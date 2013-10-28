@@ -15,8 +15,8 @@
 //Unit Headers
 #include <protocols/simple_filters/ReportFilter.hh>
 #include <protocols/simple_filters/ReportFilterCreator.hh>
-#include <protocols/moves/DataMapObj.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMapObj.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 //Project Headers
 #include <basic/Tracer.hh>
@@ -54,11 +54,11 @@ filter_val_( -9999.9 ),
 ReportFilter::~ReportFilter() {}
 
 void
-ReportFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & )
+ReportFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & )
 {
 	report_filter_name_ = tag->getOption< std::string >( "name" );
 	if( tag->hasOption( "report_string" ) )
-		report_string_ = data.get< protocols::moves::DataMapObj< std::string > * >( "report_string", tag->getOption< std::string >( "report_string" )  );
+		report_string_ = data.get< basic::datacache::DataMapObj< std::string > * >( "report_string", tag->getOption< std::string >( "report_string" )  );
 	if( tag->hasOption( "filter" ) )
 		filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
     checkpointing_file( tag->getOption< std::string >( "checkpointing_file", "" ) );

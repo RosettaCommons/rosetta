@@ -29,7 +29,7 @@
 #include <core/scoring/ScoreFunction.hh>
 
 //Protocol Headers
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
@@ -134,8 +134,8 @@ FastDesign::clone() const {
 
 void
 FastDesign::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
@@ -210,9 +210,9 @@ FastDesign::parse_my_tag(
 		worst_region_mover_ = utility::pointer::static_pointer_cast< RestrictWorstRegion >( mover );
 		}*/
 
-	utility::vector1< utility::tag::TagPtr > const & filter_tags( tag->getTags() );
+	utility::vector1< utility::tag::TagCOP > const & filter_tags( tag->getTags() );
 	for ( core::Size i=1; i<=filter_tags.size(); ++i ) {
-		utility::tag::TagPtr const layer_tag( filter_tags[i] );
+		utility::tag::TagCOP const layer_tag( filter_tags[i] );
 		std::string op = layer_tag->getName(); // Should be "AND" just like in Generic MC
 		std::string const filter_name( layer_tag->getOption< std::string >( "filter", "" ) );
 		// tolerance means if the current value is within X of the starting value, it's OK

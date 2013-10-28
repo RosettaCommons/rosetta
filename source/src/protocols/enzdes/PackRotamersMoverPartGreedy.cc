@@ -8,7 +8,7 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/enzdes/PackRotamersMoverPartGreedyCreator.hh>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 
@@ -101,8 +101,8 @@ PackRotamersMoverPartGreedy::~PackRotamersMoverPartGreedy(){}
 
 void
 PackRotamersMoverPartGreedy::parse_my_tag(
-	TagPtr const tag,
-	protocols::moves::DataMap & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap & datamap,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const & pose

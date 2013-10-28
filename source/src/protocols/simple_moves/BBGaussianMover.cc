@@ -693,8 +693,8 @@ void BBG8T3AMover::apply(Pose &pose)
 }
 
 void BBG8T3AMover::parse_my_tag(
-	TagPtr const tag,
-	protocols::moves::DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const & pose )

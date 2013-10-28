@@ -20,7 +20,7 @@
 #include <utility/tag/Tag.hh>
 #include <numeric/random/random.hh>
 #include <utility/vector1.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/protein_interface_design/read_patchdock.hh>
@@ -80,7 +80,7 @@ PatchdockTransform::get_name() const {
 }
 
 void
-PatchdockTransform::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+PatchdockTransform::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
   pd_reader()->patchdock_fname( tag->getOption< std::string >( "fname", pd_reader()->patchdock_fname() ) );
 	pd_reader()->from_entry( tag->getOption< core::Size >( "from_entry", pd_reader()->from_entry() ) );

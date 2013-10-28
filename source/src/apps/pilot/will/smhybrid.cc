@@ -2273,8 +2273,8 @@ public:
 	std::string get_name() const { return "ChiMover"; }
 	void
 	parse_my_tag(
-		utility::Tag::TagPtr const,
-		protocols::moves::DataMap &,
+		utility::Tag::TagCOP const,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const &

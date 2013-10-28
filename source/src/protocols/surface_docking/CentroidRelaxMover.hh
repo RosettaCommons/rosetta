@@ -43,7 +43,7 @@
 #include <protocols/surface_docking/CentroidRelaxMover.fwd.hh>
 #include <core/types.hh>
 
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 // ObjexxFCL Headers
 
 // Utility Headers

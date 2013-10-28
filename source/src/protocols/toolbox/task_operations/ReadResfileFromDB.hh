@@ -61,7 +61,7 @@ public:
 	void database_table(std::string const & database_table );
 	std::string const & database_table() const;
 
-	virtual void parse_tag(utility::tag::TagPtr);
+	virtual void parse_tag(utility::tag::TagCOP, DataMap &);
 
 private:
 	std::string database_table_;

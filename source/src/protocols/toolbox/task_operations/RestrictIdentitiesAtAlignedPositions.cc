@@ -125,7 +125,7 @@ RestrictIdentitiesAtAlignedPositionsOperation::source_pose( std::string const s 
 }
 
 void
-RestrictIdentitiesAtAlignedPositionsOperation::parse_tag( TagPtr tag )
+RestrictIdentitiesAtAlignedPositionsOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	using namespace protocols::rosetta_scripts;
 	utility::vector1< std::string > pdb_names, start_res, stop_res;

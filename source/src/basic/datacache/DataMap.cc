@@ -12,7 +12,7 @@
 /// @author Sarel Fleishman
 
 // Unit Headers
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 // Package headers
 
@@ -27,10 +27,10 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <basic/Tracer.hh>
 
-namespace protocols {
-namespace moves {
+namespace basic {
+namespace datacache {
 
-static basic::Tracer TR( "protocols.moves.DataMap" );
+static basic::Tracer TR( "basic.datacache.DataMap" );
 
 DataMap::DataMap() {}
 DataMap::~DataMap() {}
@@ -91,5 +91,5 @@ DataMap::begin() const { return data_map_.begin(); }
 DataMap::const_iterator
 DataMap::end() const { return data_map_.end(); }
 
-} // moves
-} // protocols
+} // datacache
+} // basic

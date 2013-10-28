@@ -21,7 +21,7 @@
 #include <core/chemical/AtomType.hh>
 #include <basic/MetricValue.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -81,7 +81,7 @@ TotalSasaFilter::task_factory(core::pack::task::TaskFactoryOP task_factory) {
 }
 
 void
-TotalSasaFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const &,moves::Movers_map const &, core::pose::Pose const & )
+TotalSasaFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, filters::Filters_map const &,moves::Movers_map const &, core::pose::Pose const & )
 {
 	lower_threshold_ = tag->getOption<core::Real>( "threshold", 800 );
 	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1000000);

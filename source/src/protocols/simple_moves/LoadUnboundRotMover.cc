@@ -71,8 +71,8 @@ protocols::moves::MoverOP LoadUnboundRotMover::clone() const { return new LoadUn
 ///@brief parse XML (specifically in the context of the parser/scripting scheme); it's a no-op
 void
 LoadUnboundRotMover::parse_my_tag(
-		utility::tag::TagPtr const,
-		protocols::moves::DataMap &,
+		utility::tag::TagCOP const,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const &

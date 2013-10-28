@@ -91,7 +91,7 @@ PeptideStapleDesignMover::get_name() const {
 }
 
 void
-PeptideStapleDesignMover::parse_my_tag( TagPtr const tag, DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+PeptideStapleDesignMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	core::Size const staple_start( core::pose::get_resnum( tag, pose ));
 	core::Size const gap( tag->getOption<core::Size>( "staple_gap", 4 ) );

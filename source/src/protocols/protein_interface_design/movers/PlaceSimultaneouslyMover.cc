@@ -28,7 +28,7 @@
 #include <core/id/AtomID.hh>
 #include <core/chemical/AA.hh>
 #include <numeric/xyzVector.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 #include <core/scoring/constraints/ConstraintSet.hh>
 
@@ -730,8 +730,8 @@ PlaceSimultaneouslyMover::final_cleanup( core::pose::Pose & pose )
 }
 
 void
-PlaceSimultaneouslyMover::parse_my_tag( TagPtr const tag,
-		DataMap &data,
+PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
+		basic::datacache::DataMap &data,
 		protocols::filters::Filters_map const &filters,
 		Movers_map const &movers,
 		core::pose::Pose const & pose )
@@ -768,14 +768,14 @@ PlaceSimultaneouslyMover::parse_my_tag( TagPtr const tag,
 	else
 		after_placement_filter_ = ap_filter->second->clone();
 	//parsing stub minimize movers and design movers for place stub
-	utility::vector0< TagPtr > const branch_tags( tag->getTags() );
+	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 
-	foreach( TagPtr const btag, branch_tags ){
+	foreach( TagCOP const btag, branch_tags ){
 		if( btag->getName() == "StubMinimize" ){
 			minimization_repeats_before_placement_ = btag->getOption< core::Size >( "min_repeats_before_placement", 0 );
 			minimization_repeats_after_placement_ = btag->getOption< core::Size >( "min_repeats_after_placement", 1 );
-			utility::vector0< TagPtr > const stub_min_tags( btag->getTags() );
-			foreach( TagPtr stub_m_tag, stub_min_tags ){
+			utility::vector0< TagCOP > const & stub_min_tags( btag->getTags() );
+			foreach( TagCOP stub_m_tag, stub_min_tags ){
 				std::string const stub_mover_name( stub_m_tag->getOption<std::string>( "mover_name" ) );
 				core::Real  const bb_stub_constraint_weight( stub_m_tag->getOption< core::Real > ( "bb_cst_weight", 10.0 ) );
 				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( stub_mover_name ));
@@ -792,8 +792,8 @@ PlaceSimultaneouslyMover::parse_my_tag( TagPtr const tag,
 			}
 		}
 		else if( btag->getName() == "DesignMovers" ){
-			utility::vector0< TagPtr > const design_tags( btag->getTags() );
-			foreach( TagPtr const m_tag_ptr, design_tags ){
+			utility::vector0< TagCOP > const & design_tags( btag->getTags() );
+			foreach( TagCOP const m_tag_ptr, design_tags ){
 				std::string const mover_name( m_tag_ptr->getOption< std::string >( "mover_name" ) );
 				bool const apply_coord_constraints( m_tag_ptr->getOption< bool >( "use_constraints", 1 ) );
 				core::Real const coord_cst_std( m_tag_ptr->getOption< core::Real >( "coord_cst_std", 0.5 ) );
@@ -825,8 +825,8 @@ PlaceSimultaneouslyMover::parse_my_tag( TagPtr const tag,
 			stub_energy_threshold_ = btag->getOption<core::Real>( "stub_energy_threshold", 1.0 );
 			max_cb_cb_dist_ = btag->getOption< core::Real >( "max_cb_dist", 3.0 );
 
-			utility::vector0< TagPtr > const stubset_tags( btag->getTags() );
-			foreach( TagPtr const stubset_tag, stubset_tags ){
+			utility::vector0< TagCOP > const & stubset_tags( btag->getTags() );
+			foreach( TagCOP const stubset_tag, stubset_tags ){
 				std::string const stub_fname = stubset_tag->getOption< std::string >( "stubfile" );
 				HotspotStubSetOP stubset = new HotspotStubSet;
 				if( data.has( "hotspot_library", stub_fname ) ){

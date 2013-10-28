@@ -33,7 +33,7 @@
 #include <basic/Tracer.hh>
 
 // Parser headers
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
@@ -167,8 +167,8 @@ bool SheetTopologyFilter::apply( Pose const & pose ) const
 /// @brief parse xml
 void
 SheetTopologyFilter::parse_my_tag(
-	TagPtr const tag,
-	DataMap &,
+	TagCOP const tag,
+	basic::datacache::DataMap &,
 	Filters_map const &,
 	Movers_map const &,
 	Pose const & )

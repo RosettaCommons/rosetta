@@ -41,12 +41,12 @@ class ResFilter : public utility::pointer::ReferenceCount
 {
 public:
 	typedef pose::Pose Pose;
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 public:
 	virtual bool operator() ( Pose const &, Size ) const = 0;
 	virtual ResFilterOP clone() const = 0;
 	/// @brief parser xml-like tags to set class data/parameters
-	virtual void parse_tag( TagPtr ) {}
+	virtual void parse_tag( TagCOP ) {}
 };
 
 // do not add any derived classes to this file, unless they are generalized abstract base classes and do not actually 'do any work'

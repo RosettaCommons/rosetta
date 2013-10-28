@@ -38,7 +38,7 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 using basic::T;
 using basic::Error;
@@ -116,8 +116,8 @@ std::string MinimizeBackbone::get_name() const{
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 MinimizeBackbone::parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & datamap,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & datamap,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/

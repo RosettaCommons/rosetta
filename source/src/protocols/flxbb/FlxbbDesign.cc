@@ -48,7 +48,7 @@
 #include <utility/string_util.hh>
 
 // Parser headers
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 
 #include <core/util/SwitchResidueTypeSet.hh>
@@ -616,8 +616,8 @@ FlxbbDesign::get_name() const {
 /// @brief parse xml
 void
 FlxbbDesign::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const &,
 	Movers_map const &,
 	Pose const & pose )
@@ -649,8 +649,8 @@ FlxbbDesign::parse_my_tag(
 	// do not perform relax after design
 	no_relax_ = tag->getOption<bool>( "no_relax", 0 );
 	bool movemap_defined( false );
-  utility::vector1< TagPtr > const branch_tags( tag->getTags() );
-	utility::vector1< TagPtr >::const_iterator tag_it;
+  utility::vector1< TagCOP > const branch_tags( tag->getTags() );
+	utility::vector1< TagCOP >::const_iterator tag_it;
 	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
 		if( (*tag_it)->getName() == "MoveMap" ){
 				movemap_defined = true;

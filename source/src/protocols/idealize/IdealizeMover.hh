@@ -20,7 +20,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/idealize/IdealizeMover.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 //Auto Headers
 #include <utility/vector1.hh>
 namespace protocols {
@@ -106,7 +106,7 @@ public:
 		pos_list_ = pos_list;
 	}
 
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	utility::vector1< core::Size > ignore_residues_in_csts() const;
 	void ignore_residues_in_csts( utility::vector1< core::Size > const i );
 	void impose_constraints( bool const i ){ impose_constraints_ = i; }

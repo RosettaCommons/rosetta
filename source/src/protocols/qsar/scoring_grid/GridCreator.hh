@@ -32,7 +32,7 @@ public:
 	GridCreator();
 	virtual ~GridCreator();
 
-	virtual GridBaseOP create_grid(utility::tag::TagPtr const tag) const = 0;
+	virtual GridBaseOP create_grid(utility::tag::TagCOP const tag) const = 0;
 	virtual GridBaseOP create_grid() const = 0;
 	virtual std::string keyname() const = 0;
 private:

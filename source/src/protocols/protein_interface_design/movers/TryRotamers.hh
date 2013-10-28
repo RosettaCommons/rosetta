@@ -18,7 +18,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunction.hh> /// EVIL
 #include <core/pack/rotamer_set/RotamerSet.hh> /// EVIL
 
@@ -78,8 +78,8 @@ public:
 	void setup_rotamer_set(core::pose::Pose & pose);
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-	void parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+	void parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );

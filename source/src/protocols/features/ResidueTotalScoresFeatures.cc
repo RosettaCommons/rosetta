@@ -25,7 +25,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/types.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
@@ -65,10 +65,10 @@ using core::scoring::getScoreFunction;
 using core::scoring::ScoreTypeManager;
 using core::scoring::ScoreTypes;
 using protocols::filters::Filters_map;
-using protocols::moves::DataMap;
+using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using numeric::xyzVector;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using utility::vector1;
 using basic::database::safely_write_to_database;
 using utility::sql_database::sessionOP;
@@ -143,8 +143,8 @@ ResidueTotalScoresFeatures::features_reporter_dependencies() const {
 
 void
 ResidueTotalScoresFeatures::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const & /*filters*/,
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/

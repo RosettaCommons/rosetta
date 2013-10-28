@@ -116,8 +116,8 @@ RollMover::get_name() const {
 
 void
 RollMover::parse_my_tag( 
-	utility::tag::TagPtr const tag,
-	moves::DataMap & /*datamap*/,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & /*datamap*/,
 	Filters_map const & /*filters*/,
 	moves::Movers_map const & /*movers*/,
 	Pose const & pose )
@@ -158,7 +158,7 @@ RollMover::parse_my_tag(
 		axis_option_parsed = true;
 	}
 
-	foreach( utility::tag::TagPtr const child_tag, tag->getTags() ){
+	foreach( utility::tag::TagCOP const child_tag, tag->getTags() ){
 		std::string name= child_tag->getName();
 
 		if( name == "axis" ) {

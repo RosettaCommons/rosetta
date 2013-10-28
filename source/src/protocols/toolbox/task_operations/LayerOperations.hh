@@ -53,7 +53,7 @@ public:
 	typedef core::pack::task::operation::TaskOperation TaskOperation;
 	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
 	typedef TaskOperation parent;
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 
 public: // constructor/destructor
 

@@ -61,7 +61,7 @@ public:
 	}
 
 	void test_parsing() {
-		DataMap data;
+		basic::datacache::DataMap data;
 		Filters_map filters;
 		Movers_map movers;
 
@@ -74,7 +74,7 @@ public:
 		filters["delta"] = sf3;
 
 		protocols::filters::CalculatorFilter  testfilter;
-		TagPtr tag = tagptr_from_string("<CalculatorFilter name=test threshold=0 equation=\"min(a, b, c)/(a*b*c-d)\" >\n "
+		TagCOP tag = tagptr_from_string("<CalculatorFilter name=test threshold=0 equation=\"min(a, b, c)/(a*b*c-d)\" >\n "
 				"<VAR name=a filter=alpha />\n"
 				"<VAR name=b filter_name=beta />\n"
 				"<VAR name=c filter=delta />\n"

@@ -50,8 +50,8 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 
 	void parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data_map,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data_map,
 		protocols::filters::Filters_map const & filters_map,
 		protocols::moves::Movers_map const & movers_map,
 		core::pose::Pose const & pose );

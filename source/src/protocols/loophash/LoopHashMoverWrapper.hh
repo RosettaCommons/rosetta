@@ -22,7 +22,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/FastRelax.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
 // AUTO-REMOVED #include <set>
 
@@ -45,8 +45,8 @@ public:
 	core::pose::PoseOP get_additional_output();
 
 	virtual std::string get_name() const;
-	void parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+	void parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );

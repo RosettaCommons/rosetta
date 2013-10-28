@@ -56,7 +56,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTree.hh>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
@@ -668,8 +668,8 @@ bool BluePrintBDR::centroid_build(
 /// @brief parse xml
 void
 BluePrintBDR::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const &,
 	Movers_map const & movers,
 	Pose const & )

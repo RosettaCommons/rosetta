@@ -110,7 +110,7 @@ void DumpPdb::set_scorefxn( core::scoring::ScoreFunctionOP scorefxn) {
 	scorefxn_ = scorefxn;
 }
 void
-DumpPdb::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
+DumpPdb::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	fname_ = tag->getOption<std::string>( "fname", "dump.pdb" );
 	bfactor_ = ( tag->getOption<bool>( "bfactor", false ) );

@@ -47,7 +47,7 @@ public:
 	virtual utility::json_spirit::Value serialize();
 	/// @brief deserialize a json_spirit object to a SingleGrid
 	virtual void deserialize(utility::json_spirit::mObject data);
-	void parse_my_tag(utility::tag::TagPtr const tag);
+	void parse_my_tag(utility::tag::TagCOP const tag);
 
 private:
 	numeric::interpolation::spline::InterpolatorOP lj_spline_;

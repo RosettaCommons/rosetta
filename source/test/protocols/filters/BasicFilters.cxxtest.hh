@@ -132,7 +132,7 @@ public:
 	}
 
 	void test_parsing() {
-		DataMap data;
+		basic::datacache::DataMap data;
 		Filters_map filters;
 		Movers_map movers;
 
@@ -144,7 +144,7 @@ public:
 		filters["sfT99"] = new StubFilter( true, 99 );
 
 		protocols::filters::IfThenFilter  testfilter;
-		TagPtr tag = tagptr_from_string("<IfThenFilter name=test threshold=0 >\n"
+		TagCOP tag = tagptr_from_string("<IfThenFilter name=test threshold=0 >\n"
 				"    <IF testfilter=sfF1 valuefilter=sfT10 />\n"
 				"    <ELIF testfilter=sfF2 value=900 />\n"
 				"    <ELIF testfilter=sfT20 valuefilter=sfF3 />\n"
@@ -215,7 +215,7 @@ public:
 	}
 
 	void test_parse_invertweights() {
-		DataMap data;
+		basic::datacache::DataMap data;
 		Filters_map filters;
 		Movers_map movers;
 
@@ -227,7 +227,7 @@ public:
 		filters["sfT99"] = new StubFilter( true, 99 );
 
 		protocols::filters::IfThenFilter  testfilter;
-		TagPtr tag = tagptr_from_string("<IfThenFilter name=test threshold=2 lower_threshold=1>\n"
+		TagCOP tag = tagptr_from_string("<IfThenFilter name=test threshold=2 lower_threshold=1>\n"
 				"    <IF testfilter=sfF1 valuefilter=sfT10 weight=60/>\n"
 				"    <ELIF testfilter=sfF2 inverttest=1 valuefilter=sfF3 weight=2/>\n"
 				"    <ELSE valuefilter=sfT99 weight=5/>\n"

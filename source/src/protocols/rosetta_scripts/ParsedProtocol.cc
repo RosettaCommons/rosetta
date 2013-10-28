@@ -14,8 +14,8 @@
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/rosetta_scripts/ParsedProtocolCreator.hh>
 #include <protocols/moves/NullMover.hh>
-#include <protocols/moves/DataMapObj.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMapObj.hh>
+#include <basic/datacache/DataMap.hh>
 
 // Project Headers
 #include <protocols/moves/Mover.hh>
@@ -277,8 +277,8 @@ protocols::moves::MoverOP ParsedProtocol::clone() const
 
 void
 ParsedProtocol::parse_my_tag(
-	TagPtr const tag,
-	protocols::moves::DataMap &data,
+	TagCOP const tag,
+	basic::datacache::DataMap &data,
 	protocols::filters::Filters_map const &filters,
 	protocols::moves::Movers_map const &movers,
 	core::pose::Pose const & )
@@ -293,11 +293,11 @@ ParsedProtocol::parse_my_tag(
 		throw utility::excn::EXCN_RosettaScriptsOption("Error: mode must be sequence, random_order, or single_random");
 	}
 
-	utility::vector0< TagPtr > const dd_tags( tag->getTags() );
+	utility::vector0< TagCOP > const & dd_tags( tag->getTags() );
 	utility::vector1< core::Real > a_probability( dd_tags.size(), 1.0/dd_tags.size() );
 	core::Size count( 1 );
-	for( utility::vector0< TagPtr >::const_iterator dd_it=dd_tags.begin(); dd_it!=dd_tags.end(); ++dd_it ) {
-		TagPtr const tag_ptr = *dd_it;
+	for( utility::vector0< TagCOP >::const_iterator dd_it=dd_tags.begin(); dd_it!=dd_tags.end(); ++dd_it ) {
+		TagCOP const tag_ptr = *dd_it;
 
 		MoverOP mover_to_add;
 		protocols::filters::FilterOP filter_to_add;
@@ -318,7 +318,7 @@ ParsedProtocol::parse_my_tag(
 
 		if( data.has( "stopping_condition", mover_name ) && tag->hasOption( "name" ) ){
 			TR<<"ParsedProtocol's mover "<<mover_name<<" requests its own stopping condition. This ParsedProtocol's stopping_condition will point at the mover's"<<std::endl;
-			data.add( "stopping_condition", tag->getOption< std::string >( "name" ), data.get< protocols::moves::DataMapObj< bool > * >( "stopping_condition", mover_name ) );
+			data.add( "stopping_condition", tag->getOption< std::string >( "name" ), data.get< basic::datacache::DataMapObj< bool > * >( "stopping_condition", mover_name ) );
 		}
 
 		std::string filter_name="true_filter"; // used in case user does not specify a filter name.

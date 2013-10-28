@@ -151,7 +151,7 @@ public:
 	void symmetric_task( core::pose::Pose const & pose, task::PackerTask & task ) const;
 
 	virtual	void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
-	virtual void parse_tag( utility::tag::TagPtr tag );
+	virtual void parse_tag( utility::tag::TagCOP tag );
 
 private:
 	utility::vector1_size rb_jump_;

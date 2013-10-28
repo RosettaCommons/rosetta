@@ -58,8 +58,8 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
-#include <protocols/moves/DataMap.hh>
-#include <protocols/moves/DataMapObj.hh>
+#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMapObj.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -183,7 +183,7 @@ Splice::Splice() :
 	dbase_subset_.clear();
 	splice_segments_.clear();
 	pdb_segments_.clear();
-	end_dbase_subset_ = new protocols::moves::DataMapObj< bool >;
+	end_dbase_subset_ = new basic::datacache::DataMapObj< bool >;
 	end_dbase_subset_->obj = false;
 	basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments ].value(true);
 }
@@ -871,15 +871,15 @@ Splice::get_name() const {
 }
 
 void
-Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
+Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
 {
-	utility::vector1< TagPtr > const sub_tags( tag->getTags() );
+	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
 
 	typedef utility::vector1< std::string > StringVec;
 	///Adding Checker. If the "Current Segment" does not appear in the list of segements than exit with error
 	segment_names_ordered_.clear(); //This string vector hold all the segment names inserted bythe user to ensure that the sequence profile is built according to tthe user
 	bool check_segment = true;
-	foreach( TagPtr const sub_tag, sub_tags ){
+	foreach( TagCOP const sub_tag, sub_tags ){
 		if( sub_tag->getName() == "Segments" ){
 			check_segment = false;//This is set to false unless current segment appears in the segment list
 			use_sequence_profiles_ = true;
@@ -899,8 +899,8 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 			</Segments>
 </Splice>
 			 */
-			utility::vector1< TagPtr > const segment_tags( sub_tag->getTags() );
-			foreach( TagPtr const segment_tag, segment_tags ){
+			utility::vector1< TagCOP > const segment_tags( sub_tag->getTags() );
+			foreach( TagCOP const segment_tag, segment_tags ){
 				std::string const segment_name( segment_tag->getName() );//get name of segment from xml
 				std::string const pdb_profile_match( segment_tag->getOption< std::string >( "pdb_profile_match" ) ); // get name of pdb profile match, this file contains all the matching between pdb name and sub segment name, i.e L1.1,L1.2 etc
 				std::string const profiles_str( segment_tag->getOption< std::string >( "profiles" ) );
@@ -949,7 +949,7 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	}
 	if( tag->hasOption( "residue_numbers_setter" ) ){
 		runtime_assert( !tag->hasOption( "locked_res" ) );
-		locked_res_ = protocols::moves::get_set_from_datamap< protocols::moves::DataMapObj< utility::vector1< core::Size > > >( "residue_numbers", tag->getOption< std::string >( "residue_numbers_setter" ), data );
+		locked_res_ = basic::datacache::get_set_from_datamap< basic::datacache::DataMapObj< utility::vector1< core::Size > > >( "residue_numbers", tag->getOption< std::string >( "residue_numbers_setter" ), data );
 	}
 	if( tag->hasOption( "torsion_database" ) ){
 		torsion_database_fname( tag->getOption< std::string >( "torsion_database" ) );
@@ -1036,7 +1036,7 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	if( tag->hasOption( "splice_filter" ))
 		splice_filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "splice_filter" ), filters ) );
 	if( tag->hasOption( "mover_tag" ) )
-		mover_tag_ = protocols::moves::get_set_from_datamap< protocols::moves::DataMapObj< std::string > >( "tags", tag->getOption< std::string >( "mover_tag" ), data );
+		mover_tag_ = basic::datacache::get_set_from_datamap< basic::datacache::DataMapObj< std::string > >( "tags", tag->getOption< std::string >( "mover_tag" ), data );
 	loop_pdb_source( tag->getOption< std::string >( "loop_pdb_source", "" ) );
 
 	restrict_to_repacking_chain2( tag->getOption< bool >( "restrict_to_repacking_chain2", true ) );

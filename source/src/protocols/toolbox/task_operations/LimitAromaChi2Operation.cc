@@ -148,7 +148,7 @@ LimitAromaChi2Operation::apply( Pose const & /*pose*/, PackerTask & task ) const
 }
 
 void
-LimitAromaChi2Operation::parse_tag( TagPtr tag )
+LimitAromaChi2Operation::parse_tag( TagCOP tag , DataMap & )
 {
 	chi2max( tag->getOption< Real >( "chi2max", 110.0 ) );
 	chi2min( tag->getOption< Real >( "chi2min", 70.0 ) );

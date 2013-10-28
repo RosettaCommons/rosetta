@@ -455,8 +455,8 @@ EnzdesRemodelMover::get_name() const {
 
 void
 EnzdesRemodelMover::parse_my_tag(
-	TagPtr const tag,
-		protocols::moves::DataMap &,// datamap,
+	TagCOP const tag,
+		basic::datacache::DataMap &,// datamap,
 	Filters_map const &, //filters,
 	protocols::moves::Movers_map const &, //movers,
 	Pose const & //pose

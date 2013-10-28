@@ -14,7 +14,7 @@
 #include <protocols/protein_interface_design/movers/FavorNativeResiduePreCycleCreator.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 // AUTO-REMOVED #include <boost/foreach.hpp>
 
 #include <utility/vector0.hh>
@@ -58,7 +58,7 @@ FavorNativeResiduePreCycle::get_name() const {
 FavorNativeResiduePreCycle::~FavorNativeResiduePreCycle() {}
 
 void
-FavorNativeResiduePreCycle::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
+FavorNativeResiduePreCycle::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	using namespace utility::pointer;
 

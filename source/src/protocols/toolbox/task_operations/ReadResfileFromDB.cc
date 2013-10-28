@@ -58,7 +58,7 @@ using std::endl;
 using std::string;
 using std::stringstream;
 using utility::sql_database::sessionOP;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 
 ReadResfileFromDB::ReadResfileFromDB() :
 	parent(),
@@ -141,7 +141,7 @@ ReadResfileFromDB::database_table() const {
 }
 
 void
-ReadResfileFromDB::parse_tag( TagPtr tag )
+ReadResfileFromDB::parse_tag( TagCOP tag , DataMap & )
 {
 	using namespace basic::resource_manager;
 

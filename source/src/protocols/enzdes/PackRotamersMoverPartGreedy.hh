@@ -58,7 +58,7 @@ public:
 	virtual ~PackRotamersMoverPartGreedy();
 
 	 //parser stuff
-  void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
+  void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
   void apply( core::pose::Pose &pose );
   virtual std::string get_name() const;
   protocols::moves::MoverOP clone() const;

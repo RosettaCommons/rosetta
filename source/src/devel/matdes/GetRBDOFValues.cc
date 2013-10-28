@@ -29,7 +29,7 @@
 #include <utility/vector1.fwd.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -222,8 +222,8 @@ bool GetRBDOFValues::apply( Pose const & pose ) const
 /// @brief parse xml
 void
 GetRBDOFValues::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & /*data*/,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & /*data*/,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )

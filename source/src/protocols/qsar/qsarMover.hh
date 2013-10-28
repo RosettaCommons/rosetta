@@ -19,7 +19,7 @@
 
 #include <core/types.hh>
 
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -35,8 +35,8 @@ public:
 	qsarMover();
 	//qsarMover(core::Real width, core::Real resolution);
 	virtual void apply(core::pose::Pose & pose);
-	virtual void parse_my_tag(utility::tag::TagPtr const tag,
-			moves::DataMap & data,
+	virtual void parse_my_tag(utility::tag::TagCOP const tag,
+			basic::datacache::DataMap & data,
 			filters::Filters_map const& filters,
 			moves::Movers_map const & movers,
 			core::pose::Pose const & pose

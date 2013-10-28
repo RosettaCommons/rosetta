@@ -281,8 +281,8 @@ public:
 
 	///@brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
-		TagPtr const,
-		protocols::moves::DataMap &,
+		TagCOP const,
+		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & );
@@ -306,7 +306,7 @@ public:
 		core::pack::task::PackerTask & task
 	) const;
 
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 
 private:
 	utility::vector1< Size > resids_to_fix_;
@@ -351,8 +351,8 @@ public:
 
 	///@brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
-		TagPtr const,
-		protocols::moves::DataMap &,
+		TagCOP const,
+		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & );

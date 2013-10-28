@@ -54,7 +54,7 @@ void lregister_Filter( lua_State * lstate ) {
 
 using namespace core;
 typedef std::pair< std::string const, FilterCOP > StringFilter_pair;
-typedef utility::tag::TagPtr TagPtr;
+typedef utility::tag::TagCOP TagCOP;
 
 FilterCollection::~FilterCollection() {}
 
@@ -102,8 +102,8 @@ Filter::~Filter() {}
 
 void
 Filter::parse_my_tag(
-	TagPtr const,
-	moves::DataMap &,
+	TagCOP const,
+	basic::datacache::DataMap &,
 	Filters_map const &,
 	moves::Movers_map const &,
 	core::pose::Pose const & )

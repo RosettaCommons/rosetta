@@ -169,7 +169,7 @@ SetCatalyticResPackBehavior::apply(
 }
 
 void
-SetCatalyticResPackBehavior::parse_tag( TagPtr tag )
+SetCatalyticResPackBehavior::parse_tag( TagCOP tag , DataMap & )
 {
 	if( tag->hasOption("fix_catalytic_aa") ) fix_catalytic_aa_ = tag->getOption<bool>( "fix_catalytic_aa", 1);
 	if( tag->hasOption("behavior_non_catalytic") ) behavior_non_catalytic_ = tag->getOption<std::string>("behavior_non_catalytic" );
@@ -241,7 +241,7 @@ DetectProteinLigandInterface::init_from_options()
 }
 
 void
-DetectProteinLigandInterface::parse_tag( TagPtr tag )
+DetectProteinLigandInterface::parse_tag( TagCOP tag , DataMap & )
 {
 	detect_design_interface_ = true; //Using DetectProteinLigandInterface implies you want to.
 	score_only_ = false; //Using DetectProteinLigandInterface implies you're doing more than scoring.
@@ -737,7 +737,7 @@ ProteinLigandInterfaceUpweighter::init_from_options()
 }
 
 void
-ProteinLigandInterfaceUpweighter::parse_tag( TagPtr tag )
+ProteinLigandInterfaceUpweighter::parse_tag( TagCOP tag , DataMap & )
 {
 	if( tag->hasOption("interface_weight") ) lig_packer_weight_ = tag->getOption< core::Real >( "interface_weight", 1.0 );
 	if( tag->hasOption("catres_interface_weight") ) catres_packer_weight_ = tag->getOption< core::Real >( "catres_interface_weight", 1.0 );
@@ -801,7 +801,7 @@ AddRigidBodyLigandConfs::clone() const
 /// this could be expanded to actually having this operation create additional
 /// conformers
 void
-AddRigidBodyLigandConfs::parse_tag( TagPtr /*tag*/ )
+AddRigidBodyLigandConfs::parse_tag( TagCOP /*tag*/ , DataMap & )
 {
 }
 
@@ -851,7 +851,7 @@ AddLigandMotifRotamers::clone() const
 }
 
 void
-AddLigandMotifRotamers::parse_tag( TagPtr /*tag*/ )
+AddLigandMotifRotamers::parse_tag( TagCOP /*tag*/ , DataMap & )
 {
 /*
 -dtest 2

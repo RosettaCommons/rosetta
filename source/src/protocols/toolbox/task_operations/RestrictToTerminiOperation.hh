@@ -61,8 +61,7 @@ public:
 		core::pack::task::PackerTask & ) const;
 
 	void
-	parse_tag(
-		utility::tag::TagPtr);
+	parse_tag( utility::tag::TagCOP, DataMap & );
 
 private:
 	core::Size chain_;

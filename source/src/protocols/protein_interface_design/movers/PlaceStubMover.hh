@@ -24,11 +24,11 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/constraints/HarmonicFunc.fwd.hh>
-#include <protocols/moves/DataMapObj.hh>
+#include <basic/datacache/DataMapObj.hh>
 // C++ headers
 
 // Unit headers
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <utility/vector1.hh>
@@ -81,8 +81,8 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-	virtual void parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+	virtual void parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );
@@ -166,7 +166,7 @@ private: // data members
 	/// should not be changed to design movers down stream. Note that this is a different implementation than
 	/// the one used in PlaceSimultaneously.
 	core::pack::task::TaskFactoryOP residue_level_tasks_for_placed_hotspots_;
-  utility::pointer::owning_ptr< protocols::moves::DataMapObj< utility::vector1< core::Size > > > residue_numbers_; /// dflt NULL; a vector of residue numbers placed on the DataMap which specifies all the placed residues. Useful to communicate between movers and filters, without the pesky NotifyMovers strategy
+  utility::pointer::owning_ptr< basic::datacache::DataMapObj< utility::vector1< core::Size > > > residue_numbers_; /// dflt NULL; a vector of residue numbers placed on the basic::datacache::DataMap which specifies all the placed residues. Useful to communicate between movers and filters, without the pesky NotifyMovers strategy
   std::string user_defined_name_; // reserved for keeping the name of the current stub placement mover
 };
 

@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_loops_loops_definers_util_HH
 
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -25,8 +25,8 @@ namespace loops_definers {
 
 LoopsOP
 load_loop_definitions(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap const & data,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap const & data,
 	core::pose::Pose const & pose);
 
 

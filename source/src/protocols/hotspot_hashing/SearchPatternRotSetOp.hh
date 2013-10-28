@@ -74,7 +74,7 @@ class AddSearchPatternRotSetOp : public core::pack::task::operation::TaskOperati
 
 		virtual core::pack::task::operation::TaskOperationOP clone() const;
 
-		void parse_tag( TagPtr tag );
+		void parse_tag( TagCOP tag , DataMap & );
 
 		virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 

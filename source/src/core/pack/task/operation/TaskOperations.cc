@@ -83,7 +83,7 @@ RestrictToRepacking::apply( pose::Pose const &, PackerTask & task ) const
 }
 
 void
-RestrictToRepacking::parse_tag( TagPtr )
+RestrictToRepacking::parse_tag( TagCOP, DataMap & )
 {}
 
 void
@@ -121,7 +121,7 @@ void
 RestrictResidueToRepacking::clear() { residues_to_restrict_to_repacking_.clear(); }
 
 void
-RestrictResidueToRepacking::parse_tag( TagPtr tag )
+RestrictResidueToRepacking::parse_tag( TagCOP tag , DataMap & )
 {
 	include_residue( tag->getOption< core::Size >( "resnum", 0 ) );
 }
@@ -202,7 +202,7 @@ RestrictAbsentCanonicalAAS::include_residue( core::Size const resid )
 }
 
 void
-RestrictAbsentCanonicalAAS::parse_tag( TagPtr tag )
+RestrictAbsentCanonicalAAS::parse_tag( TagCOP tag , DataMap & )
 {
 	include_residue( tag->getOption< core::Size >( "resnum", 0 ) );
 	keep_aas( tag->getOption< std::string >( "keep_aas" ) );
@@ -301,7 +301,7 @@ void DisallowIfNonnative::restrict_to_residue( utility::vector1< core::Size > co
 		residue_selection_.push_back( residues[ii] );
 }
 
-void DisallowIfNonnative::parse_tag( TagPtr tag )
+void DisallowIfNonnative::parse_tag( TagCOP tag , DataMap & )
 {
 	restrict_to_residue( tag->getOption< core::Size >( "resnum", 0 ) );
 	disallow_aas( tag->getOption< std::string >( "disallow_aas" ) );
@@ -344,7 +344,7 @@ RotamerExplosion::apply( core::pose::Pose const &, PackerTask & task ) const
 }
 
 void
-RotamerExplosion::parse_tag( TagPtr tag )
+RotamerExplosion::parse_tag( TagCOP tag , DataMap & )
 {
 	resid( tag->getOption< core::Size >( "resnum" ) );
 	chi( tag->getOption< core::Size >( "chi" ) );
@@ -391,7 +391,7 @@ InitializeFromCommandline::apply( pose::Pose const &, PackerTask & task ) const
 }
 
 void
-InitializeFromCommandline::parse_tag( TagPtr )
+InitializeFromCommandline::parse_tag( TagCOP, DataMap & )
 {
 }
 
@@ -478,7 +478,7 @@ TaskOperationOP ExtraRotamersGeneric::clone() const
 }
 
 void
-ExtraRotamersGeneric::parse_tag( TagPtr tag )
+ExtraRotamersGeneric::parse_tag( TagCOP tag , DataMap & )
 {
 	ex1_ = tag->getOption<bool>("ex1", false);
 	ex2_ = tag->getOption<bool>("ex2", false);
@@ -596,7 +596,7 @@ std::string const & ReadResfile::filename() const
 }
 
 void
-ReadResfile::parse_tag( TagPtr tag )
+ReadResfile::parse_tag( TagCOP tag , DataMap & )
 {
 	if ( tag->hasOption("filename") ) resfile_filename_ = tag->getOption<std::string>("filename");
 	// special case: if "COMMANDLINE" string specified, use commandline option setting.
@@ -697,9 +697,9 @@ ReadResfileAndObeyLengthEvents::apply(
 } //ReadResfileAndObeyLengthEvents::apply(
 
 void
-ReadResfileAndObeyLengthEvents::parse_tag( TagPtr tag )
+ReadResfileAndObeyLengthEvents::parse_tag( TagCOP tag , DataMap & datamap )
 {
-	parent::parse_tag( tag );
+	parent::parse_tag( tag, datamap );
 	if ( tag->hasOption("default_commands_for_inserts") )
 		apply_default_commands_to_inserts_ = tag->getOption<bool>("default_commands_for_inserts",1);
 }
@@ -995,7 +995,7 @@ void
 PreventRepacking::clear() { residues_to_prevent_.clear(); }
 
 void
-PreventRepacking::parse_tag( TagPtr tag )
+PreventRepacking::parse_tag( TagCOP tag , DataMap & )
 {
 	residue_selection_ = tag->getOption<std::string>("resnum","0");
 }
@@ -1089,7 +1089,7 @@ ExtraRotamers::apply( core::pose::Pose const & p, PackerTask & task ) const
 	}
 }
 
-void ExtraRotamers::parse_tag( TagPtr tag )
+void ExtraRotamers::parse_tag( TagCOP tag , DataMap & )
 {
 	if ( tag->hasOption("resid") ) {
 		resid_ = tag->getOption< core::Size >( "resid" );
@@ -1150,7 +1150,7 @@ ExtraChiCutoff::apply( core::pose::Pose const & p, PackerTask & task ) const
 	}
 }
 
-void ExtraChiCutoff::parse_tag( TagPtr tag )
+void ExtraChiCutoff::parse_tag( TagCOP tag , DataMap & )
 {
 	if ( tag->hasOption("resid") ) {
 		resid_ = tag->getOption< core::Size >( "resid" );

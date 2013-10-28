@@ -67,7 +67,7 @@ public:
 	void set_forget_chains_and_interface( bool value ) { forget_chains_and_interface_ = value; }
 	bool forget_chains_and_interface() const { return forget_chains_and_interface_; }
 
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 
 private:
 	// reference pose: sometimes the input pose is not actually 'native,' and it is useful to make the Task aware of an alternative 'native' pose (such as for reverting mutations that did not occur in a local context)

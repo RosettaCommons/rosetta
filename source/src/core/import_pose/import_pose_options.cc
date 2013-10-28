@@ -62,7 +62,7 @@ ImportPoseOptions::~ImportPoseOptions() {}
 
 std::string ImportPoseOptions::type() const { return "ImportPoseOptions"; }
 
-void ImportPoseOptions::parse_my_tag( utility::tag::TagPtr tag )
+void ImportPoseOptions::parse_my_tag( utility::tag::TagCOP tag )
 {
 	PDB_DReaderOptions::parse_my_tag( tag );
 

@@ -50,7 +50,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/canonical_sampling/SilentTrajectoryRecorder.hh>
@@ -393,7 +393,7 @@ CoupledSidechainProtocol::pass_metropolis(core::Real delta_energy , core::Real l
 }
 
 void
-CoupledSidechainProtocol::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose) {
+CoupledSidechainProtocol::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose) {
 	ntrials_ = tag->getOption<core::Size>( "ntrials", 10000 );
 	set_prob_uniform( tag->getOption<core::Real>( "prob_uniform", 0.0 ) );
 	set_prob_withinrot( tag->getOption<core::Real>( "prob_withinrot", 0.0 ) );

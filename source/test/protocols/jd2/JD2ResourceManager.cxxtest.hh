@@ -64,7 +64,7 @@ public:
 
 	virtual
 	void
-	parse_my_tag( utility::tag::TagPtr tag )
+	parse_my_tag( utility::tag::TagCOP tag )
 	{
 		somevar_ = tag->getOption< int >( "somevar", 1 );
 	}
@@ -155,7 +155,7 @@ public:
 	virtual
 	void
 	parse_my_tag(
-		utility::tag::TagPtr
+		utility::tag::TagCOP
 	) {}
 
 	void
@@ -456,7 +456,7 @@ public:
 			"  <DummyResourceOptions tag=dummyopt1 somevar=5/>\n"
 			"</ResourceOptions>\n";
 		std::istringstream resource_options_stream( xmlfile );
-		utility::tag::TagPtr resource_options_tags = utility::tag::Tag::create( resource_options_stream );
+		utility::tag::TagCOP resource_options_tags = utility::tag::Tag::create( resource_options_stream );
 		try {
 			jd2rm->read_resource_options_tags( resource_options_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -482,7 +482,7 @@ public:
 			"  <DummyResourceOptions tag=dummyopt2 somevar=6/>\n"
 			"</ResourceOptions>\n";
 		std::istringstream resource_options_stream( xmlfile );
-		utility::tag::TagPtr resource_options_tags = utility::tag::Tag::create( resource_options_stream );
+		utility::tag::TagCOP resource_options_tags = utility::tag::Tag::create( resource_options_stream );
 		try {
 			jd2rm->read_resource_options_tags( resource_options_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -513,7 +513,7 @@ public:
 			"  <DummyResourceOptions tag=dummyopt1 somevar=6/>\n"
 			"</ResourceOptions>\n";
 		std::istringstream resource_options_stream( xmlfile );
-		utility::tag::TagPtr resource_options_tags = utility::tag::Tag::create( resource_options_stream );
+		utility::tag::TagCOP resource_options_tags = utility::tag::Tag::create( resource_options_stream );
 		try {
 			jd2rm->read_resource_options_tags( resource_options_tags );
 			TS_ASSERT( false );
@@ -539,7 +539,7 @@ public:
 			"  <DummyResource tag=dummyresource locatorID=1ten.pdb />\n"
 			"</Resources>\n";
 		std::istringstream resources_stream( xmlfile );
-		utility::tag::TagPtr resources_tags = utility::tag::Tag::create( resources_stream );
+		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -563,7 +563,7 @@ public:
 			"  <DummyResource tag=dummyresource />\n"
 			"</Resources>\n";
 		std::istringstream resources_stream( xmlfile );
-		utility::tag::TagPtr resources_tags = utility::tag::Tag::create( resources_stream );
+		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -587,7 +587,7 @@ public:
 			"  <DummyResource tag=dummyresource locatorID=1teb.pdb/>\n"
 			"</Resources>\n";
 		std::istringstream resources_stream( xmlfile );
-		utility::tag::TagPtr resources_tags = utility::tag::Tag::create( resources_stream );
+		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -610,7 +610,7 @@ public:
 			"  <DummyResourceOptions tag=dummyopt1 somevar=5/>\n"
 			"</ResourceOptions>\n";
 		std::istringstream resource_options_stream( options_xmlfile );
-		utility::tag::TagPtr resource_options_tags = utility::tag::Tag::create( resource_options_stream );
+		utility::tag::TagCOP resource_options_tags = utility::tag::Tag::create( resource_options_stream );
 		jd2rm->read_resource_options_tags( resource_options_tags );
 
 		std::string xmlfile =
@@ -618,7 +618,7 @@ public:
 			"  <DummyResource tag=dummyresource locatorID=1ten.pdb options=dummyopt1/>\n"
 			"</Resources>\n";
 		std::istringstream resources_stream( xmlfile );
-		utility::tag::TagPtr resources_tags = utility::tag::Tag::create( resources_stream );
+		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -643,7 +643,7 @@ public:
 			"  <DummyResource tag=dummyresource locatorID=1ten.pdb options=dummyopt1/>\n"
 			"</Resources>\n";
 		std::istringstream resources_stream( xmlfile );
-		utility::tag::TagPtr resources_tags = utility::tag::Tag::create( resources_stream );
+		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -666,7 +666,7 @@ public:
 			"  <DummyResource tag=dummyresource file=1ten.pdb options=dummyopt1/>\n"
 			"</Resources>\n";
 		std::istringstream resources_stream( xmlfile );
-		utility::tag::TagPtr resources_tags = utility::tag::Tag::create( resources_stream );
+		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -689,7 +689,7 @@ public:
 			"  <DummyResource tag=dummyresource file=1ten.pdb locatorID=1ten.pdb options=dummyopt1/>\n"
 			"</Resources>\n";
 		std::istringstream resources_stream( xmlfile );
-		utility::tag::TagPtr resources_tags = utility::tag::Tag::create( resources_stream );
+		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -712,7 +712,7 @@ public:
 			"  <DummyResource tag=dummyresource locator=\"\" file=1ten.pdb/>\n"
 			"</Resources>\n";
 		std::istringstream resources_stream( xmlfile );
-		utility::tag::TagPtr resources_tags = utility::tag::Tag::create( resources_stream );
+		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -735,7 +735,7 @@ public:
 			"  <DummyResource tag=dummyresource locator=FileSystemResourceLocator file=1ten.pdb options=dummyopt1/>\n"
 			"</Resources>\n";
 		std::istringstream resources_stream( xmlfile );
-		utility::tag::TagPtr resources_tags = utility::tag::Tag::create( resources_stream );
+		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -759,7 +759,7 @@ public:
 			"  <DummyResourceLocator tag=dummyresloc />\n"
 			"</ResourceLocators>\n";
 		std::istringstream resource_locators_stream( xmlfile );
-		utility::tag::TagPtr resource_locators_tags = utility::tag::Tag::create( resource_locators_stream );
+		utility::tag::TagCOP resource_locators_tags = utility::tag::Tag::create( resource_locators_stream );
 		try {
 			jd2rm->read_resource_locators_tags( resource_locators_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
@@ -779,7 +779,7 @@ public:
 			"  <DummyResourceLocator tag=dummyresloc />\n"
 			"</ResourceLocators>\n";
 		std::istringstream resource_locators_stream( locator_xmlfile );
-		utility::tag::TagPtr resource_locators_tags = utility::tag::Tag::create( resource_locators_stream );
+		utility::tag::TagCOP resource_locators_tags = utility::tag::Tag::create( resource_locators_stream );
 		jd2rm->read_resource_locators_tags( resource_locators_tags );
 
 		std::string options_xmlfile =
@@ -787,7 +787,7 @@ public:
 			"  <DummyResourceOptions tag=dummyopt1 somevar=5/>\n"
 			"</ResourceOptions>\n";
 		std::istringstream resource_options_stream( options_xmlfile );
-		utility::tag::TagPtr resource_options_tags = utility::tag::Tag::create( resource_options_stream );
+		utility::tag::TagCOP resource_options_tags = utility::tag::Tag::create( resource_options_stream );
 		jd2rm->read_resource_options_tags( resource_options_tags );
 
 		std::string xmlfile =
@@ -795,7 +795,7 @@ public:
 			"  <DummyResource tag=dummyresource locatorID=1ten.pdb options=dummyopt1 locator=dummyresloc />\n"
 			"</Resources>\n";
 		std::istringstream resources_stream( xmlfile );
-		utility::tag::TagPtr resources_tags = utility::tag::Tag::create( resources_stream );
+		utility::tag::TagCOP resources_tags = utility::tag::Tag::create( resources_stream );
 		try {
 			jd2rm->read_resources_tags( resources_tags );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {

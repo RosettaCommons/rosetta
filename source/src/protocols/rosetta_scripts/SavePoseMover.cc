@@ -18,7 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/Tracer.hh>
 
@@ -74,7 +74,7 @@ SavePoseMover::apply( core::pose::Pose & pose )
 }
 
 void
-SavePoseMover::parse_my_tag( TagPtr const tag, protocols::moves::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+SavePoseMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	if( tag->hasOption("reference_name") ){
 		reference_pose_ = saved_reference_pose(tag,data_map );

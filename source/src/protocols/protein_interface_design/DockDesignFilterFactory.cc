@@ -75,8 +75,8 @@ DockDesignFilterFactory::newFilter(	std::string const & type )
 ///@brief return new Filter by Tag parsing
 FilterOP
 DockDesignFilterFactory::newFilter(
-	TagPtr const tag,
-	moves::DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	filters::Filters_map const & filters,
 	moves::Movers_map const & movers,
 	Pose const & pose )

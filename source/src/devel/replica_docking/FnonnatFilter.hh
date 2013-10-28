@@ -17,7 +17,7 @@
 #include <devel/replica_docking/FnonnatFilter.fwd.hh>
 
 #include <protocols/filters/Filter.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/docking/types.hh>
 
@@ -51,7 +51,7 @@ public:
 	virtual ~FnonnatFilter();
 	void jump( core::Size const jump_id );
 
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	core::Real lower_threshold_;
 	core::Real upper_threshold_;

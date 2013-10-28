@@ -155,8 +155,8 @@ DetectSymmetry::apply(Pose & pose) {
 
 void
 DetectSymmetry::parse_my_tag(
-	TagPtr const tag,
-	protocols::moves::DataMap &,
+	TagCOP const tag,
+	basic::datacache::DataMap &,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const &

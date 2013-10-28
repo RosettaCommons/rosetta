@@ -15,7 +15,7 @@
 #include <protocols/simple_moves/MinPackMover.hh>
 #include <protocols/simple_moves/MinPackMoverCreator.hh>
 
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/chemical/ResidueType.hh>
@@ -190,8 +190,8 @@ MinPackMover::task_is_valid( Pose const & pose ) const
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 MinPackMover::parse_my_tag(
-	TagPtr const tag,
-	protocols::moves::DataMap & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap & datamap,
 	Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
 	Pose const & pose
@@ -216,8 +216,8 @@ MinPackMover::parse_my_tag(
 ///@brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
 void
 MinPackMover::parse_score_function(
-	TagPtr const tag,
-	protocols::moves::DataMap const & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap const & datamap,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const &
@@ -231,8 +231,8 @@ MinPackMover::parse_score_function(
 ///@brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
 void
 MinPackMover::parse_task_operations(
-	TagPtr const tag,
-	protocols::moves::DataMap const & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap const & datamap,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const &

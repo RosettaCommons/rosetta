@@ -60,7 +60,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new LoopFinder ); }
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	Size interface_;
 	bool ch1_, ch2_;
@@ -68,7 +68,7 @@ private:
 	core::Size resnum_;
 	core::Real ca_ca_distance_;
 	core::Real iface_cutoff_;
-	//protocols::moves::DataMapOP data_;
+	//basic::datacache::DataMapOP data_;
 	protocols::loops::LoopsOP loops_;
 };
 

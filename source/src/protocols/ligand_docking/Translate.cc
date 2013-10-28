@@ -109,8 +109,8 @@ std::string Translate::get_name() const{
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 Translate::parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & /*data_map*/,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & /*data_map*/,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & pose

@@ -203,6 +203,7 @@
 #include <core/pack/task/operation/TaskOperationRegistrator.hh>
 #include <core/pack/task/operation/TaskOperationCreators.hh>
 #include <core/pack/task/operation/OperateOnCertainResiduesCreator.hh>
+#include <core/pack/task/operation/OperateOnResidueSubsetCreator.hh>
 #include <core/pack/task/operation/NoRepackDisulfidesCreator.hh>
 #include <core/pack/task/operation/OptCysHGCreator.hh>
 #include <core/pack/task/operation/OptHCreator.hh>
@@ -212,6 +213,10 @@
 #include <core/pack/task/operation/ResFilterCreators.hh>
 #include <core/pack/task/operation/ReplicateTaskCreator.hh>
 // (end for registering TaskOperations, ResLvlTaskOperations, and ResFilters)
+
+// ResidueSelectors
+#include <core/pack/task/residue_selector/ResidueSelectorCreators.hh>
+#include <core/pack/task/residue_selector/ResidueSelectorRegistrator.hh>
 
 #endif
 
@@ -507,6 +512,7 @@ static TaskOperationRegistrator< DisallowIfNonnativeCreator > DisallowIfNonnativ
 static TaskOperationRegistrator< RestrictResidueToRepackingCreator > RestrictResidueToRepackingCreator_registrator;
 static TaskOperationRegistrator< RestrictToRepackingCreator > RestrictToRepackingCreator_registrator;
 static TaskOperationRegistrator< OperateOnCertainResiduesCreator > OperateOnCertainResiduesCreator_registrator;
+static TaskOperationRegistrator< OperateOnResidueSubsetCreator > OperateOnResidueSubsetCreator_registrator;
 static TaskOperationRegistrator< NoRepackDisulfidesCreator > NoRepackDisulfidesCreator_registrator;
 static TaskOperationRegistrator< ReplicateTaskCreator > ReplicateTaskCreator_registrator;
 static TaskOperationRegistrator< OptCysHGCreator > OptCysHGCreator_registrator;
@@ -533,6 +539,20 @@ static ResFilterRegistrator< AnyResFilterCreator > AnyResFilterCreator_registrat
 static ResFilterRegistrator< AllResFilterCreator > AllResFilterCreator_registrator;
 static ResFilterRegistrator< NoResFilterCreator > NoResFilterCreator_registrator;
 static ResFilterRegistrator< ResidueTypeFilterCreator > ResidueTypeResFilterCreator_registrator;
+
+// register ResidueSelectorCreators
+using namespace core::pack::task::residue_selector;
+static ResidueSelectorRegistrator< AndResidueSelectorCreator > reg_AndResidueSelectorCreator;
+static ResidueSelectorRegistrator< ChainSelectorCreator > reg_ChainSelectorCreator;
+static ResidueSelectorRegistrator< InterGroupInterfaceByVectorSelectorCreator > reg_InterGroupInterfaceByVectorSelectorCreator;
+static ResidueSelectorRegistrator< JumpDownstreamSelectorCreator > reg_JumpDownstreamSelectorCreator;
+static ResidueSelectorRegistrator< JumpUpstreamSelectorCreator > reg_JumpUpstreamSelectorCreator;
+static ResidueSelectorRegistrator< NeighborhoodResidueSelectorCreator > reg_NeighborhoodResidueSelectorCreator;
+static ResidueSelectorRegistrator< NotResidueSelectorCreator > reg_NotResidueSelectorCreator;
+static ResidueSelectorRegistrator< NumNeighborsSelectorCreator > reg_NumNeighborsSelectorCreator;
+static ResidueSelectorRegistrator< OrResidueSelectorCreator > reg_OrResidueSelectorCreator;
+static ResidueSelectorRegistrator< ResidueIndexSelectorCreator > reg_ResidueIndexSelectorCreator;
+
 
 using basic::resource_manager::ResourceLoaderRegistrator;
 static ResourceLoaderRegistrator< core::conformation::symmetry::SymmDataLoaderCreator > SymmDataLoaderCreator_registrator;

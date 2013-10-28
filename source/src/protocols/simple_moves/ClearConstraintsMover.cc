@@ -30,8 +30,8 @@ void ClearConstraintsMover::apply( core::pose::Pose & pose )
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 ClearConstraintsMover::parse_my_tag(
-	TagPtr const,
-	moves::DataMap &,
+	TagCOP const,
+	basic::datacache::DataMap &,
 	Filters_map const &,
 	moves::Movers_map const &,
 	Pose const &

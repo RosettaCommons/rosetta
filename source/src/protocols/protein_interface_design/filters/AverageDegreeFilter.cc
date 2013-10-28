@@ -16,7 +16,7 @@
 #include <core/conformation/Residue.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -123,8 +123,8 @@ AverageDegreeFilter::report( std::ostream & out, core::pose::Pose const & pose )
 }
 
 void
-AverageDegreeFilter::parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
+AverageDegreeFilter::parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & )

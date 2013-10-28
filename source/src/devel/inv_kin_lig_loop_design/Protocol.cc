@@ -98,7 +98,7 @@ namespace devel {
     // const double Protocol::DEFAULT_MIN_ACCEPTANCE_RATE = 5e-2;
     //     const double Protocol::DEFAULT_MIN_WEIGHT_REP      = 1e-2;
 
-    void Protocol::setParams(TagPtr tag0, vector<Loop> const& loops_) {
+    void Protocol::setParams(TagCOP tag0, vector<Loop> const& loops_) {
 
       loops = loops_;
 

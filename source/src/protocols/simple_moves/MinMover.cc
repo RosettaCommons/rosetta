@@ -15,9 +15,6 @@
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/MinMoverCreator.hh>
 
-// Package headers
-#include <protocols/moves/DataMap.hh>
-
 // Project headers
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -34,6 +31,7 @@
 
 // Basic headers
 #include <basic/prof.hh>
+#include <basic/datacache/DataMap.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
@@ -334,8 +332,8 @@ void MinMover::parse_def( utility::lua::LuaObject const & def,
 }
 
 void MinMover::parse_my_tag(
-	TagPtr const tag,
-	protocols::moves::DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
 	Pose const & pose )
@@ -346,15 +344,15 @@ void MinMover::parse_my_tag(
 	parse_dof_tasks( tag, data );
 
 /// parse_movemap will reset the movemap to minimize all if nothing is stated on it. The following section ensures that the protocol specifies a MoveMap before going that way
-//	utility::vector1< TagPtr > const branch_tags( tag->getTags() );
-//	utility::vector1< TagPtr >::const_iterator tag_it;
+//	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
+//	utility::vector1< TagCOP >::const_iterator tag_it;
 	protocols::rosetta_scripts::parse_movemap( tag, pose, movemap_, data, false );
 
 }
 
 void MinMover::parse_opts(
-	TagPtr const tag,
-	protocols::moves::DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const & )
@@ -392,7 +390,7 @@ void MinMover::parse_opts(
 	}
 }
 
-void MinMover::parse_chi_and_bb( TagPtr const tag )
+void MinMover::parse_chi_and_bb( TagCOP const tag )
 {
 	if ( ! movemap_ ) movemap_ = new MoveMap;
 	bool const chi( tag->getOption< bool >( "chi" ) ), bb( tag->getOption< bool >( "bb" ) );
@@ -415,8 +413,8 @@ MinMover::parse_dof_task_type(
 	std::string const & tag_name,
 	core::id::DOF_Type dof_type,
 	core::id::TorsionType torsion_type,
-	TagPtr const tag,
-	protocols::moves::DataMap & data
+	TagCOP const tag,
+	basic::datacache::DataMap & data
 ) {
 
 	if(!tag->hasOption(tag_name)){
@@ -437,7 +435,7 @@ MinMover::parse_dof_task_type(
 			task_factory->push_back( data.get< TaskOperation * >( "task_operations", t_o_key ) );
 			TR << "\t " << tag_name << ": " << t_o_key << std::endl;
 		} else {
-			utility_exit_with_message("TaskOperation " + t_o_key + " not found in DataMap.");
+			utility_exit_with_message("TaskOperation " + t_o_key + " not found in basic::datacache::DataMap.");
 		}
 	}
 	dof_tasks_[
@@ -448,8 +446,8 @@ MinMover::parse_dof_task_type(
 
 void
 MinMover::parse_dof_tasks(
-	TagPtr const tag,
-	protocols::moves::DataMap & data
+	TagCOP const tag,
+	basic::datacache::DataMap & data
 ) {
 
 	if(

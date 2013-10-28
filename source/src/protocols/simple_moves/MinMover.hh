@@ -111,31 +111,31 @@ public:
 	/// @brief Called by protocols::moves::MoverFactory when constructing new protocols::moves::Movers. Takes care of the specific mover's parsing.
 	virtual
 	void parse_my_tag(
-		TagPtr const,
-		protocols::moves::DataMap &,
+		TagCOP const,
+		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & );
 
 	void parse_opts(
-		TagPtr const,
-		protocols::moves::DataMap & data_map,
+		TagCOP const,
+		basic::datacache::DataMap & data_map,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & );
 
-	void parse_chi_and_bb( TagPtr const );
+	void parse_chi_and_bb( TagCOP const );
 
 	void parse_dof_tasks(
-		TagPtr const tag,
-		protocols::moves::DataMap & data);
+		TagCOP const tag,
+		basic::datacache::DataMap & data);
 
 	void parse_dof_task_type(
 		std::string const & tag_name,
 		core::id::DOF_Type dof_type,
 		core::id::TorsionType torsion_type,
-		TagPtr const tag,
-		protocols::moves::DataMap & data);
+		TagCOP const tag,
+		basic::datacache::DataMap & data);
 
 	virtual void parse_def_opts( utility::lua::LuaObject const & def,
 		utility::lua::LuaObject const & score_fxns,

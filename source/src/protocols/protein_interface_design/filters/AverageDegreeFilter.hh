@@ -19,7 +19,7 @@
 #include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/protein_interface_design/filters/AverageDegreeFilter.fwd.hh>
 
@@ -49,8 +49,8 @@ public:
 	virtual ~AverageDegreeFilter();
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
-	void parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+	void parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );

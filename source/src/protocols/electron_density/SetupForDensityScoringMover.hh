@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_electron_density_SetupForDensityScoringMover_hh
 
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -52,8 +52,8 @@ public:
 	core::Real getScore() { return last_score; }
 
 	virtual void parse_my_tag( 
-			utility::tag::TagPtr const tag,
-			moves::DataMap &data,
+			utility::tag::TagCOP const tag,
+			basic::datacache::DataMap &data,
 			filters::Filters_map const &filters,
 			moves::Movers_map const &movers,
 			core::pose::Pose const & pose );

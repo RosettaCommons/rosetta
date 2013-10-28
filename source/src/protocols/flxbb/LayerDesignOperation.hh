@@ -83,7 +83,7 @@ public:
 	typedef core::pack::task::operation::TaskOperation TaskOperation;
 	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
 	typedef TaskOperation parent;
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 	typedef std::map< std::string, TaskOperationOP > TaskLayers;
 	typedef std::pair< std::string, TaskOperationOP > TaskLayer;
 
@@ -146,7 +146,7 @@ public:
 public:
 
 
-	void parse_tag( TagPtr tag );
+	void parse_tag( TagCOP tag , DataMap & );
 
 
 public:

@@ -75,8 +75,8 @@ FoldTreeFromLoops::get_name() const {
 
 void
 FoldTreeFromLoops::parse_my_tag(
-	TagPtr const tag,
-	protocols::moves::DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & pose

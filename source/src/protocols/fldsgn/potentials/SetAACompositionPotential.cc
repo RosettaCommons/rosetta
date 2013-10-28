@@ -31,7 +31,7 @@
 
 // parser
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector0.hh>
@@ -180,8 +180,8 @@ SetAACompositionPotential::get_name() const {
 /// @brief parse xml
 void
 SetAACompositionPotential::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const &,
 	Movers_map const &,
 	Pose const & )

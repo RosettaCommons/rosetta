@@ -32,7 +32,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <fstream>
@@ -185,8 +185,8 @@ bool SaveResfileToDiskFilter::apply( Pose const & pose ) const
 /// @brief parse xml
 void
 SaveResfileToDiskFilter::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )

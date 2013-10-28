@@ -60,7 +60,7 @@ public:
 	virtual utility::json_spirit::Value serialize();
 	/// @brief deserialize a json_spirit object to a SingleGrid
 	virtual void deserialize(utility::json_spirit::mObject data);
-	void parse_my_tag(utility::tag::TagPtr const tag);
+	void parse_my_tag(utility::tag::TagCOP const tag);
 	/// @brief return the current score of an UltraLightResidue using the current grid
 	virtual core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map);
 	/// @brief return the current score of an atom using the current grid

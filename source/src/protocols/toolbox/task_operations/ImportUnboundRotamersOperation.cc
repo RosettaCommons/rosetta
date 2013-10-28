@@ -73,7 +73,7 @@ ImportUnboundRotamersOperation::apply( Pose const & /*pose*/, PackerTask & task 
 }
 
 void
-ImportUnboundRotamersOperation::parse_tag( TagPtr /*tag*/ )
+ImportUnboundRotamersOperation::parse_tag( TagCOP /*tag*/ , DataMap & )
 {
 }
 

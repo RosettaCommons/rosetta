@@ -24,7 +24,7 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/ligand_docking/ligand_functions.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/tag/Tag.hh>
 
@@ -345,8 +345,8 @@ void PredesignPerturbMover::set_ligand(core::Size res_no)
 
 void
 PredesignPerturbMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & datamap,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & datamap,
 	protocols::filters::Filters_map const & ,
 	protocols::moves::Movers_map const & ,
 	core::pose::Pose const & pose)

@@ -18,7 +18,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 //#include <core/pack/task/TaskFactory.fwd.hh>
 //#include <core/pack/task/operation/TaskOperation.fwd.hh>

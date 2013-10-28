@@ -66,7 +66,7 @@ bool ResFilterFactory::has_type( std::string const & type ) const
 ResFilterOP
 ResFilterFactory::newResFilter(
 	std::string const & type,
-	TagPtr tag /* = boost::shared_ptr< Tag >() */
+	TagCOP tag /* = boost::shared_ptr< Tag >() */
 ) const
 {
 	ResFilterCreatorMap::const_iterator iter( filter_creator_map_.find( type ) );

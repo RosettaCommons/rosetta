@@ -40,7 +40,7 @@ DatabaseSessionOptions::~DatabaseSessionOptions() {}
 
 void
 DatabaseSessionOptions::parse_my_tag(
-	utility::tag::TagPtr tag
+	utility::tag::TagCOP tag
 ){
 	database_session_ = parse_database_connection(tag);
 }

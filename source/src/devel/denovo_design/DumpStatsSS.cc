@@ -141,7 +141,7 @@ void DumpStatsSS::set_scorefxn( core::scoring::ScoreFunctionOP scorefxn) {
 }
 
 void
-DumpStatsSS::parse_my_tag( utility::tag::TagPtr tag, DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
+DumpStatsSS::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	fname_ = tag->getOption<std::string>( "fname", "SS_stats.txt" );
 	if ( tag->hasOption("scorefxn") ) {

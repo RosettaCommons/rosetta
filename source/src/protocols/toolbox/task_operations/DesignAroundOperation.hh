@@ -57,7 +57,7 @@ public:
 	void
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 
 	virtual void parse_def( utility::lua::LuaObject const & def );
 

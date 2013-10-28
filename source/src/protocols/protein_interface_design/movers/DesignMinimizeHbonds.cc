@@ -270,7 +270,7 @@ DesignMinimizeHbonds::get_name() const {
 }
 
 void
-DesignMinimizeHbonds::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const & filters, Movers_map const & movers, core::pose::Pose const & pose )
+DesignMinimizeHbonds::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const & filters, Movers_map const & movers, core::pose::Pose const & pose )
 {
 	core::Real const hbond_weight( tag->getOption<core::Real>( "hbond_weight", 3.0 ) );
 	TR<<"DesignMinimizeHbonds with the following parameters: "<<std::endl;

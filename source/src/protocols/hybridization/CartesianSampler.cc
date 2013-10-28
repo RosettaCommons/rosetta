@@ -30,7 +30,7 @@
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/comparative_modeling/coord_util.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
@@ -885,7 +885,7 @@ CartesianSampler::apply( Pose & pose ) {
 // parse_my_tag
 void
 CartesianSampler::parse_my_tag(
-	utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const & , moves::Movers_map const & , core::pose::Pose const & pose )
+	utility::tag::TagCOP const tag, basic::datacache::DataMap & data, filters::Filters_map const & , moves::Movers_map const & , core::pose::Pose const & pose )
 {
 	using namespace core::scoring;
 
@@ -959,8 +959,8 @@ CartesianSampler::parse_my_tag(
 	}
 
 	// fragments
-	utility::vector1< utility::tag::TagPtr > const branch_tags( tag->getTags() );
-	utility::vector1< utility::tag::TagPtr >::const_iterator tag_it;
+	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
+	utility::vector1< utility::tag::TagCOP >::const_iterator tag_it;
 	for (tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
 		if ( (*tag_it)->getName() == "Fragments" ) {
 			using namespace core::fragment;

@@ -7,29 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
+/// @file   devel/domain_assembly/DomainAssemblyMover
 /// @brief
-/// @author
 
-#ifndef INCLUDED_protocols_moves_DataMap_fwd_hh
-#define INCLUDED_protocols_moves_DataMap_fwd_hh
 
+#ifndef INCLUDED_devel_domain_assembly_DomainAssemblyMover_FWD_HH
+#define INCLUDED_devel_domain_assembly_DomainAssemblyMover_FWD_HH
+
+// Utility Headers
 #include <utility/pointer/owning_ptr.hh>
 
-// Package headers
 
-namespace protocols {
-namespace moves {
+namespace devel{
+namespace domain_assembly{
 
-class DataMap;
+class DomainAssemblyMover;
 
-/// SJF do not define OP and COP for DataMap b/c it is not supposed to stick around
-// in memory. In all applications, please register elements *from* the datamap rather
-// than the entire map.
-//typedef utility::pointer::owning_ptr< DataMap > DataMapOP;
-//typedef utility::pointer::owning_ptr< DataMap const > DataMapCOP;
+typedef utility::pointer::owning_ptr< DomainAssemblyMover > DomainAssemblyMoverOP;
+typedef utility::pointer::owning_ptr< DomainAssemblyMover const > DomainAssemblyMoverCOP;
 
-} // moves
-} // protocols
+}
+}
 
-#endif //INCLUDED_protocols_moves_DataMap_fwd_HH
+
+#endif

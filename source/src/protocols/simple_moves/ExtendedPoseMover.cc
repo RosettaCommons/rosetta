@@ -25,7 +25,7 @@
 #include <protocols/loops/util.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 
 // C/C++ headers
@@ -92,8 +92,8 @@ protocols::moves::MoverOP ExtendedPoseMover::fresh_instance() const {
   return new protocols::simple_moves::ExtendedPoseMover();
 }
 
-void ExtendedPoseMover::parse_my_tag(const utility::tag::TagPtr tag,
-	                                         protocols::moves::DataMap&,
+void ExtendedPoseMover::parse_my_tag(const utility::tag::TagCOP tag,
+	                                         basic::datacache::DataMap&,
                                      const protocols::filters::Filters_map&,
                                      const protocols::moves::Movers_map&,
                                      const core::pose::Pose&) {

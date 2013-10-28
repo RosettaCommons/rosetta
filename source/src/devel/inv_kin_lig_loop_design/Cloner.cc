@@ -41,7 +41,7 @@
 
 
 #define FORVC(Iter,Type,Vec)  for( utility::vector0<Type>::const_iterator Iter  = (Vec).begin(); Iter != (Vec).end(); ++Iter)
-#define FORTAGS(Iter,Name,ATagPtr) const utility::vector0<TagPtr>& TagPtr ## Name ## Iter ## __LINE__ = (ATagPtr)->getTags(#Name); for( utility::vector0<TagPtr>::const_iterator Iter = (TagPtr ## Name ## Iter ## __LINE__ ).begin(); Iter != (TagPtr ## Name ## Iter ## __LINE__ ).end(); ++Iter )
+#define FORTAGS(Iter,Name,ATagCOP) const utility::vector0<TagCOP>& TagCOP ## Name ## Iter ## __LINE__ = (ATagCOP)->getTags(#Name); for( utility::vector0<TagCOP>::const_iterator Iter = (TagCOP ## Name ## Iter ## __LINE__ ).begin(); Iter != (TagCOP ## Name ## Iter ## __LINE__ ).end(); ++Iter )
 
 using namespace std;
 
@@ -57,20 +57,20 @@ namespace devel {
       // ==================== collapse_random_options ====================
       // =================================================================
 
-      void set_nres(TagPtr const& tag, string which ) {
+      void set_nres(TagCOP const& tag, string which ) {
 				using devel::inv_kin_lig_loop_design::Ints;
 
 				if( tag->hasOption(which) ) {
 					const Ints ints = tag->getOption<Ints>(which);
 					const int  nres = ints.getRandomInt();
 					cout << "InvKinLig:LoopDesign::set_nres - setting " << tag->getName() << "-" << tag->getOption<string>("name","<unnamed>") << " " << ints << " => " << nres << endl;
-					const_cast<TagPtr&>(tag)->setOption(which,nres);
+					const_cast< utility::tag::Tag * >(tag())->setOption(which,nres);
 				}
       }  // set_nres
 
-      TagPtr collapse_random_options( TagPtr tag ) {
+      TagCOP collapse_random_options( TagCOP tag ) {
 
-				TagPtr const rval = tag->clone();
+				TagCOP const rval = tag->clone();
 
 				FORTAGS(i,loop,rval) {
 					set_nres(*i,"nres_pre");
@@ -85,18 +85,18 @@ namespace devel {
 				FORTAGS(i,deletion,rval) {
 				} // i
 
-				utility::vector0<TagPtr> vVary;
+				utility::vector0<TagCOP> vVary;
 				/// apl -- replacing std::vector specific += operator from std_extra.hh with insert() calls.
-				utility::vector0<TagPtr> looptags = rval->getTags("loop");
+				utility::vector0<TagCOP> looptags = rval->getTags("loop");
 				vVary.insert(vVary.end(),looptags.begin(),looptags.end());
 
-				utility::vector0<TagPtr> anchortags = rval->getTags("anchored_loop");
+				utility::vector0<TagCOP> anchortags = rval->getTags("anchored_loop");
 				vVary.insert(vVary.end(),anchortags.begin(),anchortags.end());
 
-				utility::vector0<TagPtr> deletiontags = rval->getTags("deletion");
+				utility::vector0<TagCOP> deletiontags = rval->getTags("deletion");
 				vVary.insert(vVary.end(),deletiontags.begin(),deletiontags.end());
 
-				FORVC(i,TagPtr,vVary) {
+				FORVC(i,TagCOP,vVary) {
 					set_nres(*i,"vary_pre");
 					set_nres(*i,"vary_post");
 				} // i
@@ -109,14 +109,14 @@ namespace devel {
       // ==================== get_indels ====================
       // ====================================================
 
-      segments_type get_indels(TagPtr const& tag0, resids_type const& resids ) {
+      segments_type get_indels(TagCOP const& tag0, resids_type const& resids ) {
 
 				//cout << "get_indels: " << endl;
 
 				segments_type rval;
 
 				FORTAGS(i,loop,tag0) {
-					TagPtr tag = *i;
+					TagCOP tag = *i;
 					//      <loop nres_pre=3 nres_post=3 weight_cb=1 ss=EEEELL>
 					//           <begin res_id=A:178>
 					//           <end res_id=A:184>
@@ -137,7 +137,7 @@ namespace devel {
 				} // i
 
 				FORTAGS(i,anchored_loop,tag0) {
-					TagPtr tag = *i;
+					TagCOP tag = *i;
 					//cout << *tag << endl;
 					//   <anchored_loop nres_pre=2 nres_post=5 ss=EEHLLLLH weight_cb_begin=2 weight_cb_end=1>
 					//           <begin res_id=A:150>
@@ -166,7 +166,7 @@ namespace devel {
 				} // i
 
 				FORTAGS(i,deletion,tag0) {
-					TagPtr tag = *i;
+					TagCOP tag = *i;
 					//cout << *tag << endl;
 
 					Segment indel;
@@ -198,12 +198,12 @@ namespace devel {
     // ==================== Cloner ====================
     // ================================================
 
-    Cloner::Cloner( TagPtr const& tag0, core::pose::PoseOP pose0) : tag0( collapse_random_options(tag0) ), pose0(pose0) {
+    Cloner::Cloner( TagCOP const& tag0, core::pose::PoseOP pose0) : tag0( collapse_random_options(tag0) ), pose0(pose0) {
       cout << "after random options collapsed: " << endl << tag0 << endl;
     }
 
     core::kinematics::FoldTree Cloner::getFoldTree() {
-			//     core::kinematics::FoldTree get_fold_tree(TagPtr tag0,
+			//     core::kinematics::FoldTree get_fold_tree(TagCOP tag0,
 			//					     core::pose::PoseOP pose0,
 			//					     core::pose::PoseOP pose1,
 			//					     resids_type& resids,
@@ -636,7 +636,7 @@ namespace devel {
 		//				     r->atom( c ).xyz() );
 		//     }
 
-		//     core::kinematics::Stub get_stub(Residue const* r, TagPtr tag ) {
+		//     core::kinematics::Stub get_stub(Residue const* r, TagCOP tag ) {
 
 		// //       typedef numeric::xyzVector< Real > Vector;
 		// //       if( tag->hasOption("moiety") ) {

@@ -24,7 +24,7 @@
 #include <numeric/random/random.hh>
 
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/util.hh>
 
@@ -219,8 +219,8 @@ RandomMover::get_name() const {
 }
 
 void
-RandomMover::parse_my_tag( utility::tag::TagPtr const tag,
-                           protocols::moves::DataMap &,
+RandomMover::parse_my_tag( utility::tag::TagCOP const tag,
+                           basic::datacache::DataMap &,
                            protocols::filters::Filters_map const &,
                            protocols::moves::Movers_map const &movers,
                            core::pose::Pose const & ) {

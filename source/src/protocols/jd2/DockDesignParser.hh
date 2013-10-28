@@ -55,13 +55,13 @@ public:
 	bool
 	generate_mover_from_pose( protocols::jd2::JobCOP job, core::pose::Pose & pose, protocols::moves::MoverOP & mover, bool new_input, std::string const xml_fname );
 
-	MoverOP generate_mover_for_protocol(Pose & pose, bool & modified_pose, utility::tag::TagPtr protocol_tag);
+	MoverOP generate_mover_for_protocol(Pose & pose, bool & modified_pose, utility::tag::TagCOP protocol_tag);
 
 	//@brief Temporary hook into parsing machinery with pose reference
-	MoverOP parse_protocol_tag(Pose & pose, utility::tag::TagPtr protocol_tag);
+	MoverOP parse_protocol_tag(Pose & pose, utility::tag::TagCOP protocol_tag);
 
 	//@brief Temporary hook into parsing machinery w/o pose reference.
-	MoverOP parse_protocol_tag(utility::tag::TagPtr protocol_tag);
+	MoverOP parse_protocol_tag(utility::tag::TagCOP protocol_tag);
 
 	void register_factory_prototypes();
 

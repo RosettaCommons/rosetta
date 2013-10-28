@@ -38,7 +38,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 //#include <protocols/jobdist/Jobs.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 // ObjexxFCL Headers
 
 // Utility Headers
@@ -81,7 +81,7 @@ std::string SerializableState_get( SerializableStateSP state, std::string key );
 
 class Mover : public utility::pointer::ReferenceCount {
 public:
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 	typedef core::pose::Pose Pose;
 	typedef core::pose::PoseCOP PoseCOP;
 	typedef protocols::filters::Filters_map Filters_map;
@@ -170,8 +170,8 @@ public:
 	/// @brief Called by MoverFactory when constructing new Movers. Takes care of the specific mover's parsing.
 	virtual
 	void parse_my_tag(
-		TagPtr const tag,
-		DataMap & data,
+		TagCOP const tag,
+		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		Movers_map const & movers,
 		Pose const & pose

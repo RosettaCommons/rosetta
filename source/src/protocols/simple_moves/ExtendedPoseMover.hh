@@ -23,7 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Package headers
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <utility/vector1.hh>
@@ -73,8 +73,8 @@ class ExtendedPoseMover : public protocols::moves::Mover {
   protocols::moves::MoverOP fresh_instance() const;
 
   /// @brief protocols::moves::Mover-specific parsing required by RosettaScripts
-  void parse_my_tag(const utility::tag::TagPtr tag,
-		                      protocols::moves::DataMap& data,
+  void parse_my_tag(const utility::tag::TagCOP tag,
+		                      basic::datacache::DataMap& data,
                     const protocols::filters::Filters_map& filters,
                     const protocols::moves::Movers_map& movers,
                     const core::pose::Pose& pose);

@@ -36,7 +36,7 @@ using basic::resource_manager::ResourceOptions;
 using std::endl;
 using std::string;
 using std::stringstream;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 
 ///// SilentFileOptionsCreator /////
 SilentFileOptionsCreator::SilentFileOptionsCreator() {}
@@ -100,7 +100,7 @@ SilentFileOptions::set_silent_struct_type(
 
 void
 SilentFileOptions::parse_my_tag(
-	TagPtr tag
+	TagCOP tag
 ) {
 	if(!tag->hasOption("silent_struct_type")){
 		throw utility::excn::EXCN_BadInput(

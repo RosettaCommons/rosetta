@@ -20,7 +20,7 @@
 #include <core/scoring/ScoreType.hh>
 //#include <protocols/moves/ResidueMover.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
@@ -52,7 +52,7 @@ using namespace utility::tag;
 using namespace std;
 
 void
-ResiduesInInterfaceFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & )
+ResiduesInInterfaceFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	residues_in_interface_threshold_ = tag->getOption<core::Size>( "residues", 20 );
 	rb_jump_ = tag->getOption<core::Size>( "jump_number", 1 );
@@ -61,7 +61,7 @@ ResiduesInInterfaceFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_ma
 }
 
 void
-ScoreTypeFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const & )
+ScoreTypeFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	using namespace core::scoring;
 
@@ -74,7 +74,7 @@ ScoreTypeFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map con
 }
 
 void
-InterfaceSasaFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & )
+InterfaceSasaFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	lower_threshold_ = tag->getOption<core::Real>( "threshold", 800 );
 	jump( tag->getOption< core::Size >( "jump", 1 ));
@@ -93,7 +93,7 @@ InterfaceSasaFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map cons
 }
 
 void
-AlaScan::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const & )
+AlaScan::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	distance_threshold_ = tag->getOption<core::Real>( "interface_distance_cutoff", 8.0 );
 	chain1_ = tag->getOption< bool >( "partner1", 0 );
@@ -116,12 +116,12 @@ AlaScan::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const &, Mo
 }
 
 void
-NeighborTypeFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+NeighborTypeFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
   residue_types_.assign( chemical::num_canonical_aas, false );
-	utility::vector0< TagPtr > const neighbor_type_tags( tag->getTags() );
-	for( utility::vector0< TagPtr >::const_iterator nt_it=neighbor_type_tags.begin(); nt_it!=neighbor_type_tags.end(); ++nt_it ) {
-    TagPtr const nt_tag_ptr = *nt_it;
+	utility::vector0< TagCOP > const & neighbor_type_tags( tag->getTags() );
+	for( utility::vector0< TagCOP >::const_iterator nt_it=neighbor_type_tags.begin(); nt_it!=neighbor_type_tags.end(); ++nt_it ) {
+    TagCOP const nt_tag_ptr = *nt_it;
     if( nt_tag_ptr->getName() == "Neighbor" ) {
 			std::string const type( nt_tag_ptr->getOption<string>( "type" ) );
 			residue_types_[ chemical::aa_from_name( type ) ] = true;
@@ -134,7 +134,7 @@ NeighborTypeFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map const
 }
 
 void
-ResidueBurialFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+ResidueBurialFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	target_residue_ = protocols::rosetta_scripts::get_resnum( tag, pose );
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
@@ -144,7 +144,7 @@ ResidueBurialFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map cons
 }
 
 void
-ResidueDistanceFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+ResidueDistanceFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	res1_ = protocols::rosetta_scripts::get_resnum( tag, pose, "res1_" );
 	res2_ = protocols::rosetta_scripts::get_resnum( tag, pose, "res2_" );
@@ -154,7 +154,7 @@ ResidueDistanceFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map co
 }
 
 void
-DdgFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const & , Movers_map const & , core::pose::Pose const & )
+DdgFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const & , Movers_map const & , core::pose::Pose const & )
 {
 	using namespace core::scoring;
 
@@ -175,7 +175,7 @@ DdgFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const & ,
 }
 
 void
-HbondsToResidueFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+HbondsToResidueFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	partners_ = tag->getOption<core::Size>( "partners" );
 	energy_cutoff_ = tag->getOption<core::Real>( "energy_cutoff", -0.5 );
@@ -187,7 +187,7 @@ HbondsToResidueFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map co
 }
 
 void
-HbondsToAtomFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+HbondsToAtomFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
   partners_ = tag->getOption<core::Size>( "partners" );
   energy_cutoff_ = tag->getOption<core::Real>( "energy_cutoff", -0.5 );
@@ -206,7 +206,7 @@ HbondsToAtomFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap
 }
 
 void
-EnergyPerResidueFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+EnergyPerResidueFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	using namespace core::scoring;
 
@@ -231,7 +231,7 @@ EnergyPerResidueFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 }
 
 void
-BuriedUnsatHbondFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & )
+BuriedUnsatHbondFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	jump_num_ = tag->getOption<core::Size>( "jump_number", 1 );
 	upper_threshold_ = tag->getOption<core::Size>( "cutoff", 20 );
@@ -240,7 +240,7 @@ BuriedUnsatHbondFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map c
 }
 
 void
-TerminusDistanceFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & )
+TerminusDistanceFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	jump_num_ = tag->getOption<core::Size>( "jump_number", 1 );
 	distance_ = tag->getOption<core::Size>( "distance", 5 );

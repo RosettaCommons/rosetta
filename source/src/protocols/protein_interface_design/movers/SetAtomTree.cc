@@ -90,7 +90,7 @@ SetAtomTree::clone() const {
 }
 
 void
-SetAtomTree::parse_my_tag( TagPtr const tag, DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
+SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	docking_ft_ = tag->getOption< bool >("docking_ft", 0 );
 	simple_ft( tag->getOption< bool >( "simple_ft", 0 ) );

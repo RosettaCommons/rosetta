@@ -57,7 +57,7 @@ public:
 	void
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 
 	core::Size start_res() const;
 	void start_res( core::Size const s );

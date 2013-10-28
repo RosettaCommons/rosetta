@@ -30,7 +30,7 @@ namespace jd2 {
 namespace parser {
 
 /// @brief A factory for creating DataLoaders, which are able to load
-/// arbitrary data into the DataMap used in the XML-based parser.
+/// arbitrary data into the basic::datacache::DataMap used in the XML-based parser.
 /// This factory supports the load-time registration scheme allowing
 /// DataLoaders to be defined in libraries outside of protocols.lib
 class DataLoaderFactory

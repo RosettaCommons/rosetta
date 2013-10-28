@@ -48,7 +48,7 @@ class OperateOnCertainResidues : public TaskOperation
 {
 public:
 	typedef TaskOperation parent;
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 	typedef pose::Pose Pose;
 	typedef utility::vector1< Size > ResidueIndices;
 
@@ -74,7 +74,7 @@ public:
 	void filter( ResFilterCOP );
 
 	/// @brief Used to parse an xml-like tag to construct the ResLvlTaskOperation and the ResFilter
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 
 private:
 	ResidueIndices residue_indices_;

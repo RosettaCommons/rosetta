@@ -102,7 +102,7 @@
 #include <basic/prof.hh>
 
 #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 
@@ -732,7 +732,7 @@ SymDockProtocol::score_only( core::pose::Pose & pose )
 }
 
 void
-SymDockProtocol::parse_my_tag( TagPtr const tag, protocols::moves::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+SymDockProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	using namespace core::scoring;
 

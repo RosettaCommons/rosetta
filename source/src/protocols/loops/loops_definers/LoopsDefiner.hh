@@ -21,7 +21,7 @@
 
 // Platform Headers
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -47,8 +47,8 @@ public:
 	virtual
 	void
 	parse_my_tag(
-		utility::tag::TagPtr const,
-		moves::DataMap const &,
+		utility::tag::TagCOP const,
+		basic::datacache::DataMap const &,
 		core::pose::Pose const &) = 0;
 
 	virtual

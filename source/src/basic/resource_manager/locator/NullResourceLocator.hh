@@ -91,7 +91,7 @@ public:
 	virtual
 	void
 	parse_my_tag(
-		utility::tag::TagPtr tag
+		utility::tag::TagCOP tag
 	);
 
 };

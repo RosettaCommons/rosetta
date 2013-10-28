@@ -563,8 +563,8 @@ CartesianMD::dump_poses( pose::Pose const &pose_ref ) const {
 }
 
 void  CartesianMD::parse_my_tag(
-	TagPtr const tag,
-	protocols::moves::DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const & pose )
@@ -577,8 +577,8 @@ void  CartesianMD::parse_my_tag(
 }
 
 void CartesianMD::parse_opts(
-	TagPtr const tag,
-	protocols::moves::DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	//Filters_map const &,
 	//protocols::moves::Movers_map const &,
 	Pose const & pose )
@@ -626,8 +626,8 @@ void CartesianMD::parse_opts(
 }
 
 void CartesianMD::parse_movemap(
-	TagPtr const tag,
-	protocols::moves::DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	//Filters_map const &,
 	//protocols::moves::Movers_map const &,
 	Pose const & pose )

@@ -20,7 +20,7 @@
 
 // Project Headers
 #include <protocols/backrub/BackrubSegment.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 // AUTO-REMOVED #include <protocols/canonical_sampling/ThermodynamicObserver.hh> // needed for Windows build
@@ -142,8 +142,8 @@ protocols::backrub::BackrubSidechainMover::get_name() const
 
 void
 protocols::backrub::BackrubSidechainMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & pose
@@ -165,7 +165,7 @@ protocols::backrub::BackrubSidechainMover::parse_my_tag(
 			if ( data.has( "task_operations", *t_o_key ) ) {
 				new_task_factory->push_back( data.get< core::pack::task::operation::TaskOperation* >( "task_operations", *t_o_key ) );
 			} else {
-				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in protocols::moves::DataMap.");
+				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
 			}
 		}
 

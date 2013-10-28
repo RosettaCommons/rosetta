@@ -34,11 +34,8 @@
 
 #include <utility/vector1.hh>
 
-
-
-//namespace apps{
-//namespace devel{
-//namespace domain_assembly{
+namespace devel {
+namespace domain_assembly {
 
 class DomainAssemblyCommand;
 
@@ -151,8 +148,9 @@ parse_da_option_file( utility::vector1< DomainInfo > & domains, std::string file
 ///@brief utility for domain_assembly reader, commands MUST be entered into this hard-coded map
 std::map< std::string, DomainAssemblyCommandOP >
 create_command_map();
-//}
-//}
-//}
+
+}
+}
+
 
 #endif

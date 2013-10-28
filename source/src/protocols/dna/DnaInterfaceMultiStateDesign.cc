@@ -363,8 +363,8 @@ DnaInterfaceMultiStateDesign::get_name() const {
 
 ///@brief parse "XML" Tag (specifically in the context of the parser/scripting scheme)
 void DnaInterfaceMultiStateDesign::parse_my_tag(
-	TagPtr const tag,
-	moves::DataMap & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap & datamap,
 	protocols::filters::Filters_map const & filters,
 	moves::Movers_map const & movers,
 	Pose const & pose

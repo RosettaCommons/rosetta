@@ -21,7 +21,7 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -41,9 +41,9 @@
 using std::string;
 using std::endl;
 using std::stringstream;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using core::pose::Pose;
-using protocols::moves::DataMap;
+using basic::datacache::DataMap;
 using utility::sql_database::sessionOP;
 using protocols::jd2::JobDistributor;
 using basic::database::parse_database_connection;
@@ -77,8 +77,8 @@ LoopsDatabaseDefiner::clone(
 /// @brief Used to parse an xml-like tag to load parameters and properties.
 void
 LoopsDatabaseDefiner::parse_my_tag(
-	TagPtr const tag,
-	DataMap const &,
+	TagCOP const tag,
+	basic::datacache::DataMap const &,
 	Pose const &
 ) {
 

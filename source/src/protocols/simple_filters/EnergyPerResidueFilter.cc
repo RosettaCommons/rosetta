@@ -19,7 +19,7 @@
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <protocols/scoring/Interface.hh>
@@ -151,7 +151,7 @@ EnergyPerResidueFilter::resnum( core::Size const rn ){
 EnergyPerResidueFilter::~EnergyPerResidueFilter() {}
 
 void
-EnergyPerResidueFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+EnergyPerResidueFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
 	using namespace core::scoring;
 

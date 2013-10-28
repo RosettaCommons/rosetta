@@ -53,7 +53,7 @@ static basic::Tracer TR("core.pack.task.operation.TaskOperation");
 
 TaskOperation::~TaskOperation() {}
 
-void TaskOperation::parse_tag( TagPtr tag )
+void TaskOperation::parse_tag( TagCOP tag,  DataMap & )
 {
 	TR << "TaskOperation::parse_tag method called with no effect";
 	if ( tag.get() != NULL ) TR << " for Tag with type " << tag->getName();

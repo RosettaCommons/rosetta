@@ -16,7 +16,7 @@
 #include <protocols/dna/DnaInterfaceMinMoverCreator.hh>
 
 // Package headers
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/dna/DnaInterfaceFinder.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
@@ -165,8 +165,8 @@ DnaInterfaceMinMover::get_name() const {
 ///@brief parse XML (in the context of the parser/scripting scheme)
 void
 DnaInterfaceMinMover::parse_my_tag(
-	TagPtr const tag,
-	moves::DataMap & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap & datamap,
 	protocols::filters::Filters_map const &,
 	moves::Movers_map const &,
 	core::pose::Pose const &

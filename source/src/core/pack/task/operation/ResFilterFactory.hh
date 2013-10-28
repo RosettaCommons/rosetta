@@ -43,7 +43,7 @@ public:
 	//typedef utility::pointer::ReferenceCount parent;
 	typedef std::map< std::string, ResFilterCreatorOP > ResFilterCreatorMap;
 	typedef utility::tag::Tag Tag;
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 
 public:
 	static ResFilterFactory * get_instance();
@@ -54,7 +54,7 @@ public:
 	bool has_type( std::string const & ) const;
 
 ///@brief return new ResFilter by key lookup in filter_map_ (new ResFilter parses Tag if provided)
-	ResFilterOP newResFilter( std::string const &, TagPtr = new Tag ) const;
+	ResFilterOP newResFilter( std::string const &, TagCOP = new Tag ) const;
 
 private:
 	ResFilterFactory();

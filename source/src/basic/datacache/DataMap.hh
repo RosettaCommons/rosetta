@@ -11,8 +11,8 @@
 /// @brief
 /// @author Sarel Fleishman
 
-#ifndef INCLUDED_protocols_moves_DataMap_hh
-#define INCLUDED_protocols_moves_DataMap_hh
+#ifndef INCLUDED_basic_datacache_DataMap_hh
+#define INCLUDED_basic_datacache_DataMap_hh
 
 // Project headers
 #include <core/types.hh>
@@ -26,14 +26,15 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <utility/exit.hh>
+//#include <utility/exit.hh>
+#include <utility/excn/Exceptions.hh>
 #include <string>
 #include <basic/Tracer.hh>
 
-namespace protocols {
-namespace moves {
+namespace basic {
+namespace datacache {
 
-static basic::Tracer TR_hh( "protocols.moves.DataMap_hh" );
+static basic::Tracer TR_hh( "basic.datacache.DataMap_hh" );
 
 /// @brief general-purpose store for any reference-count derived object
 
@@ -71,6 +72,8 @@ private:
 /// @details a template utility function to grab any type of object from the
 /// Data_map. Downcasts the ReferenceCount object in map to the template data
 /// type using dynamic_cast to ensure type-correctness
+/// @throws Throws a utility::excn::EXCN_Msg_Exception in the event that
+/// the requested object cannot be found in the DataMap.
 template< class Ty >
 Ty
 DataMap::get( std::string const type, std::string const name ) const {
@@ -80,8 +83,7 @@ DataMap::get( std::string const type, std::string const name ) const {
 	if( !has( type, name ) ){
 		std::stringstream error_message;
 		error_message << "ERROR: Could not find "<<type<<" and name "<<name<<" in Datamap\n";
-
-		utility_exit_with_message( error_message.str() );
+		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
 	}
 
 	std::map< std::string, utility::pointer::ReferenceCountOP > const dm( data_map_.find( type )->second );
@@ -94,8 +96,7 @@ DataMap::get( std::string const type, std::string const name ) const {
 	if( ret==0 ) {
 		std::stringstream error_message;
 		error_message << "ERROR: Dynamic_cast failed for type "<<type<<" and name "<<name<<'\n';
-
-		utility_exit_with_message( error_message.str() );
+		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
 	}
 	return( ret );
 }
@@ -106,7 +107,7 @@ DataMap::get( std::string const type, std::string const name ) const {
 /// that item on the datamap and returns the OP for it.
 template < class Ty >
 Ty *
-get_set_from_datamap( std::string const type, std::string const name, protocols::moves::DataMap & data ){
+get_set_from_datamap( std::string const type, std::string const name, basic::datacache::DataMap & data ){
 	Ty *obj;
 	if( data.has( type, name ) ){
 		obj = data.get< Ty * >( type, name );
@@ -120,7 +121,7 @@ get_set_from_datamap( std::string const type, std::string const name, protocols:
 	return obj;
 }
 
-} // moves
-} // protocols
+} // datacache
+} // basic
 
 #endif

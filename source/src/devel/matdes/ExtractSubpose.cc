@@ -203,8 +203,8 @@ ExtractSubpose::apply(Pose & pose) {
 }
 
 void 
-ExtractSubpose::parse_my_tag( utility::tag::TagPtr const tag,
-										 protocols::moves::DataMap & /*data*/,
+ExtractSubpose::parse_my_tag( utility::tag::TagCOP const tag,
+										 basic::datacache::DataMap & /*data*/,
 										 protocols::filters::Filters_map const &,
 										 protocols::moves::Movers_map const &,
 										 core::pose::Pose const & ) {

@@ -190,13 +190,13 @@ private:
 
 	void
 	parse_jobs_tags(
-		utility::tag::TagPtr tag,
+		utility::tag::TagCOP tag,
 		Jobs & jobs
 	);
 
 	void
 	parse_job_tag(
-		utility::tag::TagPtr jobs_tags,
+		utility::tag::TagCOP jobs_tags,
 		std::map< std::string, std::string > const & generic_resources_for_job,
 		basic::resource_manager::JobOptions const & generic_job_options,
 		Jobs & jobs
@@ -204,7 +204,7 @@ private:
 
 	void
 	parse_jobs_table_tag(
-		utility::tag::TagPtr tag,
+		utility::tag::TagCOP tag,
 		std::map< std::string, std::string > const & generic_resources_for_job,
 		basic::resource_manager::JobOptions const & generic_job_options,
 		Jobs & jobs
@@ -220,7 +220,7 @@ private:
 
 	void
 	read_Option_subtag_for_job(
-		utility::tag::TagPtr options_tag,
+		utility::tag::TagCOP options_tag,
 		basic::resource_manager::JobOptionsOP job_options
 	);
 
@@ -336,7 +336,7 @@ private:
 
 	void
 	read_Data_for_subtag(
-		utility::tag::TagPtr options_tag,
+		utility::tag::TagCOP options_tag,
 		std::string const & jobname,
 		std::string & input_tag,
 		std::map< std::string, std::string > & resources_for_job
@@ -344,7 +344,7 @@ private:
 
 	void
 	read_ResidueType_for_subtag(
-		utility::tag::TagPtr options_tag,
+		utility::tag::TagCOP options_tag,
 		std::map< std::string, std::string > & resources_for_job
 	);
 

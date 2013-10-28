@@ -109,7 +109,7 @@ namespace protocols {
 			}
 						
 			void
-			RestrictResiduesToRepackingOperation::parse_tag( TagPtr tag )
+			RestrictResiduesToRepackingOperation::parse_tag( TagCOP tag , DataMap & )
 			{
 				unparsed_residues_ = tag->getOption< std::string >( "residues" ) ;
 				if( unparsed_residues_ != "" ){

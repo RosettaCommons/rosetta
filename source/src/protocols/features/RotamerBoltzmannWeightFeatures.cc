@@ -19,7 +19,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 #include <protocols/simple_filters/RotamerBoltzmannWeight.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
@@ -55,12 +55,12 @@ using core::conformation::Residue;
 using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunction;
 using protocols::filters::Filters_map;
-using protocols::moves::DataMap;
+using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using protocols::simple_filters::RotamerBoltzmannWeight;
 using utility::sql_database::sessionOP;
 using utility::vector1;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using cppdb::statement;
 
 RotamerBoltzmannWeightFeatures::RotamerBoltzmannWeightFeatures() :
@@ -131,8 +131,8 @@ RotamerBoltzmannWeightFeatures::features_reporter_dependencies() const {
 
 void
 RotamerBoltzmannWeightFeatures::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const & /*filters*/,
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/

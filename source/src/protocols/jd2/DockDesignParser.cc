@@ -79,7 +79,7 @@
 // option key includes
 
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 #include <utility/vector0.hh>
 #include <basic/Tracer.hh>
@@ -104,8 +104,8 @@ DockDesignParser::DockDesignParser() :
 
 DockDesignParser::~DockDesignParser(){}
 
-typedef utility::tag::TagPtr TagPtr;
-typedef utility::vector0< TagPtr > TagPtrs;
+typedef utility::tag::TagCOP TagCOP;
+typedef utility::vector0< TagCOP > TagCOPs;
 
 /// @details Uses the Tag interface to the xml reader library in boost to parse an xml file that contains design
 /// protocol information. A sample protocol file can be found in src/pilot/apps/sarel/dock_design.protocol.
@@ -142,7 +142,7 @@ DockDesignParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & in_mo
 		utility_exit_with_message("Unable to open Rosetta Scripts XML file: '" + dock_design_filename + "'.");
 	}
 
-	TagPtr tag;
+	TagCOP tag;
 	if( option[ OptionKeys::parser::script_vars ].user() ) {
 		std::stringstream fin_sub;
 		substitute_variables_in_stream(fin, option[ OptionKeys::parser::script_vars ], fin_sub);
@@ -163,7 +163,7 @@ DockDesignParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & in_mo
 	return modified_pose;
 }
 
-MoverOP DockDesignParser::parse_protocol_tag(Pose & pose, utility::tag::TagPtr protocol_tag)
+MoverOP DockDesignParser::parse_protocol_tag(Pose & pose, utility::tag::TagCOP protocol_tag)
 {
 	bool modified_pose = false;
 
@@ -177,7 +177,7 @@ MoverOP DockDesignParser::parse_protocol_tag(Pose & pose, utility::tag::TagPtr p
 	return mover;
 }
 
-MoverOP DockDesignParser::parse_protocol_tag(TagPtr protocol_tag)
+MoverOP DockDesignParser::parse_protocol_tag(TagCOP protocol_tag)
 {
 	Pose temp_pose;
 	bool modified_pose = false;
@@ -192,13 +192,13 @@ MoverOP DockDesignParser::parse_protocol_tag(TagPtr protocol_tag)
 	return mover;
 }
 
-MoverOP DockDesignParser::generate_mover_for_protocol(Pose & pose, bool & modified_pose, TagPtr tag)
+MoverOP DockDesignParser::generate_mover_for_protocol(Pose & pose, bool & modified_pose, TagCOP tag)
 {
 	protocols::rosetta_scripts::ParsedProtocolOP protocol( new protocols::rosetta_scripts::ParsedProtocol );
 
 	Movers_map movers;
 	protocols::filters::Filters_map filters;
-	DataMap data; // abstract objects, such as scorefunctions, to be used by filter and movers
+	basic::datacache::DataMap data; // abstract objects, such as scorefunctions, to be used by filter and movers
 
 	MoverOP mover;
 
@@ -241,12 +241,12 @@ MoverOP DockDesignParser::generate_mover_for_protocol(Pose & pose, bool & modifi
 	non_data_loader_tags.insert( "PROTOCOLS" );
 	non_data_loader_tags.insert( "OUTPUT" );
 
-	/// Load in data into the DataMap object.  All tags beside those listed
+	/// Load in data into the basic::datacache::DataMap object.  All tags beside those listed
 	/// in the non_data_loader_tags set are considered DataLoader tags.
-	TagPtrs const all_tags = tag->getTags();
+	TagCOPs const all_tags = tag->getTags();
 	for ( Size ii = 0; ii < all_tags.size(); ++ii ) {
 		using namespace parser;
-		TagPtr iitag = all_tags[ ii ];
+		TagCOP iitag = all_tags[ ii ];
 		if ( non_data_loader_tags.find( iitag->getName() ) != non_data_loader_tags.end() ) continue;
 		DataLoaderOP loader = DataLoaderFactory::get_instance()->newDataLoader( iitag->getName() );
 		loader->load_data( pose, iitag, data );
@@ -256,14 +256,14 @@ MoverOP DockDesignParser::generate_mover_for_protocol(Pose & pose, bool & modifi
 	if ( !tag->hasTag("PROTOCOLS") )
 			utility_exit_with_message("parser::protocol file must specify PROTOCOLS section");
 
-	foreach( TagPtr const curr_tag, all_tags ){
+	foreach( TagCOP const curr_tag, all_tags ){
 		///// APPLY TO POSE
 		if ( curr_tag->getName() == "APPLY_TO_POSE" ) { // section is not mandatory
 			/// apply to pose may affect all of the scorefxn definitions below, so it is called first.
-			TagPtrs const apply_tags( curr_tag->getTags() );
+			TagCOPs const apply_tags( curr_tag->getTags() );
 			//bool has_profile( false ); // This mutual-exclusion check has been disabled., has_fnr( false ); // to see that the user hasn't turned both on by mistake
 
-			foreach(TagPtr apply_tag_ptr, apply_tags){
+			foreach(TagCOP apply_tag_ptr, apply_tags){
 				std::string const mover_type( apply_tag_ptr->getName() );
 				MoverOP new_mover( MoverFactory::get_instance()->newMover( apply_tag_ptr, data, filters, movers, pose ) );
 				runtime_assert( new_mover );
@@ -285,7 +285,7 @@ MoverOP DockDesignParser::generate_mover_for_protocol(Pose & pose, bool & modifi
 		////// Filters
 		if ( curr_tag->getName() == "FILTERS" ) {
 
-			foreach(TagPtr tag_ptr, curr_tag->getTags()){
+			foreach(TagCOP tag_ptr, curr_tag->getTags()){
 				std::string const type( tag_ptr->getName() );
 				if ( ! tag_ptr->hasOption("name") )
 					utility_exit_with_message("Can't define unnamed Filter of type " + type );
@@ -307,7 +307,7 @@ MoverOP DockDesignParser::generate_mover_for_protocol(Pose & pose, bool & modifi
 
 		////// MOVERS
 		if( curr_tag->getName() == "MOVERS" ){
-			foreach(TagPtr tag_ptr, curr_tag->getTags()){
+			foreach(TagCOP tag_ptr, curr_tag->getTags()){
 				std::string const type( tag_ptr->getName() );
 				if ( ! tag_ptr->hasOption("name") )
 					utility_exit_with_message("Can't define unnamed Mover of type " + type );
@@ -329,13 +329,13 @@ MoverOP DockDesignParser::generate_mover_for_protocol(Pose & pose, bool & modifi
 	}// foreach curr_tag
 
 	////// ADD MOVER FILTER PAIRS
-	TagPtr const protocols_tag( tag->getTag("PROTOCOLS") );
+	TagCOP const protocols_tag( tag->getTag("PROTOCOLS") );
 	protocol->parse_my_tag( protocols_tag, data, filters, movers, pose );
 	TR.flush();
 
 	////// Set Output options
 	if ( tag->hasTag("OUTPUT") ) {
-		TagPtr const output_tag( tag->getTag("OUTPUT") );
+		TagCOP const output_tag( tag->getTag("OUTPUT") );
 		protocol->final_scorefxn( rosetta_scripts::parse_score_function( output_tag, data, "commandline" ) );
 	} else {
 		protocol->final_scorefxn( commandline_sfxn );

@@ -21,7 +21,7 @@
 // Unit headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
 // Package headers
@@ -179,8 +179,8 @@ public:
 
 	void
 	parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & datamap ,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & datamap ,
 		protocols::filters::Filters_map const & ,
 		protocols::moves::Movers_map const & ,
 		core::pose::Pose const & );

@@ -57,8 +57,8 @@ public:
 
 	///@brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
-		TagPtr const,
-		protocols::moves::DataMap &,
+		TagCOP const,
+		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & );
@@ -70,8 +70,8 @@ public:
 
 	///@brief parse "task_operations" XML option
 	virtual void parse_task_operations(
-		TagPtr const,
-		protocols::moves::DataMap const &,
+		TagCOP const,
+		basic::datacache::DataMap const &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & );

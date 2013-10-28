@@ -46,7 +46,7 @@ public:
 	void
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 
 
     core::Size Cterm_offset() const{ return Cterm_offset_; }

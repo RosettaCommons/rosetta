@@ -76,6 +76,7 @@
 #endif
 
 #include <basic/Tracer.hh>
+#include <basic/datacache/DataMap.hh>
 
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/MinPackMover.hh>
@@ -299,7 +300,8 @@ IterativeOptEDriver::read_tagfile_to_taskfactory(std::string tagfile_name,
 																								 core::pack::task::TaskFactoryOP task_factory){
 	using namespace core::pack::task::operation;
 	TaskOperationFactory::TaskOperationOPs tops;
-	TaskOperationFactory::get_instance()->newTaskOperations( tops, tagfile_name );
+	basic::datacache::DataMap datamap;
+	TaskOperationFactory::get_instance()->newTaskOperations( tops, datamap, tagfile_name );
 	for ( TaskOperationFactory::TaskOperationOPs::iterator it( tops.begin() ), itend( tops.end() ); it != itend; ++it ) {
 		task_factory->push_back( *it );
 	}

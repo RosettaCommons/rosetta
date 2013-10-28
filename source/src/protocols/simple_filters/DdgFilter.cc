@@ -19,7 +19,7 @@
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <basic/Tracer.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/elscripts/util.hh>
 #include <protocols/scoring/Interface.hh>
@@ -119,8 +119,8 @@ DdgFilter::repack() const
 }
 
 void
-DdgFilter::parse_my_tag( utility::tag::TagPtr const tag,
-												 moves::DataMap & data,
+DdgFilter::parse_my_tag( utility::tag::TagCOP const tag,
+												 basic::datacache::DataMap & data,
 												 filters::Filters_map const & filters,
 												 moves::Movers_map const & movers,
 												 core::pose::Pose const & )

@@ -22,6 +22,8 @@ namespace tag {
 
 class Tag;
 typedef utility::pointer::owning_ptr< Tag > TagPtr;
+typedef utility::pointer::owning_ptr< Tag > TagOP;
+typedef utility::pointer::owning_ptr< Tag const > TagCOP;
 
 }
 }

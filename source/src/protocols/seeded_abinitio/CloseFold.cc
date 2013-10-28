@@ -68,7 +68,7 @@
 //parser
 #include <utility/tag/Tag.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 //util
@@ -424,8 +424,8 @@ CloseFold::get_name() const {
 
 void
 CloseFold::parse_my_tag(
-						  utility::tag::TagPtr const tag,
-						  protocols::moves::DataMap & data ,
+						  utility::tag::TagCOP const tag,
+						  basic::datacache::DataMap & data ,
 						  protocols::filters::Filters_map const &,
 						  protocols::moves::Movers_map const &,
 						  core::pose::Pose const & pose )
@@ -511,8 +511,8 @@ CloseFold::parse_my_tag(
 	}
 
 	/// read input seeds
-	utility::vector0< TagPtr > const branch_tags( tag->getTags() );
-	foreach( TagPtr const btag, branch_tags ){
+	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
+	foreach( TagCOP const btag, branch_tags ){
 
 		if( btag->getName() == "Seeds" ) { //need an assertion for the presence of these or at least for the option file
 

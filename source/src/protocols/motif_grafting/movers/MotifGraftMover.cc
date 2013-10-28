@@ -55,7 +55,7 @@
 //Include Rosetta Mover protocols
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 //Include Rosetta protocols 
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
@@ -1804,8 +1804,8 @@ a fragment of any size in the scaffold " << std::endl;
 			
 			/**@brief Fuction to parse RosettaScripts XML options**/
 			void MotifGraftMover::parse_my_tag(
-				utility::tag::TagPtr const tag,
-				protocols::moves::DataMap &,
+				utility::tag::TagCOP const tag,
+				basic::datacache::DataMap &,
 				protocols::filters::Filters_map const &,
 				protocols::moves::Movers_map const &,
 				core::pose::Pose const &)

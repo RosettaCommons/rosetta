@@ -19,7 +19,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/pose/PDBInfo.hh>
 #include <protocols/docking/metrics.hh>
@@ -96,7 +96,7 @@ LRmsdFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void
-LRmsdFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose )
+LRmsdFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose )
 {
 	/// @details
 	///if the save pose mover has been instantiated, this filter can calculate the rms

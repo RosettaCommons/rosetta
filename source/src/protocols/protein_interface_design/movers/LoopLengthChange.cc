@@ -21,7 +21,7 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <core/chemical/ResidueType.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
@@ -108,7 +108,7 @@ LoopLengthChange::get_name() const {
 }
 
 void
-LoopLengthChange::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
+LoopLengthChange::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
 {
 	loop_start( core::pose::parse_resnum( tag->getOption< std::string >( "loop_start" ), pose ) );
 	loop_end( core::pose::parse_resnum( tag->getOption< std::string >( "loop_end" ), pose ) );

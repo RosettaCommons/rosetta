@@ -25,7 +25,7 @@
 #include <protocols/multistate_design/PackingState.hh>
 #include <protocols/multistate_design/PartitionAggregateFunction.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 // AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
@@ -512,8 +512,8 @@ ProteinInterfaceMultiStateDesignMover::output_results( Pose & pose )
 }
 
 void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
-	TagPtr const tag,
-	moves::DataMap & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap & datamap,
 	protocols::filters::Filters_map const &,
 	moves::Movers_map const &,
 	Pose const &
@@ -553,11 +553,11 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 	use_unbound_for_sequence_profile_ = tag->getOption< bool >( "unbound_for_sequence_profile", unbound_ );
 	bump_threshold_ = tag->getOption< core::Real >( "profile_bump_threshold", 1.0 );
 /// Read additional positive and negative states
-	utility::vector0< TagPtr > const branch_tags( tag->getTags() );
+	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 	bool at_least_one_negative_state( unfolded_ || unbound_ );
 	compare_energy_to_ground_state_ = tag->getOption< bool >( "compare_to_ground_state", branch_tags.size() );
 	TR<<"Compare energy to ground state set to: "<<compare_energy_to_ground_state_<<std::endl;
-	foreach( TagPtr const btag, branch_tags ){
+	foreach( TagCOP const btag, branch_tags ){
 		if( unfolded_ || unbound_ ){
 			TR<<"ERROR: If you specify additional pdb files as states, it is assumed that those would have different energies than the starting pdb. As such, comparison of energies across different states is automatically done by grounding each pdb file to its starting 'best-score design' and comparing energy differences from that state. The energies of unbound and unfolded states then become tricky to interpret. You can use anchor_offset to get much of the effect of these additional states. Or, ask Sarel."<<std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("");

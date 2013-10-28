@@ -19,7 +19,7 @@
 
 // protocols headers
 #include <protocols/backrub/BackrubMover.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -265,8 +265,8 @@ MetropolisHastingsMover::reinitialize_for_new_input() const { return false; }
 
 void
 MetropolisHastingsMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
@@ -281,9 +281,9 @@ MetropolisHastingsMover::parse_my_tag(
 	monte_carlo_ = new protocols::moves::MonteCarlo(*score_fxn, temperature);
 
 	//add movers and observers
-	utility::vector0< utility::tag::TagPtr > const subtags( tag->getTags() );
-	for( utility::vector0< utility::tag::TagPtr >::const_iterator subtag_it = subtags.begin(); subtag_it != subtags.end(); ++subtag_it ) {
-		TagPtr const subtag = *subtag_it;
+	utility::vector0< utility::tag::TagCOP > const subtags( tag->getTags() );
+	for( utility::vector0< utility::tag::TagCOP >::const_iterator subtag_it = subtags.begin(); subtag_it != subtags.end(); ++subtag_it ) {
+		TagCOP const subtag = *subtag_it;
 		protocols::moves::MoverOP mover;
 		if (subtag->getName() == "Add") { //add existing mover
 			std::string mover_name = subtag->getOption<std::string>( "mover_name", "null" );
@@ -441,7 +441,7 @@ void
 MetropolisHastingsMover::add_mover(
         ThermodynamicMoverOP mover,
         core::Real weight,
-        utility::tag::TagPtr const&
+        utility::tag::TagCOP const&
         )
 {
         add_mover( mover, weight );

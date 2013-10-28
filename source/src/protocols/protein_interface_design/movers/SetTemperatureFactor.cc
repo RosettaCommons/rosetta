@@ -20,7 +20,7 @@
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/ResId.hh>
 #include <core/pose/PDBInfo.hh>
@@ -90,7 +90,7 @@ SetTemperatureFactor::get_name() const {
 }
 
 void
-SetTemperatureFactor::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & )
+SetTemperatureFactor::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
   std::string const filter_name( tag->getOption<std::string>( "filter" ) );
   protocols::filters::Filters_map::const_iterator find_ap_filter( filters.find( filter_name));

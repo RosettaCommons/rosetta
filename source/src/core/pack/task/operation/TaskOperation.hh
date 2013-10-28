@@ -28,6 +28,9 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 
+// Basic headers
+#include <basic/datacache/DataMap.fwd.hh>
+
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -48,7 +51,8 @@ void lregister_TaskOperation( lua_State * lstate );
 class TaskOperation : public utility::pointer::ReferenceCount
 {
 public:
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
+	typedef basic::datacache::DataMap DataMap;
 	typedef pose::Pose Pose;
 
 public:
@@ -63,7 +67,7 @@ public:
 	virtual void apply( Pose const &, PackerTask & ) const = 0;
 
 	/// @brief Used to parse an xml-like tag to load parameters and properties.
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 #ifdef USELUA
 	virtual void lregister( lua_State * lstate){ lregister_TaskOperation( lstate ); }
 #endif

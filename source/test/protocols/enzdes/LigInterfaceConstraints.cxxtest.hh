@@ -44,7 +44,7 @@
 // AUTO-REMOVED #include <protocols/enzdes/AddorRemoveCsts.hh> //for parser testing
 #include <protocols/moves/MoverFactory.hh> //for parser testing
 
-#include <protocols/moves/DataMap.hh> //for parser test
+#include <basic/datacache/DataMap.hh> //for parser test
 #include <protocols/filters/Filter.hh> //for parser test
 
 
@@ -207,15 +207,15 @@ public:
 		utility::io::izstream fin;
 		fin.open("protocols/enzdes/parse_cst_test.xml");
 		runtime_assert( fin.good() );
-		utility::tag::TagPtr tag = utility::tag::Tag::create( fin );
+		utility::tag::TagCOP tag = utility::tag::Tag::create( fin );
 		fin.close();
-		utility::vector0< utility::tag::TagPtr > const TO_tags( tag->getTag("MOVERS")->getTags() );
+		utility::vector0< utility::tag::TagCOP > const TO_tags( tag->getTag("MOVERS")->getTags() );
 
 		protocols::moves::Movers_map parser_movers;
 		protocols::filters::Filters_map parser_filters;
-		protocols::moves::DataMap parser_datamap; // abstract objects, such as scorefunctions, to be used by filter and movers
+		basic::datacache::DataMap parser_datamap; // abstract objects, such as scorefunctions, to be used by filter and movers
 
-		for( utility::vector0< utility::tag::TagPtr >::const_iterator tp( TO_tags.begin() ), tp_e( TO_tags.end() ); tp != tp_e; ++tp ) {
+		for( utility::vector0< utility::tag::TagCOP >::const_iterator tp( TO_tags.begin() ), tp_e( TO_tags.end() ); tp != tp_e; ++tp ) {
 
 			std::string const user_defined_name( (*tp)->getOption<std::string>("name") );
 			protocols::moves::MoverOP new_mover(  protocols::moves::MoverFactory::get_instance()->newMover( *tp, parser_datamap, parser_filters, parser_movers, parser_pose ) );

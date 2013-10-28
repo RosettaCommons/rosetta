@@ -148,7 +148,7 @@ RepackMinimize::get_name() const {
 
 
 void
-RepackMinimize::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const &filters, Movers_map const & movers, core::pose::Pose const & pose )
+RepackMinimize::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &filters, Movers_map const & movers, core::pose::Pose const & pose )
 {
 	TR<<"repack minimize mover with the following parameters:"<<std::endl;
 	simple_moves::DesignRepackMover::parse_my_tag( tag, data, filters, movers, pose );

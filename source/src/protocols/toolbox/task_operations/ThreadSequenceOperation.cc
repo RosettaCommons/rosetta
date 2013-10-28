@@ -119,7 +119,7 @@ ThreadSequenceOperation::start_res( core::Size const s ){
 }
 
 void
-ThreadSequenceOperation::parse_tag( TagPtr tag )
+ThreadSequenceOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	target_sequence( tag->getOption< std::string >( "target_sequence" ) );
 	start_res( tag->getOption< core::Size >( "start_res", 1 ) );

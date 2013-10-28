@@ -17,7 +17,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/protein_interface_design/movers/SubroutineMover.fwd.hh>
@@ -37,8 +37,8 @@ public:
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const;
-	virtual void parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+	virtual void parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );

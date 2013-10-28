@@ -22,7 +22,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
@@ -145,7 +145,7 @@ return "SetupHotspotConstraintsMover";
 
 /// This needs to be parsed before all other movers b/c it changes scorefxns
 void
-SetupHotspotConstraintsMover::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
+SetupHotspotConstraintsMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	using core::Real;
   chain_to_design_ = tag->getOption<Size>( "redesign_chain", 2 );
@@ -165,11 +165,11 @@ SetupHotspotConstraintsMover::parse_my_tag( TagPtr const tag, DataMap & data, pr
   	std::string const hotspot_fname( tag->getOption<std::string>( "stubfile", "stubs.pdb" ) );
   	hotspot_stub_set_->read_data( hotspot_fname );
 	}
-	utility::vector1< TagPtr > const branch_tags( tag->getTags() );
-	foreach( TagPtr const curr_tag, branch_tags ){
+	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
+	foreach( TagCOP const curr_tag, branch_tags ){
 		if( curr_tag->getName() == "HotspotFiles" ){
-			utility::vector1< TagPtr > const branch_tags2( curr_tag->getTags() );
-			foreach( TagPtr const curr_tag2, branch_tags2 ){
+			utility::vector1< TagCOP > const branch_tags2( curr_tag->getTags() );
+			foreach( TagCOP const curr_tag2, branch_tags2 ){
 				std::string const file_name( curr_tag2->getOption< std::string >( "file_name" ) );
 				std::string const nickname( curr_tag2->getOption< std::string >( "nickname" ) );
 				core::Size const stub_num( curr_tag2->getOption< core::Size >( "stub_num", 100000 ) );

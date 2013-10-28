@@ -73,8 +73,8 @@ ResidueCountFilter::fresh_instance() const {
 
 void
 ResidueCountFilter::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	moves::DataMap &,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap &,
 	filters::Filters_map const &,
 	moves::Movers_map const &,
 	core::pose::Pose const & pose

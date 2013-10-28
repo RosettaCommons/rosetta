@@ -21,7 +21,7 @@
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -52,7 +52,7 @@ core::scoring::constraints::ConstraintCOPs
 add_coordinate_constraints( core::pose::Pose & pose, core::conformation::Residue const source, core::Size const host_chain, core::Size const resnum, core::Real const coord_sdev, core::scoring::constraints::HarmonicFuncOP & coord_cst_func );
 
 void
-generate_taskfactory_and_add_task_awareness( utility::tag::TagPtr const tag, protocols::moves::Movers_map const & movers, protocols::moves::DataMap & data, core::pack::task::TaskFactoryOP & task_factory );
+generate_taskfactory_and_add_task_awareness( utility::tag::TagCOP const tag, protocols::moves::Movers_map const & movers, basic::datacache::DataMap & data, core::pack::task::TaskFactoryOP & task_factory );
 
 std::string nearest_atom_for_constraint( core::conformation::Residue const residue );
 
@@ -62,7 +62,7 @@ find_nearest_residue_to_coord( core::pose::Pose const & pose, numeric::xyzVector
 
 /// @brief a utility function for parsing stubset information from a tag
 utility::vector1< std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > >
-parse_stub_sets( utility::tag::TagPtr const tag, core::pose::Pose const & pose, core::Size const host_chain, protocols::moves::DataMap data );
+parse_stub_sets( utility::tag::TagCOP const tag, core::pose::Pose const & pose, core::Size const host_chain, basic::datacache::DataMap data );
 
 core::scoring::ScoreFunctionOP make_stub_scorefxn();
 } //movers

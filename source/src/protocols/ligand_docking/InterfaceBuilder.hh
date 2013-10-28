@@ -28,7 +28,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 //// C++ headers
 #include <map>
@@ -52,8 +52,8 @@ public:
 	InterfaceBuilder(InterfaceBuilder const & that);
 
 	void parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & datamap
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & datamap
 	);
 
 	/* InterfaceBuilder(

@@ -22,7 +22,7 @@
 
 // Package headers
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -32,7 +32,7 @@ namespace protocols {
 namespace moves {
 
 protocols::moves::MoverOP find_mover_or_die(const std::string& mover_name,
-                                            const utility::tag::TagPtr,
+                                            const utility::tag::TagCOP,
                                             const protocols::moves::Movers_map& movers) {
   protocols::moves::Movers_map::const_iterator i = movers.find(mover_name);
   if (i == movers.end())
@@ -42,7 +42,7 @@ protocols::moves::MoverOP find_mover_or_die(const std::string& mover_name,
 }
 
 protocols::filters::FilterOP find_filter_or_die(const std::string& filter_name,
-                                              const utility::tag::TagPtr,
+                                              const utility::tag::TagCOP,
                                               const protocols::filters::Filters_map& filters) {
   protocols::filters::Filters_map::const_iterator i = filters.find(filter_name);
   if (i == filters.end())

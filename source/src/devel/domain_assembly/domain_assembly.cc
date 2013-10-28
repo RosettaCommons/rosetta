@@ -112,6 +112,21 @@ using namespace chemical;
 // 	FileOptionKey const da_setup_output_pdb( "DomainAssembly::da_setup_output_pdb" );
 // }
 
+namespace devel {
+namespace domain_assembly {
+
+core::kinematics::MoveMapOP
+read_movemap_from_da_linker_file()
+{
+	// read in linkers and set move map true for linker regions
+	std::string filename_linkers = option[ OptionKeys::DomainAssembly::da_linker_file ]();
+	utility::vector1< std::pair < Size, Size > >  linker_ranges;
+	read_linker_file( filename_linkers, linker_ranges );
+  kinematics::MoveMapOP mm ( new kinematics::MoveMap );
+	set_movemap_for_linkers ( linker_ranges, mm );
+	return mm;
+}
+
 ///@brief reads in file that specifies which regions of the protein will
 ///  will move during domain assembly
 ///  Each line of the file should have the start and end position for a linker region
@@ -633,11 +648,7 @@ assemble_domains_optimize()
 	}
 
 	// read in linkers and set move map true for linker regions
-	std::string filename_linkers = option[ OptionKeys::DomainAssembly::da_linker_file ]();
-	utility::vector1< std::pair < Size, Size > >  linker_ranges;
-	read_linker_file( filename_linkers, linker_ranges );
-  kinematics::MoveMapOP mm ( new kinematics::MoveMap );
-	set_movemap_for_linkers ( linker_ranges, mm );
+  kinematics::MoveMapOP mm = read_movemap_from_da_linker_file();
 
 	int nruns = option[ OptionKeys::DomainAssembly::da_nruns ];
 	int start_pdb_num = option[ OptionKeys::DomainAssembly::da_start_pdb_num ];
@@ -670,4 +681,7 @@ assemble_domains_optimize()
 		//out << "total_energy: " << (*scorefxn)(full_pose) << std::endl;
 	}
 
+}
+
+}
 }

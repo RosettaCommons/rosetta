@@ -21,7 +21,7 @@
 
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -57,8 +57,8 @@ public:
 
 	virtual
 	void parse_my_tag(
-		TagPtr const,
-		moves::DataMap &,
+		TagCOP const,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
 		Pose const & );

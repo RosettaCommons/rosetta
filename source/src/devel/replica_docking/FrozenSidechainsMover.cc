@@ -165,8 +165,8 @@ FrozenSidechainsMover::get_name() const {
 
 void
 FrozenSidechainsMover::parse_my_tag(
-  utility::tag::TagPtr const tag,
-  moves::DataMap &,
+  utility::tag::TagCOP const tag,
+  basic::datacache::DataMap &,
   filters::Filters_map const &,
   moves::Movers_map const &,
   pose::Pose const& pose

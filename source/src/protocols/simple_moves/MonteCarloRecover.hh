@@ -27,7 +27,7 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 
 // Parser headers
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -44,8 +44,8 @@ public:
 	typedef core::pose::Pose Pose;
 	typedef core::pose::PoseOP PoseOP;
 
-	typedef utility::tag::TagPtr TagPtr;
-	typedef protocols::moves::DataMap DataMap;
+	typedef utility::tag::TagCOP TagCOP;
+	typedef basic::datacache::DataMap DataMap;
 	typedef protocols::filters::Filters_map Filters_map;
 	typedef protocols::moves::Movers_map Movers_map;
 	typedef protocols::moves::MoverOP MoverOP;
@@ -76,8 +76,8 @@ public:	// constructor/destructor
 
 
 	virtual void parse_my_tag(
-		TagPtr const tag,
-		DataMap & data,
+		TagCOP const tag,
+		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		Movers_map const & movers,
 		Pose const &

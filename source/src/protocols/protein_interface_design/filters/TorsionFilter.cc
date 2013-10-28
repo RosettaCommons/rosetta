@@ -16,7 +16,7 @@
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
@@ -122,8 +122,8 @@ Torsion::report( std::ostream & out, core::pose::Pose const & pose ) const
 }
 
 void
-Torsion::parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
+Torsion::parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 		core::pose::Pose const & pose )

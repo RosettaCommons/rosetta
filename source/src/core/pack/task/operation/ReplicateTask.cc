@@ -34,66 +34,67 @@ namespace pack {
 namespace task {
 namespace operation {
 
-  ///@details empty constructor need to call set_native_task to make it work
-  ReplicateTask::ReplicateTask() : parent(){}
+///@details empty constructor need to call set_native_task to make it work
+ReplicateTask::ReplicateTask() : parent(){}
 
-  ///@details constructor using an established PackerTask
-  ReplicateTask::ReplicateTask( core::pack::task::PackerTaskOP native_task ) :
-    parent(), native_task_( native_task->clone() ){}
+///@details constructor using an established PackerTask
+ReplicateTask::ReplicateTask( core::pack::task::PackerTaskOP native_task ) :
+	parent(), native_task_( native_task->clone() ){}
 
-  ///@details contstructor that uses an TaskFactory and applies it to the native to get the task
-  ReplicateTask::ReplicateTask(core::pose::Pose & native_pose, core::pack::task::TaskFactoryOP task_factory ) :
-    parent(){
-    //convert task factory into task for general use
-    native_task_ =  task_factory->create_task_and_apply_taskoperations( native_pose ) ;
-    }
+///@details contstructor that uses an TaskFactory and applies it to the native to get the task
+ReplicateTask::ReplicateTask(core::pose::Pose & native_pose, core::pack::task::TaskFactoryOP task_factory ) :
+	parent()
+{
+	//convert task factory into task for general use
+	native_task_ =  task_factory->create_task_and_apply_taskoperations( native_pose ) ;
+}
 
-  ReplicateTask::~ReplicateTask(){}
+ReplicateTask::~ReplicateTask(){}
 
-  task::operation::TaskOperationOP ReplicateTask::clone() const
-  {
-    return new ReplicateTask( *this );
-  }
+task::operation::TaskOperationOP ReplicateTask::clone() const
+{
+	return new ReplicateTask( *this );
+}
 
-  task::operation::TaskOperationOP ReplicateTaskCreator::create_task_operation() const
-  {
-    return new ReplicateTask;
-  }
+task::operation::TaskOperationOP ReplicateTaskCreator::create_task_operation() const
+{
+	return new ReplicateTask;
+}
 
-  void
-  ReplicateTask::apply(
-		       pose::Pose const & pose,
-		       task::PackerTask & task) const
-  {
-    // note:  poses must be the same size as this copies the task logic
-    // on a per residue basis
-    runtime_assert( pose.total_residue() == native_task_->total_residue() );
-    //for all the residues in the pose copy the basic task logic
-    for( Size ii = 1; ii <= pose.total_residue(); ii++){
-      //if not being designed then restrict to repacking
-      if(!native_task_->nonconst_residue_task( ii ).being_designed())
-	task.nonconst_residue_task( ii ).restrict_to_repacking();
-	//task.nonconst_residue_task( ii ).add_behavior( "NATAA" );
+void
+ReplicateTask::apply(
+	pose::Pose const & pose,
+	task::PackerTask & task) const
+{
+	// note:  poses must be the same size as this copies the task logic
+	// on a per residue basis
+	runtime_assert( pose.total_residue() == native_task_->total_residue() );
+	//for all the residues in the pose copy the basic task logic
+	for( Size ii = 1; ii <= pose.total_residue(); ii++){
+		//if not being designed then restrict to repacking
+		if(!native_task_->nonconst_residue_task( ii ).being_designed())
+			task.nonconst_residue_task( ii ).restrict_to_repacking();
+			//task.nonconst_residue_task( ii ).add_behavior( "NATAA" );
 
-      //if not being packed at all then prevent from repacking
-      if(!native_task_->nonconst_residue_task( ii ).being_packed())
-	task.nonconst_residue_task( ii ).prevent_repacking();
-	//task.nonconst_residue_task( ii ).add_behavior( "NATRO" );
+		//if not being packed at all then prevent from repacking
+		if(!native_task_->nonconst_residue_task( ii ).being_packed())
+			task.nonconst_residue_task( ii ).prevent_repacking();
+			//task.nonconst_residue_task( ii ).add_behavior( "NATRO" );
 
-    } //end loop over all residues
-  } //end apply
+	} //end loop over all residues
+} //end apply
 
-  void
-  ReplicateTask::set_native_task( core::pack::task::PackerTaskOP native_task){
-    native_task_ = native_task;
-  }
+void
+ReplicateTask::set_native_task( core::pack::task::PackerTaskOP native_task){
+	native_task_ = native_task;
+}
 
-  ///@brief does not work within parser framework so exit if try to use.
-  void
-  ReplicateTask::parse_tag( TagPtr )
-  {
-    utility_exit_with_message_status( "No parse_tag for ReplicateTask.  Exiting...\n", 1 );
-  }
+///@brief does not work within parser framework so exit if try to use.
+void
+ReplicateTask::parse_tag( TagCOP, DataMap & )
+{
+	utility_exit_with_message_status( "No parse_tag for ReplicateTask.  Exiting...\n", 1 );
+}
 
 //private:
 

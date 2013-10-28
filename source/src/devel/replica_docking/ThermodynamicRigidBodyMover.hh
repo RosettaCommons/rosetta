@@ -1,4 +1,4 @@
-/// @brief inherit from protocols/rigid/RigidBodyPerturbNoCenterMover aimed to set it free from DockSetupMover, which was originally required to set RigidBodyPerturbNoCenter's jump. Intead of that, we store the RigidBodyInfo into DataMap in DockSetupMover, then later RigidBodyInfo could be retrieved whenever it is needed (i.e. DockingInitialPerturbation) during docking. This is especially useful in TempWeightedReplica for docking in which we have multiple RigidBodyPerturbNoCenterMover for each replica (each correspond to a unique temperature), it is not possible to use DockSetupMover to set the jump for each RigidBodyPerturbNoCenterMover.
+/// @brief inherit from protocols/rigid/RigidBodyPerturbNoCenterMover aimed to set it free from DockSetupMover, which was originally required to set RigidBodyPerturbNoCenter's jump. Intead of that, we store the RigidBodyInfo into basic::datacache::DataMap in DockSetupMover, then later RigidBodyInfo could be retrieved whenever it is needed (i.e. DockingInitialPerturbation) during docking. This is especially useful in TempWeightedReplica for docking in which we have multiple RigidBodyPerturbNoCenterMover for each replica (each correspond to a unique temperature), it is not possible to use DockSetupMover to set the jump for each RigidBodyPerturbNoCenterMover.
 
 /// @author Zhe Zhang
 
@@ -54,8 +54,8 @@ public:
   virtual protocols::moves::MoverOP fresh_instance() const;
 
   virtual void parse_my_tag(
-       utility::tag::TagPtr const tag,
-       protocols::moves::DataMap &,
+       utility::tag::TagCOP const tag,
+       basic::datacache::DataMap &,
        protocols::filters::Filters_map const &,
        protocols::moves::Movers_map const &,
        core::pose::Pose const &

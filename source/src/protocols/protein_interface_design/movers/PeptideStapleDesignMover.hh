@@ -18,7 +18,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/PeptideStapleMover.hh>
 
 #include <protocols/simple_moves/PeptideStapleMover.fwd.hh>
@@ -42,7 +42,7 @@ public:
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new PeptideStapleDesignMover ); }
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	protocols::simple_moves::PeptideStapleMoverOP stapler_;
 };

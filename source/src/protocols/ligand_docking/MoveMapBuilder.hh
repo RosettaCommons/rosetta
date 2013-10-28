@@ -27,14 +27,14 @@
 
 //// Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/vector1.hh>
 
 ///////////////////////////////////////////////////////////////////////
@@ -52,8 +52,8 @@ public:
 	MoveMapBuilder(InterfaceBuilderOP sc, InterfaceBuilderOP bb, bool minimize_water);
 
 	void parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & datamap
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & datamap
 	);
 
 	core::kinematics::MoveMapOP

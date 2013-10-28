@@ -38,17 +38,17 @@ class ModifyAnnealer : public core::pack::task::operation::TaskOperation
 
 public:
 	ModifyAnnealer();
-	
+
 	ModifyAnnealer(bool disallow_quench, core::Real high_temp, core::Real low_temp);
-	
+
 	virtual ~ModifyAnnealer();
-	
+
 	virtual core::pack::task::operation::TaskOperationOP clone() const;
-	
+
 	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
-	
-	virtual void parse_tag( utility::tag::TagPtr );
-	
+
+	virtual void parse_tag( utility::tag::TagCOP, basic::datacache::DataMap & );
+
 private:
 
 	bool disallow_quench_;

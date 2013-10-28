@@ -271,8 +271,8 @@ StoreCompoundTaskMover::apply( core::pose::Pose & pose )
 
 void
 StoreCompoundTaskMover::parse_my_tag(
-		TagPtr const tag,
-		protocols::moves::DataMap & data_map,
+		TagCOP const tag,
+		basic::datacache::DataMap & data_map,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & /*pose*/ )
@@ -303,7 +303,7 @@ StoreCompoundTaskMover::parse_my_tag(
 	/// vector of (TaskFactoryOP, boolean_operation) pairs.
 	/// Note: Do not apply tasks to pose until runtime
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	foreach(TagPtr cmp_tag_ptr, tag->getTags() ){
+	foreach(TagCOP cmp_tag_ptr, tag->getTags() ){
 		std::string const operation( cmp_tag_ptr->getName() );
 		std::pair< core::pack::task::TaskFactoryOP, boolean_operations > factory_pair;
 		if( operation == "AND" ) factory_pair.second = AND;
@@ -329,7 +329,7 @@ StoreCompoundTaskMover::parse_my_tag(
     	if ( data_map.has( "task_operations", *t_o_key ) ) {
       	new_task_factory->push_back( data_map.get< core::pack::task::operation::TaskOperation * >( "task_operations", *t_o_key ) );
     	} else {
-      	utility_exit_with_message("TaskOperation " + *t_o_key + " not found in DataMap.");
+      	utility_exit_with_message("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
     	}
   	}
 		factory_pair.first = new_task_factory->clone(); //clone?

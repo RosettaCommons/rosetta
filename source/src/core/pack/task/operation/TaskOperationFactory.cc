@@ -22,6 +22,8 @@
 #include <core/pack/task/operation/ResFilterCreator.hh>
 #include <core/pack/task/operation/ResFilterFactory.hh>
 
+// Basic headers
+#include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
@@ -108,14 +110,15 @@ or
 TaskOperationOP
 TaskOperationFactory::newTaskOperation(
 	std::string const & type,
-	TagPtr tag /* = boost::shared_ptr< Tag >() */
+	basic::datacache::DataMap & datamap,
+	TagCOP tag /* = boost::shared_ptr< Tag >() */
 ) const
 {
 	TaskOperationCreatorMap::const_iterator iter( task_operation_creator_map_.find( type ) );
 	if ( iter != task_operation_creator_map_.end() ) {
 		TaskOperationOP task_operation( iter->second->create_task_operation() );
 		// parse tag if tag pointer is pointing to one
-		if ( tag.get() != NULL ) task_operation->parse_tag( tag );
+		if ( tag.get() != NULL ) task_operation->parse_tag( tag, datamap );
 		return task_operation;
 	} else {
 		TR<<"Available options: ";
@@ -129,39 +132,39 @@ TaskOperationFactory::newTaskOperation(
 
 ///@brief recurse tag file to find TASKOPERATIONS definitions
 void
-TaskOperationFactory::newTaskOperations( TaskOperationOPs & tops, TagPtr tag ) const
+TaskOperationFactory::newTaskOperations( TaskOperationOPs & tops, basic::datacache::DataMap & datamap, TagCOP tag ) const
 {
-	typedef utility::vector0< TagPtr > TagPtrs;
+	typedef utility::vector0< TagCOP > TagCOPs;
 	TR.Trace << "Tag name " << tag->getName();
 	if ( tag->getTags().empty() ) { TR.Trace << " (empty)" << std::endl; return; }
 	else TR.Trace << std::endl;
-	TagPtrs const subtags( tag->getTags() );
+	TagCOPs const subtags( tag->getTags() );
 	if ( tag->getName() == "TASKOPERATIONS" ) {
-		for( TagPtrs::const_iterator tp( subtags.begin() ), tp_e( subtags.end() ); tp != tp_e; ++tp ) {
+		for( TagCOPs::const_iterator tp( subtags.begin() ), tp_e( subtags.end() ); tp != tp_e; ++tp ) {
 			std::string const type( (*tp)->getName() );
-			TaskOperationOP new_to = newTaskOperation( type, *tp );
+			TaskOperationOP new_to = newTaskOperation( type, datamap, *tp );
 			runtime_assert( new_to );
 			tops.push_back( new_to );
 			TR << "Created and parsed anonymous TaskOperation of type " << type << std::endl;
 		}
 	}
 	// recurse
-	for( TagPtrs::const_iterator tp( subtags.begin() ), tp_e( subtags.end() ); tp != tp_e; ++tp ) {
-		newTaskOperations( tops, *tp );
+	for( TagCOPs::const_iterator tp( subtags.begin() ), tp_e( subtags.end() ); tp != tp_e; ++tp ) {
+		newTaskOperations( tops, datamap, *tp );
 	}
 }
 
 void
-TaskOperationFactory::newTaskOperations( TaskOperationOPs & tops, std::string const & tagfilename ) const
+TaskOperationFactory::newTaskOperations( TaskOperationOPs & tops, basic::datacache::DataMap & datamap, std::string const & tagfilename ) const
 {
 	utility::io::izstream fin;
 	fin.open( tagfilename.c_str() );
 	runtime_assert( fin.good() );
-	TagPtr tag = utility::tag::Tag::create(fin);
+	TagCOP tag = utility::tag::Tag::create(fin);
 	fin.close();
 	TR << "TaskOperationFactory parsing " << tagfilename << " to create TaskOperations:" << std::endl;
 	TR << tag << std::endl;
-	newTaskOperations( tops, tag );
+	newTaskOperations( tops, datamap, tag );
 }
 
 } //namespace operation

@@ -138,8 +138,8 @@ protocols::moves::MoverOP SingleFragmentMover::fresh_instance() const {
   return new SingleFragmentMover();
 }
 
-void SingleFragmentMover::parse_my_tag(const utility::tag::TagPtr tag,
-	protocols::moves::DataMap& data,
+void SingleFragmentMover::parse_my_tag(const utility::tag::TagCOP tag,
+	basic::datacache::DataMap& data,
 	const protocols::filters::Filters_map&,
 	const protocols::moves::Movers_map&,
 	const core::pose::Pose& pose) {

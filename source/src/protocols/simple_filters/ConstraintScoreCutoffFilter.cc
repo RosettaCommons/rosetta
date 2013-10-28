@@ -38,7 +38,7 @@
 #include <protocols/jd2/util.hh>
 #include <protocols/jd2/Job.hh>
 
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
 
@@ -103,7 +103,7 @@ ConstraintScoreCutoffFilter::get_score( core::pose::Pose const & pose_in ) const
 }
 
 void
-ConstraintScoreCutoffFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & , protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &  ) {
+ConstraintScoreCutoffFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & , protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &  ) {
 	if (tag->hasOption("cutoff")) {
 		cutoff_ = tag->getOption<core::Real>("cutoff", 10000.0 );
 	}

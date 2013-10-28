@@ -24,6 +24,9 @@
 // Project Headers
 #include <core/pack/task/PackerTask.fwd.hh>
 
+// Basic headers
+#include <basic/datacache/DataCache.fwd.hh>
+
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -45,7 +48,7 @@ namespace operation {
 class ResLvlTaskOperation : public utility::pointer::ReferenceCount
 {
 public:
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 public:
 	/// @brief Create another task operation of the type matching the most-derived
 	/// version of the class.
@@ -56,7 +59,7 @@ public:
 	virtual void apply( ResidueLevelTask & ) const = 0;
 
 	/// @brief parser xml-like tags to set class data/parameters
-	virtual void parse_tag( TagPtr ) {}
+	virtual void parse_tag( TagCOP ) {}
 };
 
 // only generalized base classes go here. ResLvlTaskOperations that actually do things do not belong here.

@@ -46,7 +46,7 @@ RotamerRecoveryMoverCreator::mover_name()
 
 // Unit Headers
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.hh>
 
@@ -225,8 +225,8 @@ RotamerRecoveryMover::clone() const {
 
 void
 RotamerRecoveryMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	moves::DataMap & datamap,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & datamap,
 	Filters_map const & /*filters*/,
 	moves::Movers_map const & movers,
 	Pose const & /*pose*/ )

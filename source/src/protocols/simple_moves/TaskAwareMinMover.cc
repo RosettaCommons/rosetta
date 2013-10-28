@@ -28,7 +28,7 @@
 // AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 
 #include <protocols/simple_moves/MinMover.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/elscripts/util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -156,8 +156,8 @@ protocols::moves::MoverOP TaskAwareMinMover::clone() const { return new protocol
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 TaskAwareMinMover::parse_my_tag(
-	TagPtr const tag,
-	protocols::moves::DataMap & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap & datamap,
 	Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
 	Pose const & pose
@@ -210,8 +210,8 @@ void TaskAwareMinMover::parse_def( utility::lua::LuaObject const & def,
 ///@brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
 void
 TaskAwareMinMover::parse_task_operations(
-	TagPtr const tag,
-	protocols::moves::DataMap const & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap const & datamap,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const &

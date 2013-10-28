@@ -384,7 +384,7 @@ LayerOperations::apply( core::pose::Pose const & pose, core::pack::task::PackerT
 
 
 void
-LayerOperations::parse_tag( TagPtr tag )
+LayerOperations::parse_tag( TagCOP tag , DataMap & )
 {
 	//use_original_ = tag->getOption< bool >( "use_original_non_designed_layer", 1 );
 

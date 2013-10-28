@@ -29,7 +29,7 @@
 
 // Scripter Headers
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
@@ -109,8 +109,8 @@ std::string FinalMinimizer::get_name() const{
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 FinalMinimizer::parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & datamap,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & datamap,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/

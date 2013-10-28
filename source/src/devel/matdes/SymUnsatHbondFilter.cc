@@ -42,7 +42,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -259,7 +259,7 @@ SymUnsatHbondFilter::apply( core::pose::Pose const & pose ) const
 
 // @brief parse xml
 void
-SymUnsatHbondFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+SymUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	upper_threshold( tag->getOption<core::Size>( "cutoff", 20 ) );
 	jump_num( tag->getOption<core::Size>( "jump", 1 ) );

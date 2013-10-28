@@ -161,8 +161,8 @@ public:
 	
 	//interface for rosetta_scripts
 	virtual void parse_my_tag(
-		TagPtr const,
-		protocols::moves::DataMap &,
+		TagCOP const,
+		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & );

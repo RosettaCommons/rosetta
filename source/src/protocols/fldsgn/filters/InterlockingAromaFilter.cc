@@ -248,8 +248,8 @@ bool InterlockingAromaFilter::apply( Pose const & pose ) const
 /// @brief parse xml
 void
 InterlockingAromaFilter::parse_my_tag(
-	TagPtr const tag,
-	DataMap &,
+	TagCOP const tag,
+	basic::datacache::DataMap &,
 	Filters_map const &,
 	Movers_map const &,
 	Pose const & )

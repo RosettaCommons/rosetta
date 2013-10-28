@@ -126,7 +126,7 @@ bool GridManager::is_qsar_map_attached()
 	}
 }
 
-void GridManager::make_new_grid(utility::tag::TagPtr const tag)
+void GridManager::make_new_grid(utility::tag::TagCOP const tag)
 {
 
 	std::string name= tag->getName();

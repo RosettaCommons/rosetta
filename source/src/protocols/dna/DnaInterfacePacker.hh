@@ -58,7 +58,7 @@ public:
 class DnaInterfacePacker : public protocols::simple_moves::PackRotamersMover {
 
 public:
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 	typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
 
 public:
@@ -82,8 +82,8 @@ public:
 
 	///@brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
-		TagPtr const,
-		moves::DataMap &,
+		TagCOP const,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
 		Pose const & );

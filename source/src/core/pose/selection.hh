@@ -34,7 +34,7 @@ namespace core {
 namespace pose {
 
 core::Size
-get_resnum( utility::tag::TagPtr const tag_ptr, core::pose::Pose const & pose, std::string const & prefix="" );
+get_resnum( utility::tag::TagCOP const tag_ptr, core::pose::Pose const & pose, std::string const & prefix="" );
 
 /// @brief Extracts a residue number from a string.
 /// @detail Recognizes two forms of numbering:
@@ -50,7 +50,7 @@ parse_resnum(std::string const& resnum, core::pose::Pose const& pose);
 /// @details The tag should contain a comma-separated list of numbers, in either
 ///   pdb or rosetta format (@see parse_resnum for details)
 utility::vector1<core::Size>
-get_resnum_list(utility::tag::TagPtr const tag_ptr, std::string const& tag, core::pose::Pose const& pose);
+get_resnum_list(utility::tag::TagCOP const tag_ptr, std::string const& tag, core::pose::Pose const& pose);
 
 /// @brief returns a resnum list directly from a string
 std::set< core::Size >

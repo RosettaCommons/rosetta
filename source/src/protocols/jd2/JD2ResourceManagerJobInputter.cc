@@ -247,7 +247,7 @@ JD2ResourceManagerJobInputter::fill_jobs_from_stream( std::istream & instream, J
 	JD2ResourceManager * jd2_resource_manager(
 		JD2ResourceManager::get_jd2_resource_manager_instance());
 
-	utility::tag::TagPtr resource_tags = utility::tag::Tag::create( instream );
+	utility::tag::TagCOP resource_tags = utility::tag::Tag::create( instream );
 
 	for ( utility::tag::Tag::tags_t::const_iterator
 			tag_iter = resource_tags->getTags().begin(),
@@ -268,7 +268,7 @@ JD2ResourceManagerJobInputter::fill_jobs_from_stream( std::istream & instream, J
 
 void
 JD2ResourceManagerJobInputter::parse_jobs_tags(
-	utility::tag::TagPtr jobs_tags,
+	utility::tag::TagCOP jobs_tags,
 	Jobs & jobs
 )
 {
@@ -313,7 +313,7 @@ JD2ResourceManagerJobInputter::parse_jobs_tags(
 
 void
 JD2ResourceManagerJobInputter::parse_job_tag(
-	utility::tag::TagPtr jobs_tag,
+	utility::tag::TagCOP jobs_tag,
 	std::map< std::string, std::string > const & generic_resources_for_job,
 	JobOptions const & generic_job_options,
 	Jobs & jobs
@@ -373,7 +373,7 @@ JD2ResourceManagerJobInputter::parse_job_tag(
 
 void
 JD2ResourceManagerJobInputter::parse_jobs_table_tag(
-	utility::tag::TagPtr tag,
+	utility::tag::TagCOP tag,
 	std::map< std::string, std::string > const & generic_resources_for_job,
 	JobOptions const & generic_job_options,
 	Jobs & jobs
@@ -543,7 +543,7 @@ JD2ResourceManagerJobInputter::record_job(
 
 void
 JD2ResourceManagerJobInputter::read_Option_subtag_for_job(
-	utility::tag::TagPtr options_tag,
+	utility::tag::TagCOP options_tag,
 	JobOptionsOP job_options
 )
 {
@@ -848,7 +848,7 @@ JD2ResourceManagerJobInputter::read_StringVectorOption_subtag_for_job(
 
 void
 JD2ResourceManagerJobInputter::read_ResidueType_for_subtag(
-	utility::tag::TagPtr options_tag,
+	utility::tag::TagCOP options_tag,
 	std::map< std::string, std::string > & resources_for_job
 ){
 	std::string rname;
@@ -884,7 +884,7 @@ JD2ResourceManagerJobInputter::read_ResidueType_for_subtag(
 ///
 void
 JD2ResourceManagerJobInputter::read_Data_for_subtag(
-	utility::tag::TagPtr data_tag,
+	utility::tag::TagCOP data_tag,
 	std::string const & jobname,
 	std::string & input_tag,
 	std::map< std::string, std::string > & resources_for_job

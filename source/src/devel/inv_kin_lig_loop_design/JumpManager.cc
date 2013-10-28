@@ -186,7 +186,7 @@ namespace devel {
 
 	}
 
-      core::kinematics::RT JumpManager::get_hbond_rt( TagPtr tag, bool h2a ) {
+      core::kinematics::RT JumpManager::get_hbond_rt( TagCOP tag, bool h2a ) {
 
 				double const dist = tag->getOption<double>("dist",1.8)  + numeric::random::gaussian() * tag->getOption<double>("sigma_dist",0.1);
 				double const xBAH = (tag->getOption<double>("xBAH",120) + numeric::random::gaussian() * tag->getOption<double>("sigma_xBAH",5) ) * random_sign();
@@ -262,7 +262,7 @@ namespace devel {
     }
 
 		/*
-    core::kinematics::Jump JumpManager::get_jump_from_template( TagPtr tag_segment ) {
+    core::kinematics::Jump JumpManager::get_jump_from_template( TagCOP tag_segment ) {
 
 			assert( tag_segment->getName() == "anchored_loop" );
 			assert( tag_segment->hasTag("template") );
@@ -333,12 +333,12 @@ namespace devel {
     }
 
 */
-    core::kinematics::RT JumpManager::get_template_rt( TagPtr tag_segment ) {
+    core::kinematics::RT JumpManager::get_template_rt( TagCOP tag_segment ) {
 
 			assert( tag_segment->getName() == "anchored_loop" );
 			assert( tag_segment->hasTag("template") );
 
-			TagPtr tag_template = tag_segment->getTag("template");
+			TagCOP tag_template = tag_segment->getTag("template");
 
 			core::pose::PoseOP pose( new core::pose::Pose );
 

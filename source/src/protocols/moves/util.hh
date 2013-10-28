@@ -21,7 +21,7 @@
 
 // Package headers
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.fwd.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.fwd.hh>
 
 #include <core/types.hh>
 #include <protocols/filters/Filter.fwd.hh>
@@ -35,13 +35,13 @@ namespace moves {
 /// @brief Searches <movers> for the named mover, returning it if it exists,
 /// otherwise halts execution with an error message.
 protocols::moves::MoverOP find_mover_or_die(const std::string& mover_name,
-																						const utility::tag::TagPtr tag,
+																						const utility::tag::TagCOP tag,
 																						const protocols::moves::Movers_map& movers);
 
 /// @brief Searches <filters> for the named filter, returning it if it exists,
 /// otherwise halts execution with an error message.
 protocols::filters::FilterOP find_filter_or_die(const std::string& filter_name,
-																								const utility::tag::TagPtr tag,
+																								const utility::tag::TagCOP tag,
 																								const protocols::filters::Filters_map& filters);
 
 }  // namespace moves

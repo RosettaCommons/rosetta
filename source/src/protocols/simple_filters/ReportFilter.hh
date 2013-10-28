@@ -22,9 +22,9 @@
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/DataMapObj.hh>
+#include <basic/datacache/DataMapObj.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -46,7 +46,7 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const &pose ) const;
 	virtual ~ReportFilter();
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
 	void report_string( std::string const s );
 	std::string report_string() const;
@@ -60,7 +60,7 @@ public:
 private:
     void checkpoint_read() const; // read from a checkpoint
     void checkpoint_write() const; // write from a checkpoint
-	utility::pointer::owning_ptr< protocols::moves::DataMapObj< std::string > > report_string_; //dflt ""
+	utility::pointer::owning_ptr< basic::datacache::DataMapObj< std::string > > report_string_; //dflt ""
 	protocols::filters::FilterOP filter_; //dflt NULL; either filter or report_string should be turned on
 	std::string report_filter_name_; // the user defined filter name used in reporting
     mutable core::Real filter_val_; // stores filter_'s report_sm value at the time of apply call. Then, when report_sm for teh ReportFilter is called it reports the saved value

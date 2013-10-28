@@ -13,8 +13,8 @@
 // Unit headers
 #include <protocols/simple_moves/PSSM2BfactorMover.hh>
 #include <protocols/simple_moves/PSSM2BfactorMoverCreator.hh>
-#include <protocols/moves/DataMapObj.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMapObj.hh>
+#include <basic/datacache/DataMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
@@ -152,8 +152,8 @@ PSSM2BfactorMover::fresh_instance() const
 
 void
 PSSM2BfactorMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap &,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )

@@ -98,7 +98,7 @@ InterfaceHolesFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void
-InterfaceHolesFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+InterfaceHolesFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	threshold_ = tag->getOption<core::Size>( "threshold", 200 );
 	rb_jump_ = tag->getOption<core::Size>( "jump", 1 );

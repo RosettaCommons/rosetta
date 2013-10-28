@@ -71,7 +71,7 @@ public:
 	virtual
 	void
 	parse_my_tag(
-		utility::tag::TagPtr tag
+		utility::tag::TagCOP tag
 	) = 0;
 
 	/// @brief The class name (its type) for a particular ResourceOptions instance.

@@ -14,7 +14,7 @@
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/ConstraintSetMoverCreator.hh>
 
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -155,8 +155,8 @@ protocols::moves::MoverOP ConstraintSetMover::fresh_instance() const { return ne
 
 void
 ConstraintSetMover::parse_my_tag(
-	TagPtr const tag,
-	protocols::moves::DataMap &,
+	TagCOP const tag,
+	basic::datacache::DataMap &,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const &

@@ -9,7 +9,7 @@
 
 /// @file   protocols/ligand_docking/LigandDockingLoader.hh
 /// @brief  Declartion of the InterfaceBuilderLoader and MoveMapBuilderLoader classes
-///         for adding named InterfaceBuilders and MoveMapBuilders into the parser's DataMap
+///         for adding named InterfaceBuilders and MoveMapBuilders into the parser's basic::datacache::DataMap
 /// @author Gordon Lemmon
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com) -- moved here from DockDesignParser.cc
 
@@ -25,24 +25,24 @@
 namespace protocols {
 namespace ligand_docking {
 
-/// @brief A class for loading InterfaceBuilders into the XML parser's DataMap.
+/// @brief A class for loading InterfaceBuilders into the XML parser's basic::datacache::DataMap.
 class InterfaceBuilderLoader : public jd2::parser::DataLoader
 {
 public:
 	InterfaceBuilderLoader();
 	virtual ~InterfaceBuilderLoader();
 
-	/// @brief The InterfaceBuilderLoader will create named InterfaceBuilders and load them into the DataMap
+	/// @brief The InterfaceBuilderLoader will create named InterfaceBuilders and load them into the basic::datacache::DataMap
 	virtual
 	void load_data(
 		core::pose::Pose const & pose,
-		utility::tag::TagPtr const tag,
-		moves::DataMap & data
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data
 	) const;
 
 };
 
-/// @brief A class for loading MoveMapBuilders into the XML parser's DataMap.
+/// @brief A class for loading MoveMapBuilders into the XML parser's basic::datacache::DataMap.
 /// NOTE that in the input .xml file, the InterfaceBuilder must be specified before
 /// the MoveMapBuilder
 class MoveMapBuilderLoader : public jd2::parser::DataLoader
@@ -51,12 +51,12 @@ public:
 	MoveMapBuilderLoader();
 	virtual ~MoveMapBuilderLoader();
 
-	/// @brief The InterfaceBuilderLoader will create named InterfaceBuilders and load them into the DataMap
+	/// @brief The InterfaceBuilderLoader will create named InterfaceBuilders and load them into the basic::datacache::DataMap
 	virtual
 	void load_data(
 		core::pose::Pose const & pose,
-		utility::tag::TagPtr const tag,
-		moves::DataMap & data
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data
 	) const;
 
 };
@@ -67,12 +67,12 @@ public:
 	LigandAreaLoader();
 	virtual ~LigandAreaLoader();
 
-	/// @brief The InterfaceBuilderLoader will create named InterfaceBuilders and load them into the DataMap
+	/// @brief The InterfaceBuilderLoader will create named InterfaceBuilders and load them into the basic::datacache::DataMap
 	virtual
 	void load_data(
 		core::pose::Pose const & pose,
-		utility::tag::TagPtr const tag,
-		moves::DataMap & data
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data
 	) const;
 
 };

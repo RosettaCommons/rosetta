@@ -30,7 +30,7 @@
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -114,8 +114,8 @@ void AtomicContactCountFilter::initialize_cross_chain(core::pack::task::TaskFact
 }
 
 void AtomicContactCountFilter::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & /*pose*/

@@ -74,8 +74,8 @@ ConstraintFileRCG::ConstraintFileRCG( String const & filename ):
 ConstraintFileRCG::~ConstraintFileRCG() {}
 
 void
-ConstraintFileRCG::parse_my_tag( TagPtr const tag,
-												protocols::moves::DataMap & data,
+ConstraintFileRCG::parse_my_tag( TagCOP const tag,
+												basic::datacache::DataMap & data,
 												protocols::filters::Filters_map const & filters,
 												protocols::moves::Movers_map const & movers,
 												core::pose::Pose const & pose )

@@ -254,8 +254,8 @@ HelixPairingFilter::compute( Pose const & pose ) const
 /// @brief parse xml
 void
 HelixPairingFilter::parse_my_tag(
-	TagPtr const tag,
-	DataMap &,
+	TagCOP const tag,
+	basic::datacache::DataMap &,
 	Filters_map const &,
 	Movers_map const &,
 	Pose const & )

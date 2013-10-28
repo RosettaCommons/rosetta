@@ -15,7 +15,7 @@
 #include <protocols/simple_filters/ResidueDistanceFilterCreator.hh>
 
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
@@ -40,7 +40,7 @@ ResidueDistanceFilterCreator::keyname() const { return "ResidueDistance"; }
 ResidueDistanceFilter::~ResidueDistanceFilter(){}
 
 void
-ResidueDistanceFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+ResidueDistanceFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
 	res1_ = core::pose::get_resnum( tag, pose, "res1_" );
 	res2_ = core::pose::get_resnum( tag, pose, "res2_" );

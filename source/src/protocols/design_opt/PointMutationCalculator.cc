@@ -23,7 +23,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>

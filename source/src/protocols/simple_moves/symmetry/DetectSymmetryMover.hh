@@ -45,7 +45,7 @@ public:
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new DetectSymmetry( *this ) ) ); }
 
 	virtual void
-	parse_my_tag( TagPtr const, protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, Pose const & );
+	parse_my_tag( TagCOP const, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, Pose const & );
 
 private:
     inline core::Real angle_with_x_axis_proj_y( xyzVector const & v) const { return numeric::dihedral_degrees(xyzVector(v[0],1,v[2]), xyzVector(0,1,0), xyzVector(0,0,0), xyzVector(1,0,0)); }

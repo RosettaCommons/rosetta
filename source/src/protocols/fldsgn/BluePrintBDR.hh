@@ -78,9 +78,9 @@ public: // typedefs
 	typedef protocols::forge::components::VarLengthBuildOP VarLengthBuildOP;
 	typedef protocols::moves::MoverOP MoverOP;
 
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 	typedef protocols::filters::Filters_map Filters_map;
-	typedef protocols::moves::DataMap DataMap;
+	typedef basic::datacache::DataMap DataMap;
 	typedef protocols::moves::Movers_map Movers_map;
 
 
@@ -234,8 +234,8 @@ public: //parser
 
 
 	/// @brief parse xml file
-	void parse_my_tag( TagPtr const tag,
-										 DataMap & data,
+	void parse_my_tag( TagCOP const tag,
+										 basic::datacache::DataMap & data,
 										 Filters_map const &,
 										 Movers_map const &,
 										 Pose const & );

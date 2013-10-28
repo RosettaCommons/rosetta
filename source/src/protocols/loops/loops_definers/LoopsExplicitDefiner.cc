@@ -18,7 +18,7 @@
 // Project Headers
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 
 // Utility Headers
@@ -44,8 +44,8 @@ using std::endl;
 using std::stringstream;
 using core::Real;
 using core::pose::Pose;
-using protocols::moves::DataMap;
-using utility::tag::TagPtr;
+using basic::datacache::DataMap;
+using utility::tag::TagCOP;
 using utility::vector0;
 using basic::Tracer;
 
@@ -77,7 +77,7 @@ LoopsExplicitDefiner::clone(
 
 SerializedLoop
 LoopsExplicitDefiner::parse_loop_tag(
-	TagPtr const tag,
+	TagCOP const tag,
 	string const & loops_name
 ) {
 
@@ -114,8 +114,8 @@ LoopsExplicitDefiner::parse_loop_tag(
 /// @brief Used to parse an xml-like tag to load parameters and properties.
 void
 LoopsExplicitDefiner::parse_my_tag(
-	TagPtr const tag,
-	DataMap const &,
+	TagCOP const tag,
+	basic::datacache::DataMap const &,
 	Pose const &
 ) {
 
@@ -126,11 +126,11 @@ LoopsExplicitDefiner::parse_my_tag(
 	string const loops_name(tag->getOption<string>("name"));
 
 
-	vector0< TagPtr >::const_iterator begin=tag->getTags().begin();
-	vector0< TagPtr >::const_iterator end=tag->getTags().end();
+	vector0< TagCOP >::const_iterator begin=tag->getTags().begin();
+	vector0< TagCOP >::const_iterator end=tag->getTags().end();
 
 	for(; begin != end; ++begin){
-		TagPtr loop_tag= *begin;
+		TagCOP loop_tag= *begin;
 
 		if(loop_tag->getName() != "loop"){
 			TR.Error

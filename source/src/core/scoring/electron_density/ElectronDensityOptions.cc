@@ -29,7 +29,7 @@ namespace electron_density {
 using basic::resource_manager::ResourceOptionsOP;
 using basic::resource_manager::ResourceOptions;
 using std::string;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 
 ///// ElectronDensityOptionsCreator /////
 ElectronDensityOptionsCreator::ElectronDensityOptionsCreator() {}
@@ -108,7 +108,7 @@ ElectronDensityOptions::set_grid_spacing(
 
 void
 ElectronDensityOptions::parse_my_tag(
-	TagPtr tag
+	TagCOP tag
 ) {
 	mapreso_ = tag->getOption<Real>("mapreso", 3.0);
 	grid_spacing_ = tag->getOption<Real>("grid_spacing", 0.0);

@@ -29,7 +29,7 @@
 #include <numeric/random/random.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
@@ -173,8 +173,8 @@ GenericSymmetricSampler::apply(Pose & pose) {
 }
 
 void 
-GenericSymmetricSampler::parse_my_tag( TagPtr const tag,
-										 DataMap & data,
+GenericSymmetricSampler::parse_my_tag( TagCOP const tag,
+										 basic::datacache::DataMap & data,
 										 Filters_map const &filters,
 										 Movers_map const &movers,
 										 Pose const & ) {

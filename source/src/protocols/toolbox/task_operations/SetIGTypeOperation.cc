@@ -32,28 +32,28 @@ SetIGTypeOperation::SetIGTypeOperation():
 	lazy_(false),
 	double_lazy_(false)
 {}
-	
+
 SetIGTypeOperation::~SetIGTypeOperation(){}
-	
+
 core::pack::task::operation::TaskOperationOP SetIGTypeOperation::clone() const
 {
 	return new SetIGTypeOperation( *this );
 }
-	
+
 void SetIGTypeOperation::apply( core::pose::Pose const &, core::pack::task::PackerTask & task ) const
 {
 	if (lin_mem_) task.or_linmem_ig( true );
 	else if (lazy_) task.or_lazy_ig( true );
 	else if (double_lazy_) task.or_double_lazy_ig( true );
 }
-	
-void SetIGTypeOperation::parse_tag( utility::tag::TagPtr tag )
+
+void SetIGTypeOperation::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 	lin_mem_ = tag->getOption< bool >("lin_mem_ig", false);
 	lazy_ = tag->getOption< bool >("lazy_ig", false);
 	double_lazy_ = tag->getOption< bool >("double_lazy_ig", false);
 }
-	
+
 core::pack::task::operation::TaskOperationOP SetIGTypeOperationCreator::create_task_operation() const
 {
 	return new SetIGTypeOperation;

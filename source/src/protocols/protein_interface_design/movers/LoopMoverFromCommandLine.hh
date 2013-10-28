@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_protein_interface_design_movers_LoopMoverFromCommandLine_HH
 
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/types.hh>
@@ -68,7 +68,7 @@ public:
 		protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new LoopMoverFromCommandLine ); }
 		void apply( core::pose::Pose & pose );
 		virtual std::string get_name() const;
-		void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+		void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 		virtual ~LoopMoverFromCommandLine();
 
 private:

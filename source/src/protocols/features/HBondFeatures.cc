@@ -44,7 +44,7 @@
 #include <core/scoring/hbonds/HBondTypeManager.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/types.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
@@ -124,10 +124,10 @@ using core::scoring::fa_sol;
 using numeric::xyzVector;
 using numeric::dihedral_radians;
 using protocols::filters::Filters_map;
-using protocols::moves::DataMap;
+using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using utility::sql_database::sessionOP;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using cppdb::statement;
 using utility::vector1;
 using basic::Tracer;
@@ -595,8 +595,8 @@ HBondFeatures::features_reporter_dependencies() const {
 
 void
 HBondFeatures::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const & /*filters*/,
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/

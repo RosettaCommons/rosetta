@@ -17,7 +17,7 @@
 #include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/scoring/Interface.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/scoring/Energies.hh>
@@ -138,7 +138,7 @@ ResidueIEFilter::resnums( utility::vector1<core::Size> const & rn ){
 ResidueIEFilter::~ResidueIEFilter() {}
 
 void
-ResidueIEFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+ResidueIEFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
 	using namespace core::scoring;
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );

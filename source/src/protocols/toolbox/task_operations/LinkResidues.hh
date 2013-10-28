@@ -9,7 +9,7 @@
 
 /// @file   protocols/toolbox/task_operations/LinkResidues.hh
 /// @brief  TaskOperation class that restricts a chain to repacking
-/// @author TJ Brunette    
+/// @author TJ Brunette
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_LinkResidues_hh
 #define INCLUDED_protocols_toolbox_task_operations_LinkResidues_hh
@@ -38,7 +38,7 @@ namespace toolbox {
 namespace task_operations {
 
 ///@details this class is a TaskOperation to prevent repacking of residues not near an interface.
-class LinkResidues : public core::pack::task::operation::TaskOperation 
+class LinkResidues : public core::pack::task::operation::TaskOperation
 {
 public:
 	typedef core::Size Size;
@@ -47,7 +47,7 @@ public:
 	typedef core::pack::task::operation::TaskOperation TaskOperation;
 	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
 	typedef TaskOperation parent;
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 
 	LinkResidues();
 
@@ -56,7 +56,7 @@ public:
 	virtual TaskOperationOP clone() const;
 	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
-  virtual void parse_tag(TagPtr tag);
+  virtual void parse_tag(TagCOP tag, DataMap & );
 
 private:
 		utility::vector1< std::string > allGroups_;

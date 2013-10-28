@@ -116,7 +116,7 @@ LoopOver::get_name() const {
 }
 
 void
-LoopOver::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &filters, protocols::moves::Movers_map const &movers, core::pose::Pose const & )
+LoopOver::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &filters, protocols::moves::Movers_map const &movers, core::pose::Pose const & )
 {
 	using namespace filters;
 

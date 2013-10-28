@@ -21,7 +21,7 @@
 // Package headers
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/ResId.hh>
 
 // Project Headers
@@ -67,8 +67,8 @@ public:
 	void report( std::ostream &, core::pose::Pose const & ) const {}
 
 	void parse_my_tag(
-		utility::tag::TagPtr const tag,
-		moves::DataMap &,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,
 		core::pose::Pose const & );
@@ -105,8 +105,8 @@ public:
 	void invert( bool const inv );
 
 	void parse_my_tag(
-		utility::tag::TagPtr const,
-		moves::DataMap &,
+		utility::tag::TagCOP const,
+		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,
 		core::pose::Pose const & );
@@ -134,8 +134,8 @@ public:
 	core::Real compute( core::pose::Pose const & ) const;
 
 	void parse_my_tag(
-		utility::tag::TagPtr const,
-		moves::DataMap &,
+		utility::tag::TagCOP const,
+		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,
 		core::pose::Pose const & );
@@ -161,8 +161,8 @@ public:
 	//No compute(), as it passes everything on to the sub-mover
 
 	void parse_my_tag(
-		utility::tag::TagPtr const,
-		moves::DataMap &,
+		utility::tag::TagCOP const,
+		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,
 		core::pose::Pose const & );
@@ -201,8 +201,8 @@ public:
 	void set_else( FilterCOP elsefilter, core::Real value = 0, core::Real elseweight = 1 );
 
 	void parse_my_tag(
-		utility::tag::TagPtr const,
-		moves::DataMap &,
+		utility::tag::TagCOP const,
+		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,
 		core::pose::Pose const & );

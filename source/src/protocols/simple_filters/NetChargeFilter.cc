@@ -29,7 +29,7 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <map>
 #include <numeric/random/random.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 #include <protocols/simple_filters/NetChargeFilter.hh>
@@ -57,7 +57,7 @@ NetChargeFilterCreator::keyname() const { return "NetCharge"; }
 NetChargeFilter::~NetChargeFilter(){}
 
 void
-NetChargeFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+NetChargeFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	chain_ = tag->getOption<core::Size>( "chain", 0 );
 	net_charge_max_ = tag->getOption<signed int>( "max", 100 );

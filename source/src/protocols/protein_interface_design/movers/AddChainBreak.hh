@@ -18,7 +18,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 // AUTO-REMOVED #include <core/kinematics/FoldTree.fwd.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 
@@ -39,7 +39,7 @@ public :
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new AddChainBreak ); }
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	void resnum( std::string const r ){ resnum_=r; }
 	std::string resnum() const{ return resnum_;}
 	void change_foldtree( bool const c ){ change_foldtree_ = c; }

@@ -80,7 +80,8 @@ using basic::resource_manager::ResourceOptionsTag;
 using basic::resource_manager::ResourceLoaderFactory;
 using basic::resource_manager::ResourceTag;
 using utility::tag::Tag;
-using utility::tag::TagPtr;
+using utility::tag::TagOP;
+using utility::tag::TagCOP;
 
 static Tracer TR("protocols.resource_manager.planner.JD2ResourceManager");
 
@@ -140,7 +141,7 @@ listed here simply for context.
 / \endverbatim
 */
 ///
-void JD2ResourceManager::read_resource_locators_tags( TagPtr tags )
+void JD2ResourceManager::read_resource_locators_tags( TagCOP tags )
 {
 	using basic::resource_manager::ResourceLocatorFactory;
 	using basic::resource_manager::ResourceLocatorOP;
@@ -230,7 +231,7 @@ listed here simply for context.
 \endverbatim
 */
 ///For an example of a ResourceOptions object, see ImportPoseOptions.
-void JD2ResourceManager::read_resource_options_tags( TagPtr tags )
+void JD2ResourceManager::read_resource_options_tags( TagCOP tags )
 {
 	using utility::tag::Tag;
 	typedef utility::excn::EXCN_Msg_Exception MsgException;
@@ -253,7 +254,7 @@ void JD2ResourceManager::read_resource_options_tags( TagPtr tags )
 
 void
 JD2ResourceManager::read_resource_options_table_tag(
-	TagPtr tag
+	TagCOP tag
 ) {
 		using namespace basic::database;
 
@@ -299,16 +300,16 @@ JD2ResourceManager::read_resource_options_table_tag(
 	}
 
 	Size row_number(0);
-	std::map< string, TagPtr > tags;
+	std::map< string, TagOP > tags;
 	while(res.next()){
 		row_number++;
 
 		string tag, type, key, value;
 		res >> tag >> type >> key >> value;
 
-		std::map< string, TagPtr >::iterator t(tags.find(tag));
+		std::map< string, TagOP >::iterator t(tags.find(tag));
 		if(t == tags.end()){
-			TagPtr newtag = new Tag();
+			TagOP newtag = new Tag();
 			newtag->setOption("tag", tag);
 			newtag->setName(type);
 			if(!key.empty()){
@@ -325,7 +326,7 @@ JD2ResourceManager::read_resource_options_table_tag(
 	}
 
 	for(
-		std::map<string, TagPtr>::const_iterator t=tags.begin(), te=tags.end();
+		std::map<string, TagOP>::const_iterator t=tags.begin(), te=tags.end();
 		t != te; ++t){
 		read_resource_option_item(t->second);
 	}
@@ -334,7 +335,7 @@ JD2ResourceManager::read_resource_options_table_tag(
 
 void
 JD2ResourceManager::read_resource_option_item(
-	TagPtr tag
+	TagCOP tag
 ) {
 	using basic::resource_manager::ResourceOptionsFactory;
 	using basic::resource_manager::ResourceOptionsOP;
@@ -403,7 +404,7 @@ JD2ResourceManager::check_resource_loader_type(
 ///that no other resource object has been delecared with the same name.
 ResourceTag
 JD2ResourceManager::read_resource_tag_item(
-	TagPtr tag,
+	TagCOP tag,
 	LoaderType const & loader_type,
 	LocatorID const & locator_id
 ) {
@@ -436,7 +437,7 @@ JD2ResourceManager::read_resource_tag_item(
 ///   locatorID item (&string):
 LocatorTag
 JD2ResourceManager::read_resource_locator_items(
-	TagPtr tag,
+	TagCOP tag,
 	LoaderType const & loader_type,
 	LocatorID & locator_id
 ) {
@@ -504,7 +505,7 @@ JD2ResourceManager::read_resource_locator_items(
 
 ResourceOptionsTag
 JD2ResourceManager::read_resource_options_tag_item(
-	TagPtr tag,
+	TagCOP tag,
 	LoaderType const & loader_type,
 	ResourceTag const & resource_tag
 ) {
@@ -577,7 +578,7 @@ listed here simply for context.
 <\Resources>
 \endverbatim
 */
-void JD2ResourceManager::read_resources_tags( TagPtr tags )
+void JD2ResourceManager::read_resources_tags( TagCOP tags )
 {
 
 	for ( Tag::tags_t::const_iterator
@@ -620,7 +621,7 @@ void JD2ResourceManager::read_resources_tags( TagPtr tags )
 
 void
 JD2ResourceManager::read_resource_table_tag(
-	TagPtr tag
+	TagCOP tag
 ) {
 	using namespace basic::database;
 

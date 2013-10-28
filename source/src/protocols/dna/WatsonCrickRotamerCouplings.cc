@@ -64,7 +64,7 @@ TaskOperationOP WatsonCrickRotamerCouplings::clone() const
 }
 
 void
-WatsonCrickRotamerCouplings::parse_tag( TagPtr /*tag*/ )
+WatsonCrickRotamerCouplings::parse_tag( TagCOP /*tag*/ , DataMap & )
 {}
 
 void

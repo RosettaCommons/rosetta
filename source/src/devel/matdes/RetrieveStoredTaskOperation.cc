@@ -94,7 +94,7 @@ RetrieveStoredTaskOperation::apply( core::pose::Pose const & pose, core::pack::t
 
 // @brief parse xml
 void
-RetrieveStoredTaskOperation::parse_tag( TagPtr tag )
+RetrieveStoredTaskOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	task_name_ = tag->getOption< std::string >( "task_name" ) ;
 }

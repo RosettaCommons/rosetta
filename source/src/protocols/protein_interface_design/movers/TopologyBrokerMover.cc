@@ -145,7 +145,7 @@ TopologyBrokerMover::get_name() const {
 }
 
 void
-TopologyBrokerMover::parse_my_tag( TagPtr const tag, DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+TopologyBrokerMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	TR<<"Setup TopologyBrokerMover Mover " << std::endl;
 	if (pose.conformation().num_chains()!=2) {

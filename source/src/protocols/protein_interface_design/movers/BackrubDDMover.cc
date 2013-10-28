@@ -59,7 +59,7 @@
 #include <utility/vector1.hh>
 #include <numeric/random/random.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 //#include <protocols/simple_moves/BackboneMover.hh>
 
@@ -405,8 +405,8 @@ BackrubDDMover::get_name() const {
 }
 
 void BackrubDDMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & pose)
@@ -428,9 +428,9 @@ void BackrubDDMover::parse_my_tag(
 	emo.bond_angle_central_atoms_to_score( option[ OptionKeys::backrub::pivot_atoms ] );
 	scorefxn_repack_->set_energy_method_options( emo );
 
-	utility::vector0< TagPtr > const backrub_tags( tag->getTags() );
-	for( utility::vector0< TagPtr >::const_iterator br_it=backrub_tags.begin(); br_it!=backrub_tags.end(); ++br_it ) {
-		TagPtr const br_tag_ptr = *br_it;
+	utility::vector0< TagCOP > const & backrub_tags( tag->getTags() );
+	for( utility::vector0< TagCOP >::const_iterator br_it=backrub_tags.begin(); br_it!=backrub_tags.end(); ++br_it ) {
+		TagCOP const br_tag_ptr = *br_it;
 		if( br_tag_ptr->getName() == "residue" ) {
 			core::Size const resnum( core::pose::get_resnum( br_tag_ptr, pose ) );
 			residues_.push_back( resnum );

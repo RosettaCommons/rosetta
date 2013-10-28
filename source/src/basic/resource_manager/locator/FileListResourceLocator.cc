@@ -97,7 +97,7 @@ FileListResourceLocator::locate_resource_stream(std::string const & locator_tag)
 }
 
 void
-FileListResourceLocator::parse_my_tag(utility::tag::TagPtr)
+FileListResourceLocator::parse_my_tag(utility::tag::TagCOP)
 {
 
 }

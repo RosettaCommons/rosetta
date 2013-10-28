@@ -135,10 +135,10 @@ Example Tag syntax for parser as of Summer 2009
 </OperateOnCertainResidues>
 
 */
-void OperateOnCertainResidues::parse_tag( TagPtr tag )
+void OperateOnCertainResidues::parse_tag( TagCOP tag , DataMap & )
 {
-  utility::vector0< TagPtr > const subtags( tag->getTags() );
-  for ( utility::vector0< TagPtr >::const_iterator subtag( subtags.begin() ), end( subtags.end() );
+  utility::vector0< TagCOP > const & subtags( tag->getTags() );
+  for ( utility::vector0< TagCOP >::const_iterator subtag( subtags.begin() ), end( subtags.end() );
 		subtag != end; ++subtag ) {
 		std::string const type( (*subtag)->getName() );
 		ResLvlTaskOperationFactory * rltof = ResLvlTaskOperationFactory::get_instance();

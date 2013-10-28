@@ -187,7 +187,7 @@ FindEndpointsOperation::apply( core::pose::Pose const & pose, core::pack::task::
 }
 
 void
-FindEndpointsOperation::parse_tag( TagPtr tag )
+FindEndpointsOperation::parse_tag( TagCOP tag , DataMap & )
 {
     Cterm_offset( tag->getOption< core::Size >( "Cterm_offset", 0 ) );
     Nterm_offset( tag->getOption< core::Size >( "Nterm_offset", 0 ));

@@ -51,7 +51,7 @@ public:
 	void
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 
 	utility::vector1< core::Size > res_ids() const{ return res_ids_; }
 	void res_ids( utility::vector1< core::Size > const s ){ res_ids_ = s; }

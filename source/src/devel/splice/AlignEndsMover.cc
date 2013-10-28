@@ -13,7 +13,6 @@
 // Unit headers
 #include <devel/splice/AlignEndsMover.hh>
 #include <devel/splice/AlignEndsMoverCreator.hh>
-#include <protocols/moves/DataMap.hh>
 #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>
 using basic::T;
@@ -193,7 +192,7 @@ AlignEndsMover::fresh_instance() const
 void
 AlignEndsMover::parse_my_tag(
 	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap &,
+	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )

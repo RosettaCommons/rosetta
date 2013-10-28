@@ -18,10 +18,18 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
+namespace devel {
+namespace domain_assembly {
 
 
 ///@brief optimizes linkers in a multidomain protein
 void assemble_domains_optimize();
+
+/// @brief Initialize a movemap reading from the command line option
+/// -da_linker_file, loading linker residue ranges from this file, and
+/// then initializing the movemap from these ranges
+core::kinematics::MoveMapOP
+read_movemap_from_da_linker_file();
 
 ///@brief reads in file that specifies which regions of the protein will
 ///  move during domain assembly
@@ -84,4 +92,9 @@ find_nearest_movable_residues(
   core::pose::Pose & pose,
   utility::vector1< std::pair < core::Size, core::Size > > & nearest_movable_residues
 );
+
+
+}
+}
+
 #endif

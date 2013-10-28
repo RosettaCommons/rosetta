@@ -118,8 +118,8 @@ SilentTrajectoryRecorder::get_name() const
 
 void
 SilentTrajectoryRecorder::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap& data /* data */,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap& data /* data */,
 	protocols::filters::Filters_map const& filters /* filters */,
 	protocols::moves::Movers_map const& movers /* movers */,
 	core::pose::Pose const& pose /* pose */

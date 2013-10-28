@@ -25,7 +25,7 @@
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
@@ -204,7 +204,7 @@ HotspotHasherMover::get_name() const {
 
 
 void
-HotspotHasherMover::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const & filters, Movers_map const &, core::pose::Pose const & pose )
+HotspotHasherMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const & filters, Movers_map const &, core::pose::Pose const & pose )
 {
 
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
@@ -242,9 +242,9 @@ HotspotHasherMover::parse_my_tag( TagPtr const tag, DataMap & data, protocols::f
 	}
 
 	// residues
-	utility::vector0< TagPtr > const hasher_tags( tag->getTags() );
-	for( utility::vector0< TagPtr >::const_iterator hash_it=hasher_tags.begin(); hash_it!=hasher_tags.end(); ++hash_it ) {
-		TagPtr const hash_tag_ptr = *hash_it;
+	utility::vector0< TagCOP > const & hasher_tags( tag->getTags() );
+	for( utility::vector0< TagCOP >::const_iterator hash_it=hasher_tags.begin(); hash_it!=hasher_tags.end(); ++hash_it ) {
+		TagCOP const hash_tag_ptr = *hash_it;
 		std::string tag_name = hash_tag_ptr->getName();
 		if( tag_name == "residue" ) {
 			std::string resname( hash_tag_ptr->getOption< std::string >( "type", "" ) );

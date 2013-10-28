@@ -1007,8 +1007,8 @@ void InsertZincCoordinationRemarkLines::apply( core::pose::Pose & p )
 }
 
 void InsertZincCoordinationRemarkLines::parse_my_tag(
-	TagPtr const,
-	protocols::moves::DataMap &,
+	TagCOP const,
+	basic::datacache::DataMap &,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const &
@@ -1091,7 +1091,7 @@ void DisableZnCoordinationResiduesTaskOp::apply(
 
 }
 
-void DisableZnCoordinationResiduesTaskOp::parse_tag( TagPtr )
+void DisableZnCoordinationResiduesTaskOp::parse_tag( TagCOP, DataMap & )
 {
 }
 
@@ -1226,8 +1226,8 @@ LoadZnCoordNumHbondCalculatorMover::apply( core::pose::Pose & )
 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void LoadZnCoordNumHbondCalculatorMover::parse_my_tag(
-	TagPtr const,
-	protocols::moves::DataMap &,
+	TagCOP const,
+	basic::datacache::DataMap &,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const & )

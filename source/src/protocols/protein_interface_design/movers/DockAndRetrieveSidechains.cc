@@ -21,7 +21,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
@@ -119,7 +119,7 @@ DockAndRetrieveSidechains::get_name() const {
 }
 
 void
-DockAndRetrieveSidechains::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
+DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	std::string const score_low( tag->getOption<string>( "score_low", "score_docking_low" ) );
 	std::string const score_high( protocols::rosetta_scripts::get_score_function_name( tag, "score_high" ) );

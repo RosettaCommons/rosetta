@@ -28,7 +28,7 @@
 #include <core/conformation/Residue.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -783,8 +783,8 @@ GreedyOptMutationMover::add_filter( protocols::filters::FilterOP filter, std::st
 
 //parse rosetta scripts tags
 void
-GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
+GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & )
@@ -811,11 +811,11 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
 	}
 
 	//load multiple filters from branch tags
-  utility::vector1< utility::tag::TagPtr > const branch_tags( tag->getTags() );
-  foreach( utility::tag::TagPtr const btag, branch_tags ){
+  utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
+  foreach( utility::tag::TagCOP const btag, branch_tags ){
     if( btag->getName() == "Filters" ){
-      utility::vector1< utility::tag::TagPtr > const filters_tags( btag->getTags() );
-      foreach( utility::tag::TagPtr const ftag, filters_tags ){
+      utility::vector1< utility::tag::TagCOP > const filters_tags( btag->getTags() );
+      foreach( utility::tag::TagCOP const ftag, filters_tags ){
         std::string const filter_name( ftag->getOption< std::string >( "filter_name" ) );
         Filters_map::const_iterator find_filt( filters.find( filter_name ));
         if( find_filt == filters.end() ) {

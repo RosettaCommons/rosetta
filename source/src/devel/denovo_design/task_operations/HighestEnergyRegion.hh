@@ -20,7 +20,7 @@
 
 // project headers
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -65,7 +65,7 @@ public:
 
 public:
 	void
-	parse_tag( utility::tag::TagPtr tag );
+	parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map );
 
 	/// @brief tells this task operation whether it should use the cache when it is applied
 	void set_use_cache( bool const use_cache );

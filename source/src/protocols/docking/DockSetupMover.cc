@@ -21,7 +21,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/docking/RigidBodyInfo.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 //Project Headers
 #include <core/pose/Pose.hh>
 
@@ -150,8 +150,8 @@ DockSetupMover::set_defaults()
 
 void
 DockSetupMover::parse_my_tag(
-  TagPtr const tag,
-	moves::DataMap& data_map,
+  TagCOP const tag,
+	basic::datacache::DataMap& data_map,
 	protocols::filters::Filters_map const&,
 	moves::Movers_map const& movers,
 	core::pose::Pose const&
@@ -179,11 +179,11 @@ DockSetupMover::parse_my_tag(
 		// as member variable: RigidBodyInfoOP rigid_body_info_;
 		rigid_body_info_ = new protocols::docking::RigidBodyInfo;
 		data_map.add( "RigidBodyInfo", "docking_setup", rigid_body_info_ );
-		tr.Debug << "added RigidBodyInfo into DataMap" << std::endl;
+		tr.Debug << "added RigidBodyInfo into basic::datacache::DataMap" << std::endl;
 	} else {
 		rigid_body_info_ = data_map.get< protocols::docking::RigidBodyInfo* >( "RigidBodyInfo", "docking_setup" );
 		assert( rigid_body_info_ );
-		tr.Debug << "RigidBodyInfo supposed to be in DataMap, but somehow failed to get it from DataMap" << std::endl;
+		tr.Debug << "RigidBodyInfo supposed to be in basic::datacache::DataMap, but somehow failed to get it from basic::datacache::DataMap" << std::endl;
 	}
 }//end parse_my_tag
 

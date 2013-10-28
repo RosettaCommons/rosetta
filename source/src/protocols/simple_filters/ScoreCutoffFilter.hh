@@ -59,7 +59,7 @@ public:
 
 	virtual void report( std::ostream & ostr, core::pose::Pose const & pose ) const;
 
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &  );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &  );
 
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.

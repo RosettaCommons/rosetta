@@ -21,7 +21,7 @@
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/types.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -62,10 +62,10 @@ using core::scoring::getScoreFunction;
 using core::scoring::hbonds::HBondDatabase;
 using core::scoring::hbonds::HBondDatabaseCOP;
 using protocols::filters::Filters_map;
-using protocols::moves::DataMap;
+using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using utility::sql_database::sessionOP;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using utility::vector1;
 using cppdb::statement;
 using cppdb::result;
@@ -112,8 +112,8 @@ HBondParameterFeatures::features_reporter_dependencies() const {
 
 void
 HBondParameterFeatures::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const & /*filters*/,
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/

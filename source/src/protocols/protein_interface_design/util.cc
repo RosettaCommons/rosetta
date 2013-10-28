@@ -37,7 +37,7 @@
 #define foreach BOOST_FOREACH
 // AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 // AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.hh>
 
 #include <core/chemical/AtomType.hh>

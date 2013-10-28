@@ -12,6 +12,8 @@
 #include <utility/vector1.hh>
 
 
+namespace devel {
+namespace domain_assembly {
 
 // a class to hold information about the domains that will be assembled together
 // in addition to the coordinates of the domains it holds the linker sequences
@@ -65,8 +67,10 @@ public:
 ///@brief builds a full length pose from a set of input pdbs
 void assemble_domains_setup();
 
-///@brief optimizes linkers in a multidomain protein
-void assemble_domains_optimize();
+// @brief optimizes linkers in a multidomain protein
+// shouldn't be in this file void assemble_domains_optimize();
 
+}
+}
 
 #endif

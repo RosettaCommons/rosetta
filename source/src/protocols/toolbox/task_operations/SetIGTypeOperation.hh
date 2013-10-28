@@ -35,21 +35,20 @@ namespace task_operations {
 
 class SetIGTypeOperation : public core::pack::task::operation::TaskOperation
 {
-
 public:
-SetIGTypeOperation();
+	SetIGTypeOperation();
 
-virtual ~SetIGTypeOperation();
-	
-virtual core::pack::task::operation::TaskOperationOP clone() const;
-	
-virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
-	
-virtual void parse_tag( utility::tag::TagPtr );
-	
+	virtual ~SetIGTypeOperation();
+
+	virtual core::pack::task::operation::TaskOperationOP clone() const;
+
+	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
+
+	virtual void parse_tag( utility::tag::TagCOP, basic::datacache::DataMap & );
+
 private:
 
-bool lin_mem_,lazy_,double_lazy_;
+	bool lin_mem_,lazy_,double_lazy_;
 
 };
 

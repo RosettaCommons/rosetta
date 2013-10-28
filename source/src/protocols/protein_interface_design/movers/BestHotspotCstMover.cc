@@ -15,7 +15,7 @@
 #include <protocols/protein_interface_design/movers/BestHotspotCstMover.hh>
 #include <protocols/protein_interface_design/movers/BestHotspotCstMoverCreator.hh>
 #include <protocols/protein_interface_design/util.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/PDBInfo.hh>
@@ -137,7 +137,7 @@ BestHotspotCstMover::get_name() const {
 	return BestHotspotCstMoverCreator::mover_name();
 }
 
-void BestHotspotCstMover::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+void BestHotspotCstMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	using namespace protocols::hotspot_hashing;
 

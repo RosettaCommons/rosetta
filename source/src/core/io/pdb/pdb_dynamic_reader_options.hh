@@ -36,7 +36,7 @@ public:
 	virtual ~PDB_DReaderOptions();
 	
 	virtual
-	void parse_my_tag( utility::tag::TagPtr tag );
+	void parse_my_tag( utility::tag::TagCOP tag );
 	
 	virtual
 	std::string type() const;

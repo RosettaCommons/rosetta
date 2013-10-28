@@ -79,7 +79,7 @@ public:
 	add_mover(
 		protocols::canonical_sampling::ThermodynamicMoverOP mover,
 		core::Real weight,
-		utility::tag::TagPtr const& subtag
+		utility::tag::TagCOP const& subtag
 	) ;
 
 protected:

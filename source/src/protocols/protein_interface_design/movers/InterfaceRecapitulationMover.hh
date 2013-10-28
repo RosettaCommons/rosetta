@@ -18,7 +18,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
 // C++ headers
@@ -48,7 +48,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const;
 	void set_reference_pose( core::pose::PoseOP );
 	core::pose::PoseCOP get_reference_pose() const;
-	virtual void parse_my_tag( utility::tag::TagPtr const, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	virtual void parse_my_tag( utility::tag::TagCOP const, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	virtual ~InterfaceRecapitulationMover();
 private:
 	core::pose::PoseOP saved_pose_;

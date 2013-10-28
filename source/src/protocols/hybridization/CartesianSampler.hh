@@ -79,8 +79,8 @@ public:
 	std::string	get_name() const { return "CartesianSampler"; }
 
 	void parse_my_tag(
-		utility::tag::TagPtr const tag,
-		moves::DataMap & data,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data,
 		filters::Filters_map const & ,
 		moves::Movers_map const & ,
 		core::pose::Pose const & pose );

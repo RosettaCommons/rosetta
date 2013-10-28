@@ -27,7 +27,7 @@
 
 //parsing
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
@@ -172,8 +172,8 @@ DockWithHotspotMover::get_name() const {
  *  - target_pdb_num or target_res_num. A single target residue to form disulfides to
  *  - target_pdb_nums or target_res_nums. A list of possible target residues
  */
-void DockWithHotspotMover::parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+void DockWithHotspotMover::parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & /*pose*/)
@@ -184,14 +184,14 @@ void DockWithHotspotMover::parse_my_tag( utility::tag::TagPtr const tag,
 	TR << "Setup DockWithHotspotMover with backbone_stub_linear_constraint with weight "<< hotspot_score_weight_ <<
 			" from:" << std::endl;
 	// Set target to the residue specified by "target_pdb_num" or "target_res_num"
-	utility::vector1< TagPtr > const branch_tags( tag->getTags() );
-	foreach( TagPtr const curr_tag, branch_tags ){
+	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
+	foreach( TagCOP const curr_tag, branch_tags ){
 		if( curr_tag->getName() != "HotspotFiles" ) {
 			TR.Error << "Error: No 'HotspotFiles' specified." << std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("");
 		} else {
-			utility::vector1< TagPtr > const branch_tags2( curr_tag->getTags() );
-			foreach( TagPtr const curr_tag2, branch_tags2 ) {
+			utility::vector1< TagCOP > const branch_tags2( curr_tag->getTags() );
+			foreach( TagCOP const curr_tag2, branch_tags2 ) {
 				std::string const file_name( curr_tag2->getOption< std::string >( "file_name" ) );
 				hotspot_filenames_.push_back(file_name);
 				core::Real cb_force( curr_tag2->getOption< core::Real >( "cb_force", 1.0 ) );

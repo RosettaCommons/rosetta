@@ -20,7 +20,7 @@
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/pose/PDBInfo.hh>
 
@@ -212,7 +212,7 @@ RmsdFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void
-RmsdFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose )
+RmsdFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose )
 {
 	/// @details
 	///if the save pose mover has been instantiated, this filter can calculate the rms
@@ -260,9 +260,9 @@ RmsdFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::Data
 		}
 	}
 
-	utility::vector0< utility::tag::TagPtr > const rmsd_tags( tag->getTags() );
-	for( utility::vector0< utility::tag::TagPtr >::const_iterator it=rmsd_tags.begin(); it!=rmsd_tags.end(); ++it ) {
-		utility::tag::TagPtr const rmsd_tag = *it;
+	utility::vector0< utility::tag::TagCOP > const rmsd_tags( tag->getTags() );
+	for( utility::vector0< utility::tag::TagCOP >::const_iterator it=rmsd_tags.begin(); it!=rmsd_tags.end(); ++it ) {
+		utility::tag::TagCOP const rmsd_tag = *it;
 		if( rmsd_tag->getName() == "residue" ) {
 			core::Size const resnum( core::pose::get_resnum( rmsd_tag, *reference_pose_ ) );
 			selection_.push_back( resnum );

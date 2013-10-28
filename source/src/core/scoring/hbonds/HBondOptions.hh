@@ -64,7 +64,7 @@ public:
 	///RosettaScripts file.
 	void
 	parse_my_tag(
-		utility::tag::TagPtr tag);
+		utility::tag::TagCOP tag);
 
 	/// @brief Double counted hbonds include:
 	/// @brief  - Hydrogen bonds to self

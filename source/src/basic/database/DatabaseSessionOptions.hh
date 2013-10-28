@@ -43,7 +43,7 @@ public:
 
 	virtual
 	void
-	parse_my_tag(utility::tag::TagPtr);
+	parse_my_tag(utility::tag::TagCOP);
 
 	utility::sql_database::sessionOP
 	database_session() const;

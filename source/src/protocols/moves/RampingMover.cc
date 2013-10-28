@@ -19,7 +19,7 @@
 // Project headers
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreTypeManager.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -211,8 +211,8 @@ MoverOP RampingMover::clone() const
 
 void
 RampingMover::parse_my_tag(
-	TagPtr const tag,
-	DataMap & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap & datamap,
 	Filters_map const & /*filters*/,
 	Movers_map const & movers,
 	Pose const & /*pose*/
@@ -302,7 +302,7 @@ RampingMover::parse_my_tag(
 		if( tag->hasOption("unramped_weights_from_sfxn")) {
 			std::string const scorefxn_key( tag->getOption<std::string>("unramped_weights_from_sfxn") );
 			if ( ! datamap.has( "scorefxns", scorefxn_key ) ) {
-				throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in DataMap.");
+				throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
 			}
 			core::scoring::ScoreFunctionCOP sfxn = datamap.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_key );
 			start_weights_ = end_weights_ = sfxn->weights();
@@ -311,11 +311,11 @@ RampingMover::parse_my_tag(
 
 
 
-		utility::vector0< TagPtr > const rampterm_tags( tag->getTags() );
-		for( utility::vector0< TagPtr >::const_iterator
+		utility::vector0< TagCOP > const & rampterm_tags( tag->getTags() );
+		for( utility::vector0< TagCOP >::const_iterator
 				rampterm_it=rampterm_tags.begin(), rampterm_it_end = rampterm_tags.end();
 				rampterm_it!=rampterm_it_end; ++rampterm_it ) {
-			TagPtr const tag_ptr = *rampterm_it;
+			TagCOP const tag_ptr = *rampterm_it;
 			if ( ! tag_ptr->hasOption("score_type") ) {
 				throw utility::excn::EXCN_RosettaScriptsOption("Ramping mover Add statement requires the score_type option");
 			}
@@ -445,7 +445,7 @@ RampingMover::set_weights( core::scoring::EnergyMap const & emap )
 RampingFuncOP
 RampingMover::instantiate_rampfunc(
 	std::string const & func_name,
-	utility::tag::TagPtr const tag_ptr
+	utility::tag::TagCOP const tag_ptr
 ) const
 {
 

@@ -64,16 +64,16 @@ public:
 
 	///@brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
-		TagPtr const,
-		protocols::moves::DataMap &,
+		TagCOP const,
+		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & );
 
 	///@brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
 	virtual void parse_score_function(
-		TagPtr const,
-		protocols::moves::DataMap const &,
+		TagCOP const,
+		basic::datacache::DataMap const &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & );

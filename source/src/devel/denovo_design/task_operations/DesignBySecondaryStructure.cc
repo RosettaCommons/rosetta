@@ -287,8 +287,8 @@ DesignBySecondaryStructureOperation::apply( Pose const & pose, core::pack::task:
 }
 
 void
-DesignBySecondaryStructureOperation::parse_tag( utility::tag::TagPtr tag ) {
-	HighestEnergyRegionOperation::parse_tag( tag );
+DesignBySecondaryStructureOperation::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap ) {
+	HighestEnergyRegionOperation::parse_tag( tag, datamap );
 	initialize_blueprint_ss( tag->getOption< std::string >( "blueprint", "" ) );
 	std::string const cmd( tag->getOption< std::string >( "cmd", "" ) );
 	if ( cmd == "" ) {

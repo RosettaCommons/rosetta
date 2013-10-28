@@ -44,7 +44,7 @@
 #include <protocols/jd2/ScoreMap.hh>
 // AUTO-REMOVED #include <protocols/jobdist/standard_mains.hh>
 // AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loops/Loops.hh>
 
@@ -204,8 +204,8 @@ ScoreMover::get_name() const {
 }
 
 void ScoreMover::parse_my_tag(
-	TagPtr const tag,
-	moves::DataMap & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap & datamap,
 	protocols::filters::Filters_map const &,
 	moves::Movers_map const &,
 	Pose const &
@@ -215,7 +215,7 @@ void ScoreMover::parse_my_tag(
 		if ( datamap.has( "scorefxns", scorefxn_key ) ) {
 			score_function_ = datamap.get< ScoreFunction* >( "scorefxns", scorefxn_key );
 		} else {
-			throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in protocols::moves::DataMap.");
+			throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
 		}
 	}
 

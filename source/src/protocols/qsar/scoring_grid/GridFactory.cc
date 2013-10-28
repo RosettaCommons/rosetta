@@ -69,7 +69,7 @@ GridFactory::factory_register(GridCreatorOP creator)
 	grid_creator_map_[grid_type]  = creator;
 }
 
-GridBaseOP GridFactory::new_grid(utility::tag::TagPtr const tag) const
+GridBaseOP GridFactory::new_grid(utility::tag::TagCOP const tag) const
 {
 	//string const name = tag->getName();
 	std::string const type = tag->getOption<std::string>("grid_type");

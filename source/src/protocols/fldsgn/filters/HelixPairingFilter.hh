@@ -29,7 +29,7 @@
 // Utility headers
 
 // Parser headers
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -59,9 +59,9 @@ public:
 	typedef protocols::fldsgn::topology::HelixPairingSet  HelixPairingSet;
 	typedef protocols::fldsgn::topology::HelixPairingSetOP  HelixPairingSetOP;
 
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 	typedef protocols::filters::Filters_map Filters_map;
-	typedef protocols::moves::DataMap DataMap;
+	typedef basic::datacache::DataMap DataMap;
 	typedef protocols::moves::Movers_map Movers_map;
 
 
@@ -113,8 +113,8 @@ public:// accessor
 public:// parser
 
 
-	virtual void parse_my_tag( TagPtr const tag,
-														 DataMap &,
+	virtual void parse_my_tag( TagCOP const tag,
+														 basic::datacache::DataMap &,
 														 Filters_map const &,
 														 Movers_map const &,
 														 Pose const & );

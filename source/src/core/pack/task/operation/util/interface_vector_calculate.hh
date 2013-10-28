@@ -34,7 +34,7 @@ namespace util{
 /// The calculation is done in the following manner.  First the point graph
 /// is used to find all residues within some big cutoff of residues on the other chain.
 /// For these residues near the interface, two metrics are used to decide if they are actually
-/// possible interface residues.  The first metric is to itterate through all the side chain
+/// possible interface residues.  The first metric is to iterate through all the side chain
 /// atoms in the residue of interest and check to see if their distance is less than the nearby
 /// atom cutoff, if so then they are an interface residue.  If a residue does not pass that
 /// check, then two vectors are drawn, a CA-CB vector and a vector from CB to a CB atom on the
@@ -71,12 +71,13 @@ calc_interface_vector( core::pose::Pose const & pose, int const interface_jump )
 utility::vector1_bool
 calc_interacting_vector(
 	core::pose::Pose const & pose,
-	std::set< core::Size > & part1res,
-	std::set< core::Size > & part2res,
+	std::set< core::Size > const & part1res,
+	std::set< core::Size > const & part2res,
 	core::Real const CB_dist_cutoff,
 	core::Real const nearby_atom_cutoff,
 	core::Real const vector_angle_cutoff,
-	core::Real const vector_dist_cutoff );
+	core::Real const vector_dist_cutoff
+);
 
 }//end namespace util
 }//operation

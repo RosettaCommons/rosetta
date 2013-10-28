@@ -70,7 +70,7 @@
 // AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/packstat.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
 
@@ -1430,8 +1430,8 @@ void InterfaceAnalyzerMover::setup_task(core::pose::Pose & pose){
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 InterfaceAnalyzerMover::parse_my_tag(
-	TagPtr const tag,
-	DataMap & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap & datamap,
 	Filters_map const &,
 	Movers_map const &,
 	Pose const & pose

@@ -26,7 +26,7 @@
 
 // Package headers
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -61,7 +61,7 @@ class IfMover : public protocols::moves::Mover {
 
   virtual std::string get_name() const;
 
-  void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+  void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
  private:
   protocols::filters::FilterOP filter_;

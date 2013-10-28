@@ -142,7 +142,7 @@ StoreCombinedStoredTasksMover::apply( core::pose::Pose & pose )
 }
 
 void
-StoreCombinedStoredTasksMover::parse_my_tag( TagPtr const tag, protocols::moves::DataMap & /*data_map*/, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+StoreCombinedStoredTasksMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & /*data_map*/, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	task1_ = tag->getOption< std::string >( "task1" ) ;
 	task2_ = tag->getOption< std::string >( "task2" ) ;

@@ -17,7 +17,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
 #include <boost/unordered/unordered_map.hpp>
@@ -45,8 +45,8 @@ public:
   virtual protocols::moves::MoverOP clone() const;
   virtual protocols::moves::MoverOP fresh_instance() const;
 	virtual std::string get_name() const;
-	void parse_my_tag(  utility::tag::TagPtr const tag,
-                                	protocols::moves::DataMap &,
+	void parse_my_tag(  utility::tag::TagCOP const tag,
+                                	basic::datacache::DataMap &,
                                   protocols::filters::Filters_map const &,
                                   protocols::moves::Movers_map const &,
                                   core::pose::Pose const & );

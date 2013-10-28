@@ -129,7 +129,7 @@ using protocols::features::StructureFeatures;
 using protocols::features::FeaturesReporterFactory;
 using protocols::jd2::JobDistributor;
 using protocols::moves::MoverOP;
-using protocols::moves::DataMap;
+using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using protocols::rosetta_scripts::parse_task_operations;
 using protocols::rosetta_scripts::parse_score_function;
@@ -141,7 +141,7 @@ using std::stringstream;
 using utility::file::FileName;
 using utility::vector0;
 using utility::vector1;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using utility::sql_database::DatabaseSessionManager;
 using utility::sql_database::session;
 using utility::sql_database::sessionOP;
@@ -289,13 +289,13 @@ ReportToDB::get_relevant_residues_mode() const {
 
 void
 ReportToDB::parse_batch_description_tag_item(
-	TagPtr const tag
+	TagCOP const tag
 ){
 	batch_description_ = tag->getOption<string>("batch_description", "");
 }
 
 void
-ReportToDB::parse_batch_name_tag_item(TagPtr const tag){
+ReportToDB::parse_batch_name_tag_item(TagCOP const tag){
 		if( tag->hasOption("name") ){
 			batch_name_ = tag->getOption<string>("name");
 			utility::replace_in(batch_name_, ' ', "_");
@@ -306,7 +306,7 @@ ReportToDB::parse_batch_name_tag_item(TagPtr const tag){
 
 void
 ReportToDB::parse_protocol_id_tag_item(
-	TagPtr const tag){
+	TagCOP const tag){
 
 	if(tag->hasOption("protocol_id")){
 //#ifdef USEMPI
@@ -327,7 +327,7 @@ ReportToDB::parse_protocol_id_tag_item(
 
 void
 ReportToDB::parse_batch_id_tag_item(
-	TagPtr const tag){
+	TagCOP const tag){
 
 	if(tag->hasOption("batch_id")){
 //#ifdef USEMPI
@@ -348,7 +348,7 @@ ReportToDB::parse_batch_id_tag_item(
 
 void
 ReportToDB::parse_use_transactions_tag_item(
-	TagPtr const tag) {
+	TagCOP const tag) {
 	if(tag->hasOption("use_transactions")){
 		use_transactions_ = tag->getOption<bool>("use_transactions");
 	}
@@ -356,7 +356,7 @@ ReportToDB::parse_use_transactions_tag_item(
 
 void
 ReportToDB::parse_cache_size_tag_item(
-	TagPtr const tag) {
+	TagCOP const tag) {
 	if(tag->hasOption("cache_size")){
 		cache_size_ = tag->getOption<bool>("cache_size");
 	}
@@ -364,7 +364,7 @@ ReportToDB::parse_cache_size_tag_item(
 
 void
 ReportToDB::parse_remove_xray_virt_tag_item(
-	TagPtr const tag) {
+	TagCOP const tag) {
 	if(tag->hasOption("remove_xray_virt")){
 		remove_xray_virt_ = tag->getOption<bool>("remove_xray_virt");
 	}
@@ -372,7 +372,7 @@ ReportToDB::parse_remove_xray_virt_tag_item(
 
 void
 ReportToDB::parse_relevant_residues_mode_tag_item(
-	TagPtr const tag) {
+	TagCOP const tag) {
 	string rel_res_mode = tag->getOption<string>(
 			"relevant_residues_mode", "explicit");
 	std::transform(
@@ -393,8 +393,8 @@ ReportToDB::parse_relevant_residues_mode_tag_item(
 /// See
 void
 ReportToDB::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const & filters,
 	Movers_map const & movers,
 	Pose const & pose )
@@ -478,12 +478,12 @@ ReportToDB::parse_my_tag(
 
 	task_factory_ = parse_task_operations(tag, data);
 
-	vector0< TagPtr >::const_iterator begin=tag->getTags().begin();
-	vector0< TagPtr >::const_iterator end=tag->getTags().end();
+	vector0< TagCOP >::const_iterator begin=tag->getTags().begin();
+	vector0< TagCOP >::const_iterator end=tag->getTags().end();
 
 	for(; begin != end; ++begin){
-		TagPtr feature_tag= *begin;
-		//	foreach(TagPtr const & feature_tag, tag->getTags()){
+		TagCOP feature_tag= *begin;
+		//	foreach(TagCOP const & feature_tag, tag->getTags()){
 
 		if(feature_tag->getName() != "feature"){
 			TR.Error << "Please include only tags with name 'feature' as subtags of ReportToDB" << endl;

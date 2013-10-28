@@ -83,8 +83,8 @@ NtoC_RCG::NtoC_RCG( Real const dist, Real const coef ):
 NtoC_RCG::~NtoC_RCG() {}
 
 void
-NtoC_RCG::parse_my_tag( TagPtr const tag,
-												protocols::moves::DataMap & data,
+NtoC_RCG::parse_my_tag( TagCOP const tag,
+												basic::datacache::DataMap & data,
 												protocols::filters::Filters_map const & filters,
 												protocols::moves::Movers_map const & movers,
 												core::pose::Pose const & pose )

@@ -18,7 +18,7 @@
 
 
 // protocols headers
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
@@ -240,8 +240,8 @@ SimulatedTempering::fresh_instance() const
 
 void
 SimulatedTempering::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
 	pose::Pose const & pose

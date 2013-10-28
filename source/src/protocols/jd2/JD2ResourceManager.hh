@@ -110,27 +110,27 @@ public:
 	/// @brief Read the portion of an XML file that declares ResourceLocator objects
 	void
 	read_resource_locators_tags(
-		utility::tag::TagPtr tags );
+		utility::tag::TagCOP tags );
 
 	void
 	read_resource_options_tags(
-		utility::tag::TagPtr tags );
+		utility::tag::TagCOP tags );
 
 
 	void
 	read_resources_tags(
-		utility::tag::TagPtr tags );
+		utility::tag::TagCOP tags );
 
 private:
 	// Functions to help parsing
 
 	void
 	read_resource_options_table_tag(
-		utility::tag::TagPtr tag);
+		utility::tag::TagCOP tag);
 
 	void
 	read_resource_option_item(
-		utility::tag::TagPtr tag);
+		utility::tag::TagCOP tag);
 
 	void
 	check_resource_loader_type(
@@ -138,24 +138,24 @@ private:
 
 	basic::resource_manager::ResourceTag
 	read_resource_tag_item(
-		utility::tag::TagPtr tags,
+		utility::tag::TagCOP tags,
 		basic::resource_manager::LoaderType const & loader_type,
 		basic::resource_manager::LocatorID const & locator_id);
 
 	void
 	read_resource_table_tag(
-		utility::tag::TagPtr tags);
+		utility::tag::TagCOP tags);
 
 
 	basic::resource_manager::LocatorTag
 	read_resource_locator_items(
-		utility::tag::TagPtr tags,
+		utility::tag::TagCOP tags,
 		basic::resource_manager::LoaderType const & loader_type,
 		basic::resource_manager::LocatorID & locator_id);
 
 	basic::resource_manager::ResourceOptionsTag
 	read_resource_options_tag_item(
-		utility::tag::TagPtr tags,
+		utility::tag::TagCOP tags,
 		basic::resource_manager::LoaderType const & loader_type,
 		basic::resource_manager::ResourceTag const & resource_tag);
 

@@ -52,7 +52,7 @@ public:
 	void
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 
 	utility::vector1< core::Size > start_res() const{ return start_res_; }
 	void start_res( utility::vector1< core::Size > const s ){ start_res_ = s; }

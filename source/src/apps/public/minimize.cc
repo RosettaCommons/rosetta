@@ -34,7 +34,7 @@
 // AUTO-REMOVED #include <basic/datacache/DiagnosticData.hh>
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>

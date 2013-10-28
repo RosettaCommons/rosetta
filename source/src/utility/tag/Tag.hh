@@ -14,18 +14,24 @@
 #ifndef INCLUDED_utility_tag_tag_HH
 #define INCLUDED_utility_tag_tag_HH
 
+// Unit headers
+#include <utility/tag/Tag.fwd.hh>
+
+// C++ Headers
 #include <iosfwd>
 #include <map>
 #include <sstream>
 #include <string>
-//#include <vector>
 #include <cassert>
-#include <utility/tag/Tag.fwd.hh>
-#include <utility/exit.hh>
 #include <iostream>
 
+// Utility headers
+#include <utility/exit.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector0.hh>
+
+// Boost headers
 #include <boost/lexical_cast.hpp>
 
 namespace utility {
@@ -37,11 +43,9 @@ public:
 	virtual ~Tag();
 
 	typedef std::map<std::string, std::string > options_t;
-	typedef utility::vector0< TagPtr > tags_t;
+	typedef utility::vector0< TagCOP > tags_t;
 
 public:
-	static size_t num_tags; // why?!
-
 	Tag();
 
 	void clear();
@@ -50,10 +54,10 @@ public:
 	void setName(std::string const& name);
 	std::string const& getName() const { return name_; }
 
-	void addTag( TagPtr const& tag );
-	utility::vector0< TagPtr > const & getTags() const;
-	utility::vector0< TagPtr > const & getTags( std::string const& name ) const;
-	TagPtr const & getTag( std::string const& name ) const;
+	void addTag( TagCOP const & tag );
+	utility::vector0< TagCOP > const & getTags() const;
+	utility::vector0< TagCOP > const & getTags( std::string const& name ) const;
+	TagCOP const & getTag( std::string const& name ) const;
 	bool hasTag( std::string const& name ) const;
 	bool hasOption( std::string const& key ) const;
 
@@ -69,6 +73,10 @@ public:
 		accessed_options_.erase(key);
 	} // setOption
 
+	/// @brief Retrieve an option from the Tag with the given key name, using the
+	/// provided default value (t_default) if the option is not present in the tag.
+	/// @throws Throws a utility::excn::EXCN_Msg_Exception if the boost::lexical_cast
+	/// fails to convert the input type as requested.
 	template< class T >
 	T
 	getOption(std::string const& key, T const& t_default) const {
@@ -82,62 +90,58 @@ public:
 		try{
 			return boost::lexical_cast<T>(i->second);
 		} catch(boost::bad_lexical_cast &) {
-			std::cerr << "getOption: key= " << key << " stream extraction failed! Tried to parse '" << i->second <<
-					"' returning default value: '" << t_default << "'" << std::endl;
+			std::stringstream error_message;
+			error_message << "getOption: key= " << key << " stream extraction failed! Tried to parse '" << i->second << "'\n";
+			throw utility::excn::EXCN_Msg_Exception( error_message.str() );
 		}
 		return t_default;
 	}
 
+	/// @brief Retrieve an option from the Tag with the given key name.
+	/// @throws Throws a utility::excn::EXCN_Msg_Exception if the an option
+	/// with the given key is not present, or if the boost::lexical_cast fails
+	/// to convert the input type as requested.
 	template< class T >
 	T
 	getOption(std::string const& key) const {
 		options_t::const_iterator i = mOptions_.find(key);
 		if( i == mOptions_.end() ) {
-			std::cerr << "Option " << key << " not found." << std::endl;
-			runtime_assert( false );
+			std::stringstream error_message;
+			error_message << "Option " << key << " not found.\n";
+			throw utility::excn::EXCN_Msg_Exception( error_message.str() );
 		}
 		accessed_options_[key]= i->second;
 		try{
 			return boost::lexical_cast<T>(i->second);
 		} catch(boost::bad_lexical_cast &) {
-			std::cerr << "getOption: key= " << key << " stream extraction failed! Tried to parse '" << i->second <<
-				"' returning uninitialized value: '" << T() << "'" << std::endl;
+			std::stringstream error_message;
+			error_message << "getOption: key= " << key << " stream extraction failed! Tried to parse '" << i->second << "'\n";
+			throw utility::excn::EXCN_Msg_Exception( error_message.str() );
 		}
-		return T();
+		return T(); // appease compiler
 	}
 
 	// See also the explicit specialization of getOption() below.
 
-	options_t const& getOptions() const { return mOptions_; }
-	void setOptions( options_t const& options ) {
-		mOptions_ = options;
-		accessed_options_.clear();
-	}
+	options_t const& getOptions() const;
+	void setOptions( options_t const& options );
 
 	void read(std::istream& in);
 	void write(std::ostream& out, int num_tabs = 0 ) const;
 
-	TagPtr const &
-	operator[](std::string const& key) const {
-		return getTag(key);
-	} // operator[]
+	TagCOP const &
+	operator[](std::string const& key) const;
 
-	void die_for_unaccessed_options();
-	void die_for_unaccessed_options_recursively(){
-		die_for_unaccessed_options();
-		tags_t::const_iterator begin= vTags_.begin();
-		for(; begin != vTags_.end(); ++begin){
-			(*begin)->die_for_unaccessed_options_recursively();
-		}
-	}
+	void die_for_unaccessed_options() const;
+	void die_for_unaccessed_options_recursively() const;
 
 	static
-	TagPtr create(std::istream& in); // creates a new tag and reads into it
+	TagOP create(std::istream& in); // creates a new tag and reads into it
 
 	static
-	TagPtr create(std::string instring); // creates a new tag and reads into it
+	TagOP create(std::string instring); // creates a new tag and reads into it
 
-	TagPtr clone() const;
+	TagOP clone() const;
 
 private:
 
@@ -146,12 +150,12 @@ private:
 	mutable options_t accessed_options_;
 	tags_t vTags_;
 	std::map<std::string,tags_t> mvTags_;
-	static utility::vector0<TagPtr> const vEmpty_; // need to return this from getTags
+	static utility::vector0<TagCOP> const vEmpty_; // need to return this from getTags
 
 }; // class Tag
 
-std::ostream& operator<<(std::ostream& out, Tag const& tag);
-std::ostream& operator<<(std::ostream& out, TagPtr const& tag);
+std::ostream& operator<<(std::ostream& out, Tag const & tag);
+std::ostream& operator<<(std::ostream& out, TagCOP const & tag);
 
 //This is explicit specialization for boolean values
 //to allow for use of "true" "false" etc. in addition to 1 and 0

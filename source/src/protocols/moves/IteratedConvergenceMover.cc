@@ -15,7 +15,7 @@
 #include <protocols/moves/IteratedConvergenceMover.hh>
 #include <protocols/moves/IteratedConvergenceMoverCreator.hh>
 
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 // AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.hh>
 
@@ -123,8 +123,8 @@ IteratedConvergenceMover::get_name() const {
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 IteratedConvergenceMover::parse_my_tag(
-	TagPtr const tag,
-	DataMap &,
+	TagCOP const tag,
+	basic::datacache::DataMap &,
 	Filters_map const & filters,
 	Movers_map const & movers,
 	Pose const &

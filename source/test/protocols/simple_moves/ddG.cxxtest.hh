@@ -72,7 +72,7 @@ public:
 	}
 
   void test_filter_parsing() {
-    DataMap data;
+    basic::datacache::DataMap data;
     Filters_map filters;
     Movers_map movers;
 
@@ -83,7 +83,7 @@ public:
     filters["sfT99"] = sf;
 
     protocols::simple_moves::ddG testmover;
-    TagPtr tag = tagptr_from_string("<ddG name=test filter=sfT99 />\n");
+    TagCOP tag = tagptr_from_string("<ddG name=test filter=sfT99 />\n");
     testmover.parse_my_tag( tag, data, filters, movers, *testpose_ );
 		testmover.apply( *testpose_ );
 

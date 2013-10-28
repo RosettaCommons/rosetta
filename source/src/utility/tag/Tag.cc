@@ -20,7 +20,7 @@
 ///  When read into a tag, the following code would be valid:
 ///    std::ifstream fin;
 ///    fin.open("loop_design.tag")
-///    TagPtr tag = Tag::create( fin );
+///    TagCOP tag = Tag::create( fin );
 ///    runtime_assert( tag->getName() == "loop_design" );
 ///    int max_cycles = tag->getTag("params")->getOption<int>("max_cycles");
 ///
@@ -101,13 +101,9 @@ Tag::~Tag() {}
 
 using namespace std;
 
-size_t Tag::num_tags = 0;
+utility::vector0<TagCOP> const Tag::vEmpty_; // need to return this from getTags
 
-utility::vector0<TagPtr> const Tag::vEmpty_; // need to return this from getTags
-
-Tag::Tag() {
-	++num_tags;
-}
+Tag::Tag() {}
 
 void Tag::clear() {
 	name_.clear();
@@ -116,7 +112,20 @@ void Tag::clear() {
 	mvTags_.clear();
 }
 
-void Tag::die_for_unaccessed_options(){
+Tag::options_t const&
+Tag::getOptions() const { return mOptions_; }
+
+void Tag::setOptions( options_t const& options ) {
+	mOptions_ = options;
+	accessed_options_.clear();
+}
+
+TagCOP const &
+Tag::operator[](std::string const& key) const {
+	return getTag(key);
+} // operator[]
+
+void Tag::die_for_unaccessed_options() const {
 	options_t::const_iterator option= mOptions_.begin();
 	for(; option != mOptions_.end(); ++option){
 		std::string const & option_key= option->first;
@@ -131,6 +140,14 @@ void Tag::die_for_unaccessed_options(){
 	}
 }
 
+void Tag::die_for_unaccessed_options_recursively() const {
+	die_for_unaccessed_options();
+	tags_t::const_iterator begin= vTags_.begin();
+	for(; begin != vTags_.end(); ++begin){
+		(*begin)->die_for_unaccessed_options_recursively();
+	}
+}
+
 
 void Tag::setName(string const& name) {
 	name_ = name;
@@ -142,33 +159,34 @@ Tag::hasOption( string const& key ) const {
 	return i != mOptions_.end() && i->second.size() != 0 ;
 }
 
-void Tag::addTag( TagPtr const& tag ) {
+void Tag::addTag( TagCOP const & tag ) {
 	vTags_.push_back(tag);
 	mvTags_[ tag->getName() ].push_back( tag );
 }
 
-utility::vector0< TagPtr > const &
+utility::vector0< TagCOP > const &
 Tag::getTags() const {
 	return vTags_;
 }
 
-utility::vector0< TagPtr > const &
+utility::vector0< TagCOP > const &
 Tag::getTags( string const& name ) const {
-	map< string, utility::vector0< TagPtr > >::const_iterator i = mvTags_.find(name);
+	map< string, utility::vector0< TagCOP > >::const_iterator i = mvTags_.find(name);
 	if( i == mvTags_.end() ) {
 		return vEmpty_;
 	}
 	return i->second;
 }
 
-TagPtr const &
+TagCOP const &
 Tag::getTag( string const& name ) const
 {
-	utility::vector0< TagPtr > const& v = getTags(name);
+	utility::vector0< TagCOP > const& v = getTags(name);
 	if( v.size() != 1 ) {
-		std::cerr << "Tag::getTag - name=" << name << ", appears " << v.size() << " times in xml file. Only allowed once." << std::endl;
-		std::cerr << *this << std::endl;
-		runtime_assert( false );
+		std::stringstream error_msg;
+		error_msg << "Tag::getTag - name=" << name << ", appears " << v.size() << " times in xml file. Only allowed once.\n";
+		error_msg << *this << std::endl;
+		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
 	}
 	return v[0];
 } // getTag
@@ -193,7 +211,7 @@ void Tag::write(std::ostream& out, int num_tabs ) const
 	} else {
 		out << ">\n";
 		for( tags_t::const_iterator i = vTags_.begin(), end_i = vTags_.end(); i != end_i; ++i ) {
-			TagPtr tag = *i;
+			TagCOP tag = *i;
 			tag->write(out,num_tabs+1);
 		}
 		out << tabs << "</" << name_ << ">\n";
@@ -209,8 +227,11 @@ size_t Tag::size() const {
 	return rval;
 } // Tag::size
 
-//This is explicit specialization for boolean values
-//to allow for use of "true" "false" etc. in addition to 1 and 0
+/// @details This is explicit specialization for boolean values
+/// to allow for use of "true" "false" etc. in addition to 1 and 0
+/// @throws Throws a utility::excn::EXCN_Msg_Exception if the option
+/// is proviced, but the string that's given is not a valid true/false
+/// string (either "true", "false", "1" or "0").
 template<>
 bool
 Tag::getOption<bool>(std::string const& key, bool const& t_default) const {
@@ -222,25 +243,30 @@ Tag::getOption<bool>(std::string const& key, bool const& t_default) const {
 	accessed_options_[key]= i->second;
 	if ( utility::is_true_string( i->second ) ) { return true; }
 	if ( utility::is_false_string( i->second ) ) { return false; }
-	std::cerr << "getOption: key= " << key << " stream extraction for boolean value failed! Tried to parse '" << i->second <<
-				"' returning default value: '" << t_default << "'." << std::endl;
+	std::stringstream error_message;
+	error_message << "getOption: key= " << key << " stream extraction for boolean value failed! Tried to parse '" << i->second << "\n";
+	throw utility::excn::EXCN_Msg_Exception( error_message.str() );
 	return t_default;
 }
 
+/// @throws Throws a utility::excn::EXCN_Msg_Exception if none of the
+/// accepted boolean strings is provided.
 template<>
 bool
 Tag::getOption<bool>(std::string const& key) const {
 	options_t::const_iterator i = mOptions_.find(key);
 	if( i == mOptions_.end() ) {
-		std::cerr << "Option " << key << " not found." << std::endl;
-		runtime_assert( false );
+		std::stringstream error_message;
+		error_message << "Option " << key << " not found.\n";
+		throw utility::excn::EXCN_Msg_Exception( error_message.str() );
 	}
 	accessed_options_[key]= i->second;
 	if ( utility::is_true_string( i->second ) ) { return true; }
 	if ( utility::is_false_string( i->second ) ) { return false; }
-	std::cerr << "getOption: key= " << key << " stream extraction for boolean value failed! Tried to parse '" << i->second <<
-				"' returning false." << std::endl;
-	return false;
+	std::stringstream error_message;
+	error_message << "getOption: key= " << key << " stream extraction for boolean value failed! Tried to parse '" << i->second << "\n";
+	throw utility::excn::EXCN_Msg_Exception( error_message.str() );
+	return false; // appease compiler
 }
 
 // ____________________ <boost::spirit parser definition> ____________________
@@ -271,25 +297,25 @@ struct name_and_options_closure : public boost::spirit::classic::closure<name_an
 	member1 value;
 }; // name
 
-struct tag_closure : public boost::spirit::classic::closure<tag_closure,TagPtr>
+struct tag_closure : public boost::spirit::classic::closure< tag_closure,TagOP >
 {
 	member1 value;
 }; // tag_closure
 
-void set_name_and_options( TagPtr& tag, name_and_options_value_type const & v )
+void set_name_and_options( TagOP & tag, name_and_options_value_type const & v )
 {
-	tag = TagPtr( new Tag() );
+	tag = TagOP( new Tag() );
 	tag->setName( v.first );
 	for(  map<string,string>::const_iterator i = v.second.begin(), end_i = v.second.end(); i != end_i ; ++i ) {
 		tag->setOption( i->first, i->second );
 	}
 } // set_name_and_options
 
-void add_tag( TagPtr& tag, TagPtr const& other ) {
+void add_tag( TagOP tag, TagCOP other ) {
 	tag->addTag( other );
 } // set_name_and_options
 
-void assert_matching_tag_names( TagPtr& tag, string const& closing_tag_name )
+void assert_matching_tag_names( TagCOP tag, string const& closing_tag_name )
 {
 	if( tag->getName() != closing_tag_name ) {
 		std::cerr << "error - tag names do not match! (Possibly due to unclosed tag.) " << tag->getName() << " != " << closing_tag_name << endl;
@@ -458,7 +484,7 @@ void Tag::read(std::istream& in ) {
 	iterator_t end;
 	//begin.set_tabchars(8); // ??? what does this do
 
-	TagPtr tag; // don't need to initialize this at all
+	TagOP tag; // don't need to initialize this at all
 	tag_grammar g;
 	bool full = parse(begin, end, g[ var(tag) = arg1 ] ).full;
 
@@ -483,7 +509,7 @@ while( in.peek() != EOF ) str.push_back(in.get());
 
 tag_grammar g;
 
-TagPtr tag; // don't need to initialize this at all
+TagCOP tag; // don't need to initialize this at all
 
 if( parse( str.c_str(), g[ var(tag) = arg1 ] ).full ) {
 		*this = *tag;
@@ -495,24 +521,24 @@ else {
 } // read
 */
 
-TagPtr
+TagOP
 Tag::create(std::istream& in) {
-	TagPtr tag( new Tag() );
+	TagOP tag( new Tag() );
 	tag->read(in);
 	return tag;
 } // creates a new tag and reads into it
 
-TagPtr
+TagOP
 Tag::create(std::string instring) {
 	std::stringstream in(instring);
 
 	return create(in);
 } // creates a new tag and reads into it
 
-TagPtr
+TagOP
 Tag::clone() const {
 
-	TagPtr rval = TagPtr( new Tag() );
+	TagOP rval = new Tag;
 
 	rval->name_ = name_;
 	rval->mOptions_ = mOptions_;
@@ -530,7 +556,7 @@ std::ostream& operator<<(std::ostream& out, Tag const& tag) {
 	return out;
 }
 
-std::ostream& operator<<(std::ostream& out, TagPtr const& tag_ptr) {
+std::ostream& operator<<(std::ostream& out, TagCOP const& tag_ptr) {
 	tag_ptr->write(out);
 	return out;
 }

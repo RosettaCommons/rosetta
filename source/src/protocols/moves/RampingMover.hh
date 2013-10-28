@@ -30,7 +30,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <utility/vector1.hh>
@@ -168,8 +168,8 @@ public:
 	virtual std::string get_name() const;
 	
 	virtual void parse_my_tag( 
-		utility::tag::TagPtr const tags,
-		protocols::moves::DataMap & datamap,
+		utility::tag::TagCOP const tags,
+		basic::datacache::DataMap & datamap,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose);
@@ -188,7 +188,7 @@ private:
 
 	RampingFuncOP instantiate_rampfunc(
 		std::string const & func_name,
-		utility::tag::TagPtr const tag_ptr ) const;
+		utility::tag::TagCOP const tag_ptr ) const;
 
 private:
 

@@ -159,10 +159,10 @@ DesignAroundOperation::include_residue( core::Size const resid )
 }
 
 void
-DesignAroundOperation::parse_tag( TagPtr tag )
+DesignAroundOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	string_resnums_ = tag->getOption< std::string >( "resnums" );// these are kept in memory until the pose is available (at apply time)
-    design_shell( tag->getOption< core::Real >( "design_shell", 8.0 ) );
+	design_shell( tag->getOption< core::Real >( "design_shell", 8.0 ) );
 	allow_design( tag->getOption< bool >( "allow_design", 1 ) );
 	resnums_allow_design( tag->getOption< bool >( "resnums_allow_design", 1 ) );
 	repack_shell( tag->getOption< core::Real >( "repack_shell", 8.0 ));

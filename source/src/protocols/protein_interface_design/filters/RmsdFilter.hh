@@ -51,7 +51,7 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~RmsdFilter();
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose );
 	void superimpose_on_all( bool const b ){ superimpose_on_all_ = b; }
 	bool superimpose_on_all() const{ return superimpose_on_all_; }
 private:

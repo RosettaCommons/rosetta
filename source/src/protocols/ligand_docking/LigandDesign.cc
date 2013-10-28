@@ -120,8 +120,8 @@ std::string LigandDesign::get_name() const{
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 LigandDesign::parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & /*datamap*/,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & /*datamap*/,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/

@@ -15,7 +15,7 @@
 #include <protocols/simple_filters/SidechainRmsdFilterCreator.hh>
 
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
@@ -54,7 +54,7 @@ SidechainRmsdFilter::SidechainRmsdFilter( core::Size const res1, core::Size cons
 SidechainRmsdFilter::~SidechainRmsdFilter(){}
 
 void
-SidechainRmsdFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data_map, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+SidechainRmsdFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data_map, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
 	res1_ = core::pose::get_resnum( tag, pose, "res1_" );
 	res2_ = core::pose::get_resnum( tag, pose, "res2_" );

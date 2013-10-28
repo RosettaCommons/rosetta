@@ -157,7 +157,7 @@ public:
 	
 	virtual core::pack::task::operation::TaskOperationOP clone() const;
 	
-	//virtual void parse_tag( TagPtr );  //Not implemented - Not currently a general way to load data from a file or db.  
+	//virtual void parse_tag( TagCOP, DataMap & );  //Not implemented - Not currently a general way to load data from a file or db.  
 	
 private:
 	void init();

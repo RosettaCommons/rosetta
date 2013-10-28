@@ -53,7 +53,7 @@ public:
   /// task will be later applied.
   virtual void apply( Pose const & pose, PackerTask & task ) const;
 
-	virtual void parse_tag( TagPtr tag );
+	virtual void parse_tag( TagCOP tag , DataMap & );
 
 	void
 	set_fix_catalytic_aa( bool setting ){
@@ -93,7 +93,7 @@ public:
   /// task will be later applied.
   virtual void apply( Pose const & pose, PackerTask & task) const;
 
-  virtual void parse_tag( TagPtr );
+  virtual void parse_tag( TagCOP, DataMap & );
 
 	void
 	find_design_interface(
@@ -191,7 +191,7 @@ public:
 	/// task will be later applied.
 	virtual void apply( Pose const & pose, PackerTask & task) const;
 
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 
 	static void register_options();
 
@@ -219,7 +219,7 @@ public:
 
   virtual TaskOperationOP clone() const;
 
-	void parse_tag( TagPtr tag );
+	void parse_tag( TagCOP tag , DataMap & );
 
   /// @brief Change a packer task in some way.  The input pose is the one to which the input
   /// task will be later applied.
@@ -249,7 +249,7 @@ public:
 
 	static void register_options();
 
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 
   /// @brief Change a packer task in some way.  The input pose is the one to which the input
   /// task will be later applied.

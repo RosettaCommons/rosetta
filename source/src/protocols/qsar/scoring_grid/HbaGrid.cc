@@ -40,7 +40,7 @@ std::string HbaGridCreator::keyname() const
 	return HbaGridCreator::grid_name();
 }
 
-GridBaseOP HbaGridCreator::create_grid(utility::tag::TagPtr const tag) const
+GridBaseOP HbaGridCreator::create_grid(utility::tag::TagCOP const tag) const
 {
 	GridBaseOP hba_grid= new HbaGrid();
 
@@ -90,7 +90,7 @@ void HbaGrid::deserialize(utility::json_spirit::mObject data)
 }
 
 void
-HbaGrid::parse_my_tag(utility::tag::TagPtr const /*tag*/){
+HbaGrid::parse_my_tag(utility::tag::TagCOP const /*tag*/){
 
 }
 

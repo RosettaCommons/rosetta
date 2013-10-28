@@ -33,7 +33,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Package headers
@@ -101,8 +101,8 @@ class SingleFragmentMover : public protocols::moves::Mover {
   virtual MoverOP fresh_instance() const;
 
   /// @brief Mover-specific parsing required by RosettaScripts
-  void parse_my_tag(const utility::tag::TagPtr tag,
-                    protocols::moves::DataMap& data,
+  void parse_my_tag(const utility::tag::TagCOP tag,
+                    basic::datacache::DataMap& data,
                     const protocols::filters::Filters_map& filters,
                     const protocols::moves::Movers_map& movers,
                     const Pose& pose);

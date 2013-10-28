@@ -48,7 +48,7 @@
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/simple_moves/ddG.hh>
 #include <protocols/simple_moves/ddGCreator.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -197,8 +197,8 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	}
 }
 void ddG::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap  & data,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap  & data,
 	protocols::filters::Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const& pose)

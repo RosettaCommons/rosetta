@@ -32,7 +32,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -230,7 +230,7 @@ ConsensusDesignMover::get_name() const {
 }
 
 void
-ConsensusDesignMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+ConsensusDesignMover::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data_map );
 	if( tag->hasOption("invert_task") ) invert_task_ = tag->getOption< bool >("invert_task",1);

@@ -41,7 +41,7 @@ TempInterpolator::TempInterpolator( core::Size n_levels, core::Real start, core:
   interpolate();
 }
 
-TempInterpolator::TempInterpolator( utility::tag::TagPtr tag, core::Size n_levels ) {
+TempInterpolator::TempInterpolator( utility::tag::TagCOP tag, core::Size n_levels ) {
   if ( tag->hasOption( "start" ) && tag->hasOption( "end" ) ) {
     start_ = tag->getOption< core::Real >( "start" );
     end_ = tag->getOption< core::Real >( "end" );

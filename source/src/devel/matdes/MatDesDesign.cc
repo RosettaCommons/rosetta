@@ -24,7 +24,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/jd2/parser/BluePrint.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
@@ -170,8 +170,8 @@ MatDesDesign::repack(Pose & pose, ScoreFunctionOP sf, std::set<Size> design_pos)
 
 
 void 
-MatDesDesign::parse_my_tag( TagPtr const tag,
-										 DataMap & data,
+MatDesDesign::parse_my_tag( TagCOP const tag,
+										 basic::datacache::DataMap & data,
 										 Filters_map const &,
 										 Movers_map const &,
 										 Pose const & ) {

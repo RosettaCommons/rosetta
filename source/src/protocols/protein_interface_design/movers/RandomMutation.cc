@@ -30,7 +30,7 @@
 #include <numeric/random/random.hh>
 #include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <boost/foreach.hpp>
@@ -155,7 +155,7 @@ RandomMutation::get_name() const {
 }
 
 void
-RandomMutation::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+RandomMutation::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
   task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
   scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();

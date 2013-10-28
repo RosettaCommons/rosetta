@@ -16,7 +16,7 @@
 #include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 #include <core/conformation/symmetry/SymmData.hh>
 
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 // AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
@@ -162,8 +162,8 @@ SetupForSymmetryMover::apply( core::pose::Pose & pose )
 }
 
 void SetupForSymmetryMover::parse_my_tag(
-			utility::tag::TagPtr const tag,
-			moves::DataMap & /*data*/,
+			utility::tag::TagCOP const tag,
+			basic::datacache::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
 			core::pose::Pose const & /*pose*/ ) {
@@ -223,8 +223,8 @@ ExtractAsymmetricUnitMover::apply( core::pose::Pose & pose )
 }
 
 void ExtractAsymmetricUnitMover::parse_my_tag(
-	utility::tag::TagPtr const /*tag*/,
-	moves::DataMap & /*data*/,
+	utility::tag::TagCOP const /*tag*/,
+	basic::datacache::DataMap & /*data*/,
 	filters::Filters_map const & /*filters*/,
 	moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/ ) { }
@@ -256,8 +256,8 @@ ExtractAsymmetricPoseMover::apply( core::pose::Pose & pose )
 }
 
 void ExtractAsymmetricPoseMover::parse_my_tag(
-	utility::tag::TagPtr const /*tag*/,
-	moves::DataMap & /*data*/,
+	utility::tag::TagCOP const /*tag*/,
+	basic::datacache::DataMap & /*data*/,
 	filters::Filters_map const & /*filters*/,
 	moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/ ) { }

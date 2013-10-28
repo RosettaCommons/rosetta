@@ -30,7 +30,7 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
 
@@ -150,7 +150,7 @@ ScoreCutoffFilter::get_score( core::pose::Pose const & pose ) const {
 }
 
 void
-ScoreCutoffFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & , protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &  )
+ScoreCutoffFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & , protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &  )
 {
 	if (tag->hasOption("report_residue_pair_energies")) {
 		if( tag->getOption<core::Size>("report_residue_pair_energies",0) == 1 )	report_residue_pair_energies_ = true;

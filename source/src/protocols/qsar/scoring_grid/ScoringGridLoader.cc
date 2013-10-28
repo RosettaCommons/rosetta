@@ -43,12 +43,12 @@ ScoringGridLoader::~ScoringGridLoader() {}
 
 void ScoringGridLoader::load_data(
 	core::pose::Pose const &,
-	utility::tag::TagPtr const tag,
-	moves::DataMap &
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap &
 ) const
 {
 	using namespace utility::tag;
-	typedef utility::vector0< TagPtr > TagPtrs;
+	typedef utility::vector0< TagCOP > TagCOPs;
 
 	/// Setup the scoring grid_manager
 
@@ -77,12 +77,12 @@ void ScoringGridLoader::load_data(
 
 	/// Add grids to the scoring grid manager
 
-	TagPtrs const grid_tags( tag->getTags() );
+	TagCOPs const grid_tags( tag->getTags() );
 	if (grid_tags.size()==0){
 		TR <<"WARNING WARNING grid manager will be empty" <<std::endl;
 	}
 
-	foreach(TagPtr tag, grid_tags){
+	foreach(TagCOP tag, grid_tags){
 		grid_manager->make_new_grid(tag);
 	}
 

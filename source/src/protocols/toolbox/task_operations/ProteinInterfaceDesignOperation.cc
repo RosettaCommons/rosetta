@@ -205,7 +205,7 @@ ProteinInterfaceDesignOperation::jump() const
 }
 
 void
-ProteinInterfaceDesignOperation::parse_tag( TagPtr tag )
+ProteinInterfaceDesignOperation::parse_tag( TagCOP tag , DataMap & )
 {
   repack_chain1( tag->getOption< core::Size >( "repack_chain1", 1 ) );
   repack_chain2( tag->getOption< core::Size >( "repack_chain2", 1 ) );

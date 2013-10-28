@@ -23,7 +23,7 @@
 //parsing
 #include <utility/tag/Tag.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/rosetta_scripts/util.hh>
@@ -117,8 +117,8 @@ void AtomicContactFilter::report( std::ostream & out, core::pose::Pose const & p
 	out<<"Minimal distance between residues "<<residue1_<<" and "<<get_resid()<<" is "<<dist<<std::endl;
 }
 
-void AtomicContactFilter::parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+void AtomicContactFilter::parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & pose)

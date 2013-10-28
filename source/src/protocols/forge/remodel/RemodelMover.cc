@@ -122,7 +122,7 @@
 
 
 // Parser headers
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 
 #ifdef GL_GRAPHICS
@@ -2280,8 +2280,8 @@ utility::vector1< bool > const & RemodelMover::allowed_surface_aa() {
 /// @brief parse xml
 void
 RemodelMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	DataMap & /*data*/,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & /*data*/,
 	Filters_map const & /*filters*/,
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/ )

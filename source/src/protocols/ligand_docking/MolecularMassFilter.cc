@@ -57,7 +57,7 @@ MolecularMassFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-MolecularMassFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+MolecularMassFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 
 	if ( tag->getName() != "MolecularMass" ) {

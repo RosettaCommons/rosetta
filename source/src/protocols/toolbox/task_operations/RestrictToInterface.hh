@@ -153,7 +153,7 @@ public:
 	void symmetric_task( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
 
 	virtual	void apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 
 private:
 	//utility::vector1_int rb_jump_;

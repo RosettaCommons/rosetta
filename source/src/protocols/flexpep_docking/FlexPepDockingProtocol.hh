@@ -26,7 +26,7 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/comparative_modeling/LoopRelaxMover.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -74,8 +74,8 @@ public:
 	virtual std::string get_name() const;
 
 	virtual void parse_my_tag(
-	  utility::tag::TagPtr const tag,
-	  protocols::moves::DataMap & data,
+	  utility::tag::TagCOP const tag,
+	  basic::datacache::DataMap & data,
 	  protocols::filters::Filters_map const &,
 	  protocols::moves::Movers_map const &,
 	  core::pose::Pose const &

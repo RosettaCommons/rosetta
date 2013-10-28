@@ -1284,7 +1284,7 @@ void LoopRelaxMover::set_defaults_() {
 using namespace utility::tag;
 using namespace protocols::moves;
 void
-LoopRelaxMover::parse_my_tag( TagPtr const tag, DataMap &data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+LoopRelaxMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	cmd_line_csts( tag->getOption< bool >( "cmd_line_csts", true ) );
 	copy_sidechains( tag->getOption< bool >( "copy_sidechains", true ) );

@@ -34,7 +34,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/MoveMap.hh>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -152,8 +152,8 @@ VLB::~VLB() {}
 
 void
 VLB::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	Movers_map const &,
 	core::pose::Pose const & pose
@@ -166,9 +166,9 @@ VLB::parse_my_tag(
 	scorefxn_ = new core::scoring::ScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn ));
 
 	BuildInstructionOP instruction;
-	utility::vector0< TagPtr > const tags( tag->getTags() );
-	for( utility::vector0< TagPtr >::const_iterator it=tags.begin(); it!=tags.end(); ++it ) {
-		TagPtr const tag = *it;
+	utility::vector0< TagCOP > const & tags( tag->getTags() );
+	for( utility::vector0< TagCOP >::const_iterator it=tags.begin(); it!=tags.end(); ++it ) {
+		TagCOP const tag = *it;
 		if( tag->getName() == "Bridge" ) {
 			// connect two contiguous but disjoint sections of a Pose into one continuous section
 			string const res1( tag->getOption< std::string >( "left" ) );

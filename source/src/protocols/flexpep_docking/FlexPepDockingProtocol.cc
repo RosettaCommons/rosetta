@@ -68,7 +68,7 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/backrub/BackrubMover.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -1342,8 +1342,8 @@ FlexPepDockingProtocol::storeJobStatistics
 }
 
 void FlexPepDockingProtocol::parse_my_tag(
-	  utility::tag::TagPtr const tag,
- 	  protocols::moves::DataMap & data,
+	  utility::tag::TagCOP const tag,
+ 	  basic::datacache::DataMap & data,
 	  protocols::filters::Filters_map const &,
 	  protocols::moves::Movers_map const &,
 	  core::pose::Pose const &
@@ -1355,7 +1355,7 @@ void FlexPepDockingProtocol::parse_my_tag(
 		{
 			std::string const scorefxn_lowres_key( tag->getOption<std::string>("scorefxn_lowres" ) );
 			if ( ! data.has( "scorefxns", scorefxn_lowres_key ) ) {
-				throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_lowres_key + " not found in DataMap.");
+				throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_lowres_key + " not found in basic::datacache::DataMap.");
 			}
 			scorefxn_lowres_ = data.get< core::scoring::ScoreFunction* >( "scorefxns", scorefxn_lowres_key );
 		}

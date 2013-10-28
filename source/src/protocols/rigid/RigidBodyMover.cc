@@ -311,8 +311,8 @@ std::ostream
 
 void
 RigidBodyPerturbNoCenterMover::parse_my_tag(
-   utility::tag::TagPtr const tag,
-	 protocols::moves::DataMap&,
+   utility::tag::TagCOP const tag,
+	 basic::datacache::DataMap&,
 	 protocols::filters::Filters_map const &,
 	 protocols::moves::Movers_map const &,
 	 core::pose::Pose const &
@@ -745,8 +745,8 @@ RigidBodyTransMover::get_name() const {
 }
 
 void
-RigidBodyTransMover::parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+RigidBodyTransMover::parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & )

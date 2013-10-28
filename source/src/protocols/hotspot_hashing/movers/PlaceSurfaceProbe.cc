@@ -27,7 +27,7 @@
 #include <core/pack/task/TaskFactory.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -212,8 +212,8 @@ SearchPatternOP PlaceSurfaceProbe::initialize_refinement_pattern()
 }
 
 void
-PlaceSurfaceProbe::parse_my_tag( utility::tag::TagPtr const tag,
-                                protocols::moves::DataMap & data,
+PlaceSurfaceProbe::parse_my_tag( utility::tag::TagCOP const tag,
+                                basic::datacache::DataMap & data,
                                 protocols::filters::Filters_map const & filters_map,
                                 protocols::moves::Movers_map const & movers_map,
                                 core::pose::Pose const & target_pose)

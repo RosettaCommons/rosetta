@@ -18,7 +18,7 @@
 
 
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <core/pose/Pose.hh>
 
 namespace protocols {
@@ -29,8 +29,8 @@ namespace loops_definers {
 
 LoopsOP
 load_loop_definitions(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap const & data,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap const & data,
 	core::pose::Pose const & pose
 ) {
 	using namespace loops;

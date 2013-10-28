@@ -48,7 +48,7 @@ ResFilterComposition::ResFilterComposition(utility::vector1<ResFilterCOP> const 
 	sub_filters_(sub_filters)
 {}
 
-void ResFilterComposition::parse_tag(TagPtr tag)
+void ResFilterComposition::parse_tag(TagCOP tag)
 {
 	parse_sub_filters_tag(tag);
 
@@ -58,11 +58,11 @@ void ResFilterComposition::parse_tag(TagPtr tag)
 	}
 }
 
-void ResFilterComposition::parse_sub_filters_tag(TagPtr tag)
+void ResFilterComposition::parse_sub_filters_tag(TagCOP tag)
 {
-  utility::vector0< TagPtr > const subtags( tag->getTags() );
+  utility::vector0< TagCOP > const & subtags( tag->getTags() );
 
-  for (utility::vector0< TagPtr >::const_iterator subtag( subtags.begin() ), end( subtags.end() );
+  for (utility::vector0< TagCOP >::const_iterator subtag( subtags.begin() ), end( subtags.end() );
 			subtag != end;
 			++subtag )
 	{
@@ -186,7 +186,7 @@ bool ResidueTypeFilter::operator() ( Pose const & pose, Size index ) const
 					(charged_ && residue.is_charged());
 }
 
-void ResidueTypeFilter::parse_tag( TagPtr tag )
+void ResidueTypeFilter::parse_tag( TagCOP tag )
 {
 	if ( tag->hasOption("polar") ) polar_ = tag->getOption<bool>("polar");
 	if ( tag->hasOption("apolar") ) apolar_ = tag->getOption<bool>("apolar");
@@ -223,7 +223,7 @@ ResidueHasPropertyCreator::create_res_filter() const {
 
 ResFilterOP ResidueHasProperty::clone() const { return new ResidueHasProperty( *this ); }
 
-void ResidueHasProperty::parse_tag( TagPtr tag )
+void ResidueHasProperty::parse_tag( TagCOP tag )
 {
 	if ( tag->hasOption("property") ) property_ = tag->getOption<std::string>("property");
 }
@@ -251,7 +251,7 @@ ResiduePDBInfoHasLabelCreator::create_res_filter() const {
 
 ResFilterOP ResiduePDBInfoHasLabel::clone() const { return new ResiduePDBInfoHasLabel( *this ); }
 
-void ResiduePDBInfoHasLabel::parse_tag( TagPtr tag )
+void ResiduePDBInfoHasLabel::parse_tag( TagCOP tag )
 {
   if ( tag->hasOption("property") ) property_ = tag->getOption<std::string>("property");
 }
@@ -310,7 +310,7 @@ ResidueName3IsCreator::create_res_filter() const {
 
 ResFilterOP ResidueName3Is::clone() const { return new ResidueName3Is( *this ); }
 
-void ResidueName3Is::parse_tag( TagPtr tag )
+void ResidueName3Is::parse_tag( TagCOP tag )
 {
 	if ( tag->hasOption("name3") )
 	{
@@ -377,7 +377,7 @@ ResidueIndexIsCreator::create_res_filter() const {
 
 ResFilterOP ResidueIndexIs::clone() const { return new ResidueIndexIs( *this ); }
 
-void ResidueIndexIs::parse_tag( TagPtr tag )
+void ResidueIndexIs::parse_tag( TagCOP tag )
 {
 	if ( tag->hasOption("indices") ) {
 		indices_.clear();
@@ -464,7 +464,7 @@ ResiduePDBIndexIsCreator::create_res_filter() const {
 ResFilterOP ResiduePDBIndexIs::clone() const { return new ResiduePDBIndexIs( *this ); }
 
 ///@brief the expected format for the 'indices' option is: indices=A.2,B.3,Z.-20
-void ResiduePDBIndexIs::parse_tag( TagPtr tag )
+void ResiduePDBIndexIs::parse_tag( TagCOP tag )
 {
 	if ( tag->hasOption("indices") ) {
 		indices_.clear();
@@ -545,7 +545,7 @@ ChainIsCreator::create_res_filter() const {
 
 ResFilterOP ChainIs::clone() const { return new ChainIs( *this ); }
 
-void ChainIs::parse_tag( TagPtr tag )
+void ChainIs::parse_tag( TagCOP tag )
 {
 	chain_ = tag->getOption<char>("chain", 'A');
 }

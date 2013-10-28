@@ -32,7 +32,7 @@
 #include <protocols/moves/Mover.hh>
 
 // Parser headers
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -97,8 +97,8 @@ public:
 public:
 
 	void parse_my_tag(
-  	TagPtr const tag,
-  	protocols::moves::DataMap & data,
+  	TagCOP const tag,
+  	basic::datacache::DataMap & data,
 	  Filters_map const &,
 	  protocols::moves::Movers_map const &,
 	  Pose const & );

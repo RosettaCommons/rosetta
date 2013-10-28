@@ -274,7 +274,7 @@ RestrictToInterfaceVectorOperation::setup_interface_chains_from_jumps( core::pos
 
 ///@details parse_tag function for the parser, sets reasonable values for all options
 void
-RestrictToInterfaceVectorOperation::parse_tag( TagPtr tag )
+RestrictToInterfaceVectorOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	if( ( tag->hasOption("chain1_num" ) || tag->hasOption("chain2_num" ) ) && tag->hasOption("jump" ) )
 		utility_exit_with_message( "You can't define chains and jumps" );

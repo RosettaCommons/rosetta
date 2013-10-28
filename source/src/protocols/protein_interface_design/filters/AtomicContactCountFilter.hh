@@ -21,7 +21,7 @@
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
@@ -53,7 +53,7 @@ class AtomicContactCountFilter : public protocols::filters::Filter
 
 		void initialize_cross_chain(core::pack::task::TaskFactoryOP task_factory = NULL, bool normalize_by_sasa = false, bool detect_chains_for_interface_by_task = false);
 
-    void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+    void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
 		/// @brief Returns true if the given pose passes the filter, false otherwise.
 		virtual bool apply( core::pose::Pose const & /*pose*/ ) const { return true; }

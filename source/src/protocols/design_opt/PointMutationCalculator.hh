@@ -21,7 +21,7 @@
 #include <protocols/moves/Mover.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/simple_moves/GreenPacker.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 

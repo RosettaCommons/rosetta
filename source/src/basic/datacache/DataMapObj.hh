@@ -11,25 +11,25 @@
 /// @brief
 /// @author Sarel Fleishman
 
-#ifndef INCLUDED_protocols_moves_DataMapObj_hh
-#define INCLUDED_protocols_moves_DataMapObj_hh
+#ifndef INCLUDED_basic_datacache_DataMapObj_hh
+#define INCLUDED_basic_datacache_DataMapObj_hh
 
 // Project headers
 #include <utility/pointer/ReferenceCount.hh>
 
-namespace protocols {
-namespace moves {
+namespace basic {
+namespace datacache {
 
 /// @brief templated class to make any data type compatible with ReferenceCounts and OPs.
-/// e.g., utility::pointer::owning_ptr< DataMapObj< bool > > stop;
-/// You can then place such constructs on the DataMap
+/// e.g., utility::pointer::owning_ptr< basic::datacache::DataMapObj< bool > > stop;
+/// You can then place such constructs on the basic::datacache::DataMap
 template < class Ty >
 class DataMapObj : public utility::pointer::ReferenceCount {
 public:
 	Ty obj;
 };
 
-} // moves
-} // protocols
+} // datacache
+} // basic
 
 #endif

@@ -22,7 +22,7 @@
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 //parsing
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
@@ -99,8 +99,8 @@ SetTorsion::get_name() const {
 	return SetTorsionCreator::mover_name();
 }
 
-void SetTorsion::parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+void SetTorsion::parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & pose)

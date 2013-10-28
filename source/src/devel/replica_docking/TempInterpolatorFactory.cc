@@ -17,7 +17,7 @@
 #include <protocols/canonical_sampling/TemperatureController.hh>
 
 // required for passing to Mover::parse_my_tag
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 // AUTO-REMOVED #include <protocols/filters/Filter.hh>
 
 #include <utility/exit.hh> // runtime_assert, throw utility::excn::EXCN_RosettaScriptsOption
@@ -57,7 +57,7 @@ TempInterpolatorFactory::get_instance() {
 
 ///@brief return new TempInterpolator by key lookup in mover_prototype_map_ (new TempInterpolator parses Tag if provided)
 TempInterpolatorBaseOP
-TempInterpolatorFactory::new_tempInterpolator( utility::tag::TagPtr const tag, core::Size n_levels )
+TempInterpolatorFactory::new_tempInterpolator( utility::tag::TagCOP const tag, core::Size n_levels )
 {
 	if ( !tag->hasOption( "curve" ) ){
 		throw utility::excn::EXCN_RosettaScriptsOption("Error: interpolation curve type required !" );

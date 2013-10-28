@@ -30,7 +30,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -557,8 +557,8 @@ SegmentHybridizer::get_name() const {
 
 
 void
-SegmentHybridizer::parse_my_tag( TagPtr const tag,
-								protocols::moves::DataMap &data,
+SegmentHybridizer::parse_my_tag( TagCOP const tag,
+								basic::datacache::DataMap &data,
 								protocols::filters::Filters_map const &,
 								protocols::moves::Movers_map const &,
 								core::pose::Pose const & /*pose*/ ){
@@ -587,8 +587,8 @@ SegmentHybridizer::parse_my_tag( TagPtr const tag,
 	extra_min_=tag->getOption<bool>("extra_min", 0 );
 
 	/// read areas that are supposed to be remodeled
-	utility::vector0< TagPtr > const branch_tags( tag->getTags() );
-	foreach( TagPtr const btag, branch_tags ){
+	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
+	foreach( TagCOP const btag, branch_tags ){
 
 		if( btag->getName() == "Span" ) { //need an assertion for the presence of these or at least for the option file
 			std::string const beginS( btag->getOption<std::string>( "begin" ) );

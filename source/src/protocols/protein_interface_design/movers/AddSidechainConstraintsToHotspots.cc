@@ -27,7 +27,7 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/kinematics/FoldTree.hh>
 
@@ -109,8 +109,8 @@ AddSidechainConstraintsToHotspots::get_name() const {
 }
 
 void
-AddSidechainConstraintsToHotspots::parse_my_tag( TagPtr const tag,
-		DataMap &,
+AddSidechainConstraintsToHotspots::parse_my_tag( TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		Movers_map const &,
 		Pose const & pose )

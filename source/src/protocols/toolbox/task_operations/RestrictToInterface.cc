@@ -235,7 +235,7 @@ void RestrictToInterface::distance( core::Real const distance_in ) {
 }
 
 void
-RestrictToInterface::parse_tag( TagPtr tag )
+RestrictToInterface::parse_tag( TagCOP tag , DataMap & )
 {
   add_movable_jump( ( tag->getOption< core::Size >( "jump", 1 ) ) );
   distance_ = tag->getOption< core::Real >( "distance", 8 )  ;

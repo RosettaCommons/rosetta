@@ -61,7 +61,7 @@ RemodelRotamerLinks::RemodelRotamerLinks()
 {}
 
 void
-RemodelRotamerLinks::parse_tag( TagPtr /*tag*/ )
+RemodelRotamerLinks::parse_tag( TagCOP /*tag*/ , DataMap & )
 {}
 
 void

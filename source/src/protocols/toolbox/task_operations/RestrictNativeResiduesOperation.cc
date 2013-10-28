@@ -174,7 +174,7 @@ RestrictNativeResiduesOperation::apply( Pose const & pose, PackerTask & task ) c
 } // apply
 
 void
-RestrictNativeResiduesOperation::parse_tag( TagPtr tag )
+RestrictNativeResiduesOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	verbose( tag->getOption< bool >( "verbose", 0 ) );
 	prevent_repacking( tag->getOption< bool >( "prevent_repacking", 0 ) );

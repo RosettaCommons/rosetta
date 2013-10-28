@@ -37,7 +37,7 @@
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray3D.hh>
@@ -73,9 +73,9 @@ using core::graph::Graph;
 using core::conformation::Residue;
 using core::scoring::TenANeighborGraph;
 using protocols::filters::Filters_map;
-using protocols::moves::DataMap;
+using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using utility::sql_database::sessionOP;
 using utility::vector1;
 using basic::Tracer;
@@ -196,8 +196,8 @@ AtomAtomPairFeatures::features_reporter_dependencies() const {
 
 void
 AtomAtomPairFeatures::parse_my_tag(
-	TagPtr const tag,
-	DataMap & /*data*/,
+	TagCOP const tag,
+	basic::datacache::DataMap & /*data*/,
 	Filters_map const & /*filters*/,
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/

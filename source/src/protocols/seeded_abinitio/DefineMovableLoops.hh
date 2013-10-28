@@ -16,7 +16,7 @@
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/string_util.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
@@ -38,8 +38,8 @@ namespace protocols {
 			protocols::moves::MoverOP clone() const { return( protocols::moves::MoverOP( new DefineMovableLoops( *this ) ) ); }
 			protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new DefineMovableLoops ); }
 			
-			void parse_my_tag(  utility::tag::TagPtr const tag,
-							  					protocols::moves::DataMap &,
+			void parse_my_tag(  utility::tag::TagCOP const tag,
+							  					basic::datacache::DataMap &,
 							  					protocols::filters::Filters_map const &,
 							  					protocols::moves::Movers_map const &,
 							  					core::pose::Pose const & );

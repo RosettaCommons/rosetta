@@ -22,7 +22,7 @@
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
@@ -75,10 +75,10 @@ public:
 	void
 	parse_my_tag(
 		utility::tag::TagPtr const tag,
-		moves::DataMap &,
+		basic::datacache::DataMap &,
 		filters::Filters_map const &,
 		moves::Movers_map const &,
-		core::pose::Pose const & 
+		core::pose::Pose const &
 	);
 
 	core::Real

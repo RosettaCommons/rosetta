@@ -108,8 +108,8 @@ std::string StartFrom::get_name() const{
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 StartFrom::parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & /*datamap*/,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & /*datamap*/,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & /*pose*/
@@ -122,7 +122,7 @@ StartFrom::parse_my_tag(
 
 	chain_ = tag->getOption<std::string>("chain");
 
-	foreach(utility::tag::TagPtr child_tag, tag->getTags()){
+	foreach(utility::tag::TagCOP child_tag, tag->getTags()){
 		std::string name= child_tag->getName();
 		if( name == "features"){
 			std::cout << "found features tag with type '" << child_tag->getOption<std::string>("type") << "'" << std::endl;

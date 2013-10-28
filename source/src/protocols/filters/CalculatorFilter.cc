@@ -18,7 +18,7 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -108,8 +108,8 @@ CalculatorFilter::compute(core::pose::Pose const & pose) const {
 }
 
 void
-CalculatorFilter::parse_my_tag( utility::tag::TagPtr const tag_ptr,
-		protocols::moves::DataMap &,
+CalculatorFilter::parse_my_tag( utility::tag::TagCOP const tag_ptr,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &)
@@ -117,7 +117,7 @@ CalculatorFilter::parse_my_tag( utility::tag::TagPtr const tag_ptr,
   std::string equation = tag_ptr->getOption< std::string >( "equation" );
 	threshold_ = tag_ptr->getOption<core::Real>( "threshold", 0.0 );
 
-	foreach(utility::tag::TagPtr sub_tag_ptr, tag_ptr->getTags() ){
+	foreach(utility::tag::TagCOP sub_tag_ptr, tag_ptr->getTags() ){
 		std::string varname( sub_tag_ptr->getOption<std::string>( "name" ) );
 
 		if( sub_tag_ptr->hasOption("filter") || sub_tag_ptr->hasOption("filter_name") ) {

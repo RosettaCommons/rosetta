@@ -58,7 +58,7 @@
 
 ///////////
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <utility/string_util.hh>
@@ -324,8 +324,8 @@ void SetCrystWeightMover::apply( core::pose::Pose & pose ) {
 }
 
 void SetCrystWeightMover::parse_my_tag(
-			utility::tag::TagPtr const tag,
-			moves::DataMap &data,
+			utility::tag::TagCOP const tag,
+			basic::datacache::DataMap &data,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
 			core::pose::Pose const & pose ) {
@@ -335,7 +335,7 @@ void SetCrystWeightMover::parse_my_tag(
 	if ( tag->hasOption("scorefxn_ref") ) {
 		std::string const scorefxn_key( tag->getOption<std::string>("scorefxn_ref") );
 		if ( ! data.has( "scorefxns", scorefxn_key ) )
-			utility_exit_with_message("ScoreFunction " + scorefxn_key + " not found in DataMap.");
+			utility_exit_with_message("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
 		score_function_ref_ = data.get< ScoreFunction* >( "scorefxns", scorefxn_key );
 	} else {
 		score_function_ref_ = score_function_->clone();
@@ -398,8 +398,8 @@ void RecomputeDensityMapMover::apply( core::pose::Pose & pose )
 }
 
 void RecomputeDensityMapMover::parse_my_tag(
-			utility::tag::TagPtr const tag,
-			moves::DataMap & /*data*/,
+			utility::tag::TagCOP const tag,
+			basic::datacache::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
 			core::pose::Pose const & /*pose*/ )
@@ -419,8 +419,8 @@ void LoadDensityMapMover::apply( core::pose::Pose & /*pose*/ ) {
 }
 
 void LoadDensityMapMover::parse_my_tag(
-			utility::tag::TagPtr const tag,
-			moves::DataMap & /*data*/,
+			utility::tag::TagCOP const tag,
+			basic::datacache::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
 			core::pose::Pose const & /*pose*/ )
@@ -445,8 +445,8 @@ void FitBfactorsMover::apply( core::pose::Pose & pose ) {
 }
 
 void FitBfactorsMover::parse_my_tag(
-			utility::tag::TagPtr const tag,
-			moves::DataMap & /*data*/,
+			utility::tag::TagCOP const tag,
+			basic::datacache::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
 			core::pose::Pose const & /*pose*/ )
@@ -505,8 +505,8 @@ void UpdateSolventMover::apply( core::pose::Pose & pose ) {
 }
 
 void UpdateSolventMover::parse_my_tag(
-			utility::tag::TagPtr const tag,
-			moves::DataMap & /*data*/,
+			utility::tag::TagCOP const tag,
+			basic::datacache::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
 			core::pose::Pose const & /*pose*/ )
@@ -571,8 +571,8 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 
 
 void TagPoseWithRefinementStatsMover::parse_my_tag(
-			utility::tag::TagPtr const tag,
-			moves::DataMap & /*data*/,
+			utility::tag::TagCOP const tag,
+			basic::datacache::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
 			core::pose::Pose const & /*pose*/ )
@@ -624,8 +624,8 @@ void SetRefinementOptionsMover::apply( core::pose::Pose & /*pose*/ ) {
 
 
 void SetRefinementOptionsMover::parse_my_tag(
-			utility::tag::TagPtr const tag,
-			moves::DataMap & /*data*/,
+			utility::tag::TagCOP const tag,
+			basic::datacache::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
 			core::pose::Pose const & /*pose*/ )

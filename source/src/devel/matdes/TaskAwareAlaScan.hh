@@ -24,7 +24,7 @@
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
@@ -87,8 +87,8 @@ public :
 	virtual bool apply( core::pose::Pose const & ) const;
 
 	// Parse xml
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-	void parse_ddG_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_ddG_task_operations( utility::tag::TagCOP const tag, basic::datacache::DataMap const & data );
 	void parse_def( utility::lua::LuaObject const & def,
 				utility::lua::LuaObject const & score_fxns,
 				utility::lua::LuaObject const & tasks );

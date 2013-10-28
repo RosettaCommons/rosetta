@@ -125,7 +125,7 @@ std::string ContactMap::get_name() const {
 }
 
 /// @brief Processes options specified in xml-file and sets up the ContactMap
-void ContactMap::parse_my_tag(TagPtr const tag, moves::DataMap &,
+void ContactMap::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &, moves::Movers_map const &,
 	Pose const & pose) {
 

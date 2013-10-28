@@ -91,7 +91,7 @@
 #include <core/sequence/Sequence.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>

@@ -18,7 +18,7 @@
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
@@ -40,7 +40,7 @@ public:
 	void task_factory( core::pack::task::TaskFactoryOP tf );
 
 	virtual ~ResidueBurialFilter();
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	core::Real residue_fraction_buried() const { return residue_fraction_buried_; }
 	void residue_fraction_buried( core::Real const r ){ residue_fraction_buried_ = r; }
 

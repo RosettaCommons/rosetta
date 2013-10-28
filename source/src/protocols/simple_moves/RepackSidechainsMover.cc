@@ -15,7 +15,7 @@
 // Unit headers
 #include <protocols/simple_moves/RepackSidechainsMover.hh>
 #include <protocols/simple_moves/RepackSidechainsMoverCreator.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pack/pack_rotamers.hh>
@@ -128,8 +128,8 @@ RepackSidechainsMover::get_name() const {
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 RepackSidechainsMover::parse_my_tag(
-	TagPtr const tag,
-	protocols::moves::DataMap & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap & datamap,
 	Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
 	Pose const & pose
@@ -142,8 +142,8 @@ RepackSidechainsMover::parse_my_tag(
 ///@brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
 void
 RepackSidechainsMover::parse_score_function(
-	TagPtr const tag,
-	protocols::moves::DataMap const & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap const & datamap,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const &

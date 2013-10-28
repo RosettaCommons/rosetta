@@ -31,7 +31,7 @@
 #include <core/pose/Pose.hh>
 #include <protocols/enzdes/EnzdesTaskOperations.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/toolbox/SelectResiduesByLayer.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
@@ -122,7 +122,7 @@ HighestEnergyRegionOperation::apply( Pose const & pose, core::pack::task::Packer
 }
 
 void
-HighestEnergyRegionOperation::parse_tag( utility::tag::TagPtr tag )
+HighestEnergyRegionOperation::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 	region_shell_ = tag->getOption< core::Real >( "region_shell", region_shell_ );
 	regions_to_design_ = tag->getOption< core::Size >( "regions_to_design", regions_to_design_ );

@@ -158,7 +158,7 @@ InterfaceRecapitulationMover::get_name() const {
 }
 
 void
-InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const & movers, core::pose::Pose const & pose ){
+InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const & movers, core::pose::Pose const & pose ){
 	set_reference_pose( new core::pose::Pose( pose ) );
 	std::string const mover_name( tag->getOption<std::string>( "mover_name" ) );
 	std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( mover_name ));

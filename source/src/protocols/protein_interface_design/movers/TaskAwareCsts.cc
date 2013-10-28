@@ -25,7 +25,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 //Auto Headers
@@ -98,7 +98,7 @@ TaskAwareCsts::get_name() const {
 }
 
 void
-TaskAwareCsts::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+TaskAwareCsts::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	using namespace protocols::rosetta_scripts;
 	task_factory( parse_task_operations( tag, data ) );

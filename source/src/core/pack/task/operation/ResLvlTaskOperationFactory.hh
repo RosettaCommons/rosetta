@@ -45,7 +45,7 @@ class ResLvlTaskOperationFactory
 public:
 	typedef std::map< std::string, ResLvlTaskOperationCreatorOP > RLTOC_Map;
 	typedef utility::tag::Tag Tag;
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 
 public:
 	static ResLvlTaskOperationFactory * get_instance();

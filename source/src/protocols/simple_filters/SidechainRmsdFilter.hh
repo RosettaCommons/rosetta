@@ -19,7 +19,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.hh>
 
@@ -39,7 +39,7 @@ public:
 	filters::FilterOP fresh_instance() const;
 
 	virtual ~SidechainRmsdFilter();
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &);
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &);
 private:
 	core::Size res1_, res2_;
 	core::Real rmsd_threshold_;

@@ -25,7 +25,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 
 #include <basic/options/option.hh>
@@ -149,7 +149,7 @@ FavorSequenceProfile::apply( core::pose::Pose & pose )
 }
 
 void
-FavorSequenceProfile::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose)
+FavorSequenceProfile::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose)
 {
 	weight_ = tag->getOption<core::Real>( "weight", 1 );
 

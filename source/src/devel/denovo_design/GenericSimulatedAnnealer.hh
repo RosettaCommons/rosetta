@@ -18,10 +18,10 @@
 
 // Unit header
 #include <devel/denovo_design/GenericSimulatedAnnealer.fwd.hh>
-#include <protocols/moves/DataMapObj.hh>
+#include <basic/datacache/DataMapObj.hh>
 
 // Package headers
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/simple_moves/GenericMonteCarloMover.hh>
 
 // Project Headers
@@ -62,8 +62,8 @@ public:
 	virtual std::string get_name() const;
 
 	virtual void parse_my_tag(
-		TagPtr const tag,
-		DataMap & data,
+		TagCOP const tag,
+		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		Movers_map const & movers,
 		Pose const & );

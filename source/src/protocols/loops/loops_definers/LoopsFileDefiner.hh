@@ -64,8 +64,8 @@ public:
 	virtual
 	void
 	parse_my_tag(
-		utility::tag::TagPtr const tag,
-		moves::DataMap const & data,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap const & data,
 		core::pose::Pose const &);
 
 	virtual

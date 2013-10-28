@@ -18,7 +18,7 @@
 #include <utility/tag/Tag.fwd.hh>
 // AUTO-REMOVED #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -45,7 +45,7 @@ public:
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new HotspotHasherMover ); }
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	// SET VARIABLES BASED ON THE COMMAND LINE
 	// Residues to use for hashing (defaults to all, sans Gly, Cys, or Pro)

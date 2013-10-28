@@ -16,7 +16,7 @@
 #include <protocols/simple_moves/sidechain_moves/PerturbRotamerSidechainMoverCreator.hh>
 #include <protocols/simple_moves/sidechain_moves/JumpRotamerSidechainMover.hh>
 // Procols Headers
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 // Core Headers
 #include <core/chemical/ResidueType.hh>
@@ -113,8 +113,8 @@ PerturbRotamerSidechainMover::set_defaults() {
 
 void
 PerturbRotamerSidechainMover::parse_my_tag(
-  utility::tag::TagPtr const /*tag*/,
-	protocols::moves::DataMap & /*data*/,
+  utility::tag::TagCOP const /*tag*/,
+	basic::datacache::DataMap & /*data*/,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
 	pose::Pose const & /*pose*/

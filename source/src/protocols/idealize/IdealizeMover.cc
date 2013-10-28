@@ -303,7 +303,7 @@ IdealizeMover::get_name() const {
 }
 
 void
-IdealizeMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose ){
+IdealizeMover::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose ){
 	atom_pair_constraint_weight( tag->getOption< core::Real >( "atom_pair_constraint_weight", 0.0 ) );
 	coordinate_constraint_weight( tag->getOption< core::Real >( "coordinate_constraint_weight", 0.01 ) );
 	fast( tag->getOption< bool >( "fast", false ) );

@@ -26,7 +26,7 @@
 #include <core/conformation/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 // Numeric Headers
 #include <numeric/HomogeneousTransform.hh>
@@ -76,7 +76,7 @@ using core::SSize;
 using core::Real;
 using core::pose::Pose;
 using core::conformation::Residue;
-using protocols::moves::DataMap;
+using basic::datacache::DataMap;
 using protocols::filters::Filters_map;
 using protocols::moves::Movers_map;
 using numeric::HomogeneousTransform;
@@ -84,7 +84,7 @@ using numeric::xyzVector;
 using utility::sql_database::sessionOP;
 using utility::excn::EXCN_Msg_Exception;
 using utility::vector1;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using cppdb::statement;
 using cppdb::result;
 

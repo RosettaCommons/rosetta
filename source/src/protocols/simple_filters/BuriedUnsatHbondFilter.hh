@@ -20,7 +20,7 @@
 
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
@@ -42,7 +42,7 @@ public:
 	filters::FilterOP fresh_instance() const;
 
 	virtual ~BuriedUnsatHbondFilter();
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	void task_factory( core::pack::task::TaskFactoryOP tf );
 	core::pack::task::TaskFactoryOP task_factory() const;
 private:

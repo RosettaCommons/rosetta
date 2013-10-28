@@ -48,7 +48,7 @@ namespace inv_kin_lig_loop_design {
 
   struct Cloner {
 
-    Cloner(TagPtr const& tag0, core::pose::PoseOP pose);
+    Cloner(TagCOP const& tag0, core::pose::PoseOP pose);
 
     core::pose::PoseOP clone();
     core::kinematics::FoldTree getFoldTree();
@@ -57,7 +57,7 @@ namespace inv_kin_lig_loop_design {
 
   private:
 
-    TagPtr tag0;
+    TagCOP tag0;
 
     core::pose::PoseOP pose0;
     core::pose::PoseOP pose1;

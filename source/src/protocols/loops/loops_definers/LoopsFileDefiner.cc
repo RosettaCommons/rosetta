@@ -17,7 +17,7 @@
 #include <protocols/loops/Loop.hh>
 
 // Project Headers
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -31,8 +31,8 @@
 using std::string;
 using std::endl;
 using std::stringstream;
-using utility::tag::TagPtr;
-using protocols::moves::DataMap;
+using utility::tag::TagCOP;
+using basic::datacache::DataMap;
 using core::pose::Pose;
 
 
@@ -61,8 +61,8 @@ LoopsFileDefiner::clone(
 /// @brief Used to parse an xml-like tag to load parameters and properties.
 void
 LoopsFileDefiner::parse_my_tag(
-	TagPtr const tag,
-	DataMap const &,
+	TagCOP const tag,
+	basic::datacache::DataMap const &,
 	Pose const & p
 ) {
 

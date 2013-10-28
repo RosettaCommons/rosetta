@@ -60,8 +60,8 @@ public:
 
 	void
 	parse_my_tag(
-		utility::tag::TagPtr const tag,
-		moves::DataMap const & data,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap const & data,
 		core::pose::Pose const &);
 
 
@@ -72,7 +72,7 @@ public:
 private:
 	SerializedLoop
 	parse_loop_tag(
-		utility::tag::TagPtr const tag,
+		utility::tag::TagCOP const tag,
 		std::string const & loops_name);
 
 

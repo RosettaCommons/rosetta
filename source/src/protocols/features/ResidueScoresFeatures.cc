@@ -28,7 +28,7 @@
 #include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/types.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
@@ -76,13 +76,13 @@ using core::scoring::LREnergyContainerCOP;
 using core::scoring::ResidueNeighborConstIteratorOP;
 using core::chemical::aa_vrt;
 using protocols::filters::Filters_map;
-using protocols::moves::DataMap;
+using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using numeric::xyzVector;
 using basic::database::insert_statement_generator::InsertGenerator;
 using basic::database::insert_statement_generator::RowData;
 using basic::database::insert_statement_generator::RowDataBaseOP;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 using utility::tools::make_vector;
@@ -288,8 +288,8 @@ ResidueScoresFeatures::features_reporter_dependencies() const {
 
 void
 ResidueScoresFeatures::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const & /*filters*/,
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/

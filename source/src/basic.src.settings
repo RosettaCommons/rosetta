@@ -43,6 +43,7 @@ sources = {
 	],
 	"basic/datacache": [
 		"BasicDataCache",
+		"DataMap",
 	],
 	"basic/gpu": [
 		"GPU",

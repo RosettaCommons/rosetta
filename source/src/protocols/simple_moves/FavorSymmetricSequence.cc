@@ -16,7 +16,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/ResidueTypeLinkingConstraint.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
@@ -89,8 +89,8 @@ std::string FavorSymmetricSequence::get_name() const
 }
 
 void FavorSymmetricSequence::parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & ,
 		protocols::moves::Movers_map const & ,
 		core::pose::Pose const & )

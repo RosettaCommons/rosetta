@@ -165,7 +165,7 @@ endrepeat
 #include <core/util/SwitchResidueTypeSet.hh>
 
 //Protocol Headers
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/simple_moves/MinMover.hh>
@@ -339,8 +339,8 @@ FastRelax::clone() const {
 
 void
 FastRelax::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & pose

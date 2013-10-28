@@ -413,8 +413,8 @@ FragmentLoopInserter::get_pose_coords_to_match(
 
 void
 FragmentLoopInserter::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & /*data*/,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & /*data*/,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
 	core::pose::Pose const &

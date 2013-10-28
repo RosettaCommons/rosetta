@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 
-/// @file 
+/// @file
 /// @brief allows to add coordinate constraints to the pose based on parsed spans or residues
 ///		   residues specified are parsed at runtime not at parse time, so it can be used somewhat used with length changes
 ///		   currently it only adds CA constraints, but hopefully at some time point others too
@@ -95,8 +95,8 @@ CoordinateCst::CoordinateCst() :
 	unparsed_residue_.clear();
 	jump_ = 0;
 	anchor_atom_id_ = ""; // by default, use the same atom name as atom_id_ -- denote their sameness by setting this to the empty string
-	atom_id_ = "CA"; 
-}	
+	atom_id_ = "CA";
+}
 
 protocols::moves::MoverOP
 CoordinateCst::clone() const {
@@ -107,7 +107,7 @@ protocols::moves::MoverOP
 CoordinateCst::fresh_instance() const {
   return protocols::moves::MoverOP( new CoordinateCst );
 }
-		
+
 ///parse residues at run time, in case there was a lenght change
 void parse_spans(
 	pose::Pose & pose,
@@ -115,7 +115,7 @@ void parse_spans(
 	std::set < core::Size > resi_collection
 )
 {
-	
+
 	for( Size iter = 1 ; iter <= span_vector.size() ; ++ iter ){
 		TR.Debug <<"sanity check, span_vector[iter].first " <<span_vector[iter].first <<std::endl;
 		core::Size const begin = core::pose::parse_resnum( span_vector[iter].first, pose ) ;
@@ -123,7 +123,7 @@ void parse_spans(
 		//runtime_assert( end > begin );
 		//runtime_assert( begin>=1);
 		//runtime_assert( end<=pose.total_residue() );
-		
+
 		for (Size resi = begin; resi <= end ; resi ++ ){
 			resi_collection.insert( resi );
 			TR  << "runtime parsed of span, residue: " << resi << std::endl;
@@ -157,9 +157,9 @@ void adjust_single_residues(
 	std::string single_residues,
 	std::set < core::Size > resi_collection
 ){
-	
+
 	utility::vector1< std::string > const single_keys( utility::string_split( single_residues, ',' ) );
-	
+
 	foreach( std::string const key, single_keys ){
 		core::Size const resnum( core::pose::parse_resnum( key, pose ));
 		resi_collection.insert( resnum );
@@ -231,7 +231,7 @@ void add_coordinate_constraints(
 void
 CoordinateCst::apply( pose::Pose & pose )
 {
-	
+
 	using namespace core;
 
 	//collect all residues that should have coordinate constraints
@@ -240,11 +240,11 @@ CoordinateCst::apply( pose::Pose & pose )
 	if( unparsed_residue_ != "" ) {
 		adjust_single_residues( pose, unparsed_residue_, constrain_residues_set );
 	}
-	
+
 	parse_spans( pose, span_vector_ , constrain_residues_set );
 
 	TR.Debug << "constrain residue set size : " << constrain_residues_set.size() <<" -- if this is 0, you did NOT read in any residues "<< std::endl;
-  
+
 	Size anchor_res = 0;
 	TR.Debug<< "anchor " << anchor_res_ <<std::endl;
 
@@ -271,12 +271,12 @@ CoordinateCst::apply( pose::Pose & pose )
 		anchor_res = (pose.fold_tree().jump_edge( jump_ ).start());
 		TR<< "setting anchor residue to upstream jump residue: " << anchor_res_ << std::endl;
 	}
-	
 
-	core::scoring::constraints::HarmonicFuncOP coord_cst_func = new core::scoring::constraints::HarmonicFunc( 0.0, 0.0 );	
-	add_coordinate_constraints( pose, constrain_residues_set, anchor_res, stddev_, anchor_atom_id_, atom_id_, coord_cst_func );	
-	
-}//end apply 
+
+	core::scoring::constraints::HarmonicFuncOP coord_cst_func = new core::scoring::constraints::HarmonicFunc( 0.0, 0.0 );
+	add_coordinate_constraints( pose, constrain_residues_set, anchor_res, stddev_, anchor_atom_id_, atom_id_, coord_cst_func );
+
+}//end apply
 
 
 std::string
@@ -287,8 +287,8 @@ CoordinateCst::get_name() const {
 
 void
 CoordinateCst::parse_my_tag(
-	TagPtr const tag,
-	DataMap & /*data*/,
+	TagCOP const tag,
+	basic::datacache::DataMap & /*data*/,
 	protocols::filters::Filters_map const & /*filters*/,
 	Movers_map const &,
 	Pose const & /*pose*/)
@@ -297,9 +297,9 @@ CoordinateCst::parse_my_tag(
 	TR<<"CoordinateCst mover has been invoked"<<std::endl;
 	stddev_ = tag->getOption<core::Real>( "stddev", 0.5);
 
-	TR<<"setting constraint standard deviation to "<< stddev_<< std::endl;	
+	TR<<"setting constraint standard deviation to "<< stddev_<< std::endl;
 	use_jumps_ = true;
-	
+
 	atom_id_ = tag->getOption< std::string >( "atom" , "CA" );
 
 	// if not provided, set anchor_atom_id_ to the empty string which will signal to the
@@ -309,10 +309,10 @@ CoordinateCst::parse_my_tag(
 	if( tag->hasOption( "anchor_res" ) ){
 		anchor_res_ = tag->getOption< std::string >( "anchor_res" );
 		TR<< "user specified following residue as anchor atom for the coordinate constraints: " << anchor_res_ << std::endl;
-	
-		if( anchor_res_ != ""  ){ 
+
+		if( anchor_res_ != ""  ){
 			TR<< "WARNING, if jump is specified, it will not be used, since the specification of an anchor residue will override it" <<std::endl;
-			use_jumps_ = false; 
+			use_jumps_ = false;
 		}//end excluding jump
 	}//end anchor
 
@@ -324,14 +324,14 @@ CoordinateCst::parse_my_tag(
 		TR<< "using jump atoms for anchor, that is the first one, for jump #: " << jump_ << std::endl;
 	}
 
-	//parsing option for CA or CB to use or whether just functional groups! 
+	//parsing option for CA or CB to use or whether just functional groups!
 
 	//parsing branch tags
-	utility::vector0< TagPtr > const branch_tags( tag->getTags() );
-	
-	foreach( TagPtr const btag, branch_tags ){
+	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 
-		if( btag->getName() == "Span" || btag->getName() == "span" ||  btag->getName() == "Seeds") { 
+	foreach( TagCOP const btag, branch_tags ){
+
+		if( btag->getName() == "Span" || btag->getName() == "span" ||  btag->getName() == "Seeds") {
 			std::string const beginS( btag->getOption<std::string>( "begin" ) );
 			std::string const endS( btag->getOption<std::string>( "end" ) );
 			std::pair <std::string,std::string> seedpair;
@@ -341,13 +341,13 @@ CoordinateCst::parse_my_tag(
 			span_vector_.push_back( seedpair );
 
 		}//end seeds or chain
-		
+
 		if( btag->getName() == "residue" ) {
-			unparsed_residue_ = tag->getOption< std::string >("residue"); 
+			unparsed_residue_ = tag->getOption< std::string >("residue");
 		}//end residue tags
-		
+
    }//end b-tags
-}//end parse my tag                                                      
+}//end parse my tag
 
 }//seeded_abinitio/
 }//protocol

@@ -35,7 +35,7 @@ public:
 		std::stringstream in;
 		in << in_tag;
 		try {
-			utility::tag::TagPtr tags(utility::tag::Tag::create(in));
+			utility::tag::TagCOP tags(utility::tag::Tag::create(in));
 			TS_ASSERT(false);
 		} catch ( utility::excn::EXCN_BadInput e ){
 			std::stringstream expected_error;
@@ -148,7 +148,7 @@ public:
 		//std::cout << in_tag << std::endl;
 		std::stringstream in;
 		in << in_tag;
-		utility::tag::TagPtr tags(utility::tag::Tag::create(in));
+		utility::tag::TagCOP tags(utility::tag::Tag::create(in));
 		TS_ASSERT_EQUALS(tags->getOption<std::string>(key), val);
 		TS_ASSERT_EQUALS(tags->size(), 1);
 	}
@@ -362,7 +362,7 @@ public:
 		//std::cout << in_tag << std::endl;
 		std::stringstream in;
 		in << in_tag;
-		utility::tag::TagPtr tags(utility::tag::Tag::create(in));
+		utility::tag::TagCOP tags(utility::tag::Tag::create(in));
 		TS_ASSERT_EQUALS(tags->getOption<std::string>(key1), val1);
 		TS_ASSERT_EQUALS(tags->getOption<std::string>(key2), val2);
 		TS_ASSERT_EQUALS(tags->size(), 1);
@@ -390,7 +390,7 @@ public:
 		//std::cout << in_tag << std::endl;
 		std::stringstream in;
 		in << in_tag;
-		utility::tag::TagPtr tags(utility::tag::Tag::create(in));
+		utility::tag::TagCOP tags(utility::tag::Tag::create(in));
 		TS_ASSERT_EQUALS(tags->getOption<std::string>(key1), val1);
 		TS_ASSERT_EQUALS(tags->size(), 2);
 		for(

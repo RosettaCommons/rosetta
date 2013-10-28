@@ -33,7 +33,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 // command line options
 #include <basic/options/option.hh>
@@ -56,17 +56,17 @@ SetupPBCreator::SetupPoissonBoltzmannPotentialCreator()
 {}
 SetupPBCreator::~SetupPoissonBoltzmannPotentialCreator()
 {}
-protocols::moves::MoverOP 
+protocols::moves::MoverOP
 SetupPBCreator::create_mover() const
 {
   return new SetupPoissonBoltzmannPotential;
 }
-std::string 
+std::string
 SetupPBCreator::keyname() const
 {
   return SetupPBCreator::mover_name();
 }
-std::string 
+std::string
 SetupPBCreator::mover_name()
 {
   return "SetupPoissonBoltzmannPotential";
@@ -79,7 +79,7 @@ SetupPB::SetupPoissonBoltzmannPotential()
 
 SetupPB::~SetupPoissonBoltzmannPotential() {}
 
-void 
+void
 SetupPB::apply(core::pose::Pose & pose ) {
 
 	using namespace core;
@@ -91,9 +91,9 @@ SetupPB::apply(core::pose::Pose & pose ) {
 		PoissonBoltzmannEnergy::PBLifetimeCacheOP new_cache( new PoissonBoltzmannEnergy::PBLifetimeCache() );
 		pose.data().set( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE, new_cache );
 	}
- 
+
 	// Cache the "which chain" info
-	PoissonBoltzmannEnergy::PBLifetimeCacheOP cached_data = 
+	PoissonBoltzmannEnergy::PBLifetimeCacheOP cached_data =
 		static_cast< PoissonBoltzmannEnergy::PBLifetimeCacheOP >(pose.data().get_ptr<	PoissonBoltzmannEnergy::PBLifetimeCache>(pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ));
 	pose.data().set( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE, cached_data );
 
@@ -109,18 +109,18 @@ SetupPB::apply(core::pose::Pose & pose ) {
 
 }
 
-std::string 
+std::string
 SetupPB::get_name() const {
   return "SetupPoissonBoltzmannPotential";
 }
-protocols::moves::MoverOP 
+protocols::moves::MoverOP
 SetupPB::clone() const {
   return new SetupPoissonBoltzmannPotential( *this );
 }
 
-void 
-SetupPB::parse_my_tag( utility::tag::TagPtr const tag,
-			    protocols::moves::DataMap & data_map,
+void
+SetupPB::parse_my_tag( utility::tag::TagCOP const tag,
+			    basic::datacache::DataMap & data_map,
 			    protocols::filters::Filters_map const & filters_map,
 			    protocols::moves::Movers_map const & movers_map,
 			    core::pose::Pose const & pose ) {
@@ -129,7 +129,7 @@ SetupPB::parse_my_tag( utility::tag::TagPtr const tag,
 	std::string apbs_path;  // path to the apbs executable.
 	if( tag->hasOption( "apbs_path" ) ) {
 		apbs_path = tag->getOption<std::string>("apbs_path");
-	}	
+	}
 #ifdef LINK_APBS_LIBS
 	std::ifstream apbsstream( apbs_path.c_str() );
 	if( !apbsstream.good() ){
@@ -173,7 +173,7 @@ SetupPB::parse_my_tag( utility::tag::TagPtr const tag,
 	bool sidechain_only;
 	if( tag->hasOption("sidechain_only") ) {
 		sidechain_only = tag->getOption<bool>( "sidechain_only" );
-		basic::options::option[basic::options::OptionKeys::pb_potential::sidechain_only]( sidechain_only ); 
+		basic::options::option[basic::options::OptionKeys::pb_potential::sidechain_only]( sidechain_only );
 	}
 
 	core::Real epsilon;
@@ -195,8 +195,13 @@ SetupPB::parse_my_tag( utility::tag::TagPtr const tag,
 	// Initialize DDG for pre-scoring, which compute bound & unbound energies.
 	//-------------------------------------------------------------------------
 	ddg_ = new protocols::simple_moves::ddG();
+
 	// Must turn this ON to enable caculation of bound/unbound states.
-	tag->setOption<bool>("repack",1);
+	// HIGHLY ILLEGAL CONST_CAST TO MODIFY THE INPUT TAG!
+	// INSTEAD, THIS CODE SHOULD REQUIRE THAT "repack 1" IS SET
+	// IN THE INPUT, AND FAIL IF IT IS NOT SET.
+	( const_cast< utility::tag::Tag * > (tag()) )->setOption<bool>("repack",1);
+
 	std::string scorefxn_name = tag->getOption<std::string>("scorefxn");
 	if( scorefxn_name != "" ) {
 		core::scoring::ScoreFunction * scorefxn = data_map.get<core::scoring::ScoreFunction*>("scorefxns", scorefxn_name);
@@ -210,7 +215,7 @@ runtime_assert(false);
 	ddg_->parse_my_tag( tag, data_map, filters_map, movers_map, pose );
 
 }
-protocols::moves::MoverOP 
+protocols::moves::MoverOP
 SetupPB::fresh_instance() const {
 
   return new SetupPoissonBoltzmannPotential();

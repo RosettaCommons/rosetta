@@ -36,7 +36,7 @@ public:
 	virtual std::string get_name() const;
 
 	// function for the parser with lots of accessors
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	void set_cst_file_name( std::string const& cst_file_name ) { cst_file_name_ = cst_file_name; }
 	void set_profile_wgt( core::Real const profile_wgt ) { profile_wgt_ = profile_wgt; }
 

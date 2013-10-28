@@ -24,7 +24,7 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <basic/Tracer.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
@@ -304,8 +304,8 @@ LoopHashMoverWrapper::get_name() const {
 }
 
 void
-LoopHashMoverWrapper::parse_my_tag( TagPtr const tag,
-		DataMap & data,
+LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
+		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &filters,
 		Movers_map const &movers,
 		Pose const & pose )

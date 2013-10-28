@@ -21,7 +21,7 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/simple_filters/InterfaceSasaFilter.fwd.hh>
 #include <protocols/simple_filters/DdgFilter.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
 // Project headers
@@ -59,8 +59,8 @@ public:
 	filters::FilterOP fresh_instance() const;
 
 	void parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &

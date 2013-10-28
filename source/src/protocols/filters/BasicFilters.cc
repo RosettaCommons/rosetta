@@ -20,7 +20,7 @@
 #include <protocols/filters/BasicFilterCreators.hh>
 
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
@@ -55,7 +55,7 @@ namespace filters {
 
 using namespace core;
 typedef std::pair< std::string const, FilterCOP > StringFilter_pair;
-typedef utility::tag::TagPtr TagPtr;
+typedef utility::tag::TagCOP TagCOP;
 typedef core::pose::Pose Pose;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,8 +96,8 @@ StochasticFilter::fresh_instance() const
 
 void
 StochasticFilter::parse_my_tag(
-	TagPtr const tag,
-	moves::DataMap &,
+	TagCOP const tag,
+	basic::datacache::DataMap &,
 	Filters_map const &,
 	moves::Movers_map const &,
 	Pose const & )
@@ -261,8 +261,8 @@ CompoundFilter::set_resid( core::Size const resid )
 
 void
 CompoundFilter::parse_my_tag(
-	TagPtr const tag,
-	moves::DataMap &,
+	TagCOP const tag,
+	basic::datacache::DataMap &,
 	Filters_map const & filters,
 	moves::Movers_map const &,
 	Pose const & )
@@ -270,7 +270,7 @@ CompoundFilter::parse_my_tag(
 	TR<<"CompoundStatement"<<std::endl;
 	invert_ = tag->getOption<bool>( "invert", false );
 
-	foreach(TagPtr cmp_tag_ptr, tag->getTags() ){
+	foreach(TagCOP cmp_tag_ptr, tag->getTags() ){
 		std::string const operation( cmp_tag_ptr->getName() );
 		std::pair< FilterOP, boolean_operations > filter_pair;
 		if( operation == "AND" ) filter_pair.second = AND;
@@ -352,15 +352,15 @@ CombinedFilter::compute( core::pose::Pose const & pose ) const
 
 void
 CombinedFilter::parse_my_tag(
-	TagPtr const tag,
-	moves::DataMap &,
+	TagCOP const tag,
+	basic::datacache::DataMap &,
 	Filters_map const & filters,
 	moves::Movers_map const &,
 	Pose const & )
 {
 	threshold_ = tag->getOption<core::Real>( "threshold", 0.0 );
-	utility::vector1< TagPtr > const sub_tags( tag->getTags() );
-	foreach(TagPtr tag_ptr, sub_tags){
+	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
+	foreach(TagCOP tag_ptr, sub_tags){
 		core::Real weight(1.0);
 		if (tag_ptr->hasOption("factor") ) {
 			weight = tag_ptr->getOption<core::Real>( "factor" );
@@ -427,8 +427,8 @@ MoveBeforeFilter::report_sm( core::pose::Pose const & pose ) const
 
 void
 MoveBeforeFilter::parse_my_tag(
-	TagPtr const tag,
-	moves::DataMap &,
+	TagCOP const tag,
+	basic::datacache::DataMap &,
 	Filters_map const & filters,
 	moves::Movers_map const & movers,
 	Pose const & )
@@ -562,8 +562,8 @@ IfThenFilter::compute( core::pose::Pose const & pose ) const
 
 void
 IfThenFilter::parse_my_tag(
-	TagPtr const tag,
-	moves::DataMap &,
+	TagCOP const tag,
+	basic::datacache::DataMap &,
 	Filters_map const & filters,
 	moves::Movers_map const &,
 	Pose const & )
@@ -574,8 +574,8 @@ IfThenFilter::parse_my_tag(
 		TR.Warning << "WARNING: In IfThenFilter, lower_threshold set without setting threshold." << std::endl;
 		TR.Warning << "WARNING: Note that lower_threshold is a true/false flag, not a real-valued setting." << std::endl;
 	}
-	utility::vector1< TagPtr > const sub_tags( tag->getTags() );
-	foreach(TagPtr tag_ptr, sub_tags){
+	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
+	foreach(TagCOP tag_ptr, sub_tags){
 		std::string const tagname = tag_ptr->getName();
 		FilterOP valuefilter = 0; //default NULL
 		if( tag_ptr->hasOption("valuefilter") ) {

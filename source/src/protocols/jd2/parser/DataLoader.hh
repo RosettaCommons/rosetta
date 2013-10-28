@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_jd2_parser_DataLoader_hh
 
 // Package Headers
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -31,20 +31,20 @@ namespace protocols {
 namespace jd2 {
 namespace parser {
 
-/// @brief A class for loading arbitrary data into the XML parser's DataMap.
+/// @brief A class for loading arbitrary data into the XML parser's basic::datacache::DataMap.
 class DataLoader : public utility::pointer::ReferenceCount
 {
 public:
 	DataLoader();
 	virtual ~DataLoader();
 
-	/// @brief The DataLoader may load specific information into the DataMap
+	/// @brief The DataLoader may load specific information into the basic::datacache::DataMap
 	/// object using this interface.
 	virtual
 	void load_data(
 		core::pose::Pose const & pose,
-		utility::tag::TagPtr const tag,
-		moves::DataMap & data
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data
 	) const = 0;
 
 };

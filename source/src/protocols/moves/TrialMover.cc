@@ -24,7 +24,7 @@
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 // Utility headers
 
@@ -71,8 +71,8 @@ void MonteCarloUtil::apply(Pose & pose)
 }
 
 void MonteCarloUtil::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & /* filters */,
 	protocols::moves::Movers_map const & /* movers */,
 	core::pose::Pose const & /* pose */)
@@ -252,8 +252,8 @@ void TrialMover::set_native_pose( PoseCOP pose )
 }
 
 void TrialMover::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const &,
 	Movers_map const & movers,
 	Pose const &

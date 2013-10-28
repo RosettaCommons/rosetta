@@ -169,7 +169,7 @@ StoreQuasiSymmetricTaskMover::apply( core::pose::Pose & pose )
 }
 
 void
-StoreQuasiSymmetricTaskMover::parse_my_tag( TagPtr const tag, protocols::moves::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+StoreQuasiSymmetricTaskMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 
 	task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data_map );

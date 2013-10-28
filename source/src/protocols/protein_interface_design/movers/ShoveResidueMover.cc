@@ -35,7 +35,7 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <basic/Tracer.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 #include <core/pose/util.hh>
 #include <utility/vector0.hh>
@@ -103,8 +103,8 @@ ShoveResidueMover::get_name() const {
 }
 
 void
-ShoveResidueMover::parse_my_tag( TagPtr const tag,
-		DataMap &,
+ShoveResidueMover::parse_my_tag( TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		Movers_map const &,
 		Pose const & pose)

@@ -26,7 +26,7 @@
 #include <core/sequence/SequenceProfile.hh>
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
@@ -100,9 +100,9 @@ ConservedPosMutationFilter::apply( core::pose::Pose const & pose ) const {
 
 
 void
-ConservedPosMutationFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & , protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &  )
+ConservedPosMutationFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & datamap, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &  )
 {
-	conserved_pos_taskop_->parse_tag( tag );
+	conserved_pos_taskop_->parse_tag( tag, datamap );
 
 	if (tag->hasOption("max_conserved_pos_mutations")) {
 		max_allowed_conserved_pos_mutations_ = tag->getOption<core::Size>("max_conserved_pos_mutations");

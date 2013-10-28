@@ -218,7 +218,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 } // apply
 
 void
-SeqprofConsensusOperation::parse_tag( TagPtr tag )
+SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 {
 	convert_scores_to_probabilities( tag->getOption< bool >("convert_scores_to_probabilities", 1  ) );
 	if( tag->hasOption("filename") ){
@@ -237,19 +237,19 @@ SeqprofConsensusOperation::parse_tag( TagPtr tag )
 
 	if( tag->hasOption("ignore_pose_profile_length_mismatch") ) ignore_pose_profile_length_mismatch_ = tag->getOption< bool >("ignore_pose_profile_length_mismatch");
 
-	utility::vector1< TagPtr > const sub_tags( tag->getTags() );
-	foreach( TagPtr const sub_tag, sub_tags ){
+	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
+	foreach( TagCOP const sub_tag, sub_tags ){
 		if( sub_tag->getName() == "RestrictToAlignedSegments" ){
 			restrict_to_aligned_segments_ = new RestrictToAlignedSegmentsOperation;
 			tr<<"Within SeqprofConsensus I'm now reading a RestrictToAlignedSegments operation..."<<std::endl;
-			restrict_to_aligned_segments_->parse_tag( sub_tag );
+			restrict_to_aligned_segments_->parse_tag( sub_tag, datamap );
 			conservation_cutoff_aligned_segments( tag->getOption< core::Real >( "conservation_cutoff_aligned_segments" ) );
 			tr<<"conservation cutoff for aligned segments: "<<conservation_cutoff_aligned_segments()<<std::endl;
 		}
 		else if( sub_tag->getName() == "ProteinInterfaceDesign" ){
 			protein_interface_design_ = new ProteinInterfaceDesignOperation;
 			tr<<"Within SeqprofConsensus I'm now reading a ProteinInterfaceDesign operation..."<<std::endl;
-			protein_interface_design_->parse_tag( sub_tag );
+			protein_interface_design_->parse_tag( sub_tag, datamap );
 			conservation_cutoff_protein_interface_design( tag->getOption< core::Real >( "conservation_cutoff_protein_interface_design" ) );
 			tr<<"conservation cutoff for protein interface design: "<<conservation_cutoff_protein_interface_design()<<std::endl;
 		}
@@ -322,9 +322,9 @@ RestrictConservedLowDdgOperation::clone() const
 }
 
 void
-RestrictConservedLowDdgOperation::parse_tag( TagPtr tag )
+RestrictConservedLowDdgOperation::parse_tag( TagCOP tag , DataMap & datamap )
 {
-	Parent::parse_tag( tag );
+	Parent::parse_tag( tag, datamap );
 	if( tag->hasOption("ddG_filename") ){
 		ddG_predictions_filename_ = tag->getOption< std::string >("ddG_filename" );
 		position_ddGs_ = core::io::PositionDdGInfo::read_ddg_predictions_file( ddG_predictions_filename_ );

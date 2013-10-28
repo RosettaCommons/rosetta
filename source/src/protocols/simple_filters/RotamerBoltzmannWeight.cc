@@ -19,7 +19,7 @@
 #include <core/conformation/Residue.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/kinematics/MoveMap.hh>
 // AUTO-REMOVED #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
@@ -471,8 +471,8 @@ RotamerBoltzmannWeight::report( std::ostream & out, core::pose::Pose const & pos
 }
 
 void
-RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
+RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & )
@@ -492,8 +492,8 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagPtr const tag,
 	energy_reduction_factor( tag->getOption< core::Real >( "energy_reduction_factor", 0.5 ) );
 	compute_entropy_reduction( tag->getOption< bool >( "compute_entropy_reduction", 0 ) );
 	repack( tag->getOption< bool >( "repack", 1 ) );
-	utility::vector0< TagPtr > const branch( tag->getTags() );
-	foreach( TagPtr const tag, branch ){
+	utility::vector0< TagCOP > const & branch( tag->getTags() );
+	foreach( TagCOP const tag, branch ){
 		using namespace core::chemical;
 
 		std::string const residue_type( tag->getName() );

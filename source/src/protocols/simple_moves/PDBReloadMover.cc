@@ -91,8 +91,8 @@ PDBReloadMover::get_name() const {
 }
 
 void
-PDBReloadMover::parse_my_tag( utility::tag::TagPtr const /*tag*/,
-		protocols::moves::DataMap & /*data_map*/,
+PDBReloadMover::parse_my_tag( utility::tag::TagCOP const /*tag*/,
+		basic::datacache::DataMap & /*data_map*/,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & )

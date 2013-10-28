@@ -47,6 +47,8 @@
 
 #include <core/pose/util.hh>
 
+namespace devel {
+namespace domain_assembly {
 
 
 using namespace core;
@@ -253,4 +255,7 @@ assemble_domains_setup()
 
 	std::string output_pdb = option[ DomainAssembly::da_setup_output_pdb ]();
 	full_pose.dump_pdb( output_pdb );
+}
+
+}
 }

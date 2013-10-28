@@ -94,50 +94,50 @@ public:
 
 	void
 	parse_batch_description_tag_item(
-		utility::tag::TagPtr const tag);
+		utility::tag::TagCOP const tag);
 
 	void
 	parse_batch_id_tag_item(
-		utility::tag::TagPtr const tag);
+		utility::tag::TagCOP const tag);
 
 	void
 	parse_protocol_id_tag_item(
-		utility::tag::TagPtr const tag);
+		utility::tag::TagCOP const tag);
 
 	/* Undefined, commenting out to fix PyRosetta build  void
 	parse_struct_id_type_tag_item(
-		utility::tag::TagPtr const tag);
+		utility::tag::TagCOP const tag);
 	*/
 
 	/* Undefined, commenting out to fix PyRosetta build  void
 	parse_first_struct_id_tag_item(
-		utility::tag::TagPtr const tag);
+		utility::tag::TagCOP const tag);
 	*/
 
 	void
 	parse_use_transactions_tag_item(
-		utility::tag::TagPtr const tag);
+		utility::tag::TagCOP const tag);
 
 	void
 	parse_cache_size_tag_item(
-		utility::tag::TagPtr const tag);
+		utility::tag::TagCOP const tag);
 
 	void
 	parse_remove_xray_virt_tag_item(
-		utility::tag::TagPtr const tag);
+		utility::tag::TagCOP const tag);
 
 	void
 	parse_relevant_residues_mode_tag_item(
-		utility::tag::TagPtr const tag);
+		utility::tag::TagCOP const tag);
 
 	void
 	parse_batch_name_tag_item(
-		utility::tag::TagPtr const tag);
+		utility::tag::TagCOP const tag);
 
 	void
 	parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data,
 		Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & pose );

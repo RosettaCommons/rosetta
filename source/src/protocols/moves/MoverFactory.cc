@@ -15,7 +15,7 @@
 #include <protocols/moves/Mover.hh>
 
 // required for passing to Mover::parse_my_tag
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 // AUTO-REMOVED #include <protocols/filters/Filter.hh>
 
 #include <utility/exit.hh> // runtime_assert, throw utility::excn::EXCN_RosettaScriptsOption
@@ -105,8 +105,8 @@ MoverFactory::newMover(	std::string const & mover_type )
 ///@brief return new Mover by Tag parsing
 MoverOP
 MoverFactory::newMover(
-	TagPtr const tag,
-	moves::DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & filters,
 	moves::Movers_map const & movers,
 	Pose const & pose )

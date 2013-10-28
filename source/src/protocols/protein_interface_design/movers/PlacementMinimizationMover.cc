@@ -18,7 +18,7 @@
 // Package headers
 #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
 #include <protocols/protein_interface_design/movers/PlaceUtils.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -202,18 +202,18 @@ PlacementMinimizationMover::stub_sets( utility::vector1< StubSetStubPos > const 
 }
 
 void
-PlacementMinimizationMover::parse_my_tag( TagPtr const tag,
-		DataMap &data,
+PlacementMinimizationMover::parse_my_tag( TagCOP const tag,
+		basic::datacache::DataMap &data,
 		protocols::filters::Filters_map const &,
 		Movers_map const &,
 		core::pose::Pose const & pose )
 {
 	host_chain( tag->getOption<core::Size>( "host_chain", 2 ) );
 	cb_force( tag->getOption< core::Real >( "cb_force", 0.5 ) );
-	utility::vector0< TagPtr > const branch_tags( tag->getTags() );
+	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 /// PlaceSim calls this parse_my_tag with its own tag, and there, cb_force is
 /// set within a child tag
-	foreach( TagPtr const btag, branch_tags ){
+	foreach( TagCOP const btag, branch_tags ){
 		if( btag->hasOption( "cb_force" ) )
 			cb_force( btag->getOption< core::Real >( "cb_force" ) );
 	}

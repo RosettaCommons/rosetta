@@ -17,7 +17,7 @@
 
 // // Sample parse_my_tag() test
 //
-// DataMap data;
+// basic::datacache::DataMap data;
 // Filters_map filters;
 // Movers_map movers;
 //
@@ -31,7 +31,7 @@
 // data.add( "scorefxns", "rep", rep_only );
 //
 // MyMover testmover;
-// TagPtr tag = tagptr_from_string("<MyTest name=test filter=stubby mover=null reps=4>\n"
+// TagCOP tag = tagptr_from_string("<MyTest name=test filter=stubby mover=null reps=4>\n"
 //		"</MyTest>"); // Remember that C++ has implicit string literal concatenation, but note that the \n is required for the tag parser
 // testmover.parse_my_tag( tag, data, filters, movers, pose );
 //
@@ -44,7 +44,7 @@
 
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/moves/NullMover.hh>
 
@@ -64,8 +64,8 @@ using protocols::filters::FilterOP;
 using protocols::moves::Mover;
 using protocols::moves::MoverOP;
 
-using utility::tag::TagPtr;
-using protocols::moves::DataMap;
+using utility::tag::TagCOP;
+using basic::datacache::DataMap;
 using protocols::moves::Movers_map; // A std::map of string to MoverOP
 using protocols::filters::Filters_map; // A std::map string to FilterOP
 
@@ -75,7 +75,7 @@ using protocols::moves::NullMover;
 
 ///@brief Generate a tagptr from a string
 /// For parse_my_tag tests, only do the relevant tag, not the full <ROSETTASCRIPTS> ... </ROSETTASCRIPTS> wrapped tag.
-inline TagPtr tagptr_from_string(std::string input) {
+inline TagCOP tagptr_from_string(std::string input) {
 	std::stringstream instream( input );
 	return utility::tag::Tag::create( instream );
 }
@@ -93,7 +93,7 @@ inline void prime_Movers( Movers_map & movers ) {
 
 ///@brief setup data map with *some* of the the RosettaScript defaults
 
-inline void prime_Data( DataMap & data ) {
+inline void prime_Data( basic::datacache::DataMap & data ) {
 	core::scoring::ScoreFunctionOP commandline_sfxn = core::scoring::getScoreFunction();
 	core::scoring::ScoreFunctionOP talaris2013 = core::scoring::getScoreFunction();
 

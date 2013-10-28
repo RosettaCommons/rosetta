@@ -33,7 +33,7 @@
 // Project Headers
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
@@ -74,7 +74,7 @@ using core::pack::task::TaskFactoryOP;
 using core::pack::task::operation::InitializeFromCommandline;
 using core::pack::task::operation::RestrictToRepacking;
 using protocols::filters::Filters_map;
-using protocols::moves::DataMap;
+using basic::datacache::DataMap;
 using protocols::moves::MoverOP;
 using protocols::moves::Movers_map;
 using protocols::rosetta_scripts::parse_mover;
@@ -88,7 +88,7 @@ using protocols::rotamer_recovery::RRProtocolReferenceStructure;
 using protocols::rotamer_recovery::RRReporterSQLite;
 using protocols::rotamer_recovery::RRReporterSQLiteOP;
 using utility::sql_database::sessionOP;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using utility::vector1;
 using cppdb::statement;
 
@@ -148,8 +148,8 @@ RotamerRecoveryFeatures::initialize_task_factory(
 
 void
 RotamerRecoveryFeatures::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const & /*filters*/,
 	Movers_map const & movers,
 	Pose const & /*pose*/

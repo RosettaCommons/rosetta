@@ -140,8 +140,8 @@ RotamerTrialsMinMover::task( core::pose::Pose const & pose ) const
 ///@brief Parse XML for RosettaScripts
 void
 RotamerTrialsMinMover::parse_my_tag(
-	TagPtr const tag,
-	protocols::moves::DataMap & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap & datamap,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const &

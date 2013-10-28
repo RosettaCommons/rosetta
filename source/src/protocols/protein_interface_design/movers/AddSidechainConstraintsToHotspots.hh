@@ -18,7 +18,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <set>
 
 #include <utility/vector1.hh>
@@ -34,8 +34,8 @@ public:
 	AddSidechainConstraintsToHotspots();
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-	void parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+	void parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );

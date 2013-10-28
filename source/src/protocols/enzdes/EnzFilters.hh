@@ -29,7 +29,7 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/filters/Filter.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
@@ -63,7 +63,7 @@ public:
 	}
 
 	virtual ~LigDSasaFilter();
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	core::Real lower_threshold_, upper_threshold_;
 };
@@ -92,7 +92,7 @@ public:
 	}
 
 	virtual ~LigBurialFilter();
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	core::Size lig_id_;
 	core::Size neighbors_;
@@ -129,7 +129,7 @@ LigInterfaceEnergyFilter() : Filter( "LigInterfaceEnergy" ) {}
 	core::Real compute( core::pose::Pose const & pose ) const;
 	core::Real constraint_energy( core::pose::Pose const & pose, int which_res ) const;
 	virtual ~LigInterfaceEnergyFilter();
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
 	virtual void parse_def( utility::lua::LuaObject const & def,
 					utility::lua::LuaObject const & score_fxns,
 					utility::lua::LuaObject const & tasks );
@@ -171,7 +171,7 @@ EnzScoreFilter() : Filter( "EnzScore" ) {}
 	core::Real compute( core::pose::Pose const & pose ) const;
 	//core::Size get_resid_from_cstid( core::pose::Pose const & pose, core::Size const & cstid) const;
 	virtual ~EnzScoreFilter();
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
 private:
 	core::Size resnum_;
 	std::string cstid_;
@@ -207,7 +207,7 @@ DiffAtomSasaFilter() : Filter( "DiffAtomBurial" ) {}
   core::Real report_sm( core::pose::Pose const & pose ) const;
   bool compute( core::pose::Pose const & pose ) const;
   virtual ~DiffAtomSasaFilter();
-  void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
+  void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
 private:
   core::Size resid1_, resid2_;
 	std::string aname1_, aname2_, sample_type_;
@@ -237,7 +237,7 @@ RepackWithoutLigandFilter() : Filter( "RepackWithoutLigand" ) {}
   core::Real report_sm( core::pose::Pose const & pose ) const;
   core::Real compute( core::pose::Pose const & pose ) const;
   virtual ~RepackWithoutLigandFilter();
-  void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
+  void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn){ scorefxn_ = scorefxn; }
 	void set_cstid_list( std::string setting){ cstid_list_ = setting; }
 private:
@@ -299,7 +299,7 @@ public:
     return new EnzdesScorefileFilter();
   }
 
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
 
 // specific stuff
 public:

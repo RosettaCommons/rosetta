@@ -81,7 +81,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/backrub/BackrubMover.fwd.hh>
 #include <protocols/backrub/BackrubSegment.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>

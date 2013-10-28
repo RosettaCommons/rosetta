@@ -45,7 +45,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/toolbox/task_operations/RestrictToLoopsAndNeighbors.hh>
 
@@ -241,13 +241,13 @@ core::pack::task::TaskFactoryCOP LoopMover_Refine_CCD::get_task_factory() const 
 
 
 void
-LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose ){
+LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose ){
   packing_isolated_to_active_loops_ = false;
 	//using parser implies that the fold tree probably isn't set correctly
 	set_fold_tree_from_loops( tag->getOption< bool >( "set_fold_tree_from_loops", true ) );
-	utility::vector1< utility::tag::TagPtr > const branch_tags( tag->getTags() );
+	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
 	bool specified_movemap( false );
-	foreach( utility::tag::TagPtr const tag, branch_tags ){
+	foreach( utility::tag::TagCOP const tag, branch_tags ){
 		if( tag->getName() == "MoveMap" ) specified_movemap = true;
 		break;
 	}

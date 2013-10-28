@@ -24,19 +24,19 @@ namespace protocols {
 namespace loops {
 namespace loops_definers {
 
-/// @brief A class for loading Loops data into the XML parser's DataMap.
+/// @brief A class for loading Loops data into the XML parser's basic::datacache::DataMap.
 class LoopsDefinerLoader : public jd2::parser::DataLoader
 {
 public:
 	LoopsDefinerLoader();
 	virtual ~LoopsDefinerLoader();
 
-	/// @brief The LoopsDefinerLoader will load named task operations into the DataMap
+	/// @brief The LoopsDefinerLoader will load named task operations into the basic::datacache::DataMap
 	virtual
 	void load_data(
 		core::pose::Pose const & pose,
-		utility::tag::TagPtr const tag,
-		moves::DataMap & data
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data
 	) const;
 
 };

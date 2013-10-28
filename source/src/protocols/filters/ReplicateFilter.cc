@@ -18,7 +18,7 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -109,8 +109,8 @@ ReplicateFilter::compute(core::pose::Pose const & pose) const {
 }
 
 void
-ReplicateFilter::parse_my_tag( utility::tag::TagPtr const tag_ptr,
-		protocols::moves::DataMap &,
+ReplicateFilter::parse_my_tag( utility::tag::TagCOP const tag_ptr,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &)

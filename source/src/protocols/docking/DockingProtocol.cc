@@ -73,7 +73,7 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 #include <protocols/jd2/ScoreMap.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -1144,7 +1144,7 @@ std::ostream & operator<<(std::ostream& out, const DockingProtocol & dp )
 }
 
 void
-DockingProtocol::parse_my_tag( TagPtr const tag, moves::DataMap & data, protocols::filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+DockingProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	using namespace core::scoring;
 

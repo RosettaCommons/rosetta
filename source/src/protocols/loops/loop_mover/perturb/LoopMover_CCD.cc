@@ -47,7 +47,7 @@
 // AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
 // AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/BackboneMover.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 // AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pose/symmetry/util.hh>

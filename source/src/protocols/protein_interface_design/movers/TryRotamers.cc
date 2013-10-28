@@ -36,7 +36,7 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <basic/Tracer.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 #include <core/pose/util.hh>
 #include <utility/vector0.hh>
@@ -214,8 +214,8 @@ TryRotamers::get_name() const {
 }
 
 void
-TryRotamers::parse_my_tag( TagPtr const tag,
-		DataMap & data,
+TryRotamers::parse_my_tag( TagCOP const tag,
+		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &filters,
 		Movers_map const &,
 		Pose const & pose)

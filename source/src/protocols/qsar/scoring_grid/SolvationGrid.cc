@@ -36,7 +36,7 @@ std::string SolvationGridCreator::keyname() const
     return SolvationGridCreator::grid_name();
 }
 
-GridBaseOP SolvationGridCreator::create_grid(utility::tag::TagPtr const tag) const
+GridBaseOP SolvationGridCreator::create_grid(utility::tag::TagCOP const tag) const
 {
     GridBaseOP solvation_grid= new SolvationGrid();
     
@@ -134,7 +134,7 @@ void SolvationGrid::refresh(core::pose::Pose const & pose, core::Vector const & 
     refresh(pose,center);
 }
 
-void SolvationGrid::parse_my_tag(utility::tag::TagPtr const /*tag*/)
+void SolvationGrid::parse_my_tag(utility::tag::TagCOP const /*tag*/)
 {
 
 }

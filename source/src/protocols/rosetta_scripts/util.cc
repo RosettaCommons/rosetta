@@ -30,7 +30,7 @@
 #define foreach BOOST_FOREACH
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/id/types.hh>
 
@@ -61,7 +61,7 @@ using utility::vector1;
 /// @details This is essentially a shameless copy of Justin's PackRotamersMover::parse_task_operations. In truth
 /// DesignRepackMover should disappear into Justin's better organized class, but this will wait... (SJF)
 core::pack::task::TaskFactoryOP
-parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data )
+parse_task_operations( utility::tag::TagCOP const tag, basic::datacache::DataMap const & data )
 {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
@@ -73,7 +73,7 @@ parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap
 }
 
 core::pack::task::TaskFactoryOP
-parse_task_operations( std::string const task_list, protocols::moves::DataMap const & data )
+parse_task_operations( std::string const task_list, basic::datacache::DataMap const & data )
 {
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
@@ -89,7 +89,7 @@ parse_task_operations( std::string const task_list, protocols::moves::DataMap co
       new_task_factory->push_back( data.get< TaskOperation * >( "task_operations", *t_o_key ) );
 			TR<<*t_o_key<<' ';
     } else {
-      throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in DataMap.");
+      throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
     }
   }
 	TR<<std::endl;
@@ -98,7 +98,7 @@ parse_task_operations( std::string const task_list, protocols::moves::DataMap co
 
 ///option to add or refer to a Taskfactory through the datamap, similar to how to add/refer to movemap OPs (EMS)
 core::pack::task::TaskFactoryOP
-parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap & data, core::pack::task::TaskFactoryOP & task_factory /*, bool const reset_taskfactory */)
+parse_task_operations( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, core::pack::task::TaskFactoryOP & task_factory /*, bool const reset_taskfactory */)
 {
   using namespace core::pack::task;
   using namespace core::pack::task::operation;
@@ -135,7 +135,7 @@ parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap
       TR<<*t_o_key<<' ';
     }
     else {
-      throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in DataMap.");
+      throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
     }
   }
   TR<<std::endl;
@@ -143,7 +143,7 @@ parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap
 }
 
 utility::vector1< core::pack::task::operation::TaskOperationOP >
-get_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data )
+get_task_operations( utility::tag::TagCOP const tag, basic::datacache::DataMap const & data )
 {
 	using core::pack::task::operation::TaskOperationOP;
 	using core::pack::task::operation::TaskOperation;
@@ -158,7 +158,7 @@ get_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap c
 			if ( data.has( "task_operations", *t_o_key ) ) {
 				task_operations.push_back( data.get< TaskOperation* >( "task_operations", *t_o_key ) );
 			} else {
-				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in DataMap.");
+				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
 			}
 		}
 	}
@@ -171,14 +171,14 @@ get_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap c
 /// Justin's PackRotamersMover::parse_score_function.
 core::scoring::ScoreFunctionOP
 parse_score_function(
-	utility::tag::TagPtr const tag,
+	utility::tag::TagCOP const tag,
 	std::string const & option_name,
-	protocols::moves::DataMap const & data,
+	basic::datacache::DataMap const & data,
 	std::string const dflt_key/*="score12"*/ )
 {
 	std::string const scorefxn_key( tag->getOption<std::string>(option_name, dflt_key) );
 	if ( ! data.has( "scorefxns", scorefxn_key ) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in DataMap. To add a score function to the data map, define a score function in the <SCOREFXNS/>.'");
+		throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap. To add a score function to the data map, define a score function in the <SCOREFXNS/>.'");
 	}
 
 	try{
@@ -217,8 +217,8 @@ parse_score_function(
 /// parser-provided data for the option 'scorefxn'.
 core::scoring::ScoreFunctionOP
 parse_score_function(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap const & data,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap const & data,
 	std::string const dflt_key/*="score12"*/ )
 {
 	return parse_score_function(tag, "scorefxn", data, dflt_key);
@@ -226,7 +226,7 @@ parse_score_function(
 
 std::string
 get_score_function_name(
-	utility::tag::TagPtr const tag,
+	utility::tag::TagCOP const tag,
 	std::string const & option_name
 ) {
 	return tag->getOption<std::string>(option_name, "score12");
@@ -234,14 +234,14 @@ get_score_function_name(
 
 std::string
 get_score_function_name(
-	utility::tag::TagPtr const tag
+	utility::tag::TagCOP const tag
 ) {
 	return get_score_function_name(tag, "scorefxn");
 }
 
 
 core::pose::PoseOP
-saved_reference_pose( utility::tag::TagPtr const in_tag, protocols::moves::DataMap & data_map ){
+saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataMap & data_map ){
 
 	if( in_tag->hasOption("reference_name") ){
 		core::pose::PoseOP refpose(NULL);
@@ -262,14 +262,14 @@ saved_reference_pose( utility::tag::TagPtr const in_tag, protocols::moves::DataM
 /// @brief utility function for parse_movemap which goes over each of the tags in a movemap section
 void
 foreach_movemap_tag(
-	utility::tag::TagPtr const in_tag,
+	utility::tag::TagCOP const in_tag,
 	core::pose::Pose const & pose,
 	core::kinematics::MoveMapOP mm
 ){
 	using namespace core::kinematics;
 	using namespace utility::tag;
 
-	foreach( TagPtr const tag, in_tag->getTags() ){
+	foreach( TagCOP const tag, in_tag->getTags() ){
 		std::string const name( tag->getName() );
 		runtime_assert( name == "Jump" || name == "Chain" || name == "Span" );
 		if( name == "Jump" ){
@@ -326,19 +326,19 @@ foreach_movemap_tag(
 /// @brief variant of parse_movemap that takes in a datamap and searches it for already existing movemaps
 void
 parse_movemap(
-	utility::tag::TagPtr const in_tag,
+	utility::tag::TagCOP const in_tag,
 	core::pose::Pose const & pose,
 	core::kinematics::MoveMapOP & mm,
-	protocols::moves::DataMap & data,
+	basic::datacache::DataMap & data,
 	bool const reset_map
 ){
-	using utility::tag::TagPtr;
+	using utility::tag::TagCOP;
 	using namespace core::kinematics;
 
 	if( in_tag() == NULL ) return;
 
-	utility::vector1< TagPtr > const branch_tags( in_tag->getTags() );
-	utility::vector1< TagPtr >::const_iterator tag_it;
+	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
+	utility::vector1< TagCOP >::const_iterator tag_it;
 	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
 		if( (*tag_it)->getName() == "MoveMap" ){
 			break;
@@ -368,14 +368,14 @@ parse_movemap(
 ///@details modifies an existing movemap according to tag
 /// the movemap defaults to move all bb, chi, and jumps.
 void
-parse_movemap( utility::tag::TagPtr const in_tag, core::pose::Pose const & pose, core::kinematics::MoveMapOP mm ){
-	using utility::tag::TagPtr;
+parse_movemap( utility::tag::TagCOP const in_tag, core::pose::Pose const & pose, core::kinematics::MoveMapOP mm ){
+	using utility::tag::TagCOP;
 	using namespace core::kinematics;
 
 	if( in_tag() == NULL ) return;
 
-	utility::vector1< TagPtr > const branch_tags( in_tag->getTags() );
-	utility::vector1< TagPtr >::const_iterator tag_it;
+	utility::vector1< TagCOP > const branch_tags( in_tag->getTags() );
+	utility::vector1< TagCOP >::const_iterator tag_it;
 	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
 		if( (*tag_it)->getName() == "MoveMap" ){
 			break;
@@ -413,7 +413,7 @@ parse_mover( std::string const mover_name, protocols::moves::Movers_map const & 
 
 /// @brief utility function for parsing xyzVector
 numeric::xyzVector< core::Real >
-parse_xyz_vector( utility::tag::TagPtr const xyz_vector_tag ){
+parse_xyz_vector( utility::tag::TagCOP const xyz_vector_tag ){
 	if ( ! xyz_vector_tag->hasOption("x") ) throw utility::excn::EXCN_RosettaScriptsOption("xyz_vector requires 'x' coordinates option");
 	if ( ! xyz_vector_tag->hasOption("y") ) throw utility::excn::EXCN_RosettaScriptsOption("xyz_vector requires 'y' coordinates option");
 	if ( ! xyz_vector_tag->hasOption("z") ) throw utility::excn::EXCN_RosettaScriptsOption("xyz_vector requires 'z' coordinates option");

@@ -207,7 +207,7 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 }
 
 void
-BuildingBlockInterfaceOperation::parse_tag( TagPtr tag )
+BuildingBlockInterfaceOperation::parse_tag( TagCOP tag , DataMap & )
 {
   nsub_bblock_ = tag->getOption<core::Size>("nsub_bblock", 1);
 	sym_dof_names_ = tag->getOption< std::string >( "sym_dof_names", "" );

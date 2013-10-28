@@ -25,7 +25,7 @@
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/elscripts/util.hh>
@@ -143,8 +143,8 @@ TaskAwareSymMinMover::apply(Pose & pose) {
 }
 
 void 
-TaskAwareSymMinMover::parse_my_tag( utility::tag::TagPtr const tag,
-										 protocols::moves::DataMap & data,
+TaskAwareSymMinMover::parse_my_tag( utility::tag::TagCOP const tag,
+										 basic::datacache::DataMap & data,
 										 protocols::filters::Filters_map const &,
 										 protocols::moves::Movers_map const &,
 										 core::pose::Pose const & ) {
@@ -156,7 +156,7 @@ TaskAwareSymMinMover::parse_my_tag( utility::tag::TagPtr const tag,
   min_type_ = tag->getOption< std::string >( "type", "dfpmin_armijo_nonmonotone" );
   tolerance_ = tag->getOption< core::Real >( "tolerance", 1e-5 );
 	designable_only_ = tag->getOption< bool >( "designable_only", true );
-	// Get the ScoreFunction and TaskOperations from the DataMap
+	// Get the ScoreFunction and TaskOperations from the basic::datacache::DataMap
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data, scorefxn_name_ );
 	task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
 
@@ -172,7 +172,7 @@ void TaskAwareSymMinMover::parse_def( utility::lua::LuaObject const & def,
 	min_bb_ = def["rb"] ? def["rb"].to<bool>() : false;
 	min_type_ = def["type"] ? def["type"].to<std::string>() : "dfpmin_armijo_nonmonotone";
 	tolerance_ = def["tolerance"] ? def["tolerance"].to<core::Real>() : 1e-5;
-	// Get the ScoreFunction and TaskOperations from the DataMap
+	// Get the ScoreFunction and TaskOperations from the basic::datacache::DataMap
 	scorefxn_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns );
 	task_factory_ = protocols::elscripts::parse_taskdef( def["tasks"], tasks );
 }

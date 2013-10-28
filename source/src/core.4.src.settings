@@ -135,6 +135,7 @@ sources = {
 	"core/pack/task/operation": [
 		"NoRepackDisulfides",
 		"OperateOnCertainResidues",
+		"OperateOnResidueSubset",
 		"OptCysHG",
 		"OptH",
 		"ReplicateTask",
@@ -148,6 +149,20 @@ sources = {
 	],
 	"core/pack/task/operation/util": [
 		"interface_vector_calculate",
+	],
+	"core/pack/task/residue_selector": [
+		"ResidueIndexSelector",
+		"JumpDownstreamSelector",
+		"JumpUpstreamSelector",
+		"NeighborhoodResidueSelector",
+		"AndResidueSelector",
+		"ChainSelector",
+		"InterGroupInterfaceByVectorSelector",
+		"NotResidueSelector",
+		"NumNeighborsSelector",
+		"OrResidueSelector",
+		"ResidueSelector",
+		"ResidueSelectorFactory",
 	],
 	"core/util": [
 		"ABEGOManager",

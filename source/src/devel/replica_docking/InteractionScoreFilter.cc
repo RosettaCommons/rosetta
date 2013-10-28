@@ -24,7 +24,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/MetricValue.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/vector1.hh>
 
 // Project Headers
@@ -85,7 +85,7 @@ InteractionScoreFilter::fresh_instance() const{
 }
 
 void
-InteractionScoreFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
+InteractionScoreFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
 {
  	std::string const scorefxn_name(
 		protocols::rosetta_scripts::get_score_function_name(tag) );

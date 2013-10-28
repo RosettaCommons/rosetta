@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
-/// @file 
+/// @file
 /// @author Eva-Maria Strauch ( evas01@u.washington.edu )
 
 //Unite headers
@@ -20,7 +20,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <numeric/xyzVector.hh>
-#include <protocols/moves/DataMap.hh> 
+#include <basic/datacache/DataMap.hh>
 //Auto Headers
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
@@ -36,7 +36,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/protein_interface_design/util.hh>
 #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -61,37 +61,37 @@ static basic::Tracer TR( "protocols.seeded_abinitio.SeedFoldTree" );
 static numeric::random::RandomGenerator RG(124523); // <- Magic number, do not change it!!!
 
 namespace protocols{
-	namespace seeded_abinitio{	
-		
+	namespace seeded_abinitio{
+
 	using namespace protocols::moves;
 	using namespace core;
-	
+
 	std::string
 	SeedFoldTreeCreator::keyname() const
 	{
 		return SeedFoldTreeCreator::mover_name();
 	}
-	
+
 	protocols::moves::MoverOP
 	SeedFoldTreeCreator::create_mover() const {
 		return new SeedFoldTree;
 	}
-	
+
 	std::string
 	SeedFoldTreeCreator::mover_name()
 	{
 		return "SeedFoldTree";
 	}
-	
+
 	SeedFoldTree::~SeedFoldTree() {
 	}
-	
+
 	SeedFoldTree::SeedFoldTree() :
 	protocols::moves::Mover( SeedFoldTreeCreator::mover_name() ),
-	fold_tree_( NULL ),	
+	fold_tree_( NULL ),
 	scorefxn_( NULL )
 	{}
-		
+
 	SeedFoldTree::SeedFoldTree( core::kinematics::FoldTreeOP ft ) :
 	protocols::moves::Mover( SeedFoldTreeCreator::mover_name() )
 	{
@@ -118,16 +118,16 @@ SeedFoldTree::clone() const {
 protocols::moves::MoverOP
 SeedFoldTree::fresh_instance() const {
   return protocols::moves::MoverOP( new SeedFoldTree );
-}		
-		
-void
-SeedFoldTree::fold_tree( core::kinematics::FoldTreeOP ft ) { 
-	fold_tree_ = ft; 
 }
-		
+
+void
+SeedFoldTree::fold_tree( core::kinematics::FoldTreeOP ft ) {
+	fold_tree_ = ft;
+}
+
 core::kinematics::FoldTreeOP
-SeedFoldTree::fold_tree() const { 
-	return( fold_tree_ ); 
+SeedFoldTree::fold_tree() const {
+	return( fold_tree_ );
 }
 
 core::scoring::ScoreFunctionOP
@@ -149,7 +149,7 @@ SeedFoldTree::ddg_based( bool ddgb ){
 void
 SeedFoldTree::scorefxn( core::scoring::ScoreFunctionOP scorefxn ){
 	scorefxn_ = scorefxn;
-}		
+}
 
 
 void
@@ -169,19 +169,19 @@ SeedFoldTree::anchor_specified(){
 	return anchor_specified_;
 }
 
-Size define_cut_point_stochasticly (										 
+Size define_cut_point_stochasticly (
 													   Size start_resi,
 													   Size stop_resi,
 													   std::string secondarystruct_seq,
 													   core::Size start_fold_pose
 													   ){
 	TR <<"defining cut points stochasticly between the given two residues: "<<start_resi<<" and "<<stop_resi <<std::endl;
-	utility::vector1<Size> loopy_regions; 
+	utility::vector1<Size> loopy_regions;
 	char ss;
-		
+
 	TR<<"start and stop: " << start_resi << " " << stop_resi << "\nsecondary structure string between seeds: \n";
 	//going through the regions beteween the seeds, to identify loops and assign a cut point at random
-	for (Size resi = start_resi + 1 /*+1 since strings count from 0 */ ; resi < stop_resi - 1/*as long as it is a set*/; ++resi) { 
+	for (Size resi = start_resi + 1 /*+1 since strings count from 0 */ ; resi < stop_resi - 1/*as long as it is a set*/; ++resi) {
 		ss = secondarystruct_seq[ resi - 1 ];
 		TR << ss ;
 		if (ss == 'L')
@@ -191,30 +191,30 @@ Size define_cut_point_stochasticly (
 	//picking one at random:
 	if( loopy_regions.size() < 1 )
 		utility_exit_with_message("there are no loopy residues between the motifs, this is currently not supported.");
-	
-	int low = 1; 
+
+	int low = 1;
 	int high = loopy_regions.size();
 	core::Size ran = RG.random_range( low, high ); // todo: bias more for center
 	core::Size cutpoint = loopy_regions[ ran ] + start_fold_pose -1 ;
-	
+
 	TR.Debug <<"random number: "<< ran << ", number from loop container: " << loopy_regions[ran]<< ", adjusting by " << start_fold_pose - 1 <<", cutpoint: " << cutpoint << std::endl;
 	TR<<"picked a cutpoint between "<<start_resi << " and " << stop_resi << " ( "<<cutpoint - start_fold_pose <<" ). Renumbering will be adjusted by "<< start_fold_pose -1 << std::endl;
-	
+
   return cutpoint;
 }
 
-		
+
 //this method identifies the closest pair of residues between the target and the seed
 std::pair< Size, Size >
-get_closest_residue_pair( 
-						   Size seed_start, 
+get_closest_residue_pair(
+						   Size seed_start,
 						   Size seed_stop,
 						   core::pose::PoseOP & target_seed_pose
 						   ){
-	
+
 	using namespace core::conformation;
 	using namespace core::chemical;
-			
+
 	core::Size nearest_resi( 0 );
 	core::Size nearest_resi_target( 0 );
 	core::Real nearest_dist( 100000.0 );
@@ -223,12 +223,12 @@ get_closest_residue_pair(
 	if( target_seed_pose->conformation().num_chains() != 2 )
 		utility_exit_with_message("only two chains as input supported" );
 	Size target_length = target_seed_pose->split_by_chain( 1 )->total_residue();
-	
+
 	TR<<"iterating through each seed residue to find the closest target residue" <<std::endl;
-	
+
 	for (Size seed_resi = seed_start; seed_resi <= seed_stop ; ++seed_resi) {
-		for (Size target_resi = 1; target_resi <= target_length ; ++target_resi) {	
-			
+		for (Size target_resi = 1; target_resi <= target_length ; ++target_resi) {
+
 			//should be made fancier, using CB instead except for gly (todo)
 			core::Real const distance( target_seed_pose->residue(target_resi).xyz( "CA" ).distance(target_seed_pose->residue(seed_resi).xyz( "CA" ) ) );
 
@@ -236,7 +236,7 @@ get_closest_residue_pair(
 				nearest_resi_target = target_resi;
 				nearest_dist = distance;
 				}
-		
+
 			if( nearest_dist < nearest_dist2 ){
 				nearest_resi = seed_resi ;
 				nearest_dist2 = nearest_dist;
@@ -249,8 +249,8 @@ get_closest_residue_pair(
 	closest_pair.second = nearest_resi;
 	closest_pair.first = nearest_resi_target;
 
-	return ( closest_pair  ); 
-}	
+	return ( closest_pair  );
+}
 
 std::pair< Size, Size >
 find_nearest_residue( Size anchor , pose::PoseOP & target_seed_pose ){
@@ -263,20 +263,20 @@ find_nearest_residue( Size anchor , pose::PoseOP & target_seed_pose ){
   if( target_seed_pose->conformation().num_chains() != 2 )
     utility_exit_with_message("only two chains as input are currently supported" );
   Size target_length = target_seed_pose->split_by_chain( 1 )->total_residue();
-	
+
 	std::string anchor_atom = "CB";
 	Residue res_anchor( target_seed_pose->residue( anchor ));
-	if( res_anchor.name3() == "GLY" ) 
+	if( res_anchor.name3() == "GLY" )
 		anchor_atom = "CA";
 
   for (Size target_resi = 1; target_resi <= target_length ; ++target_resi) {
 
 		std::string connect_atom = "CB";
 		Residue res( target_seed_pose->residue( target_resi ));
-		if( res.name3() == "GLY" ) 
+		if( res.name3() == "GLY" )
 			connect_atom = "CA";
 
-		core::Real const distance( res.xyz( connect_atom ).distance( res_anchor.xyz( anchor_atom ) ) );	
+		core::Real const distance( res.xyz( connect_atom ).distance( res_anchor.xyz( anchor_atom ) ) );
 
       if( distance < nearest_dist ){
 	      nearest_resi = target_resi;
@@ -292,7 +292,7 @@ find_nearest_residue( Size anchor , pose::PoseOP & target_seed_pose ){
   return ( closest_pair  );
 
 }
-	
+
 core::Size
 SeedFoldTree::best_by_ala_scan( Size start, Size end, pose::PoseOP & ts_pose ){
 	//runtime_assert( end <= ts_pose->total_residue() );
@@ -328,32 +328,32 @@ SeedFoldTree::best_by_ala_scan( Size start, Size end, pose::PoseOP & ts_pose ){
 }
 
 core::kinematics::FoldTreeOP
-SeedFoldTree::set_foldtree( 
+SeedFoldTree::set_foldtree(
 							   pose::PoseOP & target_seed_pose,
 								 std::string secstr,
-							   protocols::loops::Loops & loops, 
+							   protocols::loops::Loops & loops,
 							   bool protein_not_folded_yet ){
-	
+
 	using namespace core;
 	using namespace kinematics;
 	using namespace protocols::seeded_abinitio;
 
 	fold_tree_ = new core::kinematics::FoldTree;
-	fold_tree_->clear(); 
+	fold_tree_->clear();
 	Size seed_num = loops.size();
-	
+
 	if( target_seed_pose->conformation().num_chains() == 2 ){
 
 		TR<<"two chains were were submitted for the seed pdb, reading target info"<< std::endl;
-		
+
 		target_chain_ = target_seed_pose->split_by_chain( 1 );
 		TR<<"input pdb: "<< secstr.length() <<" target chain: " <<target_chain_->total_residue() << std::endl;
 		seeds_only_ = target_seed_pose->split_by_chain( 2 );
-	
+
 		Size rb_jump =1;
 		Size target_length = target_chain_->total_residue();
-		/// this one needs better assertions.... 
-		Size total_size_complex = secstr.length() + target_length;	
+		/// this one needs better assertions....
+		Size total_size_complex = secstr.length() + target_length;
 		Size start_new_protein = target_length + 1 ;
 		Size seed_start;// indeces for seeds in the complete pose
 		Size seed_stop;
@@ -364,20 +364,20 @@ SeedFoldTree::set_foldtree(
 		std::set< core::Size > res_on_target;
 		std::set< core::Size > res_on_design;
 		utility::vector1 < std::pair < Size, Size > > jump_pair_collection ;
-		
+
 		//informing vertex container with the total length of the new protein
 		folding_verteces_.insert( total_size_complex );
 		folding_verteces_.insert( start_new_protein );
-			
-		if(seed_num <= 0 ) 
+
+		if(seed_num <= 0 )
 			utility_exit_with_message( "NO SEEDS SPECIFIED!!!" );
-		
+
 		//if there is more than one seed, an extra cutpoint is necessary
 		if( seed_num > 1 ){
 			//need to make sure that the cutpoints are not the same as the seed starts and stops below
 			//will cause problem with the set container and the growing peptides mover
 			TR<<"finding cutpoints..."<<std::endl;
-			
+
 			for(Size seed_it = 2 ; seed_it <= seed_num ; ++seed_it ){
 			  TR.Debug <<"loops[seed_it - 1].stop()"<< loops[seed_it - 1].stop()<<" and loops[seed_it - 1].stop()" <<loops[seed_it - 1].stop() << std::endl;
 				Size end_seed = loops[seed_it - 1].stop();
@@ -388,55 +388,55 @@ SeedFoldTree::set_foldtree(
 				folding_verteces_.insert( cut );
 				folding_verteces_.insert( cut + 1 );
 				TR<<"vector: "<<cut_points_[seed_it - 1] << "method cut: " << cut << std::endl;
-				}	
+				}
 			}//end additional cutpoints
-			
-	
+
+
 		for(Size seed_it = 1 ; seed_it <= seed_num ; ++seed_it ){
-			
+
 			std::pair<Size,Size> jump_pair;
-		
+
 			if( protein_not_folded_yet){
 
-				TR << "assuming that the pose does not have full length yet" << std::endl;	
+				TR << "assuming that the pose does not have full length yet" << std::endl;
 				TR.Debug<<"seed_res_counter "<< seed_res_counter << std::endl;
 				TR.Debug<<"seed start " << loops[seed_it].start() + target_length << std::endl;
 				TR.Debug<<"seed stop " << loops[seed_it].stop() + target_length << std::endl;
-				
+
 				//values for seeds
 				seed_start = loops[seed_it].start() + target_length;
 				seed_stop  = loops[seed_it].stop() + target_length;
-				
+
 				//adjusting values for truncated version from the input pdb
 				pdb_start = seed_res_counter + target_length;
 				pdb_stop =  pdb_start + loops[seed_it].stop() - loops[seed_it].start(); //// - 1;
-				
+
 				TR.Debug<<"pdb_start for seed " << pdb_start << std::endl;
-				TR.Debug<<"pdb_stop for seed: " << pdb_stop <<  std::endl;				
-				
+				TR.Debug<<"pdb_stop for seed: " << pdb_stop <<  std::endl;
+
 				TR<<"seed_residue_counter: "<<seed_res_counter<<std::endl;
 				//populating container for peptide growth
 				folding_verteces_.insert(seed_start);
 				folding_verteces_.insert(seed_stop);
-				
+
 				TR<<"numbering for seed(only)-target pose with target\n ----- SEED: "<< seed_it << " start: "<<seed_start<<", stop: "<<seed_stop<<" ---------" <<std::endl;
 				TR<<"position adjustment of TRUNCATED seed motif by "<<position_adjustment<<std::endl;
 
 				if( anchor_specified() ){
 						if( anchors_.size() < 1 )
 							utility_exit_with_message("no anchor specified?!");
-						Size adjust_anchor = anchors_[seed_it] - loops[seed_it].start()  + seed_res_counter; 
+						Size adjust_anchor = anchors_[seed_it] - loops[seed_it].start()  + seed_res_counter;
 						TR.Debug << "anchor defined: "<< anchors_[seed_it]<< ", adjusted to " << adjust_anchor << std::endl;
 						jump_pair = find_nearest_residue( adjust_anchor, target_seed_pose );
 						jump_pair.second += loops[seed_it].start()  - seed_res_counter;
 						TR<< "jump pairs: " << jump_pair.first << " " << jump_pair.second << std::endl;
 				}
 
-				if( !anchor_specified() ){	
+				if( !anchor_specified() ){
 					if( ddg_based_ ){
 						  TR<<"computing dG for seed " << seed_it <<" to identify jump atom "<< std::endl;
             	Size seed_jump_residue = best_by_ala_scan( pdb_start, pdb_stop, target_seed_pose );
-            	jump_pair = find_nearest_residue( seed_jump_residue, target_seed_pose );   
+            	jump_pair = find_nearest_residue( seed_jump_residue, target_seed_pose );
 					}
 
         	if( !ddg_based_ ){
@@ -445,15 +445,15 @@ SeedFoldTree::set_foldtree(
 					}
 					TR.Debug<<"loops[seed_it].start(): "<<loops[seed_it].start() << " seed_res_counter " << seed_res_counter << std::endl;
 
-        	position_adjustment = loops[seed_it].start() - seed_res_counter; //-1 
+        	position_adjustment = loops[seed_it].start() - seed_res_counter; //-1
         	jump_pair.second += position_adjustment;
 				}
-				
+
 				seed_res_counter += loops[seed_it].stop() - loops[seed_it].start() + 1;
 				TR<<"updating seed res counter: "<<seed_res_counter<<std::endl;
-				
+
 			}//end not folded yet
-			
+
 			//when the protein is already folded!
 			else {
 				TR << "assuming pose has its full length" <<std::endl;
@@ -463,7 +463,7 @@ SeedFoldTree::set_foldtree(
 				//reset the total size of the complex:
 				//total_size_complex = template_pose.total_residue();
 				TR<<"total size complex: " << total_size_complex << std::endl;
-				//pose::PoseOP templ = new pose::Pose( template_pose ); 
+				//pose::PoseOP templ = new pose::Pose( template_pose );
 
 				/// setting jump pairs:
         if( anchor_specified_ ){
@@ -483,24 +483,24 @@ SeedFoldTree::set_foldtree(
           }
         }
 			}
-	
+
 			rb_jump = seed_it;
 			TR<<"finding closest opposing residues pair for seed starting IDs: " << seed_start <<" " <<seed_stop<<" as jump: "<<rb_jump<<std::endl;
 			TR.Debug<<"after adjustment "<< jump_pair.second << std::endl;
-		
+
 			res_on_target.insert( jump_pair.first );
 			res_on_design.insert( jump_pair.second );
 			fold_tree_->add_edge( jump_pair.first, jump_pair.second, rb_jump );
 			//cant connected the edges yet since it is going to be unordered. need to do that in a second loop :(
 			TR<<"SEED: "<<seed_it <<", seed and target jump pairs: " <<jump_pair.first<<" and " <<jump_pair.second <<"\n";
 			TR<<"registered jump pairs after full-length adjustments: " << position_adjustment <<std::endl;
-					
+
 			}//end jump loop
-			
+
 			TR<<"new SeedFoldTree jumps: " <<*fold_tree_ << std::endl;
-			
+
 			//now connect folding pieces/chunks
-			
+
 			///target first:
 			Size target_head = 1;
 			foreach( core::Size const res, res_on_target ){
@@ -508,7 +508,7 @@ SeedFoldTree::set_foldtree(
 				fold_tree_->add_edge( target_head, res, Edge::PEPTIDE );
 				target_head = res;
 				}
-			
+
 			/// connect the last anchor residue on the target chain with the last residue on the target chain
 			core::Size const target_lastjump( *res_on_target.rbegin() );
 			fold_tree_->add_edge( target_lastjump, target_length , Edge::PEPTIDE );
@@ -517,7 +517,7 @@ SeedFoldTree::set_foldtree(
 			Size cut_iter = 1;
 			Size last_cut = 0;
 			//Size last_jump = 0;
-		
+
 			foreach ( core::Size const jpos, res_on_design){
 				TR<<"foldpose iterator: "<< jpos <<"and +1 "<< jpos+1 << std::endl;
 				if( last_cut != 0 )
@@ -529,12 +529,12 @@ SeedFoldTree::set_foldtree(
 					}
 				else break;
 				}
-			
+
 			/// refold chain2 from the first jump residue to the beginning of the chain and from the last key residue to its end
 			core::Size const first( *res_on_design.begin() );
 			core::Size const last(  *res_on_design.rbegin() );
 			TR<<"first: " << *res_on_design.begin() << " and " << last << std::endl;
-		
+
 			//N-terminus of the new protein
 			if( first - 1 >= start_new_protein ) {
 				fold_tree_->add_edge( first, start_new_protein , Edge::PEPTIDE );
@@ -544,25 +544,25 @@ SeedFoldTree::set_foldtree(
 				TR << "--- total_size_complex: " << total_size_complex << std::endl;
 				fold_tree_->add_edge( last, total_size_complex, Edge::PEPTIDE );
 			}
-			
-			TR <<"before deleting self edges: " << *fold_tree_ << std::endl; 
+
+			TR <<"before deleting self edges: " << *fold_tree_ << std::endl;
 			fold_tree_->delete_self_edges();
 			TR<<"before reordering: " << *fold_tree_ <<std::endl;
 			fold_tree_->reorder( 1 );
-			
+
 			TR<<"Fold tree:\n"<<*fold_tree_<<std::endl;
-		
+
 }//end set_foldtree with target
 
 
-//////////////////////// foldtree set up without target chain ///////////////////////////////////	
-/////this part was taken from bcorreia's code and hasnt been tested yet or integrated 
-	
+//////////////////////// foldtree set up without target chain ///////////////////////////////////
+/////this part was taken from bcorreia's code and hasnt been tested yet or integrated
+
 	//this should be also activatable and general in case the usere wants to fold in the absence of the target
 else if( target_seed_pose->conformation().num_chains() == 1 ){
-	
+
 	TR<<"there is no target chain, either because you turned off the option, or it was not loaded" <<std::endl;
-	
+
 	if( loops.size() > 1 ){
 		using namespace core;
 		using namespace kinematics;
@@ -572,13 +572,13 @@ else if( target_seed_pose->conformation().num_chains() == 1 ){
 		TR<<"more than one seed is defined " << std::endl;
 		for (Size seed_it = 2 ; seed_it <= seed_num; ++seed_it ){
 			Size starting = loops[seed_it - 1].stop();
-			Size ending = loops[seed_it].start(); 
+			Size ending = loops[seed_it].start();
 			Size cut = define_cut_point_stochasticly( starting, ending, target_seed_pose->secstruct(), start_protein /*or 0? start fold pose */ );
 			TR<<"adding cut: " << cut <<std::endl;
 			cut_points_.push_back( cut );
 			fold_tree_->add_edge( 1, target_seed_pose->total_residue(), Edge::PEPTIDE );
 			}
-			
+
 		for (Size i=1;  i < loops.size() ; ++i){
 			TR<<"seed "<<  i <<std::endl;
 			TR<<"cut point"<< cut_points_[i]<<std::endl;
@@ -592,12 +592,12 @@ else if( target_seed_pose->conformation().num_chains() == 1 ){
 			fold_tree_->new_jump( loop1_midpoint, variable_midpoint, cutpoint );
 			}
 			TR << "Fold Tree for the scaffold " << *fold_tree_ << std::endl;
-		
+
 		return fold_tree_;
-		
+
 		}//end more than 1 seed
 	}//end without target section
-	
+
 
 else {
 	TR<<"no special foldtree needed. There is no target chain addition and less then 2 or no seed defined"<<std::endl;
@@ -613,71 +613,71 @@ else {
 //needs some fixes... (todo)
 core::kinematics::FoldTreeOP
 SeedFoldTree::set_foldtree_manually(
-						utility::vector1 < std::pair < Size, Size > > & manual_jump_pairs, 
+						utility::vector1 < std::pair < Size, Size > > & manual_jump_pairs,
 						core::pose::Pose & pose
 						 ){
-	   
+
 	   using namespace core;
 	   using namespace kinematics;
 	   using namespace protocols::seeded_abinitio;
-	   
+
 	   fold_tree_ = new core::kinematics::FoldTree;
-	   fold_tree_->clear();  
-	
-	if( pose.conformation().num_chains() == 2 ){ 
+	   fold_tree_->clear();
+
+	if( pose.conformation().num_chains() == 2 ){
 		//Size start_design = pose.conformation().chain_begin( 2 );
-		
+
 	   cut_points_.push_back( pose.conformation().chain_end( 1 ) );
-	   
+
 	   //if there is more than one jump defined we need cutpoints
 	   if( manual_jump_pairs.size() > 1 ){
-		   
+
 		   for(Size it = 2 ; it <=manual_jump_pairs.size(); ++it){
 			   if( manual_jump_pairs.size() > 1 ){
 				   Size end_last_jump  = manual_jump_pairs[it-1].second;
 				   Size start_new_jump = manual_jump_pairs[it].second;
-				   Size cut = define_cut_point_stochasticly( end_last_jump, start_new_jump, pose, 0 ); 
+				   Size cut = define_cut_point_stochasticly( end_last_jump, start_new_jump, pose, 0 );
 				   cut_points_.push_back( cut );
 				   }
 				}
 	   }
-	   
+
 	   fold_tree_->add_edge( 1 , pose.conformation().chain_end( 1 ), Edge::PEPTIDE );
 	   fold_tree_->add_edge(pose.conformation().chain_begin( 2 ), pose.conformation().chain_end( 2 ), Edge::PEPTIDE );
 	   TR<<"foldtree before adding extra jumps: "<<*fold_tree_ <<std::endl;
-	   
+
 		for( Size jpair_it = 1; jpair_it <= manual_jump_pairs.size(); ++jpair_it ){
 			fold_tree_->new_jump( manual_jump_pairs[jpair_it].first, manual_jump_pairs[jpair_it].second, cut_points_[jpair_it]);
 			TR<<"adding jump between residues: "<< manual_jump_pairs[jpair_it].first <<" and " << manual_jump_pairs[jpair_it].second <<" with cut " << cut_points_[jpair_it] << std::endl;
 		}
 
-	   TR<<"before deleting self edges: " << *fold_tree_ << std::endl; 
+	   TR<<"before deleting self edges: " << *fold_tree_ << std::endl;
 	   fold_tree_->delete_self_edges();
 	   TR<<"before reordering: " << *fold_tree_ <<std::endl;
 	   fold_tree_->reorder( 1 );
-		   
+
 	}
-	
+
 	else {
 		utility_exit_with_message( "manual jumps are currently only set up for 2 chain targets, but super easy to set up for just 1" );
 	}
-		
+
 	return fold_tree_;
-	   
+
 }//end manual jump setfoldtree
-		
-*/	
-		
+
+*/
+
 ///////apply///////////
 void
 SeedFoldTree::apply( core::pose::Pose & pose )
 {
-	
+
 	/* (todo)
 	if (set_jumps_manually )
 		fold_tree_ = set_foldtree_manually( manual_jump_pairs_, input_pose );
 	*/
-	
+
 	bool protein_not_folded = true;
 	Size chain_num = pose.conformation().num_chains();
 
@@ -691,55 +691,55 @@ SeedFoldTree::apply( core::pose::Pose & pose )
 		TR<<"Previous fold tree: "<< pose.fold_tree()<<'\n';
 		TR<<"reseting foldtree"<<std::endl;
 		pose::PoseOP poseOP = new pose::Pose( pose );
-		fold_tree_ = set_foldtree( poseOP, template_pdb_->secstruct(), all_seeds_ , protein_not_folded ); 
-		//fold_tree_ = set_foldtree( pose, template_pdb_ , all_seeds_ , protein_not_folded ); 
+		fold_tree_ = set_foldtree( poseOP, template_pdb_->secstruct(), all_seeds_ , protein_not_folded );
+		//fold_tree_ = set_foldtree( pose, template_pdb_ , all_seeds_ , protein_not_folded );
 	}
-	
+
 	if( pose.conformation().num_chains() > 2 ){
 		utility_exit_with_message( "more than 2 chains as input are currently not supported" );
 	}
-	
+
 	runtime_assert( fold_tree_ );
-		
+
 	TR<<"Previous fold tree: "<< pose.fold_tree()<<'\n';
 	pose.fold_tree( *fold_tree_ );
 	TR<<"New fold tree: "<< pose.fold_tree()<<std::endl;
 	protocols::loops::add_cutpoint_variants( pose );
 	TR.flush();
-}	
+}
 
-utility::vector1 < core::Size > 
+utility::vector1 < core::Size >
 SeedFoldTree::get_cutpoints(){ return cut_points_ ;}
-		
-std::set< core::Size > 
+
+std::set< core::Size >
 SeedFoldTree::get_folding_verteces(){ return folding_verteces_;}
-	
+
 std::string
 SeedFoldTree::get_name() const {
 	return SeedFoldTreeCreator::mover_name();
 	}
-	
-	
+
+
 void
-SeedFoldTree::parse_my_tag( TagPtr const tag,
-								 DataMap & data,
+SeedFoldTree::parse_my_tag( TagCOP const tag,
+								 basic::datacache::DataMap & data,
 								 protocols::filters::Filters_map const &,
 								 Movers_map const &,
 								 Pose const & /*input_pose*/){
-		
+
 	TR<<"SeedFoldTree has been invoked"<<std::endl;
 
 	ddg_based_ = tag->getOption< bool >( "ddG_based", 0 );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 
 	//parsing branch tags
-	utility::vector0< TagPtr > const branch_tags( tag->getTags() );
+	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 
-	foreach( TagPtr const btag, branch_tags ){
+	foreach( TagCOP const btag, branch_tags ){
 		/* this parsing option works, it is just not hooked in yet
-		//in case anybody ever wanted to set them manually 	
-		if( btag->getName() == "cut_points" ) {	
-			
+		//in case anybody ever wanted to set them manually
+		if( btag->getName() == "cut_points" ) {
+
 			utility::vector1< Size > cut_points_;
 			core::Size const resnum( protocols::rosetta_scripts::get_resnum( btag, input_pose ) );
 			cut_points_.push_back( resnum );
@@ -750,7 +750,7 @@ SeedFoldTree::parse_my_tag( TagPtr const tag,
 		anchor_specified_ = false;
 
 		if( btag->getName() == "Seeds" ) { //need an assertion for the presence of these or at least for the option file
-			
+
 			core::Size const begin( btag->getOption<core::Size>( "begin", 0 ) );
 			core::Size const end( btag->getOption<core::Size>( "end", 0 ) );
 			all_seeds_.add_loop( begin , end , 0, 0, false );
@@ -763,8 +763,8 @@ SeedFoldTree::parse_my_tag( TagPtr const tag,
 			else
 				anchors_.push_back( 0 );
 		}//end seed tags
-	
-	
+
+
 		//add option for manual setting of the jumps. this optioh should turn off the automatic foldtree
 		if( btag->getName() == "Jumps" ) { //need an assertion for the presence of these or at least for the option file
 			set_jumps_manually = true;
@@ -774,14 +774,14 @@ SeedFoldTree::parse_my_tag( TagPtr const tag,
 			if( jump_pair.first > jump_pair.second)
 				utility_exit_with_message("specifiied jumps need to be defined in sequence order" );
 			manual_jump_pairs_.push_back( jump_pair );
-	
+
 		}//end jump tags
 	}//end b-tags
 
 	std::string const template_pdb_fname( tag->getOption< std::string >( "template_pdb" ));
 	template_pdb_ =  new core::pose::Pose ;
 	core::import_pose::pose_from_pdb( *template_pdb_, template_pdb_fname );
-	
-	}//end parse my tag							 	
+
+	}//end parse my tag
 }//end seeded_abinitio
 }//end protocols

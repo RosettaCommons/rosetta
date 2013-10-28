@@ -30,7 +30,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/make_symmetric_task.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <core/chemical/ResidueType.hh>
@@ -281,7 +281,7 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 }
 
 void
-DesignRepackMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose ){
+DesignRepackMover::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose ){
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 
 	std::string const scorefxn_repack( protocols::rosetta_scripts::get_score_function_name(tag, "scorefxn_repack" ) );
@@ -339,9 +339,9 @@ DesignRepackMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::move
 		min_sc( minsc );
 	}
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_cutoff_distance", 8.0 );
-	utility::vector0< TagPtr > const repack_tags( tag->getTags() );
-	for( utility::vector0< TagPtr >::const_iterator repack_it=repack_tags.begin(); repack_it!=repack_tags.end(); ++repack_it ) {
-		TagPtr const repack_ptr = *repack_it;
+	utility::vector0< TagCOP > const & repack_tags( tag->getTags() );
+	for( utility::vector0< TagCOP >::const_iterator repack_it=repack_tags.begin(); repack_it!=repack_tags.end(); ++repack_it ) {
+		TagCOP const repack_ptr = *repack_it;
 		if( repack_ptr->getName() == "residue" ) {
 			core::Size const resnum( core::pose::get_resnum( repack_ptr, pose ) );
 			target_residues_.push_back( resnum );

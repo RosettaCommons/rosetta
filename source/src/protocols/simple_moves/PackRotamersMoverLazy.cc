@@ -7,7 +7,7 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/PackRotamersMoverLazyCreator.hh>
 
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 // AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 
 // AUTO-REMOVED #include <core/pack/interaction_graph/InteractionGraphBase.hh>
@@ -65,8 +65,8 @@ PackRotamersMoverLazy::~PackRotamersMoverLazy(){}
 
 void
 PackRotamersMoverLazy::parse_my_tag(
-	TagPtr const tag,
-	protocols::moves::DataMap & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap & datamap,
 	Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
 	Pose const & pose

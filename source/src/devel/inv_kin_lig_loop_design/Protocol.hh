@@ -42,7 +42,7 @@ namespace devel {
     struct Protocol {
       Protocol() {}
 
-      void setParams( TagPtr tag, vector<Loop> const& loops_ );
+      void setParams( TagCOP tag, vector<Loop> const& loops_ );
       void apply(core::pose::PoseOP pose);
 
     private:

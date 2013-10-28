@@ -19,7 +19,7 @@
 // Project headers
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -205,7 +205,7 @@ PrepackMover::get_name() const {
 }
 
 void
-PrepackMover::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+PrepackMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	jump_num_ = tag->getOption<core::Size>("jump_number", 1 );

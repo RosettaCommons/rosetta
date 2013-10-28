@@ -21,7 +21,7 @@
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <utility/exit.hh>
@@ -32,7 +32,7 @@
 // C++ headers
 
 // Unit headers
-//#include <protocols/moves/DataMap.hh>
+//#include <basic/datacache/DataMap.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -71,7 +71,7 @@ public :
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Size compute( core::pose::Pose const & pose ) const;
 	virtual ~HbondsToResidueFilter();
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	Size resnum_, partners_;
 	Real energy_cutoff_;

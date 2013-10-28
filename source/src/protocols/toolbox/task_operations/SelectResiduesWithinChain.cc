@@ -114,7 +114,7 @@ SelectResiduesWithinChainOperation::apply( core::pose::Pose const & pose, core::
 }
 
 void
-SelectResiduesWithinChainOperation::parse_tag( TagPtr tag )
+SelectResiduesWithinChainOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	chain( tag->getOption< core::Size >( "chain", 1 ) );
 	std::string const res( tag->getOption< std::string >( "resid" ) );

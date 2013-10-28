@@ -84,7 +84,7 @@ void LinkResidues::apply( core::pose::Pose const & pose, core::pack::task::Packe
 				for(Size kk=2; kk<=grp_i.size(); ++kk){
 						assert(grp_i[kk].size() == numResInSet);
 				}
-				//go through the sets and set them to be equal  
+				//go through the sets and set them to be equal
 				for(Size kk=1; kk<=grp_i.size(); ++kk){
 						for(Size ll=1; ll<=grp_i.size(); ++ll){
 								Size numResInSet = grp_i[kk].size();
@@ -99,7 +99,7 @@ void LinkResidues::apply( core::pose::Pose const & pose, core::pack::task::Packe
 		}
 		//print out equivalent residues
 		for(Size ii=1; ii<=equiv_pos.size(); ++ii){
-				TR.Debug << ii <<" "; 
+				TR.Debug << ii <<" ";
 				for(Size kk=1; kk<=equiv_pos[ii].size(); ++kk){
 						TR.Debug << equiv_pos[ii][kk] <<",";
 				}
@@ -114,11 +114,11 @@ void LinkResidues::apply( core::pose::Pose const & pose, core::pack::task::Packe
 }
 
 void
-LinkResidues::parse_tag( TagPtr tag )
+LinkResidues::parse_tag( TagCOP tag , DataMap & )
 {
   // now parse ncs groups <<< subtags
-  utility::vector1< TagPtr > const branch_tags( tag->getTags() );
-	utility::vector1< TagPtr >::const_iterator tag_it;
+  utility::vector1< TagCOP > const branch_tags( tag->getTags() );
+	utility::vector1< TagCOP >::const_iterator tag_it;
 	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
 		if( (*tag_it)->getName() == "LinkGroup" || (*tag_it)->getName() == "linkgroup" ){
 				std::string grp_i = (*tag_it)->getOption<std::string>( "group" );

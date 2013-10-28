@@ -124,7 +124,7 @@ void RestrictNonSurfaceToRepackingOperation::apply( core::pose::Pose const & pos
 
 // parse_tag method; I believe this needs to be implemented so that the TaskOperationFactory can read this particular
 // TaskOperation out of an XML file specifying task operations to perform
-void RestrictNonSurfaceToRepackingOperation::parse_tag( utility::tag::TagPtr tag ) {
+void RestrictNonSurfaceToRepackingOperation::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) {
 	surface_exposed_nb_cutoff_ = tag->getOption< core::Size >( "surface_exposed_nb_count_cutoff" );
 }
 

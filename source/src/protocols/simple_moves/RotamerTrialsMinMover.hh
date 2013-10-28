@@ -27,7 +27,7 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <protocols/filters/Filter.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -94,8 +94,8 @@ public:
 
 	///@brief Parse XML for RosettaScripts
 	virtual void parse_my_tag(
-		TagPtr const,
-		protocols::moves::DataMap &,
+		TagCOP const,
+		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & );

@@ -105,8 +105,8 @@ VirtualRootMover::get_name() const {
 }
 
 void VirtualRootMover::parse_my_tag(
-	TagPtr const tag,
-	moves::DataMap &,
+	TagCOP const tag,
+	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	moves::Movers_map const &,
 	Pose const &

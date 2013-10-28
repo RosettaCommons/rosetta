@@ -43,7 +43,7 @@
 #include <core/util/ABEGOManager.hh>
 
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
@@ -194,8 +194,8 @@ FusePosesNtoCMover::apply( core::pose::Pose & pose )
 
 void
 FusePosesNtoCMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
@@ -853,8 +853,8 @@ SetupCoiledCoilFoldTreeMover::apply( core::pose::Pose & pose )
 
 void
 SetupCoiledCoilFoldTreeMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & ,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & ,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &

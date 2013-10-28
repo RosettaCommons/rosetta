@@ -47,7 +47,7 @@ public:
 	ResourceOptionsOP
 	create_resource_options(
 		std::string const & options_type,
-		utility::tag::TagPtr tag
+		utility::tag::TagCOP tag
 	) const;
 
 	/// @brief Singleton accessor function.  Return the globally-unique instance of the class.

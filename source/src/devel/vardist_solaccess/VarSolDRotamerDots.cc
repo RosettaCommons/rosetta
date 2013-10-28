@@ -1979,8 +1979,8 @@ LoadVarSolDistSasaCalculatorMover::apply( core::pose::Pose & )
 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void LoadVarSolDistSasaCalculatorMover::parse_my_tag(
-	TagPtr const,
-	protocols::moves::DataMap &,
+	TagCOP const,
+	basic::datacache::DataMap &,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const & )

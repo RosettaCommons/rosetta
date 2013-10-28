@@ -54,7 +54,7 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	virtual void
-	parse_my_tag( TagPtr const, protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, Pose const & );
+	parse_my_tag( TagCOP const, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, Pose const & );
   virtual void parse_def( utility::lua::LuaObject const & def,
 		utility::lua::LuaObject const & score_fxns,
 		utility::lua::LuaObject const & tasks,

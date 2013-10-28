@@ -31,6 +31,7 @@ sources = {
 		#"SymDock",	 # /* Ingemar Andre,Documentation Location,Demo Location */
 	],
 	"pilot/andrew" : [
+		"domain_assembly_jd2",
 		#"optest",
 		#"mpi_msd",
 		"measure_catalytic_geometry",
@@ -588,7 +589,7 @@ sources = {
 	],
 	"pilot/olungu" : [
                 "sasa_interface",
-		#"multidomain_switch", # /* ????,Documentation Location,Demo Location */
+		"multidomain_switch", # /* ????,Documentation Location,Demo Location */
 		#"Superimpose_Pdbs", # /* ????,Documentation Location,Demo Location */
 	],
 	"pilot/opt_e" : [

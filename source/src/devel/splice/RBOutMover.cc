@@ -13,8 +13,8 @@
 // Unit headers
 #include <devel/splice/RBOutMover.hh>
 #include <devel/splice/RBOutMoverCreator.hh>
-#include <protocols/moves/DataMapObj.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMapObj.hh>
+#include <basic/datacache/DataMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
@@ -177,8 +177,8 @@ RBOutMover::fresh_instance() const
 
 void
 RBOutMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap &,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )

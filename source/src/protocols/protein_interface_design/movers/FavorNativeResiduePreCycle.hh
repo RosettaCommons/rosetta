@@ -18,7 +18,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/protein_interface_design/design_utils.hh>
 
 #include <utility/vector1.hh>
@@ -42,7 +42,7 @@ public:
 		return( protocols::moves::MoverOP( new FavorNativeResiduePreCycle( bonus_ ) ) );
 	}
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new FavorNativeResiduePreCycle); }
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	virtual ~FavorNativeResiduePreCycle();
 private:
 	core::Real bonus_;

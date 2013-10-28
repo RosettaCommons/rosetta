@@ -33,7 +33,7 @@
 
 
 // Parser headers
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 
 // Utility Headers
@@ -174,8 +174,8 @@ RotamerTrialsMover::task( core::pose::Pose const & pose ) const
 /// @brief parse xml
 void
 RotamerTrialsMover::parse_my_tag(
-	TagPtr const tag,
-	protocols::moves::DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const & )

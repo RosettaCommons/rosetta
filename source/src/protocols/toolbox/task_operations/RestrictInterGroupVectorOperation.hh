@@ -73,14 +73,14 @@ public:
 public:
   ///@breif parse_tag
   //parse_tag(
-  //  utility::tag::TagPtr tag,
+  //  utility::tag::TagCOP tag,
   // core::pose::Pose const & pose);
 
   /// @brief apply
   virtual void apply( Pose const & pose, core::pack::task::PackerTask & task ) const;
 
 // ///@brief parse_tag
-// void parse_tag(utility::tag::TagPtr tag);
+// void parse_tag(utility::tag::TagCOP tag);
 
   /// @brief setters for member data
   void insert_pair( group_pair  pair);

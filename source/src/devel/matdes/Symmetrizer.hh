@@ -27,7 +27,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/jd2/parser/BluePrint.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
@@ -43,9 +43,9 @@ class Symmetrizer : public protocols::moves::Mover {
 	typedef core::scoring::ScoreFunctionCOP ScoreFunctionCOP;
 	typedef protocols::moves::MoverOP MoverOP;
 	typedef protocols::filters::Filters_map Filters_map;
-	typedef protocols::moves::DataMap DataMap;
+	typedef basic::datacache::DataMap DataMap;
 	typedef protocols::moves::Movers_map Movers_map;
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 
 public:
   Symmetrizer();
@@ -62,8 +62,8 @@ public:
 	virtual MoverOP fresh_instance() const;
 
 
-	virtual void parse_my_tag( TagPtr const tag,
-														 DataMap & data,
+	virtual void parse_my_tag( TagCOP const tag,
+														 basic::datacache::DataMap & data,
 														 Filters_map const &,
 														 Movers_map const &,
 														 Pose const & );

@@ -229,8 +229,8 @@ DesignProteinBackboneAroundDNA::get_name() const {
 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void DesignProteinBackboneAroundDNA::parse_my_tag(
-	TagPtr const tag,
-	moves::DataMap & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap & datamap,
 	protocols::filters::Filters_map const & filters,
 	moves::Movers_map const & movers,
 	Pose const & pose

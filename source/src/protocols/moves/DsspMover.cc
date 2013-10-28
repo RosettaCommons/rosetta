@@ -23,7 +23,7 @@
 #include <utility/tag/Tag.hh>
 
 // Parser headers
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 // AUTO-REMOVED #include <protocols/filters/Filter.hh>
 // AUTO-REMOVED #include <utility/tag/Tag.hh>  // REQUIRED FOR WINDOWS
 
@@ -98,8 +98,8 @@ DsspMover::get_name() const {
 /// @brief parse xml
 void
 DsspMover::parse_my_tag(
-	TagPtr const tag,
-	DataMap &,
+	TagCOP const tag,
+	basic::datacache::DataMap &,
 	Filters_map const &,
 	Movers_map const &,
 	Pose const & )

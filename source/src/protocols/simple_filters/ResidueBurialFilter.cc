@@ -19,7 +19,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <boost/foreach.hpp>
@@ -94,7 +94,7 @@ ResidueBurialFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-ResidueBurialFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+ResidueBurialFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
 	residue( tag->getOption< std::string >( "pdb_num", "" ) );
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );

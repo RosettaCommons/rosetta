@@ -52,7 +52,7 @@ LoopHashLibraryOptions::~LoopHashLibraryOptions() {}
 /// helpful error message is displayed to the user.
 void
 LoopHashLibraryOptions::parse_my_tag(
-	utility::tag::TagPtr tag
+	utility::tag::TagCOP tag
 )
 {
 	if(tag->hasOption("loop_sizes")){

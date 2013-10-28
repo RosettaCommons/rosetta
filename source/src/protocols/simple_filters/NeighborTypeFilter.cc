@@ -37,12 +37,12 @@ NeighborTypeFilterCreator::keyname() const { return "NeighborType"; }
 NeighborTypeFilter::~NeighborTypeFilter() {}
 
 void
-NeighborTypeFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+NeighborTypeFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
   residue_types_.assign( core::chemical::num_canonical_aas, false );
-	utility::vector0< utility::tag::TagPtr > const neighbor_type_tags( tag->getTags() );
-	for( utility::vector0< utility::tag::TagPtr >::const_iterator nt_it=neighbor_type_tags.begin(); nt_it!=neighbor_type_tags.end(); ++nt_it ) {
-    utility::tag::TagPtr const nt_tag_ptr = *nt_it;
+	utility::vector0< utility::tag::TagCOP > const neighbor_type_tags( tag->getTags() );
+	for( utility::vector0< utility::tag::TagCOP >::const_iterator nt_it=neighbor_type_tags.begin(); nt_it!=neighbor_type_tags.end(); ++nt_it ) {
+    utility::tag::TagCOP const nt_tag_ptr = *nt_it;
     if( nt_tag_ptr->getName() == "Neighbor" ) {
 			std::string const type( nt_tag_ptr->getOption<std::string>( "type" ) );
 			residue_types_[ core::chemical::aa_from_name( type ) ] = true;

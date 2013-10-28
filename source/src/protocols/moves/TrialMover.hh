@@ -81,8 +81,8 @@ public:
 	virtual void apply(Pose & pose);
 	
 	virtual void parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & /* data */,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & /* data */,
 		protocols::filters::Filters_map const & /* filters */,
 		protocols::moves::Movers_map const & /* movers */,
 		core::pose::Pose const & /* pose */
@@ -194,11 +194,11 @@ public:
 	virtual void set_native_pose( PoseCOP pose );
 
 	/// @brief Requires that a MonteCarlo object has already been
-	/// loaded into the DataMap in a prior MONTECARLOS objects
+	/// loaded into the basic::datacache::DataMap in a prior MONTECARLOS objects
 	/// section.
 	virtual void parse_my_tag(
-		TagPtr const tag,
-		DataMap & data,
+		TagCOP const tag,
+		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		Movers_map const & movers,
 		Pose const &

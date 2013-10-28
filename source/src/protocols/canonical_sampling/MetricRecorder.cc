@@ -121,8 +121,8 @@ MetricRecorder::get_name() const
 
 void
 MetricRecorder::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & /* data */,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & /* data */,
 	protocols::filters::Filters_map const & /* filters */,
 	protocols::moves::Movers_map const & /* movers */,
 	core::pose::Pose const & pose
@@ -134,11 +134,11 @@ MetricRecorder::parse_my_tag(
 	prepend_output_name_ = tag->getOption< bool >( "prepend_output_name", false );
 	file_name_ = tag->getOption< std::string >( "filename", "metrics.txt" );
 
-	utility::vector0< utility::tag::TagPtr > const subtags( tag->getTags() );
+	utility::vector0< utility::tag::TagCOP > const subtags( tag->getTags() );
 
-	for( utility::vector0< utility::tag::TagPtr >::const_iterator subtag_it = subtags.begin(); subtag_it != subtags.end(); ++subtag_it ) {
+	for( utility::vector0< utility::tag::TagCOP >::const_iterator subtag_it = subtags.begin(); subtag_it != subtags.end(); ++subtag_it ) {
 
-		TagPtr const subtag = *subtag_it;
+		TagCOP const subtag = *subtag_it;
 
 		protocols::moves::MoverOP mover;
 

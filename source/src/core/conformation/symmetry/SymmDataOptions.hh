@@ -52,7 +52,7 @@ public:
 
 	virtual
 	void
-	parse_my_tag(utility::tag::TagPtr) {}
+	parse_my_tag(utility::tag::TagCOP) {}
 
 	std::string
 	type() const { return "SymmDataOptions"; }

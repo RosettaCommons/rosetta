@@ -17,7 +17,7 @@
 #include <core/conformation/Residue.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -205,8 +205,8 @@ AverageInterfaceEnergyFilter::report( std::ostream & out, core::pose::Pose const
 }
 
 void
-AverageInterfaceEnergyFilter::parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
+AverageInterfaceEnergyFilter::parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & )

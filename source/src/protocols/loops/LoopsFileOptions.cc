@@ -39,7 +39,7 @@ LoopsFileOptions::~LoopsFileOptions() {}
 /// If this option is omitted it is set to true by default.
 void
 LoopsFileOptions::parse_my_tag(
-	utility::tag::TagPtr tag
+	utility::tag::TagCOP tag
 )
 {
 	prohibit_single_residue_loops( tag->getOption< bool >( "prohibit_single_residue_loops", true ));

@@ -19,7 +19,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -105,7 +105,7 @@ CutOutDomain::get_name() const {
 }
 
 void
-CutOutDomain::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
+CutOutDomain::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const & filters, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
 {
 	start_res_ = tag->getOption<core::Size>( "start_res", 1 );
 	end_res_ = tag->getOption<core::Size>( "end_res", 1 );

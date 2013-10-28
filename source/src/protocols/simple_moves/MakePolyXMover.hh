@@ -19,7 +19,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/simple_moves/MakePolyXMover.fwd.hh>
 
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -35,9 +35,9 @@ class MakePolyXMover : public protocols::moves::Mover {
 public:
 
 	typedef protocols::moves::MoverOP MoverOP;
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 	typedef protocols::filters::Filters_map Filters_map;
-	typedef protocols::moves::DataMap DataMap;
+	typedef basic::datacache::DataMap DataMap;
 	typedef protocols::moves::Movers_map Movers_map;
 
 public:
@@ -62,7 +62,7 @@ public:
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
 
 private:

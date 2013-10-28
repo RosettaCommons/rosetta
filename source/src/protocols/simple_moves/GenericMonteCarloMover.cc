@@ -18,8 +18,8 @@
 // Unit Headers
 #include <protocols/simple_moves/GenericMonteCarloMover.hh>
 #include <protocols/simple_moves/GenericMonteCarloMoverCreator.hh>
-#include <protocols/moves/DataMapObj.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMapObj.hh>
+#include <basic/datacache/DataMap.hh>
 
 // C/C++ headers
 #include <iostream>
@@ -49,7 +49,7 @@
 #include <protocols/filters/Filter.hh>
 
 // Package Headers
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -895,7 +895,7 @@ GenericMonteCarloMover::get_name() const {
 
 /// @brief parse xml file
 void
-GenericMonteCarloMover::parse_my_tag( TagPtr const tag, protocols::moves::DataMap & data, Filters_map const &filters, Movers_map const &movers, Pose const & )
+GenericMonteCarloMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &filters, Movers_map const &movers, Pose const & )
 {
 	//using core::pack::task::operation::TaskOperation;
 	//using core::pack::task::TaskFactoryOP;
@@ -911,7 +911,7 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, protocols::moves::DataMa
 	String const  user_defined_mover_name_( tag->getOption< String >( "mover_name" ,""));
 	if( data.has( "stopping_condition", user_defined_mover_name_ ) ){
 		TR<<user_defined_mover_name_<<" defines its own stopping condition, and GenericMC will respect this stopping condition"<<std::endl;
-		mover_stopping_condition_ = data.get< protocols::moves::DataMapObj< bool > * >( "stopping_condition", user_defined_mover_name_ );
+		mover_stopping_condition_ = data.get< basic::datacache::DataMapObj< bool > * >( "stopping_condition", user_defined_mover_name_ );
 	}
 
 	String const filter_name( tag->getOption< String >( "filter_name", "true_filter" ) );
@@ -965,11 +965,11 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, protocols::moves::DataMa
 	recover_low_ = tag->getOption< bool >( "recover_low", 1 );
 	boltz_rank_ = tag->getOption< bool >( "bolz_rank", 0 );
 
-	utility::vector1< TagPtr > const branch_tags( tag->getTags() );
-	foreach( TagPtr const btag, branch_tags ){
+	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
+	foreach( TagCOP const btag, branch_tags ){
 		if( btag->getName() == "Filters" ){
-			utility::vector1< TagPtr > const filters_tags( btag->getTags() );
-			foreach( TagPtr const ftag, filters_tags ){
+			utility::vector1< TagCOP > const filters_tags( btag->getTags() );
+			foreach( TagCOP const ftag, filters_tags ){
 				String const filter_name( ftag->getOption< String >( "filter_name" ) );
 				Filters_map::const_iterator find_filt( filters.find( filter_name ));
 				if( find_filt == filters.end() ) {
@@ -1006,15 +1006,15 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, protocols::moves::DataMa
 	saved_accept_file_name_ = tag->getOption< std::string >( "saved_accept_file_name", "" );
 	saved_trial_number_file_ = tag->getOption< std::string >( "saved_trial_number_file", "" );
 	if( tag->hasOption( "mover_tag" ) )
-		mover_tag_ = protocols::moves::get_set_from_datamap< protocols::moves::DataMapObj< std::string > >( "tags", tag->getOption< std::string >( "mover_tag" ), data );
+		mover_tag_ = basic::datacache::get_set_from_datamap< basic::datacache::DataMapObj< std::string > >( "tags", tag->getOption< std::string >( "mover_tag" ), data );
 	reset_baselines( tag->getOption< bool >( "reset_baselines", true ) );
   initialize();
 }
 
 ///@brief parse "task_operations" XML option
 void GenericMonteCarloMover::parse_task_operations(
-	TagPtr const tag,
-	protocols::moves::DataMap const & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap const & datamap,
 	Filters_map const &,
 	Movers_map const &
 )

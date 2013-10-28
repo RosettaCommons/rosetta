@@ -51,7 +51,7 @@ public:
 	typedef core::fragment::FragSetOP FragSetOP;
 
 	typedef utility::tag::Tag Tag;
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 
 
 public:
@@ -61,7 +61,7 @@ public:
 	FragmentReader();
 
 	/// @brief value constructor
-	FragmentReader( TagPtr const & tag );
+	FragmentReader( TagCOP const & tag );
 
 	/// @brief destructor
 	virtual ~FragmentReader();
@@ -77,7 +77,7 @@ private:
 
 
 	///@brief parse tag
-	void parse_tag( TagPtr const & tag );
+	void parse_tag( TagCOP const & tag );
 
 	///@brief set fragments just for helper function
 	void set_fragments( Pose const & pose, FragSetOP const & fragset );

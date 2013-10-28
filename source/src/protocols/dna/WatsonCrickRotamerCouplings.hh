@@ -36,7 +36,7 @@ public:
 	virtual ~WatsonCrickRotamerCouplings();
 	virtual TaskOperationOP clone() const;
 	virtual	void apply( Pose const & pose, PackerTask & ptask ) const;
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 };
 
 } // namespace dna

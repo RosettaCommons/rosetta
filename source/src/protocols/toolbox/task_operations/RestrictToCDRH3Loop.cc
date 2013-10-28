@@ -33,7 +33,7 @@ namespace task_operations {
 using core::pose::Pose;
 using core::pack::task::PackerTask;
 using core::pack::task::operation::TaskOperationOP;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 
 
 RestrictToCDRH3Loop::RestrictToCDRH3Loop() : parent() {}

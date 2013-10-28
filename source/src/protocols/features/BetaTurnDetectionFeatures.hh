@@ -22,7 +22,7 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <numeric/HomogeneousTransform.fwd.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/vector1.fwd.hh>

@@ -128,7 +128,7 @@ PoseCOP
 RestrictDesignToProteinDNAInterface::reference_pose() const { return reference_pose_; }
 
 void
-RestrictDesignToProteinDNAInterface::parse_tag( TagPtr tag )
+RestrictDesignToProteinDNAInterface::parse_tag( TagCOP tag , DataMap & )
 {
 	typedef utility::vector1< std::string > Strings;
 	if ( tag->hasOption("dna_defs") ) {

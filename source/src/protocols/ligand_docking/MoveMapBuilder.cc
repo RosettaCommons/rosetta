@@ -101,8 +101,8 @@ MoveMapBuilder::~MoveMapBuilder() {}
 //@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 MoveMapBuilder::parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & datamap
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & datamap
 ){
 	if ( tag->hasOption("sc_interface") ){
 		std::string sc_interface_name= tag->getOption<std::string>("sc_interface");

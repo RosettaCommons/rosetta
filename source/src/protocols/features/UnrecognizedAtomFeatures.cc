@@ -25,7 +25,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/types.hh>
 #include <core/io/pdb/file_data.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 
 //Basic Headers
@@ -73,9 +73,9 @@ using core::pose::Pose;
 using core::pose::PDBInfoCOP;
 using core::conformation::Residue;
 using protocols::filters::Filters_map;
-using protocols::moves::DataMap;
+using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using utility::vector1;
 using utility::tools::make_vector;
 using utility::sql_database::sessionOP;
@@ -230,8 +230,8 @@ UnrecognizedAtomFeatures::features_reporter_dependencies() const {
 
 void
 UnrecognizedAtomFeatures::parse_my_tag(
-	TagPtr const tag,
-	DataMap & /*data*/,
+	TagCOP const tag,
+	basic::datacache::DataMap & /*data*/,
 	Filters_map const & /*filters*/,
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/

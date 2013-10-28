@@ -33,7 +33,7 @@ class ProteinCore : public core::pack::task::operation::ResFilter {
 	  ProteinCore();
 		virtual bool operator() ( Pose const &, Size ) const;
 		virtual core::pack::task::operation::ResFilterOP clone() const {return (core::pack::task::operation::ResFilterOP( new ProteinCore( *this) ));}
-		virtual void parse_tag( TagPtr );
+		virtual void parse_tag( TagCOP );
 	private:
   	core::Real distance_threshold_; // dflt 8.0A; sphere around the residue
   	core::Size neighbor_cutoff_; // dflt 10; how many residues in the sequence around the target residue to ignore in computing neighbours

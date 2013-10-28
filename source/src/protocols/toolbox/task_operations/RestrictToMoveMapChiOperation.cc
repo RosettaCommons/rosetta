@@ -52,7 +52,7 @@ RestrictToMoveMapChiOperation::init() {
 }
 
 /*void
-RestrictToMoveMapChiOperation::parse_tag( TagPtr tag, protocols::moves::DataMap & data){
+RestrictToMoveMapChiOperation::parse_tag( TagCOP tag, basic::datacache::DataMap & data){
 	set_cutoff(tag->getOption< core::Real >("cutoff", 10.0));
 	set_design(tag->getOption< bool > "design", false));
 	set_include_neighbors(tag->getOption< bool > "include_neighbors", false));

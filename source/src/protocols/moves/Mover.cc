@@ -27,7 +27,7 @@
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 // AUTO-REMOVED #include <utility/tag/Tag.hh>  // REQUIRED FOR WINDOWS
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/string_util.hh>
 
@@ -175,8 +175,8 @@ void Mover::save_state( SerializableState & /*state*/ ) {
 // end mpr support
 ///@details Some movers need not be parsed, so we shouldn't stop executions. This, however, calls attention to the lack of this method, which could be due to something as silly as a wrong parameters definition.
 void Mover::parse_my_tag(
-	TagPtr const,
-	DataMap &,
+	TagCOP const,
+	basic::datacache::DataMap &,
 	Filters_map const &,
 	Movers_map const &,
 	Pose const &

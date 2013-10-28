@@ -18,7 +18,7 @@
 // Package headers
 #include <protocols/simple_filters/InterfaceSasaFilter.hh>
 #include <protocols/simple_filters/DdgFilter.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 // Project headers
 
@@ -87,8 +87,8 @@ InterfaceBindingEnergyDensityFilter::fresh_instance() const{
 
 void
 InterfaceBindingEnergyDensityFilter::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	moves::DataMap &,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap &,
 	filters::Filters_map const & filters_map,
 	moves::Movers_map const &,
 	core::pose::Pose const &

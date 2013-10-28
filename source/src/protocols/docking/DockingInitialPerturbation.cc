@@ -23,7 +23,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/docking/RigidBodyInfo.hh> // zhe
-#include <protocols/moves/DataMap.hh> // zhe
+#include <basic/datacache/DataMap.hh> // zhe
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -322,20 +322,20 @@ DockingInitialPerturbation::get_name() const {
 
 void
 DockingInitialPerturbation::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data_map,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data_map,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &
 ) {
 	if ( !data_map.has( "RigidBodyInfo", "docking_setup" ) ) {
-		TR << "RigidBodyInfo not found in DataMap" << std::endl;
+		TR << "RigidBodyInfo not found in basic::datacache::DataMap" << std::endl;
 		rigid_body_info_ = new protocols::docking::RigidBodyInfo;
 		data_map.add( "RigidBodyInfo", "docking_setup", rigid_body_info_ );
-		//		throw utility::excn::EXCN_RosettaScriptsOption( "RigidBodyInfo not found in DataMap, DockingInitialPerturbation can not be done, so exit here!" );
+		//		throw utility::excn::EXCN_RosettaScriptsOption( "RigidBodyInfo not found in basic::datacache::DataMap, DockingInitialPerturbation can not be done, so exit here!" );
 	} else {
 		rigid_body_info_ = data_map.get< protocols::docking::RigidBodyInfo* >( "RigidBodyInfo", "docking_setup" );
-		TR.Debug << "get RigidBodyInfo pointer from DataMap" << std::endl;
+		TR.Debug << "get RigidBodyInfo pointer from basic::datacache::DataMap" << std::endl;
 	}
 
 	if ( tag->hasOption( "randomize1" ) ) {

@@ -156,7 +156,7 @@ RestrictInterGroupVectorOperation::apply( core::pose::Pose const & pose, core::p
 
 // ///@details parse_tag
 // void
-// RestrictInterGroupVectorOperation::parse_tag(utility::tag::TagPtr tag)
+// RestrictInterGroupVectorOperation::parse_tag(utility::tag::TagCOP tag)
 // {
 // }//parse_tag
 

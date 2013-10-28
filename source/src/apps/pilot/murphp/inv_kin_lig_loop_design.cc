@@ -87,7 +87,7 @@ int main( int argc, char ** argv ) {
   cout << "loop_design_filename=" << loop_design_filename << endl;
   ifstream fin;
   open(fin,loop_design_filename);
-  utility::tag::TagPtr tag = utility::tag::Tag::create(fin);
+  utility::tag::TagCOP tag = utility::tag::Tag::create(fin);
   cout << tag << endl;
   assert( tag->getName() == "loop_design" );
 

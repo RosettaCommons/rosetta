@@ -29,7 +29,7 @@
 #include <basic/Tracer.hh>
 #include <core/pose/PDBInfo.hh>
 #include <devel/init.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/jd2/ScoreMap.hh>

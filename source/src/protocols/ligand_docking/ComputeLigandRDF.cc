@@ -39,7 +39,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
@@ -160,8 +160,8 @@ std::string ComputeLigandRDF::get_name() const
 	
 void ComputeLigandRDF::parse_my_tag
 (
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data_map,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data_map,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/

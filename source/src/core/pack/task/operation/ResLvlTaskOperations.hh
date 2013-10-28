@@ -55,7 +55,7 @@ public:
 // if an amino acid is not present (false) in the boolean vector, then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical order by one-letter code.
 	void aas_to_keep( utility::vector1< bool > const & );
 	void aas_to_keep( std::string const & );
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP );
 private:
 	utility::vector1< bool > canonical_aas_to_keep_;
 };
@@ -75,7 +75,7 @@ public:
 	//define as true which residues are NOT allowed
 	void disallow_aas( utility::vector1< bool > const & cannonical_disallowed );
 	void disallow_aas( std::string const & aa_string );
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP );
 
 private:
 	utility::vector1< bool > invert_vector( utility::vector1< bool > disallowed_aas);
@@ -103,7 +103,7 @@ public:
 	virtual ~AddBehaviorRLT();
 	virtual ResLvlTaskOperationOP clone() const;
 	virtual void apply( ResidueLevelTask & ) const;
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP );
 private:
 	std::string behavior_;
 };

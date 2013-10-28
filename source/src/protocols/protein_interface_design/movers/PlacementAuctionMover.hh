@@ -20,7 +20,7 @@
 #include <utility/tag/Tag.fwd.hh>
 // AUTO-REMOVED #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 // AUTO-REMOVED #include <protocols/hotspot_hashing/HotspotStub.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/protein_interface_design/movers/PlacementAuctionMover.fwd.hh>
@@ -71,8 +71,8 @@ public:
 	iterator end();
 	const_iterator begin() const;
 	const_iterator end() const;
-	virtual void parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+	virtual void parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );

@@ -19,7 +19,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -52,8 +52,8 @@ public:
 
 	std::set< core::Size > get_folding_verteces();
 	
-	void parse_my_tag( utility::tag::TagPtr const tag,
-							  protocols::moves::DataMap &,
+	void parse_my_tag( utility::tag::TagCOP const tag,
+							  basic::datacache::DataMap &,
 							  protocols::filters::Filters_map const &,
 							  protocols::moves::Movers_map const &,
 							  core::pose::Pose const & );

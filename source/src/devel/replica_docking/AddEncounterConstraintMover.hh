@@ -41,8 +41,8 @@ public:
   virtual std::string get_name() const;
 
   void parse_my_tag(
-		    utility::tag::TagPtr const tag,
-		    protocols::moves::DataMap &,
+		    utility::tag::TagCOP const tag,
+		    basic::datacache::DataMap &,
 		    protocols::filters::Filters_map const &,
 		    protocols::moves::Movers_map const &,
 		    core::pose::Pose const &

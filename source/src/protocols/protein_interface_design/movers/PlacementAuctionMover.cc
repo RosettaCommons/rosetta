@@ -18,7 +18,7 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <core/scoring/constraints/BackboneStubConstraint.hh>
 #include <core/scoring/constraints/BackboneStubLinearConstraint.hh>
@@ -369,8 +369,8 @@ PlacementAuctionMover::stub_sets() {
 }
 
 void
-PlacementAuctionMover::parse_my_tag( TagPtr const tag,
-		DataMap &data,
+PlacementAuctionMover::parse_my_tag( TagCOP const tag,
+		basic::datacache::DataMap &data,
 		protocols::filters::Filters_map const &,
 		Movers_map const &,
 		core::pose::Pose const & pose )
@@ -380,7 +380,7 @@ PlacementAuctionMover::parse_my_tag( TagPtr const tag,
 	using namespace core::scoring;
 
 	host_chain_ = tag->getOption<core::Size>( "chain_to_design", 2 );
-	utility::vector0< TagPtr > const branch_tags( tag->getTags() );
+	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 	max_cb_cb_dist_ = tag->getOption< core::Real >( "max_cb_dist", 3.0 );
 	cb_force_ = tag->getOption< core::Real >( "cb_force", 0.5 );
   stub_energy_fxn_ = tag->getOption<std::string>( "stubscorefxn", "backbone_stub_constraint" ) ;

@@ -42,7 +42,7 @@ ProteinCore::ProteinCore() :
 	{}
 
 void
-ProteinCore::parse_tag( TagPtr tag ){
+ProteinCore::parse_tag( TagCOP tag ){
   distance_threshold_ = tag->getOption< core::Real >( "distance_threshold", 8.0 ) ;
   neighbor_cutoff_ = tag->getOption< core::Size >( "neighbor_cutoff", 10 );
   bound_ = tag->getOption< bool >( "bound", false );

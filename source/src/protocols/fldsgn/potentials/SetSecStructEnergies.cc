@@ -37,7 +37,7 @@
 #include <protocols/fldsgn/potentials/sspot/NatbiasHelicesSheetPotential.hh>
 #include <protocols/fldsgn/potentials/sspot/NatbiasHelixPairPotential.hh>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 
 #include <utility/tag/Tag.hh>
@@ -330,8 +330,8 @@ SetSecStructEnergies::get_name() const {
 /// @brief parse xml
 void
 SetSecStructEnergies::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const &,
 	Movers_map const &,
 	Pose const & )

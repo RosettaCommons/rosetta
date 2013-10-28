@@ -160,7 +160,7 @@ DesignInterfacesOperation::design_shell( core::Real const radius )
 }
 
 void
-DesignInterfacesOperation::parse_tag( TagPtr tag )
+DesignInterfacesOperation::parse_tag( TagCOP tag , DataMap & )
 {
     design_shell( tag->getOption< core::Real >( "design_shell", 6.0 ) );
     repack_shell( tag->getOption<core::Real >("repack_shell", 8.0) );

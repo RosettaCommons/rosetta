@@ -18,7 +18,7 @@
 #include <protocols/moves/Mover.hh>
 #include <utility/io/ozstream.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/qsar/scoring_grid/SingleGrid.fwd.hh>
 
@@ -55,8 +55,8 @@ public:
 	virtual moves::MoverOP clone() const;
 	virtual std::string get_name() const;
 	virtual void apply(core::pose::Pose & pose);
-	virtual void parse_my_tag(utility::tag::TagPtr const tag,
-			moves::DataMap & data,
+	virtual void parse_my_tag(utility::tag::TagCOP const tag,
+			basic::datacache::DataMap & data,
 			filters::Filters_map const & filters,
 			protocols::moves::Movers_map const & movers,
 			core::pose::Pose const & pose

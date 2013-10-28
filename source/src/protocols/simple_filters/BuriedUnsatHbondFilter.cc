@@ -17,7 +17,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -52,7 +52,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter() : filters::Filter( "BuriedUnsat
 BuriedUnsatHbondFilter::~BuriedUnsatHbondFilter(){}
 
 void
-BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & datamap, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & datamap, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	jump_num_ = tag->getOption<core::Size>( "jump_number", 1 );
 	upper_threshold_ = tag->getOption<core::Size>( "cutoff", 20 );

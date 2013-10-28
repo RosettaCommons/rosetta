@@ -22,7 +22,7 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/types.hh>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/protein_interface_design/filters/RmsdFilter.hh>
@@ -135,7 +135,7 @@ RemoveLigandFilter::apply(Pose const & pose) const
 }
 
 void
-RemoveLigandFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map const & filters, Movers_map const & movers, Pose const &)
+RemoveLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const & filters, Movers_map const & movers, Pose const &)
 {
     threshold_ = tag->getOption< Real >( "threshold", 3.0 );
     const std::string mover_name = tag->getOption< std::string >( "mover", "");

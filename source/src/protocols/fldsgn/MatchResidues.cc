@@ -27,7 +27,7 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <utility/exit.hh>
@@ -157,8 +157,8 @@ MatchResidues::cart_product( VecVecSize const & input) const {
 /// @brief parse xml
 void
 MatchResidues::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & /*data*/,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & /*data*/,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
@@ -179,7 +179,7 @@ MatchResidues::parse_my_tag(
 		ss_seg = map_ss_segments( ss );
   }
 
-	foreach( utility::tag::TagPtr pairs_tag, tag->getTags() ) {
+	foreach( utility::tag::TagCOP pairs_tag, tag->getTags() ) {
 		if( pairs_tag->getName() == "match" ) {
 			const Size ref_pos = pairs_tag->getOption< Size >("ref_pos");
 			Size mod_pos_start= 0;

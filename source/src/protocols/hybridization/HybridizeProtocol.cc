@@ -109,7 +109,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
@@ -1352,8 +1352,8 @@ HybridizeProtocol::get_name() const {
 
 void
 HybridizeProtocol::parse_my_tag(
-		utility::tag::TagPtr const tag,
-		moves::DataMap & data,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data,
 		filters::Filters_map const &,
 		moves::Movers_map const &,
 		core::pose::Pose const & pose )
@@ -1481,8 +1481,8 @@ HybridizeProtocol::parse_my_tag(
 	}
 
 	// fragments
-	utility::vector1< utility::tag::TagPtr > const branch_tags( tag->getTags() );
-	utility::vector1< utility::tag::TagPtr >::const_iterator tag_it;
+	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
+	utility::vector1< utility::tag::TagCOP >::const_iterator tag_it;
 	for (tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
 		if ( (*tag_it)->getName() == "Fragments" ) {
 			using namespace core::fragment;

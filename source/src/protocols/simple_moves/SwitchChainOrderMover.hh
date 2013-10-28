@@ -15,9 +15,9 @@
 
 #include <protocols/simple_moves/SwitchChainOrderMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMapObj.hh>
+#include <basic/datacache/DataMapObj.hh>
 
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -46,8 +46,8 @@ public:
 	std::string chain_order() const;
 
 	virtual void parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose );
@@ -56,7 +56,7 @@ public:
 	void scorefxn( core::scoring::ScoreFunctionOP s );
 private:
 	std::string chain_order_;
-	utility::pointer::owning_ptr< protocols::moves::DataMapObj< utility::vector1< core::Size > > > residue_numbers_; /// dflt NULL; a vector of residue numbers placed on the DataMap which need to be changed due to the chain order switch
+	utility::pointer::owning_ptr< basic::datacache::DataMapObj< utility::vector1< core::Size > > > residue_numbers_; /// dflt NULL; a vector of residue numbers placed on the basic::datacache::DataMap which need to be changed due to the chain order switch
 	core::scoring::ScoreFunctionOP scorefxn_; // dflt NULL; needed to score the pose for the energy graph to behave well
 };
 

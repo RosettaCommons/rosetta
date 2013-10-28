@@ -28,7 +28,7 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
 

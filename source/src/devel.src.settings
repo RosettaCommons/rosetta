@@ -25,16 +25,16 @@ sources = {
 		"dna_util",
 		"SafeID",
 	],
-  "devel/constel" : [
-  	"ChainTerm",
-    "cnl_info",
-    "FilterByProxTerm",
-    "FilterBySASA",
-    "MasterFilter",
-    "PairConstelFilters",
-    "Primitives",
-    "SearchOptions",
-  ],
+	"devel/constel" : [
+		"ChainTerm",
+		"cnl_info",
+		"FilterByProxTerm",
+		"FilterBySASA",
+		"MasterFilter",
+		"PairConstelFilters",
+		"Primitives",
+		"SearchOptions",
+	],
 	"devel/coupled_sidechains": [
 		"CoupledSidechainProtocol2",
 	],
@@ -83,6 +83,7 @@ sources = {
 	"devel/domain_assembly": [
 		"domain_assembly",
 		"domain_assembly_setup",
+		"DomainAssemblyMover",
 		"DomainAssemblyReader",
 	],
 	"devel/domain_insertion": [

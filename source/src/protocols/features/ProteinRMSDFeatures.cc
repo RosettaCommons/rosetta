@@ -73,12 +73,12 @@ using core::pose::Pose;
 using core::pose::PoseCOP;
 using core::pose::PoseOP;
 using protocols::filters::Filters_map;
-using protocols::moves::DataMap;
+using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using protocols::rosetta_scripts::saved_reference_pose;
 using utility::vector1;
 using utility::sql_database::sessionOP;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using cppdb::statement;
 
 static basic::Tracer tr("protocols.features.ProteinRMSDFeatures");
@@ -163,8 +163,8 @@ ProteinRMSDFeatures::features_reporter_dependencies() const {
 
 void
 ProteinRMSDFeatures::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const & /*filters*/,
 	Movers_map const & /*movers*/,
 	Pose const & pose

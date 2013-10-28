@@ -27,7 +27,7 @@
 // AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <core/chemical/AA.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 
 // AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
@@ -124,8 +124,8 @@ void SetupForDensityScoringMover::mask( protocols::loops::Loops const & loops ) 
 }
 
 void SetupForDensityScoringMover::parse_my_tag(
-			utility::tag::TagPtr const tag,
-			moves::DataMap &,
+			utility::tag::TagCOP const tag,
+			basic::datacache::DataMap &,
 			filters::Filters_map const &,
 			moves::Movers_map const &,
 			core::pose::Pose const & ) {

@@ -84,9 +84,9 @@ public: // typedefs
 	typedef utility::vector1< FragSetOP > FragSetOPs;
 	typedef utility::vector1< FragmentMoverOP > FragmentMoverOPs;
 
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 	typedef protocols::filters::Filters_map Filters_map;
-	typedef protocols::moves::DataMap DataMap;
+	typedef basic::datacache::DataMap DataMap;
 	typedef protocols::moves::Movers_map Movers_map;
 
 

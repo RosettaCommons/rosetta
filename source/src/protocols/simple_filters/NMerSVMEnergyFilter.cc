@@ -28,7 +28,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/exit.hh>
 #include <ObjexxFCL/format.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
@@ -76,7 +76,7 @@ protocols::filters::Filter( "NMerSVMEnergy" )
 NMerSVMEnergyFilter::~NMerSVMEnergyFilter() {}
 
 void
-NMerSVMEnergyFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & /*data*/, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+NMerSVMEnergyFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & /*data*/, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	if( ! tag->hasOption( "threshold" ) ) throw utility::excn::EXCN_RosettaScriptsOption("Must specify 'threshold' for NMerSVMEnergyFilter.");
 	score_type_threshold_ = tag->getOption< core::Real >( "threshold" );

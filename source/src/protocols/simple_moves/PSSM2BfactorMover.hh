@@ -15,7 +15,7 @@
 
 #include <protocols/simple_moves/PSSM2BfactorMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -35,8 +35,8 @@ public:
 	virtual moves::MoverOP fresh_instance() const;
 
 	virtual void parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose );

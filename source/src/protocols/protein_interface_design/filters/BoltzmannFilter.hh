@@ -19,7 +19,7 @@
 #include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/protein_interface_design/filters/BoltzmannFilter.fwd.hh>
 
 #include <utility/vector1.hh>
@@ -45,8 +45,8 @@ public:
 	virtual protocols::filters::FilterOP fresh_instance() const;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~BoltzmannFilter();
-	void parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+	void parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );

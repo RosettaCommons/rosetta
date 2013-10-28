@@ -35,7 +35,7 @@ public:
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> );
 
-	void parse_my_tag(utility::tag::TagPtr const tag);
+	void parse_my_tag(utility::tag::TagCOP const tag);
 
 	/// @brief return the current score of an UltraLightResidue using the current grid
 	virtual core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map);

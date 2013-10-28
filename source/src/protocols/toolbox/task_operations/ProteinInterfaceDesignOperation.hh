@@ -66,7 +66,7 @@ public:
 	void
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 
 	bool modify_before_jump() const{ return modify_before_jump_; }
 	void modify_before_jump( bool const m ) { modify_before_jump_ = m; }

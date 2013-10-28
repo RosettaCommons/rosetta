@@ -14,7 +14,7 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -277,8 +277,8 @@ SequenceRecoveryFilter::report( std::ostream & out, core::pose::Pose const & pos
 }
 
 void
-SequenceRecoveryFilter::parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
+SequenceRecoveryFilter::parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & pose )

@@ -16,7 +16,7 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/PackRotamersMoverCreator.hh>
 
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/elscripts/util.hh>
 
@@ -205,8 +205,8 @@ void PackRotamersMover::parse_def( utility::lua::LuaObject const & def,
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 PackRotamersMover::parse_my_tag(
-	TagPtr const tag,
-	protocols::moves::DataMap & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap & datamap,
 	Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
 	Pose const & pose
@@ -229,8 +229,8 @@ PackRotamersMover::parse_my_tag(
 ///@brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
 void
 PackRotamersMover::parse_score_function(
-	TagPtr const tag,
-	protocols::moves::DataMap const & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap const & datamap,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const &
@@ -244,8 +244,8 @@ PackRotamersMover::parse_score_function(
 ///@brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
 void
 PackRotamersMover::parse_task_operations(
-	TagPtr const tag,
-	protocols::moves::DataMap const & datamap,
+	TagCOP const tag,
+	basic::datacache::DataMap const & datamap,
 	Filters_map const &,
 	protocols::moves::Movers_map const &,
 	Pose const &

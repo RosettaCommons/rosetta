@@ -25,7 +25,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/filters/Filter.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
@@ -60,7 +60,7 @@ public:
 
     core::Real report_sm( Pose const & pose ) const;
 
-    void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+    void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
     FilterOP clone() const { return new RemoveLigandFilter( *this ); }
     FilterOP fresh_instance() const { return new RemoveLigandFilter; }

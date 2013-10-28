@@ -45,8 +45,8 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual void parse_my_tag(
-			utility::tag::TagPtr const tag,
-			moves::DataMap &data,
+			utility::tag::TagCOP const tag,
+			basic::datacache::DataMap &data,
 			filters::Filters_map const &filters,
 			moves::Movers_map const &movers,
 			core::pose::Pose const & pose );
@@ -76,8 +76,8 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual void parse_my_tag(
-			utility::tag::TagPtr const tag,
-			moves::DataMap &data,
+			utility::tag::TagCOP const tag,
+			basic::datacache::DataMap &data,
 			filters::Filters_map const &filters,
 			moves::Movers_map const &movers,
 			core::pose::Pose const & pose );
@@ -98,8 +98,8 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual void parse_my_tag(
-			utility::tag::TagPtr const tag,
-			moves::DataMap &data,
+			utility::tag::TagCOP const tag,
+			basic::datacache::DataMap &data,
 			filters::Filters_map const &filters,
 			moves::Movers_map const &movers,
 			core::pose::Pose const & pose );

@@ -584,8 +584,8 @@ SymmetricMotifFilter::process_motifs() {
 // parse_my_tag
 void
 SymmetricMotifFilter::parse_my_tag(
-				utility::tag::TagPtr const tag,
-				protocols::moves::DataMap & /*data_map*/,
+				utility::tag::TagCOP const tag,
+				basic::datacache::DataMap & /*data_map*/,
 				protocols::filters::Filters_map const &,
 				protocols::moves::Movers_map const &,
 				core::pose::Pose const & /*reference_pose*/ ) {

@@ -27,7 +27,7 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/exit.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -75,7 +75,7 @@ protocols::filters::Filter( "NMerPSSMEnergy" )
 NMerPSSMEnergyFilter::~NMerPSSMEnergyFilter() {}
 
 void
-NMerPSSMEnergyFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & /*data*/, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+NMerPSSMEnergyFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & /*data*/, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	if( ! tag->hasOption( "threshold" ) ) throw utility::excn::EXCN_RosettaScriptsOption("Must specify 'threshold' for NMerPSSMEnergyFilter.");
 	score_type_threshold_ = tag->getOption< core::Real >( "threshold" );

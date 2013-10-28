@@ -151,7 +151,7 @@ AddSearchPatternRotSetOp::clone() const
 
 /// @details not valid now, extend with search pattern parsing
 void
-AddSearchPatternRotSetOp::parse_tag( TagPtr /*tag*/ )
+AddSearchPatternRotSetOp::parse_tag( TagCOP /*tag*/ , DataMap & )
 {
 	utility_exit_with_message("Can not parse tag for add search pattern rot set op.");
 }

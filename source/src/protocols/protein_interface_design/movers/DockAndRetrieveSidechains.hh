@@ -18,7 +18,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 // AUTO-REMOVED #include <protocols/docking/DockingProtocol.hh>
 // AUTO-REMOVED #include <protocols/symmetric_docking/SymDockProtocol.hh>
 
@@ -38,7 +38,7 @@ public:
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new DockAndRetrieveSidechains ); }
 	void apply( core::pose::Pose & pose );
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	virtual ~DockAndRetrieveSidechains();
 	virtual std::string get_name() const;
 private:

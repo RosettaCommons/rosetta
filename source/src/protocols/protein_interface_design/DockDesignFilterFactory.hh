@@ -18,7 +18,7 @@
 #include <protocols/protein_interface_design/DockDesignFilterFactory.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
 #include <core/pose/Pose.fwd.hh>
@@ -40,7 +40,7 @@ class DockDesignFilterFactory : public utility::pointer::ReferenceCount
 {
 public:
 	typedef utility::tag::Tag Tag;
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 	typedef core::pose::Pose Pose;
 
 public:
@@ -55,8 +55,8 @@ public:
 	protocols::filters::FilterOP newFilter( std::string const & );
 	///@brief return new Filter by Tag parsing
 	protocols::filters::FilterOP newFilter(
-		TagPtr const,
-		moves::DataMap &,
+		TagCOP const,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
 		Pose const & );

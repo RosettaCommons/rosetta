@@ -14,7 +14,7 @@
 #include <devel/splice/RBInMover.hh>
 #include <devel/splice/RBOutMover.hh>
 #include <devel/splice/RBInMoverCreator.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
 using basic::T;
@@ -198,8 +198,8 @@ RBInMover::fresh_instance() const
 
 void
 RBInMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap &,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )

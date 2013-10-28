@@ -19,7 +19,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 #include <boost/foreach.hpp>
 
@@ -373,8 +373,8 @@ SeedSetupMover::get_name() const {
 }	
 		
 void
-SeedSetupMover::parse_my_tag( TagPtr const tag,
-									 protocols::moves::DataMap & data,
+SeedSetupMover::parse_my_tag( TagCOP const tag,
+									 basic::datacache::DataMap & data,
 									 protocols::filters::Filters_map const & /*filters*/,
 									 protocols::moves::Movers_map const &,
 									 core::pose::	Pose const & pose){
@@ -412,8 +412,8 @@ SeedSetupMover::parse_my_tag( TagPtr const tag,
 	design_ = tag->getOption< bool >( "design" , 0 );
 
 	/// read input seeds
-	utility::vector0< TagPtr > const branch_tags( tag->getTags() );
-	foreach( TagPtr const btag, branch_tags ){
+	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
+	foreach( TagCOP const btag, branch_tags ){
 	
 		if( btag->getName() == "Seeds" ) { //need an assertion for the presence of these or at least for the option file
 

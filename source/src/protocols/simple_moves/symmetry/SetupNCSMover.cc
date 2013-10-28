@@ -14,7 +14,7 @@
 #include <protocols/simple_moves/symmetry/SetupNCSMoverCreator.hh>
 #include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
 
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 
@@ -320,8 +320,8 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 }
 
 void SetupNCSMover::parse_my_tag(
-			utility::tag::TagPtr const tag,
-			moves::DataMap & /*data*/,
+			utility::tag::TagCOP const tag,
+			basic::datacache::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
 			core::pose::Pose const & /*pose*/ ) {
@@ -334,8 +334,8 @@ void SetupNCSMover::parse_my_tag(
 	if (tag->hasOption( "distance_pair" )) distance_pair_ = tag->getOption< bool >( "distance_pair" );
 
 	// now parse ncs groups <<< subtags
-	utility::vector1< TagPtr > const branch_tags( tag->getTags() );
-	utility::vector1< TagPtr >::const_iterator tag_it;
+	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
+	utility::vector1< TagCOP >::const_iterator tag_it;
 	for( tag_it = branch_tags.begin(); tag_it!=branch_tags.end(); ++tag_it ){
 		if( (*tag_it)->getName() == "NCSgroup" || (*tag_it)->getName() == "ncsgroup" ){
 			std::string src_i = (*tag_it)->getOption<std::string>( "source" );

@@ -29,7 +29,7 @@
 #include <protocols/loops/loops_main.hh> // for various loop utility fxns
 #include <protocols/loops/Loops.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/forge/methods/util.hh>
 #include <protocols/forge/remodel/RemodelLoopMover.hh>
 #include <protocols/forge/methods/fragment_functions.hh> // smallmer_from_largemer
@@ -438,7 +438,7 @@ LoopRemodel::pick_loop_frags( protocols::loops::LoopsCOP loops_in, std::string c
 
 
 void
-LoopRemodel::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+LoopRemodel::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	protocol_ = tag->getOption<std::string>( "protocol", "ccd" );
 	perturb_ = tag->getOption<bool>( "perturb", 0 );
@@ -464,7 +464,7 @@ LoopRemodel::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters:
 	if( auto_loops_ ) {
 		if( !data.has( "loops", "found_loops" ) )
 		{
-			TR << "Loops not present in DataMap! Be sure to add LoopFinder before LoopRemodel!" << std::endl;
+			TR << "Loops not present in basic::datacache::DataMap! Be sure to add LoopFinder before LoopRemodel!" << std::endl;
 			return;
 		}
 		loops_ = data.get< protocols::loops::Loops * >( "loops", "found_loops" ); // from LoopFinder

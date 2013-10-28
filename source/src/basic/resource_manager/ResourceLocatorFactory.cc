@@ -39,7 +39,7 @@ ResourceLocatorOP
 ResourceLocatorFactory::create_resource_locator(
 	std::string const & locator_type,
 	std::string const & locator_tag,
-	utility::tag::TagPtr tags
+	utility::tag::TagCOP tags
 ) const
 {
 	std::map< std::string, ResourceLocatorCreatorOP >::const_iterator iter = creator_map_.find( locator_type );

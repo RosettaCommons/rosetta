@@ -29,7 +29,7 @@ std::string ClassicGridCreator::keyname() const
 	return ClassicGridCreator::grid_name();
 }
 
-GridBaseOP ClassicGridCreator::create_grid(utility::tag::TagPtr const tag) const
+GridBaseOP ClassicGridCreator::create_grid(utility::tag::TagCOP const tag) const
 {
 	GridBaseOP classic_grid = new ClassicGrid();
 	classic_grid->parse_my_tag(tag);
@@ -71,7 +71,7 @@ void ClassicGrid::deserialize(utility::json_spirit::mObject data)
 	SingleGrid::deserialize(data["base_data"].get_obj());
 }
 
-void ClassicGrid::parse_my_tag(utility::tag::TagPtr const /*tag*/)
+void ClassicGrid::parse_my_tag(utility::tag::TagCOP const /*tag*/)
 {
 
 }

@@ -66,8 +66,8 @@ public:
 	virtual void call_setup(Pose & pose);
 	virtual void apply_to_rotpack( Pose & pose,  utility::vector0< int > rot_to_pack);
 	virtual void parse_my_tag(
-		TagPtr const,
-		protocols::moves::DataMap &,
+		TagCOP const,
+		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & );

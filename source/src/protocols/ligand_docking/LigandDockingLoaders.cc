@@ -45,14 +45,14 @@ InterfaceBuilderLoader::~InterfaceBuilderLoader() {}
 
 void InterfaceBuilderLoader::load_data(
 	core::pose::Pose const &,
-	utility::tag::TagPtr const tag,
-	moves::DataMap & data
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data
 ) const
 {
 	using namespace utility::tag;
-	typedef utility::vector0< TagPtr > TagPtrs;
+	typedef utility::vector0< TagCOP > TagCOPs;
 
-	foreach(TagPtr interface_builder_tag, tag->getTags()){
+	foreach(TagCOP interface_builder_tag, tag->getTags()){
 		std::string const name( interface_builder_tag->getName() );
 
 		if ( data.has("interface_builders", name)) {
@@ -79,14 +79,14 @@ MoveMapBuilderLoader::~MoveMapBuilderLoader() {}
 
 void MoveMapBuilderLoader::load_data(
 	core::pose::Pose const &,
-	utility::tag::TagPtr const tag,
-	moves::DataMap & data
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data
 ) const
 {
 	using namespace utility::tag;
-	typedef utility::vector0< TagPtr > TagPtrs;
+	typedef utility::vector0< TagCOP > TagCOPs;
 
-	foreach(TagPtr movemap_builder_tag, tag->getTags()){
+	foreach(TagCOP movemap_builder_tag, tag->getTags()){
 		std::string const name( movemap_builder_tag->getName() );
 
 		if ( data.has("movemap_builders", name)) {
@@ -113,14 +113,14 @@ LigandAreaLoader::~LigandAreaLoader() {}
 
 void LigandAreaLoader::load_data(
 	core::pose::Pose const &,
-	utility::tag::TagPtr const tag,
-	moves::DataMap & data
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data
 ) const
 {
 	using namespace utility::tag;
-	typedef utility::vector0< TagPtr > TagPtrs;
+	typedef utility::vector0< TagCOP > TagCOPs;
 
-	foreach(TagPtr ligand_area_tag, tag->getTags()){
+	foreach(TagCOP ligand_area_tag, tag->getTags()){
 		std::string const name( ligand_area_tag->getName() );
 
 		if ( data.has("ligand_areas", name)) {

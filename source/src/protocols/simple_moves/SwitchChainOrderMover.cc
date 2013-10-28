@@ -13,8 +13,8 @@
 // Unit headers
 #include <protocols/simple_moves/SwitchChainOrderMover.hh>
 #include <protocols/simple_moves/SwitchChainOrderMoverCreator.hh>
-#include <protocols/moves/DataMapObj.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMapObj.hh>
+#include <basic/datacache/DataMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
@@ -133,8 +133,8 @@ SwitchChainOrderMover::fresh_instance() const
 
 void
 SwitchChainOrderMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
@@ -143,7 +143,7 @@ SwitchChainOrderMover::parse_my_tag(
 	std::string const residue_numbers_setter( tag->getOption< std::string >( "residue_numbers_setter", "" ) );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	if( residue_numbers_setter != "" )
-		residue_numbers_ = protocols::moves::get_set_from_datamap< protocols::moves::DataMapObj< utility::vector1< core::Size > > >( "residue_numbers", residue_numbers_setter, data );
+		residue_numbers_ = basic::datacache::get_set_from_datamap< basic::datacache::DataMapObj< utility::vector1< core::Size > > >( "residue_numbers", residue_numbers_setter, data );
 
 }
 

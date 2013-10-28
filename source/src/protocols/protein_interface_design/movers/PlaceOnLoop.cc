@@ -29,7 +29,7 @@
 // AUTO-REMOVED #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -270,7 +270,7 @@ PlaceOnLoop::get_name() const {
 }
 
 void
-PlaceOnLoop::parse_my_tag( TagPtr const tag, DataMap &data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	host_chain_ = tag->getOption< core::Size >( "host_chain", 2 );
 	loop_begin_ = tag->getOption< core::Size >( "loop_begin" );

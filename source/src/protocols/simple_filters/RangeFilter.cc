@@ -81,8 +81,8 @@ bool RangeFilter::apply( Pose const & pose ) const
 /// @brief parse xml
 void
 RangeFilter::parse_my_tag(
-	TagPtr const tag,
-	DataMap &,
+	TagCOP const tag,
+	basic::datacache::DataMap &,
 	filters::Filters_map const &filters,
 	Movers_map const &,
 	Pose const & )

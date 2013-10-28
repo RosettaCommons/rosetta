@@ -44,7 +44,7 @@ public:
 	LigandArea();
 
 	void parse_my_tag(
-		utility::tag::TagPtr const tag
+		utility::tag::TagCOP const tag
 	);
 
 	char chain_;

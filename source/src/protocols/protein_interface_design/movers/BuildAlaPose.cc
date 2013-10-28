@@ -115,7 +115,7 @@ BuildAlaPose::get_name() const {
 }
 
 void
-BuildAlaPose::parse_my_tag( TagPtr const tag, DataMap &data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
+BuildAlaPose::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	design_partner1_ = tag->getOption<bool>( "partner1", 0 );
 	design_partner2_ = tag->getOption<bool>( "partner2", 1 );

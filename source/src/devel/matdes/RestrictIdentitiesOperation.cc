@@ -118,7 +118,7 @@ RestrictIdentitiesOperation::apply( core::pose::Pose const & pose, core::pack::t
 
 // @brief parse xml
 void
-RestrictIdentitiesOperation::parse_tag( TagPtr tag )
+RestrictIdentitiesOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	unparsed_identities_ = tag->getOption< std::string >( "identities" ) ;
 	prevent_repacking( tag->getOption< bool >( "prevent_repacking", false ));

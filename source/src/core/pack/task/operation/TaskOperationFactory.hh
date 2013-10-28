@@ -23,6 +23,9 @@
 #include <core/pack/task/operation/ResLvlTaskOperationCreator.fwd.hh>
 #include <core/pack/task/operation/ResFilterCreator.fwd.hh>
 
+// Basic headers
+#include <basic/datacache/DataMap.fwd.hh>
+
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.hh>
@@ -47,7 +50,7 @@ public:
 	typedef utility::vector1< TaskOperationOP > TaskOperationOPs;
 	typedef std::map< std::string, TaskOperationCreatorOP > TaskOperationCreatorMap;
 	typedef utility::tag::Tag Tag;
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 
 public:
 	static TaskOperationFactory * get_instance();
@@ -62,12 +65,13 @@ public:
 ///@brief return new TaskOperation by key lookup in task_operation_creator_map_ (new TaskOperation parses Tag if provided)
 	TaskOperationOP newTaskOperation(
 		std::string const &,
-		TagPtr = new Tag
+		basic::datacache::DataMap & datamap,
+		TagCOP = new Tag
 	) const;
-///@brief fills vector with new TaskOperations from nested "TASKOPERATIONS" TagPtr
-	void newTaskOperations(	TaskOperationOPs &, TagPtr ) const;
+///@brief fills vector with new TaskOperations from nested "TASKOPERATIONS" TagCOP
+	void newTaskOperations(	TaskOperationOPs &, basic::datacache::DataMap & datamap, TagCOP ) const;
 ///@brief fills vector with new TaskOperations from xml-like tag file
-	void newTaskOperations(	TaskOperationOPs &, std::string const & ) const;
+	void newTaskOperations(	TaskOperationOPs &, basic::datacache::DataMap & datamap, std::string const & ) const;
 
 private:
 	// private constructor/destructor

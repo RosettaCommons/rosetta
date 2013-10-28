@@ -34,7 +34,7 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
@@ -52,16 +52,16 @@ ScoreFunctionLoader::~ScoreFunctionLoader() {}
 
 void ScoreFunctionLoader::load_data(
 	core::pose::Pose const &,
-	utility::tag::TagPtr const tag,
-	moves::DataMap & data
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data
 ) const
 {
 	using namespace utility::tag;
-	typedef utility::vector0< TagPtr > TagPtrs;
+	typedef utility::vector0< TagCOP > TagCOPs;
 
-	TagPtrs const scorefxn_tags( tag->getTags() );
+	TagCOPs const & scorefxn_tags( tag->getTags() );
 
-	foreach(TagPtr scorefxn_tag, scorefxn_tags){
+	foreach(TagCOP scorefxn_tag, scorefxn_tags){
 		using namespace core::scoring;
 		using namespace core::scoring::symmetry;
 
@@ -85,7 +85,7 @@ void ScoreFunctionLoader::load_data(
 			in_scorefxn->reset();
 			TR << "***WARNING***: No weights/patch defined. Defining " << scorefxn_name << " with all-zero weights.\n";
 		}
-		foreach(TagPtr mod_tag, scorefxn_tag->getTags()){
+		foreach(TagCOP mod_tag, scorefxn_tag->getTags()){
 			if( mod_tag->getName() == "Reweight" ) {
 				std::string const scoretype_name( mod_tag->getOption<std::string>( "scoretype" ) );
 				core::Real const weight( mod_tag->getOption<core::Real>( "weight" ) );
@@ -173,7 +173,7 @@ void ScoreFunctionLoader::load_data(
 		bool const data_add_status = data.add( "scorefxns" , scorefxn_name, in_scorefxn );
 
 		if( !data_add_status )
-			utility_exit_with_message( "scorefxn " + scorefxn_name + " already exists in the DataMap, possibly as a default scorefxn. Please rename." );
+			utility_exit_with_message( "scorefxn " + scorefxn_name + " already exists in the basic::datacache::DataMap, possibly as a default scorefxn. Please rename." );
 
 	}//end user-defined scorefxns
 	TR.flush();

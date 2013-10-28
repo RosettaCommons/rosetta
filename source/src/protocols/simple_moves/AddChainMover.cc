@@ -13,8 +13,8 @@
 // Unit headers
 #include <protocols/simple_moves/AddChainMover.hh>
 #include <protocols/simple_moves/AddChainMoverCreator.hh>
-#include <protocols/moves/DataMapObj.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMapObj.hh>
+#include <basic/datacache/DataMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
@@ -107,8 +107,8 @@ AddChainMover::fresh_instance() const
 
 void
 AddChainMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )

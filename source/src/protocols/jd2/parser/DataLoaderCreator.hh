@@ -16,7 +16,7 @@
 
 // Package headers
 #include <protocols/jd2/parser/DataLoader.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>

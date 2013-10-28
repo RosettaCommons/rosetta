@@ -55,7 +55,7 @@ public:
 	void
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 
 	void repack_shell( core::Real const repack_shell) {
 		repack_shell_ = repack_shell;

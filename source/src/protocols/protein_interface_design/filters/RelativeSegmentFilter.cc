@@ -17,7 +17,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/import_pose/import_pose.hh>
 
@@ -56,7 +56,7 @@ RelativeSegmentFilter::apply( Pose const & pose ) const {
 }
 
 void
-RelativeSegmentFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+RelativeSegmentFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
 	source_pose( tag->getOption< std::string >( "source_pose" ) );
 	start_res( tag->getOption< core::Size >( "start_res" ) );

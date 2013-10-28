@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/jd2/parser/MonteCarloLoader.hh
-/// @brief  Declartion of the XML parser's MonteCarloLoader class for adding named ScoreFunctions to the DataMap
+/// @brief  Declartion of the XML parser's MonteCarloLoader class for adding named ScoreFunctions to the basic::datacache::DataMap
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 #ifndef INCLUDED_protocols_jd2_parser_MonteCarloLoader_hh
@@ -31,19 +31,19 @@ namespace protocols {
 namespace jd2 {
 namespace parser {
 
-/// @brief The MonteCarloLoader will create named MonteCarlo objects and load them into the DataMap
+/// @brief The MonteCarloLoader will create named MonteCarlo objects and load them into the basic::datacache::DataMap
 class MonteCarloLoader : public DataLoader
 {
 public:
 	MonteCarloLoader();
 	virtual ~MonteCarloLoader();
 
-	/// @brief The MonteCarloLoader will create named MonteCarlo objects and load them into the DataMap
+	/// @brief The MonteCarloLoader will create named MonteCarlo objects and load them into the basic::datacache::DataMap
 	virtual
 	void load_data(
 		core::pose::Pose const & pose,
-		utility::tag::TagPtr const tag,
-		moves::DataMap & data
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data
 	) const;
 
 };

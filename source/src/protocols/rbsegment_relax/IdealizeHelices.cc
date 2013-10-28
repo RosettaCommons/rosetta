@@ -50,7 +50,7 @@
 #include <protocols/moves/DsspMover.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <utility/tag/Tag.hh>
@@ -304,8 +304,8 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 
 
 void IdealizeHelicesMover::parse_my_tag(
-			utility::tag::TagPtr const tag,
-			moves::DataMap & data,
+			utility::tag::TagCOP const tag,
+			basic::datacache::DataMap & data,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
 			core::pose::Pose const & pose )
@@ -322,8 +322,8 @@ void IdealizeHelicesMover::parse_my_tag(
 	cst_width_ = tag->getOption<core::Real>( "cst_width" , 0.0 );
 
 	// fragments
-	utility::vector1< utility::tag::TagPtr > const branch_tags( tag->getTags() );
-	utility::vector1< utility::tag::TagPtr >::const_iterator tag_it;
+	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
+	utility::vector1< utility::tag::TagCOP >::const_iterator tag_it;
 	for (tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
 		if ( (*tag_it)->getName() == "Helix" ) {
 			using namespace core::fragment;

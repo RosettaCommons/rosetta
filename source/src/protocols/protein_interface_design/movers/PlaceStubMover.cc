@@ -26,8 +26,8 @@
 #include <core/chemical/AA.hh>
 #include <numeric/xyzVector.hh>
 #include <protocols/protein_interface_design/movers/PlaceUtils.hh>
-#include <protocols/moves/DataMap.hh>
-#include <protocols/moves/DataMapObj.hh>
+#include <basic/datacache/DataMap.hh>
+#include <basic/datacache/DataMapObj.hh>
 #include <protocols/moves/ResId.hh>
 
 #include <core/scoring/constraints/BackboneStubConstraint.hh>
@@ -990,8 +990,8 @@ PlaceStubMover::stub_based_atom_tree( core::pose::Pose & pose, core::conformatio
 }
 
 void
-PlaceStubMover::parse_my_tag( TagPtr const tag,
-		DataMap & data,
+PlaceStubMover::parse_my_tag( TagCOP const tag,
+		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &filters,
 		Movers_map const &movers,
 		core::pose::Pose const & pose )
@@ -1007,7 +1007,7 @@ PlaceStubMover::parse_my_tag( TagPtr const tag,
 
 	if( tag->hasOption( "residue_numbers_setter" ) ){
 		std::string const residue_numbers_name( tag->getOption( "residue_numbers", tag->getOption< std::string >( "residue_numbers_setter" ) ) );
-		residue_numbers_ = protocols::moves::get_set_from_datamap< protocols::moves::DataMapObj< utility::vector1< core::Size > > >( "residue_numbers", residue_numbers_name, data );
+		residue_numbers_ = basic::datacache::get_set_from_datamap< basic::datacache::DataMapObj< utility::vector1< core::Size > > >( "residue_numbers", residue_numbers_name, data );
 	}
 
 	if( tag->hasOption( "task_operations" ) ){
@@ -1095,11 +1095,11 @@ PlaceStubMover::parse_my_tag( TagPtr const tag,
 	}
 
 	//parsing stub minimize movers and design movers for place stub
-	utility::vector0< TagPtr > const branch_tags( tag->getTags() );
-	for( utility::vector0< TagPtr >::const_iterator btag=branch_tags.begin(); btag!=branch_tags.end(); ++btag ) {
+	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
+	for( utility::vector0< TagCOP >::const_iterator btag=branch_tags.begin(); btag!=branch_tags.end(); ++btag ) {
 		if( (*btag)->getName() == "StubMinimize" ){
-			utility::vector0< TagPtr > const stub_min_tags( (*btag)->getTags() );
-			for( utility::vector0< TagPtr >::const_iterator stub_m_tag=stub_min_tags.begin(); stub_m_tag!=stub_min_tags.end(); ++stub_m_tag ) {
+			utility::vector0< TagCOP > const & stub_min_tags( (*btag)->getTags() );
+			for( utility::vector0< TagCOP >::const_iterator stub_m_tag=stub_min_tags.begin(); stub_m_tag!=stub_min_tags.end(); ++stub_m_tag ) {
 				std::string const stub_mover_name( (*stub_m_tag)->getOption<std::string>( "mover_name" ) );
 				core::Real  const bb_stub_constraint_weight( (*stub_m_tag)->getOption< core::Real > ( "bb_cst_weight", 10.0 ) );
 				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( stub_mover_name ));
@@ -1116,9 +1116,9 @@ PlaceStubMover::parse_my_tag( TagPtr const tag,
 			}
 		}
 		else if( (*btag)->getName() == "DesignMovers" ){
-			utility::vector0< TagPtr > const design_tags( (*btag)->getTags() );
-			for( utility::vector0< TagPtr >::const_iterator m_it=design_tags.begin(); m_it!=design_tags.end(); ++m_it ) {
-				TagPtr const m_tag_ptr = *m_it;
+			utility::vector0< TagCOP > const & design_tags( (*btag)->getTags() );
+			for( utility::vector0< TagCOP >::const_iterator m_it=design_tags.begin(); m_it!=design_tags.end(); ++m_it ) {
+				TagCOP const m_tag_ptr = *m_it;
 				std::string const mover_name( m_tag_ptr->getOption< std::string >( "mover_name" ) );
 				bool const apply_coord_constraints( m_tag_ptr->getOption< bool >( "use_constraints", 1 ) );
 				core::Real const coord_cst_std( m_tag_ptr->getOption< core::Real >( "coord_cst_std", 0.5 ) );

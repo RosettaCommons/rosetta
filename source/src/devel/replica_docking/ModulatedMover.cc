@@ -79,8 +79,8 @@ ModulatedMover::fresh_instance() const
 
 void
 ModulatedMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data_map,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data_map,
 	protocols::filters::Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
@@ -97,11 +97,11 @@ ModulatedMover::parse_my_tag(
   }
 
   utility::vector1< std::string > interpolated_options;
-  utility::vector0< utility::tag::TagPtr > const subtags( tag->getTags() );
+  utility::vector0< utility::tag::TagCOP > const subtags( tag->getTags() );
 
 
-  for ( utility::vector0< utility::tag::TagPtr >::const_iterator subtag_it = subtags.begin(); subtag_it != subtags.end(); ++subtag_it ) {
-    utility::tag::TagPtr const subtag = *subtag_it;
+  for ( utility::vector0< utility::tag::TagCOP >::const_iterator subtag_it = subtags.begin(); subtag_it != subtags.end(); ++subtag_it ) {
+    utility::tag::TagCOP const subtag = *subtag_it;
     tr.Debug << "subtag->getName() " << subtag->getName() << std::endl;
     if ( subtag->getName() == "Interp" && subtag->getOption< std::string >("key")!="weight" ) {
 //       //      interpolator_[ ]=InterpolatorFactory->new_interpolator( subtag );
@@ -120,7 +120,7 @@ ModulatedMover::parse_my_tag(
 
   for ( core::Size temp_level = 1; temp_level <= n_temp_levels_; ++temp_level ) {
     //have a method that creates a tag for a certain temperature level
-    utility::tag::TagPtr mover_tag = generate_mover_tag( temp_level, our_name );
+    utility::tag::TagCOP mover_tag = generate_mover_tag( temp_level, our_name );
     using namespace protocols::moves;
     using namespace protocols::canonical_sampling;
     MoverOP new_mover( MoverFactory::get_instance()->newMover( mover_tag, data_map, filters, movers, pose ) );
@@ -135,9 +135,10 @@ ModulatedMover::parse_my_tag(
   } // end of for ( temp_level )
 }
 
-utility::tag::TagPtr ModulatedMover::generate_mover_tag( core::Size temp_level, std::string const& prefix ) const {
+utility::tag::TagCOP
+ModulatedMover::generate_mover_tag( core::Size temp_level, std::string const& prefix ) const {
   using namespace utility::tag;
-  TagPtr tag = new Tag;
+  TagOP tag = new Tag;
   tag->setName(mover_name_);
   tag->setOption< std::string >("name",prefix+"_"+ ObjexxFCL::string_of(temp_level));
   for ( Interpolators::const_iterator it=interpolators_.begin(); it!=interpolators_.end(); ++it ) {

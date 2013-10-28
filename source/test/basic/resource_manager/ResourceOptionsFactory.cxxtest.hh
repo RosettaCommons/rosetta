@@ -37,7 +37,7 @@ public:
 	virtual
 	void
 	parse_my_tag(
-		utility::tag::TagPtr tag
+		utility::tag::TagCOP tag
 	)
 	{
 		somevar_ = tag->getOption< int >( "somevar", 1 );
@@ -71,7 +71,7 @@ public:
 
 		std::string dummy_opts( "<DummyResourceOptions somevar=5/>\n" );
 		std::istringstream doptstream( dummy_opts );
-		utility::tag::TagPtr tag = utility::tag::Tag::create( doptstream );
+		utility::tag::TagCOP tag = utility::tag::Tag::create( doptstream );
 
 		ResourceOptionsFactory * factory = ResourceOptionsFactory::get_instance();
 		factory->set_throw_on_double_registration();

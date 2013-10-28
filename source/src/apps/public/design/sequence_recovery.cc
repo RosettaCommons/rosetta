@@ -19,7 +19,7 @@
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
 #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
+
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
@@ -37,18 +37,19 @@
 
 // AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 
-// Utility Headers
+// basic headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/MetricValue.hh>
 #include <basic/prof.hh>
+#include <basic/options/util.hh>
+#include <basic/datacache/DataMap.hh>
+
+// Utility Headers
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
 // Option keys
-// AUTO-REMOVED #include <basic/options/keys/optE.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // Numeric Headers
@@ -113,6 +114,9 @@ void init_usage_prompt( std::string exe ) {
 
 
 ///@brief load custom TaskOperations according to an xml-like utility::tag file
+///@details The sequence recovery app can only handle taskops that do not use
+/// ResidueSelectors, unless they are anonymous (i.e. unnamed) ResidueSelectors
+/// that are declared as subtags of TaskOperations.
 core::pack::task::TaskFactoryOP setup_tf( core::pack::task::TaskFactoryOP task_factory_ ) {
 
 	using namespace core::pack::task::operation;
@@ -120,7 +124,8 @@ core::pack::task::TaskFactoryOP setup_tf( core::pack::task::TaskFactoryOP task_f
 	if ( option[ sequence_recovery::parse_taskops_file ].user() ) {
 		std::string tagfile_name( option[ sequence_recovery::parse_taskops_file ]() );
 		TaskOperationFactory::TaskOperationOPs tops;
-		TaskOperationFactory::get_instance()->newTaskOperations( tops, tagfile_name );
+		basic::datacache::DataMap dm; // empty data map! any TaskOperation that tries to retrieve data out of this datamap will fail to find it.
+		TaskOperationFactory::get_instance()->newTaskOperations( tops, dm, tagfile_name );
 		for ( TaskOperationFactory::TaskOperationOPs::iterator it( tops.begin() ), itend( tops.end() ); it != itend; ++it ) {
 			task_factory_->push_back( *it );
 		}

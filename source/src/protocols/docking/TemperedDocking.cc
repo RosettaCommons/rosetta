@@ -34,7 +34,7 @@
 
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/canonical_sampling/SimulatedTempering.hh>
@@ -439,7 +439,7 @@ TemperedDocking::init_from_options()
 
 
 void
-TemperedDocking::parse_my_tag( TagPtr const tag, moves::DataMap & data, protocols::filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+TemperedDocking::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	using namespace core::scoring;
 

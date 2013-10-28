@@ -27,7 +27,7 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/hotspot_hashing/SearchPattern.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Unit headers
@@ -67,8 +67,8 @@ class PlaceProbeMover : virtual public protocols::moves::Mover
   protected:
 		///@brief Parses tag compoments for PlaceProbeMover
     void parse_place_probe_tag(
-         utility::tag::TagPtr const tag,
-         protocols::moves::DataMap &,
+         utility::tag::TagCOP const tag,
+         basic::datacache::DataMap &,
          protocols::filters::Filters_map const &,
          protocols::moves::Movers_map const &,
          core::pose::Pose const &);

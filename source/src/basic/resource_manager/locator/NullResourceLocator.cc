@@ -35,7 +35,7 @@ namespace basic {
 namespace resource_manager {
 namespace locator {
 
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using utility::file::FileName;
 using utility::io::izstream;
 using utility::vector1;
@@ -104,7 +104,7 @@ NullResourceLocator::locate_resource_stream(
 
 void
 NullResourceLocator::parse_my_tag(
-	TagPtr
+	TagCOP
 )
 {}
 

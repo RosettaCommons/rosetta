@@ -44,11 +44,11 @@ namespace devel {
       // causes there to be a hydrogen bond between hbond_atom_from
       // and hbond_atom_to. NB: hbond_atom_from and to should be the
       // acceptor and hydrogen atoms irrespectively
-      core::kinematics::RT get_hbond_rt( TagPtr tag, bool h2a );
+      core::kinematics::RT get_hbond_rt( TagCOP tag, bool h2a );
       void set_random_hbond_jump(core::pose::Pose& pose, Loop const& loop );
 
-      //core::kinematics::Jump get_jump_from_template( TagPtr tag_segment );
-			core::kinematics::RT get_template_rt( TagPtr tag_segment );
+      //core::kinematics::Jump get_jump_from_template( TagCOP tag_segment );
+			core::kinematics::RT get_template_rt( TagCOP tag_segment );
       void set_template_jump( core::pose::Pose& pose, Loop const& loop );
 
     }; // struct JumpManager

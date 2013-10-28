@@ -26,7 +26,7 @@
 #include <core/conformation/ResidueFactory.hh>
 //parsing
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
@@ -146,8 +146,8 @@ MutateResidue::get_name() const {
  *  - target_pdb_num or target_res_num. A single target residue to form disulfides to
  *  - target_pdb_nums or target_res_nums. A list of possible target residues
  */
-void MutateResidue::parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+void MutateResidue::parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & pose)

@@ -33,7 +33,7 @@
 #include <numeric/random/random.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
@@ -320,8 +320,8 @@ SymDofMover::apply(Pose & pose) {
 
 // Parse info from xml //
 void
-SymDofMover::parse_my_tag( TagPtr const tag,
-										 DataMap &,
+SymDofMover::parse_my_tag( TagCOP const tag,
+										 basic::datacache::DataMap &,
 										 Filters_map const &,
 										 Movers_map const &,
 										 Pose const & ) {

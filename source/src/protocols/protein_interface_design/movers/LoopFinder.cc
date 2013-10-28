@@ -9,7 +9,7 @@
 
 
 /// @file protocols/protein_interface_design/LoopFinder.cc
-/// @brief Finds loops and adds them to the DataMap. Parseable options to control how loops are found
+/// @brief Finds loops and adds them to the basic::datacache::DataMap. Parseable options to control how loops are found
 /// @author Jacob Corn (jecorn@u.washington.edu)
 
 // Unit headers
@@ -42,7 +42,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
@@ -201,7 +201,7 @@ LoopFinder::get_name() const {
 
 
 void
-LoopFinder::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+LoopFinder::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	interface_ = tag->getOption<Size>( "interface", 1 );
 	ch1_ = tag->getOption<bool>( "ch1", 0 );
@@ -224,7 +224,7 @@ LoopFinder::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::
   ca_ca_distance_ = tag->getOption<core::Real>( "CA_CA_distance", 15 );
 	if( resnum_ != 0 )	TR<<"distance cutoff from user defined residue is " << ca_ca_distance_ << std::endl;
 
-	// add loopsOP to the DataMap
+	// add loopsOP to the basic::datacache::DataMap
 	loops_ = new protocols::loops::Loops;
 	data.add( "loops", "found_loops", loops_ );
 

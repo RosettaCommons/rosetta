@@ -58,7 +58,7 @@ public:
 	///@brief set ligand chain (must be done before initialization)
 	void set_chain(char chain);
 	///@brief make a new grid from grid tag, and insert it into the grid manager
-	void make_new_grid(utility::tag::TagPtr const tag);
+	void make_new_grid(utility::tag::TagCOP const tag);
 	///@brief insert a grid pointer into the grid manager
 	void insert_grid(std::string const name,GridBaseOP const grid);
 	///@brief set the qsar_map

@@ -16,7 +16,7 @@
 #include <protocols/canonical_sampling/TemperingBase.hh>
 
 // protocols headers
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
@@ -141,8 +141,8 @@ TemperingBase::get_name() const
 
 void
 TemperingBase::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap &,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	pose::Pose const &

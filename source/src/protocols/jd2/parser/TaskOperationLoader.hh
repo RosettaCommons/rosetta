@@ -24,19 +24,19 @@ namespace protocols {
 namespace jd2 {
 namespace parser {
 
-/// @brief A class for loading arbitrary data into the XML parser's DataMap.
+/// @brief A class for loading arbitrary data into the XML parser's basic::datacache::DataMap.
 class TaskOperationLoader : public DataLoader
 {
 public:
 	TaskOperationLoader();
 	virtual ~TaskOperationLoader();
 
-	/// @brief The TaskOperationLoader will load named task operations into the DataMap
+	/// @brief The TaskOperationLoader will load named task operations into the basic::datacache::DataMap
 	virtual
 	void load_data(
 		core::pose::Pose const & pose,
-		utility::tag::TagPtr const tag,
-		moves::DataMap & data
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data
 	) const;
 
 };

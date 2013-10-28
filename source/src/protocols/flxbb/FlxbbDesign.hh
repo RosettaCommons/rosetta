@@ -32,7 +32,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/moves/Mover.hh>
@@ -75,9 +75,9 @@ public:
 	typedef protocols::flxbb::DesignTaskOP DesignTaskOP;
 	typedef protocols::flxbb::DesignTaskSet DesignTaskSet;
 
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 	typedef protocols::filters::Filters_map Filters_map;
-	typedef protocols::moves::DataMap DataMap;
+	typedef basic::datacache::DataMap DataMap;
 	typedef protocols::moves::Movers_map Movers_map;
 
 
@@ -199,8 +199,8 @@ public:// mutators relevant to the DesignTaskSet
 
 public:// parser
 
-	virtual void parse_my_tag( TagPtr const tag,
-														 DataMap & data,
+	virtual void parse_my_tag( TagCOP const tag,
+														 basic::datacache::DataMap & data,
 														 Filters_map const &,
 														 Movers_map const &,
 														 Pose const & );

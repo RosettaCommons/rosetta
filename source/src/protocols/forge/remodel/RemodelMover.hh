@@ -36,7 +36,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <protocols/moves/DataMap.fwd.hh> //parser
+#include <basic/datacache/DataMap.fwd.hh> //parser
 
 // utility headers
 #include <utility/vector1.hh>
@@ -90,9 +90,9 @@ public: // typedefs
 	typedef utility::vector1< OriginalInterval2DesignString > DesignInfo;
 
 //parser fabio
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 	typedef protocols::filters::Filters_map Filters_map;
-	typedef protocols::moves::DataMap DataMap;
+	typedef basic::datacache::DataMap DataMap;
 	typedef protocols::moves::Movers_map Movers_map;
 
 public: // construct/destruct
@@ -550,7 +550,7 @@ private: // per-stage movers
 
 public: // parser
 
-	virtual void parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const &, Movers_map const &, Pose const & );
+	virtual void parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &, Movers_map const &, Pose const & );
 
 private:
 

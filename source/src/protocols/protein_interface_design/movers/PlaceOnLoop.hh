@@ -20,7 +20,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.fwd.hh>
 #include <utility/vector1.fwd.hh>
@@ -46,7 +46,7 @@ public:
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const;
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	void set_kinematic_defaults();
 	bool minimize_toward_stub( core::pose::Pose & pose ) const;
 	void add_bb_csts_to_loop( core::pose::Pose & pose ) const;

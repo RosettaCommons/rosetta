@@ -48,7 +48,7 @@ public:
 
 	typedef std::map<std::string, GridCreatorOP > GridMap;
 	typedef utility::tag::Tag Tag;
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 
 public:
 	virtual ~GridFactory();
@@ -59,7 +59,7 @@ public:
 	void factory_register(GridCreatorOP creator);
 
 	///@brief create Grid given grid tag
-	GridBaseOP new_grid(utility::tag::TagPtr const tag) const;
+	GridBaseOP new_grid(utility::tag::TagCOP const tag) const;
 
 	///@brief create Grid given a serialized grid object
 	GridBaseOP new_grid(utility::json_spirit::mObject data ) const;

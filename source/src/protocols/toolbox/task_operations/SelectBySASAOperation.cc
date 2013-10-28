@@ -238,7 +238,7 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 }
 
 void
-SelectBySASAOperation::parse_tag( TagPtr tag )
+SelectBySASAOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	mode_ = tag->getOption< std::string >("mode", "sc" );
 	state_ = tag->getOption< std::string >("state", "monomer" );

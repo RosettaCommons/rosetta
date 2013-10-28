@@ -25,7 +25,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <basic/MetricValue.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 // Jacob
 #include <utility/string_util.hh>
 #include <core/pose/symmetry/util.hh>
@@ -93,7 +93,7 @@ InterfaceSasaFilter::fresh_instance() const{
 }
 
 void
-InterfaceSasaFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filters::Filters_map const &,moves::Movers_map const &, core::pose::Pose const & )
+InterfaceSasaFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &,moves::Movers_map const &, core::pose::Pose const & )
 {
 	lower_threshold_ = tag->getOption<core::Real>( "threshold", 800 );
 	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1000000);

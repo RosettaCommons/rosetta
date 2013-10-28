@@ -234,8 +234,8 @@ public:
 
 	// function for the parser with lots of accessors
 	void parse_my_tag(
-			 utility::tag::TagPtr const tag,
-			 protocols::moves::DataMap &,
+			 utility::tag::TagCOP const tag,
+			 basic::datacache::DataMap &,
 			 protocols::filters::Filters_map const &,
 			 protocols::moves::Movers_map const &,
 			 core::pose::Pose const &
@@ -385,8 +385,8 @@ public:
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
-	virtual void parse_my_tag( utility::tag::TagPtr const tag,
-			protocols::moves::DataMap &,
+	virtual void parse_my_tag( utility::tag::TagCOP const tag,
+			basic::datacache::DataMap &,
 			protocols::filters::Filters_map const &,
 			protocols::moves::Movers_map const &,
 			core::pose::Pose const &);

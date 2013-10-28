@@ -104,10 +104,10 @@ AveragePathLengthFilter::path_tightness(
 void
 AveragePathLengthFilter::parse_my_tag(
 	utility::tag::TagPtr const tag,
-		moves::DataMap &,
-		filters::Filters_map const &,
-		moves::Movers_map const &,
-		core::pose::Pose const &
+	basic::datacache::DataMap &,
+	filters::Filters_map const &,
+	moves::Movers_map const &,
+	core::pose::Pose const &
 ) {
 	if(tag->hasOption("path_tightness")){
 		path_tightness(tag->getOption< core::Real >("path_tightness"));

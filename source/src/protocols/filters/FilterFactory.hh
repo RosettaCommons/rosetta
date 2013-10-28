@@ -19,7 +19,7 @@
 #include <protocols/filters/FilterCreator.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 //#include <protocols/filters/Filter.fwd.hh> // Filters_map (typedef)
 
@@ -60,7 +60,7 @@ class FilterFactory // singletons need not derive from RefCount : public utility
 public:
 	typedef std::map< std::string, FilterCreatorOP > FilterMap;
 	typedef utility::tag::Tag Tag;
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 	typedef core::pose::Pose Pose;
 
 public:
@@ -77,8 +77,8 @@ public:
 	///@brief return new Mover by Tag parsing; the identifying string for the Mover is in the Tag
 	FilterOP
 	newFilter(
-		TagPtr const,
-		moves::DataMap &,
+		TagCOP const,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const &

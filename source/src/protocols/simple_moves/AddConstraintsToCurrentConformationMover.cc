@@ -199,8 +199,8 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose ) 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 AddConstraintsToCurrentConformationMover::parse_my_tag(
-    TagPtr const tag,
-    moves::DataMap & datamap,
+    TagCOP const tag,
+    basic::datacache::DataMap & datamap,
     Filters_map const & filters,
     moves::Movers_map const & movers,
     Pose const & pose
@@ -253,8 +253,8 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 
 void
 AddConstraintsToCurrentConformationMover::parse_task_operations(
-    TagPtr const tag,
-    moves::DataMap const & datamap,
+    TagCOP const tag,
+    basic::datacache::DataMap const & datamap,
     Filters_map const &,
     moves::Movers_map const &,
     Pose const &

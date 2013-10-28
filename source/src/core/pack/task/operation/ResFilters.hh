@@ -42,11 +42,11 @@ class ResFilterComposition : public ResFilter
 		ResFilterComposition();
 		ResFilterComposition(utility::vector1<ResFilterCOP> const &);
 
-		virtual void parse_tag( TagPtr );
+		virtual void parse_tag( TagCOP );
 
 	protected:
 		utility::vector1<ResFilterCOP> sub_filters_;
-	  void parse_sub_filters_tag( TagPtr );
+	  void parse_sub_filters_tag( TagCOP );
 };
 
 class AnyResFilter : public ResFilterComposition
@@ -93,7 +93,7 @@ public:
 
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP );
 
 private:
 	bool polar_, apolar_, aromatic_, charged_;
@@ -110,7 +110,7 @@ public:
 	ResidueHasProperty( std::string const & );
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP );
 	virtual std::string const & property() const { return property_; }
 private:
 	std::string property_;
@@ -124,7 +124,7 @@ public:
   ResiduePDBInfoHasLabel( std::string const & );
   virtual bool operator() ( Pose const &, Size ) const;
   virtual ResFilterOP clone() const;
-  virtual void parse_tag( TagPtr );
+  virtual void parse_tag( TagCOP );
   virtual std::string const & property() const { return property_; }
 private:
   std::string property_;
@@ -149,7 +149,7 @@ public:
 	ResidueName3Is( std::set<std::string> const & );
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP );
 private:
 	std::set<std::string> name3_set;
 };
@@ -175,7 +175,7 @@ public:
 	ResidueIndexIs( utility::vector1< Size > const & );
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP );
 	virtual utility::vector1< Size > const & indices() const;
 
 private:
@@ -211,7 +211,7 @@ public:
 	ResiduePDBIndexIs( utility::vector1< ChainPos > const & );
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP );
 	virtual utility::vector1< ChainPos > const & indices() const;
 
 private:
@@ -238,7 +238,7 @@ public:
 	ChainIs( char const & );
 	virtual bool operator() ( Pose const &, Size ) const;
 	virtual ResFilterOP clone() const;
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP );
 	virtual char const & chain() const { return chain_; }
 private:
 	char chain_;

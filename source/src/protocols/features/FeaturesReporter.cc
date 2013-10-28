@@ -61,12 +61,12 @@ using cppdb::statement;
 using cppdb::cppdb_error;
 using protocols::filters::Filters_map;
 using protocols::jd2::JobDistributor;
-using protocols::moves::DataMap;
+using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using std::endl;
 using std::string;
 using std::stringstream;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using basic::database::safely_prepare_statement;
 using basic::database::safely_write_to_database;
 using utility::trim;
@@ -127,8 +127,8 @@ FeaturesReporter::report_features(
 
 void
 FeaturesReporter::parse_my_tag(
-	TagPtr const tag,
-	DataMap & /*data*/,
+	TagCOP const tag,
+	basic::datacache::DataMap & /*data*/,
 	Filters_map const & /*filters*/,
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/

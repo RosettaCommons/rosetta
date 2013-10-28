@@ -18,7 +18,7 @@
 #include <protocols/moves/MoverFactory.fwd.hh>
 #include <protocols/moves/MoverCreator.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh> // Filters_map (typedef)
 
 #include <core/pose/Pose.fwd.hh>
@@ -57,7 +57,7 @@ class MoverFactory // Singleton: should not derive from ReferenceCount
 public:
 	typedef std::map< std::string, MoverCreatorOP > MoverMap;
 	typedef utility::tag::Tag Tag;
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 	typedef core::pose::Pose Pose;
 
 public:
@@ -74,8 +74,8 @@ public:
 	///@brief return new Mover by Tag parsing; the identifying string for the Mover is in the Tag
 	MoverOP
 	newMover(
-		TagPtr const,
-		DataMap &,
+		TagCOP const,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		Movers_map const &,
 		Pose const &

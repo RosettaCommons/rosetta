@@ -88,7 +88,7 @@ RestrictToNonzeroSASAOperation::apply( core::pose::Pose const & pose, core::pack
 }
 
 void
-RestrictToNonzeroSASAOperation::parse_tag( TagPtr tag )
+RestrictToNonzeroSASAOperation::parse_tag( TagCOP tag , DataMap & )
 {
 
   probe_radius_ = tag->getOption<core::Real>("probe_radius", 2.2);

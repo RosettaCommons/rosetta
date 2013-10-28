@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/jd2/parser/ScoringGridLoader.hh
-/// @brief  Declartion of the XML parser's ScoringGridLoader class for adding named ScoringGrids to the DataMap
+/// @brief  Declartion of the XML parser's ScoringGridLoader class for adding named ScoringGrids to the basic::datacache::DataMap
 /// @author Sam DeLuca
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com) -- moved here from DockDesignParser.cc
 
@@ -33,19 +33,19 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-/// @brief A class for loading ScoringGrids into the XML parser's DataMap.
+/// @brief A class for loading ScoringGrids into the XML parser's basic::datacache::DataMap.
 class ScoringGridLoader : public protocols::jd2::parser::DataLoader
 {
 public:
 	ScoringGridLoader();
 	virtual ~ScoringGridLoader();
 
-	/// @brief The ScoringGridLoader will create named ScoringGrids and load them into the DataMap
+	/// @brief The ScoringGridLoader will create named ScoringGrids and load them into the basic::datacache::DataMap
 	virtual
 	void load_data(
 		core::pose::Pose const & pose,
-		utility::tag::TagPtr const tag,
-		moves::DataMap & data
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data
 	) const;
 
 };

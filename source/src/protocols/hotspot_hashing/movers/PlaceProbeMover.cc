@@ -36,7 +36,7 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 
 #include <protocols/jd2/JobOutputter.hh>
@@ -233,8 +233,8 @@ core::pack::task::PackerTaskOP PlaceProbeMover::create_refinement_packing_task(c
 }
 
 void
-PlaceProbeMover::parse_place_probe_tag( utility::tag::TagPtr const tag,
-                                protocols::moves::DataMap & data,
+PlaceProbeMover::parse_place_probe_tag( utility::tag::TagCOP const tag,
+                                basic::datacache::DataMap & data,
                                 protocols::filters::Filters_map const &,
                                 protocols::moves::Movers_map const &,
                                 core::pose::Pose const & target_pose)

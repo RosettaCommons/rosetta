@@ -41,12 +41,12 @@ public:
 	virtual moves::MoverOP fresh_instance() const;
 
 	virtual void
-	parse_my_tag( TagPtr const, moves::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );
+	parse_my_tag( TagCOP const, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );
 
 	///@brief parse "task_operations" XML option (can be employed virtually by derived movers)
 	virtual void parse_task_operations(
-									   TagPtr const,
-									   moves::DataMap const &,
+									   TagCOP const,
+									   basic::datacache::DataMap const &,
 									   Filters_map const &,
 									   moves::Movers_map const &,
 									   Pose const & );

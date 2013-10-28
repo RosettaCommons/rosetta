@@ -91,7 +91,11 @@
 
 #include <protocols/analysis/InterfaceAnalyzerMover.hh> // for SASA
 
-#include <protocols/moves/DataMap.hh>	// for parse_my_tag
+//DSSP
+#include <core/scoring/dssp/Dssp.hh>
+
+// for parse_my_tag
+#include <basic/datacache/DataMap.hh>
 
 
 #if defined(WIN32) || defined(__CYGWIN__)
@@ -106,9 +110,9 @@ namespace features {
 namespace strand_assembly {
 
 // for parse_my_tag
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using protocols::filters::Filters_map;
-using protocols::moves::DataMap;
+using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 
 using namespace std;
@@ -5593,8 +5597,8 @@ SandwichFeatures::report_turn_type(
 
 void
 SandwichFeatures::parse_my_tag(
-	TagPtr const tag,
-	DataMap & /*data*/,
+	TagCOP const tag,
+	basic::datacache::DataMap & /*data*/,
 	Filters_map const & /*filters*/,
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/

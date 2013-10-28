@@ -293,8 +293,8 @@ static basic::Tracer TR ("devel.loophash_loopclosure.LoopHashLoopClosureMover" )
 		return;
 	}
 
-	void LoopHashLoopClosureMover::parse_my_tag(	utility::tag::TagPtr const tag,
-							protocols::moves::DataMap & ,
+	void LoopHashLoopClosureMover::parse_my_tag(	utility::tag::TagCOP const tag,
+							basic::datacache::DataMap & ,
 							protocols::filters::Filters_map const & ,
 							protocols::moves::Movers_map const &,
 							core::pose::Pose const & pose ) {

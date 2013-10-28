@@ -17,7 +17,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 
@@ -65,8 +65,8 @@ ContingentFilter::get_value() const{
 }
 
 void
-ContingentFilter::parse_my_tag( utility::tag::TagPtr const,
-		protocols::moves::DataMap &,
+ContingentFilter::parse_my_tag( utility::tag::TagCOP const,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &)

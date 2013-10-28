@@ -62,7 +62,7 @@
 #include <protocols/simple_moves/SmoothFragmentMover.hh>
 #include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
 #include <basic/options/option.hh>

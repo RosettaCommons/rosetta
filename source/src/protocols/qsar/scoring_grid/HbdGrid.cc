@@ -31,7 +31,7 @@ std::string HbdGridCreator::keyname() const
 	return HbdGridCreator::grid_name();
 }
 
-GridBaseOP HbdGridCreator::create_grid(utility::tag::TagPtr const tag) const
+GridBaseOP HbdGridCreator::create_grid(utility::tag::TagCOP const tag) const
 {
 	GridBaseOP hbd_grid= new HbdGrid();
 
@@ -86,7 +86,7 @@ void HbdGrid::deserialize(utility::json_spirit::mObject data)
 
 
 void
-HbdGrid::parse_my_tag(utility::tag::TagPtr const /*tag*/)
+HbdGrid::parse_my_tag(utility::tag::TagCOP const /*tag*/)
 {
 }
 

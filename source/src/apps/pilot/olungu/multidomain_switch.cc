@@ -12,7 +12,7 @@
 
 #include <protocols/viewer/viewers.hh>
 #include <devel/domain_assembly/domain_assembly_setup.hh>
-// AUTO-REMOVED #include <devel/domain_assembly/domain_assembly.hh>
+#include <devel/domain_assembly/domain_assembly.hh>
 #include <basic/options/option.hh>
 #include <devel/init.hh>
 
@@ -30,25 +30,13 @@ using namespace core;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-// // protocol specific options
-// namespace DomainAssembly{
-//   BooleanOptionKey const da_setup( "DomainAssembly::da_setup" );
-//   FileOptionKey const da_setup_output_pdb( "DomainAssembly::da_setup_output_pdb" );
-// 	FileOptionKey const da_setup_option_file( "DomainAssembly::da_setup_option_file" );
-// 	FileOptionKey const start_pdb( "DomainAssembly::da_start_pdb" );
-// 	FileOptionKey const linker_file( "DomainAssembly::da_linmer_file" );
-// 	IntegerOptionKey const start_pdb_num( "DomainAssembly::da_start_pdb_num" );
-// 	IntegerOptionKey const nruns( "DomainAssembly::da_nruns" );
-// }
-
-
 //@brief helper function to get viewers to work correctly
 void*
 my_main( void* ) {
 	if ( option[ DomainAssembly::da_setup ] () ) {
-		assemble_domains_setup();
+		devel::domain_assembly::assemble_domains_setup();
 	} else {
-		assemble_domains_optimize();
+		devel::domain_assembly::assemble_domains_optimize();
 	}
 	return 0;
 }
@@ -64,8 +52,8 @@ main( int argc, char* argv[] )
 
 	protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 }
 

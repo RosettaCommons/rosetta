@@ -46,7 +46,7 @@ public:
 	create_resource_locator(
 		std::string const & locator_type,
 		std::string const & locator_tag,
-		utility::tag::TagPtr tags
+		utility::tag::TagCOP tags
 	) const;
 
 	/// @brief Singleton access method; return the single instance of the object

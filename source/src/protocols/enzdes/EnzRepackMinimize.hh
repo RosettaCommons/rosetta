@@ -26,7 +26,7 @@
 #include <core/types.hh>
 
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <utility/tag/Tag.fwd.hh>
@@ -64,7 +64,7 @@ public:
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const;
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
 	utility::vector1< core::Size > rb_min_jumps() const;
 	void rb_min_jumps( utility::vector1< core::Size > const );

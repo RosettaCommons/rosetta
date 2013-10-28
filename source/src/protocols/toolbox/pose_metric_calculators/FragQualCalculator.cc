@@ -27,7 +27,7 @@
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/Frame.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -247,8 +247,8 @@ FragQualCalculator::recompute( Pose const & pose )
 /// @brief parse xml
 void
 FragQualCalculator::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const &,
 	Movers_map const &,
 	Pose const & pose )
@@ -264,7 +264,7 @@ FragQualCalculator::parse_my_tag(
 	if ( data.has( "fragsets", fset_string ) ) {
 		frag_ = data.get< FragSet* >( "fragsets", fset_string );
 	} else {
-		throw utility::excn::EXCN_RosettaScriptsOption("fragsets " + fset_string + " not found in DataMap.");
+		throw utility::excn::EXCN_RosettaScriptsOption("fragsets " + fset_string + " not found in basic::datacache::DataMap.");
 	}
 
  	verbose_ = tag->getOption<bool>( "verbose", 0 );

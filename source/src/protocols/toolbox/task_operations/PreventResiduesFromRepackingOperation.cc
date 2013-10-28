@@ -104,7 +104,7 @@ PreventResiduesFromRepackingOperation::set_residues( utility::vector1  < core::S
 
 	
 void
-PreventResiduesFromRepackingOperation::parse_tag( TagPtr tag )
+PreventResiduesFromRepackingOperation::parse_tag( TagCOP tag , DataMap & )
 {
         unparsed_residues_ = tag->getOption< std::string >( "residues" ) ;
         if( unparsed_residues_ != "" ){

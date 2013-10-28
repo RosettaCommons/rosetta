@@ -58,8 +58,8 @@ public:
   // So this this can be called from RosettaScripts
   void
   parse_my_tag(
-	       TagPtr const tag,
-	       protocols::moves::DataMap & /*data*/,
+	       TagCOP const tag,
+	       basic::datacache::DataMap & /*data*/,
 	       Filters_map const & /*filters*/,
 	       protocols::moves::Movers_map const & /*movers*/,
 	       Pose const & /*pose*/ );

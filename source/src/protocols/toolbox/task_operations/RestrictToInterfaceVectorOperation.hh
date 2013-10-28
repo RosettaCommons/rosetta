@@ -91,7 +91,7 @@ public:
 	void vector_angle_cutoff(core::Real vector_angle_cutoff);
 	void vector_dist_cutoff(core::Real vector_dist_cutoff);
 	///@brief parse_tag function for rosetta scripts
-	void parse_tag( TagPtr tag );
+	void parse_tag( TagCOP tag , DataMap & );
 
     /*
     // Used to make the eventual inheritance frodm protocols::toolbox::task_operations::InterfaceTaskOperation easier.

@@ -20,13 +20,13 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/moves/DataMapObj.hh>
+#include <basic/datacache/DataMap.fwd.hh>
+#include <basic/datacache/DataMapObj.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <protocols/moves/DataMapObj.hh>
+#include <basic/datacache/DataMapObj.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
 #include <protocols/toolbox/task_operations/SeqprofConsensusOperation.fwd.hh>
 
@@ -102,7 +102,7 @@ public:
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new Splice ); }
-		void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+		void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	virtual ~Splice();
 
 	void from_res( core::Size const f ){ from_res_ = f; }
@@ -234,13 +234,13 @@ private:
 	bool first_pass_; // dflt true;
 	utility::vector1< core::Size > dbase_subset_; // indices to the subset of the dbase library over which multiple calls iterate
 	utility::vector1< core::Size >::const_iterator current_dbase_entry_; // used if multiple calls to splice are made to iterate through the list
-	utility::pointer::owning_ptr< protocols::moves::DataMapObj< bool > > end_dbase_subset_; // dflt false; this is a weird construct to allow placing the variable on the DataMap
-	utility::pointer::owning_ptr< protocols::moves::DataMapObj < utility::vector1< core::Size > > > locked_res_; // dflt NULL; a residue that serves as the root for a fold tree jump to the other chain. This residue is expected to be within the loop span, and allows the loop to be refined while keeping the rigid body jump between the two chains; it's a only ostensibly a vector, as it has to be compatible with placestub, but it only looks at the first element of that vector
+	utility::pointer::owning_ptr< basic::datacache::DataMapObj< bool > > end_dbase_subset_; // dflt false; this is a weird construct to allow placing the variable on the basic::datacache::DataMap
+	utility::pointer::owning_ptr< basic::datacache::DataMapObj < utility::vector1< core::Size > > > locked_res_; // dflt NULL; a residue that serves as the root for a fold tree jump to the other chain. This residue is expected to be within the loop span, and allows the loop to be refined while keeping the rigid body jump between the two chains; it's a only ostensibly a vector, as it has to be compatible with placestub, but it only looks at the first element of that vector
 	char locked_res_id_; // dflt ''; the one-letter code for the locked residue
 	std::string checkpointing_file_; // dflt ""; a file that contains checkpointing information to recover from job termination when iterating over a loop database
 	std::string loop_dbase_file_name_; //dflt ""; a file name into which the loop database is dumped
 	std::string loop_pdb_source_; //dflt ""; what is the source pdb from which the loop came? This is used in writing the loop to the loop dbase, and helps keep track of where loops come from during design.
-	utility::pointer::owning_ptr< protocols::moves::DataMapObj< std::string > > mover_tag_; /// dflt NULL; to communicate the current Splice mover's loop origin to the GenericMC
+	utility::pointer::owning_ptr< basic::datacache::DataMapObj< std::string > > mover_tag_; /// dflt NULL; to communicate the current Splice mover's loop origin to the GenericMC
 	protocols::filters::FilterOP splice_filter_;
 	std::string Pdb4LetName_;
 	

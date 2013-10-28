@@ -94,7 +94,7 @@ RestrictChainToRepackingOperation::chain() const
 }
 
 void
-RestrictChainToRepackingOperation::parse_tag( TagPtr tag )
+RestrictChainToRepackingOperation::parse_tag( TagCOP tag , DataMap & )
 {
   chain( tag->getOption< core::Size >( "chain", 1 ) );
 }

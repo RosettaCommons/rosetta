@@ -84,12 +84,12 @@ JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 
 	core::conformation::symmetry::SymmetryInfoCOP syminfo = NULL;
 	if( core::pose::symmetry::is_symmetric(pose) ) syminfo = core::pose::symmetry::symmetry_info(pose);
-	
+
 	core::Size start;
 	core::Size end;
 
-	if( chain_ > 0 ){ 
-		//core::pose::Pose new_pose;                                                                                                      
+	if( chain_ > 0 ){
+		//core::pose::Pose new_pose;
 		//new_pose = pose.split_by_chain( chain_ );
 		//pose = new_pose;
 		start = pose.conformation().chain_begin( chain_ );
@@ -106,7 +106,7 @@ JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 
 	core::Size seq_length = end - start + 1;
 
-	 
+
   // Iter through native sequence
 	for( std::vector<core::sequence::SequenceOP>::const_iterator iter(sequences_.begin()); iter != sequences_.end(); iter++ ) {
 		//TR << "it " << **iter << " " << (*iter)->length() << " vs " << seq_length << std::endl;
@@ -126,8 +126,8 @@ JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 
 		int na_ii = ii - start + 1;
 //NK120531 -- These lines commented out bc they are useless and crash for symmetric systems.
-//NK120531    std::vector<core::sequence::SequenceOP>::const_iterator iter(sequences_.begin());                                             
-//NK120531    char aa( (*(*iter))[ na_ii ] ); // aa char of native pose                                                                       
+//NK120531    std::vector<core::sequence::SequenceOP>::const_iterator iter(sequences_.begin());
+//NK120531    char aa( (*(*iter))[ na_ii ] ); // aa char of native pose
 
 		utility::vector1< bool > allowed(core::chemical::num_canonical_aas, false);
 
@@ -153,7 +153,7 @@ JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 } // apply
 
 void
-JointSequenceOperation::parse_tag( TagPtr tag )
+JointSequenceOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	use_current_pose( tag->getOption< bool >( "use_current", true ) );
 	use_natro( tag->getOption< bool >( "use_natro", false ) );
@@ -246,7 +246,7 @@ JointSequenceOperation::parse_def( utility::lua::LuaObject const & def)
 void
 JointSequenceOperation::add_pdb( std::string filename )
 {
-	
+
 	core::pose::Pose pose;
 	core::import_pose::pose_from_pdb( pose, filename );
 	add_pose( pose );
@@ -323,7 +323,7 @@ JointSequenceOperation::add_native_fasta( std::string fasta_file ) {
 
   //core::sequence::SequenceOPSequenceOP native_sequence = new Sequence(fasta_file,"fasta",1);
 	std::string name("unknown");
-  sequences_.push_back( new core::sequence::Sequence(fasta_file, name) );                                                    
+  sequences_.push_back( new core::sequence::Sequence(fasta_file, name) );
 
   //string query_sequence ( read_fasta_file( option[ in::file::fasta ]()[1])[1]->sequence() );
   //core::pose::PoseOP poseop(new core::pose::Pose);

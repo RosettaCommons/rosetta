@@ -33,7 +33,7 @@
 #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <basic/basic.hh>
 #include <core/pack/interaction_graph/SimpleInteractionGraph.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -348,7 +348,7 @@ SidechainMCMover::pass_metropolis(core::Real delta_energy , core::Real last_prop
 }
 
 void
-SidechainMCMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose) {
+SidechainMCMover::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose) {
 
 	// code duplication: should really call SidechainMover::parse_my_tag() instead of having most of the code below
 	if ( tag->hasOption("task_operations") ) {
@@ -363,7 +363,7 @@ SidechainMCMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves
 			if ( data.has( "task_operations", *t_o_key ) ) {
 				new_task_factory->push_back( data.get< core::pack::task::operation::TaskOperation* >( "task_operations", *t_o_key ) );
 			} else {
-				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in protocols::moves::DataMap.");
+				throw utility::excn::EXCN_RosettaScriptsOption("TaskOperation " + *t_o_key + " not found in basic::datacache::DataMap.");
 			}
 		}
 

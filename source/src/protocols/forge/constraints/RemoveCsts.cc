@@ -78,8 +78,8 @@ RemoveCsts::RemoveCsts( RemoveCsts const & rval )
 RemoveCsts::~RemoveCsts() {}
 
 void
-RemoveCsts::parse_my_tag( TagPtr const tag,
-												protocols::moves::DataMap &,
+RemoveCsts::parse_my_tag( TagCOP const tag,
+												basic::datacache::DataMap &,
 												protocols::filters::Filters_map const &,
 												protocols::moves::Movers_map const & movers,
 												core::pose::Pose const & )

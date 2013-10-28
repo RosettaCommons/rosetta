@@ -205,7 +205,7 @@ DomainAssembly::get_name() const {
 }
 
 void
-DomainAssembly::parse_my_tag( TagPtr const tag, DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+DomainAssembly::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	linker_start_ = core::pose::get_resnum( tag, pose, "linker_start_" );
 	linker_end_   = core::pose::get_resnum( tag, pose, "linker_end_" );

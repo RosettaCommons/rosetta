@@ -32,7 +32,7 @@ PDB_DReaderOptions::PDB_DReaderOptions() { init_from_options(); }
 
 PDB_DReaderOptions::~PDB_DReaderOptions() {}
 
-void PDB_DReaderOptions::parse_my_tag( utility::tag::TagPtr tag )
+void PDB_DReaderOptions::parse_my_tag( utility::tag::TagCOP tag )
 {
 	FileDataOptions::parse_my_tag( tag );
 	

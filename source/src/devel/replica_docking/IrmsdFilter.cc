@@ -22,7 +22,7 @@
 #include <core/types.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/docking/metrics.hh>
 
 
@@ -120,8 +120,8 @@ IrmsdFilter::fresh_instance() const{
 
 void
 IrmsdFilter::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap &,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const &

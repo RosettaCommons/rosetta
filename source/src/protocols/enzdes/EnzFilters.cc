@@ -51,7 +51,7 @@
 #include <basic/MetricValue.hh>
 
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/elscripts/util.hh>
 #include <core/pose/selection.hh>
@@ -149,7 +149,7 @@ LigDSasaFilter::compute( core::pose::Pose const & pose ) const {
 }
 
 void
-LigDSasaFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & )
+LigDSasaFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
   lower_threshold_ = tag->getOption<core::Real>( "lower_threshold", 0 );
   upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1 );
@@ -206,7 +206,7 @@ DiffAtomSasaFilter::compute( core::pose::Pose const & pose ) const {
 }
 
 void
-DiffAtomSasaFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const &pose )
+DiffAtomSasaFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const &pose )
 {
 	 if ( tag->hasOption("res1_res_num") ) resid1_ =  tag->getOption<core::Size>( "res1_res_num", 0 );
 	 if ( tag->hasOption("res2_res_num") ) resid2_ =  tag->getOption<core::Size>( "res2_res_num", 0 );
@@ -275,7 +275,7 @@ LigBurialFilter::compute( core::pose::Pose const & pose ) const {
 /// @details: this filter basically works exactly as ResidueBurialFilter, but with the advantage that it has the capability to
 /// @details: figure out resid of the ligand
 void
-LigBurialFilter::parse_my_tag( TagPtr const tag, DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const &)
+LigBurialFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, core::pose::Pose const &)
 {
 	lig_id_ =  tag->getOption<core::Size>( "lig_id", 0 );
   distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
@@ -428,7 +428,7 @@ LigInterfaceEnergyFilter::constraint_energy( core::pose::Pose const & in_pose , 
 
 }
 void
-LigInterfaceEnergyFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const & )
+LigInterfaceEnergyFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
   using namespace core::scoring;
 
@@ -562,7 +562,7 @@ EnzScoreFilter::compute( core::pose::Pose const & pose ) const {
 }
 
 void
-EnzScoreFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const &pose)
+EnzScoreFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &, Movers_map const &, core::pose::Pose const &pose)
 {
   using namespace core::scoring;
 	is_cstE_ = false;
@@ -711,7 +711,7 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
 }
 
 void
-RepackWithoutLigandFilter::parse_my_tag( TagPtr const tag, DataMap &data, Filters_map const &, Movers_map const &, core::pose::Pose const &pose )
+RepackWithoutLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, Filters_map const &, Movers_map const &, core::pose::Pose const &pose )
 {
 	TR<<" Defining RepackWithoutLigandFilter "<< std::endl;
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
@@ -845,7 +845,7 @@ EnzdesScorefileFilter::apply( core::pose::Pose const & pose ) const{
 
 /// @details not implemented yet
 void
-EnzdesScorefileFilter::parse_my_tag( utility::tag::TagPtr const tag , protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+EnzdesScorefileFilter::parse_my_tag( utility::tag::TagCOP const tag , basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
 	if ( tag->hasOption("requirements") ) reqfile_name_ =  tag->getOption<std::string>( "requirements","" );
 	else throw utility::excn::EXCN_RosettaScriptsOption("For EnzdesScorefileFilter, a requirements file needs to be specified in the tag.");

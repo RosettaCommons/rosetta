@@ -21,7 +21,7 @@
 #include <protocols/loops/loops_definers/LoopsDefinerFactory.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 
 // Utility headers
@@ -38,8 +38,8 @@
 using std::string;
 using std::endl;
 using core::pose::Pose;
-using utility::tag::TagPtr;
-using protocols::moves::DataMap;
+using utility::tag::TagCOP;
+using basic::datacache::DataMap;
 using utility::vector0;
 using protocols::loops::loops_definers::LoopsDefinerOP;
 using protocols::loops::loops_definers::LoopsDefinerFactory;
@@ -55,13 +55,13 @@ LoopsDefinerLoader::~LoopsDefinerLoader() {}
 
 void LoopsDefinerLoader::load_data(
 	Pose const & pose,
-	TagPtr const tag,
-	DataMap & data
+	TagCOP const tag,
+	basic::datacache::DataMap & data
 ) const
 {
-	typedef vector0< TagPtr > TagPtrs;
+	typedef vector0< TagCOP > TagCOPs;
 
-	foreach(TagPtr tag, tag->getTags()){
+	foreach(TagCOP tag, tag->getTags()){
 		string const type( tag->getName() );
 		if ( ! tag->hasOption("name") ) {
 			utility_exit_with_message( "Can't create unnamed Loops definition (type: " + type + ")" );

@@ -65,7 +65,7 @@ public:
 	virtual std::string get_name() const { return "SSPrediction"; }
 
 public:
-  void parse_tag( utility::tag::TagPtr tag );
+  void parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & );
 
 	/// @brief opens the passed blueprint file and determines the desired secondary structure
 	void initialize_blueprint_ss( std::string const blueprint_file );

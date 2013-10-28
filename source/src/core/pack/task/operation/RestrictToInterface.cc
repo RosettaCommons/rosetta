@@ -9,6 +9,8 @@
 
 /// @file RestrictToInterface.cc
 /// @brief When passed to a PackerTask, pack/design is limited to the protein interface
+///        NOTE: This class is deprecated (and not even compiled).  Use the task operation in
+///        protocols/toolbox/task_operations instead.
 /// @author ashworth
 
 #include <core/pack/task/operation/RestrictToInterface.hh>
@@ -218,7 +220,7 @@ void RestrictToInterface::distance( core::Real const distance_in ) {
 }
 
 void
-RestrictToInterface::parse_tag( utility::tag::TagPtr tag )
+RestrictToInterface::parse_tag( utility::tag::TagCOP tag )
 {
   rb_jump_.push_back( ( tag->getOption< core::Size >( "jump", 1 ) ) );
   distance_ = tag->getOption< core::Real >( "distance", 8 )  ;

@@ -30,7 +30,7 @@
 #include <protocols/hotspot_hashing/SearchPattern.fwd.hh>
 #include <protocols/hotspot_hashing/movers/PlaceProbeMover.hh>
 #include <protocols/hotspot_hashing/movers/PlaceSurfaceProbe.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 
@@ -66,8 +66,8 @@ class PlaceSurfaceProbe : public protocols::hotspot_hashing::movers::PlaceProbeM
 		virtual protocols::moves::MoverOP clone() const;
 
     void parse_my_tag(
-         utility::tag::TagPtr const tag,
-         protocols::moves::DataMap &,
+         utility::tag::TagCOP const tag,
+         basic::datacache::DataMap &,
          protocols::filters::Filters_map const &,
          protocols::moves::Movers_map const &,
          core::pose::Pose const &);

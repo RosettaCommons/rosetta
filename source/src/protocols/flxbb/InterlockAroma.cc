@@ -39,7 +39,7 @@
 
 // Parser headers
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 // AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh>
 
@@ -239,8 +239,8 @@ InterlockAroma::get_name() const {
 /// @brief parse xml
 void
 InterlockAroma::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const &,
 	Movers_map const &,
 	Pose const & )

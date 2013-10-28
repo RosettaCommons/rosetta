@@ -89,7 +89,7 @@ void RestrictAbsentCanonicalAASRLT::aas_to_keep( std::string const & aastring )
 	}
 }
 
-void RestrictAbsentCanonicalAASRLT::parse_tag( TagPtr tag )
+void RestrictAbsentCanonicalAASRLT::parse_tag( TagCOP tag )
 {
 	runtime_assert( tag );
 	if ( tag->hasOption("aas") ) aas_to_keep( tag->getOption<std::string>("aas") );
@@ -160,7 +160,7 @@ void DisallowIfNonnativeRLT::disallow_aas( std::string const & aa_string ){
 	allowed_aas_ = invert_vector( disallowed_aas_ );
 }
 
-void DisallowIfNonnativeRLT::parse_tag( TagPtr tag )
+void DisallowIfNonnativeRLT::parse_tag( TagCOP tag )
 {
 	runtime_assert( tag );
 	if ( tag->hasOption("disallow_aas") )
@@ -207,7 +207,7 @@ void AddBehaviorRLT::apply( ResidueLevelTask & rlt ) const
 	rlt.add_behavior( behavior_ );
 }
 
-void AddBehaviorRLT::parse_tag( TagPtr tag )
+void AddBehaviorRLT::parse_tag( TagCOP tag )
 {
 	runtime_assert( tag );
 	if ( tag->hasOption("behavior") ) behavior_ = tag->getOption<std::string>("behavior");

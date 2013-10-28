@@ -47,7 +47,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-//#include <protocols/moves/DataMap.hh>
+//#include <basic/datacache/DataMap.hh>
 
 
 namespace protocols {
@@ -299,8 +299,8 @@ void CircularPermutation::apply( Pose & pose )
 /// @brief parse xml
 void
 CircularPermutation::parse_my_tag(
-	TagPtr const tag,
-	DataMap &,
+	TagCOP const tag,
+	basic::datacache::DataMap &,
 	Filters_map const &,
 	Movers_map const &,
 	Pose const & )

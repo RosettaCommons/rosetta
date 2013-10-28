@@ -27,41 +27,41 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-	//initialize to default packer settings
-	ModifyAnnealer::ModifyAnnealer():
-	disallow_quench_(false),
-	high_temp_(100.0),
-	low_temp_(0.3)
-	{}
-	
-	ModifyAnnealer::ModifyAnnealer(bool disallow_quench, core::Real high_temp, core::Real low_temp):
-	disallow_quench_(disallow_quench),
-	high_temp_(high_temp),
-	low_temp_(low_temp)
-	{}
-	
-	ModifyAnnealer::~ModifyAnnealer(){}
-	
-	core::pack::task::operation::TaskOperationOP ModifyAnnealer::clone() const{
-		return new ModifyAnnealer( *this );
-	}
-	
-	void ModifyAnnealer::apply( core::pose::Pose const &, core::pack::task::PackerTask & task ) const{
-		task.disallow_quench(disallow_quench_);
-		task.high_temp(high_temp_);
-		task.low_temp(low_temp_);
-	}
-	
-	void ModifyAnnealer::parse_tag( utility::tag::TagPtr tag ){
-		disallow_quench_ = tag->getOption< bool >("disallow_quench", false);
-		high_temp_ = tag->getOption< core::Real >("high_temp", 100.0);
-		low_temp_ = tag->getOption< core::Real >("low_temp", 0.3);
-	}
-	
-	core::pack::task::operation::TaskOperationOP ModifyAnnealerCreator::create_task_operation() const
-	{
-		return new ModifyAnnealer;
-	}
+//initialize to default packer settings
+ModifyAnnealer::ModifyAnnealer():
+disallow_quench_(false),
+high_temp_(100.0),
+low_temp_(0.3)
+{}
+
+ModifyAnnealer::ModifyAnnealer(bool disallow_quench, core::Real high_temp, core::Real low_temp):
+disallow_quench_(disallow_quench),
+high_temp_(high_temp),
+low_temp_(low_temp)
+{}
+
+ModifyAnnealer::~ModifyAnnealer(){}
+
+core::pack::task::operation::TaskOperationOP ModifyAnnealer::clone() const{
+	return new ModifyAnnealer( *this );
+}
+
+void ModifyAnnealer::apply( core::pose::Pose const &, core::pack::task::PackerTask & task ) const{
+	task.disallow_quench(disallow_quench_);
+	task.high_temp(high_temp_);
+	task.low_temp(low_temp_);
+}
+
+void ModifyAnnealer::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ){
+	disallow_quench_ = tag->getOption< bool >("disallow_quench", false);
+	high_temp_ = tag->getOption< core::Real >("high_temp", 100.0);
+	low_temp_ = tag->getOption< core::Real >("low_temp", 0.3);
+}
+
+core::pack::task::operation::TaskOperationOP ModifyAnnealerCreator::create_task_operation() const
+{
+	return new ModifyAnnealer;
+}
 
 } //task_operations
 } //toolbox

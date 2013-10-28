@@ -59,7 +59,7 @@ public:
 	/// @brief populate the grid with values based on a passed pose
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center)=0;
 	/// @brief setup a grid based on RosettaScripts input
-	virtual void parse_my_tag(utility::tag::TagPtr const tag)=0;
+	virtual void parse_my_tag(utility::tag::TagCOP const tag)=0;
 	/// @brief serialize the SingleGrid to a json_spirit object
 	virtual utility::json_spirit::Value serialize();
 	/// @brief deserialize a json_spirit object to a SingleGrid

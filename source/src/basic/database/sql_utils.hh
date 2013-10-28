@@ -136,7 +136,7 @@ std::string make_compound_statement(
 
 utility::sql_database::sessionOP
 parse_database_connection(
-	utility::tag::TagPtr const tag);
+	utility::tag::TagCOP const tag);
 }
 
 }

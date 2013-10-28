@@ -59,7 +59,7 @@ public:
 	void
 	apply( pose::Pose const & pose, PackerTask & task ) const;
 
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 	virtual void parse_def( utility::lua::LuaObject const & def);
 
 };
@@ -82,7 +82,7 @@ public:
 	void include_residue( core::Size resid );
 	void clear();
 
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 
 private:
 	utility::vector1< core::Size > residues_to_restrict_to_repacking_;
@@ -111,7 +111,7 @@ public:
 	void keep_aas( std::string const keep_aas );
 	/// @brief direct vector1-basd mutator.  If an amino acid is not present (false) in the boolean vector, then do not allow it at this position.  The boolean vector is a 20-length vector in alphabetical order by one-letter code.
 	void keep_aas( utility::vector1< bool > keep_aas );
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 	void include_residue( core::Size const resid );
 private:
 	core::Size resid_;
@@ -144,7 +144,7 @@ public:
 	// allow restriction of residues, additive
 	void restrict_to_residue( core::Size const & resid);
 	void restrict_to_residue( utility::vector1< core::Size > const & residues);
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 	virtual void parse_def( utility::lua::LuaObject const & def);
 
 
@@ -166,7 +166,7 @@ public:
 	virtual ~RotamerExplosion();
 	virtual TaskOperationOP clone() const;
 	virtual void apply( pose::Pose const &, PackerTask & ) const;
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 	void resid( core::Size const r );
 	void chi( core::Size const c );
 	void sample_level( ExtraRotSample const s );
@@ -189,7 +189,7 @@ public:
 	void
 	apply( pose::Pose const &, PackerTask & ) const;
 
-	virtual void parse_tag( TagPtr ); //parses nothing
+	virtual void parse_tag( TagCOP, DataMap & ); //parses nothing
 	virtual void parse_def( utility::lua::LuaObject const & def);
 };
 
@@ -237,7 +237,7 @@ public:
 
 	virtual TaskOperationOP clone() const;
 
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 
 	virtual
 	void
@@ -289,7 +289,7 @@ public:
 
 	std::string const & filename() const;
 
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 	virtual void parse_def( utility::lua::LuaObject const & def);
 
 private:
@@ -318,7 +318,7 @@ public:
 	void
 	apply( pose::Pose const & pose, PackerTask & ptask ) const;
 
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 
 	std::list< ResfileCommandCOP > const &
 	resfile_commands(
@@ -357,33 +357,33 @@ private:
 	rotamer_set::RotamerCouplingsCOP rotamer_couplings_;
 };
 
-	
+
 class SetRotamerLinks : public TaskOperation
 {
 public:
 	typedef TaskOperation parent;
-	
+
 public:
 	SetRotamerLinks();
 	SetRotamerLinks(SetRotamerLinks const & );
 	virtual ~SetRotamerLinks();
 	SetRotamerLinks const & operator = ( SetRotamerLinks const & );
-	
+
 	virtual TaskOperationOP clone() const;
-	
+
 	virtual
 	void
 	apply( pose::Pose const &, PackerTask & ) const;
-	
+
 	void
 	set_links( rotamer_set::RotamerLinksOP links );
-	
-	
+
+
 private:
 	rotamer_set::RotamerLinksCOP rotamer_links_;
 };
-	
-	
+
+
 ///@brief when a PackerTask is created by the Factory, the RotamerOperation will be given to it
 class AppendRotamer : public TaskOperation
 {
@@ -479,7 +479,7 @@ public:
 	void include_residue( core::Size resid );
 	void clear();
 
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 
 private:
 	utility::vector1< core::Size > residues_to_prevent_;
@@ -521,7 +521,7 @@ public:
 	virtual ~ExtraRotamers();
 	virtual TaskOperationOP clone() const;
 	virtual void apply( pose::Pose const &, PackerTask & ) const;
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 private:
 	core::Size resid_, chi_, level_;
 };
@@ -537,7 +537,7 @@ public:
 	virtual ~ExtraChiCutoff();
 	virtual TaskOperationOP clone() const;
 	virtual void apply( pose::Pose const &, PackerTask & ) const;
-	virtual void parse_tag( TagPtr );
+	virtual void parse_tag( TagCOP, DataMap & );
 private:
 	core::Size resid_, extrachi_cutoff_;
 };

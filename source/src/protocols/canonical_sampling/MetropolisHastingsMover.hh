@@ -81,8 +81,8 @@ public:
 	virtual
 	void
 	parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
@@ -139,7 +139,7 @@ public:
 	add_mover(
 		ThermodynamicMoverOP mover,
 		core::Real weight,
-		utility::tag::TagPtr const& subtag
+		utility::tag::TagCOP const& subtag
 	);
 
 	virtual void

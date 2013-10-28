@@ -63,7 +63,7 @@ public: // The ResourceOptions public interface
 	virtual
 	void
 	parse_my_tag(
-		utility::tag::TagPtr tag
+		utility::tag::TagCOP tag
 	);
 
 	/// @brief The class name for a particular ResourceOptions instance.

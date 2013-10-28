@@ -18,7 +18,7 @@
 #include <utility/tag/Tag.fwd.hh>
 // AUTO-REMOVED #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -42,8 +42,8 @@ public:
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 	//virtual std::string protocols::moves::Mover::get_name();
-	void parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+	void parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );

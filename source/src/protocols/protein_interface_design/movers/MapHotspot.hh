@@ -21,7 +21,7 @@
 #include <map>
 #include <protocols/moves/Mover.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -49,8 +49,8 @@ public:
 	void GenerateMap( core::pose::Pose const & start_pose, core::pose::Pose & curr_pose, core::Size const jump_number );
 	/// @brief minimizes rb and sc dofs for all of the hotspots
 	void MinimizeHotspots( core::pose::Pose & pose );
-	void parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+	void parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );

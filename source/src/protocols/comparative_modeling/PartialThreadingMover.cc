@@ -25,7 +25,7 @@
 
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
 // C++ headers
@@ -88,8 +88,8 @@ void PartialThreadingMover::apply(
 } // apply
  
 void PartialThreadingMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & /* data */,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & /* data */,
 	protocols::filters::Filters_map const & /* filters */,
 	protocols::moves::Movers_map const & /* movers */,
 	core::pose::Pose const & /* pose */

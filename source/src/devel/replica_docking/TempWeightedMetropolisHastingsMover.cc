@@ -86,15 +86,15 @@ void
 TempWeightedMetropolisHastingsMover::add_mover(
 	ThermodynamicMoverOP th_mover,
 	core::Real weight,
-	utility::tag::TagPtr const& subtag
+	utility::tag::TagCOP const& subtag
 ) {
 	TR.Debug << "add_mover( mover, weight, tag) in TempWeightedMetropolisHastings " << std::endl;
-	utility::vector0< utility::tag::TagPtr > const wc_tags( subtag->getTags() );
+	utility::vector0< utility::tag::TagCOP > const wc_tags( subtag->getTags() );
 	TempInterpolatorBaseOP weight_controller=NULL;
 
-	for ( utility::vector0< utility::tag::TagPtr >::const_iterator subtag_it = wc_tags.begin(); subtag_it != wc_tags.end(); ++subtag_it)
+	for ( utility::vector0< utility::tag::TagCOP >::const_iterator subtag_it = wc_tags.begin(); subtag_it != wc_tags.end(); ++subtag_it)
 	{
-		utility::tag::TagPtr const wc_tag = *subtag_it;
+		utility::tag::TagCOP const wc_tag = *subtag_it;
 		if ( wc_tag->getName() == "Interp" && wc_tag->getOption< std::string >( "key" )=="weight" ) {
 		weight_controller = TempInterpolatorFactory::get_instance()->new_tempInterpolator( wc_tag , tempering()->temperature_level() );
 		TR.Debug <<"Interpolate weight_constroller" << std::endl;

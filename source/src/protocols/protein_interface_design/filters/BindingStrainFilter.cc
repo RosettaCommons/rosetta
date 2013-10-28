@@ -23,7 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -142,8 +142,8 @@ BindingStrainFilter::report( std::ostream & out, core::pose::Pose const & pose )
 }
 
 void
-BindingStrainFilter::parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
+BindingStrainFilter::parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & )

@@ -31,7 +31,9 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/TenANeighborGraph.hh>
+
 #include <basic/Tracer.hh>
+#include <basic/datacache/DataMap.hh>
 
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
@@ -412,7 +414,8 @@ RemoveNorCTermMPM::modified_match_positions(
 /// and then call the TaskOperationFactory::init and some other shit like that...
 TaskOperationMPM::TaskOperationMPM(
 	core::Size which_geom_cst,
-	utility::vector1< std::string > const & input_tokens )
+	utility::vector1< std::string > const & input_tokens
+)
 	: MatchPositionModifier(), which_geom_cst_(which_geom_cst), task_op_(NULL)
 {
 	//1. reassemble tag components into string
@@ -426,13 +429,14 @@ TaskOperationMPM::TaskOperationMPM(
 	tr << "TaskOperationMPM getting task_op of type " << task_op_name << " with tag '" << tagstring << "'." << std::endl;
 
 	//2. instantiate a tag object from the string
-	utility::tag::TagPtr tag = new utility::tag::Tag();
+	utility::tag::TagOP tag = new utility::tag::Tag;
 	std::istringstream tagstream(tagstring);
 	tag->read(tagstream);
 
 	//3. make task op
+	basic::datacache::DataMap datamap;
 	core::pack::task::operation::TaskOperationFactory const * topfac( core::pack::task::operation::TaskOperationFactory::get_instance() );
-	task_op_ = topfac->newTaskOperation( task_op_name, tag );
+	task_op_ = topfac->newTaskOperation( task_op_name, datamap, tag );
 
 	//4. yay :)
 }

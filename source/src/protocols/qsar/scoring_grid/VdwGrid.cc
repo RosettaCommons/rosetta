@@ -43,7 +43,7 @@ std::string VdwGridCreator::keyname() const
 	return VdwGridCreator::grid_name();
 }
 
-GridBaseOP VdwGridCreator::create_grid(utility::tag::TagPtr const tag) const
+GridBaseOP VdwGridCreator::create_grid(utility::tag::TagCOP const tag) const
 {
 	GridBaseOP vdw_grid= new VdwGrid();
 
@@ -70,7 +70,7 @@ VdwGrid::VdwGrid() : SingleGrid("VdwGrid"), cutoff_(10.0)
 }
 
 void
-VdwGrid::parse_my_tag(utility::tag::TagPtr const /*tag*/){
+VdwGrid::parse_my_tag(utility::tag::TagCOP const /*tag*/){
 
 }
 

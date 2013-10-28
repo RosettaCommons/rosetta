@@ -16,7 +16,7 @@
 #include <protocols/simple_moves/sidechain_moves/PerturbChiSidechainMoverCreator.hh>
 
 // Procols Headers
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 // Core Headers
 #include <core/chemical/ResidueType.hh>
@@ -114,8 +114,8 @@ PerturbChiSidechainMover::set_defaults() {
 
 void
 PerturbChiSidechainMover::parse_my_tag(
-  utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & /*data*/,
+  utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & /*data*/,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
 	pose::Pose const & /*pose*/

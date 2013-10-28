@@ -41,7 +41,7 @@ ResourceOptionsFactory::~ResourceOptionsFactory() {}
 ResourceOptionsOP
 ResourceOptionsFactory::create_resource_options(
 	std::string const & options_type,
-	utility::tag::TagPtr tag
+	utility::tag::TagCOP tag
 ) const
 {
 	ResourceOptionsCreatorMap::const_iterator iter = creator_map_.find( options_type );

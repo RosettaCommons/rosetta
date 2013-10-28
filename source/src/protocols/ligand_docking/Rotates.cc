@@ -17,7 +17,7 @@
 #include <protocols/ligand_docking/Rotate.hh>
 #include <protocols/ligand_docking/DistributionMap.hh>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <core/pose/util.hh> // includes Pose.hh
 
 // Utility Headers
@@ -86,8 +86,8 @@ std::string Rotates::get_name() const{
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 Rotates::parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & /*data_map*/,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & /*data_map*/,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
 		core::pose::Pose const & pose

@@ -30,7 +30,7 @@
 #include <core/pose/symmetry/util.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 // AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
 
@@ -159,8 +159,8 @@ protocols::moves::MoverOP SymMinMover::clone() const { return new  SymMinMover( 
 protocols::moves::MoverOP SymMinMover::fresh_instance() const { return new  SymMinMover; }
 
 void SymMinMover::parse_my_tag(
-	TagPtr const tag,
-	protocols::moves::DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
 	Pose const & pose )

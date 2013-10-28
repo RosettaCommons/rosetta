@@ -21,7 +21,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 
 #include <devel/denovo_design/filters/PsiPredInterface.fwd.hh>    
@@ -53,7 +53,7 @@ public:
 	core::Real compute_svm_prob(std::string sequence, std::string wanted_ss); 
 	core::Real compute_psipred_prob(core::pose::Pose & pose , std::string wanted_ss);
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn);
-	void parse_my_tag( utility::tag::TagPtr tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	std::string fname_;
   utility::io::ozstream* output_;

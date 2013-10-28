@@ -121,8 +121,8 @@ bool PackStatFilter::apply( Pose const & pose ) const
 /// @brief parse xml
 void
 PackStatFilter::parse_my_tag(
-	TagPtr const tag,
-	DataMap &,
+	TagCOP const tag,
+	basic::datacache::DataMap &,
 	filters::Filters_map const &,
 	Movers_map const &,
 	Pose const & )

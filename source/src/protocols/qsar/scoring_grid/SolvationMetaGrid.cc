@@ -34,7 +34,7 @@ std::string SolvationMetaGridCreator::keyname() const
 	return SolvationMetaGridCreator::grid_name();
 }
 
-GridBaseOP SolvationMetaGridCreator::create_grid(utility::tag::TagPtr const tag) const
+GridBaseOP SolvationMetaGridCreator::create_grid(utility::tag::TagCOP const tag) const
 {
 	GridBaseOP solvation_meta_grid = new SolvationMetaGrid();
 	solvation_meta_grid->parse_my_tag(tag);
@@ -97,7 +97,7 @@ void SolvationMetaGrid::refresh(core::pose::Pose const & pose, core::Vector cons
 	}
 }
 
-void SolvationMetaGrid::parse_my_tag(utility::tag::TagPtr const /*tag*/)
+void SolvationMetaGrid::parse_my_tag(utility::tag::TagCOP const /*tag*/)
 {
 }
 

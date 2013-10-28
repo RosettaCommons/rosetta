@@ -94,8 +94,8 @@ std::string CompoundTranslate::get_name() const{
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 CompoundTranslate::parse_my_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & datamap,
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & datamap,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose
@@ -127,7 +127,7 @@ CompoundTranslate::parse_my_tag(
 		else throw utility::excn::EXCN_RosettaScriptsOption("'allow_overlap' option takes arguments 'true' or 'false'");
 	}
 
-	foreach(utility::tag::TagPtr tag, tag->getTags()){
+	foreach(utility::tag::TagCOP tag, tag->getTags()){
 		std::string const name= tag->getName();
 		if( name == "Translate"){
 			TranslateOP translate = new Translate();

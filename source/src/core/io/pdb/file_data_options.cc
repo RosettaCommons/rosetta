@@ -33,7 +33,7 @@ FileDataOptions::FileDataOptions() { init_from_options(); }
 
 FileDataOptions::~FileDataOptions() {}
 
-void FileDataOptions::parse_my_tag( utility::tag::TagPtr tag )
+void FileDataOptions::parse_my_tag( utility::tag::TagCOP tag )
 {
 	//set_check_if_residues_are_termini( tag->getOption< std::string >( "termini", "ALL" ));
 	set_check_if_residues_are_Ntermini( tag->getOption< std::string >( "Ntermini", "ALL" ));

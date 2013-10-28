@@ -25,7 +25,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/exit.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -70,7 +70,7 @@ ScoreTypeFilter::ScoreTypeFilter( core::scoring::ScoreFunctionCOP scorefxn, core
 ScoreTypeFilter::~ScoreTypeFilter() {}
 
 void
-ScoreTypeFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+ScoreTypeFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	using namespace core::scoring;
 

@@ -14,7 +14,7 @@
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <boost/foreach.hpp>
@@ -185,8 +185,8 @@ BoltzmannFilter::report( std::ostream &, core::pose::Pose const & ) const
 }
 
 void
-BoltzmannFilter::parse_my_tag( utility::tag::TagPtr const tag,
-	protocols::moves::DataMap &,
+BoltzmannFilter::parse_my_tag( utility::tag::TagCOP const tag,
+	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const & filters,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )

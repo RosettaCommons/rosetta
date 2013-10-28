@@ -130,8 +130,8 @@ Real DisulfideFilter::report_sm( Pose const & pose ) const
  * @details Parameters recognized:
  *  - targets. A list of possible target residues, seperated by commas.
  */
-void DisulfideFilter::parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+void DisulfideFilter::parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & pose)

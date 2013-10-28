@@ -106,7 +106,7 @@ SpinMover::apply( core::pose::Pose & pose )
 }
 //mjo commenting out 'data' and 'pose' because they are unused and cause warnings
 void
-SpinMover::parse_my_tag( TagPtr const tag, DataMap & /*data*/, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & /*pose*/ )
+SpinMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & /*data*/, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & /*pose*/ )
 {
         jump_num_ = tag->getOption<core::Size>( "jump_num", 1);
         TR<<"SpinMover was instantiated "<<std::endl;

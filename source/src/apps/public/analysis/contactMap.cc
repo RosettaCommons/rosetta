@@ -31,7 +31,7 @@
 
 #include <protocols/filters/Filter.hh>
 //#include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/contact_map/ContactMap.hh>
 
 #include <core/pose/Pose.hh>
@@ -65,7 +65,7 @@ utility::vector1<ContactMap> processRegions(std::string region_def, core::pose::
 	// parameters for parse_my_tag routine
 	protocols::moves::Movers_map movers;
 	protocols::filters::Filters_map filters;
-	protocols::moves::DataMap data;
+	basic::datacache::DataMap data;
 
 	if(region_def == ""){
 		std::ostringstream oss;
@@ -77,7 +77,7 @@ utility::vector1<ContactMap> processRegions(std::string region_def, core::pose::
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		using namespace utility::tag;
-		TagPtr tag = TagPtr( new Tag() );;
+		TagOP tag = TagOP( new Tag() );;
 		core::Size pos = region_def.find(',');
 		if (pos == std::string::npos){
 			current_region = region_def;

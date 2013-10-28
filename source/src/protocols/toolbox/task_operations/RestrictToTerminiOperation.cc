@@ -123,7 +123,7 @@ RestrictToTerminiOperation::apply(
 
 
 void
-RestrictToTerminiOperation::parse_tag( TagPtr tag )
+RestrictToTerminiOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	chain_ = tag->getOption<Size>("chain", 1);
 	repack_n_terminus_ = tag->getOption<bool>("repack_n_terminus", true);

@@ -33,14 +33,14 @@ namespace devel {
 
     using namespace std;
     using core::conformation::Residue;
-    using utility::tag::TagPtr;
+    using utility::tag::TagCOP;
 
     // =================================================
     // ==================== Segment ====================
     // =================================================
 
     struct Segment {
-      TagPtr tag; // the tag which this segment represents
+      TagCOP tag; // the tag which this segment represents
       core::pose::PoseOP pose; // the pose containing this segment
       core::conformation::Residue *lo_res, *hi_res, *from_res, *to_res; // the beginning and ending residues of the indel, inclusive, NB: to signal a one residue deletion, set begin=end
       vector< core::chemical::AA > aas;
@@ -62,7 +62,7 @@ namespace devel {
 
     struct Loop { // NB: this has to be a different data structure than Segment, since pointers may change during design
       int lo,hi,to,jumpno;
-      TagPtr tag;
+      TagCOP tag;
       Loop() : lo(0), hi(0), to(0), jumpno(0) {}
       Loop( Segment const& segment, map<Residue*,Residue*> const& clones );
     };

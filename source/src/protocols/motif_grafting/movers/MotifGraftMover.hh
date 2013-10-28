@@ -37,7 +37,7 @@
 #include <core/scoring/ScoreFunction.hh>
 
 //Include Rosetta protocols 
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 //Include ObjexxFCL
@@ -221,8 +221,8 @@ namespace protocols
 					
 					/**@brief Fuction to parse RosettaScripts XML options**/
 					virtual void parse_my_tag(
-						utility::tag::TagPtr const tag,
-						protocols::moves::DataMap &,
+						utility::tag::TagCOP const tag,
+						basic::datacache::DataMap &,
 						protocols::filters::Filters_map const &,
 						protocols::moves::Movers_map const &,
 						core::pose::Pose const &);

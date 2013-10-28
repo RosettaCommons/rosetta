@@ -33,6 +33,8 @@ using basic::Warning;
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
 
+namespace devel {
+namespace domain_assembly {
 
 using namespace core;
 
@@ -160,7 +162,7 @@ parse_da_option_file( utility::vector1< DomainInfo > & domains, std::string file
 	  while ( which_token <= ntokens ) {
 			DomainAssemblyCommandOP command = command_map[ tokens[ which_token ] ];
 	    if ( !command ) {
-	      //Error() << "da_option_file ERROR: line: " << lineno << " command not found: " << tokens[ which_token ] << std::endl;
+	      Error() << "da_option_file ERROR: line: " << lineno << " command not found: " << tokens[ which_token ] << std::endl;
 	      utility_exit();
 	    }
 			command->domain_action( tokens, which_token, domain );
@@ -169,6 +171,5 @@ parse_da_option_file( utility::vector1< DomainInfo > & domains, std::string file
 	}
 }
 
-
-
-
+}
+}

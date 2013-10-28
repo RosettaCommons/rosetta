@@ -13,8 +13,8 @@
 // Unit headers
 #include <protocols/simple_moves/LoadPDBMover.hh>
 #include <protocols/simple_moves/LoadPDBMoverCreator.hh>
-#include <protocols/moves/DataMapObj.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMapObj.hh>
+#include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
 static basic::Tracer TR("protocols.simple_moves.LoadPDBMover");
@@ -76,8 +76,8 @@ LoadPDBMover::fresh_instance() const
 
 void
 LoadPDBMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & /*data*/,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & /*data*/,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )

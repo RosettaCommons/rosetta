@@ -21,7 +21,7 @@ namespace protocols {
 namespace jd2 {
 namespace parser {
 
-/// @brief A class for loading arbitrary data into the XML parser's DataMap.
+/// @brief A class for loading arbitrary data into the XML parser's basic::datacache::DataMap.
 class DataLoader;
 
 typedef utility::pointer::owning_ptr< DataLoader > DataLoaderOP;

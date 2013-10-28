@@ -62,14 +62,14 @@ public:
   }
 
   virtual void parse_my_tag(
-       utility::tag::TagPtr const tag,
-       protocols::moves::DataMap &,
+       utility::tag::TagCOP const tag,
+       basic::datacache::DataMap &,
        protocols::filters::Filters_map const &,
        protocols::moves::Movers_map const &,
        core::pose::Pose const &
   );
 
-  utility::tag::TagPtr generate_mover_tag( core::Size temp_level, std::string const& prefix ) const;
+  utility::tag::TagCOP generate_mover_tag( core::Size temp_level, std::string const& prefix ) const;
 
   virtual void
   initialize_simulation(

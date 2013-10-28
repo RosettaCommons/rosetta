@@ -32,7 +32,7 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -49,12 +49,12 @@ FragSetLoader::~FragSetLoader() {}
 
 void FragSetLoader::load_data(
 	core::pose::Pose const &,
-	utility::tag::TagPtr const tag,
-	moves::DataMap & data
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data
 ) const
 {
 	using namespace utility::tag;
-	typedef utility::vector0< TagPtr > TagPtrs;
+	typedef utility::vector0< TagCOP > TagCOPs;
 
 	using protocols::jd2::parser::FragmentReader;
 	using protocols::jd2::parser::FragmentReaderOP;
@@ -62,7 +62,7 @@ void FragSetLoader::load_data(
 
 	FragmentReaderMap frag_readers_map;
 	if ( tag->hasTag( "FRAGMENTS" ) ) {
-		foreach(TagPtr tag, tag->getTag( "FRAGMENTS" )->getTags()){
+		foreach(TagCOP tag, tag->getTag( "FRAGMENTS" )->getTags()){
 			std::string const name ( tag->getName() ); // this name is used when fragsets are defined later.
 			runtime_assert( !name.empty() );
 			FragmentReaderOP frop = new FragmentReader( tag );
@@ -73,7 +73,7 @@ void FragSetLoader::load_data(
 		runtime_assert( false );
 	}
 
-	foreach( TagPtr tag, tag->getTags() ){
+	foreach( TagCOP tag, tag->getTags() ){
 		std::string const name ( tag->getName() );
 		if( name == "FRAGMENTS" ) continue;
 

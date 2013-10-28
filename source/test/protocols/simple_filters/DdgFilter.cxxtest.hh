@@ -75,7 +75,7 @@ public:
 	}
 
   void test_filter_parsing() {
-    DataMap data;
+    basic::datacache::DataMap data;
     Filters_map filters;
     Movers_map movers;
 
@@ -88,7 +88,7 @@ public:
 		(*scorefxn_)(*testpose_);
 
     protocols::simple_filters::DdgFilter testfilter;
-    TagPtr tag = tagptr_from_string("<Ddg name=test filter=sfT99 />\n");
+    TagCOP tag = tagptr_from_string("<Ddg name=test filter=sfT99 />\n");
     testfilter.parse_my_tag( tag, data, filters, movers, *testpose_ );
 
     TS_ASSERT_EQUALS( testfilter.report_sm(*testpose_), 99 );

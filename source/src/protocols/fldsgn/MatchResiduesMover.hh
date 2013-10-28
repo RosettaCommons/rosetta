@@ -29,7 +29,7 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 // Parser headers
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 // Boost headers
@@ -48,8 +48,8 @@ public:
 	typedef core::Size Size;
 	typedef core::pose::Pose Pose;
 
-	typedef utility::tag::TagPtr TagPtr;
-	typedef protocols::moves::DataMap DataMap;
+	typedef utility::tag::TagCOP TagCOP;
+	typedef basic::datacache::DataMap DataMap;
 	typedef protocols::filters::Filters_map Filters_map;
 	typedef protocols::moves::Movers_map Movers_map;
 
@@ -72,8 +72,8 @@ public:// constructor/destructor
 	virtual std::string get_name() const { return "MatchResiduesMover"; }
 
 
-	virtual void parse_my_tag( TagPtr const tag,
-		DataMap & data,
+	virtual void parse_my_tag( TagCOP const tag,
+		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		Movers_map const & movers,
 		Pose const & pose);

@@ -159,8 +159,8 @@ protocols::backrub::BackrubMover::init_with_options()
 
 void
 protocols::backrub::BackrubMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & /*data*/,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & /*data*/,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & pose

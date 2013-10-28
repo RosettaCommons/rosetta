@@ -18,9 +18,9 @@
 
 #include <protocols/toolbox/task_operations/RestrictToMoveMapChiOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToMoveMapChiOperation.fwd.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -77,7 +77,7 @@ public:
 public:
 	
 	//@brief.  Yes, I don't know wtf I'm doing with RosettaScripts yet.
-	//virtual void parse_tag( TagPtr, protocols::moves::DataMap & data, core);
+	//virtual void parse_tag( TagCOP, basic::datacache::DataMap & data, core);
 	
 	virtual TaskOperationOP clone() const;
 	

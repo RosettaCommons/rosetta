@@ -68,8 +68,8 @@ TimeFilter::report( std::ostream &out, core::pose::Pose const & ) const
 	out<<elapsed_time<<" seconds"<<std::endl;
 }
 
-void TimeFilter::parse_my_tag( utility::tag::TagPtr const,
-		protocols::moves::DataMap &,
+void TimeFilter::parse_my_tag( utility::tag::TagCOP const,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &)

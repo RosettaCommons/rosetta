@@ -42,7 +42,7 @@ public:
 	void test_initialize_LoopsFileOptions_from_tags() {
 		std::string loopsoptioindef = "<LoopsFileOptions name=blah prohibit_single_residue_loops=1/>\n";
 		std::istringstream inputloopstream( loopsoptioindef );
-		utility::tag::TagPtr tag = utility::tag::Tag::create( inputloopstream );
+		utility::tag::TagCOP tag = utility::tag::Tag::create( inputloopstream );
 		LoopsFileOptions opts;
 		opts.parse_my_tag( tag );
 		TS_ASSERT( opts.prohibit_single_residue_loops() );
@@ -51,7 +51,7 @@ public:
 	void test_initialize_LoopsFileOptions_from_tags_w_false_psrl() {
 		std::string loopsoptioindef = "<LoopsFileOptions name=blah prohibit_single_residue_loops=0/>\n";
 		std::istringstream inputloopstream( loopsoptioindef );
-		utility::tag::TagPtr tag = utility::tag::Tag::create( inputloopstream );
+		utility::tag::TagCOP tag = utility::tag::Tag::create( inputloopstream );
 		LoopsFileOptions opts;
 		opts.parse_my_tag( tag );
 		TS_ASSERT( ! opts.prohibit_single_residue_loops() );
@@ -60,7 +60,7 @@ public:
 	void test_initialize_LoopsFileOptions_from_tags_w_default_psrl() {
 		std::string loopsoptioindef = "<LoopsFileOptions name=blah/>\n";
 		std::istringstream inputloopstream( loopsoptioindef );
-		utility::tag::TagPtr tag = utility::tag::Tag::create( inputloopstream );
+		utility::tag::TagCOP tag = utility::tag::Tag::create( inputloopstream );
 		LoopsFileOptions opts;
 		opts.parse_my_tag( tag );
 		TS_ASSERT( opts.prohibit_single_residue_loops() );

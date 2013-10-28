@@ -28,7 +28,7 @@
 // Unit headers
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <protocols/hotspot_hashing/HotspotStub.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/protein_interface_design/movers/PlacementAuctionMover.fwd.hh>
 #include <protocols/protein_interface_design/movers/PlacementMinimizationMover.fwd.hh>
 #include <protocols/protein_interface_design/filters/StubScoreFilter.fwd.hh>
@@ -83,8 +83,8 @@ public:
 	void design( core::pose::Pose & pose );
 	///@brief will be removed
 	bool place_stubs( core::pose::Pose & pose ) const;
-	virtual void parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+	virtual void parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & );

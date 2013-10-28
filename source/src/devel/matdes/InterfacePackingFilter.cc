@@ -16,7 +16,7 @@
 #include <core/conformation/Residue.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/scoring/packing/compute_holes_score.hh>
@@ -280,8 +280,8 @@ InterfacePackingFilter::report( std::ostream & out, core::pose::Pose const & pos
 }
 
 void
-InterfacePackingFilter::parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap &,
+InterfacePackingFilter::parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & )

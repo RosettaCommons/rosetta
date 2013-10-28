@@ -39,7 +39,7 @@
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/hbonds/hbonds.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
@@ -87,11 +87,11 @@ using core::scoring::EnergiesCacheableDataType::HBOND_SET;
 using core::Size;
 using core::Real;
 using protocols::filters::Filters_map;
-using protocols::moves::DataMap;
+using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
 using utility::vector1;
 using utility::sql_database::sessionOP;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using cppdb::statement;
 using cppdb::result;
 using basic::database::insert_statement_generator::InsertGenerator;
@@ -176,8 +176,8 @@ StructureScoresFeatures::features_reporter_dependencies() const {
 
 void
 StructureScoresFeatures::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const & /*filters*/,
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/

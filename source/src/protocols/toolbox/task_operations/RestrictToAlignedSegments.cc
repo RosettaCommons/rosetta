@@ -143,7 +143,7 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 }
 
 void
-RestrictToAlignedSegmentsOperation::parse_tag( TagPtr tag )
+RestrictToAlignedSegmentsOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	using namespace protocols::rosetta_scripts;
 	utility::vector1< std::string > pdb_names, start_res, stop_res;
@@ -160,8 +160,8 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagPtr tag )
 		runtime_assert( tag->hasOption( "source_pdb" ) && tag->hasOption( "start_res" ) && tag->hasOption( "stop_res" ) );
 	}
 
-	utility::vector0< TagPtr > const btags( tag->getTags() );
-	foreach( TagPtr const btag, btags ){
+	utility::vector0< TagCOP > const & btags( tag->getTags() );
+	foreach( TagCOP const btag, btags ){
 		pdb_names.push_back( btag->getOption< std::string >( "source_pdb" ) );
 		start_res.push_back( btag->getOption< std::string >( "start_res" ) );
 		stop_res.push_back( btag->getOption< std::string >( "stop_res" ) );

@@ -22,7 +22,7 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 // AUTO-REMOVED #include <core/scoring/packstat/compute_sasa.hh>
 #include <basic/MetricValue.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/toolbox/pose_metric_calculators/FragQualCalculator.hh>
 
 // Utility headers
@@ -111,8 +111,8 @@ bool FragQualFilter::apply( Pose const & pose ) const
 /// @brief parse xml
 void
 FragQualFilter::parse_my_tag(
-	TagPtr const tag,
-	DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const & filters,
 	Movers_map const & movers,
 	Pose const & pose )

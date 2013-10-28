@@ -20,7 +20,7 @@
 
 // #include <protocols/moves/MoverCreator.hh>
 // #include <protocols/moves/Mover.fwd.hh>
-// #include <protocols/moves/DataMap.fwd.hh>
+// #include <basic/datacache/DataMap.fwd.hh>
 // #include <protocols/filters/Filter.fwd.hh> // Filters_map (typedef)
 
 #include <core/pose/Pose.fwd.hh>
@@ -46,7 +46,7 @@ class TempInterpolatorFactory : public utility::pointer::ReferenceCount
 public:
 	//	typedef std::map< std::string, MoverCreatorOP > MoverMap;
 	typedef utility::tag::Tag Tag;
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 	typedef core::pose::Pose Pose;
 
 public:
@@ -55,7 +55,7 @@ public:
 	static
 	TempInterpolatorFactory * get_instance();
 
-	TempInterpolatorBaseOP new_tempInterpolator( utility::tag::TagPtr const tag, core::Size n_level );
+	TempInterpolatorBaseOP new_tempInterpolator( utility::tag::TagCOP const tag, core::Size n_level );
 
 private:
 	TempInterpolatorFactory();

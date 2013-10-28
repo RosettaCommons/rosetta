@@ -48,9 +48,9 @@ using std::stringstream;
 using core::pose::Pose;
 using core::scoring::ScoreFunctionOP;
 using protocols::filters::Filters_map;
-using protocols::moves::DataMap;
+using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 
 static basic::Tracer tr("protocols.evaluator.EvaluatorFactory");
 

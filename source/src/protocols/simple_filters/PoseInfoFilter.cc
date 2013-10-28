@@ -89,8 +89,8 @@ void PoseInfoFilter::report( std::ostream & out, core::pose::Pose const & pose )
    pose.constraint_set()->show_numbers(out);
 }
 
-void PoseInfoFilter::parse_my_tag( utility::tag::TagPtr const,
-		protocols::moves::DataMap &,
+void PoseInfoFilter::parse_my_tag( utility::tag::TagCOP const,
+		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const & /*pose*/)

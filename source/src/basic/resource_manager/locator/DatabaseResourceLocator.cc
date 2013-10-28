@@ -36,7 +36,7 @@ namespace basic {
 namespace resource_manager {
 namespace locator {
 
-using utility::tag::TagPtr;
+using utility::tag::TagCOP;
 using std::string;
 using std::stringstream;
 using std::endl;
@@ -191,7 +191,7 @@ DatabaseResourceLocator::locate_resource_stream(
 
 void
 DatabaseResourceLocator::parse_my_tag(
-	TagPtr tag
+	TagCOP tag
 ) {
 	if(tag->hasOption("database_session_tag")){
 		database_session_resource_tag_ = tag->getOption<string>("database_session_tag");

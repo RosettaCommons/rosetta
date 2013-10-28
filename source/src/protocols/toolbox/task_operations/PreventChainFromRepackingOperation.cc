@@ -93,7 +93,7 @@ PreventChainFromRepackingOperation::chain() const
 }
 
 void
-PreventChainFromRepackingOperation::parse_tag( TagPtr tag )
+PreventChainFromRepackingOperation::parse_tag( TagCOP tag , DataMap & )
 {
   chain( tag->getOption< core::Size >( "chain", 1 ) );
 }

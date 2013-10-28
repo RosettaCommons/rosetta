@@ -23,7 +23,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 // Package Headers
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -78,8 +78,8 @@ public:
 	/// @brief used to clear internal variables if needed. Using fresh_instance is preferred since it's a pure virtual
 	virtual void clear() {};
 	virtual void parse_my_tag(
-		utility::tag::TagPtr const,
-		moves::DataMap &,
+		utility::tag::TagCOP const,
+		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,
 		core::pose::Pose const &

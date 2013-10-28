@@ -22,6 +22,7 @@ static DataLoaderRegistrator< TaskOperationLoaderCreator > reg_TaskOperationLoad
 static DataLoaderRegistrator< protocols::qsar::scoring_grid::ScoringGridLoaderCreator > reg_ScoringGridLoaderCreator;
 static DataLoaderRegistrator< FragSetLoaderCreator > reg_FragSetLoaderCreator;
 static DataLoaderRegistrator< MonteCarloLoaderCreator > reg_MonteCarloLoaderCreator;
+static DataLoaderRegistrator< ResidueSelectorLoaderCreator > reg_ResidueSelectorLoaderCreator;
 static DataLoaderRegistrator< ligand_docking::InterfaceBuilderLoaderCreator > reg_InterfaceBuilderLoaderCreator;
 static DataLoaderRegistrator< ligand_docking::MoveMapBuilderLoaderCreator > reg_MoveMapBuilderLoaderCreator;
 static DataLoaderRegistrator< ligand_docking::LigandAreaLoaderCreator > reg_LigandAreaLoaderCreator;

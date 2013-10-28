@@ -39,7 +39,7 @@ public:
 	/// @brief populate the grid with values based on a passed pose
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
 	/// @setup a grid based on RosettaScripts input
-	virtual void parse_my_tag(utility::tag::TagPtr const tag);
+	virtual void parse_my_tag(utility::tag::TagCOP const tag);
 	/// @brief return the current score of an UltraLightResidue using the current grid
 	virtual core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map);
 	/// @brief return the current score of an atom using the current grid

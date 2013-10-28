@@ -86,8 +86,8 @@ public:
 
   /// @brief Parses the FastDesignTags
 	void parse_my_tag(
-	  utility::tag::TagPtr const tag,
-	  protocols::moves::DataMap & data,
+	  utility::tag::TagCOP const tag,
+	  basic::datacache::DataMap & data,
 	  protocols::filters::Filters_map const &,
 	  protocols::moves::Movers_map const &,
 	  core::pose::Pose const &

@@ -63,7 +63,7 @@ FragmentReader::FragmentReader():
 {}
 
 /// @brief value constructor
-FragmentReader::FragmentReader( TagPtr const & tag ):
+FragmentReader::FragmentReader( TagCOP const & tag ):
 	Parent()
 {
 	parse_tag( tag );
@@ -74,7 +74,7 @@ FragmentReader::~FragmentReader(){}
 
 /// @brief parse tag
 void
-FragmentReader::parse_tag( TagPtr const & tag )
+FragmentReader::parse_tag( TagCOP const & tag )
 {
 	/// the way of reading fragments: from pdbs, silent, fragfiles, or vall
 	read_type_ = tag->getOption< String >( "type", "" );

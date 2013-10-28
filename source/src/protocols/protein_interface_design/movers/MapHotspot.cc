@@ -30,7 +30,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/protein_interface_design/design_utils.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
@@ -276,8 +276,8 @@ MapHotspot::get_name() const {
 }
 
 void
-MapHotspot::parse_my_tag( utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
+MapHotspot::parse_my_tag( utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const &filters,
 		protocols::moves::Movers_map const &movers,
 		core::pose::Pose const & pose)
@@ -287,13 +287,13 @@ MapHotspot::parse_my_tag( utility::tag::TagPtr const tag,
 	clash_check_ = tag->getOption<bool>("clash_check", 0 );
 	file_name_prefix_ = tag->getOption< std::string >( "file_name_prefix", "map_hs" );
 
-	utility::vector0< TagPtr > const branch_tags( tag->getTags() );
-	foreach( TagPtr const btag, branch_tags ){
+	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
+	foreach( TagCOP const btag, branch_tags ){
 		std::string const btag_name( btag->getName() );
 		if( btag_name == "Jumps" ){
-			utility::vector0< TagPtr > const jump_tags( btag->getTags() );
+			utility::vector0< TagCOP > const & jump_tags( btag->getTags() );
 			runtime_assert( jump_tags.size() == pose.num_jump() );
-			foreach( TagPtr j_tag, jump_tags ){
+			foreach( TagCOP j_tag, jump_tags ){
 				core::Size const jump( j_tag->getOption< core::Size >( "jump" ) );
 				bool const jump_fine( jump <= pose.num_jump() );
 				if( !jump_fine ) TR.Error<<"Jump "<<jump<<" is larger than the number of jumps in pose="<<pose.num_jump()<<std::endl;

@@ -40,7 +40,7 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <map>
 #include <numeric/random/random.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/scoring/Interface.hh>
@@ -103,7 +103,7 @@ AlaScan::repack( bool const repack )
 }
 
 void
-AlaScan::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
+AlaScan::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	distance_threshold_ = tag->getOption<core::Real>( "interface_distance_cutoff", 8.0 );
 	chain1_ = tag->getOption< bool >( "partner1", 0 );

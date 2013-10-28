@@ -23,7 +23,7 @@
 
 #include <protocols/loops/Loops.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/sequence/util.hh>
@@ -228,8 +228,8 @@ void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 
 void
 AtomCoordinateCstMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & pose

@@ -54,7 +54,7 @@ public:
 	typedef core::pack::task::operation::TaskOperation TaskOperation;
 	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
 	typedef TaskOperation parent;
-	typedef utility::tag::TagPtr TagPtr;
+	typedef utility::tag::TagCOP TagCOP;
 
 
 public:
@@ -70,7 +70,7 @@ public:
 
 public:
 
-	void parse_tag( TagPtr tag );
+	void parse_tag( TagCOP tag , DataMap & );
 
 	/// @brief apply
 	virtual void apply( Pose const & pose, PackerTask & task ) const;
@@ -139,7 +139,7 @@ public:
 
 	virtual TaskOperationOP clone() const;
 
-	void parse_tag( TagPtr tag );
+	void parse_tag( TagCOP tag , DataMap & );
 
 	virtual void apply( Pose const & pose, PackerTask & task ) const;
 

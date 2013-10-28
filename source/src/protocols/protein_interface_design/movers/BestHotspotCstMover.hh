@@ -16,7 +16,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/hotspot_hashing/HotspotStubSet.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -48,7 +48,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new BestHotspotCstMover ); }
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	virtual ~BestHotspotCstMover();
 private:
 	core::Size host_chain_; //where is the stub to be placed

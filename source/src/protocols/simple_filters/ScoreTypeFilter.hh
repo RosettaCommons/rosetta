@@ -22,7 +22,7 @@
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 
@@ -51,7 +51,7 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const &pose ) const;
 	virtual ~ScoreTypeFilter();
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	void parse_def( utility::lua::LuaObject const & def,
 					utility::lua::LuaObject const & score_fxns,
 					utility::lua::LuaObject const & tasks );

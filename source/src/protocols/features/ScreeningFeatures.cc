@@ -160,8 +160,8 @@ ScreeningFeatures::report_features(
 
 void
 ScreeningFeatures::parse_my_tag(
-	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & /*data*/,
+	utility::tag::TagCOP const tag,
+	basic::datacache::DataMap & /*data*/,
 	protocols::filters::Filters_map const & /*filters*/,
 	protocols::moves::Movers_map const & /*movers*/,
 	core::pose::Pose const & /*pose*/)
@@ -180,7 +180,7 @@ ScreeningFeatures::parse_my_tag(
 	chain_ = tag->getOption<std::string>("chain");
 
 	core::Size descriptor_count = 0;
-	foreach( utility::tag::TagPtr const sub_tag, tag->getTags() )
+	foreach( utility::tag::TagCOP const sub_tag, tag->getTags() )
 	{
 		if(sub_tag->getName() != "descriptor")
 		{

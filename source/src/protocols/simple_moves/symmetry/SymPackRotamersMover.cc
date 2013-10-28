@@ -31,7 +31,7 @@
 #include <core/pose/symmetry/util.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 // AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
 
@@ -191,8 +191,8 @@ protocols::moves::MoverOP SymPackRotamersMover::fresh_instance() const { return 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 SymPackRotamersMover::parse_my_tag(
-	TagPtr const tag,
-	protocols::moves::DataMap & data,
+	TagCOP const tag,
+	basic::datacache::DataMap & data,
 	Filters_map const &fm,
 	protocols::moves::Movers_map const &mm,
 	Pose const &pose ) 

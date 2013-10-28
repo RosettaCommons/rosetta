@@ -103,8 +103,8 @@ public:
 
   /// @brief Parses the FastRelaxTags
 	void parse_my_tag(
-	  utility::tag::TagPtr const tag,
-	  protocols::moves::DataMap & data,
+	  utility::tag::TagCOP const tag,
+	  basic::datacache::DataMap & data,
 	  protocols::filters::Filters_map const &,
 	  protocols::moves::Movers_map const &,
 	  core::pose::Pose const &
@@ -217,7 +217,7 @@ private:   // other data
 	protocols::checkpoint::CheckPointer checkpoints_;
 
 	std::vector <RelaxScriptCommand> script_;
-	utility::tag::TagPtr movemap_tag_; // this cannot be parsed before apply b/c the fold tree is likely to change during a run
+	utility::tag::TagCOP movemap_tag_; // this cannot be parsed before apply b/c the fold tree is likely to change during a run
 };
 
 

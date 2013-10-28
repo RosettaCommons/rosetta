@@ -50,7 +50,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
 
-#include <protocols/moves/DataMap.hh>
+#include <basic/datacache/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <utility/tag/Tag.hh>
@@ -465,8 +465,8 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 
 
 void OptimizeThreadingMover::parse_my_tag(
-			utility::tag::TagPtr const tag,
-			moves::DataMap & data,
+			utility::tag::TagCOP const tag,
+			basic::datacache::DataMap & data,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
 			core::pose::Pose const & /*pose*/ )
