@@ -17,6 +17,12 @@
 // Package headers
 #include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
 
+// Utility headers
+#include <utility/pointer/ReferenceCount.hh>
+
+// C++ headers
+#include <string>
+
 namespace core {
 namespace pack {
 namespace task {

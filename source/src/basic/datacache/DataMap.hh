@@ -15,7 +15,7 @@
 #define INCLUDED_basic_datacache_DataMap_hh
 
 // Project headers
-#include <core/types.hh>
+#include <platform/types.hh>
 #include <sstream>
 // ObjexxFCL Headers
 
@@ -63,7 +63,7 @@ public:
 		std::string const & type
 	);
 	/// @brief returns the size of the map (how many different types are in data_map_
-	core::Size size() const;
+	platform::Size size() const;
 
 private:
 	std::map< std::string, std::map< std::string, utility::pointer::ReferenceCountOP > > data_map_;

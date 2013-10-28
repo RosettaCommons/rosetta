@@ -14,7 +14,6 @@
 #ifndef INCLUDED_core_pack_task_residue_selector_ResidueSelectorCreators_HH
 #define INCLUDED_core_pack_task_residue_selector_ResidueSelectorCreators_HH
 
-
 // Package headers
 #include <core/pack/task/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pack/task/residue_selector/ResidueSelectorCreator.hh>

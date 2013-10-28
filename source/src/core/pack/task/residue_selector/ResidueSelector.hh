@@ -28,6 +28,9 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 
+// C++ headers
+#include <string>
+
 namespace core {
 namespace pack {
 namespace task {

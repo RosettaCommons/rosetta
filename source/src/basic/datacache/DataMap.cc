@@ -76,7 +76,7 @@ DataMap::operator []( std::string const & type ) {
 	return m;
 }
 
-core::Size
+platform::Size
 DataMap::size() const { return data_map_.size(); }
 
 DataMap::iterator
