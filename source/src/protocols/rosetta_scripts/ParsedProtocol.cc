@@ -101,23 +101,20 @@ ParsedProtocol::ParsedProtocol() :
 	last_attempted_mover_idx_( 0 ),
 	report_call_order_( false )
 {
-	if ( protocols::jd2::jd2_used() ) {
-		protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
-		job_outputter->add_output_observer( this );
-	}
 }
 
 ParsedProtocol::~ParsedProtocol() {
-	if ( protocols::jd2::jd2_used() ) {
-		protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
-		job_outputter->remove_output_observer( this );
-	}
 }
 /// @detailed Takes care of the docking, design and filtering moves. pre_cycle and pose_cycle can
 /// be setup in derived classes to setup variables before and after these cycles.
 void
 ParsedProtocol::apply( Pose & pose )
 {
+	if ( protocols::jd2::jd2_used() ) {
+		protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
+		job_outputter->add_output_observer( this );
+	}
+
 	protocols::moves::Mover::set_last_move_status( protocols::moves::FAIL_RETRY );
 	pose.update_residue_neighbors();
 
@@ -142,6 +139,10 @@ ParsedProtocol::apply( Pose & pose )
 
 				if( ! apply_filter( pose, *rmover_it) ) {
 //					final_score(pose);
+					if ( protocols::jd2::jd2_used() ) {
+						protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
+						job_outputter->remove_output_observer( this );
+					}
 					return;
 				} else {
 					break;
@@ -160,8 +161,14 @@ ParsedProtocol::apply( Pose & pose )
 	{
 		TR <<"WARNING: mode is " << mode_ << " .This is not a valid ParsedProtocol Mode, your pose is being ignored" <<std::endl;
 	}
-	if( get_last_move_status() == protocols::moves::MS_SUCCESS ) // no point scoring a failed trajectory (and sometimes you get etable vs. pose atomset mismatches
+	if ( get_last_move_status() == protocols::moves::MS_SUCCESS ) {// no point scoring a failed trajectory (and sometimes you get etable vs. pose atomset mismatches
 		final_score(pose);
+	}
+	if ( protocols::jd2::jd2_used() ) {
+		protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
+		job_outputter->remove_output_observer( this );
+	}
+
 }
 
 std::string

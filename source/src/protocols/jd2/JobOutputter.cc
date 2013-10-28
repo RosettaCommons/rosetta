@@ -1,4 +1,4 @@
-// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+
 // vi: set ts=2 noet:
 // :noTabs=false:tabSize=4:indentSize=4:
 //
@@ -165,6 +165,7 @@ evaluation::PoseEvaluatorsCOP JobOutputter::evaluators() const {
 
 
 void JobOutputter::call_output_observers( core::pose::Pose const& pose, JobOP job  ) const {
+	if ( !job ) return;
 	for ( JobOutputterObserverList::const_iterator it = output_observers_.begin();
 				it != output_observers_.end();
 				++it ) {
