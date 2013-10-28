@@ -250,6 +250,8 @@ enum ScoreType {
 
 	// nucleotide resolution thermodynamics
 	loop_close,  // Loop closure terms -- attempting model full RNA folding free energy
+	missing_res, // Score term penalizing missing residues in loop closure calculations
+	swm_rmsd, // Score term that encourages native-like conformations for benchmarking purposes
 
 	//  FACTS solvation model
 	facts_elec,

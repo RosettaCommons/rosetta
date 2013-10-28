@@ -46,22 +46,26 @@ namespace swa {
 namespace monte_carlo {
 
 //Constructor
-	RNA_StepWiseMonteCarlo::RNA_StepWiseMonteCarlo( core::scoring::ScoreFunctionOP scorefxn ):
-		scorefxn_( scorefxn ),
-		verbose_scores_( false ),
-		use_phenix_geo_( true ),
-		skip_deletions_( false ),
-		erraser_( true ),
-		allow_internal_moves_( false ),
-		num_random_samples_( 20 ),
-		cycles_( 500 ),
-		add_delete_frequency_( 0.5 ),
-		minimize_single_res_frequency_( 0.0 ),
-		switch_focus_frequency_( 0.5 ),
-		just_min_after_mutation_frequency_( 0.5 ),
-		temperature_( 1.0 )
-	{
-	}
+RNA_StepWiseMonteCarlo::RNA_StepWiseMonteCarlo( core::scoring::ScoreFunctionOP scorefxn ):
+	scorefxn_( scorefxn ),
+	verbose_scores_( false ),
+	use_phenix_geo_( true ),
+	skip_deletions_( false ),
+	erraser_( true ),
+	allow_internal_moves_( false ),
+	num_random_samples_( 20 ),
+	cycles_( 500 ),
+	add_delete_frequency_( 0.5 ),
+	minimize_single_res_frequency_( 0.0 ),
+	switch_focus_frequency_( 0.5 ),
+	just_min_after_mutation_frequency_( 0.5 ),
+	temperature_( 1.0 )
+{
+	using namespace core::scoring;
+	rmsd_weight_ = scorefxn_->get_weight( swm_rmsd );
+	max_missing_weight_ = scorefxn_->get_weight( missing_res );
+}
+	
 
 //Destructor
 RNA_StepWiseMonteCarlo::~RNA_StepWiseMonteCarlo()
@@ -73,39 +77,50 @@ RNA_StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 
 	using namespace protocols::moves;
 	using namespace protocols::swa;
+	using namespace core::scoring;
 
 	initialize_movers();
-
-	MonteCarloOP monte_carlo_ = new MonteCarlo( pose, *scorefxn_, temperature_ );
+	scorefxn_->set_weight( swm_rmsd, rmsd_weight_ );
+	scorefxn_->set_weight( missing_res, 0.0 );
+	ScoreFunctionOP temp_score = new ScoreFunction( *scorefxn_ );
+	MonteCarloOP monte_carlo_ = new MonteCarlo( pose, *temp_score, temperature_ );
+	scorefxn_->set_weight( swm_rmsd, 0.0 );
 	show_scores( pose, "Initial score:" );
 
 	Size k( 1 );
 	std::string move_type;
 	bool success( true );
+	Real missing_weight_interval = max_missing_weight_;
+	missing_weight_interval /= cycles_;
+	Real missing_weight = missing_weight_interval;
 
 	while (  k <= cycles_ ){
+		//scorefxn_->set_weight( missing_res, missing_weight );
 
 		if ( success ) {
 			TR << std::endl << TR.Blue << "Embarking on cycle " << k << " of " << cycles_ << TR.Reset << std::endl;
 			show_scores( pose, "Before-move score:" );
+			TR << "Weight of missing residue score term is " << missing_weight << std::endl;
 		}
 
 		if ( RG.uniform() < switch_focus_frequency_ ) switch_focus_among_poses_randomly( pose );
 
 		bool const minimize_single_res = ( RG.uniform() <= minimize_single_res_frequency_ );
-		if ( RG.uniform() < add_delete_frequency_ ){
-			rna_add_or_delete_mover_->set_minimize_single_res( minimize_single_res );
-			success = rna_add_or_delete_mover_->apply( pose, move_type );
+
+		if ( RG.uniform() < add_delete_frequency_ ) {
+				rna_add_or_delete_mover_->set_minimize_single_res( minimize_single_res );
+				success = rna_add_or_delete_mover_->apply( pose, move_type );
 		} else {
 			// later make this an actual class!
-			rna_resample_mover_->set_minimize_single_res( minimize_single_res );
-			success = rna_resample_mover_->apply( pose, move_type );
+				rna_resample_mover_->set_minimize_single_res( minimize_single_res );
+				success = rna_resample_mover_->apply( pose, move_type );
 		}
 
 		if ( !success ) continue;
 		k++;
-
 		show_scores( pose, "After-move score:" );
+		monte_carlo_->change_weight( missing_res, missing_weight );
+		missing_weight += missing_weight_interval;
 		if ( minimize_single_res ) move_type += "-minsngl";
 		monte_carlo_->boltzmann( pose, move_type );
 

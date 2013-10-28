@@ -16,9 +16,11 @@
 
 // Unit headers
 #include <core/pose/rna/RNA_IdealCoord.fwd.hh>
+#include <core/id/DOF_ID_Map.hh>
 
 // Package headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/MiniPose.fwd.hh>
 
 // Project headers
 #include <core/conformation/Residue.fwd.hh>
@@ -44,6 +46,8 @@ public:
 	~RNA_IdealCoord();
 
 	//Apply ideal coords to one residue. Keep the backbone torsion values by default
+	//std::map < id::DOF_ID , Real > apply_and_return( Pose & pose, Size const seqpos, Size pucker, bool const keep_backbone_torsion = true ) const;
+	
 	void apply( Pose & pose, Size const seqpos, Size pucker, bool const keep_backbone_torsion = true ) const;
 
 	//Apply ideal coords to whole pose.
@@ -52,11 +56,13 @@ public:
 
 	//Apply ideal coords to whole pose. Keep all pucker state
 	void apply( Pose & pose, bool const keep_backbone_torsion = true ) const;
+	
+	bool is_torsion_exists(Pose const & pose, id::TorsionID const & torsion_id) const;
 
 private:
 	void init();
-	bool is_torsion_exists(Pose const & pose, id::TorsionID const & torsion_id) const;
-	utility::vector1 < PoseOP > ref_pose_list_;
+	//	utility::vector1 < PoseOP > ref_pose_list_;
+	utility::vector1 < MiniPoseOP > ref_mini_pose_list_;
 	std::string const path_;
 	Real delta_cutoff_;
 };

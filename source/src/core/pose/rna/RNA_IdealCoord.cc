@@ -14,6 +14,7 @@
 #include <core/pose/rna/RNA_IdealCoord.hh>
 #include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/MiniPose.hh>
 #include <core/pose/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -24,6 +25,7 @@
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/io/pdb/file_data.hh>
 #include <basic/database/open.hh>
+#include <core/id/DOF_ID_Map.hh>
 
 // Numeric headers
 #include <numeric/conversions.hh>
@@ -83,28 +85,111 @@ void RNA_IdealCoord::init() {
 	for ( Size i = 1; i <= pdb_file_list.size(); ++i ) {
 		PoseOP ref_pose = new Pose();
 		io::pdb::build_pose_from_pdb_as_is( *ref_pose, *rsd_set, pdb_file_list[i] );
-		ref_pose_list_.push_back( ref_pose );
+		MiniPoseOP ref_mini_pose = new MiniPose( *ref_pose );
+		ref_mini_pose_list_.push_back( ref_mini_pose );
 	}
 }
 
 /////////////////////////////////////////////////////
 //Apply ideal coords to a residue in pose.
 //pucker_conformations: 0 for maintaining current, 1 for North, 2 for South
+//std::map < id::DOF_ID , Real > RNA_IdealCoord::apply_and_return(
+//	Pose & pose,
+//	Size const seqpos,
+//	Size pucker,
+//	bool const keep_backbone_torsion
+//) const {
+//	using namespace id;
+//	using namespace chemical;
+//	using namespace conformation;
+//
+//	std::map < id::DOF_ID , Real > result;
+//	assert( pucker <= 2 );
+//
+//	Residue const & res = pose.residue( seqpos );
+//	if ( !res.is_RNA() ) return result;
+//
+//	if ( pucker == WHATEVER ) {
+//		Real const delta  = pose.torsion( TorsionID(seqpos, id::BB, BETA) );
+//		if ( delta > delta_cutoff_ ) {
+//			pucker = SOUTH;
+//		} else {
+//			pucker = NORTH;
+//		}
+//	}
+//
+//	//Figure out the residue_type.
+//	Size res_class = 0;
+//	switch ( res.aa() ) {
+//		case na_rad:
+//			res_class = 1; break;
+//		case na_rgu:
+//			res_class = 3; break;
+//		case na_rcy:
+//			res_class = 5; break;
+//		case na_ura:
+//			res_class = 7; break;
+//		default:
+//			utility_exit_with_message( "Invalid res.aa()!" );
+//	}
+//
+//	if ( pucker == SOUTH ) ++res_class;
+//
+//	//Record the torsions in starting pose
+//	utility::vector1 < TorsionID > saved_torsion_id;
+//	utility::vector1 < Real > saved_torsions;
+//	if ( keep_backbone_torsion ) {
+//		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  ALPHA   ) );
+//		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  BETA    ) );
+//		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  GAMMA   ) );
+//		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  EPSILON ) );
+//		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  ZETA    ) );
+//		saved_torsion_id.push_back( TorsionID( seqpos,   id::CHI, 1       ) ); //CHI
+//		saved_torsion_id.push_back( TorsionID( seqpos,   id::CHI, 4       ) ); //O2H
+//		saved_torsion_id.push_back( TorsionID( seqpos-1, id::BB,  ZETA    ) );
+//		saved_torsion_id.push_back( TorsionID( seqpos+1, id::BB,  ALPHA   ) );
+//		for ( Size i = 1; i <= saved_torsion_id.size(); ++i ) {
+//			bool const is_exists = is_torsion_exists( pose, saved_torsion_id[i] );
+//			if (is_exists) {
+//				saved_torsions.push_back( pose.torsion( saved_torsion_id[i] ) );
+//			} else {
+//				saved_torsions.push_back( -9999 );
+//			}
+//		}
+//	}
+//
+//	//Apply ideal dofs
+//	std::map <Size, Size> res_map;
+//	res_map.insert( std::pair <Size, Size> (seqpos, 2) ); //Only the center res (#2) matters in ref_pose
+//	MiniPoseOP const ref_mini_pose = ref_mini_pose_list_[res_class];
+//	result = copy_dofs_match_atom_names_and_return( pose, *ref_mini_pose, res_map );
+//
+//	//Copy back the original torsions
+//	if ( keep_backbone_torsion ) {
+//		for ( Size i = 1; i <= saved_torsion_id.size(); ++i ) {
+//			if ( saved_torsions[i] > -1000 ) pose.set_torsion( saved_torsion_id[i], saved_torsions[i] );
+//		}
+//	}
+//	
+//	return result;
+//}
+//	
+//////////////////////////
 void RNA_IdealCoord::apply(
-	Pose & pose,
-	Size const seqpos,
-	Size pucker,
-	bool const keep_backbone_torsion
-) const {
+																Pose & pose,
+																Size const seqpos,
+																Size pucker,
+																bool const keep_backbone_torsion
+																) const {
 	using namespace id;
 	using namespace chemical;
 	using namespace conformation;
-
+	
 	assert( pucker <= 2 );
-
+	
 	Residue const & res = pose.residue( seqpos );
 	if ( !res.is_RNA() ) return;
-
+	
 	if ( pucker == WHATEVER ) {
 		Real const delta  = pose.torsion( TorsionID(seqpos, id::BB, BETA) );
 		if ( delta > delta_cutoff_ ) {
@@ -113,7 +198,7 @@ void RNA_IdealCoord::apply(
 			pucker = NORTH;
 		}
 	}
-
+	
 	//Figure out the residue_type.
 	Size res_class = 0;
 	switch ( res.aa() ) {
@@ -128,9 +213,9 @@ void RNA_IdealCoord::apply(
 		default:
 			utility_exit_with_message( "Invalid res.aa()!" );
 	}
-
+	
 	if ( pucker == SOUTH ) ++res_class;
-
+	
 	//Record the torsions in starting pose
 	utility::vector1 < TorsionID > saved_torsion_id;
 	utility::vector1 < Real > saved_torsions;
@@ -153,13 +238,13 @@ void RNA_IdealCoord::apply(
 			}
 		}
 	}
-
+	
 	//Apply ideal dofs
 	std::map <Size, Size> res_map;
 	res_map.insert( std::pair <Size, Size> (seqpos, 2) ); //Only the center res (#2) matters in ref_pose
-	PoseOP const ref_pose = ref_pose_list_[res_class];
-	copy_dofs_match_atom_names( pose, *ref_pose, res_map );
-
+	MiniPoseOP const ref_mini_pose = ref_mini_pose_list_[res_class];
+	copy_dofs_match_atom_names( pose, *ref_mini_pose, res_map );
+	
 	//Copy back the original torsions
 	if ( keep_backbone_torsion ) {
 		for ( Size i = 1; i <= saved_torsion_id.size(); ++i ) {
@@ -167,6 +252,8 @@ void RNA_IdealCoord::apply(
 		}
 	}
 }
+
+	
 /////////////////////////////////////////////////////
 //Apply ideal coords to whole pose.
 //pucker_conformations: 0 for maintaining current, 1 for North, 2 for South

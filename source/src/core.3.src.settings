@@ -428,6 +428,7 @@ sources = {
 		"MembraneEnvPenalties",
 		"MembraneEnvSmoothEnergy",
 		"MembraneLipo",
+		"MissingEnergy",
 		"MMBondAngleEnergy",
 		"MMBondLengthEnergy",
 		"MMLJEnergyInter",
@@ -469,6 +470,7 @@ sources = {
 		"SmoothEnvEnergy",
 		"CenRotEnvEnergy",
 		"SuckerEnergy",
+		"SWM_RMSD_Energy",
 		"SymmetricLigandEnergy",
 		"TwoBodyEnergy",
 		"UnfoldedStateEnergy",
@@ -551,7 +553,7 @@ sources = {
 		"RNA_ScoringUtil",
 		"RNA_VDW_Energy",
 		"RNA_FullAtomVDW_BasePhosphate",
-		"StackElecEnergy"
+		"StackElecEnergy",
 	],
 
 	"core/scoring/rna/chemical_shift" : [

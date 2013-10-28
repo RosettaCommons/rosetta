@@ -25,6 +25,8 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 
 using namespace core;
 
@@ -118,11 +120,12 @@ namespace monte_carlo {
 		core::Real temperature_;
 		utility::vector1<Size> sample_res_;
 
-
 		RNA_DeleteMoverOP rna_delete_mover_;
 		RNA_AddMoverOP rna_add_mover_;
 		RNA_AddOrDeleteMoverOP rna_add_or_delete_mover_;
 		RNA_ResampleMoverOP rna_resample_mover_;
+		Real rmsd_weight_;
+		Real max_missing_weight_;
 
 	};
 

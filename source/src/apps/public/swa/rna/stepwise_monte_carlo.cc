@@ -139,7 +139,7 @@ stepwise_monte_carlo()
   using namespace core::pose::full_model_info;
   using namespace protocols::swa;
   using namespace protocols::swa::monte_carlo;
-	using namespace basic::options::OptionKeys::rna;
+  using namespace basic::options::OptionKeys::rna;
 
 	// Following could be generalized to fa_standard, after recent unification, but
 	// probably should wait for on-the-fly residue type generation.
@@ -147,7 +147,10 @@ stepwise_monte_carlo()
 
 	// native pose -- not in use currently?
 	PoseOP native_pose;
-	if ( option[ in::file::native ].user() ) native_pose = get_pdb_and_cleanup( option[ in::file::native ](), rsd_set );
+	if ( option[ in::file::native ].user() ) {
+		native_pose = get_pdb_and_cleanup( option[ in::file::native ](), rsd_set );
+		native_pose->dump_pdb( option[ in::file::native ](), "n");
+	}
 
 	// Following could go to a FullModelSetup class.
 	// read starting pose(s) from disk
@@ -171,8 +174,9 @@ stepwise_monte_carlo()
 	// actual pose to be sampled...
 	pose::Pose & pose = *input_poses[ 1 ];
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 800, 800 );
-
-	RNA_StepWiseMonteCarlo stepwise_rna_monte_carlo( scorefxn );
+	
+	RNA_StepWiseMonteCarlo stepwise_rna_monte_carlo ( scorefxn );
+	
 	stepwise_rna_monte_carlo.set_verbose_scores( option[ verbose_scores ]() );
 	stepwise_rna_monte_carlo.set_skip_deletions( option[ skip_deletions ]() );
 	stepwise_rna_monte_carlo.set_num_random_samples( option[ num_random_samples ]() );

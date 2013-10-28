@@ -27,6 +27,7 @@
 // package headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreType.hh>
 
 // utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -113,6 +114,10 @@ public:
 		Pose const & init_pose,
 		ScoreFunction const & scorefxn
 	);
+	
+	/// @brief Change the weight on a score term in the object's scorefunction. Useful when we don't want to reset the whole scorefunction during an annealing step.
+	void
+	change_weight( core::scoring::ScoreType const & t, Real const & setting );
 
 	/// @brief Sets the temperature value used in the Metropolis Criterion to  <temp>
 	///

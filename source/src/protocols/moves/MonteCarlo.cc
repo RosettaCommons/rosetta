@@ -213,7 +213,11 @@ MonteCarlo::show_counters() const {
 	counter_.show();
 }
 
-
+void
+MonteCarlo::change_weight( core::scoring::ScoreType const & t, Real const & setting ) {
+	score_function_->set_weight( t, setting );
+}
+	
 /// set the scorefxn,  re-scores last-accepted and lowest-score pose
 void
 MonteCarlo::score_function( ScoreFunction const & scorefxn )

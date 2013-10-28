@@ -47,6 +47,8 @@
 #include <core/scoring/methods/EnvEnergyCreator.hh>
 #include <core/scoring/methods/EnvSmoothEnergyCreator.hh>
 #include <core/scoring/methods/IntermolEnergyCreator.hh>
+#include <core/scoring/methods/MissingEnergyCreator.hh>
+#include <core/scoring/methods/SWM_RMSD_EnergyCreator.hh>
 #include <core/scoring/methods/NMerRefEnergyCreator.hh>
 #include <core/scoring/methods/NMerPSSMEnergyCreator.hh>
 #include <core/scoring/methods/NMerSVMEnergyCreator.hh>
@@ -296,6 +298,7 @@ namespace init {
 /// EnergyMethods with the ScoringManager before main() begins.
 
 using namespace scoring::methods;
+using namespace scoring::rna;
 
 static EnergyMethodRegistrator< scoring::constraints::ConstraintsEnergyCreator > ConstraintsEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::disulfides::CentroidDisulfideEnergyCreator > CentroidDisulfideEnergyCreator_registrator;
@@ -307,6 +310,7 @@ static EnergyMethodRegistrator< scoring::methods::ChainbreakEnergyCreator > Chai
 static EnergyMethodRegistrator< scoring::methods::CenPairEnergyCreator > CenPairEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ContactOrderEnergyCreator > ContactOrderEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::IntermolEnergyCreator > IntermolEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::MissingEnergyCreator > MissingEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::EnvEnergyCreator > EnvEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::EnvSmoothEnergyCreator > EnvSmoothEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::OmegaTetherEnergyCreator > OmegaTetherEnergyCreator_registrator;
@@ -432,6 +436,7 @@ static EnergyMethodRegistrator< scoring::rna::RNA_Mg_EnergyCreator > RNA_Mg_Ener
 static EnergyMethodRegistrator< scoring::rna::RNA_FullAtomVDW_BasePhosphateCreator > RNA_FullAtomVDW_BasePhosphateCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::StackElecEnergyCreator > StackElecEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::chemical_shift::RNA_ChemicalShiftEnergyCreator > NA_ChemicalShiftEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::SWM_RMSD_EnergyCreator > SWM_RMSD_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::sym_e::symECreator > symECreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::PoissonBoltzmannEnergyCreator > PoissonBoltzmannEnergyCreator_registrator;
 

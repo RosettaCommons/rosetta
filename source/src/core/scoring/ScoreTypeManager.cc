@@ -338,6 +338,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "stack_elec_base_bb"] = stack_elec_base_bb;
 
 	name2score_type_[ "loop_close"] = loop_close;
+	name2score_type_[ "missing_res"] = missing_res;
+	name2score_type_[ "swm_rmsd"] = swm_rmsd;
 
 	name2score_type_[ "rna_torsion"] = rna_torsion;
 	name2score_type_[ "rna_sugar_close"] = rna_sugar_close;
