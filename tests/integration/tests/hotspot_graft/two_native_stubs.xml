@@ -35,7 +35,7 @@
 				<build_Ala_pose name=ala_pose/>
 				<SaveAndRetrieveSidechains name=save_retrieve_sc/>
 				<RepackMinimize name=des1 minimize_bb=0 minimize_rb=1 scorefxn_repack=soft_rep scorefxn_minimize=score_docking interface_cutoff_distance=8.0/>
-				<RepackMinimize name=des3 minimize_bb=1 minimize_rb=1 scorefxn_repack=score12 scorefxn_minimize=score12 zzzeinterface_cutoff_distance=8.0 />
+				<RepackMinimize name=des3 minimize_bb=1 minimize_rb=1 scorefxn_repack=score12 scorefxn_minimize=score12 interface_cutoff_distance=8.0 />
 				<SaveAndRetrieveSidechains name=srsc/>
 				<PlaceStub name=place_phe stubfile=native_phe_stub.pdb add_constraints=1 final_filter=hbond_ddg minimize_rb=1 hurry=1>
 					 <DesignMovers>

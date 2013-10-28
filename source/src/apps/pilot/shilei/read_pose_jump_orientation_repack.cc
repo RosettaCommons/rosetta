@@ -130,7 +130,8 @@ void transform_pose( core::pose::Pose & pose,utility::vector1<core::Real> const 
         core::kinematics::Jump tmpJump=pose.jump(1);
         tmpJump.set_rotation(rotation_matrix);
         tmpJump.set_translation(translation_vector);
-        pose.conformation().set_jump_now(1,tmpJump);
+        pose.conformation().set_jump(1,tmpJump);
+        //pose.conformation().set_jump_now(1,tmpJump);
 
 }
 
