@@ -38,7 +38,7 @@ public:
 	typedef core::pose::Pose Pose;
 public:
 	BuildAlaPose();
-	BuildAlaPose( bool const partner1, bool const partner2, core::Real interface_distance_cutoff=8.0 );
+	BuildAlaPose( bool const partner1, bool const partner2, core::Real interface_distance_cutoff=8.0 , std::string AA="ALA");
 	void apply( Pose & pose );
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const;

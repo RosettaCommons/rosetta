@@ -68,17 +68,22 @@ BuildAlaPoseCreator::mover_name()
 	return "build_Ala_pose";
 }
 
-BuildAlaPose::BuildAlaPose() : simple_moves::DesignRepackMover( BuildAlaPoseCreator::mover_name() ) {}
+BuildAlaPose::BuildAlaPose() : simple_moves::DesignRepackMover( BuildAlaPoseCreator::mover_name() ),
+AA_("ALA")
+ {}
+
 BuildAlaPose::BuildAlaPose(
 	bool const partner1,
 	bool const partner2,
-	core::Real interface_distance_cutoff
+	core::Real interface_distance_cutoff,
+	std::string AA
 ) :
 	simple_moves::DesignRepackMover( BuildAlaPoseCreator::mover_name() )
 {
 	repack_partner1_=design_partner1_=partner1;
 	repack_partner2_=design_partner2_=partner2;
 	interface_distance_cutoff_ = interface_distance_cutoff;
+	AA_=AA;
 	runtime_assert( interface_distance_cutoff_ >= 0 );
 }
 
