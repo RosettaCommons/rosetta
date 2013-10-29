@@ -289,7 +289,7 @@ void run() {
 ///////////////////////////////////////////////////////////////////////////////
 
 int main( int argc, char * argv [] ) {
-
+  try {
         // initialize option and random number system
         NEW_OPT(read_pose_jump_orientation_repack::outtag, "output pdb tag","");
 	NEW_OPT(read_pose_jump_orientation_repack::jump_orientation, "Jump orientation",utility::vector1<core::Real>());
@@ -298,4 +298,8 @@ int main( int argc, char * argv [] ) {
         devel::init( argc, argv );
 
         run();
+
+  } catch ( utility::excn::EXCN_Base const & e ) {
+    std::cout << "caught exception " << e.msg() << std::endl;
+  }
 }
