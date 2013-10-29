@@ -1232,7 +1232,8 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 																 score3=scorefxn_->clone();
 	setup_scorefunctions( score0, score1, score2, score5, score3 );
 
-	translate_virt_to_CoM(pose);
+	if ( !core::pose::symmetry::is_symmetric(pose) )
+		translate_virt_to_CoM(pose);
 
 	// coord csts _must_ be after the CoM gets moved
 	if ( scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0) {
