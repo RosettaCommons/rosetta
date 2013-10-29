@@ -47,25 +47,19 @@ cd %(workdir)s
 
 #kdrew: test all apps in bin directory with bogus input option
 for app in %(bin)s/*.%(binext)s 
-do 
-	eval "$app -nodelay  -bogus_input_option" >> log 2>&1 
+do
+	app_prefix=$( echo $app | sed 's:.%(binext)s::' | sed 's:/: :g' | awk '{print $NF}')
+	eval "$app -nodelay  -bogus_input_option" >> log_${app_prefix} 2>&1 
+	if [[ $( grep -i "abort"  log_${app_prefix} | wc -l ) -gt 0 ]]; then
+		 guilty=$( git blame --line-porcelain %(bin)s/../src/pilot_apps.src.settings.all | grep -B 12 ${app_prefix} | awk '$1 == "author"' | sed 's:author ::' )
+		 echo "Unhandled exceptions in application $app_prefix added by $guilty " $(date) >> log
+        fi
+        rm log_${app_prefix}
 done
 
-#kdrew: test to see if exceptions were handled
-n=`grep -i "abort" log|wc|awk '{print $1}'`
-
-if [ $n -eq 0 ]
-then
-	echo "Exceptions handled, removing log"
-	rm log
-else
-	echo ""
-	echo "Exceptions *NOT* handled! Check app_exception_handling/log for apps that terminate with 'abort', 'Aborted', 'Abort trap' or variant.  Add try/catch block in main() of those apps to properly handle exceptions (see src/apps/public/design/fixbb.cc for example)."
-	echo ""
+if [[ $( wc log | awk '{print $1}' ) -gt 0 ]]; then
+   exit 1
 fi
-
-
-test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 #
 # Or if you don't care whether the logging output changes:
