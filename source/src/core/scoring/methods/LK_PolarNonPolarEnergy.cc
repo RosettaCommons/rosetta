@@ -95,9 +95,9 @@ LK_PolarNonPolarEnergy::LK_PolarNonPolarEnergy( etable::Etable const & etable_in
 ////////////////////////////////////////////////
 LK_PolarNonPolarEnergy::LK_PolarNonPolarEnergy( LK_PolarNonPolarEnergy const & src ):
 	parent( src ),
+	etable_evaluator_( src.etable_evaluator_ ),
 	safe_max_dis2_( src.safe_max_dis2_ ),
 	max_dis_( src.max_dis_ ),
-	etable_evaluator_( src.etable_evaluator_ ),
 	verbose_( src.verbose_ )
 {}
 
@@ -394,13 +394,13 @@ LK_PolarNonPolarEnergy::setup_for_derivatives(
 	//TR << "setup_for_derivatives() was called..." << std::endl;
     pose.update_residue_neighbors();
 }
- 
+
 ///////
 void
 LK_PolarNonPolarEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn) const
 {
     //using core::scoring::EnergiesCacheableDataType::HBOND_SET;
-    
+
     // We need the H-bond set -- well, at least the backbone/backbone h-bonds
     // when computing geometric solvation scores.
     // Since this is probably being computed elsewhere, might make sense
@@ -409,17 +409,17 @@ LK_PolarNonPolarEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction cons
     //std::cout<<"test";
     //TR << "setup_for_scoring() was called..." << std::endl;
     pose.update_residue_neighbors();
-	
+
 	if ( pose.energies().use_nblist() ) {
 		NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST ) );
 		nblist.prepare_for_scoring( pose, scfxn, *this );
 	}
-    
+
     //hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_->hbond_options() ) );
     //hbond_set->setup_for_residue_pair_energies( pose );
     //pose.energies().data().set( HBOND_SET, hbond_set );
 }
-    
+
 ///////////////////////////////////////////////////////////////////////////////
 void
 LK_PolarNonPolarEnergy::setup_for_minimizing(
@@ -430,17 +430,17 @@ LK_PolarNonPolarEnergy::setup_for_minimizing(
 {
     using namespace basic::options;
     using namespace basic::options::OptionKeys;
-    
+
     //set_nres_mono(pose);
     //TR << "setup_for_minimizing() was called..." << std::endl;
-    
+
 //    if ( pose.energies().use_nblist() ) {
 //        TR << "Using neighborlist..." << std::endl;
 //    }
     if ( pose.energies().use_nblist() ) {
         // stash our nblist inside the pose's energies object
         Energies & energies( pose.energies() );
-        
+
         // setup the atom-atom nblist
         NeighborListOP nblist;
         Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
@@ -455,7 +455,7 @@ LK_PolarNonPolarEnergy::setup_for_minimizing(
         energies.set_nblist( EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST, nblist );
     }
 }
-    
+
 ///////////////////////////////////////////////////////////////////////////////
 bool
 LK_PolarNonPolarEnergy::defines_score_for_residue_pair(
@@ -469,7 +469,7 @@ LK_PolarNonPolarEnergy::defines_score_for_residue_pair(
     }
     return res_moving_wrt_eachother;
 }
-    
+
 ///////////////////////////////////////////////////////////////////////////////
 etable::count_pair::CountPairFunctionCOP
 LK_PolarNonPolarEnergy::get_count_pair_function(
@@ -483,7 +483,7 @@ LK_PolarNonPolarEnergy::get_count_pair_function(
     if ( res1 == res2 ) {
         return new CountPairNone;
     }
-    
+
     conformation::Residue const & rsd1( pose.residue( res1 ) );
     conformation::Residue const & rsd2( pose.residue( res2 ) );
     return get_count_pair_function( rsd1, rsd2 );
@@ -497,15 +497,15 @@ LK_PolarNonPolarEnergy::get_count_pair_function(
 ) const
 {
     using namespace etable::count_pair;
-    
+
     if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return new CountPairNone;
-    
+
     if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
         return CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
     }
     return new CountPairAll;
 }
-    
+
 ///////////////////////////////////////////////////////////////////////////////
 etable::count_pair::CountPairFunctionCOP
 LK_PolarNonPolarEnergy::get_intrares_countpair(
@@ -517,20 +517,20 @@ LK_PolarNonPolarEnergy::get_intrares_countpair(
     using namespace etable::count_pair;
     return CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_4);
 }
-    
+
 ///////////////////////////////////////////////////////////////////////////////
 bool
 LK_PolarNonPolarEnergy::use_extended_residue_pair_energy_interface() const
 {
     return true;
 }
-    
+
 ////////////////////////////////////////////////////////////////////////////////
 void
 LK_PolarNonPolarEnergy::setup_for_minimizing_for_residue_pair(
     conformation::Residue const & rsd1,
     conformation::Residue const & rsd2,
-    pose::Pose const & pose,
+    pose::Pose const &,
     ScoreFunction const &,
     kinematics::MinimizerMapBase const &,
     ResSingleMinimizationData const &,
@@ -542,23 +542,23 @@ LK_PolarNonPolarEnergy::setup_for_minimizing_for_residue_pair(
     using namespace basic::options::OptionKeys;
     //if ( pose.energies().use_nblist_auto_update() ) return;
     //TR << "setup_for_minimizing_for_residue_pair() was called..." << std::endl;
-    
+
     etable::count_pair::CountPairFunctionCOP count_pair = get_count_pair_function( rsd1, rsd2 );
     //assert( rsd1.seqpos() < rsd2.seqpos() );
-    
+
     // update the existing nblist if it's already present in the min_data object
     ResiduePairNeighborListOP nblist( static_cast< ResiduePairNeighborList * > (pair_data.get_data( lk_PolarNonPolar_pair_nblist )() ));
     if ( ! nblist ) nblist = new ResiduePairNeighborList;
-    
+
     /// STOLEN CODE!
     Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];
     Real const XX2 = std::pow( max_dis_ + 2*tolerated_narrow_nblist_motion, 2 );
-    
+
     nblist->initialize_from_residues( XX2, XX2, XX2, rsd1, rsd2, count_pair );
-    
+
     pair_data.set_data( lk_PolarNonPolar_pair_nblist, nblist );
 }
-    
+
 ////////////////////////////////////////////////////////////////////////////////
 void
 LK_PolarNonPolarEnergy::residue_pair_energy_ext(
@@ -572,7 +572,7 @@ LK_PolarNonPolarEnergy::residue_pair_energy_ext(
 {
     //if ( pose.energies().use_nblist_auto_update() ) return;
     //TR << "residue_pair_energy_ext() was called..." << std::endl;
-    
+
     using namespace etable::count_pair;
 	CountPairFunctionOP cpfxn =
         CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
@@ -584,11 +584,11 @@ LK_PolarNonPolarEnergy::residue_pair_energy_ext(
 	bool const compute_nonpolar =  scorefxn.has_nonzero_weight( lk_nonpolar );
 
     //assert( rsd1.seqpos() < rsd2.seqpos() );
-    
+
     //assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( lk_PolarNonPolar_pair_nblist )() ));
     ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( lk_PolarNonPolar_pair_nblist ) ) );
     utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
-    
+
     Size m;
     Size n;
     Real cp_weight;
@@ -597,7 +597,7 @@ LK_PolarNonPolarEnergy::residue_pair_energy_ext(
     Real dummy_deriv;
     Real temp_score;
     std::pair<Real,Real> scores;
-    
+
     for ( Size ii = 1, iiend = neighbs.size(); ii <= iiend; ++ii ) {
         m = neighbs[ ii ].atomno1();
         if ( m > rsd1.nheavyatoms() ) continue;
@@ -612,12 +612,12 @@ LK_PolarNonPolarEnergy::residue_pair_energy_ext(
 		if ( !compute_nonpolar && !is_polar_m && !is_polar_n ) continue;
         //Real const d2 = d_ij.length_squared();
         //if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
-        
+
         dummy_deriv = 0.0;
         scores = eval_lk_efficient( rsd1.atom( m ), rsd2.atom( n ), dummy_deriv, false );
         //temp_score = cp_weight * eval_lk( rsd1.atom( m ), rsd2.atom( n ), dummy_deriv, false);
         temp_score = cp_weight * scores.first;
-        
+
         if ( compute_polar && is_polar_m ) {
             Vector const & heavy_atom_m( rsd1.xyz( m ) );
             Vector const & heavy_atom_n( rsd2.xyz( n ) );
@@ -631,11 +631,11 @@ LK_PolarNonPolarEnergy::residue_pair_energy_ext(
         } else if ( !is_polar_m && compute_nonpolar ) {
             lk_nonpolar_score += temp_score;
         }
-        
+
         //dummy_deriv = 0.0;
         //temp_score = cp_weight * eval_lk( rsd2.atom( n ), rsd1.atom( m ), dummy_deriv, false);
         temp_score = cp_weight * scores.second;
-        
+
         if ( is_polar_n && compute_polar ) {
             Vector const & heavy_atom_m( rsd1.xyz( m ) );
             Vector const & heavy_atom_n( rsd2.xyz( n ) );
@@ -672,7 +672,7 @@ LK_PolarNonPolarEnergy::eval_lk(
 
 	return temp_score;
 }
-    
+
 ////////////////////////////////////////////////
 std::pair<Real,Real>
 LK_PolarNonPolarEnergy::eval_lk_efficient(
@@ -682,13 +682,13 @@ LK_PolarNonPolarEnergy::eval_lk_efficient(
     bool const & eval_deriv
 ) const
 {
-    
+
     Real score_1( 0.0 );
     Real score_2( 0.0 );
     deriv = 0.0;
-    
+
     etable_evaluator_->atom_pair_lk_energy_and_deriv_v_efficient( atom1, atom2, score_1, score_2, deriv, eval_deriv );
-    
+
     return std::make_pair(score_1,score_2);
 }
 
@@ -884,7 +884,7 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
     if ( m > rsd1.nheavyatoms() ) return;
     Vector const & heavy_atom_m( rsd1.xyz( m ) );
     bool const is_polar_m = ( rsd1.atom_type(m).is_acceptor() || rsd1.atom_type(m).is_donor());
-    
+
 	//	Size const nres = pose.total_residue();
 	//static bool const update_deriv( true );
     //assert( pose.energies().use_nblist() );
@@ -892,13 +892,13 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
         ( pose.energies().nblist( EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST ) );
     //TR << "checkpoint..." << std::endl;
 	AtomNeighbors const & nbrs( nblist.atom_neighbors(i,m) );
-    
+
     using namespace etable::count_pair;
 	CountPairFunctionOP cpfxn;
-    
+
 	bool const compute_polar    =  scorefxn.has_nonzero_weight( lk_polar ) || scorefxn.has_nonzero_weight( lk_costheta );
 	bool const compute_nonpolar =  scorefxn.has_nonzero_weight( lk_nonpolar );
-    
+
     Real cp_weight;
     Size path_dist;
     Real dotprod;
@@ -906,7 +906,7 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
     Real lk_score;
     Vector f1;
     Vector f2;
-    
+
     for ( scoring::AtomNeighbors::const_iterator it2=nbrs.begin(),
          it2e=nbrs.end(); it2 != it2e; ++it2 ) {
 		scoring::AtomNeighbor const & nbr( *it2 );
@@ -916,24 +916,24 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
 		Size const n( nbr.atomno() );
 		conformation::Residue const & rsd2( pose.residue( j ) );
         if ( n > rsd2.nheavyatoms() ) continue;
-        
+
         cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
         cp_weight = 1.0;
         path_dist = 0;
         if ( !cpfxn->count( m, n, cp_weight, path_dist ) ) continue;
-        
+
         bool const is_polar_n = ( rsd2.atom_type(n).is_acceptor() || rsd2.atom_type(n).is_donor());
         if ( is_polar_m && is_polar_n  && !compute_polar ) continue;
         if ( !compute_nonpolar && !is_polar_m && !is_polar_n ) continue;
-        
+
         Vector const & heavy_atom_n( rsd2.xyz( n ) );
         Vector const d_ij = heavy_atom_n - heavy_atom_m;
         Vector const d_ij_norm = d_ij.normalized();
-        
+
         lk_score = cp_weight * eval_lk( rsd1.atom( m ), rsd2.atom( n ), deriv, true);
         f2 = -1.0 * cp_weight * deriv * d_ij_norm;
         f1 = cross( f2, heavy_atom_n );
-        
+
         if ( compute_polar && is_polar_m ) {
             Real const d = d_ij.length();
             F1 += weights[ lk_polar ] * f1;
@@ -949,11 +949,11 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
             F1 += weights[ lk_nonpolar ] * f1;
             F2 += weights[ lk_nonpolar ] * f2;
         }
-        
+
         lk_score = cp_weight * eval_lk( rsd2.atom( n ), rsd1.atom( m ), deriv, true);
         f2 = cp_weight * deriv * d_ij_norm;
         f1 = cross( f2, heavy_atom_m );
-        
+
         if ( compute_polar && is_polar_n ) {
             Real const d = d_ij.length();
             F1 -= weights[ lk_polar ] * f1;
@@ -1001,7 +1001,7 @@ LK_PolarNonPolarEnergy::finalize_total_energy(
 
     using namespace etable::count_pair;
 	CountPairFunctionOP cpfxn;
-    
+
     Real lk_polar_score( 0.0 );
     Real lk_nonpolar_score( 0.0 );
     Real lk_costheta_score ( 0.0 );
@@ -1013,7 +1013,7 @@ LK_PolarNonPolarEnergy::finalize_total_energy(
     Real dotprod;
     Real dummy_deriv;
     Real temp_score;
-    
+
     for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
         conformation::Residue const & rsd1( *resvect[i] );
         for ( Size m=1, m_end=rsd1.natoms(); m <= m_end; ++m ) {
@@ -1024,31 +1024,31 @@ LK_PolarNonPolarEnergy::finalize_total_energy(
             for ( AtomNeighbors::const_iterator nbr_iter=nbrs.begin(),
                  nbr_end=nbrs.end(); nbr_iter!= nbr_end; ++nbr_iter ) {
                 AtomNeighbor const & nbr( *nbr_iter );
-                
+
                 Size const  j( nbr.rsd() );
                 if ( i==j ) continue;
                 Size const n( nbr.atomno() );
                 // could reorder the nbr lists so that we dont need this check:
                 //if ( ( j < i ) || ( j == i && jj <= ii ) ) continue;
-                
+
                 conformation::Residue const & rsd2( *resvect[j] );
                 if ( rsd2.atom_type(n).is_hydrogen() ) continue;
                 cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
                 cp_weight = 1.0;
                 path_dist = 0;
                 if ( !cpfxn->count( m, n, cp_weight, path_dist ) ) continue;
-                
+
                 bool const is_polar_n = ( rsd2.atom_type(n).is_acceptor() || rsd2.atom_type(n).is_donor());
                 if ( is_polar_m && is_polar_n  && !compute_polar ) continue;
                 if ( !is_polar_m && !is_polar_n && !compute_nonpolar ) continue;
-                
+
                 Vector const & heavy_atom_n( rsd2.xyz( n ) );
                 Vector const d_ij = heavy_atom_n - heavy_atom_m;
                 Vector const d_ij_norm = d_ij.normalized();
-                
+
                 dummy_deriv = 0.0;
                 temp_score = cp_weight * eval_lk( rsd1.atom( m ), rsd2.atom( n ), dummy_deriv, false);
-                
+
                 if ( is_polar_m && compute_polar ) {
                     lk_polar_score += temp_score;
                     Vector const res1_base_vector_norm = get_base_vector( rsd1, m, pose );
@@ -1058,10 +1058,10 @@ LK_PolarNonPolarEnergy::finalize_total_energy(
                 } else if ( !is_polar_m && compute_nonpolar ) {
                     lk_nonpolar_score += temp_score;
                 }
-                
+
                 dummy_deriv = 0.0;
                 temp_score = cp_weight * eval_lk( rsd2.atom( n ), rsd1.atom( m ), dummy_deriv, false);
-                
+
                 if ( is_polar_n && compute_polar ) {
                     lk_polar_score += temp_score;
                     Vector const res2_base_vector_norm = get_base_vector( rsd2, n, pose );
@@ -1074,14 +1074,14 @@ LK_PolarNonPolarEnergy::finalize_total_energy(
             }
         }
     }
-    
+
     totals[ lk_polar ]    += lk_polar_score;
 	totals[ lk_nonpolar ] += lk_nonpolar_score;
 	totals[ lk_costheta ] += lk_costheta_score;
-    
+
     if (verbose_)	std::cout << "DONE SCORING" << std::endl;
 }
-    
+
 /////////////////////////////////////////
 core::Size
 LK_PolarNonPolarEnergy::version() const

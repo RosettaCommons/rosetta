@@ -107,6 +107,7 @@ sources = {
 		"JD2ResourceManagerJobInputter",
 		"JD2ResourceManagerJobInputterSimplifiedInput",
 		"JD2ResourceManagerJobInputterMultipleJobTags",
+                "JobOutputter",
 	],
 
 	"jd2/parser" : [

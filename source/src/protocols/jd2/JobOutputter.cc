@@ -1,4 +1,4 @@
-
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 // :noTabs=false:tabSize=4:indentSize=4:
 //
@@ -163,10 +163,9 @@ evaluation::PoseEvaluatorsCOP JobOutputter::evaluators() const {
   return evaluators_;
 }
 
-
 void JobOutputter::call_output_observers( core::pose::Pose const& pose, JobOP job  ) const {
 	if ( !job ) return;
-	for ( JobOutputterObserverList::const_iterator it = output_observers_.begin();
+	for ( JobOutputterObservers::const_iterator it = output_observers_.begin();
 				it != output_observers_.end();
 				++it ) {
 		(*it)->add_values_to_job( pose, job );
@@ -174,18 +173,12 @@ void JobOutputter::call_output_observers( core::pose::Pose const& pose, JobOP jo
 }
 
 void JobOutputter::add_output_observer( JobOutputterObserverAP an_observer ) {
-	JobOutputterObserverList::const_iterator it =
-		std::find( output_observers_.begin(), output_observers_.end(), an_observer );
-	if ( it != output_observers_.end() ) return;
-	output_observers_.push_back( an_observer );
+	output_observers_.insert( an_observer );
 }
 
 
 void JobOutputter::remove_output_observer( JobOutputterObserverAP an_observer ) {
-	JobOutputterObserverList::iterator it =
-		std::find( output_observers_.begin(), output_observers_.end(), an_observer );
-	if ( it != output_observers_.end() ) return;
-	output_observers_.erase( it );
+	output_observers_.erase( an_observer );
 }
 
 } // jd2

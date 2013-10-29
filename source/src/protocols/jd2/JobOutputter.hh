@@ -37,7 +37,7 @@
 #include <string>
 
 #include <utility/vector1.hh>
-
+#include <set>
 
 namespace protocols {
 namespace jd2 {
@@ -116,8 +116,8 @@ public:
 private:
 
   evaluation::PoseEvaluatorsOP evaluators_;
-	typedef utility::vector1< JobOutputterObserverAP > JobOutputterObserverList;
-	JobOutputterObserverList output_observers_;
+	typedef std::set< JobOutputterObserverAP > JobOutputterObservers;
+	JobOutputterObservers output_observers_;
 	//////////////////////////////// end evaluator interface /////////////////////////////////////////
 
 protected:
