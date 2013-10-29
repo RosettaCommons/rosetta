@@ -203,6 +203,9 @@ sources = {
                 "chemically_conjugated_docking/UBQ_Gp_CYD-CYD"  , # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_Gp_CYD-CYD/   */
                 "chemically_conjugated_docking/UBQ_Gp_LYX-Cterm", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_Gp_LYX-Cterm/ */
                 ],
+	"public/weight_optimization": [
+		"optE_parallel",
+	],
 }
 include_path = [
 ]
