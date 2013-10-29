@@ -61,12 +61,13 @@ public:
 	Atom():
 			name_(""),
 			mm_name_(""),
-			bonded_neighbors_(),
-			bonded_neighbor_types_(),
 			atom_type_index_(0),
 			mm_atom_type_index_(0),
 			charge_(0),
 			ideal_xyz_(),
+			bonded_neighbors_(),
+			bonded_neighbor_types_(),
+			cut_bond_neighbors_(),
 			icoor_()
 	{}
 
@@ -84,12 +85,13 @@ public:
 		name_( name_in ),
 		//type_name_(type_name),
 		mm_name_(mm_name),
-		bonded_neighbors_(),
-		bonded_neighbor_types_(),
 		atom_type_index_(atom_type_index),
 		mm_atom_type_index_(mm_atom_type_index),
 		charge_(charge),
 		ideal_xyz_(ideal_xyz),
+		bonded_neighbors_(),
+		bonded_neighbor_types_(),
+		cut_bond_neighbors_(),
 		icoor_(icoor)
 	{}
 
@@ -97,12 +99,13 @@ public:
 		name_( src.name_ ),
 		//type_name_(src.type_name),
 		mm_name_(src.mm_name_),
-		bonded_neighbors_(src.bonded_neighbors_),
-		bonded_neighbor_types_(src.bonded_neighbor_types_),
 		atom_type_index_(src.atom_type_index_),
 		mm_atom_type_index_(src.mm_atom_type_index_),
 		charge_(src.charge_),
 		ideal_xyz_(src.ideal_xyz_),
+		bonded_neighbors_(src.bonded_neighbors_),
+		bonded_neighbor_types_(src.bonded_neighbor_types_),
+		cut_bond_neighbors_(src.cut_bond_neighbors_),
 		icoor_(src.icoor_)
 	{}
 
@@ -121,6 +124,7 @@ public:
 				charge_ == atom.charge_ &&
 				bonded_neighbors_ == atom.bonded_neighbors_ &&
 				bonded_neighbor_types_ == atom.bonded_neighbor_types_ &&
+                cut_bond_neighbors_ == atom.cut_bond_neighbors_ &&
 				ideal_xyz_ == atom.ideal_xyz_;
 	}
 
@@ -135,10 +139,12 @@ public:
 	AtomICoor const& icoor() const { return icoor_; };
     AtomIndices const& bonded_neighbors() const{ return bonded_neighbors_;}
     utility::vector1<BondName> const& bonded_neighbor_types() const{ return bonded_neighbor_types_;}
+    AtomIndices const& cut_bond_neighbors() const{ return cut_bond_neighbors_;}
 // Non-const getters
 	AtomICoor & icoor() { return icoor_; };
 	AtomIndices & bonded_neighbors(){ return bonded_neighbors_;}
 	utility::vector1<BondName> & bonded_neighbor_types() { return bonded_neighbor_types_;}
+    AtomIndices & cut_bond_neighbors(){ return cut_bond_neighbors_;}
 
 // Setters
 	void name( std::string const & name ) { name_ = name; };
@@ -155,6 +161,7 @@ public:
 private:
 	// Primary data
 	std::string name_;
+    Size atom_type_index_;
 	//std::string const type_name_;
 
 	// Secondary data
@@ -162,7 +169,8 @@ private:
 	//	std::string const csd_atom_name_;
 	AtomIndices bonded_neighbors_;
 	utility::vector1<BondName> bonded_neighbor_types_;
-	Size atom_type_index_;
+    AtomIndices cut_bond_neighbors_;
+	
 	/// MM atom-type index
 	Size mm_atom_type_index_;
 	Real charge_;

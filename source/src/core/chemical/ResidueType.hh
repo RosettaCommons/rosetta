@@ -285,7 +285,7 @@ public:
 	AtomIndices const &
 	cut_bond_neighbor( Size const atomno ) const
 	{
-		return cut_bond_neighbor_[ atomno ];
+		return graph_[ ordered_atoms_[atomno] ].cut_bond_neighbors();
 	}
 
 	/// @brief indices of the bonded neighbors for an atom, shortcut for bonded_neighbor(atomno)
@@ -1823,12 +1823,6 @@ private:
 	// per-atom properties
 	/// indices of the atoms psuedo bonded atoms. Used in orbital code
 	utility::vector1< utility::vector1<core::Size > > orbital_bonded_neighbor_;
-	/// indices of each atom's bonded neighbors
-	//utility::vector1< AtomIndices > bonded_neighbor_;
-	/// indices of each atom's bonded neighbor type (uses the same indexing scheme and order as bonded_neighbor_
-	//utility::vector1<utility::vector1<BondName> > bonded_neighbor_type_;
-	/// indices of each atom's bonded neighbors
-	utility::vector1< AtomIndices > cut_bond_neighbor_;
 	/// indices of each atom's base atom
 	utility::vector1< Size        > atom_base_;
 	/// indices of each atom's second base atom, for acceptors atom only
