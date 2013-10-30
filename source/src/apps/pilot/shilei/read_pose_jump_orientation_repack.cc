@@ -126,7 +126,7 @@ void transform_pose( core::pose::Pose & pose,utility::vector1<core::Real> const 
 
         //add rb changes
         numeric::xyzMatrix<core::Real> rotation_matrix=numeric::xyzMatrix<Real>::rows(t[1],t[2],t[3],t[4],t[5],t[6],t[7],t[8],t[9]);
-        numeric::xyzVector<core::Real> translation_vector=numeric::xyzVector<core::Real>::xyzVector(t[10],t[11],t[12]);
+        numeric::xyzVector<core::Real> translation_vector=numeric::xyzVector<core::Real>(t[10],t[11],t[12]);
         core::kinematics::Jump tmpJump=pose.jump(1);
         tmpJump.set_rotation(rotation_matrix);
         tmpJump.set_translation(translation_vector);
