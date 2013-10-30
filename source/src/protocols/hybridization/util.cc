@@ -805,7 +805,7 @@ create_fragment_set( core::pose::Pose const & pose, core::Size len, core::Size n
 }
 
 core::fragment::FragSetOP
-create_fragment_set_no_ssbias( core::pose::Pose const & pose, core::Size len, core::Size nfrag ) {
+create_fragment_set_no_ssbias( core::pose::Pose const & pose, core::Size len, core::Size nfrag, char force_ss ) {
 	core::fragment::FragSetOP fragset = new core::fragment::ConstantLengthFragSet( len );
 
 	// number of residues
@@ -813,7 +813,7 @@ create_fragment_set_no_ssbias( core::pose::Pose const & pose, core::Size len, co
 
 	// sequence
 	std::string tgt_seq = pose.sequence();
-	std::string tgt_ss (len, 'D');
+	std::string tgt_ss (len, force_ss);
 
 	// pick from vall based on template SS + target sequence
 	for ( core::Size j=1; j<=nres_tgt-len+1; ++j ) {

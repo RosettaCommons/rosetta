@@ -141,32 +141,41 @@ public:
 	maskDensityMap( poseCoords const &pose, core::Real radius );
 
 	/// @brief get resolution bins (informational)
- 	utility::vector1< core::Real >
-	getResolutionBins( core::Size nbuckets, core::Real maxreso, core::Real minreso );
+	void
+	getResolutionBins(
+			core::Size nbuckets, core::Real maxreso, core::Real minreso,
+ 			utility::vector1< core::Real > &,
+		 	utility::vector1< core::Size > &,
+			bool S2_bin=false );
 
 	/// @brief Compute map intensities
 	utility::vector1< core::Real >
-	getIntensities( core::Size nbuckets, core::Real maxreso, core::Real minreso );
+	getIntensities( core::Size nbuckets, core::Real maxreso, core::Real minreso, bool S2_bin=false );
 
 	/// @brief Compute map intensities, masked by a pose
 	utility::vector1< core::Real >
-	getIntensitiesMasked( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso );
+	getIntensitiesMasked( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso, bool S2_bin=false );
 
 	/// @brief Compute intensities from a pose
 	void
-	getIntensities( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso, utility::vector1< core::Real > &Imodel);
+	getIntensities( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso, utility::vector1< core::Real > &Imodel, bool S2_bin=false);
 
 	/// @brief Compute model-map FSC
 	utility::vector1< core::Real >
-	getFSC( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso );
+	getFSC( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso, bool S2_bin=false );
 
 	/// @brief Compute model-map FSC, masked by the pose
 	utility::vector1< core::Real >
-	getFSCMasked( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso );
+	getFSCMasked( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso, bool S2_bin=false );
 
 	/// @brief Compute map-map FSC
-	utility::vector1< core::Real >
-	getFSC( ObjexxFCL::FArray3D< float > const &map2, core::Size nbuckets, core::Real maxreso, core::Real minreso );
+	void
+	getFSC(
+			ObjexxFCL::FArray3D< float > const &map2,
+			core::Size nbuckets,
+			core::Real maxreso, core::Real minreso,
+			utility::vector1< core::Real >&, utility::vector1< core::Real > &,
+			bool S2_bin=false);
 
 	/// @brief Compute model-map RSCC
 	core::Real
@@ -178,7 +187,7 @@ public:
 
 	/// @brief Compute intensities, update density
 	void
-	scaleIntensities( utility::vector1< core::Real > I_tgt, core::Real maxreso, core::Real minreso );
+	scaleIntensities( utility::vector1< core::Real > I_tgt, core::Real maxreso, core::Real minreso, bool S2_bin=false );
 
 	void
 	calcRhoC( poseCoords const &pose );
@@ -590,6 +599,7 @@ private:
 	core::Real effectiveB;  // B factor blurring based on map resolution
 	numeric::xyzVector< int > grid;
 	numeric::xyzVector< core::Real > origin, efforigin;
+	bool use_altorigin;   // which field to write origin to ... only affects map outputting
 
 	// cache scoring-related statistics
 	utility::vector1<core::Real>  CCs;

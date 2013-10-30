@@ -379,6 +379,7 @@ ElectronDensity::init() {
 	efforigin = origin = numeric::xyzVector< int >(0,0,0);
 	cellDimensions = numeric::xyzVector< float >(1,1,1);
 	cellAngles = numeric::xyzVector< float >(90,90,90);
+	use_altorigin =  false;
 
 	// command line overrides defaults
 	reso = basic::options::option[ basic::options::OptionKeys::edensity::mapreso ]();
@@ -1189,8 +1190,12 @@ core::Real ElectronDensity::matchPose(
 	return CC_i;
 }
 
-utility::vector1< core::Real >
-ElectronDensity::getResolutionBins( core::Size nbuckets, core::Real maxreso, core::Real minreso ) {
+void
+ElectronDensity::getResolutionBins(
+			core::Size nbuckets, core::Real maxreso, core::Real minreso,
+ 			utility::vector1< core::Real > &resbins,
+		 	utility::vector1< core::Size > &counts,
+			bool S2_bin/*=false*/ ) {
 	Real min_allowed = sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
 	Real max_allowed = std::min( sqrt(S2( 1,0,0 )), sqrt(S2( 0,1,0 )) );
 	max_allowed = std::min( max_allowed, sqrt(S2( 0,0,1 )) );
@@ -1202,15 +1207,47 @@ ElectronDensity::getResolutionBins( core::Size nbuckets, core::Real maxreso, cor
 		TR << "Forcing res max to " << 1/max_allowed << std::endl;
 		maxreso = max_allowed;
 	}
+
+	if (S2_bin) {
+		minreso = minreso*minreso;
+		maxreso = maxreso*maxreso;
+	}
+
+	// get bins
 	Real step = (minreso-maxreso)/nbuckets;
-	utility::vector1< core::Real > retval;
-	for (Size i=1; i<=nbuckets; ++i) retval.push_back( maxreso + (i-0.5)*step );
-	return retval;
+	resbins.resize(nbuckets);
+	counts.resize(nbuckets);
+	for (Size i=1; i<=nbuckets; ++i) {
+		counts[i] = 0;
+		if (S2_bin) {
+			resbins[i] = std::sqrt( maxreso + (i-0.5)*step );
+		} else {
+			resbins[i] =  maxreso + (i-0.5)*step;
+		}
+	}
+
+	// get bin counts
+	int H,K,L;
+	for (int z=1; z<=(int)density.u3(); ++z) {
+		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
+		for (int y=1; y<=(int)density.u2(); ++y) {
+			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
+			for (int x=1; x<=(int)density.u1(); ++x) {
+				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
+				Real s_i = (S2(H,K,L));
+				if (!S2_bin) s_i=sqrt(s_i);
+				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
+				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
+					counts[bucket_i]++;
+				}
+			}
+		}
+	}
 }
 
 /// @brief Compute intensities from model
 utility::vector1< core::Real >
-ElectronDensity::getIntensities( core::Size nbuckets, core::Real maxreso, core::Real minreso ) {
+ElectronDensity::getIntensities( core::Size nbuckets, core::Real maxreso, core::Real minreso, bool S2_bin/*=false*/ ) {
 	if (Fdensity.u1() == 0) numeric::fourier::fft3(density, Fdensity);
 
 	Real min_allowed = sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
@@ -1225,6 +1262,10 @@ ElectronDensity::getIntensities( core::Size nbuckets, core::Real maxreso, core::
 		maxreso = max_allowed;
 	}
 
+	if (S2_bin) {
+		minreso = minreso*minreso;
+		maxreso = maxreso*maxreso;
+	}
 	Real step = (minreso-maxreso)/nbuckets;
 
 	utility::vector1< core::Real > sum_I2(nbuckets, 0.0);
@@ -1237,7 +1278,8 @@ ElectronDensity::getIntensities( core::Size nbuckets, core::Real maxreso, core::
 			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
 			for (int x=1; x<=(int)density.u1(); ++x) {
 				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
-				Real s_i = sqrt(S2(H,K,L));
+				Real s_i = (S2(H,K,L));
+				if (!S2_bin) s_i=sqrt(s_i);
 				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
 				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
 					sum_I2[bucket_i] += std::real( Fdensity(x,y,z)*std::conj(Fdensity(x,y,z)) );
@@ -1256,7 +1298,7 @@ ElectronDensity::getIntensities( core::Size nbuckets, core::Real maxreso, core::
 
 /// @brief Compute intensities from model, applying a mask first
 utility::vector1< core::Real >
-ElectronDensity::getIntensitiesMasked( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso ) {
+ElectronDensity::getIntensitiesMasked( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso, bool S2_bin/*=false*/ ) {
 	//////////////
 	// 1 compute mask
 	core::Real radius = ATOM_MASK;
@@ -1322,6 +1364,10 @@ ElectronDensity::getIntensitiesMasked( poseCoords const &pose, core::Size nbucke
 		maxreso = max_allowed;
 	}
 
+	if (S2_bin) {
+		minreso = minreso*minreso;
+		maxreso = maxreso*maxreso;
+	}
 	Real step = (minreso-maxreso)/nbuckets;
 
 	utility::vector1< core::Real > sum_I2(nbuckets, 0.0);
@@ -1334,7 +1380,8 @@ ElectronDensity::getIntensitiesMasked( poseCoords const &pose, core::Size nbucke
 			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
 			for (int x=1; x<=(int)density.u1(); ++x) {
 				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
-				Real s_i = sqrt(S2(H,K,L));
+				Real s_i = (S2(H,K,L));
+				if (!S2_bin) s_i=sqrt(s_i);
 				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
 				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
 					sum_I2[bucket_i] += std::real( Fdensity(x,y,z)*std::conj(Fdensity(x,y,z)) );
@@ -1360,7 +1407,7 @@ ElectronDensity::getIntensitiesMasked( poseCoords const &pose, core::Size nbucke
 void
 ElectronDensity::getIntensities(
 	poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso,
-	utility::vector1< core::Real > &Imodel) {
+	utility::vector1< core::Real > &Imodel, bool S2_bin/*=false*/) {
 
 	// rhoc & FrhoC
 	calcRhoC( pose );
@@ -1380,6 +1427,10 @@ ElectronDensity::getIntensities(
 		maxreso = max_allowed;
 	}
 
+	if (S2_bin) {
+		minreso = minreso*minreso;
+		maxreso = maxreso*maxreso;
+	}
 	Real step = (minreso-maxreso)/nbuckets;
 
 	Imodel.clear(); Imodel.resize( nbuckets, 0.0 );
@@ -1392,7 +1443,8 @@ ElectronDensity::getIntensities(
 			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
 			for (int x=1; x<=(int)density.u1(); ++x) {
 				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
-				Real s_i = sqrt(S2(H,K,L));
+				Real s_i = (S2(H,K,L));
+				if (!S2_bin) s_i=sqrt(s_i);
 				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
 				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
 					Imodel[bucket_i] += std::real( Frho_calc(x,y,z)*std::conj(Frho_calc(x,y,z)) );
@@ -1423,7 +1475,7 @@ ElectronDensity::smooth_intensities(utility::vector1< core::Real > &Is) const {
 
 
 void
-ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i, core::Real maxreso, core::Real minreso ) {
+ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i, core::Real maxreso, core::Real minreso, bool S2_bin/*=false*/ ) {
 	if (Fdensity.u1() == 0) numeric::fourier::fft3(density, Fdensity);
 	Size nbuckets = scale_i.size();
 
@@ -1439,6 +1491,10 @@ ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i, core:
 		maxreso = max_allowed;
 	}
 
+	if (S2_bin) {
+		minreso = minreso*minreso;
+		maxreso = maxreso*maxreso;
+	}
 	Real step = (minreso-maxreso)/nbuckets;
 
 	int H,K,L;
@@ -1448,7 +1504,9 @@ ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i, core:
 			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
 			for (int x=1; x<=(int)density.u1(); ++x) {
 				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
-				Real s_i = sqrt(S2(H,K,L));
+
+				Real s_i = (S2(H,K,L));
+				if (!S2_bin) s_i=sqrt(s_i);
 
 				//fpd smooth interpolate between buckets
 				Real bucket = 0.5+((s_i-maxreso) / step);
@@ -1538,7 +1596,7 @@ ElectronDensity::maskDensityMap( poseCoords const &pose, core::Real radius ) {
 /// @brief Compute the FSC in the specified resolution range
 utility::vector1< core::Real >
 ElectronDensity::getFSC(
-	poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso ) {
+	poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso, bool S2_bin/*=false*/ ) {
 
 	Real min_allowed = sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
 	Real max_allowed = std::min( sqrt(S2( 1,0,0 )), sqrt(S2( 0,1,0 )) );
@@ -1552,6 +1610,10 @@ ElectronDensity::getFSC(
 		maxreso = max_allowed;
 	}
 
+	if (S2_bin) {
+		minreso = minreso*minreso;
+		maxreso = maxreso*maxreso;
+	}
 	Real step = (minreso-maxreso)/nbuckets;
 
 	// rhoc & FrhoC
@@ -1571,7 +1633,8 @@ ElectronDensity::getFSC(
 			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
 			for (int x=1; x<=(int)density.u1(); ++x) {
 				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
-				Real s_i = sqrt(S2(H,K,L));
+				Real s_i = (S2(H,K,L));
+				if (!S2_bin) s_i=sqrt(s_i);
 				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
 				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
 					num[bucket_i] += std::real( Frho_calc(x,y,z) * std::conj( Fdensity(x,y,z) ) );
@@ -1591,7 +1654,7 @@ ElectronDensity::getFSC(
 
 /// @brief Compute model-map FSC, masked by the pose
 utility::vector1< core::Real >
-ElectronDensity::getFSCMasked( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso ) {
+ElectronDensity::getFSCMasked( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso, bool S2_bin/*=false*/ ) {
 	//////////////
 	// 1 compute mask
 	core::Real radius = ATOM_MASK;
@@ -1656,6 +1719,11 @@ ElectronDensity::getFSCMasked( poseCoords const &pose, core::Size nbuckets, core
 		TR << "Forcing res max to " << 1/max_allowed << std::endl;
 		maxreso = max_allowed;
 	}
+
+	if (S2_bin) {
+		minreso = minreso*minreso;
+		maxreso = maxreso*maxreso;
+	}
 	Real step = (minreso-maxreso)/nbuckets;
 
 	calcRhoC( pose );
@@ -1669,7 +1737,8 @@ ElectronDensity::getFSCMasked( poseCoords const &pose, core::Size nbuckets, core
 			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
 			for (int x=1; x<=(int)density.u1(); ++x) {
 				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
-				Real s_i = sqrt(S2(H,K,L));
+				Real s_i = (S2(H,K,L));
+				if (!S2_bin) s_i=sqrt(s_i);
 				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
 				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
 					num[bucket_i] += std::real( Frho_calc(x,y,z) * std::conj( Fdensity(x,y,z) ) );
@@ -1692,9 +1761,15 @@ ElectronDensity::getFSCMasked( poseCoords const &pose, core::Size nbuckets, core
 
 
 /// @brief Compute the FSC in the specified resolution range
-utility::vector1< core::Real >
+void
 ElectronDensity::getFSC(
-	ObjexxFCL::FArray3D< float > const &density2, core::Size nbuckets, core::Real maxreso, core::Real minreso ) {
+		ObjexxFCL::FArray3D< float > const &density2,
+		core::Size nbuckets,
+		core::Real maxreso,
+		core::Real minreso,
+		utility::vector1< core::Real > &mapmapFSC,
+		utility::vector1< core::Real > &mapmapSigma,
+		bool S2_bin/*=false*/) {
 
 	Real min_allowed = sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
 	Real max_allowed = std::min( sqrt(S2( 1,0,0 )), sqrt(S2( 0,1,0 )) );
@@ -1708,6 +1783,10 @@ ElectronDensity::getFSC(
 		maxreso = max_allowed;
 	}
 
+	if (S2_bin) {
+		minreso = minreso*minreso;
+		maxreso = maxreso*maxreso;
+	}
 	Real step = (minreso-maxreso)/nbuckets;
 
 	runtime_assert( density.u1()==density2.u1() && density.u2()==density2.u2() && density.u3()==density2.u3() );
@@ -1720,7 +1799,12 @@ ElectronDensity::getFSC(
 
 	// correl
 	numeric::xyzVector< core::Real > del_ij;
-	utility::vector1<core::Real> num(nbuckets, 0.0), denom1(nbuckets, 0.0), denom2(nbuckets, 0.0);
+	utility::vector1<core::Real> num(nbuckets, 0.0), denom1(nbuckets, 0.0), denom2(nbuckets, 0.0), counter(nbuckets, 0.0);
+	mapmapFSC.resize(nbuckets);
+	mapmapSigma.resize(nbuckets);
+
+	for (Size i=1; i<=nbuckets; ++i) mapmapSigma[i] = 0;
+
 
 	int H,K,L;
 	for (int z=1; z<=(int)density.u3(); ++z) {
@@ -1729,10 +1813,11 @@ ElectronDensity::getFSC(
 			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
 			for (int x=1; x<=(int)density.u1(); ++x) {
 				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
-				Real s_i = sqrt(S2(H,K,L));
+				Real s_i = (S2(H,K,L));
+				if (!S2_bin) s_i=sqrt(s_i);
 				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
 				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
-					num[bucket_i] += std::real( Fdensity2(x,y,z) * std::conj( Fdensity(x,y,z) ) );
+					num[bucket_i] += std::real( Fdensity2(x,y,z) * std::conj( Fdensity(x,y,z) ) );    // |E_1|*|E_2|*cos(a_1-a_2)
 					denom1[bucket_i] += std::abs( Fdensity2(x,y,z) ) * std::abs( Fdensity2(x,y,z) );
 					denom2[bucket_i] += std::abs( Fdensity(x,y,z) ) * std::abs( Fdensity(x,y,z) );
 				}
@@ -1741,10 +1826,34 @@ ElectronDensity::getFSC(
 	}
 
 	for (Size i=1; i<=nbuckets; ++i) {
-		num[i] /= sqrt(denom1[i]*denom2[i]);
+		denom1[i] = sqrt(denom1[i]);
+		denom2[i] = sqrt(denom2[i]);
+		mapmapFSC[i] = num[i] / (denom1[i]*denom2[i]);
 	}
 
-	return num;
+	for (int z=1; z<=(int)density.u3(); ++z) {
+		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
+		for (int y=1; y<=(int)density.u2(); ++y) {
+			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
+			for (int x=1; x<=(int)density.u1(); ++x) {
+				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
+				Real s_i = (S2(H,K,L));
+				if (!S2_bin) s_i=sqrt(s_i);
+				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
+				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
+					Real err =  std::abs(  Fdensity2(x,y,z)/denom2[bucket_i]  -   Fdensity(x,y,z)/denom1[bucket_i]  );
+					mapmapSigma[bucket_i] += err*err;
+					counter[bucket_i] += 1;
+				}
+			}
+		}
+	}
+
+	for (Size i=1; i<=nbuckets; ++i) {
+		mapmapSigma[i] = sqrt( mapmapSigma[i] / counter[i] );
+	}
+
+	return;
 }
 
 core::Real
@@ -4966,7 +5075,11 @@ ElectronDensity::readMRCandResize(
 
  		TR << "Using ALTERNATE origin\n";
  		TR << "     origin =" << this->origin[0] << " x " << this->origin[1] << " x " << this->origin[2] << std::endl;
- 	}
+
+		use_altorigin = true;
+ 	}	else {
+		use_altorigin = false;
+	}
 
 	// if we force the apix, adjust the origin accordingly
 	if (force_apix_ > 0) {
@@ -5312,9 +5425,9 @@ bool ElectronDensity::writeMRC(std::string mapfilename, bool writeRhoCalc, bool 
 
 	// origin
 	int ori_int[3];
-	ori_int[0] = (int)std::floor( origin[0] );
-	ori_int[1] = (int)std::floor( origin[1] );
-	ori_int[2] = (int)std::floor( origin[2] );
+	ori_int[0] = use_altorigin? 0 : (int)std::floor( origin[0] );
+	ori_int[1] = use_altorigin? 0 : (int)std::floor( origin[1] );
+	ori_int[2] = use_altorigin? 0 : (int)std::floor( origin[2] );
  	outx.write(reinterpret_cast <char*>(ori_int), sizeof(int)*3);
 
  	// grid
@@ -5346,12 +5459,14 @@ bool ElectronDensity::writeMRC(std::string mapfilename, bool writeRhoCalc, bool 
 	}
 
 	// alt origin (MRC)
-	float ori_float[3];
-	numeric::xyzVector<core::Real> origin_realspace;
-	idx2cart ( numeric::xyzVector<core::Real>(1,1,1), origin_realspace );
-	ori_float[0] = (float)( origin_realspace[0] );
-	ori_float[1] = (float)( origin_realspace[1] );
-	ori_float[2] = (float)( origin_realspace[2] );
+	float ori_float[3]={0,0,0};
+	numeric::xyzVector<core::Real> origin_realspace(0,0,0);
+	if (use_altorigin) {
+		idx2cart ( numeric::xyzVector<core::Real>(1,1,1), origin_realspace );
+		ori_float[0] = (float)( origin_realspace[0] );
+		ori_float[1] = (float)( origin_realspace[1] );
+		ori_float[2] = (float)( origin_realspace[2] );
+	}
  	outx.write(reinterpret_cast <char*>(ori_float), sizeof(float)*3);
 
 	// Write "MAP" at byte 208, indicating a CCP4 file.

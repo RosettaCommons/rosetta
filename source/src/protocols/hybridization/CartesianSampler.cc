@@ -176,6 +176,7 @@ CartesianSampler::init() {
 	input_as_ref_ = false;
 	fullatom_ = false;
 	bbmove_ = false;
+	recover_low_ = true;
 
 	fragment_bias_strategy_ = "uniform";
 	selection_bias_ = "none";
@@ -717,7 +718,7 @@ CartesianSampler::apply( Pose & pose ) {
 
 	// autogenerate fragments if they are not loaded yet
 	if (fragments_.size() == 0) {
-		fragments_.push_back( create_fragment_set_no_ssbias(pose, 9, 25) );
+		fragments_.push_back( create_fragment_set_no_ssbias(pose, 9, 25, force_ss_) );
 		update_fragment_library_pointers();
 	}
 
@@ -863,7 +864,7 @@ CartesianSampler::apply( Pose & pose ) {
 	}
 	mc->show_scores();
 	mc->show_counters();
-	mc->recover_low(pose);
+	if (recover_low_) mc->recover_low(pose);
 
 	// final minimization (make optional?)
 	//(*scorefxn_)(pose);
@@ -936,6 +937,9 @@ CartesianSampler::parse_my_tag(
 		selection_bias_ = tag->getOption<std::string>( "fragbias" );
 	}
 
+	recover_low_ = tag->getOption<bool>( "recover_low" , true );
+	force_ss_ = tag->getOption<char>( "force_ss" , 'D' );
+
 	if( tag->hasOption( "reference_model" ) ) {
 		std::string ref_model_pdb = tag->getOption<std::string>( "reference_model" );
 		if (ref_model_pdb != "input")
@@ -974,7 +978,7 @@ CartesianSampler::parse_my_tag(
 	if( tag->hasOption( "fraglens" ) ) {
 		utility::vector1<std::string> fraglens = utility::string_split( tag->getOption< std::string >( "fraglens" ), ',' );
 		for (core::Size i=1; i<=fraglens.size(); ++i) {
-			fragments_.push_back( create_fragment_set_no_ssbias(pose, atoi(fraglens[i].c_str()), nfrags) );
+			fragments_.push_back( create_fragment_set_no_ssbias(pose, atoi(fraglens[i].c_str()), nfrags, force_ss_) );
 		}
 	}
 	update_fragment_library_pointers();

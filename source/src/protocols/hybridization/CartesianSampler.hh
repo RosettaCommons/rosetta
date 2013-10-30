@@ -134,7 +134,8 @@ private:
 	core::pose::Pose ref_model_;
 	core::Real ref_cst_weight_;
 	bool input_as_ref_;
-	bool fullatom_,bbmove_;
+	bool fullatom_,bbmove_, recover_low_;
+	char force_ss_;
 	LoopsOP loops_;
 
 	// scorefunctions

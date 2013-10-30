@@ -68,6 +68,7 @@ OPT_1GRP_KEY(Boolean, denstools, verbose)
 OPT_1GRP_KEY(Boolean, denstools, dump_map_and_mask)
 OPT_1GRP_KEY(Boolean, denstools, nomask)
 OPT_1GRP_KEY(Boolean, denstools, perres)
+OPT_1GRP_KEY(Boolean, denstools, bin_squared)
 
 
 using core::scoring::electron_density::poseCoords;
@@ -183,8 +184,10 @@ densityTools()
 
 	// outputs
 	Size nresobins = option[ denstools::nresbins ]();
+	bool bin_squared =  option[ denstools::bin_squared ]();
 	utility::vector1< core::Real > resobins, mapI, mapIprime, modelI, modelSum, modelmapFSC;
-	utility::vector1< core::Real > mapAltI, mapmapFSC;
+	utility::vector1< core::Size > resobin_counts;
+	utility::vector1< core::Real > mapAltI, mapmapFSC, mapmapError;
 	utility::vector1< core::Real > perResCC;
 	Real rscc, fsc=0, mm_rscc, mm_fsc=0, estErr=0;
 
@@ -212,8 +215,8 @@ densityTools()
 	}
 
 	// [1] map intensity statistics
-	resobins = core::scoring::electron_density::getDensityMap().getResolutionBins(nresobins, lowres, hires);
-	mapI = core::scoring::electron_density::getDensityMap().getIntensities(nresobins, lowres, hires);
+	core::scoring::electron_density::getDensityMap().getResolutionBins(nresobins, lowres, hires, resobins, resobin_counts, bin_squared);
+	mapI = core::scoring::electron_density::getDensityMap().getIntensities(nresobins, lowres, hires, bin_squared);
 
 	// [2] ALT map stats (intensity + map v map FSC)
 	core::scoring::electron_density::ElectronDensity mapAlt;
@@ -230,7 +233,7 @@ densityTools()
 		}
 
 		mapAltI = mapAlt.getIntensities(nresobins, lowres, hires);
-		mapmapFSC = core::scoring::electron_density::getDensityMap().getFSC( mapAlt.data(), nresobins, lowres, hires );
+		core::scoring::electron_density::getDensityMap().getFSC( mapAlt.data(), nresobins, lowres, hires, mapmapFSC, mapmapError, bin_squared );
 		mm_rscc = core::scoring::electron_density::getDensityMap().getRSCC( mapAlt.data() );
 
 		for (Size i=1; i<=resobins.size(); ++i)
@@ -265,8 +268,8 @@ densityTools()
 			}
 		}
 
-		core::scoring::electron_density::getDensityMap().getIntensities( pose, nresobins, lowres, hires, modelI );
-		modelmapFSC = core::scoring::electron_density::getDensityMap().getFSC( pose, nresobins, lowres, hires );
+		core::scoring::electron_density::getDensityMap().getIntensities( pose, nresobins, lowres, hires, modelI, bin_squared );
+		modelmapFSC = core::scoring::electron_density::getDensityMap().getFSC( pose, nresobins, lowres, hires, bin_squared );
 		rscc = core::scoring::electron_density::getDensityMap().getRSCC( pose );
 		for (Size i=1; i<=resobins.size(); ++i)
 			fsc+=modelmapFSC[i];
@@ -282,17 +285,21 @@ densityTools()
 				if (resobins[i]<0.1) continue;   // ignore hires
 				if (mapmapFSC[i]<0.0) continue;  //
 
+				Real weight = 1/mapmapError[i];
+				Real X = resobins[i]*resobins[i];
+				Real Y = modelmapFSC[i];
+
+				sumXX += weight*X*X;
 				if (modelmapFSC[i] > 0)
-					sumXX += modelmapFSC[i]*mapmapFSC[i];
-				sumXY += mapmapFSC[i];
+					sumXY += weight*X*Y;
 			}
 
 			if (sumXX == 0) {
 				std::cerr << "ERROR! No valid data for error estimate!" << std::endl;
 			} else {
 				// TO DO!  automatically choose a reasonable resolution range
-				Real linest = sumXX/sumXY;
-				//estErr = sqrt( -linest / (8/3*pi*pi));
+				Real linest = sumXY/sumXX;
+				estErr = sqrt( -linest / (8/3*pi*pi));
 				estErr = linest;
 			}
 		}
@@ -304,9 +311,9 @@ densityTools()
 			utility::vector1< core::Real > rescale_factor(nresobins,0.0);
 			for (Size i=1; i<=nresobins; ++i)
 				rescale_factor[i] = sqrt(modelI[i] / mapI[i]);
-			core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, lowres, hires );
+			core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, lowres, hires, bin_squared );
 			core::scoring::electron_density::getDensityMap().writeMRC( "scale_modelI.mrc" );
-			mapIprime = core::scoring::electron_density::getDensityMap().getIntensities(nresobins, lowres, hires);
+			mapIprime = core::scoring::electron_density::getDensityMap().getIntensities(nresobins, lowres, hires, bin_squared);
 
 			//for (Size i=1; i<=nresobins; ++i)
 			//	rescale_factor[i] *= modelmapFSC[i];
@@ -316,21 +323,21 @@ densityTools()
 			utility::vector1< core::Real > rescale_factor(nresobins,0.0);
 			for (Size i=1; i<=nresobins; ++i)
 				rescale_factor[i] = sqrt(mapAltI[i] / mapI[i]);
-			core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, lowres, hires );
+			core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, lowres, hires, bin_squared );
 			core::scoring::electron_density::getDensityMap().writeMRC( "scale_altmapI.mrc" );
-			mapIprime = core::scoring::electron_density::getDensityMap().getIntensities(nresobins, lowres, hires);
+			mapIprime = core::scoring::electron_density::getDensityMap().getIntensities(nresobins, lowres, hires, bin_squared );
 		}
 	}
 
 	// verbose
 	if ( option[ denstools::verbose ]()) {
-			std::cerr << "1/res  I_map1";
-			if (usermap)  std::cerr << "  I_map2  FSC_map1_map2" ;
+			std::cerr << "1/res count I_map1";
+			if (usermap)  std::cerr << "  I_map2  FSC_map1_map2  Error_map1_map2" ;
 			if (userpose) std::cerr << "  I_model  FSC_map1_model";
 			std::cerr << std::endl;
 		for (Size i=1; i<=resobins.size(); ++i) {
-			std::cerr << resobins[i] << " " << mapI[i];
-			if (usermap)  std::cerr << " " << mapAltI[i] << " " << mapmapFSC[i];
+			std::cerr << resobins[i] << " " << resobin_counts[i] << " " << mapI[i];
+			if (usermap)  std::cerr << " " << mapAltI[i] << " " << mapmapFSC[i]<< " " << mapmapError[i] ;
 			if (userpose) std::cerr << " " << modelI[i] << " " << modelmapFSC[i];
 			std::cerr << std::endl;
 		}
@@ -349,9 +356,8 @@ densityTools()
 	}
 
 	// compact
-	std::cerr << "------" << std::endl;
 	if (userpose) {
-		std::cerr << pdbfile << " fsc:" << fsc << " rscc:" << rscc  << " normFSC:" << estErr << std::endl;
+		std::cerr << pdbfile << " fsc= " << fsc << " rscc=" << rscc  << " normFSC=" << estErr << std::endl;
 	}
 	if (usermap) {
 		std::cerr << option[ edensity::alt_mapfile ]() << " " << mm_fsc << " " << mm_rscc << std::endl;
@@ -376,6 +382,8 @@ main( int argc, char * argv [] )
 	NEW_OPT(denstools::nomask, "nomask", false);
 	NEW_OPT(denstools::perres, "output per-residue stats", false);
 	NEW_OPT(denstools::verbose, "extra output", false);
+	NEW_OPT(denstools::bin_squared, "bin_squared", true);
+
 	devel::init( argc, argv );
 	densityTools();
 	} catch ( utility::excn::EXCN_Base const & e ) {

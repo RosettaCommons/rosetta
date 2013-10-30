@@ -65,6 +65,7 @@ void ScaleMapIntensities::init() {
 	asymm_only_=false;
 	ignore_bs_=false;
 	outmap_name_="";
+	bin_squared_=true;
 }
 
 void ScaleMapIntensities::apply(core::pose::Pose & pose) {
@@ -102,19 +103,19 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 	}
 
 
-	utility::vector1< core::Real > resobins = core::scoring::electron_density::getDensityMap().getResolutionBins(nresbins_, 1.0/res_low_, 1.0/res_high_);
-	core::Real resobins_step = resobins[2]-resobins[1];
+	utility::vector1< core::Real > resobins;
+	utility::vector1< core::Size > counts;
+	core::scoring::electron_density::getDensityMap().getResolutionBins(nresbins_, 1.0/res_low_, 1.0/res_high_, resobins, counts, bin_squared_);
 
 	// TODO: make masking optional
-	core::scoring::electron_density::getDensityMap().getIntensities( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelI );
-	mapI = core::scoring::electron_density::getDensityMap().getIntensitiesMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_);
+	core::scoring::electron_density::getDensityMap().getIntensities( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelI, bin_squared_ );
+	mapI = core::scoring::electron_density::getDensityMap().getIntensitiesMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, bin_squared_);
 
 	utility::vector1< core::Real > fade(nresbins_,1.0);
 	if (scale_by_fsc_) {
-		fade = core::scoring::electron_density::getDensityMap().getFSCMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_ );
+		fade = core::scoring::electron_density::getDensityMap().getFSCMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, bin_squared_ );
 	} else if (res_fade_ > 0) {
-		// fade over ~10 buckets
-		core::Real sigma = (1/resobins_step);
+		core::Real sigma = 100;   // ?? no idea if this is reasonable
 		core::Real inv_fade = (1.0/res_fade_);
 		for (Size i=1; i<=nresbins_; ++i) {
 			fade[i] = 1/(1+exp(sigma*(resobins[i]-inv_fade)) );
@@ -153,9 +154,6 @@ ScaleMapIntensities::parse_my_tag(
 	if ( tag->hasOption("res_high") ) {
 		res_high_ = tag->getOption<core::Real>("res_high");
 	}
-	if ( tag->hasOption("res_fade") ) {
-		res_fade_ = tag->getOption<core::Real>("res_fade");
-	}
 	if ( tag->hasOption("nresbins") ) {
 		nresbins_ = tag->getOption<core::Size>("nresbins");
 	}
@@ -170,6 +168,9 @@ ScaleMapIntensities::parse_my_tag(
 	}
 	if ( tag->hasOption("outmap") ) {
 		outmap_name_ = tag->getOption<std::string>("outmap");
+	}
+	if ( tag->hasOption("bin_squared") ) {
+		bin_squared_ = tag->getOption<bool>("bin_squared");
 	}
 }
 
