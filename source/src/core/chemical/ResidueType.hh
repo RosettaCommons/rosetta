@@ -388,21 +388,21 @@ public:
 	}
 
 	bool
-	heavyatom_has_polar_hydrogens( Size ind ) const {
+	heavyatom_has_polar_hydrogens( Size atomno ) const {
 		assert( finalized_ );
-		return heavyatom_has_polar_hydrogens_[ ind ];
+		return graph_[ordered_atoms_[atomno]].heavyatom_has_polar_hydrogens();
 	}
 
 	bool
-	heavyatom_is_an_acceptor( Size ind ) const {
+	heavyatom_is_an_acceptor( Size atomno ) const {
 		assert( finalized_ );
-		return heavyatom_is_an_acceptor_[ ind ];
+		return graph_[ordered_atoms_[atomno]].heavyatom_is_an_acceptor();
 	}
 
 	bool
-	atom_is_polar_hydrogen( Size ind ) const {
+	atom_is_polar_hydrogen( Size atomno ) const {
 		assert( finalized_ );
-		return atom_is_polar_hydrogen_[ ind ];
+		return graph_[ordered_atoms_[atomno]].atom_is_polar_hydrogen();
 	}
 
 	/// @brief indices of all mainchain atoms
@@ -1874,12 +1874,6 @@ private:
 	AtomIndices all_bb_atoms_;
 	/// Indices of all sidechain atoms, hydrogens and heavyatoms
 	AtomIndices all_sc_atoms_;
-
-	/// Vectors of booleans, represented as integers for speed (since vector1<bool> is optimized for space and is slow to read from)
-	/// 1 for true, 0 for false
-	utility::vector1< int > heavyatom_has_polar_hydrogens_; // is an atom both a heavy atom and chemically bonded to a polar hydrogen?
-	utility::vector1< int > heavyatom_is_an_acceptor_; // is an atom both a heavy atom and capable of accepting hydrogen bonds?
-	utility::vector1< int > atom_is_polar_hydrogen_; // is an atom a polar hydrogen?
 
 	/// @brief indices of all mainchain atoms
 	///

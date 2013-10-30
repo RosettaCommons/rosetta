@@ -67,11 +67,16 @@ public:
             atom_base_(0),
             abase2_(0),
             parent_(0),
-			ideal_xyz_(),
 			bonded_neighbors_(),
 			bonded_neighbor_types_(),
 			cut_bond_neighbors_(),
-			icoor_()
+			icoor_(),
+            ideal_xyz_(),
+            heavyatom_has_polar_hydrogens_(0),
+            heavyatom_is_an_acceptor_(0),
+            atom_is_polar_hydrogen_(0)
+
+
 	{}
 
 	Atom(
@@ -94,11 +99,16 @@ public:
         atom_base_(0),
         abase2_(0),
         parent_(0),
-		ideal_xyz_(ideal_xyz),
 		bonded_neighbors_(),
 		bonded_neighbor_types_(),
 		cut_bond_neighbors_(),
-		icoor_(icoor)
+		icoor_(icoor),
+        ideal_xyz_(ideal_xyz),
+        heavyatom_has_polar_hydrogens_(0),
+        heavyatom_is_an_acceptor_(0),
+        atom_is_polar_hydrogen_(0)
+
+
 	{}
 
 	Atom(Atom const & src) :
@@ -111,11 +121,16 @@ public:
         atom_base_(src.atom_base_),
         abase2_(src.abase2_),
         parent_(src.parent_),
-		ideal_xyz_(src.ideal_xyz_),
 		bonded_neighbors_(src.bonded_neighbors_),
 		bonded_neighbor_types_(src.bonded_neighbor_types_),
 		cut_bond_neighbors_(src.cut_bond_neighbors_),
-		icoor_(src.icoor_)
+		icoor_(src.icoor_),
+        ideal_xyz_(src.ideal_xyz_),
+        heavyatom_has_polar_hydrogens_(src.heavyatom_has_polar_hydrogens_),
+        heavyatom_is_an_acceptor_(src.heavyatom_is_an_acceptor_),
+        atom_is_polar_hydrogen_(src.atom_is_polar_hydrogen_)
+
+
 	{}
 
 	void
@@ -137,7 +152,10 @@ public:
 				bonded_neighbors_ == atom.bonded_neighbors_ &&
 				bonded_neighbor_types_ == atom.bonded_neighbor_types_ &&
                 cut_bond_neighbors_ == atom.cut_bond_neighbors_ &&
-				ideal_xyz_ == atom.ideal_xyz_;
+				ideal_xyz_ == atom.ideal_xyz_ &&
+                heavyatom_has_polar_hydrogens_ == atom.heavyatom_has_polar_hydrogens_ &&
+                heavyatom_is_an_acceptor_ == atom.heavyatom_is_an_acceptor_ &&
+                atom_is_polar_hydrogen_ == atom.atom_is_polar_hydrogen_;
 	}
 
 // Const Getters
@@ -152,6 +170,9 @@ public:
     AtomIndices const& bonded_neighbors() const{ return bonded_neighbors_;}
     utility::vector1<BondName> const& bonded_neighbor_types() const{ return bonded_neighbor_types_;}
     AtomIndices const& cut_bond_neighbors() const{ return cut_bond_neighbors_;}
+    bool heavyatom_has_polar_hydrogens() const{ return heavyatom_has_polar_hydrogens_;}
+    bool heavyatom_is_an_acceptor() const{ return heavyatom_is_an_acceptor_;}
+    bool atom_is_polar_hydrogen() const{ return atom_is_polar_hydrogen_;}
 // Non-const getters
 	AtomICoor & icoor() { return icoor_; };
 	AtomIndices & bonded_neighbors(){ return bonded_neighbors_;}
@@ -175,29 +196,33 @@ public:
 	void bonded_neighbors( AtomIndices const & bonded_neighbors) { bonded_neighbors_ = bonded_neighbors; }
 	void icoor( AtomICoor const & icoor) { icoor_ = icoor; };
     void parent(Size parent){parent_ = parent;}
+    void heavyatom_has_polar_hydrogens( bool heavyatom_has_polar_hydrogens){ heavyatom_has_polar_hydrogens_ = heavyatom_has_polar_hydrogens;}
+    void heavyatom_is_an_acceptor( bool heavyatom_is_an_acceptor){ heavyatom_is_an_acceptor_= heavyatom_is_an_acceptor;}
+    void atom_is_polar_hydrogen( bool atom_is_polar_hydrogen){ atom_is_polar_hydrogen_= atom_is_polar_hydrogen;}
+
 
 	// data
 private:
-	// Primary data
 	std::string name_;
+    std::string mm_name_;
     Size atom_type_index_;
-	//std::string const type_name_;
-
-	// Secondary data
-	std::string mm_name_;
-	//	std::string const csd_atom_name_;
-	AtomIndices bonded_neighbors_;
-	utility::vector1<BondName> bonded_neighbor_types_;
-    AtomIndices cut_bond_neighbors_;
+    Size mm_atom_type_index_;
+    Real charge_;
     Size atom_base_;
     Size abase2_;
     Size parent_;
-	
-	/// MM atom-type index
-	Size mm_atom_type_index_;
-	Real charge_;
-	Vector ideal_xyz_;
+	AtomIndices bonded_neighbors_;
+	utility::vector1<BondName> bonded_neighbor_types_;
+    AtomIndices cut_bond_neighbors_;
 	AtomICoor icoor_;
+    Vector ideal_xyz_;
+    bool heavyatom_has_polar_hydrogens_; // is an atom both a heavy atom and chemically bonded to a polar hydrogen?
+    bool heavyatom_is_an_acceptor_; // is an atom both a heavy atom and capable of accepting hydrogen bonds?
+    bool atom_is_polar_hydrogen_; // is an atom a polar hydrogen?
+
+
+
+
 };
 
 

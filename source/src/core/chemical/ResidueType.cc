@@ -221,9 +221,6 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 	Hpos_polar_sc_(residue_type.Hpos_polar_sc_),
 	all_bb_atoms_(residue_type.all_bb_atoms_),
 	all_sc_atoms_(residue_type.all_sc_atoms_),
-	heavyatom_has_polar_hydrogens_(residue_type.heavyatom_has_polar_hydrogens_),
-	heavyatom_is_an_acceptor_(residue_type.heavyatom_is_an_acceptor_),
-	atom_is_polar_hydrogen_(residue_type.atom_is_polar_hydrogen_),
 	mainchain_atoms_(residue_type.mainchain_atoms_),
 	actcoord_atoms_(residue_type.actcoord_atoms_),
 	chi_atoms_(residue_type.chi_atoms_),
@@ -1639,22 +1636,23 @@ ResidueType::update_derived_data()
 
 	}
 
-	// donor heavy atoms, acceptor heavy atoms, donor hydrogen atoms setup.
+    // setup the hydrogen information
+    for(Size Aindex=1; Aindex<= ordered_atoms_.size(); ++Aindex){
+        graph_[ordered_atoms_[Aindex]].heavyatom_has_polar_hydrogens(0);
+        graph_[ordered_atoms_[Aindex]].heavyatom_is_an_acceptor(0);
+        graph_[ordered_atoms_[Aindex]].atom_is_polar_hydrogen(0);
+    }
+
+    // donor heavy atoms, acceptor heavy atoms, donor hydrogen atoms setup.
 	// Must be executed after Hpos_polar_ and accpt_pos_ have been updated.
-	heavyatom_has_polar_hydrogens_.resize( natoms_ );
-	heavyatom_is_an_acceptor_.resize( natoms_ );
-	atom_is_polar_hydrogen_.resize( natoms_ );
-	std::fill( heavyatom_has_polar_hydrogens_.begin(), heavyatom_has_polar_hydrogens_.end(), 0 );
-	std::fill( heavyatom_is_an_acceptor_.begin(), heavyatom_is_an_acceptor_.end(), 0 );
-	std::fill( atom_is_polar_hydrogen_.begin(), atom_is_polar_hydrogen_.end(), 0 );
 	for ( Size ii = 1; ii <= Hpos_polar_.size(); ++ii ) {
 		Size hind = Hpos_polar_[ ii ];
-		atom_is_polar_hydrogen_[ ii ] = 1;
+        graph_[ordered_atoms_[ii]].atom_is_polar_hydrogen(1);
 		Size base = atom_base(hind);
-		heavyatom_has_polar_hydrogens_[ base ] = 1;
+        graph_[ordered_atoms_[base]].heavyatom_has_polar_hydrogens(1);
 	}
 	for ( Size ii = 1; ii <= accpt_pos_.size(); ++ii ) {
-		heavyatom_is_an_acceptor_[ accpt_pos_[ ii ] ] = 1;
+        graph_[ordered_atoms_[accpt_pos_[ ii ]]].heavyatom_is_an_acceptor(1);
 	}
 
 
