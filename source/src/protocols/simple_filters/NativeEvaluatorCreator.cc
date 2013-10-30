@@ -52,6 +52,7 @@
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>
@@ -96,6 +97,10 @@ void NativeEvaluatorCreator::add_evaluators( evaluation::MetaPoseEvaluator & eva
 
 	// set rmsd native
 	if ( native_pose && option[ in::file::native ].user() ) {
+		if ( option[ OptionKeys::symmetry::symmetric_rmsd ].user() ){
+				eval.add_evaluation( new SymmetricRmsdEvaluator( native_pose, "" ) );
+		}
+
 		if ( option[ in::file::native_exclude_res ].user() ) {
 			eval.add_evaluation( new SelectRmsdEvaluator(
 				native_pose,
