@@ -117,12 +117,22 @@ bool
 is_D_aa( AA aa );
 
 //////////////////////////////////////////////////////////
-/// @brief Given an enum type for a D-amino acid, return
-/// the enum type for the corresponding L-amino acid (or
-/// aa_unk if a D-amino acid is not provided).
+/// @brief Given an enum type for a D-amino acid with a
+/// canonical side-chain, return the enum type for the
+/// corresponding L-amino acid (or aa_unk if the 
+/// corresponding L-amino acid cannot be determined).
 //////////////////////////////////////////////////////////
 AA
 get_L_equivalent( AA aa );
+
+//////////////////////////////////////////////////////////
+/// @brief Given an enum type for a L-amino acid with a
+/// canonical side-chain, return the enum type for the
+/// corresponding D-amino acid (or aa_unk if the 
+/// corresponding D-amino acid cannot be determined).
+//////////////////////////////////////////////////////////
+AA
+get_D_equivalent( AA aa );
 
 ///////////////////////////////////////////////////////
 /// @brief give a enum type and return the string name

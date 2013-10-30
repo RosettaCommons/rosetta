@@ -273,6 +273,31 @@ get_L_equivalent( AA aa ) {
 	return aa_unk;
 }
 
+AA
+get_D_equivalent( AA aa ) {
+	if(aa==aa_ala) return aa_dal;
+	else if(aa==aa_cys) return aa_dcs;
+	else if(aa==aa_asp) return aa_das;
+	else if(aa==aa_glu) return aa_dgu;
+	else if(aa==aa_phe) return aa_dph;
+	else if(aa==aa_his) return aa_dhi;
+	else if(aa==aa_ile) return aa_dil;
+	else if(aa==aa_lys) return aa_dly;
+	else if(aa==aa_leu) return aa_dle;
+	else if(aa==aa_met) return aa_dme;
+	else if(aa==aa_asn) return aa_dan;
+	else if(aa==aa_pro) return aa_dpr;
+	else if(aa==aa_gln) return aa_dgn;
+	else if(aa==aa_arg) return aa_dar;
+	else if(aa==aa_ser) return aa_dse;
+	else if(aa==aa_thr) return aa_dth;
+	else if(aa==aa_val) return aa_dva;
+	else if(aa==aa_trp) return aa_dtr;
+	else if(aa==aa_tyr) return aa_dty;
+
+	return aa_unk;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief input operator for AA enum type
 ///
