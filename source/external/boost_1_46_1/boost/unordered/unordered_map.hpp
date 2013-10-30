@@ -96,7 +96,7 @@ namespace boost
 #endif
 
         table table_;
-        
+
         BOOST_DEDUCED_TYPENAME types::iterator_base const&
             get(const_iterator const& it)
         {
@@ -553,7 +553,7 @@ namespace boost
         {
             table_.rehash(n);
         }
-        
+
 #if !BOOST_WORKAROUND(__BORLANDC__, < 0x0582)
         friend bool operator==<K, T, H, P, A>(
             unordered_map const&, unordered_map const&);
@@ -651,7 +651,7 @@ namespace boost
 #endif
 
         table table_;
-        
+
         BOOST_DEDUCED_TYPENAME types::iterator_base const&
             get(const_iterator const& it)
         {
@@ -855,7 +855,7 @@ namespace boost
         {
             return iterator(table_.emplace(v));
         }
-        
+
         iterator emplace_hint(const_iterator,
             value_type const& v = value_type())
         {

@@ -35,6 +35,7 @@
 //// C++ headers
 // AUTO-REMOVED #include <cstdlib> //required by GCC 4.3.2
 #include <string>
+#include <cmath>
 
 namespace core {
 namespace scoring {
@@ -143,7 +144,7 @@ class Pairing {
 	}
 
 	Size get_register()  {
-		return is_anti() ? Pos1() + Pos2() : std::abs( (int) Pos1() - (int) Pos2() );
+		return is_anti() ? Pos1() + Pos2() : std::abs( float( Pos1() - Pos2() ) );
 	}
 
 	bool operator < ( Pairing const& p ) const {

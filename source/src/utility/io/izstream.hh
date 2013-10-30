@@ -36,7 +36,7 @@
 #include <istream>
 #include <limits>
 #include <string>
-
+#include <iostream>
 
 namespace utility {
 namespace io {
@@ -88,7 +88,7 @@ public: // Creation
 	) :
 		compression_( NONE ),
 		zip_stream_p_( 0 )
-#if defined( USE_FILE_PROVIDER )		
+#if defined( USE_FILE_PROVIDER )
 		,file_provider_stream( &bad_stream )
 #endif
 
@@ -131,7 +131,7 @@ public: // Methods: conversion
 	{
 		#if defined( USE_FILE_PROVIDER )
 			// if file is present in inline file provider, return that - otherwise return an actual istream
-      if (file_provider_stream->good() ){ 
+      if (file_provider_stream->good() ){
         return *file_provider_stream;
 		  }
     #endif
@@ -146,7 +146,7 @@ public: // Methods: conversion
 	operator std::istream &()
 	{
 		#if defined( USE_FILE_PROVIDER )
-      if (file_provider_stream->good() ){ 
+      if (file_provider_stream->good() ){
 			  return *file_provider_stream;
 		  }
     #endif
@@ -205,7 +205,7 @@ public: // Methods: i/o
 	{
 	 	#if defined( USE_FILE_PROVIDER )
     // if the file is coming from the file provider then clear that stream. Otherwise go on to clear the actual file streams.
-    if (file_provider_stream->good() ){ 
+    if (file_provider_stream->good() ){
 	    file_provider_stream->clear();
 		  return;
 		}
@@ -222,7 +222,7 @@ public: // Methods: i/o
 	{
 	 	#if defined( USE_FILE_PROVIDER )
 	  // no need to do anything if file is comign from file provider and not from disk
-    if (file_provider_stream->good() ){ 
+    if (file_provider_stream->good() ){
 		  return;
     }
 		#endif
@@ -240,7 +240,7 @@ public: // Methods: i/o
 	seek_beg()
 	{
 	 	#if defined( USE_FILE_PROVIDER )
-    if (file_provider_stream->good() ){ 
+    if (file_provider_stream->good() ){
       file_provider_stream->clear();
       file_provider_stream->seekg( std::ios_base::beg );
       file_provider_stream->clear();
@@ -480,7 +480,7 @@ public: // Properties
 	operator ()() const
 	{
 		#if defined( USE_FILE_PROVIDER )
-    if (file_provider_stream->good() ){ 
+    if (file_provider_stream->good() ){
 			return *file_provider_stream;
 		}
     #endif
@@ -496,7 +496,7 @@ public: // Properties
 	operator ()()
 	{
 		#if defined( USE_FILE_PROVIDER )
-    if (file_provider_stream->good() ){ 
+    if (file_provider_stream->good() ){
 			return *file_provider_stream;
 		}
     #endif
@@ -512,7 +512,7 @@ public: // Properties
 	stream() const
 	{
 		#if defined( USE_FILE_PROVIDER )
-    if (file_provider_stream->good() ){ 
+    if (file_provider_stream->good() ){
 			return *file_provider_stream;
 		}
     #endif
@@ -528,7 +528,7 @@ public: // Properties
 	stream()
 	{
 		#if defined( USE_FILE_PROVIDER )
-    if (file_provider_stream->good() ){ 
+    if (file_provider_stream->good() ){
 			return *file_provider_stream;
 		}
     #endif
@@ -725,7 +725,7 @@ private: // Fields
 	/// library comes before the basic library), so setting the
 	/// alternate search paths is it the responsibility of core::init::init()
 	static vector1< std::string > alternative_search_paths_;
-#if defined( USE_FILE_PROVIDER ) 
+#if defined( USE_FILE_PROVIDER )
 	std::istream *file_provider_stream;
 	std::stringstream bad_stream;
 #endif

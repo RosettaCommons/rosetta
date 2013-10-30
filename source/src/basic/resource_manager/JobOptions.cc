@@ -64,15 +64,15 @@ JobOptions::show(
 ) const {
 	using namespace utility::options;
 	out
-		<< setiosflags(std::ios::left) << setw(16) << "OptionKeyType"
-		<< setiosflags(std::ios::left) << setw(16) << "OptionKey"
+		<< std::setiosflags(std::ios::left) << setw(16) << "OptionKeyType"
+		<< std::setiosflags(std::ios::left) << setw(16) << "OptionKey"
 		<< "OptionValue" << endl;
 	for(
 		map<BooleanOptionKey, bool>::const_iterator
 			o = boolean_options_.begin(), oe = boolean_options_.end(); o != oe; ++o){
 		out
-			<< setiosflags(std::ios::left) << setw(16) << "Boolean"
-			<< setiosflags(std::ios::left) << setw(16) << o->first.id()
+			<< std::setiosflags(std::ios::left) << setw(16) << "Boolean"
+			<< std::setiosflags(std::ios::left) << setw(16) << o->first.id()
 			<< o->second << endl;
 	}
 
@@ -81,8 +81,8 @@ JobOptions::show(
 			o = boolean_vector_options_.begin(), oe = boolean_vector_options_.end();
 		o != oe; ++o){
 		out
-			<< setiosflags(std::ios::left) << setw(16) << "BooleanVector"
-			<< setiosflags(std::ios::left) << setw(16) << o->first.id();
+			<< std::setiosflags(std::ios::left) << setw(16) << "BooleanVector"
+			<< std::setiosflags(std::ios::left) << setw(16) << o->first.id();
 		bool first(true);
 		for(
 			vector1<bool>::const_iterator

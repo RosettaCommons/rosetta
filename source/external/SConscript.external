@@ -32,7 +32,7 @@ def build_sqlite3(current_project):
     env.Append(CPPDEFINES=["SQLITE_DISABLE_LFS"])
 
     ccflags = env['CCFLAGS'].split()
-    ccflags = [f for f in ccflags if not f.startswith("-W") and f != '-pedantic' and f != "-ffor-scope"]
+    ccflags = [f for f in ccflags if not f.startswith("-W") and f != '-pedantic' and f != "-ffor-scope" and f != '-std=c++98']
     ccflags.append("-fno-fast-math")
     env.Replace(CCFLAGS=ccflags)
 
@@ -66,7 +66,10 @@ def build_sqlite3(current_project):
 def build_cppdb(current_project):
     actual = ProjectSettings(current_project)
     env = build.environment.Clone()
+
     actual.libraries.append("sqlite3")
+    #actual.libraries.append('stdc++')
+
     actual.include_path.append("dbio/sqlite3")
     if "postgres" in build.options.extras:
         actual.include_path.append("dbio/postgreSQL")
@@ -123,8 +126,3 @@ if project == "sqlite3":
     build_sqlite3(project)
 elif project == "cppdb":
     build_cppdb(project)
-
-
-
-
-

@@ -112,7 +112,7 @@ namespace boost { namespace math {
 
    template <class RealType, class Policy>
    inline const std::pair<unsigned, unsigned> support(const hypergeometric_distribution<RealType, Policy>& d)
-   { 
+   {
       return range(d);
    }
 

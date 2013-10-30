@@ -450,14 +450,14 @@ LazyResourceManager::show(
 
 	out
 		<< "LazyResourceManager.resource_tags:" << endl
-		<< setiosflags(std::ios::left) << setw(16) << "ResourceDescription"
-		<< setiosflags(std::ios::left) << setw(16) << "JobTag ->"
+		<< std::setiosflags(std::ios::left) << setw(16) << "ResourceDescription"
+		<< std::setiosflags(std::ios::left) << setw(16) << "JobTag ->"
 		<< "ResourceTag" << endl;
 	for(
 		LazyResourceManager::ResourceTagsMap::const_iterator
 			r = resource_tags_.begin(), re = resource_tags_.end(); r != re; ++r){
 		out
-			<< setiosflags(std::ios::left) << setw(16) << r->first.first << setw(16) << r->first.second
+			<< std::setiosflags(std::ios::left) << setw(16) << r->first.first << setw(16) << r->first.second
 			<< r->second << endl;
 	}
 	out << endl;

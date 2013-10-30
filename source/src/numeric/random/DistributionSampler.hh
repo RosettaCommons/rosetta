@@ -15,6 +15,7 @@
 
 // External headers
 #include <boost/utility.hpp>
+
 #include <boost/math/distributions.hpp>
 
 // Utility headers

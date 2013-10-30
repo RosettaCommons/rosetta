@@ -114,12 +114,12 @@ ResourceManager::show(
 ) const {
 	out
 		<< "ResourceManager.resources:" << endl
-		<< setiosflags(std::ios::left) << setw(16) << "ResourceTag" << "ResourceExists" << endl;
+		<< std::setiosflags(std::ios::left) << setw(16) << "ResourceTag" << "ResourceExists" << endl;
 	for(
 		ResourceManager::ResourcesMap::const_iterator
 			r = resources_.begin(), re = resources_.end(); r != re; ++r){
 		out
-			<< setiosflags(std::ios::left) << setw(16) << r->first
+			<< std::setiosflags(std::ios::left) << setw(16) << r->first
 			<< (r->second() ? "true" : "false") << endl;
 	}
 }

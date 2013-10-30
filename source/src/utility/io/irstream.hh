@@ -22,6 +22,7 @@
 // C++ headers
 #include <iosfwd>
 #include <string>
+#include <iostream>
 
 
 namespace utility {

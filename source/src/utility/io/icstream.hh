@@ -24,6 +24,7 @@
 
 // C++ headers
 #include <istream>
+#include <iostream>
 
 
 namespace utility {

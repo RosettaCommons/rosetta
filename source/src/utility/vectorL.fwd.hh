@@ -25,6 +25,7 @@
 
 // C++ headers
 #include <vector>
+#include <memory>
 
 #else
 

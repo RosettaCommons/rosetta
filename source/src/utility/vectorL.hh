@@ -24,6 +24,7 @@
 #include <cassert>
 #include <vector>
 #include <algorithm>
+#include <memory>
 
 
 namespace utility {

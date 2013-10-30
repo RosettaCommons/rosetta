@@ -47,6 +47,7 @@
 #include <math.h>
 #include <numeric>
 #include <algorithm> //needed for std::transform, std::find_if
+#include <functional>
 
 namespace numeric{
 
@@ -408,4 +409,3 @@ private:
 
 
 #endif /* MATHVECTOR_HH_ */
-
