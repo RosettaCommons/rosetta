@@ -45,9 +45,9 @@ public:
 	parse_my_tag( TagCOP const, basic::datacache::DataMap &, Filters_map const &, moves::Movers_map const &, Pose const & );
 
 private:
-	core::Real res_low_, res_high_, res_fade_;
+	core::Real res_low_, res_high_, res_fade_, b_sharpen_;
 	core::Size nresbins_;
-	bool scale_by_fsc_, asymm_only_, ignore_bs_, bin_squared_;
+	bool scale_by_fsc_, asymm_only_, ignore_bs_, bin_squared_, mask_;
 	std::string outmap_name_;
 };
 
