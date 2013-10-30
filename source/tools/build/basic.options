@@ -11,7 +11,14 @@
 
 # C++ compiler.
 # Defaults to whatever is "g++" on the system.
-cxx     = "gcc"
+
+import os
+uname = os.uname()
+
+if uname[0] == "Darwin" and uname[2][0:2] == "13":
+    cxx = "clang"
+else:
+    cxx     = "gcc"
 cxx_ver = "*"
 
 # OS

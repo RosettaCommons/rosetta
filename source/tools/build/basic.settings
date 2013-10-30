@@ -1217,7 +1217,7 @@ settings = {
                 # be C99?  Are there portability issues?
                 "cc"        : [ "std=c99", "isystem external/boost_1_46_1/" ],
                 "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/" ],
-                "compile"   : [ "pipe", "Qunused-arguments" ],
+                "compile"   : [ "pipe", "Qunused-arguments","stdlib=libstdc++" ],
                 # By default, warn as much as possible.
                 #"warn"      : [ "W", "Weverything",
                 #                "Wno-documentation",
