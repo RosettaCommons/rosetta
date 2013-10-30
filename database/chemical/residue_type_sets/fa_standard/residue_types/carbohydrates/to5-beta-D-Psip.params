@@ -1,5 +1,5 @@
-NAME ->5)-beta-D-Psip     # ->5)-beta-D-psicopyranosyl
-IO_STRING Psi Z           # Note lower case!
+NAME ->5)-beta-D-Psip      # ->5)-beta-D-psicopyranosyl
+IO_STRING Psi Z            # Note lower case!
 TYPE POLYMER
 AA UNK
 ATOM  C2  CH1   X   0.43   # anomeric carbon
@@ -13,13 +13,13 @@ ATOM  O6  OOC   X   -0.36
 ATOM  VO6 VIRT VIRT 0.0
 ATOM  C1  CH2   X   0.15
 ATOM  O1  OH    X   -0.65
-ATOM  O2  VIRT VIRT 0.0   # for internal res, virtual to previous residue; allows for consistent chi angles; replaced with real atoms by patch for lower terminus
+ATOM  O2  VIRT VIRT 0.0    # for internal res, virtual to previous residue; allows for consistent chi angles; replaced with real atoms by patch for lower terminus
 ATOM  O3  OH    X   -0.65
 ATOM  O4  OH    X   -0.65
 ATOM 1H1  Hapo  X   0.05
 ATOM 2H1  Hapo  X   0.05
 ATOM  HO1 Hpol  X   0.40
-ATOM  HO2 VIRT VIRT 0.0   # for internal res, virtual; allows for consistent chi angles; replaced with real atoms by patch for lower terminus
+ATOM  HO2 VIRT VIRT 0.0    # for internal res, virtual; allows for consistent chi angles; replaced with real atoms by patch for lower terminus
 ATOM  H3  Hapo  X   0.05
 ATOM  HO3 Hpol  X   0.40
 ATOM  H4  Hapo  X   0.05
@@ -29,7 +29,7 @@ ATOM 1H6  Hapo  X   0.05
 ATOM 2H6  Hapo  X   0.05
 UPPER_CONNECT O5
 LOWER_CONNECT C2
-BOND  C2   VO6            # cyclic bond
+BOND  C2   VO6             # cyclic bond
 BOND  C2   C3
 BOND  C3   C4
 BOND  C4   C5
@@ -41,7 +41,8 @@ BOND  C3   O3
 BOND  C4   O4
 BOND  C5   C6
 BOND  C6   O6
-CUT_BOND  O6   C2         # cyclic bond
+BOND  O6   C2              # cyclic bond
+CUT_BOND  O6   C2          # cyclic bond
 BOND  C1   O1
 BOND  C1  1H1
 BOND  C1  2H1

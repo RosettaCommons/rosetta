@@ -37,6 +37,7 @@ BOND  C4   O4
 BOND  O4   HO4
 BOND  C4   C5
 BOND  C5   O5
+BOND  O5   C1              # cyclic bond
 CUT_BOND  O5   C1          # cyclic bond
 BOND  C5   C6
 BOND  C1   O1
