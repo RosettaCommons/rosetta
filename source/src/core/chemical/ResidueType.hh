@@ -1823,17 +1823,10 @@ private:
 	// per-atom properties
 	/// indices of the atoms psuedo bonded atoms. Used in orbital code
 	utility::vector1< utility::vector1<core::Size > > orbital_bonded_neighbor_;
-	/// indices of each atom's base atom
-	utility::vector1< Size        > atom_base_;
-	/// indices of each atom's second base atom, for acceptors atom only
-	utility::vector1< Size        > abase2_; // acceptors only
 	/// indices of each heavyatom's first attached hydrogen
 	utility::vector1< Size        > attached_H_begin_;
 	/// indices of each heavyatom's last attached hydrogen
 	utility::vector1< Size        > attached_H_end_;
-
-	/// atom parents
-	utility::vector1< Size          > parents_;
 
 	//// Data for the mm potentials.  List all of the intra-residue dihedral angles and bond angles.
 

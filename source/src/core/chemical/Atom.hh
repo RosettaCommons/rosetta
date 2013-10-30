@@ -64,6 +64,9 @@ public:
 			atom_type_index_(0),
 			mm_atom_type_index_(0),
 			charge_(0),
+            atom_base_(0),
+            abase2_(0),
+            parent_(0),
 			ideal_xyz_(),
 			bonded_neighbors_(),
 			bonded_neighbor_types_(),
@@ -88,6 +91,9 @@ public:
 		atom_type_index_(atom_type_index),
 		mm_atom_type_index_(mm_atom_type_index),
 		charge_(charge),
+        atom_base_(0),
+        abase2_(0),
+        parent_(0),
 		ideal_xyz_(ideal_xyz),
 		bonded_neighbors_(),
 		bonded_neighbor_types_(),
@@ -102,6 +108,9 @@ public:
 		atom_type_index_(src.atom_type_index_),
 		mm_atom_type_index_(src.mm_atom_type_index_),
 		charge_(src.charge_),
+        atom_base_(src.atom_base_),
+        abase2_(src.abase2_),
+        parent_(src.parent_),
 		ideal_xyz_(src.ideal_xyz_),
 		bonded_neighbors_(src.bonded_neighbors_),
 		bonded_neighbor_types_(src.bonded_neighbor_types_),
@@ -122,6 +131,9 @@ public:
 				atom_type_index_ == atom.atom_type_index_ &&
 				mm_atom_type_index_ == atom.mm_atom_type_index_ &&
 				charge_ == atom.charge_ &&
+                atom_base_ == atom.atom_base_ &&
+                abase2_ == atom.abase2_ &&
+                parent_ == atom.parent_ &&
 				bonded_neighbors_ == atom.bonded_neighbors_ &&
 				bonded_neighbor_types_ == atom.bonded_neighbor_types_ &&
                 cut_bond_neighbors_ == atom.cut_bond_neighbors_ &&
@@ -145,6 +157,10 @@ public:
 	AtomIndices & bonded_neighbors(){ return bonded_neighbors_;}
 	utility::vector1<BondName> & bonded_neighbor_types() { return bonded_neighbor_types_;}
     AtomIndices & cut_bond_neighbors(){ return cut_bond_neighbors_;}
+    Size atom_base()const{return atom_base_;}
+    Size abase2()const{return abase2_;}
+    Size parent() const{return parent_;}
+
 
 // Setters
 	void name( std::string const & name ) { name_ = name; };
@@ -152,10 +168,13 @@ public:
 	void mm_name( std::string const & name ) { mm_name_ = name; };
 	void atom_type_index( Size const & atom_type_index ) { atom_type_index_ = atom_type_index; };
 	void mm_atom_type_index( Size const & mm_atom_type_index ) { mm_atom_type_index_ = mm_atom_type_index; };
+    void atom_base(Size atom_base){atom_base_ = atom_base;}
+    void abase2(Size abase2){abase2_ = abase2;}
 	void charge( Real const & charge ) { charge_ = charge; };
 	void ideal_xyz( Vector const & ideal_xyz) { ideal_xyz_= ideal_xyz; };
 	void bonded_neighbors( AtomIndices const & bonded_neighbors) { bonded_neighbors_ = bonded_neighbors; }
 	void icoor( AtomICoor const & icoor) { icoor_ = icoor; };
+    void parent(Size parent){parent_ = parent;}
 
 	// data
 private:
@@ -170,6 +189,9 @@ private:
 	AtomIndices bonded_neighbors_;
 	utility::vector1<BondName> bonded_neighbor_types_;
     AtomIndices cut_bond_neighbors_;
+    Size atom_base_;
+    Size abase2_;
+    Size parent_;
 	
 	/// MM atom-type index
 	Size mm_atom_type_index_;

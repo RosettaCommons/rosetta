@@ -203,11 +203,8 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 	ndihe_( residue_type.ndihe_ ),
 	nbonds_(residue_type.nbonds_),
 	orbital_bonded_neighbor_(residue_type.orbital_bonded_neighbor_),
-	atom_base_(residue_type.atom_base_),
-	abase2_(residue_type.abase2_), // acceptors only
 	attached_H_begin_(residue_type.attached_H_begin_),
 	attached_H_end_(residue_type.attached_H_end_),
-	parents_(residue_type.parents_),
 	dihedral_atom_sets_(residue_type.dihedral_atom_sets_),
 	dihedrals_for_atom_(residue_type.dihedrals_for_atom_),
 	bondangle_atom_sets_(residue_type.bondangle_atom_sets_),
@@ -528,16 +525,17 @@ ResidueType::atom_name( Size const index ) const
 Size
 ResidueType::atom_base( Size const atomno ) const
 {
-	PyAssert((atomno > 0) && (atomno <= atom_base_.size()), "ResidueType::atom_base( Size const atomno ): atomno is not in this ResidueType!");
-	return atom_base_[ atomno ];
+	PyAssert((atomno > 0) && (atomno <= natoms_), "ResidueType::atom_base( Size const atomno ): atomno is not in this ResidueType!");
+	return graph_[ordered_atoms_[atomno]].atom_base();
+
 }
 
 /// @brief get index of an atom's second base atom
 Size
 ResidueType::abase2( Size const atomno ) const
 {
-	PyAssert((atomno > 0) && (atomno <= abase2_.size()), "ResidueType::abase2( Size const atomno ): atomno is not in this ResidueType!");
-	return abase2_[ atomno ];
+	PyAssert((atomno > 0) && (atomno <=  natoms_), "ResidueType::abase2( Size const atomno ): atomno is not in this ResidueType!");
+	return graph_[ordered_atoms_[atomno]].abase2();
 }
 
 Size
@@ -646,10 +644,8 @@ ResidueType::add_atom(
 
 	assert( ordered_atoms_.size() == natoms_ );
 
-	if ( (*atom_types_)[type].is_acceptor() )
-			++n_hbond_acceptors_;
-	if ( (*atom_types_)[type].is_donor() )
-			++n_hbond_donors_;
+	if ( (*atom_types_)[type].is_acceptor() ) ++n_hbond_acceptors_;
+	if ( (*atom_types_)[type].is_donor() ) ++n_hbond_donors_;
 
 	// add the atomic weight of this atom
 	if( elements_ )	{ // Be robust if elements_ isn't defined.
@@ -661,15 +657,12 @@ ResidueType::add_atom(
 		tr.Warning << "WARNING Elements set undefined." << std::endl;
 	}
 
-	parents_.push_back(0);
 
-	// allocate space for the new atom !!!!!!!!!!!!!!!!!!!!!!1
+	// allocate space for the new atom !!!!!!!!!!!!!!!!!!!!!!
 	// eg, in the atom/resconn map
-	assert( atom_2_residue_connection_map_.size() == natoms_-1  &&
-					atom_base_.size() == natoms_-1);
+	assert( atom_2_residue_connection_map_.size() == natoms_-1);
 	atom_2_residue_connection_map_.resize( natoms_ );
-	atom_base_.push_back( natoms_ ); // default value, should generally be changed
-
+	graph_atom->atom_base(natoms_); // base defaults to self
 	orbital_bonded_neighbor_.resize(natoms_);
 
 }
@@ -1060,14 +1053,14 @@ ResidueType::set_atom_base(
 			 !( i1 == 1 && i2 == 1 && natoms_ == 1 ) ) { // note we allow special exception for single-atom residue
 		utility_exit_with_message( "set_atom_base: atoms must be bonded!" );
 	}
-	if ( atom_base_.size() < Size(i1) ) utility_exit_with_message("ResidueType:: shouldnt get here!");
+	if ( ordered_atoms_.size() < Size(i1) ) utility_exit_with_message("ResidueType:: shouldnt get here!");
 
 	//Need to add a cut-bond check too!!!
 	if ( std::find( i1_cut_nbrs.begin(), i1_cut_nbrs.end(), i2 ) != i1_cut_nbrs.end() )  {
 		utility_exit_with_message( "set_atom_base: cut_bond disallows specification of atom base!" );
 	}
 
-	atom_base_[ i1 ] = i2;
+	graph_[ordered_atoms_[i1]].atom_base(i2);
 
 }
 
@@ -1406,19 +1399,15 @@ ResidueType::reorder_primary_data(AtomIndices const & old2new)
 	assert( old_natoms == ordered_atoms_.size() );
 
 	// copy the old per-atom data: note that attached_H_begin and attached_H_end have already been setup
-	// and abase2_ is derived data setup down below
+	// and abase2 is derived data setup down below
 	VDs old_ordered_atoms( ordered_atoms_ );
 
 	utility::vector1< utility::vector1 <core::Size> > old_orbital_bonded_neighbor(orbital_bonded_neighbor_);
-	AtomIndices old_atom_base( atom_base_ );
 
-	utility::vector1<Size> old_parents(parents_);
 
 	if ( old_natoms != natoms_ ) { // because we deleted some atoms
 		ordered_atoms_.resize( natoms_ );
 		orbital_bonded_neighbor_.resize( natoms_ );
-		atom_base_.resize( natoms_ );
-		parents_.resize(natoms_);
 		atom_2_residue_connection_map_.resize( natoms_ );
 	}
 	// fill in the new data
@@ -1426,8 +1415,8 @@ ResidueType::reorder_primary_data(AtomIndices const & old2new)
 		Size const new_index( old2new[ old_index ] );
 		if ( new_index == 0 ) continue; // deleted
 		ordered_atoms_[ new_index] = old_ordered_atoms[ old_index];
-		atom_base_[ new_index ] = old2new[ old_atom_base[ old_index ] ];
-		assert( atom_base_[ new_index ] ); // this will fail if we deleted an atom which was the atom_base for another atom
+		graph_[ordered_atoms_[new_index]].atom_base( old2new[atom_base(new_index)] );
+		assert( graph_[ordered_atoms_[new_index]].atom_base() ); // this will fail if we deleted an atom which was the atom_base for another atom
 
 
 		AtomIndices & new_bonded_neighbors(graph_[old_ordered_atoms[old_index]].bonded_neighbors());
@@ -1461,8 +1450,11 @@ ResidueType::reorder_primary_data(AtomIndices const & old2new)
         }
 
 
-		parents_[ new_index ] = old_parents[ old_index ];
-
+        if( graph_[ordered_atoms_[new_index]].parent() ){ // If the parent is 0, it is still 0
+            graph_[ordered_atoms_[new_index]].parent( old2new[ graph_[ordered_atoms_[new_index]].parent() ] );
+        }
+        
+        
 		VD vd = ordered_atoms_[ new_index ];
 		Atom & a2 =  graph_[vd];
 		for ( Size i=1; i<= 3; ++i ) {
@@ -1658,7 +1650,7 @@ ResidueType::update_derived_data()
 	for ( Size ii = 1; ii <= Hpos_polar_.size(); ++ii ) {
 		Size hind = Hpos_polar_[ ii ];
 		atom_is_polar_hydrogen_[ ii ] = 1;
-		Size base = atom_base_[ hind ];
+		Size base = atom_base(hind);
 		heavyatom_has_polar_hydrogens_[ base ] = 1;
 	}
 	for ( Size ii = 1; ii <= accpt_pos_.size(); ++ii ) {
@@ -1667,38 +1659,40 @@ ResidueType::update_derived_data()
 
 
 	// now setup abase2
-	abase2_.clear();
-	abase2_.resize( natoms_ );
-
+    for(Size ii=1; ii <= ordered_atoms_.size(); ++ii){
+        graph_[ordered_atoms_[ii]].abase2( 0 ); /// DEPRECATED
+    }
+    
+    
 	for ( Size ii=1, ii_end= accpt_pos_.size(); ii<= ii_end; ++ii ) {
 		uint const i( accpt_pos_[ii] );
-		uint const i_base( atom_base_[i] );
+		uint const i_base( atom_base(i) );
+		assert(i_base == atom_base(i) );
 		assert( i_base != 0 );
 		AtomIndices const & i_nbrs(bonded_neighbor(i));
 		if ( i_nbrs.size() == 0 ) {
 		        utility_exit_with_message( "failed to set abase2 for acceptor atom, it has no nbrs!" );
 		} else if ( i_nbrs.size() == 1 ) {
 			assert( i_nbrs[1] == i_base );
-			abase2_[ i ] = atom_base_[ i_base ];
+			graph_[ordered_atoms_[i]].abase2(atom_base(i_base));
 			//iwd  The first child of the root is root's atom_base.
 			//iwd  But if that child has no children, it ends up as its own abase2.
 			//iwd  So instead we use the second child of the parent,
 			//iwd  which must exist if there are 3+ atoms in this tree.
-			if( abase2_[ i ] == i ) {
+			if(abase2(i) == i ) {
 				AtomIndices const & i_base_nbrs(bonded_neighbor(i_base) );
 				for(Size jj = 1, jj_end = i_base_nbrs.size(); jj <= jj_end; ++jj) {
 					if(i_base_nbrs[ jj ] != i) {
-						abase2_[ i ] = i_base_nbrs[ jj ];
-						//TR << "Using " << atom_name(abase2_[ i ]) << " as abase2 for " << atom_name(i) << std::endl;
+						graph_[ordered_atoms_[i]].abase2( i_base_nbrs[ jj ] );
 						break;
 					}
 				}
 			}
-			assert( abase2_[ i ] != i && abase2_[ i ] != i_base && abase2_[ i ] != 0 );
+            assert(abase2(i)!= i && abase2(i) != i_base && abase2(i) != 0 );
 		} else if ( i_nbrs[1] == i_base ) {
-			abase2_[ i ] = i_nbrs[2];
+			graph_[ordered_atoms_[i]].abase2( i_nbrs[2] );
 		} else {
-			abase2_[ i ] = i_nbrs[1];
+			graph_[ordered_atoms_[i]].abase2(  i_nbrs[1] );
 		}
 	}
 
@@ -2118,7 +2112,7 @@ ResidueType::set_icoor(
 
 		// update atom_base?
 		if ( ( stub_atom1 != atm ) && has( stub_atom1 ) &&
-				 ( atom_base_.size() < atomno || atom_base_[ atomno ] == 0 || atom_base_[ atomno ] == atomno ) ) {
+				 ( atom_base(atomno) == 0 || atom_base(atomno) == atomno ) ) {
 			set_atom_base( atm, stub_atom1 );
 		}
 		if ( update_xyz ) {
@@ -2167,7 +2161,7 @@ ResidueType::set_icoor(
 			graph_[ordered_atoms_[ atomno ]].icoor( ic );
 			// update atom_base?
 			if ( ( stub_atom1 != atm ) && has( stub_atom1 ) &&
-					 ( atom_base_.size() < atomno || atom_base_[ atomno ] == 0 || atom_base_[ atomno ] == atomno ) ) {
+					 (atom_base(atomno)  == 0 || atom_base(atomno) == atomno) ) {
 				set_atom_base( atm, stub_atom1 );
 			}
 			if ( update_xyz ) {
@@ -2300,7 +2294,7 @@ void ResidueType::assign_internal_coordinates(std::string const & current_atom)
 		}
 	}else
 	{
-		core::Size parent_index = parents_[current_atom_index];
+		core::Size parent_index = graph_[ordered_atoms_[current_atom_index]].parent();
 		AtomICoor parent_icoor = icoor(parent_index);
 		parent_stub1 = atom_name(current_atom_index);
 		parent_stub2 = atom_name(parent_index);
@@ -2313,7 +2307,7 @@ void ResidueType::assign_internal_coordinates(std::string const & current_atom)
 	{
 		core::Size child_index = children[index];
 
-		if((parents_[child_index] != 0) && (child_index != nbr_atom_))
+		if((graph_[ordered_atoms_[child_index]].parent() != 0) && (child_index != nbr_atom_))
 		{
 			continue;
 		}
@@ -2321,7 +2315,7 @@ void ResidueType::assign_internal_coordinates(std::string const & current_atom)
 		std::string child_stub1 = parent_stub1;
 		std::string child_stub2 = parent_stub2;
 		std::string child_stub3 = previous_sibling;
-		parents_[child_index] = current_atom_index;
+		graph_[ordered_atoms_[child_index]].parent(current_atom_index);
 		if((current_atom_index == nbr_atom_) && (previous_sibling == parent_stub2))
 		{
 			child_stub3 = parent_stub3;
@@ -2522,11 +2516,11 @@ ResidueType::update_last_controlling_chi() {
 	for ( Size ii = 1; ii <= nchi(); ++ii ) {
 		Size const iiat3 = chi_atoms_[ ii ][ 3 ];
 		// This may be unnecessary; I believe two atoms pair as each other's bases only at the mainchain.
-		Size const iiat3base = atom_base_[ iiat3 ];
+		Size const iiat3base = atom_base(iiat3);
 		AtomIndices const & ii_nbrs(bonded_neighbor(iiat3));
 		for ( Size jj = 1; jj <= ii_nbrs.size(); ++jj ) {
 			Size const jj_atom = ii_nbrs[ jj ];
-			if ( atom_base_[ jj_atom ] == iiat3 && iiat3base != jj_atom ) {
+			if ( atom_base(jj_atom) == iiat3 && iiat3base != jj_atom ) {
 				last_controlling_chi_[ jj_atom ] = ii;
 			}
 		}
@@ -2539,11 +2533,11 @@ ResidueType::update_last_controlling_chi() {
 		/// Note children of atom 3 of chi_ii as being controlled by chi ii.
 		Size const iiat3 = chi_atoms_[ ii ][ 3 ];
 		// This may be unnecessary; I believe two atoms pair as each other's bases only at the mainchain.
-		Size const iiat3base = atom_base_[ iiat3 ];
+		Size const iiat3base = atom_base(iiat3);
 		AtomIndices const & ii_nbrs(bonded_neighbor(iiat3)  );
 		for ( Size jj = 1; jj <= ii_nbrs.size(); ++jj ) {
 			Size const jj_atom = ii_nbrs[ jj ];
-			if ( atom_base_[ jj_atom ] == iiat3 && iiat3base != jj_atom ) {
+			if (atom_base(jj_atom) == iiat3 && iiat3base != jj_atom ) {
 				note_chi_controls_atom( ii, jj_atom );
 			}
 		}
@@ -2581,7 +2575,7 @@ void
 ResidueType::note_chi_controls_atom( Size chi, Size atomno )
 {
 	/// This should never be called on the "root" atom or it will enter an infinite loop
-	assert( atom_base_[ atom_base_[ atomno ]] != atomno );
+	assert( graph_[ordered_atoms_[ atom_base(atomno)]].atom_base() != atomno );
 
 	/// End the recursion: this atom already has had it's last chi identified, and it's not
 	/// the chi we're currently labeling atoms with.
@@ -2594,11 +2588,10 @@ ResidueType::note_chi_controls_atom( Size chi, Size atomno )
 		/// descend into atoms who list atomno as their parent;
 		/// atom_base_ defines a tree except at the root, where
 		/// atom_base_[ atom_base_[ ii ]] == ii
-		if ( atom_base_[ nbrs[ ii ]] == atomno ) {
+		if (atom_base(nbrs[ii]) == atomno ) {
 			note_chi_controls_atom( chi, nbrs[ ii ] );
 		}
 	}
-
 }
 
 void
