@@ -102,7 +102,7 @@ def main(args):
 
             res = test_suite.run_test_suite(rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Options.jobs, verbose=True)
 
-            if res[_StateKey_] not in _ResultCodes_.values(): print 'Warning!!! TestSuite {} failed with unknow result code: {}'.format(t, res[_StateKey_])
+            if res[_StateKey_] not in _S_Values_: print 'Warning!!! TestSuite {} failed with unknow result code: {}'.format(t, res[_StateKey_])
             else:
                 js = json.dumps(res, sort_keys=True, indent=2)
                 file( working_dir + '/.results.json', 'w').write(js)

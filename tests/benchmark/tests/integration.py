@@ -12,7 +12,7 @@
 ## @brief  Rosetta/PyRosetta integrtion tests
 ## @author Sergey Lyskov
 
-import os, commands
+import os, shutil, commands
 
 class BenchmarkIntegrationError(Exception): pass
 
@@ -69,7 +69,9 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
     else:
         ref_files_location = rosetta_dir+'/tests/integration/ref/'
-        if not os.path.isdir(ref_files_location): TR('No {} found, creating a dummy one...'.format(ref_files_location));  os.mkdir(ref_files_location)
+        if os.path.isdir(ref_files_location): TR( 'Removing old ref dir {}...'.format(ref_files_location) );  shutil.rmtree(ref_files_location)
+        TR('Creating a dummy ref dir {}...'.format(ref_files_location));
+        os.mkdir(ref_files_location)
 
         files_location = rosetta_dir+'/tests/integration/new/'
         #if os.path.isdir(files_location): TR('Removing old ref dir %s...' % files_location);  shutil.rmtree(files_location)  # remove old dir if any
