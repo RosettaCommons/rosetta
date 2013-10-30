@@ -22,7 +22,7 @@ sources = {
 		"ResidueTypeSetTests",
 	],
 	"chemical/carbohydrates" : [
-		"CarbohydrateInfo",
+		#"CarbohydrateInfo",
 		"database_io",
 		"RingConformerSet",
 	],
