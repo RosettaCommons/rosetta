@@ -280,7 +280,7 @@ SelectMaxsubEvaluator::apply( core::pose::Pose& pose ) const {
 
 
 SymmetricRmsdEvaluator::SymmetricRmsdEvaluator( core::pose::PoseCOP pose, std::string tag )
-	: evaluation::SingleValuePoseEvaluator< Real > ("symmetric rms"+tag ),
+	: evaluation::SingleValuePoseEvaluator< Real > ("symmetric_rms"+tag ),
 		rmsd_pose_( pose ) {}
 
 SymmetricRmsdEvaluator::~SymmetricRmsdEvaluator(){}
