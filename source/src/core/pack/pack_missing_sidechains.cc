@@ -106,4 +106,3 @@ bool figure_out_repackable_residues( core::pose::Pose & pose,
 
 } //namespace pack
 } //namespace core
-

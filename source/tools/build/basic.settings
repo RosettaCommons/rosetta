@@ -1217,8 +1217,13 @@ settings = {
                 # be C99?  Are there portability issues?
                 "cc"        : [ "std=c99", "isystem external/boost_1_46_1/" ],
                 "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/" ],
-                "compile"   : [ "pipe", "Qunused-arguments", 'DUNUSUAL_ALLOCATOR_DECLARATION', 'ftemplate-depth-256',
-		                'D__ROSETTA_CLANG__', 'DBOOST_NO_0X_HDR_INITIALIZER_LIST -DBOOST_DETAIL_NO_CONTAINER_FWD', 'std=c++98',],  #   "stdlib=libstdc++" ],  # Sergey: adding BOOST_NO_0X_HDR_INITIALIZER_LIST because our boost version could not figure it out on it own
+                "compile"   : [ "pipe", "Qunused-arguments", 'DUNUSUAL_ALLOCATOR_DECLARATION', 'ftemplate-depth-256', "stdlib=libstdc++", ],
+			        # flags for Clang C++ lib:
+		                #'D__ROSETTA_CLANG__', 'DBOOST_NO_0X_HDR_INITIALIZER_LIST -DBOOST_DETAIL_NO_CONTAINER_FWD -DBOOST_NO_0X_HDR_TUPLE ',],  # 'std=c++98',  "stdlib=libstdc++" ],  # Sergey: adding BOOST_NO_0X_HDR_INITIALIZER_LIST because our boost version could not figure it out on it own
+				#  -DBOOST_MATH_TUPLE_HPP_INCLUDED
+		'shlink'      : [ "stdlib=libstdc++"],
+		'link'        : [ "stdlib=libstdc++"],
+
                 # By default, warn as much as possible.
                 #"warn"      : [ "W", "Weverything",
                 #                "Wno-documentation",

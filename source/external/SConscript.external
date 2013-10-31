@@ -67,6 +67,9 @@ def build_cppdb(current_project):
     actual = ProjectSettings(current_project)
     env = build.environment.Clone()
 
+    #env['CCFLAGS'] += ' -stdlib=libstdc++'
+    #env['LINK'] += ' -stdlib=libstdc++'
+
     actual.libraries.append("sqlite3")
     #actual.libraries.append('stdc++')
 
