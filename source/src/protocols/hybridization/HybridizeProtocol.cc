@@ -356,9 +356,9 @@ void
 HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 	if (fragments_big_.size() > 0 && fragments_small_.size() > 0) return;
 
-	if (!fragments_big_.size()) {
-		core::fragment::FragSetOP frags = new core::fragment::ConstantLengthFragSet( 9 );
+	core::Size fragbiglen=9;
 
+	if (!fragments_big_.size()) {
 		// number of residues
 		core::Size nres_tgt = pose.total_residue();
 		core::conformation::symmetry::SymmetryInfoCOP symm_info;
@@ -370,6 +370,10 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 		}
 		if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
 		while (!pose.residue(nres_tgt).is_protein()) nres_tgt--;
+
+		fragbiglen = std::min( fragbiglen, nres_tgt );
+
+		core::fragment::FragSetOP frags = new core::fragment::ConstantLengthFragSet(  );
 
 		// sequence
 		std::string tgt_seq = pose.sequence();
@@ -405,10 +409,10 @@ HybridizeProtocol::check_and_create_fragments( core::pose::Pose & pose ) {
 		}
 
 		// pick from vall based on template SS + target sequence
-		for ( core::Size j=1; j<=nres_tgt-8; ++j ) {
-			core::fragment::FrameOP frame = new core::fragment::Frame( j, 9 );
+		for ( core::Size j=1; j<=nres_tgt-fragbiglen+1; ++j ) {
+			core::fragment::FrameOP frame = new core::fragment::Frame( j, fragbiglen );
 			frame->add_fragment(
-				core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( tgt_ss.substr( j-1, 9 ), tgt_seq.substr( j-1, 9 ), 25, true, core::fragment::IndependentBBTorsionSRFD() ) );
+				core::fragment::picking_old::vall::pick_fragments_by_ss_plus_aa( tgt_ss.substr( j-1, fragbiglen ), tgt_seq.substr( j-1, fragbiglen ), 25, true, core::fragment::IndependentBBTorsionSRFD() ) );
 			frags->add( frame );
 		}
 		fragments_big_.push_back( frags );
