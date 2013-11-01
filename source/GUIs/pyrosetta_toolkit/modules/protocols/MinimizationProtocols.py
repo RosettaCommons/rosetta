@@ -139,7 +139,7 @@ class MinimizationProtocols(ProtocolBaseClass):
         """
         
         tf = self.input_class.regions.get_basic_tf(self.pose)
-        pack_mover=PackRotamersMover(self.score_class.score, packer_task)
+        pack_mover=PackRotamersMover(self.score_class.score)
         pack_mover.task_factory(tf)
         pack_mover.score_function(self.score_class.score)
         

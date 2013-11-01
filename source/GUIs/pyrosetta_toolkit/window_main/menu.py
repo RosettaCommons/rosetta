@@ -199,7 +199,7 @@ class Menus():
 	###Analysis###
 	self.analysis_menu = Menu(self.main_menu, tearoff=0)
 
-	self.analysis_menu.add_command(label = "Interface Analyzer", command=lambda: analysis_tools.analyze_interface(self.toolkit.pose, self.toolkit.score_class.score))
+	self.analysis_menu.add_command(label = "Interface Analyzer", command=lambda: analysis_tools.analyze_interface(self.toolkit.pose, self.toolkit.score_class.score, self.toolkit))
 	self.analysis_menu.add_command(label = "Packing Analyzer", command = lambda: analysis_tools.analyze_packing(self.toolkit.pose))
 	self.analysis_menu.add_command(label = "Loops Analyzer", command = lambda: analysis_tools.analyze_loops(self.toolkit.pose, self.toolkit.input_class.loops_as_strings))
 	self.analysis_menu.add_command(label = "VIP Analyzer", command = lambda: AnalysisProtocols(self.toolkit.pose, self.toolkit.score_class, self.toolkit.input_class, self.toolkit.output_class).analyze_vip())

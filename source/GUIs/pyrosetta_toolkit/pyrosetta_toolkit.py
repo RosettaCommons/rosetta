@@ -280,7 +280,7 @@ class MainTracer(rosetta.basic.PyTracer):
         self.textbox = textbox
    def output_callback(self, s):
       s = " "+s
-      self.textbox.insert(1.0, s)
+      self.textbox.insert(END, s)
       #print s
    
       

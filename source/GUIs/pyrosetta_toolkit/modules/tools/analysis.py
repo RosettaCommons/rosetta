@@ -111,7 +111,7 @@ def analyze_packing(p):
     print "\nSee the paper on RosettaHoles to find out more about this statistic (Protein Sci. 2009 Jan;18(1):229-39.)"
     pack_mover.apply(p)
 
-def analyze_interface(p, scorefxn):
+def analyze_interface(p, scorefxn, toolkit = None):
     print "Analyzing Interface.  "
     print "\nNo references are directly associated with this protocol. It was used with Documentation for AnchoredDesign application (see that app's documentation) and CAPRI21 interface descrimination. (Steven Lewis)"
     print "The Mover will seperate chains defined in the interface to calculate energy differences.  Repacking is recommended."
@@ -129,7 +129,7 @@ def analyze_interface(p, scorefxn):
     pack_separated = tkMessageBox.askyesno(message="rePack after separation (Recommended)")
 
     if (p.conformation().num_chains()==2):
-        interface_mover = InterfaceAnalyzerMover(1, True, scorefxn, False, pack_together, pack_separated)
+        interface_mover = InterfaceAnalyzerMover(1, True, scorefxn, False, pack_together, pack_separated, False)
         interface_mover.apply(p)
     
     else:
@@ -142,8 +142,11 @@ def analyze_interface(p, scorefxn):
                     break
         
         #Pass in the set.
-        interface_mover = InterfaceAnalyzerMover(rosetta.Set(chain_ids), True, scorefxn, False, pack_together, pack_separated)
+        print "Fixedchains: "+repr(chains)
+        interface_mover = InterfaceAnalyzerMover(rosetta.Set(chain_ids), True, scorefxn, False, pack_together, pack_separated, False )
+        interface_mover.use_tracer(True)
         interface_mover.apply(p)
+        print "Interface Analyzer complete."
         
 def analyze_loops(p, loops_as_strings):
     """
