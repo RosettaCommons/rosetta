@@ -110,6 +110,8 @@
 ///////////////////////////////////////////////////
 #include <fstream>
 #include <ctime>
+#include <devel/splice/RBInMover.hh>
+#include <devel/splice/RBOutMover.hh>
 
 namespace devel {
 namespace splice {
@@ -186,6 +188,7 @@ Splice::Splice() :
 	end_dbase_subset_ = new basic::datacache::DataMapObj< bool >;
 	end_dbase_subset_->obj = false;
 	basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments ].value(true);
+	rb_sensitive_ = false;
 }
 
 //Tell the JD to output comments
@@ -381,6 +384,7 @@ Splice::apply( core::pose::Pose & pose )
 	/// from_res() and to_res() can be determined directly on the tag, through a taskfactory, or through a template file. If through a template file,
 	/// we start by translating from_res/to_res from the template file to the in coming pose as in the following paragraph
 	if( template_file_ != "" ){ /// using a template file to determine from_res() to_res()
+		rb_adjust_template( pose );
 		core::Size template_from_res( 0 ), template_to_res( 0 );
 
 		if( from_res() && to_res() ){
@@ -875,6 +879,7 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 {
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
 
+	rb_sensitive( tag->getOption< bool >( "rb_sensitive", false ) );
 	typedef utility::vector1< std::string > StringVec;
 	///Adding Checker. If the "Current Segment" does not appear in the list of segements than exit with error
 	segment_names_ordered_.clear(); //This string vector hold all the segment names inserted bythe user to ensure that the sequence profile is built according to tthe user
@@ -1041,7 +1046,7 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 
 	restrict_to_repacking_chain2( tag->getOption< bool >( "restrict_to_repacking_chain2", true ) );
 
-	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" cut_secondarystruc: "<<cut_secondarystruc()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<" loop_dbase_file_name: "<<loop_dbase_file_name_<<" loop_pdb_source: "<<loop_pdb_source()<<" mover_tag: "<<mover_tag_<<" torsion_database: "<<torsion_database_fname_<<" restrict_to_repacking_chain2: "<<restrict_to_repacking_chain2()<<std::endl;
+	TR<<"from_res: "<<from_res()<<" to_res: "<<to_res()<<" dbase_iterate: "<<dbase_iterate()<<" randomize_cut: "<<randomize_cut()<<" cut_secondarystruc: "<<cut_secondarystruc()<<" source_pdb: "<<source_pdb()<<" ccd: "<<ccd()<<" rms_cutoff: "<<rms_cutoff()<<" res_move: "<<res_move()<<" template_file: "<<template_file()<<" checkpointing_file: "<<checkpointing_file_<<" loop_dbase_file_name: "<<loop_dbase_file_name_<<" loop_pdb_source: "<<loop_pdb_source()<<" mover_tag: "<<mover_tag_<<" torsion_database: "<<torsion_database_fname_<<" restrict_to_repacking_chain2: "<<restrict_to_repacking_chain2()<<" rb_sensitive: "<<rb_sensitive()<<std::endl;
 }
 
 protocols::moves::MoverOP
@@ -1637,6 +1642,23 @@ Splice::check_aa(std::string curraa, utility::vector1<core::Real > profRow)
 			return false;
 		}
 
+}
+void
+Splice::rb_adjust_template( core::pose::Pose const & pose ) const{
+	if( !rb_sensitive() )
+		return;
+
+	RBOutMover rbo;
+//	template_pose_->dump_pdb( "pre_jump_template.pdb" );
+	core::pose::Pose copy_pose( pose ); /// I don't want the fold tree to change on pose...
+	core::kinematics::Jump const pose_jump = rbo.get_disulf_jump( copy_pose, *template_pose_ );
+
+	RBInMover rbi;
+	rbi.set_fold_tree( *template_pose_ );
+	template_pose_->set_jump( 1, pose_jump );
+//	template_pose_->dump_pdb( "post_jump_template.pdb" );
+//	pose.dump_pdb( "pose.pdb" );
+//	runtime_assert( 0 );
 }
 
 } //splice

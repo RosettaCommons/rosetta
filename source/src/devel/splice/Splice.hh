@@ -200,6 +200,11 @@ public:
   bool add_sequence_constraints_only() const{ return add_sequence_constraints_only_; }
 	void add_sequence_constraints_only( bool const a ){ add_sequence_constraints_only_ = a; }
 
+	bool rb_sensitive() const{ return rb_sensitive_; }
+	void rb_sensitive( bool const r ){ rb_sensitive_ = r;}
+
+	void rb_adjust_template( core::pose::Pose const & pose ) const; // adjust the template_pose_ according the rb state of the current pose (if rb_sensitive is on)
+
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply
@@ -243,8 +248,6 @@ private:
 	utility::pointer::owning_ptr< basic::datacache::DataMapObj< std::string > > mover_tag_; /// dflt NULL; to communicate the current Splice mover's loop origin to the GenericMC
 	protocols::filters::FilterOP splice_filter_;
 	std::string Pdb4LetName_;
-	
-
 
 ///sequence profiles
 	bool use_sequence_profiles_; // dflt false; set internally only, by whether or not the Segments are defined
@@ -255,6 +258,7 @@ private:
 	core::Real profile_weight_away_from_interface_; //dflt 1.0; you can define a different weight outside an 8A shell around the partner protein. This should typically be set higher than 1.0, implying that the sequence profile carries a larger weight away from the functional site
 	bool restrict_to_repacking_chain2_; // dflt true; if false, does two-sided design during splice
 	bool add_sequence_constraints_only_; // dflt false; if true, only add constraints and return, don't do any splicing. (ask Assaf)
+	bool rb_sensitive_; //dflt false; should we impose the RB dof of the current pose on the template before finding aligned residues. (Ask Christoffer)
 };
 
 } //splice

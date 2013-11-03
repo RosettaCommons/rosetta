@@ -13,8 +13,6 @@
 // Unit headers
 #include <devel/splice/RBOutMover.hh>
 #include <devel/splice/RBOutMoverCreator.hh>
-#include <basic/datacache/DataMapObj.hh>
-#include <basic/datacache/DataMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
@@ -98,11 +96,10 @@ find_disulfs_in_range( core::pose::Pose const & pose, core::Size const start, co
     return(disulfs);
 }
 
-void
-RBOutMover::apply( Pose & pose )
+
+core::kinematics::Jump
+RBOutMover::get_disulf_jump( Pose & pose, core::pose::Pose const & template_pose )
 {
-    core::pose::Pose template_pose;
-    core::import_pose::pose_from_pdb( template_pose, template_pdb_fname() );
     utility::vector1< std::pair< core::Size, core::Size > > const disulfs_in_template = find_disulfs_in_range( template_pose, 1, template_pose.total_residue() );
     runtime_assert( disulfs_in_template.size() == 2 );
 
@@ -131,11 +128,11 @@ RBOutMover::apply( Pose & pose )
     core::kinematics::FoldTree ft;
     ft.clear();
 
- /// We don't know what order the chains will come in. Is the first disulfide in the template also first on the pose? Not always the case...
+    /// We don't know what order the chains will come in. Is the first disulfide in the template also first on the pose? Not always the case...
     core::Size const first_disulf( std::min( relevant_disulfs[ 1 ].second, relevant_disulfs[ 2 ].second ));
     core::Size const second_disulf( std::max( relevant_disulfs[ 1 ].second, relevant_disulfs[ 2 ].second ));
 
-/// Following is an ugly foldtree just used to define the jump between the 2nd and 1st disulfides in the order they're observed in template pose
+    /// Following is an ugly foldtree just used to define the jump between the 2nd and 1st disulfides in the order they're observed in template pose
     using namespace core::kinematics;
     ft.add_edge( 1, first_disulf, Edge::PEPTIDE );
     ft.add_edge( second_disulf, pose.total_residue(), Edge::PEPTIDE );
@@ -149,6 +146,17 @@ RBOutMover::apply( Pose & pose )
     pose.fold_tree( ft );
     core::kinematics::Jump const pose_disulf_jump( pose.jump( 1 ) );
 
+    return pose_disulf_jump;
+}
+
+
+void
+RBOutMover::apply( Pose & pose )
+{
+	core::pose::Pose template_pose;
+  core::import_pose::pose_from_pdb( template_pose, template_pdb_fname() );
+
+  core::kinematics::Jump pose_disulf_jump = get_disulf_jump( pose, template_pose );
 //write to file
 	std::ofstream data;
 	data.open( jump_dbase_fname().c_str(), std::ios::out );
@@ -177,7 +185,7 @@ RBOutMover::fresh_instance() const
 
 void
 RBOutMover::parse_my_tag(
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,

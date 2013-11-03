@@ -100,7 +100,7 @@ bool
 RBInMover::checkpoint_recovery(){
     if( checkpointing_file_ == "" )
         return false;
-    
+
     utility::io::izstream data( checkpointing_file_ );
     if( !data ){
         TR<<"Checkpointing file not yet written. Not recovering."<<std::endl;
@@ -132,7 +132,7 @@ RBInMover::init(){
     bool const first_pass( jump_library_.size() == 0 );
     if( !first_pass )// already initialized; don't repeat
         return;
-    
+
     TR<<"Initializing rigid-body jump library"<<std::endl;
     utility::io::izstream data( RB_dbase_ );
     if ( !data ) {
@@ -160,8 +160,7 @@ RBInMover::init(){
 }
 
 void
-RBInMover::apply( Pose & pose ){
-    init();
+RBInMover::set_fold_tree( Pose & pose ) const{
     utility::vector1< std::pair< core::Size, core::Size > > const disulfs( find_disulfs_in_range( pose, 1, pose.conformation().chain_end( 1 ) ) );
     protocols::protein_interface_design::movers::SetAtomTree sat;
     sat.two_parts_chain1( true );
@@ -173,6 +172,13 @@ RBInMover::apply( Pose & pose ){
     ft.reorder(1);
     TR<<"Fold tree after slide jump: "<<ft<<std::endl;
     pose.fold_tree( ft );
+}
+
+
+void
+RBInMover::apply( Pose & pose ){
+    init();
+		set_fold_tree( pose );
     TR<<"Setting jump now"<<std::endl;
     pose.set_jump( 1, jump_library_[ current_entry_ ] );
     ++current_entry_;

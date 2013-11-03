@@ -15,26 +15,30 @@
 
 #include <devel/splice/RBOutMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <algorithm>
+#include <core/kinematics/Jump.hh>
+#include <basic/datacache/DataMap.hh>
 
 // C++ Headers
 namespace devel {
 namespace splice {
-    
+
 class RBOutMover : public protocols::moves::Mover {
 public:
 	RBOutMover();
     ~RBOutMover();
 
-    
+
     //	RBOutMover(core::Real const min_in , core::Real const max_in);
+    core::kinematics::Jump get_disulf_jump( Pose & pose, core::pose::Pose const & template_pose );
+
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-    
+
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
@@ -47,7 +51,7 @@ public:
 
     std::string template_pdb_fname() const {return template_pdb_fname_; }
     void template_pdb_fname( std::string const s ){ template_pdb_fname_ = s; }
-    
+
     void jump_dbase_fname( std::string const s ) { jump_dbase_fname_ = s ; }
     std::string jump_dbase_fname() const{ return jump_dbase_fname_; }
 private:

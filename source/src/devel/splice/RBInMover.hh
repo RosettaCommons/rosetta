@@ -58,6 +58,8 @@ public:
     void jump_library( utility::vector1< core::kinematics::Jump > j );
 		void checkpointing_file( std::string const s ){ checkpointing_file_ = s; }
 		std::string checkpointing_file() const{ return checkpointing_file_; }
+
+		void set_fold_tree( core::pose::Pose & pose ) const;
 private:
 	  void init(); /// sets the entry order; if the jump_library is already populated returns without doing anything
 		bool checkpoint_recovery(); /// recover from checkpointing. If checkpointing is off, does nothing. Returns true if recovered from checkpoint
