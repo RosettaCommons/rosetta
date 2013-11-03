@@ -75,4 +75,4 @@ private:
 } // namespace ligand_docking
 } // namespace protocols
 
-#endif // INCLUDED_protocols_ligand_docking_UnconstrainedTorsionsMover_HH
+#endif // INCLUDED_protocols_ligand_docking_UnconstrainedTorsionsMover_hh

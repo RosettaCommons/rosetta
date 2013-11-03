@@ -42,7 +42,7 @@ public:
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new PeptideStapleDesignMover ); }
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	protocols::simple_moves::PeptideStapleMoverOP stapler_;
 };

@@ -78,7 +78,7 @@ public:
 	/// @brief used to clear internal variables if needed. Using fresh_instance is preferred since it's a pure virtual
 	virtual void clear() {};
 	virtual void parse_my_tag(
-		utility::tag::TagCOP const,
+		utility::tag::TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,

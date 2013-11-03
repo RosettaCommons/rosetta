@@ -473,7 +473,7 @@ private: // data
 
 
 	//blueprint
-	String blueprint_; 
+	String blueprint_;
 
 
     //For parsing rosetta scripts input
@@ -487,7 +487,7 @@ private: // data
 	bool rosetta_scripts_ ;
 
 	//for saving results from multiple runs
-	core::pose::PoseOP last_input_pose_; 
+	core::pose::PoseOP last_input_pose_;
 	forge::remodel::RemodelAccumulator accumulator_;
 
 
@@ -550,7 +550,7 @@ private: // per-stage movers
 
 public: // parser
 
-	virtual void parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Filters_map const &, Movers_map const &, Pose const & );
+	virtual void parse_my_tag( TagCOP tag, basic::datacache::DataMap & data, Filters_map const &, Movers_map const &, Pose const & );
 
 private:
 

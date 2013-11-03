@@ -35,7 +35,7 @@ public:
 	//default ctor
 	NMerSVMEnergyFilter();
 	//full ctor
-	NMerSVMEnergyFilter( 
+	NMerSVMEnergyFilter(
 		core::Real const score_type_threshold,
 		std::string string_resnums
 	);
@@ -52,7 +52,7 @@ public:
 //	core::Real compute_residue( core::pose::Pose const & pose, core::Size const seqpos, core::Real &, utility::vector1< core::Real > & ) const;
 	core::Real compute( core::pose::Pose const &pose ) const;
 	virtual ~NMerSVMEnergyFilter();
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	core::Real score_type_threshold_;
 	bool dump_table_;

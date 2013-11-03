@@ -39,7 +39,7 @@ public:
 	// derived from base class
 	NumNeighborsSelector();
 	NumNeighborsSelector( Size threshold, core::Real distance_cutoff );
-	NumNeighborsSelector( bool count_water, Size threshold, core::Real distance_cutoff );
+	//// Undefined, commenting out to fix PyRosetta build  NumNeighborsSelector( bool count_water, Size threshold, core::Real distance_cutoff );
 	virtual ~NumNeighborsSelector();
 
 	virtual void apply( core::pose::Pose const & pose, ResidueSubset & subset ) const;

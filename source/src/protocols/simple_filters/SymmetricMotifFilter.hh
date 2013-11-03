@@ -36,7 +36,7 @@ void R2quat( numeric::xyzMatrix< core::Real > R, Quat &Q );
 void quat2R( Quat &Q ,numeric::xyzMatrix< core::Real > R );
 core::Real RMSwrapper( utility::vector1 <numeric::xyzVector< core::Real > > chainA,
                        utility::vector1 <numeric::xyzVector< core::Real > > chainB,
-                       numeric::xyzMatrix< core::Real > &R, 
+                       numeric::xyzMatrix< core::Real > &R,
                       numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT);
 
 //
@@ -61,7 +61,7 @@ public:
 		rmsd_thresh_ = rmsd_thresh_in;
 	}
 
-	void set_weights( core::Real angle_thresh_in, core::Real trans_thresh_in, core::Real rmsd_thresh_in ) { 
+	void set_weights( core::Real angle_thresh_in, core::Real trans_thresh_in, core::Real rmsd_thresh_in ) {
 		angle_thresh_ = angle_thresh_in;
 		trans_thresh_ = trans_thresh_in;
 		rmsd_thresh_ = rmsd_thresh_in;
@@ -81,7 +81,7 @@ public:
 	// symmetry-specific variants
 	bool compute_d2( core::pose::Pose const & pose, core::Real &best_score, std::string &motifhit ) const;
 	core::Real score_d2( core::Real rms, core::Real angle, core::Real trans, core::Size clash ) const {
-		if (rms<=rmsd_thresh_ && angle<=angle_thresh_ && clash<=clash_thresh_) { 
+		if (rms<=rmsd_thresh_ && angle<=angle_thresh_ && clash<=clash_thresh_) {
 			return(
 				angle_wt_ * (angle-angle_thresh_)
 				+ rmsd_wt_ * (rms-rmsd_thresh_)
@@ -98,7 +98,7 @@ public:
 	virtual ~SymmetricMotifFilter();
 
 	void parse_my_tag(
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data_map,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -134,4 +134,3 @@ private:
 }
 
 #endif //INCLUDED_protocols_protein_interface_design_filters_SymmetricMotifFilter_HH_
-

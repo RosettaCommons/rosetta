@@ -45,17 +45,17 @@ public:
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new DetectSymmetry( *this ) ) ); }
 
 	virtual void
-	parse_my_tag( TagCOP const, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, Pose const & );
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, Pose const & );
 
 private:
     inline core::Real angle_with_x_axis_proj_y( xyzVector const & v) const { return numeric::dihedral_degrees(xyzVector(v[0],1,v[2]), xyzVector(0,1,0), xyzVector(0,0,0), xyzVector(1,0,0)); }
         inline core::Real angle_with_y_axis_proj_x( xyzVector const & v) const { return numeric::dihedral_degrees(xyzVector(1,v[1],v[2]), xyzVector(1,0,0), xyzVector(0,0,0), xyzVector(0,1,0)); }
-   
+
     inline core::Real angle_with_y_axis_proj_z( xyzVector const & v) const { return numeric::dihedral_degrees( xyzVector(v[0],v[1],1), xyzVector(0,0,1), xyzVector(0,0,0), xyzVector(0,1,0)); }
-    
+
         inline core::Real angle_with_z_axis_proj_y( xyzVector const & v) const { return numeric::dihedral_degrees( xyzVector(v[0],1,v[2]), xyzVector(0,1,0), xyzVector(0,0,0), xyzVector(0,0,1)); }
 
-    
+
 private:
 	core::Real subunit_tolerance_;
 	core::Real plane_tolerance_;

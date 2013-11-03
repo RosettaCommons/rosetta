@@ -1059,7 +1059,7 @@ EtableEvaluator::atom_pair_lk_energy_and_deriv_v_efficient(
 	 Real &,
 	 Real &,
 	 Real &,
-	 bool /* = false */
+	 bool const /* = false */
 ) const {
 	//AnalyticEtableEvaluator::atom_pair_lk_energy_and_deriv_v_efficient(atom1, atom2, solv1, solv2, dsolv1, eval_deriv);
 	return;

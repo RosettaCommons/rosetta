@@ -48,7 +48,7 @@ public:
 	virtual protocols::filters::FilterOP fresh_instance() const;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~BindingStrainFilter();
-	void parse_my_tag( utility::tag::TagCOP const tag,
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -77,4 +77,3 @@ private:
 } // protocols
 
 #endif //INCLUDED_protocols_Filters_BindingStrainFilter_HH_
-

@@ -52,7 +52,7 @@ public:
 	void set_cstfile( String const & filename );
 
 	virtual void
-	parse_my_tag( TagCOP const tag,
+	parse_my_tag( TagCOP tag,
 								basic::datacache::DataMap & data,
 								protocols::filters::Filters_map const & filters,
 								protocols::moves::Movers_map const & movers,

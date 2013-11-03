@@ -9,7 +9,7 @@
 
 /// @file   protocols/fldsgn/MatchResidues.hh
 /// @brief  header file for MatchResidues class
-//  @brief  returns the RMSD between a subset of residues of the movered pose against a list of residues in the reference pose. 
+//  @brief  returns the RMSD between a subset of residues of the movered pose against a list of residues in the reference pose.
 /// @author Javier Castellanos ( javiercv@uw.edu )
 
 
@@ -66,7 +66,7 @@ public:// constructor/destructor
 
 public:// parser
 
-	void parse_my_tag( TagCOP const tag,
+	void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		Movers_map const &,
@@ -81,7 +81,7 @@ public:
 	void threshold(core::Real value) {  threshold_ = value; }
 
 private:
-	
+
 	std::map< std::string, boost::tuple<Size, Size> >  map_ss_segments( std::string const & ss) const;
 
 	void cart_product( VecVecSize& rvvi, VecSize&  rvi, VecVecSize::const_iterator me, VecVecSize::const_iterator end ) const;

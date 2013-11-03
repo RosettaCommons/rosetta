@@ -54,7 +54,7 @@ public:
 
 	///@brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
-		TagCOP const,
+		TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		Movers_map const &,

@@ -43,7 +43,7 @@ public:
 	void start_end(core::Size e) {end_res_ = e;} 
 	void suffix(std::string suf) {suffix_ = suf;}
 	void source_pdb_name(std::string name) {source_pdb_name_ = name;}
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	core::Size start_res_;//where the domain will be cut from
 	core::Size end_res_;//where the domain will be cut to

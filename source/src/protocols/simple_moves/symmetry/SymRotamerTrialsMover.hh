@@ -66,8 +66,8 @@ public:
 		core::pack::task::PackerTaskOP task
 	);
 
-	virtual void parse_my_tag( 
-			utility::tag::TagCOP const tag,
+	virtual void parse_my_tag(
+			utility::tag::TagCOP tag,
 			basic::datacache::DataMap &data,
 			filters::Filters_map const &filters,
 			moves::Movers_map const &movers,
@@ -146,4 +146,3 @@ private:
 } // protocols
 
 #endif
-

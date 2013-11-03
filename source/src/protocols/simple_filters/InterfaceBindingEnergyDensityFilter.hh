@@ -59,7 +59,7 @@ public:
 	filters::FilterOP fresh_instance() const;
 
 	void parse_my_tag(
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -72,7 +72,7 @@ private:
 
 	core::Real upper_threshold_;
 };
-	
+
 }
 }
 

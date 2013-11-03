@@ -11,8 +11,8 @@
 /// @brief  LoopHashLoopClosureMover class forward delcaration
 /// @author Sachko Honda (honda@apl.washington.edu)
 
-#ifndef INCLUDED_devel_loophash_loopclosure_LoopHashLoopClosureMover_HH
-#define INCLUDED_devel_loophash_loopclosure_LoopHashLoopClosureMover_HH
+#ifndef INCLUDED_devel_loophash_loopclosure_LoopHashLoopClosureMover_fwd_HH
+#define INCLUDED_devel_loophash_loopclosure_LoopHashLoopClosureMover_fwd_HH
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>

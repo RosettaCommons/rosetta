@@ -42,7 +42,7 @@ public :
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new SetAtomTree ); }
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	core::kinematics::FoldTreeOP create_atom_tree( core::pose::Pose const & pose, core::Size const host_chain, core::Size const resnum, core::Size const anchor_num_ = 0, std::string const connect_to = "", std::string connect_from = "" );//if connect_to or connect_from = "" optimal_connection_point is invoked
 	bool simple_ft() const {return simple_ft_; }
 	void simple_ft( bool const s ){ simple_ft_ = s; }

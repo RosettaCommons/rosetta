@@ -68,7 +68,7 @@ public:
 		protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new LoopMoverFromCommandLine ); }
 		void apply( core::pose::Pose & pose );
 		virtual std::string get_name() const;
-		void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+		void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 		virtual ~LoopMoverFromCommandLine();
 
 private:

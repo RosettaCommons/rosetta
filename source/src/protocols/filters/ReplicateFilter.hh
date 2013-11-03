@@ -9,7 +9,7 @@
 
 /// @file protocols/filters/ReplicateFilter.hh
 /// @brief Repeat a subfilter multiple times, and pass a value based on the aggregate results
-/// @author Rocco Moretti (rmoretti@u.washington.edu) 
+/// @author Rocco Moretti (rmoretti@u.washington.edu)
 
 #ifndef INCLUDED_protocols_filters_ReplicateFilter_hh
 #define INCLUDED_protocols_filters_ReplicateFilter_hh
@@ -31,7 +31,7 @@ class ReplicateFilter : public protocols::filters::Filter
 {
 public:
 	ReplicateFilter();
-	ReplicateFilter(protocols::filters::FilterOP subfilter, core::Size replicates=1, core::Size upper_trim=0, core::Size lower_trim=0); 
+	ReplicateFilter(protocols::filters::FilterOP subfilter, core::Size replicates=1, core::Size upper_trim=0, core::Size lower_trim=0);
 	virtual bool apply( core::pose::Pose const & pose ) const;
 	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
@@ -45,7 +45,7 @@ public:
 	}
 
 	virtual ~ReplicateFilter(){};
-	void parse_my_tag( utility::tag::TagCOP const tag,
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -68,4 +68,3 @@ private:
 } // protocols
 
 #endif //INCLUDED_protocols_Filters_ReplicateFilter_HH_
-

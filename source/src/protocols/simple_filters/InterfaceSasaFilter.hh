@@ -49,7 +49,7 @@ public:
 	void sym_dof_names( utility::vector1<std::string> const sym_dof_names );
 	void add_sym_dof_name( std::string const sym_dof_name );
 
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	void parse_def( utility::lua::LuaObject const & def,
 					utility::lua::LuaObject const & score_fxns,
 					utility::lua::LuaObject const & tasks );

@@ -37,7 +37,7 @@ public:
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const;
-	virtual void parse_my_tag( utility::tag::TagCOP const tag,
+	virtual void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -52,4 +52,3 @@ private:
 } //protocols
 
 #endif /*INCLUDED_protocols_protein_interface_design_movers_Subroutine_HH*/
-

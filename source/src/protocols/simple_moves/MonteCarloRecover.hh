@@ -76,7 +76,7 @@ public:	// constructor/destructor
 
 
 	virtual void parse_my_tag(
-		TagCOP const tag,
+		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		Movers_map const & movers,
@@ -97,4 +97,3 @@ private: // data
 } // namespace protocols
 
 #endif
-

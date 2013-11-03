@@ -39,7 +39,7 @@ public:
 	filters::FilterOP fresh_instance() const;
 
 	virtual ~SidechainRmsdFilter();
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &);
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &);
 private:
 	core::Size res1_, res2_;
 	core::Real rmsd_threshold_;
@@ -51,4 +51,3 @@ private:
 }
 
 #endif
-

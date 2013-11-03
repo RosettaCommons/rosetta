@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/seeded_abinitio/CoordinateCst.hh
-/// @brief 
+/// @brief
 /// @author Eva-Maria Strauch (evas01@u.washington.edu)
 
 #ifndef INCLUDED_protocols_seeded_abinitio_CoordinateCst_hh
@@ -29,16 +29,16 @@ class CoordinateCst : public protocols::moves::Mover
 {
 public:
 	typedef core::pose::Pose Pose;
-				
+
 public:
 	CoordinateCst();
-							
+
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
-	void parse_my_tag( utility::tag::TagCOP const tag,
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -51,7 +51,7 @@ private:
 	core::Real stddev_;
 	/// residue number to which the coordinate constraints are anchored to
 	/// stored as string, parsed at runtime
-	std::string anchor_res_;				
+	std::string anchor_res_;
 	/// whether to use the jump to determine the anchor residue
 	bool use_jumps_;
 	/// vector with list of residues numbers that will getcoordinate constraints.
@@ -72,5 +72,4 @@ private:
 } //seeded_abinitio
 } // protocols
 
-#endif 
-
+#endif

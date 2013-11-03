@@ -95,7 +95,7 @@ public:// mutator
 	bool multicomp( ) const;
 
 public:// parser
-	virtual void parse_my_tag( TagCOP const tag,
+	virtual void parse_my_tag( TagCOP tag,
 		basic::datacache::DataMap &,
 		filters::Filters_map const &,
 		Movers_map const &,

@@ -32,7 +32,7 @@
 
 namespace protocols {
 namespace simple_filters {
-	
+
 class AlaScan : public filters::Filter
 {
 public :
@@ -64,7 +64,7 @@ public :
 	virtual ~AlaScan();
 	void repack( bool const repack );
 	bool repack() const;
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	bool chain1_, chain2_;
 	core::Size repeats_;

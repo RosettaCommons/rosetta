@@ -37,7 +37,7 @@ namespace enzdes {
 /// @brief a mover that packs the side-chains around a given set of target residues in a greedy fashion, and then packs the rest using the sim annealer.
 
 class PackRotamersMoverPartGreedy: public protocols::moves::Mover {
-  
+
 	typedef core::pack::task::PackerTaskOP PackerTaskOP;
   typedef core::pack::task::TaskFactoryOP TaskFactoryOP;
   typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
@@ -49,16 +49,16 @@ public:
 		PackerTaskOP task,
 		utility::vector1 <core::Size> target_residues
 	);
-	
+
 	PackRotamersMoverPartGreedy();
-	
+
 	//std::string PackRotamersMoverPartGreedyCreator::mover_name();
 
 	// destructor
 	virtual ~PackRotamersMoverPartGreedy();
 
 	 //parser stuff
-  void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
+  void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
   void apply( core::pose::Pose &pose );
   virtual std::string get_name() const;
   protocols::moves::MoverOP clone() const;
@@ -71,13 +71,13 @@ public:
         core::pack::task::PackerTaskOP task,
         core::scoring::ScoreFunctionCOP scorefxn
 	);
-	
+
 	utility::vector1< core::Size > compute_designable_neighbors(
 																	core::Size const & position,
 																	core::pack::task::PackerTaskCOP task,
 																	core::pose::Pose const & pose
 	);
-	
+
 	void update_task_and_neighbors(
 				core::Size const & best_neigh,
 				core::pack::task::PackerTaskOP task,
@@ -89,19 +89,19 @@ public:
 	void task_factory( core::pack::task::TaskFactoryOP p );
 	void task( core::pack::task::PackerTaskOP task );
   void target_residues (utility::vector1< core::Size > & trg_res);
-	
+
 	//choose n best residues interacting with ligand
-	utility::vector1<core::Size> choose_n_best( 
-		core::pose::Pose const & pose, 
-		core::Size const & n_best 
+	utility::vector1<core::Size> choose_n_best(
+		core::pose::Pose const & pose,
+		core::Size const & n_best
 	);
-	
+
 private:
 	core::scoring::ScoreFunctionOP scorefxn_repack_;
 	core::scoring::ScoreFunctionOP scorefxn_repack_greedy_;
   core::scoring::ScoreFunctionOP scorefxn_minimize_;
   core::pack::task::PackerTaskOP task_;
-  core::pack::task::TaskFactoryOP task_factory_; 
+  core::pack::task::TaskFactoryOP task_factory_;
 	utility::vector1< core::Size > target_residues_;
 	utility::vector1< core::Size > restrict_to_repacking_;
 	bool use_cstids_;

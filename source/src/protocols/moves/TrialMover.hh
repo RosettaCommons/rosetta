@@ -70,35 +70,35 @@ enum StatsType {
 	no_stats	     // no stats. Always keep last.
 };
 
-	
+
 /// @brief the MCResetMover applies a monte carlo reset
-	
+
 class MonteCarloUtil : public Mover {
 public:
 	MonteCarloUtil();
 	MonteCarloUtil(protocols::moves::MonteCarloOP mc);
 	virtual ~MonteCarloUtil();
 	virtual void apply(Pose & pose);
-	
+
 	virtual void parse_my_tag(
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & /* data */,
 		protocols::filters::Filters_map const & /* filters */,
 		protocols::moves::Movers_map const & /* movers */,
 		core::pose::Pose const & /* pose */
 	);
-	
+
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
 	virtual std::string get_name() const;
-	
-	
+
+
 private:
 	protocols::moves::MonteCarloOP mc_;
 	std::string mode_;
-	
+
 };
-	
+
 /// @brief A TrialMover applies a Mover and then accepts or rejects the move
 /// according to a MonteCarlo object.
 ///
@@ -197,7 +197,7 @@ public:
 	/// loaded into the basic::datacache::DataMap in a prior MONTECARLOS objects
 	/// section.
 	virtual void parse_my_tag(
-		TagCOP const tag,
+		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		Movers_map const & movers,

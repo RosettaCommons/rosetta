@@ -53,7 +53,7 @@ public:
 	{}
 
 	/// @setup a grid based on RosettaScripts input
-	virtual void parse_my_tag(utility::tag::TagCOP const tag)=0;
+	virtual void parse_my_tag(utility::tag::TagCOP tag)=0;
 
 	/// @brief return the current score of an UltraLightResidue using the current grid
 	virtual core::Real score(core::conformation::UltraLightResidue const & residue, core::Real const max_score, qsarMapOP qsar_map) = 0;

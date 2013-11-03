@@ -49,7 +49,7 @@ public:
 	typedef protocols::filters::Filter Super;
 	typedef protocols::filters::Filter Filter;
 	typedef protocols::filters::FilterOP FilterOP;
-	
+
 	typedef std::string String;
 	typedef core::Real Real;
 	typedef core::Size Size;
@@ -94,7 +94,7 @@ public:// accessor
 public:// parser
 
 
-	virtual void parse_my_tag( TagCOP const tag,
+	virtual void parse_my_tag( TagCOP tag,
 														 basic::datacache::DataMap &,
 														 Filters_map const &,
 														 Movers_map const &,

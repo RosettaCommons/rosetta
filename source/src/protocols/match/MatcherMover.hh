@@ -71,7 +71,7 @@ public: // virtual constructors
 	MoverOP fresh_instance() const;
 
 	virtual
-	void parse_my_tag( TagCOP const tag,
+	void parse_my_tag( TagCOP tag,
 										 basic::datacache::DataMap &,
 									   Filters_map const &,
 										 Movers_map const &,

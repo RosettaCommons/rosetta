@@ -52,7 +52,7 @@ core::scoring::constraints::ConstraintCOPs
 add_coordinate_constraints( core::pose::Pose & pose, core::conformation::Residue const source, core::Size const host_chain, core::Size const resnum, core::Real const coord_sdev, core::scoring::constraints::HarmonicFuncOP & coord_cst_func );
 
 void
-generate_taskfactory_and_add_task_awareness( utility::tag::TagCOP const tag, protocols::moves::Movers_map const & movers, basic::datacache::DataMap & data, core::pack::task::TaskFactoryOP & task_factory );
+generate_taskfactory_and_add_task_awareness( utility::tag::TagCOP tag, protocols::moves::Movers_map const & movers, basic::datacache::DataMap & data, core::pack::task::TaskFactoryOP & task_factory );
 
 std::string nearest_atom_for_constraint( core::conformation::Residue const residue );
 
@@ -62,7 +62,7 @@ find_nearest_residue_to_coord( core::pose::Pose const & pose, numeric::xyzVector
 
 /// @brief a utility function for parsing stubset information from a tag
 utility::vector1< std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > >
-parse_stub_sets( utility::tag::TagCOP const tag, core::pose::Pose const & pose, core::Size const host_chain, basic::datacache::DataMap data );
+parse_stub_sets( utility::tag::TagCOP tag, core::pose::Pose const & pose, core::Size const host_chain, basic::datacache::DataMap data );
 
 core::scoring::ScoreFunctionOP make_stub_scorefxn();
 } //movers
@@ -70,4 +70,3 @@ core::scoring::ScoreFunctionOP make_stub_scorefxn();
 } //protocols
 
 #endif /*INCLUDED_protocols_protein_interface_design_movers_PlaceUtils_HH*/
-

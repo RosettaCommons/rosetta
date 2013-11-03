@@ -39,7 +39,7 @@ public :
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new AddChainBreak ); }
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	void resnum( std::string const r ){ resnum_=r; }
 	std::string resnum() const{ return resnum_;}
 	void change_foldtree( bool const c ){ change_foldtree_ = c; }

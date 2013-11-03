@@ -20,7 +20,7 @@
 #include <protocols/ligand_docking/InterfaceBuilder.fwd.hh>
 
 // Package Headers
-#include <core/kinematics/FoldTree.fwd.hh> 
+#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/Edge.fwd.hh>
 // AUTO-REMOVED #include <core/id/AtomID.hh>
 
@@ -57,7 +57,7 @@ public:
 	virtual std::string get_name() const;
 
 	void parse_my_tag(
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,

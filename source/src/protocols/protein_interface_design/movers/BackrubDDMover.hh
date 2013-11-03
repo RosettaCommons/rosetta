@@ -54,7 +54,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new BackrubDDMover ); }
 	virtual ~BackrubDDMover();
 protected:
-		void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+		void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	bool backrub_partner1_;
 	bool backrub_partner2_;
@@ -72,4 +72,3 @@ private:
 } // protocols
 
 #endif /*INCLUDED_protocols_protein_interface_design_movers_BackrubDDMover_HH*/
-

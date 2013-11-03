@@ -50,7 +50,7 @@ public:
 	virtual ~DesignableResiduesFilter();
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
-	void parse_my_tag( utility::tag::TagCOP const tag,
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -68,7 +68,7 @@ public:
 	void designable( bool const d );
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
-	core::Size lower_threshold_, upper_threshold_; // how many design positions should be allowed for a passing design  
+	core::Size lower_threshold_, upper_threshold_; // how many design positions should be allowed for a passing design
 	bool packable_, designable_; // which sort of residues to report (packable or designable or both)
 };
 
@@ -77,4 +77,3 @@ private:
 } // protocols
 
 #endif //INCLUDED_protocols_Filters_DesignableResiduesFilter_HH_
-

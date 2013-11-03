@@ -71,7 +71,7 @@ public :
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Size compute( core::pose::Pose const & pose ) const;
 	virtual ~HbondsToAtomFilter();
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	Size resnum_, partners_;
 	Real energy_cutoff_;
@@ -85,4 +85,3 @@ private:
 
 
 #endif /*INCLUDED_DOCK_DESIGN_FILTERS_H_*/
-

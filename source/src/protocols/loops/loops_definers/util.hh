@@ -25,7 +25,7 @@ namespace loops_definers {
 
 LoopsOP
 load_loop_definitions(
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap const & data,
 	core::pose::Pose const & pose);
 

@@ -49,7 +49,7 @@ public:
 	void setup_packer_and_movemap( core::pose::Pose const & pose );
 	protocols::moves::MoverOP clone() const = 0; // this is a pure virtual class that cannot be instantiated
 	protocols::moves::MoverOP fresh_instance() const = 0;
-	virtual void parse_my_tag( utility::tag::TagCOP const, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	virtual void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 // managing minimization options
 	void min_rb( utility::vector1< bool > const min_rb ) { min_rb_ = min_rb; min_rb_set_ = true;}
 /// @brief in most cases, there would only be one rb dof making it useful to have a non-vector accessor to min_rb_. However, if the pose has multiple jumps, setting min_rb_ in this way might cause trouble in other parts of the code.

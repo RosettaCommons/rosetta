@@ -41,7 +41,7 @@ struct FragmentPair
 
 	HelicalFragmentOP fragment_1;
 	HelicalFragmentOP fragment_2;
-	
+
 	core::Real end_1_distance;
 	core::Real end_2_distance;
 	core::Real fa_attr;
@@ -50,7 +50,7 @@ struct FragmentPair
 };
 
 typedef std::map< std::pair<core::Size, core::Size>, FragmentPair> PairMap;
-	
+
 class HelixBundleFeatures : public protocols::features::FeaturesReporter
 {
 
@@ -74,7 +74,7 @@ public:
 	virtual
 	void
 	parse_my_tag(
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
@@ -85,7 +85,7 @@ public:
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
-	
+
 	bool
 	overlapping(
 		HelicalFragmentOP const & fragment_1,
@@ -107,13 +107,13 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session
 	);
-	
+
 	void
 	calc_pc_and_com(
 		core::pose::Pose const & pose,
 		HelicalFragmentOP fragment
 	);
-	
+
 	///@brief create a bundle-pose from the combination of fragments
 	/// and record the "interface" SASA for each helix against the
 	/// rest of the bundle
@@ -122,13 +122,13 @@ public:
 		core::pose::Pose const & pose,
 		std::set<HelicalFragmentOP> const & frag_set
 	);
-	
+
 	PairMap
 	get_helix_pairs(
 		core::pose::Pose const & pose,
 		utility::vector1<HelicalFragmentOP> helix_fragments
 	);
-	
+
 	///@brief calculate the shared fa_attr for each pair of helices
 	/// in the bundle
 	void
@@ -136,37 +136,37 @@ public:
 		core::pose::Pose const & pose,
 		FragmentPair & fragment_pair
 	);
-	
+
 	///@brief calculate the crossing angles of the helix fragment in the bundle set
 	void
 	calc_crossing_angles(
 		core::pose::Pose const & pose,
 		FragmentPair & fragment_pair
 	);
-	
+
 private:
 
 	//Maximum allowable distance, in angstroms, between any two helix ends
 	core::Real helix_cap_dist_cutoff_;
-	
+
 	//number of helices in the bundle
 	core::Size bundle_size_;
-	
+
 	//number of residues in each helix
 	core::Size helix_size_;
-	
+
 	//minimum residue_normalized fa_attr between two helix fragments in order to be considered
 	//interacting
 	core::Real min_per_residue_fa_attr_;
-	
+
 	//minimum fraction of
 	core::Real min_interacting_set_fraction_;
-	
+
 	//maximum degrees off parallel for crossing angle
 	core::Real max_degrees_off_parallel_;
-	
+
 	protocols::simple_filters::InterfaceSasaFilter sasa_filter_;
-	
+
 	core::scoring::ScoreFunctionOP scorefxn_;
 };
 

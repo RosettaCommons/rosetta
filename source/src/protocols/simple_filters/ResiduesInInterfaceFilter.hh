@@ -40,7 +40,7 @@ public:
 	filters::FilterOP fresh_instance() const{
 		return new ResiduesInInterfaceFilter();
 	}
-  	ResiduesInInterfaceFilter( ResiduesInInterfaceFilter const & init ) : 
+  	ResiduesInInterfaceFilter( ResiduesInInterfaceFilter const & init ) :
 	//utility::pointer::ReferenceCount(),
 	Filter( init ) {
     residues_in_interface_threshold_ = init.residues_in_interface_threshold_;
@@ -50,7 +50,7 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Size compute( core::pose::Pose const & pose ) const;
 	virtual ~ResiduesInInterfaceFilter();
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	core::Size residues_in_interface_threshold_, rb_jump_;
 };

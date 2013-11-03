@@ -49,7 +49,7 @@ public:
 	}
 
 	virtual ~GeometryFilter();
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	core::Real omega_cutoff_;
 	core::Real cart_bonded_cutoff_;
@@ -58,7 +58,7 @@ private:
 	core::Size start_;
 	core::Size end_;
 };
-	
+
 }
 }
 #endif

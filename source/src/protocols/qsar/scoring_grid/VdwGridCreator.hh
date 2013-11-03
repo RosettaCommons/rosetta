@@ -23,7 +23,7 @@ namespace scoring_grid {
 class VdwGridCreator : public GridCreator
 {
 public:
-	virtual GridBaseOP create_grid(utility::tag::TagCOP const tag) const;
+	virtual GridBaseOP create_grid(utility::tag::TagCOP tag) const;
 	virtual GridBaseOP create_grid() const;
 	virtual std::string keyname() const;
 	static std::string grid_name();

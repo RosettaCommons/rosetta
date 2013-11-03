@@ -80,7 +80,7 @@ public:// getters
 
 public:// parser
 
-  virtual void parse_my_tag( TagCOP const tag,
+  virtual void parse_my_tag( TagCOP tag,
     basic::datacache::DataMap &,
     protocols::filters::Filters_map const &,
     Movers_map const &,

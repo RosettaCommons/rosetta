@@ -52,7 +52,7 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~StubScoreFilter();
 	void stub_sets( utility::vector1< StubSetStubPos > const & stub_sets );
-	void parse_my_tag( utility::tag::TagCOP const tag,
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -68,4 +68,3 @@ private:
 } // protocols
 
 #endif //INCLUDED_protocols_Filters_StubScoreFilter_HH_
-

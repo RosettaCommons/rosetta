@@ -47,7 +47,7 @@ public:
 	virtual
 	void
 	parse_my_tag(
-		utility::tag::TagCOP const,
+		utility::tag::TagCOP,
 		basic::datacache::DataMap const &,
 		core::pose::Pose const &) = 0;
 

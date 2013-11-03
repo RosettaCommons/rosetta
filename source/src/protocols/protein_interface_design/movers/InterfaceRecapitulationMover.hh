@@ -48,7 +48,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const;
 	void set_reference_pose( core::pose::PoseOP );
 	core::pose::PoseCOP get_reference_pose() const;
-	virtual void parse_my_tag( utility::tag::TagCOP const, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	virtual void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	virtual ~InterfaceRecapitulationMover();
 private:
 	core::pose::PoseOP saved_pose_;
@@ -62,4 +62,3 @@ private:
 } // protocols
 
 #endif /*INCLUDED_protocols_protein_interface_design_movers_InterfaceRecapitulationMover_HH*/
-

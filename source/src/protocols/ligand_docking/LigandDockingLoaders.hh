@@ -36,7 +36,7 @@ public:
 	virtual
 	void load_data(
 		core::pose::Pose const & pose,
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
 	) const;
 
@@ -55,7 +55,7 @@ public:
 	virtual
 	void load_data(
 		core::pose::Pose const & pose,
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
 	) const;
 
@@ -71,7 +71,7 @@ public:
 	virtual
 	void load_data(
 		core::pose::Pose const & pose,
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
 	) const;
 

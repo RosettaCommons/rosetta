@@ -103,7 +103,7 @@ public:
 
   /// @brief Parses the FastRelaxTags
 	void parse_my_tag(
-	  utility::tag::TagCOP const tag,
+	  utility::tag::TagCOP tag,
 	  basic::datacache::DataMap & data,
 	  protocols::filters::Filters_map const &,
 	  protocols::moves::Movers_map const &,
@@ -128,7 +128,7 @@ public:
 	virtual void apply( core::pose::Pose & pose );
 
   /// @brief Batch Relax, a new even faster way to relax entire batches of structures.
-	void batch_apply( 
+	void batch_apply(
 		std::vector < core::io::silent::SilentStructOP > &  input_structs,
 		core::scoring::constraints::ConstraintSetOP input_csts = NULL,
 		core::Real decay_rate = 0.5 );
@@ -194,7 +194,7 @@ private:   // options
 
 	/// @brief Allow DNA to move?  default is False.  If True will setup DNA-specific relax settings.
 	bool dna_move_;
-	
+
 	/// @brief Do only a few test_cycles ?
 	bool test_cycles_;
 
@@ -205,7 +205,7 @@ private:   // options
 	bool dumpall_;
 
 
-	
+
   /// @brief Quit after this many accepts ?// limits themaximum number of accepts, default is 1000000
 	core::Size script_max_accept_;
 

@@ -98,7 +98,7 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	virtual void
-	parse_my_tag( TagCOP const, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, Pose const & );
+	parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, Pose const & );
 
 	// set options
 	void set_batch_relax( core::Size newval ) { batch_relax_ = newval; }

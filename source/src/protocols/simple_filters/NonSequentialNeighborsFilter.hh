@@ -44,7 +44,7 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const &pose ) const;
 	virtual ~NonSequentialNeighborsFilter();
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
 	core::Real distance_threshold() const { return distance_threshold_; }
 	void distance_threshold( core::Real const r ){ distance_threshold_ = r; }

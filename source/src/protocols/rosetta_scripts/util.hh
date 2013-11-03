@@ -41,15 +41,15 @@ namespace protocols {
 namespace rosetta_scripts {
 
 utility::vector1< core::pack::task::operation::TaskOperationOP >
-get_task_operations( utility::tag::TagCOP const tag, basic::datacache::DataMap const & data );
+get_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const & data );
 
 core::pack::task::TaskFactoryOP
-parse_task_operations( utility::tag::TagCOP const tag, basic::datacache::DataMap const & data );
+parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap const & data );
 
 /// allows the transfer of whole taskfactories on the datamap. This way a "base" taskfactory can be created, transferred on the datamap, and
 /// individual mover's specific taskoperations can be added on top
 core::pack::task::TaskFactoryOP
-parse_task_operations( utility::tag::TagCOP const tag, basic::datacache::DataMap /*const*/ & data, core::pack::task::TaskFactoryOP & task_factory );
+parse_task_operations( utility::tag::TagCOP tag, basic::datacache::DataMap /*const*/ & data, core::pack::task::TaskFactoryOP & task_factory );
 
 core::pack::task::TaskFactoryOP
 parse_task_operations( std::string const task_list, basic::datacache::DataMap const & data );
@@ -58,7 +58,7 @@ parse_task_operations( std::string const task_list, basic::datacache::DataMap co
 ///through the given option. Default to 'talaris2013' by default.
 core::scoring::ScoreFunctionOP
 parse_score_function(
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	std::string const & option_name,
 	basic::datacache::DataMap const & data,
 	std::string const dflt_key="talaris2013" );
@@ -67,7 +67,7 @@ parse_score_function(
 ///through the option 'scorefxn='. Default to 'talaris2013' by default.
 core::scoring::ScoreFunctionOP
 parse_score_function(
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap const & data,
 	std::string const dflt_key="talaris2013" );
 
@@ -76,7 +76,7 @@ parse_score_function(
 ///protocols.
 std::string
 get_score_function_name(
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP tag,
 	std::string const & option_name);
 
 ///@brief Look up the name of assigned score function to the 'scorefxn='
@@ -84,18 +84,18 @@ get_score_function_name(
 ///protocols.
 std::string
 get_score_function_name(
-	utility::tag::TagCOP const tag);
+	utility::tag::TagCOP tag);
 
 /// @brief convenience function to access pointers to poses that will be stored
 /// in the data map at an arbitrary point during an RS protocol
 core::pose::PoseOP
-saved_reference_pose( utility::tag::TagCOP const in_tag, basic::datacache::DataMap & data_map );
+saved_reference_pose( utility::tag::TagCOP in_tag, basic::datacache::DataMap & data_map );
 
 void
-parse_movemap( utility::tag::TagCOP const in_tag, core::pose::Pose const & pose, core::kinematics::MoveMapOP & mm, basic::datacache::DataMap &, bool const reset_movemap = true /* should we turn everything to true at start?*/ );
+parse_movemap( utility::tag::TagCOP in_tag, core::pose::Pose const & pose, core::kinematics::MoveMapOP & mm, basic::datacache::DataMap &, bool const reset_movemap = true /* should we turn everything to true at start?*/ );
 
 void
-parse_movemap( utility::tag::TagCOP const in_tag, core::pose::Pose const & pose, core::kinematics::MoveMapOP mm );
+parse_movemap( utility::tag::TagCOP in_tag, core::pose::Pose const & pose, core::kinematics::MoveMapOP mm );
 
 protocols::filters::FilterOP
 parse_filter( std::string const filter_name, protocols::filters::Filters_map const & d );
@@ -104,7 +104,7 @@ protocols::moves::MoverOP
 parse_mover( std::string const mover_name, protocols::moves::Movers_map const & d );
 
 numeric::xyzVector< core::Real >
-parse_xyz_vector( utility::tag::TagCOP const xyz_vector_tag );
+parse_xyz_vector( utility::tag::TagCOP xyz_vector_tag );
 
 
 /// @brief find source residue that is nearest to res on source. If distance is greater than 2.0A, return 0. chain=0, search all chains, chain=1,2,3 etc. search only that chain

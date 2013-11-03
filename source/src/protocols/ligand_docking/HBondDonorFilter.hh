@@ -60,7 +60,7 @@ public:
 		return new HBondDonorFilter();
 	}
 
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose );
 
 private:
 	std::string chain_;
@@ -70,4 +70,3 @@ private:
 } // protocols
 
 #endif //INCLUDED_protocols_ProteinInterfaceDesign_ligand_docking_HBondDonorFilter_HH_
-

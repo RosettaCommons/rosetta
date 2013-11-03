@@ -79,7 +79,7 @@ public:
 
 	///@brief parse XML (specifically in the context of the parser/scripting scheme)
 	virtual void parse_my_tag(
-		TagCOP const,
+		TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -87,7 +87,7 @@ public:
 
 	///@brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
 	virtual void parse_score_function(
-		TagCOP const,
+		TagCOP,
 		basic::datacache::DataMap const &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -95,7 +95,7 @@ public:
 
 	///@brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
 	virtual void parse_task_operations(
-		TagCOP const,
+		TagCOP,
 		basic::datacache::DataMap const &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,

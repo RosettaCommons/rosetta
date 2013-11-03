@@ -72,7 +72,7 @@ public:
 
 	virtual
 	void parse_my_tag(
-		TagCOP const,
+		TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,

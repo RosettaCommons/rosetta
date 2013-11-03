@@ -35,7 +35,7 @@ public:
 	virtual moves::MoverOP fresh_instance() const;
 
 	virtual void parse_my_tag(
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
@@ -44,7 +44,7 @@ public:
 
 	core::Real min_value() const { return min_value_; }
 	void min_value( core::Real const s ){ min_value_ = s; }
-	
+
 	core::Real max_value() const { return max_value_; }
 	void max_value( core::Real const s ){ max_value_ = s; }
 

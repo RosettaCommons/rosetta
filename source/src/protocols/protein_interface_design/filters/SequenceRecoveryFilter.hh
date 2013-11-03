@@ -66,7 +66,7 @@ public:
 	core::pose::PoseCOP reference_pose() const;
 	void reference_pose( core::pose::PoseCOP reference_pose );
 	void reference_pose( core::pose::Pose const & pose );
-	void parse_my_tag( utility::tag::TagCOP const tag,
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -89,4 +89,3 @@ private:
 } // protocols
 
 #endif //INCLUDED_protocols_Filters_SequenceRecoveryFilter_HH_
-

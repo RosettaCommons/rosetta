@@ -77,7 +77,7 @@ public:
 	///@brief return new Mover by Tag parsing; the identifying string for the Mover is in the Tag
 	FilterOP
 	newFilter(
-		TagCOP const,
+		TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,

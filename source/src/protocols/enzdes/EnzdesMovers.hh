@@ -179,7 +179,7 @@ public:
 
 	void
 	parse_my_tag(
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap ,
 		protocols::filters::Filters_map const & ,
 		protocols::moves::Movers_map const & ,
@@ -234,8 +234,8 @@ public:
 
     void
     set_separate_prt_ligand( bool separate_prt_ligand );
-    
-    
+
+
 	utility::vector1< core::io::silent::SilentEnergy > const &
 	silent_Es(){
 		return silent_Es_; }

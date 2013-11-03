@@ -33,7 +33,7 @@ class PlaceFragments : public protocols::moves::Mover {
   typedef core::pose::Pose Pose;
 
   //PlaceFragments(const FragSetOP& fragments);
-                      
+
   PlaceFragments();
 
   // undefined, commenting out to fix PyRosetta build  bool is_seed  ( protocols::loops::Loops & loops, core::Size & residue );
@@ -42,7 +42,7 @@ class PlaceFragments : public protocols::moves::Mover {
 
   virtual std::string get_name() const;
 
-  void parse_my_tag( utility::tag::TagCOP const tag,
+  void parse_my_tag( utility::tag::TagCOP tag,
                      basic::datacache::DataMap &,
                      protocols::filters::Filters_map const &,
                      protocols::moves::Movers_map const &,
@@ -53,21 +53,21 @@ class PlaceFragments : public protocols::moves::Mover {
 
   virtual ~PlaceFragments();
 
-	void initialize_fragments( const core::fragment::FragSetOP & fragments ); 
+	void initialize_fragments( const core::fragment::FragSetOP & fragments );
 
 	//use privat members...and setters/getters
 	void apply_frame(  core::pose::Pose & pose, core::fragment::Frame &frame, int aln_len, core::Size seq_start, core::Size max_frag_len  );
 	void create_fragments( core::pose::Pose & pose, core::Size insert_start, core::Size insert_stop );
-	
+
  private:
 	void initialize( const core::fragment::FragSetOP  fragments );
 
   	/// mover that should be applied after placement
     protocols::moves::MoverOP mover_;
-    
+
     /// filter that should be applied
     protocols::filters::FilterOP filter_;
-    
+
     //void initialize_library();
 		//core::fragment::FragSetOP fragments9_;
 
@@ -81,23 +81,22 @@ class PlaceFragments : public protocols::moves::Mover {
   	core::Size fsize_;
 		/// number of residues to align with fragments
 		int cartfrag_overlap_;
-    
+
 		/// stub
     std::string input_stubs_;
     /// seeds/segements
     utility::vector1< std::pair < std::string,std::string > > seg_vector_;
-    
-		bool frags_onflight_;	
+
+		bool frags_onflight_;
 
 		/// secondary structure sequence
 		std::string ss_;
-		
+
 		bool use_seq_;
-    
+
 };
 
 }
 }
 
 #endif
-

@@ -101,7 +101,7 @@ class SingleFragmentMover : public protocols::moves::Mover {
   virtual MoverOP fresh_instance() const;
 
   /// @brief Mover-specific parsing required by RosettaScripts
-  void parse_my_tag(const utility::tag::TagCOP tag,
+  void parse_my_tag(utility::tag::TagCOP tag,
                     basic::datacache::DataMap& data,
                     const protocols::filters::Filters_map& filters,
                     const protocols::moves::Movers_map& movers,

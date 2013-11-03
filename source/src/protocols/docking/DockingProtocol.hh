@@ -200,7 +200,7 @@ public:
 	friend std::ostream & operator<<(std::ostream& out, const DockingProtocol & dp );
 
 	// function for the parser with lots of accessors
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
 private:
 	/// information about the mode

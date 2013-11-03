@@ -41,7 +41,7 @@ class CAcstGenerator : public protocols::moves::Mover {
   virtual protocols::moves::MoverOP clone() const;
   virtual protocols::moves::MoverOP fresh_instance() const;
 
-  void parse_my_tag( utility::tag::TagCOP const tag,
+  void parse_my_tag( utility::tag::TagCOP tag,
                      basic::datacache::DataMap &,
                      protocols::filters::Filters_map const &,
                      protocols::moves::Movers_map const &,
@@ -58,7 +58,7 @@ class CAcstGenerator : public protocols::moves::Mover {
   /// container for the cutpoints, since there shouldnt be constraints to cutpoints
   utility::vector1< core::Size > cut_points_;
 
-	/// container with residues from seeds that should have constraints 
+	/// container with residues from seeds that should have constraints
 	utility::vector1< core::Size > seed_exceptions_;
 
   /// stddeviation for the harmonic CA constraints
@@ -90,7 +90,7 @@ class CAcstGenerator : public protocols::moves::Mover {
 
   /// sequence separation after which the pair constraints are added
   core::Size seq_separation_;
-	
+
 	/// distance separation
 	core::Real distance_cutoff_;
 };

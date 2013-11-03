@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/filters/CalculatorFilter.hh
-/// @brief Combine several filters in a (semi) arbitrary calculation 
-/// @author Rocco Moretti (rmoretti@u.washington.edu) 
+/// @brief Combine several filters in a (semi) arbitrary calculation
+/// @author Rocco Moretti (rmoretti@u.washington.edu)
 
 #ifndef INCLUDED_protocols_filters_CalculatorFilter_hh
 #define INCLUDED_protocols_filters_CalculatorFilter_hh
@@ -38,7 +38,7 @@ public:
 	CalculatorFilter(std::string equation);
 	CalculatorFilter(CalculatorFilter const & other);
 	virtual ~CalculatorFilter();
- 
+
 	virtual bool apply( core::pose::Pose const & pose ) const;
 	virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
@@ -51,7 +51,7 @@ public:
 		return new CalculatorFilter();
 	}
 
-	void parse_my_tag( utility::tag::TagCOP const tag,
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -61,7 +61,7 @@ public:
 	void add_filter( std::string name, protocols::filters::FilterOP filter );
 
   void add_constant( std::string name, core::Real value );
-	
+
 private:
 	numeric::CalculatorOP calc_;
 	std::map<std::string, core::Real> values_;
@@ -74,4 +74,3 @@ private:
 } // protocols
 
 #endif //INCLUDED_protocols_Filters_CalculatorFilter_HH_
-

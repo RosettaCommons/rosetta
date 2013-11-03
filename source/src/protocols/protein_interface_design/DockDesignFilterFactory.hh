@@ -55,7 +55,7 @@ public:
 	protocols::filters::FilterOP newFilter( std::string const & );
 	///@brief return new Filter by Tag parsing
 	protocols::filters::FilterOP newFilter(
-		TagCOP const,
+		TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,

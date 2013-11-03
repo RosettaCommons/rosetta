@@ -78,7 +78,7 @@ public:
 	virtual
 	void
 	parse_my_tag(
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap const & data,
 		core::pose::Pose const &);
 
@@ -101,5 +101,3 @@ private:
 } //namespace
 
 #endif // include guard
-
-

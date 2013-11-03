@@ -98,7 +98,7 @@ public:// accessor
 
 public:// parser
 
-	virtual void parse_my_tag( TagCOP const tag,
+	virtual void parse_my_tag( TagCOP tag,
 														 basic::datacache::DataMap &,
 														 filters::Filters_map const &,
 														 Movers_map const &,
@@ -120,10 +120,10 @@ public:// virtual main operation
 
 	/// @brief determine which chain to evaluate, 0 is all
 	core::Size chain_;
-	
+
 	/// @brief how many times to repeat evaluation
 	core::Size repeats_;
-	
+
 private:
 
 	Real filtered_score_;

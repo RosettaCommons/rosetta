@@ -54,7 +54,7 @@ public:
 	virtual moves::MoverOP fresh_instance() const;
 
 	virtual	void parse_my_tag(
-		TagCOP const,
+		TagCOP,
         basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
         moves::Movers_map const &,

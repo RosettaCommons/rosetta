@@ -49,7 +49,7 @@ public:
 	virtual ~AverageDegreeFilter();
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
-	void parse_my_tag( utility::tag::TagCOP const tag,
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -69,4 +69,3 @@ private:
 } // protocols
 
 #endif //INCLUDED_protocols_Filters_AverageDegreeFilter_HH_
-

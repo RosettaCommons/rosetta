@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
 /// @file protocols/seeded_abinitio/SeedFoldTree.cc
-/// @brief 
+/// @brief
 /// @author Eva-Maria Strauch (evas01@u.washington.edu)
 
 #ifndef INCLUDED_protocols_seeded_abinitio_SeedFoldTree_hh
@@ -31,7 +31,7 @@
 
 namespace protocols {
 namespace seeded_abinitio {
-		
+
 class SeedFoldTree : public protocols::moves::Mover
 {
 public:
@@ -44,30 +44,30 @@ public:
 	virtual std::string get_name() const;
   virtual protocols::moves::MoverOP clone() const;
   virtual protocols::moves::MoverOP fresh_instance() const;
-	
+
 	core::scoring::ScoreFunctionOP scorefxn() const;
-	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );	
+	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );
 	utility::vector1 < core::Size > get_cutpoints();
 	core::Size best_by_ala_scan( core::Size start, core::Size end, core::pose::PoseOP & ts_pose );
 
 	std::set< core::Size > get_folding_verteces();
-	
-	void parse_my_tag( utility::tag::TagCOP const tag,
+
+	void parse_my_tag( utility::tag::TagCOP tag,
 							  basic::datacache::DataMap &,
 							  protocols::filters::Filters_map const &,
 							  protocols::moves::Movers_map const &,
 							  core::pose::Pose const & );
-	
-	
-	core::kinematics::FoldTreeOP set_foldtree( 
+
+
+	core::kinematics::FoldTreeOP set_foldtree(
 												core::pose::PoseOP & seed_target_chain,
-												std::string secstr, 
+												std::string secstr,
 												protocols::loops::Loops & loops,
 												bool protein_not_folded_yet );
 
 	bool ddg_based();
 	void ddg_based( bool ddgb );
-	void set_anchor_res( utility::vector1< core::Size > anchor );  		
+	void set_anchor_res( utility::vector1< core::Size > anchor );
 	void anchor_specified( bool anchor_specified );
 	bool anchor_specified();
 
@@ -75,7 +75,7 @@ private:
 	/// newly generated foldtree OP
 	core::kinematics::FoldTreeOP fold_tree_;
 
-	/// is there a second target chain to add			
+	/// is there a second target chain to add
 	bool add_target_; //= false; not implemented
 
 	///check whether there is a second target chain loaded
@@ -87,7 +87,7 @@ private:
 	///vector containing all cutpoints
 	utility::vector1<Size> cut_points_;
 
-	///seed info 
+	///seed info
 	protocols::loops::Loops all_seeds_;
 
 	/// for manual set up
@@ -95,7 +95,7 @@ private:
 
 	/// anchor residues
 	utility::vector1< core::Size > anchors_;
-	bool anchor_specified_;	
+	bool anchor_specified_;
 
 	/// should the jump atoms be computed based on ddG
 	bool ddg_based_;
@@ -114,5 +114,4 @@ private:
 	}//end seeded_abinitio
 }//end protocols
 
-#endif 
-
+#endif

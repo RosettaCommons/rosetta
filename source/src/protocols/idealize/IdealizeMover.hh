@@ -106,7 +106,7 @@ public:
 		pos_list_ = pos_list;
 	}
 
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	utility::vector1< core::Size > ignore_residues_in_csts() const;
 	void ignore_residues_in_csts( utility::vector1< core::Size > const i );
 	void impose_constraints( bool const i ){ impose_constraints_ = i; }

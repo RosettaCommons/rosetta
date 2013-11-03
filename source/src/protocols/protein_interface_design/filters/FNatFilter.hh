@@ -52,7 +52,7 @@ public:
 	//@brief computes f(nat) by calling protocols::docking::metrics.cc
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~FNatFilter();
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & reference_pose );
 
 private:
 	core::Real threshold_;
@@ -66,4 +66,3 @@ private:
 } // protocols
 
 #endif //INCLUDED_protocols_protein_interface_design_filters_FNatFilter_HH_
-

@@ -51,7 +51,7 @@ public:
 	void output_results( Pose & );
 
 	virtual void parse_my_tag(
-		TagCOP const,
+		TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		moves::Movers_map const &,
@@ -64,7 +64,7 @@ public:
 
 private:
 	void initialize( Pose & );
-	
+
 	using protocols::simple_moves::PackRotamersMover::run;
 	void run();
 /// @brief add target and competitor states

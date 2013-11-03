@@ -74,7 +74,7 @@ public:
 	/// @brief Called by MoverFactory when constructing new Movers. Takes care of the specific mover's parsing.
 	virtual
 	void parse_my_tag(
-		utility::tag::TagCOP const,
+		utility::tag::TagCOP,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,

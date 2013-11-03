@@ -158,10 +158,10 @@ public:
 	void factorA( core::Real const fA );
 	void factorB( core::Real const fB );
 	//Real get_last_delta_square();
-	
+
 	//interface for rosetta_scripts
 	virtual void parse_my_tag(
-		TagCOP const,
+		TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -187,4 +187,3 @@ private:
 }//namespace protocols
 
 #endif
-

@@ -48,7 +48,7 @@ public:
 	}
 	void clear() { residue_types_.clear(); }
 	virtual ~NeighborTypeFilter();
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	core::Size target_residue_;
 	utility::vector1< bool > residue_types_;
@@ -59,4 +59,3 @@ private:
 }
 
 #endif
-

@@ -168,7 +168,7 @@ public:
 	virtual std::string get_name() const;
 	
 	virtual void parse_my_tag( 
-		utility::tag::TagCOP const tags,
+		utility::tag::TagCOP tags,
 		basic::datacache::DataMap & datamap,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
@@ -188,7 +188,7 @@ private:
 
 	RampingFuncOP instantiate_rampfunc(
 		std::string const & func_name,
-		utility::tag::TagCOP const tag_ptr ) const;
+		utility::tag::TagCOP tag_ptr ) const;
 
 private:
 

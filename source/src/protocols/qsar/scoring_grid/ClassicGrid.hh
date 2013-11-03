@@ -35,7 +35,7 @@ public:
 	/// @brief deserialize a json_spirit object to a SingleGrid
 	virtual void deserialize(utility::json_spirit::mObject data);
 
-	void parse_my_tag(utility::tag::TagCOP const tag);
+	void parse_my_tag(utility::tag::TagCOP tag);
 
 private:
 	core::Real atr_radius_;

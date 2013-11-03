@@ -50,7 +50,7 @@ public:
 		return protocols::moves::MoverOP( new SetChiMover );
 	}
 
-	void parse_my_tag( utility::tag::TagCOP const tag,
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -73,4 +73,3 @@ private:
 } // protocols
 
 #endif //INCLUDED_protocols_simple_moves_sidechain_moves_SetChiMover_HH_
-

@@ -26,62 +26,62 @@
 
 namespace protocols {
 	namespace seeded_abinitio {
-		
+
 		class DefineMovableLoops : public protocols::moves::Mover
 		{
 		public:
 			DefineMovableLoops();
-			
+
 			virtual ~DefineMovableLoops();
 			void apply( core::pose::Pose & pose );
 			virtual std::string get_name() const;
 			protocols::moves::MoverOP clone() const { return( protocols::moves::MoverOP( new DefineMovableLoops( *this ) ) ); }
 			protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new DefineMovableLoops ); }
-			
-			void parse_my_tag(  utility::tag::TagCOP const tag,
+
+			void parse_my_tag(  utility::tag::TagCOP tag,
 							  					basic::datacache::DataMap &,
 							  					protocols::filters::Filters_map const &,
 							  					protocols::moves::Movers_map const &,
 							  					core::pose::Pose const & );
-			
-			
+
+
 		private: ///functions
-			
-			protocols::loops::LoopsOP find_loops (  core::pose::Pose & pose, 
-												  std::string secstr, 
+
+			protocols::loops::LoopsOP find_loops (  core::pose::Pose & pose,
+												  std::string secstr,
 												  core::Size offset,
 												  protocols::loops::Loops seeds );
-		
+
 			bool is_cut( utility::vector1<Size> & cut_points, Size residue);
-			
+
 			bool chainbreakweights();
-			
+
 			void add_chainbreakweights( bool acbw );
-			
+
 			bool use_cutpoints();
-			
+
 			void use_cutpoints( bool uc );
-			
+
 
 		private: /// data
-	
+
 			core::pose::PoseOP template_pdb_;
-			
+
 			std::string secstructure_;
-			
+
 			utility::vector1< core::Size > chains_;
-			
+
 			//gather all loops for specified chains or just the ones that have a cutpoint
 			bool use_cutpoints_;
-			
+
 			///residues specifying the seeds
   		utility::vector1< std::pair < std::string,std::string > > seed_vector_;
 
 			protocols::loops::LoopsOP loops_;
-				
+
 			///add cutpoint variants for closure
 			bool chainbreakweights_;
-			
+
 		};
 	}//end seeded_abinitio
 }//end protocols

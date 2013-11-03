@@ -68,7 +68,7 @@ public:
 	protocols::moves::MoverOP relax_mover() const;
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );
-	void parse_my_tag( utility::tag::TagCOP const tag,
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -112,4 +112,3 @@ private:
 } // protocols
 
 #endif //INCLUDED_protocols_Filters_FilterScanFilter_HH_
-

@@ -67,7 +67,7 @@ public:
 	void report( std::ostream &, core::pose::Pose const & ) const {}
 
 	void parse_my_tag(
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,
@@ -105,7 +105,7 @@ public:
 	void invert( bool const inv );
 
 	void parse_my_tag(
-		utility::tag::TagCOP const,
+		utility::tag::TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,
@@ -134,7 +134,7 @@ public:
 	core::Real compute( core::pose::Pose const & ) const;
 
 	void parse_my_tag(
-		utility::tag::TagCOP const,
+		utility::tag::TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,
@@ -161,7 +161,7 @@ public:
 	//No compute(), as it passes everything on to the sub-mover
 
 	void parse_my_tag(
-		utility::tag::TagCOP const,
+		utility::tag::TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,
@@ -201,7 +201,7 @@ public:
 	void set_else( FilterCOP elsefilter, core::Real value = 0, core::Real elseweight = 1 );
 
 	void parse_my_tag(
-		utility::tag::TagCOP const,
+		utility::tag::TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		moves::Movers_map const &,

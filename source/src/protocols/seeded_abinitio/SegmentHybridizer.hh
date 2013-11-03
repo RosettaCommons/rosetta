@@ -40,12 +40,12 @@ public:
 public:
 	SegmentHybridizer();
 	virtual ~SegmentHybridizer();
-	
+
 	void apply( core::pose::Pose & pose );
   virtual protocols::moves::MoverOP clone() const;
   virtual protocols::moves::MoverOP fresh_instance() const;
 	virtual std::string get_name() const;
-	void parse_my_tag(  utility::tag::TagCOP const tag,
+	void parse_my_tag(  utility::tag::TagCOP tag,
                                 	basic::datacache::DataMap &,
                                   protocols::filters::Filters_map const &,
                                   protocols::moves::Movers_map const &,
@@ -55,14 +55,14 @@ public:
 	void hybridize( core::pose::Pose & pose , core::Size insert_pos_start, core::Size insert_pos_stop);
 	void apply_frame( core::pose::Pose & pose, core::fragment::Frame &frame );
 	void check_and_create_fragments( core::pose::Pose & pose, core::Size insert_start, core::Size insert_stop );
-	
+
 private:
-	// to output and score full atom again	
+	// to output and score full atom again
 	core::scoring::ScoreFunctionOP highres_scorefxn_;
 	core::scoring::ScoreFunctionOP lowres_scorefxn_;
 	core::scoring::ScoreFunctionOP min_scorefxn_;
 	core::scoring::ScoreFunctionOP bonds_scorefxn_;
-	core::scoring::ScoreFunctionOP nocst_scorefxn_;	
+	core::scoring::ScoreFunctionOP nocst_scorefxn_;
 
 	// for span/segment declarations
 	utility::vector1< std::pair < std::string,std::string > > seg_vector_;
@@ -70,10 +70,10 @@ private:
 	// movemap for minimization
 	core::kinematics::MoveMapOP mm_;
 	core::kinematics::MoveMapOP extended_mm_;
-	
+
 	// for cartesian alignment
 	core::Size cartfrag_overlap_;
-	
+
 	// how much outside of the replaced segment should be remodeled
 	core::Size extend_outside_;
 	core::Size extend_inside_;
@@ -82,7 +82,7 @@ private:
 	/// fragments parts
 	core::Real rms_;
 	core::Size nfrags_ ;
-	core::Size big_; 
+	core::Size big_;
 	core::Size small_;
 	core::fragment::FragSetOP fragments_big_;
 	core::fragment::FragSetOP fragments_small_;
@@ -90,7 +90,7 @@ private:
 	bool use_seq_;
 	int tries_;
 	core::Size mc_cycles_;
-	core::Real temp_;	
+	core::Real temp_;
 	bool use_frags_;
 	core::Size min_cycles_;
 	bool all_movable_;
@@ -102,4 +102,3 @@ private:
 } // protocols
 
 #endif /*INCLUDED_protocols_seeded_abinitio_movers_SegmentHybridizer_HH*/
-

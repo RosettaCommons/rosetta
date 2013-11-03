@@ -38,7 +38,7 @@ public:
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new DockAndRetrieveSidechains ); }
 	void apply( core::pose::Pose & pose );
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	virtual ~DockAndRetrieveSidechains();
 	virtual std::string get_name() const;
 private:
@@ -53,4 +53,3 @@ private:
 
 
 #endif /*INCLUDED_protocols_protein_interface_design_movers_DockAndRetrieveSidechains_HH*/
-

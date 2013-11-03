@@ -68,7 +68,7 @@ public:
 		return protocols::moves::MoverOP( new DisulfideMover );
 	}
 
-	void parse_my_tag( utility::tag::TagCOP const tag,
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -100,4 +100,3 @@ private:
 } // protocols
 
 #endif //INCLUDED_protocols_protein_interface_design_movers_DisulfideMover_HH_
-

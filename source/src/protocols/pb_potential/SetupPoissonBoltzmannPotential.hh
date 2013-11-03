@@ -56,7 +56,7 @@ public:
   virtual ~SetupPoissonBoltzmannPotential();
   virtual void apply( core::pose::Pose & pose );
   virtual std::string get_name() const;
-  virtual void parse_my_tag( utility::tag::TagCOP const,
+  virtual void parse_my_tag( utility::tag::TagCOP,
 			     basic::datacache::DataMap &,
 			     protocols::filters::Filters_map const &,
 			     protocols::moves::Movers_map const &,

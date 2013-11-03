@@ -254,7 +254,7 @@ public:
 	void show_counters( std::ostream & out ) const;
 
 	virtual void parse_my_tag(
-		TagCOP const tag,
+		TagCOP tag,
 		basic::datacache::DataMap & data,
 		Filters_map const & filters,
 		Movers_map const & movers,
@@ -263,7 +263,7 @@ public:
 
 	///@brief parse "task_operations" XML option (can be employed virtually by derived Packing movers)
 	virtual void parse_task_operations(
-		TagCOP const,
+		TagCOP,
 		basic::datacache::DataMap const &,
 		Filters_map const &,
 		Movers_map const &
@@ -433,4 +433,3 @@ private:
 } // namespace protocols
 
 #endif
-

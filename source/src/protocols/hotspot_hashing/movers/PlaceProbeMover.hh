@@ -67,7 +67,7 @@ class PlaceProbeMover : virtual public protocols::moves::Mover
   protected:
 		///@brief Parses tag compoments for PlaceProbeMover
     void parse_place_probe_tag(
-         utility::tag::TagCOP const tag,
+         utility::tag::TagCOP tag,
          basic::datacache::DataMap &,
          protocols::filters::Filters_map const &,
          protocols::moves::Movers_map const &,
@@ -106,4 +106,4 @@ class PlaceProbeMover : virtual public protocols::moves::Mover
 }
 }
 
-#endif 
+#endif

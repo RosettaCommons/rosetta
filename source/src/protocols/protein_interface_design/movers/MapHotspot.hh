@@ -49,7 +49,7 @@ public:
 	void GenerateMap( core::pose::Pose const & start_pose, core::pose::Pose & curr_pose, core::Size const jump_number );
 	/// @brief minimizes rb and sc dofs for all of the hotspots
 	void MinimizeHotspots( core::pose::Pose & pose );
-	void parse_my_tag( utility::tag::TagCOP const tag,
+	void parse_my_tag( utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,
@@ -76,4 +76,3 @@ private:
 
 
 #endif /*INCLUDED_protocols_protein_interface_design_movers_TryRotamers_HH*/
-

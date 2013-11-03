@@ -42,9 +42,9 @@ public:
 	protocols::filters::FilterOP fresh_instance() const{
 		return new InterfaceHolesFilter();
 	}
-  InterfaceHolesFilter( InterfaceHolesFilter const & init ) : 
-	//utility::pointer::ReferenceCount(), 
-	protocols::filters::Filter( init ) 
+  InterfaceHolesFilter( InterfaceHolesFilter const & init ) :
+	//utility::pointer::ReferenceCount(),
+	protocols::filters::Filter( init )
 {
 		rb_jump_ = init.rb_jump_;
 		threshold_ = init.threshold_;
@@ -53,7 +53,7 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~InterfaceHolesFilter();
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	core::Size rb_jump_;
 	core::Real threshold_;
@@ -63,4 +63,3 @@ private:
 } // protocols
 
 #endif //INCLUDED_protocols_protein_interface_design_filters_InterfaceHolesFilter_HH_
-

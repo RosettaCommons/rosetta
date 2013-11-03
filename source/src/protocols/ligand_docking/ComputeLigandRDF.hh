@@ -34,7 +34,7 @@ namespace protocols {
 namespace ligand_docking {
 
 class ComputeLigandRDF : public protocols::moves::Mover{
-	
+
 public:
 	ComputeLigandRDF();
 	virtual ~ComputeLigandRDF();
@@ -43,10 +43,10 @@ public:
 	virtual std::string get_name() const;
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
-	
+
 	virtual void parse_my_tag
 	(
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data_map,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
@@ -105,7 +105,7 @@ private:
 	core::Size bin_count_;
 	core::Real smoothing_factor_;
 	core::scoring::ScoreFunctionOP score_fxn_;
-	
+
 }; // class ComputeLigandRDF
 
 

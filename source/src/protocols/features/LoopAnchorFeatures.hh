@@ -68,7 +68,7 @@ public:
 
 	void
 	parse_my_tag(
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & /*data*/,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
@@ -84,7 +84,7 @@ public:
 
     void
     set_use_relevant_residues_as_loop_length( bool const use_relevant_residues_as_loop_length );
-    
+
     void
     set_use_single_residue_to_define_anchor_transfrom( bool const use_single_residue_to_define_anchor_transfrom );
 
@@ -93,18 +93,18 @@ private:
 	utility::vector1<Size> start_residue(Size resNo);
 	utility::vector1<Size> end_residue(Size resNo);
 	utility::vector1<Size> atoms();
-	
+
 	core::Size min_loop_length( utility::vector1< bool > const & relevant_residue );
 	core::Size max_loop_length( utility::vector1< bool > const & relevant_residue );
 	core::Size determine_correct_length( utility::vector1< bool > const & relevant_residue, Size default_length );
-	
+
 	numeric::HomogeneousTransform<core::Real>
 	compute_anchor_transform(
 		core::pose::Pose const & pose,
 		utility::vector1<core::Size> const & residue_begin,
 		utility::vector1<core::Size> const & residue_end,
 		utility::vector1<core::Size> const & atoms);
-	
+
 	void
 	compute_transform_and_write_to_db(
 		StructureID struct_id,
@@ -112,7 +112,7 @@ private:
 		core::Size end,
 		core::pose::Pose const & pose,
 		cppdb::statement & stmt);
-	
+
 	core::Real
 	compute_atom_angles(
 		core::pose::Pose const & pose,

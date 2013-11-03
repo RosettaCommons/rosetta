@@ -70,7 +70,7 @@ public :
 	virtual ~ddG();
 	protocols::moves::MoverOP fresh_instance() const { return (protocols::moves::MoverOP) new ddG; }
 	protocols::moves::MoverOP clone() const;
-	void parse_my_tag(  utility::tag::TagCOP const, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const& );
+	void parse_my_tag(  utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const& );
 
 	virtual std::string get_name() const;
 	protocols::moves::MoverOP relax_mover() const{ return relax_mover_; }
@@ -131,4 +131,3 @@ private :
 } // movers
 } // protocols
 #endif /*INCLUDED_protocols_protein_interface_design_movers_ddG_HH*/
-

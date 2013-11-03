@@ -35,13 +35,13 @@ public:
 	~O2M_MutateMover(){}
 
 	void apply( core::io::serialization::PipeMap & pmap);
-	
+
 	// stupid mover base class crap
 	void apply( Pose & ){
 		utility_exit_with_message( "DOESNT WORK WITH SINGLE POSE" );
 	}
 	std::string get_name() const { return "stupid jd2"; }
-	void parse_my_tag( utility::tag::TagCOP const , basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) {
+	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ) {
 		utility_exit_with_message( "DOESNT WORK WITH JD2" );
 	}
 

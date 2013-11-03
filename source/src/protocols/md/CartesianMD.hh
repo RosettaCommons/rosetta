@@ -40,13 +40,13 @@ public:
 	CartesianMD( );
 
 	//constructor
-	CartesianMD( core::pose::Pose const &pose, 
+	CartesianMD( core::pose::Pose const &pose,
 	 core::scoring::ScoreFunctionCOP sfxn,
 	 core::kinematics::MoveMapCOP movemap );
 
 	void
 	init( );
-	
+
 	//destructor
 	virtual ~CartesianMD();
 
@@ -74,42 +74,42 @@ public:
 
 	virtual
 	void parse_my_tag(
-		TagCOP const,
+		TagCOP,
 		basic::datacache::DataMap &,
 		Filters_map const &,
 		protocols::moves::Movers_map const &,
 		Pose const & );
 
-	void 
+	void
 	parse_opts(
-  	TagCOP const tag,
+  	TagCOP tag,
 	  basic::datacache::DataMap & data,
   	//Filters_map const &,
   	//protocols::moves::Movers_map const &,
   	Pose const & pose );
 
-	void 
+	void
 	parse_movemap(
-  	TagCOP const tag,
+  	TagCOP tag,
   	basic::datacache::DataMap & data,
   	//Filters_map const &,
   	//protocols::moves::Movers_map const &,
   	Pose const & pose );
 
-	utility::vector1< pose::Pose > 
+	utility::vector1< pose::Pose >
 	dump_poses( pose::Pose const &pose_ref ) const;
 
 private:
 	void get_native_info( pose::Pose const &pose );
-	
+
 	void do_initialize(
-		core::pose::Pose &pose, 
+		core::pose::Pose &pose,
 		core::Real const &temp0 );
 
 	// deprecated
-	void Berendsen_Integrator( core::pose::Pose & pose, 
+	void Berendsen_Integrator( core::pose::Pose & pose,
 														 core::optimization::CartesianMinimizerMap &min_map );
-	
+
 	void VelocityVerlet_Integrator( core::pose::Pose & pose,
 																	core::optimization::CartesianMinimizerMap &min_map,
 																	md::Rattle & rattle );
@@ -120,7 +120,7 @@ private:
 
 	void do_MD( core::pose::Pose & pose,
 							core::Size const &nstep,
-							core::Real const &temp0 = 300, 
+							core::Real const &temp0 = 300,
 							bool const &initialize = false );
 
 	void initialize_velocity( core::Real const &temperature );

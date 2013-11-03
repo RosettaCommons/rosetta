@@ -69,7 +69,7 @@ public:
 
 	void
 	parse_my_tag(
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & /*data*/,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
@@ -79,7 +79,7 @@ public:
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
 	features_reporter_dependencies() const;
-	
+
 	///@brief collect all the feature data for the pose
 	virtual
 	core::Size
@@ -391,7 +391,7 @@ public:
 		core::Size	sheet_id,
 		core::Size	residue_begin,
 		core::Size	residue_end);
-	
+
 	utility::vector1<Size>
 	get_vec_sw_can_by_sh_id(
 		StructureID struct_id,
@@ -452,13 +452,13 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sw_can_by_sh_id);
-		
+
 	core::Size
 	get_segment_id(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size all_strands_index);
-	
+
 	core::Size
 	get_num_of_distinct_sheet_id(
 		StructureID struct_id,
@@ -573,7 +573,7 @@ public:
 		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::Size sw_can_by_sh_id);
-		
+
 	core::Size
 	add_sw_res_size(
 		StructureID	struct_id,
@@ -634,7 +634,7 @@ public:
 		core::Size sheet_id_1,
 		core::Size sheet_id_2);
 
-	std::pair<core::Size, core::Size>	
+	std::pair<core::Size, core::Size>
 	get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
@@ -712,7 +712,7 @@ public:
 		utility::sql_database::sessionOP db_session,
 		core::Size sw_can_by_sh_id);
 
-		
+
 	bool
 	check_whether_sw_by_sh_id_still_alive(
 		StructureID struct_id,
@@ -728,16 +728,16 @@ public:
 		core::Size end_res,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
-	
- 
+
+
 private:
 
 	core::Size
 	min_num_strands_to_deal_;
-	
+
 	core::Size
 	max_num_strands_to_deal_;
-		
+
 	core::Size
 	min_res_in_strand_;
 
@@ -788,8 +788,8 @@ private:
 
 	bool
 	extract_sandwich_;
-		
-	bool	
+
+	bool
 	write_chain_B_resnum_;
 
 	bool
@@ -810,7 +810,7 @@ private:
 	core::Real
 	max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_;
 
-	bool	
+	bool
 	write_phi_psi_of_all_;
 
 	bool
@@ -833,8 +833,8 @@ private:
 
 	bool
 	do_not_connect_sheets_by_loops_;
-	
-	core::Real	
+
+	core::Real
 	check_canonicalness_cutoff_;
 
 	bool

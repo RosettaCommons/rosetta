@@ -78,7 +78,7 @@ public:
 
 	core::pack::task::TaskFactoryCOP get_task_factory() const;
 
-	virtual void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
@@ -136,7 +136,7 @@ private:
 		protocols::moves::MonteCarlo & mc,
 		core::pose::Pose & pose
 	);
-	
+
 	void debugging_output( core::pose::Pose & pose );
 
 private:
@@ -150,7 +150,7 @@ private:
 	bool repack_neighbors_;
 	core::Size outer_cycles_, max_inner_cycles_, inner_cycles_, current_cycle_number_, repack_period_;
 	core::Real temp_initial_, temp_final_;
-	
+
 	core::kinematics::FoldTreeOP original_fold_tree_;
 	core::kinematics::MoveMapOP move_map_;
 	core::scoring::ScoreFunctionOP ramping_scorefxn_;

@@ -61,7 +61,7 @@ public:
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
-	void parse_my_tag( TagCOP const, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, Pose const & );
+	void parse_my_tag( TagCOP, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, Pose const & );
 
 private:
   bool reduced_IG_as_L_;

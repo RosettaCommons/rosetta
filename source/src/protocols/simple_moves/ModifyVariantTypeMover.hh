@@ -44,7 +44,7 @@ namespace protocols {
 namespace simple_moves {
 
 /// @brief Adds variant types to selected residues
-class ModifyVariantTypeMover : public protocols::moves::Mover 
+class ModifyVariantTypeMover : public protocols::moves::Mover
 {
 public:
 	// default constructor (nmoves=1)
@@ -55,7 +55,7 @@ public:
 
 	virtual moves::MoverOP clone() const;
 	virtual moves::MoverOP fresh_instance() const;
-  virtual void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+  virtual void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
 private:
   core::pack::task::TaskFactoryOP task_factory_;

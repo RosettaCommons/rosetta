@@ -35,7 +35,7 @@ public:
 	//default ctor
 	NMerPSSMEnergyFilter();
 	//full ctor
-	NMerPSSMEnergyFilter( 
+	NMerPSSMEnergyFilter(
 		core::Real const score_type_threshold,
 		std::string string_resnums
 	);
@@ -52,7 +52,7 @@ public:
 	core::Real compute_residue( core::pose::Pose const & pose, core::Size const seqpos ) const;
 	core::Real compute( core::pose::Pose const &pose ) const;
 	virtual ~NMerPSSMEnergyFilter();
-	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	core::Real score_type_threshold_;
 	std::string string_resnums_;

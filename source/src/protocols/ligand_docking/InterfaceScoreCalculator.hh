@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/ligand_docking/InterfaceScoreCalculator.hh
-/// @brief  
+/// @brief
 /// @author Gordon Lemmon
 
 #ifndef INCLUDED_protocols_ligand_docking_InterfaceScoreCalculator_hh
@@ -55,7 +55,7 @@ public:
 	void score_fxn(core::scoring::ScoreFunctionOP const & score_fxn);
 
 	void parse_my_tag(
-		utility::tag::TagCOP const tag,
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
 		protocols::filters::Filters_map const &,
 		protocols::moves::Movers_map const &,

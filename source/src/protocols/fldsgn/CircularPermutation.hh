@@ -139,7 +139,7 @@ public: //parser
 
 
 	/// @brief parse xml file
-	void parse_my_tag( TagCOP const tag,
+	void parse_my_tag( TagCOP tag,
 										 basic::datacache::DataMap &,
 										 Filters_map const &,
 										 Movers_map const &,
