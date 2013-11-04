@@ -4465,6 +4465,31 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "exact"</dd><br>
 </dl>
 <dl>
+<dt><b>-length_dep_srbb</b> \<Boolean\><dt>
+<dd>Enable helix-length-dependent sr backbone hbonds</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-ldsrbb_low_scale</b> \<Real\><dt>
+<dd>Helix-length-dependent scaling at minlength.</dd><br>
+<dd>Default: 0.5</dd><br>
+</dl>
+<dl>
+<dt><b>-ldsrbb_high_scale</b> \<Real\><dt>
+<dd>Helix-length-dependent scaling at maxlength.</dd><br>
+<dd>Default: 2.0</dd><br>
+</dl>
+<dl>
+<dt><b>-ldsrbb_minlength</b> \<Integer\><dt>
+<dd>Helix-length-dependent scaling minlength.</dd><br>
+<dd>Default: 4</dd><br>
+</dl>
+<dl>
+<dt><b>-ldsrbb_maxlength</b> \<Integer\><dt>
+<dd>Helix-length-dependent scaling maxlength.</dd><br>
+<dd>Default: 17</dd><br>
+</dl>
+<dl>
 <dt><b>-nmer_ref_energies</b> \<String\><dt>
 <dd>nmer ref energies database filename</dd><br>
 </dl>

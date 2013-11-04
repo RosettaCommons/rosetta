@@ -764,3 +764,4 @@ namespace jumps { RealOptionKey const increase_chainbreak( "jumps:increase_chain
 namespace jumps { BooleanOptionKey const overlap_chainbreak( "jumps:overlap_chainbreak" );  }
 namespace jumps { RealOptionKey const sep_switch_accelerate( "jumps:sep_switch_accelerate" );  }
 namespace jumps { BooleanOptionKey const dump_frags( "jumps:dump_frags" );  }
+namespace jumps { IntegerOptionKey const njumps( "jumps:njumps" );  }

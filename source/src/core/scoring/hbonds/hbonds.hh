@@ -33,6 +33,14 @@ namespace core {
 namespace scoring {
 namespace hbonds {
 
+//fpd ss-len-dep weight parameters
+struct SSWeightParameters {
+	SSWeightParameters() : ssdep_(false), l_(0.5), h_(2.0), len_l_(4), len_h_(17) {}
+	bool ssdep_;
+	Real l_, h_;
+	Size len_l_, len_h_;
+};
+
 void
 fill_intra_res_hbond_set(
 	pose::Pose const & pose,
@@ -48,7 +56,29 @@ fill_hbond_set(
 	bool const exclude_bb  = false,
 	bool const exclude_bsc = false,
 	bool const exclude_scb = false,
-	bool const exclude_sc  = false);
+	bool const exclude_sc  = false
+);
+
+void
+fill_hbond_set(
+	pose::Pose const & pose,
+	bool const calculate_derivative,
+	HBondSet & hbond_set,
+	SSWeightParameters const &,
+	bool const exclude_bb  = false,
+	bool const exclude_bsc = false,
+	bool const exclude_scb = false,
+	bool const exclude_sc  = false
+);
+
+
+core::Real
+get_ssdep_weight(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const & pose,
+	SSWeightParameters const & ssdep
+);
 
 ///@breif Fill HBondSet using the distance between the acceptor and
 ///hydrogen atoms as the definitional cutoff. Do not exclude any
@@ -83,7 +113,8 @@ identify_hbonds_1way(
 	bool const exclude_acc_scb,
 	bool const exclude_acc_sc,
 	// output
-	HBondSet & hbond_set
+	HBondSet & hbond_set,
+	Real ssdep_weight_factor = 1.0
 );
 
 void
@@ -100,7 +131,8 @@ identify_hbonds_1way(
 	bool const exclude_acc_sc,
 	HBondOptions const & options,
 	// output
-	EnergyMap & emap
+	EnergyMap & emap,
+	Real ssdep_weight_factor = 1.0
 );
 	
 void
@@ -118,7 +150,8 @@ identify_hbonds_1way(
 	 HBondOptions const & options,
 	 // output
 	 EnergyMap & emap,
-	 boost::unordered_map<core::Size, core::Size> & num_hbonds
+	 boost::unordered_map<core::Size, core::Size> & num_hbonds,
+	 Real ssdep_weight_factor = 1.0
 );
 
 void
@@ -141,10 +174,10 @@ identify_intra_res_hbonds(
 
 
 void
-identify_intra_res_hbonds( 
+identify_intra_res_hbonds(
 	HBondDatabase const & database,
-	conformation::Residue const & rsd, 
-	bool const evaluate_derivative, 
+	conformation::Residue const & rsd,
+	bool const evaluate_derivative,
 	HBondOptions const & options,
 	EnergyMap & emap);
 

@@ -769,10 +769,10 @@ option.add( basic::options::OptionKeys::jumps::increase_chainbreak, "multiply ra
 option.add( basic::options::OptionKeys::jumps::overlap_chainbreak, "use the overlap chainbrak term in stage4" ).def(false);
 option.add( basic::options::OptionKeys::jumps::sep_switch_accelerate, "constraints and chainbreak depend on in-chain-separation. Accelerate their enforcement 1+num_cuts()*<this_factor>" ).def(0.4);
 option.add( basic::options::OptionKeys::jumps::dump_frags, "dump jump_fragments " ).def(false);
+option.add( basic::options::OptionKeys::jumps::njumps, "number_of_jumps to select from library for each trajectory (membrane mode)" ).def(1);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::njumps, "number_of_jumps to select from library for each trajectory (membrane mode)" ).def(1);
-option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
 option.add( basic::options::OptionKeys::jumps::contact_score, "the strand-weight will have a weight * contact_order component" ).def(0.0);
 option.add( basic::options::OptionKeys::jumps::filter_templates, "filter hybridization protocol templates" ).def(false);
 option.add( basic::options::OptionKeys::templates::templates, "templates option group" ).legal(true).def(true);
@@ -930,6 +930,11 @@ option.add( basic::options::OptionKeys::score::facts_charge_dir, "directory wher
 option.add( basic::options::OptionKeys::score::facts_eff_charge_dir, "directory where residue topology files for FACTS charge are stored" ).def("scoring/score_functions/facts/eff");
 option.add( basic::options::OptionKeys::score::facts_plane_aa, "AAs to apply plane rule" );
 option.add( basic::options::OptionKeys::score::facts_eq_type, "FACTS equation type" ).def("exact");
+option.add( basic::options::OptionKeys::score::length_dep_srbb, "Enable helix-length-dependent sr backbone hbonds" ).def(false);
+option.add( basic::options::OptionKeys::score::ldsrbb_low_scale, "Helix-length-dependent scaling at minlength." ).def(0.5);
+option.add( basic::options::OptionKeys::score::ldsrbb_high_scale, "Helix-length-dependent scaling at maxlength." ).def(2.0);
+option.add( basic::options::OptionKeys::score::ldsrbb_minlength, "Helix-length-dependent scaling minlength." ).def(4);
+option.add( basic::options::OptionKeys::score::ldsrbb_maxlength, "Helix-length-dependent scaling maxlength." ).def(17);
 option.add( basic::options::OptionKeys::score::nmer_ref_energies, "nmer ref energies database filename" );
 option.add( basic::options::OptionKeys::score::nmer_ref_energies_list, "list of nmer ref energies database filenames" );
 option.add( basic::options::OptionKeys::score::nmer_pssm, "nmer pssm database filename" );
@@ -1534,12 +1539,12 @@ option.add( basic::options::OptionKeys::casp::repack, "should we repack the stru
 option.add( basic::options::OptionKeys::casp::sc_min, "should we sidechain minimize the structure?" );
 option.add( basic::options::OptionKeys::casp::sequential, "should mutations be considered in sequence or all together?" );
 option.add( basic::options::OptionKeys::casp::num_iterations, "number of iterations to perform" );
-option.add( basic::options::OptionKeys::casp::weight_file, "what weight-file to use?" );
-option.add( basic::options::OptionKeys::casp::refine_res, "specifies file that contains which residues to refine" );
-option.add( basic::options::OptionKeys::pose_metrics::pose_metrics, "pose_metrics option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff, " maximum SASA that is allowed for an atom to count as buried for the BuriedUnsatisfiedPolarsCalculator" ).def(0.3);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::casp::weight_file, "what weight-file to use?" );
+option.add( basic::options::OptionKeys::casp::refine_res, "specifies file that contains which residues to refine" );
+option.add( basic::options::OptionKeys::pose_metrics::pose_metrics, "pose_metrics option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff, " maximum SASA that is allowed for an atom to count as buried for the BuriedUnsatisfiedPolarsCalculator" ).def(0.3);
 option.add( basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius, " the probe radius used in the SASA calculator (and thus implicitly in the BuriedUnsatisfiedPolarsCalculator" ).def(1.4);
 option.add( basic::options::OptionKeys::pose_metrics::interface_cutoff, "distance in angstroms (def. 10.0) for calculating what residues are at an interface via InterfaceNeighborDefinitionCalculator" ).def(10.0);
 option.add( basic::options::OptionKeys::pose_metrics::min_sequence_separation, " minimum number of sequence positions that two residues need to be apart to count as nonlocal in the NonlocalContactsCalculator" ).def(6);
@@ -2303,11 +2308,11 @@ option.add( basic::options::OptionKeys::hotspot::angle_res, "Residue to use for 
 option.add( basic::options::OptionKeys::parser::parser, "parser option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::parser::protocol, "File name for the xml parser protocol" );
 option.add( basic::options::OptionKeys::parser::script_vars, "Variable substitutions for xml parser, in the form of name=value" );
-option.add( basic::options::OptionKeys::parser::view, "Use the viewer?" );
-option.add( basic::options::OptionKeys::parser::patchdock, "Patchdock output file name." );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::parser::patchdock_random_entry, "Pick a random patchdock entry between two entry numbers. inclusive" ).n(2);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::parser::view, "Use the viewer?" );
+option.add( basic::options::OptionKeys::parser::patchdock, "Patchdock output file name." );
+option.add( basic::options::OptionKeys::parser::patchdock_random_entry, "Pick a random patchdock entry between two entry numbers. inclusive" ).n(2);
 option.add( basic::options::OptionKeys::DomainAssembly::DomainAssembly, "DomainAssembly option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DomainAssembly::da_setup, "run DomainAssembly setup routine" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::DomainAssembly::da_setup_option_file, "input list of pdbs and linker sequences" ).def("--");

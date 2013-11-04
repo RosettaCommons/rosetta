@@ -62,7 +62,12 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 	measure_sp3acc_BAH_from_hvy_( false ),
 	fade_energy_( false ),
 	Mbhbond_( false ), //pba
-	hbond_energy_shift_( 0.0 )
+	hbond_energy_shift_( 0.0 ),
+	length_dependent_srbb_( false ),
+	ldsrbb_low_scale_( 0.5 ),
+	ldsrbb_high_scale_( 2.0 ),
+	ldsrbb_minlength_( 4 ),
+	ldsrbb_maxlength_( 17 )
 {
 	using namespace basic::options;
 	if (option.has(OptionKeys::membrane::Mhbond_depth) &&
@@ -74,6 +79,17 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 	use_sp2_chi_penalty_ = option[OptionKeys::corrections::score::hb_sp2_chipen ];
 	bb_donor_acceptor_check_ = ! option[ OptionKeys::score::hbond_disable_bbsc_exclusion_rule ];
 	sp2_BAH180_rise_ = option[ OptionKeys::corrections::score::hb_sp2_BAH180_rise ];
+
+	if (option[ OptionKeys::score::length_dep_srbb ].user())
+		length_dependent_srbb_ = option[ OptionKeys::score::length_dep_srbb ];
+	if (option[ OptionKeys::score::ldsrbb_low_scale ].user())
+		ldsrbb_low_scale_ = option[ OptionKeys::score::ldsrbb_low_scale ];
+	if (option[ OptionKeys::score::ldsrbb_high_scale ].user())
+		ldsrbb_high_scale_ = option[ OptionKeys::score::ldsrbb_high_scale ];
+	if (option[ OptionKeys::score::ldsrbb_minlength ].user())
+		ldsrbb_minlength_ = option[ OptionKeys::score::ldsrbb_minlength ];
+	if (option[ OptionKeys::score::ldsrbb_maxlength ].user())
+		ldsrbb_maxlength_ = option[ OptionKeys::score::ldsrbb_maxlength ];
 
 	if (option.has(OptionKeys::corrections::score::hb_sp2_outer_width)) {
 		sp2_outer_width_ = option[ OptionKeys::corrections::score::hb_sp2_outer_width ];
@@ -106,7 +122,12 @@ HBondOptions::HBondOptions():
 	measure_sp3acc_BAH_from_hvy_( false ),
 	fade_energy_( false ),
 	Mbhbond_( false ), //pba
-	hbond_energy_shift_( 0.0 )
+	hbond_energy_shift_( 0.0 ),
+	length_dependent_srbb_( false ),
+	ldsrbb_low_scale_( 0.5 ),
+	ldsrbb_high_scale_( 2.0 ),
+	ldsrbb_minlength_( 4 ),
+	ldsrbb_maxlength_( 17 )
 {
 	using namespace basic::options;
 	if (option.has(OptionKeys::score::hbond_params) &&
@@ -122,6 +143,17 @@ HBondOptions::HBondOptions():
 	use_sp2_chi_penalty_ = option[OptionKeys::corrections::score::hb_sp2_chipen ];
 	bb_donor_acceptor_check_ = ! option[ OptionKeys::score::hbond_disable_bbsc_exclusion_rule ];
 	sp2_BAH180_rise_ = option[ OptionKeys::corrections::score::hb_sp2_BAH180_rise ];
+
+	if (option[ OptionKeys::score::length_dep_srbb ].user())
+		length_dependent_srbb_ = option[ OptionKeys::score::length_dep_srbb ];
+	if (option[ OptionKeys::score::ldsrbb_low_scale ].user())
+		ldsrbb_low_scale_ = option[ OptionKeys::score::ldsrbb_low_scale ];
+	if (option[ OptionKeys::score::ldsrbb_high_scale ].user())
+		ldsrbb_high_scale_ = option[ OptionKeys::score::ldsrbb_high_scale ];
+	if (option[ OptionKeys::score::ldsrbb_minlength ].user())
+    ldsrbb_minlength_ = option[ OptionKeys::score::ldsrbb_minlength ];
+  if (option[ OptionKeys::score::ldsrbb_maxlength ].user())
+    ldsrbb_maxlength_ = option[ OptionKeys::score::ldsrbb_maxlength ];
 
 	if (option.has(OptionKeys::corrections::score::hb_sp2_outer_width)) {
 		sp2_outer_width_ = option[ OptionKeys::corrections::score::hb_sp2_outer_width ];
@@ -165,7 +197,12 @@ HBondOptions::operator=( HBondOptions const & src )
 	fade_energy_ = src.fade_energy_;
 	Mbhbond_ = src.Mbhbond_; //pba
 	hbond_energy_shift_ = src.hbond_energy_shift_;
-	return *this;
+	length_dependent_srbb_ = src.length_dependent_srbb_;
+	ldsrbb_low_scale_ = src.ldsrbb_low_scale_;
+	ldsrbb_high_scale_ = src.ldsrbb_high_scale_;
+	ldsrbb_minlength_ = src.ldsrbb_minlength_;
+	ldsrbb_maxlength_ = src.ldsrbb_maxlength_;
+  return *this;
 }
 
 
@@ -428,6 +465,20 @@ void HBondOptions::fade_energy( bool setting ) { fade_energy_ = setting; }
 Real HBondOptions::hbond_energy_shift() const { return hbond_energy_shift_; }
 void HBondOptions::hbond_energy_shift( Real setting ) { hbond_energy_shift_ = setting; }
 
+bool HBondOptions::length_dependent_srbb() const { return length_dependent_srbb_; }
+void HBondOptions::length_dependent_srbb( bool setting ) { length_dependent_srbb_ = setting; }
+
+Real HBondOptions::length_dependent_srbb_lowscale() const { return ldsrbb_low_scale_; }
+void HBondOptions::length_dependent_srbb_lowscale( Real setting ) { ldsrbb_low_scale_ = setting; }
+
+Real HBondOptions::length_dependent_srbb_highscale() const { return ldsrbb_high_scale_; }
+void HBondOptions::length_dependent_srbb_highscale( Real setting ) { ldsrbb_high_scale_ = setting; }
+
+Size HBondOptions::length_dependent_srbb_minlength() const { return ldsrbb_minlength_; }
+void HBondOptions::length_dependent_srbb_minlength( Size setting ) { ldsrbb_minlength_ = setting; }
+
+Size HBondOptions::length_dependent_srbb_maxlength() const { return ldsrbb_maxlength_; }
+void HBondOptions::length_dependent_srbb_maxlength( Size setting ) { ldsrbb_maxlength_ = setting; }
 
 bool
 operator==( HBondOptions const & a, HBondOptions const & b )

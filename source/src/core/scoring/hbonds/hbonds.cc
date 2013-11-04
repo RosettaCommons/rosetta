@@ -113,6 +113,22 @@ fill_hbond_set(
 	bool const exclude_bsc /* default false */,
 	bool const exclude_scb /* default false */,
 	bool const exclude_sc  /* default false */
+) {
+	SSWeightParameters sswt;
+	fill_hbond_set( pose, calculate_derivative, hbond_set, sswt, exclude_bb, exclude_bsc, exclude_scb, exclude_sc);
+}
+
+
+void
+fill_hbond_set(
+	pose::Pose const & pose,
+	bool const calculate_derivative,
+	HBondSet & hbond_set,
+	SSWeightParameters const & sswt,
+	bool const exclude_bb  /* default false */,
+	bool const exclude_bsc /* default false */,
+	bool const exclude_scb /* default false */,
+	bool const exclude_sc  /* default false */
 )
 {
 	assert( pose.energies().residue_neighbors_updated() );
@@ -156,15 +172,17 @@ fill_hbond_set(
 					rsd2, rsd1, nb2, nb1, calculate_derivative,
 					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, pose);
 			} else {
-			   identify_hbonds_1way(
+			  core::Real ssdep_weight = get_ssdep_weight(rsd1, rsd2, pose, sswt);
+
+			  identify_hbonds_1way(
 					database,
 					rsd1, rsd2, nb1, nb2, calculate_derivative,
-					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set);
+					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, ssdep_weight);
 
-			   identify_hbonds_1way(
+			  identify_hbonds_1way(
 					database,
 					rsd2, rsd1, nb2, nb1, calculate_derivative,
-					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set);
+					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, ssdep_weight);
 
 			}
 		} // nbrs of res1
@@ -189,6 +207,47 @@ fill_hbond_set(
 		fill_intra_res_hbond_set(pose, calculate_derivative, hbond_set);
 	}
 
+}
+
+
+
+core::Real
+get_ssdep_weight(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const & pose,
+	SSWeightParameters const & ssdep
+) {
+
+	Real ss_len_scalefactor = 1.0;
+
+	if (ssdep.ssdep_) {
+		// check if they are in same helix
+		bool connected=true;
+		Size hstart = std::min( rsd1.seqpos(), rsd2.seqpos()), hend=std::max( rsd1.seqpos(), rsd2.seqpos());
+		for (Size i=hstart; i<=hend && connected; ++i) {
+			connected = (pose.secstruct(i) == 'H');
+		}
+		if (connected) {
+			while (hstart >= 1 && pose.secstruct(hstart) == 'H') hstart--;
+			while (hend <= pose.total_residue() && pose.secstruct(hend) == 'H') hend++;
+
+			Size hlen = hend-hstart-1;
+			if (pose.secstruct(hstart) == 'H') hlen++;
+			if (pose.secstruct(hend) == 'H') hlen++;
+
+			if (hlen<=ssdep.len_l_) ss_len_scalefactor = ssdep.l_;
+			else if (hlen>=ssdep.len_h_) ss_len_scalefactor = ssdep.h_;
+			else {
+				Real m = (ssdep.h_-ssdep.l_)/(ssdep.len_h_-ssdep.len_l_);
+				Real b = ssdep.l_-ssdep.len_l_*m;
+				ss_len_scalefactor = m*hlen+b;
+			}
+			//std::cerr << "hlen = " << hlen << "scale = " << ss_len_scalefactor << std::endl;
+		}
+	}
+
+	return ss_len_scalefactor;
 }
 
 ///////////////////////////////////////////////////
@@ -282,7 +341,8 @@ identify_hbonds_1way(
 	bool const exclude_scb, /* exclude if acc=sc and don=bb */
 	bool const exclude_sc,  /* exclude if acc=sc and don=sc */
 	// output
-	HBondSet & hbond_set
+	HBondSet & hbond_set,
+	Real ssdep_weight_factor
 )
 {
 	assert( don_rsd.seqpos() != acc_rsd.seqpos() );
@@ -348,10 +408,12 @@ identify_hbonds_1way(
 				(!hbond_set.hbond_options().use_hb_env_dep() ? 1 :
 				get_environment_dependent_weight(hbe_type, don_nb, acc_nb, hbond_set.hbond_options()));
 
+			Real ssdep_weight = (hbe_type.eval_type()==hbw_SR_BB) ?  ssdep_weight_factor : 1.0;
+
 			//////
 			// now we have identified a hbond -> append it into the hbond_set
 			hbond_set.append_hbond( hatm, don_rsd, aatm, acc_rsd,
-				hbe_type, unweighted_energy, environmental_weight, derivs );
+				hbe_type, unweighted_energy, environmental_weight*ssdep_weight, derivs );
 
 			//////
 
@@ -373,7 +435,8 @@ identify_hbonds_1way(
 	bool const exclude_sc,  /* exclude if acc=sc and don=sc */
 	HBondOptions const & options,
 	// output
-	EnergyMap & emap
+	EnergyMap & emap,
+	Real ssdep_weight_factor
 )
 {
 	assert( don_rsd.seqpos() != acc_rsd.seqpos() );
@@ -444,7 +507,7 @@ identify_hbonds_1way(
 			switch(get_hbond_weight_type(hbe_type.eval_type())){
 			case hbw_NONE:
 			case hbw_SR_BB:
-				emap[hbond_sr_bb] += hbE; break;
+				emap[hbond_sr_bb] += ssdep_weight_factor*hbE; break;
 			case hbw_LR_BB:
 				emap[hbond_lr_bb] += hbE; break;
 			case hbw_SR_BB_SC:
@@ -484,7 +547,8 @@ identify_hbonds_1way(
 					 HBondOptions const & options,
 					 // output
 					 EnergyMap & emap,
-					 boost::unordered_map<core::Size, core::Size> & num_hbonds
+					 boost::unordered_map<core::Size, core::Size> & num_hbonds,
+					 Real ssdep_weight_factor
 					 )
 {
 	assert( don_rsd.seqpos() != acc_rsd.seqpos() );
@@ -559,7 +623,7 @@ identify_hbonds_1way(
 			switch(get_hbond_weight_type(hbe_type.eval_type())){
 				case hbw_NONE:
 				case hbw_SR_BB:
-					emap[hbond_sr_bb] += hbE; break;
+					emap[hbond_sr_bb] += ssdep_weight_factor*hbE; break;
 				case hbw_LR_BB:
 					emap[hbond_lr_bb] += hbE; break;
 				case hbw_SR_BB_SC:

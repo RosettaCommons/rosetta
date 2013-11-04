@@ -132,6 +132,11 @@ namespace score { extern StringOptionKey const facts_charge_dir; }
 namespace score { extern StringOptionKey const facts_eff_charge_dir; }
 namespace score { extern StringVectorOptionKey const facts_plane_aa; }
 namespace score { extern StringOptionKey const facts_eq_type; }
+namespace score { extern BooleanOptionKey const length_dep_srbb; }
+namespace score { extern RealOptionKey const ldsrbb_low_scale; }
+namespace score { extern RealOptionKey const ldsrbb_high_scale; }
+namespace score { extern IntegerOptionKey const ldsrbb_minlength; }
+namespace score { extern IntegerOptionKey const ldsrbb_maxlength; }
 namespace score { extern StringOptionKey const nmer_ref_energies; }
 namespace score { extern StringOptionKey const nmer_ref_energies_list; }
 namespace score { extern StringOptionKey const nmer_pssm; }

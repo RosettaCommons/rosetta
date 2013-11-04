@@ -2016,6 +2016,16 @@ _Note that some application specific options may not be present in this list._
 <dd>AAs to apply plane rule<br/></dd>
 <dt><b>-facts_eq_type</b> \<String\></dt>
 <dd>FACTS equation type<br/>Default: "exact"<br/></dd>
+<dt><b>-length_dep_srbb</b> \<Boolean\></dt>
+<dd>Enable helix-length-dependent sr backbone hbonds<br/>Default: false<br/></dd>
+<dt><b>-ldsrbb_low_scale</b> \<Real\></dt>
+<dd>Helix-length-dependent scaling at minlength.<br/>Default: 0.5<br/></dd>
+<dt><b>-ldsrbb_high_scale</b> \<Real\></dt>
+<dd>Helix-length-dependent scaling at maxlength.<br/>Default: 2.0<br/></dd>
+<dt><b>-ldsrbb_minlength</b> \<Integer\></dt>
+<dd>Helix-length-dependent scaling minlength.<br/>Default: 4<br/></dd>
+<dt><b>-ldsrbb_maxlength</b> \<Integer\></dt>
+<dd>Helix-length-dependent scaling maxlength.<br/>Default: 17<br/></dd>
 <dt><b>-nmer_ref_energies</b> \<String\></dt>
 <dd>nmer ref energies database filename<br/></dd>
 <dt><b>-nmer_ref_energies_list</b> \<String\></dt>

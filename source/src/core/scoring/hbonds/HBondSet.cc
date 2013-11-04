@@ -251,12 +251,12 @@ HBond::get_AHDangle(core::pose::Pose const & pose) const {
 	PointPosition const Hxyz(pose.residue(don_res()).xyz(don_hatm()));
 	PointPosition const Axyz(pose.residue(acc_res()).xyz(acc_atm()));
 	return numeric::angle_degrees(Axyz, Hxyz, Dxyz);
-	
+
 }
 
 Real
 HBond::get_BAHangle(core::pose::Pose const & pose) const {
-	
+
 	PointPosition const Bxyz(pose.residue(acc_res()).xyz(pose.residue(acc_res()).atom_base(acc_atm())));
 	PointPosition const Hxyz(pose.residue(don_res()).xyz(don_hatm()));
 	PointPosition const Axyz(pose.residue(acc_res()).xyz(acc_atm()));
@@ -265,24 +265,24 @@ HBond::get_BAHangle(core::pose::Pose const & pose) const {
 
 Real
 HBond::get_BAtorsion(core::pose::Pose const & pose) const {
-	
+
 	Size const base_atomno(pose.residue(acc_res()).atom_base(acc_atm()));
 	Size const bbase_atomno(pose.residue(acc_res()).atom_base(base_atomno));
 	PointPosition const Bxyz(pose.residue(acc_res()).xyz(base_atomno));
 	PointPosition const BBxyz(pose.residue(acc_res()).xyz(bbase_atomno));
 	PointPosition const Hxyz(pose.residue(don_res()).xyz(don_hatm()));
 	PointPosition const Axyz(pose.residue(acc_res()).xyz(acc_atm()));
-	
+
 	return dihedral_degrees(BBxyz, Bxyz, Axyz, Hxyz);
 }
 
 Real
 HBond::get_HAdist(core::pose::Pose const & pose) const {
-	
+
 	PointPosition const Hxyz(pose.residue(don_res()).xyz(don_hatm()));
 	PointPosition const Axyz(pose.residue(acc_res()).xyz(acc_atm()));
 	return Hxyz.distance(Axyz);
-	
+
 }
 
 ///
@@ -695,7 +695,7 @@ Size
 HBondSet::nhbonds( AtomID const & atom, bool include_only_allowed /* true */) const
 {
 	utility::vector1< HBondCOP > const bonds = atom_hbonds(atom, include_only_allowed);
-	return bonds.size(); 
+	return bonds.size();
 }
 
 /// @brief  Get a vector of all the hbonds involving this atom
@@ -714,7 +714,7 @@ HBondSet::atom_hbonds( AtomID const & atom, bool include_only_allowed /* true */
 		else continue;
 	    }
 	}
-	
+
 	return result_bonds;
 }
 
@@ -722,10 +722,10 @@ utility::vector1< HBondCOP > const
 HBondSet::residue_hbonds(const Size seqpos, bool include_only_allowed /* true */ ) const
 {
 	utility::vector1< HBondCOP > bonds;
-	
+
 	for ( Size i=1; i<= nhbonds(); ++i ) {
 		HBond const & bond(hbond(i));
-		if ((bond.don_res() == seqpos || bond.acc_res() == seqpos) 
+		if ((bond.don_res() == seqpos || bond.acc_res() == seqpos)
 		&& ((include_only_allowed && allow_hbond(*bonds[i])) || !include_only_allowed) ){
 			bonds.push_back( &bond );
 		}
@@ -814,8 +814,15 @@ HBondSet::setup_for_residue_pair_energies(
 	// sc-bb hbonds with these groups are disallowed
 	//
 
+	SSWeightParameters ssdep;
+	ssdep.ssdep_ = options_->length_dependent_srbb();
+	ssdep.l_ = options_->length_dependent_srbb_lowscale();
+	ssdep.h_ = options_->length_dependent_srbb_highscale();
+	ssdep.len_l_ = options_->length_dependent_srbb_minlength();
+	ssdep.len_h_ = options_->length_dependent_srbb_maxlength();
+
 	HBondSet hbond_set(*this);
-	fill_hbond_set(pose, calculate_derivative, *this,
+	fill_hbond_set(pose, calculate_derivative, *this, ssdep,
 		false, backbone_only, backbone_only, backbone_only);
 
 	// stash the nbr info

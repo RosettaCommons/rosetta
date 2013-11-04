@@ -193,6 +193,19 @@ public:
 	bool fade_energy() const;
 	void fade_energy( bool setting );
 
+	/// @brief Enable helix-length-dependent sr bb hbonds
+	/// Default: false
+	bool length_dependent_srbb() const;
+	void length_dependent_srbb( bool setting );
+	Real length_dependent_srbb_lowscale() const;
+	void length_dependent_srbb_lowscale( Real setting );
+	Real length_dependent_srbb_highscale() const;
+	void length_dependent_srbb_highscale( Real setting );
+	Size length_dependent_srbb_minlength() const;
+	void length_dependent_srbb_minlength( Size setting );
+	Size length_dependent_srbb_maxlength() const;
+	void length_dependent_srbb_maxlength( Size setting );
+
 	Real hbond_energy_shift() const;
 	void hbond_energy_shift( Real );
 
@@ -231,6 +244,9 @@ private:
 	bool fade_energy_;
 	bool Mbhbond_; //pba
 	Real hbond_energy_shift_; // a penalty applied to all hydrogen bonds; raises the well depth without changing the shape of the funnel
+	bool length_dependent_srbb_;
+	Real ldsrbb_low_scale_, ldsrbb_high_scale_; // linear scaling based on helix length from minlength->maxlength residues
+	Size ldsrbb_minlength_, ldsrbb_maxlength_;
 };
 
 

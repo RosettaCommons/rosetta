@@ -1,4 +1,3 @@
-namespace jumps { IntegerOptionKey const njumps( "jumps:njumps" );  }
 namespace jumps { IntegerOptionKey const max_strand_gap_allowed( "jumps:max_strand_gap_allowed" );  }
 namespace jumps { RealOptionKey const contact_score( "jumps:contact_score" );  }
 namespace jumps { BooleanOptionKey const filter_templates( "jumps:filter_templates" );  }
@@ -157,6 +156,11 @@ namespace score { StringOptionKey const facts_charge_dir( "score:facts_charge_di
 namespace score { StringOptionKey const facts_eff_charge_dir( "score:facts_eff_charge_dir" );  }
 namespace score { StringVectorOptionKey const facts_plane_aa( "score:facts_plane_aa" );  }
 namespace score { StringOptionKey const facts_eq_type( "score:facts_eq_type" );  }
+namespace score { BooleanOptionKey const length_dep_srbb( "score:length_dep_srbb" );  }
+namespace score { RealOptionKey const ldsrbb_low_scale( "score:ldsrbb_low_scale" );  }
+namespace score { RealOptionKey const ldsrbb_high_scale( "score:ldsrbb_high_scale" );  }
+namespace score { IntegerOptionKey const ldsrbb_minlength( "score:ldsrbb_minlength" );  }
+namespace score { IntegerOptionKey const ldsrbb_maxlength( "score:ldsrbb_maxlength" );  }
 namespace score { StringOptionKey const nmer_ref_energies( "score:nmer_ref_energies" );  }
 namespace score { StringOptionKey const nmer_ref_energies_list( "score:nmer_ref_energies_list" );  }
 namespace score { StringOptionKey const nmer_pssm( "score:nmer_pssm" );  }
@@ -761,6 +765,3 @@ namespace casp { BooleanOptionKey const repack( "casp:repack" );  }
 namespace casp { BooleanOptionKey const sc_min( "casp:sc_min" );  }
 namespace casp { BooleanOptionKey const sequential( "casp:sequential" );  }
 namespace casp { RealOptionKey const num_iterations( "casp:num_iterations" );  }
-namespace casp { StringOptionKey const weight_file( "casp:weight_file" );  }
-namespace casp { StringOptionKey const refine_res( "casp:refine_res" );  }
-namespace pose_metrics { BooleanOptionKey const pose_metrics( "pose_metrics" );  }

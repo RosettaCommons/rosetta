@@ -266,6 +266,7 @@ public:
 		Size const acc_nb,
 		bool const exclude_bsc, /* exclude if acc=bb and don=sc */
 		bool const exclude_scb, /* exclude if acc=sc and don=bb */
+		Real const ssdep_weight_factor,
 		// output
 		utility::vector1< DerivVectorPair > & don_atom_derivs,
 		utility::vector1< DerivVectorPair > & acc_atom_derivs
