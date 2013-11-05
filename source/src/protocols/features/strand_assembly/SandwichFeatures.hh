@@ -361,10 +361,25 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::pose::Pose const & pose,
+		core::pose::Pose const & pose_w_center_000,
 		core::Size sw_can_by_sh_id,
 		core::Size sheet_id,
 		core::Size residue_begin,
 		core::Size residue_end);
+
+
+	std::string
+	get_residue_location(
+		StructureID struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::Size residue_num);
+
+
+	std::string
+	determine_core_heading_surface_heading_by_distance(
+		core::pose::Pose const & pose_w_center_000,
+		core::Size	residue_num);
+
 
 	core::Size
 	fill_sw_by_components(
@@ -387,6 +402,7 @@ public:
 		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::pose::Pose const & pose,
+		core::pose::Pose const & pose_w_center_000,
 		core::Size	sw_can_by_sh_id,
 		core::Size	sheet_id,
 		core::Size	residue_begin,
@@ -720,7 +736,7 @@ public:
 		core::Size sw_can_by_sh_id);
 
 
-	void
+	std::string
 	report_turn_type(
 		core::pose::Pose const & pose,
 		core::Size sw_can_by_sh_id,
@@ -728,6 +744,17 @@ public:
 		core::Size end_res,
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
+
+
+	void
+	report_turn_AA(
+		core::pose::Pose const & pose,
+		core::Size sw_can_by_sh_id,
+		core::Size i,
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		std::string turn_type);
+
 
 
 private:
@@ -816,6 +843,9 @@ private:
 	bool
 	write_phi_psi_of_E_;
 
+	bool
+	write_resfile_;
+
 	core::Size
 	max_starting_loop_size_;
 
@@ -854,6 +884,9 @@ private:
 
 	core::Real
 	min_N_H_O_angle_between_two_sheets_;
+
+	core::Real
+	allowed_deviation_for_turn_type_id_;
 
 	bool
 	write_all_info_files_;

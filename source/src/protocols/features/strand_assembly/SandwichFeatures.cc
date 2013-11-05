@@ -276,8 +276,6 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 		// hairpin_loop (intra-sheet loop)
 		// inter_sheet_loop
 		// ending_loop
-
-	Column turn_type	("turn_type",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
 	
 	Column LR	("LR",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
 
@@ -285,6 +283,15 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	// T, -> true, canonical chiral
 	// F, -> false, non-canonical chiral
 	// U, -> uncertain, this loop-size with this condition has no definite canonical chiral reference in the first place!
+
+	Column turn_type	("turn_type",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+
+	Column i_AA	("i_AA",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+	Column i_p1_AA	("i_p1_AA",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+	Column i_p2_AA	("i_p2_AA",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+	Column i_p3_AA	("i_p3_AA",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+
+	Column canonical_turn_AA	("canonical_turn_AA",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
 
 	Column PA_by_preceding_E	("PA_by_preceding_E",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
 	Column PA_by_following_E	("PA_by_following_E",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
@@ -299,75 +306,91 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	Column cano_parallel_EE	("cano_parallel_EE",	new DbText(), true /* could be null*/, false /*no autoincrement*/);	
 	Column component_size	("component_size",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
 
-	Column R  ("R", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column H  ("H", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column K  ("K", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-
+	Column A  ("A", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column C  ("C", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column D  ("D", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column E  ("E", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column S  ("S", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column T  ("T", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column N  ("N", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column Q  ("Q", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column C  ("C", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column F  ("F", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column G  ("G", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column P  ("P", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-
-	Column A  ("A", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column V  ("V", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column H  ("H", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column I  ("I", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column K  ("K", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column L  ("L", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column M  ("M", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column F  ("F", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column Y  ("Y", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column W  ("W", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column N  ("N", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column P  ("P", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column R_core_heading  ("R_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column R_surface_heading  ("R_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column H_core_heading  ("H_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column H_surface_heading  ("H_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column K_core_heading  ("K_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column K_surface_heading  ("K_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column Q  ("Q", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column R  ("R", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column S  ("S", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column T  ("T", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column V  ("V", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column W  ("W", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column Y  ("Y", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column A_core_heading  ("A_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column A_surface_heading  ("A_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column C_core_heading  ("C_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column C_surface_heading  ("C_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+
 
 	Column D_core_heading  ("D_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column D_surface_heading  ("D_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column E_core_heading  ("E_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column E_surface_heading  ("E_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 
+
+	Column F_core_heading  ("F_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column F_surface_heading  ("F_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column G_core_heading  ("G_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column G_surface_heading  ("G_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column H_core_heading  ("H_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column H_surface_heading  ("H_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column I_core_heading  ("I_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column I_surface_heading  ("I_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column K_core_heading  ("K_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column K_surface_heading  ("K_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column L_core_heading  ("L_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column L_surface_heading  ("L_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column M_core_heading  ("M_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column M_surface_heading  ("M_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column N_core_heading  ("N_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column N_surface_heading  ("N_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+
+
+	Column P_core_heading  ("P_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column P_surface_heading  ("P_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column Q_core_heading  ("Q_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column Q_surface_heading  ("Q_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column R_core_heading  ("R_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column R_surface_heading  ("R_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+
+
+
 	Column S_core_heading  ("S_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column S_surface_heading  ("S_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column T_core_heading  ("T_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column T_surface_heading  ("T_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column N_core_heading  ("N_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column N_surface_heading  ("N_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column Q_core_heading  ("Q_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column Q_surface_heading  ("Q_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column C_core_heading  ("C_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column C_surface_heading  ("C_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column G_core_heading  ("G_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column G_surface_heading  ("G_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column P_core_heading  ("P_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column P_surface_heading  ("P_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 
-	Column A_core_heading  ("A_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column A_surface_heading  ("A_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column V_core_heading  ("V_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column V_surface_heading  ("V_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column I_core_heading  ("I_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column I_surface_heading  ("I_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column L_core_heading  ("L_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column L_surface_heading  ("L_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column M_core_heading  ("M_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column M_surface_heading  ("M_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column F_core_heading  ("F_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column F_surface_heading  ("F_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column Y_core_heading  ("Y_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
-	Column Y_surface_heading  ("Y_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column W_core_heading  ("W_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
 	Column W_surface_heading  ("W_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+
+	Column Y_core_heading  ("Y_core_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+	Column Y_surface_heading  ("Y_surface_heading", new DbInteger(), true /*could be null*/, false /*don't autoincrement*/);
+
 
 	Column H_percentage ("H_percentage", new DbReal(), true /*could be null*/, false /*don't autoincrement*/);
 	Column E_percentage ("E_percentage", new DbReal(), true /*could be null*/, false /*don't autoincrement*/);
@@ -423,10 +446,18 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	sw_by_components.add_column(intra_sheet_con_id);
 	sw_by_components.add_column(inter_sheet_con_id);
 	sw_by_components.add_column(loop_kind); // better to be located right after intra_sheet_con_id/inter_sheet_con_id for better readability
-	sw_by_components.add_column(turn_type);
-		
+
 	sw_by_components.add_column(LR);
 	sw_by_components.add_column(canonical_LR);
+
+	sw_by_components.add_column(turn_type);
+	sw_by_components.add_column(i_AA);
+	sw_by_components.add_column(i_p1_AA);
+	sw_by_components.add_column(i_p2_AA);
+	sw_by_components.add_column(i_p3_AA);
+
+	sw_by_components.add_column(canonical_turn_AA);
+
 	sw_by_components.add_column(PA_by_preceding_E);
 	sw_by_components.add_column(PA_by_following_E);
 	sw_by_components.add_column(cano_PA);
@@ -434,71 +465,91 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	sw_by_components.add_column(parallel_EE);
 	sw_by_components.add_column(cano_parallel_EE);
 
-	sw_by_components.add_column(R);
-	sw_by_components.add_column(H);
-	sw_by_components.add_column(K);
+	sw_by_components.add_column(A);
+	sw_by_components.add_column(C);
 	sw_by_components.add_column(D);
 	sw_by_components.add_column(E);
-
-	sw_by_components.add_column(S);
-	sw_by_components.add_column(T);
-	sw_by_components.add_column(N);
-	sw_by_components.add_column(Q);
-	sw_by_components.add_column(C);
+	sw_by_components.add_column(F);
 	sw_by_components.add_column(G);
-	sw_by_components.add_column(P);
-
-	sw_by_components.add_column(A);
-	sw_by_components.add_column(V);
+	sw_by_components.add_column(H);
 	sw_by_components.add_column(I);
+	sw_by_components.add_column(K);
 	sw_by_components.add_column(L);
 	sw_by_components.add_column(M);
-	sw_by_components.add_column(F);
-	sw_by_components.add_column(Y);
+	sw_by_components.add_column(N);
+
+	sw_by_components.add_column(P);
+
+	sw_by_components.add_column(Q);
+
+	sw_by_components.add_column(R);
+	sw_by_components.add_column(S);
+	sw_by_components.add_column(T);
+
+	sw_by_components.add_column(V);
+
 	sw_by_components.add_column(W);
 	
-	sw_by_components.add_column(R_core_heading);
-	sw_by_components.add_column(R_surface_heading);
-	sw_by_components.add_column(H_core_heading);
-	sw_by_components.add_column(H_surface_heading);
-	sw_by_components.add_column(K_core_heading);
-	sw_by_components.add_column(K_surface_heading);
+	sw_by_components.add_column(Y);
+
+	sw_by_components.add_column(A_core_heading);
+	sw_by_components.add_column(A_surface_heading);
+	sw_by_components.add_column(C_core_heading);
+	sw_by_components.add_column(C_surface_heading);
+
+
 	sw_by_components.add_column(D_core_heading);
 	sw_by_components.add_column(D_surface_heading);
 	sw_by_components.add_column(E_core_heading);
 	sw_by_components.add_column(E_surface_heading);
 
+
+	sw_by_components.add_column(F_core_heading);
+	sw_by_components.add_column(F_surface_heading);
+
+	sw_by_components.add_column(G_core_heading);
+	sw_by_components.add_column(G_surface_heading);
+
+
+	sw_by_components.add_column(H_core_heading);
+	sw_by_components.add_column(H_surface_heading);
+	sw_by_components.add_column(I_core_heading);
+	sw_by_components.add_column(I_surface_heading);
+
+	sw_by_components.add_column(K_core_heading);
+	sw_by_components.add_column(K_surface_heading);
+
+	sw_by_components.add_column(L_core_heading);
+	sw_by_components.add_column(L_surface_heading);
+
+	sw_by_components.add_column(M_core_heading);
+	sw_by_components.add_column(M_surface_heading);
+
+	sw_by_components.add_column(N_core_heading);
+	sw_by_components.add_column(N_surface_heading);
+
+	sw_by_components.add_column(P_core_heading);
+	sw_by_components.add_column(P_surface_heading);
+
+	sw_by_components.add_column(Q_core_heading);
+	sw_by_components.add_column(Q_surface_heading);
+
+	sw_by_components.add_column(R_core_heading);
+	sw_by_components.add_column(R_surface_heading);
+
 	sw_by_components.add_column(S_core_heading);
 	sw_by_components.add_column(S_surface_heading);
 	sw_by_components.add_column(T_core_heading);
 	sw_by_components.add_column(T_surface_heading);
-	sw_by_components.add_column(N_core_heading);
-	sw_by_components.add_column(N_surface_heading);
-	sw_by_components.add_column(Q_core_heading);
-	sw_by_components.add_column(Q_surface_heading);
-	sw_by_components.add_column(C_core_heading);
-	sw_by_components.add_column(C_surface_heading);
-	sw_by_components.add_column(G_core_heading);
-	sw_by_components.add_column(G_surface_heading);
-	sw_by_components.add_column(P_core_heading);
-	sw_by_components.add_column(P_surface_heading);
 
-	sw_by_components.add_column(A_core_heading);
-	sw_by_components.add_column(A_surface_heading);
 	sw_by_components.add_column(V_core_heading);
 	sw_by_components.add_column(V_surface_heading);
-	sw_by_components.add_column(I_core_heading);
-	sw_by_components.add_column(I_surface_heading);
-	sw_by_components.add_column(L_core_heading);
-	sw_by_components.add_column(L_surface_heading);
-	sw_by_components.add_column(M_core_heading);
-	sw_by_components.add_column(M_surface_heading);
-	sw_by_components.add_column(F_core_heading);
-	sw_by_components.add_column(F_surface_heading);
-	sw_by_components.add_column(Y_core_heading);
-	sw_by_components.add_column(Y_surface_heading);
 	sw_by_components.add_column(W_core_heading);
 	sw_by_components.add_column(W_surface_heading);
+
+	sw_by_components.add_column(Y_core_heading);
+	sw_by_components.add_column(Y_surface_heading);
+
 
 	sw_by_components.add_column(H_percentage);
 	sw_by_components.add_column(E_percentage);
@@ -2833,6 +2884,7 @@ SandwichFeatures::count_AA_w_direction(
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose const & pose,
+	Pose const & pose_w_center_000,
 	Size sw_can_by_sh_id,
 	Size sheet_id,
 	Size residue_begin,
@@ -2851,46 +2903,20 @@ SandwichFeatures::count_AA_w_direction(
 	for (Size ii = residue_begin; ii <= residue_end; ii++ )
 	{
 //			TR << "resnum: " << ii << endl;
+
+		string	heading = determine_core_heading_surface_heading_by_distance(pose_w_center_000,	ii);
+
 		bool core_heading;
 
-		// <begin> determine core_heading/surface_heading by a comparison between a distance between CA and 0,0,0 and a distance between CB and 0,0,0
-			pose::Pose pose_w_center_000 = pose;
-			pose_w_center_000.center();
-
-			xyzVector< core::Real > center_point(0,0,0);
-
-			Real distance_between_CA_and_center;
-			Real distance_between_CB_and_center;
-
-			if (pose_w_center_000.residue_type(ii).name3() == "GLY")
-			{
-				distance_between_CA_and_center = pose_w_center_000.residue(ii).atom("CA").xyz().distance(center_point);
-				distance_between_CB_and_center = pose_w_center_000.residue(ii).atom("2HA").xyz().distance(center_point);
-			}
-			else if (pose_w_center_000.residue_type(ii).name3() == "ALA" || pose_w_center_000.residue_type(ii).name3() == "VAL" || pose_w_center_000.residue_type(ii).name3() == "ILE" || pose_w_center_000.residue_type(ii).name3() == "SER" || pose_w_center_000.residue_type(ii).name3() == "THR" || pose_w_center_000.residue_type(ii).name3() == "CYS")
-			{
-				distance_between_CA_and_center = pose_w_center_000.residue(ii).atom("CA").xyz().distance(center_point);
-				distance_between_CB_and_center = pose_w_center_000.residue(ii).atom("CB").xyz().distance(center_point);
-			}
-			else
-			{
-				distance_between_CA_and_center = pose_w_center_000.residue(ii).atom("CA").xyz().distance(center_point);
-				distance_between_CB_and_center = pose_w_center_000.residue(ii).atom("CG").xyz().distance(center_point);
-			}
-			
-			//			TR << "A distance between CA and center of pose: " << distance_between_CA_and_center << endl;
-			//			TR << "A distance between CG (or CB) and center of pose: " << distance_between_CB_and_center << endl;
-		// <end> determine core_heading/surface_heading by a comparison between a distance between CA and 0,0,0 and a distance between CB and 0,0,0
-
-		if (distance_between_CA_and_center - distance_between_CB_and_center > 0.9)
+		if	(heading == "core")
 		{
 			core_heading = true; 			// core heading
 		}
-		else if(distance_between_CA_and_center - distance_between_CB_and_center < -0.9)
+		else if	(heading == "surface")
 		{
 			core_heading = false;			// surface heading
 		}
-		else
+		else // uncertain
 		{
 			// <begin> determine core_heading/surface_heading by a vector between CA-CB of a residue and CA of the closest residue of the other sheet
 				xyzVector<Real> vector_sidechain;
@@ -2900,37 +2926,37 @@ SandwichFeatures::count_AA_w_direction(
 					vector_sidechain	=	pose.xyz(NamedAtomID("CB", ii)) - pose.xyz(NamedAtomID("CA", ii));
 				}
 				else
-				{	
+				{
 					vector_sidechain	=	pose.xyz(NamedAtomID("2HA", ii)) - pose.xyz(NamedAtomID("CA", ii));
 				}
-
+//
 				Real to_be_rounded_ii = (residue_begin + residue_end)/(2.0);
 				Size cen_resnum_ii = round(to_be_rounded_ii);
-
+//
 				vector<Size>	vector_of_cen_residues;
 				vector_of_cen_residues.clear();	// Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
 				vector_of_cen_residues	=	get_cen_res_in_other_sheet(struct_id, db_session, sw_can_by_sh_id,	sheet_id);
-
+//
 				Real shortest_dis_between_AA_and_other_sheet = 9999;
 				Size jj_w_shorest_dis =	0 ; // initial value=0 just to avoid build warning at rosetta trunk
 				for (Size jj = 0;	jj	<vector_of_cen_residues.size();	jj++)
 				{
 					Real distance = pose.residue(cen_resnum_ii).atom("CA").xyz().distance(pose.residue(vector_of_cen_residues[jj]).atom("CA").xyz());
-						
+//						
 					if (distance < shortest_dis_between_AA_and_other_sheet)
 					{
 						shortest_dis_between_AA_and_other_sheet = distance;
 						jj_w_shorest_dis = jj;
 					}
 				}
-
+//
 				xyzVector<Real> vector_between_AA_and_other_sheet	=	pose.xyz(NamedAtomID("CA", vector_of_cen_residues[jj_w_shorest_dis])) - pose.xyz(NamedAtomID("CA", cen_resnum_ii));
 
 				Real	dot_product_of_vectors = dot_product( vector_sidechain, vector_between_AA_and_other_sheet );
 				Real	cosine_theta = dot_product_of_vectors / (absolute_vec(vector_sidechain))*(absolute_vec(vector_between_AA_and_other_sheet));
-
-					//		TR << "cosine_theta: " << cosine_theta << endl;
-
+//
+//					//		TR << "cosine_theta: " << cosine_theta << endl;
+//
 				if (cosine_theta > 0)
 				{
 					core_heading = true;
@@ -3096,11 +3122,68 @@ SandwichFeatures::fill_sw_by_components	(
 } //fill_sw_by_components
 
 
+string
+SandwichFeatures::determine_core_heading_surface_heading_by_distance
+(
+	Pose const & pose_w_center_000,
+	Size	ii // residue_number
+)
+{
+	string heading;
+
+	// <begin> determine core_heading/surface_heading by a comparison between a distance between CA and 0,0,0 and a distance between CB and 0,0,0
+	//			pose::Pose pose_w_center_000 = pose;
+	//			pose_w_center_000.center();
+
+		xyzVector< core::Real > center_point(0,0,0);
+
+		Real distance_between_CA_and_center;
+		Real distance_between_CB_and_center;
+
+		if (pose_w_center_000.residue_type(ii).name3() == "GLY")
+		{
+			distance_between_CA_and_center = pose_w_center_000.residue(ii).atom("CA").xyz().distance(center_point);
+			distance_between_CB_and_center = pose_w_center_000.residue(ii).atom("2HA").xyz().distance(center_point);
+		}
+		else if (pose_w_center_000.residue_type(ii).name3() == "ALA" || pose_w_center_000.residue_type(ii).name3() == "VAL" || pose_w_center_000.residue_type(ii).name3() == "ILE" || pose_w_center_000.residue_type(ii).name3() == "SER" || pose_w_center_000.residue_type(ii).name3() == "THR" || pose_w_center_000.residue_type(ii).name3() == "CYS")
+		{
+			distance_between_CA_and_center = pose_w_center_000.residue(ii).atom("CA").xyz().distance(center_point);
+			distance_between_CB_and_center = pose_w_center_000.residue(ii).atom("CB").xyz().distance(center_point);
+		}
+		else
+		{
+			distance_between_CA_and_center = pose_w_center_000.residue(ii).atom("CA").xyz().distance(center_point);
+			distance_between_CB_and_center = pose_w_center_000.residue(ii).atom("CG").xyz().distance(center_point);
+		}
+		
+		//			TR << "A distance between CA and center of pose: " << distance_between_CA_and_center << endl;
+		//			TR << "A distance between CG (or CB) and center of pose: " << distance_between_CB_and_center << endl;
+	// <end> determine core_heading/surface_heading by a comparison between a distance between CA and 0,0,0 and a distance between CB and 0,0,0
+
+	if (distance_between_CA_and_center - distance_between_CB_and_center > 0.9)
+	{
+		heading = "core"; 			// core heading
+	}
+	else if(distance_between_CA_and_center - distance_between_CB_and_center < -0.9)
+	{
+		heading = "surface";			// surface heading
+	}
+	else
+	{
+		heading = "uncertain";			// surface heading
+	}
+	return heading;
+}
+
+
+
+
 Size
 SandwichFeatures::update_sw_by_components_by_AA_w_direction	(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
+	Pose const & pose_w_center_000,
 	Size sw_can_by_sh_id,
 	Size sheet_id,
 	Size residue_begin,
@@ -3154,7 +3237,7 @@ SandwichFeatures::update_sw_by_components_by_AA_w_direction	(
 	
 	statement insert_stmt(basic::database::safely_prepare_statement(insert,	db_session));
 
-	vector<Size>	AA_vector = count_AA_w_direction(struct_id,	db_session,	pose,	sw_can_by_sh_id,	sheet_id,	residue_begin,	residue_end);
+	vector<Size>	AA_vector = count_AA_w_direction(struct_id,	db_session,	pose,	pose_w_center_000,	sw_can_by_sh_id,	sheet_id,	residue_begin,	residue_end);
 	
 	insert_stmt.bind(1,	AA_vector[0]); //	R_core_heading
 	insert_stmt.bind(2,	AA_vector[1]); //	R_surface_heading
@@ -5281,10 +5364,10 @@ SandwichFeatures::get_vector_AA_distribution_w_direction (
 	{
 		sum_string =
 		"SELECT\n"
-		"	sum(R_core_heading), sum(H_core_heading), sum(K_core_heading), sum(D_core_heading), sum(E_core_heading), \n"
-		"	sum(S_core_heading), sum(T_core_heading), sum(N_core_heading), sum(Q_core_heading), sum(C_core_heading), \n"
-		"	sum(G_core_heading), sum(P_core_heading), sum(A_core_heading), sum(V_core_heading), sum(I_core_heading), \n"
-		"	sum(L_core_heading), sum(M_core_heading), sum(F_core_heading), sum(Y_core_heading), sum(W_core_heading) \n"
+		"	sum(A_core_heading), sum(C_core_heading), sum(D_core_heading), sum(E_core_heading), sum(F_core_heading), \n"
+		"	sum(G_core_heading), sum(H_core_heading), sum(I_core_heading), sum(K_core_heading), sum(L_core_heading), \n"
+		"	sum(M_core_heading), sum(N_core_heading), sum(P_core_heading), sum(Q_core_heading), sum(R_core_heading), \n"
+		"	sum(S_core_heading), sum(T_core_heading), sum(V_core_heading), sum(W_core_heading), sum(Y_core_heading) \n"
 		"FROM\n"
 		"	sw_by_components \n"
 		"WHERE\n"
@@ -5295,10 +5378,10 @@ SandwichFeatures::get_vector_AA_distribution_w_direction (
 	{
 		sum_string =
 		"SELECT\n"
-		"	sum(R_surface_heading), sum(H_surface_heading), sum(K_surface_heading), sum(D_surface_heading), sum(E_surface_heading), \n"
-		"	sum(S_surface_heading), sum(T_surface_heading), sum(N_surface_heading), sum(Q_surface_heading), sum(C_surface_heading), \n"
-		"	sum(G_surface_heading), sum(P_surface_heading), sum(A_surface_heading), sum(V_surface_heading), sum(I_surface_heading), \n"
-		"	sum(L_surface_heading), sum(M_surface_heading), sum(F_surface_heading), sum(Y_surface_heading), sum(W_surface_heading) \n"
+		"	sum(A_surface_heading), sum(C_surface_heading), sum(D_surface_heading), sum(E_surface_heading), sum(F_surface_heading), \n"
+		"	sum(G_surface_heading), sum(H_surface_heading), sum(I_surface_heading), sum(K_surface_heading), sum(L_surface_heading), \n"
+		"	sum(M_surface_heading), sum(N_surface_heading), sum(P_surface_heading), sum(Q_surface_heading), sum(R_surface_heading), \n"
+		"	sum(S_surface_heading), sum(T_surface_heading), sum(V_surface_heading), sum(W_surface_heading), sum(Y_surface_heading) \n"
 		"FROM\n"
 		"	sw_by_components \n"
 		"WHERE\n"
@@ -5311,36 +5394,36 @@ SandwichFeatures::get_vector_AA_distribution_w_direction (
 	
 	result res(basic::database::safely_read_from_database(sum_statement));
 
-	Size num_R, num_H,	num_K,	num_D, num_E, num_S, num_T, num_N, num_Q, num_C, num_G, num_P, num_A, num_V, num_I, num_L, num_M, num_F, num_Y, num_W;
+	Size num_A, num_C,	num_D,	num_E, num_F, num_G, num_H, num_I, num_K, num_L, num_M, num_N, num_P, num_Q, num_R, num_S, num_T, num_V, num_W, num_Y;
 
 	utility::vector1<Size> vector_AA_distribution_w_direction;
 
 	while(res.next())
 	{
-		res >> num_R >> num_H >> num_K >> num_D >> num_E >> num_S >> num_T >> num_N >> num_Q >> num_C >> num_G >> num_P >> num_A >> num_V >> num_I >> num_L >> num_M >> num_F >> num_Y >> num_W;
-		vector_AA_distribution_w_direction.push_back(num_R);
-		vector_AA_distribution_w_direction.push_back(num_H);
-		vector_AA_distribution_w_direction.push_back(num_K);
+		res >> num_A >>  num_C >> 	num_D >> 	num_E >>  num_F >>  num_G >>  num_H >>  num_I >>  num_K >>  num_L >>  num_M >>  num_N >>  num_P >>  num_Q >>  num_R >>  num_S >>  num_T >>  num_V >>  num_W >>  num_Y;
+		vector_AA_distribution_w_direction.push_back(num_A);
+		vector_AA_distribution_w_direction.push_back(num_C);
 		vector_AA_distribution_w_direction.push_back(num_D);
 		vector_AA_distribution_w_direction.push_back(num_E);
+		vector_AA_distribution_w_direction.push_back(num_F);
+
+		vector_AA_distribution_w_direction.push_back(num_G);
+		vector_AA_distribution_w_direction.push_back(num_H);
+		vector_AA_distribution_w_direction.push_back(num_I);
+		vector_AA_distribution_w_direction.push_back(num_K);
+		vector_AA_distribution_w_direction.push_back(num_L);
+
+		vector_AA_distribution_w_direction.push_back(num_M);
+		vector_AA_distribution_w_direction.push_back(num_N);
+		vector_AA_distribution_w_direction.push_back(num_P);
+		vector_AA_distribution_w_direction.push_back(num_Q);
+		vector_AA_distribution_w_direction.push_back(num_R);
 
 		vector_AA_distribution_w_direction.push_back(num_S);
 		vector_AA_distribution_w_direction.push_back(num_T);
-		vector_AA_distribution_w_direction.push_back(num_N);
-		vector_AA_distribution_w_direction.push_back(num_Q);
-		vector_AA_distribution_w_direction.push_back(num_C);
-
-		vector_AA_distribution_w_direction.push_back(num_G);
-		vector_AA_distribution_w_direction.push_back(num_P);
-		vector_AA_distribution_w_direction.push_back(num_A);
 		vector_AA_distribution_w_direction.push_back(num_V);
-		vector_AA_distribution_w_direction.push_back(num_I);
-
-		vector_AA_distribution_w_direction.push_back(num_L);
-		vector_AA_distribution_w_direction.push_back(num_M);
-		vector_AA_distribution_w_direction.push_back(num_F);
-		vector_AA_distribution_w_direction.push_back(num_Y);
 		vector_AA_distribution_w_direction.push_back(num_W);
+		vector_AA_distribution_w_direction.push_back(num_Y);
 	}
 
 	return vector_AA_distribution_w_direction;
@@ -5348,7 +5431,52 @@ SandwichFeatures::get_vector_AA_distribution_w_direction (
 
 
 
-utility::vector1<Size>	
+string
+SandwichFeatures::get_residue_location (
+	StructureID struct_id,
+	sessionOP db_session,
+	Size	residue_num
+	)
+{
+	string	sum_string =
+		"SELECT\n"
+		"	strand_edge \n"
+		"FROM\n"
+		"	sw_by_components \n"
+		"WHERE\n"
+		"	? between residue_begin and residue_end \n "
+		"	AND struct_id = ? ;";
+
+	statement sum_statement(basic::database::safely_prepare_statement(sum_string, db_session));
+	sum_statement.bind(1,	residue_num);
+	sum_statement.bind(2,	struct_id);
+	result res(basic::database::safely_read_from_database(sum_statement));
+
+	string strand_edge;
+
+	while(res.next())
+	{
+		res >> strand_edge;
+	}
+
+	string	residue_location;
+	if	(strand_edge == "edge")
+	{
+		residue_location = "edge";
+	}
+	else if	(strand_edge == "core")
+	{
+		residue_location = "core";
+	}
+	else
+	{
+		residue_location = "loop_or_short_edge";
+	}
+	return residue_location;
+}
+
+
+utility::vector1<Size>
 SandwichFeatures::get_vector_AA_distribution_wo_direction (
 	StructureID struct_id,
 	sessionOP db_session,
@@ -5516,7 +5644,7 @@ SandwichFeatures::identify_sheet_id_by_residue_end(
 
 
 
-void
+string
 SandwichFeatures::report_turn_type(
 	Pose const & pose,
 	Size sw_can_by_sh_id,
@@ -5535,46 +5663,74 @@ SandwichFeatures::report_turn_type(
 		// worth to be referred	http://en.wikipedia.org/wiki/Turn_(biochemistry)#Hairpins
 		// I didn't use Brian's BetaTurnDetectionFeatures since I don't understand it fully
 	string turn_type = "uncertain";
-	int allowed_deviation = 30;
 	
-	if (	(first_phi > (-64-allowed_deviation) && first_phi < (-64+allowed_deviation))
-		&&	(first_psi > (-27-allowed_deviation) && first_psi < (-27+allowed_deviation))
-		&&	(second_phi > (-90-allowed_deviation) && second_phi < (-90+allowed_deviation))
-		&&	(second_psi > (-7-allowed_deviation) && second_psi < (-7+allowed_deviation)))
+	if (	(first_phi > (-64-allowed_deviation_for_turn_type_id_) && first_phi < (-64+allowed_deviation_for_turn_type_id_))
+		&&	(first_psi > (-27-allowed_deviation_for_turn_type_id_) && first_psi < (-27+allowed_deviation_for_turn_type_id_))
+		&&	(second_phi > (-90-allowed_deviation_for_turn_type_id_) && second_phi < (-90+allowed_deviation_for_turn_type_id_))
+		&&	(second_psi > (-7-allowed_deviation_for_turn_type_id_) && second_psi < (-7+allowed_deviation_for_turn_type_id_)))
 	{
 		turn_type = "I";
 	}
 
-	if (	(first_phi > (-60-allowed_deviation) && first_phi < (-60+allowed_deviation))
-		&&	(first_psi > (131-allowed_deviation) && first_psi < (131+allowed_deviation))
-		&&	(second_phi > (84-allowed_deviation) && second_phi < (84+allowed_deviation))
-		&&	(second_psi > (1-allowed_deviation) && second_psi < (1+allowed_deviation)))
+	else if (	(first_phi > (-60-allowed_deviation_for_turn_type_id_) && first_phi < (-60+allowed_deviation_for_turn_type_id_))
+		&&	(first_psi > (131-allowed_deviation_for_turn_type_id_) && first_psi < (131+allowed_deviation_for_turn_type_id_))
+		&&	(second_phi > (84-allowed_deviation_for_turn_type_id_) && second_phi < (84+allowed_deviation_for_turn_type_id_))
+		&&	(second_psi > (1-allowed_deviation_for_turn_type_id_) && second_psi < (1+allowed_deviation_for_turn_type_id_)))
 	{
 		turn_type = "II";
 	}
 
-	if (	(first_phi > (-72-allowed_deviation) && first_phi < (-72+allowed_deviation))
-		&&	(first_psi > (-33-allowed_deviation) && first_psi < (-33+allowed_deviation))
-		&&	(second_phi > (-123-allowed_deviation) && second_phi < (-123+allowed_deviation))
-		&&	(second_psi > (121-allowed_deviation) && second_psi < (121+allowed_deviation)))
+	else if (	(first_phi > (-72-allowed_deviation_for_turn_type_id_) && first_phi < (-72+allowed_deviation_for_turn_type_id_))
+		&&	(first_psi > (-33-allowed_deviation_for_turn_type_id_) && first_psi < (-33+allowed_deviation_for_turn_type_id_))
+		&&	(second_phi > (-123-allowed_deviation_for_turn_type_id_) && second_phi < (-123+allowed_deviation_for_turn_type_id_))
+		&&	(second_psi > (121-allowed_deviation_for_turn_type_id_) && second_psi < (121+allowed_deviation_for_turn_type_id_)))
 	{
 		turn_type = "VIII";
 	}
 
-	if (	(first_phi > (55-allowed_deviation) && first_phi < (55+allowed_deviation))
-		&&	(first_psi > (38-allowed_deviation) && first_psi < (38+allowed_deviation))
-		&&	(second_phi > (78-allowed_deviation) && second_phi < (78+allowed_deviation))
-		&&	(second_psi > (6-allowed_deviation) && second_psi < (6+allowed_deviation)))
+	else if (	(first_phi > (55-allowed_deviation_for_turn_type_id_) && first_phi < (55+allowed_deviation_for_turn_type_id_))
+		&&	(first_psi > (38-allowed_deviation_for_turn_type_id_) && first_psi < (38+allowed_deviation_for_turn_type_id_))
+		&&	(second_phi > (78-allowed_deviation_for_turn_type_id_) && second_phi < (78+allowed_deviation_for_turn_type_id_))
+		&&	(second_psi > (6-allowed_deviation_for_turn_type_id_) && second_psi < (6+allowed_deviation_for_turn_type_id_)))
 	{
 		turn_type = "I_prime";
 	}
 
-	if (	(first_phi > (60-allowed_deviation) && first_phi < (60+allowed_deviation))
-		&&	(first_psi > (-126-allowed_deviation) && first_psi < (-126+allowed_deviation))
-		&&	(second_phi > (-91-allowed_deviation) && second_phi < (-91+allowed_deviation))
-		&&	(second_psi > (1-allowed_deviation) && second_psi < (1+allowed_deviation)))
+	else if (	(first_phi > (60-allowed_deviation_for_turn_type_id_) && first_phi < (60+allowed_deviation_for_turn_type_id_))
+		&&	(first_psi > (-126-allowed_deviation_for_turn_type_id_) && first_psi < (-126+allowed_deviation_for_turn_type_id_))
+		&&	(second_phi > (-91-allowed_deviation_for_turn_type_id_) && second_phi < (-91+allowed_deviation_for_turn_type_id_))
+		&&	(second_psi > (1-allowed_deviation_for_turn_type_id_) && second_psi < (1+allowed_deviation_for_turn_type_id_)))
 	{
 		turn_type = "II_prime";
+	}
+
+	else if (	(first_phi > (-64-allowed_deviation_for_turn_type_id_) && first_phi < (-64+allowed_deviation_for_turn_type_id_))
+		&&	(first_psi > (142-allowed_deviation_for_turn_type_id_) && first_psi < (142+allowed_deviation_for_turn_type_id_))
+		&&	(second_phi > (-93-allowed_deviation_for_turn_type_id_) && second_phi < (-93+allowed_deviation_for_turn_type_id_))
+		&&	(second_psi > (5-allowed_deviation_for_turn_type_id_) && second_psi < (5+allowed_deviation_for_turn_type_id_)))
+	{
+		turn_type = "VIa1";
+	}
+
+	else if (	(first_phi > (-132-allowed_deviation_for_turn_type_id_) && first_phi < (-132+allowed_deviation_for_turn_type_id_))
+		&&	(first_psi > (139-allowed_deviation_for_turn_type_id_) && first_psi < (139+allowed_deviation_for_turn_type_id_))
+		&&	(second_phi > (-80-allowed_deviation_for_turn_type_id_) && second_phi < (-80+allowed_deviation_for_turn_type_id_))
+		&&	(second_psi > (-10-allowed_deviation_for_turn_type_id_) && second_psi < (-10+allowed_deviation_for_turn_type_id_)))
+	{
+		turn_type = "VIa2";
+	}
+
+	else if (	(first_phi > (-135-allowed_deviation_for_turn_type_id_) && first_phi < (-135+allowed_deviation_for_turn_type_id_))
+		&&	(first_psi > (131-allowed_deviation_for_turn_type_id_) && first_psi < (131+allowed_deviation_for_turn_type_id_))
+		&&	(second_phi > (-76-allowed_deviation_for_turn_type_id_) && second_phi < (-76+allowed_deviation_for_turn_type_id_))
+		&&	(second_psi > (157-allowed_deviation_for_turn_type_id_) && second_psi < (157+allowed_deviation_for_turn_type_id_)))
+	{
+		turn_type = "VIa2";
+	}
+
+	else
+	{
+		turn_type = "IV";
 	}
 
 
@@ -5591,8 +5747,216 @@ SandwichFeatures::report_turn_type(
 	select_statement.bind(3,	first_res);
 	select_statement.bind(4,	struct_id);
 	basic::database::safely_write_to_database(select_statement);
-	
+
+	return turn_type;
 } //report_turn_type
+
+
+
+
+
+
+
+
+void
+SandwichFeatures::report_turn_AA(
+	Pose const & pose,
+	Size sw_can_by_sh_id,
+	Size i,
+	StructureID struct_id,
+	sessionOP db_session,
+	string turn_type)
+{
+	string canonical_turn_AA	=	"F_canonical_turn_AA";
+	if	(turn_type == "I")
+	{
+		if (pose.residue_type(i).name3() == "LEU" || pose.residue_type(i).name3() == "ALA" || pose.residue_type(i).name3() == "GLY" || pose.residue_type(i).name3() == "PRO" ||
+			pose.residue_type(i).name3() == "THR" || pose.residue_type(i).name3() == "SER" || pose.residue_type(i).name3() == "GLU" || pose.residue_type(i).name3() == "ASN" ||
+			pose.residue_type(i).name3() == "ASP")
+		{
+			if (pose.residue_type(i+1).name3() == "LEU" ||	pose.residue_type(i+1).name3() == "ALA" || pose.residue_type(i+1).name3() == "PRO" ||
+				pose.residue_type(i+1).name3() == "THR" ||	pose.residue_type(i+1).name3() == "SER" || pose.residue_type(i+1).name3() == "GLU" ||
+				pose.residue_type(i+1).name3() == "ASP" ||	pose.residue_type(i+1).name3() == "LYS" )
+			{
+				if (pose.residue_type(i+2).name3() == "ALA" ||	pose.residue_type(i+2).name3() == "GLY" || pose.residue_type(i+2).name3() == "THR" ||
+					pose.residue_type(i+2).name3() == "SER" ||	pose.residue_type(i+2).name3() == "GLU" || pose.residue_type(i+2).name3() == "ASN" ||
+					pose.residue_type(i+2).name3() == "ASP" ||	pose.residue_type(i+2).name3() == "LYS" )
+				{
+					if (pose.residue_type(i+3).name3() == "VAL" ||	pose.residue_type(i+3).name3() == "LEU"	||	pose.residue_type(i+3).name3() == "ALA" ||
+						pose.residue_type(i+3).name3() == "GLY" ||	pose.residue_type(i+3).name3() == "THR"	||	pose.residue_type(i+3).name3() == "SER" ||
+						pose.residue_type(i+3).name3() == "GLU" ||	pose.residue_type(i+3).name3() == "ASP"	||	pose.residue_type(i+3).name3() == "LYS" )
+					{
+						canonical_turn_AA = "T_canonical_turn_AA";
+					}
+				}
+
+			}
+		}
+	}
+	else if	(turn_type == "II")
+	{
+		if (pose.residue_type(i).name3() == "VAL" || pose.residue_type(i).name3() == "LEU" || pose.residue_type(i).name3() == "ALA" || pose.residue_type(i).name3() == "GLY" ||
+			pose.residue_type(i).name3() == "TYR" || pose.residue_type(i).name3() == "PRO" || pose.residue_type(i).name3() == "GLU" || pose.residue_type(i).name3() == "LYS")
+		{
+			if (pose.residue_type(i+1).name3() == "ALA" ||	pose.residue_type(i+1).name3() == "PRO" || pose.residue_type(i+1).name3() == "SER" ||
+				pose.residue_type(i+1).name3() == "GLU" ||	pose.residue_type(i+1).name3() == "LYS" )
+			{
+				if (pose.residue_type(i+2).name3() == "GLY")
+				{
+					if (pose.residue_type(i+3).name3() == "VAL" ||	pose.residue_type(i+3).name3() == "ALA"	||	pose.residue_type(i+3).name3() == "SER" ||
+						pose.residue_type(i+3).name3() == "GLU" ||	pose.residue_type(i+3).name3() == "LYS" )
+					{
+						canonical_turn_AA = "T_canonical_turn_AA";
+					}
+				}
+
+			}
+		}
+	}
+	else if	(turn_type == "VIII")
+	{
+		if (pose.residue_type(i).name3() == "GLY" || pose.residue_type(i).name3() == "PRO")
+		{
+			if (pose.residue_type(i+1).name3() == "PRO" ||	pose.residue_type(i+1).name3() == "ASP" )
+			{
+				if (pose.residue_type(i+2).name3() == "VAL"	||	pose.residue_type(i+2).name3() == "LEU"	||	pose.residue_type(i+2).name3() == "ASN"	||	pose.residue_type(i+2).name3() == "ASP")
+				{
+					if (pose.residue_type(i+3).name3() == "PRO" )
+					{
+						canonical_turn_AA = "T_canonical_turn_AA";
+					}
+				}
+
+			}
+		}
+	}
+	else if	(turn_type == "I_prime")
+	{
+		if (pose.residue_type(i).name3() == "ILE"	||	pose.residue_type(i).name3() == "VAL"	||	pose.residue_type(i).name3() == "LEU"	||
+			pose.residue_type(i).name3() == "ALA"	||	pose.residue_type(i).name3() == "TYR"	||	pose.residue_type(i).name3() == "THR"	||
+			pose.residue_type(i).name3() == "SER"	||	pose.residue_type(i).name3() == "ASP"	||	pose.residue_type(i).name3() == "LYS")
+		{
+			if (pose.residue_type(i+1).name3() == "PRO" ||	pose.residue_type(i+1).name3() == "GLY"	 ||	pose.residue_type(i+1).name3() == "HIS" ||
+			 	pose.residue_type(i+1).name3() == "ASN" ||	pose.residue_type(i+1).name3() == "ASP" )
+			{
+				if (pose.residue_type(i+2).name3() == "GLY")
+				{
+					if (pose.residue_type(i+3).name3() == "VAL"	||	pose.residue_type(i+3).name3() == "GLU" || pose.residue_type(i+3).name3() == "ASN" ||
+						pose.residue_type(i+3).name3() == "LYS"	||	pose.residue_type(i+3).name3() == "ARG" )
+					{
+						canonical_turn_AA = "T_canonical_turn_AA";
+					}
+				}
+
+			}
+		}
+	}
+	else if	(turn_type == "II_prime")
+	{
+			TR << "pose.residue_type(i).name3(): " << pose.residue_type(i).name3() << endl;
+		if (pose.residue_type(i).name3() == "PHE"	||	pose.residue_type(i).name3() == "VAL"	||	pose.residue_type(i).name3() == "LEU"	||
+			pose.residue_type(i).name3() == "ALA"	||	pose.residue_type(i).name3() == "GLY"	||
+			pose.residue_type(i).name3() == "TYR"	||	pose.residue_type(i).name3() == "THR"	||
+			pose.residue_type(i).name3() == "SER"	||	pose.residue_type(i).name3() == "HIS"	||	pose.residue_type(i).name3() == "GLU"	||
+			pose.residue_type(i).name3() == "ASN"	||
+			pose.residue_type(i).name3() == "GLN"	||	pose.residue_type(i).name3() == "ASP"	||	pose.residue_type(i).name3() == "ARG")
+		{
+				TR << "pose.residue_type(i+1).name3(): " << pose.residue_type(i+1).name3() << endl;
+			if (pose.residue_type(i+1).name3() == "GLY")
+			{
+						TR << "pose.residue_type(i+2).name3(): " << pose.residue_type(i+2).name3() << endl;
+				if (pose.residue_type(i+2).name3() == "LEU"	||	pose.residue_type(i+2).name3() == "ALA"	||	pose.residue_type(i+2).name3() == "GLY"	||
+					pose.residue_type(i+2).name3() == "PRO"	||
+					pose.residue_type(i+2).name3() == "SER"	||	pose.residue_type(i+2).name3() == "GLU"	||
+					pose.residue_type(i+2).name3() == "ASN"	||	pose.residue_type(i+2).name3() == "ASP"	|| pose.residue_type(i+2).name3() == "LYS")
+				{
+							TR << "pose.residue_type(i+3).name3(): " << pose.residue_type(i+3).name3() << endl;
+					if (pose.residue_type(i+3).name3() == "PHE"	||	pose.residue_type(i+3).name3() == "VAL"	||	pose.residue_type(i+3).name3() == "LEU"	||
+						pose.residue_type(i+3).name3() == "ALA"	||
+						pose.residue_type(i+3).name3() == "GLY" ||	pose.residue_type(i+3).name3() == "TYR"	||	pose.residue_type(i+3).name3() == "THR"	||
+						pose.residue_type(i+3).name3() == "SER"	||	pose.residue_type(i+3).name3() == "GLU"	||
+						pose.residue_type(i+3).name3() == "ASN"	||	pose.residue_type(i+3).name3() == "GLN"	||	pose.residue_type(i+3).name3() == "LYS"	||	pose.residue_type(i+3).name3() == "ARG" )
+					{
+						canonical_turn_AA = "T_canonical_turn_AA";
+					}
+				}
+
+			}
+		}
+	}
+
+	else if	(turn_type == "VIa1" ||	turn_type == "VIa2")
+	{
+		if (pose.residue_type(i).name3() == "PHE"	||	pose.residue_type(i).name3() == "VAL"	||	pose.residue_type(i).name3() == "THR"	||	pose.residue_type(i).name3() == "HIS"	||
+			pose.residue_type(i).name3() == "ASN")
+		{
+			if (pose.residue_type(i+1).name3() == "ILE"	|| pose.residue_type(i+1).name3() == "SER" || pose.residue_type(i+1).name3() == "ASN")
+			{
+				if (pose.residue_type(i+2).name3() == "PRO")
+				{
+					if (pose.residue_type(i+3).name3() == "GLY" ||	pose.residue_type(i+3).name3() == "THR" ||	pose.residue_type(i+3).name3() == "HIS" )
+					{
+						canonical_turn_AA = "T_canonical_turn_AA";
+					}
+				}
+
+			}
+		}
+	}
+
+	else if	(turn_type == "VIb")
+	{
+		if (pose.residue_type(i).name3() == "PHE"	||	pose.residue_type(i).name3() == "GLY"	||	pose.residue_type(i).name3() == "THR"	||	pose.residue_type(i).name3() == "SER")
+		{
+			if (pose.residue_type(i+1).name3() == "LEU"	|| pose.residue_type(i+1).name3() == "TYR" || pose.residue_type(i+1).name3() == "THR"	 || pose.residue_type(i+1).name3() == "GLU")
+			{
+				if (pose.residue_type(i+2).name3() == "PRO")
+				{
+					if (pose.residue_type(i+3).name3() == "PHE"	||	pose.residue_type(i+3).name3() == "ALA" ||	pose.residue_type(i+3).name3() == "TYR"	||
+						pose.residue_type(i+3).name3() == "THR"	||	pose.residue_type(i+3).name3() == "LYS" )
+					{
+						canonical_turn_AA = "T_canonical_turn_AA";
+					}
+				}
+
+			}
+		}
+	}
+
+	else	//(turn_type == 'IV')
+	{
+		canonical_turn_AA = "uncertain_canonical_turn_AA";
+	}
+
+
+	string select_string =
+	"UPDATE sw_by_components set \n"
+	"i_AA = ? , \n"
+	"i_p1_AA	=	? , \n"
+	"i_p2_AA	=	? , \n"
+	"i_p3_AA	=	? ,	\n"
+	"canonical_turn_AA	=	? \n"
+	"WHERE\n"
+	"	(sw_can_by_sh_id = ?) \n"
+	"	AND	(residue_begin = ?) \n"
+	"	AND (struct_id = ?);";
+
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+	select_statement.bind(1,	pose.residue_type(i).name3());
+	select_statement.bind(2,	pose.residue_type(i+1).name3());
+	select_statement.bind(3,	pose.residue_type(i+2).name3());
+	select_statement.bind(4,	pose.residue_type(i+3).name3());
+	select_statement.bind(5,	canonical_turn_AA);
+	select_statement.bind(6,	sw_can_by_sh_id);
+	select_statement.bind(7,	(i+1));
+	select_statement.bind(8,	struct_id);
+	basic::database::safely_write_to_database(select_statement);
+	
+} //report_turn_AA
+
+
+
+
 
 
 void
@@ -5684,7 +6048,7 @@ SandwichFeatures::parse_my_tag(
 					//	definition:	cutoff to determine canonicalness of L/R, P/A and directionality
 
 
-	///////// An option that takes longest time ///////
+	///////// An option that takes the longest time ///////
 	count_AA_with_direction_ = tag->getOption<bool>("count_AA_with_direction", false);
 					//	definition:	if true, count AA considering direction too!
 					//	<note> if true, it takes more time, but ~50 sandwiches this can be used within ~ minutes.
@@ -5710,6 +6074,7 @@ SandwichFeatures::parse_my_tag(
 	max_H_in_extracted_sw_loop_ = tag->getOption<Size>("max_H_in_extracted_sw_loop", 10);
 					//	definition: maximum allowable number of helix residues in extracted sandwich loop
 					//	example: 0 would be ideal, but then only ~10% of sandwiches will be extracted among CATH classified sandwiches instead even when same_direction_strand linking sw is allowed!
+
 	exclude_sandwich_that_is_linked_w_same_direction_strand_ = tag->getOption<bool>("exclude_sandwich_that_is_linked_w_same_direction_strand", true);
 					//	definition: if true, exclude a sandwich that is linked with same_direction_strand
 					//	Rationale of default=true (1)
@@ -5721,6 +6086,9 @@ SandwichFeatures::parse_my_tag(
 					//	Rationale of default value=13 Angstron
 						//	it is useful to exclude [1LOQ] which is beta-propeller and [3BVT] which is a stacked sandwich
 						//	but it also excludes [2V33] which has two canonical sandwiches near each other and [1W8O] which is a canonical sandwich near a single beta-sheet
+
+	allowed_deviation_for_turn_type_id_ = tag->getOption<Real>("allowed_deviation_for_turn_type_id", 40.0);
+
 
 
 
@@ -5749,6 +6117,8 @@ SandwichFeatures::parse_my_tag(
 					//	definition: if true, write phi_psi_file
 	write_phi_psi_of_E_ = tag->getOption<bool>("write_phi_psi_of_E", false);
 					//	definition: if true, write phi_psi_file
+	write_resfile_ = tag->getOption<bool>("write_resfile", false);
+					//	definition: if true, write resfile automatically
 
 }
 
@@ -5793,6 +6163,8 @@ SandwichFeatures::report_features(
 	core::scoring::dssp::Dssp dssp( dssp_pose );
 	dssp.insert_ss_into_pose( dssp_pose );
 
+
+
 	if (no_helix_in_pdb_){
 		bool helix_existence = check_helix_existence(dssp_pose);
 		if (helix_existence){
@@ -5809,7 +6181,16 @@ SandwichFeatures::report_features(
 		write_chain_B_resnum_ = true;
 		write_phi_psi_of_all_ = true;
 		write_phi_psi_of_E_	= true;
+		write_resfile_	= true;
 	}
+
+
+	pose::Pose pose_w_center_000 = pose;
+	if (count_AA_with_direction_ ||	write_resfile_)
+	{
+		pose_w_center_000.center();
+	}
+
 
 	Size sheet_PK_id_counter=1; //initial value
 	Size sw_can_by_sh_PK_id_counter=1; //initial value
@@ -6169,6 +6550,7 @@ SandwichFeatures::report_features(
 		{
 			continue; // continue i sheet 'for' loop
 		}
+		
 		/////////////////// DO NOT ERASE THESE TRACERS ///////////
 			//			TR.Info << "Now a real pair of candidates between the closest sheets is identified " << endl;
 			//			TR.Info << "candidate 1: sheet_id (all_distinct_sheet_ids[i]): " << all_distinct_sheet_ids[i] << endl;
@@ -6348,6 +6730,8 @@ SandwichFeatures::report_features(
 		}
 	}	//!write_phi_psi_of_E_
 
+
+
 	if (count_AA_with_direction_)
 	{
 		//// <begin> count AA with direction
@@ -6357,7 +6741,7 @@ SandwichFeatures::report_features(
 			{
 				break;
 			}
-			update_sw_by_components_by_AA_w_direction (struct_id, db_session, pose, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),	bs_of_sw_can_by_sh[ii].get_sheet_id(), bs_of_sw_can_by_sh[ii].get_start(), bs_of_sw_can_by_sh[ii].get_end());
+			update_sw_by_components_by_AA_w_direction (struct_id, db_session, pose, pose_w_center_000,	bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),	bs_of_sw_can_by_sh[ii].get_sheet_id(), bs_of_sw_can_by_sh[ii].get_start(), bs_of_sw_can_by_sh[ii].get_end());
 		}
 		//// <end> count AA with direction
 	}
@@ -6552,13 +6936,22 @@ SandwichFeatures::report_features(
 				{
 					if (((next_start_res-1) - (start_res+1)) == 1) // this loop is a 2-residues long hairpin
 					{
-						report_turn_type
+						string turn_type	=	report_turn_type
+												(pose,
+												vec_sw_can_by_sh_id[ii], //sw_can_by_sh_id
+												start_res+1,	// new start_res for intra_sheet_con
+												next_start_res-1, // new end_res for intra_sheet_con
+												struct_id,
+												db_session
+												);
+
+						report_turn_AA
 							(pose,
 							vec_sw_can_by_sh_id[ii], //sw_can_by_sh_id
-							start_res+1,	// new start_res for intra_sheet_con
-							next_start_res-1, // new end_res for intra_sheet_con
+							start_res,	// i
 							struct_id,
-							db_session
+							db_session,
+							turn_type
 							);
 					}
 				}
@@ -6615,13 +7008,22 @@ SandwichFeatures::report_features(
 
 				if (((next_start_res-1) - (start_res+1)) == 1) // this loop is a 2-residues long inter-sheet_loop
 				{
-					report_turn_type
+					string	turn_type	=	report_turn_type
+												(pose,
+												vec_sw_can_by_sh_id[ii], //sw_can_by_sh_id
+												start_res+1,	// new start_res for intra_sheet_con
+												next_start_res-1, // new end_res for intra_sheet_con
+												struct_id,
+												db_session
+												);
+
+					report_turn_AA
 						(pose,
 						vec_sw_can_by_sh_id[ii], //sw_can_by_sh_id
-						start_res+1,	// new start_res for intra_sheet_con
-						next_start_res-1, // new end_res for intra_sheet_con
+						start_res,	// i
 						struct_id,
-						db_session
+						db_session,
+						turn_type
 						);
 				}
 
@@ -6797,7 +7199,7 @@ SandwichFeatures::report_features(
 	{
 		Size tag_len = tag.length();
 		string pdb_file_name = tag.substr(0, tag_len-5);
-		string AA_dis_file_name = pdb_file_name + "_AA_distribution_w_direction.txt";
+		string AA_dis_file_name = pdb_file_name + "_AA_distribution_w_direction_sorted_alphabetically.txt";
 		ofstream AA_dis_file;
 		
 		AA_dis_file.open(AA_dis_file_name.c_str());	
@@ -6826,7 +7228,7 @@ SandwichFeatures::report_features(
 	{
 		Size tag_len = tag.length();
 		string pdb_file_name = tag.substr(0, tag_len-5);
-		string AA_dis_file_name = pdb_file_name + "_AA_distribution_wo_direction.txt";
+		string AA_dis_file_name = pdb_file_name + "_AA_distribution_wo_direction_sorted_alphabetically.txt";
 		ofstream AA_dis_file;
 		
 		AA_dis_file.open(AA_dis_file_name.c_str());	
@@ -6880,6 +7282,37 @@ SandwichFeatures::report_features(
 		}
 	}
 	//// <end> report number_of_inward_pointing_charged_AAs/aro_AAs_in_a_pair_of_edge_strands
+
+
+	///////////// development
+	// <begin> write resfile automatically
+	if (write_resfile_ && canonical_sw_extracted_from_this_pdb_file)
+	{
+		Size tag_len = tag.length();
+		string pdb_file_name = tag.substr(0, tag_len-5);
+		string resfile_name = pdb_file_name + "_resfile.txt";
+		ofstream resfile_stream;
+		
+		resfile_stream.open(resfile_name.c_str());
+
+		
+		resfile_stream << "EX 1 NOTAA C" << endl;
+		resfile_stream << "USE_INPUT_SC" << endl;
+		resfile_stream << "start" << endl;
+
+		for (Size i =1; i<=(pose.total_residue()); i++)
+		{
+			string residue_location = get_residue_location (struct_id,	db_session,	i);
+
+//			resfile_stream << vector_of_hairpin_AA[i] << "	" << vector_of_inter_sheet_loop_AA[i] << endl;
+		}
+
+		resfile_stream.close();
+
+	} 
+	// <end> write resfile automatically
+	///////////// development
+
 
 		TR.Info << "<Exit-Done> for this pdb including extraction of sandwich" << endl;
 //	}
