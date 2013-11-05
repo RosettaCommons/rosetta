@@ -66,6 +66,8 @@ def main(args):
       help="Number of processors to use on when building. (default: %(default)s)",
     )
 
+    parser.add_argument("--debug", action="store_true", dest="debug", default=False, help="... (off by default)" )
+
     parser.add_argument('args', nargs=argparse.REMAINDER)
 
     global Options;
@@ -84,7 +86,7 @@ def main(args):
             if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
             os.makedirs(working_dir)
 
-            res = test_suite.run_test(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Options.jobs, verbose=True)
+            res = test_suite.run_test(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Options.jobs, verbose=True, debug=Options.debug)
 
             if res[_StateKey_] not in _S_Values_: print 'Warning!!! Test {} failed with unknow result code: {}'.format(t, res[_StateKey_])
             else: print 'Test {} finished with output:\n{}'.format(test, json.dumps(res, sort_keys=True, indent=2))
@@ -100,7 +102,7 @@ def main(args):
             if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
             os.makedirs(working_dir)
 
-            res = test_suite.run_test_suite(rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Options.jobs, verbose=True)
+            res = test_suite.run_test_suite(rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Options.jobs, verbose=True, debug=Options.debug)
 
             if res[_StateKey_] not in _S_Values_: print 'Warning!!! TestSuite {} failed with unknow result code: {}'.format(t, res[_StateKey_])
             else:

@@ -34,13 +34,13 @@ def get_tests():
     raise BenchmarkIntegrationError()
 
 
-def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False):
+def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
     TR = Tracer(verbose)
     TR('Unit Test script does not support run_test! Use run_test_suite instead!')
     raise BenchmarkIntegrationError()
 
 
-def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False):
+def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
     ''' Run TestSuite.
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
     '''
@@ -53,8 +53,9 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     results = {}
 
     TR('Compiling...')
-    res, output = execute('Compiling...', 'cd {}/source && ./scons.py -j{jobs} && ./scons.py cat=test -j{jobs}'.format(rosetta_dir, jobs=jobs), return_='tuple')
-    #res, output = 0, 'debug... compiling...\n'
+
+    if debug: res, output = 0, 'unit.py: debug is enabled, skippig build phase...\n'
+    else: res, output = execute('Compiling...', 'cd {}/source && ./scons.py -j{jobs} && ./scons.py cat=test -j{jobs}'.format(rosetta_dir, jobs=jobs), return_='tuple')
 
     full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
 
@@ -69,7 +70,9 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
         command_line = 'cd {}/source && test/run.py -j{jobs}'.format(rosetta_dir, jobs=jobs)
         TR( 'Running unit test script: {}'.format(command_line) )
-        res, output = execute('Running unit test script...', command_line, return_='tuple')
+
+        if debug: res, output = 0, 'unit.py: debug is enabled, skippig unit-tests script run...\n'
+        else: res, output = execute('Running unit test script...', command_line, return_='tuple')
         full_log += output
 
         if res:

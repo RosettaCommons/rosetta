@@ -43,7 +43,7 @@ def get_tests():
 
 
 
-def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False):
+def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
     ''' Run single test.
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
     '''
@@ -52,9 +52,10 @@ def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
     TR('Running test: "{test}" at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir,
-                                                                      tests[test].format(compiler=platform['compiler'], jobs=jobs)),
-                          return_='tuple')
+    if debug: res, output = 0, 'build.py: debug is enabled, skippig build phase...\n'
+    else: res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir,
+                                                                            tests[test].format(compiler=platform['compiler'], jobs=jobs)),
+                                return_='tuple')
 
     file(working_dir+'/build-log.txt', 'w').write(output)
 
@@ -71,7 +72,7 @@ def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     return r
 
 
-def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False):
+def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
     TR = Tracer(verbose)
     TR('Build script does not support TestSuite-like run!')
     raise BenchmarkBuildError()
