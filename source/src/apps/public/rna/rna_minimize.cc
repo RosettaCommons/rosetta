@@ -15,14 +15,20 @@
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/rms_util.hh>
+#include <basic/database/open.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/annotated_sequence.hh>
 #include <core/init/init.hh>
 
 #include <core/io/pdb/pose_io.hh>
@@ -35,6 +41,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
+#include <protocols/rna/RNA_StructureParameters.hh>
 #include <protocols/rna/RNA_Minimizer.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <protocols/swa/StepWiseUtil.hh> // for other_pose.
@@ -48,9 +55,12 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 
 #include <utility/excn/Exceptions.hh>
+
+OPT_KEY( String,  params_file )
 
 using namespace core;
 using namespace protocols;
@@ -70,6 +80,7 @@ rna_fullatom_minimize_test()
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using namespace core::scoring::constraints;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
@@ -83,16 +94,25 @@ rna_fullatom_minimize_test()
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
+	// is_dump_pdb
+	bool is_dump_pdb( true );
+	if ( option[ in::file::silent ].user() ) is_dump_pdb = false;
+	if ( option[ out::pdb ].user() ) is_dump_pdb = option[ out::pdb ];
+
 	// input stream
 	PoseInputStreamOP input;
 	if ( option[ in::file::silent ].user() ) {
 		if ( option[ in::file::tags ].user() ) {
-			input = new SilentFilePoseInputStream(
+			SilentFilePoseInputStreamOP input1 = new SilentFilePoseInputStream(
 				option[ in::file::silent ](),
 				option[ in::file::tags ]()
 			);
+			input1->set_order_by_energy( true );
+			input = input1;
 		} else {
-			input = new SilentFilePoseInputStream( option[ in::file::silent ]() );
+			SilentFilePoseInputStreamOP input1 = new SilentFilePoseInputStream( option[ in::file::silent ]() );
+			input1->set_order_by_energy( true );
+			input = input1;
 		}
 	} else {
 		input = new PDBPoseInputStream( option[ in::file::s ]() );
@@ -132,10 +152,35 @@ rna_fullatom_minimize_test()
 		input->fill_pose( pose, *rsd_set );
 		i++;
 
-		cleanup( pose );
-		fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
+		if ( !option[ in::file::silent ].user() ) {
+			cleanup( pose );
+			fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
+		}
 
 		std::cout << pose.fold_tree() << std::endl;
+
+		if ( option[OptionKeys::constraints::cst_fa_file].user() ) {
+			// Just Reads the first cst_file...
+			// Not sure why but the constraint depends on the start pose given.
+			// Initialize a new pose to avoid the instability.
+			core::pose::Pose test_pose;
+			core::pose::make_pose_from_sequence( test_pose,	pose.sequence(),	*rsd_set );
+			ConstraintSetOP cst_set = ConstraintIO::get_instance()->read_constraints(
+					option[OptionKeys::constraints::cst_fa_file][1], new ConstraintSet, test_pose );
+			pose.constraint_set( cst_set );
+		}
+
+		RNA_StructureParameters parameters;
+		if ( option[params_file].user() ) {
+			parameters.initialize(
+					pose, option[params_file],
+					basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
+					false /*ignore_secstruct*/
+			);
+			// parameters.set_suppress_bp_constraint( 1.0 );
+			parameters.setup_base_pair_constraints( pose );
+			//rna_minimizer.set_allow_insert( parameters.allow_insert() );
+		}
 
 		if ( option[ in::file::minimize_res ].user() ){
 			// don't allow anything to move, and then supply minimize_res as 'extra' minimize_res.
@@ -149,6 +194,7 @@ rna_fullatom_minimize_test()
 		// graphics viewer.
 		if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
+
 		// do it
 		pose::Pose pose_init = pose;
 		rna_minimizer.apply( pose );
@@ -159,6 +205,16 @@ rna_fullatom_minimize_test()
 		if ( pos != std::string::npos ) tag.replace( pos, 4, "" );
 		tag += "_minimize";
 
+		// Do alignment to native
+		if ( native_exists ){
+			utility::vector1< Size > superimpose_res;
+			for ( Size k = 1; k <= pose.total_residue(); ++k ) superimpose_res.push_back( k );
+			core::id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
+			protocols::swa::create_alignment_id_map( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
+			core::scoring::superimpose_pose( pose, native_pose, alignment_atom_id_map_native );
+			core::scoring::superimpose_pose( pose_init, native_pose, alignment_atom_id_map_native );
+		}
+
 		BinaryRNASilentStruct s( pose, tag );
 
 		if ( native_exists ){
@@ -167,13 +223,25 @@ rna_fullatom_minimize_test()
 			std::cout << "All atom rmsd: " << rmsd_init  << " to " << rmsd << std::endl;
 			s.add_energy( "rms", rmsd );
 			s.add_energy( "rms_init", rmsd_init );
+
+			// Stem RMSD
+			if ( option[params_file].user() ) {
+				std::list< Size > stem_residues( parameters.get_stem_residues( pose ) );
+				if ( stem_residues.size() > 0 ) {
+					Real const rmsd_stems = all_atom_rmsd( native_pose, pose, stem_residues );
+					s.add_energy( "rms_stem", rmsd_stems );
+					std::cout << "Stems rmsd: " << rmsd_stems << std::endl;
+				}
+			}
 		}
 
 		std::cout << "Outputting " << tag << " to silent file: " << silent_file << std::endl;
 		silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
 
 		std::string const out_file =  tag + ".pdb";
-		dump_pdb( pose, out_file );
+		if ( is_dump_pdb ) {
+			dump_pdb( pose, out_file );
+		}
 
 	}
 
@@ -209,7 +277,10 @@ try {
 	option.add_relevant( OptionKeys::rna::skip_coord_constraints );
 	option.add_relevant( OptionKeys::rna::skip_o2prime_trials );
 	option.add_relevant( OptionKeys::rna::deriv_check );
+	option.add_relevant( OptionKeys::constraints::cst_fa_file );
 	option.add_relevant( in::file::minimize_res );
+	option.add_relevant( out::pdb );
+	NEW_OPT( params_file, "Input file for pairings", "" );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup
@@ -224,3 +295,4 @@ try {
 	std::cout << "caught exception " << e.msg() << std::endl;
 }
 }
+

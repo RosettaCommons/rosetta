@@ -21,6 +21,7 @@
 #include <core/scoring/rms_util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
+#include <basic/database/open.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -37,6 +38,7 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/swa/StepWiseUtil.hh>
+#include <protocols/rna/RNA_StructureParameters.hh>
 
 // C++ headers
 #include <iostream>
@@ -49,6 +51,8 @@
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 
 #include <utility/excn/Exceptions.hh>
+
+OPT_KEY( String,  params_file )
 
 using namespace core;
 using namespace protocols;
@@ -123,6 +127,18 @@ rna_score_test()
 		input->fill_pose( pose, *rsd_set );
 		i++;
 
+		protocols::rna::RNA_StructureParameters parameters;
+		if ( option[params_file].user() ) {
+			parameters.initialize(
+					pose, option[params_file],
+					basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
+					false /*ignore_secstruct*/
+			);
+			// parameters.set_suppress_bp_constraint( 1.0 );
+			parameters.setup_base_pair_constraints( pose );
+			//rna_minimizer.set_allow_insert( parameters.allow_insert() );
+		}
+
 		cleanup( pose );
 		fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
 
@@ -134,14 +150,32 @@ rna_score_test()
 			(*scorefxn)( pose );
 		}
 
+		// Do alignment to native
+		if ( native_exists ){
+			utility::vector1< Size > superimpose_res;
+			for ( Size k = 1; k <= pose.total_residue(); ++k ) superimpose_res.push_back( k );
+			core::id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
+			protocols::swa::create_alignment_id_map( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
+			core::scoring::superimpose_pose( pose, native_pose, alignment_atom_id_map_native );
+		}
 		// tag
 		std::string tag = tag_from_pose( pose );
 		BinaryRNASilentStruct s( pose, tag );
 
 		if ( native_exists ){
-			Real const rmsd      = all_atom_rmsd( native_pose, pose );
-			std::cout << "All atom rmsd: " << tag << " " << rmsd << std::endl;
+			Real const rmsd = all_atom_rmsd( native_pose, pose );
+			std::cout << "All atom rmsd: " << rmsd << std::endl;
 			s.add_energy( "rms", rmsd );
+
+			// Stem RMSD
+			if ( option[params_file].user() ) {
+				std::list< Size > stem_residues( parameters.get_stem_residues( pose ) );
+				if ( stem_residues.size() > 0 ) {
+					Real const rmsd_stems = all_atom_rmsd( native_pose, pose, stem_residues );
+					s.add_energy( "rms_stem", rmsd_stems );
+					std::cout << "Stems rmsd: " << rmsd_stems << std::endl;
+				}
+			}
 		}
 
 		std::cout << "Outputting " << tag << " to silent file: " << silent_file << std::endl;
@@ -189,6 +223,7 @@ main( int argc, char * argv [] )
 				option.add_relevant( in::file::input_res );
 				option.add_relevant( full_model::cutpoint_open );
 				option.add_relevant( score::just_calc_rmsd );
+				NEW_OPT( params_file, "Input file for pairings", "" );
 
         ////////////////////////////////////////////////////////////////////////////
         // setup

@@ -79,7 +79,7 @@ toolbox::AllowInsertOP
 	set_root_at_first_rigid_body( bool const setting ){ root_at_first_rigid_body_ = setting; }
 
 	void
-	set_suppress_bp_constraint( bool const setting ){ suppress_bp_constraint_ = setting; }
+	set_suppress_bp_constraint( core::Real const setting ){ suppress_bp_constraint_ = setting; }
 
 	bool
 	check_base_pairs( core::pose::Pose & pose ) const;
@@ -177,7 +177,7 @@ private:
 
 	bool add_virtual_anchor_;
 	bool root_at_first_rigid_body_;
-	bool suppress_bp_constraint_;
+	core::Real suppress_bp_constraint_;
 
 	utility::vector1 < core::Size  > allow_insert_res_;
 	toolbox::AllowInsertOP allow_insert_;

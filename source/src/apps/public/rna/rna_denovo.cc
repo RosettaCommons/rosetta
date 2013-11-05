@@ -21,6 +21,7 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/sequence/util.hh>
+#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <basic/options/option.hh>
 #include <basic/database/open.hh>
 #include <basic/options/option_macros.hh>
@@ -88,6 +89,7 @@ OPT_KEY( Real, rna_lores_chainbreak_weight )
 OPT_KEY( Integer, cycles )
 OPT_KEY( Real, jump_change_frequency )
 OPT_KEY( Real, suppress_bp_constraint )
+OPT_KEY( String,  refine_silent_file )
 OPT_KEY( String,  jump_library_file )
 OPT_KEY( String,  params_file )
 OPT_KEY( String,  data_file )
@@ -104,6 +106,7 @@ OPT_KEY( Boolean, autofilter )
 OPT_KEY( Real, filter_chain_closure_distance )
 OPT_KEY( Boolean, filter_chain_closure_halfway )
 OPT_KEY( IntegerVector, output_res_num )
+OPT_KEY( Boolean, refine_native )
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -140,16 +143,35 @@ rna_denovo_test()
 		//Read in native if it exists.
 		std::string native_pdb_file  = option[ in::file::native ];
 		core::import_pose::pose_from_pdb( native_pose, *rsd_set, in_path + native_pdb_file );
-		ensure_phosphate_nomenclature_matches_mini( native_pose );
-		//	dump_pdb( native_pose, "native.pdb");
+		// ensure_phosphate_nomenclature_matches_mini( native_pose );
+		//dump_pdb( native_pose, "native.pdb");
+	} else {
+		runtime_assert( !option[refine_native]() );
 	}
 
 
 	//Prepare starting structure from scratch --> read from fasta.
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
 	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( in_path + fasta_file )[1];
-	core::pose::make_pose_from_sequence( extended_pose,	fasta_sequence->sequence(),	*rsd_set );
+	if ( option[refine_native]() ) {
+		extended_pose = native_pose;
+	} else {
+		core::pose::make_pose_from_sequence( extended_pose,	fasta_sequence->sequence(),	*rsd_set );
+	}
 	set_output_res_num( extended_pose, option[ output_res_num ]() );
+
+	// Silent file input for fine refinement
+	utility::vector1<pose::PoseOP> refine_pose_list;
+	if ( option[refine_silent_file]() != "" ) {
+		core::import_pose::pose_stream::SilentFilePoseInputStream input( option[refine_silent_file]() );
+		input.set_order_by_energy( true );
+		while ( input.has_another_pose() ) {
+			pose::PoseOP new_pose = new pose::Pose;
+			input.fill_pose( *new_pose, *rsd_set );
+			set_output_res_num( *new_pose, option[ output_res_num ]() );
+			refine_pose_list.push_back( new_pose );
+		}
+	}
 
 	//	dump_pdb( extended_pose, "extended.pdb");
 
@@ -157,7 +179,7 @@ rna_denovo_test()
 	std::cout << "Check it! EXTEND " << extended_pose.sequence() << std::endl;
 
 	//Score these suckers.
-	pose::Pose pose;
+	pose::Pose pose( extended_pose );
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( RNA_LORES_WTS );
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
@@ -166,7 +188,6 @@ rna_denovo_test()
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	//Read in pose with ideal bond lengths and angles if it exists.
-	pose = extended_pose;
 
 	//	set_ideal_geometry( pose, extended_pose, rsd_set ); //by default, does nothing.
 
@@ -184,17 +205,18 @@ rna_denovo_test()
 	// are protein-specific!
 	Size const nstruct = option[ out::nstruct ];
 	std::string const silent_file = option[ out::file::silent  ]();
-	bool const heat_structure( true ); // hmm... ( !input_pose || option[ heat ] );
+	bool heat_structure( true );
+	if ( option[refine_native]() || option[refine_silent_file]() != "" ) heat_structure = false;
 	bool const minimize_structure = option[ minimize_rna ];
 	bool const relax_structure = option[ relax_rna ];
 	bool const is_allow_bulge = option[ allow_bulge ];
 
-    protocols::rna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct,
-                                                             silent_file,
-                                                             heat_structure,
-                                                             minimize_structure,
-                                                             relax_structure,
-                                                             is_allow_bulge );
+  protocols::rna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct,
+                                                           silent_file,
+                                                           heat_structure,
+                                                           minimize_structure,
+                                                           relax_structure,
+                                                           is_allow_bulge );
 
 	if (native_exists) rna_de_novo_protocol.set_native_pose( native_pose_OP );
 	if ( option[ cycles ].user() )	rna_de_novo_protocol.set_monte_carlo_cycles( option[ cycles ]() );
@@ -250,10 +272,18 @@ rna_denovo_test()
 	rna_de_novo_protocol.set_allowed_bulge_res( option[ allowed_bulge_res ]() ) ;
 	rna_de_novo_protocol.set_extra_minimize_res( option[ extra_minimize_res ]() ) ;
 
-		//Constraints?
+	rna_de_novo_protocol.set_refine_pose_list( refine_pose_list );
+	if ( option[refine_native]() || option[refine_silent_file]() != "" ) rna_de_novo_protocol.set_rounds( 1 );
+	if ( option[refine_native]() ) rna_de_novo_protocol.set_refine_pose( true );
+
+	//Constraints?
 	if ( option[ cst_file ].user() ) {
 		ConstraintSetOP cst_set = ConstraintIO::get_instance()->read_constraints( option[cst_file], new ConstraintSet, pose );
 		pose.constraint_set( cst_set );
+		for ( Size i = 1; i <= refine_pose_list.size(); ++i) {
+			// ConstraintSetOP cst_set = ConstraintIO::get_instance()->read_constraints( option[cst_file], new ConstraintSet, *refine_pose_list[i] );
+			refine_pose_list[i]->constraint_set( cst_set );
+		}
 	}
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
@@ -295,10 +325,10 @@ try {
 	NEW_OPT( simple_relax, "Relax by minimizing after any fragment insertion",false );
 	NEW_OPT( ignore_secstruct, "Ignore sec struct in input file",false );
 	NEW_OPT( lores_scorefxn, "Low resolution scorefunction weights file", "rna_lores.wts" );
-	NEW_OPT( filter_lores_base_pairs, "Filter for models that satisfy structure parameters",false );
-	NEW_OPT( filter_lores_base_pairs_early, "Filter for models that satisfy structure parameters at round 2 of 10",false );
+	NEW_OPT( filter_lores_base_pairs, "Filter for models that satisfy structure parameters", true );
+	NEW_OPT( filter_lores_base_pairs_early, "Filter for models that satisfy structure parameters at round 2 of 10", true );
 	NEW_OPT( filter_chain_closure, "Filter for models that have closed chains after lores before minimize",true );
-	NEW_OPT( filter_chain_closure_halfway, "Filter for models that have closed chains after lores before minimize at round 5 of 10",false );
+	NEW_OPT( filter_chain_closure_halfway, "Filter for models that have closed chains after lores before minimize at round 5 of 10", true );
 	NEW_OPT( filter_chain_closure_distance, "Mean distance across 3 chainbreak atoms to filter models that have closed chains after lores", 6.0 );
 	NEW_OPT( cycles, "Default number of Monte Carlo cycles", 0 ); // now default is set based on the number of moving residues.
 	NEW_OPT( temperature, "temperature", 2.0 );
@@ -317,17 +347,19 @@ try {
 	NEW_OPT( use_1jj2_torsions, "Use original (ribosome) fragments, 1JJ2", false );
 	NEW_OPT( rna_lores_chainbreak_weight, "chainbreak weight for lo res sampling", 0.0 );
 	NEW_OPT( rna_lores_linear_chainbreak_weight, "linear chainbreak weight for lo res sampling", 0.0 );
-    NEW_OPT( allow_bulge , "Automatically virtualize residues that are not energetically stable", false );
-    NEW_OPT( allowed_bulge_res, "Use with allow_bulge, allowable pos for virtualization", blank_size_vector  );
-    NEW_OPT( extra_minimize_res, "Extra residues during minimize step", blank_size_vector  );
-    NEW_OPT( allow_consecutive_bulges, "allow_consecutive_bulges", false );
-    NEW_OPT( binary_output, "force output to binary rna silentstruct", false );
-    NEW_OPT( move_first_rigid_body, "first_rigid_body is usually kept frozen, but might be useful to sample it.", false );
-    NEW_OPT( root_at_first_rigid_body, "places coordinate system away from the usual last virtual residue and puts it on the first rigid body. useful if this rigidbody needs to be fixed, but other bodies need to move as if this one is moving. Use with -move_first_rigid_body. ", false );
-    NEW_OPT( suppress_bp_constraint, "Factor by which to lower base pair constraint weight. ", 1.0 );
-    NEW_OPT( output_filters, "output lores scores at early stage (round  2 of 10) and at end -- could be useable for early termination of unpromising early starts", false );
-    NEW_OPT( autofilter, "Automatically skip output/minimize if lores score is worse than 20th percentile, updated on the fly.", false );
-    NEW_OPT( output_res_num, "Numbering of residues in output PDB or silent file", blank_size_vector  );
+  NEW_OPT( allow_bulge , "Automatically virtualize residues that are not energetically stable", false );
+  NEW_OPT( allowed_bulge_res, "Use with allow_bulge, allowable pos for virtualization", blank_size_vector  );
+  NEW_OPT( extra_minimize_res, "Extra residues during minimize step", blank_size_vector  );
+  NEW_OPT( allow_consecutive_bulges, "allow_consecutive_bulges", false );
+  NEW_OPT( binary_output, "force output to binary rna silentstruct", false );
+  NEW_OPT( move_first_rigid_body, "first_rigid_body is usually kept frozen, but might be useful to sample it.", false );
+  NEW_OPT( root_at_first_rigid_body, "places coordinate system away from the usual last virtual residue and puts it on the first rigid body. useful if this rigidbody needs to be fixed, but other bodies need to move as if this one is moving. Use with -move_first_rigid_body. ", false );
+  NEW_OPT( suppress_bp_constraint, "Factor by which to lower base pair constraint weight. ", 1.0 );
+  NEW_OPT( output_filters, "output lores scores at early stage (round  2 of 10) and at end -- could be useable for early termination of unpromising early starts", false );
+  NEW_OPT( autofilter, "Automatically skip output/minimize if lores score is worse than 20th percentile, updated on the fly.", true );
+  NEW_OPT( output_res_num, "Numbering of residues in output PDB or silent file", blank_size_vector  );
+  NEW_OPT( refine_silent_file, "Name of the silent file to be refined.", "" );
+  NEW_OPT( refine_native, "Refine starting from the native pose", false );
 
 	option.add_relevant( basic::options::OptionKeys::rna::vary_geometry );
 	option.add_relevant( basic::options::OptionKeys::rna::vall_torsions );
@@ -348,3 +380,4 @@ try {
 	std::cout << "caught exception " << e.msg() << std::endl;
 }
 }
+

@@ -88,7 +88,6 @@ add_virtual_res ( core::pose::Pose & pose, bool set_res_as_root ) {
 	}
 
 	// attach virt res there
-	bool fullatom = pose.is_fullatom();
 	core::chemical::ResidueTypeSet const & residue_set = pose.residue_type ( 1 ).residue_type_set();
 	core::chemical::ResidueTypeCOPs const & rsd_type_list ( residue_set.name3_map ( "VRT" ) );
 	core::conformation::ResidueOP new_res ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
@@ -125,7 +124,7 @@ pdb_scoring() {
 	core::scoring::ScoreFunctionOP scorefxn =
 		ScoreFunctionFactory::create_score_function ( force_field_file_option );
 	scorefxn -> show ( std::cout, *pose );
-	//pose->dump_pdb("test.pdb");
+	pose->dump_pdb("test.pdb");
 }
 
 ///////////////////////////////////////////////////////////////
@@ -139,19 +138,20 @@ my_main ( void* ) {
 ///////////////////////////////////////////////////////////////////////////////
 int
 main ( int argc, char * argv [] ) {
-    try {
-	using namespace basic::options;
-	NEW_OPT ( force_field_file, "score_file", "rna/rna_hires_elec_dens" );
-	////////////////////////////////////////////////////////////////////////////
-	// setup
-	////////////////////////////////////////////////////////////////////////////
-	core::init::init ( argc, argv );
-	////////////////////////////////////////////////////////////////////////////
-	// end of setup
-	////////////////////////////////////////////////////////////////////////////
-	protocols::viewer::viewer_main ( my_main );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
-                                  }
-        return 0;
+  try {
+		using namespace basic::options;
+		NEW_OPT ( force_field_file, "score_file", "rna/rna_hires_elec_dens" );
+		////////////////////////////////////////////////////////////////////////////
+		// setup
+		////////////////////////////////////////////////////////////////////////////
+		core::init::init ( argc, argv );
+		////////////////////////////////////////////////////////////////////////////
+		// end of setup
+		////////////////////////////////////////////////////////////////////////////
+		protocols::viewer::viewer_main ( my_main );
+  } catch ( utility::excn::EXCN_Base const & e ) {
+    std::cout << "caught exception " << e.msg() << std::endl;
+  }
+  return 0;
 }
+

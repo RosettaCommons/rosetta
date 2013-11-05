@@ -131,7 +131,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if(verbose_){
+	if ( verbose_ ) {
 		TR << "Check it! SEQUENCE " << pose.sequence() << std::endl;
 	  TR << "In protocols.rna.rna_minimizer.apply()" << std::endl;
 		TR << "min_type_=" << min_type_ << std::endl;

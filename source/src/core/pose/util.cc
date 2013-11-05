@@ -1158,6 +1158,21 @@ copy_dofs(
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
+copy_dofs_match_atom_names(
+					pose::Pose & pose,
+					Pose const & scratch_pose )
+{
+
+	// Assumes the poses have the same number of residues
+	runtime_assert( pose.total_residue() == scratch_pose.total_residue() );
+	std::map< Size, Size > res_map;
+	for ( Size n = 1; n <= pose.total_residue(); ++n ) res_map[n] = n;
+	copy_dofs_match_atom_names( pose, scratch_pose, res_map );
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+void
 copy_dofs_match_atom_names( //Parin Sripakdeevong Dec 27, 2011.
 					pose::Pose & pose,
 					MiniPose const & chunk_pose,
@@ -1170,6 +1185,18 @@ copy_dofs_match_atom_names( //Parin Sripakdeevong Dec 27, 2011.
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+void
+copy_dofs(
+					pose::Pose & pose,
+					Pose const & scratch_pose )
+{
+	// Assumes the poses have the same number of residues
+	runtime_assert( pose.total_residue() == scratch_pose.total_residue() );
+	std::map< Size, Size > res_map;
+	for ( Size n = 1; n <= pose.total_residue(); ++n ) res_map[n] = n;
+	copy_dofs( pose, scratch_pose, res_map );
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
 copy_dofs(

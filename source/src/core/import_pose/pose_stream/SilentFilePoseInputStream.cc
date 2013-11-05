@@ -247,6 +247,8 @@ void SilentFilePoseInputStream::read_all_files_() {
 void
 SilentFilePoseInputStream::set_order_by_energy( bool const & setting ) {
 	order_by_energy_ = setting;
+	if (setting) sfd_->order_by_energy();
+	current_position_ = sfd_->begin();
 }
 
 void

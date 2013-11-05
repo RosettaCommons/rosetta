@@ -18,3 +18,9 @@ residue_types/URA_n.params
 #../fa_standard/residue_types/water/TP3.params
 #../fa_standard/residue_types/metal_ions/MG.params
 
+# Non-natural na
+#residue_types/INO.params
+#residue_types/IGU.params
+#residue_types/ICY.params
+#residue_types/1AP.params
+

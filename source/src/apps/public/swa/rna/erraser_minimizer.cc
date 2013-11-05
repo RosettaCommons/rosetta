@@ -192,7 +192,7 @@ apply_ideal_coordinates ( pose::Pose const & pose, pose::Pose & pose_reference )
 	Real const DELTA_CUTOFF ( rna_fitted_torsion_info.delta_cutoff() );
 	bool const is_use_phenix_geo = option[ basic::options::OptionKeys::rna::corrected_geo ];
 	utility::vector1 <Size> pucker_conformation (pose_reference.total_residue(), 0);
-		
+
 	RNA_IdealCoord ideal_coord;
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		if ( pose.residue ( n ).aa() == core::chemical::aa_vrt ) continue; //FCC
@@ -201,7 +201,7 @@ apply_ideal_coordinates ( pose::Pose const & pose, pose::Pose & pose_reference )
 
 		if ( delta > DELTA_CUTOFF ) { //south
 			apply_ideal_c2endo_sugar_coords ( pose_reference, n );
-			pucker_conformation[n] = 2; 
+			pucker_conformation[n] = 2;
 		} else { //north
 			pucker_conformation[n] = 1;
 		}
@@ -601,7 +601,7 @@ setup_fold_tree_sample_res ( pose::Pose & pose, utility::vector1< core::Size > c
 }
 ///////////////////////////////////////////
 void
-pyrimidine_flip_trial( pose::Pose & pose, 
+pyrimidine_flip_trial( pose::Pose & pose,
 											 utility::vector1< Size > const & fixed_res_list,
 											 scoring::ScoreFunctionOP scorefxn )
 {
@@ -617,7 +617,7 @@ pyrimidine_flip_trial( pose::Pose & pose,
 	Real orig_score, new_score;
 	orig_score = (*scorefxn) (pose);
 	new_score = (*scorefxn) (screen_pose);
-	std::cout << "Start pyrimidine_flip_trial. Filp residue :";		
+	std::cout << "Start pyrimidine_flip_trial. Filp residue :";
 	for (Size i = 1; i <= total_res; ++i) {
 		if ( check_num_in_vector( i, fixed_res_list ) ) continue;
 		Residue const & res = pose.residue(i);
@@ -629,7 +629,7 @@ pyrimidine_flip_trial( pose::Pose & pose,
 			if (new_score < orig_score) { //Flip the chi!
 				pose.set_torsion( TorsionID( i, id::CHI, 1 ), new_chi );
 				orig_score = new_score;
-				std::cout << ' ' << i;		
+				std::cout << ' ' << i;
 			} else { //Keep the original chi
 				screen_pose.set_torsion( TorsionID( i, id::CHI, 1 ), orig_chi );
 			}
@@ -683,13 +683,13 @@ pdb_minimizer() {
 				output_pdb_name.replace(found, found + 4, "_ready_set.pdb");
 			} else {
 				output_pdb_name.replace(found, found + 4, "_minimize.pdb");
-			}			
+			}
 		} else {
 			if (ready_set_only_) {
 				output_pdb_name.append("_ready_set.pdb");
 			} else {
 				output_pdb_name.append("_minimize.pdb");
-			}	
+			}
 		}
 	}
 
@@ -697,7 +697,7 @@ pdb_minimizer() {
 		pose.dump_pdb(output_pdb_name);
 		return;
 	}
-	
+
 	//Setup score function.
 	std::string score_weight_file = "rna/rna_hires_elec_dens";
 	if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
@@ -734,7 +734,7 @@ pdb_minimizer() {
 	}
 	if ( skip_minimize_ ) {
 		pose.dump_pdb(output_pdb_name);
-		return;	
+		return;
 	}
 
 
@@ -763,7 +763,7 @@ pdb_minimizer() {
 		cut_lower.push_back(k);
 		cut_upper.push_back(m);
 
-		if ( pose.residue ( k ).aa() != core::chemical::aa_vrt && 
+		if ( pose.residue ( k ).aa() != core::chemical::aa_vrt &&
 		     pose.residue ( m ).aa() != core::chemical::aa_vrt ) {
 			if ( fixed_res_list.size() != 0 &&
 					 ! ( check_num_in_vector(k, fixed_res_list) ) &&
@@ -812,12 +812,12 @@ pdb_minimizer() {
 
 		allow_insert(fixed_res_num) = false;
 
-		if (fixed_res_num - 1 > 0 && 
+		if (fixed_res_num - 1 > 0 &&
 		    ! ( check_num_in_vector( fixed_res_num - 1, fixed_res_list ) ) &&
 		    ! ( check_num_in_vector( fixed_res_num, cut_lower ) ) ) {
 			allow_insert(fixed_res_num) = true;
 		}
-		if (fixed_res_num + 1 <= nres && 
+		if (fixed_res_num + 1 <= nres &&
 		    ! ( check_num_in_vector( fixed_res_num + 1, fixed_res_list ) ) &&
 		    ! ( check_num_in_vector( fixed_res_num, cut_upper ) ) ) {
 			allow_insert(fixed_res_num) = true;
@@ -830,7 +830,7 @@ pdb_minimizer() {
 	if (constrain_phosphate) {
 		for ( Size i = 1; i <= nres; ++i ) {
 			if ( pose.residue ( i ).aa() == core::chemical::aa_vrt ) continue;
-			
+
 			bool is_fixed_res = false;
 			for ( Size j = 1; j <= fixed_res_list.size(); ++j ) {
 				if (i == fixed_res_list[j]) {

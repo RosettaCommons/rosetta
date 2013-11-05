@@ -218,7 +218,20 @@ public:
 	set_monte_carlo_cycles( Size const setting ){ monte_carlo_cycles_ = setting;  user_defined_cycles_ = true; }
 
 	void
+	set_rounds( Size const setting ){ rounds_ = setting; }
+
+	void
 	set_extra_minimize_res( utility::vector1< core::Size > setting );
+
+	void
+	set_refine_pose_list( utility::vector1<core::pose::PoseOP> const & setting ) {
+		refine_pose_list_ = setting;
+		refine_from_silent_ = ( refine_pose_list_.size() != 0 );
+		if ( refine_from_silent_ ) rounds_ = 1; // Overide the multi-round behavior
+	}
+
+	void
+	set_refine_pose( Size const setting ){ refine_pose_ = setting; }
 
 private:
 
@@ -244,16 +257,16 @@ private:
 	initialize_tag_is_done();
 
 	void
-	setup_rigid_body_mover( core::pose::Pose const & pose, core::Size const r, core::Size const rounds );
+	setup_rigid_body_mover( core::pose::Pose const & pose, core::Size const r );
 
 
-    void
-    output_silent_struct( core::io::silent::SilentStruct & s,
-                          core::io::silent::SilentFileData & silent_file_data,
-                          std::string const & silent_file,
-                          core::pose::Pose & pose,
-                          std::string const out_file_tag,
-                          bool const score_only = false ) const;
+	void
+	output_silent_struct( core::io::silent::SilentStruct & s,
+												core::io::silent::SilentFileData & silent_file_data,
+												std::string const & silent_file,
+												core::pose::Pose & pose,
+												std::string const out_file_tag,
+												bool const score_only = false ) const;
 
 	void
 	do_random_moves( core::pose::Pose & pose );
@@ -262,16 +275,16 @@ private:
 	randomize_rigid_body_orientations( core::pose::Pose & pose );
 
 	void
-	update_denovo_scorefxn_weights( Size const & r, Size const & rounds );
+	update_denovo_scorefxn_weights( Size const r );
 
-    Size
-    figure_out_constraint_separation_cutoff( Size const & r, Size const & rounds, Size const & max_dist );
-
-	void
-	update_pose_constraints( Size const & r, Size const & rounds, core::pose::Pose & pose );
+	Size
+	figure_out_constraint_separation_cutoff( Size const r, Size const  max_dist );
 
 	void
-	update_frag_size( Size const & r, Size const & rounds );
+	update_pose_constraints( Size const r, core::pose::Pose & pose );
+
+	void
+	update_frag_size( Size const r );
 
 	void
 	random_fragment_trial( core::pose::Pose & pose );
@@ -297,16 +310,17 @@ private:
 	bool
 	check_score_filter( core::Real const lores_score_, std::list< core::Real > & all_lores_score_ );
 
-    void
-    apply_chem_shift_data(core::pose::Pose & pose, std::string const out_file_tag);
+	void
+	apply_chem_shift_data(core::pose::Pose & pose, std::string const out_file_tag);
 
-    void
-    add_chem_shift_info(core::io::silent::SilentStruct & silent_struct, core::pose::Pose const & const_pose) const;
+	void
+	add_chem_shift_info(core::io::silent::SilentStruct & silent_struct, core::pose::Pose const & const_pose) const;
 
 private:
 
 	// protocol-specific data ... need to be specified as input.
 	Size const nstruct_;
+	Size rounds_;
 	Size monte_carlo_cycles_;
 	Size const monte_carlo_cycles_max_default_;
 	bool user_defined_cycles_;
@@ -327,7 +341,7 @@ private:
 	bool simple_rmsd_cutoff_relax_;
 	bool allow_bulge_, allow_consecutive_bulges_;
 
-    bool const use_chem_shift_data_;
+  bool const use_chem_shift_data_;
 
 	// parameters
 	core::Real m_Temperature_; // default temperature for monte carlo
@@ -397,6 +411,9 @@ private:
 	bool autofilter_;
 	core::Real autofilter_score_quantile_;
 	std::list< core::Real > all_lores_score_final_;
+	bool refine_from_silent_;
+	utility::vector1<core::pose::PoseOP> refine_pose_list_;
+	bool refine_pose_;
 
 }; // class RNA_DeNovoProtocol
 

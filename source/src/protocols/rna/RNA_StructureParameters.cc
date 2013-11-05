@@ -84,7 +84,8 @@ using namespace core;
 RNA_StructureParameters::RNA_StructureParameters():
 	secstruct_defined_( false ),
 	assume_non_stem_is_loop( false ),
-	root_at_first_rigid_body_( false )
+	root_at_first_rigid_body_( false ),
+	suppress_bp_constraint_( 1.0 )
 	{
 	}
 
