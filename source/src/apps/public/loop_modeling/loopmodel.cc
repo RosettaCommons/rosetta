@@ -21,7 +21,11 @@
 
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
+#include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/loops.OptionKeys.gen.hh>
 
+static basic::Tracer TR("apps.public.loops.loopmodel");
 
 ////////////////////////////////////////////////////////
 void *
@@ -39,7 +43,16 @@ main( int argc, char * argv [] )
 	protocols::abinitio::ClassicAbinitio::register_options();
 	protocols::abinitio::AbrelaxApplication::register_options();
 	devel::init( argc, argv );
+
+	// Old versions of loopmodel used -loops:input_pdb for PDB input.
+	// Catch people using old versions of command lines and tell them to update.
+	if( basic::options::option[ basic::options::OptionKeys::loops::input_pdb ].user() ) {
+		TR.Error << "ERROR: loopmodel no longer uses the -loops:input_pdb flag -- consult recent documentation for the updated flags to use." << std::endl;
+		utility_exit_with_message("Incorrect flag passed: -loops:input_pdb");
+	}
+
 	protocols::viewer::viewer_main( LoopBuild_main_local );
+
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 	}

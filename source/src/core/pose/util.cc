@@ -358,7 +358,7 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 
 	// return if the pose is empty (otherwise will segfault)
 	if (nres == 0) {
-		TR.Warning << "addVirtualResAsRoot() called with empty pose!" << std::endl;
+		TR.Warning << "WARNING: addVirtualResAsRoot() called with empty pose!" << std::endl;
 		return;
 	}
 
@@ -434,6 +434,12 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 void addVirtualResAsRoot( core::pose::Pose & pose ) {
 	int nres = pose.total_residue();
 	int nAtms=0;
+
+	// return if the pose is empty (otherwise will segfault)
+	if (nres == 0) {
+		TR.Warning << "WARNING: addVirtualResAsRoot() called with empty pose!" << std::endl;
+		return;
+	}
 
 	numeric::xyzVector< core::Real > massSum(0.0,0.0,0.0);
 

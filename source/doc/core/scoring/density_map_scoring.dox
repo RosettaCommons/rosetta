@@ -59,7 +59,7 @@ Sample 2: remodel the loops specified in 1cid.loopfile in structure 1cid.pdb int
 @verbatim
 bin/loopmodel.linuxgccrelease \
  -database ~/rosetta_database \
- -loops:input_pdb 1cid.pdb \
+ -s 1cid.pdb \
  -score:weights score13_env_hb \
  -loops::frag_sizes 9 3 1 \
  -loops::frag_files aa1cid_09_05.200_v1_3.gz aa1cid_03_05.200_v1_3.gz none \

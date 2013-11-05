@@ -202,7 +202,7 @@ KIC has also been used to generate backbone ensembles for flexible backbone desi
 @verbatim
 loopmodel.linuxgccrelease -database <path/to/rosetta_database> -loops:refine refine_kic -loops:input_pdb structure.pdb -loops:loop_file modeling.loops -loops:outer_cycles 1 -loops:refine_init_temp 1.2 -loops:refine_final_temp 1.2 -loops:vicinity_sampling -loops:vicinity_degree 3 -loops:optimize_only_kic_region_sidechains_after_move -ex1 -ex2 -nstruct 100
 @endverbatim
-<strong>NOTE:</strong> The input pdb is now specified through the job distributor, using <code>-in:file:s</code> instead of <code>-loops:input_pdb</code>
+<strong>NOTE:</strong> The input pdb is now specified through the job distributor, using <code>-in:file:s</code> instead of <code>-loops:input_pdb</code>. The above commandline is kept as-is for historical interest.
 
 @section kic_outputs Expected Outputs
 Each output decoy contains information about the energy and rmsd of the model at the end of the file. If <code>-in:::file:native</code> is provided, the reported rmsd is the backbone (N, Ca, C, O) rmsd to the native loop(s). If not, the reported rmsd is 0. Example output looks like this:

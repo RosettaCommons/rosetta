@@ -90,9 +90,8 @@ A series of string options control what sorts of loop modeling you get. The exec
 @subsection obligate_opt Necessary options to invoke CCD loop modeling
 
 @verbatim
--loops:input_pdb
-input pdb file that loop modelling is done on (-in:file:s is not supported)
-default='input_pdb'
+-in:file:s
+input pdb file that loop modelling is done on (any "jd2" input options can be used) 
 
 -loops:remodel
 legal=['no', 'perturb_ccd', 'perturb_kic', 'quick_ccd',
