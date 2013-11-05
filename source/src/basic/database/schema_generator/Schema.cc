@@ -270,18 +270,24 @@ void Schema::check_table_and_perform_write(
     std::string init_statements) const
 {
   cppdb::transaction guard(*db_session);
+	statement stmt;
 
   if (init_statements != "" && table_exists(db_session, table_name_))
   {
     TR.Debug << "Table with init statement exists, skipping declaration: " << table_name_ << std::endl;
     return;
   }
-  
-  TR.Debug << "Writing schema for table: " << table_name_ << std::endl;
-  TR.Trace << schema_statement << std::endl;
 
-  statement stmt = (*db_session) << schema_statement;
-  stmt.exec();
+	if ( !table_exists(db_session, table_name_) ){
+		// kylebarlow - We don't need to run a "CREATE TABLE IF NOT EXISTS" query if the table already exists
+		//   Running lots of those queries results in problems waiting for table metadata locks
+		//   This problem remains unfixed in MySQL as of version 5.5.32
+		TR.Debug << "Writing schema for table: " << table_name_ << std::endl;
+		TR.Trace << schema_statement << std::endl;
+
+		stmt = (*db_session) << schema_statement;
+		stmt.exec();
+	}
 
   if (init_statements != "")
   {

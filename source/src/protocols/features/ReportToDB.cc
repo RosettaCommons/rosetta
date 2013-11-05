@@ -564,6 +564,12 @@ ReportToDB::initialize_database(){
 		protocol_id_ = basic::options::option[basic::options::OptionKeys::out::database_protocol_id];
 	}
 
+	// KAB - check if db_session_ has been set.
+	// Necessary if parse_my_tag not called because mover is being called
+	// outside of RosettaScripts
+	if ( !db_session_ )
+		db_session_ = basic::database::get_db_session();
+
 	if (!initialized){
 //		if(use_transactions_) db_session_->begin();
 
