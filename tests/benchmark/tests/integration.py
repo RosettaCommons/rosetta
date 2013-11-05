@@ -91,7 +91,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     for d in os.listdir(files_location):
         if os.path.isdir(files_location + '/' + d):
             #print 'linking: %s <-- %s' % (root + d, working_dir + d)
-            os.symlink(files_location + '/' + d, working_dir + '/' + d)
+            os.symlink( os.path.abspath(files_location + '/' + d), working_dir + '/' + d)
             command_sh = working_dir + '/' + d + '/command.sh '
             if os.path.isfile(command_sh): os.remove(command_sh)  # deleting non-tempalte command.sh files to avoid stroing absolute paths in database
 
