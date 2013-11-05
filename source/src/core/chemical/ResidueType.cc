@@ -123,7 +123,6 @@ ResidueType::ResidueType(
 	residue_type_set_( 0 ),
 	graph_(),
 	orbitals_(),
-	natoms_(0),
 	nheavyatoms_(0),
 	n_hbond_acceptors_(0),
 	n_hbond_donors_(0),
@@ -193,7 +192,6 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 	residue_type_set_( residue_type.residue_type_set_ ),
 	graph_(residue_type.graph_),
 	orbitals_(residue_type.orbitals_),
-	natoms_(residue_type.natoms_),
 	nheavyatoms_(residue_type.nheavyatoms_),
 	n_hbond_acceptors_(residue_type.n_hbond_acceptors_),
 	n_hbond_donors_(residue_type.n_hbond_donors_),
@@ -522,7 +520,7 @@ ResidueType::atom_name( Size const index ) const
 Size
 ResidueType::atom_base( Size const atomno ) const
 {
-	PyAssert((atomno > 0) && (atomno <= natoms_), "ResidueType::atom_base( Size const atomno ): atomno is not in this ResidueType!");
+	PyAssert((atomno > 0) && (atomno <= natoms()), "ResidueType::atom_base( Size const atomno ): atomno is not in this ResidueType!");
 	return graph_[ordered_atoms_[atomno]].atom_base();
 
 }
@@ -531,7 +529,7 @@ ResidueType::atom_base( Size const atomno ) const
 Size
 ResidueType::abase2( Size const atomno ) const
 {
-	PyAssert((atomno > 0) && (atomno <=  natoms_), "ResidueType::abase2( Size const atomno ): atomno is not in this ResidueType!");
+	PyAssert((atomno > 0) && (atomno <=  natoms()), "ResidueType::abase2( Size const atomno ): atomno is not in this ResidueType!");
 	return graph_[ordered_atoms_[atomno]].abase2();
 }
 
@@ -613,9 +611,7 @@ ResidueType::add_atom(
 	assert(atom_graph_index_.find(atom_name) == atom_graph_index_.end());
 	assert(atom_graph_index_.find( strip_whitespace(atom_name)) == atom_graph_index_.end());
 
-	// increment atom count
-	++natoms_;
-	// index lookup by name
+    // index lookup by name
 	// store the atom types
 	// the next calls will fail if the atom type name is unrecognized
 	Size const type( atom_types_->atom_type_index( atom_type_name ) );
@@ -639,8 +635,6 @@ ResidueType::add_atom(
 	graph_atom->icoor( AtomICoor( 0.0, 0.0, 0.0, atom_name, atom_name, atom_name, *this ) );
 	// store the name
 
-	assert( ordered_atoms_.size() == natoms_ );
-
 	if ( (*atom_types_)[type].is_acceptor() ) ++n_hbond_acceptors_;
 	if ( (*atom_types_)[type].is_donor() ) ++n_hbond_donors_;
 
@@ -657,10 +651,9 @@ ResidueType::add_atom(
 
 	// allocate space for the new atom !!!!!!!!!!!!!!!!!!!!!!
 	// eg, in the atom/resconn map
-	assert( atom_2_residue_connection_map_.size() == natoms_-1);
-	atom_2_residue_connection_map_.resize( natoms_ );
-	graph_atom->atom_base(natoms_); // base defaults to self
-	orbital_bonded_neighbor_.resize(natoms_);
+	atom_2_residue_connection_map_.resize( ordered_atoms_.size() );
+	graph_atom->atom_base(ordered_atoms_.size()); // base defaults to self
+	orbital_bonded_neighbor_.resize(ordered_atoms_.size());
 
 }
 
@@ -1047,7 +1040,7 @@ ResidueType::set_atom_base(
 	AtomIndices const & i1_cut_nbrs( graph_[ordered_atoms_[i1]].cut_bond_neighbors());
 
 	if ( ( std::find( i1_nbrs.begin(), i1_nbrs.end(), i2 ) == i1_nbrs.end() ) &&
-			 !( i1 == 1 && i2 == 1 && natoms_ == 1 ) ) { // note we allow special exception for single-atom residue
+			 !( i1 == 1 && i2 == 1 && natoms() == 1 ) ) { // note we allow special exception for single-atom residue
 		utility_exit_with_message( "set_atom_base: atoms must be bonded!" );
 	}
 	if ( ordered_atoms_.size() < Size(i1) ) utility_exit_with_message("ResidueType:: shouldnt get here!");
@@ -1287,7 +1280,7 @@ ResidueType::add_actcoord_atom( std::string const & atom )
 
 	 old2new[old_atom_index] = new_atom_index
 
-	 sets natoms_, nheavyatoms_, and n_backbone_heavyatoms_
+	 sets natoms(), nheavyatoms_, and n_backbone_heavyatoms_
 
 	 also fills attached_H_begin, attached_H_end
 **/
@@ -1311,9 +1304,7 @@ ResidueType::setup_atom_ordering(AtomIndices & old2new)
 	// Graph Atoms are already deleted! Now all we need to do is sort them...
 
 	Size const old_natoms( ordered_atoms_.size() );
-	assert( natoms_ == old_natoms );
 	assert(graph_.num_vertices() == old_natoms - delete_atoms_.size());
-	natoms_ = old_natoms - delete_atoms_.size();
 
 	// size and initialize the mapping from old to new indices
 	old2new.clear();
@@ -1402,10 +1393,10 @@ ResidueType::reorder_primary_data(AtomIndices const & old2new)
 	utility::vector1< utility::vector1 <core::Size> > old_orbital_bonded_neighbor(orbital_bonded_neighbor_);
 
 
-	if ( old_natoms != natoms_ ) { // because we deleted some atoms
-		ordered_atoms_.resize( natoms_ );
-		orbital_bonded_neighbor_.resize( natoms_ );
-		atom_2_residue_connection_map_.resize( natoms_ );
+	if ( old_natoms != natoms() ) { // because we deleted some atoms
+		ordered_atoms_.resize( natoms() );
+		orbital_bonded_neighbor_.resize( natoms() );
+		atom_2_residue_connection_map_.resize( natoms() );
 	}
 	// fill in the new data
 	for ( Size old_index=1; old_index<= old_natoms; ++old_index ) {
@@ -1497,7 +1488,7 @@ ResidueType::reorder_primary_data(AtomIndices const & old2new)
 	}
 
 	atom_graph_index_.clear();
-	for ( Size i=1; i<= natoms_; ++i ) {
+	for ( Size i=1; i<= natoms(); ++i ) {
 		atom_graph_index_[ graph_[ ordered_atoms_[i]].name() ] = ordered_atoms_[i];
 		atom_graph_index_[ strip_whitespace( graph_[ ordered_atoms_[i]].name()  ) ] = ordered_atoms_[i];
 	}
@@ -1565,7 +1556,7 @@ void
 ResidueType::update_derived_data()
 {
 
-	first_sidechain_hydrogen_ = natoms_ + 1;
+	first_sidechain_hydrogen_ = natoms() + 1;
 	for ( Size i= n_backbone_heavyatoms_ + 1; i<= nheavyatoms_; ++i ) {
 		if ( attached_H_begin_[i] <= attached_H_end_[i] ) {
 			first_sidechain_hydrogen_ = attached_H_begin_[i];
@@ -1588,7 +1579,7 @@ ResidueType::update_derived_data()
 
 
 
-	for ( Size i=1; i<= natoms_; ++i ) {
+	for ( Size i=1; i<= natoms(); ++i ) {
 		AtomType const & type( (*atom_types_)[ graph_[ ordered_atoms_[i]].atom_type_index() ] );
 		//////////////////////////////////
 		// info derived from the atom_type
@@ -1606,7 +1597,7 @@ ResidueType::update_derived_data()
 
 		}
 
-		//if ( type.is_polar_hydrogen() &&   (std::abs( graph_[ordered_atoms_[ natoms_ ]].charge() ) > 1.0e-3) ) {
+		//if ( type.is_polar_hydrogen() &&   (std::abs( graph_[ordered_atoms_[ natoms() ]].charge() ) > 1.0e-3) ) {
 		if ( type.is_polar_hydrogen() &&   (!type.is_virtual() ) ) {
 			Hpos_polar_.push_back( i );
 			if ( i >= first_sidechain_hydrogen_ ) {
@@ -1697,22 +1688,22 @@ ResidueType::update_derived_data()
 
 	// bond path distances
 	FArray2D_int path_distances( get_residue_path_distances( *this ));
-	path_distance_.resize( natoms_ );
-	for ( Size ii = 1; ii <= natoms_; ++ii ) {
-		path_distance_[ ii ].resize( natoms_ );
-		for (Size jj = 1; jj <= natoms_; ++jj ) {
+	path_distance_.resize( natoms() );
+	for ( Size ii = 1; ii <= natoms(); ++ii ) {
+		path_distance_[ ii ].resize( natoms() );
+		for (Size jj = 1; jj <= natoms(); ++jj ) {
 			path_distance_[ ii ][ jj ] = path_distances( ii, jj );
 		}
 	}
 
 	// get dihedral angles
 	dihedral_atom_sets_.clear();
-	dihedrals_for_atom_.resize( natoms_ );
-	for ( Size ii = 1; ii <= natoms_; ++ii ) dihedrals_for_atom_[ ii ].clear();
+	dihedrals_for_atom_.resize( natoms() );
+	for ( Size ii = 1; ii <= natoms(); ++ii ) dihedrals_for_atom_[ ii ].clear();
 
 	// get for all pairs of atoms seperated by 1 bond
-	for ( Size central_atom1 = 1; central_atom1 < natoms_; ++central_atom1 ) {
-		for ( Size central_atom2 = central_atom1+1; central_atom2 <= natoms_; ++central_atom2 ) {
+	for ( Size central_atom1 = 1; central_atom1 < natoms(); ++central_atom1 ) {
+		for ( Size central_atom2 = central_atom1+1; central_atom2 <= natoms(); ++central_atom2 ) {
 			if ( path_distance_[ central_atom1 ][ central_atom2 ] == 1 ) {
 
 				// get all atoms seperated from central_atom1/2 by one bond that are not central_atom2/1
@@ -1720,13 +1711,13 @@ ResidueType::update_derived_data()
 				utility::vector1< Size > ca2d1;
 
 				// ca1
-				for ( Size i = 1; i <= natoms_; ++i ) {
+				for ( Size i = 1; i <= natoms(); ++i ) {
 					if ( ( path_distance_[ central_atom1 ][ i ] == 1 ) && ( i != central_atom2 ) ) {
 						ca1d1.push_back( i );
 					}
 				}
 				// ca2
-				for ( Size i = 1; i <= natoms_; ++i ) {
+				for ( Size i = 1; i <= natoms(); ++i ) {
 					if ( ( path_distance_[ central_atom2 ][ i ] == 1 ) && ( i != central_atom1 ) ) {
 						ca2d1.push_back( i );
 					}
@@ -1756,11 +1747,11 @@ ResidueType::update_derived_data()
 
 	// get bond angles
 	bondangle_atom_sets_.clear();
-	bondangles_for_atom_.resize( natoms_ );
-	for ( Size ii = 1; ii <= natoms_; ++ii ) bondangles_for_atom_[ ii ].clear();
+	bondangles_for_atom_.resize( natoms() );
+	for ( Size ii = 1; ii <= natoms(); ++ii ) bondangles_for_atom_[ ii ].clear();
 
 	// iterate over all atoms that could be a central atom
-	for ( Size central_atom = 1; central_atom <= natoms_; ++central_atom ) {
+	for ( Size central_atom = 1; central_atom <= natoms(); ++central_atom ) {
 
 		AtomIndices const & bonded_neighbors(bonded_neighbor(central_atom) );
 		Size const num_bonded_neighbors( bonded_neighbors.size() );
@@ -1786,14 +1777,14 @@ ResidueType::update_derived_data()
 	atoms_within_one_bond_of_a_residue_connection_.resize( residue_connections_.size() );
 	for ( Size ii = 1; ii <= residue_connections_.size(); ++ii ) atoms_within_one_bond_of_a_residue_connection_[ ii ].clear();
 
-	within1bonds_sets_for_atom_.resize( natoms_ );
-	for ( Size ii = 1; ii <= natoms_; ++ii ) within1bonds_sets_for_atom_[ ii ].clear();
+	within1bonds_sets_for_atom_.resize( natoms() );
+	for ( Size ii = 1; ii <= natoms(); ++ii ) within1bonds_sets_for_atom_[ ii ].clear();
 
 	atoms_within_two_bonds_of_a_residue_connection_.resize( residue_connections_.size() );
 	for ( Size ii = 1; ii <= residue_connections_.size(); ++ii ) atoms_within_two_bonds_of_a_residue_connection_[ ii ].clear();
 
-	within2bonds_sets_for_atom_.resize( natoms_ );
-	for ( Size ii = 1; ii <= natoms_; ++ii ) within2bonds_sets_for_atom_[ ii ].clear();
+	within2bonds_sets_for_atom_.resize( natoms() );
+	for ( Size ii = 1; ii <= natoms(); ++ii ) within2bonds_sets_for_atom_[ ii ].clear();
 
 	for ( Size ii = 1; ii <= residue_connections_.size(); ++ii ) {
 		Size const ii_resconn_atom = residue_connections_[ ii ].atomno();
@@ -2473,16 +2464,16 @@ ResidueType::print_pretty_path_distances() const
 {
 	tr.Debug << "START PATH DISTANCES" << std::endl;
 	// print header line
-	for ( Size i = 1; i <= natoms_; ++i )
+	for ( Size i = 1; i <= natoms(); ++i )
 		{
 			tr.Debug << "\t" << graph_[ordered_atoms_[i]].name();
 		}
 	tr.Debug << std::endl;
 
-	for ( Size j = 1; j <= natoms_; ++j )
+	for ( Size j = 1; j <= natoms(); ++j )
 		{
 			tr.Debug << graph_[ordered_atoms_[j]].name() << "\t";
-			for ( Size k = 1; k <= natoms_; ++k )
+			for ( Size k = 1; k <= natoms(); ++k )
 				{
 					tr.Debug << path_distance_[j][k] << "\t";
 				}
@@ -2495,7 +2486,7 @@ void
 ResidueType::update_residue_connection_mapping()
 {
 	//std::fill( atom_2_residue_connection_map_.begin(), atom_2_residue_connection_map_.end(), 0 );
-	for ( Size ii = 1; ii <= natoms_; ++ii ) { atom_2_residue_connection_map_[ ii ].clear(); }
+	for ( Size ii = 1; ii <= natoms(); ++ii ) { atom_2_residue_connection_map_[ ii ].clear(); }
 
 	for ( Size ii = 1; ii <= residue_connections_.size(); ++ii ) {
 		atom_2_residue_connection_map_[ residue_connections_[ ii ].atomno() ].push_back( ii );
@@ -2505,7 +2496,7 @@ ResidueType::update_residue_connection_mapping()
 
 void
 ResidueType::update_last_controlling_chi() {
-	last_controlling_chi_.resize( natoms_ );
+	last_controlling_chi_.resize( natoms() );
 	std::fill( last_controlling_chi_.begin(), last_controlling_chi_.end(), 0 );
 
 	/// 1. First we have to mark all the atoms who are direct descendants of the 3rd
@@ -2545,7 +2536,7 @@ ResidueType::update_last_controlling_chi() {
 
 	/// get ready to allocate space in the atoms_last_controlled_by_chi_ arrays
 	utility::vector1< Size > natoms_for_chi( nchi(), 0 );
-	for ( Size ii = 1; ii <= natoms_; ++ii ) {
+	for ( Size ii = 1; ii <= natoms(); ++ii ) {
 		if ( last_controlling_chi_[ ii ] != 0 ) {
 			++natoms_for_chi[ last_controlling_chi_[ ii ] ];
 		}
@@ -2559,7 +2550,7 @@ ResidueType::update_last_controlling_chi() {
 	}
 
 	/// fill the arrays
-	for ( Size ii = 1; ii <= natoms_; ++ii ) {
+	for ( Size ii = 1; ii <= natoms(); ++ii ) {
 		if ( last_controlling_chi_[ ii ] != 0 ) {
 			atoms_last_controlled_by_chi_[ last_controlling_chi_[ ii ]].push_back( ii );
 		}

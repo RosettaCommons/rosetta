@@ -1800,7 +1800,6 @@ private:
 	//////////////////////////////////////////////////////////////////
 	// ints -- see the WARNING above if these are atom indices
 	/// number of atoms
-	Size natoms_;
 	/// number of heavy atoms
 	Size nheavyatoms_;
 	/// number of hbond_acceptors
