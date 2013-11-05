@@ -89,6 +89,17 @@ ShoveResidueMover::apply ( pose::Pose & pose )
 	using namespace core::pack::task;
 	using namespace core::pack::rotamer_set;
 	foreach( core::Size const resid, shove_residues_ ) {
+		if(pose.residue(resid).name3() == "GLY")
+		{
+			//The SHOVE_BB patch does not properly work with Glycine.  Looking at it, it's not clear that it even
+			//Makes sense to use this mover with Glycine.  Given this, it's probably best to exit here.
+			//If this isn't true, a special case should be added to the patch.  I added this if statement
+			//Because running this mover on a glycine causes select_atoms_to_orient() fails during repacking
+			// - Sam DeLuca
+
+			utility_exit_with_message("ERROR: ShoveResidueMover does not currently work properly with glycines, and residue " + utility::to_string(resid) + " is a glycine.");
+
+		}
 		if ( remove_shove_variant_ ) {
 			core::pose::remove_variant_type_from_pose_residue( pose, "SHOVE_BB", resid );
 		} else {
