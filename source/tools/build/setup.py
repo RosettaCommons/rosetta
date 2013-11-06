@@ -365,7 +365,10 @@ what SCons will use to build the system.
             symbols = setting.prepends.symbols()
             if symbols.has_key("ENV"):
                 for key, value in symbols["ENV"].items():
-                    env["ENV"][key] = value + env["ENV"][key]
+                    if key in env["ENV"]:
+                        env["ENV"][key] = value + env["ENV"][key]
+                    else:
+                        env["ENV"][key] = value
                 del symbols["ENV"]
             env.Prepend(**symbols)
         if setting.overrides:

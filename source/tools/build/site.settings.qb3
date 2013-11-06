@@ -1,0 +1,54 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Copy this file into site.settings:
+#
+#   cp site.settings.qb3 site.settings
+#
+# DO NOT try and check in site.settings
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+
+# Settings here are added to the combined build settings, after all basic
+# settings, to allow you to override anything you need to.  They can in turn
+# be overriden by user settings and project settings respectively.
+#
+# Typically you want to prepend to one of the settings listed to expand your
+# paths, but you can also append, override, or remove settings.
+#
+# NOTE: At some point this file will allow you to have multiple site settings
+# to select between.  For now there is only the "site" settings.
+
+settings = {
+    "site" : {
+        "prepends" : {
+            # Location of standard and system binaries
+            "program_path" : [
+                # Path to GCC compiler if not in the os rule
+                # Path to Intel C++ compiler if not in the os rule
+                ],
+            # Location of standard and system header files if not in the os rule
+            "include_path" : [
+                #
+                ],
+            # Location of standard and system libraries if not in the os rule.
+            "library_path" : [
+                "/netapp/home/kbarlow/lib/mysql-connector-c-6.1.2-linux-glibc2.5-x86_64/lib",
+                ],
+            "ENV" : {
+                "LD_LIBRARY_PATH": [
+                    "/netapp/home/kbarlow/lib/mysql-connector-c-6.1.2-linux-glibc2.5-x86_64/lib",
+                    ],
+                }
+            },
+        "appends" : {
+            },
+        "overrides" : {
+            },
+        "removes" : {
+            },
+        }
+    }
