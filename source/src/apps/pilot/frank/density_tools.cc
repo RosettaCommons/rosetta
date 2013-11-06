@@ -189,7 +189,7 @@ densityTools()
 	utility::vector1< core::Size > resobin_counts;
 	utility::vector1< core::Real > mapAltI, mapmapFSC, mapmapError;
 	utility::vector1< core::Real > perResCC;
-	Real rscc, fsc=0, mm_rscc, mm_fsc=0, estErr=0;
+	Real rscc, fsc=0, mm_rscc, mm_fsc=0, estErr1=0, estErr2=0, estErr3=0;
 
 	// resolution limits for analysis
 	core::Real hires = option[ denstools::hires ]();
@@ -276,32 +276,53 @@ densityTools()
 		fsc /= resobins.size();
 
 		// estimated model error
-		// linear fit ln(sqrt(fsc)) versus S^2 in each bin
 		if (usermap) {
 			using numeric::constants::d::pi;
 
-			core::Real sumXX=0.0, sumXY=0.0;
+			core::Real ncount1=0, ncount2=0, ncount3=0;
+			core::Real sumXX=0, sumXY=0, sumX=0, sumY=0;
 			for (Size i=1; i<=resobins.size(); ++i) {
-				if (resobins[i]<0.1) continue;   // ignore hires
-				if (mapmapFSC[i]<0.0) continue;  //
+				if (mapmapFSC[i]<0.1) continue;
 
-				Real weight = 1/mapmapError[i];
-				Real X = resobins[i]*resobins[i];
-				Real Y = modelmapFSC[i];
+				core::Real ratio = 0;
+				if( modelmapFSC[i] > 0.01)
+					ratio = log( modelmapFSC[i]/sqrt(mapmapFSC[i]) );
+				else
+					ratio = log( 0.01/sqrt(mapmapFSC[i]) );
+				//core::Real s2 = resobins[i]*resobins[i];
 
-				sumXX += weight*X*X;
-				if (modelmapFSC[i] > 0)
-					sumXY += weight*X*Y;
+				core::Real wt = 1/resobins[i];
+
+				if (resobins[i]>=1.0/10.0) {
+					estErr1 += wt*ratio;
+					ncount1 += wt;
+				}
+				if (resobins[i]>=1.0/15.0) {
+					estErr2 += wt*ratio;
+					ncount2 += wt;
+				}
+				if (resobins[i]>=1.0/20.0) {
+					estErr3 += wt*ratio;
+					ncount3 += wt;
+				}
+
+				//estErr2 += wt*atan( (ratio-refFSC)/(s2) );
+
+				//sumX += wt*s2;
+				//sumY += wt*ratio;
+				//sumXY += wt*s2*ratio;
+				//sumXX += wt*s2*s2;
 			}
+			estErr1 /= ncount1;
+			estErr2 /= ncount2;
+			estErr3 /= ncount3;
+			//estErr2 /= ncount; estErr2=tan(estErr2);
+			//estErr3 /= ncount; estErr3=tan(estErr3);
+			//estErr3 = (sumXY - (sumX*sumY)/ncount) / (sumXX -  (sumX*sumX)/ncount);
 
-			if (sumXX == 0) {
-				std::cerr << "ERROR! No valid data for error estimate!" << std::endl;
-			} else {
-				// TO DO!  automatically choose a reasonable resolution range
-				Real linest = sumXY/sumXX;
-				estErr = sqrt( -linest / (8/3*pi*pi));
-				estErr = linest;
-			}
+			estErr1 = std::max(0.0,-5.0*estErr1-0.4);  // 10A est
+			estErr2 = std::max(0.0,-8.0*estErr2-0.8);  // 15A est
+			estErr3 = std::max(0.0,-10.0*estErr3-1);   // 20A est
 		}
 	}
 
@@ -357,7 +378,7 @@ densityTools()
 
 	// compact
 	if (userpose) {
-		std::cerr << pdbfile << " fsc= " << fsc << " rscc=" << rscc  << " normFSC=" << estErr << std::endl;
+		std::cerr << pdbfile << " fsc " << fsc << " est_error " << estErr2 << " " << std::endl;
 	}
 	if (usermap) {
 		std::cerr << option[ edensity::alt_mapfile ]() << " " << mm_fsc << " " << mm_rscc << std::endl;
@@ -373,16 +394,16 @@ main( int argc, char * argv [] )
 {
 	try {
 	// options, random initialization
-	NEW_OPT(denstools::lowres, "lowres", 500.0);
-	NEW_OPT(denstools::hires, "hires", 0.0);
+	NEW_OPT(denstools::lowres, "low res limit", 1000.0);
+	NEW_OPT(denstools::hires, "high res limit", 0.0);
 	NEW_OPT(edensity::alt_mapfile, "alt mapfile", "");
-	NEW_OPT(denstools::nresbins, "#resolution bins for statistics", 50);
-	NEW_OPT(denstools::rescale_map, "scale map I == model I?", false);
-	NEW_OPT(denstools::dump_map_and_mask, "dump_map_and_mask", false);
-	NEW_OPT(denstools::nomask, "nomask", false);
+	NEW_OPT(denstools::nresbins, "# resolution bins for statistics", 200);
+	NEW_OPT(denstools::rescale_map, "dump map with map I scaled to to model I?", false);
+	NEW_OPT(denstools::dump_map_and_mask, "dump mrc of rho_calc and eps_calc", false);
+	NEW_OPT(denstools::nomask, "nomask", true);
 	NEW_OPT(denstools::perres, "output per-residue stats", false);
-	NEW_OPT(denstools::verbose, "extra output", false);
-	NEW_OPT(denstools::bin_squared, "bin_squared", true);
+	NEW_OPT(denstools::verbose, "dump extra output", false);
+	NEW_OPT(denstools::bin_squared, "bin uniformly in 1/res^2 (default bins 1/res)", false);
 
 	devel::init( argc, argv );
 	densityTools();
