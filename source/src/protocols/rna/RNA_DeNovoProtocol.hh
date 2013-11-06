@@ -224,11 +224,7 @@ public:
 	set_extra_minimize_res( utility::vector1< core::Size > setting );
 
 	void
-	set_refine_pose_list( utility::vector1<core::pose::PoseOP> const & setting ) {
-		refine_pose_list_ = setting;
-		refine_from_silent_ = ( refine_pose_list_.size() != 0 );
-		if ( refine_from_silent_ ) rounds_ = 1; // Overide the multi-round behavior
-	}
+	set_refine_pose_list( utility::vector1<core::pose::PoseOP> const & setting );
 
 	void
 	set_refine_pose( Size const setting ){ refine_pose_ = setting; }

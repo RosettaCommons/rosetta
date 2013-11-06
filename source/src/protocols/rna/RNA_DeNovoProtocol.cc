@@ -1296,48 +1296,54 @@ void
 RNA_DeNovoProtocol::add_chem_shift_info(core::io::silent::SilentStruct & silent_struct,
 																				core::pose::Pose const & const_pose) const {
 
-    using namespace core::scoring;
-    using namespace core::pose;
+  using namespace core::scoring;
+  using namespace core::pose;
 
-    if(!use_chem_shift_data_){
-			utility_exit_with_message("use_chem_shift_data_ == false!");
-		}
+  if(!use_chem_shift_data_){
+		utility_exit_with_message("use_chem_shift_data_ == false!");
+	}
 
-    pose::Pose chem_shift_pose=const_pose; //HARD COPY SLOW!
+  pose::Pose chem_shift_pose=const_pose; //HARD COPY SLOW!
 
-    core::scoring::ScoreFunctionOP temp_scorefxn = new ScoreFunction;
+  core::scoring::ScoreFunctionOP temp_scorefxn = new ScoreFunction;
 
-    temp_scorefxn->set_weight( scoring::rna_chem_shift  , 1.00 );
+  temp_scorefxn->set_weight( scoring::rna_chem_shift  , 1.00 );
 
-    (*temp_scorefxn)(chem_shift_pose);
+  (*temp_scorefxn)(chem_shift_pose);
 
-    EnergyMap const & energy_map=chem_shift_pose.energies().total_energies();
+  EnergyMap const & energy_map=chem_shift_pose.energies().total_energies();
 
-    Real const rosetta_chem_shift_score= energy_map[ scoring::rna_chem_shift ];
+  Real const rosetta_chem_shift_score= energy_map[ scoring::rna_chem_shift ];
 
-    //This statement should be very fast except possibly the 1st call.
-    core::scoring::rna::chemical_shift::RNA_ChemicalShiftPotential const &
-        rna_chemical_shift_potential( core::scoring::ScoringManager::
-																			get_instance()->get_RNA_ChemicalShiftPotential() );
+  //This statement should be very fast except possibly the 1st call.
+  core::scoring::rna::chemical_shift::RNA_ChemicalShiftPotential const &
+      rna_chemical_shift_potential( core::scoring::ScoringManager::
+																		get_instance()->get_RNA_ChemicalShiftPotential() );
 
-    Size const num_chem_shift_data_points=rna_chemical_shift_potential.get_total_exp_chemical_shift_data_points();
+  Size const num_chem_shift_data_points=rna_chemical_shift_potential.get_total_exp_chemical_shift_data_points();
 
-    //rosetta_chem_shift_score --> Sum_square chemical_shift deviation.
+  //rosetta_chem_shift_score --> Sum_square chemical_shift deviation.
 
-    Real const chem_shift_RMSD=sqrt( rosetta_chem_shift_score /
-																		 float(num_chem_shift_data_points) );
+  Real const chem_shift_RMSD=sqrt( rosetta_chem_shift_score /
+																	 float(num_chem_shift_data_points) );
 
-    silent_struct.add_energy( "chem_shift_RMSD", chem_shift_RMSD);
+  silent_struct.add_energy( "chem_shift_RMSD", chem_shift_RMSD);
 
-    silent_struct.add_energy( "num_chem_shift_data",
-															float(num_chem_shift_data_points) );
+  silent_struct.add_energy( "num_chem_shift_data",
+														float(num_chem_shift_data_points) );
 
-    if(silent_struct.has_energy("rna_chem_shift")==false){
-        //If missing this term, then the rna_chem_shift weight is probably
-				//zero in the weight_file.
-        silent_struct.add_energy( "rna_chem_shift", 0.0);
-    }
+  if(silent_struct.has_energy("rna_chem_shift")==false){
+      //If missing this term, then the rna_chem_shift weight is probably
+			//zero in the weight_file.
+      silent_struct.add_energy( "rna_chem_shift", 0.0);
+  }
+}
 
+void
+RNA_DeNovoProtocol::set_refine_pose_list( utility::vector1<core::pose::PoseOP> const & setting ) {
+	refine_pose_list_ = setting;
+	refine_from_silent_ = ( refine_pose_list_.size() != 0 );
+	if ( refine_from_silent_ ) rounds_ = 1; // Overide the multi-round behavior
 }
 
 std::ostream &operator<< ( std::ostream &os, RNA_DeNovoProtocol const &mover )
