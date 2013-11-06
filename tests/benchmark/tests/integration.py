@@ -102,7 +102,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
             command_sh = working_dir + '/' + d + '/command.sh '
             if os.path.isfile(command_sh): os.remove(command_sh)  # deleting non-tempalte command.sh files to avoid stroing absolute paths in database
 
-    results[_StateKey_] = _S_Finished_
+    results[_StateKey_] = _S_QueuedForComparison_
     results[_LogKey_]   = output  # ommiting compilation log and only including integration.py output
     return results
 
@@ -110,15 +110,16 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
 # ⚔ do not change this wording, they have to stay in sync with upstream (up to benchmark-model).
 # Copied from benchmark-model, standard state code's for tests results.
-_S_Draft_         = 'draft'
-_S_Queued_        = 'queued'
-_S_Running_       = 'running'
-_S_Finished_      = 'finished'
-_S_Failed_        = 'failed'
-_S_BuildFailed_   = 'build failed'
-_S_ScriptFailed_  = 'script failed'
+_S_Draft_               = 'draft'
+_S_Queued_              = 'queued'
+_S_Running_             = 'running'
+_S_Finished_            = 'finished'
+_S_Failed_              = 'failed'
+_S_BuildFailed_         = 'build failed'
+_S_ScriptFailed_        = 'script failed'
+_S_QueuedForComparison_ = 'queued for comparison'
 
-_S_Values_ = [_S_Draft_, _S_Queued_, _S_Running_, _S_Finished_, _S_Failed_, _S_BuildFailed_, _S_ScriptFailed_]
+_S_Values_ = [_S_Draft_, _S_Queued_, _S_Running_, _S_Finished_, _S_Failed_, _S_BuildFailed_, _S_ScriptFailed_, _S_QueuedForComparison_]
 
 _StateKey_    = 'state'
 _ResultsKey_  = 'results'

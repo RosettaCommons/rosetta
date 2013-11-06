@@ -19,15 +19,16 @@ import argparse
 
 # ⚔ do not change wording below, it have to stay in sync with upstream (up to benchmark-model).
 # Copied from benchmark-model, standard state code's for tests results.
-_S_Draft_         = 'draft'
-_S_Queued_        = 'queued'
-_S_Running_       = 'running'
-_S_Finished_      = 'finished'
-_S_Failed_        = 'failed'
-_S_BuildFailed_   = 'build failed'
-_S_ScriptFailed_  = 'script failed'
+_S_Draft_               = 'draft'
+_S_Queued_              = 'queued'
+_S_Running_             = 'running'
+_S_Finished_            = 'finished'
+_S_Failed_              = 'failed'
+_S_BuildFailed_         = 'build failed'
+_S_ScriptFailed_        = 'script failed'
+_S_QueuedForComparison_ = 'queued for comparison'
 
-_S_Values_ = [_S_Draft_, _S_Queued_, _S_Running_, _S_Finished_, _S_Failed_, _S_BuildFailed_, _S_ScriptFailed_]
+_S_Values_ = [_S_Draft_, _S_Queued_, _S_Running_, _S_Finished_, _S_Failed_, _S_BuildFailed_, _S_ScriptFailed_, _S_QueuedForComparison_]
 
 _StateKey_    = 'state'
 _ResultsKey_  = 'results'
@@ -106,9 +107,13 @@ def main(args):
 
             if res[_StateKey_] not in _S_Values_: print 'Warning!!! TestSuite {} failed with unknow result code: {}'.format(t, res[_StateKey_])
             else:
-                js = json.dumps(res, sort_keys=True, indent=2)
-                file( working_dir + '/.results.json', 'w').write(js)
-                print 'Test {} finished with output:\n{}\n[This output is saved in to {}/.results.json]'.format(test, js, working_dir)
+                print 'Test {} finished with output:\n{}\n'.format(test, json.dumps(res, sort_keys=True, indent=2))
+
+        print 'Output and log of this test saved to {0}/.results.json and {0}/.output.log'.format(working_dir)
+
+        with file(working_dir+'/.output.log', 'w') as f: f.write(res[_LogKey_])
+        with file(working_dir+'/.results.json', 'w') as f: json.dump(res, f, sort_keys=True, indent=2)
+
 
         '''
         # Running as individual test... may be later...
