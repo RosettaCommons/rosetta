@@ -61,14 +61,14 @@ namespace normalmode{
 
 static numeric::random::RandomGenerator RG( 151234 ); //Magic number??
 
-void 
+void
 NormalModeRelaxMover::set_harmonic_constants( Real const k_uniform )
 {
   NM_.set_harmonic_constants( k_uniform );
 }
 
 // Set modes from NM
-void 
+void
 NormalModeRelaxMover::set_mode( utility::vector1< Size > const mode_using,
 				utility::vector1< Real > const mode_scales )
 {
@@ -77,22 +77,22 @@ NormalModeRelaxMover::set_mode( utility::vector1< Size > const mode_using,
 
   // Normalize mode_scales
   Real scalesum( 0.0 );
-  for( Size i = 1; i <= mode_scales.size(); ++i ){ 
+  for( Size i = 1; i <= mode_scales.size(); ++i ){
     // Assert if values are valid
     assert( mode_scales[i] > 0.0 );
     assert( mode_using[i] <= NM().nmode() );
 
-    scalesum += mode_scales[i]; 
+    scalesum += mode_scales[i];
   }
 
   for( Size i = 1; i <= mode_scale_.size(); ++i ){ mode_scale_[i] = mode_scale_[i]/scalesum; }
 }
 
-void 
-NormalModeRelaxMover::set_movemap( core::pose::Pose const & pose, 
+void
+NormalModeRelaxMover::set_movemap( core::pose::Pose const & pose,
 																	 core::kinematics::MoveMapCOP movemap )
 {
-	mm_ = movemap->clone(); 
+	mm_ = movemap->clone();
 
 	// For Torsional NormalMode
 	NM_.clear_torsions_using();
@@ -102,7 +102,7 @@ NormalModeRelaxMover::set_movemap( core::pose::Pose const & pose,
 	}
 }
 
-void 
+void
 NormalModeRelaxMover::set_mode( Size const i_mode )
 {
   mode_using_.resize( 0 );
@@ -111,8 +111,8 @@ NormalModeRelaxMover::set_mode( Size const i_mode )
 	mode_scale_.push_back( 1.0 );
 }
 
-// Set modes randomly 
-void 
+// Set modes randomly
+void
 NormalModeRelaxMover::set_random_mode( Size const nmode,
 																			 std::string const select_option,
 																			 Real const importance_portion )
@@ -122,7 +122,7 @@ NormalModeRelaxMover::set_random_mode( Size const nmode,
 
   // Normalize mode_scales
   Real scalesum( 0.0 );
-  for( Size i = 1; i <= nmode; ++i ){ 
+  for( Size i = 1; i <= nmode; ++i ){
 		// Multiply scale by its importance
 		Real scale1 = RG.uniform();
 		if( select_option.compare("probabilistic") ==  0 ){
@@ -131,18 +131,18 @@ NormalModeRelaxMover::set_random_mode( Size const nmode,
 
 		mode_using_.push_back( i );
 		mode_scale_.push_back( scale1 );
-    scalesum += mode_scale_[i]; 
+    scalesum += mode_scale_[i];
   }
 
 	TR << "Mode setup: ";
-  for( Size i = 1; i <= mode_scale_.size(); ++i ){ 
-		mode_scale_[i] = mode_scale_[i]/scalesum; 
+  for( Size i = 1; i <= mode_scale_.size(); ++i ){
+		mode_scale_[i] = mode_scale_[i]/scalesum;
 		TR << " " << std::setw(8) << mode_scale_[i];
 	}
 	TR << std::endl;
 }
 
-void 
+void
 NormalModeRelaxMover::set_harmonic_constants( Real const k_connected,
 					      Real const k_segment,
 					      Real const k_long )
@@ -154,9 +154,9 @@ NormalModeRelaxMover::set_harmonic_constants( Real const k_connected,
 //Cartesian
 ///////////
 // Simple constructor
-CartesianNormalModeMover::CartesianNormalModeMover( 
+CartesianNormalModeMover::CartesianNormalModeMover(
 		 core::pose::Pose const &, //pose
-		 core::scoring::ScoreFunctionCOP sfxn, 
+		 core::scoring::ScoreFunctionCOP sfxn,
 		 std::string const relaxmode )
 {
   NM_ = NormalMode( "CA", 10.0 );
@@ -184,9 +184,9 @@ CartesianNormalModeMover::CartesianNormalModeMover(
 }
 
 // Advanced constructor
-CartesianNormalModeMover::CartesianNormalModeMover( 
+CartesianNormalModeMover::CartesianNormalModeMover(
      core::pose::Pose const & pose,
-		 core::scoring::ScoreFunctionCOP sfxn, 
+		 core::scoring::ScoreFunctionCOP sfxn,
 		 core::kinematics::MoveMapCOP mm,
 		 std::string const mode,
 		 Real const distcut,
@@ -213,7 +213,7 @@ CartesianNormalModeMover::CartesianNormalModeMover(
   // Default: Use mode 1 with 100% contribution
   utility::vector1< Size > mode1( 1, 1 );
   utility::vector1< Real > scale1( 1, 1.0 );
-  set_mode( mode1, scale1 ); 
+  set_mode( mode1, scale1 );
 }
 
 void
@@ -257,22 +257,22 @@ CartesianNormalModeMover::apply( pose::Pose &pose )
 	} else if ( relaxmode_.compare("min") == 0 ){
 		optimization::CartesianMinimizer minimizer;
 
-		core::scoring::ScoreFunction sfxn_loc;
+		core::scoring::ScoreFunctionOP sfxn_loc;
 		// Pick proper scorefunction
 		if( pose.is_centroid() ){
-			sfxn_loc = *sfxn_cen_;
+			sfxn_loc = sfxn_cen_->clone();
 		} else {
-			sfxn_loc = *sfxn_;
+			sfxn_loc = sfxn_->clone();
 		}
 
 		// Minimize
 		if( cartesian_minimize_ ){
 			optimization::CartesianMinimizer minimizer;
-			minimizer.run( pose, *mm_, sfxn_loc, *minoption_ );
+			minimizer.run( pose, *mm_, *sfxn_loc, *minoption_ );
 
 		} else {
 			optimization::AtomTreeMinimizer minimizer;
-			minimizer.run( pose, *mm_, sfxn_loc, *minoption_ );
+			minimizer.run( pose, *mm_, *sfxn_loc, *minoption_ );
 
 		}
 	}
@@ -324,11 +324,11 @@ CartesianNormalModeMover::extrapolate_mode( pose::Pose const &pose )
     Vector const &dxyz( movevec[ica] );
     Size resno( NM().get_atomID()[ica].rsd() );
     Size atmno( NM().get_atomID()[ica].atomno() );
-    Vector const &CAcrd( pose.residue( resno ).xyz( atmno ) ); 
+    Vector const &CAcrd( pose.residue( resno ).xyz( atmno ) );
 
     excrd[ ica ] =  CAcrd + direction_ * scale_dynamic_ * dxyz;
   }
-  
+
   return excrd;
 }
 
@@ -343,16 +343,16 @@ CartesianNormalModeMover::gen_coord_constraint( pose::Pose &pose,
   for( Size i_atm = 1; i_atm <= NM().natm(); ++i_atm ){
     pose.add_constraint(
 		new core::scoring::constraints::CoordinateConstraint
-	  ( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm], excrd[ i_atm ], 
+	  ( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm], excrd[ i_atm ],
 			new core::scoring::constraints::HarmonicFunc( 0.0, cst_sdev() ) ) );
   }
 }
 
 // Report rmsd to excrd
-Real 
+Real
 CartesianNormalModeMover::get_RMSD( utility::vector1< Vector > const excrd,
 				pose::Pose const &pose ){
-  
+
   Real rmsd( 0.0 );
   for( Size ica = 1; ica <= excrd.size(); ++ica ){
     Size resno( NM().get_atomID()[ica].rsd() );
@@ -367,9 +367,9 @@ CartesianNormalModeMover::get_RMSD( utility::vector1< Vector > const excrd,
 //Torsion
 ///////////
 // Simple constructor
-TorsionNormalModeMover::TorsionNormalModeMover( 
+TorsionNormalModeMover::TorsionNormalModeMover(
 		 core::pose::Pose const &, //pose
-		 core::scoring::ScoreFunctionCOP sfxn, 
+		 core::scoring::ScoreFunctionCOP sfxn,
 		 std::string const relaxmode )
 
 {
@@ -396,13 +396,13 @@ TorsionNormalModeMover::TorsionNormalModeMover(
   // Default: Use mode 1 with 100% contribution
   utility::vector1< Size > mode1( 1, 1 );
   utility::vector1< Real > scale1( 1, 1.0 );
-  set_mode( mode1, scale1 ); 
+  set_mode( mode1, scale1 );
 }
 
 // Advanced constructor
-TorsionNormalModeMover::TorsionNormalModeMover( 
+TorsionNormalModeMover::TorsionNormalModeMover(
      core::pose::Pose const & pose,
-		 core::scoring::ScoreFunctionCOP sfxn, 
+		 core::scoring::ScoreFunctionCOP sfxn,
 		 core::kinematics::MoveMapCOP mm,
 		 std::string const mode,
 		 Real const distcut,
@@ -432,7 +432,7 @@ TorsionNormalModeMover::TorsionNormalModeMover(
   // Default: Use mode 1 with 100% contribution
   utility::vector1< Size > mode1( 1, 1 );
   utility::vector1< Real > scale1( 1, 1.0 );
-  set_mode( mode1, scale1 ); 
+  set_mode( mode1, scale1 );
 }
 
 TorsionNormalModeMover::~TorsionNormalModeMover(){}
@@ -449,9 +449,9 @@ void
 TorsionNormalModeMover::apply( pose::Pose &pose )
 {
 	pose::Pose const pose_init( pose );
-	protocols::moves::MoverOP tocen 
+	protocols::moves::MoverOP tocen
 		= new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
-	protocols::moves::MoverOP tofa 
+	protocols::moves::MoverOP tofa
 		= new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD );
 
   // NormalMode setup
@@ -462,7 +462,7 @@ TorsionNormalModeMover::apply( pose::Pose &pose )
     refresh_normalmode_ = false;
   }
 
-	// Get weight of perturbation given mode setup 
+	// Get weight of perturbation given mode setup
 	//if( mode_changed_ )	set_dynamic_scale( pose );
 	//mode_changed_ = false; // Store information not to update dynamic scale again
 
@@ -486,22 +486,22 @@ TorsionNormalModeMover::apply( pose::Pose &pose )
 		pose = expose; // Start from perturbed
 		gen_coord_constraint( pose, dummy );
 
-		core::scoring::ScoreFunction sfxn_loc;
+		core::scoring::ScoreFunctionOP sfxn_loc;
 		// Pick proper scorefunction
 		if( pose.is_centroid() ){
-			sfxn_loc = *sfxn_cen_;
+			sfxn_loc = sfxn_cen_->clone();
 		} else {
-			sfxn_loc = *sfxn_;
+			sfxn_loc = sfxn_->clone();
 		}
 
 		// Minimize
 		if( cartesian_minimize_ ){
 			optimization::CartesianMinimizer minimizer;
-			minimizer.run( pose, *mm_, sfxn_loc, *minoption_ );
+			minimizer.run( pose, *mm_, *sfxn_loc, *minoption_ );
 
 		} else {
 			optimization::AtomTreeMinimizer minimizer;
-			minimizer.run( pose, *mm_, sfxn_loc, *minoption_ );
+			minimizer.run( pose, *mm_, *sfxn_loc, *minoption_ );
 
 		}
 
@@ -520,7 +520,7 @@ TorsionNormalModeMover::apply( pose::Pose &pose )
 
 }
 
-// Gen Coordinate Constraint 
+// Gen Coordinate Constraint
 void
 TorsionNormalModeMover::gen_coord_constraint( pose::Pose &pose,
 					utility::vector1< Vector > const & )
@@ -535,8 +535,8 @@ TorsionNormalModeMover::gen_coord_constraint( pose::Pose &pose,
 		// Just put current position
     pose.add_constraint(
 		new core::scoring::constraints::CoordinateConstraint
-	  ( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm], 
-			pose.residue(resno).xyz(atmno), 
+	  ( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm],
+			pose.residue(resno).xyz(atmno),
 			new core::scoring::constraints::HarmonicFunc( 0.0, cst_sdev() ) ) );
   }
 }

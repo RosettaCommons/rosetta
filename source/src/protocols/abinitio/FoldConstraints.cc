@@ -408,7 +408,7 @@ FoldConstraints::min_trial( core::pose::Pose &pose ) {
 	tr.Debug << "start minimization... " << std::endl;
 	current_scorefxn().show( tr.Debug, pose );
 	//get currently used score_function...
-	min_move_->score_function( new core::scoring::ScoreFunction( current_scorefxn() ) );
+	min_move_->score_function( current_scorefxn().clone() );
 	min_move_->apply( pose );
 	mc().reset( pose );
 	tr.Debug << "done with minimization! " << std::endl;

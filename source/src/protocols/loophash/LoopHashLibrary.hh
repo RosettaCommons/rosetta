@@ -51,7 +51,7 @@ public:
 	void extract_data_from_pose( core::pose::Pose& pose, core::Size nres, protocols::frag_picker::VallChunkOP chunk = NULL );
 
 	void extract_data_from_pose( core::pose::Pose& pose );
-	
+
 	bool test_saving_library( core::pose::Pose, core::Size ir, bool deposit );
 
 	void test_loop_sample( core::pose::Pose& pose, core::Size nres );
@@ -181,7 +181,7 @@ private:
     bool extra_;
 
 	// The proteins of the backbone db that are loaded (when loading a merged db, otherwise (0,0)
-		std::pair< core::Size, core::Size > loopdb_range_;	
+		std::pair< core::Size, core::Size > loopdb_range_;
 
   // Some basic flags
 	bool do_sanity_check_;
@@ -189,8 +189,8 @@ private:
 
   // Used for grafting - ultimately to move into a seperate Mover class.
 
-	core::scoring::ScoreFunction scorefxn_rama_cst;
-	core::scoring::ScoreFunction scorefxn_cen_cst;
+	core::scoring::ScoreFunctionOP scorefxn_rama_cst;
+	core::scoring::ScoreFunctionOP scorefxn_cen_cst;
 
 	core::optimization::MinimizerOptions options;
 	core::optimization::MinimizerOptions options2;

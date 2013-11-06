@@ -116,8 +116,8 @@ SymmetricScoreFunction::operator()( pose::Pose & pose ) const
 	// instead.
 	if ( !core::pose::symmetry::is_symmetric( pose ) ) {
 		TR << "Warning!!! Using a symmetric score function on a non-symmetric pose" << std::endl;
-		ScoreFunction asym_score( static_cast< ScoreFunction const & >( (*this) ) );
-		return ( asym_score )(pose);
+		ScoreFunctionOP asym_score( this->clone_as_base_class() );
+		return ( *asym_score )(pose);
 	}
 
 	// completely unnecessary temporary hack to force refold if nec. for profiling

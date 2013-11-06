@@ -81,7 +81,7 @@ public:
 
 	/// @brief set scorefunction for low resolution of CDR H3 modeling
 	void set_lowres_score_func(scoring::ScoreFunctionCOP lowres_scorefxn ) {
-		lowres_scorefxn_ = new core::scoring::ScoreFunction(*lowres_scorefxn);
+		lowres_scorefxn_ = lowres_scorefxn->clone();
 	}
 
 private:

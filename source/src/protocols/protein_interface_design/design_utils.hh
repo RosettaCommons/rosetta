@@ -53,7 +53,7 @@ public:
 		res_energy2_ = init.res_energy2_;
 		res_name1_ = init.res_name1_;
 		res_name2_ = init.res_name2_;
-		scorefxn_ = new core::scoring::ScoreFunction( *(init.scorefxn_ ) );
+		scorefxn_ = init.scorefxn_->clone();
 	}
 	void calculate( Pose const & pose1, Pose const & pose2 );
 	std::map< Size, Real> const * get_res_energy( Size const num ) const {
@@ -84,12 +84,12 @@ public:
 	typedef core::scoring::ScoreFunctionCOP ScoreFunctionCOP;
 public:
 	Revert( ScoreFunctionCOP scorefxn, core::Real const ddg_tolerance, core::Size ddg_cycles = 5 ){
-		scorefxn_ = new ScoreFunction( *scorefxn );
+		scorefxn_ = scorefxn->clone();
 		ddg_tolerance_ = ddg_tolerance;
 		ddg_cycles_ = ddg_cycles;
 	}
 	Revert( Revert const & init ) { // copy constructor
-		scorefxn_ = new core::scoring::ScoreFunction( *(init.scorefxn_ ) );
+		scorefxn_ = init.scorefxn_->clone();
 		ddg_tolerance_ = init.ddg_tolerance_;
 		ddg_cycles_ = init.ddg_cycles_;
 	}

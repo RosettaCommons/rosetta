@@ -148,8 +148,8 @@ DockAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 	}
 
 	using namespace core::scoring;
-	ScoreFunctionOP scorelo = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", score_low ) );
-	ScoreFunctionOP scorehi = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", score_high ));
+	ScoreFunctionOP scorelo = data.get< ScoreFunction * >( "scorefxns", score_low )->clone();
+	ScoreFunctionOP scorehi = data.get< ScoreFunction * >( "scorefxns", score_high )->clone();
 
 	utility::vector1<std::string> jumps_str = utility::string_split( tag->getOption<string>( "jumps", "1" ), ',' );
 	utility::vector1<core::Size> movable_jumps;

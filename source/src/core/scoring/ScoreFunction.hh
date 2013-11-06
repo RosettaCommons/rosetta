@@ -122,16 +122,27 @@ public:
 
 	virtual ~ScoreFunction();
 
+protected:
+	///@brief The ScoreFunction copy constructor is explicitly private
+	/// as using it to make a copy is just too attractive, but discards subclass information.
+	/// Use ScoreFunction::clone() instead.
+	ScoreFunction( ScoreFunction const & );
+
+	///@brief The ScoreFunction assignment operator is explicitly private
+	/// as using it discards subclass information.
+	/// Rework your algorithm to use ScoreFunctionOP's instead.
 	ScoreFunction &
 	operator=( ScoreFunction const & );
 
-	ScoreFunction( ScoreFunction const & );
+public:
 
 	virtual ScoreFunctionOP clone() const;
 
+  ///@brief If you *want* to discard subclass information, the following function is availible
+	ScoreFunctionOP clone_as_base_class() const;
+
 	/// @brief Resets the ScoreFunction to default values
-	void
-	reset();
+	void reset();
 
 	/// @brief Randomly perturbs non-zero score function weights
 	void perturb_weights();
@@ -267,9 +278,9 @@ public:
 
 	/// @brief Returns the score of the ScoreType  <t>
 	Real score_by_scoretype(
-		pose::Pose & pose, 
-		ScoreType const t, 
-		bool const weighted = true 
+		pose::Pose & pose,
+		ScoreType const t,
+		bool const weighted = true
 	) const;
 
 	/// @brief Returns an EnergyMap of the current set of weights
@@ -651,7 +662,7 @@ public:
 	///     Energies
 	///     create_score_function
 	void
-	merge( const ScoreFunction scorefxn_to_be_merged );
+	merge( const ScoreFunction & scorefxn_to_be_merged );
 
 	/// @brief Scores  <pose>  and shows the raw and weighted scores for each
 	/// non-zero ScoreType

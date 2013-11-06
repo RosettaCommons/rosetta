@@ -52,24 +52,6 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag )
 {
 	utility::vector1< std::string > patch_tags;
 	return create_score_function( weights_tag, patch_tags );
-	/* removing duplicated code OL 5/24/2012 */
-	/*
-	ScoreFunctionOP scorefxn( new ScoreFunction );
-
-	load_weights_file( weights_tag, scorefxn );
-
-	// allow user to change weights via options system
-	apply_user_defined_reweighting_( scorefxn );
-
-	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )	{
-		scorefxn = new SymmetricScoreFunction( scorefxn );
-	}
-	if ( basic::options::option[ basic::options::OptionKeys::score::docking_interface_score ]() ) {
-		scorefxn = new DockingScoreFunction( scorefxn );
-	}
-
-	return scorefxn;
-	*/
 }
 
 
@@ -79,7 +61,16 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, utility::v
 	using namespace basic::options::OptionKeys;
 
 	// create a new scorefunction
-	ScoreFunctionOP scorefxn( new ScoreFunction );
+	ScoreFunctionOP scorefxn;
+	if ( basic::options::option[ basic::options::OptionKeys::score::min_score_score ].user() ) {
+		scorefxn = new MinScoreScoreFunction( basic::options::option[ basic::options::OptionKeys::score::min_score_score ]() );
+	} else if ( basic::options::option[ basic::options::OptionKeys::score::docking_interface_score ]() ) {
+		scorefxn = new DockingScoreFunction;
+	} else if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )	{
+		scorefxn = new SymmetricScoreFunction;
+	} else {
+		scorefxn = new ScoreFunction;
+	}
 
 	/// Avoid loading the score12 patch if we're using
 	/// 1) standard weights,
@@ -112,15 +103,6 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, utility::v
 	// allow user to change weights via options system
 	apply_user_defined_reweighting_( scorefxn );
 
-	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )	{
-		scorefxn = new SymmetricScoreFunction( scorefxn );
-	}
-	if ( basic::options::option[ basic::options::OptionKeys::score::docking_interface_score ]() ) {
-		scorefxn = new DockingScoreFunction( scorefxn );
-	}
-	if ( basic::options::option[ basic::options::OptionKeys::score::min_score_score ].user() ) {
-		scorefxn = new MinScoreScoreFunction( scorefxn, basic::options::option[ basic::options::OptionKeys::score::min_score_score ]() );
-	}
 	scorefxn->name( weights_tag );
 	return scorefxn;
 }
@@ -132,38 +114,9 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, std::strin
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 
-	// create a new scorefunction
-	ScoreFunctionOP scorefxn( new ScoreFunction );
 	utility::vector1< std::string > patch_tags;
 	patch_tags.push_back( patch_tag );
 	return create_score_function( weights_tag, patch_tags );
-	/* REMOVING DUPLICATED CODE OL 5/24/2012 */
-	/*	std::string patch_tag_local( patch_tag );
-	if ( weights_tag == STANDARD_WTS && patch_tag == SCORE12_PATCH &&
-			basic::options::option[ basic::options::OptionKeys::corrections::score::score12prime ] ) {
-		weights_tag = "score12prime";
-		patch_tag_local = "";
-	}
-
-	load_weights_file( weights_tag, scorefxn );
-
-	if ( patch_tag_local.size() && patch_tag_local != "NOPATCH" ) {
-		scorefxn->apply_patch_from_file( patch_tag_local );
-	}
-
-	// allow user to change weights via options system
-	apply_user_defined_reweighting_( scorefxn );
-
-
-	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )	{
-		scorefxn = new SymmetricScoreFunction( scorefxn );
-	}
-	if ( basic::options::option[ basic::options::OptionKeys::score::docking_interface_score ]() ) {
-		scorefxn = new DockingScoreFunction( scorefxn );
-	}
-
-	return scorefxn;
-	*/
 }
 
 void ScoreFunctionFactory::apply_user_defined_reweighting_( core::scoring::ScoreFunctionOP scorefxn ) {
@@ -261,11 +214,9 @@ core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* defau
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 
-	core::scoring::ScoreFunctionOP scorefxn( new core::scoring::ScoreFunction() );
-
 	//if( option[ score::empty ]() || option[ abinitio::membrane ]() /*fullatom not implemented for membrane yet */) return scorefxn;
 
-	if( option[ score::empty ]() ) return scorefxn;
+	if( option[ score::empty ]() ) return new core::scoring::ScoreFunction();
 
 	std::string weight_set = option[ score::weights ];
 	utility::vector1< std::string > patch_tags = option[ score::patch ]();
@@ -310,6 +261,10 @@ core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* defau
 	}
 
 	T("core.scoring.ScoreFunctionFactory") << "SCOREFUNCTION: " << weight_set << std::endl;
+
+	core::scoring::ScoreFunctionOP scorefxn;
+
+	//create_score_function() handles symmetry, etc.
 	if ( patch_tags.size() == 0 ) {
 		scorefxn = scoring::ScoreFunctionFactory::create_score_function( weight_set );
 	} else {
@@ -321,20 +276,9 @@ core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* defau
 		scorefxn = scoring::ScoreFunctionFactory::create_score_function( weight_set, patch_tags );
 	}
 
-	// add in constraint weights if specified by the user. maybe we want other constraint
-	// types to be weighted as well ...
-	//
+	// add in constraint weights if specified by the user.
 	// mtyka: No No No we dont want this here. Add constraints and weights ouside this function.
 	//  just setting the weights alone isnt gonna get oyu far anyway.
-	//if ( option[ constraints::cst_weight ].user() ) {
-	//	scorefxn->set_weight( atom_pair_constraint, option[ constraints::cst_weight ]() );
-	//	}
-
-	// this is already done in create_score_function
-	//	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )
-	//  {
-	//		return core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( scorefxn ) );
-	//	}
 
 	return scorefxn;
 }
@@ -412,8 +356,6 @@ getScoreFunctionName(
 }
 
 
-
 } // namespace scoring
 } // namespace core
-
 

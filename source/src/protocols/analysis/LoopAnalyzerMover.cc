@@ -98,8 +98,8 @@ LoopAnalyzerMover::LoopAnalyzerMover( LoopAnalyzerMover const & rhs ) :
 	loops_(new protocols::loops::Loops(*(rhs.loops_))),
 	tracer_(rhs.tracer_),
 	positions_(rhs.positions_), //this is useless data
-	sf_(new core::scoring::ScoreFunction(*(rhs.sf_))),
-	chbreak_sf_(new core::scoring::ScoreFunction(*(rhs.chbreak_sf_))),
+	sf_(rhs.sf_->clone()),
+	chbreak_sf_(rhs.chbreak_sf_->clone()),
 	scores_(rhs.scores_) //useless
 {}
 

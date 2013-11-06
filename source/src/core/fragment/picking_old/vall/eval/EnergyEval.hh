@@ -67,6 +67,9 @@ public: // typedefs
 
 	typedef core::pose::Pose Pose;
 	typedef core::scoring::ScoreFunction ScoreFunction;
+	typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
+	typedef core::scoring::ScoreFunctionCOP ScoreFunctionCOP;
+
 
 	typedef std::string String;
 	typedef core::Real Real;
@@ -167,7 +170,7 @@ public: // accessor
 
 	/// @brief the ScoreFunction used to evaluate the pose
 	inline
-	ScoreFunction const & score_function() const {
+	ScoreFunctionCOP const & score_function() const {
 		return score_function_;
 	}
 
@@ -199,7 +202,7 @@ public: // mutators
 	/// @brief the ScoreFunction used to evaluate the pose
 	inline
 	void score_function( ScoreFunction const & fx ) {
-		score_function_ = fx;
+		score_function_ = fx.clone();
 	}
 
 
@@ -230,7 +233,7 @@ private: // data
 
 
 	/// @brief evaluate the Pose using this ScoreFunction
-	ScoreFunction score_function_;
+	ScoreFunctionOP score_function_;
 
 
 	/// @brief flag to add random noise between [0, 0.000001) into the energy

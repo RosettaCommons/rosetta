@@ -87,7 +87,7 @@ public:
 	virtual std::string get_name() const;
 
 	void set_highres_score_func(core::scoring::ScoreFunctionCOP highres_scorefxn) {
-		highres_scorefxn_ = new core::scoring::ScoreFunction(*highres_scorefxn);
+		highres_scorefxn_ = highres_scorefxn->clone();
 	}
 
 private:

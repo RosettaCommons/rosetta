@@ -53,6 +53,8 @@ public:
 
 	MinScoreScoreFunction( ScoreFunction const & src, core::Real const );
 
+	MinScoreScoreFunction( core::Real const );
+
 	MinScoreScoreFunction( ScoreFunctionOP src, core::Real const );
 
 	MinScoreScoreFunction( ScoreFunctionCOP src, core::Real const );

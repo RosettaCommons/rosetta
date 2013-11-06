@@ -179,10 +179,12 @@ protected:
 
 	void set_defaults();
 
-	void setup_frag_scorefxn( core::scoring::ScoreFunction& scorefxn );
+	/// @details also modifies the internal scorefxn_ variable
+	/// (But not necessarily to same function as is returned.)
+	core::scoring::ScoreFunctionOP setup_frag_scorefxn();
 
-	//@brief process fragments for loop-closing prowess, keep track of best_fragment
-	// return nr_of new good_loops ( vdw criterion )
+	/// @brief process fragments for loop-closing prowess, keep track of best_fragment
+	///  return nr_of new good_loops ( vdw criterion )
 	Size
 	process_fragments(
     core::fragment::FrameList& frame_in,

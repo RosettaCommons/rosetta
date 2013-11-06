@@ -907,7 +907,7 @@ struct HubDenovo {
 		sf3->set_weight(vdw,3.0);
 		sfsym  = getScoreFunction();
 		sfsymnocst  = getScoreFunction();
-		sfasym = new ScoreFunction(*sfsym);
+		sfasym = core::scoring::symmetry::asymmetrize_scorefunction(*sfsym);
 		sfsym->set_weight(atom_pair_constraint,4*cstwt);
 		core::chemical::ResidueTypeSetCAP rtsfa = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 

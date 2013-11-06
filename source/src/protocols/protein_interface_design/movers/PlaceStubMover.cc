@@ -274,7 +274,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 
 	using namespace core::scoring;
 	ScoreFunctionOP scorefxn = getScoreFunction();
-	ScoreFunctionOP stub_scorefxn( new ScoreFunction( *scorefxn ));
+	ScoreFunctionOP stub_scorefxn( scorefxn->clone() );
 	if( hurry ) {
 		TR << "Speeding up StubMinimize..." << std::endl;
 		stub_scorefxn->reset();
@@ -869,12 +869,12 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 						// Experimental: add residue position of successful stub placement to the score.sc file
 						protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 						//std::string column_header = this->get_user_defined_name();
-						
+
 						//convert residue number into a string
 						std::ostringstream convert;
 						convert << res;
-					
-						// set column name	
+
+						// set column name
 						//std::string column_header = "hotspot_" + convert.str();
 						std::string column_header = user_defined_name_;
 

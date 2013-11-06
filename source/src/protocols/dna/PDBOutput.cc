@@ -162,7 +162,7 @@ pose::PoseCOP PDBOutput::reference_pose() const { return reference_pose_; }
 
 void PDBOutput::score_function( ScoreFunction const & sf )
 {
-	score_function_ = new ScoreFunction( sf );
+	score_function_ = sf.clone();
 }
 ScoreFunctionCOP PDBOutput::score_function() const { return score_function_; }
 

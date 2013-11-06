@@ -85,7 +85,7 @@ TryRotamers::TryRotamers( Size resnum,
 	bool include_current
 ) :
 	protocols::moves::Mover( TryRotamersCreator::mover_name() ),
-	scorefxn_(new ScoreFunction(scorefxn)),
+	scorefxn_(scorefxn.clone()),
 	resnum_(resnum),
 	jump_num_(jump_num),
 	clash_check_(clash_check),
@@ -103,7 +103,7 @@ TryRotamers::TryRotamers( core::Size resnum,
 	bool include_current
 	) :
 	protocols::moves::Mover(),
-	scorefxn_(new ScoreFunction(scorefxn)),
+	scorefxn_( scorefxn.clone() ),
 	resnum_(resnum),
 	jump_num_(jump_num),
 	clash_check_(clash_check),

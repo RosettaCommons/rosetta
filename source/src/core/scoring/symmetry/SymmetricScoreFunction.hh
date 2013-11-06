@@ -132,6 +132,11 @@ public:
 
 };
 
+inline core::scoring::ScoreFunctionOP
+asymmetrize_scorefunction( ScoreFunction const & src ) {
+  //Should there be some test to see if the ScoreFunction is actually symmetric first?
+	return src.clone_as_base_class();
+}
 
 } // symmetry
 } // namespace scoring

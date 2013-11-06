@@ -158,7 +158,7 @@ BackrubDDMover::BackrubDDMover
 	sidechain_move_prob_ = sidechain_move_prob;
 
 	runtime_assert( backrub_moves_ );
-	scorefxn_repack_ = new ScoreFunction( *scorefxn );
+	scorefxn_repack_ = scorefxn->clone();
 	scorefxn_repack_->set_weight( mm_bend, mm_bend_weight );
 
 	// pivot atoms default to "CA" so that non-protein atoms are not considered during backrub scoring

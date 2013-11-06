@@ -44,6 +44,7 @@ static basic::Tracer TR( "core.fragment.picking_old.vall.eval.EnergyEval" );
 EnergyEval::EnergyEval() :
 	Super(),
 	insert_position_( 0 ),
+	score_function_( new core::scoring::ScoreFunction ),
 	randomize_( false )
 {}
 
@@ -65,7 +66,7 @@ EnergyEval::EnergyEval(
 	Super(),
 	pose_( pose ),
 	insert_position_( insert_position ),
-	score_function_( score_function ),
+	score_function_( score_function.clone() ),
 	randomize_( randomize )
 {}
 
@@ -75,7 +76,7 @@ EnergyEval::EnergyEval( EnergyEval const & rval ) :
 	Super( rval ),
 	pose_( rval.pose_ ),
 	insert_position_( rval.insert_position_ ),
-	score_function_( rval.score_function_ ),
+	score_function_( rval.score_function_->clone() ),
 	randomize_( rval.randomize_ )
 {}
 
@@ -91,7 +92,7 @@ EnergyEval & EnergyEval::operator =( EnergyEval const & rval ) {
 
 		pose_ = rval.pose_;
 		insert_position_ = rval.insert_position_;
-		score_function_ = rval.score_function_;
+		score_function_ = rval.score_function_->clone();
 		randomize_ = rval.randomize_;
 	}
 	return *this;
@@ -120,7 +121,7 @@ bool EnergyEval::eval_impl(
 	}
 
 	// evaluate the energy
-	fs.score += score_function_( pose_ );
+	fs.score += score_function_->score( pose_ );
 
 	if ( randomize_ ) {
 		fs.score += ( RG.uniform() * 0.000001 );
@@ -132,7 +133,7 @@ bool EnergyEval::eval_impl(
 
 /// @brief operation to be perform before catalog() starts
 void EnergyEval::pre_catalog_op( VallLibrary const & ) {
-	score_function_.show_line_headers( TR );
+	score_function_->show_line_headers( TR );
 	TR << std::endl;
 }
 

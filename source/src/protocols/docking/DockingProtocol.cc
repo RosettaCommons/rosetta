@@ -540,7 +540,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 
 		// add ensemble conformer energies to low res scorefunction
 		core::scoring::ScoreFunctionOP docking_scorefxn_ens, docking_highres_ens;
-		docking_scorefxn_ens = new core::scoring::ScoreFunction( *docking_scorefxn_low_ );
+		docking_scorefxn_ens = docking_scorefxn_low_->clone();
 		docking_scorefxn_ens->set_weight( core::scoring::dock_ens_conf, 1.0 );
 		set_lowres_scorefxn( docking_scorefxn_ens );
 		// pass the scorefunction to the low res mover
@@ -858,7 +858,7 @@ void DockingProtocol::add_constraints_to_scorefunction()
 {
 	// Add constraints to the low resolution docking mover if applicable
 	if ( docking_lowres_mover_ ) {
-		core::scoring::ScoreFunctionOP docking_scorefxn_cst = new core::scoring::ScoreFunction( *docking_scorefxn_low_ );
+		core::scoring::ScoreFunctionOP docking_scorefxn_cst = docking_scorefxn_low_->clone();
 		docking_scorefxn_cst->set_weight( core::scoring::atom_pair_constraint, cst_weight_ );
 		set_lowres_scorefxn( docking_scorefxn_cst );
 		// pass the scorefunction to the low res mover
@@ -867,7 +867,7 @@ void DockingProtocol::add_constraints_to_scorefunction()
 
 	// Add constraints to the high resolution docking mover if applicable
 	if ( docking_highres_mover_ ) {
-		core::scoring::ScoreFunctionOP docking_highres_cst = new core::scoring::ScoreFunction( *docking_scorefxn_output_ ); // needs to use the non-min score function to match assemble_domains test with constraints
+		core::scoring::ScoreFunctionOP docking_highres_cst = docking_scorefxn_output_->clone(); // needs to use the non-min score function to match assemble_domains test with constraints
 		docking_highres_cst->set_weight( core::scoring::atom_pair_constraint, cst_weight_ );
 		set_highres_scorefxn( docking_highres_cst, docking_scorefxn_pack_ ); // sets csts for mc and minimization, but not packing
 		// pass the score function to the high res mover
@@ -1150,12 +1150,12 @@ DockingProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 
 	if( tag->hasOption("docking_score_low" ) ){
 		std::string const score_low( tag->getOption<std::string>( "docking_score_low" ) );
-		ScoreFunctionOP scorelo = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", score_low ) );
+		ScoreFunctionOP scorelo = data.get< ScoreFunction * >( "scorefxns", score_low )->clone();
 		set_lowres_scorefxn(scorelo);
 	}
 	if( tag->hasOption("docking_score_high" ) ){
 		std::string const score_high( tag->getOption<std::string>( "docking_score_high" ) );
-		ScoreFunctionOP scorehi = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", score_high ));
+		ScoreFunctionOP scorehi = data.get< ScoreFunction * >( "scorefxns", score_high )->clone();
 		set_highres_scorefxn(scorehi);
 	}
 	//get through partners

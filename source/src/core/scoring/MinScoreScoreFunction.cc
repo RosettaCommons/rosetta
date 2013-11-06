@@ -61,6 +61,11 @@ MinScoreScoreFunction::MinScoreScoreFunction( ScoreFunction const & src, core::R
 	min_score_ = min_score;
 }
 
+MinScoreScoreFunction::MinScoreScoreFunction( core::Real min_score )
+{
+	min_score_ = min_score;
+}
+
 MinScoreScoreFunction::MinScoreScoreFunction( ScoreFunctionOP src, core::Real const min_score ):
   ScoreFunction( *src )
 {

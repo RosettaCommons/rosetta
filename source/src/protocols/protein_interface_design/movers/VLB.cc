@@ -93,7 +93,7 @@ VLB::VLB( BuildManagerCOP manager, ScoreFunctionCOP scorefxn ) :
 	protocols::moves::Mover( VLBCreator::mover_name() )
 {
 	manager_ = new BuildManager( *manager );
-	scorefxn_ = new core::scoring::ScoreFunction( *scorefxn );
+	scorefxn_ = scorefxn->clone();
 }
 
 void
@@ -134,16 +134,16 @@ protocols::moves::MoverOP VLB::fresh_instance() const {
 	return protocols::moves::MoverOP( new VLB );
 }
 
-VLB::VLB( VLB const & init ) : 
-	//utility::pointer::ReferenceCount(), 
+VLB::VLB( VLB const & init ) :
+	//utility::pointer::ReferenceCount(),
 	protocols::moves::Mover( init ) {
 	manager_ = new BuildManager( *init.manager_ );
-	scorefxn_ = new core::scoring::ScoreFunction( *init.scorefxn_ );
+	scorefxn_ = init.scorefxn_->clone();
 }
 
 VLB const & VLB::operator=( VLB const & init ) {
 	manager_ = new BuildManager( *init.manager_ );
-	scorefxn_ = new core::scoring::ScoreFunction( *init.scorefxn_ );
+	scorefxn_ = init.scorefxn_->clone();
 	return *this;
 }
 
@@ -163,7 +163,7 @@ VLB::parse_my_tag(
 	//RelativeConnectRight( rel_seq_pos, right, connect_pose ); /// version of ConnectRight instruction that depends upon results from another BuildInstruction
 
 	std::string const scorefxn( tag->getOption<std::string>( "scorefxn", "score4L" ) ); // VarLengthBuild uses remodel_cen by default. score4L is the same, but with Rg=2.0
-	scorefxn_ = new core::scoring::ScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn ));
+	scorefxn_ = data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn )->clone();
 
 	BuildInstructionOP instruction;
 	utility::vector0< TagCOP > const & tags( tag->getTags() );

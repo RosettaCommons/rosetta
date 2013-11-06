@@ -91,7 +91,9 @@ namespace loophash {
 
 	LoopHashLibrary::LoopHashLibrary( const utility::vector1< core::Size > &init_sizes, const core::Size num_partitions, const core::Size assigned_num):
 	  options( "dfpmin", 0.2, true , false ),
-	  options2( "dfpmin", 0.02,true , false )
+	  options2( "dfpmin", 0.02,true , false ),
+		scorefxn_rama_cst( new core::scoring::ScoreFunction ),
+		scorefxn_cen_cst( new core::scoring::ScoreFunction )
 	{
 		// create the score functions needed for the grafting process
 		set_default_score_functions();
@@ -406,21 +408,21 @@ namespace loophash {
 	{
 		using namespace core::scoring;
 
-		scorefxn_rama_cst.set_weight( coordinate_constraint, 0.5 );
-		scorefxn_rama_cst.set_weight( rama, 1.0 );
+		scorefxn_rama_cst->set_weight( coordinate_constraint, 0.5 );
+		scorefxn_rama_cst->set_weight( rama, 1.0 );
 
 
-		scorefxn_cen_cst.set_weight( coordinate_constraint, 0.05 );
-		scorefxn_cen_cst.set_weight( env      , 1.0);
-		scorefxn_cen_cst.set_weight( pair     , 1.0);
-		scorefxn_cen_cst.set_weight( cbeta    , 1.0);
-		scorefxn_cen_cst.set_weight( vdw      , 1.0);
-		scorefxn_cen_cst.set_weight( rg       , 3.0);
-		scorefxn_cen_cst.set_weight( cenpack  , 1.0);
-		scorefxn_cen_cst.set_weight( hs_pair  , 1.0);
-		scorefxn_cen_cst.set_weight( ss_pair  , 1.0);
-		scorefxn_cen_cst.set_weight( rsigma   , 1.0);
-		scorefxn_cen_cst.set_weight( sheet    , 1.0);
+		scorefxn_cen_cst->set_weight( coordinate_constraint, 0.05 );
+		scorefxn_cen_cst->set_weight( env      , 1.0);
+		scorefxn_cen_cst->set_weight( pair     , 1.0);
+		scorefxn_cen_cst->set_weight( cbeta    , 1.0);
+		scorefxn_cen_cst->set_weight( vdw      , 1.0);
+		scorefxn_cen_cst->set_weight( rg       , 3.0);
+		scorefxn_cen_cst->set_weight( cenpack  , 1.0);
+		scorefxn_cen_cst->set_weight( hs_pair  , 1.0);
+		scorefxn_cen_cst->set_weight( ss_pair  , 1.0);
+		scorefxn_cen_cst->set_weight( rsigma   , 1.0);
+		scorefxn_cen_cst->set_weight( sheet    , 1.0);
 	}
 
 
@@ -452,13 +454,13 @@ namespace loophash {
 
 		core::pose::transfer_phi_psi( src_pose, pose, myloop.start(), myloop.stop() );
 
-		core::optimization::AtomTreeMinimizer().run( pose, final_mm, scorefxn_rama_cst, options );
+		core::optimization::AtomTreeMinimizer().run( pose, final_mm, *scorefxn_rama_cst, options );
 
 		core::Real premin_rms = core::scoring::CA_rmsd( pose, tgt_pose );
 		TR.Info << "Graft: Premin RMS: " << premin_rms << std::endl;
 		TR.Info << "Graft: Min Score3 " << std::endl;
-		//scorefxn_cen_cst.show( TR.Info, *newpose );
-		core::optimization::AtomTreeMinimizer().run( pose, final_mm, scorefxn_cen_cst, options2 );
+		//scorefxn_cen_cst->show( TR.Info, *newpose );
+		core::optimization::AtomTreeMinimizer().run( pose, final_mm, *scorefxn_cen_cst, options2 );
 
 		transfer_phi_psi( pose, tgt_pose );
 	}
@@ -828,7 +830,7 @@ namespace loophash {
 					core::pose::transfer_phi_psi( start_pose, newpose );
 					add_coordinate_constraints_to_pose( newpose, original_pose, exclude_region );
 					new_bs.apply_to_pose( newpose, ir );
-					//scorefxn_rama_cst.show( TR.Info, *newpose );
+					//scorefxn_rama_cst->show( TR.Info, *newpose );
 
 
 					// just for comparison with cut!
@@ -839,19 +841,19 @@ namespace loophash {
 
 
 
-					//scorefxn_rama_cst.show( TR.Info, *newpose );
+					//scorefxn_rama_cst->show( TR.Info, *newpose );
 					//newpose->dump_pdb("rep_" + utility::to_string( ir ) + "_" + utility::to_string( jr ) + "_" + utility::to_string( int(xyzdist) ) + "_" + utility::to_string( int(angdist) ) + ".bef.pdb" );
-					AtomTreeMinimizer().run( newpose, final_mm, scorefxn_rama_cst, options );
-					//scorefxn_rama_cst.show( TR.Info, *newpose );
+					AtomTreeMinimizer().run( newpose, final_mm, *scorefxn_rama_cst, options );
+					//scorefxn_rama_cst->show( TR.Info, *newpose );
 					//newpose->dump_pdb("rep_" + utility::to_string( ir ) + "_" + utility::to_string( jr ) + "_" + utility::to_string( int(xyzdist) ) + "_" + utility::to_string( int(angdist) ) + ".aft.pdb" );
 					//newpose->dump_pdb("rep_" + utility::to_string( ir ) + "_" + utility::to_string( jr ) + "_" + utility::to_string( int(xyzdist) ) + "_" + utility::to_string( int(angdist) ) + ".pdb" );
 
 					core::Real premin_rms = core::scoring::CA_rmsd( newpose, original_pose );
 					TR.Info << "Premin RMS: " << premin_rms << std::endl;
 					TR.Info << "Min Score3 " << std::endl;
-					//scorefxn_cen_cst.show( TR.Info, *newpose );
-					AtomTreeMinimizer().run( newpose, final_mm, scorefxn_cen_cst, options2 );
-					//scorefxn_cen_cst.show( TR.Info, *newpose );
+					//scorefxn_cen_cst->show( TR.Info, *newpose );
+					AtomTreeMinimizer().run( newpose, final_mm, *scorefxn_cen_cst, options2 );
+					//scorefxn_cen_cst->show( TR.Info, *newpose );
 
 					// get final RMS
 

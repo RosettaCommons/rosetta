@@ -105,7 +105,7 @@ SidechainMCMover::SidechainMCMover():
 	temperature_(0),
 	ntrials_(0),
 	best_energy_(0),
-	sfxn_(),
+	sfxn_( new core::scoring::ScoreFunction ),
 	inherit_scorefxn_temperature_(false),
 	ig_(0),
 	accepts_(0),
@@ -125,7 +125,7 @@ SidechainMCMover::SidechainMCMover(
 	temperature_(0),
 	ntrials_(0),
 	best_energy_(0),
-	sfxn_(),
+	sfxn_( new core::scoring::ScoreFunction ),
 	inherit_scorefxn_temperature_(false),
 	ig_(0),
 	accepts_(0),
@@ -177,7 +177,7 @@ SidechainMCMover::apply(
 	//using namespace protocols::fast_sc_mover;
 
 	utility::vector1< core::Real > new_chi;
-	core::Real current_energy = sfxn_(pose);
+	core::Real current_energy = sfxn_->score(pose);
 	score_pre_apply_ = current_energy;
 	init_task(pose);
 
@@ -249,13 +249,13 @@ SidechainMCMover::apply(
 
 		if( DEBUG )
 		{//debug
-			core::Real s1=	sfxn_(temp);
+			core::Real s1=	sfxn_->score(temp);
 			dummy = temp;
 			//for(unsigned int i = 1; i <= new_state->nchi(); i++ ){
 			//dummy.set_chi( i, rand_res, new_state->chi( i ) );
 			//}
 			dummy.replace_residue( rand_res, *new_state, true );
-			core::Real s2 = sfxn_(dummy);
+			core::Real s2 = sfxn_->score(dummy);
 
 			if( (s1 - s2) - delta_energy > 0.05 ) {
 				TR.Debug << "WARNING: ENERGIES DON'T MATCH UP! " << s1 << " " << s2 << " " << (s1 - s2) << " " << delta_energy << std::endl;
@@ -272,10 +272,10 @@ SidechainMCMover::apply(
 		if( pass_metropolis( delta_energy, SidechainMover::last_proposal_density_ratio() ) ){ //ek
 			if( DEBUG )
 			{ //debug//
-				core::Real s1=	sfxn_(temp);
+				core::Real s1=	sfxn_->score(temp);
 				temp.replace_residue( rand_res, *new_state, true );
-				core::Real s2 = sfxn_(dummy);
-				TR.Debug << "current energy after accept: " << sfxn_(temp) << " delta " << (s2-s1) << std::endl;
+				core::Real s2 = sfxn_->score(dummy);
+				TR.Debug << "current energy after accept: " << sfxn_->score(temp) << " delta " << (s2-s1) << std::endl;
 				//for( core::Size itr_i = 1; itr_i <= new_state->nchi(); itr_i++ ){
 				//temp.set_chi( itr_i, rand_res, new_state->chi(itr_i) );
 				//}
@@ -312,7 +312,7 @@ SidechainMCMover::apply(
 
 	score_post_apply_ = current_energy;
 	if (metropolis_hastings_mover_) {
-		score_post_apply_ = sfxn_(pose);
+		score_post_apply_ = sfxn_->score(pose);
 		//TR << "Score Actual: " << score_post_apply_ << " Accumulated: " << current_energy << " Delta: " << current_energy - score_post_apply_ << std::endl;
 	}
 

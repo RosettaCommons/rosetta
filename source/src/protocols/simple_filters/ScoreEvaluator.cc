@@ -82,19 +82,19 @@ core::Real
 ScoreEvaluator::apply(
   core::pose::Pose& pose
 ) const {
-	core::scoring::ScoreFunction scorefxn( *scorefxn_ );
+	core::scoring::ScoreFunctionOP scorefxn( scorefxn_->clone() );
 	core::pose::Pose chainbreak_pose( pose );
 	core::pose::Pose nochainbreak_pose( pose );
 	toolbox::pose_manipulation::add_chainbreaks_according_to_jumps( chainbreak_pose );
 	//	js.remove_chainbreaks( nochainbreak_pose );  --- whatever comes in should be consistent with constraints..this might make it worse
 	scoring::ScoreFunction chainbreaks_scfxn;
-	chainbreaks_scfxn.set_weight(  scoring::linear_chainbreak, scorefxn.get_weight(  scoring::linear_chainbreak ) );
-	chainbreaks_scfxn.set_weight(  scoring::overlap_chainbreak, scorefxn.get_weight(  scoring::overlap_chainbreak ) );
-	chainbreaks_scfxn.set_weight(  scoring::chainbreak, scorefxn.get_weight(  scoring::chainbreak ) );
-	scorefxn.set_weight(  scoring::linear_chainbreak, 0);
-	scorefxn.set_weight(  scoring::overlap_chainbreak, 0);
-	scorefxn.set_weight(  scoring::chainbreak, 0);
-	core::Real val = scorefxn( nochainbreak_pose );
+	chainbreaks_scfxn.set_weight(  scoring::linear_chainbreak, scorefxn->get_weight(  scoring::linear_chainbreak ) );
+	chainbreaks_scfxn.set_weight(  scoring::overlap_chainbreak, scorefxn->get_weight(  scoring::overlap_chainbreak ) );
+	chainbreaks_scfxn.set_weight(  scoring::chainbreak, scorefxn->get_weight(  scoring::chainbreak ) );
+	scorefxn->set_weight(  scoring::linear_chainbreak, 0);
+	scorefxn->set_weight(  scoring::overlap_chainbreak, 0);
+	scorefxn->set_weight(  scoring::chainbreak, 0);
+	core::Real val = scorefxn->score( nochainbreak_pose );
 	return val + chainbreaks_scfxn( chainbreak_pose );
 }
 

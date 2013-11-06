@@ -129,7 +129,7 @@ static core::io::silent::SilentFileData sfd;
 // 		if( seq[0] != 'Z' ) utility_exit_with_message("first residue must be Z!!");
 
 // 		sfsym  = getScoreFunction();
-// 		sfasym = new ScoreFunction(*sfsym);
+// 		sfasym = core::scoring::symmetry::asymmetrize_scorefunction(sfsym);
 // 		sf0 = new symmetry::SymmetricScoreFunction(ScoreFunctionFactory::create_score_function("score0"));
 // 		sf1 = new symmetry::SymmetricScoreFunction(ScoreFunctionFactory::create_score_function("score1"));
 // 		sf2 = new symmetry::SymmetricScoreFunction(ScoreFunctionFactory::create_score_function("score2"));

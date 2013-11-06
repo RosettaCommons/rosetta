@@ -96,8 +96,8 @@ RepackMinimize::RepackMinimize(
 		if( scorefxn_repack ) scorefxn_repack_ = new core::scoring::symmetry::SymmetricScoreFunction( *scorefxn_repack );
 		if( scorefxn_minimize ) scorefxn_minimize_ = new core::scoring::symmetry::SymmetricScoreFunction( *scorefxn_minimize );
 	} else {
-		if( scorefxn_repack ) scorefxn_repack_ = new core::scoring::ScoreFunction( *scorefxn_repack );
-		if( scorefxn_minimize ) scorefxn_minimize_ = new ScoreFunction( *scorefxn_minimize );
+		if( scorefxn_repack ) scorefxn_repack_ = core::scoring::symmetry::asymmetrize_scorefunction( *scorefxn_repack );
+		if( scorefxn_minimize ) scorefxn_minimize_ = core::scoring::symmetry::asymmetrize_scorefunction( *scorefxn_minimize );
 	}
 	repack_non_ala_ = repack_non_ala;
 }

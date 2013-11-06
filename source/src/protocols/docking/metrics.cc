@@ -61,7 +61,7 @@ calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::Sco
 	core::scoring::ScoreFunctionOP docking_scorefxn;
 	core::pose::Pose complex_pose = pose;
 
-	docking_scorefxn = new core::scoring::ScoreFunction( *dock_scorefxn ) ;
+	docking_scorefxn = dock_scorefxn->clone() ;
     docking_scorefxn->set_weight( core::scoring::atom_pair_constraint, 0.0 );
 	/*
 	if ( pose.is_fullatom() ){
@@ -143,7 +143,7 @@ calc_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose,
 		native_docking_pose.fold_tree(ft);
 
 		//score to set up interface object
-		core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction( *dock_scorefxn ) ;
+		core::scoring::ScoreFunctionOP scorefxn = dock_scorefxn->clone() ;
 		(*scorefxn)( native_docking_pose );
 
 		protocols::scoring::Interface interface( rb_jump );
@@ -180,7 +180,7 @@ calc_CA_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_po
 		native_docking_pose.fold_tree(ft);
 
 		//score to set up interface object
-		core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction( *dock_scorefxn ) ;
+		core::scoring::ScoreFunctionOP scorefxn = dock_scorefxn->clone() ;
 		(*scorefxn)( native_docking_pose );
 
 		protocols::scoring::Interface interface( rb_jump );
@@ -220,7 +220,7 @@ calc_Fnat( const core::pose::Pose & pose, const core::pose::Pose & native_pose, 
 		Real cutoff = 5.0;
 
 		//score to set up interface object
-		core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction( *dock_scorefxn ) ;
+		core::scoring::ScoreFunctionOP scorefxn = dock_scorefxn->clone() ;
 		(*scorefxn)( native_docking_pose );
 
 		ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
@@ -230,7 +230,7 @@ calc_Fnat( const core::pose::Pose & pose, const core::pose::Pose & native_pose, 
 		utility::vector1< Size > partner2;
 
 		protocols::scoring::Interface interface( rb_jump );
-		interface.distance( 8.0 ); 
+		interface.distance( 8.0 );
 		interface.calculate( native_docking_pose );
 
 		//generate list of interface residues for partner 1 and partner 2
@@ -355,7 +355,7 @@ calc_Fnonnat(  const core::pose::Pose & pose, const core::pose::Pose & native_po
 		Real cutoff = 5.0;
 
 		//score to set up interface object
-		core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction( *dock_scorefxn ) ;
+		core::scoring::ScoreFunctionOP scorefxn = dock_scorefxn->clone() ;
 		(*scorefxn)( native_docking_pose );
 
 		ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );

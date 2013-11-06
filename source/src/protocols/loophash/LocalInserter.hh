@@ -44,7 +44,7 @@ public:
 
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~LocalInserter();
-	
+
 	LocalInserter(){
 	}
 
@@ -66,7 +66,7 @@ public:
 		const protocols::loophash::BackboneSegment &new_bs,
 		core::Size res_pos
 	) = 0;
-	
+
 	// closes many gaps outside of ir and jr
 	// will die if gap exists between ir and jr
 	virtual
@@ -87,24 +87,26 @@ class LocalInserter_SimpleMin : public LocalInserter{
 public:
 	LocalInserter_SimpleMin():
 		LocalInserter(),
+		scorefxn_rama_cst_( new core::scoring::ScoreFunction ),
 		options_( "dfpmin", 0.2, true , false ),
+		scorefxn_cen_cst_( new core::scoring::ScoreFunction ),
 		options2_( "dfpmin", 0.02,true , false )
 	{
 		set_default_score_functions();
 	}
-	
+
 	///@brief set the score function for the first round of minimization
 	///during a loophash insert
 	void
 	scorefxn_rama_cst(
-		core::scoring::ScoreFunction scorefxn
+		core::scoring::ScoreFunction const &  scorefxn
 	);
-	
+
 	///@brief set the score function for the second round of minimization
 	///during a loophash insert
 	void
 	scorefxn_cen_cst(
-		core::scoring::ScoreFunction scorefxn
+		core::scoring::ScoreFunction const & scorefxn
 	);
 
 	virtual
@@ -139,10 +141,10 @@ private:
 	void set_default_score_functions();
 
 	// the scorefunctions themselves
-	core::scoring::ScoreFunction scorefxn_rama_cst_;
+	core::scoring::ScoreFunctionOP scorefxn_rama_cst_;
 	core::optimization::MinimizerOptions options_;
 
-	core::scoring::ScoreFunction scorefxn_cen_cst_;
+	core::scoring::ScoreFunctionOP scorefxn_cen_cst_;
 	core::optimization::MinimizerOptions options2_;
 };
 

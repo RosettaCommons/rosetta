@@ -371,7 +371,7 @@ GreenPacker::get_name() const {
 void
 GreenPacker::set_scorefunction( ScoreFunction const & sfxn )
 {
-	full_sfxn_ = new ScoreFunction( sfxn );
+	full_sfxn_ = sfxn.clone();
 
 	/// create context independent and context dependent versions of this score function
 	ci_sfxn_ = new ScoreFunction;

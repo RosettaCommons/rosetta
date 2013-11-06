@@ -119,7 +119,7 @@ LoopMover_Refine_CCD::LoopMover_Refine_CCD(
 		max_inner_cycles_(200),
 		repack_period_(20),
 		temp_initial_(1.5),
-		temp_final_(0.5)		
+		temp_final_(0.5)
 {
 	read_options();
 	set_scorefxn( get_fa_scorefxn() );
@@ -261,7 +261,7 @@ LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagCOP const tag, basic::datac
 	if( tag->hasOption( "loops" ) ){
 		loops( loops_definers::load_loop_definitions(tag, data, pose) );
 	}
-	if( tag->hasOption( "scorefxn" ) ) this->set_scorefxn( new core::scoring::ScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", tag->getOption<std::string>( "scorefxn" ) ) ) );
+	if( tag->hasOption( "scorefxn" ) ) this->set_scorefxn( data.get< core::scoring::ScoreFunction * >( "scorefxns", tag->getOption<std::string>( "scorefxn" ) )->clone() );
 
 	if( tag->hasOption("task_operations") ){
 		core::pack::task::TaskFactoryOP task_factory = protocols::rosetta_scripts::parse_task_operations( tag, data );
@@ -281,7 +281,7 @@ void LoopMover_Refine_CCD::apply( core::pose::Pose & pose )
 {
 	using namespace scoring;
 	using namespace basic::options;
-	
+
 	// scheduler
 	int const fast( option[ OptionKeys::loops::fast ] ); // why is this an int?
 	inner_cycles_ = std::min( max_inner_cycles_, fast ? loops()->loop_size() : Size(10)*loops()->loop_size() );
@@ -314,7 +314,7 @@ void LoopMover_Refine_CCD::apply( core::pose::Pose & pose )
 
 	// set minimization degrees of freedom for all loops
 	setup_movemap( pose, *loops(), pack_task->repacking_residues(), move_map_ );
-	
+
 	LoopRefineInnerCycleOP inner_cycle = LoopRefineInnerCycleFactory::get_instance()->create_inner_cycle(
 			IC_RefineCCDStandard,
 			this,
@@ -322,7 +322,7 @@ void LoopMover_Refine_CCD::apply( core::pose::Pose & pose )
 			ramping_scorefxn(),
 			task_factory_
 		);
-	
+
 	inner_cycle->set_native_pose( get_native_pose() ); // Native pose may be used in debugging steps that use loop RMSD
 
 	for (Size i = 1; i <= outer_cycles_; ++i) {

@@ -445,12 +445,12 @@ TemperedDocking::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & dat
 
 	if( tag->hasOption("docking_score_low" ) ){
 		std::string const score_low( tag->getOption<std::string>( "docking_score_low" ) );
-		ScoreFunctionOP scorelo = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", score_low ) );
+		ScoreFunctionOP scorelo = data.get< ScoreFunction * >( "scorefxns", score_low )->clone();
 		set_lowres_scorefxn(scorelo);
 	}
 	if( tag->hasOption("docking_score_high" ) ){
 		std::string const score_high( tag->getOption<std::string>( "docking_score_high" ) );
-		ScoreFunctionOP scorehi = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", score_high ));
+		ScoreFunctionOP scorehi = data.get< ScoreFunction * >( "scorefxns", score_high )->clone();
 		set_highres_scorefxn(scorehi);
 	}
 	//get through partners

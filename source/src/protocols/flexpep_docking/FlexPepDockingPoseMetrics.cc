@@ -83,15 +83,15 @@ FlexPepDockingPoseMetrics::calc_frac_native_contacts(
 			return 0.0;
 		}
 	//iterate over the peptide
-	for (int i=flags_->peptide_first_res(); i<=flags_->peptide_last_res(); ++i) 
+	for (int i=flags_->peptide_first_res(); i<=flags_->peptide_last_res(); ++i)
 		{
 			//iterate over the protein
-			for (int j=flags_->receptor_first_res(); j<=flags_->receptor_last_res(); ++j) 
+			for (int j=flags_->receptor_first_res(); j<=flags_->receptor_last_res(); ++j)
 				{
-					if (isInContact(native.residue(i),native.residue(j),threashold)) 
+					if (isInContact(native.residue(i),native.residue(j),threashold))
 						{
 							numOfNativeContacts++;
-							if (isInContact(final.residue(i),final.residue(j),threashold)) 
+							if (isInContact(final.residue(i),final.residue(j),threashold))
 								{
 									subsetOfPredictedContacts++;
 								}
@@ -264,7 +264,7 @@ FlexPepDockingPoseMetrics::calc_interface_metrics( core::pose::Pose & pose, Size
 
 		std::map < std::string, core::Real > if_metrics;
 
-		core::scoring::ScoreFunctionOP scorefxn_no_cst = new core::scoring::ScoreFunction (*scorefxn);
+		core::scoring::ScoreFunctionOP scorefxn_no_cst = scorefxn->clone();
 		scorefxn_no_cst->set_weight(coordinate_constraint, 0.0);
 		scorefxn_no_cst->set_weight(atom_pair_constraint, 0.0);
 		scorefxn_no_cst->set_weight(angle_constraint, 0.0);

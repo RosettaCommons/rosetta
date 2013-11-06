@@ -646,9 +646,9 @@ void MembraneAbinitio::current_scorefxn( scoring::ScoreFunction const& scorefxn 
 
 //@brief set individual weight of current scorefunction --- does not change the predifined scores: score_stageX_
 void MembraneAbinitio::set_current_weight( core::scoring::ScoreType type, core::Real setting ) {
-	scoring::ScoreFunction scorefxn ( mc().score_function() );
-	scorefxn.set_weight( type, setting );
-	mc().score_function( scorefxn ); //trigger rescore
+	scoring::ScoreFunctionOP scorefxn ( mc().score_function().clone() );
+	scorefxn->set_weight( type, setting );
+	mc().score_function( *scorefxn ); //trigger rescore
 }
 
 void MembraneAbinitio::set_default_options() {

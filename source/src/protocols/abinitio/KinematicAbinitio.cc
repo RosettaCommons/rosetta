@@ -199,9 +199,9 @@ void KinematicAbinitio::set_default_options() {
 
 void KinematicAbinitio::replace_scorefxn( core::pose::Pose& pose, StageID stage, core::Real intra_stage_progress ) {
 	Parent::replace_scorefxn( pose, stage, intra_stage_progress );
-	scoring::ScoreFunction scorefxn( current_scorefxn() );
-	kinematics().add_score_weights( scorefxn, 1.0 * stage / 2.0 + intra_stage_progress * 0.2 );
-	current_scorefxn( scorefxn );
+	scoring::ScoreFunctionOP scorefxn( current_scorefxn().clone() );
+	kinematics().add_score_weights( *scorefxn, 1.0 * stage / 2.0 + intra_stage_progress * 0.2 );
+	current_scorefxn( *scorefxn );
 }
 
 bool
@@ -468,7 +468,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
   dump_jump_log( pose, "jumps.log");
 
 	if ( success && closure_protocol_ ) {
-		closure_protocol_->scorefxn( new scoring::ScoreFunction( current_scorefxn() ) );
+		closure_protocol_->scorefxn( current_scorefxn().clone() );
 		closure_protocol_->movemap( movemap() );
 		closure_protocol_->fragments( brute_move_small()->fragments() );
 		closure_protocol_->set_current_tag( get_current_tag() );

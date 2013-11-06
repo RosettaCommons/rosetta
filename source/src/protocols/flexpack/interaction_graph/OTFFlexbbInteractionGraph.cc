@@ -759,7 +759,7 @@ void
 OTFFlexbbInteractionGraph::set_scorefxn( ScoreFunction const & sfxn )
 {
 	assert( get_num_edges() == 0 );
-	sfxn_ = new ScoreFunction( sfxn );
+	sfxn_ = sfxn.clone();
 
 #ifdef DEBUG_OTF_FLEXBB_ENERGIES
 	using namespace core::scoring;

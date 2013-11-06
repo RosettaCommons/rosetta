@@ -116,8 +116,8 @@ LHRepulsiveRampLegacy::LHRepulsiveRampLegacy( loops::Loops loops_in,
         core::scoring::ScoreFunctionCOP dock_scorefxn,
         core::scoring::ScoreFunctionCOP pack_scorefxn ) : Mover() {
 	user_defined_ = true;
-	dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
-	pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
+	dock_scorefxn_ = dock_scorefxn->clone();
+	pack_scorefxn_ = pack_scorefxn->clone();
 
 	init(loops_in, false);
 }
@@ -126,8 +126,8 @@ LHRepulsiveRampLegacy::LHRepulsiveRampLegacy( AntibodyInfoOP antibody_in,
         core::scoring::ScoreFunctionCOP dock_scorefxn,
         core::scoring::ScoreFunctionCOP pack_scorefxn ) : Mover() {
 	user_defined_ = true;
-	dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
-	pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
+	dock_scorefxn_ = dock_scorefxn->clone();
+	pack_scorefxn_ = pack_scorefxn->clone();
 
 	init(*(antibody_in->get_AllCDRs_in_loopsop()),false);
 }
@@ -296,7 +296,7 @@ void LHRepulsiveRampLegacy::apply( pose::Pose & pose ) {
 
 
 	core::Real rep_ramp_step = (rep_weight_max - 0.02) / core::Real(rep_ramp_cycles_-1);
-	core::scoring::ScoreFunctionOP temp_scorefxn =new core::scoring::ScoreFunction( *dock_scorefxn_);
+	core::scoring::ScoreFunctionOP temp_scorefxn = dock_scorefxn_->clone();
 
 	for ( Size i = 1; i <= rep_ramp_cycles_; i++ ) {
 		core::Real rep_weight = 0.02 + rep_ramp_step * Real(i-1);

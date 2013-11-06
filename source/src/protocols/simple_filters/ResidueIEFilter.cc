@@ -41,7 +41,7 @@ ResidueIEFilterCreator::create_filter() const { return new ResidueIEFilter; }
 std::string
 ResidueIEFilterCreator::keyname() const { return "ResidueIE"; }
 
-ResidueIEFilter::ResidueIEFilter( 
+ResidueIEFilter::ResidueIEFilter(
 	utility::vector1< core::Size > const resnums,
 	std::string const restype,
 	core::scoring::ScoreFunctionCOP scorefxn,
@@ -53,7 +53,7 @@ ResidueIEFilter::ResidueIEFilter(
 	core::Real const interface_distance_cutoff,
 	core::Real max_penalty,
 	core::Real penalty_factor
-	) : 
+	) :
 	filters::Filter( "ResidueIE" ),
 	resnums_( resnums ),
 	restype_ (restype),
@@ -68,7 +68,7 @@ ResidueIEFilter::ResidueIEFilter(
 	{
 		using namespace core::scoring;
 
-		if( scorefxn ) scorefxn_ = new core::scoring::ScoreFunction( *scorefxn );
+		if( scorefxn ) scorefxn_ = scorefxn->clone();
 		if( score_type_ != total_score ) {
 			core::Real const old_weight( scorefxn_->get_weight( score_type_ ) );
 			scorefxn_->reset();
@@ -92,7 +92,7 @@ ResidueIEFilter::ResidueIEFilter( ResidueIEFilter const &init ) :
 	use_resE_ ( init.use_resE_ )
 {
 	using namespace core::scoring;
-	if( init.scorefxn_ ) scorefxn_ = new core::scoring::ScoreFunction( *init.scorefxn_ );
+	if( init.scorefxn_ ) scorefxn_ = init.scorefxn_->clone();
 }
 
 core::scoring::ScoreFunctionOP
@@ -179,12 +179,12 @@ ResidueIEFilter::apply( core::pose::Pose const & pose ) const
 	core::Real const penalty( compute( pose ) );
 	if (penalty>max_penalty_) return false;
 	return true;
-}	
+}
 
 
 
 void
-ResidueIEFilter::report( std::ostream & out, core::pose::Pose const & pose ) const 
+ResidueIEFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
 		core::Real const penalty( compute( pose ) );
 		out << "Total penalty for restype "<< restype_ << "is "<< penalty << std::endl;
@@ -242,7 +242,7 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
 		resnums_.clear();
 
     core::pose::Pose in_pose = pose;
-    for ( core::Size resnum = 1; resnum <= in_pose.total_residue(); ++resnum) 
+    for ( core::Size resnum = 1; resnum <= in_pose.total_residue(); ++resnum)
     {
       if ( in_pose.residue(resnum).is_protein()  && (in_pose.residue_type(resnum).name3() == restype_) ) resnums_.push_back( resnum );
     }
@@ -262,18 +262,18 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
 	(*scorefxn_)(in_pose);
 	core::Real penalty (0.0);
   EnergyMap const curr_weights = in_pose.energies().weights();
-  
+
 	if (resnums_.size() == 0) {
     tr << "No residues found. Skipping calculation."<< std::endl;
 
     return (0.0);
   }
-	
+
   foreach (core::Size const res, resnums_)
   {
 
 
-		core::Real res_intE (0.0); 
+		core::Real res_intE (0.0);
 
 		if (use_resE_)
     {
@@ -281,7 +281,7 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
 			res_intE = eprf.compute( pose );
 		}
 		else
-    {     
+    {
       core::Real res_intE_samechain (0.0);
       core::Real res_intE_differentchain (0.0);
 
@@ -310,17 +310,17 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
 
 		tr << "Residue "<< pose.residue_type( res ).name3()<<res<< " has an (interaction) energy "<< res_intE <<", threshold is "<< threshold_<<" and penalty is ";
 
-		if (res_intE > threshold_) 
+		if (res_intE > threshold_)
     {
 			penalty+= (res_intE - threshold_);
 			tr<< (res_intE - threshold_) << std::endl;
 		}
-		else 
+		else
     {
       tr << " 0"<<std::endl;
     }
 	} //foreach res
-	
+
 	return( penalty * penalty_factor_ );
 }
 

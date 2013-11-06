@@ -59,7 +59,7 @@ RefineOneCDRLoopCentroid::RefineOneCDRLoopCentroid( AntibodyInfoCOP antibody_inf
 RefineOneCDRLoopCentroid::RefineOneCDRLoopCentroid( AntibodyInfoCOP antibody_info,
         CDRNameEnum const & loop_name,
         core::scoring::ScoreFunctionCOP scorefxn) : Mover() {
-	lowres_scorefxn_ = new core::scoring::ScoreFunction(*scorefxn);
+	lowres_scorefxn_ = scorefxn->clone();
 	the_cdr_loop_ =  antibody_info->get_CDR_loop(loop_name);
 	set_default();
 }
@@ -72,7 +72,7 @@ RefineOneCDRLoopCentroid::RefineOneCDRLoopCentroid( loops::Loop const & a_cdr_lo
 
 RefineOneCDRLoopCentroid::RefineOneCDRLoopCentroid( loops::Loop const & a_cdr_loop,
         core::scoring::ScoreFunctionCOP scorefxn  ) : Mover() {
-	lowres_scorefxn_ = new core::scoring::ScoreFunction(*scorefxn);
+	lowres_scorefxn_ = scorefxn->clone();
 	the_cdr_loop_ = a_cdr_loop;
 	set_default();
 }
@@ -104,7 +104,7 @@ std::string RefineOneCDRLoopCentroid::get_name() const {
 }
 
 void RefineOneCDRLoopCentroid::set_score_function(core::scoring::ScoreFunctionCOP scorefxn) {
-	lowres_scorefxn_ = new core::scoring::ScoreFunction(*scorefxn);
+	lowres_scorefxn_ = scorefxn->clone();
 }
 
 

@@ -712,7 +712,7 @@ void HotspotStubSet::fill( core::pose::Pose const & reference_pose, core::scorin
 	// set up scorefxn's. DISABLE environment-dependent H-bonds
 	core::scoring::ScoreFunctionOP centroid_scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" ) );
 
-	core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction( *scorefxn_in );
+	core::scoring::ScoreFunctionOP scorefxn = scorefxn_in->clone();
 
 /*
 	core::scoring::ScoreFunctionOP noenvhbond_scorefxn( core::scoring::getScoreFunctionLegacy( "score13" ) );
@@ -1328,7 +1328,7 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 		}
 	}
 
-	TR << "Making hotspot constraints... "<< std::endl; 
+	TR << "Making hotspot constraints... "<< std::endl;
   //TR << pose.total_residue() << " residues" << std::endl;
 	//Size scaffold_seqpos(0);  // unused ~Labonte
 	for ( core::Size resnum=1; resnum <= pose.total_residue(); ++resnum ) {

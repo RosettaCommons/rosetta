@@ -93,10 +93,10 @@ public:
 		pack_mover->apply(pose);
 
 		//this tests that the mid-pose output has the correct scorefunction (meaning that it also includes chainbreak)
-		core::scoring::ScoreFunction score_fxn2 = *(core::scoring::getScoreFunction());
-		score_fxn2.set_weight( core::scoring::chainbreak, 2.0 );
-		(score_fxn2)(pose);
-		/// Now handled automatically.  score_fxn2.accumulate_residue_total_energies(pose);
+		core::scoring::ScoreFunctionOP score_fxn2 = core::scoring::getScoreFunction();
+		score_fxn2->set_weight( core::scoring::chainbreak, 2.0 );
+		(*score_fxn2)(pose);
+		/// Now handled automatically.  score_fxn2->accumulate_residue_total_energies(pose);
 
 		//this will show up in the intermediate output
 		job_me->add_string("somestuff");

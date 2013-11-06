@@ -161,8 +161,8 @@ ddGMover::ddGMover(
 	restrict_to_nbrhood_(false),
 	interface_ddg_(false),
 	scorefxn_(s),
-	min_cst_sfxn_( new core::scoring::ScoreFunction( *m )),
-	min_cst_sfxn_no_cst_weight_( new core::scoring::ScoreFunction( *m ) ),
+	min_cst_sfxn_( m->clone() ),
+	min_cst_sfxn_no_cst_weight_( m->clone() ),
 	cst_set_(new core::scoring::constraints::ConstraintSet()),
 	min_cst_set_wt_(new core::scoring::constraints::ConstraintSet()),
 	min_cst_wt_types_(),
@@ -508,19 +508,19 @@ ddGMover::minimize_with_constraints(
 
 	if (basic::options::option[OptionKeys::ddg::ramp_repulsive]()) {
 		//set scorefxn fa_rep to 1/10 of original weight and then minimize
-		ScoreFunction one_tenth_orig(*s);
-		//reduce_fa_rep(0.1,one_tenth_orig);
+		ScoreFunctionOP one_tenth_orig(s->clone());
+		//reduce_fa_rep(0.1,*one_tenth_orig);
 		//min_struc.run(p,mm,s,options);
 
-		one_tenth_orig.set_weight( core::scoring::fa_rep, s->get_weight(core::scoring::fa_rep)*0.1 );
-		min_struc.run(pose,mm,one_tenth_orig,options);
+		one_tenth_orig->set_weight( core::scoring::fa_rep, s->get_weight(core::scoring::fa_rep)*0.1 );
+		min_struc.run(pose,mm,*one_tenth_orig,options);
 
 		//then set scorefxn fa_rep to 1/3 of original weight and then minimize
-		ScoreFunction one_third_orig(*s);
-		//reduce_fa_rep(0.33,one_third_orig);
-		one_third_orig.set_weight( core::scoring::fa_rep, s->get_weight(core::scoring::fa_rep)*0.3333);
+		ScoreFunctionOP one_third_orig(s->clone());
+		//reduce_fa_rep(0.33,*one_third_orig);
+		one_third_orig->set_weight( core::scoring::fa_rep, s->get_weight(core::scoring::fa_rep)*0.3333);
 
-		min_struc.run(pose,mm,one_third_orig,options);
+		min_struc.run(pose,mm,*one_third_orig,options);
 		//then set scorefxn fa_rep to original weight and then minimize
 	}
 
@@ -540,18 +540,18 @@ ddGMover::minimize_with_constraints(
 
 		if ( basic::options::option[OptionKeys::ddg::ramp_repulsive]() ) {
 			//set scorefxn fa_rep to 1/10 of original weight and then minimize
-			ScoreFunction one_tenth_orig(*s);
-			//reduce_fa_rep(0.1,one_tenth_orig);
+			ScoreFunctionOP one_tenth_orig(s->clone());
+			//reduce_fa_rep(0.1,*one_tenth_orig);
 			//min_struc.run(p,mm,s,options);
 
-			one_tenth_orig.set_weight(core::scoring::fa_rep, s->get_weight(core::scoring::fa_rep)*0.1);
-			min_struc.run(pose,mm,one_tenth_orig,options);
+			one_tenth_orig->set_weight(core::scoring::fa_rep, s->get_weight(core::scoring::fa_rep)*0.1);
+			min_struc.run(pose,mm,*one_tenth_orig,options);
 
 			//then set scorefxn fa_rep to 1/3 of original weight and then minimize
-			ScoreFunction one_third_orig(*s);
-			//reduce_fa_rep(0.33,one_third_orig);
-			one_third_orig.set_weight(core::scoring::fa_rep, s->get_weight(core::scoring::fa_rep)*0.3333);
-			min_struc.run(pose,mm,one_third_orig,options);
+			ScoreFunctionOP one_third_orig(s->clone());
+			//reduce_fa_rep(0.33,*one_third_orig);
+			one_third_orig->set_weight(core::scoring::fa_rep, s->get_weight(core::scoring::fa_rep)*0.3333);
+			min_struc.run(pose,mm,*one_third_orig,options);
 		}
 		//then set scorefxn fa_rep to original weight and then minimize
 		min_struc.run(pose,mm,*s,options);
@@ -594,8 +594,8 @@ ddGMover::restrict_to_nbrs(bool truefalse){
 
 void
 ddGMover::set_minimization_score_function( core::scoring::ScoreFunctionOP s){
-	min_cst_sfxn_ = new core::scoring::ScoreFunction( *s );
-	min_cst_sfxn_no_cst_weight_ = new core::scoring::ScoreFunction( *s );
+	min_cst_sfxn_ = s->clone();
+	min_cst_sfxn_no_cst_weight_ = s->clone();
 }
 
 void

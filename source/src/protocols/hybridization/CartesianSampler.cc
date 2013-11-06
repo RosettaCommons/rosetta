@@ -386,7 +386,7 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 		mm_rb.set_jump ( true );
 
 		// scorefunctions
-		core::scoring::ScoreFunctionOP nonsymm_fa_scorefxn = new core::scoring::ScoreFunction(*fa_scorefxn_);
+		core::scoring::ScoreFunctionOP nonsymm_fa_scorefxn = core::scoring::symmetry::asymmetrize_scorefunction(*fa_scorefxn_);
 		if (nonsymm_fa_scorefxn->get_weight( core::scoring::elec_dens_fast ) == 0)
 			nonsymm_fa_scorefxn->set_weight( core::scoring::elec_dens_fast , 20 );
 		core::scoring::ScoreFunctionOP densonly = new core::scoring::ScoreFunction();

@@ -92,7 +92,7 @@ public: // tests
 
 		using namespace test_pose;
 
-		ScoreFunction scorefxn = *getScoreFunction();
+		ScoreFunctionOP scorefxn = getScoreFunction();
 
 		Pose * pose = new Pose;
 		core::import_pose::pose_from_pdb( *pose, "core/pose/pdbinfo_test_in.pdb" );
@@ -113,7 +113,7 @@ public: // tests
 		obs.g_count = 0;
 
 		// test EnergyEvent & GeneralEvent
-		scorefxn( *pose );
+		scorefxn->score( *pose );
 		TS_ASSERT_EQUALS( obs.count, 1 );
 		TS_ASSERT_EQUALS( obs.g_count, 1 );
 		obs.count = 0;
@@ -125,7 +125,7 @@ public: // tests
 		obs.count = 0;
 	}
 
-	void test_append_pose_by_jump() 
+	void test_append_pose_by_jump()
 	{
 		using namespace core::pose;
 

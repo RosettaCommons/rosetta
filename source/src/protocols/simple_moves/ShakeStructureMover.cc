@@ -380,12 +380,11 @@ ShakeStructureMover::get_name() const {
 	return "ShakeStructureMover";
 }
 
-core::scoring::ScoreFunction
+void
 ShakeStructureMover::reduce_fa_rep(float fraction_fa_rep, core::scoring::ScoreFunction & s){
 	s.set_weight(
 		core::scoring::score_type_from_name("fa_rep"),
 		s.get_weight(core::scoring::score_type_from_name("fa_rep"))*fraction_fa_rep);
-	return s;
 }
 
 void
@@ -444,12 +443,12 @@ ShakeStructureMover::minimize_with_constraints(core::pose::Pose & p,
 	mm.set_chi(true);
 
 	if(ramp_fa_rep){
-		core::scoring::ScoreFunction one_tenth_orig(s);
-		reduce_fa_rep(0.1,one_tenth_orig);
-		min_struc.run(p,mm,one_tenth_orig,options);
-		core::scoring::ScoreFunction one_third_orig(s);
-		reduce_fa_rep(0.33,one_third_orig);
-		min_struc.run(p,mm,one_third_orig,options);
+		core::scoring::ScoreFunctionOP one_tenth_orig(s.clone());
+		reduce_fa_rep(0.1,*one_tenth_orig);
+		min_struc.run(p,mm,*one_tenth_orig,options);
+		core::scoring::ScoreFunctionOP one_third_orig(s.clone());
+		reduce_fa_rep(0.33,*one_third_orig);
+		min_struc.run(p,mm,*one_third_orig,options);
 	}
 	min_struc.run(p,mm,s,options);
 

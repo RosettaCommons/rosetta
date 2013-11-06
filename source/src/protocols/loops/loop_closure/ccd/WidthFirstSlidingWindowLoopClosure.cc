@@ -169,10 +169,8 @@ WidthFirstSlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut
   Size good_loop_count( 0 );
   Size scored_frags_attempted( 0 );
 
-  scoring::ScoreFunctionOP frag_scorefxn = new scoring::ScoreFunction;
-
   //we need to move this into Base class ... right now it has effect to set scorefxn_ as well...
-  setup_frag_scorefxn( *frag_scorefxn );
+  scoring::ScoreFunctionOP frag_scorefxn = setup_frag_scorefxn();
   tr.Debug << "Trying loop-sizes: " << loop_ << std::endl;
   tr.Info << "---------------- LOOP SAMPLING based on this scorefunction: ----------------\n";
   if ( tr.Info.visible() ) frag_scorefxn->show( tr.Info, more_cut );

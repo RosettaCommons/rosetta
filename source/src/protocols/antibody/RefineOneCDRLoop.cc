@@ -74,7 +74,7 @@ RefineOneCDRLoop::RefineOneCDRLoop(AntibodyInfoOP antibody_info,
 	cdr_loop_name_ = h3;
 	ab_info_    = antibody_info;
 	refine_mode_  = refine_mode;
-	scorefxn_ = new scoring::ScoreFunction(*scorefxn);
+	scorefxn_ = scorefxn->clone();
 
 	init();
 }
@@ -89,7 +89,7 @@ RefineOneCDRLoop::RefineOneCDRLoop(AntibodyInfoOP antibody_info,
 	ab_info_    = antibody_info;
 	cdr_loop_name_ = cdr_loop_name;
 	refine_mode_  = refine_mode;
-	scorefxn_ = new scoring::ScoreFunction(*scorefxn);
+	scorefxn_ = scorefxn->clone();
 
 	init();
 }
@@ -138,7 +138,7 @@ std::string RefineOneCDRLoop::get_name() const {
 }
 
 void RefineOneCDRLoop::set_score_function(core::scoring::ScoreFunctionCOP scorefxn) {
-	scorefxn_ = new core::scoring::ScoreFunction(*scorefxn);
+	scorefxn_ = scorefxn->clone();
 }
 
 

@@ -88,7 +88,7 @@ FlexPepDockingAbInitio::FlexPepDockingAbInitio
   using namespace basic::options;
 
   // TODO: create a set_defaults() function
-  scorefxn_ = new core::scoring::ScoreFunction( *scorefxn_in );
+  scorefxn_ = scorefxn_in->clone();
 
   // Loop modeling options
   // NOTE: most LoopRelax options are initiated automatically from cmd-line

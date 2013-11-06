@@ -121,7 +121,7 @@ AlaScan::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap
 		return;
 	}
 	using namespace core::scoring;
-	scorefxn_ = new ScoreFunction( * protocols::rosetta_scripts::parse_score_function( tag, data ) );
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	TR<<"AlaScan with distance threshold of "<<distance_threshold_<<" Ang "<<". jump="<<jump_<<" partner1="<<chain1_<<", partner2="<<chain2_<<" using "<<repeats_<<" repeats repack "<<repack()<<std::endl;
 }
 

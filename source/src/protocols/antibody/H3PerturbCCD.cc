@@ -102,7 +102,7 @@ H3PerturbCCD::H3PerturbCCD( AntibodyInfoOP antibody_in,
                             core::scoring::ScoreFunctionCOP lowres_scorefxn ) : Mover() {
 	user_defined_ = true;
 	ab_info_=antibody_in;
-	lowres_scorefxn_ = new core::scoring::ScoreFunction(*lowres_scorefxn);
+	lowres_scorefxn_ = lowres_scorefxn->clone();
 
 	init();
 }

@@ -111,7 +111,7 @@ private:
 	bool testing_phase;
 
 protected:
-	  core::scoring::ScoreFunction
+		void
 		reduce_fa_rep(float fraction_fa_rep, core::scoring::ScoreFunction & s);
 
 	virtual void

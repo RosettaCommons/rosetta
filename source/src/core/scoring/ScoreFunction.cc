@@ -119,6 +119,14 @@ ScoreFunction::clone() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+ScoreFunctionOP
+ScoreFunction::clone_as_base_class() const
+{
+	ScoreFunctionOP new_score_function( new ScoreFunction( *this ) );
+	return new_score_function;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 /// @details reset function that can be called either independently or from default
 /// ScoreFunction creation
 void
@@ -419,6 +427,7 @@ ScoreFunction::set_method_weights(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// This method is private - not for general use (discards subclass information)
 ScoreFunction &
 ScoreFunction::operator=( ScoreFunction const & src )
 {
@@ -450,6 +459,7 @@ ScoreFunction::operator=( ScoreFunction const & src )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// This method is private - not for general use (discards subclass information)
 ScoreFunction::ScoreFunction( ScoreFunction const & src ):
 	ReferenceCount()
 {
@@ -474,7 +484,7 @@ ScoreFunction::show( std::ostream & out ) const
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-ScoreFunction::merge( const ScoreFunction scorefxn_to_be_merged )
+ScoreFunction::merge( const ScoreFunction & scorefxn_to_be_merged )
 {
 	for ( int i=1; i<= n_score_types; ++i ) {
 		core::Real the_weight;

@@ -59,6 +59,7 @@ static basic::Tracer tr("protocols.abinitio");
 
 using core::Real;
 using core::scoring::ScoreFunction;
+using core::scoring::ScoreFunctionOP;
 using core::scoring::methods::EnergyMethodOptions;
 using std::string;
 using namespace core;
@@ -267,9 +268,9 @@ void ConstraintFragmentSampler::set_max_seq_sep( pose::Pose& pose, core::Size se
         updated_options.cst_max_seq_sep(setting);
 
         // Replace the score function
-        ScoreFunction new_scorefxn(current_scorefxn());
-        new_scorefxn.set_energy_method_options(updated_options);
-        current_scorefxn(new_scorefxn);
+        ScoreFunctionOP new_scorefxn(current_scorefxn().clone());
+        new_scorefxn->set_energy_method_options(updated_options);
+        current_scorefxn(*new_scorefxn);
 			}
 
 			mc().reset(low_pose);
@@ -288,9 +289,9 @@ void ConstraintFragmentSampler::set_max_seq_sep( pose::Pose& pose, core::Size se
         updated_options.cst_max_seq_sep(setting);
 
         // Replace the score function
-        ScoreFunction new_scorefxn(current_scorefxn());
-        new_scorefxn.set_energy_method_options(updated_options);
-        current_scorefxn(new_scorefxn);
+        ScoreFunctionOP new_scorefxn(current_scorefxn().clone());
+        new_scorefxn->set_energy_method_options(updated_options);
+        current_scorefxn(*new_scorefxn);
 			}
 
 			mc().boltzmann(pose, "add_constraints");

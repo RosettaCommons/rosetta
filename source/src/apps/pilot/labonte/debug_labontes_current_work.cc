@@ -75,17 +75,17 @@ int main(int argc, char *argv[])
 			cout << pose.residue(i) << endl << endl;
 		}*/
 
-		//ScoreFunction sf = *getScoreFunction();
-		ScoreFunction sf = *ScoreFunctionFactory::create_score_function("mm_std");
+		//ScoreFunctionOP sf = getScoreFunction();
+		ScoreFunctionOP sf = ScoreFunctionFactory::create_score_function("mm_std");
 
-		cout << "Initial score: " << sf(pose) << endl;
+		cout << "Initial score: " << sf->score(pose) << endl;
 
 		//PackerTaskOP task = TaskFactory::create_packer_task(pose);
-		//PackRotamersMoverOP packer = new PackRotamersMover(&sf, task);
+		//PackRotamersMoverOP packer = new PackRotamersMover(sf, task);
 
 		//packer->apply(pose);
 
-		//cout << "Final score: " << sf(pose) << endl;
+		//cout << "Final score: " << sf->score(pose) << endl;
 
 		pose.dump_pdb("/home/labonte/Workspace/test_output/modified_sugar.pdb", "");
     } catch ( utility::excn::EXCN_Base const & e ) {

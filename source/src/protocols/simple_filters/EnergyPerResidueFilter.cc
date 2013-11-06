@@ -46,7 +46,7 @@ EnergyPerResidueFilterCreator::create_filter() const { return new EnergyPerResid
 std::string
 EnergyPerResidueFilterCreator::keyname() const { return "EnergyPerResidue"; }
 
-EnergyPerResidueFilter::EnergyPerResidueFilter( 
+EnergyPerResidueFilter::EnergyPerResidueFilter(
 	core::Size const resnum,
 	core::scoring::ScoreFunctionCOP scorefxn,
 	core::scoring::ScoreType const score_type,
@@ -58,7 +58,7 @@ EnergyPerResidueFilter::EnergyPerResidueFilter(
 	core::Size const rb_jump,
 	core::Real const interface_distance_cutoff,
 	bool const bb_bb
-	) : 
+	) :
 	filters::Filter( "EnergyPerResidue" ),
 	resnum_( resnum ),
 	score_type_( score_type ),
@@ -73,7 +73,7 @@ EnergyPerResidueFilter::EnergyPerResidueFilter(
 	{
 		using namespace core::scoring;
 
-		if( scorefxn ) scorefxn_ = new core::scoring::ScoreFunction( *scorefxn );
+		if( scorefxn ) scorefxn_ = scorefxn->clone();
 		if( score_type_ != total_score ) {
 			core::Real const old_weight( scorefxn_->get_weight( score_type_ ) );
 			scorefxn_->reset();
@@ -95,7 +95,7 @@ EnergyPerResidueFilter::EnergyPerResidueFilter( EnergyPerResidueFilter const &in
 	bb_bb_ ( init.bb_bb_ )
 {
 	using namespace core::scoring;
-	if( init.scorefxn_ ) scorefxn_ = new core::scoring::ScoreFunction( *init.scorefxn_ );
+	if( init.scorefxn_ ) scorefxn_ = init.scorefxn_->clone();
 }
 
 core::scoring::ScoreFunctionOP
@@ -163,18 +163,18 @@ EnergyPerResidueFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::dat
 	rb_jump_ = tag->getOption<core::Size>( "jump_number", 1 );
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_distance_cutoff" , 8.0 );
 	bb_bb_ = tag->getOption< bool >("bb_bb", false );
-	
+
 	if (whole_interface_) {
 		resnum_ = 1;
 		energy_per_residue_filter_tracer<<"energies for all interface residues with a distance cutoff of "
-		<< interface_distance_cutoff_ << " A will be calculated " 
-		<< "jump_number is set to "<< rb_jump_ 
+		<< interface_distance_cutoff_ << " A will be calculated "
+		<< "jump_number is set to "<< rb_jump_
 		<< " and scorefxn " << rosetta_scripts::get_score_function_name(tag) <<" will be used" <<std::endl;
 	}
 
   if ( whole_protein_) {
 		resnum_ = 1;
-	} 
+	}
 
 	if ( tag->hasOption( "resnums" ) ) {
 		select_resnums_=true;
@@ -212,7 +212,7 @@ EnergyPerResidueFilter::apply( core::pose::Pose const & pose ) const
       interface_obj.distance( interface_distance_cutoff_ );
       interface_obj.calculate( in_pose );
       (*scorefxn_)( in_pose );
-			
+
 			bool pass;
 			core::Real energy=0;
 			for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid) {
@@ -230,7 +230,7 @@ EnergyPerResidueFilter::apply( core::pose::Pose const & pose ) const
 			return pass;
 			}
 
-	} 
+	}
    if ( whole_protein_ ) {
       energy_per_residue_filter_tracer<<"computing all energies" << std::endl;
 			bool pass;
@@ -248,7 +248,7 @@ EnergyPerResidueFilter::apply( core::pose::Pose const & pose ) const
 			}
 
       return pass;
-	} 
+	}
 
 	if ( select_resnums_ ) {
   energy_per_residue_filter_tracer<<"computing energies for a set of residues" << std::endl;
@@ -343,7 +343,7 @@ EnergyPerResidueFilter::report( std::ostream & out, core::pose::Pose const & pos
 
 			}
 		}
-	} 
+	}
 
   if ( whole_protein_ ) {
     core::pose::Pose in_pose = pose;
@@ -354,7 +354,7 @@ EnergyPerResidueFilter::report( std::ostream & out, core::pose::Pose const & pos
          energy= compute( pose ,resid ) ;
          energy_per_residue_filter_tracer<<"Scoretype "<<name_from_score_type( score_type_ )<<" for residue: " << pose.pdb_info()->number(resid)<<" " <<pose.residue( resid ).name3() <<" is "<<energy<<std::endl;
      }
-	} 
+	}
 
 
   if ( select_resnums_ ) {
@@ -408,7 +408,7 @@ EnergyPerResidueFilter::report_sm( core::pose::Pose const & pose ) const
 					}
     }
     energy=ind_energy/num_res;
-	} 
+	}
 
 	if ( whole_protein_ ) {
       core::Real ind_energy=0;
@@ -438,7 +438,7 @@ EnergyPerResidueFilter::report_sm( core::pose::Pose const & pose ) const
   energy=ind_energy/num_res;
   }
 
-   
+
 	if (!whole_interface_ && !whole_protein_ && !select_resnums_) {
 		energy=compute( pose, resnum_ );
   }
@@ -472,7 +472,7 @@ EnergyPerResidueFilter::compute( core::pose::Pose const & pose , core::Size cons
 	core::Real weighted_score;
 	if( score_type_ == total_score ) weighted_score = in_pose.energies().residue_total_energies( resid )[ ScoreType( score_type_ )];
 	else {
-		
+
 		if( bb_bb_ ){
 			energy_per_residue_filter_tracer << "decomposing bb hydrogen bond terms" << std::endl;
     	core::scoring::methods::EnergyMethodOptionsOP energy_options(new core::scoring::methods::EnergyMethodOptions(scorefxn_->energy_method_options()));
@@ -528,6 +528,6 @@ EnergyPerResidueFilter::compute( core::pose::Pose const & pose ) const
   }
   return( weighted_score );
 }
-	
+
 }
 }

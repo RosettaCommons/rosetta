@@ -760,9 +760,9 @@ void ClassicAbinitio::current_scorefxn( scoring::ScoreFunction const& scorefxn )
 
 //@brief set individual weight of current scorefunction --- does not change the predefined scores: score_stageX_
 void ClassicAbinitio::set_current_weight( core::scoring::ScoreType type, core::Real setting ) {
-	scoring::ScoreFunction scorefxn ( mc().score_function() );
-	scorefxn.set_weight( type, setting );
-	mc().score_function( scorefxn ); //trigger rescore
+	scoring::ScoreFunctionOP scorefxn ( mc().score_function().clone() );
+	scorefxn->set_weight( type, setting );
+	mc().score_function( *scorefxn ); //trigger rescore
 }
 
 void ClassicAbinitio::set_default_options() {
@@ -999,7 +999,7 @@ bool ClassicAbinitio::do_stage4_cycles( pose::Pose &pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( option[corrections::score::cenrot]() ) nloop_stage4=2; 
+	if ( option[corrections::score::cenrot]() ) nloop_stage4=2;
 
 	for ( Size kk = 1; kk <= nloop_stage4; ++kk ) {
 		tr.Debug << "prepare ..." << std::endl ;

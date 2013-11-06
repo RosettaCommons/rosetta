@@ -72,11 +72,11 @@ public:
 	void set_default();
 
 	void set_dock_score_func(scoring::ScoreFunctionCOP dock_scorefxn ) {
-		dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
+		dock_scorefxn_ = dock_scorefxn->clone();
 	}
 
 	void set_pack_score_func(scoring::ScoreFunctionCOP pack_scorefxn) {
-		pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
+		pack_scorefxn_ = pack_scorefxn->clone();
 	}
 
 	virtual void apply( core::pose::Pose & pose );

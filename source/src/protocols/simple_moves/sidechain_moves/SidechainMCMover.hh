@@ -126,10 +126,10 @@ public:
 
 	void
 	set_scorefunction( core::scoring::ScoreFunction const & sfxn ){
-		sfxn_ = sfxn;
+		sfxn_ = sfxn.clone();
 	}
 
-	core::scoring::ScoreFunction &
+	core::scoring::ScoreFunctionCOP
 	scorefunction(){
 		return sfxn_;
 	}
@@ -199,7 +199,7 @@ private:
 	core::Size ntrials_;
 	core::Real best_energy_;
 	core::Real current_energy_;
-	core::scoring::ScoreFunction sfxn_;
+	core::scoring::ScoreFunctionOP sfxn_;
 	bool inherit_scorefxn_temperature_;
 	core::pack::interaction_graph::SimpleInteractionGraphOP ig_;
 	core::Real accepts_;

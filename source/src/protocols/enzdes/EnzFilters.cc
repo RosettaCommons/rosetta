@@ -292,7 +292,7 @@ LigInterfaceEnergyFilter::LigInterfaceEnergyFilter( core::scoring::ScoreFunction
 
 		using namespace core::scoring;
 
-		if( scorefxn ) scorefxn_ = new core::scoring::ScoreFunction( *scorefxn );
+		if( scorefxn ) scorefxn_ = scorefxn->clone();
 		if (!include_cstE) enzutil::enable_constraint_scoreterms( scorefxn_);
 	}
 
@@ -301,7 +301,7 @@ LigInterfaceEnergyFilter::LigInterfaceEnergyFilter( core::scoring::ScoreFunction
 	Filter( init ), threshold_( init.threshold_ ),
 	include_cstE_ (init.include_cstE_), rb_jump_ (init.rb_jump_), interface_distance_cutoff_ ( init.interface_distance_cutoff_){
 		using namespace core::scoring;
-		if( init.scorefxn_ ) scorefxn_ = new core::scoring::ScoreFunction( *init.scorefxn_ );
+		if( init.scorefxn_ ) scorefxn_ = init.scorefxn_->clone();
 	}
 
 
@@ -447,9 +447,9 @@ void LigInterfaceEnergyFilter::parse_def( utility::lua::LuaObject const & def,
   using namespace core::scoring;
 
 	if( def["scorefxn"] ) {
-		scorefxn_ = new ScoreFunction( *(protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns ) ) );
+		scorefxn_ = protocols::elscripts::parse_scoredef( def["scorefxn"], score_fxns )->clone();
 	} else {
-		scorefxn_ = new ScoreFunction( *(score_fxns["score12"].to<ScoreFunctionSP>()) );
+		scorefxn_ = score_fxns["score12"].to<ScoreFunctionSP>()->clone();
 	}
   threshold_ = def["threshold"] ? def["threshold"].to<core::Real>() : 0.0;
   include_cstE_ = def["include_cstE"] ? def["include_cstE"].to<bool>() : false;
@@ -463,7 +463,7 @@ EnzScoreFilter::EnzScoreFilter( core::Size const resnum, std::string const cstid
 
     using namespace core::scoring;
 
-    if( scorefxn ) scorefxn_ = new core::scoring::ScoreFunction( *scorefxn );
+    if( scorefxn ) scorefxn_ = scorefxn->clone();
 		//if(score_type_ == total_score || is_cstE_ ) enzutil::enable_constraint_scoreterms(scorefxn_);
     if( score_type_ != total_score ) {
       core::Real const old_weight( scorefxn_->get_weight( score_type_ ) );
@@ -477,7 +477,7 @@ EnzScoreFilter::EnzScoreFilter( core::Size const resnum, std::string const cstid
 	Filter( init ), resnum_( init.resnum_ ), cstid_( init.cstid_ ),score_type_( init.score_type_ ), threshold_( init.threshold_ ),
   whole_pose_ (init.whole_pose_), is_cstE_ ( init.is_cstE_ ) {
     using namespace core::scoring;
-    if( init.scorefxn_ ) scorefxn_ = new core::scoring::ScoreFunction( *init.scorefxn_ );
+    if( init.scorefxn_ ) scorefxn_ = init.scorefxn_->clone();
   }
 
 bool

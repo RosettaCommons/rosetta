@@ -153,7 +153,7 @@ LoopRemodel::LoopRemodel(
 	hurry_( hurry )
 {
 	hires_score_ = hires_score;
-	lores_score_ = new core::scoring::ScoreFunction( *lores_score );
+	lores_score_ = lores_score->clone();
 	loops_ = new protocols::loops::Loops( *loops );
 	frag1_ = new core::fragment::ConstantLengthFragSet( *frag1 );
 	frag3_ = new core::fragment::ConstantLengthFragSet( *frag3 );
@@ -229,7 +229,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 
 				(*hires_score_)(pose); // score the pose (for safety & to get a good graph state)
 				// repack to relieve clashes
-				
+
 				if( prevent_repacking().size() ){
 					using namespace core::pack::task::operation;
 					OperateOnCertainResiduesOP prevent_repacking_on_certain_res = new OperateOnCertainResidues;
@@ -258,7 +258,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 
 				if( refine_ ) {
 					loops_set_move_map( pose, *loops, refine_, *movemap ); // bb, except for omega and all sidechains
-					core::scoring::ScoreFunctionOP copy_score( new core::scoring::ScoreFunction( *hires_score_ ) );
+					core::scoring::ScoreFunctionOP copy_score( hires_score_->clone() );
 					copy_score->set_weight( core::scoring::chainbreak, 10.0 ); // upweight chainbreak, to strongly disfavor breaks
 					copy_score->set_weight( core::scoring::omega, 0.5 ); // omega term to keep backbone healthy
 					protocols::simple_moves::MinMoverOP minmover( new protocols::simple_moves::MinMover( movemap, copy_score, "dfpmin", 1e-5, true) ); // DJM has reported better results with dfpmin

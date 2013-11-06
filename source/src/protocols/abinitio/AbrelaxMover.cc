@@ -306,7 +306,7 @@ void AbrelaxMover::apply( pose::Pose &pose ) {
 			// No ? Then evidently we havn't even tried yet
 			tr << "AbrelaxMover: start loops" << std::endl;
 			kinematics::MoveMapOP movemap = new kinematics::MoveMap;
-			closure_protocol()->scorefxn( new scoring::ScoreFunction( sampling_protocol()->current_scorefxn() ) );
+			closure_protocol()->scorefxn( sampling_protocol()->current_scorefxn().clone() );
 			closure_protocol()->fragments( topology_broker()->loop_frags( *movemap ) ); //get frags and movemap from broker
 			closure_protocol()->movemap( movemap ); //this is the movemap sanctioned by the broker ... see line above
 

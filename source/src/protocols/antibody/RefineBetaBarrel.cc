@@ -62,8 +62,8 @@ RefineBetaBarrel::RefineBetaBarrel(AntibodyInfoOP antibody_info,
                                    core::scoring::ScoreFunctionCOP pack_scorefxn) : Mover() {
 	user_defined_ = true;
 	ab_info_ = antibody_info;
-	dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
-	pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
+	dock_scorefxn_ = dock_scorefxn->clone();
+	pack_scorefxn_ = pack_scorefxn->clone();
 
 	init();
 }
@@ -199,11 +199,11 @@ void RefineBetaBarrel::set_task_factory(core::pack::task::TaskFactoryCOP tf) {
 }
 
 void RefineBetaBarrel::set_dock_score_func(core::scoring::ScoreFunctionCOP dock_scorefxn ) {
-	dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
+	dock_scorefxn_ = dock_scorefxn->clone();
 }
 
 void RefineBetaBarrel::set_pack_score_func(core::scoring::ScoreFunctionCOP pack_scorefxn) {
-	pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
+	pack_scorefxn_ = pack_scorefxn->clone();
 }
 
 

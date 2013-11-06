@@ -217,19 +217,19 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 
 		if(basic::options::option[OptionKeys::ddg::ramp_repulsive]()){
 			//set scorefxn fa_rep to 1/10 of original weight and then minimize
-			ScoreFunction one_tenth_orig(s);
-			reduce_fa_rep(0.1,one_tenth_orig);
+			ScoreFunctionOP one_tenth_orig(s.clone());
+			reduce_fa_rep(0.1,*one_tenth_orig);
 			//min_struc.run(p,mm,s,options);
-			min_struc.run(p,mm,one_tenth_orig,options);
+			min_struc.run(p,mm,*one_tenth_orig,options);
 			std::cout << "one tenth repulsive fa_rep score-function" << std::endl;
-			one_tenth_orig.show(std::cout, p);
+			one_tenth_orig->show(std::cout, p);
 
 			//then set scorefxn fa_rep to 1/3 of original weight and then minimize
-			ScoreFunction one_third_orig(s);
-			reduce_fa_rep(0.33,one_third_orig);
-			min_struc.run(p,mm,one_third_orig,options);
+			ScoreFunctionOP one_third_orig(s.clone());
+			reduce_fa_rep(0.33,*one_third_orig);
+			min_struc.run(p,mm,*one_third_orig,options);
 			std::cout << "one third repulsive fa_rep score-function" << std::endl;
-			one_third_orig.show(std::cout, p);
+			one_third_orig->show(std::cout, p);
 			//then set scorefxn fa_rep to original weight and then minimize
 		}
 		pose::Pose before(p);
@@ -389,7 +389,7 @@ main( int argc, char* argv [] )
 			//then minimize
 		}
 	}
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
+	 } catch ( utility::excn::EXCN_Base const & e ) {
 		 std::cout << "caught exception " << e.msg() << std::endl;
 	}
 }

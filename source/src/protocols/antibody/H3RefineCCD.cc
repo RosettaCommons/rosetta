@@ -89,7 +89,7 @@ H3RefineCCD::H3RefineCCD(AntibodyInfoOP antibody_info,
 	user_defined_ = true;
 	ab_info_    = antibody_info;
 	loop_name_  = loop_name;
-	highres_scorefxn_ = new scoring::ScoreFunction(*highres_scorefxn);
+	highres_scorefxn_ = highres_scorefxn->clone();
 
 	init();
 }

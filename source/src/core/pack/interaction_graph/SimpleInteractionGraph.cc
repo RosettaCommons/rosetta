@@ -328,7 +328,7 @@ SimpleEdge::SimpleEdge( Graph* owner, Size res1, Size res2 ):
 	Edge( owner, res1, res2 ),
 	long_range_energies_exist_( false ),
 	current_energy_(0),
-	proposed_energy_(0)	
+	proposed_energy_(0)
 {
 	// compute_energy();
 	for ( Size ii = 0; ii < 3; ++ii ) {
@@ -533,7 +533,7 @@ SimpleInteractionGraph::~SimpleInteractionGraph() {}
 
 void SimpleInteractionGraph::set_scorefunction( ScoreFunction const & sfxn )
 {
-	sfxn_ = new scoring::ScoreFunction( sfxn );
+	sfxn_ = sfxn.clone();
 }
 
 //set up all nodes of graph
@@ -566,7 +566,7 @@ SimpleInteractionGraph::initialize( pose::Pose const & pose){
 				} else {
 					/// NOOOOO SimpleEdge* newedge( new SimpleEdge( this, jj, ii ) ); //automatically adds edge upon creation
 					/// Edges should only be added to a graph using the "add_edge" method.
-					
+
 					SimpleEdge * newedge = static_cast< SimpleEdge * > ( add_edge( jj, ii ));
 					newedge->compute_energy( true, true );
 					//TR.Debug << "DEBUG2 these two residues are neighbors " << ii << " " << jj << std::endl;

@@ -135,7 +135,7 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> revert_pos, utili
 		task->nonconst_residue_task(revert_pos[ipos]).restrict_absent_canonical_aas(allowed_aas);
 		task->nonconst_residue_task(revert_pos[ipos]).initialize_from_command_line();
 		allowed_aas[aa_from_name(aa_name)] = false;
-	}	
+	}
 
   // Actually perform design
 	make_symmetric_PackerTask_by_truncation(pose, task);
@@ -231,14 +231,14 @@ minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, boo
    movemap->set_jump(false);
    movemap->set_bb(false);
    movemap->set_chi(false);
- 
+
    // Set allowable move types at interface positions
    // Currently, only sc moves allowed
    for (utility::vector1<Size>::iterator i = design_pos.begin(); i != design_pos.end(); i++) {
      movemap->set_bb (*i, move_bb);
      movemap->set_chi(*i, move_sc);
    }
- 
+
    // Make MoveMap symmetric, apply it to minimize the pose
    core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
    protocols::simple_moves::symmetry::SymMinMover m1( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
@@ -250,11 +250,11 @@ minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, boo
  	  protocols::simple_moves::symmetry::SymMinMover m2( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 		m2.apply(pose);
 	}
-} 
+}
 
 utility::vector1<Real>
 sidechain_sasa(Pose const & pose, Real probe_radius) {
-  using core::id::AtomID; 
+  using core::id::AtomID;
   utility::vector1<Real> rsd_sasa(pose.n_residue(),0.0);
   core::id::AtomID_Map<Real> atom_sasa;
   core::id::AtomID_Map<bool> atom_mask;
@@ -264,7 +264,7 @@ sidechain_sasa(Pose const & pose, Real probe_radius) {
     for(Size j = 1; j <= pose.residue(i).nheavyatoms(); j++) {
       atom_mask[AtomID(j,i)] = true;
     }
-  } 
+  }
   core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false, atom_mask );
   utility::vector1<Real> sc_sasa(pose.n_residue(),0.0);
   for(Size i = 1; i <= pose.n_residue(); i++) {
@@ -288,7 +288,7 @@ new_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc) 
 	scc.Init();
 
 	// Figure out which chains touch chain A, and add the residues from those chains
-	// into the sc surface objects	
+	// into the sc surface objects
 	Size nres_monomer = symm_info->num_independent_residues();
 	for (Size i=1; i<=nres_monomer; ++i) {
 		scc.AddResidue(0, pose.residue(i));
@@ -323,9 +323,9 @@ newer_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc
   core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
   core::scoring::sc::ShapeComplementarityCalculator scc;
   scc.Init();
-  
+
   // Figure out which chains touch chain A, and add the residues from those chains
-  // into the sc surface objects  
+  // into the sc surface objects
   Size nres_monomer = symm_info->num_independent_residues();
   for (Size i=1; i<=nres_monomer; ++i) {
     scc.AddResidue(0, pose.residue(i));
@@ -508,15 +508,15 @@ void
 	using namespace scoring;
 	using namespace utility;
 	using basic::options::option;
-	
+
 	chemical::ResidueTypeSetCAP resi_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
-	core::io::silent::SilentFileData sfd;	
+	core::io::silent::SilentFileData sfd;
 
 	// Iterate through files
 	utility::vector1<std::string> files = option[in::file::s]();
 	for(Size ifile = 1; ifile <= files.size(); ++ifile) {
 		std::string file = files[ifile];
-		
+
 		// Read in pose
 		Pose pose;
 		import_pose::pose_from_pdb(pose, file, resi_set);
@@ -544,7 +544,7 @@ void
 	 	}
 
     // Define which subs are part of the oligomeric building block.
-    Sizes intra_subs; 
+    Sizes intra_subs;
     if (!option[matdes::num_subs_building_block].user()) {
       utility_exit_with_message("ERROR: You have not set the required option -matdes::num_subs_building_block");
     } else {
@@ -592,8 +592,8 @@ void
 			utility::vector1<std::string> mutalyze_ids;
 		  for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
 				mutalyze_ids.push_back(pose.residue(mutalyze_pos[ipos]).name3());
-		  }	
-	
+		  }
+
 			// Repack and minimize using scorefxn
 			// repack(pose, scorefxn, mutalyze_pos);
 			bool min_rb = option[matdes::mutalyze::min_rb]();
@@ -613,13 +613,13 @@ void
 
 			// Calculate the AverageDegree of the designed positions
 			Real avg_deg = average_degree(pose, mutalyze_pos, intra_subs.size());
-	
+
 	    // Calculate the change in SASA upon complex formation
 	    Real bound_sasa = core::scoring::calc_total_sasa(pose, 1.4);
   	  Pose unbound_pose;
 			if (intra_subs.size() == 1) {
 				core::pose::symmetry::extract_asymmetric_unit(pose, unbound_pose);
-				ScoreFunctionOP scorefxnasymm( new ScoreFunction( *scorefxn ) );
+				ScoreFunctionOP scorefxnasymm( core::scoring::symmetry::asymmetrize_scorefunction(scorefxn) );
 				(*scorefxnasymm)(unbound_pose);
 			} else {
 				//fpd if there is ever a way to extract a symmetric subpose (e.g. trimer from tetrahedron)
@@ -639,7 +639,7 @@ void
 	    // Calculate the Boltzmann probability for the rotamer at each designed position
 			if (option[matdes::mutalyze::calc_rot_boltz]() == 1) {
 				if (intra_subs.size() == 1) {
-					ScoreFunctionOP scorefxnasymm( new ScoreFunction( *scorefxn ) );
+					ScoreFunctionOP scorefxnasymm(  core::scoring::symmetry::asymmetrize_scorefunction(scorefxn) );
 					(*scorefxnasymm)(unbound_pose);
 					for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
 						protocols::simple_filters::RotamerBoltzmannWeight rbc = protocols::simple_filters::RotamerBoltzmannWeight();
@@ -657,14 +657,14 @@ void
 					}
 				}
 			}
-	
+
 	    // Calculate the surface area and surface complementarity for the interface
 	    Real int_area = 0; Real sc = 0;
 	    newer_sc(pose, intra_subs, int_area, sc);
-	
+
 	    // Get the packing score
 	    Real packing = get_atom_packing_score(pose, intra_subs, 9.0);
-	
+
 			// Calculate per-residue energies for interface residues
 			Real interface_energy = 0;
 			core::scoring::EnergyMap em;
@@ -681,7 +681,7 @@ void
 			avg_interface_energy = interface_energy / mutalyze_pos.size();
 			// Multiply those energies by the weights
 			em *= scorefxn->weights();
-	
+
 			// Calculate the ddG of the monomer in the assembled and unassembled states
 	   	protocols::simple_moves::ddG ddG_mover2 = protocols::simple_moves::ddG(scorefxn, 1, true);
 			Real avg_ddG = 0;
@@ -709,7 +709,7 @@ void
 			ss_out->add_energy("sasa_int_area", buried_sasa);
 			ss_out->add_energy("sc_int_area", int_area);
 			ss_out->add_energy("sc", sc);
-	
+
 			// Write the scorefile
 			sfd.write_silent_struct( *ss_out, option[out::file::o]() + "/" + option[ out::file::silent ]() );
 
@@ -728,7 +728,7 @@ void
 					} else {
 						id.push_back("ALA");
 					}
-	
+
 					// Design
 					design(pose_for_ala_scan, scorefxn, pos, id);
 
@@ -782,7 +782,7 @@ void
       }
 
 		} // for iconfig in radial_disps
-			
+
 	} // ifile
 
 	return NULL;

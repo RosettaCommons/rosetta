@@ -69,7 +69,7 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 	using namespace core::optimization::symmetry;
 
 	// create two scorefunctions, one experimental only, one rosetta only
-	core::scoring::ScoreFunctionOP rosetta_scorefxn = new core::scoring::ScoreFunction(scorefxn);//core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP rosetta_scorefxn = scorefxn.clone(); //core::scoring::getScoreFunction();
 	core::scoring::ScoreFunctionOP xtal_scorefxn = new core::scoring::ScoreFunction();
 
 	rosetta_scorefxn->set_weight( core::scoring::xtal_ml, 0.0 );
@@ -86,7 +86,7 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 		// symmetrize scorefunct & movemap
-		rosetta_scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( *rosetta_scorefxn ) ); 
+		rosetta_scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( *rosetta_scorefxn ) );
 		xtal_scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( *xtal_scorefxn ) );
 		core::pose::symmetry::make_symmetric_movemap( pose, move_map );
 
@@ -122,14 +122,14 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 		// 			rosetta_scorefxn->setup_for_minimizing( pose, min_map );
 		// 			BrentLineMinimization test_brent( f_ros, vars.size() );
 		// 			core::Real newval = test_brent( vars, dEros_dvars );
-		// 		
+		//
 		// 			f_ros.dfunc( vars, dEros_dvars );
-		// 	
+		//
 		// 			min_map.copy_dofs_to_pose( pose, vars );
 		// 			(*xtal_scorefxn)(pose);  // score pose first
 		// 			xtal_scorefxn->setup_for_minimizing( pose, min_map );
 		// 			f_xtal.dfunc( vars, dExtal_dvars );
-		// 		
+		//
 		// 			// sum
 		// 			grad2_xtal = grad2_ros = 0;
 		// 			for (int i=1; i<=(int)vars.size(); ++i) {
@@ -137,10 +137,10 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 		// 				grad2_ros += dEros_dvars[ i ]*dEros_dvars[ i ];
 		// 			}
 		// 		}
-		// 	
+		//
 		// 		core::Real w_xtal2 = (grad2_xtal != 0) ?  1 * sqrt( grad2_ros / grad2_xtal ) : 1;
 		// 		std::cerr << " w2 = " << w_xtal2 << " = sqrt( " << grad2_ros << " / " << grad2_xtal << " )" << std::endl;
-		// 	
+		//
 		// 		return 0.5*(w_xtal1+w_xtal2);
 	} else {
 		// compute gradients using both scorefunctions
@@ -171,9 +171,9 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 		} else {
 			w_xtal = 1;
 		}
-	
+
 		TS << " Gradient ratio = " << w_xtal << " = sqrt( " << grad2_ros << " / " << grad2_xtal << " )" << std::endl;
-	
+
 		return w_xtal;
 	}
 }
@@ -198,7 +198,7 @@ core::Real getMLweight_cart( core::scoring::ScoreFunction & scorefxn, core::pose
 	using namespace core::optimization::symmetry;
 
 	// create two scorefunctions, one experimental only, one rosetta only
-	core::scoring::ScoreFunctionOP rosetta_scorefxn  = new core::scoring::ScoreFunction(scorefxn);//core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP rosetta_scorefxn  = scorefxn.clone();//core::scoring::getScoreFunction();
 	core::scoring::ScoreFunctionOP xtal_scorefxn = new core::scoring::ScoreFunction();
 
 	rosetta_scorefxn->set_weight( core::scoring::xtal_ml, 0.0 );
@@ -216,7 +216,7 @@ core::Real getMLweight_cart( core::scoring::ScoreFunction & scorefxn, core::pose
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 		// symmetrize scorefunct & movemap
-		rosetta_scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( *rosetta_scorefxn ) ); 
+		rosetta_scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( *rosetta_scorefxn ) );
 		xtal_scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( *xtal_scorefxn ) );
 		core::pose::symmetry::make_symmetric_movemap( pose, move_map );
 	}

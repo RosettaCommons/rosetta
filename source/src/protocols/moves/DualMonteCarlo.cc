@@ -53,7 +53,7 @@ DualMonteCarlo::DualMonteCarlo(
 {
 	last_accepted_pose_ = new core::pose::Pose();
 	lowest_score_pose_ = new core::pose::Pose();
-	score_function_ = new core::scoring::ScoreFunction(DMC_scorefunction);
+	score_function_ = DMC_scorefunction.clone();
 	reset( DMC_pose, MC_pose );
 }
 

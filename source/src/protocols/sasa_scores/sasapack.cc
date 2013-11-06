@@ -21,6 +21,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
@@ -369,7 +370,7 @@ compute_avge_scores(
 		if ( pose::symmetry::is_symmetric( *fa_scorefxn ) ) {
 			/// seems like residue energies may be messed up in the symmetric case, for intra-monomer interactions
 			///
-			fa_scorefxn = new ScoreFunction( *fa_scorefxn );
+			fa_scorefxn = scoring::symmetry::asymmetrize_scorefunction( *fa_scorefxn );
 			runtime_assert( !pose::symmetry::is_symmetric( *fa_scorefxn ) );
 		}
 	}

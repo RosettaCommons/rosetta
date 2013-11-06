@@ -220,8 +220,8 @@ SlidingWindowLoopClosure::determine_loop( Pose const& more_cut, Pose& less_cut )
 }
 
 
-void
-SlidingWindowLoopClosure::setup_frag_scorefxn( scoring::ScoreFunction& scorefxn ) {
+core::scoring::ScoreFunctionOP
+SlidingWindowLoopClosure::setup_frag_scorefxn() {
   using namespace scoring;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -237,7 +237,8 @@ SlidingWindowLoopClosure::setup_frag_scorefxn( scoring::ScoreFunction& scorefxn 
 	if ( option[ OptionKeys::fast_loops::fragsample_patch ].user() ) {
 		score_tmp_->apply_patch_from_file( option[ OptionKeys::fast_loops::fragsample_patch ] );
 	}
-	scorefxn = *score_tmp_;
+
+	// We will be returning score_tmp_ after we setup the scorefxn_ member variable
 
 	tr.Debug << " get filter scorefunction... " << std::endl;
 	if ( option[ OptionKeys::fast_loops::overwrite_filter_scorefxn ].user() ) {
@@ -264,6 +265,8 @@ SlidingWindowLoopClosure::setup_frag_scorefxn( scoring::ScoreFunction& scorefxn 
 		filter_cst_ = new constraints_additional::ConstraintEvaluator( "filter_loops", option[ OptionKeys::fast_loops::filter_cst_file ]() );
 		filter_cst_weight_ = option[ OptionKeys::fast_loops::filter_cst_weight ]();
 	}
+
+	return score_tmp_;
 }
 
 void SlidingWindowLoopClosure::apply( Pose& more_cut ) {
@@ -295,8 +298,7 @@ SlidingWindowLoopClosure::apply( Pose& more_cut, Pose& less_cut ) {
 
 
 
-  scoring::ScoreFunctionOP frag_scorefxn = new scoring::ScoreFunction;
-  setup_frag_scorefxn( *frag_scorefxn );
+  scoring::ScoreFunctionOP frag_scorefxn = setup_frag_scorefxn();
   tr.Debug << "Trying loop-sizes: " << loop_ << std::endl;
   tr.Info << "---------------- LOOP SAMPLING based on this scorefunction: ----------------\n";
   if ( tr.Info.visible() ) frag_scorefxn->show( tr.Info, more_cut );
@@ -380,8 +382,7 @@ SlidingWindowLoopClosure::sample_loops( Pose& more_cut, Pose& less_cut ) {
 		good_loop_count += process_fragments( closure_frames, more_cut, less_cut );
 	} //scope
 
-	scoring::ScoreFunctionOP frag_scorefxn = new scoring::ScoreFunction;
-  setup_frag_scorefxn( *frag_scorefxn );
+	scoring::ScoreFunctionOP frag_scorefxn = setup_frag_scorefxn();
 
 	loops::remove_cutpoint_variants( more_cut, true );
 	loops::add_single_cutpoint_variant( more_cut, loop_ );

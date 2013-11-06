@@ -66,7 +66,7 @@ ModelCDRH3::ModelCDRH3( AntibodyInfoOP antibody_info,
                         core::scoring::ScoreFunctionCOP lowres_scorefxn) : Mover() {
 	user_defined_ = true;
 	ab_info_ = antibody_info;
-	lowres_scorefxn_  = new core::scoring::ScoreFunction(*lowres_scorefxn);
+	lowres_scorefxn_  = lowres_scorefxn->clone();
 
 	init();
 }
@@ -118,7 +118,7 @@ void ModelCDRH3::set_default() {
 
 
 void ModelCDRH3::set_lowres_score_func(scoring::ScoreFunctionCOP lowres_scorefxn ) {
-	lowres_scorefxn_ = new core::scoring::ScoreFunction(*lowres_scorefxn);
+	lowres_scorefxn_ = lowres_scorefxn->clone();
 }
 
 
@@ -173,14 +173,14 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 
    if(idealize_h3_stems_){
 		set_single_loop_fold_tree( pose_in, cdr_h3 );
-		
+
 		TR<<"Idealizing the H3 stems ........ "<<std::endl;
 		core::conformation::idealize_position(framework_loop_begin-1, pose_in.conformation());
 		pose_in.set_omega( framework_loop_begin - 1, 179.6 );
 		core::conformation::idealize_position(framework_loop_end+1, pose_in.conformation());
 		pose_in.set_omega( framework_loop_end + 1, 179.6 );
 		// 179.6 is from Daisuke's literature search, it is on Graylab wiki for idealization benchmark
-		
+
 		simple_one_loop_fold_tree( pose_in, cdr_h3 );
     }
 

@@ -101,7 +101,7 @@ void PackDaemon::set_pose_and_task( Pose const & pose, PackerTask const & task )
 
 void PackDaemon::set_score_function( ScoreFunction const & sfxn )
 {
-	score_function_ = new ScoreFunction( sfxn );
+	score_function_ = sfxn.clone();
 	setup_complete_ = false;
 }
 
@@ -448,7 +448,7 @@ void PackDaemon::calculate_background_energies()
 			EnergyMap emap = edge.fill_energy_map();
 			background_energies_ += score_function_->weights().dot( emap );
 		}
-		
+
 	}
 }
 
@@ -748,7 +748,7 @@ DaemonSet::add_npd_property_calculator_for_state(
 	if ( npd_calculator_creators_.find( npd_property ) == npd_calculator_creators_.end() ) {
 		std::string msg;
 		if ( npd_calculator_creators_.empty() ) {
-			msg = "Requested non-pairwise-decomposable (NPD) property '" + npd_property +"' but there are" 
+			msg = "Requested non-pairwise-decomposable (NPD) property '" + npd_property +"' but there are"
 				" no NPD Property Calculator Creators that have been registered with the DaemonSet";
 		} else {
 			msg = "Requested non-pairwise-decomposable (NPD) property '" + npd_property +"' but no such NPD"
@@ -771,7 +771,7 @@ DaemonSet::add_npd_property_calculator_for_state(
 		}
 	}
 	if ( which_daemon == 0 ) {
-		throw utility::excn::EXCN_Msg_Exception( "Internal error: could not locate requested daemon " + 
+		throw utility::excn::EXCN_Msg_Exception( "Internal error: could not locate requested daemon " +
 			utility::to_string( daemon_index ) + " while trying to add NPD Property Calculator for that daemon." );
 	}
 
@@ -989,7 +989,7 @@ void DaemonSet::process_add_daemon_message()
 				pdb_names[ ii ], pose,
 				correspondence_file_names[ ii ], correspondence_file,
 				secondary_resfile_names[ ii ], secondary_resfile );
-			for ( std::list< std::pair< Size, std::string > >::const_iterator 
+			for ( std::list< std::pair< Size, std::string > >::const_iterator
 					npditer     = npd_properties[ ii ].begin(),
 					npditer_end = npd_properties[ ii ].end();
 					npditer != npditer_end; ++npditer ) {
@@ -1044,7 +1044,7 @@ void DaemonSet::process_state_energy_evaluations_for_entity()
 	utility::send_integer_to_node( 0, n_daemons );
 	for ( std::list< std::pair< core::Size, core::Real > >::const_iterator
 			iter = entity_energies.first.begin(),
-			iter_end = entity_energies.first.end(); 
+			iter_end = entity_energies.first.end();
 			iter != iter_end; ++iter ) {
 		utility::send_integer_to_node( 0, iter->first );
 		utility::send_double_to_node( 0, iter->second );
@@ -1052,7 +1052,7 @@ void DaemonSet::process_state_energy_evaluations_for_entity()
 	utility::send_integer_to_node( 0, n_npd_properties_ );
 	for ( std::list< std::pair< core::Size, core::Real > >::const_iterator
 			iter = entity_energies.second.begin(),
-			iter_end = entity_energies.second.end(); 
+			iter_end = entity_energies.second.end();
 			iter != iter_end; ++iter ) {
 		utility::send_integer_to_node( 0, iter->first );
 		utility::send_double_to_node( 0, iter->second );

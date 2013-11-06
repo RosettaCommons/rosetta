@@ -65,7 +65,7 @@ RNA_StepWiseMonteCarlo::RNA_StepWiseMonteCarlo( core::scoring::ScoreFunctionOP s
 	rmsd_weight_ = scorefxn_->get_weight( swm_rmsd );
 	max_missing_weight_ = scorefxn_->get_weight( missing_res );
 }
-	
+
 
 //Destructor
 RNA_StepWiseMonteCarlo::~RNA_StepWiseMonteCarlo()
@@ -82,7 +82,7 @@ RNA_StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 	initialize_movers();
 	scorefxn_->set_weight( swm_rmsd, rmsd_weight_ );
 	scorefxn_->set_weight( missing_res, 0.0 );
-	ScoreFunctionOP temp_score = new ScoreFunction( *scorefxn_ );
+	ScoreFunctionOP temp_score = scorefxn_->clone();
 	MonteCarloOP monte_carlo_ = new MonteCarlo( pose, *temp_score, temperature_ );
 	scorefxn_->set_weight( swm_rmsd, 0.0 );
 	show_scores( pose, "Initial score:" );

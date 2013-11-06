@@ -154,7 +154,7 @@ LoopMoverFromCommandLine::LoopMoverFromCommandLine(
 		string_refine_( "no" )
 {
 		hires_score_ = hires_score;
-		lores_score = new core::scoring::ScoreFunction ( *lores_score );
+		lores_score = lores_score->clone();
 		loop_file_name_= loop_file_name;
 		loops_ = new protocols::loops::Loops( *loops );
 		design(false);

@@ -103,7 +103,7 @@ BackboneSampler::BackboneSampler
 {
 	bb_moves_ = bb_moves;
 	mc_kt_ = mc_kt;
-	scorefxn_repack_ = new ScoreFunction( *scorefxn );
+	scorefxn_repack_ = scorefxn->clone();
 }
 
 BackboneSampler::~BackboneSampler() {}
