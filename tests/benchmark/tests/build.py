@@ -14,8 +14,8 @@
 
 import os, json, commands
 
-class BenchmarkBuildError(Exception): pass
-
+import imp
+imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
 tests = dict(
     debug   = './scons.py bin cxx={compiler} -j{jobs}',
@@ -59,7 +59,7 @@ def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
     file(working_dir+'/build-log.txt', 'w').write(output)
 
-    res_code = _S_Failed_ if res else _S_Finished_
+    res_code = _S_failed_ if res else _S_finished_
 
     #if res: return _Failed_,   output  # We do not use '_BuildFailed_' because build failed for us actually mean test failure
     #else:   return _Finished_, output
@@ -75,7 +75,7 @@ def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
     TR = Tracer(verbose)
     TR('Build script does not support TestSuite-like run!')
-    raise BenchmarkBuildError()
+    raise BenchmarkError()
 
 
 '''
@@ -93,56 +93,3 @@ def run_test_suite(rosetta_dir, working_dir, jobs=1, hpc_driver=None, verbose=Fa
 
     return results
 '''
-
-
-# Standard funtions and constants below ---------------------------------------------------------------------------------
-# ⚔ Do not change this wording, they have to stay in sync with upstream (up to benchmark-model).
-# Copied from benchmark-model, standard state code's for tests results.
-_S_Draft_               = 'draft'
-_S_Queued_              = 'queued'
-_S_Running_             = 'running'
-_S_Finished_            = 'finished'
-_S_Failed_              = 'failed'
-_S_BuildFailed_         = 'build failed'
-_S_ScriptFailed_        = 'script failed'
-_S_QueuedForComparison_ = 'queued for comparison'
-
-_S_Values_ = [_S_Draft_, _S_Queued_, _S_Running_, _S_Finished_, _S_Failed_, _S_BuildFailed_, _S_ScriptFailed_, _S_QueuedForComparison_]
-
-_StateKey_    = 'state'
-_ResultsKey_  = 'results'
-_LogKey_      = 'log'
-# Keys below will be used only in up-stream, do to set them here
-#_StartedKey_  = 'started'
-#_FinishedKey_ = 'finished'
-
-
-def Tracer(verbose=False):
-    def print_(x): print x
-    return print_ if verbose else lambda x: None
-
-
-
-def execute(message, commandline, return_=False, untilSuccesses=False):
-    TR = Tracer()
-    TR(message);  TR(commandline)
-    while True:
-        (res, output) = commands.getstatusoutput(commandline)
-        TR(output)
-
-        if res and untilSuccesses: pass  # Thats right - redability COUNT!
-        else: break
-
-        print "Error while executing %s: %s\n" % (message, output)
-        print "Sleeping 60s... then I will retry..."
-        time.sleep(60)
-
-    if return_ == 'tuple': return(res, output)
-
-    if res:
-        TR("\nEncounter error while executing: " + commandline )
-        if return_==True: return True
-        else: raise BenchmarkBuildError()
-
-    if return_ == 'output': return output
-    else: return False

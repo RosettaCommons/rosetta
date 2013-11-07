@@ -14,7 +14,8 @@
 
 import os, shutil, commands
 
-class BenchmarkIntegrationError(Exception): pass
+import imp
+imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
 
 #tests = ['i']
@@ -66,7 +67,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
 
     if res:
-        results[_StateKey_] = _S_BuildFailed_
+        results[_StateKey_] = _S_build_failed_
         results[_LogKey_]   = full_log
         return results
 
@@ -89,7 +90,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
         full_log += output
 
         if res:
-            results[_StateKey_] = _S_ScriptFailed_
+            results[_StateKey_] = _S_script_failed_
             results[_LogKey_]   = output  # ommiting compilation log and only including integration.py output
             return results
 
@@ -102,55 +103,6 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
             command_sh = working_dir + '/' + d + '/command.sh '
             if os.path.isfile(command_sh): os.remove(command_sh)  # deleting non-tempalte command.sh files to avoid stroing absolute paths in database
 
-    results[_StateKey_] = _S_QueuedForComparison_
+    results[_StateKey_] = _S_queued_for_comparison_
     results[_LogKey_]   = output  # ommiting compilation log and only including integration.py output
     return results
-
-
-
-# ⚔ do not change this wording, they have to stay in sync with upstream (up to benchmark-model).
-# Copied from benchmark-model, standard state code's for tests results.
-_S_Draft_               = 'draft'
-_S_Queued_              = 'queued'
-_S_Running_             = 'running'
-_S_Finished_            = 'finished'
-_S_Failed_              = 'failed'
-_S_BuildFailed_         = 'build failed'
-_S_ScriptFailed_        = 'script failed'
-_S_QueuedForComparison_ = 'queued for comparison'
-
-_S_Values_ = [_S_Draft_, _S_Queued_, _S_Running_, _S_Finished_, _S_Failed_, _S_BuildFailed_, _S_ScriptFailed_, _S_QueuedForComparison_]
-
-_StateKey_    = 'state'
-_ResultsKey_  = 'results'
-_LogKey_      = 'log'
-
-
-def Tracer(verbose=False):
-    def print_(x): print x
-    return print_ if verbose else lambda x: None
-
-
-def execute(message, commandline, return_=False, untilSuccesses=False):
-    TR = Tracer()
-    TR(message);  TR(commandline)
-    while True:
-        (res, output) = commands.getstatusoutput(commandline)
-        TR(output)
-
-        if res and untilSuccesses: pass  # Thats right - redability COUNT!
-        else: break
-
-        print "Error while executing %s: %s\n" % (message, output)
-        print "Sleeping 60s... then I will retry..."
-        time.sleep(60)
-
-    if return_ == 'tuple': return(res, output)
-
-    if res:
-        TR("\nEncounter error while executing: " + commandline )
-        if return_==True: return True
-        else: raise BenchmarkBuildError()
-
-    if return_ == 'output': return output
-    else: return False

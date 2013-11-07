@@ -17,32 +17,7 @@ import os, sys, imp, shutil, json, platform
 
 import argparse
 
-# ⚔ do not change wording below, it have to stay in sync with upstream (up to benchmark-model).
-# Copied from benchmark-model, standard state code's for tests results.
-_S_Draft_               = 'draft'
-_S_Queued_              = 'queued'
-_S_Running_             = 'running'
-_S_Finished_            = 'finished'
-_S_Failed_              = 'failed'
-_S_BuildFailed_         = 'build failed'
-_S_ScriptFailed_        = 'script failed'
-_S_QueuedForComparison_ = 'queued for comparison'
-
-_S_Values_ = [_S_Draft_, _S_Queued_, _S_Running_, _S_Finished_, _S_Failed_, _S_BuildFailed_, _S_ScriptFailed_, _S_QueuedForComparison_]
-
-_StateKey_    = 'state'
-_ResultsKey_  = 'results'
-_LogKey_      = 'log'
-
-
-class NT:  # named tuple
-    def __init__(self, **entries): self.__dict__.update(entries)
-    def __repr__(self):
-        r = 'NT: |'
-        for i in dir(self):
-            if not i.startswith('__') and not isinstance(getattr(self, i), types.MethodType): r += '%s --> %s, ' % (i, getattr(self, i))
-        return r[:-2]+'|'
-
+from tests import *  # Tests states and key names
 
 # Calculating value of Platform dict
 Platform = {}
