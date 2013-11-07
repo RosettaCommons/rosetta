@@ -34,6 +34,7 @@
 // AUTO-REMOVED #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/match.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
@@ -80,6 +81,8 @@ MatcherTask::MatcherTask() :
 	output_writer_name_( "PDB" ),
 	output_file_name_( "output_matches.kin" ),
 	grouper_ds_rmsd_(1.5),
+	score_output_file_name_( "matcher_score.sc" ),
+	output_scores_( false ),
 	output_matchres_only_(true),
 	filter_upstream_residue_collisions_( false ),
 	filter_upstream_collisions_by_score_( false ),
@@ -141,6 +144,8 @@ MatcherTask::operator = ( MatcherTask const & rhs )
 		evaluator_name_ = rhs.evaluator_name_;
 		output_writer_name_ = rhs.output_writer_name_;
 		output_file_name_ = rhs.output_file_name_;
+		score_output_file_name_ = rhs.score_output_file_name_;
+		output_scores_ = rhs.output_scores_;
 		grouper_ds_rmsd_ = rhs.grouper_ds_rmsd_;
 		output_matchres_only_ = rhs.output_matchres_only_;
 		geom_csts_downstream_output_ = rhs.geom_csts_downstream_output_;
@@ -538,6 +543,13 @@ MatcherTask::output_file_name( std::string const & setting )
 	output_file_name_ = setting;
 }
 
+///@details Sets the output score filename and turns on score output boolean
+void
+MatcherTask::score_output_file_name( std::string const & setting )
+{
+	score_output_file_name_ = setting;
+	output_scores_ = true;
+}
 
 void
 MatcherTask::set_enz_input_data( toolbox::match_enzdes_util::EnzConstraintIOCOP data )
@@ -716,6 +728,18 @@ std::string const &
 MatcherTask::output_file_name() const
 {
 	return output_file_name_;
+}
+
+std::string const &
+MatcherTask::score_output_file_name() const
+{
+	return score_output_file_name_;
+}
+
+bool
+MatcherTask::output_scores() const
+{
+	return output_scores_;
 }
 
 MatcherTask::Real
@@ -1434,6 +1458,17 @@ MatcherTask::initialize_output_options_from_command_line()
 
 	grouper_ds_rmsd_ = option[ OptionKeys::match::grouper_downstream_rmsd ];
 	output_matchres_only_ =  option[ OptionKeys::match::output_matchres_only ];
+
+	// Check if score output option is enabled
+	if ( option[ OptionKeys::out::file::scorefile ].user() ) {
+		std::string scorefile_path = option[ OptionKeys::out::file::scorefile ];
+		if (scorefile_path == "") {
+			output_scores_ = true;
+		}
+		else {
+			score_output_file_name( option[ OptionKeys::out::file::scorefile ] );
+		}
+	}
 
 	utility::vector1< int > tempvec = option[ OptionKeys::match::geom_csts_downstream_output ];
 	if( tempvec.size() == 0 ) utility_exit_with_message("Bad user input: empty vector specified for option -match::geom_csts_downstream_output.");

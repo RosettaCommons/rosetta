@@ -174,6 +174,9 @@ public:
 	/// @brief Indicate the name of the single output file to which the matches will be written
 	void output_file_name( std::string const & setting );
 
+	/// @brief Set the name of the single output file to which the scores of matches will be written
+	void score_output_file_name( std::string const & setting );
+
 	/// @brief Set the matcher-file input data.  The Matcher will read this data when initializing itself.
 	void set_enz_input_data( toolbox::match_enzdes_util::EnzConstraintIOCOP data );
 
@@ -262,6 +265,9 @@ public:  // Accessors
 	std::string const & output_writer_name() const;
 	std::string const & output_file_name() const;
 	Real grouper_ds_rmsd() const;
+
+	std::string const & score_output_file_name() const;
+	bool output_scores() const;
 
 	bool output_matchres_only() const;
 
@@ -390,6 +396,10 @@ private:
 	std::string output_writer_name_;
 	std::string output_file_name_;
 	Real grouper_ds_rmsd_;
+
+	// Score output
+	std::string score_output_file_name_;
+	bool output_scores_;
 
 	//some options for outputting
 	bool output_matchres_only_;

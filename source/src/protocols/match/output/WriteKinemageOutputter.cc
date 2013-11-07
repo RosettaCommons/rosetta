@@ -20,6 +20,8 @@
 #include <protocols/match/Hit.hh>
 #include <protocols/match/output/UpstreamHitCacher.hh>
 #include <protocols/match/output/WriteUpstreamCoordinateKineamge.hh>
+#include <protocols/match/output/MatchEvaluator.hh>
+#include <protocols/match/output/MatchScoreWriter.hh>
 
 // Project Headers
 #include <core/conformation/Residue.hh>
@@ -38,7 +40,7 @@ WriteKinemageOutputter::~WriteKinemageOutputter() {}
 
 
 void
-WriteKinemageOutputter::record_match( match const & m )
+WriteKinemageOutputter::record_match( match const & m , MatchEvaluatorOP evaluator, MatchScoreWriterOP match_score_writer )
 {
 	upstream_kin_writer_->start_new_match();
 
@@ -49,6 +51,7 @@ WriteKinemageOutputter::record_match( match const & m )
 		upstream_kin_writer_->set_dswriter( dswriters_[ ii ] );
 		upstream_kin_writer_->geom_id( ii );
 		upstream_kin_writer_->output_hit( m[ ii ], *conf );
+		match_score_writer->add_match( evaluator->score(m) );
 	}
 }
 

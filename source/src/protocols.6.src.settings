@@ -125,6 +125,7 @@ sources = {
 		"MatchGrouper",
 		"MatchOutputter",
 		"MatchProcessor",
+		"MatchScoreWriter",
 		"OutputWriter",
 		"PDBWriter",
 		"PoseInserter",

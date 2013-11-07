@@ -22,6 +22,7 @@
 #include <protocols/match/output/MatchEvaluator.hh>
 #include <protocols/match/output/MatchGrouper.hh>
 #include <protocols/match/output/OutputWriter.hh>
+#include <protocols/match/output/MatchScoreWriter.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -112,6 +113,7 @@ MatchConsolidator::end_processing()
 
 	runtime_assert( grouper_ );
 	runtime_assert( evaluator_ );
+	runtime_assert( match_score_writer_ );
 
 	//std::cout << std::endl;
 	//std::cout << "match groups: " << match_groups_.size() << std::endl;
@@ -120,12 +122,13 @@ MatchConsolidator::end_processing()
 		//std::cout << ":";
 		for ( Size jj = 1; jj <= match_groups_[ ii ]->n_kept_matches(); ++jj ) {
 			if ( ! match_groups_[ ii ]->dspos1_mode() ) {
-				writer_->record_match( match_groups_[ ii ]->kept_match( jj ) );
+				writer_->record_match( match_groups_[ ii ]->kept_match( jj ) , evaluator_ , match_score_writer_ );
 			} else {
 				writer_->record_match( match_groups_[ ii ]->kept_match_dspos1( jj ) );
 			}
 		}
 	}
+	match_score_writer_->write_match_scores();
 	MatchProcessor::end_processing();
 }
 
@@ -216,12 +219,6 @@ void
 MatchConsolidator::set_grouper( MatchGrouperOP grouper )
 {
 	grouper_ = grouper;
-}
-
-void
-MatchConsolidator::set_evaluator( MatchEvaluatorOP evaluator )
-{
-	evaluator_ = evaluator;
 }
 
 void

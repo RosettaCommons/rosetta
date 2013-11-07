@@ -21,6 +21,8 @@
 #include <protocols/match/output/MatchGrouper.hh>
 #include <protocols/match/output/UpstreamHitCacher.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>
+#include <protocols/match/output/MatchEvaluator.hh>
+#include <protocols/match/output/MatchScoreWriter.hh>
 
 // Project Headers
 #include <core/conformation/Residue.hh>
@@ -80,7 +82,7 @@ PDBWriter::prepare_for_output_writing()
 
 
 void
-PDBWriter::record_match( match const & m )
+PDBWriter::record_match( match const & m , MatchEvaluatorOP evaluator, MatchScoreWriterOP match_score_writer )
 {
 	utility::vector1< core::conformation::ResidueCOP > upstream_matchres;
 	utility::vector1< core::pose::PoseCOP > downstream_poses;
@@ -116,9 +118,11 @@ PDBWriter::record_match( match const & m )
 
 	for ( Size ii = 1; ii <= m.size(); ++ii ) {
 		if ( ! output_dsgeom_for_geomcst_[ ii ] ) continue;
-		std::string this_tag = outtag + "_" + utility::to_string( ii ) + ".pdb";
+		std::string this_tag = outtag + "_" + utility::to_string( ii );
+		match_score_writer->add_match( this_tag , evaluator->score(m) );
+		this_tag += ".pdb";
 
-		//every match in it's own file for now
+		//every match in its own file for now
 		std::ofstream file_out( this_tag.c_str() );
 		//Size atom_counter(0);
 
@@ -180,7 +184,8 @@ PDBWriter::record_match( match_dspos1 const & m )
 
 	std::string outtag = assemble_outtag( upstream_matchres );
 
-	std::string this_tag = outtag + "_" + utility::to_string( m.originating_geom_cst_for_dspos ) + ".pdb";
+	std::string this_tag = outtag + "_" + utility::to_string( m.originating_geom_cst_for_dspos );
+	this_tag += ".pdb";
 	std::ofstream file_out( this_tag.c_str() );
 	up_outpose->dump_pdb( file_out );
 	downstream_pose->dump_pdb( file_out );
@@ -449,7 +454,7 @@ CloudPDBWriter::end_output_writing()
 }
 
 void
-CloudPDBWriter::record_match(  match const & m )
+CloudPDBWriter::record_match(  match const & m , MatchEvaluatorOP evaluator, MatchScoreWriterOP match_score_writer )
 {
 	runtime_assert( m.size() == num_geom_cst() );
 	core::Size mgroup( grouper_->assign_group_for_match( m ) );
@@ -474,8 +479,9 @@ CloudPDBWriter::record_match(  match const & m )
 				match_groups_dshits_[mgroup][ii].insert( downstream_hit( m[ii] ) );
 			}
 		}
-		unique_match_names_.push_back( prefix() + "_" + utility::to_string( mgroup ) + "_" + signature_string( upstream_matchres ) + "_" + scaf_name() + "_" + cstfile_name() );
-
+		std::string unique_match_name = prefix() + "_" + utility::to_string( mgroup ) + "_" + signature_string( upstream_matchres ) + "_" + scaf_name() + "_" + cstfile_name();
+		unique_match_names_.push_back( unique_match_name );
+		match_score_writer->add_match( unique_match_name , evaluator->score(m) );
 	}
 	else{
 		//TR << "CPW group " << mgroup << " has been previously encountered.. ";
@@ -499,7 +505,7 @@ CloudPDBWriter::record_match(  match const & m )
 
 
 void
-CloudPDBWriter::record_match(  match_dspos1 const & /*m*/ )
+CloudPDBWriter::record_match( match_dspos1 const & /*m*/ )
 {
 	utility_exit_with_message( "not implemented yet");
 }

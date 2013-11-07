@@ -23,6 +23,8 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 #include <protocols/match/Hit.fwd.hh>
 #include <protocols/match/MatcherTask.fwd.hh>
+#include <protocols/match/output/MatchEvaluator.fwd.hh>
+#include <protocols/match/output/MatchScoreWriter.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -46,8 +48,10 @@ public:
 
 	virtual
 	void
-	record_match( match const & m ) = 0;
+	record_match( match const & m , MatchEvaluatorOP evaluator, MatchScoreWriterOP match_score_writer ) = 0;
 
+	///@brief evaluator and score writer are not passed in because single-downstream-position match
+	///currently have no way of being evaluated
 	virtual
 	void
 	record_match( match_dspos1 const & m ) = 0;

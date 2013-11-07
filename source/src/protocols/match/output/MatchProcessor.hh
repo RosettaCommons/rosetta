@@ -25,6 +25,8 @@
 #include <protocols/match/output/OutputWriter.fwd.hh>
 #include <protocols/match/output/UpstreamCollisionFilter.fwd.hh>
 #include <protocols/match/output/UpstreamDownstreamCollisionFilter.fwd.hh>
+#include <protocols/match/output/MatchEvaluator.fwd.hh>
+#include <protocols/match/output/MatchScoreWriter.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -80,6 +82,12 @@ public:
 	void
 	set_output_writer( OutputWriterOP writer );
 
+	void
+	set_evaluator( MatchEvaluatorOP evaluator );
+
+	void
+	set_match_score_writer( MatchScoreWriterOP scorewriter );
+
 	/// @brief const access to the output writer, e.g.
 	/// for the MatcherMover when incorporating matches
 	/// into the pose
@@ -121,6 +129,9 @@ protected:
 
 	OutputWriterOP writer_;
 
+	MatchEvaluatorOP evaluator_;
+	MatchScoreWriterOP match_score_writer_;
+
 private:
 
 	void
@@ -135,6 +146,7 @@ private:
 	UpstreamDownstreamCollisionFilterCOP up_down_filt_;
 
 	UpstreamCollisionFilterCOP up_coll_filt_;
+
 };
 
 }

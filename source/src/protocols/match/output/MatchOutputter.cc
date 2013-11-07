@@ -22,9 +22,12 @@
 // Package headers
 #include <protocols/match/output/MatchProcessor.hh>
 #include <protocols/match/output/OutputWriter.hh>
+#include <protocols/match/output/MatchEvaluator.hh>
+#include <protocols/match/output/MatchScoreWriter.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/exit.hh>
 
 // C++ headers
 
@@ -47,6 +50,7 @@ MatchOutputter::begin_processing()
 void
 MatchOutputter::end_processing()
 {
+	match_score_writer_->write_match_scores();
 	MatchProcessor::end_processing();
 }
 
@@ -59,7 +63,9 @@ MatchOutputter::process_match(
 	if( !this->passes_filters( m ) ) return;
 
 	if ( writer_ ) {
-		writer_->record_match( m );
+		runtime_assert( evaluator_ );
+		runtime_assert( match_score_writer_ );
+		writer_->record_match( m , evaluator_ , match_score_writer_ );
 	}
 }
 

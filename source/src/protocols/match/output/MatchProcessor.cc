@@ -21,6 +21,8 @@
 #include <protocols/match/output/MatchFilter.hh>
 #include <protocols/match/output/UpstreamDownstreamCollisionFilter.hh>
 #include <protocols/match/output/OutputWriter.hh>
+#include <protocols/match/output/MatchEvaluator.hh>
+#include <protocols/match/output/MatchScoreWriter.hh>
 // AUTO-REMOVED #include <protocols/match/Hit.hh> // REQUIRED FOR WINDOWS
 // AUTO-REMOVED #include <protocols/match/downstream/DownstreamBuilder.hh> // REQUIRED FOR WINDOWS
 
@@ -213,6 +215,17 @@ MatchProcessor::up_coll_filt() const
 	return up_coll_filt_;
 }
 
+void
+MatchProcessor::set_evaluator( MatchEvaluatorOP evaluator )
+{
+  evaluator_ = evaluator;
+}
+
+void
+MatchProcessor::set_match_score_writer( MatchScoreWriterOP scorewriter)
+{
+  match_score_writer_ = scorewriter;
+}
 
 }
 }

@@ -29,6 +29,7 @@
 #include <protocols/match/output/MatchGrouper.fwd.hh>
 #include <protocols/match/output/OutputWriter.fwd.hh>
 #include <protocols/match/output/UpstreamHitCacher.fwd.hh>
+#include <protocols/match/output/MatchScoreWriter.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -95,6 +96,9 @@ private:
 		UpstreamHitCacherOP cacher
 	);
 
+	static
+	MatchScoreWriterOP
+	create_match_score_writer();
 
 };
 

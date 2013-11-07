@@ -24,6 +24,8 @@
 #include <protocols/match/output/OutputWriter.hh>
 #include <protocols/match/output/UpstreamHitCacher.fwd.hh>
 #include <protocols/match/output/WriteUpstreamCoordinateKineamge.fwd.hh>
+#include <protocols/match/output/MatchEvaluator.fwd.hh>
+#include <protocols/match/output/MatchScoreWriter.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -43,8 +45,10 @@ public:
 
 	virtual
 	void
-	record_match( match const & m );
+	record_match( match const & m , MatchEvaluatorOP evaluator, MatchScoreWriterOP match_score_writer );
 
+	///@brief evaluator and score writer are not passed in because single-downstream-position match
+	///currently have no way of being evaluated
 	virtual
 	void
 	record_match( match_dspos1 const & m );

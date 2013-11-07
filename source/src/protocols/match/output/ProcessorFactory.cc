@@ -39,6 +39,7 @@
 #include <protocols/match/output/UpstreamDownstreamCollisionFilter.hh>
 #include <protocols/match/output/WriteKinemageOutputter.hh>
 #include <protocols/match/output/WriteUpstreamCoordinateKineamge.hh>
+#include <protocols/match/output/MatchScoreWriter.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -89,7 +90,6 @@ ProcessorFactory::create_processor(
 		if( mtask->output_writer_name()  == "CloudPDB" ) TR << "NOTICE: match consolidation and CloudPDB writing are both active. This is fine but somewhat redundant. In this case, the -output_matches_per_group parameter should be set to a higher number than without cloud pdb writing, say 100 or so." << std::endl;
 		MatchConsolidatorOP consolidator = new MatchConsolidator;
 		consolidator->set_grouper( create_grouper( matcher, mtask, cacher ) );
-		consolidator->set_evaluator( create_evaluator( matcher, mtask, cacher ) );
 		consolidator->set_output_writer( create_output_writer( matcher, mtask, cacher ) );
 		consolidator->set_n_to_output_per_group( mtask->n_to_output_per_group() );
 
@@ -101,6 +101,15 @@ ProcessorFactory::create_processor(
 
 		processor = outputter;
 	}
+
+	// kylebarlow - Evaluator is now stored in the MatchProcessor parent class to allow match score output
+	// Right now this isn't that helpful, but could be more helpful if DownstreamRMSEvaluator is changed to be able to score match_dpos1
+	processor->set_evaluator( create_evaluator( matcher, mtask, cacher ) );
+	MatchScoreWriterOP match_score_writer = create_match_score_writer();
+	if( mtask->output_scores() ) {
+		match_score_writer->set_output_filename( mtask->score_output_file_name() );
+	}
+	processor->set_match_score_writer( match_score_writer );
 
 	std::list< MatchFilterOP > filters( create_filters( matcher, mtask, cacher ) );
 	for ( std::list< MatchFilterOP >::const_iterator
@@ -301,6 +310,10 @@ ProcessorFactory::create_output_writer(
 
 }
 
+MatchScoreWriterOP
+ProcessorFactory::create_match_score_writer() {
+	return new MatchScoreWriter();
+}
 
 
 }

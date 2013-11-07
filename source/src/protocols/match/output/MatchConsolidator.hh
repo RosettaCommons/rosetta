@@ -24,7 +24,6 @@
 #include <protocols/match/Hit.hh>
 #endif
 #include <protocols/match/output/MatchProcessor.hh>
-#include <protocols/match/output/MatchEvaluator.fwd.hh>
 #include <protocols/match/output/MatchGrouper.fwd.hh>
 
 // Project headers
@@ -82,12 +81,6 @@ public:
 	set_grouper( MatchGrouperOP grouper );
 
 	void
-	set_evaluator( MatchEvaluatorOP evaluator );
-
-	//void
-	//set_output_writer( OutputWriterOP writer );
-
-	void
 	reset_grouper();
 
 private:
@@ -97,14 +90,8 @@ private:
 private:
 
 	MatchGrouperOP   grouper_;
-	MatchEvaluatorOP evaluator_;
 
 	Size n_to_output_per_group_;
-
-	//OutputWriterOP writer_;
-
-	//utility::vector1< std::list< match > > match_groups_;
-	//utility::vector1< std::list< match_dspos1 > > match_dspos1_groups_;
 
 	utility::vector1< BestMatchesCollectionOP > match_groups_;
 
