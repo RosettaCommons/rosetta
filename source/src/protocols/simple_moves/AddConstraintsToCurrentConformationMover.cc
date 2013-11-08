@@ -25,6 +25,10 @@
 
 #include <core/kinematics/FoldTree.hh>
 
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
@@ -164,13 +168,27 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose ) 
 	} //cartesian
 	else {
 		// distance constraints
-		for (Size ires=1; ires<=pose.total_residue(); ++ires) {
+        Size nres;
+        if ( core::pose::symmetry::is_symmetric(pose) ) {
+            core::conformation::symmetry::SymmetryInfoCOP symm_info;
+            core::conformation::symmetry::SymmetricConformation & SymmConf (
+                                    dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+            symm_info = SymmConf.Symmetry_Info();
+            nres = symm_info->num_independent_residues();
+        }
+        else {
+            nres=pose.total_residue();
+        }
+        
+		for (Size ires=1; ires<=nres; ++ires) {
+            if (pose.residue(ires).aa() == core::chemical::aa_vrt) continue;
 			if (!residue_to_constrain(ires)) continue;
 			utility::fixedsizearray1<core::Size,2> iatoms(0); // both are 0
 			if( pose.residue_type(ires).has("CA")  ) iatoms[1] = pose.residue_type(ires).atom_index("CA");
  			if( !CA_only_ ) iatoms[2] = pose.residue_type(ires).nbr_atom();
 
 			for (Size jres=ires+min_seq_sep_; jres<=pose.total_residue(); ++jres) {
+                if (pose.residue(jres).aa() == core::chemical::aa_vrt) continue;
 				if( !inter_chain_ && pose.chain(ires)!=pose.chain(jres) ) continue;
 			  if (!residue_to_constrain(jres)) continue;
 				utility::fixedsizearray1<core::Size,2> jatoms(0);
@@ -217,12 +235,9 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 
 	if ( tag->hasOption("bound_width") ) {
 		bound_width_ = tag->getOption<core::Real>("bound_width");
-	  if ( bound_width_ < 1e-3 ) cc_func_ = new HarmonicFunc(0.0,coord_dev_);
-	  else cc_func_ = new BoundFunc(0,bound_width_,coord_dev_,"xyz");
-	} else {
-	  if ( bound_width_ < 1e-3 ) cc_func_ = new HarmonicFunc(0.0,coord_dev_);
-	  else cc_func_ = new BoundFunc(0,bound_width_,coord_dev_,"xyz");
 	}
+    if ( bound_width_ < 1e-3 ) cc_func_ = new HarmonicFunc(0.0,coord_dev_);
+    else cc_func_ = new BoundFunc(0,bound_width_,coord_dev_,"xyz");
 
 	if ( tag->hasOption("min_seq_sep") ) {
 		min_seq_sep_ = tag->getOption<core::Size>("min_seq_sep");
