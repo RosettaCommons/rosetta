@@ -12,6 +12,7 @@
 
 #Rosetta Imports
 from rosetta import *
+from rosetta.core.scoring.methods import *
 
 #Python Imports
 import glob
@@ -46,6 +47,12 @@ class ScoreFxnControl():
         self.wd = self.location()[0]
         self.readDefaults()
         self.score = create_score_function_ws_patch(self.ScoreType.get(), self.ScorePatch.get()); #This should be a score function.  We are going to have this class hold all score information.  
+        
+        #Fix to have Hbonds in scoring and total score.  Only 3 years too late.  Bargh.
+        emopts = EnergyMethodOptions(self.score.energy_method_options())
+        emopts.hbond_options().decompose_bb_hb_into_pair_energies( True)
+        self.score.set_energy_method_options(emopts)
+        
         self.pose = Pose(); #Should this be here?
         
         self.ScoreOptionsdef = StringVar(); self.ScoreOptionsdef.set("Score Pose")
@@ -253,6 +260,11 @@ class ScoreFxnControl():
             else:
 
                 self.score = create_score_function_ws_patch(self.ScoreType.get(), self.ScorePatch.get())
+                
+                #Fix to have Hbonds in scoring and total score.
+                emopts = EnergyMethodOptions(self.score.energy_method_options())
+                emopts.hbond_options().decompose_bb_hb_into_pair_energies( True)
+                self.score.set_energy_method_options(emopts)
 
             return
         elif Option=="Set Temp Score":

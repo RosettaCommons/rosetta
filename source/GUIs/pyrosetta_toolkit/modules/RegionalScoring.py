@@ -13,6 +13,7 @@
 #Rosetta Imports
 from rosetta import *
 from rosetta.core.scoring import ScoreType
+from rosetta.core.scoring.methods import *
 
 class RegionalScoring():
     def __init__(self, pose, scorefxn):
@@ -34,6 +35,12 @@ class RegionalScoring():
         self.cd_hbond_terms = ["hbond_sr_bb", "hbond_lr_bb", "hbond_sc", "hbond_bb_sc"]
         self.disulfide_terms= ["dslf_ss_dst", "dslf_cs_ang", "dslf_ss_dih", "dslf_ca_dih"]
         self.rama_terms = ["rama", "p_aa_pp"] #Could put omega on here too!
+        
+        #Fix to have Hbonds in scoring and total score.  Only 3 years too late.  Bargh.
+        emopts = EnergyMethodOptions(self.score.energy_method_options())
+        emopts.hbond_options().decompose_bb_hb_into_pair_energies( True)
+        self.score.set_energy_method_options(emopts)
+        
         
     def ret_pose_number(self, chain, resNum):
         """
