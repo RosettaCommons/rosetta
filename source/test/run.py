@@ -92,7 +92,7 @@ class Tester:
                 self.testpath = "build/test/" + platform
                 return
         sys.exit("run.py is about to crash because it could not use SCons to detect your platform.  The most likely reason for this is that you are running it from the wrong directory - it must be run from the rosetta_source directory, not the rosetta_source/test directory, even though it lives in the latter.")
-        return "PlatformWasNotFound!!!"  # <-- That should not reall happend.
+        return "PlatformWasNotFound!!!"  # <-- That should not really happend.
 
 
     # extract information regarding how good unit tests run.
@@ -286,13 +286,17 @@ class Tester:
             for lib, suite in self.all_test_suites:
                 pid = self.mfork()
                 if not pid:  # we are child process
-                    self.runOneSuite(lib, suite)
+                    if Options.debug: print 'DEBUG MODE ENABLED: Skipping tests run: ', lib, suite
+                    else: self.runOneSuite(lib, suite)
                     sys.exit(0)
 
             for p in self.jobs: os.waitpid(p, 0)  # waiting for all child process to termintate...
 
             # Now all tests should be finished, all we have to do is to create a log file and aggegated yaml file to emulate single CPU out run
             all_yaml = {}
+            all_json = dict(tests={}, summary=dict(total=0, failed=0), config=dict(test_path=self.testpath))
+            _failed_ = 'failed'
+            _finished_ = 'finished'
             for lib in UnitTestExecutable:
                 log_file = self.testpath + '/' + lib + '.log'
                 yaml_file = self.testpath + '/' + lib + '.yaml'
@@ -303,12 +307,25 @@ class Tester:
                 yaml_file_h = file(yaml_file, 'w')
                 yaml_data = {}
                 for l, suite in self.all_test_suites_by_lib[lib]:
-                    log_file_h.write( file(self.testpath + '/' + lib + '.' + suite + '.log').read() )
+                    suite_log = file(self.testpath + '/' + lib + '.' + suite + '.log').read()
+                    log_file_h.write( suite_log )
+
                     print 'trying: ', self.testpath + '/' + lib + '.' + suite + '.yaml'
                     data = json.loads( file(self.testpath + '/' + lib + '.' + suite + '.yaml').read() )
                     for k in data:
                         if k in yaml_data: yaml_data[k] = list( set(yaml_data[k] + data[k]) )
                         else: yaml_data[k] = data[k]
+
+
+                    def json_key_from_test(test): return lib[:-len('.test')] + ':' + test.replace(':', ':')  # we might want different separator then ':' in the future
+
+                    for test in data['ALL_TESTS']:
+                        json_key = json_key_from_test(test)
+                        if json_key not in all_json['tests']: all_json['tests'][json_key] = dict(state=_finished_, log=suite_log)
+
+                    for test in data['FAILED_TESTS']:
+                        json_key = json_key_from_test(test)
+                        all_json['tests'][json_key] = dict(state=_failed_, log=suite_log)
 
 
                 yaml_file_h.write( json.dumps(yaml_data) )
@@ -321,11 +338,19 @@ class Tester:
                     self.results[lib] = OI(testCount=len(yaml_data['ALL_TESTS']), testFailed=len(yaml_data['FAILED_TESTS']), failedTestsList=yaml_data['FAILED_TESTS'], name=lib)
                     all_yaml[lib] = yaml_data
 
-
                 logs_yamls[lib] = (log_file, yaml_file)
 
             #print 'All_yaml:', all_yaml
             f = file('.unit_test_results.yaml', 'w');  f.write( json.dumps(all_yaml) );  f.close()
+
+
+            for t in self.results:
+                all_json['summary']['total']   += self.results[t].testCount
+                all_json['summary']['failed'] += self.results[t].testFailed
+
+            all_json['summary']['failed_tests'] = [ t for t in all_json['tests'] if all_json['tests'][t]['state'] == _failed_ ]
+
+            with file('.unit_test_results.json', 'w') as f: json.dump(all_json, f, sort_keys=True, indent=2)
 
 
         '''
@@ -430,6 +455,12 @@ def main(args):
       action="store",
       help="The relative directory where the unit tests were built into. (default: 'cmake/build_unit/')",
     )
+
+    parser.add_option("--debug",
+                      action="store_true", default=False,
+                      help="Enable debug mode: skip test running, only generate summary from previously created yaml and log files.",
+    )
+
 
     (options, args) = parser.parse_args(args=args[1:])
 
