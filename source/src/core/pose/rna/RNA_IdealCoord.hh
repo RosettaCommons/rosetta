@@ -20,8 +20,11 @@
 
 // Package headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/MiniPose.fwd.hh>
-
+#ifdef WIN32
+	#include <core/pose/MiniPose.hh>
+#else
+	#include <core/pose/MiniPose.fwd.hh>
+#endif
 // Project headers
 #include <core/conformation/Residue.fwd.hh>
 #include <core/id/AtomID.fwd.hh>

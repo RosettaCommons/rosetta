@@ -146,7 +146,9 @@ private:
 	utility::vector1<RingConformer> energy_maxima_conformers_;
 
 	static RingConformer const DUMMY_CONFORMER;  // for silencing warnings when requested conformer is not found
+
 };  // class RingConformerSet
+
 
 // Insertion operators (overloaded so that RingConformer and RingConformerSet can be "printed" in PyRosetta).
 std::ostream & operator<<(std::ostream & output, RingConformer const & object_to_output);
