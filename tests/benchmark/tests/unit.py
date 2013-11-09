@@ -54,7 +54,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     TR('Compiling...')
 
     if debug: res, output = 0, 'unit.py: debug is enabled, skippig build phase...\n'
-    else: res, output = execute('Compiling...', 'cd {}/source && ./scons.py -j{jobs} && ./scons.py cat=test -j{jobs}'.format(rosetta_dir, jobs=jobs), return_='tuple')
+    else: res, output = execute('Compiling...', 'cd {}/source && ./scons.py cxx={compiler} -j{jobs} && ./scons.py cxx={compiler} cat=test -j{jobs}'.format(rosetta_dir, jobs=jobs, compiler=platform['compiler']), return_='tuple')
 
     full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
 
@@ -64,10 +64,10 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
         return results
 
     else:
-        json_results_file = rosetta_dir+'/source/.unit_test_results.yaml'
-        if os.path.isfile(json_results_file): os.remove(json_results_file)
+        json_results_file = rosetta_dir+'/source/.unit_test_results.json'
+        if (not debug) and  os.path.isfile(json_results_file): os.remove(json_results_file)
 
-        command_line = 'cd {}/source && test/run.py -j{jobs}'.format(rosetta_dir, jobs=jobs)  # --mute all
+        command_line = 'cd {}/source && test/run.py --compiler={platform[compiler]} -j{jobs} --mute all'.format(rosetta_dir, jobs=jobs, platform=platform)
         TR( 'Running unit test script: {}'.format(command_line) )
 
         if debug: res, output = 0, 'unit.py: debug is enabled, skippig unit-tests script run...\n'
@@ -80,17 +80,17 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
             return results
 
     json_results = json.load( file(json_results_file) )
-    r = {}
 
-    for lib in json_results:
-        key = lib[:-5]  # core.test → core
-        # u'∙'
-        for t in json_results[lib]['ALL_TESTS']: r[ key.replace('.', '_') + '_' + t.replace(':', '_')] = _S_failed_ if t in json_results[lib]['FAILED_TESTS'] else _S_finished_
+    #r = {}
+    # for lib in json_results:
+    #     key = lib[:-5]  # core.test → core
+    #     # u'∙'
+    #     for t in json_results[lib]['ALL_TESTS']: r[ key.replace('.', '_') + '_' + t.replace(':', '_')] = _S_failed_ if t in json_results[lib]['FAILED_TESTS'] else _S_finished_
 
-    results[_StateKey_]   = reduce(lambda a, b: _S_finished_ if a==_S_finished_ and b==_S_finished_ else _S_failed_, r.values())
+    results[_StateKey_]   = reduce(lambda a, b: _S_finished_ if a==_S_finished_ and b==_S_finished_ else _S_failed_, [ json_results['tests'][t][_StateKey_] for t in json_results['tests'] ] )
     results[_LogKey_]     = output  # ommiting compilation log and only including unit tests output
-    results[_ResultsKey_] = r
+    results[_ResultsKey_] = json_results
 
-    with file(working_dir+'/unit.json', 'w') as f: json.dump(r, f, sort_keys=True, indent=2)
+    with file(working_dir+'/unit.json', 'w') as f: json.dump(json_results, f, sort_keys=True, indent=2)
 
     return results

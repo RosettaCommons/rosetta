@@ -42,15 +42,33 @@ def main(args):
       help="Number of processors to use on when building. (default: %(default)s)",
     )
 
-    parser.add_argument("--debug", action="store_true", dest="debug", default=False, help="... (off by default)" )
+    parser.add_argument("--debug", action="store_true", dest="debug", default=False, help="Run specified test in debug mode (not with debug build!) this mean different things and depend on the test. Could be: skip the build phase, skip some of the test phases and so on. [off by default]" )
+
+    parser.add_argument("--suffix", default='', help="Specify ending suffix for test output dir. This is useful when you want to save test results in different dir for later comparison." )
+
+    parser.add_argument("--compare", nargs=2, help="Do not run the tests but instead compare precious results. Use --compare suffix1 suffix2" )
 
     parser.add_argument('args', nargs=argparse.REMAINDER)
 
     global Options;
     Options = parser.parse_args(args=args[1:])
 
+    if Options.suffix: Options.suffix = '.' + Options.suffix
+
     print('Platform: {}'.format(Platform))
-    print('Running tests: {}'.format(Options.args) )
+    if Options.compare: print('Comparing tests {} with suffixes: {}'.format(Options.args, Options.compare) )
+    else: print('Running tests: {}'.format(Options.args) )
+
+
+    def compare(fun):
+        working_dir_1 = os.path.abspath('./results/' + test + '.' + Options.compare[0])
+        working_dir_2 = os.path.abspath('./results/' + test + '.' + Options.compare[1])
+        res_1 = json.load( file(working_dir_1 + '/.results.json') )
+        res_2 = json.load( file(working_dir_1 + '/.results.json') )
+        res = fun(res_1, working_dir_1, res_2, working_dir_2)
+        print json.dumps(res, sort_keys=True, indent=2)
+        sys.exit(0)
+
 
     for test in Options.args:
         if not test.startswith('tests/')  and  test.count('.'):  # regular Test or a TestSuite?
@@ -58,14 +76,16 @@ def main(args):
             file_name = 'tests/' + suite_name + '.py'
             test_suite = imp.load_source('test_suite', file_name)
 
-            working_dir = os.path.abspath('./results/' + test)
-            if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
-            os.makedirs(working_dir)
+            if Options.compare: compare(test_suite.compare_tests)
+            else:
+                working_dir = os.path.abspath('./results/' + test + Options.suffix)
+                if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
+                os.makedirs(working_dir)
 
-            res = test_suite.run_test(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Options.jobs, verbose=True, debug=Options.debug)
+                res = test_suite.run_test(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Options.jobs, verbose=True, debug=Options.debug)
 
-            if res[_StateKey_] not in _S_Values_: print 'Warning!!! Test {} failed with unknow result code: {}'.format(t, res[_StateKey_])
-            else: print 'Test {} finished with output:\n{}'.format(test, json.dumps(res, sort_keys=True, indent=2))
+                if res[_StateKey_] not in _S_Values_: print 'Warning!!! Test {} failed with unknow result code: {}'.format(t, res[_StateKey_])
+                else: print 'Test {} finished with output:\n{}'.format(test, json.dumps(res, sort_keys=True, indent=2))
 
 
         else:  # TestSuite
@@ -74,34 +94,22 @@ def main(args):
 
             test_suite = imp.load_source('test_suite', file_name)
 
-            working_dir = os.path.abspath('./results/' + test)
-            if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
-            os.makedirs(working_dir)
-
-            res = test_suite.run_test_suite(rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Options.jobs, verbose=True, debug=Options.debug)
-
-            if res[_StateKey_] not in _S_Values_: print 'Warning!!! TestSuite {} failed with unknow result code: {}'.format(t, res[_StateKey_])
+            if Options.compare: compare(test_suite.compare_test_suites)
             else:
-                print 'Test {} finished with output:\n{}\n'.format(test, json.dumps(res, sort_keys=True, indent=2))
+                working_dir = os.path.abspath('./results/' + test + Options.suffix)
+                if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
+                os.makedirs(working_dir)
+
+                res = test_suite.run_test_suite(rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Options.jobs, verbose=True, debug=Options.debug)
+
+                if res[_StateKey_] not in _S_Values_: print 'Warning!!! TestSuite {} failed with unknow result code: {}'.format(t, res[_StateKey_])
+                else:
+                    print 'Test {} finished with output:\n{}\n'.format(test, json.dumps(res, sort_keys=True, indent=2))
 
         print 'Output and log of this test saved to {0}/.results.json and {0}/.output.log'.format(working_dir)
 
         with file(working_dir+'/.output.log', 'w') as f: f.write(res[_LogKey_])
         with file(working_dir+'/.results.json', 'w') as f: json.dump(res, f, sort_keys=True, indent=2)
-
-
-        '''
-        # Running as individual test... may be later...
-        for t in test_suite.get_tests():
-            working_dir = os.path.abspath('./results/' + ts.split('/')[-1][:-3]) + '/' + t
-            if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
-            os.makedirs(working_dir)
-
-            res, output = test_suite.run(t, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, jobs=Options.jobs, verbose=True)
-
-            if res not in _ResultCodes_.values(): print 'Warning!!! Test {} failed with unknow result code: {}'.format(t, res)
-            else: print 'Test {} finished with output:\n{}\nAnd result code: {}'.format(t, output, res)
-        '''
 
 
 if __name__ == "__main__": main(sys.argv)

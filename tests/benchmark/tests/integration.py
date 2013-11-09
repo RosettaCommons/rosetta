@@ -62,7 +62,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     if debug:
         res, output = 0, 'integration.py: debug is enabled, skippig build...\n'
     else:
-        res, output = execute('Compiling...', 'cd {}/source && ./scons.py bin mode=release -j{jobs}'.format(rosetta_dir, jobs=jobs), return_='tuple')
+        res, output = execute('Compiling...', 'cd {}/source && ./scons.py bin mode=release cxx={compiler} -j{jobs}'.format(rosetta_dir, jobs=jobs, compiler=platform['compiler']), return_='tuple')
 
     full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
 
@@ -81,7 +81,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
         #if os.path.isdir(files_location): TR('Removing old ref dir %s...' % files_location);  shutil.rmtree(files_location)  # remove old dir if any
 
         #output_json = working_dir + '/output.json'  , output_json=output_json   --yaml={output_json}
-        command_line = 'cd {}/tests/integration && ./integration.py --timeout=480 -j{jobs}'.format(rosetta_dir, jobs=jobs)
+        command_line = 'cd {}/tests/integration && ./integration.py --compiler={platform[compiler]} --timeout=480 -j{jobs}'.format(rosetta_dir, jobs=jobs, platform=platform)
         TR( 'Running integration script: {}'.format(command_line) )
 
         if debug: res, output = 0, 'integration.py: debug is enabled, skippig integration script run...\n'
@@ -106,3 +106,32 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     results[_StateKey_] = _S_queued_for_comparison_
     results[_LogKey_]   = output  # ommiting compilation log and only including integration.py output
     return results
+
+
+
+# compare results of two tests run (new vs. previous)
+# take two dict and two paths
+# must return standard dict
+def compare_tests(results, files_path, previous_results, previous_files_path):
+    TR = Tracer(verbose=True)
+    TR('Integration Test script does not support compare_tests! Use compare_test_suites instead!')
+    raise BenchmarkError()
+
+
+# compare results of two test suites run (new vs. previous)
+# take two dict and two paths
+# must return standard dict
+def compare_test_suites(results, files_path, previous_results, previous_files_path):
+    results = dict(tests={}, summary=dict(total=0, failed=0, failed_tests=[]), config={})
+
+    for test in os.listdir(files_path):
+        if os.path.isdir(files_path + '/' + test):
+            res, brief_diff = execute('Comparing {}...'.format(test), 'diff -rq {0}/{test} {1}/{test}'.format(files_path, previous_files_path, test=test), return_='tuple')
+            res, full_diff  = execute('Comparing {}...'.format(test), 'diff -r  {0}/{test} {1}/{test}'.format(files_path, previous_files_path, test=test), return_='tuple')
+            results['tests'][test] = {_StateKey_: _S_failed_ if res else _S_finished_, _LogKey_: brief_diff + '\n\n' + full_diff[:16384] if res else ''}
+
+            results['summary']['total'] += 1
+            if res: results['summary']['failed'] += 1; results['summary']['failed_tests'].append(test)
+
+
+    return {_StateKey_: _S_failed_ if results['summary']['failed'] else _S_finished_, _LogKey_: '', _ResultsKey_: results}
