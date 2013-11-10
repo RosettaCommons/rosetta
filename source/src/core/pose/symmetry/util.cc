@@ -376,15 +376,48 @@ make_symmetric_pdb_info(
 	SymmetricConformation const & symm_conf( dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
 	SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
-	// for updating chain IDs we need to know how many chains are in the scoring subunit
-	Size lastchnid=1;
+	// setup chainID mapping
+	Size nuniqueIDs = basic::get_pymol_num_unique_ids();
+	utility::vector1< bool > asymm_chains(nuniqueIDs, false);
+	utility::vector1< bool > used_chainIDs(nuniqueIDs, false);
+	std::map< std::pair< Size,Size >, Size > symmChainIDMap;
+
+	// first pass, find chainIDs in base unit, keep these the same
+	Size nclones = 1;
 	for ( Size res=1; res <= pdb_info_src->nres(); ++res ) {
 		char chn_id = pdb_info_src->chain( res );
 		Size chn_idx = basic::get_pymol_chain_index_1(chn_id);
-		if (chn_idx!=0) {  // maybe chn is some other character ... the output chain IDs will be funky then ...
-			lastchnid = std::max( lastchnid, chn_idx );
+		if (chn_idx!=0) {
+			asymm_chains[chn_idx] = used_chainIDs[chn_idx] = true;
+		}
+
+		if (symm_info->bb_is_independent(res)) nclones = std::max( symm_info->bb_clones(res).size(), nclones );
+	}
+
+	// second pass, map (base chain,clone#) => new chain
+	for (int clone_i = 1; clone_i<=nclones; ++clone_i) {
+		for ( Size res=1; res <= pdb_info_src->nres(); ++res ) {
+			Size res_master = res;
+			if (!symm_info->bb_is_independent(res))
+				res_master = symm_info->bb_follows(res);
+
+			char chn_id = pdb_info_src->chain( res );
+			Size chn_idx = basic::get_pymol_chain_index_1(chn_id);
+
+			if (symmChainIDMap.find( std::make_pair(chn_idx,clone_i) ) == symmChainIDMap.end()) {
+				int newchainidx;
+				for (newchainidx=1; newchainidx<=nuniqueIDs && used_chainIDs[newchainidx]; ++newchainidx) ;
+
+				if (used_chainIDs[newchainidx]) { // all ids used
+					symmChainIDMap[ std::make_pair(chn_idx,clone_i) ] = nuniqueIDs;
+				} else {
+					used_chainIDs[newchainidx] = true;
+					symmChainIDMap[ std::make_pair(chn_idx,clone_i) ] = newchainidx;
+				}
+			}
 		}
 	}
+
 
 	for ( Size res=1; res <= pdb_info_src->nres(); ++res ) {
 		// resids in scoring subunit
@@ -398,17 +431,16 @@ make_symmetric_pdb_info(
 		// chnids in scoring subunit
 		char chn_id = pdb_info_src->chain( res );
 		Size chn_idx = basic::get_pymol_chain_index_1(chn_id);
-		if (chn_idx==0) chn_idx = 1; // treat all weird-character chains as 'A' in symm copies
+		//if (chn_idx==0) chn_idx = 1; // treat all weird-character chains as 'A' in symm copies  //fpd 11-10-13 no longer necessary
 		pdb_info_target->chain( res, chn_id );
 
 		// symmetrize B's
-		for ( Size atm=1; atm <= pdb_info_src->natoms(res) /*pose.residue(res).natoms()*/; ++atm) {
+		for ( Size atm=1; atm <= pdb_info_src->natoms(res); ++atm) {
 			core::Real b_atm = pdb_info_src->temperature( res, atm );
 			pdb_info_target->temperature( res, atm, b_atm );
 		}
 
 		// scoring subunit may not be the first
-		int clonecounter=1;
 		Size res_master = res;
 		if (!symm_info->bb_is_independent(res)) {
 			res_master = symm_info->bb_follows(res);
@@ -424,6 +456,7 @@ make_symmetric_pdb_info(
 			}
 		}
 
+		int clone_counter = 1;
 		for ( std::vector< Size>::const_iterator
 				clone     = symm_info->bb_clones( res_master ).begin(),
 				clone_end = symm_info->bb_clones( res_master ).end();
@@ -432,10 +465,12 @@ make_symmetric_pdb_info(
 			pdb_info_target->number( clone_res, res_id );
 			pdb_info_target->icode( clone_res, icode );
 
-			int newchn_idx = chn_idx + (clonecounter++)*(lastchnid);  //fpd this logic could be improved
-			pdb_info_target->chain( clone_res, basic::get_pymol_chain(newchn_idx) );
+			int newchn_idx = symmChainIDMap[ std::make_pair(chn_idx,clone_counter++) ];
+			if (newchn_idx == 0)
+				pdb_info_target->chain( clone_res, ' ' );
+			else
+				pdb_info_target->chain( clone_res, basic::get_pymol_chain(newchn_idx) );
 
-			// symmetrize B's
 			for ( Size atm=1; atm <= pdb_info_src->natoms(res) /*pose.residue(res).natoms()*/; ++atm) {
 				pdb_info_target->temperature( clone_res, atm, pdb_info_src->temperature( res, atm ) );
 			}

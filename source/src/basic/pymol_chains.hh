@@ -23,6 +23,12 @@ namespace basic {
 static std::string const pymol_chains("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz!@#$&.<>?]{}|-_\\~=%");
 
 static
+numeric::Size
+get_pymol_num_unique_ids(){
+	return pymol_chains.length();
+}
+
+static
 char
 get_pymol_chain(numeric::Size i){
 	return pymol_chains[(i-1)%pymol_chains.size()];
