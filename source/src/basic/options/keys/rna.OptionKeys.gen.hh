@@ -28,7 +28,8 @@ namespace rna { extern BooleanOptionKey const vary_geometry; }
 namespace rna { extern BooleanOptionKey const skip_coord_constraints; }
 namespace rna { extern BooleanOptionKey const skip_o2prime_trials; }
 namespace rna { extern StringOptionKey const vall_torsions; }
-namespace rna { extern StringOptionKey const jump_database; }
+namespace rna { extern BooleanOptionKey const jump_database; }
+namespace rna { extern BooleanOptionKey const bps_database; }
 namespace rna { extern BooleanOptionKey const rna_prot_erraser; }
 namespace rna { extern BooleanOptionKey const deriv_check; }
 

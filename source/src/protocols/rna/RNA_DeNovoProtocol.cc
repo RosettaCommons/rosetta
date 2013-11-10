@@ -376,6 +376,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 		if ( output_lores_silent_file_ ) align_and_output_to_silent_file( pose, lores_silent_file_, out_file_tag );
 
 		if ( minimize_structure_ ) {
+			rna_minimizer_->set_allow_insert( rna_structure_parameters_->allow_insert() );
 			rna_minimizer_->apply( pose );
 			if ( close_loops_at_end_ ) {
 				rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
@@ -540,17 +541,11 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 
 	chunk_coverage_ = rna_chunk_library_->chunk_coverage();
 
-	//	std::cout << "ALLOW_INSERT RIGHT AFTER INITIALIZATION: " << std::endl;
-	//	rna_structure_parameters_->allow_insert()->show();
-
 	rna_structure_parameters_->allow_insert()->and_allow_insert( rna_chunk_library_->allow_insert() );
 
-	//	std::cout << "ALLOW_INSERT RIGHT AFTER AND WITH CHUNK_LIBRARY: " << std::endl;
-	//	rna_structure_parameters_->allow_insert()->show();
 	std::cout << pose.annotated_sequence() << std::endl;
 
 	rna_structure_parameters_->setup_virtual_phosphate_variants( pose ); // needed to refreeze virtual phosphates!
-	//	std::cout << "ALLOW_INSERT AFTER VIRTUAL PHOSPHATE: " << std::endl;
 	//	rna_structure_parameters_->allow_insert()->show();
 
 	rna_chunk_library_->set_allow_insert( rna_structure_parameters_->allow_insert() );

@@ -1092,6 +1092,7 @@ superimpose_pose(
 	double rms;
 	rmsfitca2(natoms,xx1,xx2,wt,nsup,rms);
 
+
 	if ( true ) { // debug:
 		double tmp1,tmp2,tmp3;
 		COMAS(xx1,wt,natoms,tmp1,tmp2,tmp3); // store xcen,ycen,zcen vals for later
@@ -1112,6 +1113,7 @@ superimpose_pose(
 		}
 		runtime_assert( atomno == natoms );
 	}
+
 
 	return ( static_cast < Real > ( rms ) );
 }

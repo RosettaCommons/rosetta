@@ -852,68 +852,6 @@ apply_angle_set( pose::Pose & pose,
 	}
 }
 
-
-//////////////////////////////////////////////////////////////////////////////////////
-void
-figure_out_base_pair_partner( pose::Pose & pose, std::map< Size, Size > & partner,
-															bool const strict = true )
-{
-
-	using namespace core::scoring;
-	using namespace core::chemical::rna;
-	using namespace core::chemical;
-	using namespace core::conformation;
-
-	partner.clear();
-
-	ScoreFunctionOP lores_scorefxn = ScoreFunctionFactory::create_score_function( RNA_LORES_WTS );
-	(*lores_scorefxn)( pose );
-	lores_scorefxn->show( std::cout, pose );
-
-	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
-	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
-	Energy_base_pair_list scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
-
-	Size k( 0 ), m( 0 );
-	for ( Energy_base_pair_list::const_iterator it = scored_base_pair_list.begin();
-				it != scored_base_pair_list.end(); ++it ){
-
-		Base_pair const base_pair = it->second;
-
-		Size const i = base_pair.res1;
-		Size const j = base_pair.res2;
-
-		k = base_pair.edge1;
-		m = base_pair.edge2;
-
-		Residue const & rsd_i( pose.residue( i ) );
-		Residue const & rsd_j( pose.residue( j ) );
-
-		if ( ( k == WATSON_CRICK && m == WATSON_CRICK
-					 && base_pair.orientation == 1 )  &&
-				 possibly_canonical( rsd_i.aa(), rsd_j.aa() ) &&
-				 pose.torsion( id::TorsionID( i, id::CHI, 1 ) ) > 0  && //Need to check syn/anti
-				 pose.torsion( id::TorsionID( j, id::CHI, 1 ) ) > 0     //Need to check syn/anti
-				 )
-			{
-
-				if (strict && !possibly_canonical_strict( rsd_i.aa(), rsd_j.aa() ) ) continue;
-
-				std::string atom1, atom2;
-				get_watson_crick_base_pair_atoms( rsd_i.aa(), rsd_j.aa(), atom1, atom2 );
-				if ( ( rsd_i.xyz( atom1 ) - rsd_j.xyz( atom2 ) ).length() < 3.5 ) {
-					partner[ i ] = j;
-					partner[ j ] = i;
-				}
-
-			}
-
-	}
-
-
-
-}
-
 //////////////////////////////////////////////////////////////////////////////////////
 void
 output_torsions( pose::Pose const & coarse_pose, Size const & i, utility::io::ozstream & out1 ){

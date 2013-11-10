@@ -16,6 +16,8 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/BinaryRNASilentStruct.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -25,17 +27,21 @@
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
+#include <protocols/swa/StepWiseUtil.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/init/init.hh>
 
 #include <core/io/pdb/pose_io.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tools/make_vector1.hh>
 #include <utility/io/ozstream.hh>
 
 #include <numeric/conversions.hh>
 
 #include <ObjexxFCL/string.functions.hh>
+#include <ObjexxFCL/format.hh>
 
 //RNA stuff.
 #include <protocols/rna/RNA_ProtocolUtil.hh>
@@ -78,8 +84,8 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 // these will be available in the top-level OptionKey namespace:
 // i.e., OPT_KEY( Type, key ) -->  OptionKey::key
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
-OPT_KEY( Boolean, jump_database )
-OPT_KEY( Boolean, vall_torsions )
+//OPT_KEY( Boolean, jump_database )
+//OPT_KEY( Boolean, vall_torsions )
 OPT_KEY( IntegerVector, exclude_res )
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -378,20 +384,127 @@ create_bp_jump_database_test( ){
 
 
 ///////////////////////////////////////////////////////////////
+std::string
+get_bps_seq( utility::vector1< Size > const & base_pair_res, std::string const & sequence  ){
+	runtime_assert( base_pair_res.size() == 4 );
+
+	std::string bps_seq;
+	bps_seq += sequence[ base_pair_res[1]-1 ];
+	bps_seq += sequence[ base_pair_res[2]-1 ];
+	bps_seq += "_";
+	bps_seq += sequence[ base_pair_res[3]-1 ];
+	bps_seq += sequence[ base_pair_res[4]-1 ];
+
+	return bps_seq;
+}
+
+///////////////////////////////////////////////////////////
+std::string
+get_bps_tag( utility::vector1< Size > const &  base_pair_res, std::string const & infile, pose::Pose  & pose ){
+
+	using namespace ObjexxFCL::format;
+
+	pose::PDBInfoOP pdb_info = pose.pdb_info();
+
+	std::stringstream pdb_tag_stream;
+	pdb_tag_stream << infile;
+	pdb_tag_stream << "_";
+	pdb_tag_stream << pdb_info->chain( base_pair_res[1] ) << pdb_info->number( base_pair_res[1] );
+	pdb_tag_stream << "_";
+	pdb_tag_stream << pdb_info->chain( base_pair_res[2] ) << pdb_info->number( base_pair_res[2] );
+	pdb_tag_stream << "_";
+	pdb_tag_stream << pdb_info->chain( base_pair_res[3] ) << pdb_info->number( base_pair_res[3] );
+	pdb_tag_stream << "_";
+	pdb_tag_stream << pdb_info->chain( base_pair_res[4] ) << pdb_info->number( base_pair_res[4] );
+
+	return pdb_tag_stream.str();
+}
+
+///////////////////////////////////////////////////////////////
+void
+create_base_pair_step_database_test( ){
+
+	using namespace chemical;
+	using namespace core::scoring;
+	using namespace core::scoring::rna;
+	using namespace core::io::silent;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace protocols::rna;
+	using namespace protocols::swa;
+
+	utility::vector1< core::Size > const exclude_res_list = option[exclude_res]();
+
+	ResidueTypeSetCAP rsd_set;
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+
+	std::string const infile  = option[ in::file::s ][1];
+	std::string intag = infile;
+	Size pos( intag.find( ".pdb" ) );
+	intag.replace( pos, 4, "" );
+
+	SilentFileData silent_file_data;
+
+	pose::Pose pose;
+	core::import_pose::pose_from_pdb( pose, *rsd_set, infile );
+	figure_out_reasonable_rna_fold_tree( pose );
+	std::string const sequence = pose.sequence();
+	std::cout << sequence.size() << " " << pose.total_residue() << std::endl;
+
+	std::map< Size, Size > partner;
+	figure_out_base_pair_partner( pose, partner, false );
+
+	for ( std::map< Size, Size >::const_iterator it = partner.begin();
+				it != partner.end(); ++it ){
+		Size const i = it->first;
+		Size const j = it->second;
+		if ( i < pose.total_residue() &&
+				 partner.find( i+1 ) != partner.end() && j > 1 && partner[ i+1 ] == j-1 &&
+				 !pose.fold_tree().is_cutpoint(i) && !pose.fold_tree().is_cutpoint(j-1) ){
+			utility::vector1< int > const base_pair_res = utility::tools::make_vector1( i, i+1, j-1, j);
+
+			pose::Pose bps_pose;
+			protocols::swa::pdbslice( bps_pose, pose, base_pair_res );
+
+			std::string bps_seq = get_bps_seq( base_pair_res, sequence );
+			std::string bps_tag = get_bps_tag( base_pair_res, intag, pose );
+
+			std::cout << "Found base pair step! " << bps_seq << " " << bps_tag << std::endl;
+
+			std::string const silent_file = bps_seq + ".out";
+			BinaryRNASilentStruct s( bps_pose, bps_tag );
+			silent_file_data.write_silent_struct( s, silent_file,  false /* score_only */ );
+
+		}
+	}
+
+
+	std::cout << "***********************************************************" << std::endl;
+	std::cout << "Put base pair steps from " <<  infile << " into .out files"  << std::endl;
+	std::cout << "***********************************************************" << std::endl;
+
+}
+
+
+///////////////////////////////////////////////////////////////
 void*
 my_main( void* )
 {
 	using namespace basic::options;
+	using namespace basic::options::OptionKeys::rna;
 
 	if ( option[ jump_database ] ) {
 		create_bp_jump_database_test();
 	} else if ( option[ vall_torsions ].user() ) {
 		create_rna_vall_torsions_test();
+	} else if ( option[ bps_database ]() ) {
+		create_base_pair_step_database_test();
 	} else {
 		std::cout << std::endl;
 		std::cout << "Please specify: " << std::endl;
 		std::cout << "  -vall_torsions   for generating torsions library " << std::endl;
 		std::cout << "  -jump_database   for generating database of rigid-body orientations " << std::endl;
+		std::cout << "  -bps_database    for generating database of Watson-Crick base pair steps " << std::endl;
 		std::cout << std::endl;
 	}
 
@@ -415,6 +528,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( exclude_res, "Residues exlcuded for database creation (works for one file only)", blank_size_vector );
 	option.add_relevant( basic::options::OptionKeys::rna::vall_torsions );
 	option.add_relevant( basic::options::OptionKeys::rna::jump_database );
+	option.add_relevant( basic::options::OptionKeys::rna::bps_database );
 
 
 	////////////////////////////////////////////////////////////////////////////

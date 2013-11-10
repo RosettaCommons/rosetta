@@ -111,6 +111,7 @@ private:
 	bool verbose_;
 	bool do_dump_pdb_;
 	bool move_first_rigid_body_;
+	bool close_loops_;
 	std::string min_type_;
 
 	toolbox::AllowInsertOP allow_insert_;

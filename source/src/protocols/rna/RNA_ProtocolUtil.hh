@@ -32,6 +32,7 @@
 
 //// C++ headers
 #include <string>
+#include <map>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
@@ -163,6 +164,10 @@ mutate_position( core::pose::Pose & pose, core::Size const i, char const & new_s
 void
 set_output_res_num( core::pose::Pose & extended_pose,
 										utility::vector1< core::Size > const & output_res_num );
+
+void
+figure_out_base_pair_partner( core::pose::Pose & pose, std::map< core::Size, core::Size > & partner,
+															bool const strict = true );
 
 
 } //rna

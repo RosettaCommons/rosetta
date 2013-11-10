@@ -15,6 +15,7 @@
 
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
+#include <utility/exit.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 
@@ -77,16 +78,19 @@ Real
 CircularGeneral1D_Func::func( Real const x ) const {
 
 	Real bin_real =  ( x - xmin_ ) / xbin_;
-	
+
 	Real const bin_wrap_real = bin_real - num_bins_ * floor( bin_real / num_bins_ ) + 1;
-	
-	assert( bin_wrap_real >= 1 && bin_wrap_real < num_bins_ + 1 );
+
+	assert( bin_wrap_real >= 1 && bin_wrap_real < num_bins_+1 );
 
 	Size const bin = static_cast< Size >( bin_wrap_real );
 	Real const leftover = bin_wrap_real - bin;
 
 	Size next_bin = bin + 1;
 	if ( next_bin > num_bins_ ) next_bin = 1; //wrap around.
+
+	//	runtime_assert( bin >= 1      && bin <= data_.size() );
+	//	runtime_assert( next_bin >= 1 && next_bin <= data_.size() );
 
 	return  (data_( bin ) * ( 1 - leftover ))   +   (data_( next_bin ) * leftover) ;
 

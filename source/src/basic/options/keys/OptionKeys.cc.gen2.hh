@@ -1,3 +1,4 @@
+namespace james { StringVectorOptionKey const atom_names( "james:atom_names" );  }
 namespace james { RealVectorOptionKey const dist_thresholds( "james:dist_thresholds" );  }
 namespace james { RealVectorOptionKey const torsion_thresholds( "james:torsion_thresholds" );  }
 namespace james { RealOptionKey const sog_cutoff( "james:sog_cutoff" );  }
@@ -282,7 +283,8 @@ namespace rna { BooleanOptionKey const vary_geometry( "rna:vary_geometry" );  }
 namespace rna { BooleanOptionKey const skip_coord_constraints( "rna:skip_coord_constraints" );  }
 namespace rna { BooleanOptionKey const skip_o2prime_trials( "rna:skip_o2prime_trials" );  }
 namespace rna { StringOptionKey const vall_torsions( "rna:vall_torsions" );  }
-namespace rna { StringOptionKey const jump_database( "rna:jump_database" );  }
+namespace rna { BooleanOptionKey const jump_database( "rna:jump_database" );  }
+namespace rna { BooleanOptionKey const bps_database( "rna:bps_database" );  }
 namespace rna { BooleanOptionKey const rna_prot_erraser( "rna:rna_prot_erraser" );  }
 namespace rna { BooleanOptionKey const deriv_check( "rna:deriv_check" );  }
 namespace cm { BooleanOptionKey const cm( "cm" );  }
@@ -725,5 +727,3 @@ namespace optE { FileOptionKey const optimize_decoy_discrimination( "optE:optimi
 namespace optE { StringOptionKey const normalize_decoy_score_spread( "optE:normalize_decoy_score_spread" );  }
 namespace optE { BooleanOptionKey const ramp_nativeness( "optE:ramp_nativeness" );  }
 namespace optE { IntegerOptionKey const n_top_natives_to_optimize( "optE:n_top_natives_to_optimize" );  }
-namespace optE { RealOptionKey const approximate_decoy_entropy( "optE:approximate_decoy_entropy" );  }
-namespace optE { BooleanOptionKey const repack_and_minimize_decoys( "optE:repack_and_minimize_decoys" );  }

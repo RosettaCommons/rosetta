@@ -164,6 +164,7 @@ namespace rna{
 
 			std::map< AtomID, bool >::const_iterator it_mask = atom_id_mask_.find( source_atom_id );
 			if ( it_mask == atom_id_mask_.end() ) utility_exit_with_message( "Some problem with atom_id_mask in defining atom_id_map " );
+
 			if ( !it_mask->second ) continue; // this source_atom_id is not allowed by mask, probably came from a virtual phosphate.
 
 			atom_id_map_new[ insert_atom_id ] = source_atom_id;
@@ -413,7 +414,9 @@ namespace rna{
 				std::string const & atomname = rsd_i.atom_name( j );
 				Residue const & scratch_rsd = scratch_pose.residue(i_scratch);
 
+
 				bool at_chainbreak =  ( i_scratch == 1 || scratch_pose.fold_tree().is_cutpoint( i_scratch - 1 ) ||	(i - i_prev ) > 1 );
+
 				if ( rsd_i.is_RNA() && involved_in_phosphate_torsion( atomname ) && at_chainbreak ) continue; // don't trust phosphates at beginning of chains.
 
 				if ( scratch_rsd.has( atomname ) ) {
@@ -478,11 +481,11 @@ namespace rna{
 		}
 
 		if ( num_jumps_scratch < num_jumps_in_big_pose_in_scratch_region ){
-			std::cout << "WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!" << std::endl;
-			std::cout << "Number of jumps in chunk pose               : " << num_jumps_scratch << std::endl;
-			std::cout << "Does not match:" << std::endl;
-			std::cout << "Number of jumps in full pose in chunk region: " << num_jumps_in_big_pose_in_scratch_region  << "  out of total jumps " << pose.num_jump() << std::endl;
-			std::cout << "WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!" << std::endl;
+			//			std::cout << "WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!" << std::endl;
+			//			std::cout << "Number of jumps in chunk pose               : " << num_jumps_scratch << std::endl;
+			//			std::cout << "Does not match:" << std::endl;
+			//			std::cout << "Number of jumps in full pose in chunk region: " << num_jumps_in_big_pose_in_scratch_region  << "  out of total jumps " << pose.num_jump() << std::endl;
+			//			std::cout << "WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!" << std::endl;
 			// Just a warning
 			//return false;
 		}
@@ -953,7 +956,7 @@ namespace rna{
 
 			pose::PoseOP pose_op( new pose::Pose );
 			core::import_pose::pose_from_pdb( *pose_op, *rsd_set, input_file );
-			ensure_phosphate_nomenclature_matches_mini( *pose_op );
+			//			ensure_phosphate_nomenclature_matches_mini( *pose_op );
 			figure_out_reasonable_rna_fold_tree( *pose_op );
 			pose_list.push_back( pose_op );
 
@@ -984,7 +987,9 @@ namespace rna{
 			}
 
 			virtualize_5prime_phosphates( *pose_op );
+
 		}
+
 
 		// std::cout << "DONE: " << input_file << std::endl;
 

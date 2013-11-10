@@ -17,7 +17,9 @@
 #include <protocols/toolbox/AllowInsert.hh>
 
 #include <protocols/swa/rna/StepWiseRNA_Util.hh> //Parin Sripakdeevong
+#include <protocols/swa/StepWiseUtil.hh> // for figuring out moving chainbreaks
 #include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/rna/RNA_LoopCloser.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -99,7 +101,7 @@ namespace rna {
 RNA_Minimizer::RNA_Minimizer():
     Mover(),
     deriv_check_( false ),
-    use_coordinate_constraints_( false ), // DO NOT CHECK IN
+    use_coordinate_constraints_( false ),
     coord_sdev_( 10.0 * std::sqrt(10.0) ), // awkward, but matches an old setting.
     coord_cst_weight_( 1.0 ),
     rounds_( basic::options::option[ basic::options::OptionKeys::rna::minimize_rounds ] ),
@@ -110,6 +112,7 @@ RNA_Minimizer::RNA_Minimizer():
     verbose_( false ), //Parin S. Jan 07, 2012
     do_dump_pdb_( false ),
     move_first_rigid_body_( false ),
+		close_loops_( true ),
     min_type_( "dfpmin" ) //Parin S. Jan 12, 2012
 {
     Mover::type("RNA_Minimizer");
@@ -178,9 +181,10 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 	update_allow_insert_with_extra_minimize_res( pose );
  	setup_movemap( mm, pose );
 
-	Real const fa_rep_final( scorefxn_->get_weight( fa_rep ) );
+	utility::vector1< Size > moving_chainbreaks = swa::figure_out_moving_chain_break_res( pose, mm );
+	RNA_LoopCloser rna_loop_closer;
 
-	if(do_dump_pdb_) pose.dump_pdb( "RNA_Minimizer_START.pdb" );
+	Real const fa_rep_final( scorefxn_->get_weight( fa_rep ) );
 
 	for (Size r = 1; r <= rounds_; r++ ) {
 
@@ -189,11 +193,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 		Real const suppress = static_cast<Real>(r)/rounds_;
 		minimize_scorefxn_->set_weight( fa_rep, fa_rep_final * suppress  );
 
-		if(do_dump_pdb_) pose.dump_pdb( "RNA_Minimizer_round_" + ObjexxFCL::string_of(r) + "_before_o2prime_trials.pdb" );
-
 		if (!skip_o2prime_trials_) o2prime_trials( pose, minimize_scorefxn_ );
-
-		if(do_dump_pdb_) pose.dump_pdb( "RNA_Minimizer_round_" + ObjexxFCL::string_of(r) +"_after_o2prime_trials.pdb" );
 
 		//Prevent explosions on first minimize.
 		// this is silly. in first round, just make sure coordinate_constraint is one, and use constraints 'supplemented' with coordinate constraints.
@@ -206,15 +206,14 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 			}
 		}
 		TR << "Minimizing...round= " << r << std::endl;
+
 		if (perform_minimizer_run_) minimizer.run( pose, mm, *minimize_scorefxn_, options );
 
-		if (do_dump_pdb_) pose.dump_pdb( "RNA_Minimizer_round_" + ObjexxFCL::string_of(r) + "_after_minimizer_run.pdb" );
+		if (close_loops_)		rna_loop_closer.apply( pose, moving_chainbreaks );
 
 	}
 
 	time_t pdb_end_time = time(NULL);
-
-	//scorefxn_->show( std::cout, pose );
 
 	pose.constraint_set( save_pose_constraints );
 
@@ -222,8 +221,6 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 
 	(*scorefxn_)( pose );
 	scorefxn_->show( std::cout, pose );
-
-	if(do_dump_pdb_) pose.dump_pdb( "RNA_Minimizer_FINISH.pdb" );
 
 	TR << "RNA minimizer finished in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
 
@@ -308,12 +305,16 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 
 				if ( !allow_insert_->get( rna_torsion_id, pose.conformation() ) ) continue;
 
-				DOF_ID dof_id( pose.conformation().dof_id_from_torsion_id( rna_torsion_id ) );
-				mm.set( dof_id, true );
+				// this is not general. Sigh:
+				if ( pose.residue(i).has_variant_type("VIRTUAL_PHOSPHATE") && ( j == 1 || j == 2 || j == 3 ) ) continue;
+
+				//				DOF_ID dof_id( pose.conformation().dof_id_from_torsion_id( rna_torsion_id ) );
+				mm.set( rna_torsion_id, true );
 
 			}
 
 	}
+
 
 	// jumps
 	for (Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
@@ -327,8 +328,9 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 		AtomID jump_atom_id2( 1, jump_pos2 );
 		if (jump_atom2.size() > 0) jump_atom_id2 = named_atom_id_to_atom_id( NamedAtomID( jump_atom2, jump_pos2 ), pose );
 
-		if ( allow_insert_->get( jump_atom_id1 ) || allow_insert_->get( jump_atom_id2 ) ) 	 mm.set_jump( n, true );
-
+		if ( allow_insert_->get( jump_atom_id1 ) || allow_insert_->get( jump_atom_id2 ) ) {
+			mm.set_jump( n, true );
+		}
 	}
 
 	// allow rigid body movements... check for virtual residue at end and at least two chunks with jumps to it.

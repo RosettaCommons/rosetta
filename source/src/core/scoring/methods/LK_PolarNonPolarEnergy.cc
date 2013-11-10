@@ -882,6 +882,7 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
 	Size const m( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( i ) );
     if ( m > rsd1.nheavyatoms() ) return;
+		if ( rsd1.is_virtual( m ) )  return;
     Vector const & heavy_atom_m( rsd1.xyz( m ) );
     bool const is_polar_m = ( rsd1.atom_type(m).is_acceptor() || rsd1.atom_type(m).is_donor());
 
@@ -915,7 +916,9 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
         if ( pos1_fixed && domain_map(i) == domain_map(j) ) continue;
 		Size const n( nbr.atomno() );
 		conformation::Residue const & rsd2( pose.residue( j ) );
+
         if ( n > rsd2.nheavyatoms() ) continue;
+				if ( rsd2.is_virtual( n ) ) continue;
 
         cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
         cp_weight = 1.0;
@@ -933,7 +936,6 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
         lk_score = cp_weight * eval_lk( rsd1.atom( m ), rsd2.atom( n ), deriv, true);
         f2 = -1.0 * cp_weight * deriv * d_ij_norm;
         f1 = cross( f2, heavy_atom_n );
-
         if ( compute_polar && is_polar_m ) {
             Real const d = d_ij.length();
             F1 += weights[ lk_polar ] * f1;
@@ -959,7 +961,7 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
             F1 -= weights[ lk_polar ] * f1;
             F2 -= weights[ lk_polar ] * f2;
             Vector const res2_base_vector_norm = get_base_vector( rsd2, n, pose );
-            dotprod = dot( res2_base_vector_norm, -d_ij_norm );
+           dotprod = dot( res2_base_vector_norm, -d_ij_norm );
             f2 *= dotprod;
             f2 -= lk_score * ( 1/d ) *  (res2_base_vector_norm  + dotprod * d_ij_norm );
             f1 = cross( f2, heavy_atom_m );
@@ -970,6 +972,7 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
             F2 -= weights[ lk_nonpolar ] * f2;
         }
     }
+
 }
 
 ////////////////////////////////////////////////

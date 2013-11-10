@@ -8480,9 +8480,14 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "rna.torsions"</dd><br>
 </dl>
 <dl>
-<dt><b>-jump_database</b> \<String\><dt>
+<dt><b>-jump_database</b> \<Boolean\><dt>
 <dd>Generate a database of jumps extracted from base pairings from a big RNA file</dd><br>
-<dd>Default: "rna_jumps.txt"</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-bps_database</b> \<Boolean\><dt>
+<dd>Generate a database of base pair steps extracted from a big RNA file</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-rna_prot_erraser</b> \<Boolean\><dt>

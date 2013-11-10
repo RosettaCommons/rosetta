@@ -889,7 +889,8 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 	} else {
 
 		// also useful -- if user has an input pdb, put the root in there, if possible.
-		for (Size n = pose.total_residue(); n >= 1; n-- ){ // not sure why I did this backwards...
+		//		for (Size n = pose.total_residue(); n >= 1; n-- ){ // not sure why I did this backwards...
+		for (Size n = 1; n <= pose.total_residue(); n++ ){
 			if ( pose.residue(n).is_RNA() &&
 					 allow_insert_->get_domain( named_atom_id_to_atom_id( id::NamedAtomID( " C1'", n ), pose ) ) == 1 /*1 means the first inputted pose*/ &&
 					 f.possible_root(n) ) {
@@ -1003,6 +1004,7 @@ RNA_StructureParameters::setup_virtual_phosphate_variants( pose::Pose & pose )
 
 	}
 
+	allow_insert_->renumber_after_variant_changes( pose );
 
 }
 

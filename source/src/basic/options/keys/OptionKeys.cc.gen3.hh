@@ -1,3 +1,5 @@
+namespace optE { RealOptionKey const approximate_decoy_entropy( "optE:approximate_decoy_entropy" );  }
+namespace optE { BooleanOptionKey const repack_and_minimize_decoys( "optE:repack_and_minimize_decoys" );  }
 namespace optE { BooleanOptionKey const repack_and_minimize_input_structures( "optE:repack_and_minimize_input_structures" );  }
 namespace optE { IntegerOptionKey const output_top_n_new_decoys( "optE:output_top_n_new_decoys" );  }
 namespace optE { FileOptionKey const optimize_ligand_discrimination( "optE:optimize_ligand_discrimination" );  }

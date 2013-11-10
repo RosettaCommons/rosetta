@@ -1706,7 +1706,11 @@ rotate( pose::Pose & pose, Matrix const M,
 
 			if ( cutpoint_closed.has_value( n ) ){
 				if ( moving_chainbreak_res.has_value( n ) ) continue;
-				if ( mm.get( id::TorsionID( n+1, id::BB, 1 ) ) ) moving_chainbreak_res.push_back( n );
+				if (mm.get( id::TorsionID( n, id::BB, 5 ) ) ||
+						mm.get( id::TorsionID( n, id::BB, 6 ) ) ||
+						mm.get( id::TorsionID( n+1, id::BB, 1 ) ) ||
+						mm.get( id::TorsionID( n+1, id::BB, 2 ) ) ||
+						mm.get( id::TorsionID( n+1, id::BB, 3 ) ) ) moving_chainbreak_res.push_back( n );
 			} else {
 
 				if ( pose.fold_tree().is_cutpoint( n ) ) continue;
