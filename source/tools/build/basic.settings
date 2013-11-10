@@ -1235,6 +1235,18 @@ settings = {
             },
         },
     },
+    "clang, graphics" : {
+	    "appends" : {
+            "include_path" : [ "/usr/X11R6/include" ],
+            "library_path" : [ "/usr/X11R6/lib" ],
+            "defines"      : [ "GL_GRAPHICS", "MAC" ],
+            "flags" : {
+                "link"      : [ "framework GLUT", "framework OpenGL", "dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" ],
+                "shlink"      : [ "framework GLUT", "framework OpenGL", "dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" ],
+            },
+		},
+	},
+				
     "clang, debug" : {
         "appends" : {
             "flags" : {
