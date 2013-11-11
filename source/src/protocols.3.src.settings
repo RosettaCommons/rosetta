@@ -397,6 +397,7 @@ sources = {
 		"RmsdEvaluator",
 		"RmsdEvaluatorCreator",
 		"SigmoidFilter",
+		"MultipleSigmoidsFilter",
 		"OperatorFilter",
 		"ChiWellRmsdEvaluator",
 		"ChiWellRmsdEvaluatorCreator",

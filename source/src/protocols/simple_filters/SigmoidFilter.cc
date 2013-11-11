@@ -105,9 +105,14 @@ Sigmoid::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap
 	offset( tag->getOption< core::Real >( "offset", 0 ));
 	negate( tag->getOption< bool >( "negate", false ) );
 	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
-	filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
+	if( tag->hasOption( "filter" ) ){
+		filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ),filters  ) );
+		TR<<" filter: "<<tag->getOption< std::string >( "filter" )<<std::endl;
+	}
+	else
+		TR<<"Filter not defined. I'm expecting another filter/mover to set my filter, else I will crash!!!"<<std::endl;
 	baseline_checkpointing_filename_ = tag->getOption< std::string >( "baseline_checkpoint", "" );
-	TR<<"Sigmoid with options: steepness "<<steepness()<<" offset "<<offset()<<" negate "<<negate()<<" threshold "<<threshold()<<" filter: "<<tag->getOption< std::string >( "filter" ) << " baseline checkpointing file: "<<baseline_checkpointing_filename_<<std::endl;
+	TR<<"Sigmoid with options: steepness "<<steepness()<<" offset "<<offset()<<" negate "<<negate()<<" threshold "<<threshold()<<" baseline checkpointing file: "<<baseline_checkpointing_filename_<<std::endl;
 }
 
 bool
@@ -131,6 +136,7 @@ core::Real
 Sigmoid::compute(
 	core::pose::Pose const & pose
 ) const {
+	runtime_assert( filter()() ); /// if I'm null the filter has not been set
   core::Real const val( filter()->report_sm( pose ) - baseline_ );
   core::Real const transform( 1.0 / ( ( 1.0 + std::exp( ( val - offset_ ) * steepness_ ) ) ) );
 	core::Real const complement( negate() ? 1.0 - transform : transform ); // negate means to take the complement of the transform

@@ -145,7 +145,13 @@ Operator::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMa
 	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
 	negate( tag->getOption< bool >( "negate", false ) );
 
-  utility::vector1< std::string > const filter_names( utility::string_split( tag->getOption< std::string >( "filters" ), ',' ) );
+	utility::vector1< std::string > filter_names;
+	filter_names.clear();
+
+	if( !tag->hasOption( "filters" ) )
+		TR<<"filters parameter not set. I expect another mover/filter to set the filters, o/w you'll crash and burn in apply! See Shira"<<std::endl;
+	else
+  	filter_names = utility::string_split( tag->getOption< std::string >( "filters" ), ',' );
 	foreach( std::string const fname, filter_names ){
 		add_filter( protocols::rosetta_scripts::parse_filter( fname, filters ) );
 		TR<<"Adding filter "<<fname<<std::endl;
@@ -193,6 +199,7 @@ Operator::compute(
 	core::pose::Pose const & pose
 ) const {
 	core::Real val( 0.0 );
+	runtime_assert( filters().size() > 0 ); /// you didn't set the filters parameter in the XML, or by another mover/filter; see Shira
 	if( operation() == SUBTRACT || operation() == BOOLEAN_OR ){
 		runtime_assert( filters().size() == 2 );
 		core::Real const val1( filters()[ 1 ]->report_sm( pose ) );

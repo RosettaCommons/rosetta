@@ -285,7 +285,7 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagCOP const tag,
 	}
 	relax_mover( parse_mover( tag->getOption< std::string >( "relax_mover", "null" ), movers ) );
 	filter( parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
-	filter_name( tag->getOption< std::string> ( "name" ) );
+	filter_name( tag->getOption< std::string> ( "name", "" ) );
 	baseline( tag->getOption< bool >( "baseline", 1 ));
 	if( baseline() ){
 		relax_mover()->apply( *pose() );
