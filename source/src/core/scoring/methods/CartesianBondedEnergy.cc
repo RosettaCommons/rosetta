@@ -1500,7 +1500,8 @@ IdealParametersDatabase::create_parameters_for_restype(
 //////////////////////
 /// EnergyMethod
 CartesianBondedEnergy::CartesianBondedEnergy( methods::EnergyMethodOptions const & options ) :
-	parent( new CartesianBondedEnergyCreator )
+	parent( new CartesianBondedEnergyCreator ),
+	pro_nv_("NV")
 {
 	// if flag _or_ energy method wants a linear potential, make the potential linear
 	linear_bonded_potential_ =
@@ -1517,6 +1518,7 @@ CartesianBondedEnergy::CartesianBondedEnergy( methods::EnergyMethodOptions const
 
 CartesianBondedEnergy::CartesianBondedEnergy( CartesianBondedEnergy const & src ) : parent( src ) {
 	linear_bonded_potential_ = src.linear_bonded_potential_;
+	pro_nv_ = src.pro_nv_;
 }
 
 CartesianBondedEnergy::~CartesianBondedEnergy() {}
@@ -1526,6 +1528,13 @@ CartesianBondedEnergy::clone() const {
 	return new CartesianBondedEnergy( *this );
 }
 
+void
+CartesianBondedEnergy::setup_for_derivatives(
+	pose::Pose & pose,
+	ScoreFunction const &
+) const {
+	idealize_proline_nvs(pose);
+}
 
 void
 CartesianBondedEnergy::setup_for_scoring(
@@ -1533,6 +1542,8 @@ CartesianBondedEnergy::setup_for_scoring(
 	ScoreFunction const &
 ) const {
 	using namespace methods;
+
+	idealize_proline_nvs(pose);
 
 	// create LR energy container
 	LongRangeEnergyType const & lr_type( long_range_type() );
@@ -1568,6 +1579,24 @@ CartesianBondedEnergy::setup_for_scoring(
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
+
+void
+CartesianBondedEnergy::idealize_proline_nvs(
+	pose::Pose & pose
+) const {
+
+	// Idealize the NV atom of the prolines in the pose. This allows
+	// for safe switching between cartesian and non-cartesian poses
+	for(core::Size i=1; i<=pose.total_residue(); ++i) {
+		if(pose.is_fullatom() && pose.residue(i).aa() == core::chemical::aa_pro) {
+			core::Size nv_index = pose.residue(i).atom_index(pro_nv_);
+			core::id::AtomID nv_id(nv_index, i);
+			Vector nv_coords = pose.residue(i).build_atom_ideal((int)nv_index, pose.conformation());
+			pose.set_xyz(nv_id, nv_coords);
+		}
+	}
+}
+
 
 bool
 CartesianBondedEnergy::defines_residue_pair_energy(
@@ -1662,7 +1691,8 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 
 	// bail out if the residues aren't bonded or we cross a cutpoint
 	if (!rsd1.is_bonded(rsd2)) { return; }
-	if ( pose.fold_tree().is_cutpoint( rsd1.seqpos() ) ) { return; }
+	if (rsd1.has_variant_type(core::chemical::CUTPOINT_LOWER)) { return; }
+	if (rsd2.has_variant_type(core::chemical::CUTPOINT_UPPER)) { return; }
 
 	eval_improper_torsion_derivatives( rsd1, rsd2, res1params, res2params, weights, r1_atom_derivs, r2_atom_derivs );
 
@@ -1701,9 +1731,9 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 		return 0.0;
 
 	core::Size resid = rsd.seqpos();
-	//bool is_nterm = ((resid==1) || pose.fold_tree().is_cutpoint( resid-1 ));
-	bool is_cterm = ((resid==pose.total_residue()) || pose.fold_tree().is_cutpoint( resid ));
-	bool preproline = (!is_cterm && (pose.residue( resid+1 ).aa() == core::chemical::aa_pro || pose.residue( resid+1 ).aa() == core::chemical::aa_dpr)); //i+1 residue is either D-proline or L-proline
+	//i+1 residue is either D-proline or L-proline
+	bool preproline = resid+1 < pose.total_residue() && pose.residue(resid).is_bonded(pose.residue(resid+1)) &&
+		(pose.residue( resid+1 ).aa() == core::chemical::aa_pro || pose.residue( resid+1 ).aa() == core::chemical::aa_dpr);
 
 	// phi/psi
 	Real phi=0,psi=0;
@@ -1980,8 +2010,8 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 	assert( rsd2.seqpos() > rsd1.seqpos() );
 
 	core::Size resid = rsd1.seqpos();
-	bool is_cterm = (pose.fold_tree().is_cutpoint( resid ));
-	bool preproline = (!is_cterm && (rsd2.aa() == core::chemical::aa_pro || rsd2.aa() == core::chemical::aa_dpr)); //rsd2 is either D- or L-proline
+	bool preproline = pose.residue(resid).is_bonded(pose.residue(resid+1)) &&
+		(pose.residue( resid+1 ).aa() == core::chemical::aa_pro || pose.residue( resid+1 ).aa() == core::chemical::aa_dpr);
 
 	if ( rsd1.aa() == core::chemical::aa_vrt) return;
 
@@ -2018,7 +2048,8 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 
 	// bail out if the residues aren't bonded or we cross a cutpoint
 	if (!rsd1.is_bonded(rsd2)) { return; }
-	if ( is_cterm ) { return; }
+	if (rsd1.has_variant_type(core::chemical::CUTPOINT_LOWER)) { return; }
+	if (rsd2.has_variant_type(core::chemical::CUTPOINT_UPPER)) { return; }
 
 	/// evaluate all the inter-residue energy components
 	eval_residue_pair_energies( rsd1, rsd2, rsd1params, rsd2params, phi1, psi1, phi2, psi2, pose, emap );
