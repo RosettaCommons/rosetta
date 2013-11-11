@@ -73,23 +73,9 @@ def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
 
 def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
-    TR = Tracer(verbose)
-    TR('Build script does not support TestSuite-like run!')
-    raise BenchmarkError()
+    raise BenchmarkError('Build script does not support TestSuite-like run!')
 
 
-'''
-def run_test_suite(rosetta_dir, working_dir, jobs=1, hpc_driver=None, verbose=False):
-    TR = Tracer(verbose)
-
-    TR('Running test_suite: "{}" at working_dir={working_dir!r} with rosetta_dir={rosetta_dir} jobs={jobs}, hpc_driver={hpc_driver}...'.format(__name__, **vars() ) )
-    results = {}
-    for t in tests:
-        test_working_dir = working_dir + '/' + t
-        if os.path.isdir(test_working_dir): shutil.rmtree(test_working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
-        os.makedirs(test_working_dir)
-
-        results[t] = run_test(test=t, rosetta_dir=rosetta_dir, working_dir=test_working_dir, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose)
-
-    return results
-'''
+def run(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
+    if test: return run_test(test, rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    else: return run_test_suite(rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)

@@ -34,15 +34,11 @@ def tear_down(): pass
 
 
 def get_tests():
-    TR = Tracer(verbose=True)
-    TR('Integration Test script does not support get_tests! Use run_test_suite instead!')
-    raise BenchmarkIntegrationError()
+    raise BenchmarkIntegrationError('Integration Test script does not support get_tests! Use run_test_suite instead!')
 
 
 def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
-    TR = Tracer(verbose)
-    TR('Integration Test script does not support run_test! Use run_test_suite instead!')
-    raise BenchmarkIntegrationError()
+    raise BenchmarkIntegrationError('Integration Test script does not support run_test! Use run_test_suite instead!')
 
 
 def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
@@ -108,14 +104,17 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     return results
 
 
+def run(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
+    if test: return run_test(test, rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    else: return run_test_suite(rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+
+
 
 # compare results of two tests run (new vs. previous)
 # take two dict and two paths
 # must return standard dict
-def compare_tests(results, files_path, previous_results, previous_files_path):
-    TR = Tracer(verbose=True)
-    TR('Integration Test script does not support compare_tests! Use compare_test_suites instead!')
-    raise BenchmarkError()
+def compare_tests(test, results, files_path, previous_results, previous_files_path):
+    raise BenchmarkError('Integration Test script does not support compare_tests! Use compare_test_suites instead!')
 
 
 # compare results of two test suites run (new vs. previous)
@@ -135,3 +134,8 @@ def compare_test_suites(results, files_path, previous_results, previous_files_pa
 
 
     return {_StateKey_: _S_failed_ if results['summary']['failed'] else _S_finished_, _LogKey_: '', _ResultsKey_: results}
+
+
+def compare(test, results, files_path, previous_results, previous_files_path):
+    if test.count('.'): return compare_tests(test, results, files_path, previous_results, previous_files_path)
+    else: return compare_test_suites(results, files_path, previous_results, previous_files_path)
