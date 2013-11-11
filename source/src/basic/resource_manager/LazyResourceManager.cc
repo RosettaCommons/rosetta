@@ -92,8 +92,8 @@ LazyResourceManager::clear()
 void
 LazyResourceManager::add_default_resource_locator()
 {
-	resource_locators_[""] = ResourceLocatorFactory::get_instance()->create_resource_locator( "FileSystemResourceLocator", "default_locator", 0 );
-	resource_locators_["NULL"] = ResourceLocatorFactory::get_instance()->create_resource_locator( "NullResourceLocator", "default_locator", 0 );
+	resource_locators_[""] = ResourceLocatorFactory::get_instance()->create_resource_locator( "FileSystemResourceLocator", "default_locator", NULL );
+	resource_locators_["NULL"] = ResourceLocatorFactory::get_instance()->create_resource_locator( "NullResourceLocator", "default_locator", NULL );
 }
 
 

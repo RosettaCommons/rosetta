@@ -129,14 +129,14 @@ FileStream::stream() {
 FileSystemResourceLocator::FileSystemResourceLocator(
 	std::ios_base::openmode open_mode
 ) : basic::resource_manager::ResourceLocator(),
-	open_mode_(open_mode)
+	open_mode_(open_mode), base_path_("")
 {}
 
 
 FileSystemResourceLocator::FileSystemResourceLocator(
 		FileSystemResourceLocator const & src
 ) : basic::resource_manager::ResourceLocator(),
-	open_mode_(src.open_mode_)
+	open_mode_(src.open_mode_), base_path_(src.base_path_)
 {}
 
 void
@@ -151,7 +151,10 @@ FileSystemResourceLocator::show(
 		<< (std::ios_base::binary & open_mode_ ? " binary" : "")
 		<< (std::ios_base::in & open_mode_ ? " input" : "")
 		<< (std::ios_base::out & open_mode_ ? " output" : "")
-		<< (std::ios_base::trunc & open_mode_ ? " truncate" : "");
+		<< (std::ios_base::trunc & open_mode_ ? " truncate" : "")
+		<< "  base search path for resources: "
+		<< (base_path_ == "" ? "none" : base_path_)
+		<< std::endl;
 }
 
 //std::ostream &
@@ -187,14 +190,24 @@ ResourceStreamOP
 FileSystemResourceLocator::locate_resource_stream(
 	string const & locator_tag
 ) const {
-	return new FileStream( locator_tag );
+	// Concatenate base_path_ and the locator tag to generate the appropriate filename.
+	std::stringstream fully_specified_locator_tag;
+	fully_specified_locator_tag << base_path_ << locator_tag;
+	return new FileStream( fully_specified_locator_tag.str() );
 }
 
+/// @details Set the value for base_path if specified in the ResourceDefintionFile.
 void
 FileSystemResourceLocator::parse_my_tag(
-	TagCOP
+	TagCOP tag
 )
-{}
+{
+	if (tag && tag->hasOption("base_path")) {
+		std::stringstream base_path_with_trailing_space;
+		base_path_with_trailing_space << tag->getOption<string>("base_path") << "/";
+		base_path_ = base_path_with_trailing_space.str();
+	}
+}
 
 } // namespace locator
 } // namespace resource_manager

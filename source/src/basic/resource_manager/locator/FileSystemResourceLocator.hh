@@ -113,8 +113,7 @@ public:
 		std::string const & locator_tag
 	) const;
 
-	/// @brief Noop method; the only data that could be initialized in this method is the openmode
-	/// for the files that this data is not initialized here.
+	/// @brief Allows a default base_path to be specified for the locator.
 	virtual
 	void
 	parse_my_tag(
@@ -123,6 +122,7 @@ public:
 
 private:
 	std::ios_base::openmode open_mode_;
+	std::string base_path_;
 
 };
 

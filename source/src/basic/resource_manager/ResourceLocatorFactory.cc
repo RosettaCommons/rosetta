@@ -48,7 +48,9 @@ ResourceLocatorFactory::create_resource_locator(
 	}
 	ResourceLocatorOP locator = iter->second->create_resource_locator();
 	locator->locator_tag( locator_tag );
-	locator->parse_my_tag( tags );
+	if (tags) {
+		locator->parse_my_tag( tags );
+	}
 	return locator;
 }
 
