@@ -38,6 +38,8 @@
 OPT_1GRP_KEY(Integer, MR, max_gaplength_to_model)
 OPT_1GRP_KEY(Real, MR, cen_dens_wt)
 OPT_1GRP_KEY(Real, MR, fa_dens_wt)
+OPT_1GRP_KEY(Real, MR, cst_wt)
+OPT_1GRP_KEY(Real, MR, relax_cst_wt)
 OPT_1GRP_KEY(Boolean, MR, fast)
 OPT_1GRP_KEY(Real, MR, censcale)
 OPT_1GRP_KEY(StringVector, MR, disulf)
@@ -66,6 +68,8 @@ my_main( void* ) {
 
 	do_MR->set_disulf( option[ OptionKeys::MR::disulf ]() );  // force disulfides
 	do_MR->set_censcale( option[ OptionKeys::MR::censcale ]() );  // scale # centroid cycles
+	do_MR->set_cen_cst_weight( option[ OptionKeys::MR::cst_wt ]() );
+	do_MR->set_fa_cst_weight( option[ OptionKeys::MR::relax_cst_wt ]() );
 
 	// fragment files: BACKWARDS COMPATABILITY with -loop options
 	if (option[ OptionKeys::loops::frag_files ].user() ) {
@@ -100,6 +104,8 @@ main( int argc, char * argv [] ) {
 	NEW_OPT(MR::max_gaplength_to_model, "max gaplength to rebuild", 8);
     NEW_OPT(MR::cen_dens_wt, "centroid density weight", 4.0);
     NEW_OPT(MR::fa_dens_wt, "fullatom density weight", 1.0);
+    NEW_OPT(MR::cst_wt, "add constraints to centroid stage", false);
+    NEW_OPT(MR::relax_cst_wt, "add constraints to fullatom stage", false);
     NEW_OPT(MR::fast, "fast mode", false);
     NEW_OPT(MR::censcale, "scale # of centroid cycles", 1.0);
     NEW_OPT(MR::disulf, "force a disulfide patterning", utility::vector1<std::string>());

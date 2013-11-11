@@ -69,6 +69,13 @@ public:
 	void set_max_gaplength_to_model( core::Size newval ) { max_gaplength_to_model_=newval; }
 	void set_symmdef_file( std::string newval ) { symm_def_file_=newval; }
 	void set_censcale( core::Real newval ) { censcale_=newval; }
+	void set_cen_cst_weight( core::Real newval ) {
+		cen1_scorefxn_->set_weight( core::scoring::atom_pair_constraint, newval );
+		cen2_scorefxn_->set_weight( core::scoring::atom_pair_constraint, newval );
+	}
+	void set_fa_cst_weight( core::Real newval ) {
+		fa_scorefxn_->set_weight( core::scoring::atom_pair_constraint, newval );
+	}
 	void set_disulf( utility::vector1<std::string> newval ) { disulfs_=newval; };
 
 	void set_big_fragments( core::fragment::FragSetOP newval ) { fragments_big_trim_ = fragments_big_ = newval; }

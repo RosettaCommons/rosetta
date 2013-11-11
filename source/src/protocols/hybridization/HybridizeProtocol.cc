@@ -235,7 +235,8 @@ HybridizeProtocol::init() {
 	cartfrag_overlap_ = 2;
 	seqfrags_only_ = false;
 	nofragbias_ = false;
-	skip_long_min_ = false;
+	skip_long_min_ = true;   //fpd  this is no longer necessary and seems to hurt model accuracy
+	keep_pose_constraint_ = false;   //fpd PLEASE INITIALIZE NEW VARIABLES
 
 	jump_move_ = false;
 	jump_move_repeat_ = 1;

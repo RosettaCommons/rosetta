@@ -139,31 +139,17 @@ MRMover::init(){
 	// default is a relatively short relax
 	relax_max_iter_ = 200;
 	relax_cycles_ = 2;
+	censcale_ = 1.0;
 
 	if (option[ OptionKeys::relax::default_repeats ].user())
 		relax_cycles_ = option[ OptionKeys::relax::default_repeats ]();
 	if (option[ OptionKeys::optimization::default_max_cycles ].user())
 		relax_max_iter_ = option[ OptionKeys::optimization::default_max_cycles ]();
 
-	// user constraints
-	core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *cen1_scorefxn_  );
-	core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *cen2_scorefxn_  );
-	core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fa_scorefxn_  );
-
-	// use weak centroid constraints by default in centroid
-	if (!option[ OptionKeys::constraints::cst_file ].user() && !option[ OptionKeys::constraints::cst_weight ].user()) {
-		cen1_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
-		cen2_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
-	}
-
-	// we do a nonideal relax so make sure fa scorefunction is setup for that
-	if (   fa_scorefxn_->get_weight( core::scoring::cart_bonded ) == 0
-	    && fa_scorefxn_->get_weight( core::scoring::cart_bonded_angle ) == 0
-	    && fa_scorefxn_->get_weight( core::scoring::cart_bonded_length ) == 0
-	    && fa_scorefxn_->get_weight( core::scoring::cart_bonded_torsion ) == 0 ) {
-		fa_scorefxn_->set_weight( core::scoring::cart_bonded, 0.5 );
-		fa_scorefxn_->set_weight( core::scoring::pro_close, 0.0 );
-	}
+	// initialize scorefunctions
+	cen1_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
+	cen2_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
+	fa_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.0 );
 
 	// use reasonable defaults
 	if (option[ OptionKeys::edensity::mapfile ].user()) {
@@ -200,6 +186,15 @@ void MRMover::apply( Pose &pose ) {
 		// make sure gaps were read correctly
 		protocols::simple_moves::MissingDensityToJumpMover read_miss_dens;
 		read_miss_dens.apply( pose );
+	}
+
+	// we do a nonideal relax so make sure fa scorefunction is setup for that
+	if (   fa_scorefxn_->get_weight( core::scoring::cart_bonded ) == 0
+	    && fa_scorefxn_->get_weight( core::scoring::cart_bonded_angle ) == 0
+	    && fa_scorefxn_->get_weight( core::scoring::cart_bonded_length ) == 0
+	    && fa_scorefxn_->get_weight( core::scoring::cart_bonded_torsion ) == 0 ) {
+		fa_scorefxn_->set_weight( core::scoring::cart_bonded, 0.5 );
+		fa_scorefxn_->set_weight( core::scoring::pro_close, 0.0 );
 	}
 
 	// set up initial loop build
@@ -304,6 +299,9 @@ void MRMover::apply( Pose &pose ) {
 			pose.conformation().detect_disulfides();
 		}
 
+		// apply fullatom constraints
+		//setup_fullatom_constraints( pose, templates_, template_weights_, "AUTO", "NONE" );
+
 		// relax with flexible angles & jumps
 		protocols::relax::RelaxProtocolBaseOP relax_prot = new protocols::relax::FastRelax( fa_scorefxn_, relax_cycles_ );
 		relax_prot->set_current_tag( get_current_tag() );
@@ -350,7 +348,7 @@ void MRMover::pack_missing_sidechains( Pose & pose ) {
 		}
 	}
 
-	if (!needToRepackAny) return;
+	if (!needToRepackAny) return; //?? fpd: it's used right here
 
 	core::pack::task::PackerTaskOP taskstd = core::pack::task::TaskFactory::create_packer_task( pose );
 	taskstd->restrict_to_repacking();
