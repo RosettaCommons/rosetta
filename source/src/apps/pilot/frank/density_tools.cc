@@ -23,6 +23,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/electron_density/util.hh>
@@ -282,7 +283,7 @@ densityTools()
 			core::Real ncount1=0, ncount2=0, ncount3=0;
 			core::Real sumXX=0, sumXY=0, sumX=0, sumY=0;
 			for (Size i=1; i<=resobins.size(); ++i) {
-				if (mapmapFSC[i]<0.1) continue;
+				if (mapmapFSC[i]<0.1) break;
 
 				core::Real ratio = 0;
 				if( modelmapFSC[i] > 0.01)
@@ -373,6 +374,7 @@ densityTools()
 	if (userpose && option[ denstools::perres ]()) {
 		for (int r=1; r<=perResCC.size(); ++r) {
 			std::cerr << "residue " << r << "  cc=" << perResCC[r] << std::endl;
+			//std::cerr << "residue " << r << "  resnum " << fullpose.pdb_info()->number(r) << "  cc=" << perResCC[r] << std::endl;
 		}
 	}
 
