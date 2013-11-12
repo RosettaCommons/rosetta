@@ -34,11 +34,11 @@ def tear_down(): pass
 
 
 def get_tests():
-    raise BenchmarkIntegrationError('Integration Test script does not support get_tests! Use run_test_suite instead!')
+    raise BenchmarkError('Integration Test script does not support get_tests! Use run_test_suite instead!')
 
 
 def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
-    raise BenchmarkIntegrationError('Integration Test script does not support run_test! Use run_test_suite instead!')
+    raise BenchmarkError('Integration Test script does not support run_test! Use run_test_suite instead!')
 
 
 def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
