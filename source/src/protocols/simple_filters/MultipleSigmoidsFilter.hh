@@ -38,17 +38,12 @@ class MultipleSigmoids : public filters::Filter
   public:
     MultipleSigmoids();
     virtual ~MultipleSigmoids();
-		filters::FilterOP clone() const {
-			return new MultipleSigmoids( *this );
-		}
-		filters::FilterOP fresh_instance() const{
-			return new MultipleSigmoids();
-		}
-
+		filters::FilterOP clone() const;
+		filters::FilterOP fresh_instance() const;
 		virtual bool apply( core::pose::Pose const & pose ) const;
 		virtual void report( std::ostream & out, core::pose::Pose const & pose ) const;
 		virtual core::Real report_sm( core::pose::Pose const & pose ) const;
-		void parse_my_tag( utility::tag::TagPtr const tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
+		void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, filters::Filters_map const &filters, moves::Movers_map const &, core::pose::Pose const & );
 		core::Real compute( core::pose::Pose const & pose ) const;
   	core::Real threshold() const{ return threshold_; }
   	void threshold( core::Real const t ){ threshold_ = t; }
