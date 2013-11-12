@@ -38,12 +38,9 @@
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 //#include <protocols/moves/PyMolMover.hh>
 
-
 // C++ headers
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
-
 
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -107,6 +104,7 @@ OPT_KEY( Real, filter_chain_closure_distance )
 OPT_KEY( Boolean, filter_chain_closure_halfway )
 OPT_KEY( IntegerVector, output_res_num )
 OPT_KEY( Boolean, refine_native )
+OPT_KEY( Boolean, bps_moves )
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -191,15 +189,6 @@ rna_denovo_test()
 
 	//	set_ideal_geometry( pose, extended_pose, rsd_set ); //by default, does nothing.
 
-	//  Following is deprecated -- will use "chunk_silent_file" machinery for input.
-	//	bool input_pose( false );
-	//	if ( option[in::file::s].user() ) {
-	//		std::string const pdb_file = option[in::file::s][1];
-	//		core::import_pose::pose_from_pdb( pose, *rsd_set, in_path + pdb_file );
-	//		ensure_phosphate_nomenclature_matches_mini( pose );
-	//		input_pose = true;
-	//	}
-
 	//Read in Torsion Library. Here go ahead and use my personal fragment class
 	// because other instances of fragments in mini-rosetta (e.g., loop-modeling or ab initio)
 	// are protein-specific!
@@ -253,6 +242,7 @@ rna_denovo_test()
 	rna_de_novo_protocol.set_root_at_first_rigid_body(  option[ root_at_first_rigid_body ] );
 	rna_de_novo_protocol.set_output_filters(  option[ output_filters ] );
 	rna_de_novo_protocol.set_autofilter(  option[ autofilter ] );
+	rna_de_novo_protocol.set_bps_moves(  option[ bps_moves ] );
 	if ( option[ in::file::silent_struct_type ]() == "binary_rna"  || option[ binary_output ]() )	rna_de_novo_protocol.set_binary_rna_output( true );
 
 	rna_de_novo_protocol.simple_rmsd_cutoff_relax( option[ simple_relax ] );
@@ -360,6 +350,7 @@ try {
   NEW_OPT( output_res_num, "Numbering of residues in output PDB or silent file", blank_size_vector  );
   NEW_OPT( refine_silent_file, "Name of the silent file to be refined.", "" );
   NEW_OPT( refine_native, "Refine starting from the native pose", false );
+  NEW_OPT( bps_moves, "Base pair step moves", false );
 
 	option.add_relevant( basic::options::OptionKeys::rna::vary_geometry );
 	option.add_relevant( basic::options::OptionKeys::rna::vall_torsions );

@@ -438,50 +438,57 @@ create_base_pair_step_database_test( ){
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
-	std::string const infile  = option[ in::file::s ][1];
-	std::string intag = infile;
-	Size pos( intag.find( ".pdb" ) );
-	intag.replace( pos, 4, "" );
-
 	SilentFileData silent_file_data;
 
-	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, *rsd_set, infile );
-	figure_out_reasonable_rna_fold_tree( pose );
-	std::string const sequence = pose.sequence();
-	std::cout << sequence.size() << " " << pose.total_residue() << std::endl;
+	utility::vector1< std::string > const infiles  = option[ in::file::s ]();
 
-	std::map< Size, Size > partner;
-	figure_out_base_pair_partner( pose, partner, false );
+	for ( Size n = 1; n <= infiles.size(); n++ ){
+		std::string const & infile = infiles[ n ];
 
-	for ( std::map< Size, Size >::const_iterator it = partner.begin();
-				it != partner.end(); ++it ){
-		Size const i = it->first;
-		Size const j = it->second;
-		if ( i < pose.total_residue() &&
-				 partner.find( i+1 ) != partner.end() && j > 1 && partner[ i+1 ] == j-1 &&
-				 !pose.fold_tree().is_cutpoint(i) && !pose.fold_tree().is_cutpoint(j-1) ){
-			utility::vector1< int > const base_pair_res = utility::tools::make_vector1( i, i+1, j-1, j);
+		std::string intag = infile;
+		Size pos( intag.find( ".pdb" ) );
+		intag.replace( pos, 4, "" );
 
-			pose::Pose bps_pose;
-			protocols::swa::pdbslice( bps_pose, pose, base_pair_res );
+		pose::Pose pose;
+		core::import_pose::pose_from_pdb( pose, *rsd_set, infile );
+		figure_out_reasonable_rna_fold_tree( pose );
+		std::string const sequence = pose.sequence();
+		std::cout << sequence.size() << " " << pose.total_residue() << std::endl;
 
-			std::string bps_seq = get_bps_seq( base_pair_res, sequence );
-			std::string bps_tag = get_bps_tag( base_pair_res, intag, pose );
+		std::map< Size, Size > partner;
+		figure_out_base_pair_partner( pose, partner, false );
 
-			std::cout << "Found base pair step! " << bps_seq << " " << bps_tag << std::endl;
+		for ( std::map< Size, Size >::const_iterator it = partner.begin();
+					it != partner.end(); ++it ){
+			Size const i = it->first;
+			Size const j = it->second;
+			if ( i < pose.total_residue() &&
+					 partner.find( i+1 ) != partner.end() && j > 1 && partner[ i+1 ] == j-1 &&
+					 !pose.fold_tree().is_cutpoint(i) && !pose.fold_tree().is_cutpoint(j-1) ){
+				utility::vector1< int > const base_pair_res = utility::tools::make_vector1( i, i+1, j-1, j);
 
-			std::string const silent_file = bps_seq + ".out";
-			BinaryRNASilentStruct s( bps_pose, bps_tag );
-			silent_file_data.write_silent_struct( s, silent_file,  false /* score_only */ );
+				pose::Pose bps_pose;
+				protocols::swa::pdbslice( bps_pose, pose, base_pair_res );
 
+				std::string bps_seq = get_bps_seq( base_pair_res, sequence );
+				std::string bps_tag = get_bps_tag( base_pair_res, intag, pose );
+
+				std::cout << "Found base pair step! " << bps_seq << " " << bps_tag << std::endl;
+
+				std::string const silent_file = bps_seq + ".out";
+				BinaryRNASilentStruct s( bps_pose, bps_tag );
+				silent_file_data.write_silent_struct( s, silent_file,  false /* score_only */ );
+
+			}
 		}
+
+		std::cout << "***********************************************************" << std::endl;
+		std::cout << "Put base pair steps from " <<  infile << " into .out files"  << std::endl;
+		std::cout << "***********************************************************" << std::endl;
+
 	}
 
 
-	std::cout << "***********************************************************" << std::endl;
-	std::cout << "Put base pair steps from " <<  infile << " into .out files"  << std::endl;
-	std::cout << "***********************************************************" << std::endl;
 
 }
 

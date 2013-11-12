@@ -169,6 +169,12 @@ void
 figure_out_base_pair_partner( core::pose::Pose & pose, std::map< core::Size, core::Size > & partner,
 															bool const strict = true );
 
+void
+process_input_file( std::string const & silent_file,
+										utility::vector1< core::pose::PoseOP > & pose_list,
+										bool is_pdb = false,
+										bool coarse_rna  = false );
+
 
 } //rna
 } // protocols

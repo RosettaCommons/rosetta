@@ -26,7 +26,6 @@
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -38,18 +37,17 @@
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
+#include <utility/tools/make_vector1.hh>
 
 #include <numeric/random/random.hh>
 
@@ -77,13 +75,15 @@ namespace rna{
 
 static numeric::random::RandomGenerator RG(144620);  // <- Magic number, do not change it!
 
-static basic::Tracer tr( "protocols.rna.rna_structure_parameters" ) ;
+static basic::Tracer tr( "protocols.rna.RNA_StructureParameters" ) ;
 
 using namespace core;
 
 RNA_StructureParameters::RNA_StructureParameters():
 	secstruct_defined_( false ),
 	assume_non_stem_is_loop( false ),
+	bps_moves_( false ),
+	allow_cuts_inside_base_pair_steps_( true ),
 	root_at_first_rigid_body_( false ),
 	suppress_bp_constraint_( 1.0 )
 	{
@@ -275,7 +275,7 @@ RNA_StructureParameters::initialize_allow_insert( core::pose::Pose & pose  )
 void
 RNA_StructureParameters::get_pairings_from_line(
 	std::istringstream & line_stream,
-	bool const obligate_pairing_set )
+	bool const obligate_pair )
 {
 
 	Size a,b;
@@ -321,19 +321,26 @@ RNA_StructureParameters::get_pairings_from_line(
 		p.edge2 = e2;
 		p.orientation = o;
 
-		rna_pairing_list_.push_back( p );
-
-		line_pairings.push_back( rna_pairing_list_.size() );
+		Size idx = check_in_pairing_sets( obligate_pairing_sets_, p );
+		if ( idx == 0 ){
+			idx = check_in_pairing_sets( stem_pairing_sets_, p );
+		}
+		if ( idx == 0 ) {
+			rna_pairing_list_.push_back( p );
+			idx = rna_pairing_list_.size();
+		}
+		line_pairings.push_back( idx );
 
 		line_stream >> tag;
 		if ( !line_stream.fail() && tag != "PAIR" )  utility_exit_with_message(  "Problem with PAIR readin: " + tag );
 	}
 
-	if ( obligate_pairing_set ) {
+	if ( obligate_pair ){
 		obligate_pairing_sets_.push_back( line_pairings );
 	} else {
-		possible_pairing_sets_.push_back( line_pairings );
+ 		stem_pairing_sets_.push_back( line_pairings );
 	}
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -414,13 +421,13 @@ RNA_StructureParameters::read_parameters_from_file( std::string const & filename
 		if (tag == "OBLIGATE" ) {
 
 			line_stream >> tag;
-			if ( line_stream.fail() || tag != "PAIR" )  utility_exit_with_message(  "Problem with STEM readin: " + tag );
+			if ( line_stream.fail() || tag != "PAIR" )  utility_exit_with_message(  "Problem with OBLIGATE PAIR readin: " + tag );
 			get_pairings_from_line( line_stream, true /*obligate jump*/ );
 
 		} else if (tag == "STEM"  || tag == "POSSIBLE" ) {
 
 			line_stream >> tag;
-			if ( line_stream.fail() || tag != "PAIR" )  utility_exit_with_message(  "Problem with STEM readin: " + tag );
+			if ( line_stream.fail() || tag != "PAIR" )  utility_exit_with_message(  "Problem with STEM PAIR readin: " + tag );
 			get_pairings_from_line( line_stream, false /*obligate jump*/ );
 
 		} else if (tag == "ALLOW_INSERT" ) {
@@ -530,7 +537,6 @@ RNA_StructureParameters::check_forward_backward(
 	AtomCOP current_atom ( & pose.atom_tree().atom( id::AtomID( atomno,jump_pos) ) );
 	id::AtomID const parent_id( current_atom->parent()->id() );
 	std::string const & parent_name( pose.residue(parent_id.rsd()).atom_name(parent_id.atomno()) );
-	//	std::cout << "HELLO ==> " <<  parent_name << std::endl;
 	if ( parent_name == " P  " ) {
 		return true;
 	}
@@ -554,7 +560,6 @@ RNA_StructureParameters::add_new_RNA_jump(
 
 	char e1('W') ,e2('W'), o('A');
 	bool found_pairing( false );
-	//bool flip( false ); // wait, why do we need flip?  // We don't. ~Labonte
 	for ( Size n = 1;  n <= rna_pairing_list_.size(); n++ ){
 		RNA_Pairing pairing = rna_pairing_list_[n];
 		if (pairing.pos1 == jump_pos1 && pairing.pos2 == jump_pos2 ){
@@ -562,7 +567,6 @@ RNA_StructureParameters::add_new_RNA_jump(
 			e2 = pairing.edge2;
 			o  = pairing.orientation;
 			found_pairing = true;
-			//flip = false;  // set but never used ~Labonte
 			break;
 		}
 		if (pairing.pos1 == jump_pos2 && pairing.pos2 == jump_pos1 ){
@@ -570,7 +574,6 @@ RNA_StructureParameters::add_new_RNA_jump(
 			e2 = pairing.edge1;
 			o  = pairing.orientation;
 			found_pairing = true;
-			//flip = true;  // set but never used ~Labonte
 			break;
 		}
 	}
@@ -594,10 +597,8 @@ RNA_StructureParameters::add_new_RNA_jump(
 
 	bool const forward1 = check_forward_backward( pose, jump_pos1 );
 	bool const forward2 = check_forward_backward( pose, jump_pos2 );
-	//	std::cout << "FORWARD? " << forward1 << " " << forward2 << std::endl;
 
 	std::string atom_name1, atom_name2;
-
 	kinematics::Jump const new_jump = rna_jump_library_->get_random_base_pair_jump(
 																	     pose.residue(jump_pos1).name1(),
 																			 pose.residue(jump_pos2).name1(),
@@ -606,15 +607,12 @@ RNA_StructureParameters::add_new_RNA_jump(
 																			 success,
 																			 forward1, forward2 );
 
-	//	std::cout << "ATOM NAME? " << atom_name1 << " " << atom_name2 << " /  " << jump_pos1 << " " << jump_pos2 << " / " << flip << "  . " << success << std::endl;
-
 	if (!success) return; //shh don't do anything.
 
 	fold_tree.set_jump_atoms( which_jump, atom_name1, atom_name2 );
 
 	pose.fold_tree( fold_tree );
 
-	//	std::cout << " PUTTING IN NEW JUMP: " << which_jump << "    " << atom_name1 << " " << atom_name2 << " " << e1 << " " << e2 << " " << o << "-->" << new_jump << std::endl;
 	pose.set_jump( which_jump, new_jump );
 
 
@@ -700,8 +698,6 @@ RNA_StructureParameters::insert_base_pair_jumps( pose::Pose & pose, bool & succe
 			add_new_RNA_jump( pose, i, success );
 		}
 
-		//std::cout << "INSERT RANDOM JUMP: " << i << " " << jump_pos1 << " " << jump_pos2 << std::endl;
-
 		if (!success) return;
 
 	}
@@ -712,13 +708,11 @@ RNA_StructureParameters::insert_base_pair_jumps( pose::Pose & pose, bool & succe
 void
 RNA_StructureParameters::setup_fold_tree_and_jumps_and_variants( pose::Pose & pose )
 {
-	//	std::cout << "ABOUT TO SET UP JUMPS " << std::endl;
 	setup_jumps( pose );
-	//	std::cout << "ABOUT TO SET UP CHAINBREAKS " << std::endl;
 	setup_chainbreak_variants( pose );
 
-	tr << pose.annotated_sequence() << std::endl;
-	tr << pose.fold_tree() << std::endl;
+	//	tr << pose.annotated_sequence() << std::endl;
+	//	tr << pose.fold_tree() << std::endl;
 
 
 }
@@ -738,11 +732,70 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 	Size const num_cuts_open  ( cutpoints_open_.size() );
 	Size const num_cuts_total ( num_cuts_closed + num_cuts_open );
 
+	////////////////////////////////////////////////////////////////////////
+	utility::vector1< utility::vector1< Size > > obligate_pairing_sets,  stem_pairing_sets;
+	obligate_pairing_sets = obligate_pairing_sets_;
+	if ( bps_moves_ ){ // supplement obligate_pairing_sets with stems in freely moving regions.
+		for ( Size n = 1; n <= stem_pairing_sets_.size(); n++ ){
+			bool stem_is_involved_in_obligate_pair( false );
+			for ( Size m = 1; m <= stem_pairing_sets_[n].size(); m++ ){
+				RNA_Pairing const & rna_pairing = rna_pairing_list_[ stem_pairing_sets_[n][m] ];
+				if ( check_in_pairing_sets( obligate_pairing_sets_, rna_pairing ) ) {
+					stem_is_involved_in_obligate_pair = true;
+				} else {
+					obligate_pairing_sets.push_back( utility::tools::make_vector1( stem_pairing_sets_[n][m] ) );
+				}
+			}
+			//			if ( !stem_is_involved_in_obligate_pair ) stem_pairing_sets.push_back( stem_pairing_sets_[n] );
+		}
+	} else {
+		stem_pairing_sets = stem_pairing_sets_;
+	}
+
 	Size const num_pairings( rna_pairing_list_.size() );
-	Size const num_obligate_pairing_sets( obligate_pairing_sets_.size() );
-	Size const num_possible_pairing_sets( possible_pairing_sets_.size() );
+	Size const num_obligate_pairing_sets( obligate_pairing_sets.size() );
+	Size const num_stem_pairing_sets( stem_pairing_sets.size() );
 	Size const num_chain_connections( chain_connections_.size() );
-	runtime_assert( num_possible_pairing_sets + num_obligate_pairing_sets <= num_pairings );
+	//	std::cout << num_stem_pairing_sets << " + " <<  num_obligate_pairing_sets << " <= " << num_pairings << std::endl;
+	runtime_assert( num_stem_pairing_sets + num_obligate_pairing_sets <= num_pairings );
+
+	//////////////////////////////////////////////////////////////////////
+	// Cuts.
+	//////////////////////////////////////////////////////////////////////
+	utility::vector1< Size > obligate_cut_points;
+	for (Size n = 1; n<= num_cuts_closed; n++ ) 	  obligate_cut_points.push_back( cutpoints_closed_[ n ] );
+	for (Size n = 1; n<= num_cuts_open  ; n++ ) 		obligate_cut_points.push_back( cutpoints_open_[n] );
+
+	//////////////////////////////////////////////////////////////////////
+	// base pair steps are a special kind of chunk, created "on-the-fly"
+	// from a database. These stem base pairs will be obligate pairs
+	//  (see above get_pairings_from_line ), and we can define cutpoints
+	//  ahead of time.
+	//////////////////////////////////////////////////////////////////////
+	utility::vector1< Size > base_pair_step_starts;
+	if( bps_moves_ ){
+		utility::vector1< BasePairStep > base_pair_steps = get_base_pair_steps();
+
+		for ( Size n = 1; n <= base_pair_steps.size(); n++ ){
+			BasePairStep const & base_pair_step = base_pair_steps[n];
+			runtime_assert( check_in_pairing_sets( obligate_pairing_sets, RNA_Pairing( base_pair_step.i(),      base_pair_step.j_next() ) ) );
+			runtime_assert( check_in_pairing_sets( obligate_pairing_sets, RNA_Pairing( base_pair_step.i_next(), base_pair_step.j()      ) ) );
+
+			// used below in cutpoint setting...
+			base_pair_step_starts.push_back( base_pair_step.i() );
+			base_pair_step_starts.push_back( base_pair_step.j() );
+
+			// choose one side of the base pair step to place a cutpoint.
+			if ( obligate_cut_points.has_value( base_pair_step.i() ) ) continue;
+			if ( obligate_cut_points.has_value( base_pair_step.j() ) ) continue;
+			// flip a coin
+			if ( RG.random_range( 0, 1 ) ){
+				obligate_cut_points.push_back( base_pair_step.i() );
+			} else {
+				obligate_cut_points.push_back( base_pair_step.j() );
+			}
+		}
+	}
 
 	////////////////////////////////////////////////////////////////////////
 	// Two possibilities for desired fold tree topology:
@@ -755,31 +808,27 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 	ObjexxFCL::FArray1D <int> cuts( num_pairings_to_force );
 
 	//////////////////////////////////////////////////////////////////////
-	// Cuts.
-	//////////////////////////////////////////////////////////////////////
-	std::vector< int > obligate_cut_points; //switch this to utility::vector1?
-	for (Size n = 1; n<= num_cuts_closed; n++ ) 	  obligate_cut_points.push_back( cutpoints_closed_[ n ] );
-	for (Size n = 1; n<= num_cuts_open  ; n++ ) 		obligate_cut_points.push_back( cutpoints_open_[n] );
-	// for (Size n = 1; n <= num_cuts_total; n++ ) std::cout << "CUT " << obligate_cut_points[ n-1 ]  << std::endl;
-
-	//////////////////////////////////////////////////////////////////////
 	// If a cut needs to be randomly chosen, will generally try to
 	// place it in a loopy region.
 	FArray1D_float cut_bias( nres, 1.0 );
 	std::string const & rna_secstruct( get_rna_secstruct( pose ) );
 	for ( Size i = 1; i < nres; i++ ) {
+		if ( !pose.residue(i+1).is_RNA() ) {
+			cut_bias(i) = 0.0;
+			continue;
+		}
 		if ( rna_secstruct[i] == 'H' && rna_secstruct[i+1] == 'H' ) {
 			cut_bias( i )   = 0.1;
 		}
-		if ( !pose.residue(i+1).is_RNA() ||
-				 !allow_insert_->get( core::id::AtomID( named_atom_id_to_atom_id( core::id::NamedAtomID( " P  ", i+1 ), pose )  ) ) ){
-			cut_bias( i ) = 0.0;
+		if ( !allow_insert_->get( core::id::AtomID( named_atom_id_to_atom_id( core::id::NamedAtomID( " P  ", i+1 ), pose )  ) ) ) {
+			if ( bps_moves_ && base_pair_step_starts.has_value( i ) ) {
+				cut_bias( i ) = 0.01;
+			} else {
+				cut_bias( i ) = 0.0;
+			}
 		}
-		//std::cout << "CUT_BIAS " << i << " " << cut_bias( i ) << std::endl;
 	}
 
-	//std::cout << "ALLOW INSERT IN CHECKING CUT_BIAS" << std::endl;
-	//	allow_insert_->show();
 
 	//////////////////////////////////////////////////////////////////////
 	// Jump residues.
@@ -794,8 +843,8 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 		Size count( 0 );
 
 		for (Size n = 1; n <= num_obligate_pairing_sets ; n++ ){
-			Size const pairing_index_in_stem( static_cast<Size>( RG.uniform() * obligate_pairing_sets_[n].size() )  + 1 );
-			Size const which_pairing = obligate_pairing_sets_[n][pairing_index_in_stem];
+			Size const pairing_index_in_stem( static_cast<Size>( RG.uniform() * obligate_pairing_sets[n].size() )  + 1 );
+			Size const which_pairing = obligate_pairing_sets[n][pairing_index_in_stem];
 			count++;
 			jump_points(1, count) = rna_pairing_list_[which_pairing].pos1;
 			jump_points(2, count) = rna_pairing_list_[which_pairing].pos2;
@@ -821,27 +870,27 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 		// should typically be Watson-Crick stems, but this setup is general )
 		// Note that there might be three stems defined, but we only want two --
 		//  following picks a random set of two.
-		FArray1D < bool > used_set( num_possible_pairing_sets, false );
-		Size num_sets_left( num_possible_pairing_sets );
+		FArray1D < bool > used_set( num_stem_pairing_sets, false );
+		Size num_sets_left( num_stem_pairing_sets );
 
 		while ( count < num_pairings_to_force ) {
 
 			// Find a random pairing among what's remaining.
 			Size const set_index( static_cast<Size>( RG.uniform() * num_sets_left )  + 1 );
 			Size m( 0 ), set_count( 0 );
-			for (m = 1; m <= num_possible_pairing_sets; m++ ){
+			for (m = 1; m <= num_stem_pairing_sets; m++ ){
 				if ( !used_set( m ) ) {
 					set_count++;
 					if (set_count == set_index ) break;
 				}
 			}
 
-			if (m > num_possible_pairing_sets ) {
-				utility_exit_with_message( "Problem with pairing search "+I(3,num_possible_pairing_sets)+" "+I(3,m) );
+			if (m > num_stem_pairing_sets ) {
+				utility_exit_with_message( "Problem with pairing search "+I(3,num_stem_pairing_sets)+" "+I(3,m) );
 			}
 
-			Size const pairing_index_in_set( static_cast<Size>( RG.uniform() * possible_pairing_sets_[m].size() )  + 1 );
-			Size const which_pairing = possible_pairing_sets_[m][pairing_index_in_set];
+			Size const pairing_index_in_set( static_cast<Size>( RG.uniform() * stem_pairing_sets[m].size() )  + 1 );
+			Size const which_pairing = stem_pairing_sets[m][pairing_index_in_set];
 
 			//			std::cout << "USING SET: " << m  << " ==> " << pairing_index_in_set << std::endl;
 
@@ -864,7 +913,9 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 		//				" " << 	jump_points(2, n)  <<  std::endl;
 		//		}
 
-		success = f.random_tree_from_jump_points( nres, num_pairings_to_force, jump_points, obligate_cut_points, cut_bias, 1, true /*enable 1 or NRES jumps*/ );
+		std::vector< int > obligate_cut_points_reformat;
+		for ( Size q = 1; q <= obligate_cut_points.size(); q++ ) obligate_cut_points_reformat.push_back( obligate_cut_points[q] );
+		success = f.random_tree_from_jump_points( nres, num_pairings_to_force, jump_points, obligate_cut_points_reformat, cut_bias, 1, true /*enable 1 or NRES jumps*/ );
 	}
 
 	if (!success)  utility_exit_with_message( "Couldn't find a freaking tree!" );
@@ -901,12 +952,12 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 
 	}
 
+	// Make it so.
 	pose.fold_tree( f );
 
 	bool const random_jumps( true ); // For now this is true... perhaps should also have a more deterministic procedure.
 	if (random_jumps) insert_base_pair_jumps( pose, success );
 
-	//	pose.dump_pdb( "insert_jumps.pdb" );
 
 	if (!success) {
 		utility_exit_with_message( "Trouble inserting base pair jumps into pose -- check residues and edges." );
@@ -948,7 +999,7 @@ RNA_StructureParameters::setup_chainbreak_variants( pose::Pose & pose )
 
 		//		if ( !pose.residue( cutpos ).is_coarse() ) {//its regular RNA
 
-		std::cout << "Adding chainbreak variants to " << cutpos << std::endl;
+		//		std::cout << "Adding chainbreak variants to " << cutpos << std::endl;
 
 		// important! Taken from SWA code.
 		protocols::swa::rna::Correctly_position_cutpoint_phosphate_torsions( pose, cutpos, false /*verbose*/ );
@@ -1113,8 +1164,9 @@ RNA_StructureParameters::check_base_pairs( pose::Pose & pose ) const
 void
 RNA_StructureParameters::setup_base_pair_constraints( core::pose::Pose & pose )
 {
-
 	using namespace core::id;
+
+	if ( bps_moves_ ) return; // bps moves should guarantee good stems, no need for constraints.
 
 	utility::vector1< std::pair< Size, Size > > pairings;
 
@@ -1176,6 +1228,60 @@ RNA_StructureParameters::set_jump_library( RNA_JumpLibraryOP rna_jump_library )
 {
 	rna_jump_library_ = rna_jump_library;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////
+Size
+RNA_StructureParameters::check_in_pairing_sets( utility::vector1 < utility::vector1 <core::Size > > pairing_sets,
+																								RNA_Pairing const & rna_pairing_check ) const {
+	for ( Size n = 1; n <= pairing_sets.size(); n++ ){
+		for ( Size m = 1; m <= pairing_sets[n].size(); m++ ){
+			RNA_Pairing rna_pairing = rna_pairing_list_[ pairing_sets[n][m] ];
+			if ( rna_pairing.pos1 == rna_pairing_check.pos1 && rna_pairing.pos2 == rna_pairing_check.pos2 ) return pairing_sets[n][m];
+			if ( rna_pairing.pos2 == rna_pairing_check.pos1 && rna_pairing.pos1 == rna_pairing_check.pos2 ) return pairing_sets[n][m];
+		}
+	}
+	return false;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< BasePairStep >
+RNA_StructureParameters::get_base_pair_steps() const {
+
+	// Parse base pair steps. [perhaps this should go into RNA_StructureParameters, or in a util.]
+	std::map< Size, Size > stem_partner;
+	for (Size n = 1; n <= rna_pairing_list_.size(); n++ ){
+		RNA_Pairing const & rna_pairing( rna_pairing_list_[ n ] );
+		Size i( rna_pairing.pos1 );
+		Size j( rna_pairing.pos2 );
+		if (i > j ) {
+			i = rna_pairing.pos2;
+			j = rna_pairing.pos1;
+		}
+		if (rna_pairing.edge1 == 'W' && rna_pairing.edge2 == 'W' && rna_pairing.orientation=='A' ) stem_partner[ i ] = j;
+	}
+
+	utility::vector1< BasePairStep > base_pair_steps;
+
+	for ( std::map< Size, Size >::const_iterator iter = stem_partner.begin();
+				iter != stem_partner.end(); iter++ ){
+		Size const i = iter->first;
+		if ( stem_partner.find( i+1 ) != stem_partner.end() &&
+				 stem_partner[ i+1 ] == stem_partner[i] - 1 &&
+				 !cutpoints_open_.has_value( i ) &&
+				 !cutpoints_open_.has_value( stem_partner[i+1] ) ){
+
+			Size const j = stem_partner[ i+1 ];
+			base_pair_steps.push_back( BasePairStep( i, i+1, j, j+1 ) );
+		}
+	}
+
+	return base_pair_steps;
+}
+
+
+
 
 }
 }

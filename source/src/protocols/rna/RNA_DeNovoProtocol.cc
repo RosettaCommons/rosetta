@@ -121,63 +121,63 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 	 bool const minimize_structure /*= false*/,
 	 bool const relax_structure /*=false*/,
 	 bool const allow_bulge /*=false*/):
-    Mover(),
-		nstruct_( nstruct ),
-		rounds_( 10 ),
-		monte_carlo_cycles_( 0 ), /* will be reset later */
-		monte_carlo_cycles_max_default_( 100000 ),
-		user_defined_cycles_( false ), /* will change to true if set_monte_carlo_cycles() is called */
-		all_rna_fragments_file_( basic::database::full_name("sampling/rna/RICHARDSON_RNA09.torsions") ),
-		silent_file_( silent_file ),
-		lores_silent_file_( "" ),
-		heat_structure_( heat_structure ),
-		dump_pdb_( false ), //RHIJU DO NOT CHECK THIS IN AS TRUE!
-		minimize_structure_( minimize_structure ),
-		relax_structure_( relax_structure ),
-		ignore_secstruct_( false ),
-		do_close_loops_( false ),
-		close_loops_at_end_( true ),
-		close_loops_in_last_round_( true ),
-		close_loops_after_each_move_( false ),
-		simple_rmsd_cutoff_relax_( false ),
-		allow_bulge_( allow_bulge ),
-		allow_consecutive_bulges_( false ),
-    use_chem_shift_data_( basic::options::option[
-                          basic::options::OptionKeys::
-                          score::rna_chemical_shift_exp_data].user()),
-		m_Temperature_( 2.0 ),
-		frag_size_( 3 ),
-		rna_params_file_( "" ),
-		rna_data_file_( "" ),
-		jump_library_file_( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) ),
-		rna_structure_parameters_( RNA_StructureParametersOP( new RNA_StructureParameters ) ),
-		rna_data_reader_( RNA_DataReaderOP( new RNA_DataReader ) ),
-		output_lores_silent_file_( false ),
-		filter_lores_base_pairs_( false ),
-		filter_lores_base_pairs_early_( false ),
-		filter_chain_closure_( true ),
-		filter_chain_closure_distance_( 6.0 ), /* in Angstroms. This is pretty loose!*/
-		filter_chain_closure_halfway_( true ),
-		vary_bond_geometry_( false ),
-		binary_rna_output_( false ),
-		jump_change_frequency_( 0.1 ),
-		lores_scorefxn_( "rna_lores.wts" ),
-		chunk_coverage_( 0.0 ),
-		staged_constraints_( false ),
-		chainbreak_weight_( -1.0 ), /* use rna_lores.wts number unless user specified. -1.0 is never really used. */
-		linear_chainbreak_weight_( -1.0 ),  /* use rna_lores.wts number unless user specified. -1.0 is never really used. */
-		titrate_stack_bonus_( true ),
-		move_first_rigid_body_( false ),
-		root_at_first_rigid_body_( false ),
-		suppress_bp_constraint_( 1.0 ),
-		output_filters_( false ),
-		lores_score_early_( false ),
-		lores_score_final_( false ),
-		autofilter_( false ),
-		autofilter_score_quantile_( 0.20 ),
-		refine_from_silent_( false ),
-		refine_pose_( false )
-
+	Mover(),
+	nstruct_( nstruct ),
+	rounds_( 10 ),
+	monte_carlo_cycles_( 0 ), /* will be reset later */
+	monte_carlo_cycles_max_default_( 100000 ),
+	user_defined_cycles_( false ), /* will change to true if set_monte_carlo_cycles() is called */
+	all_rna_fragments_file_( basic::database::full_name("sampling/rna/RICHARDSON_RNA09.torsions") ),
+	silent_file_( silent_file ),
+	lores_silent_file_( "" ),
+	heat_structure_( heat_structure ),
+	dump_pdb_( false ), //RHIJU DO NOT CHECK THIS IN AS TRUE!
+	minimize_structure_( minimize_structure ),
+	relax_structure_( relax_structure ),
+	ignore_secstruct_( false ),
+	do_close_loops_( false ),
+	close_loops_at_end_( true ),
+	close_loops_in_last_round_( true ),
+	close_loops_after_each_move_( false ),
+	simple_rmsd_cutoff_relax_( false ),
+	allow_bulge_( allow_bulge ),
+	allow_consecutive_bulges_( false ),
+	use_chem_shift_data_( basic::options::option[
+																							 basic::options::OptionKeys::
+																							 score::rna_chemical_shift_exp_data].user()),
+	m_Temperature_( 2.0 ),
+	frag_size_( 3 ),
+	rna_params_file_( "" ),
+	rna_data_file_( "" ),
+	jump_library_file_( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) ),
+	rna_structure_parameters_( RNA_StructureParametersOP( new RNA_StructureParameters ) ),
+	rna_data_reader_( RNA_DataReaderOP( new RNA_DataReader ) ),
+	output_lores_silent_file_( false ),
+	filter_lores_base_pairs_( false ),
+	filter_lores_base_pairs_early_( false ),
+	filter_chain_closure_( true ),
+	filter_chain_closure_distance_( 6.0 ), /* in Angstroms. This is pretty loose!*/
+	filter_chain_closure_halfway_( true ),
+	vary_bond_geometry_( false ),
+	binary_rna_output_( false ),
+	jump_change_frequency_( 0.1 ),
+	lores_scorefxn_( "rna_lores.wts" ),
+	chunk_coverage_( 0.0 ),
+	staged_constraints_( false ),
+	chainbreak_weight_( -1.0 ), /* use rna_lores.wts number unless user specified. -1.0 is never really used. */
+	linear_chainbreak_weight_( -1.0 ),  /* use rna_lores.wts number unless user specified. -1.0 is never really used. */
+	titrate_stack_bonus_( true ),
+	move_first_rigid_body_( false ),
+	root_at_first_rigid_body_( false ),
+	suppress_bp_constraint_( 1.0 ),
+	output_filters_( false ),
+	lores_score_early_( false ),
+	lores_score_final_( false ),
+	autofilter_( false ),
+	autofilter_score_quantile_( 0.20 ),
+	refine_from_silent_( false ),
+	refine_pose_( false ),
+	bps_moves_( false )
 {
 	Mover::type("RNA_DeNovoProtocol");
 	rna_loop_closer_ = protocols::rna::RNA_LoopCloserOP( new protocols::rna::RNA_LoopCloser );
@@ -240,7 +240,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 		for ( Size ntries = 1; ntries <= max_tries; ++ntries ) {
 			time_t pdb_start_time = time(NULL);
 
-			if ( ntries > 1 ) TR << "Did not pass filters. Trying the model again: trial " << ntries << " out of " << max_tries << std::endl;
+			if ( ntries > 1 ) TR << TR.Red << "Did not pass filters. Trying the model again: trial " << ntries << " out of " << max_tries << TR.Reset << std::endl;
 
 			if ( !refine_from_silent_ ) {
 				pose = start_pose;
@@ -277,7 +277,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 			bool found_solution( true );
 			for ( Size r = 1; r <= rounds_; r++ ) {
 
-				TR << "Beginning round " << r << " of " << rounds_ << std::endl;
+				TR << TR.Blue << "Beginning round " << r << " of " << rounds_ << TR.Reset << std::endl;
 
 				if ( r == rounds_ && close_loops_in_last_round_ ) do_close_loops_ = true;
 
@@ -524,6 +524,7 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 
 	// all jumping, secondary structure, base pair constraint, allow_insertation
 	// will be stored in a .prm file.
+	rna_structure_parameters_->set_bps_moves( bps_moves_ );
 	rna_structure_parameters_->initialize( pose, rna_params_file_, jump_library_file_, ignore_secstruct_ );
 	rna_structure_parameters_->set_root_at_first_rigid_body( root_at_first_rigid_body_ );
 	rna_structure_parameters_->set_suppress_bp_constraint( suppress_bp_constraint_ );
@@ -533,11 +534,8 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 
 	all_rna_fragments_ = new FullAtomRNA_Fragments( all_rna_fragments_file_ );
 
-	if ( input_res_.size() > 0 ){
-		rna_chunk_library_ = new RNA_ChunkLibrary( chunk_pdb_files_, chunk_silent_files_, pose, input_res_ );
-	} else { // deprecate soon?
-		rna_chunk_library_ = new RNA_ChunkLibrary( chunk_silent_files_, pose, rna_structure_parameters_->connections() );
-	}
+	rna_chunk_library_ = new RNA_ChunkLibrary( chunk_pdb_files_, chunk_silent_files_, pose, input_res_ );
+	if ( bps_moves_ ) rna_chunk_library_->setup_base_pair_step_chunks( pose, rna_structure_parameters_->get_base_pair_steps() );
 
 	chunk_coverage_ = rna_chunk_library_->chunk_coverage();
 
@@ -574,12 +572,15 @@ RNA_DeNovoProtocol::setup_monte_carlo_cycles( core::pose::Pose const & pose ){
 	Size const nres_move = get_moving_res( pose ).size();
 	TR << "Number of moving residues: " << nres_move << std::endl;
 
+	Size const nchunks = rna_chunk_library_->num_moving_chunks();
+	TR << "Number of moving chunks: " << nchunks << std::endl;
+
 	// then count up rigid bodies that need to be docked.
 	Size nbody_move = protocols::rna::get_rigid_body_jumps( pose ).size();
 	if ( nbody_move > 1 ) nbody_move--; // first rigid body does not move, by convention.
 	if ( nbody_move > 0 ) TR << "Number of moving bodies: " << nbody_move << std::endl;
 
-	monte_carlo_cycles_ = 2000 * nres_move + 20000 * nbody_move;
+	monte_carlo_cycles_ = 2000 * ( nres_move + nchunks ) + 20000 * nbody_move;
 
 	if ( monte_carlo_cycles_ > monte_carlo_cycles_max_default_ ){
 		monte_carlo_cycles_ = monte_carlo_cycles_max_default_;
@@ -955,10 +956,11 @@ RNA_DeNovoProtocol::update_pose_constraints( Size const r, core::pose::Pose & po
 void
 RNA_DeNovoProtocol::update_frag_size( Size const r )
 {
+	Real const frag_size_old = frag_size_;
 	frag_size_ = 3;
 	if ( r > 1.0 * ( rounds_ / 3.0 ) ) frag_size_ = 2;
 	if ( r > 2.0 * ( rounds_ / 3.0 ) ) frag_size_ = 1;
-	TR << "Fragment size: " << frag_size_ << std::endl;
+	if ( frag_size_ != frag_size_old ) TR << "Fragment size: " << frag_size_ << std::endl;
 }
 
 
@@ -973,11 +975,9 @@ RNA_DeNovoProtocol::RNA_move_trial( pose::Pose & pose ) {
 	//     junctions based on previous models stored in silent files
 	//
 
-	//Following returns early if there are no jumps.
 	if  ( RG.uniform() < jump_change_frequency_ )  {
-
+		//Following returns early if there are no jumps.
 		random_jump_trial( pose );
-
 	} else {
 
 		bool did_a_trial( false );

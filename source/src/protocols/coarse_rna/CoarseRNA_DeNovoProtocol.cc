@@ -31,20 +31,15 @@
 #include <protocols/rna/RNA_DataReader.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/chemical/rna/RNA_Util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <basic/database/open.hh>
-// AUTO-REMOVED #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -52,7 +47,6 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <utility/file/file_sys_util.hh>
-// AUTO-REMOVED #include <time.h>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -161,11 +155,7 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 
 	rna_data_reader_->initialize( pose, rna_data_file_ );
 
-	if( input_res_.size() > 0 ) {
-		rna_chunk_library_ = new protocols::rna::RNA_ChunkLibrary( chunk_silent_files_, pose, input_res_ );
-	} else {
-		rna_chunk_library_ = new protocols::rna::RNA_ChunkLibrary( chunk_silent_files_, pose, rna_structure_parameters_->connections() );
-	}
+	if( input_res_.size() > 0 )	rna_chunk_library_ = new protocols::rna::RNA_ChunkLibrary( chunk_silent_files_, pose, input_res_ );
 	rna_structure_parameters_->set_allow_insert( rna_chunk_library_->allow_insert() );
 	rna_structure_parameters_->setup_fold_tree_and_jumps_and_variants( pose );
 

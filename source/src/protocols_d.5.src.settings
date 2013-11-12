@@ -16,6 +16,8 @@ sources = {
 		"CoarseRNA_LoopCloser",
 	],
 	"protocols/rna": [
+		"BasePairStep",
+		"BasePairStepLibrary",
 		"FullAtomRNA_Fragments",
 		"MultipleDomainMover",
 		"RNA_BasePairClassifier",

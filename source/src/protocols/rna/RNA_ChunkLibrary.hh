@@ -15,6 +15,8 @@
 #define INCLUDED_protocols_rna_RNA_ChunkLibrary_HH
 
 #include <protocols/rna/RNA_ChunkLibrary.fwd.hh>
+#include <protocols/rna/BasePairStepLibrary.fwd.hh>
+#include <protocols/rna/BasePairStep.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/MiniPose.fwd.hh>
@@ -25,13 +27,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.fwd.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 #include <protocols/toolbox/AllowInsert.hh>
-//#include <protocols/toolbox/AllowInsert.fwd.hh>
-//#include <core/kinematics/tree/Atom.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/tree/Atom.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
 
 
 // ObjexxFCL Headers
@@ -42,7 +38,6 @@
 #include <map>
 
 #include <utility/vector1.hh>
-
 
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -56,10 +51,9 @@
 // Maybe has overlap with CartesianFragment class used by DNA people, but I find this somewhat
 //  less confusing.
 // The only thing to be wary of ... the fold tree must be set up with chainbreaks in the "right places"...
-//  basically one at eery junction.
+//  basically one at every junction.
 //
 //
-
 namespace protocols{
 namespace rna{
 
@@ -76,7 +70,7 @@ namespace rna{
 		// Need a clone();
 
 		//destructor -- necessary?
-		virtual ~ChunkSet();
+		~ChunkSet();
 
 		void
 		insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index, protocols::toolbox::AllowInsertOP const & allow_insert ) const;
@@ -110,14 +104,6 @@ namespace rna{
 
 		RNA_ChunkLibrary();
 
-		// constructor -- needs a list of silent files. Each silent file
-		//  has solutions for a particular piece of the desired pose.
-		// this will be deprecated soon...
-		RNA_ChunkLibrary( utility::vector1 < std::string > const & silent_files,
-											core::pose::Pose const & pose,
-											std::map< Size, Size > const & connections_in_big_pose /* to figure out mapping to big pose*/
-											);
-
 		// default constructor.
 		RNA_ChunkLibrary(
 								utility::vector1 < std::string > const & pdb_files,
@@ -132,7 +118,7 @@ namespace rna{
 								utility::vector1< core::Size > const & input_res );
 
 		//destructor
-		~RNA_ChunkLibrary(){}
+		~RNA_ChunkLibrary();
 
 		// default constructor.
 		void
@@ -156,6 +142,11 @@ namespace rna{
 																 Size const & chunk_list_index,
 																 Size const & chunk_pose_index ) const;
 
+		utility::vector1< Size >
+		get_indices_of_moving_chunks() const;
+
+		Size num_moving_chunks() const ;
+
 		bool
 		random_chunk_insertion( core::pose::Pose & pose ) const;
 
@@ -174,10 +165,13 @@ namespace rna{
 		bool
 		check_fold_tree_OK(	core::pose::Pose const & pose );
 
+		void
+		setup_base_pair_step_chunks( core::pose::Pose const & pose, utility::vector1< BasePairStep > base_pair_steps );
+
 	private:
 
 		void
-		zero_out_allow_insert( core::pose::ResMap const & res_map,
+		update_allow_insert( core::pose::ResMap const & res_map,
 													 core::pose::Pose const & pose,
 													 core::pose::Pose const & scratch_pose,
 													 Size const domain_num );
@@ -189,82 +183,8 @@ namespace rna{
 		void
 		figure_out_chunk_coverage();
 
-		void
-		get_component_sequences(
-							 core::pose::Pose const & pose,
-							 utility::vector1< std::string > & sequences,
-							 utility::vector1< core::Size > & chain_id,
-							 utility::vector1< core::Size > & sequence_start ) const;
-
-		void
-		process_input_file( std::string const & silent_file,
-												utility::vector1< core::pose::PoseOP > & pose_list,
-												bool is_pdb = false  ) const;
-
-		void
-		figure_out_possible_res_maps(
-																 utility::vector1< core::pose::ResMap > & res_maps,
-																 core::pose::Pose const & scratch_pose,
-																 std::string const & sequence_of_big_pose,
-																 std::map< Size, Size > const & connections_in_big_pose ) const;
-
-		void
-		find_res_maps(
-									utility::vector1< Size > const & chain_id,
-									utility::vector1< Size > const & scratch_sequence_start,
-									utility::vector1< std::string > const & scratch_sequences,
-									utility::vector1< utility::vector1< Size > > const & matches_to_each_scratch_sequence,
-								core::pose::Pose const & scratch_pose,
-									std::map< Size, Size > const & connections_in_big_pose,
-									utility::vector1< core::pose::ResMap > & res_maps ) const;
-
-			void
-			get_sequence_matches( 	utility::vector1< utility::vector1< Size > > & matches_to_each_scratch_sequence,
-															utility::vector1< std::string > const &	scratch_sequences,
-															std::string const & sequence_of_big_pose ) const;
-
-		void
-		check_connections( Size const & num_chain, core::pose::ResMap & res_map,
-											 utility::vector1< Size > const & chain_id,
-											 utility::vector1< Size > const & scratch_sequence_start,
-											 utility::vector1< std::string > const & scratch_sequences,
-											 utility::vector1< utility::vector1< Size > > const & matches_to_each_scratch_sequence,
-											 core::pose::Pose const & scratch_pose,
-											 std::map< Size, Size > const & connections_in_big_pose,
-											 utility::vector1< core::pose::ResMap > & res_maps ) const;
-
-		bool
-		fill_res_map( core::pose::ResMap & res_map, Size const & match_pos, Size const & scratch_start_pos, Size const & scratch_sequence_length ) const;
-
-		void
-		test_matches( Size const & res1, Size const & res2, core::pose::ResMap & res_map,
-									utility::vector1< Size > const & chain_id,
-									utility::vector1< Size > const & scratch_sequence_start,
-									utility::vector1< std::string > const & scratch_sequences,
-									utility::vector1< utility::vector1< Size > > const & matches_to_each_scratch_sequence,
-									core::pose::Pose const & scratch_pose,
-									std::map< Size, Size > const & connections_in_big_pose,
-									utility::vector1< core::pose::ResMap > & res_maps ) const;
-
 		bool
 		check_res_map( core::pose::ResMap const & res_map, core::pose::Pose const & scratch_pose, std::string const & sequence ) const;
-
-		void
-		check_res_map_recursively( core::pose::ResMap const & res_map_old,
-															 utility::vector1< std::string > const & scratch_sequences,
-															 utility::vector1< utility::vector1< Size > > const & matches_to_each_scratch_sequence,
-															 core::pose::Pose const & scratch_pose,
-															 std::map< Size, Size > const & connections_in_big_pose,
-															 utility::vector1< core::Size > const & chain_id,
-															 core::Size const & num_sequence,
-															 core::Size const & num_match,
-															 utility::vector1< core::pose::ResMap > & res_maps ) const;
-		bool
-		check_jump_match(
-										 core::pose::Pose const & scratch_pose,
-										 std::map< core::Size, core::Size > const & connections_in_big_pose,
-										 core::pose::ResMap const & res_map,
-										 utility::vector1< Size > const & chain_id ) const;
 
 		void
 		align_to_chunk( core::pose::Pose & pose, ChunkSet const & chunk_set, core::Size const chunk_index ) const;
@@ -272,10 +192,11 @@ namespace rna{
 	private:
 
 		utility::vector1< ChunkSetOP > chunk_sets_;
-	toolbox::AllowInsertOP allow_insert_;
+		toolbox::AllowInsertOP allow_insert_;
 		ObjexxFCL::FArray1D <bool> covered_by_chunk_;
 		core::Real chunk_coverage_;
 		bool coarse_rna_;
+		BasePairStepLibraryOP base_pair_step_library_;
 
 	};
 

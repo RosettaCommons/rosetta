@@ -229,6 +229,9 @@ public:
 	void
 	set_refine_pose( Size const setting ){ refine_pose_ = setting; }
 
+	void
+	set_bps_moves( Size const setting ){ bps_moves_ = setting; }
+
 private:
 
 	void
@@ -410,6 +413,7 @@ private:
 	bool refine_from_silent_;
 	utility::vector1<core::pose::PoseOP> refine_pose_list_;
 	bool refine_pose_;
+	bool bps_moves_;
 
 }; // class RNA_DeNovoProtocol
 

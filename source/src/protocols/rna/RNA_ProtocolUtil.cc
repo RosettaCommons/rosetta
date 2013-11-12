@@ -20,6 +20,7 @@
 #include <core/chemical/ResidueSelector.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/rna/RNA_Util.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
@@ -1379,9 +1380,64 @@ figure_out_base_pair_partner( pose::Pose & pose, std::map< Size, Size > & partne
 
 	}
 
+}
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+void
+process_input_file( std::string const & input_file,
+										utility::vector1< pose::PoseOP > & pose_list,
+										bool is_pdb /*= false*/,
+										bool coarse_rna /* = false */)
+{
+	using namespace core::io::silent;
+	using namespace protocols::rna;
+
+	core::chemical::ResidueTypeSetCAP rsd_set;
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA );
+
+	if ( is_pdb ){
+
+		pose::PoseOP pose_op( new pose::Pose );
+		core::import_pose::pose_from_pdb( *pose_op, *rsd_set, input_file );
+		//			ensure_phosphate_nomenclature_matches_mini( *pose_op );
+		figure_out_reasonable_rna_fold_tree( *pose_op );
+		pose_list.push_back( pose_op );
+
+	} else { //its a silent file.
+
+			SilentFileData silent_file_data;
+			silent_file_data.read_file( input_file );
+			for ( core::io::silent::SilentFileData::iterator iter = silent_file_data.begin(),
+							end = silent_file_data.end(); iter != end; ++iter ) {
+				pose::PoseOP pose_op( new pose::Pose );
+				iter->fill_pose( *pose_op );
+				pose_list.push_back( pose_op );
+			}
+
+	}
+
+	// further cleanup.
+	for (Size n = 1; n <= pose_list.size(); n++ ){
+
+		pose::PoseOP pose_op = pose_list[ n ];
+
+		remove_cutpoints_closed( *pose_op );
+
+		if ( coarse_rna && !pose_op->residue(1).is_coarse() ){
+			pose::Pose coarse_pose;
+			make_coarse_pose( *pose_op, coarse_pose );
+			*pose_op = coarse_pose;
+		}
+
+		virtualize_5prime_phosphates( *pose_op );
+	}
+
+	if ( pose_list.size() < 1)  {
+		utility_exit_with_message(  "No structure found in input file  " + input_file );
+	}
 
 }
+
 
 } // namespace rna
 } // namespace protocols

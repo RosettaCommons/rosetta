@@ -17,6 +17,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <protocols/rna/RNA_JumpLibrary.fwd.hh>
+#include <protocols/rna/BasePairStep.hh>
 #include <protocols/toolbox/AllowInsert.fwd.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/types.hh>
@@ -39,6 +40,19 @@ namespace rna {
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 class RNA_Pairing {
+
+public:
+
+	RNA_Pairing(){}
+
+	RNA_Pairing( core::Size const pos1_in, core::Size const pos2_in ):
+		pos1( pos1_in ),
+		pos2( pos2_in ),
+		edge1( 'X' ),
+		edge2( 'X' ),
+		orientation( 'X' )
+	{}
+
 public:
 	core::Size pos1;
 	core::Size pos2;
@@ -81,6 +95,9 @@ toolbox::AllowInsertOP
 	void
 	set_suppress_bp_constraint( core::Real const setting ){ suppress_bp_constraint_ = setting; }
 
+	void
+	set_bps_moves( Size const setting ){ bps_moves_ = setting; }
+
 	bool
 	check_base_pairs( core::pose::Pose & pose ) const;
 
@@ -95,6 +112,9 @@ toolbox::AllowInsertOP
 
 	void
 	setup_virtual_phosphate_variants( core::pose::Pose & pose );
+
+	utility::vector1< BasePairStep >
+	get_base_pair_steps() const;
 
 	private:
 
@@ -156,12 +176,16 @@ toolbox::AllowInsertOP
 	void
 	fill_in_default_jump_atoms( core::kinematics::FoldTree & f, core::pose::Pose const & pose ) const;
 
+	Size
+	check_in_pairing_sets( utility::vector1 < utility::vector1 <core::Size > > pairing_sets,
+												 RNA_Pairing const & rna_pairing_check ) const;
+
 private:
 	RNA_JumpLibraryOP rna_jump_library_;
 	RNA_PairingList rna_pairing_list_;
 
 	utility::vector1 < utility::vector1 <core::Size > > obligate_pairing_sets_;
-	utility::vector1 < utility::vector1 <core::Size > > possible_pairing_sets_;
+	utility::vector1 < utility::vector1 <core::Size > > stem_pairing_sets_;
 
 	utility::vector1 < std::pair< utility::vector1 <core::Size >, utility::vector1 <core::Size > > > chain_connections_;
 
@@ -174,6 +198,8 @@ private:
 	bool secstruct_defined_;
 	std::string rna_secstruct_;
 	bool assume_non_stem_is_loop;
+	bool bps_moves_;
+	bool allow_cuts_inside_base_pair_steps_;
 
 	bool add_virtual_anchor_;
 	bool root_at_first_rigid_body_;
@@ -182,9 +208,11 @@ private:
 	utility::vector1 < core::Size  > allow_insert_res_;
 	toolbox::AllowInsertOP allow_insert_;
 
+
 };
 
 	typedef utility::pointer::owning_ptr< RNA_StructureParameters > RNA_StructureParametersOP;
+
 
 } //rna
 } //protocols
