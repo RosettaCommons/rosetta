@@ -30,7 +30,7 @@ class TotalSasaFilter : public filters::Filter
 {
 public:
 	TotalSasaFilter();
-	TotalSasaFilter( core::Real const lower_threshold, bool const hydrophobic=false, bool const polar=false, core::Real const upper_threshold=100000000.0 );
+	TotalSasaFilter( core::Real const lower_threshold, bool const hydrophobic=false, bool const polar=false, core::Real const upper_threshold=100000000.0, bool report_per_residue_sasa=false );
 
 	bool apply( core::pose::Pose const & pose ) const;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
@@ -51,6 +51,8 @@ private:
 	core::Real upper_threshold_;
 	core::pack::task::TaskFactoryOP taskfactory_; /// Residue subset definition. Only the surface area from packable residues.
 	bool hydrophobic_, polar_; /// count only hydrophobics? polars?
+
+	bool report_per_residue_sasa_; //if this option is true, per residue sasas will be output in the logfile
 };
 
 }

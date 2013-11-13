@@ -1364,7 +1364,6 @@ ResidueConformerFilter::report( std::ostream & stream, core::pose::Pose const & 
 core::Real
 ResidueConformerFilter::report_sm( core::pose::Pose const & pose ) const
 {
-	std::cout << "Hack report_sm called" << std::endl;
 	core::Real to_return = this->get_current_conformer( pose );
 	return to_return;
 }

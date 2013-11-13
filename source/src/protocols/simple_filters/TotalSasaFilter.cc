@@ -23,12 +23,14 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 
-#include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/metrics/CalculatorFactory.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <utility/excn/Exceptions.hh>
+#include <utility/string_util.hh>
 #include <core/types.hh>
 
 namespace protocols {
@@ -48,15 +50,17 @@ TotalSasaFilter::TotalSasaFilter() :
 	lower_threshold_( 0.0 ),
 	upper_threshold_(100000000000.0),
 	hydrophobic_( false ),
-	polar_( false )
+	polar_( false ),
+	report_per_residue_sasa_(false)
 {}
 
-TotalSasaFilter::TotalSasaFilter( core::Real const lower_threshold, bool const hydrophobic/*=false*/, bool const polar/*=false*/, core::Real upper_threshold ) :
+TotalSasaFilter::TotalSasaFilter( core::Real const lower_threshold, bool const hydrophobic/*=false*/, bool const polar/*=false*/, core::Real upper_threshold, bool per_residue_sasa/*=false*/ ) :
 	Filter( "TotalSasa" ),
 	lower_threshold_( lower_threshold ),
 	upper_threshold_(upper_threshold),
 	hydrophobic_( hydrophobic ),
-	polar_( polar )
+	polar_( polar ),
+	report_per_residue_sasa_(per_residue_sasa)
 {}
 
 TotalSasaFilter::~TotalSasaFilter(){}
@@ -88,6 +92,7 @@ TotalSasaFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache:
 
 	hydrophobic_ = tag->getOption<bool>( "hydrophobic", false );
 	polar_ = tag->getOption<bool>( "polar", false );
+	report_per_residue_sasa_ = tag->getOption<bool>( "report_per_residue_sasa", false );
 
 	if( tag->hasOption("task_operations") ) {
 		task_factory( protocols::rosetta_scripts::parse_task_operations(tag, data) );
@@ -106,6 +111,7 @@ TotalSasaFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache:
 		" upper_threshold=" << upper_threshold_ <<
 		" hydrophobic=" << hydrophobic_ <<
 		" polar=" << polar_ <<
+		"report_per_residue_sasa_=" << report_per_residue_sasa_ <<
 		" />" << std::endl;
 }
 
@@ -128,6 +134,27 @@ void
 TotalSasaFilter::report( std::ostream & out, core::pose::Pose const & pose ) const {
 	core::Real const sasa( compute( pose ));
 	out<<"Sasa= "<< sasa<<'\n';
+
+	if( report_per_residue_sasa_ ){
+
+		std::string threshold_string = "The following residues have sasa within the desired threshold range: \n";
+
+		basic::MetricValue< utility::vector1< core::Real > > residue_sasa;
+    pose.metric( "sasa", "residue_sasa", residue_sasa ); //this does not represent a new calculation since pose metric calculators are smart enough to figure it out
+
+		runtime_assert( pose.total_residue() == (residue_sasa.value()).size() );
+		for( core::Size i = 1; i<=pose.total_residue(); ++i){
+			char res_chain = pose.pdb_info()->chain(i);
+			int res_pdbnum = pose.pdb_info()->number(i);
+			core::Real this_sasa = residue_sasa.value()[i];
+			out << pose.residue( i ).name3() << res_pdbnum << " " << res_chain << " : " << this_sasa << '\n';
+			if( (this_sasa > lower_threshold_) && (this_sasa < upper_threshold_) ){
+				threshold_string = threshold_string + utility::to_string(res_pdbnum) + "+";
+			}
+		}
+		threshold_string = threshold_string + "\n";
+		out << threshold_string;
+	}
 }
 
 core::Real
