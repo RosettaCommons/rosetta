@@ -1588,7 +1588,7 @@ CartesianBondedEnergy::idealize_proline_nvs(
 	// Idealize the NV atom of the prolines in the pose. This allows
 	// for safe switching between cartesian and non-cartesian poses
 	for(core::Size i=1; i<=pose.total_residue(); ++i) {
-		if(pose.is_fullatom() && pose.residue(i).aa() == core::chemical::aa_pro) {
+		if(pose.is_fullatom() && (pose.residue(i).aa() == core::chemical::aa_pro || pose.residue(i).aa() == core::chemical::aa_dpr)) {
 			core::Size nv_index = pose.residue(i).atom_index(pro_nv_);
 			core::id::AtomID nv_id(nv_index, i);
 			Vector nv_coords = pose.residue(i).build_atom_ideal((int)nv_index, pose.conformation());
