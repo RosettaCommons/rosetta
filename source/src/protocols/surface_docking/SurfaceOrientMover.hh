@@ -15,54 +15,51 @@
 /// @file SurfaceOrientMover.hh
 /// @brief <add a description of the class>
 /// @author Robin A Thottungal (raugust1@jhu.edu)
+/// @author Michael Pacella (mpacella88@gmail.com)
 
 #ifndef INCLUDED_protocols_surface_docking_SurfaceOrientMover_hh
 #define INCLUDED_protocols_surface_docking_SurfaceOrientMover_hh
 
 // Unit Headers
+#include <protocols/surface_docking/SurfaceOrientMover.fwd.hh>
 
 // Package headers
+#include <protocols/surface_docking/SurfaceParameters.fwd.hh>
 
 // Project headers
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
 #include <protocols/moves/Mover.hh>
-
-// Utility Headers
-#include <utility/pointer/owning_ptr.hh>
 
 // C++ Headers
 #include <string>
-#include <map>
-#include <list>
-#include <sstream>
 
 
 namespace protocols {
 namespace surface_docking {
 
-class SurfaceOrientMover;
-typedef utility::pointer::owning_ptr< SurfaceOrientMover > SurfaceOrientMoverOP;
-
 class SurfaceOrientMover : public moves::Mover {
 
 public:
+	//Standard methods
+	/// @brief Default constructor
+	SurfaceOrientMover();
 
-    SurfaceOrientMover();
+	//destructor
+	~SurfaceOrientMover();
+	
+	void apply( core::pose::Pose & );
 
-    //destructor
-    ~SurfaceOrientMover();
-
-    // virtual functions that get overloaded or
-    //                           called from the inheriting classes
-    void apply( core::pose::Pose & );
-
-    virtual std::string get_name() const;
-
-    core::Vector CalcTransVec(core::Real ProjectionDistance,
-				core::Real VectorDistance,core::Vector Vec);
+	virtual std::string get_name() const;
+	
+	void set_surface_parameters( protocols::surface_docking::SurfaceParametersOP surface_parameters);
+	
+	
+private:
+	//methods
+	core::Vector calculate_recenter_vector( core::Vector const & total_displacement );
+	
+	//data
+	protocols::surface_docking::SurfaceParametersOP surface_parameters_;
 
 };
 

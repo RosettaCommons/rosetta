@@ -1,0 +1,12 @@
+-s input/rosetta_surface_integration_test_start.pdb
+-include_surfaces
+-mute all
+-unmute protocols.SurfaceDocking
+-overwrite
+-nstruct 1
+-out:path:pdb output
+-out:path:score output
+-in:file:frag9 input/integration_test_9mers
+-in:file:frag3 input/integration_test_3mers
+-in:file:surface_vectors input/calcite.surf
+-run:test_cycles True

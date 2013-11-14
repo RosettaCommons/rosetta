@@ -304,6 +304,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>No description</dd><br>
 </dl>
 <dl>
+<dt><b>-surface_vectors</b> \<String\><dt>
+<dd>Input file containing three sets of xyz coordinates which define the plane and periodicity of the solid surface</dd><br>
+</dl>
+<dl>
 <dt><b>-xyz</b> \<String\><dt>
 <dd>Input coordinates in a raw XYZ format (three columns)</dd><br>
 </dl>

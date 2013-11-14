@@ -16,6 +16,7 @@
 /// @file   SurfaceParameters.fwd.hh
 /// @brief
 /// @author Robin A Thottungal (raugust1@jhu.edu)
+/// @author Michael Pacella (mpacella88@gmail.com)
 
 #ifndef INCLUDED_protocols_surface_docking_SurfaceParameters_fwd_hh
 #define INCLUDED_protocols_surface_docking_SurfaceParameters_fwd_hh
@@ -28,7 +29,7 @@ namespace surface_docking {
 class SurfaceParameters;
 typedef utility::pointer::owning_ptr< SurfaceParameters > SurfaceParametersOP;
 
-}
-}
+} //surface_docking
+} //protocols
 
 #endif

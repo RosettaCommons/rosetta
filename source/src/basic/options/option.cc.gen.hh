@@ -70,6 +70,7 @@ option.add( basic::options::OptionKeys::in::file::frag3, "No description" );
 option.add( basic::options::OptionKeys::in::file::frag9, "No description" );
 option.add( basic::options::OptionKeys::in::file::fragA, "No description" );
 option.add( basic::options::OptionKeys::in::file::fragB, "No description" );
+option.add( basic::options::OptionKeys::in::file::surface_vectors, "Input file containing three sets of xyz coordinates which define the plane and periodicity of the solid surface" );
 option.add( basic::options::OptionKeys::in::file::xyz, "Input coordinates in a raw XYZ format (three columns)" );
 option.add( basic::options::OptionKeys::in::file::fragA_size, "No description" ).def(9);
 option.add( basic::options::OptionKeys::in::file::keep_input_scores, "Keep/Don't keep scores from input file in Pose." ).def(true);

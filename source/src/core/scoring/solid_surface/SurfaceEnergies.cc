@@ -11,7 +11,7 @@
 /// @brief  SurfaceEnergies class avoids calculating energies between surface residues, and detecting their
 /// neighbor relationships
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
-/// @author Mike Pacella (mpacella@gmail.com)
+/// @author Mike Pacella (mpacella88@gmail.com)
 
 // Unit Headers
 #include <core/scoring/solid_surface/SurfaceEnergies.hh>

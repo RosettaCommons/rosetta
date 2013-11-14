@@ -37,6 +37,9 @@
 #include <utility/vector1.hh>
 #include <string>
 
+//Numeric Headers
+#include <numeric/xyzVector.hh>
+
 namespace protocols {
 namespace docking {
 
@@ -167,6 +170,7 @@ public:
 	FaDockingSlideIntoContact();
 	FaDockingSlideIntoContact( core::Size const rb_jump);
 	FaDockingSlideIntoContact( utility::vector1<core::Size> rb_jumps);
+	FaDockingSlideIntoContact( core::Size const rb_jump, core::Vector const slide_axis );
 
 	//destructor
 	~FaDockingSlideIntoContact();
@@ -182,6 +186,7 @@ private:
 	utility::vector1<core::Size> rb_jumps_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::Real tolerance_; ///< how accurate do you want to be?
+	core::Vector slide_axis_; //used if a specific slide axis is specified in the constructor
 
 };  // class FaDockingSlideIntoContact
 

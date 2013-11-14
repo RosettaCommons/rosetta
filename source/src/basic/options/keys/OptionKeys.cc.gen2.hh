@@ -727,3 +727,4 @@ namespace optE { FileOptionKey const optimize_decoy_discrimination( "optE:optimi
 namespace optE { StringOptionKey const normalize_decoy_score_spread( "optE:normalize_decoy_score_spread" );  }
 namespace optE { BooleanOptionKey const ramp_nativeness( "optE:ramp_nativeness" );  }
 namespace optE { IntegerOptionKey const n_top_natives_to_optimize( "optE:n_top_natives_to_optimize" );  }
+

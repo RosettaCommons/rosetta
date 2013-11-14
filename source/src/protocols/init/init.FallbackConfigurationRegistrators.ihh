@@ -17,8 +17,9 @@
 namespace protocols {
 using basic::resource_manager::FallbackConfigurationRegistrator;
 
-static FallbackConfigurationRegistrator< protocols::loops::LoopsFileFallbackConfigurationCreator > LoopsFileFallbackConfigurationCreator_registrator;
 static FallbackConfigurationRegistrator< basic::resource_manager::fallback_configuration::NativeFallbackConfigurationCreator > NativeFallbackConfigurationCreator_registrator;
+static FallbackConfigurationRegistrator< protocols::loops::LoopsFileFallbackConfigurationCreator > LoopsFileFallbackConfigurationCreator_registrator;
+static FallbackConfigurationRegistrator< protocols::surface_docking::SurfaceVectorFallbackConfigurationCreator > SurfaceVectorFallbackConfigurationCreator_registrator;
 
 } //namespace protocols
 

@@ -88,6 +88,7 @@ namespace in { namespace file { extern StringOptionKey const frag3; } }
 namespace in { namespace file { extern StringOptionKey const frag9; } }
 namespace in { namespace file { extern StringOptionKey const fragA; } }
 namespace in { namespace file { extern StringOptionKey const fragB; } }
+namespace in { namespace file { extern StringOptionKey const surface_vectors; } }
 namespace in { namespace file { extern StringOptionKey const xyz; } }
 namespace in { namespace file { extern IntegerOptionKey const fragA_size; } }
 namespace in { namespace file { extern BooleanOptionKey const keep_input_scores; } }

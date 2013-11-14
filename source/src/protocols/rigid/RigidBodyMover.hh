@@ -372,6 +372,10 @@ public:
 		core::pose::Pose const & pose_in,
 		int const rb_jump_in=1
 	);
+	
+	// constructor with arguments that specify the trans axis
+	RigidBodyTransMover( core::Vector const trans_axis, int const rb_jump_in=1 );
+
 
 	virtual ~RigidBodyTransMover();
 

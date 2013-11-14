@@ -17,3 +17,4 @@
 #include <basic/database/DatabaseSessionOptionsCreator.hh>
 #include <protocols/loophash/LoopHashLibraryOptionsCreator.hh>
 #include <protocols/loops/LoopsFileOptionsCreator.hh>
+#include <protocols/surface_docking/SurfaceVectorOptionsCreator.hh>

@@ -15,6 +15,7 @@
 /// @file SurfaceOrientMover.hh
 /// @brief <add a description of the class>
 /// @author Robin A Thottungal (raugust1@jhu.edu)
+/// @author Michael Pacella (mpacella88@gmail.com)
 
 #ifndef INCLUDED_protocols_surface_docking_SurfaceOrientMover_fwd_hh
 #define INCLUDED_protocols_surface_docking_SurfaceOrientMover_fwd_hh

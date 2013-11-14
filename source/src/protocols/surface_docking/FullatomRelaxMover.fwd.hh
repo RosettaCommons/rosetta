@@ -15,6 +15,7 @@
 /// @file FullatomRelaxMover.fwd.hh
 /// @brief
 /// @author Robin A Thottungal  (rathottungal@gmail.com)
+/// @author Michael Pacella (mpacella88@gmail.com)
 
 #ifndef INCLUDED_protocols_surface_docking_FullatomRelaxMover_fwd_hh
 #define INCLUDED_protocols_surface_docking_FullatomRelaxMover_fwd_hh

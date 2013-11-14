@@ -65,6 +65,7 @@ namespace in { namespace file { StringOptionKey const frag3( "in:file:frag3" ); 
 namespace in { namespace file { StringOptionKey const frag9( "in:file:frag9" );  } }
 namespace in { namespace file { StringOptionKey const fragA( "in:file:fragA" );  } }
 namespace in { namespace file { StringOptionKey const fragB( "in:file:fragB" );  } }
+namespace in { namespace file { StringOptionKey const surface_vectors( "in:file:surface_vectors" );  } }
 namespace in { namespace file { StringOptionKey const xyz( "in:file:xyz" );  } }
 namespace in { namespace file { IntegerOptionKey const fragA_size( "in:file:fragA_size" );  } }
 namespace in { namespace file { BooleanOptionKey const keep_input_scores( "in:file:keep_input_scores" );  } }
@@ -727,3 +728,4 @@ namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chain
 namespace jumps { FileOptionKey const pairing_file( "jumps:pairing_file" );  }
 namespace jumps { IntegerVectorOptionKey const random_sheets( "jumps:random_sheets" );  }
 namespace jumps { FileOptionKey const residue_pair_jump_file( "jumps:residue_pair_jump_file" );  }
+

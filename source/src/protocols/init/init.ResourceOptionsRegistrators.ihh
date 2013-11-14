@@ -20,5 +20,6 @@ using basic::resource_manager::ResourceOptionsRegistrator;
 static ResourceOptionsRegistrator< basic::database::DatabaseSessionOptionsCreator > DatabaseSessionOptionsCreator_registrator;
 static ResourceOptionsRegistrator< protocols::loophash::LoopHashLibraryOptionsCreator > LoopHashLibraryOptionsCreator_registrator;
 static ResourceOptionsRegistrator< protocols::loops::LoopsFileOptionsCreator > LoopsFileOptionsCreator_registrator;
+static ResourceOptionsRegistrator< protocols::surface_docking::SurfaceVectorOptionsCreator > SurfaceVectorOptionsCreator_registrator;
 
 } //namespace protocols

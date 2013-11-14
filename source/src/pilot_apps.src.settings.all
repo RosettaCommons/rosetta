@@ -525,7 +525,7 @@ sources = {
 		#"moves_test", # /* Monica Berondo,Documentation Location,Demo Location */
 	],
 	"pilot/mpacella" : [
-		"surface_docking_jd2",
+		"surface_docking",
 	],
 	"pilot/murphp" : [
 		"inv_kin_lig_loop_design", # /* Paul Murphy,Documentation Location,Demo Location */

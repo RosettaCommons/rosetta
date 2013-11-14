@@ -252,6 +252,10 @@ sources = {
 		"Sparta",
 	],
 
+	"surface_docking" : [
+		"SurfaceVectorLoader",
+	],
+
 	"toolbox/pose_metric_calculators" : [
 		"Neighbor_Calculators",
 #		SolubilityCalculator",

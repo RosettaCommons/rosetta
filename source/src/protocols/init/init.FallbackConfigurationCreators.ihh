@@ -13,6 +13,7 @@
 
 //ResourceOptionsCreator #includes
 #include <basic/resource_manager/FallbackConfigurationFactory.hh>
+#include <basic/resource_manager/fallback_configuration/NativeFallbackConfigurationCreator.hh>
 
 #include <protocols/loops/LoopsFileFallbackConfigurationCreator.hh>
-#include <basic/resource_manager/fallback_configuration/NativeFallbackConfigurationCreator.hh>
+#include <protocols/surface_docking/SurfaceVectorFallbackConfigurationCreator.hh>

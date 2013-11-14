@@ -706,6 +706,13 @@ RigidBodyTransMover::RigidBodyTransMover(
 	step_size_ = 1.0;
 	trans_axis_ = centroid_axis(pose_in);
 }
+	
+RigidBodyTransMover::RigidBodyTransMover( core::Vector const trans_axis, int const rb_jump_in  ) :
+	RigidBodyMover( rb_jump_in ), trans_axis_(trans_axis)
+{
+	moves::Mover::type( "RigidBodyTrans" );
+	step_size_ = 1.0;
+}
 
 RigidBodyTransMover::RigidBodyTransMover( RigidBodyTransMover const & src ) :
 	//utility::pointer::ReferenceCount(),

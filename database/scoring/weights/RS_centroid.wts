@@ -1,0 +1,14 @@
+# score 6 of rosetta++
+env     1.0
+pair    0.4
+cbeta   1.5
+vdw     0.5
+rg      0.0
+cenpack 1.5
+hs_pair 0.0
+ss_pair 0.3
+rsigma  0.0
+sheet   0.0
+rama    0.1
+
+STRAND_STRAND_WEIGHTS 0 6

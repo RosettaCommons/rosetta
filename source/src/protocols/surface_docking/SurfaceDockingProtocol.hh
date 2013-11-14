@@ -15,47 +15,34 @@
 /// @file SurfaceDocking.hh
 /// @brief <add a description of the class>
 /// @author Robin A Thottungal (rathottungal@gmail.com)
+/// @author Michael Pacella (mpacella88@gmail.com)
 
 #ifndef INCLUDED_protocols_surface_docking_SurfaceDockingProtocol_hh
 #define INCLUDED_protocols_surface_docking_SurfaceDockingProtocol_hh
 
 // Unit Headers
-#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-// Package headers
+#include <protocols/surface_docking/SurfaceDockingProtocol.fwd.hh>
 
-#include <protocols/moves/MoverStatus.hh>
+// Package headers
+#include <protocols/surface_docking/SurfaceParameters.fwd.hh>
+#include <protocols/surface_docking/SurfaceOrientMover.fwd.hh>
+#include <protocols/surface_docking/CentroidRelaxMover.fwd.hh>
+#include <protocols/surface_docking/FullatomRelaxMover.fwd.hh>
 
 // Project headers
-#include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <utility/tag/Tag.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
-#include <protocols/surface_docking/SurfaceParameters.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/DataMap.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-// ObjexxFCL Headers
-
-// for adding data to pose
-#include <basic/datacache/BasicDataCache.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-
-
-// Utility Headers
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/vector1.fwd.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.fwd.hh>
+#include <protocols/abinitio/ClassicAbinitio.fwd.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
+#include <protocols/docking/DockingInitialPerturbation.fwd.hh>
+#include <protocols/rigid/RigidBodyMover.fwd.hh>
 
 // C++ Headers
 #include <string>
-#include <map>
-#include <list>
-
-//Auto Headers
 #include <sstream>
-
 
 namespace protocols {
 namespace surface_docking {
@@ -63,40 +50,99 @@ namespace surface_docking {
 class SurfaceDockingProtocol : public moves::Mover {
 
 public:
-
+	//Standard Methods /////////////////////////////////////////////
+	/// @brief Default constructor
 	SurfaceDockingProtocol();
+	
+	/// @brief Copy constructor
+	SurfaceDockingProtocol(SurfaceDockingProtocol const & src);
+	
+	//// @brief Assignment operator
+	SurfaceDockingProtocol & operator=(SurfaceDockingProtocol const & src);
 
 	//destructor
 	~SurfaceDockingProtocol();
-
-	void apply( core::pose::Pose & );
-
+	
+	//Standard Rosetta methods /////////////////////////////////////
+	//General methods
+	/// @brief Register options with the option system.
+	static void register_options();
+	
+	/// @brief Generate string representation of SurfaceDockingProtocol for debugging purposes
+	void show(std::ostream & ouput=std::cout) const;
+	
+	/// Insertion operator (overloaded so that SurfaceDockingProtocol can be "printed" in Pyrosetta).
+	friend std::ostream & operator<<(std::ostream & output, SurfaceDockingProtocol const & object_to_output);
+	
+	/// Assignment operator
+	
+	
+	// Mover methods
+	/// @brief Return the name of the Mover.
 	virtual std::string get_name() const;
-
-	void setupFoldTree(core::pose::Pose & pose);
-
-	void CalcSecondayStruct(core::pose::Pose & pose);
-
-	void SetSecondayStruct(core::pose::Pose & pose);
-
-	void CalcSecondayStruct_withSurface(core::pose::Pose & pose);
-
-	void abinitio (core::pose::Pose & pose);
-
-	//virtual void setup_list( core::pose::Pose & ) = 0;
-
-	//virtual void set_angles( core::Real ) = 0;
-
-	//virtual bool make_move( core::pose::Pose & ) = 0;
-
+	
+	virtual protocols::moves::MoverOP clone() const;
+	
+	virtual protocols::moves::MoverOP fresh_instance() const;
+	
+	/// @brief Apply the corresponding move to the pose
+	virtual void apply( core::pose::Pose & pose);
+	
 private:
+	// Private methods //////////////////////////////////////////
+	
+	//Initialize data members
+	void init();
+	
+	// Copy all data members src to destinatioin
+	void copy_data(SurfaceDockingProtocol object_to_copy_to, SurfaceDockingProtocol object_to_copy_from);
+	
+	bool valid_surface_pose(core::pose::Pose const & pose);
+	
+	void calc_secondary_structure(core::pose::Pose & pose);
+	
+	void calc_secondary_structure_with_surface(core::pose::Pose const & pose);
+	
+	void set_secondary_structure(core::pose::Pose & pose);
+	
+	void initialize_surface_energies (core::pose::Pose & pose, Size first_protein_residue);
+	
+	void set_surface_parameters ( core::pose::Pose & pose );
+	
+	void setup_movers ( core::pose::Pose const & pose, Size const first_protein_residue );
+	
+	void setup_abinitio ();
+	
+	void setup_slide_movers( core::pose::Pose const & pose );
+	
+	void split_protein_surface_poses (core::pose::Pose const & pose, core::pose::Pose & surface, core::pose::Pose & protein );
+	
+	void merge_protein_surface_poses (core::pose::Pose & pose, core::pose::Pose const & surface, core::pose::Pose const & protein );
+	
+	core::pack::task::PackerTaskOP create_surface_packer_task ( core::pose::Pose const & pose, Size const first_protein_residue );
+	
+	// Private data /////////////////////////////////////////////
+	
 	core::scoring::ScoreFunctionOP score_sidechain_pack_;
-	std::string SecStruct_;
-	protocols::surface_docking::SurfaceParametersOP surfaceParameters_;
+	std::string sec_struct_;
+	protocols::surface_docking::SurfaceParametersOP surface_parameters_;
+	simple_moves::SwitchResidueTypeSetMoverOP to_centroid_;
+	simple_moves::SwitchResidueTypeSetMoverOP to_full_atom_;
+	SurfaceOrientMoverOP surface_orient_;
+	protocols::abinitio::ClassicAbinitioOP abinitio_;
+	protocols::surface_docking::CentroidRelaxMoverOP centroid_relax_;
+	protocols::simple_moves::PackRotamersMoverOP pack_rotamers_fullatom_;
+	protocols::rigid::RigidBodyTransMoverOP slide_away_from_surface_;
+	protocols::docking::FaDockingSlideIntoContactOP slide_into_surface_;
+	protocols::surface_docking::FullatomRelaxMoverOP fullatom_relax_;
+	protocols::rigid::RigidBodyTransMoverOP position_above_surface_;
+	
+	
+	
 };
 
 
-} // surfaceDockingProtocols
+} // surface_docking
 } // protocols
 
-#endif
+#endif  // INCLUDED_protocols_SurfaceDockingProtocol_hh

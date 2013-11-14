@@ -463,13 +463,14 @@ FaDockingSlideIntoContact::FaDockingSlideIntoContact()
 	Mover::type( "FaDockingSlideIntoContact" );
 	scorefxn_ = new core::scoring::ScoreFunction();
 	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
+	slide_axis_(0.0);
 }
 
 
 //constructor
 FaDockingSlideIntoContact::FaDockingSlideIntoContact(
 		core::Size const rb_jump
-) : Mover(), rb_jump_(rb_jump), tolerance_(0.2)
+) : Mover(), rb_jump_(rb_jump), tolerance_(0.2), slide_axis_(0.0)
 {
 	Mover::type( "FaDockingSlideIntoContact" );
 	scorefxn_ = new core::scoring::ScoreFunction();
@@ -477,7 +478,14 @@ FaDockingSlideIntoContact::FaDockingSlideIntoContact(
 }
 
 FaDockingSlideIntoContact::FaDockingSlideIntoContact( utility::vector1<core::Size> rb_jumps):
-		Mover(), rb_jumps_(rb_jumps),tolerance_(0.2){
+		Mover(), rb_jumps_(rb_jumps),tolerance_(0.2),slide_axis_(0.0){
+	Mover::type( "FaDockingSlideIntoContact" );
+	scorefxn_ = new core::scoring::ScoreFunction();
+	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
+}
+	
+FaDockingSlideIntoContact::FaDockingSlideIntoContact( core::Size const rb_jump, core::Vector const slide_axis): Mover(), rb_jump_(rb_jump), tolerance_(0.2), slide_axis_(slide_axis)
+{
 	Mover::type( "FaDockingSlideIntoContact" );
 	scorefxn_ = new core::scoring::ScoreFunction();
 	scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
@@ -498,10 +506,16 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 	bool are_touching = false;
 
 	utility::vector1<rigid::RigidBodyTransMover> trans_movers;
-
-	if(rb_jumps_.size()<1){
+	
+	if (slide_axis_.length() != 0)
+	{
+		trans_movers.push_back( rigid::RigidBodyTransMover(slide_axis_, rb_jump_));
+	}
+	else if(rb_jumps_.size()<1)
+	{
 		trans_movers.push_back( rigid::RigidBodyTransMover(pose,rb_jump_));
 	}
+
 	else{
 		for(
 				utility::vector1<core::Size>::iterator jump_idx = rb_jumps_.begin(),

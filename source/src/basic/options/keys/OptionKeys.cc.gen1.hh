@@ -727,3 +727,4 @@ namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jump
 namespace cmiles { namespace jumping { IntegerOptionKey const resj( "cmiles:jumping:resj" );  } }
 namespace james { BooleanOptionKey const james( "james" );  }
 namespace james { IntegerOptionKey const min_seqsep( "james:min_seqsep" );  }
+

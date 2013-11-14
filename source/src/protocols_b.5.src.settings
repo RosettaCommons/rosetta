@@ -113,10 +113,12 @@ sources = {
 	"protocols/surface_docking": [
 		"CentroidRelaxMover",
 		"FullatomRelaxMover",
-		"SlideIntoSurface",
 		"SurfaceDockingProtocol",
 		"SurfaceOrientMover",
 		"SurfaceParameters",
+		"SurfaceVectorLoader",
+		"SurfaceVectorFallbackConfiguration",
+		"SurfaceVectorOptions",
 	],
 	"protocols/symmetric_docking": [
 		"SymDockBaseProtocol",
