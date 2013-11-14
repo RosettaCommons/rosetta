@@ -174,7 +174,7 @@ if not argv.count('-subsystem') or \
 		interface_num=interface_num+1
 	# disregard interfaces with values == 0
 		if interface !=0:
-			E_string = E_string + " + " + str(interface) + "*(VRT0001:VRT000" + str(interface_num+1) + ")"
+			E_string = E_string + " + " + str(interface) + "*(VRT0001:VRT" "%04d"%(interface_num+1) + ")"
 	print  E_string
 	# default anchor position at com
 	print "anchor_residue COM"
