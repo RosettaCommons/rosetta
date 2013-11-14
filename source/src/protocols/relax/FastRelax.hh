@@ -153,7 +153,7 @@ protected:
 
 	/// @brief Use for constraint scaling -- sets the coordinate constraint weight given a scorefxn, energy map, and weight.
 	/// TL - Derived classes which may want to scale more than coordinate constraints can override this without forking apply()
-	void
+	virtual void
 	set_constraint_weight( core::scoring::ScoreFunctionOP local_scorefxn,
 												 core::scoring::EnergyMap const & full_weights,
 												 core::Real const weight ) const;
