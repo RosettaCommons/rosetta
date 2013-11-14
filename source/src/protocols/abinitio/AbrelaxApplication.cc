@@ -1899,6 +1899,11 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 			&& ( !loop_closure_failed || option[ OptionKeys::abinitio::relax_with_jumps ]() );
 
 		if ( bRelax_ ) {
+			//fpd  detect disulfides in centroid (or else they will repact as non-disulf and never get detected)
+			if ( option[ OptionKeys::abinitio::detect_disulfide_before_relax ] ) {
+				fold_pose.conformation().detect_disulfides();
+			}
+
 			if ( !fold_pose.is_fullatom() ) {
 				pose::Pose const centroid_pose ( fold_pose );
 				ResolutionSwitcher res_switch( centroid_pose, false, true, true );
@@ -2091,9 +2096,10 @@ void AbrelaxApplication::relax( pose::Pose& pose, core::scoring::ScoreFunctionOP
 
 	add_fa_constraints_from_cmdline( pose, *scorefxn );
 
-	if ( option[ OptionKeys::abinitio::detect_disulfide_before_relax ] ) {
-		pose.conformation().detect_disulfides();
-	}
+	//fpd  move the detection to _before_ fullatom
+	//if ( option[ OptionKeys::abinitio::detect_disulfide_before_relax ] ) {
+	//	pose.conformation().detect_disulfides();
+	//}
 
 	// Support deprecated option
 	if ( option[ basic::options::OptionKeys::abinitio::fastrelax ]() ) {
