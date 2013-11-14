@@ -537,20 +537,6 @@ ResidueType::abase2( Size const atomno ) const
 Size
 ResidueType::number_bonded_heavyatoms( Size const atomno ) const
 {
-
-#ifndef NDEBUG
-	/// Graph style
-	Size count = 0;
-	VD vd = ordered_atoms_[atomno];
-	for(OutEdgeIterPair ep = boost::out_edges(vd, graph_); ep.first != ep.second; ++ep.first){
-		OutEdgeIter e_iter= ep.first;
-		ED ed = *e_iter;
-		VD target = boost::target(ed, graph_);
-		AtomType const& at = (*atom_types_)[graph_[target].atom_type_index()];
-		if( at.is_heavyatom() ) ++count;
-	}
-	//assert(count == bonded_neighbor_[ atomno ].size () - number_bonded_hydrogens( atomno ));
-#endif
 	return bonded_neighbor(atomno).size() - number_bonded_hydrogens( atomno );
 }
 
@@ -558,44 +544,74 @@ ResidueType::number_bonded_heavyatoms( Size const atomno ) const
 AtomIndices const &
 ResidueType::bonded_neighbor( Size const atomno ) const
 {
-
-#ifndef NDEBUG
-	/// Graph style
-	VD vd = ordered_atoms_[atomno];
-	AtomIndices atoms;
-	for(OutEdgeIterPair ep = boost::out_edges(vd, graph_); ep.first != ep.second; ++ep.first){
-		OutEdgeIter e_iter= ep.first;
-		ED ed = *e_iter;
-		VD target = boost::target(ed, graph_);
-		for(Size i=1; i <= ordered_atoms_.size(); ++i){
-			if( ordered_atoms_[i] == target ) atoms.push_back( i );
-		}
-	}
-	//assert(bonded_neighbor_[atomno] == atoms);
-#endif
-
 	return graph_[ ordered_atoms_[atomno] ].bonded_neighbors();
-	//return graph_[ ordered_atoms_[atomno] ].bonded_neighbor();
 }
 
 utility::vector1<BondName> const &
 ResidueType::bonded_neighbor_types(Size const atomno) const
 {
-	/// Graph style
-#ifndef NDEBUG
-	utility::vector1<BondName> bond_names;
-	VD vd = ordered_atoms_[atomno];
-	for(OutEdgeIterPair ep = boost::out_edges(vd, graph_); ep.first != ep.second; ++ep.first){
-		OutEdgeIter e_iter= ep.first;
-		ResidueGraph::edge_descriptor ed = *e_iter;
-		Bond b = graph_[ed];
-		bond_names.push_back( b.bond_name() );
-	}
-	//assert( bond_names == bonded_neighbor_type_[atomno]);
-#endif
 	return graph_[ ordered_atoms_[atomno] ].bonded_neighbor_types();
 }
 
+    const HeavyAtomGraph
+    ResidueType::heavy_atoms(){
+            HeavyAtomFilter filter(graph_, atom_types_);
+            HeavyAtomGraph fg(graph_, boost::keep_all(), filter);
+            return fg;
+      }
+    
+    const AcceptorAtomGraph
+    ResidueType::acceptor_atoms(){
+    	AcceptorAtomFilter filter(graph_, atom_types_);
+    	AcceptorAtomGraph graph(graph_, boost::keep_all(), filter);
+        return graph;
+    }
+    
+    const HeavyAtomWithPolarHydrogensGraph
+    ResidueType::heavy_atom_with_polar_hydrogens(){
+    	HeavyAtomWithPolarHydrogensFilter filter(graph_, atom_types_);
+        HeavyAtomWithPolarHydrogensGraph graph(graph_, boost::keep_all(), filter);
+        return graph;
+    }
+    
+    const HeavyAtomWithHydrogensGraph
+    ResidueType::heavy_atom_with_hydrogens(){
+        HeavyAtomWithHydrogensFilter filter(graph_, atom_types_);
+        HeavyAtomWithHydrogensGraph graph(graph_, boost::keep_all(), filter);
+        return graph;
+    }
+    
+    
+    const HydrogenAtomGraph
+    ResidueType::hydrogens(){
+            HydrogenAtomFilter filter(graph_, atom_types_);
+            HydrogenAtomGraph fg(graph_, boost::keep_all(), filter);
+            return fg;
+    }
+    
+    const PolarHydrogenGraph
+    ResidueType::polar_hydrogens(){
+        PolarHydrogenFilter filter(graph_, atom_types_);
+        PolarHydrogenGraph fg(graph_, boost::keep_all(), filter);
+        return fg;
+    }
+    
+    const APolarHydrogenGraph
+    ResidueType::apolar_hydrogens(){
+        APolarHydrogenFilter filter(graph_, atom_types_);
+        APolarHydrogenGraph fg(graph_, boost::keep_all(), filter);
+        return fg;
+    }
+    
+    const AromaticAtomGraph
+    ResidueType::aromatic_atoms(){
+        AromaticAtomFilter filter(graph_, atom_types_);
+        AromaticAtomGraph fg(graph_, boost::keep_all(), filter);
+        return fg;
+    }
+    
+    
+    
 
 /// @note this does not set xyz coordinates for the added atom
 void
@@ -755,53 +771,50 @@ ResidueType::add_bond(std::string const & atom_name1, std::string const & atom_n
 /// @details add a bond between atom1 and atom2 and add a BondType object referencing the bond using the specified bondName
 void
 ResidueType::add_bond(std::string const & atom_name1, std::string const & atom_name2, BondName bondLabel)
-{
-	nbonds_++;
-	// signal that we need to update the derived data
-	finalized_ = false;
-
-	if ( !has( atom_name1 ) || !has( atom_name2 ) ) {
-		std::string message = "add_bond: atoms " + atom_name1 + " and " + atom_name2 + " dont exist!";
-		utility_exit_with_message( message  );
-	}
-
-	/////// Standard Version /////////
-
-	Size const i1( atom_index( atom_name1 ) );
-	Size const i2( atom_index( atom_name2 ) );
-
-
+    {
+        nbonds_++;
+        // signal that we need to update the derived data
+        finalized_ = false;
+        
+        if ( !has( atom_name1 ) || !has( atom_name2 ) ) {
+            std::string message = "add_bond: atoms " + atom_name1 + " and " + atom_name2 + " dont exist!";
+            utility_exit_with_message( message  );
+        }
+        
+        /////// Standard Version /////////
+        
+        Size const i1( atom_index( atom_name1 ) );
+        Size const i2( atom_index( atom_name2 ) );
+        
+        
 		// check if bond already exists
 		AtomIndices const & i1_nbrs(bonded_neighbor(i1));
 		if ( std::find( i1_nbrs.begin(), i1_nbrs.end(), i2 ) != i1_nbrs.end() ) {
 			utility_exit_with_message( "dont add residue bonds more than once!" );
 		}
-
-
+        
+        
         graph_[ordered_atoms_[i1]].bonded_neighbors().push_back(i2);
         graph_[ordered_atoms_[i2]].bonded_neighbors().push_back(i1);
         graph_[ordered_atoms_[i1]].bonded_neighbor_types().push_back(bondLabel);
         graph_[ordered_atoms_[i2]].bonded_neighbor_types().push_back(bondLabel);	//bondType_vector_.push_back(BondType(i1,i2,bondLabel));
+        
+        NameVDMap::const_iterator source = atom_graph_index_.find( atom_name1 );
+        NameVDMap::const_iterator target = atom_graph_index_.find( atom_name2 );
+        assert( source != atom_graph_index_.end());
+        assert( target != atom_graph_index_.end());
+        VD const vd_source = source->second;
+        VD const vd_target = target->second;
 
-	NameVDMap::const_iterator source = atom_graph_index_.find( atom_name1 );
-	NameVDMap::const_iterator target = atom_graph_index_.find( atom_name2 );
-	assert( source != atom_graph_index_.end());
-	assert( target != atom_graph_index_.end());
-	VD const vd_source = source->second;
-	VD const vd_target = target->second;
-
-	Atom a = graph_[vd_source];
-	Atom b = graph_[vd_target];
-
-	// check if bond already exists...
-	if( boost::edge(vd_source, vd_target, graph_).second ){
-		utility_exit_with_message( "dont add residue bonds more than once!" );
-	}
-
-	ResidueGraph::edge_descriptor e_added;
-	bool added;
-	boost::tie(e_added, added) = graph_.add_edge( vd_source, vd_target, Bond(-1, bondLabel)); /// -1 means Bond distance not set here. This will be fixed in the future
-	assert(added);
+        // check if bond already exists...
+        if( boost::edge(vd_source, vd_target, graph_).second ){
+            utility_exit_with_message( "dont add residue bonds more than once!" );
+        }
+        
+        ResidueGraph::edge_descriptor e_added;
+        bool added;
+        boost::tie(e_added, added) = graph_.add_edge( vd_source, vd_target, Bond(-1, bondLabel)); /// -1 means Bond distance not set here. This will be fixed in the future
+        assert(added);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1299,75 +1312,90 @@ ResidueType::setup_atom_ordering(AtomIndices & old2new)
 	//
 	// ** adding support for deleting atoms at this stage: calls to delete_atom( name )
 	//    will append to delete_atoms_, must follow with call to finalize()
-
+    
 	// set atom counts
-
+    
 	// Graph Atoms are already deleted! Now all we need to do is sort them...
-
+    
 	Size const old_natoms( ordered_atoms_.size() );
 	assert(graph_.num_vertices() == old_natoms - delete_atoms_.size());
-
+    
 	// size and initialize the mapping from old to new indices
 	old2new.clear();
 	old2new.resize( old_natoms, 0 );
-
+    
 	// process delete_atoms_ to a friendlier form
 	utility::vector1< bool > keep_me( old_natoms, true );
  	for ( Size i=1; i<= old_natoms; ++i ) {
-        keep_me[i] = boost::in_vertex_set(graph_, ordered_atoms_[i]); //deleted atoms are not found and are then false
+ 		if(std::find( delete_atoms_.begin(), delete_atoms_.end(), i ) != delete_atoms_.end()){
+ 			keep_me[i] =false; //deleted atoms are not found and are then false
+ 		}
+
 	}
 	delete_atoms_.clear();
-
+    
 	// first fill a list of all the heavyatoms, insisting that backbone come first
 	AtomIndices old_heavyatom_indices;
 	for ( Size i=1; i<= old_natoms; ++i ) {
 		if ( keep_me[ i ] && atom_type( i ).is_heavyatom() &&
-				 ( ( i <= n_backbone_heavyatoms_ ) || // is backbone heavyatom by count from previous call to finalize()
-					 ( std::find( force_bb_.begin(), force_bb_.end(), i ) != force_bb_.end() ) ) ) { // is forced-bb
-			old_heavyatom_indices.push_back( i );
-		}
+            ( ( i <= n_backbone_heavyatoms_ ) || // is backbone heavyatom by count from previous call to finalize()
+             ( std::find( force_bb_.begin(), force_bb_.end(), i ) != force_bb_.end() ) ) ) { // is forced-bb
+                old_heavyatom_indices.push_back( i );
+            }
 	}
-
+    
 	// update the bb-heavy counter:
 	n_backbone_heavyatoms_ = old_heavyatom_indices.size();
 	force_bb_.clear();
-
+    
 	// now add sidechain heavyatoms
 	for ( Size i=1; i<= old_natoms; ++i ) {
 		if ( keep_me[ i ] && atom_type( i ).is_heavyatom() &&
-				 ( std::find( old_heavyatom_indices.begin(), old_heavyatom_indices.end(), i ) == // not already done
-					 old_heavyatom_indices.end() ) ) {
-			old_heavyatom_indices.push_back( i );
-		}
+            ( std::find( old_heavyatom_indices.begin(), old_heavyatom_indices.end(), i ) == // not already done
+             old_heavyatom_indices.end() ) ) {
+                old_heavyatom_indices.push_back( i );
+            }
 	}
-
+    
 	// all the heavyatoms
 	nheavyatoms_ = old_heavyatom_indices.size();
-
+    
 	// setup old2new, also fill in attached_H_begin/end
 	attached_H_begin_.clear();
 	attached_H_end_.clear();
 	attached_H_begin_.resize( nheavyatoms_, 0 );
 	attached_H_end_.resize( nheavyatoms_, 0 /*do not change*/);
-
+    
 	Size new_H_index( nheavyatoms_ );
 	for ( Size new_heavy_index = 1; new_heavy_index <= nheavyatoms_; ++new_heavy_index ) {
 		Size const old_heavy_index( old_heavyatom_indices[ new_heavy_index ] );
 		// mapping between indices
 		old2new[ old_heavy_index ] = new_heavy_index;
-
+        
 		// now add the attached hydrogens
 		attached_H_begin_[ new_heavy_index ] = new_H_index + 1;
 		AtomIndices const & nbrs( bonded_neighbor(old_heavy_index));
 		for ( Size j=1; j<= nbrs.size(); ++j ) {
 			Size const old_H_index( nbrs[j] );
 			if ( keep_me[ old_H_index ] && (*atom_types_)[ graph_[ordered_atoms_[ old_H_index ]].atom_type_index() ].is_hydrogen()) {
-					++new_H_index;
-					old2new[ old_H_index ] = new_H_index;
-					attached_H_end_[ new_heavy_index ] = new_H_index;
+                ++new_H_index;
+                old2new[ old_H_index ] = new_H_index;
+                attached_H_end_[ new_heavy_index ] = new_H_index;
 			}
 		}
 	}
+    //for now, here is an example of how to iterate over a filtered graph and push back the data
+    /*
+     for(HeavyAtomVIterPair vp = boost::vertices(heavy_atom_graph); vp.first != vp.second; ++vp.first){
+     VD atom_vd = *vp.first;
+     utility::vector1<VD>::iterator it = std::find(ordered_atoms_.begin(), ordered_atoms_.end(), atom_vd);
+     Size index = (it - ordered_atoms_.begin() ) + 1;
+     if(std::find( old_heavyatom_indices.begin(), old_heavyatom_indices.end(), index ) == old_heavyatom_indices.end()  ){ // not already done
+     old_heavyatom_indices.push_back(index);
+     }
+     }
+     */
+    
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1402,7 +1430,7 @@ ResidueType::reorder_primary_data(AtomIndices const & old2new)
 		Size const new_index( old2new[ old_index ] );
 		if ( new_index == 0 ) continue; // deleted
 		ordered_atoms_[ new_index] = old_ordered_atoms[ old_index];
-		graph_[ordered_atoms_[new_index]].atom_base( old2new[atom_base(new_index)] );
+		graph_[ordered_atoms_[new_index]].atom_base( old2new[ atom_base(new_index) ] );
 		assert( graph_[ordered_atoms_[new_index]].atom_base() ); // this will fail if we deleted an atom which was the atom_base for another atom
 
 

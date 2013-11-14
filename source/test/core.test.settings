@@ -20,6 +20,7 @@ sources = {
 		"ResidueTypeBloatTests",
 		"ResidueTypeTests",
 		"ResidueTypeSetTests",
+		"ResidueGraphTypesTests",
 	],
 	"chemical/carbohydrates" : [
 		#"CarbohydrateInfo",

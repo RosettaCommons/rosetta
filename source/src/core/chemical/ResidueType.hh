@@ -23,7 +23,7 @@
 /// is controlled through PatchOperations.cc.  If the residue_type of a residue is modified, the indices of atoms and
 /// mmatoms and everything associated with those indices must be redefined.  This reordering of indices is taken care
 /// of with the function reorder_primary_data().
-///
+///�
 /// Setting of primary data and then reordering is important.  Primary data for the following are described:
 ///
 /// Atoms: Setting of atoms includes indexing the atoms into vectors, saving their names into vectors/maps, saving the
@@ -1011,6 +1011,36 @@ public:
 		std::string const & stub_atom2,
 		std::string const & stub_atom3
 	);
+    
+    //////////////////////////////////////////////////////////////////////
+	/////////////////////////GRAPHS/////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+    const HeavyAtomGraph
+    heavy_atoms();
+    
+    const AcceptorAtomGraph
+    acceptor_atoms();
+    
+    const HeavyAtomWithPolarHydrogensGraph
+    heavy_atom_with_polar_hydrogens();
+    
+    const HeavyAtomWithHydrogensGraph
+    heavy_atom_with_hydrogens();
+    
+    const HydrogenAtomGraph
+    hydrogens();
+    
+    const PolarHydrogenGraph
+    polar_hydrogens();
+    
+    const APolarHydrogenGraph
+    apolar_hydrogens();
+    
+    const AromaticAtomGraph
+    aromatic_atoms();
+    
+    
+    
 	//////////////////////////////////////////////////////////////////////
 	/////////////////////////residues/////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -1127,157 +1157,71 @@ public:
 
 
 	/// @brief is polymer?
-	bool
-	is_polymer() const
-	{
-		return is_polymer_;
-	}
+	bool is_polymer() const { return is_polymer_; }
 
 	/// @brief is protein?
-	bool
-	is_protein() const
-	{
-		return is_protein_;
-	}
+	bool is_protein() const { return is_protein_; }
 
 	/// @brief is DNA?
-	bool
-	is_DNA() const
-	{
-		return is_DNA_;
-	}
+	bool is_DNA() const{ return is_DNA_; }
 
 	/// @brief is RNA?
-	bool
-	is_RNA() const
-	{
-		return is_RNA_;
-	}
+	bool is_RNA() const{ return is_RNA_; }
 
 	/// @brief is coarse?
-	bool
-	is_coarse() const
-	{
-		return is_coarse_;
-	}
+	bool is_coarse() const{ return is_coarse_; }
 
 	/// @brief is Nucleic Acid?
-	bool
-	is_NA() const
-	{
-		return is_NA_;
-	}
+	bool is_NA() const{ return is_NA_; }
 
 	/// @brief is carbohydrate?
-	bool
-	is_carbohydrate() const
-	{
-		return is_carbohydrate_;
-	}
+	bool is_carbohydrate() const { return is_carbohydrate_; }
 
-	bool
-	is_ligand() const
-	{
-		return is_ligand_;
-	}
+	bool is_ligand() const { return is_ligand_; }
 
 	/// @brief is surface? (e.g. enamel)
-	bool
-	is_surface() const
-	{
-	  return is_surface_;
-	}
+	bool is_surface() const { return is_surface_; }
 
 	///@brief does this residue have sidechain orbitals?
-	bool
-	has_sc_orbitals() const
-	{
-		return has_sc_orbitals_;
-	}
+	bool has_sc_orbitals() const { return has_sc_orbitals_; }
 
 	/// @brief is polar?
-	bool
-	is_polar() const
-	{
-		return is_polar_;
-	}
+	bool is_polar() const { return is_polar_; }
 
 	/// @brief is charged?
-	bool
-	is_charged() const
-	{
-		return is_charged_;
-	}
+	bool is_charged() const { return is_charged_; }
 
 	/// @brief is aromatic?
-	bool
-	is_aromatic() const
-	{
-		return is_aromatic_;
-	}
+	bool is_aromatic() const { return is_aromatic_; }
 
 	/// @brief is terminus?
-	bool
-	is_terminus() const
-	{
-		return is_terminus_;
-	}
+	bool is_terminus() const { return is_terminus_; }
 
 	/// @brief is lower terminus?
-	bool
-	is_lower_terminus() const
-	{
-		return is_lower_terminus_;
-	}
+	bool is_lower_terminus() const { return is_lower_terminus_; }
 
 	/// @brief is upper terminus?
-	bool
-	is_upper_terminus() const
-	{
-		return is_upper_terminus_;
-	}
+	bool is_upper_terminus() const { return is_upper_terminus_; }
 
 	/// @brief is lower terminus of a branch?
-	bool
-	is_branch_lower_terminus() const
-	{
-		return is_branch_lower_terminus_;
-	}
+	bool is_branch_lower_terminus() const { return is_branch_lower_terminus_; }
 
 	/// @brief is acetylated n terminus
-	bool
-	is_acetylated_nterminus() const
-	{
-		return is_acetylated_nterminus_;
-	}
+	bool is_acetylated_nterminus() const { return is_acetylated_nterminus_; }
 
 	/// @brief is methylated c terminus
-	bool
-	is_methylated_cterminus() const
-	{
-		return is_methylated_cterminus_;
-	}
+	bool is_methylated_cterminus() const { return is_methylated_cterminus_; }
 
 	/// @brief  Check if atom is virtual.
-	bool
-	is_virtual( Size const & atomno ) const;
+	bool is_virtual( Size const & atomno ) const;
+	
+    /// @brief  Check if residue is 'VIRTUAL_RESIDUE'
+	bool is_virtual_residue() const;
+	
+    /// @brief is an adduct-modified residue?
+	bool is_adduct() const { return is_adduct_; }
 
-	/// @brief  Check if residue is 'VIRTUAL_RESIDUE'
-	bool
-	is_virtual_residue() const;
-
-	/// @brief is an adduct-modified residue?
-	bool
-	is_adduct() const
-	{
-		return is_adduct_;
-	}
-
-	void
-	set_adduct_flag( bool adduct_in )
-	{
-		is_adduct_ = adduct_in;
-	}
+	void set_adduct_flag( bool adduct_in ) { is_adduct_ = adduct_in; }
 
 	// this probably isnt all that slow unless you have lots of properties, if its ever a problem
 	// there is no reason not make properties_ an STL set, since this is basically what sets exist for
@@ -1762,6 +1706,11 @@ private:
 
 	ResidueTypeSetCAP residue_type_set_;
 
+    // Graph structures for residuetype
+	ResidueGraph graph_; // Stores Atoms and Bonds as Nodes and Edges. First as duplicate material, then on its own.
+
+    
+    
 	/// vector of atoms:
 	/**
 		 \note not pointers but Atom objects
@@ -1794,9 +1743,8 @@ private:
 		 WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
 
 	**/
-	ResidueGraph graph_; // Stores Atoms and Bonds as Nodes and Edges. First as duplicate material, then on its own.
-	utility::vector1< Orbital > orbitals_;
 
+    utility::vector1< Orbital > orbitals_;
 	//////////////////////////////////////////////////////////////////
 	// ints -- see the WARNING above if these are atom indices
 	/// number of atoms
