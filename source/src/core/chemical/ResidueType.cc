@@ -50,6 +50,7 @@
 // Unit headers
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueConnection.hh>
+#include <boost/graph/graph_utility.hpp>
 
 // Package Headers
 #include <core/conformation/Residue.hh>
@@ -1312,10 +1313,8 @@ ResidueType::setup_atom_ordering(AtomIndices & old2new)
 
 	// process delete_atoms_ to a friendlier form
 	utility::vector1< bool > keep_me( old_natoms, true );
-	for ( Size i=1; i<= old_natoms; ++i ) {
-		if ( std::find( delete_atoms_.begin(), delete_atoms_.end(), i ) != delete_atoms_.end() ) {
-			keep_me[i] = false;
-		}
+ 	for ( Size i=1; i<= old_natoms; ++i ) {
+        keep_me[i] = boost::in_vertex_set(graph_, ordered_atoms_[i]); //deleted atoms are not found and are then false
 	}
 	delete_atoms_.clear();
 
