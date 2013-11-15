@@ -176,6 +176,9 @@ sources = {
         "rna_thread",
         "rna_suitename",
 	],
+	"public/surface_docking": [
+		"surface_docking",
+	],
 	"public/swa/rna": [
 		"swa_rna_main",
 		"swa_rna_util",

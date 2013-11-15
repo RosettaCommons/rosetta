@@ -66,6 +66,8 @@ residue_types/spin_labels/R1A.params
 #residue_types/mineral_surface/HHA.params
 #residue_types/mineral_surface/OPH.params
 #residue_types/mineral_surface/OHH.params
+residue_types/mineral_surface/PHO.params
+residue_types/mineral_surface/HYD.params
 residue_types/mineral_surface/CAL.params
 residue_types/mineral_surface/CO3.params
 #residue_types/mineral_surface/OC3.params
@@ -74,8 +76,7 @@ residue_types/mineral_surface/CO3.params
 #residue_types/mineral_surface/OSi.params
 #residue_types/mineral_surface/Si.params
 
-#residue_types/mineral_surface/PHO.params
-#residue_types/mineral_surface/HYD.params
+
 
 
 ## Protonation State Types

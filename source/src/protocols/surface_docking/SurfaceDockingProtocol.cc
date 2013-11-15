@@ -149,6 +149,7 @@ void SurfaceDockingProtocol::apply(pose::Pose & pose)
 	TR<<"Outputting decoy..."<<std::endl;
 	surface_orient_->apply(pose);
 	pack_rotamers_fullatom_->apply(pose);
+	job->add_string_real_pair("Total weighted score: ", pose.energies().total_energy());
 	job->add_string_string_pair("SolState_SecondaryStructure:",fullatom_relax_->get_sol_secondary_struct());
 	job->add_string_string_pair("Adsorbed_SecondaryStructure:",fullatom_relax_->get_ads_secondary_struct());
 	jd2::JobDistributor::get_instance()->job_outputter()->other_pose( job,pose, "Surface_");

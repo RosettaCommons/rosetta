@@ -4,7 +4,7 @@ NAME PHO
 IO_STRING PHO Z
 TYPE LIGAND
 AA UNK
-ATOM  P1   Pha   X   2.60
+ATOM  P1  Pha   X   2.60
 ATOM  O1  OPha  X   -1.40
 ATOM  O2  OPha  X   -1.40
 ATOM  O3  OPha  X   -1.40
