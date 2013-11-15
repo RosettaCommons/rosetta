@@ -142,9 +142,9 @@ if not argv.count('-subsystem') or \
 			interfaces.append(subunits)
 			interfaces.append(subunits)
 			interfaces.append(subunits)
-			for num in range(1,subunits-2):
+			for num in range(0,subunits/2-4):
 				interfaces.append(0)
-			for num in range(1,subunits):
+			for num in range(0,subunits/2):
 				interfaces.append(subunits/2)
 		if subunits < 4:
 			print "ERROR: the smallest complex with dihedral symmetry is 4!"
