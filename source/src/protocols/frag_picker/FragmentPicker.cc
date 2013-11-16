@@ -1142,8 +1142,8 @@ void FragmentPicker::read_ss_file(std::string const & file_name,
 			 && (l4 == "(PSIPRED") ) {
 		read_psipred_ss2( file_name, prediction_name);
 	} else {
-		if ( (l1 == "REMARK") && (l2 == "Neural") && (l3 == "network")
-			 && (l4 == "secondary") && (l5 == "structure") ) {
+    if ( ( (l1 == "REMARK") && (l2 == "Neural") && (l3 == "network")
+       && (l4 == "secondary") && (l5 == "structure") ) || ( (l1 == "REMARK") && (l2 == "TALOS-N") ) ) {
 			read_talos_ss( file_name, prediction_name);
 		} else {
 			utility_exit_with_message( "Can't identify secondary structure file type (needs vertical psipred_ss2 or talos+ pred.ss): "+file_name );
