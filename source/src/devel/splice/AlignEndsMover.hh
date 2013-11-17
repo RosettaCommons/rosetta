@@ -36,7 +36,7 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	virtual void parse_my_tag(
-		utility::tag::TagPtr const tag,
+		utility::tag::TagCOP const tag,
 		basic::datacache::DataMap & data,
 		protocols::filters::Filters_map const & filters,
 		protocols::moves::Movers_map const & movers,
@@ -62,13 +62,23 @@ public:
 
 		core::Size stagger() const{ return stagger_; }
 		void stagger( core::Size const s ){ stagger_ = s; }
+
+		core::Size strand_length() const{ return strand_length_; }
+		void strand_length( core::Size const s ){ strand_length_ = s; }
+
+		core::Size max_strands() const{ return max_strands_; }// how many strands to consider (if I see more than this number of strands, I ignore them
+		void max_strands( core::Size const m ){ max_strands_ = m; }
+
+		bool parallel() const{ return parallel_; }
+		void parallel( bool const p ){ parallel_ = p; }
 private:
   utility::vector1< core::Size > reference_positions( core::pose::Pose const & p ) const;
 	core::Real distance_threshold_; // dflt 16;
-	core::Size neighbors_, N_terminal_count_; //dflt 6, 3
+	core::Size strand_length_, neighbors_, N_terminal_count_, max_strands_; //dflt 3, 6, 3, 10
 	bool odd_, even_; // dflt true, true
 	core::pose::PoseOP template_pose_; //dflt NULL
 	core::Size stagger_; // dflt 0;
+	bool parallel_; //dflt true; are the strands parallel or antiparallel?
 };
 
 

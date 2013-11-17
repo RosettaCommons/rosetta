@@ -58,12 +58,15 @@ AlignEndsMoverCreator::mover_name()
 
 AlignEndsMover::AlignEndsMover(): moves::Mover("AlignEnds"),
 	distance_threshold_( 18.0 ),
+	strand_length_( 3 ),
 	neighbors_( 6 ),
 	N_terminal_count_( 3 ),
+	max_strands_( 10 ),
 	odd_( true ),
 	even_( true ),
 	template_pose_( NULL ),
-	stagger_( 0 )
+	stagger_( 0 ),
+	parallel_( true )
 {
 }
 
@@ -86,10 +89,35 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 
 	utility::vector1< core::Size > strand_positions;
 	strand_positions.clear();
-	for( core::Size i = 1; i <= pose.total_residue() - 2; ++i ){ /// 3-strand positions in a row
-      if( dssp.get_dssp_secstruct( i ) == 'E' && dssp.get_dssp_secstruct( i + 1) == 'E' && dssp.get_dssp_secstruct( i + 2 ) == 'E' )
-          strand_positions.push_back( i );
-  }
+	bool odd_strand( true ); // if antiparallel we need to intermittently connect odd and even strands...
+/// note the fast-forwarding of resi in the inner-loop below! should be fine, but if there are bugs, this is a good place to dig
+	for( core::Size resi = 1; resi <= pose.total_residue() - strand_length() + 1; ++resi ){ /// at least n-strand positions in a row
+		if( dssp.get_dssp_secstruct( resi ) == 'E' ){
+			core::Size strand_count = 1;
+			for( ; strand_count < strand_length(); ++strand_count ){
+				if( dssp.get_dssp_secstruct( resi + strand_count ) != 'E' )
+					break;
+			}
+			if( strand_count == strand_length() ){ // we have n-length beta strand
+				if( !parallel() && !odd_strand ){
+					for( ;resi <= pose.total_residue(); ++resi ){// move to the end of the strand
+						if( dssp.get_dssp_secstruct( resi + strand_length() ) != 'E' )
+							break;
+					}//move to the end of the strand
+				}//fi !parallel() && !odd()
+				core::Size position_count = 0;
+				for( ; resi <= pose.total_residue(); ++resi ){ // this causes 'fast-forwarding' of resi, but it's okay, since we don't want to double count the strands
+					if( dssp.get_dssp_secstruct( resi ) == 'E' && position_count < strand_length()){
+          	strand_positions.push_back( resi );
+						++position_count;
+					}
+					if( dssp.get_dssp_secstruct( resi + 1 ) != 'E' )///reached end of strand
+						break;
+				}// for resi inner loop
+				odd_strand = !odd_strand;
+			}//fi strand_count
+  	}// fi dssp.get_dssp_secstruct(resi)
+	}// for resi outer loop
   utility::vector1< core::Size > strand_ntermini;
   strand_ntermini.clear();
   core::Size prev_resnum( 99999 );
@@ -108,19 +136,29 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
       }//fi resi_neighbors
   }//foreach res
 
-  utility::vector1< core::Size > ntermini_w_close_neighbors; // ntermini with 2 close neighbors
-  ntermini_w_close_neighbors.clear();
-	foreach( core::Size const res, ntermini_w_neighbors ){
-      core::Size const close_neighbors( neighbors_in_vector( pose, res, strand_ntermini, 10.0, dssp ));
-      if( close_neighbors >= 2 )
-          ntermini_w_close_neighbors.push_back( res );
-      else{
-          core::Size const close_neighbors_one_down( neighbors_in_vector( pose, res+1, strand_ntermini, 10.0, dssp ));
-          if( close_neighbors_one_down >= 2 )
-              ntermini_w_close_neighbors.push_back( res + 1);
-      }
-      TR<<res<<" has "<<close_neighbors<<" close neighbors"<<std::endl;
-  }
+	 utility::vector1< core::Size > ntermini_w_close_neighbors; // ntermini with 2 close neighbors
+	if( parallel() ){
+	  ntermini_w_close_neighbors.clear();
+	  foreach( core::Size const res, ntermini_w_neighbors ){
+	      core::Size const close_neighbors( neighbors_in_vector( pose, res, strand_ntermini, 10.0, dssp ));
+	      if( close_neighbors >= 2 )
+	          ntermini_w_close_neighbors.push_back( res );
+	      else{
+	          core::Size const close_neighbors_one_down( neighbors_in_vector( pose, res+1, strand_ntermini, 10.0, dssp ));
+	          if( close_neighbors_one_down >= 2 )
+	              ntermini_w_close_neighbors.push_back( res + 1);
+	      }
+	      TR<<res<<" has "<<close_neighbors<<" close neighbors"<<std::endl;
+	  }
+	}//fi parallel
+	else
+		ntermini_w_close_neighbors = ntermini_w_neighbors;
+	TR<<"Found "<<ntermini_w_close_neighbors.size()<<" strands that fit all of the criteria"<<std::endl;
+	if( ntermini_w_close_neighbors.size() > max_strands() ){
+		TR<<"max_strands = "<<max_strands()<<std::endl;
+		ntermini_w_close_neighbors.resize( max_strands() );
+		TR<<"Only considering the first (n-terminal) "<<ntermini_w_close_neighbors.size()<<" strands. The c-terminal strands are ignored"<<std::endl;
+	}
 
 	utility::vector1< core::Size > positions_for_alignment;
 	positions_for_alignment.clear();
@@ -155,10 +193,11 @@ AlignEndsMover::apply( Pose & pose ){
 	foreach( core::Size const p, template_positions ){
 		TR<<p<<'+';}
 	TR<<std::endl;
-	TR<<"To reference positions: ";
+	TR<<"To pose positions: ";
 	foreach( core::Size const p, pose_positions ){
 		TR<<p<<'+';}
 	TR<<std::endl;
+
 
 	utility::vector1< numeric::xyzVector< core::Real > > init_coords( Ca_coords( pose, pose_positions ) ), ref_coords( Ca_coords( *template_pose(), template_positions ) );
 
@@ -191,12 +230,13 @@ AlignEndsMover::fresh_instance() const
 
 void
 AlignEndsMover::parse_my_tag(
-	utility::tag::TagPtr const tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
+	parallel( tag->getOption< bool >( "parallel", true ) );
 	distance_threshold( tag->getOption< core::Real >( "distance_threshold", 18.0 ));
 	neighbors( tag->getOption< core::Size >( "neighbors", 6 ) );
 	N_terminal_count( tag->getOption< core::Size >( "N_terminal_count", 3 ) );
@@ -205,8 +245,10 @@ AlignEndsMover::parse_my_tag(
 	std::string const template_fname( tag->getOption< std::string >( "template_pose" ) );
 	template_pose( core::import_pose::pose_from_pdb( template_fname ) );
 	stagger( tag->getOption< core::Size >( "stagger", 0 ) );
+	strand_length( tag->getOption< core::Size >( "strand_length", 3 ) );
+	max_strands( tag->getOption< core::Size >( "max_strands", 10 ) );
 
-	TR<<"distance_threshold: "<<distance_threshold()<<" neighbors: "<<neighbors()<<" N_terminal_count: "<<N_terminal_count()<<" odd: "<<odd()<<" even: "<<even()<<" template_pose: "<<template_fname<<" stagger: "<<stagger()<<std::endl;
+	TR<<"paralell: "<<parallel()<<" distance_threshold: "<<distance_threshold()<<" max_strands: "<<max_strands()<<" strand_length: "<<strand_length()<<" neighbors: "<<neighbors()<<" N_terminal_count: "<<N_terminal_count()<<" odd: "<<odd()<<" even: "<<even()<<" template_pose: "<<template_fname<<" stagger: "<<stagger()<<std::endl;
 }
 } // simple_moves
 } // protocols
