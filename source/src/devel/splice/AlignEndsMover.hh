@@ -74,13 +74,17 @@ public:
 private:
   utility::vector1< core::Size > reference_positions( core::pose::Pose const & p ) const;
 	core::Real distance_threshold_; // dflt 16;
-	core::Size strand_length_, neighbors_, N_terminal_count_, max_strands_; //dflt 3, 6, 3, 10
-	bool odd_, even_; // dflt true, true
-	core::pose::PoseOP template_pose_; //dflt NULL
-	core::Size stagger_; // dflt 0;
+	core::Size strand_length_, neighbors_, N_terminal_count_, max_strands_; //dflt 3, 6, 3, 10. Strand length: min number of contiguous residues in 'E' to count as a strand; neighbors: how many neighbors at distance_threshold does each N-terminal residue need to have to count in barrle; N-terminal count: How many residues should be aligned from each strand; max_strands: how many strands to align (specify 100000 to align all).
+	bool odd_, even_; // dflt true, true; align even or odd (or both) strands
+	core::pose::PoseOP template_pose_; //dflt NULL; pose to which to align
+	core::Size stagger_; // dflt 0; see below
 	bool parallel_; //dflt true; are the strands parallel or antiparallel?
 };
 
+/* explanation for stagger:
+Stagger allows you to align a barrel to other barrels with a rotational stagger around the barrel principal axis. You can also align the barrel against itself.
+For a beta barrel with m strands 1->m a stagger of n means that strands 1->(n) will be aligned to (m-n+1)->m and strands (n+1)->m will be aligned to strands 1->(m-n). E.g., For m=8 strands and stagger=5: (1->5):(4->8); (6->8):(1->3).
+*/
 
 } // simple_moves
 } // protocols
