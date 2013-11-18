@@ -70,7 +70,7 @@ public:
 	get_tenA_neighbor_residues(
   	core::pose::Pose const & pose,
   	utility::vector1<bool> & residue_positions
-	);
+	) const;
 
 	core::pack::task::PackerTaskOP
 	modified_task(
@@ -88,6 +88,14 @@ public:
 	remap_resid(
 		core::pose::Pose const & pose,
 		core::id::SequenceMapping const & smap
+	);
+
+	void
+	add_flexible_region(
+		core::Size start,
+		core::Size end,
+		core::pose::Pose const & pose,
+		bool clear_existing
 	);
 
 	EnzdesFlexibleRegionCOP

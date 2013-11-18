@@ -247,7 +247,8 @@ EnzdesRemodelMover::EnzdesRemodelMover()
 	region_to_remodel_(1),
 	start_to_current_smap_(NULL),
 	include_existing_conf_as_invrot_target_(false),
-	ss_similarity_probability_( 1.0 - basic::options::option[basic::options::OptionKeys::enzdes::remodel_aggressiveness] )
+	ss_similarity_probability_( 1.0 - basic::options::option[basic::options::OptionKeys::enzdes::remodel_aggressiveness] ),
+	max_allowed_score_increase_(0.0)
 {
 	predesign_filters_ = new protocols::filters::FilterCollection();
 	postdesign_filters_ = new protocols::filters::FilterCollection();
@@ -260,6 +261,7 @@ EnzdesRemodelMover::EnzdesRemodelMover()
 	vlb_sfxn_->set_weight(core::scoring::dihedral_constraint, 1.0 );
 	vlb_sfxn_->set_weight(core::scoring::backbone_stub_constraint, 1.0 );
 	non_remodel_match_pos_.clear();
+	user_provided_ss_.clear();
 }
 
 EnzdesRemodelMover::EnzdesRemodelMover( EnzdesRemodelMover const & other )
@@ -283,13 +285,15 @@ EnzdesRemodelMover::EnzdesRemodelMover( EnzdesRemodelMover const & other )
 	include_existing_conf_as_invrot_target_(other.include_existing_conf_as_invrot_target_),
 	non_remodel_match_pos_(other.non_remodel_match_pos_),
 	rcgs_(other.rcgs_),
-	ss_similarity_probability_(other.ss_similarity_probability_ )
+	ss_similarity_probability_(other.ss_similarity_probability_ ),
+	max_allowed_score_increase_(other.max_allowed_score_increase_),
+	user_provided_ss_(other.user_provided_ss_)
 {}
 
 EnzdesRemodelMover::EnzdesRemodelMover(
 	protocols::enzdes::EnzdesFlexBBProtocolOP enz_prot,
 	core::pack::task::PackerTaskCOP task,
-	protocols::enzdes::EnzdesFlexibleRegionOP & flex_region
+	protocols::enzdes::EnzdesFlexibleRegionCOP flex_region
 ):
 	protocols::moves::Mover(),
 	enz_prot_( enz_prot ),
@@ -330,6 +334,7 @@ EnzdesRemodelMover::EnzdesRemodelMover(
 	vlb_sfxn_->set_weight(core::scoring::backbone_stub_constraint, 1.0 );
 
 	non_remodel_match_pos_.clear();
+	user_provided_ss_.clear();
 
 } //enzdes remodel mover constructor
 
@@ -364,6 +369,11 @@ EnzdesRemodelMover::set_task( core::pack::task::PackerTaskCOP task )
 	}
 
 } //set task
+
+void EnzdesRemodelMover::set_user_provided_ss( utility::vector1< std::string > const & user_ss )
+{
+	user_provided_ss_ = user_ss;
+}
 
 
 void
@@ -431,17 +441,6 @@ EnzdesRemodelMover::apply(
 		//apply post design filters
 	}
 
-	//get back the native pose and reinstate the poly-ala pose residues
-	//to the wt residue
-  //for( core::Size jj = 1; jj <= pose.total_residue(); ++jj ){
-
-	//	core::Size new_pos = ( *get_seq_mapping() )[jj];
-
-  //	if( new_pos != 0 && pose.residue(jj).is_protein() ){
-  //  	pose.replace_residue( new_pos, get_native_pose() -> residue(jj), true);
-  //	}
-
-	//}
 	remove_cached_observers( pose );
 
 	//maybe better to get rid of the task, to prepare for next call
@@ -560,8 +559,8 @@ EnzdesRemodelMover::remodel_pose(
 } //remodel_pose
 
 utility::vector1< core::Size >
-    EnzdesRemodelMover::get_flex_region( ) const 
-	{        
+    EnzdesRemodelMover::get_flex_region( ) const
+	{
         utility::vector1< core::Size> flex_pos;
         for( core::Size i( flex_region_->start() );
               i<=flex_region_->stop(); ++i)
@@ -580,6 +579,14 @@ EnzdesRemodelMover::set_target_inverse_rotamers(utility::vector1< std::list < co
         target_inverse_rotamers_=inv_rot;
     tr << "New target inverse rotamers have been set via \"set_target_inverse_rotamers\"." << std::endl;
 }
+
+
+void
+EnzdesRemodelMover::set_max_allowed_score_increase( core::Real sc_increase )
+{
+	max_allowed_score_increase_ = sc_increase;
+}
+
 
 bool
 EnzdesRemodelMover::refine_pose(
@@ -677,7 +684,9 @@ EnzdesRemodelMover::examine_initial_conformation(
 	//setting the predesign score filter to a pretty generous cutoff.
 	//we only want this to prevent ridicoulous clashes to be rejected at this stage,
 	//structures that are slightly worse can be improved in design
-	score_filter->set_cutoff( pose.energies().total_energies()[ core::scoring::total_score ] + ( 10.0 * flex_region_->remodel_max_length() ));
+	core::Real predes_cutoff = pose.energies().total_energies()[ core::scoring::total_score ] + ( 10.0 * flex_region_->remodel_max_length() );
+	if( max_allowed_score_increase_ > predes_cutoff ) predes_cutoff = max_allowed_score_increase_;
+	score_filter->set_cutoff( predes_cutoff );
 	tr << "Cutoff for remodel score filter set to " << score_filter->cutoff() << "." << std::endl;
 
 	//predesign_filters_.push_back( png_filter  );
@@ -744,11 +753,14 @@ EnzdesRemodelMover::setup_packer_neighbor_graph_filter( core::pose::Pose const &
 std::string
 EnzdesRemodelMover::generate_secstruct_string( core::pose::Pose & pose ) const {
 
-	core::scoring::dssp::Dssp pose_ss( pose );
-	pose_ss.insert_ss_into_pose( pose );
-	//pose_ss.insert_ss_into_pose( pose );
+	//A. if secondary structure strings in this mover have been set, we'll use one of these
+	if( user_provided_ss_.size() != 0 ){
+		std::string user_ss( user_provided_ss_[ RG.random_range(1, user_provided_ss_.size() ) ] );
+		tr << "picking user-provided ss_string " << user_ss << "... ";
+		return user_ss;
+	}
 
-	//A. if the user has specified secondary structure strings, let's use one of those
+	//B. if the user has specified secondary structure strings, let's use one of those
 	if( basic::options::option[ basic::options::OptionKeys::enzdes::enz_loops_file ].user()  &&
 		flex_region_->enz_loop_info()->ss_strings_specified() ) {
 
@@ -758,7 +770,10 @@ EnzdesRemodelMover::generate_secstruct_string( core::pose::Pose & pose ) const {
 		return new_ss;
 	}
 
-	//B. otherwise, we'll try to generate a secondary structure string of the new length
+	core::scoring::dssp::Dssp pose_ss( pose );
+	pose_ss.insert_ss_into_pose( pose );
+
+	//C. otherwise, we'll try to generate a secondary structure string of the new length
 	// that matches the original string as closely as possible
 	std::string orig_secstruct;
 

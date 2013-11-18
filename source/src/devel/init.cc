@@ -31,6 +31,7 @@
 #include <devel/denovo_design/FastDesignCreator.hh>
 #include <devel/denovo_design/RestrictWorstRegionCreator.hh>
 #include <devel/domain_insertion/FusePosesNtoCMoverCreator.hh>
+#include <devel/domain_insertion/InsertionSiteTestMoverCreator.hh>
 #include <devel/denovo_design/GenericSimulatedAnnealerCreator.hh>
 #include <devel/enzdes/EnzdesRemodelMoverCreator.hh>
 #include <devel/loop_creation/LoopCreationMoverCreator.hh>
@@ -109,6 +110,7 @@ static protocols::moves::MoverRegistrator< denovo_design::FastDesignCreator > re
 static protocols::moves::MoverRegistrator< denovo_design::RestrictWorstRegionCreator > reg_RestrictWorstRegionCreator;
 static protocols::moves::MoverRegistrator< denovo_design::GenericSimulatedAnnealerCreator > reg_GenericSimulatedAnnealerCreator;
 protocols::moves::MoverRegistrator< domain_insertion::FusePosesNtoCMoverCreator > reg_FusePosesNtoCMoverCreator;
+protocols::moves::MoverRegistrator< domain_insertion::InsertionSiteTestMoverCreator > reg_InsertionSiteTestMoverCreator;
 protocols::moves::MoverRegistrator< domain_insertion::SetupCoiledCoilFoldTreeMoverCreator > reg_SetupCoiledCoilFoldTreeMoverCreator;
 protocols::moves::MoverRegistrator< enzdes::EnzdesRemodelMoverCreator > reg_EnzdesRemodelMoverCreator;
 protocols::moves::MoverRegistrator< vardist_solaccess::LoadVarSolDistSasaCalculatorMoverCreator > reg_LoadVarSolDistSasaCalculatorMoverCreator;

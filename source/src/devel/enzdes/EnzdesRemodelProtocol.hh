@@ -54,6 +54,9 @@ private:
 
 }; //class EnzdesRemodelProtocol
 
+class EnzdesRemodelMover;
+typedef utility::pointer::owning_ptr< EnzdesRemodelMover > EnzdesRemodelMoverOP;
+typedef utility::pointer::access_ptr< EnzdesRemodelMover const > EnzdesRemodelMoverCAP;
 
 class EnzdesRemodelMover : public protocols::moves::Mover
 {
@@ -68,7 +71,7 @@ public:
 	EnzdesRemodelMover(
 		protocols::enzdes::EnzdesFlexBBProtocolOP enz_prot,
 		core::pack::task::PackerTaskCOP task,
-		protocols::enzdes::EnzdesFlexibleRegionOP & flex_region
+		protocols::enzdes::EnzdesFlexibleRegionCOP flex_region
 	);
 
 	~EnzdesRemodelMover();
@@ -89,6 +92,8 @@ public:
 	);
 
 	void set_task( core::pack::task::PackerTaskCOP task );
+
+	void set_user_provided_ss( utility::vector1< std::string > const & user_ss );
 
 	protocols::filters::FilterCOP
 	setup_packer_neighbor_graph_filter( core::pose::Pose const & pose ) const;
@@ -131,9 +136,12 @@ public:
 
   core::id::SequenceMappingOP get_seq_mapping();
 
-    utility::vector1< core::Size > get_flex_region( ) const; 
- 
-void set_target_inverse_rotamers(utility::vector1< std::list < core::conformation::ResidueCOP > > & inv_rot);
+	utility::vector1< core::Size > get_flex_region( ) const;
+
+	void set_target_inverse_rotamers(utility::vector1< std::list < core::conformation::ResidueCOP > > & inv_rot);
+
+	void
+	set_max_allowed_score_increase( core::Real sc_increase );
 
 protected:
 
@@ -267,6 +275,8 @@ private:
 	utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP > rcgs_;
 
 	core::Real ss_similarity_probability_;
+	core::Real max_allowed_score_increase_; //how much additional score are we allowing the remodeled pose?
+	utility::vector1< std::string > user_provided_ss_;
 
 }; //class EnzdesRemodelMover
 

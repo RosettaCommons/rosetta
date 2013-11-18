@@ -373,7 +373,7 @@ void
 EnzdesFlexBBProtocol::get_tenA_neighbor_residues(
   core::pose::Pose const & pose,
   utility::vector1<bool> & residue_positions
-)
+) const
 {
   //make a local copy first because we will change content in residue_positions
 	core::scoring::TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
@@ -507,6 +507,20 @@ EnzdesFlexBBProtocol::remap_resid(
 }
 
 void
+EnzdesFlexBBProtocol::add_flexible_region(
+	core::Size start,
+	core::Size end,
+	core::pose::Pose const & pose,
+	bool clear_existing
+)
+{
+	if( clear_existing ) flex_regions_.clear();
+	core::Size length( end - start +1 );
+	flex_regions_.push_back( new EnzdesFlexibleRegion( flex_regions_.size() + 1, start, end, length, pose, this ) );
+}
+
+
+void
 EnzdesFlexBBProtocol::determine_flexible_regions(
 	core::pose::Pose const & pose,
 	core::pack::task::PackerTaskCOP task
@@ -594,7 +608,7 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 
 		tr << "reading information from loops file " << loops_helper.loop_file_name() << ": loops are " ;
 
-		
+
 		for( utility::vector1< loops::Loop >::const_iterator lit = loops_helper.v_begin(); lit != loops_helper.v_end(); ++lit){
 			no_flex_regions++;
 			core::Size lstart( lit->start() ), lstop( lit->stop() );
