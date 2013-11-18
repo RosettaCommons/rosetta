@@ -650,11 +650,9 @@ Ramachandran2B::read_rama()
         Size index = numeric::random::random_range(1, n_torsions);
         
         // following lines set phi and set to values drawn proportionately from Rama space
-        // plus or minus uniform noise equal to half the bin width.
-        phi = left_rama_sampling_table_[left_aa][pos_aa][index][1] +
-		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
-        psi = left_rama_sampling_table_[left_aa][pos_aa][index][2] +
-		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
+        // AS Nov 2013 - note that phi/psi bins are lower left corners, so we only want to add "noise" from a uniform distribution
+        phi = left_rama_sampling_table_[left_aa][pos_aa][index][1] + numeric::random::uniform() * binw_;
+        psi = left_rama_sampling_table_[left_aa][pos_aa][index][2] + numeric::random::uniform() * binw_;
     }
     
 	
@@ -816,11 +814,9 @@ Ramachandran2B::read_rama()
         Size index = numeric::random::random_range(1, n_torsions);
         
         // following lines set phi and set to values drawn proportionately from Rama space
-        // plus or minus uniform noise equal to half the bin width.
-        phi = right_rama_sampling_table_[pos_aa][right_aa][index][1] +
-		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
-        psi = right_rama_sampling_table_[pos_aa][right_aa][index][2] +
-		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
+        // AS Nov 2013 - note that phi/psi bins are lower left corners, so we only want to add "noise" from a uniform distribution
+        phi = right_rama_sampling_table_[pos_aa][right_aa][index][1] + numeric::random::uniform() * binw_;
+        psi = right_rama_sampling_table_[pos_aa][right_aa][index][2] + numeric::random::uniform() * binw_;
     }
     
     
@@ -886,11 +882,9 @@ Ramachandran2B::read_rama()
 		Size index = numeric::random::random_range(1, n_torsions);
 		
 		// following lines set phi and set to values drawn proportionately from Rama space
-		// plus or minus uniform noise equal to half the bin width.
-		phi = left_rama_sampling_table_by_torsion_bin_[tb_index][left_aa][pos_aa][index][1] +
-		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
-		psi = left_rama_sampling_table_by_torsion_bin_[tb_index][left_aa][pos_aa][index][2] +
-		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
+        // AS Nov 2013 - note that phi/psi bins are lower left corners, so we only want to add "noise" from a uniform distribution
+		phi = left_rama_sampling_table_by_torsion_bin_[tb_index][left_aa][pos_aa][index][1] + numeric::random::uniform() * binw_;
+		psi = left_rama_sampling_table_by_torsion_bin_[tb_index][left_aa][pos_aa][index][2] + numeric::random::uniform() * binw_;
 		
 	} // random_phipsi_from_rama_by_torsion_bin_left
 	
@@ -918,11 +912,9 @@ Ramachandran2B::read_rama()
 		Size index = numeric::random::random_range(1, n_torsions);
 		
 		// following lines set phi and set to values drawn proportionately from Rama space
-		// plus or minus uniform noise equal to half the bin width.
-		phi = right_rama_sampling_table_by_torsion_bin_[tb_index][pos_aa][right_aa][index][1] +
-		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
-		psi = right_rama_sampling_table_by_torsion_bin_[tb_index][pos_aa][right_aa][index][2] +
-		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
+        // AS Nov 2013 - note that phi/psi bins are lower left corners, so we only want to add "noise" from a uniform distribution
+		phi = right_rama_sampling_table_by_torsion_bin_[tb_index][pos_aa][right_aa][index][1] + numeric::random::uniform() * binw_;
+		psi = right_rama_sampling_table_by_torsion_bin_[tb_index][pos_aa][right_aa][index][2] + numeric::random::uniform() * binw_;
 		
 	} // random_phipsi_from_rama_by_torsion_bin_right
 	

@@ -732,10 +732,10 @@ option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use s
 option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
 option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
 option.add( basic::options::OptionKeys::jumps::random_sheets, "random sheet topology--> replaces -sheet1 -sheet2 ... select randomly up to N sheets with up to -sheet_i pairgins for sheet i" ).def(1);
-option.add( basic::options::OptionKeys::jumps::residue_pair_jump_file, "a file to define residue pair jump" ).def("");
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::sheets, "sheet topology--> replaces -sheet1 -sheet2 ... -sheetN" ).def(1);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::residue_pair_jump_file, "a file to define residue pair jump" ).def("");
+option.add( basic::options::OptionKeys::jumps::sheets, "sheet topology--> replaces -sheet1 -sheet2 ... -sheetN" ).def(1);
 option.add( basic::options::OptionKeys::jumps::topology_file, "read a file with topology info ( PairingStats )" ).def("");
 option.add( basic::options::OptionKeys::jumps::bb_moves, "Apply bb_moves ( wobble, small, shear) during stage3 and stage 4." ).def(false);
 option.add( basic::options::OptionKeys::jumps::no_wobble, "Don t apply the useless wobble during stage3 and stage 4." ).def(false);
@@ -1463,10 +1463,10 @@ option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping optio
 option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
 option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
 option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::james::atom_names, "No description" ).def(utility::vector1<std::string>());
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
+option.add( basic::options::OptionKeys::james::atom_names, "No description" ).def(utility::vector1<std::string>());
 option.add( basic::options::OptionKeys::james::dist_thresholds, "No description" ).def(utility::vector1<float>(1, 1.0));
 option.add( basic::options::OptionKeys::james::torsion_thresholds, "No description" ).def(utility::vector1<float>(1, 30.0));
 option.add( basic::options::OptionKeys::james::sog_cutoff, "No description" ).def(5.0);
@@ -1892,7 +1892,7 @@ option.add( basic::options::OptionKeys::loops::kic_min_after_repack, "Should the
 option.add( basic::options::OptionKeys::loops::optimize_only_kic_region_sidechains_after_move, "Should we perform rotamer trials and minimization after every KIC move but only within the loops:neighbor_dist of the residues in the moved KIC segment. Useful to speed up when using very large loop definitions (like when whole chains are used for ensemble generation)." ).def(false);
 option.add( basic::options::OptionKeys::loops::max_kic_build_attempts, "Number of attempts at initial kinematic closure loop building" ).def(10000);
 option.add( basic::options::OptionKeys::loops::remodel_kic_attempts, "Number of kic attempts per inner cycle during perturb_kic protocol" ).def(300);
-option.add( basic::options::OptionKeys::loops::max_kic_perturber_samples, "Maximum number of kinematic perturber samples" ).def(2000);
+option.add( basic::options::OptionKeys::loops::max_kic_perturber_samples, "Maximum number of kinematic perturber samples" ).def(500);
 option.add( basic::options::OptionKeys::loops::nonpivot_torsion_sampling, "enables sampling of non-pivot residue torsions when the kinematic loop closure segment length is > 3" ).legal(true).legal(false).def(true);
 option.add( basic::options::OptionKeys::loops::fix_ca_bond_angles, "Freezes N-CA-C bond angles in KIC loop sampling" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::loops::kic_use_linear_chainbreak, "Use linear_chainbreak instead of (harmonic) chainbreak in KIC loop sampling" ).legal(true).legal(false).def(false);
@@ -2194,10 +2194,10 @@ option.add( basic::options::OptionKeys::optE::pretend_no_ddG_repulsion, "With th
 option.add( basic::options::OptionKeys::optE::optimize_decoy_discrimination, "With the iterative optE driver, optimize weights to maximize the partition between relaxed natives and low-scoring decoys.  File is a list of file-list pairs and a single pdb file < native_pdb_list, decoy_pdb_list, crystal_native_pdb >." );
 option.add( basic::options::OptionKeys::optE::normalize_decoy_score_spread, "In decoy discrimination optimization, normalize both the native and decoy energies generated by a set of weights by sigma_curr /sigma_start where sigma_start is computed as the standard deviation of the decoy energies given an input weight set" );
 option.add( basic::options::OptionKeys::optE::ramp_nativeness, "In decoy discrimination optimization, give structures in the range between max_rms_from_native and min_decoy_rms_to_native a nativeness score (which ramps linearly from 1 to 0 in that range) and include scores from structures in the numerator of the partition." );
-option.add( basic::options::OptionKeys::optE::n_top_natives_to_optimize, "For use with the -optimize_decoy_discrimination flag.  Objective function considers top N natives in partition function" ).def(1);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::approximate_decoy_entropy, "Alpha expansion of conformation space size as a function of nres: size ~ alpha ^ nres; entropy ~ nres ln alpha." );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::n_top_natives_to_optimize, "For use with the -optimize_decoy_discrimination flag.  Objective function considers top N natives in partition function" ).def(1);
+option.add( basic::options::OptionKeys::optE::approximate_decoy_entropy, "Alpha expansion of conformation space size as a function of nres: size ~ alpha ^ nres; entropy ~ nres ln alpha." );
 option.add( basic::options::OptionKeys::optE::repack_and_minimize_decoys, "Generate new structures in each round of iterative optE by repacking and minimizing the input decoys & natives using the weights obtained in the last round" );
 option.add( basic::options::OptionKeys::optE::repack_and_minimize_input_structures, "Minimizing the input decoys & natives using the starting weights -- allows structures a chance to see the energy function before decoy discrimination begins without the memory overhead of the repack_and_minimize_decoys flag" );
 option.add( basic::options::OptionKeys::optE::output_top_n_new_decoys, "For use with repack_and_minimize_decoys flag: Write out the top N decoys generated each round in this iterative refinement" ).def(0);

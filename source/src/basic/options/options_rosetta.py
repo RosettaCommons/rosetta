@@ -4067,7 +4067,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
       ),
     Option( 'max_kic_perturber_samples', 'Integer',
       desc='Maximum number of kinematic perturber samples',
-      default='2000'
+      default='500'
       ),
 		Option( 'nonpivot_torsion_sampling', 'Boolean',
 			desc='enables sampling of non-pivot residue torsions when the kinematic loop closure segment length is > 3',

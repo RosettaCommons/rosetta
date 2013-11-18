@@ -9187,7 +9187,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-max_kic_perturber_samples</b> \<Integer\><dt>
 <dd>Maximum number of kinematic perturber samples</dd><br>
-<dd>Default: 2000</dd><br>
+<dd>Default: 500</dd><br>
 </dl>
 <dl>
 <dt><b>-nonpivot_torsion_sampling</b> \<Boolean\><dt>

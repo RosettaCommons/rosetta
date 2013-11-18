@@ -353,11 +353,9 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 		Size index = numeric::random::random_range(1, n_torsions);
 		
 		// following lines set phi and set to values drawn proportionately from Rama space
-		// plus or minus uniform noise equal to half the bin width.
-		phi = rama_sampling_table_[res_aa2][index][1] +
-		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
-		psi = rama_sampling_table_[res_aa2][index][2] +
-		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
+        // AS Nov 2013 - note that phi/psi bins are lower left corners, so we only want to add "noise" from a uniform distribution
+		phi = rama_sampling_table_[res_aa2][index][1] + numeric::random::uniform() * binw_;
+		psi = rama_sampling_table_[res_aa2][index][2] + numeric::random::uniform() * binw_;
 
 		//Invert phi and psi if this is a D-amino acid.
 		if(is_d_aminoacid(res_aa)) {
@@ -437,11 +435,9 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 		 std::cerr << current_rama_sampling_table[res_aa][index][2] << " index " << index << " / 2" << std::endl;
 		 */
 		// following lines set phi and set to values drawn proportionately from Rama space
-		// plus or minus uniform noise equal to half the bin width.
-		phi = rama_sampling_table_by_torsion_bin_[tb_index][res_aa][index][1] +
-		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
-		psi = rama_sampling_table_by_torsion_bin_[tb_index][res_aa][index][2] +
-		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
+        // AS Nov 2013 - note that phi/psi bins are lower left corners, so we only want to add "noise" from a uniform distribution
+		phi = rama_sampling_table_by_torsion_bin_[tb_index][res_aa][index][1] + numeric::random::uniform() * binw_;
+		psi = rama_sampling_table_by_torsion_bin_[tb_index][res_aa][index][2] + numeric::random::uniform() * binw_;
 		// DJM: debug
 		//std::cout << "res_aa: " << res_aa << std::endl;
 		//std::cout << "phi: " << phi << std::endl;

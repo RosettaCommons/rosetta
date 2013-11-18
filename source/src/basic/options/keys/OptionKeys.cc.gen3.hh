@@ -1,3 +1,4 @@
+namespace optE { IntegerOptionKey const n_top_natives_to_optimize( "optE:n_top_natives_to_optimize" );  }
 namespace optE { RealOptionKey const approximate_decoy_entropy( "optE:approximate_decoy_entropy" );  }
 namespace optE { BooleanOptionKey const repack_and_minimize_decoys( "optE:repack_and_minimize_decoys" );  }
 namespace optE { BooleanOptionKey const repack_and_minimize_input_structures( "optE:repack_and_minimize_input_structures" );  }
