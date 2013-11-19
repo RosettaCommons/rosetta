@@ -1,3 +1,8 @@
+namespace jumps { FileOptionKey const jump_lib( "jumps:jump_lib" );  }
+namespace jumps { FileOptionKey const loop_definition_from_file( "jumps:loop_definition_from_file" );  }
+namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chainbreak_in_relax" );  }
+namespace jumps { FileOptionKey const pairing_file( "jumps:pairing_file" );  }
+namespace jumps { IntegerVectorOptionKey const random_sheets( "jumps:random_sheets" );  }
 namespace jumps { FileOptionKey const residue_pair_jump_file( "jumps:residue_pair_jump_file" );  }
 namespace jumps { IntegerVectorOptionKey const sheets( "jumps:sheets" );  }
 namespace jumps { FileOptionKey const topology_file( "jumps:topology_file" );  }
@@ -724,6 +729,3 @@ namespace cmiles { BooleanOptionKey const cmiles( "cmiles" );  }
 namespace cmiles { namespace kcluster { BooleanOptionKey const kcluster( "cmiles:kcluster" );  } }
 namespace cmiles { namespace kcluster { IntegerOptionKey const num_clusters( "cmiles:kcluster:num_clusters" );  } }
 namespace cmiles { namespace jumping { BooleanOptionKey const jumping( "cmiles:jumping" );  } }
-namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jumping:resi" );  } }
-namespace cmiles { namespace jumping { IntegerOptionKey const resj( "cmiles:jumping:resj" );  } }
-namespace james { BooleanOptionKey const james( "james" );  }

@@ -1240,6 +1240,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-pocket_dump_exemplars</b> \<Boolean\><dt>
+<dd>Generate exemplar PDB files</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-pocket_filter_by_exemplar</b> \<Boolean\><dt>
+<dd>Restrict the pocket to the exemplars</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-pocket_dump_rama</b> \<Boolean\><dt>
 <dd>Generate Ramachandran maps for each pocket cluster</dd><br>
 <dd>Default: false</dd><br>
@@ -1270,6 +1280,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-pocket_search13</b> \<Boolean\><dt>
+<dd>Search in 13 directions (all faces and edges of a cube) versus faces and diagonal</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-pocket_surface_score</b> \<Real\><dt>
 <dd>Score given to pocket surface</dd><br>
 <dd>Default: 0</dd><br>
@@ -1288,6 +1303,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-pocket_buried_dist</b> \<Real\><dt>
 <dd>Distance to consider pocket buried</dd><br>
 <dd>Default: 2.0</dd><br>
+</dl>
+<dl>
+<dt><b>-pocket_exemplar_vdw_pen</b> \<Real\><dt>
+<dd>Temporary max penalty for vdW class in exemplar discovery</dd><br>
+<dd>Default: 300.0</dd><br>
 </dl>
 <dl>
 <dt><b>-pocket_debug_output</b> \<Boolean\><dt>
@@ -1312,12 +1332,22 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-extra_eggshell_dist</b> \<Real\><dt>
 <dd>Distance to extend extra eggshell points</dd><br>
-<dd>Default: 5</dd><br>
+<dd>Default: 4</dd><br>
+</dl>
+<dl>
+<dt><b>-eggshell_dist</b> \<Real\><dt>
+<dd>Distance to extend eggshell points from ligand atoms</dd><br>
+<dd>Default: 4</dd><br>
 </dl>
 <dl>
 <dt><b>-reduce_rays</b> \<Boolean\><dt>
 <dd>reduce no. of rays by rounding and removing duplicate xyz coordinates</dd><br>
 <dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-pocket_static_grid</b> \<Boolean\><dt>
+<dd>No autoexpanding grid</dd><br>
+<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>fingerprint</h2>
@@ -1368,6 +1398,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-set_origin</b> \<Integer\><dt>
 <dd>option to set orgin: 0 to choose origin based on R(rugedness) value, 1 for protein_center, 2 for eggshell_bottom, 3 for vector form eggshell_plane closest to protein_center, 4 for vector form eggshell_plane distant to protein_center</dd><br>
+<dd>Default: 0</dd><br>
+</dl>
+<dl>
+<dt><b>-origin_res_num</b> \<Integer\><dt>
+<dd>residue to be used as origin</dd><br>
 <dd>Default: 0</dd><br>
 </dl>
  </li>

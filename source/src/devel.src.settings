@@ -34,6 +34,8 @@ sources = {
 		"PairConstelFilters",
 		"Primitives",
 		"SearchOptions",
+    "NeighTeller",
+    "InterfaceFilter",
 	],
 	"devel/coupled_sidechains": [
 		"CoupledSidechainProtocol2",

@@ -44,6 +44,9 @@ sources = {
                 "ZincHeterodimerMover",
                 "ZincSiteFinder",
 	],
+  "protocols/neighbor": [
+    "Neighborhood",
+  ],
 	"protocols/motifs": [
 		"BuildPosition",
 		"IRCollection",

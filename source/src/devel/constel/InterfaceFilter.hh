@@ -10,36 +10,25 @@
 // (C) 199x-2007 University of North Carolina, Chapel Hill
 // (C) 199x-2007 Vanderbilt University
 
-/// @brief Declaration of the different ways in which a pose is searched for
-/// 	constellations.
+/// @brief Declaration of a filter to extract constellations shared by multiple chains
 /// @author Andrea Bazzoli
 
-#ifndef INCLUDED_SearchOptions_hh
-#define INCLUDED_SearchOptions_hh
+#ifndef INCLUDED_InterfaceFilter_hh
+#define INCLUDED_InterfaceFilter_hh
 
 #include <core/pose/Pose.fwd.hh>
-#include <string>
+#include <utility/vector1.fwd.hh>
+#include <core/types.hh>
 
 using core::pose::Pose;
+using core::Size;
 
 namespace devel {
 namespace constel {
 
-	class NeighTeller;
-
-	/// @brief Search pair-constellations by target residue.
-	void pair_constel_set(int const target_pdb_number, char const target_pdb_chain,
-		Pose& pose_init);
-
-	/// @brief Search pair-constellations by mutation pair.
-	void pair_constel_set( std::string const& tgtmuts, Pose& pose_init );
-
-	/// @brief Search triple-constellations by target residue.
-	void triple_constel_set(int const target_pdb_number, char const target_pdb_chain,
-		Pose& pose_init);
+bool at_interface(Pose const& ps, utility::vector1<Size> const& cnl);
 
 } // constel
 } // devel
 
 #endif
-

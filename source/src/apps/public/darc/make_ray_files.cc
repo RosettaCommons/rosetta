@@ -24,14 +24,11 @@
 
 // Protocol Headers
 #include <devel/init.hh>
-#include <basic/options/option_macros.hh>
-#include <protocols/pockets/PocketGrid.hh>
 #include <protocols/pockets/Fingerprint.hh>
-//#include <protocols/pockets/FingerprintMultifunc.hh>
-//#include <core/optimization/ParticleSwarmMinimizer.hh>
-#include <core/import_pose/import_pose.hh>
-#include <utility/excn/Exceptions.hh>
+#include <protocols/pockets/PocketGrid.hh>
+#include <basic/options/option_macros.hh>
 
+// Utility Headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -56,39 +53,12 @@
 #include <protocols/simple_moves/SuperimposeMover.hh>
 #include <utility/options/StringOption.hh>
 
-//reqd minimization headers
-#include <protocols/simple_moves/ScoreMover.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <protocols/rigid/RigidBodyMover.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/pose/util.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <basic/MetricValue.hh>
-
-using namespace std;
 using namespace core;
-using namespace core::optimization;
-using namespace core::pose::datacache;
-using namespace core::pose::metrics;
-using namespace core::scoring;
-using namespace core::scoring::constraints;
-using namespace core::id;
 using namespace basic::options;
+using namespace std;
+using namespace core::scoring;
+using namespace core::optimization;
 using namespace basic::options::OptionKeys;
-using namespace conformation;
-using namespace protocols::simple_moves;
-using namespace protocols::rigid;
 
 OPT_KEY( String, protein )
 OPT_KEY( Integer, num_angles )
@@ -98,6 +68,7 @@ OPT_KEY( Boolean, adt_grid )
 OPT_KEY( Boolean, lig_grid )
 OPT_KEY( Boolean, lig_based_pocket )
 OPT_KEY( Boolean, res_grid )
+OPT_KEY( Boolean, lig_surface_pocket )
 OPT_KEY( Boolean, print_output_complex )
 OPT_KEY( Real, gc_x )
 OPT_KEY( Real, gc_y )
@@ -112,7 +83,6 @@ OPT_KEY( Integer, add_ext_grid_size )
 OPT_KEY( Real, trim_distance )
 
 int main( int argc, char * argv [] ) {
-	try {
 
   NEW_OPT( protein, "protein file name", "protein.pdb" );
   NEW_OPT( num_angles, "no. of angles for rotating the grid", 1 );
@@ -121,6 +91,7 @@ int main( int argc, char * argv [] ) {
   NEW_OPT( adt_grid, "resize grid based on user entered AUTODOCK grid values", false );
   NEW_OPT( lig_grid, "resize grid based on bound ligand", false );
   NEW_OPT( res_grid, "resize grid based on a target residue", true );
+  NEW_OPT( lig_surface_pocket, "trim eggshellpoints based on bound ligand", false );
   NEW_OPT( lig_based_pocket, "include eggshellpoints that are within a distance from bound ligand", false );
   NEW_OPT( gc_x, "gid center : X ", 1.0 );
   NEW_OPT( gc_y, "gid center : Y ", 1.0 );
@@ -130,8 +101,8 @@ int main( int argc, char * argv [] ) {
   NEW_OPT( gd_z, "gid dimension : Z ", 20.0 );
   NEW_OPT( bound_ligand, "use bound ligand to set the grid for generating eggshell", "" );
   NEW_OPT( add_grid_size, "add grid dimension along x,y,z axis", 2 );
-  NEW_OPT( add_ext_grid_size, "add extra grid dimension along x,y,z axis", 2 );
-  NEW_OPT( trim_distance, "include eggshellpoints that are within this distance from bound ligand", 2 );
+  NEW_OPT( add_ext_grid_size, "add extra grid dimension along x,y,z axis", 3 );
+  NEW_OPT( trim_distance, "include eggshellpoints that are within this distance from bound ligand", 4 );
 
   devel::init(argc, argv);
 
@@ -175,7 +146,7 @@ int main( int argc, char * argv [] ) {
     grid_center.x() = grid_cen_x;
     grid_center.y() = grid_cen_y;
     grid_center.z() = grid_cen_z;
-    pg.DARC_pocket_eval( residues, protein_pose, grid_center ) ;
+    pg.autoexpanding_pocket_eval( residues, protein_pose, false, grid_cen_x, grid_cen_y, grid_cen_z ) ;
     npf.setup_from_PocketGrid( protein_pose, pg );
   }
 
@@ -191,7 +162,7 @@ int main( int argc, char * argv [] ) {
     for ( int j = 1, resnum = bound_ligand_pose.total_residue(); j <= resnum; ++j ) {
       if (!bound_ligand_pose.residue(j).is_protein()){
        	lig_res_num = j;
-	break;
+				break;
       }
     }
     if (lig_res_num == 0){
@@ -201,7 +172,7 @@ int main( int argc, char * argv [] ) {
     numeric::xyzVector<core::Real> input_ligand_CoM(0.);
     conformation::Residue const & curr_rsd = bound_ligand_pose.conformation().residue(lig_res_num);
     core::Real minx(999.), miny(999.), minz(999.), maxx(-999.), maxy(-999.), maxz(-999.);
-    for(Size i = 1, i_end = curr_rsd.natoms(); i <= i_end; ++i) {
+		for(Size i = 1, i_end = curr_rsd.natoms(); i <= i_end; ++i) {
       if (curr_rsd.atom(i).xyz()(1) > maxx){maxx = curr_rsd.atom(i).xyz()(1);}
       if (curr_rsd.atom(i).xyz()(1) < minx){minx = curr_rsd.atom(i).xyz()(1);}
       if (curr_rsd.atom(i).xyz()(2) > maxy){maxy = curr_rsd.atom(i).xyz()(2);}
@@ -222,12 +193,13 @@ int main( int argc, char * argv [] ) {
     z_from_grd_cen = z_halfwidth + add_grid_dim;
 
     protocols::pockets::PocketGrid	pg( cen_x, cen_y, cen_z, x_from_grd_cen, y_from_grd_cen, z_from_grd_cen );
-    pg.DARC_pocket_eval( residues, protein_pose, grid_center ) ;
+		std::cout<<cen_x <<" "<< cen_y <<" "<< cen_z <<" "<< x_from_grd_cen <<" "<< y_from_grd_cen <<" "<< z_from_grd_cen<<std::endl;
+    pg.autoexpanding_pocket_eval( residues, protein_pose, false, cen_x, cen_y, cen_z ) ;
     x_from_grd_cen = x_halfwidth + add_grid_dim + add_ext_grid_dim;
     y_from_grd_cen = y_halfwidth + add_grid_dim + add_ext_grid_dim;
     z_from_grd_cen = z_halfwidth + add_grid_dim + add_ext_grid_dim;
     protocols::pockets::PocketGrid	ext_grd( cen_x, cen_y, cen_z, x_from_grd_cen, y_from_grd_cen, z_from_grd_cen );
-    ext_grd.DARC_pocket_eval( residues, protein_pose, grid_center ) ;
+    ext_grd.autoexpanding_pocket_eval( residues, protein_pose, false, cen_x, cen_y, cen_z);
 		if(option[lig_based_pocket ]()){
 			npf.setup_from_PocketGrid_and_known_ligand( protein_pose, pg, ext_grd, bound_ligand_pose, trim_dist );
 		}
@@ -235,6 +207,56 @@ int main( int argc, char * argv [] ) {
 			npf.setup_from_PocketGrid( protein_pose, pg, ext_grd );
 		}
   }
+
+	else if (option[ lig_surface_pocket ]()){
+    if (bound_ligand_file.empty()){
+      std::cout<<"Error, no ligand available for setting the grid" << std::endl;
+      exit(1);
+    }
+    pose::Pose bound_ligand_pose;
+    core::import_pose::pose_from_pdb( bound_ligand_pose, bound_ligand_file );
+    core::Size lig_res_num = 0;
+    for ( int j = 1, resnum = bound_ligand_pose.total_residue(); j <= resnum; ++j ) {
+      if (!bound_ligand_pose.residue(j).is_protein()){
+       	lig_res_num = j;
+				break;
+      }
+    }
+    if (lig_res_num == 0){
+      std::cout<<"Error, no ligand for PlaidFingerprint" << std::endl;
+      exit(1);
+    }
+    numeric::xyzVector<core::Real> input_ligand_CoM(0.);
+    conformation::Residue const & curr_rsd = bound_ligand_pose.conformation().residue(lig_res_num);
+    core::Real minx(999.), miny(999.), minz(999.), maxx(-999.), maxy(-999.), maxz(-999.);
+		for(Size i = 1, i_end = curr_rsd.natoms(); i <= i_end; ++i) {
+      if (curr_rsd.atom(i).xyz()(1) > maxx){maxx = curr_rsd.atom(i).xyz()(1);}
+      if (curr_rsd.atom(i).xyz()(1) < minx){minx = curr_rsd.atom(i).xyz()(1);}
+      if (curr_rsd.atom(i).xyz()(2) > maxy){maxy = curr_rsd.atom(i).xyz()(2);}
+      if (curr_rsd.atom(i).xyz()(2) < miny){miny = curr_rsd.atom(i).xyz()(2);}
+      if (curr_rsd.atom(i).xyz()(3) > maxz){maxz = curr_rsd.atom(i).xyz()(3);}
+      if (curr_rsd.atom(i).xyz()(3) < minz){minz = curr_rsd.atom(i).xyz()(3);}
+    }
+    core::Real x_from_grd_cen, y_from_grd_cen, z_from_grd_cen, x_halfwidth, y_halfwidth, z_halfwidth;
+    core::Real const cen_x = (maxx + minx)/2;
+    core::Real const cen_y = (maxy + miny)/2;
+    core::Real const cen_z = (maxz + minz)/2;
+    x_halfwidth = std::abs(maxx - minx)/2;
+    y_halfwidth = std::abs(maxy - miny)/2;
+    z_halfwidth = std::abs(maxz - minz)/2;
+    numeric::xyzVector<core::Real> const grid_center(cen_x,cen_y,cen_z);
+    x_from_grd_cen = x_halfwidth + add_grid_dim;
+    y_from_grd_cen = y_halfwidth + add_grid_dim;
+    z_from_grd_cen = z_halfwidth + add_grid_dim;
+    protocols::pockets::PocketGrid	pg( cen_x, cen_y, cen_z, x_from_grd_cen, y_from_grd_cen, z_from_grd_cen );
+    pg.autoexpanding_pocket_eval( residues, protein_pose, false, cen_x, cen_y, cen_z ) ;
+    x_from_grd_cen = x_halfwidth + add_grid_dim + add_ext_grid_dim;
+    y_from_grd_cen = y_halfwidth + add_grid_dim + add_ext_grid_dim;
+    z_from_grd_cen = z_halfwidth + add_grid_dim + add_ext_grid_dim;
+    protocols::pockets::PocketGrid	ext_grd( cen_x, cen_y, cen_z, x_from_grd_cen, y_from_grd_cen, z_from_grd_cen );
+    ext_grd.autoexpanding_pocket_eval( residues, protein_pose, false, cen_x, cen_y, cen_z ) ;
+		npf.setup_from_PocketGrid_using_bound_ligand( protein_pose, pg, ext_grd, bound_ligand_pose );
+	}
 
   //use default grid size centered around target residue to setup pocketgrid
   else if (option[ res_grid ]()){
@@ -248,7 +270,7 @@ int main( int argc, char * argv [] ) {
       core::Real best_vol(0), curr_vol(1);
       for (int i=0; i<angles; ++i){
        	core::pose::Pose temp_pose;
-	temp_pose = protein_pose;
+				temp_pose = protein_pose;
        	core::Real x = ( numeric::random::uniform() * numeric::constants::r::pi_2 ) + 0.0001;
        	core::Real y = ( numeric::random::uniform() * numeric::constants::r::pi_2 ) + 0.0001;
        	core::Real z = ( numeric::random::uniform() * numeric::constants::r::pi_2 ) + 0.0001;
@@ -264,10 +286,10 @@ int main( int argc, char * argv [] ) {
        	std::cout<<"curr_volume "<<curr_vol<<std::endl;
        	if(curr_vol > best_vol){
        	  best_vol = curr_vol;
-	  original_pocket_angle_transform[1] = x;
+					original_pocket_angle_transform[1] = x;
           original_pocket_angle_transform[2] = y;
-	  original_pocket_angle_transform[3] = z;
-	}
+					original_pocket_angle_transform[3] = z;
+				}
       }
       numeric::xyzMatrix<core::Real> bestx_rot_mat( numeric::x_rotation_matrix_radians( original_pocket_angle_transform[1] ) );
       numeric::xyzMatrix<core::Real> besty_rot_mat( numeric::y_rotation_matrix_radians( original_pocket_angle_transform[2] ) );
@@ -286,7 +308,17 @@ int main( int argc, char * argv [] ) {
     else if (angles == 1){
       protocols::pockets::PocketGrid	pg( residues );
       pg.autoexpanding_pocket_eval( residues, protein_pose ) ;
-      npf.setup_from_PocketGrid( protein_pose, pg );
+
+			using namespace basic::options;
+			core::Real const grd_x = option[ OptionKeys::pocket_grid::pocket_grid_size_x ]();
+			core::Real const grd_y = option[ OptionKeys::pocket_grid::pocket_grid_size_y ]();
+			core::Real const grd_z = option[ OptionKeys::pocket_grid::pocket_grid_size_z ]();
+			core::Real ext_grd_x = grd_x + add_ext_grid_dim;
+			core::Real ext_grd_y = grd_y + add_ext_grid_dim;
+			core::Real ext_grd_z = grd_z + add_ext_grid_dim;
+      protocols::pockets::PocketGrid	ext_grd( residues, ext_grd_x, ext_grd_y, ext_grd_z );
+      ext_grd.autoexpanding_pocket_eval( residues, protein_pose ) ;
+			npf.setup_from_PocketGrid( protein_pose, pg, ext_grd );
     }
   }
 
@@ -331,10 +363,6 @@ int main( int argc, char * argv [] ) {
   std::cout<< "Written eggshell to pdb file : "<< eggshell_pdb_tag << std::endl;
   std::cout<< "Written eggshell to triplet file: "<< eggshell_triplet_tag << std::endl;
   std::cout<< "DONE!"<< std::endl;
-
-	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-	}
 
   return 0;
 }

@@ -81,8 +81,9 @@ sources = {
 		"FingerprintMultifunc",
 		"PocketConstraint",
 		"PocketGrid",
-                "DarcElectrostatics",
-                "DarcParticleSwarmMinimizer",
+    "PocketExemplarMultifunc",
+    "DarcElectrostatics",
+    "DarcParticleSwarmMinimizer",
 	],
 }
 include_path = [

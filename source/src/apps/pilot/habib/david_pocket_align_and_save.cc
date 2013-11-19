@@ -37,9 +37,11 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
+#include <basic/options/keys/pocket_grid.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/Energies.hh>
 #include <basic/options/option_macros.hh>
@@ -86,12 +88,14 @@ using namespace protocols::simple_moves;
 
 OPT_KEY( String, comparison_relax_pdb_num )
 OPT_KEY( String, template_pdb_name )
-OPT_KEY( String, contact_list )
+OPT_KEY( String, source_contact_list )
+OPT_KEY( String, template_contact_list )
 
-static basic::Tracer TR( "apps.pilot.karen_pocket_compare.main" );
+static basic::Tracer TR( "apps.pilot.david_pocket_align_and_save.main" );
 
 //set to store pdb info keys
-std::set <std::string> interface;
+std::list <std::string> source_interface;
+std::list <std::string> template_interface;
 
 bool
 is_interface_heavyatom(
@@ -101,17 +105,60 @@ is_interface_heavyatom(
         core::Size atomno
 )
 {
-        // ws get residue "key" for set
+        // ws get residue "key" for list
         std::ostringstream residuestream;
         residuestream << pose.pdb_info()->chain(resno) << pose.pdb_info()->number(resno);
         std::string res_id = residuestream.str();
 
         core::conformation::Residue const & rsd = pose.residue(resno);
-        if ( interface.count( res_id ) > 0 ) return rsd.is_protein() && !rsd.atom_is_hydrogen(atomno);
-
-        return false;
+	bool found = false;
+        if (rsd.is_protein() && !rsd.atom_is_hydrogen(atomno)){
+          for (std::list<std::string>::iterator it=source_interface.begin();it!=source_interface.end(); ++it) {
+            if (!res_id.compare(*it)){
+std::cout<<*it<<" "<<res_id<<std::endl;
+	      found=true;
+	      break;
+	    }
+	  }
+	}
+        return found;
 }
 
+bool
+is_interface_heavyatom_pair(
+        core::pose::Pose const & pose,
+         core::pose::Pose const & pose2,
+        core::Size resno,
+        core::Size resno2,
+        core::Size atomno
+)
+{
+        // ws get residue "key" for list
+        std::ostringstream residuestream;
+        residuestream << pose.pdb_info()->chain(resno) << pose.pdb_info()->number(resno);
+        std::string res_id = residuestream.str();
+        std::ostringstream residuestream2;
+        residuestream2 << pose2.pdb_info()->chain(resno2) << pose2.pdb_info()->number(resno2);
+        std::string res_id2 = residuestream2.str();
+
+        core::conformation::Residue const & rsd = pose.residue(resno);
+        core::conformation::Residue const & rsd2 = pose2.residue(resno2);
+	bool found = false;
+        if (rsd.is_protein() && !rsd.atom_is_hydrogen(atomno)){
+          if (rsd2.is_protein() && !rsd2.atom_is_hydrogen(atomno)){
+            for (std::list<std::string>::iterator it=source_interface.begin(), it2=template_interface.begin();it!=source_interface.end() && it2!=source_interface.end(); ++it, ++it2) {
+              if (!res_id.compare(*it)){
+		if (!res_id2.compare(*it2)){
+		  found = true;
+		  break;
+		}
+	      }
+            }
+          }
+        }
+
+        return found;
+}
 Real
 iface_pdb_superimpose_pose(
         pose::Pose & mod_pose,
@@ -134,7 +181,34 @@ iface_pdb_superimpose_pose(
         atom_map.set( id1, id2 );
       }
 
+        break;
+    }
+
+  }
+  return superimpose_pose( mod_pose, ref_pose, atom_map );
+}
+
+Real
+iface_pdb_superimpose_diff_prot(
+        pose::Pose & mod_pose,
+        pose::Pose const & ref_pose
+)
+{
+  id::AtomID_Map< id::AtomID > atom_map;
+  core::pose::initialize_atomid_map( atom_map, mod_pose, id::BOGUS_ATOM_ID );
+  for ( Size ii = 1; ii <= mod_pose.total_residue(); ++ii ) {
+    if ( ! mod_pose.residue(ii).has("CA") ) continue;
+    if ( ! mod_pose.residue(ii).is_protein() ) continue;
+    for ( Size jj = 1; jj <= ref_pose.total_residue(); ++jj ) {
+      if ( ! ref_pose.residue(jj).has("CA") ) continue;
+      if ( ! ref_pose.residue(jj).is_protein() ) continue;
+      if ( is_interface_heavyatom_pair ( mod_pose, ref_pose, ii, jj, 2) ){
+        id::AtomID const id1( mod_pose.residue(ii).atom_index("CA"), ii );
+        id::AtomID const id2( ref_pose.residue(jj).atom_index("CA"), jj );
+        atom_map.set( id1, id2 );
       break;
+      }
+
     }
 
   }
@@ -148,8 +222,9 @@ int main( int argc, char * argv [] ) {
 	try{
 
 	NEW_OPT( comparison_relax_pdb_num, "comparison residue", "-1");
-	NEW_OPT( template_pdb_name, "template pdb", "template.pdb" );
-	NEW_OPT ( contact_list, "File name for optional list of contact residues to check","");
+	NEW_OPT( template_pdb_name, "template pdb", "" );
+	NEW_OPT ( source_contact_list, "File name for optional list of contact residues to align the source pdb on","");
+	NEW_OPT ( template_contact_list, "File name for optional list of contact residues to align to the template pdb","");
 
 	TR << "Calling init" << std::endl;
 	//initializes Rosetta functions
@@ -161,8 +236,21 @@ int main( int argc, char * argv [] ) {
 	std::string const resid_c = option[comparison_relax_pdb_num];
 	TR << "Starting pocket compare" << std::endl;
 
+	// create pose for comparison pose from pdb
+	std::string const comparison_pdb_name ( basic::options::start_file() );
+	pose::Pose comparison_pose;
+	core::import_pose::pose_from_pdb( comparison_pose, comparison_pdb_name );
+	TR << "set comparison pdb"<< "    Number of residues: " << comparison_pose.total_residue() << std::endl;
+
+	std::string tag = "";
+        if (!option[ OptionKeys::out::output_tag ]().empty()){
+          tag = "." + option[ OptionKeys::out::output_tag ]();
+        }
+
+  std::string const template_fname ( option[ template_pdb_name ] );
+  if ( template_fname != "" ){
+std::cout << "template\n";
 	//sets template input pdb name
-	std::string const template_fname ( option[ template_pdb_name ] );
 
 	TR << "set template pdb" << template_fname << std::endl;
 	//sets pdb as a Rosetta pose
@@ -170,18 +258,15 @@ int main( int argc, char * argv [] ) {
 	core::import_pose::pose_from_pdb( template_pose, template_fname );
 	TR << "set template pdb" << "    Number of residues: " << template_pose.total_residue() << std::endl;
 
-	// create pose for comparison pose from pdb
-	std::string const comparison_pdb_name ( basic::options::start_file() );
-	pose::Pose comparison_pose;
-	core::import_pose::pose_from_pdb( comparison_pose, comparison_pdb_name );
-	TR << "set comparison pdb"<< "    Number of residues: " << comparison_pose.total_residue() << std::endl;
-	std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(comparison_pose, resid_c);
 
-  std::string const cfilename = option[ contact_list ];
+
+
+  std::string const cfilename = option[ source_contact_list ];
   if ( cfilename != "" ){
+std::cout<<"source contact list\n";
     std::ifstream ifs(cfilename.c_str(), std::ifstream::in);
     if (!ifs.is_open()){
-      std::cout<< "Error opening contact list file "<<cfilename<<std::endl;
+      std::cout<< "Error opening source contact list file "<<cfilename<<std::endl;
       return -100;
     }
     //ifb.open (cfilename,std::ios::in);
@@ -189,11 +274,32 @@ int main( int argc, char * argv [] ) {
     std::string intres;
     while (ifs.good()){
       ifs >> intres;
-      interface.insert(intres);
+      source_interface.push_back(intres);
     }
     
-    iface_pdb_superimpose_pose( comparison_pose, template_pose);
+    std::string const tcfilename = option[ template_contact_list ];
+    if ( tcfilename != "" ){
+std::cout<<"template contact list\n";
+      std::ifstream tifs(tcfilename.c_str(), std::ifstream::in);
+      if (!tifs.is_open()){
+        std::cout<< "Error opening template contact list file "<<tcfilename<<std::endl;
+        return -101;
+      }
+      //ifb.open (cfilename,std::ios::in);
+      //std::ostream ios(&ifb);
+      std::string tintres;
+      while (tifs.good()){
+        tifs >> tintres;
+        template_interface.push_back(tintres);
+      }
+std::cout << "aligning\n";
+      iface_pdb_superimpose_diff_prot( comparison_pose, template_pose);
+    }else{
+std::cout<<"no template contact list\n";
+      iface_pdb_superimpose_pose( comparison_pose, template_pose);
+    }
   }else{
+std::cout<<"no source contact list\n";
  
 
     // align comparison pose to template pose
@@ -203,20 +309,32 @@ int main( int argc, char * argv [] ) {
         sp_mover->set_target_range( 1, template_pose.total_residue() ); 
         sp_mover->apply( comparison_pose );
   }
+  }
+std::cout << "done aligning\n";
+	std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(comparison_pose, resid_c);
 	// call function to make a grid around a target residue (seqpos)
 	protocols::pockets::PocketGrid comparison_pg( residues );
 	//call function to define the pocket
-	comparison_pg.autoexpanding_pocket_eval( residues, comparison_pose ) ;
+	comparison_pg.zeroAngle();
+ 	comparison_pg.autoexpanding_pocket_eval( residues, comparison_pose ) ;
 	//output the pocket in a pdb
 	//comparison_pg.dumpGridToFile();
 	TR << "Comparison pocket defined" << std::endl;
-
+std::cout << "Pocket score (unweighted) is: " << comparison_pg.netTargetPocketVolume() << std::endl;
 	// dump to file, with name based on input pdb
 	std::stringstream out_fname;
-	out_fname << comparison_pdb_name << ".pocket.pdb";
+	out_fname << comparison_pdb_name << tag << ".pocket.pdb";
+	std::cout<<out_fname.str() <<std::endl;
 	comparison_pg.dumpTargetPocketsToPDB( out_fname.str() );
+	if (option[ OptionKeys::pocket_grid::pocket_dump_exemplars ]()){
+		std::stringstream out_exfname;
+		out_exfname << comparison_pdb_name << tag << ".exemplar.pdb";
+		std::cout<<out_exfname.str() <<std::endl;
+		comparison_pg.dumpExemplarToFile( out_exfname.str() );	
+	}
 	std::stringstream out_pfname;
-	out_pfname << comparison_pdb_name << ".pocket";
+	out_pfname << comparison_pdb_name << tag << ".pocket";
+std::cout<<out_pfname.str() <<std::endl;
 	comparison_pg.dumpTargetPocketsToFile( out_pfname.str() );
 
 	//utility::io::ozstream fout;

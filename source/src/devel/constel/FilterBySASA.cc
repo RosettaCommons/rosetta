@@ -57,7 +57,7 @@ void FilterBySASA::init( Real const smax, Pose const& ps ) {
 	v.push_back("All");
 	for(unsigned int i=0; i<AA1.length(); ++i)
 		aa_sasa_atoms[ AA1[i] ] = v;
-
+/*
 	// Asp
 	v.clear();
 	v.push_back("OD1");
@@ -73,7 +73,7 @@ void FilterBySASA::init( Real const smax, Pose const& ps ) {
 	// Lys
 	v.clear();
 	v.push_back("NZ");
-	aa_sasa_atoms['K'] = v;
+	aa_sasa_atoms['K'] = v;*/
 
 
 	//// compute SASA for all atoms in the pose

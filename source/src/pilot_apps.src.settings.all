@@ -283,11 +283,15 @@ sources = {
 		"karen_pocket_save",
                 "karen_compare_pocket_rmsd",
  	],
-        "pilot/bazzoli" : [
+  "pilot/bazzoli" : [
 		"constel",
 		"nrg_res_set",
 		"lig_low_sasa",
 		"sel_hbonds",
+    "list_cnl_ngbs",
+    "lig_polar_sat",
+    "cnl_env_delta_state_pol",
+    #sasa-list",
 	],
  	"pilot/whitney" : [
 		#"whitney_identify_epitope",
@@ -308,12 +312,16 @@ sources = {
 		"david_open_pocket",
 		"david_pocket_align_and_save",
 		"david_pocket_compare",
+    "david_pocket2PDB",
 		"david_recompute_score_and_rmsd",
 		"david_align_and_recompute_score_and_rmsd",
 		"david_align_append_and_recompute_score_and_rmsd",
 		"david_find_best_pocket",
+    "david_find_exemplar",
+    "david_find_pocket_exemplar",
 		"david_find_best_contact_pocket",
-		#"david_darc_multirun",
+    "david_rotation_experiment",
+    #"david_darc_multirun",
 	],
 
 	# I ######################################################################
@@ -617,30 +625,17 @@ sources = {
 
 	# R ######################################################################
 	"pilot/ragul" : [
-		#"ragul_compare_plaid_fingerprints",
-		"ragul_minimize",
-		"ragul_darc_get_rmsd",
-		"ragul_darc_minimize",
-		"ragul_run_darc_with_input_eggshell",
-		#"ragul_darc_optimize_weights",
-		#"ragul_score_protein_ligand_complex",
-		#"ragul_darc_run_with_delphi",
-		#"ragul_small_mol_map",
-		"ragul_darc_score",
-		"ragul_test_darc_run",
-		"ragul_test_darc_score",
-		#"ragul_fingerprint_optimize",
-		#"ragul_fingerprint_test",
-		"ragul_get_eggshell_file",
+    "ragul_darc_minimize",
 		"ragul_get_ligand_sasa",
 		"ragul_rosetta_dump_pdb",
 		"sarah_get_pharmacophores",
 		"ragul_find_all_hbonds",
-		"ragul_gen_grid_for_adt",
 		"ragul_calculate_ligand_rmsd",
 		"get_rna_pharmacophore",
 		"get_rna_pharmacophore_with_water",
 		"get_rna_ring_sasa",
+    "ragul_get_ligand_hbonds",
+    "ragul_get_delphi_phimap",
 	],
 	"pilot/rayyrw" : [
 		"partial_thread", #Note: used for comparative modeling; no itest needed

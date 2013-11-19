@@ -36,22 +36,28 @@ namespace pocket_grid { extern IntegerOptionKey const pocket_ntrials; }
 namespace pocket_grid { extern IntegerOptionKey const pocket_num_angles; }
 namespace pocket_grid { extern BooleanOptionKey const pocket_side; }
 namespace pocket_grid { extern BooleanOptionKey const pocket_dump_pdbs; }
+namespace pocket_grid { extern BooleanOptionKey const pocket_dump_exemplars; }
+namespace pocket_grid { extern BooleanOptionKey const pocket_filter_by_exemplar; }
 namespace pocket_grid { extern BooleanOptionKey const pocket_dump_rama; }
 namespace pocket_grid { extern BooleanOptionKey const pocket_restrict_size; }
 namespace pocket_grid { extern BooleanOptionKey const pocket_ignore_buried; }
 namespace pocket_grid { extern BooleanOptionKey const pocket_only_buried; }
 namespace pocket_grid { extern BooleanOptionKey const pocket_psp; }
 namespace pocket_grid { extern BooleanOptionKey const pocket_sps; }
+namespace pocket_grid { extern BooleanOptionKey const pocket_search13; }
 namespace pocket_grid { extern RealOptionKey const pocket_surface_score; }
 namespace pocket_grid { extern RealOptionKey const pocket_surface_dist; }
 namespace pocket_grid { extern RealOptionKey const pocket_buried_score; }
 namespace pocket_grid { extern RealOptionKey const pocket_buried_dist; }
+namespace pocket_grid { extern RealOptionKey const pocket_exemplar_vdw_pen; }
 namespace pocket_grid { extern BooleanOptionKey const pocket_debug_output; }
 namespace pocket_grid { extern BooleanOptionKey const print_grid; }
 namespace pocket_grid { extern BooleanOptionKey const extend_eggshell; }
 namespace pocket_grid { extern RealOptionKey const extend_eggshell_dist; }
 namespace pocket_grid { extern RealOptionKey const extra_eggshell_dist; }
+namespace pocket_grid { extern RealOptionKey const eggshell_dist; }
 namespace pocket_grid { extern BooleanOptionKey const reduce_rays; }
+namespace pocket_grid { extern BooleanOptionKey const pocket_static_grid; }
 
 } // namespace OptionKeys
 } // namespace options

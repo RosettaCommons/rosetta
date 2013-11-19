@@ -173,6 +173,9 @@ main( int argc, char * argv [] )
       if (option[ OptionKeys::pocket_grid::pocket_dump_pdbs ]()){
         pg.dumpGridToFile();
       }
+      if (option[ OptionKeys::pocket_grid::pocket_dump_exemplars ]()){
+        pg.dumpExemplarToFile();
+      }
     }
   }
   constraint_pocket_score /= angles;

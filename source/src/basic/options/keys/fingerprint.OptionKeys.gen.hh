@@ -31,6 +31,7 @@ namespace fingerprint { extern BooleanOptionKey const include_hydrogens; }
 namespace fingerprint { extern BooleanOptionKey const use_DARC_gpu; }
 namespace fingerprint { extern BooleanOptionKey const square_score; }
 namespace fingerprint { extern IntegerOptionKey const set_origin; }
+namespace fingerprint { extern IntegerOptionKey const origin_res_num; }
 
 } // namespace OptionKeys
 } // namespace options

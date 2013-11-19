@@ -102,7 +102,8 @@ using basic::options::OptionKeys::lig_sasa_resfile;
 
 int main( int argc, char * argv [] )
 {
-	try{
+
+try {
 
 	NEW_OPT( lig_sasa_resfile, "ligand required SASA", "lig_sasa_resfile.txt" );
 
@@ -174,8 +175,22 @@ int main( int argc, char * argv [] )
 			TR << "  !HIGH!";
 		TR << std::endl;
 	}
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-    }
-    return 0;
+
+	// print average sasa of selected atoms
+	Real tot = 0;
+	for(Size i=1; i<=lig_nsasa; i++) {
+		Size aidx = lig_res.atom_index(lig_sasa_atoms[i]);
+		tot += atom_sasa(AtomID(aidx, LIG_PS_IDX));
+	}
+
+	TR << std::endl;
+	TR << "Average SASA of selected atoms: " << (tot/lig_nsasa) << std::endl;
+
+	return 0;
+
+} // try
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cerr << "caught exception " << e.msg() << std::endl;
 }
+
+} // main

@@ -266,7 +266,7 @@ using basic::options::OptionKeys::bond_fil;
 
 int main( int argc, char * argv [] )
 {
-	try{
+try {
 
 	NEW_OPT( atom_fil, "selected hbonded atoms", "" );
 	NEW_OPT( bond_fil, "selected hydrogen bonds", "" );
@@ -425,8 +425,11 @@ int main( int argc, char * argv [] )
 			}
 		}
 	}
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-    }
-    return 0;
+
+	return 0;
+
+} // try
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cerr << "caught exception " << e.msg() << std::endl;
 }
+} // main

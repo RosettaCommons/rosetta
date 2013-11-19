@@ -15,15 +15,12 @@
 #include <numeric/constants.hh>
 #include <protocols/pockets/DarcElectrostatics.hh>
 #include <protocols/pockets/PocketGrid.hh>
-// AUTO-REMOVED #include <core/init/init.hh>
 
 // Core Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/fingerprint.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
@@ -81,6 +78,9 @@ void DelphiElectrostatics::setup_from_DelphiGrid( std::string const & input_file
 		std::cout<< "Can't open input file " << input_filename << std::endl;
     exit(1);
   }
+	else  if (inFile) {
+		std::cout<< "Input DELHI phimap file : " << input_filename << std::endl;
+  }
 
 	//intialize electrostatic potential grid
 	std::vector < std::vector < std::vector <core::Real> > > esp_grid;
@@ -115,7 +115,6 @@ void DelphiElectrostatics::setup_from_DelphiGrid( std::string const & input_file
 	}
 
 
-
 	//DUMP ESP_GRID TO A PDB FILE
 	utility::io::ozstream outPDB_stream;
   outPDB_stream.open("esp_grid.pdb", std::ios::out);
@@ -129,7 +128,7 @@ void DelphiElectrostatics::setup_from_DelphiGrid( std::string const & input_file
 	//END DUMP PDB FILE
 	}
 
-	core::Real DelphiElectrostatics::get_electrostatics_energy(core::pose::Pose const & ligand_pose) {
+core::Real DelphiElectrostatics::get_electrostatics_energy(core::pose::Pose const & ligand_pose) {
 	//trilinear_interpolation
 
 	core::Size lig_res_num = 0;
@@ -150,9 +149,9 @@ void DelphiElectrostatics::setup_from_DelphiGrid( std::string const & input_file
 
 
 	core::Real x0, y0, z0,
-			x1, y1, z1,
-			x_d, y_d, z_d,
-			c_00, c_10, c_01, c_11, c_0, c_1, c;
+		x1, y1, z1,
+		x_d, y_d, z_d,
+		c_00, c_10, c_01, c_11, c_0, c_1, c;
 	core::Real V_000 = 0.0;
 	core::Real V_100 = 0.0;
 	core::Real V_010 = 0.0;
@@ -214,7 +213,7 @@ void DelphiElectrostatics::setup_from_DelphiGrid( std::string const & input_file
 	outPDB_stream.clear();
 	//END DUMP PDB FILE
 
-		std::cout<< "Delphi Electrostatics Energy: " << E_energy << std::endl;
+	std::cout<< "Delphi Electrostatics Energy: " << E_energy << std::endl;
 	return E_energy;
 
 }

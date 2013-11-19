@@ -266,22 +266,28 @@ option.add( basic::options::OptionKeys::pocket_grid::pocket_ntrials, "Number of 
 option.add( basic::options::OptionKeys::pocket_grid::pocket_num_angles, "Number of different pose angles to measure pocket score at" ).def(1);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_side, "Include only side chain residues for target surface" ).def(false);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_dump_pdbs, "Generate PDB files" ).def(false);
+option.add( basic::options::OptionKeys::pocket_grid::pocket_dump_exemplars, "Generate exemplar PDB files" ).def(false);
+option.add( basic::options::OptionKeys::pocket_grid::pocket_filter_by_exemplar, "Restrict the pocket to the exemplars" ).def(false);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_dump_rama, "Generate Ramachandran maps for each pocket cluster" ).def(false);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_restrict_size, "Pockets that are too large return score of 0" ).def(false);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_ignore_buried, "Ignore pockets that are not solvent exposed" ).def(true);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_only_buried, "Identify only pockets buried in the protein core (automatically sets -pocket_ignored_buried false)" ).def(false);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_psp, "Mark Pocket-Solvent-Pocket events as well" ).def(true);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_sps, "Unmark Solvent-Pocket-Solvent events" ).def(false);
+option.add( basic::options::OptionKeys::pocket_grid::pocket_search13, "Search in 13 directions (all faces and edges of a cube) versus faces and diagonal" ).def(false);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_surface_score, "Score given to pocket surface" ).def(0);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_surface_dist, "Distance to consider pocket surface" ).def(2.5);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_buried_score, "Score given to deeply buried pocket points" ).def(5.0);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_buried_dist, "Distance to consider pocket buried" ).def(2.0);
+option.add( basic::options::OptionKeys::pocket_grid::pocket_exemplar_vdw_pen, "Temporary max penalty for vdW class in exemplar discovery" ).def(300.0);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_debug_output, "Print any and all debuggind output related to pockets" ).def(false);
 option.add( basic::options::OptionKeys::pocket_grid::print_grid, "print the grid points into a PDB file" ).def(false);
 option.add( basic::options::OptionKeys::pocket_grid::extend_eggshell, "Extend the eggshell points" ).def(false);
 option.add( basic::options::OptionKeys::pocket_grid::extend_eggshell_dist, "Distance to extend eggshell" ).def(1);
-option.add( basic::options::OptionKeys::pocket_grid::extra_eggshell_dist, "Distance to extend extra eggshell points" ).def(5);
+option.add( basic::options::OptionKeys::pocket_grid::extra_eggshell_dist, "Distance to extend extra eggshell points" ).def(4);
+option.add( basic::options::OptionKeys::pocket_grid::eggshell_dist, "Distance to extend eggshell points from ligand atoms" ).def(4);
 option.add( basic::options::OptionKeys::pocket_grid::reduce_rays, "reduce no. of rays by rounding and removing duplicate xyz coordinates" ).def(true);
+option.add( basic::options::OptionKeys::pocket_grid::pocket_static_grid, "No autoexpanding grid" ).def(false);
 option.add( basic::options::OptionKeys::fingerprint::fingerprint, "fingerprint option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::fingerprint::print_eggshell, "print the eggshell points into a PDB file" ).def(false);
 option.add( basic::options::OptionKeys::fingerprint::atom_radius_scale, "Scale to shrink the radius of atom" ).def(0.9);
@@ -292,6 +298,7 @@ option.add( basic::options::OptionKeys::fingerprint::include_hydrogens, "include
 option.add( basic::options::OptionKeys::fingerprint::use_DARC_gpu, "use GPU when computing DARC score" ).def(false);
 option.add( basic::options::OptionKeys::fingerprint::square_score, "square the terms in DARC scoring function" ).def(false);
 option.add( basic::options::OptionKeys::fingerprint::set_origin, "option to set orgin: 0 to choose origin based on R(rugedness) value, 1 for protein_center, 2 for eggshell_bottom, 3 for vector form eggshell_plane closest to protein_center, 4 for vector form eggshell_plane distant to protein_center" ).def(0);
+option.add( basic::options::OptionKeys::fingerprint::origin_res_num, "residue to be used as origin" ).def(0);
 option.add( basic::options::OptionKeys::contactMap::contactMap, "contactMap option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::contactMap::prefix, "Prefix of contactMap filename" ).def("contact_map_");
 option.add( basic::options::OptionKeys::contactMap::distance_cutoff, "Cutoff Backbone distance for two atoms to be considered interacting" ).def(10.0);
@@ -727,14 +734,14 @@ option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoet
 option.add( basic::options::OptionKeys::jumps::extra_frags_for_ss, "use ss-def from this fragset" ).def("");
 option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix ccd in re-runs" ).def(false);
 option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
-option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
 option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
 option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
 option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
 option.add( basic::options::OptionKeys::jumps::random_sheets, "random sheet topology--> replaces -sheet1 -sheet2 ... select randomly up to N sheets with up to -sheet_i pairgins for sheet i" ).def(1);
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::residue_pair_jump_file, "a file to define residue pair jump" ).def("");
+option.add( basic::options::OptionKeys::jumps::residue_pair_jump_file, "a file to define residue pair jump" ).def("");
 option.add( basic::options::OptionKeys::jumps::sheets, "sheet topology--> replaces -sheet1 -sheet2 ... -sheetN" ).def(1);
 option.add( basic::options::OptionKeys::jumps::topology_file, "read a file with topology info ( PairingStats )" ).def("");
 option.add( basic::options::OptionKeys::jumps::bb_moves, "Apply bb_moves ( wobble, small, shear) during stage3 and stage 4." ).def(false);
@@ -1460,12 +1467,12 @@ option.add( basic::options::OptionKeys::cmiles::cmiles, "cmiles option group" ).
 option.add( basic::options::OptionKeys::cmiles::kcluster::kcluster, "kcluster option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number of clusters to use during k clustering" );
 option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
-option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
-option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
+option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
+option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
 option.add( basic::options::OptionKeys::james::atom_names, "No description" ).def(utility::vector1<std::string>());
 option.add( basic::options::OptionKeys::james::dist_thresholds, "No description" ).def(utility::vector1<float>(1, 1.0));
 option.add( basic::options::OptionKeys::james::torsion_thresholds, "No description" ).def(utility::vector1<float>(1, 30.0));
@@ -2193,10 +2200,10 @@ option.add( basic::options::OptionKeys::optE::exclude_badrep_ddGs, "With the ite
 option.add( basic::options::OptionKeys::optE::pretend_no_ddG_repulsion, "With the iterative optE driver, set all repulsive scores to zero when looking for ddG correlations" );
 option.add( basic::options::OptionKeys::optE::optimize_decoy_discrimination, "With the iterative optE driver, optimize weights to maximize the partition between relaxed natives and low-scoring decoys.  File is a list of file-list pairs and a single pdb file < native_pdb_list, decoy_pdb_list, crystal_native_pdb >." );
 option.add( basic::options::OptionKeys::optE::normalize_decoy_score_spread, "In decoy discrimination optimization, normalize both the native and decoy energies generated by a set of weights by sigma_curr /sigma_start where sigma_start is computed as the standard deviation of the decoy energies given an input weight set" );
-option.add( basic::options::OptionKeys::optE::ramp_nativeness, "In decoy discrimination optimization, give structures in the range between max_rms_from_native and min_decoy_rms_to_native a nativeness score (which ramps linearly from 1 to 0 in that range) and include scores from structures in the numerator of the partition." );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::n_top_natives_to_optimize, "For use with the -optimize_decoy_discrimination flag.  Objective function considers top N natives in partition function" ).def(1);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::ramp_nativeness, "In decoy discrimination optimization, give structures in the range between max_rms_from_native and min_decoy_rms_to_native a nativeness score (which ramps linearly from 1 to 0 in that range) and include scores from structures in the numerator of the partition." );
+option.add( basic::options::OptionKeys::optE::n_top_natives_to_optimize, "For use with the -optimize_decoy_discrimination flag.  Objective function considers top N natives in partition function" ).def(1);
 option.add( basic::options::OptionKeys::optE::approximate_decoy_entropy, "Alpha expansion of conformation space size as a function of nres: size ~ alpha ^ nres; entropy ~ nres ln alpha." );
 option.add( basic::options::OptionKeys::optE::repack_and_minimize_decoys, "Generate new structures in each round of iterative optE by repacking and minimizing the input decoys & natives using the weights obtained in the last round" );
 option.add( basic::options::OptionKeys::optE::repack_and_minimize_input_structures, "Minimizing the input decoys & natives using the starting weights -- allows structures a chance to see the energy function before decoy discrimination begins without the memory overhead of the repack_and_minimize_decoys flag" );

@@ -21,9 +21,6 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/chemical/AA.hh>
 
@@ -47,30 +44,6 @@ core::Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps);
 
 
 ///
-/// @brief A class to hold the scoring data structures used to determine the
-/// 	neighbors (interacting residues) of a target residue.
-///
-class NeighTeller {
-
-  core::scoring::ScoreFunctionOP scorefxn;
-  core::scoring::methods::EnergyMethodOptions eopts;
-  core::scoring::EnergyMap unweighted_emap;
-  core::Real fa_atr_weight;
-  core::Real const interaction_score_threshold;
-
-  public:
-  NeighTeller(Pose& ref_pose);
-
-	/// @brief: tells whether a probe residue is a neighbor of a target residue.
-  bool isneigh(core::conformation::Residue const & tgt,
-               core::conformation::Residue const & prb, Pose const& ref_pose);
-};
-
-/// @brief Creates the list of residues that are neighbors of a given residue.
-void mk_neigh_list(core::Size const tgtnum, utility::vector1<bool>& neighs, Pose& ps);
-
-
-///
 /// @brief A class to represent the mutation of a residue.
 ///
 struct ResMut {
@@ -84,8 +57,20 @@ struct ResMut {
   ResMut(char s, char e, char c, int d, Size r) : saa(s), eaa(e), cid(c), pdbn(d), psn(r) {}
 };
 
+/// @brief Outputs all pair-constellations between a given pair of residues
+void pair_constel_set_idx2(Size const i, Size const j, Pose const& pose_init );
+
 /// @brief Outputs to file a constellation obtained from mutating a pair of residues
-void out_pair_constel(ResMut const& mut1, ResMut const& mut2, int const cslnum, Pose& ps);
+void out_pair_constel(ResMut const& mut1, ResMut const& mut2, int const cslnum,
+	Pose& ps);
+
+/// @brief Outputs all triple-constellations among a given triple of residues
+void triple_constel_set_idx3(Size const i, Size const j, Size const k,
+	Pose const& pose_init );
+
+/// @brief Outputs to file a constellation obtained from mutating a triple of residues
+void out_triple_constel(ResMut const& mut1, ResMut const& mut2,
+	ResMut const& mut3, int const cslnum, Pose& ps);
 
 
 ///

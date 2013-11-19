@@ -15,6 +15,7 @@
 /// @author Andrea Bazzoli
 
 #include <devel/constel/Primitives.hh>
+#include <devel/constel/MasterFilter.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
@@ -27,9 +28,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/util.hh>
 #include <core/chemical/AA.hh>
 #include <core/io/pdb/pdb_dynamic_reader.hh>
@@ -204,50 +202,6 @@ void zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
 
 
 ///
-/// @brief NeighTeller's constructor
-///
-/// @param[out] ref_pose pose containing the residues whose neighbors	are to be
-/// 	identified.
-///
-/// @remarks For speed, a scorefxn containing only fa_atr is used.
-///
-NeighTeller::NeighTeller(Pose& ref_pose) :
-  scorefxn(core::scoring::getScoreFunction()),
-  fa_atr_weight(0.8), interaction_score_threshold(-0.3) {
-
-	(*scorefxn)(ref_pose);
-}
-
-
-///
-/// @brief Tells whether a probe residue is a neighbor of a target residue.
-///
-/// @param[in] tgt the target residue.
-/// @param[in] prb the probe residue.
-/// @ref_pose[in] pose both residues belong to.
-///
-/// @return true if prb is a neighbor of tgt; false otherwise.
-///
-bool NeighTeller::isneigh(core::conformation::Residue const & tgt,
-                          core::conformation::Residue const & prb,
-                          Pose const& ref_pose) {
-
-	unweighted_emap.clear();
-
-	core::Vector const tgt_centroid = core::scoring::compute_sc_centroid(tgt);
-	core::Vector const prb_centroid = core::scoring::compute_sc_centroid(prb);
-	Real const tgt_rad = core::scoring::compute_sc_radius( tgt, tgt_centroid );
-	Real const prb_rad = core::scoring::compute_sc_radius( prb, prb_centroid );
-
-	core::scoring::eval_scsc_sr2b_energies( tgt, prb, tgt_centroid, prb_centroid, tgt_rad, prb_rad, ref_pose, *scorefxn, unweighted_emap );
-
-	Real const weighted_fa_atr = fa_atr_weight * unweighted_emap[ core::scoring::fa_atr ];
-
-	return weighted_fa_atr < interaction_score_threshold;
-}
-
-
-///
 /// @brief Returns the residue number of a residue in a pose.
 ///
 /// @parm[in] pdbnum residue number of the residue in its PDB file.
@@ -267,26 +221,55 @@ core::Size get_pose_resnum(int const pdbnum, char const pdbchn, Pose& ps) {
 
 
 ///
-/// @brief Creates the list of residues that are neighbors of a given target
-/// 	residue.
+/// @brief Outputs all pair-constellations between a given pair of residues
 ///
-/// @param[in] tgtnum residue number of the target residue in its pose.
-/// @param[out] neighs boolean mask filled in by this function to represent the
-/// 	list of neighbors. neighs[i] will be true if the ith residue in the pose
-/// 	is a neighbor of the target; otherwise neighs[i] will be false.
-/// @param[in] ps: pose that the target and its potential neighbors belong to.
+/// @param[in] i pose index of the 1st residue.
+/// @param[in] j pose index of the 2nd residue.
+/// @param[in] pose_init the pose.
 ///
-void mk_neigh_list(core::Size const tgtnum, utility::vector1<bool>& neighs,
-	Pose& ps) {
+/// @remark Output files have the names and format specified in out_pair_constel()
+///
+void pair_constel_set_idx2(Size const i, Size const j, Pose const& pose_init) {
 
-	NeighTeller nt(ps);
+	// get info about either residue
+	char aai = core::chemical::oneletter_code_from_aa(pose_init.aa(i));
+	int i_pdb_number = pose_init.pdb_info()->number(i);
+	char i_pdb_chain = pose_init.pdb_info()->chain(i);
+	utility::vector1<char> allowable_primary_mutations = list_allowable_mutations(aai);
 
-	core::conformation::Residue tgtres = ps.residue(tgtnum);
+	char aaj = core::chemical::oneletter_code_from_aa(pose_init.aa(j));
+	int j_pdb_number = pose_init.pdb_info()->number(j);
+	char j_pdb_chain = pose_init.pdb_info()->chain(j);
+	utility::vector1<char> allowable_secondary_mutations = list_allowable_mutations(aaj);
 
-	for(Size i = 1; i <= ps.total_residue(); ++i)
-		if(i != tgtnum)
-			if(nt.isneigh(tgtres, ps.residue(i), ps))
-				neighs.at(i)=true;
+	utility::vector1<Size> cnl;
+	cnl.push_back(i);
+	cnl.push_back(j);
+
+	// loop over all allowed combinations of mutations for the residue pair
+	Size const N1MUT = allowable_primary_mutations.size();
+	Size const N2MUT = allowable_secondary_mutations.size();
+	for ( Size imut=1; imut <= N1MUT; ++imut ) {
+
+		char aa_imut = allowable_primary_mutations.at(imut);
+		Pose primary_mut_pose = pose_init;
+		zero_occ_for_deleted_atoms( primary_mut_pose, i, aa_imut);
+
+		for ( Size jmut=1; jmut <= N2MUT; ++jmut ) {
+
+			char aa_jmut = allowable_secondary_mutations.at(jmut);
+			Pose secondary_mut_pose = primary_mut_pose;
+			zero_occ_for_deleted_atoms( secondary_mut_pose, j, aa_jmut);
+
+			if( MasterFilter::is_constel_valid( secondary_mut_pose, cnl ) ) {
+
+				// print the atoms that would be removed by these mutations to a pdb file
+				ResMut mut1(aai, aa_imut, i_pdb_chain, i_pdb_number, i);
+				ResMut mut2(aaj, aa_jmut, j_pdb_chain, j_pdb_number, j);
+				out_pair_constel(mut1, mut2, -1, secondary_mut_pose);
+			}
+		}
+	}
 }
 
 
@@ -301,7 +284,7 @@ void mk_neigh_list(core::Size const tgtnum, utility::vector1<bool>& neighs,
 /// 	the occupancy of atoms in either residue is that AFTER the mutation.
 ///
 /// @remarks
-/// 	1. The file names of constellations have the following format,
+/// 	1. The file name of the constellation has the following format,
 /// 		SIIIIEC_siiiiec.pdb, where:
 /// 	- S is the first residue's start amino acid type
 /// 	- IIII is a four-digit field indicating the first residue's number in the
@@ -319,14 +302,17 @@ void out_pair_constel(ResMut const& mut1, ResMut const& mut2, int const cslnum, 
 	std::ostringstream outPDB_name;
 	outPDB_name.fill('0');
 
-	outPDB_name	<<	"constel_"	<<	mut1.saa	<<	std::setw(4)	<< mut1.pdbn	<<	mut1.eaa	<<	mut1.cid	<<	"_"
-  														<<	mut2.saa	<<	std::setw(4)	<< mut2.pdbn	<<	mut2.eaa	<<	mut2.cid	<<	".pdb";
+	outPDB_name << "constel_" <<
+		mut1.saa << std::setw(4) << mut1.pdbn << mut1.eaa << mut1.cid << "_" <<
+		mut2.saa << std::setw(4) << mut2.pdbn << mut2.eaa << mut2.cid << ".pdb";
 
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(outPDB_name.str(), std::ios::out);
-	outPDB_stream << "HEADER   CONST NUM "	<<	cslnum	<<
-                   " TARGET MUTATION: "	<<	mut1.cid	<<	':'	<<	mut1.saa	<<	mut1.pdbn	<<	mut1.eaa	<<
-              "  SECONDARY_MUTATION: "	<<	mut2.cid	<<	':'	<<	mut2.saa	<<	mut2.pdbn <<	mut2.eaa	<<	std::endl;
+	outPDB_stream << "HEADER   CONST NUM " << cslnum <<
+		" TARGET MUTATION: " << mut1.cid << ':' << mut1.saa << mut1.pdbn <<
+			mut1.eaa <<
+		"  SECONDARY_MUTATION: " << mut2.cid << ':' << mut2.saa << mut2.pdbn <<
+			mut2.eaa << std::endl;
 
 	core::io::pdb::FileData fd;
 	std::string data;
@@ -339,6 +325,146 @@ void out_pair_constel(ResMut const& mut1, ResMut const& mut2, int const cslnum, 
 	outPDB_stream.close();
 	outPDB_stream.clear();
 }
+
+
+///
+/// @brief Outputs all triple-constellations among a given triple of residues
+///
+/// @param[in] i pose index of the 1st residue.
+/// @param[in] j pose index of the 2nd residue.
+/// @param[in] k pose index of the 3rd residue.
+/// @param[in] pose_init the pose.
+///
+/// @remark Output files have the names and format specified in out_triple_constel()
+///
+void triple_constel_set_idx3(Size const i, Size const j, Size const k,
+	Pose const& pose_init ) {
+
+	using utility::vector1;
+
+	// get info about each residue of the triple
+	char aai = oneletter_code_from_aa(pose_init.aa(i));
+	int i_pdb_number = pose_init.pdb_info()->number(i);
+	char i_pdb_chain = pose_init.pdb_info()->chain(i);
+	vector1<char> allowable_primary_mutations = list_allowable_mutations(aai);
+
+	char aaj = oneletter_code_from_aa(pose_init.aa(j));
+	int j_pdb_number = pose_init.pdb_info()->number(j);
+	char j_pdb_chain = pose_init.pdb_info()->chain(j);
+	vector1<char> allowable_secondary_mutations = list_allowable_mutations(aaj);
+
+	char aak = oneletter_code_from_aa(pose_init.aa(k));
+	int k_pdb_number = pose_init.pdb_info()->number(k);
+	char k_pdb_chain = pose_init.pdb_info()->chain(k);
+	vector1<char> allowable_tertiary_mutations = list_allowable_mutations(aak);
+
+	vector1<Size> cnl;
+	cnl.push_back(i);
+	cnl.push_back(j);
+	cnl.push_back(k);
+
+	// loop over all allowed combinations of mutations for the residue triple
+	Size const N1MUT = allowable_primary_mutations.size();
+	Size const N2MUT = allowable_secondary_mutations.size();
+	Size const N3MUT = allowable_tertiary_mutations.size();
+
+	for ( Size imut=1; imut <= N1MUT; ++imut ) {
+
+		char aa_imut = allowable_primary_mutations.at(imut);
+		Pose primary_mut_pose = pose_init;
+		zero_occ_for_deleted_atoms( primary_mut_pose, i, aa_imut);
+
+		for ( Size jmut=1; jmut <= N2MUT; ++jmut ) {
+
+			char aa_jmut = allowable_secondary_mutations.at(jmut);
+			Pose secondary_mut_pose = primary_mut_pose;
+			zero_occ_for_deleted_atoms( secondary_mut_pose, j, aa_jmut);
+
+			for ( Size kmut=1; kmut <= N3MUT; ++kmut ) {
+
+				char aa_kmut = allowable_tertiary_mutations.at(kmut);
+				Pose tertiary_mut_pose = secondary_mut_pose;
+				zero_occ_for_deleted_atoms( tertiary_mut_pose, k, aa_kmut);
+
+				if( MasterFilter::is_constel_valid( tertiary_mut_pose, cnl ) ) {
+
+					// print the atoms that would be removed by these mutations to
+					// a pdb file
+					ResMut mut1(aai, aa_imut, i_pdb_chain, i_pdb_number, i);
+					ResMut mut2(aaj, aa_jmut, j_pdb_chain, j_pdb_number, j);
+					ResMut mut3(aak, aa_kmut, k_pdb_chain, k_pdb_number, k);
+					out_triple_constel(mut1, mut2, mut3, -1, tertiary_mut_pose);
+				}
+			}
+		}
+	}
+}
+
+
+///
+/// @brief Outputs to file a constellation obtained from mutating a triple of
+/// 	residues.
+///
+/// @param[in] mut1 representation of the mutation of the first residue.
+/// @param[in] mut2 representation of the mutation of the second residue.
+/// @param[in] mut3 representation of the mutation of the third residue.
+/// @param[in] cslnum a number to identify the constellation.
+/// @param[in] ps Rosetta pose that all three residues belong to. In the pose,
+/// 	the occupancy of atoms in each residue is that AFTER the mutation.
+///
+/// @remarks
+/// 	1. The file name of the constellation has the following format,
+/// 		SIIIIEC_siiiiec_tjjjjfd.pdb, where:
+/// 	- S is the first residue's start amino acid type
+/// 	- IIII is a four-digit field indicating the first residue's number in the
+/// 		input PDB file
+/// 	- E is the first residue's end amino acid type
+/// 	- C is the first residue's chain in the input PDB file
+/// 	- s is the second residue's start amino acid type
+/// 	- iiii is a four-digit field indicating the second residue's number in the
+/// 		input PDB file
+/// 	- e is the second residue's end amino acid type
+/// 	- c is the second residue's chain in the input PDB file
+/// 	- t is the third residue's start amino acid type
+/// 	- jjjj is a four-digit field indicating the third residue's number in the
+/// 		input PDB file
+/// 	- f is the third residue's end amino acid type
+/// 	- d is the third residue's chain in the input PDB file
+///
+void out_triple_constel(ResMut const& mut1, ResMut const& mut2,
+	ResMut const& mut3, int const cslnum, Pose& ps) {
+
+	std::ostringstream outPDB_name;
+	outPDB_name.fill('0');
+
+	outPDB_name << "constel_" <<
+		mut1.saa << std::setw(4) << mut1.pdbn << mut1.eaa << mut1.cid << "_" <<
+		mut2.saa << std::setw(4) << mut2.pdbn << mut2.eaa << mut2.cid << "_" <<
+		mut3.saa << std::setw(4) << mut3.pdbn << mut3.eaa << mut3.cid << ".pdb";
+
+	utility::io::ozstream outPDB_stream;
+	outPDB_stream.open(outPDB_name.str(), std::ios::out);
+	outPDB_stream << "HEADER CONST NUM " << cslnum <<
+		" TARGET MUTATION: " << mut1.cid << ':' << mut1.saa << mut1.pdbn <<
+			mut1.eaa <<
+		"  SECONDARY_MUTATION: " << mut2.cid << ':' << mut2.saa << mut2.pdbn <<
+			mut2.eaa <<
+		"  TERTIARY_MUTATION: " << mut3.cid << ':' << mut3.saa << mut3.pdbn <<
+			mut3.eaa << std::endl;
+
+	core::io::pdb::FileData fd;
+	std::string data;
+	utility::vector1< core::Size > residues_to_print;
+	residues_to_print.push_back(mut1.psn);
+	residues_to_print.push_back(mut2.psn);
+	residues_to_print.push_back(mut3.psn);
+	fd.init_from_pose( ps, residues_to_print );
+	data = core::io::pdb::PDB_DReader::createPDBData(fd);
+	outPDB_stream.write( data.c_str(), data.size() );
+	outPDB_stream.close();
+	outPDB_stream.clear();
+}
+
 
 /// @brief common database for computation of hydrogen bonds
 core::scoring::hbonds::HBondDatabaseCOP HBondCommon::hb_database;

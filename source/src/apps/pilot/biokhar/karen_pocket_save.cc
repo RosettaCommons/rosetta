@@ -39,6 +39,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/Energies.hh>
@@ -175,7 +176,11 @@ int main( int argc, char * argv [] ) {
 	pose::Pose comparison_pose;
 	core::import_pose::pose_from_pdb( comparison_pose, comparison_pdb_name );
 	TR << "set comparison pdb"<< "    Number of residues: " << comparison_pose.total_residue() << std::endl;
-	std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(comparison_pose, resid_c);
+
+        std::string tag = "";
+        if (!option[ OptionKeys::out::output_tag ]().empty()){
+          tag = "." + option[ OptionKeys::out::output_tag ]();
+        }
 
   std::string const cfilename = option[ contact_list ];
   if ( cfilename != "" ){
@@ -204,6 +209,7 @@ int main( int argc, char * argv [] ) {
         sp_mover->apply( comparison_pose );
   }
 	// call function to make a grid around a target residue (seqpos)
+	std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(comparison_pose, resid_c);
 	protocols::pockets::PocketGrid comparison_pg( residues );
 	//call function to define the pocket
 	comparison_pg.autoexpanding_pocket_eval( residues, comparison_pose ) ;
@@ -216,10 +222,10 @@ int main( int argc, char * argv [] ) {
 
 	// dump to file, with name based on input pdb
 	std::stringstream out_fname;
-	out_fname << comparison_pdb_name << ".eggshell";
+	out_fname << comparison_pdb_name << tag << ".eggshell";
 	comparison_eggshell_grid.dump_eggshell( out_fname.str() );
 	std::stringstream outpdb_fname;
-	outpdb_fname << comparison_pdb_name << ".eggshell.pdb";
+	outpdb_fname << comparison_pdb_name << tag << ".eggshell.pdb";
 	comparison_eggshell_grid.write_eggshell_to_pdb( outpdb_fname.str() );
 
 	//utility::io::ozstream fout;

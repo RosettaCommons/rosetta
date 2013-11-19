@@ -1,3 +1,6 @@
+namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jumping:resi" );  } }
+namespace cmiles { namespace jumping { IntegerOptionKey const resj( "cmiles:jumping:resj" );  } }
+namespace james { BooleanOptionKey const james( "james" );  }
 namespace james { IntegerOptionKey const min_seqsep( "james:min_seqsep" );  }
 namespace james { StringVectorOptionKey const atom_names( "james:atom_names" );  }
 namespace james { RealVectorOptionKey const dist_thresholds( "james:dist_thresholds" );  }
@@ -726,4 +729,3 @@ namespace optE { RealOptionKey const exclude_badrep_ddGs( "optE:exclude_badrep_d
 namespace optE { BooleanOptionKey const pretend_no_ddG_repulsion( "optE:pretend_no_ddG_repulsion" );  }
 namespace optE { FileOptionKey const optimize_decoy_discrimination( "optE:optimize_decoy_discrimination" );  }
 namespace optE { StringOptionKey const normalize_decoy_score_spread( "optE:normalize_decoy_score_spread" );  }
-namespace optE { BooleanOptionKey const ramp_nativeness( "optE:ramp_nativeness" );  }

@@ -34,19 +34,24 @@
 //       3. "-pair_target_mutations AB_CD": extracts all constellations that can be obtained //
 //                                          with an (A->B, C->D) mutation combination, where //
 //                                          A, B, C, and D are one-letter amino acid codes.  //
+//       4. "-triple_target_resnum X -target_chain Y": extracts all constellations formed by //
+//                                                     triples of residues containing target //
+//                                                     residue X from chain Y.               //
+//       5. "-triple_all_res": extracts all constellations formed by all triples of residues.//
 //                                                                                           //
 //  ---> OPTIONAL CONSTRAINTS:                                                               //
 //       1. "-max_atom_sasa X", where X is the maximum allowed SASA (Solvent Accessible      //
 //          Surface Area) for an atom in a constellation. (See class FilterBySASA.)          //
-//                                                                                           //
-//       2. "-prox_ct_max X", where X is the maximum allowed distance, in Angstroms, from a  //
+//       2. "-interface", extracting only constellations that are shared by two or more      //
+//          chains.                                                                          //
+//       3. "-prox_ct_max X", where X is the maximum allowed distance, in Angstroms, from a  //
 //          constellation to the N- and C-termini of the chains it belongs to (see class     //
 //          FilterByProxTerm).                                                               //
-//       3. "-prox_tt_max X", where X is the maximum allowed distance, in Angstroms,         //
+//       4. "-prox_tt_max X", where X is the maximum allowed distance, in Angstroms,         //
 //          between the N- and C-termini of any chain that a constellation belongs to.       //
 //          This constraint gets activated only upon activation of the "-prox_ct_max"        //
 //          constraint (see class FilterByProxTerm).                                         //
-//       4. "-prox_nres X", where X is the number of residues forming the N- and C-termini   //
+//       5. "-prox_nres X", where X is the number of residues forming the N- and C-termini   //
 //          in the context of the application of the "-prox_ct_max"  and "-prox_tt_max"      //
 //          constraints.                                                                     //
 //                                                                                           //
@@ -68,10 +73,12 @@
 
 #include <devel/constel/PairConstelFilters.hh>
 #include <devel/constel/FilterByProxTerm.hh>
+#include <devel/constel/InterfaceFilter.hh>
 #include <devel/constel/FilterBySASA.hh>
 #include <devel/constel/MasterFilter.hh>
 #include <devel/constel/SearchOptions.hh>
 #include <devel/constel/Primitives.hh>
+#include <devel/constel/NeighTeller.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -95,11 +102,16 @@ static basic::Tracer TR( "apps.pilot.constel.main" );
 
 OPT_KEY( Boolean, pair_all_res )
 OPT_KEY( Integer, pair_target_resnum )
-OPT_KEY( String, pair_target_mutations)
+OPT_KEY( String, pair_target_mutations )
+OPT_KEY( Boolean, triple_all_res )
+OPT_KEY( Integer, triple_target_resnum )
 
 OPT_KEY( String, target_chain )
 
 OPT_KEY( Real, max_atom_sasa )
+
+OPT_KEY( Boolean, interface)
+
 OPT_KEY( Real, prox_ct_max )
 OPT_KEY( Real, prox_tt_max )
 OPT_KEY( Integer, prox_nres )
@@ -122,12 +134,16 @@ using core::Size;
 
 int main( int argc, char * argv [] )
 {
-	try{
-	NEW_OPT( pair_all_res, "Extract pair constellations for all residues", false  );
-	NEW_OPT( pair_target_resnum, "Extract pair constellations for a target residue", -1 );
-	NEW_OPT( pair_target_mutations, "Extract pair constellations for a target mutation pair", "**_**" );
+try {
+
+	NEW_OPT( pair_all_res, "Extracts pair-constellations for all residues", false  );
+	NEW_OPT( pair_target_resnum, "Extracts pair-constellations for a target residue", -1 );
+	NEW_OPT( pair_target_mutations, "Extracts pair-constellations for a target mutation pair", "**_**" );
+	NEW_OPT( triple_all_res, "Extracts triple-constellations for all residues", false );
+	NEW_OPT( triple_target_resnum, "Extracts triple-constellations for a target residue", -1 );
 	NEW_OPT( target_chain, "Chain the target residue is in", "A" );
 	NEW_OPT( max_atom_sasa, "Maximum allowed SASA for a constellation atom", DFT_MAX_ATOM_SASA );
+	NEW_OPT( interface, "Filter to keep only constellations shared by multiple chains", false);
 	NEW_OPT( prox_ct_max, "Maximum distance for the proximity of a constellation to a chain terminus", 0 );
 	NEW_OPT( prox_tt_max, "Maximum distance for the proximity betweein chain termini" , 10.0 );
 	NEW_OPT( prox_nres, "Number of residues forming a chain terminus in the context of proximity evaluation", 10 );
@@ -149,6 +165,9 @@ int main( int argc, char * argv [] )
 	// initialize constellation filters
 	FilterBySASA::init( option[ max_atom_sasa ], pose_init );
 	MasterFilter::addfilt(FilterBySASA::has_low_per_atom_sasa);
+
+	if(option[interface])
+		MasterFilter::addfilt(at_interface);
 
 	if(option[prox_ct_max]) {
 		FilterByProxTerm::init(pose_init, option[prox_ct_max], option[prox_tt_max],
@@ -174,12 +193,20 @@ int main( int argc, char * argv [] )
 	Size const TOTRES = pose_init.total_residue();
 
 	// option "-pair_all_res"
-	if( option[ pair_all_res ] )
-		for (Size j = 1; j <= TOTRES; ++j ) {
-			char cid = pose_init.pdb_info()->chain(j);
-			int pdbnum = pose_init.pdb_info()->number(j);
-			pair_constel_set(pdbnum, cid, pose_init);
+	if(option[pair_all_res]) {
+
+		using core::conformation::Residue;
+
+		NeighTeller nt(pose_init);
+		for(Size i=1; i<TOTRES; ++i ) {
+			Residue const& ri = pose_init.residue(i);
+			for(Size j=i+1; j<=TOTRES; ++j) {
+				Residue const& rj = pose_init.residue(j);
+				if(nt.isneigh(ri, rj, pose_init))
+					pair_constel_set_idx2(i, j, pose_init);
+			}
 		}
+	}
 
 	// option "-pair_target_resnum"
 	int pdbnum = option [ pair_target_resnum ];
@@ -189,7 +216,7 @@ int main( int argc, char * argv [] )
 		if ( tmp_chain.length() != 1 ) {
 			TR << "ERROR!! Chain ID should be one character" << std::endl;
 			exit(1);
-  		}
+		}
 		char cid = tmp_chain[0];
 
 		pair_constel_set(pdbnum, cid, pose_init);
@@ -207,9 +234,50 @@ int main( int argc, char * argv [] )
 		pair_constel_set(tgtmuts, pose_init);
 	}
 
+	// option "-triple_all_res"
+	if(option[triple_all_res]) {
+
+		utility::vector1<Size> cnl(3);
+
+		Size const UI = TOTRES-2;
+		Size const UJ = TOTRES-1;
+		Size const UK = TOTRES;
+
+		NeighTeller nt(pose_init);
+		for(Size i=1; i<=UI; ++i ) {
+			cnl[1] = i;
+			for(Size j=i+1; j<=UJ; ++j) {
+				cnl[2] = j;
+				for(Size k=j+1; k<=UK; ++k) {
+					cnl[3] = k;
+					if(nt.is_neigh_tree(cnl, pose_init))
+						triple_constel_set_idx3(i, j, k, pose_init);
+				}
+			}
+		}
+	}
+
+	// option "-triple_target_resnum"
+	pdbnum = option [ triple_target_resnum ];
+	if( pdbnum != -1) {
+
+		std::string const tmp_chain = option[ target_chain ];
+		if ( tmp_chain.length() != 1 ) {
+			TR << "ERROR!! Chain ID should be one character" << std::endl;
+			exit(1);
+		}
+		char cid = tmp_chain[0];
+
+		triple_constel_set(pdbnum, cid, pose_init);
+	}
+
 	TR << "TASK COMPLETED" << std::endl;
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-    }
-    return 0;
+
+	return 0;
+
+} // try
+catch ( utility::excn::EXCN_Base const & e ) {
+	std::cerr << "caught exception " << e.msg() << std::endl;
 }
+
+} // main
