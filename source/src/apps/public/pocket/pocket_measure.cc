@@ -167,8 +167,9 @@ main( int argc, char * argv [] )
     if ( pg.autoexpanding_pocket_eval( residues, input_pose ) ){
       constraint_pocket_score += pg.netTargetPocketVolume();
       largest_pocket_score += pg.netTargetPocketVolume();
-      std::cout<<pg.netTargetPocketVolume()<<std::endl;
-    }else std::cout<<"0\n";
+      //std::cout<<pg.netTargetPocketVolume()<<std::endl;
+    }
+	//else std::cout<<"0\n";
     if (i==0){
       if (option[ OptionKeys::pocket_grid::pocket_dump_pdbs ]()){
         pg.dumpGridToFile();

@@ -1,9 +1,0 @@
--input_protein_file input/1T4E.pdb
--input_ligand_file input/DIZ_0001.fa.pdb
--extra_res_fa input/DIZ.fa.params
--atom_radius_scale 0.9
--central_relax_pdb_num 61
--missing_point_weight 20
--extra_point_weight 20
--steric_weight 5
--pocket_sps
