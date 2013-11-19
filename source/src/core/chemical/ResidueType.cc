@@ -665,6 +665,16 @@ ResidueType::add_atom(
 		tr.Warning << "WARNING Elements set undefined." << std::endl;
 	}
 
+    //setup data for atoms
+	AtomType const & atype = (*atom_types_)[type];
+	graph_atom->is_polar_hydrogen(atype.is_polar_hydrogen());
+	graph_atom->is_hydrogen(atype.is_hydrogen());
+	graph_atom->is_haro(atype.is_haro());
+	graph_atom->is_acceptor(atype.is_acceptor());
+	graph_atom->is_virtual(atype.is_virtual());
+	graph_atom->has_orbitals(atype.atom_has_orbital());
+
+    
 
 	// allocate space for the new atom !!!!!!!!!!!!!!!!!!!!!!
 	// eg, in the atom/resconn map
@@ -1605,18 +1615,14 @@ ResidueType::update_derived_data()
 	all_sc_atoms_.clear();
 
 
-
 	for ( Size i=1; i<= natoms(); ++i ) {
-		AtomType const & type( (*atom_types_)[ graph_[ ordered_atoms_[i]].atom_type_index() ] );
-		//////////////////////////////////
-		// info derived from the atom_type
-		// hbond info
-		
-		if(type.atom_has_orbital()) atoms_with_orb_index_.push_back(i); //get atoms with orbitals on it
-		if(type.is_haro()) Haro_index_.push_back( i ); //get aromatic hydrogens
-		if(type.is_polar_hydrogen()) Hpol_index_.push_back( i ); //get polar hydrogens
+        Atom const & atom(graph_[ ordered_atoms_[i]]); //get the atom that we are working on
+		// info derived from the atom
+		if(atom.has_orbitals()) atoms_with_orb_index_.push_back(i); //get atoms with orbitals on it
+		if(atom.is_haro()) Haro_index_.push_back( i ); //get aromatic hydrogens
+		if(atom.is_polar_hydrogen()) Hpol_index_.push_back( i ); //get polar hydrogens
 
-		if ( type.is_acceptor() ) {
+		if ( atom.is_acceptor() ) {
 			accpt_pos_.push_back( i );
 			if ( i > n_backbone_heavyatoms_ ) {
 				accpt_pos_sc_.push_back( i );
@@ -1625,20 +1631,20 @@ ResidueType::update_derived_data()
 		}
 
 		//if ( type.is_polar_hydrogen() &&   (std::abs( graph_[ordered_atoms_[ natoms() ]].charge() ) > 1.0e-3) ) {
-		if ( type.is_polar_hydrogen() &&   (!type.is_virtual() ) ) {
+		if ( atom.is_polar_hydrogen() &&   (!atom.is_virtual() ) ) {
 			Hpos_polar_.push_back( i );
 			if ( i >= first_sidechain_hydrogen_ ) {
 				Hpos_polar_sc_.push_back( i );
 			}
 		}
 
-		if ( type.is_hydrogen() && ( !type.is_polar_hydrogen() ) ){
+		if ( atom.is_hydrogen() && ( !atom.is_polar_hydrogen() ) ){
 			Hpos_apolar_.push_back( i );
 		}
 
 		// Which atoms are backbone and which are sidechain; sometimes nice to just get
 		// lists instead of iterating over the subranges.
-		if ( type.is_hydrogen() ) {
+		if ( atom.is_hydrogen() ) {
 			if ( i < first_sidechain_hydrogen_ ) {
 				all_bb_atoms_.push_back( i );
 			} else {
@@ -1657,20 +1663,14 @@ ResidueType::update_derived_data()
     // setup the hydrogen information
     for(Size Aindex=1; Aindex<= ordered_atoms_.size(); ++Aindex){
         graph_[ordered_atoms_[Aindex]].heavyatom_has_polar_hydrogens(0);
-        graph_[ordered_atoms_[Aindex]].heavyatom_is_an_acceptor(0);
-        graph_[ordered_atoms_[Aindex]].atom_is_polar_hydrogen(0);
     }
 
     // donor heavy atoms, acceptor heavy atoms, donor hydrogen atoms setup.
 	// Must be executed after Hpos_polar_ and accpt_pos_ have been updated.
 	for ( Size ii = 1; ii <= Hpos_polar_.size(); ++ii ) {
 		Size hind = Hpos_polar_[ ii ];
-        graph_[ordered_atoms_[ii]].atom_is_polar_hydrogen(1);
 		Size base = atom_base(hind);
         graph_[ordered_atoms_[base]].heavyatom_has_polar_hydrogens(1);
-	}
-	for ( Size ii = 1; ii <= accpt_pos_.size(); ++ii ) {
-        graph_[ordered_atoms_[accpt_pos_[ ii ]]].heavyatom_is_an_acceptor(1);
 	}
 
 

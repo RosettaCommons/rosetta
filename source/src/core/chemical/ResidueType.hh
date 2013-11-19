@@ -396,13 +396,13 @@ public:
 	bool
 	heavyatom_is_an_acceptor( Size atomno ) const {
 		assert( finalized_ );
-		return graph_[ordered_atoms_[atomno]].heavyatom_is_an_acceptor();
+		return graph_[ordered_atoms_[atomno]].is_acceptor();
 	}
 
 	bool
 	atom_is_polar_hydrogen( Size atomno ) const {
 		assert( finalized_ );
-		return graph_[ordered_atoms_[atomno]].atom_is_polar_hydrogen();
+		return graph_[ordered_atoms_[atomno]].is_polar_hydrogen();
 	}
 
 	/// @brief indices of all mainchain atoms
