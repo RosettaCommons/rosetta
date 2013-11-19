@@ -906,7 +906,8 @@ ConstraintSet::show_violations(
 ) const {
 	using namespace core::scoring::constraints;
 	Size total_viol=0;
-	setup_for_scoring( pose, ScoreFunction() ); //make sure the constraints are in good shape. (eg. named->numbers)
+	core::scoring::ScoreFunction empty_scorefxn;
+	setup_for_scoring( pose, empty_scorefxn ); //make sure the constraints are in good shape. (eg. named->numbers)
 	// Intra-Residue
 	if ( intra_residue_constraints_.size() ) {
 		if ( verbose_level>0) out << "IntraResidueConstraints: ... ";
