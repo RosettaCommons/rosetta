@@ -93,8 +93,8 @@ RepackMinimize::RepackMinimize(
 	target_residues_ = target_residues;
 	interface_distance_cutoff_ = interface_distance_cutoff;
 	if (symmetry_ ) {
-		if( scorefxn_repack ) scorefxn_repack_ = new core::scoring::symmetry::SymmetricScoreFunction( *scorefxn_repack );
-		if( scorefxn_minimize ) scorefxn_minimize_ = new core::scoring::symmetry::SymmetricScoreFunction( *scorefxn_minimize );
+		if( scorefxn_repack ) scorefxn_repack_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_repack );
+		if( scorefxn_minimize ) scorefxn_minimize_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_minimize );
 	} else {
 		if( scorefxn_repack ) scorefxn_repack_ = core::scoring::symmetry::asymmetrize_scorefunction( *scorefxn_repack );
 		if( scorefxn_minimize ) scorefxn_minimize_ = core::scoring::symmetry::asymmetrize_scorefunction( *scorefxn_minimize );

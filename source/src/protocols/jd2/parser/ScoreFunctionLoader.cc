@@ -150,7 +150,7 @@ void ScoreFunctionLoader::load_data(
 		//fpd should we symmetrize scorefunction?
 		bool const scorefxn_symm( scorefxn_tag->getOption<bool>( "symmetric", 0 ) );
 		if (scorefxn_symm) {
-			in_scorefxn = ScoreFunctionOP( new SymmetricScoreFunction( in_scorefxn ) );
+			in_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *in_scorefxn );
 			TR<<"symmetrizing "<<scorefxn_name<<'\n';
 		}
 

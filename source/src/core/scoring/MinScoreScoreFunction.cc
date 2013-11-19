@@ -24,6 +24,7 @@
 #include <core/scoring/Energies.hh>
 #include <basic/Tracer.hh>
 
+#include <limits>
 static basic::Tracer tr("core.scoring.MinScoreScoreFunction");
 
 namespace core {
@@ -31,49 +32,45 @@ namespace scoring {
 
 ///////////////////////////////////////////////////////////////////////////////
 MinScoreScoreFunction::MinScoreScoreFunction():
-	ScoreFunction()
+	ScoreFunction(),
+	// RM 2013-11-18: Make it work like regular scorefunction if min not specified.
+	min_score_( -1 * std::numeric_limits< core::Real >::max() )
 	{}
 
 ///////////////////////////////////////////////////////////////////////////////
 ScoreFunctionOP
 MinScoreScoreFunction::clone() const
 {
-	return new MinScoreScoreFunction( *this );
+	MinScoreScoreFunctionOP newscorefxn( new MinScoreScoreFunction );
+	newscorefxn->assign( *this );
+	return newscorefxn;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-MinScoreScoreFunction &
-MinScoreScoreFunction::operator=( MinScoreScoreFunction const & src )
+void
+MinScoreScoreFunction::assign( ScoreFunction const & src )
 {
-	ScoreFunction::operator=( src );
-	return *this;
+	ScoreFunction::assign( src );
+	min_score_ = -1 * std::numeric_limits< core::Real >::max();
+}
+
+void
+MinScoreScoreFunction::assign( MinScoreScoreFunction const & src )
+{
+	ScoreFunction::assign( src );
+	// MinScoreScoreFunction specific values
+	min_score_ = src.min_score_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-MinScoreScoreFunction::MinScoreScoreFunction( MinScoreScoreFunction const & src ):
-	ScoreFunction( src ),
-	min_score_( src.min_score_ )
-{}
 
-MinScoreScoreFunction::MinScoreScoreFunction( ScoreFunction const & src, core::Real min_score ):
-  ScoreFunction( src )
+MinScoreScoreFunction::MinScoreScoreFunction( ScoreFunction const & src, core::Real min_score )
 {
+	ScoreFunction::assign( src );
 	min_score_ = min_score;
 }
 
 MinScoreScoreFunction::MinScoreScoreFunction( core::Real min_score )
-{
-	min_score_ = min_score;
-}
-
-MinScoreScoreFunction::MinScoreScoreFunction( ScoreFunctionOP src, core::Real const min_score ):
-  ScoreFunction( *src )
-{
-	min_score_ = min_score;
-}
-
-MinScoreScoreFunction::MinScoreScoreFunction( ScoreFunctionCOP src, core::Real const min_score ):
-  ScoreFunction( *src )
 {
 	min_score_ = min_score;
 }

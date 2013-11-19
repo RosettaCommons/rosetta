@@ -46,18 +46,26 @@ public:
 	/// ctor
 	MinScoreScoreFunction();
 
+private:
+
 	MinScoreScoreFunction &
 	operator=( MinScoreScoreFunction const & );
 
 	MinScoreScoreFunction( MinScoreScoreFunction const & );
 
+public:
+
 	MinScoreScoreFunction( ScoreFunction const & src, core::Real const );
 
 	MinScoreScoreFunction( core::Real const );
 
-	MinScoreScoreFunction( ScoreFunctionOP src, core::Real const );
+	///@brief INTERNAL USE ONLY
+	virtual void
+	assign( ScoreFunction const & src);
 
-	MinScoreScoreFunction( ScoreFunctionCOP src, core::Real const );
+	///@brief INTERNAL USE ONLY
+	virtual void
+	assign( MinScoreScoreFunction const & src);
 
 	ScoreFunctionOP clone() const;
 

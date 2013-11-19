@@ -46,11 +46,11 @@ public:
 		core::kinematics::MoveMap const & move_map
 	) :
 		pose_( new core::pose::Pose( pose )),
-		sfxn_( new core::scoring::symmetry::SymmetricScoreFunction( sfxn ) ),
+		sfxn_( core::scoring::symmetry::symmetrize_scorefunction( sfxn ) ),
 		move_map_( new core::kinematics::MoveMap( move_map )),
 		nonzero_deriv_only_( false )
 	{}
-	inline void set_score_function( core::scoring::symmetry::SymmetricScoreFunction const & sfxn ) { sfxn_ = new core::scoring::symmetry::SymmetricScoreFunction( sfxn ); }
+	inline void set_score_function( core::scoring::symmetry::SymmetricScoreFunction const & sfxn ) { sfxn_ = core::scoring::symmetry::symmetrize_scorefunction(sfxn); }
 	inline void set_pose( core::pose::Pose const & p ) { pose_ = new core::pose::Pose( p ); }
 	inline void set_movemap( core::kinematics::MoveMap const & mm ) { move_map_ = new core::kinematics::MoveMap( mm ); }
 	inline void set_nonzero_deriv_only( bool setting ) { nonzero_deriv_only_ = setting; }

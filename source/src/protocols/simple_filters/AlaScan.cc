@@ -84,7 +84,7 @@ AlaScan::AlaScan( bool const chain1, bool const chain2, core::Size const repeats
 		symmetry_( symmetry ),
 		repack_( true )
 {
-	if ( symmetry_ ) scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction( scorefxn );
+	if ( symmetry_ ) scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn );
 	else scorefxn_ = scorefxn->clone();
 }
 
@@ -116,7 +116,7 @@ AlaScan::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap
 
 	if ( symmetry_ ) {
 		using namespace core::scoring::symmetry;
-		scorefxn_ = new SymmetricScoreFunction( * protocols::rosetta_scripts::parse_score_function( tag, data ) );
+		scorefxn_ = symmetrize_scorefunction( *protocols::rosetta_scripts::parse_score_function( tag, data ) );
 		TR<<"Symmetric AlaScan with distance threshold of "<<distance_threshold_<<" Ang "<<". jump="<<jump_<<" partner1="<<chain1_<<", partner2="<<chain2_<<" using "<<repeats_<<" repeats."<<std::endl;
 		return;
 	}

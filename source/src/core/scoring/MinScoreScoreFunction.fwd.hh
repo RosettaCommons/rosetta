@@ -10,20 +10,19 @@
 // (C) 199x-2007 University of North Carolina, Chapel Hill
 // (C) 199x-2007 Vanderbilt University
 
-/// @file   core/scoring/symmetry/DockingScoreFunction.fwd.hh
-/// @brief  core::scoring::symmetry::DockingScoreFunction forward declarations
+/// @file   core/scoring/MinScoreScoreFunction.fwd.hh
+/// @brief  core::scoring::MinScoreScoreFunction forward declarations
 /// @author Ingemar Andre
 
 
-#ifndef INCLUDED_core_scoring_symmetry_MinScoreScoreFunction_fwd_hh
-#define INCLUDED_core_scoring_symmetry_MinScoreScoreFunction_fwd_hh
+#ifndef INCLUDED_core_scoring_MinScoreScoreFunction_fwd_hh
+#define INCLUDED_core_scoring_MinScoreScoreFunction_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 
 namespace core {
 namespace scoring {
-namespace symmetry {
 
 
 // Forward
@@ -32,9 +31,8 @@ class MinScoreScoreFunction;
 typedef utility::pointer::owning_ptr< MinScoreScoreFunction > MinScoreScoreFunctionOP;
 typedef utility::pointer::owning_ptr< MinScoreScoreFunction const > MinScoreScoreFunctionCOP;
 
-} // symmetry
 } // namespace scoring
 } // namespace core
 
 
-#endif // INCLUDED_core_scoring_symmetry_MinScoreScoreFunction_FWD_HH
+#endif // INCLUDED_core_scoring_MinScoreScoreFunction_FWD_HH

@@ -45,18 +45,22 @@ public:
 	/// ctor
 	DockingScoreFunction();
 
+private:
+	///@brief Copy constructor and assignment operators private for *ScoreFunctions as they discard subtype info.
 	DockingScoreFunction &
 	operator=( DockingScoreFunction const & );
 
 	DockingScoreFunction( DockingScoreFunction const & );
 
-	DockingScoreFunction( ScoreFunction const & src );
+public:
 
-	DockingScoreFunction( ScoreFunctionOP src );
+	///@brief INTERNAL USE ONLY
+	virtual void assign( ScoreFunction const & src);
 
-	DockingScoreFunction( ScoreFunctionCOP src );
+	///@brief INTERNAL USE ONLY
+	virtual void assign( DockingScoreFunction const & src);
 
-	ScoreFunctionOP clone() const;
+	virtual ScoreFunctionOP clone() const;
 
   /////////////////////////////////////////////////////////////////////////////
   // score

@@ -106,7 +106,7 @@ pick_design_position(core::pose::Pose const & pose, Size nsub_bblock, Real conta
 	std::set<Size> design_pos;
 	Real bblock_dist_sq = bblock_dist * bblock_dist;
 	// score the pose so the we check for clashes
-	ScoreFunctionOP sf = new  core::scoring::symmetry::SymmetricScoreFunction( getScoreFunction() );
+	ScoreFunctionOP sf = core::scoring::symmetry::symmetrize_scorefunction( *getScoreFunction() );
 	core::scoring::methods::EnergyMethodOptions eo = sf->energy_method_options();
 	eo.exclude_monomer_fa_elec(true);
 	sf->set_energy_method_options(eo);
@@ -243,7 +243,7 @@ get_neighbor_subs (Pose const &pose_in, utility::vector1<Size> intra_subs) {
 
 
 
-utility::vector1<Size> 
+utility::vector1<Size>
 get_neighbor_sub_resis (Pose const &pose_in, Real contact_dist, std::string sym_dof_name) {
 	using namespace basic;
 	using namespace core::conformation::symmetry;
@@ -254,7 +254,7 @@ get_neighbor_sub_resis (Pose const &pose_in, Real contact_dist, std::string sym_
 	Size monomer_lower_bound = 0;
 	Size monomer_upper_bound = 0;
 	utility::vector1<char> subs;
-	utility::vector1<Size> resis; 
+	utility::vector1<Size> resis;
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 	Real const contact_dist_sq = contact_dist * contact_dist;
 
@@ -273,7 +273,7 @@ get_neighbor_sub_resis (Pose const &pose_in, Real contact_dist, std::string sym_
 	subs.push_back(pose.residue(monomer_lower_bound).chain());
 	for (Size i=monomer_lower_bound; i<=monomer_upper_bound; ++i) {
 		for (Size j=1; j<=symm_info->num_total_residues_without_pseudo(); j++) {
-			if( (j >= monomer_lower_bound) && (j <= monomer_upper_bound) ) continue; 
+			if( (j >= monomer_lower_bound) && (j <= monomer_upper_bound) ) continue;
 			if(find(subs.begin(),subs.end(), pose.residue(j).chain() )!=subs.end()) continue;
 			std::string atom_i = (pose.residue(i).name3() == "GLY") ? "CA" : "CB";
 			std::string atom_j = (pose.residue(j).name3() == "GLY") ? "CA" : "CB";

@@ -139,7 +139,7 @@ main( int argc, char * argv [] ) {
 	sfxn = core::scoring::getScoreFunction();
 	if ( option[ basic::options::OptionKeys::symmetry::symmetric_rmsd ]() ) {
 		core::scoring::ScoreFunctionOP sfxn_sym =
-						new core::scoring::symmetry::SymmetricScoreFunction( *sfxn );
+						core::scoring::symmetry::symmetrize_scorefunction( *sfxn );
 		sfxn = sfxn_sym;
 	}
 
@@ -287,7 +287,7 @@ main( int argc, char * argv [] ) {
 						<< "s\n  Total: " << time_total - time_start
 						<< std::endl;
 
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
+	 } catch ( utility::excn::EXCN_Base const & e ) {
 		 std::cout << "caught exception " << e.msg() << std::endl;
 	}
 	return 0;

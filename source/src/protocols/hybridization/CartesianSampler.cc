@@ -590,7 +590,7 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 			myscore->set_weight( core::scoring::vdw, 1.0 );
 
 		if (core::pose::symmetry::is_symmetric(pose) )
-			myscore = new core::scoring::symmetry::SymmetricScoreFunction(*myscore);
+			myscore = core::scoring::symmetry::symmetrize_scorefunction(*myscore);
 
 		utility::vector1<core::Real> per_resCC;
 		per_resCC.resize(nres);
@@ -638,7 +638,7 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 		core::scoring::ScoreFunctionOP myscore = new core::scoring::ScoreFunction();
 		myscore->set_weight( core::scoring::rama, 1.0 );
 		if (core::pose::symmetry::is_symmetric(pose) ) {
-			myscore = new core::scoring::symmetry::SymmetricScoreFunction(*myscore);
+			myscore = core::scoring::symmetry::symmetrize_scorefunction(*myscore);
 		}
 
 		Energies & energies( pose.energies() );
@@ -730,8 +730,8 @@ CartesianSampler::apply( Pose & pose ) {
 	scorefxn_xray_ = new core::scoring::ScoreFunction();
 	scorefxn_xray_->set_weight( core::scoring::xtal_ml, 100.0 );
 	if (core::pose::symmetry::is_symmetric(pose) ) {
-		scorefxn_dens_ = new core::scoring::symmetry::SymmetricScoreFunction(*scorefxn_dens_);
-		scorefxn_xray_ = new core::scoring::symmetry::SymmetricScoreFunction(*scorefxn_xray_);
+		scorefxn_dens_ = core::scoring::symmetry::symmetrize_scorefunction(*scorefxn_dens_);
+		scorefxn_xray_ = core::scoring::symmetry::symmetrize_scorefunction(*scorefxn_xray_);
 	}
 
 	// see if the pose has NCS

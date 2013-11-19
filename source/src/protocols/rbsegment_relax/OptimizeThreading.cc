@@ -106,8 +106,8 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 	core::Size nres = hybridization::get_num_residues_nonvirt( pose );
 	while (!pose.residue_type(nres).is_protein()) --nres;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
-		scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction( *scorefxn_ );
-		scorefxn_sampling_ = new core::scoring::symmetry::SymmetricScoreFunction( *scorefxn_sampling_ );
+		scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_ );
+		scorefxn_sampling_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_sampling_ );
 	}
 
 	// see if the pose has NCS

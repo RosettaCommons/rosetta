@@ -122,7 +122,7 @@ public:
 
 	virtual ~ScoreFunction();
 
-protected:
+private:
 	///@brief The ScoreFunction copy constructor is explicitly private
 	/// as using it to make a copy is just too attractive, but discards subclass information.
 	/// Use ScoreFunction::clone() instead.
@@ -135,7 +135,17 @@ protected:
 	operator=( ScoreFunction const & );
 
 public:
+  ///@brief NOT FOR GENERAL USE
+	/// Copy the information about src into the current score function.
+	/// There are deep interactions with subclasses,
+	/// (the subclass information doesn't necessarily get copied)
+	/// so this is primarily for advanced scorefunction manipulation.
+	/// Normal usage should just use clone() and replace the OP.
+	virtual void
+	assign( ScoreFunction const & src);
 
+	///@brief Create a copy of the scorefunction
+	/// Virtual to keep subclass information.
 	virtual ScoreFunctionOP clone() const;
 
   ///@brief If you *want* to discard subclass information, the following function is availible

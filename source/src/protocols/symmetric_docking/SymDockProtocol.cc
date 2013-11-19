@@ -382,7 +382,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 
 	//MonteCarloOP mc;
 		if ( !local_refine_ ) {
-			docking_scorefxn = new core::scoring::symmetry::SymmetricScoreFunction( *docking_score_low_ ) ;
+			docking_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *docking_score_low_ ) ;
 
 			// first convert to centroid mode
 			to_centroid.apply( pose );
@@ -422,7 +422,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 		// only do this is full atom is true
 		if ( fullatom_ && passed_lowres_filter_ ) {
 
-			docking_scorefxn =  new core::scoring::symmetry::SymmetricScoreFunction( *docking_score_high_ ) ;
+			docking_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *docking_score_high_ ) ;
 
 			if (!local_refine_ || !pose.is_fullatom()){
 				to_all_atom.apply( pose );
@@ -641,11 +641,11 @@ SymDockProtocol::calc_interaction_energy( core::pose::Pose & pose ){
 
 	//Don't use patches for computer Isc, problematic with constraints for unbound
 	if ( fullatom_ ){
-		docking_scorefxn = new core::scoring::symmetry::SymmetricScoreFunction( *docking_score_pack_ ) ;
+		docking_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *docking_score_pack_ ) ;
     docking_scorefxn->set_weight(core::scoring::atom_pair_constraint, 0.0);
 		//docking_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "docking" );
 	} else {
-		docking_scorefxn = new core::scoring::symmetry::SymmetricScoreFunction( *docking_score_low_ ) ;
+		docking_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *docking_score_low_ ) ;
     docking_scorefxn->set_weight(core::scoring::atom_pair_constraint, 0.0);
 		//docking_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" );
 	}
@@ -717,14 +717,14 @@ SymDockProtocol::score_only( core::pose::Pose & pose )
 	using namespace scoring;
 	using namespace moves;
 	if ( fullatom_ ) {
-		core::scoring::ScoreFunctionOP high_score = new core::scoring::symmetry::SymmetricScoreFunction( *docking_score_high_ );
+		core::scoring::ScoreFunctionOP high_score = core::scoring::symmetry::symmetrize_scorefunction( *docking_score_high_ );
 		simple_moves::ScoreMover score_and_exit( high_score ) ;
 		score_and_exit.insert_rms( calc_rms( pose) );
 		score_and_exit.apply( pose );
 	} else {
 		simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 		to_centroid.apply( pose );
-		core::scoring::ScoreFunctionOP low_score = new core::scoring::symmetry::SymmetricScoreFunction( *docking_score_low_ );
+		core::scoring::ScoreFunctionOP low_score = core::scoring::symmetry::symmetrize_scorefunction( *docking_score_low_ );
 		simple_moves::ScoreMover score_and_exit( low_score );
 		score_and_exit.insert_rms( calc_rms( pose ) );
 		score_and_exit.apply( pose );

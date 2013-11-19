@@ -445,7 +445,7 @@ ddG::calculate( pose::Pose const & pose_original )
 
 	if (core::pose::symmetry::is_symmetric( pose )) {
 		// Except for score function conversion, symmetry is now handled inline (pack_rotamers does autodispatch).
-		scorefxn_ = new scoring::symmetry::SymmetricScoreFunction( scorefxn_ );
+		scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_ );
 	}
 
 	//---------------------------------

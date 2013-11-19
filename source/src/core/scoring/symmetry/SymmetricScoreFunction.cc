@@ -76,33 +76,27 @@ SymmetricScoreFunction::SymmetricScoreFunction():
 ScoreFunctionOP
 SymmetricScoreFunction::clone() const
 {
-	return new SymmetricScoreFunction( *this );
+	SymmetricScoreFunctionOP newscorefxn( new SymmetricScoreFunction );
+	newscorefxn->assign( *this );
+	return newscorefxn;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-SymmetricScoreFunction &
-SymmetricScoreFunction::operator=( SymmetricScoreFunction const & src )
+
+///@detail INTERNAL USE ONLY
+void
+SymmetricScoreFunction::assign( SymmetricScoreFunction const & src )
 {
-	ScoreFunction::operator=( src );
-	return *this;
+	ScoreFunction::assign( src );
+	// Add symmetry specific copy items here.
 }
 
-///////////////////////////////////////////////////////////////////////////////
-SymmetricScoreFunction::SymmetricScoreFunction( SymmetricScoreFunction const & src ):
-	ScoreFunction( src )
-{}
-
-SymmetricScoreFunction::SymmetricScoreFunction( ScoreFunction const & src ):
-  ScoreFunction( src )
-{}
-
-SymmetricScoreFunction::SymmetricScoreFunction( ScoreFunctionOP src ):
-  ScoreFunction( *src )
-{}
-
-SymmetricScoreFunction::SymmetricScoreFunction( ScoreFunctionCOP src ):
-  ScoreFunction( *src )
-{}
+///@detail INTERNAL USE ONLY
+void
+SymmetricScoreFunction::assign( ScoreFunction const & src )
+{
+	ScoreFunction::assign( src );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -353,8 +353,8 @@ DesignRepackMover::parse_my_tag( utility::tag::TagCOP const tag, basic::datacach
 
 	if (symmetry_) {
 		using namespace core::scoring::symmetry;
-		scorefxn_repack_ = new SymmetricScoreFunction( * protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", data ) );
-		scorefxn_minimize_ = new SymmetricScoreFunction( * protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", data ) );
+		scorefxn_repack_ = core::scoring::symmetry::symmetrize_scorefunction( *protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", data ) );
+		scorefxn_minimize_ = core::scoring::symmetry::symmetrize_scorefunction( * protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", data ) );
 	} else {
 		using namespace core::scoring;
 		scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", data )->clone();

@@ -230,7 +230,7 @@ public:
 		fa_metal_scorefxn_->set_weight( angle_constraint, 1.0 );
 
 		//SCOREFUNCTION --> make symmetric
-		fa_metal_sym_scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction( *fa_metal_scorefxn_ );
+		fa_metal_sym_scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *fa_metal_scorefxn_ );
 		TR << "fullatom + metal scorefunction: " << *fa_metal_sym_scorefxn_ << std::endl;
 
 

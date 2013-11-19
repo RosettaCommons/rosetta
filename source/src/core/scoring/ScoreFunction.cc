@@ -114,7 +114,8 @@ ScoreFunction::~ScoreFunction() {}
 ScoreFunctionOP
 ScoreFunction::clone() const
 {
-	ScoreFunctionOP new_score_function( new ScoreFunction( *this ) );
+	ScoreFunctionOP new_score_function( new ScoreFunction );
+	new_score_function->assign(*this);
 	return new_score_function;
 }
 
@@ -122,7 +123,8 @@ ScoreFunction::clone() const
 ScoreFunctionOP
 ScoreFunction::clone_as_base_class() const
 {
-	ScoreFunctionOP new_score_function( new ScoreFunction( *this ) );
+	ScoreFunctionOP new_score_function( new ScoreFunction );
+	new_score_function->assign(*this);
 	return new_score_function;
 }
 
@@ -426,12 +428,13 @@ ScoreFunction::set_method_weights(
 	score_function_info_current_ = false;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// This method is private - not for general use (discards subclass information)
-ScoreFunction &
-ScoreFunction::operator=( ScoreFunction const & src )
+////////////////////////////////////////////////
+// Don't use this function unless you're mucking with ScoreFunction implementations
+// It may discard subtype information.
+void
+ScoreFunction::assign( ScoreFunction const & src )
 {
-	if ( this == &src ) return *this;
+	if ( this == &src ) return;
 
 	// copy the weights
 	weights_ = src.weights_;
@@ -454,18 +457,7 @@ ScoreFunction::operator=( ScoreFunction const & src )
 	score_function_info_ = new ScoreFunctionInfo( *src.score_function_info_ );
 
 	any_intrares_energies_ = src.any_intrares_energies_;
-
-	return *this;
 }
-
-///////////////////////////////////////////////////////////////////////////////
-// This method is private - not for general use (discards subclass information)
-ScoreFunction::ScoreFunction( ScoreFunction const & src ):
-	ReferenceCount()
-{
-	*this = src;
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////
 void

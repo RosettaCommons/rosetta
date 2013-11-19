@@ -60,7 +60,7 @@ public:
 	//setters
 //			void set_scorefunction(core::scoring::ScoreFunction & s);
 
-	core::scoring::symmetry::SymmetricScoreFunction
+	void
 	reduce_fa_rep(float fraction_fa_rep, core::scoring::ScoreFunction & s);
 
 	void minimize_with_constraints(core::pose::Pose & p,

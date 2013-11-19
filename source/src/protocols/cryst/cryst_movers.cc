@@ -234,8 +234,8 @@ void SetCrystWeightMover::apply( core::pose::Pose & pose ) {
 			core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 			// symmetrize scorefunct & movemap
-			rosetta_scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( *rosetta_scorefxn ) );
-			xtal_scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( *xtal_scorefxn ) );
+			rosetta_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *rosetta_scorefxn );
+			xtal_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *xtal_scorefxn );
 			core::pose::symmetry::make_symmetric_movemap( pose, move_map );
 		}
 
@@ -526,7 +526,7 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 	//fpd if the pose is symmetric use a symmetric scorefunction
 	if (core::pose::symmetry::is_symmetric(pose))
-		scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( scorefxn ) );
+		scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn );
 	core::Real score = (*scorefxn)(pose);
 	core::pose::RemarkInfo remark;
 

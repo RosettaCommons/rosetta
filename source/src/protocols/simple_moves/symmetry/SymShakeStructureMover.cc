@@ -160,11 +160,10 @@ namespace symmetry {
 		return "SymShakeStructureMover";
 	}
 
-    core::scoring::symmetry::SymmetricScoreFunction
-    SymShakeStructureMover::reduce_fa_rep(float fraction_fa_rep, core::scoring::ScoreFunction & s){
+		void
+		SymShakeStructureMover::reduce_fa_rep(float fraction_fa_rep, core::scoring::ScoreFunction & s){
       s.set_weight( core::scoring::score_type_from_name("fa_rep"),
                     s.get_weight(core::scoring::score_type_from_name("fa_rep"))*fraction_fa_rep);
-      return s;
     }
 
     void
@@ -224,12 +223,12 @@ namespace symmetry {
 			core::pose::symmetry::make_symmetric_movemap( p, *mm );
 
       if( get_ramp_fa_rep() ){
-        core::scoring::symmetry::SymmetricScoreFunction one_tenth_orig(s);
-        reduce_fa_rep(0.1,one_tenth_orig);
-        min_struc.run(p,*mm,one_tenth_orig,options);
-        core::scoring::symmetry::SymmetricScoreFunction one_third_orig(s);
-        reduce_fa_rep(0.33,one_third_orig);
-        min_struc.run(p,*mm,one_third_orig,options);
+        core::scoring::symmetry::SymmetricScoreFunctionOP one_tenth_orig( core::scoring::symmetry::symmetrize_scorefunction(s) );
+        reduce_fa_rep(0.1,*one_tenth_orig);
+        min_struc.run(p,*mm,*one_tenth_orig,options);
+        core::scoring::symmetry::SymmetricScoreFunctionOP one_third_orig( core::scoring::symmetry::symmetrize_scorefunction(s) );
+        reduce_fa_rep(0.33,*one_third_orig);
+        min_struc.run(p,*mm,*one_third_orig,options);
       }
 			min_struc.run(p,*mm,s,options);
 

@@ -139,7 +139,7 @@ void test_save_and_restore()
 	// test score13 difference
 	core::scoring::ScoreFunctionOP scorefxn13_sym =
 				core::scoring::ScoreFunctionFactory::create_score_function( "score13_env_hb" );
-  scorefxn13_sym = new core::scoring::symmetry::SymmetricScoreFunction(*scorefxn13_sym);
+  scorefxn13_sym = core::scoring::symmetry::symmetrize_scorefunction(*scorefxn13_sym);
 	Real score13_ref = (*scorefxn13_sym)(ref_pose);
 	Real score13_restored = (*scorefxn13_sym)(restored_pose);
 	Real score13_del = std::fabs( score13_restored - score13_ref );

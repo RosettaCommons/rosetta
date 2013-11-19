@@ -275,7 +275,7 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* =""
 	// minimization
 	core::scoring::ScoreFunctionOP scorefxn_dens = new core::scoring::ScoreFunction();
 	if ( core::pose::symmetry::is_symmetric(pose) )
-		scorefxn_dens = new core::scoring::symmetry::SymmetricScoreFunction( scorefxn_dens );
+		scorefxn_dens = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_dens );
 	core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *scorefxn_dens );
 
 	core::scoring::ScoreFunctionOP scorefxn_input = core::scoring::getScoreFunction();
@@ -357,7 +357,7 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* =""
  		TR << std::endl;
 
 		if (isSymm) {
-			core::scoring::ScoreFunctionOP symmscorefxn_dens = new core::scoring::symmetry::SymmetricScoreFunction( scorefxn_dens );
+			core::scoring::ScoreFunctionOP symmscorefxn_dens = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_dens );
 
 			core::pose::symmetry::make_symmetric_movemap( pose, *rbmm );
 			moves::MoverOP min_mover = new simple_moves::symmetry::SymMinMover( rbmm, symmscorefxn_dens,  "dfpmin_armijo_nonmonotone", 1e-5, true );

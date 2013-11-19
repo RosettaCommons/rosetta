@@ -177,8 +177,8 @@ SymDockingInitialPerturbation::get_name() const {
 	{
 
 		protocols::moves::Mover::type( "SymDockingSlideIntoContact" );
-		core::scoring::symmetry::SymmetricScoreFunction scorefxn_sym ( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::CENTROID_WTS, core::scoring::DOCK_LOW_PATCH ) );
-		scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction( scorefxn_sym );
+		core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::CENTROID_WTS, core::scoring::DOCK_LOW_PATCH ) );
+		scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn );
 	}
 
 	SymDockingSlideIntoContact::~SymDockingSlideIntoContact(){}
@@ -317,8 +317,8 @@ SymmetrySlider::SymmetrySlider(
 	SlideThreshold_ = "AUTOMATIC";
 
 	if ( SlideCriteriaType_ == CEN_DOCK_SCORE ){
-		core::scoring::symmetry::SymmetricScoreFunction scorefxn_sym ( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::CENTROID_WTS, core::scoring::DOCK_LOW_PATCH ) );
-		scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction( scorefxn_sym );
+		core::scoring::ScoreFunctionOP scorefxn ( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::CENTROID_WTS, core::scoring::DOCK_LOW_PATCH ) );
+		scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn );
 	} else if ( SlideCriteriaType_ == FA_REP_SCORE  ) {
 		scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction();
 		scorefxn_->set_weight( core::scoring::fa_rep, 1.0 );
@@ -362,8 +362,8 @@ void SymmetrySlider::setup( core::pose::Pose & pose )
 	SlideCriteriaType_ = CEN_DOCK_SCORE;
 	SlideThreshold_ = "AUTOMATIC";
 
-	core::scoring::symmetry::SymmetricScoreFunction scorefxn_sym ( ScoreFunctionFactory::create_score_function( CENTROID_WTS, DOCK_LOW_PATCH ) );
-	scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction( scorefxn_sym );
+	core::scoring::ScoreFunctionOP scorefxn ( ScoreFunctionFactory::create_score_function( CENTROID_WTS, DOCK_LOW_PATCH ) );
+	scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn );
 
 	total_num_slides_ = 0;
 

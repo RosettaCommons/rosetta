@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/symmetry/DockingScoreFunction.fwd.hh
-/// @brief  core::scoring::symmetry::DockingScoreFunction forward declarations
+/// @file   core/scoring/DockingScoreFunction.fwd.hh
+/// @brief  core::scoring::DockingScoreFunction forward declarations
 /// @author Ingemar Andre
 
 
@@ -20,7 +20,6 @@
 
 namespace core {
 namespace scoring {
-namespace symmetry {
 
 
 // Forward
@@ -29,9 +28,8 @@ class DockingScoreFunction;
 typedef utility::pointer::owning_ptr< DockingScoreFunction > DockingScoreFunctionOP;
 typedef utility::pointer::owning_ptr< DockingScoreFunction const > DockingScoreFunctionCOP;
 
-} // symmetry
 } // namespace scoring
 } // namespace core
 
 
-#endif // INCLUDED_core_scoring_symmetry_DockingScoreFunction_FWD_HH
+#endif // INCLUDED_core_scoring_DockingScoreFunction_FWD_HH

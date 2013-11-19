@@ -195,7 +195,7 @@ private:
 HDdesignMover::HDdesignMover() {
 	// variable definitions
 	scorefxn_a = core::scoring::getScoreFunction();
-	scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction( scorefxn_a );
+	scorefxn_ = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn_a );
 	tf_design_ = new TaskFactory();
 	//movemap_ = new core::kinematics::MoveMap();
 	//options
@@ -489,7 +489,7 @@ void HDdesignMover::apply (pose::Pose & pose ) {
 		symmetric_docking::SymDockProtocolOP dock_mover = new symmetric_docking::SymDockProtocol;
 		dock_mover->apply(pose);
 		scoring::ScoreFunctionOP dock_score_apple = scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
-		core::scoring::symmetry::SymmetricScoreFunctionOP sym_dock_score = new core::scoring::symmetry::SymmetricScoreFunction(  dock_score_apple );
+		core::scoring::symmetry::SymmetricScoreFunctionOP sym_dock_score = core::scoring::symmetry::symmetrize_scorefunction( *dock_score_apple );
 		TR << "Docking SCORE final: " << (*sym_dock_score)(pose) << std::endl;
 		TR << "Default SCORE after docking: " << (*scorefxn_)(pose) << std::endl;
 		//debugging checks

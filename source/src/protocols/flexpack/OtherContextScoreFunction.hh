@@ -43,6 +43,18 @@ public:
 		core::pose::Pose const & context_pose
 	);
 
+private:
+	// private assignment and copy constructors to avoid discarding subtype information
+
+	OtherContextScoreFunction( OtherContextScoreFunction const & );
+
+	OtherContextScoreFunction &
+	operator=( OtherContextScoreFunction const & );
+
+public:
+
+	// TODO: This class probably needs to have clone() and assign() methods if it's going to see non-trivial use.
+
 	void
 	set_context_pose( core::pose::Pose const & pose );
 

@@ -204,7 +204,7 @@ ParsedProtocol::final_score(core::pose::Pose & pose) const {
 	if( ! scorefxn ) { return; }
 
 	if (core::pose::symmetry::is_symmetric(pose)) {
-		scorefxn = new core::scoring::symmetry::SymmetricScoreFunction(scorefxn);
+		scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *scorefxn );
 	}
 	(*scorefxn)(pose);
 }

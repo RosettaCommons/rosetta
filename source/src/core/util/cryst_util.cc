@@ -86,8 +86,8 @@ core::Real getMLweight( core::scoring::ScoreFunction & scorefxn, core::pose::Pos
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 		// symmetrize scorefunct & movemap
-		rosetta_scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( *rosetta_scorefxn ) );
-		xtal_scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( *xtal_scorefxn ) );
+		rosetta_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *rosetta_scorefxn );
+		xtal_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *xtal_scorefxn );
 		core::pose::symmetry::make_symmetric_movemap( pose, move_map );
 
 		// compute gradients using both scorefunctions
@@ -216,8 +216,8 @@ core::Real getMLweight_cart( core::scoring::ScoreFunction & scorefxn, core::pose
 		core::conformation::symmetry::SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
 
 		// symmetrize scorefunct & movemap
-		rosetta_scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( *rosetta_scorefxn ) );
-		xtal_scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( *xtal_scorefxn ) );
+		rosetta_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *rosetta_scorefxn );
+		xtal_scorefxn = core::scoring::symmetry::symmetrize_scorefunction( *xtal_scorefxn );
 		core::pose::symmetry::make_symmetric_movemap( pose, move_map );
 	}
 

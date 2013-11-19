@@ -40,33 +40,27 @@ DockingScoreFunction::DockingScoreFunction():
 ScoreFunctionOP
 DockingScoreFunction::clone() const
 {
-	return new DockingScoreFunction( *this );
+	DockingScoreFunctionOP newscorefxn( new DockingScoreFunction );
+	newscorefxn->assign( *this );
+	return newscorefxn;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-DockingScoreFunction &
-DockingScoreFunction::operator=( DockingScoreFunction const & src )
+
+///@brief INTERNAL USE ONLY
+void
+DockingScoreFunction::assign( DockingScoreFunction const & src )
 {
-	ScoreFunction::operator=( src );
-	return *this;
+	ScoreFunction::assign( src );
+	// Add assignemnt of DockingScoreFunction specific values here.
 }
 
-///////////////////////////////////////////////////////////////////////////////
-DockingScoreFunction::DockingScoreFunction( DockingScoreFunction const & src ):
-	ScoreFunction( src )
-{}
-
-DockingScoreFunction::DockingScoreFunction( ScoreFunction const & src ):
-  ScoreFunction( src )
-{}
-
-DockingScoreFunction::DockingScoreFunction( ScoreFunctionOP src ):
-  ScoreFunction( *src )
-{}
-
-DockingScoreFunction::DockingScoreFunction( ScoreFunctionCOP src ):
-  ScoreFunction( *src )
-{}
+///@brief INTERNAL USE ONLY
+void
+DockingScoreFunction::assign( ScoreFunction const & src )
+{
+	ScoreFunction::assign( src );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 
