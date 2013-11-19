@@ -408,7 +408,7 @@ make_symmetric_pdb_info(
 				int newchainidx;
 				for (newchainidx=1; newchainidx<=nuniqueIDs && used_chainIDs[newchainidx]; ++newchainidx) ;
 
-				if (used_chainIDs[newchainidx]) { // all ids used
+				if (newchainidx>nuniqueIDs) { // all ids used
 					symmChainIDMap[ std::make_pair(chn_idx,clone_i) ] = nuniqueIDs;
 				} else {
 					used_chainIDs[newchainidx] = true;
