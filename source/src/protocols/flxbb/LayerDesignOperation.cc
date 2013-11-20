@@ -604,29 +604,9 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	BOOST_FOREACH( utility::tag::TagCOP const layer_tag, tag->getTags() ){
 
 		std::string layer = layer_tag->getName(); // core, residue, boundary or taskoperation
-		if( layer == "core" || layer =="boundary" || layer == "surface" ||  layer == "Nterm" ||  layer == "Cterm" || task_layers_.count( layer ) ) {
-			std::string const operation_str = layer_tag->getOption< std::string >("operation", "design" );
-			TR << "operation=" << operation_str << std::endl;
-			if ( operation_str == "design" ) {
-				layer_operation_[ layer ] = DESIGN;
-			} else if ( operation_str == "no_design" ) {
-				layer_operation_[ layer ] = NO_DESIGN;
-			} else if ( operation_str == "omit" ) {
-				layer_operation_[ layer ] = OMIT;
-			} else {
-				utility_exit_with_message( "Invalid operation " + operation_str + " specified for layer " + layer + ". Valid options are \"design\", \"no_design\", and \"omit\"." );
-			}
-			std::string const specification = layer_tag->getOption< std::string >("specification", "designable");
-			if ( specification == "designable" ) {
-				layer_specification_[ layer ] = DESIGNABLE;
-			} else if ( specification == "repackable" ) {
-				layer_specification_[ layer ] = PACKABLE;
-			} else if ( specification == "fixed" ) {
-				layer_specification_[ layer ] = FIXED;
-			} else {
-				utility_exit_with_message( "Invalid specification " + specification + " for layer " + layer + ". Valid options are \"designable\", \"packable\", and \"fixed\"." );
-			}
-			TR << "Modifying specification for layer " << layer << std::endl;
+		if( layer == "core" || layer =="boundary" || layer == "surface" ||  layer == "Nterm" ||  layer == "Cterm" )
+        {
+            TR << "redefining default layer " << layer << std::endl;
 		} else if(layer == "CombinedTasks" ) {
 			std::string comb_name = layer_tag->getOption< std::string >("name");
 			TR << "Making a combined task named "<< comb_name << std::endl;
@@ -651,6 +631,7 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 			task_layers_[ task_name ] = task;
 			design_layer_[ task_name ] = true;
 			layer_residues_[ task_name ] = std::map< std::string, std::string >();
+            
 		} else {
 			utility_exit_with_message( "Invalid layer " + layer + ", valid layers are core, boundary, surface, TaskOperations or CombinedTasks" );
 		}
@@ -721,6 +702,30 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 			}
 
 		}
+        
+        std::string const operation_str = layer_tag->getOption< std::string >("operation", "design" );
+        TR << "operation=" << operation_str << std::endl;
+        if ( operation_str == "design" ) {
+            layer_operation_[ layer ] = DESIGN;
+        } else if ( operation_str == "no_design" ) {
+            layer_operation_[ layer ] = NO_DESIGN;
+        } else if ( operation_str == "omit" ) {
+            layer_operation_[ layer ] = OMIT;
+        } else {
+            utility_exit_with_message( "Invalid operation " + operation_str + " specified for layer " + layer + ". Valid options are \"design\", \"no_design\", and \"omit\"." );
+        }
+
+        
+        std::string const specification = layer_tag->getOption< std::string >("specification", "designable");
+        if ( specification == "designable" ) {
+            layer_specification_[ layer ] = DESIGNABLE;
+        } else if ( specification == "repackable" ) {
+            layer_specification_[ layer ] = PACKABLE;
+        } else if ( specification == "fixed" ) {
+            layer_specification_[ layer ] = FIXED;
+        } else {
+            utility_exit_with_message( "Invalid specification " + specification + " for layer " + layer + ". Valid options are \"designable\", \"packable\", and \"fixed\"." );
+        }
 	}
 
 	// fill empty the empty layers of the task layers with the residues at the 'all' layer
