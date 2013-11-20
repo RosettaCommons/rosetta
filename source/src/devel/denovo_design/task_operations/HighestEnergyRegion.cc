@@ -432,9 +432,12 @@ DesignRandomRegionOperation::get_residues_to_design( core::pose::Pose const & po
 		residues_to_design[ target ] = residues_to_design[ i ];
 		residues_to_design[ i ] = target_value;
 	}
-
+	utility::vector1< core::Size > retval;
 	//TR.Debug << "Random array=" << residues_to_design << std::endl;
-	return residues_to_design;
+	for ( core::Size j=1; ( j<=residues_to_design.size() &&	j<=regions_to_design() ); ++j ) {
+		retval.push_back( residues_to_design[j] );
+	}
+	return retval;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
