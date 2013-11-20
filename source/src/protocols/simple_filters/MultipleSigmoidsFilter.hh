@@ -53,12 +53,14 @@ class MultipleSigmoids : public filters::Filter
 		void sigmoid_filter( SigmoidOP sig );
 		RelativePoseFilterOP relative_pose_filter() const;
 		void relative_pose_filter( RelativePoseFilterOP rpose);
+		void reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint ); /// allows within-trajectory resetting of the baseline. Notice this is nonconst, so can't be called from apply. attempt_read_from_checkpoint should be true for MC trials > 1, but false otherwise
+
 	private:
 		std::string file_names_; // dflt ""
-		OperatorOP operatorF_; //dflt NULL
-		SigmoidOP sig_; //dflt NULL
-		RelativePoseFilterOP r_pose_; //dflt NULL
 		core::Real threshold_; // dflt 0
+		RelativePoseFilterOP r_pose_; //dflt NULL
+		SigmoidOP sig_; //dflt NULL
+		OperatorOP operatorF_; //dflt NULL
 };
 }
 }

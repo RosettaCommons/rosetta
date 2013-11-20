@@ -17,6 +17,7 @@
 #include <protocols/simple_filters/OperatorFilterCreator.hh>
 #include <protocols/simple_filters/RelativePoseFilter.hh>
 #include <protocols/simple_filters/SigmoidFilter.hh>
+#include <protocols/simple_filters/MultipleSigmoidsFilter.hh>
 #include <utility/tag/Tag.hh>
 //Project Headers
 #include <basic/Tracer.hh>
@@ -60,6 +61,12 @@ Operator::reset_baseline( core::pose::Pose const & pose, bool const attempt_read
 			runtime_assert( sigmoid_filter );
 			sigmoid_filter->reset_baseline( pose, attempt_read_from_checkpoint );
 			TR<<"Resetting Sigmoid filter's baseline"<<std::endl;
+		}
+    if( filter->get_type() == "MultipleSigmoids" ){
+			MultipleSigmoidsOP multisigmoid_filter( dynamic_cast< MultipleSigmoids * >( filter() ) );
+			runtime_assert( multisigmoid_filter );
+			multisigmoid_filter->reset_baseline( pose, attempt_read_from_checkpoint );
+			TR<<"Resetting MultipleSigmoids filter's baseline"<<std::endl;
 		}
 		else if( filter->get_type() == "Operator" ){ //recursive call
 			OperatorOP operator_filter( dynamic_cast< Operator * >( filter() ) );

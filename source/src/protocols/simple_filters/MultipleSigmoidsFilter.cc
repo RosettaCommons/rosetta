@@ -31,7 +31,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 
-
 namespace protocols{
 namespace simple_filters {
 
@@ -57,13 +56,16 @@ operatorF_( NULL )
 MultipleSigmoids::~MultipleSigmoids() {}
 
 void
+MultipleSigmoids::reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint ){
+			operatorF_->reset_baseline( pose, attempt_read_from_checkpoint );
+			TR<<"MultipleSigmoids: reset baseline"<<std::endl;
+}
+
+void
 MultipleSigmoids::operator_filter( OperatorOP opt ){ operatorF_ = opt; }
 
 OperatorOP
 MultipleSigmoids::operator_filter() const{ return operatorF_; }
-
-void
-MultipleSigmoids::sigmoid_filter( SigmoidOP sig ){ sig_ = sig; }
 
 SigmoidOP
 MultipleSigmoids::sigmoid_filter() const{ return sig_; }
