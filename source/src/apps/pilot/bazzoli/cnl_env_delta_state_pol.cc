@@ -442,6 +442,7 @@ OPT_KEY( String, mut )
 ////////////////////////////////////////////////////////////////////////////////
 int main( int argc, char * argv [] )
 {
+  try {
 	NEW_OPT( cnl_resfile, "set of residues forming the constellation", "cnl_resfile.txt" );
 	NEW_OPT( mut, "PDB file containing the mutant structure", "" );
 
@@ -562,4 +563,7 @@ int main( int argc, char * argv [] )
 		bbcnl_acounts.size();
 
 	TR << "fraction of same-state polar atoms: " << (nss/float(tot)) << std::endl;
+        } catch ( utility::excn::EXCN_Base const & e ) {
+                std::cout << "caught exception " << e.msg() << std::endl;
+        }
 }

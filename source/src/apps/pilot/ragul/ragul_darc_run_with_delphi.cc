@@ -88,6 +88,7 @@ OPT_KEY( Real, delphi_grid_spacing )
 static basic::Tracer TR( "apps.pilot.ragul_run_darc_with_input_eggshell.main" );
 
 int main( int argc, char * argv [] ) {
+  try {
 
   NEW_OPT( protein, "protein file name", "protein.pdb" );
   NEW_OPT( ligand, "input ligand(s)", "" );
@@ -503,6 +504,9 @@ int main( int argc, char * argv [] ) {
 		}
 	}
 	darc_score_file.close();
+        } catch ( utility::excn::EXCN_Base const & e ) {
+                std::cout << "caught exception " << e.msg() << std::endl;
+        }
 	return 0;
 
 }

@@ -83,6 +83,7 @@ OPT_KEY( Integer, add_ext_grid_size )
 OPT_KEY( Real, trim_distance )
 
 int main( int argc, char * argv [] ) {
+  try{
 
   NEW_OPT( protein, "protein file name", "protein.pdb" );
   NEW_OPT( num_angles, "no. of angles for rotating the grid", 1 );
@@ -364,5 +365,8 @@ int main( int argc, char * argv [] ) {
   std::cout<< "Written eggshell to triplet file: "<< eggshell_triplet_tag << std::endl;
   std::cout<< "DONE!"<< std::endl;
 
+        } catch ( utility::excn::EXCN_Base const & e ) {
+                std::cout << "caught exception " << e.msg() << std::endl;
+        }
   return 0;
 }

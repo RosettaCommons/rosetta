@@ -112,6 +112,7 @@ void print_res_ids(vector1<Size> const& vec, Pose const& ps, basic::Tracer& tr) 
 
 int main( int argc, char * argv [] )
 {
+  try {
 	NEW_OPT( cnl_resfile, "set of residues forming the constellation", "cnl_resfile.txt" );
 
 	devel::init(argc, argv);
@@ -140,4 +141,8 @@ int main( int argc, char * argv [] )
 		protocols::neighbor::in_ngbat_sphere);
 
 	print_res_ids(n.get(), ps, TR);
+
+        } catch ( utility::excn::EXCN_Base const & e ) {
+                std::cout << "caught exception " << e.msg() << std::endl;
+        }
 }
