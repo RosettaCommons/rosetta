@@ -146,25 +146,25 @@ tests = env.Program(target, [cxx, main])
 # because the library is created above the '<project>' directory.
 Alias(project, tests)
 
-
 # Some of the unit tests read in text files. Hardcoding the location of the text files or taking the text in the
 # file and placing it into a string variable in the code are both less than ideal solutions.  Having smaller versions
 # of the files along with the test code seems to be the best solution.  However, the test executables get built in
 # the build directory.  When running them there, the text files are still in the test/ subdirectories.  We need to
 # have a separate command to copy text files used by test cases from test/ to the right build subdirectory.
 #
-# Turns out that this can't be done with an Execute call because on a clean build, the proper build directory
-# won't yet exist and the copy will fail.  We have to set this up as action that gets done after the source is built.
-# This is still not optimal though.  It gets called when the project files are linked, but if you go into the build
-# directory and delete the file without modifying any of the source, rerunning scons will not execute the Copy again.
-# Since the target is already built, there's no need to do the PostAction.
-# The ideal solution would be to make this a build step which depends on the presence of the file in the build directory
-# but the correct SConscript syntax to do that I have not been able to write.
+# To get Scons to copy the file appropriately, we make an explicit dependancy between the main test executable and
+# the copied file location. We then use a Copy builder to set up the file copy. Doing it this way means that only
+# the files which have gotten changed will be copied, and they'll get copied any time they do change.
+# The trick is to use the "#" prefixing on the scons source/target notation to get Scons to realize that the paths
+# we're giving it are relative to the root directory.
+# The one drawback of how it is currently structured is that if any of the the text file inputs change, you'll relink
+# the test executable, even though you don't have to.
+
 for file in requested.testinputfiles:
 	input = "test/%s/%s" % (project, file)
 	dest = "build/test/" + build.platform + "/" + project + "/" + file
-	env.AddPostAction(target, Copy(dest,input))
-
+	env.Depends(target, "#"+dest)
+	env.Command("#"+dest, "#"+input, Copy(dest,input) )
 
 # Setup useful aliases for building subdirectories of project.
 # This allows a target to be project + package and have SCons build only
