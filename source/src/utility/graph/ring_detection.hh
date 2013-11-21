@@ -19,6 +19,8 @@
 
 #include <platform/types.hh>
 
+#include <map>
+
 namespace utility {
 namespace graph {
 

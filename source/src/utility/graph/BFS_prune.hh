@@ -18,6 +18,7 @@
 #include <utility/excn/Exceptions.hh>
 
 #include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/adjacency_list.hpp>
 
 namespace utility {
 namespace graph {
