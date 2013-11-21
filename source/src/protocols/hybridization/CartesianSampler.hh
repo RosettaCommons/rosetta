@@ -72,10 +72,6 @@ public:
 	// set the fullatom scorefunction (only used for some option sets)
 	void set_fa_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in) { fa_scorefxn_=scorefxn_in; }
 
-	// set options
-	void set_ncycles(core::Size ncycles_in) { ncycles_=ncycles_in; }
-	void set_overlap(core::Size overlap_in) { overlap_=overlap_in; }
-
 	std::string	get_name() const { return "CartesianSampler"; }
 
 	void parse_my_tag(
@@ -87,6 +83,19 @@ public:
 
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
+
+	// accessors
+	void set_userpos(std::set<core::Size> const &user_pos_in) { user_pos_ = user_pos_in; }
+	void set_strategy(std::string  strategy_in) { fragment_bias_strategy_ = strategy_in; }
+	void set_rms_cutoff(core::Real rms_cutoff_in) { rms_cutoff_ = rms_cutoff_in; }
+	void set_fullatom(bool fullatom_in) {fullatom_ = fullatom_in; }
+	void set_bbmove(bool bbmove_in) { bbmove_ = bbmove_in; }
+	void set_restore_csts(bool restore_csts_in) { restore_csts_ = restore_csts_in; }
+	void set_frag_sizes(utility::vector1<core::Size> const &frag_sizes_in) { frag_sizes_ = frag_sizes_in; }
+	void set_nminsteps(core::Size nminsteps_in) { nminsteps_ = nminsteps_in; }
+
+	void set_ncycles(core::Size ncycles_in) { ncycles_=ncycles_in; }
+	void set_overlap(core::Size overlap_in) { overlap_=overlap_in; }
 
 protected:
 	// apply a sequence fragment
@@ -118,6 +127,8 @@ private:
 	core::Real rms_cutoff_;
 
 	// fragments
+	utility::vector1<core::Size> frag_sizes_;
+	core::Size nfrags_;
 	utility::vector1<core::fragment::FragSetOP> fragments_;
 	utility::vector1<boost::unordered_map<core::Size, core::fragment::Frame> > library_;
 
@@ -134,13 +145,13 @@ private:
 	core::pose::Pose ref_model_;
 	core::Real ref_cst_weight_;
 	bool input_as_ref_;
-	bool fullatom_,bbmove_, recover_low_;
+	bool restore_csts_;
+	bool fullatom_, bbmove_, recover_low_;
 	char force_ss_;
 	LoopsOP loops_;
 
 	// scorefunctions
 	core::scoring::ScoreFunctionOP scorefxn_, fa_scorefxn_, mc_scorefxn_;  // mc_scorefxn allows us to minimize and eval with different scorefxns
-	core::scoring::ScoreFunctionOP scorefxn_dens_, scorefxn_xray_;
 }; //class CartesianSampler
 
 } // hybridize

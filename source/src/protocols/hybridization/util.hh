@@ -159,6 +159,11 @@ create_fragment_set( core::pose::Pose const & pose, core::Size len, core::Size n
 core::fragment::FragSetOP
 create_fragment_set_no_ssbias( core::pose::Pose const & pose, core::Size len, core::Size nfrag, char force_ss='D' );
 
+core::fragment::FragSetOP
+create_fragment_set_no_ssbias( core::pose::Pose const & pose, std::set<core::Size> user_pos, core::Size len, core::Size nfrag, char force_ss='D' );
+
+
+
 protocols::loops::Loops
 renumber_with_pdb_info( protocols::loops::Loops & template_chunk, core::pose::PoseCOP template_pose );
 

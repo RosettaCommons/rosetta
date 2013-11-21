@@ -38,6 +38,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
 
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
@@ -172,22 +173,21 @@ CartesianSampler::init() {
 	overlap_ = 2;
 	ncycles_ = 250;
 	nminsteps_ = 10;
+	nfrags_=25;
 	ref_cst_weight_ = 1.0;
 	input_as_ref_ = false;
 	fullatom_ = false;
 	bbmove_ = false;
 	recover_low_ = true;
+	restore_csts_ = true;
+	force_ss_='D';
 
 	fragment_bias_strategy_ = "uniform";
 	selection_bias_ = "none";
 
 	// default scorefunction
-	if (!fullatom_)
-		set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
-	else
-		set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep" ) );
-
-	set_fa_scorefunction ( core::scoring::getScoreFunction() );
+	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
+	set_fa_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep" ) );
 }
 
 void
@@ -348,6 +348,9 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 		ncs = ( static_cast< simple_moves::symmetry::NCSResMapping* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING )() ));
 	}
 
+	protocols::simple_moves::SwitchResidueTypeSetMover to_fa("fa_standard");
+	protocols::simple_moves::SwitchResidueTypeSetMover to_cen("centroid");
+
 	// make subpose at this position
 	// we assume the frame does not cross a jump
 	core::pose::Pose frag;
@@ -359,41 +362,49 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 	core::Size maxtries,frag_toget;
 	core::Real rms;
 
+	// set up minimizer
+	core::optimization::AtomTreeMinimizer rbminimizer;
+	core::optimization::MinimizerOptions options_rb( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
+	options_rb.max_iter(20);
+	core::kinematics::MoveMap mm_rb;
+	mm_rb.set_bb ( bbmove_ );
+	mm_rb.set_chi ( true );
+	mm_rb.set_jump ( true );
+
+	// set up packer
+	core::scoring::ScoreFunctionOP nonsymm_fa_scorefxn = core::scoring::symmetry::asymmetrize_scorefunction(*fa_scorefxn_);
+	core::scoring::ScoreFunctionOP nonsymm_cen_scorefxn = core::scoring::symmetry::asymmetrize_scorefunction(*scorefxn_);
+
+	if (bbmove_ && nonsymm_fa_scorefxn->get_weight( core::scoring::coordinate_constraint ) == 0)
+		nonsymm_fa_scorefxn->set_weight( core::scoring::coordinate_constraint , 1 );
+	core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
+	main_task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
+	protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+	pack_mover->task_factory( main_task_factory );
+	pack_mover->score_function( nonsymm_fa_scorefxn );
+
 	if (selection_bias_ == "none") {
 		maxtries = frame.nr_frags(); // bias-dependent
 		int tries;
 		bool frag_chosen=false;
 		for (tries = 0; tries<maxtries && !frag_chosen; ++tries) {
-			frag_toget = numeric::random::random_range( 1, frame.nr_frags() ); // bias-dependent
+			frag_toget = numeric::random::random_range( 1, frame.nr_frags() );
 			frame.apply( frag_toget, frag );
 			rms = get_transform( pose,  frag,  start,	preT, postT, R);
-			frag_chosen = (rms < 0.5) || (tries >= maxtries/4 && rms < 1) || (tries >= maxtries/2 && rms < 2); // bias-dependent
+			frag_chosen = (rms < rms_cutoff_);
+
+			// minimize backbone fragment
+			if (frag_chosen && bbmove_) {
+				apply_fragcsts( frag,	pose, start );
+				(*nonsymm_cen_scorefxn)(frag);
+				rbminimizer.run( frag, mm_rb, *nonsymm_cen_scorefxn, options_rb );
+				frag_chosen = (rms < 0.5);
+			}
 		}
-		TR << "after " << tries+1 << " tries, fragment " << frag_toget << "chosen with RMS = " << rms << std::endl;
+		TR << "after " << tries+1 << " tries, fragment " << frag_toget << " chosen with RMS = " << rms << std::endl;
 
 		apply_transform( frag,	preT, postT, R);
-		for ( Size i = 0; i < len; ++i )
-			pose.replace_residue( start+i, frag.residue(i+1), false );
-	} else if (selection_bias_ == "density") {
 
-		// set up minimizer
-		core::optimization::AtomTreeMinimizer rbminimizer;
-		core::optimization::MinimizerOptions options_rb( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
-		options_rb.max_iter(20);
-		core::kinematics::MoveMap mm_rb;
-		mm_rb.set_bb ( bbmove_ );
-		mm_rb.set_chi ( false );  //?
-		mm_rb.set_jump ( true );
-
-		// scorefunctions
-		core::scoring::ScoreFunctionOP nonsymm_fa_scorefxn = core::scoring::symmetry::asymmetrize_scorefunction(*fa_scorefxn_);
-		if (nonsymm_fa_scorefxn->get_weight( core::scoring::elec_dens_fast ) == 0)
-			nonsymm_fa_scorefxn->set_weight( core::scoring::elec_dens_fast , 20 );
-		core::scoring::ScoreFunctionOP densonly = new core::scoring::ScoreFunction();
-		if (bbmove_ && nonsymm_fa_scorefxn->get_weight( core::scoring::coordinate_constraint ) == 0)
-			nonsymm_fa_scorefxn->set_weight( core::scoring::coordinate_constraint , 1 );
-
-		densonly->set_weight( core::scoring::elec_dens_fast, 5.0 );
 
 		// set up packer
 		core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
@@ -402,10 +413,30 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 		pack_mover->task_factory( main_task_factory );
 		pack_mover->score_function( nonsymm_fa_scorefxn );
 
+		for ( Size i = 0; i < len; ++i )
+			pose.replace_residue( start+i, frag.residue(i+1), false );
+
+		// if fullatom do a repack here
+		if (fullatom_) {
+			if ( core::pose::symmetry::is_symmetric(pose) ) {
+				protocols::simple_moves::PackRotamersMoverOP sympack_mover = new protocols::simple_moves::symmetry::SymPackRotamersMover;
+				sympack_mover->task_factory( main_task_factory );
+				sympack_mover->score_function( fa_scorefxn_ );
+				sympack_mover->apply( pose );
+			} else {
+				pack_mover->apply( pose );
+			}
+		}
+
+	} else if (selection_bias_ == "density") {
+		// scorefunctions
+		if (nonsymm_fa_scorefxn->get_weight( core::scoring::elec_dens_fast ) == 0)
+			nonsymm_fa_scorefxn->set_weight( core::scoring::elec_dens_fast , 20 );
+		core::scoring::ScoreFunctionOP densonly = new core::scoring::ScoreFunction();
+		densonly->set_weight( core::scoring::elec_dens_fast, 5.0 );
+
 		// prepare fragment
 		core::pose::addVirtualResAsRoot(frag);
-		protocols::simple_moves::SwitchResidueTypeSetMover to_fa("fa_standard");
-		protocols::simple_moves::SwitchResidueTypeSetMover to_cen("centroid");
 		if (!fullatom_) to_fa.apply( frag );
 
 		core::Size nattempts = 0;
@@ -612,7 +643,7 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 				fragmentProbs[r] = 0.25;
 			else
 				fragmentProbs[r] = 0.01;
-			TR << "residue " << r << ": " << " rscc=" << per_resCC[r] << " weight=" <<fragmentProbs[r] << std::endl;
+			//TR << "residue " << r << ": " << " rscc=" << per_resCC[r] << " weight=" <<fragmentProbs[r] << std::endl;
 		}
 	} else if (fragment_bias_strategy_ == "bfactors") {
 		// find segments with highest bfactors
@@ -628,7 +659,7 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 			}
 			Bsum /= nbb;
 			fragmentProbs[r] = exp( Bsum/Btemp );
-			TR << "Prob_dens_bfact( " << r << " ) = " << fragmentProbs[r] << " ; B=" << Bsum << std::endl;
+			//TR << "Prob_dens_bfact( " << r << " ) = " << fragmentProbs[r] << " ; B=" << Bsum << std::endl;
 		}
 	} else if (fragment_bias_strategy_ == "rama") {
 		// find segments with worst rama score
@@ -649,7 +680,7 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 					// i dont think this will work for symmetric systems where 1st subunit is not the scoring one
 			core::Real ramaScore = emap[ rama ];
 			fragmentProbs[r] = exp( ramaScore / Rtemp );
-			TR << "Prob_dens_rama( " << r << " ) = " << fragmentProbs[r] << " ; rama=" << ramaScore << std::endl;
+			//TR << "Prob_dens_rama( " << r << " ) = " << fragmentProbs[r] << " ; rama=" << ramaScore << std::endl;
 		}
 	} else if (fragment_bias_strategy_ == "chainbreak") {
 		for (int r=1; r<(int)nres; ++r) {
@@ -665,7 +696,7 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 			} else {
 				fragmentProbs[r] = 0.001;
 			}
-			TR << "Prob_dens_cb( " << r << " ) = " << fragmentProbs[r] << std::endl;
+			//TR << "Prob_dens_cb( " << r << " ) = " << fragmentProbs[r] << std::endl;
 		}
 	} else if (fragment_bias_strategy_ == "user") {
 		// user defined segments to rebuild
@@ -675,13 +706,13 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 			fragmentProbs[r] = 0.0;
 			if ( user_pos_.find(r) != user_pos_.end() ) fragmentProbs[r] = 1.0;
 			if ( loops_ && loops_->is_loop_residue(r) ) fragmentProbs[r] = 1.0;
-			TR << "Prob_dens_user( " << r << " ) = " << fragmentProbs[r] << std::endl;
+			//TR << "Prob_dens_user( " << r << " ) = " << fragmentProbs[r] << std::endl;
 		}
 	} else {
 		// default to uniform
 		for (int r=1; r<=(int)nres; ++r) {
 			fragmentProbs[r] = 1.0;
-			TR << "Prob_dens_uniform( " << r << " ) = " << 1.0 << std::endl;
+			//TR << "Prob_dens_uniform( " << r << " ) = " << 1.0 << std::endl;
 		}
 	}
 
@@ -690,21 +721,25 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 	//   - handle mapping from frame->seqpos
 	//   - don't allow any insertions that cross cuts
 	for (Size i_frag_set = 1; i_frag_set<=fragments_.size(); ++i_frag_set) {
-		utility::vector1< core::Real > frame_weights(fragments_[i_frag_set]->nr_frames(), 0.0);
+		//utility::vector1< core::Real > frame_weights(fragments_[i_frag_set]->nr_frames(), 0.0);
+		utility::vector1< core::Real > frame_weights(pose.total_residue(), 0.0);
 		for (Size i_frame = 1; i_frame <= fragments_[i_frag_set]->nr_frames(); ++i_frame) {
 			core::fragment::ConstFrameIterator frame_it = fragments_[i_frag_set]->begin(); // first frame of the fragment library
 			advance(frame_it, i_frame-1);  // point frame_it to the i_frame of the library
 			core::Size seqpos_start = (*frame_it)->start();  // find starting and ending residue seqpos of the inserted fragment
 			core::Size seqpos_end   = (*frame_it)->end();
 
-			frame_weights[i_frame] = 0;
+			frame_weights[seqpos_start] = 0;
 			for(int i_pos = (int)seqpos_start; i_pos<=(int)seqpos_end; ++i_pos)
-				frame_weights[i_frame] += fragmentProbs[i_pos];
-			frame_weights[i_frame] /= (seqpos_end-seqpos_start+1);
+				frame_weights[seqpos_start] += fragmentProbs[i_pos];
+			frame_weights[seqpos_start] /= (seqpos_end-seqpos_start+1);
 
 			for(int i_pos = (int)seqpos_start; i_pos<=(int)seqpos_end-1; ++i_pos)
 				if (pose.fold_tree().is_cutpoint(i_pos))
-					frame_weights[i_frame] = 0.0;
+					frame_weights[seqpos_start] = 0.0;
+
+			for(int i_pos = (int)seqpos_start; i_pos<=(int)seqpos_end-1; ++i_pos)
+				TR << "Prob_dens( " << i_frame << " " << seqpos_start << " ) = " << frame_weights[seqpos_start] << std::endl;
 		}
 		frag_bias_[i_frag_set].weights(frame_weights);
 	}
@@ -718,21 +753,20 @@ CartesianSampler::apply( Pose & pose ) {
 
 	// autogenerate fragments if they are not loaded yet
 	if (fragments_.size() == 0) {
-		fragments_.push_back( create_fragment_set_no_ssbias(pose, 9, 25, force_ss_) );
+		if (frag_sizes_.size() == 0) frag_sizes_.push_back(9); // default is 9-mers only
+
+		for (int i=1; i<=frag_sizes_.size(); ++i) {
+			if (fragment_bias_strategy_ == "user" && user_pos_.size() > 0)
+				fragments_.push_back( create_fragment_set_no_ssbias(pose, user_pos_, frag_sizes_[i], nfrags_, force_ss_) );
+			else
+				fragments_.push_back( create_fragment_set_no_ssbias(pose, frag_sizes_[i], nfrags_, force_ss_) );
+		}
+
 		update_fragment_library_pointers();
 	}
 
+	if (fullatom_) scorefxn_ = fa_scorefxn_;
 	if (!mc_scorefxn_) mc_scorefxn_ = scorefxn_;
-
-	// derived scorefunctions
-	scorefxn_dens_ = new core::scoring::ScoreFunction();
-	scorefxn_dens_->set_weight( core::scoring::elec_dens_fast, 1.0 );
-	scorefxn_xray_ = new core::scoring::ScoreFunction();
-	scorefxn_xray_->set_weight( core::scoring::xtal_ml, 100.0 );
-	if (core::pose::symmetry::is_symmetric(pose) ) {
-		scorefxn_dens_ = core::scoring::symmetry::symmetrize_scorefunction(*scorefxn_dens_);
-		scorefxn_xray_ = core::scoring::symmetry::symmetrize_scorefunction(*scorefxn_xray_);
-	}
 
 	// see if the pose has NCS
 	simple_moves::symmetry::NCSResMappingOP ncs;
@@ -811,7 +845,7 @@ CartesianSampler::apply( Pose & pose ) {
 				insert_pos = (int)frag_bias_[i_frag_set].random_sample(RG);
 
 			if (library_[i_frag_set].find(insert_pos) == library_[i_frag_set].end()) {
-				TR << "ERROR! unable to find allowed fragment inserts after " << ntries << " attempts.  Continuing.";
+				TR << "ERROR! Unable to find allowed fragment insert at " << insert_pos << " after 50 attempts.  Continuing." << std::endl;
 				continue;
 			}
 
@@ -878,8 +912,10 @@ CartesianSampler::apply( Pose & pose ) {
 	}
 
 	// reapply old constraints
-	pose.remove_constraints();
-	pose.constraint_set( saved_csts );
+	if (restore_csts_) {
+		pose.remove_constraints();
+		pose.constraint_set( saved_csts );
+	}
 }
 
 
@@ -972,13 +1008,13 @@ CartesianSampler::parse_my_tag(
 		}
 	}
 
-	core::Size nfrags = tag->getOption< core::Size >( "nfrags", 25 );
+	nfrags_ = tag->getOption< core::Size >( "nfrags", 25 );
 
 	// autofragments
 	if( tag->hasOption( "fraglens" ) ) {
 		utility::vector1<std::string> fraglens = utility::string_split( tag->getOption< std::string >( "fraglens" ), ',' );
 		for (core::Size i=1; i<=fraglens.size(); ++i) {
-			fragments_.push_back( create_fragment_set_no_ssbias(pose, atoi(fraglens[i].c_str()), nfrags, force_ss_) );
+			frag_sizes_.push_back( atoi(fraglens[i].c_str()) );
 		}
 	}
 	update_fragment_library_pointers();
