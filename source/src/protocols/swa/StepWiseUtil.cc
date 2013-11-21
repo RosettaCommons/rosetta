@@ -39,6 +39,10 @@
 #include <core/pose/util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/util.hh>
+#include <core/scoring/constraints/CoordinateConstraint.hh>
+#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rms_util.hh>
@@ -51,6 +55,7 @@
 #include <numeric/xyzMatrix.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/io/izstream.hh>
+#include <core/scoring/constraints/FlatHarmonicFunc.hh>
 
 #include <iostream>
 #include <fstream>
@@ -952,7 +957,143 @@ rotate( pose::Pose & pose, Matrix const M,
 	}
 
 
+	////////////////////////
+	///////////////////////////////
+	void
+	clear_constraints_recursively( pose::Pose & pose ) {
+		using namespace core::pose;
+		using namespace core::pose::full_model_info;
 
+		core::scoring::constraints::ConstraintSetOP cst_set = pose.constraint_set()->clone();
+		cst_set->clear();
+		pose.constraint_set( cst_set );
+		
+		utility::vector1< PoseOP > const & other_pose_list = nonconst_full_model_info( pose ).other_pose_list();
+		for ( Size n = 1; n <= other_pose_list.size(); n++ ){
+			clear_constraints_recursively( *( other_pose_list[ n ] ) );
+		}
+	}
+	
+	/////////////////////
+	void
+	add_coordinate_constraints_from_map( pose::Pose & pose, pose::Pose const & native_pose, std::map< id::AtomID, id::AtomID > const & superimpose_atom_id_map, core::Real const & constraint_x0, core::Real const & constraint_tol ) {
+				
+		Size const my_anchor( pose.fold_tree().root() ); //Change to use the root of the current foldtree as done by Rocco in AtomCoordinateCstMover - JAB.
+		
+		core::scoring::constraints::ConstraintSetOP cst_set = pose.constraint_set()->clone();
+		
+		for ( std::map< id::AtomID, id::AtomID >::const_iterator
+			 it=superimpose_atom_id_map.begin(), it_end = superimpose_atom_id_map.end(); it != it_end; ++it ) {
+			id::AtomID const mapped_atom = it->second;
+			cst_set->add_constraint( new core::scoring::constraints::CoordinateConstraint ( it->first, id::AtomID(1, my_anchor), native_pose.residue(mapped_atom.rsd()).xyz(mapped_atom.atomno()), new core::scoring::constraints::FlatHarmonicFunc( constraint_x0, 1.0, constraint_tol )) );
+			//cst_set->add_constraint( new core::scoring::constraints::CoordinateConstraint ( it->first, id::AtomID(1, my_anchor), native_pose.residue(mapped_atom.rsd()).xyz(mapped_atom.atomno()), new core::scoring::constraints::FadeFunc( -0.7, 1.5, 0.8, -1.0, 0.0)) );
+		}
+		
+		pose.constraint_set( cst_set );
+		
+	}
+	
+	////////////////////////////////////
+	void
+	superimpose_at_fixed_res_and_add_constraints( pose::Pose & pose, pose::Pose const & native_pose, core::Real const & constraint_x0, core::Real const & constraint_tol ) {
+		
+		using namespace core::chemical;
+		using namespace core::id;
+		using namespace core::pose;
+		using namespace core::pose::full_model_info;
+		using namespace core::scoring;
+		using namespace protocols::rna;
+		
+		Pose native_pose_local = native_pose; // local working copy, mutated in cases where nucleotides have been designed ('n')
+		
+		// first need to slice up native_pose to match residues in actual pose.
+		// define atoms over which to compute RMSD, using rmsd_res.
+		FullModelInfo const & full_model_info = const_full_model_info( pose );
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
+		utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
+		std::string const full_sequence = full_model_info.full_sequence();
+		
+		// following needs to be updated.
+		utility::vector1< Size > const rmsd_res = full_model_info.moving_res_in_full_model();
+		
+		utility::vector1< Size > calc_rms_res;
+		for ( Size n = 1; n <= pose.total_residue(); n++ ){
+			if ( rmsd_res.has_value( res_list[ n ] ) ) {
+				calc_rms_res.push_back( n );
+				
+				char const pose_nt = pose.sequence()[ n-1 ];
+				if ( full_sequence[ res_list[ n ] - 1 ] == 'n' ){
+					mutate_position( native_pose_local, res_list[ n ], pose_nt );
+				} else {
+					runtime_assert( full_sequence[ res_list[ n ] - 1 ] == pose_nt);
+				}
+				runtime_assert( native_pose_local.sequence()[ res_list[ n ] - 1] == pose_nt );
+			}
+		}
+		
+		std::map< AtomID, AtomID > calc_rms_atom_id_map;
+		
+		for ( Size k = 1; k <= calc_rms_res.size(); k++ ){
+			Size const n = calc_rms_res[ k ];
+			for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ){
+				add_to_atom_id_map_after_checks( calc_rms_atom_id_map,
+												pose.residue_type( n ).atom_name( q ),
+												n, res_list[ n ],
+												pose, native_pose_local );
+			}
+		}
+		
+		utility::vector1< Size > calc_rms_suites;
+		// additional RNA suites over which to calculate RMSD
+		for ( Size n = 1; n < pose.total_residue(); n++ ){
+			
+			if ( !pose.residue_type( n ).is_RNA() || !pose.residue_type( n + 1 ).is_RNA() ) continue;
+			if ( calc_rms_res.has_value( n+1 ) ) continue;
+			
+			// Atoms at ends of rebuilt loops:
+			if ( calc_rms_res.has_value( n ) &&
+				( !pose.fold_tree().is_cutpoint( n ) || pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) ) ) {
+				calc_rms_suites.push_back( n ); continue;
+			}
+			
+			// Domain boundaries:
+			if ( (res_list[ n+1 ] == res_list[ n ] + 1) &&
+				fixed_domain_map[ res_list[ n ] ] != 0 &&
+				fixed_domain_map[ res_list[ n+1 ] ] != 0 &&
+				fixed_domain_map[ res_list[ n ] ] != fixed_domain_map[ res_list[ n+1 ] ] ){
+				calc_rms_suites.push_back( n );
+			}
+		}
+		
+		utility::vector1< std::string > const extra_suite_atoms = utility::tools::make_vector1( " P  ", " OP1", " OP2", " O5'" );
+		for ( Size k = 1; k <= calc_rms_suites.size(); k++ ){
+			Size const n = calc_rms_suites[ k ];
+			for ( Size q = 1; q <= extra_suite_atoms.size(); q++ ){
+				add_to_atom_id_map_after_checks( calc_rms_atom_id_map, extra_suite_atoms[ q ],
+												n+1, res_list[ n+1 ],
+												pose, native_pose_local );
+			}
+		}
+		
+		add_coordinate_constraints_from_map( pose, native_pose_local, calc_rms_atom_id_map, constraint_x0, constraint_tol );
+	}
+
+	////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	superimpose_recursively_and_add_constraints( pose::Pose & pose, pose::Pose const & native_pose, core::Real const & constraint_x0, core::Real const & constraint_tol ) {
+		
+		using namespace core::pose;
+		using namespace core::pose::full_model_info;
+		
+		superimpose_at_fixed_res_and_add_constraints( pose, native_pose, constraint_x0, constraint_tol );
+		
+		utility::vector1< PoseOP > const & other_pose_list = nonconst_full_model_info( pose ).other_pose_list();
+		for ( Size n = 1; n <= other_pose_list.size(); n++ ){
+			superimpose_recursively_and_add_constraints( *( other_pose_list[ n ] ), native_pose, constraint_x0, constraint_tol );
+		}
+		
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	Size

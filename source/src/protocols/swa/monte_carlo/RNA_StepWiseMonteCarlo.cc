@@ -25,6 +25,10 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/EnergyGraph.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
@@ -46,7 +50,7 @@ namespace swa {
 namespace monte_carlo {
 
 //Constructor
-RNA_StepWiseMonteCarlo::RNA_StepWiseMonteCarlo( core::scoring::ScoreFunctionOP scorefxn ):
+	RNA_StepWiseMonteCarlo::RNA_StepWiseMonteCarlo( core::scoring::ScoreFunctionOP scorefxn, core::pose::PoseOP native_pose, core::Real constraint_x0, core::Real constraint_tol ):
 	scorefxn_( scorefxn ),
 	verbose_scores_( false ),
 	use_phenix_geo_( true ),
@@ -59,11 +63,15 @@ RNA_StepWiseMonteCarlo::RNA_StepWiseMonteCarlo( core::scoring::ScoreFunctionOP s
 	minimize_single_res_frequency_( 0.0 ),
 	switch_focus_frequency_( 0.5 ),
 	just_min_after_mutation_frequency_( 0.5 ),
-	temperature_( 1.0 )
+	temperature_( 1.0 ),
+	native_pose_( native_pose ),
+	constraint_x0_( constraint_x0 ),
+	constraint_tol_( constraint_tol )
 {
 	using namespace core::scoring;
-	rmsd_weight_ = scorefxn_->get_weight( swm_rmsd );
+	//rmsd_weight_ = scorefxn_->get_weight( coordinate_constraint );
 	max_missing_weight_ = scorefxn_->get_weight( missing_res );
+	chainbreak_weight_ = scorefxn_->get_weight( linear_chainbreak );
 }
 
 
@@ -80,22 +88,23 @@ RNA_StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 	using namespace core::scoring;
 
 	initialize_movers();
-	scorefxn_->set_weight( swm_rmsd, rmsd_weight_ );
+	//scorefxn_->set_weight( coordinate_constraint, rmsd_weight_ );
 	scorefxn_->set_weight( missing_res, 0.0 );
 	ScoreFunctionOP temp_score = scorefxn_->clone();
 	MonteCarloOP monte_carlo_ = new MonteCarlo( pose, *temp_score, temperature_ );
-	scorefxn_->set_weight( swm_rmsd, 0.0 );
+	//scorefxn_->set_weight( coordinate_constraint, 0.0 );
 	show_scores( pose, "Initial score:" );
 
 	Size k( 1 );
 	std::string move_type;
 	bool success( true );
-	Real missing_weight_interval = max_missing_weight_;
-	missing_weight_interval /= cycles_;
+	Real const missing_weight_interval = max_missing_weight_ / cycles_;
+	//missing_weight_interval /= cycles_;
 	Real missing_weight = missing_weight_interval;
 
 	while (  k <= cycles_ ){
 		//scorefxn_->set_weight( missing_res, missing_weight );
+		//clear_constraints_recursively( pose );
 
 		if ( success ) {
 			TR << std::endl << TR.Blue << "Embarking on cycle " << k << " of " << cycles_ << TR.Reset << std::endl;
@@ -119,10 +128,25 @@ RNA_StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 		if ( !success ) continue;
 		k++;
 		show_scores( pose, "After-move score:" );
+		
+		scoring::EMapVector & energy_map = pose.energies().total_energies();
+		Real const chainbreak_score = energy_map[linear_chainbreak];
+		
+		if ( chainbreak_score > 0.01 ) {
+			monte_carlo_->change_weight( linear_chainbreak, 100 );
+		}
+		
 		monte_carlo_->change_weight( missing_res, missing_weight );
 		missing_weight += missing_weight_interval;
 		if ( minimize_single_res ) move_type += "-minsngl";
+		
+//		if ( native_pose_ ) {
+//			superimpose_recursively_and_add_constraints( pose, *native_pose_ );
+//		}
+		
 		monte_carlo_->boltzmann( pose, move_type );
+		
+		monte_carlo_->change_weight( linear_chainbreak, chainbreak_weight_);
 
 		// following can be removed later.
 		TR << "Monte Carlo accepted? " << monte_carlo_->mc_accepted_string() << std::endl;
@@ -131,7 +155,9 @@ RNA_StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 	}
 
 	monte_carlo_->recover_low( pose );
-
+	scorefxn_->set_weight( missing_res, max_missing_weight_ );
+	//scorefxn_->set_weight( coordinate_constraint, rmsd_weight_ );
+	show_scores( pose, "Final score:" );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -150,13 +176,13 @@ RNA_StepWiseMonteCarlo::initialize_movers(){
 	stepwise_rna_modeler->set_num_pose_minimize( 1 );
 
 	// maybe RNA_AddMover could just hold a copy of RNA_ResampleMover...
-	rna_add_mover_ = new RNA_AddMover( scorefxn_ );
+	rna_add_mover_ = new RNA_AddMover( scorefxn_, native_pose_, constraint_x0_, constraint_tol_ );
 	rna_add_mover_->set_start_added_residue_in_aform( false );
 	rna_add_mover_->set_presample_added_residue(  true );
 	rna_add_mover_->set_presample_by_swa(  true );
 	rna_add_mover_->set_stepwise_rna_modeler( stepwise_rna_modeler->clone_modeler() );
 
-	rna_delete_mover_ = new RNA_DeleteMover;
+	rna_delete_mover_ = new RNA_DeleteMover( native_pose_, constraint_x0_, constraint_tol_ );
 	// following will be used to minimize after deletion.
 	rna_delete_mover_->set_stepwise_rna_modeler( stepwise_rna_modeler->clone_modeler() );
 
@@ -164,7 +190,7 @@ RNA_StepWiseMonteCarlo::initialize_movers(){
 	rna_add_or_delete_mover_->set_sample_res( sample_res_ );
 	rna_add_or_delete_mover_->set_skip_deletions( skip_deletions_ ); // for testing only
 
-	rna_resample_mover_ = new RNA_ResampleMover( stepwise_rna_modeler->clone_modeler() );
+	rna_resample_mover_ = new RNA_ResampleMover( stepwise_rna_modeler->clone_modeler(), native_pose_, constraint_x0_, constraint_tol_ );
 	rna_resample_mover_->set_just_min_after_mutation_frequency( just_min_after_mutation_frequency_ );
 	rna_resample_mover_->set_allow_internal_moves( allow_internal_moves_ );
 

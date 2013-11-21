@@ -39,7 +39,7 @@ namespace monte_carlo {
 	public:
 
 	//constructor
-		RNA_StepWiseMonteCarlo( core::scoring::ScoreFunctionOP scorefxn );
+		RNA_StepWiseMonteCarlo( core::scoring::ScoreFunctionOP scorefxn, core::pose::PoseOP native_pose, core::Real constraint_x0, core::Real constraint_tol );
 
 		//destructor
 		~RNA_StepWiseMonteCarlo();
@@ -119,14 +119,17 @@ namespace monte_carlo {
 		core::Real just_min_after_mutation_frequency_;
 		core::Real temperature_;
 		utility::vector1<Size> sample_res_;
+		core::Real constraint_x0_;
+		core::Real constraint_tol_;
 
 		RNA_DeleteMoverOP rna_delete_mover_;
 		RNA_AddMoverOP rna_add_mover_;
 		RNA_AddOrDeleteMoverOP rna_add_or_delete_mover_;
 		RNA_ResampleMoverOP rna_resample_mover_;
-		Real rmsd_weight_;
+		//Real rmsd_weight_;
 		Real max_missing_weight_;
-
+		Real chainbreak_weight_;
+		core::pose::PoseOP native_pose_;
 	};
 
 } //monte_carlo

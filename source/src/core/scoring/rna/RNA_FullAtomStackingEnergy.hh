@@ -29,6 +29,7 @@
 //Auto Headers
 #include <utility/vector1.hh>
 #include <numeric/xyzMatrix.fwd.hh>
+#include <boost/unordered_map.hpp>
 
 
 
@@ -190,6 +191,7 @@ private:
   Distance const dist_cutoff_;
   Real const dist_cutoff2_;
 	bool const base_base_only_;
+	mutable boost::unordered_map< core::Size, core::Size> num_stacks_;
 
 };
 

@@ -76,6 +76,7 @@
 #include <core/scoring/MembranePotential.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <utility/vector1.hh>
+#include <boost/unordered_map.hpp>
 
 namespace core {
 namespace scoring {
@@ -227,6 +228,7 @@ HBondEnergyCreator::score_types_for_method() const {
 	sts.push_back( hbond_lr_bb_sc );
 	sts.push_back( hbond_sc );
 	sts.push_back( hbond_intra ); //Currently affects only RNA.
+	sts.push_back( num_hbonds );
 	return sts;
 }
 
@@ -355,6 +357,9 @@ HBondEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 		hbond_set->copy_bb_donor_acceptor_arrays( existing_set );
 	}
 	pose.energies().data().set( HBOND_SET, hbond_set );
+	
+	//utility::vector1<core::Size> temp_vec ( pose.total_residue(), 0 );
+	num_hbonds_.clear();
 }
 
 ///
@@ -399,7 +404,7 @@ HBondEnergy::residue_pair_energy(
 	hbonds::HBondSet const & hbond_set
 		( static_cast< hbonds::HBondSet const & >
 			( pose.energies().data().get( HBOND_SET )));
-
+	
 	// this only works because we have already called
 	// hbond_set->setup_for_residue_pair_energies( pose )
 
@@ -458,7 +463,7 @@ HBondEnergy::residue_pair_energy(
 			false /*calculate_derivative*/,
 			!options_->decompose_bb_hb_into_pair_energies(), exclude_bsc, exclude_scb, false,
 			*options_,
-			emap);
+			emap, num_hbonds_);
 
 		exclude_bsc = exclude_scb = false;
 		if (rsd2.is_protein()) exclude_scb = options_->bb_donor_acceptor_check() && hbond_set.don_bbg_in_bb_bb_hbond(rsd2.seqpos());
@@ -470,8 +475,10 @@ HBondEnergy::residue_pair_energy(
 			false /*calculate_derivative*/,
 			!options_->decompose_bb_hb_into_pair_energies(), exclude_bsc, exclude_scb, false,
 			*options_,
-			emap);
+			emap, num_hbonds_);
 		}
+	
+	//std::cout << std::endl << num_hbonds_.size() << std::endl;
 }
 
 bool
@@ -1389,7 +1396,13 @@ HBondEnergy::finalize_total_energy(
 	totals[ hbond_sc ]       = original_sc;
 	totals[ hbond_intra ]    = original_intra;
 	// end replicate
-
+	
+	// Give back a bonus to "free" residues that are involved in 1 or fewer hbonds
+	for ( boost::unordered_map < core::Size , core::Size >::const_iterator
+		 it=num_hbonds_.begin(), it_end = num_hbonds_.end(); it != it_end; ++it ) {
+		if ( it->second > 1 ) totals[ num_hbonds ]++;
+	}
+	
 }
 
 /* DEPRECATED

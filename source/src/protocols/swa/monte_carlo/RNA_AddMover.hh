@@ -38,6 +38,8 @@ class RNA_AddMover: public protocols::moves::Mover {
 public:
 
 
+	RNA_AddMover( core::scoring::ScoreFunctionOP scorefxn, core::pose::PoseOP native_pose, core::Real constraint_x0, core::Real constraint_tol );
+	
 	RNA_AddMover( core::scoring::ScoreFunctionOP scorefxn );
 
 	//destructor
@@ -90,8 +92,11 @@ private:
 	core::Real sample_range_small_;
 	core::Real sample_range_large_;
 	core::Real kT_;
+	core::Real constraint_x0_;
+	core::Real constraint_tol_;
 
 	protocols::swa::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
+	core::pose::PoseOP native_pose_;
 
 };
 

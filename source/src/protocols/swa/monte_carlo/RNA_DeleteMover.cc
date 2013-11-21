@@ -51,9 +51,16 @@ namespace monte_carlo {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
-	RNA_DeleteMover::RNA_DeleteMover():
-		minimize_after_delete_( true )
+	RNA_DeleteMover::RNA_DeleteMover( core::pose::PoseOP native_pose, core::Real constraint_x0, core::Real constraint_tol ):
+		minimize_after_delete_( true ),
+		native_pose_ ( native_pose ),
+		constraint_x0_( constraint_x0 ),
+		constraint_tol_( constraint_tol )
   {}
+	
+	RNA_DeleteMover::RNA_DeleteMover( ):
+	minimize_after_delete_( true )
+	{}
 
   //////////////////////////////////////////////////////////////////////////
   //destructor
@@ -91,6 +98,11 @@ namespace monte_carlo {
 
 		fix_up_residue_type_variants( *sliced_out_pose_op ); // now make this include chain terminus!
 		fix_up_residue_type_variants( pose ); // now make this include chain terminus!
+		
+		if ( native_pose_ ) {
+			clear_constraints_recursively( pose );
+			superimpose_recursively_and_add_constraints( pose, *native_pose_, constraint_x0_, constraint_tol_ );
+		}
 
 		if ( minimize_after_delete_ ) minimize_after_delete( pose );
 

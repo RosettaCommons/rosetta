@@ -80,6 +80,8 @@ OPT_KEY( Real, just_min_after_mutation_frequency )
 OPT_KEY( Integer, num_random_samples )
 OPT_KEY( IntegerVector, sample_res )
 OPT_KEY( IntegerVector, rmsd_res )
+OPT_KEY( Real, constraint_x0 )
+OPT_KEY( Real, constraint_tol )
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // could go into a util or object -- or perhaps could use job distributor.
@@ -175,7 +177,14 @@ stepwise_monte_carlo()
 	pose::Pose & pose = *input_poses[ 1 ];
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 800, 800 );
 	
-	RNA_StepWiseMonteCarlo stepwise_rna_monte_carlo ( scorefxn );
+//	Real const rmsd_weight = scorefxn->get_weight( swm_rmsd );
+//	
+//	if ( rmsd_weight > 0 ) {
+//		scorefxn->set_weight( coordinate_constraint, rmsd_weight );
+//		scorefxn->set_weight( swm_rmsd, 0.001 );
+//	}
+	
+	RNA_StepWiseMonteCarlo stepwise_rna_monte_carlo ( scorefxn, native_pose, option[ constraint_x0 ](), option[ constraint_tol ]() );
 	
 	stepwise_rna_monte_carlo.set_verbose_scores( option[ verbose_scores ]() );
 	stepwise_rna_monte_carlo.set_skip_deletions( option[ skip_deletions ]() );
@@ -192,7 +201,7 @@ stepwise_monte_carlo()
 
 	// following can be simplified if we make corrected_geo default to true from command-line.
 	stepwise_rna_monte_carlo.set_use_phenix_geo(  option[ corrected_geo ].user()  ? option[corrected_geo ]() : true );
-
+	
 	// main loop
 	std::string out_tag;
 	std::string const silent_file = option[ out::file::silent ]();
@@ -252,6 +261,8 @@ main( int argc, char * argv [] )
 	NEW_OPT( just_min_after_mutation_frequency, "After a mutation, how often to just minimize (without further sampling the mutated residue)", 0.5 );
 	NEW_OPT( sample_res, "specify particular residues that should be rebuilt (as opposed to all missing in starting PDB)", blank_size_vector );
 	NEW_OPT( rmsd_res, "specify residues for which rmsd values should be computed", blank_size_vector );
+	NEW_OPT( constraint_x0, "Target RMSD value for constrained runs", 0.5 );
+	NEW_OPT( constraint_tol, "Size of flat region for coordinate constraints", 0.5 );
 
   ////////////////////////////////////////////////////////////////////////////
   // setup

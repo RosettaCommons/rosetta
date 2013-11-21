@@ -73,6 +73,7 @@ RNA_FullAtomStackingEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( fa_stack );
 	sts.push_back( fa_stack_aro );
+	sts.push_back( num_stacks );
 	return sts;
 }
 
@@ -144,6 +145,8 @@ RNA_FullAtomStackingEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction 
 		NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::FA_STACK_NBLIST ) );
 		nblist.prepare_for_scoring( pose, scfxn, *this );
 	}
+	
+	num_stacks_.clear();
 }
 
 void
@@ -175,6 +178,11 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 
 	Real const score = residue_pair_energy_one_way( rsd1, rsd2, pose, score_aro1 ) +
 		residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2 ) ;
+	
+	if ( ( score < 0 ) && !pose.energies().use_nblist() ) {
+		num_stacks_[rsd1.seqpos()]++;
+		num_stacks_[rsd2.seqpos()]++;
+	}
 
   emap[ fa_stack ]       += score;
 
@@ -256,7 +264,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 				score += fa_stack_score;
 
 				if ( is_aro( rsd1, m) && is_aro( rsd2, n) ) score_aro += fa_stack_score;
-
+		  
 				//				Real const cos_kappa_j = dot( r, z_j);
 				//				score += get_score( dist, cos_kappa_j );
 
@@ -545,13 +553,20 @@ void
 RNA_FullAtomStackingEnergy::finalize_total_energy(
 	pose::Pose & pose,
 	ScoreFunction const &,
-	EnergyMap &
+	EnergyMap & totals
 ) const
 {
 
   rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
   rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
   rna_centroid_info.calculated() = false;
+
+	if ( pose.energies().use_nblist() ) return;
+	
+	for ( boost::unordered_map < core::Size , core::Size >::const_iterator
+		 it=num_stacks_.begin(), it_end = num_stacks_.end(); it != it_end; ++it ) {
+		if ( it->second > 1 ) totals[ num_stacks ]++;
+	}
 
 }
 

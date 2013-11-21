@@ -252,6 +252,9 @@ enum ScoreType {
 	loop_close,  // Loop closure terms -- attempting model full RNA folding free energy
 	missing_res, // Score term penalizing missing residues in loop closure calculations
 	swm_rmsd, // Score term that encourages native-like conformations for benchmarking purposes
+	bulge_bonus, // Score term that gives a score bonus to residues with 0 hydrogen bonds to compensate for neglecting their entropy
+	num_hbonds, // Score term that counts the number of residues participating in at least k hydrogen bonds
+	num_stacks, // Score term that counts the number of residues participating in at least k base-base stacking interactions
 
 	//  FACTS solvation model
 	facts_elec,

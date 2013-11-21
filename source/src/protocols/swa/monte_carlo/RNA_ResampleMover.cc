@@ -39,11 +39,14 @@ namespace swa {
 namespace monte_carlo {
 
 	//Constructor
-	RNA_ResampleMover::RNA_ResampleMover(	protocols::swa::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler ):
+	RNA_ResampleMover::RNA_ResampleMover(	protocols::swa::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler, core::pose::PoseOP native_pose, core::Real constraint_x0, core::Real constraint_tol ):
 		stepwise_rna_modeler_( stepwise_rna_modeler ),
 		just_min_after_mutation_frequency_( 0.5 ),
 		allow_internal_moves_( false ),
-		minimize_single_res_( false )
+		minimize_single_res_( false ),
+		native_pose_ ( native_pose ),
+		constraint_x0_( constraint_x0 ),
+		constraint_tol_( constraint_tol )
 	{}
 
 	//Destructor
@@ -147,6 +150,11 @@ namespace monte_carlo {
 		// LATER SHOULD REPLACE THIS WITH FIXED DOMAIN MAP -- NEED TO UPDATE STEPWISE MODELER -- rhiju.
 		utility::vector1< Size > const & moving_res = get_moving_res_from_full_model_info( pose );
 		if ( ! minimize_single_res_ ) stepwise_rna_modeler_->set_minimize_res( moving_res );
+		
+		if ( native_pose_ ) {
+			clear_constraints_recursively( pose );
+			superimpose_recursively_and_add_constraints( pose, *native_pose_, constraint_x0_, constraint_tol_ );
+		}
 
 		if ( is_at_terminus ){
 

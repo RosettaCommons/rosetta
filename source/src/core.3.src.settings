@@ -410,6 +410,7 @@ sources = {
 		"Fa_MbenvEnergy",
 		"Fa_MbsolvEnergy",
 		"FreeMoietyEnergy",
+		"FreeResidueBonusEnergy",
 		"GaussianOverlapEnergy",
 		"GenBornEnergy",
 		"GoapEnergy",

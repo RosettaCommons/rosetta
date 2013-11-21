@@ -59,7 +59,7 @@ namespace monte_carlo {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
-	RNA_AddMover::RNA_AddMover( scoring::ScoreFunctionOP scorefxn ):
+	RNA_AddMover::RNA_AddMover( scoring::ScoreFunctionOP scorefxn, core::pose::PoseOP native_pose, core::Real constraint_x0, core::Real constraint_tol ):
 		scorefxn_( scorefxn ),
 		presample_added_residue_( true ),
 		presample_by_swa_( false ),
@@ -69,7 +69,23 @@ namespace monte_carlo {
 		rna_torsion_mover_( new RNA_TorsionMover ),
 		sample_range_small_( 5.0 ),
 		sample_range_large_( 40.0 ),
-		kT_( 0.5 )
+		kT_( 0.5 ),
+		native_pose_( native_pose ),
+		constraint_x0_( constraint_x0 ),
+		constraint_tol_( constraint_tol )
+	{}
+	
+	RNA_AddMover::RNA_AddMover( scoring::ScoreFunctionOP scorefxn ):
+	scorefxn_( scorefxn ),
+	presample_added_residue_( true ),
+	presample_by_swa_( false ),
+	minimize_single_res_( false ),
+	start_added_residue_in_aform_( false ),
+	internal_cycles_( 50 ),
+	rna_torsion_mover_( new RNA_TorsionMover ),
+	sample_range_small_( 5.0 ),
+	sample_range_large_( 40.0 ),
+	kT_( 0.5 )
 	{}
 
   //////////////////////////////////////////////////////////////////////////
@@ -219,6 +235,11 @@ namespace monte_carlo {
 
 		rna_torsion_mover_->sample_near_suite_torsion( pose, suite_num, sample_range_large_);
 		if ( nucleoside_num > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_large_);
+		
+		if ( native_pose_ ) {
+			clear_constraints_recursively( pose );
+			superimpose_recursively_and_add_constraints( pose, *native_pose_, constraint_x0_, constraint_tol_ );
+		}
 
 		///////////////////////////////////
 		// Presampling added residue

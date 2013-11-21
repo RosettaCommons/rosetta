@@ -35,7 +35,9 @@ class RNA_DeleteMover: public protocols::moves::Mover {
 public:
 
 	//constructor
-	RNA_DeleteMover();
+	RNA_DeleteMover( core::pose::PoseOP native_pose, core::Real constraint_x0, core::Real constraint_tol );
+	
+	RNA_DeleteMover( );
 
 	//destructor
 	~RNA_DeleteMover();
@@ -70,6 +72,9 @@ private:
 	bool minimize_after_delete_;
 
 	protocols::swa::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
+	core::pose::PoseOP native_pose_;
+	core::Real constraint_x0_;
+	core::Real constraint_tol_;
 
 };
 

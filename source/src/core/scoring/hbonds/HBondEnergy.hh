@@ -43,6 +43,8 @@
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
 #include <utility/vector1.hh>
+#include <map>
+#include <boost/unordered_map.hpp>
 
 #ifdef PYROSETTA
 	#include <core/scoring/hbonds/HBondOptions.hh>
@@ -481,6 +483,10 @@ private:
 	mutable int res2_;
 	mutable int res1_nb_;
 	mutable int res2_nb_;
+	
+	// Keeps track of the number of hbonds formed by each residue in the pose for use in bulge bonus calculations
+	//mutable utility::vector1< core::Size > num_hbonds_;
+	mutable boost::unordered_map< core::Size, core::Size> num_hbonds_;
 
 	virtual
 	core::Size version() const;

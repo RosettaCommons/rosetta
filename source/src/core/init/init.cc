@@ -49,6 +49,7 @@
 #include <core/scoring/methods/IntermolEnergyCreator.hh>
 #include <core/scoring/methods/MissingEnergyCreator.hh>
 #include <core/scoring/methods/SWM_RMSD_EnergyCreator.hh>
+#include <core/scoring/methods/FreeResidueBonusEnergyCreator.hh>
 #include <core/scoring/methods/NMerRefEnergyCreator.hh>
 #include <core/scoring/methods/NMerPSSMEnergyCreator.hh>
 #include <core/scoring/methods/NMerSVMEnergyCreator.hh>
@@ -442,6 +443,7 @@ static EnergyMethodRegistrator< scoring::rna::RNA_FullAtomVDW_BasePhosphateCreat
 static EnergyMethodRegistrator< scoring::rna::StackElecEnergyCreator > StackElecEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::chemical_shift::RNA_ChemicalShiftEnergyCreator > NA_ChemicalShiftEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SWM_RMSD_EnergyCreator > SWM_RMSD_EnergyCreator_registrator;
+//static EnergyMethodRegistrator< scoring::methods::FreeResidueBonusEnergyCreator > FreeResidueBonusEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::sym_e::symECreator > symECreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::PoissonBoltzmannEnergyCreator > PoissonBoltzmannEnergyCreator_registrator;
 

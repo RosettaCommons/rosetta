@@ -26,7 +26,7 @@ SET(COMPILE_FLAGS "-pipe -w")
 #SET(COMPILE_FLAGS "-pipe -w -O2")
 #SET(COMPILE_FLAGS "-pipe -w -O3 -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s")
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -w -ffast-math -funroll-loops -finline-functions -ftemplate-depth=250")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -w -ffast-math -funroll-loops -finline-functions -ftemplate-depth=250 -stdlib=libstdc++ -mmacosx-version-min=10.6")
 
 IF(${COMPILER} STREQUAL "clang")
 	SET(CMAKE_CXX_COMPILER "clang++")

@@ -26,6 +26,7 @@
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
 #include <utility/vector1.hh>
+#include <boost/unordered_map.hpp>
 
 
 namespace core {
@@ -100,6 +101,24 @@ identify_hbonds_1way(
 	HBondOptions const & options,
 	// output
 	EnergyMap & emap
+);
+	
+void
+identify_hbonds_1way(
+	 HBondDatabase const & database,
+	 conformation::Residue const & don_rsd,
+	 conformation::Residue const & acc_rsd,
+	 Size const don_nb,
+	 Size const acc_nb,
+	 bool const evaluate_derivative,
+	 bool const exclude_don_bb,
+	 bool const exclude_don_bsc,
+	 bool const exclude_acc_scb,
+	 bool const exclude_acc_sc,
+	 HBondOptions const & options,
+	 // output
+	 EnergyMap & emap,
+	 boost::unordered_map<core::Size, core::Size> & num_hbonds
 );
 
 void

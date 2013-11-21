@@ -184,6 +184,18 @@ namespace swa {
 
 	Real
 	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose );
+	
+	void
+	clear_constraints_recursively( pose::Pose & pose );
+	
+	void
+	add_coordinate_constraints_from_map( pose::Pose & pose, pose::Pose const & native_pose, std::map< id::AtomID, id::AtomID > const & superimpose_atom_id_map, core::Real const & constraint_x0, core::Real const & constraint_tol );
+	
+	void
+	superimpose_at_fixed_res_and_add_constraints( pose::Pose & pose, pose::Pose const & native_pose, core::Real const & constraint_x0, core::Real const & constraint_tol );
+	
+	void
+	superimpose_recursively_and_add_constraints( pose::Pose & pose, pose::Pose const & native_pose, core::Real const & constraint_x0, core::Real const & constraint_tol );
 
 	Size
 	get_number_missing_residue_connections( pose::Pose & pose );

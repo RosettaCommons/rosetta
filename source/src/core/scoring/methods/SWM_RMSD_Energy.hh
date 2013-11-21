@@ -61,7 +61,7 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
+		ScoreFunction const & test,
 		EnergyMap & totals
 	) const;
 
@@ -97,8 +97,23 @@ public:
 	void
 	superimpose_recursively( pose::Pose & pose, pose::Pose const & native_pose, Real & rmsd, Size & natoms ) const;
 	
+	void
+	add_coordinate_constraints( pose::Pose & pose, pose::Pose const & native_pose ) const;
+	
 	Real
 	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose ) const;
+	
+	void
+	add_constraints_from_map( constraints::ConstraintSetOP & cst_set, Size const & anchor, pose::Pose const & native_post, std::map< id::AtomID, id::AtomID > const & superimpose_atom_id_map ) const;
+	
+	void
+	superimpose_at_fixed_res_and_add_constraints( pose::Pose const & pose, constraints::ConstraintSetOP & cst_set, Size const & anchor, pose::Pose const & native_pose ) const;
+	
+	void
+	superimpose_recursively_and_add_constraints( pose::Pose & pose, constraints::ConstraintSetOP & cst_set, Size const & anchor, pose::Pose const & native_pose ) const;
+
+	void
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn) const;
 	
 private:
 

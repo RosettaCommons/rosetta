@@ -33,7 +33,7 @@ namespace monte_carlo {
 	public:
 
 		//constructor
-		RNA_ResampleMover( protocols::swa::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler );
+		RNA_ResampleMover( protocols::swa::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler, core::pose::PoseOP native_pose, core::Real constraint_x0, core::Real constraint_tol );
 
 		//destructor
 		~RNA_ResampleMover();
@@ -68,6 +68,9 @@ namespace monte_carlo {
 		core::Real just_min_after_mutation_frequency_;
 		bool allow_internal_moves_;
 		bool minimize_single_res_;
+		core::pose::PoseOP native_pose_;
+		core::Real constraint_x0_;
+		core::Real constraint_tol_;
 
 		protocols::swa::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
 	};

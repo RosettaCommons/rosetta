@@ -50,6 +50,7 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
+#include <boost/unordered_map.hpp>
 #define foreach BOOST_FOREACH
 
 
@@ -469,6 +470,122 @@ identify_hbonds_1way(
 	} // loop over donors
 }
 
+void
+identify_hbonds_1way(
+					 HBondDatabase const & database,
+					 conformation::Residue const & don_rsd,
+					 conformation::Residue const & acc_rsd,
+					 Size const don_nb,
+					 Size const acc_nb,
+					 bool const evaluate_derivative,
+					 bool const exclude_bb,  /* exclude if acc=bb and don=bb */
+					 bool const exclude_bsc, /* exclude if acc=bb and don=sc */
+					 bool const exclude_scb, /* exclude if acc=sc and don=bb */
+					 bool const exclude_sc,  /* exclude if acc=sc and don=sc */
+					 HBondOptions const & options,
+					 // output
+					 EnergyMap & emap,
+					 boost::unordered_map<core::Size, core::Size> & num_hbonds
+					 )
+{
+	assert( don_rsd.seqpos() != acc_rsd.seqpos() );
+	
+	// <f1,f2> -- derivative vectors
+	//std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
+	HBondDerivs derivs;
+	
+	for ( chemical::AtomIndices::const_iterator
+		 hnum = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
+		 hnum != hnume; ++hnum ) {
+		Size const hatm( *hnum );
+		Size const datm(don_rsd.atom_base(hatm));
+		bool datm_is_bb = don_rsd.atom_is_backbone(datm);
+		
+		if (datm_is_bb){
+			if (exclude_bb && exclude_scb) continue;
+		} else {
+			if (exclude_sc && exclude_bsc) continue;
+		}
+		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
+		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
+		
+		for ( chemical::AtomIndices::const_iterator
+			 anum = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
+			 anum != anume; ++anum ) {
+			Size const aatm( *anum );
+			if (acc_rsd.atom_is_backbone(aatm)){
+				if (datm_is_bb){
+					if (exclude_bb) continue;
+				} else {
+					if (exclude_bsc) continue;
+				}
+			} else {
+				if (datm_is_bb){
+					if (exclude_scb) continue;
+				} else {
+					if (exclude_sc) continue;
+				}
+			}
+			
+			// rough filter for existance of hydrogen bond
+			if ( hatm_xyz.distance_squared( acc_rsd.xyz( aatm ) ) > MAX_R2 ) continue;
+			
+			Real unweighted_energy( 0.0 );
+			
+			HBEvalTuple hbe_type( datm, don_rsd, aatm, acc_rsd);
+			
+			int const base ( acc_rsd.atom_base( aatm ) );
+			int const base2( acc_rsd.abase2( aatm ) );
+			assert( base2 > 0 && base != base2 );
+			
+			hb_energy_deriv( database, options, hbe_type, datm_xyz, hatm_xyz,
+							acc_rsd.atom(aatm ).xyz(),
+							acc_rsd.atom(base ).xyz(),
+							acc_rsd.atom(base2).xyz(),
+							unweighted_energy, evaluate_derivative, derivs);
+			
+			if (unweighted_energy >= MAX_HB_ENERGY) continue;
+			//std::cout << std::endl << "Found a hydrogen bond" << std::endl;
+			num_hbonds[don_rsd.seqpos()]++;
+			num_hbonds[acc_rsd.seqpos()]++;
+			
+			Real environmental_weight
+			(!options.use_hb_env_dep() ? 1 :
+			 get_environment_dependent_weight(hbe_type, don_nb, acc_nb, options));
+			
+			////////
+			// now we have identified an hbond -> accumulate its energy
+			
+			Real hbE = unweighted_energy /*raw energy*/ * environmental_weight /*env-dep-wt*/;
+			switch(get_hbond_weight_type(hbe_type.eval_type())){
+				case hbw_NONE:
+				case hbw_SR_BB:
+					emap[hbond_sr_bb] += hbE; break;
+				case hbw_LR_BB:
+					emap[hbond_lr_bb] += hbE; break;
+				case hbw_SR_BB_SC:
+					//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
+					emap[hbond_bb_sc] += hbE;
+					emap[hbond_sr_bb_sc] += hbE; break;
+				case hbw_LR_BB_SC:
+					//Note this is double counting if both hbond_bb_sc and hbond_sr_bb_sc have nonzero weight!
+					emap[hbond_bb_sc] += hbE;
+					emap[hbond_lr_bb_sc] += hbE; break;
+				case hbw_SC:
+					emap[hbond_sc] += hbE; break;
+				default:
+					tr << "Warning: energy from unexpected HB type ignored "
+					<< hbe_type.eval_type() << std::endl;
+					runtime_assert(false);
+					break;
+			}
+			/////////
+			
+		} // loop over acceptors
+	} // loop over donors
+}
+	
+	
 void
 identify_hbonds_1way_AHdist(
 	HBondDatabase const & database,
