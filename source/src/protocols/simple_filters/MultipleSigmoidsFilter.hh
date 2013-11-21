@@ -50,7 +50,7 @@ class MultipleSigmoids : public filters::Filter
 		OperatorOP operator_filter() const;
 		void operator_filter( OperatorOP opt );
 		SigmoidOP sigmoid_filter() const;
-		void sigmoid_filter( SigmoidOP sig );
+		// Undefined, commenting out to fix PyRosetta build  void sigmoid_filter( SigmoidOP sig );
 		RelativePoseFilterOP relative_pose_filter() const;
 		void relative_pose_filter( RelativePoseFilterOP rpose);
 		void reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint ); /// allows within-trajectory resetting of the baseline. Notice this is nonconst, so can't be called from apply. attempt_read_from_checkpoint should be true for MC trials > 1, but false otherwise

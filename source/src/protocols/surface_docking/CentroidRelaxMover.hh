@@ -48,30 +48,30 @@ public:
 // Standard methods ////////////////////////////////////////////////////////
 	///@brief Default constructor
 	CentroidRelaxMover();
-	
+
 	///@brief Copy constructor
 	CentroidRelaxMover(CentroidRelaxMover const & src);
 
 	//Destructor
 	~CentroidRelaxMover();
-	
+
 	// Standard Rosetta methods ////////////////////////////////////////////////
 	//General Methods
 	///@brief Register options with the options system
-	static void register_options();
-	
+	// Undefined, commenting out to fix PyRosetta build static void register_options();
+
 	///@brief Generate string representation of CentroidRelaxMover
 	void show(std::ostream & output=std::cout) const;
-	
+
 	//Insertion operator (overloaded so that CentroidRelaxMover can be "printed" in PyRosetta.
-	friend std::ostream & operator<<(std::ostream & output, CentroidRelaxMover const & object_to_output);
-	
+	// Undefined, commenting out to fix PyRosetta build friend std::ostream & operator<<(std::ostream & output, CentroidRelaxMover const & object_to_output);
+
 	// Mover Methods
 	///@brief Return the name of the Mover
 	virtual std::string get_name() const;
-	
+
 	virtual protocols::moves::MoverOP clone() const;
-	
+
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
 	///@brief Apply the corresponding move to <input_pose>
@@ -79,11 +79,11 @@ public:
 
 	//Accessors/Mutators
 	void set_nmoves(const core::Size setting);
-	
+
 	void set_inner_loop_cycles(const core::Size setting);
-	
+
 	void set_outer_loop_cycles(const core::Size setting);
-	
+
 
 private:
 
@@ -110,7 +110,7 @@ private:
 	moves::MonteCarloOP  monte_carlo_;
 	moves::TrialMoverOP small_trial_min_mover_;
 	moves::TrialMoverOP shear_trial_min_mover_;
-	
+
 	core::Size inner_loop_cycles_;
 	core::Size outer_loop_cycles_;
 
