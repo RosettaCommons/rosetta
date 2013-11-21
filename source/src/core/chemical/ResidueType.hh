@@ -109,6 +109,7 @@ typedef utility::keys::Key2Tuple< Size, Size > two_atom_set;
 typedef utility::keys::Key3Tuple< Size, Size, Size > three_atom_set;
 typedef utility::keys::Key3Tuple< Size, Size, Size > bondangle_atom_set;
 typedef utility::keys::Key4Tuple< Size, Size, Size, Size > dihedral_atom_set;
+typedef std::map< VD, std::string > ElementMap;
 
 class ResidueType : public utility::pointer::ReferenceCount {
 
@@ -457,6 +458,13 @@ public:
 	Size
 	atom_index( std::string const & name ) const;
 
+	/// @brief get the vertex descriptor from the name of the atom.
+	VD
+	vd_from_name( std::string const & name) const;
+
+	/// @brief Get the vertex descriptor from the atom index.
+	VD
+	vd_from_index(Size const & atomno) const;
 
 	void
 	show_all_atom_names( std::ostream & out ) const;
@@ -972,6 +980,13 @@ public:
 		Vector const & xyz_in
 	);
 
+	/// @brief Reassign Rosetta atom types based on the current heuristics.
+	/// emap is a map of VD->element strings. If an atom is not present in the element map,
+	/// attempt to get the element string from the current type (it's an error if it doesn't have one.)
+	/// If preserve is true, only retype those atoms which have an atom_type_index of zero.
+	void
+	retype_atoms(ElementMap const & emap, bool preserve=false);
+
 	//////////////////////////////////////////////////////////////////////
 	/////////////////////////orbitals/////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -1140,7 +1155,7 @@ public:
 	///@brief add a numeric property
 	void
 	add_numeric_property(std::string const & tag,core::Real value);
-	
+
 	///@brief add a string property
 	void
 	add_string_property(std::string const & tag, std::string value);
@@ -1258,7 +1273,7 @@ public:
 		}
 		return property_it->second;
 	}
-	
+
 	/// @brief  Generic variant access -- SLOW!!!!!
 	bool
 	has_variant_type( VariantType const & variant_type ) const
@@ -1626,6 +1641,10 @@ public:
 			Size & nbr2
 	) const;
 
+	/// @brief A graph-based function to determine the size of the smallest ring that involves a given atom.
+	core::Size
+	smallest_ring_size( VD const & atom, core::Size const & max_size = 999999) const;
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -1917,7 +1936,7 @@ private:
 
 	///Here we store arbitrary numeric properties with string names
 	std::map<std::string,core::Real> numeric_properties_;
-	
+
 	///Here we store arbitrary string properties with string names
 	std::map<std::string,std::string> string_properties_;
 

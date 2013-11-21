@@ -23,8 +23,6 @@
 /// Phil Bradley
 /// Steven Combs - comments
 ///
-///
-/// @last_modified December 6 2010
 /////////////////////////////////////////////////////////////////////////
 // Unit headers
 #include <core/chemical/AtomTypeSet.hh>
@@ -147,6 +145,22 @@ AtomTypeSet::name() const {
 	if(first_char_pos == std::string::npos) first_char_pos = 0;
 
 	return directory_.substr(first_char_pos, last_char_pos - first_char_pos + 1);
+}
+
+/// @brief lookup the atom_type by the atom_type_name string
+int
+AtomTypeSet::atom_type_index( std::string const & atom_type_name ) const
+{
+	std::map< std::string, int >::const_iterator
+		iter( atom_type_index_.find( atom_type_name ) );
+	if ( iter == atom_type_index_.end() ) {
+		std::string trimmed( utility::trim(atom_type_name) ); // Try with stripped whitespace
+		iter = atom_type_index_.find( trimmed );
+		if ( iter == atom_type_index_.end() ) {
+			utility_exit_with_message("unrecognized atom_type_name '"+atom_type_name+"'");
+		}
+	}
+	return iter->second;
 }
 
 /// @brief file I/O

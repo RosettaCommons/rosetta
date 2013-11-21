@@ -55,14 +55,14 @@ public:
 		cut_bond_ = cut_bond;
 	}
 
-// Setters
-	Real distance(){
+// Getters
+	Real distance() const {
 		return distance_;
 	}
-	BondName bond_name(){
+	BondName bond_name() const {
 		return bond_name_;
 	}
-	bool cut_bond(){
+	bool cut_bond() const {
 		return cut_bond_;
 	}
 

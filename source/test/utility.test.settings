@@ -37,6 +37,9 @@ sources = {
 		"file_sys_util",
 		"PathName",
 	],
+	"graph" : [
+		"ring_detection",
+	],
 	"io" : [
 		"izstream",
 		"zipstream",

@@ -1,0 +1,149 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   utility/graph/ring_detection.hh
+/// @brief  Algorithms for working with rings in boost graphs
+/// @author Rocco Moretti (rmorettiase@gmail.com)
+
+#ifndef INCLUDED_utility_graph_ring_detection_HH
+#define INCLUDED_utility_graph_ring_detection_HH
+
+#include <utility/graph/BFS_prune.hh>
+#include <utility/vector0.hh>
+
+#include <platform/types.hh>
+
+namespace utility {
+namespace graph {
+
+// As a header, we reall shouldn't have tracers here ...
+// static basic::Tracer TR("utility.graph.ring_detection");
+
+/// @brief A class to implement the behavior of the smallest ring size finding algorithm, accessible through the smallest_ring_size() function below.
+/// @details Based on BCL's smallest ring size detection algorithm.
+
+template< class Graph, class DistanceMap, class LabelMap >
+class RingSizeVisitor: public utility::graph::null_bfs_prune_visitor {
+	typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
+	typedef typename boost::graph_traits<Graph>::vertex_descriptor VD;
+
+private:
+	// References to avoid copying when the visitor is passed by value.
+	DistanceMap & distances_;
+	LabelMap & labels_;
+	// Reference to allow output when the visitor is passed by value
+	platform::Size & size_;
+	platform::Size stop_level_;
+public:
+	RingSizeVisitor(VD const & source, Graph const & graph, DistanceMap & distances, LabelMap & labels, platform::Size & size, platform::Size const & max_size = 2*999999):
+		distances_( distances ),
+		labels_( labels ),
+		size_(size), // Tie for output.
+		stop_level_( max_size/2 + 1 ) // Integer truncation division intended
+	{
+		size_ = 999999;
+		boost::put(distances_,source,0);
+		boost::put(labels_,source,0);
+		typename boost::graph_traits<Graph>::adjacency_iterator iter, end;
+		platform::Size index=1;
+		for( boost::tie(iter,end) = boost::adjacent_vertices(source,graph); iter != end; ++iter, ++index) {
+			boost::put(labels_,*iter,index);
+			boost::put(distances_,*iter,1);
+		}
+	}
+
+	bool tree_edge(Edge const & e, Graph const & g) {
+		//First time we see the target of the edge - check validity, mark distance and label
+		// We can assume the parent node is initialized on the data map.
+		VD const & parent( boost::source(e,g) );
+		VD const & child( boost::target(e,g) );
+		platform::Size distance( boost::get(distances_,parent)+1 );
+		if( distance == 1 ) { return false; } // We've already processed the node in the constructor.
+		if( distance >= stop_level_ ) { return true; }
+
+		//Set Distance and label
+		boost::put(distances_, child, distance);
+		boost::put(labels_, child, boost::get(labels_,parent));
+		return false;
+	}
+
+	bool gray_target(Edge const & e, Graph const & g) {
+		// A grey target implies a ring closure.
+		// We can be assured that both nodes have been initialized on the data maps.
+		VD const & left( boost::source(e,g) );
+		VD const & right( boost::target(e,g) );
+		if( boost::get(labels_,left) ==  boost::get(labels_,right) ) {
+			// We're closing a ring that can bypass the start vertex. Ignore.
+			return false;
+		}
+		platform::Size const & dleft( boost::get(distances_,left) );
+		platform::Size const & dright( boost::get(distances_,right) );
+		platform::Size ringsize( dleft + dright + 1 ); // +1 for the start vertex
+		// Note that the first ring encountered may not be the smallest ring.
+		// E.g. if we're working on the second level, we may close a six member ring first,
+		// but then close a five member one later while finishing up the second level.
+		// Finish this level, but don't bother working on the next level.
+		if( ringsize < size_ ) {
+			size_ = ringsize;
+			stop_level_ = dleft + 1; // Don't follow any nodes to next level
+		}
+		return false;
+	}
+};
+
+/// @brief A boost graph-based function to find the size of the smallest ring for a given vertex.
+/// Will return the maximum ring size, or 999999 for no ring. If there is a maximum ring size,
+/// That can be set to limit the amount of search needed.
+
+template < class Graph >
+platform::Size
+smallest_ring_size( typename boost::graph_traits< Graph>::vertex_descriptor const & vd, Graph const & graph, platform::Size const & max_ring_size = 2*999999 ) {
+
+	typedef typename boost::graph_traits< Graph>::vertex_descriptor VD;
+
+/*	typedef typename boost::property_map<Graph, boost::vertex_index_t>::type VertexIDMap;
+	//vector0 as the VertexIDMap is zero-based.
+	typedef utility::vector0< platform::Size > DistanceMapStore;
+	typedef boost::iterator_property_map<DistanceMapStore::iterator, VertexIDMap,
+			std::iterator_traits<DistanceMapStore::iterator>::value_type,
+			std::iterator_traits<DistanceMapStore::iterator>::reference
+			> DistanceMap;
+	typedef utility::vector0< platform::Size > LabelMapStore;
+	typedef boost::iterator_property_map<LabelMapStore::iterator, VertexIDMap,
+			std::iterator_traits<LabelMapStore::iterator>::value_type,
+			std::iterator_traits<LabelMapStore::iterator>::reference
+			> LabelMap;
+
+	VertexIDMap vertex_id( boost::get(boost::vertex_index, graph) );
+	DistanceMapStore	distancestore( boost::num_vertices(graph), 999999 );
+	DistanceMap	distances( boost::make_iterator_property_map(distancestore.begin(), vertex_id) );
+	LabelMapStore	labelstore( boost::num_vertices(graph), 999999 );
+	LabelMap	labels( boost::make_iterator_property_map(labelstore.begin(), vertex_id) );
+*/
+
+	typedef typename std::map<VD,platform::Size> DataStore;
+	typedef typename boost::associative_property_map< DataStore > DataStoreMap;
+
+	DataStore distancestore;
+	DataStoreMap distances(distancestore);
+	DataStore labelstore;
+	DataStoreMap labels(labelstore);
+
+	platform::Size smallest_size = 999999;
+	RingSizeVisitor< Graph, DataStoreMap, DataStoreMap > vis(vd, graph, distances, labels, smallest_size, max_ring_size);
+	utility::graph::breadth_first_search_prune(graph, vd, vis);
+
+	return smallest_size;
+}
+
+
+} // namespace graph
+} // namespace utility
+
+#endif

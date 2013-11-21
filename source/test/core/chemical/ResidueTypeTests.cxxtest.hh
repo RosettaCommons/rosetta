@@ -24,12 +24,16 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/MMAtomType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/residue_io.hh>
+
 // AUTO-REMOVED #include <core/chemical/ElementSet.hh>
 // AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
 // AUTO-REMOVED #include <core/chemical/orbitals/OrbitalTypeSet.hh>
 
 // Platform Headers
 #include <utility/vector1.hh>
+#include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
@@ -49,6 +53,7 @@ using core::chemical::ElementSetCAP;
 using core::chemical::MMAtomTypeSetCAP;
 using core::chemical::orbitals::OrbitalTypeSetCAP;
 using core::chemical::ResidueType;
+using core::chemical::ResidueTypeSet;
 using core::chemical::FA_STANDARD;
 using utility::vector1;
 
@@ -57,9 +62,9 @@ static Tracer TR("core.chemical.ResidueTypeTests.cxxtest");
 void add_atom(
 		ResidueType & rsd,
 		AtomTypeSetCAP & atom_types,
-		string const& name, 
-		string const& type, 
-		string const& mm_type, 
+		string const& name,
+		string const& type,
+		string const& mm_type,
 		core::Real const& charge
 ){
 	core::Size natoms = rsd.natoms();
@@ -88,7 +93,7 @@ void add_atom(
 	}else if(std::abs(charge > 1.0e-3)) ++Hpos_apolar;
 
 	rsd.add_atom( name, type, mm_type, charge);
-	
+
 	TS_ASSERT_EQUALS(rsd.natoms(), natoms);
 	//TS_ASSERT_EQUALS(rsd.nheavyatoms(), nheavyatoms); // Only updated with finalize
 	TS_ASSERT_EQUALS(rsd.n_hbond_acceptors(), nhbond_acceptors);
@@ -103,6 +108,20 @@ void add_atom(
 void add_bond(ResidueType & rsd, std::string const& a1, std::string const& a2){
 	rsd.add_bond(a1,a2);
 	//TS_ASSERT_EQUALS( rsd.path_distance(rsd.atom_index(a1), rsd.atom_index(a2)), 1); // Only updated with finalize
+}
+
+void do_retyping(ResidueType const & ref, bool build_emap = true) {
+	core::chemical::ElementMap emap;
+	if( build_emap ) {
+		for( core::Size ii(1); ii <= ref.natoms(); ++ii ) {
+			emap[ ref.vd_from_index( ii ) ] = ref.atom_type(ii).element();
+		}
+	}
+	ResidueType rsd( ref );
+	rsd.retype_atoms(emap);
+	for( core::Size ii(1); ii <= ref.natoms(); ++ii ) {
+		TS_ASSERT_EQUALS( rsd.atom_type(ii).name(), ref.atom_type(ii).name());
+	}
 }
 
 class ResidueTypeTests : public CxxTest::TestSuite {
@@ -159,7 +178,7 @@ public:
 
 		TS_ASSERT_EQUALS( rsd.lower_connect_atom(), rsd.atom_index("N"));
 		TS_ASSERT_EQUALS( rsd.upper_connect_atom(), rsd.atom_index("C"));
-		
+
 		add_bond( rsd, "N", "CA");
 		add_bond( rsd, "N", "H");
 		add_bond( rsd, "CA", "C");
@@ -170,7 +189,7 @@ public:
 		add_bond( rsd, "CB", "2HB");
 		add_bond( rsd, "CB", "3HB");
 
-		
+
 		rsd.nbr_atom("CB");
 		TS_ASSERT_EQUALS(rsd.nbr_atom(), rsd.atom_index("CB"));
 		rsd.nbr_radius(3.4473);
@@ -194,7 +213,7 @@ public:
 		rsd.finalize();
 
 		//TS_ASSERT_EQUALS( rsd.chi_atoms( rsd.atom_index("CA")).size(), (core::Size) 3); // we have to "add_chi" first and ALA has no chi listed
-		
+
 		TS_ASSERT_EQUALS( rsd.path_distance(rsd.atom_index("N"), rsd.atom_index("C")), 2);
 		TS_ASSERT_EQUALS( rsd.path_distance(rsd.atom_index("N"), rsd.atom_index("O")), 3);
 
@@ -228,7 +247,7 @@ public:
 		TS_ASSERT_EQUALS(rsd.all_sc_atoms().size(), (core::Size) 10); // Why are all atoms being called side chain atoms?
 		TS_ASSERT_EQUALS(rsd.Hpos_polar_sc().size(), (core::Size) 1);
 		TS_ASSERT_EQUALS(rsd.accpt_pos_sc().size(), (core::Size) 1);
-		
+
 
 		TS_ASSERT_EQUALS(rsd.atom_type(1).name(), "Nbb");
 		TS_ASSERT_EQUALS(rsd.atom_type(2).name(), "CAbb");
@@ -288,4 +307,34 @@ public:
 
 	}
 
+	void test_retyping() {
+		using namespace core::chemical;
+
+		ChemicalManager * cm(ChemicalManager::get_instance());
+		string const tag(FA_STANDARD);
+		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
+		ElementSetCAP element_types = cm->element_set(tag);
+		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
+		OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
+		ResidueTypeSet rsd_types;
+
+		utility::io::izstream paramslist("core/chemical/params/retype_list.txt");
+		std::string filename;
+		paramslist >> filename;
+		while( paramslist ) {
+			TR << "Retyping " << filename << std::endl;
+			core::chemical::ResidueTypeOP rsd = read_topology_file("core/chemical/"+filename,
+					atom_types, element_types, mm_atom_types, orbital_types, &rsd_types);
+			do_retyping(*rsd);
+			paramslist >> filename;
+		}
+
+		// Now test autodiscovery of elements.
+		filename = "params/1aq1.mol2.params";
+		ResidueTypeOP rsd = read_topology_file("core/chemical/"+filename,
+				atom_types, element_types, mm_atom_types, orbital_types, &rsd_types);
+		do_retyping(*rsd,false);
+
+		// TODO: Test partial reassignment.
+	}
 };

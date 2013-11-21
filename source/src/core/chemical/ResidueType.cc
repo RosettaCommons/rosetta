@@ -84,6 +84,7 @@
 // Utility headers
 #include <utility/PyAssert.hh>
 #include <utility/vector1.hh>
+#include <utility/graph/ring_detection.hh>
 
 // C++ headers
 #include <algorithm>
@@ -559,59 +560,59 @@ ResidueType::bonded_neighbor_types(Size const atomno) const
             HeavyAtomGraph fg(graph_, boost::keep_all(), filter);
             return fg;
       }
-    
+
     const AcceptorAtomGraph
     ResidueType::acceptor_atoms(){
     	AcceptorAtomFilter filter(graph_, atom_types_);
     	AcceptorAtomGraph graph(graph_, boost::keep_all(), filter);
         return graph;
     }
-    
+
     const HeavyAtomWithPolarHydrogensGraph
     ResidueType::heavy_atom_with_polar_hydrogens(){
     	HeavyAtomWithPolarHydrogensFilter filter(graph_, atom_types_);
         HeavyAtomWithPolarHydrogensGraph graph(graph_, boost::keep_all(), filter);
         return graph;
     }
-    
+
     const HeavyAtomWithHydrogensGraph
     ResidueType::heavy_atom_with_hydrogens(){
         HeavyAtomWithHydrogensFilter filter(graph_, atom_types_);
         HeavyAtomWithHydrogensGraph graph(graph_, boost::keep_all(), filter);
         return graph;
     }
-    
-    
+
+
     const HydrogenAtomGraph
     ResidueType::hydrogens(){
             HydrogenAtomFilter filter(graph_, atom_types_);
             HydrogenAtomGraph fg(graph_, boost::keep_all(), filter);
             return fg;
     }
-    
+
     const PolarHydrogenGraph
     ResidueType::polar_hydrogens(){
         PolarHydrogenFilter filter(graph_, atom_types_);
         PolarHydrogenGraph fg(graph_, boost::keep_all(), filter);
         return fg;
     }
-    
+
     const APolarHydrogenGraph
     ResidueType::apolar_hydrogens(){
         APolarHydrogenFilter filter(graph_, atom_types_);
         APolarHydrogenGraph fg(graph_, boost::keep_all(), filter);
         return fg;
     }
-    
+
     const AromaticAtomGraph
     ResidueType::aromatic_atoms(){
         AromaticAtomFilter filter(graph_, atom_types_);
         AromaticAtomGraph fg(graph_, boost::keep_all(), filter);
         return fg;
     }
-    
-    
-    
+
+
+
 
 /// @note this does not set xyz coordinates for the added atom
 void
@@ -674,7 +675,7 @@ ResidueType::add_atom(
 	graph_atom->is_virtual(atype.is_virtual());
 	graph_atom->has_orbitals(atype.atom_has_orbital());
 
-    
+
 
 	// allocate space for the new atom !!!!!!!!!!!!!!!!!!!!!!
 	// eg, in the atom/resconn map
@@ -736,6 +737,25 @@ ResidueType::mm_atom_type( Size const atomno ) const
 	return ( *mm_atom_types_ )[graph_[ ordered_atoms_[atomno] ].mm_atom_type_index() ];
 }
 
+VD
+ResidueType::vd_from_name( std::string const & name) const{
+	NameVDMap::const_iterator atom_graph_index_iter( atom_graph_index_.find( name ) );
+	if ( atom_graph_index_iter == atom_graph_index_.end() ) {
+		tr.Error << "atom name : " << name << " not available in residue " << name3() << std::endl;
+		show_all_atom_names( tr.Error );
+		tr.Error << std::endl;
+		assert(false);
+	}
+
+	return atom_graph_index_iter->second;
+}
+
+VD
+ResidueType::vd_from_index(Size const & atomno) const{
+	if( ! atomno ) { return ResidueGraph::null_vertex(); }
+	return ordered_atoms_[atomno];
+}
+
 orbitals::OrbitalType const &
 ResidueType::orbital_type(int const orbital_index)const
 {
@@ -785,30 +805,30 @@ ResidueType::add_bond(std::string const & atom_name1, std::string const & atom_n
         nbonds_++;
         // signal that we need to update the derived data
         finalized_ = false;
-        
+
         if ( !has( atom_name1 ) || !has( atom_name2 ) ) {
             std::string message = "add_bond: atoms " + atom_name1 + " and " + atom_name2 + " dont exist!";
             utility_exit_with_message( message  );
         }
-        
+
         /////// Standard Version /////////
-        
+
         Size const i1( atom_index( atom_name1 ) );
         Size const i2( atom_index( atom_name2 ) );
-        
-        
+
+
 		// check if bond already exists
 		AtomIndices const & i1_nbrs(bonded_neighbor(i1));
 		if ( std::find( i1_nbrs.begin(), i1_nbrs.end(), i2 ) != i1_nbrs.end() ) {
 			utility_exit_with_message( "dont add residue bonds more than once!" );
 		}
-        
-        
+
+
         graph_[ordered_atoms_[i1]].bonded_neighbors().push_back(i2);
         graph_[ordered_atoms_[i2]].bonded_neighbors().push_back(i1);
         graph_[ordered_atoms_[i1]].bonded_neighbor_types().push_back(bondLabel);
         graph_[ordered_atoms_[i2]].bonded_neighbor_types().push_back(bondLabel);	//bondType_vector_.push_back(BondType(i1,i2,bondLabel));
-        
+
         NameVDMap::const_iterator source = atom_graph_index_.find( atom_name1 );
         NameVDMap::const_iterator target = atom_graph_index_.find( atom_name2 );
         assert( source != atom_graph_index_.end());
@@ -820,7 +840,7 @@ ResidueType::add_bond(std::string const & atom_name1, std::string const & atom_n
         if( boost::edge(vd_source, vd_target, graph_).second ){
             utility_exit_with_message( "dont add residue bonds more than once!" );
         }
-        
+
         ResidueGraph::edge_descriptor e_added;
         bool added;
         boost::tie(e_added, added) = graph_.add_edge( vd_source, vd_target, Bond(-1, bondLabel)); /// -1 means Bond distance not set here. This will be fixed in the future
@@ -894,11 +914,11 @@ ResidueType::add_cut_bond(
     if ( std::find( i1_nbrs.begin(), i1_nbrs.end(), i2 ) != i1_nbrs.end() ) {
         utility_exit_with_message( "dont add residue bonds more than once!" );
     }
-    
-    
+
+
     graph_[ordered_atoms_[i1]].cut_bond_neighbors().push_back(i2);
     graph_[ordered_atoms_[i2]].cut_bond_neighbors().push_back(i1);
-    
+
 
 }
 
@@ -1175,7 +1195,7 @@ ResidueType::add_numeric_property(std::string const & tag, core::Real value)
 	numeric_properties_.insert(std::make_pair(tag,value));
 }
 
-	
+
 void
 ResidueType::add_string_property(std::string const & tag, std::string value)
 {
@@ -1322,18 +1342,18 @@ ResidueType::setup_atom_ordering(AtomIndices & old2new)
 	//
 	// ** adding support for deleting atoms at this stage: calls to delete_atom( name )
 	//    will append to delete_atoms_, must follow with call to finalize()
-    
+
 	// set atom counts
-    
+
 	// Graph Atoms are already deleted! Now all we need to do is sort them...
-    
+
 	Size const old_natoms( ordered_atoms_.size() );
 	assert(graph_.num_vertices() == old_natoms - delete_atoms_.size());
-    
+
 	// size and initialize the mapping from old to new indices
 	old2new.clear();
 	old2new.resize( old_natoms, 0 );
-    
+
 	// process delete_atoms_ to a friendlier form
 	utility::vector1< bool > keep_me( old_natoms, true );
  	for ( Size i=1; i<= old_natoms; ++i ) {
@@ -1343,7 +1363,7 @@ ResidueType::setup_atom_ordering(AtomIndices & old2new)
 
 	}
 	delete_atoms_.clear();
-    
+
 	// first fill a list of all the heavyatoms, insisting that backbone come first
 	AtomIndices old_heavyatom_indices;
 	for ( Size i=1; i<= old_natoms; ++i ) {
@@ -1353,11 +1373,11 @@ ResidueType::setup_atom_ordering(AtomIndices & old2new)
                 old_heavyatom_indices.push_back( i );
             }
 	}
-    
+
 	// update the bb-heavy counter:
 	n_backbone_heavyatoms_ = old_heavyatom_indices.size();
 	force_bb_.clear();
-    
+
 	// now add sidechain heavyatoms
 	for ( Size i=1; i<= old_natoms; ++i ) {
 		if ( keep_me[ i ] && atom_type( i ).is_heavyatom() &&
@@ -1366,22 +1386,22 @@ ResidueType::setup_atom_ordering(AtomIndices & old2new)
                 old_heavyatom_indices.push_back( i );
             }
 	}
-    
+
 	// all the heavyatoms
 	nheavyatoms_ = old_heavyatom_indices.size();
-    
+
 	// setup old2new, also fill in attached_H_begin/end
 	attached_H_begin_.clear();
 	attached_H_end_.clear();
 	attached_H_begin_.resize( nheavyatoms_, 0 );
 	attached_H_end_.resize( nheavyatoms_, 0 /*do not change*/);
-    
+
 	Size new_H_index( nheavyatoms_ );
 	for ( Size new_heavy_index = 1; new_heavy_index <= nheavyatoms_; ++new_heavy_index ) {
 		Size const old_heavy_index( old_heavyatom_indices[ new_heavy_index ] );
 		// mapping between indices
 		old2new[ old_heavy_index ] = new_heavy_index;
-        
+
 		// now add the attached hydrogens
 		attached_H_begin_[ new_heavy_index ] = new_H_index + 1;
 		AtomIndices const & nbrs( bonded_neighbor(old_heavy_index));
@@ -1405,7 +1425,7 @@ ResidueType::setup_atom_ordering(AtomIndices & old2new)
      }
      }
      */
-    
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1478,8 +1498,8 @@ ResidueType::reorder_primary_data(AtomIndices const & old2new)
         if( graph_[ordered_atoms_[new_index]].parent() ){ // If the parent is 0, it is still 0
             graph_[ordered_atoms_[new_index]].parent( old2new[ graph_[ordered_atoms_[new_index]].parent() ] );
         }
-        
-        
+
+
 		VD vd = ordered_atoms_[ new_index ];
 		Atom & a2 =  graph_[vd];
 		for ( Size i=1; i<= 3; ++i ) {
@@ -1678,8 +1698,8 @@ ResidueType::update_derived_data()
     for(Size ii=1; ii <= ordered_atoms_.size(); ++ii){
         graph_[ordered_atoms_[ii]].abase2( 0 ); /// DEPRECATED
     }
-    
-    
+
+
 	for ( Size ii=1, ii_end= accpt_pos_.size(); ii<= ii_end; ++ii ) {
 		uint const i( accpt_pos_[ii] );
 		uint const i_base( atom_base(i) );
@@ -2401,6 +2421,293 @@ ResidueType::set_ideal_xyz(
 	a.ideal_xyz( xyz_in );
 }
 
+////////// Utility functions for retype_atoms
+
+/// @brief Should the element be considered to be a virtual atom?
+bool retype_is_virtual( std::string const & element ) {
+	return (element == "*" || element == "X" || element == "V"); // TODO: Permit Vandium to be an actual element
+}
+
+std::string retype_get_element(VD const & vd, Atom const & a, ElementMap const & emap, AtomTypeSet const & atom_type_set ) {
+	ElementMap::const_iterator emiter( emap.find(vd) );
+	//std::string element( emap[ vd ]  );
+	if( emiter == emap.end() ) {
+		if( a.atom_type_index() != 0 ) {
+			// Assume we're keeping the same element.
+			return atom_type_set[ a.atom_type_index() ].element();
+		} else {
+			utility_exit_with_message("Cannot retype atoms - element unknown.");
+		}
+	} else {
+		return emiter->second;
+	}
+}
+
+/// @brief An atom is aromatic if it has any aromatic bonds to a non-virtual atom.
+/// TODO: We need better aromatic ring detection.
+bool retype_is_aromatic(VD const & atom, ResidueGraph const & graph, ElementMap const & emap, AtomTypeSet const & atom_type_set ) {
+	OutEdgeIter bonds, bonds_end;
+	for( boost::tie(bonds, bonds_end) = boost::out_edges(atom,graph); bonds != bonds_end; ++bonds ) {
+		if( graph[ *bonds ].bond_name() == AromaticBond ) {
+			VD const & tvd( boost::target( *bonds, graph) );
+			Atom const & t( graph[tvd] );
+			std::string t_element( retype_get_element(tvd,t,emap,atom_type_set) );
+			if( ! retype_is_virtual( t_element ) ) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+/// @brief Reassign Rosetta atom types based on the current heuristics.
+/// emap is a map of VD->element strings. If an atom is not present in the element map,
+/// attempt to get the element string from the current type (it's an error if it doesn't have one.)
+/// If preserve is true, only retype those atoms which have an atom_type_index of zero.
+/// @details The logic here comes from molfile_to_params.py
+/// Which is itself based on Rosetta++ ligand_ns.cc set_rosetta_atom_types(),
+/// and has been validated against the Meiler and Baker 2006 cross docking test set
+/// assignments
+///
+/// I'm not saying the logic is good, but it's the logic we're using.
+///
+/// This function assumes that:
+///   * All bonds and atoms exist.
+///   * Bond types (bond_name) are correctly set
+///   * The element symbols are either provided in emap, or are available through the currently set types.
+void
+ResidueType::retype_atoms(ElementMap const & emap, bool preserve) {
+	// For each atom, analyze bonding pattern to determine type
+	VDs aroCs; // Atoms assigned as aroC - need to change all attached hydrogens to Haro.
+	VIter itr, itr_end;
+	for( boost::tie(itr, itr_end) = vertices(graph_); itr != itr_end; ++itr) {
+		Atom & a( graph_[*itr] );
+		if( preserve && a.atom_type_index() != 0 ) {
+			continue;
+		}
+		std::string element( retype_get_element(*itr,a,emap,*atom_types_)  );
+		// H, C, O, N have complicated rules.
+		// Everything else maps to a single atom type.
+		if ( retype_is_virtual( element ) ) {
+			a.atom_type_index( atom_types_->atom_type_index("VIRT") );
+		} else if( element == "H" ) {
+			OutEdgeIter bonds, bonds_end;
+			core::Size num_aro_C(0), num_NOS(0);
+			for( boost::tie(bonds, bonds_end) = boost::out_edges(*itr,graph_); bonds != bonds_end; ++bonds ) {
+				VD const & tvd( boost::target( *bonds, graph_) );
+				Atom const & t( graph_[tvd] );
+				std::string t_element( retype_get_element(tvd,t,emap,*atom_types_) );
+
+				if( t_element == "N" || t_element == "O" || t_element == "S" ) { ++num_NOS; }
+				// Instead of also counting number of aroC's here (which may depend on atom iteration ordering,
+				// we annotate the ones we've assigned, and then adjust them afterwards.
+				// We still include the following test here, though, as it may catch hydrogens on carbons which
+				// don't get the aroC label.
+				if( t_element == "C" && retype_is_aromatic(tvd,graph_,emap,*atom_types_) ) {
+					++num_aro_C;
+				}
+			}
+			if( num_NOS >=1 ) {
+				a.atom_type_index( atom_types_->atom_type_index("Hpol") );
+			} else if ( num_aro_C >= 1 ) {
+				a.atom_type_index( atom_types_->atom_type_index("Haro") );
+			} else {
+				a.atom_type_index( atom_types_->atom_type_index("Hapo") );
+			}
+		} else if( element == "C") {
+			OutEdgeIter bonds, bonds_end;
+			bool saturated(true);
+			core::Size num_H(0), num_dbl_nonO(0), num_aro_nonO(0), num_aro_N(0);
+			for( boost::tie(bonds, bonds_end) = boost::out_edges(*itr,graph_); bonds != bonds_end; ++bonds ) {
+				VD const & tvd( boost::target( *bonds, graph_) );
+				Atom const & t( graph_[tvd] );
+				std::string t_element( retype_get_element(tvd,t,emap,*atom_types_) );
+
+				if( retype_is_virtual(t_element) ) { continue; }
+				switch( graph_[*bonds].bond_name() ) {
+				case SingleBond:
+					if( t_element == "H" ) { ++num_H; }
+					break;
+				case DoubleBond:
+					saturated = false;
+					if ( t_element != "O" ) { ++num_dbl_nonO; }
+					break;
+				case TripleBond:
+					saturated = false;
+					break;
+				case AromaticBond:
+					saturated = false;
+					if ( t_element != "O" ) { ++num_aro_nonO; }
+					if ( t_element == "N" ) { ++num_aro_N; } // really if, not else if
+					break;
+				default:
+					break;
+				}
+			}
+			if( saturated ) {
+				if( num_H >= 3 ) {
+					a.atom_type_index( atom_types_->atom_type_index("CH3 ") );
+				} else if( num_H == 2 ) {
+					a.atom_type_index( atom_types_->atom_type_index("CH2 ") );
+				} else {
+					a.atom_type_index( atom_types_->atom_type_index("CH1 ") );
+				}
+			} else { // unsaturated
+				if( num_aro_nonO >= 2 ) {
+					a.atom_type_index( atom_types_->atom_type_index("aroC") );
+					aroCs.push_back( *itr ); // for later attached H annotation
+				} else if( num_dbl_nonO >= 1 ) {
+					a.atom_type_index( atom_types_->atom_type_index("aroC") );
+					aroCs.push_back( *itr ); // for later attached H annotation
+				} else if( num_aro_N >= 1 ) {
+					a.atom_type_index( atom_types_->atom_type_index("CNH2") );
+				} else {
+					a.atom_type_index( atom_types_->atom_type_index("COO ") );
+				}
+			}
+		} else if( element == "N" ) {
+			OutEdgeIter bonds, bonds_end;
+			bool saturated(true);
+			core::Size num_H(0), heavy_nbrs(0);
+			for( boost::tie(bonds, bonds_end) = boost::out_edges(*itr,graph_); bonds != bonds_end; ++bonds ) {
+				VD const & tvd( boost::target( *bonds, graph_) );
+				Atom const & t( graph_[tvd] );
+				std::string t_element( retype_get_element(tvd,t,emap,*atom_types_) );
+
+				if( retype_is_virtual(t_element) ) { continue; }
+				if( t_element == "H" ) { ++num_H; }
+				else { ++heavy_nbrs; } // We've already ignored all the virtual atoms.
+				if( graph_[*bonds].bond_name() != SingleBond ) { saturated = false; }
+			}
+
+			if( num_H >= 3 ) {
+				a.atom_type_index( atom_types_->atom_type_index("Nlys") ); // carries a VERY high desolvation penalty
+			} else if( num_H == 2 ) {
+				// Not totally sure about this one, may want Ntrp instead if more than one heavy neighbor:
+				a.atom_type_index( atom_types_->atom_type_index("NH2O") ); // Narg would also be a possibility, but they're fairly similar
+			} else if( num_H == 1 ) {
+				if( heavy_nbrs <= 2 ) {
+					a.atom_type_index( atom_types_->atom_type_index("Ntrp") ); // should always be 2 neighbors, not less
+				} else {
+					a.atom_type_index( atom_types_->atom_type_index("Ntrp") ); // Npro? protonated tertiary amine
+				} // I know they're the same -- I'm just copying molfile_to_params, which splits the case.
+			} else {
+				if( heavy_nbrs <= 2 ) {
+					a.atom_type_index( atom_types_->atom_type_index("Nhis") );
+				} else if ( heavy_nbrs == 3 ) {
+					if( saturated ) {
+						a.atom_type_index( atom_types_->atom_type_index("Nhis") ); // deprotonated tertiary amine; need an sp3 hybrid H-bond acceptor type...
+					} else { // This also catches nitro groups -- is that what we want here?
+						a.atom_type_index( atom_types_->atom_type_index("Npro") ); // X=[N+](X)X, including nitro groups
+					}
+				} else {
+					a.atom_type_index( atom_types_->atom_type_index("Npro") ); // quaternary amine
+				}
+			}
+		} else if( element == "O" ) {
+			OutEdgeIter bonds, bonds_end;
+			bool saturated(true);
+			core::Size num_H(0), num_bonds(0), bonded_to_N(0), bonded_to_C_to_N(0), unsat_nbrs(0);
+			for( boost::tie(bonds, bonds_end) = boost::out_edges(*itr,graph_); bonds != bonds_end; ++bonds ) {
+				VD const & tvd( boost::target( *bonds, graph_) );
+				Atom const & t( graph_[tvd] );
+				std::string t_element( retype_get_element(tvd,t,emap,*atom_types_) );
+
+				if( retype_is_virtual(t_element) ) { continue; }
+				++num_bonds; // Bonds to non-virtual atoms.
+				if( graph_[*bonds].bond_name() != SingleBond ) { saturated = false; }
+				if( t_element == "H" ) { ++num_H; }
+				else if( t_element == "N" ) { ++bonded_to_N; }
+				OutEdgeIter bonds2, bonds_end2; // second degree bonds.
+				bool sat_neighbor = true;
+				for( boost::tie(bonds2, bonds_end2) = boost::out_edges(tvd,graph_); bonds2 != bonds_end2; ++bonds2 ) {
+					// Ignore the bond back to the atom we're typing.
+					//if( boost::target( *bonds2, graph_) == *itr ) { continue; }
+					VD const & tvd2( boost::target( *bonds2, graph_) );
+					Atom const & t2( graph_[tvd2] );
+					std::string t2_element( retype_get_element(tvd2,t2,emap,*atom_types_) );
+
+					if( retype_is_virtual(t2_element) ) { continue; }
+					if( t_element == "C" && t2_element == "N") { ++bonded_to_C_to_N; }
+					if( graph_[*bonds2].bond_name() != SingleBond ) { sat_neighbor = false; }
+				}
+				if( ! sat_neighbor ) { ++unsat_nbrs; }
+			}
+			if( saturated ) {
+				if( num_bonds < 2 ) {
+					a.atom_type_index( atom_types_->atom_type_index("OOC ") ); // catches C(=O)[O-] (Kekule form) -- new rule by IWD
+				} else {
+					core::Size ring_size( smallest_ring_size( *itr ) );
+					if( num_H > 0 ) {
+						a.atom_type_index( atom_types_->atom_type_index("OH  ") ); // catches C(=O)OH (Kekule form)
+					} else if ( ring_size < 5 ) {
+						a.atom_type_index( atom_types_->atom_type_index("OH  ") ); // small, strained rings leave the O more exposed? (IWD, see 1p8d)
+					} else if ( ring_size < 999999 && unsat_nbrs > 0 ) {
+						a.atom_type_index( atom_types_->atom_type_index("Oaro") ); // catches aromatic O in furan-like rings, though I rarely see these H-bond (IWD)
+					} else {
+						a.atom_type_index( atom_types_->atom_type_index("OH  ") ); // catches ethers, ROR (IWD, see comment)
+						// The lone pairs on ethers are capable of H-bonding in the same way that alcohols are.
+						// While alkyl ethers are quite non-polar, many others seem to make Hbonds,
+						// such as those attached to phosphates (R-O-PO3), methyls (R-O-CH3), and aromatic rings (R-O-Ph).
+						// It is unclear from the literature how strong these are, and is probably very situation dependent.
+					}
+				}
+			} else if ( num_H > 0 ) {
+				a.atom_type_index( atom_types_->atom_type_index("OH  ") ); // catches c(o)oH (aromatic bonds to both O)
+			} else if ( bonded_to_N ) {
+				a.atom_type_index( atom_types_->atom_type_index("ONH2") );
+			} else if ( bonded_to_C_to_N ) { // This is a non-standard rule introduced by IWD, agreed to by KWK:
+				a.atom_type_index( atom_types_->atom_type_index("ONH2") );
+			} else {
+				a.atom_type_index( atom_types_->atom_type_index("OOC ") );
+			}
+		} else if( "S"  == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("S   ") );
+		} else if( "P"  == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("Phos") );
+		} else if( "F"  == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("F   ") );
+		} else if( "CL" == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("Cl  ") );
+		} else if( "BR" == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("Br  ") );
+		} else if( "I"  == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("I   ") );
+		} else if( "NA" == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("Na1p") );
+		} else if( "K"  == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("K1p ") );
+		} else if( "MG" == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("Mg2p") );
+		} else if( "FE" == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("Fe3p") );
+		} else if( "CA" == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("Ca2p") );
+		} else if( "ZN" == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("Zn2p") );
+		} else {
+			utility_exit_with_message("Cannot type atom with element '"+element+"'");
+		}
+	} // For vertices in graph
+
+	// Hydrogens attached to aroCs == Haro.
+	// Technically doesn't match molfile_to_params, as a hydrogen simultaneously bonded to an aroC and an N/O/S
+	// would be typed Hpol there, but is typed Haro here. Though if you're silly enough to make two bonds to a hydrogen,
+	// you really can't complain when things come out mucked up.
+	for( VDs::const_iterator aroit(aroCs.begin()), aroend(aroCs.end()); aroit != aroend; ++aroit ) {
+		OutEdgeIter bonds, bonds_end;
+		for( boost::tie(bonds, bonds_end) = boost::out_edges(*aroit,graph_); bonds != bonds_end; ++bonds ) {
+			VD const & tvd( boost::target( *bonds, graph_) );
+			Atom & t( graph_[tvd] );
+			std::string t_element( retype_get_element(tvd,t,emap,*atom_types_) );
+			if( t_element == "H" && graph_[ *bonds ].bond_name() != UnknownBond  ) {
+				if( preserve && t.atom_type_index() != 0 ) { continue; }
+				t.atom_type_index( atom_types_->atom_type_index("Haro") );
+			}
+		}
+	}
+}
+
 // Return the CarbohydrateInfo object containing sugar-specific properties for this residue.
 core::chemical::carbohydrates::CarbohydrateInfoCOP
 ResidueType::carbohydrate_info() const
@@ -2677,6 +2984,13 @@ ResidueType::select_orient_atoms(
 			if ( center && nbr1 && nbr2 ) break;
 		} // atom_index
 	}
+}
+
+/// @brief A graph-based function to determine the size of the smallest ring that involves a given atom.
+core::Size
+ResidueType::smallest_ring_size( VD const & atom, core::Size const & max_size /*= 999999*/ ) const
+{
+	return utility::graph::smallest_ring_size(atom, graph_, max_size);
 }
 
 void

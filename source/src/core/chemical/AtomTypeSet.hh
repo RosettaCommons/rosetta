@@ -24,7 +24,6 @@
 /// Steven Combs - comments
 ///
 ///
-/// @last_modified December 6 2010
 /////////////////////////////////////////////////////////////////////////
 
 #ifndef INCLUDED_core_chemical_AtomTypeSet_hh
@@ -102,16 +101,7 @@ public:
 
 	/// @brief lookup the atom_type by the atom_type_name string
 	int
-	atom_type_index( std::string const & atom_type_name ) const
-	{
-		std::map< std::string, int >::const_iterator
-			iter( atom_type_index_.find( atom_type_name ) );
-		if ( iter == atom_type_index_.end() ) {
-			utility_exit_with_message("unrecognized atom_type_name "+atom_type_name);
-		}
-		return iter->second;
-	}
-
+	atom_type_index( std::string const & atom_type_name ) const;
 
 	/// @brief [ ] operator, simulating vector index behavior
 	///
