@@ -212,6 +212,12 @@ ResidueTypeSet::ResidueTypeSet(
 		while ( getline( data,line) ) {
 			if ( line.size() < 1 || line[0] == '#' ) continue;
 
+			// Skip carbohydrate patches unless included with include_sugars flag.
+			if ((!option[OptionKeys::in::include_sugars]) &&
+					(line.substr(0, 21) == "patches/carbohydrates")) {
+				continue;
+			}
+
 			// Skip this patch if the "patches_to_avoid" set contains the named patch.
 			utility::file::FileName fname( line );
 			if ( patches_to_avoid.find( fname.base() ) != patches_to_avoid.end() ) {
@@ -219,6 +225,7 @@ ResidueTypeSet::ResidueTypeSet(
 						": Skipping patch " << fname.base() << " as requested" << std::endl;
 				continue;
 			}
+
 			patch_filenames.push_back( directory + line );
 		}
 
