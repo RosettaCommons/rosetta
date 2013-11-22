@@ -43,8 +43,10 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh> // for dssp application
 #include <core/scoring/dssp/Dssp.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh> // ScoreFunction.hh seems required for compilation of InterfaceAnalyzerMover.hh
-
+#include <core/scoring/ScoreFunctionFactory.hh> // maybe needed for "getScoreFunction" ?
 
 //External
 #include <boost/uuid/uuid.hpp>
@@ -2101,6 +2103,31 @@ SandwichFeatures::is_this_strand_at_edge_by_looking_db(
 	return edge;
 } //is_this_strand_at_edge_by_looking_db
 
+
+
+
+void SandwichFeatures::process_decoy(
+	Pose &dssp_pose,
+	core::scoring::ScoreFunction const& scorefxn ) const
+{
+	scorefxn( dssp_pose );
+	// run PoseEvaluators
+//	evaluator_->apply( pose, tag, pss );
+} // process_decoy
+
+
+core::scoring::ScoreFunctionOP SandwichFeatures::generate_scorefxn( bool fullatom ) {
+	core::scoring::ScoreFunctionOP scorefxn( NULL );
+	if ( fullatom )
+	{
+		scorefxn = core::scoring::getScoreFunction();
+	}
+	else
+	{
+		scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
+	}
+	return scorefxn;
+}
 
 
 
@@ -6119,6 +6146,9 @@ SandwichFeatures::parse_my_tag(
 					//	definition: if true, write phi_psi_file
 	write_resfile_ = tag->getOption<bool>("write_resfile", false);
 					//	definition: if true, write resfile automatically
+	write_p_aa_pp_files_ = tag->getOption<bool>("write_p_aa_pp_files", false);
+					//	definition: if true, write p_aa_pp_files
+
 
 }
 
@@ -6182,6 +6212,7 @@ SandwichFeatures::report_features(
 		write_phi_psi_of_all_ = true;
 		write_phi_psi_of_E_	= true;
 		write_resfile_	= true;
+		write_p_aa_pp_files_	= true;
 	}
 
 
@@ -7221,6 +7252,38 @@ SandwichFeatures::report_features(
 
 	} 
 	// <end> write AA_dis to a file
+
+
+	// <begin> write p_aa_pp (Probability of amino acid at phipsi) to a file (ref. https://www.rosettacommons.org/manuals/archive/rosetta3.1_user_guide/score_types.html)
+	if (write_p_aa_pp_files_ && canonical_sw_extracted_from_this_pdb_file)
+	{
+		Size tag_len = tag.length();
+		string pdb_file_name = tag.substr(0, tag_len-5);
+		string p_aa_pp_file_name = pdb_file_name + "_p_aa_pp.txt";
+		ofstream p_aa_pp_file;
+		
+		p_aa_pp_file.open(p_aa_pp_file_name.c_str());
+		p_aa_pp_file << "residue_number	p_aa_pp" << endl;
+
+		core::scoring::ScoreFunctionOP centroid_scorefxn( generate_scorefxn( false /*fullatom*/ ) );
+		core::scoring::ScoreFunctionOP fullatom_scorefxn( generate_scorefxn( true /*fullatom*/ ) );
+
+		process_decoy( dssp_pose, pose.is_fullatom() ? *fullatom_scorefxn : *centroid_scorefxn);
+
+		TR.Info << "Current energy terms that we deal with:";
+		dssp_pose.energies().show_total_headers( std::cout );
+		TR.Info << endl;
+		
+		for(Size ii=1; ii<=dssp_pose.total_residue(); ii++ )
+		{
+			core::scoring::EnergyMap em1 = dssp_pose.energies().residue_total_energies(ii);
+			Real resi_p_aa_pp = em1[core::scoring::p_aa_pp];
+
+			p_aa_pp_file << ii << "	" << resi_p_aa_pp << endl;
+		}
+		p_aa_pp_file.close();
+	}
+	// <end> write p_aa_pp (Probability of amino acid at phipsi) to a file (ref. https://www.rosettacommons.org/manuals/archive/rosetta3.1_user_guide/score_types.html)
 
 
 	// <begin> write AA_distribution_without_direction to a file

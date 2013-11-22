@@ -755,6 +755,11 @@ public:
 		utility::sql_database::sessionOP db_session,
 		std::string turn_type);
 
+	void process_decoy(
+		core::pose::Pose & dssp_pose,
+		//core::pose::Pose &pose,
+		core::scoring::ScoreFunction const&
+	) const;
 
 
 private:
@@ -846,6 +851,9 @@ private:
 	bool
 	write_resfile_;
 
+	bool
+	write_p_aa_pp_files_;
+
 	core::Size
 	max_starting_loop_size_;
 
@@ -899,6 +907,11 @@ private:
 
 	bool
 	write_AA_distribution_files_wo_direction_;
+
+	/// @brief create score-functions for centroid and fullatom level
+	core::scoring::ScoreFunctionOP generate_scorefxn( bool fullatom = false );
+
+//	core::scoring::ScoreFunctionOP docking_scorefxn_output_;
 
 }; // class SandwichFeatures : public protocols::features::FeaturesReporter
 
