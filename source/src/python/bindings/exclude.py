@@ -304,7 +304,13 @@ def mb_exclude(path, mb, hfile):
 
 
     if path == 'core/chemical':
-        try: mb.class_("ResidueTypeSet").constructors().exclude() # default arg for ctor causes problems
+        try:
+            mb.class_("ResidueTypeSet").constructors().exclude() # default arg for ctor causes problems
+        except pygccxml.declarations.matcher.declaration_not_found_t: pass
+        try:
+            # boost::python has an issue with vertex descriptors as a return type
+            mb.class_("ResidueType").mem_funs('vd_from_name').exclude()
+            mb.class_("ResidueType").mem_funs('vd_from_index').exclude()
         except pygccxml.declarations.matcher.declaration_not_found_t: pass
 
 
