@@ -145,11 +145,6 @@ public:
 	/// @brief core of MC
 	bool boltzmann( Pose & pose );
 
-	/// @brief Does what the mover needs to do when a pose is accepted, given a pose and scores
-	void accept( Pose & pose,
-							 utility::vector1< core::Real > const & provisional_scores,
-							 MCA const mca_status );
-
 	Size num_designable( Pose & pose, PackerTaskOP & task);
 
  public: // accessor
