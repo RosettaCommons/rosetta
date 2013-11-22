@@ -36,6 +36,7 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/XYZ_Func.hh>
 #include <utility/vector1.hh>
+#include <utility/exit.hh>
 
 //Auto Headers
 #include <core/kinematics/Jump.hh>
@@ -45,7 +46,7 @@ namespace scoring {
 namespace constraints {
 
 
-static basic::Tracer TR("core.scoring.constraints.BackboneStubConstraint");
+static basic::Tracer tr("core.scoring.constraints.BackboneStubConstraint");
 
 utility::pointer::owning_ptr< AngleConstraint > BackboneStubConstraint::ang_cst_(0);
 
@@ -67,7 +68,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 	// store info about the target residue
 	assert( target_rsd.is_protein() );
 	if ( (target_rsd.aa() == chemical::aa_gly ) ) {
-		TR << "ERROR - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
+		tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
 		return;
 	}
 	CB_target_ = target_rsd.xyz("CB");
@@ -81,7 +82,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 	conformation::Residue const & rsd( pose.residue(seqpos_) );
 	assert( rsd.is_protein() );
 	if ( (rsd.aa() == chemical::aa_gly) ) {
-		TR << "ERROR - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
+		tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
 		return;
 	}
 	CB_atom_id_ = AtomID( rsd.atom_index("CB"), seqpos_ );
@@ -178,9 +179,9 @@ BackboneStubConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weig
 	core::Vector curr_ref_location = xyz_func(fixed_atom_id_);
 	core::Real ref_dist = curr_ref_location.distance_squared( fixed_reference_point_ );
 	if ( ref_dist > 1E-8 ) {
-		TR << "ERROR - BackboneStubConstraint requires a fixed reference atom, but this atom has moved!!" << std::endl;
-		TR << "Reference location was " << fixed_reference_point_.x() << ", " << fixed_reference_point_.y() << ", " << fixed_reference_point_.z() << ", now it's " << curr_ref_location.x() << ", " << curr_ref_location.y() << ", " << curr_ref_location.z() << std::endl;
-		std::exit(1);
+		tr.Error << "ERROR - BackboneStubConstraint requires a fixed reference atom, but this atom has moved!!" << std::endl;
+		tr.Error << "Reference location was " << fixed_reference_point_.x() << ", " << fixed_reference_point_.y() << ", " << fixed_reference_point_.z() << ", now it's " << curr_ref_location.x() << ", " << curr_ref_location.y() << ", " << curr_ref_location.z() << std::endl;
+		utility_exit_with_message( "ERROR - BackboneStubConstraint requires a fixed reference atom, but this atom has moved!!" );
 	}
 
 	// return a value between superposition_bonus_ (-ve) and zero
@@ -202,7 +203,7 @@ BackboneStubConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weig
 			curr_rsd = *(ala_copy); // gly => ala
 		}
 		else { */
-			TR << "ERROR - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
+			tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
 			return;
 //		}
 	}
@@ -272,8 +273,8 @@ BackboneStubConstraint::fill_f1_f2(
 			curr_rsd = *ala_copy; // gly => ala
 		}
 		else { */
-			TR << "ERROR - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
-			return;
+		tr.Warning << "WARNING - Gly residues cannot be used in BackboneStubConstraints." << std::endl;
+		return;
 //		}
 	}
 

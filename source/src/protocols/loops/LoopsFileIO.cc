@@ -416,7 +416,7 @@ GuardedLoopsFromFile::loops( Loops const & setting )
 void
 GuardedLoopsFromFile::set_loops_pointer( LoopsOP setting )
 {
-	assert( ! in_charge_ );
+	assert( !in_charge_ );
 	pose_has_resolved_loop_indices_ = true; // the assumption is that the user has resolved the indices themselves.
 	rely_on_loopfile_indices_ = false; // the user has indicated the Loops data should be used and not the LoopsFileData
 	loops_ = setting;

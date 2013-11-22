@@ -1235,10 +1235,17 @@ void LoopRelaxMover::resolve_loopfile_indices( core::pose::Pose const & pose )
 /// given to the LoopRelax object (through a call to apply() or resolve_loopfile_indices)
 /// before the get_loops() function may be called.
 void LoopRelaxMover::loops( protocols::loops::LoopsOP const val ) {
+	//there is an assertion assert( !in_charge_ ) in set_loops_pointer()
+	// as the guraded_loops_ is made with in_charge_ = true in the Constructor
+	// and this function is called in parse_my_tags to set the loops, the assertion
+	// seems to be wrong, or the use of this class is wrong.
+	// I have no idea what this assertion is supposed to achieve...
+	guarded_loops_->in_charge( false );
 	guarded_loops_->set_loops_pointer( val );
+	guarded_loops_->in_charge( true );
 }
 
-/// @brief Set the loop file data.  This will require that 
+/// @brief Set the loop file data.  This will require that
 void LoopRelaxMover::loops_file_data( loops::LoopsFileData const & loopfiledata ) {
 	guarded_loops_->loops( loopfiledata );
 }
