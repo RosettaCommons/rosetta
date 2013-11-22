@@ -432,17 +432,18 @@ GenericMonteCarloMover::recover_low( Pose & pose )
   }
 }
 
-
 /// @brief reset this GenericMonteCarloMover
 void
 GenericMonteCarloMover::reset( Pose & pose )
 {
+	last_accepted_scores_.clear();
+	lowest_scores_.clear();
   if( filters_.size() == 0 ) {
     lowest_score_ = scoring( pose );
+		last_accepted_scores_.push_back( lowest_score_ );
+		lowest_scores_.push_back( lowest_score_ );
 	} else {
 		core::Real ranking_score( 0.0 );
-    last_accepted_scores_.clear();
-		lowest_scores_.clear();
     for( Size index = 1; index <= filters_.size(); ++index ){
       protocols::filters::FilterCOP filter( filters_[ index ] );
       Real const flip( sample_types_[ index ] == "high" ? -1 : 1 );
@@ -501,7 +502,68 @@ GenericMonteCarloMover::num_designable( Pose & pose, PackerTaskOP & task )
 	return number_designable;
 }
 
-// @brief
+/// @brief Does what the mover needs to do when a pose is accepted, given a pose and scores
+void
+GenericMonteCarloMover::accept( Pose & pose,
+																utility::vector1< core::Real > const & provisional_scores,
+																MCA const mca_status )
+{
+	TR<<"Accept"<<std::endl;
+	mc_accepted_ = mca_status;
+	copy( provisional_scores.begin(), provisional_scores.end(), last_accepted_scores_.begin() );
+	++accept_counter_;
+	TR << "rank_by_filter=" << rank_by_filter_ << std::endl; TR.flush();
+	core::Real ranking_score( provisional_scores[rank_by_filter_] );
+	if(boltz_rank_ && filters_.size() > 0) {
+		ranking_score = 0.0;
+		for(core::Size ii(1); ii <= filters_.size(); ++ii ){
+			ranking_score += provisional_scores[ii] / temperatures_[ii];
+		}
+	}
+	energy_gap_counter_ += ranking_score - last_accepted_score();
+	last_accepted_score_ = ranking_score;
+	*last_accepted_pose_ = pose;
+	if( ranking_score <= lowest_score() ){
+		*lowest_score_pose_ = pose;
+		lowest_score_ = ranking_score;
+		copy( provisional_scores.begin(), provisional_scores.end(), lowest_scores_.begin() );
+		mc_accepted_ = MCA_accepted_score_beat_low;
+		if( saved_accept_file_name_ != "" ){
+			if( mover_tag_() != NULL ){
+				TR<<"Adding accepted mover tag to pose comments"<<std::endl;
+				//						std::ofstream f;
+				//						std::string const fname( saved_accept_file_name_ + ".mover_tag" );
+				//						f.open( fname.c_str(), std::ios::out );
+				//						if( !f.good() )
+				//							utility_exit_with_message( "Unable to open MC mover_tag file " + fname );
+				//						f<<mover_tag_->obj;
+				//						f.close();
+				core::pose::add_comment( pose, user_defined_mover_name_, mover_tag_->obj ); /// adding comment to the pose to save the mover's tag since it's accepted
+			}
+			TR<<"Dumping accepted file to disk as: "<<saved_accept_file_name_<<std::endl;
+			if ( basic::options::option[basic::options::OptionKeys::out::file::pdb_comments]() ) { //if pose has comment field then dump it with comments
+				std::ofstream out( saved_accept_file_name_.c_str() );
+				pose.dump_pdb(saved_accept_file_name_);
+				/*						        out << "##Begin comments##" << std::endl;
+															using namespace std;
+															map< string, string > const comments = core::pose::get_all_comments(pose);
+															for( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
+															out << i->first<<" "<<i->second << std::endl;
+															}
+															out << "##End comments##" << std::endl;
+				*/
+			}
+			else{
+				pose.dump_pdb( saved_accept_file_name_ );
+			}
+		}
+	}
+}
+
+/// @brief Uses filters or scorefunction to evaluate a pose and either accept or reject it
+/// @details Uses the filters or scorefunction to evaluates a pose and compare it to the
+/// last accepted and best poses.
+/// @param pose = the pose to be evaluated
 bool
 GenericMonteCarloMover::boltzmann( Pose & pose )
 {
@@ -509,26 +571,22 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
   TR.Debug <<"filters.size() "<<filters_.size()<<std::endl;
   if( filters_.size() ){
     runtime_assert( filters_.size() == adaptive_.size() );
-		runtime_assert( filters_.size() == temperatures_.size() );
-		runtime_assert( filters_.size() == sample_types_.size() );
-		runtime_assert( filters_.size() == num_rejections_.size() );
-    bool accept( false );
+    runtime_assert( filters_.size() == temperatures_.size() );
+    runtime_assert( filters_.size() == sample_types_.size() );
+    runtime_assert( filters_.size() == num_rejections_.size() );
+    bool accepted( false );
     utility::vector1< Real > provisional_scores;
     provisional_scores.clear();
-    Real ranking_score( 0.0 );
     for( core::Size index( 1 ); index <= filters_.size(); ++index ){
       TR.Debug <<"Filter #"<<index<<std::endl;
       protocols::filters::FilterCOP filter( filters_[ index ] );
       bool const adaptive( adaptive_[ index ] );
       Real const temp( temperatures_[ index ] );
       Real const flip( sample_types_[ index ] == "high" ? -1 : 1 );
-			core::Real const filter_val( filter->report_sm( pose ));
-			TR<<"Filter "<<index<<" reports "<<filter_val<<" ( best="<<last_accepted_scores_[index]<<" )"<<std::endl;
+      core::Real const filter_val( filter->report_sm( pose ));
+      TR<<"Filter "<<index<<" reports "<<filter_val<<" ( best="<<last_accepted_scores_[index]<<" )"<<std::endl;
 
       provisional_scores.push_back( flip * filter_val );
-      if( index == rank_by_filter_ ) {
-        ranking_score = provisional_scores[ rank_by_filter_ ];
-			}
       Real const boltz_factor = ( last_accepted_scores_[ index ] - provisional_scores[ index ] ) / temp;
       TR_energies.Debug <<"energy index, last_accepted_score, current_score "<<index<<" "<< last_accepted_scores_[ index ]<<" "<<provisional_scores[ index ]<<std::endl;
       TR.Debug <<"Current, best, boltz "<<provisional_scores[ index ]<<" "<<last_accepted_scores_[ index ]<<" "<<boltz_factor<<std::endl;
@@ -539,65 +597,19 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
       Real const random_num( mc_RG.uniform() );
       bool const reject_filter( provisional_scores[ index ] > last_accepted_scores_[ index ] && random_num >= probability );
       if( reject_filter ){
-        accept = false;
+        accepted = false;
 				++num_rejections_[index];
         break;
       }
       if( !reject_filter ) {
-        accept = true;
+        accepted = true;
 			}
     }//for index
-    if( accept ){
-      TR<<"Accept"<<std::endl;
-      mc_accepted_ = MCA_accepted_thermally;
-      copy( provisional_scores.begin(), provisional_scores.end(), last_accepted_scores_.begin() );
-      ++accept_counter_;
-			if(boltz_rank_) {
-				ranking_score = 0.0;
-				for(core::Size ii(1); ii <= filters_.size(); ++ii ){
-					ranking_score += provisional_scores[ii] / temperatures_[ii];
-				}
-			}
-      energy_gap_counter_ += ranking_score - last_accepted_score();
-      last_accepted_score_ = ranking_score;
-      *last_accepted_pose_ = pose;
-      if( ranking_score <= lowest_score() ){
-        *lowest_score_pose_ = pose;
-        lowest_score_ = ranking_score;
-				copy( provisional_scores.begin(), provisional_scores.end(), lowest_scores_.begin() );
-        mc_accepted_ = MCA_accepted_score_beat_low; //3;
-				if( saved_accept_file_name_ != "" ){
-					if( mover_tag_() != NULL ){
-						TR<<"Adding accepted mover tag to pose comments"<<std::endl;
-//						std::ofstream f;
-//						std::string const fname( saved_accept_file_name_ + ".mover_tag" );
-//						f.open( fname.c_str(), std::ios::out );
-//						if( !f.good() )
-//							utility_exit_with_message( "Unable to open MC mover_tag file " + fname );
-//						f<<mover_tag_->obj;
-//						f.close();
-						core::pose::add_comment( pose, user_defined_mover_name_, mover_tag_->obj ); /// adding comment to the pose to save the mover's tag since it's accepted
-					}
-					TR<<"Dumping accepted file to disk as: "<<saved_accept_file_name_<<std::endl;
-					if ( basic::options::option[basic::options::OptionKeys::out::file::pdb_comments]() ) { //if pose has comment field then dump it with comments
-						std::ofstream out( saved_accept_file_name_.c_str() );
-						pose.dump_pdb(saved_accept_file_name_);
-/*						        out << "##Begin comments##" << std::endl;
-	 	                        using namespace std;
-	 	                        map< string, string > const comments = core::pose::get_all_comments(pose);
-	 	                        for( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
-	 	                                out << i->first<<" "<<i->second << std::endl;
-	 	                        }
-	 	                        out << "##End comments##" << std::endl;
-	*/
-					}
-					else{
-					pose.dump_pdb( saved_accept_file_name_ );
-					}
-				}
-      }
-      return( true );
-    }// fi accept
+   
+    if( accepted ){
+	    accept( pose, provisional_scores, MCA_accepted_thermally );
+	    return( true );
+    }// fi accepted
     else{
       TR.Debug <<"Reject"<<std::endl;
       mc_accepted_ = MCA_rejected;
@@ -605,39 +617,34 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
     }
   }//fi filters_.size()
   else{
-    Real score = scoring( pose );
-    current_score_ = score; // for debugging
-    show_scores( TR.Debug );
-    if ( score > last_accepted_score() ) {
-      if( temperature_ < 1e-8 ){
-        mc_accepted_ = MCA_rejected; // rejected
-      }else{
-        Real const boltz_factor = ( last_accepted_score() - score ) / temperature_;
-        Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) );
-        if ( mc_RG.uniform() >= probability ) {
-          mc_accepted_ = MCA_rejected; // rejected
-        }else{
-          mc_accepted_ = MCA_accepted_thermally; // accepted thermally
-        }
-      }
-    }else{
-      mc_accepted_ = MCA_accepted_score_beat_last; // accepted: energy is lower than last_accepted
-    }
+	  utility::vector1< core::Real > provisional_score;
+	  provisional_score.push_back( scoring( pose ) );
+	  current_score_ = provisional_score[1]; // for debugging
+	  last_tested_scores_.clear();
+	  last_tested_scores_ = provisional_score;
+	  show_scores( TR.Debug );
+	  MCA mc_status( MCA_rejected );
+	  if ( provisional_score[1] > last_accepted_score() ) {
+		  if( temperature_ >= 1e-8 ){
+			  Real const boltz_factor = ( last_accepted_score() - provisional_score[1] ) / temperature_;
+			  Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) );
+			  Real const random_num( mc_RG.uniform() );
+			  if ( random_num < probability ) {
+				  mc_status = MCA_accepted_thermally; // accepted thermally
+			  }
+		  }
+	  }else{
+		  mc_status = MCA_accepted_score_beat_last; // accepted: energy is lower than last_accepted
+	  }
 
-    if( mc_accepted_ >= 1 ){ // accepted
-      ++accept_counter_;
-      energy_gap_counter_ += score - last_accepted_score();
-      *last_accepted_pose_ = pose;
-      last_accepted_score_ = score;
-      if ( score < lowest_score() ){  // energy is lower than last_accepted
-        lowest_score_ = score;
-        *lowest_score_pose_ = pose;
-        mc_accepted_ = MCA_accepted_score_beat_low; //3;
-      }
-      return true;
-    }else{ //rejected
-      return false;
-    }
+	  if( mc_status >= 1 ){ // accepted
+		  accept( pose, provisional_score, mc_status );
+		  return true;
+	  } else {
+		  // rejected
+		  mc_accepted_ = mc_status;
+		  return false;
+	  }
   }
 } // boltzmann
 
