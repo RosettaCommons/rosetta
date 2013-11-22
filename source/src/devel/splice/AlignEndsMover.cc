@@ -66,7 +66,8 @@ AlignEndsMover::AlignEndsMover(): moves::Mover("AlignEnds"),
 	even_( true ),
 	template_pose_( NULL ),
 	stagger_( 0 ),
-	parallel_( true )
+	parallel_( true ),
+	chain_( 1 )
 {
 }
 
@@ -90,8 +91,11 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 	utility::vector1< core::Size > strand_positions;
 	strand_positions.clear();
 	bool odd_strand( true ); // if antiparallel we need to intermittently connect odd and even strands...
+	core::Size const resi_end( chain() == 0 ? pose.total_residue() : pose.conformation().chain_end( chain() ) );
+	core::Size const resi_start( chain() == 0 ? 1 : pose.conformation().chain_begin( chain() ) );
+	TR<<"Chain start: "<<resi_start<<" resi_end: "<<resi_end<<std::endl;
 /// note the fast-forwarding of resi in the inner-loop below! should be fine, but if there are bugs, this is a good place to dig
-	for( core::Size resi = 1; resi <= pose.total_residue() - strand_length() + 1; ++resi ){ /// at least n-strand positions in a row
+	for( core::Size resi = resi_start; resi <= resi_end - strand_length() + 1; ++resi ){ /// at least n-strand positions in a row
 		if( dssp.get_dssp_secstruct( resi ) == 'E' ){
 			core::Size strand_count = 1;
 			for( ; strand_count < strand_length(); ++strand_count ){
@@ -100,13 +104,13 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 			}
 			if( strand_count == strand_length() ){ // we have n-length beta strand
 				if( !parallel() && !odd_strand ){
-					for( ;resi <= pose.total_residue(); ++resi ){// move to the end of the strand
+					for( ;resi <= resi_end; ++resi ){// move to the end of the strand
 						if( dssp.get_dssp_secstruct( resi + strand_length() ) != 'E' )
 							break;
 					}//move to the end of the strand
 				}//fi !parallel() && !odd()
 				core::Size position_count = 0;
-				for( ; resi <= pose.total_residue(); ++resi ){ // this causes 'fast-forwarding' of resi, but it's okay, since we don't want to double count the strands
+				for( ; resi <= resi_end; ++resi ){ // this causes 'fast-forwarding' of resi, but it's okay, since we don't want to double count the strands
 					if( dssp.get_dssp_secstruct( resi ) == 'E' && position_count < strand_length()){
           	strand_positions.push_back( resi );
 						++position_count;
@@ -204,6 +208,7 @@ AlignEndsMover::apply( Pose & pose ){
 	numeric::xyzMatrix< core::Real > rotation;
 	numeric::xyzVector< core::Real > to_init_center, to_fit_center;
 
+	runtime_assert( init_coords.size() >= N_terminal_count() * stagger() );
 	std::rotate( init_coords.begin(), init_coords.begin() + ( N_terminal_count() * stagger()), init_coords.end());
 
 	superposition_transform( init_coords, ref_coords, rotation, to_init_center, to_fit_center );
@@ -247,8 +252,9 @@ AlignEndsMover::parse_my_tag(
 	stagger( tag->getOption< core::Size >( "stagger", 0 ) );
 	strand_length( tag->getOption< core::Size >( "strand_length", 3 ) );
 	max_strands( tag->getOption< core::Size >( "max_strands", 10 ) );
+	chain( tag->getOption< core::Size >( "chain", 1 ) );
 
-	TR<<"paralell: "<<parallel()<<" distance_threshold: "<<distance_threshold()<<" max_strands: "<<max_strands()<<" strand_length: "<<strand_length()<<" neighbors: "<<neighbors()<<" N_terminal_count: "<<N_terminal_count()<<" odd: "<<odd()<<" even: "<<even()<<" template_pose: "<<template_fname<<" stagger: "<<stagger()<<std::endl;
+	TR<<"paralell: "<<parallel()<<" distance_threshold: "<<distance_threshold()<<" max_strands: "<<max_strands()<<" strand_length: "<<strand_length()<<" neighbors: "<<neighbors()<<" N_terminal_count: "<<N_terminal_count()<<" odd: "<<odd()<<" even: "<<even()<<" template_pose: "<<template_fname<<" stagger: "<<stagger()<<" chain: "<<chain()<<std::endl;
 }
 } // simple_moves
 } // protocols

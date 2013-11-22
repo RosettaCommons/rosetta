@@ -71,6 +71,9 @@ public:
 
 		bool parallel() const{ return parallel_; }
 		void parallel( bool const p ){ parallel_ = p; }
+
+		void chain( core::Size const c ){ chain_ = c;}
+		core::Size chain() const{ return chain_ ; }
 private:
   utility::vector1< core::Size > reference_positions( core::pose::Pose const & p ) const;
 	core::Real distance_threshold_; // dflt 16;
@@ -79,6 +82,7 @@ private:
 	core::pose::PoseOP template_pose_; //dflt NULL; pose to which to align
 	core::Size stagger_; // dflt 0; see below
 	bool parallel_; //dflt true; are the strands parallel or antiparallel?
+	core::Size chain_; //dflt 1; on which chain to search? 0 means all chains
 };
 
 /* explanation for stagger:
