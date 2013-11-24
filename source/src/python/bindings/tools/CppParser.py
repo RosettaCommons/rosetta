@@ -372,8 +372,8 @@ class CppFunction:
 
 
         #  check if return result is sane. Some types (like int *) mean that we actully have an iterator functions and this one should be taked care at class abstraction level
-        for t in ['char *', 'int *', 'int const *', 'double *', 'double const *', 'Real *', 'Real const *', 'kiss_fft_cpx *',
-                  'kiss_fft_cfg', 'kiss_fftnd_cfg', 'kiss_fftr_cfg', ]:
+        for t in ['void *', 'void const *', 'char *', 'int *', 'int const *', 'double *', 'double const *', 'Real *', 'Real const *', 
+                  'kiss_fft_cpx *', 'kiss_fft_cfg', 'kiss_fftnd_cfg', 'kiss_fftr_cfg', ]:
             if (self.returnType.T() or '').endswith(t): return False
 
         if self.returnType.T().startswith('::boost::unordered_detail::hash_const_iterator_unique_keys<std::allocator') : return False
@@ -420,6 +420,12 @@ class CppFunction:
 
         elif self.returnType.T().endswith(' *') or self.returnType.T().endswith(' &'):  # ... &, ... *
             return '    , boost::python::return_value_policy< boost::python::reference_existing_object >()\n'
+
+	# The boost::graph vertex descriptors and edge descriptors are implemented with void pointers
+	# which gives boost::python a headache. Tell boost::python to treat them as opaque objects.
+        elif self.returnType.T().endswith('core::chemical::VD') or self.returnType.T().endswith('core::chemical::ED'):
+            return '    , boost::python::return_value_policy< boost::python::return_opaque_pointer >()\n'
+
 
         return ''
 
@@ -1199,8 +1205,8 @@ def sortObjects(l):
 
                 if isinstance(l[i], CppClass) and isinstance(l[j], CppClass): # some special cases (default parameter bechavor)
                     #print l[i].getChildrenContext(), l[j].getChildrenContext()
-                    if l[i].getChildrenContext()=='::core::chemical::Atom::' and l[j].getChildrenContext()=='::core::chemical::AtomICoor::': swap(i, j); f = True; break 
-                     
+                    if l[i].getChildrenContext()=='::core::chemical::Atom::' and l[j].getChildrenContext()=='::core::chemical::AtomICoor::': swap(i, j); f = True; break
+
 
 
 
