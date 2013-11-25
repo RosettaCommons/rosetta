@@ -98,40 +98,41 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 	for( core::Size resi = resi_start; resi <= resi_end - strand_length() + 1; ++resi ){ /// at least n-strand positions in a row
 		if( dssp.get_dssp_secstruct( resi ) == 'E' ){
 			core::Size strand_count = 1;
-			for( ; strand_count < strand_length(); ++strand_count ){
-				if( dssp.get_dssp_secstruct( resi + strand_count ) != 'E' )
-					break;
-			}
+			for( ; strand_count < strand_length() && dssp.get_dssp_secstruct( resi + strand_count ) == 'E'; ++strand_count ); //find end of beta strand
 			if( strand_count == strand_length() ){ // we have n-length beta strand
 				if( !parallel() && !odd_strand ){
-					for( ;resi <= resi_end; ++resi ){// move to the end of the strand
-						if( dssp.get_dssp_secstruct( resi + strand_length() ) != 'E' )
-							break;
-					}//move to the end of the strand
+					for( ;resi <= resi_end && dssp.get_dssp_secstruct( resi + strand_length() ) == 'E'; ++resi ); // move to the end of the strand (even strands will be represented by the C-termini)
 				}//fi !parallel() && !odd()
-				core::Size position_count = 0;
-				for( ; resi <= resi_end; ++resi ){ // this causes 'fast-forwarding' of resi, but it's okay, since we don't want to double count the strands
-					if( dssp.get_dssp_secstruct( resi ) == 'E' && position_count < strand_length()){
+				core::Size position_count = 0; /// how many strand positions were added to the strand_positions array
+				for( ; resi <= resi_end && dssp.get_dssp_secstruct( resi + 1 ) == 'E'; ++resi ){ // this causes 'fast-forwarding' of resi, but it's okay, since we don't want to double count the strands
+					/// we'll add only strand_length() positions to the array, but will forward the resi index to the end of the strand.
+					if( dssp.get_dssp_secstruct( resi ) == 'E' && position_count < strand_length() ){
           	strand_positions.push_back( resi );
 						++position_count;
 					}
-					if( dssp.get_dssp_secstruct( resi + 1 ) != 'E' )///reached end of strand
-						break;
 				}// for resi inner loop
-				odd_strand = !odd_strand;
+				odd_strand = !odd_strand; /// flip odd->even->odd...
 			}//fi strand_count
   	}// fi dssp.get_dssp_secstruct(resi)
 	}// for resi outer loop
   utility::vector1< core::Size > strand_ntermini;
   strand_ntermini.clear();
   core::Size prev_resnum( 99999 );
-  foreach( core::Size const resi, strand_positions ){ /// find strand ntermini
-      if( resi != prev_resnum + 1 )
-          strand_ntermini.push_back( resi );
-      prev_resnum = resi;
+	odd_strand = true; // antiparallel strands have neighboring c/n terminal positions whereas parallel strands have neighboring n terminal positions.
+  for( utility::vector1< core::Size >::const_iterator resi = strand_positions.begin(); resi != strand_positions.end(); ++resi ){ /// find strand ntermini
+      if( *resi != prev_resnum + 1 ){ /// search for non-contiguous residue indices; these are cuts in the sheet. We could also use the strand_length() value b/c each strand comprises a set number of strand positions.
+				if( !odd_strand && !parallel() )
+					for( ; resi != strand_positions.end() && *resi == prev_resnum + 1; ++resi ) /// fast forward resi to strand c-terminus
+						prev_resnum = *resi;
+
+      	strand_ntermini.push_back( *resi );
+				odd_strand = !odd_strand;/// flip odd->even->odd...
+			}
+      prev_resnum = *resi;
   }
   utility::vector1< core::Size > ntermini_w_neighbors;
   ntermini_w_neighbors.clear();
+/// In the following we ensure that each of the ntermini has neighbors within the ntermini array. We're looking for tightly packed barrel structures.
 	foreach( core::Size const res, strand_ntermini ){ /// strand_ntermini with enough neighbors
       core::Size const resi_neighbors( neighbors_in_vector( pose, res, strand_ntermini, distance_threshold(), dssp ));
       if( resi_neighbors >= neighbors() ){
@@ -140,9 +141,9 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
       }//fi resi_neighbors
   }//foreach res
 
-	 utility::vector1< core::Size > ntermini_w_close_neighbors; // ntermini with 2 close neighbors
+ 	utility::vector1< core::Size > ntermini_w_close_neighbors; // ntermini with 2 close neighbors
+	ntermini_w_close_neighbors.clear();
 	if( parallel() ){
-	  ntermini_w_close_neighbors.clear();
 	  foreach( core::Size const res, ntermini_w_neighbors ){
 	      core::Size const close_neighbors( neighbors_in_vector( pose, res, strand_ntermini, 10.0, dssp ));
 	      if( close_neighbors >= 2 )
@@ -155,8 +156,16 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 	      TR<<res<<" has "<<close_neighbors<<" close neighbors"<<std::endl;
 	  }
 	}//fi parallel
-	else
-		ntermini_w_close_neighbors = ntermini_w_neighbors;
+	else{ /// antiparallel, even strands should be fed in from their ntermini
+		odd_strand = true;
+		foreach( core::Size const resi, ntermini_w_neighbors ){
+//		  if( odd_strand )
+				ntermini_w_close_neighbors.push_back( resi );
+//			else
+	//			ntermini_w_close_neighbors.push_back( resi - strand_length() + 1 );
+			odd_strand = !odd_strand;
+		}
+	}
 	TR<<"Found "<<ntermini_w_close_neighbors.size()<<" strands that fit all of the criteria"<<std::endl;
 	if( ntermini_w_close_neighbors.size() > max_strands() ){
 		TR<<"max_strands = "<<max_strands()<<std::endl;
