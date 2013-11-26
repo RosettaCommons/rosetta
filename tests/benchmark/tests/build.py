@@ -56,7 +56,7 @@ def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     else: res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].command.format(compiler=platform['compiler'], jobs=jobs)), return_='tuple')
 
     # re-running builds in case we got error - so we can get nice error message
-    if res and tests[tests].incremental:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].command.format(compiler=platform['compiler'], jobs=1)), return_='tuple')
+    if res and tests[test].incremental:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].command.format(compiler=platform['compiler'], jobs=1)), return_='tuple')
 
     file(working_dir+'/build-log.txt', 'w').write(output)
 
