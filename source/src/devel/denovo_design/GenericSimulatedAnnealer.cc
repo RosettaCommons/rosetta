@@ -23,6 +23,7 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <numeric/random/random.hh>
 #include <utility/tag/Tag.hh>
 
 // Project Headers
@@ -38,6 +39,8 @@ static basic::Tracer TR("devel.denovo_design.GenericSimulatedAnnealer");
 
 namespace devel {
 namespace denovo_design {
+
+static numeric::random::RandomGenerator sa_RG(34823); // <- Magic number, do not change it!!!
 
 std::string
 GenericSimulatedAnnealerCreator::keyname() const
@@ -59,7 +62,7 @@ GenericSimulatedAnnealerCreator::mover_name()
 /// @brief default constructor
 GenericSimulatedAnnealer::GenericSimulatedAnnealer():
 	GenericMonteCarloMover(),
-	history_( 5 ),
+	history_( 10 ),
 	periodic_mover_( NULL ),
 	eval_period_( 0 ),
 	checkpoint_file_( "" ),
@@ -367,18 +370,19 @@ void
 GenericSimulatedAnnealer::save_checkpoint_file() const
 {
 	runtime_assert( checkpoint_file_ != "" );
+	std::string const tmp_checkpoint( checkpoint_file_ + "~" );
 	// save best pose
 	if ( lowest_score_pose() ) {
-		lowest_score_pose()->dump_pdb( checkpoint_file_ + "_best.pdb" );
+		lowest_score_pose()->dump_pdb( tmp_checkpoint + "_best.pdb" );
 	}
 	// save last accepted pose
 	if ( last_accepted_pose() ) {
-		last_accepted_pose()->dump_pdb( checkpoint_file_ + "_last.pdb" );
+		last_accepted_pose()->dump_pdb( tmp_checkpoint + "_last.pdb" );
 	}
 	// Write out a file with stats
-	std::ofstream saved_file( checkpoint_file_.c_str() );
+	std::ofstream saved_file( std::string( tmp_checkpoint ).c_str() );
 	if ( !saved_file.is_open() ) {
-		utility_exit_with_message( "Error: The GenericSimulatedAnnealerMover could not open " + checkpoint_file_ + " for writing." );
+		utility_exit_with_message( "Error: The GenericSimulatedAnnealerMover could not open " + tmp_checkpoint + " for writing." );
 	}
 	// save trial number
 	saved_file << boost::lexical_cast< std::string >( current_trial_ );
@@ -406,11 +410,47 @@ GenericSimulatedAnnealer::save_checkpoint_file() const
 	}
 	saved_file << std::endl;
 
-	// save last accepted scores
 	if ( saved_file.bad() ) {
-		utility_exit_with_message( "The GenericSimulatedAnnealerMover encountered an error writing to " + checkpoint_file_ );
+		utility_exit_with_message( "The GenericSimulatedAnnealerMover encountered an error writing to " + tmp_checkpoint );
+	} else {
+		saved_file.close();
+		// Writing was successful -- therefore, remove the tmp file and overwrite it
+		replace_file( tmp_checkpoint, checkpoint_file_ );
+		replace_file( tmp_checkpoint + "_best.pdb", checkpoint_file_ + "_best.pdb" );
+		replace_file( tmp_checkpoint + "_last.pdb", checkpoint_file_ + "_last.pdb" );
 	}
-	saved_file.close();
+}
+
+/// @brief safely replaces a file with another
+void replace_file( std::string const & origfile, std::string const & newfile )
+{
+	// see if newfile already exists
+	std::ifstream f( newfile.c_str() );
+	std::ifstream f2( origfile.c_str() );
+	bool origfile_exists( false );
+	bool newfile_exists( false );
+	if ( f.good() ) {
+		newfile_exists = true;
+	}
+	f.close();
+	if ( f2.good() ) {
+		origfile_exists = true;
+	}
+	f.close();
+
+	if ( newfile_exists &&
+			 ( rename( newfile.c_str(), std::string( newfile + "_tmp" ).c_str() ) != 0 ) ) {
+		utility_exit_with_message( "Error renaming " + newfile + " to " + newfile + "_tmp" );
+	}
+	if ( ( ! origfile_exists ) ||
+			 ( rename( std::string( origfile ).c_str(), newfile.c_str() ) != 0 ) ) {
+		TR.Error << "Error moving " << origfile << " to " << newfile << std::endl;
+		utility_exit();
+	}
+	if ( newfile_exists &&
+			 ( remove( std::string( newfile + "_tmp" ).c_str() ) != 0 ) ) {
+		utility_exit_with_message( "Error removing " + newfile + "_tmp" );
+	}
 }
 
 void
@@ -459,6 +499,7 @@ GenericSimulatedAnnealer::reset( Pose & pose )
 	temp_step_ = 1;
 	current_trial_ = 0;
 	accepted_scores_.push_back( last_accepted_scores() );
+	start_temperatures_ = temperatures();
 }
 
 
@@ -476,9 +517,9 @@ GenericSimulatedAnnealer::apply( Pose & pose )
   }
 
 	bool const stop_at_start( ( mover_stopping_condition() && mover_stopping_condition()->obj )
-														|| stopping_condition()->apply( pose ) );
+														|| ( stopping_condition() && stopping_condition()->apply( pose ) ) );
 	if( stop_at_start ){
-		TR<<"MC stopping condition met at the start, so failing without retrying "<<std::endl;
+		TR << "MC stopping condition met at the start, so failing without retrying " << std::endl;
 		set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 		return;
 	}
@@ -495,35 +536,35 @@ GenericSimulatedAnnealer::apply( Pose & pose )
 		task_factory( NULL );
 	}
 
+	//re-initialize MC statistics
+	reset( pose );
 	if ( checkpoint_file_ != "" && checkpoint_exists() ) {
 		// if the checkpoint information exists, load it up to resume the run,
 		TR.Info << "Resuming from checkpoint!" << std::endl;
 		load_checkpoint_file( pose );
 	} else {
 		// otherwise, reset to the beginning
-		reset( pose ); //(re)initialize MC statistics
 		TR.Info << "Checkpoint does not exist! Starting from the beginning" << std::endl;
 		if( checkpoint_file_ != "" ){
-			TR<<"Saving initial state entering the MC trajectory, for use in checkpoint recovery. Checkpointing filename: "<<checkpoint_file_<<std::endl;
+			TR.Info << "Saving initial state entering the MC trajectory, for use in checkpoint recovery. Checkpointing filename: " << checkpoint_file_ << std::endl;
 			save_checkpoint_file();
 		}
 	}
 
-	core::Size accept( 0 );
-	core::Size reject( 0 );
+	core::Size accept_count( 0 );
+	core::Size reject_count( 0 );
 	++current_trial_;
 	for ( ; current_trial_<=trials; ++current_trial_ ) {
-		TR << "Starting trial " << current_trial_ << std::endl;
+		TR.Info << "Starting trial " << current_trial_ << std::endl;
 		// apply the mover and test the pose
 		TrialResult res( apply_mover( pose ) );
 		if ( res == FINISHED ) {
-			TR<<"MC stopping condition met at trial "<<current_trial_<<std::endl;
+			TR << "MC stopping condition met at trial " << current_trial_ << std::endl;
 			break;
 		} else if ( res == REJECTED ) {
-			++reject;
+			++reject_count;
 		} else if ( res == ACCEPTED ) {
-			++accept;
-			calculate_temps();
+			++accept_count;
 		} else if ( res == FAILED ) {
 			break;
 		}
@@ -536,13 +577,15 @@ GenericSimulatedAnnealer::apply( Pose & pose )
 		if ( periodic_mover_ && eval_period_ && ( current_trial_ % eval_period_ == 0 ) ) {
 			TR << "Running periodic mover..." << std::endl;
 			periodic_mover_->apply( pose );
+			// always accept periodic mover results
+			accept( pose, score_pose( pose ), protocols::moves::MCA_accepted_thermally );
 		}
 	}
 
 	// Output final diagnositics, for potential tuning
 	show_scores(TR);
 	show_counters(TR);
-	TR<<"Finished MC. Out of "<<trials<<" "<<accept<<" accepted "<<" and "<<reject<<" rejected."<<std::endl;
+	TR << "Finished MC. Out of " << trials << ", " << accept_count << " accepted " << " and " << reject_count << " rejected." << std::endl;
 
   // Recover pose that have the lowest score, or the last accepted pose, as appropriate
 	if ( recover_low() ) {
@@ -563,7 +606,67 @@ GenericSimulatedAnnealer::apply( Pose & pose )
 		remove_checkpoint_file();
 	}
 
+	// reset temperatures to starting values
+	temperatures( start_temperatures_ );
 }// apply
+
+
+/// @brief given a pose, score the result
+utility::vector1< core::Real >
+GenericSimulatedAnnealer::score_pose( core::pose::Pose const & pose ) const
+{
+	utility::vector1< core::Real > provisional_scores;
+	for( core::Size index( 1 ); index <= filters().size(); ++index ){
+		TR.Debug <<"Filter #"<<index<<std::endl;
+		protocols::filters::FilterCOP filter( filters()[ index ] );
+		Real const flip( sample_types()[ index ] == "high" ? -1 : 1 );
+		core::Real const filter_val( filter->report_sm( pose ) );
+		TR<<"Filter "<<index<<" reports "<<filter_val<<" ( best="<<lowest_scores()[index]<<"; last="<<last_accepted_scores()[index]<<" )"<<std::endl;
+		provisional_scores.push_back( flip * filter_val );
+	}
+	return provisional_scores;
+}
+
+/// @brief given a modified pose, determines whether we should accept or not, and updates internal class data accordingly
+/// @brief uses randomly generated numbers to assess acceptance of scores with temperatures
+TrialResult
+GenericSimulatedAnnealer::boltzmann_result( core::pose::Pose & pose )
+{
+	utility::vector1< core::Real > randoms;
+	for ( core::Size i=1; i<=filters().size(); ++i ) {
+		randoms.push_back( sa_RG.uniform() );
+	}
+	return boltzmann_result( pose, randoms );
+}
+
+/// @brief given a modified pose, determines whether we should accept or not, and updates internal class data accordingly
+TrialResult
+GenericSimulatedAnnealer::boltzmann_result( core::pose::Pose & pose,
+																						utility::vector1< core::Real > const & random_nums )
+{
+	TR << "Randoms=";
+	for ( core::Size i=1; i<=random_nums.size(); ++i ) {
+		TR << " " << random_nums[i];
+	}
+	TR << std::endl;
+	// check to see if we should accept or not
+	if ( ! boltzmann( pose, random_nums ) ) {
+		TR << "Rejected" << std::endl;
+		pose = *last_accepted_pose();
+		return REJECTED;
+	} else {
+		// save the results as accepted
+		accepted_scores_.push_back( last_accepted_scores() );
+		// check to see if the stopping condition is satisfied.
+		bool const stop( ( mover_stopping_condition() && mover_stopping_condition()->obj )
+										 || ( stopping_condition() && stopping_condition()->apply( pose ) ) );
+		if ( stop ) {
+			return FINISHED;
+		}
+		calculate_temps();
+		return ACCEPTED;
+	}
+}
 
 TrialResult
 GenericSimulatedAnnealer::apply_mover( core::pose::Pose & pose ) {
@@ -579,21 +682,8 @@ GenericSimulatedAnnealer::apply_mover( core::pose::Pose & pose ) {
 		TR.Error << "The mover, " << mover()->get_name() << " failed. Exit from GenericSimulatedAnnealer." << std::endl;
 		return FAILED;
 	}
+	return boltzmann_result( pose );
 
-	// check to see if we should accept or not
-	if ( ! boltzmann( pose ) ) {
-		pose = *last_accepted_pose();
-		return REJECTED;
-	} else {
-		// save the results as accepted
-		accepted_scores_.push_back( last_accepted_scores() );
-		// check to see if the stopping condition is satisfied.
-		bool const stop( ( mover_stopping_condition()() != NULL && mover_stopping_condition()->obj ) || stopping_condition()->apply( pose ) );
-		if ( stop ) {
-			return FINISHED;
-		}
-		return ACCEPTED;
-	}
 }
 
 std::string
@@ -623,7 +713,6 @@ GenericSimulatedAnnealer::parse_my_tag( TagCOP const tag,
 		runtime_assert( find_mover != movers.end() );
 		periodic_mover_ = find_mover->second;
 	}
-	start_temperatures_ = temperatures();
 }
 
 

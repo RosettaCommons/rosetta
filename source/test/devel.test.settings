@@ -10,6 +10,9 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
+        "denovo_design" : [
+                "GenericSimulatedAnnealer",
+        ],
 	"vardist_solaccess" : [
 		"VarSolDRotamerDots",
 	],
@@ -56,6 +59,8 @@ libraries    = ["devel",
 "sqlite3" ]
 subprojects  = []
 testinputfiles = [
+    "denovo_design/test_input.pdb",
+    "denovo_design/D2I.params",
     "znhash/1EER_A.pdb",
     "znhash/1EER_cn4_0043.pdb",
     "znhash/match_cst_pairs.txt",

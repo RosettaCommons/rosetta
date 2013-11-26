@@ -432,7 +432,6 @@ GenericMonteCarloMover::recover_low( Pose & pose )
   }
 }
 
-
 /// @brief reset this GenericMonteCarloMover
 void
 GenericMonteCarloMover::reset( Pose & pose )
@@ -503,6 +502,12 @@ GenericMonteCarloMover::num_designable( Pose & pose, PackerTaskOP & task )
 	return number_designable;
 }
 
+/// @brief
+bool GenericMonteCarloMover::boltzmann( Pose & pose )
+{
+	return boltzmann( pose, generate_random() );
+}
+
 /// @brief Does what the mover needs to do when a pose is accepted, given a pose and scores
 void
 GenericMonteCarloMover::accept( Pose & pose,
@@ -563,8 +568,9 @@ GenericMonteCarloMover::accept( Pose & pose,
 /// @details Uses the filters or scorefunction to evaluates a pose and compare it to the
 /// last accepted and best poses.
 /// @param pose = the pose to be evaluated
+/// @param random_nums = a vector of random numbers between 0 and 1, to be used for accepting poses that are not necessarily improved on filter/scorefxn value over the last accepted pose. Values of 0 indicate that only values that are improvements will be accepted, and values of 1 indicate that everything will be accepted regardless of scorefxn/filter value. Must have the same size as filters_
 bool
-GenericMonteCarloMover::boltzmann( Pose & pose )
+GenericMonteCarloMover::boltzmann( Pose & pose, utility::vector1< core::Real > const & random_nums )
 {
   ++trial_counter_;
   TR.Debug <<"filters.size() "<<filters_.size()<<std::endl;
@@ -573,32 +579,31 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
 		runtime_assert( filters_.size() == temperatures_.size() );
 		runtime_assert( filters_.size() == sample_types_.size() );
 		runtime_assert( filters_.size() == num_rejections_.size() );
+		runtime_assert( filters_.size() == random_nums.size() );
     bool accepted( false );
     utility::vector1< Real > provisional_scores;
-    provisional_scores.clear();
-    Real ranking_score( 0.0 );
+		provisional_scores.clear();
     for( core::Size index( 1 ); index <= filters_.size(); ++index ){
+			runtime_assert( random_nums[ index ] >= 0.0 );
+			runtime_assert( random_nums[ index ] <= 1.0 );
       TR.Debug <<"Filter #"<<index<<std::endl;
       protocols::filters::FilterCOP filter( filters_[ index ] );
       bool const adaptive( adaptive_[ index ] );
       Real const temp( temperatures_[ index ] );
       Real const flip( sample_types_[ index ] == "high" ? -1 : 1 );
 			core::Real const filter_val( filter->report_sm( pose ));
-			TR<<"Filter "<<index<<" reports "<<filter_val<<" ( best="<<last_accepted_scores_[index]<<" )"<<std::endl;
+			TR<<"Filter "<<index<<" reports "<<filter_val<<" ( best="<<lowest_scores_[index]<<"; last="<<last_accepted_scores_[index]<<" )"<<std::endl;
 
       provisional_scores.push_back( flip * filter_val );
-      if( index == rank_by_filter_ ) {
-        ranking_score = provisional_scores[ rank_by_filter_ ];
-			}
-      Real const boltz_factor = ( last_accepted_scores_[ index ] - provisional_scores[ index ] ) / temp;
-      TR_energies.Debug <<"energy index, last_accepted_score, current_score "<<index<<" "<< last_accepted_scores_[ index ]<<" "<<provisional_scores[ index ]<<std::endl;
-      TR.Debug <<"Current, best, boltz "<<provisional_scores[ index ]<<" "<<last_accepted_scores_[ index ]<<" "<<boltz_factor<<std::endl;
+			Real const boltz_factor = ( last_accepted_scores_[ index ] - provisional_scores[ index ] ) / temp;
+			TR_energies.Debug <<"energy index, last_accepted_score, current_score "<<index<<" "<< last_accepted_scores_[ index ]<<" "<<provisional_scores[ index ]<<std::endl;
+			TR.Debug <<"Current, best, boltz "<<provisional_scores[ index ]<<" "<<last_accepted_scores_[ index ]<<" "<<boltz_factor<<std::endl;
       if( !adaptive ) { // return the starting score
         provisional_scores[ index ] = last_accepted_scores_[ index ];
 			}
-      Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) );
-      Real const random_num( mc_RG.uniform() );
-      bool const reject_filter( provisional_scores[ index ] > last_accepted_scores_[ index ] && random_num >= probability );
+			Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) );
+			bool const reject_filter( provisional_scores[ index ] > last_accepted_scores_[ index ]
+																&& random_nums[ index ] >= probability );
       if( reject_filter ){
         accepted = false;
 				++num_rejections_[index];
@@ -612,41 +617,44 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
     if( accepted ){
 	    TR<<"Accept"<<std::endl;
 	    accept( pose, provisional_scores, MCA_accepted_thermally );
-	    return( true );
+	    return true;
     }// fi accepted
     else{
       TR.Debug <<"Reject"<<std::endl;
       mc_accepted_ = MCA_rejected;
-      return( false );
+      return false;
     }
   }//fi filters_.size()
   else{
-		MCA mc_status( MCA_rejected );
+	  runtime_assert( random_nums.size() >= 1 );
+	  MCA mc_status( MCA_rejected );
 	  utility::vector1< core::Real > provisional_score;
-		provisional_score.clear();
+	  provisional_score.clear();
 	  provisional_score.push_back( scoring( pose ) );
 	  current_score_ = provisional_score[1]; // for debugging
 	  last_tested_scores_.clear();
 	  last_tested_scores_ = provisional_score;
-		show_scores( TR.Debug );
-		if ( provisional_score[1] > last_accepted_score() ) {
-      if( temperature_ >= 1e-8 ){
-        Real const boltz_factor = ( last_accepted_score() - provisional_score[1] ) / temperature_;
-        Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) );
-        if ( mc_RG.uniform() < probability ) {
-          mc_status = MCA_accepted_thermally; // accepted thermally
-        }
-      }
-    }else{
-      mc_status = MCA_accepted_score_beat_last; // accepted: energy is lower than last_accepted
-    }
+	  show_scores( TR.Debug );
+	  if ( provisional_score[1] > last_accepted_score() ) {
+		  if ( temperature_ >= 1e-8 ) {
+			  Real const boltz_factor = ( last_accepted_score() - provisional_score[1] ) / temperature_;
+			  Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) );
+			  if ( random_nums[1] < probability ) {
+				//if ( mc_RG.uniform() < probability ) {
+				  mc_status = MCA_accepted_thermally; // accepted thermally
+			  }
+		  }
+	  } else {
+		  mc_status = MCA_accepted_score_beat_last; // accepted: energy is lower than last_accepted
+	  }
 
 	  if( mc_status >= 1 ){ // accepted
 			accept( pose, provisional_score, mc_status );
-		  return true;
+			return true;
 	  } else {
 		  // rejected
-		  return false;
+			mc_accepted_ = mc_status;
+			return false;
 	  }
   }
 } // boltzmann
@@ -795,7 +803,7 @@ GenericMonteCarloMover::apply( Pose & pose )
 					else{
 					pose.dump_pdb( saved_accept_file_name_ );
 					}
-		
+
 	}
 
   PoseOP initial_pose = new Pose( pose );
@@ -864,7 +872,7 @@ GenericMonteCarloMover::apply( Pose & pose )
     if( preapply_ && i==1 ){ // Auto-accept first application in order to deal with movers that e.g. change the length of the pose.
       reset( pose );
     }else{
-      if( ! boltzmann( pose ) ){ // evaluate pose by scorefxn_ or filter_.report_sm()
+      if( ! boltzmann( pose ) ){// evaluate pose by scorefxn_ or filter_.report_sm()
         pose = *last_accepted_pose();
 				reject++;
       }
@@ -897,6 +905,20 @@ GenericMonteCarloMover::apply( Pose & pose )
 	}
 
 }// apply
+
+/// @brief generate a set of random numbers to accompany the filters or scorefxn
+utility::vector1< core::Real >
+GenericMonteCarloMover::generate_random() const {
+	utility::vector1< core::Real > randoms;
+	core::Size vec_size( filters_.size() );
+	if ( !vec_size ) {
+		vec_size = 1;
+	}
+	for ( core::Size i=1; i<=vec_size; ++i ) {
+		randoms.push_back( mc_RG.uniform() );
+	}
+	return randoms;
+}
 
 std::string
 GenericMonteCarloMover::get_name() const {

@@ -70,6 +70,10 @@ public:
 
 	virtual void reset( Pose & pose );
 
+	/// @brief given a pose, score the result
+	utility::vector1< core::Real >
+	score_pose( core::pose::Pose const & pose ) const;
+
 public: // accessor
 	/// @brief Saves the current state of the mover into checkpoint files
 	void save_checkpoint_file() const;
@@ -77,10 +81,28 @@ public: // accessor
 	void remove_checkpoint_file() const;
 	/// @brief tests to see if the checkpoint files exist and have been generated
 	bool checkpoint_exists() const;
+	/// @brief gets a list of scores for acceptance number i
+	utility::vector1< core::Real > const &  accepted_scores( core::Size const i ) const { return accepted_scores_[i]; }
+	/// @brief number of acceptances
+	core::Size num_accepted_scores() const { return accepted_scores_.size(); }
+	/// @brief if boltz_rank is used, this will calculate the ranking score from a list of filter scores
+	core::Real calc_boltz_score( utility::vector1< core::Real > const & scores ) const;
 
 public: // mutators
 	/// @brief loads checkpoint data and attempts to resume a run with pose as the pose
 	void load_checkpoint_file( core::pose::Pose & pose );
+	/// @brief set the checkpoint file name
+	void checkpoint_file( std::string const & check_file ) { checkpoint_file_ = check_file; };
+	/// @brief sets whether or not to delete checkpoint files when done -- useful for debugging
+	void keep_checkpoint_file( bool const keep_checkpoint ) { keep_checkpoint_file_ = keep_checkpoint; };
+	/// @brief scales temperatures by the factor provided
+	void scale_temperatures( core::Real const temp_factor );
+	/// @brief given a modified pose, determines whether we should accept or not, and updates internal class data accordingly
+	/// @brief uses randomly generated numbers to assess acceptance of scores with temperatures
+	TrialResult boltzmann_result( core::pose::Pose & pose );
+	/// @brief given a modified pose, determines whether we should accept or not, and updates internal class data accordingly
+	TrialResult boltzmann_result( core::pose::Pose & pose,
+																utility::vector1< core::Real > const & random_nums );
 
 private: // private functions
 	/// @brief calls a round of monte carlo -- basically copied from GenericMonteCarloMover
@@ -94,15 +116,8 @@ private: // private functions
 	utility::vector1< core::Real >
 	calculate_standardized_scores( core::Size const filterid ) const;
 
-	/// @brief scales temperatures by the factor provided
-	void
-	scale_temperatures( core::Real const temp_factor );
-
 	/// @brief calculates multiplier for temperatures based on which anneal step we are no
 	core::Real calc_temp_factor() const;
-
-	/// @brief if boltz_rank is used, this will calculate the ranking score from a list of filter scores
-	core::Real calc_boltz_score( utility::vector1< core::Real > const & scores ) const;
 
 private:
 	/// @brief counter for how many accepts it takes to reach equilibrium at a given temperature
@@ -126,6 +141,9 @@ private:
 	/// @brief what is the current trial number
 	core::Size current_trial_;
 };
+
+/// @brief helper function that safely replaces a file with another
+void replace_file( std::string const & origfile, std::string const & newfile );
 
 } // namespace denovo_design
 } // namespace devel

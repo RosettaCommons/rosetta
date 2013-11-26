@@ -145,6 +145,9 @@ public:
 	/// @brief core of MC
 	bool boltzmann( Pose & pose );
 
+	/// @brief core of MC -- evaulates a pose based on the scores/filters + temperatures. random_num is a vector of random numbers between 0 and 1 with size equal to the number of MC criteria
+	bool boltzmann( Pose & pose, utility::vector1< core::Real > const & random_nums );
+
 	/// @brief Does what the mover needs to do when a pose is accepted, given a pose and scores
 	void
 	accept( Pose & pose, utility::vector1< core::Real > const & provisional_scores, MCA const mca_status );
@@ -322,6 +325,10 @@ protected:
 		Size num_cycles,
 		const Pose& pose,
 		ScoreFunctionOP scoring);
+
+	/// @brief generate a set of random numbers to accompany the filters or scorefxn
+	utility::vector1< core::Real >
+	generate_random() const;
 
 private:
 	/// @brief evalute pose by ScoreFunctionOP or FilterOP
