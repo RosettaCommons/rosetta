@@ -186,10 +186,10 @@ private: // structs
 		/// @brief vector of AtomRecord
 		/// @details sized the same as number of atoms for a given instance of core::conformation::Residue
 		AtomRecords atomRec;
-		/// @brief Added in 2013 by dadriano. A vector of labels in the AtomRecord that can be used to store 
+		/// @brief Added in 2013 by dadriano. A vector of labels in the AtomRecord that can be used to store
 		/// residue-based information that you want/can-use to communicate movers with moverts or afthermath for task-opperations
 		utility::vector1< std::string >  label;
-		
+
 #ifdef USEBOOSTSERIALIZE
 		friend class boost::serialization::access;
 
@@ -367,7 +367,7 @@ public: // state
 	Size
 	natoms( Size const res ) const
 	{
-		PyAssert( (res>0) && (res<residue_rec_.size()), "PDBInfo::natoms( Size const res): res is not in this PDBInfo!" );
+		//PyAssert( (res>0) && (res<=residue_rec_.size()), "PDBInfo::natoms( Size const res): res is not in this PDBInfo!" );
 		return residue_rec_[ res ].atomRec.size();
 	}
 
@@ -596,7 +596,7 @@ public: // single residue accessors
 	char const &
 	chain( Size const res ) const
 	{
-		//PyAssert( (res>0) && (res<residue_rec_.size()), "PDBInfo::chain( Size const res): res is not in this PDBInfo!" );
+		//PyAssert( (res>0) && (res<=residue_rec_.size()), "PDBInfo::chain( Size const res): res is not in this PDBInfo!" );
 		return residue_rec_[ res ].chainID;
 	}
 
@@ -614,7 +614,7 @@ public: // single residue accessors
 	int const &
 	number( Size const res ) const
 	{
-		//PyAssert( (res>0) && (res<residue_rec_.size()), "PDBInfo::number( Size const res): res is not in this PDBInfo!" );
+		//PyAssert( (res>0) && (res<=residue_rec_.size()), "PDBInfo::number( Size const res): res is not in this PDBInfo!" );
 		return residue_rec_[ res ].resSeq;
 	}
 
@@ -632,7 +632,7 @@ public: // single residue accessors
 	char const &
 	icode( Size const res ) const
 	{
-		//PyAssert( ( (res>0) && (res<residue_rec_.size() ) || residue_rec_.size()==0), "PDBInfo::icode( Size const res): res is not in this PDBInfo!" );
+		//PyAssert( (res>0) && (res<=residue_rec_.size()), "PDBInfo::icode( Size const res): res is not in this PDBInfo!" );
 		return residue_rec_[ res ].iCode;
 	}
 
@@ -772,7 +772,7 @@ public: // single residue mutators
 	/// @brief clean all the label(s) associated to a pose resid.
 	/// @param[in] res  residue in pose numbering
 	void
-	clear_reslabel( 
+	clear_reslabel(
 		Size const res
 	);
 
@@ -780,9 +780,9 @@ public: // single residue mutators
 	/// @param[in] res  residue in pose numbering
 	/// @param[in] target_label string to look for inside the labes associated to the residue
 	bool
-	res_haslabel( 
+	res_haslabel(
 		Size const res,
-		std::string const target_label 
+		std::string const target_label
 	) const
 	{
 		return ( std::find( residue_rec_[res].label.begin(), residue_rec_[res].label.end(), target_label ) != residue_rec_[res].label.end() );
