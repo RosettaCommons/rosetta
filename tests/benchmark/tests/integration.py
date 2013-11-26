@@ -54,11 +54,13 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     results = {}
 
     TR('Compiling...')
+    compiler = platform['compiler']
+    extras   = ','.join(platform['extras'])
 
     if debug:
         res, output = 0, 'integration.py: debug is enabled, skippig build...\n'
     else:
-        res, output = execute('Compiling...', 'cd {}/source && ./scons.py bin mode=release cxx={compiler} -j{jobs}'.format(rosetta_dir, jobs=jobs, compiler=platform['compiler']), return_='tuple')
+        res, output = execute('Compiling...', 'cd {}/source && ./scons.py bin mode=release cxx={compiler} extras={extras} -j{jobs}'.format(rosetta_dir, jobs=jobs, compiler=compiler, extras=extras), return_='tuple')
 
     full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
 
@@ -77,7 +79,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
         #if os.path.isdir(files_location): TR('Removing old ref dir %s...' % files_location);  shutil.rmtree(files_location)  # remove old dir if any
 
         #output_json = working_dir + '/output.json'  , output_json=output_json   --yaml={output_json}
-        command_line = 'cd {}/tests/integration && ./integration.py --compiler={platform[compiler]} --timeout=480 -j{jobs}'.format(rosetta_dir, jobs=jobs, platform=platform)
+        command_line = 'cd {}/tests/integration && ./integration.py --compiler={compiler} --extras={extras} --timeout=480 -j{jobs}'.format(rosetta_dir, jobs=jobs, compiler=compiler, extras=extras)
         TR( 'Running integration script: {}'.format(command_line) )
 
         if debug: res, output = 0, 'integration.py: debug is enabled, skippig integration script run...\n'

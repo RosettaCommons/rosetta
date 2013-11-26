@@ -42,6 +42,8 @@ def main(args):
       help="Number of processors to use on when building. (default: %(default)s)",
     )
 
+    parser.add_argument("--extras", default='', help="Specify scons extras separated by ',': like --extras=mpi,static" )
+
     parser.add_argument("--debug", action="store_true", dest="debug", default=False, help="Run specified test in debug mode (not with debug build!) this mean different things and depend on the test. Could be: skip the build phase, skip some of the test phases and so on. [off by default]" )
 
     parser.add_argument("--suffix", default='', help="Specify ending suffix for test output dir. This is useful when you want to save test results in different dir for later comparison." )
@@ -54,6 +56,8 @@ def main(args):
     Options = parser.parse_args(args=args[1:])
 
     if Options.suffix: Options.suffix = '.' + Options.suffix
+
+    Platform['extras'] = Options.extras.split(',') if Options.extras else []
 
     print('Platform: {}'.format(Platform))
     if Options.compare: print('Comparing tests {} with suffixes: {}'.format(Options.args, Options.compare) )

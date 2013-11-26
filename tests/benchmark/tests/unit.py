@@ -53,8 +53,11 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
     TR('Compiling...')
 
+    compiler = platform['compiler']
+    extras   = ','.join(platform['extras'])
+
     if debug: res, output = 0, 'unit.py: debug is enabled, skippig build phase...\n'
-    else: res, output = execute('Compiling...', 'cd {}/source && ./scons.py cxx={compiler} -j{jobs} && ./scons.py cxx={compiler} cat=test -j{jobs}'.format(rosetta_dir, jobs=jobs, compiler=platform['compiler']), return_='tuple')
+    else: res, output = execute('Compiling...', 'cd {}/source && ./scons.py cxx={compiler} extras={extras} -j{jobs} && ./scons.py cxx={compiler} extras={extras} cat=test -j{jobs}'.format(rosetta_dir, jobs=jobs, compiler=compiler, extras=extras), return_='tuple')
 
     full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
 
@@ -67,7 +70,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
         json_results_file = rosetta_dir+'/source/.unit_test_results.json'
         if (not debug) and  os.path.isfile(json_results_file): os.remove(json_results_file)
 
-        command_line = 'cd {}/source && test/run.py --compiler={platform[compiler]} -j{jobs} --mute all'.format(rosetta_dir, jobs=jobs, platform=platform)
+        command_line = 'cd {}/source && test/run.py --compiler={compiler} --extras={extras} -j{jobs} --mute all'.format(rosetta_dir, jobs=jobs, compiler=compiler, extras=extras)
         TR( 'Running unit test script: {}'.format(command_line) )
 
         if debug: res, output = 0, 'unit.py: debug is enabled, skippig unit-tests script run...\n'

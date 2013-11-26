@@ -18,9 +18,9 @@ import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
 tests = dict(
-    debug   = NT(command='./scons.py bin cxx={compiler} -j{jobs}', incremental=True),
-    release = NT(command='./scons.py bin cxx={compiler} mode=release -j{jobs}', incremental=True),
-    static  = NT(command='./scons.py bin cxx={compiler} mode=release extras=static -j{jobs}', incremental=True),
+    debug   = NT(command='./scons.py bin cxx={compiler} extras={extras} -j{jobs}', incremental=True),
+    release = NT(command='./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}', incremental=True),
+    static  = NT(command='./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}', incremental=True),
     header  = NT(command='cd src && python ./../../../tools/python_cc_reader/test_all_headers_compile_w_fork.py -n {jobs}', incremental=False),
 )
 
@@ -52,11 +52,14 @@ def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
     TR('Running test: "{test}" at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
+    compiler = platform['compiler']
+    extras   = ','.join(platform['extras'])
+
     if debug: res, output = 0, 'build.py: debug is enabled, skippig build phase...\n'
-    else: res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].command.format(compiler=platform['compiler'], jobs=jobs)), return_='tuple')
+    else: res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].command.format(compiler=compiler, jobs=jobs, extras=extras)), return_='tuple')
 
     # re-running builds in case we got error - so we can get nice error message
-    if res and tests[test].incremental:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].command.format(compiler=platform['compiler'], jobs=1)), return_='tuple')
+    if res and tests[test].incremental:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].command.format(compiler=compiler, jobs=1, extras=extras)), return_='tuple')
 
     file(working_dir+'/build-log.txt', 'w').write(output)
 
