@@ -67,6 +67,9 @@ public:
     bool point_inside() const{ return point_inside_; }
     void point_inside( bool const b ){ point_inside_ = b; }
 
+		core::Size sequence_separation() const { return sequence_separation_; }
+		void sequence_separation( core::Size const s ){ sequence_separation_ = s; }
+
 private:
     core::Size Cterm_offset_, Nterm_offset_; //dflt 0,0; whether to count residues N and C-terminally
     bool even_, odd_; //dflt true, true; report on even and odd blades
@@ -74,9 +77,10 @@ private:
     core::Size neighbors_; //dflt 6; how many neighbors to require
 
     bool point_inside_; //dflt true; select residues that point into the barrel
+		core::Size sequence_separation_; //dflt 15aa; how many aas between the  strand ntermini to count. useful for eliminating short hairpins
 };
 
-core::Size neighbors_in_vector( core::pose::Pose const & pose, core::Size const target_res, utility::vector1< core::Size > const & neighbors, core::Real const dist_threshold, core::scoring::dssp::Dssp & dssp );
+core::Size neighbors_in_vector( core::pose::Pose const & pose, core::Size const target_res, utility::vector1< core::Size > const & neighbors, core::Real const dist_threshold, core::scoring::dssp::Dssp & dssp, core::Size const sequence_separation );
 
 } //namespace splice
 } //namespace devel

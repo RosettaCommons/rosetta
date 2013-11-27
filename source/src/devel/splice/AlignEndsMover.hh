@@ -74,6 +74,9 @@ public:
 
 		void chain( core::Size const c ){ chain_ = c;}
 		core::Size chain() const{ return chain_ ; }
+
+		void sequence_separation( core::Size const c ){ sequence_separation_ = c;}
+		core::Size sequence_separation() const{ return sequence_separation_; }
 private:
   utility::vector1< core::Size > reference_positions( core::pose::Pose const & p ) const;
 	core::Real distance_threshold_; // dflt 16;
@@ -83,6 +86,7 @@ private:
 	core::Size stagger_; // dflt 0; see below
 	bool parallel_; //dflt true; are the strands parallel or antiparallel?
 	core::Size chain_; //dflt 1; on which chain to search? 0 means all chains
+	core::Size sequence_separation_; // dflt 15aa; the minimal sequence separation between neighboring strands. Useful to eliminate short hairpins
 };
 
 /* explanation for stagger:

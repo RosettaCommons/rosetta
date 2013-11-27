@@ -49,7 +49,8 @@ FindEndpointsOperation::FindEndpointsOperation() :
 		odd_( true ),
     distance_cutoff_( 18.0 ),
     neighbors_( 6 ),
-    point_inside_( true )
+    point_inside_( true ),
+		sequence_separation_( 15 )
 {
 }
 
@@ -68,13 +69,13 @@ core::pack::task::operation::TaskOperationOP FindEndpointsOperation::clone() con
 
 ///@brief compute the number of residue neighbours target_res has within neighbours vector
 core::Size
-    neighbors_in_vector( core::pose::Pose const & pose, core::Size const target_res, utility::vector1< core::Size > const & neighbors, core::Real const dist_threshold, core::scoring::dssp::Dssp & dssp ){
+    neighbors_in_vector( core::pose::Pose const & pose, core::Size const target_res, utility::vector1< core::Size > const & neighbors, core::Real const dist_threshold, core::scoring::dssp::Dssp & dssp, core::Size const sequence_separation ){
 
     core::Size neighbor_count( 0 );
     for(utility::vector1<core::Size>::const_iterator res_jt = neighbors.begin(); res_jt != neighbors.end(); ++res_jt){
         if( target_res == *res_jt ) // don't count self as neighbour
             continue;
-        if( std::abs( (int)target_res - (int)*res_jt ) <= 15 ) // make sure sequence separation is >=15
+        if( std::abs( (int)target_res - (int)*res_jt ) <= (int) sequence_separation ) // make sure sequence separation is >= sequence separation
             continue;
         bool intervening_helix( false );
         for( core::Size i=std::min( target_res, *res_jt ); i<=std::max( target_res, *res_jt ); ++i ) /// make sure there is an intervening helix
@@ -119,7 +120,7 @@ FindEndpointsOperation::apply( core::pose::Pose const & pose, core::pack::task::
     utility::vector1< core::Size > ntermini_w_neighbors;
     ntermini_w_neighbors.clear();
     for( utility::vector1< core::Size >::const_iterator res_it = strand_ntermini.begin(); res_it!=strand_ntermini.end();++res_it){
-        core::Size const resi_neighbors( neighbors_in_vector( pose, *res_it, strand_ntermini, distance_cutoff(), dssp ));
+        core::Size const resi_neighbors( neighbors_in_vector( pose, *res_it, strand_ntermini, distance_cutoff(), dssp, sequence_separation() ));
         if( resi_neighbors >= neighbors() ){
             ntermini_w_neighbors.push_back( *res_it );
             TR<<*res_it<<" has "<<resi_neighbors<<" neighbors"<<std::endl;
@@ -129,11 +130,11 @@ FindEndpointsOperation::apply( core::pose::Pose const & pose, core::pack::task::
     utility::vector1< core::Size > ntermini_w_close_neighbors;
     ntermini_w_close_neighbors.clear();
     for( utility::vector1< core::Size >::const_iterator res_it = ntermini_w_neighbors.begin(); res_it!=ntermini_w_neighbors.end();++res_it){
-        core::Size const close_neighbors( neighbors_in_vector( pose, *res_it, strand_ntermini, 10.0, dssp ));
+        core::Size const close_neighbors( neighbors_in_vector( pose, *res_it, strand_ntermini, 10.0, dssp, sequence_separation() ));
         if( close_neighbors >= 2 )
             ntermini_w_close_neighbors.push_back( *res_it );
         else{
-            core::Size const close_neighbors_one_down( neighbors_in_vector( pose, *res_it+1, strand_ntermini, 10.0, dssp ));
+            core::Size const close_neighbors_one_down( neighbors_in_vector( pose, *res_it+1, strand_ntermini, 10.0, dssp, sequence_separation() ));
             if( close_neighbors_one_down >= 2 )
                 ntermini_w_close_neighbors.push_back( *res_it + 1);
         }
@@ -196,7 +197,9 @@ FindEndpointsOperation::parse_tag( TagCOP tag , DataMap & )
     neighbors( tag->getOption< core::Size >( "neighbors", 6 ));
     distance_cutoff( tag->getOption< core::Real >( "distance_cutoff", 18.0 ));
     point_inside( tag->getOption< bool >( "point_inside", true ));
-    TR<<"Cterm_offset: "<<Cterm_offset()<<" Nterm_offset: "<<Nterm_offset()<<" even: "<<even()<<" odd: "<<odd()<<" neighbors: "<<neighbors()<<" distance_cutoff: "<<distance_cutoff()<<" point_inside: "<<point_inside()<<std::endl;
+		sequence_separation( tag->getOption< core::Size >( "sequence_separation", 15 ) );
+
+    TR<<"Cterm_offset: "<<Cterm_offset()<<" Nterm_offset: "<<Nterm_offset()<<" even: "<<even()<<" odd: "<<odd()<<" neighbors: "<<neighbors()<<" distance_cutoff: "<<distance_cutoff()<<" point_inside: "<<point_inside()<<" sequence_separation: "<<sequence_separation()<<std::endl;
 }
 
 } //namespace splice

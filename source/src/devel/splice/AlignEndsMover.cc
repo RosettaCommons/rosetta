@@ -67,7 +67,8 @@ AlignEndsMover::AlignEndsMover(): moves::Mover("AlignEnds"),
 	template_pose_( NULL ),
 	stagger_( 0 ),
 	parallel_( true ),
-	chain_( 1 )
+	chain_( 1 ),
+	sequence_separation_( 15 )
 {
 }
 
@@ -104,9 +105,9 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 					for( ;resi <= resi_end && dssp.get_dssp_secstruct( resi + strand_length() ) == 'E'; ++resi ); // move to the end of the strand (even strands will be represented by the C-termini)
 				}//fi !parallel() && !odd()
 				core::Size position_count = 0; /// how many strand positions were added to the strand_positions array
-				for( ; resi <= resi_end && dssp.get_dssp_secstruct( resi + 1 ) == 'E'; ++resi ){ // this causes 'fast-forwarding' of resi, but it's okay, since we don't want to double count the strands
+				for( ; resi <= resi_end && dssp.get_dssp_secstruct( resi ) == 'E'; ++resi ){ // this causes 'fast-forwarding' of resi, but it's okay, since we don't want to double count the strands
 					/// we'll add only strand_length() positions to the array, but will forward the resi index to the end of the strand.
-					if( dssp.get_dssp_secstruct( resi ) == 'E' && position_count < strand_length() ){
+					if( position_count < strand_length() ){
           	strand_positions.push_back( resi );
 						++position_count;
 					}
@@ -115,26 +116,31 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 			}//fi strand_count
   	}// fi dssp.get_dssp_secstruct(resi)
 	}// for resi outer loop
+	TR<<"DEBUG: strand positions: ";
+	foreach( core::Size const sp, strand_positions )
+	  TR<<sp<<'+';
+	TR<<std::endl;
   utility::vector1< core::Size > strand_ntermini;
   strand_ntermini.clear();
   core::Size prev_resnum( 99999 );
 	odd_strand = true; // antiparallel strands have neighboring c/n terminal positions whereas parallel strands have neighboring n terminal positions.
-  for( utility::vector1< core::Size >::const_iterator resi = strand_positions.begin(); resi != strand_positions.end(); ++resi ){ /// find strand ntermini
-      if( *resi != prev_resnum + 1 ){ /// search for non-contiguous residue indices; these are cuts in the sheet. We could also use the strand_length() value b/c each strand comprises a set number of strand positions.
-				if( !odd_strand && !parallel() )
-					for( ; resi != strand_positions.end() && *resi == prev_resnum + 1; ++resi ) /// fast forward resi to strand c-terminus
-						prev_resnum = *resi;
-
-      	strand_ntermini.push_back( *resi );
+  for( utility::vector1< core::Size >::const_iterator resi = strand_positions.begin(); resi != strand_positions.end(); resi += strand_length() ){ /// find strand ntermini
+			if( !odd_strand && !parallel() )
+				strand_ntermini.push_back( *(resi + strand_length() - 1 ) );
+			else
+				strand_ntermini.push_back( *resi );
 				odd_strand = !odd_strand;/// flip odd->even->odd...
-			}
       prev_resnum = *resi;
-  }
+	}
+	TR<<"DEBUG: nterminal positions: ";
+	foreach( core::Size const resi, strand_ntermini )
+	  TR<<resi<<'+';
+	TR<<std::endl;
   utility::vector1< core::Size > ntermini_w_neighbors;
   ntermini_w_neighbors.clear();
 /// In the following we ensure that each of the ntermini has neighbors within the ntermini array. We're looking for tightly packed barrel structures.
 	foreach( core::Size const res, strand_ntermini ){ /// strand_ntermini with enough neighbors
-      core::Size const resi_neighbors( neighbors_in_vector( pose, res, strand_ntermini, distance_threshold(), dssp ));
+      core::Size const resi_neighbors( neighbors_in_vector( pose, res, strand_ntermini, distance_threshold(), dssp, sequence_separation() ));
       if( resi_neighbors >= neighbors() ){
           ntermini_w_neighbors.push_back( res );
           TR<<res<<" has "<<resi_neighbors<<" neighbors"<<std::endl;
@@ -145,11 +151,11 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 	ntermini_w_close_neighbors.clear();
 	if( parallel() ){
 	  foreach( core::Size const res, ntermini_w_neighbors ){
-	      core::Size const close_neighbors( neighbors_in_vector( pose, res, strand_ntermini, 10.0, dssp ));
+	      core::Size const close_neighbors( neighbors_in_vector( pose, res, strand_ntermini, 10.0, dssp, sequence_separation() ));
 	      if( close_neighbors >= 2 )
 	          ntermini_w_close_neighbors.push_back( res );
 	      else{
-	          core::Size const close_neighbors_one_down( neighbors_in_vector( pose, res+1, strand_ntermini, 10.0, dssp ));
+	          core::Size const close_neighbors_one_down( neighbors_in_vector( pose, res+1, strand_ntermini, 10.0, dssp, sequence_separation() ));
 	          if( close_neighbors_one_down >= 2 )
 	              ntermini_w_close_neighbors.push_back( res + 1);
 	      }
@@ -159,10 +165,7 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 	else{ /// antiparallel, even strands should be fed in from their ntermini
 		odd_strand = true;
 		foreach( core::Size const resi, ntermini_w_neighbors ){
-//		  if( odd_strand )
-				ntermini_w_close_neighbors.push_back( resi );
-//			else
-	//			ntermini_w_close_neighbors.push_back( resi - strand_length() + 1 );
+			ntermini_w_close_neighbors.push_back( resi );
 			odd_strand = !odd_strand;
 		}
 	}
@@ -175,12 +178,19 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 
 	utility::vector1< core::Size > positions_for_alignment;
 	positions_for_alignment.clear();
-	bool curr_odd( true );
+	odd_strand = true;
 	foreach( core::Size const res, ntermini_w_close_neighbors ){
-		if( ( curr_odd && odd() ) || ( !curr_odd && even() ) ){
-			for( core::Size count = 0; count < N_terminal_count(); ++count )
-				positions_for_alignment.push_back( res + count );
+		if( ( odd_strand && odd() ) || ( !odd_strand && even() ) ){
+			if( !odd_strand && !parallel() ){
+				for( core::Size count = 0; count < N_terminal_count(); ++count )
+					positions_for_alignment.push_back( res - count ); // count residues backwards if antiparallel and even
+			}
+			else{
+				for( core::Size count = 0; count < N_terminal_count(); ++count )
+					positions_for_alignment.push_back( res + count );
+			}
 		}//fi
+		odd_strand = !odd_strand;
 	}//foreach
 	return positions_for_alignment;
 }
@@ -262,8 +272,9 @@ AlignEndsMover::parse_my_tag(
 	strand_length( tag->getOption< core::Size >( "strand_length", 3 ) );
 	max_strands( tag->getOption< core::Size >( "max_strands", 10 ) );
 	chain( tag->getOption< core::Size >( "chain", 1 ) );
+	sequence_separation( tag->getOption< core::Size >( "sequence_separation", 15 ) );
 
-	TR<<"paralell: "<<parallel()<<" distance_threshold: "<<distance_threshold()<<" max_strands: "<<max_strands()<<" strand_length: "<<strand_length()<<" neighbors: "<<neighbors()<<" N_terminal_count: "<<N_terminal_count()<<" odd: "<<odd()<<" even: "<<even()<<" template_pose: "<<template_fname<<" stagger: "<<stagger()<<" chain: "<<chain()<<std::endl;
+	TR<<"paralell: "<<parallel()<<" distance_threshold: "<<distance_threshold()<<" max_strands: "<<max_strands()<<" strand_length: "<<strand_length()<<" neighbors: "<<neighbors()<<" N_terminal_count: "<<N_terminal_count()<<" odd: "<<odd()<<" even: "<<even()<<" template_pose: "<<template_fname<<" stagger: "<<stagger()<<" chain: "<<chain()<<" sequence_separation: "<<sequence_separation()<<std::endl;
 }
 } // simple_moves
 } // protocols
