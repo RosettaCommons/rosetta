@@ -372,7 +372,7 @@ class CppFunction:
 
 
         #  check if return result is sane. Some types (like int *) mean that we actully have an iterator functions and this one should be taked care at class abstraction level
-        for t in ['void *', 'void const *', 'char *', 'int *', 'int const *', 'double *', 'double const *', 'Real *', 'Real const *', 
+        for t in ['void *', 'void const *', 'char *', 'int *', 'int const *', 'double *', 'double const *', 'Real *', 'Real const *',
                   'kiss_fft_cpx *', 'kiss_fft_cfg', 'kiss_fftnd_cfg', 'kiss_fftr_cfg', ]:
             if (self.returnType.T() or '').endswith(t): return False
 
@@ -424,7 +424,7 @@ class CppFunction:
 	# The boost::graph vertex descriptors and edge descriptors are implemented with void pointers
 	# which gives boost::python a headache. Tell boost::python to treat them as opaque objects.
         elif self.returnType.T().endswith('core::chemical::VD') or self.returnType.T().endswith('core::chemical::ED'):
-            return '    , boost::python::return_value_policy< boost::python::return_opaque_pointer >()\n'
+            return '    , boost::python::return_value_policy< boost::python::return_by_value >()\n'
 
 
         return ''
