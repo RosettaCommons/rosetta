@@ -46,26 +46,30 @@ sources = {
 	"devel/cstEnergyBalance": [
 		"minimalCstRelaxUtil",
 	],
-        "devel/denovo_design": [
-                "DumpStatsSS",
-                "FastDesign",
-                "GenericSimulatedAnnealer",
-                "RestrictRegion",
-        ],
-        "devel/denovo_design/calculators": [
-                "CavityCalculator",
-                "ResidueCentralityCalculator",
-        ],
-        "devel/denovo_design/filters": [
-                "CavityVolumeFilter",
-                "PsiPredInterface",
-                "SSPredictionFilter",
+	"devel/denovo_design": [
+		"BuildSheet",
+		"ConnectJumps",
+		"DumpStatsSS",
+		"FastDesign",
+		"GenericSimulatedAnnealer",
+		"ParametricSheet",
+		"RestrictRegion",
+	],
+	"devel/denovo_design/calculators": [
+		"CavityCalculator",
+		"ResidueCentralityCalculator",
+	],
+	"devel/denovo_design/filters": [
+		"CavityVolumeFilter",
+		"FoldabilityFilter",
+		"PsiPredInterface",
+		"SSPredictionFilter",
 		"SSShapeComplementarityFilter",
-        ],
-        "devel/denovo_design/task_operations": [
-                "DesignBySecondaryStructure",
-                "HighestEnergyRegion",
-        ],
+	],
+	"devel/denovo_design/task_operations": [
+		"DesignBySecondaryStructure",
+		"HighestEnergyRegion",
+	],
 	"devel/denovo_protein_design": [
 		"CreateStartingStructureMover",
 		"DesignRelaxMover",

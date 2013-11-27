@@ -27,6 +27,8 @@
 //#include <devel/constrained_sequence_design/SequenceConstraintFactory.hh>
 
 //mover creators
+#include <devel/denovo_design/BuildSheetCreator.hh>
+#include <devel/denovo_design/ConnectJumpsCreator.hh>
 #include <devel/denovo_design/DumpStatsSSCreator.hh>
 #include <devel/denovo_design/FastDesignCreator.hh>
 #include <devel/denovo_design/RestrictRegionCreator.hh>
@@ -61,6 +63,7 @@
 
 // Filter creators
 #include <devel/denovo_design/filters/CavityVolumeFilterCreator.hh>
+#include <devel/denovo_design/filters/FoldabilityFilterCreator.hh>
 #include <devel/denovo_design/filters/SSPredictionFilterCreator.hh>
 #include <devel/denovo_design/filters/SSShapeComplementarityFilterCreator.hh>
 #include <devel/matdes/OligomericAverageDegreeFilterCreator.hh>
@@ -105,6 +108,8 @@
 namespace devel {
 
 // Mover creators
+static protocols::moves::MoverRegistrator< denovo_design::BuildSheetCreator > reg_BuildSheetCreator;
+static protocols::moves::MoverRegistrator< denovo_design::ConnectJumpsCreator > reg_ConnectJumpsCreator;
 static protocols::moves::MoverRegistrator< denovo_design::DumpStatsSSCreator > reg_DumpStatsSSCreator;
 static protocols::moves::MoverRegistrator< denovo_design::FastDesignCreator > reg_FastDesignCreator;
 static protocols::moves::MoverRegistrator< denovo_design::RestrictRegionCreator > reg_RestrictRegionCreator;
@@ -155,6 +160,7 @@ static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::Ret
 
 // Filter creators
 static protocols::filters::FilterRegistrator< denovo_design::filters::CavityVolumeFilterCreator > reg_CavityVolumeFilterCreator;
+static protocols::filters::FilterRegistrator< denovo_design::filters::FoldabilityFilterCreator > reg_FoldabilityFilterCreator;
 static protocols::filters::FilterRegistrator< denovo_design::filters::SSPredictionFilterCreator > reg_SSPredictionFilterCreator;
 static protocols::filters::FilterRegistrator< denovo_design::filters::SSShapeComplementarityFilterCreator > reg_SSShapeComplementarityFilterCreator;
 static protocols::filters::FilterRegistrator< devel::matdes::OligomericAverageDegreeFilterCreator > OligomericAverageDegreeFilterCreator_registrator;

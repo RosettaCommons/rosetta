@@ -11,6 +11,7 @@
 
 sources = {
         "denovo_design" : [
+                "BuildSheet",
                 "GenericSimulatedAnnealer",
         ],
 	"vardist_solaccess" : [
