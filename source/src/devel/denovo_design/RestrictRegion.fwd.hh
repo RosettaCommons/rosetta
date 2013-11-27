@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/devel/denovo_design/RestrictWorstRegion.fwd.hh
+/// @file   src/devel/denovo_design/RestrictRegion.fwd.hh
 /// @brief  Fwd declarations for Tom's denovo design protocol
 /// @author Tom Linsky
 
 
-#ifndef INCLUDED_devel_denovo_design_RestrictWorstRegion_fwd_hh
-#define INCLUDED_devel_denovo_design_RestrictWorstRegion_fwd_hh
+#ifndef INCLUDED_devel_denovo_design_RestrictRegion_fwd_hh
+#define INCLUDED_devel_denovo_design_RestrictRegion_fwd_hh
 
 
 // Utility headers
@@ -25,14 +25,14 @@ namespace devel {
 namespace denovo_design {
 
 // Forward
-class RestrictWorstRegion;
+class RestrictRegion;
 
 // Types
-typedef  utility::pointer::owning_ptr< RestrictWorstRegion >  RestrictWorstRegionOP;
-typedef  utility::pointer::owning_ptr< RestrictWorstRegion const >  RestrictWorstRegionCOP;
+typedef  utility::pointer::owning_ptr< RestrictRegion >  RestrictRegionOP;
+typedef  utility::pointer::owning_ptr< RestrictRegion const >  RestrictRegionCOP;
 
-typedef  utility::pointer::access_ptr< RestrictWorstRegion >  RestrictWorstRegionAP;
-typedef  utility::pointer::access_ptr< RestrictWorstRegion const >  RestrictWorstRegionCAP;
+typedef  utility::pointer::access_ptr< RestrictRegion >  RestrictRegionAP;
+typedef  utility::pointer::access_ptr< RestrictRegion const >  RestrictRegionCAP;
 
 
 } // namespace denovo_design

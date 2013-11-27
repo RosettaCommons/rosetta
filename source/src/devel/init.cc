@@ -29,7 +29,7 @@
 //mover creators
 #include <devel/denovo_design/DumpStatsSSCreator.hh>
 #include <devel/denovo_design/FastDesignCreator.hh>
-#include <devel/denovo_design/RestrictWorstRegionCreator.hh>
+#include <devel/denovo_design/RestrictRegionCreator.hh>
 #include <devel/domain_insertion/FusePosesNtoCMoverCreator.hh>
 #include <devel/domain_insertion/InsertionSiteTestMoverCreator.hh>
 #include <devel/denovo_design/GenericSimulatedAnnealerCreator.hh>
@@ -107,7 +107,7 @@ namespace devel {
 // Mover creators
 static protocols::moves::MoverRegistrator< denovo_design::DumpStatsSSCreator > reg_DumpStatsSSCreator;
 static protocols::moves::MoverRegistrator< denovo_design::FastDesignCreator > reg_FastDesignCreator;
-static protocols::moves::MoverRegistrator< denovo_design::RestrictWorstRegionCreator > reg_RestrictWorstRegionCreator;
+static protocols::moves::MoverRegistrator< denovo_design::RestrictRegionCreator > reg_RestrictRegionCreator;
 static protocols::moves::MoverRegistrator< denovo_design::GenericSimulatedAnnealerCreator > reg_GenericSimulatedAnnealerCreator;
 protocols::moves::MoverRegistrator< domain_insertion::FusePosesNtoCMoverCreator > reg_FusePosesNtoCMoverCreator;
 protocols::moves::MoverRegistrator< domain_insertion::InsertionSiteTestMoverCreator > reg_InsertionSiteTestMoverCreator;

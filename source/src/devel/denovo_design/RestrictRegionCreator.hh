@@ -6,12 +6,12 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-/// @file    src/devel/denovo_design/RestrictWorstRegionCreator.fwd.hh
+/// @file    src/devel/denovo_design/RestrictRegionCreator.fwd.hh
 /// @brief   Creator for Tom's denovo protocol
 /// @author  Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_devel_denovo_design_RestrictWorstRegionCreator_hh
-#define INCLUDED_devel_denovo_design_RestrictWorstRegionCreator_hh
+#ifndef INCLUDED_devel_denovo_design_RestrictRegionCreator_hh
+#define INCLUDED_devel_denovo_design_RestrictRegionCreator_hh
 
 // Project headers
 #include <protocols/moves/MoverCreator.hh>
@@ -19,7 +19,7 @@
 namespace devel {
 namespace denovo_design {
 
-class RestrictWorstRegionCreator : public protocols::moves::MoverCreator
+class RestrictRegionCreator : public protocols::moves::MoverCreator
 {
 public:
 	virtual protocols::moves::MoverOP create_mover() const;

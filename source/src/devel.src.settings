@@ -50,7 +50,7 @@ sources = {
                 "DumpStatsSS",
                 "FastDesign",
                 "GenericSimulatedAnnealer",
-                "RestrictWorstRegion",
+                "RestrictRegion",
         ],
         "devel/denovo_design/calculators": [
                 "CavityCalculator",

@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/devel/denovo_design/RestrictWorstRegion.cc
+/// @file src/devel/denovo_design/RestrictRegion.cc
 /// @brief Tom's Denovo design protocol
 /// @detailed
 /// @author Tom Linsky (tlinsky@gmail.com)
 
 // Unit headers
-#include <devel/denovo_design/RestrictWorstRegion.hh>
-#include <devel/denovo_design/RestrictWorstRegionCreator.hh>
+#include <devel/denovo_design/RestrictRegion.hh>
+#include <devel/denovo_design/RestrictRegionCreator.hh>
 
 // Project Headers
 #include <devel/denovo_design/task_operations/HighestEnergyRegion.hh>
@@ -62,7 +62,7 @@
 #include <protocols/boinc/boinc.hh>
 #endif
 
-static basic::Tracer TR("devel.denovo_design.RestrictWorstRegion");
+static basic::Tracer TR("devel.denovo_design.RestrictRegion");
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -70,34 +70,34 @@ namespace devel {
 namespace denovo_design {
 
 std::string
-RestrictWorstRegionCreator::keyname() const
+RestrictRegionCreator::keyname() const
 {
-	return RestrictWorstRegionCreator::mover_name();
+	return RestrictRegionCreator::mover_name();
 }
 
 protocols::moves::MoverOP
-RestrictWorstRegionCreator::create_mover() const {
-	return new RestrictWorstRegion();
+RestrictRegionCreator::create_mover() const {
+	return new RestrictRegion();
 }
 
 std::string
-RestrictWorstRegionCreator::mover_name()
+RestrictRegionCreator::mover_name()
 {
-	return "RestrictWorstRegion";
+	return "RestrictRegion";
 }
 
 ///  ---------------------------------------------------------------------------------
-///  RestrictWorstRegion main code:
+///  RestrictRegion main code:
 ///  ---------------------------------------------------------------------------------
 
 /// @brief initialize static member variable
-utility::vector1< core::Size > RestrictWorstRegion::last_residues_restricted_;
-utility::vector1< std::string > RestrictWorstRegion::permanently_restricted_residues_;
-core::pose::PoseOP RestrictWorstRegion::previous_pose_ = NULL;
+utility::vector1< core::Size > RestrictRegion::last_residues_restricted_;
+utility::vector1< std::string > RestrictRegion::permanently_restricted_residues_;
+core::pose::PoseOP RestrictRegion::previous_pose_ = NULL;
 
 /// @brief default constructor
-RestrictWorstRegion::RestrictWorstRegion() :
-	Mover( "RestrictWorstRegion" ),
+RestrictRegion::RestrictRegion() :
+	Mover( "RestrictRegion" ),
 	type_( "score" ),
 	permanent_restriction_( false ),
 	resfile_( "" ),
@@ -115,7 +115,7 @@ RestrictWorstRegion::RestrictWorstRegion() :
 }
 
 /// @brief copy constructor
-RestrictWorstRegion::RestrictWorstRegion( RestrictWorstRegion const & rval ) :
+RestrictRegion::RestrictRegion( RestrictRegion const & rval ) :
 	Mover( rval ),
 	type_( rval.type_ ),
 	permanent_restriction_( rval.permanent_restriction_ ),
@@ -135,18 +135,18 @@ RestrictWorstRegion::RestrictWorstRegion( RestrictWorstRegion const & rval ) :
 
 /// @brief destructor - this class has no dynamic allocation, so
 //// nothing needs to be cleaned. C++ will take care of that for us.
-RestrictWorstRegion::~RestrictWorstRegion()
+RestrictRegion::~RestrictRegion()
 {}
 
 
 /// Return a copy of ourselves
 protocols::moves::MoverOP
-RestrictWorstRegion::clone() const {
-	return new RestrictWorstRegion(*this);
+RestrictRegion::clone() const {
+	return new RestrictRegion(*this);
 }
 
 void
-RestrictWorstRegion::parse_my_tag(
+RestrictRegion::parse_my_tag(
 	utility::tag::TagCOP const tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
@@ -194,7 +194,7 @@ RestrictWorstRegion::parse_my_tag(
 		tmpOpSet = true;
 	}
 	if(tmpOpSet == false)
-		utility_exit_with_message( "Bad type specified to RestrictWorstRegion op: " + type  );
+		utility_exit_with_message( "Bad type specified to RestrictRegion op: " + type  );
 	//initialize metric calculator. maybe not the best location for this?
 	for(core::Size ii=1; ii<=highestEnergyRegionOperation_ops_.size(); ++ii){
 		std::string opName = highestEnergyRegionOperation_ops_[ii]->get_name();
@@ -203,17 +203,17 @@ RestrictWorstRegion::parse_my_tag(
 }
 
 std::string
-RestrictWorstRegion::get_name() const
+RestrictRegion::get_name() const
 {
-	return "RestrictWorstRegion";
+	return "RestrictRegion";
 }
 
-/// @brief Does the RestrictWorstRegion moves
+/// @brief Does the RestrictRegion moves
 void
-RestrictWorstRegion::apply( core::pose::Pose & pose )
+RestrictRegion::apply( core::pose::Pose & pose )
 {
 	if ( resfile_ == "" ) {
-		utility_exit_with_message( "A resfile was not specified to the RestrictWorstRegion mover." );
+		utility_exit_with_message( "A resfile was not specified to the RestrictRegion mover." );
 	}
 
 	if ( permanently_restricted_residues_.size() == 0 ) {
@@ -369,7 +369,7 @@ RestrictWorstRegion::apply( core::pose::Pose & pose )
 
 /// @brief initialize the resfile -- takes an input resfile, but converts it to a resfile in the output directory
 void
-RestrictWorstRegion::initialize_resfile( std::string const & orig_resfile )
+RestrictRegion::initialize_resfile( std::string const & orig_resfile )
 {
 	if ( orig_resfile == "" ) {
 		resfile_ = orig_resfile;
@@ -404,7 +404,7 @@ RestrictWorstRegion::initialize_resfile( std::string const & orig_resfile )
 
 /// @brief writes a resfile from the task
 void
-RestrictWorstRegion::write_resfile( core::pose::Pose const & pose,  core::pack::task::PackerTaskCOP task ) const
+RestrictRegion::write_resfile( core::pose::Pose const & pose,  core::pack::task::PackerTaskCOP task ) const
 {
 	core::Real const distance_cutoff( 8.0 );
 	utility::io::ozstream outfile( resfile_ );
@@ -468,7 +468,7 @@ RestrictWorstRegion::write_resfile( core::pose::Pose const & pose,  core::pack::
 
 /// @brief restricts design at the specified position such that only the existing amino acid is allowed, and writes this to a resfile
 void
-RestrictWorstRegion::preserve_residue( core::pose::Pose const & /*pose*/, core::pack::task::PackerTaskOP task, core::Size const seqpos ) const
+RestrictRegion::preserve_residue( core::pose::Pose const & /*pose*/, core::pack::task::PackerTaskOP task, core::Size const seqpos ) const
 {
 	// just restrict to repacking and we're done
 	task->nonconst_residue_task( seqpos ).restrict_to_repacking();
@@ -476,7 +476,7 @@ RestrictWorstRegion::preserve_residue( core::pose::Pose const & /*pose*/, core::
 
 /// @brief restricts design at the specified position such that the existing amino acid is not allowed, and writes this action to a resfile so that other movers can use it. Also checks for allowed amino acids based on task factory to ensure there is at least one allowed residue type. Returns true if successful, false if not successful.
 bool
-RestrictWorstRegion::restrict_aa( core::pose::Pose const & pose, core::pack::task::PackerTaskOP task, core::Size const seqpos )
+RestrictRegion::restrict_aa( core::pose::Pose const & pose, core::pack::task::PackerTaskOP task, core::Size const seqpos )
 {
 	// don't restrict this residue if it is the only possibility at this position
 	if ( residues_allowed( task, seqpos ).size() <= 1 ) {
@@ -495,7 +495,7 @@ RestrictWorstRegion::restrict_aa( core::pose::Pose const & pose, core::pack::tas
 
 /// @brief Permanently restricts design at the specified position such that the existing amino acid is not allowed.
 void
-RestrictWorstRegion::permanently_restrict_aa( core::pose::Pose const & pose, core::pack::task::PackerTaskOP /*task*/, core::Size const seqpos )
+RestrictRegion::permanently_restrict_aa( core::pose::Pose const & pose, core::pack::task::PackerTaskOP /*task*/, core::Size const seqpos )
 {
 	// if the amino acid is not found in the string of permanently restricted residues, add it in there
 	if ( permanently_restricted_residues_[ seqpos ].find( pose.residue( seqpos ).name1() ) == std::string::npos ) {
@@ -504,16 +504,16 @@ RestrictWorstRegion::permanently_restrict_aa( core::pose::Pose const & pose, cor
 }
 
 
-/// @brief static method that tells the last residue affected by any RestrictWorstRegion mover. This method also makes sure that the pose length hasn't changed. If this is called before any instance of the mover::apply() is called, returns 0.
+/// @brief static method that tells the last residue affected by any RestrictRegion mover. This method also makes sure that the pose length hasn't changed. If this is called before any instance of the mover::apply() is called, returns 0.
 utility::vector1< core::Size > const &
-RestrictWorstRegion::last_residues_restricted()
+RestrictRegion::last_residues_restricted()
 {
 	return last_residues_restricted_;
 }
 
-/// @brief static method that tells the last pose returned by any RestrictWorstRegion mover. This method also makes sure that the pose length hasn't changed. If this is called before any instance of the mover::apply() is called, returns 0.
+/// @brief static method that tells the last pose returned by any RestrictRegion mover. This method also makes sure that the pose length hasn't changed. If this is called before any instance of the mover::apply() is called, returns 0.
 core::pose::PoseCOP
-RestrictWorstRegion::previous_pose()
+RestrictRegion::previous_pose()
 {
 	return previous_pose_;
 }
@@ -521,7 +521,7 @@ RestrictWorstRegion::previous_pose()
 /// @brief tells whether a given fragment is compatible with the task
 /// basically, this function counts the number of amino acids in each fragment that are compatible with the task
 core::Size
-RestrictWorstRegion::compatible_with_task( core::pack::task::PackerTaskOP task,
+RestrictRegion::compatible_with_task( core::pack::task::PackerTaskOP task,
 																					 core::Size const frag_id,
 																					 core::fragment::FrameOP frame ) const
 {
@@ -552,7 +552,7 @@ residue_is_allowed( core::pack::task::PackerTaskCOP task, core::Size const seqpo
 
 /// @brief function that checks to see whether an amino acid is restricted at a certain position
 bool
-RestrictWorstRegion::is_restricted( char const aa, core::Size const seqpos ) const
+RestrictRegion::is_restricted( char const aa, core::Size const seqpos ) const
 {
 	runtime_assert( seqpos <= restricted_residues_.size() );
 	// if this amino acid is found in the restricted list for seqpos, will return true
@@ -561,7 +561,7 @@ RestrictWorstRegion::is_restricted( char const aa, core::Size const seqpos ) con
 
 /// @brief function that tells how many residues are allowed at a certain position
 std::string
-RestrictWorstRegion::residues_allowed( core::pack::task::PackerTaskCOP task, core::Size const seqpos ) const
+RestrictRegion::residues_allowed( core::pack::task::PackerTaskCOP task, core::Size const seqpos ) const
 {
 	std::string aas;
 	core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter res_iter( task->residue_task( seqpos ).allowed_residue_types_begin() );

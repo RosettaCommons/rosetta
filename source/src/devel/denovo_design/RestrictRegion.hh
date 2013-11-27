@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/devel/denovo_design/RestrictWorstRegion.hh
+/// @file src/devel/denovo_design/RestrictRegion.hh
 /// @brief Tom's Denovo Protocol. This is freely mutable and used for playing around with stuff
 /// @detailed
 /// @author Tom Linsky (tlinsky@gmail.com)
 
 
-#ifndef INCLUDED_devel_denovo_design_RestrictWorstRegion_hh
-#define INCLUDED_devel_denovo_design_RestrictWorstRegion_hh
+#ifndef INCLUDED_devel_denovo_design_RestrictRegion_hh
+#define INCLUDED_devel_denovo_design_RestrictRegion_hh
 
 // Unit headers
-#include <devel/denovo_design/RestrictWorstRegion.fwd.hh>
+#include <devel/denovo_design/RestrictRegion.fwd.hh>
 #include <devel/denovo_design/task_operations/DesignBySecondaryStructure.hh>
 // Project headers
 #include <protocols/moves/Mover.hh>
@@ -47,18 +47,18 @@
 namespace devel {
 namespace denovo_design {
 
-class RestrictWorstRegion : public protocols::moves::Mover {
+class RestrictRegion : public protocols::moves::Mover {
 public:
-  /// @brief Initialize RestrictWorstRegion
-  RestrictWorstRegion();
+  /// @brief Initialize RestrictRegion
+  RestrictRegion();
 
 	/// @brief copy constructor
-	RestrictWorstRegion( RestrictWorstRegion const & rval );
+	RestrictRegion( RestrictRegion const & rval );
 
   /// @brief virtual constructor to allow derivation
-	virtual ~RestrictWorstRegion();
+	virtual ~RestrictRegion();
 
-  /// @brief Parses the RestrictWorstRegion tags
+  /// @brief Parses the RestrictRegion tags
 	void parse_my_tag(
 	  utility::tag::TagCOP tag,
 	  basic::datacache::DataMap & data,
@@ -73,14 +73,14 @@ public:
   /// @brief return a fresh instance of this class in an owning pointer
 	virtual protocols::moves::MoverOP clone() const;
 
-  /// @brief Apply the RestrictWorstRegion. Overloaded apply function from mover base class.
+  /// @brief Apply the RestrictRegion. Overloaded apply function from mover base class.
 	virtual void apply( core::pose::Pose & pose );
 
-	/// @brief static method that tells the last residue affected by any RestrictWorstRegion mover. This method also makes sure that the pose length hasn't changed. If this is called before any instance of the mover::apply() is called, returns 0.
+	/// @brief static method that tells the last residue affected by any RestrictRegion mover. This method also makes sure that the pose length hasn't changed. If this is called before any instance of the mover::apply() is called, returns 0.
 	static utility::vector1< core::Size > const &
 	last_residues_restricted();
 
-	/// @brief static method that tells the last pose processed by any RestrictWorstRegion mover. If this is called before any instance of the mover::apply() is called, returns 0.
+	/// @brief static method that tells the last pose processed by any RestrictRegion mover. If this is called before any instance of the mover::apply() is called, returns 0.
 	static core::pose::PoseCOP
 	previous_pose();
 
@@ -161,11 +161,11 @@ private:   // other data
 	/// @brief This is the pose from the last apply() call -- if it is different from the current pose, the changes will be made permanent, otherwise they will be ignored.
 	static core::pose::PoseOP previous_pose_;
 
-	/// @brief Stores the last residue restricted by any RestrictWorstRegion mover
+	/// @brief Stores the last residue restricted by any RestrictRegion mover
 	static utility::vector1< core::Size > last_residues_restricted_;
 
 /// @brief strores a vector or the possible highestEnergyRegionOperations
-	utility::vector1<task_operations::HighestEnergyRegionOperationOP> highestEnergyRegionOperation_ops_; 
+	utility::vector1<task_operations::HighestEnergyRegionOperationOP> highestEnergyRegionOperation_ops_;
 };
 
 /// @brief function that tells whether a given amino acid is allowed at a certain position
