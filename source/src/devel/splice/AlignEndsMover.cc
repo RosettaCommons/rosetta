@@ -122,15 +122,13 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 	TR<<std::endl;
   utility::vector1< core::Size > strand_ntermini;
   strand_ntermini.clear();
-  core::Size prev_resnum( 99999 );
 	odd_strand = true; // antiparallel strands have neighboring c/n terminal positions whereas parallel strands have neighboring n terminal positions.
   for( utility::vector1< core::Size >::const_iterator resi = strand_positions.begin(); resi != strand_positions.end(); resi += strand_length() ){ /// find strand ntermini
 			if( !odd_strand && !parallel() )
 				strand_ntermini.push_back( *(resi + strand_length() - 1 ) );
 			else
 				strand_ntermini.push_back( *resi );
-				odd_strand = !odd_strand;/// flip odd->even->odd...
-      prev_resnum = *resi;
+			odd_strand = !odd_strand;/// flip odd->even->odd...
 	}
 	TR<<"DEBUG: nterminal positions: ";
 	foreach( core::Size const resi, strand_ntermini )
@@ -162,13 +160,8 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 	      TR<<res<<" has "<<close_neighbors<<" close neighbors"<<std::endl;
 	  }
 	}//fi parallel
-	else{ /// antiparallel, even strands should be fed in from their ntermini
-		odd_strand = true;
-		foreach( core::Size const resi, ntermini_w_neighbors ){
-			ntermini_w_close_neighbors.push_back( resi );
-			odd_strand = !odd_strand;
-		}
-	}
+	else /// antiparallel beta barrels are less well packed; ignoring close neighbors condition
+		ntermini_w_close_neighbors = ntermini_w_neighbors;
 	TR<<"Found "<<ntermini_w_close_neighbors.size()<<" strands that fit all of the criteria"<<std::endl;
 	if( ntermini_w_close_neighbors.size() > max_strands() ){
 		TR<<"max_strands = "<<max_strands()<<std::endl;
