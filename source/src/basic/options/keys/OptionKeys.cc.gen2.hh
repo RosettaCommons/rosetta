@@ -666,6 +666,7 @@ namespace edensity { BooleanOptionKey const cryoem_scatterers( "edensity:cryoem_
 namespace edensity { RealOptionKey const force_apix( "edensity:force_apix" );  }
 namespace edensity { RealOptionKey const fastdens_wt( "edensity:fastdens_wt" );  }
 namespace edensity { RealVectorOptionKey const fastdens_params( "edensity:fastdens_params" );  }
+namespace edensity { BooleanOptionKey const legacy_fastdens_score( "edensity:legacy_fastdens_score" );  }
 namespace edensity { RealOptionKey const sliding_window_wt( "edensity:sliding_window_wt" );  }
 namespace edensity { BooleanOptionKey const score_sliding_window_context( "edensity:score_sliding_window_context" );  }
 namespace edensity { RealOptionKey const whole_structure_ca_wt( "edensity:whole_structure_ca_wt" );  }
@@ -728,4 +729,3 @@ namespace optE { BooleanOptionKey const optimize_ddGmutation_boltzman_average( "
 namespace optE { RealOptionKey const exclude_badrep_ddGs( "optE:exclude_badrep_ddGs" );  }
 namespace optE { BooleanOptionKey const pretend_no_ddG_repulsion( "optE:pretend_no_ddG_repulsion" );  }
 namespace optE { FileOptionKey const optimize_decoy_discrimination( "optE:optimize_decoy_discrimination" );  }
-namespace optE { StringOptionKey const normalize_decoy_score_spread( "optE:normalize_decoy_score_spread" );  }

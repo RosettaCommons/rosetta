@@ -541,6 +541,9 @@ private:
 	core::Size WINDOW_;
 	bool score_window_context_, remap_symm_;
 
+	// turn on legacy options
+	bool legacy_;
+
 	bool DensScoreInMinimizer, ExactDerivatives;
 	core::Real NUM_DERIV_H, NUM_DERIV_H_CEN, PattersonB, PattersonMinR, PattersonMaxR;
 	ObjexxFCL::FArray3D< float > PattersonEpsilon;

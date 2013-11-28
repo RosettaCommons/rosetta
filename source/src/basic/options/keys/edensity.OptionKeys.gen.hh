@@ -32,6 +32,7 @@ namespace edensity { extern BooleanOptionKey const cryoem_scatterers; }
 namespace edensity { extern RealOptionKey const force_apix; }
 namespace edensity { extern RealOptionKey const fastdens_wt; }
 namespace edensity { extern RealVectorOptionKey const fastdens_params; }
+namespace edensity { extern BooleanOptionKey const legacy_fastdens_score; }
 namespace edensity { extern RealOptionKey const sliding_window_wt; }
 namespace edensity { extern BooleanOptionKey const score_sliding_window_context; }
 namespace edensity { extern RealOptionKey const whole_structure_ca_wt; }

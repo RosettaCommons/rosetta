@@ -37,7 +37,9 @@
 
 #include <core/io/silent/silent.fwd.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyzMatrix.fwd.hh>
+#include <numeric/xyzMatrix.hh>
+#include <numeric/xyzVector.hh>
+#include <numeric/xyz.functions.hh>
 
 
 namespace devel {

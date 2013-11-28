@@ -31,7 +31,9 @@
 #include <string>
 
 // Utility Headers
-#include <numeric/xyzMatrix.fwd.hh>
+#include <numeric/xyzMatrix.hh>
+#include <numeric/xyzVector.hh>
+#include <numeric/xyz.functions.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 

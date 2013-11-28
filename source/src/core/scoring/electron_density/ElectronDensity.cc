@@ -381,6 +381,8 @@ ElectronDensity::init() {
 	cellAngles = numeric::xyzVector< float >(90,90,90);
 	use_altorigin =  false;
 
+	legacy_ = basic::options::option[ basic::options::OptionKeys::edensity::legacy_fastdens_score ]();
+
 	// command line overrides defaults
 	reso = basic::options::option[ basic::options::OptionKeys::edensity::mapreso ]();
 	ATOM_MASK = basic::options::option[ basic::options::OptionKeys::edensity::atom_mask ]();
@@ -2336,14 +2338,7 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 			for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i)
 				scores_i[i] = fastdens_score_i[i];
 
-
-			//core::Size low_cut = (core::Size) std::floor( 0.005 * density.u1()*density.u2()*density.u3() );
-			//core::Size high_cut = (core::Size) std::ceil( 0.995 * density.u1()*density.u2()*density.u3() );
-
-			//fpd  the percentage based normalization (above) fails when the map is almost empty
-			//fpd  instead we revert to old formulation where absolute max/min is used for normalization
-
-			core::Size cutat = 5;
+			core::Size cutat = legacy_? 1:5;
 			std::nth_element (scores_i.begin(), scores_i.begin()+cutat-1, scores_i.end());
 			std::nth_element (scores_i.begin(), scores_i.end()-cutat, scores_i.end());
 			min_val = scores_i[cutat-1];
@@ -2364,7 +2359,8 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 	}
 
 	core::Real scalefactor = (natms/nres);
-	core::Real mu=0.0 /*0.5*(max_val+min_val)*/, sigma=0.5*scalefactor*(max_val-min_val);
+	core::Real mu=0.0, sigma=0.5*scalefactor*(max_val-min_val);
+	if (legacy_) mu = 0.5*(max_val-min_val);
 	for (int i=0; i<nkbins_*density.u1()*density.u2()*density.u3(); ++i) {
 		fastdens_score[i] = (fastdens_score[i]-mu)/sigma;
 	}
@@ -5110,7 +5106,7 @@ ElectronDensity::readMRCandResize(
 	TR << "Minimum B factor = " << minimumB << std::endl;
 
 	// if "auto" input resolution is given (and there is no b factor fitting), assume oversampling
-	if (reso == 0)
+	if (reso == 0 && !legacy_)
 		max_del_grid *= 1.5;
 	else
 		max_del_grid = std::max( max_del_grid, reso/2 );

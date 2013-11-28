@@ -4513,6 +4513,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
                 Option( 'force_apix', 'Real', default = '0.0', desc='force pixel spacing to take a particular value'),
                 Option( 'fastdens_wt', 'Real', default = '0.0', desc='wt of fast edens score'),
                 Option( 'fastdens_params', 'RealVector',  desc='parameters for fastdens scoring'),
+                Option( 'legacy_fastdens_score', 'Boolean', default = 'false', desc='use the pre-June 2013 normalization for scoring'),
                 Option( 'sliding_window_wt', 'Real', default = '0.0', desc='wt of edens sliding-window score'),
                 Option( 'score_sliding_window_context', 'Boolean', default = 'false', desc='when using sl. win. density fit, include neighbor atoms (slows trajectory)'),
                 Option( 'whole_structure_ca_wt', 'Real', default = '0.0', desc='wt of edens centroid (CA-only) scoring'),
