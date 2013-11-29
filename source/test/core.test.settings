@@ -155,6 +155,13 @@ sources = {
 	"scoring/cenrot" : [
 		"CenRotEnergy",
 	],
+	"scoring/func" : [
+		"HarmonicFunc",
+		"GaussianFunc",
+		"ScalarWeightedFunc",
+		"SOGFunc",
+		"SplineFunc",
+        ],
 	"scoring/constraints" : [
 		"AngleConstraint",
 		"AtomPairConstraint",
@@ -163,12 +170,7 @@ sources = {
 		"ConstraintSetRemapping",
 		"ConstraintsEnergy",
 		"DihedralConstraint",
-		"HarmonicFunc",
-		"GaussianFunc",
-		"ScalarWeightedFunc",
 		"SiteConstraint",
-		"SOGFunc",
-		"SplineFunc",
 		"util",
 	],
 	"scoring/custom_pair_distance" : [
@@ -419,7 +421,7 @@ testinputfiles = [
 	"scoring/1pqc_0001.pdb",
 	"scoring/1pqc_0003.pdb",
 	"scoring/atom_pair_constraint.data",
-	"scoring/constraints/GaussianFunc.u",
+	"scoring/func/GaussianFunc.u",
 	"scoring/constraints/test_in.pdb",
 	"scoring/coordinate_constraint.data",
 	"scoring/dslf_ca_dih.u",
