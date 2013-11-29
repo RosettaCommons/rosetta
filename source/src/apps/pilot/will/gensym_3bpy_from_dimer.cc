@@ -49,7 +49,7 @@
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>

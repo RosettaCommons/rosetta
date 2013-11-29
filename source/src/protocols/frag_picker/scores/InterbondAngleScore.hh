@@ -24,8 +24,8 @@
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <protocols/frag_picker/FragmentPicker.fwd.hh>
 // mini
-// AUTO-REMOVED #include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/FuncFactory.hh>
+// AUTO-REMOVED #include <core/scoring/func/Func.hh>
+#include <core/scoring/func/FuncFactory.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 

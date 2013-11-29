@@ -43,8 +43,8 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-//#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+//#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 

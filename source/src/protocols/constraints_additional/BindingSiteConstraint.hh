@@ -15,11 +15,11 @@
 
 // Package headers
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/XYZ_Func.fwd.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/XYZ_Func.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-#include <core/scoring/constraints/FuncFactory.fwd.hh>
+#include <core/scoring/func/FuncFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers

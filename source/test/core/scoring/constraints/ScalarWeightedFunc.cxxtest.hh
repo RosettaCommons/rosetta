@@ -13,7 +13,7 @@
 // (C) 199x-2009 University of North Carolina, Chapel Hill
 // (C) 199x-2009 Vanderbilt University
 
-/// @file   core/scoring/constraints/SplineFunc.cxxtest.hh
+/// @file   core/scoring/func/SplineFunc.cxxtest.hh
 /// @brief  test suite for ScalarWeightedFunc constraints function
 /// @author Stephanie DeLuca (stephanie.h.deluca@vanderbilt.edu)
 
@@ -21,8 +21,8 @@
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 
-#include <core/scoring/constraints/ScalarWeightedFunc.hh>
-#include <core/scoring/constraints/ScalarWeightedFunc.fwd.hh>
+#include <core/scoring/func/ScalarWeightedFunc.hh>
+#include <core/scoring/func/ScalarWeightedFunc.fwd.hh>
 
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>

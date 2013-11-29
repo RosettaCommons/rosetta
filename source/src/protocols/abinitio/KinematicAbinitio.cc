@@ -54,7 +54,7 @@
 #include <protocols/simple_filters/JumpEvaluator.hh>
 
 #include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/constraints/SkipViolFunc.hh>
+#include <core/scoring/func/SkipViolFunc.hh>
 
 #include <core/fragment/FragSet.hh>
 

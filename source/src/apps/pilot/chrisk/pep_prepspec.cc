@@ -125,8 +125,8 @@
 
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/PeriodicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/PeriodicFunc.hh>
 #include <core/scoring/constraints/DOF_Constraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>

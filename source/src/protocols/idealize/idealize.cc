@@ -38,7 +38,7 @@
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.hh>
+// AUTO-REMOVED #include <core/scoring/func/HarmonicFunc.hh>
 
 #include <core/pose/PDBInfo.hh>
 

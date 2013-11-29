@@ -33,8 +33,8 @@
 #include <core/scoring/dna/BasePartner.hh>
 #include <core/scoring/dna/DNA_BasePotential.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>

@@ -51,7 +51,7 @@
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/conformation/symmetry/util.hh>
 //Constraint Headers
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>

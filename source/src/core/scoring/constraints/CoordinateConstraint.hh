@@ -14,8 +14,8 @@
 #define INCLUDED_core_scoring_constraints_CoordinateConstraint_hh
 
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
-#include <core/scoring/constraints/XYZ_Func.fwd.hh>
+#include <core/scoring/func/Func.fwd.hh>
+#include <core/scoring/func/XYZ_Func.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>

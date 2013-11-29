@@ -15,7 +15,7 @@
 
 // Package headers
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/XYZ_Func.hh>
 
 // AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/pose/Pose.fwd.hh>

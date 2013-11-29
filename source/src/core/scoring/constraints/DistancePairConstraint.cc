@@ -13,7 +13,7 @@
 
 #include <core/scoring/constraints/DistancePairConstraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/FuncFactory.hh>
+#include <core/scoring/func/FuncFactory.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -29,7 +29,7 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/XYZ_Func.hh>
 #include <utility/vector1.hh>
 
 namespace core {

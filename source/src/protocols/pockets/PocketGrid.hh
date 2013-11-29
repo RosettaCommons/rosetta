@@ -20,7 +20,7 @@
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/constraints/XYZ_Func.fwd.hh>
+#include <core/scoring/func/XYZ_Func.fwd.hh>
 
 // Numeric Headers
 // AUTO-REMOVED #include <numeric/xyz.functions.hh>

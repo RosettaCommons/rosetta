@@ -734,9 +734,7 @@ option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoet
 option.add( basic::options::OptionKeys::jumps::extra_frags_for_ss, "use ss-def from this fragset" ).def("");
 option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix ccd in re-runs" ).def(false);
 option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
+option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
 option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
 option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
 option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
@@ -746,7 +744,9 @@ option.add( basic::options::OptionKeys::jumps::sheets, "sheet topology--> replac
 option.add( basic::options::OptionKeys::jumps::topology_file, "read a file with topology info ( PairingStats )" ).def("");
 option.add( basic::options::OptionKeys::jumps::bb_moves, "Apply bb_moves ( wobble, small, shear) during stage3 and stage 4." ).def(false);
 option.add( basic::options::OptionKeys::jumps::no_wobble, "Don t apply the useless wobble during stage3 and stage 4." ).def(false);
-option.add( basic::options::OptionKeys::jumps::no_shear, "Don t apply the useless shear during stage3 and stage 4." ).def(false);
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::no_shear, "Don t apply the useless shear during stage3 and stage 4." ).def(false);
 option.add( basic::options::OptionKeys::jumps::no_sample_ss_jumps, "sample jump-frags during folding" ).def(false);
 option.add( basic::options::OptionKeys::jumps::invrate_jump_move, "give 5 here to have 5 torsion moves for each jump move" ).def(10);
 option.add( basic::options::OptionKeys::jumps::chainbreak_weight_stage1, "the weight on chainbreaks" ).def(1.0);
@@ -1321,7 +1321,7 @@ option.add( basic::options::OptionKeys::packing::optH_MCA, "If running optH, use
 option.add( basic::options::OptionKeys::packing::pack_missing_sidechains, "Run packer to fix residues with missing sidechain density at PDB load" ).def(true);
 option.add( basic::options::OptionKeys::packing::preserve_c_beta, "Preserve c-beta positions during rotamer construction" );
 option.add( basic::options::OptionKeys::packing::flip_HNQ, "Consider flipping HIS, ASN, and GLN during hydrogen placement optimization" );
-option.add( basic::options::OptionKeys::packing::fix_his_tautomer, "seqpos numbers of his residus whose tautomer should be fixed during repacking" );
+option.add( basic::options::OptionKeys::packing::fix_his_tautomer, "seqpos numbers of his residus whose tautomer should be fixed during repacking" ).def();
 option.add( basic::options::OptionKeys::packing::print_pymol_selection, "include pymol-style selections when printing a PackerTask" ).def(false);
 option.add( basic::options::OptionKeys::packing::ex1::ex1, "use extra chi1 sub-rotamers for all residues that pass the extrachi_cutoff" );
 option.add( basic::options::OptionKeys::packing::ex1::level, "use extra chi1 sub-rotamers for all residues that pass the extrachi_cutoff The integers that follow the ex flags specify the pattern for chi dihedral angle sampling There are currently 8 options; they all include the original chi dihedral angle. NO_EXTRA_CHI_SAMPLES          0          original dihedral only; same as using no flag at all EX_ONE_STDDEV                 1 Default  +/- one standard deviation (sd); 3 samples EX_ONE_HALF_STEP_STDDEV       2          +/- 0.5 sd; 3 samples EX_TWO_FULL_STEP_STDDEVS      3          +/- 1 & 2 sd; 5 samples EX_TWO_HALF_STEP_STDDEVS      4          +/- 0.5 & 1 sd; 5 samples EX_FOUR_HALF_STEP_STDDEVS     5          +/- 0.5, 1, 1.5 & 2 sd; 9 samples EX_THREE_THIRD_STEP_STDDEVS   6          +/- 0.33, 0.67, 1 sd; 7 samples EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 13 samples" ).legal(0).legal(1).legal(2).legal(3).legal(4).legal(5).legal(6).legal(7).def(1);
@@ -1467,9 +1467,7 @@ option.add( basic::options::OptionKeys::cmiles::cmiles, "cmiles option group" ).
 option.add( basic::options::OptionKeys::cmiles::kcluster::kcluster, "kcluster option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number of clusters to use during k clustering" );
 option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
+option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
 option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
 option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
@@ -1489,7 +1487,9 @@ option.add( basic::options::OptionKeys::james::thread_unaligned, "basic_threadin
 option.add( basic::options::OptionKeys::membrane::membrane, "membrane option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::membrane::normal_cycles, "number of membrane normal cycles" ).def(100);
 option.add( basic::options::OptionKeys::membrane::normal_mag, "magnitude of membrane normal angle search (degrees)" ).def(5);
-option.add( basic::options::OptionKeys::membrane::center_mag, "magnitude of membrane normal center search (Angstroms)" ).def(1);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::membrane::center_mag, "magnitude of membrane normal center search (Angstroms)" ).def(1);
 option.add( basic::options::OptionKeys::membrane::smooth_move_frac, "No description" ).def(0.5);
 option.add( basic::options::OptionKeys::membrane::no_interpolate_Mpair, "No description" ).def(false);
 option.add( basic::options::OptionKeys::membrane::Menv_penalties, "No description" ).def(false);
@@ -2200,9 +2200,7 @@ option.add( basic::options::OptionKeys::optE::optimize_ddGmutation_boltzman_aver
 option.add( basic::options::OptionKeys::optE::exclude_badrep_ddGs, "With the iterative optE driver, consider only ddG data where the unweighted repulsive energy delta mut-wt < given value" );
 option.add( basic::options::OptionKeys::optE::pretend_no_ddG_repulsion, "With the iterative optE driver, set all repulsive scores to zero when looking for ddG correlations" );
 option.add( basic::options::OptionKeys::optE::optimize_decoy_discrimination, "With the iterative optE driver, optimize weights to maximize the partition between relaxed natives and low-scoring decoys.  File is a list of file-list pairs and a single pdb file < native_pdb_list, decoy_pdb_list, crystal_native_pdb >." );
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::normalize_decoy_score_spread, "In decoy discrimination optimization, normalize both the native and decoy energies generated by a set of weights by sigma_curr /sigma_start where sigma_start is computed as the standard deviation of the decoy energies given an input weight set" );
+option.add( basic::options::OptionKeys::optE::normalize_decoy_score_spread, "In decoy discrimination optimization, normalize both the native and decoy energies generated by a set of weights by sigma_curr /sigma_start where sigma_start is computed as the standard deviation of the decoy energies given an input weight set" );
 option.add( basic::options::OptionKeys::optE::ramp_nativeness, "In decoy discrimination optimization, give structures in the range between max_rms_from_native and min_decoy_rms_to_native a nativeness score (which ramps linearly from 1 to 0 in that range) and include scores from structures in the numerator of the partition." );
 option.add( basic::options::OptionKeys::optE::n_top_natives_to_optimize, "For use with the -optimize_decoy_discrimination flag.  Objective function considers top N natives in partition function" ).def(1);
 option.add( basic::options::OptionKeys::optE::approximate_decoy_entropy, "Alpha expansion of conformation space size as a function of nres: size ~ alpha ^ nres; entropy ~ nres ln alpha." );
@@ -2232,7 +2230,9 @@ option.add( basic::options::OptionKeys::optE::design_with_minpack, "Use the min-
 option.add( basic::options::OptionKeys::optE::limit_bad_scores, "Quit after 100,000 inf or NaN errors in optE objective function" );
 option.add( basic::options::OptionKeys::optE::rescore::rescore, "rescore option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::optE::rescore::weights, "Weight set to use when rescoring optE partition functions" );
-option.add( basic::options::OptionKeys::optE::rescore::context_round, "Integer of the context PDBs generated during design to use to measure the pNatAA" );
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::rescore::context_round, "Integer of the context PDBs generated during design to use to measure the pNatAA" );
 option.add( basic::options::OptionKeys::optE::rescore::outlog, "File to which the OptEPosition data should be written" );
 option.add( basic::options::OptionKeys::optE::rescore::measure_sequence_recovery, "When rescoring a weight set, run design with that weight set and measure the sequence recovery." ).def(false);
 option.add( basic::options::OptionKeys::optE::no_design_pdb_output, "Do not write out the designed pdbs to the workdir_ directories over the course of the optE run" );
@@ -2674,14 +2674,52 @@ option.add( basic::options::OptionKeys::swa::silent1, "input file" );
 option.add( basic::options::OptionKeys::swa::silent2, "input file" );
 option.add( basic::options::OptionKeys::swa::tags1, "input tag(s)" );
 option.add( basic::options::OptionKeys::swa::tags2, "input tag(s)" );
-option.add( basic::options::OptionKeys::swa::slice_res1, "Residues to slice out of starting file" );
-option.add( basic::options::OptionKeys::swa::slice_res2, "Residues to slice out of starting file" );
-option.add( basic::options::OptionKeys::swa::input_res1, "Residues already present in starting file" );
-option.add( basic::options::OptionKeys::swa::input_res2, "Residues already present in starting file2" );
+option.add( basic::options::OptionKeys::swa::slice_res1, "Residues to slice out of starting file" ).def();
+option.add( basic::options::OptionKeys::swa::slice_res2, "Residues to slice out of starting file" ).def();
+option.add( basic::options::OptionKeys::swa::input_res1, "Residues already present in starting file" ).def();
+option.add( basic::options::OptionKeys::swa::input_res2, "Residues already present in starting file2" ).def();
 option.add( basic::options::OptionKeys::swa::backbone_only1, "just copy protein backbone DOFS, useful for homology modeling" );
 option.add( basic::options::OptionKeys::swa::backbone_only2, "just copy protein backbone DOFS, useful for homology modeling" );
+option.add( basic::options::OptionKeys::swa::rna::rna, "rna option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::swa::rna::sample_res, "residues to build, the first element is the actual sample res while the other are the bulge residues" ).def();
+option.add( basic::options::OptionKeys::swa::rna::fixed_res, "Do not move these residues during minimization." ).def();
+option.add( basic::options::OptionKeys::swa::rna::minimize_res, "alternative to fixed_res" ).def();
+option.add( basic::options::OptionKeys::swa::rna::alignment_res, "align_res_list" ).def();
+option.add( basic::options::OptionKeys::swa::rna::native_alignment_res, "optional: native_alignment_res " ).def();
+option.add( basic::options::OptionKeys::swa::rna::rmsd_res, "residues that will be use to calculate rmsd ( for clustering as well as RMSD to native_pdb if specified )" ).def();
+option.add( basic::options::OptionKeys::swa::rna::missing_res, "Residues missing in starting pose_1, alternative to input_res" ).def();
+option.add( basic::options::OptionKeys::swa::rna::missing_res2, "Residues missing in starting pose_2, alternative to input_res2" ).def();
+option.add( basic::options::OptionKeys::swa::rna::job_queue_ID, "swa_rna_sample()/combine_long_loop mode: Specify the tag pair in filter_output_filename to be read in and imported ( start from 0! )" ).def(0);
+option.add( basic::options::OptionKeys::swa::rna::minimize_and_score_sugar, "minimize and sugar torsion + angle? and include the rna_sugar_close_score_term " ).def(true);
+option.add( basic::options::OptionKeys::swa::rna::global_sample_res_list, "A list of all the nucleotide to be build/sample over the entire dag." ).def();
+option.add( basic::options::OptionKeys::swa::rna::filter_output_filename, "CombineLongLoopFilterer: filter_output_filename" ).def("filter_struct.txt");
+option.add( basic::options::OptionKeys::swa::rna::combine_long_loop_mode, " Sampler: combine_long_loop_mode " ).def(false);
+option.add( basic::options::OptionKeys::swa::rna::combine_helical_silent_file, "CombineLongLoopFilterer: combine_helical_silent_file" ).def(false);
+option.add( basic::options::OptionKeys::swa::rna::output_extra_RMSDs, "output_extra_RMSDs" ).def(false);
+option.add( basic::options::OptionKeys::swa::rna::force_syn_chi_res_list, "optional: sample only syn chi for the res in sampler." ).def();
+option.add( basic::options::OptionKeys::swa::rna::force_north_sugar_list, "optional: sample only north sugar for the res in sampler." ).def();
+option.add( basic::options::OptionKeys::swa::rna::force_south_sugar_list, "optional: sample only south sugar for the res in sampler." ).def();
+option.add( basic::options::OptionKeys::swa::rna::protonated_H1_adenosine_list, "optional: protonate_H1_adenosine_list" ).def();
+option.add( basic::options::OptionKeys::swa::rna::native_virtual_res, " optional: native_virtual_res " ).def();
+option.add( basic::options::OptionKeys::swa::rna::simple_append_map, "simple_append_map" ).def(false);
+option.add( basic::options::OptionKeys::swa::rna::allow_fixed_res_at_moving_res, "mainly just to get Hermann Duplex modeling to work" ).def(false);
+option.add( basic::options::OptionKeys::swa::rna::force_user_defined_jumps, "Trust and use user defined jumps" ).def(false);
+option.add( basic::options::OptionKeys::swa::rna::test_encapsulation, "Test ability StepWiseRNA Modeler to figure out what it needs from just the pose - no JobParameters" ).def(false);
+option.add( basic::options::OptionKeys::swa::rna::jump_point_pairs, "optional: extra jump_points specified by the user for setting up the fold_tree " ).def();
+option.add( basic::options::OptionKeys::swa::rna::terminal_res, "optional: residues that are not allowed to stack during sampling" ).def();
+option.add( basic::options::OptionKeys::swa::rna::add_virt_root, "add_virt_root" ).def(false);
+option.add( basic::options::OptionKeys::swa::rna::floating_base, " floating_base " ).def(false);
+option.add( basic::options::OptionKeys::swa::rna::allow_chain_boundary_jump_partner_right_at_fixed_BP, "mainly just to get Hermann nano - square RNA modeling to work" ).def(false);
+option.add( basic::options::OptionKeys::swa::rna::virtual_res, "optional: residues to be made virtual" ).def();
+option.add( basic::options::OptionKeys::swa::rna::bulge_res, "optional: residues to be turned into a bulge variant" ).def();
+option.add( basic::options::OptionKeys::swa::rna::rebuild_bulge_mode, "rebuild_bulge_mode" ).def(false);
+option.add( basic::options::OptionKeys::swa::rna::choose_random, "ask swa residue sampler for a random solution" ).def(false);
+option.add( basic::options::OptionKeys::swa::rna::num_random_samples, "Number of samples from swa residue sampler before minimizing best" ).def(1);
+option.add( basic::options::OptionKeys::swa::rna::filter_user_alignment_res, " filter_user_alignment_res " ).def(true);
+option.add( basic::options::OptionKeys::swa::rna::output_pdb, "output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process." ).def(false);
 option.add( basic::options::OptionKeys::full_model::full_model, "full_model option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::full_model::cutpoint_open, "open cutpoints in full model" );
+option.add( basic::options::OptionKeys::full_model::cutpoint_open, "open cutpoints in full model" ).def();
+option.add( basic::options::OptionKeys::full_model::cutpoint_closed, "closed cutpoints in full model" ).def();
 option.add( basic::options::OptionKeys::full_model::other_poses, "list of PDB files containing other poses" );
 option.add( basic::options::OptionKeys::ufv::ufv, "ufv option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::ufv::left, "left endpoint" );

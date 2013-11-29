@@ -18,8 +18,8 @@
 // Package Headers
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/FuncFactory.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/FuncFactory.hh>
+#include <core/scoring/func/XYZ_Func.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 // Project Headers
 #include <core/chemical/ResidueType.hh>

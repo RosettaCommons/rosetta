@@ -25,7 +25,7 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/ScoreFunction.hh>

@@ -16,7 +16,7 @@
 
 // Unit header
 #include <core/scoring/constraints/DOF_Constraint.fwd.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/id/DOF_ID.hh>
 

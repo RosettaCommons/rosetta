@@ -158,7 +158,7 @@ endrepeat
 #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>

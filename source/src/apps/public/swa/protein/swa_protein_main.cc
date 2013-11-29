@@ -47,7 +47,7 @@
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/AtomTree.hh>

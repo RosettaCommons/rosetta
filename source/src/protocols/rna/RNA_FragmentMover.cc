@@ -50,7 +50,7 @@ using basic::T;
 
 static numeric::random::RandomGenerator RG(22220);  // <- Magic number, do not change it!
 
-static basic::Tracer TR( "protocols.rna.rna_fragment_mover" ) ;
+static basic::Tracer TR( "protocols.rna.RNA_FragmentMover" ) ;
 
 namespace protocols {
 namespace rna {

@@ -20,7 +20,7 @@
 
  #include <core/scoring/constraints/CoordinateConstraint.hh>
  #include <core/scoring/constraints/ConstraintIO.hh>
- #include <core/scoring/constraints/FlatHarmonicFunc.hh>
+ #include <core/scoring/func/FlatHarmonicFunc.hh>
 
  #include <protocols/simple_moves/BackboneMover.hh>
  #include <protocols/simple_moves/MinMover.hh>

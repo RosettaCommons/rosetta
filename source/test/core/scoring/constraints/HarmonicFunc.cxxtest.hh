@@ -8,7 +8,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/constraints/HarmonicFunc.cxxtest.hh
+/// @file   core/scoring/func/HarmonicFunc.cxxtest.hh
 /// @brief  test suite for HarmonicFunc function
 /// @author James Thompson
 
@@ -17,8 +17,8 @@
 
 #include <test/core/init_util.hh>
 
-#include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/HarmonicFunc.fwd.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.fwd.hh>
 #include <core/types.hh>
 // AUTO-REMOVED #include <basic/Tracer.hh>
 

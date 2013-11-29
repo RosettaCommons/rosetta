@@ -54,7 +54,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>

@@ -33,7 +33,7 @@
 #include <numeric/xyzVector.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/id/AtomID.hh>
 
 namespace protocols {

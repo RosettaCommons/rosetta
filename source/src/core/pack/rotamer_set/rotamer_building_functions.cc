@@ -41,8 +41,8 @@
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>

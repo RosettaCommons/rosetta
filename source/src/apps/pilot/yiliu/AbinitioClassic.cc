@@ -65,7 +65,7 @@
 
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
 
 #include <core/io/pdb/pose_io.hh>
@@ -77,7 +77,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 

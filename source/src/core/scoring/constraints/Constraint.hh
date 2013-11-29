@@ -16,8 +16,8 @@
 // Unit header
 #include <core/scoring/constraints/Constraint.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
-#include <core/scoring/constraints/FuncFactory.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
+#include <core/scoring/func/FuncFactory.fwd.hh>
 
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -27,8 +27,8 @@
 // AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/random/random.fwd.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 
 //Utility Headers
@@ -43,7 +43,7 @@
 // #include <core/id/SequenceMapping.fwd.hh> Commented by Brian Weitzner to fix compilation
 #include <core/id/SequenceMapping.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-#include <core/scoring/constraints/XYZ_Func.fwd.hh>
+#include <core/scoring/func/XYZ_Func.fwd.hh>
 #include <utility/vector1.hh>
 #include <sstream>
 

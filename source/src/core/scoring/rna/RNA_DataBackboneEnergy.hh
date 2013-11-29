@@ -22,7 +22,7 @@
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 
-#include <core/scoring/constraints/Func.fwd.hh>
+#include <core/scoring/func/Func.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

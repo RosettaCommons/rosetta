@@ -27,8 +27,8 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/FadeFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/FadeFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -81,7 +81,7 @@ using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 using basic::T;
 
-static basic::Tracer TR( "protocols.rna.rna_protocol_util" ) ;
+static basic::Tracer TR( "protocols.rna.RNA_ProtocolUtil" ) ;
 
 namespace protocols {
 namespace rna {

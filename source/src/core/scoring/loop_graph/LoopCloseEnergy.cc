@@ -20,7 +20,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/loop_graph/LoopGraph.hh>
 #include <core/scoring/loop_graph/LoopScoreInfo.hh>

@@ -17,7 +17,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <core/scoring/constraints/HarmonicFunc.fwd.hh>
+#include <core/scoring/func/HarmonicFunc.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>

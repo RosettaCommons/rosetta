@@ -50,7 +50,7 @@ using utility::make_tag_with_dashes;
 
 static numeric::random::RandomGenerator RG(2555512);  // <- Magic number, do not change it!
 
-static basic::Tracer TR( "protocols.swa.monte_carlo.rna_add_mover" ) ;
+static basic::Tracer TR( "protocols.swa.monte_carlo.RNA_AddMover" ) ;
 
 namespace protocols {
 namespace swa {

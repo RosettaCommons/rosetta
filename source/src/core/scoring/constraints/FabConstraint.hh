@@ -22,7 +22,7 @@
 #include <core/scoring/constraints/MultiConstraint.hh>
 
 
-#include <core/scoring/constraints/XYZ_Func.fwd.hh>
+#include <core/scoring/func/XYZ_Func.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 

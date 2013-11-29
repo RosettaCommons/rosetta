@@ -14,10 +14,10 @@
 /// @author Krishna Kilambi (kkpraneeth@jhu.edu, April 2012)
 
 #include <core/scoring/constraints/FabConstraint.hh>
-#include <core/scoring/constraints/FuncFactory.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/ConstantFunc.hh>
-#include <core/scoring/constraints/ConstantFunc.fwd.hh>
+#include <core/scoring/func/FuncFactory.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/ConstantFunc.hh>
+#include <core/scoring/func/ConstantFunc.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 
 

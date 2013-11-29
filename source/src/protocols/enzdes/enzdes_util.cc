@@ -52,7 +52,7 @@
 // AUTO-REMOVED #include <protocols/ligand_docking/ligand_functions.hh> //for minimizing ligand torsions
 // AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/MinMover.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>

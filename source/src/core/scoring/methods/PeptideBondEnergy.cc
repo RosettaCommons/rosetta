@@ -23,7 +23,7 @@
 // AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/scoring/EnergyMap.hh>
 
-#include <core/scoring/constraints/GaussianFunc.hh>
+#include <core/scoring/func/GaussianFunc.hh>
 
 #include <utility/vector1.hh>
 

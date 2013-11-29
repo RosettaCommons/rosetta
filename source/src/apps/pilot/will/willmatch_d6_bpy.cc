@@ -23,8 +23,8 @@
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/CircularHarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <core/scoring/packing/compute_holes_score.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>

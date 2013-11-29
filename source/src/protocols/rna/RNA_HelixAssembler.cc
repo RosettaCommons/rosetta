@@ -55,7 +55,7 @@ using namespace core;
 using ObjexxFCL::string_of;
 using basic::T;
 
-static basic::Tracer TR( "protocols.rna.HelixAssembler" ) ;
+static basic::Tracer TR( "protocols.rna.RNA_HelixAssembler" ) ;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 

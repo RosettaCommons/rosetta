@@ -20,8 +20,8 @@
 // Package headers
 #include <core/scoring/disulfides/DisulfideAtomIndices.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/CircularSigmoidalFunc.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/CircularSigmoidalFunc.hh>
 #include <core/scoring/DerivVectorPair.hh>
 
 // Project headers

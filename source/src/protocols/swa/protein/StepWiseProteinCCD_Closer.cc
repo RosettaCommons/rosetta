@@ -71,7 +71,7 @@ using core::Real;
 // Later, should sample omega recursively for pre-prolines.
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.swa.protein.stepwise_protein_ccd_closer" );
+static basic::Tracer TR( "protocols.swa.protein.StepWiseProteinCCD_Closer" );
 
 namespace protocols {
 namespace swa {

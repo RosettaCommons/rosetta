@@ -24,7 +24,7 @@
 
 #include <core/scoring/dna/setup.hh>
 #include <core/scoring/dna/BasePartner.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>

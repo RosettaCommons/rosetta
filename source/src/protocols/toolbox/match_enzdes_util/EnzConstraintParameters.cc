@@ -31,8 +31,8 @@
 #include <core/scoring/constraints/MultiConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/CharmmPeriodicFunc.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/CharmmPeriodicFunc.hh>
 #include <core/scoring/constraints/BoundConstraint.hh> //need function in this file
 
 // Project headers

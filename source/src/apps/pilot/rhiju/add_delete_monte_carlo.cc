@@ -177,7 +177,7 @@ OPT_KEY( Integer, job_queue_ID)
 OPT_KEY( String, filter_output_filename)
 OPT_KEY( Boolean, filter_for_previous_contact)
 OPT_KEY( Boolean, filter_for_previous_clash)
-OPT_KEY( Boolean, filterer_undercount_ribose_rotamers)
+OPT_KEY( Boolean, filterer_undercount_sugar_rotamers)
 OPT_KEY( Boolean, combine_helical_silent_file)
 OPT_KEY( Boolean, exclude_alpha_beta_gamma_sampling)
 OPT_KEY( Boolean, debug_eplison_south_sugar_mode)
@@ -244,8 +244,8 @@ OPT_KEY( Boolean, clusterer_rename_tags )
 OPT_KEY( Boolean, simple_append_map )
 OPT_KEY( IntegerVector, global_sample_res_list )
 OPT_KEY( IntegerVector, force_syn_chi_res_list )
-OPT_KEY( IntegerVector, force_north_ribose_list )
-OPT_KEY( IntegerVector, force_south_ribose_list )
+OPT_KEY( IntegerVector, force_north_sugar_list )
+OPT_KEY( IntegerVector, force_south_sugar_list )
 OPT_KEY( IntegerVector, protonated_H1_adenosine_list )
 OPT_KEY( Boolean,  output_pdb )
 OPT_KEY( String, 	start_silent)
@@ -504,8 +504,8 @@ setup_rna_job_parameters(){
 	stepwise_rna_job_parameters_setup.set_global_sample_res_list( option[ global_sample_res_list ]() ); //March 20, 2011
 
 	stepwise_rna_job_parameters_setup.set_force_syn_chi_res_list( option[ force_syn_chi_res_list]() ); //April 29, 2011
-	stepwise_rna_job_parameters_setup.set_force_north_ribose_list( option[ force_north_ribose_list ]() ); //April 29, 2011
-	stepwise_rna_job_parameters_setup.set_force_south_ribose_list( option[ force_south_ribose_list ]() ); //April 29, 2011
+	stepwise_rna_job_parameters_setup.set_force_north_sugar_list( option[ force_north_sugar_list ]() ); //April 29, 2011
+	stepwise_rna_job_parameters_setup.set_force_south_sugar_list( option[ force_south_sugar_list ]() ); //April 29, 2011
 	stepwise_rna_job_parameters_setup.set_protonated_H1_adenosine_list( option[ protonated_H1_adenosine_list ]() ); //May 02, 2011
 
 	stepwise_rna_job_parameters_setup.set_allow_chain_boundary_jump_partner_right_at_fixed_BP( option[ allow_chain_boundary_jump_partner_right_at_fixed_BP ]() ); //Hacky just to get Square RNA working.
@@ -734,8 +734,8 @@ main( int argc, char * argv [] )
 	NEW_OPT( terminal_res, "optional: residues that are not allowed to stack during sampling", blank_size_vector );
 	NEW_OPT( bulge_res, "optional: residues to be turned into a bulge variant", blank_size_vector );
 	NEW_OPT( force_syn_chi_res_list, "optional: sample only syn chi for the res in sampler.", blank_size_vector); //April 29, 2011
-	NEW_OPT( force_north_ribose_list, "optional: sample only north ribose for the res in sampler.", blank_size_vector); //April 29, 2011
-	NEW_OPT( force_south_ribose_list, "optional: sample only south ribose for the res in sampler.", blank_size_vector); //April 29, 2011
+	NEW_OPT( force_north_sugar_list, "optional: sample only north sugar for the res in sampler.", blank_size_vector); //April 29, 2011
+	NEW_OPT( force_south_sugar_list, "optional: sample only south sugar for the res in sampler.", blank_size_vector); //April 29, 2011
 	NEW_OPT( protonated_H1_adenosine_list, "optional: protonate_H1_adenosine_list", blank_size_vector); //May 02, 2011
 
 	//////////////Pose setup///////
@@ -777,7 +777,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( skip_sampling, "no sampling step in rna_swa residue sampling", false );
 	NEW_OPT( do_not_sample_multiple_virtual_sugar, " Samplerer: do_not_sample_multiple_virtual_sugar " , false);
 	NEW_OPT( sample_ONLY_multiple_virtual_sugar, " Samplerer: sample_ONLY_multiple_virtual_sugar " , false);
-	NEW_OPT( filterer_undercount_ribose_rotamers, "Undercount all ribose_rotamers as 1 count", false); //July 29, 2011
+	NEW_OPT( filterer_undercount_sugar_rotamers, "Undercount all sugar_rotamers as 1 count", false); //July 29, 2011
 	NEW_OPT( exclude_alpha_beta_gamma_sampling, "Speed up the debug eplison south sugar mode", false);
 	NEW_OPT( debug_eplison_south_sugar_mode, "Check why when eplison is roughly -160 and pucker is south, energy is not favorable", false);
 	NEW_OPT( sampler_extra_anti_chi_rotamer, "Samplerer: extra_anti_chi_rotamer", false);

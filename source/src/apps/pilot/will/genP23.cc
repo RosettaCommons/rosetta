@@ -50,7 +50,7 @@
 #include <core/pose/util.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>

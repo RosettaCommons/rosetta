@@ -25,7 +25,7 @@
 // Constraints
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 
 // parsing

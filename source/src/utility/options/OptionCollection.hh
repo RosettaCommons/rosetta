@@ -136,14 +136,6 @@ public: // Methods
 	void
 	add_built_in_options();
 
-
-	/// @brief add OptionKey to list of application relevant options
-	void add_relevant(const OptionKey & key)
-	{
-		relevant_.push_back( &key );
-	}
-
-
 	/// @brief Add a BooleanOption
 	inline
 	BooleanOption &
@@ -465,7 +457,7 @@ public: // Methods
 		char * const argv[],
 		bool const free_args = false // Support free argument (without - prefix)?
 	);
-	
+
 	/// @brief Load the user-specified option values
   void
   load(
@@ -500,19 +492,19 @@ public: // Methods
 
 	/// @brief Show all the options and their descriptions
 	void
-	show_help( std::ostream & stream ) const;
+	show_help( std::ostream & stream );
 
 
 	/// @brief Show one option and it description
-	void show_option_help(OptionKey const &, std::string &group, std::ostream & stream ) const;
+	void show_option_help(OptionKey const &, std::string &group, std::ostream & stream );
 
 
 	/// @brief Show all the options and their descriptions in a hierarchy format
 	void
-	show_help_hier( std::ostream & stream ) const;
+	show_help_hier( std::ostream & stream );
 
 	/// @brief Show one option and it description in a hierarchy format
-	void show_option_help_heir(OptionKey const &, std::string &group, std::ostream & stream ) const;
+	void show_option_help_heir(OptionKey const &, std::string &group, std::ostream & stream );
 
 
 	/// @brief Show the user-specified options and their values
@@ -2090,6 +2082,18 @@ private: // Methods
 
 public: // Static functions
 
+	/// @brief add OptionKey to list of application relevant options
+	static
+	void add_relevant(const OptionKey & key)
+	{
+		relevant_.push_back( &key );
+	}
+
+	/// @brief Checks if option has been registered as relevant.
+	static
+	bool
+	is_relevant( OptionKey const & key );
+
 
 	/// @brief Space-prefixed string except blank if string is empty
 	inline
@@ -2281,7 +2285,7 @@ private: // Fields
 	All all_;
 
 	/// @brief global list of application relevant options
-	std::vector< OptionKey const *> relevant_;
+	static std::vector< OptionKey const *> relevant_;
 
 	/// @brief keep a copy of argv around in case people want to
 	/// get at it elsewhere in the code.

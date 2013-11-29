@@ -13,7 +13,7 @@
 // (C) 199x-2009 University of North Carolina, Chapel Hill
 // (C) 199x-2009 Vanderbilt University
 
-/// @file   core/scoring/constraints/SplineFunc.cxxtest.hh
+/// @file   core/scoring/func/SplineFunc.cxxtest.hh
 /// @brief  test suite for SplineFunc constraints function
 /// @author Stephanie Hirst (stephanie.j.hirst@vanderbilt.edu)
 
@@ -21,8 +21,8 @@
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 
-#include <core/scoring/constraints/SplineFunc.hh>
-#include <core/scoring/constraints/SplineFunc.fwd.hh>
+#include <core/scoring/func/SplineFunc.hh>
+#include <core/scoring/func/SplineFunc.fwd.hh>
 
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>

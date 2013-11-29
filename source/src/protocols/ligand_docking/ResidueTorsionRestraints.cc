@@ -19,8 +19,8 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/CircularHarmonicFunc.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/CircularHarmonicFunc.hh>
 
 #include <basic/Tracer.hh>
 

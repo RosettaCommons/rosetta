@@ -39,7 +39,7 @@ using core::Real;
 // updates the pose full_model_info object.
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.swa.monte_carlo.o2prime_mover" ) ;
+static basic::Tracer TR( "protocols.swa.monte_carlo.RNA_O2StarMover" ) ;
 
 namespace protocols {
 namespace swa {

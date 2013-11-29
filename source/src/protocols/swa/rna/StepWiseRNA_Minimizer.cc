@@ -16,12 +16,12 @@
 //////////////////////////////////
 #include <protocols/swa/rna/StepWiseRNA_Minimizer.hh>
 #include <protocols/swa/rna/StepWiseRNA_OutputData.hh> //Sept 26, 2011
-#include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.hh>
-#include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
+#include <protocols/swa/rna/screener/StepWiseRNA_BaseCentroidScreener.hh>
+#include <protocols/swa/rna/screener/StepWiseRNA_BaseCentroidScreener.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>
+#include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.hh>
 #include <protocols/swa/StepWiseUtil.hh>
 
 //////////////////////////////////
@@ -138,23 +138,23 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 	using namespace protocols::rna;
 	using namespace protocols::swa;
 
-	Output_title_text( "Enter StepWiseRNA_Minimizer::apply", TR.Debug );
+	output_title_text( "Enter StepWiseRNA_Minimizer::apply", TR.Debug );
 
-	Output_boolean( " verbose_ = ", verbose_, TR.Debug ); TR.Debug << std::endl;
-	Output_boolean( " native_screen_ = ", native_screen_, TR.Debug ); TR.Debug << std::endl;
+	output_boolean( " verbose_ = ", verbose_, TR.Debug ); TR.Debug << std::endl;
+	output_boolean( " native_screen_ = ", native_screen_, TR.Debug ); TR.Debug << std::endl;
 	TR.Debug << " native_screen_rmsd_cutoff_ = " << native_screen_rmsd_cutoff_ << std::endl;
-	Output_boolean( " perform_electron_density_screen_ = ", perform_electron_density_screen_, TR.Debug ); TR.Debug << std::endl;
-	Output_boolean( " rm_virt_phosphate_ = ", rm_virt_phosphate_, TR.Debug ); TR.Debug << std::endl;
+	output_boolean( " perform_electron_density_screen_ = ", perform_electron_density_screen_, TR.Debug ); TR.Debug << std::endl;
+	output_boolean( " rm_virt_phosphate_ = ", rm_virt_phosphate_, TR.Debug ); TR.Debug << std::endl;
 	TR.Debug << " native_edensity_score_cutoff_ = " << native_edensity_score_cutoff_ << std::endl;
-	Output_boolean( " centroid_screen_ = ", centroid_screen_, TR.Debug ); TR.Debug << std::endl;
-	Output_boolean( " perform_o2prime_pack_ = ", perform_o2prime_pack_, TR.Debug ); TR.Debug << std::endl;
-	Output_boolean( " output_before_o2prime_pack_ = ", output_before_o2prime_pack_, TR.Debug ); TR.Debug << std::endl;
+	output_boolean( " centroid_screen_ = ", centroid_screen_, TR.Debug ); TR.Debug << std::endl;
+	output_boolean( " perform_o2prime_pack_ = ", perform_o2prime_pack_, TR.Debug ); TR.Debug << std::endl;
+	output_boolean( " output_before_o2prime_pack_ = ", output_before_o2prime_pack_, TR.Debug ); TR.Debug << std::endl;
 	TR.Debug << " ( Upper_limit ) num_pose_minimize_ = " << num_pose_minimize_ << " pose_data_list.size() = " << pose_data_list_.size() <<  std::endl;
-	Output_boolean( " minimize_and_score_sugar_ = ", minimize_and_score_sugar_, TR.Debug ); TR.Debug << std::endl;
-	if (user_input_VDW_bin_screener_) Output_boolean( " user_inputted_VDW_bin_screener_ = ", user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose(), TR.Debug ); TR.Debug << std::endl;
-	Output_seq_num_list( " working_global_sample_res_list = ", job_parameters_->working_global_sample_res_list(), TR.Debug );
-	Output_boolean( " perform_minimize_ = ", perform_minimize_, TR.Debug ); TR.Debug << std::endl;
-	Output_boolean( " rename_tag_ = ", rename_tag_, TR.Debug ); TR.Debug << std::endl;
+	output_boolean( " minimize_and_score_sugar_ = ", minimize_and_score_sugar_, TR.Debug ); TR.Debug << std::endl;
+	if (user_input_VDW_bin_screener_) output_boolean( " user_inputted_VDW_bin_screener_ = ", user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose(), TR.Debug ); TR.Debug << std::endl;
+	output_seq_num_list( " working_global_sample_res_list = ", job_parameters_->working_global_sample_res_list(), TR.Debug );
+	output_boolean( " perform_minimize_ = ", perform_minimize_, TR.Debug ); TR.Debug << std::endl;
+	output_boolean( " rename_tag_ = ", rename_tag_, TR.Debug ); TR.Debug << std::endl;
 
 	clock_t const time_start( clock() );
 
@@ -186,7 +186,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 	TR.Debug << "check scorefxn" << std::endl;
 	scorefxn_->show( TR.Debug, dummy_pose );
 
-	if ( move_map_list_.size() == 0 ) move_map_list_ = Get_default_movemap( dummy_pose );
+	if ( move_map_list_.size() == 0 ) move_map_list_ = get_default_movemap( dummy_pose );
 
 	if ( ! minimize_and_score_sugar_ ){
 		TR.Debug << "WARNING: minimize_and_score_sugar_ is FALSE, freezing all DELTA, NU_1 and NU_2 torsions." << std::endl;
@@ -197,7 +197,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 
 	for ( Size n = 1; n <= move_map_list_.size(); n++ ){
 		TR.Debug << "OUTPUT move_map_list[" << n << "]:" << std::endl;
-		Output_movemap( move_map_list_[n], dummy_pose, TR.Debug );
+		output_movemap( move_map_list_[n], dummy_pose, TR.Debug );
 	}
 
 	minimized_pose_data_list_.clear();
@@ -222,7 +222,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 
 		if ( verbose_ && output_before_o2prime_pack_ ) output_pose_data_wrapper( tag, 'B', pose, silent_file_data, silent_file_ + "_before_o2prime_pack" );
 
-		Remove_virtual_O2Star_hydrogen( pose );
+		remove_virtual_O2Star_hydrogen( pose );
 
 		if ( perform_o2prime_pack_ ) o2prime_minimize( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
 
@@ -285,7 +285,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 	TR.Debug << "Total time in StepWiseRNA_Minimizer: " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 	TR.Debug << "--------------------------------------------------------------------" << std::endl;
 
-	Output_title_text( "Exit StepWiseRNA_Minimizer::apply", TR.Debug );
+	output_title_text( "Exit StepWiseRNA_Minimizer::apply", TR.Debug );
 
 }
 
@@ -298,13 +298,13 @@ StepWiseRNA_Minimizer::figure_out_actual_five_prime_chain_break_res( pose::Pose 
 
 	Size five_prime_chain_break_res = 0;
 
-	if ( job_parameters_->Is_simple_full_length_job_params() ){
-		//March 03, 2012. If job_parameters_->Is_simple_full_length_job_params()==true, then
+	if ( job_parameters_->is_simple_full_length_job_params() ){
+		//March 03, 2012. If job_parameters_->is_simple_full_length_job_params()==true, then
 		//actual five_prime_chain_break_res varies from pose to pose and might not correspond to the one given in the job_params!
 
 		Size const gap_size(  job_parameters_->gap_size() );
 
-		if ( gap_size != 0 ) utility_exit_with_message( "job_parameters_->Is_simple_full_length_job_params() == true but gap_size != 0" );
+		if ( gap_size != 0 ) utility_exit_with_message( "job_parameters_->is_simple_full_length_job_params() == true but gap_size != 0" );
 
 		Size num_cutpoint_lower_found = 0;
 
@@ -367,7 +367,7 @@ StepWiseRNA_Minimizer::output_pose_data_wrapper( std::string & tag,
 	tag[0] = tag_first_char;
 	TR.Debug << "tag = " << tag <<  std::endl;
 	( *scorefxn_ )( pose ); //Score pose to ensure that that it has a score to be output
-	Output_data( silent_file_data, out_silent_file, tag, false, pose, get_native_pose(), job_parameters_ );
+	output_data( silent_file_data, out_silent_file, tag, false, pose, get_native_pose(), job_parameters_ );
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -419,11 +419,11 @@ StepWiseRNA_Minimizer::pass_all_pose_screens( core::pose::Pose & pose, std::stri
 
 	bool pass_screen = true;
 
-	//March 03, 2012. Don't need this for post-process analysis. For full_length_job_params, Is_prepend, moving_res and five_prime_chain_break_res are not well defined.
-	if ( job_parameters_->Is_simple_full_length_job_params() == false ){
+	//March 03, 2012. Don't need this for post-process analysis. For full_length_job_params, is_prepend, moving_res and five_prime_chain_break_res are not well defined.
+	if ( job_parameters_->is_simple_full_length_job_params() == false ){
 
 		Size const five_prime_chain_break_res = job_parameters_->five_prime_chain_break_res();
-		bool const Is_prepend(  job_parameters_->Is_prepend() );
+		bool const is_prepend(  job_parameters_->is_prepend() );
 		Size const moving_res(  job_parameters_->working_moving_res() );
 
 		if ( gap_size == 0 && five_prime_chain_break_res > 0 ){
@@ -473,14 +473,14 @@ StepWiseRNA_Minimizer::pass_all_pose_screens( core::pose::Pose & pose, std::stri
 		}
 
 		if ( gap_size == 1 ){
-			if ( !Check_chain_closable( pose, five_prime_chain_break_res, gap_size ) ){
+			if ( !check_chain_closable( pose, five_prime_chain_break_res, gap_size ) ){
 				pass_screen = false;
 			}
 		}
 
-		if ( native_screen_ && get_native_pose() ){	//Before have the (&& !Is_chain_break condition). Parin Dec 21, 2009
+		if ( native_screen_ && get_native_pose() ){	//Before have the (&& !is_chain_break condition). Parin Dec 21, 2009
 
-			Real const rmsd = suite_rmsd( *get_native_pose(), pose,  moving_res, Is_prepend, true /*ignore_virtual_atom*/ );
+			Real const rmsd = suite_rmsd( *get_native_pose(), pose,  moving_res, is_prepend, true /*ignore_virtual_atom*/ );
 			Real const loop_rmsd =	 rmsd_over_residue_list( *get_native_pose(), pose, job_parameters_, true /*ignore_virtual_atom*/ );
 
 			if ( rmsd > native_screen_rmsd_cutoff_ || loop_rmsd > native_screen_rmsd_cutoff_ ){
@@ -571,13 +571,13 @@ StepWiseRNA_Minimizer::get_working_moving_res( Size const & nres ) const {
 			working_moving_res.push_back( seq_num );
 		}
 	}
-	//	Output_seq_num_list( "working_moving_res", working_moving_res );
+	//	output_seq_num_list( "working_moving_res", working_moving_res );
 	return working_moving_res;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1 < core::kinematics::MoveMap >
-StepWiseRNA_Minimizer::Get_default_movemap( core::pose::Pose const & pose ) const{
+StepWiseRNA_Minimizer::get_default_movemap( core::pose::Pose const & pose ) const{
 
 	utility::vector1 < core::kinematics::MoveMap > move_map_list;
 
@@ -585,7 +585,7 @@ StepWiseRNA_Minimizer::Get_default_movemap( core::pose::Pose const & pose ) cons
 	Figure_out_moving_residues( mm, pose );
 
 	// Allow sugar torsions to move again (RD 01/31/2010), now
-	// that rotamers have been pre-optimized for ribose closure, and
+	// that rotamers have been pre-optimized for sugar closure, and
 	// sugar_close is turned back on.
 	//		Freeze_sugar_torsions(mm, nres); //Freeze the sugar_torsions!
 
@@ -660,7 +660,7 @@ StepWiseRNA_Minimizer::silent_file_data(){
 
 //////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_Minimizer::set_base_centroid_screener( StepWiseRNA_BaseCentroidScreenerOP & screener ){
+StepWiseRNA_Minimizer::set_base_centroid_screener( screener::StepWiseRNA_BaseCentroidScreenerOP & screener ){
 	base_centroid_screener_ = screener;
 }
 

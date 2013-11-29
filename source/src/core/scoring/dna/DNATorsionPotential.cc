@@ -26,8 +26,8 @@
 //#include <basic/options/option.hh>
 #include <basic/basic.hh>
 #include <core/chemical/AA.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/AmberPeriodicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/AmberPeriodicFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>

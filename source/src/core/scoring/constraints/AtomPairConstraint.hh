@@ -16,8 +16,8 @@
 #include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
 
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/Func.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/Func.hh>
+// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 // AUTO-REMOVED #include <core/scoring/EnergyMap.hh>

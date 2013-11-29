@@ -29,8 +29,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/rna/RNA_Util.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
-#include <core/scoring/constraints/FadeFunc.hh>
+#include <core/scoring/func/Func.fwd.hh>
+#include <core/scoring/func/FadeFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/types.hh>
@@ -72,7 +72,7 @@ using core::Real;
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.swa.rna.stepwise_rna_pose_setup" ) ;
+static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_PoseSetup" ) ;
 
 namespace protocols {
 namespace swa {
@@ -88,7 +88,7 @@ StepWiseRNA_PoseSetup::StepWiseRNA_PoseSetup( StepWiseRNA_JobParametersOP & job_
 	rebuild_bulge_mode_( false ), //Nov 26, 2010
 	output_pdb_( false ), //Sept 24, 2011
 	apply_virtual_res_variant_at_dinucleotide_( true ), //Jul 12, 2012
-	align_to_native_( false ), //Jul 12, 2012
+	align_to_native_( true ),
 	use_phenix_geo_( false )
 {}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +110,7 @@ StepWiseRNA_PoseSetup::apply( core::pose::Pose & pose ) {
 
 	using namespace ObjexxFCL;
 
-	if ( verbose_ ) Output_title_text( "Enter StepWiseRNA_PoseSetup::apply", TR.Debug );
+	if ( verbose_ ) output_title_text( "Enter StepWiseRNA_PoseSetup::apply", TR.Debug );
 
 	// actually make the pose, set fold tree, copy in starting templates from disk.
 
@@ -145,9 +145,11 @@ StepWiseRNA_PoseSetup::apply( core::pose::Pose & pose ) {
 	apply_virtual_phosphate_variants( pose );
 	add_protonated_H1_adenosine_variants( pose );
 	apply_bulge_variants( pose );
-	apply_virtual_res_variant( pose ); //User specified virtaul_res and bulge_res of it being built
+	apply_virtual_res_variant( pose ); //User specified virtual_res and bulge_res of it being built
 	verify_protonated_H1_adenosine_variants( pose );
 	add_terminal_res_repulsion( pose );
+	additional_setup_for_floating_base( pose );
+	instantiate_residue_if_rebuilding_bulge( pose );
 
 	if ( job_parameters_->add_virt_res_as_root() ) add_aa_virt_rsd_as_root( pose ); //Fang's electron density code.
 
@@ -155,7 +157,7 @@ StepWiseRNA_PoseSetup::apply( core::pose::Pose & pose ) {
 
 	if ( output_pdb_ ) pose.dump_pdb( "start.pdb" );
 
-	if ( verbose_ ) Output_title_text( "Exit StepWiseRNA_PoseSetup::apply", TR.Debug );
+	if ( verbose_ ) output_title_text( "Exit StepWiseRNA_PoseSetup::apply", TR.Debug );
 }
 
 ////////////////////////////////////////////////////////
@@ -167,7 +169,7 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 	using namespace core::pose;
 	using namespace protocols::rna;
 
-	if ( verbose_ ) Output_title_text( "Enter StepWiseRNA_PoseSetup::setup_native_pose", TR.Debug );
+	if ( verbose_ ) output_title_text( "Enter StepWiseRNA_PoseSetup::setup_native_pose", TR.Debug );
 
 	utility::vector1< core::Size > const & is_working_res( job_parameters_->is_working_res() );
 	std::string const & working_sequence( job_parameters_->working_sequence() );
@@ -245,11 +247,11 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 	}
 
 
-	Output_seq_num_list( "act_working_alignment = ", act_working_alignment, TR.Debug );
-	Output_seq_num_list( "working_moving_res_list = ", working_moving_res_list, TR.Debug );
-	Output_seq_num_list( "working_moving_partition_pos = ", working_moving_partition_pos, TR.Debug );
-	Output_seq_num_list( "working_native_alignment = ", working_native_alignment, TR.Debug );
-	Output_seq_num_list( "working_best_alignment = ", working_best_alignment, TR.Debug );
+	output_seq_num_list( "act_working_alignment = ", act_working_alignment, TR.Debug );
+	output_seq_num_list( "working_moving_res_list = ", working_moving_res_list, TR.Debug );
+	output_seq_num_list( "working_moving_partition_pos = ", working_moving_partition_pos, TR.Debug );
+	output_seq_num_list( "working_native_alignment = ", working_native_alignment, TR.Debug );
+	output_seq_num_list( "working_best_alignment = ", working_best_alignment, TR.Debug );
 
 	if ( act_working_alignment.size() == 0 ) utility_exit_with_message( "act_working_alignment.size() == 0" );
 
@@ -271,7 +273,7 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 		// Rhiju -- prefer to align pose to native pose...
 		align_poses( pose, "working_pose", ( *working_native_pose ), "working_native_pose", act_working_alignment );
 
-	} else{ //March 17, 2012 Standard. This ensures that adding native_pdb does not change the final output silent_struct coordinates.
+	} else{ //March 17, 2012 (Previous) Standard. This ensures that adding native_pdb does not change the final output silent_struct coordinates.
 		align_poses( ( *working_native_pose ), "working_native_pose", pose, "working_pose", act_working_alignment );
 
 	}
@@ -297,7 +299,7 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 
 
 
-	if ( verbose_ ) Output_title_text( "Exit StepWiseRNA_PoseSetup::setup_native_pose", TR.Debug );
+	if ( verbose_ ) output_title_text( "Exit StepWiseRNA_PoseSetup::setup_native_pose", TR.Debug );
 
 }
 
@@ -468,7 +470,7 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 
 		//////////////////////Add virtual_rna_residue, virtual_rna_residue variant_upper and VIRTUAL_RIBOSE variant type back//////////////////////
 		//////////////////////For standard dincleotide move, there should be virtual_rna_residue and virtual_rna_residue variant_upper //////////
-		//////////////////////However if floating base sampling, will contain the virtual_ribose as well..
+		//////////////////////However if floating base sampling, will contain the virtual_sugar as well..
 
 
 		utility::vector1< Size > const & cutpoint_closed_list = job_parameters_->cutpoint_closed_list();
@@ -496,7 +498,7 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 				//start_pose_with_variant does not have PROTONATED_H1_ADENOSINE variant type since the input_pdb does not have the variant type or loses the variant when imported into Rosetta.
 
 				if ( start_pose_with_variant.residue( n ).has_variant_type( "PROTONATED_H1_ADENOSINE" ) ) { //May 03, 2011
-					Output_seq_num_list( "protonate_H1_adenosine_list = ", job_parameters_->protonated_H1_adenosine_list(), TR.Debug );
+					output_seq_num_list( "protonate_H1_adenosine_list = ", job_parameters_->protonated_H1_adenosine_list(), TR.Debug );
 					utility_exit_with_message( "start_pose have PROTONATED_H1_ADENOSINE variant type at full_seq_num = " + ObjexxFCL::string_of( input_res[n] ) + " even though it was read in from PDB file!" );
 				}
 
@@ -513,7 +515,7 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 					}
 
 					if ( ( job_parameters_->protonated_H1_adenosine_list() ).has_value( input_res[n] ) == false ){
-						Output_seq_num_list( "protonate_H1_adenosine_list = ", job_parameters_->protonated_H1_adenosine_list(), TR.Debug );
+						output_seq_num_list( "protonate_H1_adenosine_list = ", job_parameters_->protonated_H1_adenosine_list(), TR.Debug );
 						utility_exit_with_message( "full_seq_num = " + ObjexxFCL::string_of( input_res[n] ) + " is have a PROTONATED_H1_ADENOSINE variant type in the start_pose but is not in the protonate_H1_adenosine_list" );
 					}
 
@@ -543,7 +545,7 @@ StepWiseRNA_PoseSetup::correctly_copy_HO2prime_positions( pose::Pose & working_p
 	using namespace core::conformation;
 	using namespace core::id;
 
-	if ( verbose_ ) Output_title_text( "Enter StepWiseRNA_PoseSetup::correctly_copy_HO2prime_position", TR.Debug );
+	if ( verbose_ ) output_title_text( "Enter StepWiseRNA_PoseSetup::correctly_copy_HO2prime_position", TR.Debug );
 
 	if ( output_pdb_ ) working_pose.dump_pdb( "copy_dof_pose_BEFORE_correctly_copy_HO2prime_positions.pdb" );
 
@@ -574,13 +576,13 @@ StepWiseRNA_PoseSetup::correctly_copy_HO2prime_positions( pose::Pose & working_p
 	}
 
 	if ( verbose_ ){
-		Output_seq_num_list( "input_res_vectors[1] = ", input_res_vectors[1], TR, 30 );
-		Output_seq_num_list( "input_res_vectors[2] = ", input_res_vectors[2], TR, 30 );
-		Output_seq_num_list( "common_res_list = ", common_res_list, TR, 30 );
+		output_seq_num_list( "input_res_vectors[1] = ", input_res_vectors[1], TR, 30 );
+		output_seq_num_list( "input_res_vectors[2] = ", input_res_vectors[2], TR, 30 );
+		output_seq_num_list( "common_res_list = ", common_res_list, TR, 30 );
 	}
 
 	if ( common_res_list.size() == 0 ) {
-		if ( verbose_ ) Output_title_text( "Exit StepWiseRNA_PoseSetup::correctly_copy_HO2prime_position", TR.Debug );
+		if ( verbose_ ) output_title_text( "Exit StepWiseRNA_PoseSetup::correctly_copy_HO2prime_position", TR.Debug );
 		return; //No common/background residues...
 	}
 
@@ -622,7 +624,7 @@ StepWiseRNA_PoseSetup::correctly_copy_HO2prime_positions( pose::Pose & working_p
 	}
 
 	if ( output_pdb_ ) working_pose.dump_pdb( "copy_dof_pose_AFTER_correctly_copy_HO2prime_positions.pdb" );
-	if ( verbose_ ) Output_title_text( "Exit StepWiseRNA_PoseSetup::correctly_copy_HO2prime_position", TR.Debug );
+	if ( verbose_ ) output_title_text( "Exit StepWiseRNA_PoseSetup::correctly_copy_HO2prime_position", TR.Debug );
 
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -797,7 +799,7 @@ StepWiseRNA_PoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) con
 		}
 	}
 
-	Output_seq_num_list( "working_terminal_res_list = ", working_terminal_res, TR.Debug );
+	output_seq_num_list( "working_terminal_res_list = ", working_terminal_res, TR.Debug );
 	/////////////////////////////////////////////////
 	Distance const DIST_CUTOFF = 8.0;
 	FuncOP const repulsion_func( new FadeFunc( -2.0 /*min*/, DIST_CUTOFF /*max*/, 1.0 /*fade zone width*/, 100.0 /*penalty*/ ) );
@@ -843,6 +845,42 @@ StepWiseRNA_PoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) con
 	cst_set->show( TR );
 	pose.remove_constraints();
 	*/
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_PoseSetup::additional_setup_for_floating_base( pose::Pose & pose ) const {
+
+	Size const num_nucleotides = job_parameters_->working_moving_res_list().size();
+	bool const is_dinucleotide = ( num_nucleotides == 2 );
+
+	if ( !job_parameters_->floating_base() && !is_dinucleotide ) return;
+
+	virtualize_sugar_and_backbone_at_moving_res( pose );
+
+	Size const moving_res_ =  job_parameters_->working_moving_res(); // Might not correspond to user input.
+	Size const reference_res_ =  job_parameters_->working_reference_res(); //the last static_residues that this attach to the moving residues
+	if ( num_nucleotides == 1 ) {
+		Size const floating_base_five_prime_chain_break_ = ( job_parameters_->is_prepend() ) ? moving_res_ : ( moving_res_ - 1 );
+		setup_chain_break_jump_point( pose, moving_res_, reference_res_, floating_base_five_prime_chain_break_, true );
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_PoseSetup::instantiate_residue_if_rebuilding_bulge( pose::Pose & pose ){
+	if ( rebuild_bulge_mode_ ) remove_virtual_rna_residue_variant_type( pose, job_parameters_->working_moving_res() );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_PoseSetup::virtualize_sugar_and_backbone_at_moving_res( pose::Pose & pose ) const {
+
+	////////Only base is instantiated in 'floating base' at moving res (This will be moved to PoseSetup later)/////////////////////////////
+	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", job_parameters_->working_moving_res() ); //This is unique to floating_base_mode
+	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", job_parameters_->working_moving_res() ); //This is unique to floating_base_mode
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -949,14 +987,14 @@ StepWiseRNA_PoseSetup::apply_virtual_res_variant( pose::Pose & pose ) const {
 
 	///////////////////////////////////////////////////////////////////////////////////////
 	Size const working_moving_res(  job_parameters_->working_moving_res() ); // corresponds to user input.
-	bool const Is_prepend(  job_parameters_->Is_prepend() );
-	Size const working_bulge_moving_res = ( Is_prepend ) ? working_moving_res + 1 : working_moving_res - 1;
+	bool const is_prepend(  job_parameters_->is_prepend() );
+	Size const working_bulge_moving_res = ( is_prepend ) ? working_moving_res + 1 : working_moving_res - 1;
 
-	bool const Is_dinucleotide = ( job_parameters_->working_moving_res_list().size() == 2 );
+	bool const is_dinucleotide = ( job_parameters_->working_moving_res_list().size() == 2 );
 
-	if ( apply_virtual_res_variant_at_dinucleotide_ &&  Is_dinucleotide ){
+	if ( apply_virtual_res_variant_at_dinucleotide_ &&  is_dinucleotide ){
 		if ( working_bulge_moving_res != job_parameters_->working_moving_res_list()[2] ){
-			Output_boolean( "Is_prepend = ", job_parameters_->Is_prepend(), TR.Debug );
+			output_boolean( "is_prepend = ", job_parameters_->is_prepend(), TR.Debug );
 			TR.Debug << " working_moving_res = " << working_moving_res << std::endl;
 			TR.Debug << "working_bulge_moving_res = " << working_bulge_moving_res << " working_moving_res_list()[2] = " << job_parameters_->working_moving_res_list()[2] << std::endl;
 			utility_exit_with_message( "working_bulge_moving_res != working_moving_res_list[2]" );

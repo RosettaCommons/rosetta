@@ -36,8 +36,8 @@
 #include <basic/options/option.hh> //needed to set option
 //#include <core/scoring/constraints/AngleConstraint.hh>
 //#include <core/scoring/constraints/DihedralConstraint.hh>
-//#include <core/scoring/constraints/Func.hh>
-//#include <core/scoring/constraints/HarmonicFunc.hh>
+//#include <core/scoring/func/Func.hh>
+//#include <core/scoring/func/HarmonicFunc.hh>
 //#include <core/scoring/constraints/BoundConstraint.hh> //need function in this file
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //function for reading cstfiles
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>

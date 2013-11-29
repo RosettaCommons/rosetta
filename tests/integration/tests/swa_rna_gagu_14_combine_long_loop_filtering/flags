@@ -2,7 +2,7 @@
 -filter_output_filename filtered_tag_pairs.txt
 -clusterer_num_pose_kept 20
 -filter_for_previous_clash true
--filterer_undercount_ribose_rotamers true
+-filterer_undercount_sugar_rotamers true
 -sample_res  5
 -cutpoint_closed 5
 -input_res 1 2 3 4 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47

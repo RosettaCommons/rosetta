@@ -17,8 +17,8 @@
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
 
-#include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/CircularPowerFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/CircularPowerFunc.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>

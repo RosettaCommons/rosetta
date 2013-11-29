@@ -35,7 +35,7 @@
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/ScalarWeightedFunc.hh>
+#include <core/scoring/func/ScalarWeightedFunc.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 // AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS

@@ -1511,7 +1511,7 @@ one_chain_torsion_cluster(){
 	}
 	out.close();
 
-	//Output_torsion_clusters
+	//output_torsion_clusters
 	ozstream out_tor;
 	out_tor.open( "torsion_cluster.out" );
 	std::sort(counts_torsion.begin(), counts_torsion.end(), sort_mine );
@@ -1531,7 +1531,7 @@ one_chain_torsion_cluster(){
 		out_tor << std::endl;
 	}
 
-	//Output_suite_counts
+	//output_suite_counts
 	ozstream out_suite;
 	out_suite.open( "suite_counts.out" );
 	for (Size i = 1; i <= suite_names.size(); ++i) {

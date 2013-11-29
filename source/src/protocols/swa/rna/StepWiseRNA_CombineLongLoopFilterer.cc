@@ -31,8 +31,8 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
-#include <core/scoring/constraints/FadeFunc.hh>
+#include <core/scoring/func/Func.fwd.hh>
+#include <core/scoring/func/FadeFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/import_pose/import_pose.hh>
@@ -77,7 +77,7 @@ using core::Real;
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.swa.rna_stepwise_rna_CombineLongLoopFilterer" ) ;
+static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_CombineLongLoopFilterer" ) ;
 
 namespace protocols {
 namespace swa {
@@ -91,7 +91,7 @@ namespace rna {
 		verbose_( true ), //Parin Mar 22, 2010
 		filter_for_previous_contact_( false ),
 		filter_for_previous_clash_( false ),
-		undercount_ribose_rotamers_( false ), //July 29, 2011
+		undercount_sugar_rotamers_( false ), //July 29, 2011
 		filter_for_chain_closable_( true ),
 		filter_for_moving_res_contact_( true ),
 		moving_res_to_base_contact_only_( true ), //used if filter_for_movign_res_contact_ is true, buggy right now since ignoring hydrogen (non-heavy) atom in the base..
@@ -106,7 +106,7 @@ namespace rna {
 		contact_dist_cutoff_(  - 1.0 ), //two atoms are considered in contact if their VDW radius edge is within 1.0 Angstrom of each other
 		clash_dist_cutoff_( 0.8 ),    //two atoms are considered clash if their VDW radius edge overlap by 0.8 Angstrom.
 															 //0.8 is appropriate for VDW clash screen, although value about 1.2 would be more appropriate if we consider minimum H-bond distance
-															 //See StepWiseRNA_VDW_BinScreener.cc for details.
+															 //See screener::StepWiseRNA_VDW_BinScreener.cc for details.
 //		num_contact_cutoff_(9), //num of contact between the two sides before discarding pose (Used to be 1 before Nov 18, 2010)
 		num_contact_cutoff_( 1 ), //num of contact between the two sides before discarding pose (Used to be 1 before Nov 18, 2010)
 		num_clash_cutoff_( 1 ), // num of clash between the two sides before discarding pose.
@@ -206,11 +206,11 @@ namespace rna {
 			}
 		}
 
-		Output_seq_num_list( "full_pose_appended_res:", full_pose_appended_res_list, TR );
-		Output_seq_num_list( "full_pose_prepended_res:", full_pose_prepended_res_list, TR );
+		output_seq_num_list( "full_pose_appended_res:", full_pose_appended_res_list, TR );
+		output_seq_num_list( "full_pose_prepended_res:", full_pose_prepended_res_list, TR );
 
-		Output_seq_num_list( "input_ONE_appended_res:", input_pose_ONE_appended_res_list_, TR );
-		Output_seq_num_list( "input_TWO_prepended_res:", input_pose_TWO_prepended_res_list_, TR );
+		output_seq_num_list( "input_ONE_appended_res:", input_pose_ONE_appended_res_list_, TR );
+		output_seq_num_list( "input_TWO_prepended_res:", input_pose_TWO_prepended_res_list_, TR );
 
 
 	}
@@ -264,7 +264,7 @@ namespace rna {
 /*
 		using namespace ObjexxFCL;
 
-		bool const Is_prepend(  job_parameters_->Is_prepend() );
+		bool const is_prepend(  job_parameters_->is_prepend() );
 
 		std::map< core::Size, core::Size > const & sub_to_full = job_parameters_->const_sub_to_full(); //make these const
 
@@ -275,7 +275,7 @@ namespace rna {
 
 		Size working_last_prepended_res, working_last_appended_res;
 
-		if ( Is_prepend ){
+		if ( is_prepend ){
 			working_last_prepended_res = reference_res;
 			working_last_appended_res = moving_res - 1;
 		} else{
@@ -349,7 +349,7 @@ namespace rna {
 
 //		if(pose_data_list.size()==0) utility_exit_with_message("pose_data_list.size()==0" );
 
-//		Output_title_text("Exit StepWiseRNA_CombineLongLoopFilterer::convert_silent_file_to_pose_data_list (" + path_basename(silent_file) +  ")", TR );
+//		output_title_text("Exit StepWiseRNA_CombineLongLoopFilterer::convert_silent_file_to_pose_data_list (" + path_basename(silent_file) +  ")", TR );
 
 
 		return pose_data_list;
@@ -362,7 +362,7 @@ namespace rna {
 																									  utility::vector1< PoseOP > const & side_TWO_pose_data_list ){
  		using namespace chemical;
 
-		Output_title_text( "Enter StepWiseRNA_CombineLongLoopFilterer::align_all_pose ", TR );
+		output_title_text( "Enter StepWiseRNA_CombineLongLoopFilterer::align_all_pose ", TR );
 
 		if ( side_ONE_pose_data_list.size() == 0 ) utility_exit_with_message( "side_ONE_pose_data_list.size() == 0" );
 		if ( side_TWO_pose_data_list.size() == 0 ) utility_exit_with_message( "side_TWO_pose_data_list.size() == 0" );
@@ -407,7 +407,7 @@ namespace rna {
 
 
 
-		Output_title_text( "Exit StepWiseRNA_CombineLongLoopFilterer::align_all_pose ", TR );
+		output_title_text( "Exit StepWiseRNA_CombineLongLoopFilterer::align_all_pose ", TR );
 
 
 	}
@@ -431,7 +431,7 @@ namespace rna {
 				Size const input_pose_ONE_appended_res = input_pose_ONE_appended_res_list_[i];
 				Size const input_pose_TWO_prepended_res = input_pose_TWO_prepended_res_list_[j];
 
-				bool const residues_in_contact = Is_residues_in_contact( input_pose_ONE_appended_res, side_ONE_pose, input_pose_TWO_prepended_res, side_TWO_pose, overlap_dist_cutoff, num_atom_contacts_cutoff );
+				bool const residues_in_contact = is_residues_in_contact( input_pose_ONE_appended_res, side_ONE_pose, input_pose_TWO_prepended_res, side_TWO_pose, overlap_dist_cutoff, num_atom_contacts_cutoff );
 
 				if ( residues_in_contact ) return false;
 
@@ -506,7 +506,7 @@ namespace rna {
 	StepWiseRNA_CombineLongLoopFilterer::moving_res_contact_filter( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data ){
 
 
-		bool const Is_prepend(  job_parameters_->Is_prepend() );
+		bool const is_prepend(  job_parameters_->is_prepend() );
 
 
 		core::pose::Pose const & side_ONE_pose = ( *side_ONE_pose_data );
@@ -516,9 +516,9 @@ namespace rna {
 		core::conformation::Residue const & last_append_rsd = side_ONE_pose.residue( input_pose_ONE_last_appended_res_ );
 		core::conformation::Residue const & last_prepend_rsd = side_TWO_pose.residue( input_pose_TWO_last_prepended_res_ );
 
-		numeric::xyzVector< core::Real > const anchor_atom_xyz = ( Is_prepend ) ? last_prepend_rsd.xyz( "C5'" ) : last_append_rsd.xyz( "O3'" );
+		numeric::xyzVector< core::Real > const anchor_atom_xyz = ( is_prepend ) ? last_prepend_rsd.xyz( "C5'" ) : last_append_rsd.xyz( "O3'" );
 
-		core::conformation::Residue const & enforce_contact_rsd = ( Is_prepend ) ? last_append_rsd : last_prepend_rsd;
+		core::conformation::Residue const & enforce_contact_rsd = ( is_prepend ) ? last_append_rsd : last_prepend_rsd;
 
 		if ( enforce_contact_rsd.type().atom_name( enforce_contact_rsd.first_sidechain_atom() ) != " O2'" ){
 			utility_exit_with_message( "enforce_contact_rsd.type().atom_name( enforce_contact_rsd.first_sidechain_atom() ) != \" O2'\" " );
@@ -546,7 +546,7 @@ namespace rna {
 
 		using namespace ObjexxFCL;
 
-		//if(verbose_) Output_title_text("Enter StepWiseRNA_CombineLongLoopFilterer::do_some_filtering(" + side_ONE_pose_data.tag + "," +  side_TWO_pose_data.tag  +")", TR );
+		//if(verbose_) output_title_text("Enter StepWiseRNA_CombineLongLoopFilterer::do_some_filtering(" + side_ONE_pose_data.tag + "," +  side_TWO_pose_data.tag  +")", TR );
 
 
 		//Would this slow down the code?
@@ -573,9 +573,9 @@ namespace rna {
 		if ( ( filter_for_chain_closable_ == true ) ){
 
 			//OK STILL HAVE TO WRITE CODE FOR THE DINUCLEOTIDE case....
-			//July 19th, 2011..This assumes that the 5' and 3' ribose is already built (not virtual!) but this might not be the case!
+			//July 19th, 2011..This assumes that the 5' and 3' sugar is already built (not virtual!) but this might not be the case!
 
-			if ( Check_chain_closable( side_TWO_pose.residue( input_pose_TWO_last_prepended_res_ ).xyz( "C5'" ), side_ONE_pose.residue( input_pose_ONE_last_appended_res_ ).xyz( "O3'" ), previous_step_gap_size ) == false ) return false;
+			if ( check_chain_closable( side_TWO_pose.residue( input_pose_TWO_last_prepended_res_ ).xyz( "C5'" ), side_ONE_pose.residue( input_pose_ONE_last_appended_res_ ).xyz( "O3'" ), previous_step_gap_size ) == false ) return false;
 
 			filterer_count_.chain_closable_screen++;
 
@@ -621,7 +621,7 @@ namespace rna {
 
 		using namespace ObjexxFCL;
 
-		Output_title_text( "Enter StepWiseRNA_CombineLongLoopFilterer::do_some_filtering for side_ONE_pose_list_id_ = " + string_of( side_ONE_pose_list_id_ ) + "/" + string_of( side_ONE_NUM_pose_list_ ) + " side_ONE_pose_list_id_ = " + string_of( side_TWO_pose_list_id_ ) + "/" + string_of( side_TWO_NUM_pose_list_ ), TR );
+		output_title_text( "Enter StepWiseRNA_CombineLongLoopFilterer::do_some_filtering for side_ONE_pose_list_id_ = " + string_of( side_ONE_pose_list_id_ ) + "/" + string_of( side_ONE_NUM_pose_list_ ) + " side_ONE_pose_list_id_ = " + string_of( side_TWO_pose_list_id_ ) + "/" + string_of( side_TWO_NUM_pose_list_ ), TR );
 
 
 //		std::ofstream outfile;
@@ -682,7 +682,7 @@ namespace rna {
 //		outfile.flush();
 //		outfile.close();
 
-		Output_title_text( "Exit StepWiseRNA_CombineLongLoopFilterer::do_some_filtering", TR );
+		output_title_text( "Exit StepWiseRNA_CombineLongLoopFilterer::do_some_filtering", TR );
 
 
 
@@ -867,7 +867,7 @@ namespace rna {
 	}
 
 	bool
-	StepWiseRNA_CombineLongLoopFilterer::Is_virt_sample_ribose_tag( std::string const & tag, utility::vector1< std::string > const & tag_token ) const {
+	StepWiseRNA_CombineLongLoopFilterer::is_virt_sample_sugar_tag( std::string const & tag, utility::vector1< std::string > const & tag_token ) const {
 
 
 		if ( tag_token.size() >= 5 ){ //VIRT_RIBOSE_SAMPLED tag
@@ -875,7 +875,7 @@ namespace rna {
 			//consistency check!
 			if ( tag_token[3] != "sample" ) utility_exit_with_message( "tag_token[3] != \"sample\" for tag = " + tag );
 
-			if ( tag_token[4] != "ribose" ) utility_exit_with_message( "tag_token[4] != \"ribose\" for tag = " + tag );
+			if ( tag_token[4] != "sugar" ) utility_exit_with_message( "tag_token[4] != \"sugar\" for tag = " + tag );
 
 			return true;
 
@@ -890,28 +890,28 @@ namespace rna {
 
 
 	bool
-	StepWiseRNA_CombineLongLoopFilterer::Is_sibling_ribose_rotamer_pose( std::string const & curr_tag,
+	StepWiseRNA_CombineLongLoopFilterer::is_sibling_sugar_rotamer_pose( std::string const & curr_tag,
 																																	 std::string const & prev_tag,
 																																	 std::map< std::string, std::string > const & tag_to_source_map ) const{
 
 
-		utility::vector1< std::string > const curr_tag_token = Tokenize( curr_tag, "_" );
+		utility::vector1< std::string > const curr_tag_token = tokenize( curr_tag, "_" );
 		std::string const curr_parent_tag = get_parent_tag( curr_tag_token );
 
-		utility::vector1< std::string > const prev_tag_token = Tokenize( prev_tag, "_" );
+		utility::vector1< std::string > const prev_tag_token = tokenize( prev_tag, "_" );
 		std::string const prev_parent_tag = get_parent_tag( prev_tag_token );
 
-		bool const curr_tag_is_virt_sample_ribose = Is_virt_sample_ribose_tag( curr_parent_tag, curr_tag_token );
+		bool const curr_tag_is_virt_sample_sugar = is_virt_sample_sugar_tag( curr_parent_tag, curr_tag_token );
 
-		bool const prev_tag_is_virt_sample_ribose = Is_virt_sample_ribose_tag( prev_parent_tag, prev_tag_token );
+		bool const prev_tag_is_virt_sample_sugar = is_virt_sample_sugar_tag( prev_parent_tag, prev_tag_token );
 
 		//The parent_tag (e.g S_0) should be the same only if pose originate from the same struct before the VIRT_RIBOSE_SAMPLING!
 		if ( prev_parent_tag != curr_parent_tag ) return false;
 
 		/////More Consistency check/////
-		//If same src struct, then if one pose have the virt_ribose sampled then so must the other.
-		if ( curr_tag_is_virt_sample_ribose != prev_tag_is_virt_sample_ribose ){
-			utility_exit_with_message( "curr_tag_is_virt_sample_ribose != prev_tag_is_virt_sample_ribose" );
+		//If same src struct, then if one pose have the virt_sugar sampled then so must the other.
+		if ( curr_tag_is_virt_sample_sugar != prev_tag_is_virt_sample_sugar ){
+			utility_exit_with_message( "curr_tag_is_virt_sample_sugar != prev_tag_is_virt_sample_sugar" );
 		}
 
 		if ( tag_to_source_map.count( curr_tag ) == 0 ){
@@ -944,22 +944,22 @@ namespace rna {
 
 		clock_t const time_start( clock() );
 
-		Output_title_text( "Enter StepWiseRNA_CombineLongLoopFilterer:apply", TR );
+		output_title_text( "Enter StepWiseRNA_CombineLongLoopFilterer:apply", TR );
 
 
-		Output_boolean( "parin_favorite_ouput = ", parin_favorite_output_, TR ); TR << std::endl;
-		Output_boolean( " combine_helical_silent_file_ = ", combine_helical_silent_file_, TR ); TR << std::endl;
-		Output_boolean( " filter_for_previous_contact_ = ", filter_for_previous_contact_, TR ); TR << std::endl;
-		Output_boolean( " filter_for_previous_clash_ = ", filter_for_previous_clash_, TR ); TR << std::endl;
-		Output_boolean( " filter_for_chain_closable_ = ", filter_for_chain_closable_, TR ); TR << std::endl;
-		Output_boolean( " filter_for_moving_res_contact_ = ", filter_for_moving_res_contact_, TR ); TR << std::endl;
-		Output_boolean( " moving_res_to_base_contact_only_ = ", moving_res_to_base_contact_only_, TR ); TR << std::endl;
+		output_boolean( "parin_favorite_ouput = ", parin_favorite_output_, TR ); TR << std::endl;
+		output_boolean( " combine_helical_silent_file_ = ", combine_helical_silent_file_, TR ); TR << std::endl;
+		output_boolean( " filter_for_previous_contact_ = ", filter_for_previous_contact_, TR ); TR << std::endl;
+		output_boolean( " filter_for_previous_clash_ = ", filter_for_previous_clash_, TR ); TR << std::endl;
+		output_boolean( " filter_for_chain_closable_ = ", filter_for_chain_closable_, TR ); TR << std::endl;
+		output_boolean( " filter_for_moving_res_contact_ = ", filter_for_moving_res_contact_, TR ); TR << std::endl;
+		output_boolean( " moving_res_to_base_contact_only_ = ", moving_res_to_base_contact_only_, TR ); TR << std::endl;
 		TR << "max_decoys_( nstruct ) = " << max_decoys_ << std::endl;
 
 		setup_silent_file_stream();
 		figure_out_NUM_pose_list();
 
-		if ( undercount_ribose_rotamers_ ) setup_tag_to_source_map();
+		if ( undercount_sugar_rotamers_ ) setup_tag_to_source_map();
 
 
 		side_ONE_pose_list_id_ = 1;
@@ -1002,7 +1002,7 @@ namespace rna {
 		outfile.open( output_filename_.c_str() ); //Opening the file with this command removes all prior content..
 
 		Size pass_screen_struct_pair_ACT = 0;
-		Size pass_screen_struct_pair_undercount_ribose_rotamers = 0;
+		Size pass_screen_struct_pair_undercount_sugar_rotamers = 0;
 
 
 		//TR << "best_combine_score_= " << best_combine_score_ << " score_diff_cut_= " << score_diff_cut_ << std::endl;
@@ -1018,7 +1018,7 @@ namespace rna {
 
 			//if( (combine_tag_info.combine_score) > (best_combine_score_ + score_diff_cut_) ) continue;
 
-			if ( undercount_ribose_rotamers_ ){
+			if ( undercount_sugar_rotamers_ ){
 
 				bool match_existing_pair = false;
 
@@ -1026,9 +1026,9 @@ namespace rna {
 
 					Combine_Tags_Info const prev_combine_tag_info = filterered_combine_tag_info_list_[ii];
 
-					if ( Is_sibling_ribose_rotamer_pose( combine_tag_info.side_one_tag, prev_combine_tag_info.side_one_tag, tag_to_source_map_ONE_ ) == false ) continue;
+					if ( is_sibling_sugar_rotamer_pose( combine_tag_info.side_one_tag, prev_combine_tag_info.side_one_tag, tag_to_source_map_ONE_ ) == false ) continue;
 
-					if ( Is_sibling_ribose_rotamer_pose( combine_tag_info.side_two_tag, prev_combine_tag_info.side_two_tag, tag_to_source_map_TWO_ ) == false ) continue;
+					if ( is_sibling_sugar_rotamer_pose( combine_tag_info.side_two_tag, prev_combine_tag_info.side_two_tag, tag_to_source_map_TWO_ ) == false ) continue;
 
 					TR << "tag_pair: ";
 					TR << "( " << std::setw( 28 ) << std::left << combine_tag_info.side_one_tag       << ", ";
@@ -1045,7 +1045,7 @@ namespace rna {
 				}
 
 
-				if ( match_existing_pair == false ) pass_screen_struct_pair_undercount_ribose_rotamers++;
+				if ( match_existing_pair == false ) pass_screen_struct_pair_undercount_sugar_rotamers++;
 
 			}
 
@@ -1060,8 +1060,8 @@ namespace rna {
 
 			bool max_decoys_reached = false;
 
-			if ( undercount_ribose_rotamers_ ){
-				if ( pass_screen_struct_pair_undercount_ribose_rotamers >= max_decoys_ ) max_decoys_reached = true;
+			if ( undercount_sugar_rotamers_ ){
+				if ( pass_screen_struct_pair_undercount_sugar_rotamers >= max_decoys_ ) max_decoys_reached = true;
 			} else{
 				if ( pass_screen_struct_pair_ACT >= max_decoys_ ) max_decoys_reached = true;
 			}
@@ -1082,12 +1082,12 @@ namespace rna {
 
 		TR << "CombineLongLoopFilterer COUNTS ( AFTER FINAL SCORE SCREENING )" << std::endl;
 		TR << "pass_screen_struct_pair_ACT = " << pass_screen_struct_pair_ACT << std::endl;
-		TR << "pass_screen_struct_pair_undercount_ribose_rotamers = " << pass_screen_struct_pair_undercount_ribose_rotamers << std::endl;
-		TR << "StepWiseRNA_CombineLongLoopFilterer::final_output: " << static_cast< Real > ( clock() - time_start_FINAL_output ) / CLOCKS_PER_SEC << std::endl;
+		TR << "pass_screen_struct_pair_undercount_sugar_rotamers = " << pass_screen_struct_pair_undercount_sugar_rotamers << std::endl;
+		//		TR << "StepWiseRNA_CombineLongLoopFilterer::final_output: " << static_cast< Real > ( clock() - time_start_FINAL_output ) / CLOCKS_PER_SEC << std::endl;
 		TR.Debug << "StepWiseRNA_CombineLongLoopFilterer::apply: " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 
 
-		Output_title_text( "Exit StepWiseRNA_CombineLongLoopFilterer:apply", TR );
+		output_title_text( "Exit StepWiseRNA_CombineLongLoopFilterer:apply", TR );
 
 	}
 }

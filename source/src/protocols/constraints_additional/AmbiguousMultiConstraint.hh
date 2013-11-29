@@ -20,8 +20,8 @@
 // Unit header
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <protocols/constraints_additional/AmbiguousMultiConstraint.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
-#include <core/scoring/constraints/XYZ_Func.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
+#include <core/scoring/func/XYZ_Func.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 

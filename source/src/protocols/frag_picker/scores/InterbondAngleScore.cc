@@ -20,9 +20,9 @@
 #include <protocols/frag_picker/FragmentPicker.hh>
 
 // mini headers
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/FuncFactory.hh>
-#include <core/scoring/constraints/MinMultiHarmonicFunc.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/FuncFactory.hh>
+#include <core/scoring/func/MinMultiHarmonicFunc.hh>
 
 #include <basic/Tracer.hh>
 

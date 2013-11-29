@@ -17,6 +17,7 @@
 #ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_FloatingBaseSamplerUtil_HH
 #define INCLUDED_protocols_swa_rna_StepWiseRNA_FloatingBaseSamplerUtil_HH
 
+#include <protocols/swa/rna/FloatingBaseClasses.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
@@ -35,16 +36,13 @@
 #include <core/kinematics/FoldTree.hh>
 
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
+#include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh> //June 02, 2011
 #include <core/pose/Pose.hh> //June 02, 2011
 
-//#define centroid_bin_size 0.5
-//#define euler_angle_bin_size 5
 #define centroid_bin_size 1.0
 #define euler_angle_bin_size 20
 #define euler_z_bin_size 0.05
-
 
 typedef  numeric::xyzMatrix< core::Real > Matrix;
 
@@ -52,82 +50,8 @@ namespace protocols {
 namespace swa {
 namespace rna {
 
-struct Anchor_ribose_stub{
-	numeric::xyzVector< core::Real > origin;
-  Matrix coordinate_matrix;
-	Matrix invert_coordinate_matrix;
-};
-
-//Should make sure that alpha and gamma lies in the [-Pi:Pi] range.
-struct Euler_angles{
-	core::Real z; //z=cos(beta)
-	core::Real alpha; //phi
-	core::Real beta; //theta
-	core::Real gamma; //psi
-};
-
-
-struct Base_bin{
-
-	int centroid_x;
-	int centroid_y;
-	int centroid_z;
-	int euler_alpha;
-	int euler_z;
-	int euler_gamma;
-
-};
-
-
-struct
-compare_base_bin{
-
-	//The expression comp(a,b), where comp is an object of this comparison class and a and b are key values, shall return true if a is to be placed at an earlier position than b in a strict weak ordering operation
-
-  bool
-	operator() ( Base_bin const & first, Base_bin const & second ) const {
-
-		if ( first.centroid_x != second.centroid_x ) return ( first.centroid_x < second.centroid_x ); //x
-		if ( first.centroid_y != second.centroid_y ) return ( first.centroid_y < second.centroid_y ); //y
-		if ( first.centroid_z != second.centroid_z ) return ( first.centroid_z < second.centroid_z ) ; //z
-		if ( first.euler_alpha != second.euler_alpha ) return ( first.euler_alpha < second.euler_alpha );
-		if ( first.euler_gamma != second.euler_gamma ) return ( first.euler_gamma < second.euler_gamma );
-		if ( first.euler_z != second.euler_z ) return ( first.euler_z < second.euler_z );
-
-		return false; //Equality case.
-	}
-
-};
-
-struct
-compare_int_pair{
-
-	//The expression comp(a,b), where comp is an object of this comparison class and a and b are key values, shall return true if a is to be placed at an earlier position than b in a strict weak ordering operation
-
-
-  bool
-	operator() ( std::pair < int, int > const & pair_one, std::pair < int, int > const & pair_two ) const {
-
-		if ( pair_one.first != pair_two.first ) return ( pair_one.first < pair_two.first );
-		if ( pair_one.second != pair_two.second ) return ( pair_one.second < pair_two.second );
-
-		return false; //Equality case.
-	}
-
-};
-
-struct
-compare_test{
-  bool
-	operator() ( core::Real const & first, core::Real const & second ) const {
-		return first < second;
-	}
-};
-
-
-
-//typedef utility::pointer::owning_ptr< FloatingBaseChainClosureJobParameter > FloatingBaseChainClosureJobParameterOP;
-//typedef utility::pointer::owning_ptr< FloatingBaseChainClosureJobParameter const > FloatingBaseChainClosureJobParameterCOP;
+//typedef utility::pointer::owning_ptr< SugarModeling > SugarModelingOP;
+//typedef utility::pointer::owning_ptr< SugarModeling const > SugarModelingCOP;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -136,35 +60,30 @@ compare_test{
 //Should probably integrate this with Rhiju's class Jan 28, 2010. ***ALERT***RHIJU pointed out that the screening condition is slight different in his new class.
 
 bool
-Is_base_stack( core::kinematics::Stub const & moving_res_base,
+is_base_stack( core::kinematics::Stub const & moving_res_base,
 						  utility::vector1 < core::kinematics::Stub > const & other_residues_base_list,
 				  	  core::Real const base_axis_CUTOFF,
 	            core::Real const base_planarity_CUTOFF );
 
 bool
-Is_base_pair( core::kinematics::Stub const & moving_res_base,
+is_base_pair( core::kinematics::Stub const & moving_res_base,
 						 utility::vector1 < core::kinematics::Stub > const & other_residues_base_list,
 				  	 core::Real const base_axis_CUTOFF,
 	           core::Real const base_planarity_CUTOFF );
 
 bool
-Is_strong_base_stack( core::kinematics::Stub const & moving_res_base, utility::vector1 < core::kinematics::Stub > const & other_residues_base_list );
-
-// Undefined, commenting out to fix PyRosetta build  bool Is_medium_stack_base_and_medium_stack_base(core::kinematics::Stub const & moving_res_base, utility::vector1 < core::kinematics::Stub > const & other_residues_base_list);
+is_strong_base_stack( core::kinematics::Stub const & moving_res_base, utility::vector1 < core::kinematics::Stub > const & other_residues_base_list );
 
 bool
-Base_centroid_screening( core::kinematics::Stub const & moving_res_base, utility::vector1 < core::kinematics::Stub > const & other_residues_base_list, core::Size const num_nucleotides, SillyCountStruct & count_data, bool const allow_base_pair_only_screen );
+floating_base_centroid_screening( core::kinematics::Stub const & moving_res_base, utility::vector1 < core::kinematics::Stub > const & other_residues_base_list, core::Size const num_nucleotides, StepWiseRNA_CountStruct & count_data, bool const allow_base_pair_only_screen );
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
 Base_bin
-Get_euler_stub_bin( numeric::xyzVector< core::Real > const & centroid, Euler_angles const &  euler_angles );
+get_euler_stub_bin( numeric::xyzVector< core::Real > const & centroid, Euler_angles const &  euler_angles );
 
 core::kinematics::Stub
-Get_ribose_stub( core::conformation::Residue const & rsd, bool const Is_prepend, bool const verbose = true );
+get_sugar_stub( core::conformation::Residue const & rsd, bool const is_prepend, bool const verbose = true );
 
 
 int
@@ -174,13 +93,13 @@ core::Real
 DOF_bin_size( std::string const & DOF );
 
 void
-Analyze_base_bin_map( std::map< Base_bin, int, compare_base_bin > const & base_bin_map, std::string const foldername );
+analyze_base_bin_map( std::map< Base_bin, int, compare_base_bin > const & base_bin_map, std::string const foldername );
 
 void
-Analyze_base_bin_map( std::map< Base_bin, int, compare_base_bin > const & base_bin_map, std::string const & DOF_one, std::string const & DOF_two, std::string const foldername );
+analyze_base_bin_map( std::map< Base_bin, int, compare_base_bin > const & base_bin_map, std::string const & DOF_one, std::string const & DOF_two, std::string const foldername );
 
 
-// Undefined, commenting out to fix PyRosetta build  void Analyze_base_bin_map_old(std::map<Base_bin, int, compare_base_bin> const & base_bin_map, bool const Is_dinucleotide);
+// Undefined, commenting out to fix PyRosetta build  void analyze_base_bin_map_old(std::map<Base_bin, int, compare_base_bin> const & base_bin_map, bool const is_dinucleotide);
 
 void
 translate_then_rotate_pose( core::pose::Pose & pose, numeric::xyzVector< core::Real > const & vector, numeric::xyzMatrix< core::Real > const matrix, bool const verbose = false );
@@ -189,7 +108,7 @@ void
 set_to_origin( core::pose::Pose & pose, core::Size const seq_num, bool verbose = false );
 
 Euler_angles
-Get_euler_angles( numeric::xyzMatrix< core::Real > const & coordinate_matrix );
+get_euler_angles( numeric::xyzMatrix< core::Real > const & coordinate_matrix );
 
 void
 convert_euler_to_coordinate_matrix( Euler_angles const & E, numeric::xyzMatrix< core::Real > & coordinate_matrix );
@@ -203,7 +122,7 @@ get_specific_atom_coordinate( std::string const & atom_name,
 core::Real
 get_max_centroid_to_atom_distance( utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list, std::string const atom_name );
 
-//////////////////////////////////////////Ribose sugar, close_break closures function////////////////////////////
+//////////////////////////////////////////Sugar sugar, close_break closures function////////////////////////////
 
 utility::vector1<core::conformation::ResidueOP>
 setup_residue_at_origin_list(
@@ -218,7 +137,7 @@ check_floating_base_chain_closable( core::Size const & reference_res,
 																 core::pose::Pose const & pose,
 																 utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list,
 																 core::kinematics::Stub const & moving_res_base_stub,
-																 bool const Is_prepend,
+																 bool const is_prepend,
 																 core::Size const gap_size );
 
 bool
@@ -226,7 +145,7 @@ check_floating_base_chain_closable( core::Size const & reference_res,
 																		utility::vector1< core::pose::PoseOP >,
 																		utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list,
 																		core::kinematics::Stub const & moving_res_base_stub,
-																		bool const Is_prepend,
+																		bool const is_prepend,
 																		core::Size const gap_size );
 
 

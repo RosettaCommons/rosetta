@@ -90,10 +90,10 @@ namespace rna {
 		set_force_syn_chi_res_list( utility::vector1 < core::Size > const & setting );
 
 		void
-		set_force_north_ribose_list( utility::vector1 < core::Size > const & setting );
+		set_force_north_sugar_list( utility::vector1 < core::Size > const & setting );
 
 		void
-		set_force_south_ribose_list( utility::vector1 < core::Size > const & setting );
+		set_force_south_sugar_list( utility::vector1 < core::Size > const & setting );
 
 		void
 		set_protonated_H1_adenosine_list( utility::vector1 < core::Size > const & setting );
@@ -103,6 +103,9 @@ namespace rna {
 
 		void
 		set_add_virt_res_as_root( bool const setting );
+
+		void
+		set_floating_base( bool const setting );
 
 		void
 		set_input_tags( utility::vector1< std::string > const & setting ){ input_tags_ = setting; } //Only called if check_for_previously_closed_cutpoint_with_input_pose is true
@@ -159,10 +162,10 @@ namespace rna {
 		figure_out_working_moving_suite();
 
 		void
-		figure_out_Is_prepend_map();
+		figure_out_is_prepend_map();
 
 		bool
-		figure_out_Is_residue_prepend( core::Size const seq_num ) const;
+		figure_out_is_residue_prepend( core::Size const seq_num ) const;
 
 		core::Size
 		input_struct_definition( core::Size const working_seq_num );
@@ -180,7 +183,7 @@ namespace rna {
 		reroot_fold_tree_simple();
 
 //		void
-//		reset_Is_prepend(core::Size const root_res);
+//		reset_is_prepend(core::Size const root_res);
 
 		void
 		figure_out_best_working_alignment();

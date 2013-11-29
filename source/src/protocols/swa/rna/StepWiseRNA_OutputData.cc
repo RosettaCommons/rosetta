@@ -288,9 +288,17 @@ namespace rna {
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	output_data( std::string const & silent_file, std::string const & tag, bool const write_score_only, pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, StepWiseRNA_JobParametersCOP job_parameters_ ){
+		static core::io::silent::SilentFileData silent_file_data;
+		output_data( silent_file_data, silent_file, tag, write_score_only, pose, native_poseCOP, job_parameters_ );
+	}
+
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Accept the job_parameter instead.
 	void
-	Output_data( core::io::silent::SilentFileData& silent_file_data, std::string const & silent_file, std::string const & tag, bool const write_score_only, pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, StepWiseRNA_JobParametersCOP job_parameters_ ){
+	output_data( core::io::silent::SilentFileData& silent_file_data, std::string const & silent_file, std::string const & tag, bool const write_score_only, pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, StepWiseRNA_JobParametersCOP job_parameters_ ){
 
 		using namespace core::io::silent;
 		using namespace core::scoring;
@@ -298,8 +306,8 @@ namespace rna {
 
 		utility::vector1 < core::Size > const & rmsd_res_list = job_parameters_->rmsd_res_list();
 		std::map< core::Size, core::Size > const & full_to_sub = job_parameters_->const_full_to_sub();
-		std::map< core::Size, bool > const & Is_prepend_map = job_parameters_->Is_prepend_map();
-		bool const Is_prepend(  job_parameters_->Is_prepend() ); // if true, moving_suite+1 is fixed. Otherwise, moving_suite is fixed.
+		std::map< core::Size, bool > const & is_prepend_map = job_parameters_->is_prepend_map();
+		bool const is_prepend(  job_parameters_->is_prepend() ); // if true, moving_suite+1 is fixed. Otherwise, moving_suite is fixed.
 		Size const moving_base_residue( job_parameters_->actually_moving_res() );
 
 		BinaryRNASilentStruct s = get_binary_rna_silent_struct_safe_wrapper( pose, tag, silent_file, write_score_only );
@@ -318,11 +326,11 @@ namespace rna {
 				// This assumes that pose and native_pose are correctly syperimposed.
 				// I added a function in Pose_Setup to make sure this happens. Parin Jan 28, 2010
 
-				s.add_energy( "rmsd", suite_rmsd( pose, *native_poseCOP, moving_base_residue, Is_prepend, false ) );
-				s.add_energy( "loop_rmsd", rmsd_over_residue_list( pose, *native_poseCOP, rmsd_res_list, full_to_sub, Is_prepend_map, false, false ) );
+				s.add_energy( "rmsd", suite_rmsd( pose, *native_poseCOP, moving_base_residue, is_prepend, false ) );
+				s.add_energy( "loop_rmsd", rmsd_over_residue_list( pose, *native_poseCOP, rmsd_res_list, full_to_sub, is_prepend_map, false, false ) );
 
-				s.add_energy( "V_rms", suite_rmsd( pose, *native_poseCOP, moving_base_residue, Is_prepend, true ) );
-				s.add_energy( "V_loop_rms", rmsd_over_residue_list( pose, *native_poseCOP, rmsd_res_list, full_to_sub, Is_prepend_map, false, true ) );
+				s.add_energy( "V_rms", suite_rmsd( pose, *native_poseCOP, moving_base_residue, is_prepend, true ) );
+				s.add_energy( "V_loop_rms", rmsd_over_residue_list( pose, *native_poseCOP, rmsd_res_list, full_to_sub, is_prepend_map, false, true ) );
 
 				if ( job_parameters_->gap_size() == 0 ){
 					s.add_energy( "PBP_rmsd", phosphate_base_phosphate_rmsd( pose, *native_poseCOP, moving_base_residue,  false ) );
@@ -346,11 +354,11 @@ namespace rna {
 					} else{ //default
 						align_poses( current_pose, tag, *native_poseCOP, "native", working_best_alignment );
 					}
-					s.add_energy( "O_rmsd", suite_rmsd( current_pose, *native_poseCOP, moving_base_residue, Is_prepend, false ) );
-					s.add_energy( "O_loop_rmsd", rmsd_over_residue_list( current_pose, *native_poseCOP, rmsd_res_list, full_to_sub, Is_prepend_map, false, false ) );
+					s.add_energy( "O_rmsd", suite_rmsd( current_pose, *native_poseCOP, moving_base_residue, is_prepend, false ) );
+					s.add_energy( "O_loop_rmsd", rmsd_over_residue_list( current_pose, *native_poseCOP, rmsd_res_list, full_to_sub, is_prepend_map, false, false ) );
 
-					s.add_energy( "O_V_rms", suite_rmsd( current_pose, *native_poseCOP, moving_base_residue, Is_prepend, true ) );
-					s.add_energy( "O_V_loop_rms", rmsd_over_residue_list( current_pose, *native_poseCOP, rmsd_res_list, full_to_sub, Is_prepend_map, false, true ) );
+					s.add_energy( "O_V_rms", suite_rmsd( current_pose, *native_poseCOP, moving_base_residue, is_prepend, true ) );
+					s.add_energy( "O_V_loop_rms", rmsd_over_residue_list( current_pose, *native_poseCOP, rmsd_res_list, full_to_sub, is_prepend_map, false, true ) );
 
 					if ( job_parameters_->gap_size() == 0 ){
 						s.add_energy( "O_PBP_rmsd", phosphate_base_phosphate_rmsd( current_pose, *native_poseCOP, moving_base_residue,  false ) );
@@ -369,7 +377,7 @@ namespace rna {
 					align_poses( curr_pose_no_variants, tag + "_no_variants", ( *native_poseCOP ), "native",  working_best_alignment );
 				}
 
-				s.add_energy( "NAT_rmsd", rmsd_over_residue_list( curr_pose_no_variants, *native_poseCOP, rmsd_res_list, full_to_sub, Is_prepend_map, false /*verbose*/, true /*ignore_virtual_atom*/ ) );
+				s.add_energy( "NAT_rmsd", rmsd_over_residue_list( curr_pose_no_variants, *native_poseCOP, rmsd_res_list, full_to_sub, is_prepend_map, false /*verbose*/, true /*ignore_virtual_atom*/ ) );
 
 			}
 		}

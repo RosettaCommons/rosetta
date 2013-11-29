@@ -729,56 +729,61 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 
 	} else if ( tag == "SET_ATOM_TYPE" ) {
 		l >> atom_name >> atom_type_name;
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) utility_exit_with_message( line );
 		return new SetAtomType( atom_name, atom_type_name );
 
 	} else if ( tag == "SET_MM_ATOM_TYPE" ) {
+		runtime_assert( l.good() );
 		l >> atom_name >> mm_atom_type_name;
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) utility_exit_with_message( line );
 		return new SetMMAtomType( atom_name, mm_atom_type_name );
 
 	} else if ( tag == "SET_ATOMIC_CHARGE" ) {
 		l >> atom_name >> charge;
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) utility_exit_with_message( line );
 		return new SetAtomicCharge( atom_name, charge );
 
 	} else if ( tag == "SET_POLYMER_CONNECT" ) {
 		l >> tag >> atom_name; // tag should be "UPPER" or "LOWER"
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) utility_exit_with_message( line );
 		return new SetPolymerConnectAtom( atom_name, tag );
 
 	} else if ( tag == "SET_ICOOR" ) {
 		Real phi,theta,d;
 		std::string stub1, stub2, stub3;
 		l >> atom_name >> phi >> theta >> d >> stub1 >> stub2 >> stub3;
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) utility_exit_with_message( line );
 		return new SetICoor( atom_name, radians(phi), radians(theta), d, stub1, stub2, stub3 );
 
 	} else if ( tag == "PREPEND_MAINCHAIN_ATOM" ) {
 		l >> atom_name;
+		if ( l.fail() ) utility_exit_with_message( line );
 		return new PrependMainchainAtom( atom_name );
 
 	} else if ( tag == "APPEND_MAINCHAIN_ATOM" ) {
 		l >> atom_name;
+		if ( l.fail() ) utility_exit_with_message( line );
 		return new AppendMainchainAtom( atom_name );
 
 	} else if ( tag == "NCAA_ROTLIB_PATH" ) {
 		std::string path;
 		l >> path;
+		if ( l.fail() ) utility_exit_with_message( line );
 		return new NCAARotLibPath( path );
 
 	} else if ( tag == "SET_NBR_ATOM") {
 		l >> atom_name;
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) utility_exit_with_message( line );
 		return new SetNbrAtom( atom_name );
 
 	} else if ( tag == "SET_NBR_RADIUS") {
 		l >> radius;
-		if ( l.fail() ) return 0;
+		if ( l.fail() ) utility_exit_with_message( line );
 		return new SetNbrRadius( radius );
 
 	} else if ( tag == "SET_ORIENT_ATOM") {
 		l >> tag;
+		if ( l.fail() ) utility_exit_with_message( line );
 		if ( tag == "NBR" ) {
 			return new SetOrientAtom(true);
 		} else if ( tag == "DEFAULT" ) {

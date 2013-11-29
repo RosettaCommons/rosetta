@@ -131,7 +131,7 @@
 #include <core/scoring/constraints/ConstraintFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 #include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
@@ -141,7 +141,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/MembraneTopology.hh>
 #include <core/sequence/util.hh>
@@ -191,7 +191,7 @@
 #include <core/id/SequenceMapping.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/scoring/constraints/FuncFactory.hh>
+#include <core/scoring/func/FuncFactory.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/abinitio/KinematicAbinitio.hh>
 #include <protocols/relax/ClassicRelax.hh>

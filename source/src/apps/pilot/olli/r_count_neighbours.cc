@@ -25,7 +25,7 @@
 
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -80,7 +80,7 @@
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 //Auto Headers
-#include <core/scoring/constraints/FuncFactory.hh>
+#include <core/scoring/func/FuncFactory.hh>
 #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #include <utility/excn/EXCN_Base.hh>
 #include <utility/io/mpistream.hh>

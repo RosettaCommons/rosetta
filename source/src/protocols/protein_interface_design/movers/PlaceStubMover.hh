@@ -23,7 +23,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <core/scoring/constraints/HarmonicFunc.fwd.hh>
+#include <core/scoring/func/HarmonicFunc.fwd.hh>
 #include <basic/datacache/DataMapObj.hh>
 // C++ headers
 

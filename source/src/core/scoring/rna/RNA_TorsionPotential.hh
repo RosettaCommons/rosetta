@@ -22,9 +22,9 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
-#include <core/scoring/constraints/SumFunc.fwd.hh>
-#include <core/scoring/constraints/SumFunc.hh>
+#include <core/scoring/func/Func.fwd.hh>
+#include <core/scoring/func/SumFunc.fwd.hh>
+#include <core/scoring/func/SumFunc.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>

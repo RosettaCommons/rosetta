@@ -28,7 +28,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 /*
 #include <core/scoring/ScoreFunction.fwd.hh>

@@ -34,7 +34,7 @@ using namespace core::pose::full_model_info;
 // updates the pose full_model_info object.
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.swa.monte_carlo.rna_add_or_delete_mover" ) ;
+static basic::Tracer TR( "protocols.swa.monte_carlo.RNA_AddOrDeleteMover" ) ;
 
 namespace protocols {
 namespace swa {

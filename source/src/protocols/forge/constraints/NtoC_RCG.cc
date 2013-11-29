@@ -22,7 +22,7 @@
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
-#include <core/scoring/constraints/ScalarWeightedFunc.hh>
+#include <core/scoring/func/ScalarWeightedFunc.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/id/SequenceMapping.hh>
 #include <protocols/toolbox/match_enzdes_util/util_functions.hh>

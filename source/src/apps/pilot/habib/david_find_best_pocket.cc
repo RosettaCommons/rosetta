@@ -43,7 +43,7 @@
 #include <core/id/AtomID_Map.hh>
 //#include <protocols/pockets/PocketConstraint.hh>
 #include <protocols/pockets/PocketGrid.hh>
-#include <core/scoring/constraints/ScalarWeightedFunc.hh>
+#include <core/scoring/func/ScalarWeightedFunc.hh>
 #include <core/scoring/Energies.hh>
 
 // Numeric Headers

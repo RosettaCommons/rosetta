@@ -37,7 +37,7 @@ namespace protocols {
 namespace rotamer_sampler {
 namespace rna {
 
-static basic::Tracer TR("RNA_SugarRotamer");
+static basic::Tracer TR("protocols.rotamer_sampler.rna.RNA_SugarRotamer");
 //////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
 RNA_SugarRotamer::RNA_SugarRotamer(

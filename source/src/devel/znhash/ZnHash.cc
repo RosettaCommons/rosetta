@@ -35,7 +35,7 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/XYZ_Func.hh>
 
 // Protocols headers
 #include <protocols/enzdes/AddorRemoveCsts.hh>

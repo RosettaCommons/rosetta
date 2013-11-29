@@ -23,8 +23,8 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 
 #include <numeric/trig.functions.hh>
 #include <numeric/conversions.hh>

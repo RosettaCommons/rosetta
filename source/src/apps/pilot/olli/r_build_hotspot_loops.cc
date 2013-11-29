@@ -54,10 +54,10 @@
 
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/BackboneStubConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
+// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>

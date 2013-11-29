@@ -15,7 +15,7 @@
 // Core headers
 #include <core/types.hh>
 #include <core/scoring/disulfides/FullatomDisulfidePotential.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 
 //Utility
 #include <numeric/constants.hh>

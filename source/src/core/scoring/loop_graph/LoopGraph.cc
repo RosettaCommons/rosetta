@@ -23,8 +23,8 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/GaussianChainFunc.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/GaussianChainFunc.hh>
 #include <core/chemical/VariantType.hh>
 
 // Utility headers

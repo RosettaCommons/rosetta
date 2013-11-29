@@ -23,7 +23,7 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/CircularHarmonicFunc.hh>
+#include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/ligand_docking/grid_functions.hh>

@@ -32,7 +32,7 @@
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ScalarWeightedFunc.hh>
+#include <core/scoring/func/ScalarWeightedFunc.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>

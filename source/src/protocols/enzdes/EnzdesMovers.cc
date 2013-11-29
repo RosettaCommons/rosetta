@@ -43,7 +43,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>

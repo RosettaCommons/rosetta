@@ -49,7 +49,7 @@
 using namespace core;
 using core::Real;
 
-static basic::Tracer TR( "protocols.swa.stepwise_clusterer" ) ;
+static basic::Tracer TR( "protocols.swa.StepWiseClusterer" ) ;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 

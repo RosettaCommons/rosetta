@@ -22,7 +22,7 @@
 #ifdef WIN32
 #include <core/scoring/constraints/Constraint.hh> // WIN32 INCLUDE
 #endif
-#include <core/scoring/constraints/XYZ_Func.fwd.hh>
+#include <core/scoring/func/XYZ_Func.fwd.hh>
 
 /// Project headers
 #include <core/types.hh>

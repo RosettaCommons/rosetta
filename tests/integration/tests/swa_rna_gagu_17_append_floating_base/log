@@ -1,0 +1,1002 @@
+core.init: Constant seed mode, seed=1111111 seed_offset=0 real_seed=1111111
+swa_rna_main: 
+swa_rna_main: -----------------------------Enter swa_rna_sample()-----------------------------
+core.chemical.ResidueTypeSet: Finished initializing rna residue type set.  Created 2883 residue types
+core.io.pdb.file_data_fixup: Flipping atom xyz for  H41 and  H42 for residue   C
+core.io.pdb.file_data_fixup: Flipping atom xyz for  H41 and  H42 for residue   C
+native_pose->fold_tree(): FOLD_TREE  EDGE 1 16 -1 
+native_pose->annotated_sequence( true ): a[RAD_p:LowerRNA]cgaguguacgagugu[URA_p:UpperRNA]
+Input structures for COPY DOF
+input_tag = lower_helix.pdb
+core.io.pdb.file_data_fixup: Number of flip-atom fixups exceeds output limit. Rerun with -show_all_fixes to show everything.
+protocols.swa.rna.stepwise_rna_pose_setup:        input_res_vectors[1] =    1   2                                                  15  16
+protocols.swa.rna.stepwise_rna_pose_setup:        input_res_vectors[2] = 
+protocols.swa.rna.stepwise_rna_pose_setup:             common_res_list = 
+protocols.swa.rna.stepwise_rna_pose_setup:        input_res_vectors[1] =    1   2                                                  15  16
+protocols.swa.rna.stepwise_rna_pose_setup:        input_res_vectors[2] = 
+protocols.swa.rna.stepwise_rna_pose_setup:             common_res_list = 
+User passed in score:weight option: rna/rna_hires_07232011_with_intra_base_phosphate.wts
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: rna/rna_hires_07232011_with_intra_base_phosphate.wts
+core.scoring: INCLUDE_INTRA_RES_RNA_HB==true
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBPoly1D.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBFadeIntervals.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/sp2_elec_params/HBEval.csv
+basic.io.database: Database file opened: scoring/score_functions/carbon_hbond/ch_o_bond_potential.dat
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 218 score/deriv cals, 12 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 218 score/deriv cals, 12 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 236 score/deriv cals, 12 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 201 score/deriv cals, 2 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 201 score/deriv cals, 2 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 219 score/deriv cals, 2 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 200 score/deriv cals, 12 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 200 score/deriv cals, 12 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 217 score/deriv cals, 12 narrow-from-wide updates, 2 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 283 score/deriv cals, 16 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 283 score/deriv cals, 16 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 311 score/deriv cals, 16 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 258 score/deriv cals, 17 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 258 score/deriv cals, 17 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 282 score/deriv cals, 17 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 246 score/deriv cals, 24 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 246 score/deriv cals, 24 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 268 score/deriv cals, 24 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 193 score/deriv cals, 10 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 193 score/deriv cals, 10 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 208 score/deriv cals, 10 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 193 score/deriv cals, 15 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 193 score/deriv cals, 15 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 207 score/deriv cals, 15 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 302 score/deriv cals, 20 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 302 score/deriv cals, 20 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 326 score/deriv cals, 20 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 132 score/deriv cals, 6 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 132 score/deriv cals, 6 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 142 score/deriv cals, 6 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 204 score/deriv cals, 19 narrow-from-wide updates, 8 full updates.
+core.scoring.NeighborList: Minimization stats: 204 score/deriv cals, 19 narrow-from-wide updates, 8 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 219 score/deriv cals, 19 narrow-from-wide updates, 8 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 162 score/deriv cals, 5 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 162 score/deriv cals, 5 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 173 score/deriv cals, 5 narrow-from-wide updates, 2 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 342 score/deriv cals, 20 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 342 score/deriv cals, 20 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 374 score/deriv cals, 20 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 219 score/deriv cals, 18 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 219 score/deriv cals, 18 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 238 score/deriv cals, 18 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 266 score/deriv cals, 21 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 266 score/deriv cals, 21 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 287 score/deriv cals, 21 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 134 score/deriv cals, 1 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 134 score/deriv cals, 1 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 141 score/deriv cals, 1 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 163 score/deriv cals, 14 narrow-from-wide updates, 3 full updates.
+core.scoring.NeighborList: Minimization stats: 163 score/deriv cals, 14 narrow-from-wide updates, 3 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 177 score/deriv cals, 14 narrow-from-wide updates, 3 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 235 score/deriv cals, 15 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 235 score/deriv cals, 15 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 254 score/deriv cals, 15 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 152 score/deriv cals, 5 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 152 score/deriv cals, 5 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 163 score/deriv cals, 5 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 404 score/deriv cals, 32 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 404 score/deriv cals, 32 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 442 score/deriv cals, 32 narrow-from-wide updates, 2 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 166 score/deriv cals, 8 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 166 score/deriv cals, 8 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 178 score/deriv cals, 8 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 443 score/deriv cals, 23 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 443 score/deriv cals, 23 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 499 score/deriv cals, 23 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 597 score/deriv cals, 30 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 597 score/deriv cals, 30 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 682 score/deriv cals, 30 narrow-from-wide updates, 2 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 374 score/deriv cals, 22 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 374 score/deriv cals, 22 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 421 score/deriv cals, 22 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 272 score/deriv cals, 16 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 272 score/deriv cals, 16 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 297 score/deriv cals, 16 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 295 score/deriv cals, 31 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 295 score/deriv cals, 31 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 327 score/deriv cals, 31 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 380 score/deriv cals, 41 narrow-from-wide updates, 7 full updates.
+core.scoring.NeighborList: Minimization stats: 380 score/deriv cals, 41 narrow-from-wide updates, 7 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 424 score/deriv cals, 41 narrow-from-wide updates, 7 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 245 score/deriv cals, 12 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 245 score/deriv cals, 12 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 265 score/deriv cals, 12 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 257 score/deriv cals, 19 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 257 score/deriv cals, 19 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 282 score/deriv cals, 19 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 245 score/deriv cals, 14 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 245 score/deriv cals, 14 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 266 score/deriv cals, 14 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 256 score/deriv cals, 17 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 256 score/deriv cals, 17 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 280 score/deriv cals, 17 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 406 score/deriv cals, 35 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 406 score/deriv cals, 35 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 448 score/deriv cals, 35 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 267 score/deriv cals, 21 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 267 score/deriv cals, 21 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 291 score/deriv cals, 21 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 361 score/deriv cals, 18 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 361 score/deriv cals, 18 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 403 score/deriv cals, 18 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 287 score/deriv cals, 12 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 287 score/deriv cals, 12 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 314 score/deriv cals, 12 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 230 score/deriv cals, 10 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 230 score/deriv cals, 10 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 249 score/deriv cals, 10 narrow-from-wide updates, 2 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 143 score/deriv cals, 6 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 143 score/deriv cals, 6 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 154 score/deriv cals, 6 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 270 score/deriv cals, 20 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 270 score/deriv cals, 20 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 298 score/deriv cals, 20 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 228 score/deriv cals, 13 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 228 score/deriv cals, 13 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 248 score/deriv cals, 13 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 127 score/deriv cals, 5 narrow-from-wide updates, 3 full updates.
+core.scoring.NeighborList: Minimization stats: 127 score/deriv cals, 5 narrow-from-wide updates, 3 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 138 score/deriv cals, 5 narrow-from-wide updates, 3 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 178 score/deriv cals, 10 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 178 score/deriv cals, 10 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 194 score/deriv cals, 10 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 221 score/deriv cals, 12 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 221 score/deriv cals, 12 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 246 score/deriv cals, 12 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 251 score/deriv cals, 21 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 251 score/deriv cals, 21 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 273 score/deriv cals, 21 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 265 score/deriv cals, 27 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 265 score/deriv cals, 27 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 289 score/deriv cals, 27 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 292 score/deriv cals, 22 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 292 score/deriv cals, 22 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 320 score/deriv cals, 22 narrow-from-wide updates, 2 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 262 score/deriv cals, 16 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 262 score/deriv cals, 16 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 287 score/deriv cals, 16 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 211 score/deriv cals, 13 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 211 score/deriv cals, 13 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 228 score/deriv cals, 13 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 296 score/deriv cals, 22 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 296 score/deriv cals, 22 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 326 score/deriv cals, 22 narrow-from-wide updates, 2 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 211 score/deriv cals, 8 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 211 score/deriv cals, 8 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 233 score/deriv cals, 8 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 239 score/deriv cals, 11 narrow-from-wide updates, 3 full updates.
+core.scoring.NeighborList: Minimization stats: 239 score/deriv cals, 11 narrow-from-wide updates, 3 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 259 score/deriv cals, 11 narrow-from-wide updates, 3 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 297 score/deriv cals, 10 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 297 score/deriv cals, 10 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 328 score/deriv cals, 10 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 255 score/deriv cals, 25 narrow-from-wide updates, 7 full updates.
+core.scoring.NeighborList: Minimization stats: 255 score/deriv cals, 25 narrow-from-wide updates, 7 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 277 score/deriv cals, 25 narrow-from-wide updates, 7 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 242 score/deriv cals, 20 narrow-from-wide updates, 4 full updates.
+core.scoring.NeighborList: Minimization stats: 242 score/deriv cals, 20 narrow-from-wide updates, 4 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 263 score/deriv cals, 20 narrow-from-wide updates, 4 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 406 score/deriv cals, 31 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 406 score/deriv cals, 31 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 444 score/deriv cals, 31 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 279 score/deriv cals, 17 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 279 score/deriv cals, 17 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 315 score/deriv cals, 17 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 203 score/deriv cals, 11 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 203 score/deriv cals, 11 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 221 score/deriv cals, 11 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 316 score/deriv cals, 27 narrow-from-wide updates, 3 full updates.
+core.scoring.NeighborList: Minimization stats: 316 score/deriv cals, 27 narrow-from-wide updates, 3 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 349 score/deriv cals, 27 narrow-from-wide updates, 3 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 261 score/deriv cals, 20 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 261 score/deriv cals, 20 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 284 score/deriv cals, 20 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 208 score/deriv cals, 10 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 208 score/deriv cals, 10 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 226 score/deriv cals, 10 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 369 score/deriv cals, 32 narrow-from-wide updates, 3 full updates.
+core.scoring.NeighborList: Minimization stats: 369 score/deriv cals, 32 narrow-from-wide updates, 3 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 406 score/deriv cals, 32 narrow-from-wide updates, 3 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 324 score/deriv cals, 17 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 324 score/deriv cals, 17 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 355 score/deriv cals, 17 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 555 score/deriv cals, 40 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 555 score/deriv cals, 40 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 627 score/deriv cals, 40 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 398 score/deriv cals, 27 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 398 score/deriv cals, 27 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 451 score/deriv cals, 27 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 160 score/deriv cals, 10 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 160 score/deriv cals, 10 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 172 score/deriv cals, 10 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 127 score/deriv cals, 3 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 127 score/deriv cals, 3 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 135 score/deriv cals, 3 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 219 score/deriv cals, 14 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 219 score/deriv cals, 14 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 243 score/deriv cals, 14 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 403 score/deriv cals, 25 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 403 score/deriv cals, 25 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 455 score/deriv cals, 25 narrow-from-wide updates, 2 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 286 score/deriv cals, 22 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 286 score/deriv cals, 22 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 314 score/deriv cals, 22 narrow-from-wide updates, 2 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 279 score/deriv cals, 16 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 279 score/deriv cals, 16 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 312 score/deriv cals, 16 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 207 score/deriv cals, 11 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 207 score/deriv cals, 11 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 226 score/deriv cals, 11 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 200 score/deriv cals, 9 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 200 score/deriv cals, 9 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 218 score/deriv cals, 9 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 255 score/deriv cals, 18 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 255 score/deriv cals, 18 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 278 score/deriv cals, 18 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 332 score/deriv cals, 20 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 332 score/deriv cals, 20 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 374 score/deriv cals, 20 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 196 score/deriv cals, 13 narrow-from-wide updates, 3 full updates.
+core.scoring.NeighborList: Minimization stats: 196 score/deriv cals, 13 narrow-from-wide updates, 3 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 213 score/deriv cals, 13 narrow-from-wide updates, 3 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 452 score/deriv cals, 20 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 452 score/deriv cals, 20 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 511 score/deriv cals, 20 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 199 score/deriv cals, 19 narrow-from-wide updates, 3 full updates.
+core.scoring.NeighborList: Minimization stats: 199 score/deriv cals, 19 narrow-from-wide updates, 3 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 216 score/deriv cals, 19 narrow-from-wide updates, 3 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 357 score/deriv cals, 24 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 357 score/deriv cals, 24 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 394 score/deriv cals, 24 narrow-from-wide updates, 2 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 236 score/deriv cals, 10 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 236 score/deriv cals, 10 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 256 score/deriv cals, 10 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 242 score/deriv cals, 19 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 242 score/deriv cals, 19 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 262 score/deriv cals, 19 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 256 score/deriv cals, 19 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 256 score/deriv cals, 19 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 288 score/deriv cals, 19 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 418 score/deriv cals, 17 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 418 score/deriv cals, 17 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 473 score/deriv cals, 17 narrow-from-wide updates, 2 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 303 score/deriv cals, 27 narrow-from-wide updates, 4 full updates.
+core.scoring.NeighborList: Minimization stats: 303 score/deriv cals, 27 narrow-from-wide updates, 4 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 330 score/deriv cals, 27 narrow-from-wide updates, 4 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 212 score/deriv cals, 19 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 212 score/deriv cals, 19 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 231 score/deriv cals, 19 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 248 score/deriv cals, 11 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 248 score/deriv cals, 11 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 271 score/deriv cals, 11 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 216 score/deriv cals, 15 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 216 score/deriv cals, 15 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 233 score/deriv cals, 15 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 354 score/deriv cals, 30 narrow-from-wide updates, 4 full updates.
+core.scoring.NeighborList: Minimization stats: 354 score/deriv cals, 30 narrow-from-wide updates, 4 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 400 score/deriv cals, 30 narrow-from-wide updates, 4 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 189 score/deriv cals, 8 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 189 score/deriv cals, 8 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 201 score/deriv cals, 8 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 233 score/deriv cals, 14 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 233 score/deriv cals, 14 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 253 score/deriv cals, 14 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 253 score/deriv cals, 22 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 253 score/deriv cals, 22 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 276 score/deriv cals, 22 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 131 score/deriv cals, 10 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 131 score/deriv cals, 10 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 145 score/deriv cals, 10 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 135 score/deriv cals, 3 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 135 score/deriv cals, 3 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 144 score/deriv cals, 3 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 263 score/deriv cals, 11 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 263 score/deriv cals, 11 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 285 score/deriv cals, 11 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 185 score/deriv cals, 21 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 185 score/deriv cals, 21 narrow-from-wide updates, 2 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 205 score/deriv cals, 21 narrow-from-wide updates, 2 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 309 score/deriv cals, 24 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 309 score/deriv cals, 24 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 347 score/deriv cals, 24 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 428 score/deriv cals, 44 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 428 score/deriv cals, 44 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 480 score/deriv cals, 44 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 451 score/deriv cals, 27 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 451 score/deriv cals, 27 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 500 score/deriv cals, 27 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 529 score/deriv cals, 28 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 529 score/deriv cals, 28 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 595 score/deriv cals, 28 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 291 score/deriv cals, 18 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 291 score/deriv cals, 18 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 324 score/deriv cals, 18 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 394 score/deriv cals, 30 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 394 score/deriv cals, 30 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 435 score/deriv cals, 30 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 204 score/deriv cals, 15 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 204 score/deriv cals, 15 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 220 score/deriv cals, 15 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 232 score/deriv cals, 8 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 232 score/deriv cals, 8 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 252 score/deriv cals, 8 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 163 score/deriv cals, 4 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 163 score/deriv cals, 4 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 174 score/deriv cals, 4 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 246 score/deriv cals, 17 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 246 score/deriv cals, 17 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 274 score/deriv cals, 17 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 203 score/deriv cals, 16 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 203 score/deriv cals, 16 narrow-from-wide updates, 1 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 219 score/deriv cals, 16 narrow-from-wide updates, 1 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 353 score/deriv cals, 25 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 353 score/deriv cals, 25 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 398 score/deriv cals, 25 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 287 score/deriv cals, 28 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 287 score/deriv cals, 28 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 322 score/deriv cals, 28 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 252 score/deriv cals, 21 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 252 score/deriv cals, 21 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 281 score/deriv cals, 21 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.scoring.NeighborList: Minimization stats: 275 score/deriv cals, 21 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 275 score/deriv cals, 21 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 0 score/deriv cals, 0 narrow-from-wide updates, 0 full updates.
+core.scoring.NeighborList: Minimization stats: 305 score/deriv cals, 21 narrow-from-wide updates, 0 full updates.
+protocols.swa.rna.StepWiseRNA_Util:                  O2prime_pack_seq_num =    1   2   3   4
+core.pack.task: Packer task: initialize from command line() 
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+core.io.silent.SilentFileData: Reading all structures from region_0_1_sample.out_CONVERSION_DEBUG
+JOB_SUCCESSFULLY_COMPLETED

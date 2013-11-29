@@ -32,8 +32,8 @@
 #include <protocols/simple_moves/MissingDensityToJumpMover.fwd.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>

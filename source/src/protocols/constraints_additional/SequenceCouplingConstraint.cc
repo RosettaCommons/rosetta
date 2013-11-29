@@ -30,7 +30,7 @@
 //Auto Headers
 #include <core/id/AtomID.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/XYZ_Func.hh>
 #include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
 

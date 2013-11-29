@@ -21,7 +21,7 @@
 #include <core/scoring/constraints/BoundConstraint.fwd.hh>
 //#include <core/scoring/constraints/Constraint.hh>
 //#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/types.hh>
 #include <basic/basic.hh>
 
@@ -192,7 +192,7 @@ private:
 #include <core/scoring/constraints/BoundConstraint.fwd.hh>
 //#include <core/scoring/constraints/Constraint.hh>
 //#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/types.hh>
 #include <basic/basic.hh>
 

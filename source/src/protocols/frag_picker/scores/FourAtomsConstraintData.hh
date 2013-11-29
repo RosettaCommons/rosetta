@@ -17,8 +17,8 @@
 #include <protocols/frag_picker/scores/FourAtomsConstraintData.fwd.hh>
 
 // mini
-#include <core/scoring/constraints/Func.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/FuncFactory.hh>
+#include <core/scoring/func/Func.hh>
+// AUTO-REMOVED #include <core/scoring/func/FuncFactory.hh>
 
 // utility headers
 #include <utility/pointer/ReferenceCount.hh>

@@ -23,7 +23,7 @@
 #include <core/chemical/ChemicalManager.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/constraints/MixtureFunc.hh>
+#include <core/scoring/func/MixtureFunc.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>

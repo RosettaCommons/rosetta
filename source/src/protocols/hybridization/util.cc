@@ -41,10 +41,10 @@
 #include <protocols/simple_moves/AddConstraintsToCurrentConformationMover.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/ScalarWeightedFunc.hh>
-#include <core/scoring/constraints/USOGFunc.hh>
-#include <core/scoring/constraints/SOGFunc.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/ScalarWeightedFunc.hh>
+#include <core/scoring/func/USOGFunc.hh>
+#include <core/scoring/func/SOGFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/pose/PDBInfo.hh>

@@ -21,7 +21,7 @@
 #include <core/scoring/EnergyMap.hh>
 
 // AUTO-REMOVED #include <core/scoring/constraints/BoundConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>

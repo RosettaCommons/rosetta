@@ -37,8 +37,8 @@ namespace swa {
 		which_chain_has_moving_res_( 0 ),
 		gap_size_( 0 ),
 		first_chain_break_res_( 0 ),
-		Is_prepend_( false ),
-		Is_internal_( false )
+		is_prepend_( false ),
+		is_internal_( false )
 	{
 	}
 
@@ -101,12 +101,12 @@ namespace swa {
 		return first_chain_break_res_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	bool const & StepWiseJobParameters::Is_prepend() const{
-		return Is_prepend_;
+	bool const & StepWiseJobParameters::is_prepend() const{
+		return is_prepend_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	bool const & StepWiseJobParameters::Is_internal() const{
-		return Is_internal_;
+	bool const & StepWiseJobParameters::is_internal() const{
+		return is_internal_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	ObjexxFCL::FArray1D< bool > const & StepWiseJobParameters::partition_definition() const{
@@ -228,12 +228,12 @@ namespace swa {
 		first_chain_break_res_ = setting;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	void StepWiseJobParameters::set_Is_prepend( bool const & setting ){
-		Is_prepend_ = setting;
+	void StepWiseJobParameters::set_is_prepend( bool const & setting ){
+		is_prepend_ = setting;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	void StepWiseJobParameters::set_Is_internal( bool const & setting ){
-		Is_internal_ = setting;
+	void StepWiseJobParameters::set_is_internal( bool const & setting ){
+		is_internal_ = setting;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void StepWiseJobParameters::set_partition_definition( ObjexxFCL::FArray1D< bool > const & setting ){
@@ -254,7 +254,7 @@ namespace swa {
 	//////////////////////////////////////////////////////////////////////////////////////////
 	Size
 	StepWiseJobParameters::actually_moving_res() const{ //Should rewrite code so that there is moving_suite and moving_res......having actually_moving_res is confusing..Parin Jan 30, 2010
-		return ( Is_prepend_ ?
+		return ( is_prepend_ ?
 						 working_moving_suite_list_[1] :
 						 working_moving_suite_list_[1]+1 );
 	}

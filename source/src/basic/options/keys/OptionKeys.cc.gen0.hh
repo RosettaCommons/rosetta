@@ -729,3 +729,13 @@ namespace jumps { BooleanOptionKey const evaluate( "jumps:evaluate" );  }
 namespace jumps { FileOptionKey const extra_frags_for_ss( "jumps:extra_frags_for_ss" );  }
 namespace jumps { BooleanOptionKey const fix_chainbreak( "jumps:fix_chainbreak" );  }
 namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }
+namespace jumps { FileOptionKey const jump_lib( "jumps:jump_lib" );  }
+namespace jumps { FileOptionKey const loop_definition_from_file( "jumps:loop_definition_from_file" );  }
+namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chainbreak_in_relax" );  }
+namespace jumps { FileOptionKey const pairing_file( "jumps:pairing_file" );  }
+namespace jumps { IntegerVectorOptionKey const random_sheets( "jumps:random_sheets" );  }
+namespace jumps { FileOptionKey const residue_pair_jump_file( "jumps:residue_pair_jump_file" );  }
+namespace jumps { IntegerVectorOptionKey const sheets( "jumps:sheets" );  }
+namespace jumps { FileOptionKey const topology_file( "jumps:topology_file" );  }
+namespace jumps { BooleanOptionKey const bb_moves( "jumps:bb_moves" );  }
+namespace jumps { BooleanOptionKey const no_wobble( "jumps:no_wobble" );  }

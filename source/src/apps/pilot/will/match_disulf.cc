@@ -31,7 +31,7 @@
 #include <core/kinematics/MoveMap.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/conformation/ResidueFactory.hh>

@@ -19,12 +19,12 @@
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 // AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/HarmonicFunc.fwd.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.fwd.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/FadeFunc.hh>
+#include <core/scoring/func/FadeFunc.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>

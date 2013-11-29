@@ -34,6 +34,43 @@ namespace swa { extern IntegerVectorOptionKey const input_res1; }
 namespace swa { extern IntegerVectorOptionKey const input_res2; }
 namespace swa { extern BooleanOptionKey const backbone_only1; }
 namespace swa { extern BooleanOptionKey const backbone_only2; }
+namespace swa { namespace rna { extern BooleanOptionKey const rna; } }
+namespace swa { namespace rna { extern IntegerVectorOptionKey const sample_res; } }
+namespace swa { namespace rna { extern IntegerVectorOptionKey const fixed_res; } }
+namespace swa { namespace rna { extern IntegerVectorOptionKey const minimize_res; } }
+namespace swa { namespace rna { extern StringVectorOptionKey const alignment_res; } }
+namespace swa { namespace rna { extern IntegerVectorOptionKey const native_alignment_res; } }
+namespace swa { namespace rna { extern IntegerVectorOptionKey const rmsd_res; } }
+namespace swa { namespace rna { extern IntegerVectorOptionKey const missing_res; } }
+namespace swa { namespace rna { extern IntegerVectorOptionKey const missing_res2; } }
+namespace swa { namespace rna { extern IntegerOptionKey const job_queue_ID; } }
+namespace swa { namespace rna { extern BooleanOptionKey const minimize_and_score_sugar; } }
+namespace swa { namespace rna { extern IntegerVectorOptionKey const global_sample_res_list; } }
+namespace swa { namespace rna { extern FileOptionKey const filter_output_filename; } }
+namespace swa { namespace rna { extern BooleanOptionKey const combine_long_loop_mode; } }
+namespace swa { namespace rna { extern BooleanOptionKey const combine_helical_silent_file; } }
+namespace swa { namespace rna { extern BooleanOptionKey const output_extra_RMSDs; } }
+namespace swa { namespace rna { extern IntegerVectorOptionKey const force_syn_chi_res_list; } }
+namespace swa { namespace rna { extern IntegerVectorOptionKey const force_north_sugar_list; } }
+namespace swa { namespace rna { extern IntegerVectorOptionKey const force_south_sugar_list; } }
+namespace swa { namespace rna { extern IntegerVectorOptionKey const protonated_H1_adenosine_list; } }
+namespace swa { namespace rna { extern IntegerVectorOptionKey const native_virtual_res; } }
+namespace swa { namespace rna { extern BooleanOptionKey const simple_append_map; } }
+namespace swa { namespace rna { extern BooleanOptionKey const allow_fixed_res_at_moving_res; } }
+namespace swa { namespace rna { extern BooleanOptionKey const force_user_defined_jumps; } }
+namespace swa { namespace rna { extern BooleanOptionKey const test_encapsulation; } }
+namespace swa { namespace rna { extern StringVectorOptionKey const jump_point_pairs; } }
+namespace swa { namespace rna { extern IntegerVectorOptionKey const terminal_res; } }
+namespace swa { namespace rna { extern BooleanOptionKey const add_virt_root; } }
+namespace swa { namespace rna { extern BooleanOptionKey const floating_base; } }
+namespace swa { namespace rna { extern BooleanOptionKey const allow_chain_boundary_jump_partner_right_at_fixed_BP; } }
+namespace swa { namespace rna { extern IntegerVectorOptionKey const virtual_res; } }
+namespace swa { namespace rna { extern IntegerVectorOptionKey const bulge_res; } }
+namespace swa { namespace rna { extern BooleanOptionKey const rebuild_bulge_mode; } }
+namespace swa { namespace rna { extern BooleanOptionKey const choose_random; } }
+namespace swa { namespace rna { extern IntegerOptionKey const num_random_samples; } }
+namespace swa { namespace rna { extern BooleanOptionKey const filter_user_alignment_res; } }
+namespace swa { namespace rna { extern BooleanOptionKey const output_pdb; } }
 
 } // namespace OptionKeys
 } // namespace options

@@ -47,7 +47,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/fragment/ConstantLengthFragSet.hh>

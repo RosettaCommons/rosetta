@@ -10412,6 +10412,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>parameters for fastdens scoring</dd><br>
 </dl>
 <dl>
+<dt><b>-legacy_fastdens_score</b> \<Boolean\><dt>
+<dd>use the pre-June 2013 normalization for scoring</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-sliding_window_wt</b> \<Real\><dt>
 <dd>wt of edens sliding-window score</dd><br>
 <dd>Default: 0.0</dd><br>
@@ -13000,18 +13005,22 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-slice_res1</b> \<IntegerVector\><dt>
 <dd>Residues to slice out of starting file</dd><br>
+<dd>Default: []</dd><br>
 </dl>
 <dl>
 <dt><b>-slice_res2</b> \<IntegerVector\><dt>
 <dd>Residues to slice out of starting file</dd><br>
+<dd>Default: []</dd><br>
 </dl>
 <dl>
 <dt><b>-input_res1</b> \<IntegerVector\><dt>
 <dd>Residues already present in starting file</dd><br>
+<dd>Default: []</dd><br>
 </dl>
 <dl>
 <dt><b>-input_res2</b> \<IntegerVector\><dt>
 <dd>Residues already present in starting file2</dd><br>
+<dd>Default: []</dd><br>
 </dl>
 <dl>
 <dt><b>-backbone_only1</b> \<Boolean\><dt>
@@ -13022,6 +13031,192 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>just copy protein backbone DOFS, useful for homology modeling</dd><br>
 </dl>
  </li>
+<li><h2>swa:rna</h2>
+<dl>
+<dt><b>-rna</b> \<Boolean\><dt>
+<dd>rna option group</dd><br>
+</dl>
+<dl>
+<dt><b>-sample_res</b> \<IntegerVector\><dt>
+<dd>residues to build, the first element is the actual sample res while the other are the bulge residues</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-fixed_res</b> \<IntegerVector\><dt>
+<dd>Do not move these residues during minimization.</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-minimize_res</b> \<IntegerVector\><dt>
+<dd>alternative to fixed_res</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-alignment_res</b> \<StringVector\><dt>
+<dd>align_res_list</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-native_alignment_res</b> \<IntegerVector\><dt>
+<dd>optional: native_alignment_res </dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-rmsd_res</b> \<IntegerVector\><dt>
+<dd>residues that will be use to calculate rmsd ( for clustering as well as RMSD to native_pdb if specified )</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-missing_res</b> \<IntegerVector\><dt>
+<dd>Residues missing in starting pose_1, alternative to input_res</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-missing_res2</b> \<IntegerVector\><dt>
+<dd>Residues missing in starting pose_2, alternative to input_res2</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-job_queue_ID</b> \<Integer\><dt>
+<dd>swa_rna_sample()/combine_long_loop mode: Specify the tag pair in filter_output_filename to be read in and imported ( start from 0! )</dd><br>
+<dd>Default: 0</dd><br>
+</dl>
+<dl>
+<dt><b>-minimize_and_score_sugar</b> \<Boolean\><dt>
+<dd>minimize and sugar torsion + angle? and include the rna_sugar_close_score_term </dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-global_sample_res_list</b> \<IntegerVector\><dt>
+<dd>A list of all the nucleotide to be build/sample over the entire dag.</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-filter_output_filename</b> \<File\><dt>
+<dd>CombineLongLoopFilterer: filter_output_filename</dd><br>
+<dd>Default: "filter_struct.txt"</dd><br>
+</dl>
+<dl>
+<dt><b>-combine_long_loop_mode</b> \<Boolean\><dt>
+<dd> Sampler: combine_long_loop_mode </dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-combine_helical_silent_file</b> \<Boolean\><dt>
+<dd>CombineLongLoopFilterer: combine_helical_silent_file</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-output_extra_RMSDs</b> \<Boolean\><dt>
+<dd>output_extra_RMSDs</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-force_syn_chi_res_list</b> \<IntegerVector\><dt>
+<dd>optional: sample only syn chi for the res in sampler.</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-force_north_sugar_list</b> \<IntegerVector\><dt>
+<dd>optional: sample only north sugar for the res in sampler.</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-force_south_sugar_list</b> \<IntegerVector\><dt>
+<dd>optional: sample only south sugar for the res in sampler.</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-protonated_H1_adenosine_list</b> \<IntegerVector\><dt>
+<dd>optional: protonate_H1_adenosine_list</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-native_virtual_res</b> \<IntegerVector\><dt>
+<dd> optional: native_virtual_res </dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-simple_append_map</b> \<Boolean\><dt>
+<dd>simple_append_map</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-allow_fixed_res_at_moving_res</b> \<Boolean\><dt>
+<dd>mainly just to get Hermann Duplex modeling to work</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-force_user_defined_jumps</b> \<Boolean\><dt>
+<dd>Trust and use user defined jumps</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-test_encapsulation</b> \<Boolean\><dt>
+<dd>Test ability StepWiseRNA Modeler to figure out what it needs from just the pose - no JobParameters</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-jump_point_pairs</b> \<StringVector\><dt>
+<dd>optional: extra jump_points specified by the user for setting up the fold_tree </dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-terminal_res</b> \<IntegerVector\><dt>
+<dd>optional: residues that are not allowed to stack during sampling</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-add_virt_root</b> \<Boolean\><dt>
+<dd>add_virt_root</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-floating_base</b> \<Boolean\><dt>
+<dd> floating_base </dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-allow_chain_boundary_jump_partner_right_at_fixed_BP</b> \<Boolean\><dt>
+<dd>mainly just to get Hermann nano - square RNA modeling to work</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-virtual_res</b> \<IntegerVector\><dt>
+<dd>optional: residues to be made virtual</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-bulge_res</b> \<IntegerVector\><dt>
+<dd>optional: residues to be turned into a bulge variant</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-rebuild_bulge_mode</b> \<Boolean\><dt>
+<dd>rebuild_bulge_mode</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-choose_random</b> \<Boolean\><dt>
+<dd>ask swa residue sampler for a random solution</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-num_random_samples</b> \<Integer\><dt>
+<dd>Number of samples from swa residue sampler before minimizing best</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
+<dt><b>-filter_user_alignment_res</b> \<Boolean\><dt>
+<dd> filter_user_alignment_res </dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-output_pdb</b> \<Boolean\><dt>
+<dd>output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+ </li>
 <li><h2>full_model</h2>
 <dl>
 <dt><b>-full_model</b> \<Boolean\><dt>
@@ -13030,6 +13225,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-cutpoint_open</b> \<IntegerVector\><dt>
 <dd>open cutpoints in full model</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-cutpoint_closed</b> \<IntegerVector\><dt>
+<dd>closed cutpoints in full model</dd><br>
+<dd>Default: []</dd><br>
 </dl>
 <dl>
 <dt><b>-other_poses</b> \<StringVector\><dt>

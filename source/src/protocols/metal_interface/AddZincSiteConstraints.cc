@@ -16,14 +16,14 @@
 #include <protocols/metal_interface/MetalSiteResidue.hh>
 
 //Constraint Headers
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/CircularHarmonicFunc.hh>
-#include <core/scoring/constraints/MinMultiHarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/CircularHarmonicFunc.hh>
+#include <core/scoring/func/MinMultiHarmonicFunc.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 

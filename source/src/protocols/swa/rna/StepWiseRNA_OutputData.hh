@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file StepWiseRNA_Output_Data.hh
+/// @file StepWiseRNA_OutputData.hh
 /// @brief
 /// @detailed
 ///
@@ -44,6 +44,8 @@
 
 typedef  numeric::xyzMatrix< core::Real > Matrix;
 
+using namespace core;
+
 namespace protocols {
 namespace swa {
 namespace rna {
@@ -56,7 +58,10 @@ core::io::silent::BinaryRNASilentStruct
 get_binary_rna_silent_struct_safe_wrapper( core::pose::Pose const & const_pose, std::string const & tag, std::string const & silent_file, bool const write_score_only );
 
 void
-Output_data( core::io::silent::SilentFileData& silent_file_data, std::string const & silent_file, std::string const & tag, bool const write_score_only, core::pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, StepWiseRNA_JobParametersCOP job_parameters_ );
+output_data( std::string const & silent_file, std::string const & tag, bool const write_score_only, pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, StepWiseRNA_JobParametersCOP job_parameters_ );
+
+void
+output_data( core::io::silent::SilentFileData& silent_file_data, std::string const & silent_file, std::string const & tag, bool const write_score_only, core::pose::Pose const & pose, core::pose::PoseCOP native_poseCOP, StepWiseRNA_JobParametersCOP job_parameters_ );
 
 
 }

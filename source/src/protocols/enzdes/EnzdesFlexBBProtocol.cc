@@ -46,7 +46,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/id/SequenceMapping.hh>
 //#include <core/scoring/constraints/CoordinateConstraint.hh>
-//#include <core/scoring/constraints/HarmonicFunc.hh>
+//#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/EnergyMap.hh>

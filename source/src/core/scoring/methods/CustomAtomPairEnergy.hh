@@ -22,7 +22,7 @@
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/constraints/SOGFunc_Impl.hh>
+#include <core/scoring/func/SOGFunc_Impl.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

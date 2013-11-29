@@ -38,7 +38,7 @@
 // AUTO-REMOVED #include <core/chemical/util.hh>
 
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 
 #include <core/conformation/util.hh> //idealize
 #include <core/fragment/Frame.hh>

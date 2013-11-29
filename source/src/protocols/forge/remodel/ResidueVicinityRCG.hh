@@ -22,7 +22,7 @@
 // project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/types.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 

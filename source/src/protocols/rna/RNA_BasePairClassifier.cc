@@ -54,7 +54,7 @@
 using namespace core;
 using basic::T;
 
-static basic::Tracer TR( "protocols.rna.rna_base_pair_classifier" ) ;
+static basic::Tracer TR( "protocols.rna.RNA_BasePairClassifier" ) ;
 
 namespace protocols {
 namespace rna {

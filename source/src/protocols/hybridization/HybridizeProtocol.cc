@@ -47,7 +47,7 @@
 #include <core/fragment/picking_old/vall/util.hh>
 
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/io/silent/SilentStructFactory.hh>

@@ -19,15 +19,15 @@
 #include <protocols/seeded_abinitio/CoordinateCst.hh>
 #include <protocols/seeded_abinitio/CoordinateCstCreator.hh>
 
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <numeric/xyzVector.hh>
 
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/types.hh>
 
 #include <protocols/rosetta_scripts/util.hh>

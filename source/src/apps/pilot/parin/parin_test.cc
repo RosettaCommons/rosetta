@@ -170,7 +170,7 @@ OPT_KEY( IntegerVector, helical_ends_to_full_res)
 OPT_KEY( IntegerVector, cutpoint_closed)
 OPT_KEY( String, filter_filename)
 OPT_KEY( IntegerVector, virtual_res)
-OPT_KEY( IntegerVector, virtual_ribose)
+OPT_KEY( IntegerVector, virtual_sugar)
 OPT_KEY( IntegerVector, native_virtual_res)
 OPT_KEY( IntegerVector, native_alignment_res)
 OPT_KEY( IntegerVector, rmsd_res)
@@ -271,8 +271,8 @@ multiple_variant_type_test(){
 		output_pose_name+="iAU";
 		dump_pdb( pose, output_pose_name+ ".pdb" );	
 
-		Output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
-		Output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
+		output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
+		output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
 		std::cout << std::endl;
 	
 		/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -283,8 +283,8 @@ multiple_variant_type_test(){
 		dump_pdb( pose, output_pose_name+ ".pdb" );	
 	
 		
-		Output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
-		Output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
+		output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
+		output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
 		std::cout << std::endl;
 
 	
@@ -294,8 +294,8 @@ multiple_variant_type_test(){
 		output_pose_name+="iRP";
 		dump_pdb( pose, output_pose_name+ ".pdb" );	
 
-		Output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
-		Output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
+		output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
+		output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
 		std::cout << std::endl;
 
 		std::cout << "REMOVE VIRTUAL_RNA_RESIDUE_UPPER " << std::endl;
@@ -303,8 +303,8 @@ multiple_variant_type_test(){
 		output_pose_name+="iRU";
 		dump_pdb( pose, output_pose_name+ ".pdb" );		
 
-		Output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
-		Output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
+		output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
+		output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
 		std::cout << std::endl;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -621,11 +621,11 @@ hermann_phase_two_minimize(){
 	Size const num_extra_rounds=20;
 
 
-	Output_boolean("biox_submit= ", biox_submit, TR ); std::cout << std::endl;
-	Output_boolean("output_silentfile_every_round= ", output_silentfile_every_round, TR ); std::cout << std::endl;
-	Output_boolean("output_copy_DOF= ", output_copy_DOF, TR ); std::cout << std::endl;
-	Output_boolean("skip_minimize= ", skip_minimize, TR ); std::cout << std::endl;
-	Output_boolean("extra_minimize_rounds= ", extra_minimize_rounds, TR ); std::cout << std::endl;
+	output_boolean("biox_submit= ", biox_submit, TR ); std::cout << std::endl;
+	output_boolean("output_silentfile_every_round= ", output_silentfile_every_round, TR ); std::cout << std::endl;
+	output_boolean("output_copy_DOF= ", output_copy_DOF, TR ); std::cout << std::endl;
+	output_boolean("skip_minimize= ", skip_minimize, TR ); std::cout << std::endl;
+	output_boolean("extra_minimize_rounds= ", extra_minimize_rounds, TR ); std::cout << std::endl;
 
 
 	bool copy_DOF=false;
@@ -699,7 +699,7 @@ hermann_phase_two_minimize(){
 
 	utility::vector1< core::Size > const minimize_res_list= option[ minimize_res ]();
 	
-	Output_seq_num_list("minimize_res_list= ", minimize_res_list, TR, 30 );
+	output_seq_num_list("minimize_res_list= ", minimize_res_list, TR, 30 );
 
 	utility::vector1< std::string > const	fold_tree_string_list= option[ fold_tree_strings ]();	
 	std::string const filtered_tag_file=option[ filter_filename  ]();
@@ -765,7 +765,7 @@ hermann_phase_two_minimize(){
 	std::cout << "total_min_rounds= " << scorefxn_list.size() << " num_extra_rounds= " << num_extra_rounds << std::endl;
 
 	////////////////////////////////////Setup fold_tree...////////////////////////////////////////////////////////////////////
-	Output_title_text("Setup FOLD_TREE", TR );
+	output_title_text("Setup FOLD_TREE", TR );
 	core::kinematics::FoldTree fold_tree( total_res );
 
 	for(Size ii=1; ii<=fold_tree_string_list.size(); ii++){
@@ -782,7 +782,7 @@ hermann_phase_two_minimize(){
 
 		fold_tree.new_jump( five_prime_seq_num, three_prime_seq_num, cut_point );
 	}		
-	Output_fold_tree_info(fold_tree, "fold_tree derived from user inputted fold_tree_strings");
+	output_fold_tree_info(fold_tree, "fold_tree derived from user inputted fold_tree_strings");
 
 
 	////////////////////////setup coresponding movemap_list//////////////////////////////////////////////////////
@@ -831,7 +831,7 @@ hermann_phase_two_minimize(){
 		utility_exit_with_message( "scorefxn_list.size()"+string_of(scorefxn_list.size())+"!mm_list.size()("+string_of(mm_list.size())+")" );
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Output_title_text("IMPORT_FILTERED_FILENAME", TR );
+	output_title_text("IMPORT_FILTERED_FILENAME", TR );
 
 	Size const num_nstruct_per_node=option[ user_num_nstruct_per_node ]();
 	Size const JOB_ID_MOD_CUTOFF=option[ user_JOB_ID_MOD_CUTOFF ]();
@@ -975,7 +975,7 @@ hermann_phase_two_minimize(){
 		std::cout << "SO_FAR: num_tag_pair_found= " << num_tag_pair_found << " time_taken=" << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC <<std::endl;
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 		if(copy_DOF){
-			Output_title_text("COPY DOFS", TR );
+			output_title_text("COPY DOFS", TR );
 
 			pose::Pose copy_DOF_pose;
 
@@ -1013,7 +1013,7 @@ hermann_phase_two_minimize(){
 
 			//continue;
 		}else{
-			Output_title_text("IMPORT PDB", TR );
+			output_title_text("IMPORT PDB", TR );
 			//import PDB? CAN JUST COPY DOF? MIGHT NEED the alignment helix...
 
 			std::cout << "importing " << import_pose_tag << std::endl;
@@ -1182,9 +1182,9 @@ hermann_phase_two_minimize(){
 				BinaryRNASilentStruct s( full_pose, full_pose_tag_MOD );
 
 				if(verbose){
-						protocols::swa::rna::Output_seq_num_list("native_virtual_res_list=", native_virtual_res_list, TR );
-						protocols::swa::rna::Output_seq_num_list("native_alignment_res_list=",native_alignment_res_list, TR );
-						protocols::swa::rna::Output_seq_num_list("rmsd_res_list=",rmsd_res_list, TR );
+						protocols::swa::rna::output_seq_num_list("native_virtual_res_list=", native_virtual_res_list, TR );
+						protocols::swa::rna::output_seq_num_list("native_alignment_res_list=",native_alignment_res_list, TR );
+						protocols::swa::rna::output_seq_num_list("rmsd_res_list=",rmsd_res_list, TR );
 				}
 
 
@@ -1321,10 +1321,10 @@ hermann_phase_two(){
 	utility::vector1< pose_data_struct2 > upper_pose_data_list=convert_silent_file_to_pose_data_list(silent_files_list[2]);
 
 
-	Output_title_text("align LOWER SWA pdbs", TR );
+	output_title_text("align LOWER SWA pdbs", TR );
 	align_pdbs_function(static_pose, lower_pose_data_list, lower_alignment_res_pair_list, 	alignment_RMSD_cutoff);
 
-	Output_title_text("align UPPER SWA pdbs", TR );
+	output_title_text("align UPPER SWA pdbs", TR );
 	align_pdbs_function(static_pose, upper_pose_data_list, upper_alignment_res_pair_list, 	alignment_RMSD_cutoff);
 
 
@@ -1717,7 +1717,7 @@ calculate_theoretical_RNA_length_with_bond_angle_dependence(){
 			add_torsion_id(TorsionID( moving_suite_    , CHI, 3 )); //nu2_2
 
 			lower_base_state = (sample_syn_chi1_) ? BOTH: ANTI;
-			if(Is_bulge_) lower_base_state= NONE ;
+			if(is_bulge_) lower_base_state= NONE ;
 		}
 
 		add_torsion_id( TorsionID( moving_suite_    , BB, 5 ) ); // epsilon1
@@ -1732,7 +1732,7 @@ calculate_theoretical_RNA_length_with_bond_angle_dependence(){
 			add_torsion_id( TorsionID( moving_suite_ + 1, CHI, 3 ) ); //nu2_2
 
 			upper_base_state = (sample_syn_chi2_) ? BOTH: ANTI;
-			if(Is_bulge_) upper_base_state = NONE ;
+			if(is_bulge_) upper_base_state = NONE ;
 		}
 */
 
@@ -1779,7 +1779,7 @@ extract_clash_list(){
 
 	sort_seq_num_list(sample_res_list);
 
-	Output_seq_num_list("sample_res_list= ", sample_res_list, TR );
+	output_seq_num_list("sample_res_list= ", sample_res_list, TR );
 
 	for(Size seq_num_1=1; seq_num_1<=sample_res_list.size(); seq_num_1++){
 
@@ -1797,10 +1797,10 @@ extract_clash_list(){
 			if(rsd_1.atom_type(atomno_1).name()=="VIRT") continue; 
 
 
-			bool const Is_3_prime_phosphate_1=Is_three_prime_phosphate_atom(atom_name_1); //This is just the O3' atom
-			bool const Is_5_prime_phosphate_1=Is_five_prime_phosphate_atom(atom_name_1);  //This is O5', OP2, OP1 and P 
+			bool const is_3_prime_phosphate_1=is_three_prime_phosphate_atom(atom_name_1); //This is just the O3' atom
+			bool const is_5_prime_phosphate_1=is_five_prime_phosphate_atom(atom_name_1);  //This is O5', OP2, OP1 and P 
 
-			bool const Is_base_sugar_1=(Is_3_prime_phosphate_1==false && Is_5_prime_phosphate_1==false);
+			bool const is_base_sugar_1=(is_3_prime_phosphate_1==false && is_5_prime_phosphate_1==false);
 
 			for(Size atomno_2=1; atomno_2<=other_rsd.natoms(); atomno_2++){ //include hydrogen atoms
 
@@ -1812,32 +1812,32 @@ extract_clash_list(){
 				if(atom_name_2=="HO2'") continue;
 				//if(rsd_2.atom_type(atomno_2).name()=="VIRT") continue; 
 
-				bool const Is_3_prime_phosphate_2=Is_three_prime_phosphate_atom(atom_name_2);
-				bool const Is_5_prime_phosphate_2=Is_five_prime_phosphate_atom(atom_name_2);
+				bool const is_3_prime_phosphate_2=is_three_prime_phosphate_atom(atom_name_2);
+				bool const is_5_prime_phosphate_2=is_five_prime_phosphate_atom(atom_name_2);
 
-				bool const Is_base_sugar_2=(Is_3_prime_phosphate_2==false && Is_5_prime_phosphate_2==false);
+				bool const is_base_sugar_2=(is_3_prime_phosphate_2==false && is_5_prime_phosphate_2==false);
 
 				if(seq_num_1==seq_num_2){ //same nucleotide
-					if( (Is_base_sugar_1 ) && (Is_base_sugar_2 ) ) continue; //Ignore clash between same base-sugar group
+					if( (is_base_sugar_1 ) && (is_base_sugar_2 ) ) continue; //Ignore clash between same base-sugar group
 
-					if( Is_3_prime_phosphate_1 && Is_3_prime_phosphate_2 ) continue; //Ignore clash between same phosphate group
-					if( Is_5_prime_phosphate_1 && Is_5_prime_phosphate_2 ) continue; //Ignore clash between same phosphate group
+					if( is_3_prime_phosphate_1 && is_3_prime_phosphate_2 ) continue; //Ignore clash between same phosphate group
+					if( is_5_prime_phosphate_1 && is_5_prime_phosphate_2 ) continue; //Ignore clash between same phosphate group
 
-					if( Is_3_prime_phosphate_1 && Is_base_sugar_2) continue; //O3' atom is actually part of the 3' sugar
-					if( Is_3_prime_phosphate_2 && Is_base_sugar_1) continue; //O3' atom is actually part of the 3' sugar
+					if( is_3_prime_phosphate_1 && is_base_sugar_2) continue; //O3' atom is actually part of the 3' sugar
+					if( is_3_prime_phosphate_2 && is_base_sugar_1) continue; //O3' atom is actually part of the 3' sugar
 
 				}
 
 				if(seq_num_1==1 && seq_num_2==2){ 
-					if( Is_3_prime_phosphate_1 && Is_5_prime_phosphate_2) continue; //Ignore clash between same phosphate group
+					if( is_3_prime_phosphate_1 && is_5_prime_phosphate_2) continue; //Ignore clash between same phosphate group
 				} 
 
 				if(seq_num_2==1 && seq_num_1==2){ 
-					if( Is_3_prime_phosphate_2 && Is_5_prime_phosphate_1) continue; //Ignore clash between same phosphate group
+					if( is_3_prime_phosphate_2 && is_5_prime_phosphate_1) continue; //Ignore clash between same phosphate group
 				}
 
-				if(Is_bonded_neighbor_atoms_at_phosphate_interface(atom_name_1, seq_num_1, atom_name_2, seq_num_2)) continue;
-				if(Is_bonded_neighbor_atoms_at_phosphate_interface(atom_name_2, seq_num_2, atom_name_1, seq_num_1)) continue;
+				if(is_bonded_neighbor_atoms_at_phosphate_interface(atom_name_1, seq_num_1, atom_name_2, seq_num_2)) continue;
+				if(is_bonded_neighbor_atoms_at_phosphate_interface(atom_name_2, seq_num_2, atom_name_1, seq_num_1)) continue;
 
 				if(atom_name_1==atom_name_2 && seq_num_1==seq_num_2){
 					std::cout << "atom_name_1=" << atom_name_1 << std::endl;
@@ -1914,7 +1914,7 @@ extract_hydrogen_bonds_statistic(){
 
 	utility::vector1< core::Size > sample_res_list=input_sample_res_list;
 
-	Output_boolean("include_edge_phosphate= ", include_edge_phosphate, TR ); std::cout << std::endl;
+	output_boolean("include_edge_phosphate= ", include_edge_phosphate, TR ); std::cout << std::endl;
 
 
 	if(include_edge_phosphate){ //Assume continuous_range for now.
@@ -1936,8 +1936,8 @@ extract_hydrogen_bonds_statistic(){
 
 	}
 
-	Output_seq_num_list("input_sample_res_list= ", input_sample_res_list, TR );
-	Output_seq_num_list("sample_res_list= ", sample_res_list, TR );
+	output_seq_num_list("input_sample_res_list= ", input_sample_res_list, TR );
+	output_seq_num_list("sample_res_list= ", sample_res_list, TR );
 
 	utility::vector1< Hydrogen_Bond_Info > hydrogen_bond_info_list;
 
@@ -1945,13 +1945,13 @@ extract_hydrogen_bonds_statistic(){
 	
 	for(Size sample_res_ID=1; sample_res_ID<=sample_res_list.size(); sample_res_ID++){
 
-		bool Is_five_prime_edge=false;
-		bool Is_three_prime_edge=false;
+		bool is_five_prime_edge=false;
+		bool is_three_prime_edge=false;
 
 
 		if(include_edge_phosphate){
-			if(sample_res_ID==1 && include_edge_phosphate==true) Is_five_prime_edge=true;
-			if(sample_res_ID==sample_res_list.size() && include_edge_phosphate==true) Is_three_prime_edge=true;
+			if(sample_res_ID==1 && include_edge_phosphate==true) is_five_prime_edge=true;
+			if(sample_res_ID==sample_res_list.size() && include_edge_phosphate==true) is_three_prime_edge=true;
 		}
 
 		core::Size const sample_res=sample_res_list[sample_res_ID];
@@ -1962,9 +1962,9 @@ extract_hydrogen_bonds_statistic(){
 
 			core::conformation::Residue const & surrounding_rsd=pose.residue(seq_num);
 
-			get_hbonds_1way(hydrogen_bond_info_list, sample_rsd, surrounding_rsd, sample_res, Is_five_prime_edge, Is_three_prime_edge, verbose); //sample_rsd as donor
+			get_hbonds_1way(hydrogen_bond_info_list, sample_rsd, surrounding_rsd, sample_res, is_five_prime_edge, is_three_prime_edge, verbose); //sample_rsd as donor
 
-			get_hbonds_1way(hydrogen_bond_info_list, surrounding_rsd, sample_rsd, sample_res, Is_five_prime_edge, Is_three_prime_edge, verbose); //sample_rsd as acceptor
+			get_hbonds_1way(hydrogen_bond_info_list, surrounding_rsd, sample_rsd, sample_res, is_five_prime_edge, is_three_prime_edge, verbose); //sample_rsd as acceptor
 
 			if(verbose==true) verbose=false;
 
@@ -2313,7 +2313,7 @@ minimize_pdb(){
 	mm.set_chi( false );
 	mm.set_jump( false );
 
-	Output_seq_num_list("minimize_res_list= ", minimize_res_list, TR, 30 );
+	output_seq_num_list("minimize_res_list= ", minimize_res_list, TR, 30 );
 
 	for(Size n=1; n<=minimize_res_list.size(); n++){
 		Size const seq_num=minimize_res_list[n];
@@ -2336,7 +2336,7 @@ minimize_pdb(){
 
 		kinematics::FoldTree const start_fold_tree=pose.fold_tree();
 		if(start_fold_tree.is_simple_tree()==false){
-			Output_fold_tree_info(pose, 	pdb_tag); std::cout << std::endl;	
+			output_fold_tree_info(pose, 	pdb_tag); std::cout << std::endl;	
 			utility_exit_with_message("Error: imported_pose does not have a simple fold_tree");
 		}	
 		Size const nres=pose.total_residue();
@@ -2365,7 +2365,7 @@ minimize_pdb(){
 		
 		std::cout << "----------------------------------------------------------" << std::endl;
 		std::cout << "FINAL_fold_Tree:" << std::endl;
-		Output_fold_tree_info(pose, 	pdb_tag); std::cout << std::endl;	
+		output_fold_tree_info(pose, 	pdb_tag); std::cout << std::endl;	
 		std::cout << "----------------------------------------------------------" << std::endl;
 
 
@@ -2402,12 +2402,12 @@ hack_create_torsion_value_string(core::Real const & torsion_value){
 
 
 std::string //silly function used for appending the rotamer value to the tag
-hack_create_rotamer_string( core::pose::Pose const & pose, bool const Is_prepend, Size const moving_res ){
+hack_create_rotamer_string( core::pose::Pose const & pose, bool const is_prepend, Size const moving_res ){
 
 	std::string rotamer_tag="";
 
-	conformation::Residue const & five_prime_rsd= (Is_prepend) ? pose.residue(moving_res): pose.residue(moving_res-1);
-	conformation::Residue const & three_prime_rsd= (Is_prepend) ?  pose.residue(moving_res+1) : pose.residue(moving_res);
+	conformation::Residue const & five_prime_rsd= (is_prepend) ? pose.residue(moving_res): pose.residue(moving_res-1);
+	conformation::Residue const & three_prime_rsd= (is_prepend) ?  pose.residue(moving_res+1) : pose.residue(moving_res);
 
 
 	rotamer_tag.append("_E" + hack_create_torsion_value_string(five_prime_rsd.mainchain_torsion( 5  ) ) );
@@ -2417,7 +2417,7 @@ hack_create_rotamer_string( core::pose::Pose const & pose, bool const Is_prepend
 	rotamer_tag.append("_G" + hack_create_torsion_value_string(three_prime_rsd.mainchain_torsion( 3 ) ) );
 
 
-	if(Is_prepend){
+	if(is_prepend){
 		rotamer_tag.append("_D" + hack_create_torsion_value_string(five_prime_rsd.mainchain_torsion( 4 ) ) );
 		rotamer_tag.append("_C" + hack_create_torsion_value_string(five_prime_rsd.chi(  1) ) );
 
@@ -2431,11 +2431,11 @@ hack_create_rotamer_string( core::pose::Pose const & pose, bool const Is_prepend
 }
 
 bool
-Is_new_cluster_center_rotamer(pose::Pose const & pose, 
+is_new_cluster_center_rotamer(pose::Pose const & pose, 
 														pose::Pose & cluster_center_pose, 
 														Size const rotamer_count,
 														Size const sample_res,
-														bool const Is_prepend, 
+														bool const is_prepend, 
 														Real const cluster_rmsd, 
 														utility::vector1< utility::vector1< Torsion_Info > > const & cluster_center_rotamer_list){
 
@@ -2445,7 +2445,7 @@ Is_new_cluster_center_rotamer(pose::Pose const & pose,
 
 		apply_rotamer( cluster_center_pose, cluster_center_rotamer_list[cluster_ID] );
 
-		Real const rmsd=suite_rmsd(pose, cluster_center_pose, sample_res, Is_prepend, true); 			
+		Real const rmsd=suite_rmsd(pose, cluster_center_pose, sample_res, is_prepend, true); 			
 
 		if(rmsd < cluster_rmsd) {
 			if(verbose) std::cout << "rotamer_count= "<< rotamer_count << " is part of cluster center " << cluster_ID << ". RMSD= " << rmsd << std::endl;
@@ -2460,7 +2460,7 @@ Is_new_cluster_center_rotamer(pose::Pose const & pose,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void
-get_residue_xyz_list(pose::Pose const & pose, Size const sample_res, bool const Is_prepend, utility::vector1< numeric::xyzVector<Real> > & xyz_list){
+get_residue_xyz_list(pose::Pose const & pose, Size const sample_res, bool const is_prepend, utility::vector1< numeric::xyzVector<Real> > & xyz_list){
 
 		xyz_list.clear();
 
@@ -2468,7 +2468,7 @@ get_residue_xyz_list(pose::Pose const & pose, Size const sample_res, bool const 
 
 		conformation::Residue const & base_rsd= pose.residue(sample_res);
 
-		conformation::Residue const & phosphate_rsd= (Is_prepend) ? pose.residue(sample_res+1) : pose.residue(sample_res);
+		conformation::Residue const & phosphate_rsd= (is_prepend) ? pose.residue(sample_res+1) : pose.residue(sample_res);
 
 		if(num_heavy_backbone_atoms!=(base_rsd.first_sidechain_atom()-1) ){
 			std::cout << "num_heavy_backbone_atoms= " << num_heavy_backbone_atoms << std::endl;
@@ -2492,7 +2492,7 @@ get_residue_xyz_list(pose::Pose const & pose, Size const sample_res, bool const 
 
 		for ( Size atomno=1; atomno<= base_rsd.first_sidechain_atom(); atomno++ ){ //rsd.first_sidechain_atom() is the O2prime oxygen.
 
-			if(Is_prepend && (atomno<=4) ){
+			if(is_prepend && (atomno<=4) ){
 
 				if(phosphate_rsd.atom_type(atomno).name()=="VIRT"){
 					std::cout << "phosphate_rsd.atom_type(atomno).name()==\"VIRT\"!, atomno= " << atomno << std::endl;
@@ -2522,10 +2522,10 @@ get_residue_xyz_list(pose::Pose const & pose, Size const sample_res, bool const 
 
 
 bool
-Is_new_cluster_center_xyz(pose::Pose const & pose, 
+is_new_cluster_center_xyz(pose::Pose const & pose, 
 												 Size const rotamer_count, 
 												 Size const sample_res, 
-												 bool const Is_prepend, 
+												 bool const is_prepend, 
 												 Real const cluster_rmsd,  
 												 utility::vector1< utility::vector1< numeric::xyzVector<Real> > >	& cluster_center_xyz_list){
 
@@ -2533,7 +2533,7 @@ Is_new_cluster_center_xyz(pose::Pose const & pose,
 
 	utility::vector1< numeric::xyzVector<Real> > curr_xyz_list;	
 
-	get_residue_xyz_list( pose, sample_res, Is_prepend, curr_xyz_list);
+	get_residue_xyz_list( pose, sample_res, is_prepend, curr_xyz_list);
 
 	Real const CUTOFF_sum_square_deviation=(cluster_rmsd*cluster_rmsd)*(curr_xyz_list.size());
 
@@ -2577,7 +2577,7 @@ Is_new_cluster_center_xyz(pose::Pose const & pose,
 
 
 bool
-Is_cluster_member(utility::vector1< numeric::xyzVector<Real> > const & cluster_center_xyzs, 
+is_cluster_member(utility::vector1< numeric::xyzVector<Real> > const & cluster_center_xyzs, 
 								 utility::vector1< numeric::xyzVector<Real> > const & curr_xyz_list, 
 								 Real const CUTOFF_sum_square_deviation){
 
@@ -2604,10 +2604,10 @@ Is_cluster_member(utility::vector1< numeric::xyzVector<Real> > const & cluster_c
 }
 
 bool
-Is_new_cluster_center_second_stage(pose::Pose const & pose, 
+is_new_cluster_center_second_stage(pose::Pose const & pose, 
 												 				Size const rotamer_count, 
 												 				Size const sample_res, 
-												 				bool const Is_prepend, 
+												 				bool const is_prepend, 
 												 				Real const cluster_rmsd, 
 												 				Real const large_cluster_rmsd, 
 																utility::vector1< utility::vector1<Size> > & large_to_small_cluster_center_map_list, 
@@ -2617,7 +2617,7 @@ Is_new_cluster_center_second_stage(pose::Pose const & pose,
 
 	utility::vector1< numeric::xyzVector<Real> > curr_xyz_list;	
 
-	get_residue_xyz_list( pose, sample_res, Is_prepend, curr_xyz_list);
+	get_residue_xyz_list( pose, sample_res, is_prepend, curr_xyz_list);
 
 	Real const first_stage_CUTOFF_sum_square_deviation=((cluster_rmsd+large_cluster_rmsd)*(cluster_rmsd+large_cluster_rmsd))*(curr_xyz_list.size());
 	Real const second_stage_CUTOFF_sum_square_deviation=((cluster_rmsd)*(cluster_rmsd))*(curr_xyz_list.size());
@@ -2625,13 +2625,13 @@ Is_new_cluster_center_second_stage(pose::Pose const & pose,
 	for(Size large_cluster_ID=large_cluster_center_xyz_list.size(); large_cluster_ID>=1; large_cluster_ID--){ //more likely to be cluster a cluster member of a neighbor rotamer.
 
 		//Use triangular identity here.
-		if(Is_cluster_member(large_cluster_center_xyz_list[large_cluster_ID], curr_xyz_list, first_stage_CUTOFF_sum_square_deviation)==false) continue;
+		if(is_cluster_member(large_cluster_center_xyz_list[large_cluster_ID], curr_xyz_list, first_stage_CUTOFF_sum_square_deviation)==false) continue;
 
 		utility::vector1<Size> const & large_to_small_cluster_center_map=large_to_small_cluster_center_map_list[large_cluster_ID];
 
 		for(Size n=1; n<=large_to_small_cluster_center_map.size(); n++){
 			Size const small_cluster_ID=large_to_small_cluster_center_map[n];
-			if(Is_cluster_member(small_cluster_center_xyz_list[small_cluster_ID], curr_xyz_list, second_stage_CUTOFF_sum_square_deviation)){
+			if(is_cluster_member(small_cluster_center_xyz_list[small_cluster_ID], curr_xyz_list, second_stage_CUTOFF_sum_square_deviation)){
 				 return false;
 			}			
 		}
@@ -2682,11 +2682,11 @@ Is_new_cluster_center_second_stage(pose::Pose const & pose,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Ignore atoms that are within 3-bonds
 bool
-Is_bonded_neighbor_atoms_at_phosphate_interface(std::string const & atom_name_1, Size const seq_num_1, std::string const & atom_name_2, Size const seq_num_2){
+is_bonded_neighbor_atoms_at_phosphate_interface(std::string const & atom_name_1, Size const seq_num_1, std::string const & atom_name_2, Size const seq_num_2){
 
 
 
-	if(Is_O3prime_atom(atom_name_1)){
+	if(is_O3prime_atom(atom_name_1)){
 
 		if(seq_num_1==seq_num_2){ 
 
@@ -2694,72 +2694,72 @@ Is_bonded_neighbor_atoms_at_phosphate_interface(std::string const & atom_name_1,
 
 		}else if(seq_num_1==(seq_num_2-1)){
 
-			if(Is_C5prime_atom(atom_name_2)) return true; //3 bond
+			if(is_C5prime_atom(atom_name_2)) return true; //3 bond
 
 		}
 	}
 
 
-	if(Is_P_atom(atom_name_1)){
+	if(is_P_atom(atom_name_1)){
 
 		if(seq_num_1==(seq_num_2+1)){ 
 
-			if(Is_C3prime_atom(atom_name_2)) return true; //2 bond
+			if(is_C3prime_atom(atom_name_2)) return true; //2 bond
 
-			if(Is_H3prime_atom(atom_name_2)) return true; //3 bond
+			if(is_H3prime_atom(atom_name_2)) return true; //3 bond
 
-			if(Is_C4prime_atom(atom_name_2)) return true; //3 bond
+			if(is_C4prime_atom(atom_name_2)) return true; //3 bond
 
-			if(Is_C2prime_atom(atom_name_2)) return true; //3 bond
+			if(is_C2prime_atom(atom_name_2)) return true; //3 bond
 
 		}else if(seq_num_1==seq_num_2){ 
 
-			if(Is_C5prime_atom(atom_name_2)) return true; //2 bond
+			if(is_C5prime_atom(atom_name_2)) return true; //2 bond
 
-			if(Is_1H5prime_atom(atom_name_2)) return true; //3 bond
+			if(is_1H5prime_atom(atom_name_2)) return true; //3 bond
 
-			if(Is_2H5prime_atom(atom_name_2)) return true; //3 bond
+			if(is_2H5prime_atom(atom_name_2)) return true; //3 bond
 
-			if(Is_C4prime_atom(atom_name_2)) return true; //3 bond
+			if(is_C4prime_atom(atom_name_2)) return true; //3 bond
 
 		}
 	}
 
 
-	if( (Is_OP2_atom(atom_name_1) || Is_OP1_atom(atom_name_1) ) ){
+	if( (is_OP2_atom(atom_name_1) || is_OP1_atom(atom_name_1) ) ){
 
 		if(seq_num_1==(seq_num_2+1)){ 
 
-			if(Is_C3prime_atom(atom_name_2)) return true; //3 bond
+			if(is_C3prime_atom(atom_name_2)) return true; //3 bond
 
 		}else if(seq_num_1==seq_num_2){ 
 
-			if(Is_C5prime_atom(atom_name_2)) return true; //3 bond
+			if(is_C5prime_atom(atom_name_2)) return true; //3 bond
 
 		}
 	}
 
-	if(Is_O5prime_atom(atom_name_1)){
+	if(is_O5prime_atom(atom_name_1)){
 
 		if(seq_num_1==(seq_num_2+1)){ 
 
-			if(Is_C3prime_atom(atom_name_2)) return true; //3 bond
+			if(is_C3prime_atom(atom_name_2)) return true; //3 bond
 
 		}else if(seq_num_1==seq_num_2){ 
 
-			if(Is_C5prime_atom(atom_name_2)) return true; //1 bond
+			if(is_C5prime_atom(atom_name_2)) return true; //1 bond
 
-			if(Is_1H5prime_atom(atom_name_2)) return true; //2 bond
+			if(is_1H5prime_atom(atom_name_2)) return true; //2 bond
 
-			if(Is_2H5prime_atom(atom_name_2)) return true; //2 bond
+			if(is_2H5prime_atom(atom_name_2)) return true; //2 bond
 
-			if(Is_C4prime_atom(atom_name_2)) return true; //2 bond
+			if(is_C4prime_atom(atom_name_2)) return true; //2 bond
 
-			if(Is_H4prime_atom(atom_name_2)) return true; //3 bond
+			if(is_H4prime_atom(atom_name_2)) return true; //3 bond
 
-			if(Is_C3prime_atom(atom_name_2)) return true; //3 bond
+			if(is_C3prime_atom(atom_name_2)) return true; //3 bond
 
-			if(Is_O4prime_atom(atom_name_2)) return true; //3 bond
+			if(is_O4prime_atom(atom_name_2)) return true; //3 bond
 
 		}
 	}
@@ -2785,10 +2785,10 @@ setup_VDW_rep_atom_map_list(pose::Pose const & pose, utility::vector1< std::pair
 		if(rsd_1.atom_type(atomno_1).name()=="VIRT") continue; 
 
 
-		bool const Is_3_prime_phosphate_1=Is_three_prime_phosphate_atom(atom_name_1); //This is just the O3' atom
-		bool const Is_5_prime_phosphate_1=Is_five_prime_phosphate_atom(atom_name_1);  //This is O5', OP2, OP1 and P 
+		bool const is_3_prime_phosphate_1=is_three_prime_phosphate_atom(atom_name_1); //This is just the O3' atom
+		bool const is_5_prime_phosphate_1=is_five_prime_phosphate_atom(atom_name_1);  //This is O5', OP2, OP1 and P 
 
-		bool const Is_base_sugar_1=(Is_3_prime_phosphate_1==false && Is_5_prime_phosphate_1==false);
+		bool const is_base_sugar_1=(is_3_prime_phosphate_1==false && is_5_prime_phosphate_1==false);
 
 		////////////////////////////////////////////////////////////////////////////////////
 		std::pair<Size,Size> const res_1_atom_ID = std::make_pair(seq_num_1, atomno_1);
@@ -2808,32 +2808,32 @@ setup_VDW_rep_atom_map_list(pose::Pose const & pose, utility::vector1< std::pair
 				if(atom_name_2=="HO2'") continue;
 				if(rsd_2.atom_type(atomno_2).name()=="VIRT") continue; 
 
-				bool const Is_3_prime_phosphate_2=Is_three_prime_phosphate_atom(atom_name_2);
-				bool const Is_5_prime_phosphate_2=Is_five_prime_phosphate_atom(atom_name_2);
+				bool const is_3_prime_phosphate_2=is_three_prime_phosphate_atom(atom_name_2);
+				bool const is_5_prime_phosphate_2=is_five_prime_phosphate_atom(atom_name_2);
 
-				bool const Is_base_sugar_2=(Is_3_prime_phosphate_2==false && Is_5_prime_phosphate_2==false);
+				bool const is_base_sugar_2=(is_3_prime_phosphate_2==false && is_5_prime_phosphate_2==false);
 
 				if(seq_num_1==seq_num_2){ //same nucleotide
-					if( (Is_base_sugar_1 ) && (Is_base_sugar_2 ) ) continue; //Ignore clash between same base-sugar group
+					if( (is_base_sugar_1 ) && (is_base_sugar_2 ) ) continue; //Ignore clash between same base-sugar group
 
-					if( Is_3_prime_phosphate_1 && Is_3_prime_phosphate_2 ) continue; //Ignore clash between same phosphate group
-					if( Is_5_prime_phosphate_1 && Is_5_prime_phosphate_2 ) continue; //Ignore clash between same phosphate group
+					if( is_3_prime_phosphate_1 && is_3_prime_phosphate_2 ) continue; //Ignore clash between same phosphate group
+					if( is_5_prime_phosphate_1 && is_5_prime_phosphate_2 ) continue; //Ignore clash between same phosphate group
 
-					if( Is_3_prime_phosphate_1 && Is_base_sugar_2) continue; //O3' atom is actually part of the 3' sugar
-					if( Is_3_prime_phosphate_2 && Is_base_sugar_1) continue; //O3' atom is actually part of the 3' sugar
+					if( is_3_prime_phosphate_1 && is_base_sugar_2) continue; //O3' atom is actually part of the 3' sugar
+					if( is_3_prime_phosphate_2 && is_base_sugar_1) continue; //O3' atom is actually part of the 3' sugar
 
 				}
 
 				if(seq_num_1==1 && seq_num_2==2){ 
-					if( Is_3_prime_phosphate_1 && Is_5_prime_phosphate_2) continue; //Ignore clash between same phosphate group
+					if( is_3_prime_phosphate_1 && is_5_prime_phosphate_2) continue; //Ignore clash between same phosphate group
 				} 
 
 				if(seq_num_2==1 && seq_num_1==2){ 
-					if( Is_3_prime_phosphate_2 && Is_5_prime_phosphate_1) continue; //Ignore clash between same phosphate group
+					if( is_3_prime_phosphate_2 && is_5_prime_phosphate_1) continue; //Ignore clash between same phosphate group
 				}
 
-				if(Is_bonded_neighbor_atoms_at_phosphate_interface(atom_name_1, seq_num_1, atom_name_2, seq_num_2)) continue;
-				if(Is_bonded_neighbor_atoms_at_phosphate_interface(atom_name_2, seq_num_2, atom_name_1, seq_num_1)) continue;
+				if(is_bonded_neighbor_atoms_at_phosphate_interface(atom_name_1, seq_num_1, atom_name_2, seq_num_2)) continue;
+				if(is_bonded_neighbor_atoms_at_phosphate_interface(atom_name_2, seq_num_2, atom_name_1, seq_num_1)) continue;
 
 				if(atom_name_1==atom_name_2 && seq_num_1==seq_num_2){
 					std::cout << "atom_name_1=" << atom_name_1 << std::endl;
@@ -2924,10 +2924,10 @@ pass_VDW_replusion_screen_slow(pose::Pose const & pose, Real const VDW_overlap_d
 		if(rsd_1.atom_type(atomno_1).name()=="VIRT") continue; 
 
 
-		bool const Is_3_prime_phosphate_1=Is_three_prime_phosphate_atom(atom_name_1); //This is just the O3' atom
-		bool const Is_5_prime_phosphate_1=Is_five_prime_phosphate_atom(atom_name_1);  //This is O5', OP2, OP1 and P 
+		bool const is_3_prime_phosphate_1=is_three_prime_phosphate_atom(atom_name_1); //This is just the O3' atom
+		bool const is_5_prime_phosphate_1=is_five_prime_phosphate_atom(atom_name_1);  //This is O5', OP2, OP1 and P 
 
-		bool const Is_base_sugar_1=(Is_3_prime_phosphate_1==false && Is_5_prime_phosphate_1==false);
+		bool const is_base_sugar_1=(is_3_prime_phosphate_1==false && is_5_prime_phosphate_1==false);
 
 		for(Size atomno_2=1; atomno_2<=rsd_2.natoms(); atomno_2++){ //include hydrogen atoms
 
@@ -2939,32 +2939,32 @@ pass_VDW_replusion_screen_slow(pose::Pose const & pose, Real const VDW_overlap_d
 			if(atom_name_2=="HO2'") continue;
 			if(rsd_2.atom_type(atomno_2).name()=="VIRT") continue; 
 
-			bool const Is_3_prime_phosphate_2=Is_three_prime_phosphate_atom(atom_name_2);
-			bool const Is_5_prime_phosphate_2=Is_five_prime_phosphate_atom(atom_name_2);
+			bool const is_3_prime_phosphate_2=is_three_prime_phosphate_atom(atom_name_2);
+			bool const is_5_prime_phosphate_2=is_five_prime_phosphate_atom(atom_name_2);
 
-			bool const Is_base_sugar_2=(Is_3_prime_phosphate_2==false && Is_5_prime_phosphate_2==false);
+			bool const is_base_sugar_2=(is_3_prime_phosphate_2==false && is_5_prime_phosphate_2==false);
 
 			if(seq_num_1==seq_num_2){ //same nucleotide
-				if( (Is_base_sugar_1 ) && (Is_base_sugar_2 ) ) continue; //Ignore clash between same base-sugar group
+				if( (is_base_sugar_1 ) && (is_base_sugar_2 ) ) continue; //Ignore clash between same base-sugar group
 
-				if( Is_3_prime_phosphate_1 && Is_3_prime_phosphate_2 ) continue; //Ignore clash between same phosphate group
-				if( Is_5_prime_phosphate_1 && Is_5_prime_phosphate_2 ) continue; //Ignore clash between same phosphate group
+				if( is_3_prime_phosphate_1 && is_3_prime_phosphate_2 ) continue; //Ignore clash between same phosphate group
+				if( is_5_prime_phosphate_1 && is_5_prime_phosphate_2 ) continue; //Ignore clash between same phosphate group
 
-				if( Is_3_prime_phosphate_1 && Is_base_sugar_2) continue; //O3' atom is actually part of the 3' sugar
-				if( Is_3_prime_phosphate_2 && Is_base_sugar_1) continue; //O3' atom is actually part of the 3' sugar
+				if( is_3_prime_phosphate_1 && is_base_sugar_2) continue; //O3' atom is actually part of the 3' sugar
+				if( is_3_prime_phosphate_2 && is_base_sugar_1) continue; //O3' atom is actually part of the 3' sugar
 
 			}
 
 			if(seq_num_1==1 && seq_num_2==2){ 
-				if( Is_3_prime_phosphate_1 && Is_5_prime_phosphate_2) continue; //Ignore clash between same phosphate group
+				if( is_3_prime_phosphate_1 && is_5_prime_phosphate_2) continue; //Ignore clash between same phosphate group
 			} 
 
 			if(seq_num_2==1 && seq_num_1==2){ 
-				if( Is_3_prime_phosphate_2 && Is_5_prime_phosphate_1) continue; //Ignore clash between same phosphate group
+				if( is_3_prime_phosphate_2 && is_5_prime_phosphate_1) continue; //Ignore clash between same phosphate group
 			}
 
-			if(Is_bonded_neighbor_atoms_at_phosphate_interface(atom_name_1, seq_num_1, atom_name_2, seq_num_2)) continue;
-			if(Is_bonded_neighbor_atoms_at_phosphate_interface(atom_name_2, seq_num_2, atom_name_1, seq_num_1)) continue;
+			if(is_bonded_neighbor_atoms_at_phosphate_interface(atom_name_1, seq_num_1, atom_name_2, seq_num_2)) continue;
+			if(is_bonded_neighbor_atoms_at_phosphate_interface(atom_name_2, seq_num_2, atom_name_1, seq_num_1)) continue;
 
 			if(atom_name_1==atom_name_2 && seq_num_1==seq_num_2){
 				std::cout << "atom_name_1=" << atom_name_1 << std::endl;
@@ -3011,9 +3011,9 @@ cluster_rotamers(bool const second_stage,
 								utility::vector1< utility::vector1< numeric::xyzVector<Real> > > & cluster_center_xyz_list){
 
 	if(second_stage){
-		Output_title_text("Enter Rosetta cluster_rotamers function SECOND_STAGE", TR );
+		output_title_text("Enter Rosetta cluster_rotamers function SECOND_STAGE", TR );
 	}else{
-		Output_title_text("Enter Rosetta cluster_rotamers function FIRST_STAGE", TR );
+		output_title_text("Enter Rosetta cluster_rotamers function FIRST_STAGE", TR );
 	}
 
 	using namespace core::chemical;
@@ -3039,10 +3039,10 @@ cluster_rotamers(bool const second_stage,
 
 	if(sequence.size()!=2) utility_exit_with_message( "sequence.size()!=2, sequence=" + sequence);
 
-	bool const Is_prepend=false;
-	Size const sample_res=(Is_prepend) ? 1 : 2;
-	Size const sample_suite= (Is_prepend) ? sample_res : sample_res-1;
-	Size const anchor_res=(Is_prepend) ? 2 : 1;
+	bool const is_prepend=false;
+	Size const sample_res=(is_prepend) ? 1 : 2;
+	Size const sample_suite= (is_prepend) ? sample_res : sample_res-1;
+	Size const anchor_res=(is_prepend) ? 2 : 1;
 	bool const replusion_screen=option[ cluster_rotamer_replusion_screen ]();
 	bool const VDW_rep_screening_slow_check=option[ cluster_rotamer_VDW_rep_screening_slow_check ] ();
 
@@ -3062,7 +3062,7 @@ cluster_rotamers(bool const second_stage,
 
 	std::cout << "------------------------------------------------------" << std::endl;
 	std::cout << "sequence=" << sequence << std::endl;
-	Output_boolean("Is_prepend= ", Is_prepend, TR ); std::cout << std::endl;
+	output_boolean("is_prepend= ", is_prepend, TR ); std::cout << std::endl;
 	std::cout << "sample_res= " << sample_res << std::endl;
 	std::cout << "sample_suite= " << sample_suite << std::endl;
 	std::cout << "bin_size= " << bin_size << std::endl;
@@ -3070,13 +3070,13 @@ cluster_rotamers(bool const second_stage,
 	std::cout << "large_cluster_rmsd= " << large_cluster_rmsd << std::endl;
 	std::cout << "VDW_overlap_dist_cutoff= " << VDW_overlap_dist_cutoff << std::endl;
 	std::cout << "num_atom_VDW_clash_cutoff= " << num_atom_VDW_clash_cutoff << std::endl;
-	Output_boolean("replusion_screen= ", replusion_screen, TR ); std::cout << std::endl;
+	output_boolean("replusion_screen= ", replusion_screen, TR ); std::cout << std::endl;
 	std::cout << "silent_file= " << silent_file << std::endl;
-	Output_boolean("QUICK= ", QUICK, TR ); std::cout << std::endl;
-	Output_boolean("sparse_output= ", sparse_output, TR ); std::cout << std::endl;
-	Output_boolean("create_rotamer_silent_file= ", create_rotamer_silent_file, TR ); std::cout << std::endl;
-	Output_boolean("VDW_rep_screening_slow_check= ", VDW_rep_screening_slow_check, TR ); std::cout << std::endl;
-	Output_boolean("optimize_screening= ", optimize_screening ); std::cout << std::endl;
+	output_boolean("QUICK= ", QUICK, TR ); std::cout << std::endl;
+	output_boolean("sparse_output= ", sparse_output, TR ); std::cout << std::endl;
+	output_boolean("create_rotamer_silent_file= ", create_rotamer_silent_file, TR ); std::cout << std::endl;
+	output_boolean("VDW_rep_screening_slow_check= ", VDW_rep_screening_slow_check, TR ); std::cout << std::endl;
+	output_boolean("optimize_screening= ", optimize_screening ); std::cout << std::endl;
 
 
 
@@ -3119,8 +3119,8 @@ cluster_rotamers(bool const second_stage,
 	utility::vector1< core::Size > working_moving_suite_list;
 	working_moving_suite_list.push_back(sample_suite);
 
-	bool const sample_sugar_and_base1= (Is_prepend) ? true : false;
-	bool const sample_sugar_and_base2= (Is_prepend) ? false : true;
+	bool const sample_sugar_and_base1= (is_prepend) ? true : false;
+	bool const sample_sugar_and_base2= (is_prepend) ? false : true;
 
 
 	StepWiseRNA_RotamerGeneratorWrapperOP rotamer_generator = new StepWiseRNA_RotamerGeneratorWrapper( pose,
@@ -3258,8 +3258,8 @@ cluster_rotamers(bool const second_stage,
 
 				if(pass_VDW_rep_screen!=pass_VDW_rep_screen_check){
 					std::cout << "pass_VDW_rep_screen!=pass_VDW_rep_screen_check" << rotamer_count << std::endl;
-					Output_boolean("pass_VDW_rep_screen=", pass_VDW_rep_screen, TR ); std::cout << std::endl;
-					Output_boolean("pass_VDW_rep_screen=", pass_VDW_rep_screen_check, TR ); std::cout << std::endl;
+					output_boolean("pass_VDW_rep_screen=", pass_VDW_rep_screen, TR ); std::cout << std::endl;
+					output_boolean("pass_VDW_rep_screen=", pass_VDW_rep_screen_check, TR ); std::cout << std::endl;
 					utility_exit_with_message("pass_VDW_rep_screen!=pass_VDW_rep_screen_check");
 				}	
 
@@ -3273,7 +3273,7 @@ cluster_rotamers(bool const second_stage,
 			(*scorefxn)(pose);
 
 
-			std::string const tag= "S" + hack_create_rotamer_string( pose, Is_prepend, sample_res ) + "_" + lead_zero_string_of(rotamer_count, 8); 
+			std::string const tag= "S" + hack_create_rotamer_string( pose, is_prepend, sample_res ) + "_" + lead_zero_string_of(rotamer_count, 8); 
 		
 			BinaryRNASilentStruct s( pose, tag ); //Does this take a long time to create?
 			silent_file_data.write_silent_struct(s, silent_file, true);
@@ -3285,10 +3285,10 @@ cluster_rotamers(bool const second_stage,
 			bool pass_screen;
 
 			if(second_stage){
-				pass_screen=Is_new_cluster_center_second_stage(pose, rotamer_count, sample_res, Is_prepend, cluster_rmsd, large_cluster_rmsd, 
+				pass_screen=is_new_cluster_center_second_stage(pose, rotamer_count, sample_res, is_prepend, cluster_rmsd, large_cluster_rmsd, 
 																				 large_to_small_cluster_center_map_list, cluster_center_xyz_list, input_cluster_center_xyz_list);													
 			}else{
-				pass_screen=Is_new_cluster_center_xyz(pose, rotamer_count, sample_res, Is_prepend, cluster_rmsd, cluster_center_xyz_list);
+				pass_screen=is_new_cluster_center_xyz(pose, rotamer_count, sample_res, is_prepend, cluster_rmsd, cluster_center_xyz_list);
 			}
 
 
@@ -3297,17 +3297,17 @@ cluster_rotamers(bool const second_stage,
 				bool pass_screen_check;		
 
 				if(second_stage){
-					pass_screen_check=Is_new_cluster_center_xyz(pose, rotamer_count, sample_res, Is_prepend, cluster_rmsd, check_cluster_center_xyz_list);
+					pass_screen_check=is_new_cluster_center_xyz(pose, rotamer_count, sample_res, is_prepend, cluster_rmsd, check_cluster_center_xyz_list);
 				}else{
-					pass_screen_check=Is_new_cluster_center_rotamer(pose, cluster_center_pose, rotamer_count, sample_res, Is_prepend, cluster_rmsd, cluster_center_rotamer_list);
+					pass_screen_check=is_new_cluster_center_rotamer(pose, cluster_center_pose, rotamer_count, sample_res, is_prepend, cluster_rmsd, cluster_center_rotamer_list);
 				}
 
 				if(pass_screen_check) cluster_center_rotamer_list.push_back(current_rotamer);
 
 				if(pass_screen!=pass_screen_check){
 					std::cout << "pass_screen!=pass_screen_check for rotamer_count= " << rotamer_count << std::endl;
-					Output_boolean("pass_screen=", pass_screen, TR ); std::cout << std::endl;
-					Output_boolean("pass_screen_check=", pass_screen_check, TR ); std::cout << std::endl;
+					output_boolean("pass_screen=", pass_screen, TR ); std::cout << std::endl;
+					output_boolean("pass_screen_check=", pass_screen_check, TR ); std::cout << std::endl;
 					utility_exit_with_message("pass_screen!=pass_screen_check for rotamer_count");
 				}				
 			}
@@ -3351,9 +3351,9 @@ cluster_rotamers(bool const second_stage,
 	std::cout << "Total time_taken:" <<  static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC <<std::endl;
 
 	if(second_stage){
-		Output_title_text("Exit Rosetta cluster_rotamers function SECOND_STAGE", TR );
+		output_title_text("Exit Rosetta cluster_rotamers function SECOND_STAGE", TR );
 	}else{
-		Output_title_text("Exit Rosetta cluster_rotamers function FIRST_STAGE", TR );
+		output_title_text("Exit Rosetta cluster_rotamers function FIRST_STAGE", TR );
 	}
 
 }
@@ -3364,7 +3364,7 @@ cluster_rotamers(bool const second_stage,
 void
 cluster_rotamers_wrapper(){
 
-	Output_title_text("Enter Rosetta cluster_rotamers WRAPPER ", TR );
+	output_title_text("Enter Rosetta cluster_rotamers WRAPPER ", TR );
 
 
 	utility::vector1< utility::vector1< numeric::xyzVector<Real> > > first_stage_cluster_center_xyz_list;
@@ -3397,7 +3397,7 @@ cluster_rotamers_wrapper(){
 			cluster_rotamers(false, optimize_screening, cluster_rmsd, large_cluster_rmsd, empty_list, first_stage_cluster_center_xyz_list );
 	}
 
-	Output_title_text("Exit Rosetta cluster_rotamers WRAPPER ", TR );
+	output_title_text("Exit Rosetta cluster_rotamers WRAPPER ", TR );
 
 
 }
@@ -3539,7 +3539,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( cutpoint_closed, "cutpoint_closed", blank_size_vector );
 	NEW_OPT( filter_filename, "filter_filename", "");
 	NEW_OPT( virtual_res , " virtual_res ", blank_size_vector );
-	NEW_OPT( virtual_ribose , " virtual_ribose ", blank_size_vector );
+	NEW_OPT( virtual_sugar , " virtual_sugar ", blank_size_vector );
 	NEW_OPT( native_virtual_res , " native_virtual_res (use for loop_rmsd calculation)", blank_size_vector );
 	NEW_OPT( native_alignment_res , " native_alignment_res (use for loop_rmsd calculation) ", blank_size_vector );
 	NEW_OPT( rmsd_res, "optional: residues that will be use to calculate rmsd (use for loop_rmsd calculation)", blank_size_vector );

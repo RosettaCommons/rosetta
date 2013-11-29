@@ -1,10 +1,10 @@
 -algorithm rna_sample 
--sample_res 4 3 
+-sample_res 13 14 
 -floating_base true 
 -input_res 1 2 15 16 
 -s lower_helix.pdb 
 -in:file:silent_struct_type binary_rna 
--out:file:silent region_0_2_sample.out 
+-out:file:silent region_8_0_sample.out 
 -native rosetta_model.pdb 
 -fixed_res 1 8 9 16 
 -rmsd_res 3 4 5 6 11 12 13 14 
@@ -14,5 +14,6 @@
 -global_sample_res_list 3 4 5 6 11 12 13 14 
 -cutpoint_open 8 
 -score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts 
--integration_test true 
+-sampler_native_rmsd_screen true
 -analytic_etable_evaluation 0
+-integration_test true

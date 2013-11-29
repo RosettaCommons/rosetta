@@ -1,33 +1,3 @@
-namespace optE { StringOptionKey const normalize_decoy_score_spread( "optE:normalize_decoy_score_spread" );  }
-namespace optE { BooleanOptionKey const ramp_nativeness( "optE:ramp_nativeness" );  }
-namespace optE { IntegerOptionKey const n_top_natives_to_optimize( "optE:n_top_natives_to_optimize" );  }
-namespace optE { RealOptionKey const approximate_decoy_entropy( "optE:approximate_decoy_entropy" );  }
-namespace optE { BooleanOptionKey const repack_and_minimize_decoys( "optE:repack_and_minimize_decoys" );  }
-namespace optE { BooleanOptionKey const repack_and_minimize_input_structures( "optE:repack_and_minimize_input_structures" );  }
-namespace optE { IntegerOptionKey const output_top_n_new_decoys( "optE:output_top_n_new_decoys" );  }
-namespace optE { FileOptionKey const optimize_ligand_discrimination( "optE:optimize_ligand_discrimination" );  }
-namespace optE { BooleanOptionKey const no_design( "optE:no_design" );  }
-namespace optE { BooleanOptionKey const sqrt_pssm( "optE:sqrt_pssm" );  }
-namespace optE { RealOptionKey const min_decoy_rms_to_native( "optE:min_decoy_rms_to_native" );  }
-namespace optE { RealOptionKey const max_rms_from_native( "optE:max_rms_from_native" );  }
-namespace optE { BooleanOptionKey const optimize_starting_free_weights( "optE:optimize_starting_free_weights" );  }
-namespace optE { FileOptionKey const wrap_dof_optimization( "optE:wrap_dof_optimization" );  }
-namespace optE { RealOptionKey const randomly_perturb_starting_free_weights( "optE:randomly_perturb_starting_free_weights" );  }
-namespace optE { RealOptionKey const inv_kT_natrot( "optE:inv_kT_natrot" );  }
-namespace optE { RealOptionKey const inv_kT_nataa( "optE:inv_kT_nataa" );  }
-namespace optE { RealOptionKey const inv_kT_natstruct( "optE:inv_kT_natstruct" );  }
-namespace optE { BooleanOptionKey const mpi_weight_minimization( "optE:mpi_weight_minimization" );  }
-namespace optE { BooleanOptionKey const dont_use_reference_energies( "optE:dont_use_reference_energies" );  }
-namespace optE { IntegerOptionKey const number_of_swarm_particles( "optE:number_of_swarm_particles" );  }
-namespace optE { IntegerOptionKey const number_of_swarm_cycles( "optE:number_of_swarm_cycles" );  }
-namespace optE { FileOptionKey const constrain_weights( "optE:constrain_weights" );  }
-namespace optE { BooleanOptionKey const fit_reference_energies_to_aa_profile_recovery( "optE:fit_reference_energies_to_aa_profile_recovery" );  }
-namespace optE { FileOptionKey const starting_refEs( "optE:starting_refEs" );  }
-namespace optE { BooleanOptionKey const repeat_swarm_optimization_until_fitness_improves( "optE:repeat_swarm_optimization_until_fitness_improves" );  }
-namespace optE { BooleanOptionKey const design_with_minpack( "optE:design_with_minpack" );  }
-namespace optE { BooleanOptionKey const limit_bad_scores( "optE:limit_bad_scores" );  }
-namespace optE { namespace rescore { BooleanOptionKey const rescore( "optE:rescore" );  } }
-namespace optE { namespace rescore { FileOptionKey const weights( "optE:rescore:weights" );  } }
 namespace optE { namespace rescore { IntegerOptionKey const context_round( "optE:rescore:context_round" );  } }
 namespace optE { namespace rescore { FileOptionKey const outlog( "optE:rescore:outlog" );  } }
 namespace optE { namespace rescore { BooleanOptionKey const measure_sequence_recovery( "optE:rescore:measure_sequence_recovery" );  } }
@@ -476,8 +446,46 @@ namespace swa { IntegerVectorOptionKey const input_res1( "swa:input_res1" );  }
 namespace swa { IntegerVectorOptionKey const input_res2( "swa:input_res2" );  }
 namespace swa { BooleanOptionKey const backbone_only1( "swa:backbone_only1" );  }
 namespace swa { BooleanOptionKey const backbone_only2( "swa:backbone_only2" );  }
+namespace swa { namespace rna { BooleanOptionKey const rna( "swa:rna" );  } }
+namespace swa { namespace rna { IntegerVectorOptionKey const sample_res( "swa:rna:sample_res" );  } }
+namespace swa { namespace rna { IntegerVectorOptionKey const fixed_res( "swa:rna:fixed_res" );  } }
+namespace swa { namespace rna { IntegerVectorOptionKey const minimize_res( "swa:rna:minimize_res" );  } }
+namespace swa { namespace rna { StringVectorOptionKey const alignment_res( "swa:rna:alignment_res" );  } }
+namespace swa { namespace rna { IntegerVectorOptionKey const native_alignment_res( "swa:rna:native_alignment_res" );  } }
+namespace swa { namespace rna { IntegerVectorOptionKey const rmsd_res( "swa:rna:rmsd_res" );  } }
+namespace swa { namespace rna { IntegerVectorOptionKey const missing_res( "swa:rna:missing_res" );  } }
+namespace swa { namespace rna { IntegerVectorOptionKey const missing_res2( "swa:rna:missing_res2" );  } }
+namespace swa { namespace rna { IntegerOptionKey const job_queue_ID( "swa:rna:job_queue_ID" );  } }
+namespace swa { namespace rna { BooleanOptionKey const minimize_and_score_sugar( "swa:rna:minimize_and_score_sugar" );  } }
+namespace swa { namespace rna { IntegerVectorOptionKey const global_sample_res_list( "swa:rna:global_sample_res_list" );  } }
+namespace swa { namespace rna { FileOptionKey const filter_output_filename( "swa:rna:filter_output_filename" );  } }
+namespace swa { namespace rna { BooleanOptionKey const combine_long_loop_mode( "swa:rna:combine_long_loop_mode" );  } }
+namespace swa { namespace rna { BooleanOptionKey const combine_helical_silent_file( "swa:rna:combine_helical_silent_file" );  } }
+namespace swa { namespace rna { BooleanOptionKey const output_extra_RMSDs( "swa:rna:output_extra_RMSDs" );  } }
+namespace swa { namespace rna { IntegerVectorOptionKey const force_syn_chi_res_list( "swa:rna:force_syn_chi_res_list" );  } }
+namespace swa { namespace rna { IntegerVectorOptionKey const force_north_sugar_list( "swa:rna:force_north_sugar_list" );  } }
+namespace swa { namespace rna { IntegerVectorOptionKey const force_south_sugar_list( "swa:rna:force_south_sugar_list" );  } }
+namespace swa { namespace rna { IntegerVectorOptionKey const protonated_H1_adenosine_list( "swa:rna:protonated_H1_adenosine_list" );  } }
+namespace swa { namespace rna { IntegerVectorOptionKey const native_virtual_res( "swa:rna:native_virtual_res" );  } }
+namespace swa { namespace rna { BooleanOptionKey const simple_append_map( "swa:rna:simple_append_map" );  } }
+namespace swa { namespace rna { BooleanOptionKey const allow_fixed_res_at_moving_res( "swa:rna:allow_fixed_res_at_moving_res" );  } }
+namespace swa { namespace rna { BooleanOptionKey const force_user_defined_jumps( "swa:rna:force_user_defined_jumps" );  } }
+namespace swa { namespace rna { BooleanOptionKey const test_encapsulation( "swa:rna:test_encapsulation" );  } }
+namespace swa { namespace rna { StringVectorOptionKey const jump_point_pairs( "swa:rna:jump_point_pairs" );  } }
+namespace swa { namespace rna { IntegerVectorOptionKey const terminal_res( "swa:rna:terminal_res" );  } }
+namespace swa { namespace rna { BooleanOptionKey const add_virt_root( "swa:rna:add_virt_root" );  } }
+namespace swa { namespace rna { BooleanOptionKey const floating_base( "swa:rna:floating_base" );  } }
+namespace swa { namespace rna { BooleanOptionKey const allow_chain_boundary_jump_partner_right_at_fixed_BP( "swa:rna:allow_chain_boundary_jump_partner_right_at_fixed_BP" );  } }
+namespace swa { namespace rna { IntegerVectorOptionKey const virtual_res( "swa:rna:virtual_res" );  } }
+namespace swa { namespace rna { IntegerVectorOptionKey const bulge_res( "swa:rna:bulge_res" );  } }
+namespace swa { namespace rna { BooleanOptionKey const rebuild_bulge_mode( "swa:rna:rebuild_bulge_mode" );  } }
+namespace swa { namespace rna { BooleanOptionKey const choose_random( "swa:rna:choose_random" );  } }
+namespace swa { namespace rna { IntegerOptionKey const num_random_samples( "swa:rna:num_random_samples" );  } }
+namespace swa { namespace rna { BooleanOptionKey const filter_user_alignment_res( "swa:rna:filter_user_alignment_res" );  } }
+namespace swa { namespace rna { BooleanOptionKey const output_pdb( "swa:rna:output_pdb" );  } }
 namespace full_model { BooleanOptionKey const full_model( "full_model" );  }
 namespace full_model { IntegerVectorOptionKey const cutpoint_open( "full_model:cutpoint_open" );  }
+namespace full_model { IntegerVectorOptionKey const cutpoint_closed( "full_model:cutpoint_closed" );  }
 namespace full_model { StringVectorOptionKey const other_poses( "full_model:other_poses" );  }
 namespace ufv { BooleanOptionKey const ufv( "ufv" );  }
 namespace ufv { IntegerOptionKey const left( "ufv:left" );  }

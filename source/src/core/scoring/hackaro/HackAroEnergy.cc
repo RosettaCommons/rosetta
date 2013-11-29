@@ -17,8 +17,8 @@
 #include <core/scoring/hackaro/HackAroEnergyCreator.hh>
 
 // Package headers
-#include <core/scoring/constraints/FadeFunc.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
+#include <core/scoring/func/FadeFunc.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/kinematics/Stub.hh>

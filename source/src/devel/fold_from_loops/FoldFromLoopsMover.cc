@@ -55,7 +55,7 @@
 //constraints
 // AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 
 //design headers
 

@@ -23,11 +23,11 @@
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <protocols/frag_picker/FragmentPicker.fwd.hh>
 // mini
-#include <core/scoring/constraints/Func.fwd.hh>
-#include <core/scoring/constraints/FuncFactory.hh>
+#include <core/scoring/func/Func.fwd.hh>
+#include <core/scoring/func/FuncFactory.hh>
 #include <numeric/xyzVector.hh>
 
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 #include <utility/vector1.hh>
 
 

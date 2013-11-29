@@ -113,9 +113,9 @@
 #include <core/scoring/constraints/ConstraintForest.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/Constraints.fwd.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
-#include <core/scoring/constraints/FuncFactory.fwd.hh>
-#include <core/scoring/constraints/FuncFactory.hh>
+#include <core/scoring/func/Func.fwd.hh>
+#include <core/scoring/func/FuncFactory.fwd.hh>
+#include <core/scoring/func/FuncFactory.hh>
 #include <basic/MetricValue.fwd.hh>
 // AUTO-REMOVED #include <basic/OStream.fwd.hh>
 #include <basic/Tracer.fwd.hh>

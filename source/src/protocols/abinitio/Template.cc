@@ -31,7 +31,7 @@
 #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/DerivedSequenceMapping.hh>
 

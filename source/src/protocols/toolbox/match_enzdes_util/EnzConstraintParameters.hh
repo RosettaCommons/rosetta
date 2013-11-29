@@ -20,7 +20,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 
 // Package headers
-#include <core/scoring/constraints/Func.fwd.hh>
+#include <core/scoring/func/Func.fwd.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 

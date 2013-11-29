@@ -45,7 +45,7 @@
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/CircularHarmonicFunc.hh>
+#include <core/scoring/func/CircularHarmonicFunc.hh>
 
 #include <protocols/simple_moves/MinMover.hh>
 //#include <protocols/simple_moves/PackRotamersMover.hh>

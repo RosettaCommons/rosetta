@@ -35,19 +35,19 @@ namespace rna {
 	};
 
 	void
-	Print_torsion_info( core::pose::Pose const & pose, core::Size const seq_num, core::Size const rna_torsion_number, std::string const type );
+	print_torsion_info( core::pose::Pose const & pose, core::Size const seq_num, core::Size const rna_torsion_number, std::string const type );
 
 	utility::vector1 < Residue_info >
 	Convert_rebuild_residue_string_to_list( std::string const & rebuild_residue_string );
 
 	void
-	Output_residue_struct( Residue_info const & residue );
+	output_residue_struct( Residue_info const & residue );
 
 	std::string
-	Get_one_letter_name( std::string const & three_letter_name );
+	get_one_letter_name( std::string const & three_letter_name );
 
 	std::string
-	Get_three_letter_name( std::string const & one_letter_name );
+	get_three_letter_name( std::string const & one_letter_name );
 
 	core::Size
 	get_max_seq_num_from_res_map( std::map< core::Size, core::Size > const & my_map );
@@ -59,13 +59,13 @@ namespace rna {
 	// Undefined, commenting out to fix PyRosetta build  void output_is_prepend_map(std::map< core::Size, bool > const & my_map, core::Size const max_seq_num);
 
 	void
-	Output_residue_list( utility::vector1< Residue_info > residue_list );
+	output_residue_list( utility::vector1< Residue_info > residue_list );
 
 	utility::vector1< Residue_info >
-	Get_residue_list_from_fasta( std::string const full_fasta_sequence );
+	get_residue_list_from_fasta( std::string const full_fasta_sequence );
 
 	Residue_info
-	Get_residue_from_seq_num( core::Size const & seq_num, utility::vector1 < Residue_info > const & residue_list );
+	get_residue_from_seq_num( core::Size const & seq_num, utility::vector1 < Residue_info > const & residue_list );
 
 	bool
 	Contain_residue_at_seq_num( core::Size seq_num, utility::vector1 < Residue_info > const & residue_list );

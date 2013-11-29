@@ -31,7 +31,7 @@
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/ScalarWeightedFunc.hh>
+#include <core/scoring/func/ScalarWeightedFunc.hh>
 #include <protocols/jd2/parser/BluePrint.hh>
 
 // Utility headers

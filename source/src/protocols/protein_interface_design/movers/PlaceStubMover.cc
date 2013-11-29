@@ -32,7 +32,7 @@
 
 #include <core/scoring/constraints/BackboneStubConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
+// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>

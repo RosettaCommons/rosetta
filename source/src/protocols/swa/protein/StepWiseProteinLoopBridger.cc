@@ -64,7 +64,7 @@ using core::Real;
 // files.
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.swa.protein.stepwise_loop_bridger" ) ;
+static basic::Tracer TR( "protocols.swa.protein.StepWiseProteinLoopBridger" ) ;
 
 namespace protocols {
 namespace swa {

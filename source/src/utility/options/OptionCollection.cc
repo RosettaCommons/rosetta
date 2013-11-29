@@ -57,6 +57,8 @@ namespace options {
 /// @brief Flag indicating that list of accessed option should be printed when destructor of OptionCollection is called.
 	bool OptionCollection::show_accessed_options_ = false;
 
+	std::vector< OptionKey const *> OptionCollection::relevant_;
+
 
 	OptionCollection::~OptionCollection()
 	{
@@ -86,6 +88,16 @@ namespace options {
 
 		// Check for problems in the option specifications
 		check_specs();
+	}
+
+
+	/// @brief Checks is option has been registered as relevant.
+	bool
+	OptionCollection::is_relevant( OptionKey const & key ){
+		for( unsigned int i=0; i<relevant_.size(); i++) {
+			if ( relevant_[i]->id() == key.id() ) return true;
+		}
+		return false;
 	}
 
 
@@ -134,12 +146,12 @@ namespace options {
     if( args.size() == 0 ) return;
 		// Put the arguments strings in a list
 		ValueStrings arg_strings;
-		for ( std::vector<std::string>::const_iterator arg = args.begin(); arg != args.end();  ++arg ){ 
+		for ( std::vector<std::string>::const_iterator arg = args.begin(); arg != args.end();  ++arg ){
 			arg_strings.push_back( *arg );
 			argv_copy_ += " " + (*arg);
 		}
 
-    load( "", arg_strings, free_args); 
+    load( "", arg_strings, free_args);
 	} // load
 
 
@@ -161,7 +173,7 @@ namespace options {
 			argv_copy_ += " " + temp;
 		}
 
-    load( std::string(argv[0]), arg_strings, free_args); 
+    load( std::string(argv[0]), arg_strings, free_args);
 	} // load
 
 
@@ -503,7 +515,7 @@ void OptionCollection::load_option_from_file(
 	}
 
 
-	void OptionCollection::show_option_help(OptionKey const &key, std::string &group, std::ostream & stream ) const
+	void OptionCollection::show_option_help(OptionKey const &key, std::string &group, std::ostream & stream )
 	{
 		using std::string;
 		typedef  std::string::size_type  size_type;
@@ -529,7 +541,7 @@ void OptionCollection::load_option_from_file(
 
 	/// @brief Show all the options and their descriptions
 	void
-	OptionCollection::show_help( std::ostream & stream ) const
+	OptionCollection::show_help( std::ostream & stream )
 	{
 		using std::string;
 		typedef  std::string::size_type  size_type;
@@ -556,7 +568,7 @@ void OptionCollection::load_option_from_file(
 #define COL2 25
 #define COL3 30
 
-	void OptionCollection::show_option_help_heir(OptionKey const &key, std::string &group, std::ostream & stream ) const
+	void OptionCollection::show_option_help_heir(OptionKey const &key, std::string &group, std::ostream & stream )
 	{
 		using std::string;
 		typedef  std::string::size_type  size_type;
@@ -622,7 +634,7 @@ void OptionCollection::load_option_from_file(
 
 	/// @brief Show all the options and their descriptions in a hierarchy format
 	void
-	OptionCollection::show_help_hier( std::ostream & stream ) const
+	OptionCollection::show_help_hier( std::ostream & stream )
 	{
 		using std::string;
 		typedef  std::string::size_type  size_type;
@@ -1135,12 +1147,14 @@ void OptionCollection::load_option_from_file(
 			}
 		}
 
+
 		if ( kid.empty() ) { // Look for unique best suffix match wrt the context
 			size_type const k_part( n_part( key_string ) ); // Number of parts in key string entered
 			size_type m_part( 0 ); // Number of prefix parts matching context
 			string bid; // Best id match so far
 			std::vector< std::string > possible_matches; //what matches could it be; for error reporting
 			int n_best( 0 );
+			bool found_relevant( false );
 			for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {
 				OptionKey const & key( *i );
 				string sid;
@@ -1152,13 +1166,16 @@ void OptionCollection::load_option_from_file(
 					sid = key.code();
 				}
 				if ( ! sid.empty() ) {
-					size_type const p_part( n_part_prefix_match( cid, sid ) );
-					if ( p_part > m_part ) { // New best prefix match level
+					size_type p_part( n_part_prefix_match( cid, sid ) );
+					bool is_relevant_ = is_relevant( key );
+					if ( !found_relevant && ( p_part > m_part || is_relevant_ ) ) { // New best prefix match level
 						m_part = p_part;
 						n_best = 0;
 						possible_matches.clear();
 						bid = sid;
-					} else if ( p_part == m_part ) { // Another match at this prefix match level
+					}
+					if ( is_relevant_ ) found_relevant = true;
+					if ( (!found_relevant && p_part == m_part) || is_relevant_ ) { // Another match at this prefix match level
 						++n_best;
 						possible_matches.push_back(sid);
 						if ( bid.empty() ) bid = sid; // First match at zero level
@@ -1172,6 +1189,7 @@ void OptionCollection::load_option_from_file(
 				for( unsigned long i(0); i<possible_matches.size(); ++i ){
 					too_many_choices_error += (" " + possible_matches[i]);
 				}
+				too_many_choices_error += ". Either specify namespace from command line; or in code, use add_relevant() to register option.";
 				throw ( excn::EXCN_Msg_Exception( too_many_choices_error ) );
 			}
 		}
@@ -1186,7 +1204,6 @@ void OptionCollection::load_option_from_file(
 
 		return kid;
 	}
-
 
 	/// @brief Find a user-specified option key in an indented @file context
 	/// @note  Looks in the context to find a match

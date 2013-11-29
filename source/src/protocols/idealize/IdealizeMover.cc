@@ -39,7 +39,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>

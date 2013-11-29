@@ -24,8 +24,8 @@
 #include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/pack/task/PackerTask.hh>

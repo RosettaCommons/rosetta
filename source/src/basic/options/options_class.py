@@ -96,8 +96,11 @@ class Option:
         if self.default is not None :
             if type(self.default) == type(''): s+= '.def(' + self.default + ')'
             else:
-                for d in self.default:
-                    s+= '.def(' + d + ')'
+                if len( self.default ) > 0:
+                    for d in self.default:
+                        s+= '.def(' + d + ')'
+                else:
+                    s+='.def()'
         if self.restrict_access: s+= '.restrict_access(true)'
         return s + ';\n'
 

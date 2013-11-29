@@ -38,7 +38,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <basic/options/option_macros.hh>
 

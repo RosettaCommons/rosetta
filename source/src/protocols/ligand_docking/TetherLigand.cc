@@ -21,7 +21,7 @@
 
 #include <core/conformation/Conformation.hh>
 
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 
 // Utility Headers

@@ -32,8 +32,8 @@
 #include <basic/options/option.hh> //needed to set option
 // AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/DihedralConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/Func.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.hh>
+// AUTO-REMOVED #include <core/scoring/func/Func.hh>
+// AUTO-REMOVED #include <core/scoring/func/HarmonicFunc.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/BoundConstraint.hh> //need function in this file
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //function for reading cstfiles
 #include <protocols/enzdes/EnzdesMovers.hh> // for testing rot_center

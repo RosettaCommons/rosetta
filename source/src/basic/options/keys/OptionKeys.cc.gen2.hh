@@ -1,23 +1,3 @@
-namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jumping:resi" );  } }
-namespace cmiles { namespace jumping { IntegerOptionKey const resj( "cmiles:jumping:resj" );  } }
-namespace james { BooleanOptionKey const james( "james" );  }
-namespace james { IntegerOptionKey const min_seqsep( "james:min_seqsep" );  }
-namespace james { StringVectorOptionKey const atom_names( "james:atom_names" );  }
-namespace james { RealVectorOptionKey const dist_thresholds( "james:dist_thresholds" );  }
-namespace james { RealVectorOptionKey const torsion_thresholds( "james:torsion_thresholds" );  }
-namespace james { RealOptionKey const sog_cutoff( "james:sog_cutoff" );  }
-namespace james { BooleanOptionKey const shift_sog_func( "james:shift_sog_func" );  }
-namespace james { StringOptionKey const min_type( "james:min_type" );  }
-namespace james { RealOptionKey const min_tol( "james:min_tol" );  }
-namespace james { BooleanOptionKey const debug( "james:debug" );  }
-namespace james { RealOptionKey const real( "james:real" );  }
-namespace james { IntegerOptionKey const n_designs( "james:n_designs" );  }
-namespace james { BooleanOptionKey const awesome_mode( "james:awesome_mode" );  }
-namespace james { IntegerOptionKey const n_clusters( "james:n_clusters" );  }
-namespace james { BooleanOptionKey const thread_unaligned( "james:thread_unaligned" );  }
-namespace membrane { BooleanOptionKey const membrane( "membrane" );  }
-namespace membrane { IntegerOptionKey const normal_cycles( "membrane:normal_cycles" );  }
-namespace membrane { RealOptionKey const normal_mag( "membrane:normal_mag" );  }
 namespace membrane { RealOptionKey const center_mag( "membrane:center_mag" );  }
 namespace membrane { RealOptionKey const smooth_move_frac( "membrane:smooth_move_frac" );  }
 namespace membrane { BooleanOptionKey const no_interpolate_Mpair( "membrane:no_interpolate_Mpair" );  }
@@ -729,3 +709,33 @@ namespace optE { BooleanOptionKey const optimize_ddGmutation_boltzman_average( "
 namespace optE { RealOptionKey const exclude_badrep_ddGs( "optE:exclude_badrep_ddGs" );  }
 namespace optE { BooleanOptionKey const pretend_no_ddG_repulsion( "optE:pretend_no_ddG_repulsion" );  }
 namespace optE { FileOptionKey const optimize_decoy_discrimination( "optE:optimize_decoy_discrimination" );  }
+namespace optE { StringOptionKey const normalize_decoy_score_spread( "optE:normalize_decoy_score_spread" );  }
+namespace optE { BooleanOptionKey const ramp_nativeness( "optE:ramp_nativeness" );  }
+namespace optE { IntegerOptionKey const n_top_natives_to_optimize( "optE:n_top_natives_to_optimize" );  }
+namespace optE { RealOptionKey const approximate_decoy_entropy( "optE:approximate_decoy_entropy" );  }
+namespace optE { BooleanOptionKey const repack_and_minimize_decoys( "optE:repack_and_minimize_decoys" );  }
+namespace optE { BooleanOptionKey const repack_and_minimize_input_structures( "optE:repack_and_minimize_input_structures" );  }
+namespace optE { IntegerOptionKey const output_top_n_new_decoys( "optE:output_top_n_new_decoys" );  }
+namespace optE { FileOptionKey const optimize_ligand_discrimination( "optE:optimize_ligand_discrimination" );  }
+namespace optE { BooleanOptionKey const no_design( "optE:no_design" );  }
+namespace optE { BooleanOptionKey const sqrt_pssm( "optE:sqrt_pssm" );  }
+namespace optE { RealOptionKey const min_decoy_rms_to_native( "optE:min_decoy_rms_to_native" );  }
+namespace optE { RealOptionKey const max_rms_from_native( "optE:max_rms_from_native" );  }
+namespace optE { BooleanOptionKey const optimize_starting_free_weights( "optE:optimize_starting_free_weights" );  }
+namespace optE { FileOptionKey const wrap_dof_optimization( "optE:wrap_dof_optimization" );  }
+namespace optE { RealOptionKey const randomly_perturb_starting_free_weights( "optE:randomly_perturb_starting_free_weights" );  }
+namespace optE { RealOptionKey const inv_kT_natrot( "optE:inv_kT_natrot" );  }
+namespace optE { RealOptionKey const inv_kT_nataa( "optE:inv_kT_nataa" );  }
+namespace optE { RealOptionKey const inv_kT_natstruct( "optE:inv_kT_natstruct" );  }
+namespace optE { BooleanOptionKey const mpi_weight_minimization( "optE:mpi_weight_minimization" );  }
+namespace optE { BooleanOptionKey const dont_use_reference_energies( "optE:dont_use_reference_energies" );  }
+namespace optE { IntegerOptionKey const number_of_swarm_particles( "optE:number_of_swarm_particles" );  }
+namespace optE { IntegerOptionKey const number_of_swarm_cycles( "optE:number_of_swarm_cycles" );  }
+namespace optE { FileOptionKey const constrain_weights( "optE:constrain_weights" );  }
+namespace optE { BooleanOptionKey const fit_reference_energies_to_aa_profile_recovery( "optE:fit_reference_energies_to_aa_profile_recovery" );  }
+namespace optE { FileOptionKey const starting_refEs( "optE:starting_refEs" );  }
+namespace optE { BooleanOptionKey const repeat_swarm_optimization_until_fitness_improves( "optE:repeat_swarm_optimization_until_fitness_improves" );  }
+namespace optE { BooleanOptionKey const design_with_minpack( "optE:design_with_minpack" );  }
+namespace optE { BooleanOptionKey const limit_bad_scores( "optE:limit_bad_scores" );  }
+namespace optE { namespace rescore { BooleanOptionKey const rescore( "optE:rescore" );  } }
+namespace optE { namespace rescore { FileOptionKey const weights( "optE:rescore:weights" );  } }

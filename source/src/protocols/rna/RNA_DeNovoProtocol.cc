@@ -112,7 +112,7 @@ namespace rna {
 
 static numeric::random::RandomGenerator RG(12320);  // <- Magic number, do not change it!
 
-static basic::Tracer TR( "protocols.rna.rna_denovo_protocol" ) ;
+static basic::Tracer TR( "protocols.rna.RNA_DeNovoProtocol" ) ;
 
 RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 	 Size const nstruct,

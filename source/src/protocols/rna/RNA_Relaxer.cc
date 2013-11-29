@@ -78,7 +78,7 @@ using basic::T;
 
 static numeric::random::RandomGenerator RG(19920);  // <- Magic number, do not change it!
 
-static basic::Tracer TR( "protocols.rna.rna_relaxer" ) ;
+static basic::Tracer TR( "protocols.rna.RNA_Relaxer" ) ;
 
 namespace protocols {
 namespace rna {

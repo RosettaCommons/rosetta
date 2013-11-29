@@ -23,7 +23,7 @@
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/Func.hh>
+// AUTO-REMOVED #include <core/scoring/func/Func.hh>
 
 //Utility Headers
 // AUTO-REMOVED #include <numeric/interpolation/Histogram.hh>

@@ -15,8 +15,8 @@
 
 // Package headers
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/pose/util.hh>

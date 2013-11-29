@@ -19,7 +19,7 @@
 #include <utility/string_util.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/scoring/sasa.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/pose/util.hh>
 #include <core/kinematics/Stub.hh>
 #include <boost/foreach.hpp>

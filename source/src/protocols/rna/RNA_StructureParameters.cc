@@ -19,7 +19,7 @@
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <protocols/rna/RNA_SecStructInfo.hh>
 #include <protocols/toolbox/AllowInsert.hh>
-#include <protocols/swa/rna/StepWiseRNA_Util.hh> // for  Correctly_position_cutpoint_phosphate_torsions
+#include <protocols/swa/rna/StepWiseRNA_Util.hh> // for  correctly_position_cutpoint_phosphate_torsions
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_DataInfo.hh>
 
@@ -1002,7 +1002,7 @@ RNA_StructureParameters::setup_chainbreak_variants( pose::Pose & pose )
 		//		std::cout << "Adding chainbreak variants to " << cutpos << std::endl;
 
 		// important! Taken from SWA code.
-		protocols::swa::rna::Correctly_position_cutpoint_phosphate_torsions( pose, cutpos, false /*verbose*/ );
+		protocols::swa::rna::correctly_position_cutpoint_phosphate_torsions( pose, cutpos, false /*verbose*/ );
 
 		pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpos   );
 		pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpos+1 );

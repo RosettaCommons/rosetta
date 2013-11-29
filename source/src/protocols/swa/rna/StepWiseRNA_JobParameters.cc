@@ -39,7 +39,7 @@ namespace rna {
 	// Constructor
 	StepWiseRNA_JobParameters::StepWiseRNA_JobParameters():
 		output_extra_RMSDs_( false ),
-		Is_simple_full_length_job_params_( false ),
+		is_simple_full_length_job_params_( false ),
 		full_sequence_( "" ),
 		working_sequence_( "" ),
 		moving_res_( 0 ),
@@ -48,9 +48,10 @@ namespace rna {
 		//which_chain_has_moving_res_( 0 ),
 		gap_size_( 0 ),
 		five_prime_chain_break_res_( 0 ),
-		Is_prepend_( false ),
-		Is_internal_( false ),
-		add_virt_res_as_root_( false )
+		is_prepend_( false ),
+		is_internal_( false ),
+		add_virt_res_as_root_( false ),
+		floating_base_( false )
 	{
 
 		//These vectors and map should be empty to begin with, but not harm to ensure this.
@@ -59,7 +60,7 @@ namespace rna {
 		working_moving_suite_list_.clear();
 		full_to_sub_.clear();
 		sub_to_full_.clear();
-		Is_prepend_map_.clear();
+		is_prepend_map_.clear();
 		chain_boundaries_.clear();
 		partition_definition_.clear();
 		working_fixed_res_.clear();
@@ -76,10 +77,10 @@ namespace rna {
 		working_global_sample_res_list_.clear();
 		force_syn_chi_res_list_.clear();
 		working_force_syn_chi_res_list_.clear();
-		force_north_ribose_list_.clear();
-		working_force_north_ribose_list_.clear();
-		force_south_ribose_list_.clear();
-		working_force_south_ribose_list_.clear();
+		force_north_sugar_list_.clear();
+		working_force_north_sugar_list_.clear();
+		force_south_sugar_list_.clear();
+		working_force_south_sugar_list_.clear();
 		protonated_H1_adenosine_list_.clear();
 		working_protonated_H1_adenosine_list_.clear();
 	}
@@ -91,8 +92,8 @@ namespace rna {
 		return output_extra_RMSDs_;
 	}
 	///////////////////////////////////////////////////////////////////////////////////////
-	bool const & StepWiseRNA_JobParameters::Is_simple_full_length_job_params() const{
-		return Is_simple_full_length_job_params_;
+	bool const & StepWiseRNA_JobParameters::is_simple_full_length_job_params() const{
+		return is_simple_full_length_job_params_;
 	}
 	///////////////////////////////////////////////////////////////////////////////////////
 	std::string const & StepWiseRNA_JobParameters::full_sequence() const{
@@ -129,7 +130,7 @@ namespace rna {
 		if ( working_moving_res_ == 0 ) utility_exit_with_message( "working_moving_res_ == 0!!" );
 
 
-		Size const working_reference_res_ = ( Is_prepend_ ) ? working_moving_res_ + num_nucleotides : working_moving_res_ - num_nucleotides;
+		Size const working_reference_res_ = ( is_prepend_ ) ? working_moving_res_ + num_nucleotides : working_moving_res_ - num_nucleotides;
 
 		return working_reference_res_;
 	}
@@ -188,9 +189,9 @@ namespace rna {
 		return fold_tree_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	std::map< core::Size, bool > const & StepWiseRNA_JobParameters::Is_prepend_map() const {
-		if ( Is_prepend_map_.size() == 0 ) utility_exit_with_message( "Is_prepend_map_.size() == 0" );
-		return Is_prepend_map_;
+	std::map< core::Size, bool > const & StepWiseRNA_JobParameters::is_prepend_map() const {
+		if ( is_prepend_map_.size() == 0 ) utility_exit_with_message( "is_prepend_map_.size() == 0" );
+		return is_prepend_map_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< std::pair < core::Size, core::Size > > const & StepWiseRNA_JobParameters::chain_boundaries() const{
@@ -209,12 +210,12 @@ namespace rna {
 		return five_prime_chain_break_res_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	bool const & StepWiseRNA_JobParameters::Is_prepend() const{
-		return Is_prepend_;
+	bool const & StepWiseRNA_JobParameters::is_prepend() const{
+		return is_prepend_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	bool const & StepWiseRNA_JobParameters::Is_internal() const{
-		return Is_internal_;
+	bool const & StepWiseRNA_JobParameters::is_internal() const{
+		return is_internal_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	bool const & StepWiseRNA_JobParameters::add_virt_res_as_root() const{
@@ -284,20 +285,20 @@ namespace rna {
 		return working_force_syn_chi_res_list_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< core::Size > const & StepWiseRNA_JobParameters::force_north_ribose_list() const{
-		return force_north_ribose_list_;
+	utility::vector1< core::Size > const & StepWiseRNA_JobParameters::force_north_sugar_list() const{
+		return force_north_sugar_list_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< core::Size > const & StepWiseRNA_JobParameters::working_force_north_ribose_list() const{
-		return working_force_north_ribose_list_;
+	utility::vector1< core::Size > const & StepWiseRNA_JobParameters::working_force_north_sugar_list() const{
+		return working_force_north_sugar_list_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< core::Size > const & StepWiseRNA_JobParameters::force_south_ribose_list() const{
-		return force_south_ribose_list_;
+	utility::vector1< core::Size > const & StepWiseRNA_JobParameters::force_south_sugar_list() const{
+		return force_south_sugar_list_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< core::Size > const & StepWiseRNA_JobParameters::working_force_south_ribose_list() const{
-		return working_force_south_ribose_list_;
+	utility::vector1< core::Size > const & StepWiseRNA_JobParameters::working_force_south_sugar_list() const{
+		return working_force_south_sugar_list_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< core::Size > const & StepWiseRNA_JobParameters::protonated_H1_adenosine_list() const{
@@ -312,8 +313,8 @@ namespace rna {
 		output_extra_RMSDs_ = setting;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	void StepWiseRNA_JobParameters::set_Is_simple_full_length_job_params( bool const & setting ){ //Oct 31, 2011
-		Is_simple_full_length_job_params_ = setting;
+	void StepWiseRNA_JobParameters::set_is_simple_full_length_job_params( bool const & setting ){ //Oct 31, 2011
+		is_simple_full_length_job_params_ = setting;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void StepWiseRNA_JobParameters::set_full_sequence( std::string const & setting ){
@@ -335,7 +336,7 @@ namespace rna {
 		working_moving_res_list_ = setting;
 		working_moving_res_ = working_moving_res_list_[1];
 
-		update_working_moving_suite(); //Be careful..currently when working_moving_res_list is first initialize in JP_Setup, Is_Prepend is not setup yet.
+		update_working_moving_suite(); //Be careful..currently when working_moving_res_list is first initialize in JP_Setup, is_Prepend is not setup yet.
 	}
 
 
@@ -369,8 +370,8 @@ namespace rna {
 		fold_tree_ = setting;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	void StepWiseRNA_JobParameters::set_Is_prepend_map( std::map< core::Size, bool > const & setting ){
-		Is_prepend_map_ = setting;
+	void StepWiseRNA_JobParameters::set_is_prepend_map( std::map< core::Size, bool > const & setting ){
+		is_prepend_map_ = setting;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void StepWiseRNA_JobParameters::set_chain_boundaries( utility::vector1< std::pair < core::Size, core::Size > > const & setting ){
@@ -389,13 +390,13 @@ namespace rna {
 		five_prime_chain_break_res_ = setting;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	void StepWiseRNA_JobParameters::set_Is_prepend( bool const & setting ){
-		Is_prepend_ = setting;
+	void StepWiseRNA_JobParameters::set_is_prepend( bool const & setting ){
+		is_prepend_ = setting;
 		update_working_moving_suite();
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	void StepWiseRNA_JobParameters::set_Is_internal( bool const & setting ){
-		Is_internal_ = setting;
+	void StepWiseRNA_JobParameters::set_is_internal( bool const & setting ){
+		is_internal_ = setting;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void StepWiseRNA_JobParameters::set_partition_definition( ObjexxFCL::FArray1D < bool > const & setting ){
@@ -487,25 +488,25 @@ namespace rna {
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_JobParameters::set_force_north_ribose_list( utility::vector1< core::Size > const & setting ){
-		force_north_ribose_list_ = setting;
-		working_force_north_ribose_list_ = apply_full_to_sub_mapping( force_north_ribose_list_, is_working_res_, full_to_sub_ );
+	StepWiseRNA_JobParameters::set_force_north_sugar_list( utility::vector1< core::Size > const & setting ){
+		force_north_sugar_list_ = setting;
+		working_force_north_sugar_list_ = apply_full_to_sub_mapping( force_north_sugar_list_, is_working_res_, full_to_sub_ );
 
-		for ( Size n = 1; n <= force_north_ribose_list_.size(); n++ ){
-			if ( force_south_ribose_list_.has_value( force_north_ribose_list_[n] ) ){
-				utility_exit_with_message( "seq_num = " + ObjexxFCL::string_of( force_north_ribose_list_[n] ) + " is in both force_north_ribose_list_ and force_south_ribose_list_! " );
+		for ( Size n = 1; n <= force_north_sugar_list_.size(); n++ ){
+			if ( force_south_sugar_list_.has_value( force_north_sugar_list_[n] ) ){
+				utility_exit_with_message( "seq_num = " + ObjexxFCL::string_of( force_north_sugar_list_[n] ) + " is in both force_north_sugar_list_ and force_south_sugar_list_! " );
 			}
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_JobParameters::set_force_south_ribose_list( utility::vector1< core::Size > const & setting ){
-		force_south_ribose_list_ = setting;
-		working_force_south_ribose_list_ = apply_full_to_sub_mapping( force_south_ribose_list_, is_working_res_, full_to_sub_ );
+	StepWiseRNA_JobParameters::set_force_south_sugar_list( utility::vector1< core::Size > const & setting ){
+		force_south_sugar_list_ = setting;
+		working_force_south_sugar_list_ = apply_full_to_sub_mapping( force_south_sugar_list_, is_working_res_, full_to_sub_ );
 
-		for ( Size n = 1; n <= force_north_ribose_list_.size(); n++ ){
-			if ( force_south_ribose_list_.has_value( force_north_ribose_list_[n] ) ){
-				utility_exit_with_message( "seq_num = " + ObjexxFCL::string_of( force_north_ribose_list_[n] ) + " is in both force_north_ribose_list_ and force_south_ribose_list_! " );
+		for ( Size n = 1; n <= force_north_sugar_list_.size(); n++ ){
+			if ( force_south_sugar_list_.has_value( force_north_sugar_list_[n] ) ){
+				utility_exit_with_message( "seq_num = " + ObjexxFCL::string_of( force_north_sugar_list_[n] ) + " is in both force_north_sugar_list_ and force_south_sugar_list_! " );
 			}
 		}
 	}
@@ -536,7 +537,7 @@ namespace rna {
 
 		working_moving_suite_list_.clear();
 
-		if ( Is_prepend_ ){
+		if ( is_prepend_ ){
 			working_moving_suite_ = working_moving_res_;
 			working_moving_suite_list_ = working_moving_res_list_;
 		} else{

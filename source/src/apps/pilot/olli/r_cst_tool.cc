@@ -27,7 +27,7 @@
 #include <core/scoring/constraints/ConstraintFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -59,7 +59,7 @@
 // AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 
 //Auto Headers
-#include <core/scoring/constraints/FuncFactory.hh>
+#include <core/scoring/func/FuncFactory.hh>
 #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #include <protocols/moves/MoverStatistics.hh>
 #include <utility/excn/EXCN_Base.hh>

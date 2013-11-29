@@ -45,8 +45,8 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/Func.hh>
 
 // AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>

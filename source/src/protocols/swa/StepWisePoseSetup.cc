@@ -30,8 +30,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
-#include <core/scoring/constraints/FadeFunc.hh>
+#include <core/scoring/func/Func.fwd.hh>
+#include <core/scoring/func/FadeFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
@@ -86,7 +86,7 @@ using core::Real;
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.swa.stepwise_pose_setup" ) ;
+static basic::Tracer TR( "protocols.swa.StepWisePoseSetup" ) ;
 
 //typedef std::map< core::Size, core::Size > ResMap;
 
@@ -835,7 +835,7 @@ return "StepWisePoseSetup";
 		for ( Size i = 1; i <= pose.total_residue(); i++ ){
 			if ( is_moving_res( sub_to_full[ i ] ) ) continue;
 			if ( partition_definition( i )  == start_partition  ){
-				job_parameters_->set_Is_internal( true );
+				job_parameters_->set_is_internal( true );
 				break;
 			}
 		}
@@ -894,8 +894,8 @@ return "StepWisePoseSetup";
 
 		//Made some changes here .... Parin Jan 18, 2009
 		Size const moving_res( moving_res_list[1] );
-		if ( job_parameters_->Is_internal() ){
-			//			std::cout << "Is_internal" << std::endl;
+		if ( job_parameters_->is_internal() ){
+			//			std::cout << "is_internal" << std::endl;
 			if ( num_partition_1 >= num_partition_0 ){
 				// best to put the root in partition 1 -- it is bigger, and will stay anchored.
 				if ( partition_definition( 1 ) && partition_definition( nres ) ) {
@@ -952,16 +952,16 @@ return "StepWisePoseSetup";
 		if ( working_moving_suite_list.size() < 1 ) return;
 		Size const first_moving_suite = working_moving_suite_list[ 1 ];
 
-		if ( job_parameters_->Is_internal() ){
+		if ( job_parameters_->is_internal() ){
 			if ( partition_definition( first_moving_suite ) == partition_definition( root_res ) ){
-				job_parameters_->set_Is_prepend( false );
+				job_parameters_->set_is_prepend( false );
 			} else {
-				job_parameters_->set_Is_prepend( true );
+				job_parameters_->set_is_prepend( true );
 			}
 		} else {
 			/// consistency check!
 			bool const should_be_prepend = ( partition_definition( first_moving_suite ) != partition_definition( root_res ) );
-			if ( should_be_prepend != job_parameters_->Is_prepend() ) {
+			if ( should_be_prepend != job_parameters_->is_prepend() ) {
 
 				// Wait there's one way the root res is a moving res -- if we're building from scratch.
 				ObjexxFCL::FArray1D< Size > const & is_working_res( job_parameters_->is_working_res() );
@@ -974,7 +974,7 @@ return "StepWisePoseSetup";
 				}
 
 				if (!ok) {
-					std::cout << " Is_prepend: " << job_parameters_->Is_prepend() << std::endl;
+					std::cout << " is_prepend: " << job_parameters_->is_prepend() << std::endl;
 					std::cout << " should_be_prepend: " << should_be_prepend << std::endl;
 					std::cout << " first_moving_suite: " << first_moving_suite << "  partition: " << partition_definition( first_moving_suite ) << std::endl;
 					std::cout << " root_res: " << root_res << "   partition: " << partition_definition( root_res ) << std::endl;
@@ -1121,10 +1121,10 @@ return "StepWisePoseSetup";
 	void
 	StepWisePoseSetup::check_close_chain_break( core::pose::Pose const & pose ) const{
 
-		if ( !Is_close_chain_break( pose ) && job_parameters_->gap_size() == 0 ) {
+		if ( !is_close_chain_break( pose ) && job_parameters_->gap_size() == 0 ) {
 			utility_exit_with_message( "mismatch --> gap_size = 0, but no cutpoint variants defined?" );
 		}
-		//		if ( Is_close_chain_break( pose ) && job_parameters_->gap_size() != 0 ) {
+		//		if ( is_close_chain_break( pose ) && job_parameters_->gap_size() != 0 ) {
 			//utility_exit_with_message( "mismatch --> gap_size != 0, but cutpoint variants defined?" );
 		//		}
 
@@ -1315,18 +1315,18 @@ return "StepWisePoseSetup";
 			moving_res_attached_at_end = false;
 		}
 
-		// It might actually make more sense to replace Is_prepend and Is_internal
+		// It might actually make more sense to replace is_prepend and is_internal
 		//  with moving_res_attached_at_start  and   moving_res_attached_at_end...
 		//
 		// Or perhaps we should just get rid of these booleans -- what about the more complex
 		// case in which the N-terminus and C-terminus are being sampled?
 		//
-		//		bool const Is_prepend = moving_res_attached_at_end;
-		bool const Is_internal = ( moving_res_attached_at_end && moving_res_attached_at_start );
+		//		bool const is_prepend = moving_res_attached_at_end;
+		bool const is_internal = ( moving_res_attached_at_end && moving_res_attached_at_start );
 
 		//////////////////////////////////////////////////////
 		// Fill out working_moving_suite.
-		if ( moving_res_attached_at_start && !Is_internal ){
+		if ( moving_res_attached_at_start && !is_internal ){
 			working_moving_suite_list.push_back( first_working_moving_res - 1 );
 		}
 
@@ -1348,11 +1348,11 @@ return "StepWisePoseSetup";
 		//		std::cout << "ATTACH AT START: " << moving_res_attached_at_start << std::endl;
 		//		std::cout << "ATTACH AT END:   " << moving_res_attached_at_end << std::endl;
 
-		job_parameters_->set_Is_prepend(  moving_res_attached_at_end  );
+		job_parameters_->set_is_prepend(  moving_res_attached_at_end  );
 
-		// Watch out! Is_internal gets replaced later based on "partition_definition" --
+		// Watch out! is_internal gets replaced later based on "partition_definition" --
 		//  occurs in complex fold_trees.
-		job_parameters_->set_Is_internal( moving_res_attached_at_end && moving_res_attached_at_start  );
+		job_parameters_->set_is_internal( moving_res_attached_at_end && moving_res_attached_at_start  );
 
 
 		job_parameters_->set_working_moving_suite_list( working_moving_suite_list );

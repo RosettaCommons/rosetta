@@ -367,6 +367,20 @@ public: // Methods
 	}
 
 
+	/// @brief Default value assignment to empty vector.
+	inline
+	virtual
+	VectorOption_T_ &
+	def()
+	{
+		default_state_ = DEFAULT;
+		if ( ( state_ == INACTIVE ) || ( state_ == DEFAULT ) ) {
+			state_ = DEFAULT;
+		}
+		return *this;
+	}
+
+
 	/// @brief Default value vector assignment
 	inline
 	VectorOption_T_ &

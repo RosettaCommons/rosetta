@@ -21,8 +21,8 @@
 // Package headers
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/HarmonicFunc.fwd.hh>
-#include <core/scoring/constraints/FadeFunc.hh>
+#include <core/scoring/func/HarmonicFunc.fwd.hh>
+#include <core/scoring/func/FadeFunc.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

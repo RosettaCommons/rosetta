@@ -21,9 +21,9 @@
 //#include <numeric/xyzVector.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>     //Feb 02, 2012: Need this to pass rosetta_tools/python_cc_reader/test_all_headers_compile.py
-#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
+#include <protocols/swa/rna/screener/StepWiseRNA_BaseCentroidScreener.fwd.hh>
+#include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.hh>     //Feb 02, 2012: Need this to pass rosetta_tools/python_cc_reader/test_all_headers_compile.py
+#include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -71,7 +71,7 @@ namespace rna {
 		core::io::silent::SilentFileDataOP & silent_file_data();
 
 		void
-		set_base_centroid_screener( StepWiseRNA_BaseCentroidScreenerOP & screener );
+		set_base_centroid_screener( screener::StepWiseRNA_BaseCentroidScreenerOP & screener );
 
 		void
 		set_native_edensity_score_cutoff( core::Real const & setting ); //Fang's electron density code
@@ -107,7 +107,7 @@ namespace rna {
 		set_native_screen_rmsd_cutoff( core::Real const setting ){ native_screen_rmsd_cutoff_ = setting; }
 
 		void
-		set_user_input_VDW_bin_screener( StepWiseRNA_VDW_BinScreenerOP const & user_input_VDW_bin_screener ){ user_input_VDW_bin_screener_ = user_input_VDW_bin_screener; }
+		set_user_input_VDW_bin_screener( screener::StepWiseRNA_VDW_BinScreenerOP const & user_input_VDW_bin_screener ){ user_input_VDW_bin_screener_ = user_input_VDW_bin_screener; }
 
 		void
 		set_rename_tag( bool const setting ){ rename_tag_ = setting; }
@@ -126,7 +126,7 @@ namespace rna {
 		get_working_moving_res( Size const & nres ) const;
 
 		utility::vector1 < core::kinematics::MoveMap >
-		Get_default_movemap( core::pose::Pose const & pose ) const;
+		get_default_movemap( core::pose::Pose const & pose ) const;
 
 		void
 		Figure_out_moving_residues( core::kinematics::MoveMap & mm, core::pose::Pose const & pose ) const;
@@ -187,9 +187,9 @@ namespace rna {
 
 		utility::vector1< core::Size > fixed_res_;
 
-		StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
+		screener::StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
 
-		StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
+		screener::StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
 
 
   };

@@ -44,7 +44,7 @@
 // AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 #include <core/scoring/Energies.hh>
 // AUTO-REMOVED #include <core/scoring/rms_util.hh>

@@ -23,7 +23,7 @@
 #include <core/scoring/dna/base_geometry.hh>
 #include <utility/excn/Exceptions.hh>
 // AUTO-REMOVED #include <core/scoring/dna/BasePartner.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>

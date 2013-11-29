@@ -37,8 +37,8 @@
 #include <core/scoring/constraints/BoundConstraint.hh> //need function in this file
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //function for reading cstfiles
 // AUTO-REMOVED #include <protocols/enzdes/AddorRemoveCsts.hh> //for parser testing

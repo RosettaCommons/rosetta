@@ -21,7 +21,7 @@
 // Unit header
 #include <core/scoring/constraints/MultiConstraint.hh>
 #include <core/scoring/constraints/Constraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
+// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/ScoreType.hh>
 
 #include <core/id/AtomID.hh>

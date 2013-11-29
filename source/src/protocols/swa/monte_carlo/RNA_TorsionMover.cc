@@ -46,7 +46,7 @@ using core::Real;
 // updates the pose full_model_info object.
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.swa.monte_carlo.rna_torsion_mover" ) ;
+static basic::Tracer TR( "protocols.swa.monte_carlo.RNA_TorsionMover" ) ;
 
 namespace protocols {
 namespace swa {

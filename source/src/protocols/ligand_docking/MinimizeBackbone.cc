@@ -23,7 +23,7 @@
 
 //Project Headers
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/pose/Pose.hh>
 
 

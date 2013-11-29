@@ -27,7 +27,7 @@
 // Project Headers
 // AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/Func.hh>
+// AUTO-REMOVED #include <core/scoring/func/Func.hh>
 
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/types.hh>
@@ -44,7 +44,7 @@
 #include <map>
 #include <iostream>
 
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 
 //Auto Headers
 #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.fwd.hh>

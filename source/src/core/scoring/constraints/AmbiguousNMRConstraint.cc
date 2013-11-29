@@ -17,7 +17,7 @@
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/FuncFactory.hh>
+#include <core/scoring/func/FuncFactory.hh>
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <utility/excn/Exceptions.hh>
@@ -25,7 +25,7 @@
 
 //Auto Headers
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/XYZ_Func.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 

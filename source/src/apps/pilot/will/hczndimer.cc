@@ -39,8 +39,8 @@
 #include <core/pose/util.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/CircularHarmonicFunc.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/CircularHarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/packing/compute_holes_score.hh>
 #include <core/scoring/ScoreFunction.hh>

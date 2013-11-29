@@ -36,7 +36,7 @@
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/util.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

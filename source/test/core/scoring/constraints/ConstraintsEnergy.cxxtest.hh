@@ -26,7 +26,7 @@
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 
 // Project headers
 // Auto-header: duplicate removed #include <core/conformation/Residue.hh>

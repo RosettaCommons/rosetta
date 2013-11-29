@@ -27,7 +27,7 @@
 
 //project headers
 #include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <basic/datacache/DataMap.fwd.hh>

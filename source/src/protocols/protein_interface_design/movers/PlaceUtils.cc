@@ -20,7 +20,7 @@
 #include <core/id/AtomID.hh>
 #include <core/chemical/AA.hh>
 #include <numeric/xyzVector.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 
 
 #include <core/pack/task/TaskFactory.hh>

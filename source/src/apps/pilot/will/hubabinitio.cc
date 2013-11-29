@@ -48,11 +48,11 @@
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/CircularHarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
 #include <core/scoring/constraints/util.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/electron_density/util.hh>
 #include <core/scoring/Energies.hh>

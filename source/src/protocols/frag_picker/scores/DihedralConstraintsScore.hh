@@ -26,7 +26,7 @@
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <protocols/frag_picker/FragmentPicker.fwd.hh>
 // mini
-#include <core/scoring/constraints/FuncFactory.hh>
+#include <core/scoring/func/FuncFactory.hh>
 #include <numeric/xyzVector.hh>
 
 #include <protocols/frag_picker/scores/FourAtomsConstraintData.fwd.hh>

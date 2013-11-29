@@ -41,10 +41,10 @@
 
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.fwd.hh>
 
-// AUTO-REMOVED #include <core/scoring/constraints/Func.hh>
+// AUTO-REMOVED #include <core/scoring/func/Func.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/LinearPenaltyFunction.hh>
+// AUTO-REMOVED #include <core/scoring/func/LinearPenaltyFunction.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 
 

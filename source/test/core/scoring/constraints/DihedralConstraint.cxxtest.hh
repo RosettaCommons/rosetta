@@ -31,11 +31,11 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/FourPointsFunc.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/CircularHarmonicFunc.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/FourPointsFunc.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/CircularHarmonicFunc.hh>
+#include <core/scoring/func/XYZ_Func.hh>
 
 #include <core/types.hh>
 

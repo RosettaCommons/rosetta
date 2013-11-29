@@ -26,7 +26,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/kinematics/Stub.hh>
 // AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/XYZ_Func.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>

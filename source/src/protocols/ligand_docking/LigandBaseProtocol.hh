@@ -22,7 +22,7 @@
 #include <core/pack/rotamer_set/UnboundRotamersOperation.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
 

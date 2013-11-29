@@ -29,8 +29,8 @@
 
 #include <core/scoring/constraints/DihedralPairConstraint.hh>
 #include <core/scoring/constraints/DistancePairConstraint.hh>
-#include <core/scoring/constraints/TopOutFunc.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/TopOutFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 
 #include <utility/vector1.hh>
 #include <utility/exit.hh>

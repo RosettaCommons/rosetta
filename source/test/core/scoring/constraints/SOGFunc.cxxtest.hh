@@ -8,13 +8,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/constraints/SOGFunc.cxxtest.hh
+/// @file   core/scoring/func/SOGFunc.cxxtest.hh
 /// @brief  test suite for SOGFunc function
 /// @author James Thompson
 
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
-#include <core/scoring/constraints/SOGFunc_Impl.hh>
+#include <core/scoring/func/SOGFunc_Impl.hh>
 #include <core/types.hh>
 
 using core::Size;

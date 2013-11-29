@@ -23,7 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/constraints/AmbiguousConstraint.fwd.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
+#include <core/scoring/func/Func.fwd.hh>
 
 #include <list>
 

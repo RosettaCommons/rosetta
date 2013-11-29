@@ -33,8 +33,8 @@
 
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/datacache/CacheablePoseRawPtr.hh>

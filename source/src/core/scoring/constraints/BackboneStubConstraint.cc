@@ -20,7 +20,7 @@
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreType.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/PeriodicFunc.hh>
+#include <core/scoring/func/PeriodicFunc.hh>
 #include <basic/Tracer.hh>
 
 // used to make temporary alanines for gly cst's
@@ -34,7 +34,7 @@
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/XYZ_Func.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 

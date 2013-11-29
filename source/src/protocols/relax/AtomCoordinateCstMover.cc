@@ -31,7 +31,7 @@
 
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 
 #include <basic/Tracer.hh>

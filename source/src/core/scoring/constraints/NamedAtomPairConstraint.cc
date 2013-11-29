@@ -17,7 +17,7 @@
 
 // Package Headers
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/FuncFactory.hh>
+#include <core/scoring/func/FuncFactory.hh>
 
 // Project Headers
 #include <core/chemical/ResidueType.hh>
@@ -32,7 +32,7 @@
 #include <basic/Tracer.hh>
 
 #include <core/id/SequenceMapping.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/XYZ_Func.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers

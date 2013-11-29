@@ -24,9 +24,9 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/AmberPeriodicFunc.hh>
-#include <core/scoring/constraints/HarmonicFunc.fwd.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/AmberPeriodicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.fwd.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>

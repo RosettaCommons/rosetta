@@ -14,16 +14,16 @@
 
 #include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/swa/rna/StepWiseRNA_ResidueSampler.hh>
-#include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.hh>
+#include <protocols/swa/rna/screener/StepWiseRNA_BaseCentroidScreener.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParametersSetup.hh>
 #include <protocols/swa/rna/StepWiseRNA_Minimizer.hh>
-#include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.hh>
+#include <protocols/swa/rna/screener/StepWiseRNA_BaseCentroidScreener.hh>
 #include <protocols/swa/StepWiseUtil.hh>
 
 #include <core/chemical/VariantType.hh>
 #include <core/id/TorsionID.hh>
-
+#include <core/kinematics/MoveMap.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
@@ -39,6 +39,20 @@
 static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_Modeler" );
 
 using utility::tools::make_vector1;
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// This is meant to be a simple 'master interface' to StepWiseAssembly and
+//  StepWiseMonteCarlo functions, requiring only a pose and the residue to be
+//  sampled.
+//
+// All of the complexities of setting up the JobParameters, etc. are hidden
+//  in a single wrapper function below.
+//
+//  -- Rhiju
+////////////////////////////////////////////////////////////////////////////////
+
 
 namespace protocols {
 namespace swa {
@@ -98,17 +112,15 @@ StepWiseRNA_Modeler::initialize_variables(){
 	integration_test_mode_ = false;
 	allow_bulge_at_chainbreak_ = false;
 	parin_favorite_output_ = false;
-	floating_base_ = false;
 	reinitialize_CCD_torsions_ = false;
 	sampler_extra_epsilon_rotamer_ = false;
 	sampler_extra_beta_rotamer_ = false;
 	sample_both_sugar_base_rotamer_ = false;
 	sampler_include_torsion_value_in_tag_ = false;
-	rebuild_bulge_mode_ = false;
 	combine_long_loop_mode_ = false;
 	do_not_sample_multiple_virtual_sugar_ = false;
 	sample_ONLY_multiple_virtual_sugar_ = false;
-	sampler_assert_no_virt_ribose_sampling_ = false;
+	sampler_assert_no_virt_sugar_sampling_ = false;
 	allow_base_pair_only_centroid_screen_ = false;
 	minimizer_perform_o2prime_pack_ = false;
 	minimizer_output_before_o2prime_pack_ = false;
@@ -176,17 +188,15 @@ StepWiseRNA_Modeler::operator=( StepWiseRNA_Modeler const & src )
 	integration_test_mode_ = src.integration_test_mode_;
 	allow_bulge_at_chainbreak_ = src.allow_bulge_at_chainbreak_;
 	parin_favorite_output_ = src.parin_favorite_output_;
-	floating_base_ = src.floating_base_;
 	reinitialize_CCD_torsions_ = src.reinitialize_CCD_torsions_;
 	sampler_extra_epsilon_rotamer_ = src.sampler_extra_epsilon_rotamer_;
 	sampler_extra_beta_rotamer_ = src.sampler_extra_beta_rotamer_;
 	sample_both_sugar_base_rotamer_ = src.sample_both_sugar_base_rotamer_;
 	sampler_include_torsion_value_in_tag_ = src.sampler_include_torsion_value_in_tag_;
-	rebuild_bulge_mode_ = src.rebuild_bulge_mode_;
 	combine_long_loop_mode_ = src.combine_long_loop_mode_;
 	do_not_sample_multiple_virtual_sugar_ = src.do_not_sample_multiple_virtual_sugar_;
 	sample_ONLY_multiple_virtual_sugar_ = src.sample_ONLY_multiple_virtual_sugar_;
-	sampler_assert_no_virt_ribose_sampling_ = src.sampler_assert_no_virt_ribose_sampling_;
+	sampler_assert_no_virt_sugar_sampling_ = src.sampler_assert_no_virt_sugar_sampling_;
 	allow_base_pair_only_centroid_screen_ = src.allow_base_pair_only_centroid_screen_;
 	minimizer_perform_o2prime_pack_ = src.minimizer_perform_o2prime_pack_;
 	minimizer_output_before_o2prime_pack_ = src.minimizer_output_before_o2prime_pack_;
@@ -225,8 +235,8 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 	if ( !job_parameters_ ) utility_exit_with_message( "You must supply job parameters!" );
 
 	utility::vector1< PoseOP > pose_data_list;
-	StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener;
-	StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener;
+	screener::StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener;
+	screener::StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener;
 	num_sampled_ = 0;
 
 	if ( ! skip_sampling_ && moving_res_list_.size() > 0 ) {
@@ -254,23 +264,21 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 		stepwise_rna_residue_sampler.set_integration_test_mode( integration_test_mode_ ); //Should set after setting sampler_native_screen_rmsd_cutoff, fast, medium_fast options.
 		stepwise_rna_residue_sampler.set_allow_bulge_at_chainbreak( allow_bulge_at_chainbreak_ );
 		stepwise_rna_residue_sampler.set_parin_favorite_output( parin_favorite_output_ );
-		stepwise_rna_residue_sampler.set_floating_base( floating_base_ );
 		stepwise_rna_residue_sampler.set_reinitialize_CCD_torsions( reinitialize_CCD_torsions_ );
 		stepwise_rna_residue_sampler.set_extra_epsilon_rotamer( sampler_extra_epsilon_rotamer_ );
 		stepwise_rna_residue_sampler.set_extra_beta_rotamer( sampler_extra_beta_rotamer_ );
 		stepwise_rna_residue_sampler.set_sample_both_sugar_base_rotamer( sample_both_sugar_base_rotamer_ ); //Nov 12, 2010
 		stepwise_rna_residue_sampler.set_include_torsion_value_in_tag( sampler_include_torsion_value_in_tag_ );
-		stepwise_rna_residue_sampler.set_rebuild_bulge_mode( rebuild_bulge_mode_ );
 		stepwise_rna_residue_sampler.set_combine_long_loop_mode( combine_long_loop_mode_ );
 		stepwise_rna_residue_sampler.set_do_not_sample_multiple_virtual_sugar( do_not_sample_multiple_virtual_sugar_ );
 		stepwise_rna_residue_sampler.set_sample_ONLY_multiple_virtual_sugar( sample_ONLY_multiple_virtual_sugar_ );
-		stepwise_rna_residue_sampler.set_assert_no_virt_ribose_sampling( sampler_assert_no_virt_ribose_sampling_ );
+		stepwise_rna_residue_sampler.set_assert_no_virt_sugar_sampling( sampler_assert_no_virt_sugar_sampling_ );
 		stepwise_rna_residue_sampler.set_allow_base_pair_only_centroid_screen( allow_base_pair_only_centroid_screen_ );
 
-		base_centroid_screener = new StepWiseRNA_BaseCentroidScreener ( pose, job_parameters_ );
+		base_centroid_screener = new screener::StepWiseRNA_BaseCentroidScreener ( pose, job_parameters_ );
 		stepwise_rna_residue_sampler.set_base_centroid_screener ( base_centroid_screener );
 
-		user_input_VDW_bin_screener = new StepWiseRNA_VDW_BinScreener();
+		user_input_VDW_bin_screener = new screener::StepWiseRNA_VDW_BinScreener();
 		if ( VDW_rep_screen_info_.size() > 0 ) {
 			user_input_VDW_bin_screener->set_VDW_rep_alignment_RMSD_CUTOFF ( VDW_rep_alignment_RMSD_CUTOFF_ );
 			user_input_VDW_bin_screener->set_VDW_rep_delete_matching_res( VDW_rep_delete_matching_res_ );
@@ -346,7 +354,7 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 // Briefly, we need to make a StepWiseRNA_JobParameters object that will
 // be fed into various StepWiseRNA movers. Setting this up can be quite complicated...
 // it has become a grab bag of residue lists referring to the global pose, the working pose,
-// sequence mappings, "Is_Prepend_map", etc.
+// sequence mappings, "is_Prepend_map", etc.
 //
 StepWiseRNA_JobParametersOP
 StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > moving_res, core::pose::Pose const & pose ){
@@ -563,7 +571,7 @@ StepWiseRNA_Modeler::output_pose(
 ///////////////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_Modeler::add_to_pose_list( utility::vector1< core::pose::PoseOP > & pose_data_list, pose::Pose const & pose, std::string const pose_tag ) const {
-	PoseOP pose_op = pose.clone();
+	core::pose::PoseOP pose_op = pose.clone();
 	tag_into_pose( *pose_op, pose_tag );
 	pose_data_list.push_back( pose_op );
 }

@@ -17,7 +17,6 @@
 #ifndef INCLUDED_protocols_swa_StepWiseUtil_HH
 #define INCLUDED_protocols_swa_StepWiseUtil_HH
 
-
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
@@ -36,8 +35,6 @@
 #include <core/id/AtomID.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
-
-
 using namespace core;
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -49,6 +46,12 @@ namespace swa {
 	Size
 	make_cut_at_moving_suite( pose::Pose & pose, Size const & moving_suite );
 
+	Size
+	make_cut_at_moving_suite( kinematics::FoldTree & fold_tree, Size const & moving_suite );
+
+	Size
+	find_jump_number_at_suite( kinematics::FoldTree const & fold_tree, Size const & moving_suite );
+
 	bool
 	is_cutpoint_closed( pose::Pose const & pose, Size const seq_num );
 
@@ -56,19 +59,19 @@ namespace swa {
 	get_cutpoint_closed( pose::Pose const & pose );
 
 	bool
-	Is_close_chain_break(pose::Pose const & pose);
+	is_close_chain_break(pose::Pose const & pose);
 
 	// Undefined, commenting out to fix PyRosetta build  bool Contain_seq_num(Size const & seq_num, utility::vector1< Size > const & residue_list);
 
 	//following copies code that is in rna/StepWiseRNA_Util? Remove the latter?
 	void
-	Output_boolean(std::string const & tag, bool boolean, std::ostream & TR );
+	output_boolean(std::string const & tag, bool boolean, std::ostream & TR );
 
 	void
-	Output_boolean(bool boolean, std::ostream & TR );
+	output_boolean(bool boolean, std::ostream & TR );
 
 	void
-	Output_movemap(kinematics::MoveMap const & mm, Size const total_residue, std::ostream & TR);
+	output_movemap(kinematics::MoveMap const & mm, Size const total_residue, std::ostream & TR);
 
 	void
 	Figure_out_moving_residues( kinematics::MoveMap & mm, pose::Pose const & pose,
@@ -184,16 +187,16 @@ namespace swa {
 
 	Real
 	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose );
-	
+
 	void
 	clear_constraints_recursively( pose::Pose & pose );
-	
+
 	void
 	add_coordinate_constraints_from_map( pose::Pose & pose, pose::Pose const & native_pose, std::map< id::AtomID, id::AtomID > const & superimpose_atom_id_map, core::Real const & constraint_x0, core::Real const & constraint_tol );
-	
+
 	void
 	superimpose_at_fixed_res_and_add_constraints( pose::Pose & pose, pose::Pose const & native_pose, core::Real const & constraint_x0, core::Real const & constraint_tol );
-	
+
 	void
 	superimpose_recursively_and_add_constraints( pose::Pose & pose, pose::Pose const & native_pose, core::Real const & constraint_x0, core::Real const & constraint_tol );
 

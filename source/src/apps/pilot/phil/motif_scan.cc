@@ -35,7 +35,7 @@
 #include <core/scoring/dna/BasePartner.hh>
 // AUTO-REMOVED #include <core/scoring/dna/DNA_BasePotential.hh>
 // AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>

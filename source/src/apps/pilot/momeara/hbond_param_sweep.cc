@@ -19,7 +19,7 @@
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/HBondTypeManager.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/LinearPenaltyFunction.hh>
+#include <core/scoring/func/LinearPenaltyFunction.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/Jump.hh>

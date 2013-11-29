@@ -30,8 +30,8 @@
 #include <core/io/silent/SilentStruct.fwd.hh>
 
 #include <protocols/swa/rna/StepWiseRNA_PoseSetup.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
+#include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.hh>
+#include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.fwd.hh>
 
 #include <map>
 
@@ -45,7 +45,7 @@ namespace rna {
 	
 			 SlicedPoseJobParameters():
 				verbose_( true ),
-				Is_setup_( false )
+				is_setup_( false )
 			{
 			}
 
@@ -61,18 +61,18 @@ namespace rna {
 			utility::vector1< core::Size > sliced_pose_best_alignment; //check
 			utility::vector1 < core::Size > sliced_pose_rmsd_res_list; 
 			std::map< core::Size, core::Size > sliced_pose_full_to_sub;
-			std::map< core::Size, bool > sliced_pose_Is_prepend_map;
+			std::map< core::Size, bool > sliced_pose_is_prepend_map;
 			
 
 
 
  	 	private:
-			utility::vector1< bool > Is_sliced_res_;
+			utility::vector1< bool > is_sliced_res_;
 			utility::vector1 < core::Size > working_to_sliced_res_map_; 
 			utility::vector1 < core::Size > sliced_to_working_res_map_; 
 			utility::vector1< std::pair < core::Size, core::Size > > delete_res_range_list_;
 			bool verbose_;
-			bool Is_setup_;
+			bool is_setup_;
 
 	};
 
@@ -182,13 +182,13 @@ namespace rna {
 		set_perform_filters( bool const & setting ){ perform_filters_ = setting; }
 
 		void
-		set_min_num_south_ribose_filter( Size const & setting ){ min_num_south_ribose_filter_ = setting; }
+		set_min_num_south_sugar_filter( Size const & setting ){ min_num_south_sugar_filter_ = setting; }
 
 		void
 		set_VDW_rep_screen_info( utility::vector1< std::string > const & setting ){ VDW_rep_screen_info_ = setting; }
 
 		void
-		set_user_input_VDW_bin_screener( protocols::swa::rna::StepWiseRNA_VDW_BinScreenerOP const & user_input_VDW_bin_screener ){ user_input_VDW_bin_screener_ = user_input_VDW_bin_screener; }
+		set_user_input_VDW_bin_screener( protocols::swa::rna::screener::StepWiseRNA_VDW_BinScreenerOP const & user_input_VDW_bin_screener ){ user_input_VDW_bin_screener_ = user_input_VDW_bin_screener; }
 
 		void
 		set_full_length_loop_rmsd_clustering( bool const & setting ){ full_length_loop_rmsd_clustering_ = setting; }
@@ -224,11 +224,11 @@ namespace rna {
 
 
 		bool 
-		Is_old_individual_suite_cluster( core::pose::Pose const & current_pose, 
+		is_old_individual_suite_cluster( core::pose::Pose const & current_pose, 
                                     core::pose::Pose const & cluster_center_pose,
                                     utility::vector1 < core::Size > const & rmsd_res_list,
 																	std::map< core::Size, core::Size > const & full_to_sub,
-																	std::map< core::Size, bool > const & Is_prepend_map,
+																	std::map< core::Size, bool > const & is_prepend_map,
 																	core::Real const & cluster_radius ) const;
 
 
@@ -240,7 +240,7 @@ namespace rna {
 
 
 		bool 
-		Is_new_cluster_center_with_job_parameters( core::pose::PoseOP const & pose_op, std::string const & tag );
+		is_new_cluster_center_with_job_parameters( core::pose::PoseOP const & pose_op, std::string const & tag );
 
 		bool
 		check_for_closeness_without_job_parameters( core::pose::PoseOP const & pose_op );
@@ -259,7 +259,7 @@ namespace rna {
 		get_act_full_to_sub()	 const;
 
 		std::map< core::Size, bool > const &
-		get_act_Is_prepend_map() const;
+		get_act_is_prepend_map() const;
 
 		void
 		initialize_quick_alignment_pose();
@@ -325,10 +325,10 @@ namespace rna {
 		std::string quick_alignment_tag_;
 		bool skip_clustering_;
 
-		protocols::swa::rna::StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
+		protocols::swa::rna::screener::StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
 		bool perform_VDW_rep_screen_;
 		bool perform_filters_;
-		Size min_num_south_ribose_filter_;
+		Size min_num_south_sugar_filter_;
 		utility::vector1< std::string > VDW_rep_screen_info_;
 		bool full_length_loop_rmsd_clustering_;
 

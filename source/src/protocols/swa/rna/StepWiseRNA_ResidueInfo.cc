@@ -47,7 +47,7 @@ namespace swa {
 namespace rna {
 
 	void
-	Print_torsion_info( core::pose::Pose const & pose, core::Size const seq_num, core::Size const rna_torsion_number, std::string const type ){
+	print_torsion_info( core::pose::Pose const & pose, core::Size const seq_num, core::Size const rna_torsion_number, std::string const type ){
 
 		using namespace core::id;
 		using namespace core::chemical;
@@ -63,7 +63,7 @@ namespace rna {
 			torsion_id = id::TorsionID( seq_num, id::CHI, rna_torsion_number );
 			torsion_angle = pose.residue( seq_num ).chi( rna_torsion_number );
 		} else{
-			TR << "In Print_torsion_info, invalid torsion_type: " << type << std::endl;
+			TR << "In print_torsion_info, invalid torsion_type: " << type << std::endl;
 			exit( 1 );
 		}
 
@@ -72,7 +72,7 @@ namespace rna {
 		id::AtomID id1, id2, id3, id4;
 		bool fail = pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
 		if ( fail ){
-			TR << "In Print_torsion_info, would not get torsion angle atom ids: " <<  std::endl;
+			TR << "In print_torsion_info, would not get torsion angle atom ids: " <<  std::endl;
 			exit( 1 );
 		}
 
@@ -98,13 +98,13 @@ namespace rna {
 //		return rebuild_residue_list;
 //	}
 
-		 utility::vector1< std::string > nucleotides_token = Tokenize( rebuild_residue_string, "-" );
+		 utility::vector1< std::string > nucleotides_token = tokenize( rebuild_residue_string, "-" );
 
 			for ( Size i = 1; i <= nucleotides_token.size(); i++ ){
 //			TR<< nucleotides_token[i] << " ";
 
 				Residue_info res_info;
-				res_info.name = Get_three_letter_name( nucleotides_token[i].substr( 0, 1 ) );
+				res_info.name = get_three_letter_name( nucleotides_token[i].substr( 0, 1 ) );
 				//std::string seq_num_string=nucleotides_token[i].substr(1,2);
 				std::string seq_num_string = nucleotides_token[i].substr( 1, nucleotides_token[i].length() - 1 );
 				res_info.seq_num = string_to_int( seq_num_string );
@@ -118,19 +118,19 @@ namespace rna {
 
 
 	void
-	Output_residue_struct( Residue_info const & residue ){
+	output_residue_struct( Residue_info const & residue ){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::format;
 
-		TR << Get_one_letter_name( residue.name );
+		TR << get_one_letter_name( residue.name );
 		TR << lead_zero_string_of( residue.seq_num, 2 );
 		TR << A( 1, " " );
 	}
 
 
 	std::string
-	Get_one_letter_name( std::string const & three_letter_name ){
+	get_one_letter_name( std::string const & three_letter_name ){
 		if ( three_letter_name == "RAD" ) return "A";
 		if ( three_letter_name == "RCY" ) return "C";
 		if ( three_letter_name == "URA" ) return "U";
@@ -140,7 +140,7 @@ namespace rna {
 	}
 
 	std::string
-	Get_three_letter_name( std::string const & one_letter_name ){
+	get_three_letter_name( std::string const & one_letter_name ){
 		if ( one_letter_name == "A" ) return "RAD";
 		if ( one_letter_name == "C" ) return "RCY";
 		if ( one_letter_name == "U" ) return "URA";
@@ -191,7 +191,7 @@ namespace rna {
 
 
 	void
-	Output_residue_list( utility::vector1< Residue_info > residue_list ){
+	output_residue_list( utility::vector1< Residue_info > residue_list ){
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::format;
 
@@ -207,7 +207,7 @@ namespace rna {
 				seq_num++;
 			}
 
-			Output_residue_struct( residue );
+			output_residue_struct( residue );
 			seq_num++;
 		}
 
@@ -216,7 +216,7 @@ namespace rna {
 	}
 
 	utility::vector1< Residue_info >
-	Get_residue_list_from_fasta( std::string const full_fasta_sequence ){
+	get_residue_list_from_fasta( std::string const full_fasta_sequence ){
 
 		utility::vector1< Residue_info > full_residue_list;
 
@@ -237,14 +237,14 @@ namespace rna {
 
 
 	Residue_info
-	Get_residue_from_seq_num( Size const & seq_num, utility::vector1 < Residue_info > const & residue_list ){
+	get_residue_from_seq_num( Size const & seq_num, utility::vector1 < Residue_info > const & residue_list ){
 
 		for ( Size i = 1; i <= residue_list.size(); i++ ){
 			if ( seq_num == residue_list[i].seq_num ){
 				return residue_list[i];
 			}
 		}
-		TR << "Error, in Get_residue_from_seq_num function. The seq_num " << seq_num << " does not exist in the residue_list" << 	std::endl;
+		TR << "Error, in get_residue_from_seq_num function. The seq_num " << seq_num << " does not exist in the residue_list" << 	std::endl;
 		exit ( 1 );
 	}
 

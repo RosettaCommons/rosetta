@@ -23,8 +23,8 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/HarmonicFunc.fwd.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 

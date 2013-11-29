@@ -18,7 +18,7 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/rna/RNA_AtomVDW.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>

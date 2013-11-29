@@ -23,7 +23,7 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/kinematics/MinimizerMapBase.fwd.hh>

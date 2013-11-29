@@ -41,7 +41,7 @@
 #include <numeric/random/random.hh>
 #include <basic/options/option.hh>
 
-// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.hh>
+// AUTO-REMOVED #include <core/scoring/func/HarmonicFunc.hh>
 // AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <utility/tag/Tag.hh>
 

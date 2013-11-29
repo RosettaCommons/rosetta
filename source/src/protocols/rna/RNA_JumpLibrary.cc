@@ -43,7 +43,7 @@ RNA_PairingTemplate::~RNA_PairingTemplate() {}
 
 static numeric::random::RandomGenerator RG(144621);  // <- Magic number, do not change it!
 
-static basic::Tracer tr( "protocols.rna.rna_jump_library" ) ;
+static basic::Tracer tr( "protocols.rna.RNA_JumpLibrary" ) ;
 
 //@brief constructor
 RNA_PairingTemplate::RNA_PairingTemplate(

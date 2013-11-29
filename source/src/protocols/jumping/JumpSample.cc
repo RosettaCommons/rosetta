@@ -31,7 +31,7 @@
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/JumpSRFD.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 
 // ObjexxFCL Headers

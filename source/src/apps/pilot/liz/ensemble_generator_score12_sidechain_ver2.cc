@@ -83,9 +83,9 @@ numeric::random::RandomGenerator RG(154313929); // <- Magic number, do not chang
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>

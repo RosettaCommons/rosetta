@@ -117,7 +117,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
  #include <core/scoring/constraints/ConstraintSet.hh>
- #include <core/scoring/constraints/FlatHarmonicFunc.hh>
+ #include <core/scoring/func/FlatHarmonicFunc.hh>
  #include <core/scoring/constraints/AtomPairConstraint.hh>
  #include <core/scoring/constraints/CoordinateConstraint.hh>
  #include <core/scoring/constraints/ConstraintIO.hh>

@@ -41,7 +41,7 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/MixtureFunc.hh>
+// AUTO-REMOVED #include <core/scoring/func/MixtureFunc.hh>
 
 #include <core/scoring/constraints/util.hh>
 #include <core/pose/Pose.hh>

@@ -20,7 +20,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/loop_graph/LoopScoreInfo.fwd.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
+#include <core/scoring/func/Func.fwd.hh>
 #include <core/id/AtomID.hh>
 
 using core::scoring::constraints::FuncOP;

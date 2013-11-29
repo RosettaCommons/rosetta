@@ -32,10 +32,10 @@
 #include <core/conformation/Conformation.hh>
 #include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/constraints/CircularGeneral1D_Func.hh>
-#include <core/scoring/constraints/CircularHarmonicFunc.hh>
-#include <core/scoring/constraints/FadeFunc.hh>
-#include <core/scoring/constraints/SumFunc.hh>
+#include <core/scoring/func/CircularGeneral1D_Func.hh>
+#include <core/scoring/func/CircularHarmonicFunc.hh>
+#include <core/scoring/func/FadeFunc.hh>
+#include <core/scoring/func/SumFunc.hh>
 #include <core/scoring/EnergyMap.hh>
 
 // Numeric Headers

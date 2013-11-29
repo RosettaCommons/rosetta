@@ -27,7 +27,6 @@
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
-//#include <protocols/moves/GreenPacker.fwd.hh>
 #include <string>
 #include <map>
 #include <utility/exit.hh> //April 29, 2011
@@ -115,11 +114,11 @@ public:
 
 
 
-class SillyCountStruct{
+class StepWiseRNA_CountStruct{
 
 public:
 
-  SillyCountStruct():
+  StepWiseRNA_CountStruct():
     output_pose_count( 0 ),
     full_score_count( 0 ),
     good_bin_rep_count( 0 ),
@@ -138,7 +137,7 @@ public:
     tot_rotamer_count( 0 ),
     fine_rmsd_count( 0 ),
     rmsd_count( 0 ),
-    non_clash_ribose( 0 ),
+    non_clash_sugar( 0 ),
     fast_full_atom_VDW_replusion_screen( 0 ),
     in_range_CCD_torsion( 0 ),
     total_bin( 0 ),
@@ -152,7 +151,7 @@ public:
   }
 
 
-  ~SillyCountStruct(){};
+  ~StepWiseRNA_CountStruct(){};
 
 public:
 
@@ -174,7 +173,7 @@ public:
   core::Size tot_rotamer_count;
   core::Size fine_rmsd_count;
   core::Size rmsd_count;
-  core::Size non_clash_ribose;
+  core::Size non_clash_sugar;
   core::Size fast_full_atom_VDW_replusion_screen;
   core::Size in_range_CCD_torsion;
   core::Size total_bin;

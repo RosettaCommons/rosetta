@@ -161,7 +161,7 @@ OPT_KEY( String, 	output_silent_file )
 OPT_KEY( StringVector, list_of_virtual_res )
 OPT_KEY( RealVector, list_of_energy )
 OPT_KEY( IntegerVector, virtual_res )
-OPT_KEY( IntegerVector, virtual_ribose )
+OPT_KEY( IntegerVector, virtual_sugar )
 OPT_KEY( Boolean, align_only_over_base_atoms )
 OPT_KEY( IntegerVector, additional_slice_res )
 OPT_KEY( IntegerVector, native_virtual_res )
@@ -225,7 +225,7 @@ align_pose_general( core::pose::Pose const & static_pose, std::string const stat
 		Size const static_seq_num = alignment_res_pair_list[n].first;
 		Size const moving_seq_num = alignment_res_pair_list[n].second;
 
-		if ( Is_virtual_base( static_pose.residue( static_seq_num ) ) || Is_virtual_base( moving_pose.residue( moving_seq_num ) ) ) continue;
+		if ( is_virtual_base( static_pose.residue( static_seq_num ) ) || is_virtual_base( moving_pose.residue( moving_seq_num ) ) ) continue;
 
 		found_non_virtual_base = true; //ok found a non-virtual base nucleotide that can be used for alignment
 		break;
@@ -238,8 +238,8 @@ align_pose_general( core::pose::Pose const & static_pose, std::string const stat
 			Size const moving_seq_num = alignment_res_pair_list[n].second;
 
 			std::cout << "static_seq_num = " << static_seq_num << " moving_seq_num = " << moving_seq_num;
-			Output_boolean( "  Is_virtual_base( " + static_tag + " ):", Is_virtual_base( static_pose.residue( static_seq_num ) ), TR );
-			Output_boolean( "  Is_virtual_base( " + moving_tag + " ):", Is_virtual_base( moving_pose.residue( moving_seq_num ) ), TR );
+			output_boolean( "  is_virtual_base( " + static_tag + " ):", is_virtual_base( static_pose.residue( static_seq_num ) ), TR );
+			output_boolean( "  is_virtual_base( " + moving_tag + " ):", is_virtual_base( moving_pose.residue( moving_seq_num ) ), TR );
 			std::cout << std::endl;
 		}
 		std::string error_message = "Error in aligning " + moving_tag + " to " + static_tag + ". No non - virtual_base in working_best_alignment to align the poses!";
@@ -296,7 +296,7 @@ check_alignment_RMSD_cutoff( core::pose::Pose const & static_pose, std::string c
 		Size const moving_seq_num = alignment_res_pair_list[n].second;
 
 
-		if ( Is_virtual_base( static_pose.residue( static_seq_num ) ) || Is_virtual_base( static_pose.residue( static_seq_num ) ) ) continue;
+		if ( is_virtual_base( static_pose.residue( static_seq_num ) ) || is_virtual_base( static_pose.residue( static_seq_num ) ) ) continue;
 
 		Size atom_count = 0;
 		Real sum_sd = 0.0;
@@ -304,7 +304,7 @@ check_alignment_RMSD_cutoff( core::pose::Pose const & static_pose, std::string c
 		if ( base_only ){
 			base_atoms_square_deviation( static_pose, moving_pose, static_seq_num, moving_seq_num, atom_count, sum_sd, false /*verbose*/, false /*ignore_virtual_atom*/ );
 		} else{
-			suite_square_deviation( static_pose, moving_pose, false /*Is_prepend*/, static_seq_num, moving_seq_num, atom_count, sum_sd, false /*verbose*/, false /*ignore_virtual_atom*/ );
+			suite_square_deviation( static_pose, moving_pose, false /*is_prepend*/, static_seq_num, moving_seq_num, atom_count, sum_sd, false /*verbose*/, false /*ignore_virtual_atom*/ );
 		}
 
 		sum_sd = sum_sd/( atom_count );
@@ -338,8 +338,8 @@ full_length_rmsd_over_reside_list_general( pose::Pose const & pose_one, pose::Po
 	using namespace ObjexxFCL;
 
 	if ( verbose ){
-		Output_title_text( "Enter full_length_rmsd_over_residue_list_general function", TR );
-		Output_boolean( "ignore_virtual_atom = ", ignore_virtual_atom, TR ); std::cout << std::endl;
+		output_title_text( "Enter full_length_rmsd_over_residue_list_general function", TR );
+		output_boolean( "ignore_virtual_atom = ", ignore_virtual_atom, TR ); std::cout << std::endl;
 		output_pair_size( rmsd_res_pair_list, "rmsd_res_pair_list = ", TR );
 	}
 
@@ -374,7 +374,7 @@ full_length_rmsd_over_reside_list_general( pose::Pose const & pose_one, pose::Po
 		}
 
 
-		bool Is_prepend = false;
+		bool is_prepend = false;
 		bool both_pose_res_is_virtual = false;
 
 		if ( pose_one.residue( seq_num_one ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) && pose_two.residue( seq_num_two ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
@@ -397,15 +397,15 @@ full_length_rmsd_over_reside_list_general( pose::Pose const & pose_one, pose::Po
 
 		if ( verbose ){
 			std::cout << "seq_num_one = " << seq_num_one << " seq_num_two = " << seq_num_two;
-			Output_boolean( " Is_prepend = ", Is_prepend, TR );
-			Output_boolean( " both_pose_res_is_virtual = ", both_pose_res_is_virtual, TR ); std::cout << std::endl;
+			output_boolean( " is_prepend = ", is_prepend, TR );
+			output_boolean( " both_pose_res_is_virtual = ", both_pose_res_is_virtual, TR ); std::cout << std::endl;
 		}
 
 		if ( both_pose_res_is_virtual ) continue;
 
 		//add atom in the suites to atom_count
 		//add sd of each atom to sum_sd
-		suite_square_deviation( pose_one, pose_two, Is_prepend, seq_num_one, seq_num_two, atom_count, sum_sd, false, ignore_virtual_atom );
+		suite_square_deviation( pose_one, pose_two, is_prepend, seq_num_one, seq_num_two, atom_count, sum_sd, false, ignore_virtual_atom );
 
 
 		if ( ( ( seq_num_one + 1 ) <= pose_one.total_residue() ) != ( ( seq_num_two + 1 ) <= pose_two.total_residue() ) ){
@@ -422,20 +422,20 @@ full_length_rmsd_over_reside_list_general( pose::Pose const & pose_one, pose::Po
 				utility_exit_with_message( "( sequence_one[( seq_num_one + 1 ) - 1] ) != ( sequence_two[( seq_num_two + 1 ) - 1] )" );
 			}
 
-			bool Is_phosphate_edge_res_one = false;
-			bool Is_phosphate_edge_res_two = false;
+			bool is_phosphate_edge_res_one = false;
+			bool is_phosphate_edge_res_two = false;
 
-			if ( rmsd_res_list_one.has_value( seq_num_one + 1 ) == false ) Is_phosphate_edge_res_one = true;
-			if ( rmsd_res_list_two.has_value( seq_num_two + 1 ) == false ) Is_phosphate_edge_res_two = true;
+			if ( rmsd_res_list_one.has_value( seq_num_one + 1 ) == false ) is_phosphate_edge_res_one = true;
+			if ( rmsd_res_list_two.has_value( seq_num_two + 1 ) == false ) is_phosphate_edge_res_two = true;
 
-			if ( Is_phosphate_edge_res_one != Is_phosphate_edge_res_two ){
+			if ( is_phosphate_edge_res_one != is_phosphate_edge_res_two ){
 				std::cout << "seq_num_one + 1 = " << seq_num_one + 1 << " seq_num_two + 1 = " << seq_num_two + 1 << std::endl;
-				utility_exit_with_message( "Is_phosphate_edge_res_one != Is_phosphate_edge_res_two" );
+				utility_exit_with_message( "is_phosphate_edge_res_one != is_phosphate_edge_res_two" );
 			}
 
-			if ( Is_phosphate_edge_res_one ){
+			if ( is_phosphate_edge_res_one ){
 
-				if ( verbose ) std::cout << "Is_phosphate_edge_res = true! for seq_num_one = " << seq_num_one << " seq_num_two = " << seq_num_two << "" << std::endl;
+				if ( verbose ) std::cout << "is_phosphate_edge_res = true! for seq_num_one = " << seq_num_one << " seq_num_two = " << seq_num_two << "" << std::endl;
 
 				phosphate_square_deviation( pose_one, pose_two, seq_num_one + 1, seq_num_two + 1, atom_count, sum_sd, false, ignore_virtual_atom );
 
@@ -453,7 +453,7 @@ full_length_rmsd_over_reside_list_general( pose::Pose const & pose_one, pose::Po
 
 	if ( verbose ){
 		std::cout << "sum_sd = " << sum_sd << " atom_count = " << atom_count << " rmsd = " << rmsd << std::endl;
-		Output_title_text( "Exit In full_length_rmsd_over_residue_list function_general", TR );
+		output_title_text( "Exit In full_length_rmsd_over_residue_list function_general", TR );
 	}
 
 	return ( std::max( 0.01, rmsd ) );
@@ -482,7 +482,7 @@ align_pdbs(){
 
 	bool const align_base_only = option[align_only_over_base_atoms ]();
 
-	Output_boolean( "align_base_only = ", align_base_only, TR ); std::cout << std::endl;
+	output_boolean( "align_base_only = ", align_base_only, TR ); std::cout << std::endl;
 
 
 	std::string const static_pdb_tag = option[ in::file::native ]();
@@ -493,7 +493,7 @@ align_pdbs(){
 
 	utility::vector1< core::Size > const native_virtual_res_list = option[ native_virtual_res ]();
 
-	Output_seq_num_list( "native_virtual_res_list = ", native_virtual_res_list, TR );
+	output_seq_num_list( "native_virtual_res_list = ", native_virtual_res_list, TR );
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	if ( alignment_res_string_pair_list.size() == 0 ) utility_exit_with_message( "alignment_res_string_pair_list.size() == 0" );
@@ -502,7 +502,7 @@ align_pdbs(){
 
 	for ( Size n = 1; n <= alignment_res_string_pair_list.size(); n++ ){
 
-		utility::vector1< std::string > const alignment_res_string_pair = Tokenize( alignment_res_string_pair_list[n], "-" );
+		utility::vector1< std::string > const alignment_res_string_pair = tokenize( alignment_res_string_pair_list[n], "-" );
 		if ( alignment_res_string_pair.size() != 2 ){
 			 utility_exit_with_message( "alignment_res_string_pair.size() != 2, alignment_res_string_pair_list[n] = " + alignment_res_string_pair_list[n] );
 		}
@@ -608,8 +608,8 @@ calculate_pairwise_RMSD(){
 	bool const do_dump_pdb = option[ dump ]();
 	Real const alignment_RMSD_cutoff = option[ alignment_RMSD_CUTOFF ]();
 
-	Output_boolean( "align_base_only = ", align_base_only, TR ); std::cout << std::endl;
-	Output_boolean( "do_dump_pdb = ", do_dump_pdb, TR ); std::cout << std::endl;
+	output_boolean( "align_base_only = ", align_base_only, TR ); std::cout << std::endl;
+	output_boolean( "do_dump_pdb = ", do_dump_pdb, TR ); std::cout << std::endl;
 	std::cout << "alignment_RMSD_cutoff = " << alignment_RMSD_cutoff << std::endl;
 
 
@@ -639,7 +639,7 @@ calculate_pairwise_RMSD(){
 
 	for ( Size n = 1; n <= alignment_res_string_pair_list.size(); n++ ){
 
-		utility::vector1< std::string > const alignment_res_string_pair = Tokenize( alignment_res_string_pair_list[n], "-" );
+		utility::vector1< std::string > const alignment_res_string_pair = tokenize( alignment_res_string_pair_list[n], "-" );
 		if ( alignment_res_string_pair.size() != 2 ){
 			 utility_exit_with_message( "alignment_res_string_pair.size() != 2, alignment_res_string_pair_list[n] = " + alignment_res_string_pair_list[n] );
 		}
@@ -661,7 +661,7 @@ calculate_pairwise_RMSD(){
 
 	for ( Size n = 1; n <= rmsd_res_string_pair_list.size(); n++ ){
 
-		utility::vector1< std::string > const rmsd_res_string_pair = Tokenize( rmsd_res_string_pair_list[n], "-" );
+		utility::vector1< std::string > const rmsd_res_string_pair = tokenize( rmsd_res_string_pair_list[n], "-" );
 		if ( rmsd_res_string_pair.size() != 2 ){
 			 utility_exit_with_message( "rmsd_res_string_pair.size() != 2, rmsd_res_string_pair_list[n] = " + rmsd_res_string_pair_list[n] );
 		}
@@ -678,8 +678,8 @@ calculate_pairwise_RMSD(){
 	for ( Size n = 1; n <= rmsd_res_pair_list.size(); n++ ){
 		Size native_rmsd_res = rmsd_res_pair_list[n].first;
 		Size decoy_rmsd_res = rmsd_res_pair_list[n].second;
-		Output_boolean( "Is_native_virtual_res( " + string_of( native_rmsd_res ) + " ) = ", native_pose.residue( native_rmsd_res ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ), TR );
-		Output_boolean( " | Is_decoy_virtual_res( " + string_of( decoy_rmsd_res ) + " ) = ", decoy_pose.residue( decoy_rmsd_res ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ), TR );
+		output_boolean( "is_native_virtual_res( " + string_of( native_rmsd_res ) + " ) = ", native_pose.residue( native_rmsd_res ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ), TR );
+		output_boolean( " | is_decoy_virtual_res( " + string_of( decoy_rmsd_res ) + " ) = ", decoy_pose.residue( decoy_rmsd_res ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ), TR );
 		std::cout << std::endl;
 	}
 
@@ -819,7 +819,7 @@ mutate_residue( pose::Pose & pose, Size const seq_num, std::string const res_nam
 
 	pose::Pose start_pose = pose;
 
-	std::cout << "before_mutation: " << std::endl; Print_torsion_info( pose, seq_num, 1, "side_chain" );
+	std::cout << "before_mutation: " << std::endl; print_torsion_info( pose, seq_num, 1, "side_chain" );
 
 	chemical::AA res_aa = aa_from_name( res_name );
 //	ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *(rsd_set->aa_map( res_aa )[1]) ) ;
@@ -831,7 +831,7 @@ mutate_residue( pose::Pose & pose, Size const seq_num, std::string const res_nam
 
 	pose.set_torsion( TorsionID( seq_num, id::CHI, 1 ), start_pose.residue( seq_num ).chi( 1 ) );
 
-	std::cout << "after_mutation: " << std::endl; Print_torsion_info( pose, seq_num, 1, "side_chain" );
+	std::cout << "after_mutation: " << std::endl; print_torsion_info( pose, seq_num, 1, "side_chain" );
 
 }
 
@@ -866,7 +866,7 @@ mutate_residues_wrapper()
 	utility::vector1 < Residue_info > strand_residue_list = Convert_rebuild_residue_string_to_list( rebuild_residue_string );
 
 	for ( Size n = 1; n <= strand_residue_list.size(); n++ ){
-		std::cout << "mutate_residue: "; Output_residue_struct( strand_residue_list[n] );
+		std::cout << "mutate_residue: "; output_residue_struct( strand_residue_list[n] );
 		mutate_residue( pose, strand_residue_list[n].seq_num, strand_residue_list[n].name );
 	}
 
@@ -923,7 +923,7 @@ slice_ellipsoid_envelope(){
 
 	utility::vector1< core::Size > additional_slice_res_list = option[ additional_slice_res]();
 
-	Output_seq_num_list( "additional_slice_res_list = ", additional_slice_res_list, TR );
+	output_seq_num_list( "additional_slice_res_list = ", additional_slice_res_list, TR );
 
 	for ( Size ii = 1; ii <= additional_slice_res_list.size(); ii++ ){
 		if ( additional_slice_res_list[ii] < 1 )  utility_exit_with_message( "additional_slice_res_list[" + string_of( ii ) + "] < 1" );
@@ -1060,8 +1060,8 @@ slice_ellipsoid_envelope(){
 
 			if ( method_1 != method_2 ){
 				std::cout << "method_1 != method_2" << std::endl;
-				Output_boolean( "method_1 = ", method_1, TR ); std::cout << std::endl;
-				Output_boolean( "method_2 = ", method_2, TR ); std::cout << std::endl;
+				output_boolean( "method_1 = ", method_1, TR ); std::cout << std::endl;
+				output_boolean( "method_2 = ", method_2, TR ); std::cout << std::endl;
 				utility_exit_with_message( "method_1 != method_2" );
 			}
 
@@ -1195,7 +1195,7 @@ slice_sample_res_and_surrounding(){
 
 	utility::vector1< core::Size > additional_slice_res_list = option[ additional_slice_res]();
 
-	Output_seq_num_list( "additional_slice_res_list = ", additional_slice_res_list, TR );
+	output_seq_num_list( "additional_slice_res_list = ", additional_slice_res_list, TR );
 
 
 	for ( Size ii = 1; ii <= additional_slice_res_list.size(); ii++ ){
@@ -1222,28 +1222,28 @@ slice_sample_res_and_surrounding(){
 
 		core::conformation::Residue const & surrounding_rsd = pose.residue( seq_num );
 
-		bool Is_surrounding_res = false;
+		bool is_surrounding_res = false;
 
 		for ( Size ii = 1; ii <= sample_res_list.size(); ii++ ){
-			if ( Is_surrounding_res == true ) break;
+			if ( is_surrounding_res == true ) break;
 
-			bool Is_very_far_from_each_other = false;
+			bool is_very_far_from_each_other = false;
 
 			Size const sample_res = sample_res_list[ii];
 
 			core::conformation::Residue const & sample_rsd = pose.residue( sample_res );
 
 			for ( Size surr_at = 1; surr_at <= surrounding_rsd.natoms(); surr_at++ ){
-				if ( Is_surrounding_res == true ) break;
-				if ( Is_very_far_from_each_other == true ) break;
+				if ( is_surrounding_res == true ) break;
+				if ( is_very_far_from_each_other == true ) break;
 
 				for ( Size sample_at = 1; sample_at <= sample_rsd.natoms(); sample_at++ ){
-					if ( Is_surrounding_res == true ) break;
-					if ( Is_very_far_from_each_other == true ) break;
+					if ( is_surrounding_res == true ) break;
+					if ( is_very_far_from_each_other == true ) break;
 
 //					if( (surrounding_rsd.xyz(surr_at)-sample_rsd.xyz(sample_at) ).length_squared() > 35*35) {
 //						std::cout << "res " << seq_num << " is very_far_away from sample_res " << sample_res << ", length()= " << ( surrounding_rsd.xyz(surr_at)-sample_rsd.xyz(sample_at) ).length()  << std::endl;
-//						Is_very_far_from_each_other=true;
+//						is_very_far_from_each_other=true;
 //						break;
 //					}
 
@@ -1251,14 +1251,14 @@ slice_sample_res_and_surrounding(){
 					if ( ( surrounding_rsd.xyz( surr_at ) - sample_rsd.xyz( sample_at ) ).length_squared() < expand_radius*expand_radius ){
 						std::cout << "res " << seq_num << " is a surrounding res, length() = " << ( surrounding_rsd.xyz( surr_at ) - sample_rsd.xyz( sample_at ) ).length()  << std::endl;
 						keep_res_list.push_back( seq_num );
-						Is_surrounding_res = true;
+						is_surrounding_res = true;
 						break;
 					}
 				}
 			}
 		}
 
-		if ( Is_surrounding_res == false ){
+		if ( is_surrounding_res == false ){
 
 			for ( Size n = 1; n <= sample_res_final_seq_num.size(); n++ ){
 				if ( sample_res_list[n] > seq_num ){
@@ -1360,7 +1360,7 @@ pdb_to_silent_file(){
 
 	utility::vector1< Size > const virtual_res_list = option[ virtual_res]();
 
-	utility::vector1< Size > const virtual_ribose_list = option[ virtual_ribose]();
+	utility::vector1< Size > const virtual_sugar_list = option[ virtual_sugar]();
 
 	utility::vector1< Real > const list_of_pose_energy = option[ list_of_energy ]();
 
@@ -1397,7 +1397,7 @@ pdb_to_silent_file(){
 		if ( virtual_res_list.size() > 0 ){
 			act_virtual_res_list = virtual_res_list;
 		} else if ( option[ list_of_virtual_res].user() ){
-			utility::vector1< std::string > virtual_res_string_list = Tokenize( list_of_pose_virtual_res[n], "-" );
+			utility::vector1< std::string > virtual_res_string_list = tokenize( list_of_pose_virtual_res[n], "-" );
 
 			for ( Size ii = 1; ii <= virtual_res_string_list.size(); ii++ ){
 				Size const virtual_seq_num = string_to_int( virtual_res_string_list[ii] );
@@ -1411,8 +1411,8 @@ pdb_to_silent_file(){
 			apply_virtual_rna_residue_variant_type( pose, act_virtual_res_list[ii], false /*apply_check*/ ) ;
 		}
 
-		for ( Size ii = 1; ii <= virtual_ribose_list.size(); ii++ ){
-			add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", virtual_ribose_list[ii] );
+		for ( Size ii = 1; ii <= virtual_sugar_list.size(); ii++ ){
+			add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", virtual_sugar_list[ii] );
 		}
 
 		viewer_pose = pose;
@@ -1600,7 +1600,7 @@ try {
 	NEW_OPT( list_of_virtual_res, " list of virtual_res of each corresponding imported pdb", blank_string_vector );
 	NEW_OPT( list_of_energy, " list of energy of each corresponding imported pdb", blank_real_vector );
 	NEW_OPT( virtual_res, " virtual_res ", blank_size_vector );
-	NEW_OPT( virtual_ribose, " virtual_ribose ", blank_size_vector );
+	NEW_OPT( virtual_sugar, " virtual_sugar ", blank_size_vector );
 	NEW_OPT( align_only_over_base_atoms, "align_only_over_base_atoms", true );
 	NEW_OPT( additional_slice_res, "additional_slice_res", blank_size_vector );
 	NEW_OPT( native_virtual_res, " native_virtual_res ( use in align_pdbs() function )", blank_size_vector );

@@ -26,7 +26,7 @@
 
 // Package headers
 #include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/Func.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/constraints/MultiConstraint.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 

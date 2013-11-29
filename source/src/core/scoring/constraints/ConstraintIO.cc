@@ -23,11 +23,11 @@
 //#include <core/scoring/constraints/BindingSiteConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/FuncFactory.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/MixtureFunc.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ScalarWeightedFunc.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/FuncFactory.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+// AUTO-REMOVED #include <core/scoring/func/MixtureFunc.hh>
+// AUTO-REMOVED #include <core/scoring/func/ScalarWeightedFunc.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>

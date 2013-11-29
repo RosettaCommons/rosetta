@@ -14,7 +14,7 @@
 
 
 #include <core/scoring/loop_graph/LoopScoreInfo.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 

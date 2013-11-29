@@ -26,8 +26,8 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/ScalarWeightedFunc.hh>
-#include <core/scoring/constraints/SOGFunc.hh>
+#include <core/scoring/func/ScalarWeightedFunc.hh>
+#include <core/scoring/func/SOGFunc.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/pose/PDBInfo.hh>
 

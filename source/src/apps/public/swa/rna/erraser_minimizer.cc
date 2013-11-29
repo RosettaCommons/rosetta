@@ -89,7 +89,7 @@
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 
 //////////////////////////////////////////////////
@@ -726,7 +726,7 @@ pdb_minimizer() {
 	//Output the sequence
 	std::string working_sequence = pose.sequence();
 	std::cout << "Pose sequence = " << working_sequence << std::endl;
-	protocols::swa::rna::Output_fold_tree_info ( pose.fold_tree(), "rna_pdb_minimizing" );
+	protocols::swa::rna::output_fold_tree_info ( pose.fold_tree(), "rna_pdb_minimizing" );
 
 	//Try flipping the pyrimidines
 	if ( attempt_pyrimidine_flip_ ) {
@@ -860,7 +860,7 @@ pdb_minimizer() {
 		vary_bond_geometry ( mm, pose, pose_reference, allow_insert );
 	}
 
-	Output_movemap ( mm, pose );
+	output_movemap ( mm, pose );
 	scorefxn->show ( std::cout, pose );
 	Real const score_before = ( (*scorefxn) (pose) );
 	Real const edens_score_before = ( (*edens_scorefxn) (pose) );

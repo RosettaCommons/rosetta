@@ -25,7 +25,7 @@
 
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/ScoreFunction.hh>

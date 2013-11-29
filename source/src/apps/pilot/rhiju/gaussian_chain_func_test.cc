@@ -12,7 +12,7 @@
 
 
 // libRosetta headers
-#include <core/scoring/constraints/GaussianChainFunc.hh>
+#include <core/scoring/func/GaussianChainFunc.hh>
 #include <utility/tools/make_vector1.hh>
 #include <iostream>
 #include <ObjexxFCL/format.hh>

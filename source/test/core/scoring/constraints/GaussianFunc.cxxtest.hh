@@ -8,7 +8,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/constraints/GaussianFunc.cxxtest.hh
+/// @file   core/scoring/func/GaussianFunc.cxxtest.hh
 /// @brief  test suite for GaussianFunc function
 /// @author James Thompson
 /// @author modified Apr 23 2008 by Sergey Lyskov: rewriting to use UTracer
@@ -26,8 +26,8 @@
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
-#include <core/scoring/constraints/GaussianFunc.hh>
-#include <core/scoring/constraints/GaussianFunc.fwd.hh>
+#include <core/scoring/func/GaussianFunc.hh>
+#include <core/scoring/func/GaussianFunc.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 
 #include <core/types.hh>
@@ -72,7 +72,7 @@ public:
 		using namespace core::scoring::constraints;
 
 		// UTracer log file
-		test::UTracer UT("core/scoring/constraints/GaussianFunc.u");
+		test::UTracer UT("core/scoring/func/GaussianFunc.u");
 
 		GaussianFuncOP func( new GaussianFunc( 5.16, 1.5 ) );
 

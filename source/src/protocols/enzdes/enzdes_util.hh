@@ -21,7 +21,7 @@
 
 // Package headers
 // AUTO-REMOVED #include <core/scoring/constraints/Constraints.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/Func.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/func/Func.fwd.hh>
 
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 

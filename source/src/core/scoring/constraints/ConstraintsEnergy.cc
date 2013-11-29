@@ -19,7 +19,7 @@
 #include <core/scoring/constraints/ConstraintEnergyContainer.hh>
 #include <core/scoring/constraints/CstMinimizationData.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/XYZ_Func.hh>
 
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/MinimizationData.hh>

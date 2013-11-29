@@ -264,7 +264,7 @@ get_fixed_res ( core::Size const nres ) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 bool
-Is_nonempty_input_silent_file ( std::string const input_silent_file, std::string const exit_key_string ) {
+is_nonempty_input_silent_file ( std::string const input_silent_file, std::string const exit_key_string ) {
 	std::cout << "Checking that input_silent_file " << input_silent_file << " contain actual silent_structs or the correct exit_key_string" << std::endl;
 	std::ifstream infile;
 	infile.open ( input_silent_file.c_str() );
@@ -354,7 +354,7 @@ get_silent_file_tags() {
 	}
 
 	if ( option[ job_queue_ID ].user() && option[ filter_output_filename ].user() ) {
-		Output_title_text( "importing tag from filter_outfile", TR );
+		output_title_text( "importing tag from filter_outfile", TR );
 		tags_from_filterer_outfile = true;
 		std::string const filtered_tag_file = option[ filter_output_filename ]();
 		std::ifstream infile;
@@ -391,7 +391,7 @@ get_silent_file_tags() {
 		input_silent_file_tags.clear();
 		input_silent_file_tags.push_back ( line_list[1] );
 		input_silent_file_tags.push_back ( line_list[2] );
-		Output_title_text( "", TR );
+		output_title_text( "", TR );
 	}
 
 	if ( ( tags_from_command_line == false ) && ( tags_from_filterer_outfile == false ) ) {

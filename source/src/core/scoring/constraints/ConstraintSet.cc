@@ -14,7 +14,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 // Package headers
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/scoring/constraints/DOF_Constraint.hh> //Special constraints.
 #include <core/scoring/MinimizationData.hh>
 #include <core/scoring/constraints/CstMinimizationData.hh>
@@ -31,7 +31,7 @@
 #include <set>
 
 #include <core/id/SequenceMapping.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/XYZ_Func.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 

@@ -21,14 +21,14 @@
 // Unit header
 #include <core/scoring/constraints/Constraint.hh>
 
-// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
+// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/ScoreType.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-#include <core/scoring/constraints/FuncFactory.fwd.hh>
+#include <core/scoring/func/FuncFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/constraints/XYZ_Func.fwd.hh>
+#include <core/scoring/func/XYZ_Func.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/random/random.fwd.hh>

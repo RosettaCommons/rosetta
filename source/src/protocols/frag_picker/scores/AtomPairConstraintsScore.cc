@@ -20,8 +20,8 @@
 #include <protocols/frag_picker/FragmentPicker.hh>
 
 // mini headers
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/FuncFactory.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/FuncFactory.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>

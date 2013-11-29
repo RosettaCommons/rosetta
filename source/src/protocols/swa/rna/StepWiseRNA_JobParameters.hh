@@ -47,7 +47,7 @@ namespace rna {
     virtual ~StepWiseRNA_JobParameters();
 
 		bool const & output_extra_RMSDs() const;
-		bool const & Is_simple_full_length_job_params() const;
+		bool const & is_simple_full_length_job_params() const;
 
 		std::string const & full_sequence() const;
 		std::string const & working_sequence() const;
@@ -69,7 +69,7 @@ namespace rna {
 		std::map< core::Size, core::Size > const & const_full_to_sub() const;
 		std::map< core::Size, core::Size > const & const_sub_to_full() const;
 		core::kinematics::FoldTree const & fold_tree() const;
-		std::map< core::Size, bool > const & Is_prepend_map() const;
+		std::map< core::Size, bool > const & is_prepend_map() const;
 
 
 		utility::vector1< std::pair < core::Size, core::Size > > const & chain_boundaries() const;
@@ -77,9 +77,10 @@ namespace rna {
 		Size const & gap_size() const;
 		Size const & five_prime_chain_break_res() const;
 
-		bool const & Is_prepend() const;
-		bool const & Is_internal() const;
+		bool const & is_prepend() const;
+		bool const & is_internal() const;
 		bool const & add_virt_res_as_root() const;
+		bool const & floating_base() const{ return floating_base_;}
 
 		ObjexxFCL::FArray1D < bool > const & partition_definition() const;
 
@@ -103,17 +104,17 @@ namespace rna {
 		utility::vector1< core::Size > const & force_syn_chi_res_list() const;
 		utility::vector1< core::Size > const & working_force_syn_chi_res_list() const;
 
-		utility::vector1< core::Size > const & force_north_ribose_list() const;
-		utility::vector1< core::Size > const & working_force_north_ribose_list() const;
+		utility::vector1< core::Size > const & force_north_sugar_list() const;
+		utility::vector1< core::Size > const & working_force_north_sugar_list() const;
 
-		utility::vector1< core::Size > const & force_south_ribose_list() const;
-		utility::vector1< core::Size > const & working_force_south_ribose_list() const;
+		utility::vector1< core::Size > const & force_south_sugar_list() const;
+		utility::vector1< core::Size > const & working_force_south_sugar_list() const;
 
 		utility::vector1< core::Size > const & protonated_H1_adenosine_list() const;
 		utility::vector1< core::Size > const & working_protonated_H1_adenosine_list() const;
 
 		void set_output_extra_RMSDs( bool const & setting );
-		void set_Is_simple_full_length_job_params( bool const & setting );
+		void set_is_simple_full_length_job_params( bool const & setting );
 
 		void set_full_sequence( std::string const & setting );
 		//void set_working_sequence( std::string const & setting );
@@ -128,7 +129,7 @@ namespace rna {
 		void set_full_to_sub( std::map< core::Size, core::Size > const & setting );
 
 		void set_fold_tree( core::kinematics::FoldTree const & setting );
-		void set_Is_prepend_map( std::map< core::Size, bool > const & setting );
+		void set_is_prepend_map( std::map< core::Size, bool > const & setting );
 
 
 		void set_chain_boundaries( utility::vector1< std::pair < core::Size, core::Size > > const & setting );
@@ -136,8 +137,8 @@ namespace rna {
 		void set_gap_size( Size const & setting );
 		void set_five_prime_chain_break_res( Size const & setting );
 
-		void set_Is_prepend( bool const & setting );
-		void set_Is_internal( bool const & setting );
+		void set_is_prepend( bool const & setting );
+		void set_is_internal( bool const & setting );
 		void set_partition_definition( ObjexxFCL::FArray1D < bool > const & setting );
 
 		void set_working_native_pose( core::pose::PoseOP & pose );
@@ -155,15 +156,13 @@ namespace rna {
 
 		void set_global_sample_res_list( utility::vector1< core::Size > const & setting );
 		void set_force_syn_chi_res_list( utility::vector1< core::Size > const & setting );
-		void set_force_north_ribose_list( utility::vector1< core::Size > const & setting );
-		void set_force_south_ribose_list( utility::vector1< core::Size > const & setting );
+		void set_force_north_sugar_list( utility::vector1< core::Size > const & setting );
+		void set_force_south_sugar_list( utility::vector1< core::Size > const & setting );
 		void set_protonated_H1_adenosine_list( utility::vector1< core::Size > const & setting );
 		void set_add_virt_res_as_root( bool const setting ){ add_virt_res_as_root_ = setting; }
-
+		void set_floating_base( bool const setting ){ floating_base_ = setting; }
 
 		core::pose::PoseCOP	working_native_pose() const;
-
-
 
 	private:
 
@@ -174,8 +173,8 @@ namespace rna {
 
 	private:
 
-		bool output_extra_RMSDs_; //Used in StepWiseRNA_Output_Data.cc
-		bool Is_simple_full_length_job_params_;
+		bool output_extra_RMSDs_; //Used in StepWiseRNA_output_Data.cc
+		bool is_simple_full_length_job_params_;
 
 		std::string full_sequence_;
 		std::string working_sequence_;
@@ -189,16 +188,17 @@ namespace rna {
 		utility::vector1< core::Size >  is_working_res_;
 		std::map< core::Size, core::Size > full_to_sub_;
 		std::map< core::Size, core::Size > sub_to_full_;
-		std::map< core::Size, bool > Is_prepend_map_;
+		std::map< core::Size, bool > is_prepend_map_;
 
 		utility::vector1< std::pair < core::Size, core::Size > > chain_boundaries_;
 		//Size which_chain_has_moving_res_;
 		Size gap_size_;
 		Size five_prime_chain_break_res_;
 
-		bool Is_prepend_;
-		bool Is_internal_;
+		bool is_prepend_;
+		bool is_internal_;
 		bool add_virt_res_as_root_;
+		bool floating_base_;
 
 		ObjexxFCL::FArray1D < bool > partition_definition_;
 
@@ -222,11 +222,11 @@ namespace rna {
 		utility::vector1< core::Size > force_syn_chi_res_list_;
 		utility::vector1< core::Size > working_force_syn_chi_res_list_;
 
-		utility::vector1< core::Size > force_north_ribose_list_;
-		utility::vector1< core::Size > working_force_north_ribose_list_;
+		utility::vector1< core::Size > force_north_sugar_list_;
+		utility::vector1< core::Size > working_force_north_sugar_list_;
 
-		utility::vector1< core::Size > force_south_ribose_list_;
-		utility::vector1< core::Size > working_force_south_ribose_list_;
+		utility::vector1< core::Size > force_south_sugar_list_;
+		utility::vector1< core::Size > working_force_south_sugar_list_;
 
 
 		utility::vector1< core::Size > protonated_H1_adenosine_list_;

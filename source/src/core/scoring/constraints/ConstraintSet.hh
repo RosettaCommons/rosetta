@@ -16,7 +16,7 @@
 
 // Unit headers
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/Func.hh> /// cant get to compile w/ Func.fwd.hh
+#include <core/scoring/func/Func.hh> /// cant get to compile w/ Func.fwd.hh
 
 
 // Package headers

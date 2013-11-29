@@ -11,8 +11,8 @@
 
 #include <core/types.hh>
 #include <core/scoring/constraints/ConstantConstraint.hh>
-#include <core/scoring/constraints/Func.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
+#include <core/scoring/func/Func.hh>
+// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 

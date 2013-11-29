@@ -60,8 +60,8 @@ namespace swa {
 		Size const & gap_size() const;
 		Size const & first_chain_break_res() const;
 
-		bool const & Is_prepend() const;
-		bool const & Is_internal() const;
+		bool const & is_prepend() const;
+		bool const & is_internal() const;
 
 		ObjexxFCL::FArray1D< bool > const & partition_definition() const;
 
@@ -91,8 +91,8 @@ namespace swa {
 		void set_gap_size( Size const & setting );
 		void set_first_chain_break_res( Size const & setting );
 
-		void set_Is_prepend( bool const & setting );
-		void set_Is_internal( bool const & setting );
+		void set_is_prepend( bool const & setting );
+		void set_is_internal( bool const & setting );
 		void set_partition_definition( ObjexxFCL::FArray1D< bool > const & setting );
 
 		void set_working_native_pose( core::pose::PoseOP & pose );
@@ -133,8 +133,8 @@ namespace swa {
 		Size gap_size_;
 		Size first_chain_break_res_;
 
-		bool Is_prepend_;
-		bool Is_internal_;
+		bool is_prepend_;
+		bool is_internal_;
 
 		ObjexxFCL::FArray1D< bool > partition_definition_;
 

@@ -37,7 +37,7 @@
 #include <core/scoring/constraints/Constraints.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>

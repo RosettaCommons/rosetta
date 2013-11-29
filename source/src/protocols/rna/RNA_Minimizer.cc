@@ -36,7 +36,7 @@
 
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 
 #include <protocols/simple_moves/ConstrainToIdealMover.hh>
@@ -93,7 +93,7 @@
 using namespace core;
 using basic::T;
 
-static basic::Tracer TR( "protocols.rna.rna_minimizer" ) ;
+static basic::Tracer TR( "protocols.rna.RNA_Minimizer" ) ;
 
 namespace protocols {
 namespace rna {
@@ -138,14 +138,14 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 		TR << "Check it! SEQUENCE " << pose.sequence() << std::endl;
 	  TR << "In protocols.rna.rna_minimizer.apply()" << std::endl;
 		TR << "min_type_=" << min_type_ << std::endl;
-		protocols::swa::rna::Output_boolean("deriv_check_: ", deriv_check_, TR ); std::cout << std::endl;
-		protocols::swa::rna::Output_boolean("use_coordinate_constraints_: ", use_coordinate_constraints_, TR ); std::cout << std::endl;
-		protocols::swa::rna::Output_boolean("skip_o2prime_trials_: ", skip_o2prime_trials_, TR ); std::cout << std::endl;
-		protocols::swa::rna::Output_boolean("perform_minimizer_run_: ", perform_minimizer_run_, TR ); std::cout << std::endl;
-		protocols::swa::rna::Output_boolean("vary_bond_geometry_: ", vary_bond_geometry_, TR ); std::cout << std::endl;
-		protocols::swa::rna::Output_boolean("include_default_linear_chainbreak_: ", include_default_linear_chainbreak_, TR ); std::cout << std::endl;
-		protocols::swa::rna::Output_boolean("do_dump_pdb_: ", do_dump_pdb_, TR ); std::cout << std::endl;
-		protocols::swa::rna::Output_boolean("verbose_: ", verbose_, TR ); std::cout << std::endl;
+		protocols::swa::rna::output_boolean("deriv_check_: ", deriv_check_, TR ); std::cout << std::endl;
+		protocols::swa::rna::output_boolean("use_coordinate_constraints_: ", use_coordinate_constraints_, TR ); std::cout << std::endl;
+		protocols::swa::rna::output_boolean("skip_o2prime_trials_: ", skip_o2prime_trials_, TR ); std::cout << std::endl;
+		protocols::swa::rna::output_boolean("perform_minimizer_run_: ", perform_minimizer_run_, TR ); std::cout << std::endl;
+		protocols::swa::rna::output_boolean("vary_bond_geometry_: ", vary_bond_geometry_, TR ); std::cout << std::endl;
+		protocols::swa::rna::output_boolean("include_default_linear_chainbreak_: ", include_default_linear_chainbreak_, TR ); std::cout << std::endl;
+		protocols::swa::rna::output_boolean("do_dump_pdb_: ", do_dump_pdb_, TR ); std::cout << std::endl;
+		protocols::swa::rna::output_boolean("verbose_: ", verbose_, TR ); std::cout << std::endl;
 	}
 
 

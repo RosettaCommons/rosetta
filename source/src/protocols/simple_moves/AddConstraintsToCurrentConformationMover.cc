@@ -33,9 +33,9 @@
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/SOGFunc.hh>
-#include <core/scoring/constraints/ScalarWeightedFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/SOGFunc.hh>
+#include <core/scoring/func/ScalarWeightedFunc.hh>
 
 // task operation
 #include <core/pack/task/TaskFactory.hh>

@@ -16,7 +16,7 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/ScoringManager.hh>

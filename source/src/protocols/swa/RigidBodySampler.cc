@@ -59,7 +59,7 @@
 using namespace core;
 using core::Real;
 
-static basic::Tracer TR( "protocols.swa.rigid_body_sampler" ) ;
+static basic::Tracer TR( "protocols.swa.RigidBodySampler" ) ;
 using numeric::conversions::radians;
 using numeric::conversions::degrees;
 

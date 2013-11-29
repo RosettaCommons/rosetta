@@ -39,7 +39,7 @@
 #include <basic/options/after_opts.hh>
 #include <core/id/AtomID_Map.hh>
 #include <protoc/PocketConstraint.hh>
-#include <core/scoring/constraints/ScalarWeightedFunc.hh>
+#include <core/scoring/func/ScalarWeightedFunc.hh>
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 

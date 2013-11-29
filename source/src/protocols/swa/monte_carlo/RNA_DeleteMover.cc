@@ -42,7 +42,7 @@ using utility::make_tag_with_dashes;
 // updates the pose full_model_info object.
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.swa.monte_carlo.rna_delete_mover" ) ;
+static basic::Tracer TR( "protocols.swa.monte_carlo.RNA_DeleteMover" ) ;
 
 namespace protocols {
 namespace swa {

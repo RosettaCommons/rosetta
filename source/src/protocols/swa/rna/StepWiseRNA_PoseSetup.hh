@@ -18,6 +18,7 @@
 #ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_PoseSetup_hh
 #define INCLUDED_protocols_swa_rna_StepWiseRNA_PoseSetup_hh
 
+#include <protocols/swa/rna/StepWiseRNA_PoseSetup.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
@@ -31,12 +32,13 @@
 #include <string>
 #include <map>
 
+using namespace core;
 
 namespace protocols {
 namespace swa {
 namespace rna {
 
-//	typedef std::map< std::string, core::pose::PoseOP > PoseList;
+//	typedef std::map< std::string, pose::PoseOP > PoseList;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +53,7 @@ public:
 
 	/////////////////////////////////////////////////////////////////////////
 
-	virtual void apply( core::pose::Pose & pose );
+	virtual void apply( pose::Pose & pose );
 
 	virtual std::string get_name() const;
 
@@ -62,13 +64,13 @@ public:
 	set_silent_files_in( utility::vector1< std::string > const & setting ){ silent_files_in_ = setting; } //Only called if COPY_DOF is true
 
 	void
-	set_bulge_res( utility::vector1 < core::Size > const & bulge_res ){ bulge_res_ = bulge_res; }
+	set_bulge_res( utility::vector1 < Size > const & bulge_res ){ bulge_res_ = bulge_res; }
 
 	void
-	set_virtual_res( utility::vector1 < core::Size > const & virtual_res_list ){ virtual_res_list_ = virtual_res_list; }
+	set_virtual_res( utility::vector1 < Size > const & virtual_res_list ){ virtual_res_list_ = virtual_res_list; }
 
 	void
-	set_native_virtual_res( utility::vector1 < core::Size > const & native_virtual_res_list ){ native_virtual_res_list_ = native_virtual_res_list; } //Parin Mar 22, 2010
+	set_native_virtual_res( utility::vector1 < Size > const & native_virtual_res_list ){ native_virtual_res_list_ = native_virtual_res_list; } //Parin Mar 22, 2010
 
 	void
 	set_copy_DOF( bool const setting ){ copy_DOF_ = setting; } //Parin Mar 29, 2010
@@ -77,7 +79,7 @@ public:
 	set_verbose( bool const setting ){ verbose_ = setting; }
 
 	void
-	setup_native_pose( core::pose::Pose & pose );
+	setup_native_pose( pose::Pose & pose );
 
 	void
 	set_rebuild_bulge_mode( bool const setting ){ rebuild_bulge_mode_ = setting; }
@@ -97,55 +99,64 @@ public:
 private:
 
 	void
-	Import_pose( Size const & i, core::pose::Pose & import_pose ) const; //Only called if COPY_DOF is true
+	Import_pose( Size const & i, pose::Pose & import_pose ) const; //Only called if COPY_DOF is true
 
 	void
-	make_pose( core::pose::Pose & pose ); //Only called if COPY_DOF is true
+	make_pose( pose::Pose & pose ); //Only called if COPY_DOF is true
 
 	void
-	read_input_pose_and_copy_dofs( core::pose::Pose & pose ); //Only called if COPY_DOF is true
+	read_input_pose_and_copy_dofs( pose::Pose & pose ); //Only called if COPY_DOF is true
 
 	void
-	apply_cutpoint_variants( core::pose::Pose & pose, core::pose::Pose & pose_without_cutpoints );
+	apply_cutpoint_variants( pose::Pose & pose, pose::Pose & pose_without_cutpoints );
 
 	void
-	apply_bulge_variants( core::pose::Pose & pose ) const;
+	apply_bulge_variants( pose::Pose & pose ) const;
 
 	void
-	apply_virtual_phosphate_variants( core::pose::Pose & pose ) const;
+	apply_virtual_phosphate_variants( pose::Pose & pose ) const;
 
 	void
-	add_terminal_res_repulsion( core::pose::Pose & pose ) const;
+	add_terminal_res_repulsion( pose::Pose & pose ) const;
 
 	void
-	apply_virtual_res_variant( core::pose::Pose & pose ) const;
+	additional_setup_for_floating_base( pose::Pose & pose ) const;
 
 	void
-	correctly_copy_HO2prime_positions( core::pose::Pose & full_pose, utility::vector1< core::pose::Pose > const & primet_pose_list );
+	instantiate_residue_if_rebuilding_bulge( pose::Pose & pose );
 
-	core::Real
-	get_nearest_dist_to_O2prime( core::Size const O2prime_seq_num, core::pose::Pose const & input_pose, utility::vector1< core::Size > const input_res_list, utility::vector1< core::Size > const & common_res_list );
+	void
+	virtualize_sugar_and_backbone_at_moving_res( pose::Pose & pose ) const;
+
+	void
+	apply_virtual_res_variant( pose::Pose & pose ) const;
+
+	void
+	correctly_copy_HO2prime_positions( pose::Pose & full_pose, utility::vector1< pose::Pose > const & primet_pose_list );
+
+	Real
+	get_nearest_dist_to_O2prime( Size const O2prime_seq_num, pose::Pose const & input_pose, utility::vector1< Size > const input_res_list, utility::vector1< Size > const & common_res_list );
 
 	//void
-	//ensure_idealize_bond_length_bond_angle_at_cutpoint( core::pose::Pose & working_pose);
+	//ensure_idealize_bond_length_bond_angle_at_cutpoint( pose::Pose & working_pose);
 
 	void
-	add_protonated_H1_adenosine_variants( core::pose::Pose & pose ) const;
+	add_protonated_H1_adenosine_variants( pose::Pose & pose ) const;
 
 	void
-	verify_protonated_H1_adenosine_variants( core::pose::Pose & pose ) const;
+	verify_protonated_H1_adenosine_variants( pose::Pose & pose ) const;
 
 	void
-	add_aa_virt_rsd_as_root( core::pose::Pose & pose );
+	add_aa_virt_rsd_as_root( pose::Pose & pose );
 
 	void
-	setup_pdb_info_with_working_residue_numbers( core::pose::Pose & pose ) const;
+	setup_pdb_info_with_working_residue_numbers( pose::Pose & pose ) const;
 
 private:
 
 //		utility::vector1< utility::vector1< Size > > input_res_vectors_;
 
-	core::chemical::ResidueTypeSetCAP rsd_set_;
+	chemical::ResidueTypeSetCAP rsd_set_;
 	utility::vector1< std::string > input_tags_;
 	utility::vector1< std::string > silent_files_in_;
 	StepWiseRNA_JobParametersOP job_parameters_;

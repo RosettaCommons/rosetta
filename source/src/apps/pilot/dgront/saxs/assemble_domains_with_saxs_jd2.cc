@@ -41,10 +41,10 @@
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/func/Func.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/LinearPenaltyFunction.hh>
+#include <core/scoring/func/LinearPenaltyFunction.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 
 

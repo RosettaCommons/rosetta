@@ -21,8 +21,8 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/MixtureFunc.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/MixtureFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 
 #include <core/id/AtomID.hh>
 

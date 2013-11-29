@@ -61,8 +61,8 @@
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/ScalarWeightedFunc.hh>
-#include <core/scoring/constraints/SOGFunc.hh>
+#include <core/scoring/func/ScalarWeightedFunc.hh>
+#include <core/scoring/func/SOGFunc.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>

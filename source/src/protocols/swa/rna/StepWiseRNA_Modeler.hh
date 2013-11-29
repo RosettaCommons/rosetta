@@ -143,8 +143,6 @@ namespace rna {
 
 		void set_parin_favorite_output( bool const & setting ){ parin_favorite_output_ = setting; }
 
-		void set_floating_base( bool const & setting ){ floating_base_ = setting; }
-
 		void set_reinitialize_CCD_torsions( bool const & setting ){ reinitialize_CCD_torsions_ = setting; }
 
 		void set_sampler_extra_epsilon_rotamer( bool const & setting ){ sampler_extra_epsilon_rotamer_ = setting; }
@@ -155,15 +153,13 @@ namespace rna {
 
 		void set_sampler_include_torsion_value_in_tag( bool const & setting ){ sampler_include_torsion_value_in_tag_ = setting; }
 
-		void set_rebuild_bulge_mode( bool const & setting ){ rebuild_bulge_mode_ = setting; }
-
 		void set_combine_long_loop_mode( bool const & setting ){ combine_long_loop_mode_ = setting; }
 
 		void set_do_not_sample_multiple_virtual_sugar( bool const & setting ){ do_not_sample_multiple_virtual_sugar_ = setting; }
 
 		void set_sample_ONLY_multiple_virtual_sugar( bool const & setting ){ sample_ONLY_multiple_virtual_sugar_ = setting; }
 
-		void set_sampler_assert_no_virt_ribose_sampling( bool const & setting ){ sampler_assert_no_virt_ribose_sampling_ = setting; }
+		void set_sampler_assert_no_virt_sugar_sampling( bool const & setting ){ sampler_assert_no_virt_sugar_sampling_ = setting; }
 
 		void set_allow_base_pair_only_centroid_screen( bool const & setting ){ allow_base_pair_only_centroid_screen_ = setting; }
 
@@ -237,17 +233,15 @@ namespace rna {
 		bool integration_test_mode_;
 		bool allow_bulge_at_chainbreak_;
 		bool parin_favorite_output_;
-		bool floating_base_;
 		bool reinitialize_CCD_torsions_;
 		bool sampler_extra_epsilon_rotamer_;
 		bool sampler_extra_beta_rotamer_;
 		bool sample_both_sugar_base_rotamer_;
 		bool sampler_include_torsion_value_in_tag_;
-		bool rebuild_bulge_mode_;
 		bool combine_long_loop_mode_;
 		bool do_not_sample_multiple_virtual_sugar_;
 		bool sample_ONLY_multiple_virtual_sugar_;
-		bool sampler_assert_no_virt_ribose_sampling_;
+		bool sampler_assert_no_virt_sugar_sampling_;
 		bool allow_base_pair_only_centroid_screen_;
 
 		// this is new, not in ERRASER (swa_rna_analytical_closure)

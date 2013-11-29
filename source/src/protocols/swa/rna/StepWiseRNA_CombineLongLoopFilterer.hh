@@ -124,7 +124,7 @@ namespace rna {
 		set_filter_for_previous_clash( core::Real const setting ){ filter_for_previous_clash_ = setting; }
 
 		void
-		set_undercount_ribose_rotamers( bool const setting ){ undercount_ribose_rotamers_ = setting; }
+		set_undercount_sugar_rotamers( bool const setting ){ undercount_sugar_rotamers_ = setting; }
 
 		void set_max_decoys( core::Size const & setting ){ max_decoys_ = setting; }
 
@@ -187,10 +187,10 @@ namespace rna {
 		get_parent_tag( utility::vector1< std::string > const & tag_token ) const;
 
 		bool
-		Is_virt_sample_ribose_tag( std::string const & tag, utility::vector1< std::string > const & tag_token ) const;
+		is_virt_sample_sugar_tag( std::string const & tag, utility::vector1< std::string > const & tag_token ) const;
 
 		bool
-		Is_sibling_ribose_rotamer_pose( std::string const & curr_tag, std::string const & prev_tag, std::map< std::string, std::string > const & tag_to_source_map ) const;
+		is_sibling_sugar_rotamer_pose( std::string const & curr_tag, std::string const & prev_tag, std::map< std::string, std::string > const & tag_to_source_map ) const;
 
 
 	private:
@@ -208,7 +208,7 @@ namespace rna {
 		bool parin_favorite_output_;
 		bool filter_for_previous_contact_;
 		bool filter_for_previous_clash_;
-		bool undercount_ribose_rotamers_;
+		bool undercount_sugar_rotamers_;
 		bool const filter_for_chain_closable_;
 		bool const filter_for_moving_res_contact_;
 		bool const moving_res_to_base_contact_only_;

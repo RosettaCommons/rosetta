@@ -25,8 +25,8 @@
 
 // mini
 // AUTO-REMOVED #include <core/scoring/ResidualDipolarCoupling.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/Func.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/FuncFactory.hh>
+// AUTO-REMOVED #include <core/scoring/func/Func.hh>
+// AUTO-REMOVED #include <core/scoring/func/FuncFactory.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 

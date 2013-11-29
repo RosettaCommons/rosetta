@@ -90,12 +90,12 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 #include <core/scoring/constraints/Constraints.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/CircularHarmonicFunc.hh>
+#include <core/scoring/func/Func.hh>
+#include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <numeric/constants.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <core/scoring/Energies.hh>
 #include <numeric/xyz.functions.hh>

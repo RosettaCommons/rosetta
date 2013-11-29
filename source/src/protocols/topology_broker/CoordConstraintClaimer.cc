@@ -59,7 +59,7 @@
 #include <core/id/NamedStubID.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/constraints/FuncFactory.hh>
+#include <core/scoring/func/FuncFactory.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers

@@ -73,7 +73,7 @@ using core::Real;
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.swa.stepwise_residue_sampler" ) ;
+static basic::Tracer TR( "protocols.swa.protein.StepWiseProteinScreener" ) ;
 
 namespace protocols {
 namespace swa {

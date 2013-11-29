@@ -62,10 +62,10 @@
 // AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/util.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
+// AUTO-REMOVED #include <core/scoring/func/XYZ_Func.hh>
 #include <core/scoring/dssp/Dssp.hh>
 // AUTO-REMOVED #include <core/scoring/electron_density/util.hh>
 // AUTO-REMOVED #include <core/scoring/Energies.hh>
