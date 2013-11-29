@@ -832,10 +832,10 @@ read_topology_file(
 
 		// if polymer, fill in upper/lower connect and mainchain info
 		if ( rsd->is_polymer() ) {
-			uint upper_connect( rsd->upper_connect_atom() ), lower_connect( rsd->lower_connect_atom() );
 
 			// fill in the mainchain info -- shortest path between upper connect and lower connect
-			if ( upper_connect && lower_connect ) {
+			if ( rsd->upper_connect_id() && rsd->upper_connect_atom() && rsd->lower_connect_id() && rsd->lower_connect_atom() ) {
+				Size upper_connect( rsd->upper_connect_atom() ), lower_connect( rsd->lower_connect_atom() );
 				AtomIndices mainchain;
 				FArray2D_int D( get_residue_path_distances( *rsd ) );
 				uint atom( lower_connect );
@@ -860,6 +860,8 @@ read_topology_file(
 				}
 				mainchain.push_back( upper_connect );
 				rsd->set_mainchain_atoms( mainchain );
+			} else {
+				tr.Warning << "WARNING: Residue " << rsd->name() << " claims it's a polymer, but it doesn't have the appropriate UPPER and LOWER connection points specifed." << std::endl;
 			}
 		}
 
