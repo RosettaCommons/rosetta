@@ -307,6 +307,10 @@ AddAtom::AddAtom(
 bool
 AddAtom::apply( ResidueType & rsd ) const
 {
+	if( rsd.has_atom_name( atom_name_ ) ) {
+		TR_PatchOperations.Debug << "AddAtom::apply failed: " << rsd.name() << " already has an atom named  '" << atom_name_ << "'." << std::endl;
+		return true; // Can't add an atom if this residue already has one of the same name.
+	}
 	rsd.add_atom( atom_name_, atom_type_name_, mm_atom_type_name_, charge_ );
 	//std::cout << "AddAtom::apply: " << atom_name_ << ' ' << atom_type_name_ << ' ' << mm_atom_type_name_ << ' ' <<
 	//	charge_ << std::endl;

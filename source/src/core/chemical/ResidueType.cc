@@ -1307,7 +1307,9 @@ ResidueType::redefine_chi(
 void
 ResidueType::add_actcoord_atom( std::string const & atom )
 {
-	assert( is_protein() );
+	if( ! is_protein() ) {
+		tr.Warning << "WARNING: ACT_COORD_ATOM specified for non-protein residue type '" << name() << "' . This doesn't make much sense." << std::endl;
+	}
 	finalized_ = false;
 	tr.Trace << "adding act coord atom: " << name_ << ' ' << atom << std::endl;
 	Size atomindex = atom_index( atom );

@@ -487,7 +487,7 @@ RotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv(
 		} else {
 			dE_dbb[ i ] = d_multiplier * ( invp * scratch.drotprob_dbb()[ i ] + scratch.dchidevpen_dbb()[ i ] );
 			dE_dbb_dev[ i ] = d_multiplier * scratch.dchidevpen_dbb()[ i ];
-			dE_dbb_rot[ i ] = d_multiplier * invp * scratch.drotprob_dbb()[ i ]; 
+			dE_dbb_rot[ i ] = d_multiplier * invp * scratch.drotprob_dbb()[ i ];
 		}
 
 		// Correction for entropy
@@ -516,7 +516,8 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 ) const
 {
 
-	assert( rsd.aa() == aa() );
+	//There's probably a better way to check this.
+	assert( rsd.aa() == aa() || ( core::chemical::is_D_aa(rsd.aa()) && core::chemical::get_L_equivalent( rsd.aa() ) == aa() ) );
 
 	// Grab data from rsd
 	//Size const nbb ( rsd.mainchain_torsions().size() );
@@ -984,8 +985,8 @@ RotamericSingleResidueDunbrackLibrary< T >::interpolate_rotamers(
 	Size const &j1 = psibin_next;
 
 	/*
-	std::cout << "AA/phi/psi/S00/S01/S10/S11/Sinter: " << aa(); 
-	printf(" %8.1f %8.1f %8.4f %8.4f %8.4f %8.4f %8.4f\n", 
+	std::cout << "AA/phi/psi/S00/S01/S10/S11/Sinter: " << aa();
+	printf(" %8.1f %8.1f %8.4f %8.4f %8.4f %8.4f %8.4f\n",
 				 phi, psi,
 				 ShanonEntropy_(i0,j0), ShanonEntropy_(i0,j1), ShanonEntropy_(i1,j0), ShanonEntropy_(i1,j1),
 				 scratch.entropy());
@@ -1870,7 +1871,7 @@ RotamericSingleResidueDunbrackLibrary< T >::setup_entropy_correction()
 	std::cout << " " << std::setw(8) << "d2Sdpsi2" << " " << std::setw(8) << "d4Sdp2p2";
 	std::cout << std::endl;
 	*/
- 
+
 	// Derivatives
 	for ( Size jj = 1; jj <= N_PHIPSI_BINS; ++jj ) {
 		for ( Size kk = 1; kk <= N_PHIPSI_BINS; ++kk ) {
@@ -1900,7 +1901,7 @@ RotamericSingleResidueDunbrackLibrary< T >::setup_entropy_correction()
 			//if( ShanonEntropy_( jj, kk ) > 0.0 ){
 			std::cout << aa();
 			printf(" %6.1f %6.1f %8.5f %8.5f %8.5f %8.5f %8.5f %8.5f %8.5f\n",
-						 phi, psi, 
+						 phi, psi,
 						 rotamers_(jj,kk,1).rotamer_probability(),
 						 rotamers_(jj,kk,2).rotamer_probability(),
 						 rotamers_(jj,kk,3).rotamer_probability(),
@@ -1911,7 +1912,7 @@ RotamericSingleResidueDunbrackLibrary< T >::setup_entropy_correction()
 			*/
 		}
 	}
-	
+
 }
 
 /// @details Returns the three letter string of the next amino acid specified in the
