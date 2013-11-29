@@ -35,7 +35,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <set>
-
+#include <fstream>
 typedef  numeric::xyzMatrix< core::Real > Matrix;
 
 namespace protocols {

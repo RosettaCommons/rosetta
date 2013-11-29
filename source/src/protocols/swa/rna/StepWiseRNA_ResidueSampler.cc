@@ -473,6 +473,8 @@ StepWiseRNA_ResidueSampler::standard_sampling_WRAPPER( core::pose::Pose & pose )
 	standard_residue_sampler.set_include_torsion_value_in_tag( include_torsion_value_in_tag_ );
 	standard_residue_sampler.set_combine_long_loop_mode( combine_long_loop_mode_ );
 	standard_residue_sampler.set_allow_base_pair_only_centroid_screen( allow_base_pair_only_centroid_screen_ );
+	standard_residue_sampler.set_choose_random( choose_random_ );
+	standard_residue_sampler.set_num_random_samples( num_random_samples_ );
 
 	if ( !sampling_sugar() ){
 		standard_residue_sampler.apply( pose );
