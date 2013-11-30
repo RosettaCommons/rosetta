@@ -28,6 +28,7 @@ sources = {
 		"NcontactsFilter",
 		"ParallelBetaPairingPreferenceFilter",
 		"SecondaryStructureFilter",
+		"SecondaryStructureCountFilter",
 		"SheetTopologyFilter",
 	],
 	"protocols/fldsgn/potentials": [

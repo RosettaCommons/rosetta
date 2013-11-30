@@ -34,6 +34,8 @@ public:
 
 	SuperimposeMover( core::pose::Pose const & pose );
 
+	SuperimposeMover( core::pose::Pose const & ref_pose , core::Size ref_start, core::Size ref_end, core::Size target_start, core::Size target_end, bool CA_only);
+
 	~SuperimposeMover();
 
 	virtual void apply( core::pose::Pose & pose );

@@ -49,6 +49,7 @@ static FilterRegistrator< protocols::fldsgn::filters::InterlockingAromaFilterCre
 static FilterRegistrator< protocols::fldsgn::filters::NcontactsFilterCreator > reg_NcontactsFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::ParallelBetaPairingPreferenceFilterCreator > reg_ParallelBetaPairingPreferenceFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::SecondaryStructureFilterCreator > reg_SecondaryStructureFilterCreator;
+static FilterRegistrator< protocols::fldsgn::filters::SecondaryStructureCountFilterCreator > reg_SecondaryStructureFilterCountCreator;
 static FilterRegistrator< protocols::fldsgn::filters::SheetTopologyFilterCreator > reg_SheetTopologyFilterCreator;
 
 static FilterRegistrator< protocols::denovo_design::filters::ExposedHydrophobicsFilterCreator > reg_ExposedHydrophobicsFilterCreator;
@@ -74,6 +75,7 @@ static FilterRegistrator< protocols::protein_interface_design::filters::HbondsTo
 static FilterRegistrator< protocols::protein_interface_design::filters::InterfaceHolesFilterCreator > reg_InterfaceHolesFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::RelativeSegmentFilterCreator > reg_RelativeSegmentFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::RmsdFilterCreator > reg_RmsdFilterCreator;
+static FilterRegistrator< protocols::protein_interface_design::filters::ClashWithTargetFilterCreator > reg_ClashWithTargetFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::LRmsdFilterCreator > reg_LRmsdFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::IRmsdFilterCreator > reg_IRmsdFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::FNatFilterCreator > reg_FNatFilterCreator;

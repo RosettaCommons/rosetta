@@ -53,6 +53,7 @@
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/MatrixScoringScheme.hh>
+#include <core/sequence/SimpleScoringScheme.hh>
 
 namespace protocols {
 namespace frag_picker {
@@ -183,22 +184,29 @@ bool FragmentChunkCrms::score(FragmentCandidateOP f, FragmentScoreMapOP empty_ma
 void sequencealign(core::sequence::SequenceOP seq1, core::sequence::SequenceOP seq2, FArray1D_int& seqmapping) {
 
   seqmapping.redimension(std::max(seq1->length(),seq2->length()), 0);
-	//std::cout << "map size: " << std::min(seq1->length(),seq2->length()) << std::endl;
-  utility::file::FileName blosum62( basic::database::full_name("sequence/substitution_matrix/BLOSUM62"));
-  core::sequence::ScoringSchemeOP blosum_score( new core::sequence::MatrixScoringScheme( -11, -1, blosum62 ) );
+	std::cout << "map min size: " << std::min(seq1->length(),seq2->length()) << std::endl;
+	std::cout << "map max size: " << std::max(seq1->length(),seq2->length()) << std::endl;
+  //utility::file::FileName blosum62( basic::database::full_name("sequence/substitution_matrix/BLOSUM62"));
+  //core::sequence::ScoringSchemeOP ss( new core::sequence::MatrixScoringScheme( -11, -1, blosum62 ) );
+  core::sequence::ScoringSchemeOP ss( new core::sequence::SimpleScoringScheme( 120, 0, -100, 0 ) );
 
 	//alignment
 	core::sequence::NWAligner nw_aligner;
-	core::sequence::SequenceAlignment global_align = nw_aligner.align( seq1, seq2, blosum_score ) ;
+  std::cout << "seq1: " << *seq1 << std::endl;
+  std::cout << "seq2: " << *seq2 << std::endl;
+	core::sequence::SequenceAlignment global_align = nw_aligner.align( seq1, seq2, ss) ;
 	core::id::SequenceMapping mapping = global_align.sequence_mapping(1, 2);
+	//std::cout << "mapping: " << std::endl;
   //std::cout << mapping;
   //std::cout << std::endl;
 
   for (core::Size i = 1; i <= std::max(seq1->length(),seq2->length()); ++i) {
            if (mapping[i]) {
 							seqmapping(i)=1;
+							std::cout << "seqmapping("<<i<<")="<< seqmapping(i) << std::endl;
            } else {
 							seqmapping(i)=0;
+							std::cout << "seqmapping("<<i<<")="<< seqmapping(i) << std::endl;
 					}
    }
 

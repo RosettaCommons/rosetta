@@ -26,8 +26,12 @@
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/datacache/cacheable_observers.hh>
+#include <core/pose/selection.hh>
+#include <core/pose/util.hh>
 
 // utility header
 #include <basic/Tracer.hh>
@@ -71,6 +75,17 @@ SuperimposeMover::SuperimposeMover( Pose const & pose ) :
   protocols::moves::Mover("SuperimposeMover"),
 	ref_pose_(new Pose(pose))
 	{}
+
+SuperimposeMover::SuperimposeMover(Pose const & ref_pose, core::Size ref_start, core::Size ref_end, core::Size target_start, core::Size target_end, bool CA_only):
+  protocols::moves::Mover("SuperimposeMover"),
+  ref_pose_(new Pose(ref_pose)),
+  ref_start_(ref_start),
+  ref_end_(ref_end),
+  target_start_(target_start),
+  target_end_(target_end),
+  CA_only_(CA_only)
+{ 
+}
 
 SuperimposeMover::~SuperimposeMover() {}
 
@@ -196,7 +211,6 @@ SuperimposeMover::apply( Pose & pose ) {
 	runtime_assert(ref_start > 0 && ref_start < ref_end && ref_end <= pose.total_residue()); 
 	runtime_assert_msg(ref_end - ref_start == target_end - target_start, "segments to superimpose have different lengths!");
 
-	//if ( ref_pose_->total_residue() == pose.total_residue() ) {
 	if ( CA_only_ ) {
 		core::Real rms  = superimpose( pose, *ref_pose_, ref_start, ref_end, target_start, target_end );
 		TR << "CA RMS to reference: " << rms << std::endl;
@@ -204,7 +218,6 @@ SuperimposeMover::apply( Pose & pose ) {
 		core::Real rms  = superimposebb( pose, *ref_pose_, ref_start, ref_end, target_start, target_end );
 		TR << "Backbone RMS to reference: " << rms << std::endl;
 	}
-	//}
 }
 
 std::string

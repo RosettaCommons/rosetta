@@ -33,6 +33,7 @@
 #include <protocols/fldsgn/filters/NcontactsFilterCreator.hh>
 #include <protocols/fldsgn/filters/ParallelBetaPairingPreferenceFilterCreator.hh>
 #include <protocols/fldsgn/filters/SecondaryStructureFilterCreator.hh>
+#include <protocols/fldsgn/filters/SecondaryStructureCountFilterCreator.hh>
 #include <protocols/fldsgn/filters/SheetTopologyFilterCreator.hh>
 
 #include <protocols/denovo_design/filters/ExposedHydrophobicsFilterCreator.hh>
@@ -58,6 +59,7 @@
 #include <protocols/protein_interface_design/filters/InterfaceHolesFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/RelativeSegmentFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/RmsdFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/ClashWithTargetFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/LRmsdFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/IRmsdFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/FNatFilterCreator.hh>

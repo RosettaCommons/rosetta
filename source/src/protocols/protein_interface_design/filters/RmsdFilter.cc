@@ -190,13 +190,13 @@ RmsdFilter::apply( core::pose::Pose const & pose ) const {
 
 	core::Real const rmsd( compute( pose ));
 	TR << "RMSD over selected residues: " << rmsd ;
-	if( rmsd <= threshold_ )
-	{
+	if( rmsd <= threshold_ ) {
 		TR<<" passing."<<std::endl;
 		return( true );
-	}
-	else TR<<" failing." << std::endl;
+	} else { 
+	TR<<" failing." << std::endl;
 	return( false );
+	}
 }
 
 void
