@@ -63,8 +63,9 @@ void ReportFSC::init() {
 	res_high_=0.0;
 	nresbins_=50;
 	asymm_only_=false;
+	mask_=true;
 	testmap_ = NULL;
-	bin_squared_=true;
+	bin_squared_=false;
 }
 
 void ReportFSC::apply(core::pose::Pose & pose) {
@@ -96,16 +97,17 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	}
 
 	utility::vector1< core::Real > modelmap1FSC(nresbins_,1.0), modelmap2FSC(nresbins_,1.0);
+	utility::vector1< core::Real > modelmap1Error(nresbins_,1.0), modelmap2Error(nresbins_,1.0);
 	core::Real fsc1=0.0, fsc2=0.0;
 
 	// train map
-	modelmap1FSC = core::scoring::electron_density::getDensityMap().getFSCMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, bin_squared_ );
+	core::scoring::electron_density::getDensityMap().getFSC( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap1FSC, modelmap1Error, mask_, bin_squared_ );
 
 	for (Size i=1; i<=modelmap1FSC.size(); ++i) fsc1+=modelmap1FSC[i];
 	fsc1 /= modelmap1FSC.size();
 
 	if (testmap_ && testmap_->isMapLoaded()) {
-		modelmap2FSC = testmap_->getFSCMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, bin_squared_ );
+		testmap_->getFSC( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap2FSC, modelmap2Error, mask_, bin_squared_ );
 		for (Size i=1; i<=modelmap2FSC.size(); ++i) fsc2+=modelmap2FSC[i];
 		fsc2 /= modelmap2FSC.size();
 	}
@@ -113,8 +115,13 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	// tag
 	core::pose::RemarkInfo remark;
 	std::ostringstream oss;
-	core::Real mask =  core::scoring::electron_density::getDensityMap().getAtomMask();
-	oss << "FSC[mask=" << mask << "](" << res_low_ << ":" << res_high_ << ") = " << fsc1;
+	core::Real maskwidth =  core::scoring::electron_density::getDensityMap().getAtomMask();
+
+	if (mask_)
+		oss << "FSC[mask=" << maskwidth << "](" << res_low_ << ":" << res_high_ << ") = " << fsc1;
+	else
+		oss << "FSC(" << res_low_ << ":" << res_high_ << ") = " << fsc1;
+
 	if (testmap_ && testmap_->isMapLoaded())
 		oss << " / " << fsc2;
 
@@ -147,6 +154,9 @@ ReportFSC::parse_my_tag(
 	}
 	if ( tag->hasOption("asymm_only") ) {
 		asymm_only_ = tag->getOption<bool>("asymm_only");
+	}
+	if ( tag->hasOption("mask") ) {
+		mask_ = tag->getOption<bool>("mask");
 	}
 	if ( tag->hasOption("bin_squared") ) {
 		bin_squared_ = tag->getOption<bool>("bin_squared");

@@ -461,8 +461,8 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 		for (core::Size j=1; j<=nvalues; ++j) {
 			for (int i=1; i<=litePose.size(); ++i) litePose[i].B_ = weights_to_scan_[j];
 
-			utility::vector1< core::Real > modelmapFSC(nresbins_,1.0);
-			modelmapFSC = core::scoring::electron_density::getDensityMap().getFSCMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_ );
+			utility::vector1< core::Real > modelmapFSC(nresbins_,1.0), modelmapError(nresbins_,1.0);
+			core::scoring::electron_density::getDensityMap().getFSC( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmapFSC, modelmapError );
 			core::Real thisScore = 0;
 			for (Size i=1; i<=modelmapFSC.size(); ++i) thisScore+=modelmapFSC[i];
 			thisScore /= modelmapFSC.size();

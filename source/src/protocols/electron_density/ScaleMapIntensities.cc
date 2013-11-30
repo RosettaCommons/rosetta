@@ -61,7 +61,6 @@ void ScaleMapIntensities::init() {
 	res_low_=1000.0;
 	res_high_= res_fade_= 0;
 	nresbins_=50;
-	scale_by_fsc_=false;
 	asymm_only_=false;
 	ignore_bs_=false;
 	mask_=true;
@@ -123,9 +122,7 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 			mapI = core::scoring::electron_density::getDensityMap().getIntensities( nresbins_, 1.0/res_low_, 1.0/res_high_, bin_squared_);
 		}
 
-		if (scale_by_fsc_) {
-			fade = core::scoring::electron_density::getDensityMap().getFSCMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, bin_squared_ );
-		} else if (res_fade_ > 0 && res_high_ > res_fade_) {
+		if (res_fade_ > 0 && res_high_ > res_fade_) {
 			core::Real inv_fade_s = 0.5/(res_fade_) + 0.5/(res_high_);
 			core::Real fade_width = 1/(res_high_) - 1/(res_fade_);
 			core::Real sigma = 12.0/fade_width;   // ?? no idea if this is reasonable
@@ -133,7 +130,6 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 				fade[i] = 1/(1+exp(sigma*(resobins[i]-inv_fade_s)) );
 			}
 		}
-
 
 		for (Size i=1; i<=nresbins_; ++i) {
 			if (mapI[i] > 0 && fade[i]*modelI[i] >= 0 )
@@ -195,9 +191,6 @@ ScaleMapIntensities::parse_my_tag(
 	}
 	if ( tag->hasOption("nresbins") ) {
 		nresbins_ = tag->getOption<core::Size>("nresbins");
-	}
-	if ( tag->hasOption("scale_by_fsc") ) {
-		scale_by_fsc_ = tag->getOption<bool>("scale_by_fsc");
 	}
 	if ( tag->hasOption("asymm_only") ) {
 		asymm_only_ = tag->getOption<bool>("asymm_only");

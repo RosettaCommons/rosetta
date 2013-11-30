@@ -48,7 +48,7 @@ public:
 private:
 	core::Real res_low_, res_high_;
 	core::Size nresbins_;
-	bool asymm_only_, bin_squared_;
+	bool asymm_only_, bin_squared_, mask_;
 
 	core::scoring::electron_density::ElectronDensityOP testmap_;
 };

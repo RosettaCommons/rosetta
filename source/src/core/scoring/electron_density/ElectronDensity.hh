@@ -161,12 +161,23 @@ public:
 	getIntensities( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso, utility::vector1< core::Real > &Imodel, bool S2_bin=false);
 
 	/// @brief Compute model-map FSC
-	utility::vector1< core::Real >
-	getFSC( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso, bool S2_bin=false );
+	void
+	getFSC(
+		poseCoords const &pose,
+		core::Size nbuckets,
+		core::Real maxreso, core::Real minreso,
+		utility::vector1< core::Real >&, utility::vector1< core::Real > &,
+		bool masked=false, bool S2_bin=false, core::Real mask_radius=0.0 );
 
-	/// @brief Compute model-map FSC, masked by the pose
-	utility::vector1< core::Real >
-	getFSCMasked( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso, bool S2_bin=false );
+	/// @brief Compute model-map FSC
+	void
+	getMLE(
+		poseCoords const &pose,
+		core::Size nbuckets,
+		core::Real maxreso, core::Real minreso,
+		utility::vector1< core::Real > const &, utility::vector1< core::Real >&,
+		Real &errS2,
+		bool masked=false, bool S2_bin=false, core::Real mask_radius=0.0 );
 
 	/// @brief Compute map-map FSC
 	void
