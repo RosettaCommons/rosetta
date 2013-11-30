@@ -125,15 +125,22 @@ def compare_tests(test, results, files_path, previous_results, previous_files_pa
 def compare_test_suites(results, files_path, previous_results, previous_files_path):
     results = dict(tests={}, summary=dict(total=0, failed=0, failed_tests=[]), config={})
 
-    for test in os.listdir(files_path):
-        if os.path.isdir(files_path + '/' + test):
-            res, brief_diff = execute('Comparing {}...'.format(test), 'diff -rq {0}/{test} {1}/{test}'.format(files_path, previous_files_path, test=test), return_='tuple')
-            res, full_diff  = execute('Comparing {}...'.format(test), 'diff -r  {0}/{test} {1}/{test}'.format(files_path, previous_files_path, test=test), return_='tuple')
-            results['tests'][test] = {_StateKey_: _S_failed_ if res else _S_finished_, _LogKey_: brief_diff + '\n\n' + full_diff[:16384] if res else ''}
 
-            results['summary']['total'] += 1
-            if res: results['summary']['failed'] += 1; results['summary']['failed_tests'].append(test)
+    if previous_files_path:
+        for test in os.listdir(files_path):
+            if os.path.isdir(files_path + '/' + test):
+                res, brief_diff = execute('Comparing {}...'.format(test), 'diff -rq {0}/{test} {1}/{test}'.format(files_path, previous_files_path, test=test), return_='tuple')
+                res, full_diff  = execute('Comparing {}...'.format(test), 'diff -r  {0}/{test} {1}/{test}'.format(files_path, previous_files_path, test=test), return_='tuple')
+                results['tests'][test] = {_StateKey_: _S_failed_ if res else _S_finished_, _LogKey_: brief_diff + '\n\n' + full_diff[:65536] if res else ''}
 
+                results['summary']['total'] += 1
+                if res: results['summary']['failed'] += 1; results['summary']['failed_tests'].append(test)
+
+    else: # no previous test failed, returning finished for all sub_tests
+        for test in os.listdir(files_path):
+            if os.path.isdir(files_path + '/' + test):
+                results['tests'][test] = {_StateKey_: _S_finished_, _LogKey_: 'First run, no previous results available. Skipping comparison...\n'}
+                results['summary']['total'] += 1
 
     return {_StateKey_: _S_failed_ if results['summary']['failed'] else _S_finished_, _LogKey_: '', _ResultsKey_: results}
 
