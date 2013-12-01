@@ -34,7 +34,7 @@ def tear_down(): pass
 
 
 def get_tests():
-    raise BenchmarkError('Integration Test script does not support get_tests! Use run_test_suite instead!')
+    raise BenchmarkError('Integration Test script does not support get_tests!')
 
 
 def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
@@ -111,18 +111,12 @@ def run(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbo
     else: return run_test_suite(rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
 
-
 # compare results of two tests run (new vs. previous)
 # take two dict and two paths
-# must return standard dict
-def compare_tests(test, results, files_path, previous_results, previous_files_path):
-    raise BenchmarkError('Integration Test script does not support compare_tests! Use compare_test_suites instead!')
+# must return standard dict with results
+def compare(test, results, files_path, previous_results, previous_files_path):
+    if test: raise BenchmarkError('Integration Test script does not support compare function for {} test!'.format(test))
 
-
-# compare results of two test suites run (new vs. previous)
-# take two dict and two paths
-# must return standard dict
-def compare_test_suites(results, files_path, previous_results, previous_files_path):
     results = dict(tests={}, summary=dict(total=0, failed=0, failed_tests=[]), config={})
 
 
@@ -143,8 +137,3 @@ def compare_test_suites(results, files_path, previous_results, previous_files_pa
                 results['summary']['total'] += 1
 
     return {_StateKey_: _S_failed_ if results['summary']['failed'] else _S_finished_, _LogKey_: '', _ResultsKey_: results}
-
-
-def compare(test, results, files_path, previous_results, previous_files_path):
-    if test.count('.'): return compare_tests(test, results, files_path, previous_results, previous_files_path)
-    else: return compare_test_suites(results, files_path, previous_results, previous_files_path)

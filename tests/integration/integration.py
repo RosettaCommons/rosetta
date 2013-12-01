@@ -129,9 +129,9 @@ rm -r ref/; ./integration.py    # create reference results using only default se
       help="In selecting binaries, which mode was used? (default: release)",
     )
     parser.add_option("--extras",
-      default="default",
-      dest="extras",
-      help="in selecting binaries, which options were specified? (default: default)",
+                      default="",
+                      dest="extras",
+                      help="in selecting binaries, which options were specified? (default: '')",
     )
     parser.add_option("--daemon", action="store_true", dest="daemon", default=False,
       help="generate daemon friendly output (off by default)"
@@ -676,8 +676,10 @@ def generateIntegrationTestGlobalSubstitutionParameters(host=None):
 
     compiler = Options.compiler
     mode = Options.mode
-    extras = Options.extras
-    binext = Options.extras+"."+platform+compiler+mode
+    extras = Options.extras if Options.extras else 'default'
+    binext = extras+"."+platform+compiler+mode
+    #print 'binext: %s, extras: %s, Options.extras: %s' % (binext, repr(extras), repr(Options.extras) )
+
     additional_flags = Options.additional_flags
     dbms_host = Options.dbms_host
     dbms_user = Options.dbms_user
