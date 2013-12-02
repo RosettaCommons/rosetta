@@ -295,7 +295,7 @@ MultistateFitnessFunction::update_entity_history( Entity const & ent )
 					utility::vector1< EntityAndScore > worst_entities; worst_entities.reserve( top_entities_.size() );
 					Real const new_worst_fitness = top_entities_.front().first->fitness();
 					n_tied_for_worst_ = 0;
-					while ( top_entities_.front().first->fitness() == new_worst_fitness ) {
+					while ( top_entities_.size() != 0 && top_entities_.front().first->fitness() == new_worst_fitness ) {
 						worst_entities.push_back( top_entities_.front() );
 						std::pop_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
 						top_entities_.pop_back();
