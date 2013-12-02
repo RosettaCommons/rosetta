@@ -119,7 +119,7 @@ put links to commonly referred to documentation pages here.
 	- @ref remodel "Documentation for RosettaRemodel"
 	- @ref oop_design "Documentation for the oligooxopiperazine (oop) design app"
 	- @ref hbs_design "Documentation for the hydrogen bond surrogate (hbs) design app"
-	- @ref optE "Documentation for the optE_parallel weight-fitting application"
+	- @ref optE_parallel_doc "Documentation for the optE_parallel weight-fitting application"
 
 @section mainpage_namespaces Important Namespaces
 

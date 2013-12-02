@@ -10,7 +10,7 @@
 ///@author Andrew Leaver-Fay
 /*!
 
-@page optE_parallel Documentation for the optE_parallel application
+@page optE_parallel_doc Documentation for the optE_parallel application
 
 @section metadata Metadata
 This document was written by Andrew Leaver-Fay in October 2013. The optE_parallel code is maintained in the Kuhlman lab at UNC.  Send questions to aleaverfay@gmail.com.

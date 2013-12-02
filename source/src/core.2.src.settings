@@ -39,6 +39,7 @@ sources = {
 		"ResidueSupport",
 		"ResidueGraphTypes",
 		"ResidueType",
+		"ResidueTypeKinWriter",
 		"ResidueTypeSet",
 		"util",
 		"VariantType",
