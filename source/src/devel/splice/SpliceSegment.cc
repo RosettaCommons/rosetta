@@ -18,12 +18,19 @@
 #define foreach BOOST_FOREACH
 // Package headers
 #include <basic/Tracer.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
+#include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/option_macros.hh>
+#include <core/pose/util.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
 #include <iostream>
 #include <sstream>
 #include <utility/string_util.hh>
-
+#include <dirent.h>
 
 namespace devel {
 namespace splice {
@@ -40,7 +47,65 @@ SpliceSegment::SpliceSegment(){
 
 SpliceSegment::~SpliceSegment() {}
 
-void
+
+void//rapper function for read_profile to accomedate the new way of reading profiles
+SpliceSegment::read_many( string const Protein_family_path , string const segment){
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	std::string fname;
+	for(size_t i = 1, i_end = option[ in::path::database ]().size(); i <= i_end; ++i) {
+		fname = option[ in::path::database ](i).name();
+		//TR<<"Trying to open folder:"<<fname<<std::endl;
+	}
+
+
+	//Get all PDB_profile_Match files from raltive path
+	const std::string target_path = (fname+Protein_family_path+"pssm/"+segment+"/");
+
+
+	DIR *dir;
+	struct dirent *ent;
+	const char * c =target_path.c_str();
+	if ((dir = opendir (c))!= NULL) {
+		while ((ent = readdir (dir)) != NULL) {
+			//TR<<"Loading PSSM from file "<<target_path+ent->d_name<<std::endl;
+			utility::io::izstream data( target_path+ent->d_name);
+			if ( !data )
+				continue;
+			/*get segment name from file name*/
+			string segment_name(target_path+ent->d_name);
+			// Remove directory if present.
+			// Do this before extension removal incase directory has a period character.
+			const size_t last_slash_idx = segment_name.find_last_of("\\/");
+			if (std::string::npos != last_slash_idx)
+			{
+				segment_name.erase(0, last_slash_idx + 1);
+			}
+
+			// Remove extension if present.
+			const size_t period_idx = segment_name.rfind('.');
+			if (std::string::npos != period_idx)
+			{
+				segment_name.erase(period_idx);
+			}
+		//	TR<<"segment name:"<<segment_name<<std::endl;
+			if ((segment_name.compare("") == 0)||(segment_name.compare(".") == 0)){//hack to avoid trying to read . or.. when looking into directory
+				continue;
+			}
+			read_profile(target_path+ent->d_name,segment_name);
+		}
+		closedir (dir);
+	}
+
+	else {
+		/* could not open directory */
+		utility_exit_with_message( "Directory path" + target_path+"was not found" );
+
+	}
+}
+
+void //this version of read_profile is an older one and it allows the user to enter it's own PSSM files, instead of using the ones in Rosetta_DB
 SpliceSegment::read_profile( string const file_name, string const segment_name ){
 	SequenceProfileOP new_seqprof( new SequenceProfile );
 	utility::file::FileName const fname( file_name );
@@ -80,12 +145,10 @@ concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles, util
 	core::Size current_profile_size( 0 );
 	core::Size current_segment_name( 1 );
 	foreach( SequenceProfileOP const prof, profiles ){
-		//TR<<"now adding profile of segment "<< segment_names_ordered[ current_segment_name]<<std::endl;
-		
+		TR<<"now adding profile of segment "<< segment_names_ordered[ current_segment_name]<<std::endl;
 		for( core::Size pos = 1; pos <= prof->size(); ++pos ){
 			current_profile_size++;
-			TR.Debug<<"The sequence profile row for this residue is: "<<prof->prof_row(pos)<<std::endl;
-			// Check that the flanking segments of the desigend segment are according to profile concensus
+			//TR<<"The sequence profile row for this residue is: "<<prof->prof_row(pos)<<std::endl;
 		
 			concatenated_profile->prof_row( prof->prof_row( pos ), current_profile_size );
 		}
@@ -98,23 +161,69 @@ concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles, util
 /// @brief reads the pdb-profile match file, matching each pdb file to one profile
 void
 SpliceSegment::read_pdb_profile( std::string const file_name ){
-  utility::io::izstream data( file_name );
-  if ( !data )
+	utility::io::izstream data( file_name );
+	if ( !data )
 		utility_exit_with_message( "File not found " + file_name );
 	//TR<<"Loading pdb profile pairs from file "<<file_name<<std::endl;
 	string line;
 	while (getline( data, line )){
-	istringstream line_stream( line );
-	while( !line_stream.eof() ){
-		std::string pdb, profile;
-		line_stream >> pdb >> profile;
-		pdb_to_profile_map_.insert( pair< string, string >( pdb, profile ) );
-		//TR<<"Loading pdb-profile pair: "<<pdb<<" "<<profile<<"\n";
+		istringstream line_stream( line );
+		while( !line_stream.eof() ){
+			std::string pdb, profile;
+			line_stream >> pdb >> profile;
+			pdb_to_profile_map_.insert( pair< string, string >( pdb, profile ) );
+			//TR<<"Loading pdb-profile pair: "<<pdb<<" "<<profile<<std::endl;
+		}
 	}
- }
-}
-/// @brief Helper function to make sure current aa postion in the pose co
 
+}
+
+void
+SpliceSegment::all_pdb_profile( string const Protein_family_path, string const segment){
+
+	//This is to get the path to the database
+	utility::io::izstream data;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	std::string fname;
+	for(size_t i = 1, i_end = option[ in::path::database ]().size(); i <= i_end; ++i) {
+		fname = option[ in::path::database ](i).name();
+		//TR<<"Trying to open folder:"<<fname<<std::endl;
+	}
+
+
+	//Get all PDB_profile_Match files from raltive path
+	const std::string target_path = (fname+Protein_family_path+"pdb_profile_match/");
+
+
+	DIR *dir;
+	struct dirent *ent;
+	const char * c =target_path.c_str();
+	if ((dir = opendir (c))!= NULL) {
+			string fileName(target_path+"pdb_profile_match."+segment);
+			utility::io::izstream data( fileName );
+				if ( !data )
+					utility_exit_with_message( "File not found " + fileName );
+			std::string line;
+			TR<<"Loading pdb profile pairs from file "<<fileName<<std::endl;
+			while (getline( data, line )){
+				istringstream line_stream( line );
+				while( !line_stream.eof() ){
+					std::string pdb, profile;
+					line_stream >> pdb >> profile;
+					pdb_to_profile_map_.insert( pair< string, string >( pdb, profile ) );
+					//TR<<"Loading pdb-profile pair: "<<pdb<<" "<<profile<<std::endl;
+				}
+			}
+
+		closedir (dir);
+	} else {
+		/* could not open directory */
+		utility_exit_with_message( "Directory path" + target_path+"was not found" );
+
+	}
+}
 
 
 } //splice

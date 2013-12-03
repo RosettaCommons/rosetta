@@ -29,6 +29,9 @@
 #include <basic/datacache/DataMapObj.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
 #include <protocols/toolbox/task_operations/SeqprofConsensusOperation.fwd.hh>
+#include <basic/database/open.hh>
+
+
 
 namespace devel {
 namespace splice {
@@ -204,6 +207,8 @@ public:
 	void rb_sensitive( bool const r ){ rb_sensitive_ = r;}
 
 	void rb_adjust_template( core::pose::Pose const & pose ) const; // adjust the template_pose_ according the rb state of the current pose (if rb_sensitive is on)
+	void protein_family( std::string const s) {protein_family_=s;}; //setter of the protein_family tag option
+
 
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
@@ -248,6 +253,10 @@ private:
 	utility::pointer::owning_ptr< basic::datacache::DataMapObj< std::string > > mover_tag_; /// dflt NULL; to communicate the current Splice mover's loop origin to the GenericMC
 	protocols::filters::FilterOP splice_filter_;
 	std::string Pdb4LetName_;
+	std::string protein_family_;
+	std::map< std::string, utility::vector1< std::string > > order_segments_;
+
+	//A map form protein family name to the order of the segments (eg. <"antibodies",<L1_L2,L3,H1_H2,H3>>)
 
 ///sequence profiles
 	bool use_sequence_profiles_; // dflt false; set internally only, by whether or not the Segments are defined
@@ -259,6 +268,7 @@ private:
 	bool restrict_to_repacking_chain2_; // dflt true; if false, does two-sided design during splice
 	bool add_sequence_constraints_only_; // dflt false; if true, only add constraints and return, don't do any splicing. (ask Assaf)
 	bool rb_sensitive_; //dflt false; should we impose the RB dof of the current pose on the template before finding aligned residues. (Ask Christoffer)
+	std::map < std::string, std::string> protein_family_to_database_;
 };
 
 } //splice

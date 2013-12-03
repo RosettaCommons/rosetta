@@ -12,10 +12,10 @@
 /// @author Sarel Fleishman (sarel@weizmann.ac.il)
 /// @modified by gideonla (glapidoth@gmail.com)
 
-///Clarifications about Variables:
+///Clarifications of variables used:
 /*
  * Template_pose = The pose that is used as refrence for all the start and end positions of loop segments
- * Souce_pose = The
+ * Source_pose = The
  * startn = the position on the pose where the loop starts (N-ter)
  * startc = The position on the pose where the loop ends (C-ter)
  * from_res = The user supplies loop start residues accoding to Template PDB. Splice.cc updates this to be the correct residue accrding to the current pose (both
@@ -189,9 +189,14 @@ Splice::Splice() :
 	end_dbase_subset_->obj = false;
 	basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments ].value(true);
 	rb_sensitive_ = false;
-}
+	protein_family_to_database_["antibodies"] =  "protocol_data/splice/antibodies/";
+	//Hard coding the correct order of segments to be spliced
+	order_segments_["antibodies"].push_back("L1_L2");
+	order_segments_["antibodies"].push_back("L3");
+	order_segments_["antibodies"].push_back("H1_H2");
+	order_segments_["antibodies"].push_back("H3");
 
-//Tell the JD to output comments
+}
 
 
 
@@ -565,7 +570,7 @@ Splice::apply( core::pose::Pose & pose )
 		pose.set_psi(  pose_resi, dofs[ i + 1 ].psi() );
 		pose.set_omega( pose_resi, dofs[ i + 1 ].omega() );
 		//		pose.dump_pdb( "dump"+ utility::to_string( i ) + ".pdb" );
-		TR<<"resi, phi/psi/omega: "<< pose_resi<<' '<<pose.phi( pose_resi )<<'/'<<pose.psi( pose_resi )<<'/'<<pose.omega( pose_resi )<<std::endl;
+		//TR<<"resi, phi/psi/omega: "<< pose_resi<<' '<<pose.phi( pose_resi )<<'/'<<pose.psi( pose_resi )<<'/'<<pose.omega( pose_resi )<<std::endl;
 		//		TR<<"requested phi/psi/omega: "<<dofs[ i + 1 ].phi()<<'/'<<dofs[i+1].psi()<<'/'<<dofs[i+1].omega()<<std::endl;
 	}
 	//	pose.dump_pdb( "after_changedofs_test.pdb" );
@@ -880,60 +885,99 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
 
 	rb_sensitive( tag->getOption< bool >( "rb_sensitive", false ) );
-	typedef utility::vector1< std::string > StringVec;
-	///Adding Checker. If the "Current Segment" does not appear in the list of segements than exit with error
-	segment_names_ordered_.clear(); //This string vector hold all the segment names inserted bythe user to ensure that the sequence profile is built according to tthe user
-	bool check_segment = true;
-	foreach( TagCOP const sub_tag, sub_tags ){
-		if( sub_tag->getName() == "Segments" ){
-			check_segment = false;//This is set to false unless current segment appears in the segment list
-			use_sequence_profiles_ = true;
-			profile_weight_away_from_interface( tag->getOption< core::Real >( "profile_weight_away_from_interface", 1.0 ) );
-			segment_type_ = sub_tag->getOption< std::string >( "current_segment" );
-			TR<<"reading segments in splice "<<tag->getName()<<std::endl;
-			/* e.g.,
-<Splice name=splice_L2...
-  <Segments current_segment=L1>
-				<L1 pdb_profile_match="pdb_profile_match.L1" profiles="L1:L1.pssm"/>
-				<L2 pdb_profile_match="pdb_profile_match.L2" profiles="L2:L2.pssm"/>
-				<L3 pdb_profile_match="pdb_profile_match.L3" profiles="L3:L3.pssm"/>
-				<Frm1 pdb_profile_match="pdb_profile_match.Frm1" profiles="Frm1:frm1.pssm"/>
-				<Frm2 pdb_profile_match="pdb_profile_match.Frm2" profiles="Frm2:frm2.pssm"/>
-				<Frm3 pdb_profile_match="pdb_profile_match.Frm3" profiles="Frm3:frm3.pssm"/>
-                <Frm4 pdb_profile_match="pdb_profile_match.Frm4" profiles="Frm4:frm4.pssm"/>
-			</Segments>
-</Splice>
-			 */
-			utility::vector1< TagCOP > const segment_tags( sub_tag->getTags() );
-			foreach( TagCOP const segment_tag, segment_tags ){
-				std::string const segment_name( segment_tag->getName() );//get name of segment from xml
-				std::string const pdb_profile_match( segment_tag->getOption< std::string >( "pdb_profile_match" ) ); // get name of pdb profile match, this file contains all the matching between pdb name and sub segment name, i.e L1.1,L1.2 etc
-				std::string const profiles_str( segment_tag->getOption< std::string >( "profiles" ) );
-				StringVec const profile_name_pairs( utility::string_split( profiles_str, ',' ) );
-				SpliceSegmentOP splice_segment( new SpliceSegment );
-				//TR<<"Now working on segment:"<<segment_name<<"\n";
-				foreach( std::string const s, profile_name_pairs ){
-					StringVec const profile_name_file_name( utility::string_split( s, ':' ) );
-					//TR<<"pssm file:"<<profile_name_file_name[ 2 ]<<",segment name:"<<profile_name_file_name[ 1 ]<<std::endl;
-
-					splice_segment->read_profile( profile_name_file_name[ 2 ], profile_name_file_name[ 1 ] );
-
-				}
-				splice_segment->read_pdb_profile( pdb_profile_match );
-
-				//TR<<"the segment name is: "<<segment_name<<std::endl;
-				if (segment_name.compare(segment_type_) == 0){
-						check_segment=true;
-				}
-				splice_segments_.insert( std::pair< std::string, SpliceSegmentOP >( segment_name, splice_segment ) );
-				segment_names_ordered_.push_back(segment_name);
-			}//foreach segment_tag
-		}// fi Segments
-	}//foreach sub_tag
-	if (!check_segment){
-			utility_exit_with_message( "Segment "+segment_type_+" was not found in the list of segemnts. Check XML file\n");
+	 //if this flag is present then we don't use the subtags, get all pssm data from the database
+	if(( tag->hasOption( "segment" ) )&&(!sub_tags.empty())){//if both tags are turned on exit with error msg.
+			utility_exit_with_message( "it appears you are trying to run both \"segment\" and sub tags \"segments\" simoutansiously, this is not a valid option. Please only choose one\n");
 	}
-	 scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
+	if (( tag->hasOption( "segment" )) && ( tag->hasOption( "protein_family" ))){
+		TR<<" !! ATTENTION !! YOU ARE USING DATABASE PSSMs"<< std::endl;
+
+		segment_type_ = tag->getOption< std::string >("segment");
+		protein_family(tag->getOption< std::string >( "protein_family" ));///Declare which protein family to use in-order to invoke the correct PSSM files
+		foreach( std::string const segment_type, order_segments_[protein_family_] ){
+
+			SpliceSegmentOP splice_segment( new SpliceSegment );
+			splice_segment->all_pdb_profile( protein_family_to_database_.find(protein_family_)->second, segment_type );
+			splice_segment->read_many (protein_family_to_database_.find(protein_family_)->second,segment_type);
+			splice_segments_.insert( std::pair< std::string, SpliceSegmentOP >( segment_type, splice_segment ) );
+			use_sequence_profiles_ = true;
+			segment_names_ordered_.push_back(segment_type);
+		}
+		typedef std::map< std::string, SpliceSegmentOP >::iterator it_type;
+		for(it_type iterator = splice_segments_.begin(); iterator != splice_segments_.end(); iterator++) {
+				TR<<"##############"<<iterator->first<<std::endl;
+				TR<<" The cluster of 1AHW is: "<<iterator->second->get_cluster_name_by_PDB("1AHW")<<std::endl;;//second is the SpliceSegment_OP
+
+
+		}//End of debuggin function
+	}
+	//complex if staement to ensure that user provied both segment flag and protein family flag
+	if((!( tag->hasOption( "segment" )) && ( tag->hasOption( "protein_family" )))||(( tag->hasOption( "segment" )) && (! tag->hasOption( "protein_family" )))){
+		utility_exit_with_message( "You are using Splice flags \"segment=\" or \"protein_family\" without the other, they both must be used!\n");
+	}
+
+
+	typedef utility::vector1< std::string > StringVec;
+	bool check_segment = false;
+	//that the sequence profile is built according to the user (eg. vl, L3, vh, H3)
+	if (!sub_tags.empty()){//currently subtags is used to assign to each segment in the pose the correct pssm. In the future this will be hard coded (gideonla,NOV13)
+		segment_names_ordered_.clear(); //This string vector holds all the segment names inserted by the user to ensure
+		foreach( TagCOP const sub_tag, sub_tags ){
+
+			if( sub_tag->getName() == "Segments" ){
+				check_segment = false;//This is set to false unless current segment appears in the segment list
+				use_sequence_profiles_ = true;
+				profile_weight_away_from_interface( tag->getOption< core::Real >( "profile_weight_away_from_interface", 1.0 ) );
+				segment_type_ = sub_tag->getOption< std::string >( "current_segment" );
+
+				//TR<<"reading segments in splice "<<tag->getName()<<std::endl;
+
+
+				utility::vector1< TagCOP > const segment_tags( sub_tag->getTags() );
+				foreach( TagCOP const segment_tag, segment_tags ){
+					SpliceSegmentOP splice_segment( new SpliceSegment );
+					std::string const segment_name( segment_tag->getName() );//get name of segment from xml
+					std::string const pdb_profile_match( segment_tag->getOption< std::string >( "pdb_profile_match" ) ); // get name of pdb profile match, this file contains all the matching between pdb name and sub segment name, i.e L1.1,L1.2 etc
+					std::string const profiles_str( segment_tag->getOption< std::string >( "profiles" ) );
+					StringVec const profile_name_pairs( utility::string_split( profiles_str, ',' ) );
+
+				//	TR<<"Now working on segment:"<<segment_name<<std::endl;
+					foreach( std::string const s, profile_name_pairs ){
+						StringVec const profile_name_file_name( utility::string_split( s, ':' ) );
+					//	TR<<"pssm file:"<<profile_name_file_name[ 2 ]<<",segment name:"<<profile_name_file_name[ 1 ]<<std::endl;
+
+						splice_segment->read_profile( profile_name_file_name[ 2 ], profile_name_file_name[ 1 ] );
+
+
+					}
+
+					splice_segment->read_pdb_profile( pdb_profile_match );
+					//TR<<"the segment name is: "<<segment_name<<std::endl;
+					if (segment_name.compare(segment_type_) == 0){
+						check_segment=true;
+					}
+					splice_segments_.insert( std::pair< std::string, SpliceSegmentOP >( segment_name, splice_segment ) );
+					segment_names_ordered_.push_back(segment_name);
+				}//foreach segment_tag
+			}// fi Segments
+		}//foreach sub_tag
+		if (!check_segment){
+				utility_exit_with_message( "Segment "+segment_type_+" was not found in the list of segemnts. Check XML file\n");
+			}
+	}//fi (sub_tags!=NULL)
+
+	//Function for debuging should be commented out, check that all segments are in the right place
+/*
+	typedef std::map< std::string, SpliceSegmentOP >::iterator it_type;
+	for(it_type iterator = splice_segments_.begin(); iterator != splice_segments_.end(); iterator++) {
+		TR<<"##############"<<iterator->first<<std::endl;
+		TR<<" The cluster of 1AHW is: "<<iterator->second->get_cluster_name_by_PDB("1AHW")<<std::endl;;//second is the SpliceSegment_OP
+*/
+
+	//}//End of debuggin function
+
+
+	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	add_sequence_constraints_only( tag->getOption< bool >( "add_sequence_constraints_only", false ) );
 	if( add_sequence_constraints_only() ){
 		TR<<"add_sequence_constraints only set to true. Therefore not parsing any of the other Splice flags."<<std::endl;
@@ -1266,7 +1310,7 @@ Splice::splice_filter( protocols::filters::FilterOP f ){
 	splice_filter_ = f;
 }
 
-void
+void//is anyone using this function ? gideonla. NOv13
 Splice::read_splice_segments( std::string const segment_type, std::string const segment_name, std::string const file_name ){
 	if(use_sequence_profiles_){
 		splice_segments_[ segment_type ]->read_profile( file_name, segment_name );
@@ -1296,7 +1340,7 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 		pose.dump_pdb(out); //Testing out comment pdb, comment this out after test (GDL) */
 		map< string, string > const comments = core::pose::get_all_comments( pose );
 		if (comments.size()<3 ){
-			utility_exit_with_message("Please check comments field in the pdb file (header= ##begin comments##), could not find any comments");
+			utility_exit_with_message("Please check comments field in the pdb file (header= ##Begin comments##), could not find any comments");
 		}
 		///This code will cut the source pdb file name and extract the four letter code
 		if (torsion_database_fname_!=""){
@@ -1330,7 +1374,7 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 
 		load_pdb_segments_from_pose_comments(pose); // get segment name and pdb accosiation from comments in pdb file
 		TR<<"There are "<<pdb_segments_.size()<<" PSSM segments"<<std::endl;
-
+		TR<<"new line for debugging"<<std::endl;
 
 		runtime_assert( pdb_segments_.size() ); //This assert is in place to make sure that the pdb file has the correct comments, otherwise this function will fail
 //		pose.dump_pdb("test"); //Testing out comment pdb, comment this out after test (GDL)
@@ -1346,9 +1390,11 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 		profile_vector.clear(); //this vector holds all the pdb segment profiless
 
 		foreach( std::string const segment_type, segment_names_ordered_ ){ //<- Start of PDB segment iterator
+			TR<<"segment_type: "<<segment_type<<std::endl;
 			if (splice_segments_[ segment_type ]->pdb_profile(pdb_segments_[segment_type])==0){
 				utility_exit_with_message(" could not find the source pdb name:: "+ pdb_segments_[segment_type]+ ", in pdb_profile_match file."+segment_type+"\n");
 			}
+			TR<<"reading profile:"<< pdb_segments_[segment_type]<<std::endl;
 			profile_vector.push_back( splice_segments_[ segment_type ]->pdb_profile( pdb_segments_[segment_type] ));
 		} // <- End of PDB segment iterator
 		TR<<"The size of the profile vector is: "<<profile_vector.size()<<std::endl;

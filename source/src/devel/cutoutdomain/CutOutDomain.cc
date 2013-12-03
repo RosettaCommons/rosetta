@@ -85,15 +85,15 @@ CutOutDomain::apply( core::pose::Pose & pose )
 	core::pose::Pose Temp_pose;
 	core::import_pose::pose_from_pdb( Temp_pose, source_pdb_name_ );
 	core::Size from = find_nearest_res(Temp_pose,pose,start_res_, 1/*chain*/ );
-	//	TR<<from<<std::endl;
+		TR<<from<<std::endl;
 		core::Size to  = find_nearest_res(Temp_pose,pose,end_res_, 1/*chain*/ );
 		//TR<<to<<std::endl;
 		TR<<"Start resdiue on the source pose "<<source_pdb_name_<<" : "<<Temp_pose.residue(start_res_).name1()<<start_res_<<std::endl;
 		TR<<"Start resdiue on the target pose "<<pose.pdb_info()->name()<<" : "<<pose.residue(from).name1()<<from<<std::endl;
 		TR<<"End resdiue on the source pose "<<source_pdb_name_<<" : "<<Temp_pose.residue(end_res_).name1()<<end_res_<<std::endl;
 		TR<<"End resdiue on the target pose "<<pose.pdb_info()->name()<<" : "<<pose.residue(to).name1()<<to<<std::endl;
-		pose.conformation().delete_residue_range_slow( to+1,pose.total_residue() );
-		pose.conformation().delete_residue_range_slow( 1,from+1 );
+		pose.conformation().delete_residue_range_slow( to+delta_c_ter_+1,pose.total_residue() );
+		pose.conformation().delete_residue_range_slow( 1,from+1-delta_n_ter_ );
 		//hack so Rosetta doesn't call scoring function at the end
 		pose.dump_pdb(suffix_);
 }
@@ -111,6 +111,8 @@ CutOutDomain::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, p
 	end_res_ = tag->getOption<core::Size>( "end_res", 1 );
 	source_pdb_name( tag->getOption< std::string >( "source_pdb" ));
 	suffix( tag->getOption< std::string >( "suffix" ,""));
+	delta_n_ter_ = tag->getOption<core::Size>( "delta_n_ter", 0 );
+	delta_c_ter_ = tag->getOption<core::Size>( "delta_c_ter", 0 );
 }
 
 core::Size
@@ -120,7 +122,10 @@ CutOutDomain::find_nearest_res( core::pose::Pose const & source, core::pose::Pos
   for( i = 1; i < target.total_residue(); ++i ){
 		if( target.residue( i ).is_ligand() ) continue;
 		if( chain && target.residue( i ).chain() != chain ) continue;
+		// TR<<"the residue examnied is:"<<i<<target.residue(i).name1()<<std::endl;
     core::Real const dist( source.residue( res ).xyz( "CA" ).distance( target.residue( i ).xyz( "CA" ) ) );
+    TR<<"distance between source res:"<<res<<source.residue( res ).name1()<<" and target res: "<<i<<target.residue(i).name1();
+    TR<<" is: " <<dist<<std::endl;
     if( dist <= min_dist ){
       min_dist = dist;
       nearest_res = i;

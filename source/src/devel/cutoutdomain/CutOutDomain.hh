@@ -51,6 +51,8 @@ private:
 	std::string suffix_; //the output of this mover will be suffix+source_pdb_name
 	core::Size
 	find_nearest_res( core::pose::Pose const & source, core::pose::Pose const & target, core::Size const res, core::Size const chain/*=0*/ );
+	core::Size delta_n_ter_;//one can cut an additioanl delta aa from designated cut site. dflt=0
+	core::Size delta_c_ter_;
 };
 
 
