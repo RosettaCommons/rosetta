@@ -122,11 +122,21 @@ output_to_silent_file( std::string const & out_tag,
 	static SilentFileData const silent_file_data;
 
 	Real rms( 0.0 );
-	if ( native_pose ) rms = superimpose_at_fixed_res_and_get_all_atom_rmsd( pose, *native_pose );
+	Real rms_no_bulges ( 0.0 );
+	
+	if ( native_pose ) {
+		rms = superimpose_at_fixed_res_and_get_all_atom_rmsd( pose, *native_pose );
+		rms_no_bulges = superimpose_at_fixed_res_and_get_all_atom_rmsd( pose, *native_pose, true );
+	}
 
 	BinaryRNASilentStruct s( pose, out_tag );
 	s.add_string_value( "missing", ObjexxFCL::string_of( get_number_missing_residue_connections( pose ) ) );
-	if ( native_pose ) 	s.add_energy( "rms", rms );
+	
+	if ( native_pose ) {
+		s.add_energy( "rms", rms );
+		s.add_energy( "non_bulge_rms", rms_no_bulges );
+	}
+	
 	silent_file_data.write_silent_struct( s, silent_file, false /*score_only*/ );
 
 }

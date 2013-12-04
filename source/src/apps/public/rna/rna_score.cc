@@ -39,6 +39,7 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/swa/StepWiseUtil.hh>
 #include <protocols/rna/RNA_StructureParameters.hh>
+#include <core/pose/PDBInfo.hh>
 
 // C++ headers
 #include <iostream>
@@ -58,6 +59,8 @@ using namespace core;
 using namespace protocols;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
+
+OPT_KEY( StringVector, original_input )
 
 ///////////////////////////////////////////////////////////////////////////////
 void
@@ -113,14 +116,33 @@ rna_score_test()
 	// Silent file output setup
 	std::string const silent_file = option[ out::file::silent  ]();
 	SilentFileData silent_file_data;
-
-	// other poses -- for scoring collections of poses connected by (virtual) loops, using full_model_info.
+	
+	FullModelInfoOP my_model;
 	utility::vector1< pose::PoseOP > other_poses;
-	if ( option[ full_model::other_poses ].user() ) get_other_poses( other_poses, option[ full_model::other_poses ](), rsd_set );
-
+	
+	if ( option[ original_input ].user() ) {
+		utility::vector1< std::string > const & original_files = option[ original_input ]();
+		utility::vector1< pose::PoseOP > original_poses;
+		
+		for ( Size n = 1; n <= original_files.size(); n++ ) {
+			original_poses.push_back( get_pdb_and_cleanup( original_files[ n ], rsd_set ) );
+		}
+		if ( option[ full_model::other_poses ].user() ) get_other_poses( original_poses, option[ full_model::other_poses ](), rsd_set );
+		
+		//FullModelInfo (minimal object needed for add/delete)
+		fill_full_model_info_from_command_line( original_poses );
+		my_model = const_full_model_info( *original_poses[ 1 ] ).clone_info();
+		
+	} else {
+		// other poses -- for scoring collections of poses connected by (virtual) loops, using full_model_info.
+		if ( option[ full_model::other_poses ].user() ) get_other_poses( other_poses, option[ full_model::other_poses ](), rsd_set );
+	}
+	
 	pose::Pose pose,start_pose;
 
 	Size i( 0 );
+	
+	if ( native_exists ) (*scorefxn)( native_pose );
 
 	while ( input->has_another_pose() ){
 
@@ -128,44 +150,72 @@ rna_score_test()
 		i++;
 
 		protocols::rna::RNA_StructureParameters parameters;
-		if ( option[params_file].user() ) {
-			parameters.initialize(
-					pose, option[params_file],
-					basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
-					false /*ignore_secstruct*/
-			);
-			// parameters.set_suppress_bp_constraint( 1.0 );
-			parameters.setup_base_pair_constraints( pose );
-			//rna_minimizer.set_allow_insert( parameters.allow_insert() );
+                if ( option[params_file].user() ) {
+                        parameters.initialize(
+                                        pose, option[params_file],
+                                        basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat"),
+                                        false /*ignore_secstruct*/
+                        );
+                        // parameters.set_suppress_bp_constraint( 1.0 );
+                        parameters.setup_base_pair_constraints( pose );
+                        //rna_minimizer.set_allow_insert( parameters.allow_insert() );
+                }
+
+
+		if ( !option[ in::file::silent ].user() ) cleanup( pose );
+				
+		if ( !option[ original_input ].user() ) {
+			fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
+		} else {
+			utility::vector1< Size > resnum;
+			core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
+			
+			if ( pdb_info )	{
+				//std::cout << std::endl << "PDB Info available for this pose..." << std::endl << std::endl;
+				for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( pdb_info->number( n ) );
+			} else {
+				for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( n );
+			}
+			
+			my_model->set_res_list( resnum );
+			my_model->set_other_pose_list( other_poses );
+			
+//			utility::vector1< Size > cutpoint_open_in_full_model;
+//			if( option[ full_model::cutpoint_open ].user() )	cutpoint_open_in_full_model = option[ full_model::cutpoint_open ]();
+//			
+//			for ( Size i = 1; i < pose.total_residue(); i++ ){
+//				if ( cutpoint_open_in_full_model.has_value( resnum[ i ]) ) continue;
+//				if ( (resnum[ i+1 ] == resnum[ i ] + 1) && pose.fold_tree().is_cutpoint( i ) ){
+//					cutpoint_open_in_full_model.push_back( resnum[ i ] );
+//				}
+//			}
+//			
+//			my_model->set_cutpoint_open_in_full_model( cutpoint_open_in_full_model );
+
+			pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, my_model );
 		}
 
-		cleanup( pose );
-		fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
-
 		// graphics viewer.
-		if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+		//if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 		// do it
 		if ( ! option[ score::just_calc_rmsd]() ){
 			(*scorefxn)( pose );
 		}
 
-		// Do alignment to native
-		if ( native_exists ){
-			utility::vector1< Size > superimpose_res;
-			for ( Size k = 1; k <= pose.total_residue(); ++k ) superimpose_res.push_back( k );
-			core::id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
-			protocols::swa::create_alignment_id_map( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
-			core::scoring::superimpose_pose( pose, native_pose, alignment_atom_id_map_native );
-		}
 		// tag
 		std::string tag = tag_from_pose( pose );
 		BinaryRNASilentStruct s( pose, tag );
-
+		
 		if ( native_exists ){
-			Real const rmsd = all_atom_rmsd( native_pose, pose );
-			std::cout << "All atom rmsd: " << rmsd << std::endl;
+			//Real const rmsd      = all_atom_rmsd( native_pose, pose );
+			Real const rmsd = superimpose_at_fixed_res_and_get_all_atom_rmsd( pose, native_pose );
+			std::cout << "All atom rmsd over moving residues: " << tag << " " << rmsd << std::endl;
 			s.add_energy( "rms", rmsd );
+			
+			Real const rms_no_bulges = superimpose_at_fixed_res_and_get_all_atom_rmsd( pose, native_pose, true );
+			std::cout << "All atom rmsd over non-bulged moving residues: " << tag << " " << rms_no_bulges << std::endl;
+			s.add_energy( "non_bulge_rms", rms_no_bulges );
 
 			// Stem RMSD
 			if ( option[params_file].user() ) {
@@ -214,6 +264,7 @@ main( int argc, char * argv [] )
         std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
 				utility::vector1< Size > blank_size_vector;
+				utility::vector1< std::string > blank_string_vector;
 				option.add_relevant( score::weights );
 				option.add_relevant( in::file::s );
 				option.add_relevant( in::file::silent );
@@ -223,6 +274,7 @@ main( int argc, char * argv [] )
 				option.add_relevant( in::file::input_res );
 				option.add_relevant( full_model::cutpoint_open );
 				option.add_relevant( score::just_calc_rmsd );
+				NEW_OPT( original_input, "If you want to rescore the poses using the original FullModelInfo from a SWM run, input those original PDBs here", blank_string_vector );
 				NEW_OPT( params_file, "Input file for pairings", "" );
 
         ////////////////////////////////////////////////////////////////////////////
@@ -233,7 +285,9 @@ main( int argc, char * argv [] )
         ////////////////////////////////////////////////////////////////////////////
         // end of setup
         ////////////////////////////////////////////////////////////////////////////
-        protocols::viewer::viewer_main( my_main );
+        //protocols::viewer::viewer_main( my_main );
+		rna_score_test();
+		exit( 0 );
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cout << "caught exception " << e.msg() << std::endl;
     }

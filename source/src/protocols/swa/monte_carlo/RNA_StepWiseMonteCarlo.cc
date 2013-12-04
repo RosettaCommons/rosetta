@@ -158,6 +158,8 @@ RNA_StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 	scorefxn_->set_weight( missing_res, max_missing_weight_ );
 	//scorefxn_->set_weight( coordinate_constraint, rmsd_weight_ );
 	show_scores( pose, "Final score:" );
+	
+	if ( native_pose_ ) show_scores ( *native_pose_, "Native energy:" );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

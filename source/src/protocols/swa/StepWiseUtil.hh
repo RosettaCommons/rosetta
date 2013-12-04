@@ -30,6 +30,7 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 
 //Auto Headers
 #include <core/id/AtomID.fwd.hh>
@@ -186,8 +187,12 @@ namespace swa {
 																	 pose::Pose const & pose1, pose::Pose const & pose2 );
 
 	Real
-	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose );
+	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose, bool skip_bulges = false );
+	
+	Real
+	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose, core::pose::full_model_info::FullModelInfoOP full_model_pointer, bool skip_bulges = false );
 
+	
 	void
 	clear_constraints_recursively( pose::Pose & pose );
 
@@ -223,6 +228,9 @@ namespace swa {
 									 utility::vector1< Size > const & working_res2,
 									 Size const & merge_res,
 									 bool const fix_first_pose = true );
+	
+	bool
+	residue_is_bulged( pose::Pose const & pose, Size const & resid );
 
 	void
 	slice( pose::Pose & sliced_out_pose,

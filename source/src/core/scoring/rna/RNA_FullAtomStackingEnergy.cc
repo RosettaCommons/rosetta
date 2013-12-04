@@ -563,9 +563,15 @@ RNA_FullAtomStackingEnergy::finalize_total_energy(
 
 	if ( pose.energies().use_nblist() ) return;
 	
+	Energies & energies( pose.energies() );
+	
 	for ( boost::unordered_map < core::Size , core::Size >::const_iterator
 		 it=num_stacks_.begin(), it_end = num_stacks_.end(); it != it_end; ++it ) {
-		if ( it->second > 1 ) totals[ num_stacks ]++;
+		if ( it->second > 1 ) {
+			totals[ num_stacks ]++;
+			EnergyMap & emap( energies.onebody_energies( it->first ) );
+			emap[ num_stacks ] = it->second;
+		}
 	}
 
 }

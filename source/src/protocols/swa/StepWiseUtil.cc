@@ -56,6 +56,7 @@
 #include <utility/tools/make_vector1.hh>
 #include <utility/io/izstream.hh>
 #include <core/scoring/func/FlatHarmonicFunc.hh>
+#include <core/scoring/Energies.hh>
 
 #include <iostream>
 #include <fstream>
@@ -826,36 +827,53 @@ rotate( pose::Pose & pose, Matrix const M,
 		atom_id_map[ AtomID( idx1, n1 ) ] = AtomID( idx2, n2 );
 
 	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	superimpose_at_fixed_res( pose::Pose & pose, pose::Pose const & native_pose,
-														Real & rmsd, Size & natoms_rmsd ){
-
+	
+	bool
+	residue_is_bulged( pose::Pose const & pose, Size const & resid ) {
+		
+		core::scoring::Energies const & energies( pose.energies() );
+		core::scoring::EnergyMap const & emap( energies.onebody_energies( resid ) );
+		
+		if ( emap[ core::scoring::num_stacks ] < 2 ) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	//////////////////
+	void superimpose_at_fixed_res( pose::Pose & pose, pose::Pose const & native_pose, Real & rmsd, Size & natoms_rmsd, core::pose::full_model_info::FullModelInfo const & full_model_info, bool skip_bulges = false ) {
+		
 		using namespace core::chemical;
 		using namespace core::id;
 		using namespace core::pose;
 		using namespace core::pose::full_model_info;
 		using namespace core::scoring;
 		using namespace protocols::rna;
-
+		
 		Pose native_pose_local = native_pose; // local working copy, mutated in cases where nucleotides have been designed ('n')
-
+		
 		// first need to slice up native_pose to match residues in actual pose.
 		// define atoms over which to compute RMSD, using rmsd_res.
-		FullModelInfo const & full_model_info = const_full_model_info( pose );
-		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
+		utility::vector1< Size > const & res_list = full_model_info.res_list();
 		utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
 		std::string const full_sequence = full_model_info.full_sequence();
-
+		
 		// following needs to be updated.
 		utility::vector1< Size > const rmsd_res = full_model_info.moving_res_in_full_model();
-
+		
 		utility::vector1< Size > calc_rms_res;
+		utility::vector1< Size > skipped_residues;
+		
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
 			if ( rmsd_res.has_value( res_list[ n ] ) ) {
+				if ( skip_bulges && residue_is_bulged( pose, n ) && residue_is_bulged( native_pose_local, res_list[ n ] ) ) {
+					skipped_residues.push_back( n );
+					continue;
+				}
+				
 				calc_rms_res.push_back( n );
-
+				
 				char const pose_nt = pose.sequence()[ n-1 ];
 				if ( full_sequence[ res_list[ n ] - 1 ] == 'n' ){
 					mutate_position( native_pose_local, res_list[ n ], pose_nt );
@@ -865,73 +883,76 @@ rotate( pose::Pose & pose, Matrix const M,
 				runtime_assert( native_pose_local.sequence()[ res_list[ n ] - 1] == pose_nt );
 			}
 		}
-
+		
 		std::map< AtomID, AtomID > calc_rms_atom_id_map;
-
+		
 		for ( Size k = 1; k <= calc_rms_res.size(); k++ ){
 			Size const n = calc_rms_res[ k ];
 			for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ){
 				add_to_atom_id_map_after_checks( calc_rms_atom_id_map,
-																				 pose.residue_type( n ).atom_name( q ),
-																				 n, res_list[ n ],
-																				 pose, native_pose_local );
+												pose.residue_type( n ).atom_name( q ),
+												n, res_list[ n ],
+												pose, native_pose_local );
 			}
 		}
-
+		
 		utility::vector1< Size > calc_rms_suites;
 		// additional RNA suites over which to calculate RMSD
 		for ( Size n = 1; n < pose.total_residue(); n++ ){
-
+			
 			if ( !pose.residue_type( n ).is_RNA() || !pose.residue_type( n + 1 ).is_RNA() ) continue;
 			if ( calc_rms_res.has_value( n+1 ) ) continue;
-
+			
 			// Atoms at ends of rebuilt loops:
 			if ( calc_rms_res.has_value( n ) &&
-					 ( !pose.fold_tree().is_cutpoint( n ) || pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) ) ) {
+				( !pose.fold_tree().is_cutpoint( n ) || pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) ) ) {
 				calc_rms_suites.push_back( n ); continue;
 			}
-
+			
 			// Domain boundaries:
 			if ( (res_list[ n+1 ] == res_list[ n ] + 1) &&
-					 fixed_domain_map[ res_list[ n ] ] != 0 &&
-					 fixed_domain_map[ res_list[ n+1 ] ] != 0 &&
-					 fixed_domain_map[ res_list[ n ] ] != fixed_domain_map[ res_list[ n+1 ] ] ){
+				fixed_domain_map[ res_list[ n ] ] != 0 &&
+				fixed_domain_map[ res_list[ n+1 ] ] != 0 &&
+				fixed_domain_map[ res_list[ n ] ] != fixed_domain_map[ res_list[ n+1 ] ] ){
 				calc_rms_suites.push_back( n );
 			}
 		}
-
+		
 		utility::vector1< std::string > const extra_suite_atoms = utility::tools::make_vector1( " P  ", " OP1", " OP2", " O5'" );
 		for ( Size k = 1; k <= calc_rms_suites.size(); k++ ){
 			Size const n = calc_rms_suites[ k ];
 			for ( Size q = 1; q <= extra_suite_atoms.size(); q++ ){
 				add_to_atom_id_map_after_checks( calc_rms_atom_id_map, extra_suite_atoms[ q ],
-																				 n+1, res_list[ n+1 ],
-																				 pose, native_pose_local );
+												n+1, res_list[ n+1 ],
+												pose, native_pose_local );
 			}
 		}
-
+		
 		//		for ( std::map < AtomID, AtomID >::const_iterator it = calc_rms_atom_id_map.begin();
 		//					it != calc_rms_atom_id_map.end(); it++ ){
 		//			TR << it->first << " mapped to " << it->second << std::endl;
 		//		}
-
+		
 		// define superposition atoms. Should be over atoms in any fixed domains. This should be
 		// the 'inverse' of calc_rms atoms.
+		
 		std::map< AtomID, AtomID > superimpose_atom_id_map;
 		for ( Size n = 1; n < pose.total_residue(); n++ ){
+			if ( skipped_residues.has_value( n ) ) continue;
+			
 			for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ){
 				if ( calc_rms_atom_id_map.find( AtomID( q, n ) ) == calc_rms_atom_id_map.end() ){
 					add_to_atom_id_map_after_checks( superimpose_atom_id_map,
-																					 pose.residue_type( n ).atom_name( q ),
-																					 n, res_list[ n ],
-																					 pose, native_pose_local );
+													pose.residue_type( n ).atom_name( q ),
+													n, res_list[ n ],
+													pose, native_pose_local );
 				}
 			}
 		}
-
+		
 		// What if there weren't any fixed atoms? superimpose over everything.
 		if ( superimpose_atom_id_map.size() == 0 ) superimpose_atom_id_map = calc_rms_atom_id_map;
-
+		
 		rmsd = 0.0;
 		natoms_rmsd = calc_rms_atom_id_map.size();
 		if ( natoms_rmsd > 0 && superimpose_atom_id_map.size() > 0 ) {
@@ -940,19 +961,39 @@ rotate( pose::Pose & pose, Matrix const M,
 			rmsd = rms_at_corresponding_atoms_no_super( pose, native_pose, calc_rms_atom_id_map );
 		}
 		TR << "Pose " << make_tag_with_dashes(res_list) << ": RMSD " << rmsd << " over " << natoms_rmsd << " atoms, superimposing on " << superimpose_atom_id_map.size() << " atoms. " << std::endl;
-
+		
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	superimpose_recursively( pose::Pose & pose, pose::Pose const & native_pose, Real & rmsd, Size & natoms ){
+	superimpose_at_fixed_res( pose::Pose & pose, pose::Pose const & native_pose, Real & rmsd, Size & natoms_rmsd, core::pose::full_model_info::FullModelInfoOP full_model_pointer, bool skip_bulges = false ){
+
+		using namespace core::chemical;
+		using namespace core::id;
+		using namespace core::pose;
+		using namespace core::pose::full_model_info;
+		using namespace core::scoring;
+		using namespace protocols::rna;
+
+		if ( full_model_pointer ) {
+			superimpose_at_fixed_res( pose, native_pose, rmsd, natoms_rmsd, *full_model_pointer, skip_bulges );
+		} else {
+			FullModelInfo const & full_model_info = const_full_model_info( pose );
+			superimpose_at_fixed_res( pose, native_pose, rmsd, natoms_rmsd, full_model_info, skip_bulges );
+		}
+		
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	superimpose_recursively( pose::Pose & pose, pose::Pose const & native_pose, Real & rmsd, Size & natoms, core::pose::full_model_info::FullModelInfoOP full_model_pointer, bool skip_bulges = false ){
 
 		using namespace core::pose;
 		using namespace core::pose::full_model_info;
 
 		Real rmsd_pose;
 		Size natoms_pose;
-		superimpose_at_fixed_res( pose, native_pose, rmsd_pose, natoms_pose );
+		superimpose_at_fixed_res( pose, native_pose, rmsd_pose, natoms_pose, full_model_pointer, skip_bulges );
 
 		Real const total_sd = ( rmsd * rmsd * natoms) + (rmsd_pose * rmsd_pose * natoms_pose );
 		natoms += natoms_pose;
@@ -964,18 +1005,25 @@ rotate( pose::Pose & pose, Matrix const M,
 
 		utility::vector1< PoseOP > const & other_pose_list = nonconst_full_model_info( pose ).other_pose_list();
 		for ( Size n = 1; n <= other_pose_list.size(); n++ ){
-			superimpose_recursively( *( other_pose_list[ n ] ), native_pose, rmsd, natoms );
+			superimpose_recursively( *( other_pose_list[ n ] ), native_pose, rmsd, natoms, full_model_pointer, skip_bulges );
 		}
 
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	Real
-	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose ){
+	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose, core::pose::full_model_info::FullModelInfoOP full_model_pointer, bool skip_bulges ){
 		Real rmsd( 0.0 );
 		Size natoms( 0 );
-		superimpose_recursively( pose, native_pose, rmsd, natoms );
+		superimpose_recursively( pose, native_pose, rmsd, natoms, full_model_pointer, skip_bulges );
 		return rmsd;
+	}
+
+	Real
+	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose, bool skip_bulges ){
+		core::pose::full_model_info::FullModelInfoOP dummy_pointer;
+		return superimpose_at_fixed_res_and_get_all_atom_rmsd( pose, native_pose, dummy_pointer, skip_bulges );
 	}
 
 
