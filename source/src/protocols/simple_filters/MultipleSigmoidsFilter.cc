@@ -102,7 +102,8 @@ void
 				else if( sub_tag->getName() == "Sigmoid" )
 				{
 					sig_=new Sigmoid;
-					TR<<"I'm now reading from Sigmoid filter"<<std::endl;
+					TR<<"I'm now reading from Sigmoid filter for fname "<<fname<<std::endl;
+					sig_->set_user_defined_name( fname );
 					sig_->filter(r_pose_);
 					sig_->parse_my_tag(sub_tag, data, filters, movers, pose);
 				}
@@ -130,6 +131,7 @@ MultipleSigmoids::report( std::ostream &o, core::pose::Pose const & pose ) const
 }
 core::Real
 MultipleSigmoids::report_sm( core::pose::Pose const & pose ) const {
+		operatorF_->report_sm( pose );
 	  return( compute( pose ) );
 }
 core::Real

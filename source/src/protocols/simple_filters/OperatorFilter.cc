@@ -19,6 +19,12 @@
 #include <protocols/simple_filters/SigmoidFilter.hh>
 #include <protocols/simple_filters/MultipleSigmoidsFilter.hh>
 #include <utility/tag/Tag.hh>
+#include <protocols/rosetta_scripts/ParsedProtocol.hh>
+//JD2 headers
+#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/JobOutputter.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 //Project Headers
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
@@ -197,6 +203,19 @@ Operator::report( std::ostream &o, core::pose::Pose const & pose ) const {
 core::Real
 Operator::report_sm( core::pose::Pose const & pose ) const {
 	core::Real const val( compute( pose ) );
+	//add sigmoid values to the scroring file
+	using protocols::jd2::JobDistributor;
+	protocols::jd2::JobOP job_me( protocols::jd2::JobDistributor::get_instance()->current_job() );
+	//This is the problematic line:
+	//protocols::rosetta_scripts::ParsedProtocol::add_values_to_job( pose, job_me );
+	//protocols::rosetta_scripts::ParsedProtocol parsedP = new ParsedProtocol;
+	//parsedP->add_values_to_job( pose, job_me );
+	TR<<"reporting operator subvalues for: ";
+	foreach( FilterOP filter, filters_ ){
+		core::Real const val( filter->report_sm( pose ) );
+		TR<<filter->get_user_defined_name()<<" with value "<<val<<std::endl;
+		job_me->add_string_real_pair(filter->get_user_defined_name(), val);
+	}
 	TR<<"Operator returning: "<<val<<std::endl;
 	return( val );
 }
