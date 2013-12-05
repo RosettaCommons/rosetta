@@ -35,8 +35,6 @@ import tools.CppParser
 
 
 
-
-
 from optparse import OptionParser
 
 
@@ -540,7 +538,9 @@ def getLinkerOptions():
         add_loption += '-shared'
         #if PlatformBits == '32' and Platform != 'cygwin': add_loption += ' -malign-double'
         if PlatformBits == '32' : add_loption += ' -malign-double'
-    else: add_loption = '-dynamiclib -Xlinker -headerpad_max_install_names'
+    else:
+        add_loption = '-dynamiclib -Xlinker -headerpad_max_install_names'
+        #if platform.release()[:2] == '13': add_loption += ' -stdlib=libstdc++'
 
     return add_loption
 
@@ -670,6 +670,8 @@ def prepareMiniLibs(mini_path, bindings_path):
     elif Platform == "cygwin": execute("Building mini libraries...", "cd %s && ./scons.py mode=%s bin -j%s" % (mini_path, mode, Options.jobs) )
     else: execute("Building mini libraries...", "cd %s && ./scons.py mode=%s -j%s" % (mini_path, mode, Options.jobs) )
 
+    version_add_on = execute("Getting GCC version...", 'gcc -dumpversion', return_='output').strip()[0:3] + '/default/'
+
     # fix this for diferent platform
     if Platform == "linux": lib_path = 'build/src/'+mode+'/linux/' + platform.release()[:3] + '/' + PlatformBits +'/x86/gcc/'
     elif Platform == "cygwin": lib_path = 'build/src/'+mode+'/cygwin/1.7/32/x86/gcc/'
@@ -678,10 +680,12 @@ def prepareMiniLibs(mini_path, bindings_path):
         if Platform == "macos" and PlatformBits=='64':
             if platform.release()[:2] == '10': lib_path = 'build/src/'+mode+'/macos/10.6/64/x86/gcc/'
             elif platform.release()[:2] == '11': lib_path = 'build/src/'+mode+'/macos/10.7/64/x86/gcc/'
-            else: lib_path = 'build/src/'+mode+'/macos/10.8/64/x86/gcc/'
+            elif platform.release()[:2] == '12': lib_path = 'build/src/'+mode+'/macos/10.8/64/x86/gcc/'
+            elif platform.release()[:2] == '13': lib_path = 'build/src/'+mode+'/macos/10.9/64/x86/clang/';  version_add_on = '5.0/default/'
+            else: print 'Unknown MacOS version:', platform.release()[:2];  sys.exit(1)  #lib_path = 'build/src/'+mode+'/macos/10.8/64/x86/gcc/'
 
     # now lets add version to lib_path...
-    lib_path += execute("Getting GCC version...", 'gcc -dumpversion', return_='output').strip()[0:3] + '/default/'
+    lib_path += version_add_on
 
         #if Platform == "macos" and PlatformBits=='64'  and  platform.release().startswith('11.'): lib_path = 'build/src/pyrosetta/macos/11/64/x86/gcc/'
         #else: lib_path = 'build/src/pyrosetta/macos/10.6/64/x86/gcc/'
@@ -1087,7 +1091,9 @@ class ModuleBuilder:
         #self.gccxml_options = '--gccxml-compiler llvm-g++-4.2 -march=nocona' if Platform == "macos" else ''
         self.gccxml_options = ''
         if Options.gccxml_compiler: self.gccxml_options += '--gccxml-compiler ' + Options.gccxml_compiler
-        elif Platform == 'macos': self.gccxml_options += '--gccxml-compiler llvm-g++-4.2'
+        elif Platform == 'macos':
+            if platform.release()[:2] == '13': self.gccxml_options += '--gccxml-compiler gcc'  #  --gccxml-cxxflags "-stdlib=libstdc++"
+            else: self.gccxml_options += '--gccxml-compiler llvm-g++-4.2'
         if Platform == 'macos': self.gccxml_options += ' -march=nocona'
 
         self.cc_files = []
