@@ -95,6 +95,7 @@ std::map< std::string, AA > setup_name2aa() {
 
 	n2aa[ "VRT" ] = aa_vrt;
 
+	n2aa[ "UNP" ] = aa_unp;
 	n2aa[ "UNK" ] = aa_unk;
 
 	return n2aa;
@@ -137,6 +138,7 @@ std::map< char, AA > setup_oneletter2aa() {
 	l2aa[ 'g' ] = na_rgu;
 	l2aa[ 'u' ] = na_ura;
 
+	l2aa[ 'z' ] = aa_unp;
 	l2aa[ 'Z' ] = aa_unk;
 	l2aa[ 'X' ] = aa_vrt;
 

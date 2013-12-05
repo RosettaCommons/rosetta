@@ -415,8 +415,8 @@ apply_pucker(
 
 	if ( pucker_state == WHATEVER ) pucker_state = curr_pucker;
 
-	if (idealize_coord) {
-		ideal_coord.apply(pose, i, pucker_state);
+	if ( idealize_coord ) {
+		ideal_coord.apply_pucker(pose, i, pucker_state);
 	} else {
 		if (pucker_state == NORTH) {
 			delta = torsion_info.delta_north();

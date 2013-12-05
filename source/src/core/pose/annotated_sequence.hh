@@ -30,6 +30,17 @@
 namespace core {
 namespace pose {
 
+/// @brief Parse the input annotated sequence
+void parse_sequence(
+	std::string const & sequence_in,
+	utility::vector1< std::string > & fullname_list,
+	std::vector< Size > & oneletter_to_fullname_index,
+	std::string & one_letter_sequence
+);
+
+/// @brief Get the real length of a annotated sequence
+Size get_sequence_len( std::string const & sequence_in );
+
 /// @brief return a list of ResidueTypes corresponding to an annotated protein sequence
 /// @param[in] sequence_in an annotated sequence
 /// @param[in] residue_set the desired residue set

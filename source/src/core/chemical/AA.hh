@@ -98,6 +98,8 @@ enum AA {
 	aa_h2o,
 	// virtual
 	aa_vrt,
+	// unknown polymer
+	aa_unp,
 	// unknown
 	aa_unk,
 	num_aa_types = aa_unk //keep this guy last
@@ -119,7 +121,7 @@ is_D_aa( AA aa );
 //////////////////////////////////////////////////////////
 /// @brief Given an enum type for a D-amino acid with a
 /// canonical side-chain, return the enum type for the
-/// corresponding L-amino acid (or aa_unk if the 
+/// corresponding L-amino acid (or aa_unk if the
 /// corresponding L-amino acid cannot be determined).
 //////////////////////////////////////////////////////////
 AA
@@ -128,7 +130,7 @@ get_L_equivalent( AA aa );
 //////////////////////////////////////////////////////////
 /// @brief Given an enum type for a L-amino acid with a
 /// canonical side-chain, return the enum type for the
-/// corresponding D-amino acid (or aa_unk if the 
+/// corresponding D-amino acid (or aa_unk if the
 /// corresponding D-amino acid cannot be determined).
 //////////////////////////////////////////////////////////
 AA

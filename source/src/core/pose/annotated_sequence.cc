@@ -49,37 +49,23 @@ using namespace core;
 using namespace core::conformation;
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @details Given a protein sequence where each character represents an amino
-/// acid, and a ResidueTypeSet, return the residue types that match the
-/// sequence. NOTE: support making residue types from a fully annotated sequence
-/// now, that is, for each residue variant or ligand which cannot be deduced
-/// from one letter code directly, a [] is added directly following the one
-/// letter code containing the residue's fullname, for example
-/// K[lys_p:NtermProteinFull]ADFGCH[HIS_D]QNVE[glu_p:CtermProteinFull]Z[ZN].
-/// This allows a pose to be constructed with full features from a silent output
-/// file, such as with distinguished HIS tautomers, various chain termini and
-/// cutpoint variants etc. Currently not working with disulfide variant CYD, but
-/// this is on to-do list.
-chemical::ResidueTypeCOPs residue_types_from_sequence(
+/// parse the annotated sequence.
+void parse_sequence(
 	std::string const & sequence_in,
-	chemical::ResidueTypeSet const & residue_set,
-	bool const auto_termini /* true */
-)
-{
-	chemical::ResidueTypeCOPs requested_types;
-
-	using namespace core::chemical;
-
-	if ( !sequence_in.size() ) return requested_types;
+	utility::vector1< std::string > & fullname_list,
+	std::vector< Size > & oneletter_to_fullname_index,
+	std::string & one_letter_sequence
+) {
+	fullname_list.clear();
+	oneletter_to_fullname_index.clear();
+	if ( sequence_in.empty() ) return;
 
 	// deal with the sequence read in; any non-standard protein AA name including lig should be put within a bracket[]
 	// following the one-letter AA character. X for aa_vrt and Z for aa_unk
+	one_letter_sequence = sequence_in.substr( 0,1 );
 	std::string fullname;
-	utility::vector1< std::string > fullname_list; // a vector of non-standard full names
-	std::vector< Size > oneletter_to_fullname_index; // for each one-letter sequence, zero means no fullname given
 
 	// we start with the first character in sequence and that should be a standard AA.
-	std::string one_letter_sequence = sequence_in.substr( 0,1 );
 	Size last_index = 0; // zero means this one-letter name does not have a fullname specified in bracket.
 	bool in_bracket = false; // currently whether scanning fullname in bracket or not.
 
@@ -109,8 +95,48 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 			last_index = 0;
 		}
 	} // finish reading in the whole sequence.
-
 	oneletter_to_fullname_index.push_back( last_index );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// Get the length of the annotated sequence
+Size get_sequence_len( std::string const & sequence_in ) {
+	utility::vector1< std::string > fullname_list;
+	std::vector< Size > oneletter_to_fullname_index;
+	std::string one_letter_sequence;
+	parse_sequence( sequence_in, fullname_list, oneletter_to_fullname_index, one_letter_sequence );
+	return one_letter_sequence.size();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// @details Given a protein sequence where each character represents an amino
+/// acid, and a ResidueTypeSet, return the residue types that match the
+/// sequence. NOTE: support making residue types from a fully annotated sequence
+/// now, that is, for each residue variant or ligand which cannot be deduced
+/// from one letter code directly, a [] is added directly following the one
+/// letter code containing the residue's fullname, for example
+/// K[lys_p:NtermProteinFull]ADFGCH[HIS_D]QNVE[glu_p:CtermProteinFull]Z[ZN].
+/// This allows a pose to be constructed with full features from a silent output
+/// file, such as with distinguished HIS tautomers, various chain termini and
+/// cutpoint variants etc. Currently not working with disulfide variant CYD, but
+/// this is on to-do list.
+chemical::ResidueTypeCOPs residue_types_from_sequence(
+	std::string const & sequence_in,
+	chemical::ResidueTypeSet const & residue_set,
+	bool const auto_termini /* true */
+)
+{
+	chemical::ResidueTypeCOPs requested_types;
+
+	using namespace core::chemical;
+
+	if ( sequence_in.empty() ) return requested_types;
+
+	utility::vector1< std::string > fullname_list; // a vector of non-standard full names
+	std::vector< Size > oneletter_to_fullname_index; // for each one-letter sequence, zero means no fullname given
+	std::string one_letter_sequence;
+	parse_sequence( sequence_in, fullname_list, oneletter_to_fullname_index, one_letter_sequence );
+
 	tr.Debug << "one_letter: " << one_letter_sequence << std::endl;
 	tr.Debug << "seq_in: " << sequence_in << std::endl;
 

@@ -83,6 +83,9 @@ public:
 	void
 	build_helix( core::pose::Pose & pose, std::string const & full_sequence );
 
+	core::pose::PoseOP
+	build_init_pose( std::string const & seq1, std::string const & seq2 );
+
 private:
 
 	void
@@ -152,11 +155,10 @@ private:
 	bool minimize_all_;
 	bool minimize_jump_;
 	bool use_phenix_geo_;
-	std::string const ideal_jump;
 
-	core::chemical::ResidueTypeSetCAP rsd_set;
+	core::chemical::ResidueTypeSetCAP rsd_set_;
 
-	core::chemical::rna::RNA_FittedTorsionInfo const torsion_info;
+	core::chemical::rna::RNA_FittedTorsionInfo const torsion_info_;
 
 	core::Real perturb_amplitude_;
 

@@ -96,22 +96,22 @@ void RNA_SugarRotamer::apply( pose::Pose & pose, core::Size const i ) {
 	runtime_assert( is_init() );
 	Size pucker_state = pucker_states_[i];
 	assert( pucker_state <= 2 );
-	
+
 	static const RNA_IdealCoord ideal_coord;
 	static const RNA_FittedTorsionInfo torsion_info;
 	Real delta, nu1, nu2;
-	
+
 	Size const curr_pucker = assign_pucker( pose, rsd_id_ );
 	if ( skip_same_pucker_ && pucker_state == curr_pucker ) return;
-	
+
 	if ( pucker_state == WHATEVER ) pucker_state = curr_pucker;
-	
+
 	if (idealize_coord_) {
 		if ( pucker_state == NORTH ) {
 			if (  north_pucker_dofs_have_not_been_initialized_ ) {
 				// Arvind - 10/06/2013
 				// If it is the first time the RNA_SugarRotamer object has encountered a NORTH pucker, then we need to go through the whole process of running copy_dofs() from the ideal pucker. But when we do this, we are caching all of the dofs we need to alter so that we don't have to do this again
-				ideal_coord.apply(pose, rsd_id_, pucker_state);
+				ideal_coord.apply_pucker(pose, rsd_id_, pucker_state);
 				//north_pucker_dof_key_values_ = ideal_coord.apply_and_return(pose, rsd_id_, pucker_state);
 				//north_pucker_dofs_have_not_been_initialized_ = false;
 			} else {
@@ -127,7 +127,7 @@ void RNA_SugarRotamer::apply( pose::Pose & pose, core::Size const i ) {
 				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_,   id::CHI, 4       ) ); //O2H
 				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_-1, id::BB,  ZETA    ) );
 				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_+1, id::BB,  ALPHA   ) );
-				
+
 				for ( Size index = 1; index <= saved_torsion_id.size(); ++index ) {
 					bool const is_exists = ideal_coord.is_torsion_exists( pose, saved_torsion_id[index] );
 					if (is_exists) {
@@ -142,7 +142,7 @@ void RNA_SugarRotamer::apply( pose::Pose & pose, core::Size const i ) {
 					 it=north_pucker_dof_key_values_.begin(), it_end = north_pucker_dof_key_values_.end(); it != it_end; ++it ) {
 					pose.set_dof( it->first, it->second );
 				}
-				
+
 				for ( Size index = 1; index <= saved_torsion_id.size(); ++index ) {
 					if ( saved_torsions[index] > -1000 ) pose.set_torsion( saved_torsion_id[index], saved_torsions[index] );
 				}
@@ -151,7 +151,7 @@ void RNA_SugarRotamer::apply( pose::Pose & pose, core::Size const i ) {
 			if (  south_pucker_dofs_have_not_been_initialized_ ) {
 				// Arvind - 10/06/2013
 				// Same procedure for the first occurrence of a SOUTH pucker.
-				ideal_coord.apply(pose, rsd_id_, pucker_state);
+				ideal_coord.apply_pucker(pose, rsd_id_, pucker_state);
 				//south_pucker_dof_key_values_ = ideal_coord.apply_and_return(pose, rsd_id_, pucker_state);
 				//south_pucker_dofs_have_not_been_initialized_ = false;
 			} else {
@@ -167,7 +167,7 @@ void RNA_SugarRotamer::apply( pose::Pose & pose, core::Size const i ) {
 				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_,   id::CHI, 4       ) ); //O2H
 				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_-1, id::BB,  ZETA    ) );
 				saved_torsion_id.push_back( core::id::TorsionID( rsd_id_+1, id::BB,  ALPHA   ) );
-				
+
 				for ( Size index = 1; index <= saved_torsion_id.size(); ++index ) {
 					bool const is_exists = ideal_coord.is_torsion_exists( pose, saved_torsion_id[index] );
 					if (is_exists) {
@@ -182,13 +182,13 @@ void RNA_SugarRotamer::apply( pose::Pose & pose, core::Size const i ) {
 					 it=south_pucker_dof_key_values_.begin(), it_end = south_pucker_dof_key_values_.end(); it != it_end; ++it ) {
 					pose.set_dof( it->first, it->second );
 				}
-				
+
 				for ( Size index = 1; index <= saved_torsion_id.size(); ++index ) {
 					if ( saved_torsions[index] > -1000 ) pose.set_torsion( saved_torsion_id[index], saved_torsions[index] );
 				}
 			}
 		}
-		
+
 	} else {
 		if (pucker_state == NORTH) {
 			delta = torsion_info.delta_north();

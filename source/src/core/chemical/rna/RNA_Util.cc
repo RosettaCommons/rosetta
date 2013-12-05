@@ -354,7 +354,6 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 
 	using namespace chemical;
 
-
   //SML PHENIX conference
   if ( !rsd.is_RNA() ) {
     if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
@@ -368,33 +367,34 @@ get_rna_base_coordinate_system( conformation::Residue const & rsd, Vector const 
 
 	Vector x,y,z;
 
-	// Make an axis pointing from base centroid to Watson-Crick edge.
-	std::string WC_atom;
-	if ( res_type == na_rad ) WC_atom = " N1 ";
-	if ( res_type == na_rcy ) WC_atom = " N3 ";
-	if ( res_type == na_rgu ) WC_atom = " N1 ";
-	if ( res_type == na_ura ) WC_atom = " N3 ";
+	Vector WC_coord, H_coord;
+	if ( res_type == aa_unk || res_type == aa_unp ) {
+		// Just use the first two sidechain atoms for generality
+		WC_coord = rsd.xyz( rsd.first_sidechain_atom() );
+		H_coord = rsd.xyz( rsd.first_sidechain_atom() + 1 );
+	} else {
+		// Make an axis pointing from base centroid to Watson-Crick edge.
+		std::string WC_atom;
+		if ( res_type == na_rad || res_type == na_rgu ) WC_atom = "N1";
+		if ( res_type == na_rcy || res_type == na_ura ) WC_atom = "N3";
+		// Make a perpendicular axis pointing from centroid towards
+		// Hoogstein edge (e.g., major groove in a double helix).
+		std::string H_atom;
+		if ( res_type == na_rad || res_type == na_rgu ) H_atom = "N7" ;
+		if ( res_type == na_rcy || res_type == na_ura ) H_atom = "C5";
+		WC_coord = rsd.xyz( WC_atom );
+		H_coord = rsd.xyz( H_atom );
+	}
 
-	Vector const WC_coord (rsd.xyz( WC_atom ) );
 	x = WC_coord - centroid;
 	x.normalize();
 
-	// Make a perpendicular axis pointing from centroid towards
-	// Hoogstein edge (e.g., major groove in a double helix).
-	std::string H_atom;
-	if ( res_type == na_rad ) H_atom = "N7";
-	if ( res_type == na_rcy ) H_atom = "C5";
-	if ( res_type == na_rgu ) H_atom = "N7";
-	if ( res_type == na_ura ) H_atom = "C5";
-
-  Vector const H_coord (rsd.xyz( H_atom ) );
 	y = H_coord - centroid; //not orthonormal yet...
 	z = cross(x, y);
 	z.normalize(); // Should poSize roughly 5' to 3' if in a double helix.
 
 	y = cross(z, x);
 	y.normalize(); //not necessary but doesn't hurt.
-
 
  	numeric::xyzMatrix< core::Real > M=numeric::xyzMatrix< core::Real >::cols( x, y, z );
 	return M;

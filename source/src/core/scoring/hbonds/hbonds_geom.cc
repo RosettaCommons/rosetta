@@ -234,6 +234,7 @@ get_hb_don_chem_type(
 		case aa_h2o:
 			return hbdon_H2O;
 		case aa_vrt:
+		case aa_unp:
 		case aa_unk:
 			//tr << "WARNING: Unknown Hydrogen Bond donor type for: " + don_rsd.name1() + I(3, don_rsd.seqpos()) + " " + don_rsd.atom_name( datm) + ".  Using hbdon_GENERIC_SC.";
 			return hbdon_GENERIC_SC; break;
@@ -309,7 +310,7 @@ get_hb_acc_chem_type(
 		case aa_ala: case aa_cys: case aa_phe: case aa_gly: case aa_ile: case aa_leu:
 		case aa_met: case aa_pro: case aa_val: case aa_tyr:
 		case aa_dal: case aa_dcs: case aa_dph: case aa_dil: case aa_dle:
-		case aa_dme: case aa_dpr: case aa_dva: case aa_dty: 
+		case aa_dme: case aa_dpr: case aa_dva: case aa_dty:
 			return hbacc_AHX; break;
 		case aa_ser: case aa_thr: case aa_dse: case aa_dth: return hbacc_HXL; break;
 		case aa_lys: case aa_arg: case aa_trp: case aa_dly: case aa_dar: case aa_dtr:
@@ -406,6 +407,7 @@ get_hb_acc_chem_type(
 		case aa_h2o:
 			return hbacc_H2O;
 		case aa_vrt:
+		case aa_unp:
 		case aa_unk:
 			// generic types; for backwards compatibility; prefer functional group based chem type
 			switch(acc_rsd.atom_type(aatm).hybridization()){

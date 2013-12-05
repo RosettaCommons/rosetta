@@ -92,13 +92,13 @@ private:
 	core::Size rsd_id_, pucker_state_;
 
 	bool skip_same_pucker_, idealize_coord_;
-	
+
 	std::map < core::id::DOF_ID , core::Real > north_pucker_dof_key_values_;
-	
+
 	std::map < core::id::DOF_ID , core::Real > south_pucker_dof_key_values_;
-	
+
 	bool north_pucker_dofs_have_not_been_initialized_;
-	
+
 	bool south_pucker_dofs_have_not_been_initialized_;
 };
 

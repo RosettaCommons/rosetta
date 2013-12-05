@@ -154,13 +154,13 @@ ideal_A_form_torsions(){
 
 	ideal_torsions.second[0] = rna_fitted_torsion_info.delta_north();
 	ideal_torsions.second[1] = rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[1].center;
-	
+
 	return ideal_torsions;
 }
 
 //////////////////////////////////
 void
-apply_backbone( Backbone_Torsion const & backbone, 
+apply_backbone( Backbone_Torsion const & backbone,
 								pose::Pose & pose,
 								Size const suite ){
 
@@ -176,7 +176,7 @@ apply_backbone( Backbone_Torsion const & backbone,
 }
 //////////////////////////////////
 void
-apply_nucleoside( Nucleoside_Torsion const & nucleoside, 
+apply_nucleoside( Nucleoside_Torsion const & nucleoside,
 								  pose::Pose & pose,
 								  Size const residue ){
 
@@ -194,7 +194,7 @@ apply_nucleoside( Nucleoside_Torsion const & nucleoside,
 			ideal_coord_rna.apply(pose, residue, false);
 		}
 	}
-	
+
 	pose.set_torsion( TorsionID( residue, id::CHI, 1 ), nucleoside[1] ); //chi
 }
 //////////////////////////////////
@@ -212,7 +212,7 @@ apply_all( utility::vector1< Backbone_Torsion > const & backbones,
 }
 //////////////////////////////////
 void
-get_backbone( Backbone_Torsion & backbone, 
+get_backbone( Backbone_Torsion & backbone,
 							pose::Pose const & pose,
 							Size const suite ){
 
@@ -228,14 +228,14 @@ get_backbone( Backbone_Torsion & backbone,
 }
 //////////////////////////////////
 void
-get_nucleoside( Nucleoside_Torsion & nucleoside, 
+get_nucleoside( Nucleoside_Torsion & nucleoside,
 							  pose::Pose const & pose,
 								Size const residue ){
 
 	using namespace id;
 	using namespace chemical::rna;
 
-	
+
 	nucleoside[0] = pose.torsion( TorsionID( residue, id::BB , 4 ) ); //delta
 	nucleoside[1] = pose.torsion( TorsionID( residue, id::CHI, 1 ) ); //chi
 }
@@ -276,7 +276,7 @@ get_all_tor_id( utility::vector1< id::TorsionID > & tor_id,
 	}
 
 	for (Size i = 1; i <= nucleosides.size(); ++i) {
-		tor_id.push_back( TorsionID( i, id::CHI, 1 ) ); 
+		tor_id.push_back( TorsionID( i, id::CHI, 1 ) );
 		torsions.push_back( nucleosides[i][1] );
 	}
 }
@@ -306,7 +306,7 @@ read_rigid_body_settings( std::string const infile,
 }
 //////////////////////////////////
 void
-apply_rigid_body_settings( pose::Pose & pose, 
+apply_rigid_body_settings( pose::Pose & pose,
 													 pose::Pose const & pose_start,
 													 utility::vector1< Size > const & moving_res,
 													 utility::vector1< Real > const & rbs) {
@@ -345,10 +345,10 @@ setup_pose ( pose::Pose & pose){
 	Size const len1      = sequence1.size();
 	Size const len2      = sequence2.size();
 
-		
-	if (len1 == 0) utility_exit_with_message( "User need to specify at least -seq1 !!" ); 
 
-	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	if (len1 == 0) utility_exit_with_message( "User need to specify at least -seq1 !!" );
+
+	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna_phenix" );
 	pose::make_pose_from_sequence( pose, total_seq, *rsd_set );
 
 	static std::pair < Backbone_Torsion,  Nucleoside_Torsion > const ideal_torsions = ideal_A_form_torsions();
@@ -357,11 +357,11 @@ setup_pose ( pose::Pose & pose){
 		apply_nucleoside( ideal_torsions.second, pose, i );
 	}
 	apply_nucleoside( ideal_torsions.second, pose, total_len );
-	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
+	// pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
 
 	if (len2 == 0) return; // Only one chain
 
-	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", len1 + 1 );
+	// pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", len1 + 1 );
 
 	FoldTree f( total_len );
 	f.new_jump( 1, total_len, len1 );
@@ -384,6 +384,7 @@ setup_pose ( pose::Pose & pose){
 
 	utility::vector1< Real > const & rbs = reference_rigid_body_settings[ option[ fixed_pair_state_number ]() ];
 	apply_rigid_body_settings( pose, pose, strand2_res, rbs );
+	pose.dump_pdb("init.pdb");
 }
 //////////////////////////////////
 //Random angle sampling functions
@@ -416,11 +417,11 @@ gaussian_angle_move(float & angle, Real const stdev) {
 }
 /////////////////////////////////
 void
-nucleoside_sampling( Nucleoside_Torsion & nucleoside, 
-										 Real const sample_stdev, 
+nucleoside_sampling( Nucleoside_Torsion & nucleoside,
+										 Real const sample_stdev,
 										 Real const lowerbound,
 										 Real const upperbound,
-										 Real const pucker_prob ) 
+										 Real const pucker_prob )
 {
 	if (sample_stdev == 0) return; //Skip sampling
 
@@ -453,18 +454,18 @@ nucleoside_sampling( Nucleoside_Torsion & nucleoside,
 /////////////////////////////////
 void
 backbone_sampling( Backbone_Torsion & backbone,
-									 Real const sample_stdev, 
+									 Real const sample_stdev,
 									 Real const lowerbound,
 									 Real const upperbound )
 {
 	if (sample_stdev == 0) return; //Skip sampling
 	static std::pair < Backbone_Torsion,  Nucleoside_Torsion > const ideal_torsions = ideal_A_form_torsions();
 
-	if  (sample_stdev < 0 || sample_stdev > 180 ) { //use random sampling 
+	if  (sample_stdev < 0 || sample_stdev > 180 ) { //use random sampling
 		for (Size i = 0; i != 5; ++i) random_angle( backbone[i], lowerbound + ideal_torsions.first[i], upperbound + ideal_torsions.first[i] );
 		return;
 	}
-		
+
 	for (Size i = 0; i != 5; ++i) {
 		float angle = backbone[i];
 		gaussian_angle_move( angle, sample_stdev );
@@ -508,7 +509,7 @@ update_backbone( utility::vector1 < Backbone_Torsion > & backbones,
 								 Real const stdev_free,
 								 Real const lowerbound_bp,
 								 Real const upperbound_bp )
-								 
+
 {
 	for (Size i = 1; i <= backbones.size(); ++i) {
 		if ( sample_modes[i] == 1 ) { //free mode
@@ -529,13 +530,13 @@ get_torsion_list( utility::vector1< float > & data,
 {
 	for (Size i = 1; i <= backbones.size(); ++i) {
 		if (i == missing_suite) continue;
-		for (Size j = 0; j != 5; ++j) { 
+		for (Size j = 0; j != 5; ++j) {
 			data.push_back( backbones[i][j] );
 		}
 	}
 
 	for (Size i = 1; i <= nucleosides.size(); ++i) {
-		for (Size j = 0; j != 2; ++j) { 
+		for (Size j = 0; j != 2; ++j) {
 			data.push_back( nucleosides[i][j] );
 		}
 	}
@@ -560,7 +561,7 @@ get_base_steps( utility::vector1< float > & data,
 
 	for (Size i = 1; i <= n_res_half - 1; ++i) {
 		utility::vector1 <Real> params (6);
-		scoring::dna::get_base_step_params( pose.residue(i), pose.residue(n_res + 1 - i), 
+		scoring::dna::get_base_step_params( pose.residue(i), pose.residue(n_res + 1 - i),
 																				pose.residue(i + 1), pose.residue(n_res - i), params );
 		for (Size j = 1; j <= 6; ++j) {
 			data.push_back(params[j]);
@@ -584,7 +585,7 @@ helix_minimize (core::pose::Pose & pose, scoring::ScoreFunctionOP scorefxn) {
 
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
 		mm.set( TorsionID( i, id::CHI, 1 ), true );
-	}	
+	}
 
 	minimizer.run ( pose, mm, *scorefxn, min_options );
 }
@@ -617,11 +618,11 @@ MC_run () {
 	scoretypes.push_back( lk_nonpolar );
 	scoretypes.push_back( stack_elec );
 
-	for (Size i = 1; i <= scoretypes.size(); ++i) {
-		ScoreFunctionOP scorefxn_test = new ScoreFunction;
-		scorefxn_test -> set_weight( scoretypes[i], 1.0 );
-		scorefxns.push_back( scorefxn_test );
-	}
+	//for (Size i = 1; i <= scoretypes.size(); ++i) {
+	//	ScoreFunctionOP scorefxn_test = new ScoreFunction;
+	//	scorefxn_test -> set_weight( scoretypes[i], 1.0 );
+	//	scorefxns.push_back( scorefxn_test );
+	//}
 	//
 
 	Pose pose;
@@ -637,7 +638,7 @@ MC_run () {
 	utility::vector1< Real > const kTs = option[ kT_list ] ();
 	utility::vector1< Real > weights = option[ weight_list ] ();
 	if ( weights.empty() ) weights.push_back(0);
-	if ( weights.size() != kTs.size() ) 
+	if ( weights.size() != kTs.size() )
 		utility_exit_with_message("kT_list and weight_list have different sizes!!!!!");
 	Size const kT_id_max = kTs.size();
 
@@ -666,7 +667,7 @@ MC_run () {
 		bool const is_kT_inf = (kT < 0);
 		stdev_bp.push_back( (is_kT_inf) ? -1.0 : kT * 4.0 / double(n_res - 2) );
 		stdev_free.push_back( (is_kT_inf) ? -1.0 : kT * 24.0 / double(n_res) );
-		pucker_prob.push_back( (is_kT_inf) ? 1.0 : 0.2 ); 
+		pucker_prob.push_back( (is_kT_inf) ? 1.0 : 0.2 );
 	}
 
 	Real const upperbound_bp = 60;
@@ -693,7 +694,7 @@ MC_run () {
 	}
 
 	apply_all( backbones, nucleosides, pose );
-	Real score = (*scorefxn)( pose );	
+	Real score = (*scorefxn)( pose );
 	Real score_new, rep_score;
 	Size n_accpet = 0;
 	Size n_exch = 0;
@@ -731,13 +732,13 @@ MC_run () {
 		backbones_new = backbones;
 		nucleosides_new = nucleosides;
 
-		update_backbone( backbones_new, backbones_mode, stdev_bp[kT_id], 
+		update_backbone( backbones_new, backbones_mode, stdev_bp[kT_id],
 										 stdev_free[kT_id], lowerbound_bp, upperbound_bp);
-		update_nucleoside( nucleosides_new, nucleosides_mode,  stdev_bp[kT_id], 
+		update_nucleoside( nucleosides_new, nucleosides_mode,  stdev_bp[kT_id],
 											 stdev_free[kT_id], lowerbound_bp, upperbound_bp, pucker_prob[kT_id]);
 
 		apply_all( backbones_new, nucleosides_new, pose );
-	
+
 		rep_score = (*rep_scorefxn)(pose);
 		if ( rep_score > rep_score_cutoff ) {
 			score_new = rep_score;
@@ -751,7 +752,7 @@ MC_run () {
 			if (is_save_torsions) get_torsion_list(data_list[kT_id], backbones, nucleosides, len1);
 			if (is_save_score_terms) get_score_terms(data_list[kT_id], pose, scorefxns);
 			if (is_save_base_steps) get_base_steps(data_list[kT_id], pose);
-			
+
 			current_count = 1;
 			score = score_new;
 			backbones = backbones_new;
@@ -803,7 +804,7 @@ MC_run () {
 
 	std::cout << "Total number of cycles = " << num_cycle << std::endl;
 	std::cout << "Accept rate:" << (1.0 * n_accpet / num_cycle) << std::endl;
-	if ( kT_id_max != 1) 
+	if ( kT_id_max != 1)
 		std::cout << "Exchange Accept rate:" << (1.0 * n_acpt_exch / n_exch) << std::endl;
 
 	Real const time_in_test = static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC;
@@ -929,7 +930,7 @@ hessian_estimate()
 	utility::vector1< Real > torsions;
 
 	get_all_tor_id(tor_id, torsions, backbones, nucleosides, len1);
-	
+
 	Size const n_dof = torsions.size();
 	Real const delta  = 0.000001;
 	Real const half_delta  = delta * 0.5;
@@ -979,7 +980,7 @@ hessian_estimate()
 				pose.set_torsion( tor_id[j], orig_tor_j - half_delta );
 				scoremm = (*scorefxn) ( pose );
 			}
- 
+
 			pose.set_torsion( tor_id[i], orig_tor_i );
 			pose.set_torsion( tor_id[j], orig_tor_j );
 
@@ -990,7 +991,7 @@ hessian_estimate()
 	out.close();
 }
 //////////////////////////////////
-void 
+void
 bp_score_calibrate()
 {
 	using namespace scoring;
@@ -1048,7 +1049,7 @@ bp_score_calibrate()
 		if ( i - (0.04) < 0.0001 ) {
 			pose.dump_pdb("bp_0.04.pdb");
 		}
-		
+
 		if ( i - (2.1) < 0.0001 ) {
 			pose.dump_pdb("bp_2.1.pdb");
 		}
@@ -1056,7 +1057,7 @@ bp_score_calibrate()
 	}
 	pose.dump_pdb("end_bp.pdb");
 
-	
+
 }
 //////////////////////////////////
 void*

@@ -42,10 +42,15 @@ Size const NUM_RNA_CHI_TORSIONS( NUM_RNA_TORSIONS - NUM_RNA_MAINCHAIN_TORSIONS  
 
 ///////////////////////////////////////////////////////////////////////////////
 static const char* __arg1__ [] = {" C2'", " C1'", " O4'"};
-utility::vector1< std::string > const non_main_chain_sugar_atoms(__arg1__, __arg1__ + 3);
+utility::vector1< std::string > const non_main_chain_sugar_atoms( __arg1__, __arg1__ + 3 );
 
 static const char* __arg2__ [] = {" P  ", " OP2", " OP1", " O5'", " H5'", "H5''"};
-utility::vector1< std::string > const atoms_involved_in_phosphate_torsion(__arg2__, __arg2__ + 6);
+utility::vector1< std::string > const atoms_involved_in_phosphate_torsion( __arg2__, __arg2__ + 6 );
+
+static const char* __arg3__ [] = {
+	" P  ", " OP2", " OP1", " O5'", " C4'", " O4'", " C3'", " O3'", " C1'",
+	" C2'", " O2'", " H5'", "H5''", " H4'", " H3'", " H2'", "HO2'", " H1'"};
+utility::vector1< std::string > const non_base_atoms( __arg3__, __arg3__ + 18 );
 ///////////////////////////////////////////////////////////////////////////////
 Size
 convert_acgu_to_1234( char const c );

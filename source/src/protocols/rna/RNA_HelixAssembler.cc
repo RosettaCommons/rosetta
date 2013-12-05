@@ -28,9 +28,11 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/rna/RNA_Util.hh>
+#include <core/io/pdb/file_data.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <basic/database/open.hh>
 
 //Minimizer stuff
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -87,13 +89,12 @@ RNA_HelixAssembler::RNA_HelixAssembler():
 	minimize_all_( false ),
 	minimize_jump_( false ),
 	use_phenix_geo_( false ),
-	ideal_jump( "RT -0.994805 -0.0315594 0.0967856 -0.0422993 0.992919 -0.111004 -0.092597 -0.114522 -0.989096 6.34696 -0.449942 0.334582 " ),
-	rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA ) ),
+	rsd_set_( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA ) ),
+	torsion_info_(),
 	perturb_amplitude_( 10.0 ),
 	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "rna/rna_helix" ) ),
 	model_and_remove_capping_residues_( true ),
-	capping_residues_( "gc" ),
-	torsion_info()
+	capping_residues_( "gc" )
 {
 	Mover::type("RNA_HelixAssembler");
 	//	scorefxn_->set_weight( core::scoring::atom_pair_constraint, 5.0 );
@@ -140,9 +141,9 @@ void RNA_HelixAssembler::use_phenix_geo( bool const setting )
 {
 	use_phenix_geo_ = setting;
 	if (setting) {
-		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna_phenix" );
+		rsd_set_ = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna_phenix" );
 	} else {
-		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA );
+		rsd_set_ = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA );
 	}
 }
 
@@ -172,6 +173,7 @@ RNA_HelixAssembler::build_helix( core::pose::Pose & pose, std::string const & fu
 
 	using namespace core::pose;
 	using namespace core::kinematics;
+	using namespace core::id;
 
 	Size seq_length( full_sequence.size() );
 	std::string sequence1( full_sequence.substr( 0, seq_length/2 ) );
@@ -190,30 +192,8 @@ RNA_HelixAssembler::build_helix( core::pose::Pose & pose, std::string const & fu
 	Size const numres = sequence1.size();
 	assert( sequence2.size() == numres );
 
-	Pose pose_scratch;
-	core::pose::make_pose_from_sequence( pose_scratch, sequence1.substr(0,1)+sequence2.substr( numres-1,numres) ,	*rsd_set );
-	pose = pose_scratch;
+	pose = *build_init_pose( sequence1.substr( 0, 1 ), sequence2.substr( numres-1, numres ) );
 
-	/////////////////////////////////////
-	FoldTree f( 2 );
-	f.new_jump( 1, 2, 1);
-	f.set_jump_atoms( 1,
-										core::chemical::rna::chi1_torsion_atom( pose.residue(1) ),
-										core::chemical::rna::chi1_torsion_atom( pose.residue(2) ) );
-	pose.fold_tree( f );
-
-	/////////////////////////////////////
-	//Need sample jumps for a-u, g-c, g-u.
-	Jump j;
-	std::stringstream jump_stream( ideal_jump );
-	jump_stream >> j;
-	TR.Debug << j << std::endl;
-
-	pose.set_jump( 1, j );
-
-	using namespace core::id;
-	set_Aform_torsions( pose, 1 );
-	set_Aform_torsions( pose, 2 );
 	//	pose.dump_pdb( "helix_init.pdb" );
 
 	for ( Size n = 2; n <= numres; n++ ) {
@@ -242,18 +222,71 @@ RNA_HelixAssembler::build_helix( core::pose::Pose & pose, std::string const & fu
 
 
 //////////////////////////////////////////////////////
+pose::PoseOP
+RNA_HelixAssembler::build_init_pose( std::string const & seq1, std::string const & seq2 ){
+	using namespace core::pose;
+	using namespace core::kinematics;
+	using namespace core::chemical::rna;
+
+	PoseOP pose( new Pose() );
+	make_pose_from_sequence( *pose, seq1 + seq2,	*rsd_set_ );
+	for ( Size i = 1; i <= pose->n_residue(); ++i ) set_Aform_torsions( *pose, i );
+	if ( seq1 == "" || seq2 == "" ) return pose;
+	Size const len1( get_sequence_len( seq1 ) );
+
+	FoldTree f( pose->n_residue() );
+	f.new_jump( 1, pose->n_residue(), len1 );
+	f.set_jump_atoms(
+		1,
+		chi1_torsion_atom( pose->residue( 1 ) ),
+		chi1_torsion_atom( pose->residue( pose->n_residue() ) )
+	);
+	pose->fold_tree( f );
+
+	// Get reference jump from database
+	std::string path( basic::database::full_name("sampling/rna/") );
+	std::string const & pose_seq( pose->sequence() );
+	std::string first_bp( pose_seq.substr(0, 1) );
+	first_bp += pose_seq[pose_seq.size()];
+	// Use gc jump for non-WC pairs
+	if (
+		first_bp != "au" &&
+		first_bp != "ua" &&
+		first_bp != "gc" &&
+		first_bp != "cg"
+	) first_bp = "gc";
+
+	path += first_bp + "_std.pdb";
+	Pose ref_pose;
+	core::io::pdb::build_pose_from_pdb_as_is( ref_pose, *rsd_set_, path );
+	FoldTree f1( 2 );
+	f1.new_jump( 1, 2, 1 );
+	f1.set_jump_atoms(
+		1,
+		chi1_torsion_atom( ref_pose.residue( 1 ) ),
+		chi1_torsion_atom( ref_pose.residue( 2 ) )
+	);
+	ref_pose.fold_tree( f1 );
+	Jump const & jump( ref_pose.jump( 1 ) );
+
+	// Now set the jump
+	pose->set_jump( 1, jump );
+
+	return pose;
+}
+//////////////////////////////////////////////////////
 void
 RNA_HelixAssembler::set_Aform_torsions( pose::Pose & pose, Size const & n ) const
 {
 	using namespace core::id;
 	using namespace core::pose::rna;
 	using namespace core::chemical::rna;
-	pose.set_torsion( TorsionID( n, BB, 1), torsion_info.alpha_aform() );
-	pose.set_torsion( TorsionID( n, BB, 2), torsion_info.beta_aform() );
-	pose.set_torsion( TorsionID( n, BB, 3), torsion_info.gamma_aform() );
-	pose.set_torsion( TorsionID( n, BB, 4), torsion_info.delta_north() );
-	pose.set_torsion( TorsionID( n, BB, 5), torsion_info.epsilon_aform() );
-	pose.set_torsion( TorsionID( n, BB, 6), torsion_info.zeta_aform() );
+	pose.set_torsion( TorsionID( n, BB, 1), torsion_info_.alpha_aform() );
+	pose.set_torsion( TorsionID( n, BB, 2), torsion_info_.beta_aform() );
+	pose.set_torsion( TorsionID( n, BB, 3), torsion_info_.gamma_aform() );
+	pose.set_torsion( TorsionID( n, BB, 4), torsion_info_.delta_north() );
+	pose.set_torsion( TorsionID( n, BB, 5), torsion_info_.epsilon_aform() );
+	pose.set_torsion( TorsionID( n, BB, 6), torsion_info_.zeta_aform() );
 
 	apply_pucker(pose, n, NORTH, false /*skip_same_state*/, use_phenix_geo_);
 }
@@ -498,11 +531,11 @@ RNA_HelixAssembler::append_Aform_residue( pose::Pose & pose, Size const & n, cha
 	runtime_assert( pose.fold_tree().is_cutpoint(n) || n == pose.total_residue() );
 
 	/////////////////////////////////////
-	ResidueOP rsd1( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( nt ) )[1] ) ) );
+	ResidueOP rsd1( ResidueFactory::create_residue( *(rsd_set_->aa_map( aa_from_oneletter_code( nt ) )[1] ) ) );
 	pose.append_polymer_residue_after_seqpos( *rsd1, n, true /*build_ideal_geometry*/ );
 
-	pose.set_torsion( TorsionID( n, BB, 5), torsion_info.epsilon_aform());
-	pose.set_torsion( TorsionID( n, BB, 6), torsion_info.zeta_aform());
+	pose.set_torsion( TorsionID( n, BB, 5), torsion_info_.epsilon_aform());
+	pose.set_torsion( TorsionID( n, BB, 6), torsion_info_.zeta_aform());
 	set_Aform_torsions( pose, n+1 );
 
 	if ( random_perturbation_ ) {
@@ -531,13 +564,13 @@ RNA_HelixAssembler::prepend_Aform_residue( pose::Pose & pose, Size const & n, ch
 
 	runtime_assert( n == 1 || pose.fold_tree().is_cutpoint(n-1) );
 
-	ResidueOP rsd2( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( nt ) )[1] ) ) );
+	ResidueOP rsd2( ResidueFactory::create_residue( *(rsd_set_->aa_map( aa_from_oneletter_code( nt ) )[1] ) ) );
 	pose.prepend_polymer_residue_before_seqpos( *rsd2, n, true /*build_ideal_geometry*/ );
 
 	set_Aform_torsions( pose, n );
-	pose.set_torsion( TorsionID( n+1, BB, 1), torsion_info.alpha_aform());
-	pose.set_torsion( TorsionID( n+1, BB, 2), torsion_info.beta_aform());
-	pose.set_torsion( TorsionID( n+1, BB, 3), torsion_info.gamma_aform());
+	pose.set_torsion( TorsionID( n+1, BB, 1), torsion_info_.alpha_aform());
+	pose.set_torsion( TorsionID( n+1, BB, 2), torsion_info_.beta_aform());
+	pose.set_torsion( TorsionID( n+1, BB, 3), torsion_info_.gamma_aform());
 
 
 	// perturb all torsion angles except those at sugar puckers (DELTA, NU1, NU2 )
@@ -564,7 +597,7 @@ RNA_HelixAssembler::perturb_torsion(
 	utility::vector1<id::TorsionID> const & id_list
 ) const {
 	for (Size i = 1; i <= id_list.size(); ++i) {
-		pose.set_torsion( id_list[i], pose.torsion(id_list[i]) + perturb_amplitude_ * RG.gaussian() ); 
+		pose.set_torsion( id_list[i], pose.torsion(id_list[i]) + perturb_amplitude_ * RG.gaussian() );
 	}
 }
 //////////////////////////////////////////////////////////////////////////////////

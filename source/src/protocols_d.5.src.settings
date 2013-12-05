@@ -36,6 +36,8 @@ sources = {
 		"RNA_StructureParameters",
 	],
     "protocols/rotamer_sampler": [
+        "McComb",
+        "McOneTorsion",
         "RotamerAny",
         "RotamerComb",
         "RotamerOneTorsion",
@@ -44,9 +46,12 @@ sources = {
         "util",
     ],
     "protocols/rotamer_sampler/rna": [
+        "RNA_ChiRotamer",
         "RNA_KicSampler",
         "RNA_KinematicCloser",
-        "RNA_ChiRotamer",
+        "RNA_McMultiSuite",
+        "RNA_McSugar",
+        "RNA_McSuite",
         "RNA_NucleosideRotamer",
         "RNA_SugarRotamer",
         "RNA_SuiteRotamer",

@@ -2,7 +2,7 @@
 #version 0.1
 NAME 1AP
 IO_STRING 1AP a
-AA UNK
+AA UNP
 TYPE POLYMER #residue type
 ATOM  P   Phos H   1.5
 ATOM  OP2 OOC  H   -0.78

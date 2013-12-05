@@ -109,13 +109,13 @@ RNA_FullAtomStackingEnergy::setup_for_minimizing(
 {
     using namespace basic::options;
     using namespace basic::options::OptionKeys;
-    
+
     //set_nres_mono(pose);
-    
+
     if ( pose.energies().use_nblist() ) {
         // stash our nblist inside the pose's energies object
         Energies & energies( pose.energies() );
-        
+
         // setup the atom-atom nblist
         NeighborListOP nblist;
         Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
@@ -145,7 +145,7 @@ RNA_FullAtomStackingEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction 
 		NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::FA_STACK_NBLIST ) );
 		nblist.prepare_for_scoring( pose, scfxn, *this );
 	}
-	
+
 	num_stacks_.clear();
 }
 
@@ -170,7 +170,6 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-
   if ( !rsd1.is_RNA() ) return;
   if ( !rsd2.is_RNA() ) return;
 
@@ -178,7 +177,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 
 	Real const score = residue_pair_energy_one_way( rsd1, rsd2, pose, score_aro1 ) +
 		residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2 ) ;
-	
+
 	if ( ( score < 0 ) && !pose.energies().use_nblist() ) {
 		num_stacks_[rsd1.seqpos()]++;
 		num_stacks_[rsd2.seqpos()]++;
@@ -264,7 +263,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 				score += fa_stack_score;
 
 				if ( is_aro( rsd1, m) && is_aro( rsd2, n) ) score_aro += fa_stack_score;
-		  
+
 				//				Real const cos_kappa_j = dot( r, z_j);
 				//				score += get_score( dist, cos_kappa_j );
 
@@ -562,9 +561,7 @@ RNA_FullAtomStackingEnergy::finalize_total_energy(
   rna_centroid_info.calculated() = false;
 
 	if ( pose.energies().use_nblist() ) return;
-	
 	Energies & energies( pose.energies() );
-	
 	for ( boost::unordered_map < core::Size , core::Size >::const_iterator
 		 it=num_stacks_.begin(), it_end = num_stacks_.end(); it != it_end; ++it ) {
 		if ( it->second > 1 ) {

@@ -50,7 +50,7 @@ public:
 
 	//Apply ideal coords to one residue. Keep the backbone torsion values by default
 	//std::map < id::DOF_ID , Real > apply_and_return( Pose & pose, Size const seqpos, Size pucker, bool const keep_backbone_torsion = true ) const;
-	
+
 	void apply( Pose & pose, Size const seqpos, Size pucker, bool const keep_backbone_torsion = true ) const;
 
 	//Apply ideal coords to whole pose.
@@ -59,11 +59,15 @@ public:
 
 	//Apply ideal coords to whole pose. Keep all pucker state
 	void apply( Pose & pose, bool const keep_backbone_torsion = true ) const;
-	
+
+	// Apply ideal coord to puckers only, assuming ideal coords of A
+	void apply_pucker( Pose & pose, Size const seqpos, Size pucker, bool const keep_backbone_torsion = true ) const;
+
 	bool is_torsion_exists(Pose const & pose, id::TorsionID const & torsion_id) const;
 
 private:
 	void init();
+	void apply_coords( Pose & pose, Size const seqpos, Size const res_class, bool const ignore_base, bool const keep_backbone_torsion ) const;
 	//	utility::vector1 < PoseOP > ref_pose_list_;
 	utility::vector1 < MiniPoseOP > ref_mini_pose_list_;
 	std::string const path_;
