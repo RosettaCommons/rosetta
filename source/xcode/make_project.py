@@ -1,6 +1,6 @@
 PATH_TO_ROOT = '../../'
 
-import hashlib, os, string, sys
+import hashlib, os, string, sys, shutil
 #sys.path.append(PATH_TO_ROOT + 'script/')
 import build_util, xcode_util
 
@@ -24,6 +24,10 @@ def project_callback(project, project_path, project_files):
 	# read file
 
 	xcode_filename = 'Rosetta.xcodeproj/project.pbxproj'
+
+	if not os.path.exists( xcode_filename ):
+		shutil.copyfile( xcode_filename + '.template', xcode_filename )
+
 	lines = open(xcode_filename, 'r').readlines()
 
 	# find the relevant sections

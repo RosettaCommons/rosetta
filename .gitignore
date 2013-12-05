@@ -14,4 +14,5 @@
 *.swp
 \#*\#
 .\#*
-source/Makefile
+source/Makefile  
+source/xcode/Rosetta.xcodeproj/project.pbxproj
