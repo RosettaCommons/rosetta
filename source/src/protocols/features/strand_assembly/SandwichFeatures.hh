@@ -854,6 +854,9 @@ private:
 	bool
 	write_p_aa_pp_files_;
 
+	bool
+	write_rama_at_AA_to_files_;
+
 	core::Size
 	max_starting_loop_size_;
 

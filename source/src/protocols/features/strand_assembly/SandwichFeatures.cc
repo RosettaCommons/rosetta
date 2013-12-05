@@ -2111,8 +2111,6 @@ void SandwichFeatures::process_decoy(
 	core::scoring::ScoreFunction const& scorefxn ) const
 {
 	scorefxn( dssp_pose );
-	// run PoseEvaluators
-//	evaluator_->apply( pose, tag, pss );
 } // process_decoy
 
 
@@ -2138,8 +2136,10 @@ SandwichFeatures::check_whether_this_sheet_is_too_short(
 	utility::sql_database::sessionOP db_session,
 	Size sheet_i){
 	utility::vector1<SandwichFragment> strands_from_sheet_i = get_full_strands_from_sheet(struct_id, db_session, sheet_i);
-	for(Size i=1; i<=strands_from_sheet_i.size(); ++i){
-		if (strands_from_sheet_i[i].get_size() > 2){
+	for(Size i=1; i<=strands_from_sheet_i.size(); ++i)
+	{
+		if (strands_from_sheet_i[i].get_size() > 2)
+		{
 			return false; // no, this sheet is not too short
 		}
 	}
@@ -5952,7 +5952,7 @@ SandwichFeatures::report_turn_AA(
 
 	else	//(turn_type == 'IV')
 	{
-		canonical_turn_AA = "uncertain_canonical_turn_AA";
+		canonical_turn_AA = "uncertain_canonical_turn_AA_since_turn_type_eq_IV";
 	}
 
 
@@ -6148,6 +6148,8 @@ SandwichFeatures::parse_my_tag(
 					//	definition: if true, write resfile automatically
 	write_p_aa_pp_files_ = tag->getOption<bool>("write_p_aa_pp_files", false);
 					//	definition: if true, write p_aa_pp_files
+	write_rama_at_AA_to_files_ = tag->getOption<bool>("write_rama_at_AA_to_files", false);
+					//	definition: if true, write write_rama_at_AA_to_files
 
 
 }
@@ -6213,6 +6215,7 @@ SandwichFeatures::report_features(
 		write_phi_psi_of_E_	= true;
 		write_resfile_	= true;
 		write_p_aa_pp_files_	= true;
+		write_rama_at_AA_to_files_	=	true;
 	}
 
 
@@ -7254,36 +7257,61 @@ SandwichFeatures::report_features(
 	// <end> write AA_dis to a file
 
 
-	// <begin> write p_aa_pp (Probability of amino acid at phipsi) to a file (ref. https://www.rosettacommons.org/manuals/archive/rosetta3.1_user_guide/score_types.html)
+
+	core::scoring::ScoreFunctionOP centroid_scorefxn( generate_scorefxn( false /*fullatom*/ ) );
+	core::scoring::ScoreFunctionOP fullatom_scorefxn( generate_scorefxn( true /*fullatom*/ ) );
+
+	process_decoy( dssp_pose, pose.is_fullatom() ? *fullatom_scorefxn : *centroid_scorefxn);
+
+	TR.Info << "Current energy terms that we deal with:";
+	dssp_pose.energies().show_total_headers( std::cout );
+	TR.Info << endl;
+
+
+	// <begin> write p_aa_pp (Probability of amino acid at phipsi) to a file (ref. https://www.rosettacommons.org/manuals/archive/rosetta3.1_user_guide/score_types.html )
 	if (write_p_aa_pp_files_ && canonical_sw_extracted_from_this_pdb_file)
 	{
 		Size tag_len = tag.length();
 		string pdb_file_name = tag.substr(0, tag_len-5);
-		string p_aa_pp_file_name = pdb_file_name + "_p_aa_pp.txt";
+		string p_aa_pp_file_name = pdb_file_name + "_p_aa_pp_at_each_AA.txt";
 		ofstream p_aa_pp_file;
 		
 		p_aa_pp_file.open(p_aa_pp_file_name.c_str());
-		p_aa_pp_file << "residue_number	p_aa_pp" << endl;
+		p_aa_pp_file << "residue_number	res_type	p_aa_pp" << endl;
 
-		core::scoring::ScoreFunctionOP centroid_scorefxn( generate_scorefxn( false /*fullatom*/ ) );
-		core::scoring::ScoreFunctionOP fullatom_scorefxn( generate_scorefxn( true /*fullatom*/ ) );
-
-		process_decoy( dssp_pose, pose.is_fullatom() ? *fullatom_scorefxn : *centroid_scorefxn);
-
-		TR.Info << "Current energy terms that we deal with:";
-		dssp_pose.energies().show_total_headers( std::cout );
-		TR.Info << endl;
-		
 		for(Size ii=1; ii<=dssp_pose.total_residue(); ii++ )
 		{
 			core::scoring::EnergyMap em1 = dssp_pose.energies().residue_total_energies(ii);
 			Real resi_p_aa_pp = em1[core::scoring::p_aa_pp];
 
-			p_aa_pp_file << ii << "	" << resi_p_aa_pp << endl;
+			p_aa_pp_file << ii << "	" << dssp_pose.residue_type(ii).name3()	<<	"	"	<<	resi_p_aa_pp << endl;
 		}
 		p_aa_pp_file.close();
 	}
-	// <end> write p_aa_pp (Probability of amino acid at phipsi) to a file (ref. https://www.rosettacommons.org/manuals/archive/rosetta3.1_user_guide/score_types.html)
+	// <end> write p_aa_pp (Probability of amino acid at phipsi) to a file (ref. https://www.rosettacommons.org/manuals/archive/rosetta3.1_user_guide/score_types.html )
+
+
+	// <begin> write rama (ramachandran preferences) of residue to a file (ref. https://www.rosettacommons.org/manuals/archive/rosetta3.1_user_guide/score_types.html )
+	if (write_rama_at_AA_to_files_ && canonical_sw_extracted_from_this_pdb_file)
+	{
+		Size tag_len = tag.length();
+		string pdb_file_name = tag.substr(0, tag_len-5);
+		string rama_file_name = pdb_file_name + "_rama_at_each_AA.txt";
+		ofstream rama_file;
+		
+		rama_file.open(rama_file_name.c_str());
+		rama_file << "residue_number		res_type	rama" << endl;
+
+		for(Size ii=1; ii<=dssp_pose.total_residue(); ii++ )
+		{
+			core::scoring::EnergyMap em1 = dssp_pose.energies().residue_total_energies(ii);
+			Real rama_at_this_AA = em1[core::scoring::rama];
+
+			rama_file << ii << "	" << dssp_pose.residue_type(ii).name3()	<<	"	"	<<	rama_at_this_AA << endl;
+		}
+		rama_file.close();
+	}
+	// <end> write rama (ramachandran preferences) of residue to a file (ref. https://www.rosettacommons.org/manuals/archive/rosetta3.1_user_guide/score_types.html )
 
 
 	// <begin> write AA_distribution_without_direction to a file
