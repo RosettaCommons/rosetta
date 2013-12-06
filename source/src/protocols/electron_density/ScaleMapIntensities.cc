@@ -125,7 +125,7 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		if (res_fade_ > 0 && res_high_ > res_fade_) {
 			core::Real inv_fade_s = 0.5/(res_fade_) + 0.5/(res_high_);
 			core::Real fade_width = 1/(res_high_) - 1/(res_fade_);
-			core::Real sigma = 12.0/fade_width;   // ?? no idea if this is reasonable
+			core::Real sigma = 12.0/fade_width;
 			for (Size i=1; i<=nresbins_; ++i) {
 				fade[i] = 1/(1+exp(sigma*(resobins[i]-inv_fade_s)) );
 			}
@@ -141,10 +141,10 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		////
  		mapI = core::scoring::electron_density::getDensityMap().getIntensities( nresbins_, 1.0/res_low_, 1.0/res_high_, bin_squared_);
 
-		if (res_fade_ > 0 && res_high_ > res_fade_) {
+		if (res_fade_ > 0 && res_high_ < res_fade_) {
 			core::Real inv_fade_s = 0.5/(res_fade_) + 0.5/(res_high_);
 			core::Real fade_width = 1/(res_high_) - 1/(res_fade_);
-			core::Real sigma = 12.0/fade_width;   // ?? no idea if this is reasonable
+			core::Real sigma = 12.0/fade_width;
 			for (Size i=1; i<=nresbins_; ++i) {
 				fade[i] = 1/(1+exp(sigma*(resobins[i]-inv_fade_s)) );
 			}
