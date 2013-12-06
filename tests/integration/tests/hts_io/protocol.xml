@@ -21,21 +21,43 @@
 		<final sc_interface="side_chain_for_final" bb_interface="backbone" minimize_water="true"/>
 	</MOVEMAP_BUILDERS>
 	
-    <SCORINGGRIDS ligand_chain="X" width="15">
+	<SCORINGGRIDS ligand_chain="X" width="15">
 		<vdw grid_type="VdwGrid" weight="1.0"/>
-    	<hba grid_type="HbaGrid" weight="50"/>
-    	<hbd grid_type="HbdGrid" weight="50"/>
+		<hba grid_type="HbaGrid" weight="50"/>
+		<hbd grid_type="HbdGrid" weight="50"/>
 	</SCORINGGRIDS>
 	
 	<MOVERS>
-      
-		<Transform name="transform" chain="X" box_size="5.0" move_distance="0.1" angle="5" cycles="8000" repeats="5" temperature="5"/>
+	  
+		<Transform
+			name="transform" 
+			chain="X"
+			box_size="5.0"move_distance="0.1"
+			angle="5"
+			cycles="8000"
+			repeats="5"
+			temperature="5"
+		/>
 		
 		<InterfaceScoreCalculator name="add_scores" chains="X" scorefxn="hard_rep"/>
-		<ComputeLigandRDF name="rdf_compute_pocket" ligand_chain="X" mode="pocket" scorefxn="hard_rep"/>
-		<ComputeLigandRDF name="rdf_compute_interface" ligand_chain="X" mode="interface" scorefxn="hard_rep"/>
-      <AddJobPairData name="test_string" key="test_string" value_type="string" value_from_ligand_chain="X"/>
-      <AddJobPairData name="test_value" key="test_value" value_type="real" value_from_ligand_chain="X"/>
+		<ComputeLigandRDF name="rdf_compute_pocket" ligand_chain="X" mode="pocket">
+			<RDF name="RDFEtableFunction" scorefxn="hard_rep"/>
+			<RDF name="RDFElecFunction" scorefxn="hard_rep"/>
+			<RDF name="RDFHbondFunction"/>
+			<RDF name="RDFBinaryHbondFunction"/>
+			<RDF name="RDFOrbitalFunction"/>
+			<RDF name="RDFBinaryOrbitalFunction"/>
+		</ComputeLigandRDF>
+		<ComputeLigandRDF name="rdf_compute_interface" ligand_chain="X" mode="interface">
+			<RDF name="RDFEtableFunction" scorefxn="hard_rep"/>
+			<RDF name="RDFElecFunction" scorefxn="hard_rep"/>
+			<RDF name="RDFHbondFunction"/>
+			<RDF name="RDFBinaryHbondFunction"/>
+			<RDF name="RDFOrbitalFunction"/>
+			<RDF name="RDFBinaryOrbitalFunction"/>
+		</ComputeLigandRDF>
+		<AddJobPairData name="test_string" key="test_string" value_type="string" value_from_ligand_chain="X"/>
+		<AddJobPairData name="test_value" key="test_value" value_type="real" value_from_ligand_chain="X"/>
 		<WriteLigandMolFile name="write_ligand" chain="X" directory="output_ligands" prefix="test"/>
 		
 		<ParsedProtocol name="low_res_dock">
@@ -46,8 +68,8 @@
 			<Add mover_name="rdf_compute_pocket"/>
 			<Add mover_name="rdf_compute_interface"/>
 			<Add mover_name="add_scores"/>
-         <Add mover_name="test_string"/>
-         <Add mover_name="test_value"/>
+			<Add mover_name="test_string"/>
+			<Add mover_name="test_value"/>
 			<Add mover_name="write_ligand"/>
 		</ParsedProtocol>
 	</MOVERS>

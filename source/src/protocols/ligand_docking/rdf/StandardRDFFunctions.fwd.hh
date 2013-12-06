@@ -7,25 +7,28 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/orbitals/OrbitalsScore.fwd.hh
-/// @brief  Created on: Jun 2, 2010
-/// @author combss
+/// @file   protocols/ligand_docking/rdf/StandardRDFFunctions.fwd.hh
+///
+/// @brief forward headers for standard RDF Functions used by RosettaHTS
+/// @author Sam DeLuca
 
-#ifndef INCLUDED_core_scoring_orbitals_ORBITALSSCORE_FWD_HH
-#define INCLUDED_core_scoring_orbitals_ORBITALSSCORE_FWD_HH
+
+#ifndef INCLUDED_protocols_ligand_docking_rdf_StandardRDFFunctions_fwd_hh
+#define INCLUDED_protocols_ligand_docking_rdf_StandardRDFFunctions_fwd_hh
+
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace core{
-namespace scoring{
-namespace orbitals {
-	
-class OrbitalsScore;
-	
-typedef  utility::pointer::owning_ptr< OrbitalsScore > OrbitalsScoreOP;
-	
+namespace protocols {
+namespace ligand_docking {
+namespace rdf {
+
+class RDFEtableFunction;
+
 }
 }
 }
 
-#endif /* ORBITALSSCORE_FWD_HH_ */
+
+
+#endif

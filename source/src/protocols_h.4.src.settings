@@ -26,7 +26,7 @@ sources = {
 		"DockMCMProtocol",
 		"DockMinMover",
 		"DockSetupMover",
-                "RigidBodyInfo",
+		"RigidBodyInfo",
 		"DockTaskFactory",
 		"metrics",
 		"SidechainMinMover",
@@ -84,6 +84,10 @@ sources = {
 	"protocols/ligand_docking/ligand_options": [
 		"Interface",
 		"interface_distance_functions",
+	],
+	"protocols/ligand_docking/rdf" : [
+		"StandardRDFFunctions",
+		"RDFFunctionFactory"
 	],
 
 }

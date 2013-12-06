@@ -1,0 +1,27 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   src/protocols/init/init.RDFFunctionRegistrators.ihh
+/// @brief  Declare WidgetRegistrators as static (global) variables in this .cc file
+///         so that at load time, they will be initialized, and the Creator classes
+///         they register will be handed to the appropriate WidgetFactory.
+///         This is for RDFFunctionRegistrators ONLY.
+/// @author Sam DeLuca
+
+namespace protocols {
+
+using namespace protocols::ligand_docking::rdf ;
+static RDFFunctionRegistrator< RDFEtableCreator > RDFEtableCreator_registrator;
+static RDFFunctionRegistrator< RDFElecCreator > RDFElecCreator_registrator;
+static RDFFunctionRegistrator< RDFHbondCreator > RDFHbondCreator_registrator;
+static RDFFunctionRegistrator< RDFBinaryHbondCreator > RDFBinaryHbondCreator_registrator;
+static RDFFunctionRegistrator< RDFOrbitalFunctionCreator > RDFOrbitalFunctionCreator_registrator;
+static RDFFunctionRegistrator< RDFBinaryOrbitalFunctionCreator > RDFBinaryOrbitalFunctionCreator_registrator;
+
+} //namespace protocols

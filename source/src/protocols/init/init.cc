@@ -27,6 +27,9 @@
 #include <protocols/init/init.FallbackConfigurationCreators.ihh>
 #include <protocols/init/init.FallbackConfigurationRegistrators.ihh>
 
+#include <protocols/init/init.RDFFunctionCreators.ihh>
+#include <protocols/init/init.RDFFunctionRegistrators.ihh>
+
 #include <protocols/init/init.ResourceLoaderCreators.ihh>
 #include <protocols/init/init.ResourceLoaderRegistrators.ihh>
 
