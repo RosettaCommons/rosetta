@@ -58,6 +58,9 @@ ProfileScoreBlosum62::ProfileScoreBlosum62(Size priority, Real lowest_acceptable
 		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
 				"ProfileScoreBlosum62")
 {
+	if( query_profile->size() != query_profile->length() ) {
+		utility_exit_with_message("ProfileScoreBlosum62 needs a valid sequence profile.");
+	}
 	query_profile_ = query_profile;
 
 	for (Size i = 1; i <= query_profile->length(); ++i) {

@@ -1579,6 +1579,25 @@ void FragmentPicker::parse_command_line() {
 	tr << std::endl;
 }
 
+/// @brief sets the query sequence
+/// @detailed Well, it is a sequence profile, but the sequence can be extracted from it
+void FragmentPicker::set_query_seq(core::sequence::SequenceProfileOP query_sequence) {
+	query_profile_ = query_sequence;
+	query_seq_as_string_ = query_profile_->sequence();
+	set_picked_positions(1,query_sequence->length());
+}
+
+/// @brief sets the query sequence
+void FragmentPicker::set_query_seq(std::string & query_sequence) {
+	if (query_profile_ == 0) {
+		query_profile_ = new core::sequence::SequenceProfile();
+		tr.Warning << "CAUTION: No sequence profile supplied. Profile-dependant options/scoring will not work." << std::endl;
+	}
+	query_profile_->sequence(query_sequence);
+	query_seq_as_string_ = query_sequence;
+	set_picked_positions(1,query_profile_->length());
+}
+
 void FragmentPicker::set_up_ss_abego_quota() {
 
 	std::string quota_config_file("UNKNOWN-QUOTA-CONFIG_FILE");
@@ -1761,8 +1780,12 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 					CandidatesCollectorOP storage = get_candidates_collector(frag_sizes_[f], j);
 					quota::QuotaCollectorOP collector = dynamic_cast<quota::QuotaCollector*> (storage());
 
+					core::fragment::SecondaryStructureOP ss_prediction( get_query_ss( name ) );
+					if( ! ss_prediction ) {
+						utility_exit_with_message("Unable to get secondary structure prediction for " + name);
+					}
 					collector->attach_secondary_structure_pools(q_config.get_fraction( name ) ,
-					get_query_ss( name ),name,n_candidates_,components,weights,scores_[1]->count_components());
+					ss_prediction,name,n_candidates_,components,weights,scores_[1]->count_components());
 //					avg_ss,name,n_candidates_,components,weights,scores_->count_components());
 				}
 			}

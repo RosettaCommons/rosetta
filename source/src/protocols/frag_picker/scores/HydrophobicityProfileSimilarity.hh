@@ -42,6 +42,9 @@ public:
 				std::string & fastaQuerySequence, sequence::SequenceProfileOP query_profile) :
 			CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
 				"HydrophobicityProfileSimilarity"),  query_(fastaQuerySequence) {
+		if( query_profile->size() != query_profile->length() ) {
+			utility_exit_with_message("HydrophobicityProfileSimilarity needs a valid sequence profile.");
+		}
 
 		query_profile_ = query_profile;
 

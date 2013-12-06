@@ -42,7 +42,10 @@ public:
 	ProfileScore(Size priority, Real lowest_acceptable_value, bool use_lowest,
 			sequence::SequenceProfileOP query_profile,
 			sequence::ScoringSchemeOP profile_scoring, Size longest_vall_chunk) :
-		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "ProfileScore") {
+			CachingScoringMethod(priority, lowest_acceptable_value, use_lowest, "ProfileScore") {
+		if( query_profile->size() != query_profile->length() ) {
+			utility_exit_with_message("ProfileScore needs a valid sequence profile.");
+		}
 		query_profile_ = query_profile;
 		profile_scoring_ = profile_scoring;
 

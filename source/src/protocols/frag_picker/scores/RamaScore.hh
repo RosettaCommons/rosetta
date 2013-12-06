@@ -101,8 +101,12 @@ public:
 		} else {
 
 			//std::cout << "PREDICTION_ID " << prediction_id << std::endl;
+			core::fragment::SecondaryStructureOP query_prediction( picker->get_query_ss(prediction_id) );
+			if( ! query_prediction ) {
+				utility_exit_with_message( "Unable to find secondary structure prediction for " + prediction_id );
+			}
 			return (FragmentScoringMethodOP) new RamaScore(priority,
-				lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), picker->get_query_ss(prediction_id),prediction_id);
+				lowest_acceptable_value, use_lowest, picker->get_query_seq_string(), query_prediction,prediction_id);
 		}
 	}
 };

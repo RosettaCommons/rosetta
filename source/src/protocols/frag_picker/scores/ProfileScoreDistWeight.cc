@@ -155,8 +155,12 @@ FragmentScoringMethodOP MakeProfileScoreDistWeight::make(Size priority,
 	//line_stream >> score_name >> p >> weight >> lowest >> prediction_id;
 
 	trProfScoreDistWeight << "Profile scoring method is: DistWeight" << std::endl;
+	core::fragment::SecondaryStructureOP query_prediction( picker->get_query_ss(prediction_id) );
+	if( ! query_prediction ) {
+		utility_exit_with_message("Unable to find secondary structure prediction for " + prediction_id );
+	}
 	return (FragmentScoringMethodOP) new ProfileScoreDistWeight(priority,
-																															lowest_acceptable_value, use_lowest, picker->get_query_seq(), picker->get_query_ss(prediction_id),picker->get_query_seq_string(),len);
+																															lowest_acceptable_value, use_lowest, picker->get_query_seq(), query_prediction, picker->get_query_seq_string(),len);
 }
 
 } //scores

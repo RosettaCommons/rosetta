@@ -176,20 +176,10 @@ public:
 
 	/// @brief sets the query sequence
 	/// @detailed Well, it is a sequence profile, but the sequence can be extracted from it
-	void set_query_seq(core::sequence::SequenceProfileOP query_sequence) {
-		query_profile_ = query_sequence;
-		query_seq_as_string_ = query_profile_->sequence();
-		set_picked_positions(1,query_sequence->length());
-	}
+	void set_query_seq(core::sequence::SequenceProfileOP query_sequence);
 
 	/// @brief sets the query sequence
-	void set_query_seq(std::string & query_sequence) {
-		if (query_profile_ == 0)
-			query_profile_ = new core::sequence::SequenceProfile();
-		query_profile_->sequence(query_sequence);
-		query_seq_as_string_ = query_sequence;
-		set_picked_positions(1,query_profile_->length());
-	}
+	void set_query_seq(std::string & query_sequence);
 
 	/// @brief Returns the sequence we are picking fragments for (as a string)
 	 std::string& get_query_seq_string() {
