@@ -16,3 +16,4 @@
 .\#*
 source/Makefile  
 source/xcode/Rosetta.xcodeproj/project.pbxproj
+source/xcode/DerivedData/
