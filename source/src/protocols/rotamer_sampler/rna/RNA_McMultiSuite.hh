@@ -11,7 +11,7 @@
 /// @brief Markov chain sampler for mulitple RNA suite.
 /// @author Fang-Chieh Chou
 
-#ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_McMulitSuite_HH
+#ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_McMultiSuite_HH
 #define INCLUDED_protocols_rotamer_sampler_rna_RNA_McMultiSuite_HH
 
 // Unit headers
