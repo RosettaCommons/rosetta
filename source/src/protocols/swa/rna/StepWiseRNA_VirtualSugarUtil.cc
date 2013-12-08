@@ -383,7 +383,7 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 
 		if ( possible_reference_res > 0 ) possible_reference_res_list.push_back( possible_reference_res );
 
-		TR.Debug << "REFERENCE_RES_LIST FOR " << virtual_sugar_res << " is " << possible_reference_res_list << std::endl;
+		//		TR.Debug << "REFERENCE_RES_LIST FOR " << virtual_sugar_res << " is " << possible_reference_res_list << std::endl;
 
 		return possible_reference_res_list;
 	}

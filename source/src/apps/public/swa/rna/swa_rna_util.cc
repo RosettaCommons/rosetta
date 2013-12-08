@@ -777,7 +777,7 @@ o2prime_packer(){
 
 
 
-		o2prime_minimize( pose, scorefxn ); //replace this on Jun 11, 2010
+		o2prime_trials( pose, scorefxn ); //replace this on Jun 11, 2010
 
 /*
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ) );
@@ -1106,7 +1106,7 @@ slice_ellipsoid_envelope(){
 
 	pose::Pose no_loop_output_pose = output_pose; //copy before perform o2prime minimize with loop as part of struct.
 
-	o2prime_minimize( output_pose, scorefxn );
+	o2prime_trials( output_pose, scorefxn );
 	dump_pdb( output_pose, "ellipsoid_expand_radius_" + string_of( int_expand_radius ) + "_" + pose_name );
 
 
@@ -1129,7 +1129,7 @@ slice_ellipsoid_envelope(){
 	///////////////////////////////////////////////////////////////////////
 
 
-	o2prime_minimize( no_loop_output_pose, scorefxn );
+	o2prime_trials( no_loop_output_pose, scorefxn );
 	dump_pdb( no_loop_output_pose, "no_loop_ellipsoid_expand_radius_" + string_of( int_expand_radius )  + "_" + pose_name );
 
 	std::cout << "Sliced out " << output_pose.total_residue() << " out of " << pose.total_residue()  << " nucleotides" << std::endl;
@@ -1293,7 +1293,7 @@ slice_sample_res_and_surrounding(){
 
 	pose::Pose no_loop_output_pose = output_pose; //copy before perform o2prime minimize with loop as part of struct.
 
-	o2prime_minimize( output_pose, scorefxn );
+	o2prime_trials( output_pose, scorefxn );
 	dump_pdb( output_pose, "expand_radius_" + string_of( int_expand_radius ) + "_" + pose_name );
 
 
@@ -1316,7 +1316,7 @@ slice_sample_res_and_surrounding(){
 	///////////////////////////////////////////////////////////////////////
 
 
-	o2prime_minimize( no_loop_output_pose, scorefxn );
+	o2prime_trials( no_loop_output_pose, scorefxn );
 	dump_pdb( no_loop_output_pose, "no_loop_expand_radius_" + string_of( int_expand_radius )  + "_" + pose_name );
 
 

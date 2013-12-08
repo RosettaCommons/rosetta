@@ -105,7 +105,9 @@ namespace screener {
 
 		bool const moving_partition_based_on_res = partition_definition( working_moving_res );
 		bool const moving_partition = partition_definition( working_moving_partition_pos[1] );
-		runtime_assert( moving_partition_based_on_res == moving_partition );
+		// this had to be disabled for stepwise monte carlo stuff -- root of fold tree sometimes is on same partition
+		// as moving residue.
+		//		runtime_assert( moving_partition_based_on_res == moving_partition );
 
 		moving_residues_.clear();
 		fixed_residues_.clear();
