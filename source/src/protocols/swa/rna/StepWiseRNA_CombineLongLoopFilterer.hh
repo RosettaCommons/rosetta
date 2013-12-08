@@ -177,7 +177,7 @@ namespace rna {
 		setup_tag_to_source_map();
 
 //		bool
-//		score_sort_citeria(Combine_Tags_Info tag_info_1, Combine_Tags_Info tag_info_2);
+//		score_sort_criterion(Combine_Tags_Info tag_info_1, Combine_Tags_Info tag_info_2);
 
 		void
 		sort_Combine_Tags_Info( utility::vector1< Combine_Tags_Info > & combine_tags_info_list );

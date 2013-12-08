@@ -23,7 +23,7 @@
 #include <protocols/swa/monte_carlo/RNA_AddDeleteMonteCarlo.fwd.hh>
 #include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.fwd.hh>
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.fwd.hh>
-#include <protocols/swa/monte_carlo/RNA_O2StarMover.fwd.hh>
+#include <protocols/swa/monte_carlo/RNA_O2PrimeMover.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <protocols/swa/monte_carlo/SWA_Move.hh>
@@ -41,7 +41,7 @@ public:
 
 RNA_AddDeleteMonteCarlo(  RNA_AddOrDeleteMoverOP rna_add_or_delete_mover,
 													RNA_TorsionMoverOP     rna_torsion_mover,
-													RNA_O2StarMoverOP      rna_o2prime_mover,
+													RNA_O2PrimeMoverOP      rna_o2prime_mover,
 													core::scoring::ScoreFunctionOP scorefxn );
 
 	//destructor -- necessary? -- YES destructors are necessary.
@@ -79,7 +79,7 @@ private:
 
 	RNA_AddOrDeleteMoverOP rna_add_or_delete_mover_;
 	RNA_TorsionMoverOP rna_torsion_mover_;
-	RNA_O2StarMoverOP rna_o2prime_mover_;
+	RNA_O2PrimeMoverOP rna_o2prime_mover_;
 
 	core::scoring::ScoreFunctionOP scorefxn_;
 

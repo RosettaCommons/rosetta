@@ -105,13 +105,8 @@ namespace screener {
 
 		static protocols::rna::RNA_LoopCloser rna_loop_closer;
 
-		if ( !chain_break_screening_pose.residue( five_prime_res ).has_variant_type( chemical::CUTPOINT_LOWER ) ) {
-			utility_exit_with_message( "chain_break_screening_pose.residue( five_prime_chain_break_res ).has_variant_type(  chemical::CUTPOINT_LOWER ) == false" );
-		}
-
-		if ( !chain_break_screening_pose.residue( five_prime_res + 1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
-			utility_exit_with_message( "chain_break_screening_pose.residue( five_prime_chain_break_res + 1 ).has_variant_type( chemical::CUTPOINT_UPPER ) == false" );
-		}
+		runtime_assert( chain_break_screening_pose.residue( five_prime_res ).has_variant_type( chemical::CUTPOINT_LOWER ) );
+		runtime_assert( chain_break_screening_pose.residue( five_prime_res + 1 ).has_variant_type( chemical::CUTPOINT_UPPER ) );
 
 		if ( reinitialize_CCD_torsions_ ) set_CCD_torsions_to_zero( chain_break_screening_pose, five_prime_res );
 
@@ -138,16 +133,22 @@ namespace screener {
 				TR.Debug << " tot = " << count_data_.tot_rotamer_count << std::endl;
 			}
 			return true;
-		} else {
-			return false;
 		}
+
+		return false;
+
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	bool
 	ChainBreakScreener::check_screen(){
-		chain_break_screening_general( chain_break_screening_pose_, chain_break_scorefxn_, five_prime_res_ );
+		return chain_break_screening_general( chain_break_screening_pose_, chain_break_scorefxn_, five_prime_res_ );
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	ChainBreakScreener::check_screen( pose::Pose & pose ){
+		return chain_break_screening_general( pose, chain_break_scorefxn_, five_prime_res_ );
 	}
 
 

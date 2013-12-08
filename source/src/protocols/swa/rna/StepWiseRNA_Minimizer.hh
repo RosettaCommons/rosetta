@@ -129,7 +129,7 @@ namespace rna {
 		get_default_movemap( core::pose::Pose const & pose ) const;
 
 		void
-		Figure_out_moving_residues( core::kinematics::MoveMap & mm, core::pose::Pose const & pose ) const;
+		figure_out_moving_residues( core::kinematics::MoveMap & mm, core::pose::Pose const & pose ) const;
 
 		bool
 		pass_all_pose_screens( core::pose::Pose & pose, std::string const in_tag, core::io::silent::SilentFileData & silent_file_data ) const;
@@ -151,6 +151,9 @@ namespace rna {
 
 		void
 		output_minimized_pose_data_list();
+
+		void
+		output_parameters();
 
 	private:
 

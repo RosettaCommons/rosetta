@@ -184,7 +184,7 @@ void
 output_pair_size( utility::vector1 < std::pair < Size, Size > > const & pair_size_vector, std::string const & output_string, std::ostream & outstream = std::cout, Size const spacing = 40 );
 
 bool
-pair_sort_citeria( std::pair < Size, Size > pair_one, std::pair < Size, Size > pair_two );
+pair_sort_criterion( std::pair < Size, Size > pair_one, std::pair < Size, Size > pair_two );
 
 void sort_seq_num_list( utility::vector1< Size > & seq_num_list );
 
@@ -204,16 +204,10 @@ output_bool_list( std::string const tag, utility::vector1< Size > const & size_l
 void
 output_size_list( std::string const tag, utility::vector1< Size > const & size_list, std::ostream & outstream = std::cout, Size const spacing = 40 );
 
-// Undefined, commenting out to fix PyRosetta build  bool seq_num_list_sort_citeria(Size seq_num_1, Residue_info seq_num_2);
+// Undefined, commenting out to fix PyRosetta build  bool seq_num_list_sort_criterion(Size seq_num_1, Residue_info seq_num_2);
 
 void
 sort_pair_list( utility::vector1< std::pair < Size, Size > > pair_list );
-
-bool
-is_close_chain_break( pose::Pose const & pose );
-
-//Size
-//get_five_prime_chain_break(pose::Pose const & pose);
 
 void
 output_fold_tree_info( kinematics::FoldTree const & fold_tree, std::string const pose_name, std::ostream & outstream = std::cout );
@@ -231,10 +225,10 @@ void
 output_rotamer( utility::vector1 < Real > & rotamer );
 
 void
-add_virtual_O2Star_hydrogen( pose::Pose & pose );
+add_virtual_O2Prime_hydrogen( pose::Pose & pose );
 
 bool
-remove_virtual_O2Star_hydrogen( pose::Pose & pose );
+remove_virtual_O2Prime_hydrogen( pose::Pose & pose );
 
 Real
 suite_rmsd( pose::Pose const & pose1, pose::Pose const & pose2, Size const & seq_num, bool const prepend_res, bool const ignore_virtual_atom = false );
@@ -277,23 +271,6 @@ suite_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, bool
 void
 output_title_text( std::string const title, std::ostream & outstream = std::cout );
 
-bool
-check_chain_closable( numeric::xyzVector< Real > const & xyz_1, numeric::xyzVector< Real > const & xyz_2, Size const gap_size );
-
-bool
-check_chain_closable( pose::Pose const & pose, Size const five_prime_chain_break_res, Size const gap_size );
-
-bool
-check_chain_closable_floating_base( pose::Pose const & five_prime_pose,
-                                   pose::Pose const & three_prime_pose,
-																	 Size const five_prime_chain_break_res,
-                                   Size const gap_size );
-
-void
-get_C4_C3_distance_range( conformation::Residue const & five_prime_rsd,
-												 conformation::Residue const & three_prime_rsd,
-												 Distance & C4_C3_dist_min,
-												 Distance & C4_C3_dist_max );
 
 void
 Freeze_sugar_torsions( kinematics::MoveMap & mm, Size const total_residue );
@@ -311,10 +288,10 @@ utility::vector1< Size >
 get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< Size > const & moving_res, bool verbose = false );
 
 void
-o2prime_minimize( pose::Pose& pose, scoring::ScoreFunctionOP const & packer_scorefxn );
+o2prime_trials( pose::Pose& pose, scoring::ScoreFunctionOP const & packer_scorefxn );
 
 void
-o2prime_minimize( pose::Pose& pose, scoring::ScoreFunctionOP const & packer_scorefxn, utility::vector1< Size > const & O2prime_seq_num_list );
+o2prime_trials( pose::Pose& pose, scoring::ScoreFunctionOP const & packer_scorefxn, utility::vector1< Size > const & O2prime_seq_num_list );
 
 pack::task::PackerTaskOP
 create_standard_o2prime_pack_task( pose::Pose const & pose, utility::vector1< Size > const & O2prime_pack_seq_num );
@@ -328,23 +305,24 @@ correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size 
 void
 copy_torsions_FROM_TO( id::TorsionID const start_torsion_ID, id::TorsionID const end_torsion_ID, pose::Pose const & template_pose, pose::Pose & pose );
 
-Size
-setup_chain_break_jump_point( pose::Pose & pose, Size const jump_point_one, Size const jump_point_two, Size const five_prime_cutpoint, bool const verbose );
+core::Size
+setup_chain_break_jump_point( core::pose::Pose & pose,
+															core::Size const moving_res,
+															core::Size const reference_res );
 
 void
-remove_chain_break_jump_point( pose::Pose & pose, Size const five_prime_cutpoint, kinematics::FoldTree const fold_tree_without_cutpoint );
+remove_chain_break_jump_point( core::pose::Pose & pose,
+															 core::Size const moving_res,
+															 core::Size const reference_res );
+
+void
+setup_chain_break_variants( core::pose::Pose & pose,  Size const cutpoint );
+
+void
+remove_chain_break_variants( core::pose::Pose & pose,  Size const & cutpoint );
 
 Size
 setup_bulge_jump_point( pose::Pose & pose, Size const & moving_base, Size const & reference_base, bool verbose = false );
-
-
-// Undefined, commenting out to fix PyRosetta build
-// void
-// get_partition_definition( ObjexxFCL::FArray1D<bool> & partition_definition, kinematics::FoldTree const & fold_tree, Size const & moving_suite );
-
-// Undefined, commenting out to fix PyRosetta build
-// void
-// get_partition_definition( ObjexxFCL::FArray1D<bool> & partition_definition, pose::Pose const & pose , Size const & moving_suite );
 
 utility::vector1< bool >
 get_partition_definition( pose::Pose const & pose, Size const & moving_suite );
@@ -364,30 +342,17 @@ get_residue_pucker_state( pose::Pose const & pose, Size const seq_num, bool verb
 bool
 is_same_sugar_pucker( pose::Pose const & current_pose, pose::Pose const & cluster_center_pose, Size const seq_num );
 
-
 void
 sleep( Size mseconds );
 
-
 void
 setup_simple_fold_tree( pose::Pose & pose );
-
-
-void
-get_atom_coordinates(
-    utility::vector1< std::pair < id::AtomID,
-    numeric::xyzVector< Real > > > & xyz_list,
-    Size const & seq_num,
-    conformation::Residue const & rsd_at_origin,
-    kinematics::Stub const & moving_res_base_stub );
-
 
 void
 import_pose_from_silent_file(
     pose::Pose & import_pose,
     std::string const & silent_file,
     std::string const & input_tag );
-
 
 std::string
 path_basename( std::string const full_path );
@@ -452,6 +417,9 @@ void
 print_sugar_pucker_state( std::string const tag, Size const pucker_state, std::ostream & outstream = std::cout );
 
 
+scoring::ScoreFunctionOP
+get_sampling_scorefxn( scoring::ScoreFunctionCOP scorefxn_ );
+
 void
 initialize_common_scorefxns(
     scoring::ScoreFunctionOP const & scorefxn,
@@ -498,7 +466,17 @@ std::string //silly function used for appending the rotamer value to the tag
 create_rotamer_string( core::pose::Pose const & pose, Size const moving_res, bool const is_prepend );
 
 void
+add_fade_chain_break_constraint_across_gap( pose::Pose & pose,
+																						Size const five_prime_res,
+																						Size const three_prime_res,
+																						Size const gap_size );
+
+void
 add_harmonic_chain_break_constraint( pose::Pose & pose, Size const five_prime_res );
+
+void
+get_possible_O3prime_C5prime_distance_range( Size const gap_size_, Distance & min_dist, Distance & max_dist );
+
 
 }
 }

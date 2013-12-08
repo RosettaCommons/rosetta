@@ -37,6 +37,11 @@ namespace screener {
 		//Constructor
 		AtrRepScreener( pose::Pose const & pose, StepWiseRNA_JobParametersCOP & job_parameters );
 
+		AtrRepScreener( pose::Pose const & pose,
+										Size const moving_suite, Size const moving_res, Size const gap_size,
+										bool const is_internal = false,
+										bool const separate_moving_residue_to_estimate_baseline = true );
+
 		//destructor
 		~AtrRepScreener();
 
@@ -45,22 +50,38 @@ namespace screener {
 
 		Real delta_atr_score() const{ return delta_atr_score_; }
 		Real delta_rep_score() const{ return delta_rep_score_; }
+		Real base_atr_score() const{ return base_atr_score_; }
+		Real base_rep_score() const{ return base_rep_score_; }
 
 	public:
+
+		bool
+		check_screen( pose::Pose & current_pose_screen );
+
+		void
+		set_kic_sampling( bool const & setting ) { kic_sampling_ = setting;	}
+
+	private:
 
 		void
 		get_base_atr_rep_score( core::pose::Pose const & pose );
 
-		bool
-		check_screen( pose::Pose & current_pose_screen,
-									Size const & gap_size,
-									bool const & is_internal,
-									bool const & kic_sampling );
+		void
+		initialize_scorefxn();
+
+		void
+		initialize_parameters();
 
 	private:
 
-		StepWiseRNA_JobParametersCOP job_parameters_; //need to use the full_to_sub map...should convert to const style.. Parin Feb 28, 2010
-		Real const rep_cutoff_;
+		Size const working_moving_suite_;
+		Size const working_moving_res_;
+		Size const gap_size_;
+		bool const is_prepend_;
+		bool const is_internal_;
+		bool const separate_moving_residue_to_estimate_baseline_;
+
+		Real rep_cutoff_;
 		Real base_atr_score_;
 		Real base_rep_score_;
 		Real delta_atr_score_;
@@ -68,6 +89,7 @@ namespace screener {
 		bool sample_both_sugar_base_rotamer_;
 		bool output_pdb_;
 		bool verbose_;
+		bool kic_sampling_;
 
 		core::scoring::ScoreFunctionOP atr_rep_screening_scorefxn_;
 

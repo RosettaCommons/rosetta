@@ -7,29 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/swa/RNA_O2StarMover.fwd.hh
-/// @brief  Various suite/nucleoside moves.
-/// @author Rhiju Das
-
-#ifndef INCLUDED_protocols_swa_monte_carlo_RNA_O2StarMover_fwd_hh
-#define INCLUDED_protocols_swa_monte_carlo_RNA_O2StarMover_fwd_hh
+/// @file protocols/swa/rna/screener/ChainClosableScreener.fwd.hh
+/// @brief 
+/// @detailed
+/// @author Rhiju Das, rhiju@stanford.edu
 
 
-#include <utility/pointer/access_ptr.hh>
+#ifndef INCLUDED_protocols_swa_rna_screener_ChainClosableScreener_FWD_HH
+#define INCLUDED_protocols_swa_rna_screener_ChainClosableScreener_FWD_HH
+
 #include <utility/pointer/owning_ptr.hh>
-
-
-// C++
 
 namespace protocols {
 namespace swa {
-namespace monte_carlo {
-
-	class RNA_O2StarMover;
-	typedef utility::pointer::owning_ptr< RNA_O2StarMover > RNA_O2StarMoverOP;
-
-}
-}
-}
+namespace rna {
+namespace screener {
+	
+	class ChainClosableScreener;
+	typedef utility::pointer::owning_ptr< ChainClosableScreener > ChainClosableScreenerOP;
+	typedef utility::pointer::owning_ptr< ChainClosableScreener const > ChainClosableScreenerCOP;
+	
+} //screener 
+} //rna 
+} //swa 
+} //protocols 
 
 #endif

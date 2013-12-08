@@ -96,6 +96,8 @@ namespace rna {
 
 		void set_use_phenix_geo( bool const & setting ){ use_phenix_geo_ = setting; }
 
+		void set_virtual_sugar_legacy_mode( bool const & setting ){ virtual_sugar_legacy_mode_ = setting; }
+
 		void set_kic_sampling( bool const & setting ){ kic_sampling_ = setting; }
 
 		void set_kic_sampling_if_relevant( bool const & setting ){ kic_sampling_if_relevant_ = setting; }
@@ -161,6 +163,8 @@ namespace rna {
 
 		void set_sampler_assert_no_virt_sugar_sampling( bool const & setting ){ sampler_assert_no_virt_sugar_sampling_ = setting; }
 
+		void set_sampler_try_sugar_instantiation( bool const & setting ){ sampler_try_sugar_instantiation_ = setting; }
+
 		void set_allow_base_pair_only_centroid_screen( bool const & setting ){ allow_base_pair_only_centroid_screen_ = setting; }
 
 		// this is new, not in ERRASER (swa_rna_analytical_closure)
@@ -209,6 +213,7 @@ namespace rna {
 		bool allow_syn_pyrimidine_;
 		bool extra_chi_;
 		bool use_phenix_geo_;
+		bool virtual_sugar_legacy_mode_;
 		bool kic_sampling_;
 		bool kic_sampling_if_relevant_;
 		bool centroid_screen_;
@@ -242,6 +247,7 @@ namespace rna {
 		bool do_not_sample_multiple_virtual_sugar_;
 		bool sample_ONLY_multiple_virtual_sugar_;
 		bool sampler_assert_no_virt_sugar_sampling_;
+		bool sampler_try_sugar_instantiation_;
 		bool allow_base_pair_only_centroid_screen_;
 
 		// this is new, not in ERRASER (swa_rna_analytical_closure)

@@ -66,6 +66,9 @@ namespace screener {
 		bool
 		check_screen();
 
+		bool
+		check_screen( pose::Pose & pose );
+
 		pose::Pose & pose(){ return chain_break_screening_pose_; }
 
 	private:

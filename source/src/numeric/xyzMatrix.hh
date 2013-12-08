@@ -2241,7 +2241,7 @@ bool
 operator >( T const & t, xyzMatrix< T > const & m );
 
 
-/*
+
 /// @brief xyzMatrix * xyzVector
 /// @note  Same as product( xyzMatrix, xyzVector )
 template< typename T >
@@ -2255,7 +2255,7 @@ operator *( xyzMatrix< T > const & m, xyzVector< T > const & v )
 		m.zx_ * v.x_ + m.zy_ * v.y_ + m.zz_ * v.z_
 	);
 }
-*/
+
 
 
 // PyRosetta work around for templates classes

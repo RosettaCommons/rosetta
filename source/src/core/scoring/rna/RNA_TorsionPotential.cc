@@ -130,7 +130,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 			if ( path_to_torsion_files_ .compare(path_to_torsion_files_.size() - 3, 3, "new") == 0 ) {
 				use_new_potential_ = true;
 			}
-			
+
 			if (verbose_) {
 				TR << "-----------------------------------------------------------------------------------" << std::endl;
 				TR << "USER INPUTTED path_to_torsion_files_=" <<  basic::database::full_name(path_to_torsion_files_) << std::endl;
@@ -663,7 +663,6 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 																					 1.0  ) );
 	}
 
-	//HACKY	/////////////////////////////////////////////////////////////////////////////////////////
 	void
 	RNA_TorsionPotential::Output_boolean(std::string const & tag, bool boolean) const {
 
@@ -793,41 +792,29 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
 		if(Is_virtual_torsion && verbose_) print_torsion_info(pose, torsion_id);
 
-
 		/////////////////////Check for cutpoint_closed (Since these torsions will contain virtual atom(s), but want to score these torsions!///////////////////////////////
-		//Method 1:
 		bool const METHOD_ONE_Is_cutpoint_closed_torsion = Is_cutpoint_closed_torsion(pose, torsion_id);
-
-    //Method 2:
 		bool const METHOD_TWO_Is_cutpoint_closed_torsion = ( Is_cutpoint_closed_atom(rsd_1, id1) || Is_cutpoint_closed_atom(rsd_2, id2) || Is_cutpoint_closed_atom(rsd_3, id3) || Is_cutpoint_closed_atom(rsd_4, id4) );
-
 
 		if( METHOD_ONE_Is_cutpoint_closed_torsion != METHOD_TWO_Is_cutpoint_closed_torsion){
 			Output_boolean(" METHOD_ONE_Is_cutpoint_closed_torsion= ", METHOD_ONE_Is_cutpoint_closed_torsion);
 			Output_boolean(" METHOD_TWO_Is_cutpoint_closed_torsion= ", METHOD_TWO_Is_cutpoint_closed_torsion);
 			Output_boolean(" Is_virtual_torsion= ", Is_virtual_torsion); TR << std::endl;
-
 			print_torsion_info(pose, torsion_id);
-
 			utility_exit_with_message( "METHOD_ONE_Is_cutpoint_closed_torsion != METHOD_TWO_Is_cutpoint_closed_torsion !!" );
 		}
 
-		if( METHOD_ONE_Is_cutpoint_closed_torsion==true && Is_virtual_torsion==false ){
-
+		if( METHOD_ONE_Is_cutpoint_closed_torsion && !Is_virtual_torsion ){
 			print_torsion_info(pose, torsion_id);
-
 			utility_exit_with_message( "METHOD_ONE_Is_cutpoint_closed_torsion==true && Is_virtual_torsion==false !!" );
 		}
 
 
 		////////////////////////////////////////////////Jan 19, 2012: New code//////////////////////////////////////////
-		if(rsd_1.seqpos()>rsd_2.seqpos()) utility_exit_with_message("rsd_1.seqpos()>rsd_2.seqpos()");
-		if(rsd_2.seqpos()>rsd_3.seqpos()) utility_exit_with_message("rsd_1.seqpos()>rsd_2.seqpos()");
-		if(rsd_3.seqpos()>rsd_4.seqpos()) utility_exit_with_message("rsd_1.seqpos()>rsd_2.seqpos()");
-
-		if( (rsd_1.seqpos()!=rsd_4.seqpos()) && (rsd_1.seqpos()!=(rsd_4.seqpos()-1)) ){
-			utility_exit_with_message("(rsd_1.seqpos()!=rsd_4.seqpos()) && (rsd_1.seqpos()!=(rsd_4.seqpos()-1))");
-		}
+		runtime_assert(rsd_1.seqpos()<=rsd_2.seqpos());
+		runtime_assert(rsd_2.seqpos()<=rsd_3.seqpos());
+		runtime_assert(rsd_3.seqpos()<=rsd_4.seqpos());
+		runtime_assert( (rsd_1.seqpos()==rsd_4.seqpos()) || (rsd_1.seqpos()==(rsd_4.seqpos()-1)) );
 
 		bool const inter_residue_torsion= (rsd_1.seqpos()!=rsd_4.seqpos());
 

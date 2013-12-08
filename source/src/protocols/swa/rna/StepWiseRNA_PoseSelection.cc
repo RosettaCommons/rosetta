@@ -56,18 +56,7 @@ namespace rna {
 	void
 	StepWiseRNA_PoseSelection::initialize_sampling_scorefxn( core::scoring::ScoreFunctionCOP & scorefxn ){
 		using namespace core::scoring;
-
-		sampling_scorefxn_ = scorefxn->clone();
-		//		sampling_scorefxn_->set_weight( rna_sugar_close, 0.0 ); (TURN IT BACK ON: RD 01/31/2010)
-
-		sampling_scorefxn_->set_weight( fa_rep, 0.12 );
-		//Only important only if fa_rep score in weight file is not 0.12..want to make sure that changing fa_rep in weight file doesn't effect sampling process. May 23 2010 Parin S.
-		sampling_scorefxn_->set_weight( linear_chainbreak, 0.0 );
-		sampling_scorefxn_->set_weight( chainbreak, 0.0 );
-		sampling_scorefxn_->set_weight( angle_constraint, 0.0 );
-		sampling_scorefxn_->set_weight( atom_pair_constraint, 0.0 );
-		//This makes sure that there are no chain_break score involve in the full_score screening.
-		//This works since by the time a pose reach full_score screening, it must already pass chain_break screening, May 23, 2010 Parin S.
+		sampling_scorefxn_ = get_sampling_scorefxn( scorefxn );
 	}
 
 

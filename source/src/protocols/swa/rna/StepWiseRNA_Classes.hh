@@ -36,6 +36,8 @@
 #define O3I_C5I_PLUS_ONE_MAX_DIST 3.968000 //see data below the function get_C4_C3_distance_range() in StepWiseRNA_Classes.hh
 #define O3I_O3I_PLUS_ONE_MAX_DIST 7.45583 //see ~/minirosetta/test/Sept_19_calculate_MAX_O3_O3_distance/trail_1_range_0_360_bin_size_5/output.txt
 #define C5I_C5I_PLUS_ONE_MAX_DIST 7.71355 //see ~/minirosetta/test/Sept_19_calculate_MAX_C5_C5_distance/trail_3_0_torsion_range_360_5_degree_bin/output.txt
+#define O3I_C5I_MIN_DIST 2.000
+#define O3I_C5I_MAX_DIST 4.627
 
 
 //using namespace core;
@@ -138,7 +140,7 @@ public:
     fine_rmsd_count( 0 ),
     rmsd_count( 0 ),
     non_clash_sugar( 0 ),
-    fast_full_atom_VDW_replusion_screen( 0 ),
+    fast_full_atom_VDW_repulsion_screen( 0 ),
     in_range_CCD_torsion( 0 ),
     total_bin( 0 ),
     bulge_at_chain_closure_count( 0 ),
@@ -174,7 +176,7 @@ public:
   core::Size fine_rmsd_count;
   core::Size rmsd_count;
   core::Size non_clash_sugar;
-  core::Size fast_full_atom_VDW_replusion_screen;
+  core::Size fast_full_atom_VDW_repulsion_screen;
   core::Size in_range_CCD_torsion;
   core::Size total_bin;
   core::Size bulge_at_chain_closure_count;

@@ -176,8 +176,9 @@ ICoorAtomID::xyz( conformation::Residue const & rsd ) const
 		return rsd.type().residue_connection( atomno_ ).icoor().build( rsd );
 		utility_exit_with_message( "unrecognized stub atom id type!" );
 	}
+	return Vector( 0.0 ); //get rid of compiler warnings.
 }
-	
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 id::AtomID
@@ -236,16 +237,16 @@ AtomICoor::build(
 ///    anything but real atoms on the given residue, and where a conformation is absolutely not availible.
 ///    If you /can/ use AtomICoor::build( Residue const &, Conformation const &), you /should/.
 Vector
-AtomICoor::build( 
-		conformation::Residue const & rsd 
+AtomICoor::build(
+		conformation::Residue const & rsd
 ) const
 {
 	kinematics::Stub built_stub( stub_atom1_.xyz( rsd ),
 		stub_atom2_.xyz( rsd ),
 		stub_atom3_.xyz( rsd ));
-			
+
 	assert( built_stub.is_orthogonal( 0.001 ) );
-	
+
 	return built_stub.spherical( phi_, theta_, d_ );
 }
 

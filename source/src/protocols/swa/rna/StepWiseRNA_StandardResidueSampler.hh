@@ -21,6 +21,7 @@
 #include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.fwd.hh>
 #include <protocols/swa/rna/screener/AtrRepScreener.fwd.hh>
 #include <protocols/swa/rna/screener/ChainBreakScreener.fwd.hh>
+#include <protocols/swa/rna/screener/ChainClosableScreener.fwd.hh>
 #include <protocols/swa/rna/O2PrimePacker.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_Classes.hh>
@@ -62,9 +63,6 @@ namespace rna {
 		set_centroid_screen( bool const setting ){ centroid_screen_ = setting; }
 
 		void
-		set_allow_base_pair_only_centroid_screen( bool const setting ){ allow_base_pair_only_centroid_screen_ = setting; }
-
-		void
 		set_VDW_atr_rep_screen( bool const setting ){ VDW_atr_rep_screen_ = setting; }
 
 		void set_silent_file( std::string const & setting ){ silent_file_ = setting; }
@@ -93,7 +91,7 @@ namespace rna {
 
 		void output_pose_data_list( std::string const final_sampler_output_silent_file ) const;
 
-		Size set_num_pose_kept( core::Size const & num_pose_kept ){ num_pose_kept_ = num_pose_kept; }
+		void set_num_pose_kept( core::Size const & num_pose_kept ){ num_pose_kept_ = num_pose_kept; }
 
 		void
 		set_base_centroid_screener( screener::StepWiseRNA_BaseCentroidScreenerOP & screener );
@@ -176,7 +174,10 @@ namespace rna {
 		setup_rotamer_sampler( pose::Pose const & pose ) const;
 
 		bool
-		apply_bulge_variant( core::pose::Pose & pose, core::Real const & delta_atr_score );
+		bulge_variant_decision( core::pose::Pose & pose, Real const & delta_atr_score );
+
+		void
+		apply_bulge_variant( core::pose::Pose & pose ) const;
 
 	private:
 
@@ -218,6 +219,7 @@ namespace rna {
 
 		screener::AtrRepScreenerOP atr_rep_screener_;
 		screener::StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
+		screener::ChainClosableScreenerOP chain_closable_screener_;
 		screener::ChainBreakScreenerOP chain_break_screener_;
 		screener::StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
 		pose::PoseOP screening_pose_;
@@ -227,7 +229,6 @@ namespace rna {
 
 		bool parin_favorite_output_;
 		bool centroid_screen_;
-		bool allow_base_pair_only_centroid_screen_;
 		bool VDW_atr_rep_screen_;
 		bool allow_syn_pyrimidine_;
 		bool distinguish_pucker_;

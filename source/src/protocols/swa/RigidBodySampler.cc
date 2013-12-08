@@ -274,7 +274,7 @@ RigidBodySampler::~RigidBodySampler() {}
 					translate( pose, translation, pose_to_translate, moving_res_ );
 
 					if ( ignore_o2prime_hbonds_in_filter_ && min_hbonds_ > 0 && !check_num_hbonds( pose ) ) continue;
-					if ( o2prime_trials_ && check_o2prime_needs_optimization( pose ) ) protocols::swa::rna::o2prime_minimize( pose, o2prime_pack_scorefxn_ );
+					if ( o2prime_trials_ && check_o2prime_needs_optimization( pose ) ) protocols::swa::rna::o2prime_trials( pose, o2prime_pack_scorefxn_ );
 					if ( min_hbonds_ > 0 && !check_num_hbonds( pose ) ) continue;
 
 					count_good_++;

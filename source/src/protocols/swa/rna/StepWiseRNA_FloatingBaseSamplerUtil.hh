@@ -30,12 +30,12 @@
 #include <numeric/angle.functions.hh> // Need this to prevent the compiling error: 'principal_angle_degrees' is not a member of 'numeric' Oct 14, 2009
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Residue.hh>
-#include <set>
 #include <ObjexxFCL/string.functions.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
+#include <protocols/rotamer_sampler/rigid_body/EulerAngles.hh>
 #include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh> //June 02, 2011
 #include <core/pose/Pose.hh> //June 02, 2011
@@ -50,41 +50,12 @@ namespace protocols {
 namespace swa {
 namespace rna {
 
-//typedef utility::pointer::owning_ptr< SugarModeling > SugarModelingOP;
-//typedef utility::pointer::owning_ptr< SugarModeling const > SugarModelingCOP;
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//This is the version currently used for floating base sampling....slightly different from the old version of Base_centroid_screening which appear to StepWiseRNA_Sampling
-//Should probably integrate this with Rhiju's class Jan 28, 2010. ***ALERT***RHIJU pointed out that the screening condition is slight different in his new class.
-
-bool
-is_base_stack( core::kinematics::Stub const & moving_res_base,
-						  utility::vector1 < core::kinematics::Stub > const & other_residues_base_list,
-				  	  core::Real const base_axis_CUTOFF,
-	            core::Real const base_planarity_CUTOFF );
-
-bool
-is_base_pair( core::kinematics::Stub const & moving_res_base,
-						 utility::vector1 < core::kinematics::Stub > const & other_residues_base_list,
-				  	 core::Real const base_axis_CUTOFF,
-	           core::Real const base_planarity_CUTOFF );
-
-bool
-is_strong_base_stack( core::kinematics::Stub const & moving_res_base, utility::vector1 < core::kinematics::Stub > const & other_residues_base_list );
-
-bool
-floating_base_centroid_screening( core::kinematics::Stub const & moving_res_base, utility::vector1 < core::kinematics::Stub > const & other_residues_base_list, core::Size const num_nucleotides, StepWiseRNA_CountStruct & count_data, bool const allow_base_pair_only_screen );
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Base_bin
-get_euler_stub_bin( numeric::xyzVector< core::Real > const & centroid, Euler_angles const &  euler_angles );
+get_euler_stub_bin( numeric::xyzVector< core::Real > const & centroid, rotamer_sampler::rigid_body::EulerAngles const &  euler_angles );
 
 core::kinematics::Stub
 get_sugar_stub( core::conformation::Residue const & rsd, bool const is_prepend, bool const verbose = true );
-
 
 int
 DOF_bin_value( std::map< Base_bin, int, compare_base_bin > ::const_iterator const & base_bin_it, std::string const & DOF );
@@ -98,31 +69,14 @@ analyze_base_bin_map( std::map< Base_bin, int, compare_base_bin > const & base_b
 void
 analyze_base_bin_map( std::map< Base_bin, int, compare_base_bin > const & base_bin_map, std::string const & DOF_one, std::string const & DOF_two, std::string const foldername );
 
-
-// Undefined, commenting out to fix PyRosetta build  void analyze_base_bin_map_old(std::map<Base_bin, int, compare_base_bin> const & base_bin_map, bool const is_dinucleotide);
-
 void
 translate_then_rotate_pose( core::pose::Pose & pose, numeric::xyzVector< core::Real > const & vector, numeric::xyzMatrix< core::Real > const matrix, bool const verbose = false );
 
 void
 set_to_origin( core::pose::Pose & pose, core::Size const seq_num, bool verbose = false );
 
-Euler_angles
-get_euler_angles( numeric::xyzMatrix< core::Real > const & coordinate_matrix );
-
-void
-convert_euler_to_coordinate_matrix( Euler_angles const & E, numeric::xyzMatrix< core::Real > & coordinate_matrix );
-
-void
-get_specific_atom_coordinate( std::string const & atom_name,
-														 numeric::xyzVector< core::Real > & atom_pos,
-										         core::conformation::Residue const & rsd_at_origin,
-										         core::kinematics::Stub const & moving_res_base_stub );
-
 core::Real
 get_max_centroid_to_atom_distance( utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list, std::string const atom_name );
-
-//////////////////////////////////////////Sugar sugar, close_break closures function////////////////////////////
 
 utility::vector1<core::conformation::ResidueOP>
 setup_residue_at_origin_list(
@@ -132,32 +86,11 @@ setup_residue_at_origin_list(
 	bool const use_phenix_geo
 );
 
-bool
-check_floating_base_chain_closable( core::Size const & reference_res,
-																 core::pose::Pose const & pose,
-																 utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list,
-																 core::kinematics::Stub const & moving_res_base_stub,
-																 bool const is_prepend,
-																 core::Size const gap_size );
-
-bool
-check_floating_base_chain_closable( core::Size const & reference_res,
-																		utility::vector1< core::pose::PoseOP >,
-																		utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list,
-																		core::kinematics::Stub const & moving_res_base_stub,
-																		bool const is_prepend,
-																		core::Size const gap_size );
-
-
 void
 set_base_coordinate_frame( core::pose::Pose & pose,
 													core::Size const & seq_num,
 													core::conformation::Residue const & rsd_at_origin,
 													core::kinematics::Stub const & moving_res_base_stub );
-
-
-
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }

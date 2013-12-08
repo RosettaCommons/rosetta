@@ -48,18 +48,25 @@ namespace screener {
 		virtual ~StepWiseRNA_BaseCentroidScreener();
 
 		bool
-		Update_base_stub_list_and_Check_centroid_interaction( core::pose::Pose const & pose, StepWiseRNA_CountStruct & count_data );
-
-		// Undefined, commenting out to fix PyRosetta build
-		// bool non_adjacent_and_stack_base(core::pose::Pose const & pose,  Size const & pos1, Size const & pos2, bool const verbose = false  );
+		update_base_stub_list_and_check_centroid_interaction( core::pose::Pose const & pose, StepWiseRNA_CountStruct & count_data );
 
 		bool
-		Update_base_stub_list_and_Check_that_terminal_res_are_unstacked( core::pose::Pose const & pose, bool const reinitialize = false );
+		update_base_stub_list_and_check_that_terminal_res_are_unstacked( core::pose::Pose const & pose, bool const reinitialize = false );
 
 		bool
-		Check_that_terminal_res_are_unstacked( bool const verbose = false );
+		check_that_terminal_res_are_unstacked( bool const verbose = false );
 
-		// Undefined, commenting out to fix PyRosetta build  utility::vector1< core::Size > const & moving_residues() const;
+		bool
+		check_centroid_interaction( core::kinematics::Stub const &  moving_res_base_stub, StepWiseRNA_CountStruct & count_data );
+
+		void
+		set_allow_base_pair_only_screen( bool const setting ){ allow_base_pair_only_screen_ = setting; }
+
+		bool const &
+		allow_base_pair_only_screen() const{ return allow_base_pair_only_screen_; }
+
+		void
+		set_floating_base( bool const setting ){ floating_base_ = setting; }
 
 	private:
 
@@ -73,20 +80,54 @@ namespace screener {
 		Initialize_terminal_res( core::pose::Pose const & pose );
 
 		bool
-		check_stack_base( core::kinematics::Stub const & rebuild_residue_base_stub, core::kinematics::Stub const & base_stub, bool const verbose = false ) const;
+		check_base_stack( core::kinematics::Stub const & moving_residue_base_stub,
+											core::kinematics::Stub const & other_base_stub,
+											core::Real const base_axis_CUTOFF,
+											core::Real const base_planarity_CUTOFF,
+											bool const verbose = false ) const;
 
 		bool
-		check_stack_base( Size const & pos1, Size const & pos2, bool const verbose  = false  );
+		check_base_stack( Size const & pos1, Size const & pos2, bool const verbose  = false  );
 
 		bool
-		check_base_pairing( core::kinematics::Stub const & rebuild_residue_base_stub, core::kinematics::Stub const & base_stub   ) const;
+		check_base_stack( core::kinematics::Stub const & moving_res_base,
+											utility::vector1 < core::kinematics::Stub > const & other_residues_base_list,
+											core::Real const base_axis_CUTOFF,
+											core::Real const base_planarity_CUTOFF ) const;
 
 		bool
-		Check_centroid_interaction( StepWiseRNA_CountStruct & count_data ) const;
+		check_base_pair( core::kinematics::Stub const & moving_residue_base_stub,
+												core::kinematics::Stub const & other_base_stub,
+												core::Real const base_axis_CUTOFF,
+												core::Real const base_planarity_CUTOFF ) const;
+
+		bool
+		check_base_pair( core::kinematics::Stub const & moving_res_base_stub,
+										 utility::vector1 < core::kinematics::Stub > const & other_residues_base_list,
+										 core::Real const base_axis_CUTOFF,
+										 core::Real const base_planarity_CUTOFF ) const;
+
+
+		bool
+		check_base_stack( core::kinematics::Stub const & moving_residue_base_stub,
+											core::kinematics::Stub const & other_base_stub,
+											bool const verbose = false ) const;
+
+		bool
+		check_centroid_interaction_floating_base( core::kinematics::Stub const &  moving_res_base_stub,
+																							StepWiseRNA_CountStruct & count_data ) const;
+
+		bool
+		check_centroid_interaction( StepWiseRNA_CountStruct & count_data );
 
 		void
-		Update_base_stub_list( core::pose::Pose const & pose );
+		update_base_stub_list( core::pose::Pose const & pose );
 
+		bool
+		is_strong_base_stack( core::kinematics::Stub const & moving_res_base, utility::vector1 < core::kinematics::Stub > const & other_residues_base_list ) const;
+
+		bool
+		is_medium_base_stack_and_medium_base_pair( core::kinematics::Stub const & moving_res_base, utility::vector1 < core::kinematics::Stub > const & other_residues_base_list ) const;
 
 	private:
 
@@ -105,6 +146,8 @@ namespace screener {
 		core::Real const base_pair_planarity_cutoff_;
 		core::Real const base_pair_rho_min_;
 		core::Real const base_pair_rho_max_;
+		bool allow_base_pair_only_screen_;
+		bool floating_base_;
 
 		utility::vector1 < core::Size > moving_residues_;
 		utility::vector1 < core::Size > fixed_residues_;

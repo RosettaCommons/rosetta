@@ -110,6 +110,14 @@ public:
 		spline
 	};
 
+	std::string
+	to_string( Interpolator const & interpolator ) const{
+		if ( interpolator == flat ) return "flat";
+		if ( interpolator == linear ) return "linear";
+		if ( interpolator == spline ) return "spline";
+		return "unrecognized";
+	}
+
 protected:
 	/**
 	 * @brief Read a score function from the minirosetta_database into an array
@@ -451,7 +459,7 @@ public:
 		case spline:
 			return min_;
 		default:
-			utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+interpolator_);
+			utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+to_string(interpolator_));
 			return X(-1);
 		}
 
@@ -476,7 +484,7 @@ public:
 		case spline:
 			return X(min_ + step_*(nbins()-1.0) );
 		default:
-			utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+interpolator_);
+			utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+to_string(interpolator_));
 			return X(-1);
 		}
 
@@ -506,7 +514,7 @@ public:
 				Real dy;
 				return interpolate_spline(x, y, dy);
 			default:
-				utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+interpolator_);
+				utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+to_string(interpolator_));
 				return false;
 		}
 	}
@@ -525,7 +533,7 @@ public:
 			case spline:
 				return interpolate_spline(x, y, dy);
 			default:
-				utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+interpolator_);
+				utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+to_string(interpolator_));
 				return false;
 		}
 	}
@@ -551,7 +559,7 @@ public:
 				return retval;
 			}
 			default:
-				utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+interpolator_);
+				utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+to_string(interpolator_));
 				return false;
 		}
 	}
@@ -636,7 +644,7 @@ protected: // Interpolation methods
 			lower = static_cast<size_type>(bin_number(x-step_*0.5, alpha));
 			break;
 		default:
-			utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+interpolator_);
+			utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+to_string(interpolator_));
 		}
 		// lower is [1,nbins]
 		upper = ( lower == nbins())?1:lower+1; //wrap around periodic values
@@ -672,7 +680,7 @@ protected: // Interpolation methods
 			lower = static_cast<size_type>(bin_number(x-step_*0.5, alpha));
 			break;
 		default:
-			utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+interpolator_);
+			utility_exit_with_message("Internal Error: Unrecognized interpolation method: "+to_string(interpolator_));
 		}
 		// lower is [1,nbins]
 		upper = ( lower == nbins())?1:lower+1; //wrap around periodic values

@@ -41,6 +41,8 @@ sources = {
         "RotamerAny",
         "RotamerComb",
         "RotamerOneTorsion",
+        "RotamerOneValue",
+        "RotamerOneValueComb",
         "RotamerSizedAny",
         "RotamerSizedComb",
         "util",
@@ -55,6 +57,11 @@ sources = {
         "RNA_NucleosideRotamer",
         "RNA_SugarRotamer",
         "RNA_SuiteRotamer",
+    ],
+    "protocols/rotamer_sampler/rigid_body": [
+	"RigidBodyRotamer",
+	"RigidBodyUtil",
+	"EulerAngles",
     ],
     "protocols/rotamer_sampler/screener": [
         "RNA_TorsionScreener",
@@ -79,7 +86,7 @@ sources = {
 		"RNA_AddMover",
 		"RNA_DeleteMover",
 		"RNA_AddOrDeleteMover",
-		"RNA_O2StarMover",
+		"RNA_O2PrimeMover",
 		"RNA_ResampleMover",
 		"RNA_AddDeleteMonteCarlo",
 		"RNA_TorsionMover",
@@ -106,8 +113,8 @@ sources = {
 	],
 
 	"protocols/swa/rna": [
-	        "SugarModeling",
 	        "O2PrimePacker",
+	        "SugarModeling",
 		"StepWiseRNA_Modeler",
 		"StepWiseRNA_Clusterer",
 		"StepWiseRNA_CombineLongLoopFilterer",
@@ -125,10 +132,14 @@ sources = {
 		"StepWiseRNA_StandardResidueSampler",
 		"StepWiseRNA_Util",
 		"StepWiseRNA_VirtualSugarSampler",
+		"StepWiseRNA_VirtualSugarSamplerFromStringList",
+		"StepWiseRNA_VirtualSugarSamplerWrapper",
+		"StepWiseRNA_VirtualSugarUtil",
 		"RNA_AnalyticLoopCloser",
 	],
 
 	"protocols/swa/rna/screener": [
+	    "ChainClosableScreener",
 	    "ChainBreakScreener",
 	    "AtrRepScreener",
 	    "StepWiseRNA_BaseCentroidScreener",

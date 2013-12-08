@@ -195,15 +195,9 @@ get_working_directory(){
  	 utility_exit_with_message( "!GetCurrentDir( cCurrentPath, sizeof( cCurrentPath ) )" );
  	}
 
-	//cCurrentPath[sizeof(cCurrentPath) - 1] = '/0'; /* not really required */
-
-	//std::cout << "current_directory= " << cCurrentPath << std::endl;
-
 	std::stringstream ss;
 	ss << cCurrentPath;
 	ss >> current_directory_string;
-
-	//std::cout << "current_directory = " << current_directory_string << std::endl;
 
 	return current_directory_string;
 }
@@ -252,38 +246,37 @@ get_fixed_res( core::Size const nres ){
 bool
 is_nonempty_input_silent_file( std::string const input_silent_file, std::string const exit_key_string ){
 
-    std::cout << "Checking that input_silent_file " << input_silent_file << " contain actual silent_structs or the correct exit_key_string" << std::endl;
+	TR << "Checking that input_silent_file " << input_silent_file << " contain actual silent_structs or the correct exit_key_string" << std::endl;
 
-		std::ifstream infile;
-	 	infile.open( input_silent_file.c_str() );
+	std::ifstream infile;
+	infile.open( input_silent_file.c_str() );
 
-		if ( infile.fail() ){
-		 utility_exit_with_message( "Error! \"" + input_silent_file + "\" could not be opened!" );
-		} else{
-			std::cout << "Open \"" << input_silent_file << "\" successful!" << std::endl;
-		}
+	if ( infile.fail() ){
+		utility_exit_with_message( "Error! \"" + input_silent_file + "\" could not be opened!" );
+	} else{
+		std::cout << "Open \"" << input_silent_file << "\" successful!" << std::endl;
+	}
 
-		std::string line;
+	std::string line;
 
-		bool found_line = getline( infile, line );
+	bool found_line = getline( infile, line );
+	runtime_assert( found_line );
 
-		if ( found_line == false ) utility_exit_with_message( "No line exist in input_silent_file = " + input_silent_file );
+	size_t found_substring = line.find( exit_key_string );
 
-		size_t found_substring = line.find( exit_key_string );
+	if ( found_substring != std::string::npos ){
+		std::cout << "input_silent_file: " << input_silent_file << " contain no silent struct" << std::endl;
+		std::cout << line << std::endl;
 
-		if ( found_substring != std::string::npos ){
-			std::cout << "input_silent_file: " << input_silent_file << " contain no silent struct" << std::endl;
-			std::cout << line << std::endl;
-
-			//consistency check:////////////////////////////////////////////////////////////////////////////////////////////////////
-			std::string next_line;
-			bool found_next_line = getline( infile, next_line );
-			if ( found_next_line ) std::cout << "input silent_file contain more than one line! next_line = " << next_line << std::endl;
-			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			return false;
-		} else{
-			return true;
-		}
+		//consistency check:////////////////////////////////////////////////////////////////////////////////////////////////////
+		std::string next_line;
+		bool found_next_line = getline( infile, next_line );
+		if ( found_next_line ) std::cout << "input silent_file contain more than one line! next_line = " << next_line << std::endl;
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		return false;
+	} else{
+		return true;
+	}
 }
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -368,7 +361,7 @@ get_silent_file_tags(){
 		if ( infile.fail() ){
 		 utility_exit_with_message( "Error! \"" + filtered_tag_file + "\" could not be opened!" );
 		} else{
-			std::cout << "Open \"" << filtered_tag_file << "\" successful!" << std::endl;
+			TR << "Open \"" << filtered_tag_file << "\" successful!" << std::endl;
 		}
 
 
@@ -377,7 +370,7 @@ get_silent_file_tags(){
 		int const queue_ID = option[ OptionKeys::swa::rna::job_queue_ID ]();
 		int ID = 0;
 
-		std::cout << "queue_ID = " << queue_ID << std::endl;
+		TR << "queue_ID = " << queue_ID << std::endl;
 
 		std::string tag_pair_string;
 
@@ -397,7 +390,7 @@ get_silent_file_tags(){
 		if ( found_queue_ID == false ) utility_exit_with_message( "found_queue_ID == false, queue_ID = " + string_of( queue_ID ) + " num_tag_string_in_file = " + string_of( ID ) );
 
 
-		std::cout << "import silent_file_tags: " << tag_pair_string << " from filter_output_filename = " << filtered_tag_file << std::endl;
+		TR << "import silent_file_tags: " << tag_pair_string << " from filter_output_filename = " << filtered_tag_file << std::endl;
 
 		infile.close();
 
@@ -441,7 +434,7 @@ create_scorefxn(){
 
 	if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
 		score_weight_file = option[ basic::options::OptionKeys::score::weights ]();
-		std::cout << "User passed in score:weight option: " << score_weight_file << std::endl;
+		TR << "User passed in score:weight option: " << score_weight_file << std::endl;
 		num_score_weight_file++;
 	}
 
@@ -455,7 +448,7 @@ create_scorefxn(){
 	}
 
 	if ( num_score_weight_file > 1 ){
-		std::cout << "num_score_weight_file ( inputted by user ) = " << num_score_weight_file << std::endl;
+		TR << "num_score_weight_file ( inputted by user ) = " << num_score_weight_file << std::endl;
 		utility_exit_with_message( "num_score_weight_file > 1" );
 	}
 
@@ -463,7 +456,7 @@ create_scorefxn(){
 
 
 	if ( ! option[ OptionKeys::swa::rna::minimize_and_score_sugar]() ){
-		std::cout << "WARNING minimize_and_score_sugar is false, SET rna_sugar_close weight to 0.0 " << std::endl;
+		TR << "WARNING minimize_and_score_sugar is false, SET rna_sugar_close weight to 0.0 " << std::endl;
     scorefxn->set_weight( rna_sugar_close, 0 );
 
 		//Sept 16, 2010. Thought about include a very small weight for rna_sugar_close so that column # will not change. HOWEVER this significant change the minimization results!
@@ -769,7 +762,7 @@ setup_rna_job_parameters( bool check_for_previously_closed_cutpoint_with_input_p
 	stepwise_rna_job_parameters_setup.set_output_extra_RMSDs( option[ OptionKeys::swa::rna::output_extra_RMSDs ]() );
 	stepwise_rna_job_parameters_setup.set_add_virt_res_as_root( option[ OptionKeys::swa::rna::add_virt_root]() );
 	stepwise_rna_job_parameters_setup.set_floating_base( option[ OptionKeys::swa::rna::floating_base ]() );
-
+	stepwise_rna_job_parameters_setup.set_rebuild_bulge_mode( option[ basic::options::OptionKeys::swa::rna::rebuild_bulge_mode]() );
 
 	/////////////////////////////Sept 1, 2010////////////
 	if ( check_for_previously_closed_cutpoint_with_input_pose ){
@@ -831,12 +824,12 @@ setup_copy_DOF_input( StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup ){
 		utility_exit_with_message( "input_tags.size() > 2!!" );
 	}
 
-	std::cout << "Input structures for COPY DOF" << std::endl;
+	TR << "Input structures for COPY DOF" << std::endl;
 	for ( Size n = 1; n <= input_tags.size(); n++ ){
 		if ( n <= silent_files_in.size() ){
-			std::cout << "silent_file tag = " << input_tags[n] << " silent_file = " << silent_files_in[n] << std::endl;
+			TR << "silent_file tag = " << input_tags[n] << " silent_file = " << silent_files_in[n] << std::endl;
 		} else{
-			std::cout << "input_tag = " << input_tags[n] << std::endl;
+			TR << "input_tag = " << input_tags[n] << std::endl;
 		}
 	}
 
@@ -865,8 +858,8 @@ setup_pose_setup_class( StepWiseRNA_JobParametersOP & job_parameters, bool const
 	if ( option[ in::file::native ].user() ) {
 		native_pose = PoseOP( new Pose );
 		import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
-		std::cout << "native_pose->fold_tree(): " << native_pose->fold_tree();
-		std::cout << "native_pose->annotated_sequence( true ): " << native_pose->annotated_sequence( true ) << std::endl;
+		TR.Debug << "native_pose->fold_tree(): " << native_pose->fold_tree();
+		TR.Debug << "native_pose->annotated_sequence( true ): " << native_pose->annotated_sequence( true ) << std::endl;
 		protocols::rna::make_phosphate_nomenclature_matches_mini( *native_pose );
 	}
 
@@ -884,7 +877,6 @@ setup_pose_setup_class( StepWiseRNA_JobParametersOP & job_parameters, bool const
 	stepwise_rna_pose_setup->set_bulge_res( option[ basic::options::OptionKeys::swa::rna::bulge_res ]() );
 	stepwise_rna_pose_setup->set_native_pose( native_pose );
 	stepwise_rna_pose_setup->set_native_virtual_res( option[ basic::options::OptionKeys::swa::rna::native_virtual_res]() );
-	stepwise_rna_pose_setup->set_rebuild_bulge_mode( option[ basic::options::OptionKeys::swa::rna::rebuild_bulge_mode]() );
 	stepwise_rna_pose_setup->set_output_pdb( option[ OptionKeys::swa::rna::output_pdb ]() );
 	stepwise_rna_pose_setup->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
 
@@ -904,14 +896,14 @@ void check_if_silent_file_exists(){
 
 	std::string const silent_file = option[ out::file::silent ]();
 
-	std::cout << "Does following file exist? " <<  silent_file << " " << utility::file::file_exists( silent_file )  << std::endl;
+	TR << "Does following file exist? " <<  silent_file << " " << utility::file::file_exists( silent_file )  << std::endl;
 
 	if ( utility::file::file_exists( silent_file ) ) {
 
-		std::cout << "WARNING: silent_file " << silent_file << " already exists! removing..." << std::endl;
+		TR << "WARNING: silent_file " << silent_file << " already exists! removing..." << std::endl;
 
 		int remove_file_return_value = std::remove( silent_file.c_str() );
-		std::cout << "remove_file_return_value = " <<  remove_file_return_value << " for std::remove( " << silent_file << " )" << std::endl;
+		TR << "remove_file_return_value = " <<  remove_file_return_value << " for std::remove( " << silent_file << " )" << std::endl;
 		if ( !remove_file_return_value )	utility_exit_with_message( "remove_file_return_value = " + ObjexxFCL::string_of( remove_file_return_value ) + " != 0 for std::remove( " + silent_file + " )" );
 	}
 }
@@ -968,7 +960,7 @@ ensure_directory_for_out_silent_file_exists(){
 
 		if ( outstream.fail() ){
 			// wow, this is tortuous -- libgen.h has dirname, but requires and output C-style char.
-			std::cout <<  "Could not create silent file output " << outfile << " so making the directory!" << std::endl;
+			TR <<  "Could not create silent file output " << outfile << " so making the directory!" << std::endl;
 			char * outfile_char = strdup( outfile.c_str() );
 			char * outdir =  dirname( outfile_char );
 			std::stringstream mkdir_command;

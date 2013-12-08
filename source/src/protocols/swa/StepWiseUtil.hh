@@ -53,6 +53,9 @@ namespace swa {
 	Size
 	find_jump_number_at_suite( kinematics::FoldTree const & fold_tree, Size const & moving_suite );
 
+	Size
+	look_for_unique_jump_to_moving_res( kinematics::FoldTree const & fold_tree, Size const & i );
+
 	bool
 	is_cutpoint_closed( pose::Pose const & pose, Size const seq_num );
 
@@ -75,7 +78,7 @@ namespace swa {
 	output_movemap(kinematics::MoveMap const & mm, Size const total_residue, std::ostream & TR);
 
 	void
-	Figure_out_moving_residues( kinematics::MoveMap & mm, pose::Pose const & pose,
+	figure_out_moving_residues( kinematics::MoveMap & mm, pose::Pose const & pose,
 															utility::vector1< Size > const & fixed_res,
 															bool const move_takeoff_torsions = true,
 															bool const move_jumps_between_chains = false

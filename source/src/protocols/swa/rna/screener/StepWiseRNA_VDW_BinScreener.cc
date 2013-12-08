@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file StepWiseRNA_VDW_BinScreener.cc
-/// @brief Very fast version of VWD replusion screening
+/// @brief Very fast version of VWD repulsion screening
 /// @detailed
 /// @author Parin Sripakdeevong
 
@@ -20,6 +20,7 @@
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.hh>
 #include <protocols/swa/rna/StepWiseRNA_FloatingBaseSamplerUtil.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyUtil.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 
 #include <protocols/rna/RNA_ProtocolUtil.hh>
@@ -140,7 +141,7 @@ namespace screener {
 		numeric::xyzVector< core::Real > const reference_xyz = core::chemical::rna::get_rna_base_centroid( const_working_pose.residue( reference_res ), false /*verbose*/ );
 
 		pose::Pose working_pose = const_working_pose; //Feb 20, 2011..just to make sure that the o2prime hydrogens are virtualized. Since this hydrogen can vary during sampling.
-		add_virtual_O2Star_hydrogen( working_pose );
+		add_virtual_O2Prime_hydrogen( working_pose );
 
 		create_VDW_screen_bin( working_pose, job_parameters->working_moving_res_list(), job_parameters->is_prepend(), reference_xyz, false /*verbose*/ );
 
@@ -266,7 +267,7 @@ namespace screener {
 					if ( working_atom_name == "H5''" ){ continue; }
 					if ( working_atom_name == "HO2'" ){ continue; }
 
-					if ( working_rsd.atom_type( working_at ).name() == "VIRT" ) continue; //mainly to deal with "OVU1", "OVL1", "OVL2"
+					if ( working_rsd.is_virtual( working_at ) ) continue; //mainly to deal with "OVU1", "OVL1", "OVL2"
 
 					if ( VDW_rep_rsd.has( working_atom_name ) == false ) utility_exit_with_message( "VDW_rep_rsd does not have atom = " + working_atom_name + "!" );
 
@@ -316,7 +317,7 @@ namespace screener {
 
 			} //VDW_rep_seq
 
-			if ( num_match_res > 1 ) utility_exit_with_message( "num_match_res > 1 for working_seq = " + working_seq );
+			if ( num_match_res > 1 ) utility_exit_with_message( "num_match_res > 1 for working_seq = " + ObjexxFCL::string_of(working_seq) );
 
 		} //working_seq
 
@@ -522,7 +523,7 @@ namespace screener {
 
 		//Virtualize O2prime...o2prime hydrogen position can change ..particularly important for long loop mode.
 		//Important since by virtualizing...the o2prime hydrogen will be ignored when creating the VDW_screen_bin.
-		add_virtual_O2Star_hydrogen( VDW_rep_screen_pose );
+		add_virtual_O2Prime_hydrogen( VDW_rep_screen_pose );
 
 		utility::vector1< core::Size > const & VDW_rep_screen_align_res = VDW_rep_screen_info.VDW_align_res;
 		utility::vector1< core::Size > const & working_align_res = VDW_rep_screen_info.working_align_res;
@@ -592,7 +593,7 @@ namespace screener {
 			VDW_rep_screen_info.working_align_res = VDW_rep_screen_info.full_align_res;
 			///////////////////////////////////////////////////////////////////////////
 			pose::Pose working_pose = const_working_pose;
-			add_virtual_O2Star_hydrogen( working_pose );
+			add_virtual_O2Prime_hydrogen( working_pose );
 			//Virtualize O2prime...o2prime hydrogen position can change ..particularly important for long loop mode.
 			//Important since by virtualizing...the o2prime hydrogen will be ignored when creating the VDW_screen_bin.
 
@@ -697,7 +698,7 @@ namespace screener {
 			}
 			//////////////////////////////////////////////////////////////////
 			pose::Pose working_pose = const_working_pose;
-			add_virtual_O2Star_hydrogen( working_pose );
+			add_virtual_O2Prime_hydrogen( working_pose );
 			//Virtualize O2prime...o2prime hydrogen position can change ..particularly important for long loop mode.
 			//Important since by virtualizing...the o2prime hydrogen will be ignored when creating the VDW_screen_bin.
 
@@ -814,7 +815,7 @@ namespace screener {
 
 			for ( Size at = 1; at <= rsd.natoms(); at++ ){ //include hydrogen atoms.
 
-				if ( rsd.atom_type( at ).name() == "VIRT" ){
+				if ( rsd.is_virtual( at )  ){
 					virtual_atom_list.push_back( std::make_pair( n, rsd.type().atom_name( at ) ) );
 					continue;
 				}
@@ -847,7 +848,7 @@ namespace screener {
 				//////////////Purpose of three_dim_VDW_bin is for van der Waals repulsion screening///////
 				Real const VDW_radius = rsd.atom_type( at ).lj_radius();
 				Real const moving_atom_radius = 1.0; //Play it safe...could optimize by having a VWD_bin for each moving_atom tyep but don't think will significantly speed out code Apr 17, 2010
-				Real const clash_dist_cutoff = 0.8; //Fail van der Waals replusion screen if two atoms radius within 0.5 Angstrom of each other
+				Real const clash_dist_cutoff = 0.8; //Fail van der Waals repulsion screen if two atoms radius within 0.5 Angstrom of each other
 				Real const max_binning_error = 2*( atom_bin_size_/2 )*sqrt( 3.0 ); //Feb 09, 2012: FIXED. Used to be "3" instead of "3.0"
 
 				//Basically distance from center of box to the edge of box...2x since this is Lennard Jones distance between two atoms.
@@ -1035,11 +1036,10 @@ namespace screener {
 		core::conformation::Residue const & moving_rsd = screening_pose.residue( moving_res );
 
 		utility::vector1< std::pair < id::AtomID, numeric::xyzVector< core::Real > > > xyz_list;
-		get_atom_coordinates( xyz_list, moving_res, rsd_at_origin, moving_res_base_stub );
+		rotamer_sampler::rigid_body::get_atom_coordinates( xyz_list, moving_res, rsd_at_origin, moving_res_base_stub );
 
 		Size num_clash_atom = 0;
 		for ( Size n = 1; n <= xyz_list.size(); n++ ){
-
 
 			//check
 			if ( xyz_list[n].first.rsd() != moving_res ){
@@ -1049,26 +1049,24 @@ namespace screener {
 
 			//Virtual atom screen
 			Size const at = xyz_list[n].first.atomno();
-			if ( moving_rsd.atom_type( at ).name() == "VIRT" ) continue; //Is this slow???
-
+			if ( moving_rsd.is_virtual( at ) ) continue; //Is this slow???
 
 			Atom_Bin const atom_pos_bin = get_atom_bin( xyz_list[n].second );
 
 			if ( check_atom_bin_in_range( atom_pos_bin ) == false ) continue;
 
 			//VDW Replusion screening...
-			if ( VDW_screen_bin_[atom_pos_bin.x][atom_pos_bin.y][atom_pos_bin.z] == true ){ //CLASH!
+			if ( VDW_screen_bin_[atom_pos_bin.x][atom_pos_bin.y][atom_pos_bin.z] ){ //CLASH!
 				num_clash_atom++;
 			}
 
-			if ( num_clash_atom >= num_clash_atom_cutoff_ ) return false; //before this use to be at the beginning of the for loop, move this down on Sept 29, 2010
+			if ( num_clash_atom >= num_clash_atom_cutoff_ ) return false; //before this used to be at the beginning of the for loop, move this down on Sept 29, 2010
 
 		}
 
 		return true;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	//Slow version (in the sense that position of screening_pose had to be updated before this function is called)..
 	bool
 	StepWiseRNA_VDW_BinScreener::VDW_rep_screen( core::pose::Pose const & screening_pose, core::Size const & moving_res ){
@@ -1081,21 +1079,20 @@ namespace screener {
 		for ( Size at = 1; at <= moving_rsd.natoms(); at++ ){
 
 			//Virtual atom screen
-			if ( moving_rsd.atom_type( at ).name() == "VIRT" ) continue; //Is this slow???
+			if ( moving_rsd.is_virtual( at )) continue;
 
 			Atom_Bin const atom_pos_bin = get_atom_bin( moving_rsd.xyz( at ) );
 
 			if ( check_atom_bin_in_range( atom_pos_bin ) == false ) continue;
 
 			//VDW Replusion screening...
-			if ( VDW_screen_bin_[atom_pos_bin.x][atom_pos_bin.y][atom_pos_bin.z] == true ){ //CLASH!
+			if ( VDW_screen_bin_[atom_pos_bin.x][atom_pos_bin.y][atom_pos_bin.z] ){ //CLASH!
 				num_clash_atom++;
 			}
 
 			if ( num_clash_atom >= num_clash_atom_cutoff_ ) return false; //before this use to be at the beginning of the for loop, move this down on Sept 29, 2010
 
 		}
-
 
 		return true;
 	}
@@ -1104,8 +1101,8 @@ namespace screener {
 	///Warning, this version is very SLOW!
 	bool
 	StepWiseRNA_VDW_BinScreener::VDW_rep_screen_with_act_pose( core::pose::Pose const & screening_pose,
-																													utility::vector1< core::Size > const & moving_res_list,
-																													bool const local_verbose ){
+																														 utility::vector1< core::Size > const & moving_res_list,
+																														 bool const local_verbose ){
 
 		if ( use_VDW_rep_pose_for_screening_ == false ) utility_exit_with_message( "use_VDW_rep_pose_for_screening_ == false" );
 

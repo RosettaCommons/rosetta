@@ -17,7 +17,7 @@
 #include <protocols/swa/rna/StepWiseRNA_Minimizer.hh>
 #include <protocols/swa/rna/StepWiseRNA_OutputData.hh> //Sept 26, 2011
 #include <protocols/swa/rna/screener/StepWiseRNA_BaseCentroidScreener.hh>
-#include <protocols/swa/rna/screener/StepWiseRNA_BaseCentroidScreener.fwd.hh>
+#include <protocols/swa/rna/screener/ChainClosableScreener.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
@@ -77,13 +77,12 @@ using core::Real;
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-// Core routine for stepwise sampling of proteins (and probably other
+// Core routine for stepwise sampling of RNA (and probably other
 // biopolymers soon). Take a starting pose and a list of residues to sample,
 //  and comprehensively sample all backbone torsion angles by recursion.
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-
 static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_Minimizer" ) ;
 
 namespace protocols {
@@ -139,23 +138,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 	using namespace protocols::swa;
 
 	output_title_text( "Enter StepWiseRNA_Minimizer::apply", TR.Debug );
-
-	output_boolean( " verbose_ = ", verbose_, TR.Debug ); TR.Debug << std::endl;
-	output_boolean( " native_screen_ = ", native_screen_, TR.Debug ); TR.Debug << std::endl;
-	TR.Debug << " native_screen_rmsd_cutoff_ = " << native_screen_rmsd_cutoff_ << std::endl;
-	output_boolean( " perform_electron_density_screen_ = ", perform_electron_density_screen_, TR.Debug ); TR.Debug << std::endl;
-	output_boolean( " rm_virt_phosphate_ = ", rm_virt_phosphate_, TR.Debug ); TR.Debug << std::endl;
-	TR.Debug << " native_edensity_score_cutoff_ = " << native_edensity_score_cutoff_ << std::endl;
-	output_boolean( " centroid_screen_ = ", centroid_screen_, TR.Debug ); TR.Debug << std::endl;
-	output_boolean( " perform_o2prime_pack_ = ", perform_o2prime_pack_, TR.Debug ); TR.Debug << std::endl;
-	output_boolean( " output_before_o2prime_pack_ = ", output_before_o2prime_pack_, TR.Debug ); TR.Debug << std::endl;
-	TR.Debug << " ( Upper_limit ) num_pose_minimize_ = " << num_pose_minimize_ << " pose_data_list.size() = " << pose_data_list_.size() <<  std::endl;
-	output_boolean( " minimize_and_score_sugar_ = ", minimize_and_score_sugar_, TR.Debug ); TR.Debug << std::endl;
-	if (user_input_VDW_bin_screener_) output_boolean( " user_inputted_VDW_bin_screener_ = ", user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose(), TR.Debug ); TR.Debug << std::endl;
-	output_seq_num_list( " working_global_sample_res_list = ", job_parameters_->working_global_sample_res_list(), TR.Debug );
-	output_boolean( " perform_minimize_ = ", perform_minimize_, TR.Debug ); TR.Debug << std::endl;
-	output_boolean( " rename_tag_ = ", rename_tag_, TR.Debug ); TR.Debug << std::endl;
-
+	output_parameters();
 	clock_t const time_start( clock() );
 
 	Size const gap_size(  job_parameters_->gap_size() );
@@ -222,9 +205,9 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 
 		if ( verbose_ && output_before_o2prime_pack_ ) output_pose_data_wrapper( tag, 'B', pose, silent_file_data, silent_file_ + "_before_o2prime_pack" );
 
-		remove_virtual_O2Star_hydrogen( pose );
+		remove_virtual_O2Prime_hydrogen( pose );
 
-		if ( perform_o2prime_pack_ ) o2prime_minimize( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
+		if ( perform_o2prime_pack_ ) o2prime_trials( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
 
 		if ( verbose_ && !output_before_o2prime_pack_ ) output_pose_data_wrapper( tag, 'B', pose, silent_file_data, silent_file_ + "_before_minimize" );
 
@@ -242,11 +225,11 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 			moving_chainbreaks = figure_out_moving_chain_break_res( pose, mm );
 
 			if ( perform_minimize_ ) minimizer.run( pose, mm, *( scorefxn_ ), options );
-			if ( perform_o2prime_pack_ ) o2prime_minimize( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
+			if ( perform_o2prime_pack_ ) o2prime_trials( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
 
 			if ( close_chainbreak ){
 				rna_loop_closer.apply( pose, moving_chainbreaks );
-				if ( perform_o2prime_pack_ ) o2prime_minimize( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
+				if ( perform_o2prime_pack_ ) o2prime_trials( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
 				if ( perform_minimize_ ) minimizer.run( pose, mm, *( scorefxn_ ), options );
 
 			}
@@ -369,6 +352,7 @@ StepWiseRNA_Minimizer::output_pose_data_wrapper( std::string & tag,
 	( *scorefxn_ )( pose ); //Score pose to ensure that that it has a score to be output
 	output_data( silent_file_data, out_silent_file, tag, false, pose, get_native_pose(), job_parameters_ );
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_Minimizer::output_empty_minimizer_silent_file() const {
@@ -466,17 +450,14 @@ StepWiseRNA_Minimizer::pass_all_pose_screens( core::pose::Pose & pose, std::stri
 		if ( centroid_screen_ ){
 			if ( base_centroid_screener_ == 0 ) utility_exit_with_message( "base_centroid_screener_ == 0!" );
 
-			if ( !base_centroid_screener_->Update_base_stub_list_and_Check_that_terminal_res_are_unstacked( pose, true /*reinitialize*/ ) ){
-				TR.Debug << in_tag << " discarded: fail Check_that_terminal_res_are_unstacked	" << std::endl;
+			if ( !base_centroid_screener_->update_base_stub_list_and_check_that_terminal_res_are_unstacked( pose, true /*reinitialize*/ ) ){
+				TR.Debug << in_tag << " discarded: fail check_that_terminal_res_are_unstacked	" << std::endl;
 				pass_screen = false;
 			}
 		}
 
-		if ( gap_size == 1 ){
-			if ( !check_chain_closable( pose, five_prime_chain_break_res, gap_size ) ){
-				pass_screen = false;
-			}
-		}
+		screener::ChainClosableScreener chain_closable_screener( five_prime_chain_break_res, gap_size );
+		if ( gap_size == 1 &&  !chain_closable_screener.check_screen( pose ) ) pass_screen = false;
 
 		if ( native_screen_ && get_native_pose() ){	//Before have the (&& !is_chain_break condition). Parin Dec 21, 2009
 
@@ -582,7 +563,7 @@ StepWiseRNA_Minimizer::get_default_movemap( core::pose::Pose const & pose ) cons
 	utility::vector1 < core::kinematics::MoveMap > move_map_list;
 
 	core::kinematics::MoveMap mm;
-	Figure_out_moving_residues( mm, pose );
+	figure_out_moving_residues( mm, pose );
 
 	// Allow sugar torsions to move again (RD 01/31/2010), now
 	// that rotamers have been pre-optimized for sugar closure, and
@@ -596,18 +577,17 @@ StepWiseRNA_Minimizer::get_default_movemap( core::pose::Pose const & pose ) cons
 ////////////////////////////////////////////////////////////////////////////////////
 // This is similar to code in RNA_Minimizer.cc
 void
-StepWiseRNA_Minimizer::Figure_out_moving_residues( core::kinematics::MoveMap & mm, core::pose::Pose const & pose ) const
+StepWiseRNA_Minimizer::figure_out_moving_residues( core::kinematics::MoveMap & mm, core::pose::Pose const & pose ) const
 {
-
 	using namespace core::id;
 	using namespace ObjexxFCL;
 
 	Size const nres( pose.total_residue() );
 
 	utility::vector1< core::Size > const & fixed_res( job_parameters_->working_fixed_res() );
-
 	ObjexxFCL::FArray1D < bool > allow_insert( nres, true );
 	for ( Size i = 1; i <= fixed_res.size(); i++ ) allow_insert( fixed_res[ i ] ) = false;
+
 	figure_out_swa_rna_movemap( mm, pose, allow_insert );
 }
 
@@ -667,13 +647,31 @@ StepWiseRNA_Minimizer::set_base_centroid_screener( screener::StepWiseRNA_BaseCen
 //////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_Minimizer::set_native_edensity_score_cutoff( core::Real const & setting ){
-
 	native_edensity_score_cutoff_ = setting;
-
 	perform_electron_density_screen_ = ( native_edensity_score_cutoff_ > -0.99999 || native_edensity_score_cutoff_ < -1.00001 );
-
 }
 //////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_Minimizer::output_parameters(){
+	output_boolean( " verbose_ = ", verbose_, TR.Debug ); TR.Debug << std::endl;
+	output_boolean( " native_screen_ = ", native_screen_, TR.Debug ); TR.Debug << std::endl;
+	TR.Debug << " native_screen_rmsd_cutoff_ = " << native_screen_rmsd_cutoff_ << std::endl;
+	output_boolean( " perform_electron_density_screen_ = ", perform_electron_density_screen_, TR.Debug ); TR.Debug << std::endl;
+	output_boolean( " rm_virt_phosphate_ = ", rm_virt_phosphate_, TR.Debug ); TR.Debug << std::endl;
+	TR.Debug << " native_edensity_score_cutoff_ = " << native_edensity_score_cutoff_ << std::endl;
+	output_boolean( " centroid_screen_ = ", centroid_screen_, TR.Debug ); TR.Debug << std::endl;
+	output_boolean( " perform_o2prime_pack_ = ", perform_o2prime_pack_, TR.Debug ); TR.Debug << std::endl;
+	output_boolean( " output_before_o2prime_pack_ = ", output_before_o2prime_pack_, TR.Debug ); TR.Debug << std::endl;
+	TR.Debug << " ( Upper_limit ) num_pose_minimize_ = " << num_pose_minimize_ << " pose_data_list.size() = " << pose_data_list_.size() <<  std::endl;
+	output_boolean( " minimize_and_score_sugar_ = ", minimize_and_score_sugar_, TR.Debug ); TR.Debug << std::endl;
+	if (user_input_VDW_bin_screener_) output_boolean( " user_inputted_VDW_bin_screener_ = ", user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose(), TR.Debug ); TR.Debug << std::endl;
+	output_seq_num_list( " working_global_sample_res_list = ", job_parameters_->working_global_sample_res_list(), TR.Debug );
+	output_boolean( " perform_minimize_ = ", perform_minimize_, TR.Debug ); TR.Debug << std::endl;
+	output_boolean( " rename_tag_ = ", rename_tag_, TR.Debug ); TR.Debug << std::endl;
+}
+
 
 }
 }

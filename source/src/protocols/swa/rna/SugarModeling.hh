@@ -56,7 +56,7 @@ namespace rna {
 		core::Size bulge_res_pucker_state;
 		core::Size moving_res_base_state;
 		core::Size bulge_res_base_state;
-		utility::vector1< core::pose::PoseOP > PDL; //pose_data_list of possible sugar conformations.
+		utility::vector1< core::pose::PoseOP > pose_list; //pose_data_list of possible sugar conformations.
 
 	};
 

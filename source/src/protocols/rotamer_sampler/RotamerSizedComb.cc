@@ -136,5 +136,37 @@ RotamerSizedComb::id2list( core::Size const id ) const {
 	return new_id_list;
 }
 ///////////////////////////////////////////////////////////////////////////
+core::Size
+RotamerSizedComb::list2id( utility::vector1<core::Size> const & id_list ) const {
+	runtime_assert( is_init() );
+
+	Size id( 1 );
+	Size block_size_( 1 );
+	for ( Size i = 1; i <= id_list.size(); ++i ){
+		id += block_size_ * ( id_list[ i ] - 1);
+		block_size_ *= size_list_[ i ];
+	}
+
+	// check!
+	//	utility::vector1< Size > const id_list_new = id2list( id );
+	//	std::cout << "Conversion to: " << id << std::endl;
+	//	for ( Size n = 1; n <= id_list.size(); ++n ){
+	//		std::cout << "At position: " << n << "  new: " << id_list_new[n] << "  old: " << id_list[ n ] << " at index with size " <<  size_list_[ n ] << std::endl;
+	//	}
+	//	for ( Size n = 1; n <= id_list.size(); ++n ) runtime_assert( id_list_new[n] == id_list[n] );
+
+	return id;
+}
+
+/// @brief Move sampler to end.
+void
+RotamerSizedComb::fast_forward( Size const sampler_number ){
+	runtime_assert( sampler_number <= rotamer_list_.size() );
+	for ( Size n = 1; n <= sampler_number; n++ ){
+		id_list_[ n ] = rotamer_list_[ n ]->size();
+	}
+	id_ = list2id( id_list_ );
+}
+
 }
 }

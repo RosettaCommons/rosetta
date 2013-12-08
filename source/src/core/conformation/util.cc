@@ -941,8 +941,9 @@ get_root_residue_root_atomno(
 			kinematics::Edge const & edge( fold_tree.jump_edge( i ) );
 			if ( seqpos == Size(edge.start()) && edge.has_atom_info() ) {
 				root_atomno = rsd.atom_index( edge.upstream_atom() );
-				TR.Debug <<	"Using jump " << i <<
-				" anchor atom as atomtree root " << edge.upstream_atom() << std::endl;
+				// tracer was actually getting too big...
+				//				TR.Debug <<	"Using jump " << i <<
+				//				" anchor atom as atomtree root " << edge.upstream_atom() << std::endl;
 				break;
 			}
 		}
@@ -2066,7 +2067,7 @@ disulfide_bonds( conformation::Conformation const& conformation, utility::vector
 		}
 	}
 }
-	
+
 	// @brief determine torsion bins for given phi/psi/omega combination
 	// assume that omega is 180 if not specified
 	// @author Amelie Stein
@@ -2077,15 +2078,15 @@ disulfide_bonds( conformation::Conformation const& conformation, utility::vector
 	{
 		if (phi > 180)
 			phi -= 360; // KIC returns positive values that need to be adjusted
-		if (psi > 180) 
+		if (psi > 180)
 			psi -= 360;
 		if (omega > 180)
 			omega -= 360;
 		char pos_bin = 'X';
-		
+
 		if (omega > 90 || omega < -90) { // trans --> uppercase letters
 			if (phi <= 0) {
-				if (psi < -130 || psi > 50) { 
+				if (psi < -130 || psi > 50) {
 					pos_bin = 'B';
 				} else { // -130 <= psi <= 50
 					pos_bin = 'A';
@@ -2099,7 +2100,7 @@ disulfide_bonds( conformation::Conformation const& conformation, utility::vector
 			}
 		} else { // cis --> lowercase letters
 			if (phi <= 0) {
-				if (psi < -130 || psi > 50) { 
+				if (psi < -130 || psi > 50) {
 					pos_bin = 'b';
 				} else { // -130 <= psi <= 50
 					pos_bin = 'a';
@@ -2111,10 +2112,10 @@ disulfide_bonds( conformation::Conformation const& conformation, utility::vector
 					pos_bin = 'g';
 				}
 			}
-		}	
+		}
 		return pos_bin;
 	}
-	
+
 
 } // namespace conformation
 } // namespace core

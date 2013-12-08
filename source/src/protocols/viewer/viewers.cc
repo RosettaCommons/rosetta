@@ -426,7 +426,6 @@ check_for_new_conformation_viewers()
 /////////////////////////////////////////////////////////////////////////
 //
 // WORKER THREAD (conformation owner)
-
 void
 add_conformation_viewer(
 	conformation::Conformation & conformation,

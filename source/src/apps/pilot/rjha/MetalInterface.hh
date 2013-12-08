@@ -57,7 +57,7 @@ std::string const find_closest_atom( core::conformation::Residue const & res, co
 		temp_dis = res.xyz(i).distance(xyz);
 		T("apps.pilot.rhja.find_closest_atom") << "testing atom name " << res.atom_name(i) << std::endl;
 		//T("apps.pilot.rhja.find_closest_atom") << temp_dis << std::endl;
-		if (res.atom_type(i).name() == "VIRT"){
+		if (res.is_virtual(i) ){
 			T("apps.pilot.rhja.find_closest_atom") << "skipping virtual atom " << res.atom_name(i) << std::endl;
 			continue;
 		}

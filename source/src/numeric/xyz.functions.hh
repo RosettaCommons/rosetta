@@ -46,17 +46,17 @@ namespace numeric {
 
 /// @brief xyzMatrix * xyzVector
 /// @note  Same as product( xyzMatrix, xyzVector )
-template< typename T >
-inline
-xyzVector< T >
-operator *( xyzMatrix< T > const & m, xyzVector< T > const & v )
-{
-	return xyzVector< T >(
-		m.xx_ * v.x_ + m.xy_ * v.y_ + m.xz_ * v.z_,
-		m.yx_ * v.x_ + m.yy_ * v.y_ + m.yz_ * v.z_,
-		m.zx_ * v.x_ + m.zy_ * v.y_ + m.zz_ * v.z_
-	);
-}
+//template< typename T >
+//inline
+//xyzVector< T >
+//operator *( xyzMatrix< T > const & m, xyzVector< T > const & v )
+//{
+//	return xyzVector< T >(
+//		m.xx_ * v.x_ + m.xy_ * v.y_ + m.xz_ * v.z_,
+//		m.yx_ * v.x_ + m.yy_ * v.y_ + m.yz_ * v.z_,
+//		m.zx_ * v.x_ + m.zy_ * v.y_ + m.zz_ * v.z_
+//	);
+//}
 
 /// @brief return the point closest to point p3 that lies on the line
 /// defined by p1 and p2

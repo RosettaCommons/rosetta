@@ -26,7 +26,9 @@
 #include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.fwd.hh>
 #include <protocols/swa/rna/screener/AtrRepScreener.fwd.hh>
 #include <protocols/swa/rna/screener/ChainBreakScreener.fwd.hh>
+#include <protocols/swa/rna/screener/ChainClosableScreener.fwd.hh>
 #include <protocols/swa/rna/O2PrimePacker.fwd.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamer.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/kinematics/Stub.hh>
@@ -60,9 +62,6 @@ namespace rna {
 		set_centroid_screen( bool const setting ){ centroid_screen_ = setting; }
 
 		void
-		set_allow_base_pair_only_centroid_screen( bool const setting ){ allow_base_pair_only_centroid_screen_ = setting; }
-
-		void
 		set_VDW_atr_rep_screen( bool const setting ){ VDW_atr_rep_screen_ = setting; }
 
 		void set_silent_file( std::string const & setting ){ silent_file_ = setting; }
@@ -87,7 +86,7 @@ namespace rna {
 
 		void output_pose_data_list( std::string const final_sampler_output_silent_file ) const;
 
-		Size set_num_pose_kept( Size const & num_pose_kept ){ num_pose_kept_ = num_pose_kept; }
+		void set_num_pose_kept( Size const & num_pose_kept ){ num_pose_kept_ = num_pose_kept; }
 
 		void
 		set_base_centroid_screener( screener::StepWiseRNA_BaseCentroidScreenerOP & screener );
@@ -117,6 +116,9 @@ namespace rna {
 		set_use_phenix_geo( bool const & setting ) { use_phenix_geo_ = setting;	}
 
 		void
+		set_try_sugar_instantiation( bool const & setting ) { try_sugar_instantiation_ = setting;	}
+
+		void
 		set_anchor_sugar_modeling( SugarModeling const & anchor_sugar_modeling );
 
 	private:
@@ -132,6 +134,9 @@ namespace rna {
 
 		void
 		initialize_xyz_grid_parameters();
+
+		void
+		initialize_rigid_body_sampler( pose::Pose const & pose );
 
 		bool
 		break_early_for_integration_tests();
@@ -149,7 +154,19 @@ namespace rna {
 		update_base_bin_map( Base_bin const & base_bin );
 
 		void
+		update_base_bin_map( utility::vector1< Real > const & rigid_body_values );
+
+		void
 		output_count_data();
+
+		void
+		instantiate_moving_sugar_and_o2prime( pose::Pose & pose );
+
+		void
+		virtualize_moving_sugar_and_o2prime( pose::Pose & pose );
+
+		bool
+		check_moving_sugar( pose::Pose & pose );
 
 	private:
 
@@ -160,9 +177,11 @@ namespace rna {
 		bool const is_internal_; // no cutpoints before or after moving_res.
 		Size const gap_size_; /* If this is zero or one, need to screen or closable chain break */
 		Size const five_prime_chain_break_res_;
+		Size const chain_break_reference_res_;
 		Size const num_nucleotides_;
 		Size const reference_res_; //the last static_residues that this attach to the moving residues
-		Size const floating_base_five_prime_chain_break_; //for floating base chain closure when num_nucleotides=1
+		Size const floating_base_five_prime_chain_break_;
+		Size const floating_base_three_prime_chain_break_;
 		bool const is_dinucleotide_;
 		bool const close_chain_to_distal_;
 		bool const close_chain_to_anchor_;
@@ -170,6 +189,8 @@ namespace rna {
 		utility::vector1< pose::PoseOP > pose_data_list_;
 
 		scoring::ScoreFunctionOP scorefxn_;
+
+		protocols::rotamer_sampler::rigid_body::RigidBodyRotamerOP sampler_;
 
 		StepWiseRNA_CountStruct count_data_;
 		std::string silent_file_;
@@ -184,7 +205,6 @@ namespace rna {
 		bool integration_test_mode_;
 
 		bool centroid_screen_;
-		bool allow_base_pair_only_centroid_screen_;
 		bool VDW_atr_rep_screen_;
 		bool allow_syn_pyrimidine_;
 		bool distinguish_pucker_;
@@ -199,10 +219,14 @@ namespace rna {
 		SugarModeling anchor_sugar_modeling_;
 
 		screener::AtrRepScreenerOP atr_rep_screener_;
+		screener::AtrRepScreenerOP atr_rep_screener_with_instantiated_sugar_;
+		utility::vector1< screener::AtrRepScreenerOP > atr_rep_screeners_for_anchor_sugar_models_;
 		screener::StepWiseRNA_VDW_BinScreenerOP VDW_bin_screener_;
 		screener::StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
-		screener::ChainBreakScreenerOP chain_break_screener_, chain_break_screener_to_anchor_;
+		screener::ChainClosableScreenerOP chain_closable_to_distal_screener_, chain_closable_to_anchor_screener_;
+		screener::ChainBreakScreenerOP chain_break_to_distal_screener_, chain_break_to_anchor_screener_;
 		screener::StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
+
 		pose::PoseOP screening_pose_, sugar_screening_pose_;
 		utility::vector1 < conformation::ResidueOP > moving_rsd_at_origin_list_, screening_moving_rsd_at_origin_list_, sugar_screening_moving_rsd_at_origin_list_;
 		StepWiseRNA_PoseSelectionOP pose_selection_;
@@ -213,15 +237,22 @@ namespace rna {
 		utility::vector1 < core::kinematics::Stub > other_residues_base_list_;
 		std::map< Base_bin, int, compare_base_bin > base_bin_map_;
 
+		Size max_ntries_; // for choose_random
+
 		int euler_angle_bin_min_;
 		int euler_angle_bin_max_;
+		Real euler_angle_bin_size_;
 		int euler_z_bin_min_;
 		int euler_z_bin_max_;
+		Real euler_z_bin_size_;
 		int centroid_bin_min_;
 		int centroid_bin_max_;
+		Real centroid_bin_size_;
 		Distance max_distance_;
 		Real max_distance_squared_;
 
+		bool try_sugar_instantiation_;
+		Distance o2prime_instantiation_distance_cutoff_;
 	};
 
 } //rna

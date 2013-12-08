@@ -1912,17 +1912,20 @@ FoldTree::cutpoint_by_jump(
 
 	FArray1D_bool partner1( nres_, false );
 	partition_by_jump( jump_number, partner1 );
-	int i = 1;
-	while ( i < nres_ && partner1(i) == partner1(i+1) ) i++;
-	if ( i == nres_ ) {
-		TR.Fatal << " FoldTree::cutpoint_by_jump error: "
-						 << "can not find the cutpoint! for jump_number: " << jump_number
-						 << std::endl << (*this) << std::endl;
-		utility_exit();
-		return i;
-	} else {
-		return i;
+	int const i_min = std::min( upstream_jump_residue( jump_number ), downstream_jump_residue( jump_number ) );
+	int const i_max = std::max( upstream_jump_residue( jump_number ), downstream_jump_residue( jump_number ) ) - 1;
+	for ( int i = i_min; i <= i_max; i++ ){
+		if ( partner1(i) != partner1(i+1) ) {
+			return i;
+		}
 	}
+
+	TR.Fatal << " FoldTree::cutpoint_by_jump error: "
+					 << "can not find the cutpoint! for jump_number: " << jump_number
+					 << std::endl << (*this) << std::endl;
+	utility_exit();
+	return 0;
+
 }
 
 

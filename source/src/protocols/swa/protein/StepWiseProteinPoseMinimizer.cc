@@ -145,7 +145,7 @@ namespace protein {
 
     kinematics::MoveMap mm_start, mm;
 		std::cout << "MOVE TAKEOFF TORSIONS: " << move_takeoff_torsions_ << std::endl;
-		protocols::swa::Figure_out_moving_residues( mm_start, pose, fixed_res_, move_takeoff_torsions_, move_jumps_between_chains_ );
+		protocols::swa::figure_out_moving_residues( mm_start, pose, fixed_res_, move_takeoff_torsions_, move_jumps_between_chains_ );
 		mm = mm_start;
 
 		//		using namespace core::id;

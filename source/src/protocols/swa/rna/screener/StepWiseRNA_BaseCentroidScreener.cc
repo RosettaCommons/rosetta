@@ -60,7 +60,8 @@ namespace screener {
 		base_pair_axis_cutoff_( 0.5 ),
 		base_pair_planarity_cutoff_( 0.866 ),
 		base_pair_rho_min_( 5 ),
-		base_pair_rho_max_( 10 )
+		base_pair_rho_max_( 10 ),
+		allow_base_pair_only_screen_( false )
 	{
 		Initialize_is_virtual_base( pose,  true /*verbose*/ );
 		Initialize_base_stub_list( pose, true /*verbose*/ );
@@ -98,32 +99,13 @@ namespace screener {
 
 		ObjexxFCL::FArray1D < bool > const & partition_definition = job_parameters_->partition_definition();
 
-		//Used to be this before March 19, 2012. Fang switched to the version below to fix a memory leak problem.
-		//bool const root_partition = partition_definition( pose.fold_tree().root() );
-
-		//To Fang: This version is buggy since it assumes full-length pose which is not always the case!
-		//Fang modified to this version On March 18, 2012
-		//Size const moving_res = job_parameters_ -> moving_res();
-		//bool const moving_partition = partition_definition( moving_res );
-
-		// following seems ridiculous. Should be possible to figure out partitions on the fly from
-		//  root of pose.  -- rhiju, sep. 2013
 		Size const working_moving_res = job_parameters_->working_moving_res();
 		utility::vector1 < core::Size > const & working_moving_partition_pos = job_parameters_->working_moving_partition_pos();
-
-		if ( working_moving_partition_pos.size() == 0 ) utility_exit_with_message( "working_moving_partition_pos.size() == 0!" );
+		runtime_assert( working_moving_partition_pos.size() > 0 );
 
 		bool const moving_partition_based_on_res = partition_definition( working_moving_res );
 		bool const moving_partition = partition_definition( working_moving_partition_pos[1] );
-
-		if ( moving_partition_based_on_res != moving_partition ){
-			TR.Debug << "moving_partition_based_on_res != moving_partition" << std::endl;
-			TR.Debug << "working_moving_res = " << working_moving_res << std::endl;
-			output_seq_num_list( "working_moving_partition_pos = ", job_parameters_->working_moving_partition_pos(), TR.Debug );
-			TR.Debug << "moving_partition_based_on_res = " << moving_partition_based_on_res << std::endl;
-			TR.Debug << "moving_partition = " << moving_partition << std::endl;
-			//			utility_exit_with_message( "moving_partition != moving_partition_check!" );
-		}
+		runtime_assert( moving_partition_based_on_res == moving_partition );
 
 		moving_residues_.clear();
 		fixed_residues_.clear();
@@ -138,13 +120,12 @@ namespace screener {
 			if ( residue_object.aa() == core::chemical::aa_vrt ) continue;
 			core::kinematics::Stub base_stub;
 
-			if ( is_virtual_base_( seq_num ) == true ){
-				base_stub = core::kinematics::Stub();	//"default" tub, this will never be called
+			if ( is_virtual_base_( seq_num ) ){
+				base_stub = core::kinematics::Stub();	//"default" stub, this will never be called
 			} else{
 				Vector const centroid = rna_centroid_info_->get_base_centroid( residue_object );
 				base_stub = rna_centroid_info_->get_base_coordinate_system( residue_object, centroid );
 			}
-
 			base_stub_list_.push_back( base_stub );
 
 			if ( is_virtual_base_( seq_num ) == true ) continue;
@@ -152,23 +133,12 @@ namespace screener {
 			if ( partition_definition( seq_num ) != moving_partition ) {
 				// This is a "fixed" residue -- on the same side of the moving suite as the root.
 				fixed_residues_.push_back( seq_num );
-				//if ( verbose ) TR << " FIXED POSITION  --> " << seq_num << std::endl;
 				is_fixed_res_( seq_num ) = true;
 			} else {
 				moving_residues_.push_back( seq_num );
-				//				if ( verbose ) TR << " MOVING POSITION --> " << seq_num << std::endl;
 				is_moving_res_( seq_num ) = true;
 			}
 		}
-
-
-//		moving_residues_ does not necessarily equal job_parameters_->working_moving_partition_pos since job_parameters_->working_moving_partition_pos include virtual residues. May 25, 2010
-//		if(is_equivalent_vector(moving_residues_,job_parameters_->working_moving_partition_pos())==false){
-//			output_seq_num_list("moving_residues_= ", moving_residues_, 50, TR );
-//			output_seq_num_list("job_parameters_->working_moving_partition_pos()= ", job_parameters_->working_moving_partition_pos(), 50, TR );
-//			utility_exit_with_message( "moving_residues_,job_parameters_->working_moving_partition_pos()) ==false ");
-//		}
-
 	}
 
 
@@ -186,9 +156,7 @@ namespace screener {
 
 		for ( Size n = 1; n <= terminal_res_.size(); n++ ) {
 
-			//			TR << "NRES " << pose.total_residue() << " " << is_terminal_res_.size() << "      " << terminal_res_[ n ] << std::endl;
 			Size const terminal_res = terminal_res_[ n ];
-
 			if ( is_virtual_base_( terminal_res ) == true ){
 				utility_exit_with_message( "working_res: " + string_of( terminal_res ) + " is a terminal res but has a virtual! " );
 			}
@@ -197,32 +165,28 @@ namespace screener {
 
 			for ( Size m = 1; m <= nres; m++ ) {
 
-				//				TR << " about to check stack: --- " << std::endl;
-				//				TR << " TERMINAL_RES " << terminal_res << " " << is_moving_res_( terminal_res ) <<  " " << is_fixed_res_( terminal_res ) << std::endl;
-				//				TR << " M            " << m << " " << is_moving_res_( m ) <<  " " << is_fixed_res_( m ) << std::endl;
-
 				if ( ( is_moving_res_( terminal_res )  && is_moving_res_( m ) ) ||
 						 ( is_fixed_res_(  terminal_res )  && is_fixed_res_(  m ) ) ){
 
-					stacked_on_terminal_res_in_original_pose_( terminal_res, m )  = check_stack_base( terminal_res, m );
-					//if ( stacked_on_terminal_res_in_original_pose_( terminal_res, m ) ) TR << "ALREADY STACKED: " << terminal_res << " " << m << std::endl;
-
+					stacked_on_terminal_res_in_original_pose_( terminal_res, m )  = check_base_stack( terminal_res, m );
 				}
 			}
 		}
-
 	}
-
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_BaseCentroidScreener::check_stack_base( core::kinematics::Stub const & rebuild_residue_base_stub, core::kinematics::Stub const & base_stub, bool const verbose  ) const{
+	StepWiseRNA_BaseCentroidScreener::check_base_stack( core::kinematics::Stub const & moving_residue_base_stub,
+																											core::kinematics::Stub const & other_base_stub,
+																											core::Real const base_axis_CUTOFF,
+																											core::Real const base_planarity_CUTOFF,
+																											bool const verbose  /* = false */ ) const{
 
-		numeric::xyzVector< Real > const other_z_vector = base_stub.M.col_z();
-		numeric::xyzVector< Real > rebuild_z_vector = rebuild_residue_base_stub.M.col_z();
+		numeric::xyzVector< Real > const other_z_vector = other_base_stub.M.col_z();
+		numeric::xyzVector< Real > rebuild_z_vector = moving_residue_base_stub.M.col_z();
 
 		numeric::xyzVector< Real > centroid_diff;
-		subtract( rebuild_residue_base_stub.v, base_stub.v, centroid_diff );
+		subtract( moving_residue_base_stub.v, other_base_stub.v, centroid_diff );
 		Real centroid_distance = centroid_diff.length();
 		if ( verbose ) TR << "Centroid Distance: " << centroid_distance << std::endl;
 		if ( centroid_distance > base_stack_dist_cutoff_ ) return false;
@@ -242,26 +206,51 @@ namespace screener {
 		if ( verbose ) TR << "Base Axis 1: " << base_axis_one << std::endl;
 		if ( verbose ) TR << "Base Axis 2: " << base_axis_two << std::endl;
 
-		if ( base_axis_one < base_stack_axis_cutoff_ && base_axis_two < base_stack_axis_cutoff_ ) return false;
+		if ( base_axis_one < base_axis_CUTOFF && base_axis_two < base_axis_CUTOFF ) return false;
 
 		Real base_planarity = std::abs( dot( other_z_vector, rebuild_z_vector ) );
 
 		if ( verbose ) TR << "Base planarity: " << base_planarity << std::endl;
 
-		if ( base_planarity < base_stack_planarity_cutoff_ ) return false;
+		if ( base_planarity < base_planarity_CUTOFF ) return false;
 
 		return true;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_BaseCentroidScreener::check_base_pairing( core::kinematics::Stub const & rebuild_residue_base_stub, core::kinematics::Stub const & base_stub   ) const{
+	StepWiseRNA_BaseCentroidScreener::check_base_stack( core::kinematics::Stub const & moving_residue_base_stub,
+																											core::kinematics::Stub const & other_base_stub,
+																											bool const verbose  /* = false */ ) const{
+		return check_base_stack( moving_residue_base_stub, other_base_stub, base_stack_axis_cutoff_, base_stack_planarity_cutoff_ );
+	}
 
-		numeric::xyzVector< Real > const other_z_vector = base_stub.M.col_z();
-		numeric::xyzVector< Real > rebuild_z_vector = rebuild_residue_base_stub.M.col_z();
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	StepWiseRNA_BaseCentroidScreener::check_base_stack( core::kinematics::Stub const & moving_res_base_stub,
+																											utility::vector1 < core::kinematics::Stub > const & other_residues_base_list,
+																											core::Real const base_axis_CUTOFF,
+																											core::Real const base_planarity_CUTOFF ) const {
+
+		for ( Size i = 1; i <= other_residues_base_list.size(); i++ ){
+			core::kinematics::Stub const & other_base_stub = other_residues_base_list[i];
+			if ( check_base_stack( moving_res_base_stub, other_base_stub, base_axis_CUTOFF, base_planarity_CUTOFF ) ) return true;
+		}
+		return false;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	StepWiseRNA_BaseCentroidScreener::check_base_pair( core::kinematics::Stub const & moving_residue_base_stub,
+																										 core::kinematics::Stub const & other_base_stub,
+																										 core::Real const base_axis_CUTOFF,
+																										 core::Real const base_planarity_CUTOFF   ) const{
+
+		numeric::xyzVector< Real > const other_z_vector = other_base_stub.M.col_z();
+		numeric::xyzVector< Real > rebuild_z_vector = moving_residue_base_stub.M.col_z();
 
 		numeric::xyzVector< Real > centroid_diff;
-		subtract( rebuild_residue_base_stub.v, base_stub.v, centroid_diff );
+		subtract( moving_residue_base_stub.v, other_base_stub.v, centroid_diff );
 
 		Real centroid_distance = centroid_diff.length();
 		if ( centroid_distance < base_pair_dist_min_ || centroid_distance > base_pair_dist_max_ ) return false;
@@ -273,10 +262,10 @@ namespace screener {
 
 		Real base_axis_one = base_z_offset_one/centroid_distance;
 		Real base_axis_two = base_z_offset_two/centroid_distance;
-		if ( base_axis_one > base_pair_axis_cutoff_ && base_axis_two > base_pair_axis_cutoff_ ) return false; //This is a stronger condition compare to baze_z_offset check
+		if ( base_axis_one > base_axis_CUTOFF && base_axis_two > base_axis_CUTOFF ) return false; //This is a stronger condition compare to baze_z_offset check
 
 		Real base_planarity = std::abs( dot( rebuild_z_vector, other_z_vector ) );
-		if ( base_planarity < base_pair_planarity_cutoff_ ) return false;
+		if ( base_planarity < base_planarity_CUTOFF ) return false;
 
 		numeric::xyzVector< Real > centroid_diff_parallel_one = dot( centroid_diff, other_z_vector )*other_z_vector;
 		numeric::xyzVector< Real > centroid_diff_perpendicular_one = centroid_diff - centroid_diff_parallel_one;
@@ -292,25 +281,62 @@ namespace screener {
 		return true;
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	StepWiseRNA_BaseCentroidScreener::check_base_pair( core::kinematics::Stub const & moving_res_base_stub,
+																											utility::vector1 < core::kinematics::Stub > const & other_residues_base_list,
+																											core::Real const base_axis_CUTOFF,
+																											core::Real const base_planarity_CUTOFF ) const {
+
+		for ( Size i = 1; i <= other_residues_base_list.size(); i++ ){
+			core::kinematics::Stub const & other_base_stub = other_residues_base_list[i];
+			if ( check_base_pair( moving_res_base_stub, other_base_stub, base_axis_CUTOFF, base_planarity_CUTOFF ) ) return true;
+		}
+		return false;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	StepWiseRNA_BaseCentroidScreener::is_strong_base_stack( core::kinematics::Stub const & moving_res_base,
+																													utility::vector1 < core::kinematics::Stub > const & other_residues_base_list ) const{
+
+		Real const base_axis_CUTOFF = 0.9000;
+		Real const base_planarity_CUTOFF = 0.9000;
+
+		return check_base_stack( moving_res_base, other_residues_base_list, base_axis_CUTOFF, base_planarity_CUTOFF );
+
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	StepWiseRNA_BaseCentroidScreener::is_medium_base_stack_and_medium_base_pair( core::kinematics::Stub const & moving_res_base,
+																																							 utility::vector1 < core::kinematics::Stub > const & other_residues_base_list ) const{
+
+		bool base_stack = check_base_stack( moving_res_base, other_residues_base_list, 0.7070 /*base_axis_CUTOFF*/, 0.7070 /*base_planarity_CUTOFF*/ );
+
+		bool base_pair = check_base_pair( moving_res_base, other_residues_base_list, 0.5000 /*base_axis_CUTOFF*/, 0.7070 /*base_planarity_CUTOFF*/ );
+		//value in Base_screener_class is 0.866 Sept 16 2010, Parin S.
+
+		return ( base_stack && base_pair );
+	}
+
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_BaseCentroidScreener::Update_base_stub_list_and_Check_centroid_interaction( core::pose::Pose const & pose, StepWiseRNA_CountStruct & count_data ){
-		Update_base_stub_list( pose );
-		return Check_centroid_interaction( count_data );
+	StepWiseRNA_BaseCentroidScreener::update_base_stub_list_and_check_centroid_interaction( core::pose::Pose const & pose,
+																																													StepWiseRNA_CountStruct & count_data ){
+		update_base_stub_list( pose );
+		return check_centroid_interaction( count_data );
 	}
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_BaseCentroidScreener::Update_base_stub_list( core::pose::Pose const & pose ){
+	StepWiseRNA_BaseCentroidScreener::update_base_stub_list( core::pose::Pose const & pose ){
 
 		for ( Size m = 1; m <= moving_residues_.size(); m++ ) {
-
 			Size const moving_res( moving_residues_[ m ] );
-
 			core::conformation::Residue const & residue_object( pose.residue( moving_res ) );
-
 			Vector const centroid = rna_centroid_info_->get_base_centroid( residue_object );
 			core::kinematics::Stub base_stub = rna_centroid_info_->get_base_coordinate_system( residue_object, centroid );
 			base_stub_list_[ moving_res ] = base_stub;
@@ -319,80 +345,119 @@ namespace screener {
 
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	StepWiseRNA_BaseCentroidScreener::check_centroid_interaction_floating_base( core::kinematics::Stub const &  moving_res_base_stub,
+																																							StepWiseRNA_CountStruct & count_data ) const{
+
+		utility::vector1< core::kinematics::Stub > other_residues_base_list;
+		for ( Size i = 1; i <= fixed_residues_.size(); i++ ) other_residues_base_list.push_back( base_stub_list_[ fixed_residues_[ i ] ] );
+
+		bool const strong_stack_base = is_strong_base_stack( moving_res_base_stub, other_residues_base_list );
+		if ( strong_stack_base ) count_data.base_stack_count++;
+
+		bool const medium_base_stack_and_medium_base_pair = is_medium_base_stack_and_medium_base_pair( moving_res_base_stub, other_residues_base_list );
+		if ( medium_base_stack_and_medium_base_pair ) count_data.base_pairing_count++;
+
+		bool strict_base_pair = false;
+		if ( allow_base_pair_only_screen_ ){
+			strict_base_pair = check_base_pair( moving_res_base_stub, other_residues_base_list, 0.2588 /*base_axis_CUTOFF*/, 0.8660 /*base_planarity_CUTOFF*/ );
+			if ( strict_base_pair ) count_data.strict_base_pairing_count++;
+		}
+
+		if ( strong_stack_base || medium_base_stack_and_medium_base_pair || ( allow_base_pair_only_screen_ && strict_base_pair ) ){
+			count_data.pass_base_centroid_screen++;
+			return true;
+		}
+
+		return false;
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_BaseCentroidScreener::Check_centroid_interaction( StepWiseRNA_CountStruct & count_data ) const{
+	StepWiseRNA_BaseCentroidScreener::check_centroid_interaction( core::kinematics::Stub const &  moving_res_base_stub,
+																																StepWiseRNA_CountStruct & count_data ) {
 
-		bool stack_base( false ), base_pairing( false );
+		if ( floating_base_ )	return check_centroid_interaction_floating_base( moving_res_base_stub, count_data );
 
-		for ( Size m = 1; m <= moving_residues_.size(); m++ ) {
-
-			core::kinematics::Stub const & rebuild_residue_base_stub = base_stub_list_[ moving_residues_[ m ] ];
-			stack_base = false;
-
-			for ( Size i = 1; i <= fixed_residues_.size(); i++ ){
-				stack_base = check_stack_base( rebuild_residue_base_stub, base_stub_list_[ fixed_residues_[ i ] ] );
-				if ( stack_base ) break;
-			}
-
-			base_pairing = false;
-
-			for ( Size i = 1; i <= fixed_residues_.size(); i++ ) {
-				base_pairing = check_base_pairing( rebuild_residue_base_stub, base_stub_list_[ fixed_residues_[ i ] ] );
-				if ( base_pairing ) break;
-			}
-
-			if ( base_pairing || stack_base ) break; // found an interaction!
-
-		}
-
-		if ( base_pairing ) count_data.base_pairing_count++;
-		if ( stack_base ) count_data.base_stack_count++;
-		if ( base_pairing || stack_base ) count_data.pass_base_centroid_screen++;
-
-		//		if ( stack_base ) count_data_.base_stack_count++;
-		//		if ( base_pairing ) count_data_.base_pairing_count++;
-
-		if ( !base_pairing && !stack_base ) return false;
-
-
-		//		TR << " BASE_PAIRING " << base_pairing << "  BASE_STACKING " << stack_base << std::endl;
-		return true;
+		runtime_assert( moving_residues_.size() == 1 );
+		base_stub_list_[ moving_residues_[ 1 ] ] = moving_res_base_stub;
+		return check_centroid_interaction( count_data );
 
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_BaseCentroidScreener::Update_base_stub_list_and_Check_that_terminal_res_are_unstacked( core::pose::Pose const & pose, bool const reinitialize /* = false */ ){
+	StepWiseRNA_BaseCentroidScreener::check_centroid_interaction( StepWiseRNA_CountStruct & count_data ) {
+
+		bool stack_base( false ), base_pair( false );
+
+		for ( Size m = 1; m <= moving_residues_.size(); m++ ) {
+
+			core::kinematics::Stub const & moving_residue_base_stub = base_stub_list_[ moving_residues_[ m ] ];
+			stack_base = false;
+
+			for ( Size i = 1; i <= fixed_residues_.size(); i++ ){
+				stack_base = check_base_stack( moving_residue_base_stub, base_stub_list_[ fixed_residues_[ i ] ] );
+				if ( stack_base ) break;
+			}
+
+			base_pair = false;
+
+			for ( Size i = 1; i <= fixed_residues_.size(); i++ ) {
+				base_pair = check_base_pair( moving_residue_base_stub, base_stub_list_[ fixed_residues_[ i ] ], base_pair_axis_cutoff_, base_pair_planarity_cutoff_ );
+				if ( base_pair ) break;
+			}
+
+			if ( base_pair || stack_base ) break; // found an interaction!
+
+		}
+
+		if ( base_pair ) count_data.base_pairing_count++;
+		if ( stack_base ) count_data.base_stack_count++;
+		if ( base_pair || stack_base ) count_data.pass_base_centroid_screen++;
+
+		//		if ( stack_base ) count_data_.base_stack_count++;
+		//		if ( base_pair ) count_data_.base_pairing_count++;
+
+		if ( !base_pair && !stack_base ) return false;
+
+
+		//		TR << " BASE_PAIR " << base_pair << "  BASE_STACKING " << stack_base << std::endl;
+		return true;
+
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	StepWiseRNA_BaseCentroidScreener::update_base_stub_list_and_check_that_terminal_res_are_unstacked( core::pose::Pose const & pose, bool const reinitialize /* = false */ ){
 		if ( reinitialize ) {
 			Initialize_base_stub_list( pose );
 		} else {
-			Update_base_stub_list( pose );
+			update_base_stub_list( pose );
 		}
-		bool const passed = Check_that_terminal_res_are_unstacked( false /*verbose*/ );
+		bool const passed = check_that_terminal_res_are_unstacked( false /*verbose*/ );
 		return passed;
 	}
 
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_BaseCentroidScreener::check_stack_base( Size const & pos1, Size const & pos2, bool const verbose /* = false */  ) {
+	StepWiseRNA_BaseCentroidScreener::check_base_stack( Size const & pos1, Size const & pos2, bool const verbose /* = false */  ) {
 
 		if ( is_virtual_base_( pos1 ) == true || is_virtual_base_( pos2 ) == true ){
 			utility_exit_with_message( "is_virtual_base_( pos1 ) == true || is_virtual_base_( pos2 ) == true !" );
 		}
 
 		if ( pos1 == pos2 ) return true;
-		return check_stack_base(  base_stub_list_[ pos1 ], base_stub_list_[ pos2 ], verbose );
+		return check_base_stack(  base_stub_list_[ pos1 ], base_stub_list_[ pos2 ], verbose );
 
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_BaseCentroidScreener::Check_that_terminal_res_are_unstacked( bool const verbose ){
-
-		//		bool stack_base( false );//, base_pairing( false );
+	StepWiseRNA_BaseCentroidScreener::check_that_terminal_res_are_unstacked( bool const verbose ){
 
 		// Look through all terminal_res
 		for ( Size i = 1; i <= terminal_res_.size(); i++ ) {
@@ -402,14 +467,14 @@ namespace screener {
 				Size const & moving_res = moving_residues_[ m ];
 				if ( verbose ) TR << "about to check stack: " << terminal_res << " " << moving_res << " " << stacked_on_terminal_res_in_original_pose_( terminal_res, moving_res ) << std::endl;
 				if ( !stacked_on_terminal_res_in_original_pose_( terminal_res, moving_res ) &&
-						 check_stack_base( terminal_res, moving_res, verbose  ) ) return false;
+						 check_base_stack( terminal_res, moving_res, verbose  ) ) return false;
 			}
 
 			for ( Size m = 1; m <= fixed_residues_.size(); m++ ) {
 				Size const & fixed_res = fixed_residues_[ m ];
 				if ( verbose ) TR << "about to check stack: " << terminal_res << " " << fixed_res << " " << stacked_on_terminal_res_in_original_pose_( terminal_res, fixed_res ) << std::endl;
 				if ( !stacked_on_terminal_res_in_original_pose_( terminal_res, fixed_res ) &&
-						 check_stack_base( terminal_res, fixed_res, verbose  ) ) return false;
+						 check_base_stack( terminal_res, fixed_res, verbose  ) ) return false;
 			}
 
 		}

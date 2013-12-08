@@ -119,6 +119,21 @@ namespace swa {
 		return 0;
 	}
 
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	Size
+	look_for_unique_jump_to_moving_res( kinematics::FoldTree const & fold_tree, Size const & i ){
+		Size num_jump( 0 ), jump_idx( 0 );
+		for ( Size n = 1; n <= fold_tree.num_jump(); n++ ) {
+			if ( fold_tree.upstream_jump_residue( n ) == i || fold_tree.downstream_jump_residue( n ) == i ) {
+				jump_idx = n;
+				num_jump++;
+			}
+		}
+		runtime_assert( num_jump == 1 );
+		return jump_idx;
+	}
+
 	///////////////////////////////////////////////////////////////////////////////////////
 	bool
 	is_cutpoint_closed( pose::Pose const & pose, Size const seq_num ){
@@ -214,7 +229,7 @@ namespace swa {
 	////////////////////////////////////////////////////////////////////////////////////
 	// This is similar to code in RNA_Minimizer.cc
 	void
-	Figure_out_moving_residues( core::kinematics::MoveMap & mm, core::pose::Pose const & pose,
+	figure_out_moving_residues( core::kinematics::MoveMap & mm, core::pose::Pose const & pose,
 															utility::vector1< core::Size > const & fixed_res,
 															bool const move_takeoff_torsions,
 															bool const move_jumps_between_chains
@@ -235,10 +250,8 @@ namespace swa {
 		mm.set_chi( false );
 		mm.set_jump( false );
 
-		//		std::cout << "ALLOWING BB TO MOVE: ";
 		for  (Size i = 1; i <= nres; i++ )  {
 
-			//std::cout << "ALLOW INSERT " << i << " " << allow_insert(i) << std::endl;
 			if ( !move_takeoff_torsions && !allow_insert(i) ) continue; // don't allow, e.g., psi/omega of residue before loop to move.
 
 			utility::vector1< TorsionID > torsion_ids;
@@ -264,12 +277,9 @@ namespace swa {
 				if ( !allow_insert( id1.rsd() ) && !allow_insert( id2.rsd() ) && !allow_insert( id3.rsd() )  && !allow_insert( id4.rsd() ) ) continue;
 				mm.set(  torsion_id, true );
 
-				//				if ( n == 1 )	std::cout << ' ' <<  i;
-
 			}
 
 		}
-		//		std::cout << std::endl;
 
 		utility::vector1< Size > chain_index;
 		Size chain_number( 0 );
@@ -277,8 +287,6 @@ namespace swa {
 			if ( pose.residue_type( n ).is_lower_terminus()  && !pose.residue_type( n ).has_variant_type( chemical::N_ACETYLATION ) ) chain_number++;
 			chain_index.push_back( chain_number );
 		}
-
-		//		for (Size n = 1; n <= pose.total_residue(); n++ ) std::cout << "CHAIN "<< n << ' ' << chain_index[ n ] << std::endl;
 
 		for (Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
 			Size const jump_pos1( pose.fold_tree().upstream_jump_residue( n ) );

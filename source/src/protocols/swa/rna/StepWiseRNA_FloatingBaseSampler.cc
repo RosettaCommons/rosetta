@@ -14,15 +14,17 @@
 
 #include <protocols/swa/rna/StepWiseRNA_FloatingBaseSampler.hh>
 #include <protocols/swa/rna/StepWiseRNA_FloatingBaseSamplerUtil.hh>
-#include <protocols/swa/rna/StepWiseRNA_VirtualSugarSampler.hh>
+#include <protocols/swa/rna/StepWiseRNA_VirtualSugarUtil.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_PoseSelection.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/swa/rna/screener/StepWiseRNA_BaseCentroidScreener.hh>
 #include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.hh>
+#include <protocols/swa/rna/screener/ChainClosableScreener.hh>
 #include <protocols/swa/rna/screener/ChainBreakScreener.hh>
 #include <protocols/swa/rna/screener/AtrRepScreener.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamer.hh>
 #include <protocols/swa/rna/O2PrimePacker.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -48,8 +50,6 @@ static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_FloatingBaseSampler" ) ;
 
 using namespace core;
 
-Real const RADS_PER_DEG = numeric::NumericTraits < Real > ::pi() / 180.;
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // "Floating base", a.k.a. dinucleotide or "skip bulge" sampling, developed by Parin Sripakdeevong.
@@ -69,6 +69,9 @@ Real const RADS_PER_DEG = numeric::NumericTraits < Real > ::pi() / 180.;
 //             Base                (virtual)                   Base!                        Base
 //                                            |                          |
 //                     If no bulge, close_chain_to_anchor             If no residues to distal, close_chain_to_distal
+//
+//              | <------   num_nucleotides    --------------->|<------- gap_size + 1 ----->|
+//
 //
 //  * usually virtual -- the exceptions are if connected through chain closure to anchor and/or distal residue.
 //
@@ -102,9 +105,11 @@ StepWiseRNA_FloatingBaseSampler::StepWiseRNA_FloatingBaseSampler( StepWiseRNA_Jo
 	is_internal_(  job_parameters_->is_internal() ), // no cutpoints before or after moving_res.
 	gap_size_( job_parameters_->gap_size() ), /* If this is zero or one, need to screen or closable chain break */
 	five_prime_chain_break_res_( job_parameters_->five_prime_chain_break_res() ),
+	chain_break_reference_res_( ( is_prepend_ ) ? five_prime_chain_break_res_ : five_prime_chain_break_res_ + 1 ),
 	num_nucleotides_( job_parameters_->working_moving_res_list().size() ),
 	reference_res_( job_parameters_->working_reference_res() ), //the last static_residues that this attach to the moving residues
-	floating_base_five_prime_chain_break_( ( is_prepend_ ) ? moving_res_ : moving_res_ - 1 ), //for floating base chain closure when num_nucleotides=1
+	floating_base_five_prime_chain_break_ ( ( is_prepend_ ) ? moving_res_   : reference_res_ ),
+	floating_base_three_prime_chain_break_( ( is_prepend_ ) ? reference_res_: moving_res_ ),
 	is_dinucleotide_( num_nucleotides_ == 2 ),
 	close_chain_to_distal_( gap_size_ == 0 ),
 	close_chain_to_anchor_( num_nucleotides_ == 1 ),
@@ -119,7 +124,6 @@ StepWiseRNA_FloatingBaseSampler::StepWiseRNA_FloatingBaseSampler( StepWiseRNA_Jo
 	perform_o2prime_pack_( true ),
 	integration_test_mode_( false ), //March 16, 2012
 	centroid_screen_( true ),
-	allow_base_pair_only_centroid_screen_( false ), //allow for possibility of conformation that base_pair but does not base_stack
 	VDW_atr_rep_screen_( true ),
 	distinguish_pucker_( true ),
 	PBP_clustering_at_chain_closure_( false ), //New option Aug 15 2010
@@ -128,6 +132,7 @@ StepWiseRNA_FloatingBaseSampler::StepWiseRNA_FloatingBaseSampler( StepWiseRNA_Jo
 	choose_random_( false ), // Rhiju, Jul 2013
 	num_random_samples_( 1 ),
 	use_phenix_geo_( false ),
+	max_ntries_( 0 ), // updated below
 	euler_angle_bin_min_( 0 ), // updated below
 	euler_angle_bin_max_( 0 ), // updated below
 	euler_z_bin_min_( 0 ), // updated below
@@ -135,11 +140,13 @@ StepWiseRNA_FloatingBaseSampler::StepWiseRNA_FloatingBaseSampler( StepWiseRNA_Jo
 	centroid_bin_min_( 0 ),  // updated below
 	centroid_bin_max_( 0 ),  // updated below
 	max_distance_( 0.0 ),  // updated below
-	max_distance_squared_( 0.0 ) // updated below
+	max_distance_squared_( 0.0 ), // updated below
+	try_sugar_instantiation_( false ),
+	o2prime_instantiation_distance_cutoff_( 6.0 )
 {
 	set_native_pose( job_parameters_->working_native_pose() );
-	if ( is_dinucleotide_ && is_internal_ ) utility_exit_with_message( "is_dinucleotide_ == true && is_internal_ == true )!!" );
-	if ( num_nucleotides_ != 1 && num_nucleotides_ != 2 ) utility_exit_with_message( "num_nucleotides != 1 and num_nucleotides != 2" );
+	runtime_assert ( !is_dinucleotide_ || !is_internal_ );
+	runtime_assert( num_nucleotides_ == 1 || num_nucleotides_ == 2 );
 }
 
 //Destructor
@@ -155,7 +162,6 @@ StepWiseRNA_FloatingBaseSampler::get_name() const {
 ///////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_FloatingBaseSampler::apply( core::pose::Pose & pose ){
-
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::scoring;
@@ -163,168 +169,151 @@ StepWiseRNA_FloatingBaseSampler::apply( core::pose::Pose & pose ){
 	using namespace core::io::silent;
 	using namespace core::id;
 	using namespace core::kinematics;
+	using namespace protocols::rotamer_sampler::rigid_body;
 
 	output_title_text( "Enter StepWiseRNA_FloatingBaseSampler::floating_base_sampling", TR.Debug );
 
 	clock_t const time_start( clock() );
 
 	initialize_poses_and_stubs_and_screeners( pose );
-	initialize_euler_angle_grid_parameters(); // later will move into a rotamer sampler.
+	initialize_euler_angle_grid_parameters();
 	initialize_xyz_grid_parameters();
+	initialize_rigid_body_sampler( pose );
 	initialize_other_residues_base_list( pose ); 	// places where floating base can 'dock'
 
-	core::kinematics::Stub moving_res_base_stub;
-	Euler_angles euler_angles;
-	Base_bin base_bin;
 	utility::vector1< PoseOP > pose_data_list;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// MAIN LOOP
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	for ( base_bin.euler_alpha = euler_angle_bin_min_; base_bin.euler_alpha <= euler_angle_bin_max_; base_bin.euler_alpha++ ){
-		for ( base_bin.euler_z = euler_z_bin_min_; base_bin.euler_z <= euler_z_bin_max_; base_bin.euler_z++ ){
+	Size ntries( 0 ), num_success( 0 ); // used in choose_random mode.
+	for ( sampler_->reset(); sampler_->not_end(); ++(*sampler_) ){
 
-			if ( break_early_for_integration_tests() ) break;
+		if ( choose_random_ && ++ntries > max_ntries_ ) break;
+		if ( break_early_for_integration_tests() ) break;
 
-			// Note: most of the initial screening occurs at the level of residues, not in poses.
-			Matrix O_frame_rotation;
-			euler_angles.alpha = ( base_bin.euler_alpha + 0.5 )*euler_angle_bin_size*( RADS_PER_DEG ); //convert to radians
-			euler_angles.z = ( base_bin.euler_z )*euler_z_bin_size;
-			euler_angles.beta = acos( euler_angles.z );
-			euler_angles.gamma = 0;
+		core::kinematics::Stub moving_res_base_stub = sampler_->get_stub();
+		if ( ( moving_res_base_stub.v - reference_stub_.v ).length_squared() > max_distance_squared_ ) {
+			sampler_->fast_forward_to_next_translation(); continue;
+		}
+		if ( centroid_screen_ &&
+				 ( !base_centroid_screener_->check_centroid_interaction( moving_res_base_stub, count_data_ ) ||
+					 !base_centroid_screener_->check_that_terminal_res_are_unstacked() ) ) {
+			sampler_->fast_forward_to_next_euler_gamma(); continue;
+		}
+		count_data_.tot_rotamer_count++;
 
-			convert_euler_to_coordinate_matrix( euler_angles, O_frame_rotation );
-			moving_res_base_stub.M = reference_stub_.M * O_frame_rotation;
+		//////////////////////////////////////////////////////////////////////////////////////////////////////
+		// geometry checks that require base conformation (but not sugar) at moving_res
+		if ( anchor_sugar_modeling_.sample_sugar ){
+			if ( !chain_closable_to_anchor_screener_->check_screen( anchor_sugar_modeling_.pose_list, moving_rsd_at_origin_list_, moving_res_base_stub, reference_res_ ) ) continue;
+		} else {
+			if ( !chain_closable_to_anchor_screener_->check_screen( *screening_pose_, moving_rsd_at_origin_list_, moving_res_base_stub, reference_res_ ) ) continue;
+		}
+		if ( close_chain_to_distal_ ){
+			if ( !chain_closable_to_distal_screener_->check_screen( *screening_pose_, moving_rsd_at_origin_list_, moving_res_base_stub, chain_break_reference_res_ ) ) continue;
+		}
+		count_data_.chain_closable_count++;
+
+		//////////////////////////////////////////////////////////////////////////////////////////////////////
+		// clash checks
+		// Some trickiness with clashes to 3'-phosphate in case of chain closure -- parin has worked out these cases, fortunately.
+		Residue const & screening_moving_rsd_at_origin = ( *screening_moving_rsd_at_origin_list_[ 5 /*magic number?*/ ] );
+		if ( !VDW_bin_screener_->VDW_rep_screen( *screening_pose_, moving_res_, screening_moving_rsd_at_origin, moving_res_base_stub ) ) continue;
+		// User-input VDW: Does not work for chain_closure move and is_internal_ move yet, since the screener does not know that
+		// moving residue atoms can bond to previous or next residues.
+		if ( ( user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose() ) && ( !close_chain_to_distal_ ) && ( !is_internal_ )  &&
+				 !user_input_VDW_bin_screener_->VDW_rep_screen( *screening_pose_, moving_res_, screening_moving_rsd_at_origin, moving_res_base_stub ) ) continue;
+		count_data_.good_bin_rep_count++;
+
+		//////////////////////////////////////////////////////////////////////////////////////////////
+		// finally copy in the base conformation into the pose for RMSD and VDW  screens
+		sampler_->apply( *screening_pose_, screening_moving_rsd_at_origin );
+
+		//////////////////////////////////////////////////////
+		if ( native_rmsd_screen_ && get_native_pose() ){
+			//This assumes that screening_pose and native_pose are already superimposed.
+			if ( suite_rmsd( *get_native_pose(), *screening_pose_, moving_res_, is_prepend_, true /*ignore_virtual_atom*/ ) > ( native_screen_rmsd_cutoff_ ) ) continue;
+			if ( rmsd_over_residue_list( *get_native_pose(), *screening_pose_, job_parameters_, true /*ignore_virtual_atom*/ ) > ( native_screen_rmsd_cutoff_ ) ) continue; //Oct 14, 2010
+			count_data_.rmsd_count++;
+		}
+
+		if ( VDW_atr_rep_screen_ && !atr_rep_screener_->check_screen( *screening_pose_ ) ) continue;
+
+		//////////////////////////////////////////////////////////////////////////
+		// Inner-most loop: over potential sugar/chi conformations.
+		//  Note that actual sugar will end up virtual -- this
+		//  is a sanity check that at least one sugar conformation is viable
+		//  in terms of sterics and chain closure geometry.
+		//
+		// Moving_rsd_at_origin_list and anchor_sugar_modeling_ are similar in spirit,
+		//  storing possible sugar conformations for moving residue and for anchor residue.
+		// But they are unfortunately different data structures here.
+		for ( Size n = 1; n <= moving_rsd_at_origin_list_.size(); n++ ){
+
+			std::string tag = "U_" + lead_zero_string_of( count_data_.tot_rotamer_count, 12 ) + '_' + string_of( n );
+
+			sampler_->apply( *sugar_screening_pose_, ( *sugar_screening_moving_rsd_at_origin_list_[n] ) );
+			if ( close_chain_to_distal_ ) if ( !chain_closable_to_distal_screener_->check_screen( *sugar_screening_pose_ ) ) continue;
+			if ( !screen_anchor_sugar_conformation( pose, tag ) ) continue; // this loops over anchor sugar models if there are more than one.
+			count_data_.non_clash_sugar++;
+
+			// above was all on screening poses; the actual base of the pose hasn't been moved yet!
+			conformation::Residue const & moving_rsd_at_origin( *moving_rsd_at_origin_list_[n] );
+			if ( close_chain_to_distal_ ) sampler_->apply( chain_break_to_distal_screener_->pose(), moving_rsd_at_origin );
+			if ( close_chain_to_anchor_ ) sampler_->apply( chain_break_to_anchor_screener_->pose(), moving_rsd_at_origin );
+			if ( perform_o2prime_pack_ )  sampler_->apply( o2prime_packer_->pose(), moving_rsd_at_origin );
+			sampler_->apply( pose, moving_rsd_at_origin );
+
+			//////////////////////////////////////////////////////////////////////////////////////
+			// Try to close chain break from floating base to a distal connection point, if it exists.
+			if ( close_chain_to_distal_ ) {
+				if ( !chain_break_to_distal_screener_->check_screen() ) continue;
+				if ( perform_o2prime_pack_ ) chain_break_to_distal_screener_->copy_CCD_torsions( o2prime_packer_->pose() );
+				chain_break_to_distal_screener_->copy_CCD_torsions( pose );
+			}
+
+			/////////////////////////////////////////////////////////////////////////////////////
+			// Try to close chain break from floating base to its anchor point, if they are directly connected.
+			if ( close_chain_to_anchor_ ){
+				if ( !chain_closable_to_anchor_screener_->check_screen( chain_break_to_anchor_screener_->pose(), true /*strict*/ ) ) continue;
+				if ( !chain_break_to_anchor_screener_->check_screen() ) continue;
+				if ( perform_o2prime_pack_ ) chain_break_to_anchor_screener_->copy_CCD_torsions( o2prime_packer_->pose() );
+				chain_break_to_anchor_screener_->copy_CCD_torsions( pose );
+			}
 
 			////////////////////////////////////////////////////////////////////////////////////////////////////////
-			for ( base_bin.centroid_z = centroid_bin_min_; base_bin.centroid_z <= centroid_bin_max_; base_bin.centroid_z++ ){
-				for ( base_bin.centroid_x = centroid_bin_min_; base_bin.centroid_x <= centroid_bin_max_; base_bin.centroid_x++ ){
-					for ( base_bin.centroid_y = centroid_bin_min_; base_bin.centroid_y <= centroid_bin_max_; base_bin.centroid_y++ ){
+			bool instantiate_sugar = check_moving_sugar( pose );
+			if ( perform_o2prime_pack_ ){
+				if ( instantiate_sugar ) instantiate_moving_sugar_and_o2prime( o2prime_packer_->pose() );
+				o2prime_packer_->sample_o2prime_hydrogen();
+				o2prime_packer_->copy_all_o2prime_torsions( pose ); //Copy the o2prime torsions from the o2prime_pack_pose to the pose!
+				if ( instantiate_sugar ) virtualize_moving_sugar_and_o2prime( o2prime_packer_->pose() );
+			}
 
-						Vector O_frame_centroid;
-						O_frame_centroid[0] = ( base_bin.centroid_x + 0.5 ) * centroid_bin_size;
-						O_frame_centroid[1] = ( base_bin.centroid_y + 0.5 ) * centroid_bin_size;
-						O_frame_centroid[2] = ( base_bin.centroid_z ) * centroid_bin_size;
-						moving_res_base_stub.v = ( reference_stub_.M * O_frame_centroid ) + reference_stub_.v;
+			Pose selected_pose = pose; // the reason for this copy is that we might apply a bulge variant, and that can produce thread conflicts with graphics.
+			if ( instantiate_sugar ) instantiate_moving_sugar_and_o2prime( selected_pose );
+			pose_selection_->pose_selection_by_full_score( selected_pose, tag );
 
-						////////////////////Not dependent on euler gamma value//////////////////////////////////////////////////////////////
-						if ( ( moving_res_base_stub.v - reference_stub_.v ).length_squared() > max_distance_squared_ ) continue;
-						if ( centroid_screen_  &&  !floating_base_centroid_screening( moving_res_base_stub, other_residues_base_list_, num_nucleotides_, count_data_, allow_base_pair_only_centroid_screen_ ) ) continue;
+			if ( verbose_ ) output_data( silent_file_, tag, true, pose, get_native_pose(), job_parameters_ );
+			num_success++;
 
-						//////////////////////Update the moving_res_base_stub -- euler angle is last /////////////////////////////////////////
-						for ( base_bin.euler_gamma = euler_angle_bin_min_; base_bin.euler_gamma <= euler_angle_bin_max_; base_bin.euler_gamma++ ){
+			// As long as we're not instantiating the sugar in the final pose, break once we found any valid sugar rotamer
+			if ( !close_chain_to_distal_ && !close_chain_to_anchor_ && !try_sugar_instantiation_ ) break;
 
-							count_data_.tot_rotamer_count++;
+		} // floating base's sugar/chi rotamer
 
-							euler_angles.gamma = ( base_bin.euler_gamma + 0.5 )*euler_angle_bin_size*( RADS_PER_DEG ); //convert to radians
-							convert_euler_to_coordinate_matrix( euler_angles, O_frame_rotation );
-							moving_res_base_stub.M = reference_stub_.M * O_frame_rotation;
+		update_base_bin_map( sampler_->get_values() ); // diagnostics.
 
-							//////////////////////////////////////////////////////////////////////////////////////////////////////
-							// geometry checks that do not require sugar instantiated at moving_res -- can we close chains?
-							if ( anchor_sugar_modeling_.sample_sugar ){
-								if (	!check_floating_base_chain_closable( reference_res_, anchor_sugar_modeling_.PDL, moving_rsd_at_origin_list_, moving_res_base_stub, is_prepend_, ( num_nucleotides_ - 1 ) ) ) continue;
-							} else{
-								if (	!check_floating_base_chain_closable( reference_res_, *screening_pose_, moving_rsd_at_origin_list_, moving_res_base_stub, is_prepend_, ( num_nucleotides_ - 1 ) ) ) continue;
-							}
-							if ( close_chain_to_distal_ ){
-								Size const chain_break_reference_res_ = ( is_prepend_ ) ? five_prime_chain_break_res_ : five_prime_chain_break_res_ + 1;
-								if ( !check_floating_base_chain_closable( chain_break_reference_res_, *screening_pose_, moving_rsd_at_origin_list_, moving_res_base_stub, !is_prepend_, 0 /*gap_size_*/ ) ) continue;
-							}
-							count_data_.chain_closable_count++;
+		if ( choose_random_ && num_success >= num_random_samples_ ) break;
+	}
 
-							//////////////////////////////////////////////////////////////////////////////////////////////////////
-							// clash checks
-							Residue const & screening_moving_rsd_at_origin = ( *screening_moving_rsd_at_origin_list_[ 5 /*magic number?*/ ] );
-							// Some trickiness with clashes to 3'-phosphate in case of chain closure -- parin has worked out these cases, fortunately.
-							if ( !VDW_bin_screener_->VDW_rep_screen( *screening_pose_, moving_res_, screening_moving_rsd_at_origin, moving_res_base_stub ) ) continue;
-							// User-input VDW: Does not work for chain_closure move and is_internal_ move yet, since the screener does not know that moving residue atoms can bond
-							//  to previous or next residues.
-							if ( ( user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose() ) && ( !close_chain_to_distal_ ) && ( !is_internal_ )  &&
-									 !user_input_VDW_bin_screener_->VDW_rep_screen( *screening_pose_, moving_res_, screening_moving_rsd_at_origin, moving_res_base_stub ) ) continue;
-							count_data_.good_bin_rep_count++;
-
-							//////////////////////////////////////////////////////////////////////////////////////////////
-							// finally copy in the base conformation into the pose for RMSD and VDW  screens
-							set_base_coordinate_frame( *screening_pose_, moving_res_, screening_moving_rsd_at_origin, moving_res_base_stub );
-
-							//////////////////////////////////////////////////////
-							if ( native_rmsd_screen_ && get_native_pose() ){
-								//This assumes that screening_pose and native_pose are already superimposed.
-								if ( suite_rmsd( *get_native_pose(), *screening_pose_, moving_res_, is_prepend_, true /*ignore_virtual_atom*/ ) > ( native_screen_rmsd_cutoff_ ) ) continue;
-								if ( rmsd_over_residue_list( *get_native_pose(), *screening_pose_, job_parameters_, true /*ignore_virtual_atom*/ ) > ( native_screen_rmsd_cutoff_ ) ) continue; //Oct 14, 2010
-								count_data_.rmsd_count++;
-							}
-
-							if ( VDW_atr_rep_screen_ && !atr_rep_screener_->check_screen( *screening_pose_, gap_size_, is_internal_, false /*kic_sampling_*/ ) ) continue;
-							//////////////////////////////////////////////////////////////////////////
-							// Inner-most loop: over potential sugar/chi conformations.
-							//  Note that actual sugar will end up virtual -- this
-							//  is a sanity check that at least one sugar conformation is viable
-							//  in terms of sterics and chain closure geometry.
-							//
-							// Moving_rsd_at_origin_list and anchor_sugar_modeling_ are similar in spirit,
-							//  storing possible sugar conformations for moving residue and for anchor residue.
-							// But they are unfortunately different data structures here.
-							for ( Size n = 1; n <= moving_rsd_at_origin_list_.size(); n++ ){
-
-								std::string tag = "U_" + lead_zero_string_of( count_data_.tot_rotamer_count, 12 ) + '_' + string_of( n );
-
-								set_base_coordinate_frame( *sugar_screening_pose_, moving_res_, ( *sugar_screening_moving_rsd_at_origin_list_[n] ), moving_res_base_stub );
-								if ( gap_size_ == 0 ) if ( !check_chain_closable( *sugar_screening_pose_, five_prime_chain_break_res_, 0 ) ) continue;
-								if ( !screen_anchor_sugar_conformation( pose, tag ) ) continue; // this loops over anchor sugar models if there are more than one.
-								count_data_.non_clash_sugar++;
-
-								// above was all on screening poses; the actual base of the pose hasn't been moved yet!
-								conformation::Residue const & moving_rsd_at_origin( *moving_rsd_at_origin_list_[n] );
-								if ( close_chain_to_distal_ ) set_base_coordinate_frame( chain_break_screener_->pose(), moving_res_, moving_rsd_at_origin, moving_res_base_stub );
-								if ( close_chain_to_anchor_ ) set_base_coordinate_frame( chain_break_screener_to_anchor_->pose(), moving_res_, moving_rsd_at_origin, moving_res_base_stub );
-								if ( perform_o2prime_pack_ ) set_base_coordinate_frame( o2prime_packer_->pose(), moving_res_, moving_rsd_at_origin, moving_res_base_stub );
-								set_base_coordinate_frame( pose, moving_res_, moving_rsd_at_origin, moving_res_base_stub );
-
-								//////////////////////////////////////////////////////////////////////////////////////
-								// Try to close chain break from floating base to a connection point, if it exists.
-								if ( close_chain_to_distal_ ) {
-									if ( !chain_break_screener_->check_screen() ) continue;
-									if ( perform_o2prime_pack_ ) chain_break_screener_->copy_CCD_torsions( o2prime_packer_->pose() );
-									chain_break_screener_->copy_CCD_torsions( pose );
-								}
-
-								/////////////////////////////////////////////////////////////////////////////////////
-								// Try to close chain break from floating base to its anchor point, if they are directly connected.
-								if ( close_chain_to_anchor_ ){
-									if ( !check_chain_closable_floating_base( chain_break_screener_to_anchor_->pose(), chain_break_screener_to_anchor_->pose(), floating_base_five_prime_chain_break_, 0 ) ) continue; //strict version of the check chain closable.
-									if ( !chain_break_screener_to_anchor_->check_screen() ) continue;
-									if ( perform_o2prime_pack_ ) chain_break_screener_to_anchor_->copy_CCD_torsions( o2prime_packer_->pose() );
-									chain_break_screener_to_anchor_->copy_CCD_torsions( pose );
-								}
-
-								////////////////////////////////////////////////////////////////////////////////////////////////////////
-								if ( perform_o2prime_pack_ ){
-									o2prime_packer_->sample_o2prime_hydrogen();
-									o2prime_packer_->copy_all_o2prime_torsions( pose ); //Copy the o2prime torsions from the o2prime_pack_pose to the pose!
-								}
-
-								pose_selection_->pose_selection_by_full_score( pose, tag );
-								if ( verbose_ ) output_data( silent_file_, tag, true, pose, get_native_pose(), job_parameters_ );
-
-								// As long as we're not instantiating the sugar in the final pose, break once we found any valid sugar rotamer
-								if ( !close_chain_to_distal_ && !close_chain_to_anchor_ ) break;
-
-							} // floating base's sugar/chi rotamer
-
-							update_base_bin_map( base_bin); // diagnostics.
-
-						} // base centroid x
-					} // base centroid y
-				} // base centroid z
-			} // euler gamma
-		} // euler z
-	} // euler alpha
+	if ( choose_random_ ) TR << "Number of tries: " << ntries << ".  Passed filters: " << count_data_.tot_rotamer_count++ << ". Number of successes: " << num_success << std::endl;
 
 	pose_selection_->finalize();
 	output_count_data();
 
+	// can put this back in pretty easily...
 	if ( verbose_ ) analyze_base_bin_map( base_bin_map_, "test/" );
 
 	pose_data_list_ = pose_selection_->pose_data_list();
@@ -342,9 +331,7 @@ StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_screeners( pose:
 
 	// hydrogens will be reinstantiated later. perhaps this should be the screening_pose?
 	Pose pose_with_virtual_O2prime_hydrogen = pose;
-	add_virtual_O2Star_hydrogen( pose_with_virtual_O2prime_hydrogen );
-
-	atr_rep_screener_ = new screener::AtrRepScreener( pose_with_virtual_O2prime_hydrogen, job_parameters_ );
+	add_virtual_O2Prime_hydrogen( pose_with_virtual_O2prime_hydrogen );
 
 	reference_stub_ = get_reference_stub( pose_with_virtual_O2prime_hydrogen );
 
@@ -353,7 +340,7 @@ StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_screeners( pose:
 	VDW_bin_screener_->setup_using_working_pose( pose_with_virtual_O2prime_hydrogen, job_parameters_ );
 	if ( user_input_VDW_bin_screener_ ) user_input_VDW_bin_screener_->reference_xyz_consistency_check( reference_stub_.v );
 
-	screening_pose_ = pose.clone(); //Hard copy, used for clash checking
+	screening_pose_ = pose_with_virtual_O2prime_hydrogen.clone(); //Hard copy, used for clash checking
 	if ( close_chain_to_distal_ ) pose::add_variant_type_to_pose_residue( *screening_pose_, "VIRTUAL_PHOSPHATE", five_prime_chain_break_res_ + 1 ); //May 31, 2010
 
 	sugar_screening_pose_ = screening_pose_->clone(); //Hard copy. Used for trying out sugar at moving residue.
@@ -363,19 +350,31 @@ StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_screeners( pose:
 	if ( close_chain_to_anchor_ ) reinstantiate_backbone_and_add_constraint_at_moving_res( pose, floating_base_five_prime_chain_break_ );
 
 	if ( perform_o2prime_pack_ ) {
-		remove_virtual_O2Star_hydrogen( pose );
+		remove_virtual_O2Prime_hydrogen( pose );
 		// weird -- following should not be necessary, but commenting it out changes results.
 		if ( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_RIBOSE" ) ) pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", moving_res_ );
 		o2prime_packer_ = new O2PrimePacker( pose, scorefxn_, job_parameters_->working_moving_partition_pos() /* moving_res_*/ );
 	} else {
-		add_virtual_O2Star_hydrogen( pose );
+		add_virtual_O2Prime_hydrogen( pose );
 	}
 
-	chain_break_screener_ = new screener::ChainBreakScreener( pose, five_prime_chain_break_res_ ); //Hard copy
-	chain_break_screener_->set_reinitialize_CCD_torsions( reinitialize_CCD_torsions_ );
+	atr_rep_screener_ = new screener::AtrRepScreener( pose_with_virtual_O2prime_hydrogen, job_parameters_ );
+	atr_rep_screener_with_instantiated_sugar_ = new screener::AtrRepScreener( *sugar_screening_pose_, job_parameters_ );
 
-	chain_break_screener_to_anchor_ = new screener::ChainBreakScreener( pose, floating_base_five_prime_chain_break_ ); //Hard copy
-	chain_break_screener_to_anchor_->set_reinitialize_CCD_torsions( reinitialize_CCD_torsions_ );
+	// this seems like overkill, but anchor sugar modeling can involve minimizing, and the 'anchor' residue moves.
+	for ( Size anchor_sugar_ID = 1; anchor_sugar_ID <= anchor_sugar_modeling_.pose_list.size(); anchor_sugar_ID++ ){
+		pose::Pose const & anchor_sugar_modeling_pose = *anchor_sugar_modeling_.pose_list[anchor_sugar_ID];
+		copy_bulge_res_and_sugar_torsion( anchor_sugar_modeling_, *sugar_screening_pose_, anchor_sugar_modeling_pose );
+		atr_rep_screeners_for_anchor_sugar_models_.push_back( new screener::AtrRepScreener( *sugar_screening_pose_, job_parameters_ ) );
+	}
+
+	chain_closable_to_distal_screener_ = new screener::ChainClosableScreener( five_prime_chain_break_res_, gap_size_ );
+	chain_break_to_distal_screener_    = new screener::ChainBreakScreener( pose, five_prime_chain_break_res_ ); //Hard copy
+	chain_break_to_distal_screener_->set_reinitialize_CCD_torsions( reinitialize_CCD_torsions_ );
+
+	chain_closable_to_anchor_screener_ = new screener::ChainClosableScreener( floating_base_five_prime_chain_break_, floating_base_three_prime_chain_break_, ( num_nucleotides_ - 1 ) );
+	chain_break_to_anchor_screener_    = new screener::ChainBreakScreener( pose, floating_base_five_prime_chain_break_ ); //Hard copy
+	chain_break_to_anchor_screener_->set_reinitialize_CCD_torsions( reinitialize_CCD_torsions_ );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Setup Residue of moving and reference of various rsd conformation (syn/anti chi, 2' and 3' endo) with
@@ -387,12 +386,18 @@ StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_screeners( pose:
 	runtime_assert ( moving_rsd_at_origin_list_.size() == sugar_screening_moving_rsd_at_origin_list_.size() );
 
 	num_pose_kept_to_use_ =  num_pose_kept_;
-	if ( is_dinucleotide_ && allow_base_pair_only_centroid_screen_ ) num_pose_kept_to_use_ = 4 * num_pose_kept_;
+	if ( is_dinucleotide_ && base_centroid_screener_->allow_base_pair_only_screen() ) num_pose_kept_to_use_ = 4 * num_pose_kept_;
 	pose_selection_ = new StepWiseRNA_PoseSelection( job_parameters_, scorefxn_ );
 	pose_selection_->set_num_pose_kept( num_pose_kept_to_use_ );
 	pose_selection_->set_cluster_rmsd( cluster_rmsd_ );
 	pose_selection_->set_PBP_clustering_at_chain_closure( PBP_clustering_at_chain_closure_ );
 	pose_selection_->set_distinguish_pucker( distinguish_pucker_ );
+
+	max_ntries_ = std::max( 100000, 1000 * int( num_random_samples_ ) );
+	if ( close_chain_to_distal_ ) max_ntries_ *= 10;
+	if ( close_chain_to_anchor_ ) max_ntries_ *= 10;
+	if ( native_rmsd_screen_ ) max_ntries_ *= 10;
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -411,30 +416,27 @@ StepWiseRNA_FloatingBaseSampler::reinstantiate_backbone_and_add_constraint_at_mo
 void
 StepWiseRNA_FloatingBaseSampler::initialize_euler_angle_grid_parameters(){
 
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// definition of euler angle grid search parameters
-		// Following are set by  #define in StepWiseRNA_FloatingBase_Samper_util.hh
-		// instead this should be its own class, and these should be private variables.
-		Real euler_angle_bin_size_ = euler_angle_bin_size;
-		Real euler_z_bin_size_     = euler_z_bin_size;
-		Real centroid_bin_size_    = centroid_bin_size;
-		if ( integration_test_mode_ ){ // use coarser search for speed
-			euler_angle_bin_size_ *= 4;
-			//euler_z_bin_size_     *= 4;
-			centroid_bin_size_    *= 4;
-		}
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// definition of euler angle grid search parameters
+	// Following are set by  #define in StepWiseRNA_FloatingBase_Samper_util.hh
+	euler_angle_bin_size_ = euler_angle_bin_size;
+	euler_z_bin_size_     = euler_z_bin_size;
+	centroid_bin_size_    = centroid_bin_size;
+	if ( integration_test_mode_ ){ // use coarser search for speed
+		euler_angle_bin_size_ *= 4;
+		//euler_z_bin_size_     *= 4;
+		centroid_bin_size_    *= 4;
+	}
 
-		euler_angle_bin_min_ =  - 180/euler_angle_bin_size_; //Should be -180/euler_angle_bin_size
-		euler_angle_bin_max_ = 180/euler_angle_bin_size_ - 1;  //Should be 180/euler_angle_bin_size-1
-		euler_z_bin_min_ = int(  - 1/euler_z_bin_size_ );
-		euler_z_bin_max_ = int( 1/euler_z_bin_size_ );
+	euler_angle_bin_min_ =  - 180/euler_angle_bin_size_    ; //Should be -180/euler_angle_bin_size
+	euler_angle_bin_max_ =    180/euler_angle_bin_size_ - 1;  //Should be 180/euler_angle_bin_size-1
+	euler_z_bin_min_ = int(  - 1/euler_z_bin_size_ );
+	euler_z_bin_max_ = int(    1/euler_z_bin_size_ );
 }
 
-
-/////////////////////////////////////////////////////////////////////////////////////////
-// Following defines a grid search centered around 'takeoff' position for floating base.
 void
 StepWiseRNA_FloatingBaseSampler::initialize_xyz_grid_parameters(){
+
 	Distance C5_centroid_dist = get_max_centroid_to_atom_distance( moving_rsd_at_origin_list_, " C5'" );
 	Distance O5_centroid_dist = get_max_centroid_to_atom_distance( moving_rsd_at_origin_list_, " O3'" );
 	Distance const Max_O3_to_C5_DIST = ( num_nucleotides_ == 1 ) ? O3I_C5I_PLUS_ONE_MAX_DIST : O3I_C5IPLUS2_MAX_DIST;
@@ -444,15 +446,53 @@ StepWiseRNA_FloatingBaseSampler::initialize_xyz_grid_parameters(){
 
 	centroid_bin_min_ = int(  - max_distance_/centroid_bin_size );
 	centroid_bin_max_ = int( max_distance_/centroid_bin_size ) - 1;
+
 	base_bin_map_.clear();
+}
+
+//////////////////////////////////////
+void
+StepWiseRNA_FloatingBaseSampler::initialize_rigid_body_sampler( pose::Pose const & pose ){
+
+	sampler_ = new rotamer_sampler::rigid_body::RigidBodyRotamer( moving_res_, pose.residue( moving_res_ ), reference_stub_ );
+
+	Real max_distance_rounded = int( max_distance_/centroid_bin_size_ ) * centroid_bin_size_;
+	sampler_->set_x_values( -max_distance_rounded + 0.5 * Real(centroid_bin_size_),
+													+max_distance_rounded - 0.5 * Real(centroid_bin_size_),
+													centroid_bin_size_);
+	sampler_->set_y_values( -max_distance_rounded + 0.5 * Real(centroid_bin_size_),
+													+max_distance_rounded - 0.5 * Real(centroid_bin_size_),
+													centroid_bin_size_);
+
+	// weird offset -- just matching Parin's original
+	sampler_->set_z_values( -max_distance_rounded,
+													+max_distance_rounded - Real(centroid_bin_size_),
+													centroid_bin_size_);
+
+	Real const max_angle_rounded = int( 180 / euler_angle_bin_size_ ) * euler_angle_bin_size_;
+	sampler_->set_euler_alpha_values( -max_angle_rounded + 0.5 * Real ( euler_angle_bin_size_ ),
+																		+max_angle_rounded - 0.5 * Real ( euler_angle_bin_size_ ),
+																		euler_angle_bin_size_ );
+
+	Real const max_euler_z_rounded = int( 1.0 / euler_z_bin_size_ ) * euler_z_bin_size_;
+	sampler_->set_euler_z_values( -max_euler_z_rounded,
+																+max_euler_z_rounded,
+																euler_z_bin_size_ );
+	sampler_->set_euler_gamma_values( -max_angle_rounded + 0.5 * Real ( euler_angle_bin_size_ ),
+																		+max_angle_rounded - 0.5 * Real ( euler_angle_bin_size_ ),
+																		euler_angle_bin_size_ );
+
+	sampler_->set_random( choose_random_ );
+
+	sampler_->init();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool
 StepWiseRNA_FloatingBaseSampler::break_early_for_integration_tests() {
-	if ( integration_test_mode_ && count_data_.both_count > 10000 ) return true;
+	if ( integration_test_mode_ && count_data_.both_count > 10000 )     return true;
 	if ( integration_test_mode_ && count_data_.full_score_count >= 10 ) native_rmsd_screen_ = true;
-	if ( integration_test_mode_ && count_data_.rmsd_count >= 10 ) return true;
+	if ( integration_test_mode_ && count_data_.rmsd_count >= 10 )       return true;
 	return false;
 }
 
@@ -468,25 +508,30 @@ StepWiseRNA_FloatingBaseSampler::screen_anchor_sugar_conformation( pose::Pose & 
 	std::string const reference_atom_name = ( is_prepend_ ) ? " C5'" : " O3'";
 
 	if ( !anchor_sugar_modeling_.sample_sugar ){
-		if ( !check_chain_closable( sugar_screening_pose_->residue( moving_res_ ).xyz( moving_atom_name ),
-																sugar_screening_pose_->residue( reference_res_ ).xyz( reference_atom_name ), ( num_nucleotides_ - 1 ) ) ) return false;
-		if ( VDW_atr_rep_screen_ && !atr_rep_screener_->check_screen( *sugar_screening_pose_, gap_size_, is_internal_, false /*kic_sampling_*/ ) ) return false;
+		if ( !chain_closable_to_anchor_screener_->check_screen( *sugar_screening_pose_ ) ) return false;
+		if ( VDW_atr_rep_screen_ && !atr_rep_screener_with_instantiated_sugar_->check_screen( *sugar_screening_pose_ ) ) return false; // wait a minute... why is this in here? oh, because base can move in different sampled sugar modeling conformations.
 		return true;
 	} else {
-		// The point of this section is to look for *any* conformation of sugar in attached residue that passes
+
+		// The point of this section is to look for *any* conformation of sugar in anchor residue that passes
 		// screens, going from the lowest energy option on up.
-		//Ok, since anchor_sugar_modeling_.PDL is sorted by SCORE, the lower energy conformations are tried first!
-		for ( Size anchor_sugar_ID = 1; anchor_sugar_ID <= anchor_sugar_modeling_.PDL.size(); anchor_sugar_ID++ ){
+		//Ok, since anchor_sugar_modeling_.pose_list is sorted by SCORE, the lower energy conformations are tried first!
 
-			if ( !check_chain_closable( sugar_screening_pose_->residue( moving_res_ ).xyz( moving_atom_name ),
-																	( *anchor_sugar_modeling_.PDL[anchor_sugar_ID] ).residue( reference_res_ ).xyz( reference_atom_name ), ( num_nucleotides_ - 1 ) ) )	 continue;
+		for ( Size n = 1; n <= anchor_sugar_modeling_.pose_list.size(); n++ ){
 
-			copy_bulge_res_and_sugar_torsion( anchor_sugar_modeling_, *sugar_screening_pose_, ( *anchor_sugar_modeling_.PDL[anchor_sugar_ID] ) );
-			if ( VDW_atr_rep_screen_ && !atr_rep_screener_->check_screen( *sugar_screening_pose_, gap_size_, is_internal_, false /*kic_sampling_*/ ) ) continue;
+			pose::Pose const & anchor_sugar_modeling_pose = *anchor_sugar_modeling_.pose_list[n];
 
-			copy_bulge_res_and_sugar_torsion( anchor_sugar_modeling_, pose, ( *anchor_sugar_modeling_.PDL[anchor_sugar_ID] ) );
-			if ( perform_o2prime_pack_ ) copy_bulge_res_and_sugar_torsion( anchor_sugar_modeling_, o2prime_packer_->pose(), ( *anchor_sugar_modeling_.PDL[anchor_sugar_ID] ) );
-			tag += tag_from_pose( *anchor_sugar_modeling_.PDL[ anchor_sugar_ID ] );
+			// is_prepend --> sugar_screening_pose [moving] = 5' pose [need O3'], anchor_sugar = 3' pose [need C5']
+			if ( !chain_closable_to_anchor_screener_->check_screen( *sugar_screening_pose_, anchor_sugar_modeling_pose, is_prepend_ ) ) continue;
+
+			copy_bulge_res_and_sugar_torsion( anchor_sugar_modeling_, *sugar_screening_pose_, anchor_sugar_modeling_pose );
+			// This is in here because the anchor sugar models can have slightly shifted bases (not just riboses!) due to a minimization step that
+			// can occur in VirtualRiboseSampler [see the option: do_minimize].
+			if ( VDW_atr_rep_screen_ && !atr_rep_screeners_for_anchor_sugar_models_[ n ]->check_screen( *sugar_screening_pose_ ) ) continue;
+
+			copy_bulge_res_and_sugar_torsion( anchor_sugar_modeling_, pose, anchor_sugar_modeling_pose );
+			if ( perform_o2prime_pack_ ) copy_bulge_res_and_sugar_torsion( anchor_sugar_modeling_, o2prime_packer_->pose(), anchor_sugar_modeling_pose );
+			tag += tag_from_pose( anchor_sugar_modeling_pose );
 			return true;
 		}
 		return false;
@@ -497,6 +542,48 @@ StepWiseRNA_FloatingBaseSampler::screen_anchor_sugar_conformation( pose::Pose & 
 }
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_FloatingBaseSampler::instantiate_moving_sugar_and_o2prime( pose::Pose & pose ){
+	if ( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_RIBOSE" ) )           pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", moving_res_ ); //May 31, 2010
+	if ( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_O2PRIME_HYDROGEN" ) ) pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", moving_res_ );
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_FloatingBaseSampler::virtualize_moving_sugar_and_o2prime( pose::Pose & pose ){
+	if ( !pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_RIBOSE" ) ) pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", moving_res_ ); //May 31, 2010
+	if ( !pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_O2PRIME_HYDROGEN" ) ) pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", moving_res_ );
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+StepWiseRNA_FloatingBaseSampler::check_moving_sugar( pose::Pose & pose ){
+	if ( !try_sugar_instantiation_ ) return false;
+	if ( !pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_RIBOSE" ) ) return false; // nothing to do.
+
+	bool instantiate_sugar( false );
+	Vector const & moving_O2prime_xyz = pose.residue( moving_res_ ).xyz( " O2'" );
+	for ( Size i = 1; i <= pose.total_residue(); i++ ){
+		if ( i == moving_res_ ) continue;
+		if ( pose.residue( i ).is_virtual_residue() ) continue;
+		for ( Size j = 1; j <= pose.residue( i ).nheavyatoms(); j++ ){
+			if ( pose.residue_type( i ).is_virtual( j ) ) continue;
+			if ( pose.residue_type( i ).heavyatom_is_an_acceptor( j ) ||
+					 pose.residue_type( i ).heavyatom_has_polar_hydrogens( j )  ){
+				Distance dist = ( pose.residue(i).xyz( j ) - moving_O2prime_xyz ).length();
+				//std::cout << "Distance to rsd " << i << "  atom " << pose.residue_type( i ).atom_name( j ) << ": " << dist << std::endl;
+				if ( dist < o2prime_instantiation_distance_cutoff_ ) {
+					instantiate_sugar = true; break;
+				}
+			}
+		} // atoms j
+		if ( instantiate_sugar ) break;
+	} // residues i
+
+	return instantiate_sugar;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 core::kinematics::Stub
@@ -579,6 +666,20 @@ StepWiseRNA_FloatingBaseSampler::update_base_bin_map( Base_bin const & base_bin 
 	std::map< Base_bin, int, compare_base_bin > ::const_iterator it = base_bin_map_.find( base_bin );
 	if ( it == base_bin_map_.end() )	base_bin_map_[base_bin] = 0;
 	base_bin_map_[base_bin] ++;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+// diagnostics
+void
+StepWiseRNA_FloatingBaseSampler::update_base_bin_map( utility::vector1< Real > const & rigid_body_values ){
+	Base_bin base_bin;
+	base_bin.centroid_x  = rigid_body_values[6];
+	base_bin.centroid_y  = rigid_body_values[5];
+	base_bin.centroid_z  = rigid_body_values[4];
+	base_bin.euler_alpha = rigid_body_values[3];
+	base_bin.euler_z     = rigid_body_values[2];
+	base_bin.euler_gamma = rigid_body_values[1];
+	update_base_bin_map( base_bin );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

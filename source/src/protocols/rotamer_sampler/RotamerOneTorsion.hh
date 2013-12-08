@@ -19,7 +19,7 @@
 #include <protocols/rotamer_sampler/RotamerOneTorsion.fwd.hh>
 
 // Package headers
-#include <protocols/rotamer_sampler/RotamerSized.hh>
+#include <protocols/rotamer_sampler/RotamerOneValue.hh>
 
 // Project headers
 #include <core/id/TorsionID.hh>
@@ -27,7 +27,7 @@
 namespace protocols {
 namespace rotamer_sampler {
 
-class RotamerOneTorsion : public RotamerSized {
+class RotamerOneTorsion : public RotamerOneValue {
 public:
 	using RotamerBase::TorsionList;
 
@@ -40,48 +40,15 @@ public:
 
 	virtual ~RotamerOneTorsion();
 
-	/// @brief Initialization
-	virtual void init() {
-		set_init( true );
-		reset();
-	}
-
-	/// @brief Reset to the first (or random if random()) rotamer
-	virtual void reset();
-
-	/// @brief Move to next rotamer
-	virtual void operator++();
-
-	/// @brief Check if reach the end of rotamer list
-	virtual bool not_end() const;
-
 	/// @brief Apply the current rotamer to pose
 	virtual void apply( core::pose::Pose & pose ) {	apply( pose, id_ ); }
 
 	/// @brief Apply the i-th rotamer to pose
 	virtual void apply( core::pose::Pose & pose, Size const i );
 
-	/// @brief Get the total number of rotamers in sampler
-	virtual core::Size size() const {
-		runtime_assert( is_init() );
-		return torsions_.size();
-	}
-
-	/// @brief Get the value of current torsion
-	virtual core::Real value() const {
-		runtime_assert( is_init() );
-		return torsions_[id_];
-	}
-
-	/// @brief Get the value of i-th torsion
-	virtual core::Real value( core::Size const i ) const {
-		runtime_assert( is_init() );
-		return torsions_[i];
-	}
-
 	/// @brief Set the allowed torsions in sampler
 	virtual void set_torsions( TorsionList const & setting	) {
-		set_and_reinit( torsions_, setting );
+		set_values( setting );
 	}
 
 	/// @brief Set the residue id being sampled
@@ -98,12 +65,11 @@ public:
 
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "RotamerOneTorsion"; }
-private:
-	core::Size id_;
 
-	TorsionList torsions_;
+private:
 
 	core::id::TorsionID torsion_id_;
+
 };
 
 }

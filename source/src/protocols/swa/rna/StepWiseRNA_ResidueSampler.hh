@@ -19,6 +19,7 @@
 #define INCLUDED_protocols_swa_rna_StepWiseRNA_ResidueSampler_HH
 
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_VirtualSugarSamplerWrapper.fwd.hh>
 #include <protocols/swa/rna/SugarModeling.hh>
 #include <protocols/swa/rna/screener/StepWiseRNA_BaseCentroidScreener.fwd.hh>
 #include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.fwd.hh>
@@ -39,6 +40,7 @@ namespace swa {
 namespace rna {
 
 class StepWiseRNA_ResidueSampler: public protocols::moves::Mover {
+
 public:
 
 	//constructor!
@@ -53,9 +55,6 @@ public:
 
 	void
 	set_centroid_screen( bool const setting ){ centroid_screen_ = setting; }
-
-	void
-	set_allow_base_pair_only_centroid_screen( bool const setting ){ allow_base_pair_only_centroid_screen_ = setting; }
 
 	void
 	set_VDW_atr_rep_screen( bool const setting ){ VDW_atr_rep_screen_ = setting; }
@@ -166,8 +165,13 @@ public:
 	set_use_phenix_geo( bool const & setting ) { use_phenix_geo_ = setting;	}
 
 	void
+	set_virtual_sugar_legacy_mode( bool const & setting ) { virtual_sugar_legacy_mode_ = setting;	}
+
+	void
 	set_kic_sampling( bool const & setting ) { kic_sampling_ = setting;	}
 
+	void
+	set_try_sugar_instantiation( bool const & setting ) { try_sugar_instantiation_ = setting;	}
 
 private:
 
@@ -186,56 +190,19 @@ private:
 	void
 	floating_base_sampling( core::pose::Pose & pose );
 
-
-	/////////////////////////////////////function related to sampling/setup virtual sugar /////////////////////////////////////////////////////////////////
-	bool
-	is_anchor_sugar_virtual( core::pose::Pose const & pose ) const;
-
-	bool
-	is_current_sugar_virtual( core::pose::Pose const & pose ) const;
-
-	bool
-	is_five_prime_chain_break_sugar_virtual( core::pose::Pose const & pose ) const;
-
-	bool
-	is_three_prime_chain_break_sugar_virtual( core::pose::Pose const & pose ) const;
-
-	utility::vector1< core::pose::PoseOP >
-	anchor_floating_base_chain_closure(
-		core::pose::Pose & viewer_pose,
-		SugarModeling const & sugar_modeling,
-		std::string const name
-	);
-
-	bool
-	sampling_sugar() const;
-
 	void
 	instantiate_any_virtual_sugars( core::pose::Pose & pose );
-
-	bool
-	prepare_from_prior_sampled_sugar_jobs( pose::Pose const & pose, utility::vector1< pose::PoseOP > & starting_pose_data_list );
 
 private:
 
 	StepWiseRNA_JobParametersCOP job_parameters_;
 
-	core::io::silent::SilentFileDataOP sfd_;
 	utility::vector1< pose::PoseOP > pose_data_list_;
 
 	core::scoring::ScoreFunctionOP scorefxn_;
-	core::scoring::ScoreFunctionOP atr_rep_screening_scorefxn_;
-	core::scoring::ScoreFunctionOP chainbreak_scorefxn_;
-	core::scoring::ScoreFunctionOP sampling_scorefxn_;
-	core::scoring::ScoreFunctionOP o2prime_pack_scorefxn_;
 
-	utility::vector1 < core::Size > working_rmsd_res_;
-
-	StepWiseRNA_CountStruct count_data_;
 	std::string silent_file_;
 	std::string output_filename_;
-	core::Real const bin_size_; /*ALWAYS 20!!!*/
-	core::Real const rep_cutoff_;
 	core::Size num_pose_kept_;
 	core::Real cluster_rmsd_;
 	bool verbose_;
@@ -247,11 +214,8 @@ private:
 	bool allow_bulge_at_chainbreak_;
 	bool integration_test_mode_;
 
-	screener::StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
-
 	bool parin_favorite_output_;
 	bool centroid_screen_;
-	bool allow_base_pair_only_centroid_screen_;
 	bool VDW_atr_rep_screen_;
 	bool allow_syn_pyrimidine_;
 	bool distinguish_pucker_;
@@ -273,11 +237,14 @@ private:
 	Size num_random_samples_;
 	bool force_centroid_interaction_;
 	bool use_phenix_geo_;
+	bool virtual_sugar_legacy_mode_;
 	bool kic_sampling_;
+	bool try_sugar_instantiation_;
 
-	SugarModeling anchor_sugar_modeling_, curr_sugar_modeling_, five_prime_CB_sugar_modeling_, three_prime_CB_sugar_modeling_;
-
+	screener::StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
 	screener::StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
+
+	StepWiseRNA_VirtualSugarSamplerWrapperOP virtual_sugar_sampler_wrapper_;
 
 };
 

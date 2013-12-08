@@ -35,21 +35,36 @@ namespace screener {
 
 	//Constructor
 	AtrRepScreener::AtrRepScreener( pose::Pose const & pose,
-																					StepWiseRNA_JobParametersCOP & job_parameters ):
-		job_parameters_( job_parameters ),
-		rep_cutoff_( 4.0 ),
-		base_atr_score_( 0.0 ),
-		base_rep_score_( 0.0 ),
-		delta_atr_score_( 0.0 ),
-		delta_rep_score_( 0.0 ),
-		sample_both_sugar_base_rotamer_( false ), //New option Nov 12, 2010 (mainly for square_RNA)
-		verbose_( false ),
-		output_pdb_( false )
+																	StepWiseRNA_JobParametersCOP & job_parameters ):
+		working_moving_suite_(  job_parameters->working_moving_suite() ),
+		working_moving_res_(  job_parameters->working_moving_res() ),
+		gap_size_(    job_parameters->gap_size() ),
+		is_prepend_(  job_parameters->is_prepend() ),
+		is_internal_(  job_parameters->is_internal() ),
+		separate_moving_residue_to_estimate_baseline_( true )
 	{
-		// Bare minimum to check for contact (fa_atr) but not clash (fa_rep)
-		atr_rep_screening_scorefxn_ =  new core::scoring::ScoreFunction;
-		atr_rep_screening_scorefxn_->set_weight( core::scoring::fa_atr , 0.23 );
-		atr_rep_screening_scorefxn_->set_weight( core::scoring::fa_rep , 0.12 );
+		initialize_parameters();
+		initialize_scorefxn();
+		get_base_atr_rep_score( pose );
+	}
+
+	//Constructor
+	AtrRepScreener::AtrRepScreener( pose::Pose const & pose,
+																	Size const moving_suite,
+																	Size const moving_res,
+																	Size const gap_size,
+																	bool const is_internal /* = false */,
+																	bool const separate_moving_residue_to_estimate_baseline /* = true */
+																	):
+		working_moving_suite_( moving_suite ),
+		working_moving_res_( moving_res ),
+		gap_size_( gap_size ),
+		is_prepend_(  working_moving_suite_ >= working_moving_res_ ),
+		is_internal_( is_internal ),
+		separate_moving_residue_to_estimate_baseline_( separate_moving_residue_to_estimate_baseline  )
+	{
+		initialize_parameters();
+		initialize_scorefxn();
 		get_base_atr_rep_score( pose );
 	}
 
@@ -57,6 +72,30 @@ namespace screener {
 	AtrRepScreener::~AtrRepScreener()
 	{}
 
+	///////////////////////////////////////////
+	void
+	AtrRepScreener::initialize_scorefxn(){
+		// Bare minimum to check for contact (fa_atr) but not clash (fa_rep)
+		atr_rep_screening_scorefxn_ =  new core::scoring::ScoreFunction;
+		atr_rep_screening_scorefxn_->set_weight( core::scoring::fa_atr , 0.23 );
+		atr_rep_screening_scorefxn_->set_weight( core::scoring::fa_rep , 0.12 );
+	}
+
+	///////////////////////////////////////////
+	void
+	AtrRepScreener::initialize_parameters(){
+		rep_cutoff_ = 4.0; // const, but can be updated below.
+		base_atr_score_ = 0.0;
+		base_rep_score_ = 0.0;
+		delta_atr_score_ = 0.0;
+		delta_rep_score_ = 0.0;
+		sample_both_sugar_base_rotamer_ = false;
+		verbose_ = false;
+		output_pdb_ = false;
+		kic_sampling_ = false;
+	}
+
+	///////////////////////////////////////////
 	void
 	AtrRepScreener::get_base_atr_rep_score( core::pose::Pose const & pose ){
 
@@ -65,10 +104,7 @@ namespace screener {
 		using namespace core::pose;
 		using namespace ObjexxFCL;
 
-		Size const working_moving_suite(  job_parameters_->working_moving_suite() );
-		Size const working_moving_res(  job_parameters_->working_moving_res() );
-		Size const nres = job_parameters_->working_sequence().size();
-		bool const is_prepend(  job_parameters_->is_prepend() );
+		Size const nres = pose.total_residue();
 
 		///////////////////////////////Old_way////////////////////////////////////////////
 
@@ -76,16 +112,14 @@ namespace screener {
 
 		if ( output_pdb_ ) base_pose_screen.dump_pdb( "base_atr_rep_before.pdb" );
 
-		//		if(working_moving_suite>=nres) utility_exit_with_message( "working_moving_suite " + string_of(working_moving_suite) + " >= nres " + string_of(nres) );
+		pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_PHOSPHATE", working_moving_res_ ); //May 7...
 
-		pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_PHOSPHATE", working_moving_res ); //May 7...
-
-		if ( ( working_moving_res + 1 ) <= nres ){
-			pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_PHOSPHATE", working_moving_res + 1 ); //May 7...
+		if ( ( working_moving_res_ + 1 ) <= nres ){
+			pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_PHOSPHATE", working_moving_res_ + 1 ); //May 7...
 		}
 
-		if ( sample_both_sugar_base_rotamer_ == true ){ //Nov 15, 2010
-			Size const extra_sample_sugar_base_res = ( is_prepend ) ? ( working_moving_res + 1 ) : ( working_moving_res - 1 );
+		if ( sample_both_sugar_base_rotamer_ ){ //Nov 15, 2010
+			Size const extra_sample_sugar_base_res = ( is_prepend_ ) ? ( working_moving_res_ + 1 ) : ( working_moving_res_ - 1 );
 			if ( verbose_ ) TR.Debug << "extra_sample_sugar_base_res = " << extra_sample_sugar_base_res << std::endl;
 			pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_RIBOSE", extra_sample_sugar_base_res );
 		}
@@ -93,10 +127,17 @@ namespace screener {
 		// I think this should work... push apart different parts of the structure so that whatever fa_atr, fa_rep is left is
 		// due to "intra-domain" interactions.
 		// Crap this doesn't work when building 2 or more nucleotides.
-		Size const jump_at_moving_suite = make_cut_at_moving_suite( base_pose_screen, working_moving_suite );
-		kinematics::Jump j = base_pose_screen.jump( jump_at_moving_suite );
-		j.set_translation( Vector( 1.0e4, 0.0, 0.0 ) );
-		base_pose_screen.set_jump( jump_at_moving_suite, j );
+		if ( separate_moving_residue_to_estimate_baseline_ ){
+			Size jump_at_moving_suite( 0 );
+			if ( !base_pose_screen.fold_tree().is_cutpoint( working_moving_suite_ ) ){
+				jump_at_moving_suite = make_cut_at_moving_suite( base_pose_screen, working_moving_suite_ );
+			} else {
+				jump_at_moving_suite = look_for_unique_jump_to_moving_res( base_pose_screen.fold_tree(), working_moving_res_ );
+			}
+			kinematics::Jump j = base_pose_screen.jump( jump_at_moving_suite );
+			j.set_translation( Vector( 1.0e4, 0.0, 0.0 ) );
+			base_pose_screen.set_jump( jump_at_moving_suite, j );
+		}
 
 		( *atr_rep_screening_scorefxn_ )( base_pose_screen );
 
@@ -111,17 +152,13 @@ namespace screener {
 
 	///////////////////////////////////////////////////////////////////////////////
 	bool
-	AtrRepScreener::check_screen( pose::Pose & current_pose_screen,
-																		Size const & gap_size,
-																		bool const & is_internal,
-																		bool const & kic_sampling ){
+	AtrRepScreener::check_screen( pose::Pose & current_pose_screen ){
 
 		using namespace core::scoring;
 		using namespace ObjexxFCL;
 
-		bool close_chain = ( gap_size == 0 );
-
-		if ( close_chain && is_internal ) return true; //Don't screen at all Mar 1, 2010
+		bool close_chain = ( gap_size_ == 0 );
+		if ( close_chain && is_internal_ ) return true; //Don't screen at all Mar 1, 2010
 
 		( *atr_rep_screening_scorefxn_ )( current_pose_screen );
 
@@ -145,15 +182,15 @@ namespace screener {
 			utility_exit_with_message( "delta_atr_score_ > (  +0.1 ), " + message );
 		}
 
-		Real actual_rep_cutoff = rep_cutoff_; //defualt
+		Real actual_rep_cutoff = rep_cutoff_; //default
 		if ( close_chain ) {
-			if ( kic_sampling ) {
-				actual_rep_cutoff = 200; // KIC needs a much higher cutoff
+			if ( kic_sampling_ ) {
+				actual_rep_cutoff = 200.0; // KIC needs a much higher cutoff -- atoms can get really close
 			} else {
-				actual_rep_cutoff = 10; //Parin's old parameter
+				actual_rep_cutoff = 10.0; //Parin's old parameter
 			}
 		}
-		if ( is_internal ) actual_rep_cutoff = 200; //Bigger moving_element..easier to crash (before May 4 used to be (close_chain && is_internal) actual_rep_cutoff=200
+		if ( is_internal_ ) actual_rep_cutoff = 200; //Bigger moving_element..easier to crash (before May 4 used to be (close_chain && is_internal) actual_rep_cutoff=200
 
 		bool pass_rep_screen = false;
 
@@ -168,7 +205,7 @@ namespace screener {
 
 		if ( close_chain ){
 			pass_atr_rep_screen = pass_rep_screen;
-		} else if ( is_internal ){
+		} else if ( is_internal_ ){
 			if ( delta_atr_score_ < (  - 1 ) && ( delta_rep_score_ + delta_atr_score_ ) < ( actual_rep_cutoff - rep_cutoff_ ) ) pass_atr_rep_screen = true;
 		} else{
 			if ( delta_atr_score_ < (  - 1 ) && ( delta_rep_score_ + delta_atr_score_ ) < 0 ) pass_atr_rep_screen = true;
@@ -180,7 +217,6 @@ namespace screener {
 			count_data_.both_count++;
 			if ( verbose_ ) {
 				TR.Debug << " rep = " << delta_rep_score_ << " atr = " << delta_atr_score_;
-				//				if ( combine_long_loop_mode_ && ( job_parameters_->gap_size() != 0 ) ) TR.Debug << " res_contact = " << count_data_.residues_contact_screen;
 				TR.Debug << "  stack_n = " << count_data_.base_stack_count << " pair_n = " << count_data_.base_pairing_count;
 				TR.Debug << "  strict_pair_n = " << count_data_.strict_base_pairing_count;
 				TR.Debug << "  centroid_n = " << count_data_.pass_base_centroid_screen;

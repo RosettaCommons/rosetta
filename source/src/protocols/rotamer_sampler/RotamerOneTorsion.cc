@@ -29,8 +29,7 @@ namespace protocols {
 namespace rotamer_sampler {
 ///////////////////////////////////////////////////////////////////////////
 RotamerOneTorsion::RotamerOneTorsion():
-	RotamerSized(),
-	id_( 0 ),
+	RotamerOneValue(),
 	torsion_id_()
 {}
 
@@ -38,37 +37,12 @@ RotamerOneTorsion::RotamerOneTorsion(
 		core::id::TorsionID const & tor_id,
 		TorsionList const & allowed_torsions
 ):
-	RotamerSized(),
-	id_( 0 ),
-	torsions_( allowed_torsions ),
+	RotamerOneValue( allowed_torsions ),
 	torsion_id_( tor_id )
 {}
 
 RotamerOneTorsion::~RotamerOneTorsion(){}
-///////////////////////////////////////////////////////////////////////////
-void RotamerOneTorsion::reset() {
-	runtime_assert( is_init() );
-	if ( random() ) {
-		++( *this );
-	} else {
-		id_ = 1;
-	}
-}
-///////////////////////////////////////////////////////////////////////////
-void RotamerOneTorsion::operator++() {
-	runtime_assert( not_end() );
-	if ( random() ) {
-		id_ = RG.random_range( 1, size() );
-	} else {
-		++id_;
-	}
-}
-///////////////////////////////////////////////////////////////////////////
-bool RotamerOneTorsion::not_end() const {
-	runtime_assert( is_init() );
-	return ( id_ <= size() );
-}
-///////////////////////////////////////////////////////////////////////////
+
 void RotamerOneTorsion::apply( core::pose::Pose & pose, Size const i ) {
 	pose.set_torsion( torsion_id_, value( i ) );
 }

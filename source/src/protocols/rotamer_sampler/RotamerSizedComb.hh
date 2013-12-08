@@ -68,18 +68,33 @@ public:
 		set_init( false );
 	}
 
+	/// @brief Move sampler to end.
+	void fast_forward( Size const sampler_number );
+
+
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "RotamerSizedComb"; }
-private:
+
+protected:
+
 	/// @brief Convert input id number to the individual id_list for each
 	/// stored rotamer sampler
 	utility::vector1<core::Size> id2list( core::Size const id ) const;
 
-	core::Size size_, id_;
+	/// @brief Convert id_list for each stored rotamer sampler
+	/// stored to the global id number
+	core::Size list2id( utility::vector1<core::Size> const & id_list ) const;
 
-	utility::vector1<core::Size> id_list_, size_list_;
+private:
 
+	core::Size size_;
+	utility::vector1<core::Size> size_list_;
+
+protected: // can be read out by derived classes.
+	core::Size id_;
+	utility::vector1<core::Size> id_list_;
 	utility::vector1<RotamerSizedOP> rotamer_list_;
+
 };
 }
 }

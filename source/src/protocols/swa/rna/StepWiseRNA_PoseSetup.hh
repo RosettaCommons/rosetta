@@ -82,9 +82,6 @@ public:
 	setup_native_pose( pose::Pose & pose );
 
 	void
-	set_rebuild_bulge_mode( bool const setting ){ rebuild_bulge_mode_ = setting; }
-
-	void
 	set_output_pdb( bool const setting ){ output_pdb_ = setting; }
 
 	void
@@ -96,19 +93,28 @@ public:
 	void
 	set_use_phenix_geo( bool const setting ){ use_phenix_geo_ = setting; }
 
+	void
+	update_fold_tree_at_virtual_sugars( pose::Pose & pose );
+
 private:
 
 	void
 	Import_pose( Size const & i, pose::Pose & import_pose ) const; //Only called if COPY_DOF is true
 
 	void
-	make_pose( pose::Pose & pose ); //Only called if COPY_DOF is true
+	make_extended_pose( pose::Pose & pose ); //Only called if COPY_DOF is true
+
+	void
+	create_starting_pose( pose::Pose & pose );
+
+	void
+	create_pose_from_input_poses( pose::Pose & pose );
 
 	void
 	read_input_pose_and_copy_dofs( pose::Pose & pose ); //Only called if COPY_DOF is true
 
 	void
-	apply_cutpoint_variants( pose::Pose & pose, pose::Pose & pose_without_cutpoints );
+	apply_cutpoint_variants( pose::Pose & pose );
 
 	void
 	apply_bulge_variants( pose::Pose & pose ) const;
@@ -132,13 +138,19 @@ private:
 	apply_virtual_res_variant( pose::Pose & pose ) const;
 
 	void
-	correctly_copy_HO2prime_positions( pose::Pose & full_pose, utility::vector1< pose::Pose > const & primet_pose_list );
+	do_checks_and_apply_protonated_H1_adenosine_variant( pose::Pose & pose,
+																											 pose::Pose const & start_pose_with_variant,
+																											 Size const & n /*res num*/,
+																											 Size const & i /*input pose num*/,
+																											 utility::vector1< Size > const & input_res,
+																											 std::map< Size, Size > & full_to_sub );
+
+	void
+	correctly_copy_HO2prime_positions( pose::Pose & full_pose, utility::vector1< pose::Pose > const & start_pose_list );
 
 	Real
-	get_nearest_dist_to_O2prime( Size const O2prime_seq_num, pose::Pose const & input_pose, utility::vector1< Size > const input_res_list, utility::vector1< Size > const & common_res_list );
-
-	//void
-	//ensure_idealize_bond_length_bond_angle_at_cutpoint( pose::Pose & working_pose);
+	get_nearest_dist_to_O2prime( Size const O2prime_seq_num, pose::Pose const & input_pose,
+															 utility::vector1< Size > const & input_res_list, utility::vector1< Size > const & common_res_list );
 
 	void
 	add_protonated_H1_adenosine_variants( pose::Pose & pose ) const;
@@ -167,7 +179,6 @@ private:
 	utility::vector1< Size > virtual_res_list_;
 	utility::vector1< Size > native_virtual_res_list_;
 
-	bool rebuild_bulge_mode_;
 	bool output_pdb_;
 	bool apply_virtual_res_variant_at_dinucleotide_;
 	bool align_to_native_;

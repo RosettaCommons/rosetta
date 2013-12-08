@@ -7,22 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file RNA_O2StarMover.hh
+/// @file RNA_O2PrimeMover.hh
 /// @brief
 /// @detailed
 ///
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_monte_carlo_RNA_O2StarMover_hh
-#define INCLUDED_protocols_swa_monte_carlo_RNA_O2StarMover_hh
+#ifndef INCLUDED_protocols_swa_monte_carlo_RNA_O2PrimeMover_hh
+#define INCLUDED_protocols_swa_monte_carlo_RNA_O2PrimeMover_hh
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/swa/monte_carlo/SWA_Move.hh>
-#include <protocols/swa/monte_carlo/RNA_O2StarMover.fwd.hh>
+#include <protocols/swa/monte_carlo/RNA_O2PrimeMover.fwd.hh>
 
 
 namespace protocols {
@@ -31,16 +31,16 @@ namespace monte_carlo {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
-class RNA_O2StarMover: public protocols::moves::Mover {
+class RNA_O2PrimeMover: public protocols::moves::Mover {
 public:
 
-	RNA_O2StarMover( core::scoring::ScoreFunctionOP scorefxn,
+	RNA_O2PrimeMover( core::scoring::ScoreFunctionOP scorefxn,
 									 bool const sample_all_o2prime,
 									 core::Real const sample_range_small,
 									 core::Real const sample_range_large );
 
 	//destructor -- necessary? -- YES destructors are necessary.
-	~RNA_O2StarMover();
+	~RNA_O2PrimeMover();
 
 	// Undefinded, commenting out to fix PyRosetta build  void apply( core::pose::Pose & pose, Size const res_to_delete, protocols::swa::monte_carlo::MovingResidueCase const moving_residue_case  );
 

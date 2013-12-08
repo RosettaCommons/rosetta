@@ -152,20 +152,20 @@ rotamer_trials(
 		Size bestrot = utility::arg_min( one_body_energies );
 
 		//don't replace if the best rotamer is the one that's already assigned
-		TR.Trace << "rottrial at position " << resid << " nrot= " << rotset->num_rotamers() << std::endl;
+		//		TR.Trace << "rottrial at position " << resid << " nrot= " << rotset->num_rotamers() << std::endl;
 		if ( bestrot != rotset->id_for_current_rotamer() )
 		{
 			replaced_residue = true;
 			conformation::ResidueOP newresidue(  rotset->rotamer( bestrot )->clone() );//create_residue() );
 			pose.replace_residue ( resid, *newresidue, false );
 			scfxn.update_residue_for_packing( pose, resid );
- 			TR.Trace << "rottrial accept: " << resid << " bestrot: " << bestrot << ' ' <<	one_body_energies[ bestrot ];
+ 			//TR.Trace << "rottrial accept: " << resid << " bestrot: " << bestrot << ' ' <<	one_body_energies[ bestrot ];
 			if( rotset->id_for_current_rotamer() != 0 ){ //more output in this case
 				//sml this output is protected because id_for_current_rotamer is incompatible with forced mutations (eg PIKAA)
-				TR.Trace << ' ' << one_body_energies[ rotset->id_for_current_rotamer() ] << ' ' <<
-					one_body_energies[ bestrot ] - one_body_energies[ rotset->id_for_current_rotamer() ];
+				//TR.Trace << ' ' << one_body_energies[ rotset->id_for_current_rotamer() ] << ' ' <<
+				//	one_body_energies[ bestrot ] - one_body_energies[ rotset->id_for_current_rotamer() ];
 			}
-			TR.Trace << std::endl;
+			//			TR.Trace << std::endl;
 		}
 
 		rottrial_task->temporarily_set_pack_residue( resid, false );
@@ -266,7 +266,7 @@ symmetric_rotamer_trials(
 		Size bestrot = utility::arg_min( one_body_energies );
 
 		//don't replace if the best rotamer is the one that's already assigned
-		TR.Trace << "rottrial at position " << resid << " nrot= " << rotset->num_rotamers() << std::endl;
+		//		TR.Trace << "rottrial at position " << resid << " nrot= " << rotset->num_rotamers() << std::endl;
 		if ( bestrot != rotset->id_for_current_rotamer() )
 		{
 			replaced_residue = true;
@@ -287,14 +287,14 @@ symmetric_rotamer_trials(
 			//  		pose.replace_residue ( *clone, *sym_rsd, false );
 						scfxn.update_residue_for_packing( pose, *clone );
 			}
-			TR.Trace << "rottrial accept: " << resid << " bestrot: " << bestrot << ' ' <<	one_body_energies[ bestrot ];
+			//			TR.Trace << "rottrial accept: " << resid << " bestrot: " << bestrot << ' ' <<	one_body_energies[ bestrot ];
 			if( rotset->id_for_current_rotamer() != 0 ){ //more output in this case
 				//sml this output is protected because id_for_current_rotamer is incompatible with forced mutations (eg PIKAA)
-				 TR.Trace << ' ' << one_body_energies[ rotset->id_for_current_rotamer() ] << ' ' <<
-					one_body_energies[ bestrot ] - one_body_energies[ rotset->id_for_current_rotamer() ];
+				// TR.Trace << ' ' << one_body_energies[ rotset->id_for_current_rotamer() ] << ' ' <<
+				//					one_body_energies[ bestrot ] - one_body_energies[ rotset->id_for_current_rotamer() ];
 
 			}
-			TR.Trace << std::endl;
+			//TR.Trace << std::endl;
 		}
 
 		rottrial_task->temporarily_set_pack_residue( resid, false );

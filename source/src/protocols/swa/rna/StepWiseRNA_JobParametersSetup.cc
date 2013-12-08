@@ -402,19 +402,12 @@ namespace rna {
 
 	}
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//	StepWiseRNA_JobParametersSetup::figure_out_is_build_pose_from_scratch(){
-//		bool const build_pose_from_scratch( job_parameters_->is_build_pose_from_scratch() );
-//	}
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// prepend map is used solely for RMSD calculations, I think -- rhiju.
 	bool
 	StepWiseRNA_JobParametersSetup::figure_out_is_residue_prepend( Size const seq_num ) const {
 
-//		output_title_text("Enter StepWiseRNA_JobParametersSetup::figure_out_is_residue_prepend", TR.Debug );
+		output_title_text("Enter StepWiseRNA_JobParametersSetup::figure_out_is_residue_prepend", TR.Debug );
 
 		using namespace ObjexxFCL;
 
@@ -424,7 +417,7 @@ namespace rna {
 		std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() );
 		utility::vector1< core::Size > working_fixed_res( job_parameters_->working_fixed_res() );
 
-		if ( is_working_res[seq_num] == false ){
+		if ( !is_working_res[seq_num] ){
 			output_bool_list( "is_working_res = ", is_working_res, TR.Debug, 30 );
 			utility_exit_with_message( "In is_residue_prependable function. Input seq_num: " + string_of( seq_num ) + " is not a element of moving_res_list_" );
 		}
@@ -435,20 +428,15 @@ namespace rna {
 		//Check if can prepend
 		while ( true ){
 			if ( cur_seq_num < 1 ) break;
-
 			if ( seq_num == total_residues ) break; //Cannot prepend last residue
-
 			if ( is_working_res[cur_seq_num] == false ) break;
-
 			if ( cur_seq_num != seq_num && is_cutpoint_( cur_seq_num - 1 ) ) break;
-
 			if ( allow_chain_boundary_jump_partner_right_at_fixed_BP_ ){ //Hacky Nov 12, 2010
 				for ( Size i = 1; i <= jump_point_pair_list_.size(); i++ ){
 					if ( cur_seq_num == jump_point_pair_list_[i].first ) return true; //is_prepend
 					if ( cur_seq_num == jump_point_pair_list_[i].second ) return true; //is_prepend
 				}
 			}
-
 			if ( fixed_res_.has_value( cur_seq_num ) ) return true; //is_prepend
 
 			//For build loop outward case, in this case make every residue append except for the 1st residue in the chain..
@@ -496,13 +484,11 @@ namespace rna {
 				if ( full_to_sub[cur_seq_num] != 1 ) return false; //append
 
 			}
-
-
 			cur_seq_num--;
 		}
 
 		//Error, if reach this point of the function
-		TR.Debug << "Error: Figure_out_is_residue_prepend, residue seq_num: " << seq_num << std::endl;
+		TR.Debug << "Error: figure_out_is_residue_prepend, residue seq_num: " << seq_num << std::endl;
 		TR.Debug << "Cannot attach residue by either prepending and appending!" << std::endl;
 		exit ( 1 );
 
@@ -550,7 +536,6 @@ namespace rna {
 
 			TR.Debug << "WARNING using simple_append_map!" << std::endl;
 			//Only initial is_residue_prepend for rebuild residues;
-
 			for ( Size n = 1; n <= rmsd_res_list.size(); n++ ){
 				Size const seq_num = rmsd_res_list[n];
 				is_prepend_map[seq_num] = false;
@@ -843,7 +828,6 @@ namespace rna {
 		output_title_text( "StepWiseRNA_JobParametersSetup::figure_out_jump_partners", TR.Debug );
 		output_boolean( "allow_chain_boundary_jump_partner_right_at_fixed_BP_ = ", allow_chain_boundary_jump_partner_right_at_fixed_BP_, TR.Debug ); TR.Debug << std::endl;
 
-
 		jump_partners_.clear();
 
 		utility::vector1< std::pair < core::Size, core::Size > > const & chain_boundaries(	 job_parameters_->chain_boundaries() );
@@ -963,13 +947,10 @@ namespace rna {
 		output_title_text( "Enter StepWiseRNA_JobParametersSetup::setup_fold_tree", TR.Debug );
 
 		std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() );
-
-		if ( cuts_.size() != jump_partners_.size() ) utility_exit_with_message( "cuts_.size() != jump_partners_.size()" );
+		runtime_assert( cuts_.size() == jump_partners_.size() );
 
 		std::string const working_sequence = job_parameters_->working_sequence();
-
 		Size const nres( working_sequence.size() );
-
 		Size const num_cuts( cuts_.size() );
 
 		ObjexxFCL::FArray2D < int > jump_point( 2, num_cuts, 0 );
@@ -986,9 +967,7 @@ namespace rna {
 		Size const root_res = ( full_to_sub[ moving_res_ ] == 1 ) ? nres : 1;
 
 		core::kinematics::FoldTree fold_tree( nres );
-
 		fold_tree.tree_from_jumps_and_cuts( nres, num_cuts, jump_point, cuts, root_res ); //order of element in jump_point and cuts does not have to match. Jan 29, 2010 Parin S.
-
 		Size num_cutpoint = fold_tree.num_cutpoint();
 
 		for ( Size i = 1; i <= num_cutpoint; i++ ) {
@@ -998,10 +977,7 @@ namespace rna {
 			char upstream_res = working_sequence[k - 1];
 			char downstream_res = working_sequence[m - 1];
 
-
 			//Base atoms...
-			//chi_atoms(1)[4] )=  C2 if URA or RCY
-			//chi_atoms(1)[4] )=  C4 if RGU or RAD
 			std::string upstream_jump_atom;
 			std::string downstream_jump_atom;
 
@@ -1023,21 +999,12 @@ namespace rna {
 
 			TR.Debug << "upstream_res = " << k << upstream_res << " upstream_jump_atom = " << upstream_jump_atom;
 			TR.Debug << " downstream_res = " << k << downstream_res << " downstream_jump_atom = " << downstream_jump_atom << std::endl;
-
 			fold_tree.set_jump_atoms( i, downstream_jump_atom, upstream_jump_atom );
-
-//			Residue const & rsd1( pose.residue( k ) );
-//			Residue const & rsd2( pose.residue( m ) );
-//			TR.Debug << "rsd1.name()= " << rsd1.name() << " rsd1.atom_name( rsd1.chi_atoms(1)[4] )= " << rsd1.atom_name( rsd1.chi_atoms(1)[4] );
-//			TR.Debug << "  rsd2.name()= " << rsd2.name() << " rsd2.atom_name( rsd1.chi_atoms(1)[4] )= " << rsd2.atom_name( rsd2.chi_atoms(1)[4] ) << std::endl;
-
 		}
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 
 		output_fold_tree_info( fold_tree, "StepWiseRNA_JobParametersSetup::setup_fold_tree()", TR.Debug );
-
 		job_parameters_->set_fold_tree( fold_tree );
-
 		output_title_text( "", TR.Debug );
 
 	}
@@ -1052,12 +1019,10 @@ namespace rna {
 
 		if ( input_res_vectors.size() != 2 ) utility_exit_with_message( "is_internal case but input_res_vectors.size() != 2" );
 		std::map< core::Size, core::Size > & sub_to_full( job_parameters_->sub_to_full() );
-
 		if ( input_res_vectors[1].has_value( sub_to_full[working_seq_num] ) ) return 1;
-
 		if ( input_res_vectors[2].has_value( sub_to_full[working_seq_num] ) ) return 2;
 
-		TR.Debug << "working_seq_num = " << working_seq_num << " full_seq_num = " << sub_to_full[working_seq_num] << std::endl;
+		TR << "working_seq_num = " << working_seq_num << " full_seq_num = " << sub_to_full[working_seq_num] << std::endl;
 		utility_exit_with_message( "seq_num is not part of either input_res_vectors[1] or input_res_vectors[2]" );
 		return 0; //Just to prevent compiler warning...
 
@@ -1139,12 +1104,10 @@ namespace rna {
 			//       behavior:
 			//
 			//           i. Append [4, 3] : Treat res 4 as sampling base and 3 as bulge.
-			//           ii. Prepend [4, 3] : Treat res 3 as sampling base and 4 as bulge.
+			//           ii. Prepend [3, 4] : Treat res 3 as sampling base and 4 as bulge.
 			//
 			//       Although, this move is also currently not used in default SWA runs.
 			//
-
-
 			bool const can_append  = check_can_append( working_moving_res_list ); //[14, 13, 12]
 			bool const can_prepend = check_can_prepend( working_moving_res_list ); //[12, 13, 14]
 
@@ -1159,8 +1122,6 @@ namespace rna {
 			Size possible_working_res_1 = 0;
 			Size possible_working_res_2 = 0;
 			Size found_possible_working_res = 0;
-
-			//			TR << "HEY! " <<  input_struct_definition( working_moving_res ) << " " <<  input_struct_definition( working_moving_res + 1 ) << std::endl;
 
 			//Check if this is a suite right between two previously built moving_elements.
 			if ( working_moving_res_list.size() == 1 ){
@@ -1277,10 +1238,9 @@ namespace rna {
 			}
 		}
 
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//If moving_res=1 or nres, try putting root at fix res (second best choice)
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
+		//If moving_res = 1 or nres, try putting root at fix res (second best choice)
 		utility::vector1< core::Size > working_fixed_res( job_parameters_->working_fixed_res() );
-
 		for ( Size i = 1; i <= working_fixed_res.size(); i++ ){
 			Size const seq_num = working_fixed_res[i];
 			if ( partition_definition( seq_num ) && fold_tree.possible_root( seq_num ) ){
@@ -1315,14 +1275,11 @@ namespace rna {
 				break;
 			}
 		}
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		if ( ( num_partition_0 > 0 ) == false ) utility_exit_with_message( "num_partition_0 > 0" );
-		if ( ( num_partition_1 > 0 ) == false ) utility_exit_with_message( "num_partition_1 > 0" );
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
+		runtime_assert( num_partition_0 > 0 );
+		runtime_assert( num_partition_1 > 0 );
 
 		Size const moving_res( job_parameters_->working_moving_res() );
-
-
 		if ( num_partition_1 == num_partition_0 ){
 			if ( partition_definition( moving_res ) == 0 ){ //put root_res in partition 1 away from the moving_res.
 				if ( partition_definition( 1 ) && partition_definition( nres ) ) {
@@ -1356,14 +1313,11 @@ namespace rna {
 		TR.Debug << "Moving_res full seq_num   = "   << sub_to_full[moving_res] << ", partition "   << partition_definition( moving_res ) << std::endl;
 		TR.Debug << "fake_working_moving_suite = "   << sub_to_full[fake_working_moving_suite ] << ", partition "   << partition_definition( fake_working_moving_suite ) << std::endl;
 		TR.Debug << "New root res full seq_num = " << sub_to_full[root_res]   << ", partition " << partition_definition( root_res ) << std::endl;
+		runtime_assert ( root_res > 0 );
 
-
-		if ( ( root_res > 0 ) == false ) utility_exit_with_message( "( root_res > 0 ) == false" );
-
-
+		TR.Debug << "Before reroot: " << fold_tree << std::endl;
 		core::kinematics::FoldTree rerooted_fold_tree = fold_tree;
 		bool reorder_went_OK = rerooted_fold_tree.reorder( root_res );
-
 		if ( !reorder_went_OK ) utility_exit_with_message( "!reorder_went_OK" );
 
 		if ( force_fold_tree_ ) rerooted_fold_tree = job_parameters_->fold_tree();;
@@ -1712,27 +1666,18 @@ namespace rna {
 		if ( fixed_res_.size() == 0 ) utility_exit_with_message( "need to called set_fixed_res before calling set_jump_point_pair_list" );
 
 		bool assert_in_fixed_res = true;
-
 		for ( Size n = 1; n <= jump_point_pairs_string.size(); n++ ){
 
-
 			if ( ( n == 1 ) && ( jump_point_pairs_string[n] == "NOT_ASSERT_IN_FIXED_RES" ) ){ //Feb 09, 2012: FIXED BUG. Used to be "and" instead of "&&"
-
 				assert_in_fixed_res = false;
 				continue;
 			}
 
 			utility::vector1< std::string > JP_pair_string = tokenize( jump_point_pairs_string[n], "-" );
-			if ( JP_pair_string.size() != 2 ) utility_exit_with_message( "Each jump_point_pair need to have two elements! ( e.g. 1 - 10 )" );
-
+			runtime_assert( JP_pair_string.size() == 2 /* Each jump_point_pair needs to have two elements! ( e.g. 1 - 10 ) */);
 			std::pair < core::Size, core::Size > jump_point_pair = std::make_pair( string_to_int( JP_pair_string[1] ), string_to_int( JP_pair_string[2] ) );
-
-			if ( jump_point_pair.first > jump_point_pair.second ){
-				jump_point_pair = std::make_pair( string_to_int( JP_pair_string[2] ), string_to_int( JP_pair_string[1] ) );
-			} else if ( jump_point_pair.first == jump_point_pair.second ){
-				output_pair_size( jump_point_pair, TR.Debug );
-				utility_exit_with_message( "jump_point_pair.first == jump_point_pair.second!" );
-			}
+			runtime_assert ( jump_point_pair.first != jump_point_pair.second );
+			if ( jump_point_pair.first > jump_point_pair.second )	jump_point_pair = std::make_pair( string_to_int( JP_pair_string[2] ), string_to_int( JP_pair_string[1] ) );
 
 			jump_point_pair_list_.push_back( jump_point_pair );
 		}
@@ -1745,17 +1690,10 @@ namespace rna {
 		output_boolean( "assert_in_fixed_res = ", assert_in_fixed_res, TR.Debug );
 
 		//Ensure that every seq_num in jump_point_pair_list_ is a fixed_res
-		if ( assert_in_fixed_res == true ){
+		if ( assert_in_fixed_res ){
 			for ( Size n = 1; n <= jump_point_pair_list_.size(); n++ ){
-
-				if ( fixed_res_.has_value( jump_point_pair_list_[n].first ) == false ){
-					utility_exit_with_message( "seq_num ( " + ObjexxFCL::string_of( jump_point_pair_list_[n].first )   + " ) is in jump_point_pair_list_ but is not a fixed res!" );
-				}
-
-				if ( fixed_res_.has_value( jump_point_pair_list_[n].second ) == false ){
-					utility_exit_with_message( "seq_num ( " + ObjexxFCL::string_of( jump_point_pair_list_[n].second ) + " ) is in jump_point_pair_list_ but is not a fixed res!" );
-				}
-
+				runtime_assert ( fixed_res_.has_value( jump_point_pair_list_[n].first ) );
+				runtime_assert ( fixed_res_.has_value( jump_point_pair_list_[n].second ) );
 			}
 		}
 	}
@@ -1846,6 +1784,13 @@ namespace rna {
 	StepWiseRNA_JobParametersSetup::set_floating_base( bool const setting ){
 
 		job_parameters_->set_floating_base( setting );
+
+	}
+  //////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseRNA_JobParametersSetup::set_rebuild_bulge_mode( bool const setting ){
+
+		job_parameters_->set_rebuild_bulge_mode( setting );
 
 	}
   //////////////////////////////////////////////////////////////////////////

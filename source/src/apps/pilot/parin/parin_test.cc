@@ -1134,7 +1134,7 @@ hermann_phase_two_minimize(){
 					minimizer.run( full_pose, mm, *(scorefxn_list[round_ID]), options );		
 				//}
 
-				o2prime_minimize(full_pose, scorefxn_list[round_ID], get_surrounding_O2prime_hydrogen(full_pose, minimize_res_list, verbose) );
+				o2prime_trials(full_pose, scorefxn_list[round_ID], get_surrounding_O2prime_hydrogen(full_pose, minimize_res_list, verbose) );
 
 				for(Size cc_ID=1; cc_ID<=cutpoint_closed_list.size(); cc_ID++){
 
@@ -1144,7 +1144,7 @@ hermann_phase_two_minimize(){
 					std::cout << "mean_dist_err for cutpoint_closed ("<< cutpoint_closed <<", round_ID= " << round_ID << " ) = " <<  mean_dist_err << std::endl;
 				}
 
-				o2prime_minimize(full_pose, scorefxn_list[round_ID], get_surrounding_O2prime_hydrogen(full_pose, minimize_res_list, verbose) ); 
+				o2prime_trials(full_pose, scorefxn_list[round_ID], get_surrounding_O2prime_hydrogen(full_pose, minimize_res_list, verbose) ); 
 				minimizer.run( full_pose, mm, *(scorefxn_list[round_ID]), options );
 
 			}			
@@ -1794,7 +1794,7 @@ extract_clash_list(){
 
 			std::string const & atom_name_1=rsd_1.type().atom_name(atomno_1);
 			if(atom_name_1=="HO2'") continue;
-			if(rsd_1.atom_type(atomno_1).name()=="VIRT") continue; 
+			if(rsd_1.is_virtual(atomno_1) ) continue; 
 
 
 			bool const is_3_prime_phosphate_1=is_three_prime_phosphate_atom(atom_name_1); //This is just the O3' atom
@@ -1810,7 +1810,7 @@ extract_clash_list(){
 
 				std::string const & atom_name_2=rsd_2.type().atom_name(atomno_2);
 				if(atom_name_2=="HO2'") continue;
-				//if(rsd_2.atom_type(atomno_2).name()=="VIRT") continue; 
+				//if(rsd_2.is_virtual(atomno_2) ) continue; 
 
 				bool const is_3_prime_phosphate_2=is_three_prime_phosphate_atom(atom_name_2);
 				bool const is_5_prime_phosphate_2=is_five_prime_phosphate_atom(atom_name_2);
@@ -2479,7 +2479,7 @@ get_residue_xyz_list(pose::Pose const & pose, Size const sample_res, bool const 
 		//Basically want the Base atoms at the top of the list since these atoms will are furthest from anchor and hence largest variation.
 		for ( Size atomno=base_rsd.first_sidechain_atom()+1; atomno<= base_rsd.nheavyatoms(); atomno++ ) { //rsd.first_sidechain_atom()+1 to not include the O2prime oxygen.
 
-			if(base_rsd.atom_type(atomno).name()=="VIRT"){
+			if(base_rsd.is_virtual(atomno) ){
 				std::cout << "base_rsd.atom_type(atomno).name()==\"VIRT\"!, atomno= " << atomno << std::endl;
 				 utility_exit_with_message("base_rsd.atom_type(atomno).name()==\"VIRT\"!");
 			}
@@ -2494,7 +2494,7 @@ get_residue_xyz_list(pose::Pose const & pose, Size const sample_res, bool const 
 
 			if(is_prepend && (atomno<=4) ){
 
-				if(phosphate_rsd.atom_type(atomno).name()=="VIRT"){
+				if(phosphate_rsd.is_virtual(atomno) ){
 					std::cout << "phosphate_rsd.atom_type(atomno).name()==\"VIRT\"!, atomno= " << atomno << std::endl;
 					std::cout << "atomno= " << atomno << std::endl;
 					utility_exit_with_message("phosphate_rsd.atom_type(atomno).name()==\"VIRT\"");
@@ -2505,7 +2505,7 @@ get_residue_xyz_list(pose::Pose const & pose, Size const sample_res, bool const 
 
 			}else{
 
-				if(base_rsd.atom_type(atomno).name()=="VIRT"){
+				if(base_rsd.is_virtual(atomno) ){
 					std::cout << "base_rsd.atom_type(atomno).name()==\"VIRT\"!, atomno= " << atomno << std::endl;
 					utility_exit_with_message("base_rsd.atom_type(atomno).name()==\"VIRT\"!");
 				}
@@ -2782,7 +2782,7 @@ setup_VDW_rep_atom_map_list(pose::Pose const & pose, utility::vector1< std::pair
 
 		std::string const & atom_name_1=rsd_1.type().atom_name(atomno_1);
 		if(atom_name_1=="HO2'") continue;
-		if(rsd_1.atom_type(atomno_1).name()=="VIRT") continue; 
+		if(rsd_1.is_virtual(atomno_1) ) continue; 
 
 
 		bool const is_3_prime_phosphate_1=is_three_prime_phosphate_atom(atom_name_1); //This is just the O3' atom
@@ -2806,7 +2806,7 @@ setup_VDW_rep_atom_map_list(pose::Pose const & pose, utility::vector1< std::pair
 
 				std::string const & atom_name_2=rsd_2.type().atom_name(atomno_2);
 				if(atom_name_2=="HO2'") continue;
-				if(rsd_2.atom_type(atomno_2).name()=="VIRT") continue; 
+				if(rsd_2.is_virtual(atomno_2) ) continue; 
 
 				bool const is_3_prime_phosphate_2=is_three_prime_phosphate_atom(atom_name_2);
 				bool const is_5_prime_phosphate_2=is_five_prime_phosphate_atom(atom_name_2);
@@ -2921,7 +2921,7 @@ pass_VDW_replusion_screen_slow(pose::Pose const & pose, Real const VDW_overlap_d
 
 		std::string const & atom_name_1=rsd_1.type().atom_name(atomno_1);
 		if(atom_name_1=="HO2'") continue;
-		if(rsd_1.atom_type(atomno_1).name()=="VIRT") continue; 
+		if(rsd_1.is_virtual(atomno_1) ) continue; 
 
 
 		bool const is_3_prime_phosphate_1=is_three_prime_phosphate_atom(atom_name_1); //This is just the O3' atom
@@ -2937,7 +2937,7 @@ pass_VDW_replusion_screen_slow(pose::Pose const & pose, Real const VDW_overlap_d
 
 			std::string const & atom_name_2=rsd_2.type().atom_name(atomno_2);
 			if(atom_name_2=="HO2'") continue;
-			if(rsd_2.atom_type(atomno_2).name()=="VIRT") continue; 
+			if(rsd_2.is_virtual(atomno_2) ) continue; 
 
 			bool const is_3_prime_phosphate_2=is_three_prime_phosphate_atom(atom_name_2);
 			bool const is_5_prime_phosphate_2=is_five_prime_phosphate_atom(atom_name_2);

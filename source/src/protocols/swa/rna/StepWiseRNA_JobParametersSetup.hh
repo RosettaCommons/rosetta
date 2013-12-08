@@ -108,6 +108,9 @@ namespace rna {
 		set_floating_base( bool const setting );
 
 		void
+		set_rebuild_bulge_mode( bool const setting );
+
+		void
 		set_input_tags( utility::vector1< std::string > const & setting ){ input_tags_ = setting; } //Only called if check_for_previously_closed_cutpoint_with_input_pose is true
 
 		void

@@ -22,6 +22,7 @@
 #include <protocols/swa/rna/O2PrimePacker.hh>
 #include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.hh>
 #include <protocols/swa/rna/screener/AtrRepScreener.hh>
+#include <protocols/swa/rna/screener/ChainClosableScreener.hh>
 #include <protocols/swa/rna/screener/ChainBreakScreener.hh>
 #include <protocols/swa/rna/screener/StepWiseRNA_BaseCentroidScreener.hh>
 #include <protocols/rotamer_sampler/rna/RNA_KicSampler.hh>
@@ -54,6 +55,8 @@ using ObjexxFCL::string_of;
 //             Base                 Residue                      Base
 //                                                        |
 //                                       If no residues to distal, close_chain_to_distal
+//
+//                                     |<------ gap_size + 1 ----->|
 //
 //
 // Refactored out of StepWiseRNA_ResidueSampler.cc
@@ -98,7 +101,6 @@ namespace rna {
 		allow_bulge_at_chainbreak_( false ),
 		integration_test_mode_( false ), //March 16, 2012
 		centroid_screen_( true ),
-		allow_base_pair_only_centroid_screen_( false ), //allow for possibility of conformation that base_pair but does not base_stack
 		VDW_atr_rep_screen_( true ),
 		allow_syn_pyrimidine_( false ), //New option Nov 15, 2010
 		distinguish_pucker_( true ),
@@ -156,7 +158,7 @@ namespace rna {
 		Size max_ntries = std::max( 10000, 100 * int( num_random_samples_ ) );
 		if ( kic_sampling_ ) max_ntries = num_random_samples_; // some chains just aren't closable.
 
-		for ( ; rotamer_sampler_->not_end(); ++( *rotamer_sampler_ ) ) {
+		for ( rotamer_sampler_->reset(); rotamer_sampler_->not_end(); ++( *rotamer_sampler_ ) ) {
 
 			if ( choose_random_ && ++ntries > max_ntries ) break;
 
@@ -188,7 +190,7 @@ namespace rna {
 				//Reminder note of independency: Important that base_stub_list is updated even in the case where gap_size_ == 0 (and bulge is allowed) ////
 				// since base_stub_list is used later below in the chain_break_screening section Jan 28, 2010 Parin S. ///////////////////////////////////
 				bool found_a_centroid_interaction_partner( false );
-				found_a_centroid_interaction_partner = base_centroid_screener_->Update_base_stub_list_and_Check_centroid_interaction( *screening_pose_, count_data_ );
+				found_a_centroid_interaction_partner = base_centroid_screener_->update_base_stub_list_and_check_centroid_interaction( *screening_pose_, count_data_ );
 
 				if ( close_chain_to_distal_ && !found_a_centroid_interaction_partner ){ //does not stack or base_pair
 					if ( working_moving_partition_pos_.size() == 1 ) is_possible_bulge = true;
@@ -197,26 +199,22 @@ namespace rna {
 				if ( ( !close_chain_to_distal_ || force_centroid_interaction_ ) && !found_a_centroid_interaction_partner ) continue;
 				if ( num_nucleotides_ > 1 && is_possible_bulge ) utility_exit_with_message( "num_nucleotides_ > 1 but is_possible_bulge == true!" );
 
-				// Note that is does not update base_stub_list. To do that, use Update_base_stub_list_and_Check_that_terminal_res_are_unstacked
-				if ( !base_centroid_screener_->Check_that_terminal_res_are_unstacked() ) continue;
+				// Note that is does not update base_stub_list. To do that, use update_base_stub_list_and_check_that_terminal_res_are_unstacked
+				if ( !base_centroid_screener_->check_that_terminal_res_are_unstacked() ) continue;
 			}
 
 			//////////////////////////////////////////////////////////////////////////////////////////
 			///////////////Chain_break_screening -- distance cut                     /////////////////
 			//////////////////////////////////////////////////////////////////////////////////////////
 			if ( close_chain_to_distal_ && !kic_sampling_ ){
-				if ( finer_sampling_at_chain_closure_ ){ //hacky, use strict version of check_chain_closable when using finer_sampling.
-					if ( !check_chain_closable_floating_base( *screening_pose_, *screening_pose_, five_prime_chain_break_res_, gap_size_ ) ) continue;
-				} else{
-					if ( !check_chain_closable( *screening_pose_, five_prime_chain_break_res_, gap_size_ ) ) continue;
-				}
+				if ( !chain_closable_screener_->check_screen( *screening_pose_, finer_sampling_at_chain_closure_ ) ) continue;
 				count_data_.chain_closable_count++;
 			}
 
 			//////////////////////////////////////////////////////////////////////////////////////////
 			/////////////// Van_der_Waals_screening                                  /////////////////
 			//////////////////////////////////////////////////////////////////////////////////////////
-			if ( VDW_atr_rep_screen_ && !atr_rep_screener_->check_screen( *screening_pose_, gap_size_, is_internal_, kic_sampling_ ) ) continue;
+			if ( VDW_atr_rep_screen_ && !atr_rep_screener_->check_screen( *screening_pose_ ) ) continue;
 
 			if ( ( user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose() ) && ( gap_size_ != 0 ) && ( !is_internal_ ) ){
 				//Does not work for chain_closure move and is_internal_ move yet...
@@ -236,48 +234,36 @@ namespace rna {
 			//////////////////////////////////////////////////////////////////////////////////////////
 			///////////////Chain_break_screening -- CCD closure /////////////////////////////////////
 			//////////////////////////////////////////////////////////////////////////////////////////
-			bool bulge_added( false );
+			bool add_bulge( false );
 			if ( close_chain_to_distal_ ) {
-				if ( kic_sampling_ ){
-					// tolerance appears too fine here -- might be worth talking to fang about this.
-					if ( !chain_break_screener_->check_loop_closed( pose ) ){
-						// pose.dump_pdb( "pose.pdb" );
-						// *screening_pose_.dump_pdb( "screening_pose.pdb" );
-						// utility_exit_with_message( "KIC problem!" );
-					}
-				} else {
+				if ( !kic_sampling_ ){ // kic sampling already should have closed chain.
 					rotamer_sampler_->apply( chain_break_screener_->pose() );
 					if ( ! chain_break_screener_->check_screen() ) continue;
 					chain_break_screener_->copy_CCD_torsions( pose );
 					if ( perform_o2prime_pack_ ) chain_break_screener_->copy_CCD_torsions( o2prime_packer_->pose() );
-
 					if ( is_possible_bulge ){
-						bulge_added = apply_bulge_variant( pose, atr_rep_screener_->delta_atr_score() ); /*further cut on atr, inside*/
-						if ( perform_o2prime_pack_ ) apply_bulge_variant( o2prime_packer_->pose(), atr_rep_screener_->delta_atr_score() ); /*further cut on atr, inside*/
+						add_bulge = bulge_variant_decision( pose, atr_rep_screener_->delta_atr_score() ); /*further cut on atr, inside*/
 					}
 				}
 			}
 
 			if ( perform_o2prime_pack_ ){
+				if ( add_bulge ) apply_bulge_variant( o2prime_packer_->pose() );
 				o2prime_packer_->sample_o2prime_hydrogen();
 				o2prime_packer_->copy_all_o2prime_torsions( pose ); //Copy the o2prime torsions from the o2prime_pack_pose to the pose!
+				if ( add_bulge ) remove_virtual_rna_residue_variant_type( o2prime_packer_->pose(), moving_res_ );
 			}
 
 			if ( include_torsion_value_in_tag_ ) tag += create_rotamer_string( pose, moving_res_, is_prepend_ );
 
-			////////////////////////////////////////////////////////////////////
 			///////Add pose to pose_data_list if pose has good score///////////
-			pose_selection_->pose_selection_by_full_score( pose, tag );
+			Pose selected_pose = pose; // the reason for this copy is that we might apply a bulge variant, and that can produce thread conflicts with graphics.
+			if ( add_bulge ) apply_bulge_variant( selected_pose );
+			pose_selection_->pose_selection_by_full_score( selected_pose, tag );
 
-			if ( verbose_ ){
-				TR.Debug << tag <<  std::endl;
-				output_data( silent_file_, tag, true, pose, get_native_pose(), job_parameters_ );
-			}
+			TR.Debug << tag <<  std::endl;
+			if (verbose_ ) output_data( silent_file_, tag, true, selected_pose, get_native_pose(), job_parameters_ );
 
-			if ( bulge_added ){
-				remove_virtual_rna_residue_variant_type( pose, moving_res_ );
-				if ( perform_o2prime_pack_ ) remove_virtual_rna_residue_variant_type( o2prime_packer_->pose(), moving_res_ );
-			}
 
 			num_success++;
 			if ( choose_random_ && num_success >= num_random_samples_ ) break;
@@ -288,23 +274,8 @@ namespace rna {
 
 		output_title_text( "Final sort and clustering", TR.Debug );
 		pose_selection_->finalize( !build_pose_from_scratch_ /*do_clustering*/ );
-
 		pose_data_list_ = pose_selection_->pose_data_list();
 
-		//Hacky..temporary until we fix the reroot atom problem..This is just for calculating rmsd purposes... Apr 27, 2010 Parin/////////////////////////////////////////////
-		if ( build_pose_from_scratch_ && get_native_pose() ){
-			utility::vector1< core::Size > const & working_best_alignment( job_parameters_->working_best_alignment() );
-			pose::Pose const & native_pose = *get_native_pose();
-
-			for ( Size n = 1; n <= pose_data_list_.size(); n++ ){ //align all other pose to first pose
-				pose::Pose & current_pose = ( *pose_data_list_[n] );
-				std::string const & tag = tag_from_pose( current_pose );
-				align_poses( current_pose, tag, native_pose, "native", working_best_alignment );
-			}
-		}
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		TR.Debug << "FINAL COUNTS" << std::endl;
 		output_count_data();
 
 		TR.Debug << "Total time in StepWiseRNA_StandardResidueSampler: " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
@@ -322,7 +293,7 @@ namespace rna {
 		}
 		/////////////////////////////// O2prime sampling/virtualization //////////////////////////
 		Pose pose_with_virtual_O2prime_hydrogen = pose;
-		add_virtual_O2Star_hydrogen( pose_with_virtual_O2prime_hydrogen );
+		add_virtual_O2Prime_hydrogen( pose_with_virtual_O2prime_hydrogen );
 
 		if ( perform_o2prime_pack_ ) {
 			o2prime_packer_ = new O2PrimePacker( pose, scorefxn_, working_moving_partition_pos_ /* moving_res_*/ );
@@ -335,6 +306,7 @@ namespace rna {
 
 		atr_rep_screener_ = new screener::AtrRepScreener( pose_with_virtual_O2prime_hydrogen, job_parameters_ );
 		atr_rep_screener_->set_sample_both_sugar_base_rotamer( sample_both_sugar_base_rotamer_ ); //Nov 12, 2010
+		atr_rep_screener_->set_kic_sampling( kic_sampling_ );
 
 		screening_pose_ = pose_with_virtual_O2prime_hydrogen.clone(); //Hard copy
 
@@ -343,7 +315,8 @@ namespace rna {
 		// the VIRTUAL_PHOSPHATE is needed to prevent artificial clashes. Parin Jan 28, 2010////////////////////////////////////
 		if ( close_chain_to_distal_ ) pose::add_variant_type_to_pose_residue( *screening_pose_, "VIRTUAL_PHOSPHATE", five_prime_chain_break_res_ + 1 );
 
-		///////////////////////////////////////Setup chainbreak_screening//////////////////////////////////////////////////////
+		chain_closable_screener_ = new screener::ChainClosableScreener( five_prime_chain_break_res_, gap_size_ );
+
 		chain_break_screener_ = new screener::ChainBreakScreener( pose_with_virtual_O2prime_hydrogen, five_prime_chain_break_res_ ); //Hard copy
 		chain_break_screener_->set_reinitialize_CCD_torsions( reinitialize_CCD_torsions_ );
 
@@ -371,19 +344,6 @@ namespace rna {
 		bool const is_dinucleotide_ = ( num_nucleotides_ == 2 );
 
 		Size num_pose_kept = num_pose_kept_;
-
-		if ( is_dinucleotide_ && allow_base_pair_only_centroid_screen_ ) {
-			Size const user_input_num_pose_kept = num_pose_kept_;
-			num_pose_kept = 4*num_pose_kept_;
-
-			//TR.Debug << "Accessible conformational space is larger when sampling a dinucleotide " << std::endl;
-			TR.Debug << "allow_base_pair_only_centroid_screen_ == true + dinucleotide sampling" << std::endl;
-			TR.Debug << "Note that allow_base_pair_only_centroid_screen_ doesn't effect the screening in standard sampling mode." << std::endl;
-			TR.Debug << "Just keeping more pose to be consistent with floating base mode + keep high score basepairing conformations." << std::endl;
-			TR.Debug << "Increase num_pose_kept by 4 folds" << std::endl;
-
-			TR.Debug << " user_input_num_pose_kept = " << user_input_num_pose_kept << " num_pose_kept_ " << num_pose_kept_ << std::endl;
-		}
 
 		if ( build_pose_from_scratch_ ){
 			TR.Debug << "Since build_pose_from_scratch, choose to increase NUM_POSE_KEPT by 36 fold. ";
@@ -525,70 +485,64 @@ StepWiseRNA_StandardResidueSampler::set_base_centroid_screener( screener::StepWi
 
 ////////////////////////////////////////////////////////////////////////////////////////
 bool
-StepWiseRNA_StandardResidueSampler::apply_bulge_variant( core::pose::Pose & pose, Real const & delta_atr_score ){
-
+StepWiseRNA_StandardResidueSampler::bulge_variant_decision( core::pose::Pose & pose, Real const & delta_atr_score ){
 	using namespace ObjexxFCL;
 
 	if ( rebuild_bulge_mode_ ) return false; //Hacky want to output sample diverse bulge conformation
 	static Real const atr_cutoff_for_bulge( -999999.0 ); //Feb 02, 2012
 
-	if ( delta_atr_score > (  + 0.01 ) ){
-		utility_exit_with_message( "delta_atr_score > (  + 0.01 ). delta_atr_score = " + string_of( delta_atr_score ) );
-	}
+	runtime_assert ( delta_atr_score <= (  + 0.01 ) );
+	runtime_assert ( !is_virtual_base( pose.residue( moving_res_ ) ) );
 
-	if ( is_virtual_base( pose.residue( moving_res_ ) ) ) { //Check that the residue is not be already virtualized...
-		utility_exit_with_message( "The base at " + string_of( moving_res_ ) + " is already virtualized!!" );
-	}
-
-	bool bulge_added = false;
-
+	bool add_bulge = false;
 	if ( allow_bulge_at_chainbreak_ ) {
 		if ( delta_atr_score >= atr_cutoff_for_bulge ) {
-
-			//Note that there is problem in that even after applying virtual_rna_residue, the chain break torsion potential is still scored for the chain_break torsions.
-			//The should_score_torsion function in RNA_torsional_potential returns true (indicating that the score should be scored) if it finds a chain_break torsion,
-			//even if this torsion contain virtual atoms.. May 4, 2010
-			apply_virtual_rna_residue_variant_type( pose, moving_res_, true );
-
+			add_bulge = true;
 			count_data_.bulge_at_chain_closure_count++;
-			bulge_added = true;
-
 			if ( verbose_ ){
 				TR.Debug << "delta_atr " << delta_atr_score << " passes cutoff for bulge. " << atr_cutoff_for_bulge;
 				TR.Debug << "  bulge = " << count_data_.bulge_at_chain_closure_count << "  both = " << count_data_.both_count << " tot = " << count_data_.tot_rotamer_count << std::endl;
 			}
-
 		} else {
-
-			bulge_added = false;
+			add_bulge = false;
 			if ( verbose_ ) TR.Debug << "delta_atr " << delta_atr_score << " DOES NOT PASS cutoff for bulge " << atr_cutoff_for_bulge << std::endl;
-
 		}
 	}
 
-	return bulge_added;
+	return add_bulge;
+
 }
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	StepWiseRNA_StandardResidueSampler::output_count_data(){
+////////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_StandardResidueSampler::apply_bulge_variant( core::pose::Pose & pose ) const{
+	//Note that there is problem in that even after applying virtual_rna_residue, the chain break torsion potential is still scored for the chain_break torsions.
+	//The should_score_torsion function in RNA_torsional_potential returns true (indicating that the score should be scored) if it finds a chain_break torsion,
+	//even if this torsion contain virtual atoms.. May 4, 2010
+	runtime_assert( !is_virtual_base( pose.residue( moving_res_ ) ) );
+	apply_virtual_rna_residue_variant_type( pose, moving_res_, true );
+}
 
-		if ( gap_size_ <= 1 ) TR.Debug << " chain_closable_count = " << count_data_.chain_closable_count << std::endl;
-		if ( gap_size_ == 0 ){
-			TR.Debug << " angle_n = " << count_data_.good_angle_count << " dist_n = " << count_data_.good_distance_count;
-			TR.Debug << " chain_break_screening = " << count_data_.chain_break_screening_count << std::endl;
-		}
-		if ( combine_long_loop_mode_ && !close_chain_to_distal_ ) TR.Debug << "res_contact = " << count_data_.residues_contact_screen << " ";
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_StandardResidueSampler::output_count_data(){
 
-		TR.Debug << "stack = " << count_data_.base_stack_count << " pair = " << count_data_.base_pairing_count;
-		TR.Debug << " strict_pair_n = " << count_data_.strict_base_pairing_count;
-		TR.Debug << " atr = " << count_data_.good_atr_rotamer_count;
-		TR.Debug << " rep = " << count_data_.good_rep_rotamer_count;
-		TR.Debug << " both = " << count_data_.both_count;
-		TR.Debug << " bulge = " << count_data_.bulge_at_chain_closure_count;
-		TR.Debug << " rmsd = " << count_data_.rmsd_count << " tot = " << count_data_.tot_rotamer_count << std::endl;
-
+	if ( gap_size_ <= 1 ) TR.Debug << " chain_closable_count = " << count_data_.chain_closable_count << std::endl;
+	if ( gap_size_ == 0 ){
+		TR.Debug << " angle_n = " << count_data_.good_angle_count << " dist_n = " << count_data_.good_distance_count;
+		TR.Debug << " chain_break_screening = " << count_data_.chain_break_screening_count << std::endl;
 	}
+	if ( combine_long_loop_mode_ && !close_chain_to_distal_ ) TR.Debug << "res_contact = " << count_data_.residues_contact_screen << " ";
+
+	TR.Debug << "stack = " << count_data_.base_stack_count << " pair = " << count_data_.base_pairing_count;
+	TR.Debug << " strict_pair_n = " << count_data_.strict_base_pairing_count;
+	TR.Debug << " atr = " << count_data_.good_atr_rotamer_count;
+	TR.Debug << " rep = " << count_data_.good_rep_rotamer_count;
+	TR.Debug << " both = " << count_data_.both_count;
+	TR.Debug << " bulge = " << count_data_.bulge_at_chain_closure_count;
+	TR.Debug << " rmsd = " << count_data_.rmsd_count << " tot = " << count_data_.tot_rotamer_count << std::endl;
+
+}
 
 
 //////////////////////////////////////////////////////////////////////////

@@ -15,11 +15,11 @@
 
 //////////////////////////////////
 #include <protocols/swa/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
-
 #include <protocols/swa/rna/StepWiseRNA_Classes.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
+#include <protocols/swa/rna/screener/ChainClosableScreener.hh>
 
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 //////////////////////////////////
@@ -31,8 +31,6 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/func/Func.fwd.hh>
-#include <core/scoring/func/FadeFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/import_pose/import_pose.hh>
@@ -462,8 +460,8 @@ namespace rna {
 				for ( Size at_ONE = 1; at_ONE <= rsd_ONE.natoms(); at_ONE++ ){
 					for ( Size at_TWO = 1; at_TWO <= rsd_TWO.natoms(); at_TWO++ ){
 
-						if ( rsd_ONE.atom_type( at_ONE ).name() == "VIRT" ) continue;
-						if ( rsd_TWO.atom_type( at_TWO ).name() == "VIRT" ) continue;
+						if ( rsd_ONE.is_virtual( at_ONE )  ) continue;
+						if ( rsd_TWO.is_virtual( at_TWO )  ) continue;
 
 						Real const VDW_radius_ONE = rsd_ONE.atom_type( at_ONE ).lj_radius();
 						Real const VDW_radius_TWO = rsd_TWO.atom_type( at_TWO ).lj_radius();
@@ -570,12 +568,14 @@ namespace rna {
 		filterer_count_.score_cut_count++;
 
 
-		if ( ( filter_for_chain_closable_ == true ) ){
+		if ( ( filter_for_chain_closable_ ) ){
 
 			//OK STILL HAVE TO WRITE CODE FOR THE DINUCLEOTIDE case....
 			//July 19th, 2011..This assumes that the 5' and 3' sugar is already built (not virtual!) but this might not be the case!
-
-			if ( check_chain_closable( side_TWO_pose.residue( input_pose_TWO_last_prepended_res_ ).xyz( "C5'" ), side_ONE_pose.residue( input_pose_ONE_last_appended_res_ ).xyz( "O3'" ), previous_step_gap_size ) == false ) return false;
+			screener::ChainClosableScreener chain_closable_screener( input_pose_ONE_last_appended_res_  /* last from 5', provides O3' atom*/,
+																															 input_pose_TWO_last_prepended_res_ /* last from 3', provides C5' atom*/,
+																															 previous_step_gap_size );
+			if ( !chain_closable_screener.check_screen( side_ONE_pose, side_TWO_pose, true /*is_prepend*/ ) ) return false;
 
 			filterer_count_.chain_closable_screen++;
 
@@ -846,13 +846,13 @@ namespace rna {
 //	bool
 //	StepWiseRNA_CombineLongLoopFilterer::
 	bool
-	score_sort_citeria( Combine_Tags_Info tag_info_1, Combine_Tags_Info tag_info_2 ){
+	score_sort_criterion( Combine_Tags_Info tag_info_1, Combine_Tags_Info tag_info_2 ){
 		return ( tag_info_1.combine_score < tag_info_2.combine_score );
 	}
 
 	void
 	StepWiseRNA_CombineLongLoopFilterer::sort_Combine_Tags_Info( utility::vector1< Combine_Tags_Info > & combine_tags_info_list ) { 	//Lowest combine score on the top of the list
-		sort( combine_tags_info_list.begin(), combine_tags_info_list.end(), score_sort_citeria );
+		sort( combine_tags_info_list.begin(), combine_tags_info_list.end(), score_sort_criterion );
 	}
 
   /////////////////////////////////////////////////////////////////////////////////////////////////

@@ -80,7 +80,7 @@ namespace rna {
 	Set_Union( utility::vector1 < Residue_info > const & residue_list_1, utility::vector1 < Residue_info > const & residue_list_2 );
 
 	bool
-	residue_list_sort_citeria( Residue_info residue_info_1, Residue_info residue_info_2 );
+	residue_list_sort_criterion( Residue_info residue_info_1, Residue_info residue_info_2 );
 
 	void
 	sort_residue_list( utility::vector1< Residue_info > & residue_list );

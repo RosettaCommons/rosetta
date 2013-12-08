@@ -324,7 +324,7 @@ namespace rna {
 	}
 
 	bool
-	residue_list_sort_citeria( Residue_info residue_info_1, Residue_info residue_info_2 ){
+	residue_list_sort_criterion( Residue_info residue_info_1, Residue_info residue_info_2 ){
 		//Sort by seq_number, lowest sequence number at the top of the vector list.
 		return ( residue_info_1.seq_num < residue_info_2.seq_num );
 	}
@@ -332,7 +332,7 @@ namespace rna {
 	void
 	sort_residue_list( utility::vector1< Residue_info > & residue_list ) {
 		//Need to check if this work with vector1, if not switch to std::vector
-		sort( residue_list.begin(), residue_list.end(), residue_list_sort_citeria );
+		sort( residue_list.begin(), residue_list.end(), residue_list_sort_criterion );
 	}
 
 }

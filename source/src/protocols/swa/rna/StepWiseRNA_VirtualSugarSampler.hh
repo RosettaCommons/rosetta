@@ -17,176 +17,124 @@
 #ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_VirtualSugarSampler_HH
 #define INCLUDED_protocols_swa_rna_StepWiseRNA_VirtualSugarSampler_HH
 
+#include <protocols/moves/Mover.hh>
+#include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/swa/rna/SugarModeling.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
-#include <string>
-#include <map>
-#include <core/chemical/AA.hh>
-#include <core/io/silent/RNA_SilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
 #include <numeric/angle.functions.hh> // Need this to prevent the compiling error: 'principal_angle_degrees' is not a member of 'numeric' Oct 14, 2009
-#include <core/kinematics/MoveMap.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/conformation/Residue.hh>
-#include <set>
-#include <ObjexxFCL/string.functions.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 
-#include <protocols/swa/rna/StepWiseRNA_Util.hh>
-#include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_JobParameters.hh> //June 02, 2011
-#include <protocols/swa/rna/SugarModeling.hh>
-#include <core/pose/Pose.hh> //June 02, 2011
-
-
+using namespace core;
 using namespace core::pose;
 
 namespace protocols {
 namespace swa {
 namespace rna {
 
-class FB_Pose_Data{
 
-		public:
-
-		FB_Pose_Data():
-		score( 0.0 ),
-		tag( "tag_blah" ),
-		base_tag( "base_tag_blah" ),
-		is_chain_close( false ),
-		base_rep_score( 999999 )
-
-	{
-	}
-
-	~FB_Pose_Data(){};
+	class StepWiseRNA_VirtualSugarSampler: public protocols::moves::Mover {
 
 	public:
 
-	core::Real score;
-	core::pose::PoseOP pose_OP;
-	std::string tag;
-	std::string base_tag;
-	bool is_chain_close;
-	core::Real base_rep_score;
-	core::kinematics::FoldTree starting_fold_tree;
-	core::scoring::constraints::ConstraintSetOP starting_cst_set_OP;
+		//constructor
+		StepWiseRNA_VirtualSugarSampler( StepWiseRNA_JobParametersCOP & job_parameters, SugarModeling & sugar_modeling	);
 
-};
+		//destructor
+		~StepWiseRNA_VirtualSugarSampler();
 
+		virtual void apply( Pose & pose_to_visualize );
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		virtual std::string get_name() const;
 
-bool
-fast_full_atom_VDW_repulsion_screen( core::pose::Pose const & pose, core::Size const res_1, core::Size const res_2, bool const is_prepend );
+		void set_tag( std::string const & setting ) { tag_ = setting;	}
 
+		void set_use_phenix_geo( bool const & setting ) { use_phenix_geo_ = setting;	}
 
-//Duplication of Chain_break_screening function from StepWiseRNA_ResidueSampler.cc. NEED TO MERGE THEM BACK TOGETHER AFTER TESTING! Apr 20,2010. Parin S.
-bool
-floating_base_full_atom_van_der_Waals_screening( core::pose::Pose & current_pose_screen,
-																								core::Real const & base_rep_score,
-																								core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
-																		 						StepWiseRNA_CountStruct & count_data,
-																								bool const verbose );
+		void set_legacy_mode( bool const & setting ) { legacy_mode_ = setting;	}
 
-//Duplication of Chain_break_screening function from StepWiseRNA_ResidueSampler.cc. NEED TO MERGE THEM BACK TOGETHER AFTER TESTING! Apr 20,2010. Parin S.
-bool
-floating_base_chain_break_screening( core::pose::Pose & chain_break_screening_pose,
-																	core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
-																	StepWiseRNA_CountStruct & count_data,
-																	core::Size const & five_prime_res,
-																	std::string const & tag,
-                                    bool const verbose );
+		void set_integration_test_mode( bool const & setting ){ integration_test_mode_ = setting; }
 
+		void set_virtual_sugar_is_from_prior_step( bool const & setting ) { virtual_sugar_is_from_prior_step_ = setting;	}
 
-utility::vector1< FB_Pose_Data >
-floating_base_chain_closure_setup(
-	utility::vector1< PoseOP > const & input_pose_data_list,
-	SugarModeling const & sugar_modeling,
-	core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
-	core::scoring::ScoreFunctionOP const & full_scorefxn,
-	core::pose::Pose & viewer_pose,
-	bool const do_minimize,
-	bool const use_phenix_geo
-);
+		void set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn );
 
-void
-floating_base_chain_closure_sampling(
-	utility::vector1< FB_Pose_Data > & pose_data_list,
-	SugarModeling const & sugar_modeling,
-	core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
-	core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
-	screener::StepWiseRNA_VDW_BinScreenerOP const & VDW_bin_screener,
-	bool const integration_test_mode,
-	bool const use_phenix_geo
-);
+	private:
 
+		void
+		setup_sugar_conformations( utility::vector1< PoseOP > & pose_list, pose::Pose & pose );
 
-utility::vector1< PoseOP >
-floating_base_chain_closure_post_process( utility::vector1< FB_Pose_Data > & pose_data_list,
-	                                       core::pose::Pose & viewer_pose,
-																				 core::scoring::ScoreFunctionOP const & sampling_scorefxn,
-																		 		 SugarModeling const & sugar_modeling,
-																				 bool const rm_chain_break_jump_point = true );
+		void
+		minimize_sugar( pose::Pose & pose_with_sugar );
 
-utility::vector1< PoseOP >
-sample_virtual_sugar_and_bulge_and_close_chain(
-	core::pose::Pose & viewer_pose,
-	SugarModeling const & sugar_modeling,
-	std::string const name,
-	core::scoring::ScoreFunctionOP const & scorefxn,
-	core::scoring::ScoreFunctionOP const & sampling_scorefxn,
-	core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
-	core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
-	StepWiseRNA_JobParametersCOP & job_parameters,
-	bool const integration_test_mode,
-	bool const use_phenix_geo,
-	bool const virtual_sugar_is_from_prior_step = true
-);
+		void
+		get_sugar_setup_scorefxns( scoring::ScoreFunctionOP & sugar_scorefxn, scoring::ScoreFunctionOP & sugar_scorefxn_without_ch_bond, scoring::ScoreFunctionOP & rescaled_sugar_score_fxn_without_ch_bond ) const;
 
+		void
+		do_chain_closure_sampling( utility::vector1< PoseOP > & pose_list,
+															 pose::Pose & viewer_pose );
 
-void
-minimize_all_sampled_floating_bases( core::pose::Pose & viewer_pose,
-																		utility::vector1< SugarModeling > const & modeling_list,
-																		utility::vector1< PoseOP > & pose_data_list,
-																		core::scoring::ScoreFunctionOP const & sampling_scorefxn,
-																		StepWiseRNA_JobParametersCOP const & job_parameters,
-																		bool const virtual_sugar_is_from_prior_step = true );
+		void
+		initialize_pose_variants_for_chain_closure( utility::vector1< pose::PoseOP > & pose_list );
 
-bool
-is_sugar_virtual( core::pose::Pose const & pose, core::Size const previous_moving_res, core::Size const previous_bulge_res );
+		void
+		restore_pose_variants_after_chain_closure( utility::vector1< pose::PoseOP > & pose_list );
 
-void
-copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::pose::Pose & pose, core::pose::Pose const & template_pose );
+		void
+		floating_base_chain_closure( utility::vector1< PoseOP > & pose_list,
+																 pose::Pose & viewer_pose );
 
-void
-enumerate_starting_pose_data_list( utility::vector1< PoseOP > & starting_pose_data_list,
-																utility::vector1< SugarModeling > const & FB_CC_JP_list,
-																core::pose::Pose const & pose );
+		void
+		floating_base_chain_closure_legacy( utility::vector1< PoseOP > & pose_list,
+																				pose::Pose & viewer_pose );
 
+		void
+		floating_base_chain_minimize_legacy( utility::vector1< PoseOP > & pose_list,
+																				 Pose & viewer_pose );
 
-utility::vector1< SugarModeling >
-setup_FB_CC_JP_list( core::pose::Pose const & pose, utility::vector1< std::string > const & sample_virtual_sugar_string_list, StepWiseRNA_JobParametersCOP & job_parameters );
+		bool
+		fast_full_atom_VDW_repulsion_screen( core::pose::Pose const & pose, core::Size const res_1, core::Size const res_2, bool const is_prepend );
 
-void
-sample_user_specified_virtual_sugars(
-	core::pose::Pose & pose,
-	utility::vector1< std::string > const & sample_virtual_sugar_string_list,
-	StepWiseRNA_JobParametersCOP & job_parameters,
-	core::scoring::ScoreFunctionOP const & scorefxn,
-	std::string const silent_file_out,
-	std::string const input_tag,
-	bool const integration_test_mode,
-	bool const use_phenix_geo
-);
+		void
+		setup_VDW_bin_screener( pose::Pose const & input_pose );
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		void
+		virtualize_other_partition( pose::Pose & input_pose );
+
+		void
+		reinstantiate_other_partition( utility::vector1< PoseOP > & final_pose_list );
+
+		void
+		reinstantiate_other_partition( pose::Pose & current_pose );
+
+		void
+		reinstate_original_constraints( utility::vector1< pose::PoseOP >  & pose_list );
+
+	private:
+
+		StepWiseRNA_JobParametersCOP job_parameters_;
+		SugarModeling & sugar_modeling_; // trick -- inputs some modeling info, and holds pose_list as output.
+		std::string tag_;
+		bool use_phenix_geo_;
+		bool legacy_mode_;
+		bool integration_test_mode_;
+		bool virtual_sugar_is_from_prior_step_;
+		bool const do_chain_closure_;
+
+		scoring::ScoreFunctionOP scorefxn_;
+		screener::StepWiseRNA_VDW_BinScreenerOP VDW_bin_screener_;
+
+		utility::vector1 < core::Size > other_partition_pos_;
+		utility::vector1 < core::Size > already_virtualized_res_list_;
+
+		core::scoring::constraints::ConstraintSetOP original_constraint_set_;
+
+	};
 
 
 }

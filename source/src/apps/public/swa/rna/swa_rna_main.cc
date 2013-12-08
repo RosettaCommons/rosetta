@@ -95,7 +95,7 @@
 #include <protocols/swa/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/swa/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
 #include <protocols/swa/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_VirtualSugarSampler.hh>
+#include <protocols/swa/rna/StepWiseRNA_VirtualSugarSamplerFromStringList.hh>
 #include <protocols/swa/rna/StepWiseRNA_Minimizer.hh>
 #include <protocols/swa/rna/StepWiseRNA_ResidueSampler.hh>
 #include <protocols/swa/rna/StepWiseRNA_PoseSetup.fwd.hh>
@@ -174,6 +174,7 @@ OPT_KEY( Boolean, add_lead_zero_to_tag )
 OPT_KEY( Boolean, distinguish_pucker )
 OPT_KEY( Boolean, sampler_allow_syn_pyrimidine )
 OPT_KEY( Boolean, erraser )
+OPT_KEY( Boolean, virtual_sugar_legacy_mode )
 OPT_KEY( Real, whole_struct_cluster_radius )
 OPT_KEY( Real, suite_cluster_radius )
 OPT_KEY( Real, loop_cluster_radius )
@@ -207,6 +208,7 @@ OPT_KEY( Real,  VDW_rep_screen_physical_pose_clash_dist_cutoff )
 OPT_KEY( Boolean,  clusterer_full_length_loop_rmsd_clustering )
 OPT_KEY( StringVector, 	sample_virtual_sugar_list )
 OPT_KEY( Boolean,  sampler_assert_no_virt_sugar_sampling )
+OPT_KEY( Boolean,  sampler_try_sugar_instantiation )
 OPT_KEY( Boolean,  clusterer_ignore_FARFAR_no_auto_bulge_tag )
 OPT_KEY( Boolean,  clusterer_ignore_FARFAR_no_auto_bulge_parent_tag )
 OPT_KEY( Boolean,  clusterer_ignore_unmatched_virtual_res )
@@ -262,6 +264,8 @@ swa_rna_sample()
 
 	for ( Size n = 1; n <= num_struct; n++ ){
 
+		TR << TR.Blue << "Embarking on structure " << n << " of " << num_struct << TR.Reset << std::endl;
+
 		pose = start_pose;
 
 		if ( !get_tag_and_silent_file_for_struct( swa_silent_file, out_tag, n, multiple_shots, silent_file ) ) continue;
@@ -273,7 +277,6 @@ swa_rna_sample()
 		// turn this on to test StepWiseRNA_Modeler's "on-the-fly" determination of job based on pose fold_tree, cutpoints, etc.
 		if ( !option[ basic::options::OptionKeys::swa::rna::test_encapsulation ]() )	stepwise_rna_modeler.set_job_parameters( job_parameters );
 
-		// NOTE: Still need to put in minimize_res & fixed_res !?
 		stepwise_rna_modeler.set_native_pose( native_pose ); // wait put thi inside
 		stepwise_rna_modeler.set_silent_file( swa_silent_file );
 		stepwise_rna_modeler.set_sampler_num_pose_kept ( option[ sampler_num_pose_kept ]() );
@@ -304,6 +307,7 @@ swa_rna_sample()
 		stepwise_rna_modeler.set_minimize_and_score_native_pose ( option[ minimize_and_score_native_pose ]() );
 		if ( option[ num_pose_minimize ].user() ) stepwise_rna_modeler.set_num_pose_minimize( option[ num_pose_minimize ]() );
 		stepwise_rna_modeler.set_output_minimized_pose_data_list( !multiple_shots );
+		stepwise_rna_modeler.set_virtual_sugar_legacy_mode( option[ virtual_sugar_legacy_mode ] );
 
 		// newer options
 		stepwise_rna_modeler.set_VDW_rep_delete_matching_res ( option[ VDW_rep_delete_matching_res ]() );
@@ -320,6 +324,7 @@ swa_rna_sample()
 		stepwise_rna_modeler.set_do_not_sample_multiple_virtual_sugar( option[ do_not_sample_multiple_virtual_sugar]() );
 		stepwise_rna_modeler.set_sample_ONLY_multiple_virtual_sugar( option[ sample_ONLY_multiple_virtual_sugar]() );
 		stepwise_rna_modeler.set_sampler_assert_no_virt_sugar_sampling( option[ sampler_assert_no_virt_sugar_sampling ]() );
+		stepwise_rna_modeler.set_sampler_try_sugar_instantiation( option[ sampler_try_sugar_instantiation ]() );
 		stepwise_rna_modeler.set_allow_base_pair_only_centroid_screen( option[ allow_base_pair_only_centroid_screen ]() );
 
 		stepwise_rna_modeler.set_minimizer_perform_o2prime_pack( option[ minimizer_perform_o2prime_pack ]() );
@@ -464,7 +469,7 @@ swa_rna_cluster(){
 
 	if ( recreate_silent_struct_for_output ){
 		//For analysis purposes....for example rescore with a different force-field...change native_pose and etc..
-		if ( job_parameters_exist == false ) utility_exit_with_message( "need job_parameters!" );
+		runtime_assert( job_parameters_exist );
 
 		//core::scoring::ScoreFunctionOP scorefxn=create_scorefxn();
 		StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class( job_parameters, false /*COPY DOF*/ ); //This contains the native_pose
@@ -504,43 +509,35 @@ rna_sample_virtual_sugar(){ //July 19th, 2011...rebuild the bulge nucleotides af
 
 	StepWiseRNA_JobParametersOP	job_parameters = setup_rna_job_parameters( false );
 	StepWiseRNA_JobParametersCOP job_parameters_COP( job_parameters );
-
 	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class( job_parameters, false /*COPY DOF*/ );
 
 	utility::vector1< std::string > const sample_virtual_sugar_string_list = option[ sample_virtual_sugar_list ]();
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< std::string > input_tags;
 	utility::vector1< std::string > silent_files_in;
-
-	if ( option[ in::file::silent ].user() == false ) utility_exit_with_message( "option[ in::file::silent ].user() == false" );
-
+	runtime_assert( option[ in::file::silent ].user() );
 	silent_files_in = option[ in::file::silent ]();
 	input_tags = get_silent_file_tags();
 
-	if ( silent_files_in.size() != 1 ) utility_exit_with_message( "silent_files_in.size() != 1" );
-
-	if ( silent_files_in.size() != input_tags.size() ) utility_exit_with_message( "silent_files_in.size() != input_tags.size()" );
+	runtime_assert( silent_files_in.size() == 1 );
+	runtime_assert( silent_files_in.size() == input_tags.size() );
 
   pose::Pose pose;
 	import_pose_from_silent_file( pose, silent_files_in[ 1 ], input_tags[1] );
 	protocols::rna::assert_phosphate_nomenclature_matches_mini( pose );
+	stepwise_rna_pose_setup->update_fold_tree_at_virtual_sugars( pose );
 
   std::string const silent_file_out = option[ out::file::silent  ]();
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	if ( option[ graphic ]() ){
-		std::string const current_directory_string = get_working_directory();
-		protocols::viewer::add_conformation_viewer( pose.conformation(), current_directory_string, 400, 400 );
-	}
-
+	if ( option[ graphic ]() ) protocols::viewer::add_conformation_viewer( pose.conformation(), get_working_directory(), 400, 400 );
 	stepwise_rna_pose_setup->setup_native_pose( pose ); //NEED pose to align native_pose to pose.
 
-	// Hey! This should be in a class! -- rhiju, 2013.
-	sample_user_specified_virtual_sugars(
-			pose, sample_virtual_sugar_string_list, job_parameters_COP,
-			scorefxn, silent_file_out, input_tags[1], option[ integration_test ](),
-			option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+	StepWiseRNA_VirtualSugarSamplerFromStringList virtual_sugar_sampler_from_string_list( job_parameters_COP, sample_virtual_sugar_string_list );
+	virtual_sugar_sampler_from_string_list.set_scorefxn( scorefxn );
+	virtual_sugar_sampler_from_string_list.set_silent_file_out( silent_file_out );
+	virtual_sugar_sampler_from_string_list.set_tag( input_tags[1] );
+	virtual_sugar_sampler_from_string_list.set_integration_test_mode( option[ integration_test ] );
+	virtual_sugar_sampler_from_string_list.set_use_phenix_geo( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+	virtual_sugar_sampler_from_string_list.set_legacy_mode( option[ virtual_sugar_legacy_mode ] );
+	virtual_sugar_sampler_from_string_list.apply( pose );
 
 	output_title_text( "Exit rna_sample_virtual_sugar()", TR );
 
@@ -954,12 +951,14 @@ main( int argc, char * argv [] )
 	NEW_OPT( sampler_include_torsion_value_in_tag, "Samplerer:include_torsion_value_in_tag", true );
 	NEW_OPT( sampler_allow_syn_pyrimidine, "sampler_allow_syn_pyrimidine", false ); //Nov 15, 2010
 	NEW_OPT( sampler_assert_no_virt_sugar_sampling, "sampler_assert_no_virt_sugar_sampling", false ); //July 28, 2011
+	NEW_OPT( sampler_try_sugar_instantiation, "for floating base sampling, try to instantiate sugar if it looks promising", false ); //July 28, 2011
 	NEW_OPT( centroid_screen, "centroid_screen", true );
 	NEW_OPT( allow_base_pair_only_centroid_screen, "allow_base_pair_only_centroid_screen", false ); //This only effect floating base sampling + dinucleotide.. deprecate option
 	NEW_OPT( VDW_atr_rep_screen, "classic VDW_atr_rep_screen", true );
 	NEW_OPT( sampler_perform_o2prime_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
 	NEW_OPT( allow_bulge_at_chainbreak, "Allow sampler to replace chainbreak res with virtual_rna_variant if it looks have bad fa_atr score.", true );
 	NEW_OPT( erraser, "Use KIC sampling", false );
+	NEW_OPT( virtual_sugar_legacy_mode, "In virtual sugar sampling, use legacy protocol to match Parin's original workflow", false );
 
 	//////////////Minimizer////////////
 	NEW_OPT( minimize_and_score_native_pose, "minimize_and_score_native_pose ", false ); //Sept 15, 2010

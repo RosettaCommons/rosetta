@@ -84,7 +84,7 @@ RNA_ResidueType::update_derived_rna_data(ResidueTypeCOP const residue_type_in){
 	Is_virtual_atom_list_.clear();
 
 	for ( Size i=1; i<= residue_type_->natoms(); i++ ) {
-		if(residue_type_->atom_type( i ).name()=="VIRT"){
+		if(residue_type_->is_virtual( i ) ){
 			Is_virtual_atom_list_.push_back(true);
 		}else{
 			Is_virtual_atom_list_.push_back(false);	

@@ -17,10 +17,9 @@
 
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
-
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/chemical/rna/RNA_Util.hh>
-
 #include <core/types.hh>
 
 #include <ObjexxFCL/format.hh>
@@ -46,45 +45,27 @@ namespace rna {
 			bulge_res_base_state( WHATEVER )
 		{
 
-			PDL.clear(); //pose_data_list
-			is_prepend = ( moving_res > reference_res ) ? false: true;
-			bulge_res = ( is_prepend ) ? reference_res - 1: reference_res + 1;
+			pose_list.clear();
+			is_prepend = ( moving_res <= reference_res );
+			bulge_res  = ( is_prepend ) ? reference_res - 1: reference_res + 1;
 			bulge_suite = ( is_prepend ) ? bulge_res : bulge_res - 1;
 			five_prime_chain_break = ( is_prepend ) ? moving_res: moving_res - 1;
-
-			////////////////////////Consistency check!////////////////////////////////////////
-			if ( is_prepend ){
-				if ( moving_res + 2 != reference_res ){
-					std::cout << "moving_res = " << moving_res << " reference_res = " << reference_res;
-					utility_exit_with_message( "prepend, but moving_res + 2 != reference_res!" );
-				}
-			} else{
-				if ( moving_res - 2 != reference_res ){
-					std::cout << "moving_res = " << moving_res << " reference_res = " << reference_res;
-					utility_exit_with_message( "append, but moving_res - 2 != reference_res!" );
-				}
-			}
-
 		}
 
 	SugarModeling::SugarModeling():
-			sample_sugar( false )
-		{
-			PDL.clear(); //pose_data_list
-		}
+		sample_sugar( false )
+	{
+		pose_list.clear(); //pose_data_list
+	}
 
 	SugarModeling::~SugarModeling(){}
 
 
 	void
 	SugarModeling::check_compatibility( core::Size const nres ) const{
-			using namespace ObjexxFCL;
-
-			if ( moving_res < 1 || moving_res > nres ) utility_exit_with_message( "moving_res < 1 || moving_res > nres. moving_res = " + string_of( moving_res ) );
-			if ( bulge_res < 1 || bulge_res > nres ) utility_exit_with_message( "bulge_res < 1 || bulge_res > nres. bulge_res = " + string_of( bulge_res ) );
-			if ( reference_res < 1 || reference_res > nres ) utility_exit_with_message( "reference_res < 1 || reference_res > nres. reference_res = " + string_of( reference_res ) );
-
-			//Should check here that moving_res contain virtual sugar and bulge_res is a virtual_rna_residue?
+		using namespace ObjexxFCL;
+		runtime_assert( moving_res >= 1 && moving_res <= nres );
+		runtime_assert( reference_res >= 1 && reference_res <= nres );
 	}
 
 	void
@@ -106,19 +87,19 @@ namespace rna {
 			if (  ( JP->working_force_syn_chi_res_list() ).has_value( bulge_res ) ) bulge_res_base_state = SYN;
 
 			////////////////////////Print data!////////////////////////////////////////
-			std::cout << "SugarModeling: " << std::endl;
-			output_boolean( " is_prepend = ", is_prepend, TR );
-			std::cout << " reference_res = " << reference_res;
+			TR.Debug << "SugarModeling: " << std::endl;
+			output_boolean( " is_prepend = ", is_prepend, TR.Debug );
+			TR.Debug << " reference_res = " << reference_res;
 
-			std::cout << " moving_res = " << moving_res;
-			print_base_state( "|base_state = ", moving_res_base_state );
+			TR.Debug << " moving_res = " << moving_res;
+			print_base_state( "|base_state = ", moving_res_base_state, TR.Debug );
 			print_sugar_pucker_state( "|pucker_state = ", moving_res_pucker_state, TR.Debug );
 
-			std::cout << " bulge_res = " << bulge_res;
-			print_base_state( "|base_state = ", bulge_res_base_state );
+			TR.Debug << " bulge_res = " << bulge_res;
+			print_base_state( "|base_state = ", bulge_res_base_state, TR.Debug );
 			print_sugar_pucker_state( "|pucker_state = ", bulge_res_pucker_state, TR.Debug );
 
-			std::cout << " bulge_suite = " << bulge_suite << " five_prime_chain_break = " << five_prime_chain_break;
+			TR.Debug << " bulge_suite = " << bulge_suite << " five_prime_chain_break = " << five_prime_chain_break;
 
 	}
 

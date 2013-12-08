@@ -14,7 +14,7 @@
 
 #include <protocols/swa/monte_carlo/RNA_AddDeleteMonteCarlo.hh>
 #include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.hh>
-#include <protocols/swa/monte_carlo/RNA_O2StarMover.hh>
+#include <protocols/swa/monte_carlo/RNA_O2PrimeMover.hh>
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.hh>
 #include <protocols/swa/monte_carlo/SWA_MonteCarloUtil.hh>
 #include <protocols/swa/monte_carlo/SWA_Move.hh>
@@ -65,7 +65,7 @@ namespace monte_carlo {
   //constructor!
 	RNA_AddDeleteMonteCarlo::RNA_AddDeleteMonteCarlo(  RNA_AddOrDeleteMoverOP rna_add_or_delete_mover,
 																										 RNA_TorsionMoverOP     rna_torsion_mover,
-																										 RNA_O2StarMoverOP      rna_o2prime_mover,
+																										 RNA_O2PrimeMoverOP      rna_o2prime_mover,
 																										 core::scoring::ScoreFunctionOP scorefxn ):
 		rna_add_or_delete_mover_( rna_add_or_delete_mover ),
 		rna_torsion_mover_( rna_torsion_mover ),

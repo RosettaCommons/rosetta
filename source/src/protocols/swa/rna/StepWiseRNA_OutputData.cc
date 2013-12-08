@@ -20,8 +20,7 @@
 #include <protocols/swa/rna/StepWiseRNA_FloatingBaseSamplerUtil.hh> //Sept 26, 2011
 #include <protocols/swa/rna/StepWiseRNA_ResidueInfo.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
-
-
+#include <protocols/rotamer_sampler/rigid_body/EulerAngles.hh>
 #include <protocols/rna/RNA_BasePairClassifier.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 
@@ -35,7 +34,6 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
@@ -98,16 +96,16 @@ namespace rna {
 		//        What I encountered was that sometime a pose structure that have entirely
 		//        normal coordinates inside Rosetta becomes messed up when written as a
 		//        silent_struct. I also noticed that if the pose is then slightly rotated
-		//        (eular angles), then this problem will disappear.
+		//        (euler angles), then this problem will disappear.
 		//
 		//        So essentially, the get_binary_rna_silent_struct_safe() function writes a
 		//        pose as a silent_struct to file and then checks whether the silent_struct is
-		//        messed up. If it is messed, the function rotates the pose and rewrite the
+		//        messed up. If it is messed up, the function rotates the pose and rewrite the
 		//        silent_struct. This process continues until the silent_struct is no longer
 		//        messed-up or maximum trial (10) is reached.
 		//
 		//        For most cases, the silent_struct is successfully written on the first
-		//        trial since a very small fraction (perhaps 0.01%) of pose experience
+		//        trial since a very small fraction (perhaps 0.01%) of pose experiences
 		//        this problem. -- parin (2013)
 
 		using namespace core::io::silent;
@@ -132,8 +130,6 @@ namespace rna {
 
 		pose::Pose first_trial_pose_from_silent_file;
 		pose::Pose first_trial_pose;
-
-
 
 		for ( Size trial_num = 1; trial_num <= NUM_trials; trial_num++ ){ //Found that just rigid problem rotation of the pose solves the silent_file conversion problem
 
@@ -164,21 +160,12 @@ namespace rna {
 				centroid = centroid/numatoms;
 
 				////////////////////////////////////////////////////////////////////////////////
-
-
-				Euler_angles euler_angles;
-
+				rotamer_sampler::rigid_body::EulerAngles euler_angles;
 				Matrix rotation_matrix;
-
-				euler_angles.alpha = ( 0.25*trial_num )*local_angle_bin_size*( RADS_PER_DEG );
-				euler_angles.gamma = ( 0.25*trial_num )*local_angle_bin_size*( RADS_PER_DEG );
-
-				euler_angles.z = ( 0.25*trial_num )*local_z_bin_size;	//MAKE SURE THIS DOESN'T GET OUT OF BOUND!
-				euler_angles.beta = acos( euler_angles.z );
-
-				convert_euler_to_coordinate_matrix( euler_angles, rotation_matrix );
-
-				//numeric::xyzVector<core::Real> const offset_vector=Vector( 0.0,   0.0,   1.0*(trial_num-1) );
+				euler_angles.set_alpha( ( 0.25*trial_num )*local_angle_bin_size*( RADS_PER_DEG ) );
+				euler_angles.set_gamma( ( 0.25*trial_num )*local_angle_bin_size*( RADS_PER_DEG ) );
+				euler_angles.set_z( ( 0.25*trial_num )*local_z_bin_size );	//MAKE SURE THIS DOESN'T GET OUT OF BOUND!
+				euler_angles.convert_to_rotation_matrix( rotation_matrix );
 
 				for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ){
 
@@ -231,9 +218,6 @@ namespace rna {
 				first_trial_pose = pose;
 			}
 
-			//pose.dump_pdb( "SILENT_FILE_CONVERSION_TEST_" + tag +"_TRIAL_" + lead_zero_string_of(trial_num, 3) + ".pdb" );
-			//pose_from_silent_file.dump_pdb( "IMPORTED_SILENT_FILE_CONVERSION_TEST_" + tag +"_TRIAL_" + lead_zero_string_of(trial_num, 3) + ".pdb" );
-
 			if ( check_for_messed_up_structure( pose_from_silent_file, debug_tag ) == false ){
 				return silent_struct;
 
@@ -242,7 +226,6 @@ namespace rna {
 			}
 
 		}
-
 
 		first_trial_pose_from_silent_file.dump_pdb( "SILENT_FILE_CONVERSION_PROBLEM_" + tag + "_pose_from_silent_file.pdb" );
 		first_trial_pose.dump_pdb( "SILENT_FILE_CONVERSION_PROBLEM_" + tag + ".pdb" );
@@ -312,9 +295,6 @@ namespace rna {
 
 		BinaryRNASilentStruct s = get_binary_rna_silent_struct_safe_wrapper( pose, tag, silent_file, write_score_only );
 
-		//s.print_header( TR );
-		//s.precision(5); REALLY COOL. SET higher precision so that their is no energy rank ambiguity!.
-
 		bool const output_extra_RMSDs = job_parameters_->output_extra_RMSDs();
 
 		if ( native_poseCOP ){
@@ -367,9 +347,11 @@ namespace rna {
 					}
 				}
 
-				////////Simple loop RMSD exclude only virtual atoms in native_pdb (mostly just the native virtual_res)//////////////
+				////////Simple loop RMSD exclude only virtual atoms in native_pdb (mostly just the native virtual_res)///////
 				core::pose::Pose curr_pose_no_variants = pose;
-				remove_all_variant_types( curr_pose_no_variants ); //This remove all virtual_atoms!
+
+				// rhiju, 2013 -- I want the rmsd over non-virtual atoms!! Can't strip off virtuals.
+				//remove_all_variant_types( curr_pose_no_variants ); //This removes all virtual_atoms
 
 				if ( working_native_alignment.size() != 0 ){ //user specify which residue to align with native.
 					align_poses( curr_pose_no_variants, tag + "_no_variants", ( *native_poseCOP ), "native",  working_native_alignment );
@@ -377,11 +359,16 @@ namespace rna {
 					align_poses( curr_pose_no_variants, tag + "_no_variants", ( *native_poseCOP ), "native",  working_best_alignment );
 				}
 
-				s.add_energy( "NAT_rmsd", rmsd_over_residue_list( curr_pose_no_variants, *native_poseCOP, rmsd_res_list, full_to_sub, is_prepend_map, false /*verbose*/, true /*ignore_virtual_atom*/ ) );
+				s.add_energy( "NAT_rmsd", rmsd_over_residue_list( curr_pose_no_variants,
+																													*native_poseCOP,
+																													rmsd_res_list,
+																													full_to_sub,
+																													is_prepend_map,
+																													false /*verbose*/,
+																													true /*ignore_virtual_atom*/ ) );
 
 			}
 		}
-
 
 		silent_file_data.write_silent_struct( s, silent_file, write_score_only );
 

@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file RNA_O2StarMover
-/// @brief O2Stars an RNA residue from a chain terminus.
+/// @file RNA_O2PrimeMover
+/// @brief O2Primes an RNA residue from a chain terminus.
 /// @detailed
 /// @author Rhiju Das
 
-#include <protocols/swa/monte_carlo/RNA_O2StarMover.hh>
+#include <protocols/swa/monte_carlo/RNA_O2PrimeMover.hh>
 
 // libRosetta headers
 #include <core/types.hh>
@@ -39,7 +39,7 @@ using core::Real;
 // updates the pose full_model_info object.
 //////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "protocols.swa.monte_carlo.RNA_O2StarMover" ) ;
+static basic::Tracer TR( "protocols.swa.monte_carlo.RNA_O2PrimeMover" ) ;
 
 namespace protocols {
 namespace swa {
@@ -48,7 +48,7 @@ namespace monte_carlo {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
-	RNA_O2StarMover::RNA_O2StarMover( scoring::ScoreFunctionOP scorefxn ,
+	RNA_O2PrimeMover::RNA_O2PrimeMover( scoring::ScoreFunctionOP scorefxn ,
 																		bool const sample_all_o2prime,
 																		Real const sample_range_small,
 																		Real const sample_range_large ):
@@ -60,12 +60,12 @@ namespace monte_carlo {
 
   //////////////////////////////////////////////////////////////////////////
   //destructor
-  RNA_O2StarMover::~RNA_O2StarMover()
+  RNA_O2PrimeMover::~RNA_O2PrimeMover()
   {}
 
   //////////////////////////////////////////////////////////////////////////
   void
-  RNA_O2StarMover::apply( core::pose::Pose & pose )
+  RNA_O2PrimeMover::apply( core::pose::Pose & pose )
 	{
 		std::string move_type = "";
 		apply( pose, move_type );
@@ -73,7 +73,7 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////
   void
-  RNA_O2StarMover::apply( core::pose::Pose & pose, std::string & move_type )
+  RNA_O2PrimeMover::apply( core::pose::Pose & pose, std::string & move_type )
 	{
 
 		using namespace core::pose::full_model_info;
@@ -108,14 +108,14 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	std::string
-	RNA_O2StarMover::get_name() const {
-		return "RNA_O2StarMover";
+	RNA_O2PrimeMover::get_name() const {
+		return "RNA_O2PrimeMover";
 	}
 
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	void
-	RNA_O2StarMover::sample_near_o2prime_torsion( pose::Pose & pose, Size const moving_res, Real const sample_range){
+	RNA_O2PrimeMover::sample_near_o2prime_torsion( pose::Pose & pose, Size const moving_res, Real const sample_range){
 		id::TorsionID o2prime_torsion_id( moving_res, id::CHI, 4 );
 		Real o2prime_torsion = pose.torsion( o2prime_torsion_id ); //get
 		o2prime_torsion += RG.gaussian() * sample_range; //sample_near
@@ -124,7 +124,7 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	Size
-	RNA_O2StarMover::get_random_o2prime_residue( pose::Pose & pose ){
+	RNA_O2PrimeMover::get_random_o2prime_residue( pose::Pose & pose ){
 		// pick at random from whole pose -- a quick initial stab.
 		Size const o2prime_num = int( pose.total_residue() * RG.uniform() ) + 1;
 		return o2prime_num;
@@ -133,7 +133,7 @@ namespace monte_carlo {
 	//////////////////////////////////////////////////////////////////////////////////////
 	// This could be made smarter -- could go over nucleoside *and* suite.
 	Size
-	RNA_O2StarMover::get_random_o2prime_residue_near_moving_residue( pose::Pose & pose, utility::vector1< Size > const moving_res_list ){
+	RNA_O2PrimeMover::get_random_o2prime_residue_near_moving_residue( pose::Pose & pose, utility::vector1< Size > const moving_res_list ){
 
 		// should be better -- actually look at o2prime's that might be engaged in interactions with moving nucleoside
 

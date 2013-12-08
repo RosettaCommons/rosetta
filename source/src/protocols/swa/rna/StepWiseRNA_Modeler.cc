@@ -93,6 +93,7 @@ StepWiseRNA_Modeler::initialize_variables(){
 	allow_syn_pyrimidine_ = false;
 	extra_chi_ = false;
 	use_phenix_geo_ = false;
+	virtual_sugar_legacy_mode_ = false;
 	kic_sampling_ = false;
 	kic_sampling_if_relevant_ = false;
 	centroid_screen_ = true;
@@ -169,6 +170,7 @@ StepWiseRNA_Modeler::operator=( StepWiseRNA_Modeler const & src )
 	allow_syn_pyrimidine_ = src.allow_syn_pyrimidine_;
 	extra_chi_ = src.extra_chi_;
 	use_phenix_geo_ = src.use_phenix_geo_;
+	virtual_sugar_legacy_mode_ = src.virtual_sugar_legacy_mode_;
 	kic_sampling_ = src.kic_sampling_;
 	kic_sampling_if_relevant_ = src.kic_sampling_if_relevant_;
 	centroid_screen_ = src.centroid_screen_;
@@ -197,6 +199,7 @@ StepWiseRNA_Modeler::operator=( StepWiseRNA_Modeler const & src )
 	do_not_sample_multiple_virtual_sugar_ = src.do_not_sample_multiple_virtual_sugar_;
 	sample_ONLY_multiple_virtual_sugar_ = src.sample_ONLY_multiple_virtual_sugar_;
 	sampler_assert_no_virt_sugar_sampling_ = src.sampler_assert_no_virt_sugar_sampling_;
+	sampler_try_sugar_instantiation_ = src.sampler_try_sugar_instantiation_;
 	allow_base_pair_only_centroid_screen_ = src.allow_base_pair_only_centroid_screen_;
 	minimizer_perform_o2prime_pack_ = src.minimizer_perform_o2prime_pack_;
 	minimizer_output_before_o2prime_pack_ = src.minimizer_output_before_o2prime_pack_;
@@ -273,10 +276,12 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 		stepwise_rna_residue_sampler.set_do_not_sample_multiple_virtual_sugar( do_not_sample_multiple_virtual_sugar_ );
 		stepwise_rna_residue_sampler.set_sample_ONLY_multiple_virtual_sugar( sample_ONLY_multiple_virtual_sugar_ );
 		stepwise_rna_residue_sampler.set_assert_no_virt_sugar_sampling( sampler_assert_no_virt_sugar_sampling_ );
-		stepwise_rna_residue_sampler.set_allow_base_pair_only_centroid_screen( allow_base_pair_only_centroid_screen_ );
+		stepwise_rna_residue_sampler.set_try_sugar_instantiation( sampler_try_sugar_instantiation_ );
 
 		base_centroid_screener = new screener::StepWiseRNA_BaseCentroidScreener ( pose, job_parameters_ );
-		stepwise_rna_residue_sampler.set_base_centroid_screener ( base_centroid_screener );
+		base_centroid_screener->set_floating_base( job_parameters_->floating_base() );
+		base_centroid_screener->set_allow_base_pair_only_screen( allow_base_pair_only_centroid_screen_ );
+		stepwise_rna_residue_sampler.set_base_centroid_screener( base_centroid_screener );
 
 		user_input_VDW_bin_screener = new screener::StepWiseRNA_VDW_BinScreener();
 		if ( VDW_rep_screen_info_.size() > 0 ) {
@@ -304,7 +309,6 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 			if ( !output_minimized_pose_data_list_ ) return; // don't do a minimize...
 		}
 
-		// let's output the final pose_data_list, just to have a look
 		if ( verbose_ ) stepwise_rna_residue_sampler.output_pose_data_list ( silent_file_ + "_final_sample" );
 
 	} else {
@@ -315,7 +319,6 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 		runtime_assert ( get_native_pose() );
 		add_to_pose_list( pose_data_list, *get_native_pose(), "working_native_pose" );
 	}
-
 
 	////////////////////////////////////////////////////////////////
 	stepwise_rna_minimizer_ = new StepWiseRNA_Minimizer( pose_data_list, job_parameters_ );
@@ -342,9 +345,7 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 
 	stepwise_rna_minimizer_->apply ( pose );
 
-	// Need to make sure that final pose output is the lowest scoring one. Is it?
-
-	job_parameters_ = NULL; // Important: make sure that the next time this is used, job parameters is set explicitly -- or it will be reset.
+	job_parameters_ = 0; // Important: make sure that the next time this is used, job parameters is set explicitly -- or it will be reset.
 
 }
 
@@ -564,7 +565,7 @@ StepWiseRNA_Modeler::output_pose(
 																 pose::Pose & pose,
 																 std::string const & out_tag,
 																 std::string const out_silent_file ) const {
-	runtime_assert(  stepwise_rna_minimizer_ != 0 );
+	if ( !stepwise_rna_minimizer_ ) return;
 	stepwise_rna_minimizer_->output_pose_data_wrapper( out_tag, pose, out_silent_file );
 }
 

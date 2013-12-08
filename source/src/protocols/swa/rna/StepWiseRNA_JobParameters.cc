@@ -51,7 +51,8 @@ namespace rna {
 		is_prepend_( false ),
 		is_internal_( false ),
 		add_virt_res_as_root_( false ),
-		floating_base_( false )
+		floating_base_( false ),
+		rebuild_bulge_mode_( false )
 	{
 
 		//These vectors and map should be empty to begin with, but not harm to ensure this.

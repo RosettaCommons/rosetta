@@ -27,20 +27,6 @@ namespace protocols {
 namespace swa {
 namespace rna {
 
-struct Anchor_sugar_stub{
-	numeric::xyzVector< core::Real > origin;
-  Matrix coordinate_matrix;
-	Matrix invert_coordinate_matrix;
-};
-
-//Should make sure that alpha and gamma lies in the [-Pi:Pi] range.
-struct Euler_angles{
-	core::Real z; //z=cos(beta)
-	core::Real alpha; //phi
-	core::Real beta; //theta
-	core::Real gamma; //psi
-};
-
 
 struct Base_bin{
 
@@ -89,14 +75,6 @@ compare_int_pair{
 		return false; //Equality case.
 	}
 
-};
-
-struct
-compare_test{
-  bool
-	operator() ( core::Real const & first, core::Real const & second ) const {
-		return first < second;
-	}
 };
 
 

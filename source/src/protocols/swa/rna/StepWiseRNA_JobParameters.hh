@@ -81,6 +81,7 @@ namespace rna {
 		bool const & is_internal() const;
 		bool const & add_virt_res_as_root() const;
 		bool const & floating_base() const{ return floating_base_;}
+		bool const & rebuild_bulge_mode() const{ return rebuild_bulge_mode_;}
 
 		ObjexxFCL::FArray1D < bool > const & partition_definition() const;
 
@@ -161,6 +162,7 @@ namespace rna {
 		void set_protonated_H1_adenosine_list( utility::vector1< core::Size > const & setting );
 		void set_add_virt_res_as_root( bool const setting ){ add_virt_res_as_root_ = setting; }
 		void set_floating_base( bool const setting ){ floating_base_ = setting; }
+		void set_rebuild_bulge_mode( bool const setting ){ rebuild_bulge_mode_ = setting; }
 
 		core::pose::PoseCOP	working_native_pose() const;
 
@@ -198,6 +200,7 @@ namespace rna {
 		bool is_prepend_;
 		bool is_internal_;
 		bool add_virt_res_as_root_;
+		bool rebuild_bulge_mode_;
 		bool floating_base_;
 
 		ObjexxFCL::FArray1D < bool > partition_definition_;

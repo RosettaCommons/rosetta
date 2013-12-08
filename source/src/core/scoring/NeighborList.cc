@@ -78,9 +78,9 @@ NeighborList::NeighborList(
 NeighborList::~NeighborList()
 {
 	if ( auto_update_ ) {
-		tr << "Minimization stats: " << n_prepare_for_scorings_ << " score/deriv cals, ";
-		tr << n_update_from_wide_ << " narrow-from-wide updates, ";
-		tr << n_full_updates_ << " full updates." << std::endl;
+		tr.Debug << "Minimization stats: " << n_prepare_for_scorings_ << " score/deriv cals, ";
+		tr.Debug << n_update_from_wide_ << " narrow-from-wide updates, ";
+		tr.Debug << n_full_updates_ << " full updates." << std::endl;
 	}
 }
 
