@@ -77,6 +77,9 @@ public:
 
 		void sequence_separation( core::Size const c ){ sequence_separation_ = c;}
 		core::Size sequence_separation() const{ return sequence_separation_; }
+
+		void residues_to_align_on_pose( utility::vector1< core::Size > r ){ residues_to_align_on_pose_ = r; }
+		void residues_to_align_on_template( utility::vector1< core::Size > r ){ residues_to_align_on_template_ = r; }
 private:
   utility::vector1< core::Size > reference_positions( core::pose::Pose const & p ) const;
 	core::Real distance_threshold_; // dflt 16;
@@ -87,6 +90,7 @@ private:
 	bool parallel_; //dflt true; are the strands parallel or antiparallel?
 	core::Size chain_; //dflt 1; on which chain to search? 0 means all chains
 	core::Size sequence_separation_; // dflt 15aa; the minimal sequence separation between neighboring strands. Useful to eliminate short hairpins
+	utility::vector1< core::Size > residues_to_align_on_pose_, residues_to_align_on_template_; //dflt empty; if specified short circuit computing which residues to align, instead aligning the residues specificed here directly.
 };
 
 /* explanation for stagger:

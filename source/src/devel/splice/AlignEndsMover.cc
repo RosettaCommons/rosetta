@@ -33,6 +33,7 @@ static basic::Tracer TR("devel.splice.AlignEndsMover");
 #include <core/scoring/dssp/Dssp.hh>
 #include <numeric/xyzVector.hh>
 #include <algorithm>
+#include <utility/string_util.hh>
 
 namespace devel {
 namespace splice {
@@ -70,6 +71,8 @@ AlignEndsMover::AlignEndsMover(): moves::Mover("AlignEnds"),
 	chain_( 1 ),
 	sequence_separation_( 15 )
 {
+	residues_to_align_on_pose_.clear();
+	residues_to_align_on_template_.clear();
 }
 
 AlignEndsMover::~AlignEndsMover()
@@ -204,7 +207,18 @@ AlignEndsMover::apply( Pose & pose ){
 	using namespace protocols::toolbox;
 	using namespace core::scoring::dssp;
 
-	utility::vector1< core::Size > const template_positions( reference_positions( *template_pose() ) ), pose_positions( reference_positions( pose ) );
+	runtime_assert( residues_to_align_on_pose_.size() == residues_to_align_on_template_.size() );
+	utility::vector1< core::Size > template_positions, pose_positions;
+	template_positions.clear(); pose_positions.clear();
+	if( residues_to_align_on_pose_.size() == 0 ){
+		template_positions = reference_positions( *template_pose() );
+		pose_positions = reference_positions( pose );
+	}
+	else{
+		template_positions = residues_to_align_on_template_;
+		pose_positions = residues_to_align_on_pose_;
+	}
+
 	TR<<"Aligning positions on template: ";
 	foreach( core::Size const p, template_positions ){
 		TR<<p<<'+';}
@@ -266,6 +280,21 @@ AlignEndsMover::parse_my_tag(
 	max_strands( tag->getOption< core::Size >( "max_strands", 10 ) );
 	chain( tag->getOption< core::Size >( "chain", 1 ) );
 	sequence_separation( tag->getOption< core::Size >( "sequence_separation", 15 ) );
+	if( tag->hasOption( "residues_to_align_on_pose" ) && tag->hasOption( "residues_to_align_on_template" ) ){
+		TR<<"Will respect user defined residues for alignment, ignoring beta-strand calculations"<<std::endl;
+		residues_to_align_on_pose_ = utility::string_split(tag->getOption<std::string>("residues_to_align_on_pose"),'+',core::Size());
+		residues_to_align_on_template_ = utility::string_split(tag->getOption<std::string>("residues_to_align_on_template"),'+',core::Size());
+		runtime_assert( residues_to_align_on_pose_.size() == residues_to_align_on_template_.size() );
+		TR<<"Aligning pose residues: ";
+		foreach( core::Size const s, residues_to_align_on_pose_ ){
+			TR<<s<<',';
+		}
+		TR<<"\nwith template residues";
+		foreach( core::Size const s, residues_to_align_on_template_ ){
+			TR<<s<<',';
+		}
+		TR<<std::endl;
+	}//fi tag->hasOption
 
 	TR<<"paralell: "<<parallel()<<" distance_threshold: "<<distance_threshold()<<" max_strands: "<<max_strands()<<" strand_length: "<<strand_length()<<" neighbors: "<<neighbors()<<" N_terminal_count: "<<N_terminal_count()<<" odd: "<<odd()<<" even: "<<even()<<" template_pose: "<<template_fname<<" stagger: "<<stagger()<<" chain: "<<chain()<<" sequence_separation: "<<sequence_separation()<<std::endl;
 }
