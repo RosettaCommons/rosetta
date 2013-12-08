@@ -31,6 +31,9 @@
 #include <utility/vector1.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/kinematics/FoldTree.hh>
+//#include <time.h> // THIS IS USED FOR DEBUGGING!
+//#include <algorithm> // THIS IS USED FOR DEBUGGING!
+//#include <string> // THIS IS USED FOR DEBUGGING!
 
 namespace protocols {
 namespace protein_interface_design {
@@ -70,9 +73,23 @@ LoopLengthChange::~LoopLengthChange() {}
 void
 LoopLengthChange::apply( core::pose::Pose & pose )
 {
-	TR<<"Changing loop "<<loop_start()<<"-"<<loop_end()<<" by "<<delta()<<std::endl;
+//    TR<<"Changing loop "<<loop_start()<<"-"<<loop_end()<<" by "<<delta()<<std::endl;
+//    if ( loop_end() + delta() < loop_start() ){
+//        pose.dump_pdb("dumping_as_loop_end_greater_than_loop_start.pdb");
+//    }
+    
+    //time_t rawtime;
+    //time (&rawtime);
+    //std::string timerstring = ctime(&rawtime);
+    //TR<<"Now dumping at time "<<timerstring<<std::endl;
+    //timerstring.erase(std::remove(timerstring.begin(), timerstring.end(), '\n'), timerstring.end());
+    //timerstring.erase(std::remove(timerstring.begin(), timerstring.end(), ' '), timerstring.end());
+    //pose.dump_pdb(timerstring+"_dump.pdb");
+    
+    //TR<<"loop end is "<<loop_end()<<" loop_start is "<<loop_start()<<" delta is "<<delta()<<std::endl;
+    
   runtime_assert( loop_end() >= loop_start() );
-  runtime_assert( loop_end() + delta() >= loop_start() );
+  //runtime_assert( loop_end() + delta() >= loop_start() );
 	core::kinematics::FoldTreeCOP ft( pose.fold_tree() );
 	core::Size jump_count( 0 );
   if( delta() < 0 ){
@@ -115,7 +132,7 @@ LoopLengthChange::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, p
 	delta( tag->getOption< int >( "delta" ) );
 
   runtime_assert( loop_end() > loop_start() );
-  runtime_assert( loop_end() + delta() >= loop_start() );
+  // runtime_assert( loop_end() + delta() >= loop_start() ); 
 
 	TR<<"LoopLengthChange with loop "<<loop_start()<<"-"<<loop_end()<<" and delta "<<delta()<<std::endl;
 }

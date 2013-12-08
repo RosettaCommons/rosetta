@@ -218,13 +218,15 @@ copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::
 	TR<<"target: "<<from_res<<" "<<to_res<<" source: "<<from_nearest_on_source<<" "<<to_nearest_on_source<<std::endl;
 	runtime_assert( from_nearest_on_source && to_nearest_on_source );
 	// change loop length:
-	core::Size const residue_diff( to_nearest_on_source - from_nearest_on_source - (to_res - from_res ));
+    TR << "2 residue_diff: to_nearest_on_source" << to_nearest_on_source << "  from_nearest_on_source "<<from_nearest_on_source<<" to_res "<<to_res<<" from_res "<<from_res<<std::endl;
+	int const residue_diff( to_nearest_on_source - from_nearest_on_source - (to_res - from_res )); // SF&CN changed from core::Size to int, as residue_diff can be negative.
 	//	if( residue_diff == 0 ){
 	//		TR<<"skipping copy_stretch since loop lengths are identical"<<std::endl;
 	//		return;
 	//	}
 	core::kinematics::FoldTree const saved_ft( target.fold_tree() );
 	TR<<"DEBUG: copy_stretch foldtree: "<<saved_ft<<std::endl;
+	TR<<" from res "<<from_res<<" to res "<<to_res<< "residue_diff"<<std::endl; 	
 	protocols::protein_interface_design::movers::LoopLengthChange llc;
 	llc.loop_start( from_res );
 	llc.loop_end( to_res );
@@ -320,8 +322,10 @@ Splice::find_dbase_entry( core::pose::Pose const & pose )
 					continue;
 			}
 			bool const fit = std::find( delta_lengths_.begin(), delta_lengths_.end(), delta ) != delta_lengths_.end();
-			if( fit || database_pdb_entry_ != "" || dbase_entry != 0 )
-				dbase_subset_.push_back( i );
+			
+            if( fit || database_pdb_entry_ != "" || dbase_entry != 0 ){
+                dbase_subset_.push_back( i );
+            }
 		}
 		if( dbase_subset_.empty() ){
 			TR<<"Loop of appropriate length not found in database. Returning"<<std::endl;
@@ -414,7 +418,8 @@ Splice::apply( core::pose::Pose & pose )
 		to_res( designable[ designable.size() ] );
 	}
 	core::pose::Pose source_pose;
-	core::Size nearest_to_from( 0 ), nearest_to_to( 0 ), residue_diff( 0 ); // residues on source_pose that are nearest to from_res and to_res; what is the difference in residue numbers between incoming pose and source pose
+	core::Size nearest_to_from( 0 ), nearest_to_to( 0 );
+    int residue_diff( 0 ); // residues on source_pose that are nearest to from_res and to_res; what is the difference in residue numbers between incoming pose and source pose. 21/11/13: CN&SF This was changed from Core:Size to int as residue diff very well could be shorter than 0! //
 	ResidueBBDofs dofs; /// used to store the torsion/resid dofs from any of the input files
 	dofs.clear();
 	core::Size cut_site( 0 );
@@ -509,9 +514,9 @@ Splice::apply( core::pose::Pose & pose )
 			cut_site = dofs.cut_site();
 			runtime_assert( from_res() && to_res() && cut_site );
 		}
+        // TR<<"dofs.size "<<dofs.size()<<" dofs.stop_loop() "<<dofs.stop_loop()<<" dofs.start_loop() "<<dofs.start_loop()<<std::endl;
 		residue_diff = dofs.size() - ( dofs.stop_loop() - dofs.start_loop()  + 1 );
 	}// read from dbase
-	TR<<"From res: "<<from_res()<<" to_res: "<<to_res()<<std::endl;
 	runtime_assert( to_res() > from_res() );
 	//	if( saved_fold_tree_ )/// is saved_fold_tree_ being used?
 	//		pose.fold_tree( *saved_fold_tree_ );
@@ -521,6 +526,7 @@ Splice::apply( core::pose::Pose & pose )
 	/// than template_pose (this is a bit confusing, but it works!)
 	copy_stretch( pose, *template_pose_, from_res(), to_res() );
 	//	( *scorefxn() ) ( pose );
+    
 
 	using namespace utility;
 	/// randomize_cut() should not be invoked with a database entry, b/c the dbase already specified the cut sites.
@@ -554,7 +560,7 @@ Splice::apply( core::pose::Pose & pose )
 	TR<<"Foldtree before loop length change: "<<pose.fold_tree()<<std::endl;
 	protocols::protein_interface_design::movers::LoopLengthChange llc;
 	llc.loop_start( from_res() );
-	llc.loop_end( cut_site + residue_diff < from_res() ? to_res() : cut_site );
+    llc.loop_end( cut_site + residue_diff < from_res() ? to_res() : cut_site );
 	llc.delta( residue_diff );
 	llc.apply( pose );
 	TR<<"Foldtree after loop length change: "<<pose.fold_tree()<<std::endl;
@@ -1052,6 +1058,10 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 		delta_lengths_.push_back( 0 );
 	std::sort( delta_lengths_.begin(), delta_lengths_.end() );
 	std::unique( delta_lengths_.begin(), delta_lengths_.end() );
+    //TR<<"Deltas from xml: ";
+    //foreach( int const d, delta_lengths_ )
+    //    TR<<d<<',';
+    //TR<<std::endl;
 
 	if( template_file_ != "" ){ /// using a template file to determine from_res() to_res()
 		if( data.has( "poses", template_file_ ) ){
@@ -1523,7 +1533,7 @@ Splice::add_sequence_constraints( core::pose::Pose & pose){
 			ConstraintCOPs constraints( pose.constraint_set()->get_all_constraints() );
 			TR<<"Total number of constraints at End: "<<constraints.size()<<std::endl;
 		}
-		else{ //if pose has two chains than there is also a ligand therefore we weight antibody rediues according to distance from ligand
+		else{ //if pose has two chains then there is also a ligand therefore we weight antibody rediues according to distance from ligand
 			utility::vector1< core::Size > const non_upweighted_residues( find_residues_on_chain1_inside_interface( pose ) );
 			for( core::Size seqpos = pose.conformation().chain_begin( 1 ); seqpos <= pose.conformation().chain_end( 1 ); ++seqpos ){
 				using namespace core::scoring::constraints;
