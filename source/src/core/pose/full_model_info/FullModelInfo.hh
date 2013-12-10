@@ -154,6 +154,10 @@ const_full_model_info( pose::Pose const & pose );
 FullModelInfo &
 nonconst_full_model_info( core::pose::Pose & pose );
 
+// basically an alias to nonconst_full_model_info.
+FullModelInfo const &
+make_sure_full_model_info_is_setup( pose::Pose & pose );
+
 
 }
 }

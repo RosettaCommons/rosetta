@@ -35,7 +35,7 @@ namespace rna {
 																												core::scoring::ScoreFunctionCOP scorefxn ):
 		job_parameters_( job_parameters ),
 		num_pose_kept_( 108 ),
-		multiplier_( 2 ), //Sort and cluster poses when the number of pose is pose_data_list exceed multiplier*num_pose_kept,
+		multiplier_( 2 ), //Sort and cluster poses when the number of pose is pose_list exceed multiplier*num_pose_kept,
 		cluster_rmsd_( 0.5001 ),
 		PBP_clustering_at_chain_closure_( false ), //New option Aug 15 2010
 		distinguish_pucker_( true ),
@@ -70,16 +70,16 @@ namespace rna {
 
 		Real const current_score = ( *sampling_scorefxn_ )( current_pose );
 
-		update_pose_data_list( tag, current_pose, current_score );
+		update_pose_list( tag, current_pose, current_score );
 
-		if ( ( pose_data_list_.size() == num_pose_kept_*multiplier_ ) ){
-			std::sort( pose_data_list_.begin(), pose_data_list_.end(), sort_pose_by_score );
-			cluster_pose_data_list();
-			if ( pose_data_list_.size() > num_pose_kept_ ){
-				pose_data_list_.erase( pose_data_list_.begin() + num_pose_kept_, pose_data_list_.end() );
-				TR.Debug << "after erasing.. pose_data_list.size() = " << pose_data_list_.size() << std::endl;
+		if ( ( pose_list_.size() == num_pose_kept_*multiplier_ ) ){
+			std::sort( pose_list_.begin(), pose_list_.end(), sort_pose_by_score );
+			cluster_pose_list();
+			if ( pose_list_.size() > num_pose_kept_ ){
+				pose_list_.erase( pose_list_.begin() + num_pose_kept_, pose_list_.end() );
+				TR.Debug << "after erasing.. pose_list.size() = " << pose_list_.size() << std::endl;
 			} else{
-				TR.Debug << "pose_data_list.size() = " << pose_data_list_.size() << std::endl;
+				TR.Debug << "pose_list.size() = " << pose_list_.size() << std::endl;
 			}
 		}
 
@@ -89,37 +89,37 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Dec 18, 2009...took off alot of optimization from this code since it is very fast (not rate limiting) anyways.
 	void
-	StepWiseRNA_PoseSelection::cluster_pose_data_list(){
+	StepWiseRNA_PoseSelection::cluster_pose_list(){
 
 		bool const is_prepend(  job_parameters_->is_prepend() );
 		Size const actually_moving_res = job_parameters_->actually_moving_res();
 
-		utility::vector1< bool > pose_state_list( pose_data_list_.size(), true );
+		utility::vector1< bool > pose_state_list( pose_list_.size(), true );
 
 		Size num_clustered_pose = 0;
 
-		for ( Size i = 1; i <= pose_data_list_.size(); i++ ){
+		for ( Size i = 1; i <= pose_list_.size(); i++ ){
 
 			if ( pose_state_list[i] == true ){
 				num_clustered_pose++;
-				for ( Size j = i + 1; j <= pose_data_list_.size(); j++ ){
+				for ( Size j = i + 1; j <= pose_list_.size(); j++ ){
 
 					Real rmsd;
 					if ( PBP_clustering_at_chain_closure_ && job_parameters_->gap_size() == 0 ){ //new option Aug 15, 2010..include both phosphates in rmsd calculation at chain_break
-						rmsd =	 phosphate_base_phosphate_rmsd( ( *pose_data_list_[i] ), ( *pose_data_list_[j] ), actually_moving_res,  false /*ignore_virtual_atom*/ );
+						rmsd =	 phosphate_base_phosphate_rmsd( ( *pose_list_[i] ), ( *pose_list_[j] ), actually_moving_res,  false /*ignore_virtual_atom*/ );
 					} else{
-						rmsd = suite_rmsd( ( *pose_data_list_[i] ), ( *pose_data_list_[j] ), actually_moving_res, is_prepend, false /*ignore_virtual_atom*/ );
+						rmsd = suite_rmsd( ( *pose_list_[i] ), ( *pose_list_[j] ), actually_moving_res, is_prepend, false /*ignore_virtual_atom*/ );
 					}
 
-					bool const same_pucker = is_same_sugar_pucker( ( *pose_data_list_[i] ), ( *pose_data_list_[j] ), actually_moving_res );
+					bool const same_pucker = is_same_sugar_pucker( ( *pose_list_[i] ), ( *pose_list_[j] ), actually_moving_res );
 
 					if ( rmsd < cluster_rmsd_ && ( same_pucker || !distinguish_pucker_ ) ){
 						pose_state_list[j] = false;
 						if ( verbose_ ) {
-							TR.Debug << "rmsd = " << rmsd << "  pose " << tag_from_pose( *pose_data_list_[j] ) << " is a neighbor of pose " << tag_from_pose( *pose_data_list_[i] );
+							TR.Debug << "rmsd = " << rmsd << "  pose " << tag_from_pose( *pose_list_[j] ) << " is a neighbor of pose " << tag_from_pose( *pose_list_[i] );
 							TR.Debug << " same_pucker = "; output_boolean( same_pucker, TR.Debug );
-							print_sugar_pucker_state( " center_pucker = ", get_residue_pucker_state( ( *pose_data_list_[i] ), actually_moving_res ), TR.Debug );
-							print_sugar_pucker_state( " curr_pucker = ", get_residue_pucker_state( ( *pose_data_list_[j] ), actually_moving_res ), TR.Debug );
+							print_sugar_pucker_state( " center_pucker = ", get_residue_pucker_state( ( *pose_list_[i] ), actually_moving_res ), TR.Debug );
+							print_sugar_pucker_state( " curr_pucker = ", get_residue_pucker_state( ( *pose_list_[j] ), actually_moving_res ), TR.Debug );
 							TR.Debug << std::endl;
 						}
 					}
@@ -127,19 +127,19 @@ namespace rna {
 			}
 		}
 
-		utility::vector1< pose::PoseOP > clustered_pose_data_list;
+		utility::vector1< pose::PoseOP > clustered_pose_list;
 
-		for ( Size i = 1; i <= pose_data_list_.size(); i++ ) {
+		for ( Size i = 1; i <= pose_list_.size(); i++ ) {
 			if ( pose_state_list[i] == true ){
-				clustered_pose_data_list.push_back( pose_data_list_[i] );
+				clustered_pose_list.push_back( pose_list_[i] );
 			}
 		}
 
-		pose_data_list_ = clustered_pose_data_list;
+		pose_list_ = clustered_pose_list;
 
-		//check if pose_data_list size is equal to or exceed num_pose_kept_. Important to get score_cutoff here right after clustering.
-		if ( pose_data_list_.size() >= num_pose_kept_ ){
-			current_score_cutoff_ = total_energy_from_pose( *pose_data_list_[num_pose_kept_] );
+		//check if pose_list size is equal to or exceed num_pose_kept_. Important to get score_cutoff here right after clustering.
+		if ( pose_list_.size() >= num_pose_kept_ ){
+			current_score_cutoff_ = total_energy_from_pose( *pose_list_[num_pose_kept_] );
 		} else{
 			//keep on adding pose to list if there are still not enough clusters
 			current_score_cutoff_ = 999999.9; //Feb 02, 2012
@@ -153,16 +153,16 @@ namespace rna {
 	void
 	StepWiseRNA_PoseSelection::finalize( bool const do_clustering /* = true */ ){
 
-		std::sort( pose_data_list_.begin(), pose_data_list_.end(), sort_pose_by_score );
+		std::sort( pose_list_.begin(), pose_list_.end(), sort_pose_by_score );
 
-		if ( do_clustering ) cluster_pose_data_list();
+		if ( do_clustering ) cluster_pose_list();
 
-		if ( pose_data_list_.size() > num_pose_kept_ ) pose_data_list_.erase( pose_data_list_.begin() + num_pose_kept_, pose_data_list_.end() );
+		if ( pose_list_.size() > num_pose_kept_ ) pose_list_.erase( pose_list_.begin() + num_pose_kept_, pose_list_.end() );
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_PoseSelection::update_pose_data_list(
+	StepWiseRNA_PoseSelection::update_pose_list(
 																									 std::string const & tag,
 																									 pose::Pose const & current_pose,
 																									 Real const & current_score ) {
@@ -175,14 +175,8 @@ namespace rna {
 			if ( verbose_ ){
 				TR.Debug << "tag = " << tag << " current_score_cutoff_ " << current_score_cutoff_ << " score = " << current_score;
 			}
-
-			pose::PoseOP current_pose_data;
-			current_pose_data = new pose::Pose;
-			( *current_pose_data ) = current_pose;
-			tag_into_pose( *current_pose_data, tag );
-
-			pose_data_list_.push_back( current_pose_data );
-			if ( verbose_ ) TR.Debug << " pose_data_list.size = " << pose_data_list_.size() << std::endl;
+			pose_list_.push_back( current_pose.clone() );
+			if ( verbose_ ) TR.Debug << " pose_list.size = " << pose_list_.size() << std::endl;
 		}
 	}
 
@@ -202,11 +196,11 @@ namespace rna {
 
 	//////////////////////////////////////////////////////////////////
 	utility::vector1< pose::PoseOP >
-	StepWiseRNA_PoseSelection::pose_data_list(){ return pose_data_list_;}
+	StepWiseRNA_PoseSelection::pose_list(){ return pose_list_;}
 
 	//////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_PoseSelection::set_pose_data_list( utility::vector1< pose::PoseOP > &	pose_data_list ){ pose_data_list_ = pose_data_list; }
+	StepWiseRNA_PoseSelection::set_pose_list( utility::vector1< pose::PoseOP > &	pose_list ){ pose_list_ = pose_list; }
 
 } //rna
 } //swa

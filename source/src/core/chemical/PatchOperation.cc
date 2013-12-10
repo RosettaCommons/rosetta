@@ -377,6 +377,10 @@ SetAtomType::apply( ResidueType & rsd ) const
 	} else {
 		//std::cout << "SetAtomType::apply: " << atom_name_ << ' ' << atom_type_name_ << std::endl;
 		rsd.set_atom_type( atom_name_, atom_type_name_ );
+		if ( atom_type_name_ == "VIRT" ) {
+			rsd.atom( atom_name_ ).charge( 0.0 );
+			rsd.atom( atom_name_ ).is_virtual( true );
+		}
 	}
 	return false;
 }

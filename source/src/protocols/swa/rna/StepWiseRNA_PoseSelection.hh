@@ -50,7 +50,7 @@ namespace rna {
 		pose_selection_by_full_score( pose::Pose & current_pose, std::string const & tag );
 
 		void
-		cluster_pose_data_list();
+		cluster_pose_list();
 
 		void set_num_pose_kept( core::Size const & num_pose_kept );
 
@@ -64,14 +64,14 @@ namespace rna {
 		set_PBP_clustering_at_chain_closure( bool const & setting ){ PBP_clustering_at_chain_closure_ = setting; }
 
 		void
-		update_pose_data_list(
+		update_pose_list(
 													std::string const & tag,
 													pose::Pose const & current_pose,
 													Real const & current_score );
 
-		utility::vector1< pose::PoseOP > pose_data_list();
+		utility::vector1< pose::PoseOP > pose_list();
 
-		void set_pose_data_list( utility::vector1< pose::PoseOP > &	pose_data_list );
+		void set_pose_list( utility::vector1< pose::PoseOP > &	pose_list );
 
 		void
 		finalize( bool const do_clustering = true );
@@ -92,7 +92,7 @@ namespace rna {
 
 		StepWiseRNA_CountStruct count_data_;
 
-		utility::vector1< pose::PoseOP > pose_data_list_;
+		utility::vector1< pose::PoseOP > pose_list_;
 
 	};
 

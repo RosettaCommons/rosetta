@@ -475,6 +475,7 @@ namespace swa { namespace rna { StringVectorOptionKey const jump_point_pairs( "s
 namespace swa { namespace rna { IntegerVectorOptionKey const terminal_res( "swa:rna:terminal_res" );  } }
 namespace swa { namespace rna { BooleanOptionKey const add_virt_root( "swa:rna:add_virt_root" );  } }
 namespace swa { namespace rna { BooleanOptionKey const floating_base( "swa:rna:floating_base" );  } }
+namespace swa { namespace rna { IntegerOptionKey const floating_base_anchor_res( "swa:rna:floating_base_anchor_res" );  } }
 namespace swa { namespace rna { BooleanOptionKey const allow_chain_boundary_jump_partner_right_at_fixed_BP( "swa:rna:allow_chain_boundary_jump_partner_right_at_fixed_BP" );  } }
 namespace swa { namespace rna { IntegerVectorOptionKey const virtual_res( "swa:rna:virtual_res" );  } }
 namespace swa { namespace rna { IntegerVectorOptionKey const bulge_res( "swa:rna:bulge_res" );  } }

@@ -2709,6 +2709,7 @@ option.add( basic::options::OptionKeys::swa::rna::jump_point_pairs, "optional: e
 option.add( basic::options::OptionKeys::swa::rna::terminal_res, "optional: residues that are not allowed to stack during sampling" ).def();
 option.add( basic::options::OptionKeys::swa::rna::add_virt_root, "add_virt_root" ).def(false);
 option.add( basic::options::OptionKeys::swa::rna::floating_base, " floating_base " ).def(false);
+option.add( basic::options::OptionKeys::swa::rna::floating_base_anchor_res, "If we want floating base to be connected via a jump to an anchor res (with no intervening virtual residues), specify the anchor." ).def(0);
 option.add( basic::options::OptionKeys::swa::rna::allow_chain_boundary_jump_partner_right_at_fixed_BP, "mainly just to get Hermann nano - square RNA modeling to work" ).def(false);
 option.add( basic::options::OptionKeys::swa::rna::virtual_res, "optional: residues to be made virtual" ).def();
 option.add( basic::options::OptionKeys::swa::rna::bulge_res, "optional: residues to be turned into a bulge variant" ).def();

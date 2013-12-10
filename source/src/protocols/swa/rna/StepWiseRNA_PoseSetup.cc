@@ -743,9 +743,11 @@ StepWiseRNA_PoseSetup::additional_setup_for_floating_base( pose::Pose & pose ) c
 	Size const num_nucleotides = job_parameters_->working_moving_res_list().size();
 	bool const is_dinucleotide = ( num_nucleotides == 2 );
 
-	if ( !job_parameters_->floating_base() && !is_dinucleotide ) return;
+	if ( !job_parameters_->floating_base() ) return;
 
 	virtualize_sugar_and_backbone_at_moving_res( pose );
+
+	if ( !is_dinucleotide ) return;
 
 	Size const moving_res_ =  job_parameters_->working_moving_res(); // Might not correspond to user input.
 	Size const reference_res_ =  job_parameters_->working_reference_res(); //the last static_residues that this attach to the moving residues

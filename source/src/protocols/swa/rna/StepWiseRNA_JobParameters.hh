@@ -57,6 +57,7 @@ namespace rna {
 		utility::vector1< core::Size > const & working_moving_res_list() const;
 		utility::vector1< core::Size > working_res_list() const;
 		Size working_reference_res() const;
+		Size gap_size_to_anchor() const;
 
 		Size const & working_moving_suite() const;
 		utility::vector1< core::Size > const & working_moving_suite_list() const;
@@ -81,6 +82,8 @@ namespace rna {
 		bool const & is_internal() const;
 		bool const & add_virt_res_as_root() const;
 		bool const & floating_base() const{ return floating_base_;}
+		Size const & floating_base_anchor_res() const{ return floating_base_anchor_res_;}
+		Size working_floating_base_anchor_res() const;
 		bool const & rebuild_bulge_mode() const{ return rebuild_bulge_mode_;}
 
 		ObjexxFCL::FArray1D < bool > const & partition_definition() const;
@@ -150,6 +153,7 @@ namespace rna {
 		void set_working_moving_partition_pos(	utility::vector1< core::Size > const & working_moving_partition_pos );
 		void set_input_res_vectors(	utility::vector1< utility::vector1< Size > > const & setting );
 		void set_cutpoint_closed_list( utility::vector1< core::Size >  const & setting );
+		void set_cutpoint_open_list( utility::vector1< core::Size >  const & setting );
 		void set_working_best_alignment( utility::vector1< core::Size > const & setting );
 
 		void set_native_alignment( utility::vector1< core::Size > const & setting );
@@ -162,6 +166,7 @@ namespace rna {
 		void set_protonated_H1_adenosine_list( utility::vector1< core::Size > const & setting );
 		void set_add_virt_res_as_root( bool const setting ){ add_virt_res_as_root_ = setting; }
 		void set_floating_base( bool const setting ){ floating_base_ = setting; }
+		void set_floating_base_anchor_res( Size const setting ){ floating_base_anchor_res_ = setting; }
 		void set_rebuild_bulge_mode( bool const setting ){ rebuild_bulge_mode_ = setting; }
 
 		core::pose::PoseCOP	working_native_pose() const;
@@ -202,6 +207,7 @@ namespace rna {
 		bool add_virt_res_as_root_;
 		bool rebuild_bulge_mode_;
 		bool floating_base_;
+		Size floating_base_anchor_res_;
 
 		ObjexxFCL::FArray1D < bool > partition_definition_;
 
@@ -214,6 +220,7 @@ namespace rna {
 		core::kinematics::FoldTree fold_tree_;
 		utility::vector1< utility::vector1< core::Size > > input_res_vectors_;
 		utility::vector1< core::Size > cutpoint_closed_list_;
+		utility::vector1< core::Size > cutpoint_open_list_;
 		utility::vector1< core::Size > working_best_alignment_;
 
 		utility::vector1< core::Size > native_alignment_;

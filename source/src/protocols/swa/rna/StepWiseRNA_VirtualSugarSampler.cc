@@ -18,6 +18,7 @@
 #include <protocols/swa/rna/StepWiseRNA_VirtualSugarUtil.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_OutputData.hh>
+#include <protocols/swa/rna/StepWiseRNA_Modeler.hh> // for nice, encapsulated chain closer.
 #include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.hh>
 #include <protocols/swa/rna/screener/AtrRepScreener.hh>
 #include <protocols/swa/rna/screener/ChainClosableScreener.hh>
@@ -121,7 +122,7 @@ StepWiseRNA_VirtualSugarSampler::get_name() const {
 //Will have to at least rewrite both floating_base_chain_closure_setup() and floating_base_chain_closure_sampling() to sample both i and i-2 sugar.
 //Hardest 1. To change this would have to recursively sample the conformation of the bulge and corresponding virtual sugar starting from the bulge that is futhest away. If assume that each bulge conformation is independent of the other bulges then this is not very computationally expensive. Although this would require sampling two sugar for each bulge except for the bulge that is futhest again.   A trace back is then needed to find combinations of all the bulge conformation which is closable.
 //Medium 2. Another possibility is to simple assume that i-2 base can assume all bulge conformation subjected to chain_closable_screener.
-//Easiest 3. Just set chain_closure_sampling to false in this function. This will just keep all possible bulge conformation in pose_list that pass O3i_C5iplus2_distance>O3I_C5IPLUS2_MAX_DIST (in setup)
+//Easiest 3. Just set chain_closure_sampling to false in this function. This will just keep all possible bulge conformation in pose_list that pass O3i_C5iplus2_distance>O3I_C5I_PLUS_TWO_MAX_DIST (in setup)
 //However in Easiest 3. case, there is a problem is problem in that O3i_C5iplus2_distance has determined with fixed i-2 sugar.
 
 void
@@ -393,16 +394,38 @@ StepWiseRNA_VirtualSugarSampler::restore_pose_variants_after_chain_closure( util
 void
 StepWiseRNA_VirtualSugarSampler::floating_base_chain_closure( utility::vector1< PoseOP > & pose_list,
 																															pose::Pose & viewer_pose ){
-	// as an alternative, we could use a StepWiseRNA_Modeler for the following two steps, perhaps
-	// making use of KIC sampling for speed, and setting an option to return first solution that passes screens.
-	if ( legacy_mode_ ){
+	if ( legacy_mode_ ){ // deprecate legacy code soon
 		floating_base_chain_closure_legacy( pose_list, viewer_pose );
 		floating_base_chain_minimize_legacy( pose_list, viewer_pose );
+	} else {
+		floating_base_chain_closure_complete( pose_list, viewer_pose );
 	}
 }
 
 
-/////////////////////////////////////////////////////////////////////////////////////////void
+/////////////////////////////////////////////////////////////////////////////////////////
+// through the use of KIC-based sampling, this bulge modeling is both more comprehensive and
+// faster than the legacy code [which was CCD-based].
+void
+StepWiseRNA_VirtualSugarSampler::floating_base_chain_closure_complete( utility::vector1< PoseOP > & pose_list,
+																																			 pose::Pose & viewer_pose ){
+	utility::vector1< PoseOP > output_pose_list;
+	StepWiseRNA_ModelerOP stepwise_rna_modeler = new StepWiseRNA_Modeler( sugar_modeling_.bulge_res,
+																																				scorefxn_ );
+	stepwise_rna_modeler->set_use_phenix_geo( use_phenix_geo_ );
+	stepwise_rna_modeler->set_kic_sampling_if_relevant( true /*erraser sampling for speed & completeness*/ );
+	stepwise_rna_modeler->set_num_pose_minimize( 1 );
+	for ( Size n = 1; n <= pose_list.size(); n++ ){
+		Pose & pose = *(pose_list[n]);
+		stepwise_rna_modeler->apply( pose);
+		if ( stepwise_rna_modeler->get_num_sampled() > 0 ) output_pose_list.push_back( pose_list[n] );
+	}
+	pose_list = output_pose_list;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+// deprecate this after march 2014 if new 'floating_base_chain_closure_complete' is
+// satisfactory for stepwise assembly & stepwise monte carlo runs.
 void
 StepWiseRNA_VirtualSugarSampler::floating_base_chain_closure_legacy( utility::vector1< PoseOP > & pose_list,
 																																		 pose::Pose & viewer_pose ){

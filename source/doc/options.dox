@@ -13177,6 +13177,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-floating_base_anchor_res</b> \<Integer\><dt>
+<dd>If we want floating base to be connected via a jump to an anchor res (with no intervening virtual residues), specify the anchor.</dd><br>
+<dd>Default: 0</dd><br>
+</dl>
+<dl>
 <dt><b>-allow_chain_boundary_jump_partner_right_at_fixed_BP</b> \<Boolean\><dt>
 <dd>mainly just to get Hermann nano - square RNA modeling to work</dd><br>
 <dd>Default: false</dd><br>

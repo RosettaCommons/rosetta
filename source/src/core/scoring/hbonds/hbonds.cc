@@ -97,7 +97,7 @@ fill_intra_res_hbond_set(
 		if(rsd1.is_RNA()==false) continue;
 
   		identify_intra_res_hbonds( database, rsd1, calculate_derivative, hbond_set);
- 
+
 	}
 
 }
@@ -221,7 +221,7 @@ fill_hbond_set_by_AHdist_threshold(
 			core::conformation::Residue const & rsd2(pose.residue(res2));
 			int const nb2 = tenA_neighbor_graph.get_node(res2)->num_neighbors_counting_self_static();
 
-				
+
 			if (hbond_set.hbond_options().exclude_DNA_DNA() &&
 				rsd1.is_DNA() && rsd2.is_DNA() ) continue;
 
@@ -296,7 +296,6 @@ identify_hbonds_1way(
 		Size const hatm( *hnum );
 		Size const datm(don_rsd.atom_base(hatm));
 		bool datm_is_bb = don_rsd.atom_is_backbone(datm);
-
 		if (datm_is_bb){
 			if (exclude_bb && exclude_scb) continue;
 		} else {
@@ -388,7 +387,6 @@ identify_hbonds_1way(
 		Size const hatm( *hnum );
 		Size const datm(don_rsd.atom_base(hatm));
 		bool datm_is_bb = don_rsd.atom_is_backbone(datm);
-
 		if (datm_is_bb){
 			if (exclude_bb && exclude_scb) continue;
 		} else {
@@ -415,7 +413,7 @@ identify_hbonds_1way(
 				}
 			}
 
-			// rough filter for existance of hydrogen bond
+			// rough filter for existence of hydrogen bond
 			if ( hatm_xyz.distance_squared( acc_rsd.xyz( aatm ) ) > MAX_R2 ) continue;
 
 			Real unweighted_energy( 0.0 );
@@ -489,18 +487,18 @@ identify_hbonds_1way(
 					 )
 {
 	assert( don_rsd.seqpos() != acc_rsd.seqpos() );
-	
+
 	// <f1,f2> -- derivative vectors
 	//std::pair< Vector, Vector > deriv( Vector(0.0), Vector(0.0 ) );
 	HBondDerivs derivs;
-	
+
 	for ( chemical::AtomIndices::const_iterator
 		 hnum = don_rsd.Hpos_polar().begin(), hnume = don_rsd.Hpos_polar().end();
 		 hnum != hnume; ++hnum ) {
 		Size const hatm( *hnum );
 		Size const datm(don_rsd.atom_base(hatm));
 		bool datm_is_bb = don_rsd.atom_is_backbone(datm);
-		
+
 		if (datm_is_bb){
 			if (exclude_bb && exclude_scb) continue;
 		} else {
@@ -508,7 +506,7 @@ identify_hbonds_1way(
 		}
 		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
 		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
-		
+
 		for ( chemical::AtomIndices::const_iterator
 			 anum = acc_rsd.accpt_pos().begin(), anume = acc_rsd.accpt_pos().end();
 			 anum != anume; ++anum ) {
@@ -526,36 +524,36 @@ identify_hbonds_1way(
 					if (exclude_sc) continue;
 				}
 			}
-			
+
 			// rough filter for existance of hydrogen bond
 			if ( hatm_xyz.distance_squared( acc_rsd.xyz( aatm ) ) > MAX_R2 ) continue;
-			
+
 			Real unweighted_energy( 0.0 );
-			
+
 			HBEvalTuple hbe_type( datm, don_rsd, aatm, acc_rsd);
-			
+
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
 			assert( base2 > 0 && base != base2 );
-			
+
 			hb_energy_deriv( database, options, hbe_type, datm_xyz, hatm_xyz,
 							acc_rsd.atom(aatm ).xyz(),
 							acc_rsd.atom(base ).xyz(),
 							acc_rsd.atom(base2).xyz(),
 							unweighted_energy, evaluate_derivative, derivs);
-			
+
 			if (unweighted_energy >= MAX_HB_ENERGY) continue;
 			//std::cout << std::endl << "Found a hydrogen bond" << std::endl;
 			num_hbonds[don_rsd.seqpos()]++;
 			num_hbonds[acc_rsd.seqpos()]++;
-			
+
 			Real environmental_weight
 			(!options.use_hb_env_dep() ? 1 :
 			 get_environment_dependent_weight(hbe_type, don_nb, acc_nb, options));
-			
+
 			////////
 			// now we have identified an hbond -> accumulate its energy
-			
+
 			Real hbE = unweighted_energy /*raw energy*/ * environmental_weight /*env-dep-wt*/;
 			switch(get_hbond_weight_type(hbe_type.eval_type())){
 				case hbw_NONE:
@@ -580,12 +578,12 @@ identify_hbonds_1way(
 					break;
 			}
 			/////////
-			
+
 		} // loop over acceptors
 	} // loop over donors
 }
-	
-	
+
+
 void
 identify_hbonds_1way_AHdist(
 	HBondDatabase const & database,
@@ -647,9 +645,9 @@ identify_intra_res_hbonds(
 	HBondDerivs derivs;
 
 	//Assume use_hb_env_dep==False!
-	//Right now RNA specific. Include only hydrogen bonds between the base and the phosphate. June 22, 2011 Parin S. 
+	//Right now RNA specific. Include only hydrogen bonds between the base and the phosphate. June 22, 2011 Parin S.
 	//Since there is no DONOR on the phosphate, this means that datm needs to be on the base and the aatm is on the phosphate
-	
+
 	for ( chemical::AtomIndices::const_iterator anum  = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 
 		Size const aatm( *anum );
@@ -659,18 +657,13 @@ identify_intra_res_hbonds(
 
 		if( rsd.RNA_type().atom_is_phosphate(aatm)==false) continue;
 
-		if( rsd.is_virtual(aatm) ) continue; //Is this necessary?
-
 		for ( chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(),	hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 			Size const hatm( *hnum );
 			Size const datm(rsd.atom_base(hatm));
-	 
+
 			if( rsd.RNA_type().is_RNA_base_atom( datm )==false ) continue;
 
 			if( rsd.path_distance( aatm, datm ) < 4) utility_exit_with_message("rsd.path_distance(aatm, datm) < 4"); //consistency check
-	
-	 		if(rsd.is_virtual(hatm) ) continue; //Is this necessary?
-	 		if(rsd.is_virtual(datm) ) continue; //Is this necessary?
 
 			Vector const & hatm_xyz( rsd.atom(hatm).xyz());
 			Vector const & datm_xyz( rsd.atom(datm).xyz());
@@ -682,11 +675,11 @@ identify_intra_res_hbonds(
 
 			HBEvalTuple hbe_type( datm, rsd, aatm, rsd);
 
-			hb_energy_deriv( database, hbond_set.hbond_options(), 
-			hbe_type, datm_xyz, hatm_xyz, 
-			rsd.atom(aatm ).xyz(), 
-			rsd.atom(base ).xyz(), 
-			rsd.atom(base2).xyz(), 
+			hb_energy_deriv( database, hbond_set.hbond_options(),
+			hbe_type, datm_xyz, hatm_xyz,
+			rsd.atom(aatm ).xyz(),
+			rsd.atom(base ).xyz(),
+			rsd.atom(base2).xyz(),
 			unweighted_energy, evaluate_derivative, derivs);
 
 			if (unweighted_energy >= MAX_HB_ENERGY) continue;
@@ -704,10 +697,10 @@ identify_intra_res_hbonds(
 
 
 void
-identify_intra_res_hbonds( 
+identify_intra_res_hbonds(
 	HBondDatabase const & database,
-	conformation::Residue const & rsd, 
-	bool const evaluate_derivative, 
+	conformation::Residue const & rsd,
+	bool const evaluate_derivative,
 	HBondOptions const & options,
 	EnergyMap & emap){
 
@@ -720,9 +713,9 @@ identify_intra_res_hbonds(
 	HBondDerivs derivs;
 
 	//Assume use_hb_env_dep==False!
-	//Right now RNA specific. Include only hydrogen bonds between the base and the phosphate. June 22, 2011 Parin S. 
+	//Right now RNA specific. Include only hydrogen bonds between the base and the phosphate. June 22, 2011 Parin S.
 	//Since there is no DONOR on the phosphate, this means that datm needs to be on the base and the aatm is on the phosphate
-	
+
 	for ( chemical::AtomIndices::const_iterator anum  = rsd.accpt_pos().begin(), anume = rsd.accpt_pos().end(); anum != anume; ++anum ) {
 
     Size const aatm( *anum );
@@ -732,18 +725,12 @@ identify_intra_res_hbonds(
 
 		if( rsd.RNA_type().atom_is_phosphate(aatm)==false) continue;
 
- 		if( rsd.is_virtual(aatm) ) continue; //Is this necessary?
-
 	  for ( chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(),	hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 		  Size const hatm( *hnum );
 		  Size const datm(rsd.atom_base(hatm));
-	 
-			if( rsd.RNA_type().is_RNA_base_atom( datm )==false ) continue; 
 
+			if( rsd.RNA_type().is_RNA_base_atom( datm )==false ) continue;
 			if( rsd.path_distance( aatm, datm ) < 4) utility_exit_with_message("rsd.path_distance(aatm, datm) < 4"); //consistency check
-
-	 		if(rsd.is_virtual(hatm) ) continue; //Is this necessary?
-	 		if(rsd.is_virtual(datm) ) continue; //Is this necessary?
 
 		  Vector const & hatm_xyz( rsd.atom(hatm).xyz());
 		  Vector const & datm_xyz( rsd.atom(datm).xyz());
@@ -756,10 +743,10 @@ identify_intra_res_hbonds(
       HBEvalTuple hbe_type( datm, rsd, aatm, rsd);
 
 			hb_energy_deriv( database, options,
-				hbe_type, datm_xyz, hatm_xyz, 
-				rsd.atom(aatm ).xyz(), 
-				rsd.atom(base ).xyz(), 
-				rsd.atom(base2).xyz(), 
+				hbe_type, datm_xyz, hatm_xyz,
+				rsd.atom(aatm ).xyz(),
+				rsd.atom(base ).xyz(),
+				rsd.atom(base2).xyz(),
 				unweighted_energy, evaluate_derivative, derivs);
 
       if (unweighted_energy >= MAX_HB_ENERGY) continue;
@@ -1248,7 +1235,7 @@ get_membrane_depth_dependent_weight(
 	total_weight = fa_proj_AH * wat_weight + (1-fa_proj_AH) * memb_weight;
 
 	//pbadebug
-	//std::cout << "tot " << total_weight << " wat " << wat_weight << " memb " << memb_weight << " proj " 
+	//std::cout << "tot " << total_weight << " wat " << wat_weight << " memb " << memb_weight << " proj "
 	//<< fa_proj_AH << std::endl;
 
 	return total_weight;
@@ -1292,7 +1279,7 @@ get_membrane_depth_dependent_weight(
 	total_weight = fa_proj_AH * wat_weight + (1-fa_proj_AH) * memb_weight;
 
 	//pbadebug
-	//std::cout << "tot " << total_weight << " wat " << wat_weight << " memb " << memb_weight << " proj " 
+	//std::cout << "tot " << total_weight << " wat " << wat_weight << " memb " << memb_weight << " proj "
 				//<< fa_proj_AH << std::endl;
 
 	return total_weight;

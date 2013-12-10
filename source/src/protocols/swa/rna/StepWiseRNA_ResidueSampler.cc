@@ -162,7 +162,7 @@ StepWiseRNA_ResidueSampler::floating_base_sampling( pose::Pose & pose ){
 
 	floating_base_sampler.apply( pose );
 
-	pose_data_list_ = floating_base_sampler.get_pose_data_list();
+	pose_list_ = floating_base_sampler.get_pose_list();
 
 }
 
@@ -180,7 +180,7 @@ StepWiseRNA_ResidueSampler::standard_sampling_WRAPPER( core::pose::Pose & pose )
 	pose::Pose const pose_save = pose;
 
 	StepWiseRNA_StandardResidueSampler standard_residue_sampler( job_parameters_ );
-	standard_residue_sampler.set_pose_data_list( pose_data_list_ ); // allows for accumulation of poses, if desired.
+	standard_residue_sampler.set_pose_list( pose_list_ ); // allows for accumulation of poses, if desired.
 	standard_residue_sampler.set_base_centroid_screener( base_centroid_screener_ );
 	standard_residue_sampler.set_user_input_VDW_bin_screener ( user_input_VDW_bin_screener_ );
 	standard_residue_sampler.set_silent_file ( silent_file_ );
@@ -217,17 +217,17 @@ StepWiseRNA_ResidueSampler::standard_sampling_WRAPPER( core::pose::Pose & pose )
 	if ( !virtual_sugar_sampler_wrapper_->sampling_sugar() ){
 		standard_residue_sampler.apply( pose );
 	} else{ //Case where we have to sample virtual sugar...
-		utility::vector1< PoseOP > pose_data_list;
-		virtual_sugar_sampler_wrapper_->prepare_from_prior_sampled_sugar_jobs( pose, pose_data_list );
-		for ( Size n = 1; n <= pose_data_list.size(); n++ ){
-			TR << TR.Blue << "Running on sugar job " << n << " out of " << pose_data_list.size() << TR.Reset << std::endl;
-			pose = ( *pose_data_list[n] ); //set viewer_pose;
-			standard_residue_sampler.set_extra_tag( tag_from_pose( *pose_data_list[n] )  );
+		utility::vector1< PoseOP > pose_list;
+		virtual_sugar_sampler_wrapper_->prepare_from_prior_sampled_sugar_jobs( pose, pose_list );
+		for ( Size n = 1; n <= pose_list.size(); n++ ){
+			TR << TR.Blue << "Running on sugar job " << n << " out of " << pose_list.size() << TR.Reset << std::endl;
+			pose = ( *pose_list[n] ); //set viewer_pose;
+			standard_residue_sampler.set_extra_tag( tag_from_pose( *pose_list[n] )  );
 			standard_residue_sampler.apply( pose );
 		}
 	}
 
-	pose_data_list_ = standard_residue_sampler.pose_data_list();
+	pose_list_ = standard_residue_sampler.pose_list();
 	pose = pose_save;
 
 }
@@ -261,8 +261,8 @@ StepWiseRNA_ResidueSampler::set_user_input_VDW_bin_screener( screener::StepWiseR
 
 ////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< PoseOP > &
-StepWiseRNA_ResidueSampler::get_pose_data_list(){
-	return pose_data_list_;
+StepWiseRNA_ResidueSampler::get_pose_list(){
+	return pose_list_;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -332,17 +332,17 @@ StepWiseRNA_ResidueSampler::set_scorefxn( core::scoring::ScoreFunctionOP const &
 
 //////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_ResidueSampler::output_pose_data_list( std::string const final_sampler_output_silent_file ) const{
+StepWiseRNA_ResidueSampler::output_pose_list( std::string const final_sampler_output_silent_file ) const{
 	using namespace core::io::silent;
 
 	if ( verbose_ == false ){ //consistency check Apr 3, 2010
-		utility_exit_with_message( "verbose_ == false, but StepWiseRNA_ResidueSampler::output_pose_data_list is still called?!" );
+		utility_exit_with_message( "verbose_ == false, but StepWiseRNA_ResidueSampler::output_pose_list is still called?!" );
 	}
 
 	SilentFileData silent_file_data;
 
-	for ( Size n = 1; n <= pose_data_list_.size(); n++ ) {
-		output_data( silent_file_data, final_sampler_output_silent_file, tag_from_pose( *pose_data_list_[n] ), false, *( pose_data_list_[n] ), get_native_pose(), job_parameters_ );
+	for ( Size n = 1; n <= pose_list_.size(); n++ ) {
+		output_data( silent_file_data, final_sampler_output_silent_file, tag_from_pose( *pose_list_[n] ), false, *( pose_list_[n] ), get_native_pose(), job_parameters_ );
 	}
 
 }

@@ -3302,6 +3302,8 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 		using namespace core::id;
 
 		runtime_assert( gap_size > 0 );
+		if ( gap_size == GAP_SIZE_DUMMY ) return; // this signifies that the residues are actually on different strands.
+
 		Distance min_dist( 0.0 ), max_dist( 0.0 );
 		get_possible_O3prime_C5prime_distance_range( gap_size, min_dist, max_dist );
 
@@ -3392,10 +3394,10 @@ get_possible_O3prime_C5prime_distance_range( Size const gap_size_, Distance & mi
 	min_dist = 0.0;
 
 	if ( gap_size_ > 1 ){ //new option Sept 18, 2010, most useful for long loop mode...
-		max_dist = O3I_C5IPLUS2_MAX_DIST + ( ( gap_size_ - 1 )*( C5I_C5I_PLUS_ONE_MAX_DIST ) );
+		max_dist = O3I_C5I_PLUS_TWO_MAX_DIST + ( ( gap_size_ - 1 )*( C5I_C5I_PLUS_ONE_MAX_DIST ) );
 	} else if ( gap_size_ == 1 ) {
-		//previously used 11.0138 as O3I_C5IPLUS2_MAX_DIS which is slight underestimate...TOO strict;
-		max_dist = O3I_C5IPLUS2_MAX_DIST;
+		//previously used 11.0138 as O3I_C5I_PLUS_TWO_MAX_DIS which is slight underestimate...TOO strict;
+		max_dist = O3I_C5I_PLUS_TWO_MAX_DIST;
 	} else if ( gap_size_ == 0 ){
 		min_dist = O3I_C5I_MIN_DIST;
 		max_dist = O3I_C5I_MAX_DIST;

@@ -46,12 +46,13 @@ namespace rna {
 		working_moving_res_( 0 ),
 		working_moving_suite_( 0 ),
 		//which_chain_has_moving_res_( 0 ),
-		gap_size_( 0 ),
+		gap_size_( GAP_SIZE_DUMMY ),
 		five_prime_chain_break_res_( 0 ),
 		is_prepend_( false ),
 		is_internal_( false ),
 		add_virt_res_as_root_( false ),
 		floating_base_( false ),
+		floating_base_anchor_res_( 0 ),
 		rebuild_bulge_mode_( false )
 	{
 
@@ -124,16 +125,33 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////
 	Size StepWiseRNA_JobParameters::working_reference_res() const{ //the last static_residues that this attach to the moving residues
 
-		Size const num_nucleotides = working_moving_res_list_.size();
+		if ( floating_base_anchor_res_ ) return working_floating_base_anchor_res();
 
+		Size const num_nucleotides = working_moving_res_list_.size(); // this is number of working nucleotides
 		//check that moving_res_ and working_moving_res_list list are intialized (note this is not foolproof)
-		if ( num_nucleotides == 0 ) utility_exit_with_message( "num_building_nucleotides == 0!!" );
-		if ( working_moving_res_ == 0 ) utility_exit_with_message( "working_moving_res_ == 0!!" );
-
+		runtime_assert( num_nucleotides > 0 );
+		runtime_assert( working_moving_res_ > 0 );
 
 		Size const working_reference_res_ = ( is_prepend_ ) ? working_moving_res_ + num_nucleotides : working_moving_res_ - num_nucleotides;
 
 		return working_reference_res_;
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	StepWiseRNA_JobParameters::gap_size_to_anchor() const { //the last static_residues that this attach to the moving residues -- total distance.
+		Size const working_reference_res_ = working_reference_res();
+		runtime_assert( sub_to_full_.find( working_reference_res_ ) != sub_to_full_.end() );
+		Size const & reference_res = sub_to_full_.find( working_reference_res_ )->second;
+
+		// check if these are really separated by a user-defined chain break ('cutpoint open');
+		Size const check_cut_start = std::min( moving_res_, reference_res );
+		Size const check_cut_stop = std::max( moving_res_, reference_res )-1;
+		for ( Size i = check_cut_start; i <= check_cut_stop; i++ ) if ( cutpoint_open_list_.has_value( i ) ) return GAP_SIZE_DUMMY;
+
+		int separation = std::abs( int( reference_res ) - int( moving_res_ ) );
+		Size gap_size_to_anchor = separation - 1;
+		runtime_assert( gap_size_to_anchor >= 0 );
+		return static_cast<Size>( gap_size_to_anchor );
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	Size const & StepWiseRNA_JobParameters::working_moving_suite() const{
@@ -460,6 +478,11 @@ namespace rna {
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void
+	StepWiseRNA_JobParameters::set_cutpoint_open_list( utility::vector1< Size >  const & setting ){
+		cutpoint_open_list_ = setting;
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////
+	void
 	StepWiseRNA_JobParameters::set_working_best_alignment( utility::vector1< core::Size > const & setting ){
 		working_best_alignment_ = setting;
 	}
@@ -600,8 +623,12 @@ namespace rna {
 		}
 
 	}
-
 	//////////////////////////////////////////////////////////////////////////////////////////
+	Size StepWiseRNA_JobParameters::working_floating_base_anchor_res() const{
+		if ( floating_base_anchor_res_ == 0 ) return 0;
+		if ( !is_working_res_[ floating_base_anchor_res_ ] ) return 0;
+		return full_to_sub_.find( floating_base_anchor_res_ )->second;
+	}
 
 
 }

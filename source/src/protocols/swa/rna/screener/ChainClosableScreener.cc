@@ -100,15 +100,11 @@ namespace screener {
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
 	ChainClosableScreener::check_chain_closable( numeric::xyzVector< core::Real > const & xyz_1, numeric::xyzVector< core::Real > const & xyz_2 ) const {
-
 		//Two possibilities
 		//1. xyz_1-> five_prime_O3_xyz &&  xyz_2->three_prime_C5_xyz
 		//2. xyz_2-> five_prime_O3_xyz &&  xyz_1->three_prime_C5_xyz
-
 		Real const dist_squared = ( xyz_1 - xyz_2 ).length_squared();
-
 		Distance min_dist( 0.0 ), max_dist( 0.0 );
-
 		get_possible_O3prime_C5prime_distance_range( gap_size_, min_dist, max_dist );
 		return ( dist_squared > (min_dist*min_dist) &&
 						 dist_squared < (max_dist*max_dist ) );

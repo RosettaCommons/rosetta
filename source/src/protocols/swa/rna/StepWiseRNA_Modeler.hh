@@ -20,12 +20,17 @@
 #include <protocols/swa/rna/StepWiseRNA_Modeler.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_Minimizer.fwd.hh>
+#include <protocols/swa/rna/screener/StepWiseRNA_BaseCentroidScreener.fwd.hh>
+#include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <utility/vector1.hh>
 #include <string>
+
+using namespace core;
+using namespace core::pose;
 
 namespace protocols {
 namespace swa {
@@ -36,10 +41,10 @@ namespace rna {
 	public:
 
 		//constructor
-		StepWiseRNA_Modeler( core::scoring::ScoreFunctionOP scorefxn );
+		StepWiseRNA_Modeler( scoring::ScoreFunctionOP scorefxn );
 
 		//constructor
-		StepWiseRNA_Modeler( core::Size const sample_res, core::scoring::ScoreFunctionOP scorefxn );
+		StepWiseRNA_Modeler( Size const sample_res, scoring::ScoreFunctionOP scorefxn );
 
 		//destructor
 		~StepWiseRNA_Modeler();
@@ -52,31 +57,31 @@ namespace rna {
 
 	public:
 
-		void set_moving_res_and_reset( core::Size const moving_res );
+		void set_moving_res_and_reset( Size const moving_res );
 
-		virtual void apply( core::pose::Pose & pose );
+		virtual void apply( pose::Pose & pose );
 
 		virtual std::string get_name() const;
 
 		void set_job_parameters( StepWiseRNA_JobParametersCOP job_parameters );
 
-		void set_native_pose( core::pose::PoseCOP );
+		void set_native_pose( pose::PoseCOP );
 
-		core::pose::PoseCOP get_native_pose();
+		pose::PoseCOP get_native_pose();
 
 		void set_silent_file( std::string const & setting ){ silent_file_ = setting; }
 
-		void set_sampler_num_pose_kept( core::Size const & setting ){ sampler_num_pose_kept_ = setting; }
+		void set_sampler_num_pose_kept( Size const & setting ){ sampler_num_pose_kept_ = setting; }
 
-		void set_num_pose_minimize( core::Size const & setting ){ num_pose_minimize_ = setting; }
+		void set_num_pose_minimize( Size const & setting ){ num_pose_minimize_ = setting; }
 
-		core::Size get_num_sampled(){ return num_sampled_; }
+		Size get_num_sampled(){ return num_sampled_; }
 
-		void set_sampler_native_screen_rmsd_cutoff( core::Real const & setting ){ sampler_native_screen_rmsd_cutoff_ = setting; }
+		void set_sampler_native_screen_rmsd_cutoff( Real const & setting ){ sampler_native_screen_rmsd_cutoff_ = setting; }
 
-		void set_cluster_rmsd( core::Real const & setting ){ cluster_rmsd_ = setting; }
+		void set_cluster_rmsd( Real const & setting ){ cluster_rmsd_ = setting; }
 
-		void set_native_edensity_score_cutoff( core::Real const & setting ){ native_edensity_score_cutoff_ = setting; }
+		void set_native_edensity_score_cutoff( Real const & setting ){ native_edensity_score_cutoff_ = setting; }
 
 		void set_sampler_native_rmsd_screen( bool const & setting ){ sampler_native_rmsd_screen_ = setting; }
 
@@ -124,11 +129,11 @@ namespace rna {
 
 		void set_VDW_rep_screen_info( utility::vector1< std::string > const & setting ){ VDW_rep_screen_info_ = setting; }
 
-		void set_VDW_rep_alignment_RMSD_CUTOFF( core::Real const & setting ){ VDW_rep_alignment_RMSD_CUTOFF_ = setting; }
+		void set_VDW_rep_alignment_RMSD_CUTOFF( Real const & setting ){ VDW_rep_alignment_RMSD_CUTOFF_ = setting; }
 
 		void set_output_pdb( bool const & setting ){ output_pdb_ = setting; }
 
-		void set_output_minimized_pose_data_list( bool const & setting ){ output_minimized_pose_data_list_ = setting; }
+		void set_output_minimized_pose_list( bool const & setting ){ output_minimized_pose_list_ = setting; }
 
 		void set_fixed_res( utility::vector1< Size > const & setting ){ fixed_res_ = setting; }
 
@@ -175,35 +180,45 @@ namespace rna {
 		void set_minimizer_rename_tag( bool const & setting ){ minimizer_rename_tag_ = setting; }
 
 		StepWiseRNA_JobParametersOP
-		setup_job_parameters_for_swa( utility::vector1< Size > moving_res, core::pose::Pose const & pose );
+		setup_job_parameters_for_swa( utility::vector1< Size > moving_res, pose::Pose const & pose );
 
 		void
-		output_pose(core::pose::Pose & pose, std::string const & out_tag, std::string const out_silent_file ) const;
+		output_pose(pose::Pose & pose, std::string const & out_tag, std::string const out_silent_file ) const;
 
 	private:
 
 		void initialize_variables();
 
+		void initialize_job_parameters( pose::Pose & pose );
+
 		void
-		add_to_pose_list( utility::vector1< core::pose::PoseOP > & pose_data_list, core::pose::Pose const & pose, std::string const pose_tag ) const;
+		do_residue_sampling( pose::Pose & pose, utility::vector1< PoseOP > & pose_list );
+
+		bool
+		sampling_successful( utility::vector1< PoseOP > & pose_list );
+
+		void
+		do_minimizing( pose::Pose & pose, utility::vector1< PoseOP > & pose_list );
+
+		void
+		add_to_pose_list( utility::vector1< pose::PoseOP > & pose_list, pose::Pose const & pose, std::string const pose_tag ) const;
 
 	private:
 
 		StepWiseRNA_JobParametersCOP job_parameters_;
-		core::pose::PoseCOP native_pose_;
+		pose::PoseCOP native_pose_;
 
-		utility::vector1< core::Size > moving_res_list_;
-
-		utility::vector1< core::Size > fixed_res_;
-		utility::vector1< core::Size > minimize_res_;
-		core::scoring::ScoreFunctionOP scorefxn_;
+		utility::vector1< Size > moving_res_list_;
+		utility::vector1< Size > fixed_res_;
+		utility::vector1< Size > minimize_res_;
+		scoring::ScoreFunctionOP scorefxn_;
 		std::string silent_file_;
-		core::Size sampler_num_pose_kept_;
-		core::Size num_pose_minimize_;
-		core::Size num_sampled_;
-		core::Real sampler_native_screen_rmsd_cutoff_;
-		core::Real cluster_rmsd_;
-		core::Real native_edensity_score_cutoff_;
+		Size sampler_num_pose_kept_;
+		Size num_pose_minimize_;
+		Size num_sampled_;
+		Real sampler_native_screen_rmsd_cutoff_;
+		Real cluster_rmsd_;
+		Real native_edensity_score_cutoff_;
 		bool sampler_native_rmsd_screen_;
 		bool o2prime_screen_;
 		bool verbose_;
@@ -228,9 +243,9 @@ namespace rna {
 		bool rm_virt_phosphate_;
 
 		utility::vector1< std::string > VDW_rep_screen_info_;
-		core::Real VDW_rep_alignment_RMSD_CUTOFF_;
+		Real VDW_rep_alignment_RMSD_CUTOFF_;
 		bool output_pdb_;
-		bool output_minimized_pose_data_list_;
+		bool output_minimized_pose_list_;
 
 		// additional options that are not shared with ERRASER (yet)
 		utility::vector1< std::string > VDW_rep_delete_matching_res_;
@@ -256,7 +271,10 @@ namespace rna {
 		bool minimizer_rename_tag_;
 
 		StepWiseRNA_MinimizerOP stepwise_rna_minimizer_;
-		core::kinematics::MoveMapOP minimize_move_map_;
+		kinematics::MoveMapOP minimize_move_map_;
+
+		screener::StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
+		screener::StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
 
 	};
 

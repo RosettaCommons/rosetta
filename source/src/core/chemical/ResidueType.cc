@@ -676,7 +676,6 @@ ResidueType::add_atom(
 	graph_atom->has_orbitals(atype.atom_has_orbital());
 
 
-
 	// allocate space for the new atom !!!!!!!!!!!!!!!!!!!!!!
 	// eg, in the atom/resconn map
 	atom_2_residue_connection_map_.resize( ordered_atoms_.size() );
@@ -1623,7 +1622,6 @@ ResidueType::update_derived_data()
 		}
 	}
 
-
 	// compile atom-index lists of subsets of the atoms
 	accpt_pos_.clear();
 	accpt_pos_sc_.clear();
@@ -1636,31 +1634,26 @@ ResidueType::update_derived_data()
 	all_bb_atoms_.clear();
 	all_sc_atoms_.clear();
 
-
 	for ( Size i=1; i<= natoms(); ++i ) {
-        Atom const & atom(graph_[ ordered_atoms_[i]]); //get the atom that we are working on
+		Atom const & atom(graph_[ ordered_atoms_[i]]); //get the atom that we are working on
+
 		// info derived from the atom
 		if(atom.has_orbitals()) atoms_with_orb_index_.push_back(i); //get atoms with orbitals on it
 		if(atom.is_haro()) Haro_index_.push_back( i ); //get aromatic hydrogens
 		if(atom.is_polar_hydrogen()) Hpol_index_.push_back( i ); //get polar hydrogens
-
-		if ( atom.is_acceptor() ) {
+		if ( atom.is_acceptor() && !atom.is_virtual() ){
 			accpt_pos_.push_back( i );
 			if ( i > n_backbone_heavyatoms_ ) {
 				accpt_pos_sc_.push_back( i );
 			}
-
 		}
-
-		//if ( type.is_polar_hydrogen() &&   (std::abs( graph_[ordered_atoms_[ natoms() ]].charge() ) > 1.0e-3) ) {
-		if ( atom.is_polar_hydrogen() &&   (!atom.is_virtual() ) ) {
+		if ( atom.is_polar_hydrogen() && !atom.is_virtual() ){
 			Hpos_polar_.push_back( i );
 			if ( i >= first_sidechain_hydrogen_ ) {
 				Hpos_polar_sc_.push_back( i );
 			}
 		}
-
-		if ( atom.is_hydrogen() && ( !atom.is_polar_hydrogen() ) ){
+		if ( atom.is_hydrogen() && !atom.is_polar_hydrogen() ){
 			Hpos_apolar_.push_back( i );
 		}
 

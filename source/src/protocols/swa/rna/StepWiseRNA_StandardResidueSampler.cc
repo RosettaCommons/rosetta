@@ -256,7 +256,7 @@ namespace rna {
 
 			if ( include_torsion_value_in_tag_ ) tag += create_rotamer_string( pose, moving_res_, is_prepend_ );
 
-			///////Add pose to pose_data_list if pose has good score///////////
+			///////Add pose to pose_list if pose has good score///////////
 			Pose selected_pose = pose; // the reason for this copy is that we might apply a bulge variant, and that can produce thread conflicts with graphics.
 			if ( add_bulge ) apply_bulge_variant( selected_pose );
 			pose_selection_->pose_selection_by_full_score( selected_pose, tag );
@@ -274,7 +274,7 @@ namespace rna {
 
 		output_title_text( "Final sort and clustering", TR.Debug );
 		pose_selection_->finalize( !build_pose_from_scratch_ /*do_clustering*/ );
-		pose_data_list_ = pose_selection_->pose_data_list();
+		pose_list_ = pose_selection_->pose_list();
 
 		output_count_data();
 
@@ -328,7 +328,7 @@ namespace rna {
 		pose_selection_->set_PBP_clustering_at_chain_closure( PBP_clustering_at_chain_closure_ );
 		pose_selection_->set_distinguish_pucker( distinguish_pucker_ );
 		// Allows for accumulation and clustering of poses across multiple jobs with e.g. different conformations of sampled sugars.
-		pose_selection_->set_pose_data_list( pose_data_list_ );
+		pose_selection_->set_pose_list( pose_list_ );
 
 		/////Get the Rotamer Sampler/////
 		runtime_assert( base_centroid_screener_ );
@@ -566,14 +566,14 @@ StepWiseRNA_StandardResidueSampler::set_user_input_VDW_bin_screener( screener::S
 
 //////////////////////////////////////////////////////////////////
 utility::vector1< pose::PoseOP > &
-StepWiseRNA_StandardResidueSampler::pose_data_list(){
-	return pose_data_list_;
+StepWiseRNA_StandardResidueSampler::pose_list(){
+	return pose_list_;
 }
 
 //////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_StandardResidueSampler::set_pose_data_list( utility::vector1< pose::PoseOP > &	pose_data_list ){
-	pose_data_list_ = pose_data_list;
+StepWiseRNA_StandardResidueSampler::set_pose_list( utility::vector1< pose::PoseOP > &	pose_list ){
+	pose_list_ = pose_list;
 }
 
 } //rna

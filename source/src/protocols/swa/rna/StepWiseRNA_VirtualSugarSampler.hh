@@ -90,6 +90,10 @@ namespace rna {
 																 pose::Pose & viewer_pose );
 
 		void
+		floating_base_chain_closure_complete( utility::vector1< PoseOP > & pose_list,
+																					pose::Pose & viewer_pose );
+
+		void
 		floating_base_chain_closure_legacy( utility::vector1< PoseOP > & pose_list,
 																				pose::Pose & viewer_pose );
 

@@ -108,6 +108,9 @@ namespace rna {
 		set_floating_base( bool const setting );
 
 		void
+		set_floating_base_anchor_res( Size const setting );
+
+		void
 		set_rebuild_bulge_mode( bool const setting );
 
 		void
@@ -156,6 +159,9 @@ namespace rna {
 		figure_out_cuts();
 
 		void
+		setup_floating_base_jump_to_anchor();
+
+		void
 		setup_fold_tree();
 
 		void
@@ -185,8 +191,8 @@ namespace rna {
 		core::Size
 		reroot_fold_tree_simple();
 
-//		void
-//		reset_is_prepend(core::Size const root_res);
+		void
+		figure_out_working_alignment( Size const & root_res );
 
 		void
 		figure_out_best_working_alignment();
@@ -196,8 +202,6 @@ namespace rna {
 
 		utility::vector1< core::Size >
 		get_previously_closed_cutpoint_from_imported_silent_file() const;
-
-		/////////////////////////////////////////////////////////////////////////////////////
 
 	private:
 

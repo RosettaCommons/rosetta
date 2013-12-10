@@ -316,6 +316,14 @@ nonconst_full_model_info( pose::Pose & pose )
 	return *full_model_info;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// basically an alias
+FullModelInfo const &
+make_sure_full_model_info_is_setup( pose::Pose & pose )
+{
+	return nonconst_full_model_info( pose );
+}
+
 }
 }
 }

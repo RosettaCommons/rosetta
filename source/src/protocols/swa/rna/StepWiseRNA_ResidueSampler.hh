@@ -90,11 +90,11 @@ public:
 	set_allow_bulge_at_chainbreak( bool const & setting );
 
 	utility::vector1< core::pose::PoseOP > &
-	get_pose_data_list();
+	get_pose_list();
 
 	core::io::silent::SilentFileDataOP & silent_file_data();
 
-	void output_pose_data_list( std::string const final_sampler_output_silent_file ) const;
+	void output_pose_list( std::string const final_sampler_output_silent_file ) const;
 
 	void set_num_pose_kept( core::Size const & num_pose_kept );
 
@@ -197,7 +197,7 @@ private:
 
 	StepWiseRNA_JobParametersCOP job_parameters_;
 
-	utility::vector1< pose::PoseOP > pose_data_list_;
+	utility::vector1< pose::PoseOP > pose_list_;
 
 	core::scoring::ScoreFunctionOP scorefxn_;
 

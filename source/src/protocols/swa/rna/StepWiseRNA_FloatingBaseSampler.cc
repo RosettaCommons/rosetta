@@ -70,7 +70,7 @@ using namespace core;
 //                                            |                          |
 //                     If no bulge, close_chain_to_anchor             If no residues to distal, close_chain_to_distal
 //
-//              | <------   num_nucleotides    --------------->|<------- gap_size + 1 ----->|
+//              | <--------  gap_size_to_anchor + 1  ----------->|<------- gap_size + 1 ----->|
 //
 //
 //  * usually virtual -- the exceptions are if connected through chain closure to anchor and/or distal residue.
@@ -104,15 +104,15 @@ StepWiseRNA_FloatingBaseSampler::StepWiseRNA_FloatingBaseSampler( StepWiseRNA_Jo
 	is_prepend_(  job_parameters_->is_prepend() ),
 	is_internal_(  job_parameters_->is_internal() ), // no cutpoints before or after moving_res.
 	gap_size_( job_parameters_->gap_size() ), /* If this is zero or one, need to screen or closable chain break */
+	gap_size_to_anchor_( job_parameters_->gap_size_to_anchor() ),
 	five_prime_chain_break_res_( job_parameters_->five_prime_chain_break_res() ),
 	chain_break_reference_res_( ( is_prepend_ ) ? five_prime_chain_break_res_ : five_prime_chain_break_res_ + 1 ),
-	num_nucleotides_( job_parameters_->working_moving_res_list().size() ),
 	reference_res_( job_parameters_->working_reference_res() ), //the last static_residues that this attach to the moving residues
 	floating_base_five_prime_chain_break_ ( ( is_prepend_ ) ? moving_res_   : reference_res_ ),
 	floating_base_three_prime_chain_break_( ( is_prepend_ ) ? reference_res_: moving_res_ ),
-	is_dinucleotide_( num_nucleotides_ == 2 ),
+	is_dinucleotide_( gap_size_to_anchor_ == 1 ),
 	close_chain_to_distal_( gap_size_ == 0 ),
-	close_chain_to_anchor_( num_nucleotides_ == 1 ),
+	close_chain_to_anchor_( gap_size_to_anchor_ == 0 ),
 	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "rna_hires.wts" ) ), // can be replaced from the outside
 	silent_file_( "silent_file.txt" ),
 	num_pose_kept_( 108 ),
@@ -146,7 +146,8 @@ StepWiseRNA_FloatingBaseSampler::StepWiseRNA_FloatingBaseSampler( StepWiseRNA_Jo
 {
 	set_native_pose( job_parameters_->working_native_pose() );
 	runtime_assert ( !is_dinucleotide_ || !is_internal_ );
-	runtime_assert( num_nucleotides_ == 1 || num_nucleotides_ == 2 );
+	TR.Debug << "GAP_SIZE_TO_ANCHOR " << gap_size_to_anchor_ << "  REFERENCE RES        " << reference_res_ << "  MOVING_RES " << moving_res_ << std::endl;
+	TR.Debug << "GAP_SIZE_TO_DISTAL " << gap_size_           << "  FIVE' CHAINBREAK RES " << five_prime_chain_break_res_ << "  MOVING_RES " << moving_res_ << std::endl;
 }
 
 //Destructor
@@ -181,7 +182,7 @@ StepWiseRNA_FloatingBaseSampler::apply( core::pose::Pose & pose ){
 	initialize_rigid_body_sampler( pose );
 	initialize_other_residues_base_list( pose ); 	// places where floating base can 'dock'
 
-	utility::vector1< PoseOP > pose_data_list;
+	utility::vector1< PoseOP > pose_list;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// MAIN LOOP
@@ -308,7 +309,7 @@ StepWiseRNA_FloatingBaseSampler::apply( core::pose::Pose & pose ){
 		if ( choose_random_ && num_success >= num_random_samples_ ) break;
 	}
 
-	if ( choose_random_ ) TR << "Number of tries: " << ntries << ".  Passed filters: " << count_data_.tot_rotamer_count++ << ". Number of successes: " << num_success << std::endl;
+	if ( choose_random_ ) TR << "Number of tries: " << ntries << ".  Passed centroid filters: " << count_data_.tot_rotamer_count++ << ". Number of successes: " << num_success << std::endl;
 
 	pose_selection_->finalize();
 	output_count_data();
@@ -316,7 +317,7 @@ StepWiseRNA_FloatingBaseSampler::apply( core::pose::Pose & pose ){
 	// can put this back in pretty easily...
 	if ( verbose_ ) analyze_base_bin_map( base_bin_map_, "test/" );
 
-	pose_data_list_ = pose_selection_->pose_data_list();
+	pose_list_ = pose_selection_->pose_list();
 	TR.Debug << "floating base sampling time : " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 
 }
@@ -327,7 +328,7 @@ StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_screeners( pose:
 
 	runtime_assert( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_PHOSPHATE" ) );
 	runtime_assert( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_RIBOSE" ) );
-	if ( num_nucleotides_ == 1 ) runtime_assert( pose.fold_tree().is_cutpoint( moving_res_ - 1 ) );
+	if ( gap_size_to_anchor_ == 0 ) runtime_assert( pose.fold_tree().is_cutpoint( moving_res_ - 1 ) );
 
 	// hydrogens will be reinstantiated later. perhaps this should be the screening_pose?
 	Pose pose_with_virtual_O2prime_hydrogen = pose;
@@ -372,7 +373,7 @@ StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_screeners( pose:
 	chain_break_to_distal_screener_    = new screener::ChainBreakScreener( pose, five_prime_chain_break_res_ ); //Hard copy
 	chain_break_to_distal_screener_->set_reinitialize_CCD_torsions( reinitialize_CCD_torsions_ );
 
-	chain_closable_to_anchor_screener_ = new screener::ChainClosableScreener( floating_base_five_prime_chain_break_, floating_base_three_prime_chain_break_, ( num_nucleotides_ - 1 ) );
+	chain_closable_to_anchor_screener_ = new screener::ChainClosableScreener( floating_base_five_prime_chain_break_, floating_base_three_prime_chain_break_, gap_size_to_anchor_ );
 	chain_break_to_anchor_screener_    = new screener::ChainBreakScreener( pose, floating_base_five_prime_chain_break_ ); //Hard copy
 	chain_break_to_anchor_screener_->set_reinitialize_CCD_torsions( reinitialize_CCD_torsions_ );
 
@@ -434,14 +435,18 @@ StepWiseRNA_FloatingBaseSampler::initialize_euler_angle_grid_parameters(){
 	euler_z_bin_max_ = int(    1/euler_z_bin_size_ );
 }
 
+//////////////////////////////////////////////////////////////////////
+// max_distance is currently hard-wired... instead we should make it
+// depend on gap_size_to_anchor_, right?
 void
 StepWiseRNA_FloatingBaseSampler::initialize_xyz_grid_parameters(){
 
 	Distance C5_centroid_dist = get_max_centroid_to_atom_distance( moving_rsd_at_origin_list_, " C5'" );
 	Distance O5_centroid_dist = get_max_centroid_to_atom_distance( moving_rsd_at_origin_list_, " O3'" );
-	Distance const Max_O3_to_C5_DIST = ( num_nucleotides_ == 1 ) ? O3I_C5I_PLUS_ONE_MAX_DIST : O3I_C5IPLUS2_MAX_DIST;
+	Distance const Max_O3_to_C5_DIST = ( gap_size_to_anchor_ == 0 ) ? O3I_C5I_PLUS_ONE_MAX_DIST : O3I_C5I_PLUS_TWO_MAX_DIST;
 
-	max_distance_ = Max_O3_to_C5_DIST + C5_centroid_dist + O5_centroid_dist + 1.0; //Theoretical maximum dist between the two base's centroid, +1 is to be lenient
+	//Theoretical maximum dist between the two base's centroid, +1 is to be lenient
+	max_distance_ = Max_O3_to_C5_DIST + C5_centroid_dist + O5_centroid_dist + 1.0;
 	max_distance_squared_ = max_distance_ * max_distance_;
 
 	centroid_bin_min_ = int(  - max_distance_/centroid_bin_size );
@@ -450,7 +455,7 @@ StepWiseRNA_FloatingBaseSampler::initialize_xyz_grid_parameters(){
 	base_bin_map_.clear();
 }
 
-//////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_FloatingBaseSampler::initialize_rigid_body_sampler( pose::Pose const & pose ){
 
@@ -522,7 +527,7 @@ StepWiseRNA_FloatingBaseSampler::screen_anchor_sugar_conformation( pose::Pose & 
 			pose::Pose const & anchor_sugar_modeling_pose = *anchor_sugar_modeling_.pose_list[n];
 
 			// is_prepend --> sugar_screening_pose [moving] = 5' pose [need O3'], anchor_sugar = 3' pose [need C5']
-			if ( !chain_closable_to_anchor_screener_->check_screen( *sugar_screening_pose_, anchor_sugar_modeling_pose, is_prepend_ ) ) continue;
+			if ( !chain_closable_to_anchor_screener_->check_screen( *sugar_screening_pose_, anchor_sugar_modeling_pose, is_prepend_) ) continue;
 
 			copy_bulge_res_and_sugar_torsion( anchor_sugar_modeling_, *sugar_screening_pose_, anchor_sugar_modeling_pose );
 			// This is in here because the anchor sugar models can have slightly shifted bases (not just riboses!) due to a minimization step that
@@ -654,8 +659,8 @@ StepWiseRNA_FloatingBaseSampler::set_anchor_sugar_modeling( SugarModeling const 
 
 ////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< PoseOP > &
-StepWiseRNA_FloatingBaseSampler::get_pose_data_list(){
-	return pose_data_list_;
+StepWiseRNA_FloatingBaseSampler::get_pose_list(){
+	return pose_list_;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

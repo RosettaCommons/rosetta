@@ -63,6 +63,7 @@ namespace swa { namespace rna { extern StringVectorOptionKey const jump_point_pa
 namespace swa { namespace rna { extern IntegerVectorOptionKey const terminal_res; } }
 namespace swa { namespace rna { extern BooleanOptionKey const add_virt_root; } }
 namespace swa { namespace rna { extern BooleanOptionKey const floating_base; } }
+namespace swa { namespace rna { extern IntegerOptionKey const floating_base_anchor_res; } }
 namespace swa { namespace rna { extern BooleanOptionKey const allow_chain_boundary_jump_partner_right_at_fixed_BP; } }
 namespace swa { namespace rna { extern IntegerVectorOptionKey const virtual_res; } }
 namespace swa { namespace rna { extern IntegerVectorOptionKey const bulge_res; } }

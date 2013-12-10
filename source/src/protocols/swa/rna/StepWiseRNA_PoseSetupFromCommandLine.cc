@@ -761,7 +761,10 @@ setup_rna_job_parameters( bool check_for_previously_closed_cutpoint_with_input_p
 
 	stepwise_rna_job_parameters_setup.set_output_extra_RMSDs( option[ OptionKeys::swa::rna::output_extra_RMSDs ]() );
 	stepwise_rna_job_parameters_setup.set_add_virt_res_as_root( option[ OptionKeys::swa::rna::add_virt_root]() );
-	stepwise_rna_job_parameters_setup.set_floating_base( option[ OptionKeys::swa::rna::floating_base ]() );
+	stepwise_rna_job_parameters_setup.set_floating_base( option[ OptionKeys::swa::rna::floating_base ]() ||
+																											 option[ OptionKeys::swa::rna::floating_base_anchor_res ].user() );
+	stepwise_rna_job_parameters_setup.set_floating_base_anchor_res( option[ OptionKeys::swa::rna::floating_base_anchor_res ]() );
+	if ( option[ OptionKeys::swa::rna::floating_base_anchor_res ]() ) runtime_assert( option[ OptionKeys::swa::rna::force_user_defined_jumps ]() );
 	stepwise_rna_job_parameters_setup.set_rebuild_bulge_mode( option[ basic::options::OptionKeys::swa::rna::rebuild_bulge_mode]() );
 
 	/////////////////////////////Sept 1, 2010////////////

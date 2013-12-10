@@ -14,11 +14,11 @@
 
 #include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/swa/rna/StepWiseRNA_ResidueSampler.hh>
-#include <protocols/swa/rna/screener/StepWiseRNA_BaseCentroidScreener.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParametersSetup.hh>
 #include <protocols/swa/rna/StepWiseRNA_Minimizer.hh>
 #include <protocols/swa/rna/screener/StepWiseRNA_BaseCentroidScreener.hh>
+#include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.hh>
 #include <protocols/swa/StepWiseUtil.hh>
 
 #include <core/chemical/VariantType.hh>
@@ -108,7 +108,7 @@ StepWiseRNA_Modeler::initialize_variables(){
 	rm_virt_phosphate_ = false;
 	VDW_rep_alignment_RMSD_CUTOFF_ = 0.001;
 	output_pdb_ = false;
-	output_minimized_pose_data_list_ = false;
+	output_minimized_pose_list_ = false;
 	VDW_rep_screen_physical_pose_clash_dist_cutoff_ = false;
 	integration_test_mode_ = false;
 	allow_bulge_at_chainbreak_ = false;
@@ -185,7 +185,7 @@ StepWiseRNA_Modeler::operator=( StepWiseRNA_Modeler const & src )
 	rm_virt_phosphate_ = src.rm_virt_phosphate_;
 	VDW_rep_alignment_RMSD_CUTOFF_ = src.VDW_rep_alignment_RMSD_CUTOFF_;
 	output_pdb_ = src.output_pdb_;
-	output_minimized_pose_data_list_ = src.output_minimized_pose_data_list_;
+	output_minimized_pose_list_ = src.output_minimized_pose_list_;
 	VDW_rep_screen_physical_pose_clash_dist_cutoff_ = src.VDW_rep_screen_physical_pose_clash_dist_cutoff_;
 	integration_test_mode_ = src.integration_test_mode_;
 	allow_bulge_at_chainbreak_ = src.allow_bulge_at_chainbreak_;
@@ -209,7 +209,6 @@ StepWiseRNA_Modeler::operator=( StepWiseRNA_Modeler const & src )
 	return *this;
 }
 
-
 /////////////////////
 std::string
 StepWiseRNA_Modeler::get_name() const {
@@ -221,7 +220,7 @@ void
 StepWiseRNA_Modeler::set_moving_res_and_reset( core::Size const moving_res ){
 	moving_res_list_.clear();
 	if ( moving_res > 0 ) moving_res_list_ = utility::tools::make_vector1( moving_res );
-	job_parameters_ = NULL; // Important: will trigger reset of job parameters when we get pose.
+	job_parameters_ = 0; // Important: will trigger reset of job parameters when we get pose.
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -234,13 +233,29 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 	using namespace core::scoring;
 	using namespace protocols::swa::rna;
 
-	if ( !job_parameters_ ) job_parameters_ = setup_job_parameters_for_swa( moving_res_list_, pose );
-	if ( !job_parameters_ ) utility_exit_with_message( "You must supply job parameters!" );
+	initialize_job_parameters( pose );
 
-	utility::vector1< PoseOP > pose_data_list;
-	screener::StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener;
-	screener::StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener;
-	num_sampled_ = 0;
+	utility::vector1< PoseOP > pose_list;
+	do_residue_sampling( pose, pose_list );
+	if ( !sampling_successful( pose_list ) ) return;
+	do_minimizing( pose, pose_list );
+
+	job_parameters_ = 0; // Important: make sure that the next time this is used, job parameters is set explicitly -- or it will be reset.
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_Modeler::initialize_job_parameters( pose::Pose & pose ){
+	if ( job_parameters_ ) return;
+	pose::full_model_info::make_sure_full_model_info_is_setup( pose );
+	job_parameters_ = setup_job_parameters_for_swa( moving_res_list_, pose );
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_Modeler::do_residue_sampling( pose::Pose & pose,
+																					utility::vector1< PoseOP > & pose_list ){
 
 	if ( ! skip_sampling_ && moving_res_list_.size() > 0 ) {
 		// let's actually sample.
@@ -278,20 +293,20 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 		stepwise_rna_residue_sampler.set_assert_no_virt_sugar_sampling( sampler_assert_no_virt_sugar_sampling_ );
 		stepwise_rna_residue_sampler.set_try_sugar_instantiation( sampler_try_sugar_instantiation_ );
 
-		base_centroid_screener = new screener::StepWiseRNA_BaseCentroidScreener ( pose, job_parameters_ );
-		base_centroid_screener->set_floating_base( job_parameters_->floating_base() );
-		base_centroid_screener->set_allow_base_pair_only_screen( allow_base_pair_only_centroid_screen_ );
-		stepwise_rna_residue_sampler.set_base_centroid_screener( base_centroid_screener );
+		base_centroid_screener_ = new screener::StepWiseRNA_BaseCentroidScreener ( pose, job_parameters_ );
+		base_centroid_screener_->set_floating_base( job_parameters_->floating_base() );
+		base_centroid_screener_->set_allow_base_pair_only_screen( allow_base_pair_only_centroid_screen_ );
+		stepwise_rna_residue_sampler.set_base_centroid_screener( base_centroid_screener_ );
 
-		user_input_VDW_bin_screener = new screener::StepWiseRNA_VDW_BinScreener();
+		user_input_VDW_bin_screener_ = new screener::StepWiseRNA_VDW_BinScreener();
 		if ( VDW_rep_screen_info_.size() > 0 ) {
-			user_input_VDW_bin_screener->set_VDW_rep_alignment_RMSD_CUTOFF ( VDW_rep_alignment_RMSD_CUTOFF_ );
-			user_input_VDW_bin_screener->set_VDW_rep_delete_matching_res( VDW_rep_delete_matching_res_ );
-			user_input_VDW_bin_screener->set_physical_pose_clash_dist_cutoff( VDW_rep_screen_physical_pose_clash_dist_cutoff_ );
-			user_input_VDW_bin_screener->setup_using_user_input_VDW_pose( VDW_rep_screen_info_, pose, job_parameters_ );
-			user_input_VDW_bin_screener->set_output_pdb( output_pdb_ );
+			user_input_VDW_bin_screener_->set_VDW_rep_alignment_RMSD_CUTOFF ( VDW_rep_alignment_RMSD_CUTOFF_ );
+			user_input_VDW_bin_screener_->set_VDW_rep_delete_matching_res( VDW_rep_delete_matching_res_ );
+			user_input_VDW_bin_screener_->set_physical_pose_clash_dist_cutoff( VDW_rep_screen_physical_pose_clash_dist_cutoff_ );
+			user_input_VDW_bin_screener_->setup_using_user_input_VDW_pose( VDW_rep_screen_info_, pose, job_parameters_ );
+			user_input_VDW_bin_screener_->set_output_pdb( output_pdb_ );
 		}
-		stepwise_rna_residue_sampler.set_user_input_VDW_bin_screener ( user_input_VDW_bin_screener );
+		stepwise_rna_residue_sampler.set_user_input_VDW_bin_screener ( user_input_VDW_bin_screener_ );
 
 		if ( choose_random_ ){
 			stepwise_rna_residue_sampler.set_choose_random( true );
@@ -302,31 +317,40 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 
 		stepwise_rna_residue_sampler.apply( pose );
 
-		pose_data_list = stepwise_rna_residue_sampler.get_pose_data_list();
-		num_sampled_ = pose_data_list.size();
-		if ( num_sampled_ == 0 ){
-			TR << "WARNING! WARNING! WARNING! pose_data_list.size() == 0! " << std::endl;
-			if ( !output_minimized_pose_data_list_ ) return; // don't do a minimize...
-		}
-
-		if ( verbose_ ) stepwise_rna_residue_sampler.output_pose_data_list ( silent_file_ + "_final_sample" );
+		pose_list = stepwise_rna_residue_sampler.get_pose_list();
+		if ( verbose_ ) stepwise_rna_residue_sampler.output_pose_list( silent_file_ + "_final_sample" );
 
 	} else {
-		add_to_pose_list( pose_data_list, pose, "input_pose" );
+		add_to_pose_list( pose_list, pose, "input_pose" );
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool
+StepWiseRNA_Modeler::sampling_successful( utility::vector1< PoseOP > & pose_list ){
+	num_sampled_ = pose_list.size();
+	if ( num_sampled_ == 0 ){
+		TR << "WARNING! WARNING! WARNING! pose_list_.size() == 0! " << std::endl;
+		if ( !output_minimized_pose_list_ ) return false; // don't do a minimize...
+	}
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_Modeler::do_minimizing( pose::Pose & pose, utility::vector1< PoseOP > & pose_list ){
 
 	if ( minimize_and_score_native_pose_ ) {
 		runtime_assert ( get_native_pose() );
-		add_to_pose_list( pose_data_list, *get_native_pose(), "working_native_pose" );
+		add_to_pose_list( pose_list, *get_native_pose(), "working_native_pose" );
 	}
-
 	////////////////////////////////////////////////////////////////
-	stepwise_rna_minimizer_ = new StepWiseRNA_Minimizer( pose_data_list, job_parameters_ );
+	stepwise_rna_minimizer_ = new StepWiseRNA_Minimizer( pose_list, job_parameters_ );
 	stepwise_rna_minimizer_->set_silent_file ( silent_file_ );
 	stepwise_rna_minimizer_->set_verbose (  verbose_ );
 	stepwise_rna_minimizer_->set_scorefxn ( scorefxn_ );
-	stepwise_rna_minimizer_->set_base_centroid_screener ( base_centroid_screener );
-	stepwise_rna_minimizer_->set_centroid_screen ( ( base_centroid_screener != 0 ) );
+	stepwise_rna_minimizer_->set_base_centroid_screener ( base_centroid_screener_ );
+	stepwise_rna_minimizer_->set_centroid_screen ( ( base_centroid_screener_ != 0 ) );
 	stepwise_rna_minimizer_->set_perform_minimize(  perform_minimize_ );
 	stepwise_rna_minimizer_->set_native_rmsd_screen (  sampler_native_rmsd_screen_ );
 	stepwise_rna_minimizer_->set_native_edensity_score_cutoff ( native_edensity_score_cutoff_ );
@@ -336,16 +360,13 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 	if ( integration_test_mode_ ) num_pose_minimize_ = 1;
 	if ( num_pose_minimize_ > 0 ) stepwise_rna_minimizer_->set_num_pose_minimize ( num_pose_minimize_ );
 	stepwise_rna_minimizer_->set_minimize_and_score_sugar ( minimize_and_score_sugar_ );
-	stepwise_rna_minimizer_->set_user_input_VDW_bin_screener ( user_input_VDW_bin_screener );
-	stepwise_rna_minimizer_->set_output_minimized_pose_data_list( output_minimized_pose_data_list_ );
+	stepwise_rna_minimizer_->set_user_input_VDW_bin_screener ( user_input_VDW_bin_screener_ );
+	stepwise_rna_minimizer_->set_output_minimized_pose_list( output_minimized_pose_list_ );
 	if ( minimize_move_map_ ) stepwise_rna_minimizer_->set_move_map_list( make_vector1( *minimize_move_map_ ) );
 	stepwise_rna_minimizer_->set_perform_o2prime_pack(  minimizer_perform_o2prime_pack_ );
 	stepwise_rna_minimizer_->set_output_before_o2prime_pack( minimizer_output_before_o2prime_pack_ );
 	stepwise_rna_minimizer_->set_rename_tag( minimizer_rename_tag_ );
-
 	stepwise_rna_minimizer_->apply ( pose );
-
-	job_parameters_ = 0; // Important: make sure that the next time this is used, job parameters is set explicitly -- or it will be reset.
 
 }
 
@@ -485,12 +506,10 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 
 		// ignore fold tree setup which is hopelessly complicated in stepwise_rna_job_parameters_setup.
 		stepwise_rna_job_parameters_setup.force_fold_tree( pose.fold_tree() );
-
 		stepwise_rna_job_parameters_setup.apply();
-
 		job_parameters = stepwise_rna_job_parameters_setup.job_parameters();
-
 		job_parameters->set_working_native_pose( get_native_pose() );
+		TR.Debug << "past job_parameters initialization " << std::endl;
 	}
 
 	// user input minimize_res...
@@ -509,6 +528,7 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 
 	minimize_move_map_ = new core::kinematics::MoveMap;
 	figure_out_swa_rna_movemap( *minimize_move_map_, pose, minimize_res_ );
+	TR.Debug << "finished movemap initialization. " << std::endl;
 
 	// last, but not least, there might be some information in the domain map. Note
 	// that generally we could instead replace fixed_res with an inputted domain map.
@@ -566,15 +586,15 @@ StepWiseRNA_Modeler::output_pose(
 																 std::string const & out_tag,
 																 std::string const out_silent_file ) const {
 	if ( !stepwise_rna_minimizer_ ) return;
-	stepwise_rna_minimizer_->output_pose_data_wrapper( out_tag, pose, out_silent_file );
+	stepwise_rna_minimizer_->output_pose_wrapper( out_tag, pose, out_silent_file );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_Modeler::add_to_pose_list( utility::vector1< core::pose::PoseOP > & pose_data_list, pose::Pose const & pose, std::string const pose_tag ) const {
+StepWiseRNA_Modeler::add_to_pose_list( utility::vector1< core::pose::PoseOP > & pose_list, pose::Pose const & pose, std::string const pose_tag ) const {
 	core::pose::PoseOP pose_op = pose.clone();
 	tag_into_pose( *pose_op, pose_tag );
-	pose_data_list.push_back( pose_op );
+	pose_list.push_back( pose_op );
 }
 
 

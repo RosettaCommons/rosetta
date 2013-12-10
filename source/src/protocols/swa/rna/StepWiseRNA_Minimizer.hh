@@ -48,7 +48,7 @@ namespace rna {
 
     //constructor!
     StepWiseRNA_Minimizer(
-													utility::vector1 < core::pose::PoseOP > const & pose_data_list,
+													utility::vector1 < core::pose::PoseOP > const & pose_list,
 													StepWiseRNA_JobParametersCOP & job_parameters );
 
     //destructor -- necessary?
@@ -113,10 +113,10 @@ namespace rna {
 		set_rename_tag( bool const setting ){ rename_tag_ = setting; }
 
 		void
-		set_output_minimized_pose_data_list( bool const setting ){ output_minimized_pose_data_list_ = setting; }
+		set_output_minimized_pose_list( bool const setting ){ output_minimized_pose_list_ = setting; }
 
 		void
-		output_pose_data_wrapper( std::string const & tag,
+		output_pose_wrapper( std::string const & tag,
 															core::pose::Pose & pose,
 															std::string const & out_silent_file ) const;
 
@@ -141,7 +141,7 @@ namespace rna {
 		output_empty_minimizer_silent_file() const; //FEB 09, 2012
 
 		void
-		output_pose_data_wrapper( std::string & tag, char tag_first_char, core::pose::Pose & pose, core::io::silent::SilentFileData & silent_file_data, std::string const out_silent_file ) const;
+		output_pose_wrapper( std::string & tag, char tag_first_char, core::pose::Pose & pose, core::io::silent::SilentFileData & silent_file_data, std::string const out_silent_file ) const;
 
 		core::Size
 		figure_out_actual_five_prime_chain_break_res( core::pose::Pose const & pose ) const;
@@ -150,15 +150,15 @@ namespace rna {
 		native_edensity_score_screener( core::pose::Pose & pose, core::pose::Pose & native_pose ) const; //Fang's electron density code
 
 		void
-		output_minimized_pose_data_list();
+		output_minimized_pose_list();
 
 		void
 		output_parameters();
 
 	private:
 
-		utility::vector1 < core::pose::PoseOP > const pose_data_list_;
-		utility::vector1 < core::pose::PoseOP > minimized_pose_data_list_;
+		utility::vector1 < core::pose::PoseOP > const pose_list_;
+		utility::vector1 < core::pose::PoseOP > minimized_pose_list_;
 		StepWiseRNA_JobParametersCOP job_parameters_;
 
 		core::io::silent::SilentFileDataOP sfd_;
@@ -183,7 +183,7 @@ namespace rna {
 		core::Size num_pose_minimize_;
 		bool minimize_and_score_sugar_;
 		bool rename_tag_;
-		bool output_minimized_pose_data_list_;
+		bool output_minimized_pose_list_;
 
 
 		std::map< core::id::AtomID, core::id::AtomID > pose_to_native_map_;

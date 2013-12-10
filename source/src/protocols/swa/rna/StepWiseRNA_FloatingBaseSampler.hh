@@ -80,11 +80,11 @@ namespace rna {
 
 		void set_cluster_rmsd( Real const & setting ){ cluster_rmsd_ = setting; }
 
-		utility::vector1< pose::PoseOP > &		get_pose_data_list();
+		utility::vector1< pose::PoseOP > &		get_pose_list();
 
 		io::silent::SilentFileDataOP & silent_file_data();
 
-		void output_pose_data_list( std::string const final_sampler_output_silent_file ) const;
+		void output_pose_list( std::string const final_sampler_output_silent_file ) const;
 
 		void set_num_pose_kept( Size const & num_pose_kept ){ num_pose_kept_ = num_pose_kept; }
 
@@ -176,9 +176,9 @@ namespace rna {
 		bool const is_prepend_;
 		bool const is_internal_; // no cutpoints before or after moving_res.
 		Size const gap_size_; /* If this is zero or one, need to screen or closable chain break */
+		Size const gap_size_to_anchor_;
 		Size const five_prime_chain_break_res_;
 		Size const chain_break_reference_res_;
-		Size const num_nucleotides_;
 		Size const reference_res_; //the last static_residues that this attach to the moving residues
 		Size const floating_base_five_prime_chain_break_;
 		Size const floating_base_three_prime_chain_break_;
@@ -186,7 +186,7 @@ namespace rna {
 		bool const close_chain_to_distal_;
 		bool const close_chain_to_anchor_;
 
-		utility::vector1< pose::PoseOP > pose_data_list_;
+		utility::vector1< pose::PoseOP > pose_list_;
 
 		scoring::ScoreFunctionOP scorefxn_;
 

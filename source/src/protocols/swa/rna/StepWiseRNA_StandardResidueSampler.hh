@@ -83,13 +83,13 @@ namespace rna {
 
 		void set_allow_bulge_at_chainbreak( bool const & setting ){ allow_bulge_at_chainbreak_ = setting; }
 
-		void set_pose_data_list( utility::vector1< PoseOP > &	pose_data_list );
+		void set_pose_list( utility::vector1< PoseOP > &	pose_list );
 
-		utility::vector1< PoseOP > & pose_data_list();
+		utility::vector1< PoseOP > & pose_list();
 
 		core::io::silent::SilentFileDataOP & silent_file_data();
 
-		void output_pose_data_list( std::string const final_sampler_output_silent_file ) const;
+		void output_pose_list( std::string const final_sampler_output_silent_file ) const;
 
 		void set_num_pose_kept( core::Size const & num_pose_kept ){ num_pose_kept_ = num_pose_kept; }
 
@@ -200,7 +200,7 @@ namespace rna {
 		Real const atom_atom_overlap_dist_cutoff_;
 		std::string extra_tag_;
 
-		utility::vector1< PoseOP > pose_data_list_;
+		utility::vector1< PoseOP > pose_list_;
 		core::scoring::ScoreFunctionOP scorefxn_;
 		StepWiseRNA_CountStruct count_data_;
 

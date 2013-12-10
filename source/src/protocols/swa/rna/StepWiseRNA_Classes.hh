@@ -32,13 +32,14 @@
 #include <utility/exit.hh> //April 29, 2011
 
 
-#define O3I_C5IPLUS2_MAX_DIST 11.4226  //See ~/minirosetta/04_2010_Early_RUN/test/Apr_9_calculate_theortical_RNA_distance_O3i_C5iplus2/140_220 for detail.
+#define O3I_C5I_PLUS_TWO_MAX_DIST 11.4226  //See ~/minirosetta/04_2010_Early_RUN/test/Apr_9_calculate_theortical_RNA_distance_O3i_C5iplus2/140_220 for detail.
 #define O3I_C5I_PLUS_ONE_MAX_DIST 3.968000 //see data below the function get_C4_C3_distance_range() in StepWiseRNA_Classes.hh
 #define O3I_O3I_PLUS_ONE_MAX_DIST 7.45583 //see ~/minirosetta/test/Sept_19_calculate_MAX_O3_O3_distance/trail_1_range_0_360_bin_size_5/output.txt
 #define C5I_C5I_PLUS_ONE_MAX_DIST 7.71355 //see ~/minirosetta/test/Sept_19_calculate_MAX_C5_C5_distance/trail_3_0_torsion_range_360_5_degree_bin/output.txt
 #define O3I_C5I_MIN_DIST 2.000
 #define O3I_C5I_MAX_DIST 4.627
 
+#define GAP_SIZE_DUMMY 999 //encodes for an 'infinite' gap between residues, e.g., if on different chains.
 
 //using namespace core;
 typedef  numeric::xyzMatrix< core::Real > Matrix;

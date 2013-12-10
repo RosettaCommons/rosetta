@@ -5510,6 +5510,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 	    Option( 'terminal_res', 'IntegerVector', desc="optional: residues that are not allowed to stack during sampling", default=[] ),
 	    Option( 'add_virt_root', 'Boolean', desc="add_virt_root", default="false" ),
 	    Option( 'floating_base', 'Boolean', desc=" floating_base ", default="false" ),
+	    Option( 'floating_base_anchor_res', 'Integer', desc="If we want floating base to be connected via a jump to an anchor res (with no intervening virtual residues), specify the anchor.", default="0" ),
 	    Option( 'allow_chain_boundary_jump_partner_right_at_fixed_BP', 'Boolean', desc="mainly just to get Hermann nano - square RNA modeling to work", default="false" ),
 	    Option( 'virtual_res', 'IntegerVector', desc="optional: residues to be made virtual", default=[] ),
 	    Option( 'bulge_res', 'IntegerVector', desc="optional: residues to be turned into a bulge variant", default=[] ),
