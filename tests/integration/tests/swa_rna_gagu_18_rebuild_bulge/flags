@@ -1,0 +1,24 @@
+-algorithm rna_sample 
+-sample_res 14
+-floating_base true 
+-input_res 1-2 13-16 
+-in:file:silent in_region_8_0_sample.out
+-in:file:silent_struct_type binary_rna 
+-in:file:tags S_000001
+-out:file:silent region_6_0_sample.out 
+-native rosetta_model.pdb 
+-fixed_res 1 8 13 15 9 16 
+-rmsd_res 3-6 11-14 
+-jump_point_pairs 1-16 8-9 13-15
+-alignment_res 1-16 8-9 
+-fasta fasta 
+-global_sample_res_list 3 4 5 6 11 12 13 14 
+-cutpoint_open 8 
+-score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts 
+-analytic_etable_evaluation 0
+-sampler_native_rmsd_screen true
+-integration_test true
+-rebuild_bulge_mode
+-output_virtual
+-allow_bulge_at_chainbreak
+-cutpoint_closed 13
