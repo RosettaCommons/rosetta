@@ -1121,6 +1121,7 @@ void PocketGrid::newSearch(core::Size thr1, core::Size thr2, core::Size thr3, co
     deltas.push_back(0);deltas.push_back(-1);deltas.push_back(1);
   }
   int dirs=deltas.size();
+  dirs /=3;
 
   core::Size thr;
   core::Size max;
@@ -1356,7 +1357,7 @@ outPDB_stream<<"ATOM      8  C   C            "<<std::setw(8)<<std::fixed<<std::
         concatenated_pdb_info += "ATOM  ";
         std::stringstream  tmp;
         tmp<<counter2;
-        if (counter2<10) concatenated_pdb_info += "    ";
+		  if (counter2<10) concatenated_pdb_info += "    ";
         else if (counter2<100) concatenated_pdb_info += "   ";
         else if (counter2<1000) concatenated_pdb_info += "  ";
         else if (counter2<10000) concatenated_pdb_info += " ";
@@ -1407,7 +1408,8 @@ outPDB_stream<<"ATOM      8  C   C            "<<std::setw(8)<<std::fixed<<std::
           continue;
         }
         if (grid_[x][y][z]==PROTEIN) {
-          continue;
+		  concatenated_pdb_info += "PR  PR ";
+          //continue;
         }
         if (grid_[x][y][z]==PSP) {
           continue;
@@ -3244,8 +3246,11 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
           }
 			}
 
+			
         findPockets(0, maxLen_);
-        if (markpsp_){
+			core::Size xx,yy,zz;
+			
+		if (markpsp_){
           findPSP(0,maxLen_);
         }
 
@@ -3282,6 +3287,19 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 
 		if (dumpExemplars_ || exemplarRestriction_) findExemplars(inPose, total_residues);
 		if (exemplarRestriction_) findClustersByExemplars();							
+
+/*		core::Size xx,yy,zz;
+		for (xx=0;xx<(xdim_); xx++){
+			for (yy=0;yy<(ydim_); yy++){
+				std::cout << "XYZ: ";
+				for (zz=0;zz<(zdim_); zz++){
+					std::cout<<grid_[xx][yy][zz]<<" ";
+				}
+				std::cout<<std::endl;
+			}
+			std::cout<<"XYZ:"<<std::endl;
+		}
+*/		
 
 		return true;
     }
