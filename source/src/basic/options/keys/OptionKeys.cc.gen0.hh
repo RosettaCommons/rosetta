@@ -36,6 +36,7 @@ namespace in { namespace file { FileVectorOptionKey const l( "in:file:l" );  } }
 namespace in { namespace file { FileVectorOptionKey const list( "in:file:list" );  } }
 namespace in { namespace file { FileVectorOptionKey const screening_list( "in:file:screening_list" );  } }
 namespace in { namespace file { FileOptionKey const screening_job_file( "in:file:screening_job_file" );  } }
+namespace in { namespace file { BooleanOptionKey const shuffle_screening_jobs( "in:file:shuffle_screening_jobs" );  } }
 namespace in { namespace file { FileOptionKey const native( "in:file:native" );  } }
 namespace in { namespace file { FileOptionKey const torsion_bin_probs( "in:file:torsion_bin_probs" );  } }
 namespace in { namespace file { FileOptionKey const PCS_frag_cst( "in:file:PCS_frag_cst" );  } }
@@ -738,4 +739,3 @@ namespace jumps { FileOptionKey const residue_pair_jump_file( "jumps:residue_pai
 namespace jumps { IntegerVectorOptionKey const sheets( "jumps:sheets" );  }
 namespace jumps { FileOptionKey const topology_file( "jumps:topology_file" );  }
 namespace jumps { BooleanOptionKey const bb_moves( "jumps:bb_moves" );  }
-namespace jumps { BooleanOptionKey const no_wobble( "jumps:no_wobble" );  }

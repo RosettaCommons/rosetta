@@ -50,7 +50,7 @@
 #include <utility/io/izstream.hh>
 
 #include <basic/Tracer.hh>
-
+#include <algorithm>
 namespace protocols {
 namespace jd2 {
 
@@ -217,6 +217,11 @@ void ScreeningJobInputter::fill_jobs(Jobs & jobs)
 			}
 		}
 
+	}
+
+	if(basic::options::option[basic::options::OptionKeys::in::file::shuffle_screening_jobs]())
+	{
+		std::random_shuffle(jobs.begin(),jobs.end());
 	}
 }
 

@@ -74,7 +74,8 @@ InterfaceScoreCalculator::InterfaceScoreCalculator():
 		chains_(),
 		native_(NULL),
 		score_fxn_(NULL),
-		normalization_function_(NULL)
+		normalization_function_(NULL),
+		compute_grid_scores_(true)
 {}
 
 InterfaceScoreCalculator::InterfaceScoreCalculator(InterfaceScoreCalculator const & that):
@@ -83,7 +84,8 @@ InterfaceScoreCalculator::InterfaceScoreCalculator(InterfaceScoreCalculator cons
 		chains_(that.chains_),
 		native_(that.native_),
 		score_fxn_(that.score_fxn_),
-		normalization_function_(that.normalization_function_)
+		normalization_function_(that.normalization_function_),
+		compute_grid_scores_(that.compute_grid_scores_)
 {}
 
 InterfaceScoreCalculator::~InterfaceScoreCalculator() {}
@@ -153,6 +155,9 @@ InterfaceScoreCalculator::parse_my_tag(
 		std::string const & normalization_mode = tag->getOption<std::string>("normalize");
 		normalization_function_ = protocols::qsar::scoring_grid::get_score_normalization_function(normalization_mode);
 	}
+	compute_grid_scores_ = tag->getOption<bool>("compute_grid_scores", true);
+	
+	
 }
 
 void InterfaceScoreCalculator::apply(core::pose::Pose & pose) {
@@ -244,13 +249,17 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 		append_ligand_RMSD(jump_id, job, *native_, after);
 	}
 
-	if(normalization_function_ && !protocols::qsar::scoring_grid::GridManager::get_instance()->is_normalization_enabled())
+	if(compute_grid_scores_)
 	{
-		append_ligand_grid_scores(jump_id,job,after,normalization_function_);
-	}else
-	{
-		append_ligand_grid_scores(jump_id,job,after);
+		if(normalization_function_ && !protocols::qsar::scoring_grid::GridManager::get_instance()->is_normalization_enabled())
+		{
+			append_ligand_grid_scores(jump_id,job,after,normalization_function_);
+		}else
+		{
+			append_ligand_grid_scores(jump_id,job,after);
+		}
 	}
+
 
 }
 

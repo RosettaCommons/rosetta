@@ -41,6 +41,7 @@ option.add( basic::options::OptionKeys::in::file::l, "File(s) containing list(s)
 option.add( basic::options::OptionKeys::in::file::list, "File(s) containing list(s) of PDB files.  PDBs on the same line become one pose" );
 option.add( basic::options::OptionKeys::in::file::screening_list, "Files containing lists of PDB files. all permutations of the files in the list become poses" );
 option.add( basic::options::OptionKeys::in::file::screening_job_file, "A JSON file containing groups of ligands and proteins to screen" );
+option.add( basic::options::OptionKeys::in::file::shuffle_screening_jobs, "Randomize the order of jbos input through -in:file:screening_job_file" ).def(false);
 option.add( basic::options::OptionKeys::in::file::native, "Native PDB filename" );
 option.add( basic::options::OptionKeys::in::file::torsion_bin_probs, "File describing probabilities over torsion bins A,B,E,G,O" ).def("empty");
 option.add( basic::options::OptionKeys::in::file::PCS_frag_cst, "File that containts PCS constraints for use in fragment picking" );
@@ -743,10 +744,10 @@ option.add( basic::options::OptionKeys::jumps::residue_pair_jump_file, "a file t
 option.add( basic::options::OptionKeys::jumps::sheets, "sheet topology--> replaces -sheet1 -sheet2 ... -sheetN" ).def(1);
 option.add( basic::options::OptionKeys::jumps::topology_file, "read a file with topology info ( PairingStats )" ).def("");
 option.add( basic::options::OptionKeys::jumps::bb_moves, "Apply bb_moves ( wobble, small, shear) during stage3 and stage 4." ).def(false);
-option.add( basic::options::OptionKeys::jumps::no_wobble, "Don t apply the useless wobble during stage3 and stage 4." ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::no_shear, "Don t apply the useless shear during stage3 and stage 4." ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::no_wobble, "Don t apply the useless wobble during stage3 and stage 4." ).def(false);
+option.add( basic::options::OptionKeys::jumps::no_shear, "Don t apply the useless shear during stage3 and stage 4." ).def(false);
 option.add( basic::options::OptionKeys::jumps::no_sample_ss_jumps, "sample jump-frags during folding" ).def(false);
 option.add( basic::options::OptionKeys::jumps::invrate_jump_move, "give 5 here to have 5 torsion moves for each jump move" ).def(10);
 option.add( basic::options::OptionKeys::jumps::chainbreak_weight_stage1, "the weight on chainbreaks" ).def(1.0);
@@ -1486,10 +1487,10 @@ option.add( basic::options::OptionKeys::james::n_clusters, "number of clusters f
 option.add( basic::options::OptionKeys::james::thread_unaligned, "basic_threading without performing an alignment" ).def(false);
 option.add( basic::options::OptionKeys::membrane::membrane, "membrane option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::membrane::normal_cycles, "number of membrane normal cycles" ).def(100);
-option.add( basic::options::OptionKeys::membrane::normal_mag, "magnitude of membrane normal angle search (degrees)" ).def(5);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::membrane::center_mag, "magnitude of membrane normal center search (Angstroms)" ).def(1);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::membrane::normal_mag, "magnitude of membrane normal angle search (degrees)" ).def(5);
+option.add( basic::options::OptionKeys::membrane::center_mag, "magnitude of membrane normal center search (Angstroms)" ).def(1);
 option.add( basic::options::OptionKeys::membrane::smooth_move_frac, "No description" ).def(0.5);
 option.add( basic::options::OptionKeys::membrane::no_interpolate_Mpair, "No description" ).def(false);
 option.add( basic::options::OptionKeys::membrane::Menv_penalties, "No description" ).def(false);
@@ -2229,10 +2230,10 @@ option.add( basic::options::OptionKeys::optE::repeat_swarm_optimization_until_fi
 option.add( basic::options::OptionKeys::optE::design_with_minpack, "Use the min-packer to design in the sequence recovery stages." ).def(false);
 option.add( basic::options::OptionKeys::optE::limit_bad_scores, "Quit after 100,000 inf or NaN errors in optE objective function" );
 option.add( basic::options::OptionKeys::optE::rescore::rescore, "rescore option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::optE::rescore::weights, "Weight set to use when rescoring optE partition functions" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::rescore::context_round, "Integer of the context PDBs generated during design to use to measure the pNatAA" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::rescore::weights, "Weight set to use when rescoring optE partition functions" );
+option.add( basic::options::OptionKeys::optE::rescore::context_round, "Integer of the context PDBs generated during design to use to measure the pNatAA" );
 option.add( basic::options::OptionKeys::optE::rescore::outlog, "File to which the OptEPosition data should be written" );
 option.add( basic::options::OptionKeys::optE::rescore::measure_sequence_recovery, "When rescoring a weight set, run design with that weight set and measure the sequence recovery." ).def(false);
 option.add( basic::options::OptionKeys::optE::no_design_pdb_output, "Do not write out the designed pdbs to the workdir_ directories over the course of the optE run" );

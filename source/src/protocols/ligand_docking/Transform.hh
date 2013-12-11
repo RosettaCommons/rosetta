@@ -39,7 +39,23 @@ public:
 	core::Size cycles;
 	core::Real temperature;
 	core::Size repeats;
-	Transform_info(): chain(""), move_distance(0),box_size(0), angle(0), cycles(0),repeats(1){};
+	Transform_info():
+		chain(""),
+		move_distance(0),
+		box_size(0),
+		angle(0),
+		cycles(0),
+		repeats(1){};
+	Transform_info(Transform_info const & other) :
+		chain(other.chain),
+		chain_id(other.chain_id),
+		jump_id(other.jump_id),
+		move_distance(other.move_distance),
+		box_size(other.box_size),
+		angle(other.angle),
+		cycles(other.cycles),
+		temperature(other.temperature),
+		repeats(other.repeats){}
 };
 
 class Transform: public protocols::moves::Mover
@@ -54,6 +70,7 @@ public:
 		core::Size const & cycles,
 		core::Real const & temp
 	);
+	Transform(Transform const & other);
 	virtual ~Transform();
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
@@ -70,8 +87,17 @@ public:
 	virtual void apply(core::pose::Pose & pose);
 
 private:
+	
+	/// @brief translate a ligand residue by some random value within a uniform distribution with a max of distance
+    void translate_ligand(core::conformation::UltraLightResidue & residue, core::Real distance);
+	
+	/// @brief translate and rotate a random value by the distances specified in the Transform_info object, using a gaussian distribution
 	void transform_ligand(core::conformation::UltraLightResidue & residue);
+	
+	/// @brief randomly change the ligand conformation
 	void change_conformer(core::conformation::UltraLightResidue & residue);
+	
+	/// @brief output the ligand residues to a pdb file
 	void dump_conformer(core::conformation::UltraLightResidue & residue, utility::io::ozstream & output);
 
 private:
@@ -81,6 +107,7 @@ private:
 	bool optimize_until_score_is_negative_;
 	bool output_sampled_space_;
 	std::string sampled_space_file_;
+    core::Real initial_perturb_;
 
 };
 

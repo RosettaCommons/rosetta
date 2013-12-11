@@ -2632,7 +2632,7 @@ std::string get_sha1_hash_excluding_chain(char const & chain, core::pose::Pose c
 		{
 			id::AtomID atom_id(atom_num,res_num);
 			PointPosition current_xyz = pose.conformation().xyz(atom_id);
-			coord_stream << numeric::truncate_and_serialize_xyz_vector(current_xyz,5);
+			coord_stream << numeric::truncate_and_serialize_xyz_vector(current_xyz,3);
 		}
 	}
 	return utility::string_to_sha1(coord_stream.str());

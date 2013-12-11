@@ -1,3 +1,4 @@
+namespace membrane { RealOptionKey const normal_mag( "membrane:normal_mag" );  }
 namespace membrane { RealOptionKey const center_mag( "membrane:center_mag" );  }
 namespace membrane { RealOptionKey const smooth_move_frac( "membrane:smooth_move_frac" );  }
 namespace membrane { BooleanOptionKey const no_interpolate_Mpair( "membrane:no_interpolate_Mpair" );  }
@@ -738,4 +739,3 @@ namespace optE { BooleanOptionKey const repeat_swarm_optimization_until_fitness_
 namespace optE { BooleanOptionKey const design_with_minpack( "optE:design_with_minpack" );  }
 namespace optE { BooleanOptionKey const limit_bad_scores( "optE:limit_bad_scores" );  }
 namespace optE { namespace rescore { BooleanOptionKey const rescore( "optE:rescore" );  } }
-namespace optE { namespace rescore { FileOptionKey const weights( "optE:rescore:weights" );  } }

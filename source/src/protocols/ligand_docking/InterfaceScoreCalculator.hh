@@ -69,6 +69,7 @@ private:
 	core::pose::PoseOP native_;
 	core::scoring::ScoreFunctionOP score_fxn_;
 	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function_;
+	bool compute_grid_scores_;
 
 	void
 	add_scores_to_job(

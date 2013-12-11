@@ -63,10 +63,21 @@ std::string TransformCreator::mover_name()
 	return "Transform";
 }
 
-Transform::Transform(): Mover("Transform"), transform_info_(),optimize_until_score_is_negative_(false), output_sampled_space_(false)
+Transform::Transform(): Mover("Transform"), transform_info_(),optimize_until_score_is_negative_(false), output_sampled_space_(false),initial_perturb_(0.0)
 {
 
 }
+
+
+Transform::Transform(Transform const & other) :
+	Mover(other),
+	transform_info_(other.transform_info_),
+	ligand_conformers_(other.ligand_conformers_),
+	optimize_until_score_is_negative_(other.optimize_until_score_is_negative_),
+	output_sampled_space_(other.output_sampled_space_),
+	sampled_space_file_(other.sampled_space_file_),
+	initial_perturb_(other.initial_perturb_)
+{}
 
 Transform::Transform(
 	std::string const & chain,
@@ -133,6 +144,8 @@ void Transform::parse_my_tag
 	transform_info_.temperature = tag->getOption<core::Real>("temperature");
 	transform_info_.repeats = tag->getOption<core::Size>("repeats",1);
 	optimize_until_score_is_negative_ = tag->getOption<bool>("optimize_until_score_is_negative",false);
+	initial_perturb_ = tag->getOption<core::Real>("initial_perturb",0.0);
+    
 
 	if(tag->hasOption("sampled_space_file"))
 	{
@@ -156,6 +169,7 @@ void Transform::apply(core::pose::Pose & pose)
 	core::conformation::Residue original_residue = pose.residue(begin);
 	core::chemical::ResidueType residue_type = pose.residue_type(begin);
 
+	
 	grid_manager->initialize_all_grids(center);
 	grid_manager->update_grids(pose,center);
 
@@ -183,12 +197,20 @@ void Transform::apply(core::pose::Pose & pose)
 	}
 
 
+
 	for(core::Size repeat = 1; repeat <= transform_info_.repeats; ++repeat)
 	{
 		pose = starting_pose;
 		core::Size cycle = 1;
 		bool not_converged = true;
 		core::conformation::UltraLightResidue ligand_residue(&pose.residue(begin));
+        
+		//For benchmarking purposes it is sometimes desirable to translate the ligand
+		//away from the starting point before beginning a trajectory.
+		if(initial_perturb_ > 0.0)
+		{
+			translate_ligand(ligand_residue,initial_perturb_ );
+		}
 		last_score = grid_manager->total_score(ligand_residue);
 		core::conformation::UltraLightResidue last_accepted_ligand_residue(ligand_residue);
 		while(not_converged)
@@ -292,6 +314,17 @@ void Transform::apply(core::pose::Pose & pose)
 
 }
 
+    
+void Transform::translate_ligand(core::conformation::UltraLightResidue & residue, core::Real distance)
+{
+	core::Vector translation(
+		distance*RG.uniform(),
+		distance*RG.uniform(),
+		distance*RG.uniform());
+    
+	
+	residue.slide(translation);
+}
 void Transform::transform_ligand(core::conformation::UltraLightResidue & residue)
 {
 	if(transform_info_.angle ==0 && transform_info_.move_distance == 0)

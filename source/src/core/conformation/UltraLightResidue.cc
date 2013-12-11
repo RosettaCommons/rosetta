@@ -80,8 +80,9 @@ void UltraLightResidue::slide(core::Vector const & translation_vector)
 	numeric::xyzTransform<core::Real> transformer(numeric::xyzTransform<core::Real>::rot(identity,translation_vector));
 	for(utility::vector1<PointPosition>::iterator it = coords_.begin(); it != coords_.end(); ++it)
 	{
-		*it = transformer*(*it);
+		*it = translation_vector+(*it);
 	}
+	center_ = numeric::center_of_mass(coords_);
 }
 
 }

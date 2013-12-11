@@ -39,6 +39,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -364,6 +365,21 @@ void InterfaceAnalyzerMover::apply( core::pose::Pose & pose )
 	//if only 2 chains
 	else {
 		//sets up the pose for calculations
+		//If the user has specified "fixedchains" and provided a 2 chain pose then the interface jump hasn't been set properly.
+		//The interface jump ought to be 1, but we'll just do it properly and get it from the chain id
+		if(interface_jump_ == 0)
+		{
+			std::set< int > fixedchains( get_fixed_chains() );
+			if(fixedchains.size() != 1)
+			{
+				utility_exit_with_message_status( "Pose only has 2 chains, but 'fixedchains' option in Interface analyzer specified more than one chain \n", 1 );
+			}
+			
+			core::Size newjump = reorder_foldtree_find_jump( pose, fixedchains );
+			interface_jump_ = newjump ;
+		}
+
+		
 		set_pose_info( pose );
 		//register calculators here if need be
 		if(!calcs_ready_){

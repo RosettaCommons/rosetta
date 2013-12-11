@@ -184,6 +184,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>A JSON file containing groups of ligands and proteins to screen</dd><br>
 </dl>
 <dl>
+<dt><b>-shuffle_screening_jobs</b> \<Boolean\><dt>
+<dd>Randomize the order of jbos input through -in:file:screening_job_file</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-native</b> \<File\><dt>
 <dd>Native PDB filename</dd><br>
 </dl>
