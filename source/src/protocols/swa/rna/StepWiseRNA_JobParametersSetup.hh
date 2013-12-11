@@ -61,15 +61,16 @@ namespace rna {
 		void
 		set_fixed_res( utility::vector1 < core::Size > const & fixed_res );
 
-		// Undefined, commenting out to fix PyRosetta build  void set_virtual_res(utility::vector1 < core::Size > const & set_virtual_res_list);
-
 		void
 		set_terminal_res( utility::vector1 < core::Size > const & terminal_res );
 
-		// // Undefined, commenting out to fix PyRosetta build  void set_bulge_res(utility::vector1 < core::Size > const & bulge_res );
+		void set_cutpoint_closed_list( utility::vector1< core::Size >  const & setting );
 
 		void
 		set_jump_point_pair_list( utility::vector1< std::string > const & jump_point_pairs_string );
+
+		void
+		set_assert_jump_point_in_fixed_res( bool const setting ){ assert_jump_point_in_fixed_res_ = setting; }
 
 		void
 		set_rmsd_res_list( utility::vector1< core::Size > const & setting );
@@ -165,7 +166,7 @@ namespace rna {
 		setup_fold_tree();
 
 		void
-		figure_out_Prepend_Internal( core::Size const root_res, InternalWorkingResidueParameter const & internal_params );
+		figure_out_prepend_internal( core::Size const root_res, InternalWorkingResidueParameter const & internal_params );
 
 		void
 		figure_out_working_moving_suite();
@@ -230,7 +231,7 @@ namespace rna {
 		bool skip_complicated_stuff_;
 		bool force_fold_tree_;
 		bool force_user_defined_jumps_;
-
+		bool assert_jump_point_in_fixed_res_;
   };
 
 }

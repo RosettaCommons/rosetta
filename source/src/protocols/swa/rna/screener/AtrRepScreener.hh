@@ -38,7 +38,9 @@ namespace screener {
 		AtrRepScreener( pose::Pose const & pose, StepWiseRNA_JobParametersCOP & job_parameters );
 
 		AtrRepScreener( pose::Pose const & pose,
-										Size const moving_suite, Size const moving_res, Size const gap_size,
+										Size const moving_res,
+										Size const reference_res,
+										Size const gap_size,
 										bool const is_internal = false,
 										bool const separate_moving_residue_to_estimate_baseline = true );
 
@@ -74,8 +76,8 @@ namespace screener {
 
 	private:
 
-		Size const working_moving_suite_;
 		Size const working_moving_res_;
+		Size const working_reference_res_;
 		Size const gap_size_;
 		bool const is_prepend_;
 		bool const is_internal_;

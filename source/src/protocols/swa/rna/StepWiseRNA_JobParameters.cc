@@ -138,7 +138,7 @@ namespace rna {
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	Size
-	StepWiseRNA_JobParameters::gap_size_to_anchor() const { //the last static_residues that this attach to the moving residues -- total distance.
+	StepWiseRNA_JobParameters::gap_size_to_anchor() const { //the last static residue that this attach to the moving residues -- total sequence distance.
 		Size const working_reference_res_ = working_reference_res();
 		runtime_assert( sub_to_full_.find( working_reference_res_ ) != sub_to_full_.end() );
 		Size const & reference_res = sub_to_full_.find( working_reference_res_ )->second;
@@ -270,6 +270,10 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< Size > const & StepWiseRNA_JobParameters::cutpoint_closed_list() const {
 		return cutpoint_closed_list_;
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< Size > const & StepWiseRNA_JobParameters::cutpoint_open_list() const {
+		return cutpoint_open_list_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< core::Size > const & StepWiseRNA_JobParameters::working_best_alignment() const{

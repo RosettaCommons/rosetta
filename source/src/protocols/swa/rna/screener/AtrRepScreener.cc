@@ -36,8 +36,8 @@ namespace screener {
 	//Constructor
 	AtrRepScreener::AtrRepScreener( pose::Pose const & pose,
 																	StepWiseRNA_JobParametersCOP & job_parameters ):
-		working_moving_suite_(  job_parameters->working_moving_suite() ),
-		working_moving_res_(  job_parameters->working_moving_res() ),
+		working_moving_res_(     job_parameters->working_moving_res() ),
+		working_reference_res_(  job_parameters->working_reference_res() ),
 		gap_size_(    job_parameters->gap_size() ),
 		is_prepend_(  job_parameters->is_prepend() ),
 		is_internal_(  job_parameters->is_internal() ),
@@ -50,16 +50,16 @@ namespace screener {
 
 	//Constructor
 	AtrRepScreener::AtrRepScreener( pose::Pose const & pose,
-																	Size const moving_suite,
 																	Size const moving_res,
+																	Size const reference_res,
 																	Size const gap_size,
 																	bool const is_internal /* = false */,
 																	bool const separate_moving_residue_to_estimate_baseline /* = true */
 																	):
-		working_moving_suite_( moving_suite ),
-		working_moving_res_( moving_res ),
+		working_moving_res_( moving_res    ),
+		working_reference_res_( reference_res ),
 		gap_size_( gap_size ),
-		is_prepend_(  working_moving_suite_ >= working_moving_res_ ),
+		is_prepend_(  working_reference_res_ > working_moving_res_ ),
 		is_internal_( is_internal ),
 		separate_moving_residue_to_estimate_baseline_( separate_moving_residue_to_estimate_baseline  )
 	{
@@ -113,7 +113,6 @@ namespace screener {
 		if ( output_pdb_ ) base_pose_screen.dump_pdb( "base_atr_rep_before.pdb" );
 
 		pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_PHOSPHATE", working_moving_res_ ); //May 7...
-
 		if ( ( working_moving_res_ + 1 ) <= nres ){
 			pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_PHOSPHATE", working_moving_res_ + 1 ); //May 7...
 		}
@@ -128,11 +127,12 @@ namespace screener {
 		// due to "intra-domain" interactions.
 		// Crap this doesn't work when building 2 or more nucleotides.
 		if ( separate_moving_residue_to_estimate_baseline_ ){
-			Size jump_at_moving_suite( 0 );
-			if ( !base_pose_screen.fold_tree().is_cutpoint( working_moving_suite_ ) ){
-				jump_at_moving_suite = make_cut_at_moving_suite( base_pose_screen, working_moving_suite_ );
-			} else {
-				jump_at_moving_suite = look_for_unique_jump_to_moving_res( base_pose_screen.fold_tree(), working_moving_res_ );
+			Size jump_at_moving_suite = base_pose_screen.fold_tree().jump_nr( working_moving_res_, working_reference_res_ );
+			if ( jump_at_moving_suite == 0 ){
+				runtime_assert( std::abs( int( working_moving_res_ ) - int( working_reference_res_ ) ) == 1 );
+				Size const working_moving_suite = std::min( working_moving_res_, working_reference_res_ );
+				jump_at_moving_suite = make_cut_at_moving_suite( base_pose_screen, working_moving_suite );
+				TR.Debug << "Made new cutpoint at suite " << working_moving_suite << " found Jump " << jump_at_moving_suite <<  std::endl;
 			}
 			kinematics::Jump j = base_pose_screen.jump( jump_at_moving_suite );
 			j.set_translation( Vector( 1.0e4, 0.0, 0.0 ) );

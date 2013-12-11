@@ -135,9 +135,11 @@ namespace rna {
 
 		void set_output_minimized_pose_list( bool const & setting ){ output_minimized_pose_list_ = setting; }
 
-		void set_fixed_res( utility::vector1< Size > const & setting ){ fixed_res_ = setting; }
+		void set_fixed_res( utility::vector1< Size > const & setting ){ fixed_res_ = setting; minimize_res_.clear(); }
 
-		void set_minimize_res( utility::vector1< Size > const & setting ){ minimize_res_ = setting; }
+		void set_minimize_res( utility::vector1< Size > const & setting ){ minimize_res_ = setting; fixed_res_.clear(); }
+
+		void set_rmsd_res_list( utility::vector1< Size > const & setting ){ rmsd_res_list_ = setting; }
 
 		// additional options that are not shared with ERRASER (yet)
 		void set_VDW_rep_delete_matching_res( utility::vector1< std::string > const & setting ){ VDW_rep_delete_matching_res_ = setting ; }
@@ -180,6 +182,10 @@ namespace rna {
 		void set_minimizer_rename_tag( bool const & setting ){ minimizer_rename_tag_ = setting; }
 
 		StepWiseRNA_JobParametersOP
+		setup_job_parameters_for_swa_with_full_model_info( utility::vector1< Size > moving_res,
+																											 core::pose::Pose & pose );
+
+		StepWiseRNA_JobParametersOP
 		setup_job_parameters_for_swa( utility::vector1< Size > moving_res, pose::Pose const & pose );
 
 		void
@@ -211,6 +217,7 @@ namespace rna {
 		utility::vector1< Size > moving_res_list_;
 		utility::vector1< Size > fixed_res_;
 		utility::vector1< Size > minimize_res_;
+		utility::vector1< Size > rmsd_res_list_;
 		scoring::ScoreFunctionOP scorefxn_;
 		std::string silent_file_;
 		Size sampler_num_pose_kept_;

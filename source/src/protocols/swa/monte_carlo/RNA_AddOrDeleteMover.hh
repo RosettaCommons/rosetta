@@ -64,6 +64,7 @@ private:
 	RNA_DeleteMoverOP rna_delete_mover_;
 	bool disallow_deletion_of_last_residue_;
 	bool skip_deletions_;
+	bool disallow_skip_bulge_;
 	utility::vector1< Size > sample_res_;
 };
 

@@ -835,53 +835,54 @@ rotate( pose::Pose & pose, Matrix const M,
 		atom_id_map[ AtomID( idx1, n1 ) ] = AtomID( idx2, n2 );
 
 	}
-	
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
 	residue_is_bulged( pose::Pose const & pose, Size const & resid ) {
-		
+
 		core::scoring::Energies const & energies( pose.energies() );
 		core::scoring::EnergyMap const & emap( energies.onebody_energies( resid ) );
-		
+
 		if ( emap[ core::scoring::num_stacks ] < 2 ) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	//////////////////
 	void superimpose_at_fixed_res( pose::Pose & pose, pose::Pose const & native_pose, Real & rmsd, Size & natoms_rmsd, core::pose::full_model_info::FullModelInfo const & full_model_info, bool skip_bulges = false ) {
-		
+
 		using namespace core::chemical;
 		using namespace core::id;
 		using namespace core::pose;
 		using namespace core::pose::full_model_info;
 		using namespace core::scoring;
 		using namespace protocols::rna;
-		
+
 		Pose native_pose_local = native_pose; // local working copy, mutated in cases where nucleotides have been designed ('n')
-		
+
 		// first need to slice up native_pose to match residues in actual pose.
 		// define atoms over which to compute RMSD, using rmsd_res.
 		utility::vector1< Size > const & res_list = full_model_info.res_list();
 		utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
 		std::string const full_sequence = full_model_info.full_sequence();
-		
+
 		// following needs to be updated.
 		utility::vector1< Size > const rmsd_res = full_model_info.moving_res_in_full_model();
-		
+
 		utility::vector1< Size > calc_rms_res;
 		utility::vector1< Size > skipped_residues;
-		
+
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
 			if ( rmsd_res.has_value( res_list[ n ] ) ) {
 				if ( skip_bulges && residue_is_bulged( pose, n ) && residue_is_bulged( native_pose_local, res_list[ n ] ) ) {
 					skipped_residues.push_back( n );
 					continue;
 				}
-				
+
 				calc_rms_res.push_back( n );
-				
+
 				char const pose_nt = pose.sequence()[ n-1 ];
 				if ( full_sequence[ res_list[ n ] - 1 ] == 'n' ){
 					mutate_position( native_pose_local, res_list[ n ], pose_nt );
@@ -891,9 +892,9 @@ rotate( pose::Pose & pose, Matrix const M,
 				runtime_assert( native_pose_local.sequence()[ res_list[ n ] - 1] == pose_nt );
 			}
 		}
-		
+
 		std::map< AtomID, AtomID > calc_rms_atom_id_map;
-		
+
 		for ( Size k = 1; k <= calc_rms_res.size(); k++ ){
 			Size const n = calc_rms_res[ k ];
 			for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ){
@@ -903,20 +904,20 @@ rotate( pose::Pose & pose, Matrix const M,
 												pose, native_pose_local );
 			}
 		}
-		
+
 		utility::vector1< Size > calc_rms_suites;
 		// additional RNA suites over which to calculate RMSD
 		for ( Size n = 1; n < pose.total_residue(); n++ ){
-			
+
 			if ( !pose.residue_type( n ).is_RNA() || !pose.residue_type( n + 1 ).is_RNA() ) continue;
 			if ( calc_rms_res.has_value( n+1 ) ) continue;
-			
+
 			// Atoms at ends of rebuilt loops:
 			if ( calc_rms_res.has_value( n ) &&
 				( !pose.fold_tree().is_cutpoint( n ) || pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) ) ) {
 				calc_rms_suites.push_back( n ); continue;
 			}
-			
+
 			// Domain boundaries:
 			if ( (res_list[ n+1 ] == res_list[ n ] + 1) &&
 				fixed_domain_map[ res_list[ n ] ] != 0 &&
@@ -925,7 +926,7 @@ rotate( pose::Pose & pose, Matrix const M,
 				calc_rms_suites.push_back( n );
 			}
 		}
-		
+
 		utility::vector1< std::string > const extra_suite_atoms = utility::tools::make_vector1( " P  ", " OP1", " OP2", " O5'" );
 		for ( Size k = 1; k <= calc_rms_suites.size(); k++ ){
 			Size const n = calc_rms_suites[ k ];
@@ -935,19 +936,19 @@ rotate( pose::Pose & pose, Matrix const M,
 												pose, native_pose_local );
 			}
 		}
-		
+
 		//		for ( std::map < AtomID, AtomID >::const_iterator it = calc_rms_atom_id_map.begin();
 		//					it != calc_rms_atom_id_map.end(); it++ ){
 		//			TR << it->first << " mapped to " << it->second << std::endl;
 		//		}
-		
+
 		// define superposition atoms. Should be over atoms in any fixed domains. This should be
 		// the 'inverse' of calc_rms atoms.
-		
+
 		std::map< AtomID, AtomID > superimpose_atom_id_map;
 		for ( Size n = 1; n < pose.total_residue(); n++ ){
 			if ( skipped_residues.has_value( n ) ) continue;
-			
+
 			for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ){
 				if ( calc_rms_atom_id_map.find( AtomID( q, n ) ) == calc_rms_atom_id_map.end() ){
 					add_to_atom_id_map_after_checks( superimpose_atom_id_map,
@@ -957,10 +958,10 @@ rotate( pose::Pose & pose, Matrix const M,
 				}
 			}
 		}
-		
+
 		// What if there weren't any fixed atoms? superimpose over everything.
 		if ( superimpose_atom_id_map.size() == 0 ) superimpose_atom_id_map = calc_rms_atom_id_map;
-		
+
 		rmsd = 0.0;
 		natoms_rmsd = calc_rms_atom_id_map.size();
 		if ( natoms_rmsd > 0 && superimpose_atom_id_map.size() > 0 ) {
@@ -969,7 +970,7 @@ rotate( pose::Pose & pose, Matrix const M,
 			rmsd = rms_at_corresponding_atoms_no_super( pose, native_pose, calc_rms_atom_id_map );
 		}
 		TR << "Pose " << make_tag_with_dashes(res_list) << ": RMSD " << rmsd << " over " << natoms_rmsd << " atoms, superimposing on " << superimpose_atom_id_map.size() << " atoms. " << std::endl;
-		
+
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -989,7 +990,7 @@ rotate( pose::Pose & pose, Matrix const M,
 			FullModelInfo const & full_model_info = const_full_model_info( pose );
 			superimpose_at_fixed_res( pose, native_pose, rmsd, natoms_rmsd, full_model_info, skip_bulges );
 		}
-		
+
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1019,7 +1020,7 @@ rotate( pose::Pose & pose, Matrix const M,
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 	Real
 	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose, core::pose::full_model_info::FullModelInfoOP full_model_pointer, bool skip_bulges ){
 		Real rmsd( 0.0 );
@@ -1098,7 +1099,6 @@ rotate( pose::Pose & pose, Matrix const M,
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
 			if ( rmsd_res.has_value( res_list[ n ] ) ) {
 				calc_rms_res.push_back( n );
-
 				char const pose_nt = pose.sequence()[ n-1 ];
 				if ( full_sequence[ res_list[ n ] - 1 ] == 'n' ){
 					mutate_position( native_pose_local, res_list[ n ], pose_nt );
@@ -1159,7 +1159,8 @@ rotate( pose::Pose & pose, Matrix const M,
 	////////////////
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	superimpose_recursively_and_add_constraints( pose::Pose & pose, pose::Pose const & native_pose, core::Real const & constraint_x0, core::Real const & constraint_tol ) {
+	superimpose_recursively_and_add_constraints( pose::Pose & pose, pose::Pose const & native_pose,
+																							 core::Real const & constraint_x0, core::Real const & constraint_tol ) {
 
 		using namespace core::pose;
 		using namespace core::pose::full_model_info;
@@ -1618,6 +1619,7 @@ rotate( pose::Pose & pose, Matrix const M,
 		using namespace core::conformation;
 
 		Size num_five_prime_connections( 0 ), num_three_prime_connections( 0 );
+		Size num_jumps_to_previous( 0 ), num_jumps_to_subsequent( 0 );
 
 		sliced_out_pose.conformation().clear();
 
@@ -1626,13 +1628,19 @@ rotate( pose::Pose & pose, Matrix const M,
 			Size const j = slice_res[ n ];
 			ResidueOP rsd = pose.residue( j ).clone();
 
-			bool const after_cutpoint = ( j == 1 || pose.fold_tree().is_cutpoint( j - 1 ) );
-			if ( !after_cutpoint && !slice_res.has_value( j - 1 ) ) num_five_prime_connections++;
+			bool const after_cutpoint = ( j == 1 ||	( pose.fold_tree().is_cutpoint( j - 1 ) ) );
 			if ( after_cutpoint ) remove_lower_terminus( rsd );
+			if ( !after_cutpoint && !slice_res.has_value( j - 1 ) ) num_five_prime_connections++;
 
-			bool const before_cutpoint = ( j == pose.total_residue() || pose.fold_tree().is_cutpoint( j ) );
-			if ( !before_cutpoint && !slice_res.has_value( j + 1 ) ) num_three_prime_connections++;
+			bool const jump_to_previous = check_jump_to_previous_residue_in_chain( pose, j, slice_res );
+			if ( jump_to_previous ) num_jumps_to_previous++;
+
+			bool const before_cutpoint = ( j == pose.total_residue() || ( pose.fold_tree().is_cutpoint( j ) ) );
 			if ( before_cutpoint ) remove_upper_terminus( rsd );
+			if ( !before_cutpoint && !slice_res.has_value( j + 1 ) ) num_three_prime_connections++;
+
+			bool const jump_to_subsequent = check_jump_to_subsequent_residue_in_chain( pose, j, slice_res );
+			if ( jump_to_subsequent ) num_jumps_to_subsequent++;
 
 			if ( n == 1 || !after_cutpoint ){
 				sliced_out_pose.append_residue_by_bond( *rsd, true /* build_ideal_geometry */ );
@@ -1641,8 +1649,11 @@ rotate( pose::Pose & pose, Matrix const M,
 			}
 		}
 
-		runtime_assert ( ( num_five_prime_connections  == 1 && num_three_prime_connections == 0 ) ||
-										 ( num_three_prime_connections == 1 && num_five_prime_connections == 0 ) );
+		runtime_assert ( num_five_prime_connections <= 1 );
+		runtime_assert ( num_three_prime_connections <= 1 );
+		runtime_assert ( num_jumps_to_previous <= 1 );
+		runtime_assert ( num_jumps_to_subsequent <= 1 );
+		runtime_assert( (num_five_prime_connections + num_three_prime_connections + num_jumps_to_previous + num_jumps_to_subsequent) == 1 );
 
 		// fold tree!
 		// figure out jumps
@@ -1701,6 +1712,85 @@ rotate( pose::Pose & pose, Matrix const M,
 
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	check_jump_to_previous_residue_in_chain( pose::Pose const & pose, Size const i,
+																					 utility::vector1< Size > const & current_element,
+																					 FullModelInfo const & full_model_info ){
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
+		utility::vector1< Size > const & chains_in_full_model = full_model_info.chains_in_full_model();
+		return 	check_jump_to_previous_residue_in_chain( pose, i, current_element, res_list, chains_in_full_model );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	check_jump_to_previous_residue_in_chain( pose::Pose const & pose, Size const i,
+																					 utility::vector1< Size > const & current_element ){
+		utility::vector1< Size > res_list, chains_in_full_model;
+		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+			res_list.push_back( n );
+			chains_in_full_model.push_back( 1 ); // could easily fix this for virtual residue.
+		}
+		return 	check_jump_to_previous_residue_in_chain( pose, i, current_element, res_list, chains_in_full_model );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	check_jump_to_previous_residue_in_chain( pose::Pose const & pose, Size const i,
+																					 utility::vector1< Size > const & current_element,
+																					 utility::vector1< Size > const & res_list,
+																					 utility::vector1< Size > const & chains_in_full_model ){
+		Size previous_res = i - 1;
+		Size const current_chain = chains_in_full_model[ res_list[ i ] ];
+		while ( previous_res >= 1 &&
+						chains_in_full_model[ res_list[ previous_res ] ] == current_chain ){
+			if ( !current_element.has_value( res_list[ previous_res ] ) &&
+					 pose.fold_tree().jump_nr( previous_res, i ) > 0 ) return previous_res;
+			previous_res--;
+		}
+		return 0;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	check_jump_to_subsequent_residue_in_chain( pose::Pose const & pose, Size const i,
+																					 utility::vector1< Size > const & current_element,
+																					 FullModelInfo const & full_model_info ){
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
+		utility::vector1< Size > const & chains_in_full_model = full_model_info.chains_in_full_model();
+		return 	check_jump_to_subsequent_residue_in_chain( pose, i, current_element, res_list, chains_in_full_model );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	check_jump_to_subsequent_residue_in_chain( pose::Pose const & pose, Size const i,
+																					 utility::vector1< Size > const & current_element ){
+		utility::vector1< Size > res_list, chains_in_full_model;
+		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+			res_list.push_back( n );
+			chains_in_full_model.push_back( 1 ); // could easily fix this for virtual residue.
+		}
+		return 	check_jump_to_subsequent_residue_in_chain( pose, i, current_element, res_list, chains_in_full_model );
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	check_jump_to_subsequent_residue_in_chain( pose::Pose const & pose, Size const i,
+																						 utility::vector1< Size > const & current_element,
+																						 utility::vector1< Size > const & res_list,
+																						 utility::vector1< Size > const & chains_in_full_model ){
+		Size subsequent_res = i + 1;
+		Size const current_chain = chains_in_full_model[ res_list[ i ] ];
+		while ( subsequent_res <= pose.total_residue() &&
+						chains_in_full_model[ res_list[ subsequent_res ] ] == current_chain ){
+			if ( !current_element.has_value( res_list[ subsequent_res ] ) &&
+					 pose.fold_tree().jump_nr( subsequent_res, i ) > 0 ) return subsequent_res;
+			subsequent_res++;
+		}
+		return 0;
+	}
+
 
 	////////////////////////////////////////////////////////////////////
 	void
@@ -1727,6 +1817,9 @@ rotate( pose::Pose & pose, Matrix const M,
 
 			// can happen after additions
 			correctly_add_cutpoint_variants( pose, res );
+
+			// this should actually get instantiated by the modeler
+			//if ( pose.residue_type( res ).has_variant_type( "VIRTUAL_RIBOSE" ) )	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", res );
 
 		} else{
 
@@ -1761,6 +1854,9 @@ rotate( pose::Pose & pose, Matrix const M,
 			// can happen after additions
 			correctly_add_cutpoint_variants( pose, res - 1 );
 
+			// This should actually be instantiated by the modeler.
+			//if ( pose.residue_type( res ).has_variant_type( "VIRTUAL_RIBOSE" ) )	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", res );
+
 		} else {
 
 			// can happen after additions
@@ -1779,31 +1875,33 @@ rotate( pose::Pose & pose, Matrix const M,
 
 	////////////////////////////////////////////////////////////////////
 	void
-	fix_up_residue_type_variants( pose::Pose & pose ) {
+	fix_up_residue_type_variants( pose::Pose & pose_to_fix ) {
 
 		using namespace core::chemical;
+		pose::Pose pose = pose_to_fix; // costly, but prevents seg fault with graphics.
 
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
 
-			// Are we at a 5' end
+			// Are we at a strand beginning?
 			if ( n == 1 || pose.fold_tree().is_cutpoint( n-1 ) ){
 				fix_up_residue_type_variants_at_strand_beginning( pose, n );
 			} else { // make sure there is nothing crazy here
-				if ( pose.residue_type( n ).has_variant_type( VIRTUAL_PHOSPHATE ) ) {
-					remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, n );
-				}
+				if ( pose.residue_type( n ).has_variant_type( VIRTUAL_PHOSPHATE ) )	remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, n );
+				if ( pose.residue_type( n ).has_variant_type( "VIRTUAL_RIBOSE" ) )	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", n );
 				runtime_assert( !pose.residue_type( n ).has_variant_type( CUTPOINT_UPPER ) );
 			}
 
-			// Look for 3' ends
+			// Look for strand ends.
 			if ( n == pose.total_residue() || pose.fold_tree().is_cutpoint( n ) ){
 				fix_up_residue_type_variants_at_strand_end( pose, n );
 			} else {
+				if ( pose.residue_type( n ).has_variant_type( "VIRTUAL_RIBOSE" ) )	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", n );
 				runtime_assert( !pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) );
 			}
 
 		}
 
+		pose_to_fix = pose;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////

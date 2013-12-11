@@ -52,6 +52,8 @@ namespace rna {
 
 		void set_legacy_mode( bool const & setting ) { legacy_mode_ = setting;	}
 
+		void set_choose_random( bool const & setting ) { choose_random_ = setting;	}
+
 		void set_integration_test_mode( bool const & setting ){ integration_test_mode_ = setting; }
 
 		void set_tag( std::string const & setting ){ tag_ = setting; }
@@ -80,6 +82,7 @@ namespace rna {
 		std::string silent_file_out_;
 		bool use_phenix_geo_;
 		bool legacy_mode_;
+		bool choose_random_;
 		bool integration_test_mode_;
 		std::string tag_;
 

@@ -28,6 +28,7 @@
 #include <core/pose/util.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
+#include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_VirtualSugarUtil" );
@@ -240,7 +241,7 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 
 	std::map< core::Size, core::Size > res_map;  //This is map from sub numbering to input_res numbering..
 	res_map[ sugar_modeling.moving_res    ] = sugar_modeling.moving_res;
-	res_map[ sugar_modeling.bulge_res     ] = sugar_modeling.bulge_res;
+	if ( sugar_modeling.bulge_res > 0 ) res_map[ sugar_modeling.bulge_res     ] = sugar_modeling.bulge_res;
 	res_map[ sugar_modeling.reference_res ] = sugar_modeling.reference_res;
 
 	//Dec 24, 2011 Parin S.:Convert to Rhiju's NEW version
@@ -290,24 +291,27 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 		for ( Size num_pass = 1; num_pass <= num_virtual_sugar_res; num_pass++ ){
 
 			Size found_reference_res( 0 );
+			Size virt_sugar_res;
 			for ( Size i = 1; i <= num_virtual_sugar_res; i++ ){
-				if ( reference_res_for_each_virtual_sugar[ virtual_sugar_res[i] ] == 0 &&
+				virt_sugar_res = virtual_sugar_res[i];
+				if ( reference_res_for_each_virtual_sugar[ virt_sugar_res  ] == 0 &&
 						 possible_reference_res_lists[ i ] .size() == 1 ){
 					found_reference_res = possible_reference_res_lists[ i ][ 1 ];
-					reference_res_for_each_virtual_sugar[ virtual_sugar_res[i] ] = found_reference_res;
-					TR.Debug << "Found anchor res " << found_reference_res << " for sugar " << virtual_sugar_res[ i ] << std::endl;
+					reference_res_for_each_virtual_sugar[ virt_sugar_res ] = found_reference_res;
+					TR.Debug << "Found anchor res " << found_reference_res << " for sugar " << virt_sugar_res << std::endl;
 					break;
 				}
 			}
 			runtime_assert( found_reference_res > 0 );
 
-			// this anchor cannot be an anchor for any other res -- an *assumption*.
+			// the sugar cannot be an anchor for any other res -- an *assumption*.
 			// eliminate from the list of possibilities
 			for ( Size i = 1; i <= num_virtual_sugar_res; i++ ){
 				utility::vector1< Size > const & possible_reference_res_list = possible_reference_res_lists[ i ];
 				utility::vector1< Size > new_list;
 				for ( Size k = 1; k <= possible_reference_res_list.size(); k++ ){
-					if ( possible_reference_res_list[k] != found_reference_res ) new_list.push_back( possible_reference_res_list[k] );
+					if ( /*possible_reference_res_list[k] != found_reference_res &&*/
+							 possible_reference_res_list[k] != virt_sugar_res )  new_list.push_back( possible_reference_res_list[k] );
 				}
 				possible_reference_res_lists[i] = new_list;
 			}
@@ -383,7 +387,7 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 
 		if ( possible_reference_res > 0 ) possible_reference_res_list.push_back( possible_reference_res );
 
-		//		TR.Debug << "REFERENCE_RES_LIST FOR " << virtual_sugar_res << " is " << possible_reference_res_list << std::endl;
+		TR.Debug << "REFERENCE_RES_LIST FOR " << virtual_sugar_res << " is " << possible_reference_res_list << std::endl;
 
 		return possible_reference_res_list;
 	}

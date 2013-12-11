@@ -106,7 +106,8 @@ StepWiseRNA_VirtualSugarSamplerWrapper::StepWiseRNA_VirtualSugarSamplerWrapper( 
 	assert_no_virt_sugar_sampling_( false ),
 	integration_test_mode_( false ),
 	use_phenix_geo_( false ),
-	legacy_mode_( false )
+	legacy_mode_( false ),
+	success_( false )
 {}
 
 //Destructor
@@ -116,19 +117,28 @@ StepWiseRNA_VirtualSugarSamplerWrapper::~StepWiseRNA_VirtualSugarSamplerWrapper(
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_VirtualSugarSamplerWrapper::apply( core::pose::Pose & pose ){
+	success_ = do_the_sampling( pose );
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+StepWiseRNA_VirtualSugarSamplerWrapper::do_the_sampling( core::pose::Pose & pose ){
 
 	output_title_text( "Build previously virtualize sugar", TR.Debug );
-	if ( rebuild_bulge_mode_ ) apply_virtual_rna_residue_variant_type( pose,  moving_res_ );
+	if ( rebuild_bulge_mode_ ) {
+		TR << TR.Red << "In: REBUILD_BULGE_MODE " << TR.Reset << std::endl;
+		apply_virtual_rna_residue_variant_type( pose,  moving_res_ );
+	}
 
 	// infer anchor/reference res for each virtual sugar based on pose fold tree and variants.
 	reference_res_for_each_virtual_sugar_ = get_reference_res_for_each_virtual_sugar( pose, job_parameters_->working_moving_suite() );
 
-	if ( !initialize_parameters( pose ) ) return;
+	if ( !initialize_parameters( pose ) ) return false;
 
-	if ( is_anchor_sugar_virt_                  && !do_sugar_sampling( pose, anchor_sugar_modeling_, "anchor" ) ) return;
-	if ( is_current_sugar_virt_                 && !do_sugar_sampling( pose, current_sugar_modeling_, "current" ) ) return;
-	if ( is_five_prime_chain_break_sugar_virt_  && !do_sugar_sampling( pose, five_prime_chain_break_sugar_modeling_, "five_prime_CB" ) ) return;
-	if ( is_three_prime_chain_break_sugar_virt_ && !do_sugar_sampling( pose, three_prime_chain_break_sugar_modeling_, "three_prime_CB" ) ) return;
+	if ( is_anchor_sugar_virt_                  && !do_sugar_sampling( pose, anchor_sugar_modeling_, "anchor" ) ) return false;
+	if ( is_current_sugar_virt_                 && !do_sugar_sampling( pose, current_sugar_modeling_, "current" ) ) return false;
+	if ( is_five_prime_chain_break_sugar_virt_  && !do_sugar_sampling( pose, five_prime_chain_break_sugar_modeling_, "five_prime_CB" ) ) return false;
+	if ( is_three_prime_chain_break_sugar_virt_ && !do_sugar_sampling( pose, three_prime_chain_break_sugar_modeling_, "three_prime_CB" ) ) return false;
 
 	/////////////Sort the pose_data_list by score..should be determined according to torsional potential score.	/////////////////////////
 	std::sort( anchor_sugar_modeling_.pose_list.begin(),                  anchor_sugar_modeling_.pose_list.end(),         sort_pose_by_score );
@@ -136,6 +146,7 @@ StepWiseRNA_VirtualSugarSamplerWrapper::apply( core::pose::Pose & pose ){
 	std::sort( five_prime_chain_break_sugar_modeling_.pose_list.begin(),  five_prime_chain_break_sugar_modeling_.pose_list.end(),  sort_pose_by_score );
 	std::sort( three_prime_chain_break_sugar_modeling_.pose_list.begin(), three_prime_chain_break_sugar_modeling_.pose_list.end(), sort_pose_by_score );
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -148,6 +159,7 @@ StepWiseRNA_VirtualSugarSamplerWrapper::do_sugar_sampling( pose::Pose & viewer_p
 	virtual_sugar_sampler.set_integration_test_mode( integration_test_mode_ );
 	virtual_sugar_sampler.set_use_phenix_geo( use_phenix_geo_ );
 	virtual_sugar_sampler.set_legacy_mode( legacy_mode_ );
+	virtual_sugar_sampler.set_choose_random( choose_random_ );
 
 	virtual_sugar_sampler.apply( viewer_pose );
 
@@ -178,7 +190,6 @@ StepWiseRNA_VirtualSugarSamplerWrapper::setup_sugar_modeling( pose::Pose const &
 	// in the same direction as moving_res. This would be the case in Parin's
 	// usual dinucleotide move.  But we want to be able to totally leave out that
 	// filler base, in which case there's no bulge to rebuild. -- rhiju
-
 	Size const bulge_res_ = sugar_modeling.bulge_res;
 	if ( bulge_res_ == sugar_modeling.reference_res ||
 			 bulge_res_ == 0 ||
@@ -196,7 +207,7 @@ StepWiseRNA_VirtualSugarSamplerWrapper::setup_sugar_modeling( pose::Pose const &
 bool
 StepWiseRNA_VirtualSugarSamplerWrapper::is_anchor_sugar_virtual( core::pose::Pose const & pose ) {
 	//Check if anchor sugar is virtual, if virtual then need to sample it.
-	Size const anchor_moving_res = ( is_prepend_ ) ? ( moving_res_ + num_nucleotides_ ) : ( moving_res_ - num_nucleotides_ );
+	Size const anchor_moving_res = job_parameters_->working_reference_res();
 	return setup_sugar_modeling( pose, anchor_moving_res, anchor_sugar_modeling_ );
 }
 

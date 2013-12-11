@@ -34,6 +34,8 @@
 #include <core/types.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/rna/RNA_Util.hh>
@@ -962,15 +964,19 @@ StepWiseRNA_PoseSetup::add_aa_virt_rsd_as_root( core::pose::Pose & pose ){  //Fa
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////
+// how about just setting full_model_info here?
 void
 StepWiseRNA_PoseSetup::setup_pdb_info_with_working_residue_numbers( pose::Pose & pose ) const {
 
 	using namespace core::pose;
+	using namespace core::pose::full_model_info;
 
 	utility::vector1< core::Size > const & is_working_res( job_parameters_->is_working_res() );
-	std::string const & full_sequence = job_parameters_->full_sequence();
+	utility::vector1< core::Size > const & cutpoint_open_list( job_parameters_->cutpoint_open_list() );
+	std::string full_sequence = job_parameters_->full_sequence();
 
 	utility::vector1< Size > working_res;
+	Size chain_number( 1 );
 	for ( Size i = 1; i <= full_sequence.size(); i++ ){
 		if ( is_working_res[ i ] ){
 			working_res.push_back( i );
@@ -979,11 +985,16 @@ StepWiseRNA_PoseSetup::setup_pdb_info_with_working_residue_numbers( pose::Pose &
 
 	if ( job_parameters_->add_virt_res_as_root() ){
 		working_res.push_back( full_sequence.size() + 1  );
+		full_sequence += 'X';
 	}
 
-	PDBInfoOP pdb_info = new PDBInfo( pose );
-	pdb_info->set_numbering( working_res );
-	pose.pdb_info( pdb_info );
+	FullModelInfoOP full_model_info = new FullModelInfo( pose, full_sequence,  cutpoint_open_list, working_res );
+	set_full_model_info( pose, full_model_info );
+	update_pdb_info_from_full_model_info( pose );
+
+	//	PDBInfoOP pdb_info = new PDBInfo( pose );
+	//	pdb_info->set_numbering( working_res );
+	//	pose.pdb_info( pdb_info );
 }
 
 

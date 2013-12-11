@@ -147,6 +147,8 @@ StepWiseRNA_FloatingBaseSampler::StepWiseRNA_FloatingBaseSampler( StepWiseRNA_Jo
 {
 	set_native_pose( job_parameters_->working_native_pose() );
 	runtime_assert ( !is_dinucleotide_ || !is_internal_ );
+
+	// remove following soon.
 	TR.Debug << "GAP_SIZE_TO_ANCHOR " << gap_size_to_anchor_ << "  REFERENCE RES        " << reference_res_ << "  MOVING_RES " << moving_res_ << std::endl;
 	TR.Debug << "GAP_SIZE_TO_DISTAL " << gap_size_           << "  FIVE' CHAINBREAK RES " << five_prime_chain_break_res_ << "  MOVING_RES " << moving_res_ << std::endl;
 }
@@ -184,6 +186,7 @@ StepWiseRNA_FloatingBaseSampler::apply( core::pose::Pose & pose ){
 	initialize_other_residues_base_list( pose ); 	// places where floating base can 'dock'
 
 	utility::vector1< PoseOP > pose_list;
+	sampler_->apply( pose, *moving_rsd_at_origin_list_[1] ); // just to see something in graphics viewer.
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// MAIN LOOP
@@ -327,9 +330,9 @@ StepWiseRNA_FloatingBaseSampler::apply( core::pose::Pose & pose ){
 void
 StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_screeners( pose::Pose & pose  ){
 
-	runtime_assert( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_PHOSPHATE" ) );
-	runtime_assert( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_RIBOSE" ) );
-	if ( gap_size_to_anchor_ == 0 ) runtime_assert( pose.fold_tree().is_cutpoint( moving_res_ - 1 ) );
+	//runtime_assert( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_PHOSPHATE" ) );
+	//	runtime_assert( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_RIBOSE" ) );
+	if ( gap_size_to_anchor_ == 0 )	runtime_assert( pose.fold_tree().is_cutpoint( moving_res_ - 1 ) );
 
 	// hydrogens will be reinstantiated later. perhaps this should be the screening_pose?
 	Pose pose_with_virtual_O2prime_hydrogen = pose;

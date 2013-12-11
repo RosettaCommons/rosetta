@@ -87,7 +87,9 @@ namespace rna {
 		allow_fixed_res_at_moving_res_( false ), //hacky, just to get the Hermann Duplex RNA working..Nov 15, 2010
 		simple_append_map_( false ),
 		skip_complicated_stuff_( false ),
-		force_fold_tree_( false )
+		force_fold_tree_( false ),
+		force_user_defined_jumps_( false ),
+		assert_jump_point_in_fixed_res_( true )
   {
 		output_title_text( "Enter StepWiseRNA_JobParametersSetup::constructor", TR.Debug );
 
@@ -154,7 +156,7 @@ namespace rna {
 			root_res = reroot_fold_tree( internal_params.fake_working_moving_suite );
 			//need the final rerooted fold_tree, WARNING: this function resets the working_moving_res_list annd working_moving_res for the internal case...
 			//Warning this leaves is_working_res NOT updated...
-			figure_out_Prepend_Internal( root_res, internal_params );
+			figure_out_prepend_internal( root_res, internal_params );
 			figure_out_gap_size_and_five_prime_chain_break_res(); //Need partition definition to be initialized...
 			figure_out_is_prepend_map(); //Need fold_tree and fixed_res to be initialized
 		} else {
@@ -927,7 +929,7 @@ namespace rna {
 		std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() );
 		jump_point_pair_list_.push_back( std::make_pair( moving_res, anchor_res ) );
 		jump_partners_.push_back( std::make_pair( full_to_sub[moving_res], full_to_sub[anchor_res] ) );
-		TR << "MOVING_RES -- ANCHOR_RES in working numbering: " << full_to_sub[ moving_res ] << " -- " << full_to_sub[ anchor_res ] << std::endl;
+		TR.Debug << "MOVING_RES -- ANCHOR_RES in working numbering: " << full_to_sub[ moving_res ] << " -- " << full_to_sub[ anchor_res ] << std::endl;
 
 		// Note -- following is not necessary.
 		// put a cutpoint right in between these residues. Note that they should not be adjacent in the full
@@ -1062,7 +1064,7 @@ namespace rna {
 
 			fake_working_moving_suite = first_working_moving_res - 1;
 
-		} else { //Internal case...problematic/complicated case....
+		} else { //internal case...problematic/complicated case....
 
 			// I don't remember what this coding stands for. When would we supply the working_moving_res 'backwards'? -- rhiju
 			//			So the order of the working_moving_res should only matters if there is
@@ -1080,7 +1082,7 @@ namespace rna {
 			//       Dinucleotide move can be used to close the chain in two ways:
 			//
 			//           i. Append [4, 3] : Treat res 4 as sampling base and 3 as bulge.
-			//           ii. Prepend [3, 4] Treat res 3 as sampling base and 4 as bulge.
+			//           ii. prepend [3, 4] Treat res 3 as sampling base and 4 as bulge.
 			//
 			//           Note that the first residue in the list is always the one that
 			//           is sampled (in this case by 'floating base' sampling). The
@@ -1104,7 +1106,7 @@ namespace rna {
 			//       behavior:
 			//
 			//           i. Append [4, 3] : Treat res 4 as sampling base and 3 as bulge.
-			//           ii. Prepend [3, 4] : Treat res 3 as sampling base and 4 as bulge.
+			//           ii. prepend [3, 4] : Treat res 3 as sampling base and 4 as bulge.
 			//
 			//       Although, this move is also currently not used in default SWA runs.
 			//
@@ -1407,9 +1409,9 @@ namespace rna {
 
 	/////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_JobParametersSetup::figure_out_Prepend_Internal( core::Size const root_res, InternalWorkingResidueParameter const & internal_params ){
+	StepWiseRNA_JobParametersSetup::figure_out_prepend_internal( core::Size const root_res, InternalWorkingResidueParameter const & internal_params ){
 
-		output_title_text( "Enter StepWiseRNA_JobParametersSetup::figure_out_Prepend_Internal", TR.Debug );
+		output_title_text( "Enter StepWiseRNA_JobParametersSetup::figure_out_prepend_internal", TR.Debug );
 		std::map< core::Size, core::Size > & sub_to_full( job_parameters_->sub_to_full() );
 
 		ObjexxFCL::FArray1D < bool > const & partition_definition = job_parameters_->partition_definition();
@@ -1632,11 +1634,11 @@ namespace rna {
 
 		if ( fixed_res_.size() == 0 ) utility_exit_with_message( "need to called set_fixed_res before calling set_jump_point_pair_list" );
 
-		bool assert_in_fixed_res = true;
+		bool assert_jump_point_in_fixed_res = assert_jump_point_in_fixed_res_;
 		for ( Size n = 1; n <= jump_point_pairs_string.size(); n++ ){
 
 			if ( ( n == 1 ) && ( jump_point_pairs_string[n] == "NOT_ASSERT_IN_FIXED_RES" ) ){ //Feb 09, 2012: FIXED BUG. Used to be "and" instead of "&&"
-				assert_in_fixed_res = false;
+				assert_jump_point_in_fixed_res = false;
 				continue;
 			}
 
@@ -1653,10 +1655,10 @@ namespace rna {
 
 		output_pair_size( jump_point_pair_list_, "jump_point_pair_list: ", TR.Debug );
 
-		output_boolean( "assert_in_fixed_res = ", assert_in_fixed_res, TR.Debug );
+		output_boolean( "assert_jump_point_in_fixed_res = ", assert_jump_point_in_fixed_res, TR.Debug );
 
 		//Ensure that every seq_num in jump_point_pair_list_ is a fixed_res
-		if ( assert_in_fixed_res ){
+		if ( assert_jump_point_in_fixed_res ){
 			for ( Size n = 1; n <= jump_point_pair_list_.size(); n++ ){
 				runtime_assert ( fixed_res_.has_value( jump_point_pair_list_[n].first ) );
 				runtime_assert ( fixed_res_.has_value( jump_point_pair_list_[n].second ) );
@@ -1711,7 +1713,6 @@ namespace rna {
 	}
 
   //////////////////////////////////////////////////////////////////////////
-
 	void
 	StepWiseRNA_JobParametersSetup::set_force_south_sugar_list( utility::vector1 < core::Size > const & setting ){
 
@@ -1773,6 +1774,11 @@ namespace rna {
 		job_parameters_->set_fold_tree( fold_tree );
 		force_fold_tree_ = true;
 
+	}
+  //////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseRNA_JobParametersSetup::set_cutpoint_closed_list( utility::vector1 < core::Size > const & setting ){
+		job_parameters_->set_cutpoint_closed_list( setting );
 	}
   //////////////////////////////////////////////////////////////////////////
 }

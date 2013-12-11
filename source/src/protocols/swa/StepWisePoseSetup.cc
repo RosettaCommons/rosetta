@@ -1214,7 +1214,6 @@ return "StepWisePoseSetup";
 	void
 	StepWisePoseSetup::align_poses( pose::Pose & pose ){
 
-
 		if ( align_file_.size() > 0 ){
 			Pose full_align_pose;
 			import_pose::pose_from_pdb( full_align_pose, *rsd_set_, align_file_ );

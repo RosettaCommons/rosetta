@@ -68,16 +68,18 @@ namespace monte_carlo {
 
 	void
 	get_random_move_element_at_chain_terminus( pose::Pose & pose,
-																			SWA_Move & swa_move,
-																			bool const disallow_delete,
-																			bool const disallow_resample,
-																			utility::vector1< Size > const & sample_res );
+																						 SWA_Move & swa_move,
+																						 bool const disallow_delete,
+																						 bool const disallow_resample,
+																						 bool const disallow_skip_bulge,
+																						 utility::vector1< Size > const & sample_res );
 
 	void
 	get_random_move_element_at_chain_terminus( pose::Pose & pose,
-																		  SWA_Move & swa_move,
-																			bool const disallow_delete,
-																			bool const disallow_resample = true );
+																						 SWA_Move & swa_move,
+																						 bool const disallow_delete,
+																						 bool const disallow_resample = true,
+																						 bool const disallow_skip_bulge = true );
 
 	void
 	filter_by_sample_res(utility::vector1< SWA_Move > & swa_moves,

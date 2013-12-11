@@ -252,7 +252,7 @@ namespace rna {
 			}
 		}
 
-		bool const is_cutpoint_open = ( pose.fold_tree().is_cutpoint( seq_num ) && is_cutpoint_closed == false );
+		bool const is_cutpoint_open = ( pose.fold_tree().is_cutpoint( seq_num ) && !is_cutpoint_closed );
 		if ( apply_check ){
 			if ( is_cutpoint_open ) {
 				utility_exit_with_message( "Cannot apply VIRTUAL_RNA_RESIDUE VARIANT TYPE to seq_num: " + string_of( seq_num ) + ". The residue is 5' of a OPEN cutpoint" );
@@ -669,11 +669,9 @@ namespace rna {
  			utility_exit_with_message( "ref_pose.sequence() != mod_pose.sequence()" );
  		}
 
-
  		for ( Size seq_num = 1; seq_num <= mod_pose.total_residue(); ++seq_num ) {
 			if ( mod_pose.residue( seq_num ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code.
  			if ( !rmsd_residue_list.has_value( seq_num ) ) continue;
-
  			setup_suite_atom_id_map( mod_pose, ref_pose, seq_num, atom_ID_map, base_only );
  		}
 
@@ -690,13 +688,12 @@ namespace rna {
 		bool found_non_virtual_base = false;
 		for ( Size n = 1; n <= working_best_alignment.size(); n++ ){
 			Size const seq_num = working_best_alignment[n];
-			if ( is_virtual_base( moving_pose.residue( seq_num ) ) == true || is_virtual_base( static_pose.residue( seq_num ) ) == true ) continue;
-
+			if ( is_virtual_base( moving_pose.residue( seq_num ) ) || is_virtual_base( static_pose.residue( seq_num ) ) ) continue;
 			found_non_virtual_base = true; //ok found a non-virtual base nucleotide that can be used for alignment
 			break;
 		}
 
-		if ( found_non_virtual_base == false ){
+		if ( !found_non_virtual_base ){
 			for ( Size n = 1; n <= working_best_alignment.size(); n++ ){
 				Size const seq_num = working_best_alignment[n];
 				TR.Debug << "seq_num = " << seq_num;
@@ -711,10 +708,19 @@ namespace rna {
 
 		//align current_pose to pose_output_list.
 		id::AtomID_Map < id::AtomID > const & alignment_atom_id_map = create_alignment_id_map( moving_pose, static_pose, working_best_alignment, base_only );
+		// for ( Size i = 1; i <= moving_pose.total_residue(); i++ ){
+		// 	for ( Size j = 1; j <= moving_pose.residue( i ).natoms(); j++ ){
+		// 		if ( alignment_atom_id_map( core::id::AtomID(j,i) ) != core::id::BOGUS_ATOM_ID ) {
+		// 			std::cout << "RMSD: Aligning at " << i << " " << moving_pose.residue( i ).atom_name( j ) << std::endl;
+		// 		}
+		// 	}
+		// }
+		// std::cout << std::endl;
+
 		core::scoring::superimpose_pose( moving_pose, static_pose, alignment_atom_id_map );
 
 //				current_pose.dump_pdb( tag+ "_current_pose_after_alignment");
-		if ( check_for_messed_up_structure( moving_pose, moving_tag ) == true ){
+		if ( check_for_messed_up_structure( moving_pose, moving_tag ) ){
 			std::string error_message = "Error in aligning " + moving_tag + " to " + static_tag + "!";
 			TR << error_message << std::endl;
 			utility_exit_with_message( moving_tag + " is messed up ...this is probably an alignment problem" );
@@ -2119,6 +2125,20 @@ namespace rna {
 
 	}
 
+	///////////////////////////////////////////////////////////////////////
+	utility::vector1< bool >
+	get_partition_definition_floating_base( pose::Pose const & pose, Size const & moving_res ){
+
+		ObjexxFCL::FArray1D<bool> partition_definition( pose.total_residue(), false );
+		Size const jump_nr = look_for_unique_jump_to_moving_res( pose.fold_tree(), moving_res );
+		pose.fold_tree().partition_by_jump( jump_nr, partition_definition );
+
+		//silly conversion. There may be a faster way to do this actually.
+		utility::vector1< bool > partition_definition_vector1;
+		for ( Size n = 1; n <= pose.total_residue(); n++ )	partition_definition_vector1.push_back( partition_definition(n) );
+
+		return partition_definition_vector1;
+	}
 
 	////////////////////////////////////////////////////////////////////////
 	void
@@ -2128,17 +2148,7 @@ namespace rna {
 		}
 	}
 
-	//////////////////////////////////////////////////////////////////////////////////////
-/*
-/// @brief Principal value of angle in degrees on ( -180, 180 ]
-template < typename T >
-inline
-T
-principal_angle_degrees( T const & angle )
-{
-	return remainder( angle, T( 360.0 ) );
-}
-*/
+	////////////////////////////////////////////////////////////////////////
 	bool
 	check_for_messed_up_structure( core::pose::Pose const & pose, std::string const & tag ){
 		using namespace core::scoring;

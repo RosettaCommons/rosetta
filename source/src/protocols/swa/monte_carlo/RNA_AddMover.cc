@@ -18,8 +18,8 @@
 #include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/StepWiseUtil.hh>
-
-// libRosetta headers
+#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -28,13 +28,8 @@
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
-
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/MonteCarlo.fwd.hh>
-
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
-
 #include <numeric/random/random.hh>
 
 #include <map>
@@ -74,7 +69,7 @@ namespace monte_carlo {
 		constraint_x0_( constraint_x0 ),
 		constraint_tol_( constraint_tol )
 	{}
-	
+
 	RNA_AddMover::RNA_AddMover( scoring::ScoreFunctionOP scorefxn ):
 	scorefxn_( scorefxn ),
 	presample_added_residue_( true ),
@@ -108,14 +103,16 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////
   void
-  RNA_AddMover::apply( core::pose::Pose & pose, Size const res_to_add_in_full_model_numbering, Size const res_to_build_off_in_full_model_numbering )
+  RNA_AddMover::apply( core::pose::Pose & viewer_pose, Size const res_to_add_in_full_model_numbering, Size const res_to_build_off_in_full_model_numbering )
 	{
 
 		using namespace core::chemical;
+		using namespace core::chemical::rna;
 		using namespace core::pose;
 		using namespace core::pose::full_model_info;
 		using namespace protocols::swa::rna;
 
+		Pose pose = viewer_pose; // hard copy -- try to avoid graphics problems when variants are added.
 		runtime_assert( pose.total_residue() > 1 );
 		ResidueTypeSet const & rsd_set = pose.residue_type( 1 ).residue_type_set();
 
@@ -126,21 +123,21 @@ namespace monte_carlo {
 
 		runtime_assert( res_list.has_value( res_to_build_off_in_full_model_numbering ) );
 		runtime_assert( !res_list.has_value( res_to_add_in_full_model_numbering ) );
-
 		Size const res_to_build_off = res_list.index( res_to_build_off_in_full_model_numbering );
 
 		// need to encapsulate the following residue addition & domain addition functions...
-
-		if ( res_to_add_in_full_model_numbering == (res_to_build_off_in_full_model_numbering + 1) ){
+		if ( res_to_add_in_full_model_numbering > res_to_build_off_in_full_model_numbering ) {
+			Size const offset = res_to_add_in_full_model_numbering - res_to_build_off_in_full_model_numbering;
 			// addition to strand ending (append)
-			runtime_assert( res_to_build_off == pose.total_residue() || res_list[ res_to_build_off ] < res_list[ res_to_build_off+1 ] -1 );
+			runtime_assert( res_to_build_off == pose.total_residue() ||
+											res_list[ res_to_build_off ] < res_list[ res_to_build_off + 1 ] - 1 );
 			runtime_assert( res_list[ res_to_build_off ] < full_sequence.size() );
 
 			Size const res_to_add = res_to_build_off + 1;
 			Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( res_to_add_in_full_model_numbering );
 
 			if ( other_pose_idx ){ // addition of a domain (a whole sister pose)
-
+				runtime_assert( offset == 1);
 				Pose & other_pose = *(full_model_info.other_pose_list()[ other_pose_idx ]);
 				Size const res_to_build_off_in_full_model_numbering = res_list[ res_to_build_off ];
 				merge_in_other_pose( pose, other_pose, res_to_build_off_in_full_model_numbering );
@@ -154,7 +151,6 @@ namespace monte_carlo {
 
 				char newrestype = full_sequence[ res_to_add_in_full_model_numbering - 1 ];
 				choose_random_if_unspecified_nucleotide( newrestype );
-
 				chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
 				chemical::ResidueTypeCOPs const & rsd_type_list( rsd_set.aa_map( my_aa ) );
 
@@ -164,25 +160,37 @@ namespace monte_carlo {
 
 				remove_variant_type_from_pose_residue( pose, "UPPER_TERMINUS", res_to_build_off ); // got to be safe.
 
-				pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
+				if ( offset == 1){
+					pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
+					suite_num = res_to_add - 1;
+				} else {
+					runtime_assert( offset > 1 );
+					pose.insert_residue_by_jump( *new_rsd, res_to_add, res_to_build_off,
+																			 default_jump_atom( pose.residue( res_to_build_off ) ),
+																			 default_jump_atom( *new_rsd ) );
+					add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add );
+					if ( res_to_add_in_full_model_numbering < res_list[ res_to_build_off+1 ]-1 ) {
+						add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", res_to_add );
+					}
+					suite_num = 0;
+				}
 
-				reorder_full_model_info_after_append( pose, res_to_add );
+				reorder_full_model_info_after_append( pose, res_to_add, offset );
 
-				suite_num = res_to_add - 1;
 				nucleoside_num = res_to_add;
 			}
 		} else {
 
 			// addition to strand beginning (prepend)
-			runtime_assert( res_to_add_in_full_model_numbering == (res_to_build_off_in_full_model_numbering - 1) );
-
+			runtime_assert( res_to_add_in_full_model_numbering < res_to_build_off_in_full_model_numbering );
+			Size const offset = res_to_build_off_in_full_model_numbering - res_to_add_in_full_model_numbering;
 			Size const res_to_add = res_to_build_off;
 			Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( res_to_add_in_full_model_numbering );
 
 			TR << "About to add onto " << res_to_build_off_in_full_model_numbering << " the following residue (in full model numbering) " << res_to_add_in_full_model_numbering << " which may be part of other pose " << other_pose_idx << std::endl;
 
 			if ( other_pose_idx ){ // addition of a domain (a whole sister pose)
-
+				runtime_assert( offset == 1 );
 				Pose & other_pose = *(full_model_info.other_pose_list()[ other_pose_idx ]);
 				merge_in_other_pose( pose, other_pose, res_to_build_off_in_full_model_numbering - 1 /*merge_res*/ );
 
@@ -212,12 +220,23 @@ namespace monte_carlo {
 				remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add ); // got to be safe.
 				remove_variant_type_from_pose_residue( pose, "LOWER_TERMINUS", res_to_add ); // got to be safe.
 
-				pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
-
-				reorder_full_model_info_after_prepend( pose, res_to_add );
+				if ( offset == 1){
+					pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
+					suite_num = res_to_add;
+				} else {
+					runtime_assert( offset > 1 );
+					pose.insert_residue_by_jump( *new_rsd, res_to_add, res_to_build_off,
+																			 default_jump_atom( pose.residue( res_to_build_off ) ),
+																			 default_jump_atom( *new_rsd ) );
+					if ( res_to_add_in_full_model_numbering > res_list[ res_to_build_off-1 ]+1 ) {
+						add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", res_to_add );
+						add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add+1 );
+					}
+					suite_num = 0;
+				}
+				reorder_full_model_info_after_prepend( pose, res_to_add, offset );
 
 				// initialize with a random torsion... ( how about an A-form + perturbation ... or go to a 'reasonable' rotamer)
-				suite_num = res_to_add;
 				nucleoside_num = res_to_add;
 			}
 
@@ -225,20 +244,25 @@ namespace monte_carlo {
 
 		fix_up_residue_type_variants( pose );
 
+		viewer_pose = pose;
+
+		TR << TR.Blue << pose.fold_tree() << TR.Reset << std::endl;
+		TR << TR.Blue << pose.annotated_sequence() << TR.Reset << std::endl;
+
 		if ( start_added_residue_in_aform_ ){
-			rna_torsion_mover_->apply_suite_torsion_Aform( pose, suite_num );
-			if ( nucleoside_num > 0 ) rna_torsion_mover_->apply_nucleoside_torsion_Aform( pose, nucleoside_num );
+			if ( suite_num > 0 ) rna_torsion_mover_->apply_suite_torsion_Aform( viewer_pose, suite_num );
+			if ( nucleoside_num > 0 ) rna_torsion_mover_->apply_nucleoside_torsion_Aform( viewer_pose, nucleoside_num );
 		} else {
-			rna_torsion_mover_->apply_random_suite_torsion( pose, suite_num );
-			if ( nucleoside_num > 0 ) rna_torsion_mover_->apply_random_nucleoside_torsion( pose, nucleoside_num );
+			if ( suite_num > 0 ) rna_torsion_mover_->apply_random_suite_torsion( viewer_pose, suite_num );
+			if ( nucleoside_num > 0 ) rna_torsion_mover_->apply_random_nucleoside_torsion( viewer_pose, nucleoside_num );
 		}
 
-		rna_torsion_mover_->sample_near_suite_torsion( pose, suite_num, sample_range_large_);
-		if ( nucleoside_num > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_large_);
-		
+		if ( suite_num > 0 ) rna_torsion_mover_->sample_near_suite_torsion( viewer_pose, suite_num, sample_range_large_);
+		if ( nucleoside_num > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( viewer_pose, nucleoside_num, sample_range_large_);
+
 		if ( native_pose_ ) {
-			clear_constraints_recursively( pose );
-			superimpose_recursively_and_add_constraints( pose, *native_pose_, constraint_x0_, constraint_tol_ );
+			clear_constraints_recursively( viewer_pose );
+			superimpose_recursively_and_add_constraints( viewer_pose, *native_pose_, constraint_x0_, constraint_tol_ );
 		}
 
 		///////////////////////////////////
@@ -248,9 +272,9 @@ namespace monte_carlo {
 			if ( presample_by_swa_ ){
 				Size swa_sample_res = nucleoside_num;
 				if ( swa_sample_res == 0) swa_sample_res = suite_num; // nucleoside_num = 0 in domain addition.
-				sample_by_swa( pose, swa_sample_res );
+				sample_by_swa( viewer_pose, swa_sample_res );
 			} else {
-				sample_by_monte_carlo_internal( pose, nucleoside_num, suite_num );
+				sample_by_monte_carlo_internal( viewer_pose, nucleoside_num, suite_num );
 			}
 		}
 

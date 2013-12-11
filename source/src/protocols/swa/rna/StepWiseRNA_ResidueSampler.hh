@@ -190,7 +190,7 @@ private:
 	void
 	floating_base_sampling( core::pose::Pose & pose );
 
-	void
+	bool
 	instantiate_any_virtual_sugars( core::pose::Pose & pose );
 
 private:

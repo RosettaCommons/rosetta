@@ -118,7 +118,7 @@ StepWiseRNA_ResidueSampler::apply( core::pose::Pose & pose ) {
 	output_options();
 
 	Pose const pose_save = pose; pose = pose_save; //this recopy is actually useful for triggering graphics.
-	instantiate_any_virtual_sugars( pose );
+	if ( !instantiate_any_virtual_sugars( pose ) ) return;
 	if ( job_parameters_->floating_base() ){
 		floating_base_sampling( pose );
 	} else{
@@ -234,7 +234,7 @@ StepWiseRNA_ResidueSampler::standard_sampling_WRAPPER( core::pose::Pose & pose )
 
 
 //////////////////////Build previously virtualize sugar/////////////////////
-void
+bool
 StepWiseRNA_ResidueSampler::instantiate_any_virtual_sugars( pose::Pose & pose ){
 	Pose pose_save = pose;
 	virtual_sugar_sampler_wrapper_ = new StepWiseRNA_VirtualSugarSamplerWrapper( job_parameters_ );
@@ -244,9 +244,11 @@ StepWiseRNA_ResidueSampler::instantiate_any_virtual_sugars( pose::Pose & pose ){
 	virtual_sugar_sampler_wrapper_->set_assert_no_virt_sugar_sampling( assert_no_virt_sugar_sampling_ );
 	virtual_sugar_sampler_wrapper_->set_use_phenix_geo ( use_phenix_geo_  );
 	virtual_sugar_sampler_wrapper_->set_legacy_mode ( virtual_sugar_legacy_mode_  );
+	virtual_sugar_sampler_wrapper_->set_choose_random ( choose_random_  );
 	virtual_sugar_sampler_wrapper_->set_integration_test_mode( integration_test_mode_ ); //Should set after setting sampler_native_screen_rmsd_cutoff, fast, medium_fast options.
 	virtual_sugar_sampler_wrapper_->apply( pose );
 	pose = pose_save;
+	return virtual_sugar_sampler_wrapper_->success();
 }
 
 

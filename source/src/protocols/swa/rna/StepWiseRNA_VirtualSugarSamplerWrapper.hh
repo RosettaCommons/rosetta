@@ -43,6 +43,10 @@ namespace rna {
 
 		virtual std::string get_name() const;
 
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		bool
+		do_the_sampling( core::pose::Pose & pose );
+
 		bool
 		sampling_sugar() const;
 
@@ -70,6 +74,11 @@ namespace rna {
 
 		void
 		set_legacy_mode( bool const & setting ) { legacy_mode_ = setting;	}
+
+		void
+		set_choose_random( bool const & setting ) { choose_random_ = setting;	}
+
+		bool const & success() const{ return success_; }
 
 	private:
 
@@ -121,6 +130,7 @@ namespace rna {
 		bool integration_test_mode_;
 		bool use_phenix_geo_;
 		bool legacy_mode_;
+		bool choose_random_;
 
 		bool do_not_sample_multiple_virtual_sugar_;
 		bool sample_ONLY_multiple_virtual_sugar_;
@@ -129,6 +139,8 @@ namespace rna {
 		core::scoring::ScoreFunctionOP scorefxn_;
 
 		std::map< Size, Size > reference_res_for_each_virtual_sugar_;
+
+		bool success_;
 	};
 
 } //rna

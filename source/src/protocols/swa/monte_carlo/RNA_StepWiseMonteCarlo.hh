@@ -103,6 +103,9 @@ namespace monte_carlo {
 		bool
 		switch_focus_among_poses_randomly( pose::Pose & pose ) const;
 
+		void
+		set_minimize_single_res( bool const minimize_single_res );
+
 	private:
 		core::scoring::ScoreFunctionOP scorefxn_;
 
@@ -115,6 +118,7 @@ namespace monte_carlo {
 		core::Size cycles_;
 		core::Real add_delete_frequency_;
 		core::Real minimize_single_res_frequency_;
+		bool minimize_single_res_;
 		core::Real switch_focus_frequency_;
 		core::Real just_min_after_mutation_frequency_;
 		core::Real temperature_;

@@ -17,8 +17,9 @@
 #ifndef INCLUDED_protocols_swa_StepWiseUtil_HH
 #define INCLUDED_protocols_swa_StepWiseUtil_HH
 
-#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/pose/full_model_info/FullModelInfo.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzMatrix.hh>
@@ -37,6 +38,8 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 
 using namespace core;
+using namespace core::pose;
+using namespace core::pose::full_model_info;
 typedef  numeric::xyzMatrix< Real > Matrix;
 
 namespace protocols {
@@ -85,9 +88,9 @@ namespace swa {
 															);
 
 	void
-	pdbslice( core::pose::Pose & new_pose,
-						core::pose::Pose const & pose,
-						utility::vector1< core::Size > const & slice_res );
+	pdbslice( pose::Pose & new_pose,
+						pose::Pose const & pose,
+						utility::vector1< Size > const & slice_res );
 
 	void
 	pdbslice( pose::Pose & pose,
@@ -110,7 +113,7 @@ namespace swa {
  	id::AtomID_Map< id::AtomID >
  	create_alignment_id_map(	pose::Pose const & mod_pose,
 													pose::Pose const & ref_pose,
-													std::map< core::Size, core::Size > res_map );
+													std::map< Size, Size > res_map );
 
 	utility::vector1< Size > const
 	convert_to_working_res( utility::vector1< Size > const & res_vector,
@@ -191,28 +194,28 @@ namespace swa {
 
 	Real
 	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose, bool skip_bulges = false );
-	
-	Real
-	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose, core::pose::full_model_info::FullModelInfoOP full_model_pointer, bool skip_bulges = false );
 
-	
+	Real
+	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose, pose::full_model_info::FullModelInfoOP full_model_pointer, bool skip_bulges = false );
+
+
 	void
 	clear_constraints_recursively( pose::Pose & pose );
 
 	void
-	add_coordinate_constraints_from_map( pose::Pose & pose, pose::Pose const & native_pose, std::map< id::AtomID, id::AtomID > const & superimpose_atom_id_map, core::Real const & constraint_x0, core::Real const & constraint_tol );
+	add_coordinate_constraints_from_map( pose::Pose & pose, pose::Pose const & native_pose, std::map< id::AtomID, id::AtomID > const & superimpose_atom_id_map, Real const & constraint_x0, Real const & constraint_tol );
 
 	void
-	superimpose_at_fixed_res_and_add_constraints( pose::Pose & pose, pose::Pose const & native_pose, core::Real const & constraint_x0, core::Real const & constraint_tol );
+	superimpose_at_fixed_res_and_add_constraints( pose::Pose & pose, pose::Pose const & native_pose, Real const & constraint_x0, Real const & constraint_tol );
 
 	void
-	superimpose_recursively_and_add_constraints( pose::Pose & pose, pose::Pose const & native_pose, core::Real const & constraint_x0, core::Real const & constraint_tol );
+	superimpose_recursively_and_add_constraints( pose::Pose & pose, pose::Pose const & native_pose, Real const & constraint_x0, Real const & constraint_tol );
 
 	Size
 	get_number_missing_residue_connections( pose::Pose & pose );
 
 	bool
-	is_at_terminus( core::pose::Pose const & pose, Size const i );
+	is_at_terminus( pose::Pose const & pose, Size const i );
 
 	void
 	merge_in_other_pose( pose::Pose & pose, pose::Pose const & pose2, Size const & merge_res );
@@ -231,7 +234,7 @@ namespace swa {
 									 utility::vector1< Size > const & working_res2,
 									 Size const & merge_res,
 									 bool const fix_first_pose = true );
-	
+
 	bool
 	residue_is_bulged( pose::Pose const & pose, Size const & resid );
 
@@ -245,9 +248,38 @@ namespace swa {
 									pose::Pose & sliced_out_pose,
 									utility::vector1< Size > const & residues_to_delete );
 
-	void
-	correctly_add_cutpoint_variants( core::pose::Pose & pose, Size const res_to_add, 	bool const check_fold_tree = true );
+	Size
+	check_jump_to_previous_residue_in_chain( pose::Pose const & pose, Size const i,
+																					 utility::vector1< Size > const & current_element );
 
+	Size
+	check_jump_to_previous_residue_in_chain( pose::Pose const & pose, Size const i,
+																					 utility::vector1< Size > const & current_element,
+																					 FullModelInfo const & full_model_info );
+
+	Size
+	check_jump_to_previous_residue_in_chain( pose::Pose const & pose, Size const i,
+																					 utility::vector1< Size > const & current_element,
+																					 utility::vector1< Size > const & res_list,
+																					 utility::vector1< Size > const & chains_in_full_model );
+
+	Size
+	check_jump_to_subsequent_residue_in_chain( pose::Pose const & pose, Size const i,
+																						 utility::vector1< Size > const & current_element );
+
+	Size
+	check_jump_to_subsequent_residue_in_chain( pose::Pose const & pose, Size const i,
+																						 utility::vector1< Size > const & current_element,
+																						 FullModelInfo const & full_model_info );
+
+	Size
+	check_jump_to_subsequent_residue_in_chain( pose::Pose const & pose, Size const i,
+																						 utility::vector1< Size > const & current_element,
+																						 utility::vector1< Size > const & res_list,
+																						 utility::vector1< Size > const & chains_in_full_model );
+
+	void
+	correctly_add_cutpoint_variants( pose::Pose & pose, Size const res_to_add, 	bool const check_fold_tree = true );
 
 	void
 	fix_up_residue_type_variants_at_strand_beginning( pose::Pose & pose, Size const res );
@@ -261,9 +293,9 @@ namespace swa {
 	void
 	switch_focus_to_other_pose( pose::Pose & pose, Size const & focus_pose_idx );
 
-	core::pose::PoseOP
+	pose::PoseOP
 	get_pdb_and_cleanup( std::string const input_file,
-											 core::chemical::ResidueTypeSetCAP rsd_set );
+											 chemical::ResidueTypeSetCAP rsd_set );
 
 	void
 	cleanup( pose::Pose & pose );
@@ -271,7 +303,7 @@ namespace swa {
 	void
 	get_other_poses( 	utility::vector1< pose::PoseOP > & other_poses,
 										utility::vector1< std::string > const & other_files,
-										core::chemical::ResidueTypeSetCAP rsd_set );
+										chemical::ResidueTypeSetCAP rsd_set );
 
 	utility::vector1< Size >
 	figure_out_moving_chain_break_res( pose::Pose const & pose, kinematics::MoveMap const & mm );

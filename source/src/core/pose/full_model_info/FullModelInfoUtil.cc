@@ -13,29 +13,21 @@
 
 // Unit headers
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
-
-// Package headers
-
-// Project headers
 #include <core/chemical/ResidueType.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <basic/datacache/BasicDataCache.hh>
-
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
-
-// Utility headers
-#include <utility/vector1.hh>
+#include <utility/stream_util.hh>
 #include <utility/tools/make_vector1.hh>
-
+#include <utility/stream_util.hh>
+#include <basic/datacache/BasicDataCache.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
-
 #include <basic/Tracer.hh>
 
 // C++
@@ -43,7 +35,6 @@
 #include <map>
 
 using ObjexxFCL::string_of;
-
 static basic::Tracer TR("core.pose.full_model_info.FullModelInfoUtil");
 
 ///////////////////////////////////////////////////////
@@ -119,7 +110,8 @@ reorder_moving_res_list_after_insert( utility::vector1<Size> const & moving_res_
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
 reorder_res_list_after_prepend( utility::vector1< Size > const & res_list,
-											Size const & res_to_add ){
+																Size const & res_to_add,
+																Size const offset = 1 ){
 
 	utility::vector1< Size > res_list_new(  res_list.size() + 1, 0 );
 
@@ -128,7 +120,7 @@ reorder_res_list_after_prepend( utility::vector1< Size > const & res_list,
 		if ( n < res_to_add )  res_list_new[ n ] = m;
 		if ( n >= res_to_add ) res_list_new[ n+1 ] = m;
 	}
-	res_list_new[ res_to_add ] = res_list[ res_to_add ] - 1;
+	res_list_new[ res_to_add ] = res_list[ res_to_add ] - offset;
 
 	return  res_list_new;
 }
@@ -136,7 +128,8 @@ reorder_res_list_after_prepend( utility::vector1< Size > const & res_list,
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
 reorder_res_list_after_append( utility::vector1< Size > const & res_list,
-											Size const & res_to_add ){
+															 Size const & res_to_add,
+															 Size const offset = 1 ){
 
 	utility::vector1< Size > res_list_new(  res_list.size() + 1, 0 );
 
@@ -145,7 +138,7 @@ reorder_res_list_after_append( utility::vector1< Size > const & res_list,
 		if ( n < res_to_add )  res_list_new[ n ] = m;
 		if ( n >= res_to_add ) res_list_new[ n+1 ] = m;
 	}
-	res_list_new[ res_to_add ] = res_list[ res_to_add-1 ]+1;
+	res_list_new[ res_to_add ] = res_list[ res_to_add-1 ] + offset;
 
 	return  res_list_new;
 }
@@ -170,17 +163,16 @@ reorder_full_model_info_after_delete( pose::Pose & pose, Size const res_to_delet
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-reorder_full_model_info_after_append( pose::Pose & pose, Size const res_to_add ){
-
-	utility::vector1< Size > res_list_new = reorder_res_list_after_append( get_res_list_from_full_model_info_const( pose ), res_to_add );
+reorder_full_model_info_after_append( pose::Pose & pose, Size const res_to_add, Size const offset /* = 1 */ ){
+	utility::vector1< Size > res_list_new = reorder_res_list_after_append( get_res_list_from_full_model_info_const( pose ), res_to_add, offset );
 	update_res_list_in_full_model_info_and_pdb_info( pose, res_list_new );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-reorder_full_model_info_after_prepend( pose::Pose & pose, Size const res_to_add ){
+reorder_full_model_info_after_prepend( pose::Pose & pose, Size const res_to_add, Size const offset /* = 1 */ ){
 
-	utility::vector1< Size > res_list_new = reorder_res_list_after_prepend( get_res_list_from_full_model_info_const( pose ), res_to_add );
+	utility::vector1< Size > res_list_new = reorder_res_list_after_prepend( get_res_list_from_full_model_info_const( pose ), res_to_add, offset );
 	update_res_list_in_full_model_info_and_pdb_info( pose, res_list_new );
 }
 
@@ -211,21 +203,28 @@ update_pdb_info_from_full_model_info( pose::Pose & pose ){
 
 }
 
+///////////////////////////////////////////////////////////////////////////////utility::vector1< Size >
+utility::vector1< Size >
+figure_out_chains_from_full_model_info( pose::Pose & pose ) {
+	pose::full_model_info::make_sure_full_model_info_is_setup( pose );
+	return figure_out_chains_from_full_model_info_const( pose );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // assign to different chains. [Note: we could actually use PDBInfo for this bookkeeping... perhaps that's a good idea]
 // label them 1, 2, 3, etc.
 utility::vector1< Size >
-figure_out_chains_from_full_model_info( pose::Pose & pose ) {
+figure_out_chains_from_full_model_info_const( pose::Pose const & pose ) {
 
 	using namespace core::pose::full_model_info;
 
 	// first assign chains to full model
 	utility::vector1< Size > chains_full;
 
-	FullModelInfo const & full_model_info = nonconst_full_model_info( pose );
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	std::string const & sequence = full_model_info.full_sequence();
 	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
-	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
+	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 
 	utility::vector1< Size > cutpoint_open_in_full_model_including_terminus = cutpoint_open_in_full_model;
 	cutpoint_open_in_full_model_including_terminus.push_back( sequence.size() );

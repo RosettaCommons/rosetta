@@ -28,8 +28,8 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh> // should remove this later.
-
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
@@ -237,8 +237,7 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 
 	utility::vector1< PoseOP > pose_list;
 	do_residue_sampling( pose, pose_list );
-	if ( !sampling_successful( pose_list ) ) return;
-	do_minimizing( pose, pose_list );
+	if ( sampling_successful( pose_list ) ) do_minimizing( pose, pose_list );
 
 	job_parameters_ = 0; // Important: make sure that the next time this is used, job parameters is set explicitly -- or it will be reset.
 }
@@ -248,8 +247,7 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 void
 StepWiseRNA_Modeler::initialize_job_parameters( pose::Pose & pose ){
 	if ( job_parameters_ ) return;
-	pose::full_model_info::make_sure_full_model_info_is_setup( pose );
-	job_parameters_ = setup_job_parameters_for_swa( moving_res_list_, pose );
+	job_parameters_ = setup_job_parameters_for_swa_with_full_model_info( moving_res_list_, pose );
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -370,6 +368,16 @@ StepWiseRNA_Modeler::do_minimizing( pose::Pose & pose, utility::vector1< PoseOP 
 
 }
 
+// Wrapper for routine below (which requires a const pose). If you call this,
+// note that the pose's full_model_info object will be initialized based on its
+// current fold_tree, cutpoint_variants, and any chain/residue-numbering information in
+// PDBInfo.
+StepWiseRNA_JobParametersOP
+StepWiseRNA_Modeler::setup_job_parameters_for_swa_with_full_model_info( utility::vector1< Size > moving_res,
+																																				core::pose::Pose & pose ){
+	pose::full_model_info::make_sure_full_model_info_is_setup( pose );
+	return setup_job_parameters_for_swa( moving_res_list_, pose );
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // This could go into a Util.hh if it ends up being more useful.
@@ -379,14 +387,21 @@ StepWiseRNA_Modeler::do_minimizing( pose::Pose & pose, utility::vector1< PoseOP 
 // sequence mappings, "is_Prepend_map", etc.
 //
 StepWiseRNA_JobParametersOP
-StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > moving_res, core::pose::Pose const & pose ){
+StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > moving_res,
+																									 core::pose::Pose const & pose ){
 
 	using namespace core::pose;
 	using namespace core::chemical;
 	using namespace core::id;
 	using namespace protocols::swa;
+	using namespace core::pose::full_model_info;
 
-	if ( moving_res.size() > 1 ) utility_exit_with_message( "For now, StepWiseRNA_Modeler requires exactly 0 or 1 numbers in -moving_res unless you feed it a JobParameters object." );
+	runtime_assert( moving_res.size() <= 1 );
+
+	// FullModelInfo can be setup with the command make_sure_full_model_info_is_setup( pose ) before calling this function.
+	// It is used to figure out which suites need to be minimized (using info in domain map), and
+	// is also necessary if there are jumps to floating bases -- need to know how many intervening residues are skipped.
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
 
 	StepWiseRNA_JobParametersOP job_parameters = new StepWiseRNA_JobParameters;
 
@@ -396,11 +411,6 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 
 	// what if there is a virtual residue? need to remove it, actually, before running stepwise_rna_job_parameters_setup.
 	Size nres = pose.total_residue();
-	if ( full_sequence[nres - 1] == 'X' ){
-		full_sequence = full_sequence.substr( 0, nres - 1 );
-		nres -= 1;
-	}
-
 	Size const rebuild_res =  ( moving_res.size() == 1 ) ? moving_res[1] : 0;
 	utility::vector1< Size > not_rebuild_res;
 	for ( Size n = 1; n <= nres; n++ ) if ( n != rebuild_res ) not_rebuild_res.push_back( n );
@@ -412,22 +422,45 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 		TR.Debug << pose.fold_tree() << std::endl;
 		TR.Debug << "Rebuild residue: " << rebuild_res << std::endl;
 
-		utility::vector1< Size > input_res1, input_res2 /*blank*/, cutpoint_open;
+		utility::vector1< Size > input_res1, input_res2 /*blank*/, cutpoint_open, cutpoint_closed;
+		Size cutpoint_closed_distal( 0 );
 		input_res1 = not_rebuild_res;
 
-		Size cutpoint_closed( 0 );
-		Size rebuild_suite = rebuild_res;
-
-		// special case: residue is at strand end -- there isn't even a suite to build.
-		if ( pose.fold_tree().is_cutpoint( rebuild_res ) ){
+		Size rebuild_suite( 0 );
+		bool floating_base( false );
+		bool const cut_at_previous =  (rebuild_res == 1) || pose.fold_tree().is_cutpoint( rebuild_res - 1 );
+		bool const cut_at_next     =  (rebuild_res == pose.total_residue() ) || pose.fold_tree().is_cutpoint( rebuild_res );
+		if ( cut_at_next && !cut_at_previous ){
 			rebuild_suite = rebuild_res - 1;
+		} else if ( cut_at_previous && !cut_at_next ){
+			rebuild_suite = rebuild_res;
+		} else if ( !cut_at_previous && !cut_at_next ){ // internal
+			rebuild_suite = rebuild_res;
+		} else {
+			floating_base = true;
 		}
 
-		// internal. need to be smart about input_res definitions -- 'domains' that are separated by moving residue.
+		// for internal moves, need to be smart about input_res definitions -- 'domains' that are separated by moving residue.
+		// this loop will also determine any chainbreak that requires closure
+		utility::vector1< bool > partition_definition;
+		Size floating_base_anchor_res( 0 );
+		if ( floating_base ){
+			kinematics::FoldTree const & f = pose.fold_tree();
+			Size const jump_nr = look_for_unique_jump_to_moving_res( f, rebuild_res );
+			floating_base_anchor_res = ( f.upstream_jump_residue( jump_nr ) == rebuild_res ) ?
+				f.downstream_jump_residue( jump_nr ) : f.upstream_jump_residue( jump_nr );
+			//if ( floating_base_anchor_res == rebuild_res + 2 ) floating_base_bulge_res = rebuild_res + 1;
+			//			if ( floating_base_anchor_res == rebuild_res - 2 ) floating_base_bulge_res = rebuild_res - 1;
+			//TR << TR.Red << "Floating_base bulge_res " << floating_base_bulge_res << TR.Reset << std::endl;
+			partition_definition = get_partition_definition_floating_base( pose, rebuild_res );
+		} else {
+			partition_definition = get_partition_definition( pose, rebuild_suite );
+		}
+
+		utility::vector1< Size > const chains = figure_out_chains_from_full_model_info_const( pose );
+		bool found_moving_cutpoint( false );
 		input_res1.clear();
 		input_res2.clear();
-		utility::vector1< bool > partition_definition =	get_partition_definition( pose, rebuild_suite );
-		bool found_moving_cutpoint( false );
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
 			if ( !partition_definition[ n ] ) {
 				input_res1.push_back( n );
@@ -437,63 +470,88 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 			// look for cutpoints
 			if ( n == pose.total_residue() ) continue;
 			if ( pose.fold_tree().is_cutpoint( n ) && ( partition_definition[ n ] != partition_definition[ n+1 ] ) ){
-				runtime_assert( !found_moving_cutpoint );
+				if ( n == rebuild_res && n+1 == floating_base_anchor_res ) continue;
+				if ( n == floating_base_anchor_res && ( n + 1 == rebuild_res) ) continue;
+				if ( !floating_base ) runtime_assert( !found_moving_cutpoint );
 				found_moving_cutpoint = true;
 				if ( pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) ){
 					runtime_assert( pose.residue_type( n + 1 ).has_variant_type( CUTPOINT_UPPER  ) );
-					if ( cutpoint_closed > 0 ) utility_exit_with_message( "Right now, StepWiseRNA Modeler can only handle poses with single movable closable cutpoints!" );
-					cutpoint_closed = n;
-				} else {
+					cutpoint_closed.push_back( n );
+					if ( !floating_base ||
+							 ( floating_base_anchor_res > rebuild_res &&  n < rebuild_res ) ||
+							 ( floating_base_anchor_res < rebuild_res &&  n > rebuild_res ) ){
+						runtime_assert( cutpoint_closed_distal == 0 ); // can only handle one such distal cutpoint, at present.
+						cutpoint_closed_distal = n;
+					}
+				} else if ( chains[ n ] != chains[ n+1 ]  ){
 					cutpoint_open.push_back( n );
 				}
 			}
 		}
 
-		// if there's really just a single nucleotide being rebuilt, its nucleoside is not fixed.
-		// but if there's a whole chunk of stuff.
+		TR.Debug << "INPUT_RES1 " << make_tag_with_dashes(input_res1) << " INPUT_RES2 " << make_tag_with_dashes(input_res2) << " REBUILD_RES " << rebuild_res << " REBUILD_SUITE " <<  rebuild_suite << " CUTPOINT_CLOSED " << cutpoint_closed << std::endl;
 
+		// if there's really just a single nucleotide being rebuilt, its nucleoside is not fixed.
+		// but if there's a whole chunk of stuff, its sugar & base are assumed fixed.
 		//note that fixed_res_guess, which is really a list of fixed nucleosides,
 		// should now include the 'moving res' [unless re-specified by user down below].
-		TR << "INPUT_RES1 " << make_tag_with_dashes(input_res1) << " INPUT_RES2 " << make_tag_with_dashes(input_res2) << " REBUILD_RES " << rebuild_res << " REBUILD_SUITE " <<  rebuild_suite << " CUTPOINT_CLOSED " << cutpoint_closed << std::endl;
 
 		// check if this is an 'internal' move.
 		if ( input_res1.size() > 1 && input_res2.size() > 1 ) fixed_res_guess.push_back( rebuild_res );
 
-		// To specify that the suite move, we actually need to directly address the movemap... see below.
-		suites_that_must_be_minimized.push_back( rebuild_suite );
-		if ( cutpoint_closed > 0 ) suites_that_must_be_minimized.push_back( cutpoint_closed );
-
-		if ( cutpoint_closed > 0 ) {
+		// To specify that the suite moves, we actually need to directly address the movemap... see below.
+		if ( rebuild_suite > 0 ) suites_that_must_be_minimized.push_back( rebuild_suite );
+		if ( cutpoint_closed.size() > 0 ) {
 			if ( kic_sampling_if_relevant_ ) kic_sampling_ = true;
-			if ( !pose.fold_tree().is_cutpoint( cutpoint_closed ) ) utility_exit_with_message( "StepWiseRNA requires a chainbreak right at sampled residue" );
+			for ( Size i = 1; i <= cutpoint_closed.size(); i++ ) {
+				suites_that_must_be_minimized.push_back( cutpoint_closed[i] );
+				if ( !pose.fold_tree().is_cutpoint( cutpoint_closed[i] ) ) utility_exit_with_message( "StepWiseRNA requires a chainbreak right at sampled residue" );
+			}
 			if ( rebuild_res == 1 || rebuild_res == pose.total_residue() ) utility_exit_with_message( "StepWiseRNA requires that residue is not at terminus!");
 		}
 
-		StepWiseRNA_JobParametersSetup stepwise_rna_job_parameters_setup( moving_res,
+		std::string full_sequence = full_model_info.full_sequence();
+		if ( full_sequence[nres - 1] == 'X' ){
+			full_sequence = full_sequence.substr( 0, nres - 1 );
+			nres -= 1;
+		}
+		StepWiseRNA_JobParametersSetup stepwise_rna_job_parameters_setup( full_model_info.sub_to_full( moving_res ),
 																																			full_sequence,
-																																			input_res1,
-																																			input_res2,
-																																			cutpoint_open,
-																																			cutpoint_closed );
-
-		stepwise_rna_job_parameters_setup.set_fixed_res( fixed_res_guess );
-
-		utility::vector1< Size > rmsd_res_list;
-		rmsd_res_list.push_back( rebuild_res );
-		stepwise_rna_job_parameters_setup.set_rmsd_res_list( rmsd_res_list );
+																																			full_model_info.sub_to_full( input_res1 ),
+																																			full_model_info.sub_to_full( input_res2 ),
+																																			full_model_info.sub_to_full( cutpoint_open ),
+																																			full_model_info.sub_to_full( cutpoint_closed_distal ) );
+		// following still might be worth doing -- just didn't seem necessary at this point.
+		//		stepwise_rna_job_parameters_setup.set_cutpoint_closed_list( full_model_info.sub_to_full( cutpoint_closed ) );
+		stepwise_rna_job_parameters_setup.set_fixed_res( full_model_info.sub_to_full( fixed_res_guess ) );
+		stepwise_rna_job_parameters_setup.set_floating_base( floating_base );
+		if ( floating_base ){
+			stepwise_rna_job_parameters_setup.set_assert_jump_point_in_fixed_res( false );
+			stepwise_rna_job_parameters_setup.set_floating_base_anchor_res( full_model_info.sub_to_full( floating_base_anchor_res ) );
+		}
+		if ( rmsd_res_list_.size() > 0 ) stepwise_rna_job_parameters_setup.set_rmsd_res_list( rmsd_res_list_ /*global numbering*/ );
+		else  stepwise_rna_job_parameters_setup.set_rmsd_res_list( full_model_info.sub_to_full( make_vector1( rebuild_res ) ) );
+		if ( rebuild_res > 1 &&
+				 pose.residue( rebuild_res - 1 ).has_variant_type( "VIRTUAL_RIBOSE" ) &&
+				 ( !pose.fold_tree().is_cutpoint( rebuild_res - 1 ) ||
+					 is_cutpoint_closed( pose, rebuild_res - 1 ) ) ) stepwise_rna_job_parameters_setup.set_rebuild_bulge_mode( true );
+		if ( rebuild_res < pose.total_residue() &&
+				 pose.residue( rebuild_res + 1 ).has_variant_type( "VIRTUAL_RIBOSE" ) &&
+				 ( !pose.fold_tree().is_cutpoint( rebuild_res ) ||
+					 is_cutpoint_closed( pose, rebuild_res ) ) ) stepwise_rna_job_parameters_setup.set_rebuild_bulge_mode( true );
 
 		utility::vector1< std::string > jump_point_pair_list;
 		core::kinematics::FoldTree const & f = pose.fold_tree();
 		for ( Size n = 1; n <= f.num_jump(); n++ ){
-			jump_point_pair_list.push_back( ObjexxFCL::string_of( f.upstream_jump_residue( n ) ) + "-" +
-																			ObjexxFCL::string_of( f.downstream_jump_residue( n ) ) );
+			jump_point_pair_list.push_back( ObjexxFCL::string_of( full_model_info.sub_to_full( f.upstream_jump_residue( n ) ) ) + "-" +
+																			ObjexxFCL::string_of( full_model_info.sub_to_full( f.downstream_jump_residue( n ) ) ) );
 		}
 		stepwise_rna_job_parameters_setup.set_jump_point_pair_list( jump_point_pair_list ); //Important!: Needs to be called after set_fixed_res
 
 		utility::vector1< std::string > alignment_res; //why is this a string vector?????
-		for ( Size n = 1; n <= fixed_res_guess.size(); n++ ) alignment_res.push_back( ObjexxFCL::string_of( fixed_res_guess[ n ] ) );
+		for ( Size n = 1; n <= fixed_res_guess.size(); n++ ) alignment_res.push_back( ObjexxFCL::string_of( full_model_info.sub_to_full( fixed_res_guess[ n ] ) ) );
 		stepwise_rna_job_parameters_setup.set_alignment_res( alignment_res );
-		stepwise_rna_job_parameters_setup.set_native_alignment_res( fixed_res_guess );
+		stepwise_rna_job_parameters_setup.set_native_alignment_res( full_model_info.sub_to_full( fixed_res_guess ) );
 
 		// could use this later to minimize more residues...
 		//stepwise_rna_job_parameters_setup.set_global_sample_res_list( option[ global_sample_res_list ]() ); //March 20, 2011
@@ -501,7 +559,7 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 		// NOT SURE ABOUT THIS. false by default, but shows up as true in 'normal' erraser runs.
 		stepwise_rna_job_parameters_setup.set_allow_chain_boundary_jump_partner_right_at_fixed_BP ( true );
 
-	// NOT SURE ABOUT THIS...
+		// NOT SURE ABOUT THIS...
 		stepwise_rna_job_parameters_setup.set_add_virt_res_as_root( true );
 
 		// ignore fold tree setup which is hopelessly complicated in stepwise_rna_job_parameters_setup.
@@ -513,18 +571,25 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 	}
 
 	// user input minimize_res...
-	if ( minimize_res_.size() > 0 ) { // specifying more residues which could move during the minimize step.
+	if ( minimize_res_.size() > 0 ) { // specifying more residues which could move during the minimize step -- standard for SWM.
 		fixed_res_.clear();
 		for ( Size n = 1; n <= nres; n++ ) {
 			if ( !minimize_res_.has_value( n ) )	fixed_res_.push_back( n );
 		}
-	} else {
+	} else if ( fixed_res_.size() > 0 ){ // how 'standard' SWA specifies moving information.
+		runtime_assert( minimize_res_.size() == 0 );
+		for ( Size n = 1; n <= nres; n++ ) {
+			if ( !fixed_res_.has_value( n ) )	minimize_res_.push_back( n );
+		}
+	} else { // 'reasonable' default behavior, inferred above.
 		for ( Size n = 1; n <= nres; n++ ) {
 			if ( !fixed_res_guess.has_value( n ) )	minimize_res_.push_back( n );
 		}
+		fixed_res_ = fixed_res_guess;
 	}
 
 	if ( fixed_res_.size() > 0 ) 	job_parameters->set_working_fixed_res( fixed_res_ ); // is this necessary if we just supply movemap?
+	job_parameters->set_working_native_alignment( fixed_res_ );
 
 	minimize_move_map_ = new core::kinematics::MoveMap;
 	figure_out_swa_rna_movemap( *minimize_move_map_, pose, minimize_res_ );
@@ -534,13 +599,10 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 	// that generally we could instead replace fixed_res with an inputted domain map.
 	// that is, get rid of fixed_res_ & minimize_res_ and instead have a local fixed_domain_map,
 	// which can instead be updated by set_fixed_res.
-	using namespace core::pose::full_model_info;
-	// following is dangerous -- what if full_model_info is not set properly?
 	// how to tell Modeler to *not* minimize additional suites?
-	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
 	utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
 	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
-	utility::vector1< Size > const & res_list = full_model_info.res_list();
 	for ( Size n = 1; n < pose.total_residue(); n++ ){
 		if ( !cutpoint_open_in_full_model.has_value( res_list[ n ] ) &&
 				( res_list[ n + 1 ]  == res_list[ n ] + 1 ) &&

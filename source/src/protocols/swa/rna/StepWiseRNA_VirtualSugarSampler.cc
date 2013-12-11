@@ -67,13 +67,15 @@ static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_VirtualSugarSampler" );
 //   'floating base' ( a.k.a., dinucleotide, or "skip bulge") moves:
 //
 //
-//       Anchor residue    Bulge residue        Moving residue
-//                      (virtual) (virtual)    (virtual)   (virtual)
-//     5'   --Sugar --  Phosphate -- Sugar  -- Phosphate -- Sugar --
-//              |                     |                       |
-//          Reference               Bulge                  Floating
-//             Base                (virtual)                   Base!
-//
+//       Anchor residue    Bulge residue         Moving residue             partition that needs to be virtualized.
+//                      (virtual) (virtual)     (virtual)   (virtual)  ------------------------->
+//     5'   --Sugar --  Phosphate -- Sugar  -x- Phosphate -- Sugar --  Phosphate -- Sugar --
+//              |                     |      |                |                      |
+//          Reference               Bulge    |             Floating                Distal
+//             Base                (virtual) |                  Base!               Base
+//              |                          cutpoint            |
+//              |______________________________________________|
+//                     Jump between anchor & moving
 //
 //  This class instantiates and samples the virtual ribose, including some minimization of the ribose &
 //   moving base.
@@ -97,7 +99,10 @@ StepWiseRNA_VirtualSugarSampler::StepWiseRNA_VirtualSugarSampler( StepWiseRNA_Jo
 	integration_test_mode_( false ),
 	virtual_sugar_is_from_prior_step_( true ),
 	legacy_mode_( true ), //for comparison to original code -- deprecate in 2014?
-	do_chain_closure_( true || legacy_mode_ )
+	do_chain_closure_( true || legacy_mode_ ),
+	max_tries_for_random_overall_( 12 ),
+	max_tries_for_random_sugar_setup_( 1 ),
+	sugar_setup_success_( false )
 {
 }
 
@@ -110,6 +115,23 @@ std::string
 StepWiseRNA_VirtualSugarSampler::get_name() const {
 	return "StepWiseRNA_VirtualSugarSampler";
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_VirtualSugarSampler::apply( pose::Pose & viewer_pose ){
+
+	utility::vector1< PoseOP > pose_list;
+
+	Size const max_tries = choose_random_ ? max_tries_for_random_sugar_setup_ : 1;
+	for ( Size ntries = 1; ntries <= max_tries; ntries++ ){
+		TR << TR.Green << "On sampling try: " << ntries << TR.Reset << std::endl;
+		apply( viewer_pose, pose_list );
+		if ( pose_list.size() > 0 || !sugar_setup_success_ ) break;
+	}
+	sugar_modeling_.pose_list = pose_list; // stores the solutions.
+
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////July 21, 2011 Moved from StepWiseRNA_ResidueSampler.cc ////////////////////////////////////////////////
@@ -124,10 +146,9 @@ StepWiseRNA_VirtualSugarSampler::get_name() const {
 //Medium 2. Another possibility is to simple assume that i-2 base can assume all bulge conformation subjected to chain_closable_screener.
 //Easiest 3. Just set chain_closure_sampling to false in this function. This will just keep all possible bulge conformation in pose_list that pass O3i_C5iplus2_distance>O3I_C5I_PLUS_TWO_MAX_DIST (in setup)
 //However in Easiest 3. case, there is a problem is problem in that O3i_C5iplus2_distance has determined with fixed i-2 sugar.
-
 void
-StepWiseRNA_VirtualSugarSampler::apply( pose::Pose & viewer_pose ){
-
+StepWiseRNA_VirtualSugarSampler::apply( pose::Pose & viewer_pose,
+																				utility::vector1< PoseOP > & pose_list ){
 	using namespace ObjexxFCL;
 	using namespace core::io::silent;
 
@@ -135,27 +156,24 @@ StepWiseRNA_VirtualSugarSampler::apply( pose::Pose & viewer_pose ){
 	clock_t const time_start( clock() );
 	pose::Pose const viewer_pose_save = viewer_pose;
 
-	PoseOP pose = viewer_pose.clone();
-	tag_into_pose( *pose, tag_ );
+	tag_into_pose( viewer_pose, tag_ );
 	sugar_modeling_.check_compatibility( viewer_pose.total_residue() );
-	original_constraint_set_ = pose->constraint_set()->clone();
+	original_constraint_set_ = viewer_pose.constraint_set()->clone();
 
-	//Virtualize the other partition since it doesn't exist in prior step!
-	if ( virtual_sugar_is_from_prior_step_ ) virtualize_other_partition( *pose );
+	//Virtualize any residues that move 'with' the moving residue -- their locations have not been sampled yet.
+	if ( virtual_sugar_is_from_prior_step_ ) virtualize_distal_partition( viewer_pose );
 	else runtime_assert( job_parameters_->gap_size() > 0 );
 
-	setup_VDW_bin_screener( *pose );
+	setup_VDW_bin_screener( viewer_pose );
 
-	utility::vector1< PoseOP > pose_list;
 	setup_sugar_conformations( pose_list, viewer_pose );
 
-	if ( do_chain_closure_ ) do_chain_closure_sampling( pose_list, viewer_pose );
+	if ( ( sugar_modeling_.bulge_res > 0 ) && do_chain_closure_ ) do_chain_closure_sampling( pose_list, viewer_pose );
 
 	reinstate_original_constraints( pose_list );
-	if ( virtual_sugar_is_from_prior_step_ )	reinstantiate_other_partition( pose_list );
+	if ( virtual_sugar_is_from_prior_step_ )	reinstantiate_distal_partition( pose_list );
 
 	viewer_pose = viewer_pose_save;
-	sugar_modeling_.pose_list = pose_list; // stores the solutions.
 
 	TR.Debug << "Time in sample_virtual_sugar_and_bulge_and_close_chain(): " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 }
@@ -190,26 +208,29 @@ StepWiseRNA_VirtualSugarSampler::setup_sugar_conformations( utility::vector1< Po
 																 sugar_modeling_.moving_res_base_state );
 	sampler.set_idealize_coord(   use_phenix_geo_ );
 	sampler.set_skip_same_pucker( use_phenix_geo_ );
+	sampler.set_random( choose_random_ );
 	sampler.init();
 
+	Size const moving_suite = sugar_modeling_.is_prepend ? sugar_modeling_.moving_res : ( sugar_modeling_.moving_res - 1);
 	bool const do_minimize = !integration_test_mode_; // for speed.
-	Size const five_prime_chain_break_res = sugar_modeling_.is_prepend ? sugar_modeling_.moving_res : sugar_modeling_.reference_res;
-	Size const three_prime_chain_break_res = sugar_modeling_.is_prepend ? sugar_modeling_.reference_res : sugar_modeling_.moving_res;
-	runtime_assert( five_prime_chain_break_res == sugar_modeling_.five_prime_chain_break );
-	screener::ChainClosableScreener chain_closable_screener( five_prime_chain_break_res, 1 /*gap_size -- problem!?*/);
-	screener::AtrRepScreener atr_rep_screener( pose,
-																						 sugar_modeling_.is_prepend,
-																						 sugar_modeling_.moving_res,
-																						 0 /*gap_size = 0 forces loose rep_cutoff (10.0 )*/ );
+	Size const five_prime_gap_res  = sugar_modeling_.is_prepend ? sugar_modeling_.moving_res    : sugar_modeling_.reference_res;
+	Size const three_prime_gap_res = sugar_modeling_.is_prepend ? sugar_modeling_.reference_res : sugar_modeling_.moving_res;
+
+	// Deprecate soon:
+	//	TR << TR.Red << "MOVING " << sugar_modeling_.moving_res << "  BULGE " << sugar_modeling_.bulge_res << "  REFERENCE " << sugar_modeling_.reference_res << " IS_PREPEND " << sugar_modeling_.is_prepend << " MOVING_SUITE " << moving_suite << " sugar_modeling:FIVE_PRIME_CHAINBREAK " << sugar_modeling_.five_prime_chain_break << " FIVE_PRIME_GAP_RES " << five_prime_gap_res << TR.Reset << std::endl;
+
+	screener::ChainClosableScreener chain_closable_screener( five_prime_gap_res, three_prime_gap_res, 1 /*gap_size -- problem!?*/);
+	screener::AtrRepScreener atr_rep_screener( pose, sugar_modeling_.moving_res, sugar_modeling_.reference_res, 0 /*gap_size = 0 forces loose rep_cutoff (10.0 )*/ );
 
 	pose::Pose pose_init = pose;//Hard copy
 	pose::remove_variant_type_from_pose_residue( pose_init, "VIRTUAL_RIBOSE", sugar_modeling_.moving_res );
 
-	Size count = 0;
+	Size count( 0 );
+	sugar_setup_success_ = false;
 	pose_list.clear();
 	for ( sampler.reset(); sampler.not_end(); ++sampler ) {
 		count++;
-
+		if ( choose_random_ && count > max_tries_for_random_sugar_setup_ ) break;
 		pose = pose_init;
 
 		// following *must* be mistake... should occur below inside actual chain_closure..
@@ -217,7 +238,7 @@ StepWiseRNA_VirtualSugarSampler::setup_sugar_conformations( utility::vector1< Po
 			add_harmonic_chain_break_constraint( pose, sugar_modeling_.five_prime_chain_break );
 			if  ( do_chain_closure_ ) setup_chain_break_variants( pose, sugar_modeling_.five_prime_chain_break );
 		} else {
-			add_fade_chain_break_constraint_across_gap( pose, five_prime_chain_break_res, three_prime_chain_break_res,	1 /*gap_size -- one intervening bulge residue -- perhaps should not be hard-wired! */ );
+			add_fade_chain_break_constraint_across_gap( pose, five_prime_gap_res, three_prime_gap_res,	1 /*gap_size -- one intervening bulge residue -- perhaps should not be hard-wired! */ );
 		}
 
 		sampler.apply( pose );
@@ -228,6 +249,8 @@ StepWiseRNA_VirtualSugarSampler::setup_sugar_conformations( utility::vector1< Po
 
 		tag_into_pose( pose, tag_from_pose( pose_init ) + '_' + ObjexxFCL::string_of( count ) );
 		pose_list.push_back( pose.clone() );
+		sugar_setup_success_ = true;
+		if ( choose_random_ ) break; // take the first random sample.
 	}
 
 	output_title_text( "", TR.Debug );
@@ -415,6 +438,7 @@ StepWiseRNA_VirtualSugarSampler::floating_base_chain_closure_complete( utility::
 	stepwise_rna_modeler->set_use_phenix_geo( use_phenix_geo_ );
 	stepwise_rna_modeler->set_kic_sampling_if_relevant( true /*erraser sampling for speed & completeness*/ );
 	stepwise_rna_modeler->set_num_pose_minimize( 1 );
+	stepwise_rna_modeler->set_integration_test_mode( true /*fast sampling*/ );
 	for ( Size n = 1; n <= pose_list.size(); n++ ){
 		Pose & pose = *(pose_list[n]);
 		stepwise_rna_modeler->apply( pose);
@@ -628,55 +652,67 @@ StepWiseRNA_VirtualSugarSampler::setup_VDW_bin_screener( pose::Pose const & inpu
 }
 
 /////////////////////////////////////////////////////////////////
+// want to instantiate sugar of moving residue, but may not know
+//  yet what is happening to a chunk of stuff that is attached to
+//  it but distal from the reference (and will eventually be sampled).
+//  This function recognizes that other stuff and virtualizes it.
 void
-StepWiseRNA_VirtualSugarSampler::virtualize_other_partition( pose::Pose & input_pose ){
+StepWiseRNA_VirtualSugarSampler::virtualize_distal_partition( pose::Pose & viewer_pose ){
 
-	other_partition_pos_.clear();
+	Pose pose = viewer_pose; // using a 'scratch' pose, because applying variants can confuse graphics viewers.
+	distal_partition_pos_.clear();
 	already_virtualized_res_list_.clear();
-
 	Size const nres = job_parameters_->working_sequence().size();
-	ObjexxFCL::FArray1D < bool > const & partition_definition = job_parameters_->partition_definition();
 
-	bool const bulge_res_partition_value = partition_definition( sugar_modeling_.bulge_res );
-	//Check that these three nts are in the same paritition!
-	if ( partition_definition( sugar_modeling_.moving_res ) != partition_definition( sugar_modeling_.reference_res ) ) return;
-	if ( bulge_res_partition_value != partition_definition( sugar_modeling_.reference_res ) )   return;
-	if ( bulge_res_partition_value != partition_definition( sugar_modeling_.moving_res ) )      return;
+	ObjexxFCL::FArray1D < bool > partition( nres, false );
+	Size const jump = pose.fold_tree().jump_nr( sugar_modeling_.moving_res, sugar_modeling_.reference_res );
+	runtime_assert( jump > 0 );
+	pose.fold_tree().partition_by_jump( jump, partition );
 
-	for ( Size seq_num = 1; seq_num <= nres; seq_num++ ){
-		if ( partition_definition( seq_num ) != bulge_res_partition_value ) other_partition_pos_.push_back( seq_num );
+	bool const moving_res_partition    = partition( sugar_modeling_.moving_res );
+	bool const reference_res_partition = partition( sugar_modeling_.reference_res );
+	runtime_assert( moving_res_partition != reference_res_partition );
+	if ( sugar_modeling_.bulge_res > 0 ){
+		bool const bulge_res_partition     = partition( sugar_modeling_.bulge_res );
+		runtime_assert( bulge_res_partition == reference_res_partition );
 	}
 
-	for ( Size ii = 1; ii <= other_partition_pos_.size(); ii++ ){
-		Size const seq_num = other_partition_pos_[ii];
-		if ( input_pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+	for ( Size seq_num = 1; seq_num <= nres; seq_num++ ){
+		if ( seq_num == sugar_modeling_.moving_res ) continue;
+		if ( partition( seq_num ) == moving_res_partition ) distal_partition_pos_.push_back( seq_num );
+	}
+
+	for ( Size ii = 1; ii <= distal_partition_pos_.size(); ii++ ){
+		Size const seq_num = distal_partition_pos_[ii];
+		if ( pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
 			already_virtualized_res_list_.push_back( seq_num );
-			continue;
+		} else {
+			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RNA_RESIDUE", seq_num );
 		}
-		pose::add_variant_type_to_pose_residue( input_pose, "VIRTUAL_RNA_RESIDUE", seq_num );
 	}
 
 	if ( job_parameters_->gap_size() == 0 ){
-		runtime_assert ( !input_pose.residue( job_parameters_->five_prime_chain_break_res() + 1 ).has_variant_type( "VIRTUAL_PHOSPHATE" ) );
+		runtime_assert ( !pose.residue( job_parameters_->five_prime_chain_break_res() + 1 ).has_variant_type( "VIRTUAL_PHOSPHATE" ) );
 	}
+	viewer_pose = pose;
 }
 
 
 /////////////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_VirtualSugarSampler::reinstantiate_other_partition( utility::vector1< PoseOP > & final_pose_list ){
+StepWiseRNA_VirtualSugarSampler::reinstantiate_distal_partition( utility::vector1< PoseOP > & final_pose_list ){
 	for ( Size n = 1; n <= final_pose_list.size(); n++ ){
 		pose::Pose & current_pose = ( *final_pose_list[n] );
-		if ( virtual_sugar_is_from_prior_step_ )	reinstantiate_other_partition( current_pose );
+		if ( virtual_sugar_is_from_prior_step_ )	reinstantiate_distal_partition( current_pose );
 	}
 }
 
 /////////////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_VirtualSugarSampler::reinstantiate_other_partition( pose::Pose & current_pose ){
+StepWiseRNA_VirtualSugarSampler::reinstantiate_distal_partition( pose::Pose & current_pose ){
 
-	for ( Size ii = 1; ii <= other_partition_pos_.size(); ii++ ){
-		Size const seq_num = other_partition_pos_[ii];
+	for ( Size ii = 1; ii <= distal_partition_pos_.size(); ii++ ){
+		Size const seq_num = distal_partition_pos_[ii];
 		if ( already_virtualized_res_list_.has_value( seq_num ) ) continue;
 		pose::remove_variant_type_from_pose_residue( current_pose, "VIRTUAL_RNA_RESIDUE", seq_num );
 	}

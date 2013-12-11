@@ -50,6 +50,10 @@ namespace rna {
 
 		virtual void apply( Pose & pose_to_visualize );
 
+		void
+		apply( Pose & pose_to_visualize,
+					 utility::vector1< pose::PoseOP > & pose_list );
+
 		virtual std::string get_name() const;
 
 		void set_tag( std::string const & setting ) { tag_ = setting;	}
@@ -57,6 +61,8 @@ namespace rna {
 		void set_use_phenix_geo( bool const & setting ) { use_phenix_geo_ = setting;	}
 
 		void set_legacy_mode( bool const & setting ) { legacy_mode_ = setting;	}
+
+		void set_choose_random( bool const & setting ) { choose_random_ = setting;	}
 
 		void set_integration_test_mode( bool const & setting ){ integration_test_mode_ = setting; }
 
@@ -108,13 +114,13 @@ namespace rna {
 		setup_VDW_bin_screener( pose::Pose const & input_pose );
 
 		void
-		virtualize_other_partition( pose::Pose & input_pose );
+		virtualize_distal_partition( pose::Pose & input_pose );
 
 		void
-		reinstantiate_other_partition( utility::vector1< PoseOP > & final_pose_list );
+		reinstantiate_distal_partition( utility::vector1< PoseOP > & final_pose_list );
 
 		void
-		reinstantiate_other_partition( pose::Pose & current_pose );
+		reinstantiate_distal_partition( pose::Pose & current_pose );
 
 		void
 		reinstate_original_constraints( utility::vector1< pose::PoseOP >  & pose_list );
@@ -126,14 +132,17 @@ namespace rna {
 		std::string tag_;
 		bool use_phenix_geo_;
 		bool legacy_mode_;
+		bool choose_random_;
 		bool integration_test_mode_;
 		bool virtual_sugar_is_from_prior_step_;
 		bool const do_chain_closure_;
-
+		Size const max_tries_for_random_overall_;
+		Size const max_tries_for_random_sugar_setup_;
+		bool sugar_setup_success_;
 		scoring::ScoreFunctionOP scorefxn_;
 		screener::StepWiseRNA_VDW_BinScreenerOP VDW_bin_screener_;
 
-		utility::vector1 < core::Size > other_partition_pos_;
+		utility::vector1 < core::Size > distal_partition_pos_;
 		utility::vector1 < core::Size > already_virtualized_res_list_;
 
 		core::scoring::constraints::ConstraintSetOP original_constraint_set_;

@@ -32,10 +32,10 @@ namespace full_model_info {
 	reorder_full_model_info_after_delete( core::pose::Pose & pose, core::Size const res_to_delete );
 
 	void
-	reorder_full_model_info_after_append( core::pose::Pose & pose, core::Size const res_to_add );
+	reorder_full_model_info_after_append( core::pose::Pose & pose, core::Size const res_to_add, Size const offset = 1 );
 
 	void
-	reorder_full_model_info_after_prepend( core::pose::Pose & pose, core::Size const res_to_add );
+	reorder_full_model_info_after_prepend( core::pose::Pose & pose, core::Size const res_to_add, Size const offset = 1 );
 
 	void
 	update_res_list_in_full_model_info_and_pdb_info( pose::Pose & pose, utility::vector1< Size > const & res_list_new );
@@ -45,6 +45,9 @@ namespace full_model_info {
 
 	utility::vector1< Size >
 	figure_out_chains_from_full_model_info( pose::Pose & pose );
+
+	utility::vector1< Size >
+	figure_out_chains_from_full_model_info_const( pose::Pose const & pose );
 
 	void
 	fill_full_model_info_from_command_line( pose::Pose & pose );

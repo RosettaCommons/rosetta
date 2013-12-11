@@ -61,6 +61,7 @@ namespace monte_carlo {
 	cycles_( 500 ),
 	add_delete_frequency_( 0.5 ),
 	minimize_single_res_frequency_( 0.0 ),
+	minimize_single_res_( false ), // changes during run depending on minimize_single_res_frequency_
 	switch_focus_frequency_( 0.5 ),
 	just_min_after_mutation_frequency_( 0.5 ),
 	temperature_( 1.0 ),
@@ -114,38 +115,34 @@ RNA_StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 
 		if ( RG.uniform() < switch_focus_frequency_ ) switch_focus_among_poses_randomly( pose );
 
-		bool const minimize_single_res = ( RG.uniform() <= minimize_single_res_frequency_ );
-
+		set_minimize_single_res( RG.uniform() <= minimize_single_res_frequency_ );
 		if ( RG.uniform() < add_delete_frequency_ ) {
-				rna_add_or_delete_mover_->set_minimize_single_res( minimize_single_res );
 				success = rna_add_or_delete_mover_->apply( pose, move_type );
 		} else {
-			// later make this an actual class!
-				rna_resample_mover_->set_minimize_single_res( minimize_single_res );
 				success = rna_resample_mover_->apply( pose, move_type );
 		}
 
 		if ( !success ) continue;
 		k++;
 		show_scores( pose, "After-move score:" );
-		
+
 		scoring::EMapVector & energy_map = pose.energies().total_energies();
 		Real const chainbreak_score = energy_map[linear_chainbreak];
-		
+
 		if ( chainbreak_score > 0.01 ) {
 			monte_carlo_->change_weight( linear_chainbreak, 100 );
 		}
-		
+
 		monte_carlo_->change_weight( missing_res, missing_weight );
 		missing_weight += missing_weight_interval;
-		if ( minimize_single_res ) move_type += "-minsngl";
-		
+		if ( minimize_single_res_ ) move_type += "-minsngl";
+
 //		if ( native_pose_ ) {
 //			superimpose_recursively_and_add_constraints( pose, *native_pose_ );
 //		}
-		
+
 		monte_carlo_->boltzmann( pose, move_type );
-		
+
 		monte_carlo_->change_weight( linear_chainbreak, chainbreak_weight_);
 
 		// following can be removed later.
@@ -158,7 +155,7 @@ RNA_StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 	scorefxn_->set_weight( missing_res, max_missing_weight_ );
 	//scorefxn_->set_weight( coordinate_constraint, rmsd_weight_ );
 	show_scores( pose, "Final score:" );
-	
+
 	if ( native_pose_ ) show_scores ( *native_pose_, "Native energy:" );
 }
 
@@ -235,6 +232,13 @@ RNA_StepWiseMonteCarlo::show_scores( core::pose::Pose & pose,
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_StepWiseMonteCarlo::set_minimize_single_res( bool const minimize_single_res ){
+	rna_add_or_delete_mover_->set_minimize_single_res( minimize_single_res );
+	rna_resample_mover_->set_minimize_single_res( minimize_single_res );
+	minimize_single_res_ = minimize_single_res;
+}
 
 } //monte_carlo
 } //swa

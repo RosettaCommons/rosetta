@@ -84,6 +84,10 @@ public:
 
 	utility::vector1< Size > full_to_sub( utility::vector1< Size > const & res_in_full_model_numbering ) const;
 
+	utility::vector1< Size > sub_to_full( utility::vector1< Size > const & res ) const;
+
+	Size sub_to_full( Size const & res ) const;
+
 	void add_other_pose( core::pose::PoseOP & pose );
 
 	// set properties of full model.
@@ -157,6 +161,9 @@ nonconst_full_model_info( core::pose::Pose & pose );
 // basically an alias to nonconst_full_model_info.
 FullModelInfo const &
 make_sure_full_model_info_is_setup( pose::Pose & pose );
+
+void
+set_full_model_info( pose::Pose & pose, FullModelInfoOP & full_model_info );
 
 
 }

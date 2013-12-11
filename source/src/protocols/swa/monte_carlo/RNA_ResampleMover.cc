@@ -106,6 +106,7 @@ namespace monte_carlo {
 		if ( is_at_terminus ) {
 			Attachment const & attachment = swa_move.attachments()[ 1 ];
 			AttachmentType const & attachment_type = attachment.attachment_type();
+			//			TR << TR.Red << "Attachment " << attachment << TR.Reset << std::endl;
 			if ( move_element_size == 1) {
 				remodel_res = res_list.index( swa_move.moving_res() );
 				remodel_suite = ( attachment_type == ATTACHED_TO_PREVIOUS ) ? remodel_res - 1 : remodel_res;
@@ -139,6 +140,9 @@ namespace monte_carlo {
 		}
 		runtime_assert( remodel_res > 0 );
 
+		//		TR << TR.Red << pose.fold_tree() << TR.Reset;
+		//		TR << TR.Red << "Is at terminus: " << is_at_terminus << " num attachments " << num_attachments << TR.Reset << std::endl;
+
 		bool did_mutation( false );
 		// based on 'n' in full_model_info.full_sequence
 		if ( move_element_size == 1 ) did_mutation = mutate_res_if_allowed( pose, full_to_sub( swa_move.moving_res(), pose ) );
@@ -150,7 +154,7 @@ namespace monte_carlo {
 		// LATER SHOULD REPLACE THIS WITH FIXED DOMAIN MAP -- NEED TO UPDATE STEPWISE MODELER -- rhiju.
 		utility::vector1< Size > const & moving_res = get_moving_res_from_full_model_info( pose );
 		if ( ! minimize_single_res_ ) stepwise_rna_modeler_->set_minimize_res( moving_res );
-		
+
 		if ( native_pose_ ) {
 			clear_constraints_recursively( pose );
 			superimpose_recursively_and_add_constraints( pose, *native_pose_, constraint_x0_, constraint_tol_ );

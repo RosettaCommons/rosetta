@@ -226,6 +226,25 @@ FullModelInfo::full_to_sub( utility::vector1< Size > const & res_in_full_model_n
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< Size >
+FullModelInfo::sub_to_full( utility::vector1< Size > const & res ) const{
+	utility::vector1< Size > res_in_full_model_numbering;
+	for ( Size n = 1; n <= res.size(); n++ ){
+		runtime_assert( res[n] >= 1 && res[n] <= res_list_.size() );
+		res_in_full_model_numbering.push_back( res_list_[ res[n] ] );
+	}
+	return res_in_full_model_numbering;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+Size
+FullModelInfo::sub_to_full( Size const & res ) const{
+	if ( res == 0 ) return 0;
+	runtime_assert( res >= 1 && res <= res_list_.size() );
+	return res_list_[ res ];
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
 Size
 FullModelInfo::find_index_in_other_pose_list( pose::Pose const & pose) const {
 
@@ -322,6 +341,12 @@ FullModelInfo const &
 make_sure_full_model_info_is_setup( pose::Pose & pose )
 {
 	return nonconst_full_model_info( pose );
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+set_full_model_info( pose::Pose & pose, FullModelInfoOP & full_model_info ){
+	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info );
 }
 
 }

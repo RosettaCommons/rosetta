@@ -95,8 +95,8 @@ namespace rna {
 
 		utility::vector1< utility::vector1< core::Size > > const & input_res_vectors() const;
 		utility::vector1< core::Size > const & cutpoint_closed_list() const;
+		utility::vector1< core::Size > const & cutpoint_open_list() const;
 		utility::vector1< core::Size > const & working_best_alignment() const;
-
 
 		utility::vector1< core::Size > const & native_alignment() const;
 		utility::vector1< core::Size > const & working_native_alignment() const;
@@ -121,13 +121,9 @@ namespace rna {
 		void set_is_simple_full_length_job_params( bool const & setting );
 
 		void set_full_sequence( std::string const & setting );
-		//void set_working_sequence( std::string const & setting );
 		void set_moving_res( Size const & setting );
 		void set_working_moving_res_list( utility::vector1< core::Size > const & setting );
 
-		//void set_working_moving_res( Size const & setting );
-		//void set_working_moving_suite_list( utility::vector1< core::Size > const & setting );
-		//void set_working_moving_suite( Size const & setting );
 
 		void set_is_working_res( utility::vector1< core::Size > const & setting );
 		void set_full_to_sub( std::map< core::Size, core::Size > const & setting );

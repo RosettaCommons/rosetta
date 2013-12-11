@@ -274,9 +274,6 @@ swa_rna_sample()
 
 		StepWiseRNA_Modeler stepwise_rna_modeler( working_moving_res, scorefxn );
 
-		// turn this on to test StepWiseRNA_Modeler's "on-the-fly" determination of job based on pose fold_tree, cutpoints, etc.
-		if ( !option[ basic::options::OptionKeys::swa::rna::test_encapsulation ]() )	stepwise_rna_modeler.set_job_parameters( job_parameters );
-
 		stepwise_rna_modeler.set_native_pose( native_pose ); // wait put thi inside
 		stepwise_rna_modeler.set_silent_file( swa_silent_file );
 		stepwise_rna_modeler.set_sampler_num_pose_kept ( option[ sampler_num_pose_kept ]() );
@@ -305,8 +302,10 @@ swa_rna_sample()
 		stepwise_rna_modeler.set_rm_virt_phosphate ( option[rm_virt_phosphate]() );
 		stepwise_rna_modeler.set_minimize_and_score_sugar ( option[ basic::options::OptionKeys::swa::rna::minimize_and_score_sugar ]() );
 		stepwise_rna_modeler.set_minimize_and_score_native_pose ( option[ minimize_and_score_native_pose ]() );
+		if ( option[ basic::options::OptionKeys::swa::rna::choose_random ]() ) stepwise_rna_modeler.set_num_pose_minimize( 1 );
 		if ( option[ num_pose_minimize ].user() ) stepwise_rna_modeler.set_num_pose_minimize( option[ num_pose_minimize ]() );
 		stepwise_rna_modeler.set_output_minimized_pose_list( !multiple_shots );
+		stepwise_rna_modeler.set_virtual_sugar_legacy_mode( option[ virtual_sugar_legacy_mode ] );
 		stepwise_rna_modeler.set_virtual_sugar_legacy_mode( option[ virtual_sugar_legacy_mode ] );
 
 		// newer options
@@ -330,6 +329,13 @@ swa_rna_sample()
 		stepwise_rna_modeler.set_minimizer_perform_o2prime_pack( option[ minimizer_perform_o2prime_pack ]() );
 		stepwise_rna_modeler.set_minimizer_output_before_o2prime_pack( option[ minimizer_output_before_o2prime_pack ]() );
 		stepwise_rna_modeler.set_minimizer_rename_tag( option[ minimizer_rename_tag ]() );
+
+		// turn this on to test StepWiseRNA_Modeler's "on-the-fly" determination of job based on pose fold_tree, cutpoints, etc.
+		//  in this case, need to tell stepwise_rna_modeler some additional arbitrary information that cannot be determined from
+		//  info sitting inside the pose -- fixed_res & rmsd_res (over which to calculate rmsds).
+		if ( !option[ basic::options::OptionKeys::swa::rna::test_encapsulation ]() )	stepwise_rna_modeler.set_job_parameters( job_parameters );
+		stepwise_rna_modeler.set_fixed_res ( job_parameters->working_fixed_res() );
+		stepwise_rna_modeler.set_rmsd_res_list ( job_parameters->rmsd_res_list() /*global numbering*/ );
 
 		// in traditional swa, this creates silent file
 		stepwise_rna_modeler.apply( pose );
@@ -537,6 +543,7 @@ rna_sample_virtual_sugar(){ //July 19th, 2011...rebuild the bulge nucleotides af
 	virtual_sugar_sampler_from_string_list.set_integration_test_mode( option[ integration_test ] );
 	virtual_sugar_sampler_from_string_list.set_use_phenix_geo( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
 	virtual_sugar_sampler_from_string_list.set_legacy_mode( option[ virtual_sugar_legacy_mode ] );
+	virtual_sugar_sampler_from_string_list.set_choose_random( option[ basic::options::OptionKeys::swa::rna::choose_random ] );
 	virtual_sugar_sampler_from_string_list.apply( pose );
 
 	output_title_text( "Exit rna_sample_virtual_sugar()", TR );

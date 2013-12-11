@@ -48,7 +48,8 @@ namespace monte_carlo {
 		rna_add_mover_( rna_add_mover ),
 		rna_delete_mover_( rna_delete_mover ),
 		disallow_deletion_of_last_residue_( false ),
-		skip_deletions_( false )
+		skip_deletions_( false ),
+		disallow_skip_bulge_( true )
 	{}
 
   //////////////////////////////////////////////////////////////////////////
@@ -74,8 +75,9 @@ namespace monte_carlo {
 
 		SWA_Move swa_move;
 		get_random_move_element_at_chain_terminus( pose, swa_move,
-																				disallow_delete, true /*disallow_resample*/,
-																				sample_res_ /* empty means no filter on what residues can be added */ );
+																							 disallow_delete, true /*disallow_resample*/,
+																							 disallow_skip_bulge_,
+																							 sample_res_ /* empty means no filter on what residues can be added */ );
 
 		if ( swa_move.move_type() == NO_ADD_OR_DELETE ) {
 			move_type = "no move";
@@ -84,7 +86,6 @@ namespace monte_carlo {
 
 		TR << swa_move << std::endl;
 		TR.Debug << "Starting from: " << pose.annotated_sequence() << std::endl;
-
 		if ( swa_move.move_type() == DELETE ) {
 			move_type = "delete";
 			rna_delete_mover_->apply( pose, swa_move.move_element() );

@@ -156,7 +156,7 @@ namespace rna {
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 		Size ntries( 0 ), num_success( 0 ); // used in choose_random mode.
 		Size max_ntries = std::max( 10000, 100 * int( num_random_samples_ ) );
-		if ( kic_sampling_ ) max_ntries = num_random_samples_; // some chains just aren't closable.
+		if ( kic_sampling_ ) max_ntries = 5 * num_random_samples_; // some chains just aren't closable.
 
 		for ( rotamer_sampler_->reset(); rotamer_sampler_->not_end(); ++( *rotamer_sampler_ ) ) {
 
@@ -264,13 +264,14 @@ namespace rna {
 			TR.Debug << tag <<  std::endl;
 			if (verbose_ ) output_data( silent_file_, tag, true, selected_pose, get_native_pose(), job_parameters_ );
 
-
 			num_success++;
 			if ( choose_random_ && num_success >= num_random_samples_ ) break;
-
 		}
 
-		if ( choose_random_ ) TR << "Number of tries: " << count_data_.tot_rotamer_count++ << ". Number of successes: " << num_success << std::endl;
+		if ( choose_random_ ) {
+			TR << "Number of tries: " << count_data_.tot_rotamer_count++ << ". Number of successes: " << num_success <<  std::endl;
+			TR.Debug << "Was shooting for max_tries: " << max_ntries << ". num_random_samples: " << num_random_samples_ << std::endl;
+		}
 
 		output_title_text( "Final sort and clustering", TR.Debug );
 		pose_selection_->finalize( !build_pose_from_scratch_ /*do_clustering*/ );
@@ -428,15 +429,10 @@ StepWiseRNA_StandardResidueSampler::setup_rotamer_sampler( pose::Pose const & po
 
 	/////Set up the sampler/////
 	if ( kic_sampling_ ) {
-		if ( ! close_chain_to_distal_ ) utility_exit_with_message(
-				"gap_size_ != 0 in kic_sampling mode!" );
-		//		if ( is_prepend_ ) utility_exit_with_message(
-		//				"is_prepend_ is not allowed in kic_sampling mode!" );
+		runtime_assert( close_chain_to_distal_ );
 
-		utility::vector1<Size> const & cutpoint_closed_list(
-				job_parameters_->cutpoint_closed_list() );
-		runtime_assert( cutpoint_closed_list.size() == 1 );
-		Size const chainbreak_suite( cutpoint_closed_list[1] );
+		Size const chainbreak_suite( five_prime_chain_break_res_ );
+		runtime_assert( five_prime_chain_break_res_ > 0 );
 
 		pose::PoseOP new_pose = new pose::Pose( pose ); //hard copy
 		RNA_KicSamplerOP sampler = new RNA_KicSampler(
@@ -454,6 +450,7 @@ StepWiseRNA_StandardResidueSampler::setup_rotamer_sampler( pose::Pose const & po
 		sampler->set_extra_epsilon( extra_epsilon_rotamer_ );
 		sampler->set_extra_chi(	extra_chi_ );
 		sampler->set_random( choose_random_ );
+		sampler->set_fast( integration_test_mode_ ); // overrules extra_chi, extra_epsilon; and sets bin size to 40!
 		if ( finer_sampling_at_chain_closure_ ) sampler->set_bin_size( 10 );
 		sampler->init();
 		return sampler;

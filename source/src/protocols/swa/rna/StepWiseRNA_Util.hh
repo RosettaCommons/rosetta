@@ -327,6 +327,9 @@ setup_bulge_jump_point( pose::Pose & pose, Size const & moving_base, Size const 
 utility::vector1< bool >
 get_partition_definition( pose::Pose const & pose, Size const & moving_suite );
 
+utility::vector1< bool >
+get_partition_definition_floating_base( pose::Pose const & pose, Size const & moving_res );
+
 void
 apply_rotamer( pose::Pose & pose, utility::vector1< Torsion_Info >  const & rotamer_list );
 

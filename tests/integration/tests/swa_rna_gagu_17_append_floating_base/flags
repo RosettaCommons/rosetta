@@ -1,5 +1,8 @@
 -algorithm rna_sample 
--sample_res 3 
+-sample_res 3
+-floating_base
+-floating_base_anchor_res 2
+-force_user_defined_jumps
 -input_res 1 2 15 16 
 -s lower_helix.pdb 
 -out:file:silent region_0_1_sample.out 
@@ -12,7 +15,7 @@
 -fasta fasta 
 -global_sample_res_list  3 4 5 6 11 12 13 14 
 -cutpoint_open  8 
+-cutpoint_closed 2
 -score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts 
 -integration_test true 
 -analytic_etable_evaluation 0
--floating_base
