@@ -83,7 +83,7 @@ core::Size ClashWithTargetFilter::compute( core::pose::Pose const & pose ) const
 
   //pose_copy.dump_pdb("input.pdb");
   core::pose::PoseOP ref_pose= core::import_pose::pose_from_pdb( align_to_pdbname_, false ); 
-  protocols::simple_moves::SuperimposeMoverOP SuperimposeMoverOP=new protocols::simple_moves::SuperimposeMover(*ref_pose, 0, 0, 0, 0, true);
+  protocols::simple_moves::SuperimposeMoverOP SuperimposeMoverOP=new protocols::simple_moves::SuperimposeMover(*ref_pose, ref_start_, ref_end_, pose_start_, pose_end_, true);
 	SuperimposeMoverOP->apply(pose_copy);
   //pose_copy.dump_pdb("inputAlign.pdb");
 
