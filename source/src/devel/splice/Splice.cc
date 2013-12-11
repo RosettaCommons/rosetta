@@ -226,7 +226,7 @@ copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::
 	//	}
 	core::kinematics::FoldTree const saved_ft( target.fold_tree() );
 	TR<<"DEBUG: copy_stretch foldtree: "<<saved_ft<<std::endl;
-	TR<<" from res "<<from_res<<" to res "<<to_res<< "residue_diff"<<std::endl; 	
+	TR<<" from res "<<from_res<<" to res "<<to_res<< "residue_diff"<<std::endl;
 	protocols::protein_interface_design::movers::LoopLengthChange llc;
 	llc.loop_start( from_res );
 	llc.loop_end( to_res );
@@ -322,7 +322,7 @@ Splice::find_dbase_entry( core::pose::Pose const & pose )
 					continue;
 			}
 			bool const fit = std::find( delta_lengths_.begin(), delta_lengths_.end(), delta ) != delta_lengths_.end();
-			
+
             if( fit || database_pdb_entry_ != "" || dbase_entry != 0 ){
                 dbase_subset_.push_back( i );
             }
@@ -474,6 +474,7 @@ Splice::apply( core::pose::Pose & pose )
 		core::Size const dbase_entry( find_dbase_entry( pose ) );
 		if( dbase_entry == 0 )// failed to read entry
 			return;
+		runtime_assert( dbase_entry <= torsion_database_.size() );
 		dofs = torsion_database_[ dbase_entry ];
 		std::string const source_pdb_name( dofs.source_pdb() );
 		dofs_pdb_name = source_pdb_name;
@@ -526,7 +527,7 @@ Splice::apply( core::pose::Pose & pose )
 	/// than template_pose (this is a bit confusing, but it works!)
 	copy_stretch( pose, *template_pose_, from_res(), to_res() );
 	//	( *scorefxn() ) ( pose );
-    
+
 
 	using namespace utility;
 	/// randomize_cut() should not be invoked with a database entry, b/c the dbase already specified the cut sites.
@@ -1011,7 +1012,6 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 		database_entry( tag->getOption< core::Size >( "database_entry", 0 ) );
 		database_pdb_entry( tag->getOption< std::string >( "database_pdb_entry", "" ) );
 		runtime_assert( !( tag->hasOption( "database_entry" ) && tag->hasOption( "database_pdb_entry" ) ) );
-		runtime_assert( !( tag->hasOption( "delta_lengths" ) && (tag->hasOption( "database_pdb_entry" ) || tag->hasOption( "database_entry" ) ) ) );
 		read_torsion_database();
 		TR<<"torsion_database: "<<torsion_database_fname()<<" ";
 		if( database_entry() == 0 ){

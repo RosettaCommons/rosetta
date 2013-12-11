@@ -52,7 +52,8 @@ protocols::filters::Filter( "Operator" ),
 operation_( PRODUCT ),
 threshold_( 0.0 ),
 negate_( false ),
-logarithm_( false )
+logarithm_( false ),
+report_subvalues_( false )
 {
 	filters_.clear();
 }
@@ -161,6 +162,8 @@ Operator::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMa
 	utility::vector1< std::string > filter_names;
 	filter_names.clear();
 
+	report_subvalues( tag->getOption< bool >( "report_subvalues", false ) );
+
 	if( !tag->hasOption( "filters" ) )
 		TR<<"filters parameter not set. I expect another mover/filter to set the filters, o/w you'll crash and burn in apply! See Shira"<<std::endl;
 	else
@@ -182,6 +185,7 @@ Operator::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMa
 	logarithm( tag->getOption< bool >( "logarithm", false ) );
 	TR<<"setting logarithm to "<<logarithm()<<std::endl;
 	TR<<" using operator "<<op<<" with "<< filters_.size()<<" filters "<<std::endl;
+	TR<<"report_subvalues: "<<report_subvalues()<<std::endl;
 }
 
 bool
@@ -203,19 +207,17 @@ Operator::report( std::ostream &o, core::pose::Pose const & pose ) const {
 core::Real
 Operator::report_sm( core::pose::Pose const & pose ) const {
 	core::Real const val( compute( pose ) );
-	//add sigmoid values to the scroring file
-	using protocols::jd2::JobDistributor;
-	protocols::jd2::JobOP job_me( protocols::jd2::JobDistributor::get_instance()->current_job() );
-	//This is the problematic line:
-	//protocols::rosetta_scripts::ParsedProtocol::add_values_to_job( pose, job_me );
-	//protocols::rosetta_scripts::ParsedProtocol parsedP = new ParsedProtocol;
-	//parsedP->add_values_to_job( pose, job_me );
-	TR<<"reporting operator subvalues for: ";
-	foreach( FilterOP filter, filters_ ){
-		core::Real const val( filter->report_sm( pose ) );
-		TR<<filter->get_user_defined_name()<<" with value "<<val<<std::endl;
-		job_me->add_string_real_pair(filter->get_user_defined_name(), val);
-	}
+	if( report_subvalues() ){
+		//add sigmoid values to the scroring file
+		using protocols::jd2::JobDistributor;
+		protocols::jd2::JobOP job_me( protocols::jd2::JobDistributor::get_instance()->current_job() );
+		TR<<"reporting operator subvalues for: ";
+		foreach( FilterOP filter, filters_ ){
+			core::Real const val_local( filter->report_sm( pose ) );
+			TR<<filter->get_user_defined_name()<<" with value "<<val_local<<std::endl;
+			job_me->add_string_real_pair(filter->get_user_defined_name(), val_local);
+		}
+	}//fi report_subvalues
 	TR<<"Operator returning: "<<val<<std::endl;
 	return( val );
 }
