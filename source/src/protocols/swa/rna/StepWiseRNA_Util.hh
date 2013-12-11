@@ -453,8 +453,8 @@ choose_random_if_unspecified_nucleotide( char & newrestype );
 bool
 mutate_res_if_allowed( pose::Pose & pose, Size const mutate_res, Real const mutation_frequency = 0.5 );
 
-Real
-pose_selection_by_full_score( utility::vector1< pose::PoseOP > & pose_data_list, pose::Pose & current_pose, std::string const & tag );
+//Real
+//pose_selection_by_full_score( utility::vector1< pose::PoseOP > & pose_data_list, pose::Pose & current_pose, std::string const & tag );
 
 std::string
 create_tag( std::string const & prestring, Size const i );

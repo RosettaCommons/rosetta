@@ -45,8 +45,8 @@ namespace screener {
 		void
 		set_reinitialize_CCD_torsions( bool const & setting ){ reinitialize_CCD_torsions_ = setting; };
 
-		void
-		add_harmonic_chain_break_constraint( Size const five_prime_res );
+		//void
+		//add_harmonic_chain_break_constraint( Size const five_prime_res );
 
 		void
 		copy_CCD_torsions( pose::Pose & pose ) const;
@@ -60,8 +60,8 @@ namespace screener {
 		bool
 		chain_break_screening_general( pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & chainbreak_scorefxn, Size const five_ );
 
-		bool
-		chain_break_screening( pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & chainbreak_scorefxn );
+		//bool
+		//chain_break_screening( pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & chainbreak_scorefxn );
 
 		bool
 		check_screen();

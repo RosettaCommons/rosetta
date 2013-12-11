@@ -92,7 +92,7 @@ public:
 	utility::vector1< core::pose::PoseOP > &
 	get_pose_list();
 
-	core::io::silent::SilentFileDataOP & silent_file_data();
+	//core::io::silent::SilentFileDataOP & silent_file_data();
 
 	void output_pose_list( std::string const final_sampler_output_silent_file ) const;
 

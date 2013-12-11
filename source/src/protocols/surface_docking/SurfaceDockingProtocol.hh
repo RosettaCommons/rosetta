@@ -72,7 +72,7 @@ public:
 	void show(std::ostream & ouput=std::cout) const;
 
 	/// Insertion operator (overloaded so that SurfaceDockingProtocol can be "printed" in Pyrosetta).
-	friend std::ostream & operator<<(std::ostream & output, SurfaceDockingProtocol const & object_to_output);
+	//friend std::ostream & operator<<(std::ostream & output, SurfaceDockingProtocol const & object_to_output);
 
 	/// Assignment operator
 

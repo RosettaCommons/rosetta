@@ -87,9 +87,9 @@ namespace rna {
 
 		utility::vector1< PoseOP > & pose_list();
 
-		core::io::silent::SilentFileDataOP & silent_file_data();
+		//core::io::silent::SilentFileDataOP & silent_file_data();
 
-		void output_pose_list( std::string const final_sampler_output_silent_file ) const;
+		//void output_pose_list( std::string const final_sampler_output_silent_file ) const;
 
 		void set_num_pose_kept( core::Size const & num_pose_kept ){ num_pose_kept_ = num_pose_kept; }
 

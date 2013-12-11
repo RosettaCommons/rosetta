@@ -19,6 +19,7 @@
 #include <protocols/swa/rna/StepWiseRNA_PoseSelection.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_OutputData.hh>
+#include <protocols/swa/rna/StepWiseRNA_ResidueSampler.hh>
 #include <protocols/swa/rna/screener/StepWiseRNA_BaseCentroidScreener.hh>
 #include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.hh>
 #include <protocols/swa/rna/screener/ChainClosableScreener.hh>

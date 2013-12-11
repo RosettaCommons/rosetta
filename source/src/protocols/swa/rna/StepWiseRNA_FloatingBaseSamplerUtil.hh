@@ -86,11 +86,11 @@ setup_residue_at_origin_list(
 	bool const use_phenix_geo
 );
 
-void
-set_base_coordinate_frame( core::pose::Pose & pose,
-													core::Size const & seq_num,
-													core::conformation::Residue const & rsd_at_origin,
-													core::kinematics::Stub const & moving_res_base_stub );
+//void
+//set_base_coordinate_frame( core::pose::Pose & pose,
+//													core::Size const & seq_num,
+//													core::conformation::Residue const & rsd_at_origin,
+//													core::kinematics::Stub const & moving_res_base_stub );
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }

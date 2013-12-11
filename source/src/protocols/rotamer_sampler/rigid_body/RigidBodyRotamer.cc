@@ -81,18 +81,18 @@ namespace rigid_body {
 
 		RotamerOneValueComb::init();
 
-	};
+	}
 
 	///////////////////////////////////////////////////////////////////////////
 	void RigidBodyRotamer::apply( core::pose::Pose & pose ){
 		apply( pose, template_moving_residue_, id_ );
-	};
+	}
 
 	///////////////////////////////////////////////////////////////////////////
 	void RigidBodyRotamer::apply( core::pose::Pose & pose,
 																core::conformation::Residue const & template_moving_residue ){
 		apply( pose, template_moving_residue, id_ );
-	};
+	}
 
 	///////////////////////////////////////////////////////////////////////////
 	void RigidBodyRotamer::apply( core::pose::Pose & pose,
@@ -106,7 +106,7 @@ namespace rigid_body {
 																Size const id ) {
 		runtime_assert( is_init() );
 		set_coordinate_frame( pose, moving_res_, template_moving_residue, get_stub( id ) );
-	};
+	}
 
 	///////////////////////////////////////////////////////////////////////////
 	core::kinematics::Stub const &
