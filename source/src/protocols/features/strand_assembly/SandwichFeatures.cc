@@ -2933,7 +2933,7 @@ SandwichFeatures::count_AA_w_direction(
 
 		string	heading = determine_core_heading_surface_heading_by_distance(pose_w_center_000,	ii);
 
-		bool core_heading;
+		bool core_heading = "initialization_just_to_avoid_warning";
 
 		if	(heading == "core")
 		{
@@ -2945,57 +2945,16 @@ SandwichFeatures::count_AA_w_direction(
 		}
 		else // uncertain
 		{
-			// <begin> determine core_heading/surface_heading by a vector between CA-CB of a residue and CA of the closest residue of the other sheet
-				xyzVector<Real> vector_sidechain;
-
-				if (pose.residue_type(ii).name3() != "GLY")
-				{
-					vector_sidechain	=	pose.xyz(NamedAtomID("CB", ii)) - pose.xyz(NamedAtomID("CA", ii));
-				}
-				else
-				{
-					vector_sidechain	=	pose.xyz(NamedAtomID("2HA", ii)) - pose.xyz(NamedAtomID("CA", ii));
-				}
-//
-				Real to_be_rounded_ii = (residue_begin + residue_end)/(2.0);
-				Size cen_resnum_ii = round(to_be_rounded_ii);
-//
-				vector<Size>	vector_of_cen_residues;
-				vector_of_cen_residues.clear();	// Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
-				vector_of_cen_residues	=	get_cen_res_in_other_sheet(struct_id, db_session, sw_can_by_sh_id,	sheet_id);
-//
-				Real shortest_dis_between_AA_and_other_sheet = 9999;
-				Size jj_w_shorest_dis =	0 ; // initial value=0 just to avoid build warning at rosetta trunk
-				for (Size jj = 0;	jj	<vector_of_cen_residues.size();	jj++)
-				{
-					Real distance = pose.residue(cen_resnum_ii).atom("CA").xyz().distance(pose.residue(vector_of_cen_residues[jj]).atom("CA").xyz());
-//						
-					if (distance < shortest_dis_between_AA_and_other_sheet)
-					{
-						shortest_dis_between_AA_and_other_sheet = distance;
-						jj_w_shorest_dis = jj;
-					}
-				}
-//
-				xyzVector<Real> vector_between_AA_and_other_sheet	=	pose.xyz(NamedAtomID("CA", vector_of_cen_residues[jj_w_shorest_dis])) - pose.xyz(NamedAtomID("CA", cen_resnum_ii));
-
-				Real	dot_product_of_vectors = dot_product( vector_sidechain, vector_between_AA_and_other_sheet );
-				Real	cosine_theta = dot_product_of_vectors / (absolute_vec(vector_sidechain))*(absolute_vec(vector_between_AA_and_other_sheet));
-//
-//					//		TR << "cosine_theta: " << cosine_theta << endl;
-//
-				if (cosine_theta > 0)
-				{
-					core_heading = true;
-				}
-				else
-				{
-					core_heading = false;
-				}
-			//// <end> determine core_heading/surface_heading by a vector between CA-CB of a residue and CA of the closest residue of the other sheet
+			string	heading	=	determine_heading_direction_by_vector	(struct_id,	db_session,	pose,	sw_can_by_sh_id,	sheet_id,	residue_begin,	residue_end,	ii);
+			if	(heading == "core")
+			{
+				core_heading = true; 			// core heading
+			}
+			else if	(heading == "surface")
+			{
+				core_heading = false;			// surface heading
+			}
 		}
-
-
 		
 		if (pose.residue_type(ii).name3() == "ARG"){
 			if (core_heading)	{	AA_w_direction[0] = AA_w_direction[0] + 1;				}	//R_heading_core_num++;
@@ -3201,6 +3160,97 @@ SandwichFeatures::determine_core_heading_surface_heading_by_distance
 	}
 	return heading;
 }
+
+
+string
+SandwichFeatures::determine_heading_direction_by_vector
+(
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
+	Pose const & pose,
+	Size sw_can_by_sh_id,
+	Size sheet_id,
+	Size residue_begin,
+	Size residue_end,
+	Size	ii // residue_number
+)
+{
+	string heading;
+
+	// <begin> determine core_heading/surface_heading by a vector between CA-CB of a residue and CA of the closest residue of the other sheet
+		xyzVector<Real> vector_sidechain;
+
+		if (pose.residue_type(ii).name3() != "GLY")
+		{
+			vector_sidechain	=	pose.xyz(NamedAtomID("CB", ii)) - pose.xyz(NamedAtomID("CA", ii));
+		}
+		else
+		{
+			vector_sidechain	=	pose.xyz(NamedAtomID("2HA", ii)) - pose.xyz(NamedAtomID("CA", ii));
+		}
+
+		Real to_be_rounded_ii = (residue_begin + residue_end)/(2.0);
+		Size cen_resnum_ii = round(to_be_rounded_ii);
+
+		vector<Size>	vector_of_cen_residues;
+		vector_of_cen_residues.clear();	// Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
+		vector_of_cen_residues	=	get_cen_res_in_other_sheet(struct_id, db_session, sw_can_by_sh_id,	sheet_id);
+
+		Real shortest_dis_between_AA_and_other_sheet = 9999;
+		Size jj_w_shorest_dis =	0 ; // initial value=0 just to avoid build warning at rosetta trunk
+		for (Size jj = 0;	jj	<vector_of_cen_residues.size();	jj++)
+		{
+			Real distance = pose.residue(cen_resnum_ii).atom("CA").xyz().distance(pose.residue(vector_of_cen_residues[jj]).atom("CA").xyz());
+//						
+			if (distance < shortest_dis_between_AA_and_other_sheet)
+			{
+				shortest_dis_between_AA_and_other_sheet = distance;
+				jj_w_shorest_dis = jj;
+			}
+		}
+//
+		xyzVector<Real> vector_between_AA_and_other_sheet	=	pose.xyz(NamedAtomID("CA", vector_of_cen_residues[jj_w_shorest_dis])) - pose.xyz(NamedAtomID("CA", cen_resnum_ii));
+
+		Real	dot_product_of_vectors = dot_product( vector_sidechain, vector_between_AA_and_other_sheet );
+		Real	cosine_theta = dot_product_of_vectors / (absolute_vec(vector_sidechain))*(absolute_vec(vector_between_AA_and_other_sheet));
+//
+//					//		TR << "cosine_theta: " << cosine_theta << endl;
+//
+		if (cosine_theta > 0)
+		{
+			heading = "core"; 			// core heading
+		}
+		else
+		{
+			heading = "surface";			// surface heading
+		}
+	//// <end> determine core_heading/surface_heading by a vector between CA-CB of a residue and CA of the closest residue of the other sheet
+
+
+	return heading;
+} //determine_heading_direction_by_vector
+
+
+
+string
+SandwichFeatures::report_heading_directions_of_all_AA_in_a_strand	(
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
+	Pose const & pose,
+	Size sw_can_by_sh_id,
+	Size sheet_id,
+	Size residue_begin,
+	Size residue_end)
+{
+	string heading_directions	=	"";
+	for (Size	ii	=	residue_begin;	ii	<=	residue_end; ii++)
+	{
+		string	heading	=	determine_heading_direction_by_vector	(struct_id,	db_session,	pose,	sw_can_by_sh_id,	sheet_id,	residue_begin,	residue_end,	ii);
+		heading_directions	= heading_directions	+	"	"	+	heading;
+	}
+
+	return heading_directions;
+} //SandwichFeatures::report_heading_directions_of_all_AA_in_a_strand
 
 
 
@@ -6150,6 +6200,8 @@ SandwichFeatures::parse_my_tag(
 					//	definition: if true, write p_aa_pp_files
 	write_rama_at_AA_to_files_ = tag->getOption<bool>("write_rama_at_AA_to_files", false);
 					//	definition: if true, write write_rama_at_AA_to_files
+	write_heading_directions_of_all_AA_in_a_strand_ = tag->getOption<bool>("write_heading_directions_of_all_AA_in_a_strand", false);
+
 
 
 }
@@ -6216,6 +6268,7 @@ SandwichFeatures::report_features(
 		write_resfile_	= true;
 		write_p_aa_pp_files_	= true;
 		write_rama_at_AA_to_files_	=	true;
+		write_heading_directions_of_all_AA_in_a_strand_	=	true;
 	}
 
 
@@ -6724,7 +6777,7 @@ SandwichFeatures::report_features(
 		phi_psi_file.close();
 	} //write_phi_psi_of_E_
 
-	else
+	else	// write_phi_psi_of_E_ = false
 	{
 		if (write_phi_psi_of_all_)
 		{
@@ -6779,6 +6832,9 @@ SandwichFeatures::report_features(
 		}
 		//// <end> count AA with direction
 	}
+
+
+
 /////////////////// <end> fill a table 'sw_by_components' by secondary_structure_segments
 		TR.Info << "<end> fill a table 'sw_by_components' by secondary_structure_segments" << endl;
 
@@ -7228,6 +7284,28 @@ SandwichFeatures::report_features(
 	}	// per each sandwich_candidate_by_sheet_id
 
 
+	/// <begin> write_heading_direction_of_all_AA_in_a_strand
+	if (write_heading_directions_of_all_AA_in_a_strand_ && canonical_sw_extracted_from_this_pdb_file)
+	{
+		Size tag_len = tag.length();
+		string pdb_file_name = tag.substr(0, tag_len-5);
+		string heading_file_name = pdb_file_name + "_heading_direction_of_all_AA_in_a_strand.txt";
+		ofstream heading_file;
+			
+		heading_file.open(heading_file_name.c_str());
+		heading_file << "residue_begin	residue_end	heading_directions" << endl;
+
+		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++) // per each beta-strand
+		{
+			string	heading_directions	=	report_heading_directions_of_all_AA_in_a_strand (struct_id, db_session, pose, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),	bs_of_sw_can_by_sh[ii].get_sheet_id(), bs_of_sw_can_by_sh[ii].get_start(), bs_of_sw_can_by_sh[ii].get_end());
+			heading_file << bs_of_sw_can_by_sh[ii].get_start() << "	" << bs_of_sw_can_by_sh[ii].get_end() << "	"	<<	heading_directions	<< endl;
+		}
+
+		heading_file.close();
+	}
+	/// <end> write_heading_direction_of_all_AA_in_a_strand
+
+
 	// <begin> write AA_dis to a file
 	if (write_AA_distribution_files_w_direction_ && canonical_sw_extracted_from_this_pdb_file)
 	{
@@ -7250,9 +7328,7 @@ SandwichFeatures::report_features(
 		{
 			AA_dis_file << vec_core_heading_at_core_strand[i] << "	" << vec_surface_heading_at_core_strand[i] << "	" << vec_core_heading_at_edge_strand[i] << "	" << vec_surface_heading_at_edge_strand[i] << endl;
 		}
-
 		AA_dis_file.close();
-
 	} 
 	// <end> write AA_dis to a file
 
@@ -7263,10 +7339,9 @@ SandwichFeatures::report_features(
 
 	process_decoy( dssp_pose, pose.is_fullatom() ? *fullatom_scorefxn : *centroid_scorefxn);
 
-	TR.Info << "Current energy terms that we deal with:";
+	TR.Info << "Current energy terms that we deal with:"	<< endl;
 	dssp_pose.energies().show_total_headers( std::cout );
-	TR.Info << endl;
-
+	std::cout << std::endl;
 
 	// <begin> write p_aa_pp (Probability of amino acid at phipsi) to a file (ref. https://www.rosettacommons.org/manuals/archive/rosetta3.1_user_guide/score_types.html )
 	if (write_p_aa_pp_files_ && canonical_sw_extracted_from_this_pdb_file)
@@ -7331,9 +7406,7 @@ SandwichFeatures::report_features(
 		{
 			AA_dis_file << vector_of_hairpin_AA[i] << "	" << vector_of_inter_sheet_loop_AA[i] << endl;
 		}
-
 		AA_dis_file.close();
-
 	} 
 	// <end> write AA_distribution_without_direction to a file
 	
@@ -7394,12 +7467,9 @@ SandwichFeatures::report_features(
 		for (Size i =1; i<=(pose.total_residue()); i++)
 		{
 			string residue_location = get_residue_location (struct_id,	db_session,	i);
-
 //			resfile_stream << vector_of_hairpin_AA[i] << "	" << vector_of_inter_sheet_loop_AA[i] << endl;
 		}
-
 		resfile_stream.close();
-
 	} 
 	// <end> write resfile automatically
 	///////////// development

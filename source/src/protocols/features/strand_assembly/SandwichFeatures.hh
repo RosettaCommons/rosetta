@@ -335,6 +335,15 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
+	std::string
+	report_heading_directions_of_all_AA_in_a_strand	(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::pose::Pose const & pose,
+		core::Size sw_can_by_sh_id,
+		core::Size sheet_id,
+		core::Size residue_begin,
+		core::Size residue_end);
 
 
 	std::vector<Size>
@@ -757,9 +766,21 @@ public:
 
 	void process_decoy(
 		core::pose::Pose & dssp_pose,
-		//core::pose::Pose &pose,
 		core::scoring::ScoreFunction const&
 	) const;
+
+	std::string
+	determine_heading_direction_by_vector
+	(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::pose::Pose const & pose,
+		core::Size sw_can_by_sh_id,
+		core::Size sheet_id,
+		core::Size residue_begin,
+		core::Size residue_end,
+		core::Size	ii // residue_number
+	);
 
 
 private:
@@ -856,6 +877,9 @@ private:
 
 	bool
 	write_rama_at_AA_to_files_;
+
+	bool
+	write_heading_directions_of_all_AA_in_a_strand_;
 
 	core::Size
 	max_starting_loop_size_;
