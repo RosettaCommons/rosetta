@@ -110,7 +110,8 @@ sources = {
 		#"minimalCstRelax",
 		#"minimalCstHomology",
         #"outputLayerDesignBurial",
-		#"outputSasa",
+		"outputAbego",
+        "outputSasa",
         #"outputRama",
         #"cluster_alns", # /#TJ Brunette,Documentation Location,Demo Location */
 		#"identify_homolog_inaccuracies",

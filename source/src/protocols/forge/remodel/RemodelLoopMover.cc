@@ -2079,7 +2079,7 @@ void RemodelLoopMover::abinitio_stage(
 	}
 }
 
-/// @brief abinitio stage 
+/// @brief  relax stage 
  void RemodelLoopMover::fa_relax_stage(
 				 Pose & pose
 				 ){
@@ -3367,7 +3367,7 @@ void RemodelLoopMover::set_ideal_helices(Pose & pose){
 		using core::Size;
 		//At this point the pose is 2x. So we need to copy the helical residues twice.
 		std::string ss = remodel_data_.ss;
-		Size repeatRes = (pose.total_residue()/2)+1;
+		Size repeatRes = (pose.total_residue()/2);
 		for(Size ii=1; ii<=ss.size(); ++ii){
 				if(ss[ii-1] == 'H'){
 						pose.set_phi(ii,-63.8);
