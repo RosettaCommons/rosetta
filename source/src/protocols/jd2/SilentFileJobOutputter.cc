@@ -127,13 +127,10 @@ void SilentFileJobOutputter::set_defaults() {
 
 	// dd_parser should use binary silent files as a default. but score-only
 	// silent files are also an option
-	// this is really stupid. What knowledge do you about the user's intentions
-	// that trumps the user's input via the command-line? A better idea would be
-	// to exclude certain SilentStruct types, throw a warning or error message,
-	// or do something more intelligent like that.
+	// and protein-style too, if that's my choice? -JRP 2012
 	if ( option[ basic::options::OptionKeys::jd2::dd_parser ]() ) {
 		if ( option[ out::file::silent_struct_type ]() != "score")
-			option[ out::file::silent_struct_type ].value( "binary" );
+			option[ out::file::silent_struct_type ].def( "binary" );
 	}
 
 	//default is 1
