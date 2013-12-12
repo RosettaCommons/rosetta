@@ -62,9 +62,8 @@ namespace monte_carlo {
 	Attachments
 	get_attachments( pose::Pose & pose, Size const & moving_res );
 
-	void
-	get_add_move_elements( pose::Pose & pose,
-														utility::vector1< SWA_Move > & swa_moves );
+	// Undefined, commenting out to fix PyRosetta build
+	// void get_add_move_elements( pose::Pose & pose, utility::vector1< SWA_Move > & swa_moves );
 
 	void
 	get_random_move_element_at_chain_terminus( pose::Pose & pose,
