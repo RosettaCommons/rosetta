@@ -48,6 +48,14 @@ void chainXYZ  (const int& n,
 				const utility::vector1<utility::vector1<numeric::Real> >& Q,
 				utility::vector1<utility::vector1<numeric::Real> >& atoms
 				);
+
+void chainXYZ  (
+		const int& n,
+		const utility::vector1<numeric::Real>& b_len,
+		const utility::vector1<numeric::Real>& b_ang,
+		const utility::vector1<numeric::Real>& t_ang,
+		utility::vector1<utility::vector1<numeric::Real> >& atoms);
+
 numeric::Real bondangle(const utility::vector1<numeric::Real>& a, const utility::vector1<numeric::Real>& b,
 					 const utility::vector1<numeric::Real>& c);
 

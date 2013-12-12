@@ -96,6 +96,26 @@ loops_set_move_map(
 	core::kinematics::MoveMap & mm
 );
 
+/// @brief Create a new MoveMapOP for use in minimizing the given loop.
+core::kinematics::MoveMapOP
+move_map_from_loops(
+		core::pose::Pose & pose,
+		Loops const & loops,
+		bool const fix_template_sc,
+		core::Real neighbor_dist = 10.0,
+		bool const flanking_residues = false
+);
+
+/// @brief Create a new MoveMapOP for use in minimizing the given loop.
+core::kinematics::MoveMapOP
+move_map_from_loop(
+		core::pose::Pose & pose,
+		Loop const & loop,
+		bool const fix_template_sc,
+		core::Real neighbor_dist = 10.0,
+		bool const flanking_residues = false
+);
+
 void
 set_move_map_for_centroid_loop(
 	Loop const & loop,
@@ -133,12 +153,28 @@ void select_loop_residues(
 	core::Real neighbor_dist = 10.0
 );
 
+/// @brief mark loop residues and its neighbors as necessary in a sequence map.
+utility::vector1<bool> select_loop_residues(
+	core::pose::Pose const & pose,
+	Loops const & loops,
+	bool const include_neighbors,
+	core::Real neighbor_dist = 10.0
+);
+
 // @brief mark loop residues and its neighbors as necessary for one loop.
 void select_loop_residues(
 	core::pose::Pose const & pose,
 	Loop const & loop,
 	bool const include_neighbors,
 	utility::vector1<bool> & map,
+	core::Real neighbor_dist = 10.0
+);
+
+// @brief mark loop residues and its neighbors as necessary for one loop.
+utility::vector1<bool> select_loop_residues(
+	core::pose::Pose const & pose,
+	Loop const & loop,
+	bool const include_neighbors,
 	core::Real neighbor_dist = 10.0
 );
 

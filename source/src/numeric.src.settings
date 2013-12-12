@@ -61,10 +61,15 @@ sources = {
 	],
 	"numeric/kinematic_closure": [
 		"bridgeObjects",
+        "closure",
 		"dixon",
 		"kinematic_closure_helpers",
 		"sturm",
+        "vector",
 	],
+    "numeric/linear_algebra": [
+        "rgg",
+    ],
 	"numeric/model_quality": [
 		"maxsub",
 		"rms",

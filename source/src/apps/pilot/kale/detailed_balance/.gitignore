@@ -1,0 +1,10 @@
+/data
+/jobs
+/remote-jobs
+/mount.sh
+/umount.sh
+/analysis/remote-jobs
+/*job*
+
+/*.sh
+

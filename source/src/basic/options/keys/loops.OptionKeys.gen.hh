@@ -106,6 +106,9 @@ namespace loops { extern BooleanOptionKey const taboo_in_fa; }
 namespace loops { extern BooleanOptionKey const ramp_fa_rep; }
 namespace loops { extern BooleanOptionKey const ramp_rama; }
 namespace loops { extern BooleanOptionKey const kic_rama2b; }
+namespace loops { extern BooleanOptionKey const kic_small_moves; }
+namespace loops { extern RealOptionKey const kic_small_move_magnitude; }
+namespace loops { extern BooleanOptionKey const kic_pivot_based; }
 namespace loops { extern BooleanOptionKey const kic_no_centroid_min; }
 namespace loops { extern BooleanOptionKey const kic_leave_centroid_after_initial_closure; }
 namespace loops { extern BooleanOptionKey const kic_repack_neighbors_only; }

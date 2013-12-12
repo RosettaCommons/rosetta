@@ -83,7 +83,6 @@
 
 //Auto Headers
 
-
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 //Auto using namespaces end
@@ -237,7 +236,7 @@ void LoopMover_Refine_KIC::apply(
 		max_inner_cycles = 3;
 	}
 
-	int const inner_cycles = std::min( Size(max_inner_cycles), fast ? (int)loops()->loop_size() : 10 * (Size)( loops()->loop_size() ) );
+	int inner_cycles = std::min( Size(max_inner_cycles), fast ? (int)loops()->loop_size() : 10 * (Size)( loops()->loop_size() ) );
 	int repack_period = 20; // should be an option
 	if ( option[ OptionKeys::loops::repack_period ].user() ) {
 		repack_period = option[ OptionKeys::loops::repack_period ]();
@@ -483,6 +482,9 @@ void LoopMover_Refine_KIC::apply(
 		loop_outfile << "ENDMDL" << std::endl;
 	}
 
+	//outer_cycles = 1;
+	//inner_cycles = 20;
+	core::Size num_kinematic_trials = 2;
 
 	for (int i=1; i<=outer_cycles; ++i) {
 		// increase CHAINBREAK weight and update monte carlo
@@ -578,8 +580,8 @@ void LoopMover_Refine_KIC::apply(
 			// rewriting the kinematic trials so that the 1st and 2nd round are handled by a loop instead of code duplication
 			// then incorporating the possibility to repack after each loop move (and before calling mc.boltzmann)
 			
-			core::Size num_kinematic_trials = 2;
 			for (core::Size kinematic_trial = 1; kinematic_trial <= num_kinematic_trials; kinematic_trial++) {
+
 				// AS: the previous implementation had a "history bias" towards the N-terminus of the loop, as the start pivot can be anywhere between begin_loop and end_loop-2, while the choice of the end pivot depends on the start pivot 
 				if ( option[ OptionKeys::loops::legacy_kic ]() || j % 2 == 0 ) {
 					kic_start = RG.random_range(begin_loop,end_loop-2);
@@ -600,7 +602,6 @@ void LoopMover_Refine_KIC::apply(
 				core::pose::Pose last_accepted_pose = pose; // backup in case of undetected chain breaks
 				myKinematicMover.apply( pose );
 
-				
 				// AS April 25, 2013
 				// There seems to be a bug in KIC that makes it occasionally report open conformations but stating they are closed. We're looking into why exactly this happens -- for the moment this is a workaround that discards structures with a chainbreak score > 0, as this indicates that the chain probably isn't closed after all
 				
@@ -716,6 +717,7 @@ void LoopMover_Refine_KIC::apply(
 					k_trial << kinematic_trial;
 					std::string move_type = "kic_refine_r" + k_trial.str();
 					bool accepted = mc.boltzmann( pose, move_type );
+
 					if (accepted) {
 						tr() << "RMS to native after accepted kinematic round " << kinematic_trial << " move on loop "
 						   << loops()->size() + 1 - loop_ind << ": " // reverse the order so it corresponds with the loop file
@@ -734,6 +736,7 @@ void LoopMover_Refine_KIC::apply(
 						//tr << "chainbreak: " << pose.energies().total_energies()[ core::scoring::chainbreak ] << std::endl; 
 						if ( verbose ) tr() << "energy after accepted move: " << (*local_scorefxn)(pose) << std::endl;
 					}
+
 					//mc.show_scores();
 				}
 			}
@@ -820,8 +823,6 @@ void LoopMover_Refine_KIC::apply(
 		pose.dump_pdb(loop_outfile, indices, "final_refine");
 		loop_outfile << "ENDMDL" << std::endl;
 	}
-
-
 }
 
 std::string

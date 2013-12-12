@@ -13,6 +13,9 @@ ADD_DEFINITIONS(-D_DEBUG)
 SET(COMPILE_FLAGS "-std=c++98 -pipe -ffor-scope -Wall -Wextra -pedantic -Wno-long-long -O0 -g -ggdb -ffloat-store")
 SET(CMAKE_CXX_FLAGS "${COMPILE_FLAGS}")
 
+# Added to force compilation of debug symbols.  -Kale Kundert
+SET (CMAKE_CXX_FLAGS "-g")
+
 INCLUDE(../build/build.post.cmake)
 
 ## Top level binaries

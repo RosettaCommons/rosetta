@@ -95,6 +95,12 @@ public:
 	/// @brief Returns a random int in the range specified by the arguments
 	int random_range( int low, int high );
 
+	/// @brief Return the seed used by this RNG.
+	int get_seed() { return generator->getSeed(); }
+
+	/// @brief Return the seed used by this RNG.
+	void set_seed(int seed) { generator->setSeed(seed); }
+
 	void saveState(std::ostream & out);
 
 	void restoreState(std::istream & in);

@@ -1,0 +1,7 @@
+*.dat
+*.tgz
+*.pdb
+*.pse
+score.sc
+
+callgrind.out.*

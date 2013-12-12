@@ -334,6 +334,7 @@ public:
 	/// @brief Set seed and state
 	inline void setSeed(int const iseed)
 	{
+		iseed_ = iseed;
 		uint32_t seed = (uint32_t) iseed;
 		int i;
 		uint32_t *psformat;
@@ -353,6 +354,10 @@ public:
 
 	/// @brief Set seed and state
 	void setSeed( std::string const & ) { assert( false ); } //< Not implemented yet!
+
+	inline int getSeed() {
+		return iseed_;
+	}
 
 	inline double getRandom()
 	{
@@ -554,6 +559,8 @@ protected:
 	}
 
 private:
+	/** The integer used to seed the RNG. */
+	int iseed_;
 	/** the 128-bit internal state array */
 	w128_t sformat[DSFMT_N + 1];
 	/** the double pointer to the 128-bit internal state array */

@@ -17,11 +17,22 @@
 // Utility headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 //#include <basic/Tracer.hh> // tracer output
-// Rosetta Headers
+
+// Unit headers
+#include <numeric/kinematic_closure/dixon.hh>
+
+// Numeric headers
 #include <numeric/types.hh>
-// Sturm code
 #include <numeric/kinematic_closure/sturm.hh>
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
+#include <numeric/linear_algebra/GeneralizedEigenSolver.hh>
+
+// External headers
+#include <Eigen/Dense>
+
+// C++ headers
+#include <cmath>
+#include <iostream>
 
 // Constants
 #define PP4x2_VECSIZE 7
@@ -29,13 +40,32 @@
 #define DIXON_RESULTANT_SIZE 3
 
 using numeric::Real;
-//static basic::Tracer std::cout( "protocols.moves.kinematic_closure.dixon" );
+using utility::vector1;
 
 namespace numeric {
 namespace kinematic_closure {
 
+using namespace std;
+Eigen::IOFormat scipy(8, 0, ", ", ",\n", "[", "]", "[", "]");
+string skipl = "\n\n";
+
+typedef Eigen::Matrix<Real, 8, 8> Matrix8;
+typedef Eigen::Matrix<Real, 16, 16> Matrix16;
+typedef Eigen::Matrix<Real, Eigen::Dynamic, 1, 0, 16, 1> Vector16;
+typedef linear_algebra::GeneralizedEigenSolver<Matrix16> SolverType;
+
+// If I can rant for a little bit, using STL vectors as a matrix type was a 
+// fucking horrible idea.  For one thing, the API presented by the std::vector 
+// class is totally inappropriate for doing linear algebra.  More importantly, 
+// you run the risk of getting really terrible caching performance because 
+// these matrices aren't necessarily stored contiguously in memory.
+
+typedef vector1<Real> PseudoVector;
+typedef vector1<PseudoVector> PseudoMatrix;
+
 /// dixon functions ///
 
+// point_value2 {{{1
 /* C becomes the point value 2 between A and t */
 void point_value2(const utility::vector1<Real>& A, const utility::vector1<Real>& t, utility::vector1<Real>& C) {
 	C.resize(t.size());
@@ -44,6 +74,7 @@ void point_value2(const utility::vector1<Real>& A, const utility::vector1<Real>&
 	}
 }
 
+// point_value4 {{{1
 /* C becomes the point value 4 between A and t */
 void point_value4(const utility::vector1<Real>& A, const utility::vector1<Real>& t, utility::vector1<Real>& C) {
 	C.resize(t.size());
@@ -52,6 +83,7 @@ void point_value4(const utility::vector1<Real>& A, const utility::vector1<Real>&
 	}
 }
 
+// point_value6 {{{1
 /* C becomes the point value 6 between B and t */
 void point_value6(const utility::vector1<Real>& B, const utility::vector1<Real>& t, utility::vector1<Real>& C) {
 	C.resize(t.size());
@@ -60,6 +92,7 @@ void point_value6(const utility::vector1<Real>& B, const utility::vector1<Real>&
 	}
 }
 
+// point_value8 {{{1
 /* C becomes the point value 8 between A and t */
 void point_value8(const utility::vector1<Real>& A, const utility::vector1<Real>& t, utility::vector1<Real>& C) {
 	C.resize(t.size());
@@ -68,6 +101,7 @@ void point_value8(const utility::vector1<Real>& A, const utility::vector1<Real>&
 	}
 }
 
+// point_value16 {{{1
 /* C becomes the point value 16 between A and t */
 void point_value16(const utility::vector1<Real>& A, const utility::vector1<Real>& t, utility::vector1<Real>& C) {
 	C.resize(t.size());
@@ -75,7 +109,9 @@ void point_value16(const utility::vector1<Real>& A, const utility::vector1<Real>
 		C[i] = A[1]+t[i]*(A[2]+t[i]*(A[3]+t[i]*(A[4]+t[i]*(A[5]+t[i]*(A[6]+t[i]*(A[7]+t[i]*(A[8]+t[i]*(A[9]+t[i]*(A[10]+t[i]*(A[11]+t[i]*(A[12]+t[i]*(A[13]+t[i]*(A[14]+t[i]*(A[15]+t[i]*(A[16]+t[i]*A[17])))))))))))))));
 	}
 }
+// }}}1
 
+// polyProduct2x2 {{{1
 /* C becomes the polyProduct2x2 of A and B */
 void polyProduct2x2(const utility::vector1<Real>& A, const utility::vector1<Real>& B, utility::vector1<Real>& C) {
   C.resize(PP4x2_VECSIZE);
@@ -87,6 +123,7 @@ void polyProduct2x2(const utility::vector1<Real>& A, const utility::vector1<Real
   return;
 }
 
+// polyProduct4x2 {{{1
 /* C becomes the polyProduct4x2 of A and B */
 void polyProduct4x2(const utility::vector1<Real>& A, const utility::vector1<Real>& B, utility::vector1<Real>& C) {
   C.resize(7);
@@ -100,6 +137,7 @@ void polyProduct4x2(const utility::vector1<Real>& A, const utility::vector1<Real
   return;
 }
 
+// polyProduct4x4 {{{1
 /* C becomes the polyProduct4x4 of A and B */
 void polyProduct4x4(const utility::vector1<Real>& A, const utility::vector1<Real>& B, utility::vector1<Real>& C) {
   C.resize(9);
@@ -115,6 +153,7 @@ void polyProduct4x4(const utility::vector1<Real>& A, const utility::vector1<Real
   return;
 }
 
+// polyProduct4sq {{{1
 /* C becomes the polyProduct4sq of A*A */
 void polyProduct4sq(const utility::vector1<Real>& A, utility::vector1<Real>& C) {
   C.resize(9);
@@ -130,6 +169,7 @@ void polyProduct4sq(const utility::vector1<Real>& A, utility::vector1<Real>& C) 
   return;
 }
 
+// polyProduct6x6 {{{1
 /* C becomes the polyProduct6x6 of A and B */
 void polyProduct6x6(const utility::vector1<Real>& A, const utility::vector1<Real>& B, utility::vector1<Real>& C) {
   C.resize(13);
@@ -149,6 +189,7 @@ void polyProduct6x6(const utility::vector1<Real>& A, const utility::vector1<Real
   return;
 }
 
+// polyProduct12x4 {{{1
 /* C becomes the polyProduct12x4 of A and B */
 void polyProduct12x4(const utility::vector1<Real>& A, const utility::vector1<Real>& B, utility::vector1<Real>& C) {
   C.resize(17);
@@ -172,6 +213,7 @@ void polyProduct12x4(const utility::vector1<Real>& A, const utility::vector1<Rea
   return;
 }
 
+// polyProduct8x8 {{{1
 /* C becomes the polyProduct8x8 of A and B */
 void polyProduct8x8(const utility::vector1<Real>& A, const utility::vector1<Real>& B, utility::vector1<Real>& C) {
   C.resize(17);
@@ -195,6 +237,7 @@ void polyProduct8x8(const utility::vector1<Real>& A, const utility::vector1<Real
   return;
 }
 
+// polyProduct8sq {{{1
 /* C becomes the polyProduct8sq of A*A */
 void polyProduct8sq(const utility::vector1<Real>& A, utility::vector1<Real>& C) {
   C.resize(17);
@@ -217,7 +260,9 @@ void polyProduct8sq(const utility::vector1<Real>& A, utility::vector1<Real>& C) 
   C[ 1] = A[1]*A[1];
   return;
 }
+// }}}1
 
+// vectorDiff {{{1
 /* C becomes the difference of A - B */
 /* Assumes A and B are the same size */
 void vectorDiff(const utility::vector1<Real>& A, const utility::vector1<Real>& B, utility::vector1<Real>& C) {
@@ -229,10 +274,15 @@ void vectorDiff(const utility::vector1<Real>& A, const utility::vector1<Real>& B
 }
 
 
+// dixonResultant {{{1
 /* R becomes the Dixon resultant of the determinant of the matrix polynomial
 	 D(t3) := R{1} + R{2} * t3 + R{3} * t3^2
 */
-void dixonResultant(const utility::vector1<utility::vector1<Real> >& A, const utility::vector1<utility::vector1<Real> >& B, const utility::vector1<utility::vector1<Real> >& C, const utility::vector1<utility::vector1<Real> >& D, utility::vector1<utility::vector1<utility::vector1<Real> > >& R) {
+void dixonResultant(const utility::vector1<utility::vector1<Real> >& A,
+		const utility::vector1<utility::vector1<Real> >& B, 
+		const utility::vector1<utility::vector1<Real> >& C, 
+		const utility::vector1<utility::vector1<Real> >& D, 
+		utility::vector1<utility::vector1<utility::vector1<Real> > >& R) {
 	R.resize(DIXON_RESULTANT_SIZE);
 	for (int i=1; i<=3; i++) {
 		R[i].resize(DIXON_SIZE);
@@ -318,123 +368,145 @@ void dixonResultant(const utility::vector1<utility::vector1<Real> >& A, const ut
 		R[i][8][8]=0.0;
 	}
 }
+// }}}1
 
-/// test functions ///
+// build_dixon_matrices {{{1
+void build_dixon_matrices(
+		PseudoMatrix const & A, PseudoMatrix const & B,
+		PseudoMatrix const & C, PseudoMatrix const & D,
+		Matrix8 & R0, Matrix8 & R1, Matrix8 & R2) {
 
-void test_point_value2() {
-	utility::vector1<Real> A(3), t(16), C;
-	A[1]=0.0;
-	A[2]=-60;
-	A[3]=0.0;
-	t[1]=7.4248;
-	t[2]=5.3100;
- 	t[3]=0.0;
- 	t[4]=0.0;
- 	t[5]=0.0;
- 	t[6]=0.0;
- 	t[7]=0.0;
- 	t[8]=0.0;
- 	t[9]=0.0;
- 	t[10]=0.0;
- 	t[11]=0.0;
- 	t[12]=0.0;
- 	t[13]=0.0;
- 	t[14]=0.0;
- 	t[15]=0.0;
- 	t[16]=0.0;
-	point_value2(A,t,C);
-	printVector(C);
-	// output should be { -445.4891, -318.6002, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0,0.0, 0.0, 0.0}
+	// The variable names used here mostly correspond to those used by:
+	// Coutsias, Seok, Wester, Dill; Int. J. Quant. Chem. 106:176-189 (2006).
+
+	Matrix8 * R[3] = {&R0, &R1, &R2};
+
+	for (int i = 1; i <= 3; i++) {
+		Matrix8 & Ri = *R[i-1];
+		Ri.fill(0);
+
+		Ri(0, 1) = A[1][i];   Ri(0, 2) = A[2][i];   Ri(0, 3) = A[3][i];
+		Ri(1, 0) = A[1][i];   Ri(1, 1) = A[2][i];   Ri(1, 2) = A[3][i];
+
+		Ri(0, 5) = B[1][i];   Ri(0, 6) = B[2][i];   Ri(0, 7) = B[3][i];
+		Ri(1, 4) = B[1][i];   Ri(1, 5) = B[2][i];   Ri(1, 6) = B[3][i];
+		Ri(2, 1) = B[1][i];   Ri(2, 2) = B[2][i];   Ri(2, 3) = B[3][i];
+		Ri(3, 0) = B[1][i];   Ri(3, 1) = B[2][i];   Ri(3, 2) = B[3][i];
+
+		Ri(2, 5) = C[1][i];   Ri(2, 6) = C[2][i];   Ri(2, 7) = C[3][i];
+		Ri(3, 4) = C[1][i];   Ri(3, 5) = C[2][i];   Ri(3, 6) = C[3][i];
+
+		Ri(4, 5) = D[1][i];   Ri(4, 6) = D[2][i];   Ri(4, 7) = D[3][i];
+		Ri(5, 4) = D[1][i];   Ri(5, 5) = D[2][i];   Ri(5, 6) = D[3][i];
+		Ri(6, 1) = D[1][i];   Ri(6, 2) = D[2][i];   Ri(6, 3) = D[3][i];
+		Ri(7, 0) = D[1][i];   Ri(7, 1) = D[2][i];   Ri(7, 2) = D[3][i];
+	}
 }
 
-void test_polyProduct6x6() {
-  utility::vector1<Real> A (7), B (7), C;
-  A[1]=366130000.0;
-  A[2]=0.0;
-  A[3]=316600000.0;
-  A[4]=0.0;
-  A[5]=-47950000.0;
-  A[6]=0.0;
-  A[7]=920000.0;
-  B[1]=1790200000.0;
-  B[2]=0.0;
-  B[3]=2113200000.0;
-  B[4]=0.0;
-  B[5]=317100000.0;
-  B[6]=0.0;
-  B[7]=-8300000.0;
-  polyProduct6x6(A,B,C);
-  printVector(C);
-  // output should be 1.0e+18*{0.6554, 0.0, 1.3405, 0.0, 0.6993, 0.0, -0.0023, 0.0, -0.0159, 0.0}, 6.89717e+14, 0.0, -7.636e+12
-  return;
+// build_sin_and_cos {{{1
+void build_sin_and_cos(
+		PseudoMatrix const & u, PseudoMatrix & sin, PseudoMatrix & cos) {
+
+	// The variable names used here mostly correspond to those used by:
+	// Coutsias, Seok, Wester, Dill; Int. J. Quant. Chem. 106:176-189 (2006).
+
+	int num_solutions = u.size();
+	double u_squared, u_squared_plus_1;
+
+	cos.resize(num_solutions);
+	sin.resize(num_solutions);
+
+	for (int i = 1; i <= num_solutions; i++) {
+		cos[i].resize(3);
+		sin[i].resize(3);
+
+		for (int j = 1; j <= 3; j++) {
+			u_squared = u[i][j] * u[i][j];
+			u_squared_plus_1 = u_squared + 1;
+
+			cos[i][j] = (1 - u_squared) / u_squared_plus_1;
+			sin[i][j] = 2 * u[i][j] / u_squared_plus_1;
+		}
+	}
 }
 
-void test_polyProduct4sq() {
-  utility::vector1<Real> A (5), C;
-  A[1]=126600.0;
-  A[2]=0.0;
-  A[3]=-28200.0;
-  A[4]=0.0;
-  A[5]=-2890.0;
-  polyProduct4sq(A,C);
-  printVector(C);
-  // output should be 1.0e+10*{1.6027, 0.0, -0.7140, 0.0, 0.0063, 0.0, 0.0163, 0.0, 0.0008}
-  return;
+void dixon_eig( // {{{1
+		PseudoMatrix const & A,
+		PseudoMatrix const & B,
+		PseudoMatrix const & C,
+		PseudoMatrix const & D,
+		vector1<int> const & order,
+		PseudoMatrix & cos,
+		PseudoMatrix & sin,
+		PseudoMatrix & u,
+		int & num_solutions) {
+
+	// The variable names used here mostly correspond to those used by:
+	// Coutsias, Seok, Wester, Dill; Int. J. Quant. Chem. 106:176-189 (2006).
+	//
+	// An exception is made for the script A and B variables, which represent the 
+	// 16x16 matrices used to setup to generalized eigenvalue problem, because 
+	// the non-script A and B variables are already in use.  Instead, script A 
+	// and B will be named U and V, respectively.
+
+	// Fill in the Dixon matrices.
+	Matrix8 R0, R1, R2;
+	build_dixon_matrices(A, B, C, D, R0, R1, R2);
+
+	// Setup the eigenvalue problem.
+	Matrix16 U = Matrix16::Zero();
+	Matrix16 V = Matrix16::Zero();
+	Matrix8 I = Matrix8::Identity();
+
+	U.topRightCorner(8, 8) = I;
+	U.bottomLeftCorner(8, 8) = -R0;
+	U.bottomRightCorner(8, 8) = -R1;
+
+	V.topLeftCorner(8, 8) = I;
+	V.bottomRightCorner(8, 8) = R2;
+
+	// Solve the eigenvalue problem.
+	SolverType solver(U, V);
+	SolverType::RealEigenvalueType eigenvalues = solver.real_eigenvalues();
+	SolverType::RealEigenvectorType eigenvectors = solver.real_eigenvectors();
+
+	// Extract the closure variables.
+	num_solutions = solver.num_real_solutions();
+	u.resize(num_solutions);
+
+	for (int i = 0; i < num_solutions; i++) {
+		u[i+1].resize(3);
+
+		if (abs(eigenvectors(0, i)) > 1e-8) {
+			u[i+1][1] = eigenvectors(1, i) / eigenvectors(0, i);
+			u[i+1][2] = eigenvectors(4, i) / eigenvectors(0, i);
+		}
+		else {
+			u[i+1][1] = eigenvectors(3, i) / eigenvectors(2, i);
+			u[i+1][2] = eigenvectors(6, i) / eigenvectors(2, i);
+		}
+
+		u[i+1][3] = eigenvalues(i);
+	}
+
+	build_sin_and_cos(u, sin, cos);
 }
 
-void test_polyProduct4x4() {
-  utility::vector1<Real> A (5), B (5), C;
-  A[1]=126940.0;
-  A[2]=0.0;
-  A[3]=-28110.0;
-  A[4]=0.0;
-  A[5]=-2890.0;
-  B[1]=0.0;
-  B[2]=172730.0;
-  B[3]=0.0;
-  B[4]=20800.0;
-  B[5]=0.0;
-  polyProduct4x4(A,B,C);
-  printVector(C);
-  // output should be 1.0e+10*{0.0, 2.1927, 0.0, -0.2216, 0.0, -0.1085, 0.0, -0.0060, 0.0}
-  return;
-}
+void dixon_sturm( // {{{1
+		const utility::vector1<utility::vector1<Real> >& A,
+		const utility::vector1<utility::vector1<Real> >& B,
+		const utility::vector1<utility::vector1<Real> >& C,
+		const utility::vector1<utility::vector1<Real> >& D,
+		const utility::vector1<int>& order,
+		utility::vector1<utility::vector1<Real> >& cos,
+		utility::vector1<utility::vector1<Real> >& sin,
+		utility::vector1<utility::vector1<Real> >& tau, int& nsol) {
 
-void test_polyProduct4x2() {
-  utility::vector1<Real> A (5), B (3), C;
-  A[1]=0.0;
-  A[2]=-108950.0;
-  A[3]=0.0;
-  A[4]=43180.0;
-  A[5]=0.0;
-  B[1]=0.0;
-  B[2]=-1799.10;
-  B[3]=0.0;
-  polyProduct4x2(A,B,C);
-  printVector(C);
-  // output should be 1.0e+08 * {0.0, 0.0, 1.9601, 0.0, -0.7769, 0.0, 0.0}
-  return;
-}
-
-void test_polyProduct2x2() {
-  utility::vector1<Real> A (3), B (3), C;
-  A[1]=15.999410431075338;
-  A[2]=0.0;
-  A[3]=-8.999904923464781;
-  B[1]=72.015965384650187;
-  B[2]=0.0;
-  B[3]=7.000641402062060;
-  polyProduct2x2(A,B,C);
-  printVector(C);
-  // output should be 1.03e+03 * {1.152212987779133, 0.0, -0.536130706361013, 0.0, -0.063005107021830}
-  return;
-}
-
-void dixon(const utility::vector1<utility::vector1<Real> >& A, const utility::vector1<utility::vector1<Real> >& B, const utility::vector1<utility::vector1<Real> >& C, const utility::vector1<utility::vector1<Real> >& D, const utility::vector1<int>& order, utility::vector1<utility::vector1<Real> >& cos, utility::vector1<utility::vector1<Real> >& sin, utility::vector1<utility::vector1<Real> >& tau, int& nsol) {
+	using utility::vector1;
 	using namespace numeric::kinematic_closure;
 
 	utility::vector1<Real> ddet (17); // Dixon determinant
-  utility::vector1<Real> A0D1, A1D0, A1D2, A2D1, A0D2, A2D0, B0D1, B0D2, B1D0, B1D2, B2D0, B2D1, C0D1, C0D2, C1D0, C1D2, C2D0, C2D1, D0D2; // 1. Products of 2 quadratics
+	utility::vector1<Real> A0D1, A1D0, A1D2, A2D1, A0D2, A2D0, B0D1, B0D2, B1D0, B1D2, B2D0, B2D1, C0D1, C0D2, C1D0, C1D2, C2D0, C2D1, D0D2; // 1. Products of 2 quadratics
 	utility::vector1<Real> Det11, Det12, Det13, Det21, Det22, Det23, Det31, Det32, Det33; // 2. Sums of quartics;
 	utility::vector1<Real> D1131, D1132, D1231, D1232, D1233, D1332, D1333, D2122, D2223; // 3. Products of 2 quartics
 	utility::vector1<Real> D2121, D2222, D2323; // 4. Squares of quartics
@@ -457,42 +529,42 @@ void dixon(const utility::vector1<utility::vector1<Real> >& A, const utility::ve
 	//utility::vector1<utility::vector1<Real> > tau (16); // half tangents
 	utility::vector1<utility::vector1<Real> > tsq (16); // tau.^2
 	utility::vector1<utility::vector1<Real> > tsq1 (16); // tsq+1
-  // sturm initialization constants
-  Real tol_secant=1.0e-15;
-  int max_iter_sturm=100, max_iter_secant=20;
+	// sturm initialization constants
+	Real tol_secant=1.0e-15;
+	int max_iter_sturm=100, max_iter_secant=20;
 	int p_order=16; // order of polynomial for sturm
 	utility::vector1<Real> Q (17); // polynomial coefficients for sturm solver
 	utility::vector1<Real> roots; // roots found by sturm solver
 
-  ////----------------------------------------------------------------------------
+	////----------------------------------------------------------------------------
 	// A: Characteristic polynomial via Lagrange 4x4-expansion of Dixon determinant.
 	//    Roots of characteristic polynomial will give tau[3]. In B, we'll use
 	//    Cramer's rule to derive tau[1] and tau[2] from tau[3].
 	////----------------------------------------------------------------------------
 
-  //-----------------------------------
-  //A1. Products of 2 quadratics
-  //   (19 * 13ops = 247ops]
-  //-----------------------------------
-  polyProduct2x2(A[1],D[2],A0D1); // A0*D1
-  polyProduct2x2(A[2],D[1],A1D0); // A1*D0:
-  polyProduct2x2(A[2],D[3],A1D2); // A1*D2:
-  polyProduct2x2(A[3],D[2],A2D1); // A2*D1:
-  polyProduct2x2(A[1],D[3],A0D2); // A0*D2:
-  polyProduct2x2(A[3],D[1],A2D0); // A2*D0:
-  polyProduct2x2(B[1],D[2],B0D1); // B0*D1:
-  polyProduct2x2(B[1],D[3],B0D2); // B0*D2:
-  polyProduct2x2(B[2],D[1],B1D0); // B1*D0:
-  polyProduct2x2(B[2],D[3],B1D2); // B1*D2:
-  polyProduct2x2(B[3],D[1],B2D0); // B2*D0:
-  polyProduct2x2(B[3],D[2],B2D1); // B2*D1:
-  polyProduct2x2(C[1],D[2],C0D1); // C0*D1:
-  polyProduct2x2(C[1],D[3],C0D2); // C0*D2:
-  polyProduct2x2(C[2],D[1],C1D0); // C1*D0:
-  polyProduct2x2(C[2],D[3],C1D2); // C1*D2:
-  polyProduct2x2(C[3],D[1],C2D0); // C2*D0:
-  polyProduct2x2(C[3],D[2],C2D1); // C2*D1:
-  polyProduct2x2(D[1],D[3],D0D2); // D0*D2:
+	//-----------------------------------
+	//A1. Products of 2 quadratics
+	//   (19 * 13ops = 247ops]
+	//-----------------------------------
+	polyProduct2x2(A[1],D[2],A0D1); // A0*D1
+	polyProduct2x2(A[2],D[1],A1D0); // A1*D0:
+	polyProduct2x2(A[2],D[3],A1D2); // A1*D2:
+	polyProduct2x2(A[3],D[2],A2D1); // A2*D1:
+	polyProduct2x2(A[1],D[3],A0D2); // A0*D2:
+	polyProduct2x2(A[3],D[1],A2D0); // A2*D0:
+	polyProduct2x2(B[1],D[2],B0D1); // B0*D1:
+	polyProduct2x2(B[1],D[3],B0D2); // B0*D2:
+	polyProduct2x2(B[2],D[1],B1D0); // B1*D0:
+	polyProduct2x2(B[2],D[3],B1D2); // B1*D2:
+	polyProduct2x2(B[3],D[1],B2D0); // B2*D0:
+	polyProduct2x2(B[3],D[2],B2D1); // B2*D1:
+	polyProduct2x2(C[1],D[2],C0D1); // C0*D1:
+	polyProduct2x2(C[1],D[3],C0D2); // C0*D2:
+	polyProduct2x2(C[2],D[1],C1D0); // C1*D0:
+	polyProduct2x2(C[2],D[3],C1D2); // C1*D2:
+	polyProduct2x2(C[3],D[1],C2D0); // C2*D0:
+	polyProduct2x2(C[3],D[2],C2D1); // C2*D1:
+	polyProduct2x2(D[1],D[3],D0D2); // D0*D2:
 
 	//-----------------------------------
 	//A2. Sums of  quartics
@@ -646,9 +718,6 @@ void dixon(const utility::vector1<utility::vector1<Real> >& A, const utility::ve
 		tau[i][order[3]]=roots[i];  // restoring column-major indexing!
 	}
 
-	//dixonResultant(A,B,C,D,R);
-  //printMatrix(R[2]);
-
 	////---------------------------------------------------------------------
 	// B: Determination of tau[1] and tau[2] from tau[3] using Cramers' rule
   ////---------------------------------------------------------------------
@@ -757,7 +826,6 @@ void dixon(const utility::vector1<utility::vector1<Real> >& A, const utility::ve
 		tau[i][order[2]] = -cram_num2[i] / crden[i]; // DJM: division inside for-loop!
 	}                                              // and restoring column-major indexing!
 
-
 	//----------------------------------------
 	//B4. Compute the output sines and cosines
 	//----------------------------------------
@@ -777,9 +845,127 @@ void dixon(const utility::vector1<utility::vector1<Real> >& A, const utility::ve
 			sin[i][j]=2 * tau[i][j] / tsq1[i][j];  // of for-loops!
 		}
 	}
+
+  return;
+}
+// }}}1
+
+// test_point_value2 {{{1
+void test_point_value2() {
+	utility::vector1<Real> A(3), t(16), C;
+	A[1]=0.0;
+	A[2]=-60;
+	A[3]=0.0;
+	t[1]=7.4248;
+	t[2]=5.3100;
+ 	t[3]=0.0;
+ 	t[4]=0.0;
+ 	t[5]=0.0;
+ 	t[6]=0.0;
+ 	t[7]=0.0;
+ 	t[8]=0.0;
+ 	t[9]=0.0;
+ 	t[10]=0.0;
+ 	t[11]=0.0;
+ 	t[12]=0.0;
+ 	t[13]=0.0;
+ 	t[14]=0.0;
+ 	t[15]=0.0;
+ 	t[16]=0.0;
+	point_value2(A,t,C);
+	printVector(C);
+	// output should be { -445.4891, -318.6002, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0,0.0, 0.0, 0.0}
+}
+
+// test_polyProduct6x6 {{{1
+void test_polyProduct6x6() {
+  utility::vector1<Real> A (7), B (7), C;
+  A[1]=366130000.0;
+  A[2]=0.0;
+  A[3]=316600000.0;
+  A[4]=0.0;
+  A[5]=-47950000.0;
+  A[6]=0.0;
+  A[7]=920000.0;
+  B[1]=1790200000.0;
+  B[2]=0.0;
+  B[3]=2113200000.0;
+  B[4]=0.0;
+  B[5]=317100000.0;
+  B[6]=0.0;
+  B[7]=-8300000.0;
+  polyProduct6x6(A,B,C);
+  printVector(C);
+  // output should be 1.0e+18*{0.6554, 0.0, 1.3405, 0.0, 0.6993, 0.0, -0.0023, 0.0, -0.0159, 0.0}, 6.89717e+14, 0.0, -7.636e+12
   return;
 }
 
+// test_polyProduct4sq {{{1
+void test_polyProduct4sq() {
+  utility::vector1<Real> A (5), C;
+  A[1]=126600.0;
+  A[2]=0.0;
+  A[3]=-28200.0;
+  A[4]=0.0;
+  A[5]=-2890.0;
+  polyProduct4sq(A,C);
+  printVector(C);
+  // output should be 1.0e+10*{1.6027, 0.0, -0.7140, 0.0, 0.0063, 0.0, 0.0163, 0.0, 0.0008}
+  return;
+}
+
+// test_polyProduct4x4 {{{1
+void test_polyProduct4x4() {
+  utility::vector1<Real> A (5), B (5), C;
+  A[1]=126940.0;
+  A[2]=0.0;
+  A[3]=-28110.0;
+  A[4]=0.0;
+  A[5]=-2890.0;
+  B[1]=0.0;
+  B[2]=172730.0;
+  B[3]=0.0;
+  B[4]=20800.0;
+  B[5]=0.0;
+  polyProduct4x4(A,B,C);
+  printVector(C);
+  // output should be 1.0e+10*{0.0, 2.1927, 0.0, -0.2216, 0.0, -0.1085, 0.0, -0.0060, 0.0}
+  return;
+}
+
+// test_polyProduct4x2 {{{1
+void test_polyProduct4x2() {
+  utility::vector1<Real> A (5), B (3), C;
+  A[1]=0.0;
+  A[2]=-108950.0;
+  A[3]=0.0;
+  A[4]=43180.0;
+  A[5]=0.0;
+  B[1]=0.0;
+  B[2]=-1799.10;
+  B[3]=0.0;
+  polyProduct4x2(A,B,C);
+  printVector(C);
+  // output should be 1.0e+08 * {0.0, 0.0, 1.9601, 0.0, -0.7769, 0.0, 0.0}
+  return;
+}
+
+// test_polyProduct2x2 {{{1
+void test_polyProduct2x2() {
+  utility::vector1<Real> A (3), B (3), C;
+  A[1]=15.999410431075338;
+  A[2]=0.0;
+  A[3]=-8.999904923464781;
+  B[1]=72.015965384650187;
+  B[2]=0.0;
+  B[3]=7.000641402062060;
+  polyProduct2x2(A,B,C);
+  printVector(C);
+  // output should be 1.03e+03 * {1.152212987779133, 0.0, -0.536130706361013, 0.0, -0.063005107021830}
+  return;
+}
+
+// test_dixon() {{{1
 void test_dixon() {
   Real Avals[]={-0.061472096577788, -2.424098126176366, -0.016332287075674, 2.421954432062721, -0.090242315482933, 0.643479843225995, 0.061472096577788, -0.646358402699405, 0.016332287075674};
   Real Bvals[]={-0.000625561301665, 0.0, 1.070810990722253,  0.054344479784912, 0.0, 0.054308028868740, -1.071191403371629, 0.0, 0.000963218011333};
@@ -822,14 +1008,16 @@ void test_dixon() {
   order[3]=3;
 
   // compute Dixon resultant
-  dixon(A, B, C, D, order, cos, sin, tau, nsol);
+	//dixon(A, B, C, D, order, cos, sin, tau, nsol);
 
-	//std::cout << "number of solutions" << nsol << std::endl;
+	cout << "number of solutions" << nsol << std::endl;
 	printMatrix(cos);
 	printMatrix(sin);
   return;
 }
+// }}}1
 
+// main (commented out) {{{1
 // int main(int argc, char** argv)
 // {
 //   //test_polyProduct2x2();
@@ -842,6 +1030,7 @@ void test_dixon() {
 // 	test_dixon();
 // 	//}
 // }
+// }}}1
 
 } // end namespace kinematic_closure
 } // end namespace numeric

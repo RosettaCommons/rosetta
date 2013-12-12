@@ -1,0 +1,11 @@
+-I../..
+-I../../src
+-I../../external/cxxtest
+-I../../external/boost_1_46_1
+-I../../external/include
+-I../../src/platform/linux
+-I../../external/dbio/sqlite3
+-I../../external/dbio
+-I../../external
+-I../../test
+

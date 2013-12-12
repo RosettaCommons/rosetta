@@ -1,0 +1,9 @@
+Every loop conformation the algorithm comes up with is worse than the original.  
+So the only moves that are accepted are those where the algorithm restores the 
+starting structure because it can't find any new solutions.
+
+This brings up an interesting point about how to accurately quantify the 
+acceptance rate.  I want to know how many novel conformations were accepted and 
+how many conformations were simply restored.  This would be a good thing to 
+have a logger for, if possible.  I might need some information that's pretty 
+internal to the StandardKicSampler.

@@ -1,0 +1,3 @@
+SEQUENCE: 
+SCORE: total_score dslf_ca_dih dslf_cs_ang dslf_ss_dih dslf_ss_dst      fa_atr      fa_dun fa_intra_rep      fa_pair       fa_rep       fa_sol hbond_bb_sc hbond_lr_bb    hbond_sc hbond_sr_bb       omega     p_aa_pp pro_close      rama       ref description 
+SCORE:    -549.070       0.000       0.000       0.000       0.000   -1038.489     190.716        2.299      -20.829      128.672      503.131     -26.901     -89.948     -16.058     -74.512       5.368     -33.898     2.556   -17.306   -63.870 1f46_0001

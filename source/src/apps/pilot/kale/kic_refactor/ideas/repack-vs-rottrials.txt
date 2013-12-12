@@ -1,0 +1,15 @@
+Extended Rotamer Library
+========================
+Repack: 90
+RotamerTrials: 50
+
+RotamerTrials: 52
+Repack: 116
+
+Normal Rotamer Library
+======================
+Repack: 10
+RotamerTrials: 25
+
+RotamerTrials: 27
+Repack: 10

@@ -598,6 +598,56 @@ loops_set_move_map(
 
 }
 
+///////////////////////////////////////////////////////////////////////////////
+/// @details Wrapper around loops_set_move_map which works on a single loop 
+/// object and returns a MoveMapOP.  See the detailed documentation for 
+/// loops_set_move_map for more information about the generated MoveMap.
+///////////////////////////////////////////////////////////////////////////////
+
+core::kinematics::MoveMapOP
+move_map_from_loops(
+		core::pose::Pose & pose,
+		Loops const & loops,
+		bool const fix_template_sc,
+		core::Real neighbor_dist,
+		bool const flanking_residues
+)
+{
+	using core::kinematics::MoveMap;
+	using core::kinematics::MoveMapOP;
+
+	MoveMapOP move_map = new MoveMap;
+	loops_set_move_map(pose, loops, fix_template_sc, *move_map, neighbor_dist);
+
+	if (flanking_residues) {
+		add_loop_flank_residues_bb_to_movemap(loops, *move_map);
+	}
+
+	return move_map;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// @details Wrapper around loops_set_move_map which works on a single loop 
+/// object and returns a MoveMapOP.  See the detailed documentation for 
+/// loops_set_move_map for more information about the generated MoveMap.
+///////////////////////////////////////////////////////////////////////////////
+
+core::kinematics::MoveMapOP
+move_map_from_loop(
+		core::pose::Pose & pose,
+		Loop const & loop,
+		bool const fix_template_sc,
+		core::Real neighbor_dist,
+		bool const flanking_residues
+)
+{
+	Loops loops = Loops();
+	loops.add_loop(loop);
+
+	return move_map_from_loops(
+			pose, loops, fix_template_sc, neighbor_dist, flanking_residues);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 /// @details omega backbone torsion is always fixed. phi/psi backbone torsions within
 /// the loop region are flexible. Depending on whether -fix_natsc flag, sidechain DOFs
@@ -769,6 +819,22 @@ void select_loop_residues(
 }
 
 /////////////////////////////////////////////////////////////////////////////
+///@details use 10A CB distance cutoff as neighboring residue defintion. The function
+///is used for conveniently setting up sidechain movable residues in loop modeling.
+///The 10A residue set is further reduced if neighbor_dist < 10.0
+utility::vector1<bool> select_loop_residues(
+	pose::Pose const & pose,
+	Loops const & loops,
+	bool const include_neighbors,
+	Real neighbor_dist
+)
+{
+	utility::vector1<bool> map(pose.total_residue(), false);
+	select_loop_residues(pose, loops, include_neighbors, map, neighbor_dist);
+	return map;
+}
+
+/////////////////////////////////////////////////////////////////////////////
 ///@details for one loop only
 void select_loop_residues(
 	pose::Pose const & pose,
@@ -782,6 +848,20 @@ void select_loop_residues(
 	loops.add_loop( loop );
 	select_loop_residues( pose, loops, include_neighbors, map, neighbor_dist );
 	return;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+///@details for one loop only
+utility::vector1<bool> select_loop_residues(
+	pose::Pose const & pose,
+	Loop const & loop,
+	bool const include_neighbors,
+	Real neighbor_dist
+)
+{
+	utility::vector1<bool> map(pose.total_residue(), false);
+	select_loop_residues(pose, loop, include_neighbors, map, neighbor_dist);
+	return map;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////

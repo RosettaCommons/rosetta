@@ -1,0 +1,6 @@
+1. Repack first to strip native sidechains.
+2. Then minpack.
+
+(Also, I didn't use the right energy function when preprocessing the master run.)
+
+

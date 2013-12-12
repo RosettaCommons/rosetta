@@ -1,0 +1,36 @@
+ATOM      1  N   GLY     1       1.906  -0.927  -1.742
+ATOM      2  CA  GLY     1       0.468  -1.187  -2.229
+ATOM      3  C   GLY     1      -0.602  -0.666  -1.251
+ATOM      4  N   GLY     2       0.000   0.000   0.000
+ATOM      5  CA  GLY     2       1.540   0.000   0.000
+ATOM      6  C   GLY     2       2.142   1.418   0.000
+ATOM      7  N   GLY     3       3.037   1.691  -1.223
+ATOM      8  CA  GLY     3       4.356   0.897  -1.192
+ATOM      9  C   GLY     3       4.195  -0.557  -1.673
+ATOM     10  N   GLY     4       3.997  -0.668  -3.196
+ATOM     11  CA  GLY     4       3.735  -2.112  -3.665
+ATOM     12  C   GLY     4       3.168  -3.012  -2.552
+ATOM     13  N   GLY     5       2.647  -2.216  -1.341
+ATOM     14  CA  GLY     5       1.906  -0.927  -1.742
+ATOM     15  C   GLY     5       0.468  -1.187  -2.229
+ATOM     16  N   GLY     6      -0.602  -0.666  -1.251
+ATOM     17  CA  GLY     6       0.000   0.000   0.000
+ATOM     18  C   GLY     6       1.540   0.000   0.000
+
+CONECT    1    2
+CONECT    2    3
+CONECT    3    4
+CONECT    4    5
+CONECT    5    6
+CONECT    6    7
+CONECT    7    8
+CONECT    8    9
+CONECT    9   10
+CONECT   10   11
+CONECT   11   12
+CONECT   12   13
+CONECT   13   14
+CONECT   14   15
+CONECT   15   16
+CONECT   16   17
+CONECT   17   18

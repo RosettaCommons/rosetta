@@ -85,7 +85,21 @@ void sincos (const utility::vector1<Real>& theta,
  * Sets up characteristic polynomial matrices A,B,C,D from tripeptide parameters
  */
 
-void triaxialCoefficients(const utility::vector1<Real>& vb, const utility::vector1<Real>& xi, const utility::vector1<Real>& eta, const utility::vector1<Real>& delta, const utility::vector1<Real>& theta, const utility::vector1<int>& order, utility::vector1<utility::vector1<Real> >& A, utility::vector1<utility::vector1<Real> >& B, utility::vector1<utility::vector1<Real> >& C, utility::vector1<utility::vector1<Real> >& D, utility::vector1<Real>& cal, utility::vector1<Real>& sal, int& f) {
+void triaxialCoefficients(
+		const utility::vector1<Real>& vb,
+		const utility::vector1<Real>& xi,
+		const utility::vector1<Real>& eta,
+		const utility::vector1<Real>& delta,
+		const utility::vector1<Real>& theta,
+		const utility::vector1<int>& order,
+		utility::vector1<utility::vector1<Real> >& A,
+		utility::vector1<utility::vector1<Real> >& B,
+		utility::vector1<utility::vector1<Real> >& C,
+		utility::vector1<utility::vector1<Real> >& D,
+		utility::vector1<Real>& cal,
+		utility::vector1<Real>& sal,
+		int& f) {
+
   utility::vector1<Real> ctheta (4), calpha (4), salpha (4), cxi (3), sxi (3), ceta (4), seta (4), cdelta (3), sdelta (3), caceta (4), caseta (4), saceta (4), saseta (4), capeta (4), sapeta (4), cameta (4), sameta (4);
   Real am, ap, cdsx, sdsx, b, bm, bp, d, dp, dm;
   utility::vector1<utility::vector1<Real> > L, M, N;
@@ -536,6 +550,18 @@ void chainXYZ(const int& n,
 	 */
 }
 
+void chainXYZ(
+		const int& n,
+		const utility::vector1<Real>& b_len,
+		const utility::vector1<Real>& b_ang,
+		const utility::vector1<Real>& t_ang,
+		utility::vector1<utility::vector1<Real> >& atoms) {
+
+	utility::vector1<Real> dummy_R0;
+	utility::vector1<utility::vector1<Real> > dummy_Q;
+
+	chainXYZ(n, b_len, b_ang, t_ang, false, dummy_R0, dummy_Q, atoms);
+}
 
 /*        chainTORS
 //        ---------
@@ -776,8 +802,13 @@ void bridgeObjects (const utility::vector1<utility::vector1<Real> >& atoms,
 	// check feasibility of arrangement and define polynomial coefficients
 	triaxialCoefficients( vbond, xi, eta, delta, theta, order, A, B, C, D, cal, sal, f );
 
+	if (f == 0) {
+		nsol = 0;
+		return;
+	}
+
 	// find the solutions
-	dixon( A, B, C, D, order, cosines, sines, taus, nsol );
+	dixon_eig( A, B, C, D, order, cosines, sines, taus, nsol );
 
 	// reconstruct the molecular chain with new torsions
 	loop.resize(nsol);
@@ -1352,7 +1383,7 @@ void test_triaxialCoefficients() {
 
   triaxialCoefficients(vb, xi, eta, delta, theta, order, A, B, C, D, cal, sal, f);
   printMatrix(B);
-  dixon(A,B,C,D,order,sines,cosines,tau,nsol);
+  dixon_sturm(A,B,C,D,order,sines,cosines,tau,nsol);
   //std::cout << nsol << std::endl;
   //printMatrix(sines);
 

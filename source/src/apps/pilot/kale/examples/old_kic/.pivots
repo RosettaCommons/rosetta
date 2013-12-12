@@ -1,0 +1,4 @@
+select pivots, resi 2+7+12 and name ca
+set sphere_scale, 0.2
+show spheres, pivots
+select

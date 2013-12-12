@@ -36,7 +36,6 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 
-
 namespace protocols {
 namespace loops {
 namespace loop_closure {

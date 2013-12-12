@@ -46,7 +46,7 @@ public:
 
 	virtual void setSeed(std::string const & seed) = 0;  //< some generator take more than int to init
 
-	//virtual string getSeed();
+	virtual int getSeed() = 0;
 
 	virtual double getRandom() = 0;
 
@@ -66,15 +66,20 @@ public:
 
 	inline virtual ~standard_RG() {}
 
-	inline void setSeed(int const seed) { srand( seed ); }
+	inline void setSeed(int const seed) { seed_ = seed; srand( seed_ ); }
 
 	inline void setSeed(std::string const &) { assert( false ); } // Not implemented yet!
+
+	inline int getSeed() { return seed_; }
 
 	inline double getRandom() { return (double)rand() / (double)RAND_MAX; }
 
 	virtual void saveState(std::ostream & /*out*/) { assert( false ); } // Not implemented yet!
 
 	virtual void restoreState(std::istream & /*in*/) { assert( false ); } // Not implemented yet!
+
+private:
+	int seed_;
 
 }; // standard_RG
 

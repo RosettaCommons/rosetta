@@ -9396,6 +9396,21 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-kic_small_moves</b> \<Boolean\><dt>
+<dd>sample torsions by adding or subtracting a small amount from the previous value, instead of picking from the Ramachandran distribution.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-kic_small_move_magnitude</b> \<Real\><dt>
+<dd>specify the magnitude of the small moves.  Only meant to be used for initial testing and optimization.</dd><br>
+<dd>Default: 5.0</dd><br>
+</dl>
+<dl>
+<dt><b>-kic_pivot_based</b> \<Boolean\><dt>
+<dd>use ramachandran sampling if the pivots are closer than 8 residues apart, otherwise use small moves.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-kic_no_centroid_min</b> \<Boolean\><dt>
 <dd>don't minimize in centroid mode during KIC perturb</dd><br>
 <dd>Default: false</dd><br>

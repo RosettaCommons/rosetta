@@ -1,0 +1,54 @@
+Sampler classes:
+- Responsible for generating new structures.
+- Examples: 
+    - StandardKic: Perturb loop and refine
+    - BalancedKic: Perturb with balance
+    - MonteCarloKic: Make small moves
+    - WiggleKic: Allow endpoints to wiggle
+
+Sampler Variants:
+- Make it easy to experiment with different algorithms.
+- Examples:
+    - BalancedKic with different side chain movers
+    - StandardKic with and without refinement
+
+Scoring:
+
+Monte Carlo:
+
+-----------------
+
+Fundamentally there needs to be a loop.  In practice this seems to be a nested 
+loop, but I should be able to turn any loop into a nested loop.
+
+Within the loop:
+- Sample
+- Filter (one or more)
+- Refine (one or more)
+- Accept
+
+-----------------
+
+LoopMover
+- Contains a list of components, or tasks.
+- Each task has an apply function which:
+    - Accepts a non-const pose.
+    - Returns a boolean indicating whether or not the move should be rejected 
+      out of hand.
+- The mover implements the following algorithm:
+    - Pick a loop to sample.
+    - Invoke each task in turn, stopping if any returns false.
+    - Decide whether or accept or reject the move.
+
+LoopProtocol
+- Manages the for-loops around the LoopMover.
+- Contains a list of ForLoopTasks.  Each task corresponds to a for-loop and is 
+  responsible for controlled what that for-loop does.  Some examples:
+    - RampTemperatureTask
+    - RampScoreWeightsTask
+    - IterateTask - Doesn't do anything, just loops the specified number of 
+      times.
+  
+----------------
+
+

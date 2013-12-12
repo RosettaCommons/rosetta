@@ -23,6 +23,7 @@
 namespace numeric {
 namespace conversions {
 
+enum AngleUnit { RADIANS, DEGREES };
 
 /// @brief Radians of degrees
 template< typename T >
@@ -31,6 +32,19 @@ T
 radians( T const & degrees )
 {
 	return degrees * NumericTraits< T >::degrees_to_radians();
+}
+
+
+/// @brief Radians of any angle
+template< typename T >
+inline
+T
+radians( T const & angle, AngleUnit const unit )
+{
+	switch (unit) {
+		case RADIANS: return angle;
+		case DEGREES: return angle * NumericTraits< T >::degrees_to_radians();
+	}
 }
 
 
@@ -44,6 +58,19 @@ to_radians( T & degrees )
 }
 
 
+/// @brief Radians from any angle
+template< typename T >
+inline
+T &
+to_radians( T & angle, AngleUnit const unit )
+{
+	switch (unit) {
+		case RADIANS: return angle;
+		case DEGREES: return angle *= NumericTraits< T >::degrees_to_radians();
+	}
+}
+
+
 /// @brief Degrees of radians
 template< typename T >
 inline
@@ -54,6 +81,19 @@ degrees( T const & radians )
 }
 
 
+/// @brief Degrees of any angle
+template< typename T >
+inline
+T
+degrees( T const & angle, AngleUnit const unit )
+{
+	switch (unit) {
+		case RADIANS: return angle * NumericTraits< T >::radians_to_degrees();
+		case DEGREES: return angle;
+	}
+}
+
+
 /// @brief Degrees from radians
 template< typename T >
 inline
@@ -61,6 +101,45 @@ T &
 to_degrees( T & radians )
 {
 	return radians *= NumericTraits< T >::radians_to_degrees();
+}
+
+
+/// @brief Degrees from any angle
+template< typename T >
+inline
+T &
+to_degrees( T & angle, AngleUnit const unit )
+{
+	switch (unit) {
+		case RADIANS: return angle *= NumericTraits< T >::radians_to_degrees();
+		case DEGREES: return angle;
+	}
+}
+
+
+/// @brief Any angle from radians
+template< typename T >
+inline
+T
+from_radians( T const & angle, AngleUnit const unit )
+{
+	switch (unit) {
+		case RADIANS: return angle;
+		case DEGREES: return angle * NumericTraits< T >::radians_to_degrees();
+	}
+}
+
+
+/// @brief Any angle from radians
+template< typename T >
+inline
+T
+from_degrees( T const & angle, AngleUnit const unit )
+{
+	switch (unit) {
+		case RADIANS: return angle * NumericTraits< T >::degrees_to_radians();
+		case DEGREES: return angle;
+	}
 }
 
 

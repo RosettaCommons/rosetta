@@ -1,0 +1,3 @@
+I think I might have fucked up the standard kic implementation by switching 
+bridgeObjects() to radians instead of degrees.  I'm not sure, though.  I should 
+definitely test the existing code, though.

@@ -83,6 +83,26 @@
 #include <protocols/loops/util.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
+
+// Refactored Kic headers
+#include <protocols/loop_modeling/types.hh>
+#include <protocols/loop_modeling/LoopProtocol.hh>
+#include <protocols/loop_modeling/LoopMover.hh>
+#include <protocols/loop_modeling/LoopMoverTask.hh>
+#include <protocols/loop_modeling/samplers/KicSampler.hh>
+#include <protocols/loop_modeling/samplers/BalancedKicSampler.hh>
+#include <protocols/loop_modeling/samplers/LegacyKicSampler.hh>
+#include <protocols/loop_modeling/refiners/LocalMinimizationRefiner.hh>
+#include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
+#include <protocols/loop_modeling/refiners/RepackingRefiner.hh>
+#include <protocols/loop_modeling/utilities/RepeatedTask.hh>
+#include <protocols/loop_modeling/utilities/PeriodicTask.hh>
+#include <protocols/loop_modeling/loggers/Logger.hh>
+#include <protocols/loop_modeling/loggers/ProgressBar.hh>
+#include <protocols/loop_modeling/loggers/AcceptanceRates.hh>
+#include <protocols/loop_modeling/loggers/PdbLogger.hh>
+#include <protocols/loop_modeling/loggers/ScoreVsRmsd.hh>
+
 #ifdef GL_GRAPHICS
 #include <protocols/viewer/viewers.hh>  // this was auto-removed but is needed for graphics builds!
 #endif
@@ -1018,7 +1038,63 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				loops::loop_mover::refine::LoopMover_Refine_KIC refine_kic( loops, fa_scorefxn_ );
 				refine_kic.set_native_pose( new core::pose::Pose ( native_pose ) );
 				refine_kic.apply( pose );
+			} else
+			if ( refine() == "refine_kic_refactor" ) {
+				using protocols::loop_modeling::LoopProtocol;
+				using protocols::loop_modeling::LoopProtocolOP;
+				using protocols::loop_modeling::LoopMover;
+				using protocols::loop_modeling::LoopMoverOP;
+				using protocols::loop_modeling::samplers::KicSampler;
+				using protocols::loop_modeling::refiners::RepackingRefiner;
+				using protocols::loop_modeling::refiners::RotamerTrialsRefiner;
+				using protocols::loop_modeling::refiners::LocalMinimizationRefiner;
+				using protocols::loop_modeling::utilities::PeriodicTask;
+				using protocols::loop_modeling::loggers::LoggerOP;
+				using protocols::loop_modeling::loggers::ProgressBar;
+				using protocols::loop_modeling::loggers::ScoreVsRmsd;
+				using protocols::loop_modeling::loggers::AcceptanceRates;
+
+				LoopProtocolOP protocol = new LoopProtocol;
+				LoopMoverOP mover = new LoopMover;
+				LoggerOP acceptance_logger = new AcceptanceRates;
+				loops::Loop loop = (*loops)[1];
+
+				Size repack_period = 20;
+				if (option[OptionKeys::loops::repack_period].user()) {
+					repack_period = option[OptionKeys::loops::repack_period]();
+				}
+
+				mover->add_task(new KicSampler(acceptance_logger));
+				mover->add_task(new PeriodicTask(new RepackingRefiner, repack_period));
+				mover->add_task(new RotamerTrialsRefiner);
+				mover->add_task(new LocalMinimizationRefiner);
+
+				Size outer_cycles = 3;
+				Size inner_cycles = 10 * loop.size();
+
+				if (option[OptionKeys::loops::outer_cycles].user()) {
+					outer_cycles = option[ OptionKeys::loops::outer_cycles ]();
+				}
+				if (option[OptionKeys::loops::max_inner_cycles].user()) {
+					Size max_cycles = option[OptionKeys::loops::max_inner_cycles]();
+					inner_cycles = std::max(inner_cycles, max_cycles);
+				}
+				if (option[OptionKeys::loops::fast]) {
+					outer_cycles = 3;
+					inner_cycles = 12;
+				}
+
+				protocol->set_mover(mover);
+				protocol->set_loop(loop);
+				protocol->set_score_function(fa_scorefxn_);
+				protocol->set_iterations(outer_cycles, inner_cycles, 2);
+				protocol->add_logger(new ProgressBar);
+				protocol->add_logger(new ScoreVsRmsd(native_pose, loop));
+				protocol->add_logger(acceptance_logger);
+
+				protocol->apply(pose);
 			}
+
 			if ( debug ) pose.dump_pdb(curr_job_tag + "_after_refine.pdb");
 			checkpoints_.checkpoint( pose, curr_job_tag, "refine", true);
 

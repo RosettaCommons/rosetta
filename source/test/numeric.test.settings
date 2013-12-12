@@ -29,6 +29,7 @@ sources = {
 		"sphericalVector",
 		"statistics.functions",
 		"util",
+        "WrapAngles",
 		"xyz.functions",
 		"xyzMatrix",
 		"xyzTriple",
@@ -56,6 +57,9 @@ sources = {
 	"kdtree" : [
 		"kdtree",
 	],
+    "linear_algebra": [
+        "GeneralizedEigenSolverTests",
+    ],
 	"random" : [
                 "DistributionSampler",
 		"reservoir_sample",

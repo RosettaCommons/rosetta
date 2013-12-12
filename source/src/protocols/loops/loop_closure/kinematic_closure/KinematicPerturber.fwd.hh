@@ -35,6 +35,14 @@ class TorsionSamplingKinematicPerturber;
 typedef utility::pointer::owning_ptr< TorsionSamplingKinematicPerturber > TorsionSamplingKinematicPerturberOP;
 typedef utility::pointer::owning_ptr< TorsionSamplingKinematicPerturber const > TorsionSamplingKinematicPerturberCOP;
 
+class SmallMoveKinematicPerturber;
+typedef utility::pointer::owning_ptr< SmallMoveKinematicPerturber > SmallMoveKinematicPerturberOP;
+typedef utility::pointer::owning_ptr< SmallMoveKinematicPerturber const > SmallMoveKinematicPerturberCOP;
+
+class PivotBasedKinematicPerturber;
+typedef utility::pointer::owning_ptr< PivotBasedKinematicPerturber > PivotBasedKinematicPerturberOP;
+typedef utility::pointer::owning_ptr< PivotBasedKinematicPerturber const > PivotBasedKinematicPerturberCOP;
+
 class VicinitySamplingKinematicPerturber;
 typedef utility::pointer::owning_ptr< VicinitySamplingKinematicPerturber > VicinitySamplingKinematicPerturberOP;
 typedef utility::pointer::owning_ptr< VicinitySamplingKinematicPerturber const > VicinitySamplingKinematicPerturberCOP;
