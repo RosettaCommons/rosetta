@@ -2,96 +2,60 @@
 /// @brief
 
 
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/CartesianMinimizer.hh>
-#include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/symmetry/SymDof.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/util.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/CrystInfo.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
-#include <core/io/silent/ScoreFileSilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/pack/make_symmetric_task.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/packing/compute_holes_score.hh>
-#include <core/scoring/packing/HolesParams.hh>
-#include <core/scoring/packstat/compute_sasa.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/sasa.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/electron_density/util.hh>
-#include <core/scoring/sc/ShapeComplementarityCalculator.hh>
-#include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <core/types.hh>
 #include <core/pack/task/ResfileReader.hh>
 
+#include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/electron_density/util.hh>
-#include <protocols/docking/util.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/simple_moves/ddG.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/mpistream.hh>
 #include <utility/string_util.hh>
+#include <utility/file/FileName.hh>
+#include <utility/file/file_sys_util.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
 #include <numeric/NumericTraits.hh>
+#include <numeric/fourier/FFT.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/format.hh>
 
 #include <devel/init.hh>
 
+#include <utility/excn/Exceptions.hh>
+
+#include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/after_opts.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
-#include <basic/options/keys/holes.OptionKeys.gen.hh>
+
+// option includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/matdes.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/parser.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/Tracer.hh>
-
-#include <utility/excn/Exceptions.hh>
-
 
 #include <fstream>
 #include <iostream>
@@ -99,586 +63,1067 @@
 
 #include <sstream>
 #include <string>
+#include <queue>
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.io.hh>
 
-using std::string;
-using ObjexxFCL::string_of;
+using namespace basic;
 using namespace core;
-using utility::vector1;
-using core::id::AtomID;
-using namespace core::scoring::packing;
-using namespace ObjexxFCL::format;
-using core::scoring::ScoreFunctionOP;
-using core::pose::Pose;
-typedef numeric::xyzVector<Real> Vec;
-typedef numeric::xyzMatrix<Real> Mat;
-typedef vector1<Size> Sizes;
+using namespace core::pose;
+using namespace numeric;
+using namespace ObjexxFCL;
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
+
+#define DEG2RAD 0.0174532925199433
 
 static basic::Tracer TR("cryst.design");
 
-OPT_1GRP_KEY(String, crystdes, prefix)
-OPT_1GRP_KEY(Real, crystdes, alpha)
-OPT_1GRP_KEY(Boolean, crystdes, cen_min)
-OPT_1GRP_KEY(Boolean, crystdes, smallres_only)
-OPT_1GRP_KEY(Real, crystdes, rot_step)
-OPT_1GRP_KEY(Real, crystdes, trans_step)
-OPT_1GRP_KEY(Real, crystdes, rot_max)
-OPT_1GRP_KEY(Real, crystdes, trans_max)
-OPT_1GRP_KEY(Real, crystdes, vdw)
-OPT_1GRP_KEY(Real, crystdes, sa1)
-OPT_1GRP_KEY(Real, crystdes, sa2)
-OPT_1GRP_KEY(Real, crystdes, sa3)
-OPT_1GRP_KEY(Real, crystdes, sc1)
-OPT_1GRP_KEY(Real, crystdes, sc2)
-OPT_1GRP_KEY(Real, crystdes, sc3)
-OPT_1GRP_KEY(Real, crystdes, ddg)
-OPT_1GRP_KEY(Real, crystdes, air)
-OPT_1GRP_KEY(Boolean, crystdes, print_des)
+OPT_1GRP_KEY(String, crystdock, spacegroup)
+OPT_1GRP_KEY(Real, crystdock, A)
+OPT_1GRP_KEY(Real, crystdock, B)
+OPT_1GRP_KEY(Real, crystdock, C)
+OPT_1GRP_KEY(Real, crystdock, alpha)
+OPT_1GRP_KEY(Real, crystdock, beta)
+OPT_1GRP_KEY(Real, crystdock, gamma)
+OPT_1GRP_KEY(Real, crystdock, trans_step)
+OPT_1GRP_KEY(Real, crystdock, rot_step)
+OPT_1GRP_KEY(Integer, crystdock, nmodels)
+OPT_1GRP_KEY(Boolean, crystdock, debug)
 
-///////////////////////////////////////////////////////////////////////////////
-
-utility::vector1<Real>
-sidechain_sasa(Pose const & pose, Real probe_radius) {
-	using core::id::AtomID;
-	utility::vector1<Real> rsd_sasa(pose.n_residue(),0.0);
-	core::id::AtomID_Map<Real> atom_sasa;
-	core::id::AtomID_Map<bool> atom_mask;
-	core::pose::initialize_atomid_map(atom_sasa,pose,0.0);
-	core::pose::initialize_atomid_map(atom_mask,pose,false);
-	for (Size i = 1; i <= pose.n_residue(); i++) {
-		for (Size j = 1; j <= pose.residue(i).nheavyatoms(); j++) {
-			atom_mask[AtomID(j,i)] = true;
-		}
-	}
-	core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false, atom_mask );
-	utility::vector1<Real> sc_sasa(pose.n_residue(),0.0);
-	for(Size i = 1; i <= pose.n_residue(); i++) {
-		// Use CA as the side chain for Glys
-		if(pose.residue(i).name3()=="GLY") sc_sasa[i] += atom_sasa[AtomID(2,i)];		
-		for(Size j = 5; j <= pose.residue(i).nheavyatoms(); j++) {
-			sc_sasa[i] += atom_sasa[AtomID(j,i)];
-		}
-	}
-	return sc_sasa;
+////////////////////////////////////////////////
+// helper functions
+inline int pos_mod(int x,int y) {
+	int r=x%y; if (r<0) r+=y;
+	return r;
+}
+inline Real pos_mod(Real x,Real y) {
+	Real r=std::fmod(x,y); if (r<0) r+=y;
+	return r;
+}
+inline int min_mod(int x,int y) {
+	int r=x%y; if (r<-y/2) r+=y;if (r>=y/2) r-=y;
+	return r;
+}
+inline double min_mod(double x,double y) {
+	double r=std::fmod(x,y); if (r<-0.5*y) r+=y;if (r>=0.5*y) r-=y;
+	return r;
 }
 
+/// trilinear interpolation with periodic boundaries
+template <class S>
+core::Real interp_linear(
+	ObjexxFCL::FArray3D< S > const & data ,
+	numeric::xyzVector< core::Real > const & idxX) {
+
+	int pt000[3], pt111[3];
+	core::Real fpart[3],neg_fpart[3];
+	int grid[3];
+	grid[0] = data.u1(); grid[1] = data.u2(); grid[2] = data.u3();
+
+	// find bounding grid points
+	pt000[0] = (int)(floor(idxX[0])) % grid[0]; if (pt000[0] <= 0) pt000[0]+= grid[0];
+	pt000[1] = (int)(floor(idxX[1])) % grid[1]; if (pt000[1] <= 0) pt000[1]+= grid[1];
+	pt000[2] = (int)(floor(idxX[2])) % grid[2]; if (pt000[2] <= 0) pt000[2]+= grid[2];
+	pt111[0] = (pt000[0]+1); if (pt111[0]>grid[0]) pt111[0] = 1;
+	pt111[1] = (pt000[1]+1); if (pt111[1]>grid[1]) pt111[1] = 1;
+	pt111[2] = (pt000[2]+1); if (pt111[2]>grid[2]) pt111[2] = 1;
+
+	// interpolation coeffs
+	fpart[0] = idxX[0]-floor(idxX[0]); neg_fpart[0] = 1-fpart[0];
+	fpart[1] = idxX[1]-floor(idxX[1]); neg_fpart[1] = 1-fpart[1];
+	fpart[2] = idxX[2]-floor(idxX[2]); neg_fpart[2] = 1-fpart[2];
+
+	S retval = (S)0.0;
+	retval+= neg_fpart[0]*neg_fpart[1]*neg_fpart[2] * data(pt000[0],pt000[1],pt000[2]);
+	retval+= neg_fpart[0]*neg_fpart[1]*    fpart[2] * data(pt000[0],pt000[1],pt111[2]);
+	retval+= neg_fpart[0]*    fpart[1]*neg_fpart[2] * data(pt000[0],pt111[1],pt000[2]);
+	retval+= neg_fpart[0]*    fpart[1]*    fpart[2] * data(pt000[0],pt111[1],pt111[2]);
+	retval+= fpart[0]*neg_fpart[1]*neg_fpart[2] * data(pt111[0],pt000[1],pt000[2]);
+	retval+= fpart[0]*neg_fpart[1]*    fpart[2] * data(pt111[0],pt000[1],pt111[2]);
+	retval+= fpart[0]*    fpart[1]*neg_fpart[2] * data(pt111[0],pt111[1],pt000[2]);
+	retval+= fpart[0]*    fpart[1]*    fpart[2] * data(pt111[0],pt111[1],pt111[2]);
+
+	return retval;
+}
+
+////////////////////////////////////////////////
+
+void euler2rot( core::Real a, core::Real b, core::Real g, numeric::xyzMatrix<Real> &R) {
+	R.xx() = -sin(DEG2RAD*a)*cos(DEG2RAD*b)*sin(DEG2RAD*g) + cos(DEG2RAD*a)*cos(DEG2RAD*g);
+	R.xy() =  cos(DEG2RAD*a)*cos(DEG2RAD*b)*sin(DEG2RAD*g) + sin(DEG2RAD*a)*cos(DEG2RAD*g);
+	R.xz() =  sin(DEG2RAD*b)*sin(DEG2RAD*g);
+	R.yx() = -sin(DEG2RAD*a)*cos(DEG2RAD*b)*cos(DEG2RAD*g) - cos(DEG2RAD*a)*sin(DEG2RAD*g);
+	R.yy() =  cos(DEG2RAD*a)*cos(DEG2RAD*b)*cos(DEG2RAD*g) - sin(DEG2RAD*a)*sin(DEG2RAD*g);
+	R.yz() =  sin(DEG2RAD*b)*cos(DEG2RAD*g);
+	R.zx() =  sin(DEG2RAD*a)*sin(DEG2RAD*b);
+	R.zy() = -cos(DEG2RAD*a)*sin(DEG2RAD*b);
+	R.zz() =  cos(DEG2RAD*b);
+}
+
+
+////////////////////////////////////////////////
+
+// write density grids in MRC
 void
-new_sc(Pose &pose, Real& sa1, Real& sc1, Real& sa2, Real& sc2, Real& sa3, Real& sc3 ) {
-	using namespace core;
+writeMRC(FArray3D<Real> density, std::string mapfilename) {
+	const int CCP4HDSIZE = 1024;  // size of CCP4/MRC header
+	std::fstream outx( (mapfilename).c_str() , std::ios::binary | std::ios::out );
 
-	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
+	float buff_f, buff_vf[3];
+	int buff_i, buff_vi[3], symBytes = 0;
 
-	utility::vector1<Real> sas;
-	utility::vector1<Real> scs;
+	if (!outx ) {
+		std::cerr << "Error opening " << mapfilename << " for writing." << std::endl;
+		return;
+	}
 
-	for (Size i=2; i<=symm_info->subunits(); ++i) {
-		core::scoring::sc::ShapeComplementarityCalculator scc;
-		scc.Init();
+	// extent
+	buff_vi[0] = density.u1(); buff_vi[1] = density.u2(); buff_vi[2] = density.u3();
+	outx.write(reinterpret_cast <char*>(buff_vi), sizeof(int)*3);
 
-		// Figure out which chains touch chain A, and add the residues from those chains
-		// into the sc surface objects	
-		Size nres_monomer = symm_info->num_independent_residues();
-		for (Size ir=1; ir<=nres_monomer; ++ir) {
-			scc.AddResidue(0, pose.residue(ir));
-		}
-	
-		bool contact = false;
-		Size start = (i-1)*nres_monomer;
-		for (Size ir=1; ir<=nres_monomer; ir++) {
-			if (pose.energies().residue_total_energies(ir+start)[core::scoring::fa_atr] < 0) {
-				contact = true;
-				break;
+	// mode
+	buff_i = 2;
+	outx.write(reinterpret_cast <char*>(&buff_i), sizeof(int));
+
+	// origin
+	int ori_int[3] = {0,0,0};
+ 	outx.write(reinterpret_cast <char*>(ori_int), sizeof(int)*3);
+
+ 	// grid
+	int grid[3] = {density.u1(),density.u2(),density.u3()};
+ 	outx.write(reinterpret_cast <char*>(&grid[0]), sizeof(int)*3);
+
+	// cell params
+	float cellDimensions[3] = {density.u1(),density.u2(),density.u3()};
+	float cellAngles[3] = {90,90,90};
+	outx.write(reinterpret_cast <char*>(&cellDimensions), sizeof(float)*3);
+	outx.write(reinterpret_cast <char*>(&cellAngles), sizeof(float)*3);
+
+	// crs2xyz
+	buff_vi[0] = 1; buff_vi[1] = 2; buff_vi[2] = 3;
+	outx.write(reinterpret_cast <char*>(buff_vi), sizeof(int)*3);
+
+	// min, max, mean dens
+	buff_vf[0] = -100.0; buff_vf[1] = 100.0; buff_vf[2] = 0.0;
+	outx.write(reinterpret_cast <char*>(buff_vf), sizeof(float)*3);
+
+	// 4 bytes junk
+	buff_i = 0;
+	outx.write(reinterpret_cast <char*>(&buff_i), sizeof(int));
+
+	// symmops
+	outx.write(reinterpret_cast <char*>(&symBytes), sizeof(int));
+
+	// 104 bytes junk
+	buff_i = 0;
+	for (int i=0; i<25; ++i) {
+		outx.write(reinterpret_cast <char*>(&buff_i), sizeof(int));
+	}
+
+	// alt origin (MRC)
+	float ori_float[3]={0,0,0};
+ 	outx.write(reinterpret_cast <char*>(ori_float), sizeof(float)*3);
+
+	// Write "MAP" at byte 208, indicating a CCP4 file.
+	char buff_s[80]; strcpy(buff_s, "MAP DD");
+	outx.write(reinterpret_cast <char*>(buff_s), 8);
+
+	// fill remainder of head with junk
+	int nJunkWords = (CCP4HDSIZE - 216) /4;
+	buff_i = 0;
+	for (int i=0; i<nJunkWords; ++i) {
+		outx.write(reinterpret_cast <char*>(&buff_i), sizeof(int));
+	}
+
+	// data
+	int coord[3];
+	for (coord[2] = 1; coord[2] <= density.u3(); coord[2]++) {
+		for (coord[1] = 1; coord[1] <= density.u2(); coord[1]++) {
+			for (coord[0] = 1; coord[0] <= density.u1(); coord[0]++) {
+				buff_f = (float) density(coord[0],coord[1],coord[2]);
+				outx.write(reinterpret_cast <char*>(&buff_f), sizeof(float));
 			}
 		}
-		if (contact) {
-			for (Size ir=1; ir<=nres_monomer; ir++) {
-				scc.AddResidue(1, pose.residue(ir+start));
-			}
-			if (scc.Calc()) {
-				scs.push_back( scc.GetResults().sc );
-				sas.push_back( scc.GetResults().surface[2].trimmedArea );
-			}
-		}
-	}
-
-	// find max uniques
-	sa1=sa2=sa3=0;
-	sc1=sc2=sc3=0;
-	for (Size i=1; i<=sas.size(); ++i) {
-		// check if duplicate
-		if ( fabs(sa1-sas[i]) < 1e-1 || fabs(sa2-sas[i]) < 1e-1 || fabs(sa3-sas[i]) < 1e-1 ) continue;
-		if (sas[i] > sa1) {
-			sa3 = sa2; sc3 = sc2;
-			sa2 = sa1; sc2 = sc1;
-			sa1 = sas[i]; sc1 = scs[i];
-		} else if (sas[i] > sa2) {
-			sa3 = sa2; sc3 = sc2;
-			sa2 = sas[i]; sc2 = scs[i];
-		} else if (sas[i] > sa3) {
-			sa3 = sas[i]; sc3 = scs[i];
-		}
 	}
 }
 
 
-void
-design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool small_only) {
-	using namespace core;
-	using namespace pack;
-	using namespace task;
-	using namespace conformation;
-	using namespace conformation::symmetry;
-	using namespace scoring;
-	using namespace chemical;
 
-	// Set allowed AAs.
-	vector1<bool> allowed_aas(20, true);
-	allowed_aas[aa_cys] = false;
-	allowed_aas[aa_gly] = false;
-	allowed_aas[aa_pro] = false;
+////////////////////////////////////////////////
 
-	if(small_only == true) {
-		allowed_aas[aa_ala] = true;
-		allowed_aas[aa_asp] = true;
-		allowed_aas[aa_glu] = false;
-		allowed_aas[aa_phe] = false;
-		allowed_aas[aa_his] = false;
-		allowed_aas[aa_ile] = true;
-		allowed_aas[aa_lys] = false;
-		allowed_aas[aa_leu] = true;
-		allowed_aas[aa_met] = false;
-		allowed_aas[aa_asn] = true;
-		allowed_aas[aa_pro] = false;
-		allowed_aas[aa_gln] = false;
-		allowed_aas[aa_arg] = false;
-		allowed_aas[aa_ser] = true;
-		allowed_aas[aa_thr] = true;
-		allowed_aas[aa_val] = true;
-		allowed_aas[aa_trp] = false;
-		allowed_aas[aa_tyr] = false;
-	}
-
-	// Get the symmetry info and make the packer task
-	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
-	PackerTaskOP task( TaskFactory::create_packer_task( pose ));
-
-	if (basic::options::option[basic::options::OptionKeys::packing::resfile].user()) {
-		core::pack::task::parse_resfile( pose, *task);
-	}
-
-	// Set which residues can be designed
-	for (Size i=1; i<=pose.n_residue(); i++) {
-		if (!sym_info->bb_is_independent(i)) {
-			task->nonconst_residue_task(i).prevent_repacking();
-		} else if (pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY") {
-			// Don't mess with Pros or Glys at the interfaces
-			task->nonconst_residue_task(i).prevent_repacking();
-		} else if (find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
-			task->nonconst_residue_task(i).prevent_repacking();
-		} else {
-			bool temp = allowed_aas[pose.residue(i).aa()];
-			allowed_aas[pose.residue(i).aa()] = true;
-			task->nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aas);
-			task->nonconst_residue_task(i).or_include_current(true);
-			task->nonconst_residue_task(i).initialize_from_command_line();
-			allowed_aas[pose.residue(i).aa()] = temp;
-		}
-	}
-
-	// Actually perform design.
-	make_symmetric_PackerTask_by_truncation(pose, task);
-	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
-	packer->apply(pose);
-}
-
-
-void
-repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) {
-  using namespace core;
-  using namespace pack;
-  using namespace task;
-  using namespace conformation;
-  using namespace conformation::symmetry;
-  using namespace scoring;
-  using namespace chemical;
-
-  // Get the symmetry info and make the packer task
-  SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
-  PackerTaskOP task( TaskFactory::create_packer_task( pose ));
-
-  // Set which residues can be repacked
-  for (Size i=1; i<=pose.n_residue(); i++) {
-    if (!sym_info->bb_is_independent(i)) {
-      task->nonconst_residue_task(i).prevent_repacking();
-    } else if (find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
-      task->nonconst_residue_task(i).prevent_repacking();
-    } else {
-			vector1<bool> allowed_aas(20, false);
-      allowed_aas[pose.residue(i).aa()] = true;
-      task->nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aas);
-      task->nonconst_residue_task(i).initialize_from_command_line();
-    }
-  }
-
-  // Actually repack.
-  make_symmetric_PackerTask_by_truncation(pose, task);
-  protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
-  packer->apply(pose);
-}
-
-
-void
-minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool move_bb, bool move_sc, bool move_rb) {
-	// Initialize a MoveMap
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-	movemap->set_jump(move_rb);
-	movemap->set_bb(false);
-	movemap->set_chi(false);
-	
-	// Set allowable move types at interface positions
-	// Currently, only sc moves allowed
-	for (utility::vector1<Size>::iterator i = design_pos.begin(); i != design_pos.end(); i++) {
-		movemap->set_bb (*i, move_bb);
-		movemap->set_chi(*i, move_sc);
-	}
-	
-	// Make MoveMap symmetric, apply it to minimize the pose
-	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
-	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
-	m.apply(pose);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-class RBSymmSampler : public protocols::moves::Mover {
+// Uniformly (roughly) sample rotation space
+// Input in DEGREES
+class UniformRotationSampler {
 private:
-	core::Real ang_step_, ang_max_;
-	core::Real alpha_;
-	core::Real trans_min_, trans_step_, trans_max_;
-	core::Real fav_nat_bonus_;
+	core::Real step_;
 
-	core::Real cen_vdw_filter_;
-	core::Real sa_filter_1_, sa_filter_2_, sa_filter_3_;
-	core::Real sc_filter_1_, sc_filter_2_, sc_filter_3_;
-	core::Real ddg_filter_;
-	core::Real air_filter_;
-
-	bool cen_min_, smallres_only_;
-
-	core::scoring::ScoreFunctionOP cen_scorefxn_, cenmin_scorefxn_, fa_scorefxn_;
+	int a_,b_,g_,amax_,bmax_,gmax_;
+	core::Real astep_,bstep_,gstep_;
 
 public:
-	RBSymmSampler(){
-		using namespace basic::options;
-		using namespace basic::options::OptionKeys;
-
-		ang_step_   =  option[crystdes::rot_step]();
-		ang_max_    =  option[crystdes::rot_max]();
-		trans_step_ =  option[crystdes::trans_step]();
-		trans_max_  =  option[crystdes::trans_max]();
-		trans_min_  = -trans_max_;
-
-		cen_min_ =  option[crystdes::cen_min]();
-		smallres_only_ = option[crystdes::smallres_only]();
-		alpha_ = option[crystdes::alpha]();
-
-		// filters
-		cen_vdw_filter_ = option[crystdes::vdw]();
-		sa_filter_1_    = option[crystdes::sa1]();
-		sa_filter_2_    = option[crystdes::sa2]();
-		sa_filter_3_    = option[crystdes::sa3]();
-		sc_filter_1_    = option[crystdes::sc1]();
-		sc_filter_2_    = option[crystdes::sc2]();
-		sc_filter_3_    = option[crystdes::sc3]();
-		ddg_filter_     = option[crystdes::ddg]();
-		air_filter_     = option[crystdes::air]();
-		
-		cen_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("score0");
-		cenmin_scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction();
-		cenmin_scorefxn_->set_weight( core::scoring::vdw, 0.5 );
-		cenmin_scorefxn_->set_weight( core::scoring::cbeta_smooth, 1.0 );
-		cenmin_scorefxn_->set_weight( core::scoring::cenpack_smooth, 1.0 );
-		cenmin_scorefxn_->set_weight( core::scoring::cen_env_smooth, 1.0 );
-		cenmin_scorefxn_->set_weight( core::scoring::hbond_lr_bb, 1.0 );
-		cenmin_scorefxn_->set_weight( core::scoring::hbond_sr_bb, 1.0 );
-
-		fa_scorefxn_  = core::scoring::getScoreFunction();
-
-		// Get the favor_native_residue weight from the command line
-		fav_nat_bonus_ = 0.0;
-		if (option[matdes::design::fav_nat_bonus]()) {
-	      fav_nat_bonus_ = option[matdes::design::fav_nat_bonus]();
-		}
-
-		if (option[crystdes::print_des]()) {
-			trans_min_ = trans_max_ = ang_max_ = alpha_ = 0;
-			cen_vdw_filter_ = 99999;
+	UniformRotationSampler(Real step_in) {
+		step_ = step_in;
+		a_ = g_ = b_ = 0;
+		if (option[ crystdock::debug ]) {
+			amax_ = bmax_ = gmax_ = 1;
+			astep_ = bstep_ = gstep_ = 90.0;
+		} else {
+			bmax_ = (Size) std::floor( 0.5 + 180.0 / step_ );
+			gmax_ = (Size) std::floor( 0.5 + 360.0 / step_ );
+			amax_ = std::floor( 0.5 + gmax_ * sin(DEG2RAD*90.0/bmax_) );
+			if (amax_ == 0) amax_ = 1;
+			bstep_ = 180.0 / bmax_;
+			gstep_ = 360.0 / gmax_;
+			astep_ = 360.0 / amax_;
 		}
 	}
 
-	virtual std::string get_name() const { return "RBSymmSampler"; }
-
-	// helper func
-	//    euler angles (degrees) to rotation matrix
-	void euler2rot( core::Real a, core::Real b, core::Real g, numeric::xyzMatrix<core::Real> &R) {
-		const core::Real deg2rad = numeric::NumericTraits<Real>::pi()/180.0;
-		R.xx() = -sin(deg2rad*a)*cos(deg2rad*b)*sin(deg2rad*g) + cos(deg2rad*a)*cos(deg2rad*g);
-		R.xy() =  cos(deg2rad*a)*cos(deg2rad*b)*sin(deg2rad*g) + sin(deg2rad*a)*cos(deg2rad*g);
-		R.xz() =  sin(deg2rad*b)*sin(deg2rad*g);
-		R.yx() = -sin(deg2rad*a)*cos(deg2rad*b)*cos(deg2rad*g) - cos(deg2rad*a)*sin(deg2rad*g);
-		R.yy() =  cos(deg2rad*a)*cos(deg2rad*b)*cos(deg2rad*g) - sin(deg2rad*a)*sin(deg2rad*g);
-		R.yz() =  sin(deg2rad*b)*cos(deg2rad*g);
-		R.zx() =  sin(deg2rad*a)*sin(deg2rad*b);
-		R.zy() = -cos(deg2rad*a)*sin(deg2rad*b);
-		R.zz() =  cos(deg2rad*b);
+	bool hasNext() {
+		return (b_!=bmax_);
 	}
 
-	//
+	void getNext(numeric::xyzMatrix<Real> &R, Real &alpha, Real &beta, Real &gamma) {
+		alpha = astep_*(0.5+a_);
+		beta  = bstep_*(0.5+b_);
+		gamma = gstep_*(0.5+g_);
+
+		if (b_ >= bmax_) {  // past the end
+			alpha = beta = gamma = 0;
+		} else {
+			// increment
+			if (++g_ >= gmax_) {
+				g_ = 0;
+
+				if (++a_ >= amax_) {
+					a_ = 0;
+					if (++b_ < bmax_) {
+						// get new a_ limits
+						amax_ = std::floor( 0.5 + gmax_ * sin(DEG2RAD*bstep_*(0.5+b_)) );
+						if (amax_ == 0) amax_ = 1;
+						astep_ = 360.0 / amax_;
+					}
+				}
+			}
+		}
+
+		std::cerr << "getNext() = euler(" << alpha << "," << beta << "," << gamma << ")" << std::endl;
+		euler2rot(alpha,beta,gamma, R);
+	}
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+// fpd this class stores information on the top-N interfaces
+//    underlying heap makes this reasonably fast
+//    N is 5 by default (covers up to 3 unique interfaces)
+struct SingleInterface {
+	SingleInterface( Size index_in, Real cb_overlap_in ) {
+		index = index_in;
+		cb_overlap = cb_overlap_in;
+	}
+    Size index;
+	Real cb_overlap;
+};
+
+class SingleInterfaceComparitor {
+public:
+	bool operator()(SingleInterface& t1, SingleInterface& t2) {
+		return (t1.cb_overlap > t2.cb_overlap);
+	}
+};
+
+class InterfaceInfo {
+private:
+	core::Size N_;
+    std::priority_queue<SingleInterface, std::vector<SingleInterface>, SingleInterfaceComparitor> queue_;
+
+public:
+	InterfaceInfo() { N_ = 5; }
+
+	void add_interface( SingleInterface interface ) {
+		if (queue_.size() <N_) {
+			queue_.push( interface );
+		} else if ( interface.cb_overlap > queue_.top().cb_overlap ) {
+			queue_.pop();
+			queue_.push( interface );
+		}
+	}
+
+	SingleInterface pop() {
+		SingleInterface retval = queue_.top();
+		queue_.pop();
+		return retval;
+	}
+
+	Size size() { return queue_.size(); }
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+// fpd this class is used for storing hits over all rotations
+//    same top-N priority_queue but much larger store
+struct InterfaceHit {
+	InterfaceHit( Real score_in, Real x_in, Real y_in, Real z_in, Real alpha_in, Real beta_in, Real gamma_in ) {
+		score=score_in;
+		x=x_in; y=y_in; z=z_in;
+		alpha=alpha_in; beta=beta_in; gamma=gamma_in;
+	}
+	Real score;
+	Real x,y,z;
+	Real alpha, beta, gamma;
+};
+
+class InterfaceHitComparitor {
+public:
+	bool operator()(InterfaceHit& t1, InterfaceHit& t2) {
+		return (t1.score > t2.score);
+	}
+};
+
+class InterfaceHitDatabase {
+private:
+	core::Size N_;
+    std::priority_queue<InterfaceHit, std::vector<InterfaceHit>, InterfaceHitComparitor> queue_;
+
+public:
+	InterfaceHitDatabase() { N_ = option[crystdock::nmodels]; }
+
+	void add_interface( InterfaceHit interface ) {
+		if (queue_.size() <N_) {
+			queue_.push( interface );
+		} else if ( interface.score > queue_.top().score ) {
+			queue_.pop();
+			queue_.push( interface );
+		}
+	}
+
+	InterfaceHit pop() {
+		InterfaceHit retval = queue_.top();
+		queue_.pop();
+		return retval;
+	}
+
+	InterfaceHit top() {
+		InterfaceHit retval = queue_.top();
+		return retval;
+	}
+
+	Size size() { return queue_.size(); }
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+enum SpacegroupSetting {
+	TRICLINIC,
+	MONOCLINIC,
+	ORTHORHOMBIC,
+	TETRAGONAL,
+	HEXAGONAL,  // includes trigonal
+	CUBIC
+};
+
+class Spacegroup {
+private:
+	std::string name_;
+	SpacegroupSetting setting_;
+
+	// cryst stuff
+	xyzMatrix<Real> f2c_, c2f_;
+	Real a_, b_, c_, alpha_, beta_, gamma_, V_;
+public:
+	Spacegroup(std::string name_in) {
+		name_ = name_in;
+
+		// setting
+		if ( name_ == "P1" )
+			setting_ = TRICLINIC;
+		else if ( (name_ == "P2") ||  (name_ == "P21") ||  (name_ == "C2") )
+			setting_ = MONOCLINIC;
+		else if ( (name_ == "P23") ||  (name_ == "F23") ||  (name_ == "I23") ||
+			      (name_ == "P213") ||  (name_ == "I213") ||  (name_ == "P432") ||
+			      (name_ == "P4232") ||  (name_ == "F432") ||  (name_ == "F4132") ||
+			      (name_ == "I432") ||  (name_ == "P4332") ||  (name_ == "P4132") ||
+			      (name_ == "I4132") )
+			setting_ = CUBIC;
+		else if ( (name_ == "P222") ||  (name_ == "P2221") ||  (name_ == "P21212") ||
+			      (name_ == "P212121") ||  (name_ == "C2221") ||  (name_ == "C222") ||
+			      (name_ == "F222") ||  (name_ == "I222") ||  (name_ == "I212121") )
+			setting_ = ORTHORHOMBIC;
+		else if ( (name_ == "P4") ||  (name_ == "P41") ||  (name_ == "P42") ||
+			      (name_ == "P43") ||  (name_ == "I4") ||  (name_ == "I41") ||
+			      (name_ == "P422") ||  (name_ == "P4212") ||  (name_ == "P4122") ||
+			      (name_ == "P41212") ||  (name_ == "P4222") ||  (name_ == "P42212") ||
+			      (name_ == "P4322") ||  (name_ == "P43212") ||  (name_ == "I422") ||
+			      (name_ == "I4122") )
+			setting_ = TETRAGONAL;
+		else if ( (name_ == "P3") ||  (name_ == "P31") ||  (name_ == "P32") ||
+			      (name_ == "H3") ||  (name_ == "P312") ||  (name_ == "P321") ||
+			      (name_ == "P3112") ||  (name_ == "P3121") ||  (name_ == "P3212") ||
+			      (name_ == "P3221") ||  (name_ == "H32") ||  (name_ == "P6") ||
+			      (name_ == "P61") ||  (name_ == "P65") ||  (name_ == "P62") ||
+			      (name_ == "P64") ||  (name_ == "P63") ||  (name_ == "P622") ||
+			      (name_ == "P6122") ||  (name_ == "P6522") ||  (name_ == "P6222") ||
+			      (name_ == "P6422") ||  (name_ == "P6322") )
+			setting_ = HEXAGONAL;
+		else
+			utility_exit_with_message("Unknown spacegroup!");
+	}
+
+	xyzMatrix<Real> const &f2c() const { return f2c_; };
+	xyzMatrix<Real> const &c2f() const { return c2f_; };
+	Real A() const { return a_; }
+	Real B() const { return b_; }
+	Real C() const { return c_; }
+	Real alpha() const { return alpha_; }
+	Real beta() const { return beta_; }
+	Real gamma() const { return gamma_; }
+	Real volume() const { return V_; }
+
+	// grid spacing must be a multiple of this number
+	Size minmult() const {
+		if (setting_ == TRICLINIC)   return 2;
+		if (setting_ == MONOCLINIC)   return 4;
+		if (setting_ == CUBIC)        return 4;
+		if (setting_ == ORTHORHOMBIC) return 4;
+		if (setting_ == TETRAGONAL)   return 8;
+		if (setting_ == HEXAGONAL)    return 6;
+	}
+
+	// sets AND VALIDATES input parameters
+	void set_parameters(Real a_in, Real b_in, Real c_in, Real alpha_in, Real beta_in, Real gamma_in) {
+		if (setting_ == TRICLINIC) {
+			a_=a_in; b_=b_in; c_=c_in; alpha_=alpha_in; beta_=beta_in; gamma_=gamma_in;
+		}
+		else if (setting_ == MONOCLINIC) {
+			a_=a_in; b_=b_in; c_=c_in; alpha_=90.0; beta_=beta_in; gamma_=90.0;
+		}
+		else if (setting_ == CUBIC) {
+			a_=a_in; b_=a_in; c_=a_in; alpha_=90.0; beta_=90.0; gamma_=90.0;
+		}
+		else if (setting_ == ORTHORHOMBIC) {
+			a_=a_in; b_=b_in; c_=c_in; alpha_=90.0; beta_=90.0; gamma_=90.0;
+		}
+		else if (setting_ == TETRAGONAL) {
+			a_=a_in; b_=a_in; c_=c_in; alpha_=90.0; beta_=90.0; gamma_=90.0;
+		}
+		else if (setting_ == HEXAGONAL) {
+			a_=a_in; b_=a_in; c_=c_in; alpha_=90.0; beta_=90.0; gamma_=120.0;
+		}
+
+		// transformation matrices
+		core::Real ca = cos(DEG2RAD*alpha_), cb = cos(DEG2RAD*beta_), cg = cos(DEG2RAD*gamma_);
+		core::Real sa = sin(DEG2RAD*alpha_), sb = sin(DEG2RAD*beta_), sg = sin(DEG2RAD*gamma_);
+		f2c_ = numeric::xyzMatrix<core::Real>::rows(
+			a_  , b_ * cg , c_ * cb,
+			0.0 , b_ * sg , c_ * (ca - cb*cg) / sg,
+			0.0 , 0.0     , c_ * sb * sqrt(1.0 - square((cb*cg - ca)/(sb*sg)))
+		);
+		c2f_ = numeric::inverse(f2c_);
+		V_ = a_*b_*c_* sqrt(1-square(ca)-square(cb)-square(cg)+2*ca*cb*cg);
+
+		// report
+		if (a_!=a_in || b_!=b_in || c_!=c_in || alpha_!=alpha_in || beta_!=beta_in || gamma_!=gamma_in) {
+			std::cerr << "Overriding input crystal parameters with [ "
+			          << a_ << "," << b_ << "," << c_ << " , " << alpha_ << ","  << beta_ << ","  << gamma_ << " ]" << std::endl;
+		}
+	}
+
+	// get symmops
+	void get_symmops(utility::vector1<core::kinematics::RT> &rt_out) const;
+
+	// get symmops
+	std::string pdbname() const;
+
+	// TO DO get this working for all settings
+	Real get_interface_score(InterfaceInfo iinfo) {
+		/*Real r5 = */iinfo.pop().cb_overlap;
+		/*Real r4 = */iinfo.pop().cb_overlap;
+		Real r3 = iinfo.pop().cb_overlap;
+		/*Real r2 = */iinfo.pop().cb_overlap;
+		/*Real r1 = */iinfo.pop().cb_overlap;
+
+		return 2*r3;
+	}
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+class CrystDock : public protocols::moves::Mover {
+private:
+	core::Real ca_clashdist_, cb_clashdist_;
+	core::Real interfacedist_;
+
+	xyzMatrix<Real> i2c_, c2i_;
+
+public:
+	CrystDock() {
+		ca_clashdist_ = 2.5;
+		cb_clashdist_ = 1.7;
+		interfacedist_ = 5.0;
+	}
+
+	virtual std::string get_name() const { return "CrystDock"; }
+
+	void setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &rho_cb, Spacegroup const &sg, Real trans_step) {
+		Real ATOM_MASK_PADDING = 2.0;
+
+		Size minmult = sg.minmult();
+
+		// find true grid
+		Size ngridA = minmult*(Size)std::floor(sg.A()/(minmult*trans_step) + 0.5);
+		Size ngridB = minmult*(Size)std::floor(sg.B()/(minmult*trans_step) + 0.5);
+		Size ngridC = minmult*(Size)std::floor(sg.C()/(minmult*trans_step) + 0.5);
+		Real true_stepA = sg.A()/ngridA;
+		Real true_stepB = sg.B()/ngridB;
+		Real true_stepC = sg.C()/ngridC;
+
+		xyzMatrix<Real> i2f, f2i;
+		f2i = xyzMatrix<Real>::rows( (Real)ngridA,0,0,  0,(Real)ngridB,0,  0,0,(Real)ngridC );
+		i2f = xyzMatrix<Real>::rows( 1.0/((Real)ngridA),0,0,  0,1.0/((Real)ngridB),0,  0,0,1.0/((Real)ngridC) );
+
+		i2c_ = sg.f2c()*i2f;
+		c2i_ = f2i*sg.c2f();
+
+		rho_ca.dimension( ngridA, ngridB, ngridC ); rho_ca = 1;
+		rho_cb.dimension( ngridA, ngridB, ngridC ); rho_cb = 1;
+
+		// loop over CAs
+		for (int i=1 ; i<=(int)pose.total_residue(); ++i) {
+			if (!pose.residue(i).is_protein()) continue;
+			numeric::xyzVector< core::Real> CA = pose.residue(i).atom(2).xyz();
+			numeric::xyzVector< core::Real> atm_idx = c2i_*CA;
+			numeric::xyzVector< core::Real> atm_j, del_ij;
+			atm_idx[0] = pos_mod (atm_idx[0], (Real)ngridA);
+			atm_idx[1] = pos_mod (atm_idx[1], (Real)ngridB);
+			atm_idx[2] = pos_mod (atm_idx[2], (Real)ngridC);
+
+			for (int z=1; z<=ngridC; ++z) {
+				atm_j[2] = z-1;
+				del_ij[2] = min_mod(atm_idx[2] - atm_j[2], (Real)ngridC);
+				del_ij[0] = del_ij[1] = 0.0;
+				if ((i2c_*del_ij).length_squared() > (ca_clashdist_+ATOM_MASK_PADDING)*(ca_clashdist_+ATOM_MASK_PADDING)) continue;
+				for (int y=1; y<=ngridB; ++y) {
+					atm_j[1] = y-1;
+					del_ij[1] = min_mod(atm_idx[1] - atm_j[1], (Real)ngridB);
+					del_ij[0] = 0.0;
+					if ((i2c_*del_ij).length_squared() > (ca_clashdist_+ATOM_MASK_PADDING)*(ca_clashdist_+ATOM_MASK_PADDING)) continue;
+					for (int x=1; x<=ngridA; ++x) {
+						atm_j[0] = x-1;
+						del_ij[0] = min_mod(atm_idx[0] - atm_j[0], (Real)ngridA);
+						numeric::xyzVector< core::Real > cart_del_ij = i2c_*del_ij;
+						core::Real d2 = (cart_del_ij).length_squared();
+						if (d2 <= (ca_clashdist_+ATOM_MASK_PADDING)*(ca_clashdist_+ATOM_MASK_PADDING)) {
+							core::Real doff = sqrt(d2) - ca_clashdist_;
+							core::Real sig = 1 / ( 1 + exp ( -6*doff ) );   // '6' is sigmoid dropoff
+							rho_ca(x,y,z) *= sig;
+						}
+					}
+				}
+			}
+		}
+
+		// loop over CBs
+		for (int i=1 ; i<=(int)pose.total_residue(); ++i) {
+			if (!pose.residue(i).is_protein() || pose.residue(i).aa() == core::chemical::aa_gly) continue;
+			numeric::xyzVector< core::Real> CB = pose.residue(i).atom(5).xyz();
+			numeric::xyzVector< core::Real> atm_idx = c2i_*CB;
+			numeric::xyzVector< core::Real> atm_j, del_ij;
+			atm_idx[0] = pos_mod (atm_idx[0], (Real)ngridA);
+			atm_idx[1] = pos_mod (atm_idx[1], (Real)ngridB);
+			atm_idx[2] = pos_mod (atm_idx[2], (Real)ngridC);
+
+			for (int z=1; z<=ngridC; ++z) {
+				atm_j[2] = z-1;
+				del_ij[2] = min_mod(atm_idx[2] - atm_j[2], (Real)ngridC);
+				del_ij[0] = del_ij[1] = 0.0;
+				if ((i2c_*del_ij).length_squared() > (interfacedist_+ATOM_MASK_PADDING)*(interfacedist_+ATOM_MASK_PADDING)) continue;
+				for (int y=1; y<=ngridB; ++y) {
+					atm_j[1] = y-1;
+					del_ij[1] = min_mod(atm_idx[1] - atm_j[1], (Real)ngridB);
+					del_ij[0] = 0.0;
+					if ((i2c_*del_ij).length_squared() > (interfacedist_+ATOM_MASK_PADDING)*(interfacedist_+ATOM_MASK_PADDING)) continue;
+					for (int x=1; x<=ngridA; ++x) {
+						atm_j[0] = x-1;
+						del_ij[0] = min_mod(atm_idx[0] - atm_j[0], (Real)ngridA);
+						numeric::xyzVector< core::Real > cart_del_ij = i2c_*del_ij;
+						core::Real d2 = (cart_del_ij).length_squared();
+						if (d2 <= (interfacedist_+ATOM_MASK_PADDING)*(interfacedist_+ATOM_MASK_PADDING)) {
+							core::Real doff = sqrt(d2) - cb_clashdist_;
+							core::Real sig = 1 / ( 1 + exp ( 6*doff ) );   // '6' gives sigmoid dropoff
+							rho_ca(x,y,z) *= (1 - sig);
+
+							doff = sqrt(d2) - interfacedist_;
+							sig = 1 / ( 1 + exp ( 6*doff ) );   // '6' gives sigmoid dropoff
+							rho_cb(x,y,z) *= (1 - sig);
+						}
+					}
+				}
+			}
+		}
+
+		// factor CA mask out of CB mask; invert both
+		for (int i=0 ; i<ngridA*ngridB*ngridC; ++i) {
+			rho_cb[i] = (1-rho_cb[i])*rho_ca[i];
+			rho_ca[i] = (1-rho_ca[i]);
+		}
+	}
+
+	// trilinear interpolation of map subject to real-space rotation
+	void resample_maps(
+			FArray3D<Real> const &rho_ca, FArray3D<Real> const &rho_cb,
+			xyzMatrix<Real> R,
+			FArray3D<Real> &r_rho_ca, FArray3D<Real> &r_rho_cb ) {
+		r_rho_ca.dimension( rho_ca.u1(), rho_ca.u2(), rho_ca.u3() );
+		r_rho_cb.dimension( rho_cb.u1(), rho_cb.u2(), rho_cb.u3() );
+
+		xyzMatrix<Real> Ri = numeric::inverse(R);
+		int nx=rho_ca.u1(), ny=rho_ca.u2(), nz=rho_ca.u3();
+
+		for (int z=1; z<=nz; ++z)
+		for (int y=1; y<=ny; ++y)
+		for (int x=1; x<=nx; ++x) {
+			int cx=x-1,cy=y-1,cz=z-1;
+			if (cx>nx/2) cx -= nx;
+			if (cy>ny/2) cy -= ny;
+			if (cz>nz/2) cz -= nz;
+			xyzVector<Real> rx = c2i_*Ri*i2c_*xyzVector<Real>(cx,cy,cz);
+			Real rho_ca_rx = interp_linear( rho_ca, rx+1 );
+			Real rho_cb_rx = interp_linear( rho_cb, rx+1 );
+			r_rho_ca(x,y,z) = rho_ca_rx;
+			r_rho_cb(x,y,z) = rho_cb_rx;
+		}
+
+		if (option[ crystdock::debug ] ) {
+			static int i=1;
+			std::ostringstream oss;
+			oss << "rot"<<i++<<".mrc";
+			writeMRC( r_rho_ca, oss.str() );
+		}
+	}
+
+	void center_pose_at_origin( Pose & pose ) {
+		xyzVector<Real> com(0,0,0);
+		int count=0;
+		for (int i=1; i<=pose.total_residue(); ++i) {
+			if (!pose.residue(i).is_protein()) continue;
+			com += pose.residue(i).atom(2).xyz();
+			count++;
+		}
+		com /= count;
+
+		for (int i=1; i<=pose.total_residue(); ++i) {
+			for (int j=1; j<=pose.residue(i).natoms(); ++j) {
+				pose.set_xyz(id::AtomID(j,i), pose.residue(i).atom(j).xyz()-com );
+			}
+		}
+	}
+
+	void add_crystinfo_to_pose( Pose & pose, Spacegroup const &sg ) {
+		CrystInfo ci;
+
+		ci.A(sg.A()); ci.B(sg.B()); ci.C(sg.C()); ci.alpha(sg.alpha()); ci.beta(sg.beta()); ci.gamma(sg.gamma());
+		ci.spacegroup(sg.pdbname());
+
+		pose.pdb_info()->set_crystinfo(ci);
+	}
+
+	void dump_transformed_pdb( Pose pose, InterfaceHit ih, std::string outname ) {
+		numeric::xyzMatrix<Real> R;
+		euler2rot(ih.alpha,ih.beta,ih.gamma, R);
+		numeric::xyzVector<Real> T (ih.x, ih.y, ih.z);
+
+		pose.apply_transform_Rx_plus_v( R,T );
+
+		pose.dump_pdb( outname );
+	}
+
+	// nearest-neighbor interpolation subject to grid-space transform
+	void transform_map(
+			FArray3D<Real> const &rho,
+			xyzMatrix<Real> S, xyzVector<Real> T,
+			FArray3D<Real> &Srho) {
+		Srho.dimension( rho.u1(), rho.u2(), rho.u3() );
+		for (int z=1; z<=rho.u3(); ++z)
+		for (int y=1; y<=rho.u2(); ++y)
+		for (int x=1; x<=rho.u1(); ++x) {
+			int cx=x-1,cy=y-1,cz=z-1;
+			int rx = 1 + pos_mod( (int)(S.xx()*cx) + (int)(S.xy()*cy) + (int)(S.xz()*cz) + (int)(T[0]*rho.u1()) , rho.u1());
+			int ry = 1 + pos_mod( (int)(S.yx()*cx) + (int)(S.yy()*cy) + (int)(S.yz()*cz) + (int)(T[1]*rho.u2()) , rho.u2());
+			int rz = 1 + pos_mod( (int)(S.zx()*cx) + (int)(S.zy()*cy) + (int)(S.zz()*cz) + (int)(T[2]*rho.u3()) , rho.u3());
+			Real rho_sx = rho(rx,ry,rz);
+			Srho(x,y,z) = rho_sx;
+		}
+	}
+
+	// same as previous function, but not transformation and applies an offset of 1 (necessary for symm xform)
+	void transform_map_offset1(
+			FArray3D<Real> const &rho,
+			xyzMatrix<Real> S,
+			FArray3D<Real> &Srho) {
+		Srho.dimension( rho.u1(), rho.u2(), rho.u3() );
+		for (int z=1; z<=rho.u3(); ++z)
+		for (int y=1; y<=rho.u2(); ++y)
+		for (int x=1; x<=rho.u1(); ++x) {
+			int cx=x,cy=y,cz=z;
+			int rx = 1 + pos_mod( (int)(S.xx()*cx) + (int)(S.xy()*cy) + (int)(S.xz()*cz)  , rho.u1());
+			int ry = 1 + pos_mod( (int)(S.yx()*cx) + (int)(S.yy()*cy) + (int)(S.yz()*cz)  , rho.u2());
+			int rz = 1 + pos_mod( (int)(S.zx()*cx) + (int)(S.zy()*cy) + (int)(S.zz()*cz)  , rho.u3());
+			Real rho_sx = rho(rx,ry,rz);
+			Srho(x,y,z) = rho_sx;
+		}
+	}
+
+
+	// wrapper does a series of 2d ffts
+	//    this could be an option to the low-level fft code to possibly save time
+	void
+	fft2dslice( FArray3D<Real> const &rho, FArray3D< std::complex<Real> > &Frho, int axisSlice ) {
+		FArray2D<Real> rhoSlice;
+		FArray2D< std::complex<Real> > FrhoSlice;
+		int xi = rho.u1(), yi = rho.u2(), zi = rho.u3();
+		Frho.dimension(xi,yi,zi);
+
+		if (axisSlice == 1) {
+			rhoSlice.dimension(yi,zi);
+			for (int ii=1; ii<=xi; ii++) {
+				for (int jj=1; jj<=yi; jj++)
+				for (int kk=1; kk<=zi; kk++) {
+					rhoSlice(jj,kk) = rho(ii,jj,kk);
+				}
+				numeric::fourier::fft2(rhoSlice, FrhoSlice);
+				for (int jj=1; jj<=yi; jj++)
+				for (int kk=1; kk<=zi; kk++) {
+					Frho(ii,jj,kk) = FrhoSlice(jj,kk);
+				}
+			}
+		} else if (axisSlice == 2) {
+			rhoSlice.dimension(xi,zi);
+			for (int jj=1; jj<=yi; jj++) {
+				for (int ii=1; ii<=xi; ii++)
+				for (int kk=1; kk<=zi; kk++) {
+					rhoSlice(ii,kk) = rho(ii,jj,kk);
+				}
+				numeric::fourier::fft2(rhoSlice, FrhoSlice);
+				for (int ii=1; ii<=xi; ii++)
+				for (int kk=1; kk<=zi; kk++) {
+					Frho(ii,jj,kk) = FrhoSlice(ii,kk);
+				}
+			}
+		} else if (axisSlice == 3) {
+			rhoSlice.dimension(xi,zi);
+			for (int kk=1; kk<=zi; kk++) {
+				for (int ii=1; ii<=xi; ii++)
+				for (int jj=1; jj<=yi; jj++) {
+					rhoSlice(ii,jj) = rho(ii,jj,kk);
+				}
+				numeric::fourier::fft2(rhoSlice, FrhoSlice);
+				for (int ii=1; ii<=xi; ii++)
+				for (int jj=1; jj<=yi; jj++) {
+					Frho(ii,jj,kk) = FrhoSlice(ii,jj);
+				}
+			}
+		} else {
+			utility_exit_with_message( "ERROR! Bad axis specified!");
+		}
+	}
+
+	// wrapper does a series of 2d iffts + SUMS IN THE THIRD DIMENSION
+	void
+	ifft2dslice( FArray3D< std::complex<Real> > const &Frho, FArray3D<Real> &rho, int axisSlice ) {
+		FArray2D<Real> rhoSlice;
+		FArray2D< std::complex<Real> > FrhoSlice;
+		int xi = Frho.u1(), yi = Frho.u2(), zi = Frho.u3();
+		rho.dimension(xi,yi,zi);
+		rho = 0;
+
+		if (axisSlice == 1) {
+			FrhoSlice.dimension(yi,zi);
+			for (int ii=1; ii<=xi; ii++) {
+				for (int jj=1; jj<=yi; jj++)
+				for (int kk=1; kk<=zi; kk++) {
+					FrhoSlice(jj,kk) = Frho(ii,jj,kk);
+				}
+				numeric::fourier::ifft2(FrhoSlice, rhoSlice);
+				for (int jj=1; jj<=yi; jj++)
+				for (int kk=1; kk<=zi; kk++) {
+					for (int xx=1; xx<=xi; xx++)  //SUM
+						rho(xx,jj,kk) += rhoSlice(jj,kk);
+				}
+			}
+		} else if (axisSlice == 2) {
+			FrhoSlice.dimension(xi,zi);
+			for (int jj=1; jj<=yi; jj++) {
+				for (int ii=1; ii<=xi; ii++)
+				for (int kk=1; kk<=zi; kk++) {
+					FrhoSlice(ii,kk) = Frho(ii,jj,kk);
+				}
+				numeric::fourier::ifft2(FrhoSlice, rhoSlice);
+				for (int ii=1; ii<=xi; ii++)
+				for (int kk=1; kk<=zi; kk++) {
+					for (int yy=1; yy<=yi; yy++)  //SUM
+						rho(ii,yy,kk) += rhoSlice(ii,kk);
+				}
+			}
+		} else if (axisSlice == 3) {
+			FrhoSlice.dimension(xi,zi);
+			for (int kk=1; kk<=zi; kk++) {
+				for (int ii=1; ii<=xi; ii++)
+				for (int jj=1; jj<=yi; jj++) {
+					FrhoSlice(ii,jj) = Frho(ii,jj,kk);
+				}
+				numeric::fourier::ifft2(FrhoSlice, rhoSlice);
+				for (int ii=1; ii<=xi; ii++)
+				for (int jj=1; jj<=yi; jj++) {
+					for (int zz=1; zz<=zi; zz++)  //SUM
+						rho(ii,jj,zz) += rhoSlice(ii,jj);
+				}
+			}
+		} else {
+			utility_exit_with_message( "ERROR! Bad axis specified!");
+		}
+	}
+
+	// the main convolution operation used for both CA and CB maps
+	// there are actually three possible cases, depending on input transformation
+	//     a) symm axis not parallel to any xtal axis (cubic SGs): 3D FFT
+	//     b) symm axis parallel to some xtal axis: 2D FFTs of each slice, sum after convolution
+	//     c) translation only: sum (f dot g)
+	void
+	do_convolution( FArray3D<Real> const &rho, FArray3D<Real> const &Srho, xyzMatrix<Real> S, FArray3D<Real> &conv_out) {
+		FArray3D<Real> working_s, working_trans, working_strans;
+		FArray3D< std::complex<Real> > Fworking_trans, Fworking_strans;
+		Size Npoints = rho.u1()*rho.u2()*rho.u3();
+
+		// find out what case we are...
+		bool SLICE_X = (fabs(S.xx())<1e-6 && fabs(S.xy())<1e-6 && fabs(S.xz())<1e-6);
+		bool SLICE_Y = (fabs(S.yx())<1e-6 && fabs(S.yy())<1e-6 && fabs(S.yz())<1e-6);
+		bool SLICE_Z = (fabs(S.zx())<1e-6 && fabs(S.zy())<1e-6 && fabs(S.zz())<1e-6);
+		bool SLICE_ALL = (SLICE_X && SLICE_Y && SLICE_Z);
+		bool SLICE_NONE = (!SLICE_X && !SLICE_Y && !SLICE_Z);
+
+		if (SLICE_NONE) {  // case A
+			if (option[ crystdock::debug ]) std::cerr << "SLICE_NONE!\n";
+			transform_map_offset1( rho, S, working_trans);
+			transform_map_offset1( Srho, S, working_strans);
+
+			numeric::fourier::fft3(working_trans, Fworking_trans);
+			numeric::fourier::fft3(working_strans, Fworking_strans);
+			for (int i=0; i<Npoints; ++i) Fworking_trans[i] *= std::conj(Fworking_strans[i]);
+			numeric::fourier::ifft3(Fworking_trans, conv_out);
+		} else if (SLICE_ALL) {
+			if (option[ crystdock::debug ]) std::cerr << "SLICE_ALL!\n";
+			core::Real dotProd=0;
+			for (int i=0; i<Npoints; ++i) dotProd += rho[i]*Srho[i];
+			conv_out.dimension( rho.u1(),rho.u2(),rho.u3() );
+			conv_out = dotProd;
+		} else {
+			if (option[ crystdock::debug ]) std::cerr << "SLICE_ONE! " << SLICE_X << " " << SLICE_Y << " " << SLICE_Z << "\n";
+
+			xyzMatrix<Real> Sadjusted = S;
+			if (SLICE_X) Sadjusted.xx() = 1;
+			if (SLICE_Y) Sadjusted.yy() = 1;
+			if (SLICE_Z) Sadjusted.zz() = 1;
+			transform_map_offset1( rho, Sadjusted, working_trans);
+			transform_map_offset1( Srho, Sadjusted, working_strans);
+
+			Size axisSlice = SLICE_X? 1 : (SLICE_Y? 2:3);
+			fft2dslice( working_trans, Fworking_trans, axisSlice );
+			fft2dslice( working_strans, Fworking_strans, axisSlice );
+			for (int i=0; i<Npoints; ++i) Fworking_trans[i] *= std::conj(Fworking_strans[i]);
+			ifft2dslice(Fworking_trans, conv_out, axisSlice);  // also sums
+		}
+	}
+
 	void apply( Pose & pose) {
-		using namespace core;
-		using namespace core::conformation;
-		using namespace core::conformation::symmetry;
-		using namespace basic::options;
-		using namespace basic::options::OptionKeys;
+		// set up crystal info
+		Spacegroup sg( option[ crystdock::spacegroup ] );
+		sg.set_parameters(
+			option[ crystdock::A ],option[ crystdock::B ],option[ crystdock::C ],
+			option[ crystdock::alpha ],option[ crystdock::beta ],option[ crystdock::gamma ] );
 
-		utility::vector1<id::AtomID> atoms;
+		// center pose at origin
+		center_pose_at_origin( pose );
+		add_crystinfo_to_pose( pose, sg );
 
-		SymmetricConformation const & symm_conf (
-		      dynamic_cast<SymmetricConformation const & > ( pose.conformation() ) );
+		// lookup symmops
+		utility::vector1<core::kinematics::RT> rts;
+		sg.get_symmops( rts );
 
-		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-		Size nres_monomer = symm_info->num_independent_residues();
+		// compute rho_ca, rho_cb
+		FArray3D<Real> rho_ca, rho_cb, r_rho_ca, r_rho_cb;
 
-		for (core::Size resid=1; resid<=symm_info->num_total_residues_without_pseudo(); ++resid) {
-			if (!symm_info->bb_is_independent(resid)) continue;
-			core::conformation::Residue const &rsd_i = pose.residue(resid);
-			for (core::Size atmid=1; atmid<=rsd_i.natoms(); ++atmid) {
-				atoms.push_back( id::AtomID(atmid,resid) );
-			}
+		setup_maps( pose, rho_ca, rho_cb, sg, option[ crystdock::trans_step ]);
+		Size Npoints = rho_ca.u1()*rho_ca.u2()*rho_ca.u3();
+		Real voxel_volume = sg.volume() / Npoints;
+
+		if (option[ crystdock::debug ]) {
+			writeMRC( rho_ca, "ca_mask.mrc" );
+			writeMRC( rho_cb, "cb_mask.mrc" );
 		}
 
-		Pose mono;
-		core::pose::symmetry::extract_asymmetric_unit(pose, mono);
-		utility::vector1<Real> sc_sasa = sidechain_sasa(mono,2.5);
+		// space for intermediate results
+		FArray3D<Real> working_s, conv_out;
 
-		// steal coords from ASU
-		utility::vector1< numeric::xyzVector<core::Real> > xyzs( atoms.size() );
-		pose.batch_get_xyz( atoms, xyzs );
-		utility::vector1< numeric::xyzVector<core::Real> > xyz_xform=xyzs;
-		core::Size natoms = xyzs.size();
+		xyzMatrix<Real> identity = xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1);
+		numeric::xyzMatrix<Real> r_local;
+		Real alpha, beta, gamma;
 
-		// get CoM
-		numeric::xyzVector<core::Real> com(0,0,0);
-		for (int i=1; i<=natoms; ++i)
-			com += xyzs[i];
-		com /= (core::Real)natoms;
+		// the collection of hits
+		InterfaceHitDatabase IDB;
+		core::Size nnonclashing = 0;
 
-		protocols::moves::MoverOP tocentroid( new protocols::simple_moves::SwitchResidueTypeSetMover("centroid") );
-		protocols::moves::MoverOP tofa( new protocols::simple_moves::SwitchResidueTypeSetMover("fa_standard") );
+		// foreach rotation
+		UniformRotationSampler urs( option[ crystdock::rot_step ] );
+		while (urs.hasNext()) {
+			int ctr=1;
+			urs.getNext(r_local, alpha, beta, gamma);
+			resample_maps( rho_ca, rho_cb, r_local, r_rho_ca, r_rho_cb );
 
-		core::io::silent::SilentFileData sfd;	
+			if (option[ crystdock::debug ] ) {
+				std::ostringstream oss; oss << "rot"<<ctr<<".pdb";
+				dump_transformed_pdb( pose, InterfaceHit( 0,0,0,0, alpha, beta, gamma ), oss.str() );
+			}
+			// store info
+			FArray3D<Real> collision_map, ex_collision_map;
+			collision_map.dimension( rho_ca.u1() , rho_ca.u2() , rho_ca.u3() );
+			collision_map=0;
 
-		// loop over all positions
-		core::Real gamma=0;  // fpd no need to sample both alpha & gamma for small values of beta
-		core::Real alpha=alpha_;
-		for (core::Real beta=0; beta<=ang_max_; beta+=ang_step_)
-		for (core::Real x=trans_min_; x<=trans_max_; x+=trans_step_)
-		for (core::Real y=trans_min_; y<=trans_max_; y+=trans_step_)
-		for (core::Real z=trans_min_; z<=trans_max_; z+=trans_step_) {
-			numeric::xyzMatrix<core::Real> R_abg;
-			euler2rot(alpha,beta,gamma, R_abg);
-			numeric::xyzVector<core::Real> T_xyz(x,y,z);
-
-			// apply transform
-			for (int i=1; i<=natoms; ++i)
-				xyz_xform[i] = R_abg*(xyzs[i]-com)+T_xyz+com;
-
-			pose.batch_set_xyz( atoms, xyz_xform );
-
-			// CENTROID FILTER
-			core::pose::Pose cenpose = pose;
-			tocentroid->apply( cenpose );
-
-			// opt centroid rigid-body min
-			if (cen_min_) {
-				core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-				movemap->set_jump(true);movemap->set_bb(false);movemap->set_chi(false);
-				core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
-				protocols::simple_moves::symmetry::SymMinMover m( movemap, cenmin_scorefxn_, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
-				m.apply(cenpose);
+			if (option[ crystdock::debug ] ) {
+				ex_collision_map.dimension( rho_ca.u1() , rho_ca.u2() , rho_ca.u3() );
+				ex_collision_map=0;
 			}
 
-			core::Real cen_score = (*cen_scorefxn_)(cenpose);
-			if (cen_score > cen_vdw_filter_) {
-				TR << alpha<<"_"<<beta<<"_"<<x<<"_"<<y<<"_"<<z << "    fail centroid filter (" << cen_score << ")" << std::endl;
-				continue;
-			}
+			FArray3D<InterfaceInfo> interface_map;
+			interface_map.dimension( rho_ca.u1() , rho_ca.u2() , rho_ca.u3() );
 
-			// steal sidechains
-			tofa->apply( cenpose );
-			for ( Size ii = 1; ii <= nres_monomer; ++ii ) {
-				core::conformation::ResidueOP new_residue( pose.residue( ii ).clone() );
-				cenpose.replace_residue ( ii, *new_residue, true );
-			}
-			pose = cenpose;
+			// foreach symmop
+			for (int s=2; s<=rts.size(); ++s) {   // s==1 is always identity
+				numeric::xyzMatrix<Real> resample = rts[s].get_rotation() - identity;
 
-			// DESIGN STEP
-			// 1 find interface reses
-			// Find out which positions are near the inter-subunit interfaces
-			// These will be further screened below, then passed to design() and minimize()
-			Pose pose_for_design = pose;
-			Real const contact_dist = option[matdes::design::contact_dist]();
-			Real const contact_dist_sq = contact_dist * contact_dist;
-			vector1<bool> indy_resis = symm_info->independent_residues();
-			Sizes interface_pos;
-			for (Size ir=1; ir<=symm_info->num_total_residues_without_pseudo(); ir++) {
-				if (!indy_resis[ir]) continue;
-				std::string atom_i = "";
-				atom_i = (pose_for_design.residue(ir).name3() == "GLY")? "CA":"CB";
-				for (Size jr=1; jr<=symm_info->num_total_residues_without_pseudo(); jr++) {
-					if (indy_resis[jr]) continue;
-					std::string atom_j = "";
-					atom_j = (pose_for_design.residue(jr).name3() == "GLY")? "CA":"CB";
-					if (pose_for_design.residue(ir).xyz(atom_i).distance_squared(pose_for_design.residue(jr).xyz(atom_j)) <= contact_dist_sq) {
-					  interface_pos.push_back(ir);
-					  break;
+				transform_map( r_rho_ca, rts[s].get_rotation(), rts[s].get_translation(), working_s);
+				do_convolution( r_rho_ca, working_s, resample, conv_out);
+				for (int i=0; i<Npoints; ++i) collision_map[i] += conv_out[i];
+
+				// debug: exact CA fft
+				if (option[ crystdock::debug ] ) {
+					FArray3D<Real> shift_rho_ca, s_shift_rho_ca;
+					shift_rho_ca.dimension( rho_ca.u1() , rho_ca.u2() , rho_ca.u3() );
+					for (int sz=0; sz<rho_ca.u3(); ++sz)
+					for (int sy=0; sy<rho_ca.u2(); ++sy)
+					for (int sx=0; sx<rho_ca.u1(); ++sx) {
+						for (int z=1; z<=rho_ca.u3(); ++z)
+						for (int y=1; y<=rho_ca.u2(); ++y)
+						for (int x=1; x<=rho_ca.u1(); ++x) {
+							int cx = pos_mod( x-sx-1 , rho_ca.u1() ) + 1;
+							int cy = pos_mod( y-sy-1 , rho_ca.u2() ) + 1;
+							int cz = pos_mod( z-sz-1 , rho_ca.u3() ) + 1;
+							shift_rho_ca(x,y,z) = r_rho_ca(cx,cy,cz);
+						}
+						transform_map( shift_rho_ca, rts[s].get_rotation(), rts[s].get_translation(), s_shift_rho_ca);
+						for (int i=0; i<Npoints; ++i) {
+							ex_collision_map(sx+1,sy+1,sz+1) += shift_rho_ca[i] * s_shift_rho_ca[i];
+						}
 					}
 				}
+
+
+				// do CB fft
+				transform_map( r_rho_cb, rts[s].get_rotation(), rts[s].get_translation(), working_s);
+				do_convolution( r_rho_cb, working_s, resample, conv_out);
+				for (int i=0; i<Npoints; ++i) interface_map[i].add_interface( SingleInterface(s, conv_out[i]) );
 			}
 
-			// Finally, filter the positions for design based on surface accessibility.
-			// We don't want to design positions that are near to the interface but pointed
-			// in toward the core of the monomer (e.g., positions on the insides of helices).
-			// At the same time, create ResidueTypeConstraints favoring the native residue
-			// at each design position if a fav_nat_bonus option is passed.
-			Sizes design_pos;
-			utility::vector1<core::scoring::constraints::ConstraintOP> favor_native_constraints;
-			favor_native_constraints.clear();
-			for(Size i = 1; i <= interface_pos.size(); ++i) {
-				if( sc_sasa[interface_pos[i]] > 0.0 ) {
-					design_pos.push_back(interface_pos[i]);
-					if (fav_nat_bonus_ != 0.0) {
-						core::scoring::constraints::ConstraintOP resconstraint
-						     = new core::scoring::constraints::ResidueTypeConstraint(pose_for_design, interface_pos[i], fav_nat_bonus_);
-						favor_native_constraints.push_back(resconstraint);
-						//resconstraint->show(TR);
-						//TR << std::endl;
-					}
+			if (option[ crystdock::debug ] ) {
+				std::ostringstream oss; oss << "collisionmap_"<<ctr<<".mrc";
+				FArray3D<Real> collision_map_dump = collision_map;
+				for (int i=0; i<Npoints; ++i) collision_map_dump[i] = 1-collision_map[i];
+				writeMRC( collision_map_dump, oss.str() );
+
+				std::ostringstream oss2; oss2 << "ex_collisionmap_"<<ctr<<".mrc";
+				for (int i=0; i<Npoints; ++i) collision_map_dump[i] = 1-ex_collision_map[i];
+				writeMRC( collision_map_dump, oss2.str() );
+
+				// get correl
+				Real x2=0,y2=0,xy=0,x=0,y=0;
+				for (int i=0; i<Npoints; ++i) {
+					x2+=collision_map[i]*collision_map[i];
+					y2+=ex_collision_map[i]*ex_collision_map[i];
+					xy+=collision_map[i]*ex_collision_map[i];
+					x+=collision_map[i];
+					y+=ex_collision_map[i];
+				}
+				Real correl = (Npoints*xy - x*y) / std::sqrt( (Npoints*x2-x*x) * (Npoints*y2-y*y) );
+				std::cerr << "correl = " << correl << std::endl;
+
+				collision_map = ex_collision_map;
+			}
+
+			// now add nonclashing interfaces to the DB
+			for (int x=1; x<=rho_ca.u1(); ++x)
+			for (int y=1; y<=rho_ca.u2(); ++y)
+			for (int z=1; z<=rho_ca.u3(); ++z) {
+				if (collision_map(x,y,z) < 1.0) {
+					nnonclashing++;
+					core::Real score_xyz = voxel_volume * sg.get_interface_score( interface_map(x,y,z) );
+					xyzVector<Real> xyz((Real)x-1,(Real)y-1,(Real)z-1);
+					xyz = i2c_*xyz;
+					IDB.add_interface( InterfaceHit( score_xyz, xyz[0],xyz[1],xyz[2], alpha, beta, gamma ) );
 				}
 			}
+			if (IDB.size()>0)
+				std::cerr << IDB.size() << " of " << nnonclashing << " nonclashing configurations; min_score = " << IDB.top().score << std::endl;
+			else
+				std::cerr << IDB.size() << " configurations" << std::endl;
+			ctr++;
+		}
 
-			if ( option[crystdes::print_des]() ) {
-				std::cout << "design_pos " << design_pos[1];
-				for (Size index=2; index<=design_pos.size(); index++) {
-					std::cout << "," << design_pos[index];
+		// DONE!  dump hits to stdout
+		int nhits = IDB.size();
+		for (int i=1; i<=nhits; ++i) {
+			InterfaceHit ih = IDB.pop();
+			std::cerr << i << ": " << ih.score << " " << ih.x << " "  << ih.y << " "  << ih.z << " "
+				<< ih.alpha  << " " << ih.beta  << " " << ih.gamma  << " " << std::endl;
+
+			// Treat tags as file names so that we put the number before the extension.
+			std::string base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
+			utility::vector1< std::string > temp_out_names= utility::split( base_name );
+			utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
+			base_name = out_name.base();
+			std::string outname = base_name+"_"+right_string_of( i, 8, '0' )+".pdb";
+			dump_transformed_pdb( pose, ih, outname );
+
+			// debug: dump exact maps
+			if (option[ crystdock::debug ] && i==nhits) {
+				xyzVector<Real> xyz((Real)ih.x,(Real)ih.y,(Real)ih.z);
+				xyz = c2i_*xyz;
+				int sx = pos_mod( (int)xyz[0] , rho_ca.u1() );
+				int sy = pos_mod( (int)xyz[1] , rho_ca.u2() );
+				int sz = pos_mod( (int)xyz[2] , rho_ca.u3() );
+
+				FArray3D<Real> shift_rho_ca, s_shift_rho_ca;
+				shift_rho_ca.dimension( rho_ca.u1() , rho_ca.u2() , rho_ca.u3() );
+
+				std::cerr << "dumping shift(" << sx << "," << sy << "," << sz << ")\n";
+
+				for (int z=1; z<=rho_ca.u3(); ++z)
+				for (int y=1; y<=rho_ca.u2(); ++y)
+				for (int x=1; x<=rho_ca.u1(); ++x) {
+					int cx = pos_mod( x-sx-1 , rho_ca.u1() ) + 1;
+					int cy = pos_mod( y-sy-1 , rho_ca.u2() ) + 1;
+					int cz = pos_mod( z-sz-1 , rho_ca.u3() ) + 1;
+					shift_rho_ca(x,y,z) = r_rho_ca(cx,cy,cz);
 				}
-				std::cout << std::endl;
-				return; // output only
+				transform_map( shift_rho_ca, rts[2].get_rotation(), rts[2].get_translation(), s_shift_rho_ca);
+
+				writeMRC( shift_rho_ca, "shift_rho_ca.mrc" );
+				writeMRC( s_shift_rho_ca, "s_shift_rho_ca.mrc" );
 			}
-
-			if (fav_nat_bonus_ != 0.0) {
-				pose_for_design.add_constraints(favor_native_constraints);
-			}
-
-			// Design
-			design(pose_for_design, fa_scorefxn_, design_pos, smallres_only_);
-			minimize(pose_for_design, fa_scorefxn_, design_pos, false, true, true);
-			design(pose_for_design, fa_scorefxn_, design_pos, smallres_only_);
-
-			// Repack and minimize using scorefxn
-			ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
-			repack(pose_for_design, scorefxn, design_pos);
-			minimize(pose_for_design, scorefxn, design_pos, false, true, false);
-			scorefxn->score(pose_for_design);
-
-			// Calculate the surface area and surface complementarity for the interface
-			Real sa1=0,sc1=0,sa2=0,sc2=0,sa3=0,sc3=0;
-			new_sc(pose_for_design, sa1,sc1,sa2,sc2,sa3,sc3);
-
-			// Calculate the ddG of the monomer in the assembled and unassembled states
-			protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(scorefxn, 1, true);
-			ddG_mover.calculate(pose_for_design);
-			Real ddG = ddG_mover.sum_ddG();
-
-			// Calculate per-residue energies for interface residues
-			Real interface_energy = 0;
-			core::scoring::EnergyMap em;
-			Real avg_interface_energy = 0;
-			for (Size index=1; index<=design_pos.size(); index++) {
-				interface_energy += pose_for_design.energies().residue_total_energy(design_pos[index]);
-				em += pose_for_design.energies().residue_total_energies(design_pos[index]);
-			}
-			avg_interface_energy = interface_energy / design_pos.size();
-			em *= fa_scorefxn_->weights();
-
-			// fa filters
-			if (sa1 < sa_filter_1_) {
-				TR << alpha<<"_"<<beta<<"_"<<x<<"_"<<y<<"_"<<z << "    fail sa1 filter (" << sa1 << ")" << std::endl;
-				continue;
-			}
-			if (sa2 < sa_filter_2_) {
-				TR << alpha<<"_"<<beta<<"_"<<x<<"_"<<y<<"_"<<z << "    fail sa2 filter (" << sa2 << ")" << std::endl;
-				continue;
-			}
-			if (sa3 < sa_filter_3_) {
-				TR << alpha<<"_"<<beta<<"_"<<x<<"_"<<y<<"_"<<z << "    fail sa3 filter (" << sa3 << ")" << std::endl;
-				continue;
-			}
-			if (sc1 < sc_filter_1_) {
-				TR << alpha<<"_"<<beta<<"_"<<x<<"_"<<y<<"_"<<z << "    fail sc1 filter (" << sc1 << ")" << std::endl;
-				continue;
-			}
-			if (sc2 < sc_filter_2_) {
-				TR << alpha<<"_"<<beta<<"_"<<x<<"_"<<y<<"_"<<z << "    fail sc2 filter (" << sc2 << ")" << std::endl;
-				continue;
-			}
-			if (sc3 < sc_filter_3_) {
-				TR << alpha<<"_"<<beta<<"_"<<x<<"_"<<y<<"_"<<z << "    fail sc3 filter (" << sc3 << ")" << std::endl;
-				continue;
-			}
-			if (ddG > ddg_filter_) {
-				TR << alpha<<"_"<<beta<<"_"<<x<<"_"<<y<<"_"<<z << "    fail ddG filter (" << ddG << ")" << std::endl;
-				continue;
-			}
-			if (avg_interface_energy > air_filter_) {
-				TR << alpha<<"_"<<beta<<"_"<<x<<"_"<<y<<"_"<<z << "    fail air filter (" << avg_interface_energy << ")" << std::endl;
-				continue;
-			}
-
-			// finally ... dump the output struct
-			TR << alpha<<"_"<<beta<<"_"<<x<<"_"<<y<<"_"<<z << "    PASSES ALL FILTERS!" << std::endl;
-
-
-			std::string tag = string_of(numeric::random::uniform()).substr(2,4);
-			std::string fn = option[crystdes::prefix]()+"_"+string_of(alpha)+"_"+string_of(beta)+"_"+string_of(x)+"_"+string_of(y)+"_"+string_of(z)+"_"+tag+"_final.pdb.gz";
-
-			// Write the pdb file of the design
-			utility::io::ozstream out( option[out::file::o]() + "/" + fn );
-			pose_for_design.dump_pdb(out);
-			core::io::pdb::extract_scores(pose_for_design,out);
-			out.close();
-
-			// Create a scorefile struct, add custom metrics to it
-			core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
-			ss_out->fill_struct(pose_for_design,fn);
-			ss_out->add_energy("ddG", ddG);
-			ss_out->add_energy("air_energy", avg_interface_energy);
-			ss_out->add_energy("air_fa_atr", em[core::scoring::fa_atr] / design_pos.size());
-			ss_out->add_energy("air_fa_rep", em[core::scoring::fa_rep] / design_pos.size());
-			ss_out->add_energy("des_pos", design_pos.size());
-			ss_out->add_energy("sa1", sa1);
-			ss_out->add_energy("sc1", sc1);
-			ss_out->add_energy("sa2", sa2);
-			ss_out->add_energy("sc2", sc2);
-			ss_out->add_energy("sa3", sa3);
-			ss_out->add_energy("sc3", sc3);
-
-			// Write the scorefile
-			sfd.write_silent_struct( *ss_out, option[out::file::o]() + "/" + option[ out::file::silent ]() );
 		}
 	}
 };
@@ -688,12 +1133,15 @@ public:
 void*
 my_main( void* ) {
 	using namespace protocols::moves;
-	using namespace protocols::simple_moves::symmetry;
 
 	SequenceMoverOP seq( new SequenceMover() );
-	seq->add_mover( new SetupForSymmetryMover() );
-	seq->add_mover( new RBSymmSampler() );
+	seq->add_mover( new CrystDock() );
 
+	// force some options
+	option[ out::nooutput ].value(true);
+	option[ in::preserve_crystinfo ].value(true);
+
+	// main loop
 	protocols::jd2::JobDistributor::get_instance()->go( seq );
 
 	return 0;
@@ -703,32 +1151,1031 @@ my_main( void* ) {
 
 int
 main( int argc, char * argv [] ) {
-    try {
-	NEW_OPT(crystdes::prefix, "out-prefix", "S");
-	NEW_OPT(crystdes::cen_min, "cen_min", true);
-	NEW_OPT(crystdes::smallres_only, "smallres_only", true);
-	NEW_OPT(crystdes::alpha, "alpha", 0.0);
-	NEW_OPT(crystdes::rot_step, "rot_step", 1.5);
-	NEW_OPT(crystdes::trans_step, "trans_step", 0.75);
-	NEW_OPT(crystdes::rot_max, "rot_max", 7.5);
-	NEW_OPT(crystdes::trans_max, "trans_max", 1.5);
-	NEW_OPT(crystdes::vdw, "vdw", 1);
-	NEW_OPT(crystdes::sa1, "sa1", 150.0);
-	NEW_OPT(crystdes::sa2, "sa2", 150.0);
-	NEW_OPT(crystdes::sa3, "sa3", 0.0);
-	NEW_OPT(crystdes::sc1, "sc1", 0.5);
-	NEW_OPT(crystdes::sc2, "sc2", 0.5);
-	NEW_OPT(crystdes::sc3, "sc3", 0.0);
-	NEW_OPT(crystdes::ddg, "ddg", -10);
-	NEW_OPT(crystdes::air, "air", -1);
-	NEW_OPT(crystdes::print_des, "print_des", false);
+try {
+	NEW_OPT(crystdock::spacegroup, "spacegroup (no spaces)", "P23");
+	NEW_OPT(crystdock::A, "unit cell A", 50);
+	NEW_OPT(crystdock::B, "unit cell B", 50);
+	NEW_OPT(crystdock::C, "unit cell C", 50);
+	NEW_OPT(crystdock::alpha, "unit cell alpha", 90);
+	NEW_OPT(crystdock::beta, "unit cell beta", 90);
+	NEW_OPT(crystdock::gamma, "unit cell gamma", 90);
+	NEW_OPT(crystdock::trans_step, "translational stepsize (A)", 1);
+	NEW_OPT(crystdock::rot_step, "rotational stepsize (deg)", 10);
+	NEW_OPT(crystdock::nmodels, "#models", 1000);
+	NEW_OPT(crystdock::debug, "debug mode", false);
 
-	// initialize option and random number system
 	devel::init( argc, argv );
-
 	protocols::viewer::viewer_main( my_main );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
-                                  }
-        return 0;
+
+} catch ( utility::excn::EXCN_Base const & e ) {
+	std::cout << "caught exception " << e.msg() << std::endl;
+}
+	return 0;
+}
+
+
+///
+///
+///
+void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) const {
+	//fpd -- P1 will require special logic and we can't use FFT anyway
+	//if ( name_ == "P1" ) {
+	//	rt_out.resize(1);
+	//	rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+	//	//cheshire = [ 0,0 ; 0,0 ; 0,0 ];
+	//}
+	if ( name_ == "P121" || name_ == "P2") {
+		rt_out.resize(2);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		//cheshire = [ 0,1/2 ; 0,0 ; 0,1/2 ];
+	}
+	else if ( name_ == "P1211" || name_ == "P21" ) {
+		rt_out.resize(2);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0,0) );
+		//cheshire = [ 0,1/2 ; 0,0 ; 0,1/2 ];
+	}
+	else if ( name_ == "C121" || name_ == "C2" ) {
+		rt_out.resize(2);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0.5,0) );
+		//cheshire = [ 0,1/2 ; 0,0 ; 0,1/2 ];
+	}
+	else if ( name_ == "P4" ) {
+		rt_out.resize(4);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		//cheshire = [ 0,1 ; 0,1/2 ; 0,0 ];
+	}
+	else if ( name_ == "P41" ) {
+		rt_out.resize(4);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.25) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0.5) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.75) );
+		//cheshire = [ 0,1 ; 0,1/2 ; 0,0 ];
+	}
+	else if ( name_ == "P42" ) {
+		rt_out.resize(4);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.5) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.5) );
+		//cheshire = [ 0,1 ; 0,1/2 ; 0,0 ];
+	}
+	else if ( name_ == "P43" ) {
+		rt_out.resize(4);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.75) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0.5) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.25) );
+		//cheshire = [ 0,1 ; 0,1/2 ; 0,0 ];
+	}
+	else if ( name_ == "I4" ) {
+		rt_out.resize(8);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		// cenops
+		for (int ii=1; ii<=4; ++ii) {
+			rt_out[4+ii] = rt_out[ii];
+			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
+		}
+		//cheshire = [ 0,1 ; 0,1/2 ; 0,0 ];
+	}
+	else if ( name_ == "I41" ) {
+		rt_out.resize(8);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0,0.5,0.25) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0.5,0,0.75) );
+		// cenops
+		for (int ii=1; ii<=4; ++ii) {
+			rt_out[4+ii] = rt_out[ii];
+			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
+		}
+ 		//cheshire = [ 0,1 ; 0,1/2 ; 0,0 ];
+	}
+	else if ( name_ == "P422" ) {
+		rt_out.resize(8);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+	}
+	else if ( name_ == "P4212" ) {
+		rt_out.resize(8);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0.5,0.5,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0.5,0.5,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0.5,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0.5,0) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+	}
+	else if ( name_ == "P4122" ) {
+		rt_out.resize(8);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.25) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0.5) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.75) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.5) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.75) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.25) );
+		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+	}
+	else if ( name_ == "P41212" ) {
+		rt_out.resize(8);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0.5,0.5,0.25) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0.5) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0.5,0.5,0.75) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0.5,0.75) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0.5,0.25) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.5) );
+		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+	}
+	else if ( name_ == "P4222" ) {
+		rt_out.resize(8);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.5) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.5) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.5) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.5) );
+		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+	}
+	else if ( name_ == "P42212" ) {
+		rt_out.resize(8);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+	}
+	else if ( name_ == "P4322" ) {
+		rt_out.resize(8);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.75) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0.5) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.25) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.5) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.25) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.75) );
+		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+	}
+	else if ( name_ == "P43212" ) {
+		rt_out.resize(8);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0.5,0.5,0.75) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0.5) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0.5,0.5,0.25) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0.5,0.25) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0.5,0.75) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.5) );
+		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+	}
+	else if ( name_ == "I422" ) {
+		rt_out.resize(16);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		// cenops
+		for (int ii=1; ii<=8; ++ii) {
+			rt_out[8+ii] = rt_out[ii];
+			rt_out[8+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
+		}
+		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+	}
+	else if ( name_ == "I4122" ) {
+		rt_out.resize(16);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0,0.5,0.25) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0.5,0,0.75) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , xyzVector<Real>(0,0.5,0.25) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0,0.75) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
+		// cenops
+		for (int ii=1; ii<=8; ++ii) {
+			rt_out[8+ii] = rt_out[ii];
+			rt_out[8+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
+		}
+		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+	}
+	else if ( name_ == "P23" ) {
+		rt_out.resize(12);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		//cheshire = [0,1;0,1;0,1];
+	}
+	else if ( name_ == "F23" ) {
+		rt_out.resize(48);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		// cenops
+		for (int ii=1; ii<=12; ++ii) {
+			rt_out[12+ii] = rt_out[ii];
+			rt_out[24+ii] = rt_out[ii];
+			rt_out[36+ii] = rt_out[ii];
+			rt_out[12+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0,0.5,0.5) );
+			rt_out[24+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0,0.5) );
+			rt_out[36+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
+		}
+		//cheshire = [ [0,1/2;0,1/2;0,1/2] ];
+	}
+	else if ( name_ == "I23" ) {
+		rt_out.resize(24);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		for (int ii=1; ii<=12; ++ii) {
+			rt_out[12+ii] = rt_out[ii];
+			rt_out[12+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
+		}
+		//cheshire = [ [0,1;0,1;0,1] ];
+	}
+	else if ( name_ == "P213" ) {
+		rt_out.resize(12);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0.5,0,0.5) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0.5,0.5,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0.5,0.5) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , xyzVector<Real>(0.5,0,0.5) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , xyzVector<Real>(0.5,0.5,0) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , xyzVector<Real>(0,0.5,0.5) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , xyzVector<Real>(0.5,0.5,0) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , xyzVector<Real>(0,0.5,0.5) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0.5,0,0.5) );
+		//cheshire = [ [0,1;0,1;0,1] ];
+	}
+	else if ( name_ == "I213" ) {
+		rt_out.resize(24);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0.5,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0.5,0.5) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , xyzVector<Real>(0,0.5,0) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , xyzVector<Real>(0,0.5,0.5) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , xyzVector<Real>(0,0.5,0.5) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0.5,0,0.5) );
+		for (int ii=1; ii<=12; ++ii) {
+			rt_out[12+ii] = rt_out[ii];
+			rt_out[12+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
+		}
+		//cheshire = [ [0,1;0,1;0,1] ];
+	}
+	else if ( name_ == "P432" ) {
+		rt_out.resize(24);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,0,1,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,0,-1,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[13] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[14] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,0,1,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[15] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[16] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,0,-1,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[17] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[18] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[19] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,1,0,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[20] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[21] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,-1,0,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[22] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[23] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[24] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		//cheshire = [ [0,1;0,1;0,1] ];
+	}
+	else if ( name_ == "P4232" ) {
+		rt_out.resize(24);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,0,1,   0,1,0)  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,0,-1,   0,1,0)  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[13] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[14] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,0,1,   0,-1,0)  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[15] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[16] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,0,-1,   0,-1,0)  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[17] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[18] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[19] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,1,0,   -1,0,0)  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[20] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[21] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,-1,0,   -1,0,0)  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[22] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[23] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , xyzVector<Real>(0.5,0.5,0.5) );
+		rt_out[24] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , xyzVector<Real>(0.5,0.5,0.5) );
+		//cheshire = [ [0,1;0,1;0,1] ];
+	}
+	else if ( name_ == "F432" ) {
+		rt_out.resize(96);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,0,1,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,0,-1,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[13] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[14] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,0,1,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[15] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[16] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,0,-1,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[17] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[18] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[19] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,1,0,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[20] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[21] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,-1,0,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[22] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[23] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[24] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		// cenops
+		for (int ii=1; ii<=24; ++ii) {
+			rt_out[24+ii] = rt_out[ii];
+			rt_out[48+ii] = rt_out[ii];
+			rt_out[72+ii] = rt_out[ii];
+			rt_out[24+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0,0.5,0.5) );
+			rt_out[48+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0,0.5) );
+			rt_out[72+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
+		}
+		//cheshire = [ [0,1/2;0,1/2;0,1/2] ];
+	}
+	else if ( name_ == "F4132" ) {
+		rt_out.resize(96);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0.25,0.25,0.25) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0.5,0.5) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0.75,0.25,0.75) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0.25,0.25,0.25) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0.5,0.5) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0.75,0.25,0.75) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,0,1,   0,1,0)  , xyzVector<Real>(0.25,0.25,0.25) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , xyzVector<Real>(0,0.5,0.5) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,0,-1,   0,1,0)  , xyzVector<Real>(0.75,0.25,0.75) );
+		rt_out[13] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[14] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,0,1,   0,-1,0)  , xyzVector<Real>(0.25,0.25,0.25) );
+		rt_out[15] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , xyzVector<Real>(0,0.5,0.5) );
+		rt_out[16] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,0,-1,   0,-1,0)  , xyzVector<Real>(0.75,0.25,0.75) );
+		rt_out[17] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[18] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , xyzVector<Real>(0.5,0,0.5) );
+		rt_out[19] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,1,0,   -1,0,0)  , xyzVector<Real>(0.25,0.75,0.75) );
+		rt_out[20] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , xyzVector<Real>(0.5,0.5,0) );
+		rt_out[21] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,-1,0,   -1,0,0)  , xyzVector<Real>(0.25,0.25,0.25) );
+		rt_out[22] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[23] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , xyzVector<Real>(0.25,0.75,0.75) );
+		rt_out[24] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , xyzVector<Real>(0.75,0.75,0.25) );
+		// cenops
+		for (int ii=1; ii<=24; ++ii) {
+			rt_out[24+ii] = rt_out[ii];
+			rt_out[48+ii] = rt_out[ii];
+			rt_out[72+ii] = rt_out[ii];
+			rt_out[24+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0,0.5,0.5) );
+			rt_out[48+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0,0.5) );
+			rt_out[72+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
+		}
+		//cheshire = [ [0,1/2;0,1/2;0,1/2] ];
+	}
+	else if ( name_ == "I432" ) {
+		rt_out.resize(48);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,0,1,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,0,-1,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[13] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[14] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,0,1,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[15] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[16] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,0,-1,   0,-1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[17] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[18] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[19] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,1,0,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[20] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[21] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,-1,0,   -1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[22] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[23] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[24] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		// cenops
+		for (int ii=1; ii<=24; ++ii) {
+			rt_out[24+ii] = rt_out[ii];
+			rt_out[24+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
+		}
+		//cheshire = [ [0,1;0,1;0,1] ];
+	}
+	else if ( name_ == "P4332" ) {
+		rt_out.resize(24);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0.75,0.25,0.75) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0.5,0,0.5) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0.75,0.75,0.25) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0.5,0.5,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0.25,0.75,0.75) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0.5,0.5) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0.25,0.25,0.25) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,0,1,   0,1,0)  , xyzVector<Real>(0.75,0.25,0.75) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , xyzVector<Real>(0.5,0,0.5) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,0,-1,   0,1,0)  , xyzVector<Real>(0.75,0.75,0.25) );
+		rt_out[13] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , xyzVector<Real>(0.5,0.5,0) );
+		rt_out[14] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,0,1,   0,-1,0)  , xyzVector<Real>(0.25,0.75,0.75) );
+		rt_out[15] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , xyzVector<Real>(0,0.5,0.5) );
+		rt_out[16] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,0,-1,   0,-1,0)  , xyzVector<Real>(0.25,0.25,0.25) );
+		rt_out[17] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[18] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , xyzVector<Real>(0.5,0.5,0) );
+		rt_out[19] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,1,0,   -1,0,0)  , xyzVector<Real>(0.25,0.75,0.75) );
+		rt_out[20] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , xyzVector<Real>(0,0.5,0.5) );
+		rt_out[21] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,-1,0,   -1,0,0)  , xyzVector<Real>(0.25,0.25,0.25) );
+		rt_out[22] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0.5,0,0.5) );
+		rt_out[23] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , xyzVector<Real>(0.75,0.75,0.25) );
+		rt_out[24] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , xyzVector<Real>(0.75,0.25,0.75) );
+		//cheshire = [ [0,1;0,1;0,1] ];
+	}
+	else if ( name_ == "P4132" ) {
+		rt_out.resize(24);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0.25,0.75,0.25) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0.5,0,0.5) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0.25,0.25,0.75) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0.5,0.5,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0.75,0.25,0.25) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0.5,0.5) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0.75,0.75,0.75) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,0,1,   0,1,0)  , xyzVector<Real>(0.25,0.75,0.25) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , xyzVector<Real>(0.5,0,0.5) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,0,-1,   0,1,0)  , xyzVector<Real>(0.25,0.25,0.75) );
+		rt_out[13] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , xyzVector<Real>(0.5,0.5,0) );
+		rt_out[14] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,0,1,   0,-1,0)  , xyzVector<Real>(0.75,0.25,0.25) );
+		rt_out[15] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , xyzVector<Real>(0,0.5,0.5) );
+		rt_out[16] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,0,-1,   0,-1,0)  , xyzVector<Real>(0.75,0.75,0.75) );
+		rt_out[17] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[18] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , xyzVector<Real>(0.5,0.5,0) );
+		rt_out[19] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,1,0,   -1,0,0)  , xyzVector<Real>(0.75,0.25,0.25) );
+		rt_out[20] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , xyzVector<Real>(0,0.5,0.5) );
+		rt_out[21] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,-1,0,   -1,0,0)  , xyzVector<Real>(0.75,0.75,0.75) );
+		rt_out[22] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0.5,0,0.5) );
+		rt_out[23] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , xyzVector<Real>(0.25,0.25,0.75) );
+		rt_out[24] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , xyzVector<Real>(0.25,0.75,0.25) );
+		//cheshire = [ [0,1;0,1;0,1] ];
+	}
+	else if ( name_ == "I4132" ) {
+		rt_out.resize(48);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0.25,0.75,0.25) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0.5,0,0.5) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0.25,0.25,0.75) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0.25,0.75,0.75) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0.5,0,0) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0.25,0.25,0.25) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,0,1,   0,1,0)  , xyzVector<Real>(0.25,0.75,0.25) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , xyzVector<Real>(0.5,0,0.5) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,0,-1,   0,1,0)  , xyzVector<Real>(0.25,0.25,0.75) );
+		rt_out[13] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[14] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,0,1,   0,-1,0)  , xyzVector<Real>(0.25,0.75,0.75) );
+		rt_out[15] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , xyzVector<Real>(0.5,0,0) );
+		rt_out[16] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,0,-1,   0,-1,0)  , xyzVector<Real>(0.25,0.25,0.25) );
+		rt_out[17] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , xyzVector<Real>(0,0,0) );
+		rt_out[18] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , xyzVector<Real>(0.5,0.5,0) );
+		rt_out[19] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,1,0,   -1,0,0)  , xyzVector<Real>(0.75,0.25,0.25) );
+		rt_out[20] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , xyzVector<Real>(0,0.5,0.5) );
+		rt_out[21] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,-1,0,   -1,0,0)  , xyzVector<Real>(0.25,0.25,0.25) );
+		rt_out[22] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0.5,0,0.5) );
+		rt_out[23] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , xyzVector<Real>(0.75,0.75,0.25) );
+		rt_out[24] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , xyzVector<Real>(0.75,0.25,0.75) );
+		// cenops
+		for (int ii=1; ii<=24; ++ii) {
+			rt_out[24+ii] = rt_out[ii];
+			rt_out[24+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
+		}
+		//cheshire = [ [0,1;0,1;0,1] ];
+	}
+	else if (name_ == "P3") {
+		rt_out.resize(3);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		// cheshire = [ 0,2/3 ; 0,2/3 ; 0,0 ];
+	}
+	else if (name_ == "P31") {
+		rt_out.resize(3);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		// cheshire = [ 0,2/3 ; 0,2/3 ; 0,0 ];
+	}
+	else if (name_ == "P32") {
+		rt_out.resize(3);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		// cheshire = [ 0,2/3 ; 0,2/3 ; 0,0 ];
+	}
+	else if (name_ == "H3") {
+		rt_out.resize(9);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		// cenops
+		for (int ii=1; ii<=3; ++ii) {
+			rt_out[3+ii] = rt_out[ii];
+			rt_out[3+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.666666666666667,0.333333333333333,0.333333333333333) );
+			rt_out[6+ii] = rt_out[ii];
+			rt_out[6+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.333333333333333,0.666666666666667,0.666666666666667) );
+		}
+		// cheshire = [ 0,2/3 ; 0,2/3 ; 0,0 ];
+	}
+	else if (name_ == "P312") {
+		rt_out.resize(6);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		// cheshire = [ 0,2/3 ; 0,2/3 ; 0,1/2 ];
+	}
+	else if (name_ == "P321") {
+		rt_out.resize(6);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+	}
+	else if (name_ == "P3112") {
+		rt_out.resize(6);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		// cheshire = [ 0,2/3 ; 0,2/3 ; 0,1/2 ];
+	}
+	else if (name_ == "P3121") {
+		rt_out.resize(6);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+	}
+	else if (name_ == "P3212") {
+		rt_out.resize(6);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		// cheshire = [ 0,2/3 ; 0,2/3 ; 0,1/2 ];
+	}
+	else if (name_ == "P3221") {
+		rt_out.resize(6);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+	}
+	else if (name_ == "H32") {
+		rt_out.resize(18);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		// cenops
+		for (int ii=1; ii<=6; ++ii) {
+			rt_out[6+ii] = rt_out[ii];
+			rt_out[6+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.666666666666667,0.333333333333333,0.333333333333333) );
+			rt_out[12+ii] = rt_out[ii];
+			rt_out[12+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.333333333333333,0.666666666666667,0.666666666666667) );
+		}
+		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+	}
+	else if (name_ == "P6") {
+		rt_out.resize(6);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		// cheshire = [ 0,1 ; 0,1 ; 0,0 ];
+	}
+	else if (name_ == "P61") {
+		rt_out.resize(6);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.166666666666667) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0.833333333333333) );
+		// cheshire = [ 0,1 ; 0,1 ; 0,0 ];
+	}
+	else if (name_ == "P65") {
+		rt_out.resize(6);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.833333333333333) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0.166666666666667) );
+		// cheshire = [ 0,1 ; 0,1 ; 0,0 ];
+	}
+	else if (name_ == "P62") {
+		rt_out.resize(6);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		// cheshire = [ 0,1 ; 0,1 ; 0,0 ];
+	}
+	else if (name_ == "P64") {
+		rt_out.resize(6);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		// cheshire = [ 0,1 ; 0,1 ; 0,0 ];
+	}
+	else if (name_ == "P63") {
+		rt_out.resize(6);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0.5) );
+		// cheshire = [ 0,1 ; 0,1 ; 0,0 ];
+	}
+	else if (name_ == "P622") {
+		rt_out.resize(12);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+	}
+	else if (name_ == "P6122") {
+		rt_out.resize(12);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.166666666666667) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0.833333333333333) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0.833333333333333) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.166666666666667) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+	}
+	else if (name_ == "P6522") {
+		rt_out.resize(12);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.833333333333333) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0.166666666666667) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0.166666666666667) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.833333333333333) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+	}
+	else if (name_ == "P6222") {
+		rt_out.resize(12);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+	}
+	else if (name_ == "P6422") {
+		rt_out.resize(12);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
+		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+	}
+	else if (name_ == "P6322") {
+		rt_out.resize(12);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
+		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[9] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+	}
+	else if (name_ == "P222") {
+		rt_out.resize(4);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+	}
+	else if (name_ == "P2221") {
+		rt_out.resize(4);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.5) );
+		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+	}
+	else if (name_ == "P21212") {
+		rt_out.resize(4);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0.5,0.5,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , xyzVector<Real>(0.5,0.5,0) );
+		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+	}
+	else if (name_ == "P212121") {
+		rt_out.resize(4);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , xyzVector<Real>(0.5,0,0.5) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0.5,0.5,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , xyzVector<Real>(0,0.5,0.5) );
+		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+	}
+	else if (name_ == "C2221") {
+		rt_out.resize(8);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.5) );
+		// cenops
+		for (int ii=1; ii<=4; ++ii) {
+			rt_out[4+ii] = rt_out[ii];
+			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
+		}
+		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+	}
+	else if (name_ == "C222") {
+		rt_out.resize(8);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		// cenops
+		for (int ii=1; ii<=4; ++ii) {
+			rt_out[4+ii] = rt_out[ii];
+			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
+		}
+		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+	}
+	else if (name_ == "F222") {
+		rt_out.resize(16);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		// cenops
+		for (int ii=1; ii<=4; ++ii) {
+			rt_out[4+ii] = rt_out[ii];
+			rt_out[8+ii] = rt_out[ii];
+			rt_out[12+ii] = rt_out[ii];
+			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0,0.5,0.5) );
+			rt_out[8+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0,0.5) );
+			rt_out[12+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
+		}
+		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+	}
+	else if (name_ == "I222") {
+		rt_out.resize(8);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , xyzVector<Real>(0,0,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
+		// cenops
+		for (int ii=1; ii<=4; ++ii) {
+			rt_out[4+ii] = rt_out[ii];
+			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
+		}
+		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+	}
+	else if (name_ == "I212121") {
+		rt_out.resize(8);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0, 1,0,   0,0, 1)  , xyzVector<Real>(0,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , xyzVector<Real>(0,0.5,0) );
+		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.5) );
+		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , xyzVector<Real>(0,0.5,0.5) );
+		// cenops
+		for (int ii=1; ii<=4; ++ii) {
+			rt_out[4+ii] = rt_out[ii];
+			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
+		}
+		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+	}
+}
+
+// name output in pdbheader
+std::string Spacegroup::pdbname() const {
+	//fpd -- P1 will require special logic and we can't use FFT anyway
+	//if ( name_ == "P1" ) return "P 1";
+	if ( name_ == "P121" || name_ == "P2") return "P 1 2 1";
+	if ( name_ == "P1211" || name_ == "P21" ) return "P 1 21 1";
+	if ( name_ == "C121" || name_ == "C2" ) return "C 1 2 1";
+	if ( name_ == "P4" ) return "P 4";
+	if ( name_ == "P41" ) return "P 41";
+	if ( name_ == "P42" ) return "P 42";
+	if ( name_ == "P43" ) return "P 43";
+	if ( name_ == "I4" ) return "I 4";
+	if ( name_ == "I41" )return "I 41";
+	if ( name_ == "P422" ) return "P 4 2 2";
+	if ( name_ == "P4212" ) return "P 4 21 2";
+	if ( name_ == "P4122" ) return "P 41 2 2";
+	if ( name_ == "P41212" ) return "P 41 21 2";
+	if ( name_ == "P4222" ) return "P 42 2 2";
+	if ( name_ == "P42212" ) return "P 42 21 2";
+	if ( name_ == "P4322" ) return "P 43 2 2";
+	if ( name_ == "P43212" ) return "P 43 21 2";
+	if ( name_ == "I422" ) return "I 4 2 2";
+	if ( name_ == "I4122" ) return "I 41 2 2";
+	if ( name_ == "P23" ) return "P 2 3";
+	if ( name_ == "F23" ) return "F 2 3";
+	if ( name_ == "I23" ) return "I 2 3";
+	if ( name_ == "P213" ) return "P 21 3";
+	if ( name_ == "I213" ) return "I 21 3";
+	if ( name_ == "P432" ) return "P 4 3 2";
+	if ( name_ == "P4232" ) return "P 42 3 2";
+	if ( name_ == "F432" ) return "F 4 3 2";
+	if ( name_ == "F4132" ) return "F 41 3 2";
+	if ( name_ == "I432" ) return "I 4 3 2";
+	if ( name_ == "P4332" ) return "P 43 3 2";
+	if ( name_ == "P4132" ) return "P 41 3 2";
+	if ( name_ == "I4132" ) return "I 41 3 2";
+	if ( name_ == "P3") return "P 3";
+	if ( name_ == "P31") return "P 31";
+	if ( name_ == "P32") return "P 32";
+	if ( name_ == "H3") return "H 3";
+	if ( name_ == "P312") return "P 3 1 2";
+	if ( name_ == "P321") return "P 3 2 1";
+	if ( name_ == "P3112") return "P 31 1 2";
+	if ( name_ == "P3121") return "P 31 2 1";
+	if ( name_ == "P3212") return "P 3 21 2";
+	if ( name_ == "P3221") return "P 3 2 21";
+	if ( name_ == "H32") return "H 3 2";
+	if ( name_ == "P6") return "P 6";
+	if ( name_ == "P61") return "P 61";
+	if ( name_ == "P65") return "P 65";
+	if ( name_ == "P62") return "P 62";
+	if ( name_ == "P64") return "P 64";
+	if ( name_ == "P63") return "P 63";
+	if ( name_ == "P622") return "P 6 2 2";
+	if ( name_ == "P6122") return "P 61 2 2";
+	if ( name_ == "P6522") return "P 65 2 2";
+	if ( name_ == "P6222") return "P 62 2 2";
+	if ( name_ == "P6422") return "P 64 2 2";
+	if ( name_ == "P6322") return "P 63 2 2";
+	if ( name_ == "P222") return "P 2 2 2";
+	if ( name_ == "P2221") return "P 2 2 21";
+	if ( name_ == "P21212") return "P 21 21 2";
+	if ( name_ == "P212121") return "P 21 21 21";
+	if ( name_ == "C2221") return "C 2 2 21";
+	if ( name_ == "C222") return "C 2 2 2";
+	if ( name_ == "F222") return "F 2 2 2";
+	if ( name_ == "I222") return "I 2 2 2";
+	if ( name_ == "I212121") return "I 21 21 21";
 }
