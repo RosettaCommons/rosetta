@@ -1002,7 +1002,6 @@ ResidueType::add_nu(core::uint const nu_index,
 	nu_atoms_[nu_index] = atoms;
 }
 
-
 /// @details Describe proton behavior for residue type; where should rotamer samples be considered,
 /// and if expanded rotamers are desired, what deviations from the original rotamer samples
 /// should be included.
@@ -1786,7 +1785,6 @@ ResidueType::update_derived_data()
 	ndihe_ = dihedral_atom_sets_.size();
 
 
-
 	// get bond angles
 	bondangle_atom_sets_.clear();
 	bondangles_for_atom_.resize( natoms() );
@@ -1872,7 +1870,7 @@ ResidueType::update_derived_data()
 
 		rna_residuetype_ = *( core::chemical::rna::RNA_ResidueTypeOP( new core::chemical::rna::RNA_ResidueType ) );
 
-		//update_last_controlling_chi is treated seperately for RNA case. Parin Sripakdeevong, June 26, 2011
+		//update_last_controlling_chi is treated separately for RNA case. Parin Sripakdeevong, June 26, 2011
 		rna_residuetype_.rna_update_last_controlling_chi(this, last_controlling_chi_, atoms_last_controlled_by_chi_);
 
 		rna_residuetype_.update_derived_rna_data(this);

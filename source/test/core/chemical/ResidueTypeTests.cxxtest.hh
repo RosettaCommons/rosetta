@@ -27,10 +27,6 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/residue_io.hh>
 
-// AUTO-REMOVED #include <core/chemical/ElementSet.hh>
-// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/orbitals/OrbitalTypeSet.hh>
-
 // Platform Headers
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
@@ -39,8 +35,6 @@
 // C++ Headers
 #include <string>
 #include <ostream>
-
-//Auto Headers
 
 
 using std::endl;
@@ -161,7 +155,7 @@ public:
 		rsd.add_numeric_property("foo",1.5);
 		TS_ASSERT_EQUALS(rsd.get_numeric_property("foo"),1.5);
 
-/// Build an Alanine
+		// Build an "Alanine"
 		add_atom( rsd, atom_types," N  ", "Nbb", "NH1", -0.47);
 		add_atom( rsd, atom_types," CA ", "CAbb", "CT1", 0.07);
 		add_atom( rsd, atom_types," C  ", "CObb", "C", 0.51);
@@ -189,7 +183,6 @@ public:
 		add_bond( rsd, "CB", "2HB");
 		add_bond( rsd, "CB", "3HB");
 
-
 		rsd.nbr_atom("CB");
 		TS_ASSERT_EQUALS(rsd.nbr_atom(), rsd.atom_index("CB"));
 		rsd.nbr_radius(3.4473);
@@ -210,9 +203,19 @@ public:
 		rsd.set_icoor("LOWER", -150.000000,  58.300003, 1.328685, "N",  "CA", "C");
 		rsd.set_icoor("H", -180.000000,  60.849998,   1.010000, "N",  "CA", "LOWER");
 
+		// For the purposes of a unit test, we'll just add_chi (and add_nu, too) anyway, even though both are meaning-
+		// less for alanine. ~Labonte
+		rsd.add_chi(1, "N", "CA", "CB", "1HB");
+		rsd.add_chi("N", "CA", "CB", "2HB");  // alternate designations, just for kicks
+		rsd.add_chi("N", "CA", "CB", "3HB");
+		rsd.add_nu(1, "C", "CA", "CB", "1HB");  // not really a nu angle, but it doesn't matter for testing purposes
+
 		rsd.finalize();
 
-		//TS_ASSERT_EQUALS( rsd.chi_atoms( rsd.atom_index("CA")).size(), (core::Size) 3); // we have to "add_chi" first and ALA has no chi listed
+		TS_ASSERT_EQUALS(rsd.chi_atoms().size(), 3);  // We specified three chi angles above.
+		TS_ASSERT_EQUALS(rsd.chi_atoms(3).size(), 4);  // There should be four atom indices for any torsion angle.
+		TS_ASSERT_EQUALS(rsd.nu_atoms().size(), 1);  // We specified one nu angle above.
+		TS_ASSERT_EQUALS(rsd.nu_atoms(1).at(1), rsd.atom_index("C"));  // 1st atom index in the list should be that of C.
 
 		TS_ASSERT_EQUALS( rsd.path_distance(rsd.atom_index("N"), rsd.atom_index("C")), 2);
 		TS_ASSERT_EQUALS( rsd.path_distance(rsd.atom_index("N"), rsd.atom_index("O")), 3);
@@ -242,12 +245,10 @@ public:
 		//TS_ASSERT_EQUALS(rsd.mainchain_atom( rsd.atom_index("N")), (core::Size) 1); // Index of MC atom should be 1
 		TS_ASSERT( ! rsd.has( "BURRITO" ));
 
-
 		TS_ASSERT_EQUALS(rsd.all_bb_atoms().size(), (core::Size) 0); // Why are all atoms being counted as side chain atoms?
 		TS_ASSERT_EQUALS(rsd.all_sc_atoms().size(), (core::Size) 10); // Why are all atoms being called side chain atoms?
 		TS_ASSERT_EQUALS(rsd.Hpos_polar_sc().size(), (core::Size) 1);
 		TS_ASSERT_EQUALS(rsd.accpt_pos_sc().size(), (core::Size) 1);
-
 
 		TS_ASSERT_EQUALS(rsd.atom_type(1).name(), "Nbb");
 		TS_ASSERT_EQUALS(rsd.atom_type(2).name(), "CAbb");
@@ -265,7 +266,6 @@ public:
 		rsd.finalize();
 		TS_ASSERT_EQUALS(rsd.atom_base(rsd.atom_index("N")), (core::Size) 2);
 		TS_ASSERT_EQUALS(rsd.atom_base(rsd.atom_index("CA")), (core::Size) 1);
-
 
     	core::Size center=0;
     	core::Size nbr1=0;
@@ -285,7 +285,6 @@ public:
         TS_ASSERT_EQUALS(rsd.atom_name(neigh[2]), " C  ");
         TS_ASSERT_EQUALS(rsd.atom_name(neigh[3]), " O  ");
 
-
 		rsd.delete_atom("3HB");
 		rsd.delete_atom("2HB");
 		rsd.delete_atom("1HB");
@@ -295,7 +294,7 @@ public:
 
 		TS_ASSERT_EQUALS(rsd.natoms(), 4);
 
-		rsd.finalize();
+		//rsd.finalize();  // can't remove the above atoms if they are part of a CHI definition and then finalize
 
 		rsd.delete_atom("O"); // can't delete these
 		rsd.delete_atom("C");
@@ -304,7 +303,6 @@ public:
 
 		TS_ASSERT_EQUALS(rsd.natoms(), 0);
 		//rsd.finalize(); // residue type doesn't support removing the backbone...
-
 	}
 
 	void test_retyping() {
