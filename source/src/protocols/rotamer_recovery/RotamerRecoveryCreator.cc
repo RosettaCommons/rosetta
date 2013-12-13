@@ -20,9 +20,11 @@
 #include <protocols/rotamer_recovery/RRProtocolRotamerTrials.hh>
 #include <protocols/rotamer_recovery/RRProtocolMinPack.hh>
 #include <protocols/rotamer_recovery/RRProtocolPackRotamers.hh>
+#include <protocols/rotamer_recovery/RRProtocolRelax.hh>
 #include <protocols/rotamer_recovery/RRProtocolMover.hh>
 #include <protocols/rotamer_recovery/RRComparer.hh>
 #include <protocols/rotamer_recovery/RRComparerAutomorphicRMSD.hh>
+#include <protocols/rotamer_recovery/RRComparerElecDensDiff.hh>
 #include <protocols/rotamer_recovery/RRReporter.hh>
 #include <protocols/rotamer_recovery/RRReporterSQLite.hh>
 #include <protocols/rotamer_recovery/RRReporterHuman.hh>
@@ -99,6 +101,17 @@ RRProtocolPackRotamersCreator::type_name() const {
 	return "RRProtocolPackRotamers";
 }
 
+//////////////// Relax ///////////////////
+RRProtocolOP
+RRProtocolRelaxCreator::create_protocol(
+) const {
+	return new RRProtocolRelax;
+}
+
+string
+RRProtocolRelaxCreator::type_name() const {
+	return "RRProtocolRelax";
+}
 
 //////////////// Mover ///////////////////
 string
@@ -150,6 +163,17 @@ RRComparerChiDiffCreator::type_name() const {
 	return "RRComparerChiDiff";
 }
 
+//////////////// ElecDensDiff ///////////////////
+RRComparerOP
+RRComparerElecDensDiffCreator::create_comparer(
+) const {
+	return new RRComparerElecDensDiff;
+}
+
+string
+RRComparerElecDensDiffCreator::type_name() const {
+	return "RRComparerElecDensDiff";
+}
 
 //////////////// Simple ///////////////////
 RRReporterOP

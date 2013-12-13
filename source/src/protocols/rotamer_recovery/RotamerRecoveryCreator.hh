@@ -86,6 +86,15 @@ public:
 	std::string type_name() const;
 };
 
+class RRProtocolRelaxCreator : public RRProtocolCreator {
+public:
+	RRProtocolRelaxCreator() {}
+	~RRProtocolRelaxCreator() {}
+
+	RRProtocolOP create_protocol() const;
+	std::string type_name() const;
+};
+
 class RRProtocolMoverCreator : public RRProtocolCreator {
 public:
 	RRProtocolMoverCreator() {}
@@ -135,7 +144,14 @@ public:
 	std::string type_name() const;
 };
 
+class RRComparerElecDensDiffCreator : public RRComparerCreator {
+public:
+	RRComparerElecDensDiffCreator() {}
+	~RRComparerElecDensDiffCreator() {}
 
+	RRComparerOP create_comparer() const;
+	std::string type_name() const;
+};
 
 /// @brief The Creator class is responsible for creating a particular
 /// mover class.

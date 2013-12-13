@@ -1019,7 +1019,7 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
 	if( script_file == "" && basic::options::option[ basic::options::OptionKeys::relax::dualspace ]() ){
     TR << "================== Using dualspace script ==================" << std::endl;
     filelines.push_back( "switch:torsion"  								 );
-    filelines.push_back( "repeat 3"  															 );
+    filelines.push_back( "repeat " + string_of( standard_repeats - 1 ) );
     filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
     filelines.push_back( "ramp_repack_min 0.250 0.01     0.5"      );
     filelines.push_back( "ramp_repack_min 0.550 0.01     0.0"      );
@@ -1028,7 +1028,7 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
     filelines.push_back( "endrepeat "                      );
 
     filelines.push_back( "switch:cartesian"  								 );
-    filelines.push_back( "repeat 2"  															 );
+    filelines.push_back( "repeat 1"  															 );
     filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
     filelines.push_back( "ramp_repack_min 0.250 0.01     0.5"      );
     filelines.push_back( "ramp_repack_min 0.550 0.01     0.0"      );
@@ -1047,7 +1047,7 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
 	}else if (script_file == "NO CST RAMPING" && basic::options::option[ basic::options::OptionKeys::relax::dualspace ]() ){
     TR << "================== Using dualspace script ==================" << std::endl;
     filelines.push_back( "switch:torsion"                  );
-    filelines.push_back( "repeat 3"                                );
+    filelines.push_back( "repeat " + string_of( standard_repeats - 1 ) );
     filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
     filelines.push_back( "ramp_repack_min 0.250 0.01     1.0"      );
     filelines.push_back( "ramp_repack_min 0.550 0.01     1.0"      );
@@ -1056,7 +1056,7 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
     filelines.push_back( "endrepeat "                      );
 
     filelines.push_back( "switch:cartesian"                  );
-    filelines.push_back( "repeat 2"                                );
+    filelines.push_back( "repeat 1"                                );
     filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
     filelines.push_back( "ramp_repack_min 0.250 0.01     1.0"      );
     filelines.push_back( "ramp_repack_min 0.550 0.01     1.0"      );

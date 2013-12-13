@@ -22,6 +22,7 @@ namespace options {
 namespace OptionKeys {
 
 namespace corrections { extern BooleanOptionKey const corrections; }
+namespace corrections { extern BooleanOptionKey const beta; }
 namespace corrections { extern BooleanOptionKey const correct; }
 namespace corrections { extern BooleanOptionKey const hbond_sp2_correction; }
 namespace corrections { extern BooleanOptionKey const facts_default; }

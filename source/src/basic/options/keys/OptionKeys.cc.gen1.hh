@@ -1,5 +1,3 @@
-namespace jumps { BooleanOptionKey const no_wobble( "jumps:no_wobble" );  }
-namespace jumps { BooleanOptionKey const no_shear( "jumps:no_shear" );  }
 namespace jumps { BooleanOptionKey const no_sample_ss_jumps( "jumps:no_sample_ss_jumps" );  }
 namespace jumps { IntegerOptionKey const invrate_jump_move( "jumps:invrate_jump_move" );  }
 namespace jumps { RealOptionKey const chainbreak_weight_stage1( "jumps:chainbreak_weight_stage1" );  }
@@ -190,6 +188,7 @@ namespace ProQ { StringOptionKey const prefix( "ProQ:prefix" );  }
 namespace ProQ { BooleanOptionKey const use_gzip( "ProQ:use_gzip" );  }
 namespace ProQ { RealOptionKey const normalize( "ProQ:normalize" );  }
 namespace corrections { BooleanOptionKey const corrections( "corrections" );  }
+namespace corrections { BooleanOptionKey const beta( "corrections:beta" );  }
 namespace corrections { BooleanOptionKey const correct( "corrections:correct" );  }
 namespace corrections { BooleanOptionKey const hbond_sp2_correction( "corrections:hbond_sp2_correction" );  }
 namespace corrections { BooleanOptionKey const facts_default( "corrections:facts_default" );  }
@@ -739,3 +738,6 @@ namespace james { IntegerOptionKey const n_clusters( "james:n_clusters" );  }
 namespace james { BooleanOptionKey const thread_unaligned( "james:thread_unaligned" );  }
 namespace membrane { BooleanOptionKey const membrane( "membrane" );  }
 namespace membrane { IntegerOptionKey const normal_cycles( "membrane:normal_cycles" );  }
+namespace membrane { RealOptionKey const normal_mag( "membrane:normal_mag" );  }
+namespace membrane { RealOptionKey const center_mag( "membrane:center_mag" );  }
+namespace membrane { RealOptionKey const smooth_move_frac( "membrane:smooth_move_frac" );  }

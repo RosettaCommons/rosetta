@@ -744,11 +744,11 @@ option.add( basic::options::OptionKeys::jumps::residue_pair_jump_file, "a file t
 option.add( basic::options::OptionKeys::jumps::sheets, "sheet topology--> replaces -sheet1 -sheet2 ... -sheetN" ).def(1);
 option.add( basic::options::OptionKeys::jumps::topology_file, "read a file with topology info ( PairingStats )" ).def("");
 option.add( basic::options::OptionKeys::jumps::bb_moves, "Apply bb_moves ( wobble, small, shear) during stage3 and stage 4." ).def(false);
+option.add( basic::options::OptionKeys::jumps::no_wobble, "Don t apply the useless wobble during stage3 and stage 4." ).def(false);
+option.add( basic::options::OptionKeys::jumps::no_shear, "Don t apply the useless shear during stage3 and stage 4." ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::no_wobble, "Don t apply the useless wobble during stage3 and stage 4." ).def(false);
-option.add( basic::options::OptionKeys::jumps::no_shear, "Don t apply the useless shear during stage3 and stage 4." ).def(false);
-option.add( basic::options::OptionKeys::jumps::no_sample_ss_jumps, "sample jump-frags during folding" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::no_sample_ss_jumps, "sample jump-frags during folding" ).def(false);
 option.add( basic::options::OptionKeys::jumps::invrate_jump_move, "give 5 here to have 5 torsion moves for each jump move" ).def(10);
 option.add( basic::options::OptionKeys::jumps::chainbreak_weight_stage1, "the weight on chainbreaks" ).def(1.0);
 option.add( basic::options::OptionKeys::jumps::chainbreak_weight_stage2, "the weight on chainbreaks" ).def(1.0);
@@ -938,6 +938,7 @@ option.add( basic::options::OptionKeys::ProQ::prefix, "prefix for outputfiles)" 
 option.add( basic::options::OptionKeys::ProQ::use_gzip, "gzip output files" ).def(false);
 option.add( basic::options::OptionKeys::ProQ::normalize, "Normalizing factor (usually target sequence length)" ).def(1.0);
 option.add( basic::options::OptionKeys::corrections::corrections, "corrections option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::corrections::beta, "use beta score function" ).def(false);
 option.add( basic::options::OptionKeys::corrections::correct, "turn on default corrections:-corrections::chemical:icoor_05_2009-corrections::score:p_aa_pp scoring/score_functions/P_AA_pp/P_AA_pp_08.2009-corrections::score:p_aa_pp_nogridshift-corrections::score:p_aa_pp_nogridshift-corrections::score:rama_not_squared-corrections::score:rama_map scoring/score_functions/rama/Rama.10.2009.yfsong.dat-scoring::hbond_params helix_hb_06_2009-corrections::score:hbond_fade 1.9 2.3 2.3 2.6 0.3 0.7 0.0 0.05-corrections::score:ch_o_bond_potential scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat" ).def(false);
 option.add( basic::options::OptionKeys::corrections::hbond_sp2_correction, "turn on the hbond Sp2 correction with a single flag use with sp2_correction.wts. Note, these weight sets are chosen automatically by default. -score::hb_sp2_chipen -hb_sp2_BAH180_rise 0.75 -hb_sp2_outer_width 0.357 -hb_fade_energy -hbond_measure_sp3acc_BAH_from_hvy -lj_hbond_hdis 1.75 -lj_hbond_OH_donor_dis 2.6 -hbond_params sp2_elec_params -expand_st_chi2sampling -smooth_fa_elec -elec_min_dis 1.6 -elec_r_option false -chemical::set_atom_properties fa_standard:ONH2:LK_DGFREE:-5.85 fa_standard:NH2O:LK_DGFREE:-7.8 fa_standard:Narg:LK_DGFREE:-10.0 fa_standard:OH:LK_DGFREE:-6.70" );
 option.add( basic::options::OptionKeys::corrections::facts_default, "turn on default options for FACTS use with scorefacts.wts. Incompatible with hbond_sp2_correction option. -correct -lj_hbond_hdis 2.3 -lj_hbond_OH_donor_dis 3.4 -use_bicubic_interpolation  -hbond_params sp2_elec_params -hb_sp2_chipen  -hbond_measure_sp3acc_BAH_from_hby -facts_GBpair_cut 10.0 -facts_min_dis 1.5 -facts_dshift 1.4 -facts_die 1.0 -facts_kappa 12.0 -facts_asp_patch 3 -facts_intrares_scale 0.4 -facts_elec_sh_exponent 1.8" ).def(false);
@@ -1487,12 +1488,12 @@ option.add( basic::options::OptionKeys::james::n_clusters, "number of clusters f
 option.add( basic::options::OptionKeys::james::thread_unaligned, "basic_threading without performing an alignment" ).def(false);
 option.add( basic::options::OptionKeys::membrane::membrane, "membrane option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::membrane::normal_cycles, "number of membrane normal cycles" ).def(100);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::membrane::normal_mag, "magnitude of membrane normal angle search (degrees)" ).def(5);
+option.add( basic::options::OptionKeys::membrane::normal_mag, "magnitude of membrane normal angle search (degrees)" ).def(5);
 option.add( basic::options::OptionKeys::membrane::center_mag, "magnitude of membrane normal center search (Angstroms)" ).def(1);
 option.add( basic::options::OptionKeys::membrane::smooth_move_frac, "No description" ).def(0.5);
-option.add( basic::options::OptionKeys::membrane::no_interpolate_Mpair, "No description" ).def(false);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::membrane::no_interpolate_Mpair, "No description" ).def(false);
 option.add( basic::options::OptionKeys::membrane::Menv_penalties, "No description" ).def(false);
 option.add( basic::options::OptionKeys::membrane::Membed_init, "No description" ).def(false);
 option.add( basic::options::OptionKeys::membrane::Fa_Membed_update, "No description" ).def(false);
@@ -1883,7 +1884,7 @@ option.add( basic::options::OptionKeys::loops::fa_closure_protocol, "Abrelax use
 option.add( basic::options::OptionKeys::loops::combine_rate, "Combine successive loops at this rate" ).def(0.0);
 option.add( basic::options::OptionKeys::loops::remodel, "" ).legal("no").legal("perturb_ccd").legal("perturb_kic").legal("quick_ccd").legal("quick_ccd_moves").legal("old_loop_relax").legal("sdwindow").def("no");
 option.add( basic::options::OptionKeys::loops::intermedrelax, "" ).legal("no").legal("relax").legal("fastrelax").legal("seqrelax").def("no");
-option.add( basic::options::OptionKeys::loops::refine, "method for performing full-atom refinement on loops" ).legal("no").legal("refine_ccd").legal("refine_kic").def("no");
+option.add( basic::options::OptionKeys::loops::refine, "method for performing full-atom refinement on loops" ).legal("no").legal("refine_ccd").legal("refine_kic").legal("refine_kic_v2").def("no");
 option.add( basic::options::OptionKeys::loops::relax, "" ).legal("no").legal("relax").legal("fastrelax").legal("seqrelax").legal("minirelax").def("no");
 option.add( basic::options::OptionKeys::loops::n_rebuild_tries, "number of times to retry loop-rebuilding" ).def(1);
 option.add( basic::options::OptionKeys::loops::final_clean_fastrelax, "Add a final fastrelax without constraints" ).legal(true).legal(false).def(false);
@@ -1933,6 +1934,9 @@ option.add( basic::options::OptionKeys::loops::taboo_in_fa, "enhance diversity i
 option.add( basic::options::OptionKeys::loops::ramp_fa_rep, "ramp the weight of fa_rep over outer cycles in refinement" ).def(false);
 option.add( basic::options::OptionKeys::loops::ramp_rama, "ramp the weight of rama over outer cycles in refinement" ).def(false);
 option.add( basic::options::OptionKeys::loops::kic_rama2b, "use neighbor-dependent Ramachandran distributions in random torsion angle sampling" ).def(false);
+option.add( basic::options::OptionKeys::loops::kic_small_moves, "sample torsions by adding or subtracting a small amount from the previous value, instead of picking from the Ramachandran distribution." ).def(false);
+option.add( basic::options::OptionKeys::loops::kic_small_move_magnitude, "specify the magnitude of the small moves.  Only meant to be used for initial testing and optimization." ).def(5.0);
+option.add( basic::options::OptionKeys::loops::kic_pivot_based, "use ramachandran sampling if the pivots are closer than 8 residues apart, otherwise use small moves." ).def(false);
 option.add( basic::options::OptionKeys::loops::kic_no_centroid_min, "don't minimize in centroid mode during KIC perturb" ).def(false);
 option.add( basic::options::OptionKeys::loops::kic_leave_centroid_after_initial_closure, "only use centroid mode for initial loop closure -- all further loop closures will be performed in full-atom" ).def(false);
 option.add( basic::options::OptionKeys::loops::kic_repack_neighbors_only, "select neigbors for repacking via the residue-dependent NBR_RADIUS, not via a generic threshold (WARNING: this overrides any setting in -loops:neighbor_dist)" ).def(false);
@@ -2153,6 +2157,7 @@ option.add( basic::options::OptionKeys::edensity::score_symm_complex, "If set, s
 option.add( basic::options::OptionKeys::edensity::sc_scaling, "Scale sidechain density by this amount (default same as mainchain density)" ).def(1.0);
 option.add( basic::options::OptionKeys::edensity::n_kbins, "Number of B-factor bins" ).def(1);
 option.add( basic::options::OptionKeys::edensity::render_sigma, "initially render at this sigma level (extras=graphics build only)" ).def(2);
+option.add( basic::options::OptionKeys::edensity::unmask_bb, "Only include sidechain atoms in atom mask" ).def(false);
 option.add( basic::options::OptionKeys::patterson::patterson, "patterson option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::patterson::debug, "No description" ).def(false);
 option.add( basic::options::OptionKeys::patterson::weight, "wt of patterson correlation" ).def(0.0);
@@ -2230,10 +2235,10 @@ option.add( basic::options::OptionKeys::optE::repeat_swarm_optimization_until_fi
 option.add( basic::options::OptionKeys::optE::design_with_minpack, "Use the min-packer to design in the sequence recovery stages." ).def(false);
 option.add( basic::options::OptionKeys::optE::limit_bad_scores, "Quit after 100,000 inf or NaN errors in optE objective function" );
 option.add( basic::options::OptionKeys::optE::rescore::rescore, "rescore option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::optE::rescore::weights, "Weight set to use when rescoring optE partition functions" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::rescore::weights, "Weight set to use when rescoring optE partition functions" );
-option.add( basic::options::OptionKeys::optE::rescore::context_round, "Integer of the context PDBs generated during design to use to measure the pNatAA" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::rescore::context_round, "Integer of the context PDBs generated during design to use to measure the pNatAA" );
 option.add( basic::options::OptionKeys::optE::rescore::outlog, "File to which the OptEPosition data should be written" );
 option.add( basic::options::OptionKeys::optE::rescore::measure_sequence_recovery, "When rescoring a weight set, run design with that weight set and measure the sequence recovery." ).def(false);
 option.add( basic::options::OptionKeys::optE::no_design_pdb_output, "Do not write out the designed pdbs to the workdir_ directories over the course of the optE run" );
@@ -2668,6 +2673,7 @@ option.add( basic::options::OptionKeys::optimization::scale_rb, "max cycles for 
 option.add( basic::options::OptionKeys::optimization::scale_rbangle, "max cycles for MinimizerOptions" ).def(1);
 option.add( basic::options::OptionKeys::optimization::scmin_nonideal, "Do we allow sidechain nonideality during scmin (e.g. rtmin and min_pack)" ).def(false);
 option.add( basic::options::OptionKeys::optimization::scmin_cartesian, "Toggle Cartesian-space minimization during scmin (e.g. rmin and min_pack)" ).def(false);
+option.add( basic::options::OptionKeys::optimization::nonideal, "Permit bond geometries to vary from ideal values" ).def(false);
 option.add( basic::options::OptionKeys::swa::swa, "swa option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::swa::s1, "input file(s)" );
 option.add( basic::options::OptionKeys::swa::s2, "input file(s)" );

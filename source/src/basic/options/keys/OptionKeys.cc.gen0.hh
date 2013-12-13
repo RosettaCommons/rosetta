@@ -739,3 +739,5 @@ namespace jumps { FileOptionKey const residue_pair_jump_file( "jumps:residue_pai
 namespace jumps { IntegerVectorOptionKey const sheets( "jumps:sheets" );  }
 namespace jumps { FileOptionKey const topology_file( "jumps:topology_file" );  }
 namespace jumps { BooleanOptionKey const bb_moves( "jumps:bb_moves" );  }
+namespace jumps { BooleanOptionKey const no_wobble( "jumps:no_wobble" );  }
+namespace jumps { BooleanOptionKey const no_shear( "jumps:no_shear" );  }

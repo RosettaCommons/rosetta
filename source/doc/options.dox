@@ -4499,6 +4499,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>corrections option group</dd><br>
 </dl>
 <dl>
+<dt><b>-beta</b> \<Boolean\><dt>
+<dd>use beta score function</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-correct</b> \<Boolean\><dt>
 <dd>turn on default corrections:-corrections::chemical:icoor_05_2009-corrections::score:p_aa_pp scoring/score_functions/P_AA_pp/P_AA_pp_08.2009-corrections::score:p_aa_pp_nogridshift-corrections::score:p_aa_pp_nogridshift-corrections::score:rama_not_squared-corrections::score:rama_map scoring/score_functions/rama/Rama.10.2009.yfsong.dat-scoring::hbond_params helix_hb_06_2009-corrections::score:hbond_fade 1.9 2.3 2.3 2.6 0.3 0.7 0.0 0.05-corrections::score:ch_o_bond_potential scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat</dd><br>
 <dd>Default: false</dd><br>
@@ -10506,6 +10511,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>initially render at this sigma level (extras=graphics build only)</dd><br>
 <dd>Default: 2</dd><br>
 </dl>
+<dl>
+<dt><b>-unmask_bb</b> \<Boolean\><dt>
+<dd>Only include sidechain atoms in atom mask</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>patterson</h2>
 <dl>
@@ -12990,6 +13000,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-scmin_cartesian</b> \<Boolean\><dt>
 <dd>Toggle Cartesian-space minimization during scmin (e.g. rmin and min_pack)</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-nonideal</b> \<Boolean\><dt>
+<dd>Permit bond geometries to vary from ideal values</dd><br>
 <dd>Default: false</dd><br>
 </dl>
  </li>

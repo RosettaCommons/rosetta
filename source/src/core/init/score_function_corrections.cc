@@ -29,10 +29,14 @@
 #include <basic/options/keys/qsar.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
+#include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 // Core headers
 #include <core/types.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreType.hh>
 
 // C++ headers
 #include <istream>
@@ -421,6 +425,88 @@ init_crystal_refinement_correction() {
 	}
 }
 
+
+void
+init_beta_correction() {
+	// beta score function - experimental energy function changes are accumulated here until made default
+	// please share issues/feedback with Patrick Conway - ptconway@gmail.com
+  if( option[corrections::beta]) {
+		//nonideal
+		if ( ! option[ optimization::nonideal ].user() ) {
+      option[ optimization::nonideal ].value( true );
+    }
+		//optimized cart_bonded parameters - currently same as default
+		if ( option[ optimization::nonideal ] ) {
+			option[ score::bonded_params_dir ].value( "scoring/score_functions/bondlength_bondangle_beta" );
+		}
+		/*	--coming soon--
+		//length dependent hbond_sr_bb to model helix cooperativity
+		if ( ! option[ corrections::nonideal ].user() ) {
+      option[ corrections::nonideal ].value( true );
+    }
+		//arovirt - aromatic cation-pi interaction modeling via virtual atoms
+		if ( ! option[ corrections::nonideal ].user() ) {
+      option[ corrections::nonideal ].value( true );
+    }
+		//dunbrack hbond exclusion - downweight rotamers that hbond with self/neighbor (don't double count hbond terms)
+		if ( ! option[ corrections::nonideal ].user() ) {
+      option[ corrections::nonideal ].value( true );
+    }
+		//upweight serine/threonine H-HG/H-HH intra_rep so they don't clash
+		if ( ! option[ corrections::nonideal ].user() ) {
+      option[ corrections::nonideal ].value( true );
+    }
+		*/
+
+		// talaris2013_beta.wts - currently same as talaris2013_cart.wts
+		// overrides weight files set in the other options - make sure all of these previous options are happy!
+    if ( ! option[ score::weights ].user() ) {
+      option[ score::weights ].value( "talaris2013_beta.wts" );
+    }	
+	}
+}
+
+void
+init_nonideal_correction() {
+	//PTC set up for flexible bond geometries 
+	if( option[optimization::nonideal]) {
+		// add jumps to missing densities so cart_bonded_length behaves correctly 
+		if ( ! option[ in::missing_density_to_jump ].user() ) {
+			option[ in::missing_density_to_jump ].value( true );
+		}
+
+		// use dualspace relax protocol - start with internal coordinate, finish with Cartesian
+		if ( ! option[ relax::dualspace ].user() ) {
+			option[ relax::dualspace ].value( true );
+		}
+
+		// use flexible bond angles during internal coordinate stage of dualspace relax
+		if ( ! option[ relax::minimize_bond_angles ].user() ) {
+			option[ relax::minimize_bond_angles ].value( true );
+		}
+
+		// limit default_max_cycles 
+		if ( ! option[ optimization::default_max_cycles ].user() ) {
+			option[ optimization::default_max_cycles ].value( 200 );
+		}
+
+		// enable for rtmin/minpack - use nonideal unless nonideal option is defined or cartesian is specified as true
+		if ( (! option[ optimization::scmin_nonideal ].user()) || option[ optimization::scmin_cartesian ] ) {
+			option[ optimization::scmin_nonideal ].value( true );
+		}
+
+		// talaris2013_cart.wts - enables cart_bonded, disables pro_close, new reference weights 
+		if ( ! option[ score::weights ].user() ) {
+			option[ score::weights ].value( "talaris2013_cart.wts" );
+		}
+		else {
+			scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+			if ( !sfxn->ready_for_nonideal_scoring() )
+				TR.Warning << "option[ optimization::nonideal ] - scorefunction not set up for nonideal/Cartesian scoring (safe to ignore this warning if setting weights via RosettaScripts)" << std::endl;
+		}
+	}
+}
+
 //void
 //revert_hbond_sp2_correction_to_score12() {
 //	if( ! option[ corrections::score::hb_sp2_chipen ].user() ) {
@@ -474,6 +560,8 @@ init_score_function_corrections(){
 	init_facts_correction();
 	init_correct_correction();
 	init_crystal_refinement_correction();
+	init_beta_correction();
+	init_nonideal_correction();
 }
 
 void

@@ -59,5 +59,7 @@
 #include <protocols/toolbox/task_operations/SetIGTypeOperationCreator.hh>
 #include <protocols/toolbox/task_operations/ThreadSequenceOperationCreator.hh>
 #include <protocols/toolbox/task_operations/SelectBySASAOperationCreator.hh>
+#include <protocols/toolbox/task_operations/SelectByDensityFitOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictNativeResiduesOperationCreator.hh>
 #include <protocols/toolbox/task_operations/ImportUnboundRotamersOperationCreator.hh>
+#include <protocols/toolbox/task_operations/CrystalContactsOperationCreator.hh>

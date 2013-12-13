@@ -32,6 +32,7 @@ namespace optimization { extern RealOptionKey const scale_rb; }
 namespace optimization { extern RealOptionKey const scale_rbangle; }
 namespace optimization { extern BooleanOptionKey const scmin_nonideal; }
 namespace optimization { extern BooleanOptionKey const scmin_cartesian; }
+namespace optimization { extern BooleanOptionKey const nonideal; }
 
 } // namespace OptionKeys
 } // namespace options

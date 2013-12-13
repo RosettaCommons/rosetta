@@ -47,6 +47,7 @@ namespace edensity { extern BooleanOptionKey const score_symm_complex; }
 namespace edensity { extern RealOptionKey const sc_scaling; }
 namespace edensity { extern IntegerOptionKey const n_kbins; }
 namespace edensity { extern RealOptionKey const render_sigma; }
+namespace edensity { extern BooleanOptionKey const unmask_bb; }
 
 } // namespace OptionKeys
 } // namespace options

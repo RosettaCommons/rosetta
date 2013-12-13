@@ -1,4 +1,3 @@
-namespace optE { namespace rescore { FileOptionKey const weights( "optE:rescore:weights" );  } }
 namespace optE { namespace rescore { IntegerOptionKey const context_round( "optE:rescore:context_round" );  } }
 namespace optE { namespace rescore { FileOptionKey const outlog( "optE:rescore:outlog" );  } }
 namespace optE { namespace rescore { BooleanOptionKey const measure_sequence_recovery( "optE:rescore:measure_sequence_recovery" );  } }
@@ -434,6 +433,7 @@ namespace optimization { RealOptionKey const scale_rb( "optimization:scale_rb" )
 namespace optimization { RealOptionKey const scale_rbangle( "optimization:scale_rbangle" );  }
 namespace optimization { BooleanOptionKey const scmin_nonideal( "optimization:scmin_nonideal" );  }
 namespace optimization { BooleanOptionKey const scmin_cartesian( "optimization:scmin_cartesian" );  }
+namespace optimization { BooleanOptionKey const nonideal( "optimization:nonideal" );  }
 namespace swa { BooleanOptionKey const swa( "swa" );  }
 namespace swa { StringVectorOptionKey const s1( "swa:s1" );  }
 namespace swa { StringVectorOptionKey const s2( "swa:s2" );  }

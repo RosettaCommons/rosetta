@@ -2213,6 +2213,7 @@ Options = Option_Group( '',
   ),
 	# correction for testing ------------------------------------------------------------
 	Option_Group( 'corrections',
+		Option( 'beta', 'Boolean', desc='use beta score function', default='false'),
 		Option( 'correct', 'Boolean',
 			desc="turn on default corrections:"
 			"-corrections::chemical:icoor_05_2009"
@@ -4541,6 +4542,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
                 Option( 'sc_scaling', 'Real', default = '1.0', desc='Scale sidechain density by this amount (default same as mainchain density)'),
                 Option( 'n_kbins', 'Integer', default = '1', desc='Number of B-factor bins'),
                 Option( 'render_sigma', 'Real', default = '2', desc='initially render at this sigma level (extras=graphics build only)'),
+                Option( 'unmask_bb', 'Boolean', default = 'false', desc='Only include sidechain atoms in atom mask'),
 	),
   Option_Group( 'patterson',
                 Option( 'debug', 'Boolean', default = 'false'),
@@ -5476,6 +5478,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option( 'scale_rbangle','Real', desc='max cycles for MinimizerOptions', default='1'),
 		Option( 'scmin_nonideal','Boolean', desc='Do we allow sidechain nonideality during scmin (e.g. rtmin and min_pack)', default='false'),
 		Option( 'scmin_cartesian', 'Boolean', desc='Toggle Cartesian-space minimization during scmin (e.g. rmin and min_pack)', default='false'),
+		Option( 'nonideal', 'Boolean', desc='Permit bond geometries to vary from ideal values', default='false'),
 	),
 
 	################################

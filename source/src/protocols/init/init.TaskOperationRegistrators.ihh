@@ -60,9 +60,11 @@ static TaskOperationRegistrator< protocols::toolbox::task_operations::SelectResi
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SetIGTypeOperationCreator > SetIGTypeOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::ThreadSequenceOperationCreator > ThreadSequenceOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SelectBySASAOperationCreator > SelectBySASAOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::SelectByDensityFitOperationCreator > SelectByDensityFitOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictNativeResiduesOperationCreator > RestrictNativeResiduesOperationCreator_registrator;
 
 static TaskOperationRegistrator< protocols::toolbox::task_operations::ImportUnboundRotamersOperationCreator > ImportUnboundRotamersOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::CrystalContactsOperationCreator > CrystalContactsOperationCreator_registrator;
 
 
 using core::pack::task::operation::ResFilterRegistrator;

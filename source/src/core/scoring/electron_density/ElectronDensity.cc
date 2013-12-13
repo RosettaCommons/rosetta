@@ -4096,7 +4096,11 @@ core::Real ElectronDensity::matchRes(
 		idxX_high[1] = std::max(idxX[1],idxX_high[1]);
 		idxX_high[2] = std::max(idxX[2],idxX_high[2]);
 	}
+	
+	int firstMaskedAtom = 1; 
 	int lastMaskedAtom = atmList.size();
+	if (basic::options::option[ basic::options::OptionKeys::edensity::unmask_bb ]())
+		firstMaskedAtom = rsd.last_backbone_atom()+1;
 
 	// add in neighbor atoms
 	// don't let them modify size of bounding box
@@ -4214,7 +4218,7 @@ core::Real ElectronDensity::matchRes(
 						core::Real inv_msk = 1/(1+sigmoid_msk);
 
 						rho_obs(x,y,z) = density(mapX,mapY,mapZ);
-						if (i<=lastMaskedAtom) {
+						if (i>=firstMaskedAtom && i<=lastMaskedAtom) {
 							rho_calc_fg(x,y,z) += atm;
 							inv_rho_mask(x,y,z) *= (1 - inv_msk);
 							if (cacheCCs) {
@@ -4239,12 +4243,21 @@ core::Real ElectronDensity::matchRes(
 		}
 	}
 
+	
 	if (basic::options::option[ basic::options::OptionKeys::edensity::debug ]() && resid == 1) {
-		ElectronDensity(rho_obs,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_obs.mrc");
-		ElectronDensity(inv_rho_mask,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_mask.mrc");
-		ElectronDensity(rho_calc_bg,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_calc_bg.mrc");
-		ElectronDensity(rho_calc_fg,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_calc_fg.mrc");
+    ElectronDensity(rho_obs,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_obs.mrc");
+    ElectronDensity(inv_rho_mask,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_mask.mrc");
+    ElectronDensity(rho_calc_bg,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_calc_bg.mrc");
+    ElectronDensity(rho_calc_fg,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_calc_fg.mrc");
 	}
+
+	// dumps map for every residue
+	/*if (basic::options::option[ basic::options::OptionKeys::edensity::debug ]() && resid ) {
+		ElectronDensity(rho_obs,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_obs.mrc." + utility::to_string(resid) );
+		ElectronDensity(inv_rho_mask,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_mask.mrc." + utility::to_string(resid) );
+		ElectronDensity(rho_calc_bg,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_calc_bg.mrc." + utility::to_string(resid) );
+		ElectronDensity(rho_calc_fg,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_calc_fg.mrc." + utility::to_string(resid) );
+	}*/
 
 	//////////////////////////
 	/// 2 COMPUTE SUMMARY STATISTICS
@@ -5242,6 +5255,7 @@ ElectronDensity::readMRCandResize(
 
 	// make sure mask extends >= 3 carbon STDEVS
 	core::Real mask_min = 3.0 * sqrt( effectiveB / (2*M_PI*M_PI) );
+	//core::Real mask_min = 2; 				// ptc - use this threshold for electron density rotamer recovery
 	if (ATOM_MASK < mask_min) {
 		TR << "Override ATOM_MASK (was " << ATOM_MASK << ", now " << mask_min << ")" << std::endl;
 		ATOM_MASK = mask_min;

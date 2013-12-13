@@ -1007,6 +1007,9 @@ public:
 		return score_types_by_method_type_[ methods::ws ];
 	}
 
+	bool
+	ready_for_nonideal_scoring() const;
+
 
 public:
 
@@ -1039,7 +1042,7 @@ private:
 	void
 	update_intrares_energy_status();
 
-	protected:
+protected:
 
 	bool
 	any_intrares_energies() const

@@ -2997,7 +2997,29 @@ find_weights_file(std::string name, std::string extension/*=".wts"*/) {
 	}
 }
 
+bool
+ScoreFunction::ready_for_nonideal_scoring() const
+{
+	// if any of cart_bonded terms are on and pro_close is off, return true
+	if ( (has_nonzero_weight( cart_bonded ) ||
+		has_nonzero_weight( cart_bonded_angle ) ||
+		has_nonzero_weight( cart_bonded_length ) ||
+		has_nonzero_weight( cart_bonded_torsion )) &&
+		has_zero_weight( pro_close ) )
+			return true;
 
+	// if any of the mm_ terms are on, return true
+	if ( has_nonzero_weight( mm_lj_intra_rep ) ||
+		has_nonzero_weight( mm_lj_intra_atr ) ||
+		has_nonzero_weight( mm_lj_inter_rep ) ||
+		has_nonzero_weight( mm_lj_inter_atr ) ||
+		has_nonzero_weight( mm_twist ) ||
+		has_nonzero_weight( mm_bend ) ||
+		has_nonzero_weight( mm_stretch ) )
+			return true;
+
+	return false;
+}
 
 } // namespace scoring
 } // namespace core

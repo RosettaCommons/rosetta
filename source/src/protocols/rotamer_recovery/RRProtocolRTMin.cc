@@ -16,6 +16,7 @@
 // Project Headers
 #include <protocols/rotamer_recovery/RRComparer.hh>
 #include <protocols/rotamer_recovery/RRReporter.hh>
+#include <protocols/rotamer_recovery/RRComparerElecDensDiff.hh>
 
 // Platform Headers
 #include <basic/Tracer.hh>

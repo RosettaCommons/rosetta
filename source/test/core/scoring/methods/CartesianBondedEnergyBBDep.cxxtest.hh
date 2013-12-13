@@ -82,42 +82,42 @@ class CartesianBondedEnergyBBDepTests : public CxxTest::TestSuite {
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 1 ), trpcage.residue( 2 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 6.975177438926673, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 6.975177438926675, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 2 ), trpcage.residue( 3 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.8991522444165312, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.8991522444165306, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 3 ), trpcage.residue( 4 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 3.11410963626992, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 3.114109636269921, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 4 ), trpcage.residue( 5 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.3038665827235487, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.3038665827235478, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 5 ), trpcage.residue( 6 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.780497215077475, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.780497215077474, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 6 ), trpcage.residue( 7 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.9669926269700165, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.966992626970017, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 7 ), trpcage.residue( 8 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.8931865755240214, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.8931865755240223, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 8 ), trpcage.residue( 9 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.1872891188728817, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.1872891188728825, 1e-12 );
 		}
 		{
 			EnergyMap emap;
@@ -127,22 +127,22 @@ class CartesianBondedEnergyBBDepTests : public CxxTest::TestSuite {
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 10 ), trpcage.residue( 11 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.03930233029517319, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.03930233029517332, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 11 ), trpcage.residue( 12 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.890837997095729, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.890837117275449, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 12 ), trpcage.residue( 13 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.4445991382404, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.444599138240399, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 13 ), trpcage.residue( 14 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.9989614072013335, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.9989614072013324, 1e-12 );
 		}
 		{
 			EnergyMap emap;
@@ -152,27 +152,27 @@ class CartesianBondedEnergyBBDepTests : public CxxTest::TestSuite {
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 15 ), trpcage.residue( 16 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.05331704731068374, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.05331704731068346, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 16 ), trpcage.residue( 17 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 4.8939425109152, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 4.893938863844899, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 17 ), trpcage.residue( 18 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 4.143634791534057, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 4.143634755780028, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 18 ), trpcage.residue( 19 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 3.878703682390087, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 3.8787027211059, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 19 ), trpcage.residue( 20 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 4.61957315211321, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 4.619573152113211, 1e-12 );
 		}
 	}
 
@@ -186,7 +186,7 @@ class CartesianBondedEnergyBBDepTests : public CxxTest::TestSuite {
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( 26.92951259981151, true );
+		adv.validate_start_func_matches_start_score( 26.92950983784711, true );
 
 	}
 

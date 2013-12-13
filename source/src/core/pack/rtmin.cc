@@ -51,7 +51,7 @@
 // AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 // AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 // AUTO-REMOVED #include <core/scoring/hbonds/HBondOptions.hh>
 // AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -195,9 +195,11 @@ RTMin::rtmin(
 	//optimization::MinimizerOptions min_options( "dfpmin", 0.1, true, false, false );
 	std::string minimizer = "dfpmin";
 	Size max_iter=200;
-	if (cartesian_) {
-		minimizer = "lbfgs_armijo";
-		max_iter = 25;
+	if (cartesian_ || nonideal_) {
+		if ( !scfxn.ready_for_nonideal_scoring() )
+    	utility_exit_with_message( "scorefunction not set up for nonideal/Cartesian scoring" );
+		minimizer = "lbfgs_armijo_atol";
+		//max_iter = 25;									// PTC - this doesn't give Cartesian enough time to converge
 	}
 
 	optimization::MinimizerOptions min_options( minimizer, 0.1, true, false, false );

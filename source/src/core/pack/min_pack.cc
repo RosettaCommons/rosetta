@@ -39,6 +39,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
 #include <core/scoring/LREnergyContainer.hh>
@@ -796,9 +797,11 @@ min_pack(
 	//optimization::MinimizerOptions min_options( "dfpmin", 0.1, true, false, false );
 	std::string minimizer = "dfpmin";
 	Size max_iter=200;
-	if (cartesian) {
-		minimizer = "lbfgs_armijo";
-		max_iter = 25;
+	if (cartesian || nonideal) {
+		if ( !sfxn.ready_for_nonideal_scoring() )
+    	utility_exit_with_message( "scorefunction not set up for nonideal/Cartesian scoring" );
+		minimizer = "lbfgs_armijo_atol";
+		//max_iter = 25;                  // PTC - this doesn't give Cartesian enough time to converge
 	}
 	optimization::MinimizerOptions min_options( minimizer, 0.1, true, false, false );
 	min_options.max_iter(max_iter);

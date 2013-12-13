@@ -250,8 +250,11 @@ void RelaxProtocolBase::set_default_minimization_settings(){
 	cartesian_ = option[ OptionKeys::relax::cartesian ]() || option[ OptionKeys::relax::dualspace ]();	// dualspace uses Cartesian - set up accordingly
 	if ( option[ OptionKeys::relax::min_type ].user() )
 		min_type_ = option[ OptionKeys::relax::min_type ]();
-	else if (cartesian_ || minimize_bond_lengths_ || minimize_bond_angles_)
-		min_type_ = "lbfgs_armijo_nonmonotone";  // default is different for cartesian/fbal minimization
+	else if (cartesian_ || minimize_bond_lengths_ || minimize_bond_angles_) {
+		if ( !get_scorefxn()->ready_for_nonideal_scoring() )
+			utility_exit_with_message( "scorefunction not set up for nonideal/Cartesian scoring" );
+		min_type_ = "lbfgs_armijo_nonmonotone";  // default is different for cartesian/nonideal minimization
+	}
 
 	//fpd
 	max_iter_ = 0;  // if nonzero, override MinimizerOption default

@@ -38,8 +38,14 @@ void init_facts_correction();
 /// @brief Initialize the -correct correction
 void init_correct_correction();
 
+/// @brief Initialize the -beta score function
+void init_beta_correction();
+
 /// @brief Initialize the crystal refinement correction
 void init_crystal_refinement_correction();
+
+/// @brief Initialize nonideal bond geometry correction 
+void init_nonideal_correction();
 
 /// @brief restore the the score function to the Score12prime version
 void init_restore_score12prime();

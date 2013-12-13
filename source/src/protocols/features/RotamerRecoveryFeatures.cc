@@ -28,6 +28,7 @@
 #include <protocols/rotamer_recovery/RRProtocolMover.hh>
 #include <protocols/rotamer_recovery/RRProtocolReferenceStructure.hh>
 #include <protocols/rotamer_recovery/RRProtocolRTMin.hh>
+#include <protocols/rotamer_recovery/RRProtocolRelax.hh>
 
 
 // Project Headers
@@ -223,6 +224,15 @@ RotamerRecoveryFeatures::parse_my_tag(
 		}
 		if(tag->hasOption("cartesian")){
 			static_cast<rotamer_recovery::RRProtocolRTMin &>(*protocol_).set_cartesian(tag->getOption<bool>("cartesian"));
+		}
+	}
+
+	if(protocol_->get_name() == "RRProtocolRelax"){
+		if(tag->hasOption("nonideal")){
+			static_cast<rotamer_recovery::RRProtocolRelax &>(*protocol_).set_nonideal(tag->getOption<bool>("nonideal"));
+		}
+		if(tag->hasOption("cartesian")){
+			static_cast<rotamer_recovery::RRProtocolRelax &>(*protocol_).set_cartesian(tag->getOption<bool>("cartesian"));
 		}
 	}
 

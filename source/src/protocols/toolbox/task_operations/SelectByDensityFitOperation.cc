@@ -1,0 +1,127 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @brief  Restrict design to residues with electron density correlation above threshold value 
+/// @author Patrick Conway
+
+// Unit Headers
+#include <protocols/toolbox/task_operations/SelectByDensityFitOperation.hh>
+#include <protocols/toolbox/task_operations/SelectByDensityFitOperationCreator.hh>
+
+// Project Headers
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/pose/util.hh>
+#include <core/types.hh>
+
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/electron_density/ElectronDensity.hh>
+#include <protocols/electron_density/util.hh>
+#include <protocols/electron_density/SetupForDensityScoringMover.hh>
+
+#include <basic/options/util.hh>
+
+#include <basic/options/option.hh>
+#include <basic/options/option_macros.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
+
+// Utility Headers
+#include <basic/Tracer.hh>
+#include <ObjexxFCL/format.hh>
+#include <utility/string_util.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/vector1.hh>
+#include <utility/exit.hh>
+
+// C++ Headers
+
+static basic::Tracer TR("protocols.toolbox.task_operations.SelectByDensityFitOperation" );
+
+using namespace core;
+using namespace basic;
+using namespace utility;
+using namespace protocols;
+using namespace toolbox;
+using namespace task_operations;
+
+core::pack::task::operation::TaskOperationOP
+SelectByDensityFitOperationCreator::create_task_operation() const
+{
+	return new SelectByDensityFitOperation;
+}
+
+SelectByDensityFitOperation::SelectByDensityFitOperation( core::Real threshold, bool invert ):
+	threshold_(threshold),
+	invert_(invert)
+{}
+
+SelectByDensityFitOperation::~SelectByDensityFitOperation() {}
+
+core::pack::task::operation::TaskOperationOP SelectByDensityFitOperation::clone() const
+{
+	return new SelectByDensityFitOperation( *this );
+}
+
+void
+SelectByDensityFitOperation::apply( core::pose::Pose const & const_pose, core::pack::task::PackerTask & task ) const
+{
+	using namespace protocols::moves;
+	using namespace scoring;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	core::pose::Pose pose = const_pose;
+	core::Size nres = pose.total_residue();
+
+	protocols::electron_density::SetupForDensityScoringMoverOP dockindens
+		( new protocols::electron_density::SetupForDensityScoringMover );
+	dockindens->apply( pose );
+
+	core::scoring::electron_density::getDensityMap().set_nres( nres );
+	core::scoring::electron_density::getDensityMap().setScoreWindowContext( true );
+	if ( option[ edensity::sliding_window ].user() )
+		core::scoring::electron_density::getDensityMap().setWindow( option[ edensity::sliding_window ] );
+
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	scorefxn->set_weight( core::scoring::elec_dens_window, 1.0 );
+	(*scorefxn)(pose);
+
+	for (Size r=1; r<=nres; ++r) {
+		if (task.nonconst_residue_task(r).being_designed() || task.nonconst_residue_task(r).being_packed()) {
+			Real score = core::scoring::electron_density::getDensityMap().matchRes( r , pose.residue(r), pose, NULL , false);
+			TR.Debug << pose.pdb_info()->name() << " residue: " << r << " density_score: " << score << std::endl;
+			if ( (score < threshold_) != invert_ ) { 								// != invert_ flips the Boolean when true
+				task.nonconst_residue_task(r).prevent_repacking();
+			}
+		}
+	}
+}
+
+void
+SelectByDensityFitOperation::parse_tag( TagCOP tag, DataMap & )
+{
+	threshold_ = tag->getOption<core::Real>("threshold", 0.72);
+	invert_ = tag->getOption<bool>("invert", 0);
+}
+
+void
+SelectByDensityFitOperation::parse_def( utility::lua::LuaObject const & def)
+{
+	threshold_ = def["threshold"] ? def["threshold"].to<core::Real>() : 0.72;
+	invert_ = def["invert"] ? def["invert"].to<bool>() : 0;
+}
+
+

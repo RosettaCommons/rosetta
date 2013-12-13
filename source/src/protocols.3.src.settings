@@ -673,8 +673,10 @@ sources = {
 		"SetIGTypeOperation",
 		"ThreadSequenceOperation",
 		"SelectBySASAOperation",
+		"SelectByDensityFitOperation",
 		"RestrictNativeResiduesOperation",
 		"ImportUnboundRotamersOperation",
+		"CrystalContactsOperation",
 	],
 }
 include_path = [

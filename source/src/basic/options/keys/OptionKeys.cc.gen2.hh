@@ -1,6 +1,3 @@
-namespace membrane { RealOptionKey const normal_mag( "membrane:normal_mag" );  }
-namespace membrane { RealOptionKey const center_mag( "membrane:center_mag" );  }
-namespace membrane { RealOptionKey const smooth_move_frac( "membrane:smooth_move_frac" );  }
 namespace membrane { BooleanOptionKey const no_interpolate_Mpair( "membrane:no_interpolate_Mpair" );  }
 namespace membrane { BooleanOptionKey const Menv_penalties( "membrane:Menv_penalties" );  }
 namespace membrane { BooleanOptionKey const Membed_init( "membrane:Membed_init" );  }
@@ -442,6 +439,9 @@ namespace loops { BooleanOptionKey const taboo_in_fa( "loops:taboo_in_fa" );  }
 namespace loops { BooleanOptionKey const ramp_fa_rep( "loops:ramp_fa_rep" );  }
 namespace loops { BooleanOptionKey const ramp_rama( "loops:ramp_rama" );  }
 namespace loops { BooleanOptionKey const kic_rama2b( "loops:kic_rama2b" );  }
+namespace loops { BooleanOptionKey const kic_small_moves( "loops:kic_small_moves" );  }
+namespace loops { RealOptionKey const kic_small_move_magnitude( "loops:kic_small_move_magnitude" );  }
+namespace loops { BooleanOptionKey const kic_pivot_based( "loops:kic_pivot_based" );  }
 namespace loops { BooleanOptionKey const kic_no_centroid_min( "loops:kic_no_centroid_min" );  }
 namespace loops { BooleanOptionKey const kic_leave_centroid_after_initial_closure( "loops:kic_leave_centroid_after_initial_closure" );  }
 namespace loops { BooleanOptionKey const kic_repack_neighbors_only( "loops:kic_repack_neighbors_only" );  }
@@ -662,6 +662,7 @@ namespace edensity { BooleanOptionKey const score_symm_complex( "edensity:score_
 namespace edensity { RealOptionKey const sc_scaling( "edensity:sc_scaling" );  }
 namespace edensity { IntegerOptionKey const n_kbins( "edensity:n_kbins" );  }
 namespace edensity { RealOptionKey const render_sigma( "edensity:render_sigma" );  }
+namespace edensity { BooleanOptionKey const unmask_bb( "edensity:unmask_bb" );  }
 namespace patterson { BooleanOptionKey const patterson( "patterson" );  }
 namespace patterson { BooleanOptionKey const debug( "patterson:debug" );  }
 namespace patterson { RealOptionKey const weight( "patterson:weight" );  }
@@ -739,3 +740,4 @@ namespace optE { BooleanOptionKey const repeat_swarm_optimization_until_fitness_
 namespace optE { BooleanOptionKey const design_with_minpack( "optE:design_with_minpack" );  }
 namespace optE { BooleanOptionKey const limit_bad_scores( "optE:limit_bad_scores" );  }
 namespace optE { namespace rescore { BooleanOptionKey const rescore( "optE:rescore" );  } }
+namespace optE { namespace rescore { FileOptionKey const weights( "optE:rescore:weights" );  } }
