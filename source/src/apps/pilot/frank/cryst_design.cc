@@ -168,6 +168,7 @@ void euler2rot( core::Real a, core::Real b, core::Real g, numeric::xyzMatrix<Rea
 ////////////////////////////////////////////////
 
 // write density grids in MRC
+// debugging only for now
 void
 writeMRC(FArray3D<Real> density, std::string mapfilename) {
 	const int CCP4HDSIZE = 1024;  // size of CCP4/MRC header
@@ -655,12 +656,12 @@ public:
 						core::Real d2 = (cart_del_ij).length_squared();
 						if (d2 <= (interfacedist_+ATOM_MASK_PADDING)*(interfacedist_+ATOM_MASK_PADDING)) {
 							core::Real doff = sqrt(d2) - cb_clashdist_;
-							core::Real sig = 1 / ( 1 + exp ( 6*doff ) );   // '6' gives sigmoid dropoff
-							rho_ca(x,y,z) *= (1 - sig);
+							core::Real sig = 1 / ( 1 + exp ( -6*doff ) );   // '6' gives sigmoid dropoff
+							rho_ca(x,y,z) *= sig;
 
 							doff = sqrt(d2) - interfacedist_;
-							sig = 1 / ( 1 + exp ( 6*doff ) );   // '6' gives sigmoid dropoff
-							rho_cb(x,y,z) *= (1 - sig);
+							sig = 1 / ( 1 + exp ( -6*doff ) );   // '6' gives sigmoid dropoff
+							rho_cb(x,y,z) *= sig;
 						}
 					}
 				}
@@ -753,9 +754,9 @@ public:
 		for (int y=1; y<=rho.u2(); ++y)
 		for (int x=1; x<=rho.u1(); ++x) {
 			int cx=x-1,cy=y-1,cz=z-1;
-			int rx = 1 + pos_mod( (int)(S.xx()*cx) + (int)(S.xy()*cy) + (int)(S.xz()*cz) + (int)(T[0]*rho.u1()) , rho.u1());
-			int ry = 1 + pos_mod( (int)(S.yx()*cx) + (int)(S.yy()*cy) + (int)(S.yz()*cz) + (int)(T[1]*rho.u2()) , rho.u2());
-			int rz = 1 + pos_mod( (int)(S.zx()*cx) + (int)(S.zy()*cy) + (int)(S.zz()*cz) + (int)(T[2]*rho.u3()) , rho.u3());
+			int rx = 1 + pos_mod( (int)std::floor( (S.xx()*cx) + (S.xy()*cy) + (S.xz()*cz) + (T[0]*rho.u1()) + 0.5 ) , rho.u1());
+			int ry = 1 + pos_mod( (int)std::floor( (S.yx()*cx) + (S.yy()*cy) + (S.yz()*cz) + (T[1]*rho.u2()) + 0.5 ) , rho.u2());
+			int rz = 1 + pos_mod( (int)std::floor( (S.zx()*cx) + (S.zy()*cy) + (S.zz()*cz) + (T[2]*rho.u3()) + 0.5 ) , rho.u3());
 			Real rho_sx = rho(rx,ry,rz);
 			Srho(x,y,z) = rho_sx;
 		}
@@ -771,9 +772,9 @@ public:
 		for (int y=1; y<=rho.u2(); ++y)
 		for (int x=1; x<=rho.u1(); ++x) {
 			int cx=x,cy=y,cz=z;
-			int rx = 1 + pos_mod( (int)(S.xx()*cx) + (int)(S.xy()*cy) + (int)(S.xz()*cz)  , rho.u1());
-			int ry = 1 + pos_mod( (int)(S.yx()*cx) + (int)(S.yy()*cy) + (int)(S.yz()*cz)  , rho.u2());
-			int rz = 1 + pos_mod( (int)(S.zx()*cx) + (int)(S.zy()*cy) + (int)(S.zz()*cz)  , rho.u3());
+			int rx = 1 + pos_mod( (int)std::floor( (S.xx()*cx) + (S.xy()*cy) + (S.xz()*cz) ) , rho.u1());
+			int ry = 1 + pos_mod( (int)std::floor( (S.yx()*cx) + (S.yy()*cy) + (S.yz()*cz) ) , rho.u2());
+			int rz = 1 + pos_mod( (int)std::floor( (S.zx()*cx) + (S.zy()*cy) + (S.zz()*cz) ) , rho.u3());
 			Real rho_sx = rho(rx,ry,rz);
 			Srho(x,y,z) = rho_sx;
 		}
@@ -816,7 +817,7 @@ public:
 				}
 			}
 		} else if (axisSlice == 3) {
-			rhoSlice.dimension(xi,zi);
+			rhoSlice.dimension(xi,yi);
 			for (int kk=1; kk<=zi; kk++) {
 				for (int ii=1; ii<=xi; ii++)
 				for (int jj=1; jj<=yi; jj++) {
