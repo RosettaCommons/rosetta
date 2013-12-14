@@ -746,10 +746,10 @@ option.add( basic::options::OptionKeys::jumps::topology_file, "read a file with 
 option.add( basic::options::OptionKeys::jumps::bb_moves, "Apply bb_moves ( wobble, small, shear) during stage3 and stage 4." ).def(false);
 option.add( basic::options::OptionKeys::jumps::no_wobble, "Don t apply the useless wobble during stage3 and stage 4." ).def(false);
 option.add( basic::options::OptionKeys::jumps::no_shear, "Don t apply the useless shear during stage3 and stage 4." ).def(false);
+option.add( basic::options::OptionKeys::jumps::no_sample_ss_jumps, "sample jump-frags during folding" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::no_sample_ss_jumps, "sample jump-frags during folding" ).def(false);
-option.add( basic::options::OptionKeys::jumps::invrate_jump_move, "give 5 here to have 5 torsion moves for each jump move" ).def(10);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::invrate_jump_move, "give 5 here to have 5 torsion moves for each jump move" ).def(10);
 option.add( basic::options::OptionKeys::jumps::chainbreak_weight_stage1, "the weight on chainbreaks" ).def(1.0);
 option.add( basic::options::OptionKeys::jumps::chainbreak_weight_stage2, "the weight on chainbreaks" ).def(1.0);
 option.add( basic::options::OptionKeys::jumps::chainbreak_weight_stage3, "the weight on chainbreaks" ).def(1.0);
@@ -1491,11 +1491,11 @@ option.add( basic::options::OptionKeys::membrane::normal_cycles, "number of memb
 option.add( basic::options::OptionKeys::membrane::normal_mag, "magnitude of membrane normal angle search (degrees)" ).def(5);
 option.add( basic::options::OptionKeys::membrane::center_mag, "magnitude of membrane normal center search (Angstroms)" ).def(1);
 option.add( basic::options::OptionKeys::membrane::smooth_move_frac, "No description" ).def(0.5);
+option.add( basic::options::OptionKeys::membrane::no_interpolate_Mpair, "No description" ).def(false);
+option.add( basic::options::OptionKeys::membrane::Menv_penalties, "No description" ).def(false);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::membrane::no_interpolate_Mpair, "No description" ).def(false);
-option.add( basic::options::OptionKeys::membrane::Menv_penalties, "No description" ).def(false);
-option.add( basic::options::OptionKeys::membrane::Membed_init, "No description" ).def(false);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::membrane::Membed_init, "No description" ).def(false);
 option.add( basic::options::OptionKeys::membrane::Fa_Membed_update, "No description" ).def(false);
 option.add( basic::options::OptionKeys::membrane::center_search, "perform membrane center search" ).def(false);
 option.add( basic::options::OptionKeys::membrane::normal_search, "perform membrane normal search" ).def(false);
@@ -2152,6 +2152,7 @@ option.add( basic::options::OptionKeys::edensity::debug_derivatives, "calculate 
 option.add( basic::options::OptionKeys::edensity::realign, "how to initially align the pose to density" ).legal("no").legal("min").legal("random").legal("membrane").legal("membrane_min").def("no");
 option.add( basic::options::OptionKeys::edensity::membrane_axis, "the membrane normal axis" ).def("Z");
 option.add( basic::options::OptionKeys::edensity::atom_mask, "override default (=3.2A) atom mask radius to this value (hi-res scoring)" ).def(3.2);
+option.add( basic::options::OptionKeys::edensity::atom_mask_min, "override the 3 sigma minimum value which takes precedence over atom_mask value (hi-res scoring)" ).def(2.0);
 option.add( basic::options::OptionKeys::edensity::ca_mask, "override default (=6A) CA mask radius to this value (low-res scoring)" ).def(6.0);
 option.add( basic::options::OptionKeys::edensity::score_symm_complex, "If set, scores the structure over the entire symmetric complex; otherwise just use controlling monomer" ).def(false);
 option.add( basic::options::OptionKeys::edensity::sc_scaling, "Scale sidechain density by this amount (default same as mainchain density)" ).def(1.0);
@@ -2236,11 +2237,11 @@ option.add( basic::options::OptionKeys::optE::design_with_minpack, "Use the min-
 option.add( basic::options::OptionKeys::optE::limit_bad_scores, "Quit after 100,000 inf or NaN errors in optE objective function" );
 option.add( basic::options::OptionKeys::optE::rescore::rescore, "rescore option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::optE::rescore::weights, "Weight set to use when rescoring optE partition functions" );
+option.add( basic::options::OptionKeys::optE::rescore::context_round, "Integer of the context PDBs generated during design to use to measure the pNatAA" );
+option.add( basic::options::OptionKeys::optE::rescore::outlog, "File to which the OptEPosition data should be written" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::rescore::context_round, "Integer of the context PDBs generated during design to use to measure the pNatAA" );
-option.add( basic::options::OptionKeys::optE::rescore::outlog, "File to which the OptEPosition data should be written" );
-option.add( basic::options::OptionKeys::optE::rescore::measure_sequence_recovery, "When rescoring a weight set, run design with that weight set and measure the sequence recovery." ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::rescore::measure_sequence_recovery, "When rescoring a weight set, run design with that weight set and measure the sequence recovery." ).def(false);
 option.add( basic::options::OptionKeys::optE::no_design_pdb_output, "Do not write out the designed pdbs to the workdir_ directories over the course of the optE run" );
 option.add( basic::options::OptionKeys::backrub::backrub, "backrub option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::backrub::pivot_residues, "residues for which contiguous stretches can contain segments (internal residue numbers, defaults to all residues)" ).def(utility::vector1<int>());

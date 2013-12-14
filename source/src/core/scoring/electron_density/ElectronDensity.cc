@@ -5255,7 +5255,9 @@ ElectronDensity::readMRCandResize(
 
 	// make sure mask extends >= 3 carbon STDEVS
 	core::Real mask_min = 3.0 * sqrt( effectiveB / (2*M_PI*M_PI) );
-	//core::Real mask_min = 2; 				// ptc - use this threshold for electron density rotamer recovery
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::atom_mask_min ].user() )
+		mask_min = basic::options::option[ basic::options::OptionKeys::edensity::atom_mask_min ];		//override mask_min - probably don't want to go below 2
+
 	if (ATOM_MASK < mask_min) {
 		TR << "Override ATOM_MASK (was " << ATOM_MASK << ", now " << mask_min << ")" << std::endl;
 		ATOM_MASK = mask_min;

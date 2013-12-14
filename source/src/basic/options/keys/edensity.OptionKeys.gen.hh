@@ -42,6 +42,7 @@ namespace edensity { extern BooleanOptionKey const debug_derivatives; }
 namespace edensity { extern StringOptionKey const realign; }
 namespace edensity { extern StringOptionKey const membrane_axis; }
 namespace edensity { extern RealOptionKey const atom_mask; }
+namespace edensity { extern RealOptionKey const atom_mask_min; }
 namespace edensity { extern RealOptionKey const ca_mask; }
 namespace edensity { extern BooleanOptionKey const score_symm_complex; }
 namespace edensity { extern RealOptionKey const sc_scaling; }

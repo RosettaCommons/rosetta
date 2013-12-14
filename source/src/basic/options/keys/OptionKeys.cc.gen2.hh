@@ -1,5 +1,3 @@
-namespace membrane { BooleanOptionKey const no_interpolate_Mpair( "membrane:no_interpolate_Mpair" );  }
-namespace membrane { BooleanOptionKey const Menv_penalties( "membrane:Menv_penalties" );  }
 namespace membrane { BooleanOptionKey const Membed_init( "membrane:Membed_init" );  }
 namespace membrane { BooleanOptionKey const Fa_Membed_update( "membrane:Fa_Membed_update" );  }
 namespace membrane { BooleanOptionKey const center_search( "membrane:center_search" );  }
@@ -657,6 +655,7 @@ namespace edensity { BooleanOptionKey const debug_derivatives( "edensity:debug_d
 namespace edensity { StringOptionKey const realign( "edensity:realign" );  }
 namespace edensity { StringOptionKey const membrane_axis( "edensity:membrane_axis" );  }
 namespace edensity { RealOptionKey const atom_mask( "edensity:atom_mask" );  }
+namespace edensity { RealOptionKey const atom_mask_min( "edensity:atom_mask_min" );  }
 namespace edensity { RealOptionKey const ca_mask( "edensity:ca_mask" );  }
 namespace edensity { BooleanOptionKey const score_symm_complex( "edensity:score_symm_complex" );  }
 namespace edensity { RealOptionKey const sc_scaling( "edensity:sc_scaling" );  }
@@ -741,3 +740,5 @@ namespace optE { BooleanOptionKey const design_with_minpack( "optE:design_with_m
 namespace optE { BooleanOptionKey const limit_bad_scores( "optE:limit_bad_scores" );  }
 namespace optE { namespace rescore { BooleanOptionKey const rescore( "optE:rescore" );  } }
 namespace optE { namespace rescore { FileOptionKey const weights( "optE:rescore:weights" );  } }
+namespace optE { namespace rescore { IntegerOptionKey const context_round( "optE:rescore:context_round" );  } }
+namespace optE { namespace rescore { FileOptionKey const outlog( "optE:rescore:outlog" );  } }

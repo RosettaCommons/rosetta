@@ -4537,6 +4537,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
                 Option( 'realign', 'String' , default = 'no' , legal=['no', 'min', 'random', 'membrane', 'membrane_min'] , desc='how to initially align the pose to density'),
 								Option( 'membrane_axis', 'String' , default = 'Z' , desc='the membrane normal axis'),
                 Option( 'atom_mask', 'Real', default = '3.2', desc='override default (=3.2A) atom mask radius to this value (hi-res scoring)'),
+                Option( 'atom_mask_min', 'Real', default = '2.0', desc='override the 3 sigma minimum value which takes precedence over atom_mask value (hi-res scoring)'),
                 Option( 'ca_mask', 'Real', default = '6.0', desc='override default (=6A) CA mask radius to this value (low-res scoring)'),
                 Option( 'score_symm_complex', 'Boolean', default = 'false', desc='If set, scores the structure over the entire symmetric complex; otherwise just use controlling monomer'),
                 Option( 'sc_scaling', 'Real', default = '1.0', desc='Scale sidechain density by this amount (default same as mainchain density)'),

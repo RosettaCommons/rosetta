@@ -10487,6 +10487,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 3.2</dd><br>
 </dl>
 <dl>
+<dt><b>-atom_mask_min</b> \<Real\><dt>
+<dd>override the 3 sigma minimum value which takes precedence over atom_mask value (hi-res scoring)</dd><br>
+<dd>Default: 2.0</dd><br>
+</dl>
+<dl>
 <dt><b>-ca_mask</b> \<Real\><dt>
 <dd>override default (=6A) CA mask radius to this value (low-res scoring)</dd><br>
 <dd>Default: 6.0</dd><br>
