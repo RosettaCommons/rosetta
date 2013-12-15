@@ -20,9 +20,12 @@
 #include <protocols/swa/rna/screener/StepWiseRNA_BaseCentroidScreener.hh>
 #include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.hh>
 #include <protocols/swa/StepWiseUtil.hh>
+#include <protocols/swa/rna/StepWiseRNA_Util.hh>
 
 #include <core/chemical/VariantType.hh>
 #include <core/id/TorsionID.hh>
+#include <core/id/AtomID.hh>
+#include <core/chemical/util.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -39,7 +42,6 @@
 static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_Modeler" );
 
 using utility::tools::make_vector1;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -126,6 +128,8 @@ StepWiseRNA_Modeler::initialize_variables(){
 	minimizer_perform_o2prime_pack_ = false;
 	minimizer_output_before_o2prime_pack_ = false;
 	minimizer_rename_tag_ = false;
+	minimizer_allow_variable_bond_geometry_ = false;
+	minimizer_vary_bond_geometry_frequency_ = 0.0;
 }
 
 //Destructor
@@ -206,6 +210,9 @@ StepWiseRNA_Modeler::operator=( StepWiseRNA_Modeler const & src )
 	minimizer_rename_tag_ = src.minimizer_rename_tag_;
 	stepwise_rna_minimizer_ = src.stepwise_rna_minimizer_;
 	minimize_move_map_ = src.minimize_move_map_;
+	minimizer_vary_bond_geometry_frequency_ = src.minimizer_vary_bond_geometry_frequency_;
+	minimizer_allow_variable_bond_geometry_ = src.minimizer_allow_variable_bond_geometry_;
+	minimizer_extra_minimize_res_ = src.minimizer_extra_minimize_res_;
 	return *this;
 }
 
@@ -360,10 +367,19 @@ StepWiseRNA_Modeler::do_minimizing( pose::Pose & pose, utility::vector1< PoseOP 
 	stepwise_rna_minimizer_->set_minimize_and_score_sugar ( minimize_and_score_sugar_ );
 	stepwise_rna_minimizer_->set_user_input_VDW_bin_screener ( user_input_VDW_bin_screener_ );
 	stepwise_rna_minimizer_->set_output_minimized_pose_list( output_minimized_pose_list_ );
-	if ( minimize_move_map_ ) stepwise_rna_minimizer_->set_move_map_list( make_vector1( *minimize_move_map_ ) );
+	
+	if ( minimize_move_map_ ) {
+		stepwise_rna_minimizer_->set_move_map_list( make_vector1( *minimize_move_map_ ) );
+		stepwise_rna_minimizer_->set_allow_insert( allow_insert_ );
+	}
+	
 	stepwise_rna_minimizer_->set_perform_o2prime_pack(  minimizer_perform_o2prime_pack_ );
 	stepwise_rna_minimizer_->set_output_before_o2prime_pack( minimizer_output_before_o2prime_pack_ );
 	stepwise_rna_minimizer_->set_rename_tag( minimizer_rename_tag_ );
+	stepwise_rna_minimizer_->set_extra_minimize_res( minimizer_extra_minimize_res_ );
+	stepwise_rna_minimizer_->set_allow_variable_bond_geometry( minimizer_allow_variable_bond_geometry_ );
+	stepwise_rna_minimizer_->set_vary_bond_geometry_frequency( minimizer_vary_bond_geometry_frequency_ );
+
 	stepwise_rna_minimizer_->apply ( pose );
 
 }
@@ -570,30 +586,47 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 		TR.Debug << "past job_parameters initialization " << std::endl;
 	}
 
+	// If setup_job_parameters_for_swa() is called, then the user has not supplied their own StepWiseRNA_JobParameters object to the modeler. This means that StepWiseRNAMinimizer will not be generating a move map on its own, so we need to supply it with an AllowInsert object in order to handle the possibility of variable bond geometries.
+	allow_insert_ = new toolbox::AllowInsert(pose); // Default constructor that allows everything to move
+	
 	// user input minimize_res...
 	if ( minimize_res_.size() > 0 ) { // specifying more residues which could move during the minimize step -- standard for SWM.
 		fixed_res_.clear();
 		for ( Size n = 1; n <= nres; n++ ) {
-			if ( !minimize_res_.has_value( n ) )	fixed_res_.push_back( n );
+			if ( !minimize_res_.has_value( n ) )	{
+				fixed_res_.push_back( n );
+				allow_insert_->set( n, false );
+			}
 		}
 	} else if ( fixed_res_.size() > 0 ){ // how 'standard' SWA specifies moving information.
 		runtime_assert( minimize_res_.size() == 0 );
 		for ( Size n = 1; n <= nres; n++ ) {
-			if ( !fixed_res_.has_value( n ) )	minimize_res_.push_back( n );
+			if ( !fixed_res_.has_value( n ) )	{
+				minimize_res_.push_back( n );
+			} else {
+				allow_insert_->set( n, false );
+			}
 		}
 	} else { // 'reasonable' default behavior, inferred above.
 		for ( Size n = 1; n <= nres; n++ ) {
-			if ( !fixed_res_guess.has_value( n ) )	minimize_res_.push_back( n );
+			if ( !fixed_res_guess.has_value( n ) )	{
+				minimize_res_.push_back( n );
+			} else {
+				allow_insert_->set( n, false );
+			}
 		}
 		fixed_res_ = fixed_res_guess;
 	}
 
 	if ( fixed_res_.size() > 0 ) 	job_parameters->set_working_fixed_res( fixed_res_ ); // is this necessary if we just supply movemap?
 	job_parameters->set_working_native_alignment( fixed_res_ );
+	
+	//Now we perform the additional task of updating the AllowInsert object based on any optional additional residues that the user wants minimized, as specified in minimizer_extra_minimize_res. The intended mode of operation is that the user decides on extra_minimize_res at the high level for an entire SWM run, and then changes minimize_res_ to control a specific minimization event.
+	update_allow_insert_with_extra_minimize_res( pose, allow_insert_, minimizer_extra_minimize_res_ );
 
 	minimize_move_map_ = new core::kinematics::MoveMap;
-	figure_out_swa_rna_movemap( *minimize_move_map_, pose, minimize_res_ );
-	TR.Debug << "finished movemap initialization. " << std::endl;
+	//figure_out_swa_rna_movemap( *minimize_move_map_, pose, minimize_res_ );
+	figure_out_swa_rna_movemap( *minimize_move_map_, pose, allow_insert_ );
 
 	// last, but not least, there might be some information in the domain map. Note
 	// that generally we could instead replace fixed_res with an inputted domain map.

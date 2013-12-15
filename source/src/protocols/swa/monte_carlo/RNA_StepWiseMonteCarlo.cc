@@ -90,8 +90,8 @@ RNA_StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 
 	initialize_movers();
 	//scorefxn_->set_weight( coordinate_constraint, rmsd_weight_ );
-	scorefxn_->set_weight( missing_res, 0.0 );
 	ScoreFunctionOP temp_score = scorefxn_->clone();
+	temp_score->set_weight( missing_res, 0.0 );
 	MonteCarloOP monte_carlo_ = new MonteCarlo( pose, *temp_score, temperature_ );
 	//scorefxn_->set_weight( coordinate_constraint, 0.0 );
 	show_scores( pose, "Initial score:" );
@@ -152,7 +152,6 @@ RNA_StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 	}
 
 	monte_carlo_->recover_low( pose );
-	scorefxn_->set_weight( missing_res, max_missing_weight_ );
 	//scorefxn_->set_weight( coordinate_constraint, rmsd_weight_ );
 	show_scores( pose, "Final score:" );
 
@@ -168,11 +167,14 @@ RNA_StepWiseMonteCarlo::initialize_movers(){
 	// used in all movers.
 	StepWiseRNA_ModelerOP stepwise_rna_modeler = new StepWiseRNA_Modeler( scorefxn_ );
 	stepwise_rna_modeler->set_choose_random( true );
-	stepwise_rna_modeler->set_force_centroid_interaction( true );
+	stepwise_rna_modeler->set_force_centroid_interaction( false );
 	stepwise_rna_modeler->set_use_phenix_geo( use_phenix_geo_ );
 	stepwise_rna_modeler->set_kic_sampling_if_relevant( erraser_ );
 	stepwise_rna_modeler->set_num_random_samples( num_random_samples_ );
 	stepwise_rna_modeler->set_num_pose_minimize( 1 );
+	stepwise_rna_modeler->set_minimizer_allow_variable_bond_geometry( true );
+	stepwise_rna_modeler->set_minimizer_vary_bond_geometry_frequency( 0.1 );
+	stepwise_rna_modeler->set_minimizer_extra_minimize_res( extra_minimize_res_ );
 
 	// maybe RNA_AddMover could just hold a copy of RNA_ResampleMover...
 	rna_add_mover_ = new RNA_AddMover( scorefxn_, native_pose_, constraint_x0_, constraint_tol_ );

@@ -33,6 +33,7 @@
 #include <protocols/moves/Mover.hh>
 #include <string>
 #include <map>
+#include <protocols/toolbox/AllowInsert.hh>
 
 namespace protocols {
 namespace swa {
@@ -119,6 +120,18 @@ namespace rna {
 		output_pose_wrapper( std::string const & tag,
 															core::pose::Pose & pose,
 															std::string const & out_silent_file ) const;
+	  	void
+	    set_extra_minimize_res( utility::vector1< core::Size > setting ){ extra_minimize_res_ = setting; }
+	  
+	  	void
+	  	set_allow_variable_bond_geometry( bool const setting ){ allow_variable_bond_geometry_ = setting; }
+	  
+	  	void
+	  	set_vary_bond_geometry_frequency( core::Real const setting ) { vary_bond_geometry_frequency_ = setting; }
+	  
+	  	void
+	  	set_allow_insert( toolbox::AllowInsertOP setting ){ allow_insert_ = setting; }
+	
 
   private:
 
@@ -126,10 +139,10 @@ namespace rna {
 		get_working_moving_res( Size const & nres ) const;
 
 		utility::vector1 < core::kinematics::MoveMap >
-		get_default_movemap( core::pose::Pose const & pose ) const;
+		get_default_movemap( core::pose::Pose const & pose );
 
 		void
-		figure_out_moving_residues( core::kinematics::MoveMap & mm, core::pose::Pose const & pose ) const;
+		figure_out_moving_residues( core::kinematics::MoveMap & mm, core::pose::Pose const & pose );
 
 		bool
 		pass_all_pose_screens( core::pose::Pose & pose, std::string const in_tag, core::io::silent::SilentFileData & silent_file_data ) const;
@@ -193,6 +206,16 @@ namespace rna {
 		screener::StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
 
 		screener::StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
+	  
+	    core::Real vary_bond_geometry_frequency_;
+	  
+	  	bool allow_variable_bond_geometry_;
+	  
+	  	utility::vector1< core::Size > extra_minimize_res_;
+	  
+	  	toolbox::AllowInsertOP allow_insert_;
+	  
+	  	core::Real original_geometry_weight_;
 
 
   };

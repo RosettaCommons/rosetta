@@ -58,6 +58,8 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
+#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/simple_moves/ConstrainToIdealMover.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -90,7 +92,7 @@
 using namespace core;
 using namespace core::chemical::rna;
 
-static numeric::random::RandomGenerator RG(257572);  // <- Magic number, do not change it!
+static numeric::random::RandomGenerator RG(129384);  // <- Magic number, do not change it!
 
 static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_Util" );
 
@@ -3193,7 +3195,164 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 
 	}
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////
+void
+figure_out_swa_rna_movemap( core::kinematics::MoveMap & mm, core::pose::Pose const & pose, toolbox::AllowInsertOP const & allow_insert ){
+	
+	using namespace core::id;
+	using namespace core::scoring::rna;
+	using namespace core::chemical;
+	
+	Size const nres = pose.total_residue();
+	runtime_assert( nres == allow_insert->nres() );
+	
+	mm.set_bb( false );
+	mm.set_chi( false );
+	mm.set_jump( false );
+	
+	// New -- rhiju, june 2013
+	for ( Size i = 1; i <= nres; i++ ){
+		if ( allow_insert->get( i ) ) {
+			mm.set_bb( i, true );
+			mm.set_chi( i, true );
+		}
+	}
+	
+	for ( Size i = 1; i <= nres; i++ ){
+		
+		if ( pose.residue( i ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code.
+		if ( !pose.residue( i ).is_RNA() ) continue;
+				
+		utility::vector1< TorsionID > torsion_ids;
+		
+		for ( Size rna_torsion_number = 1; rna_torsion_number <= NUM_RNA_MAINCHAIN_TORSIONS; rna_torsion_number++ ) {
+			torsion_ids.push_back( TorsionID( i, id::BB, rna_torsion_number ) );
+		}
+		for ( Size rna_torsion_number = 1; rna_torsion_number <= NUM_RNA_CHI_TORSIONS; rna_torsion_number++ ) {
+			torsion_ids.push_back( TorsionID( i, id::CHI, rna_torsion_number ) );
+		}
+		
+		
+		for ( Size n = 1; n <= torsion_ids.size(); n++ ) {
+			
+			TorsionID const & torsion_id  = torsion_ids[ n ];
+			
+			id::AtomID id1, id2, id3, id4;
+			bool fail = pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
+			if ( fail ) continue; //This part is risky, should also rewrite...
+			
+			// Dec 19, 2010..Crap there is a mistake here..should have realize this earlier...
+			//Should allow torsions at the edges to minimize...will have to rewrite this. This effect the gamma and beta angle of the 3' fix res.
+			
+			// If there's any atom that is in a moving residue by this torsion, let the torsion move.
+			//  should we handle a special case for cutpoint atoms? I kind of want those all to move.
+			utility::vector1< AtomID > torsion_atom_ids = utility::tools::make_vector1( id1, id2, id3, id4 );
+			
+			for ( Size k = 1; k <= torsion_atom_ids.size(); k++ ){
+				if ( allow_insert->get( torsion_atom_ids[k].rsd() ) ) {
+					mm.set(  torsion_id, true );
+					break;
+				}
+			}
+			if ( mm.get( torsion_id ) ) continue;
+			
+			
+			//
+			// there is a note above from parin 'Should allow torsions at the edges to minimize...'
+			// it appears fixed, except for cutpoints. Has this caused a problem in SWA & ERRASER at closed cutpoints?
+			// Following code introduced by rhiju on aug. 2013:
+			//
+			if ( pose.residue(i).has_variant_type( CUTPOINT_LOWER ) && allow_insert->get( i+1 ) ){
+				for ( Size k = 1; k <= torsion_atom_ids.size(); k++ ){
+					if ( pose.residue_type( torsion_atom_ids[k].rsd() ).atom_name( torsion_atom_ids[k].atomno() ) == "OVL1" ||
+						pose.residue_type( torsion_atom_ids[k].rsd() ).atom_name( torsion_atom_ids[k].atomno() ) == "OVL2" )  {
+						mm.set(  torsion_id, true );
+						break;
+					}
+				}
+			}
+			if ( mm.get( torsion_id ) ) continue;
+			
+			if ( pose.residue(i).has_variant_type( CUTPOINT_UPPER ) && allow_insert->get( i-1 ) ){
+				for ( Size k = 1; k <= torsion_atom_ids.size(); k++ ){
+					if ( pose.residue_type( torsion_atom_ids[k].rsd() ).atom_name( torsion_atom_ids[k].atomno() ) == "OVU1" ){
+						mm.set(  torsion_id, true );
+						break;
+					}
+				}
+			}
+			if ( mm.get( torsion_id ) ) continue;
+			
+		}
+	}
+	
+	
+	// why is this in the internal loop? -- rhiju
+	TR.Debug << "pose.fold_tree().num_jump() = " << pose.fold_tree().num_jump() << std::endl;
+	
+	for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
+		Size const jump_pos1( pose.fold_tree().upstream_jump_residue( n ) );
+		Size const jump_pos2( pose.fold_tree().downstream_jump_residue( n ) );
+		
+		if ( pose.residue( jump_pos1 ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
+		if ( pose.residue( jump_pos2 ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
+		
+		if ( !pose.residue( jump_pos1 ).is_RNA() ) continue;
+		if ( !pose.residue( jump_pos2 ).is_RNA() ) continue;
+		
+		bool const move_jump = allow_insert->get( jump_pos1 ) || allow_insert->get( jump_pos2 );
+		if ( move_jump )	mm.set_jump( n, true );
+		TR.Debug << "jump_pos1 = " << jump_pos1 << " jump_pos2 = " << jump_pos2 << " mm.jump = "; output_boolean( move_jump, TR.Debug );  TR.Debug << std::endl;
+		
+	}
+	
+}
+	
+////////////////////////////////////////////
+void
+update_allow_insert_with_extra_minimize_res( pose::Pose const & pose, toolbox::AllowInsertOP & allow_insert, utility::vector1< core::Size > const & extra_minimize_res ) {
+	
+	if ( extra_minimize_res.size() == 0 ) return;
+	
+	utility::vector1< id::AtomID > atom_ids_to_move;
+	core::pose::full_model_info::FullModelInfo const & full_model_info = core::pose::full_model_info::const_full_model_info( pose );
+	utility::vector1< Size > const & res_list = full_model_info.res_list();
+	
+	for ( Size n = 1; n <= pose.total_residue(); n++ ){
+	//for ( Size n = 1; n <= extra_minimize_res.size(); n++ ){
+		if ( !extra_minimize_res.has_value( res_list[ n ] ) ) continue;
+		//TR << n << std::endl;
+		
+		//Size const i = extra_minimize_res[n];
+		runtime_assert( pose.residue( n ).is_RNA() );
+		
+		for ( Size j = 1; j <= pose.residue(n).natoms(); j++ ){
+			if ( pose.residue(n).is_virtual( j ) ) continue;
+			atom_ids_to_move.push_back( id::AtomID( j, n ) );
+		}
+		
+		if ( pose.fold_tree().is_cutpoint( n ) ) continue;
+		if ( n > pose.total_residue() ) continue;
+		if ( !pose.residue( n+1 ).is_RNA() ) continue;
+		
+		// go ahead and minimize backbone torsions up to next pucker.
+		atom_ids_to_move.push_back( named_atom_id_to_atom_id( id::NamedAtomID( " OP2", n+1 ), pose ) );
+		atom_ids_to_move.push_back( named_atom_id_to_atom_id( id::NamedAtomID( " OP1", n+1 ), pose ) );
+		atom_ids_to_move.push_back( named_atom_id_to_atom_id( id::NamedAtomID( " P  ", n+1 ), pose ) );
+		atom_ids_to_move.push_back( named_atom_id_to_atom_id( id::NamedAtomID( " O5'", n+1 ), pose ) );
+		
+	}
+	
+	for ( Size n = 1; n <= atom_ids_to_move.size(); n++ ){
+		if ( allow_insert->has_domain( atom_ids_to_move[n] ) ) allow_insert->set( atom_ids_to_move[n],  true );
+	}
+	// We should do a double check that we're not introducing movement that would mess up a domain?
+	
+}
 
+	
+	
 	////////////////////////////////////////////////////////////////////
 	void
 	choose_random_if_unspecified_nucleotide( char & newrestype ) {

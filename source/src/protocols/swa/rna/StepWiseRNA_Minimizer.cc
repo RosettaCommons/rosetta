@@ -23,6 +23,7 @@
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.hh>
 #include <protocols/swa/StepWiseUtil.hh>
+#include <protocols/simple_moves/ConstrainToIdealMover.hh>
 
 //////////////////////////////////
 #include <core/types.hh>
@@ -52,10 +53,13 @@
 #include <protocols/rna/RNA_LoopCloser.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
+#include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
+
+#include <numeric/random/random.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -83,6 +87,8 @@ using core::Real;
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
+
+static numeric::random::RandomGenerator RG(3892128);
 static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_Minimizer" ) ;
 
 namespace protocols {
@@ -111,7 +117,9 @@ StepWiseRNA_Minimizer::StepWiseRNA_Minimizer(
 	minimize_and_score_sugar_( true ),
 	rename_tag_( true ),
 	output_minimized_pose_list_( true ),
-	base_centroid_screener_( 0 ) //Owning-pointer.
+	base_centroid_screener_( 0 ), //Owning-pointer.
+	vary_bond_geometry_frequency_( 0.0 ),
+	allow_variable_bond_geometry_( false )
 {
 	set_native_pose( job_parameters_->working_native_pose() );
 }
@@ -126,6 +134,8 @@ std::string
 StepWiseRNA_Minimizer::get_name() const {
 	return "StepWiseRNA_Minimizer";
 }
+			
+//////////////////////////////////////////
 
 void
 StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
@@ -137,6 +147,9 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 	using namespace protocols::rna;
 	using namespace protocols::swa;
 
+	//Real const bulge_weight = scorefxn_->get_weight( num_stacks );
+	//scorefxn_->set_weight( num_stacks, 0.0);
+	original_geometry_weight_ = scorefxn_->get_weight( rna_bond_geometry );
 	output_title_text( "Enter StepWiseRNA_Minimizer::apply", TR.Debug );
 	output_parameters();
 	clock_t const time_start( clock() );
@@ -168,8 +181,15 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 	//Check scorefxn
 	TR.Debug << "check scorefxn" << std::endl;
 	scorefxn_->show( TR.Debug, dummy_pose );
+	
+	bool vary_bond_geometry( false );
+	if ( allow_variable_bond_geometry_ && ( RG.uniform() < vary_bond_geometry_frequency_ ) ) {
+		vary_bond_geometry = true;
+	}
 
-	if ( move_map_list_.size() == 0 ) move_map_list_ = get_default_movemap( dummy_pose );
+	if ( move_map_list_.size() == 0 ) {
+		move_map_list_ = get_default_movemap( dummy_pose );
+	}
 
 	if ( ! minimize_and_score_sugar_ ){
 		TR.Debug << "WARNING: minimize_and_score_sugar_ is FALSE, freezing all DELTA, NU_1 and NU_2 torsions." << std::endl;
@@ -223,6 +243,20 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 			core::kinematics::MoveMap mm = move_map_list_[round];
 
 			moving_chainbreaks = figure_out_moving_chain_break_res( pose, mm );
+			
+			if ( vary_bond_geometry ) {
+				TR << "Performing variable geometry minimization..." << std::endl;
+				scorefxn_->set_weight( rna_bond_geometry, 8.0 );
+				protocols::simple_moves::ConstrainToIdealMover CTIMover;
+				core::kinematics::MoveMapOP mmop(mm.clone());
+				CTIMover.set_movemap(mmop);
+				CTIMover.set_AllowInsert(allow_insert_->clone());
+				CTIMover.apply(pose);
+				core::kinematics::MoveMap new_mm = (*CTIMover.get_movemap());
+				//CartesianMinimizer cartesian_minimizer;
+				if ( perform_minimize_ ) minimizer.run( pose, new_mm, *(scorefxn_ ), options );
+				scorefxn_->set_weight( rna_bond_geometry, original_geometry_weight_ );
+			}
 
 			if ( perform_minimize_ ) minimizer.run( pose, mm, *( scorefxn_ ), options );
 			if ( perform_o2prime_pack_ ) o2prime_trials( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
@@ -558,7 +592,7 @@ StepWiseRNA_Minimizer::get_working_moving_res( Size const & nres ) const {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1 < core::kinematics::MoveMap >
-StepWiseRNA_Minimizer::get_default_movemap( core::pose::Pose const & pose ) const{
+StepWiseRNA_Minimizer::get_default_movemap( core::pose::Pose const & pose ) {
 
 	utility::vector1 < core::kinematics::MoveMap > move_map_list;
 
@@ -577,18 +611,15 @@ StepWiseRNA_Minimizer::get_default_movemap( core::pose::Pose const & pose ) cons
 ////////////////////////////////////////////////////////////////////////////////////
 // This is similar to code in RNA_Minimizer.cc
 void
-StepWiseRNA_Minimizer::figure_out_moving_residues( core::kinematics::MoveMap & mm, core::pose::Pose const & pose ) const
+StepWiseRNA_Minimizer::figure_out_moving_residues( core::kinematics::MoveMap & mm, core::pose::Pose const & pose )
 {
 	using namespace core::id;
-	using namespace ObjexxFCL;
-
-	Size const nres( pose.total_residue() );
 
 	utility::vector1< core::Size > const & fixed_res( job_parameters_->working_fixed_res() );
-	ObjexxFCL::FArray1D < bool > allow_insert( nres, true );
-	for ( Size i = 1; i <= fixed_res.size(); i++ ) allow_insert( fixed_res[ i ] ) = false;
-
-	figure_out_swa_rna_movemap( mm, pose, allow_insert );
+	allow_insert_ = new toolbox::AllowInsert( pose );
+	for ( Size i = 1; i <= fixed_res.size(); i++ ) allow_insert_->set( fixed_res[ i ], false ) ;
+	update_allow_insert_with_extra_minimize_res( pose, allow_insert_, extra_minimize_res_ );
+	figure_out_swa_rna_movemap( mm, pose, allow_insert_ );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////

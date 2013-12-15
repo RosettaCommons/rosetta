@@ -20,7 +20,7 @@
 #include <core/scoring/rna/RNA_FullAtomStackingEnergy.fwd.hh>
 
 // Package headers
-#include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
+#include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -41,9 +41,9 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 
 ///
 
-class RNA_FullAtomStackingEnergy : public methods::ContextIndependentTwoBodyEnergy  {
+class RNA_FullAtomStackingEnergy : public methods::ContextDependentTwoBodyEnergy  {
 public:
-	typedef methods::ContextIndependentTwoBodyEnergy  parent;
+	typedef methods::ContextDependentTwoBodyEnergy  parent;
 
 public:
 
@@ -191,7 +191,7 @@ private:
   Distance const dist_cutoff_;
   Real const dist_cutoff2_;
 	bool const base_base_only_;
-	mutable boost::unordered_map< core::Size, core::Size> num_stacks_;
+	//mutable boost::unordered_map< core::Size, core::Size> num_stacks_;
 
 };
 

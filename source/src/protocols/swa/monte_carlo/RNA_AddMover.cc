@@ -259,10 +259,11 @@ namespace monte_carlo {
 
 		if ( suite_num > 0 ) rna_torsion_mover_->sample_near_suite_torsion( viewer_pose, suite_num, sample_range_large_);
 		if ( nucleoside_num > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( viewer_pose, nucleoside_num, sample_range_large_);
+		
+		clear_constraints_recursively( pose );
 
 		if ( native_pose_ ) {
-			clear_constraints_recursively( viewer_pose );
-			superimpose_recursively_and_add_constraints( viewer_pose, *native_pose_, constraint_x0_, constraint_tol_ );
+			superimpose_recursively_and_add_constraints( pose, *native_pose_, constraint_x0_, constraint_tol_ );
 		}
 
 		///////////////////////////////////

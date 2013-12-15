@@ -93,7 +93,7 @@ public:
 	void
 	and_allow_insert(AllowInsertOP allow_insert_in );
 
-	core::Size nres(){ return nres_;}
+	core::Size nres() const{ return nres_;}
 
 	void
 	set_phosphate_domain( core::Size const & i,

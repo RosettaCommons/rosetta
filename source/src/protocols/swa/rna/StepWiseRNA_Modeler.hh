@@ -23,6 +23,7 @@
 #include <protocols/swa/rna/screener/StepWiseRNA_BaseCentroidScreener.fwd.hh>
 #include <protocols/swa/rna/screener/StepWiseRNA_VDW_BinScreener.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <protocols/toolbox/AllowInsert.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -180,6 +181,16 @@ namespace rna {
 		void set_minimizer_output_before_o2prime_pack( bool const & setting ){ minimizer_output_before_o2prime_pack_ = setting; }
 
 		void set_minimizer_rename_tag( bool const & setting ){ minimizer_rename_tag_ = setting; }
+		
+	  	void
+	    set_minimizer_extra_minimize_res( utility::vector1< core::Size > setting ){ minimizer_extra_minimize_res_ = setting; }
+		
+	  	void
+	  	set_minimizer_allow_variable_bond_geometry( bool const setting ){ minimizer_allow_variable_bond_geometry_ = setting; }
+		
+	  	void
+	  	set_minimizer_vary_bond_geometry_frequency( core::Real const setting ) { minimizer_vary_bond_geometry_frequency_ = setting; }
+
 
 		StepWiseRNA_JobParametersOP
 		setup_job_parameters_for_swa_with_full_model_info( utility::vector1< Size > moving_res,
@@ -276,6 +287,9 @@ namespace rna {
 		bool minimizer_perform_o2prime_pack_;
 		bool minimizer_output_before_o2prime_pack_;
 		bool minimizer_rename_tag_;
+		core::Real minimizer_vary_bond_geometry_frequency_;
+	  	bool minimizer_allow_variable_bond_geometry_;
+	  	utility::vector1< core::Size > minimizer_extra_minimize_res_;
 
 		StepWiseRNA_MinimizerOP stepwise_rna_minimizer_;
 		kinematics::MoveMapOP minimize_move_map_;
@@ -283,6 +297,7 @@ namespace rna {
 		screener::StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
 		screener::StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
 
+		toolbox::AllowInsertOP allow_insert_;
 	};
 
 } //rna

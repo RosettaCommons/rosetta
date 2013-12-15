@@ -145,8 +145,8 @@ RNA_FullAtomStackingEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction 
 		NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::FA_STACK_NBLIST ) );
 		nblist.prepare_for_scoring( pose, scfxn, *this );
 	}
-
-	num_stacks_.clear();
+	
+	pose.clear_stacking_map();
 }
 
 void
@@ -179,8 +179,8 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 		residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2 ) ;
 
 	if ( ( score < 0 ) && !pose.energies().use_nblist() ) {
-		num_stacks_[rsd1.seqpos()]++;
-		num_stacks_[rsd2.seqpos()]++;
+		pose.record_stacking_interaction(rsd1.seqpos());
+		pose.record_stacking_interaction(rsd2.seqpos());
 	}
 
   emap[ fa_stack ]       += score;
@@ -561,13 +561,18 @@ RNA_FullAtomStackingEnergy::finalize_total_energy(
   rna_centroid_info.calculated() = false;
 
 	if ( pose.energies().use_nblist() ) return;
-	Energies & energies( pose.energies() );
+	
+	//Energies & energies( pose.energies() );
+	
+	//num_stacks_.clear();
+	boost::unordered_map < core::Size , core::Size > const & stacking_map = pose.get_stacking_map();
+	
 	for ( boost::unordered_map < core::Size , core::Size >::const_iterator
-		 it=num_stacks_.begin(), it_end = num_stacks_.end(); it != it_end; ++it ) {
+		 it=stacking_map.begin(), it_end = stacking_map.end(); it != it_end; ++it ) {
 		if ( it->second > 1 ) {
 			totals[ num_stacks ]++;
-			EnergyMap & emap( energies.onebody_energies( it->first ) );
-			emap[ num_stacks ] = it->second;
+			//EnergyMap & emap( energies.onebody_energies( it->first ) );
+			//emap[ num_stacks ] = it->second;
 		}
 	}
 

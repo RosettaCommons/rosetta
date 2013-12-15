@@ -99,8 +99,9 @@ namespace monte_carlo {
 		fix_up_residue_type_variants( *sliced_out_pose_op ); // now make this include chain terminus!
 		fix_up_residue_type_variants( pose ); // now make this include chain terminus!
 		
+		clear_constraints_recursively( pose );
+		
 		if ( native_pose_ ) {
-			clear_constraints_recursively( pose );
 			superimpose_recursively_and_add_constraints( pose, *native_pose_, constraint_x0_, constraint_tol_ );
 		}
 

@@ -80,6 +80,7 @@ OPT_KEY( Real, just_min_after_mutation_frequency )
 OPT_KEY( Integer, num_random_samples )
 OPT_KEY( IntegerVector, sample_res )
 OPT_KEY( IntegerVector, rmsd_res )
+OPT_KEY( IntegerVector, extra_min_res )
 OPT_KEY( Real, constraint_x0 )
 OPT_KEY( Real, constraint_tol )
 
@@ -208,6 +209,7 @@ stepwise_monte_carlo()
 	stepwise_rna_monte_carlo.set_just_min_after_mutation_frequency( option[ just_min_after_mutation_frequency ]() );
 	stepwise_rna_monte_carlo.set_allow_internal_moves( option[ allow_internal_moves ]() );
 	stepwise_rna_monte_carlo.set_temperature( option[ temperature ]() );
+	stepwise_rna_monte_carlo.set_extra_minimize_res( option[ extra_min_res ]() );
 
 	// following can be simplified if we make corrected_geo default to true from command-line.
 	stepwise_rna_monte_carlo.set_use_phenix_geo(  option[ corrected_geo ].user()  ? option[corrected_geo ]() : true );
@@ -273,6 +275,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( rmsd_res, "specify residues for which rmsd values should be computed", blank_size_vector );
 	NEW_OPT( constraint_x0, "Target RMSD value for constrained runs", 0.5 );
 	NEW_OPT( constraint_tol, "Size of flat region for coordinate constraints", 0.5 );
+	NEW_OPT( extra_min_res, "specify residues other than those being built that should be minimized", blank_size_vector );
 
   ////////////////////////////////////////////////////////////////////////////
   // setup

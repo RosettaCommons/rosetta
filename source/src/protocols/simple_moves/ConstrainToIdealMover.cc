@@ -336,8 +336,10 @@ bool
 ConstrainToIdealMover::i_want_this_atom_to_move( core::conformation::Residue const & residue2, core::Size const & k )
 {
 
-	if (k > residue2.first_sidechain_atom() &&
-		k != core::chemical::rna::first_base_atom_index( residue2 ) ) return false;
+	//if (k > residue2.first_sidechain_atom() &&
+		//k != core::chemical::rna::first_base_atom_index( residue2 ) ) return false;
+	core::id::AtomID id( k, residue2.seqpos() );
+	if ( !allow_insert_->get( id ) ) return false;
 
 	if ( residue2.is_virtual( k ) ) {
 		//		std::cout << "Is this virtual? " << residue2.atom_name( k ) << std::endl;
@@ -352,9 +354,16 @@ ConstrainToIdealMover::i_want_this_atom_to_move( core::conformation::Residue con
 bool
 ConstrainToIdealMover::i_want_this_atom_to_move( core::pose::Pose const & pose, core::id::AtomID const & atom_id )
 {
-
-	return i_want_this_atom_to_move( pose.residue( atom_id.rsd() ) ,
-																	 atom_id.atomno() );
+	core::conformation::Residue const & residue( pose.residue( atom_id.rsd() ) );
+	core::Size const & k( atom_id.atomno() );
+	
+	if ( !allow_insert_->get( atom_id ) ) return false;
+	
+	if ( residue.is_virtual( k ) ) return false;
+	
+	return true;
+	//return i_want_this_atom_to_move( pose.residue( atom_id.rsd() ) ,
+																	 //atom_id.atomno() );
 
 }
 //////////////////////////////////////////////////////////////////////////////

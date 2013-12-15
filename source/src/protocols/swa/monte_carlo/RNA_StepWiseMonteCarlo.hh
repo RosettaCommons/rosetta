@@ -92,6 +92,8 @@ namespace monte_carlo {
 
 		void set_sample_res( utility::vector1<Size> const & setting ){ sample_res_ = setting; }
 		utility::vector1<Size> sample_res() const{ return sample_res_; }
+		
+		void set_extra_minimize_res( utility::vector1< core::Size > const & setting ){ extra_minimize_res_ = setting; }
 
 
 	private:
@@ -134,6 +136,7 @@ namespace monte_carlo {
 		Real max_missing_weight_;
 		Real chainbreak_weight_;
 		core::pose::PoseOP native_pose_;
+		utility::vector1< core::Size > extra_minimize_res_;
 	};
 
 } //monte_carlo

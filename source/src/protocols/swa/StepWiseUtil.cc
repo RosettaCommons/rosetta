@@ -839,11 +839,9 @@ rotate( pose::Pose & pose, Matrix const M,
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
 	residue_is_bulged( pose::Pose const & pose, Size const & resid ) {
-
-		core::scoring::Energies const & energies( pose.energies() );
-		core::scoring::EnergyMap const & emap( energies.onebody_energies( resid ) );
-
-		if ( emap[ core::scoring::num_stacks ] < 2 ) {
+		boost::unordered_map < core::Size , core::Size > num_stacks = pose.get_stacking_map();
+		
+		if ( num_stacks[ resid ] < 2 ) {
 			return true;
 		}
 

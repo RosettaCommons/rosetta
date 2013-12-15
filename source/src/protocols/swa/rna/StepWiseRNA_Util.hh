@@ -35,6 +35,7 @@
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/Residue.hh>
+#include <protocols/toolbox/AllowInsert.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
@@ -449,6 +450,12 @@ figure_out_swa_rna_movemap( kinematics::MoveMap & mm, pose::Pose const & pose, O
 
 void
 figure_out_swa_rna_movemap( kinematics::MoveMap & mm, pose::Pose const & pose, utility::vector1< Size > const & minimize_res );
+	
+void
+figure_out_swa_rna_movemap( core::kinematics::MoveMap & mm, core::pose::Pose const & pose, toolbox::AllowInsertOP const & allow_insert );
+	
+void
+update_allow_insert_with_extra_minimize_res( pose::Pose const & pose, toolbox::AllowInsertOP & allow_insert, utility::vector1< core::Size > const & extra_minimize_res );
 
 void
 choose_random_if_unspecified_nucleotide( char & newrestype );
