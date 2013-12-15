@@ -19,7 +19,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 Real
 CircularHarmonicFunc::func( Real const x ) const {
@@ -45,4 +45,3 @@ void CircularHarmonicFunc::show_definition( std::ostream & out ) const
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

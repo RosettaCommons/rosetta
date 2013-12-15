@@ -30,7 +30,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 Real
 SquareWellFunc::func( Real const x ) const
@@ -69,4 +69,3 @@ SquareWellFunc::show_violations( std::ostream& out, Real x, Size verbose_level, 
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

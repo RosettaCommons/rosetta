@@ -21,7 +21,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 
 Real
@@ -63,5 +63,3 @@ CharmmPeriodicFunc::show_violations( std::ostream& out, Real x, Size verbose_lev
 } //constraints
 } //scoring
 } //core
-
-

@@ -31,7 +31,7 @@ using numeric::constants::d::pi;
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 GaussianChainTripleFunc::GaussianChainTripleFunc( Real const gaussian_variance,
 																									Real const D2, Real const D3 ):
@@ -143,4 +143,3 @@ GaussianChainTripleFunc::show_definition( std::ostream &out ) const {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

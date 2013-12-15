@@ -17,8 +17,8 @@
 /// for the same structural information.
 
 
-#ifndef INCLUDED_core_scoring_constraints_CountViolFunc_hh
-#define INCLUDED_core_scoring_constraints_CountViolFunc_hh
+#ifndef INCLUDED_core_scoring_func_CountViolFunc_hh
+#define INCLUDED_core_scoring_func_CountViolFunc_hh
 
 #include <core/scoring/func/Func.hh>
 
@@ -31,7 +31,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 	class CountViolFunc : public Func {
 	public:
@@ -68,7 +68,7 @@ namespace constraints {
 		mutable core::Size count_viols_;
 		FuncOP func_to_weight_;
 
-  	//typedef std::map< std::string, scoring::constraints::FuncOP > FuncTypes;
+  	//typedef std::map< std::string, scoring::func::FuncOP > FuncTypes;
 		//	static FuncTypes func_types_;
 
 	};

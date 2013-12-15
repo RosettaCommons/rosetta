@@ -17,7 +17,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 
 Real
@@ -60,5 +60,3 @@ PeriodicFunc::show_violations(
 } //constraints
 } //scoring
 } //core
-
-

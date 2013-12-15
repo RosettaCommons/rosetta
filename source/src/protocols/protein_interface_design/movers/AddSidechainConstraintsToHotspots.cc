@@ -93,7 +93,7 @@ AddSidechainConstraintsToHotspots::apply( Pose & pose )
 	{
 		using namespace core::scoring::constraints;
 
-		HarmonicFuncOP dummy_cst;
+		core::scoring::func::HarmonicFuncOP dummy_cst;
 		ConstraintCOPs constraint;
 		constraint = add_coordinate_constraints( pose, pose.conformation().residue( residue ), chain(), residue, coord_sdev(), dummy_cst );
 		foreach( ConstraintCOP cst, constraint ){
@@ -154,4 +154,3 @@ AddSidechainConstraintsToHotspots::residues() const{
 } //movers
 } //protein_interface_design
 } //protocols
-

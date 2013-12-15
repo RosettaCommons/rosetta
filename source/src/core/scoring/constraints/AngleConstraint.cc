@@ -67,7 +67,7 @@ void
 AngleConstraint::read_def(
 	std::istream & data,
 	pose::Pose const & pose,
-	FuncFactory const & func_factory
+	func::FuncFactory const & func_factory
 )
 {
 	Size res1, res2, res3;
@@ -396,7 +396,7 @@ AngleConstraint::p2_deriv(
 
 
 void
-AngleConstraint::score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
+AngleConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
 {
 	emap[ this->score_type() ] += score( xyz( atom1_ ), xyz( atom2_ ), xyz( atom3_ ) );
 }
@@ -405,7 +405,7 @@ AngleConstraint::score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & ema
 void
 AngleConstraint::fill_f1_f2(
 	AtomID const & atom,
-	XYZ_Func const & xyz,
+	func::XYZ_Func const & xyz,
 	Vector & F1,
 	Vector & F2,
  	EnergyMap const & weights
@@ -499,5 +499,3 @@ Size AngleConstraint::show_violations(
 } // constraints
 } // scoring
 } // core
-
-

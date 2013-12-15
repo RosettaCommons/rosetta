@@ -117,7 +117,7 @@ test_res_res_aln( core::conformation::Residue const & res1, core::conformation::
 }
 
 core::scoring::constraints::ConstraintCOPs
-add_coordinate_constraints( pose::Pose & pose, core::Size const resnum, core::conformation::Residue const rsd_i, core::scoring::constraints::HarmonicFuncOP coord_cst_func, core::id::AtomID const anchor_atom )
+add_coordinate_constraints( pose::Pose & pose, core::Size const resnum, core::conformation::Residue const rsd_i, core::scoring::func::HarmonicFuncOP coord_cst_func, core::id::AtomID const anchor_atom )
 {
 	using namespace core::scoring::constraints;
 
@@ -271,7 +271,7 @@ nearest_atom_for_constraint( core::conformation::Residue const residue )
 }
 
 core::scoring::constraints::ConstraintCOPs
-add_coordinate_constraints( pose::Pose & pose, core::conformation::Residue const source, core::Size const host_chain, core::Size const resnum, core::Real const coord_sdev, core::scoring::constraints::HarmonicFuncOP & coord_cst_func )
+add_coordinate_constraints( pose::Pose & pose, core::conformation::Residue const source, core::Size const host_chain, core::Size const resnum, core::Real const coord_sdev, core::scoring::func::HarmonicFuncOP & coord_cst_func )
 {
 	using namespace core::scoring::constraints;
 
@@ -285,7 +285,7 @@ add_coordinate_constraints( pose::Pose & pose, core::conformation::Residue const
 		atom_id = "CA";
 	core::id::AtomID const anchor_atom( core::id::AtomID( pose.residue( fixed_res ).atom_index( atom_id ), fixed_res ) );
 
-	if( !coord_cst_func ) coord_cst_func = new core::scoring::constraints::HarmonicFunc( 0.0, 0.0 );
+	if( !coord_cst_func ) coord_cst_func = new core::scoring::func::HarmonicFunc( 0.0, 0.0 );
 	coord_cst_func->sd( coord_sdev );
 	cst = add_coordinate_constraints( pose, resnum, source, coord_cst_func, anchor_atom );
 	return( cst );
@@ -405,4 +405,3 @@ parse_stub_sets( utility::tag::TagCOP const tag, core::pose::Pose const & pose, 
 } //movers
 } //protein_interface_design
 } //protocols
-

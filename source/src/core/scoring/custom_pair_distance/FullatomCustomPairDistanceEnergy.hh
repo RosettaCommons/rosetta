@@ -261,12 +261,12 @@ private:
 
 
 // stolen from Spencer's centroid disulfide stuff
-class DistanceFunc : public constraints::Func
+class DistanceFunc : public func::Func
 {
 public:
 	DistanceFunc( std::string const name );
 	virtual ~DistanceFunc();
-	constraints::FuncOP clone() const { return new DistanceFunc( *this ); }
+	func::FuncOP clone() const { return new DistanceFunc( *this ); }
 	virtual Real func( Real const ) const;
 	virtual Real dfunc( Real const ) const;
 	virtual Real max_dis() const;

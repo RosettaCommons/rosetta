@@ -112,7 +112,7 @@ void
 DistancePairConstraint::read_def(
 	std::istream & in,
 	pose::Pose const & pose,
-	FuncFactory const & func_factory
+	func::FuncFactory const & func_factory
 ) {
 	Size res1, res2, res3, res4;
 	std::string tempres1, tempres2, tempres3, tempres4;
@@ -186,7 +186,7 @@ DistancePairConstraint::score(
 
 void
 DistancePairConstraint::score(
-	XYZ_Func const & xyz,
+	func::XYZ_Func const & xyz,
 	EnergyMap const &,
 	EnergyMap & emap
 ) const {
@@ -213,7 +213,7 @@ DistancePairConstraint::score(
 void
 DistancePairConstraint::fill_f1_f2(
 	AtomID const & /* atom */,
-	XYZ_Func const & xyz,
+	func::XYZ_Func const & xyz,
 	Vector & F1,
  	Vector & F2,
  	EnergyMap const & weights

@@ -21,7 +21,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 
 Real
@@ -63,5 +63,3 @@ AmberPeriodicFunc::show_violations( std::ostream& out, Real x, Size verbose_leve
 } //constraints
 } //scoring
 } //core
-
-

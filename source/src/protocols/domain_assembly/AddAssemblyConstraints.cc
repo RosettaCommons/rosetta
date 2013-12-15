@@ -81,7 +81,7 @@ void AddAssemblyConstraints::apply( core::pose::Pose & pose ) {
 			if ( first_chain != chain_ii ) {
 				AtomID atom1( pose.residue_type(ii-1).atom_index(atom_name), ii-1 ),
 					atom2( pose.residue_type(ii).atom_index(atom_name), ii );
-				FuncOP func( new LinearPenaltyFunction( dist_cutoff, score, range, slope ) );
+				core::scoring::func::FuncOP func( new core::scoring::func::LinearPenaltyFunction( dist_cutoff, score, range, slope ) );
 
 				ConstraintOP cst = new AtomPairConstraint(atom1,atom2,func);
 				cst_set->add_constraint(cst);
@@ -93,4 +93,3 @@ void AddAssemblyConstraints::apply( core::pose::Pose & pose ) {
 
 }//namespace domain_assembly
 }//namespace protocols
-

@@ -61,52 +61,52 @@ ResidueVicinityInfo::ResidueVicinityInfo(
 
 ResidueVicinityInfo::~ResidueVicinityInfo() {}
 
-core::scoring::constraints::FuncOP
+core::scoring::func::FuncOP
 ResidueVicinityInfo::dis() const {
 	return dis_; }
 
-core::scoring::constraints::FuncOP
+core::scoring::func::FuncOP
 ResidueVicinityInfo::loop_ang() const{
 	return loop_ang_; }
 
-	core::scoring::constraints::FuncOP
+	core::scoring::func::FuncOP
 ResidueVicinityInfo::targ_ang() const{
 	return targ_ang_; }
 
-	core::scoring::constraints::FuncOP
+	core::scoring::func::FuncOP
 ResidueVicinityInfo::loop_dih() const{
 	return loop_dih_; }
 
-	core::scoring::constraints::FuncOP
+	core::scoring::func::FuncOP
 ResidueVicinityInfo::targ_dih() const{
 	return targ_dih_; }
 
-core::scoring::constraints::FuncOP
+	core::scoring::func::FuncOP
 ResidueVicinityInfo::lt_dih() const{
 	return lt_dih_; }
 
 void
-ResidueVicinityInfo::set_dis( core::scoring::constraints::FuncOP dis ){
+ResidueVicinityInfo::set_dis( core::scoring::func::FuncOP dis ){
 	dis_ = dis; }
 
 	void
-ResidueVicinityInfo::set_loop_ang( core::scoring::constraints::FuncOP loop_ang ){
+ResidueVicinityInfo::set_loop_ang( core::scoring::func::FuncOP loop_ang ){
 	loop_ang_ = loop_ang; }
 
 	void
-ResidueVicinityInfo::set_targ_ang( core::scoring::constraints::FuncOP targ_ang ){
+ResidueVicinityInfo::set_targ_ang( core::scoring::func::FuncOP targ_ang ){
 	targ_ang_ = targ_ang; }
 
 void
-ResidueVicinityInfo::set_loop_dih( core::scoring::constraints::FuncOP loop_dih ){
+ResidueVicinityInfo::set_loop_dih( core::scoring::func::FuncOP loop_dih ){
 	loop_dih_ = loop_dih; }
 
 void
-ResidueVicinityInfo::set_targ_dih( core::scoring::constraints::FuncOP targ_dih ){
+ResidueVicinityInfo::set_targ_dih( core::scoring::func::FuncOP targ_dih ){
 	targ_dih_ = targ_dih; }
 
 void
-ResidueVicinityInfo::set_lt_dih( core::scoring::constraints::FuncOP lt_dih ){
+ResidueVicinityInfo::set_lt_dih( core::scoring::func::FuncOP lt_dih ){
 	lt_dih_ = lt_dih; }
 
 

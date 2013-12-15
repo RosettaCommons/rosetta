@@ -78,13 +78,13 @@ public:
 		using namespace core::scoring;
 		using namespace core::scoring::constraints;
 
-		FourPointsFunc fourpts;
+		core::scoring::func::FourPointsFunc fourpts;
 		fourpts.xyz( 1, Vector( 0, 0, 0 ) );
 		fourpts.xyz( 2, Vector( 0, 1.0, 0 ));
 		fourpts.xyz( 3, Vector( 0.707, 0.707, 0 ));
 		fourpts.xyz( 4, Vector( 0.707, 0.707, 1.0 )); // 90 degrees
 
-		CircularHarmonicFuncOP func = new CircularHarmonicFunc( numeric::conversions::radians( 80 ), 10 );
+		core::scoring::func::CircularHarmonicFuncOP func = new core::scoring::func::CircularHarmonicFunc( numeric::conversions::radians( 80 ), 10 );
 
 		AtomID at1( 1, 1), at2( 2, 1 ), at3( 3, 1 ), at4( 4, 1 );
 
@@ -109,7 +109,7 @@ public:
 		core::pose::PoseOP ubqstump = create_twores_1ubq_poseop();
 		TS_ASSERT( ubqstump->total_residue() == 2 );
 		AtomID at1( 1, 1), at2( 2, 1 ), at3( 3, 1 ), at4( 4, 1 );
-		CircularHarmonicFuncOP func = new CircularHarmonicFunc( numeric::conversions::radians( 80 ), 10 );
+		core::scoring::func::CircularHarmonicFuncOP func = new core::scoring::func::CircularHarmonicFunc( numeric::conversions::radians( 80 ), 10 );
 
 		ScoreFunction sfxn;
 		sfxn.set_weight( dihedral_constraint, 1.0 );
@@ -174,7 +174,7 @@ public:
 
 		core::Real const start_chi_degrees = rsd.chi(which_chi);
 		core::Real const start_chi_radians = numeric::conversions::radians( start_chi_degrees );
-		FuncOP restr_func = new CircularHarmonicFunc( start_chi_radians, stddev_radians );
+		core::scoring::func::FuncOP restr_func = new core::scoring::func::CircularHarmonicFunc( start_chi_radians, stddev_radians );
 		AtomIndices chi_idx = rsd_type.chi_atoms(which_chi); // 1-based
 		ConstraintOP constraint = new DihedralConstraint(
 			AtomID(chi_idx[1], which_res),

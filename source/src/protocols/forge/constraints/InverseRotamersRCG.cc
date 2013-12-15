@@ -151,7 +151,7 @@ InverseRotamersRCG::generate_remodel_constraints(
 
 void
 InverseRotamersRCG::set_constraint_func(
-	core::scoring::constraints::FuncOP constraint_func ){
+	core::scoring::func::FuncOP constraint_func ){
 	constraint_func_ = constraint_func;
 }
 

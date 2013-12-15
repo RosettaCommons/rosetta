@@ -81,7 +81,7 @@ RNA_DataBackboneEnergy::RNA_DataBackboneEnergy() :
 	dist_fade_( 1.0  ),
 	well_depth_burial_( -0.05 ),
 	well_depth_exposed_( 0.01 ),
-	burial_function_( new constraints::FadeFunc( -10.0 /*cutoff_lower*/, dist_cutoff_, dist_fade_, 1.0 /*well_depth*/ ) )
+	burial_function_( new func::FadeFunc( -10.0 /*cutoff_lower*/, dist_cutoff_, dist_fade_, 1.0 /*well_depth*/ ) )
 {
 	initialize_atom_numbers_sugar();
 }

@@ -54,7 +54,7 @@ DihedralConstraintsScore::DihedralConstraintsScore(Size priority,
 	AtomBasedConstraintsScore(priority, lowest_acceptable_value, use_lowest, query_size,
 			constrainable_atoms, "DihedralConstraintsScore") {
 
-	factory_.add_type("PERIODIC", new core::scoring::constraints::PeriodicFunc(
+	factory_.add_type("PERIODIC", new core::scoring::func::PeriodicFunc(
 			0, 0, 0, 0));
 
 	data_.resize(get_query_size());
@@ -67,7 +67,7 @@ DihedralConstraintsScore::DihedralConstraintsScore(Size priority,
 	AtomBasedConstraintsScore(priority, lowest_acceptable_value, use_lowest, query_size,
 			"DihedralConstraintsScore") {
 
-	factory_.add_type("PERIODIC", new core::scoring::constraints::PeriodicFunc(
+	factory_.add_type("PERIODIC", new core::scoring::func::PeriodicFunc(
 			0, 0, 0, 0));
 
 	data_.resize(get_query_size());
@@ -175,7 +175,7 @@ void DihedralConstraintsScore::read_constraints(
 					<< name2 << " " << name3 << " " << name4 << " " << res1
 					<< " " << res2 << " " << res3 << " " << res4 << " func: "
 					<< func_type << std::endl;
-			core::scoring::constraints::FuncOP func = factory_.new_func(
+			core::scoring::func::FuncOP func = factory_.new_func(
 					func_type);
 			func->read_data(data);
 			std::map<std::string, Size> constr_atoms =

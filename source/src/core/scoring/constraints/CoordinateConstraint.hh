@@ -51,7 +51,7 @@ public:
 		AtomID const & a1,
 		AtomID const & fixed_atom_in,
 		Vector const & xyz_target_in,
-	 	FuncOP func,
+	 	core::scoring::func::FuncOP func,
 		ScoreType scotype = coordinate_constraint
 	);
 
@@ -73,10 +73,10 @@ public:
 	void show( std::ostream& out ) const;
 
 	// @brief Reads the definition of a Constraint from the given std::istream,
-	// using the given Pose, and the given FuncFactory. This method is intended
+	// using the given Pose, and the given func::FuncFactory. This method is intended
 	// to be overridden by derived classes if they'd like to use the
 	// ConstraintIO machinery.
-	virtual void read_def( std::istream &, pose::Pose const &, FuncFactory const & );
+	virtual void read_def( std::istream &, pose::Pose const &,func::FuncFactory const & );
 
 	/// @brief possibility to do object comparison instead
 	/// of pointer comparison
@@ -98,14 +98,14 @@ public:
 	///
 	virtual
 	void
-	score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
 	// atom deriv
 	virtual
 	void
 	fill_f1_f2(
 		AtomID const & atom,
-		XYZ_Func const & xyz,
+		func::XYZ_Func const & xyz,
 		Vector & F1,
  		Vector & F2,
 		EnergyMap const & weights
@@ -151,7 +151,7 @@ private:
 	AtomID atom_;
 	AtomID fixed_atom_;
 	Vector xyz_target_;
-	FuncOP func_;
+	core::scoring::func::FuncOP func_;
 };
 
 }

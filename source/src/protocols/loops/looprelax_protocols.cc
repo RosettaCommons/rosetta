@@ -611,7 +611,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 		for( int ir=loop_begin; ir <= loop_end; ir++ ){
 			Real middlefactor = 1.0 - (float(std::min( std::abs(ir - loop_begin), std::abs(loop_end - ir) ))/ float(std::abs(loop_end-loop_begin))) * 2 * 0.8;
 
-			core::scoring::constraints::FuncOP CA_cst = new core::scoring::constraints::HarmonicFunc( 0, option[OptionKeys::loops::coord_cst ]() * middlefactor );
+			core::scoring::func::FuncOP CA_cst = new core::scoring::func::HarmonicFunc( 0, option[OptionKeys::loops::coord_cst ]() * middlefactor );
 			core::scoring::constraints::ConstraintOP newcst = new core::scoring::constraints::CoordinateConstraint(
 								core::id::AtomID( pose.residue_type(ir).atom_index("CA") , ir ),
 								core::id::AtomID( pose.residue_type( 1).atom_index("CA") , 1  ),

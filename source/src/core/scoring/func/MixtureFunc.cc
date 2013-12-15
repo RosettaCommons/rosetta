@@ -41,9 +41,12 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+
+	using namespace core::scoring::constraints;
 
 	void
 	MixtureFunc::read_data( std::istream & in ) {
@@ -212,4 +215,3 @@ namespace constraints {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

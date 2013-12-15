@@ -30,7 +30,9 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
+
+using namespace core::scoring::constraints;
 
 void
 SoedingFunc::read_data( std::istream & in ) {
@@ -62,8 +64,8 @@ SoedingFunc::func( Real const x ) const	{
 	Real const score( compute_func(x) );
 
 	if ( option[ james::debug ]() ) {
-		//return std::min( score, compute_func(10) );		
-		return std::min( score, 0.0 );		
+		//return std::min( score, compute_func(10) );
+		return std::min( score, 0.0 );
 	}
 	return score;
 } // func

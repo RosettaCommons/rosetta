@@ -68,7 +68,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 GaussianChainFunc::GaussianChainFunc( Real const gaussian_variance,
 																			utility::vector1< Real > const & other_distances ):
@@ -170,4 +170,3 @@ GaussianChainFunc::show_definition( std::ostream &out ) const {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

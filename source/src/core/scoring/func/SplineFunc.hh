@@ -17,8 +17,8 @@
 /// @brief  Constraint function for looking up data in a histogram over which a spline is created
 /// @author Stephanie Hirst (stephanie.j.hirst@vanderbilt.edu)
 
-#ifndef INCLUDED_core_scoring_constraints_SplineFunc_hh
-#define INCLUDED_core_scoring_constraints_SplineFunc_hh
+#ifndef INCLUDED_core_scoring_func_SplineFunc_hh
+#define INCLUDED_core_scoring_func_SplineFunc_hh
 
 // Unit Headers
 #include <core/scoring/func/SplineFunc.fwd.hh>
@@ -39,7 +39,7 @@
 
 namespace core {
 	namespace scoring {
-		namespace constraints {
+		namespace func {
 
 class SplineFunc : public Func {
 
@@ -122,4 +122,3 @@ private:
 } // core
 
 #endif
-

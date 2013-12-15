@@ -148,7 +148,7 @@ ResidueTypeConstraint::remapped_clone( pose::Pose const&, pose::Pose const&, id:
 // emap. Although the current set of weights currently is provided, Constraint objects
 // should put unweighted scores into emap.
 void
-ResidueTypeConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const
+ResidueTypeConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const
 {
 	Real const weight(weights[ this->score_type() ] );
 	if( weight == 0 ) return; // what's the point?
@@ -163,7 +163,7 @@ ResidueTypeConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weigh
 void
 ResidueTypeConstraint::fill_f1_f2(
 	AtomID const & ,//atom,
-	XYZ_Func const &,
+	func::XYZ_Func const &,
 	Vector & ,//F1,
 	Vector & ,//F2,
 	EnergyMap const & //weights

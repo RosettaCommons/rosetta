@@ -23,7 +23,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 //Constructor
 CircularGeneral1D_Func::CircularGeneral1D_Func(

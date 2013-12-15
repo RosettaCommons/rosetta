@@ -323,7 +323,7 @@ using namespace basic::options::OptionKeys;
 
 
 
-										cst->add_constraint( new AtomPairConstraint ( AtomID(res_pos.atom_index("CA"),pos), AtomID(res_pos_2.atom_index("CA"),pos_2), new HarmonicFunc( d, sd ) ) );
+										cst->add_constraint( new AtomPairConstraint ( AtomID(res_pos.atom_index("CA"),pos), AtomID(res_pos_2.atom_index("CA"),pos_2), new core::scoring::func::HarmonicFunc( d, sd ) ) );
 									}
 								}
 							}
@@ -421,7 +421,7 @@ using namespace basic::options::OptionKeys;
 
 
 
-											cst->add_constraint( new AtomPairConstraint ( AtomID(res_pos.atom_index("CA"),pos), AtomID(res_pos_2.atom_index("CA"),pos_2), new HarmonicFunc( d, sd ) ) );
+											cst->add_constraint( new AtomPairConstraint ( AtomID(res_pos.atom_index("CA"),pos), AtomID(res_pos_2.atom_index("CA"),pos_2), new core::scoring::func::HarmonicFunc( d, sd ) ) );
 
 										}
 								}

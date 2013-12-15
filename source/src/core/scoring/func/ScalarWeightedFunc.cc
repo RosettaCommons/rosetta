@@ -33,7 +33,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 	ScalarWeightedFunc::~ScalarWeightedFunc() {}
 
@@ -84,4 +84,3 @@ namespace constraints {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

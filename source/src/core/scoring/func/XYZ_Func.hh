@@ -11,8 +11,8 @@
 /// @brief
 
 
-#ifndef INCLUDED_core_scoring_constraints_XYZ_Func_hh
-#define INCLUDED_core_scoring_constraints_XYZ_Func_hh
+#ifndef INCLUDED_core_scoring_func_XYZ_Func_hh
+#define INCLUDED_core_scoring_func_XYZ_Func_hh
 
 #include <core/scoring/func/XYZ_Func.fwd.hh>
 
@@ -28,7 +28,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////

@@ -13,8 +13,8 @@
 /// @author James Thompson
 /// @author Oliver Lange
 
-#ifndef INCLUDED_core_scoring_constraints_Func_hh
-#define INCLUDED_core_scoring_constraints_Func_hh
+#ifndef INCLUDED_core_scoring_func_Func_hh
+#define INCLUDED_core_scoring_func_Func_hh
 
 #include <utility/pointer/ReferenceCount.hh>
 
@@ -23,7 +23,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 /// @brief Func is an abstract base class representing a function used to define
 /// constraints, in which func(r) gives the constraint score for the given value

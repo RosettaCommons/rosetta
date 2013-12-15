@@ -16,7 +16,7 @@
 
 // Unit headers
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/func/Func.hh> /// cant get to compile w/ Func.fwd.hh
+#include <core/scoring/func/Func.hh> /// cant get to compile w/ func::Func.fwd.hh
 
 
 // Package headers
@@ -362,7 +362,7 @@ public:
 	void
 	add_dof_constraint(
 		DOF_ID const & id,
-		FuncOP func,
+		core::scoring::func::FuncOP func,
 		ScoreType const & t = dof_constraint
 	);
 

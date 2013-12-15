@@ -22,7 +22,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 static basic::Tracer trMinMultiHarmonicFunc(
                 "fragment.picking.scores.MinMultiHarmonicFunc");
@@ -130,4 +130,3 @@ MinMultiHarmonicFunc::show_violations( std::ostream& out, Real x, Size verbose_l
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

@@ -77,7 +77,7 @@ Constraints::copy_from( Constraints const & other ) {
 
 // call the setup_for_derivatives for each constraint
 void
-Constraints::setup_for_scoring( XYZ_Func const & xyz, ScoreFunction const &scfxn ) const {
+Constraints::setup_for_scoring( func::XYZ_Func const & xyz, ScoreFunction const &scfxn ) const {
 	for ( ConstraintCOPs::const_iterator it= constraints_.begin(), ite=constraints_.end();
 				it != ite; ++it ) {
 		(*it)->setup_for_scoring( xyz, scfxn );
@@ -86,7 +86,7 @@ Constraints::setup_for_scoring( XYZ_Func const & xyz, ScoreFunction const &scfxn
 
 // call the setup_for_derivatives for each constraint
 void
-Constraints::setup_for_derivatives( XYZ_Func const & xyz, ScoreFunction const &scfxn ) const {
+Constraints::setup_for_derivatives( func::XYZ_Func const & xyz, ScoreFunction const &scfxn ) const {
 	for ( ConstraintCOPs::const_iterator it= constraints_.begin(), ite=constraints_.end();
 				it != ite; ++it ) {
 		(*it)->setup_for_derivatives( xyz, scfxn );
@@ -103,7 +103,7 @@ Constraints::eval_intrares_atom_derivative(
 	Vector & F2
 ) const
 {
-	ResidueXYZ resxyz( residue );
+	func::ResidueXYZ resxyz( residue );
 	for ( ConstraintCOPs::const_iterator it= constraints_.begin(), ite=constraints_.end();
 				it != ite; ++it ) {
 		Constraint const & cst( **it );
@@ -124,7 +124,7 @@ Constraints::eval_respair_atom_derivative(
 	Vector & F2
 ) const
 {
-	ResiduePairXYZ respairxyz( residue1, residue2 );
+	func::ResiduePairXYZ respairxyz( residue1, residue2 );
 	for ( ConstraintCOPs::const_iterator it= constraints_.begin(), ite=constraints_.end();
 			it != ite; ++it ) {
 		Constraint const & cst( **it );
@@ -144,7 +144,7 @@ Constraints::eval_ws_atom_derivative(
 	Vector & F2
 ) const
 {
-	ConformationXYZ confxyz( conformation );
+	func::ConformationXYZ confxyz( conformation );
 	for ( ConstraintCOPs::const_iterator it= constraints_.begin(), ite=constraints_.end();
 			it != ite; ++it ) {
 		Constraint const & cst( **it );
@@ -162,7 +162,7 @@ Constraints::eval_ws_atom_derivative(
 ///
 void
 Constraints::energy(
-	XYZ_Func const & xyz_func,
+	func::XYZ_Func const & xyz_func,
 	EnergyMap const & weights,
 	EnergyMap & emap
 ) const
@@ -183,7 +183,7 @@ Constraints::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-	ResiduePairXYZ const xyz_func( rsd1, rsd2 );
+	func::ResiduePairXYZ const xyz_func( rsd1, rsd2 );
 	energy( xyz_func, weights, emap );
 }
 
@@ -195,7 +195,7 @@ Constraints::intra_residue_energy(
 	EnergyMap & emap
 ) const
 {
-	ResidueXYZ const xyz_func( rsd );
+	func::ResidueXYZ const xyz_func( rsd );
 	energy( xyz_func, weights, emap );
 }
 
@@ -207,7 +207,7 @@ Constraints::conformation_energy(
 	EnergyMap & emap
 ) const
 {
-	ConformationXYZ const xyz_func( conformation );
+	func::ConformationXYZ const xyz_func( conformation );
 	energy( xyz_func, weights, emap );
 }
 

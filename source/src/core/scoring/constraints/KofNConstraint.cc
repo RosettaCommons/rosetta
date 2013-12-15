@@ -113,7 +113,7 @@ KofNConstraint::init_cst_score_types()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief ScoreFunction, scores all member constraints; reports the lowest k
 void
-KofNConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const {
+KofNConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const {
 	//std::cout << "scoring K of N constraint..." << std::endl;
 
 	if (K_ == 0) {
@@ -194,7 +194,7 @@ KofNConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const {
 void
 KofNConstraint::fill_f1_f2(
 	AtomID const & atom,
-	XYZ_Func const & xyz,
+	func::XYZ_Func const & xyz,
 	Vector & F1,
 	Vector & F2,
 	EnergyMap const & weights
@@ -244,7 +244,7 @@ KofNConstraint::show_violations( std::ostream& out, pose::Pose const& pose, Size
 
 
 void
-KofNConstraint::read_def( std::istream& data, core::pose::Pose const& pose, FuncFactory const& func_factory ) {
+KofNConstraint::read_def( std::istream& data, core::pose::Pose const& pose,func::FuncFactory const& func_factory ) {
 	data >> K_;
 	ConstraintOP constr;
 	while( ( constr = ConstraintIO::read_individual_constraint_new( data, pose, func_factory ) ) != 0) {

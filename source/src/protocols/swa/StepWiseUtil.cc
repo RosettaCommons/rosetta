@@ -1062,7 +1062,7 @@ rotate( pose::Pose & pose, Matrix const M,
 		for ( std::map< id::AtomID, id::AtomID >::const_iterator
 			 it=superimpose_atom_id_map.begin(), it_end = superimpose_atom_id_map.end(); it != it_end; ++it ) {
 			id::AtomID const mapped_atom = it->second;
-			cst_set->add_constraint( new core::scoring::constraints::CoordinateConstraint ( it->first, id::AtomID(1, my_anchor), native_pose.residue(mapped_atom.rsd()).xyz(mapped_atom.atomno()), new core::scoring::constraints::FlatHarmonicFunc( constraint_x0, 1.0, constraint_tol )) );
+			cst_set->add_constraint( new core::scoring::constraints::CoordinateConstraint ( it->first, id::AtomID(1, my_anchor), native_pose.residue(mapped_atom.rsd()).xyz(mapped_atom.atomno()), new core::scoring::func::FlatHarmonicFunc( constraint_x0, 1.0, constraint_tol )) );
 			//cst_set->add_constraint( new core::scoring::constraints::CoordinateConstraint ( it->first, id::AtomID(1, my_anchor), native_pose.residue(mapped_atom.rsd()).xyz(mapped_atom.atomno()), new core::scoring::constraints::FadeFunc( -0.7, 1.5, 0.8, -1.0, 0.0)) );
 		}
 

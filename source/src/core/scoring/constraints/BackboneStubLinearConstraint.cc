@@ -101,7 +101,7 @@ BackboneStubLinearConstraint::BackboneStubLinearConstraint(
 	// to get access to AngleConstraint derivatives
 	if ( ang_cst_ == 0 ) {
 		// note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
-		FuncOP cos_func = new PeriodicFunc(0., 1., 1., 0.);
+		func::FuncOP cos_func = new func::PeriodicFunc(0., 1., 1., 0.);
 		ang_cst_ = new AngleConstraint( cos_func );
 	}
 }
@@ -164,7 +164,7 @@ bool BackboneStubLinearConstraint::operator == ( Constraint const & other_cst ) 
 //Lei Shi
 // constraint score, C, is given by C = b + k*(1-exp(-x^2/2)+z_Cab^2+z_Ccn^2
 // this should help better the ranking of patchdock solutions and constrainted guided docking
-void BackboneStubLinearConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const {
+void BackboneStubLinearConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const {
 
 	if ( weights[ this->score_type() ] == 0 ) return;
 
@@ -242,7 +242,7 @@ void BackboneStubLinearConstraint::score( XYZ_Func const & xyz_func, EnergyMap c
 void
 BackboneStubLinearConstraint::fill_f1_f2(
 	AtomID const & atom,
-	XYZ_Func const & xyz,
+	func::XYZ_Func const & xyz,
 	Vector & F1,
 	Vector & F2,
 	EnergyMap const & weights

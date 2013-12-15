@@ -98,13 +98,13 @@ public:
 
 	virtual
 	void
-	score( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
+	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
 
 	virtual
 	void
 	fill_f1_f2(
 		AtomID const & atom,
-		XYZ_Func const & xyz,
+		func::XYZ_Func const & xyz,
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const & weights

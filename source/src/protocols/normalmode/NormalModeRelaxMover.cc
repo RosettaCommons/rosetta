@@ -89,8 +89,8 @@ NormalModeRelaxMover::set_mode( utility::vector1< Size > const mode_using,
 }
 
 void
-NormalModeRelaxMover::set_movemap( core::pose::Pose const & pose,
-																	 core::kinematics::MoveMapCOP movemap )
+NormalModeRelaxMover::set_movemap(core::pose::Pose const & pose,
+								  core::kinematics::MoveMapCOP movemap )
 {
 	mm_ = movemap->clone();
 
@@ -344,7 +344,7 @@ CartesianNormalModeMover::gen_coord_constraint( pose::Pose &pose,
     pose.add_constraint(
 		new core::scoring::constraints::CoordinateConstraint
 	  ( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm], excrd[ i_atm ],
-			new core::scoring::constraints::HarmonicFunc( 0.0, cst_sdev() ) ) );
+			new core::scoring::func::HarmonicFunc( 0.0, cst_sdev() ) ) );
   }
 }
 
@@ -537,7 +537,7 @@ TorsionNormalModeMover::gen_coord_constraint( pose::Pose &pose,
 		new core::scoring::constraints::CoordinateConstraint
 	  ( NM().get_atomID()[i_atm], NM().get_atomID()[i_atm],
 			pose.residue(resno).xyz(atmno),
-			new core::scoring::constraints::HarmonicFunc( 0.0, cst_sdev() ) ) );
+			new core::scoring::func::HarmonicFunc( 0.0, cst_sdev() ) ) );
   }
 }
 

@@ -464,7 +464,7 @@ ddGMover::setup_constraints(
 							ConstraintCOP cst( new AtomPairConstraint(
 								core::id::AtomID(pose.residue(i).atom_index(" CA "),i),
 								core::id::AtomID(pose.residue(j).atom_index(" CA "),j),
-								new HarmonicFunc(CA_dist, cst_tol)));
+								new core::scoring::func::HarmonicFunc(CA_dist, cst_tol)));
 							pose.add_constraint(cst);
 						}
 					}
@@ -1557,10 +1557,3 @@ ddGMover::get_name() const {
 
 } //moves
 } //protocols
-
-
-
-
-
-
-

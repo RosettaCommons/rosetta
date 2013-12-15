@@ -12,8 +12,8 @@
 /// @author James Thompson
 
 
-#ifndef INCLUDED_core_scoring_constraints_CircularGeneral1D_Func_FWD_HH
-#define INCLUDED_core_scoring_constraints_CircularGeneral1D_Func_FWD_HH
+#ifndef INCLUDED_core_scoring_func_CircularGeneral1D_Func_FWD_HH
+#define INCLUDED_core_scoring_func_CircularGeneral1D_Func_FWD_HH
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 
@@ -21,7 +21,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class CircularGeneral1D_Func;
 typedef utility::pointer::owning_ptr< CircularGeneral1D_Func > CircularGeneral1D_FuncOP;

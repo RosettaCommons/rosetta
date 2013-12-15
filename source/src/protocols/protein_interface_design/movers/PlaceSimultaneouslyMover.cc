@@ -305,7 +305,7 @@ void PlaceSimultaneouslyMover::add_coordinatecst_for_hotspot_packing( core::pose
       if( pos==item.second.first ) {
         //loop through sidechain heavy atom of pos and the coordinates of hs_stub_curr->residue()->xyz(heavy_sidechain)
         //create coordinate constraints
-        core::scoring::constraints::HarmonicFuncOP dummy_cst;
+        core::scoring::func::HarmonicFuncOP dummy_cst;
         add_coordinate_constraints( pose, *hs_stub_curr->residue(), host_chain_, pos, 0.5, dummy_cst );
         TR<<"applied coordinate constraints at position " << pos << std::endl;
     }
@@ -377,10 +377,10 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
         pose.update_residue_neighbors(); // o/w fails assertion `graph_state_ == GOOD`
         interface_obj.distance( 8 );
         interface_obj.calculate( pose );
-      
+
         std::multimap< core::Real, std::pair< core::Size, StubsetStubPair > > saved_auction = auction_->auction_results();
         std::multimap< core::Real, std::pair< core::Size, StubsetStubPair > > new_auction;
-      
+
        utility::vector1< Size > scanned_position;
        core::pose::Pose saved_pose=pose;
 
@@ -391,19 +391,19 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
            auction_->insert(*each_auction_result);
            PackerTaskOP task = create_task_for_allhotspot_packing( saved_pose );
            //TR << "test loop through saved_auction: " << auction_->auction_results().size() << " , " << new_auction.size() << std::endl;
-        
+
            //Size residue= each_auction_result->second.first;  // unused ~Labonte
            residue_level_tasks_for_placed_hotspots_->clear();
            core::pack::task::TaskFactoryOP pack_around_placed_hotspots_ = residue_level_tasks_for_placed_hotspots_->clone();
            pack_around_placed_hotspots_->push_back( new core::pack::task::operation::RestrictToRepacking );
            core::pack::task::operation::PreventRepackingOP prop( new core::pack::task::operation::PreventRepacking );
-        
+
            for( core::Size i=1; i<=saved_pose.total_residue(); ++i ){
              if( !saved_pose.residue(i).is_protein() ) continue;
              if( std::find( targets.begin(), targets.end(), i ) == targets.end() ) {
                      //prevents everything else from repacking
                    task->nonconst_residue_task(i).prevent_repacking();
-        
+
                    //if i in interface and in chain 1 and inpair with prev_pack
                    if ( interface_obj.is_interface( i ) ) {
                      bool contact_any=false;
@@ -420,14 +420,14 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
                    } else {
                          prop->include_residue(i);
                      } //non-interface residues
-        
+
              }
           }//for residue i in saved_pose
-        
+
           using namespace core::scoring;
           add_coordinatecst_for_hotspot_packing(saved_pose);
           pack_rotamers( saved_pose, *scorefxn, task );
-        
+
           ScoreFunctionOP scorefxnc = getScoreFunction();
           scorefxnc->set_weight( coordinate_constraint, 1.0 );
           (*scorefxnc)(saved_pose);
@@ -435,7 +435,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
           //TR << "residue: " << residue << " coordinate constraint energy: " << cst_score << std::endl;
           TR << std::endl;
           remove_coordinate_constraints_from_pose( saved_pose );
-        
+
          //decide whether to keep it or not
          //complexity for the unknown number of hotspot
          if (new_auction.size()==0) {
@@ -447,20 +447,20 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
                      if ( cst_score < selected_auction_result->first ) {
                          new_auction.erase( selected_auction_result );
                          new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result->second.first, std::make_pair( each_auction_result->second.second.first, each_auction_result->second.second.second) ) ) );
-                   } 
+                   }
                    status=1;
                }
            }
-        
+
            if (status==0) {
                    new_auction.insert( std::make_pair( cst_score, std::make_pair( each_auction_result->second.first, std::make_pair( each_auction_result->second.second.first, each_auction_result->second.second.second) ) ) );
              }
-        
+
          } //insert when there is something
-        
+
          remove_coordinate_constraints_from_pose( saved_pose );
        } //pack through each position
-       
+
        //loop through each position, save best score for each position and insert to new_auction_results
        auction_->clear();
        for( PlacementAuctionMover::ResidueAuction::iterator selected_auction_result = new_auction.begin(); selected_auction_result != new_auction.end(); ++selected_auction_result) {
@@ -471,10 +471,10 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
              return( false );
          }
        }
-       
+
        PackerTaskOP task = create_task_for_allhotspot_packing( pose );
        //PackerTaskOP taskc = task->clone();
-       
+
        //create a new task that does not allow design
        core::pack::task::TaskFactoryOP pack_around_placed_hotspots_ = residue_level_tasks_for_placed_hotspots_->clone();
        //core::pack::task::TaskFactoryOP pack_around_placed_hotspots_ = new core::pack::task::TaskFactory;
@@ -490,7 +490,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
          if( std::find( targets.begin(), targets.end(), i ) == targets.end() ) {
                  //prevents everything else from repacking
                task->nonconst_residue_task(i).prevent_repacking();
-     
+
                //if i in interface and in chain 1 and inpair with prev_pack
                if ( interface_obj.is_interface( i ) ) {
                  bool contact_any=false;
@@ -509,7 +509,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
                      prop->include_residue(i);
                     //taskc->nonconst_residue_task(i).prevent_repacking();
                  } //non-interface residues
-     
+
          }
       }//for residue i in pose
 
@@ -600,7 +600,7 @@ PlaceSimultaneouslyMover::refresh_coordinate_constraints( core::pose::Pose & pos
 
 		HotspotStubCOP stub( hs_set.second.first );
 		core::Size const position( hs_set.second.second );
-		core::scoring::constraints::HarmonicFuncOP dummy_cst;
+		core::scoring::func::HarmonicFuncOP dummy_cst;
 		add_coordinate_constraints( pose, *stub->residue(), host_chain_, position, coord_sdev, dummy_cst );
 	}
 	TR<<"applied coordinate constraints" << std::endl;
@@ -921,5 +921,3 @@ PlaceSimultaneouslyMover::PlaceSimultaneouslyMover() :
 } //movers
 } //protein_interface_design
 } //protocols
-
-

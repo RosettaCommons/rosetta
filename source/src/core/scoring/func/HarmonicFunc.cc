@@ -30,7 +30,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 FuncOP
 HarmonicFunc::clone() const
@@ -76,4 +76,3 @@ HarmonicFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Re
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

@@ -21,7 +21,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 Real
 LinearPenaltyFunction::func( Real const x ) const {
@@ -63,4 +63,3 @@ LinearPenaltyFunction::show_violations( std::ostream& out, Real x, Size verbose_
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

@@ -11,8 +11,8 @@
 /// @brief Definition for functions used in definition of constraints.
 /// @author Rhiju Das
 
-#ifndef INCLUDED_core_scoring_constraints_FadeFunc_HH
-#define INCLUDED_core_scoring_constraints_FadeFunc_HH
+#ifndef INCLUDED_core_scoring_func_FadeFunc_HH
+#define INCLUDED_core_scoring_func_FadeFunc_HH
 
 #include <core/scoring/func/FadeFunc.fwd.hh>
 
@@ -27,7 +27,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class FadeFunc : public Func {
 public:

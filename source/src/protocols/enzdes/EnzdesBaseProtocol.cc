@@ -459,8 +459,8 @@ core::Size jump_id ) const
 	core::Size const lig_id = jump_id !=0 ? get_ligand_id(pose, jump_id): 0;
   //restraining function for Calphas. should allow fairly liberal movement ~0.1A from the original position,
   //but severly limits movement beyond this
-  core::scoring::constraints::FuncOP ss_ca_restr_func = new core::scoring::constraints::BoundFunc( 0, bb_min_allowed_dev_, 0.1, "CAdis");
-  core::scoring::constraints::FuncOP loop_ca_restr_func = new core::scoring::constraints::BoundFunc( 0, loop_bb_min_allowed_dev_, 0.1, "CAdis");
+  core::scoring::func::FuncOP ss_ca_restr_func = new core::scoring::constraints::BoundFunc( 0, bb_min_allowed_dev_, 0.1, "CAdis");
+  core::scoring::func::FuncOP loop_ca_restr_func = new core::scoring::constraints::BoundFunc( 0, loop_bb_min_allowed_dev_, 0.1, "CAdis");
 
 	//note flo feb '11 reordering the foldtree will change residue types and can thus have an
 	//effect on constraints, which is a nasty bug bc different constraints will be enforced.

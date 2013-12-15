@@ -68,11 +68,11 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
 	using namespace core::scoring::constraints;
 
 	//kdrew: add constraint
-	HarmonicFuncOP harm_func  (new HarmonicFunc( distance, std ) );
-	HarmonicFuncOP harm_func_0  (new HarmonicFunc( 0, std ) );
-	CircularHarmonicFuncOP ang_func  (new CircularHarmonicFunc( 3.14159*2/3, 0.02 ) );
-	CircularHarmonicFuncOP dih_func  (new CircularHarmonicFunc( 3.14159, 0.02 ) );
-																			 
+	core::scoring::func::HarmonicFuncOP harm_func  (new core::scoring::func::HarmonicFunc( distance, std ) );
+	core::scoring::func::HarmonicFuncOP harm_func_0  (new core::scoring::func::HarmonicFunc( 0, std ) );
+	core::scoring::func::CircularHarmonicFuncOP ang_func  (new core::scoring::func::CircularHarmonicFunc( 3.14159*2/3, 0.02 ) );
+	core::scoring::func::CircularHarmonicFuncOP dih_func  (new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.02 ) );
+
 	AtomID aidCYH( pose.residue( hbs_pre_position ).atom_index("CYH"), hbs_pre_position );
 	AtomID aidCZH( pose.residue( hbs_pre_position+2 ).atom_index("CZH"), hbs_pre_position+2 );
 	AtomID aidVZH( pose.residue( hbs_pre_position ).atom_index("VZH"), hbs_pre_position );
@@ -100,7 +100,7 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
 void HbsPatcher::apply( core::pose::Pose & pose )
 {
 	TR<< "patching residues" <<std::endl;
-	
+
 	//kdrew: an hbs pre position cannot be last position
 	runtime_assert_msg ( hbs_pre_pos_ != pose.total_residue(), "beginning of hbs cannot be last residue" );
 	// I believe that this should be terminal, but since we're manually cutting off later residues
@@ -121,11 +121,11 @@ void HbsPatcher::apply( core::pose::Pose & pose )
 	{
     	utility_exit_with_message("Cannot patch proline");
 	}
-	if ( pose.residue(hbs_pre_pos_).has_variant_type(chemical::HBS_POST) == 1) 
+	if ( pose.residue(hbs_pre_pos_).has_variant_type(chemical::HBS_POST) == 1)
 	{
     	utility_exit_with_message("Cannot patch HBS_PRE on an HBS_POST");
 	}
-	if ( pose.residue(hbs_post_pos_).has_variant_type(chemical::HBS_PRE) == 1) 
+	if ( pose.residue(hbs_post_pos_).has_variant_type(chemical::HBS_PRE) == 1)
 	{
     	utility_exit_with_message("Cannot patch HBS_POST on an HBS_PRE");
 	}
@@ -200,4 +200,3 @@ HbsPatcher::~HbsPatcher(){}
 }//hbs
 }//simple_moves
 }//protocols
-

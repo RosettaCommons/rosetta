@@ -28,7 +28,7 @@ using numeric::constants::d::pi;
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 GaussianChainDoubleFunc::GaussianChainDoubleFunc( Real const gaussian_variance,
 																									Real const D2 ):
@@ -110,4 +110,3 @@ GaussianChainDoubleFunc::show_definition( std::ostream &out ) const {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

@@ -61,7 +61,7 @@ public:
 	void read_def(
 		std::istream & in,
 		pose::Pose const & pose,
-		FuncFactory const & func_factory
+		func::FuncFactory const & func_factory
 	);
 
 	/// @brief possibility to compare constraint according to data
@@ -69,7 +69,7 @@ public:
 	bool operator == ( Constraint const & other ) const;
 
 	void
-	score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
 	Real
 	score( conformation::Conformation const & conformation 	) const;
@@ -78,7 +78,7 @@ public:
 	void
 	fill_f1_f2(
 		AtomID const & atom,
-		XYZ_Func const & xyz,
+		func::XYZ_Func const & xyz,
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const & weights
@@ -90,7 +90,7 @@ public:
 		AtomID const & a2,
 		AtomID const & a3,
 		AtomID const & a4,
-		FuncOP func,
+		func::FuncOP func,
 		ScoreType scotype = dihedral_constraint
 	):
 		Constraint( scotype ),
@@ -118,7 +118,7 @@ public:
 
 	void show_def( std::ostream& out, pose::Pose const& pose ) const;
 
-	virtual Func const& get_func() const {
+	virtual func::Func const& get_func() const {
 		return *func_;
 	}
 
@@ -178,7 +178,7 @@ private:
 private:
 	// data
 	AtomID atom1_, atom2_, atom3_, atom4_;
-	FuncOP func_;
+	func::FuncOP func_;
 };
 
 } // constraints

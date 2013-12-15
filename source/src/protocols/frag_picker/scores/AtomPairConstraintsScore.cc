@@ -164,7 +164,7 @@ void AtomPairConstraintsScore::read_constraints(
 			trAtomPairConstraintsScore.Debug << "read: " << name1 << " " << id1
 					<< " " << name2 << " " << id2 << " func: " << func_type
 					<< std::endl;
-			core::scoring::constraints::FuncOP func = factory_.new_func(
+			core::scoring::func::FuncOP func = factory_.new_func(
 					func_type);
 			func->read_data(data);
 			std::map<std::string, Size> constr_atoms =

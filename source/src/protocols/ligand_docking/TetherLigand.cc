@@ -93,7 +93,7 @@ restrain_ligand_nbr_atom(
 		core::pose::Pose & pose
 ){
 	tether_ligand_tracer.Debug<< "stddev: " << stddev_Angstroms << std::endl;
-	core::scoring::constraints::FuncOP const restraint_function = new core::scoring::constraints::HarmonicFunc(0, stddev_Angstroms);
+	core::scoring::func::FuncOP const restraint_function = new core::scoring::func::HarmonicFunc(0, stddev_Angstroms);
 
 	core::id::AtomID const fixed_pt(pose.atom_tree().root()->atom_id());
 

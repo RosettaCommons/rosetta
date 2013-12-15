@@ -9,10 +9,10 @@
 
 /// @file src/core/scoring/func/SigmoidFunc.hh
 /// @brief Definition for functions used in definition of constraints.
-/// @author 
+/// @author
 
-#ifndef INCLUDED_core_scoring_constraints_SigmoidFunc_hh
-#define INCLUDED_core_scoring_constraints_SigmoidFunc_hh
+#ifndef INCLUDED_core_scoring_func_SigmoidFunc_hh
+#define INCLUDED_core_scoring_func_SigmoidFunc_hh
 
 #include <core/scoring/func/SigmoidFunc.fwd.hh>
 #include <core/scoring/func/Func.hh>
@@ -22,7 +22,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class SigmoidFunc : public Func {
 public:

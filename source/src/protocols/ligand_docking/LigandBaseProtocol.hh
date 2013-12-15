@@ -117,7 +117,7 @@ public:
     core::pose::Pose & pose,
     utility::vector1< bool > const & is_restrained,
       //core::Real stddev_Angstroms,
-    core::scoring::constraints::FuncOP restr_func
+    core::scoring::func::FuncOP restr_func
   ) const;
 
     void

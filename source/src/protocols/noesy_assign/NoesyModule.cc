@@ -250,7 +250,7 @@ void NoesyModule::add_dist_viol_to_assignments( core::pose::Pose native_pose) {
 		if ( (*it)->eliminated() ) continue;
 		if ( (*it)->min_seq_separation_residue_assignment( 0.1 ) < 1 ) continue;
 		for ( CrossPeak::iterator ait = (*it)->begin(); ait != (*it)->end(); ++ait ) {
-			FuncOP func( new BoundFunc(1.5,	(*it)->distance_bound(), 1, "NOE Peak " ) );
+			core::scoring::func::FuncOP func( new BoundFunc(1.5,	(*it)->distance_bound(), 1, "NOE Peak " ) );
 			AmbiguousNMRDistanceConstraintOP new_cst( (*ait)->create_constraint( native_pose, func ) );
 			(*ait)->set_native_distance_viol( new_cst->score( native_pose ) );
 		}
@@ -363,5 +363,3 @@ void NoesyModule::generate_constraint_files(
 
 }
 }
-
-

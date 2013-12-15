@@ -118,13 +118,13 @@ public:
 		using namespace core::scoring;
 		using namespace core::scoring::constraints;
 
-		FourPointsFunc fourpts;
+		core::scoring::func::FourPointsFunc fourpts;
 		fourpts.xyz( 1, Vector( 0, 0, 0 ) );
 		fourpts.xyz( 2, Vector( 0, 1.0, 0 ));
 		fourpts.xyz( 3, Vector( 0.707, 0.707, 0 ));
 		fourpts.xyz( 4, Vector( 0.707, 0.707, 1.0 )); // 90 degrees
 
-		HarmonicFuncOP func = new HarmonicFunc( 1.2, 0.5 );
+		core::scoring::func::HarmonicFuncOP func = new core::scoring::func::HarmonicFunc( 1.2, 0.5 );
 
 		AtomID at1( 1, 1), at2( 2, 1 );
 
@@ -150,7 +150,7 @@ public:
 		core::pose::PoseOP ubqstump = create_twores_1ubq_poseop();
 		TS_ASSERT( ubqstump->total_residue() == 2 );
 
-		HarmonicFuncOP func = new HarmonicFunc( 1.2, 0.5 );
+		core::scoring::func::HarmonicFuncOP func = new core::scoring::func::HarmonicFunc( 1.2, 0.5 );
 		AtomID at1, at2;
 		ScoreFunction sfxn;
 		sfxn.set_weight( atom_pair_constraint, 1.0 );

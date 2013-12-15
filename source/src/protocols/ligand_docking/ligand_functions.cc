@@ -62,7 +62,7 @@ torsion_constraints_from_mean_sd(
 		// input is in degrees, but dihedral constraints deal in radians
 		Real const chi_radians = numeric::conversions::radians( mean_sd_degrees[j].first );
 		Real const stddev_radians = numeric::conversions::radians( mean_sd_degrees[j].second );
-		FuncOP restr_func = new CircularHarmonicFunc( chi_radians, stddev_radians );
+		core::scoring::func::FuncOP restr_func = new core::scoring::func::CircularHarmonicFunc( chi_radians, stddev_radians );
 		AtomIndices chi_idx = rsd_type.chi_atoms(chino);
 		ConstraintCOP constraint = new DihedralConstraint(
 			AtomID(chi_idx[1], rsd_no),

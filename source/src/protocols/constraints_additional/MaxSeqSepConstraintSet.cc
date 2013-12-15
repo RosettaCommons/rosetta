@@ -204,7 +204,7 @@ MaxSeqSepConstraintSet::eval_non_residue_pair_energy(
 ) const
 {
 	//non_residue_pair_constraints_.conformation_energy( pose.conformation(), sfxn.weights(), emap );
-	core::scoring::constraints::ConformationXYZ const xyz_func( pose.conformation() );
+	core::scoring::func::ConformationXYZ const xyz_func( pose.conformation() );
 	core::scoring::constraints::ConstraintCOPs const& csts( non_residue_pair_constraints().constraints() );
 	for ( core::scoring::constraints::ConstraintCOPs::const_iterator it=csts.begin(), ite = csts.end(); it != ite; ++it ) {
 		core::scoring::constraints::Constraint const & cst( **it );
@@ -217,5 +217,3 @@ MaxSeqSepConstraintSet::eval_non_residue_pair_energy(
 
 } //abinitio
 } //protocols
-
-

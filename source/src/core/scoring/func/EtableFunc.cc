@@ -28,7 +28,9 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
+
+using namespace core::scoring::constraints;
 
 	void
 	EtableFunc::read_data( std::istream& in ) {
@@ -74,4 +76,3 @@ namespace constraints {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

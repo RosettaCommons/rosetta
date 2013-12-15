@@ -318,17 +318,17 @@ add_motif_bb_constraints(
 	cst_set->add_constraint( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "CA" ), this_pos ),
 																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( "CA" ),
-																											new HarmonicFunc( 0.0, 1.0 ) ) );
+																											new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) ) );
 
 	cst_set->add_constraint( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "C" ), this_pos ),
 																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( "C" ),
-																											new HarmonicFunc( 0.0, 1.0 ) ) );
+																											new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) ) );
 
 	cst_set->add_constraint( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "N" ), this_pos ),
 																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( "N" ),
-																											new HarmonicFunc( 0.0, 1.0 ) ) );
+																											new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) ) );
 
 	// For the fourth atom, if either residue is glycine, you need to use HA, else use CB
 	if( pose.residue( this_pos ).type().aa() == core::chemical::aa_gly || inv_rotamer.type().aa() == core::chemical::aa_gly ) {
@@ -340,12 +340,12 @@ add_motif_bb_constraints(
 		cst_set->add_constraint( new CoordinateConstraint( core::id::AtomID( index1, this_pos ),
 																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( index2 ),
-																											new HarmonicFunc( 0.0, 1.0 ) ) );
+																											new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) ) );
 	} else {
 		cst_set->add_constraint( new CoordinateConstraint( core::id::AtomID( pose.residue( this_pos ).atom_index( "CB" ), this_pos ),
 																											core::id::AtomID( pose.residue( 1 ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( "CB" ),
-																											new HarmonicFunc( 0.0, 1.0 ) ) );
+																											new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) ) );
 	}
 
 	return;
@@ -388,17 +388,17 @@ add_motif_sc_constraints(
 	cst_set->add_constraint( new CoordinateConstraint( core::id::AtomID( index1, this_pos ),
 																											core::id::AtomID( pose.residue( first_protein_resi ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( index1 ),
-																											new HarmonicFunc( 0.0, 1.0 ) ) );
+																											new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) ) );
 
 	cst_set->add_constraint( new CoordinateConstraint( core::id::AtomID( index2, this_pos ),
 																											core::id::AtomID( pose.residue( first_protein_resi ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( index2 ),
-																											new HarmonicFunc( 0.0, 1.0 ) ) );
+																											new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) ) );
 
 	cst_set->add_constraint( new CoordinateConstraint( core::id::AtomID( index3, this_pos ),
 																											core::id::AtomID( pose.residue( first_protein_resi ).atom_index( "CA" ), 1 ),
 																											inv_rotamer.xyz( index3 ),
-																											new HarmonicFunc( 0.0, 1.0 ) ) );
+																											new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) ) );
 
 	return;
 }

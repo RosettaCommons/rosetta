@@ -597,7 +597,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
 	///////////////////////////////////////////////////////////////////////////////////////
 	void
-	RNA_TorsionPotential::initialize_potential_from_file( core::scoring::constraints::FuncOP & func,
+	RNA_TorsionPotential::initialize_potential_from_file( core::scoring::func::FuncOP & func,
 																	std::string const & filename ) {
 
 		std::string const full_filename = basic::database::full_name( path_to_torsion_files_ + "/"+filename  );
@@ -607,7 +607,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 			utility_exit_with_message( "full_torsional_potential_filename " + full_filename + " doesn't exist!" );
 		}
 
-		func = new core::scoring::constraints::CircularGeneral1D_Func( full_filename );
+		func = new core::scoring::func::CircularGeneral1D_Func( full_filename );
 
 	}
 
@@ -623,12 +623,12 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 		Real const DELTA_CUTOFF_ = rna_torsion_fitted_info.delta_cutoff();
 
 		// FadeFunc initialized with min, max, fade-width, and function value.
-		fade_delta_north_ = new FadeFunc(
+		fade_delta_north_ = new func::FadeFunc(
 																		 -180.0 -delta_fade_,
 																		 DELTA_CUTOFF_ + 0.5*delta_fade_ ,
 																		 delta_fade_ ,
 																		 1.0  );
-		fade_delta_south_ = new FadeFunc(
+		fade_delta_south_ = new func::FadeFunc(
 																		 DELTA_CUTOFF_ - 0.5*delta_fade_,
 																		 180.0 +delta_fade_ ,
 																		 delta_fade_ ,
@@ -636,27 +636,27 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
 
 		// FadeFunc initialized with min, max, fade-width, and function value.
-		fade_alpha_sc_minus_ = new FadeFunc(
+		fade_alpha_sc_minus_ = new func::FadeFunc(
 																				-120.0 - 0.5 * alpha_fade_ ,
 																				0.0 + 0.5 * alpha_fade_ ,
 																				alpha_fade_ ,
 																				1.0  );
-		fade_alpha_sc_plus_ = new FadeFunc(
+		fade_alpha_sc_plus_ = new func::FadeFunc(
 																			 0.0 - 0.5 * alpha_fade_ ,
 																			 100.0 + 0.5 * alpha_fade_ ,
 																			 alpha_fade_ ,
 																			 1.0  );
 
-		fade_alpha_ap_ = new SumFunc();
+		fade_alpha_ap_ = new func::SumFunc();
 		fade_alpha_ap_->add_func(
-														 new FadeFunc(
+														 new func::FadeFunc(
 																					-180.0 - alpha_fade_ ,
 																					-120.0 + 0.5 * alpha_fade_ ,
 																					alpha_fade_ ,
 																					1.0  ) );
 
 		fade_alpha_ap_->add_func(
-														 new FadeFunc(
+														 new func::FadeFunc(
 																					 100.0 - 0.5 * alpha_fade_ ,
 																					 180.0 + alpha_fade_ ,
 																					 alpha_fade_ ,

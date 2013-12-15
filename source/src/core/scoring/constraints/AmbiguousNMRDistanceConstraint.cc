@@ -760,7 +760,7 @@ AmbiguousNMRDistanceConstraint::dist( pose::Pose const & pose ) const {
 	//	tr.Trace << std::endl;
 
 	//conformation::Conformation const & conformation( pose.conformation() );
-	return dist( ConformationXYZ( pose.conformation() ) );
+	return dist( func::ConformationXYZ( pose.conformation() ) );
 	/*
 	Real cum_dist( 0.0 );
 	for ( Atoms::const_iterator it1 = atoms1_.begin(); it1 != atoms1_.end(); ++it1 ) {
@@ -782,7 +782,7 @@ AmbiguousNMRDistanceConstraint::dist( pose::Pose const & pose ) const {
 
 Real
 AmbiguousNMRDistanceConstraint::dist(
-	XYZ_Func const & xyz
+	func::XYZ_Func const & xyz
 ) const
 {
 	return pow( inv_dist6( xyz ), -1.0/6 );
@@ -790,7 +790,7 @@ AmbiguousNMRDistanceConstraint::dist(
 
 Real
 AmbiguousNMRDistanceConstraint::inv_dist6(
-	XYZ_Func const & xyz
+	func::XYZ_Func const & xyz
 ) const
 {
 	Real cum_dist( 0.0 );
@@ -830,7 +830,7 @@ AmbiguousNMRDistanceConstraint::dist( conformation::Conformation const & conform
 	return cum_dist;
 }*/
 
-void AmbiguousNMRDistanceConstraint::score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const {
+void AmbiguousNMRDistanceConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const {
 	Real eff_dist = pow( inv_dist6( xyz ), -1.0/6 );
 	emap[ this->score_type() ] += func( eff_dist );
 }
@@ -863,7 +863,7 @@ Size AmbiguousNMRDistanceConstraint::show_violations(
 void
 AmbiguousNMRDistanceConstraint::fill_f1_f2(
 	AtomID const & atom,
-	XYZ_Func const & xyz,
+	func::XYZ_Func const & xyz,
 	Vector & F1,
 	Vector & F2,
 	EnergyMap const & weights
@@ -927,7 +927,7 @@ AmbiguousNMRDistanceConstraint::AmbiguousNMRDistanceConstraint(
     id::NamedAtomID const & a1, //digests names like "QG1"
 		id::NamedAtomID const & a2,
 		core::pose::Pose const& pose,
-	 	FuncOP func,
+	 	func::FuncOP func,
 		ScoreType scoretype
 ) : Constraint( scoretype ),
 		func_( func )
@@ -951,7 +951,7 @@ void
 AmbiguousNMRDistanceConstraint::read_def(
 	std::istream & data,
 	core::pose::Pose const & pose,
-	FuncFactory const & func_factory
+	func::FuncFactory const & func_factory
 ) {
 	Size res1, res2;
 	std::string tempres1, tempres2;

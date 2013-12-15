@@ -12,8 +12,8 @@
 /// @brief feel free to add definitions for other (derived) periodic functions to this file
 /// @author Florian Richter
 
-#ifndef INCLUDED_core_scoring_constraints_CharmmPeriodicFunc_hh
-#define INCLUDED_core_scoring_constraints_CharmmPeriodicFunc_hh
+#ifndef INCLUDED_core_scoring_func_CharmmPeriodicFunc_hh
+#define INCLUDED_core_scoring_func_CharmmPeriodicFunc_hh
 
 #include <core/scoring/func/Func.hh>
 
@@ -24,7 +24,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 
 /// @brief function of type y = 0.5 * k * (1 - cos(n * (x - x0) ) )

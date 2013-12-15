@@ -203,7 +203,7 @@ CrossPeak::create_fa_and_cen_constraint(
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	core::Real inv_weight( sqrt( 1.0*normalization )/params.cst_strength_ );
 
-	FuncOP func( new BoundFunc(1.5,
+	core::scoring::func::FuncOP func( new BoundFunc(1.5,
 			round(distance_bound()+padding,round_digits),
 			round(inv_weight,round_digits),
 			  "automatic NOE Peak "+ObjexxFCL::string_of( peak_id() )+" "+filename()+" Volume: "+ObjexxFCL::string_of( volume() )
@@ -435,7 +435,7 @@ CrossPeak::create_constraint( pose::Pose const& pose, core::Size normalization )
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
 	core::Real inv_weight( sqrt( 1.0*normalization )/params.cst_strength_ );
 	core::Size const round_digits( 2 );
-	core::scoring::constraints::FuncOP func( new core::scoring::constraints::BoundFunc( 1.5, round(distance_bound(),round_digits), round(inv_weight,round_digits), "automatic NOE Peak "+ObjexxFCL::string_of( peak_id() )+" "+filename() ) );
+	core::scoring::func::FuncOP func( new BoundFunc( 1.5, round(distance_bound(),round_digits), round(inv_weight,round_digits), "automatic NOE Peak "+ObjexxFCL::string_of( peak_id() )+" "+filename() ) );
 
 	Size ct_ambiguous( 0 );
 	for ( PeakAssignments::const_iterator it = begin(); it != end(); ++it ) {

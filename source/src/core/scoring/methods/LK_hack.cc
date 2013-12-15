@@ -65,11 +65,11 @@ LK_hackCreator::score_types_for_method() const {
 
 using namespace constraints;
 
-class LK_SigmoidalFunc : public constraints::Func {
+class LK_SigmoidalFunc : public func::Func {
 public:
 	LK_SigmoidalFunc();
 
-	FuncOP
+	func::FuncOP
 	clone() const;
 
 	virtual Real func( Real const x ) const;
@@ -96,7 +96,7 @@ Real const LK_SigmoidalFunc::cos_flipped_ANGLE_CUTOFF_LOW(  std::cos( pi - LK_Si
 
 LK_SigmoidalFunc::LK_SigmoidalFunc() {}
 
-FuncOP LK_SigmoidalFunc::clone() const { return new LK_SigmoidalFunc; }
+core::scoring::func::FuncOP LK_SigmoidalFunc::clone() const { return new LK_SigmoidalFunc; }
 
 /// @brief a Sigmoidal function that ramps from 1 to 0 over a certain range.
 /// Thanks to Mike Tyka for having a sigmoidal function on the top of his head.
@@ -479,7 +479,7 @@ LK_hack::calculate_derivatives_for_residue_pair
 {
 	using namespace etable::count_pair;
 
-	FuncOP lkfunc = new LK_SigmoidalFunc;
+	core::scoring::func::FuncOP lkfunc = new LK_SigmoidalFunc;
 	AngleConstraint lk_angle_cst( lkfunc ); //Using the stupid and dangerous version of the AngleConstraint ctor
 
 	conformation::Residue const & lowerres( pose.residue( lower_res_id ) );
@@ -805,6 +805,3 @@ LK_hack::version() const
 }
 }
 }
-
-
-

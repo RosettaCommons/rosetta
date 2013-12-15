@@ -308,13 +308,13 @@ ConnectJumps::create_coordinate_cst( core::pose::Pose const & pose,
 	core::Size atom( pose.residue_type(resi).nbr_atom() );
 	if( pose.residue_type(resi).has("CA") ) {
 		atom = pose.residue_type(resi).atom_index("CA");
-	} 
+	}
 
-	return new core::scoring::constraints::CoordinateConstraint( 
+	return new core::scoring::constraints::CoordinateConstraint(
 			core::id::AtomID(atom,resi),
 			core::id::AtomID(pose.residue(1).nbr_atom(),1),
 			pose.residue(resi).xyz(atom),
-			new core::scoring::constraints::HarmonicFunc(0.0, 0.5) );
+			new core::scoring::func::HarmonicFunc(0.0, 0.5) );
 }
 
 } // namespace denovo_design

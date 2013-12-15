@@ -48,7 +48,7 @@ public:
 
 private:
 	utility::vector1<utility::vector1<AtomPairConstraintsDataOP> > data_;
-	core::scoring::constraints::FuncFactory factory_;
+	core::scoring::func::FuncFactory factory_;
 	void read_constraints(std::string);
 	Size get_atom_type(std::string atom_name);
 };
@@ -59,7 +59,7 @@ class AtomPairConstraintsData: public utility::pointer::ReferenceCount {
 public:
 
 	/// @brief makes a new object
-	AtomPairConstraintsData(core::scoring::constraints::FuncOP function,
+	AtomPairConstraintsData(core::scoring::func::FuncOP function,
 			Size offset, Size first_atom, Size second_atom) {
 		offset_ = offset;
 		func_ = function;
@@ -81,13 +81,13 @@ public:
 		return second_atom_;
 	}
 
-	inline core::scoring::constraints::FuncOP get_function() {
+	inline core::scoring::func::FuncOP get_function() {
 		return func_;
 	}
 
 private:
 	Size offset_;
-	core::scoring::constraints::FuncOP func_;
+	core::scoring::func::FuncOP func_;
 	Size first_atom_;
 	Size second_atom_;
 };
@@ -107,4 +107,3 @@ public:
 } // protocols
 
 #endif /* INCLUDED_protocols_frag_picker_scores_AtomPairConstraintsScore_HH */
-

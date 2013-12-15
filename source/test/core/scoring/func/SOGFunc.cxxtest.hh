@@ -20,7 +20,7 @@
 using core::Size;
 using core::Real;
 using utility::vector1;
-using namespace core::scoring::constraints;
+using namespace core::scoring::func;
 
 class SOGFuncTests : public CxxTest::TestSuite {
  public:

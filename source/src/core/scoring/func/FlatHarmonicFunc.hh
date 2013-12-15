@@ -11,8 +11,8 @@
 /// @brief Definition for functions used in definition of constraints.
 /// @author Chris King modified from James Thompson
 
-#ifndef INCLUDED_core_scoring_constraints_FlatHarmonicFunc_hh
-#define INCLUDED_core_scoring_constraints_FlatHarmonicFunc_hh
+#ifndef INCLUDED_core_scoring_func_FlatHarmonicFunc_hh
+#define INCLUDED_core_scoring_func_FlatHarmonicFunc_hh
 
 #include <core/scoring/func/FlatHarmonicFunc.fwd.hh>
 #include <core/scoring/func/Func.hh>
@@ -22,7 +22,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class FlatHarmonicFunc : public Func {
 public:

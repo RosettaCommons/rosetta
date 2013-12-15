@@ -82,7 +82,7 @@ DunbrackConstraint::clone() const {
 // provided, Constraint objects should put unweighted scores into emap.
 void
 DunbrackConstraint::score(
-	scoring::constraints::XYZ_Func const & xyz_func,
+	scoring::func::XYZ_Func const & xyz_func,
 	scoring::EnergyMap const & weights,
 	scoring::EnergyMap & emap
 ) const {
@@ -102,7 +102,7 @@ DunbrackConstraint::score(
 void
 DunbrackConstraint::fill_f1_f2(
 	AtomID const & ,//atom,
-	scoring::constraints::XYZ_Func const &,
+	scoring::func::XYZ_Func const &,
 	Vector & ,//F1,
 	Vector & ,//F2,
 	scoring::EnergyMap const & //weights
@@ -126,7 +126,7 @@ void DunbrackConstraint::show( std::ostream & out ) const {
 void DunbrackConstraint::read_def(
 	std::istream & in,
 	pose::Pose const & /* pose */,
-	scoring::constraints::FuncFactory const & /* func_factory */
+	scoring::func::FuncFactory const & /* func_factory */
 ) {
 	in >> seqpos_ >> rot_vec_pos_ >> rot_bin_ >> bonus_;
 	if ( seqpos_ == 0 || rot_vec_pos_ == 0 || rot_bin_ == 0 || bonus_ == 0 ) {

@@ -122,7 +122,7 @@ generate_bb_coordinate_constraints(
 					cst_set->add_constraint(
 						new CoordinateConstraint(
 							AtomID(ii,idx), AtomID(1,pose.total_residue()), rsd.xyz(ii),
-							new HarmonicFunc(0.0,coord_sdev)
+							new core::scoring::func::HarmonicFunc(0.0,coord_sdev)
 						)
 					);
 				}
@@ -204,7 +204,7 @@ void derive_sc_sc_restraints(
 						pose.add_constraint(
 							new AtomPairConstraint(
 								AtomID(atm_ii,ii), AtomID(atm_jj,jj),
-								new HarmonicFunc( distance, cst_sdev )
+								new core::scoring::func::HarmonicFunc( distance, cst_sdev )
 						) );
 						tr << "adding restraint from "
 							<< "AtomID(" << atm_ii << "," << ii

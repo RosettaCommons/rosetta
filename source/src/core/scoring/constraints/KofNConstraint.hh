@@ -83,11 +83,11 @@ public:
 
 	/// @brief read in constraint defiinition
 	void
-	read_def( std::istream& data, pose::Pose const& pose, FuncFactory const& func_factory );
+	read_def( std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory );
 
   /// @brief compute score
   void
-  score( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
+  score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
 
   core::Real
   calculate_total_cst_score( EnergyMap const & weights, EnergyMap & emap) const;
@@ -100,7 +100,7 @@ public:
 	void
 	fill_f1_f2(
 		AtomID const & atom,
-		XYZ_Func const & xyz,
+		func::XYZ_Func const & xyz,
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const & weights
@@ -110,7 +110,7 @@ public:
 
 	utility::vector1<ConstraintCOP> active_constraints() const;
 
-	//	void read_def( std::istream& in, pose::Pose const& pose, FuncFactory const& func_factory );
+	//	void read_def( std::istream& in, pose::Pose const& pose, func::FuncFactory const& func_factory );
 	Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1.0 ) const;
 
 

@@ -88,7 +88,7 @@ public:
 
 	/// @brief read in constraint defiinition
 	virtual
-	void read_def( std::istream& data, pose::Pose const& pose, FuncFactory const& func_factory );
+	void read_def( std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory );
 
 	/// @brief possibility to compare constraint according to data
 	/// and not just pointers
@@ -98,7 +98,7 @@ public:
 	/// @brief compute score
 	virtual
 	void
-	score( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
+	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
 
 	virtual
 	AtomID const & atom( Size const n ) const{
@@ -111,7 +111,7 @@ public:
 	residues() const { return member_residues_; }
 
 	//@brief translates the atom-names into numbers
-	virtual void setup_for_scoring( XYZ_Func const &, ScoreFunction const & ) const;
+	virtual void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const;
 
 	///@brief add individual constraint into MultiConstraint
 	virtual
@@ -127,7 +127,7 @@ public:
 	void
 	fill_f1_f2(
 		AtomID const & atom,
-		XYZ_Func const & xyz,
+		func::XYZ_Func const & xyz,
 		Vector & F1,
  		Vector & F2,
 		EnergyMap const & weights

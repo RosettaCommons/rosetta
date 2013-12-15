@@ -31,7 +31,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 Real
 SigmoidFunc::func( Real const x ) const
@@ -73,4 +73,3 @@ SigmoidFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Rea
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

@@ -18,7 +18,7 @@
 #include <ObjexxFCL/format.hh>
 
 using namespace core;
-using namespace core::scoring::constraints;
+using namespace core::scoring::func;
 using ObjexxFCL::format::F;
 using utility::tools::make_vector1;
 

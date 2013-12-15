@@ -88,7 +88,7 @@ private:
 	core::Real bound_width_;
 	core::Size min_seq_sep_;
 
-	core::scoring::constraints::FuncOP cc_func_;
+	core::scoring::func::FuncOP cc_func_;
 
 };
 

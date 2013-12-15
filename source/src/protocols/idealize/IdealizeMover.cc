@@ -101,6 +101,7 @@ IdealizeMoverCreator::mover_name()
 void
 IdealizeMover::setup_idealize_constraints( core::pose::Pose & pose ) {
 	using namespace scoring::constraints;
+	using namespace scoring::func;
 	using namespace conformation;
 	using namespace id;
 
@@ -155,7 +156,7 @@ IdealizeMover::setup_idealize_constraints( core::pose::Pose & pose ) {
 								 ( it.is_heavyatom()      && jt.is_heavyatom() && dis2 < heavyatom_dis2_threshold ) ) {
 
 							pose.add_constraint( new AtomPairConstraint( AtomID(ii,i), AtomID(jj,j),
-																	 new HarmonicFunc( std::sqrt( dis2 ), atom_pair_sdev ))
+																		 new HarmonicFunc( std::sqrt( dis2 ), atom_pair_sdev ))
 							);
 							++total_atompairs;
 						}
@@ -178,7 +179,7 @@ IdealizeMover::setup_idealize_constraints( core::pose::Pose & pose ) {
 			Residue const & i_rsd( pose.residue(i) );
 			for ( Size ii = 1; ii<= i_rsd.natoms(); ++ii ) {
 				pose.add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,nres), i_rsd.xyz( ii ),
-															new HarmonicFunc( 0.0, coord_sdev ) )
+															   new HarmonicFunc( 0.0, coord_sdev ) )
 				);
 			}
 		}

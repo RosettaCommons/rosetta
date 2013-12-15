@@ -28,7 +28,7 @@ using numeric::constants::d::pi;
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 GaussianChainSingleFunc::GaussianChainSingleFunc( Real const gaussian_variance ):
 	gaussian_variance_( gaussian_variance )
@@ -87,4 +87,3 @@ GaussianChainSingleFunc::show_definition( std::ostream &out ) const {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

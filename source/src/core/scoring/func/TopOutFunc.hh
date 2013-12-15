@@ -12,8 +12,8 @@
 ///   Similar to Geman-McClure: harmonic near 'x0_', flat past 'limit_'
 /// @author Frank DiMaio
 
-#ifndef INCLUDED_core_scoring_constraints_TopOutFunc_hh
-#define INCLUDED_core_scoring_constraints_TopOutFunc_hh
+#ifndef INCLUDED_core_scoring_func_TopOutFunc_hh
+#define INCLUDED_core_scoring_func_TopOutFunc_hh
 
 #include <core/scoring/func/TopOutFunc.fwd.hh>
 #include <core/scoring/func/Func.hh>
@@ -23,7 +23,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class TopOutFunc : public Func {
 public:

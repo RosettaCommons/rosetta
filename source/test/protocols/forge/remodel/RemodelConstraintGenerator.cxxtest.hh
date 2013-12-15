@@ -263,7 +263,7 @@ public:
 
 		// add a random constraint
 		core::scoring::constraints::BoundFuncOP bound_func( new core::scoring::constraints::BoundFunc( 0.0, 4.0, 1.0, "random_constraint" ) );
-		core::scoring::constraints::ScalarWeightedFuncOP func( new core::scoring::constraints::ScalarWeightedFunc( 1.0, bound_func ) );
+		core::scoring::func::ScalarWeightedFuncOP func( new core::scoring::func::ScalarWeightedFunc( 1.0, bound_func ) );
 		// CB on PHE3 to CB on ILE44 dist=4.9
 		core::id::AtomID atom1( testpose.residue_type( 3 ).atom_index( "CB" ), 3 );
 		core::id::AtomID atom2( testpose.residue_type( 44 ).atom_index( "CB" ), 44 );
@@ -349,4 +349,3 @@ public:
   }
 
 };
-

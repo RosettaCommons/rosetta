@@ -31,7 +31,7 @@ using numeric::constants::d::pi;
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 GaussianChainQuadrupleFunc::GaussianChainQuadrupleFunc( Real const gaussian_variance,
 																												Real const D2, Real const D3, Real const D4 ):
@@ -161,4 +161,3 @@ GaussianChainQuadrupleFunc::show_definition( std::ostream &out ) const {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

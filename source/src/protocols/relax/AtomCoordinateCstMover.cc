@@ -195,11 +195,11 @@ void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 					}
 					jj = targ_j_rsd.atom_index( atomname );
 				}
-				core::scoring::constraints::FuncOP function;
+				core::scoring::func::FuncOP function;
 				if( bounded_ ) {
 					function = new BoundFunc( 0, cst_width_, cst_sd_, "xyz" );
 				} else {
-					function = new HarmonicFunc( 0.0, cst_sd_ );
+					function = new core::scoring::func::HarmonicFunc( 0.0, cst_sd_ );
 				}
 				if( amb_hnq_ && cst_sidechain_ &&  // Rely on shortcutting evaluation to speed things up - get to else clause as soon as possible.
 						(pose_i_rsd.aa() == core::chemical::aa_asn && targ_j_rsd.aa() == core::chemical::aa_asn && ( pose_i_rsd.atom_name(ii) == " OD1" || pose_i_rsd.atom_name(ii) == " ND2" )) ||

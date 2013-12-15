@@ -12,8 +12,8 @@
 /// @author Rhiju Das
 /// @author Jianqing Xu
 
-#ifndef INCLUDED_core_scoring_constraints_SquareWell2Func_hh
-#define INCLUDED_core_scoring_constraints_SquareWell2Func_hh
+#ifndef INCLUDED_core_scoring_func_SquareWell2Func_hh
+#define INCLUDED_core_scoring_func_SquareWell2Func_hh
 
 #include <core/scoring/func/SquareWell2Func.fwd.hh>
 
@@ -28,7 +28,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class SquareWell2Func : public Func {
 public:
@@ -67,4 +67,3 @@ private:
 } // core
 
 #endif
-

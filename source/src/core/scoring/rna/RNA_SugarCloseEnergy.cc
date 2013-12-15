@@ -74,17 +74,17 @@ RNA_SugarCloseEnergy::RNA_SugarCloseEnergy() :
 	scale_rna_torsion_sd_( 1.0 / std::sqrt( scale_rna_torsion_tether_ ) ),
 	o4prime_c1prime_bond_length_( 1.414 ),
 	o4prime_c1prime_sd_( 0.01 ),
-	o4prime_c1prime_dist_harm_func_( new constraints::HarmonicFunc( o4prime_c1prime_bond_length_, scale_rna_torsion_sd_ * o4prime_c1prime_sd_ )),
+	o4prime_c1prime_dist_harm_func_( new func::HarmonicFunc( o4prime_c1prime_bond_length_, scale_rna_torsion_sd_ * o4prime_c1prime_sd_ )),
 	angle_sd_( numeric::conversions::radians( 1.0 ) ),
 	o4prime_c1prime_c2prime_bond_angle_( numeric::conversions::radians( 106.39 ) ),
 	o4prime_c1prime_c2prime_angle_harm_func_(
-		new constraints::HarmonicFunc( o4prime_c1prime_c2prime_bond_angle_, scale_rna_torsion_sd_ * angle_sd_ ) ),
+		new func::HarmonicFunc( o4prime_c1prime_c2prime_bond_angle_, scale_rna_torsion_sd_ * angle_sd_ ) ),
 	o4prime_c1prime_first_base_bond_angle_( numeric::conversions::radians( 108.2 ) ),
 	o4prime_c1prime_first_base_angle_harm_func_(
-		new constraints::HarmonicFunc( o4prime_c1prime_first_base_bond_angle_, angle_sd_ ) ),
+		new func::HarmonicFunc( o4prime_c1prime_first_base_bond_angle_, angle_sd_ ) ),
 	c4prime_o4prime_c1prime_bond_angle_( numeric::conversions::radians( 110.4 ) ),
 	c4prime_o4prime_c1prime_angle_harm_func_(
-																				new constraints::HarmonicFunc( c4prime_o4prime_c1prime_bond_angle_, scale_rna_torsion_sd_ * angle_sd_ ) ),
+																				new func::HarmonicFunc( c4prime_o4prime_c1prime_bond_angle_, scale_rna_torsion_sd_ * angle_sd_ ) ),
 	//phenix_based_sugar_close params
 	use_phenix_sugar_close_( basic::options::option[ basic::options::OptionKeys::rna::corrected_geo ]() ),
 	o4prime_c1prime_bond_north_(1.412),
@@ -182,7 +182,7 @@ RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue 
 	Size const o4prime_index=rsd.RNA_type().o4prime_atom_index();
 	Size const c1prime_index=rsd.RNA_type().c1prime_atom_index();
 	Size const c2prime_index=rsd.RNA_type().c2prime_atom_index();
-	Size const c4prime_index=rsd.RNA_type().c4prime_atom_index(); 
+	Size const c4prime_index=rsd.RNA_type().c4prime_atom_index();
 
 	//consistency_check
 	if(o4prime_index!=7)  utility_exit_with_message("o4prime_id="+ObjexxFCL::string_of(o4prime_index) + "!=7");
@@ -202,32 +202,32 @@ RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue 
 		RNA_FittedTorsionInfo rna_torsion_fitted_info;
 		Real const delta_cutoff = rna_torsion_fitted_info.delta_cutoff();
 		if ( delta < delta_cutoff ) { //NORTH
-			dist_cst = new AtomPairConstraint( o4prime_id, c1prime_id, 
-				new HarmonicFunc( o4prime_c1prime_bond_north_, scale_rna_torsion_sd_ * bond_sd_ ) , rna_sugar_close );
+			dist_cst = new AtomPairConstraint( o4prime_id, c1prime_id,
+											   new func::HarmonicFunc( o4prime_c1prime_bond_north_, scale_rna_torsion_sd_ * bond_sd_ ) , rna_sugar_close );
 			angle1 = new AngleConstraint( o4prime_id, c1prime_id, c2prime_id,
-				new HarmonicFunc( o4prime_c1prime_c2prime_angle_north_, scale_rna_torsion_sd_ * angle_sd1_ ), rna_sugar_close );
+				new func::HarmonicFunc( o4prime_c1prime_c2prime_angle_north_, scale_rna_torsion_sd_ * angle_sd1_ ), rna_sugar_close );
 			angle2 = new AngleConstraint( c4prime_id, o4prime_id, c1prime_id,
-				new HarmonicFunc( c4prime_o4prime_c1prime_angle_north_, scale_rna_torsion_sd_ * angle_sd1_ ), rna_sugar_close );
+				new func::HarmonicFunc( c4prime_o4prime_c1prime_angle_north_, scale_rna_torsion_sd_ * angle_sd1_ ), rna_sugar_close );
 			angle3 = new AngleConstraint( o4prime_id, c1prime_id, first_base_atom_id,
-				new HarmonicFunc( o4prime_c1prime_n1_9_angle_north_, scale_rna_torsion_sd_ * angle_sd2_ ), rna_sugar_close );
+				new func::HarmonicFunc( o4prime_c1prime_n1_9_angle_north_, scale_rna_torsion_sd_ * angle_sd2_ ), rna_sugar_close );
 		} else { //SOUTH
-			dist_cst = new AtomPairConstraint( o4prime_id, c1prime_id, 
-				new HarmonicFunc( o4prime_c1prime_bond_south_, scale_rna_torsion_sd_ * bond_sd_ ) , rna_sugar_close );
+			dist_cst = new AtomPairConstraint( o4prime_id, c1prime_id,
+				new func::HarmonicFunc( o4prime_c1prime_bond_south_, scale_rna_torsion_sd_ * bond_sd_ ) , rna_sugar_close );
 			angle1 = new AngleConstraint( o4prime_id, c1prime_id, c2prime_id,
-				new HarmonicFunc( o4prime_c1prime_c2prime_angle_south_, scale_rna_torsion_sd_ * angle_sd1_ ), rna_sugar_close );
+				new func::HarmonicFunc( o4prime_c1prime_c2prime_angle_south_, scale_rna_torsion_sd_ * angle_sd1_ ), rna_sugar_close );
 			angle2 = new AngleConstraint( c4prime_id, o4prime_id, c1prime_id,
-				new HarmonicFunc( c4prime_o4prime_c1prime_angle_south_, scale_rna_torsion_sd_ * angle_sd1_ ), rna_sugar_close );
+				new func::HarmonicFunc( c4prime_o4prime_c1prime_angle_south_, scale_rna_torsion_sd_ * angle_sd1_ ), rna_sugar_close );
 			angle3 = new AngleConstraint( o4prime_id, c1prime_id, first_base_atom_id,
-				new HarmonicFunc( o4prime_c1prime_n1_9_angle_south_, scale_rna_torsion_sd_ * angle_sd2_ ), rna_sugar_close );
+				new func::HarmonicFunc( o4prime_c1prime_n1_9_angle_south_, scale_rna_torsion_sd_ * angle_sd2_ ), rna_sugar_close );
 		}
 	} else {
-		dist_cst = 
+		dist_cst =
 			new AtomPairConstraint( o4prime_id, c1prime_id, o4prime_c1prime_dist_harm_func_, rna_sugar_close );
-		angle1 = 
+		angle1 =
 			new AngleConstraint( o4prime_id, c1prime_id, c2prime_id, o4prime_c1prime_c2prime_angle_harm_func_, rna_sugar_close );
-		angle2 = 
+		angle2 =
 			new AngleConstraint( c4prime_id, o4prime_id, c1prime_id, c4prime_o4prime_c1prime_angle_harm_func_, rna_sugar_close );
-		angle3 = 
+		angle3 =
 			new AngleConstraint( o4prime_id, c1prime_id, first_base_atom_id, o4prime_c1prime_first_base_angle_harm_func_, rna_sugar_close );
 	}
 
@@ -252,4 +252,3 @@ RNA_SugarCloseEnergy::version() const
 } // rna
 } // scoring
 } // core
-

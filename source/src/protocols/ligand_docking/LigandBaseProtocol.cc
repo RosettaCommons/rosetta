@@ -677,7 +677,7 @@ LigandBaseProtocol::restrain_protein_Calphas(
 	core::pose::Pose & pose,
 	utility::vector1< bool > const & is_restrained,
 		//core::Real stddev_Angstroms,
-	core::scoring::constraints::FuncOP restr_func
+	core::scoring::func::FuncOP restr_func
 ) const
 {
 	using namespace core::scoring::constraints;
@@ -729,7 +729,7 @@ LigandBaseProtocol::restrain_ligand_nbr_atom(
 	using core::conformation::Residue;
 	using core::id::AtomID;
 
-	FuncOP restr_func = new HarmonicFunc(0, stddev_Angstroms);
+	core::scoring::func::FuncOP restr_func = new core::scoring::func::HarmonicFunc(0, stddev_Angstroms);
 	// An atom that should never move in terms of absolute coordinates.
 	// Needed as a proxy for the origin, b/c Rosetta assumes all energies are
 	// translation-invariant.  So it's a "two-body" energy with this fixed atom.
@@ -785,7 +785,7 @@ LigandBaseProtocol::setup_bbmin_foldtree(
 		allow_move_bb[i] = mobile_bb[i];
 	}
 	// Add constraints
-	core::scoring::constraints::FuncOP restr_func = new core::scoring::constraints::HarmonicFunc(0, stddev_Angstroms);
+	core::scoring::func::FuncOP restr_func = new core::scoring::func::HarmonicFunc(0, stddev_Angstroms);
 	restrain_protein_Calphas(pose, allow_move_bb, restr_func);
 
 }//setup_bbmin_foldtree

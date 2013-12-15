@@ -11,12 +11,12 @@
 /// @brief
 
 
-#ifndef INCLUDED_core_scoring_constraints_XYZ_Func_fwd_hh
-#define INCLUDED_core_scoring_constraints_XYZ_Func_fwd_hh
+#ifndef INCLUDED_core_scoring_func_XYZ_Func_fwd_hh
+#define INCLUDED_core_scoring_func_XYZ_Func_fwd_hh
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class XYZ_Func;
 class ResidueXYZ;

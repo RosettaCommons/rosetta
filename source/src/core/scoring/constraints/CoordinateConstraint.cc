@@ -62,7 +62,7 @@ CoordinateConstraint::CoordinateConstraint(
 	AtomID const & a1,
 	AtomID const & fixed_atom_in,
 	Vector const & xyz_target_in,
-	FuncOP func,
+	func::FuncOP func,
 	ScoreType scotype
 ):
 	Constraint( scotype ),
@@ -152,7 +152,7 @@ CoordinateConstraint::non_virtual_score(
 
 ///
 void
-CoordinateConstraint::score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
+CoordinateConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
 {
 	emap[ this->score_type() ] += non_virtual_score( xyz( atom_ ) );
 }
@@ -161,7 +161,7 @@ CoordinateConstraint::score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap 
 void
 CoordinateConstraint::fill_f1_f2(
 	AtomID const & atom,
-	XYZ_Func const & xyz,
+	func::XYZ_Func const & xyz,
 	Vector & F1,
 	Vector & F2,
 	EnergyMap const & weights
@@ -235,12 +235,12 @@ CoordinateConstraint::steal_def( pose::Pose const& pose ) {
   xyz_target_ = conformation.xyz( atom_ );
 }
 
-///@details one line definition "CoordinateConstraint Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Atom1_target_X_coordinate Atom1_target_Y_coordinate Atom1_target_Z_coordinate Func_Type Func_Def"
+///@details one line definition "CoordinateConstraint Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Atom1_target_X_coordinate Atom1_target_Y_coordinate Atom1_target_Z_coordinate func::Func_Type func::Func_Def"
 void
 CoordinateConstraint::read_def(
 	std::istream& data,
 	core::pose::Pose const& pose,
-	FuncFactory const& func_factory
+	func::FuncFactory const& func_factory
 ) {
 	Size res1, res2;
 	std::string tempres1, tempres2;

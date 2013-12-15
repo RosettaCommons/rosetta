@@ -359,8 +359,8 @@ void MinimizeBackbone::restrain_protein_Calpha(
 	assert( found != ligand_areas.end() );// this shouldn't be possible
 	LigandAreaOP const ligand_area= found->second;
 	core::id::AtomID const atom_ID(residue.atom_index("CA"), residue_id);
-	core::scoring::constraints::FuncOP const harmonic_function=
-			new core::scoring::constraints::HarmonicFunc(0, ligand_area->Calpha_restraints_);
+	core::scoring::func::FuncOP const harmonic_function=
+			new core::scoring::func::HarmonicFunc(0, ligand_area->Calpha_restraints_);
 	core::scoring::constraints::ConstraintOP const constraint =
 			new core::scoring::constraints::CoordinateConstraint(
 					atom_ID,

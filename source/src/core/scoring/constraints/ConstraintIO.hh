@@ -56,7 +56,7 @@ public:
 	static void write_constraints( std::ostream&, ConstraintSet const& cst_set, core::pose::Pose const& );
 	static void write_constraints( std::string const& filename, ConstraintSet const& cst_set, core::pose::Pose const& );
 
-	static FuncFactory& get_func_factory(void);
+	static func::FuncFactory& get_func_factory(void);
 	static ConstraintFactory& get_cst_factory(void);
 
 	static ConstraintOP parse_atom_pair_constraint(
@@ -80,14 +80,14 @@ public:
 	static ConstraintOP read_individual_constraint_new(
 		std::istream & data,
 		core::pose::Pose const& pose,
-		FuncFactory const & func_factory
+		func::FuncFactory const & func_factory
 	);
 
 	///@brief read one individual constraint defined.
 	static ConstraintOP read_individual_constraint_new(
 		std::istream & data,
 		core::pose::Pose const& pose,
-		FuncFactory const & func_factory,
+		func::FuncFactory const & func_factory,
 		std::string type /*cst -type*/
 	);
 
@@ -113,7 +113,7 @@ protected:
 private:
 	ConstraintIO () {};
 	static ConstraintIO* instance_;
-	static FuncFactory func_factory_;
+	static func::FuncFactory func_factory_;
 	//static ConstraintFactory cst_factory_;
 };
 

@@ -270,7 +270,7 @@ ConstraintSet::setup_for_scoring(
 	ScoreFunction const & scfxn
 ) const {
 	// iterate through all constraints and call setup_for_scoring
-	ConformationXYZ confxyz( pose.conformation() );
+	func::ConformationXYZ confxyz( pose.conformation() );
 	for ( int i=1; i <= (int) residue_pair_constraints_.size() ; ++i ) {
 		if (!residue_pair_constraints_[i]) continue;
 
@@ -294,7 +294,7 @@ ConstraintSet::setup_for_scoring(
 void
 ConstraintSet::setup_for_derivatives( pose::Pose &pose, ScoreFunction const &scfxn ) const {
 	// iterate through all constraints and call setup_for_scoring
-	ConformationXYZ confxyz( pose.conformation() );
+	func::ConformationXYZ confxyz( pose.conformation() );
 	for ( int i=1; i <= (int) residue_pair_constraints_.size() ; ++i ) {
 		if (!residue_pair_constraints_[i]) continue;
 
@@ -649,7 +649,7 @@ ConstraintSet::remove_constraint(
 
 ///
 void
-ConstraintSet::add_dof_constraint( DOF_ID const & id, FuncOP func, ScoreType const & t )
+ConstraintSet::add_dof_constraint( DOF_ID const & id, func::FuncOP func, ScoreType const & t )
 {
 	mark_revision_id_expired();
 	dof_constraints_.push_back( new DOF_Constraint( id, func, t ) );
@@ -997,4 +997,3 @@ std::ostream & operator << (std::ostream & os, ConstraintSet const & set)
 } // constraints
 } // scoring
 } // core
-

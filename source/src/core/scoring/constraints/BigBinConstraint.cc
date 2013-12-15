@@ -45,7 +45,7 @@ namespace constraints {
 void BigBinConstraint::read_def(
 	std::istream & in,
 	core::pose::Pose const & pose,
-	FuncFactory const & /*func_factory*/
+	func::FuncFactory const & /*func_factory*/
 ) {
 	my_csts_.clear();
 
@@ -106,13 +106,13 @@ void BigBinConstraint::read_def(
 			);
 		}
 
-		FuncOP phi_func( new PeriodicBoundFunc(
+		func::FuncOP phi_func( new PeriodicBoundFunc(
 			phi_lower_, phi_upper_, sdev_, "phi_" + string_of(bin_), two_pi
 		) );
-		FuncOP psi_func( new PeriodicBoundFunc(
+		func::FuncOP psi_func( new PeriodicBoundFunc(
 				psi_lower_, psi_upper_, sdev_, "psi_" + string_of(bin_), two_pi
 		) );
-		FuncOP omega_func( new PeriodicBoundFunc(
+		func::FuncOP omega_func( new PeriodicBoundFunc(
 				omega_lower_, omega_upper_, sdev_, "omega_" + string_of(bin_), two_pi
 		) );
 
@@ -139,7 +139,7 @@ void BigBinConstraint::show( std::ostream & out ) const {
 /////////////////////////////////////////////////////////////////////////////
 void
 BigBinConstraint::score(
-	XYZ_Func const & xyz, EnergyMap const & weights, EnergyMap & emap
+	func::XYZ_Func const & xyz, EnergyMap const & weights, EnergyMap & emap
 ) const {
 	using utility::vector1;
 	typedef vector1< ConstraintOP >::const_iterator iter;
@@ -151,7 +151,7 @@ BigBinConstraint::score(
 void
 BigBinConstraint::fill_f1_f2(
 	AtomID const & id,
-	XYZ_Func const & xyz,
+	func::XYZ_Func const & xyz,
 	Vector & F1,
 	Vector & F2,
 	EnergyMap const & weights

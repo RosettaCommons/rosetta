@@ -48,7 +48,7 @@ namespace constraints {
 class DOF_Constraint : public utility::pointer::ReferenceCount {
 
 public:
-	DOF_Constraint( id::DOF_ID const & id, FuncOP func, ScoreType t = dof_constraint ):
+	DOF_Constraint( id::DOF_ID const & id, core::scoring::func::FuncOP func, ScoreType t = dof_constraint ):
 		dof_id_( id ),
 		func_( func),
 		score_type_(t) {}
@@ -67,14 +67,14 @@ public:
 		return score_type_;
 	}
 
-	/// @brief Returns the Function
+	/// @brief Returns the func::Function
 	Real
 	func( Real const val ) const
 	{
 		return func_->func( val );
 	}
 
-	/// @brief Returns the Function Derivative
+	/// @brief Returns the func::Function Derivative
 	Real
 	dfunc( Real const val ) const
 	{
@@ -92,7 +92,7 @@ public:
 private:
 
 	id::DOF_ID const dof_id_;
-	constraints::FuncOP func_;
+	func::FuncOP func_;
 	ScoreType const score_type_;
 
 };

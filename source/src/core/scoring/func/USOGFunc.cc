@@ -31,7 +31,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 Real USOGFunc::background_prob = exp(-10.); // the maximum constraint penalty == -log(background_prob)
 

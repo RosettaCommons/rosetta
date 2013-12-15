@@ -37,7 +37,7 @@ std::string ConstantConstraint::type() const {
 
 /// @brief compute score
 void
-ConstantConstraint::score( XYZ_Func const &, EnergyMap const &, EnergyMap & emap ) const
+ConstantConstraint::score( func::XYZ_Func const &, EnergyMap const &, EnergyMap & emap ) const
 {
 	emap[ this->score_type() ] += score();
 }
@@ -46,7 +46,7 @@ ConstantConstraint::score( XYZ_Func const &, EnergyMap const &, EnergyMap & emap
 void
 ConstantConstraint::fill_f1_f2(
 	AtomID const & ,
-	XYZ_Func const &,
+	func::XYZ_Func const &,
 	Vector & /*F1*/,
 	Vector & /*F2*/,
 	EnergyMap const &
@@ -54,7 +54,7 @@ ConstantConstraint::fill_f1_f2(
 
 /// @brief Constructor
 ConstantConstraint::ConstantConstraint(
-	FuncOP func_in, // we take ownership of this guy
+	func::FuncOP func_in, // we take ownership of this guy
 	ScoreType scotype
 ):
 	Constraint( scotype ),

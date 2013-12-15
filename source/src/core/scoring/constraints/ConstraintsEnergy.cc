@@ -202,7 +202,7 @@ ConstraintsEnergy::setup_for_scoring_for_residue_pair(
 	CstMinimizationDataOP res_cst = static_cast< CstMinimizationData * > ( data_cache.get_data( cst_respair_data )() );
 	if (!res_cst) return;
 	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
-	res_cst->constraints().setup_for_scoring( ResiduePairXYZ( rsd1, rsd2 ), sfxn );
+	res_cst->constraints().setup_for_scoring( func::ResiduePairXYZ( rsd1, rsd2 ), sfxn );
 
 }
 
@@ -226,7 +226,7 @@ ConstraintsEnergy::setup_for_derivatives_for_residue_pair(
 	CstMinimizationDataOP res_cst = static_cast< CstMinimizationData * > ( data_cache.get_data( cst_respair_data )() );
 	if (!res_cst) return;
 	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
-	res_cst->constraints().setup_for_derivatives( ResiduePairXYZ( rsd1, rsd2 ), sfxn );
+	res_cst->constraints().setup_for_derivatives( func::ResiduePairXYZ( rsd1, rsd2 ), sfxn );
 }
 
 /*void
@@ -350,7 +350,7 @@ ConstraintsEnergy::setup_for_scoring_for_residue(
 	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	CstMinimizationDataOP res_cst = static_cast< CstMinimizationData * > ( min_data.get_data( cst_res_data )() );
 	if (!res_cst) return;
-	res_cst->constraints().setup_for_scoring( ResidueXYZ( rsd ), sfxn );
+	res_cst->constraints().setup_for_scoring( func::ResidueXYZ( rsd ), sfxn );
 }
 
 
@@ -372,7 +372,7 @@ ConstraintsEnergy::setup_for_derivatives_for_residue(
 	//	basic::ProfileThis doit( basic::CONSTRAINT_SCORE );
 	CstMinimizationDataOP res_cst = static_cast< CstMinimizationData * > ( min_data.get_data( cst_res_data )() );
 	if (!res_cst) return;
-	res_cst->constraints().setup_for_derivatives( ResidueXYZ( rsd ), sfxn );
+	res_cst->constraints().setup_for_derivatives( func::ResidueXYZ( rsd ), sfxn );
 }
 
 /*void

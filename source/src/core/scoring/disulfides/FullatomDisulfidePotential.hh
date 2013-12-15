@@ -182,7 +182,7 @@ private:
 };
 
 
-class CBSG_Dihedral_Func : public constraints::Func
+class CBSG_Dihedral_Func : public func::Func
 {
 public:
 	CBSG_Dihedral_Func();
@@ -192,19 +192,19 @@ public:
 	Real
 	func( Real const ) const;
 
-	constraints::FuncOP
+	func::FuncOP
 	clone() const { return new CBSG_Dihedral_Func( *this ); };
 
 	virtual
 	Real
 	dfunc( Real const ) const;
 private:
-	core::scoring::constraints::CircularSigmoidalFunc csf_cbang1_;
-	core::scoring::constraints::CircularSigmoidalFunc csf_cbang2_;
-	core::scoring::constraints::CircularSigmoidalFunc csf_cbang3_;
+	core::scoring::func::CircularSigmoidalFunc csf_cbang1_;
+	core::scoring::func::CircularSigmoidalFunc csf_cbang2_;
+	core::scoring::func::CircularSigmoidalFunc csf_cbang3_;
 };
 
-class SGSG_Dihedral_Func : public constraints::Func
+class SGSG_Dihedral_Func : public func::Func
 {
 public:
 	SGSG_Dihedral_Func();
@@ -215,7 +215,7 @@ public:
 	Real
 	func( Real const ) const;
 
-	constraints::FuncOP
+	func::FuncOP
 	clone() const { return new SGSG_Dihedral_Func( *this ); };
 
 	virtual
@@ -223,20 +223,20 @@ public:
 	dfunc( Real const ) const;
 private:
 	/// Access the histogram for this Func
-	core::scoring::constraints::CircularSigmoidalFunc csf_cbang1a_;
-	core::scoring::constraints::CircularSigmoidalFunc csf_cbang2a_;
-	core::scoring::constraints::CircularSigmoidalFunc csf_cbang1b_;
-	core::scoring::constraints::CircularSigmoidalFunc csf_cbang2b_;
+	core::scoring::func::CircularSigmoidalFunc csf_cbang1a_;
+	core::scoring::func::CircularSigmoidalFunc csf_cbang2a_;
+	core::scoring::func::CircularSigmoidalFunc csf_cbang1b_;
+	core::scoring::func::CircularSigmoidalFunc csf_cbang2b_;
 };
 
-class CB_Angle_Func : public constraints::Func
+class CB_Angle_Func : public func::Func
 {
 public:
 	CB_Angle_Func();
 
 	~CB_Angle_Func();
 
-	constraints::FuncOP
+	func::FuncOP
 	clone() const { return new CB_Angle_Func( *this ); };
 
 	virtual
@@ -248,19 +248,19 @@ public:
 	Real
 	dfunc( Real const ) const;
 private:
-	core::scoring::constraints::CircularSigmoidalFunc csf_cbang1_;
-	core::scoring::constraints::CircularSigmoidalFunc csf_cbang2_;
+	core::scoring::func::CircularSigmoidalFunc csf_cbang1_;
+	core::scoring::func::CircularSigmoidalFunc csf_cbang2_;
 
 };
 
-class SG_Dist_Func : public constraints::Func
+class SG_Dist_Func : public func::Func
 {
 public:
 	SG_Dist_Func();
 
 	~SG_Dist_Func();
 
-	constraints::FuncOP
+	func::FuncOP
 	clone() const { return new SG_Dist_Func( *this ); };
 
 	virtual

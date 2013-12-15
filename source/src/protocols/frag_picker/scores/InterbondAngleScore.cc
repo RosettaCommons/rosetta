@@ -56,7 +56,7 @@ InterbondAngleScore::InterbondAngleScore(Size priority,
 
 	utility::vector1<Real> x0(2);
 	utility::vector1<Real> sd(2);
-	factory_.add_type("MINMULTIHARMONIC", new core::scoring::constraints::MinMultiHarmonicFunc(
+	factory_.add_type("MINMULTIHARMONIC", new core::scoring::func::MinMultiHarmonicFunc(
 			x0,sd));
 
 	data_.resize(get_query_size());
@@ -71,7 +71,7 @@ InterbondAngleScore::InterbondAngleScore(Size priority,
 
 	utility::vector1<Real> x0(2);
 	utility::vector1<Real> sd(2);
-	factory_.add_type("MINMULTIHARMONIC", new core::scoring::constraints::MinMultiHarmonicFunc(
+	factory_.add_type("MINMULTIHARMONIC", new core::scoring::func::MinMultiHarmonicFunc(
 			x0,sd));
 
 	data_.resize(get_query_size());
@@ -178,7 +178,7 @@ void InterbondAngleScore::read_constraints(
 					<< name2 << " " << name3 << " " << name4 << " " << res1
 					<< " " << res2 << " " << res3 << " " << res4 << " func: "
 					<< func_type << std::endl;
-			core::scoring::constraints::FuncOP func = factory_.new_func(
+			core::scoring::func::FuncOP func = factory_.new_func(
 					func_type);
 			func->read_data(data);
 			std::map<std::string, Size> constr_atoms =

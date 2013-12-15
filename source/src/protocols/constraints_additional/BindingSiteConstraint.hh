@@ -68,10 +68,10 @@ public:
 
 	///
 	void
-	score( core::scoring::constraints::XYZ_Func const & xyz, core::scoring::EnergyMap const &, core::scoring::EnergyMap & emap ) const;
+	score( core::scoring::func::XYZ_Func const & xyz, core::scoring::EnergyMap const &, core::scoring::EnergyMap & emap ) const;
 
 	// do some pre-scoring calculations
- 	void setup_for_scoring( core::scoring::constraints::XYZ_Func const & xyz, core::scoring::ScoreFunction const &scfxn ) const;
+ 	void setup_for_scoring( core::scoring::func::XYZ_Func const & xyz, core::scoring::ScoreFunction const &scfxn ) const;
 
 	// align the atoms
 	//   ... placing a vector  -- from each atom to the the rotated >target< atoms -- in the database
@@ -79,14 +79,14 @@ public:
                   utility::vector1< bool > const & ) const;
 
 	// call the setup_for_derivatives for each constraint
- 	void setup_for_derivatives(  core::scoring::constraints::XYZ_Func const & xyz, core::scoring::ScoreFunction const &scfxn ) const;
+ 	void setup_for_derivatives(  core::scoring::func::XYZ_Func const & xyz, core::scoring::ScoreFunction const &scfxn ) const;
 
 	// atom deriv
 	virtual
 	void
 	fill_f1_f2(
 		AtomID const & atom,
-		core::scoring::constraints::XYZ_Func const & xyz,
+		core::scoring::func::XYZ_Func const & xyz,
 		core::Vector & F1,
 	 	core::Vector & F2,
 		core::scoring::EnergyMap const & weights
@@ -109,7 +109,7 @@ public:
 	void show( std::ostream& out ) const;
 
 	void show_def( std::ostream& out, core::pose::Pose const & pose ) const;
-	void read_def( std::istream& in, core::pose::Pose const & pose, core::scoring::constraints::FuncFactory const & func_factory );
+	void read_def( std::istream& in, core::pose::Pose const & pose, core::scoring::func::FuncFactory const & func_factory );
 
 	Size show_violations( std::ostream & out, core::pose::Pose const & pose, core::Size verbose_level, core::Real threshold = 1.0 ) const;
 

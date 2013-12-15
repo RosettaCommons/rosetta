@@ -12,8 +12,8 @@
 /// @brief feel free to add definitions for other (derived) periodic functions to this file
 /// @author Florian Richter
 
-#ifndef INCLUDED_core_scoring_constraints_AmberPeriodicFunc_HH
-#define INCLUDED_core_scoring_constraints_AmberPeriodicFunc_HH
+#ifndef INCLUDED_core_scoring_func_AmberPeriodicFunc_HH
+#define INCLUDED_core_scoring_func_AmberPeriodicFunc_HH
 
 #include <core/scoring/func/AmberPeriodicFunc.fwd.hh>
 
@@ -25,7 +25,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 
 /// @brief function of type y = 0.5 * k * (1 - cos(n * (x - x0) ) )

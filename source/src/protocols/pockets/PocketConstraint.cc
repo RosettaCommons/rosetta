@@ -85,7 +85,7 @@ void PocketConstraint::init(core::pose::Pose const & pose){
 void PocketConstraint::read_def(
   std::istream & line_stream,
   core::pose::Pose const & pose,
-  core::scoring::constraints::FuncFactory const & /* func_factory */)
+  core::scoring::func::FuncFactory const & /* func_factory */)
 {
 	init(pose);
 	std::string tmp;
@@ -236,7 +236,7 @@ void PocketConstraint::set_target_res_pdb( core::pose::Pose const & pose, std::s
 // emap. Although the current set of weights currently is provided, Constraint objects
 // should put unweighted scores into emap.
 void
-PocketConstraint::score( core::scoring::constraints::XYZ_Func const & xyz_func, core::scoring::EnergyMap const & weights, core::scoring::EnergyMap & emap ) const
+PocketConstraint::score( core::scoring::func::XYZ_Func const & xyz_func, core::scoring::EnergyMap const & weights, core::scoring::EnergyMap & emap ) const
 {
   using namespace basic::options;
   bool debug = option[ OptionKeys::pocket_grid::pocket_dump_pdbs ]();
@@ -310,7 +310,7 @@ PocketConstraint::score( core::scoring::constraints::XYZ_Func const & xyz_func, 
 void
 PocketConstraint::fill_f1_f2(
 	core::id::AtomID const & ,
-	core::scoring::constraints::XYZ_Func const & ,
+	core::scoring::func::XYZ_Func const & ,
 	core::Vector & ,
 	core::Vector & ,
 	core::scoring::EnergyMap const & weights

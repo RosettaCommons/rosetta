@@ -11,8 +11,8 @@
 /// @brief Definition for functions used in definition of constraints.
 /// @author James Thompson
 
-#ifndef INCLUDED_core_scoring_constraints_MixtureFunc_hh
-#define INCLUDED_core_scoring_constraints_MixtureFunc_hh
+#ifndef INCLUDED_core_scoring_func_MixtureFunc_hh
+#define INCLUDED_core_scoring_func_MixtureFunc_hh
 
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
@@ -21,7 +21,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 /// @brief Derived class of class Func representing a Mixture of several distinct functions. The
 /// function is of the form ln( g(r) / h(r) ), where g(r) is a mixture of a Gaussian and Exponential

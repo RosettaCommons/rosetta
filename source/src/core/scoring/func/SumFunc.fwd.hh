@@ -10,8 +10,8 @@
 /// @file
 /// @brief
 
-#ifndef INCLUDED_core_scoring_constraints_SumFunc_FWD_HH
-#define INCLUDED_core_scoring_constraints_SumFunc_FWD_HH
+#ifndef INCLUDED_core_scoring_func_SumFunc_FWD_HH
+#define INCLUDED_core_scoring_func_SumFunc_FWD_HH
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 
@@ -23,7 +23,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 ///
 

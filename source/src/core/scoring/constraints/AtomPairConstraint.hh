@@ -52,7 +52,7 @@ public:
 	AtomPairConstraint(
 		AtomID const & a1,
 		AtomID const & a2,
-	 	FuncOP func,
+	 	core::scoring::func::FuncOP func,
 		ScoreType scoretype = atom_pair_constraint
 	):
 		Constraint( scoretype ),
@@ -67,7 +67,7 @@ public:
 
 	///
 	virtual
-	ConstraintOP clone( FuncOP func ) const {
+	ConstraintOP clone( core::scoring::func::FuncOP func ) const {
 		return new AtomPairConstraint( atom1_, atom2_, func, score_type() );
 	}
 
@@ -97,7 +97,7 @@ public:
 
 	///
 	void
-	score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+	score( core::scoring::func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
 	Real score( pose::Pose const& pose ) const {
 		return func_->func( dist( pose ) );
@@ -108,7 +108,7 @@ public:
 	void
 	fill_f1_f2(
 		AtomID const & atom,
-		XYZ_Func const & xyz,
+		core::scoring::func::XYZ_Func const & xyz,
 		Vector & F1,
 	 	Vector & F2,
 		EnergyMap const & weights
@@ -147,7 +147,7 @@ public:
 	void show( std::ostream& out ) const;
 	void show_def( std::ostream& out, pose::Pose const& pose ) const;
 
-	void read_def( std::istream& in, pose::Pose const& pose, FuncFactory const& func_factory );
+	void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory );
 	//	//@brief set constraint such that the pose doesn't violate it.
 	//	virtual void steal( pose::Pose& );
 	virtual
@@ -156,11 +156,11 @@ public:
 	Real dist( core::conformation::Conformation const& conformation ) const;
 
 	virtual
-	Real dist( XYZ_Func const & xyz ) const;
+	Real dist( core::scoring::func::XYZ_Func const & xyz ) const;
 
 	virtual Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1 ) const;
 
-	virtual Func const& get_func() const {
+	virtual func::Func const& get_func() const {
 		return *func_;
 	}
 
@@ -186,7 +186,7 @@ private:
 protected:
 	// data -- write accessed by NamedAtomPairConstraint
 	mutable AtomID atom1_, atom2_;
-	FuncOP func_;
+	core::scoring::func::FuncOP func_;
 }; // class AtomPairConstraint
 
 } // constraints

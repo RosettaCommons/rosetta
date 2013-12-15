@@ -66,7 +66,7 @@ void
 SiteConstraintResidues::read_def(
     std::istream & data,
     core::pose::Pose const & pose,
-    FuncFactory const & func_factory
+   func::FuncFactory const & func_factory
 ) {
     TR.Debug << "read_site_cst" << std::endl;
     std::string tempres;
@@ -78,7 +78,7 @@ SiteConstraintResidues::read_def(
     std::string type;
     data >> res1 >> name >> res2 >> res3 >> func_type;
     TR.Info << "read: " << res1 << " "<< name << " constrain to residues " << res2 << ":" << res3  << " func: " << func_type << std::endl;
-    FuncOP aFunc = func_factory.new_func( func_type );
+    func::FuncOP aFunc = func_factory.new_func( func_type );
     aFunc->read_data( data );
 
     if ( TR.Debug.visible() ) {
@@ -106,7 +106,7 @@ SiteConstraintResidues::setup_csts(
     Size res2,
     Size res3,
     core::pose::Pose const & pose,
-    FuncOP const & func
+    func::FuncOP const & func
 ) {
     id::AtomID target_atom( pose.residue_type( res1 ).atom_index( name ), res1 );
     //Size target_chain = pose.chain( res );

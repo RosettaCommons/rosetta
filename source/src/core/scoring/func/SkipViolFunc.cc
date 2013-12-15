@@ -29,7 +29,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 	Real
 	SkipViolFunc::func( Real const x ) const
@@ -76,4 +76,3 @@ SkipViolFunc::show_definition( std::ostream &out ) const {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

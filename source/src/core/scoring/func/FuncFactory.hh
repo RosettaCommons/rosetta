@@ -11,8 +11,8 @@
 /// @brief Factory for creating various types of constraints.
 /// @author Greg Taylor <gktaylor@u.washington.edu>
 
-#ifndef INCLUDED_core_scoring_constraints_FuncFactory_hh
-#define INCLUDED_core_scoring_constraints_FuncFactory_hh
+#ifndef INCLUDED_core_scoring_func_FuncFactory_hh
+#define INCLUDED_core_scoring_func_FuncFactory_hh
 
 // Unit headers
 #include <core/scoring/func/FuncFactory.fwd.hh>
@@ -29,14 +29,14 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class FuncFactory {
  public:
 	FuncFactory(void);
 	void add_type( std::string type_name, FuncOP new_func );
 	FuncOP new_func( std::string const& type ) const;
-	typedef std::map< std::string, scoring::constraints::FuncOP > FuncTypes;
+	typedef std::map< std::string, scoring::func::FuncOP > FuncTypes;
 	FuncTypes func_types_;
 };
 

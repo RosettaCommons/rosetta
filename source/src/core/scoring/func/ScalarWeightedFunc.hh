@@ -17,8 +17,8 @@
 /// for the same structural information.
 
 
-#ifndef INCLUDED_core_scoring_constraints_ScalarWeightedFunc_hh
-#define INCLUDED_core_scoring_constraints_ScalarWeightedFunc_hh
+#ifndef INCLUDED_core_scoring_func_ScalarWeightedFunc_hh
+#define INCLUDED_core_scoring_func_ScalarWeightedFunc_hh
 
 #include <core/scoring/func/ScalarWeightedFunc.fwd.hh>
 
@@ -33,7 +33,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 	class ScalarWeightedFunc : public Func {
 	public:

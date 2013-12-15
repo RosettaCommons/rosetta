@@ -64,11 +64,11 @@ public:
 
 	// call the setup_for_derivatives for each constraint
  	void
- 	setup_for_scoring( XYZ_Func const & xyz_func, ScoreFunction const &scfxn ) const;
+ 	setup_for_scoring( core::scoring::func::XYZ_Func const & xyz_func, ScoreFunction const &scfxn ) const;
 
 	// call the setup_for_derivatives for each constraint
  	void
- 	setup_for_derivatives( XYZ_Func const & xyz_func, ScoreFunction const &scfxn ) const;
+ 	setup_for_derivatives( core::scoring::func::XYZ_Func const & xyz_func, ScoreFunction const &scfxn ) const;
 
 	/// will fail if Residues dont contain all the necessary atoms
 	void
@@ -165,7 +165,7 @@ public:
 
 private:
 	void
-	energy( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
+	energy( core::scoring::func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
 
 	// There's no implementation for this method in the .cc file ...
 	//void

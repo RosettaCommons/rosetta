@@ -11,8 +11,8 @@
 /// @brief Definition for functions used in definition of constraints.
 /// @author Nikolas Sgourakis
 
-#ifndef INCLUDED_core_scoring_constraints_KarplusFunc_hh
-#define INCLUDED_core_scoring_constraints_KarplusFunc_hh
+#ifndef INCLUDED_core_scoring_func_KarplusFunc_hh
+#define INCLUDED_core_scoring_func_KarplusFunc_hh
 
 #include <core/scoring/func/KarplusFunc.fwd.hh>
 #include <core/scoring/func/Func.hh>
@@ -22,7 +22,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 /// @brief Function that evaluates a J-coupling from dihedral angles in radians, for applications like DihedralConstraint.
 /// Prevents discontinuities at 0/360 or -180/180 degrees for dihedral constraints.

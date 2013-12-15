@@ -131,7 +131,7 @@ private: // data members
 	protocols::filters::FilterOP after_placement_filter_;
 	/// a filter at the last stage of placement. Defaults to TrueFilter
 	protocols::filters::FilterOP final_filter_;
-	core::scoring::constraints::HarmonicFuncOP coord_cst_func_;
+	core::scoring::func::HarmonicFuncOP coord_cst_func_;
 	/// where stubs were placed and whether they use constraints. vector is
 	/// necessary to maintain the order of the placed stubs
 	utility::vector1< std::pair< core::Size, bool > > placed_stubs_;

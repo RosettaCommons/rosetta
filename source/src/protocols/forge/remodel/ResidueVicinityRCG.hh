@@ -112,41 +112,41 @@ public:
 	desired_remodelres_in_vicinity() const {
 		return desired_remodelres_in_vicinity_; }
 
-	core::scoring::constraints::FuncOP
+	core::scoring::func::FuncOP
 	dis() const;
 
-	core::scoring::constraints::FuncOP
+	core::scoring::func::FuncOP
 	loop_ang() const;
 
-	core::scoring::constraints::FuncOP
+	core::scoring::func::FuncOP
 	targ_ang() const;
 
-	core::scoring::constraints::FuncOP
+	core::scoring::func::FuncOP
 	loop_dih() const;
 
-	core::scoring::constraints::FuncOP
+	core::scoring::func::FuncOP
 	targ_dih() const;
 
-	core::scoring::constraints::FuncOP
+	core::scoring::func::FuncOP
 	lt_dih() const;
 
 	void
-	set_dis( core::scoring::constraints::FuncOP dis );
+	set_dis( core::scoring::func::FuncOP dis );
 
 	void
-	set_loop_ang( core::scoring::constraints::FuncOP loop_ang );
+	set_loop_ang( core::scoring::func::FuncOP loop_ang );
 
 	void
-	set_targ_ang( core::scoring::constraints::FuncOP targ_ang );
+	set_targ_ang( core::scoring::func::FuncOP targ_ang );
 
 	void
-	set_loop_dih( core::scoring::constraints::FuncOP loop_dih );
+	set_loop_dih( core::scoring::func::FuncOP loop_dih );
 
 	void
-	set_targ_dih( core::scoring::constraints::FuncOP targ_dih );
+	set_targ_dih( core::scoring::func::FuncOP targ_dih );
 
 	void
-	set_lt_dih( core::scoring::constraints::FuncOP lt_dih );
+	set_lt_dih( core::scoring::func::FuncOP lt_dih );
 
 private:
 
@@ -154,7 +154,7 @@ private:
 	utility::vector1< core::Size > residue_atoms_, residue_base_atoms_, residue_base2_atoms_;
 	utility::vector1< core::Size > loopres_atoms_, loopres_base_atoms_, loopres_base2_atoms_;
 
-	core::scoring::constraints::FuncOP dis_, loop_ang_, targ_ang_, loop_dih_, targ_dih_, lt_dih_;
+	core::scoring::func::FuncOP dis_, loop_ang_, targ_ang_, loop_dih_, targ_dih_, lt_dih_;
 
 	core::Size desired_remodelres_in_vicinity_;
 

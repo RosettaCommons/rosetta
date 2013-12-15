@@ -11,8 +11,8 @@
 /// @brief Definition for functions used in definition of loop closure energies.
 /// @author Rhiju Das
 
-#ifndef INCLUDED_core_scoring_constraints_GaussianChainDoubleFunc_HH
-#define INCLUDED_core_scoring_constraints_GaussianChainDoubleFunc_HH
+#ifndef INCLUDED_core_scoring_func_GaussianChainDoubleFunc_HH
+#define INCLUDED_core_scoring_func_GaussianChainDoubleFunc_HH
 
 #include <core/scoring/func/GaussianChainDoubleFunc.fwd.hh>
 #include <core/scoring/func/Func.hh>
@@ -24,7 +24,7 @@
 // C++ Headers
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class GaussianChainDoubleFunc : public Func {
 public:

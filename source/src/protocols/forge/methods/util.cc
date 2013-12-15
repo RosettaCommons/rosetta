@@ -487,7 +487,7 @@ fill_non_loop_cst_set(
 			Residue const & i_rsd( pose.residue(i));
 
 			for (core::Size ii = 1; ii <= i_rsd.nheavyatoms(); ++ii) {
-				cst_set->add_constraint( new CoordinateConstraint(AtomID(ii,i), AtomID(1, my_anchor), i_rsd.xyz(ii), new HarmonicFunc(0.0, coord_sdev)));
+				cst_set->add_constraint( new CoordinateConstraint(AtomID(ii,i), AtomID(1, my_anchor), i_rsd.xyz(ii), new core::scoring::func::HarmonicFunc(0.0, coord_sdev)));
 			}
 		}
 	}
@@ -645,9 +645,9 @@ void cyclize_pose(core::pose::Pose & pose) {
   AtomID b1( pose.residue(1).atom_index(  "CA"), 1 ), b2( pose.residue(pose.n_residue()).atom_index("OVL2"), pose.n_residue() );
   AtomID c1( pose.residue(1).atom_index("OVU1"), 1 ), c2( pose.residue(pose.n_residue()).atom_index(   "C"), pose.n_residue() );
 //  pose.remove_constraints();
-  pose.add_constraint(new AtomPairConstraint(a1,a2,new HarmonicFunc(0.0,0.1)));
-  pose.add_constraint(new AtomPairConstraint(b1,b2,new HarmonicFunc(0.0,0.1)));
-  pose.add_constraint(new AtomPairConstraint(c1,c2,new HarmonicFunc(0.0,0.1)));
+  pose.add_constraint(new AtomPairConstraint(a1,a2,new core::scoring::func::HarmonicFunc(0.0,0.1)));
+  pose.add_constraint(new AtomPairConstraint(b1,b2,new core::scoring::func::HarmonicFunc(0.0,0.1)));
+  pose.add_constraint(new AtomPairConstraint(c1,c2,new core::scoring::func::HarmonicFunc(0.0,0.1)));
 }
 
 

@@ -90,7 +90,7 @@ constrain_pose_res_to_invrots(
 	std::list< core::conformation::ResidueCOP > const & invrots,
 	utility::vector1< core::Size > const & seqpos,
 	core::pose::Pose const & pose,
-	core::scoring::constraints::FuncOP constraint_func
+	core::scoring::func::FuncOP constraint_func
 )
 {
 	core::id::AtomID fixed_pt( pose.atom_tree().root()->atom_id() );
@@ -104,7 +104,7 @@ constrain_pose_res_to_invrots(
 	utility::vector1< core::Size > const & seqpos,
 	core::pose::Pose const & pose,
 	core::id::AtomID const & fixed_pt,
-	core::scoring::constraints::FuncOP constraint_func
+	core::scoring::func::FuncOP constraint_func
 )
 {
 	using namespace core::scoring::constraints;
@@ -277,4 +277,3 @@ get_last_protein_residue( core::pose::Pose const & pose )
 }  // match_enzdes_util
 } // toolbox
 } //protocols
-

@@ -11,12 +11,12 @@
 /// @brief Factory for creating various types of constraints.
 /// @author Greg Taylor gktaylor@u.washington.edu
 
-#ifndef INCLUDED_core_scoring_constraints_FuncFactory_fwd_hh
-#define INCLUDED_core_scoring_constraints_FuncFactory_fwd_hh
+#ifndef INCLUDED_core_scoring_func_FuncFactory_fwd_hh
+#define INCLUDED_core_scoring_func_FuncFactory_fwd_hh
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class FuncFactory;
 

@@ -11,8 +11,8 @@
 /// @brief Definition for functions used in definition of constraints.
 /// @author James Thompson
 
-#ifndef INCLUDED_core_scoring_constraints_EtableFunc_hh
-#define INCLUDED_core_scoring_constraints_EtableFunc_hh
+#ifndef INCLUDED_core_scoring_func_EtableFunc_hh
+#define INCLUDED_core_scoring_func_EtableFunc_hh
 
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
@@ -27,7 +27,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 /// @brief Class for representing arbitrarily defined functions.
 class EtableFunc : public Func {

@@ -323,7 +323,7 @@ FlexPepDockingProtocol::set_receptor_constraints( core::pose::Pose & pose )
 	using namespace core::scoring;
 
 	ConstraintSetOP cst_set( new ConstraintSet() );
-	HarmonicFuncOP spring = new HarmonicFunc( 0 /*mean*/, 1 /*std-dev*/);
+	core::scoring::func::HarmonicFuncOP spring = new core::scoring::func::HarmonicFunc( 0 /*mean*/, 1 /*std-dev*/);
 	conformation::Conformation const & conformation( pose.conformation() );
 	for (int i=flags_.receptor_first_res();
 			 i <= flags_.receptor_last_res(); i++)

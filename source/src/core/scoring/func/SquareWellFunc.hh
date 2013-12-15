@@ -11,8 +11,8 @@
 /// @brief Definition for functions used in definition of constraints.
 /// @author Rhiju Das
 
-#ifndef INCLUDED_core_scoring_constraints_SquareWellFunc_hh
-#define INCLUDED_core_scoring_constraints_SquareWellFunc_hh
+#ifndef INCLUDED_core_scoring_func_SquareWellFunc_hh
+#define INCLUDED_core_scoring_func_SquareWellFunc_hh
 
 #include <core/scoring/func/SquareWellFunc.fwd.hh>
 
@@ -27,7 +27,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class SquareWellFunc : public Func {
 public:

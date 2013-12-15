@@ -79,18 +79,18 @@ public:
 
 	Real delta_cutoff() const { return DELTA_CUTOFF_; }
 
-	utility::vector1< constraints::AmberPeriodicFuncOP > & alpha_components() { return alpha_components_; }
-	utility::vector1< constraints::AmberPeriodicFuncOP > & beta_components() { return beta_components_; }
-	utility::vector1< constraints::AmberPeriodicFuncOP > & gamma_components() { return gamma_components_; }
-	utility::vector1< constraints::AmberPeriodicFuncOP > & delta_components() { return delta_components_; }
-	utility::vector1< constraints::AmberPeriodicFuncOP > & epsilon_components() { return epsilon_components_; }
-	utility::vector1< constraints::AmberPeriodicFuncOP > & zeta_components() { return zeta_components_; }
+	utility::vector1< func::AmberPeriodicFuncOP > & alpha_components() { return alpha_components_; }
+	utility::vector1< func::AmberPeriodicFuncOP > & beta_components() { return beta_components_; }
+	utility::vector1< func::AmberPeriodicFuncOP > & gamma_components() { return gamma_components_; }
+	utility::vector1< func::AmberPeriodicFuncOP > & delta_components() { return delta_components_; }
+	utility::vector1< func::AmberPeriodicFuncOP > & epsilon_components() { return epsilon_components_; }
+	utility::vector1< func::AmberPeriodicFuncOP > & zeta_components() { return zeta_components_; }
 
-	utility::vector1< constraints::AmberPeriodicFuncOP > & nu0_components() { return nu0_components_; }
-	utility::vector1< constraints::AmberPeriodicFuncOP > & nu1_components() { return nu1_components_; }
-	utility::vector1< constraints::AmberPeriodicFuncOP > & nu2_components() { return nu2_components_; }
-	utility::vector1< constraints::AmberPeriodicFuncOP > & nu3_components() { return nu3_components_; }
-	utility::vector1< constraints::AmberPeriodicFuncOP > & nu4_components() { return nu4_components_; }
+	utility::vector1< func::AmberPeriodicFuncOP > & nu0_components() { return nu0_components_; }
+	utility::vector1< func::AmberPeriodicFuncOP > & nu1_components() { return nu1_components_; }
+	utility::vector1< func::AmberPeriodicFuncOP > & nu2_components() { return nu2_components_; }
+	utility::vector1< func::AmberPeriodicFuncOP > & nu3_components() { return nu3_components_; }
+	utility::vector1< func::AmberPeriodicFuncOP > & nu4_components() { return nu4_components_; }
 
 	void
 	add_sugar_ring_closure_constraints( conformation::Residue const & rsd, constraints::ConstraintSet & cst_set ) const;
@@ -114,7 +114,7 @@ private:
 			 Size const i,
 			 constraints::ConstraintSet & cst_set,
 			 Size const dna_torsion_number,
-			 utility::vector1< constraints::AmberPeriodicFuncOP > const & gaussian_parameter_set ) const;
+			 utility::vector1< func::AmberPeriodicFuncOP > const & gaussian_parameter_set ) const;
 
 
 	bool
@@ -130,18 +130,18 @@ private:
 	void
 	init_dna_torsion_parameters();
 
-	utility::vector1< constraints::AmberPeriodicFuncOP > alpha_components_;
-	utility::vector1< constraints::AmberPeriodicFuncOP > beta_components_;
-	utility::vector1< constraints::AmberPeriodicFuncOP > gamma_components_;
-	utility::vector1< constraints::AmberPeriodicFuncOP > delta_components_;
-	utility::vector1< constraints::AmberPeriodicFuncOP > epsilon_components_;
-	utility::vector1< constraints::AmberPeriodicFuncOP > zeta_components_;
+	utility::vector1< func::AmberPeriodicFuncOP > alpha_components_;
+	utility::vector1< func::AmberPeriodicFuncOP > beta_components_;
+	utility::vector1< func::AmberPeriodicFuncOP > gamma_components_;
+	utility::vector1< func::AmberPeriodicFuncOP > delta_components_;
+	utility::vector1< func::AmberPeriodicFuncOP > epsilon_components_;
+	utility::vector1< func::AmberPeriodicFuncOP > zeta_components_;
 
-	utility::vector1< constraints::AmberPeriodicFuncOP > nu0_components_;
-	utility::vector1< constraints::AmberPeriodicFuncOP > nu1_components_;
-	utility::vector1< constraints::AmberPeriodicFuncOP > nu2_components_;
-	utility::vector1< constraints::AmberPeriodicFuncOP > nu3_components_;
-	utility::vector1< constraints::AmberPeriodicFuncOP > nu4_components_;
+	utility::vector1< func::AmberPeriodicFuncOP > nu0_components_;
+	utility::vector1< func::AmberPeriodicFuncOP > nu1_components_;
+	utility::vector1< func::AmberPeriodicFuncOP > nu2_components_;
+	utility::vector1< func::AmberPeriodicFuncOP > nu3_components_;
+	utility::vector1< func::AmberPeriodicFuncOP > nu4_components_;
 
 	utility::vector1< std::string > alpha_atom_names_;
 	utility::vector1< std::string > beta_atom_names_;
@@ -164,14 +164,14 @@ private:
 	// Ribose closure
 	Distance const c2prime_c3prime_bond_length_;
 	Distance const c2prime_c3prime_sd_;
-	constraints::HarmonicFuncOP c2prime_c3prime_dist_harm_func_;
+	func::HarmonicFuncOP c2prime_c3prime_dist_harm_func_;
 
 	Real const c4prime_c3prime_c2prime_bond_angle_;
-	constraints::HarmonicFuncOP c4prime_c3prime_c2prime_angle_harm_func_;
+	func::HarmonicFuncOP c4prime_c3prime_c2prime_angle_harm_func_;
 	Real const o3prime_c3prime_c2prime_bond_angle_;
-	constraints::HarmonicFuncOP o3prime_c3prime_c2prime_angle_harm_func_;
+	func::HarmonicFuncOP o3prime_c3prime_c2prime_angle_harm_func_;
 	Real const c3prime_c2prime_c1prime_bond_angle_;
-	constraints::HarmonicFuncOP c3prime_c2prime_c1prime_angle_harm_func_;
+	func::HarmonicFuncOP c3prime_c2prime_c1prime_angle_harm_func_;
 
 	bool const verbose_;
 

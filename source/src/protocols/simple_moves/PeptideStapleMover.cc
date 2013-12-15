@@ -162,12 +162,12 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 	ConstraintOP apc1 = new AtomPairConstraint(
 		AtomID( seqpos_conn_atom, seqpos_ ),
 		AtomID( jj_vc_atom, jj ),
-		new HarmonicFunc( 0.0, 0.001 ) );
+		new core::scoring::func::HarmonicFunc( 0.0, 0.001 ) );
 
 	ConstraintOP apc2 = new AtomPairConstraint(
 		AtomID( jj_conn_atom, jj ),
 		AtomID( seqpos_vc_atom, seqpos_ ),
-		new HarmonicFunc( 0.0, 0.001 ) );
+		new core::scoring::func::HarmonicFunc( 0.0, 0.001 ) );
 
 	pose.add_constraint( apc1 );
 	pose.add_constraint( apc2 );
@@ -185,13 +185,13 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 		AtomID( seqpos_conn_atom, seqpos_),
 		AtomID( seqpos_vc_atom, seqpos_ ),
 		AtomID( jj_conn_atom_base, jj ),
-		new HarmonicFunc( jj_ideal_angle, 0.01 ) );
+		new core::scoring::func::HarmonicFunc( jj_ideal_angle, 0.01 ) );
 
 	ConstraintOP bac2 = new AngleConstraint(
 		AtomID( seqpos_conn_atom_base, seqpos_),
 		AtomID( jj_vc_atom, jj ),
 		AtomID( jj_conn_atom, jj ),
-		new HarmonicFunc( seqpos_ideal_angle, 0.01 ) );
+		new core::scoring::func::HarmonicFunc( seqpos_ideal_angle, 0.01 ) );
 
 	pose.add_constraint( bac1 );
 	pose.add_constraint( bac2 );
@@ -206,7 +206,7 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 		AtomID( seqpos_conn_atom, seqpos_ ),
 		AtomID( jj_conn_atom, jj ),
 		AtomID( jj_conn_atom_base, jj ),
-		new CircularHarmonicFunc( cross_connection_dihedral_val * numeric::constants::d::pi / 180.0, 0.1 ) );
+		new core::scoring::func::CircularHarmonicFunc( cross_connection_dihedral_val * numeric::constants::d::pi / 180.0, 0.1 ) );
 	pose.add_constraint( dcst );
 
 	utility::vector1< AtomIndices > const & seqpos_chi( pose.residue( seqpos_ ).chi_atoms() );
@@ -218,7 +218,7 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 			AtomID( seqpos_chi[ kk ][ 2 ], seqpos_ ),
 			AtomID( seqpos_chi[ kk ][ 3 ], seqpos_ ),
 			AtomID( seqpos_chi[ kk ][ 4 ], seqpos_ ),
-			new CircularHarmonicFunc( ideal_dihedral, 0.1 ) );
+			new core::scoring::func::CircularHarmonicFunc( ideal_dihedral, 0.1 ) );
 		pose.add_constraint( dcst );
 	}
 
@@ -231,7 +231,7 @@ void PeptideStapleMover::derive_staple_constraints_( core::pose::Pose & pose )
 			AtomID( jj_chi[ kk ][ 2 ], jj ),
 			AtomID( jj_chi[ kk ][ 3 ], jj ),
 			AtomID( jj_chi[ kk ][ 4 ], jj ),
-			new CircularHarmonicFunc( ideal_dihedral, 0.1 ) );
+			new core::scoring::func::CircularHarmonicFunc( ideal_dihedral, 0.1 ) );
 		pose.add_constraint( dcst );
 	}
 	//pose.add_constraint( cst_set );

@@ -69,7 +69,7 @@ public:
 	/// @brief simple test minimization
 	void test_gaussian_func()
 	{
-		using namespace core::scoring::constraints;
+		using namespace core::scoring::func;
 
 		// UTracer log file
 		test::UTracer UT("core/scoring/func/GaussianFunc.u");

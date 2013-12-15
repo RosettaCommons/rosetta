@@ -64,10 +64,10 @@ public:
 
     /// @brief read in constraint defiinition
     void
-    read_def( std::istream& data, pose::Pose const& pose, FuncFactory const& func_factory );
+    read_def( std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory );
 
     void show( std::ostream& out) const;
-    void setup_csts( Size res1, std::string name, Size res2, Size res3, core::pose::Pose const & pose, FuncOP const & func );
+    void setup_csts( Size res1, std::string name, Size res2, Size res3, core::pose::Pose const & pose, func::FuncOP const & func );
 
 private:
 

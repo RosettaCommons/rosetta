@@ -53,7 +53,7 @@ public:
 	AmbiguousNMRDistanceConstraint(
 		Atoms const & a1,
 		Atoms const & a2,
-	 	FuncOP func,
+	 	func::FuncOP func,
 		ScoreType scoretype = atom_pair_constraint
 	):
 		Constraint( scoretype ),
@@ -66,7 +66,7 @@ public:
 		id::NamedAtomID const & a1, //digests names like "QG1"
 		id::NamedAtomID const & a2,
 		core::pose::Pose const&,
-	 	FuncOP func,
+	 	func::FuncOP func,
 		ScoreType scoretype = atom_pair_constraint
 	);
 
@@ -81,7 +81,7 @@ public:
 
 	///
 	virtual
-	ConstraintOP clone( FuncOP func ) const {
+	ConstraintOP clone( func::FuncOP func ) const {
 		return new AmbiguousNMRDistanceConstraint( atoms1_, atoms2_, func, score_type() );
 	}
 
@@ -97,18 +97,18 @@ public:
 
 	///
 	void
-	score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
 	///
 	core::Real
-	inv_dist6( XYZ_Func const & xyz ) const;
+	inv_dist6( func::XYZ_Func const & xyz ) const;
 
 
 	// atom deriv
 	virtual void
 	fill_f1_f2(
 		AtomID const & atom,
-		XYZ_Func const & xyz,
+		func::XYZ_Func const & xyz,
 		Vector & F1,
 	 	Vector & F2,
 		EnergyMap const & weights
@@ -162,12 +162,12 @@ public:
 	void show( std::ostream& out ) const;
 	void show_def( std::ostream& out, pose::Pose const& pose ) const;
 
-	void read_def( std::istream& in, pose::Pose const& pose, FuncFactory const& func_factory );
+	void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory );
 	//	//@brief set constraint such that the pose doesn't violate it.
 	//	virtual void steal( pose::Pose& );
 
 	Real dist( pose::Pose const & pose ) const;
-	Real dist( XYZ_Func const & xyz ) const;
+	Real dist( func::XYZ_Func const & xyz ) const;
 
 
 	//Real inv_dist6( conformation::Conformation const& pose ) const;
@@ -181,7 +181,7 @@ public:
 
 	virtual Size show_violations( std::ostream& out, pose::Pose const& pose, Size verbose_level, Real threshold = 1 ) const;
 
-	virtual Func const& get_func() const {
+	virtual func::Func const& get_func() const {
 		return *func_;
 	}
 
@@ -207,7 +207,7 @@ protected:
 	// data -- write accessed by NamedAmbiguousNMRDistanceConstraint
 
 	Atoms atoms1_, atoms2_;
-	FuncOP func_;
+	func::FuncOP func_;
 }; // class AmbiguousNMRDistanceConstraint
 
 typedef utility::vector1< core::id::NamedAtomID > NamedAtoms;

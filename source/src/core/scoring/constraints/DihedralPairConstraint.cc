@@ -45,7 +45,7 @@ ConstraintOP
 DihedralPairConstraint::remap_resid(
 	core::id::SequenceMapping const & seqmap
 ) const {
-  if (   seqmap[atomA1_.rsd()] != 0 && seqmap[atomA2_.rsd()] != 0 
+  if (   seqmap[atomA1_.rsd()] != 0 && seqmap[atomA2_.rsd()] != 0
 	    && seqmap[atomA3_.rsd()] != 0 && seqmap[atomA4_.rsd()] != 0
 	    && seqmap[atomB1_.rsd()] != 0 && seqmap[atomB2_.rsd()] != 0
 	    && seqmap[atomB3_.rsd()] != 0 && seqmap[atomB4_.rsd()] != 0 ) {
@@ -57,7 +57,7 @@ DihedralPairConstraint::remap_resid(
            remap_b2( atomB2_.atomno(), seqmap[atomB2_.rsd()] ),
 		       remap_b3( atomB3_.atomno(), seqmap[atomB3_.rsd()] ),
 		       remap_b4( atomB4_.atomno(), seqmap[atomB4_.rsd()] );
-    return ConstraintOP( 
+    return ConstraintOP(
 			new DihedralPairConstraint(
 				remap_a1, remap_a2, remap_a3, remap_a4,
 				remap_b1, remap_b2, remap_b3, remap_b4,
@@ -101,7 +101,7 @@ ConstraintOP DihedralPairConstraint::remapped_clone( pose::Pose const& src, pose
   id::AtomID id6( core::pose::named_atom_id_to_atom_id(atomB2, dest ));
   id::AtomID id7( core::pose::named_atom_id_to_atom_id(atomB3, dest ));
   id::AtomID id8( core::pose::named_atom_id_to_atom_id(atomB4, dest ));
-  if (    id1.valid() && id2.valid() &&  id3.valid() && id4.valid() 
+  if (    id1.valid() && id2.valid() &&  id3.valid() && id4.valid()
 	     && id5.valid() && id6.valid() &&  id7.valid() && id8.valid() ) {
     return new DihedralPairConstraint( id1, id2, id3, id4, id5, id6, id7, id8, func_, score_type() );
   } else {
@@ -135,7 +135,7 @@ void
 DihedralPairConstraint::read_def(
 	std::istream & in,
 	pose::Pose const & pose,
-	FuncFactory const & func_factory
+	func::FuncFactory const & func_factory
 ) {
 	Size res1, res2, res3, res4, res5, res6, res7, res8;
 	std::string tempres1, tempres2, tempres3, tempres4, tempres5, tempres6, tempres7, tempres8;
@@ -166,9 +166,9 @@ DihedralPairConstraint::read_def(
 	TR.Debug 	<< "read: " << name1 << " " << name2 << " " << name3 << " " << name4 << " "
 						<< res1 << " " << res2 << " " << res3 << " " << res4 << " func: " << func_type
 						<< std::endl;
-	if (    res1 > pose.total_residue() || res2 > pose.total_residue() 
-	     || res3 > pose.total_residue() || res4 > pose.total_residue() 
-	     || res5 > pose.total_residue() || res6 > pose.total_residue() 
+	if (    res1 > pose.total_residue() || res2 > pose.total_residue()
+	     || res3 > pose.total_residue() || res4 > pose.total_residue()
+	     || res5 > pose.total_residue() || res6 > pose.total_residue()
 	     || res7 > pose.total_residue() || res8 > pose.total_residue() ) {
 		TR.Warning 	<< "ignored constraint (no such atom in pose!)"
 								<< name1 << " " << name2 << " " << name3 << " " << name4 << " "
@@ -215,8 +215,8 @@ Real
 DihedralPairConstraint::score(
 	conformation::Conformation const & conformation
 ) const {
-	return score(  
-		conformation.xyz( atomA1_ ), conformation.xyz( atomA2_ ), 
+	return score(
+		conformation.xyz( atomA1_ ), conformation.xyz( atomA2_ ),
 		conformation.xyz( atomA3_ ), conformation.xyz( atomA4_ ),
 		conformation.xyz( atomB1_ ), conformation.xyz( atomB2_ ),
 		conformation.xyz( atomB3_ ), conformation.xyz( atomB4_ ));
@@ -224,7 +224,7 @@ DihedralPairConstraint::score(
 
 void
 DihedralPairConstraint::score(
-	XYZ_Func const & xyz,
+	func::XYZ_Func const & xyz,
 	EnergyMap const &,
 	EnergyMap & emap
 ) const {
@@ -251,7 +251,7 @@ DihedralPairConstraint::score(
 void
 DihedralPairConstraint::fill_f1_f2(
 	AtomID const & atom,
-	XYZ_Func const & xyz,
+	func::XYZ_Func const & xyz,
 	Vector & F1,
  	Vector & F2,
  	EnergyMap const & weights

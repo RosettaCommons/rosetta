@@ -138,12 +138,12 @@ private: //Scoring functions
  *
  * Uses a sum of three gaussians.
  */
-class Cb_Distance_Func : public constraints::Func
+class Cb_Distance_Func : public func::Func
 {
 public:
 	Cb_Distance_Func();
 	virtual ~Cb_Distance_Func();
-	constraints::FuncOP clone() const { return new Cb_Distance_Func( *this ); }
+	func::FuncOP clone() const { return new Cb_Distance_Func( *this ); }
 	virtual core::Real func( core::Real const ) const;
 	virtual core::Real dfunc( core::Real const ) const;
 private:
@@ -160,12 +160,12 @@ private:
 /**
  * Score based on the distance between the two residues' centroids
  */
-class Cen_Distance_Func : public constraints::Func
+class Cen_Distance_Func : public func::Func
 {
 public:
 	Cen_Distance_Func();
 	virtual ~Cen_Distance_Func();
-	constraints::FuncOP clone() const { return new Cen_Distance_Func( *this ); }
+	func::FuncOP clone() const { return new Cen_Distance_Func( *this ); }
 	virtual core::Real func( core::Real const ) const;
 	virtual core::Real dfunc( core::Real const ) const;
 private:
@@ -175,12 +175,12 @@ private:
 /**
  * Score based on the angle Ca Cb Cb
  */
-class CaCbCb_Angle_Func : public constraints::Func
+class CaCbCb_Angle_Func : public func::Func
 {
 public:
 	CaCbCb_Angle_Func();
 	virtual ~CaCbCb_Angle_Func();
-	constraints::FuncOP clone() const { return new CaCbCb_Angle_Func( *this ); }
+	func::FuncOP clone() const { return new CaCbCb_Angle_Func( *this ); }
 	virtual core::Real func( core::Real const ) const;
 	virtual core::Real dfunc( core::Real const ) const;
 private:
@@ -190,12 +190,12 @@ private:
 /**
  * Score based on the dihedral formed by the two Ca and Cb
  */
-class NCaCaC_Dihedral_Func : public constraints::Func
+class NCaCaC_Dihedral_Func : public func::Func
 {
 public:
 	NCaCaC_Dihedral_Func();
 	virtual ~NCaCaC_Dihedral_Func();
-	constraints::FuncOP clone() const { return new NCaCaC_Dihedral_Func( *this ); }
+	func::FuncOP clone() const { return new NCaCaC_Dihedral_Func( *this ); }
 	virtual core::Real func( core::Real const ) const;
 	virtual core::Real dfunc( core::Real const ) const;
 private:
@@ -205,12 +205,12 @@ private:
 /**
  * Score based on the dihedral formed by N Ca Ca C
  */
-class CaCbCbCa_Dihedral_Func : public constraints::Func
+class CaCbCbCa_Dihedral_Func : public func::Func
 {
 public:
 	CaCbCbCa_Dihedral_Func();
 	virtual ~CaCbCbCa_Dihedral_Func();
-	constraints::FuncOP clone() const { return new CaCbCbCa_Dihedral_Func( *this ); }
+	func::FuncOP clone() const { return new CaCbCbCa_Dihedral_Func( *this ); }
 	virtual core::Real func( core::Real const ) const;
 	virtual core::Real dfunc( core::Real const ) const;
 private:

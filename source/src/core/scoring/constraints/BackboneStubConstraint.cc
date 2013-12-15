@@ -103,7 +103,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 	// to get access to AngleConstraint derivatives
 	if ( ang_cst_ == 0 ) {
 		// note: PeriodicFunc has functional form y = ( k * cos(n * (x - x0) ) ) + C
-		FuncOP cos_func = new PeriodicFunc(0., 1., 1., 0.);
+		func::FuncOP cos_func = new func::PeriodicFunc(0., 1., 1., 0.);
 		ang_cst_ = new AngleConstraint( cos_func );
 	}
 }
@@ -168,7 +168,7 @@ BackboneStubConstraint::operator == ( Constraint const & other_cst ) const
 // sqrt( -b / k ). As a rule of thumb, b=-4, so k can be decided in a way that will
 // determine the radius of the effect of a stub on pulling a scaffold towards it: k = 4/dist^2, where dist is the preferred radius
 void
-BackboneStubConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const {
+BackboneStubConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const {
 
 	if ( weights[ this->score_type() ] == 0 ) return;
 
@@ -240,7 +240,7 @@ BackboneStubConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weig
 void
 BackboneStubConstraint::fill_f1_f2(
 	AtomID const & atom,
-	XYZ_Func const & xyz,
+	func::XYZ_Func const & xyz,
 	Vector & F1,
 	Vector & F2,
 	EnergyMap const & weights

@@ -12,8 +12,8 @@
 /// @author Frank DiMaio
 
 
-#ifndef INCLUDED_core_scoring_constraints_TopOutFunc_fwd_hh
-#define INCLUDED_core_scoring_constraints_TopOutFunc_fwd_hh
+#ifndef INCLUDED_core_scoring_func_TopOutFunc_fwd_hh
+#define INCLUDED_core_scoring_func_TopOutFunc_fwd_hh
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 
@@ -21,7 +21,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class TopOutFunc;
 typedef utility::pointer::owning_ptr< TopOutFunc > TopOutFuncOP;

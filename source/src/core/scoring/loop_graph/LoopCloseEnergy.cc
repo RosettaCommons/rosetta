@@ -128,7 +128,7 @@ LoopCloseEnergy::eval_atom_derivative(
 
 			id::AtomID const & loop_landing_atom = loop_score_info->landing_atom();
 
-			FuncOP const & loop_func = loop_score_info->func();
+			core::scoring::func::FuncOP const & loop_func = loop_score_info->func();
 			Vector const d = pose.xyz( atom_id ) - pose.xyz( loop_landing_atom );
 			Real const x = d.length();
 			Vector f2 = loop_func->dfunc( x ) * d / x;
@@ -142,7 +142,7 @@ LoopCloseEnergy::eval_atom_derivative(
 
 			id::AtomID const & loop_takeoff_atom = loop_score_info->takeoff_atom();
 
-			FuncOP const & loop_func = loop_score_info->func();
+			core::scoring::func::FuncOP const & loop_func = loop_score_info->func();
 			Vector const d = pose.xyz( atom_id ) - pose.xyz( loop_takeoff_atom );
 			Real const x = d.length();
 			Vector f2 = loop_func->dfunc( x ) * d / x;

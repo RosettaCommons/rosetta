@@ -11,8 +11,8 @@
 /// @brief Definition for functions used in definition of loop closure energies.
 /// @author Rhiju Das
 
-#ifndef INCLUDED_core_scoring_constraints_GaussianChainTripleFunc_HH
-#define INCLUDED_core_scoring_constraints_GaussianChainTripleFunc_HH
+#ifndef INCLUDED_core_scoring_func_GaussianChainTripleFunc_HH
+#define INCLUDED_core_scoring_func_GaussianChainTripleFunc_HH
 
 #include <core/scoring/func/GaussianChainTripleFunc.fwd.hh>
 #include <core/scoring/func/Func.hh>
@@ -24,7 +24,7 @@
 // C++ Headers
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class GaussianChainTripleFunc : public Func {
 public:

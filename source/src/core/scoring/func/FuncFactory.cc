@@ -47,6 +47,10 @@
 
 using namespace core::scoring::constraints;
 
+namespace core {
+namespace scoring {
+namespace func {
+
 void FuncFactory::add_type( std::string type_name, FuncOP new_func ) {
 	func_types_[ type_name ] = new_func;
 }
@@ -89,3 +93,7 @@ FuncFactory::FuncFactory(void) {
   FuncFactory::add_type( "FLAT_HARMONIC", new FlatHarmonicFunc( 0, 0, 0 ) );
   FuncFactory::add_type( "TOPOUT", new TopOutFunc( 0, 0, 0 ) );
 }
+
+} //constraints
+} //scoring
+} //core

@@ -105,7 +105,7 @@ private:
 
 	mutable core::scoring::constraints::ConstraintSetOP constraints_;
 	mutable std::string sequence_;
-	core::scoring::constraints::FuncOP cst_func_;
+	core::scoring::func::FuncOP cst_func_;
 	Size root_; //if 0 -- it's ignored. otherwise try to set fold-tree root to this.
 	std::string root_from_label_;
 	bool bRegenerateFromInputPose_;

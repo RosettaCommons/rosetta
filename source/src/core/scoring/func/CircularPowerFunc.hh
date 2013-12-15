@@ -11,8 +11,8 @@
 /// @brief Definition for functions used in definition of constraints.
 /// @author James Thompson
 
-#ifndef INCLUDED_core_scoring_constraints_CircularPowerFunc_hh
-#define INCLUDED_core_scoring_constraints_CircularPowerFunc_hh
+#ifndef INCLUDED_core_scoring_func_CircularPowerFunc_hh
+#define INCLUDED_core_scoring_func_CircularPowerFunc_hh
 
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
@@ -21,7 +21,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 /// @brief Generalization of CircularCircularPowerFunc -- other exponents allowed.
 /// @brief Operates in radians, like DihedralConstraint.

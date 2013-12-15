@@ -22,7 +22,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 Real
 KarplusFunc::func( Real const x ) const {
@@ -54,4 +54,3 @@ void KarplusFunc::show_definition( std::ostream & out ) const
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

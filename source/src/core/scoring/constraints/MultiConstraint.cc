@@ -33,7 +33,7 @@ void
 MultiConstraint::read_def(
 	std::istream& data,
 	core::pose::Pose const& pose,
-	FuncFactory const & func_factory
+	func::FuncFactory const & func_factory
 )
 {
 	Size ct ( 0 );
@@ -78,7 +78,7 @@ MultiConstraint::operator == ( Constraint const & other_cst ) const
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-MultiConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const
+MultiConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const
 {
   for( ConstraintCOPs::const_iterator member_it = member_constraints_.begin(); member_it != member_constraints_.end(); member_it++){
     (*member_it)->score( xyz_func, weights, emap );
@@ -125,7 +125,7 @@ MultiConstraint::add_individual_constraint( ConstraintCOP cst_in )
 }
 
 	//@brief translates the atom-names into numbers
-void MultiConstraint::setup_for_scoring( XYZ_Func const & xyz, ScoreFunction const & scfxn) const {
+void MultiConstraint::setup_for_scoring( func::XYZ_Func const & xyz, ScoreFunction const & scfxn) const {
 	for ( ConstraintCOPs::const_iterator cst_it = member_constraints_.begin(); cst_it != member_constraints_.end(); ++cst_it ) {
 		(*cst_it)->setup_for_scoring( xyz, scfxn );
 	}
@@ -165,7 +165,7 @@ ConstraintOP MultiConstraint::remapped_clone(
 void
 MultiConstraint::fill_f1_f2(
 	AtomID const & atom,
-	XYZ_Func const & xyz,
+	func::XYZ_Func const & xyz,
 	Vector & F1,
 	Vector & F2,
 	EnergyMap const & weights

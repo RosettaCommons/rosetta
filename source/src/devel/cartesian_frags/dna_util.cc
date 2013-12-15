@@ -145,7 +145,7 @@ optimize_suite(
 	for ( Size i=1; i<=   angles.size(); ++i ) mm.set(   angles[i], true );
 	//// setup constraints for outgoing stub + to tether angles to starting values
 	ConstraintSetOP cst_set( new ConstraintSet() );
-	FuncOP coord_cst_func( new HarmonicFunc( 0.0, 0.1 ) );
+	core::scoring::func::FuncOP coord_cst_func( new core::scoring::func::HarmonicFunc( 0.0, 0.1 ) );
 	for ( Size i=1; i<= 3; ++i ) {
 		cst_set->add_constraint( new CoordinateConstraint( AtomID(i,4), AtomID(1,1), target_stub.build_fake_xyz(i),
 																											 coord_cst_func ) );
@@ -155,14 +155,14 @@ optimize_suite(
 		Real const target( pose.dof( torsions[i] ) );
 		Real const sdev( numeric::conversions::radians( torsion_constraint_sdev_degrees ) );
 		Real const weight( torsion_constraint_weight );
-		cst_set->add_dof_constraint( torsions[i], new CircularPowerFunc( target, sdev, torsion_constraint_power, weight ));
+		cst_set->add_dof_constraint( torsions[i], new core::scoring::func::CircularPowerFunc( target, sdev, torsion_constraint_power, weight ));
 	}
 
 	for ( Size i=1; i<= angles.size(); ++i ) {
 		Real const target( pose.dof( angles[i] ) );
 		Real const sdev( numeric::conversions::radians( angle_constraint_sdev_degrees ) );
 		Real const weight( angle_constraint_weight );
-		cst_set->add_dof_constraint( angles[i], new CircularPowerFunc( target, sdev, angle_constraint_power, weight ));
+		cst_set->add_dof_constraint( angles[i], new core::scoring::func::CircularPowerFunc( target, sdev, angle_constraint_power, weight ));
 	}
 
 	//// setup scorefxn

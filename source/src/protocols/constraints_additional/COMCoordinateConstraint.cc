@@ -94,7 +94,7 @@ interval_(0.0)
 {}
 
 void
-COMCoordinateConstraint::score( scoring::constraints::XYZ_Func const& xyz,
+COMCoordinateConstraint::score( scoring::func::XYZ_Func const& xyz,
 																scoring::EnergyMap const &,
 																scoring::EnergyMap & emap ) const
 {
@@ -118,7 +118,7 @@ COMCoordinateConstraint::score( scoring::constraints::XYZ_Func const& xyz,
 }
 
 void
-COMCoordinateConstraint::setup_for_scoring( scoring::constraints::XYZ_Func const & xyz,
+COMCoordinateConstraint::setup_for_scoring( scoring::func::XYZ_Func const & xyz,
 																						scoring::ScoreFunction const & ) const
 {
 	// Take care of Centroid models
@@ -137,7 +137,7 @@ COMCoordinateConstraint::setup_for_scoring( scoring::constraints::XYZ_Func const
 
 // call the setup_for_derivatives for each constraint
 void
-COMCoordinateConstraint::setup_for_derivatives( scoring::constraints::XYZ_Func const & xyz, scoring::ScoreFunction const &scfxn ) const {
+COMCoordinateConstraint::setup_for_derivatives( scoring::func::XYZ_Func const & xyz, scoring::ScoreFunction const &scfxn ) const {
 	setup_for_scoring( xyz, scfxn );
 }
 
@@ -145,7 +145,7 @@ COMCoordinateConstraint::setup_for_derivatives( scoring::constraints::XYZ_Func c
 void
 COMCoordinateConstraint::fill_f1_f2(
 	AtomID const & atom,
-	scoring::constraints::XYZ_Func const & xyz,
+	scoring::func::XYZ_Func const & xyz,
 	Vector & F1,
 	Vector & F2,
 	scoring::EnergyMap const & weights
@@ -212,7 +212,7 @@ void
 COMCoordinateConstraint::read_def(
 	std::istream & line_stream,
 	pose::Pose const & pose,
-	scoring::constraints::FuncFactory const & /* func_factory */
+	scoring::func::FuncFactory const & /* func_factory */
 ) {
 
 	Size res;

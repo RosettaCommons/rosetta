@@ -20,7 +20,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 Real
 IdentityFunc::func( Real const x ) const {
@@ -53,4 +53,3 @@ IdentityFunc::show_violations(
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

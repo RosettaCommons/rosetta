@@ -49,7 +49,7 @@ add_coordinate_constraints( core::pose::Pose & pose, core::Size const host_chain
 */
 
 core::scoring::constraints::ConstraintCOPs
-add_coordinate_constraints( core::pose::Pose & pose, core::conformation::Residue const source, core::Size const host_chain, core::Size const resnum, core::Real const coord_sdev, core::scoring::constraints::HarmonicFuncOP & coord_cst_func );
+add_coordinate_constraints( core::pose::Pose & pose, core::conformation::Residue const source, core::Size const host_chain, core::Size const resnum, core::Real const coord_sdev, core::scoring::func::HarmonicFuncOP & coord_cst_func );
 
 void
 generate_taskfactory_and_add_task_awareness( utility::tag::TagCOP tag, protocols::moves::Movers_map const & movers, basic::datacache::DataMap & data, core::pack::task::TaskFactoryOP & task_factory );

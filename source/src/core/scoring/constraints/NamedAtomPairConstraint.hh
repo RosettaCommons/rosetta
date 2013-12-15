@@ -82,7 +82,7 @@ public:
 	NamedAtomPairConstraint(
    	id::NamedAtomID const& a1,
 		id::NamedAtomID const& a2,
-		FuncOP func,
+		func::FuncOP func,
 		ScoreType scoretype = atom_pair_constraint
 	) :
 		AtomPairConstraint( id::AtomID( 0, a1.rsd() ), id::AtomID( 0, a2.rsd() ), func, scoretype ),
@@ -104,12 +104,12 @@ public:
 
 
 	//@brief translates the atom-names into numbers
-	virtual void setup_for_scoring( XYZ_Func const &, ScoreFunction const & ) const;
+	virtual void setup_for_scoring( func::XYZ_Func const &, ScoreFunction const & ) const;
 
 	virtual void show_def( std::ostream& out, pose::Pose const& pose ) const;
 	void show_def_nopose( std::ostream& out ) const;
 
-	virtual void read_def( std::istream& in, pose::Pose const& pose, FuncFactory const& func_factory );
+	virtual void read_def( std::istream& in, pose::Pose const& pose,func::FuncFactory const& func_factory );
 	//	//@brief set constraint such that the pose doesn't violate it.
 	//	virtual void steal( pose::Pose& );
 

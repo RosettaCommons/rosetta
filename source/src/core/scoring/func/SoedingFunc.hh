@@ -11,8 +11,8 @@
 /// @brief Definition for Johannes Soeding-style distance restraints.
 /// @author James Thompson
 
-#ifndef INCLUDED_core_scoring_constraints_SoedingFunc_hh
-#define INCLUDED_core_scoring_constraints_SoedingFunc_hh
+#ifndef INCLUDED_core_scoring_func_SoedingFunc_hh
+#define INCLUDED_core_scoring_func_SoedingFunc_hh
 
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
@@ -21,7 +21,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 /// @brief Derived class of class Func representing a Soeding distribution with a user-specified
 /// mean and standard deviation.

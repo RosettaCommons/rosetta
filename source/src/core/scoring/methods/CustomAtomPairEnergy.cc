@@ -143,8 +143,8 @@ CustomAtomPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const 
 	Size const n_res( pose.total_residue() );
 	// could save some space by only doing upper triangle (resi < resj)
 	have_cst_ = vector1< vector1< bool > >( n_res, vector1< bool >( n_res, false ) );
-	funcs_ = vector1< vector1< SOGFunc_Impl > >(
-		n_res, vector1< SOGFunc_Impl >( n_res, SOGFunc_Impl() )
+	funcs_ = vector1< vector1< func::SOGFunc_Impl > >(
+		n_res, vector1< func::SOGFunc_Impl >( n_res, func::SOGFunc_Impl() )
 	);
 
 	string line;
@@ -157,7 +157,7 @@ CustomAtomPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const 
 			>> func_tag;
 
 		if ( cst_tag == "AtomPair" && func_tag == "SOGFUNC" ) {
-			SOGFunc_Impl func;
+			func::SOGFunc_Impl func;
 			func.read_data( line_stream );
 			//swap_seqpos(resi,resj);
 			have_cst_[resi][resj] = true;

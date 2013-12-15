@@ -146,7 +146,7 @@ private:
 	Real const well_depth_exposed_;
 	utility::vector1< Size > atom_numbers_sugar_;
 	utility::vector1< Size > atom_numbers_sugar_coarse_;
-	constraints::FuncOP burial_function_;
+	func::FuncOP burial_function_;
 virtual
 core::Size version() const;
 

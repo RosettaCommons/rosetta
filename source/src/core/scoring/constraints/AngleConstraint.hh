@@ -46,7 +46,7 @@ public:
 	}
 
 	/// @brief read in constraint defiinition
-	void read_def( std::istream & data, pose::Pose const & pose, FuncFactory const & func_factory );
+	void read_def( std::istream & data, pose::Pose const & pose, core::scoring::func::FuncFactory const & func_factory );
 
 	/// @brief Copies the data from this Constraint into a new object and returns an OP
 	/// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
@@ -75,13 +75,13 @@ public:
 
 	/// @brief compute score
 	void
-	score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+	score( core::scoring::func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
 	/// @brief compute atom deriv
 	void
 	fill_f1_f2(
 		AtomID const & atom,
-		XYZ_Func const & xyz,
+		core::scoring::func::XYZ_Func const & xyz,
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const & weights
@@ -92,7 +92,7 @@ public:
 		AtomID const & a1,
 		AtomID const & a2,
 		AtomID const & a3,
-		FuncOP func_in, // we take ownership of this guy
+		core::scoring::func::FuncOP func_in, // we take ownership of this guy
 		ScoreType scotype = angle_constraint
 	):
 		Constraint( scotype ),
@@ -105,7 +105,7 @@ public:
 	/// @brief Constructor without atom IDs -- if you create an AngleConstraint with
 	/// this constructor, you must never call its score( XYZFunc ) method!  Dangerous and stupid!
 	AngleConstraint(
-		FuncOP func_in,
+		core::scoring::func::FuncOP func_in,
 		ScoreType scoretype = angle_constraint
 	):
 		Constraint( scoretype ),
@@ -135,7 +135,7 @@ public:
 
 	void show_def( std::ostream& out, pose::Pose const& pose ) const;
 
-	virtual Func const& get_func() const {
+	virtual core::scoring::func::Func const& get_func() const {
 		return *func_;
 	}
 
@@ -203,7 +203,7 @@ public:
 private:
 	// data
 	AtomID atom1_, atom2_, atom3_;
-	FuncOP func_;
+	core::scoring::func::FuncOP func_;
 };
 
 } // constraints

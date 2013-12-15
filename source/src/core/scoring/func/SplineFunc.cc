@@ -42,7 +42,7 @@ basic::Tracer TR( "core.scoring.constraints.SplineFunc");
 
 namespace core {
 	namespace scoring {
-		namespace constraints {
+		namespace func {
 
 		SplineFunc::SplineFunc():
 		exp_val_(0),

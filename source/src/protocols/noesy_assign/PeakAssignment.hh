@@ -100,7 +100,7 @@ public:
 
 	NmrConstraintOP create_constraint(
   	core::pose::Pose const& pose,
-		core::scoring::constraints::FuncOP = NULL  ) const;
+		core::scoring::func::FuncOP = NULL  ) const;
 
   ///@brief returns residue number of a1 or a2 of the assigned cross-peak, --- might throw Exception if atom not found
   core::Size resid( core::Size iatom ) const {

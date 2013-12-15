@@ -101,7 +101,7 @@ PeptideBondEnergy::residue_pair_energy(
 	Real const mean( 1.325883 );
 	Real const sdev( 0.012547 );
 	Real total_dev(0.0);
-	core::scoring::constraints::GaussianFunc gfunc( mean, sdev );
+	core::scoring::func::GaussianFunc gfunc( mean, sdev );
 
 	std::string const bbN_( "N" );
 	std::string const bbC_( "C" );

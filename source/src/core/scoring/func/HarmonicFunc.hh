@@ -11,8 +11,8 @@
 /// @brief Definition for functions used in definition of constraints.
 /// @author James Thompson
 
-#ifndef INCLUDED_core_scoring_constraints_HarmonicFunc_hh
-#define INCLUDED_core_scoring_constraints_HarmonicFunc_hh
+#ifndef INCLUDED_core_scoring_func_HarmonicFunc_hh
+#define INCLUDED_core_scoring_func_HarmonicFunc_hh
 
 #include <core/scoring/func/HarmonicFunc.fwd.hh>
 #include <core/scoring/func/Func.hh>
@@ -22,7 +22,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class HarmonicFunc : public Func {
 public:

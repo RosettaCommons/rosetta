@@ -3481,7 +3481,7 @@ update_allow_insert_with_extra_minimize_res( pose::Pose const & pose, toolbox::A
 
 		Distance fade_zone( 2.0 );
 		Real const well_depth( -10.0 ), well_offset( +10.0 );
-		FuncOP const distance_func( new FadeFunc( min_dist, max_dist, fade_zone,
+		core::scoring::func::FuncOP const distance_func( new core::scoring::func::FadeFunc( min_dist, max_dist, fade_zone,
 																							well_depth, well_offset ) );
 
 		Residue const & rsd1( pose.residue( five_prime_res ) );
@@ -3525,9 +3525,9 @@ update_allow_insert_with_extra_minimize_res( pose::Pose const & pose, toolbox::A
 		ConstraintSetOP cst_set( pose.constraint_set()->clone() );
 		assert( cst_set ); //if ( !cst_set ) cst_set = new ConstraintSet();
 
-		FuncOP const distance_func( new HarmonicFunc( O3_P_distance, distance_stddev ) );
-		FuncOP const O3_angle_func( new HarmonicFunc( radians( O3_angle ), radians( angle_stddev_degrees_P ) ) ); //did I made a mistake with the variable naming or is that a actual error? May 25, 2011.
-		FuncOP const  P_angle_func( new HarmonicFunc( radians(  P_angle ), radians( angle_stddev_degrees_O3 ) ) ); //did I made a mistake with the variable naming or is that a actual error? May 25, 2011.
+		core::scoring::func::FuncOP const distance_func( new core::scoring::func::HarmonicFunc( O3_P_distance, distance_stddev ) );
+		core::scoring::func::FuncOP const O3_angle_func( new core::scoring::func::HarmonicFunc( radians( O3_angle ), radians( angle_stddev_degrees_P ) ) ); //did I made a mistake with the variable naming or is that a actual error? May 25, 2011.
+		core::scoring::func::FuncOP const  P_angle_func( new core::scoring::func::HarmonicFunc( radians(  P_angle ), radians( angle_stddev_degrees_O3 ) ) ); //did I made a mistake with the variable naming or is that a actual error? May 25, 2011.
 
 		Residue const & rsd1( pose.residue( five_prime_res ) );
 		Residue const & rsd2( pose.residue( three_prime_res ) );

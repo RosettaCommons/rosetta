@@ -53,7 +53,7 @@ public:
 	{
 		static basic::Tracer TR("core.scoring.constraints.SplineFunc.cxxtest");
 
-		using namespace core::scoring::constraints;
+		using namespace core::scoring::func;
 
 		// func points to the SplineFunc
 		SplineFuncOP func( new SplineFunc());

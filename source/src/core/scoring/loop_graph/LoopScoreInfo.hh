@@ -23,7 +23,7 @@
 #include <core/scoring/func/Func.fwd.hh>
 #include <core/id/AtomID.hh>
 
-using core::scoring::constraints::FuncOP;
+using core::scoring::func::FuncOP;
 using namespace core;
 
 namespace core {

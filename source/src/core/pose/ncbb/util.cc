@@ -57,7 +57,7 @@ initialize_oops(
 	Pose & pose
 ) {
 	utility::vector1< core::Size > oop_seq_positions;
-	for ( Size i=1; i<= pose.total_residue(); ++i ) 
+	for ( Size i=1; i<= pose.total_residue(); ++i )
 	{
 		if( pose.residue(i).has_variant_type(chemical::OOP_PRE) == 1 )
 		{
@@ -68,8 +68,8 @@ initialize_oops(
 	return oop_seq_positions;
 }
 
-// Add constraints to keep oligooxopiperazine (oop) ring closed, default values (distance = 1.5, std = 0.05) 
-/// @details Overloaded function which defines default values, calls more general add_oop_constraint function 
+// Add constraints to keep oligooxopiperazine (oop) ring closed, default values (distance = 1.5, std = 0.05)
+/// @details Overloaded function which defines default values, calls more general add_oop_constraint function
 void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position )
 {
 	add_oop_constraint( pose, oop_seq_position, 1.5, 0.05 );
@@ -86,11 +86,11 @@ void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position, c
 	runtime_assert_msg ( pose.residue(oop_seq_position).has_variant_type(chemical::OOP_PRE) == 1, "residue must have OOP_PRE variant type" );
 
 	//kdrew: add constraint
-	HarmonicFuncOP harm_func  (new HarmonicFunc( distance, std ) );
+	core::scoring::func::HarmonicFuncOP harm_func  (new core::scoring::func::HarmonicFunc( distance, std ) );
 
 	//kdrew: constrain: CYP VYP  and CZP VZP, hard coded to have zero distance
-	HarmonicFuncOP virtual_atom_overlap_harm_func  (new HarmonicFunc( 0.0, 0.1 ) );
-																			 
+	core::scoring::func::HarmonicFuncOP virtual_atom_overlap_harm_func  (new core::scoring::func::HarmonicFunc( 0.0, 0.1 ) );
+
 	AtomID aidCYP( pose.residue( oop_seq_position ).atom_index("CYP"), oop_seq_position );
 	AtomID aidCZP( pose.residue( oop_seq_position+1 ).atom_index("CZP"), oop_seq_position+1 );
 	AtomID aidVYP( pose.residue( oop_seq_position+1 ).atom_index("VYP"), oop_seq_position+1 );
@@ -103,16 +103,16 @@ void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position, c
 
 	//kdrew: remove old constraints that are identical
 	core::scoring::constraints::ConstraintCOPs cs = pose.constraint_set()->get_all_constraints();
-	for(Size i = 1; i <= cs.size(); i++) 
+	for(Size i = 1; i <= cs.size(); i++)
 	{
 		Constraint const & other_cst = *cs[i];
-		if( !dynamic_cast< AtomPairConstraint const * > ( &other_cst ) ) 
+		if( !dynamic_cast< AtomPairConstraint const * > ( &other_cst ) )
 		{ continue; }
 
 		AtomPairConstraint const & constraint_i( static_cast< AtomPairConstraint const & > (other_cst) );
 
 		if ( (constraint_i.atom(1) == CYP_CZP_atompair->atom(1) && constraint_i.atom(2) == CYP_CZP_atompair->atom(2))
-			|| (constraint_i.atom(1) == CYP_VYP_atompair->atom(1) && constraint_i.atom(2) == CYP_VYP_atompair->atom(2))  
+			|| (constraint_i.atom(1) == CYP_VYP_atompair->atom(1) && constraint_i.atom(2) == CYP_VYP_atompair->atom(2))
 			|| (constraint_i.atom(1) == CZP_VZP_atompair->atom(1) && constraint_i.atom(2) == CZP_VZP_atompair->atom(2))  )
 		{
 			pose.remove_constraint( cs[i], true );

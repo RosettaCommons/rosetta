@@ -53,7 +53,7 @@ using core::pose::named_atom_id_to_atom_id;
 
 ///
 void
-AtomPairConstraint::score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
+AtomPairConstraint::score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
 {
 	Real const score_val =  score( xyz( atom1_ ), xyz( atom2_ ) );
 	emap[ this->score_type() ] += score_val;
@@ -160,7 +160,7 @@ Real AtomPairConstraint::dist( conformation::Conformation  const& conformation )
 	return dist;
 }
 
-Real AtomPairConstraint::dist( XYZ_Func const & xyz ) const {
+Real AtomPairConstraint::dist( func::XYZ_Func const & xyz ) const {
 	assert( atom1_.atomno() );
 	assert( atom2_.atomno() );
 	return xyz( atom1_ ).distance( xyz( atom2_ ) );
@@ -194,7 +194,7 @@ Size AtomPairConstraint::show_violations(
 void
 AtomPairConstraint::fill_f1_f2(
 	AtomID const & atom,
-	XYZ_Func const & xyz,
+	func::XYZ_Func const & xyz,
 	Vector & F1,
 	Vector & F2,
 	EnergyMap const & weights
@@ -248,7 +248,7 @@ void
 AtomPairConstraint::read_def(
 	std::istream & data,
 	core::pose::Pose const & pose,
-	FuncFactory const & func_factory
+	func::FuncFactory const & func_factory
 ) {
 	Size res1, res2;
 	std::string tempres1, tempres2;

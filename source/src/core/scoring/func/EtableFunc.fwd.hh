@@ -12,8 +12,8 @@
 /// @author James Thompson
 
 
-#ifndef INCLUDED_core_scoring_constraints_EtableFunc_fwd_hh
-#define INCLUDED_core_scoring_constraints_EtableFunc_fwd_hh
+#ifndef INCLUDED_core_scoring_func_EtableFunc_fwd_hh
+#define INCLUDED_core_scoring_func_EtableFunc_fwd_hh
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 
@@ -21,7 +21,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class EtableFunc;
 typedef utility::pointer::owning_ptr< EtableFunc > EtableFuncOP;

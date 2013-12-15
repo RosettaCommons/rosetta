@@ -32,7 +32,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 /// @details Auto-generated virtual destructor
 Func::~Func() {}
@@ -92,4 +92,3 @@ std::ostream& operator<<( std::ostream& out, const Func& f ) {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

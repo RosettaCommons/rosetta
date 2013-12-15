@@ -64,7 +64,7 @@ public:
 	  id::AtomID const & a1,
 		id::StubID const & fixed_stub_in,
 		Vector const & xyz_target_in,
-	 	FuncOP func,
+	 	func::FuncOP func,
 		ScoreType scotype = coordinate_constraint
 	):
 		Constraint( scotype ),
@@ -107,10 +107,10 @@ public:
 	}
 
 	// @brief Reads the definition of a Constraint from the given std::istream,
-	// using the given Pose, and the given FuncFactory. This method is intended
+	// using the given Pose, and the given func::FuncFactory. This method is intended
 	// to be overridden by derived classes if they'd like to use the
 	// ConstraintIO machinery.
-	virtual void read_def( std::istream &, pose::Pose const &, FuncFactory const & );
+	virtual void read_def( std::istream &, pose::Pose const &,func::FuncFactory const & );
 
 	///
 	void show_def( std::ostream& out, pose::Pose const& pose ) const;
@@ -132,7 +132,7 @@ public:
 
 	///
 	void
-	score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
+	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
 	{
 		emap[ this->score_type() ] += score( xyz( atom_ ),
 			xyz( fixed_stub_.atom( 1 ) ),
@@ -145,7 +145,7 @@ public:
 	void
 	fill_f1_f2(
 		AtomID const & atom,
-		XYZ_Func const & xyz,
+		func::XYZ_Func const & xyz,
 		Vector & F1,
  		Vector & F2,
 		EnergyMap const & weights
@@ -230,7 +230,7 @@ private:
 	id::AtomID atom_;
 	id::StubID fixed_stub_;
 	Vector xyz_target_;
-	FuncOP func_;
+	func::FuncOP func_;
 };
 
 }

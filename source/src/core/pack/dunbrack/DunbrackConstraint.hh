@@ -48,7 +48,7 @@ public:
 	atom( Size const index ) const;
 
 	virtual void score(
-		scoring::constraints::XYZ_Func const & xyz_func,
+		scoring::func::XYZ_Func const & xyz_func,
 		scoring::EnergyMap const & weights,
 		scoring::EnergyMap & emap
 	) const;
@@ -57,7 +57,7 @@ public:
 	void
 	fill_f1_f2(
 		AtomID const & atom,
-		scoring::constraints::XYZ_Func const & xyz,
+		scoring::func::XYZ_Func const & xyz,
 		Vector & F1,
 		Vector & F2,
 		scoring::EnergyMap const & weights
@@ -71,7 +71,7 @@ public:
   virtual void read_def(
 		std::istream & in,
 		pose::Pose const & pose,
-		scoring::constraints::FuncFactory const & func_factory
+		scoring::func::FuncFactory const & func_factory
 	);
 
 private:

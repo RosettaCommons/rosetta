@@ -214,7 +214,7 @@ minimize_test()
 		Residue const & i_rsd( pose.residue(i) );
 		for ( Size ii = 1; ii<= i_rsd.natoms(); ++ii ) {
 			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii),
-																												 new HarmonicFunc( 0.0, coord_sdev ) ) );
+															   new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) ) );
 		}
 	}
 
@@ -243,8 +243,8 @@ minimize_test()
 					stub_atom2->xyz(), stub_atom3->xyz() );
 
 			cst_set->add_constraint( new DihedralConstraint( current_atom->id(), stub_atom1->id(),
-																											 stub_atom2->id(), stub_atom3->id(),
-																											 new HarmonicFunc( angle, dihedral_sdev ) ) );
+															 stub_atom2->id(), stub_atom3->id(),
+															 new core::scoring::func::HarmonicFunc( angle, dihedral_sdev ) ) );
 
 		}
 
@@ -361,7 +361,7 @@ repack_test () {
 	utility::vector1< core::Size > const repack_res_list = option[repack_res]();
 	Size const repeats = option[n_repeat]();
 	Size const repeat_unit = option[repeat_size]();
-	
+
 	utility::vector1< bool > residues_to_repack( nres, false );
 	rotamer_set::RotamerLinksOP links( new rotamer_set::RotamerLinks() );
 	links->resize( nres );
@@ -402,7 +402,7 @@ repack_test () {
 	}
 
 	designtask->restrict_to_residues( residues_to_repack );
-	
+
 	// setup residue couplings
 	rotamer_set::RotamerLinksOP links( new rotamer_set::RotamerLinks() );
 	links->resize( nres );
@@ -431,7 +431,7 @@ repack_test () {
 			}
 		}
 	}
-	
+
 	designtask->rotamer_links( links );
 */
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -451,7 +451,7 @@ repack_test () {
 }
 ///////////////////////////////////////////////////////////////////////////////
 void
-my_main ( ) 
+my_main ( )
 {
 	std::string const & algorithm_name = option[algorithm];
 
@@ -489,7 +489,7 @@ main( int argc, char * argv [] )
 
 	my_main();
 
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
+	 } catch ( utility::excn::EXCN_Base const & e ) {
 		 std::cout << "caught exception " << e.msg() << std::endl;
 	}
 

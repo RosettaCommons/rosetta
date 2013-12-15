@@ -252,7 +252,7 @@ EnzConstraintParameters::set_mcfi(
 }
 
 
-core::scoring::constraints::FuncOP
+core::scoring::func::FuncOP
 EnzConstraintParameters::convert_GeomSampleInfo_to_FuncOP(
 	toolbox::match_enzdes_util::GeomSampleInfoCOP gsi,
 	core::Real & ideal_val)
@@ -261,7 +261,7 @@ EnzConstraintParameters::convert_GeomSampleInfo_to_FuncOP(
 	core::Real const rad_per_deg = numeric::constants::f::degrees_to_radians;
 	core::Real const twopi = numeric::constants::f::pi_2;
 
-	core::scoring::constraints::FuncOP to_return( NULL );
+	core::scoring::func::FuncOP to_return( NULL );
 
 	//check if this gsi has a force constant resp. if it even exists
 	//if not, return right away. this will lead to no constraints being produced
@@ -286,7 +286,7 @@ EnzConstraintParameters::convert_GeomSampleInfo_to_FuncOP(
 			tr.Info << "WARNING: Constraint specified for tag " << gsi->tag() << " requests a periodic function. Standard-Deviation/tolerance is meaningless in this case. The tolerance value of " << gsi->tolerance() << " that you specified will be ignored!" << std::endl;
 		}
 
-		to_return = new core::scoring::constraints::CharmmPeriodicFunc(x0, gsi->force_const(), twopi/period_rad);
+		to_return = new core::scoring::func::CharmmPeriodicFunc(x0, gsi->force_const(), twopi/period_rad);
 
 	}
 
@@ -1002,5 +1002,3 @@ EnzConstraintParameters::remap_resid( core::id::SequenceMapping const & smap )
 }
 } //enzdes
 } //protocols
-
-

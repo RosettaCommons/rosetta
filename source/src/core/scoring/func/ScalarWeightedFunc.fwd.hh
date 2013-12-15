@@ -17,14 +17,14 @@
 /// for the same structural information.
 
 
-#ifndef INCLUDED_core_scoring_constraints_ScalarWeightedFunc_fwd_hh
-#define INCLUDED_core_scoring_constraints_ScalarWeightedFunc_fwd_hh
+#ifndef INCLUDED_core_scoring_func_ScalarWeightedFunc_fwd_hh
+#define INCLUDED_core_scoring_func_ScalarWeightedFunc_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 	class ScalarWeightedFunc;
 	typedef utility::pointer::owning_ptr< ScalarWeightedFunc > ScalarWeightedFuncOP;

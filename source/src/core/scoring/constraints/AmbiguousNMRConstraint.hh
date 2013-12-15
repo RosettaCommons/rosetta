@@ -47,10 +47,10 @@ class AmbiguousNMRConstraint : public MultiConstraint {
 public:
 
 	/// @brief default Constructor
-	AmbiguousNMRConstraint( FuncOP func = NULL );
+	AmbiguousNMRConstraint( func::FuncOP func = NULL );
 
 	/// @brief Constructor
-	AmbiguousNMRConstraint( const ConstraintCOPs & cst_in, FuncOP func );
+	AmbiguousNMRConstraint( const ConstraintCOPs & cst_in, func::FuncOP func );
 
 // 	/// @brief
 // 	void
@@ -68,7 +68,7 @@ public:
 
 	///
 	virtual
-	ConstraintOP clone( FuncOP func ) const {
+	ConstraintOP clone( func::FuncOP func ) const {
 		if ( size() > 0 ) {
 			return new AmbiguousNMRConstraint( member_constraints_, func );
 		} else {
@@ -89,7 +89,7 @@ public:
 	/// @brief compute score
 	virtual
 	void
-	score( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
+	score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
 
 
 	virtual
@@ -98,7 +98,7 @@ public:
 
 	virtual
 	core::Real
-	dist( XYZ_Func const & xyz ) const;
+	dist( func::XYZ_Func const & xyz ) const;
 
 	///@brief add individual constraint into AmbiguousNMRConstraint
 	virtual
@@ -114,15 +114,15 @@ public:
 	void
 	fill_f1_f2(
 		AtomID const & atom,
-		XYZ_Func const & xyz,
+		func::XYZ_Func const & xyz,
 		Vector & F1,
  		Vector & F2,
 		EnergyMap const & weights
 	) const;
 
-	/// @brief Returns the Func object associated with this Constraint object.
+	/// @brief Returns the func::Func object associated with this Constraint object.
 	virtual
-	Func const & get_func() const {
+	func::Func const & get_func() const {
 		runtime_assert( func_ );
 		return *func_;
 	}
@@ -139,7 +139,7 @@ public:
 	read_def(
 		std::istream& data,
 		core::pose::Pose const& pose,
-		FuncFactory const & func_factory
+		func::FuncFactory const & func_factory
 	);
 
 	virtual
@@ -159,7 +159,7 @@ public:
 // 		id::SequenceMappingCOP map=NULL ) const;
 
 private:
-	FuncOP func_;
+	func::FuncOP func_;
 
 }; //AmbiguousNMRConstraint
 

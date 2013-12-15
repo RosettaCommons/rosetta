@@ -284,7 +284,7 @@ LinkerScore::dump_linkers(
 
 
 
-class NoPoseXYX_Func : public core::scoring::constraints::XYZ_Func {
+class NoPoseXYX_Func : public core::scoring::func::XYZ_Func {
  public:
  	boost::unordered_map<core::id::AtomID,Vec,AtomIDHashFunction> const & start_coords_;
  	Xform const & x1_;

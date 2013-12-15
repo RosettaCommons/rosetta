@@ -73,7 +73,7 @@ ConstraintOP NamedAtomPairConstraint::remapped_clone( pose::Pose const&, pose::P
 }
 
 void
-NamedAtomPairConstraint::setup_for_scoring(  XYZ_Func const & xyz, ScoreFunction const& ) const {
+NamedAtomPairConstraint::setup_for_scoring(  func::XYZ_Func const & xyz, ScoreFunction const& ) const {
 	// if ( pose_chemical_checksum_ == pose.get_current_chemical_checksum() )
 	core::Size type1_id_now = (core::Size)&( xyz.residue( named_atom1_.rsd() ).type() );
 	core::Size type2_id_now = (core::Size)&( xyz.residue( named_atom2_.rsd() ).type() );
@@ -107,7 +107,7 @@ void
 NamedAtomPairConstraint::read_def(
 	std::istream& data,
 	core::pose::Pose const& pose,
-	FuncFactory const& func_factory
+	func::FuncFactory const& func_factory
 ) {
 	Size res1, res2;
 	std::string tempres1, tempres2;

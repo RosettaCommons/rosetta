@@ -68,8 +68,8 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 	using core::scoring::constraints::AtomPairConstraint;
 	using core::scoring::constraints::BoundFunc;
 	using core::scoring::constraints::ConstraintOPs;
-	using core::scoring::constraints::ScalarWeightedFunc;
-	using core::scoring::constraints::ScalarWeightedFuncOP;
+	using core::scoring::func::ScalarWeightedFunc;
+	using core::scoring::func::ScalarWeightedFuncOP;
 	using protocols::fldsgn::topology::StrandPairing;
 	using protocols::fldsgn::topology::StrandPairings;
 	using protocols::fldsgn::topology::StrandPairingOP;
@@ -88,9 +88,9 @@ constraints_sheet( Pose const & pose, BluePrintOP const & blueprint, Real const 
 	ScalarWeightedFuncOP cstfunc = new ScalarWeightedFunc( coef, new BoundFunc( lb, ub, sd, tag ) );
 
 	//flo sep '12 add more accurate constraints by also constraining proper angles along paired residues
-	core::scoring::constraints::FuncOP cacb_dihedral_func = new core::scoring::constraints::OffsetPeriodicBoundFunc(-0.9,0.9, sqrt(1.0/42.0), "dihed_cacb", 6.28, 0.0 );
-	core::scoring::constraints::FuncOP bb_dihedral_func = new core::scoring::constraints::OffsetPeriodicBoundFunc(-0.52,0.52, sqrt(1.0/42.0), "dihed_bb", 3.14, 0.0 );
-	core::scoring::constraints::FuncOP bb_angle_func = new core::scoring::constraints::BoundFunc(1.22,1.92, sqrt(1.0/42.0), "angle_bb");
+	core::scoring::func::FuncOP cacb_dihedral_func = new core::scoring::constraints::OffsetPeriodicBoundFunc(-0.9,0.9, sqrt(1.0/42.0), "dihed_cacb", 6.28, 0.0 );
+	core::scoring::func::FuncOP bb_dihedral_func = new core::scoring::constraints::OffsetPeriodicBoundFunc(-0.52,0.52, sqrt(1.0/42.0), "dihed_bb", 3.14, 0.0 );
+	core::scoring::func::FuncOP bb_angle_func = new BoundFunc(1.22,1.92, sqrt(1.0/42.0), "angle_bb");
 
 	// set constraints to csts
   Size nres( pose.total_residue() );
@@ -157,8 +157,8 @@ constraints_NtoC( Pose const & pose, Real const coef, Real const condist )
 	using core::scoring::constraints::AtomPairConstraint;
 	using core::scoring::constraints::BoundFunc;
 	using core::scoring::constraints::ConstraintOPs;
-	using core::scoring::constraints::ScalarWeightedFunc;
-	using core::scoring::constraints::ScalarWeightedFuncOP;
+	using core::scoring::func::ScalarWeightedFunc;
+	using core::scoring::func::ScalarWeightedFuncOP;
 
 	// returned data
 	ConstraintOPs csts;
@@ -187,8 +187,8 @@ constraints_sheet( Pose const & pose, Real const coef, Real const condist )
 	using core::scoring::constraints::AtomPairConstraint;
 	using core::scoring::constraints::BoundFunc;
 	using core::scoring::constraints::ConstraintOPs;
-	using core::scoring::constraints::ScalarWeightedFunc;
-	using core::scoring::constraints::ScalarWeightedFuncOP;
+	using core::scoring::func::ScalarWeightedFunc;
+	using core::scoring::func::ScalarWeightedFuncOP;
 	using core::scoring::dssp::Dssp;
 	using core::scoring::Strands;
 

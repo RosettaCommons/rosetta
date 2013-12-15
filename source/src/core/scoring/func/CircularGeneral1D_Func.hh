@@ -11,8 +11,8 @@
 /// @brief A general 1D function that can be initialized by FArray or from text file. There's stuff like this all over Rosetta.
 /// @author Rhiju Das
 
-#ifndef INCLUDED_core_scoring_constraints_CircularGeneral1D_Func_HH
-#define INCLUDED_core_scoring_constraints_CircularGeneral1D_Func_HH
+#ifndef INCLUDED_core_scoring_func_CircularGeneral1D_Func_HH
+#define INCLUDED_core_scoring_func_CircularGeneral1D_Func_HH
 
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
@@ -23,7 +23,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 /// @brief Function that allows return of arbitrary FArrays -- this time circularized.
 class CircularGeneral1D_Func : public Func {

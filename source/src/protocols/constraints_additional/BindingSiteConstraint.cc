@@ -129,7 +129,7 @@ BindingSiteConstraint::BindingSiteConstraint(
 
 ///
 void
-BindingSiteConstraint::score( core::scoring::constraints::XYZ_Func const&, core::scoring::EnergyMap const &, core::scoring::EnergyMap & emap ) const {
+BindingSiteConstraint::score( core::scoring::func::XYZ_Func const&, core::scoring::EnergyMap const &, core::scoring::EnergyMap & emap ) const {
 	// filler
 	//std::cerr << "BindingSiteConstraint::score( core::scoring::constraints::XYZ_Func const & xyz, core::scoring::EnergyMap const &, core::scoring::EnergyMap & emap ) " << std::endl;
 
@@ -146,7 +146,7 @@ BindingSiteConstraint::score( core::scoring::constraints::XYZ_Func const&, core:
 
 // do some pre-scoring calculations
 void
-BindingSiteConstraint::setup_for_scoring( core::scoring::constraints::XYZ_Func const & xyz, core::scoring::ScoreFunction const & ) const {
+BindingSiteConstraint::setup_for_scoring( core::scoring::func::XYZ_Func const & xyz, core::scoring::ScoreFunction const & ) const {
 	// filler
 	//std::cerr << "BindingSiteConstraint::setup_for_scoring() " << std::endl;
 
@@ -262,7 +262,7 @@ BindingSiteConstraint::pre_align(
 
 // call the setup_for_derivatives for each constraint
 void
-BindingSiteConstraint::setup_for_derivatives( core::scoring::constraints::XYZ_Func const & xyz, core::scoring::ScoreFunction const &scfxn ) const {
+BindingSiteConstraint::setup_for_derivatives( core::scoring::func::XYZ_Func const & xyz, core::scoring::ScoreFunction const &scfxn ) const {
 	// filler
 	//std::cerr << "BindingSiteConstraint::setup_for_derivatives() " << std::endl;
 	setup_for_scoring( xyz, scfxn );
@@ -272,7 +272,7 @@ BindingSiteConstraint::setup_for_derivatives( core::scoring::constraints::XYZ_Fu
 void
 BindingSiteConstraint::fill_f1_f2(
 	AtomID const & atom,
-	core::scoring::constraints::XYZ_Func const & xyz,
+	core::scoring::func::XYZ_Func const & xyz,
 	core::Vector & F1,
 	core::Vector & F2,
 	core::scoring::EnergyMap const & weights
@@ -399,7 +399,7 @@ void
 BindingSiteConstraint::read_def(
 	std::istream & line_stream,
 	core::pose::Pose const & pose,
-	core::scoring::constraints::FuncFactory const & /* func_factory */
+	core::scoring::func::FuncFactory const & /* func_factory */
 ) {
 
 	core::Size res; // ?

@@ -19,7 +19,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 	void
 	ConstantFunc::read_data( std::istream & in ) {
@@ -43,4 +43,3 @@ namespace constraints {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

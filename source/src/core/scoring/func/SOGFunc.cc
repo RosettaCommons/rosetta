@@ -26,7 +26,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 SOGFunc::SOGFunc(
 	const utility::vector1< core::Real >& means,

@@ -53,13 +53,13 @@ public:
 		return new BigBinConstraint( res_, bin_, sdev_ );
 	}
 
-	void score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+	void score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
 	// atom deriv
 	void
 	fill_f1_f2(
 		AtomID const &,
-		XYZ_Func const & xyz,
+		func::XYZ_Func const & xyz,
 		Vector &,
 		Vector &,
 		EnergyMap const &
@@ -131,7 +131,7 @@ public:
 
 	virtual void show( std::ostream & out ) const;
 
-	void read_def( std::istream & in, pose::Pose const & pose, FuncFactory const & func_factory );
+	void read_def( std::istream & in, pose::Pose const & pose,func::FuncFactory const & func_factory );
 
 	char bin() const {
 		return bin_;

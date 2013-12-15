@@ -84,7 +84,7 @@ AmbiguousConstraint::operator == ( Constraint const & other_cst ) const
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief ScoreFunction, scores all member constraints but only reports the lowest one
 void
-AmbiguousConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const
+AmbiguousConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const
 {
 
 	Real low_total_cst_score = 0;
@@ -170,7 +170,7 @@ AmbiguousConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) cons
 void
 AmbiguousConstraint::fill_f1_f2(
 	AtomID const & atom,
-	XYZ_Func const & xyz,
+	func::XYZ_Func const & xyz,
 	Vector & F1,
 	Vector & F2,
 	EnergyMap const & weights
@@ -209,7 +209,7 @@ AmbiguousConstraint::show( std::ostream& out) const
 
 ConstraintCOP
 AmbiguousConstraint::active_constraint(
-//	XYZ_Func const & xyz, // these arguments would allow active-constraint determination in a purley const fashion
+//	func::XYZ_Func const & xyz, // these arguments would allow active-constraint determination in a purley const fashion
 //	EnergyMap const & weights
 ) const
 {
@@ -322,7 +322,7 @@ void
 AmbiguousConstraint::read_def(
 	std::istream & data,
 	core::pose::Pose const & pose,
-	FuncFactory const & func_factory
+	func::FuncFactory const & func_factory
 ) {
 	ConstraintOP constr;
 	while( ( constr = ConstraintIO::read_individual_constraint_new( data, pose, func_factory ) ) != 0) {

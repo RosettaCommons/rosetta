@@ -12,8 +12,8 @@
 /// @author James Thompson, Greg Taylor
 
 
-#ifndef INCLUDED_core_scoring_constraints_SumFunc_hh
-#define INCLUDED_core_scoring_constraints_SumFunc_hh
+#ifndef INCLUDED_core_scoring_func_SumFunc_hh
+#define INCLUDED_core_scoring_func_SumFunc_hh
 
 #include <core/scoring/func/Func.hh>
 
@@ -30,7 +30,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 	class SumFunc : public Func {
 	public:

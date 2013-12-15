@@ -18,7 +18,7 @@
 #include <core/id/AtomID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-using core::scoring::constraints::FuncOP;
+using core::scoring::func::FuncOP;
 using namespace core;
 
 namespace core {

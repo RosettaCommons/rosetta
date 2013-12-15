@@ -1573,7 +1573,7 @@ Splice::add_coordinate_constraints( core::pose::Pose & pose, core::pose::Pose co
 	TR<<"Current pose CA xyz coordinate/source pdb CA xyz coordinate:"<<std::endl;
 	core::id::AtomID const anchor_atom( core::id::AtomID( pose.residue( fixed_res ).atom_index( "CA" ), fixed_res ) );
 		for( core::Size i = nearest_to_from; i <= nearest_to_to; ++i ){
-			core::scoring::constraints::FuncOP coor_cont_fun = new core::scoring::constraints::HarmonicFunc(0.0,1);
+			core::scoring::func::FuncOP coor_cont_fun = new core::scoring::func::HarmonicFunc(0.0,1);
 			cst.push_back( new core::scoring::constraints::CoordinateConstraint( core::id::AtomID(pose.residue(from).atom_index("CA"), from), anchor_atom, source_pose.residue(i).atom("CA").xyz(),coor_cont_fun));
 			//Print xyz coor of current pose CA atoms vs. source pose
 			TR<<from<<pose.aa(from)<<" "<<pose.residue(from).atom("CA").xyz()[0]<<","<<pose.residue(from).atom("CA").xyz()[1]<<","<<pose.residue(from).atom("CA").xyz()[2]<<" / "<<
@@ -1607,7 +1607,7 @@ Splice::add_dihedral_constraints( core::pose::Pose & pose, core::pose::Pose cons
 
 
 		TR<<"Phi: "<<from<<pose.aa(from)<<":"<<pose.phi(from)<<" / "<<i<<source_pose.aa(i)<<":"<<numeric::dihedral_degrees(xyz_Cj,xyz_Ni,xyz_Cai,xyz_Ci) <<std::endl;
-		core::scoring::constraints::FuncOP di_const_func_phi = new core::scoring::constraints::CircularHarmonicFunc((source_pose.phi(i)*numeric::constants::d::pi_2)/360,1);
+		core::scoring::func::FuncOP di_const_func_phi = new core::scoring::func::CircularHarmonicFunc((source_pose.phi(i)*numeric::constants::d::pi_2)/360,1);
 		csts.push_back( new core::scoring::constraints::DihedralConstraint(phi_resj_c,phi_resi_n,phi_resi_ca,phi_resi_co, di_const_func_phi ) );
 		//for debuggin comment this out
 
@@ -1625,7 +1625,7 @@ Splice::add_dihedral_constraints( core::pose::Pose & pose, core::pose::Pose cons
 		xyz_Cai = source_pose.residue(i).atom("CA").xyz();
 
 		//for each residue the ideal angle is taken from the "donor" pdb
-		core::scoring::constraints::FuncOP di_const_func_psi = new core::scoring::constraints::CircularHarmonicFunc((source_pose.psi(i)*numeric::constants::d::pi_2)/360,1);
+		core::scoring::func::FuncOP di_const_func_psi = new core::scoring::func::CircularHarmonicFunc((source_pose.psi(i)*numeric::constants::d::pi_2)/360,1);
 		csts.push_back( new core::scoring::constraints::DihedralConstraint(psi_resi_n,psi_resi_ca,psi_resi_co,psi_resj_n, di_const_func_psi ) );
 		TR<<"Psi: "<<from<<pose.aa(from)<<":"<<pose.psi(from)<<" / "<<i<<source_pose.aa(i)<<":"<<numeric::dihedral_degrees(xyz_Ni,xyz_Cai,xyz_Ci,xyz_Nj) <<std::endl;
 		//Set up constraints for the omega angle
@@ -1642,7 +1642,7 @@ Splice::add_dihedral_constraints( core::pose::Pose & pose, core::pose::Pose cons
 		numeric::xyzVector< core::Real > xyz_Caj = source_pose.residue(i+1).atom("CA").xyz();
 		TR<<"omega: "<<from<<pose.aa(from)<<":"<<pose.omega(from)<<" / "<<i<<source_pose.aa(i)<<":"<<numeric::dihedral_degrees(xyz_Cai,xyz_Ci,xyz_Nj,xyz_Caj) <<std::endl;
 		//for each residue the ideal angle is taken from the "donor" pdb
-		core::scoring::constraints::FuncOP di_const_func_omega = new core::scoring::constraints::CircularHarmonicFunc((source_pose.omega(i)*numeric::constants::d::pi_2)/360,1);
+		core::scoring::func::FuncOP di_const_func_omega = new core::scoring::func::CircularHarmonicFunc((source_pose.omega(i)*numeric::constants::d::pi_2)/360,1);
 		csts.push_back( new core::scoring::constraints::DihedralConstraint(omega_resi_ca,omega_resi_co, omega_resj_n, omega_resj_ca, di_const_func_omega ) );
 
 		pose.add_constraints(csts);
@@ -1719,4 +1719,3 @@ Splice::rb_adjust_template( core::pose::Pose const & pose ) const{
 
 } //splice
 } //devel
-

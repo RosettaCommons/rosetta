@@ -29,7 +29,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 /// @brief Unnormalized, unbounded sum of Gaussians constraint
 class USOGFunc : public Func {

@@ -34,7 +34,7 @@ class FourAtomsConstraintData: public utility::pointer::ReferenceCount {
 public:
 
 	/// @brief makes a new object
-	FourAtomsConstraintData(core::scoring::constraints::FuncOP function,
+	FourAtomsConstraintData(core::scoring::func::FuncOP function,
 			Size first_atom, Size second_offset, Size second_atom,
 			Size third_offset, Size third_atom, Size fourth_offset,
 			Size fourth_atom);
@@ -66,13 +66,13 @@ public:
 	inline Size get_fourth_offset() {
 		return fourth_offset_;
 	}
-	inline core::scoring::constraints::FuncOP get_function() {
+	inline core::scoring::func::FuncOP get_function() {
 		return func_;
 	}
 
 	virtual ~FourAtomsConstraintData();
 private:
-	core::scoring::constraints::FuncOP func_;
+	core::scoring::func::FuncOP func_;
 	Size first_atom_;
 	Size second_atom_;
 	Size third_atom_;

@@ -29,7 +29,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 	Real
 	CountViolFunc::func( Real const x ) const
@@ -79,4 +79,3 @@ CountViolFunc::show_definition( std::ostream &out ) const {
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

@@ -44,7 +44,7 @@ constrain_pose_res_to_invrots(
 	std::list< core::conformation::ResidueCOP> const & invrots,
 	utility::vector1< core::Size > const & seqpos,
 	core::pose::Pose const & pose,
-	core::scoring::constraints::FuncOP constraint_func = NULL
+	core::scoring::func::FuncOP constraint_func = NULL
 );
 
 /// @brief constraints each invrot to the
@@ -57,7 +57,7 @@ constrain_pose_res_to_invrots(
 	utility::vector1< core::Size > const & seqpos,
 	core::pose::Pose const & pose,
 	core::id::AtomID const & fixed_pt,
-	core::scoring::constraints::FuncOP constraint_func = NULL
+	core::scoring::func::FuncOP constraint_func = NULL
 );
 
 

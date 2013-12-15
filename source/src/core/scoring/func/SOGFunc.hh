@@ -11,8 +11,8 @@
 /// @brief Definition for functions used in definition of constraints.
 /// @author James Thompson
 
-#ifndef INCLUDED_core_scoring_constraints_SOGFunc_hh
-#define INCLUDED_core_scoring_constraints_SOGFunc_hh
+#ifndef INCLUDED_core_scoring_func_SOGFunc_hh
+#define INCLUDED_core_scoring_func_SOGFunc_hh
 
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
@@ -29,7 +29,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 /// @brief Derived class of class Func representing a SOG distribution with a user-specified
 /// mean and standard deviation.

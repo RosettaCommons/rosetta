@@ -880,12 +880,12 @@ void run() {
 
                                   Real d1 = pose.residue(brsd).xyz("ZN").distance(pose.residue(ersd).xyz("OE1"));
                                   Real d2 = pose.residue(brsd).xyz("ZN").distance(pose.residue(ersd).xyz("OE2"));
-                                  core::scoring::constraints::FuncOP disfunc0   = new core::scoring::constraints::HarmonicFunc( 0.0, 0.2 );
-                                  core::scoring::constraints::FuncOP disfunc    = new core::scoring::constraints::HarmonicFunc( 2.2, 0.2 );
-                                  core::scoring::constraints::FuncOP angfunc0   = new core::scoring::constraints::CircularHarmonicFunc(   0.0   , 0.2 );
-                                  core::scoring::constraints::FuncOP angfunc90  = new core::scoring::constraints::CircularHarmonicFunc(   1.5707, 0.2 );
-                                  core::scoring::constraints::FuncOP angfunc180 = new core::scoring::constraints::CircularHarmonicFunc( 2*1.5707, 0.2 );
-                                  core::scoring::constraints::FuncOP angfunc2   = new core::scoring::constraints::CircularHarmonicFunc(   2.0943, 0.2 );
+                                  core::scoring::func::FuncOP disfunc0   = new core::scoring::func::HarmonicFunc( 0.0, 0.2 );
+                                  core::scoring::func::FuncOP disfunc    = new core::scoring::func::HarmonicFunc( 2.2, 0.2 );
+                                  core::scoring::func::FuncOP angfunc0   = new core::scoring::func::CircularHarmonicFunc(   0.0   , 0.2 );
+                                  core::scoring::func::FuncOP angfunc90  = new core::scoring::func::CircularHarmonicFunc(   1.5707, 0.2 );
+                                  core::scoring::func::FuncOP angfunc180 = new core::scoring::func::CircularHarmonicFunc( 2*1.5707, 0.2 );
+                                  core::scoring::func::FuncOP angfunc2   = new core::scoring::func::CircularHarmonicFunc(   2.0943, 0.2 );
 
 																	bool angbei = numeric::angle_degrees(opose.xyz(bne),opose.xyz(bzn),opose.xyz(inn)) < 135.0;
 																	bool angbni = numeric::angle_degrees(opose.xyz(bnn),opose.xyz(bzn),opose.xyz(inn)) < 135.0;

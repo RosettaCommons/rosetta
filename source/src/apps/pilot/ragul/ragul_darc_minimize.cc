@@ -327,7 +327,7 @@ int main( int argc, char * argv [] ){
 				}
 
 				ConstraintSetOP cst_set( new ConstraintSet() );
-				HarmonicFuncOP spring = new HarmonicFunc( 0 /*mean*/, coord_sdev /*std-dev*/);
+				core::scoring::func::HarmonicFuncOP spring = new core::scoring::func::HarmonicFunc( 0 /*mean*/, coord_sdev /*std-dev*/);
 				conformation::Conformation const & conformation( bound_pose.conformation() );
 
 				// jk we need an anchor in order to use CoordinateConstraint !!!

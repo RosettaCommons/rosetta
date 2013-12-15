@@ -61,16 +61,16 @@ public:
 	virtual core::id::AtomID const & atom( core::Size const index ) const { return atom_ids_[index]; };
 
 	void show_def( std::ostream& out, core::pose::Pose const & pose ) const;
-	void read_def( std::istream& in, core::pose::Pose const & pose, core::scoring::constraints::FuncFactory const & func_factory );
+	void read_def( std::istream& in, core::pose::Pose const & pose, core::scoring::func::FuncFactory const & func_factory );
 
 	virtual
-	void score( core::scoring::constraints::XYZ_Func const & xyz_func, core::scoring::EnergyMap const & weights, core::scoring::EnergyMap & emap ) const;
+	void score( core::scoring::func::XYZ_Func const & xyz_func, core::scoring::EnergyMap const & weights, core::scoring::EnergyMap & emap ) const;
 
 	virtual
 	void
 	fill_f1_f2(
 		core::id::AtomID const & ,
-		core::scoring::constraints::XYZ_Func const & ,
+		core::scoring::func::XYZ_Func const & ,
 		core::Vector & ,
 		core::Vector & ,
 		core::scoring::EnergyMap const & weights

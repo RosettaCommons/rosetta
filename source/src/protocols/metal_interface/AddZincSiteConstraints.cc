@@ -129,15 +129,15 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 
 
 
-	FuncOP const S_dist_func( new HarmonicFunc( S_dist, S_dist_dev ) );
-	FuncOP const N_dist_func( new HarmonicFunc( N_dist, N_dist_dev ) );
-	FuncOP const O_dist_func( new HarmonicFunc( O_dist, O_dist_dev ) );
+	core::scoring::func::FuncOP const S_dist_func( new core::scoring::func::HarmonicFunc( S_dist, S_dist_dev ) );
+	core::scoring::func::FuncOP const N_dist_func( new core::scoring::func::HarmonicFunc( N_dist, N_dist_dev ) );
+	core::scoring::func::FuncOP const O_dist_func( new core::scoring::func::HarmonicFunc( O_dist, O_dist_dev ) );
 
-	FuncOP const S_angle_func( new HarmonicFunc( S_angle, S_angle_dev ) );
-	FuncOP const N_angle_func( new HarmonicFunc( N_angle, N_angle_dev ) );
-	FuncOP const O_angle_func( new HarmonicFunc( O_angle, O_angle_dev ) );
+	core::scoring::func::FuncOP const S_angle_func( new core::scoring::func::HarmonicFunc( S_angle, S_angle_dev ) );
+	core::scoring::func::FuncOP const N_angle_func( new core::scoring::func::HarmonicFunc( N_angle, N_angle_dev ) );
+	core::scoring::func::FuncOP const O_angle_func( new core::scoring::func::HarmonicFunc( O_angle, O_angle_dev ) );
 
-	FuncOP const tetr_func( new HarmonicFunc( tetrahedral, tetr_dev ) );
+	core::scoring::func::FuncOP const tetr_func( new core::scoring::func::HarmonicFunc( tetrahedral, tetr_dev ) );
 
 	//these dihedral funcs are initialized later
 	//FuncOP const NE2_func( new CircularHarmonicFunc( NE2_dihedral, NE2_dev ) );
@@ -267,17 +267,17 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 		// TR << "Check_point " << id3 << " " << p3 << std::endl;
 		// TR << "Check_point " << id4 << " " << p4 << std::endl;
 
-		FuncOP dihedral_func;
+		core::scoring::func::FuncOP dihedral_func;
 
 		if ( msr_[i]->get_ligand_atom_name() == " ND1" ) {
 			TR << "Adding dihedral constraint for ND1 His" << std::endl;
-			dihedral_func = new CircularHarmonicFunc( ND1_dihedral, ND1_dev );
+			dihedral_func = new core::scoring::func::CircularHarmonicFunc( ND1_dihedral, ND1_dev );
 			dihedral_constraints_.push_back( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) );
 			pose.add_constraint( dihedral_constraints_[ dihedral_constraints_.size() ] );
 		}
 		else if ( msr_[i]->get_ligand_atom_name() == " NE2" ) {
 			TR << "Adding dihedral constraint for NE2 His" << std::endl;
-			dihedral_func = new CircularHarmonicFunc( NE2_dihedral, NE2_dev );
+			dihedral_func = new core::scoring::func::CircularHarmonicFunc( NE2_dihedral, NE2_dev );
 			dihedral_constraints_.push_back( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) );
 			pose.add_constraint( dihedral_constraints_[ dihedral_constraints_.size() ] );
 		}
@@ -290,21 +290,21 @@ AddZincSiteConstraints::add_constraints( pose::Pose & pose ) {
 
 			if(dihed_diff_180 < dihed_diff_0) {
 				TR << "Adding dihedral constraint for Oxy_anti" << std::endl;
-				dihedral_func = new CircularHarmonicFunc( NE2_dihedral, NE2_dev );
+				dihedral_func = new core::scoring::func::CircularHarmonicFunc( NE2_dihedral, NE2_dev );
 				dihedral_constraints_.push_back( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) );
 				pose.add_constraint( dihedral_constraints_[ dihedral_constraints_.size() ] );
 			}
 
  			else if(dihed_diff_0 < dihed_diff_180) {
 				TR << "Adding dihedral constraint for Oxy_syn" << std::endl;
-				dihedral_func = new CircularHarmonicFunc( ND1_dihedral, ND1_dev );
+				dihedral_func = new core::scoring::func::CircularHarmonicFunc( ND1_dihedral, ND1_dev );
 				dihedral_constraints_.push_back( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) );
 				pose.add_constraint( dihedral_constraints_[ dihedral_constraints_.size() ] );
 			}
 		}
 		else if ( msr_[i]->get_ligand_atom_name() == " SG " ) {
 			TR << "Adding dihedral constraint for SG Cys" << std::endl;
-			dihedral_func = new MinMultiHarmonicFunc( SG_dihedrals, SG_devs );
+			dihedral_func = new core::scoring::func::MinMultiHarmonicFunc( SG_dihedrals, SG_devs );
 			dihedral_constraints_.push_back( new DihedralConstraint( id1, id2, id3, id4, dihedral_func ) );
 			pose.add_constraint( dihedral_constraints_[ dihedral_constraints_.size() ] );
 		}
@@ -528,7 +528,7 @@ AddZincSiteConstraints::output_constraints_file( core::pose::Pose const & pose )
 	for( Size i(1); i <= distance_constraints_.size(); ++i ) {
 		AtomID lig_atom_id( distance_constraints_[i]->atom(1) );
 		AtomID zinc_id    ( distance_constraints_[i]->atom(2) );
-		const scoring::constraints::HarmonicFunc & dist_func = dynamic_cast< const scoring::constraints::HarmonicFunc& >( distance_constraints_[i]->get_func() );
+		const scoring::func::HarmonicFunc & dist_func = dynamic_cast< const scoring::func::HarmonicFunc& >( distance_constraints_[i]->get_func() );
 		OutputConstraints << "AtomPair  "
 		<< pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " " << lig_atom_id.rsd() << pose.pdb_info()->chain(lig_atom_id.rsd()) << " "
 		<< pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << " " << zinc_id.rsd() << pose.pdb_info()->chain(zinc_id.rsd()) << " "
@@ -541,7 +541,7 @@ AddZincSiteConstraints::output_constraints_file( core::pose::Pose const & pose )
 		AtomID pre_lig_atom_id( angle_constraints_[i]->atom(1) );
 		AtomID lig_atom_id    ( angle_constraints_[i]->atom(2) );
 		AtomID zinc_id        ( angle_constraints_[i]->atom(3) );
-		const scoring::constraints::HarmonicFunc & angle_func = dynamic_cast< const scoring::constraints::HarmonicFunc& >( angle_constraints_[i]->get_func() );
+		const scoring::func::HarmonicFunc & angle_func = dynamic_cast< const scoring::func::HarmonicFunc& >( angle_constraints_[i]->get_func() );
 		OutputConstraints << "Angle     "
 		<< pose.residue(pre_lig_atom_id.rsd()).atom_name(pre_lig_atom_id.atomno()) << " " << pre_lig_atom_id.rsd() << pose.pdb_info()->chain(pre_lig_atom_id.rsd()) << " "
 		<< pose.residue(lig_atom_id.rsd()).atom_name(lig_atom_id.atomno()) << " " << lig_atom_id.rsd() << pose.pdb_info()->chain(lig_atom_id.rsd()) << " "
@@ -556,7 +556,7 @@ AddZincSiteConstraints::output_constraints_file( core::pose::Pose const & pose )
 		AtomID pre_lig_atom_id    ( dihedral_constraints_[i]->atom(2) );
 		AtomID lig_atom_id        ( dihedral_constraints_[i]->atom(3) );
 		AtomID zinc_id            ( dihedral_constraints_[i]->atom(4) );
-		const scoring::constraints::CircularHarmonicFunc & dihed_func = dynamic_cast< const scoring::constraints::CircularHarmonicFunc& >( dihedral_constraints_[i]->get_func() );
+		const scoring::func::CircularHarmonicFunc & dihed_func = dynamic_cast< const scoring::func::CircularHarmonicFunc& >( dihedral_constraints_[i]->get_func() );
 		OutputConstraints << "Dihedral  "
 		<< pose.residue(pre_pre_lig_atom_id.rsd()).atom_name(pre_pre_lig_atom_id.atomno()) << " " << pre_pre_lig_atom_id.rsd() << pose.pdb_info()->chain(pre_pre_lig_atom_id.rsd()) << " "
 		<< pose.residue(pre_lig_atom_id.rsd()).atom_name(pre_lig_atom_id.atomno()) << " " << pre_lig_atom_id.rsd() << pose.pdb_info()->chain(pre_lig_atom_id.rsd()) << " "
@@ -571,7 +571,7 @@ AddZincSiteConstraints::output_constraints_file( core::pose::Pose const & pose )
 		AtomID lig_atom_id_1( tetrahedral_constraints_[i]->atom(1) );
 		AtomID       zinc_id( tetrahedral_constraints_[i]->atom(2) );
 		AtomID lig_atom_id_2( tetrahedral_constraints_[i]->atom(3) );
-		const scoring::constraints::HarmonicFunc & tetr_func = dynamic_cast< const scoring::constraints::HarmonicFunc& >( tetrahedral_constraints_[i]->get_func() );
+		const scoring::func::HarmonicFunc & tetr_func = dynamic_cast< const scoring::func::HarmonicFunc& >( tetrahedral_constraints_[i]->get_func() );
 		OutputConstraints << "Angle     "
 		<< pose.residue(lig_atom_id_1.rsd()).atom_name(lig_atom_id_1.atomno()) << " " << lig_atom_id_1.rsd() << pose.pdb_info()->chain(lig_atom_id_1.rsd()) << " "
 		<< pose.residue(zinc_id.rsd()).atom_name(zinc_id.atomno()) << " " << zinc_id.rsd() << pose.pdb_info()->chain(zinc_id.rsd()) << " "

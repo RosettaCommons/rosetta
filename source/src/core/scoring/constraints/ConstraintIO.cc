@@ -64,7 +64,7 @@ ConstraintIO::get_instance() {
 	return instance_;
 }
 
-FuncFactory & ConstraintIO::get_func_factory(void) {
+func::FuncFactory & ConstraintIO::get_func_factory(void) {
 	return func_factory_;
 }
 
@@ -73,7 +73,7 @@ ConstraintFactory & ConstraintIO::get_cst_factory(void) {
 }
 
 ConstraintIO* ConstraintIO::instance_ = 0;
-FuncFactory ConstraintIO::func_factory_;
+func::FuncFactory ConstraintIO::func_factory_;
 //ConstraintFactory ConstraintIO::cst_factory_;
 
 
@@ -124,7 +124,7 @@ ConstraintIO::read_cst_atom_pairs(
 		id::AtomID atom1( pose.residue_type( res1 ).atom_index( name1 ), res1 );
 		id::AtomID atom2( pose.residue_type( res2 ).atom_index( name2 ), res2 );
 
-		FuncOP aFunc = func_factory_.func_types_[ func_type ]->clone();
+		func::FuncOP aFunc = func_factory_.func_types_[ func_type ]->clone();
 		aFunc->read_data( line_stream );
 
 		if ( tr.Debug.visible() ) {
@@ -167,7 +167,7 @@ ConstraintOP ConstraintIO::parse_atom_pair_constraint(
 	id::AtomID atom1( pose.residue_type( res1 ).atom_index( name1 ), res1 );
 	id::AtomID atom2( pose.residue_type( res2 ).atom_index( name2 ), res2 );
 
-	FuncOP aFunc = func_factory_.func_types_[ func_type ]->clone();
+	func::FuncOP aFunc = func_factory_.func_types_[ func_type ]->clone();
 	aFunc->read_data( data );
 
 	if ( tr.Debug.visible() ) {
@@ -229,7 +229,7 @@ ConstraintIO::read_cst_coordinates(
 		id::AtomID atom1( pose.residue_type( res1 ).atom_index( name1 ), res1 );
 		id::AtomID atom2( pose.residue_type( res2 ).atom_index( name2 ), res2 );
 
-		FuncOP aFunc = func_factory_.func_types_[ func_type ]->clone();
+		func::FuncOP aFunc = func_factory_.func_types_[ func_type ]->clone();
 		aFunc->read_data( line_stream );
 
 		//		if ( tr.Debug.visible() ) {
@@ -276,7 +276,7 @@ ConstraintOP ConstraintIO::parse_coordinate_constraint(
 	id::AtomID atom1( pose.residue_type( fixed_res ).atom_index( fixed_res_name ), fixed_res );
 	id::AtomID atom2( pose.residue_type( other_res ).atom_index( other_res_name ), other_res );
 
-	FuncOP aFunc = func_factory_.func_types_[ func_type ]->clone();
+	func::FuncOP aFunc = func_factory_.func_types_[ func_type ]->clone();
 	aFunc->read_data( data );
 
 	if ( tr.Debug.visible() ) {
@@ -326,7 +326,7 @@ ConstraintIO::read_cst_angles(
 
 		tr.Debug	<< "read: " << name1 << " " << res1 << " "  <<  name2 << " "
 							<< res2 << " " << name3 << " " << res3 << std::endl;
-		FuncOP aFunc = func_factory_.func_types_[ func_type ]->clone();
+		func::FuncOP aFunc = func_factory_.func_types_[ func_type ]->clone();
 		aFunc->read_data( line_stream );
 
 		if ( tr.Debug.visible() ) {
@@ -573,7 +573,7 @@ ConstraintOP
 ConstraintIO::read_individual_constraint_new(
 	std::istream & data,
 	pose::Pose const& pose,
-	FuncFactory const & func_factory,
+	func::FuncFactory const & func_factory,
 	std::string tag
 )
 {
@@ -623,7 +623,7 @@ ConstraintOP
 ConstraintIO::read_individual_constraint_new(
 	std::istream & data,
 	pose::Pose const& pose,
-	FuncFactory const & func_factory
+	func::FuncFactory const & func_factory
 )
 {
  	std::string tag, dummy_line;
@@ -691,4 +691,3 @@ ConstraintIO::parse_residue( pose::Pose const& pose, std::string const residue_s
 } //constraints
 } //scoring
 } //core
-

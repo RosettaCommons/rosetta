@@ -56,7 +56,7 @@ AmbiguousMultiConstraint::AmbiguousMultiConstraint(
 /// @brief to the member_it->score() function
 void
 AmbiguousMultiConstraint::score(
-	core::scoring::constraints::XYZ_Func const & xyz_func,
+	core::scoring::func::XYZ_Func const & xyz_func,
 	core::scoring::EnergyMap const & weights,
 	core::scoring::EnergyMap & emap
 ) const
@@ -139,7 +139,7 @@ AmbiguousMultiConstraint::remap_resid( core::id::SequenceMapping const &seqmap )
 void
 AmbiguousMultiConstraint::fill_f1_f2(
 	core::id::AtomID const & atom,
-	core::scoring::constraints::XYZ_Func const & xyz,
+	core::scoring::func::XYZ_Func const & xyz,
 	core::Vector & F1,
 	core::Vector & F2,
 	core::scoring::EnergyMap const & weights
@@ -186,4 +186,3 @@ AmbiguousMultiConstraint::show_violations( std::ostream& out, core::pose::Pose c
 
 }
 }
-

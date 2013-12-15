@@ -156,13 +156,13 @@ public:
 		using namespace core::scoring;
 		using namespace core::scoring::constraints;
 
-		FourPointsFunc fourpts;
+		core::scoring::func::FourPointsFunc fourpts;
 		fourpts.xyz( 1, Vector( 0, 0, 0 ) );
 		fourpts.xyz( 2, Vector( 0, 1.0, 0 ));
 		fourpts.xyz( 3, Vector( 0.707, 0.707, 0 ));
 		fourpts.xyz( 4, Vector( 0.707, 0.707, 1.0 )); // 90 degrees
 
-		HarmonicFuncOP func = new HarmonicFunc( numeric::conversions::radians( 109 ), 10 );
+		core::scoring::func::HarmonicFuncOP func = new core::scoring::func::HarmonicFunc( numeric::conversions::radians( 109 ), 10 );
 
 		AtomID at1( 1, 1), at2( 2, 1 ), at3( 3, 1 );
 
@@ -187,11 +187,11 @@ public:
 		core::pose::PoseOP ubqstump = create_twores_1ubq_poseop();
 		TS_ASSERT( ubqstump->total_residue() == 2 );
 		AtomID at1( 1, 1), at2( 2, 1 ), at3( 3, 1 );
-		HarmonicFuncOP func = new HarmonicFunc( numeric::conversions::radians( 109 ), 10 );
+		core::scoring::func::HarmonicFuncOP func = new core::scoring::func::HarmonicFunc( numeric::conversions::radians( 109 ), 10 );
 		AngleConstraint ang_cst( at1, at2, at3, func );
 		EnergyMap weights, emap;
 		weights[ angle_constraint ] = 1.0;
-		ConformationXYZ cfunc( ubqstump->conformation() );
+		core::scoring::func::ConformationXYZ cfunc( ubqstump->conformation() );
 		ang_cst.score( cfunc, weights, emap );
 		Size before_precision = std::cout.precision();
 		std::cout.precision( 16 );

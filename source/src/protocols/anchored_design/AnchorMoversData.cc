@@ -925,7 +925,7 @@ void protocols::anchored_design::AnchorMoversData::anchor_noise_constraints_setu
 	for(core::Size i(1); i<=this_many_constraints; ++i, ++opp_CA){
 		using namespace core::scoring::constraints;
 
-		HarmonicFuncOP anchor_func( new HarmonicFunc(opp_CA->first, sd));
+		core::scoring::func::HarmonicFuncOP anchor_func( new core::scoring::func::HarmonicFunc(opp_CA->first, sd));
 
 		TR << "anchor_noise_constraints constraint, opp_CA, center, sd: " << opp_CA->second << " " << opp_CA->first << " " << sd << std::endl;
 

@@ -45,18 +45,18 @@ public:
     SiteConstraintTests() {}
 
     pose::PoseOP the_pose;
-    FlatHarmonicFuncOP func;
+    core::scoring::func::FlatHarmonicFuncOP func;
     std::string name;
-    
+
     // Shared initialization goes here.
 	void setUp() {
 		core_init();
         the_pose = new pose::Pose;
 		core::import_pose::centroid_pose_from_pdb( *the_pose, "protocols/scoring/dock_in.pdb" );
-        func = new FlatHarmonicFunc( 0.0, 1.0, 5.0 );
+        func = new core::scoring::func::FlatHarmonicFunc( 0.0, 1.0, 5.0 );
         name = "CA";
 	}
-    
+
 	// Shared finalization goes here.
 	void tearDown() {
         the_pose = 0;
@@ -65,45 +65,44 @@ public:
     }
 
     void test_site_constraint_near_interface() {
-        
+
         Size res = 192;
         SiteConstraintOP site_cst = new SiteConstraint();
         site_cst->setup_csts( res, name, "I", *the_pose, func );
-        
+
         EnergyMap weights, emap;
-        ConformationXYZ xyz_func( the_pose->conformation() );
-		
+        core::scoring::func::ConformationXYZ xyz_func( the_pose->conformation() );
+
         weights[ atom_pair_constraint ] = 1.0;
 		site_cst->score( xyz_func, weights, emap );
-        
+
         Size before_precision = std::cout.precision();
 		std::cout.precision( 16 );
-		
+
         TS_ASSERT_DELTA( emap[ atom_pair_constraint ],   0.000000, 1e-6 );
-        
+
         std::cout.precision( before_precision );
-        
+
     }
     void test_site_constraint_far_from_interface() {
-        
+
         Size res = 3;
         Real distance = 26.71618914; // measured in pdb file
         SiteConstraintOP site_cst = new SiteConstraint();
         site_cst->setup_csts( res, name, "I", *the_pose, func );
-        
+
         EnergyMap weights, emap;
 		weights[ atom_pair_constraint ] = 1.0;
-        ConformationXYZ xyz_func( the_pose->conformation() );
+        core::scoring::func::ConformationXYZ xyz_func( the_pose->conformation() );
 		site_cst->score( xyz_func, weights, emap );
-        
+
         Size before_precision = std::cout.precision();
 		std::cout.precision( 16 );
 		//std::cout << "Best score from site constraint: " << emap[ atom_pair_constraint ] << std::endl;
         //std::cout << "What I think the score should be:" << func->func( distance ) << std::endl;
         TS_ASSERT_DELTA( emap[ atom_pair_constraint ],   func->func( distance ), 1e-6 );
-        
+
         std::cout.precision( before_precision );
-        
+
     }
 };
-

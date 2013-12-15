@@ -36,7 +36,7 @@ namespace constraints {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
-AmbiguousNMRConstraint::AmbiguousNMRConstraint( FuncOP func ):
+AmbiguousNMRConstraint::AmbiguousNMRConstraint( func::FuncOP func ):
 	MultiConstraint( atom_pair_constraint ),
 	func_( func )
 {
@@ -45,7 +45,7 @@ AmbiguousNMRConstraint::AmbiguousNMRConstraint( FuncOP func ):
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Constructor
-AmbiguousNMRConstraint::AmbiguousNMRConstraint( ConstraintCOPs const& cst_in, FuncOP func ):
+AmbiguousNMRConstraint::AmbiguousNMRConstraint( ConstraintCOPs const& cst_in, func::FuncOP func ):
 	MultiConstraint( cst_in, atom_pair_constraint ),
 	func_( func )
 {
@@ -62,7 +62,7 @@ AmbiguousNMRConstraint::AmbiguousNMRConstraint( ConstraintCOPs const& cst_in, Fu
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief ScoreFunction, scores all member constraints but only reports the lowest one
 void
-AmbiguousNMRConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & /*weights*/, EnergyMap & emap ) const
+AmbiguousNMRConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & /*weights*/, EnergyMap & emap ) const
 {
 
 	core::Real cum_invdist6 = 0;
@@ -93,11 +93,11 @@ AmbiguousNMRConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & /*we
 core::Real
 AmbiguousNMRConstraint::dist( core::pose::Pose const& pose ) const
 {
-	return dist( ConformationXYZ( pose.conformation() ) );
+	return dist( func::ConformationXYZ( pose.conformation() ) );
 }
 
 core::Real
-AmbiguousNMRConstraint::dist( XYZ_Func const & xyz ) const
+AmbiguousNMRConstraint::dist( func::XYZ_Func const & xyz ) const
 {
 	core::Real cum_invdist6 = 0;
 
@@ -146,7 +146,7 @@ AmbiguousNMRConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) c
 void
 AmbiguousNMRConstraint::fill_f1_f2(
 	AtomID const & atom,
-	XYZ_Func const & xyz,
+	func::XYZ_Func const & xyz,
 	Vector & F1,
 	Vector & F2,
 	EnergyMap const & weights
@@ -175,7 +175,7 @@ AmbiguousNMRConstraint::fill_f1_f2(
                F1 += 1.0 * scale_i * out_wderiv * in_deriv * f1;
                F2 += 1.0 * scale_i * out_wderiv * in_deriv * f2;
         }
-        //              tr.Trace << "wderiv " << wderiv << std::endl;	
+        //              tr.Trace << "wderiv " << wderiv << std::endl;
 
 
 	//		tr.Trace << "wderiv " << wderiv << std::endl;
@@ -202,7 +202,7 @@ void
 AmbiguousNMRConstraint::read_def(
 	std::istream& data,
 	core::pose::Pose const& pose,
-	FuncFactory const & func_factory
+	func::FuncFactory const & func_factory
 )
 {
 	std::string func_type;

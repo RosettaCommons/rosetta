@@ -50,7 +50,7 @@ public:
 	/// @brief simple test minimization
 	void test_harmonic_func()
 	{
-		using namespace core::scoring::constraints;
+		using namespace core::scoring::func;
 
 		HarmonicFuncOP func( new HarmonicFunc( 5.16, 1.5 ) );
 

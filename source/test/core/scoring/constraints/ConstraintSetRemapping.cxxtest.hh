@@ -130,8 +130,8 @@ void test_constraint_set_remapping()
 	scorefxn->set_weight( scoring::backbone_stub_constraint, 1.0 );
 
 	core::Real const stddev_radians = numeric::conversions::radians( 5.0 );
-	FuncOP some_func = new CircularHarmonicFunc( 1.05, stddev_radians );
-	FuncOP some_other_func = new HarmonicFunc( 0.5, 1.0 );
+	core::scoring::func::FuncOP some_func = new core::scoring::func::CircularHarmonicFunc( 1.05, stddev_radians );
+	core::scoring::func::FuncOP some_other_func = new core::scoring::func::HarmonicFunc( 0.5, 1.0 );
 
 	utility::vector1< core::Size > cst_positions;
 	cst_positions.push_back( 3 );

@@ -240,8 +240,8 @@ SheetConstraintsRCG::generate_remodel_constraints( Pose const & pose )
 	using core::scoring::constraints::BoundFunc;
 	using core::scoring::constraints::ConstraintOPs;
 	using core::scoring::constraints::OffsetPeriodicBoundFunc;
-	using core::scoring::constraints::ScalarWeightedFunc;
-	using core::scoring::constraints::ScalarWeightedFuncOP;
+	using core::scoring::func::ScalarWeightedFunc;
+	using core::scoring::func::ScalarWeightedFuncOP;
 	using protocols::fldsgn::topology::StrandPairing;
 	using protocols::fldsgn::topology::StrandPairings;
 	using protocols::fldsgn::topology::StrandPairingOP;
@@ -257,7 +257,7 @@ SheetConstraintsRCG::generate_remodel_constraints( Pose const & pose )
 	core::Real ub( dist_ );
 	core::Real sd( 1.0 );
 	std::string tag( "constraints_in_beta_sheet" );
-	ScalarWeightedFuncOP cstfunc = new ScalarWeightedFunc( weight_, new BoundFunc( lb, ub, sd, tag ) );
+	core::scoring::func::ScalarWeightedFuncOP cstfunc = new core::scoring::func::ScalarWeightedFunc( weight_, new BoundFunc( lb, ub, sd, tag ) );
 	// TL Oct '12 add weights to angle/dihedral constraints
 	ScalarWeightedFuncOP cacb_dihedral_func = new ScalarWeightedFunc( weight_, new OffsetPeriodicBoundFunc(-cacb_dihedral_tolerance_,cacb_dihedral_tolerance_, std::sqrt(1.0/42.0), "dihed_cacb", 6.28, 0.0 ) );
 	ScalarWeightedFuncOP bb_dihedral_func = new ScalarWeightedFunc( weight_, new OffsetPeriodicBoundFunc(-bb_dihedral_tolerance_,bb_dihedral_tolerance_, std::sqrt(1.0/42.0), "dihed_bb", 3.14, 0.0 ) );
@@ -270,7 +270,7 @@ SheetConstraintsRCG::generate_remodel_constraints( Pose const & pose )
 		if( pose.residue_type(i).is_ligand() ) {
 			nres--;
 			TR << pose.residue( i ).name3() << i << " = ligand" << std::endl;
-		}	
+		}
 	}
 	runtime_assert( blueprint_ );
 	TR << "Blueprint num res=" << blueprint_->total_residue() << std::endl;

@@ -198,7 +198,7 @@ public:
 	remap_resid( core::id::SequenceMapping const & smap );
 
 	static
-	core::scoring::constraints::FuncOP
+	core::scoring::func::FuncOP
 	convert_GeomSampleInfo_to_FuncOP(
 		toolbox::match_enzdes_util::GeomSampleInfoCOP gsi,
 		core::Real & ideal_val);
@@ -246,7 +246,7 @@ private: //data
 
 	toolbox::match_enzdes_util::MatchConstraintFileInfoCOP mcfi_;
 
-	core::scoring::constraints::FuncOP disAB_, angleA_, angleB_, torsionA_, torsionB_, torsionAB_;
+	core::scoring::func::FuncOP disAB_, angleA_, angleB_, torsionA_, torsionB_, torsionAB_;
 
 	core::Real ndisAB_, nangleA_, nangleB_, ntorsionA_, ntorsionB_, ntorsionAB_;
 

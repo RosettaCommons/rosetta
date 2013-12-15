@@ -290,7 +290,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 	using namespace id;
 	using namespace constraints;
 
-	ResiduePairXYZ respairxyz( res1, res2 );
+	func::ResiduePairXYZ respairxyz( res1, res2 );
 	Vector f1( 0.0 ), f2( 0.0 );
 	if ( res1_atom_indices.derivative_atom( at1 ) == CYS_C_ALPHA ) {
 
@@ -970,4 +970,3 @@ SG_Dist_Func::fa_ssdist_scores()
 }
 }
 }
-

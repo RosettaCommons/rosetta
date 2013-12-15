@@ -79,7 +79,7 @@
 #endif
 
 //moves to src/basic/options_rosetta.py
-//OPT_1GRP_KEY(Boolean, sampling, no_detailed_balance) 
+//OPT_1GRP_KEY(Boolean, sampling, no_detailed_balance)
 //OPT_1GRP_KEY(Integer,sampling,ntrials)
 //OPT_1GRP_KEY(Real,sampling,mc_kt)
 //OPT_1GRP_KEY(Integer, sampling, interval_pose_dump)
@@ -95,7 +95,7 @@
 //OPT_1GRP_KEY(Real, sampling, starting_temp)
 //OPT_1GRP_KEY(Boolean, sampling, add_constraints)
 
-//dump or save part of the structure? 
+//dump or save part of the structure?
 //OPT_1GRP_KEY(Boolean, sampling, save_loops_only )
 //OPT_1GRP_KEY(Boolean, sampling, dump_loops_only )
 
@@ -221,7 +221,7 @@ void CanonicalSamplingMover::set_defaults_from_cmdline() {
   //ramp_temperature_ = option[ canonical_sampling::sampling::ramp_temperature ]();
   save_loops_only_ =  option[ basic::options::OptionKeys::canonical_sampling::sampling::save_loops_only ]();
   dump_loops_only_ =  option[ basic::options::OptionKeys::canonical_sampling::sampling::dump_loops_only ]();
-	
+
   //if in boinc mode, you need to alter the outputs
   if( option[ run::protocol ].user() && option[run::protocol]() == "canonical_sampling") {
     //assumes this flag is only set when you're using the minirosetta-app
@@ -252,7 +252,7 @@ CanonicalSamplingMover::periodic_range(
 
 
   std::string CanonicalSamplingMover::get_ABGEO_string( core::pose::Pose & pose, protocols::loops::Loops & loop ) {
- 
+
   std::string ABGEO_assignment = "";
   for( protocols::loops::Loops::const_iterator itr = loop.begin(); itr != loop.end(); itr++ ) {
     for( core::Size ii = itr->start(); ii <= itr->stop(); ii++ ){
@@ -330,7 +330,7 @@ void CanonicalSamplingMover::setup_constraints( core::pose::Pose & pose ){
 	    new core::scoring::constraints::AtomPairConstraint(
 	       core::id::AtomID(pose.residue(itr_res_i).atom_index(" CA "),itr_res_i),
 	       core::id::AtomID(pose.residue(itr_res_j).atom_index(" CA "),itr_res_j),
-	       new core::scoring::constraints::HarmonicFunc( CA_dist, cst_tol )
+	       new core::scoring::func::HarmonicFunc( CA_dist, cst_tol )
 	    )
 	);
       }
@@ -366,7 +366,7 @@ void CanonicalSamplingMover::dump_xtc_format_decoy(
 						   loops::Loops const& loop_to_dump
 						   ) {
 
-  
+
 }
 **/
 
@@ -414,7 +414,7 @@ void CanonicalSamplingMover::dump_decoy_or_score(
     + lead_zero_string_of( rest100_rest10, 1)
     + score_dump_str;
 
-  if( dump_loops_only_ /* save only loop conformations */ 
+  if( dump_loops_only_ /* save only loop conformations */
       && loop_to_dump.num_loop() > 0 ) {
     // make pose with just loop coordinates
 
@@ -454,7 +454,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 
   runtime_assert( pool_rms_ );
 
-  // set up loop definition if we're only sampling loop conformations. 
+  // set up loop definition if we're only sampling loop conformations.
   // even if we're not sampling loop defs, make empty loop definition
   loops::Loops loops;
   if( option[basic::options::OptionKeys::loops::loop_file].user() ) {
@@ -585,7 +585,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 	}
 
       }
-    
+
   }
 
   /**********************************CHECKPOINTING ****************************************************/
@@ -727,7 +727,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 
 	    if( above_threshold ){
 	      std::string newtag = "new-structure-tag";
-	      if( save_loops_only_ && loops.num_loop() > 0 ){ 
+	      if( save_loops_only_ && loops.num_loop() > 0 ){
 		hpool_ptr->add_new( looponly, newtag, address, true, new_level_start );
 	      } else {
 		hpool_ptr->add_new( pose, newtag, address, true, new_level_start );
@@ -838,4 +838,3 @@ CanonicalSamplingMover::get_name() const {
 
 } //moves
 } //protocols
-

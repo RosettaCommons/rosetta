@@ -67,11 +67,10 @@ MDBase::cst_on_pose( pose::Pose &pose )
 			Size i_ca = pose.residue(i_res).atom_index(" CA ");
 			id::AtomID atomID( i_ca, i_res );
 
-			pose.add_constraint(
-													new scoring::constraints::CoordinateConstraint
-													( atomID, atomID, pose.residue(i_res).xyz(i_ca),
-														new scoring::constraints::HarmonicFunc( 0.0, cst_sdev_ ) ) 
-													);
+			pose.add_constraint(new scoring::constraints::CoordinateConstraint
+								( atomID, atomID, pose.residue(i_res).xyz(i_ca),
+								  new scoring::func::HarmonicFunc( 0.0, cst_sdev_ ) )
+								);
 		}
 	}
 }
@@ -94,7 +93,7 @@ MDBase::parse_schfile( std::string const schfile ){
 
 	// Clean first
 	mdsch_.resize( 0 );
-	
+
 	// Put in by reading line by line
 	for( Size i = 0; i < filelines.size(); i++ ){
 		line = filelines[i];

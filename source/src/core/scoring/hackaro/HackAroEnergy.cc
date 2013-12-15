@@ -217,7 +217,7 @@ HackAroEnergy::get_aro_axis_score_DIST(
 	static Real const upper_bound_(  7.0 );
 	static Real const bound_zone_ (  2.0 ); // bonus is flat below 5.0 Angstroms.
 	static Real const well_depth_ (  1.0 ); // angular dependence goes negative.
-	static FuncOP dist_func_( new FadeFunc( lower_bound_, upper_bound_, bound_zone_, well_depth_) );
+	static core::scoring::func::FuncOP dist_func_( new core::scoring::func::FadeFunc( lower_bound_, upper_bound_, bound_zone_, well_depth_) );
 
 	Real const value = dist_func_->func( dist );
 	deriv = dist_func_->dfunc( dist );

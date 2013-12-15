@@ -173,7 +173,7 @@ void add_coordinate_constraints(
 	core::Real const coord_sdev,
 	std::string anchor_atom_name, // if this is the empty string, use the same string as "atom_name"
 	std::string atom_name,
-	core::scoring::constraints::HarmonicFuncOP & coord_cst_func
+	core::scoring::func::HarmonicFuncOP & coord_cst_func
 )
 {
 
@@ -203,7 +203,7 @@ void add_coordinate_constraints(
 	core::id::AtomID const anchor_atom( core::id::AtomID( pose.residue( anchor_resnum ).atom_index( anchor_atom_name ), anchor_resnum ) );
 
 	if( !coord_cst_func ) {
-		coord_cst_func = new core::scoring::constraints::HarmonicFunc( 0.0, 0.0 );
+		coord_cst_func = new core::scoring::func::HarmonicFunc( 0.0, 0.0 );
 	}
 	coord_cst_func->sd( coord_sdev );
 
@@ -273,7 +273,7 @@ CoordinateCst::apply( pose::Pose & pose )
 	}
 
 
-	core::scoring::constraints::HarmonicFuncOP coord_cst_func = new core::scoring::constraints::HarmonicFunc( 0.0, 0.0 );
+	core::scoring::func::HarmonicFuncOP coord_cst_func = new core::scoring::func::HarmonicFunc( 0.0, 0.0 );
 	add_coordinate_constraints( pose, constrain_residues_set, anchor_res, stddev_, anchor_atom_id_, atom_id_, coord_cst_func );
 
 }//end apply

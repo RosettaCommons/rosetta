@@ -96,7 +96,7 @@ void
 SequenceCouplingConstraint::read_def(
 	std::istream & is,
 	Pose const & pose,
-	FuncFactory const &
+	core::scoring::func::FuncFactory const &
 )
 {
 	Size residue_index1(0);
@@ -204,7 +204,7 @@ SequenceCouplingConstraint::remap_resid(
 // should put unweighted scores into emap.
 void
 SequenceCouplingConstraint::score(
-	XYZ_Func const & xyz_func,
+	core::scoring::func::XYZ_Func const & xyz_func,
 	EnergyMap const & weights,
 	EnergyMap & emap
 ) const

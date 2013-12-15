@@ -29,7 +29,9 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
+
+using namespace core::scoring::constraints;
 
 SOGFunc_Impl::~SOGFunc_Impl() {}
 

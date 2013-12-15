@@ -100,8 +100,8 @@ void setup_coordinate_constraints(const Pose& pose, LoopsCOP aligned, Constraint
   using core::id::AtomID;
   using core::scoring::constraints::ConstraintCOP;
   using core::scoring::constraints::CoordinateConstraint;
-  using core::scoring::constraints::FuncOP;
-  using core::scoring::constraints::HarmonicFunc;
+  using core::scoring::func::FuncOP;
+  using core::scoring::func::HarmonicFunc;
 
   // const Real delta = option[OptionKeys::cm::sanitize::bound_delta](); // Unused variable causes warning.
   // const Real sd = option[OptionKeys::cm::sanitize::bound_sd](); // Unused variable causes warning.

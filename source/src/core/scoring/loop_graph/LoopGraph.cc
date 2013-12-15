@@ -131,7 +131,7 @@ namespace loop_graph {
 			}
 
 			// Note loop_fixed_cost_ needs to be my current loop_fixed_cost_ but corrected by 1.5 * k_B_T_ * log( rna_persistence_length2_ )
-			FuncOP func = new GaussianChainFunc( total_gaussian_variance, other_distances );
+			core::scoring::func::FuncOP func = new core::scoring::func::GaussianChainFunc( total_gaussian_variance, other_distances );
 			Real const loop_closure_energy = func->func( main_distance );
 			total_energy_ += loop_closure_energy;
 

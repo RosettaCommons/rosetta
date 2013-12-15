@@ -59,7 +59,7 @@ private:
 	utility::vector1<utility::vector1<FourAtomsConstraintDataOP> > data_;
 	void read_constraints(std::string);
 	Size get_atom_type(std::string atom_name);
-	core::scoring::constraints::FuncFactory factory_;
+	core::scoring::func::FuncFactory factory_;
 };
 
 
@@ -78,4 +78,3 @@ public:
 } // protocols
 
 #endif /* INCLUDED_protocols_frag_picker_scores_AtomPairConstraintsScore_HH */
-

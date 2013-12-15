@@ -148,7 +148,7 @@ namespace simple_moves {
 				( *conformation::ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ),
 					pose.total_residue()/2 );
 		int virt_resno = pose.total_residue();
-		FuncOP func( new HarmonicFunc( 0.0, 1.0 ) );
+		core::scoring::func::FuncOP func( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 
 		// std::cerr << "add sucker atoms" << std::endl;
 		int count = 0;

@@ -148,7 +148,7 @@ ResidueTypeLinkingConstraint::remapped_clone( pose::Pose const& src, pose::Pose 
 // emap. Although the current set of weights currently is provided, Constraint objects
 // should put unweighted scores into emap.
 void
-ResidueTypeLinkingConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const
+ResidueTypeLinkingConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const
 {
 	Real const weight(weights[ this->score_type() ] );
 //	std::cout << "res_type_linking_cst weight " << weight << std::endl;
@@ -167,7 +167,7 @@ ResidueTypeLinkingConstraint::score( XYZ_Func const & xyz_func, EnergyMap const 
 void
 ResidueTypeLinkingConstraint::fill_f1_f2(
 	AtomID const & ,//atom,
-	XYZ_Func const &,
+	func::XYZ_Func const &,
 	Vector & ,//F1,
 	Vector & ,//F2,
 	EnergyMap const & //weights

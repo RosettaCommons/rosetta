@@ -24,7 +24,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 Real
 CircularSigmoidalFunc::func( Real const x ) const {
@@ -61,4 +61,3 @@ void CircularSigmoidalFunc::show_definition( std::ostream & out ) const
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

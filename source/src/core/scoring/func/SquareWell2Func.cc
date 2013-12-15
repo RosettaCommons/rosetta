@@ -29,13 +29,13 @@ static basic::Tracer TR("core.scoring.constraints.SquareWall2Func");
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 Real
 SquareWell2Func::func( Real const x ) const
 {
 	Real const z = ( numeric::nearest_angle_radians(x,x0_)-x0_ );
-//	TR<<"x="<<x<<"   x0_="<<x0_<<"   |x-x0|="<<std::fabs(z) <<"  x_range_="<<x_range_<<std::endl;	
+//	TR<<"x="<<x<<"   x0_="<<x0_<<"   |x-x0|="<<std::fabs(z) <<"  x_range_="<<x_range_<<std::endl;
 	if ( std::fabs(z) > x_range_ ) {
 		return well_depth_;
 	}
@@ -80,4 +80,3 @@ SquareWell2Func::show_violations( std::ostream& out, Real x, Size verbose_level,
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

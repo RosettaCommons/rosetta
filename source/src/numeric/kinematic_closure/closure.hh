@@ -17,8 +17,8 @@
 /// @author Evangelos A. Coutsias
 /// @author Daniel J. Mandell
 
-#ifndef INCLUDED_numeric_kinematic_closure_bridgeObjects_hh
-#define INCLUDED_numeric_kinematic_closure_bridgeObjects_hh
+#ifndef INCLUDED_numeric_kinematic_closure_hh
+#define INCLUDED_numeric_kinematic_closure_hh
 
 // Rosetta Headers
 #include <numeric/types.hh>

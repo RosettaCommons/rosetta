@@ -172,7 +172,7 @@ void apply_chi_cst( core::pose::Pose & pose, core::pose::Pose const & ref_pose )
 		Residue const & res = pose.residue( i );
 		if ( res.is_RNA() && ( res.aa() == na_rad || res.aa() == na_rgu ) ) {
 			Real const chi = numeric::conversions::radians( ref_pose.torsion( TorsionID( i, id::CHI, 1 ) ) );
-			FuncOP chi_cst_func ( new CharmmPeriodicFunc( chi, 1.0, 1.0 ) );
+			core::scoring::func::FuncOP chi_cst_func ( new core::scoring::func::CharmmPeriodicFunc( chi, 1.0, 1.0 ) );
 			AtomID const atom1 ( res.atom_index( "C2'" ), i );
 			AtomID const atom2 ( res.atom_index( "C1'" ), i );
 			AtomID const atom3 ( is_purine( res ) ? res.atom_index( "N9" ) : res.atom_index( "N1" ), i );

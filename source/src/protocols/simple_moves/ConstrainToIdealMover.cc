@@ -238,7 +238,7 @@ ConstrainToIdealMover::add_bond_constraint(
 															 pose_reference.residue( atom_id2.rsd() ).xyz( atom_name2 ) ).length();
 
 
-		FuncOP dist_harm_func_( new HarmonicFunc( bond_length, bond_length_sd_ ));
+		core::scoring::func::FuncOP dist_harm_func_( new core::scoring::func::HarmonicFunc( bond_length, bond_length_sd_ ));
 
 		cst_set->add_constraint( new AtomPairConstraint( atom_id1 ,
 																										 atom_id2,
@@ -296,7 +296,7 @@ ConstrainToIdealMover::add_bond_angle_constraint(
 
 		if (bond_angle < 0.001 ) TR << "WHAT THE HELL????????? " << std::endl;
 
-		FuncOP angle_harm_func_( new HarmonicFunc( bond_angle, bond_angle_sd_ ));
+		core::scoring::func::FuncOP angle_harm_func_( new core::scoring::func::HarmonicFunc( bond_angle, bond_angle_sd_ ));
 		cst_set->add_constraint( new AngleConstraint(
 																								 atom_id2 , atom_id1, atom_id3, angle_harm_func_,	rna_bond_geometry ) );
 

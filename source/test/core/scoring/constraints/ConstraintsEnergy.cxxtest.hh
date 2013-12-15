@@ -84,7 +84,7 @@ public:
 		sfxn.set_weight( atom_pair_constraint, 0.5 );
 
 		// Try to draw the tyrosine 3 sidechain towards the backbone oxygen on residue 19.
-		FuncOP harmonic_func = new HarmonicFunc( 4.0, 1.0 );
+		core::scoring::func::FuncOP harmonic_func = new core::scoring::func::HarmonicFunc( 4.0, 1.0 );
 		AtomPairConstraintOP cst1 = new AtomPairConstraint(
 			AtomID( pose.residue( 3  ).atom_index( "CE2" ), 3 ),
 			AtomID( pose.residue( 19 ).atom_index( "O"   ), 19),
@@ -113,7 +113,7 @@ public:
 		sfxn.set_weight( atom_pair_constraint, 0.5 );
 
 		// Try to push the tyrosine 3 sidechain away from CZ3.
-		FuncOP harmonic_func = new HarmonicFunc( 5.0, 1.0 );
+		core::scoring::func::FuncOP harmonic_func = new core::scoring::func::HarmonicFunc( 5.0, 1.0 );
 		AtomPairConstraintOP cst1 = new AtomPairConstraint(
 			AtomID( pose.residue( 3  ).atom_index( "CZ" ), 3 ),
 			AtomID( pose.residue( 6 ).atom_index(  "CZ3"   ), 6),
@@ -142,7 +142,7 @@ public:
 
 		// Try to draw the tyrosine 3 sidechain towards the backbone oxygen on residue 19.
 		// of course, this pair is a fixed distance in this minimization routine given the domain map
-		FuncOP harmonic_func = new HarmonicFunc( 3.5, 1.0 );
+		core::scoring::func::FuncOP harmonic_func = new core::scoring::func::HarmonicFunc( 3.5, 1.0 );
 		AtomPairConstraintOP cst1 = new AtomPairConstraint(
 			AtomID( pose.residue( 2 ).atom_index( "CD2" ), 2 ),
 			AtomID( pose.residue( 2 ).atom_index( "N"   ), 2 ),
@@ -171,7 +171,7 @@ public:
 		ScoreFunction sfxn;
 		sfxn.set_weight( angle_constraint, 0.5 );
 
-		FuncOP harmonic_func = new HarmonicFunc( numeric::constants::d::pi_over_2, numeric::constants::d::deg2rad * 5 );
+		core::scoring::func::FuncOP harmonic_func = new core::scoring::func::HarmonicFunc( numeric::constants::d::pi_over_2, numeric::constants::d::deg2rad * 5 );
 		ConstraintOP cst1 = new AngleConstraint(
 			AtomID( pose.residue( 6  ).atom_index( "CZ3" ), 6 ),
 			AtomID( pose.residue( 3 ).atom_index(  "CZ"  ), 3 ),
@@ -196,7 +196,7 @@ public:
 		ScoreFunction sfxn;
 		sfxn.set_weight( angle_constraint, 0.5 );
 
-		FuncOP harmonic_func = new HarmonicFunc( numeric::constants::d::pi_over_2, numeric::constants::d::deg2rad * 5 );
+		core::scoring::func::FuncOP harmonic_func = new core::scoring::func::HarmonicFunc( numeric::constants::d::pi_over_2, numeric::constants::d::deg2rad * 5 );
 		ConstraintOP cst1 = new AngleConstraint(
 			AtomID( pose.residue( 6  ).atom_index( "CZ3" ),  6 ),
 			AtomID( pose.residue( 3  ).atom_index( "CZ"  ),  3 ),

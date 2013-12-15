@@ -84,7 +84,7 @@ public:
 	/// used by pose.add_constraint
 	virtual ConstraintOP clone() const = 0;
 
-	virtual ConstraintOP clone( FuncOP ) const {
+	virtual ConstraintOP clone( core::scoring::func::FuncOP ) const {
 		unimplemented_method_error( std::string("clone" ) );
 		return NULL;
 	}
@@ -172,7 +172,7 @@ public:
 
 	virtual
 	core::Real
-	dist( XYZ_Func const & /*xyz*/ ) const {
+	dist( core::scoring::func::XYZ_Func const & /*xyz*/ ) const {
 		unimplemented_method_error( std::string( "dist" ) );
 		return -1.0;
 	};
@@ -183,7 +183,7 @@ public:
 	/// into emap because the ScoreFunction will do the weighting itself.
 	virtual
 	void
-	score( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const = 0;
+	score( core::scoring::func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const = 0;
 
 	/// @brief Returns a unique string identified for this constraint. Used in several
 	/// places, including the ConstraintIO class.
@@ -193,10 +193,10 @@ public:
 	}
 
 	// do some pre-scoring calculations -- does nothing by default
- 	virtual void setup_for_scoring( XYZ_Func const &, ScoreFunction const & ) const {}
+ 	virtual void setup_for_scoring( core::scoring::func::XYZ_Func const &, ScoreFunction const & ) const {}
 
 	// call the setup_for_derivatives for each constraint -- does nothing by default
- 	virtual void setup_for_derivatives( XYZ_Func const &, ScoreFunction const & ) const {}
+ 	virtual void setup_for_derivatives( core::scoring::func::XYZ_Func const &, ScoreFunction const & ) const {}
 
 	/// @brief Returns the score of this constraint computed over the given conformation.
 	/// Not necessarily implemented in all derived classes, as it's redundant with
@@ -214,7 +214,7 @@ public:
 	void
 	fill_f1_f2(
 		AtomID const & atom,
-		XYZ_Func const & xyz_func,
+		core::scoring::func::XYZ_Func const & xyz_func,
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const & weights
@@ -229,7 +229,7 @@ public:
 	}
 
 	/// @brief Prints the definition of a Constraint to the given std::ostream,
-	/// using the given Pose, and the given FuncFactory. This method is intended
+	/// using the given Pose, and the given func::FuncFactory. This method is intended
 	/// to be overridden by derived classes if they'd like to use the
 	/// ConstraintIO machinery. It's also not clear why this method takes a Pose,
 	/// other than to be symmetric with read_def.
@@ -238,10 +238,10 @@ public:
 	}
 
 	// @brief Reads the definition of a Constraint from the given std::istream,
-	// using the given Pose, and the given FuncFactory. This method is intended
+	// using the given Pose, and the given func::FuncFactory. This method is intended
 	// to be overridden by derived classes if they'd like to use the
 	// ConstraintIO machinery.
-	virtual void read_def( std::istream &, pose::Pose const &, FuncFactory const & ) {
+	virtual void read_def( std::istream &, pose::Pose const &, core::scoring::func::FuncFactory const & ) {
 		unimplemented_method_error( std::string( "read_def" ) );
 	}
 
@@ -271,11 +271,11 @@ public:
 		Real threshold = 1
 	) const;
 
-	/// @brief Returns the Func object associated with this Constraint object.
+	/// @brief Returns the func::Func object associated with this Constraint object.
 	virtual
-	Func const & get_func() const {
+	core::scoring::func::Func const & get_func() const {
 		unimplemented_method_error( std::string( "get_func" ) );
-		static HarmonicFunc dummy_func( 0.0, 0.0);
+		static core::scoring::func::HarmonicFunc dummy_func( 0.0, 0.0);
 		return dummy_func; // satisfy compiler
 	}
 

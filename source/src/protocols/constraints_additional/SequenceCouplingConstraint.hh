@@ -40,8 +40,8 @@ public:
 	typedef core::pose::Pose Pose;
 	typedef core::conformation::Conformation Conformation;
 	typedef core::scoring::EnergyMap EnergyMap;
-	typedef core::scoring::constraints::FuncFactory FuncFactory;
-	typedef core::scoring::constraints::XYZ_Func XYZ_Func;
+	typedef core::scoring::func::FuncFactory FuncFactory;
+	typedef core::scoring::func::XYZ_Func XYZ_Func;
 	typedef core::scoring::constraints::ConstraintOP ConstraintOP;
 
 public:
@@ -87,11 +87,11 @@ public:
 	SequenceCouplingCOP sequence_coupling() const;
 
 	virtual core::Size natoms() const { return 0; };
-	virtual	AtomID const & atom( Size const ) const { 
-		utility_exit_with_message("SequenceCouplingConstraint is not atom-based!."); 
+	virtual	AtomID const & atom( Size const ) const {
+		utility_exit_with_message("SequenceCouplingConstraint is not atom-based!.");
 		return core::id::BOGUS_ATOM_ID;  // required for compilation on Windows
 	}
-	
+
 	virtual utility::vector1< core::Size > residues() const;
 
 	//virtual ConstraintOP remap_resid( SequenceMapping const & ) const;

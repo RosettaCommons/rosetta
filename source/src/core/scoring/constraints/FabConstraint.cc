@@ -68,7 +68,7 @@ void
 FabConstraint::read_def(
     std::istream & data,
     core::pose::Pose const & pose,
-    FuncFactory const & /*func_factory*/
+   func::FuncFactory const & /*func_factory*/
 ) {
     utility::vector1<Size> res1;
     utility::vector1<Size> res2;
@@ -188,8 +188,8 @@ FabConstraint::setup_csts(
     std::string antchains
 ) {
 	utility::vector1<Real> abpenalty;
-	ConstantFuncOP flankpenaltyfunc (new ConstantFunc(0.5));
-	ConstantFuncOP noncdrpenaltyfunc (new ConstantFunc(1.5));
+	func::ConstantFuncOP flankpenaltyfunc (new func::ConstantFunc(0.5));
+	func::ConstantFuncOP noncdrpenaltyfunc (new func::ConstantFunc(1.5));
 
 	//set up antigen and antibody chain limits
 	Size ant_start_chain = pose::get_chain_id_from_chain(antchains[0], pose);
@@ -222,10 +222,10 @@ FabConstraint::setup_csts(
             	id::AtomID atom2(pose.residue_type(j).atom_index("CA"),j);
             	runtime_assert(atom1.valid() && atom2.valid());
             	if (abpenalty[i] == 1.5){
-            		add_individual_constraint( new AtomPairConstraint(atom1,atom2,noncdrpenaltyfunc));
+            		add_individual_constraint( new AtomPairConstraint(atom1,atom2, noncdrpenaltyfunc));
             	}
             	else if (abpenalty[i] == 0.5){
-            		add_individual_constraint( new AtomPairConstraint(atom1,atom2,flankpenaltyfunc));
+            		add_individual_constraint( new AtomPairConstraint(atom1,atom2, flankpenaltyfunc));
             	}
             	break;
             }
@@ -238,5 +238,3 @@ FabConstraint::setup_csts(
 } // constraints
 } // scoring
 } // core
-
-

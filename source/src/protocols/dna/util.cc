@@ -1104,10 +1104,10 @@ set_base_segment_chainbreak_constraints(
 	Real const distance_stddev( 0.3 ); // amber is 0.0659
 	Real const angle_stddev_degrees( 35 ); // amber is 8.54 (P angle), 5.73 (O3 angle)
 
-	FuncOP const distance_func( new HarmonicFunc( O3_P_distance, distance_stddev ) );
-	FuncOP const O3_angle_func( new HarmonicFunc( radians( O3_angle ), radians( angle_stddev_degrees ) ) );
-	FuncOP const  P_angle_func( new HarmonicFunc( radians(  P_angle ), radians( angle_stddev_degrees ) ) );
-	FuncOP const OP2_angle_func( new HarmonicFunc( radians(  OP2_angle ), radians( angle_stddev_degrees ) ) );
+	core::scoring::func::FuncOP const distance_func( new core::scoring::func::HarmonicFunc( O3_P_distance, distance_stddev ) );
+	core::scoring::func::FuncOP const O3_angle_func( new core::scoring::func::HarmonicFunc( radians( O3_angle ), radians( angle_stddev_degrees ) ) );
+	core::scoring::func::FuncOP const  P_angle_func( new core::scoring::func::HarmonicFunc( radians(  P_angle ), radians( angle_stddev_degrees ) ) );
+	core::scoring::func::FuncOP const OP2_angle_func( new core::scoring::func::HarmonicFunc( radians(  OP2_angle ), radians( angle_stddev_degrees ) ) );
 
 	assert( start_base <= end_base );
 

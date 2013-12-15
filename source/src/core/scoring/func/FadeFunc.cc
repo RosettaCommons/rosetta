@@ -28,7 +28,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 FuncOP
 FadeFunc::clone() const
@@ -124,4 +124,3 @@ FadeFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Real t
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

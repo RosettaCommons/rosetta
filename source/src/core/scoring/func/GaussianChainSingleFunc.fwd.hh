@@ -12,8 +12,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_core_scoring_constraints_GaussianChainSingleFunc_fwd_hh
-#define INCLUDED_core_scoring_constraints_GaussianChainSingleFunc_fwd_hh
+#ifndef INCLUDED_core_scoring_func_GaussianChainSingleFunc_fwd_hh
+#define INCLUDED_core_scoring_func_GaussianChainSingleFunc_fwd_hh
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 
@@ -21,7 +21,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class GaussianChainSingleFunc;
 typedef utility::pointer::owning_ptr< GaussianChainSingleFunc > GaussianChainSingleFuncOP;

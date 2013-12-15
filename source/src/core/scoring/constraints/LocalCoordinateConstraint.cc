@@ -143,12 +143,12 @@ void LocalCoordinateConstraint::set_xyz_target( Vector const& xyz_in, core::pose
 	xyz_target_=my_stub.global2local( xyz_in );
 }
 
-///@details one line definition "LocalCoordinateConstraint Atom1_Name Atom1_ResNum Atom2_Name Atom3_Name Atom4_Name Atom234_ResNum Atom1_target_X_coordinate Atom1_target_Y_coordinate Atom1_target_Z_coordinate Func_Type Func_Def"
+///@details one line definition "LocalCoordinateConstraint Atom1_Name Atom1_ResNum Atom2_Name Atom3_Name Atom4_Name Atom234_ResNum Atom1_target_X_coordinate Atom1_target_Y_coordinate Atom1_target_Z_coordinate func::Func_Type func::Func_Def"
 void
 LocalCoordinateConstraint::read_def(
 	std::istream& data,
 	core::pose::Pose const& pose,
-	FuncFactory const& func_factory
+	func::FuncFactory const& func_factory
 ) {
 	Size res1, res2;
 	std::string tempres1, tempres2;

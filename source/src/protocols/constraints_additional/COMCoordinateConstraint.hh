@@ -81,22 +81,22 @@ public:
 
 	///
 	void
-	score( scoring::constraints::XYZ_Func const & xyz,
+	score( scoring::func::XYZ_Func const & xyz,
 				 scoring::EnergyMap const &, scoring::EnergyMap & emap ) const;
 
 	// do some pre-scoring calculations
-	void setup_for_scoring( scoring::constraints::XYZ_Func const & xyz,
+	void setup_for_scoring( scoring::func::XYZ_Func const & xyz,
 													scoring::ScoreFunction const &scfxn ) const;
 
 	// call the setup_for_derivatives for each constraint
-	void setup_for_derivatives(  scoring::constraints::XYZ_Func const & xyz, scoring::ScoreFunction const &scfxn ) const;
+	void setup_for_derivatives(  scoring::func::XYZ_Func const & xyz, scoring::ScoreFunction const &scfxn ) const;
 
 	// atom deriv
 	virtual
 	void
 	fill_f1_f2(
 		AtomID const & atom,
-		scoring::constraints::XYZ_Func const & xyz,
+		scoring::func::XYZ_Func const & xyz,
 		Vector & F1,
 		Vector & F2,
 		scoring::EnergyMap const & weights
@@ -119,7 +119,7 @@ public:
 	void show( std::ostream& out ) const;
 
 	void show_def( std::ostream& out, pose::Pose const & pose ) const;
-	void read_def( std::istream& in, pose::Pose const & pose, scoring::constraints::FuncFactory const & func_factory );
+	void read_def( std::istream& in, pose::Pose const & pose, scoring::func::FuncFactory const & func_factory );
 
 	Size show_violations( std::ostream & out, pose::Pose const & pose, Size verbose_level, Real threshold = 1.0 ) const;
 

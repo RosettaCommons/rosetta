@@ -11,15 +11,15 @@
 /// @brief Definition for functions used in definition of constraints.
 /// @author James Thompson
 
-#ifndef INCLUDED_core_scoring_constraints_GaussianFunc_hh
-#define INCLUDED_core_scoring_constraints_GaussianFunc_hh
+#ifndef INCLUDED_core_scoring_func_GaussianFunc_hh
+#define INCLUDED_core_scoring_func_GaussianFunc_hh
 
 #include <core/scoring/func/Func.hh>
 #include <core/types.hh>
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 /// @brief Derived class of class Func representing a Gaussian distribution with a user-specified
 /// mean and standard deviation.

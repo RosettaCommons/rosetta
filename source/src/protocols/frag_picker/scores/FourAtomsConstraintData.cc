@@ -21,7 +21,7 @@ namespace scores {
 FourAtomsConstraintData::~FourAtomsConstraintData() {}
 
 /// @brief makes a new object
-FourAtomsConstraintData::FourAtomsConstraintData(core::scoring::constraints::FuncOP function,
+FourAtomsConstraintData::FourAtomsConstraintData(core::scoring::func::FuncOP function,
 			Size first_atom, Size second_offset, Size second_atom,
 			Size third_offset, Size third_atom, Size fourth_offset,
 			Size fourth_atom) {

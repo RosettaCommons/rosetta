@@ -247,7 +247,7 @@ public:
 
 	void add_match_from_istream( std::istream & input_match );
 
-	utility::fixedsizearray1< core::id::AtomID, 3 > const & 
+	utility::fixedsizearray1< core::id::AtomID, 3 > const &
 	asymm_atids() const {
 		return asymm_atids_;
 	}
@@ -269,7 +269,7 @@ public:
 
 	void finalize_after_all_matches_added();
 
-	bool optimal_coordination_is_reversed( core::pose::Pose const & p );	
+	bool optimal_coordination_is_reversed( core::pose::Pose const & p );
 
 	Real score( core::pose::Pose const & p ) const;
 
@@ -388,7 +388,7 @@ private:
 	ZnHashOP hash_;
 };
 
-class ZnCoordinationConstraint : public core::scoring::constraints::Constraint 
+class ZnCoordinationConstraint : public core::scoring::constraints::Constraint
 {
 public:
 	ZnCoordinationConstraint( ZnCoordinationScorerCOP zn_score );
@@ -411,7 +411,7 @@ public:
 	virtual
 	void
 	score(
-		core::scoring::constraints::XYZ_Func const & xyz_func,
+		core::scoring::func::XYZ_Func const & xyz_func,
 		core::scoring::EnergyMap const & weights,
 		core::scoring::EnergyMap & emap ) const;
 
@@ -423,14 +423,14 @@ public:
 	void
 	fill_f1_f2(
 		core::id::AtomID const & atom,
-		core::scoring::constraints::XYZ_Func const & xyz_func,
+		core::scoring::func::XYZ_Func const & xyz_func,
 		core::Vector & F1,
 		core::Vector & F2,
 		core::scoring::EnergyMap const & weights
 	) const;
-	
+
 	virtual void show( std::ostream & /*out*/ ) const {}
-	
+
 	core::scoring::constraints::ConstraintOP
 	remap_resid( core::id::SequenceMapping const &/*seqmap*/ ) const
 	{

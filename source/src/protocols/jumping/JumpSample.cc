@@ -60,11 +60,11 @@ namespace constraints {
 
 using namespace ObjexxFCL::format;
 
-class ChainbreakDistFunc : public core::scoring::constraints::Func {
+class ChainbreakDistFunc : public core::scoring::func::Func {
 public:
 	ChainbreakDistFunc( Real const x0_in ): d2target_( x0_in*x0_in ){}
 
-	FuncOP
+	core::scoring::func::FuncOP
 	clone() const { return new ChainbreakDistFunc( *this ); }
 
 	Real func( Real const x ) const;
@@ -602,5 +602,3 @@ JumpSample::dump_pymol( std::string fn ) const {
 
 } //jumping
 } //protocols
-
-

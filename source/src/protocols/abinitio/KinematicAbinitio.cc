@@ -437,7 +437,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 					Real const basis( option[ fold_cst::violation_skip_basis ] );
 					Real const base_line( option[ fold_cst::violation_skip_ignore ] );
 					try {
-						SkipViolFunc const& cfunc = dynamic_cast< SkipViolFunc const& >( (*it)->get_func() );
+						core::scoring::func::SkipViolFunc const& cfunc = dynamic_cast< core::scoring::func::SkipViolFunc const& >( (*it)->get_func() );
 						local_skip*=1.0*(cfunc.viols()-base_line)/basis;
 						tr.Trace << "ponder constraint "; (*it)->show_def( tr.Trace, pose );
 						tr.Trace << "skip prob: " << skip_rate*local_skip << " computed from, viols :" << cfunc.viols() << " - " << base_line << " base: "

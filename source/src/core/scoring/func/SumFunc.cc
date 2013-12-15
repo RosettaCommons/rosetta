@@ -31,7 +31,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 	Real
 	SumFunc::func( Real const x ) const {

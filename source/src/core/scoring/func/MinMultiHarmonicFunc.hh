@@ -11,8 +11,8 @@
 /// @brief Definition for functions used in definition of constraints.
 /// @author Dominik Gront (dgront@chem.uw.edu.pl)
 
-#ifndef INCLUDED_core_scoring_constraints_MinMultiHarmonicFunc_hh
-#define INCLUDED_core_scoring_constraints_MinMultiHarmonicFunc_hh
+#ifndef INCLUDED_core_scoring_func_MinMultiHarmonicFunc_hh
+#define INCLUDED_core_scoring_func_MinMultiHarmonicFunc_hh
 
 #include <core/scoring/func/MinMultiHarmonicFunc.fwd.hh>
 #include <core/scoring/func/Func.hh>
@@ -26,7 +26,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class MinMultiHarmonicFunc : public Func {
 public:

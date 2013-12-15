@@ -800,7 +800,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 						Residue const & nat_i_rsd( constraint_target_pose.residue(i) );
 						for ( Size ii = 1; ii<=nat_i_rsd.last_backbone_atom(); ++ii ) {
 							pose.add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ),
-							                     new HarmonicFunc( 0.0, coord_sdev ) ) );
+							                     new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) ) );
 						}
 
 						// now cst symmetry mates

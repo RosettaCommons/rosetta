@@ -375,7 +375,7 @@ add_coordinate_constraints( pose::Pose & pose, Real const coord_sdev /* = 10.0 *
 	for ( Size i=1; i<= nres;  ++i ) {
 
 		Residue const & i_rsd( pose.residue(i) );
-		
+
 		core::Size last_atom = i_rsd.last_backbone_atom();
 		if ( include_sc ){
 			last_atom = i_rsd.nheavyatoms();
@@ -383,7 +383,7 @@ add_coordinate_constraints( pose::Pose & pose, Real const coord_sdev /* = 10.0 *
 		for ( Size ii = 1; ii <= last_atom; ++ii ) {
 
 			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii),
-																												 new HarmonicFunc( 0.0, coord_sdev ) ) );
+																												 new func::HarmonicFunc( 0.0, coord_sdev ) ) );
 		}
 	}
 
@@ -404,7 +404,7 @@ add_coordinate_constraints( pose::Pose & pose, core::Size const start_res, core:
 	for ( Size i=start_res; i<= end_res;  ++i ) {
 
 		Residue const & i_rsd( pose.residue(i) );
-		
+
 		core::Size last_atom = i_rsd.last_backbone_atom();
 		if ( include_sc ){
 			last_atom = i_rsd.nheavyatoms();
@@ -412,7 +412,7 @@ add_coordinate_constraints( pose::Pose & pose, core::Size const start_res, core:
 		for ( Size ii = 1; ii<= last_atom; ++ii ) {
 
 			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii),
-																												 new HarmonicFunc( 0.0, coord_sdev ) ) );
+																												 new func::HarmonicFunc( 0.0, coord_sdev ) ) );
 		}
 	}
 
@@ -436,7 +436,7 @@ remove_constraints_of_type(core::pose::Pose & pose, std::string const type, core
 	for (core::Size i=1; i<=all_csts.size(); ++i){
 		if (all_csts[i]->type() == type){
 			utility::vector1< core::Size > residues = all_csts[i]->residues();
-			
+
 			for (core::Size x = 1; x <= residues.size(); ++i){
 				if (start_res <= residues[x] >= end_res){
 					pose.remove_constraint(all_csts[i], true);

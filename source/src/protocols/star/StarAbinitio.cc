@@ -123,7 +123,7 @@ void setup_constraints(const Loops& aligned, Pose* pose) {
   using core::id::AtomID;
   using core::kinematics::ShortestPathInFoldTree;
   using core::scoring::constraints::AtomPairConstraint;
-  using core::scoring::constraints::HarmonicFunc;
+  using core::scoring::func::HarmonicFunc;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
 

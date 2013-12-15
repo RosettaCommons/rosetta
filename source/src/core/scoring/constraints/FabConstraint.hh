@@ -68,7 +68,7 @@ public:
 
     /// @brief read in constraint definition
     void
-    read_def(std::istream& data, pose::Pose const& pose, FuncFactory const& func_factory);
+    read_def(std::istream& data, pose::Pose const& pose,func::FuncFactory const& func_factory);
 
     Size
     pose_res_no(core::pose::Pose const & pose, std::string tempres);

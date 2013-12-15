@@ -100,7 +100,7 @@ void
 SequenceProfileConstraint::read_def(
 	std::istream & is,
 	Pose const & pose,
-	FuncFactory const &
+	func::FuncFactory const &
 )
 {
 
@@ -269,7 +269,7 @@ SequenceProfileConstraint::remapped_clone(
 // should put unweighted scores into emap.
 void
 SequenceProfileConstraint::score(
-	XYZ_Func const & xyz_func,
+	func::XYZ_Func const & xyz_func,
 	EnergyMap const & weights,
 	EnergyMap & emap
 ) const
@@ -300,7 +300,7 @@ SequenceProfileConstraint::score(
 void
 SequenceProfileConstraint::fill_f1_f2(
 	AtomID const & ,//atom,
-	XYZ_Func const & ,//conformation,
+	func::XYZ_Func const & ,//conformation,
 	Vector & ,//f1,
 	Vector & ,//f2,
 	EnergyMap const & //weights

@@ -98,14 +98,14 @@ using basic::Error;
 using basic::Warning;
 using utility::file::FileName;
 
-//kdrew: this app adds hbs patches to the given pdb strucure 
+//kdrew: this app adds hbs patches to the given pdb strucure
 
 // tracer - used to replace cout
 static basic::Tracer TR("HBS_Creator");
 
 void
-setup_pert_foldtree( 
-					core::pose::Pose & pose 
+setup_pert_foldtree(
+					core::pose::Pose & pose
 					);
 
 // application specific options
@@ -157,7 +157,7 @@ main( int argc, char* argv[] )
 	// init command line options
 	//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
 	devel::init(argc, argv);
-	
+
 	//create mover instance
 	HbsCreatorMoverOP HC_mover( new HbsCreatorMover() );
 
@@ -186,36 +186,36 @@ HbsCreatorMover::apply(
 
 	 score_fxn->set_weight( core::scoring::atom_pair_constraint, 1.0 );
 	/*
-	 
+
 	 TODO:
-	 
+
 	 We probably aren't going to need this. We are probably going to:
 	 1) Delete all residues in the chain hbs_creator::hbs_chain that are outside of hbs_creator::hbs_final_res to that plus hbs_creator::hbs_length
 	 2) There aren't two puckers. So we'll probably just push back the three residues we care about to all_positions.
 	*/
-	utility::vector1< core::Size > all_positions; 
+	utility::vector1< core::Size > all_positions;
 	char hbs_chain = option[hbs_creator::hbs_chain].value()[0];
 	core::Size final_res = option[hbs_creator::hbs_final_res].value();
 	core::pose::PDBInfoCOP pdb_info( pose.pdb_info() );
-	
+
 	for(Size i=1; i<=pose.total_residue(); ++i) {
 		char chn = pdb_info->chain(i);
 		if (chn == hbs_chain) { // correct chain to be truncated and prepped
-			
+
 			core::Size pdb_res_num = pdb_info->number(i);
-			
+
 			// hbs pre is the smallest number of what we want to preserve
 			if (pdb_res_num < final_res) {
 				TR << "deleting residue " << pdb_res_num  << " which was " << core::chemical::oneletter_code_from_aa(pose.aa(i)) << std::endl;
-								
+
 				while (pdb_res_num < final_res) {
           pose.delete_polymer_residue(i);
 				  pdb_res_num = pdb_info->number(i);
         }
 
         setup_pert_foldtree(pose);
-				
-				
+
+
 			}
 			else if (pdb_res_num == final_res) { // also applies the post patch
 				hbs::HbsPatcherOP hbs_patcher (new hbs::HbsPatcher( i ) );
@@ -225,19 +225,19 @@ HbsCreatorMover::apply(
 			}
 			else if (pdb_res_num > final_res + option[hbs_creator::hbs_length].value()) {
 				TR << "deleting residue " << pdb_res_num << std::endl;
-								
+
 				while (pdb_res_num > final_res) {
           pose.delete_polymer_residue(i);
 				  pdb_res_num = pdb_info->number(i);
         }
 
 				setup_pert_foldtree(pose);
-				
+
 			}
-			
+
 			if (pdb_res_num >= final_res && pdb_res_num <= final_res+2) {
 				all_positions.push_back(i);
-				
+
 				if (pdb_res_num == final_res) {
 					pose.set_phi(i, -78);
 					pose.set_psi(i, -48);
@@ -250,7 +250,7 @@ HbsCreatorMover::apply(
 				//	pose.set_phi(i+2, -55);
 				//	pose.set_psi(i+2, -45);
 				//}
-				
+
 				/*
 				pose.set_psi( i, -57) ;
 				pose.set_phi( i, -48) ;
@@ -258,12 +258,12 @@ HbsCreatorMover::apply(
 			}
 		}
 	}
-	
+
 	//pose.set_phi(i+3, -40);
 	//pose.set_psi(i+3, -58);
 
 	//pose.dump_pdb( "postdihedrals.pdb");
-	
+
 	//kdrew: since we added new connection types (i.e. hbs atoms) above, need to reset connections
 	pose.conformation().detect_bonds();
 	pose.conformation().detect_pseudobonds();
@@ -273,8 +273,8 @@ HbsCreatorMover::apply(
 
 	//pose.dump_pdb( "postpseudobonds.pdb");
 
-	//kdrew: monte carlo phi/psi of hbs to find low energy 
-	if( option[ hbs_creator::final_mc ].value() ) 
+	//kdrew: monte carlo phi/psi of hbs to find low energy
+	if( option[ hbs_creator::final_mc ].value() )
 	{
 		moves::SequenceMoverOP pert_sequence( new moves::SequenceMover() );
 		moves::MonteCarloOP pert_mc( new moves::MonteCarlo( pose, *score_fxn, 0.2 ) );
@@ -285,20 +285,20 @@ HbsCreatorMover::apply(
 		pert_pep_small->angle_max( 'L', 2.0 );
 		pert_pep_small->angle_max( 'E', 2.0 );
 
-		core::Size hbs_position = 1; 
-		
+		core::Size hbs_position = 1;
+
 		//kdrew: load all hbs-affected positions into vector and make all other positions movable by small mover
 		for( Size i = 1; i <= pose.total_residue(); ++i )
-		{ 
+		{
 			//TR << "resid: " << i << " is last in the HBS macrocycle." << std::endl;
 			//if( i < option[hbs_creator::hbs_final_res] || i>option[hbs_creator::hbs_final_res+2] ) // maybe 3 someday?
 			if (i != ((unsigned) (option[hbs_creator::hbs_final_res].value())))
-			{ 
-				if( is_l_chiral( pose.residue_type( i ) ) )	
-				{ 	
+			{
+				if( is_l_chiral( pose.residue_type( i ) ) )
+				{
 					TR << "setting small movable resid: "<< i<<std::endl;
 					//kdrew: commenting out because small mover fails randomly
-					//pert_pep_mm->set_bb( i ); 
+					//pert_pep_mm->set_bb( i );
 				}
 			}
 			else
@@ -312,7 +312,7 @@ HbsCreatorMover::apply(
 		//hbs::HbsRandomSmallMoverOP hpm( new hbs::HbsRandomSmallMover ( hbs_position, 2.0));//option[hbs_creator::hbs_length].value(), 2.0 ) );
 		//moves::RepeatMoverOP pert_pep_repeat( new moves::RepeatMover( hpm, 1000 ) );
 		//pert_sequence->add_mover( pert_pep_repeat );
-		
+
 		moves::TrialMoverOP pert_trial( new moves::TrialMover( pert_sequence, pert_mc ) );
 
 		pert_trial->apply( pose );
@@ -320,7 +320,7 @@ HbsCreatorMover::apply(
 
 	}
 
-	if( option[ hbs_creator::final_repack ].value() ) 
+	if( option[ hbs_creator::final_repack ].value() )
 	{
 
 		// create a task factory and task operations
@@ -328,7 +328,7 @@ HbsCreatorMover::apply(
 		tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
 
 		using namespace basic::resource_manager;
-		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() ) 
+		if ( ResourceManager::get_instance()->has_option( packing::resfile ) ||  option[ packing::resfile ].user() )
 		{
 			operation::ReadResfileOP rrop( new operation::ReadResfile() );
 			rrop->default_filename();
@@ -340,8 +340,8 @@ HbsCreatorMover::apply(
 			operation::RestrictToRepackingOP rtrp( new operation::RestrictToRepacking() );
 			tf->push_back( rtrp );
 		}
-	 
-	 
+
+
 		// create a pack rotamers mover
 		simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover() );
 		packer->task_factory( tf );
@@ -351,7 +351,7 @@ HbsCreatorMover::apply(
 	}
 
 
-	if( option[ hbs_creator::final_minimize ].value() ) 
+	if( option[ hbs_creator::final_minimize ].value() )
 	{
 		using namespace core::id;
 		using namespace core::scoring;
@@ -366,11 +366,11 @@ HbsCreatorMover::apply(
 
 			//kdrew: put constraint on omega angle
 			pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
-													
+
 			Real torsion_value( pose.torsion( torsion_id ) );
 
-			CircularHarmonicFuncOP circularharm_func  (new CircularHarmonicFunc( numeric::conversions::radians( torsion_value ), numeric::conversions::radians( 10.0 ) ) );
-																					 
+			core::scoring::func::CircularHarmonicFuncOP circularharm_func  (new core::scoring::func::CircularHarmonicFunc( numeric::conversions::radians( torsion_value ), numeric::conversions::radians( 10.0 ) ) );
+
 			ConstraintCOP dihedral1 = new DihedralConstraint( id1, id2, id3, id4, circularharm_func );
 
 			pose.add_constraint( dihedral1 );
@@ -409,26 +409,26 @@ HbsCreatorMover::apply(
 // this only works for two chains and assumes the protein is first and the peptide is second
 // inspired by protocols/docking/DockingProtocol.cc
 void
-setup_pert_foldtree( 
-												core::pose::Pose & pose 
+setup_pert_foldtree(
+												core::pose::Pose & pose
 												)
 {
 	using namespace kinematics;
-	
+
 	// get current fold tree
 	FoldTree f( pose.fold_tree() );
 	f.clear();
-	
+
 	// get the start and end for both chains
 	Size pro_start( pose.conformation().chain_begin( 1 ) );
 	Size pro_end( pose.conformation().chain_end( 1 ) );
 	Size pep_start( pose.conformation().chain_begin( 2 ) );
 	Size pep_end( pose.conformation().chain_end( 2 ) );
-	
+
 	// get jump positions based on the center of mass of the chains
 	Size dock_jump_pos_pro( geometry::residue_center_of_mass( pose, pro_start, pro_end ) );
 	Size dock_jump_pos_pep( geometry::residue_center_of_mass( pose, pep_start, pep_end ) );
-	
+
 	// build fold tree
 	Size jump_index( f.num_jump() + 1 );
 	//-1 is a magic number for PEPTIDE EDGE.  There is a constant defined with the fold tree that should have been used here.
@@ -437,13 +437,13 @@ setup_pert_foldtree(
 	f.add_edge( pep_start, dock_jump_pos_pep, -1);
 	f.add_edge( dock_jump_pos_pep, pep_end, -1 );
 	f.add_edge( dock_jump_pos_pro, dock_jump_pos_pep, jump_index );
-	
+
 	// set pose foldtree to foldtree we just created
 	f.reorder(1);
 	f.check_fold_tree();
 	assert( f.check_fold_tree() );
-	
+
 	std::cout << "AFTER: " << f << std::endl;
-	
+
 	pose.fold_tree( f );
 }

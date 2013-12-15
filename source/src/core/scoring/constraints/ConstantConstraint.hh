@@ -43,7 +43,7 @@ public:
 
 	/// @brief compute score
 	void
-	score( XYZ_Func const &, EnergyMap const &, EnergyMap & emap ) const;
+	score( func::XYZ_Func const &, EnergyMap const &, EnergyMap & emap ) const;
 
 	//Real score( pose::Pose const & ) const;
 
@@ -51,7 +51,7 @@ public:
 	void
 	fill_f1_f2(
 		AtomID const & ,
-		XYZ_Func const &,
+		func::XYZ_Func const &,
 		Vector & F1,
 		Vector & F2,
 		EnergyMap const &
@@ -59,7 +59,7 @@ public:
 
 	/// @brief Constructor
 	ConstantConstraint(
-		FuncOP func_in,
+		func::FuncOP func_in,
 		ScoreType scotype = constant_constraint
 	);
 
@@ -79,7 +79,7 @@ public:
 	void show( std::ostream& out ) const;
 
 private:
-	FuncOP func_;
+	func::FuncOP func_;
 };
 
 } // constraints

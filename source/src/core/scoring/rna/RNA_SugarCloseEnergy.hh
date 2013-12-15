@@ -115,15 +115,15 @@ private:
 	Real const scale_rna_torsion_sd_;
 	Distance const o4prime_c1prime_bond_length_;
 	Distance const o4prime_c1prime_sd_;
-	constraints::HarmonicFuncOP o4prime_c1prime_dist_harm_func_;
+	func::HarmonicFuncOP o4prime_c1prime_dist_harm_func_;
 
 	Real const angle_sd_;
 	Real const o4prime_c1prime_c2prime_bond_angle_;
-	constraints::HarmonicFuncOP o4prime_c1prime_c2prime_angle_harm_func_;
+	func::HarmonicFuncOP o4prime_c1prime_c2prime_angle_harm_func_;
 	Real const o4prime_c1prime_first_base_bond_angle_;
-	constraints::HarmonicFuncOP o4prime_c1prime_first_base_angle_harm_func_;
+	func::HarmonicFuncOP o4prime_c1prime_first_base_angle_harm_func_;
 	Real const c4prime_o4prime_c1prime_bond_angle_;
-	constraints::HarmonicFuncOP c4prime_o4prime_c1prime_angle_harm_func_;
+	func::HarmonicFuncOP c4prime_o4prime_c1prime_angle_harm_func_;
 
 	//phenix-based constraint
 	bool const use_phenix_sugar_close_;
@@ -137,7 +137,7 @@ private:
 	Real const c4prime_o4prime_c1prime_angle_north_;
 	Real const c4prime_o4prime_c1prime_angle_south_;
 	Real const angle_sd1_, angle_sd2_;
-	core::scoring::constraints::FuncOP fade_delta_north_, fade_delta_south_;
+	core::scoring::func::FuncOP fade_delta_north_, fade_delta_south_;
 
 	mutable constraints::ConstraintSetOP rna_sugar_close_constraints_;
 

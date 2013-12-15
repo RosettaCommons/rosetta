@@ -499,7 +499,7 @@ OopCreatorMover::apply(
 
 			Real torsion_value( pose.torsion( torsion_id ) );
 
-			CircularHarmonicFuncOP circularharm_func  (new CircularHarmonicFunc( numeric::conversions::radians( torsion_value ), numeric::conversions::radians( 10.0 ) ) );
+			core::scoring::func::CircularHarmonicFuncOP circularharm_func  (new core::scoring::func::CircularHarmonicFunc( numeric::conversions::radians( torsion_value ), numeric::conversions::radians( 10.0 ) ) );
 
 			ConstraintCOP dihedral1 = new DihedralConstraint( id1, id2, id3, id4, circularharm_func );
 
@@ -535,5 +535,3 @@ OopCreatorMover::apply(
 		minM->apply( pose );
 	}
 }
-
-

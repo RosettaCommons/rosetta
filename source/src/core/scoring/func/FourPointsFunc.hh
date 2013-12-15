@@ -11,8 +11,8 @@
 /// @brief
 
 
-#ifndef INCLUDED_core_scoring_constraints_FourPointsFunc_hh
-#define INCLUDED_core_scoring_constraints_FourPointsFunc_hh
+#ifndef INCLUDED_core_scoring_func_FourPointsFunc_hh
+#define INCLUDED_core_scoring_func_FourPointsFunc_hh
 
 // Unit headers
 #include <core/scoring/func/FourPointsFunc.fwd.hh>
@@ -32,14 +32,14 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 /// @brief A simple class that represents the coordinates of four points, pretending
 /// that they all belong to residue 1.  The residue() method is not implemented and
 /// cause a utility_exit.
-class FourPointsFunc : public XYZ_Func {
+class FourPointsFunc : public func::XYZ_Func {
 public:
-	typedef XYZ_Func parent;
+	typedef func::XYZ_Func parent;
 	typedef parent::AtomID AtomID;
 	typedef parent::Residue Residue;
 	typedef parent::Conformation Conformation;

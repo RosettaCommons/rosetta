@@ -98,7 +98,7 @@ public:
 	// public member functions
 	void
 	set_constraint_func(
-		core::scoring::constraints::FuncOP constraint_func );
+		core::scoring::func::FuncOP constraint_func );
 
 	void
 	clear_inverse_rotamers();
@@ -115,7 +115,7 @@ private:
 
 	std::list< core::conformation::ResidueCOP > inverse_rotamers_;
 
-	core::scoring::constraints::FuncOP constraint_func_;
+	core::scoring::func::FuncOP constraint_func_;
 	core::Real func_sd_;
 }; //class InverseRotamersRCG
 

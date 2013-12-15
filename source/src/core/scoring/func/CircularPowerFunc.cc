@@ -19,7 +19,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 CircularPowerFunc::CircularPowerFunc(
 	Real const x0_radians,

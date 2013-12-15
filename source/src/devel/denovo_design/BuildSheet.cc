@@ -392,8 +392,8 @@ BuildSheet::minimize_residues( core::pose::Pose & pose,
 	core::Size const anchor_ca_index( pose.residue_type(1).atom_index("CA") );
 
 	// functions for coordinate constraints
-	core::scoring::constraints::HarmonicFuncOP weak_func( new core::scoring::constraints::HarmonicFunc(0.0, 2.0 ) );
-	core::scoring::constraints::HarmonicFuncOP func( new core::scoring::constraints::HarmonicFunc(0.0, 0.1 ) );
+	core::scoring::func::HarmonicFuncOP weak_func( new core::scoring::func::HarmonicFunc(0.0, 2.0 ) );
+	core::scoring::func::HarmonicFuncOP func( new core::scoring::func::HarmonicFunc(0.0, 0.1 ) );
 
 	// first element is the residue being minimized
 	// second element is the previous residue in the c direction

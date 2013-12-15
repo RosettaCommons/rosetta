@@ -54,7 +54,7 @@ public:
 	void read_def(
 		std::istream & in,
 		pose::Pose const & pose,
-		FuncFactory const & func_factory
+		func::FuncFactory const & func_factory
 	);
 
 	/// @brief possibility to compare constraint according to data
@@ -68,7 +68,7 @@ public:
 	) const;
 
 	void
-	score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
+	score( func::XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
 	Real
 	score( conformation::Conformation const & conformation 	) const;
@@ -77,7 +77,7 @@ public:
 	void
 	fill_f1_f2(
 		AtomID const & atom,
-		XYZ_Func const & xyz,
+		func::XYZ_Func const & xyz,
 		Vector & F1, Vector & F2,
 		EnergyMap const & weights
 	) const;
@@ -86,7 +86,7 @@ public:
 	DistancePairConstraint(
 		AtomID const & a1, AtomID const & a2,
 		AtomID const & b1, AtomID const & b2,
-		FuncOP func,
+		func::FuncOP func,
 		ScoreType scotype = atom_pair_constraint
 	):
 		Constraint( scotype ),
@@ -132,7 +132,7 @@ private:
 	// data
 	AtomID atomA1_, atomA2_;
 	AtomID atomB1_, atomB2_;
-	FuncOP func_;
+	func::FuncOP func_;
 };
 
 } // constraints

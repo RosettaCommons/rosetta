@@ -147,12 +147,12 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose ) 
 			Size iatom_start=1, iatom_stop=pose.residue(ires).nheavyatoms();
 			if ( pose.residue_type(ires).is_DNA() ) {
 				iatom_stop = 0;
-			} else if ( pose.residue_type(ires).is_protein() ) { 
+			} else if ( pose.residue_type(ires).is_protein() ) {
 					if( CA_only_ && pose.residue_type(ires).has("CA") ) {
 							iatom_start = iatom_stop = pose.residue_type(ires).atom_index("CA");
 					} else if( bb_only_ ) {
 							iatom_stop = pose.residue_type(ires).last_backbone_atom();
-					} 
+					}
 			} else {
 				continue;
 			}
@@ -179,7 +179,7 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose ) 
         else {
             nres=pose.total_residue();
         }
-        
+
 		for (Size ires=1; ires<=nres; ++ires) {
             if (pose.residue(ires).aa() == core::chemical::aa_vrt) continue;
 			if (!residue_to_constrain(ires)) continue;
@@ -205,7 +205,7 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose ) 
 
 					pose.add_constraint(
 					    new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres),
-					            new core::scoring::constraints::ScalarWeightedFunc( cst_weight_, new core::scoring::constraints::SOGFunc( dist, coord_dev_ ) ) ) );
+					            new core::scoring::func::ScalarWeightedFunc( cst_weight_, new core::scoring::func::SOGFunc( dist, coord_dev_ ) ) ) );
 					TR.Debug << "atom_pair_constraint added to residue " << ires << ", atom " << iatom << " and residue " << jres << ", atom " << jatom << " with weight " << cst_weight_ << std::endl;
 				}}
 			}
@@ -236,7 +236,7 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 	if ( tag->hasOption("bound_width") ) {
 		bound_width_ = tag->getOption<core::Real>("bound_width");
 	}
-    if ( bound_width_ < 1e-3 ) cc_func_ = new HarmonicFunc(0.0,coord_dev_);
+    if ( bound_width_ < 1e-3 ) cc_func_ = new core::scoring::func::HarmonicFunc(0.0,coord_dev_);
     else cc_func_ = new BoundFunc(0,bound_width_,coord_dev_,"xyz");
 
 	if ( tag->hasOption("min_seq_sep") ) {

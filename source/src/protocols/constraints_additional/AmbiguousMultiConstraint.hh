@@ -70,7 +70,7 @@ public:
   /// @brief compute score
   void
   score(
-		core::scoring::constraints::XYZ_Func const & xyz_func,
+		core::scoring::func::XYZ_Func const & xyz_func,
 		core::scoring::EnergyMap const & weights,
 		core::scoring::EnergyMap & emap ) const;
 
@@ -83,7 +83,7 @@ public:
 	void
 	fill_f1_f2(
 		core::id::AtomID const & atom,
-		core::scoring::constraints::XYZ_Func const & xyz,
+		core::scoring::func::XYZ_Func const & xyz,
 		core::Vector & F1,
 		core::Vector & F2,
 		core::scoring::EnergyMap const & weights

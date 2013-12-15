@@ -39,8 +39,8 @@ public:
 	typedef core::pose::Pose Pose;
 	typedef core::conformation::Conformation Conformation;
 	typedef core::scoring::EnergyMap EnergyMap;
-	typedef core::scoring::constraints::FuncFactory FuncFactory;
-	typedef core::scoring::constraints::XYZ_Func XYZ_Func;
+	typedef core::scoring::func::FuncFactory FuncFactory;
+	typedef core::scoring::func::XYZ_Func XYZ_Func;
 	typedef core::scoring::constraints::ConstraintOP ConstraintOP;
 
 public:

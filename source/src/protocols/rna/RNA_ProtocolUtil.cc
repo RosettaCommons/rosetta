@@ -697,12 +697,12 @@ setup_base_pair_constraints(
 
  	Real const WC_distance( 1.9 );
  	Real const distance_stddev( 0.25 / suppress_factor ); //Hmm. Maybe try linear instead?
-	FuncOP const distance_func( new HarmonicFunc( WC_distance, distance_stddev ) );
+	core::scoring::func::FuncOP const distance_func( new core::scoring::func::HarmonicFunc( WC_distance, distance_stddev ) );
 
 	// Need to force base pairing -- not base stacking!
  	Real const C1prime_distance( 10.5 );
  	Real const C1prime_distance_stddev( 1.0 / suppress_factor ); //Hmm. Maybe try linear instead?
-	FuncOP const C1prime_distance_func( new HarmonicFunc( C1prime_distance, C1prime_distance_stddev ) );
+	core::scoring::func::FuncOP const C1prime_distance_func( new core::scoring::func::HarmonicFunc( C1prime_distance, C1prime_distance_stddev ) );
 
 	for ( Size n = 1; n <= pairings.size(); n++ ) {
 
@@ -746,7 +746,7 @@ setup_base_pair_constraints(
 			static Real const coarse_WC_SUG_distance_max( 14.3 );
 			static Real const coarse_WC_SUG_distance_stddev( 2.0 );
 			static Real const coarse_WC_SUG_bonus( -2.5 );
-			static FuncOP const coarse_SUG_distance_func( new FadeFunc( coarse_WC_SUG_distance_min - coarse_WC_SUG_distance_stddev,
+			static core::scoring::func::FuncOP const coarse_SUG_distance_func( new core::scoring::func::FadeFunc( coarse_WC_SUG_distance_min - coarse_WC_SUG_distance_stddev,
 																																  coarse_WC_SUG_distance_max + coarse_WC_SUG_distance_stddev,
 																																	coarse_WC_SUG_distance_stddev,
 																																	coarse_WC_SUG_bonus ) );
@@ -767,7 +767,7 @@ setup_base_pair_constraints(
 			static Real const coarse_WC_CEN_distance( 5.5 );
 			static Real const coarse_WC_CEN_distance_stddev( 3.0 );
 			static Real const coarse_WC_CEN_bonus( -5.0 );
-			static FuncOP const coarse_CEN_distance_func( new FadeFunc( coarse_WC_CEN_distance - coarse_WC_CEN_distance_stddev,
+			static core::scoring::func::FuncOP const coarse_CEN_distance_func( new core::scoring::func::FadeFunc( coarse_WC_CEN_distance - coarse_WC_CEN_distance_stddev,
 																																	coarse_WC_CEN_distance + coarse_WC_CEN_distance_stddev,
 																																	coarse_WC_CEN_distance_stddev,
 																																	coarse_WC_CEN_bonus ) );
@@ -788,7 +788,7 @@ setup_base_pair_constraints(
 			static Real const coarse_WC_X_distance( 3.5 );
 			static Real const coarse_WC_X_distance_stddev( 2.0 );
 			static Real const coarse_WC_X_bonus( -5.0 );
-			static FuncOP const coarse_X_distance_func( new FadeFunc( coarse_WC_X_distance - coarse_WC_X_distance_stddev,
+			static core::scoring::func::FuncOP const coarse_X_distance_func( new core::scoring::func::FadeFunc( coarse_WC_X_distance - coarse_WC_X_distance_stddev,
 																																coarse_WC_X_distance + coarse_WC_X_distance_stddev,
 																																coarse_WC_X_distance_stddev, coarse_WC_X_bonus ) );
 
@@ -829,7 +829,7 @@ setup_coarse_chainbreak_constraints( pose::Pose & pose, Size const & n )
  	static Real const S_P_distance_max( 4 );
  	static Real const S_P_distance_fade( 1.0 );
  	static Real const S_P_distance_bonus( -10.0 );
-	static FuncOP const S_P_distance_func( new FadeFunc( S_P_distance_min - S_P_distance_fade,
+	static core::scoring::func::FuncOP const S_P_distance_func( new core::scoring::func::FadeFunc( S_P_distance_min - S_P_distance_fade,
 																								S_P_distance_max + S_P_distance_fade,
 																								S_P_distance_fade,
 																								S_P_distance_bonus ) );
@@ -837,7 +837,7 @@ setup_coarse_chainbreak_constraints( pose::Pose & pose, Size const & n )
 	// loose long-range constraint too
  	static Real const S_P_distance( 4.0 );
  	static Real const S_P_distance_stdev( 10.0 );
-	static FuncOP const S_P_harmonic_func( new HarmonicFunc( S_P_distance,
+	static core::scoring::func::FuncOP const S_P_harmonic_func( new core::scoring::func::HarmonicFunc( S_P_distance,
 																													 S_P_distance_stdev ) );
 
 
@@ -845,7 +845,7 @@ setup_coarse_chainbreak_constraints( pose::Pose & pose, Size const & n )
  	static Real const S_S_distance_max( 7.5 );
  	static Real const S_S_distance_fade( 2.0 );
  	static Real const S_S_distance_bonus( -5.0 );
-	static FuncOP const S_S_distance_func( new FadeFunc( S_S_distance_min - S_S_distance_fade,
+	static core::scoring::func::FuncOP const S_S_distance_func( new core::scoring::func::FadeFunc( S_S_distance_min - S_S_distance_fade,
 																								S_S_distance_max + S_S_distance_fade,
 																								S_S_distance_fade,
 																								S_S_distance_bonus ) );
@@ -854,7 +854,7 @@ setup_coarse_chainbreak_constraints( pose::Pose & pose, Size const & n )
  	static Real const P_P_distance_max( 7.5 );
  	static Real const P_P_distance_fade( 2.0 );
  	static Real const P_P_distance_bonus( -5.0 );
-	static FuncOP const P_P_distance_func( new FadeFunc( P_P_distance_min - P_P_distance_fade,
+	static core::scoring::func::FuncOP const P_P_distance_func( new core::scoring::func::FadeFunc( P_P_distance_min - P_P_distance_fade,
 																								P_P_distance_max + P_P_distance_fade,
 																								P_P_distance_fade,
 																								P_P_distance_bonus ) );

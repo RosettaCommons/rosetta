@@ -24,7 +24,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 FourPointsFunc::FourPointsFunc() : points_( 4, Vector(0.0) ) {}
 

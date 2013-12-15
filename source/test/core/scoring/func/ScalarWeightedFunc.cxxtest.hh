@@ -50,7 +50,7 @@ public:
 	void test_ScalarWeightedFunc()
 	{
 		static basic::Tracer TR("core.scoring.constraints.ScalarWeightedFunc.cxxtest");
-		using namespace core::scoring::constraints;
+		using namespace core::scoring::func;
 
 		core::Real weight=0.0;
 		FuncOP myfunc;

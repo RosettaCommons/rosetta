@@ -115,7 +115,7 @@ NonResidueTypeConstraint::remap_resid( core::id::SequenceMapping const &seqmap )
 // emap. Although the current set of weights currently is provided, Constraint objects
 // should put unweighted scores into emap.
 void
-NonResidueTypeConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const
+NonResidueTypeConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const
 {
 	Real const weight(weights[ this->score_type() ] );
 	if( weight == 0 ) return; // what's the point?
@@ -130,7 +130,7 @@ NonResidueTypeConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & we
 void
 NonResidueTypeConstraint::fill_f1_f2(
 	AtomID const & ,//atom,
-	XYZ_Func const &,
+	func::XYZ_Func const &,
 	Vector & ,//F1,
 	Vector & ,//F2,
 	EnergyMap const & //weights

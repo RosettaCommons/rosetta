@@ -159,7 +159,7 @@ RotamerConstraint::atom( Size const index ) const
 // should put unweighted scores into emap.
 void
 RotamerConstraint::score(
-	XYZ_Func const & xyz_func,
+	func::XYZ_Func const & xyz_func,
 	EnergyMap const & weights,
 	EnergyMap & emap
 ) const
@@ -190,7 +190,7 @@ RotamerConstraint::score(
 void
 RotamerConstraint::fill_f1_f2(
 	AtomID const & ,//atom,
-	XYZ_Func const &,
+	func::XYZ_Func const &,
 	Vector & ,//F1,
 	Vector & ,//F2,
 	EnergyMap const & //weights

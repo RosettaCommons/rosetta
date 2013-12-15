@@ -698,7 +698,7 @@ StepWiseRNA_PoseSetup::add_terminal_res_repulsion( core::pose::Pose & pose ) con
 	output_seq_num_list( "working_terminal_res_list = ", working_terminal_res, TR.Debug );
 	/////////////////////////////////////////////////
 	Distance const DIST_CUTOFF = 8.0;
-	FuncOP const repulsion_func( new FadeFunc( -2.0 /*min*/, DIST_CUTOFF /*max*/, 1.0 /*fade zone width*/, 100.0 /*penalty*/ ) );
+	core::scoring::func::FuncOP const repulsion_func( new core::scoring::func::FadeFunc( -2.0 /*min*/, DIST_CUTOFF /*max*/, 1.0 /*fade zone width*/, 100.0 /*penalty*/ ) );
 
 	for ( Size i = 1; i <= working_terminal_res.size(); i++ ) {
 

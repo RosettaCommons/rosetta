@@ -94,7 +94,7 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
 				for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
 					pose.add_constraint( new CoordinateConstraint(
 								AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
-								new HarmonicFunc( 0.0, coord_sdev ) ) );
+								new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) ) );
 				}
 			}
 		}
@@ -305,6 +305,3 @@ void fix_worst_bad_ramas( core::pose::Pose & original_pose, core::Size how_many,
 }
 
 }
-
-
-

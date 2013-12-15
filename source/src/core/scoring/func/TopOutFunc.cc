@@ -23,7 +23,7 @@
 // C++ Headers
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 Real
 TopOutFunc::func( Real const x ) const {
@@ -62,4 +62,3 @@ TopOutFunc::show_violations( std::ostream& out, Real x, Size verbose_level, Real
 } // namespace constraints
 } // namespace scoring
 } // namespace core
-

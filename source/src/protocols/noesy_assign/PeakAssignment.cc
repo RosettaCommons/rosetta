@@ -129,7 +129,7 @@ void PeakAssignment::update_upperdistance_score(/*dmax*/ ) {
 
 PeakAssignment::NmrConstraintOP PeakAssignment::create_constraint(
 					pose::Pose const& pose,
-					core::scoring::constraints::FuncOP func
+					core::scoring::func::FuncOP func
 ) const {
 	basic::ProfileThis doit( basic::NOESY_ASSIGN_PA_GEN_CST );
 

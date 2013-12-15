@@ -176,7 +176,7 @@ void AlternativePairings::build_constraints( pose::Pose const& pose, scoring::co
   //        for A I residue n constrain N-O of n+1 and O-N n-1
   //        for A O residue n constrain N-O of n and O-N of n
   //        for P  ...
-  HarmonicFunc const NOfunc( 2.875, 0.2 ); //pretty much the same for all different pleatings
+  core::scoring::func::HarmonicFunc const NOfunc( 2.875, 0.2 ); //pretty much the same for all different pleatings
 
   //   Although 2) will give tighter constraints it might have the disadvantage that it creates high-energy barriers between
   //    different registers: going from reg N -> N+1 requires change of pleating for one residue.
@@ -224,7 +224,7 @@ void AlternativePairings::build_constraints( pose::Pose const& pose, scoring::co
 	    NamedAtomID atom2( "CA", pair );
 
 	    //get distance-function parameters right
-	    FuncOP myfunc;
+	    core::scoring::func::FuncOP myfunc;
 	    if ( pit->pairing().antiparallel() ) {
 	      if ( pit->pairing().get_pleating( pos ) == 2 ) { // Inward
 					myfunc = CAfuncAI.clone();

@@ -67,7 +67,7 @@ void
 SiteConstraint::read_def(
     std::istream & data,
     core::pose::Pose const & pose,
-    FuncFactory const & func_factory
+   func::FuncFactory const & func_factory
 ) {
     TR.Debug << "ConstraintIO::read_site_cst" << std::endl;
     Size res;
@@ -83,7 +83,7 @@ SiteConstraint::read_def(
 
 
 
-    FuncOP aFunc = func_factory.new_func( func_type );
+    func::FuncOP aFunc = func_factory.new_func( func_type );
     aFunc->read_data( data );
 
     if ( TR.Debug.visible() ) {
@@ -109,7 +109,7 @@ SiteConstraint::setup_csts(
     std::string name,
     std::string chain,
     core::pose::Pose const & pose,
-    FuncOP const & func
+    func::FuncOP const & func
 ) {
     id::AtomID target_atom( pose.residue_type( res ).atom_index( name ), res );
     //Size target_chain = pose.chain( res );
@@ -129,5 +129,3 @@ SiteConstraint::setup_csts(
 } // constraints
 } // scoring
 } // core
-
-

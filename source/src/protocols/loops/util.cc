@@ -123,7 +123,7 @@ fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom
 	      id::AtomID( ii, pos),
 	      id::AtomID( 1, pos ) /*this is completely ignored! */,
 	      rsd.xyz( ii ),
-	      new scoring::constraints::HarmonicFunc( 0.0, coord_sdev )
+	      new scoring::func::HarmonicFunc( 0.0, coord_sdev )
 						) );
 				}
       } else {
@@ -132,7 +132,7 @@ fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom
 						atomID,
 						id::AtomID( 1, pos ) /*this is completely ignored! */,
 						rsd.xyz( atomID.atomno() ),
-						new scoring::constraints::HarmonicFunc( 0.0, coord_sdev )
+						new scoring::func::HarmonicFunc( 0.0, coord_sdev )
 					) );
       }
     }
@@ -379,7 +379,7 @@ void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::po
       for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
         pose.add_constraint( new CoordinateConstraint(
           AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
-          new HarmonicFunc( 0.0, coord_sdev ) ) );
+          new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) ) );
       }
     }
   }
@@ -481,11 +481,11 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 	using namespace core;
 	using protocols::loops::Loops;
 	Loops secondary_structure_chunks;
-	
+
 	bool ss_chunk_started = false;
 	Size chunk_start_seqpos(0);
 	Size chunk_end_seqpos(0);
-	
+
 	for (core::Size ires = 1; ires <= pose.total_residue(); ++ires) {
 		if (!ss_chunk_started) {
 			if (pose.secstruct(ires) == extracted_ss_type) {
@@ -506,7 +506,7 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 			}
 		}
 	}
-	
+
 	// if the input sequence ends with the last ss chunk
 	if (ss_chunk_started) {
 		chunk_end_seqpos = pose.total_residue();
@@ -519,7 +519,7 @@ protocols::loops::Loops split_by_resSeq(core::pose::Pose const & pose) {
 	using protocols::loops::Loop;
 	using protocols::loops::Loops;
 	Loops chunks;
-	
+
 	Loop new_loop;
 	new_loop.set_start(1);
 	new_loop.set_stop(pose.total_residue());
@@ -549,7 +549,7 @@ protocols::loops::Loops find_non_protein_chunks(core::pose::Pose const & pose) {
 	}
 	return chunks;
 }
-	
+
 protocols::loops::Loops split_by_resSeq(core::pose::Pose const & pose,
 										protocols::loops::Loops const & input_chunks) {
 	using protocols::loops::Loop;
@@ -559,15 +559,15 @@ protocols::loops::Loops split_by_resSeq(core::pose::Pose const & pose,
 	Loops::LoopList::const_iterator eit, it;
 	for (  it = input_chunks.begin(), eit = input_chunks.end();
 		 it != eit; ++it ) {
-		
+
 		Loop new_loop(*it);
-		
+
 		for (core::Size ires = it->start(); ires < it->stop(); ++ires) {
 			if ( pose.pdb_info()->number(ires+1) - pose.pdb_info()->number(ires) != 1 ||
 				pose.pdb_info()->chain(ires+1) != pose.pdb_info()->chain(ires) ) {
 				new_loop.set_stop(ires);
 				chunks.add_loop(new_loop);
-				
+
 				new_loop.set_start(ires+1);
 				new_loop.set_stop(it->stop());
 			}
@@ -575,7 +575,7 @@ protocols::loops::Loops split_by_resSeq(core::pose::Pose const & pose,
 		chunks.add_loop( new_loop );
 	}
 	return chunks;
-    
+
 }
 
 protocols::loops::Loops split_by_ca_ca_dist(core::pose::Pose const & pose,
@@ -584,13 +584,13 @@ protocols::loops::Loops split_by_ca_ca_dist(core::pose::Pose const & pose,
 	using protocols::loops::Loop;
 	using protocols::loops::Loops;
 	Loops continuous_chunks;
-	
+
 	Loops::LoopList::const_iterator eit, it;
 	for (  it = input_chunks.begin(), eit = input_chunks.end();
 		 it != eit; ++it ) {
-		
+
 		Loop new_loop(*it);
-		
+
 		for (core::Size ires = it->start(); ires < it->stop(); ++ires) {
 			if( ! pose.residue(ires).is_protein() ) continue;
 
@@ -598,7 +598,7 @@ protocols::loops::Loops split_by_ca_ca_dist(core::pose::Pose const & pose,
 			if ( pose.residue(ires).xyz("CA").distance(pose.residue(ires+1).xyz("CA")) > CA_CA_distance_cutoff ) {
 				new_loop.set_stop(ires);
 				continuous_chunks.add_loop(new_loop);
-				
+
 				new_loop.set_start(ires+1);
 				new_loop.set_stop(it->stop());
 			}
@@ -606,7 +606,7 @@ protocols::loops::Loops split_by_ca_ca_dist(core::pose::Pose const & pose,
 			else {
 				new_loop.set_stop(ires);
 				continuous_chunks.add_loop(new_loop);
-				
+
 				new_loop.set_start(ires+1);
 				new_loop.set_stop(it->stop());
 			}
@@ -621,7 +621,7 @@ protocols::loops::Loops remove_small_gaps(protocols::loops::Loops const & input_
 	using protocols::loops::Loops;
 	using protocols::loops::Loop;
 	Loops secondary_structure_chunks;
-	
+
 	// join ss_chunks seperated by a small gap
 	core::Size i_chunk = 1;
 	while (i_chunk <= input_chunks.num_loop()) {
@@ -645,7 +645,7 @@ protocols::loops::Loops remove_small_gaps(protocols::loops::Loops const & input_
 protocols::loops::Loops remove_short_chunks(protocols::loops::Loops const & input_chunks, core::Size minimum_length_of_chunk) {
 	using protocols::loops::Loops;
 	Loops secondary_structure_chunks;
-	
+
 	//remove short ss_chunks
 	Loops::LoopList::const_iterator eit, it;
 	for (  it = input_chunks.begin(), eit = input_chunks.end();
@@ -666,11 +666,11 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 														   core::Real CA_CA_distance_cutoff) {
 	using protocols::loops::Loops;
 	Loops secondary_structure_chunks;
-	
+
 	for (core::Size i_ss = 0; i_ss < extracted_ss_types.size(); ++i_ss) {
 		char ss = extracted_ss_types[i_ss];
 		Loops secondary_structure_chunks_this_ss;
-		
+
 		// this order might be the best to deal with chain breaks in the middle of secondary structure chunk
 		secondary_structure_chunks_this_ss = extract_secondary_structure_chunks(pose, ss);
 		secondary_structure_chunks_this_ss = remove_small_gaps(secondary_structure_chunks_this_ss, gap_size);
@@ -682,14 +682,14 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 		if (ss == 'E') {
 			secondary_structure_chunks_this_ss = remove_short_chunks(secondary_structure_chunks_this_ss, minimum_length_of_chunk_strand);
 		}
-		
+
 		Loops::LoopList::const_iterator eit, it;
 		for (  it = secondary_structure_chunks_this_ss.begin(), eit = secondary_structure_chunks_this_ss.end();
 			 it != eit; ++it ) {
 			secondary_structure_chunks.add_loop(*it);
 		}
 	}
-	
+
 	// insert non protein chunks
 	/*
 	Loops non_prot_chunks = find_non_protein_chunks(pose);
@@ -701,11 +701,11 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 	*/
 	return secondary_structure_chunks;
 }
-	
+
 protocols::loops::Loops extract_continuous_chunks(core::pose::Pose const & pose,
 														   core::Size const minimum_size,
 														   core::Real const CA_CA_distance_cutoff) {
-	
+
 	using protocols::loops::Loops;
 	Loops chunks;
 	chunks = split_by_resSeq(pose);

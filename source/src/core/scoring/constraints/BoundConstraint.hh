@@ -39,14 +39,14 @@ namespace scoring {
 namespace constraints {
 
 ///
-class BoundFunc : public Func {
+class BoundFunc : public func::Func {
 public:
 	BoundFunc( Real const lb, Real const ub, Real sd, std::string type ): lb_( lb ), ub_( ub ), sd_ ( sd ), rswitch_( 0.5 ), type_( type ) {}
 	BoundFunc( Real const lb, Real const ub, Real sd, Real rswitch, std::string type )
 	  : lb_( lb ), ub_( ub ), sd_ ( sd ), rswitch_( rswitch ), type_( type ) {}
 
 	virtual
-	FuncOP clone() const { return new BoundFunc( *this ); };
+	func::FuncOP clone() const { return new BoundFunc( *this ); };
 
 	virtual
 	void read_data( std::istream& );
@@ -98,7 +98,7 @@ public:
 	periodicity_( periodicity_in )
 	{}
 
-	FuncOP clone() const { return new PeriodicBoundFunc( *this ); };
+	func::FuncOP clone() const { return new PeriodicBoundFunc( *this ); };
 
 	void read_data( std::istream& );
 
@@ -143,7 +143,7 @@ public:
 	offset_( offset_in )
 	{}
 
-	FuncOP clone() const { return new OffsetPeriodicBoundFunc( *this ); };
+	func::FuncOP clone() const { return new OffsetPeriodicBoundFunc( *this ); };
 
 	void read_data( std::istream& );
 
@@ -210,14 +210,14 @@ namespace scoring {
 namespace constraints {
 
 ///
-class BoundFunc : public Func {
+class BoundFunc : public func::Func {
 public:
 	BoundFunc( Real const lb, Real const ub, Real sd, std::string type ): lb_( lb ), ub_( ub ), sd_ ( sd ), rswitch_( 0.5 ), type_( type ) {}
 	BoundFunc( Real const lb, Real const ub, Real sd, Real rswitch, std::string type )
 	  : lb_( lb ), ub_( ub ), sd_ ( sd ), rswitch_( rswitch ), type_( type ) {}
 
 	virtual
-	FuncOP clone() const { return new BoundFunc( *this ); };
+	func::FuncOP clone() const { return new BoundFunc( *this ); };
 
 	virtual
 	void read_data( std::istream& );
@@ -267,7 +267,7 @@ public:
 	periodicity_( periodicity_in )
 	{}
 
-	FuncOP clone() const { return new PeriodicBoundFunc( *this ); };
+	func::FuncOP clone() const { return new PeriodicBoundFunc( *this ); };
 
 	void read_data( std::istream& );
 
@@ -312,7 +312,7 @@ public:
 	offset_( offset_in )
 	{}
 
-	FuncOP clone() const { return new OffsetPeriodicBoundFunc( *this ); };
+	func::FuncOP clone() const { return new OffsetPeriodicBoundFunc( *this ); };
 
 	void read_data( std::istream& );
 

@@ -17,7 +17,7 @@
 
 namespace core {
 namespace scoring {
-namespace constraints {
+namespace func {
 
 class USOGFunc;
 typedef utility::pointer::owning_ptr<USOGFunc> USOGFuncOP;

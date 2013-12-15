@@ -144,7 +144,7 @@ public:
 			"fa_standard"
 		);
 
-		FuncFactory ff; // dummy
+		core::scoring::func::FuncFactory ff; // dummy
 
 		bb_cst.read_def( input, mypose, ff );
 
