@@ -200,8 +200,11 @@ private:
 private:
 	///@brief jump to define which interface is interesting
 	core::Size interface_jump_;
-	//@brief what chains are fixed in an interface
+	///@brief what chains are fixed in an interface
 	std::set<int> fixed_chains_;
+	///@brief the ligand chain that will be moved in an interface
+	///In this scheme, everything else is fixed
+	std::string ligand_chain_;
 	///@brief scorefunction
 	core::scoring::ScoreFunctionCOP sf_;
 

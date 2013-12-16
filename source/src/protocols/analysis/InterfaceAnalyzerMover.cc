@@ -333,9 +333,25 @@ void InterfaceAnalyzerMover::apply( core::pose::Pose & pose )
 		utility_exit_with_message_status( "InterfaceAnalyzerMover: pose has only one chain, aborting analysis \n", 1 );
 		//remaining code works for actual interfaces
 	}
+	
+	//If we've specified a ligand chainn, then every other chain is the fixed chain
+	//This isn't a very efficient way of figuring this out but this mover is full of
+	//fairly slow stuff so another trip through the residues isn't going to kill anyone
+	if(ligand_chain_.size() != 0)
+	{
+		char this_chain (ligand_chain_[0]);
+		for (core::Size i = 1; i<=pose.total_residue(); ++i){
+			if (pose.pdb_info()->chain( i ) != this_chain){
+				fixed_chains_.insert( pose.chain(i) );
+			}
+		}
+		
+	}
 	//check for multichain poses
-	else if(pose.conformation().num_chains() > 2){
+	if(pose.conformation().num_chains() > 2){
 		if (multichain_constructor_){
+			
+
 			//fix the foldtree to reflect the fixed chains we want
 			core::Size newjump;
 			std::set< int > fixedchains( get_fixed_chains() );
@@ -1472,6 +1488,12 @@ InterfaceAnalyzerMover::parse_my_tag(
     {
     	throw utility::excn::EXCN_RosettaScriptsOption("Jump and fixedchains are mutually exclusive. Use either jump or fixedchains");
     }
+	
+	if ( (tag->hasOption("jump") || tag->hasOption("fixedchains") ) && tag->hasOption("ligandchain") )
+	{
+		throw utility::excn::EXCN_RosettaScriptsOption("if you specify Jump or fixedchains you cannot also specify ligandchain");
+	}
+	
 	if (tag->hasOption("fixedchains"))
     {
     	set_interface_jump(0);
@@ -1494,7 +1516,12 @@ InterfaceAnalyzerMover::parse_my_tag(
 
 			multichain_constructor_ = true;
 			//fixed_chains_(fixed_chains)
-    }
+    }else if(tag->hasOption("ligandchain"))
+	{
+		ligand_chain_ = tag->getOption<std::string>("ligandchain");
+		multichain_constructor_ = true;
+		multichain_constructor_ = true;
+	}
 	else
     {
     	set_interface_jump(tag->getOption("jump", 1));
