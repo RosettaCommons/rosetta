@@ -42,6 +42,11 @@
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 
+///////////////////////////////////////////////////////////////////////////
+// This should be deprecated in favor of Fang's RNA_KinematicCloser.cc
+// which is in protocols/rotamer_sampler/rna/
+///////////////////////////////////////////////////////////////////////////
+
 using namespace core;
 
 static numeric::random::RandomGenerator RG ( 26640 ); // <- Magic number, do not change it!

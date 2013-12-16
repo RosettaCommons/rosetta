@@ -36,7 +36,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/id/AtomID_Map.Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/DOF_ID.hh>
@@ -54,18 +53,18 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/options/option.hh>
-#include <core/options/after_opts.hh>
-#include <core/options/util.hh>
-#include <core/options/option_macros.hh>
+#include <basic/options/option.hh>
+#include <basic/options/after_opts.hh>
+#include <basic/options/util.hh>
+#include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/swa/StepWiseUtil.hh>
 #include <protocols/swa/StepWiseClusterer.hh>
-#include <protocols/swa/StepWisePoseSampleGenerator.hh>
-#include <protocols/swa/StepWisePoseCombineSampleGenerator.hh>
+#include <protocols/swa/sample_generators/StepWisePoseSampleGenerator.hh>
+#include <protocols/swa/sample_generators/StepWisePoseCombineSampleGenerator.hh>
 #include <protocols/swa/RigidBodySampler.hh>
 #include <protocols/swa/InputStreamWithResidueInfo.hh>
-#include <protocols/swa/rna/rigid_body_settings.hh>
+//#include <protocols/swa/rna/rigid_body_settings.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.hh>
 #include <protocols/swa/rna/StepWiseRNA_Classes.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
@@ -2605,6 +2604,7 @@ rna_close_loop_test(){
 	apply_rigid_body_settings( pose, rbs_new_pair, 2, 3 );
 
 	/////////////////////////////////////////////////////////////////
+	// NOTE!!!!! Following no longer works.
 	RNA_AnalyticLoopCloser rna_analytic_loop_closer( 1, 3 );
 	rna_analytic_loop_closer.apply( pose );
 	pose.dump_pdb( "closed.pdb" );

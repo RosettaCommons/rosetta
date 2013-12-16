@@ -102,7 +102,6 @@
 #include <protocols/swa/monte_carlo/RNA_O2PrimeMover.hh>
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.hh>
 #include <protocols/swa/monte_carlo/RNA_AddDeleteMonteCarlo.hh>
-#include <protocols/swa/monte_carlo/SWA_MonteCarloUtil.hh>
 #include <protocols/swa/monte_carlo/SWA_Move.hh>
 
 #include <numeric/random/random.hh>

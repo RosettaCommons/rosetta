@@ -843,7 +843,7 @@ StepWiseRNA_PoseSetup::verify_protonated_H1_adenosine_variants( pose::Pose & pos
 void
 StepWiseRNA_PoseSetup::update_fold_tree_at_virtual_sugars( pose::Pose & pose ){
 
-	std::map< Size, Size > const reference_res_for_each_virtual_sugar = get_reference_res_for_each_virtual_sugar( pose, job_parameters_->working_moving_suite() );
+	std::map< Size, Size > const reference_res_for_each_virtual_sugar = get_reference_res_for_each_virtual_sugar( pose, true /*check_for_non_jump*/, job_parameters_->working_moving_suite() );
 
 	TR.Debug << "BEFORE VIRTUAL SUGAR UPDATE " << pose.fold_tree() << std::endl;
 	for ( std::map< Size, Size >::const_iterator it = reference_res_for_each_virtual_sugar.begin();

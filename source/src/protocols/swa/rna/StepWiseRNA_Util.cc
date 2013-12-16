@@ -2131,8 +2131,15 @@ namespace rna {
 	utility::vector1< bool >
 	get_partition_definition_floating_base( pose::Pose const & pose, Size const & moving_res ){
 
-		ObjexxFCL::FArray1D<bool> partition_definition( pose.total_residue(), false );
 		Size const jump_nr = look_for_unique_jump_to_moving_res( pose.fold_tree(), moving_res );
+		return get_partition_definition_by_jump( pose, jump_nr);
+	}
+
+	///////////////////////////////////////////////////////////////////////
+	utility::vector1< bool >
+	get_partition_definition_by_jump( pose::Pose const & pose, Size const & jump_nr /*jump_number*/ ){
+		ObjexxFCL::FArray1D<bool> partition_definition( pose.total_residue(), false );
+
 		pose.fold_tree().partition_by_jump( jump_nr, partition_definition );
 
 		//silly conversion. There may be a faster way to do this actually.
@@ -2140,6 +2147,15 @@ namespace rna {
 		for ( Size n = 1; n <= pose.total_residue(); n++ )	partition_definition_vector1.push_back( partition_definition(n) );
 
 		return partition_definition_vector1;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	get_anchor_res( Size const rebuild_res, pose::Pose const & pose ){
+		kinematics::FoldTree const & f = pose.fold_tree();
+		Size const jump_nr = look_for_unique_jump_to_moving_res( f, rebuild_res );
+		return ( f.upstream_jump_residue( jump_nr ) == rebuild_res ) ?
+			f.downstream_jump_residue( jump_nr ) : f.upstream_jump_residue( jump_nr );
 	}
 
 	////////////////////////////////////////////////////////////////////////

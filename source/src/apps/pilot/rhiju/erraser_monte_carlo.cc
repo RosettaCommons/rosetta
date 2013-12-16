@@ -44,7 +44,6 @@
 //////////////////////////////////////////////////////////
 #include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
-#include <protocols/swa/monte_carlo/SWA_MonteCarloUtil.hh>
 #include <protocols/swa/TransientCutpointHandler.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <protocols/viewer/viewers.hh>
@@ -134,7 +133,6 @@ erraser_monte_carlo()
   using namespace core::import_pose;
 	using namespace protocols::swa;
 	using namespace protocols::swa::rna;
-	using namespace protocols::swa::monte_carlo;
 	using namespace protocols::moves;
 
 	clock_t const time_start( clock() );

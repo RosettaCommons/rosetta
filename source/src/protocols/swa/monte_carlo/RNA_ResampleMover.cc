@@ -15,11 +15,10 @@
 
 #include <protocols/swa/monte_carlo/RNA_ResampleMover.hh>
 #include <protocols/swa/monte_carlo/SWA_Move.hh>
+#include <protocols/swa/monte_carlo/SWA_MoveSelector.hh>
 #include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/TransientCutpointHandler.hh>
-#include <protocols/swa/monte_carlo/SWA_Move.hh>
-#include <protocols/swa/monte_carlo/SWA_MonteCarloUtil.hh>
 #include <protocols/swa/StepWiseUtil.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -46,7 +45,8 @@ namespace monte_carlo {
 		minimize_single_res_( false ),
 		native_pose_ ( native_pose ),
 		constraint_x0_( constraint_x0 ),
-		constraint_tol_( constraint_tol )
+		constraint_tol_( constraint_tol ),
+		swa_move_selector_( new SWA_MoveSelector )
 	{}
 
 	//Destructor
@@ -61,8 +61,8 @@ namespace monte_carlo {
 														std::string & move_type ){
 
 		utility::vector1< SWA_Move > swa_moves;
-		get_resample_terminal_move_elements( pose, swa_moves );
-		if ( allow_internal_moves_ ) get_resample_internal_move_elements( pose, swa_moves );
+		swa_move_selector_->get_resample_terminal_move_elements( pose, swa_moves );
+		if ( allow_internal_moves_ ) swa_move_selector_->get_resample_internal_move_elements( pose, swa_moves );
 
 		//		TR << "POSSIBLE RESAMPLE MOVES! ";
 		//		for ( Size n = 1; n <= swa_moves.size(); n++ ) TR << swa_moves[n];

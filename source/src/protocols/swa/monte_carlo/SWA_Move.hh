@@ -87,12 +87,16 @@ namespace monte_carlo {
 							Attachments const & attachments,
 							MoveType const & move_type );
 
+		SWA_Move( MoveElement const & move_element,
+							Attachment const & attachment,
+							MoveType const & move_type );
+
 		SWA_Move( Size const moving_res,
 							Attachments const & attachments,
 							MoveType const & move_type );
 
 		SWA_Move( Size const moving_res,
-							Attachment const & attachments,
+							Attachment const & attachment,
 							MoveType const & move_type );
 
 		SWA_Move( SWA_Move const & src );

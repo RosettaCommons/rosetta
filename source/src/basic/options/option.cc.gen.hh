@@ -746,10 +746,10 @@ option.add( basic::options::OptionKeys::jumps::topology_file, "read a file with 
 option.add( basic::options::OptionKeys::jumps::bb_moves, "Apply bb_moves ( wobble, small, shear) during stage3 and stage 4." ).def(false);
 option.add( basic::options::OptionKeys::jumps::no_wobble, "Don t apply the useless wobble during stage3 and stage 4." ).def(false);
 option.add( basic::options::OptionKeys::jumps::no_shear, "Don t apply the useless shear during stage3 and stage 4." ).def(false);
-option.add( basic::options::OptionKeys::jumps::no_sample_ss_jumps, "sample jump-frags during folding" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::invrate_jump_move, "give 5 here to have 5 torsion moves for each jump move" ).def(10);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::no_sample_ss_jumps, "sample jump-frags during folding" ).def(false);
+option.add( basic::options::OptionKeys::jumps::invrate_jump_move, "give 5 here to have 5 torsion moves for each jump move" ).def(10);
 option.add( basic::options::OptionKeys::jumps::chainbreak_weight_stage1, "the weight on chainbreaks" ).def(1.0);
 option.add( basic::options::OptionKeys::jumps::chainbreak_weight_stage2, "the weight on chainbreaks" ).def(1.0);
 option.add( basic::options::OptionKeys::jumps::chainbreak_weight_stage3, "the weight on chainbreaks" ).def(1.0);
@@ -866,6 +866,7 @@ option.add( basic::options::OptionKeys::score::extra_improper_file, "Add extra p
 option.add( basic::options::OptionKeys::score::pro_close_planar_constraint, "stdev of CD,N,CA,prevC trigonal planar constraint in pro_close energy method" ).def(0.1);
 option.add( basic::options::OptionKeys::score::linear_bonded_potential, "use linear (instead of quadratic) bonded potential" ).def(false);
 option.add( basic::options::OptionKeys::score::geom_sol_correct_acceptor_base, "Fixed definition of base atom for acceptors to match hbonds_geom" ).def(false);
+option.add( basic::options::OptionKeys::score::free_sugar_bonus, "Amount to reward virtualization of a sugar/ribose" ).def(0.0);
 option.add( basic::options::OptionKeys::score::rg_local_span, "First,last res in rg_local. For example to calc rg_local from 1-20 would be 1,20" ).def(0);
 option.add( basic::options::OptionKeys::score::unmodifypot, "Do not call modify pot to add extra repulsive interactions between Obb/Obb atom types at distances beneath 3.6 Angstroms" );
 option.add( basic::options::OptionKeys::score::saxs::saxs, "saxs option group" ).legal(true).def(true);
@@ -1490,12 +1491,12 @@ option.add( basic::options::OptionKeys::membrane::membrane, "membrane option gro
 option.add( basic::options::OptionKeys::membrane::normal_cycles, "number of membrane normal cycles" ).def(100);
 option.add( basic::options::OptionKeys::membrane::normal_mag, "magnitude of membrane normal angle search (degrees)" ).def(5);
 option.add( basic::options::OptionKeys::membrane::center_mag, "magnitude of membrane normal center search (Angstroms)" ).def(1);
-option.add( basic::options::OptionKeys::membrane::smooth_move_frac, "No description" ).def(0.5);
-option.add( basic::options::OptionKeys::membrane::no_interpolate_Mpair, "No description" ).def(false);
-option.add( basic::options::OptionKeys::membrane::Menv_penalties, "No description" ).def(false);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::membrane::Membed_init, "No description" ).def(false);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::membrane::smooth_move_frac, "No description" ).def(0.5);
+option.add( basic::options::OptionKeys::membrane::no_interpolate_Mpair, "No description" ).def(false);
+option.add( basic::options::OptionKeys::membrane::Menv_penalties, "No description" ).def(false);
+option.add( basic::options::OptionKeys::membrane::Membed_init, "No description" ).def(false);
 option.add( basic::options::OptionKeys::membrane::Fa_Membed_update, "No description" ).def(false);
 option.add( basic::options::OptionKeys::membrane::center_search, "perform membrane center search" ).def(false);
 option.add( basic::options::OptionKeys::membrane::normal_search, "perform membrane normal search" ).def(false);
@@ -2235,13 +2236,13 @@ option.add( basic::options::OptionKeys::optE::starting_refEs, "IterativeOptEDriv
 option.add( basic::options::OptionKeys::optE::repeat_swarm_optimization_until_fitness_improves, "After the first time though the particle swarm optimization phase, if the end fitness is not better than the start fitness, recreate the swarm around the start dofs and repeat the swarm optimization." ).def(false);
 option.add( basic::options::OptionKeys::optE::design_with_minpack, "Use the min-packer to design in the sequence recovery stages." ).def(false);
 option.add( basic::options::OptionKeys::optE::limit_bad_scores, "Quit after 100,000 inf or NaN errors in optE objective function" );
-option.add( basic::options::OptionKeys::optE::rescore::rescore, "rescore option group" ).legal(true).def(true);
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::rescore::rescore, "rescore option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::optE::rescore::weights, "Weight set to use when rescoring optE partition functions" );
 option.add( basic::options::OptionKeys::optE::rescore::context_round, "Integer of the context PDBs generated during design to use to measure the pNatAA" );
 option.add( basic::options::OptionKeys::optE::rescore::outlog, "File to which the OptEPosition data should be written" );
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::rescore::measure_sequence_recovery, "When rescoring a weight set, run design with that weight set and measure the sequence recovery." ).def(false);
+option.add( basic::options::OptionKeys::optE::rescore::measure_sequence_recovery, "When rescoring a weight set, run design with that weight set and measure the sequence recovery." ).def(false);
 option.add( basic::options::OptionKeys::optE::no_design_pdb_output, "Do not write out the designed pdbs to the workdir_ directories over the course of the optE run" );
 option.add( basic::options::OptionKeys::backrub::backrub, "backrub option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::backrub::pivot_residues, "residues for which contiguous stretches can contain segments (internal residue numbers, defaults to all residues)" ).def(utility::vector1<int>());

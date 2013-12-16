@@ -1,3 +1,4 @@
+namespace jumps { BooleanOptionKey const no_sample_ss_jumps( "jumps:no_sample_ss_jumps" );  }
 namespace jumps { IntegerOptionKey const invrate_jump_move( "jumps:invrate_jump_move" );  }
 namespace jumps { RealOptionKey const chainbreak_weight_stage1( "jumps:chainbreak_weight_stage1" );  }
 namespace jumps { RealOptionKey const chainbreak_weight_stage2( "jumps:chainbreak_weight_stage2" );  }
@@ -115,6 +116,7 @@ namespace score { StringOptionKey const extra_improper_file( "score:extra_improp
 namespace score { RealOptionKey const pro_close_planar_constraint( "score:pro_close_planar_constraint" );  }
 namespace score { BooleanOptionKey const linear_bonded_potential( "score:linear_bonded_potential" );  }
 namespace score { BooleanOptionKey const geom_sol_correct_acceptor_base( "score:geom_sol_correct_acceptor_base" );  }
+namespace score { RealOptionKey const free_sugar_bonus( "score:free_sugar_bonus" );  }
 namespace score { IntegerVectorOptionKey const rg_local_span( "score:rg_local_span" );  }
 namespace score { BooleanOptionKey const unmodifypot( "score:unmodifypot" );  }
 namespace score { namespace saxs { BooleanOptionKey const saxs( "score:saxs" );  } }
@@ -739,6 +741,3 @@ namespace membrane { BooleanOptionKey const membrane( "membrane" );  }
 namespace membrane { IntegerOptionKey const normal_cycles( "membrane:normal_cycles" );  }
 namespace membrane { RealOptionKey const normal_mag( "membrane:normal_mag" );  }
 namespace membrane { RealOptionKey const center_mag( "membrane:center_mag" );  }
-namespace membrane { RealOptionKey const smooth_move_frac( "membrane:smooth_move_frac" );  }
-namespace membrane { BooleanOptionKey const no_interpolate_Mpair( "membrane:no_interpolate_Mpair" );  }
-namespace membrane { BooleanOptionKey const Menv_penalties( "membrane:Menv_penalties" );  }

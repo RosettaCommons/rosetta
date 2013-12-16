@@ -7,18 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file RNA_DeleteMover
-/// @brief Torsions an RNA residue from a chain terminus.
+/// @file protocols/swa/monte_carlo/SWA_MoveSelector.cc
+/// @brief
 /// @detailed
-/// @author Rhiju Das
+/// @author Rhiju Das, rhiju@stanford.edu
 
-#include <protocols/swa/monte_carlo/SWA_MonteCarloUtil.hh>
+
+#include <protocols/swa/monte_carlo/SWA_MoveSelector.hh>
 #include <protocols/swa/monte_carlo/SWA_Move.hh>
 #include <protocols/swa/StepWiseUtil.hh>
+#include <protocols/swa/rna/StepWiseRNA_Util.hh> // probably do not need RNA in here.
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh> // Probably could get rid of RNA-specialized stuff here.
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -29,43 +31,34 @@
 #include <basic/Tracer.hh>
 
 #include <map>
-
 #include <numeric/random/random.hh>
 
 static numeric::random::RandomGenerator RG(239111);  // <- Magic number, do not change it!
 
-static basic::Tracer TR( "protocols.swa.monte_carlo.SWA_MonteCarloUtil" ) ;
+static basic::Tracer TR( "protocols.swa.monte_carlo.SWA_MoveSelector" );
 
 using namespace core;
 using namespace core::pose::full_model_info;
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// Functions mainly to define what add/delete/resample moves are possible next, given the current pose.
-//
-// Maybe this should be changed to an object -- 'SWA_MoveDecider'
-//
-
 
 namespace protocols {
 namespace swa {
 namespace monte_carlo {
 
+	//Constructor
+	SWA_MoveSelector::SWA_MoveSelector():
+		disallow_delete_( false ),
+		disallow_resample_( false ),
+		disallow_skip_bulge_( false ),
+		delete_terminal_only_( false )
+	{}
+
+	//Destructor
+	SWA_MoveSelector::~SWA_MoveSelector()
+	{}
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	get_delete_move_elements( pose::Pose & pose,
-														utility::vector1< SWA_Move > & swa_moves ) {
-
-		utility::vector1< SWA_Move > swa_moves_delete;
-		get_terminal_move_elements( pose, swa_moves_delete, DELETE );
-		// don't delete a multi_residue_move_element if its the only one!
-		remove_from_consideration_first_multi_residue_move_element( swa_moves_delete, false /*remove_even_if_not_singlet*/ );
-		for ( Size n = 1; n <= swa_moves_delete.size(); n++ ) swa_moves.push_back( swa_moves_delete[ n ] );
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	get_resample_terminal_move_elements( pose::Pose & pose,
+	SWA_MoveSelector::get_resample_terminal_move_elements( pose::Pose & pose,
 																			 utility::vector1< SWA_Move > & swa_moves ) {
 
 		utility::vector1< SWA_Move > swa_moves_terminal;
@@ -75,9 +68,118 @@ namespace monte_carlo {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	SWA_MoveSelector::get_resample_internal_move_elements( pose::Pose & pose,
+																			 utility::vector1< SWA_Move > & swa_moves ) {
+
+		utility::vector1< SWA_Move > swa_moves_internal;
+		get_internal_move_elements( pose, swa_moves_internal, RESAMPLE_INTERNAL_LOCAL );
+		// don't delete a multi_residue_move_element if its the only one!
+		remove_from_consideration_first_multi_residue_move_element( swa_moves_internal, false /*remove_even_if_not_singlet*/ );
+		for ( Size n = 1; n <= swa_moves_internal.size(); n++ ) swa_moves.push_back( swa_moves_internal[ n ] );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	SWA_MoveSelector::get_delete_move_elements( pose::Pose & pose,
+														utility::vector1< SWA_Move > & swa_moves ) {
+
+		utility::vector1< SWA_Move > swa_moves_delete;
+		if ( delete_terminal_only_ ){ // original mode. doesn't actually permit detailed balance with pose 'merges'
+			get_terminal_move_elements( pose, swa_moves_delete, DELETE );
+			// don't delete a multi_residue_move_element if its the only one!
+			remove_from_consideration_first_multi_residue_move_element( swa_moves_delete, false /*remove_even_if_not_singlet*/ );
+		} else { // opposites of all possible merges, I think.
+			get_split_move_elements( pose, swa_moves );
+		}
+		for ( Size n = 1; n <= swa_moves_delete.size(); n++ ) swa_moves.push_back( swa_moves_delete[ n ] );
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< Size >
+	SWA_MoveSelector::get_partition_res( utility::vector1< bool > const & partition_definition, bool const setting ){
+		utility::vector1< Size > partition_res;
+		for ( Size n = 1; n <= partition_definition.size(); n++ ){
+			if ( partition_definition[ n ]  == setting ) partition_res.push_back( n );
+		}
+		return partition_res;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	SWA_MoveSelector::check_for_fixed_domain( pose::Pose const & pose,
+																						utility::vector1< Size> const & partition_res ){
+		utility::vector1< Size > const domain_map = core::pose::full_model_info::get_fixed_domain_from_full_model_info_const( pose );
+		for ( Size i = 1; i <= partition_res.size(); i++ ){
+			if ( domain_map[ partition_res[ i ] ] > 0 ) return true;
+		}
+		return false;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	SWA_MoveSelector::get_split_move_elements( pose::Pose & pose,
+																						 utility::vector1< SWA_Move > & swa_moves ) {
+
+		using namespace protocols::swa::rna;
+
+		make_sure_full_model_info_is_setup( pose );
+
+		utility::vector1< SWA_Move > swa_moves_split;
+		utility::vector1< bool > partition_definition;
+		utility::vector1< Size > partition_res1, partition_res2;
+		utility::vector1< Size > const domain_map = core::pose::full_model_info::get_fixed_domain_from_full_model_info_const( pose );
+		FullModelInfo const & full_model_info = const_full_model_info( pose );
+
+		// first look at suites
+		for ( Size i = 1; i < pose.total_residue(); i++ ){
+			if ( !pose.fold_tree().is_cutpoint( i ) &&
+					 ( domain_map[ i ] != domain_map[ i+1 ] ||
+						 domain_map[ i ] == 0 || domain_map [ i+1 ] == 0 ) ){
+				partition_definition = get_partition_definition( pose, i /*suite*/ );
+
+				partition_res1 = get_partition_res( partition_definition, true );
+				partition_res2 = get_partition_res( partition_definition, false );
+				if ( check_for_fixed_domain( pose, partition_res1 )  ) {
+					swa_moves_split.push_back( SWA_Move( full_model_info.sub_to_full(partition_res2),
+																							 Attachment( full_model_info.sub_to_full(i), ATTACHED_TO_PREVIOUS ), DELETE ) );
+				}
+				if ( check_for_fixed_domain( pose, partition_res2 ) ) {
+					swa_moves_split.push_back( SWA_Move( full_model_info.sub_to_full(partition_res1),
+																							 Attachment( full_model_info.sub_to_full(i+1), ATTACHED_TO_NEXT ), DELETE ) );
+				}
+
+			}
+		}
+
+		// now look at jumps. Note that, currently, additions by jump are only for single residues, so only
+		// split cases in which single residues are deleted.
+		for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
+			partition_definition = get_partition_definition_by_jump( pose, n );
+			partition_res1 = get_partition_res( partition_definition, true );
+			partition_res2 = get_partition_res( partition_definition, false );
+			if ( partition_res1.size() == 1 && check_for_fixed_domain( pose, partition_res2 ) ){
+				Size const anchor_res = get_anchor_res( partition_res1[1], pose );
+				AttachmentType type = ( anchor_res > partition_res1[1] ) ? SKIP_BULGE_TO_NEXT : SKIP_BULGE_TO_PREVIOUS;
+				swa_moves_split.push_back( SWA_Move( full_model_info.sub_to_full(partition_res1),
+																						 Attachment( full_model_info.sub_to_full(anchor_res), type ), DELETE ) );
+			}
+			if ( partition_res2.size() == 1 && check_for_fixed_domain( pose, partition_res1 ) ){
+				Size const anchor_res = get_anchor_res( partition_res2[1], pose );
+				AttachmentType type = ( anchor_res > partition_res2[1] ) ? SKIP_BULGE_TO_NEXT : SKIP_BULGE_TO_PREVIOUS;
+				swa_moves_split.push_back( SWA_Move( full_model_info.sub_to_full(partition_res2),
+																						 Attachment( full_model_info.sub_to_full(anchor_res), type ), DELETE ) );
+			}
+		}
+		for ( Size n = 1; n <= swa_moves_split.size(); n++ ) swa_moves.push_back( swa_moves_split[ n ] );
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// The point of this function is to allow big move_elements to remain fixed. It may not be entirely necessary.
 	void
-	remove_from_consideration_first_multi_residue_move_element( utility::vector1< SWA_Move > & swa_moves,
+	SWA_MoveSelector::remove_from_consideration_first_multi_residue_move_element( utility::vector1< SWA_Move > & swa_moves,
 																																bool remove_even_if_not_singlet ){
 
 		Size number_of_multi_residue_move_elements( 0 ), first_multi_residue_move_element( 0 );
@@ -106,7 +208,7 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	get_terminal_move_elements( pose::Pose & pose,
+	SWA_MoveSelector::get_terminal_move_elements( pose::Pose & pose,
 																utility::vector1< SWA_Move > & swa_moves,
 																MoveType const & move_type ) {
 
@@ -121,8 +223,12 @@ namespace monte_carlo {
 			utility::vector1< Attachment > attachments = get_attachments( pose, move_element );
 			// at least for now, each move_element should be connected to another one.
 			if ( attachments.size() == 0 ) runtime_assert( num_move_elements == 1 );
-
 			if ( attachments.size() > 1 ) continue; // not a terminal
+
+			// for now, floating base can only handle single residues.
+			if ( attachments.size() == 1 &&
+					 ( attachments[1].attachment_type() == SKIP_BULGE_TO_PREVIOUS || attachments[1].attachment_type() == SKIP_BULGE_TO_NEXT ) &&
+					 move_element.size() > 1 ) continue;
 
 			swa_moves.push_back( SWA_Move( move_element, attachments, move_type ) );
 		}
@@ -131,19 +237,7 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	get_resample_internal_move_elements( pose::Pose & pose,
-																			 utility::vector1< SWA_Move > & swa_moves ) {
-
-		utility::vector1< SWA_Move > swa_moves_internal;
-		get_internal_move_elements( pose, swa_moves_internal, RESAMPLE_INTERNAL_LOCAL );
-		// don't delete a multi_residue_move_element if its the only one!
-		remove_from_consideration_first_multi_residue_move_element( swa_moves_internal, false /*remove_even_if_not_singlet*/ );
-		for ( Size n = 1; n <= swa_moves_internal.size(); n++ ) swa_moves.push_back( swa_moves_internal[ n ] );
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	get_internal_move_elements( pose::Pose & pose,
+	SWA_MoveSelector::get_internal_move_elements( pose::Pose & pose,
 															utility::vector1< SWA_Move > & swa_moves,
 															MoveType const & move_type ) {
 
@@ -170,7 +264,7 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	Attachments
-	get_attachments( pose::Pose & pose, Size const & moving_res ){
+	SWA_MoveSelector::get_attachments( pose::Pose & pose, Size const & moving_res ){
 		return get_attachments( pose, utility::tools::make_vector1( moving_res ) );
 	}
 
@@ -180,7 +274,7 @@ namespace monte_carlo {
 	// Others skip some residues, but are in the same chain (SKIP_BULGE_TO_PREVIOUS, SKIP_BULGE_TO_NEXT)
 	// Finally, some could involve jumps to other chains or ligands -- not modeled yet.
 	Attachments
-	get_attachments( pose::Pose & pose, MoveElement const & move_element ){
+	SWA_MoveSelector::get_attachments( pose::Pose & pose, MoveElement const & move_element ){
 
 		using namespace core::pose::full_model_info;
 
@@ -222,15 +316,15 @@ namespace monte_carlo {
 		for ( Size k = 1; k <= attachments_to_previous.size(); k++ ) attachments.push_back( attachments_to_previous[ k ] );
 		for ( Size k = 1; k <= attachments_to_next.size()    ; k++ ) attachments.push_back( attachments_to_next[ k ] );
 
-		// can relax this later when we enable inter-chain jumps, or enable multiple intra-chain jumps.
-		runtime_assert( attachments.size() <= 4 );
+		// have to relax this when we enable inter-chain jumps, or enable multiple intra-chain jumps.
+		//		runtime_assert( attachments.size() <= 4 );
 		return attachments;
 
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	get_add_move_elements( pose::Pose & pose,
+	SWA_MoveSelector::get_add_move_elements( pose::Pose & pose,
 												 utility::vector1< SWA_Move > & swa_moves,
 												 bool const disallow_skip_bulge ){
 
@@ -261,12 +355,14 @@ namespace monte_carlo {
 
 					// bulge skip...
 					if ( !disallow_skip_bulge &&
-							 (res_list[ i ] + 2 < res_list[ i+1 ]) &&
-							 i_full < (nres_full - 1) &&
+							 (i == nres || res_list[ i ] + 2 < res_list[ i+1 ]) &&
+							 i_full < (nres_full - 1)  &&
 							 !is_cutpoint_in_full_pose[ i_full + 1 ] ){
 						// for now can only handle single residue additions via skip-bulge ("floating base")
 						Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( i_full + 2 );
-						if ( other_pose_idx == 0 ) swa_moves.push_back( SWA_Move( i_full + 2, Attachment( i_full, SKIP_BULGE_TO_PREVIOUS ), ADD ) );
+						Size const other_pose_idx_intervening = full_model_info.get_idx_for_other_pose_with_residue( i_full + 1 );
+						if ( other_pose_idx == 0 && other_pose_idx_intervening == 0 )
+							swa_moves.push_back( SWA_Move( i_full + 2, Attachment( i_full, SKIP_BULGE_TO_PREVIOUS ), ADD ) );
 					}
 				}
 
@@ -286,12 +382,14 @@ namespace monte_carlo {
 
 					// bulge skip...
 					if ( !disallow_skip_bulge &&
-							 (res_list[ i ] - 2 > res_list[ i - 1 ]) &&
+							 (i == 1 || res_list[ i ] - 2 > res_list[ i - 1 ]) &&
 							 i_full > 2 &&
 							 !is_cutpoint_in_full_pose[ i_full - 2 ] ){
 						// for now can only handle single residue additions via skip-bulge ("floating base")
 						Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( i_full - 2 );
-						if ( other_pose_idx == 0 ) swa_moves.push_back( SWA_Move( i_full - 2, Attachment( i_full, SKIP_BULGE_TO_NEXT ), ADD ) );
+						Size const other_pose_idx_intervening = full_model_info.get_idx_for_other_pose_with_residue( i_full - 1 );
+						if ( other_pose_idx == 0  && other_pose_idx_intervening == 0)
+							swa_moves.push_back( SWA_Move( i_full - 2, Attachment( i_full, SKIP_BULGE_TO_NEXT ), ADD ) );
 					}
 				}
 
@@ -302,35 +400,27 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	get_random_move_element_at_chain_terminus( pose::Pose & pose,
-																						 SWA_Move & swa_move,
-																						 bool const disallow_delete,
-																						 bool const disallow_resample,
-																						 bool const disallow_skip_bulge ){
+	SWA_MoveSelector::get_random_move_element_at_chain_terminus( pose::Pose & pose,
+																															 SWA_Move & swa_move ){
 
 		utility::vector1< Size > sample_res; /*leave empty if no filter*/
 		get_random_move_element_at_chain_terminus( pose, swa_move,
-																							 disallow_delete, disallow_resample,
-																							 disallow_skip_bulge,
 																							 sample_res );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	get_random_move_element_at_chain_terminus( pose::Pose & pose,
+	SWA_MoveSelector::get_random_move_element_at_chain_terminus( pose::Pose & pose,
 																						 SWA_Move & swa_move,
-																						 bool const disallow_delete,
-																						 bool const disallow_resample,
-																						 bool const disallow_skip_bulge,
 																						 utility::vector1< Size > const & sample_res /*leave empty if no filter*/) {
 
 		using namespace core::pose::full_model_info;
 
 		utility::vector1< SWA_Move >  swa_moves;
 
-		if ( !disallow_resample )   get_resample_terminal_move_elements( pose, swa_moves );
-		if ( !disallow_delete )     get_delete_move_elements( pose, swa_moves );
-		get_add_move_elements( pose, swa_moves, disallow_skip_bulge );
+		if ( !disallow_resample_ )   get_resample_terminal_move_elements( pose, swa_moves );
+		if ( !disallow_delete_ )     get_delete_move_elements( pose, swa_moves );
+		get_add_move_elements( pose, swa_moves, disallow_skip_bulge_ );
 
 		if ( sample_res.size() > 0 ) filter_by_sample_res( swa_moves,
 																											 sample_res, get_res_list_from_full_model_info( pose ) );
@@ -348,7 +438,7 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	filter_by_sample_res( utility::vector1< SWA_Move > & swa_moves,
+	SWA_MoveSelector::filter_by_sample_res( utility::vector1< SWA_Move > & swa_moves,
 											  utility::vector1< Size > const & sample_res,
 											  utility::vector1< Size > const & res_list ){
 
@@ -371,6 +461,6 @@ namespace monte_carlo {
 	}
 
 
-}
-}
-}
+} //monte_carlo
+} //swa
+} //protocols

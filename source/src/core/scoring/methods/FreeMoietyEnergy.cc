@@ -22,6 +22,8 @@
 
 // Project headers
 #include <core/conformation/Residue.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
 
@@ -53,7 +55,8 @@ FreeMoietyEnergyCreator::score_types_for_method() const {
 FreeMoietyEnergy::FreeMoietyEnergy() :
 	parent( new FreeMoietyEnergyCreator ),
 	free_suite_bonus_( -1.0 ), // this is ad hoc for now.
-	free_2HOprime_bonus_( -1.0 ) // this is ad hoc for now.
+	free_2HOprime_bonus_( -1.0 ), // this is ad hoc for now.
+	free_sugar_bonus_( basic::options::option[ basic::options::OptionKeys::score::free_sugar_bonus ] )
 {}
 
 FreeMoietyEnergy::~FreeMoietyEnergy() {}
@@ -93,6 +96,7 @@ FreeMoietyEnergy::residue_energy(
 			emap[ free_suite ] += free_suite_bonus_;
 		}
 	}
+	if ( rsd.has_variant_type( "VIRTUAL_RIBOSE" ) )	emap[ free_suite ] += free_sugar_bonus_;
 
 	if ( rsd.has_variant_type( "VIRTUAL_O2PRIME_HYDROGEN" ) )	emap[ free_2HOprime ] += free_2HOprime_bonus_;
 

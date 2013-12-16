@@ -136,6 +136,8 @@ namespace rna {
 		bool integration_test_mode_;
 		bool virtual_sugar_is_from_prior_step_;
 		bool const do_chain_closure_;
+		bool const first_minimize_with_fixed_base_;
+		bool const keep_base_fixed_;
 		Size const max_tries_for_random_overall_;
 		Size const max_tries_for_random_sugar_setup_;
 		bool sugar_setup_success_;

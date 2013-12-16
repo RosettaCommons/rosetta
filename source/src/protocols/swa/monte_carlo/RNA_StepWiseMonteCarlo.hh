@@ -95,6 +95,8 @@ namespace monte_carlo {
 		
 		void set_extra_minimize_res( utility::vector1< core::Size > const & setting ){ extra_minimize_res_ = setting; }
 
+		void set_allow_skip_bulge( bool const & setting ){ allow_skip_bulge_ = setting; }
+		bool allow_skip_bulge() const{ return allow_skip_bulge_; }
 
 	private:
 
@@ -135,6 +137,8 @@ namespace monte_carlo {
 		//Real rmsd_weight_;
 		Real max_missing_weight_;
 		Real chainbreak_weight_;
+		bool allow_skip_bulge_;
+
 		core::pose::PoseOP native_pose_;
 		utility::vector1< core::Size > extra_minimize_res_;
 	};

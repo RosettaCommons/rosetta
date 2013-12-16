@@ -76,6 +76,9 @@ namespace full_model_info {
 	utility::vector1< Size >
 	get_moving_res_from_full_model_info( pose::Pose & pose );
 
+	utility::vector1< Size >
+	get_fixed_domain_from_full_model_info_const( pose::Pose const & pose );
+
 	core::Size
 	sub_to_full( core::Size const i, core::pose::Pose & pose );
 
@@ -87,6 +90,9 @@ namespace full_model_info {
 
 	utility::vector1< Size >
 	figure_out_pose_domain_map( core::pose::Pose & pose );
+
+	utility::vector1< Size >
+	figure_out_pose_domain_map_const( core::pose::Pose const & pose );
 
 	core::conformation::Residue const &
 	get_residue( Size const seqpos_in_full_model,

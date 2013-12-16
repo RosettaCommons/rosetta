@@ -15,7 +15,7 @@
 #include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_AddMover.hh>
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
-#include <protocols/swa/monte_carlo/SWA_MonteCarloUtil.hh>
+#include <protocols/swa/monte_carlo/SWA_MoveSelector.hh>
 
 // libRosetta headers
 #include <core/types.hh>
@@ -49,7 +49,8 @@ namespace monte_carlo {
 		rna_delete_mover_( rna_delete_mover ),
 		disallow_deletion_of_last_residue_( false ),
 		skip_deletions_( false ),
-		disallow_skip_bulge_( true )
+		disallow_skip_bulge_( true ),
+		swa_move_selector_( new SWA_MoveSelector )
 	{}
 
   //////////////////////////////////////////////////////////////////////////
@@ -74,10 +75,10 @@ namespace monte_carlo {
 		if ( skip_deletions_ ) disallow_delete = true;
 
 		SWA_Move swa_move;
-		get_random_move_element_at_chain_terminus( pose, swa_move,
-																							 disallow_delete, true /*disallow_resample*/,
-																							 disallow_skip_bulge_,
-																							 sample_res_ /* empty means no filter on what residues can be added */ );
+		swa_move_selector_->set_disallow_delete( disallow_delete );
+		swa_move_selector_->set_disallow_skip_bulge( disallow_skip_bulge_ );
+		swa_move_selector_->set_disallow_resample( true );
+		swa_move_selector_->get_random_move_element_at_chain_terminus( pose, swa_move, sample_res_ /* empty means no filter on what residues can be added */ );
 
 		if ( swa_move.move_type() == NO_ADD_OR_DELETE ) {
 			move_type = "no move";

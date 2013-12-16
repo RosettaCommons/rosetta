@@ -16,8 +16,6 @@
 #include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_O2PrimeMover.hh>
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.hh>
-#include <protocols/swa/monte_carlo/SWA_MonteCarloUtil.hh>
-#include <protocols/swa/monte_carlo/SWA_Move.hh>
 
 // libRosetta headers
 #include <core/types.hh>
@@ -50,6 +48,8 @@ using core::Real;
 // AddDeleteMonteCarlo (a prototype for SWA Monte Carlo) -- framework for
 //  sampling RNA through torsion moves,
 //  and moves that delete or add residues at chain termini.
+//  This probably should be deprecated soon -- could be captured by
+//  RNA_StepWiseMonteCarlo
 //////////////////////////////////////////////////////////////////////////
 
 static numeric::random::RandomGenerator RG(29111);  // <- Magic number, do not change it!

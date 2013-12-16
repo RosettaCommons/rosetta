@@ -91,8 +91,8 @@ sources = {
 		"RNA_AddDeleteMonteCarlo",
 		"RNA_TorsionMover",
 		"RNA_StepWiseMonteCarlo",
-		"SWA_MonteCarloUtil",
 		"SWA_Move",
+		"SWA_MoveSelector",
 	],
 	"protocols/swa/protein": [
 		"MainChainTorsionSet",

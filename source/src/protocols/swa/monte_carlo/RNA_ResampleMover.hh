@@ -19,6 +19,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/swa/monte_carlo/RNA_ResampleMover.fwd.hh>
 #include <protocols/swa/monte_carlo/SWA_Move.fwd.hh>
+#include <protocols/swa/monte_carlo/SWA_MoveSelector.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_Modeler.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -73,6 +74,7 @@ namespace monte_carlo {
 		core::Real constraint_tol_;
 
 		protocols::swa::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
+		protocols::swa::monte_carlo::SWA_MoveSelectorOP swa_move_selector_;
 	};
 
 } //monte_carlo

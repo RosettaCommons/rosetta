@@ -331,6 +331,12 @@ get_partition_definition( pose::Pose const & pose, Size const & moving_suite );
 utility::vector1< bool >
 get_partition_definition_floating_base( pose::Pose const & pose, Size const & moving_res );
 
+utility::vector1< bool >
+get_partition_definition_by_jump( pose::Pose const & pose, Size const & jump_nr /*jump_number*/ );
+
+Size
+get_anchor_res( Size const rebuild_res, pose::Pose const & pose );
+
 void
 apply_rotamer( pose::Pose & pose, utility::vector1< Torsion_Info >  const & rotamer_list );
 

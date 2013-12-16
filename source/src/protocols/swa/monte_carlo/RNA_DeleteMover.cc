@@ -13,7 +13,7 @@
 /// @author Rhiju Das
 
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
-#include <protocols/swa/monte_carlo/SWA_MonteCarloUtil.hh>
+#include <protocols/swa/monte_carlo/SWA_MoveSelector.hh>
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/swa/StepWiseUtil.hh>
@@ -57,7 +57,7 @@ namespace monte_carlo {
 		constraint_x0_( constraint_x0 ),
 		constraint_tol_( constraint_tol )
   {}
-	
+
 	RNA_DeleteMover::RNA_DeleteMover( ):
 	minimize_after_delete_( true )
 	{}
@@ -98,9 +98,9 @@ namespace monte_carlo {
 
 		fix_up_residue_type_variants( *sliced_out_pose_op ); // now make this include chain terminus!
 		fix_up_residue_type_variants( pose ); // now make this include chain terminus!
-		
+
 		clear_constraints_recursively( pose );
-		
+
 		if ( native_pose_ ) {
 			superimpose_recursively_and_add_constraints( pose, *native_pose_, constraint_x0_, constraint_tol_ );
 		}
@@ -150,7 +150,8 @@ namespace monte_carlo {
 		minimize_after_delete_ = false;
 
 		utility::vector1< SWA_Move > swa_moves;
-		get_delete_move_elements( pose, swa_moves);
+		SWA_MoveSelector swa_move_selector;
+		swa_move_selector.get_delete_move_elements( pose, swa_moves);
 
 		if ( swa_moves.size() > 0 ){ // recursively delete all residues.
 			apply( pose, swa_moves[1].move_element() );

@@ -15,7 +15,6 @@
 
 #include <protocols/swa/monte_carlo/RNA_StepWiseMonteCarlo.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/swa/monte_carlo/SWA_MonteCarloUtil.hh>
 #include <protocols/swa/monte_carlo/RNA_AddMover.hh>
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.hh>
@@ -51,26 +50,26 @@ namespace monte_carlo {
 
 //Constructor
 	RNA_StepWiseMonteCarlo::RNA_StepWiseMonteCarlo( core::scoring::ScoreFunctionOP scorefxn, core::pose::PoseOP native_pose, core::Real constraint_x0, core::Real constraint_tol ):
-	scorefxn_( scorefxn ),
-	verbose_scores_( false ),
-	use_phenix_geo_( true ),
-	skip_deletions_( false ),
-	erraser_( true ),
-	allow_internal_moves_( false ),
-	num_random_samples_( 20 ),
-	cycles_( 500 ),
-	add_delete_frequency_( 0.5 ),
-	minimize_single_res_frequency_( 0.0 ),
-	minimize_single_res_( false ), // changes during run depending on minimize_single_res_frequency_
-	switch_focus_frequency_( 0.5 ),
-	just_min_after_mutation_frequency_( 0.5 ),
-	temperature_( 1.0 ),
-	native_pose_( native_pose ),
-	constraint_x0_( constraint_x0 ),
-	constraint_tol_( constraint_tol )
+		scorefxn_( scorefxn ),
+		verbose_scores_( false ),
+		use_phenix_geo_( true ),
+		skip_deletions_( false ),
+		erraser_( true ),
+		allow_internal_moves_( false ),
+		num_random_samples_( 20 ),
+		cycles_( 500 ),
+		add_delete_frequency_( 0.5 ),
+		minimize_single_res_frequency_( 0.0 ),
+		minimize_single_res_( false ), // changes during run depending on minimize_single_res_frequency_
+		switch_focus_frequency_( 0.5 ),
+		just_min_after_mutation_frequency_( 0.5 ),
+		temperature_( 1.0 ),
+		native_pose_( native_pose ),
+		constraint_x0_( constraint_x0 ),
+		constraint_tol_( constraint_tol ),
+		allow_skip_bulge_( false )
 {
 	using namespace core::scoring;
-	//rmsd_weight_ = scorefxn_->get_weight( coordinate_constraint );
 	max_missing_weight_ = scorefxn_->get_weight( missing_res );
 	chainbreak_weight_ = scorefxn_->get_weight( linear_chainbreak );
 }
@@ -190,6 +189,7 @@ RNA_StepWiseMonteCarlo::initialize_movers(){
 	rna_add_or_delete_mover_ = new RNA_AddOrDeleteMover( rna_add_mover_, rna_delete_mover_ );
 	rna_add_or_delete_mover_->set_sample_res( sample_res_ );
 	rna_add_or_delete_mover_->set_skip_deletions( skip_deletions_ ); // for testing only
+	rna_add_or_delete_mover_->set_disallow_skip_bulge( !allow_skip_bulge_ );
 
 	rna_resample_mover_ = new RNA_ResampleMover( stepwise_rna_modeler->clone_modeler(), native_pose_, constraint_x0_, constraint_tol_ );
 	rna_resample_mover_->set_just_min_after_mutation_frequency( just_min_after_mutation_frequency_ );

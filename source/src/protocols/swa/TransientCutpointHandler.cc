@@ -53,7 +53,9 @@ namespace swa {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	TransientCutpointHandler::put_in_cutpoints( core::pose::Pose & pose ){
+	TransientCutpointHandler::put_in_cutpoints( core::pose::Pose & viewer_pose ){
+
+		Pose pose = viewer_pose; // prevent some conflicts with graphics. Note potential slowdown.
 
 		fold_tree_save_ = pose.fold_tree();
 
@@ -62,6 +64,7 @@ namespace swa {
 
 		correctly_add_cutpoint_variants( pose, cutpoint_suite_ );
 
+		viewer_pose = pose;
 	}
 
 	/////////////////////////////////////////////////////////////////////////
@@ -102,9 +105,11 @@ namespace swa {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	TransientCutpointHandler::take_out_cutpoints( core::pose::Pose & pose ){
+	TransientCutpointHandler::take_out_cutpoints( core::pose::Pose & viewer_pose ){
 
 		using namespace core::chemical;
+
+		Pose pose = viewer_pose; // prevent some conflicts with graphics. Note potential slowdown.
 
 		// remove chainbreak variants. along with fold_tree restorer, put into separate function.
 		remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, cutpoint_suite_   );
@@ -113,6 +118,7 @@ namespace swa {
 		// return to simple fold tree
 		pose.fold_tree( fold_tree_save_ );
 
+		viewer_pose = pose;
 	}
 
 } //swa

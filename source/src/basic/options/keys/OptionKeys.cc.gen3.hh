@@ -1,3 +1,7 @@
+namespace optE { namespace rescore { BooleanOptionKey const rescore( "optE:rescore" );  } }
+namespace optE { namespace rescore { FileOptionKey const weights( "optE:rescore:weights" );  } }
+namespace optE { namespace rescore { IntegerOptionKey const context_round( "optE:rescore:context_round" );  } }
+namespace optE { namespace rescore { FileOptionKey const outlog( "optE:rescore:outlog" );  } }
 namespace optE { namespace rescore { BooleanOptionKey const measure_sequence_recovery( "optE:rescore:measure_sequence_recovery" );  } }
 namespace optE { BooleanOptionKey const no_design_pdb_output( "optE:no_design_pdb_output" );  }
 namespace backrub { BooleanOptionKey const backrub( "backrub" );  }

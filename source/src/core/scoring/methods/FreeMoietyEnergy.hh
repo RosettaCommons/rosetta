@@ -84,6 +84,7 @@ private:
 
 	core::Real const free_suite_bonus_;
 	core::Real const free_2HOprime_bonus_;
+	core::Real const free_sugar_bonus_;
 
 };
 

@@ -461,10 +461,7 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 		utility::vector1< bool > partition_definition;
 		Size floating_base_anchor_res( 0 );
 		if ( floating_base ){
-			kinematics::FoldTree const & f = pose.fold_tree();
-			Size const jump_nr = look_for_unique_jump_to_moving_res( f, rebuild_res );
-			floating_base_anchor_res = ( f.upstream_jump_residue( jump_nr ) == rebuild_res ) ?
-				f.downstream_jump_residue( jump_nr ) : f.upstream_jump_residue( jump_nr );
+			floating_base_anchor_res = get_anchor_res( rebuild_res, pose );
 			//if ( floating_base_anchor_res == rebuild_res + 2 ) floating_base_bulge_res = rebuild_res + 1;
 			//			if ( floating_base_anchor_res == rebuild_res - 2 ) floating_base_bulge_res = rebuild_res - 1;
 			//TR << TR.Red << "Floating_base bulge_res " << floating_base_bulge_res << TR.Reset << std::endl;
@@ -547,14 +544,19 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 		}
 		if ( rmsd_res_list_.size() > 0 ) stepwise_rna_job_parameters_setup.set_rmsd_res_list( rmsd_res_list_ /*global numbering*/ );
 		else  stepwise_rna_job_parameters_setup.set_rmsd_res_list( full_model_info.sub_to_full( make_vector1( rebuild_res ) ) );
+
 		if ( rebuild_res > 1 &&
 				 pose.residue( rebuild_res - 1 ).has_variant_type( "VIRTUAL_RIBOSE" ) &&
 				 ( !pose.fold_tree().is_cutpoint( rebuild_res - 1 ) ||
-					 is_cutpoint_closed( pose, rebuild_res - 1 ) ) ) stepwise_rna_job_parameters_setup.set_rebuild_bulge_mode( true );
+					 is_cutpoint_closed( pose, rebuild_res - 1 ) ) &&
+				 !pose.fold_tree().is_cutpoint( rebuild_res ) &&
+				 pose.fold_tree().jump_nr( rebuild_res - 1, rebuild_res + 1) > 0 ) stepwise_rna_job_parameters_setup.set_rebuild_bulge_mode( true );
 		if ( rebuild_res < pose.total_residue() &&
 				 pose.residue( rebuild_res + 1 ).has_variant_type( "VIRTUAL_RIBOSE" ) &&
 				 ( !pose.fold_tree().is_cutpoint( rebuild_res ) ||
-					 is_cutpoint_closed( pose, rebuild_res ) ) ) stepwise_rna_job_parameters_setup.set_rebuild_bulge_mode( true );
+					 is_cutpoint_closed( pose, rebuild_res ) ) &&
+				 !pose.fold_tree().is_cutpoint( rebuild_res - 1 ) &&
+				 pose.fold_tree().jump_nr( rebuild_res - 1, rebuild_res + 1 ) > 0 ) stepwise_rna_job_parameters_setup.set_rebuild_bulge_mode( true );
 
 		utility::vector1< std::string > jump_point_pair_list;
 		core::kinematics::FoldTree const & f = pose.fold_tree();

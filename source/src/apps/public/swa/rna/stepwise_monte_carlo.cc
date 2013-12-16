@@ -71,6 +71,7 @@ OPT_KEY( Integer, cycles )
 OPT_KEY( Real, minimize_single_res_frequency )
 OPT_KEY( Real, switch_focus_frequency )
 OPT_KEY( Boolean, allow_internal_moves )
+OPT_KEY( Boolean, allow_skip_bulge )
 OPT_KEY( Boolean, erraser )
 OPT_KEY( Boolean, skip_deletions )
 OPT_KEY( Boolean, verbose_scores )
@@ -124,7 +125,7 @@ output_to_silent_file( std::string const & out_tag,
 
 	Real rms( 0.0 );
 	Real rms_no_bulges ( 0.0 );
-	
+
 	if ( native_pose ) {
 		rms = superimpose_at_fixed_res_and_get_all_atom_rmsd( pose, *native_pose );
 		rms_no_bulges = superimpose_at_fixed_res_and_get_all_atom_rmsd( pose, *native_pose, true );
@@ -132,12 +133,12 @@ output_to_silent_file( std::string const & out_tag,
 
 	BinaryRNASilentStruct s( pose, out_tag );
 	s.add_string_value( "missing", ObjexxFCL::string_of( get_number_missing_residue_connections( pose ) ) );
-	
+
 	if ( native_pose ) {
 		s.add_energy( "rms", rms );
 		s.add_energy( "non_bulge_rms", rms_no_bulges );
 	}
-	
+
 	silent_file_data.write_silent_struct( s, silent_file, false /*score_only*/ );
 
 }
@@ -187,16 +188,16 @@ stepwise_monte_carlo()
 	// actual pose to be sampled...
 	pose::Pose & pose = *input_poses[ 1 ];
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 800, 800 );
-	
+
 //	Real const rmsd_weight = scorefxn->get_weight( swm_rmsd );
-//	
+//
 //	if ( rmsd_weight > 0 ) {
 //		scorefxn->set_weight( coordinate_constraint, rmsd_weight );
 //		scorefxn->set_weight( swm_rmsd, 0.001 );
 //	}
-	
+
 	RNA_StepWiseMonteCarlo stepwise_rna_monte_carlo ( scorefxn, native_pose, option[ constraint_x0 ](), option[ constraint_tol ]() );
-	
+
 	stepwise_rna_monte_carlo.set_verbose_scores( option[ verbose_scores ]() );
 	stepwise_rna_monte_carlo.set_skip_deletions( option[ skip_deletions ]() );
 	stepwise_rna_monte_carlo.set_num_random_samples( option[ num_random_samples ]() );
@@ -208,12 +209,13 @@ stepwise_monte_carlo()
 	stepwise_rna_monte_carlo.set_sample_res( option[ sample_res ]() );
 	stepwise_rna_monte_carlo.set_just_min_after_mutation_frequency( option[ just_min_after_mutation_frequency ]() );
 	stepwise_rna_monte_carlo.set_allow_internal_moves( option[ allow_internal_moves ]() );
+	stepwise_rna_monte_carlo.set_allow_skip_bulge( option[ allow_skip_bulge ]() );
 	stepwise_rna_monte_carlo.set_temperature( option[ temperature ]() );
 	stepwise_rna_monte_carlo.set_extra_minimize_res( option[ extra_min_res ]() );
 
 	// following can be simplified if we make corrected_geo default to true from command-line.
 	stepwise_rna_monte_carlo.set_use_phenix_geo(  option[ corrected_geo ].user()  ? option[corrected_geo ]() : true );
-	
+
 	// main loop
 	std::string out_tag;
 	std::string const silent_file = option[ out::file::silent ]();
@@ -264,6 +266,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( skip_deletions, "no delete moves -- just for testing", false );
 	NEW_OPT( erraser, "Use KIC sampling", true );
 	NEW_OPT( allow_internal_moves, "Allow moves in which internal cutpoints are created to allow ERRASER rebuilds", false );
+	NEW_OPT( allow_skip_bulge, "Allow moves in which an intervening residue is skipped and the next one is modeled as floating base", false );
 	NEW_OPT( num_random_samples, "Number of samples from swa residue sampler before minimizing best", 20 );
 	NEW_OPT( cycles, "Number of Monte Carlo cycles", 50 );
 	NEW_OPT( temperature, "Monte Carlo temperature", 1.0 );

@@ -379,7 +379,7 @@ StepWiseRNA_VirtualSugarSamplerWrapper::do_consistency_checks(){
 	}
 
 	if ( is_current_sugar_virt_ ){ //Consistency test.
-		runtime_assert( gap_size_ == 0 );
+		// runtime_assert( gap_size_ == 0 ); // not true for internal suites.
 	}
 	runtime_assert( gap_size_ == 0 || num_virtual_sugar_ <= 1 );
 

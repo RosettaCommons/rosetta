@@ -1651,6 +1651,8 @@ rotate( pose::Pose & pose, Matrix const M,
 		runtime_assert ( num_three_prime_connections <= 1 );
 		runtime_assert ( num_jumps_to_previous <= 1 );
 		runtime_assert ( num_jumps_to_subsequent <= 1 );
+		TR.Debug << num_five_prime_connections << " " <<  num_three_prime_connections << " " << num_jumps_to_previous << " " <<  num_jumps_to_subsequent << std::endl;
+		// requirement for a clean slice:
 		runtime_assert( (num_five_prime_connections + num_three_prime_connections + num_jumps_to_previous + num_jumps_to_subsequent) == 1 );
 
 		// fold tree!
@@ -1816,7 +1818,7 @@ rotate( pose::Pose & pose, Matrix const M,
 			// can happen after additions
 			correctly_add_cutpoint_variants( pose, res );
 
-			// this should actually get instantiated by the modeler
+			// leave virtual riboses in this should actually get instantiated by the modeler
 			//if ( pose.residue_type( res ).has_variant_type( "VIRTUAL_RIBOSE" ) )	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", res );
 
 		} else{
@@ -1870,6 +1872,28 @@ rotate( pose::Pose & pose, Matrix const M,
 		}
 	}
 
+	void
+	fix_up_residue_type_variants_at_floating_base( pose::Pose & pose, Size const res ) {
+
+		if ( !pose.residue(res ).is_RNA() ) return;
+		FullModelInfo const & full_model_info = const_full_model_info( pose );
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
+		utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+
+		if ( res > 1 &&
+				 res_list[ res ] - 1 == res_list[ res - 1 ] &&
+				 ! cutpoint_open_in_full_model.has_value( res_list[ res - 1 ])  ) return;
+
+		if ( res < pose.total_residue() &&
+				 res_list[ res ] + 1 == res_list[ res + 1 ] &&
+				 ! cutpoint_open_in_full_model.has_value( res_list[ res ]) ) return;
+
+		if ( !pose.residue_type( res ).has_variant_type( "VIRTUAL_RIBOSE" ) )	{
+			add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", res );
+		}
+
+	}
+
 
 	////////////////////////////////////////////////////////////////////
 	void
@@ -1881,22 +1905,28 @@ rotate( pose::Pose & pose, Matrix const M,
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
 
 			// Are we at a strand beginning?
-			if ( n == 1 || pose.fold_tree().is_cutpoint( n-1 ) ){
+			bool const at_strand_beginning = ( n == 1 || pose.fold_tree().is_cutpoint( n-1 ) );
+			if ( at_strand_beginning ) {
 				fix_up_residue_type_variants_at_strand_beginning( pose, n );
 			} else { // make sure there is nothing crazy here
 				if ( pose.residue_type( n ).has_variant_type( VIRTUAL_PHOSPHATE ) )	remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, n );
-				if ( pose.residue_type( n ).has_variant_type( "VIRTUAL_RIBOSE" ) )	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", n );
+				// don't remove virtual sugars -- those will be instantiated inside the residue sampler
+				//				if ( pose.residue_type( n ).has_variant_type( "VIRTUAL_RIBOSE" ) )	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", n );
 				runtime_assert( !pose.residue_type( n ).has_variant_type( CUTPOINT_UPPER ) );
 			}
 
 			// Look for strand ends.
-			if ( n == pose.total_residue() || pose.fold_tree().is_cutpoint( n ) ){
+			bool const at_strand_end = ( n == pose.total_residue() || pose.fold_tree().is_cutpoint( n ) );
+			if ( at_strand_end ) {
 				fix_up_residue_type_variants_at_strand_end( pose, n );
 			} else {
-				if ( pose.residue_type( n ).has_variant_type( "VIRTUAL_RIBOSE" ) )	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", n );
+				// don't remove virtual sugars -- those will be instantiated inside the residue sampler
+				//				if ( pose.residue_type( n ).has_variant_type( "VIRTUAL_RIBOSE" ) )	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", n );
 				runtime_assert( !pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) );
 			}
 
+			 // check for floating_base
+			if ( at_strand_end && at_strand_beginning ) fix_up_residue_type_variants_at_floating_base( pose,  n );
 		}
 
 		pose_to_fix = pose;

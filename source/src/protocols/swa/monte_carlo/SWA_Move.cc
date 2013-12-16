@@ -38,6 +38,17 @@ namespace monte_carlo {
 	}
 
 	//Constructor
+	SWA_Move::SWA_Move( MoveElement const & move_element,
+											Attachment const & attachment,
+											MoveType const & move_type ):
+		utility::pointer::ReferenceCount(),
+		move_element_( move_element ),
+		attachments_( utility::tools::make_vector1( attachment ) ),
+		move_type_( move_type )
+	{
+	}
+
+	//Constructor
 	SWA_Move::SWA_Move( Size const res,
 											utility::vector1< Attachment > const & attachments,
 											MoveType const & move_type ):

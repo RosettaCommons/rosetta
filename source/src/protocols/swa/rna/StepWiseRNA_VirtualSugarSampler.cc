@@ -100,6 +100,8 @@ StepWiseRNA_VirtualSugarSampler::StepWiseRNA_VirtualSugarSampler( StepWiseRNA_Jo
 	virtual_sugar_is_from_prior_step_( true ),
 	legacy_mode_( true ), //for comparison to original code -- deprecate in 2014?
 	do_chain_closure_( true || legacy_mode_ ),
+	first_minimize_with_fixed_base_( false ),
+	keep_base_fixed_( false ),
 	max_tries_for_random_overall_( 12 ),
 	max_tries_for_random_sugar_setup_( 1 ),
 	sugar_setup_success_( false )
@@ -125,6 +127,8 @@ StepWiseRNA_VirtualSugarSampler::apply( pose::Pose & viewer_pose ){
 	Size const max_tries = choose_random_ ? max_tries_for_random_sugar_setup_ : 1;
 	for ( Size ntries = 1; ntries <= max_tries; ntries++ ){
 		TR << TR.Green << "On sampling try: " << ntries << TR.Reset << std::endl;
+		TR << TR.Green << "Will sample residue " << sugar_modeling_.moving_res << " -- reference res: " << sugar_modeling_.reference_res <<  std::endl;
+		TR << TR.Green << viewer_pose.fold_tree() << TR.Reset << std::endl;
 		apply( viewer_pose, pose_list );
 		if ( pose_list.size() > 0 || !sugar_setup_success_ ) break;
 	}
@@ -267,6 +271,8 @@ StepWiseRNA_VirtualSugarSampler::minimize_sugar( pose::Pose & pose_with_sugar ){
 
 	using namespace core::optimization;
 	using namespace core::scoring;
+	using namespace core::id;
+	using namespace core::kinematics;
 
 	ScoreFunctionOP sugar_scorefxn, sugar_scorefxn_without_ch_bond, rescaled_sugar_score_fxn_without_ch_bond;
 	get_sugar_setup_scorefxns( sugar_scorefxn, sugar_scorefxn_without_ch_bond, rescaled_sugar_score_fxn_without_ch_bond );
@@ -284,9 +290,19 @@ StepWiseRNA_VirtualSugarSampler::minimize_sugar( pose::Pose & pose_with_sugar ){
 	options_standard.nblist_auto_update( true );
 	options_armijo.nblist_auto_update( true );
 
-	core::kinematics::MoveMap mm;
+	MoveMap mm;
 	mm.set_bb( false );
 	mm.set_chi( false );
+	mm.set_jump( false );
+
+	if ( first_minimize_with_fixed_base_ ){
+		mm.set( TorsionID( sugar_modeling_.moving_res, id::BB, 4 ), true );
+		mm.set( TorsionID( sugar_modeling_.moving_res, id::BB, 5 ), true );
+		mm.set( TorsionID( sugar_modeling_.moving_res, id::BB, 6 ), true );
+		minimizer.run( pose_with_sugar, mm, *( sugar_scorefxn_without_ch_bond ), options_standard );
+	}
+
+	if ( keep_base_fixed_ ) return;
 
 	bool found_desired_jump_ID = false;
 	for ( Size jump_ID = 1; jump_ID <= pose_with_sugar.fold_tree().num_jump(); jump_ID++ ){
@@ -672,10 +688,10 @@ StepWiseRNA_VirtualSugarSampler::virtualize_distal_partition( pose::Pose & viewe
 	bool const moving_res_partition    = partition( sugar_modeling_.moving_res );
 	bool const reference_res_partition = partition( sugar_modeling_.reference_res );
 	runtime_assert( moving_res_partition != reference_res_partition );
-	if ( sugar_modeling_.bulge_res > 0 ){
-		bool const bulge_res_partition     = partition( sugar_modeling_.bulge_res );
-		runtime_assert( bulge_res_partition == reference_res_partition );
-	}
+	//	if ( sugar_modeling_.bulge_res > 0 ){
+		//		bool const bulge_res_partition     = partition( sugar_modeling_.bulge_res );
+		//		runtime_assert( bulge_res_partition == reference_res_partition );
+	//	}
 
 	for ( Size seq_num = 1; seq_num <= nres; seq_num++ ){
 		if ( seq_num == sugar_modeling_.moving_res ) continue;

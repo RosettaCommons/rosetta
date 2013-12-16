@@ -58,12 +58,35 @@ namespace rna {
 
 	std::map< Size, Size > const
 	get_reference_res_for_each_virtual_sugar( pose::Pose const & pose,
-																	 Size const & moving_suite /*cannot place jump across partititions*/ );
+																						bool const check_for_non_jump = false,
+																						Size const moving_suite = 0 /*cannot place jump across partititions*/ );
 
 	utility::vector1< Size >
 	get_possible_reference_res_list( Size const virtual_sugar_res,
 																	 pose::Pose const & pose,
-																	 Size const & moving_suite /*cannot place jump across partititions*/ );
+																	 bool const check_for_non_jump,
+																	 Size const moving_suite /*cannot place jump across partititions*/ );
+
+
+	Size
+	look_for_jumps_to_previous( Size const virtual_sugar_res,
+															pose::Pose const & pose,
+															bool const force_upstream );
+
+	Size
+	look_for_jumps_to_next( Size const virtual_sugar_res,
+													pose::Pose const & pose,
+													bool const force_upstream );
+
+	Size
+	look_for_non_jump_reference_to_previous( Size const virtual_sugar_res,
+																					 pose::Pose const & pose,
+																					 Size const moving_suite );
+
+	Size
+	look_for_non_jump_reference_to_next( Size const virtual_sugar_res,
+																			 pose::Pose const & pose,
+																			 Size const moving_suite );
 
 } //rna
 } //swa

@@ -13,8 +13,8 @@
 /// @author Rhiju Das
 
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.hh>
-#include <protocols/swa/monte_carlo/SWA_MonteCarloUtil.hh>
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <protocols/swa/monte_carlo/SWA_MoveSelector.hh>
 #include <protocols/swa/monte_carlo/SWA_Move.hh>
 
 // libRosetta headers
@@ -92,7 +92,8 @@ namespace monte_carlo {
 		Size const random_idx = int( RG.uniform() * moving_res_list.size() ) + 1;
 		Size const i = moving_res_list[ random_idx ];
 
-		Attachments attachments = get_attachments( pose, pose::full_model_info::sub_to_full( i, pose ) );
+		SWA_MoveSelector swa_move_selector;
+		Attachments attachments = swa_move_selector.get_attachments( pose, pose::full_model_info::sub_to_full( i, pose ) );
 
 		runtime_assert( attachments.size() > 0 );
 

@@ -80,6 +80,7 @@ namespace score { extern StringOptionKey const extra_improper_file; }
 namespace score { extern RealOptionKey const pro_close_planar_constraint; }
 namespace score { extern BooleanOptionKey const linear_bonded_potential; }
 namespace score { extern BooleanOptionKey const geom_sol_correct_acceptor_base; }
+namespace score { extern RealOptionKey const free_sugar_bonus; }
 namespace score { extern IntegerVectorOptionKey const rg_local_span; }
 namespace score { extern BooleanOptionKey const unmodifypot; }
 namespace score { namespace saxs { extern BooleanOptionKey const saxs; } }

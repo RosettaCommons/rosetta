@@ -21,6 +21,7 @@
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/swa/monte_carlo/SWA_Move.hh>
+#include <protocols/swa/monte_carlo/SWA_MoveSelector.hh>
 #include <protocols/swa/monte_carlo/RNA_AddMover.fwd.hh>
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.fwd.hh>
 #include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.fwd.hh>
@@ -58,6 +59,9 @@ public:
 
 	void set_minimize_single_res( bool const setting );
 
+	void set_disallow_skip_bulge( bool const & setting ){ disallow_skip_bulge_ = setting; }
+	bool disallow_skip_bulge() const{ return disallow_skip_bulge_; }
+
 private:
 
 	RNA_AddMoverOP rna_add_mover_;
@@ -66,6 +70,7 @@ private:
 	bool skip_deletions_;
 	bool disallow_skip_bulge_;
 	utility::vector1< Size > sample_res_;
+	SWA_MoveSelectorOP swa_move_selector_;
 };
 
 } // monte_carlo

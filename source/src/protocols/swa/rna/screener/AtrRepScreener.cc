@@ -129,8 +129,8 @@ namespace screener {
 		if ( separate_moving_residue_to_estimate_baseline_ ){
 			Size jump_at_moving_suite = base_pose_screen.fold_tree().jump_nr( working_moving_res_, working_reference_res_ );
 			if ( jump_at_moving_suite == 0 ){
-				runtime_assert( std::abs( int( working_moving_res_ ) - int( working_reference_res_ ) ) == 1 );
-				Size const working_moving_suite = std::min( working_moving_res_, working_reference_res_ );
+				//				runtime_assert( std::abs( int( working_moving_res_ ) - int( working_reference_res_ ) ) == 1 );
+				Size const working_moving_suite = ( working_moving_res_ > working_reference_res_ ) ? (working_moving_res_ - 1) : working_moving_res_;
 				jump_at_moving_suite = make_cut_at_moving_suite( base_pose_screen, working_moving_suite );
 				TR.Debug << "Made new cutpoint at suite " << working_moving_suite << " found Jump " << jump_at_moving_suite <<  std::endl;
 			}
