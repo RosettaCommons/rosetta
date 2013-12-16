@@ -32,6 +32,7 @@
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
@@ -76,6 +77,7 @@ using core::scoring::getScoreFunction;
 using core::scoring::hbond_sr_bb;
 using core::scoring::hbond_lr_bb;
 using core::scoring::n_score_types;
+using core::scoring::total_score;
 using core::scoring::ScoreTypeManager;
 using core::scoring::ScoreType;
 using core::scoring::ScoreFunctionOP;
@@ -203,6 +205,7 @@ StructureScoresFeatures::report_features(
 	StructureID struct_id,
 	sessionOP db_session
 ){
+	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, scfxn_);
 	insert_structure_score_rows(pose, relevant_residues, struct_id, db_session);
 	return 0;
 }
@@ -239,7 +242,7 @@ StructureScoresFeatures::compute_energies(
 	// two-body scores.
 	bool all_residues(true);
 
-	if(relevant_residues_mode_ == RelevantResiduesMode::Implicit){
+	if(relevant_residues_mode_ == RelevantResiduesMode::Inclusive){
 		TR.Warning << "StructureScoresFeatures is currently not compatible with inclusive RelevantResiduesMode::Inclusive, treating as Explicit." << std::endl;
 	}
 
@@ -279,7 +282,7 @@ StructureScoresFeatures::insert_structure_score_rows(
 	EnergyMap emap;
 	compute_energies(pose_in, relevant_residues, emap);
 
-	core::Real total_score= 0.0;
+	core::Real total_score_value= 0.0;
 	Size const batch_id(get_batch_id(struct_id, db_session));
 	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
 	RowDataBaseOP batch_id_data = new RowData<Size>("batch_id",batch_id);
@@ -288,7 +291,7 @@ StructureScoresFeatures::insert_structure_score_rows(
 		ScoreType type(static_cast<ScoreType>(score_type_id));
 		Real const score_value( (*scfxn_)[type] * emap[type] );
 		if(!score_value) continue;
-		total_score += score_value;
+		total_score_value += score_value;
 
 		RowDataBaseOP score_type_id_data = new RowData<Size>("score_type_id",score_type_id);
 		RowDataBaseOP score_value_data = new RowData<Real>("score_value",score_value);
@@ -299,8 +302,8 @@ StructureScoresFeatures::insert_structure_score_rows(
 	}
 
 	// add the total_score type
-	RowDataBaseOP total_id_data = new RowData<Size>("score_type_id",n_score_types);
-	RowDataBaseOP total_score_data = new RowData<Real>("score_value",total_score);
+	RowDataBaseOP total_id_data = new RowData<Size>("score_type_id",total_score);
+	RowDataBaseOP total_score_data = new RowData<Real>("score_value",total_score_value);
 
 	structure_scores_insert.add_row(
 		utility::tools::make_vector(batch_id_data,struct_id_data,total_id_data,total_score_data));

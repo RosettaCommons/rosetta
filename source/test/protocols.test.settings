@@ -221,6 +221,7 @@ sources = {
 		"RotamerRecovery",
 		"RRComparer",
 		"RRReporter",
+		"RRReporterSQLite",
 	],
 
 	"scoring" : [

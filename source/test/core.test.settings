@@ -136,6 +136,9 @@ sources = {
 		"Pose",
 		"util",
 	 ],
+	"pose/symmetry" : [
+		"util",
+	 ],
 	"scoring" : [
 		"EnergyMap",
 		"EnvPairPotential",

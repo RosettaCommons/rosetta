@@ -211,27 +211,17 @@ void
 DatabaseJobInputter::set_struct_ids_from_sql(
 	utility::vector1<string> const & sql)
 {
+	using namespace cppdb;
+	using namespace basic::database;
 	string sql_command(utility::join(sql, " "));
 	basic::database::check_statement_sanity(sql_command);
 
 	sessionOP db_session(
 		basic::database::get_db_session(database_name_, database_pq_schema_));
 
+	statement stmt = safely_prepare_statement( sql_command, db_session );
 	result res;
-	while(true)
-	{
-		try
-		{
-			res = (*db_session) << sql_command;
-			break;
-		}catch(cppdb::cppdb_error &)
-		{
-			#ifndef WIN32
-				usleep(10);
-			#endif
-			continue;
-		}
-	}
+	res = safely_read_from_database( stmt );
 
 	bool res_nums_specified = false;
 	if(res.find_column("resnum") != -1){res_nums_specified=true;}
@@ -328,21 +318,9 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::Jobs &
 		sessionOP db_session(
 			basic::database::get_db_session(database_name_, database_pq_schema_));
 
-		result res;
-		while(true)
-		{
-			try
-			{
-				res = (*db_session) << "SELECT struct_id FROM structures;";
-				break;
-			}catch(cppdb::cppdb_error &)
-			{
-				#ifndef WIN32
-					usleep(10);
-				#endif
-				continue;
-			}
-		}
+		std::string stmt_string("SELECT struct_id FROM structures;");
+		cppdb::statement stmt( basic::database::safely_prepare_statement(stmt_string, db_session));
+		cppdb::result res( basic::database::safely_read_from_database(stmt));
 		while(res.next()){
 			StructureID struct_id;
 			res >> struct_id;

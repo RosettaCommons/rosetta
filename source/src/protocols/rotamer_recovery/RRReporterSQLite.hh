@@ -21,6 +21,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/features/FeaturesReporter.fwd.hh>
+#include <protocols/features/ReportToDB.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -47,7 +48,7 @@ public: // constructors destructors
 		};
 	};
 
-RRReporterSQLite();
+	RRReporterSQLite();
 
 	RRReporterSQLite(
 		std::string const & database_name,
@@ -69,8 +70,7 @@ public: // public interface
 	///@brief generate the table schemas and write them to the database
 	void
 	write_schema_to_db(
-		utility::sql_database::sessionOP db_session,
-		OutputLevel::e output_level = OutputLevel::full) const;
+		utility::sql_database::sessionOP db_session) const;
 
 private:
 	///@brief generate the nchi table schema
@@ -88,6 +88,11 @@ private:
 	write_rotamer_recovery_features_table_schema(
 		utility::sql_database::sessionOP db_session) const;
 
+	///@brief generate the predicted_features table schema
+	void
+	write_predicted_features_table_schema(
+		utility::sql_database::sessionOP db_session) const;
+
 public:
 	void
 	set_protocol_info(
@@ -98,6 +103,10 @@ public:
 	set_comparer_info(
 		std::string const & comparer_name,
 		std::string const & comparer_params);
+
+	void
+	db_session(
+		utility::sql_database::sessionOP db_session);
 
 	utility::sql_database::sessionOP
 	db_session();
@@ -117,11 +126,8 @@ public:
 	get_struct_id1() const;
 
 	void
-	set_struct_id2(
-		protocols::features::StructureID const struct_id1);
-
-	protocols::features::StructureID
-	get_struct_id2() const;
+	set_predicted_report_to_db(
+		features::ReportToDBOP report_to_db);
 
 	virtual
 	void
@@ -160,6 +166,15 @@ public:
 	);
 
 	virtual
+	void
+	report_predicted_features(
+		features::StructureID struct_id1,
+		core::conformation::Residue const & res1,
+		core::pose::Pose const & predicted_pose,
+		core::conformation::Residue const & predicted_res
+	);
+
+	virtual
 	core::Real
 	recovery_rate() const;
 
@@ -176,7 +191,9 @@ private: // data members
 	OutputLevel::e output_level_;
 
 	protocols::features::StructureID struct_id1_;
-	protocols::features::StructureID struct_id2_;
+
+	//Additional features can be reported for the predicted conformations
+	protocols::features::ReportToDBOP report_to_db_;
 
 	std::string protocol_name_;
 	std::string protocol_params_;

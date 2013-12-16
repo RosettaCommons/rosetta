@@ -49,15 +49,15 @@ namespace features {
 
 namespace RelevantResiduesMode {
 enum T {
-	Implicit=1,
-	Explicit
+	Inclusive=1,
+	Exclusive
 };
 }
 
 class FeaturesReporter : public utility::pointer::ReferenceCount {
 public:
 	FeaturesReporter() :
-		relevant_residues_mode_(RelevantResiduesMode::Explicit)
+		relevant_residues_mode_(RelevantResiduesMode::Exclusive)
 	{}
 
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount

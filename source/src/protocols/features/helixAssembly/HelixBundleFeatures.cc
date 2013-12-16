@@ -18,6 +18,7 @@
 #include <core/conformation/Atom.hh>
 #include <core/scoring/sasa.hh>
 #include <core/pose/util.hh>
+#include <core/pose/symmetry/util.hh>
 
 //Devel
 #include <protocols/features/helixAssembly/HelixBundleFeatures.hh>
@@ -601,6 +602,7 @@ HelixBundleFeatures::report_features(
 	
 	//Non-const pose to score
 	core::pose::Pose pose_copy(pose);
+	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose_copy, scorefxn_);
 	scorefxn_->score(pose_copy);
 	PairMap pair_map = get_helix_pairs(pose_copy, all_helix_fragments);
 	if(pair_map.size()==0){ return 0; };

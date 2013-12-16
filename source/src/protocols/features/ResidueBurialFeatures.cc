@@ -53,7 +53,6 @@ using core::conformation::Residue;
 using core::id::AtomID_Map;
 using core::scoring::calc_per_atom_sasa;
 using core::scoring::EnergyMap;
-using core::scoring::ScoreFunctionOP;
 using core::scoring::TenANeighborGraph;
 using core::scoring::TwelveANeighborGraph;
 using core::scoring::neigh_vect_raw;

@@ -77,7 +77,7 @@ public:
 		utility::sql_database::sessionOP db_session,
 		StructureID struct_id,
 		core::pose::Pose & pose);
-	
+
 	void
 	load_conformation(
 		utility::sql_database::sessionOP db_session,
@@ -85,6 +85,15 @@ public:
 		core::pose::Pose & pose);
 
 private:
+	void
+	check_num_requested_atoms(
+		core::Size num_requested_atoms,
+		core::Size pose_resNum,
+		core::pose::Pose & pose,
+		core::Size resNum,
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session) const;
+
 	void
 	set_coords_for_residues(
 		utility::sql_database::sessionOP db_session,

@@ -23,7 +23,6 @@
 // Project Headers
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>

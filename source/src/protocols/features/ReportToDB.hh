@@ -69,7 +69,8 @@ public:
 
 	virtual moves::MoverOP clone() const;
 
-	virtual std::string get_name() const { return "ReportToDB"; }
+	virtual std::string name() { return "ReportToDB"; }
+ 	virtual std::string get_name() const { return "ReportToDB"; }
 
 	void
 	set_batch_name(
@@ -86,11 +87,43 @@ public:
 	get_batch_description() const;
 
 	void
+	set_relevant_residues_task_factory(
+		core::pack::task::TaskFactoryOP task_factory);
+
+	core::pack::task::TaskFactoryOP
+	get_relevant_residues_task_factory() const;
+
+	void
+	set_relevant_residues(
+		utility::vector1< bool > const & relevant_residues);
+
+	utility::vector1< bool >
+	get_relevant_residues() const;
+
+	void
 	set_relevant_residues_mode(
 		protocols::features::RelevantResiduesMode::T setting);
 
 	protocols::features::RelevantResiduesMode::T
 	get_relevant_residues_mode() const;
+
+	void
+	set_structure_tag(
+		std::string const & setting);
+
+	std::string
+	get_structure_tag() const;
+
+	void
+	set_structure_input_tag(
+		std::string const & setting);
+
+	std::string
+	get_structure_input_tag() const;
+
+	void
+	add_features_reporter(
+		FeaturesReporterOP features_reporter);
 
 	void
 	parse_batch_description_tag_item(
@@ -153,11 +186,17 @@ public:
 	void
 	initialize_database();
 
-	///@brief initialize the pose and return the relevant residues
-	utility::vector1< bool >
+	///@brief initialize the pose and set the relevant residues
+	void
 	initialize_pose(
 		Pose & pose
 	) const;
+
+	///@brief initialize the relevant residues of the pose and store save for later.
+	utility::vector1< bool >
+	initialize_relevant_residues(
+		Pose const & pose
+	);
 
 	void
 	apply(
@@ -171,6 +210,9 @@ public:
 		core::pose::Pose const & pose,
 		StructureID struct_id,
 		utility::vector1<bool> const & relevant_residues) const;
+
+	StructureID
+	get_last_struct_id() const;
 
 private:
 	utility::sql_database::sessionOP db_session_;
@@ -186,8 +228,13 @@ private:
 	core::Size protocol_id_;
 	core::Size batch_id_;
 
+	std::string structure_tag_;
+	std::string structure_input_tag_;
+	StructureID last_struct_id_;
+
 	// initialized in parse_my_tag
 	core::pack::task::TaskFactoryOP task_factory_;
+	utility::vector1< bool > relevant_residues_;
 
 	///@brief This indicates which features should be reported given the
 	///relevant residue specification:

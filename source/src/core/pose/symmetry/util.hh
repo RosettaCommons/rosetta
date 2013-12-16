@@ -44,6 +44,15 @@ is_symmetric( scoring::ScoreFunction const & scorefxn );
 bool
 is_symmetric( scoring::Energies const & energies );
 
+// This is a stopgap measure to refactoring SymmetricScoreFunction to
+// be interalized into the ScoreFunciton class to shield this logic
+// from the user.
+void
+make_score_function_consistent_with_symmetric_state_of_pose(
+	pose::Pose const & pose,
+	scoring::ScoreFunctionOP & scorefxn
+);
+
 conformation::symmetry::SymmetryInfoCOP
 symmetry_info( pose::Pose const & pose );
 

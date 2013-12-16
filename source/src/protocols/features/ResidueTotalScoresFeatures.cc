@@ -18,6 +18,7 @@
 // Project Headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -64,6 +65,7 @@ using core::scoring::ScoreFunctionOP;
 using core::scoring::getScoreFunction;
 using core::scoring::ScoreTypeManager;
 using core::scoring::ScoreTypes;
+using core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose;
 using protocols::filters::Filters_map;
 using basic::datacache::DataMap;
 using protocols::moves::Movers_map;
@@ -169,6 +171,7 @@ ResidueTotalScoresFeatures::report_features(
 	StructureID const struct_id,
 	sessionOP db_session
 ){
+	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, scfxn_);
 	insert_residue_total_scores_rows(pose, relevant_residues, struct_id, db_session );
 
 	return 0;

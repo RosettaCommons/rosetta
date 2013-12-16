@@ -20,8 +20,10 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <protocols/features/ReportToDB.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.hh>
 #include <protocols/rotamer_recovery/RotamerRecoveryFactory.hh>
 #include <protocols/rotamer_recovery/RRReporterSQLite.hh>
@@ -97,23 +99,30 @@ static Tracer TR("protocols.features.RotamerRecoveryFeatures");
 
 RotamerRecoveryFeatures::RotamerRecoveryFeatures() :
 	scfxn_(getScoreFunction()),
+	reporter_(new RRReporterSQLite() ),
 	protocol_(),
 	comparer_(),
 	task_factory_()
-{}
+{
+	reporter_->set_output_level(RRReporterSQLite::OutputLevel::features);
+}
 
 RotamerRecoveryFeatures::RotamerRecoveryFeatures(
 	ScoreFunctionOP scfxn) :
 	scfxn_(scfxn),
+	reporter_(new RRReporterSQLite() ),
 	protocol_(),
 	comparer_(),
 	task_factory_()
-{}
+{
+	reporter_->set_output_level(RRReporterSQLite::OutputLevel::features);
+}
 
 RotamerRecoveryFeatures::RotamerRecoveryFeatures(
 	RotamerRecoveryFeatures const & src) :
 	FeaturesReporter(),
 	scfxn_(src.scfxn_),
+	reporter_(src.reporter_),
 	protocol_(src.protocol_),
 	comparer_(src.comparer_),
 	task_factory_(src.task_factory_)
@@ -123,15 +132,6 @@ RotamerRecoveryFeatures::~RotamerRecoveryFeatures() {}
 
 string
 RotamerRecoveryFeatures::type_name() const { return "RotamerRecoveryFeatures"; }
-
-
-void
-RotamerRecoveryFeatures::write_schema_to_db(
-	sessionOP db_session
-) const {
-	RRReporterSQLite reporter;
-	reporter.write_schema_to_db(db_session, RRReporterSQLite::OutputLevel::features);
-}
 
 vector1<string>
 RotamerRecoveryFeatures::features_reporter_dependencies() const {
@@ -246,8 +246,38 @@ RotamerRecoveryFeatures::parse_my_tag(
 
 	task_factory_ = parse_task_operations(tag, data);
 
+	if(tag->hasOption("predicted_features_reporter")){
+		string report_to_db_name(
+			tag->getOption<string>("predicted_features_reporter"));
+		MoverOP report_to_db(parse_mover(report_to_db_name, movers));
+
+		if(report_to_db->get_name() != "ReportToDB"){
+			stringstream errmsg;
+			errmsg
+				<< "For tag '" << tag->getName() << "',"
+				<< " the predicted_features_reporter item should refer to"
+				<< " a previously defined mover of type ReportToDB."
+				<< " Instead type specified mover '" << report_to_db_name << "'"
+				<< " is a mover of type '" << report_to_db->get_name() << "'."
+				<< std::endl;
+			throw utility::excn::EXCN_RosettaScriptsOption(errmsg.str());
+		}
+
+		ReportToDBOP report_to_db_ptr(
+			static_cast<ReportToDB &>(*report_to_db));
+
+		reporter_->set_predicted_report_to_db(report_to_db_ptr);
+
+	}
 }
 
+
+void
+RotamerRecoveryFeatures::write_schema_to_db(
+	sessionOP db_session
+) const {
+	reporter_->write_schema_to_db(db_session);
+}
 
 
 Size
@@ -257,15 +287,15 @@ RotamerRecoveryFeatures::report_features(
 	StructureID const struct_id,
 	sessionOP db_session
 ){
-	RRReporterSQLiteOP reporter(
-		new RRReporterSQLite(db_session, RRReporterSQLite::OutputLevel::features));
+	reporter_->db_session(db_session);
 
-	reporter->set_struct_id1(struct_id);
-	RotamerRecovery rotamer_recovery(protocol_, comparer_, reporter);
+
+	reporter_->set_struct_id1(struct_id);
+	RotamerRecovery rotamer_recovery(protocol_, comparer_, reporter_);
 
 	Pose pose=pose_in;
+	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, scfxn_);
 	(*scfxn_)(pose);
-	//scfxn_->setup_for_scoring(pose);
 
 	if(task_factory_ == 0){
 		task_factory_ = new TaskFactory();

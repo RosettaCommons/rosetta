@@ -21,7 +21,6 @@
 #include <basic/Tracer.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 #include <core/scoring/dssp/Dssp.hh>
 

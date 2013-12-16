@@ -18,6 +18,7 @@
 // Project Headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreTypeManager.hh>
@@ -361,6 +362,7 @@ ResidueScoresFeatures::insert_residue_scores_rows(
 	//require that the pose be previously setup for scoring before
 	//calling this mover
 	Pose temp_pose = pose;
+	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, scfxn_);
 	scfxn_->setup_for_scoring(temp_pose);
 
 	Size const batch_id(get_batch_id(struct_id, db_session));

@@ -19,12 +19,16 @@
 #include <basic/database/sql_utils.hh>
 #include <basic/Tracer.hh>
 #include <core/conformation/Residue.hh>
+#include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
+#include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/types.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
+#include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
+
 
 //Basic Headers
 // #include <basic/database/sql_utils.hh> 09_11_2013, commented by Doonam due to double declaration
@@ -44,10 +48,11 @@
 //C++ Headers
 #include <boost/assign/list_of.hpp>
 #include <ostream>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <utility/vector1.hh>
-
+#include <set>
 
 namespace protocols {
 namespace rotamer_recovery {
@@ -76,8 +81,6 @@ static Tracer TR("protocols.rotamer_recovery.RRReporterSQLite");
 
 RRReporterSQLite::RRReporterSQLite() :
 	output_level_( OutputLevel::full ),
-//	struct_id1_(""),
-//	struct_id2_(""),
 	protocol_name_(),
 	protocol_params_(),
 	comparer_name_(),
@@ -95,8 +98,6 @@ RRReporterSQLite::RRReporterSQLite(
 	OutputLevel::e output_level /* = OutputLevel::full */
 ) :
 	output_level_( output_level ),
-//	struct_id1_(""),
-//	struct_id2_(""),
 	protocol_name_(),
 	protocol_params_(),
 	comparer_name_(),
@@ -113,8 +114,6 @@ RRReporterSQLite::RRReporterSQLite(
 	OutputLevel::e const output_level /* = OutputLevel::full */
 ) :
 	output_level_( output_level ),
-//	struct_id1_(""),
-//	struct_id2_(""),
 	protocol_name_(),
 	protocol_params_(),
 	comparer_name_(),
@@ -132,7 +131,7 @@ RRReporterSQLite::RRReporterSQLite( RRReporterSQLite const & src ) :
 	RRReporter(),
 	output_level_( src.output_level_ ),
 	struct_id1_( src.struct_id1_ ),
-	struct_id2_( src.struct_id2_ ),
+	report_to_db_( src.report_to_db_ ),
 	protocol_name_( src.protocol_name_ ),
 	protocol_params_( src.protocol_params_ ),
 	comparer_name_( src.comparer_name_ ),
@@ -148,16 +147,18 @@ RRReporterSQLite::~RRReporterSQLite() {}
 
 void
 RRReporterSQLite::write_schema_to_db(
-	sessionOP db_session,
-	RRReporterSQLite::OutputLevel::e output_level /* = OutputLevel::ful */
+	sessionOP db_session
 ) const {
-	switch(output_level){
+	switch(output_level_){
 	case OutputLevel::full:
 		write_nchi_table_schema(db_session);
 		write_rotamer_recovery_full_table_schema(db_session);
 		break;
 	case OutputLevel::features:
 		write_rotamer_recovery_features_table_schema(db_session);
+		if(report_to_db_){
+			write_predicted_features_table_schema(db_session);
+		}
 		break;
 	case OutputLevel::none:
 		break;
@@ -223,10 +224,10 @@ RRReporterSQLite::write_rotamer_recovery_full_table_schema(
 	Column name1("name1", new DbText());
 	Column name3("name3", new DbText());
 	Column residue_type("residue_type", new DbText());
-	Column chain1("chain1", new DbText());
+	Column chain1("chain1", new DbInteger());
 	Column res1("res1", new DbInteger());
-	Column struct2_name("struct_name2", new DbText());
-	Column chain2("chain2", new DbText());
+	Column struct2_name("struct2_name", new DbText());
+	Column chain2("chain2", new DbInteger());
 	Column res2("res2", new DbInteger());
 	Column protocol_name("protocol_name", new DbText());
 	Column protocol_params("protocol_params", new DbText());
@@ -289,6 +290,40 @@ RRReporterSQLite::write_rotamer_recovery_features_table_schema(
 	table.add_column(recovered);
 
 	table.write(db_session);
+
+}
+
+void
+RRReporterSQLite::write_predicted_features_table_schema(
+	sessionOP db_session
+) const {
+	using namespace basic::database::schema_generator;
+
+	Column struct_id("struct_id", new DbBigInt());
+	Column resNum("resNum", new DbInteger());
+	Column predicted_struct_id("predicted_struct_id", new DbBigInt());
+	Column predicted_resNum("predicted_resNum", new DbInteger());
+
+	Columns primary_key_columns;
+	primary_key_columns.push_back(struct_id);
+	primary_key_columns.push_back(resNum);
+	primary_key_columns.push_back(predicted_struct_id);
+	primary_key_columns.push_back(predicted_resNum);
+	PrimaryKey primary_key(primary_key_columns);
+
+	Columns foreign_key_columns;
+	foreign_key_columns.push_back(struct_id);
+	foreign_key_columns.push_back(resNum);
+	vector1< std::string > reference_columns;
+	reference_columns.push_back("struct_id");
+	reference_columns.push_back("resNum");
+	ForeignKey foreign_key(foreign_key_columns, "residues", reference_columns, true);
+
+	Schema table("rotamer_recovery_predictions", primary_key);
+	table.add_foreign_key(foreign_key);
+
+	table.write(db_session);
+
 }
 
 void
@@ -318,16 +353,10 @@ RRReporterSQLite::get_struct_id1(
 }
 
 void
-RRReporterSQLite::set_struct_id2(
-	StructureID const struct_id2
-){
-	struct_id1_ = struct_id2;
-}
-
-StructureID
-RRReporterSQLite::get_struct_id2(
-) const {
-	return struct_id2_;
+RRReporterSQLite::set_predicted_report_to_db(
+	features::ReportToDBOP report_to_db
+) {
+	report_to_db_ = report_to_db;
 }
 
 void
@@ -348,14 +377,22 @@ RRReporterSQLite::set_comparer_info(
 	comparer_params_ = comparer_params;
 }
 
+void
+RRReporterSQLite::db_session(
+	sessionOP db_session
+) {
+	db_session_ = db_session;
+}
+
 sessionOP
 RRReporterSQLite::db_session(){
 	if(!db_session_){
-		db_session_ =
-			basic::database::get_db_session(
-				database_name_, database_pq_schema_);
-
-		write_schema_to_db(db_session_, get_output_level());
+		utility_exit_with_message("RRReporterSQLite: the db_session has not been initialized yet");
+//		db_session_ =
+//			basic::database::get_db_session(
+//				database_name_, database_pq_schema_);
+//
+//		write_schema_to_db(db_session_);
 	}
 	return db_session_;
 }
@@ -382,6 +419,7 @@ RRReporterSQLite::report_rotamer_recovery(
 		break;
 	case OutputLevel::features:
 		report_rotamer_recovery_features(struct_id1_, res1, score, recovered);
+		report_predicted_features(struct_id1_, res1, pose2, res2);
 		break;
 	case OutputLevel::none:
 		break;
@@ -427,15 +465,21 @@ RRReporterSQLite::report_rotamer_recovery_full(
 	std::string statement_string = "INSERT INTO rotamer_recovery VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement stmt(safely_prepare_statement(statement_string,db_session()));
 
+	// primary key struct1
 	stmt.bind(1,struct1_name);
-	stmt.bind(2,string(1,res1.name1()));
-	stmt.bind(3,res1.name3());
-	stmt.bind(4,res1.type().name());
-	stmt.bind(5,res1.chain());
-	stmt.bind(6,res1.seqpos());
-	stmt.bind(7,struct2_name);
-	stmt.bind(8,res2.chain());
-	stmt.bind(9,res2.seqpos());
+	stmt.bind(2,res1.chain());
+	stmt.bind(3,res1.seqpos());
+
+	// primary key struct2
+	stmt.bind(4,struct2_name);
+	stmt.bind(5,res2.chain());
+	stmt.bind(6,res2.seqpos());
+
+	// extra information about the residue
+	stmt.bind(7,string(1,res1.name1()));
+	stmt.bind(8,res1.name3());
+	stmt.bind(9,res1.type().name());
+
 	stmt.bind(10,protocol_name_);
 	stmt.bind(11,protocol_params_);
 	stmt.bind(12,comparer_name_);
@@ -456,13 +500,74 @@ RRReporterSQLite::report_rotamer_recovery_features(
 
 
 	std::string statement_string = "INSERT INTO rotamer_recovery VALUES (?,?,?,?);";
-	statement stmt(safely_prepare_statement(statement_string, db_session_));
+	statement stmt(safely_prepare_statement(statement_string, db_session()));
 
-	stmt.bind(1,struct_id1);
+	stmt.bind(1, struct_id1);
 	stmt.bind(2, res1.seqpos());
 	stmt.bind(3, score);
 	stmt.bind(4, recovered);
 	safely_write_to_database(stmt);
+
+}
+
+void
+RRReporterSQLite::report_predicted_features(
+	features::StructureID struct_id1,
+	Residue const & res1,
+	Pose const & predicted_pose,
+	Residue const & predicted_residue
+) {
+
+	if(!report_to_db_) return;
+
+
+	core::pack::task::TaskFactoryOP task_factory(
+		new core::pack::task::TaskFactory());
+	std::set< core::Size > central_residues;
+	central_residues.insert(predicted_residue.seqpos());
+
+	// TODO: Make a parameter
+	core::Real dist_cutoff(10);
+
+	toolbox::task_operations::RestrictToNeighborhoodOperationOP
+		restrict_to_neighborhood_operation(
+			new toolbox::task_operations::RestrictToNeighborhoodOperation(
+				central_residues,dist_cutoff));
+	std::string neighborhood_calculator_name(
+		restrict_to_neighborhood_operation->get_calculator_name());
+	task_factory->push_back(restrict_to_neighborhood_operation);
+
+	report_to_db_->set_relevant_residues_task_factory(task_factory);
+
+	// to strip the const quantifier
+	// I copy the pose
+	// perhaps there's a better way?
+	Pose predicted_pose_copy = predicted_pose;
+	predicted_pose_copy.update_residue_neighbors();
+
+	report_to_db_->set_structure_input_tag(
+		protocols::jd2::JobDistributor::get_instance()->current_output_name());
+	std::stringstream structure_tag;
+	structure_tag
+		<< protocols::jd2::JobDistributor::get_instance()->current_output_name()
+		<< "_" << predicted_residue.seqpos();
+	report_to_db_->set_structure_tag(structure_tag.str());
+
+	report_to_db_->apply(predicted_pose_copy);
+	StructureID predicted_struct_id(report_to_db_->get_last_struct_id());
+
+	std::string statement_string =
+		"INSERT INTO rotamer_recovery_predictions VALUES (?,?,?,?);";
+	statement stmt(safely_prepare_statement(statement_string, db_session()));
+
+	stmt.bind(1, struct_id1);
+	stmt.bind(2, res1.seqpos());
+	stmt.bind(3, predicted_struct_id);
+	stmt.bind(4, predicted_residue.seqpos());
+	safely_write_to_database(stmt);
+
+	core::pose::metrics::CalculatorFactory::Instance().remove_calculator(
+		neighborhood_calculator_name);
 
 }
 

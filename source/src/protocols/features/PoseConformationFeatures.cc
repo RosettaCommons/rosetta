@@ -82,6 +82,7 @@ using core::pose::PoseOP;
 using core::pose::PoseCOP;
 using core::pose::make_pose_from_sequence;
 using core::chemical::ResidueTypeSetCAP;
+using core::chemical::ResidueTypeCOPs;
 using core::chemical::ChemicalManager;
 using core::chemical::FA_STANDARD;
 using core::chemical::CENTROID;
@@ -352,33 +353,62 @@ PoseConformationFeatures::load_sequence(
 		return;
 	}
 
-	std::string statement_string =
-	"SELECT\n"
-	"	annotated_sequence,\n"
-	"	total_residue,\n"
-	"	fullatom\n"
-	"FROM\n"
-	"	pose_conformations\n"
-	"WHERE\n"
-	"	pose_conformations.struct_id = ?;";
-	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-	stmt.bind(1,struct_id);
-	result res(basic::database::safely_read_from_database(stmt));
 
-	if(!res.next()){
-		stringstream error_message;
-		error_message << "Unable to locate structure with struct_id '" << struct_id << "'";
-		utility_exit_with_message(error_message.str());
-	}
 	string annotated_sequence;
 	Size total_residue, fullatom;
+	{
+		std::string statement_string =
+			"SELECT\n"
+			"	annotated_sequence,\n"
+			"	total_residue,\n"
+			"	fullatom\n"
+			"FROM\n"
+			"	pose_conformations\n"
+			"WHERE\n"
+			"	pose_conformations.struct_id = ?;";
+		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+		stmt.bind(1,struct_id);
+		result res(basic::database::safely_read_from_database(stmt));
 
-	res >> annotated_sequence >> total_residue >> fullatom;
+		if(!res.next()){
+			stringstream error_message;
+			error_message << "Unable to locate structure with struct_id '" << struct_id << "'";
+			utility_exit_with_message(error_message.str());
+		}
+		res >> annotated_sequence >> total_residue >> fullatom;
+	}
+	ResidueTypeSetCAP residue_set(
+		ChemicalManager::get_instance()->residue_type_set(
+			fullatom ? FA_STANDARD : CENTROID));
 
-	ResidueTypeSetCAP residue_set(ChemicalManager::get_instance()->residue_type_set(
-																					fullatom ? FA_STANDARD : CENTROID));
-	make_pose_from_sequence(pose, annotated_sequence, *residue_set);
-	runtime_assert(pose.total_residue() == total_residue );
+
+
+	if(basic::database::table_exists(db_session, "residues")){
+		std::string statement_string =
+			"SELECT\n"
+			"	res_type\n"
+			"FROM\n"
+			"	residues\n"
+			"WHERE\n"
+			"	struct_id = ?;";
+		statement stmt(
+			basic::database::safely_prepare_statement(statement_string,db_session));
+		stmt.bind(1,struct_id);
+		result res(basic::database::safely_read_from_database(stmt));
+
+		ResidueTypeCOPs requested_types;
+		while(res.next()){
+			string res_type;
+			res >> res_type;
+			requested_types.push_back( &residue_set->name_map( res_type ));
+		}
+		make_pose_from_sequence(pose, requested_types);
+
+	} else {
+
+		make_pose_from_sequence(pose, annotated_sequence, *residue_set);
+		runtime_assert(pose.total_residue() == total_residue );
+	}
 }
 
 

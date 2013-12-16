@@ -82,6 +82,22 @@ is_symmetric( scoring::ScoreFunction const & scorefxn )
 }
 
 
+void
+make_score_function_consistent_with_symmetric_state_of_pose(
+	pose::Pose const & pose,
+	scoring::ScoreFunctionOP & scorefxn
+) {
+	scoring::ScoreFunctionOP tmp_scorefxn = scorefxn;
+	if(is_symmetric( pose ) && !is_symmetric( *scorefxn ) ){
+		scorefxn = new scoring::symmetry::SymmetricScoreFunction();
+		scorefxn->assign(*tmp_scorefxn);
+	} else if( !is_symmetric( pose ) && is_symmetric( *scorefxn) ){
+		scorefxn = new scoring::ScoreFunction();
+		scorefxn->assign(*tmp_scorefxn);
+	}
+}
+
+
 /// @details Attempts to grab the symmetry info if the pose is symmetric
 conformation::symmetry::SymmetryInfoCOP symmetry_info( pose::Pose const & pose )
 {

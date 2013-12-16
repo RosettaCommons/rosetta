@@ -187,9 +187,9 @@ FeaturesReporter::check_relevant_residues(
 	Size res1
 ) const {
 	switch(relevant_residues_mode_){
-	case RelevantResiduesMode::Explicit:
+	case RelevantResiduesMode::Exclusive:
 		return relevant_residues[res1];
-	case RelevantResiduesMode::Implicit:
+	case RelevantResiduesMode::Inclusive:
 		return relevant_residues[res1];
 	default:
 		utility_exit_with_message("Unrecognized relevant_residues_mode: " + relevant_residues_mode_);
@@ -203,9 +203,9 @@ FeaturesReporter::check_relevant_residues(
 	Size res2
 ) const {
 	switch(relevant_residues_mode_){
-	case RelevantResiduesMode::Explicit:
+	case RelevantResiduesMode::Exclusive:
 		return relevant_residues[res1] && relevant_residues[res2];
-	case RelevantResiduesMode::Implicit:
+	case RelevantResiduesMode::Inclusive:
 		return relevant_residues[res1] || relevant_residues[res2];
 	default:
 		utility_exit_with_message("Unrecognized relevant_residues_mode: " + relevant_residues_mode_);
@@ -219,7 +219,7 @@ FeaturesReporter::check_relevant_residues_range(
 	Size end
 ) const {
 	switch(relevant_residues_mode_){
-	case RelevantResiduesMode::Explicit: {
+	case RelevantResiduesMode::Exclusive: {
 		for(Size ii=begin; ii != end; ++ii){
 			if (!relevant_residues[ii]) {
 				return false;
@@ -227,7 +227,7 @@ FeaturesReporter::check_relevant_residues_range(
 		}
 		return true;
 	}
-	case RelevantResiduesMode::Implicit: {
+	case RelevantResiduesMode::Inclusive: {
 		for(Size ii=begin; ii != end; ++ii){
 			if (relevant_residues[ii]) {
 				return true;
@@ -247,7 +247,7 @@ FeaturesReporter::check_relevant_residues(
 	vector1< Size > const & residues
 ) const {
 	switch(relevant_residues_mode_){
-	case RelevantResiduesMode::Explicit: {
+	case RelevantResiduesMode::Exclusive: {
 		for( vector1< Size >::const_iterator ii = residues.begin(), ii_end = residues.end(); ii != ii_end; ++ii){
 			if (!relevant_residues[*ii]) {
 				return false;
@@ -255,7 +255,7 @@ FeaturesReporter::check_relevant_residues(
 		}
 		return true;
 	}
-	case RelevantResiduesMode::Implicit: {
+	case RelevantResiduesMode::Inclusive: {
 		for( vector1< Size >::const_iterator ii = residues.begin(), ii_end = residues.end(); ii != ii_end; ++ii){
 			if (relevant_residues[*ii]) {
 				return true;

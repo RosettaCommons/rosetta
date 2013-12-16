@@ -72,6 +72,12 @@ chemical::ResidueTypeCOPs residue_types_from_saccharide_sequence(std::string con
 ///     pose_from_sequence
 void make_pose_from_sequence(
 	pose::Pose & pose,
+	chemical::ResidueTypeCOPs requested_types,
+	bool const auto_termini = true
+);
+
+void make_pose_from_sequence(
+	pose::Pose & pose,
 	std::string const & sequence,
 	chemical::ResidueTypeSet const & residue_set,
 	bool const auto_termini = true

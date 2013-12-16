@@ -36,7 +36,6 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
@@ -111,14 +110,10 @@ using basic::database::set_cache_size;
 using core::Size;
 using core::pack::task::PackerTaskCOP;
 using core::pack::task::TaskFactory;
+using core::pack::task::TaskFactoryOP;
 using core::pose::Pose;
 using core::pose::PoseOP;
 using core::pose::symmetry::is_symmetric;
-using core::scoring::getScoreFunction;
-using core::scoring::ScoreFunctionFactory;
-using core::scoring::ScoreFunction;
-using core::scoring::ScoreFunctionOP;
-using core::scoring::ScoreFunctionCOP;
 using cppdb::cppdb_error;
 using cppdb::statement;
 using cppdb::result;
@@ -158,8 +153,11 @@ ReportToDB::ReportToDB():
 	remove_xray_virt_(false),
 	protocol_id_(0),
 	batch_id_(0),
+	structure_tag_(""),
+	structure_input_tag_(""),
+	last_struct_id_(0),
 	task_factory_(new TaskFactory()),
-	relevant_residues_mode_(RelevantResiduesMode::Explicit),
+	relevant_residues_mode_(RelevantResiduesMode::Exclusive),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
 	initialized( false )
@@ -177,8 +175,11 @@ ReportToDB::ReportToDB(string const & type):
 	remove_xray_virt_(false),
 	protocol_id_(0),
 	batch_id_(0),
+	structure_tag_(""),
+	structure_input_tag_(""),
+	last_struct_id_(0),
 	task_factory_(new TaskFactory()),
-	relevant_residues_mode_(RelevantResiduesMode::Explicit),
+	relevant_residues_mode_(RelevantResiduesMode::Exclusive),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
 	initialized( false )
@@ -201,12 +202,19 @@ ReportToDB::ReportToDB(
 	remove_xray_virt_(false),
 	protocol_id_(0),
 	batch_id_(0),
+	structure_tag_(""),
+	structure_input_tag_(""),
+	last_struct_id_(0),
 	task_factory_(new TaskFactory()),
-	relevant_residues_mode_(RelevantResiduesMode::Explicit),
+	relevant_residues_mode_(RelevantResiduesMode::Exclusive),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
 	initialized( false )
 {
+	if(batch_name == ""){
+		utility::excn::EXCN_BadInput("Failed to create ReportToDB instance because the batch name must not be ''.");
+	}
+
 	initialize_reporters();
 }
 
@@ -220,6 +228,9 @@ ReportToDB::ReportToDB( ReportToDB const & src):
 	remove_xray_virt_(src.remove_xray_virt_),
 	protocol_id_(src.protocol_id_),
 	batch_id_(src.batch_id_),
+	structure_tag_(src.structure_tag_),
+	structure_input_tag_(src.structure_input_tag_),
+	last_struct_id_(src.last_struct_id_),
 	task_factory_(src.task_factory_),
 	relevant_residues_mode_(src.relevant_residues_mode_),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
@@ -255,6 +266,10 @@ void
 ReportToDB::set_batch_name(
 	std::string const & name
 ) {
+	if(name == ""){
+		utility::excn::EXCN_BadInput("Setting the batch name for a ReporToDB instance to '' is not allowed.");
+	}
+
 	batch_name_ = name;
 }
 
@@ -276,6 +291,30 @@ ReportToDB::get_batch_description() const {
 }
 
 void
+ReportToDB::set_relevant_residues_task_factory(
+	TaskFactoryOP task_factory
+) {
+	task_factory_ = task_factory;
+}
+
+TaskFactoryOP
+ReportToDB::get_relevant_residues_task_factory() const {
+	return task_factory_;
+}
+
+void
+ReportToDB::set_relevant_residues(
+	vector1<bool> const & relevant_residues
+) {
+	relevant_residues_ = relevant_residues;
+}
+
+vector1<bool>
+ReportToDB::get_relevant_residues() const {
+	return relevant_residues_;
+}
+
+void
 ReportToDB::set_relevant_residues_mode(
 	RelevantResiduesMode::T setting
 ) {
@@ -285,6 +324,41 @@ ReportToDB::set_relevant_residues_mode(
 RelevantResiduesMode::T
 ReportToDB::get_relevant_residues_mode() const {
 	return relevant_residues_mode_;
+}
+
+void
+ReportToDB::set_structure_tag(
+	std::string const & setting
+) {
+	structure_tag_ = setting;
+}
+
+std::string
+ReportToDB::get_structure_tag() const {
+	return structure_tag_;
+}
+
+void
+ReportToDB::set_structure_input_tag(
+	std::string const & setting
+) {
+	structure_input_tag_ = setting;
+}
+
+std::string
+ReportToDB::get_structure_input_tag() const {
+	return structure_input_tag_;
+}
+
+void
+ReportToDB::add_features_reporter(
+	FeaturesReporterOP features_reporter
+) {
+	check_features_reporter_dependencies(features_reporter);
+	// TODO IMPLMENT THIS:
+	//check_multiple_features_reporter_definitions(features_reporter);
+
+	features_reporters_.push_back(features_reporter);
 }
 
 void
@@ -380,9 +454,9 @@ ReportToDB::parse_relevant_residues_mode_tag_item(
 		::toupper);
 
 	if(rel_res_mode == "EXPLICIT"){
-		relevant_residues_mode_ = RelevantResiduesMode::Explicit;
+		relevant_residues_mode_ = RelevantResiduesMode::Exclusive;
 	} else if(rel_res_mode == "IMPLICIT") {
-		relevant_residues_mode_ = RelevantResiduesMode::Implicit;
+		relevant_residues_mode_ = RelevantResiduesMode::Inclusive;
 	} else {
 		throw utility::excn::EXCN_RosettaScriptsOption
 			( "Bad value for relevant_residues_mode: '" + rel_res_mode + "'. It must be either 'EXPLICIT' or 'IMPLICIT' (case insensitive). This indicates which features should be reported given the relevant residue specification (determined by the packable residues in the given task operation:\n\tEXCLUSIVE: All residues in a feature must be specified as 'relevant'. (DEFAULT)\n\tINCLUSIVE: At least one residue in the the feature must be specified as 'relevant' to be reported.");
@@ -494,15 +568,9 @@ ReportToDB::parse_my_tag(
 		FeaturesReporterOP features_reporter(
 			features_reporter_factory_->get_features_reporter(
 				feature_tag, data, filters, movers, pose));
-
-		check_features_reporter_dependencies(features_reporter);
-
-		// TODO IMPLMENT THIS:
-		//check_multiple_features_reporter_definitions(features_reporter);
-
 		features_reporter->set_relevant_residues_mode(relevant_residues_mode_);
 
-		features_reporters_.push_back(features_reporter);
+		add_features_reporter(features_reporter);
 	}
 }
 
@@ -590,19 +658,49 @@ ReportToDB::initialize_database(){
 	}
 }
 
-vector1< bool >
+void
 ReportToDB::initialize_pose(
 	Pose & pose
 ) const {
-
 	if (remove_xray_virt_) {
 		TR << "Removing virtual residue left behind by xray refinement" << endl;
 		while (pose.residue( pose.total_residue() ).aa() == core::chemical::aa_vrt )
 			pose.conformation().delete_residue_slow( pose.total_residue() );
 	}
+}
 
-	PackerTaskCOP task(task_factory_->create_task_and_apply_taskoperations(pose));
-	vector1< bool > relevant_residues(task->repacking_residues());
+vector1< bool >
+ReportToDB::initialize_relevant_residues(
+	Pose const & pose
+) {
+	if(relevant_residues_.size() && task_factory_){
+		TR.Warning
+			<< "Both relevant_residues and task_factory has been specified;"
+			<< " using the relevant residues." << std::endl;
+	}
+	if(relevant_residues_.size()){
+		if(relevant_residues_.size() != pose.total_residue()){
+			TR.Warning
+				<< "The size of relevant_residues is: " << relevant_residues_.size()
+				<< " while the pose has '" << pose.total_residue() << "' residues,"
+				<< " verify that this mismatch intended."
+				<< " Resetting the relevant_residues to be all residues in the pose."
+				<< std::endl;
+			return vector1< bool >(pose.total_residue(), true);
+		} else {
+			return relevant_residues_;
+		}
+	} else {
+		PackerTaskCOP task(task_factory_->create_task_and_apply_taskoperations(pose));
+		return task->repacking_residues();
+	}
+}
+
+void
+ReportToDB::apply( Pose& pose ){
+
+	initialize_pose(pose);
+	vector1< bool > relevant_residues(initialize_relevant_residues(pose));
 
 	TR
 		<< "Reporting features for "
@@ -612,13 +710,6 @@ ReportToDB::initialize_pose(
 		<< JobDistributor::get_instance()->current_output_name()
 		<< " for batch '" << batch_name_ << "'." << endl;
 
-	return relevant_residues;
-}
-
-void
-ReportToDB::apply( Pose& pose ){
-
-	vector1<bool> relevant_residues(initialize_pose(pose));
 
 	initialize_database();
 
@@ -646,6 +737,8 @@ ReportToDB::apply( Pose& pose ){
 
 	StructureID struct_id = report_structure_features();
 	report_features(pose, struct_id, relevant_residues);
+
+	last_struct_id_ = struct_id;
 }
 
 StructureID
@@ -654,15 +747,21 @@ ReportToDB::report_structure_features() const {
 	try {
 		if(use_transactions_){
 			db_session_->begin_transaction();
+		}
+
+		if(structure_tag_ != "" && structure_input_tag_ != ""){
+			struct_id = structure_features_->report_features(
+				batch_id_, db_session_, structure_tag_, structure_input_tag_);
+		} else {
 			struct_id = structure_features_->report_features(
 				batch_id_, db_session_);
+		}
+
+		if(use_transactions_){
 			db_session_->commit_transaction();
 		}
-		else{
-			struct_id = structure_features_->report_features(
-				batch_id_, db_session_);
-		}
 	} catch (cppdb_error error){
+		db_session_->rollback();
 		stringstream err_msg;
 		err_msg
 			<< "Failed to report structure features for:" << endl
@@ -671,6 +770,19 @@ ReportToDB::report_structure_features() const {
 			<< "\tbatch description: '" << batch_description_ << "'" <<  endl
 			<< "\tbatch_id: '" << batch_id_ << "'" << endl
 			<< "Error Message:" << endl << error.what() << endl;
+		utility_exit_with_message(err_msg.str());
+	} catch (utility::excn::EXCN_Base & error){
+		if(use_transactions_){
+			db_session_->rollback();
+		}
+		stringstream err_msg;
+		err_msg
+			<< "Failed to report structure features for:" << endl
+			<< "\tprotocol_id: '" << protocol_id_ << "'" << endl
+			<< "\tbatch name: '" << batch_name_ << "'" <<  endl
+			<< "\tbatch description: '" << batch_description_ << "'" <<  endl
+			<< "\tbatch_id: '" << batch_id_ << "'" << endl
+			<< "Error Message:" << endl << error << endl;
 		utility_exit_with_message(err_msg.str());
 	}
 	return struct_id;
@@ -715,6 +827,12 @@ ReportToDB::report_features(
 		}
 	}
 }
+
+StructureID
+ReportToDB::get_last_struct_id() const {
+	return last_struct_id_;
+}
+
 
 } // namespace
 } // namespace

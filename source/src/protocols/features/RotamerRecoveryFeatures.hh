@@ -36,8 +36,9 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/rotamer_recovery/RRComparer.fwd.hh>
-#include <protocols/rotamer_recovery/RRProtocol.fwd.hh>
+#include <protocols/rotamer_recovery/RRReporterSQLite.hh>
+#include <protocols/rotamer_recovery/RRComparer.hh>
+#include <protocols/rotamer_recovery/RRProtocol.hh>
 
 
 
@@ -60,11 +61,6 @@ public:
 	std::string
 	type_name() const;
 
-	///@brief generate the table schemas and write them to the database
-	void
-	write_schema_to_db(
-		utility::sql_database::sessionOP db_session) const;
-
 	///@brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
 	utility::vector1<std::string>
@@ -82,6 +78,11 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & /*pose*/);
 
+	///@brief generate the table schemas and write them to the database
+	void
+	write_schema_to_db(
+		utility::sql_database::sessionOP db_session) const;
+
 	///@brief collect all the feature data for the pose
 	core::Size
 	report_features(
@@ -92,6 +93,7 @@ public:
 
 private:
 	core::scoring::ScoreFunctionOP scfxn_;
+	protocols::rotamer_recovery::RRReporterSQLiteOP reporter_;
 	protocols::rotamer_recovery::RRProtocolOP protocol_;
 	protocols::rotamer_recovery::RRComparerOP comparer_;
 	core::pack::task::TaskFactoryOP task_factory_;

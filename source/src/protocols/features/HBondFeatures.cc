@@ -31,6 +31,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreType.hh>
@@ -136,7 +137,9 @@ using basic::database::insert_or_ignore;
 static Tracer TR("protocols.features.HBondFeatures");
 
 HBondFeatures::HBondFeatures() :
-	scfxn_(getScoreFunction())
+	scfxn_(getScoreFunction()),
+	definition_type_(hbdef_ENERGY),
+	definition_threshold_(0)
 {}
 
 HBondFeatures::HBondFeatures(
@@ -605,12 +608,7 @@ HBondFeatures::parse_my_tag(
 		string const scorefxn_name(tag->getOption<string>("scorefxn"));
 		scfxn_ = data.get<ScoreFunction*>("scorefxns", scorefxn_name);
 	} else {
-		stringstream error_msg;
-		error_msg
-			<< "The " << type_name() << " reporter requires a 'scorefxn' tag:" << endl
-			<< endl
-			<< "    <feature name=" << type_name() <<" scorefxn=(name_of_score_function) />" << endl;
-		throw utility::excn::EXCN_RosettaScriptsOption(error_msg.str());
+		scfxn_ = getScoreFunction();
 	}
 
 	string const definition_type(
@@ -641,6 +639,11 @@ HBondFeatures::report_features(
 	StructureID struct_id,
 	sessionOP db_session
 ){
+	if(!scfxn_){
+		scfxn_ = getScoreFunction();
+	}
+	core::pose::symmetry::make_score_function_consistent_with_symmetric_state_of_pose(pose, scfxn_);
+
 	HBondSet hbond_set;
 
 	// assert pose.update_residue_neighbors() has been called:
@@ -1176,6 +1179,8 @@ HBondFeatures::insert_hbond_dehydron_row(
 
 	Residue const & don_res(pose.residue(hbond.don_res()));
 	Residue const & acc_res(pose.residue(hbond.acc_res()));
+
+	if(!don_res.is_protein() || !acc_res.is_protein()) return;
 
 	Vector const & don_res_ca_xyz(don_res.xyz("CA"));
 	Vector const & acc_res_ca_xyz(acc_res.xyz("CA"));

@@ -384,7 +384,6 @@ ProteinResidueConformationFeatures::load_conformation(
 	if(pose.is_fullatom()){
 		std::string statement_string =
 			"SELECT\n"
-			"	seqpos,\n"
 			"	secstruct,\n"
 			"	phi,\n"
 			"	psi,\n"
@@ -403,11 +402,11 @@ ProteinResidueConformationFeatures::load_conformation(
 
 		result res(basic::database::safely_read_from_database(stmt));
 
+		Size seqpos(1);
 		while(res.next()){
-			Size seqpos;
 			Real phi,psi,omega,chi1,chi2,chi3,chi4;
 			std::string secstruct;
-			res >> seqpos >> secstruct >> phi >> psi >> omega >> chi1 >> chi2 >> chi3 >> chi4 ;
+			res >> secstruct >> phi >> psi >> omega >> chi1 >> chi2 >> chi3 >> chi4 ;
 			if (!pose.residue_type(seqpos).is_protein()){
 				// WARNING why are you storing non-protein in the ProteinSilentReport?
 				continue;
@@ -424,6 +423,7 @@ ProteinResidueConformationFeatures::load_conformation(
 			if(2 <= nchi) pose.set_chi(2, seqpos, chi2);
 			if(3 <= nchi) pose.set_chi(3, seqpos, chi3);
 			if(4 <= nchi) pose.set_chi(4, seqpos, chi4);
+			seqpos++;
 		}
 
 	}else{
@@ -455,8 +455,92 @@ ProteinResidueConformationFeatures::load_conformation(
 	}
 }
 
+void
+ProteinResidueConformationFeatures::check_num_requested_atoms(
+	Size num_requested_atoms,
+	Size pose_resNum,
+	Pose & pose,
+	Size resNum,
+	StructureID struct_id,
+	sessionOP db_session
+) const {
+	if(num_requested_atoms != pose.residue_type(pose_resNum).natoms()){
+		string get_res_type_stmt_str("SELECT res_type FROM residues WHERE struct_id = ? AND resNum = ?;");
+		statement get_res_type_stmt(basic::database::safely_prepare_statement(get_res_type_stmt_str, db_session));
+		get_res_type_stmt.bind(1, struct_id);
+		get_res_type_stmt.bind(2, resNum);
+		result get_res_type_res(basic::database::safely_read_from_database(get_res_type_stmt));
+		get_res_type_res.next();
+		string db_res_type;
+		get_res_type_res >> db_res_type;
+
+		if(
+			db_res_type == "CYD" && num_requested_atoms == 10 &&
+			pose.residue_type(pose_resNum).name() == "CYS"
+		){
+			// The pose incorrectly says this cystine is
+			// forming a disulfide while the coordinates say that is
+			// not. Convert the residue type to CYD.
+			bool success = core::conformation::change_cys_state(
+				pose_resNum, "CYD", pose.conformation());
+			if(!success){
+				std::stringstream errmsg;
+				errmsg
+					<< "Failed to convert cystine from CYS to CYD for residue '" << resNum << "'";
+				if( pose_resNum != resNum){
+					errmsg
+						<< ", which has been renumbered to '" << pose_resNum << "'." << std::endl;
+				} else {
+					errmsg
+						<< "." << std::endl;
+				}
+				utility_exit_with_message(errmsg.str());
+			} else {
+				// should probably rebuild disulfides when done...
+				return;
+			}
+		}
+
+
+		std::stringstream errmsg;
+		errmsg
+			<< "Attempting to set atom coordinates for residue '" << resNum << "'";
+		if( pose_resNum != resNum){
+			errmsg
+				<< ", which has been renumbered to '" << pose_resNum << "'." << std::endl;
+		} else {
+			errmsg
+				<< "." << std::endl;
+		}
+
+		errmsg
+			<< "The pose residue has '" << pose.residue_type(pose_resNum).natoms() << "' coordinates but '" << num_requested_atoms << "' were provided." << std::endl;
+		if( db_res_type != pose.residue_type(pose_resNum).name()){
+			errmsg
+				<< "The pose residue type is '" << pose.residue_type(pose_resNum).name() << "' while the residue type in the database is '" << db_res_type << "'." << std::endl;
+		} else {
+			errmsg
+				<< "The residue type in the database is '" << db_res_type << "' and it matches the pose residue type." << std::endl;
+		}
+		utility_exit_with_message(errmsg.str());
+	}
+}
 
 //This should be factored out into a non-member function.
+/// This is a little complicated:
+/// PoseConformationFeatures: renumbers the pose then reports the relevant residues
+/// ResidueFeatures: doesn't renumber the pose and reports the relevant residues
+/// ProteinResidueConformationFeatures: don't renumber the pose but also only report features for (canonical) protein residues
+///
+/// This means that to reconstruct the pose conformation, first the conformations
+/// stored in residue_atom_coords must be aligned with residues table
+/// to get the appropriate gaps for non-canonical residues, then these
+/// need to be renumbered to align with the renumbered pose reported
+/// in PoseConformationFEatures
+///
+///    pose_resNum -> the numbering in the pose to be filled
+///    resNum -> the numbering in the residues table
+
 void ProteinResidueConformationFeatures::set_coords_for_residues(
 		sessionOP db_session,
 		StructureID struct_id,
@@ -469,36 +553,76 @@ void ProteinResidueConformationFeatures::set_coords_for_residues(
 
 	std::string statement_string =
 		"SELECT\n"
-		"	seqpos,\n"
-		"	atomno,\n"
-		"	x,\n"
-		"	y,\n"
-		"	z\n"
+		"	r.resNum,\n"
+		"	c.atomno,\n"
+		"	c.x,\n"
+		"	c.y,\n"
+		"	c.z\n"
 		"FROM\n"
-		"	residue_atom_coords\n"
+		"	residues AS r LEFT JOIN\n"
+		"	residue_atom_coords AS c ON\n"
+		"	r.struct_id = c.struct_id AND r.resNum = c.seqpos\n"
 		"WHERE\n"
-		"	residue_atom_coords.struct_id=?;";
+		"	r.struct_id=?;";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-	//std::string struct_id_string(to_string(struct_id));
 	stmt.bind(1,struct_id);
 
 	result res(basic::database::safely_read_from_database(stmt));
 
 	vector1< AtomID > atom_ids;
 	vector1< Vector > coords;
-	while(res.next())
-	{
-		Size seqpos, atomno;
-		Real x,y,z;
-		res >> seqpos >> atomno >> x >> y >> z;
+	vector1< Size > missing_coordinates;
+	bool initial_iteration(true);
+	bool last_residue_missing(true);
+	Size pose_resNum(1);
+	Size prev_resNum(0);
+	Size natoms_in_residue(0);
+	Size resNum, atomno;
+	Real x, y, z;
+	while(res.next()){
+		res >> resNum >> atomno >> x >> y >> z;
+		if(!initial_iteration && prev_resNum != resNum){
+			if(!last_residue_missing){
+				check_num_requested_atoms(natoms_in_residue, pose_resNum, pose, prev_resNum, struct_id, db_session);
+			}
+			pose_resNum++;
+			natoms_in_residue = 0;
+		}
 
-		atom_ids.push_back(AtomID(atomno, seqpos));
+		if(res.is_null(1)) {
+			missing_coordinates.push_back(pose_resNum);
+			last_residue_missing = true;
+			continue;
+		} else {
+			last_residue_missing = false;
+		}
+		atom_ids.push_back(AtomID(atomno, pose_resNum));
 		coords.push_back(Vector(x,y,z));
+		natoms_in_residue++;
+		prev_resNum = resNum;
+		initial_iteration=false;
 	}
+	if(!last_residue_missing){
+		check_num_requested_atoms(natoms_in_residue, pose_resNum, pose, resNum, struct_id, db_session);
+	}
+
 	// use the batch_set_xyz because it doesn't trigger a coordinate
 	// update after setting each atom.
-	pose.batch_set_xyz(atom_ids,coords);
+	pose.batch_set_xyz(atom_ids, coords);
 
+
+	if(missing_coordinates.size() > 0){
+		TR.Warning << "In loading the residue coodinates, some of the residues did not have coordinates specified:" << std::endl << "\t[";
+		for(Size ii=1; ii <= missing_coordinates.size(); ++ii){
+			TR.Warning << missing_coordinates[ii] << ",";
+		}
+		TR.Warning << "]" << std::endl;
+		TR.Warning << "This can happen because you are using ProteinResidueConformationFeatures with a structure that contains non-protein residues, for example. To avoid this, extract with the ReisudeConformationFeatures instead." << std::endl;
+//		TR.Warning << "These residues will be deleted from the pose." << std::endl;
+//		for(Size ii=1; ii < missing_coordinates.size(); ++ii){
+//			pose.conformation().delete_residue_slow(ii);
+//		}
+	}
 }
 
 void
@@ -511,7 +635,6 @@ ProteinResidueConformationFeatures::set_coords_for_residue_from_compact_schema(
 	std::string statement_string =
 		"SELECT\n"
 		"	coord_data,\n"
-		"	seqpos,\n"
 		"	atom_count\n"
 		"FROM\n"
 		"	compact_residue_atom_coords\n"
@@ -521,17 +644,18 @@ ProteinResidueConformationFeatures::set_coords_for_residue_from_compact_schema(
 	stmt.bind(1,struct_id);
 
 	result res(basic::database::safely_read_from_database(stmt));
+	Size seqpos(1);
 	while(res.next()){
 		std::string coords;
 		core::Size atom_count = 0;
-		core::Size seqpos = 0;
-		res >> coords >> seqpos >> atom_count;
+		res >> coords >> atom_count;
 		utility::vector1<numeric::xyzVector<core::Real> > residue_coords(deserialize_xyz_coords(coords,atom_count)	);
 		for(core::Size atomno = 1; atomno <= residue_coords.size();++atomno)
 		{
 			core::id::AtomID atom_id(atomno,seqpos);
 			pose.set_xyz(atom_id,residue_coords[atomno]);
 		}
+		seqpos++;
 	}
 }
 

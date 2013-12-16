@@ -15,7 +15,7 @@
 //project headers
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueType.hh>
 
 //External
 
@@ -31,6 +31,7 @@
 
 #include <basic/database/insert_statement_generator/InsertGenerator.hh>
 #include <basic/database/insert_statement_generator/RowData.hh>
+#include <basic/Tracer.hh>
 
 //Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -47,13 +48,15 @@
 namespace protocols {
 namespace features {
 
+static basic::Tracer TR("protocols.features.PdbDataFeatures");
+
 using std::string;
 using std::max;
 using std::min;
 using std::numeric_limits;
 using core::Size;
 using core::Real;
-using core::conformation::Residue;
+using core::chemical::ResidueType;
 using core::pose::Pose;
 using utility::sql_database::sessionOP;
 using utility::vector1;
@@ -210,33 +213,43 @@ void PdbDataFeatures::load_residue_pdb_identification(
 	vector1<char> insertion_codes;
 	string statement_string =
 		"SELECT\n"
-				"	r_id.struct_id,\n"
-		"	r_id.residue_number,\n"
 		"	r_id.chain_id,\n"
 		"	r_id.insertion_code,\n"
 		"	r_id.pdb_residue_number\n"
 		"FROM\n"
-		"	residue_pdb_identification AS r_id\n"
+		"	residues AS r LEFT JOIN\n"
+		"	residue_pdb_identification AS r_id ON\n"
+		"	r.struct_id = r_id.struct_id AND r_id.residue_number = r.resNum\n"
 		"WHERE\n"
-		"	r_id.struct_id=?;";
+		"	r.struct_id=?\n"
+		"ORDER BY\n"
+		"	r.struct_id, r.resNum;";
 
 	statement stmt(safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 	result res(safely_read_from_database(stmt));
 
+	Size pose_resNum(0);
+	vector1< Size > missing_residues;
+
 	while(res.next()) {
-				StructureID temp;
-		Size residue_number;
+		pose_resNum++;
+
 		//cppdb doesn't do char's
 		string chain_id;
 		string insertion_code;
 		int pdb_residue_number;
 
-		res >> temp >> residue_number >> chain_id >> insertion_code >> pdb_residue_number;
+		if(res.is_null(1)){
+			missing_residues.push_back(pose_resNum);
+			continue;
+		}
+
+		res >> chain_id >> insertion_code >> pdb_residue_number;
 
 		pdb_chains.push_back(chain_id[0]);
 		insertion_codes.push_back(insertion_code[0]);
-				pdb_numbers.push_back(pdb_residue_number);
+		pdb_numbers.push_back(pdb_residue_number);
 	}
 
 	if(!pose.pdb_info()){
@@ -299,58 +312,77 @@ void PdbDataFeatures::load_residue_pdb_confidence(
 
 	std::string statement_string =
 		"SELECT\n"
-		"	r_conf.residue_number,\n"
 		"	r_conf.max_bb_temperature,\n"
 		"	r_conf.max_sc_temperature,\n"
 		"	r_conf.min_bb_occupancy,\n"
 		"	r_conf.min_sc_occupancy\n"
 		"FROM\n"
-		"	residue_pdb_confidence AS r_conf\n"
+		"	residues AS r LEFT JOIN\n"
+		"	residue_pdb_confidence AS r_conf ON\n"
+		"	r_conf.struct_id = r.struct_id AND r_conf.residue_number = r.resNum\n"
 		"WHERE\n"
-		"	r_conf.struct_id=?;";
+		"	r_conf.struct_id=?\n"
+		"ORDER BY\n"
+		"	r.struct_id, r.resNum;";
+
 
 	statement stmt(safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
 	result res(safely_read_from_database(stmt));
 
+	Size pose_resNum(0);
+	vector1< Size > missing_residues;
+
 	while(res.next()) {
-		Size residue_number;
+		pose_resNum++;
 		Real max_bb_temperature;
 		Real max_sc_temperature;
 		Real min_bb_occupancy;
 		Real min_sc_occupancy;
 
+		if(res.is_null(1)){
+			missing_residues.push_back(pose_resNum);
+			continue;
+		}
+
 		res
-			>> residue_number
 			>> max_bb_temperature
 			>> max_sc_temperature
 			>> min_bb_occupancy
 			>> min_sc_occupancy;
 
-		Residue const & residue(pose.residue(residue_number));
+		ResidueType const & res_type(pose.residue_type(pose_resNum));
 
 		pose.pdb_info()->resize_atom_records(
-			residue_number, residue.natoms(), false);
+			pose_resNum, res_type.natoms(), false);
 
 		for(
 			Size atom_index=1;
-			atom_index <= residue.last_backbone_atom();
+			atom_index <= res_type.last_backbone_atom();
 			++atom_index){
 			pose.pdb_info()->temperature(
-				residue_number, atom_index, max_bb_temperature);
+				pose_resNum, atom_index, max_bb_temperature);
 			pose.pdb_info()->occupancy(
-				residue_number, atom_index, min_bb_occupancy);
+				pose_resNum, atom_index, min_bb_occupancy);
 		}
 		for(
-			Size atom_index = residue.first_sidechain_atom();
-			atom_index <= residue.natoms();
+			Size atom_index = res_type.first_sidechain_atom();
+			atom_index <= res_type.natoms();
 			++atom_index){
 			pose.pdb_info()->temperature(
-				residue_number, atom_index, max_sc_temperature);
+				pose_resNum, atom_index, max_sc_temperature);
 			pose.pdb_info()->occupancy(
-				residue_number, atom_index, min_sc_occupancy);
+				pose_resNum, atom_index, min_sc_occupancy);
 		}
 	}
+	if(missing_residues.size() > 0){
+		TR.Warning << "In loading the residue PDB confidence measures, some of the residues did not have data specified:" << std::endl << "\t[";
+		for(Size ii=1; ii <= missing_residues.size(); ++ii){
+			TR.Warning << missing_residues[ii] << ",";
+		}
+		TR.Warning << "]" << std::endl;
+	}
+
 }
 
 
@@ -380,12 +412,12 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 	for(Size ri=1; ri <= pose.n_residue(); ++ri) {
 		if(!check_relevant_residues(relevant_residues, ri)) continue;
 
-		Residue const & r(pose.residue(ri));
+		ResidueType const & r(pose.residue_type(ri));
 		Real max_bb_temperature(-1), max_sc_temperature(-1);
 		Real min_bb_occupancy(9999999);
 		Real min_sc_occupancy(9999999);
-		Size const n_bb(r.n_mainchain_atoms());
-		Size const n_sc(r.nheavyatoms() - r.n_mainchain_atoms());
+		Size const n_bb(r.mainchain_atoms().size());
+		Size const n_sc(r.nheavyatoms() - r.mainchain_atoms().size());
 		for(Size ai=1; ai <= n_bb; ++ai){
 			max_bb_temperature = max(max_bb_temperature, pdb_info->temperature(ri, ai));
 			min_bb_occupancy = min(min_bb_occupancy, pdb_info->occupancy(ri, ai));
