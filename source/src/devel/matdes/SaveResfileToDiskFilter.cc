@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   devel/matdes/SaveResfileToDiskFilter.cc
-/// @brief  Calculates AverageDegree within the context of an unbound oligomer
+/// @brief  Outputs a resfile based on a given set of taskoperations
 /// @author Neil King (neilking@u.washington.edu)
 
 // Unit Headers
@@ -52,13 +52,17 @@ namespace devel {
 namespace matdes {
 
 // @brief default constructor
-SaveResfileToDiskFilter::SaveResfileToDiskFilter() {}
+SaveResfileToDiskFilter::SaveResfileToDiskFilter():
+	designable_only_( false ),
+	renumber_pdb_( false )
+{}
 
 // @brief constructor with arguments
 SaveResfileToDiskFilter::SaveResfileToDiskFilter( core::pack::task::TaskFactoryOP task_factory, utility::vector1<core::Size> r, bool d, std::string n, std::string s, std::string p, std::string g, std::string srp ):
 	task_factory_( task_factory ),
 	selected_resis_( r ),
 	designable_only_( d ),
+	renumber_pdb_( false ),
 	resfile_name_( n ),
 	resfile_suffix_( s ),
 	resfile_prefix_( p ),
@@ -72,6 +76,7 @@ SaveResfileToDiskFilter::SaveResfileToDiskFilter( SaveResfileToDiskFilter const 
 	task_factory_( rval.task_factory_ ),
 	selected_resis_( rval.selected_resis_ ),
 	designable_only_( rval.designable_only_ ),
+	renumber_pdb_( rval.renumber_pdb_ ),
 	resfile_name_( rval.resfile_name_ ),
 	resfile_suffix_( rval.resfile_suffix_ ),
 	resfile_prefix_( rval.resfile_prefix_ ),
@@ -96,6 +101,7 @@ SaveResfileToDiskFilter::clone() const{
 core::pack::task::TaskFactoryOP SaveResfileToDiskFilter::task_factory() const { return task_factory_; }
 utility::vector1<core::Size> SaveResfileToDiskFilter::selected_resis() const { return selected_resis_; }
 bool SaveResfileToDiskFilter::designable_only() const { return designable_only_; }
+bool SaveResfileToDiskFilter::renumber_pdb() const { return renumber_pdb_; }
 std::string SaveResfileToDiskFilter::resfile_name() const { return resfile_name_; }
 std::string SaveResfileToDiskFilter::resfile_suffix() const { return resfile_suffix_; }
 std::string SaveResfileToDiskFilter::resfile_prefix() const { return resfile_prefix_; }
@@ -106,6 +112,7 @@ std::string SaveResfileToDiskFilter::selected_resis_property() const { return se
 void SaveResfileToDiskFilter::task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
 void SaveResfileToDiskFilter::selected_resis( utility::vector1<core::Size> const r ) { selected_resis_ = r; }
 void SaveResfileToDiskFilter::designable_only( bool const d ) { designable_only_ = d; }
+void SaveResfileToDiskFilter::renumber_pdb( bool const p ) { renumber_pdb_ = p; }
 void SaveResfileToDiskFilter::resfile_name( std::string const n ) { resfile_name_ = n; }
 void SaveResfileToDiskFilter::resfile_suffix( std::string const s ) { resfile_suffix_ = s; }
 void SaveResfileToDiskFilter::resfile_prefix( std::string const p ) { resfile_prefix_ = p; }
@@ -160,10 +167,15 @@ SaveResfileToDiskFilter::write_resfile( Pose const & pose, utility::vector1< cor
   resfile.open( resfile_to_write.c_str(), std::ios::out );
   resfile << resfile_general_property() << "\nstart\n";
 	for ( core::Size i=1; i<=selected_residues.size(); i++ ) {
-		if ( selected_resis_property() != "" ) {
-			resfile << selected_residues[i] << '\t' << pose.pdb_info()->chain(selected_residues[i]) << " " << selected_resis_property() << '\n';
+		if ( renumber_pdb() ) {
+			resfile << selected_residues[i] << '\t' << pose.pdb_info()->chain(selected_residues[i]);
 		} else {
-			resfile << selected_residues[i] << '\t' << pose.pdb_info()->chain(selected_residues[i]) << " PIKAA " << pose.residue(selected_residues[i]).name1() << '\n';
+			resfile << pose.pdb_info()->number( selected_residues[i] ) << '\t' << pose.pdb_info()->chain(selected_residues[i]);
+		}
+		if ( selected_resis_property() != "" ) {
+			resfile << " " << selected_resis_property() << '\n';
+		} else {
+			resfile << " PIKAA " << pose.residue(selected_residues[i]).name1() << '\n';
 		}
   }
   resfile.close();
@@ -193,6 +205,7 @@ SaveResfileToDiskFilter::parse_my_tag(
 {
   task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	designable_only( tag->getOption< bool >( "designable_only", false ) );
+	renumber_pdb( tag->getOption< bool >( "renumber_pdb", false ) );
 	resfile_suffix( tag->getOption< std::string >( "resfile_suffix", "" ) );
 	resfile_prefix( tag->getOption< std::string >( "resfile_prefix", "" ) );
 	resfile_name( tag->getOption< std::string >( "resfile_name", "" ) );
@@ -204,7 +217,7 @@ core::Real
 SaveResfileToDiskFilter::report_sm( core::pose::Pose const & pose ) const
 {
   return( compute( pose ) );
-} 
+}
 
 void
 SaveResfileToDiskFilter::report( std::ostream & out, core::pose::Pose const & pose ) const

@@ -1,819 +1,1009 @@
-## This is just the log from 'wget http://rosettatests.graylab.jhu.edu/viewlog/55602', for svn r53121
-##
+## This is just the log from 'wget http://test.rosettacommons.org/viewlog/67438', for test r56155 on 2013-12-17, SHA1 acfb7e6ca0e1a2827a4576e1e10bf7a588752922
 
-<pre>Using Rosetta source dir at: /home/benchmark/svd.64/rosetta/rosetta_source
-Running Test features_parallel
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/features_parallel/command.sh
-Finished features_parallel                        in   0 seconds	 [~  25 test (12%) started,  178 in queue,   24 running]
-Running Test combine_silent
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/combine_silent/command.sh
-Finished combine_silent                           in   1 seconds	 [~  26 test (12%) started,  177 in queue,   24 running]
-Running Test RescoreSAXS
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/RescoreSAXS/command.sh
-Finished RescoreSAXS                              in   0 seconds	 [~  27 test (13%) started,  176 in queue,   24 running]
-Running Test rna_cluster
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/rna_cluster/command.sh
-Finished rna_cluster                              in   2 seconds	 [~  28 test (13%) started,  175 in queue,   24 running]
-Running Test cstfile_to_theozyme_pdb
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/cstfile_to_theozyme_pdb/command.sh
-Finished cstfile_to_theozyme_pdb                  in   3 seconds	 [~  29 test (14%) started,  174 in queue,   24 running]
-Running Test RescorePDDF
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/RescorePDDF/command.sh
-Finished RescorePDDF                              in   3 seconds	 [~  30 test (14%) started,  173 in queue,   24 running]
-Running Test fix_alignment_to_match_pdb
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/fix_alignment_to_match_pdb/command.sh
-Finished fix_alignment_to_match_pdb               in   4 seconds	 [~  31 test (15%) started,  172 in queue,   24 running]
-Running Test loop_hash
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/loop_hash/command.sh
-Finished loop_hash                                in   1 seconds	 [~  32 test (15%) started,  171 in queue,   24 running]
-Running Test cluster
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/cluster/command.sh
-Finished cluster                                  in   6 seconds	 [~  33 test (16%) started,  170 in queue,   24 running]
-Running Test fragmentpicker_integration_demo
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/fragmentpicker_integration_demo/command.sh
-Finished fragmentpicker_integration_demo          in   4 seconds	 [~  34 test (16%) started,  169 in queue,   24 running]
-Running Test test_idealize
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/test_idealize/command.sh
-Running Test InterfaceAnalyzer_tracer
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/InterfaceAnalyzer_tracer/command.sh
-Finished test_idealize                            in   7 seconds	 [~  35 test (17%) started,  168 in queue,   24 running]
-Finished InterfaceAnalyzer_tracer                 in   7 seconds	 [~  35 test (17%) started,  168 in queue,   23 running]
-Running Test metalloprotein_broker
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/metalloprotein_broker/command.sh
-Running Test orbitals
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/orbitals/command.sh
-Finished orbitals                                 in   7 seconds	 [~  37 test (18%) started,  166 in queue,   24 running]
-Finished metalloprotein_broker                    in   7 seconds	 [~  37 test (18%) started,  166 in queue,   23 running]
-Running Test crossaln
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/crossaln/command.sh
-Finished crossaln                                 in   0 seconds	 [~  39 test (19%) started,  164 in queue,   24 running]
-Running Test InterfaceAnalyzer_resfile
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/InterfaceAnalyzer_resfile/command.sh
-Finished InterfaceAnalyzer_resfile                in   8 seconds	 [~  40 test (19%) started,  163 in queue,   24 running]
-Running Test make_rot_lib
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/make_rot_lib/command.sh
-Finished make_rot_lib                             in  10 seconds	 [~  41 test (20%) started,  162 in queue,   24 running]
-Running Test classic_relax_1a19
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/classic_relax_1a19/command.sh
-Finished classic_relax_1a19                       in   9 seconds	 [~  42 test (20%) started,  161 in queue,   24 running]
-Running Test ld_converter
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/ld_converter/command.sh
-Finished ld_converter                             in   3 seconds	 [~  43 test (21%) started,  160 in queue,   24 running]
-Running Test InterfaceAnalyzer_bothpack
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/InterfaceAnalyzer_bothpack/command.sh
-Finished InterfaceAnalyzer_bothpack               in   7 seconds	 [~  44 test (21%) started,  159 in queue,   24 running]
-Running Test extract_atomtree_diffs
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/extract_atomtree_diffs/command.sh
-Finished extract_atomtree_diffs                   in   5 seconds	 [~  45 test (22%) started,  158 in queue,   24 running]
-Running Test sequence_recovery
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/sequence_recovery/command.sh
-Finished sequence_recovery                        in  13 seconds	 [~  46 test (22%) started,  157 in queue,   24 running]
-Running Test hbonds
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/hbonds/command.sh
-Finished hbonds                                   in  15 seconds	 [~  47 test (23%) started,  156 in queue,   24 running]
-Running Test broker_membrane
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/broker_membrane/command.sh
-Finished broker_membrane                          in  16 seconds	 [~  48 test (23%) started,  155 in queue,   24 running]
-Running Test ppk
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/ppk/command.sh
-Finished ppk                                      in   6 seconds	 [~  49 test (24%) started,  154 in queue,   24 running]
-Running Test zinc_homodimer_setup
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/zinc_homodimer_setup/command.sh
-Finished zinc_homodimer_setup                     in   9 seconds	 [~  50 test (24%) started,  153 in queue,   24 running]
-Running Test flexpepdock_abinitio
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/flexpepdock_abinitio/command.sh
-Finished flexpepdock_abinitio                     in  20 seconds	 [~  51 test (25%) started,  152 in queue,   24 running]
-Running Test rna_helix
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/rna_helix/command.sh
-Running Test filter_termini_near_interface
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/filter_termini_near_interface/command.sh
-Finished rna_helix                                in  22 seconds	 [~  52 test (25%) started,  151 in queue,   24 running]
-Finished filter_termini_near_interface            in   8 seconds	 [~  52 test (25%) started,  151 in queue,   23 running]
-Running Test sequence_tolerance
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/sequence_tolerance/command.sh
-Finished sequence_tolerance                       in   5 seconds	 [~  54 test (26%) started,  149 in queue,   24 running]
-Running Test UBQ_Gp_CYD-CYD
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/UBQ_Gp_CYD-CYD/command.sh
-Finished UBQ_Gp_CYD-CYD                           in  23 seconds	 [~  55 test (27%) started,  148 in queue,   24 running]
-Running Test posttranslationalmod_io
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/posttranslationalmod_io/command.sh
-Finished posttranslationalmod_io                  in   4 seconds	 [~  56 test (27%) started,  147 in queue,   24 running]
-Running Test rs_flexbbmoves
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/rs_flexbbmoves/command.sh
-Finished rs_flexbbmoves                           in  22 seconds	 [~  57 test (28%) started,  146 in queue,   24 running]
-Running Test fold_and_dock
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/fold_and_dock/command.sh
-Finished fold_and_dock                            in   6 seconds	 [~  58 test (28%) started,  145 in queue,   24 running]
-Running Test batch_relax
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/batch_relax/command.sh
-Finished batch_relax                              in  27 seconds	 [~  59 test (29%) started,  144 in queue,   24 running]
-Running Test assemble_domains_jd2
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/assemble_domains_jd2/command.sh
-Finished assemble_domains_jd2                     in  12 seconds	 [~  60 test (29%) started,  143 in queue,   24 running]
-Running Test docking_ensemble_prepack
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/docking_ensemble_prepack/command.sh
-Finished docking_ensemble_prepack                 in  17 seconds	 [~  61 test (30%) started,  142 in queue,   24 running]
-Running Test pH_mode
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/pH_mode/command.sh
-Finished pH_mode                                  in   6 seconds	 [~  62 test (30%) started,  141 in queue,   24 running]
-Running Test AlterSpecDisruption
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/AlterSpecDisruption/command.sh
-Finished AlterSpecDisruption                      in  17 seconds	 [~  63 test (31%) started,  140 in queue,   24 running]
-Running Test ncaa_fixbb
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/ncaa_fixbb/command.sh
-Finished ncaa_fixbb                               in   4 seconds	 [~  64 test (31%) started,  139 in queue,   24 running]
-Running Test rna_minimize
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/rna_minimize/command.sh
-Finished rna_minimize                             in  32 seconds	 [~  65 test (32%) started,  138 in queue,   24 running]
-Running Test InterfaceAnalyzer_prepack
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/InterfaceAnalyzer_prepack/command.sh
-Finished InterfaceAnalyzer_prepack                in   7 seconds	 [~  66 test (32%) started,  137 in queue,   24 running]
-Running Test zinc_homodimer_design
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/zinc_homodimer_design/command.sh
-Finished zinc_homodimer_design                    in   7 seconds	 [~  67 test (33%) started,  136 in queue,   24 running]
-Running Test features_scientific_benchmark
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/features_scientific_benchmark/command.sh
-which: no Rscript in (/home/benchmark/prefix/Python-2.6.64Bit/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/opt/condor-7.8.6/etc/condor_config:/opt/condor-7.8.6/bin/:/etc/ProFitV3.1:/etc/ProFitV3.1:/home/benchmark/y/bin:/opt/condor-7.8.6/bin::/opt/condor-7.8.6/etc/condor_config:/opt/condor-7.8.6/bin/:/etc/ProFitV3.1:/etc/ProFitV3.1:/home/benchmark/prefix/scripts:/opt/condor-7.8.6/etc/condor_config:/opt/condor-7.8.6/bin/:/etc/ProFitV3.1:/etc/ProFitV3.1)
-Finished features_scientific_benchmark            in   0 seconds	 [~  68 test (33%) started,  135 in queue,   24 running]
-Running Test FloppyTail
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/FloppyTail/command.sh
-Finished FloppyTail                               in  27 seconds	 [~  69 test (33%) started,  134 in queue,   24 running]
-Running Test rna_denovo
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/rna_denovo/command.sh
-Finished rna_denovo                               in  26 seconds	 [~  70 test (34%) started,  133 in queue,   24 running]
-Running Test hotspot_graft
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/hotspot_graft/command.sh
-Finished hotspot_graft                            in  30 seconds	 [~  71 test (34%) started,  132 in queue,   24 running]
-Running Test docking_site_constraints
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/docking_site_constraints/command.sh
-Finished docking_site_constraints                 in  32 seconds	 [~  72 test (35%) started,  131 in queue,   24 running]
-Running Test doug_dock_design_min_mod2_cal_cal
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/doug_dock_design_min_mod2_cal_cal/command.sh
-Finished doug_dock_design_min_mod2_cal_cal        in  41 seconds	 [~  73 test (35%) started,  130 in queue,   24 running]
-Running Test jscore
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/jscore/command.sh
-Finished jscore                                   in  10 seconds	 [~  74 test (36%) started,  129 in queue,   24 running]
-Running Test sequence_profile_constraints
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/sequence_profile_constraints/command.sh
-Finished sequence_profile_constraints             in  14 seconds	 [~  75 test (36%) started,  128 in queue,   24 running]
-Running Test ligand_motif_design
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/ligand_motif_design/command.sh
-Finished ligand_motif_design                      in  46 seconds	 [~  76 test (37%) started,  127 in queue,   24 running]
-Running Test noe_assignment
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/noe_assignment/command.sh
-Finished noe_assignment                           in   5 seconds	 [~  77 test (37%) started,  126 in queue,   24 running]
-Running Test membrane_abinitio
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/membrane_abinitio/command.sh
-Finished membrane_abinitio                        in  31 seconds	 [~  78 test (38%) started,  125 in queue,   24 running]
-Running Test distances
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/distances/command.sh
-Finished distances                                in   3 seconds	 [~  79 test (38%) started,  124 in queue,   24 running]
-Running Test silent2frag
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/silent2frag/command.sh
-Finished silent2frag                              in   4 seconds	 [~  80 test (39%) started,  123 in queue,   24 running]
-Running Test test1_benchmark
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/test1_benchmark/command.sh
-Finished test1_benchmark                          in  29 seconds	 [~  81 test (39%) started,  122 in queue,   24 running]
-Running Test Enzrevert_xml
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/Enzrevert_xml/command.sh
-Finished Enzrevert_xml                            in  15 seconds	 [~  82 test (40%) started,  121 in queue,   24 running]
-Running Test backrub_pilot
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/backrub_pilot/command.sh
-Finished backrub_pilot                            in  24 seconds	 [~  83 test (40%) started,  120 in queue,   24 running]
-Running Test simple_dna_test
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/simple_dna_test/command.sh
-Finished simple_dna_test                          in  12 seconds	 [~  84 test (41%) started,  119 in queue,   24 running]
-Running Test docking_local_refine_min
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/docking_local_refine_min/command.sh
-Running Test antibody_CDR_grafting
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/antibody_CDR_grafting/command.sh
-Finished antibody_CDR_grafting                    in   7 seconds	 [~  85 test (41%) started,  118 in queue,   24 running]
-Finished docking_local_refine_min                 in   4 seconds	 [~  85 test (41%) started,  118 in queue,   23 running]
-Running Test fold_cst_new
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/fold_cst_new/command.sh
-Finished fold_cst_new                             in  20 seconds	 [~  87 test (42%) started,  116 in queue,   24 running]
-Running Test score_only_silence
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/score_only_silence/command.sh
-Finished score_only_silence                       in  10 seconds	 [~  88 test (43%) started,  115 in queue,   24 running]
-Running Test gen_lig_grids
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/gen_lig_grids/command.sh
-Finished gen_lig_grids                            in   3 seconds	 [~  89 test (43%) started,  114 in queue,   24 running]
-Running Test hotspot_stub_constraints
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/hotspot_stub_constraints/command.sh
-Running Test mm_params
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/mm_params/command.sh
-Finished mm_params                                in  15 seconds	 [~  90 test (44%) started,  113 in queue,   24 running]
-Finished hotspot_stub_constraints                 in   6 seconds	 [~  90 test (44%) started,  113 in queue,   23 running]
-Running Test per_residue_energies
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/per_residue_energies/command.sh
-Finished per_residue_energies                     in   6 seconds	 [~  92 test (45%) started,  111 in queue,   24 running]
-Running Test docking_distance_constraints
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/docking_distance_constraints/command.sh
-Finished docking_distance_constraints             in  30 seconds	 [~  93 test (45%) started,  110 in queue,   24 running]
-Running Test oop_dock_design
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/oop_dock_design/command.sh
-Finished oop_dock_design                          in  27 seconds	 [~  94 test (46%) started,  109 in queue,   24 running]
-Running Test darc_score
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/darc_score/command.sh
-Finished darc_score                               in   2 seconds	 [~  95 test (46%) started,  108 in queue,   24 running]
-Running Test hshash_utils
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/hshash_utils/command.sh
-Finished hshash_utils                             in   7 seconds	 [~  96 test (47%) started,  107 in queue,   24 running]
-Running Test docking_local_refine
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/docking_local_refine/command.sh
-Finished docking_local_refine                     in  31 seconds	 [~  97 test (47%) started,  106 in queue,   24 running]
-Running Test darc
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/darc/command.sh
-Finished darc                                     in   4 seconds	 [~  98 test (48%) started,  105 in queue,   24 running]
-Running Test density_refine
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/density_refine/command.sh
-Finished density_refine                           in  64 seconds	 [~  99 test (48%) started,  104 in queue,   24 running]
-Running Test InterfaceAnalyzer
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/InterfaceAnalyzer/command.sh
-Finished InterfaceAnalyzer                        in   7 seconds	 [~ 100 test (49%) started,  103 in queue,   24 running]
-Running Test centroid_disulfide_scores
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/centroid_disulfide_scores/command.sh
-Finished centroid_disulfide_scores                in   3 seconds	 [~ 101 test (49%) started,  102 in queue,   24 running]
-Running Test test_computed_saxs_spectrum
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/test_computed_saxs_spectrum/command.sh
-Finished test_computed_saxs_spectrum              in  11 seconds	 [~ 102 test (50%) started,  101 in queue,   24 running]
-Running Test rotamer_probability
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/rotamer_probability/command.sh
-Finished rotamer_probability                      in  30 seconds	 [~ 103 test (50%) started,  100 in queue,   24 running]
-Running Test UBQ_Gp_LYX-Cterm
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/UBQ_Gp_LYX-Cterm/command.sh
-Running Test r_rmsf
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/r_rmsf/command.sh
-Finished UBQ_Gp_LYX-Cterm                         in  21 seconds	 [~ 104 test (51%) started,   99 in queue,   24 running]
-Finished r_rmsf                                   in   2 seconds	 [~ 104 test (51%) started,   99 in queue,   23 running]
-Running Test symmetric_docking
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/symmetric_docking/command.sh
-Finished symmetric_docking                        in   7 seconds	 [~ 106 test (52%) started,   97 in queue,   24 running]
-Running Test rs_loophash
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/rs_loophash/command.sh
-Finished rs_loophash                              in  64 seconds	 [~ 107 test (52%) started,   96 in queue,   24 running]
-Running Test enzdes
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/enzdes/command.sh
-Finished enzdes                                   in  70 seconds	 [~ 108 test (53%) started,   95 in queue,   24 running]
-Running Test super_aln
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/super_aln/command.sh
-Finished super_aln                                in   5 seconds	 [~ 109 test (53%) started,   94 in queue,   24 running]
-Running Test docking_prepack
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/docking_prepack/command.sh
-Finished docking_prepack                          in   7 seconds	 [~ 110 test (54%) started,   93 in queue,   24 running]
-Running Test fragment_picker
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/fragment_picker/command.sh
-Finished fragment_picker                          in   5 seconds	 [~ 111 test (54%) started,   92 in queue,   24 running]
-Running Test score_aln
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/score_aln/command.sh
-Finished score_aln                                in   0 seconds	 [~ 112 test (55%) started,   91 in queue,   24 running]
-Running Test flexpepdock
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/flexpepdock/command.sh
-Finished flexpepdock                              in  60 seconds	 [~ 113 test (55%) started,   90 in queue,   24 running]
-Running Test molfile_to_params
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/molfile_to_params/command.sh
-Finished molfile_to_params                        in  21 seconds	 [~ 114 test (56%) started,   89 in queue,   24 running]
-Running Test erraser_minimize
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/erraser_minimize/command.sh
-Finished erraser_minimize                         in   6 seconds	 [~ 115 test (56%) started,   88 in queue,   24 running]
-Running Test score12_docking
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/score12_docking/command.sh
-Finished score12_docking                          in  18 seconds	 [~ 116 test (57%) started,   87 in queue,   24 running]
-Running Test rna_assemble
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/rna_assemble/command.sh
-Finished rna_assemble                             in  13 seconds	 [~ 117 test (57%) started,   86 in queue,   24 running]
-Running Test gen_apo_grids
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/gen_apo_grids/command.sh
-Finished gen_apo_grids                            in  12 seconds	 [~ 118 test (58%) started,   85 in queue,   24 running]
-Running Test UBQ_E2_thioester
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/UBQ_E2_thioester/command.sh
-Running Test BuildPeptide
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/BuildPeptide/command.sh
-Finished UBQ_E2_thioester                         in  25 seconds	 [~ 119 test (58%) started,   84 in queue,   24 running]
-Finished BuildPeptide                             in   2 seconds	 [~ 119 test (58%) started,   84 in queue,   23 running]
-Running Test ThreadingInputter
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/ThreadingInputter/command.sh
-Finished ThreadingInputter                        in  27 seconds	 [~ 121 test (59%) started,   82 in queue,   24 running]
-Running Test swa_rna_loop_clusterer
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/swa_rna_loop_clusterer/command.sh
-Finished swa_rna_loop_clusterer                   in   1 seconds	 [~ 122 test (60%) started,   81 in queue,   24 running]
-Running Test fixbb
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/fixbb/command.sh
-Finished fixbb                                    in  17 seconds	 [~ 123 test (60%) started,   80 in queue,   24 running]
-Running Test rna_score
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/rna_score/command.sh
-Finished rna_score                                in   2 seconds	 [~ 124 test (61%) started,   79 in queue,   24 running]
-Running Test ligand_dock_script
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/ligand_dock_script/command.sh
-Finished ligand_dock_script                       in  79 seconds	 [~ 125 test (61%) started,   78 in queue,   24 running]
-Running Test extract_pdbs
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/extract_pdbs/command.sh
-Finished extract_pdbs                             in   0 seconds	 [~ 126 test (62%) started,   77 in queue,   24 running]
-Running Test score_jd2
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/score_jd2/command.sh
-Running Test ligand_dock_grid
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/ligand_dock_grid/command.sh
-Finished ligand_dock_grid                         in  17 seconds	 [~ 127 test (62%) started,   76 in queue,   24 running]
-Finished score_jd2                                in   7 seconds	 [~ 127 test (62%) started,   76 in queue,   23 running]
-Running Test angle_recovery_stats
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/angle_recovery_stats/command.sh
-Finished angle_recovery_stats                     in   3 seconds	 [~ 129 test (63%) started,   74 in queue,   24 running]
-Running Test beta_strand_homodimer
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/beta_strand_homodimer/command.sh
-Running Test ligand_dock_7cpa
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/ligand_dock_7cpa/command.sh
-Finished ligand_dock_7cpa                         in  30 seconds	 [~ 130 test (64%) started,   73 in queue,   24 running]
-Finished beta_strand_homodimer                    in  22 seconds	 [~ 130 test (64%) started,   73 in queue,   23 running]
-Running Test docking_ensemble
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/docking_ensemble/command.sh
-Finished docking_ensemble                         in  35 seconds	 [~ 132 test (65%) started,   71 in queue,   24 running]
-Running Test oop_create
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/oop_create/command.sh
-Finished oop_create                               in   5 seconds	 [~ 133 test (65%) started,   70 in queue,   24 running]
-Running Test r_pdb2top
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/r_pdb2top/command.sh
-Finished r_pdb2top                                in   2 seconds	 [~ 134 test (66%) started,   69 in queue,   24 running]
-Running Test report_hbonds_for_plugin
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/report_hbonds_for_plugin/command.sh
-Finished report_hbonds_for_plugin                 in   3 seconds	 [~ 135 test (66%) started,   68 in queue,   24 running]
-Running Test jrelax
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/jrelax/command.sh
-Finished jrelax                                   in   5 seconds	 [~ 136 test (66%) started,   67 in queue,   24 running]
-Running Test backrub
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/backrub/command.sh
-Finished backrub                                  in  16 seconds	 [~ 137 test (67%) started,   66 in queue,   24 running]
-Running Test residue_energy_breakdown
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/residue_energy_breakdown/command.sh
-Finished residue_energy_breakdown                 in  21 seconds	 [~ 138 test (67%) started,   65 in queue,   24 running]
-Running Test select_best_unique_ligand_poses
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/select_best_unique_ligand_poses/command.sh
-Finished select_best_unique_ligand_poses          in   4 seconds	 [~ 139 test (68%) started,   64 in queue,   24 running]
-Running Test AnchoredPDBCreator
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/AnchoredPDBCreator/command.sh
-Finished AnchoredPDBCreator                       in  10 seconds	 [~ 140 test (68%) started,   63 in queue,   24 running]
-Running Test inv_kin_lig_loop_design
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/inv_kin_lig_loop_design/command.sh
-Finished inv_kin_lig_loop_design                  in  18 seconds	 [~ 141 test (69%) started,   62 in queue,   24 running]
-Running Test match
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/match/command.sh
-Finished match                                    in  91 seconds	 [~ 142 test (69%) started,   61 in queue,   24 running]
-Running Test relax_w_allatom_cst
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/relax_w_allatom_cst/command.sh
-Finished relax_w_allatom_cst                      in  40 seconds	 [~ 143 test (70%) started,   60 in queue,   24 running]
-Running Test jd2test
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/jd2test/command.sh
-Finished jd2test                                  in   5 seconds	 [~ 144 test (70%) started,   59 in queue,   24 running]
+<pre>Using Rosetta source dir at:  /home/benchmark/svd.64.git/rosetta/main/source
+Using Rosetta databse dir at: /home/benchmark/svd.64.git/rosetta/main/database
+Running Test swa_rna_gagu_14_combine_long_loop_filtering
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_14_combine_long_loop_filtering/command.sh
+Finished swa_rna_gagu_14_combine_long_loop_filtering in   2 seconds	 [~  25 test (10%) started,  225 in queue,   24 running]
+Running Test swa_rna_gagu_13_chunk_combination_and_closure
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_13_chunk_combination_and_closure/command.sh
+Finished swa_rna_gagu_13_chunk_combination_and_closure in   2 seconds	 [~  26 test (10%) started,  224 in queue,   24 running]
+Running Test swa_rna_gagu_15_combine_long_loop_sampling
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_15_combine_long_loop_sampling/command.sh
+Finished swa_rna_gagu_15_combine_long_loop_sampling in   3 seconds	 [~  27 test (10%) started,  223 in queue,   24 running]
+Running Test swa_rna_gagu_06_append_to_3primeterminus
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_06_append_to_3primeterminus/command.sh
+Finished swa_rna_gagu_06_append_to_3primeterminus in   4 seconds	 [~  28 test (11%) started,  222 in queue,   24 running]
+Running Test sweep_respair_energies
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/sweep_respair_energies/command.sh
+Finished sweep_respair_energies                   in   4 seconds	 [~  29 test (11%) started,  221 in queue,   24 running]
+Running Test swa_rna_gagu_04_clustering
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_04_clustering/command.sh
+Finished swa_rna_gagu_04_clustering               in   3 seconds	 [~  30 test (12%) started,  220 in queue,   24 running]
+Running Test swa_rna_gagu_05_prepend_to_5primeterminus
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_05_prepend_to_5primeterminus/command.sh
+Running Test swa_rna_gagu_03_append_to_silent
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_03_append_to_silent/command.sh
+Running Test swa_rna_erraser
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_erraser/command.sh
+Finished swa_rna_gagu_05_prepend_to_5primeterminus in   3 seconds	 [~  31 test (12%) started,  219 in queue,   24 running]
+Finished swa_rna_gagu_03_append_to_silent         in   2 seconds	 [~  31 test (12%) started,  219 in queue,   23 running]
+Finished swa_rna_erraser                          in   0 seconds	 [~  31 test (12%) started,  219 in queue,   22 running]
+Running Test swa_rna_gagu_02_prepend
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_02_prepend/command.sh
+Finished swa_rna_gagu_02_prepend                  in   3 seconds	 [~  34 test (13%) started,  216 in queue,   24 running]
+Running Test swm_nickedhelix
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swm_nickedhelix/command.sh
+Running Test write_mol_file
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/write_mol_file/command.sh
+Finished write_mol_file                           in   7 seconds	 [~  35 test (14%) started,  215 in queue,   24 running]
+Finished swm_nickedhelix                          in   7 seconds	 [~  35 test (14%) started,  215 in queue,   23 running]
+Running Test swa_rna_gagu_01_append
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_01_append/command.sh
+Finished swa_rna_gagu_01_append                   in   3 seconds	 [~  37 test (14%) started,  213 in queue,   24 running]
+Running Test swa_rna_gagu_12_helix_addition
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_12_helix_addition/command.sh
+Finished swa_rna_gagu_12_helix_addition           in   8 seconds	 [~  38 test (15%) started,  212 in queue,   24 running]
+Running Test swa_rna_gagu_17_append_floating_base
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_17_append_floating_base/command.sh
+Running Test swa_rna_gagu_11_append_and_ccd_close
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_11_append_and_ccd_close/command.sh
+Finished swa_rna_gagu_17_append_floating_base     in   9 seconds	 [~  39 test (15%) started,  211 in queue,   24 running]
+Finished swa_rna_gagu_11_append_and_ccd_close     in   9 seconds	 [~  39 test (15%) started,  211 in queue,   23 running]
+Running Test swa_rna_gagu_09_sample_virtual_ribose
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_09_sample_virtual_ribose/command.sh
+Running Test swa_rna_gagu_20_append_floating_base_by_jump
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_20_append_floating_base_by_jump/command.sh
+Running Test rna_suitename
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/rna_suitename/command.sh
+Finished swa_rna_gagu_20_append_floating_base_by_jump in   9 seconds	 [~  41 test (16%) started,  209 in queue,   24 running]
+Finished swa_rna_gagu_09_sample_virtual_ribose    in   9 seconds	 [~  41 test (16%) started,  209 in queue,   23 running]
+Finished rna_suitename                            in   2 seconds	 [~  43 test (17%) started,  207 in queue,   24 running]
+Running Test swa_rna_gagu_08_append_dinucleotide
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_08_append_dinucleotide/command.sh
+Finished swa_rna_gagu_08_append_dinucleotide      in   9 seconds	 [~  44 test (17%) started,  206 in queue,   24 running]
+Running Test swa_rna_gagu_19_prepend_floating_base_by_jump
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_19_prepend_floating_base_by_jump/command.sh
+Finished swa_rna_gagu_19_prepend_floating_base_by_jump in  10 seconds	 [~  45 test (18%) started,  205 in queue,   24 running]
+Running Test swa_rna_gagu_07_prepend_dinucleotide
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_07_prepend_dinucleotide/command.sh
+Finished swa_rna_gagu_07_prepend_dinucleotide     in  10 seconds	 [~  46 test (18%) started,  204 in queue,   24 running]
+Running Test swa_rna_gagu_10_prepend_and_ccd_close
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_10_prepend_and_ccd_close/command.sh
+Finished swa_rna_gagu_10_prepend_and_ccd_close    in  11 seconds	 [~  47 test (18%) started,  203 in queue,   24 running]
+Running Test swa_rna_gagu_23_append_and_kic_close
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_23_append_and_kic_close/command.sh
+Finished swa_rna_gagu_23_append_and_kic_close     in  12 seconds	 [~  48 test (19%) started,  202 in queue,   24 running]
+Running Test swm_loop_design
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swm_loop_design/command.sh
+Running Test swa_rna_gagu_21_prepend_dinucleotide_on_dinucleotide_by_jump
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_21_prepend_dinucleotide_on_dinucleotide_by_jump/command.sh
+Finished swm_loop_design                          in  13 seconds	 [~  49 test (19%) started,  201 in queue,   24 running]
+Finished swa_rna_gagu_21_prepend_dinucleotide_on_dinucleotide_by_jump in  13 seconds	 [~  49 test (19%) started,  201 in queue,   23 running]
+Running Test swa_rna_gagu_22_prepend_and_kic_close
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_22_prepend_and_kic_close/command.sh
+Finished swa_rna_gagu_22_prepend_and_kic_close    in  15 seconds	 [~  51 test (20%) started,  199 in queue,   24 running]
+Running Test rosetta_scripts_hbond_options
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/rosetta_scripts_hbond_options/command.sh
+Running Test database_jd2_compact_io
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/database_jd2_compact_io/command.sh
+Finished rosetta_scripts_hbond_options            in   9 seconds	 [~  52 test (20%) started,  198 in queue,   24 running]
+Finished database_jd2_compact_io                  in   6 seconds	 [~  52 test (20%) started,  198 in queue,   23 running]
+Running Test buried_unsat_kinemage
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/buried_unsat_kinemage/command.sh
+Finished buried_unsat_kinemage                    in   5 seconds	 [~  54 test (21%) started,  196 in queue,   24 running]
+Running Test contactMap
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/contactMap/command.sh
+Finished contactMap                               in   6 seconds	 [~  55 test (22%) started,  195 in queue,   24 running]
+Running Test phosphonate
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/phosphonate/command.sh
+Finished phosphonate                              in   8 seconds	 [~  56 test (22%) started,  194 in queue,   24 running]
+Running Test swm_fourwayjunction
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swm_fourwayjunction/command.sh
+Finished swm_fourwayjunction                      in  18 seconds	 [~  57 test (22%) started,  193 in queue,   24 running]
+Running Test add_job_pair_data
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/add_job_pair_data/command.sh
+Finished add_job_pair_data                        in   5 seconds	 [~  58 test (23%) started,  192 in queue,   24 running]
+Running Test surface_docking
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/surface_docking/command.sh
+Finished surface_docking                          in  16 seconds	 [~  59 test (23%) started,  191 in queue,   24 running]
+Running Test ProQ
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/ProQ/command.sh
+Running Test antibody_graft
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/antibody_graft/command.sh
+Finished antibody_graft                           in  14 seconds	 [~  60 test (24%) started,  190 in queue,   24 running]
+Finished ProQ                                     in  11 seconds	 [~  60 test (24%) started,  190 in queue,   23 running]
+Running Test readin_dna_rna_protein
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/readin_dna_rna_protein/command.sh
+Finished readin_dna_rna_protein                   in  20 seconds	 [~  62 test (24%) started,  188 in queue,   24 running]
+Running Test swm_singleloop
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swm_singleloop/command.sh
+Finished swm_singleloop                           in  29 seconds	 [~  63 test (25%) started,  187 in queue,   24 running]
+Running Test place_simultaneously
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/place_simultaneously/command.sh
+Running Test swa_protein_loop_sampler
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_protein_loop_sampler/command.sh
+Finished swa_protein_loop_sampler                 in  24 seconds	 [~  64 test (25%) started,  186 in queue,   24 running]
+Finished place_simultaneously                     in  22 seconds	 [~  64 test (25%) started,  186 in queue,   23 running]
+Running Test swa_rna_gagu_18_rebuild_bulge
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_18_rebuild_bulge/command.sh
+Finished swa_rna_gagu_18_rebuild_bulge            in  31 seconds	 [~  66 test (26%) started,  184 in queue,   24 running]
 Running Test ligand_database_io
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/ligand_database_io/command.sh
-Finished ligand_database_io                       in  83 seconds	 [~ 145 test (71%) started,   58 in queue,   24 running]
-Running Test rna_design
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/rna_design/command.sh
-Finished rna_design                               in  31 seconds	 [~ 146 test (71%) started,   57 in queue,   24 running]
-Running Test ig_dump
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/ig_dump/command.sh
-Finished ig_dump                                  in   6 seconds	 [~ 147 test (72%) started,   56 in queue,   24 running]
-Running Test abinitio
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/abinitio/command.sh
-Finished abinitio                                 in  16 seconds	 [~ 148 test (72%) started,   55 in queue,   24 running]
-Running Test min_pack_min
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/min_pack_min/command.sh
-Finished min_pack_min                             in   8 seconds	 [~ 149 test (73%) started,   54 in queue,   24 running]
-Running Test supercharge
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/supercharge/command.sh
-Finished supercharge                              in  77 seconds	 [~ 150 test (73%) started,   53 in queue,   24 running]
-Running Test erraser_analytical_closure
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/erraser_analytical_closure/command.sh
-Finished erraser_analytical_closure               in  44 seconds	 [~ 151 test (74%) started,   52 in queue,   24 running]
-Running Test membrane_relax
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/membrane_relax/command.sh
-Finished membrane_relax                           in  81 seconds	 [~ 152 test (74%) started,   51 in queue,   24 running]
-Running Test pepspec_anchor_dock
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/pepspec_anchor_dock/command.sh
-Finished pepspec_anchor_dock                      in   5 seconds	 [~ 153 test (75%) started,   50 in queue,   24 running]
-Running Test mpi_multistate_design
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/mpi_multistate_design/command.sh
-Running Test density_refine_symm
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/density_refine_symm/command.sh
-Finished density_refine_symm                      in  29 seconds	 [~ 154 test (75%) started,   49 in queue,   24 running]
-Finished mpi_multistate_design                    in   5 seconds	 [~ 154 test (75%) started,   49 in queue,   23 running]
-Running Test broker
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/broker/command.sh
-Finished broker                                   in  26 seconds	 [~ 156 test (76%) started,   47 in queue,   24 running]
-Running Test rotamer_recovery
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/rotamer_recovery/command.sh
-Finished rotamer_recovery                         in  25 seconds	 [~ 157 test (77%) started,   46 in queue,   24 running]
-Running Test KIC_vicinity
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/KIC_vicinity/command.sh
-Finished KIC_vicinity                             in  26 seconds	 [~ 158 test (77%) started,   45 in queue,   24 running]
-Running Test AnchoredDesign
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/AnchoredDesign/command.sh
-Running Test unfolded_state_energy_calc
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/unfolded_state_energy_calc/command.sh
-Finished AnchoredDesign                           in  31 seconds	 [~ 159 test (78%) started,   44 in queue,   24 running]
-Finished unfolded_state_energy_calc               in   4 seconds	 [~ 159 test (78%) started,   44 in queue,   23 running]
-Running Test antibody
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/antibody/command.sh
-Running Test pepspec
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/pepspec/command.sh
-Finished antibody                                 in  42 seconds	 [~ 161 test (79%) started,   42 in queue,   24 running]
-Finished pepspec                                  in  25 seconds	 [~ 161 test (79%) started,   42 in queue,   23 running]
-Running Test database_jd2_io
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/database_jd2_io/command.sh
-Running Test mr_protocols
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/mr_protocols/command.sh
-Finished mr_protocols                             in  33 seconds	 [~ 163 test (80%) started,   40 in queue,   24 running]
-Finished database_jd2_io                          in  10 seconds	 [~ 163 test (80%) started,   40 in queue,   23 running]
-Running Test hierarchical_clustering
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/hierarchical_clustering/command.sh
-Finished hierarchical_clustering                  in   0 seconds	 [~ 165 test (81%) started,   38 in queue,   24 running]
-Running Test metropolis_hastings
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/metropolis_hastings/command.sh
-Finished metropolis_hastings                      in   8 seconds	 [~ 166 test (81%) started,   37 in queue,   24 running]
-Running Test HOW_TO_MAKE_TESTS
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/HOW_TO_MAKE_TESTS/command.sh
-Running Test AnchorFinder
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/AnchorFinder/command.sh
-Finished AnchorFinder                             in  50 seconds	 [~ 167 test (82%) started,   36 in queue,   24 running]
-Finished HOW_TO_MAKE_TESTS                        in   0 seconds	 [~ 167 test (82%) started,   36 in queue,   23 running]
-Running Test vip
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/vip/command.sh
-Finished vip                                      in   9 seconds	 [~ 169 test (83%) started,   34 in queue,   24 running]
-Running Test docking_low_res
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/docking_low_res/command.sh
-Running Test rosetta_scripts_setup
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/rosetta_scripts_setup/command.sh
-Finished docking_low_res                          in   7 seconds	 [~ 170 test (83%) started,   33 in queue,   24 running]
-Finished rosetta_scripts_setup                    in   5 seconds	 [~ 170 test (83%) started,   33 in queue,   23 running]
-Running Test features_postgres
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/features_postgres/command.sh
-Finished features_postgres                        in   0 seconds	 [~ 172 test (84%) started,   31 in queue,   24 running]
-Running Test docking_full_protocol
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/docking_full_protocol/command.sh
-Finished docking_full_protocol                    in  25 seconds	 [~ 173 test (85%) started,   30 in queue,   24 running]
-Running Test geometric_solvation
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/geometric_solvation/command.sh
-Finished geometric_solvation                      in   7 seconds	 [~ 174 test (85%) started,   29 in queue,   24 running]
-Running Test motif_dna_packer_design
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/motif_dna_packer_design/command.sh
-Finished motif_dna_packer_design                  in  98 seconds	 [~ 175 test (86%) started,   28 in queue,   24 running]
-Running Test loop_modeling
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/loop_modeling/command.sh
-Running Test InterfaceAnalyzer_allscores
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/InterfaceAnalyzer_allscores/command.sh
-Running Test features_database_schema
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/features_database_schema/command.sh
-Finished loop_modeling                            in  22 seconds	 [~ 176 test (86%) started,   27 in queue,   24 running]
-Finished InterfaceAnalyzer_allscores              in   6 seconds	 [~ 176 test (86%) started,   27 in queue,   23 running]
-Finished features_database_schema                 in   2 seconds	 [~ 176 test (86%) started,   27 in queue,   22 running]
-Running Test fixbb_resource_manager
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/fixbb_resource_manager/command.sh
-Finished fixbb_resource_manager                   in   3 seconds	 [~ 179 test (88%) started,   24 in queue,   24 running]
-Running Test metalloprotein_abrelax
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/metalloprotein_abrelax/command.sh
-Finished metalloprotein_abrelax                   in  16 seconds	 [~ 180 test (88%) started,   23 in queue,   24 running]
-Running Test KIC_refine
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/KIC_refine/command.sh
-Finished KIC_refine                               in  16 seconds	 [~ 181 test (89%) started,   22 in queue,   24 running]
-Running Test startfrom_file
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/startfrom_file/command.sh
-Running Test features_pdb
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/features_pdb/command.sh
-Finished startfrom_file                           in   9 seconds	 [~ 182 test (89%) started,   21 in queue,   24 running]
-Finished features_pdb                             in   4 seconds	 [~ 182 test (89%) started,   21 in queue,   23 running]
-Running Test pmut_scan
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/pmut_scan/command.sh
-Finished pmut_scan                                in  26 seconds	 [~ 184 test (90%) started,   19 in queue,   24 running]
-Running Test fast_relax
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/fast_relax/command.sh
-Finished fast_relax                               in  28 seconds	 [~ 185 test (91%) started,   18 in queue,   24 running]
-Running Test make_symmdef_file
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/make_symmdef_file/command.sh
-Running Test symmetry_data_resource
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/symmetry_data_resource/command.sh
-Finished make_symmdef_file                        in   7 seconds	 [~ 186 test (91%) started,   17 in queue,   24 running]
-Finished symmetry_data_resource                   in   4 seconds	 [~ 186 test (91%) started,   17 in queue,   23 running]
-Running Test database_session_resource
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/database_session_resource/command.sh
-Finished database_session_resource                in   4 seconds	 [~ 188 test (92%) started,   15 in queue,   24 running]
-Running Test minimize_with_elec_dens
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/minimize_with_elec_dens/command.sh
-Finished minimize_with_elec_dens                  in   6 seconds	 [~ 189 test (93%) started,   14 in queue,   24 running]
-Running Test residue_data_resource
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/residue_data_resource/command.sh
-Finished residue_data_resource                    in   5 seconds	 [~ 190 test (93%) started,   13 in queue,   24 running]
-Running Test UBQ_E2_thioester_two_ubiquitins
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/UBQ_E2_thioester_two_ubiquitins/command.sh
-Finished UBQ_E2_thioester_two_ubiquitins          in  10 seconds	 [~ 191 test (94%) started,   12 in queue,   24 running]
-Running Test rotamer_recovery_compare_two_structures
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/rotamer_recovery_compare_two_structures/command.sh
-Finished rotamer_recovery_compare_two_structures  in   4 seconds	 [~ 192 test (94%) started,   11 in queue,   24 running]
-Running Test carbohydrates
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/carbohydrates/command.sh
-Finished carbohydrates                            in   1 seconds	 [~ 193 test (95%) started,   10 in queue,   24 running]
-Running Test file_list_locator
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/file_list_locator/command.sh
-Finished file_list_locator                        in   4 seconds	 [~ 194 test (95%) started,    9 in queue,   24 running]
-Running Test features
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/features/command.sh
-Finished features                                 in  20 seconds	 [~ 195 test (96%) started,    8 in queue,   24 running]
-Running Test cluster_alns
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/cluster_alns/command.sh
-Finished cluster_alns                             in  26 seconds	 [~ 196 test (96%) started,    7 in queue,   24 running]
-Running Test symmetry_multicomponent
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/symmetry_multicomponent/command.sh
-Finished symmetry_multicomponent                  in  22 seconds	 [~ 197 test (97%) started,    6 in queue,   24 running]
-Running Test resource_database_locator
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/resource_database_locator/command.sh
-Running Test grid_scores_features
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/grid_scores_features/command.sh
-Finished resource_database_locator                in  10 seconds	 [~ 198 test (97%) started,    5 in queue,   24 running]
-Finished grid_scores_features                     in   7 seconds	 [~ 198 test (97%) started,    5 in queue,   23 running]
-Running Test kinematic_looprelax
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/kinematic_looprelax/command.sh
-Finished kinematic_looprelax                      in  35 seconds	 [~ 200 test (98%) started,    3 in queue,   24 running]
-Running Test resource_database_tables
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/resource_database_tables/command.sh
-Finished resource_database_tables                 in  12 seconds	 [~ 201 test (99%) started,    2 in queue,   24 running]
-Running Test kinemage_grid_output
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/kinemage_grid_output/command.sh
-Finished kinemage_grid_output                     in  53 seconds	 [~ 202 test (99%) started,    1 in queue,   24 running]
-Running Test swa_rna_loop_sampler
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/swa_rna_loop_sampler/command.sh
-Finished swa_rna_loop_sampler                     in  33 seconds	 [~ 203 test (100%) started,    0 in queue,   24 running]
-Running Test UBQ_E2_thioester_extra_bodies
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/UBQ_E2_thioester_extra_bodies/command.sh
-Running Test favor_native_residue
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/favor_native_residue/command.sh
-Running Test hbonds_sp2
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/hbonds_sp2/command.sh
-Running Test loop_creation
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/loop_creation/command.sh
-Running Test pocket_measure
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/pocket_measure/command.sh
-Running Test SnugDock
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/SnugDock/command.sh
-Running Test dna_interface_design
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/dna_interface_design/command.sh
-Running Test repack_with_elec_dens
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/repack_with_elec_dens/command.sh
-Running Test oop_design
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/oop_design/command.sh
-Running Test next_generation_KIC
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/next_generation_KIC/command.sh
-Running Test torsion_restricted_sampling
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/torsion_restricted_sampling/command.sh
-Running Test hbs_design
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/hbs_design/command.sh
-Running Test splice_in
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/splice_in/command.sh
-Running Test rosetta_scripts_loops
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/rosetta_scripts_loops/command.sh
-Running Test ddG_of_mutation
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/ddG_of_mutation/command.sh
-Running Test nonideal_rtmin
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/nonideal_rtmin/command.sh
-Running Test splice_out
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/splice_out/command.sh
-Running Test zinc_heterodimer
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/zinc_heterodimer/command.sh
-Running Test antibody_loop_modeling_protocol
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/antibody_loop_modeling_protocol/command.sh
-Running Test hotspot_hashing
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/hotspot_hashing/command.sh
-Running Test antibody_protocol_using_KIC_loop_mover
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/antibody_protocol_using_KIC_loop_mover/command.sh
-Running Test antibody_protocol_using_CCD_loop_mover
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/antibody_protocol_using_CCD_loop_mover/command.sh
-Running Test inverse_rotamer_remodel
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/inverse_rotamer_remodel/command.sh
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/ligand_database_io/command.sh
+Finished ligand_database_io                       in  12 seconds	 [~  67 test (26%) started,  183 in queue,   24 running]
+Running Test swa_rna_gagu_16_prepend_dinucleotide_on_dinucleotide
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_gagu_16_prepend_dinucleotide_on_dinucleotide/command.sh
+Finished swa_rna_gagu_16_prepend_dinucleotide_on_dinucleotide in  39 seconds	 [~  68 test (27%) started,  182 in queue,   24 running]
+Running Test hts_io
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/hts_io/command.sh
+Error: near line 4: no such table: protocols
+Error: near line 5: no such table: protocols
+Finished hts_io                                   in  34 seconds	 [~  69 test (27%) started,  181 in queue,   24 running]
+Running Test antibody_designer
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/antibody_designer/command.sh
+Finished antibody_designer                        in  32 seconds	 [~  70 test (28%) started,  180 in queue,   24 running]
 Running Test pocket_relax
-ulimit -t240 && bash /home/benchmark/svd.64/rosetta/rosetta_tests/integration/new/pocket_relax/command.sh
-Finished UBQ_E2_thioester_extra_bodies            in  24 seconds	 [~ 203 test (100%) started,    0 in queue,   23 running]
-Finished favor_native_residue                     in   7 seconds	 [~ 203 test (100%) started,    0 in queue,   22 running]
-Finished hbonds_sp2                               in  16 seconds	 [~ 203 test (100%) started,    0 in queue,   21 running]
-Finished loop_creation                            in   5 seconds	 [~ 203 test (100%) started,    0 in queue,   20 running]
-Finished pocket_measure                           in   9 seconds	 [~ 203 test (100%) started,    0 in queue,   19 running]
-Finished SnugDock                                 in  28 seconds	 [~ 203 test (100%) started,    0 in queue,   18 running]
-Finished dna_interface_design                     in  60 seconds	 [~ 203 test (100%) started,    0 in queue,   17 running]
-Finished repack_with_elec_dens                    in  29 seconds	 [~ 203 test (100%) started,    0 in queue,   16 running]
-Finished oop_design                               in  20 seconds	 [~ 203 test (100%) started,    0 in queue,   15 running]
-Finished next_generation_KIC                      in  22 seconds	 [~ 203 test (100%) started,    0 in queue,   14 running]
-Finished torsion_restricted_sampling              in  23 seconds	 [~ 203 test (100%) started,    0 in queue,   13 running]
-Finished hbs_design                               in  22 seconds	 [~ 203 test (100%) started,    0 in queue,   12 running]
-Finished splice_in                                in  13 seconds	 [~ 203 test (100%) started,    0 in queue,   11 running]
-Finished rosetta_scripts_loops                    in  43 seconds	 [~ 203 test (100%) started,    0 in queue,   10 running]
-Finished ddG_of_mutation                          in  54 seconds	 [~ 203 test (100%) started,    0 in queue,    9 running]
-Finished nonideal_rtmin                           in  29 seconds	 [~ 203 test (100%) started,    0 in queue,    8 running]
-Finished splice_out                               in  23 seconds	 [~ 203 test (100%) started,    0 in queue,    7 running]
-Finished zinc_heterodimer                         in  27 seconds	 [~ 203 test (100%) started,    0 in queue,    6 running]
-Finished antibody_loop_modeling_protocol          in  69 seconds	 [~ 203 test (100%) started,    0 in queue,    5 running]
-Finished hotspot_hashing                          in  72 seconds	 [~ 203 test (100%) started,    0 in queue,    4 running]
-Finished antibody_protocol_using_KIC_loop_mover   in  65 seconds	 [~ 203 test (100%) started,    0 in queue,    3 running]
-Finished antibody_protocol_using_CCD_loop_mover   in  79 seconds	 [~ 203 test (100%) started,    0 in queue,    2 running]
-Finished inverse_rotamer_remodel                  in 151 seconds	 [~ 203 test (100%) started,    0 in queue,    1 running]
-Finished pocket_relax                             in 146 seconds	 [~ 203 test (100%) started,    0 in queue,    0 running]
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/pocket_relax/command.sh
+Finished pocket_relax                             in  35 seconds	 [~  71 test (28%) started,  179 in queue,   24 running]
+Running Test antibody_legacy
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/antibody_legacy/command.sh
+Finished antibody_legacy                          in  43 seconds	 [~  72 test (28%) started,  178 in queue,   24 running]
+Running Test density_refine
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/density_refine/command.sh
+Finished density_refine                           in  34 seconds	 [~  73 test (29%) started,  177 in queue,   24 running]
+Running Test hybridization
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/hybridization/command.sh
+Finished hybridization                            in  65 seconds	 [~  74 test (29%) started,  176 in queue,   24 running]
+Running Test app_exception_handling
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/app_exception_handling/command.sh
+wc: log: No such file or directory
+Finished app_exception_handling                   in  66 seconds	 [~  75 test (30%) started,  175 in queue,   24 running]
+Running Test antibody_H3_legacy
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/antibody_H3_legacy/command.sh
+Finished antibody_H3_legacy                       in  67 seconds	 [~  76 test (30%) started,  174 in queue,   24 running]
+Running Test kinemage_grid_output
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/kinemage_grid_output/command.sh
+Finished kinemage_grid_output                     in  47 seconds	 [~  77 test (30%) started,  173 in queue,   24 running]
+Running Test antibody_H3
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/antibody_H3/command.sh
+Finished antibody_H3                              in  82 seconds	 [~  78 test (31%) started,  172 in queue,   24 running]
+Running Test supercharge
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/supercharge/command.sh
+Finished supercharge                              in  71 seconds	 [~  79 test (31%) started,  171 in queue,   24 running]
+Running Test swa_rna_loop_sampler
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_loop_sampler/command.sh
+Finished swa_rna_loop_sampler                     in   3 seconds	 [~  80 test (32%) started,  170 in queue,   24 running]
+Running Test rs_loophash
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/rs_loophash/command.sh
+Finished rs_loophash                              in  73 seconds	 [~  81 test (32%) started,  169 in queue,   24 running]
+Running Test dock_with_hotspot_place_simultaneously
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/dock_with_hotspot_place_simultaneously/command.sh
+Finished dock_with_hotspot_place_simultaneously   in  95 seconds	 [~  82 test (32%) started,  168 in queue,   24 running]
+Running Test ligand_motif_design
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/ligand_motif_design/command.sh
+Finished ligand_motif_design                      in  54 seconds	 [~  83 test (33%) started,  167 in queue,   24 running]
+Running Test AnchorFinder
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/AnchorFinder/command.sh
+Finished AnchorFinder                             in  57 seconds	 [~  84 test (33%) started,  166 in queue,   24 running]
+Running Test membrane_relax
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/membrane_relax/command.sh
+Finished membrane_relax                           in  89 seconds	 [~  85 test (34%) started,  165 in queue,   24 running]
+Running Test motif_dna_packer_design
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/motif_dna_packer_design/command.sh
+Finished motif_dna_packer_design                  in 100 seconds	 [~  86 test (34%) started,  164 in queue,   24 running]
+Running Test doug_dock_design_min_mod2_cal_cal
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/doug_dock_design_min_mod2_cal_cal/command.sh
+Running Test rna_minimize
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/rna_minimize/command.sh
+Finished doug_dock_design_min_mod2_cal_cal        in  44 seconds	 [~  87 test (34%) started,  163 in queue,   24 running]
+Finished rna_minimize                             in  18 seconds	 [~  87 test (34%) started,  163 in queue,   23 running]
+Running Test ligand_dock_script
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/ligand_dock_script/command.sh
+Finished ligand_dock_script                       in  93 seconds	 [~  89 test (35%) started,  161 in queue,   24 running]
+Running Test enzdes
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/enzdes/command.sh
+Finished enzdes                                   in  93 seconds	 [~  90 test (36%) started,  160 in queue,   24 running]
+Running Test rna_design
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/rna_design/command.sh
+Finished rna_design                               in  20 seconds	 [~  91 test (36%) started,  159 in queue,   24 running]
+Running Test inverse_rotamer_remodel
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/inverse_rotamer_remodel/command.sh
+Finished inverse_rotamer_remodel                  in 113 seconds	 [~  92 test (36%) started,  158 in queue,   24 running]
+Running Test kinematic_looprelax
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/kinematic_looprelax/command.sh
+Finished kinematic_looprelax                      in  52 seconds	 [~  93 test (37%) started,  157 in queue,   24 running]
+Running Test repack_with_elec_dens
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/repack_with_elec_dens/command.sh
+Finished repack_with_elec_dens                    in   9 seconds	 [~  94 test (37%) started,  156 in queue,   24 running]
+Running Test remodel_disulfides
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/remodel_disulfides/command.sh
+Finished remodel_disulfides                       in 132 seconds	 [~  95 test (38%) started,  155 in queue,   24 running]
+Running Test ligand_water_docking
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/ligand_water_docking/command.sh
+Finished ligand_water_docking                     in 131 seconds	 [~  96 test (38%) started,  154 in queue,   24 running]
+Running Test dna_interface_design
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/dna_interface_design/command.sh
+Finished dna_interface_design                     in 105 seconds	 [~  97 test (38%) started,  153 in queue,   24 running]
+Running Test flexpepdock
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/flexpepdock/command.sh
+Finished flexpepdock                              in 113 seconds	 [~  98 test (39%) started,  152 in queue,   24 running]
+Running Test membrane_abinitio
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/membrane_abinitio/command.sh
+Finished membrane_abinitio                        in  38 seconds	 [~  99 test (39%) started,  151 in queue,   24 running]
+Running Test hotspot_graft
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/hotspot_graft/command.sh
+Running Test rotamer_probability
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/rotamer_probability/command.sh
+Running Test docking_ensemble
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/docking_ensemble/command.sh
+Finished docking_ensemble                         in  57 seconds	 [~ 100 test (40%) started,  150 in queue,   24 running]
+Finished rotamer_probability                      in  30 seconds	 [~ 100 test (40%) started,  150 in queue,   23 running]
+Finished hotspot_graft                            in  29 seconds	 [~ 100 test (40%) started,  150 in queue,   22 running]
+Running Test remodel
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/remodel/command.sh
+Finished remodel                                  in 142 seconds	 [~ 103 test (41%) started,  147 in queue,   24 running]
+Running Test density_refine_symm
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/density_refine_symm/command.sh
+Running Test docking_site_constraints
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/docking_site_constraints/command.sh
+Finished docking_site_constraints                 in  47 seconds	 [~ 104 test (41%) started,  146 in queue,   24 running]
+Finished density_refine_symm                      in  17 seconds	 [~ 104 test (41%) started,  146 in queue,   23 running]
+Running Test ligand_dock_7cpa
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/ligand_dock_7cpa/command.sh
+Finished ligand_dock_7cpa                         in  37 seconds	 [~ 106 test (42%) started,  144 in queue,   24 running]
+Running Test AnchoredDesign
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/AnchoredDesign/command.sh
+Running Test docking_distance_constraints
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/docking_distance_constraints/command.sh
+Finished AnchoredDesign                           in  43 seconds	 [~ 107 test (42%) started,  143 in queue,   24 running]
+Finished docking_distance_constraints             in  39 seconds	 [~ 107 test (42%) started,  143 in queue,   23 running]
+Running Test relax_w_allatom_cst
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/relax_w_allatom_cst/command.sh
+Finished relax_w_allatom_cst                      in  83 seconds	 [~ 109 test (43%) started,  141 in queue,   24 running]
+Running Test docking_local_refine
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/docking_local_refine/command.sh
+Finished docking_local_refine                     in  54 seconds	 [~ 110 test (44%) started,  140 in queue,   24 running]
+Running Test test1_benchmark
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/test1_benchmark/command.sh
+Finished test1_benchmark                          in  43 seconds	 [~ 111 test (44%) started,  139 in queue,   24 running]
+Running Test mr_protocols
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/mr_protocols/command.sh
+Finished mr_protocols                             in  71 seconds	 [~ 112 test (44%) started,  138 in queue,   24 running]
+Running Test rosetta_scripts_loops
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/rosetta_scripts_loops/command.sh
+Finished rosetta_scripts_loops                    in 104 seconds	 [~ 113 test (45%) started,  137 in queue,   24 running]
+Running Test splice_out
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/splice_out/command.sh
+Finished splice_out                               in   0 seconds	 [~ 114 test (45%) started,  136 in queue,   24 running]
+Running Test ThreadingInputter
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/ThreadingInputter/command.sh
+Finished ThreadingInputter                        in  27 seconds	 [~ 115 test (46%) started,  135 in queue,   24 running]
+Running Test FloppyTail
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/FloppyTail/command.sh
+Finished FloppyTail                               in  28 seconds	 [~ 116 test (46%) started,  134 in queue,   24 running]
+Running Test oop_dock_design
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/oop_dock_design/command.sh
+Running Test cluster_alns
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/cluster_alns/command.sh
+Finished oop_dock_design                          in  34 seconds	 [~ 117 test (46%) started,  133 in queue,   24 running]
+Finished cluster_alns                             in  29 seconds	 [~ 117 test (46%) started,  133 in queue,   23 running]
+Running Test hotspot_hashing
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/hotspot_hashing/command.sh
+Finished hotspot_hashing                          in 150 seconds	 [~ 119 test (47%) started,  131 in queue,   24 running]
+Running Test rna_denovo
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/rna_denovo/command.sh
+Finished rna_denovo                               in  31 seconds	 [~ 120 test (48%) started,  130 in queue,   24 running]
+Running Test broker
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/broker/command.sh
+Finished broker                                   in  30 seconds	 [~ 121 test (48%) started,  129 in queue,   24 running]
+Running Test rotamer_recovery
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/rotamer_recovery/command.sh
+Finished rotamer_recovery                         in  27 seconds	 [~ 122 test (48%) started,  128 in queue,   24 running]
+Running Test zinc_heterodimer
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/zinc_heterodimer/command.sh
+Finished zinc_heterodimer                         in  45 seconds	 [~ 123 test (49%) started,  127 in queue,   24 running]
+Running Test pepspec
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/pepspec/command.sh
+Finished pepspec                                  in  26 seconds	 [~ 124 test (49%) started,  126 in queue,   24 running]
+Running Test rna_helix
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/rna_helix/command.sh
+Finished rna_helix                                in  12 seconds	 [~ 125 test (50%) started,  125 in queue,   24 running]
+Running Test UBQ_Gp_CYD-CYD
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/UBQ_Gp_CYD-CYD/command.sh
+Finished UBQ_Gp_CYD-CYD                           in  23 seconds	 [~ 126 test (50%) started,  124 in queue,   24 running]
+Running Test batch_relax
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/batch_relax/command.sh
+Finished batch_relax                              in  46 seconds	 [~ 127 test (50%) started,  123 in queue,   24 running]
+Running Test UBQ_E2_thioester
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/UBQ_E2_thioester/command.sh
+Finished UBQ_E2_thioester                         in  34 seconds	 [~ 128 test (51%) started,  122 in queue,   24 running]
+Running Test docking_full_protocol
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/docking_full_protocol/command.sh
+Finished docking_full_protocol                    in  35 seconds	 [~ 129 test (51%) started,  121 in queue,   24 running]
+Running Test match
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/match/command.sh
+Finished match                                    in 176 seconds	 [~ 130 test (52%) started,  120 in queue,   24 running]
+Running Test SnugDock
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/SnugDock/command.sh
+Finished SnugDock                                 in  60 seconds	 [~ 131 test (52%) started,  119 in queue,   24 running]
+Running Test KIC_vicinity
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/KIC_vicinity/command.sh
+Running Test fast_relax
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/fast_relax/command.sh
+Finished fast_relax                               in  66 seconds	 [~ 132 test (52%) started,  118 in queue,   24 running]
+Finished KIC_vicinity                             in  48 seconds	 [~ 132 test (52%) started,  118 in queue,   23 running]
+Running Test pmut_scan
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/pmut_scan/command.sh
+Finished pmut_scan                                in  53 seconds	 [~ 134 test (53%) started,  116 in queue,   24 running]
+Running Test backrub_pilot
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/backrub_pilot/command.sh
+Finished backrub_pilot                            in  39 seconds	 [~ 135 test (54%) started,  115 in queue,   24 running]
+Running Test rs_flexbbmoves
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/rs_flexbbmoves/command.sh
+Finished rs_flexbbmoves                           in  26 seconds	 [~ 136 test (54%) started,  114 in queue,   24 running]
+Running Test molfile_to_params
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/molfile_to_params/command.sh
+Finished molfile_to_params                        in  21 seconds	 [~ 137 test (54%) started,  113 in queue,   24 running]
+Running Test loop_modeling
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/loop_modeling/command.sh
+Running Test symmetry_multicomponent
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/symmetry_multicomponent/command.sh
+Finished symmetry_multicomponent                  in  33 seconds	 [~ 138 test (55%) started,  112 in queue,   24 running]
+Finished loop_modeling                            in  29 seconds	 [~ 138 test (55%) started,  112 in queue,   23 running]
+Running Test ligand_dock_grid
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/ligand_dock_grid/command.sh
+Finished ligand_dock_grid                         in  11 seconds	 [~ 140 test (56%) started,  110 in queue,   24 running]
+Running Test torsion_restricted_sampling
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/torsion_restricted_sampling/command.sh
+Finished torsion_restricted_sampling              in  43 seconds	 [~ 141 test (56%) started,  109 in queue,   24 running]
+Running Test UBQ_E2_thioester_extra_bodies
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/UBQ_E2_thioester_extra_bodies/command.sh
+Finished UBQ_E2_thioester_extra_bodies            in  48 seconds	 [~ 142 test (56%) started,  108 in queue,   24 running]
+Running Test UBQ_Gp_LYX-Cterm
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/UBQ_Gp_LYX-Cterm/command.sh
+Finished UBQ_Gp_LYX-Cterm                         in  30 seconds	 [~ 143 test (57%) started,  107 in queue,   24 running]
+Running Test score12_docking
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/score12_docking/command.sh
+Finished score12_docking                          in  21 seconds	 [~ 144 test (57%) started,  106 in queue,   24 running]
+Running Test fold_cst_new
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/fold_cst_new/command.sh
+Finished fold_cst_new                             in  23 seconds	 [~ 145 test (58%) started,  105 in queue,   24 running]
+Running Test nonideal_rtmin
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/nonideal_rtmin/command.sh
+Finished nonideal_rtmin                           in  88 seconds	 [~ 146 test (58%) started,  104 in queue,   24 running]
+Running Test features
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/features/command.sh
+Finished features                                 in  24 seconds	 [~ 147 test (58%) started,  103 in queue,   24 running]
+Running Test metalloprotein_abrelax
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/metalloprotein_abrelax/command.sh
+Finished metalloprotein_abrelax                   in  19 seconds	 [~ 148 test (59%) started,  102 in queue,   24 running]
+Running Test next_generation_KIC
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/next_generation_KIC/command.sh
+Running Test docking_ensemble_prepack
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/docking_ensemble_prepack/command.sh
+Finished next_generation_KIC                      in  44 seconds	 [~ 149 test (59%) started,  101 in queue,   24 running]
+Finished docking_ensemble_prepack                 in  23 seconds	 [~ 149 test (59%) started,  101 in queue,   23 running]
+Running Test broker_membrane
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/broker_membrane/command.sh
+Finished broker_membrane                          in  17 seconds	 [~ 151 test (60%) started,   99 in queue,   24 running]
+Running Test inv_kin_lig_loop_design
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/inv_kin_lig_loop_design/command.sh
+Finished inv_kin_lig_loop_design                  in  26 seconds	 [~ 152 test (60%) started,   98 in queue,   24 running]
+Running Test flexpepdock_abinitio
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/flexpepdock_abinitio/command.sh
+Finished flexpepdock_abinitio                     in  31 seconds	 [~ 153 test (61%) started,   97 in queue,   24 running]
+Running Test beta_strand_homodimer
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/beta_strand_homodimer/command.sh
+Finished beta_strand_homodimer                    in  44 seconds	 [~ 154 test (61%) started,   96 in queue,   24 running]
+Running Test abinitio
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/abinitio/command.sh
+Finished abinitio                                 in  18 seconds	 [~ 155 test (62%) started,   95 in queue,   24 running]
+Running Test residue_energy_breakdown
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/residue_energy_breakdown/command.sh
+Finished residue_energy_breakdown                 in  44 seconds	 [~ 156 test (62%) started,   94 in queue,   24 running]
+Running Test mm_params
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/mm_params/command.sh
+Finished mm_params                                in  17 seconds	 [~ 157 test (62%) started,   93 in queue,   24 running]
+Running Test backrub
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/backrub/command.sh
+Finished backrub                                  in  25 seconds	 [~ 158 test (63%) started,   92 in queue,   24 running]
+Running Test fixbb
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/fixbb/command.sh
+Finished fixbb                                    in  34 seconds	 [~ 159 test (63%) started,   91 in queue,   24 running]
+Running Test rna_assemble
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/rna_assemble/command.sh
+Finished rna_assemble                             in  15 seconds	 [~ 160 test (64%) started,   90 in queue,   24 running]
+Running Test sequence_recovery
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/sequence_recovery/command.sh
+Finished sequence_recovery                        in  17 seconds	 [~ 161 test (64%) started,   89 in queue,   24 running]
+Running Test resource_database_tables
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/resource_database_tables/command.sh
+Finished resource_database_tables                 in  12 seconds	 [~ 162 test (64%) started,   88 in queue,   24 running]
+Running Test database_jd2_io
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/database_jd2_io/command.sh
+Finished database_jd2_io                          in   7 seconds	 [~ 163 test (65%) started,   87 in queue,   24 running]
+Running Test oop_design
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/oop_design/command.sh
+Finished oop_design                               in  46 seconds	 [~ 164 test (65%) started,   86 in queue,   24 running]
+Running Test score_only_silence
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/score_only_silence/command.sh
+Finished score_only_silence                       in  12 seconds	 [~ 165 test (66%) started,   85 in queue,   24 running]
+Running Test sequence_profile_constraints
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/sequence_profile_constraints/command.sh
+Finished sequence_profile_constraints             in  20 seconds	 [~ 166 test (66%) started,   84 in queue,   24 running]
+Running Test make_rot_lib
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/make_rot_lib/command.sh
+Finished make_rot_lib                             in  11 seconds	 [~ 167 test (66%) started,   83 in queue,   24 running]
+Running Test gen_apo_grids
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/gen_apo_grids/command.sh
+Finished gen_apo_grids                            in  14 seconds	 [~ 168 test (67%) started,   82 in queue,   24 running]
+Running Test resource_database_locator
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/resource_database_locator/command.sh
+Finished resource_database_locator                in  12 seconds	 [~ 169 test (67%) started,   81 in queue,   24 running]
+Running Test test_computed_saxs_spectrum
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/test_computed_saxs_spectrum/command.sh
+Running Test Enzrevert_xml
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/Enzrevert_xml/command.sh
+Finished Enzrevert_xml                            in  22 seconds	 [~ 170 test (68%) started,   80 in queue,   24 running]
+Finished test_computed_saxs_spectrum              in  15 seconds	 [~ 170 test (68%) started,   80 in queue,   23 running]
+Running Test assemble_domains_jd2
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/assemble_domains_jd2/command.sh
+Finished assemble_domains_jd2                     in  17 seconds	 [~ 172 test (68%) started,   78 in queue,   24 running]
+Running Test jscore
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/jscore/command.sh
+Finished jscore                                   in  12 seconds	 [~ 173 test (69%) started,   77 in queue,   24 running]
+Running Test hbonds_sp2
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/hbonds_sp2/command.sh
+Finished hbonds_sp2                               in  38 seconds	 [~ 174 test (69%) started,   76 in queue,   24 running]
+Running Test zinc_homodimer_setup
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/zinc_homodimer_setup/command.sh
+Finished zinc_homodimer_setup                     in  11 seconds	 [~ 175 test (70%) started,   75 in queue,   24 running]
+Running Test hbs_design
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/hbs_design/command.sh
+Finished hbs_design                               in  66 seconds	 [~ 176 test (70%) started,   74 in queue,   24 running]
+Running Test UBQ_E2_thioester_two_ubiquitins
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/UBQ_E2_thioester_two_ubiquitins/command.sh
+Finished UBQ_E2_thioester_two_ubiquitins          in  12 seconds	 [~ 177 test (70%) started,   73 in queue,   24 running]
+Running Test simple_dna_test
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/simple_dna_test/command.sh
+Finished simple_dna_test                          in  24 seconds	 [~ 178 test (71%) started,   72 in queue,   24 running]
+Running Test AnchoredPDBCreator
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/AnchoredPDBCreator/command.sh
+Finished AnchoredPDBCreator                       in  13 seconds	 [~ 179 test (71%) started,   71 in queue,   24 running]
+Running Test test_idealize
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/test_idealize/command.sh
+Finished test_idealize                            in   8 seconds	 [~ 180 test (72%) started,   70 in queue,   24 running]
+Running Test InterfaceAnalyzer_resfile
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/InterfaceAnalyzer_resfile/command.sh
+Running Test startfrom_file
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/startfrom_file/command.sh
+Finished startfrom_file                           in  11 seconds	 [~ 181 test (72%) started,   69 in queue,   24 running]
+Finished InterfaceAnalyzer_resfile                in   9 seconds	 [~ 181 test (72%) started,   69 in queue,   23 running]
+Running Test vip
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/vip/command.sh
+Finished vip                                      in  13 seconds	 [~ 183 test (73%) started,   67 in queue,   24 running]
+Running Test metropolis_hastings
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/metropolis_hastings/command.sh
+Finished metropolis_hastings                      in  10 seconds	 [~ 184 test (73%) started,   66 in queue,   24 running]
+Running Test metalloprotein_broker
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/metalloprotein_broker/command.sh
+Finished metalloprotein_broker                    in   7 seconds	 [~ 185 test (74%) started,   65 in queue,   24 running]
+Running Test filter_termini_near_interface
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/filter_termini_near_interface/command.sh
+Finished filter_termini_near_interface            in  11 seconds	 [~ 186 test (74%) started,   64 in queue,   24 running]
+Running Test ddG_of_mutation
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/ddG_of_mutation/command.sh
+Running Test splice_in
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/splice_in/command.sh
+Running Test orbitals
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/orbitals/command.sh
+Finished ddG_of_mutation                          in 208 seconds	 [~ 187 test (74%) started,   63 in queue,   24 running]
+Finished splice_in                                in  33 seconds	 [~ 187 test (74%) started,   63 in queue,   23 running]
+Finished orbitals                                 in   9 seconds	 [~ 187 test (74%) started,   63 in queue,   22 running]
+Running Test AlterSpecDisruption
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/AlterSpecDisruption/command.sh
+Finished AlterSpecDisruption                      in  49 seconds	 [~ 190 test (76%) started,   60 in queue,   24 running]
+Running Test score_jd2
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/score_jd2/command.sh
+Finished score_jd2                                in  10 seconds	 [~ 191 test (76%) started,   59 in queue,   24 running]
+Running Test zinc_homodimer_design
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/zinc_homodimer_design/command.sh
+Finished zinc_homodimer_design                    in  13 seconds	 [~ 192 test (76%) started,   58 in queue,   24 running]
+Running Test pocket_measure
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/pocket_measure/command.sh
+Finished pocket_measure                           in  16 seconds	 [~ 193 test (77%) started,   57 in queue,   24 running]
+Running Test hshash_utils
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/hshash_utils/command.sh
+Finished hshash_utils                             in   7 seconds	 [~ 194 test (77%) started,   56 in queue,   24 running]
+Running Test classic_relax_1a19
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/classic_relax_1a19/command.sh
+Running Test min_pack_min
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/min_pack_min/command.sh
+Running Test KIC_refine
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/KIC_refine/command.sh
+Finished KIC_refine                               in  43 seconds	 [~ 195 test (78%) started,   55 in queue,   24 running]
+Finished classic_relax_1a19                       in  17 seconds	 [~ 195 test (78%) started,   55 in queue,   23 running]
+Finished min_pack_min                             in  16 seconds	 [~ 195 test (78%) started,   55 in queue,   22 running]
+Running Test symmetric_docking
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/symmetric_docking/command.sh
+Finished symmetric_docking                        in  14 seconds	 [~ 198 test (79%) started,   52 in queue,   24 running]
+Running Test grid_scores_features
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/grid_scores_features/command.sh
+Finished grid_scores_features                     in   7 seconds	 [~ 199 test (79%) started,   51 in queue,   24 running]
+Running Test make_symmdef_file
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/make_symmdef_file/command.sh
+Finished make_symmdef_file                        in   9 seconds	 [~ 200 test (80%) started,   50 in queue,   24 running]
+Running Test hbonds
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/hbonds/command.sh
+Finished hbonds                                   in  40 seconds	 [~ 201 test (80%) started,   49 in queue,   24 running]
+Running Test ppk
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/ppk/command.sh
+Running Test geometric_solvation
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/geometric_solvation/command.sh
+Finished geometric_solvation                      in   8 seconds	 [~ 202 test (80%) started,   48 in queue,   24 running]
+Finished ppk                                      in   6 seconds	 [~ 202 test (80%) started,   48 in queue,   23 running]
+Running Test InterfaceAnalyzer_tracer
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/InterfaceAnalyzer_tracer/command.sh
+Running Test pH_mode
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/pH_mode/command.sh
+Finished InterfaceAnalyzer_tracer                 in   8 seconds	 [~ 204 test (81%) started,   46 in queue,   24 running]
+Finished pH_mode                                  in   6 seconds	 [~ 204 test (81%) started,   46 in queue,   23 running]
+Running Test docking_low_res
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/docking_low_res/command.sh
+Running Test jrelax
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/jrelax/command.sh
+Finished docking_low_res                          in   9 seconds	 [~ 206 test (82%) started,   44 in queue,   24 running]
+Finished jrelax                                   in   0 seconds	 [~ 206 test (82%) started,   44 in queue,   23 running]
+Running Test InterfaceAnalyzer
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/InterfaceAnalyzer/command.sh
+Finished InterfaceAnalyzer                        in   8 seconds	 [~ 208 test (83%) started,   42 in queue,   24 running]
+Running Test InterfaceAnalyzer_prepack
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/InterfaceAnalyzer_prepack/command.sh
+Finished InterfaceAnalyzer_prepack                in   9 seconds	 [~ 209 test (83%) started,   41 in queue,   24 running]
+Running Test minimize_with_elec_dens
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/minimize_with_elec_dens/command.sh
+Finished minimize_with_elec_dens                  in   7 seconds	 [~ 210 test (84%) started,   40 in queue,   24 running]
+Running Test erraser_minimize
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/erraser_minimize/command.sh
+Running Test ig_dump
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/ig_dump/command.sh
+Running Test InterfaceAnalyzer_bothpack
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/InterfaceAnalyzer_bothpack/command.sh
+Finished InterfaceAnalyzer_bothpack               in  10 seconds	 [~ 211 test (84%) started,   39 in queue,   24 running]
+Finished ig_dump                                  in   7 seconds	 [~ 211 test (84%) started,   39 in queue,   23 running]
+Finished erraser_minimize                         in   5 seconds	 [~ 211 test (84%) started,   39 in queue,   22 running]
+Running Test favor_native_residue
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/favor_native_residue/command.sh
+Finished favor_native_residue                     in  11 seconds	 [~ 214 test (85%) started,   36 in queue,   24 running]
+Running Test per_residue_energies
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/per_residue_energies/command.sh
+Finished per_residue_energies                     in   8 seconds	 [~ 215 test (86%) started,   35 in queue,   24 running]
+Running Test rosetta_scripts_setup
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/rosetta_scripts_setup/command.sh
+Finished rosetta_scripts_setup                    in   5 seconds	 [~ 216 test (86%) started,   34 in queue,   24 running]
+Running Test docking_prepack
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/docking_prepack/command.sh
+Finished docking_prepack                          in  12 seconds	 [~ 217 test (86%) started,   33 in queue,   24 running]
+Running Test pepspec_anchor_dock
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/pepspec_anchor_dock/command.sh
+Finished pepspec_anchor_dock                      in   5 seconds	 [~ 218 test (87%) started,   32 in queue,   24 running]
+Running Test super_aln
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/super_aln/command.sh
+Finished super_aln                                in   6 seconds	 [~ 219 test (87%) started,   31 in queue,   24 running]
+Running Test fold_and_dock
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/fold_and_dock/command.sh
+Finished fold_and_dock                            in   8 seconds	 [~ 220 test (88%) started,   30 in queue,   24 running]
+Running Test hotspot_stub_constraints
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/hotspot_stub_constraints/command.sh
+Running Test cluster
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/cluster/command.sh
+Finished hotspot_stub_constraints                 in   9 seconds	 [~ 221 test (88%) started,   29 in queue,   24 running]
+Finished cluster                                  in   7 seconds	 [~ 221 test (88%) started,   29 in queue,   23 running]
+Running Test residue_data_resource
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/residue_data_resource/command.sh
+Finished residue_data_resource                    in   7 seconds	 [~ 223 test (89%) started,   27 in queue,   24 running]
+Running Test oop_create
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/oop_create/command.sh
+Finished oop_create                               in   6 seconds	 [~ 224 test (89%) started,   26 in queue,   24 running]
+Running Test sequence_tolerance
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/sequence_tolerance/command.sh
+Running Test InterfaceAnalyzer_allscores
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/InterfaceAnalyzer_allscores/command.sh
+Finished InterfaceAnalyzer_allscores              in   9 seconds	 [~ 225 test (90%) started,   25 in queue,   24 running]
+Finished sequence_tolerance                       in   9 seconds	 [~ 225 test (90%) started,   25 in queue,   23 running]
+Running Test unfolded_state_energy_calc
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/unfolded_state_energy_calc/command.sh
+Finished unfolded_state_energy_calc               in   5 seconds	 [~ 227 test (90%) started,   23 in queue,   24 running]
+Running Test symmetry_data_resource
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/symmetry_data_resource/command.sh
+Finished symmetry_data_resource                   in   5 seconds	 [~ 228 test (91%) started,   22 in queue,   24 running]
+Running Test jd2test
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/jd2test/command.sh
+Finished jd2test                                  in   6 seconds	 [~ 229 test (91%) started,   21 in queue,   24 running]
+Running Test silent2frag
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/silent2frag/command.sh
+Running Test rotamer_recovery_compare_two_structures
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/rotamer_recovery_compare_two_structures/command.sh
+Running Test posttranslationalmod_io
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/posttranslationalmod_io/command.sh
+Finished silent2frag                              in   5 seconds	 [~ 230 test (92%) started,   20 in queue,   24 running]
+Finished rotamer_recovery_compare_two_structures  in   5 seconds	 [~ 230 test (92%) started,   20 in queue,   23 running]
+Finished posttranslationalmod_io                  in   4 seconds	 [~ 230 test (92%) started,   20 in queue,   22 running]
+Running Test loop_creation
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/loop_creation/command.sh
+Finished loop_creation                            in   7 seconds	 [~ 233 test (93%) started,   17 in queue,   24 running]
+Running Test noe_assignment
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/noe_assignment/command.sh
+Running Test features_pdb
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/features_pdb/command.sh
+Finished noe_assignment                           in   8 seconds	 [~ 234 test (93%) started,   16 in queue,   24 running]
+Finished features_pdb                             in   4 seconds	 [~ 234 test (93%) started,   16 in queue,   23 running]
+Running Test extract_atomtree_diffs
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/extract_atomtree_diffs/command.sh
+Running Test select_best_unique_ligand_poses
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/select_best_unique_ligand_poses/command.sh
+Finished extract_atomtree_diffs                   in   7 seconds	 [~ 236 test (94%) started,   14 in queue,   24 running]
+Finished select_best_unique_ligand_poses          in   6 seconds	 [~ 236 test (94%) started,   14 in queue,   23 running]
+Running Test fragment_picker
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/fragment_picker/command.sh
+Finished fragment_picker                          in   8 seconds	 [~ 238 test (95%) started,   12 in queue,   24 running]
+Running Test ncaa_fixbb
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/ncaa_fixbb/command.sh
+Finished ncaa_fixbb                               in   6 seconds	 [~ 239 test (95%) started,   11 in queue,   24 running]
+Running Test rna_cluster
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/rna_cluster/command.sh
+Finished rna_cluster                              in   1 seconds	 [~ 240 test (96%) started,   10 in queue,   24 running]
+Running Test report_hbonds_for_plugin
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/report_hbonds_for_plugin/command.sh
+Finished report_hbonds_for_plugin                 in   4 seconds	 [~ 241 test (96%) started,    9 in queue,   24 running]
+Running Test fix_alignment_to_match_pdb
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/fix_alignment_to_match_pdb/command.sh
+Finished fix_alignment_to_match_pdb               in   6 seconds	 [~ 242 test (96%) started,    8 in queue,   24 running]
+Running Test ld_converter
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/ld_converter/command.sh
+Running Test rna_score
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/rna_score/command.sh
+Finished ld_converter                             in   4 seconds	 [~ 243 test (97%) started,    7 in queue,   24 running]
+Finished rna_score                                in   2 seconds	 [~ 243 test (97%) started,    7 in queue,   23 running]
+Running Test fragmentpicker_integration_demo
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/fragmentpicker_integration_demo/command.sh
+Running Test features_scientific_benchmark
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/features_scientific_benchmark/command.sh
+Running Test score_aln
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/score_aln/command.sh
+Finished fragmentpicker_integration_demo          in   6 seconds	 [~ 245 test (98%) started,    5 in queue,   24 running]
+Finished score_aln                                in   0 seconds	 [~ 245 test (98%) started,    5 in queue,   23 running]
+Finished features_scientific_benchmark            in   0 seconds	 [~ 245 test (98%) started,    5 in queue,   22 running]
+Running Test features_postgres
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/features_postgres/command.sh
+Finished features_postgres                        in   0 seconds	 [~ 248 test (99%) started,    2 in queue,   24 running]
+Running Test hierarchical_clustering
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/hierarchical_clustering/command.sh
+Running Test combine_silent
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/combine_silent/command.sh
+Finished combine_silent                           in   1 seconds	 [~ 249 test (99%) started,    1 in queue,   24 running]
+Finished hierarchical_clustering                  in   0 seconds	 [~ 249 test (99%) started,    1 in queue,   23 running]
+Running Test RescoreSAXS
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/RescoreSAXS/command.sh
+Running Test HOW_TO_MAKE_TESTS
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/HOW_TO_MAKE_TESTS/command.sh
+Running Test file_list_locator
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/file_list_locator/command.sh
+Running Test swa_rna_loop_clusterer
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/swa_rna_loop_clusterer/command.sh
+Running Test crossaln
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/crossaln/command.sh
+Running Test extract_pdbs
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/extract_pdbs/command.sh
+Running Test database_session_resource
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/database_session_resource/command.sh
+Running Test docking_local_refine_min
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/docking_local_refine_min/command.sh
+Running Test cstfile_to_theozyme_pdb
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/cstfile_to_theozyme_pdb/command.sh
+Running Test loop_hash
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/loop_hash/command.sh
+Running Test fixbb_resource_manager
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/fixbb_resource_manager/command.sh
+Running Test centroid_disulfide_scores
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/centroid_disulfide_scores/command.sh
+Running Test angle_recovery_stats
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/angle_recovery_stats/command.sh
+Running Test r_rmsf
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/r_rmsf/command.sh
+Running Test distances
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/distances/command.sh
+Running Test mpi_multistate_design
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/mpi_multistate_design/command.sh
+Running Test features_database_schema
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/features_database_schema/command.sh
+Running Test darc
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/darc/command.sh
+Running Test BuildPeptide
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/BuildPeptide/command.sh
+Running Test gen_lig_grids
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/gen_lig_grids/command.sh
+Running Test r_pdb2top
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/r_pdb2top/command.sh
+Running Test RescorePDDF
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/RescorePDDF/command.sh
+Running Test carbohydrates
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/carbohydrates/command.sh
+Running Test features_parallel
+ulimit -t 480 && bash /home/benchmark/svd.64.git/rosetta/main/tests/integration/new/features_parallel/command.sh
+Finished file_list_locator                        in   6 seconds	 [~ 250 test (100%) started,    0 in queue,   23 running]
+Finished RescoreSAXS                              in   0 seconds	 [~ 250 test (100%) started,    0 in queue,   22 running]
+Finished HOW_TO_MAKE_TESTS                        in   0 seconds	 [~ 250 test (100%) started,    0 in queue,   21 running]
+Finished swa_rna_loop_clusterer                   in   1 seconds	 [~ 250 test (100%) started,    0 in queue,   20 running]
+Finished extract_pdbs                             in   0 seconds	 [~ 250 test (100%) started,    0 in queue,   19 running]
+Finished crossaln                                 in   0 seconds	 [~ 250 test (100%) started,    0 in queue,   18 running]
+Finished docking_local_refine_min                 in   6 seconds	 [~ 250 test (100%) started,    0 in queue,   17 running]
+Finished database_session_resource                in   6 seconds	 [~ 250 test (100%) started,    0 in queue,   16 running]
+Finished cstfile_to_theozyme_pdb                  in   3 seconds	 [~ 250 test (100%) started,    0 in queue,   15 running]
+Finished fixbb_resource_manager                   in   4 seconds	 [~ 250 test (100%) started,    0 in queue,   14 running]
+Finished centroid_disulfide_scores                in   3 seconds	 [~ 250 test (100%) started,    0 in queue,   13 running]
+Finished loop_hash                                in   2 seconds	 [~ 250 test (100%) started,    0 in queue,   12 running]
+Finished mpi_multistate_design                    in  12 seconds	 [~ 250 test (100%) started,    0 in queue,   11 running]
+Finished distances                                in   5 seconds	 [~ 250 test (100%) started,    0 in queue,   10 running]
+Finished angle_recovery_stats                     in   4 seconds	 [~ 250 test (100%) started,    0 in queue,    9 running]
+Finished r_rmsf                                   in   3 seconds	 [~ 250 test (100%) started,    0 in queue,    8 running]
+Finished features_database_schema                 in   3 seconds	 [~ 250 test (100%) started,    0 in queue,    7 running]
+Finished darc                                     in   7 seconds	 [~ 250 test (100%) started,    0 in queue,    6 running]
+Finished BuildPeptide                             in   3 seconds	 [~ 250 test (100%) started,    0 in queue,    5 running]
+Finished gen_lig_grids                            in   5 seconds	 [~ 250 test (100%) started,    0 in queue,    4 running]
+Finished r_pdb2top                                in   4 seconds	 [~ 250 test (100%) started,    0 in queue,    3 running]
+Finished RescorePDDF                              in   5 seconds	 [~ 250 test (100%) started,    0 in queue,    2 running]
+Finished carbohydrates                            in   3 seconds	 [~ 250 test (100%) started,    0 in queue,    1 running]
+Finished features_parallel                        in   5 seconds	 [~ 250 test (100%) started,    0 in queue,    0 running]
 
-ok   orbitals
-ok   cluster
-ok   rna_cluster
-ok   test_idealize
-ok   fix_alignment_to_match_pdb
-ok   enzdes
-ok   broker_membrane
-ok   metalloprotein_broker
-ok   cstfile_to_theozyme_pdb
-ok   InterfaceAnalyzer_tracer
-ok   density_refine
-ok   doug_dock_design_min_mod2_cal_cal
-ok   rna_helix
-ok   batch_relax
-ok   hbonds
-ok   InterfaceAnalyzer_resfile
-ok   rna_minimize
-ok   flexpepdock_abinitio
-ok   ligand_motif_design
-ok   sequence_recovery
-ok   make_rot_lib
-ok   UBQ_Gp_CYD-CYD
-ok   combine_silent
-ok   features_parallel
-ok   RescorePDDF
-ok   RescoreSAXS
-ok   classic_relax_1a19
-ok   fragmentpicker_integration_demo
-ok   loop_hash
-ok   rs_flexbbmoves
-ok   InterfaceAnalyzer_bothpack
-ok   rs_loophash
-ok   ligand_dock_script
-ok   hotspot_graft
-ok   FloppyTail
-ok   crossaln
-ok   zinc_homodimer_setup
-ok   ld_converter
-ok   extract_atomtree_diffs
-ok   docking_site_constraints
-ok   ppk
-ok   rna_denovo
+ok   write_mol_file
+ok   swm_singleloop
+ok   swm_nickedhelix
+ok   swm_loop_design
+ok   swm_fourwayjunction
+ok   sweep_respair_energies
+ok   swa_rna_gagu_23_append_and_kic_close
+ok   swa_rna_gagu_22_prepend_and_kic_close
+ok   swa_rna_gagu_21_prepend_dinucleotide_on_dinucleotide_by_jump
+ok   swa_rna_gagu_20_append_floating_base_by_jump
+ok   swa_rna_gagu_19_prepend_floating_base_by_jump
+ok   swa_rna_gagu_18_rebuild_bulge
+ok   swa_rna_gagu_17_append_floating_base
+ok   swa_rna_gagu_16_prepend_dinucleotide_on_dinucleotide
+ok   swa_rna_gagu_15_combine_long_loop_sampling
+ok   swa_rna_gagu_14_combine_long_loop_filtering
+ok   swa_rna_gagu_13_chunk_combination_and_closure
+ok   swa_rna_gagu_12_helix_addition
+ok   swa_rna_gagu_11_append_and_ccd_close
+ok   swa_rna_gagu_10_prepend_and_ccd_close
+ok   swa_rna_gagu_09_sample_virtual_ribose
+ok   swa_rna_gagu_08_append_dinucleotide
+ok   swa_rna_gagu_07_prepend_dinucleotide
+ok   swa_rna_gagu_06_append_to_3primeterminus
+ok   swa_rna_gagu_05_prepend_to_5primeterminus
+ok   swa_rna_gagu_04_clustering
+ok   swa_rna_gagu_03_append_to_silent
+ok   swa_rna_gagu_02_prepend
+ok   swa_rna_gagu_01_append
+ok   swa_rna_erraser
+ok   swa_protein_loop_sampler
+ok   surface_docking
+ok   rosetta_scripts_hbond_options
+ok   rna_suitename
+ok   remodel_disulfides
+ok   remodel
+ok   readin_dna_rna_protein
+ok   place_simultaneously
+ok   phosphonate
+ok   ligand_water_docking
+ok   hybridization
+ok   hts_io
+ok   dock_with_hotspot_place_simultaneously
+ok   database_jd2_compact_io
+ok   contactMap
+ok   buried_unsat_kinemage
+ok   app_exception_handling
+ok   antibody_legacy
+ok   antibody_graft
+ok   antibody_designer
+ok   antibody_H3_legacy
+ok   antibody_H3
+ok   add_job_pair_data
+ok   ProQ
+ok   inverse_rotamer_remodel
+ok   pocket_relax
+ok   motif_dna_packer_design
 ok   match
+ok   ligand_database_io
+ok   membrane_relax
+ok   ligand_dock_script
+ok   supercharge
+ok   hotspot_hashing
+ok   enzdes
+ok   rs_loophash
+ok   density_refine
+ok   flexpepdock
+ok   dna_interface_design
+ok   ddG_of_mutation
+ok   kinemage_grid_output
+ok   AnchorFinder
+ok   ligand_motif_design
+ok   rosetta_scripts_loops
+ok   doug_dock_design_min_mod2_cal_cal
+ok   relax_w_allatom_cst
+ok   kinematic_looprelax
+ok   docking_ensemble
+ok   swa_rna_loop_sampler
+ok   mr_protocols
+ok   rna_minimize
+ok   docking_site_constraints
+ok   rna_design
+ok   membrane_abinitio
+ok   docking_local_refine
+ok   AnchoredDesign
+ok   rotamer_probability
+ok   ligand_dock_7cpa
+ok   hotspot_graft
+ok   docking_distance_constraints
+ok   test1_benchmark
+ok   repack_with_elec_dens
+ok   nonideal_rtmin
+ok   density_refine_symm
+ok   fast_relax
+ok   SnugDock
+ok   zinc_heterodimer
+ok   oop_dock_design
+ok   batch_relax
+ok   ThreadingInputter
+ok   FloppyTail
+ok   rna_denovo
+ok   pmut_scan
+ok   cluster_alns
+ok   broker
+ok   KIC_vicinity
+ok   rotamer_recovery
+ok   pepspec
+ok   docking_full_protocol
+ok   UBQ_E2_thioester
+ok   backrub_pilot
+ok   UBQ_E2_thioester_extra_bodies
+ok   torsion_restricted_sampling
+ok   splice_out
+ok   UBQ_Gp_CYD-CYD
+ok   symmetry_multicomponent
+ok   rs_flexbbmoves
+ok   rna_helix
+ok   next_generation_KIC
+ok   loop_modeling
+ok   hbs_design
+ok   beta_strand_homodimer
+ok   residue_energy_breakdown
+ok   molfile_to_params
+ok   UBQ_Gp_LYX-Cterm
+ok   oop_design
+ok   fold_cst_new
+ok   flexpepdock_abinitio
+ok   features
+ok   score12_docking
+ok   inv_kin_lig_loop_design
+ok   ligand_dock_grid
+ok   fixbb
 ok   docking_ensemble_prepack
 ok   AlterSpecDisruption
-ok   filter_termini_near_interface
-ok   membrane_abinitio
-ok   flexpepdock
-ok   assemble_domains_jd2
-ok   sequence_tolerance
-ok   fold_and_dock
-ok   posttranslationalmod_io
-ok   ligand_database_io
-ok   test1_benchmark
-ok   pH_mode
-ok   InterfaceAnalyzer_prepack
-ok   zinc_homodimer_design
-ok   ncaa_fixbb
-ok   motif_dna_packer_design
-ok   docking_distance_constraints
-ok   sequence_profile_constraints
-ok   backrub_pilot
-ok   docking_local_refine
-ok   membrane_relax
-ok   jscore
-ok   oop_dock_design
-ok   features_scientific_benchmark
-ok   fold_cst_new
-ok   supercharge
-ok   Enzrevert_xml
-ok   rotamer_probability
-ok   noe_assignment
-ok   simple_dna_test
-ok   mm_params
-ok   distances
-ok   score_only_silence
-ok   silent2frag
-ok   UBQ_Gp_LYX-Cterm
-ok   antibody_CDR_grafting
-ok   docking_local_refine_min
-ok   hotspot_stub_constraints
-ok   per_residue_energies
-ok   docking_ensemble
-ok   gen_lig_grids
-ok   molfile_to_params
-ok   hshash_utils
-ok   test_computed_saxs_spectrum
-ok   ThreadingInputter
-ok   UBQ_E2_thioester
-ok   darc_score
-ok   InterfaceAnalyzer
-ok   ligand_dock_7cpa
-ok   darc
-ok   symmetric_docking
-ok   inverse_rotamer_remodel
-ok   score12_docking
-ok   centroid_disulfide_scores
-ok   relax_w_allatom_cst
-ok   docking_prepack
-ok   super_aln
-ok   r_rmsf
-ok   beta_strand_homodimer
-ok   fixbb
-ok   rna_assemble
-ok   erraser_analytical_closure
-ok   fragment_picker
-ok   gen_apo_grids
-ok   AnchorFinder
-ok   ligand_dock_grid
-ok   erraser_minimize
-ok   score_aln
-ok   residue_energy_breakdown
-ok   rna_design
-ok   antibody
-ok   backrub
-ok   score_jd2
-ok   BuildPeptide
-ok   inv_kin_lig_loop_design
-ok   swa_rna_loop_clusterer
-ok   rna_score
-ok   density_refine_symm
-ok   AnchoredDesign
-ok   oop_create
-ok   extract_pdbs
-ok   angle_recovery_stats
-ok   mr_protocols
-ok   KIC_vicinity
-ok   broker
-ok   jrelax
-ok   rotamer_recovery
-ok   AnchoredPDBCreator
-ok   r_pdb2top
-ok   report_hbonds_for_plugin
-ok   abinitio
-ok   pepspec
-ok   kinemage_grid_output
-ok   select_best_unique_ligand_poses
-ok   dna_interface_design
-ok   jd2test
-ok   docking_full_protocol
-ok   min_pack_min
-ok   ig_dump
-ok   loop_modeling
-ok   fast_relax
-ok   pmut_scan
-ok   pepspec_anchor_dock
-ok   mpi_multistate_design
-ok   kinematic_looprelax
-ok   database_jd2_io
-ok   unfolded_state_energy_calc
 ok   metalloprotein_abrelax
-ok   metropolis_hastings
-ok   KIC_refine
-ok   cluster_alns
-ok   vip
-ok   hotspot_hashing
-ok   antibody_loop_modeling_protocol
-ok   ddG_of_mutation
-ok   swa_rna_loop_sampler
-ok   docking_low_res
-ok   rosetta_scripts_setup
-ok   geometric_solvation
-ok   hierarchical_clustering
-ok   InterfaceAnalyzer_allscores
-ok   features
-ok   HOW_TO_MAKE_TESTS
-ok   startfrom_file
-ok   symmetry_multicomponent
-ok   rosetta_scripts_loops
-ok   features_database_schema
-ok   features_postgres
-ok   fixbb_resource_manager
-ok   antibody_protocol_using_CCD_loop_mover
-ok   antibody_protocol_using_KIC_loop_mover
-ok   features_pdb
-ok   UBQ_E2_thioester_two_ubiquitins
-ok   UBQ_E2_thioester_extra_bodies
-ok   SnugDock
-ok   make_symmdef_file
-ok   repack_with_elec_dens
-ok   minimize_with_elec_dens
-ok   symmetry_data_resource
-ok   database_session_resource
-ok   residue_data_resource
-ok   resource_database_locator
-ok   rotamer_recovery_compare_two_structures
-ok   resource_database_tables
-ok   file_list_locator
 ok   hbonds_sp2
-ok   grid_scores_features
-ok   carbohydrates
-ok   torsion_restricted_sampling
-ok   next_generation_KIC
-ok   oop_design
-ok   nonideal_rtmin
-ok   hbs_design
-ok   pocket_relax
-ok   pocket_measure
-ok   favor_native_residue
-ok   zinc_heterodimer
-ok   loop_creation
-ok   splice_out
+ok   broker_membrane
+ok   backrub
+ok   abinitio
+ok   KIC_refine
+ok   mm_params
+ok   hbonds
+ok   Enzrevert_xml
+ok   sequence_profile_constraints
 ok   splice_in
+ok   sequence_recovery
+ok   rna_assemble
+ok   simple_dna_test
+ok   resource_database_tables
+ok   gen_apo_grids
+ok   assemble_domains_jd2
+ok   test_computed_saxs_spectrum
+ok   score_only_silence
+ok   resource_database_locator
+ok   make_rot_lib
+ok   jscore
+ok   database_jd2_io
+ok   UBQ_E2_thioester_two_ubiquitins
+ok   AnchoredPDBCreator
+ok   zinc_homodimer_setup
+ok   vip
+ok   startfrom_file
+ok   pocket_measure
+ok   classic_relax_1a19
+ok   min_pack_min
+ok   metropolis_hastings
+ok   filter_termini_near_interface
+ok   InterfaceAnalyzer_resfile
+ok   zinc_homodimer_design
+ok   test_idealize
+ok   symmetric_docking
+ok   score_jd2
+ok   orbitals
+ok   metalloprotein_broker
+ok   make_symmdef_file
+ok   hshash_utils
+ok   grid_scores_features
+ok   geometric_solvation
+ok   favor_native_residue
+ok   docking_prepack
+ok   docking_low_res
+ok   InterfaceAnalyzer_tracer
+ok   InterfaceAnalyzer_prepack
+ok   InterfaceAnalyzer_bothpack
+ok   InterfaceAnalyzer
+ok   ppk
+ok   per_residue_energies
+ok   pH_mode
+ok   minimize_with_elec_dens
+ok   ig_dump
+ok   hotspot_stub_constraints
+ok   fold_and_dock
+ok   erraser_minimize
+ok   cluster
+ok   InterfaceAnalyzer_allscores
+ok   super_aln
+ok   sequence_tolerance
+ok   rosetta_scripts_setup
+ok   residue_data_resource
+ok   pepspec_anchor_dock
+ok   oop_create
+ok   noe_assignment
+ok   mpi_multistate_design
+ok   loop_creation
+ok   jrelax
+ok   jd2test
+ok   fragment_picker
+ok   extract_atomtree_diffs
+ok   unfolded_state_energy_calc
+ok   symmetry_data_resource
+ok   silent2frag
+ok   select_best_unique_ligand_poses
+ok   rotamer_recovery_compare_two_structures
+ok   posttranslationalmod_io
+ok   ncaa_fixbb
+ok   fragmentpicker_integration_demo
+ok   fix_alignment_to_match_pdb
+ok   file_list_locator
+ok   features_pdb
+ok   docking_local_refine_min
+ok   database_session_resource
+ok   darc
+ok   report_hbonds_for_plugin
+ok   ld_converter
+ok   gen_lig_grids
+ok   fixbb_resource_manager
+ok   distances
+ok   cstfile_to_theozyme_pdb
+ok   centroid_disulfide_scores
+ok   angle_recovery_stats
+ok   RescorePDDF
+ok   rna_score
+ok   rna_cluster
+ok   r_rmsf
+ok   r_pdb2top
+ok   features_database_schema
+ok   BuildPeptide
+ok   swa_rna_loop_clusterer
+ok   loop_hash
+ok   combine_silent
+ok   carbohydrates
+ok   score_aln
+ok   hierarchical_clustering
+ok   features_scientific_benchmark
+ok   features_postgres
+ok   features_parallel
+ok   extract_pdbs
+ok   crossaln
+ok   RescoreSAXS
+ok   HOW_TO_MAKE_TESTS
 All tests passed.</pre>

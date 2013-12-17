@@ -72,7 +72,7 @@ public:// constructor/destructor
 			std::string resfile_prefix,
 			std::string resfile_general_property,
 			std::string selected_resis_property
-	); 
+	);
 
 	// @brief copy constructor
 	SaveResfileToDiskFilter( SaveResfileToDiskFilter const & rval );
@@ -99,6 +99,7 @@ public:// setters
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
 	void selected_resis( utility::vector1<core::Size> const r );
 	void designable_only( bool const d );
+	void renumber_pdb( bool const r );
 	void resfile_name( std::string const n );
 	void resfile_suffix( std::string const s );
 	void resfile_prefix( std::string const p );
@@ -109,6 +110,7 @@ public:// getters
 	core::pack::task::TaskFactoryOP task_factory() const;
 	utility::vector1< core::Size > selected_resis() const;
 	bool designable_only() const;
+	bool renumber_pdb() const;
 	std::string resfile_name() const;
 	std::string resfile_suffix() const;
 	std::string resfile_prefix() const;
@@ -143,6 +145,7 @@ private:
   core::pack::task::TaskFactoryOP task_factory_;
 	utility::vector1< core::Size > selected_resis_;
 	bool designable_only_;
+	bool renumber_pdb_;
 	std::string resfile_name_;
 	std::string resfile_suffix_;
 	std::string resfile_prefix_;

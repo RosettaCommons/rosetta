@@ -507,28 +507,32 @@ def wrapNewLine(s):
 
 #
 # Order tests based on decreasing expected runtime. Unknown tests get run first.
-# Expected runtime is taken from the file "runtimes" in the current directory.
-# (It's just an old version of the integration.py output.)
+# Expected runtime is taken from the runtimes.yaml file in the ref directory,
+# if it exists, else from the file "runtimes" in the current directory.
+# (Which is just an old version of the integration.py output.)
 #
 def order_tests(tests):
+    times = {}
     try:
-        f = open('runtimes','r')
+        times = json.load( open('ref/runtimes.yaml') )
     except Exception:
-        return tests #Any problems? Just skip ordering
-    try:
-        times = {}
-        for line in f:
-            line = line.split()
-            if len(line) > 5 and line[0] == "Finished" and line[4] == "seconds":
-                times[ line[1] ] = int(line[3])
-        #Decorate, sort, undecorate (A side effect is we'll alphabetize any missing tests)
-        ordered = [ ( times.get(test, 9999), test ) for test in tests ]
-        ordered.sort(reverse=True)
-        return [ test for (time, test) in ordered ]
-    finally:
-        f.close()
-
-    return tests #If for some reason we get here
+        pass
+    if not times:
+        try:
+            f = open('runtimes','r')
+        except Exception:
+            return tests #Any problems? Just skip ordering
+        try:
+            for line in f:
+                line = line.split()
+                if len(line) > 5 and line[0] == "Finished" and line[4] == "seconds":
+                    times[ line[1] ] = int(line[3])
+        finally:
+            f.close()
+    #Decorate, sort, undecorate (A side effect is we'll alphabetize any missing tests)
+    ordered = [ ( times.get(test, 9999), test ) for test in tests ]
+    ordered.sort(reverse=True)
+    return [ test for (time, test) in ordered ]
 
 # -------------------------------------
 def execute(message, command_line, return_=False, untilSuccesses=False, print_output=True, verbose=True):
