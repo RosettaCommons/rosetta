@@ -177,7 +177,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 
 	Schema sheet("sheet",  PrimaryKey(primary_key_columns_sh));
 
-	// add column which is not PrimaryKey nor ForeignKey
+	// add column which is neither PrimaryKey nor ForeignKey
 	sheet.add_column(sheet_id);
 	sheet.add_column(sheet_antiparallel);
 	sheet.add_column(num_of_sheets_that_surround_this_sheet);
@@ -226,7 +226,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 
 	Schema sw_can_by_sh("sw_can_by_sh",  PrimaryKey(primary_key_columns_sw_can_by_sh));
 
-	// add column which is not PrimaryKey nor ForeignKey
+	// add column which is neither PrimaryKey nor ForeignKey
 	sw_can_by_sh.add_column(tag);
 	sw_can_by_sh.add_column(sw_can_by_sh_id);
 
@@ -245,7 +245,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 
 	sw_can_by_sh.add_foreign_key(ForeignKey(fkey_cols_sh,	"sheet",	fkey_reference_cols_sh,	true /*defer*/));
 
-	// add column which is not PrimaryKey nor ForeignKey
+	// add column which is neither PrimaryKey nor ForeignKey
 	sw_can_by_sh.add_column(strand_num);
 
 	sw_can_by_sh.write(db_session);
@@ -434,7 +434,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 
 	Schema sw_by_components("sw_by_components",  PrimaryKey(primary_key_columns_sw_by_components));
 
-	// add column which is not PrimaryKey nor ForeignKey
+	// add column which is neither PrimaryKey nor ForeignKey
 	sw_by_components.add_column(tag);
 	sw_by_components.add_column(sw_can_by_sh_id);
 	sw_by_components.add_column(sheet_id);
@@ -600,6 +600,45 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 
 	sw_by_components.write(db_session);
 /****** <end> writing sw_by_components ******/
+
+
+
+
+
+/****** <begin> writing surface_rkde ******/
+
+	// Columns
+
+	// unique_primary_key
+	Column surface_rkde_PK_id	("surface_rkde_PK_id",	new DbInteger(), false /*not null*/, false /*no autoincrement*/);
+
+	// may not be unique
+	Column residue_number	("residue_number",	new DbInteger(), false /*not null*/, false /*no autoincrement*/);
+	Column residue_type	("residue_type",	new DbText(), false /*not null*/, false /*no autoincrement*/);
+
+	// Schema
+	// PrimaryKey
+	utility::vector1<Column> primary_key_columns_surface_rkde;
+	primary_key_columns_surface_rkde.push_back(struct_id);
+	primary_key_columns_surface_rkde.push_back(surface_rkde_PK_id);
+
+	Schema surface_rkde("surface_rkde",  PrimaryKey(primary_key_columns_surface_rkde));
+
+	// add column which is neither PrimaryKey nor ForeignKey
+	surface_rkde.add_column(tag);
+	surface_rkde.add_column(sw_can_by_sh_id);
+
+	surface_rkde.add_column(residue_number);
+	surface_rkde.add_column(residue_type);
+
+	// ForeignKey
+	surface_rkde.add_foreign_key(ForeignKey(struct_id,	"structures",	"struct_id",	true /*defer*/));
+		// (reference) wiki.rosettacommons.org/index.php/MultiBodyFeaturesReporters#StructureFeatures
+
+	surface_rkde.write(db_session);
+/****** <end> surface_rkde ******/
+
+
 }
 
 
@@ -767,6 +806,36 @@ SandwichFeatures::get_distinct_sheet_id_from_sheet_table(
 } //get_distinct_sheet_id_from_sheet_table
 
 
+utility::vector1<Size>	
+SandwichFeatures::get_distinct_sw_id_from_sw_by_components_table(
+	StructureID struct_id,
+	sessionOP db_session)
+{
+	string select_string =
+	"SELECT\n"
+	"	distinct sw_can_by_sh_id\n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	struct_id = ?;";
+
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+	select_statement.bind(1,struct_id);
+	result res(basic::database::safely_read_from_database(select_statement));
+
+	utility::vector1<Size> all_distinct_sw_ids;
+	while(res.next())
+	{
+		Size distinct_sw_id;
+		res >> distinct_sw_id;
+		all_distinct_sw_ids.push_back(distinct_sw_id);
+	}
+	return all_distinct_sw_ids;
+} //get_distinct_sw_id_from_sw_by_components_table
+
+
+
+
 //get_max_sheet_id
 Size
 SandwichFeatures::get_max_sheet_id(
@@ -865,6 +934,54 @@ SandwichFeatures::update_num_of_sheets_that_surround_this_sheet(
 	basic::database::safely_write_to_database(select_statement);
 } //update_num_of_sheets_that_surround_this_sheet
 
+
+//update_surface_rkde
+void	
+SandwichFeatures::update_surface_rkde(
+	StructureID struct_id,
+	sessionOP db_session,
+	Size	surface_RKDE_PK_id_counter,
+	string tag,
+	Size sw_can_by_sh_id,
+	Size residue_number,
+	string	residue_type)
+{
+
+	string insert =	"INSERT INTO surface_rkde (struct_id, surface_RKDE_PK_id, tag, sw_can_by_sh_id, residue_number, residue_type)  VALUES (?,?,?,?,	?,?);";
+
+	statement insert_stmt(basic::database::safely_prepare_statement(insert,	db_session));
+	insert_stmt.bind(1,	struct_id);
+	insert_stmt.bind(2,	surface_RKDE_PK_id_counter);
+	insert_stmt.bind(3,	tag);
+	insert_stmt.bind(4,	sw_can_by_sh_id);
+	insert_stmt.bind(5,	residue_number);
+	insert_stmt.bind(6,	residue_type);
+	basic::database::safely_write_to_database(insert_stmt);
+
+	/*
+	string select_string =
+	"UPDATE surface_rkde set \n"
+	"tag = ? , \n"
+	"sw_can_by_sh_id	=	? , \n"
+	"residue_number	=	? , \n"
+	"residue_type	=	?	\n"
+	"WHERE\n"
+	"	(sw_can_by_sh_id = ?) \n"
+	"	AND (struct_id = ?);";
+
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+
+	select_statement.bind(1,	tag);
+	select_statement.bind(2,	sw_can_by_sh_id);
+	select_statement.bind(3,	residue_number);
+	select_statement.bind(4,	residue_type);
+	select_statement.bind(5,	sw_can_by_sh_id);
+	select_statement.bind(6,	struct_id);
+
+	basic::database::safely_write_to_database(select_statement);
+	*/
+
+} //update_surface_rkde
 
 //get_num_of_sheets_that_surround_this_sheet
 Size	
@@ -5388,7 +5505,8 @@ SandwichFeatures::check_whether_sw_is_not_connected_with_continuous_atoms(
 	result res(basic::database::safely_read_from_database(select_statement));
 
 	Size starting_res_num, ending_res_num;
-	while(res.next()){
+	while(res.next())
+	{
 		res >> starting_res_num >> ending_res_num;
 	}
 	// <end> get starting_res_num/ending_res_num
@@ -5424,6 +5542,37 @@ SandwichFeatures::get_list_of_residues_in_sheet_i(
 	return list_of_residues_in_sheet_i;
 } // get_list_of_residues_in_sheet_i
 
+
+
+utility::vector1<Size>
+SandwichFeatures::retrieve_residue_num_of_surface_rkde(
+	StructureID struct_id,
+	sessionOP db_session,
+	Size	sw_can_by_sh_id)
+{
+	string select_string =
+	"SELECT\n"
+	"	residue_number\n"
+	"FROM\n"
+	"	surface_rkde \n"
+	"WHERE\n"
+	"	struct_id = ? \n"
+	"  AND sw_can_by_sh_id = ? ;";
+	
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+	select_statement.bind(1,	struct_id);
+	select_statement.bind(2,	sw_can_by_sh_id);
+	result res(basic::database::safely_read_from_database(select_statement));
+	
+	utility::vector1<Size> vector_of_residue_num_of_surface_rkde;
+	Size	residue_num_of_surface_rkde;
+	while(res.next())
+	{
+		res >> residue_num_of_surface_rkde;
+		vector_of_residue_num_of_surface_rkde.push_back(residue_num_of_surface_rkde);
+	}
+	return vector_of_residue_num_of_surface_rkde;
+} //retrieve_residue_num_of_surface_rkde
 
 
 
@@ -6167,7 +6316,7 @@ SandwichFeatures::parse_my_tag(
 	allowed_deviation_for_turn_type_id_ = tag->getOption<Real>("allowed_deviation_for_turn_type_id", 40.0);
 
 
-
+	distance_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("distance_cutoff_for_electrostatic_interactions", 6.1);
 
 
 	///////// development options ///////
@@ -6201,13 +6350,13 @@ SandwichFeatures::parse_my_tag(
 	write_rama_at_AA_to_files_ = tag->getOption<bool>("write_rama_at_AA_to_files", false);
 					//	definition: if true, write write_rama_at_AA_to_files
 	write_heading_directions_of_all_AA_in_a_strand_ = tag->getOption<bool>("write_heading_directions_of_all_AA_in_a_strand", false);
-
+	write_electrostatic_interactions_of_surface_residues_in_a_strand_ = tag->getOption<bool>("write_electrostatic_interactions_of_surface_residues_in_a_strand", false);
 
 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////	SandwichFeatures	///////////////////////////////////////////////////////////
+//////////////////////				SandwichFeatures			///////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///@brief collect all the feature data for the pose
 core::Size
@@ -6269,6 +6418,7 @@ SandwichFeatures::report_features(
 		write_p_aa_pp_files_	= true;
 		write_rama_at_AA_to_files_	=	true;
 		write_heading_directions_of_all_AA_in_a_strand_	=	true;
+		write_electrostatic_interactions_of_surface_residues_in_a_strand_	=	true;
 	}
 
 
@@ -6281,6 +6431,7 @@ SandwichFeatures::report_features(
 
 	Size sheet_PK_id_counter=1; //initial value
 	Size sw_can_by_sh_PK_id_counter=1; //initial value
+	Size surface_RKDE_PK_id_counter=1; //initial value
 	Size sw_can_by_sh_id_counter=1; //initial value
 	Size sw_by_components_PK_id_counter=1; //initial value
 	Size intra_sheet_con_id_counter=1; //initial value
@@ -7304,6 +7455,148 @@ SandwichFeatures::report_features(
 		heading_file.close();
 	}
 	/// <end> write_heading_direction_of_all_AA_in_a_strand
+
+
+	/// <begin> write_electrostatic_interactions_of_surface_residues_in_a_strand
+	if (write_electrostatic_interactions_of_surface_residues_in_a_strand_ && canonical_sw_extracted_from_this_pdb_file)
+	{
+		// <begin> store surface RKDE to a database table
+		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++) // per each beta-strand
+		{
+			Size residue_begin	=	bs_of_sw_can_by_sh[ii].get_start();
+			Size residue_end	=	bs_of_sw_can_by_sh[ii].get_end();
+			for (Size	residue_num	=	residue_begin;	residue_num	<=	residue_end; residue_num++)
+			{
+				string	heading	=	determine_heading_direction_by_vector	(struct_id,	db_session,	pose,	bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),	bs_of_sw_can_by_sh[ii].get_sheet_id(),	residue_begin,	residue_end,	residue_num);
+				if (heading == "surface")
+				{
+					if (
+						(pose.residue_type(residue_num).name3() == "ARG")
+						||	(pose.residue_type(residue_num).name3() == "LYS")
+						||	(pose.residue_type(residue_num).name3() == "ASP")
+						||	(pose.residue_type(residue_num).name3() == "GLU")
+						)
+					{
+						update_surface_rkde(
+							struct_id,
+							db_session,
+							surface_RKDE_PK_id_counter,
+							tag,
+							bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),	//sw_can_by_sh_id
+							residue_num,	//residue_number,
+							pose.residue_type(residue_num).name3()	//residue_type,
+							);
+						surface_RKDE_PK_id_counter++;
+					}
+				}
+			}
+		}
+		// <end> store surface RKDE to a database table
+
+		Size tag_len = tag.length();
+		string pdb_file_name = tag.substr(0, tag_len-5);
+		string ElectroStatic_file_name = pdb_file_name + "_electrostatic_interactions_of_surface_residues_in_a_strand.txt";
+		ofstream ElectroStatic_file;
+			
+		ElectroStatic_file.open(ElectroStatic_file_name.c_str());
+		ElectroStatic_file << "surface_residue_number	surface_residue_type	number_of_attractions	number_of_repulsions" << endl;
+
+		utility::vector1<Size>	vector_of_unique_distinct_sw_ids	=	get_distinct_sw_id_from_sw_by_components_table	(struct_id,	db_session);
+
+		for(Size sw_ii=1; sw_ii<=vector_of_unique_distinct_sw_ids.size(); sw_ii++) // per each beta-sandwich
+		{
+			utility::vector1<Size>	vector_of_residue_num_of_surface_rkde	=
+				retrieve_residue_num_of_surface_rkde(
+					struct_id,
+					db_session,
+					vector_of_unique_distinct_sw_ids[sw_ii]	//sw_can_by_sh_id
+					);
+			for(Size residue_i=1; residue_i<=vector_of_residue_num_of_surface_rkde.size(); residue_i++)
+			{
+				Size	residue_num	=	vector_of_residue_num_of_surface_rkde[residue_i];
+				ElectroStatic_file	<< residue_num	<<	"	"	<<	pose.residue_type(residue_num).name3();
+
+				numeric::xyzVector< core::Real > xyz_of_terminal_atom;
+
+				if (pose.residue_type(residue_num).name3() == "ARG")
+				{
+					xyz_of_terminal_atom =	pose.residue(residue_num).atom(" NH1").xyz();
+				}
+				else	if (pose.residue_type(residue_num).name3() == "LYS")
+				{
+					xyz_of_terminal_atom =	pose.residue(residue_num).atom(" NZ ").xyz();
+				}
+				else	if (pose.residue_type(residue_num).name3() == "ASP")
+				{
+					xyz_of_terminal_atom =	pose.residue(residue_num).atom(" OD1").xyz();
+				}
+				else	//if (pose.residue_type(residue_num).name3() == "GLU")
+				{
+					xyz_of_terminal_atom =	pose.residue(residue_num).atom(" OE1").xyz();
+				}
+
+				Size	number_of_attractions	=	0;
+				Size	number_of_repulsions	=	0;
+				for(Size other_residue_i=1; other_residue_i<=vector_of_residue_num_of_surface_rkde.size(); other_residue_i++)
+				{
+					if	(other_residue_i	==	residue_i)
+					{
+						continue;
+					}
+					Size	other_residue_num	=	vector_of_residue_num_of_surface_rkde[other_residue_i];
+					numeric::xyzVector< core::Real > xyz_of_other_terminal_atom;
+					if (pose.residue_type(other_residue_num).name3() == "ARG")
+					{
+						xyz_of_other_terminal_atom =	pose.residue(other_residue_num).atom(" NH1").xyz();
+					}
+					else	if (pose.residue_type(other_residue_num).name3() == "LYS")
+					{
+						xyz_of_other_terminal_atom =	pose.residue(other_residue_num).atom(" NZ ").xyz();
+					}
+					else	if (pose.residue_type(other_residue_num).name3() == "ASP")
+					{
+						xyz_of_other_terminal_atom =	pose.residue(other_residue_num).atom(" OD1").xyz();
+					}
+					else	//if (pose.residue_type(other_residue_num).name3() == "GLU")
+					{
+						xyz_of_other_terminal_atom =	pose.residue(other_residue_num).atom(" OE1").xyz();
+					}
+
+					Real distance = xyz_of_terminal_atom.distance(xyz_of_other_terminal_atom);
+					if (distance < distance_cutoff_for_electrostatic_interactions_)
+					{
+						if	((pose.residue_type(residue_num).name3() == "ARG") || (pose.residue_type(residue_num).name3() == "LYS"))
+						{
+							if	((pose.residue_type(other_residue_num).name3() == "ASP") || (pose.residue_type(other_residue_num).name3() == "GLU"))
+							{
+								number_of_attractions++;
+							}
+							else
+							{
+								number_of_repulsions++;
+							}
+						}
+						else // (pose.residue_type(residue_num).name3() == "ASP") || (pose.residue_type(residue_num).name3() == "GLU")
+						{
+							if	((pose.residue_type(other_residue_num).name3() == "ASP") || (pose.residue_type(other_residue_num).name3() == "GLU"))
+							{
+								number_of_repulsions++;
+							}
+							else
+							{
+								number_of_attractions++;
+							}
+						}
+
+					}
+				}
+				ElectroStatic_file	<<	"	"	<< number_of_attractions	<< "	"	<<	number_of_repulsions	<<	endl;
+			}
+		}
+		ElectroStatic_file.close();
+	}
+	/// <end> write_electrostatic_interactions_of_surface_residues_in_a_strand
+
 
 
 	// <begin> write AA_dis to a file

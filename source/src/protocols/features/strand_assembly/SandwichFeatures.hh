@@ -155,6 +155,12 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
+	utility::vector1<core::Size>
+	get_distinct_sw_id_from_sw_by_components_table(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session);
+
+
 	core::Size
 	find_sheet	(
 		core::pose::Pose const & pose,
@@ -698,6 +704,11 @@ public:
 		utility::sql_database::sessionOP db_session,
 		core::Size sheet_id);
 
+	utility::vector1<Size>
+	retrieve_residue_num_of_surface_rkde(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::Size	sw_can_by_sh_id);
 
 	bool
 	check_whether_sheets_are_connected_with_near_bb_atoms(
@@ -713,7 +724,6 @@ public:
 		core::pose::Pose & dssp_pose,
 		core::Size sw_can_by_sh_id);
 
-
 	utility::vector1<core::Size>
 	get_vector_AA_distribution_w_direction (
 		StructureID struct_id,
@@ -721,7 +731,6 @@ public:
 		std::string heading_direction, // like core_heading, surface_heading
 		std::string strand_location // like edge_strand, core_strand
 		);
-
 
 	utility::vector1<core::Size>
 	get_vector_AA_distribution_wo_direction (
@@ -781,6 +790,17 @@ public:
 		core::Size residue_end,
 		core::Size	ii // residue_number
 	);
+
+	void
+	update_surface_rkde(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::Size surface_RKDE_PK_id_counter,
+		std::string tag,
+		core::Size sw_can_by_sh_id,
+		core::Size residue_number,
+		std::string	residue_type);
+
 
 
 private:
@@ -881,6 +901,9 @@ private:
 	bool
 	write_heading_directions_of_all_AA_in_a_strand_;
 
+	bool
+	write_electrostatic_interactions_of_surface_residues_in_a_strand_;
+
 	core::Size
 	max_starting_loop_size_;
 
@@ -922,6 +945,10 @@ private:
 
 	core::Real
 	allowed_deviation_for_turn_type_id_;
+
+	core::Real
+	distance_cutoff_for_electrostatic_interactions_;
+
 
 	bool
 	write_all_info_files_;
