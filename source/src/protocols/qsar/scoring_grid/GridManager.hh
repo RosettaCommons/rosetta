@@ -26,14 +26,22 @@
 #include <core/conformation/UltraLightResidue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
+// Utility headers
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/json_spirit/json_spirit_writer.h>
 #include <utility/json_spirit/json_spirit_reader.h>
 
+// C++ Headers
 #include <string>
 #include <map>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 
 namespace protocols {
@@ -101,6 +109,11 @@ public:
     bool is_in_grid(core::conformation::Residue const & residue);
 
 private:
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static GridManager * create_singleton_instance();
+
 	GridManager();
 	GridManager(GridManager const &);
 	GridManager const & operator = (GridManager const & );
@@ -110,6 +123,21 @@ private:
 	utility::json_spirit::Value serialize();
 	/// @brief deserialize the JSON object to a map.  There is no public interface for this because the grid manager takes care of it on its own
 	void deserialize(utility::json_spirit::mArray data);
+
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
 
 private:
 

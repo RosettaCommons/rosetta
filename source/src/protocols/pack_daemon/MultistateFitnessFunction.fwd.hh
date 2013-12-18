@@ -20,6 +20,12 @@
 namespace protocols {
 namespace pack_daemon {
 
+class TopEntitySet;
+
+typedef utility::pointer::owning_ptr< TopEntitySet > TopEntitySetOP;
+typedef utility::pointer::owning_ptr< TopEntitySet const > TopEntitySetCOP;
+
+
 class MultistateFitnessFunction;
 
 typedef utility::pointer::owning_ptr< MultistateFitnessFunction > MultistateFitnessFunctionOP;

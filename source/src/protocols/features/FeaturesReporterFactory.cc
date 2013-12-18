@@ -19,22 +19,24 @@
 // Package Headers
 #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>
-#include <utility/tag/Tag.hh>
 
 // Project Headers
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/vector0.hh>
-
-// Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // C++ Headers
 #include <sstream>
 
-//Auto Headers
+//Utility Headers
+#include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
+#include <utility/tag/Tag.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 
 
@@ -56,6 +58,30 @@ static basic::Tracer tr("protocols.features.FeaturesReporterFactory");
 
 FeaturesReporterFactory * FeaturesReporterFactory::instance_( 0 );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex FeaturesReporterFactory::singleton_mutex_;
+
+std::mutex & FeaturesReporterFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+FeaturesReporterFactory * FeaturesReporterFactory::get_instance()
+{
+	boost::function< FeaturesReporterFactory * () > creator = boost::bind( &FeaturesReporterFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+FeaturesReporterFactory *
+FeaturesReporterFactory::create_singleton_instance()
+{
+	return new FeaturesReporterFactory;
+}
+
 /// @details Private constructor insures correctness of singleton.
 FeaturesReporterFactory::FeaturesReporterFactory() {}
 
@@ -64,17 +90,6 @@ FeaturesReporterFactory::FeaturesReporterFactory(
 ) {}
 
 FeaturesReporterFactory::~FeaturesReporterFactory() {}
-
-
-FeaturesReporterFactory *
-FeaturesReporterFactory::get_instance()
-{
-	if ( instance_ == 0 ) {
-		instance_ = new FeaturesReporterFactory;
-	}
-	return instance_;
-}
-
 
 void
 FeaturesReporterFactory::factory_register(

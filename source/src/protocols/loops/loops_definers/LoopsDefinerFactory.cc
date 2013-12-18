@@ -23,8 +23,11 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
-// Boost Headers
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
@@ -46,6 +49,30 @@ static basic::Tracer tr("protocols.loops.loops_definers.LoopsDefinerFactory");
 
 LoopsDefinerFactory * LoopsDefinerFactory::instance_( 0 );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex LoopsDefinerFactory::singleton_mutex_;
+
+std::mutex & LoopsDefinerFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+LoopsDefinerFactory * LoopsDefinerFactory::get_instance()
+{
+	boost::function< LoopsDefinerFactory * () > creator = boost::bind( &LoopsDefinerFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+LoopsDefinerFactory *
+LoopsDefinerFactory::create_singleton_instance()
+{
+	return new LoopsDefinerFactory;
+}
+
 /// @details Private constructor insures correctness of singleton.
 LoopsDefinerFactory::LoopsDefinerFactory() {}
 
@@ -54,17 +81,6 @@ LoopsDefinerFactory::LoopsDefinerFactory(
 ) {}
 
 LoopsDefinerFactory::~LoopsDefinerFactory() {}
-
-
-LoopsDefinerFactory *
-LoopsDefinerFactory::get_instance()
-{
-	if ( instance_ == 0 ) {
-		instance_ = new LoopsDefinerFactory;
-	}
-	return instance_;
-}
-
 
 void
 LoopsDefinerFactory::factory_register(

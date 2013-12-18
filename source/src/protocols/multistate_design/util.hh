@@ -31,6 +31,13 @@ list_amino_acid_options(
 	core::pack::task::ResidueLevelTask const & rtask
 );
 
+/// @breif Creates a set of PosType entity-elements from a string of 1-letter AA codes
+protocols::genetic_algorithm::EntityElements
+entity_elements_from_1letterstring(
+	std::string const & input
+);
+
+
 }
 }
 

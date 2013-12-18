@@ -16,17 +16,20 @@
 
 #include <protocols/canonical_sampling/TemperatureController.hh>
 
-// required for passing to Mover::parse_my_tag
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
-// AUTO-REMOVED #include <protocols/filters/Filter.hh>
+// Basic headers
+#include <basic/Tracer.hh>
 
+// Utility headers
 #include <utility/exit.hh> // runtime_assert, throw utility::excn::EXCN_RosettaScriptsOption
 #include <utility/tag/Tag.hh>
-
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
-#include <basic/Tracer.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 static basic::Tracer tr("devel.replica_docking.TempInterpolatorFactory");
 
@@ -42,16 +45,28 @@ TempInterpolatorFactory::~TempInterpolatorFactory(){}
 
 TempInterpolatorFactory * TempInterpolatorFactory::instance_( 0 );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
 
+std::mutex TempInterpolatorFactory::singleton_mutex_;
 
+std::mutex & TempInterpolatorFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+TempInterpolatorFactory * TempInterpolatorFactory::get_instance()
+{
+	boost::function< TempInterpolatorFactory * () > creator = boost::bind( &TempInterpolatorFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
 
 TempInterpolatorFactory *
-TempInterpolatorFactory::get_instance() {
-	if ( ! instance_ ) {
-		TempInterpolatorFactory * instance_local = new TempInterpolatorFactory;
-		instance_ = instance_local;
-	}
-	return instance_;
+TempInterpolatorFactory::create_singleton_instance()
+{
+	return new TempInterpolatorFactory;
 }
 
 

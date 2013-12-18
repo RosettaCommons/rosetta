@@ -198,7 +198,7 @@ void initialize_group_list(
 				indices.push_back( rsd.atom_index( atom ) );
 				tr.Info << atom << " ";
 			}
-			new_grps.push_back( std::make_pair<std::string, SizeList >( it->first, indices ) );
+			new_grps.push_back( std::make_pair( it->first, indices ) );
 			//			tr.Info << "CONTROL: " << it->first << " " << new_grps.back().first << std::endl;
 			tr.Info << std::endl;
 		}

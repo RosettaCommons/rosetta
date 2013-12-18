@@ -13,12 +13,27 @@
 
 // much of this comes from http://charles.karney.info/orientation/
 
-
 // unit headers
 #include <basic/sampling/orientations/QuaternionGrid.hh>
+
+// basic headers
 #include <basic/database/open.hh>
+
+// Utility headers
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
+#include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// numeric headers
+#include <numeric/xyz.io.hh>
+#include <numeric/conversions.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+
+// C++ headers
 #include <cassert>
 #include <vector>
 #include <iostream>
@@ -26,13 +41,6 @@
 #include <cmath>
 #include <string>
 #include <limits>
-
-#include <utility/vector1.hh>
-#include <numeric/xyz.io.hh>
-#include <numeric/conversions.hh>
-
-
-// #include <numeric/HomogeneousTransform.hh>
 
 namespace basic {
 namespace sampling {
@@ -45,12 +53,27 @@ using namespace std;
 /// @brief set initial value as no instance
 QuaternionGridManager* QuaternionGridManager::instance_( 0 );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex QuaternionGridManager::singleton_mutex_;
+std::mutex & QuaternionGridManager::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
 /// @brief static function to get the instance of ( pointer to) this singleton class
-QuaternionGridManager * QuaternionGridManager::get_instance(){
-    if ( instance_ == 0 ){
-         instance_ = new QuaternionGridManager();
-    }
-    return instance_;
+QuaternionGridManager * QuaternionGridManager::get_instance()
+{
+	boost::function< QuaternionGridManager * () > creator = boost::bind( &QuaternionGridManager::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+QuaternionGridManager *
+QuaternionGridManager::create_singleton_instance()
+{
+	return new QuaternionGridManager;
 }
 
 QuaternionGridManager::QuaternionGridManager(){

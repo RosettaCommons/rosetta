@@ -346,7 +346,7 @@ private:
 
 
 	core::pack::task::PackerTaskOP                       entity_task_;
-	core::pack::task::ResfileContentsCOP                 entity_resfile_;
+	core::pack::task::ResfileContentsOP                  entity_resfile_;
 	DaemonList                                           daemons_;
 	core::Size                                           ndaemons_;
 

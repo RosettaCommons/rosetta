@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
-/// @file 
-/// @brief 
+/// @file
+/// @brief
 /// @author Jacob Bale ( balej@uw.edu )
 
 #ifndef INCLUDED_devel_matdes_SymDofMoverSampler_HH
@@ -18,11 +18,17 @@
 #include <utility/vector1.hh>
 #include <string>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace devel {
 namespace matdes {
 
-class SymDofMoverSampler 
+class SymDofMoverSampler
 {
 	typedef core::Real Real;
 	typedef core::Size Size;
@@ -47,8 +53,27 @@ private:
 	SymDofMoverSampler(SymDofMoverSampler const&);
 	void operator=(SymDofMoverSampler const&);
 
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static SymDofMoverSampler * create_singleton_instance();
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
 
 private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
+private:
+	static SymDofMoverSampler * instance_;
+
 	utility::vector1<std::string> sym_dof_names_;
 	utility::vector1<Real> angles_;
 	utility::vector1<Real> radial_disps_;

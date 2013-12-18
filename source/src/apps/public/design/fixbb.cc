@@ -54,7 +54,7 @@
 namespace basic{ namespace options{ namespace OptionKeys{
 basic::options::BooleanOptionKey const minimize_sidechains("minimize_sidechains");
 basic::options::BooleanOptionKey const min_pack("min_pack");
-basic::options::BooleanOptionKey const stochastic_pack("stochastic_pack");
+basic::options::BooleanOptionKey const off_rotamer_pack("off_rotamer_pack");
 }}}//basic::options::OptionKeys
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ main( int argc, char * argv [] )
 
 	option.add( minimize_sidechains, "Do minimization of side chains after rotamer packing").def(false);
 	option.add( min_pack, "Pack and minimize sidechains simultaneously").def(false);
-	option.add( stochastic_pack, "Pack using a continuous sidechains rotamer library").def(false);
+	option.add( off_rotamer_pack, "Pack using a continuous sidechains rotamer library").def(false);
 
 	devel::init(argc, argv);
 
@@ -124,11 +124,11 @@ main( int argc, char * argv [] )
 	    seq_mover->add_mover( new protocols::simple_moves::symmetry::SetupForSymmetryMover );
 	}
 
-	if ( option[ min_pack ] || option[ stochastic_pack ] ) {
+	if ( option[ min_pack ] || option[ off_rotamer_pack ] ) {
 		protocols::simple_moves::MinPackMoverOP minpack_mover = new protocols::simple_moves::MinPackMover;
 		minpack_mover->task_factory( main_task_factory );
 		minpack_mover->score_function( score_fxn );
-		if ( option[ stochastic_pack ] ) minpack_mover->stochastic_pack( true );
+		if ( option[ off_rotamer_pack ] ) minpack_mover->off_rotamer_pack( true );
 		seq_mover->add_mover( minpack_mover );
 	} else {
 		seq_mover->add_mover( pack_mover );

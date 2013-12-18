@@ -12,8 +12,19 @@
 #define INCLUDED_core_chemical_orbitals_OrbitalTypeMapper_hh
 
 #include <core/chemical/orbitals/OrbitalTypeMapper.fwd.hh>
+
+// Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
+
+// C++ Headers
 #include <map>
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace core {
 namespace chemical {
@@ -32,12 +43,30 @@ public:
 
 	//orbital_type_enum get_orbital_type_enum(std::string const & orbital_type_name)
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
 
 private:
 	OrbitalTypeMapper();
 	//unimplemented -- uncopyable
 	OrbitalTypeMapper(OrbitalTypeMapper const & );
 	OrbitalTypeMapper const & operator = (OrbitalTypeMapper const &);
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static OrbitalTypeMapper * create_singleton_instance();
+
 	void map_orbital_name_to_enum();
 
 private:

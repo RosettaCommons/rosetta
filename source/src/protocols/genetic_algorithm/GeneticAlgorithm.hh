@@ -24,29 +24,19 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
-
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh> // file_exists
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/pointer/access_ptr.hh>
 #include <utility/vector1.hh>
-
-// AUTO-REMOVED #include <numeric/random/random.fwd.hh>
 
 #include <boost/unordered_map.hpp>
 
 #include <algorithm> // std::copy
 
-//Auto Headers
+
 namespace protocols {
 namespace genetic_algorithm {
 
-class GeneticAlgorithm : public utility::pointer::ReferenceCount {
-
+class GeneticAlgorithmBase : public utility::pointer::ReferenceCount {
 public:
-	typedef FitnessFunction::OP FitnessFunctionOP;
 	typedef EntityRandomizer::OP EntityRandomizerOP;
 	typedef Entity::OP EntityOP;
 	typedef Entity::COP EntityCOP;
@@ -59,8 +49,8 @@ public:
 	typedef boost::unordered_map< EntityElements , EntityOP, Vec1Hash, EntityElementsEqual > TraitEntityHashMap;
 
 public:
-	GeneticAlgorithm();
-	virtual ~GeneticAlgorithm();
+	GeneticAlgorithmBase();
+	virtual ~GeneticAlgorithmBase();
 
 	virtual EntityOP add_entity( EntityElements const & traits );
 	virtual EntityOP add_entity( EntityOP entity );
@@ -73,16 +63,12 @@ public:
 	virtual void fill_with_perturbations_of_existing_entities( core::Size size = 0 );
 	virtual void fill_by_crossover( core::Size size = 0 );
 	virtual void fill_by_mutation( core::Size size = 0 );
-	virtual void evaluate_fitnesses();
 	virtual void evolve_next_generation();
 	virtual bool current_generation_complete();
 	virtual bool complete();
 	virtual core::Real best_fitness_from_current_generation() const;
 
-	virtual void set_func( FitnessFunctionOP f );
 	virtual void set_rand( EntityRandomizerOP r );
-	virtual core::Size current_generation() const { return current_generation_; }
-	virtual core::Size max_generations() const { return max_generations_; }
 	virtual void set_max_generations( core::Size s );
 	virtual void set_max_pop_size( core::Size s ) { max_population_size_ = s; }
 	virtual void set_num_to_propagate( core::Size s ) { number_to_propagate_ = s; }
@@ -118,13 +104,29 @@ public:
 	virtual void set_entity_template(EntityCOP entity);
 	virtual EntityOP new_entity();
 
+	core::Size current_generation() const { return current_generation_; }
+	core::Size max_generations() const { return max_generations_; }
+	core::Size max_population_size() const { return max_population_size_; }
+	core::Size number_to_propagate() const { return number_to_propagate_; }
+	core::Real fraction_by_recombination() const { return fraction_by_recombination_; }
+
+	pop_iter current_generation_begin();
+	pop_iter current_generation_end();
+
+	pop_const_iter current_generation_begin() const;
+	pop_const_iter current_generation_end() const;
+
+	/// @brief retreive a particular entity for the current generation
+	EntityOP curr_gen_entity( core::Size index );
+
 protected:
+
+	core::Size checkpoint_write_interval() const;
 
 private:
 	utility::vector1< utility::vector1< EntityOP > > generations_;
 	utility::vector1< EntityCOP > parent_entities_;
 	TraitEntityHashMap entity_cache_;
-	FitnessFunctionOP fitness_function_;
 	EntityRandomizerOP entity_randomizer_;
 	EntityCOP entity_template_;
 	core::Size current_generation_;
@@ -136,6 +138,20 @@ private:
 	core::Size checkpoint_write_interval_;
 	bool checkpoint_gzip_;
 	bool checkpoint_rename_;
+
+};
+
+class GeneticAlgorithm : public GeneticAlgorithmBase {
+public:
+	typedef FitnessFunction::OP FitnessFunctionOP;
+
+public:
+	GeneticAlgorithm();
+	virtual ~GeneticAlgorithm();
+
+	virtual void set_func( FitnessFunctionOP f );
+	virtual void evaluate_fitnesses();
+	FitnessFunctionOP fitness_function_;
 
 };
 

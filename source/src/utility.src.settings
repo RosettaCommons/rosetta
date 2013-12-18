@@ -43,15 +43,16 @@ sources = {
 		"izstream",
 		"ocstream",
 		"ozstream",
+		"FileContentsMap",
 	],
 	"utility/libsvm":[
 		"Svm_rosetta",
 		"Svm",
 	],
-  "utility/lua": [
-    "LuaIterator",
-    "LuaObject"
-  ],
+	"utility/lua": [
+		"LuaIterator",
+		"LuaObject"
+	],
 	"utility/json_spirit": [
 		"json_spirit_reader",
 		"json_spirit_value",
@@ -77,6 +78,9 @@ sources = {
 	],
 	"utility/tag": [
 		"Tag",
+	],
+	"utility/thread": [
+		"ReadWriteMutex",
 	],
 }
 include_path = [

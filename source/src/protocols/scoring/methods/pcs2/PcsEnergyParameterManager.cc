@@ -51,7 +51,11 @@
 #include <iostream>
 
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace protocols {
 namespace scoring {
@@ -59,6 +63,30 @@ namespace methods {
 namespace pcs2 {
 
 basic::Tracer TR_PcsEnergyParameterManager("protocols.scoring.methods.pcs.PcsEnergyParameterManager");
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex PcsEnergyParameterManager::singleton_mutex_;
+
+std::mutex & PcsEnergyParameterManager::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+PcsEnergyParameterManager * PcsEnergyParameterManager::get_instance()
+{
+	boost::function< PcsEnergyParameterManager * () > creator = boost::bind( &PcsEnergyParameterManager::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+PcsEnergyParameterManager *
+PcsEnergyParameterManager::create_singleton_instance()
+{
+	return new PcsEnergyParameterManager;
+}
 
 PcsEnergyParameterManager::PcsEnergyParameterManager(){
 
@@ -130,14 +158,6 @@ operator<<(std::ostream& out, const PcsEnergyParameterManager &me){
 
 	return(out);
 
-}
-
-PcsEnergyParameterManager *
-PcsEnergyParameterManager::get_instance(){
-	if ( instance_ == 0 ){
-		instance_ = new PcsEnergyParameterManager();
-	}
-	return instance_;
 }
 
 core::Size

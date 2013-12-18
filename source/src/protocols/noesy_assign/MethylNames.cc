@@ -24,9 +24,11 @@
 
 // Utility headers
 #include <utility/io/izstream.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
-// C++ headers
-
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 static basic::Tracer tr("protocols.noesy_assign.crosspeaks");
 
@@ -37,15 +39,32 @@ using namespace core;
 
 MethylNameLibrary* MethylNameLibrary::instance_( 0 );
 
-MethylNameLibrary::MethylNameLibrary() {
-	load_database_table();
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex MethylNameLibrary::singleton_mutex_;
+
+std::mutex & MethylNameLibrary::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+MethylNameLibrary const * MethylNameLibrary::get_instance()
+{
+	boost::function< MethylNameLibrary * () > creator = boost::bind( &MethylNameLibrary::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
 }
 
-MethylNameLibrary const* MethylNameLibrary::get_instance() {
-  if ( instance_ == 0 ) {
-    instance_ = new MethylNameLibrary();
-  }
-  return instance_;
+MethylNameLibrary *
+MethylNameLibrary::create_singleton_instance()
+{
+	return new MethylNameLibrary;
+}
+
+MethylNameLibrary::MethylNameLibrary() {
+	load_database_table();
 }
 
 MethylNames const& MethylNameLibrary::operator[]( chemical::AA aa ) const {

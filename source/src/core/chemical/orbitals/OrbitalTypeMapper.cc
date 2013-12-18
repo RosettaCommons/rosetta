@@ -12,6 +12,11 @@
 
 #include <string>
 
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace core{
 namespace chemical{
@@ -20,6 +25,31 @@ namespace orbitals{
 
 OrbitalTypeMapper * OrbitalTypeMapper::instance_(0);
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex OrbitalTypeMapper::singleton_mutex_;
+
+std::mutex & OrbitalTypeMapper::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+OrbitalTypeMapper * OrbitalTypeMapper::get_instance()
+{
+	boost::function< OrbitalTypeMapper * () > creator = boost::bind( &OrbitalTypeMapper::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+OrbitalTypeMapper *
+OrbitalTypeMapper::create_singleton_instance()
+{
+	return new OrbitalTypeMapper;
+}
+
+
 OrbitalTypeMapper::OrbitalTypeMapper()
 {
 	map_orbital_name_to_enum();
@@ -27,19 +57,6 @@ OrbitalTypeMapper::OrbitalTypeMapper()
 
 OrbitalTypeMapper::~OrbitalTypeMapper()
 { }
-
-
-
-OrbitalTypeMapper *
-OrbitalTypeMapper::get_instance()
-{
-	if(!instance_)
-	{
-		OrbitalTypeMapper * instance_local = new OrbitalTypeMapper;
-		instance_ = instance_local;
-	}
-	return instance_;
-}
 
 void OrbitalTypeMapper::map_orbital_name_to_enum()
 {

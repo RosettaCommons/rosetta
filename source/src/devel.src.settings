@@ -34,8 +34,9 @@ sources = {
 		"PairConstelFilters",
 		"Primitives",
 		"SearchOptions",
-    "NeighTeller",
-    "InterfaceFilter",
+		"NeighTeller",
+		"InterfaceFilter",
+
 	],
 	"devel/coupled_sidechains": [
 		"CoupledSidechainProtocol2",
@@ -174,6 +175,13 @@ sources = {
 		#"MatchGrafter",
 		#"MetalSiteResidue",
 		#"ZincSiteFinder",
+	],
+	"devel/mmt_msd": [
+		"MMTDriver",
+		"MMTOffRotamerPackingJob",
+		"MMTPackingJob",
+		"MMTMinPackingJob",
+		"MMTReceiver",
 	],
 	"devel/optest": [
 		"A",

@@ -34,6 +34,11 @@ mpi_rank();
 int
 mpi_nprocs();
 
+///@brief Use MPI to wait until some node sends an integer -- usually its own mpi_rank
+/// so that it can send further messages.
+int
+receive_integer_from_anyone();
+
 /// @brief Use MPI to receive a string from a particular node.
 std::string
 receive_string_from_node( int source );

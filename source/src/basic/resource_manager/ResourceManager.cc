@@ -26,6 +26,11 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 //C++ headers
 #include <sstream>
@@ -40,18 +45,31 @@ using std::setw;
 
 ResourceManager * ResourceManager::instance_( 0 );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex ResourceManager::singleton_mutex_;
+
+std::mutex & ResourceManager::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
 ResourceManager * ResourceManager::get_instance()
 {
-	if ( ! instance_ ) {
-		/// Let the ResourceManagerFactory instantiate the appropriate ResourceManager
-		instance_ = ResourceManagerFactory::get_instance()->
-			create_resource_manager_from_options_system();
-	}
+	boost::function< ResourceManager * () > creator = boost::bind( &ResourceManager::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
 }
 
-ResourceManager::ResourceManager(){}
+ResourceManager *
+ResourceManager::create_singleton_instance()
+{
+	return ResourceManagerFactory::get_instance()->create_resource_manager_from_options_system();
+}
 
+ResourceManager::ResourceManager(){}
 
 void
 ResourceManager::add_resource(

@@ -21,11 +21,40 @@
 // utility headers
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace basic {
 namespace resource_manager {
 
 ResourceManagerFactory * ResourceManagerFactory::instance_( 0 );
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex ResourceManagerFactory::singleton_mutex_;
+
+std::mutex & ResourceManagerFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+ResourceManagerFactory * ResourceManagerFactory::get_instance()
+{
+	boost::function< ResourceManagerFactory * () > creator = boost::bind( &ResourceManagerFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+ResourceManagerFactory *
+ResourceManagerFactory::create_singleton_instance()
+{
+	return new ResourceManagerFactory;
+}
 
 ResourceManagerFactory::ResourceManagerFactory() {}
 
@@ -38,14 +67,6 @@ ResourceManagerFactory::create_resource_manager_from_options_system() const
 		utility_exit_with_message( "failed to find JD2ResourceManager; must not have been properly registered" );
 	}
 	return iter->second->create_resource_manager();
-}
-
-ResourceManagerFactory *
-ResourceManagerFactory::get_instance() {
-	if ( instance_ == 0 ) {
-		instance_ = new ResourceManagerFactory;
-	}
-	return instance_;
 }
 
 void

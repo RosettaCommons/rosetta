@@ -74,8 +74,7 @@ class FFTTests : public CxxTest::TestSuite {
 		// dim==120 tests bfly2,3,4,5
 		x.dimension(120);
 		for (int i=0; i<120; ++i) {
-			x[i].real() = 2*i;
-			x[i].imag() = 2*i+1;
+			x[i] = std::complex< double >( 2*i, 2*i+1);
 		}
 		numeric::fourier::fft ( x, fx );
 		numeric::fourier::ifft( fx, y );
@@ -94,8 +93,7 @@ class FFTTests : public CxxTest::TestSuite {
 		// dim==120 tests bfly2,3,4,5
 		x.dimension(120,120);
 		for (int i=0; i<120*120; ++i) {
-			x[i].real() = 2*i;
-			x[i].imag() = 2*i+1;
+			x[i] = std::complex< double >( 2*i, 2*i+1);
 		}
 		numeric::fourier::fft2 ( x, fx );
 		numeric::fourier::ifft2( fx, y );
@@ -114,8 +112,7 @@ class FFTTests : public CxxTest::TestSuite {
 		// dim==120 tests bfly2,3,4,5
 		x.dimension(120,120,120);
 		for (int i=0; i<120*120*120; ++i) {
-			x[i].real() = 2*i;
-			x[i].imag() = 2*i+1;
+			x[i] = std::complex< double >( 2*i, 2*i+1);
 		}
 		numeric::fourier::fft3 ( x, fx );
 		numeric::fourier::ifft3( fx, y );

@@ -21,7 +21,11 @@
 #include <utility/file/file_sys_util.hh>
 
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace core {
 namespace sequence {
@@ -30,17 +34,33 @@ static basic::Tracer tr("core.sequence.SequenceFactory");
 
 SequenceFactory * SequenceFactory::instance_( 0 );
 
-/// @details Private constructor insures correctness of singleton.
-SequenceFactory::SequenceFactory() {}
+#ifdef MULTI_THREADED
+#ifdef CXX11
 
-SequenceFactory *
-SequenceFactory::get_instance()
+std::mutex SequenceFactory::singleton_mutex_;
+
+std::mutex & SequenceFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+SequenceFactory * SequenceFactory::get_instance()
 {
-	if ( instance_ == 0 ) {
-		instance_ = new SequenceFactory;
-	}
+	boost::function< SequenceFactory * () > creator = boost::bind( &SequenceFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
 }
+
+SequenceFactory *
+SequenceFactory::create_singleton_instance()
+{
+	return new SequenceFactory;
+}
+
+
+/// @details Private constructor insures correctness of singleton.
+SequenceFactory::SequenceFactory() {}
 
 void
 SequenceFactory::factory_register( SequenceCreatorCOP creator )
@@ -88,6 +108,7 @@ SequenceFactory::get_sequence( std::string const & type_name )
 	return 0;
 }
 
+/// @details DANGER DANGER DANGER: NOT THREADSAFE!
 utility::vector1< std::string >
 SequenceFactory::get_seq_names() const {
 	using std::string;
@@ -102,6 +123,7 @@ SequenceFactory::get_seq_names() const {
 	return seq_names;
 }
 
+/// @details DANGER DANGER DANGER: NOT THREADSAFE!
 void SequenceFactory::replace_creator( SequenceCreatorCOP creator )
 {
 	seq_types_[ creator->keyname() ] = creator;

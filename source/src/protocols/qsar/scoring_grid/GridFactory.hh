@@ -26,6 +26,13 @@
 // c++ headers
 #include <map>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
+
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
@@ -64,11 +71,29 @@ public:
 	///@brief create Grid given a serialized grid object
 	GridBaseOP new_grid(utility::json_spirit::mObject data ) const;
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
 private:
 	GridFactory();
 	//unimplemented -- uncopyable
 	GridFactory(GridFactory const & );
 	GridFactory const & operator = (GridFactory const &);
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static GridFactory * create_singleton_instance();
 
 private:
 	static GridFactory * instance_ ;

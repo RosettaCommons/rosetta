@@ -7,22 +7,56 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
-/// @file 
-/// @brief 
+/// @file
+/// @brief
 /// @author Neil King ( neilking@uw.edu )
 /// @author Javier Castellanos ( javiercv@uw.edu )
 
 // Unit headers
 #include <devel/matdes/SymmetrizerSampler.hh>
 
+// Basic headers
+#include <basic/Tracer.hh>
+
 // Utility headers
 #include <utility/exit.hh>
-#include <basic/Tracer.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+
 
 static basic::Tracer TR("devel.matdes.SymmetrizerSampler");
 
 namespace devel {
 namespace matdes {
+
+SymmetrizerSampler * SymmetrizerSampler::instance_( 0 );
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex SymmetrizerSampler::singleton_mutex_;
+
+std::mutex & SymmetrizerSampler::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+SymmetrizerSampler & SymmetrizerSampler::get_instance()
+{
+	boost::function< SymmetrizerSampler * () > creator = boost::bind( &SymmetrizerSampler::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return *instance_;
+}
+
+SymmetrizerSampler *
+SymmetrizerSampler::create_singleton_instance()
+{
+	return new SymmetrizerSampler;
+}
 
 SymmetrizerSampler::SymmetrizerSampler():
 	angle_min_(0),
@@ -34,15 +68,6 @@ SymmetrizerSampler::SymmetrizerSampler():
 	current_angle_(0),
 	current_radial_disp_(0)
 	{ }
-
-//static 
-SymmetrizerSampler& 
-SymmetrizerSampler::get_instance()
-{
-	static SymmetrizerSampler instance; // Guaranteed to be destroyed,Instantiated on first use.
-	return instance;
-}
-
 
 void
 SymmetrizerSampler::set_angle_range(Real angle_min, Real angle_max, Real angle_step) {
@@ -76,7 +101,7 @@ SymmetrizerSampler::step() {
 	if(new_angle < angle_max_) {
 		current_angle_ = new_angle;
   }	else {
-		current_angle_ = angle_min_;	
+		current_angle_ = angle_min_;
 		if( new_radial_disp < radial_disp_max_)
 			current_radial_disp_ = new_radial_disp;
 		else

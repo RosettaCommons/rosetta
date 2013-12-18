@@ -22,8 +22,6 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.fwd.hh>
 #include <protocols/loops/loop_mover/refine/LoopRefineInnerCycle.fwd.hh>
 
-
-
 // Project headers
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -34,6 +32,13 @@
 
 // C++ Headers
 #include <map>
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace protocols {
 namespace loops {
@@ -79,8 +84,27 @@ private: // methods
 	LoopRefineInnerCycleFactory const &
 	operator=( LoopRefineInnerCycleFactory const & ); // unimplemented
 
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static LoopRefineInnerCycleFactory * create_singleton_instance();
+
 	LoopRefineInnerCycleOP make_inner_cycle_from_string_name( std::string const & name ) const;
 	void setup_known_types();
+
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
 
 private:
 

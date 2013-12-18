@@ -80,7 +80,7 @@ MinPackMover::MinPackMover() :
 	scorefxn_(0),
 	task_(0),
 	task_factory_(0),
-	stochastic_pack_( false )
+	off_rotamer_pack_( false )
 {
 	init();
 }
@@ -90,7 +90,7 @@ MinPackMover::MinPackMover( std::string const & type_name ) :
 	scorefxn_(0),
 	task_(0),
 	task_factory_(0),
-	stochastic_pack_( false )
+	off_rotamer_pack_( false )
 {
 	init();
 }
@@ -103,7 +103,7 @@ MinPackMover::MinPackMover(
 	scorefxn_( scorefxn ),
 	task_( 0 ),
 	task_factory_(0),
-	stochastic_pack_( false )
+	off_rotamer_pack_( false )
 {
 	init();
 }
@@ -117,7 +117,7 @@ MinPackMover::MinPackMover(
 	scorefxn_( scorefxn ),
 	task_( task ),
 	task_factory_(0),
-	stochastic_pack_( false )
+	off_rotamer_pack_( false )
 {
 	init();
 }
@@ -134,7 +134,7 @@ MinPackMover::init()
 MinPackMover::MinPackMover( MinPackMover const & other ) :
 	//utility::pointer::ReferenceCount(),
 	protocols::moves::Mover( other ),
-	stochastic_pack_( other.stochastic_pack_ )
+	off_rotamer_pack_( other.off_rotamer_pack_ )
 {
 	scorefxn_ = other.score_function();
 	task_ = other.task();
@@ -159,11 +159,11 @@ MinPackMover::apply( Pose & pose )
 		runtime_assert( task_is_valid( pose ) );
 		task = task_;
 		//core::pack::min_pack( pose, *scorefxn_, task_ );
-		core::pack::stochastic_pack( pose, *scorefxn_, task_ );
+		core::pack::off_rotamer_pack( pose, *scorefxn_, task_ );
 	}
 
-	if ( stochastic_pack_ ) {
-		core::pack::stochastic_pack( pose, *scorefxn_, task );
+	if ( off_rotamer_pack_ ) {
+		core::pack::off_rotamer_pack( pose, *scorefxn_, task );
 	} else {
 		core::pack::min_pack( pose, *scorefxn_, task, cartesian_, nonideal_ );
 	}
@@ -278,8 +278,8 @@ ScoreFunctionCOP MinPackMover::score_function() const { return scorefxn_; }
 PackerTaskCOP MinPackMover::task() const { return task_; }
 TaskFactoryCOP MinPackMover::task_factory() const { return task_factory_; }
 
-void MinPackMover::stochastic_pack( bool setting ) { stochastic_pack_ = setting; }
-bool MinPackMover::stochastic_pack() const { return stochastic_pack_; }
+void MinPackMover::off_rotamer_pack( bool setting ) { off_rotamer_pack_ = setting; }
+bool MinPackMover::off_rotamer_pack() const { return off_rotamer_pack_; }
 
 } // moves
 } // protocols

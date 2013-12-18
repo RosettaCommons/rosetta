@@ -30,21 +30,28 @@
 #include <utility/vector1.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
 #include <map>
 
-
-
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace protocols {
 namespace rotamer_recovery {
 
 /// Create Rotamer_Recovery Reporters
 class RotamerRecoveryFactory {
-
+private:
 	// Private constructor to make it singleton managed
 	RotamerRecoveryFactory();
 	RotamerRecoveryFactory(const RotamerRecoveryFactory & src); // unimplemented
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static RotamerRecoveryFactory * create_singleton_instance();
 
 	RotamerRecoveryFactory const &
 	operator=( RotamerRecoveryFactory const & ); // unimplemented
@@ -68,6 +75,20 @@ public:
 		std::string const & protocol,
 		std::string const & comparer,
 		std::string const & reporter);
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
 
 private:
 

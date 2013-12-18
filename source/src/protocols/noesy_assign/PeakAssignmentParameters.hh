@@ -25,6 +25,13 @@
 #include <iosfwd>
 #include <string>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
+
 namespace protocols {
 namespace noesy_assign {
 
@@ -33,6 +40,10 @@ class PeakAssignmentParameters { //: public utility::pointer::ReferenceCount {
 private:
   static bool options_registered_;
   PeakAssignmentParameters() {}; //private constructor
+
+  /// @brief private singleton creation function to be used with
+  /// utility::thread::threadsafe_singleton
+  static PeakAssignmentParameters * create_singleton_instance();
 
 public:
   static void register_options();
@@ -46,6 +57,21 @@ private:
   void set_options_from_cmdline( core::Size cycle = 0 );
   static PeakAssignmentParameters* instance_;
   core::Size cycle_selector_;
+
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+  /// @brief This public method is meant to be used only by the
+  /// utility::thread::safely_create_singleton function and not meant
+  /// for any other purpose.  Do not use.
+  static std::mutex & singleton_mutex();
+
+private:
+  static std::mutex singleton_mutex_;
+#endif
+#endif
 
 public:
   /* maybe make all options const

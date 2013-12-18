@@ -78,6 +78,7 @@ sources = {
 		"MultistateAggregateFunction",
 		"MultistateFitnessFunction",
 		"PackDaemon",
+		"util",
 	],
 	"protocols/vip": [
 		"VIP_Mover",

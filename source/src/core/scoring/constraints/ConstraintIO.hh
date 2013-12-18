@@ -27,10 +27,12 @@
 #include <core/scoring/func/FuncFactory.fwd.hh>
 #include <utility/vector1.hh>
 
-
-//Utility Headers
-
-// C++ Headers
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace core {
 namespace scoring {
@@ -109,12 +111,30 @@ protected:
 	static void read_cst_coordinates( std::istream &data, std::string& next_section,  ConstraintSet&, pose::Pose const&  );
 	static void read_cst_angles( std::istream &data, std::string& next_section,  ConstraintSet&, pose::Pose const&  );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
 
 private:
 	ConstraintIO () {};
 	static ConstraintIO* instance_;
 	static func::FuncFactory func_factory_;
 	//static ConstraintFactory cst_factory_;
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static ConstraintIO * create_singleton_instance();
+
 };
 
 } //constraints

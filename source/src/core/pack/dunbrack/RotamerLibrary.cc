@@ -1,4 +1,3 @@
-
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
@@ -55,6 +54,7 @@
 #include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
 // ObjexxFCL headers
 // AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
@@ -347,6 +347,37 @@ SingleResidueRotamerLibrary::~SingleResidueRotamerLibrary()
 
 //// RotamerLibrary
 RotamerLibrary * RotamerLibrary::rotamer_library_( 0 );
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex RotamerLibrary::singleton_mutex_;
+
+std::mutex & RotamerLibrary::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+RotamerLibrary & RotamerLibrary::get_instance()
+{
+	boost::function< RotamerLibrary * () > creator = boost::bind( &RotamerLibrary::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, rotamer_library_ );
+	return *rotamer_library_;
+}
+
+RotamerLibrary *
+RotamerLibrary::create_singleton_instance()
+{
+	RotamerLibrary * rotamer_library = new RotamerLibrary();
+	read_dunbrack_library( *rotamer_library );
+
+	if ( basic::options::option[ basic::options::OptionKeys::corrections::score::cenrot ] ) {
+		//hack
+		rotamer_library->create_centroid_rotamer_libraries_from_ASCII();
+	}
+	return rotamer_library;
+}
 
 RotamerLibrary::RotamerLibrary():
 	reslibraries_(),
@@ -1928,24 +1959,6 @@ RotamerLibrary::read_from_binary( utility::io::izstream & in )
 		add_residue_library( which_aa, single_lib );
 	}
 }
-
-RotamerLibrary &
-RotamerLibrary::get_instance()
-{
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-	if ( rotamer_library_ == 0 ) {
-		rotamer_library_ = new RotamerLibrary();
-		read_dunbrack_library( *rotamer_library_ );
-
-		if ( option[ corrections::score::cenrot ] ) {
-				//hack
-				rotamer_library_->create_centroid_rotamer_libraries_from_ASCII();
-		}
-	}
-	return *rotamer_library_;
-}
-
 
 SingleResidueRotamerLibraryCAP
 RotamerLibrary::get_NCAARotamerLibrary( chemical::ResidueType const & rsd_type ) const

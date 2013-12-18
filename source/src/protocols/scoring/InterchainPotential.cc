@@ -24,15 +24,10 @@
 
 // Package headers
 
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-
 // Project headers
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -40,7 +35,6 @@
 
 // Utility headers
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/utility.functions.hh>
 
 // just for debugging
 //#include <ObjexxFCL/format.hh>
@@ -49,6 +43,11 @@
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 using basic::T;
 using basic::Error;
@@ -57,22 +56,35 @@ using basic::Warning;
 static basic::Tracer TC("protocols.scoring.InterchainPotential");
 
 
-
-// C++
-
 namespace protocols {
 namespace scoring {
 
 
 InterchainPotential * InterchainPotential::instance_( 0 );
 
-InterchainPotential * InterchainPotential::get_instance() {
-	if ( instance_ == 0 ) {
-		instance_ = new InterchainPotential();
-	}
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex InterchainPotential::singleton_mutex_;
+
+std::mutex & InterchainPotential::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+InterchainPotential * InterchainPotential::get_instance()
+{
+	boost::function< InterchainPotential * () > creator = boost::bind( &InterchainPotential::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
 }
 
+InterchainPotential *
+InterchainPotential::create_singleton_instance()
+{
+	return new InterchainPotential;
+}
 
 InterchainPotential::InterchainPotential():
 	core::scoring::EnvPairPotential(),

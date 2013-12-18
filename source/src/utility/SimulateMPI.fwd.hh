@@ -14,12 +14,17 @@
 #ifndef INCLUDED_utility_SimulateMPI_fwd_hh
 #define INCLUDED_utility_SimulateMPI_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
 
-namespace utility{
+namespace utility {
 
+class SimulateMPIMessage;
+
+typedef utility::pointer::owning_ptr< SimulateMPIMessage > SimulateMPIMessageOP;
+typedef utility::pointer::owning_ptr< SimulateMPIMessage const > SimulateMPIMessageCOP;
 
 class SimulateMPI;
 
-} // utility
+}
 
 #endif

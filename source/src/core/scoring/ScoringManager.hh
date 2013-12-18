@@ -84,8 +84,15 @@
 // C++ headers
 #include <map>
 
+// Utility headers
 #include <utility/vector1.hh>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace core {
 namespace scoring {
@@ -242,6 +249,20 @@ public:
 	*/
 	//XRW_E_T1
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
 private:
 
 	static ScoringManager * instance_;
@@ -249,6 +270,12 @@ private:
 	//private constructor
 	ScoringManager();
 	~ScoringManager();
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static ScoringManager * create_singleton_instance();
+
+private:
 
 	// WARNING -- if you add something here don't forget to initialize to 0 in the constructor
 	mutable PairEPotentialOP pairE_potential_;

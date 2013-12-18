@@ -18,16 +18,10 @@
 #include <devel/replica_docking/TempInterpolatorFactory.fwd.hh>
 #include <devel/replica_docking/TempInterpolator.fwd.hh>
 
-// #include <protocols/moves/MoverCreator.hh>
-// #include <protocols/moves/Mover.fwd.hh>
-// #include <basic/datacache/DataMap.fwd.hh>
-// #include <protocols/filters/Filter.fwd.hh> // Filters_map (typedef)
-
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers
-// #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 
@@ -36,6 +30,12 @@
 #include <set>
 #include <utility/vector1.hh>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace devel {
 namespace replica_docking {
@@ -57,7 +57,26 @@ public:
 
 	TempInterpolatorBaseOP new_tempInterpolator( utility::tag::TagCOP const tag, core::Size n_level );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
 private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
+private:
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static TempInterpolatorFactory * create_singleton_instance();
+
 	TempInterpolatorFactory();
 
 	// Unimplemented -- uncopyable

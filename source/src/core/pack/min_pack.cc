@@ -12,6 +12,7 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 // Unit Headers
+#include <core/pack/min_pack.hh>
 
 // Package Headers
 #include <core/pack/rtmin.hh>
@@ -65,6 +66,8 @@
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <utility/vector1.hh>
 
+// APL TEEEEMMMPPP
+// #include <ctime>
 
 namespace core {
 namespace pack {
@@ -252,7 +255,7 @@ initialize_temperatures(
 }
 
 utility::vector1< Real >
-initialize_temperatures_stochastic_pack(
+initialize_temperatures_off_rotamer_pack(
 )
 {
 	using namespace basic::options;
@@ -264,7 +267,7 @@ initialize_temperatures_stochastic_pack(
 
 	/// "kTsched5" in APL's tuning of the min packer
 	utility::vector1< Real > temps; temps.reserve( 15 );
-	
+
 	temps.push_back( 20   );
 	temps.push_back( 10   );
 	temps.push_back( 3    );
@@ -758,8 +761,6 @@ min_pack(
 {
 	using namespace interaction_graph;
 	using namespace rotamer_set;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys::packing;
 	task::PackerTaskOP task = input_task->clone();
 
 	Real start_score( sfxn( pose ) );
@@ -774,24 +775,64 @@ min_pack(
 	///          8. if the new rotamer passes the metropolis criterion, save a momento of the network state
 	/// 9. construct the pose from the momentos of the lowest scoring network state
 
+	rotamer_set::RotamerSetsOP rotsets;
+	scmin::SCMinMinimizerMapOP scminmap;
+	scoring::MinimizationGraphOP mingraph;
+	scmin::AtomTreeCollectionOP atc;
+	optimization::MinimizerOptionsOP min_options;
+
+	min_pack_setup(
+		pose, sfxn, task, cartesian, nonideal,
+		rotsets, scminmap, mingraph,
+		atc, min_options );
+
+	scmin::SidechainStateAssignment best_state( rotsets->nmoltenres() );
+
+	min_pack_optimize(
+		pose,	sfxn,	task, rotsets, scminmap,
+		mingraph, atc, *min_options, best_state );
+
+
+	min_pack_place_opt_rotamers_on_pose( pose, sfxn, rotsets, atc, best_state, start_score );
+}
+
+void
+min_pack_setup(
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunction const & sfxn,
+	task::PackerTaskOP task,
+	bool cartesian,
+	bool nonideal,
+	rotamer_set::RotamerSetsOP & rotsets,
+	scmin::SCMinMinimizerMapOP & scminmap,
+	scoring::MinimizationGraphOP & mingraph,
+	scmin::AtomTreeCollectionOP & atc,
+	optimization::MinimizerOptionsOP & min_options
+)
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::packing;
+
+	//time_t starttime = time( NULL );
+
 	/// 1.
 	pack_scorefxn_pose_handshake( pose, sfxn);
 	pose.update_residue_neighbors();
 	sfxn.setup_for_packing( pose, task->repacking_residues(), task->designing_residues() );
 	if ( option[ minpack_disable_bumpcheck ] ) task->set_bump_check( false );
 	graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, task );
-	rotamer_set::RotamerSetsOP rotsets( new rotamer_set::RotamerSets() );
+	rotsets = new rotamer_set::RotamerSets();
 	rotsets->set_task( task );
 	rotsets->build_rotamers( pose, sfxn, packer_neighbor_graph );
 	rotsets->prepare_sets_for_packing( pose, sfxn );
 
 	/// 2.
-	scmin::SCMinMinimizerMapOP scminmap = create_scmin_minimizer_map( pose, task, cartesian );
+	scminmap = create_scmin_minimizer_map( pose, task, cartesian );
 	scminmap->set_nonideal(nonideal);
-	scoring::MinimizationGraphOP mingraph = create_minimization_graph( pose, sfxn, *task, *packer_neighbor_graph, *scminmap );
+	mingraph = create_minimization_graph( pose, sfxn, *task, *packer_neighbor_graph, *scminmap );
 
 	/// 3.
-	scmin::AtomTreeCollectionOP atc = new scmin::AtomTreeCollection( pose, *rotsets );
+	atc = new scmin::AtomTreeCollection( pose, *rotsets );
 
 	// true -- nblist, false -- deriv_check, false -- deriv_verbose
 	//optimization::MinimizerOptions min_options( "dfpmin", 0.1, true, false, false );
@@ -803,10 +844,28 @@ min_pack(
 		minimizer = "lbfgs_armijo_atol";
 		//max_iter = 25;                  // PTC - this doesn't give Cartesian enough time to converge
 	}
-	optimization::MinimizerOptions min_options( minimizer, 0.1, true, false, false );
-	min_options.max_iter(max_iter);
-	min_options.silent(true);
+	min_options = new optimization::MinimizerOptions( minimizer, 0.1, true, false, false );
+	min_options->max_iter(max_iter);
+	min_options->silent(true);
 
+	//time_t stoptime = time( NULL );
+	//std::cerr << "min_pack_setup took " << stoptime - starttime << std::endl;
+}
+
+void
+min_pack_optimize(
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunction const & sfxn,
+	task::PackerTaskOP task,
+	rotamer_set::RotamerSetsOP rotsets,
+	scmin::SCMinMinimizerMapOP scminmap,
+	scoring::MinimizationGraphOP mingraph,
+	scmin::AtomTreeCollectionOP atc,
+	optimization::MinimizerOptions const & min_options,
+	scmin::SidechainStateAssignment & best_state
+)
+{
+	//time_t starttime = time( NULL );
 
 #ifdef APL_FULL_DEBUG
 	pose::Pose debug_pose( pose );
@@ -815,7 +874,7 @@ min_pack(
 
 	/// 4.
 	utility::vector1< conformation::ResidueCOP > bgres = setup_bgres_cops( pose, *task );
-	scmin::SidechainStateAssignment curr_state( rotsets->nmoltenres() ), best_state( rotsets->nmoltenres() );
+	scmin::SidechainStateAssignment curr_state( rotsets->nmoltenres() );
 	assign_random_rotamers( pose, bgres, sfxn, mingraph,
 		scminmap, min_options, curr_state, best_state, atc, rotsets
 #ifdef APL_FULL_DEBUG
@@ -964,7 +1023,21 @@ min_pack(
 		}
 		//std::cout << "Finished temperature " << ii_temperature << " with energy " << curr_state.energy() << " and best energy " << best_state.energy() << std::endl;
 	}
+	//time_t stoptime = time( NULL );
+	//std::cerr << "min_pack_optimize took " << stoptime - starttime << std::endl;
 
+}
+
+void
+min_pack_place_opt_rotamers_on_pose(
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunction const & sfxn,
+	rotamer_set::RotamerSetsOP rotsets,
+	scmin::AtomTreeCollectionOP atc,
+	scmin::SidechainStateAssignment const & best_state,
+	Real start_score
+)
+{
 	/// 8.
 	for ( Size ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
 		Size iiresid = rotsets->moltenres_2_resid( ii );
@@ -1032,7 +1105,7 @@ void compare_simple_inteaction_graph_alt_state_and_energy_graph(
 		} else {
 			Real ig_edge_energy = simple_edge->get_proposed_energy();
 			if ( std::abs( edge_energy - ig_edge_energy ) > 1e-5 ) {
-				std::cout << " twobody energy discrepancy: " << ii << " " << jj << " " << edge_energy << " " << ig_edge_energy << " " << edge_energy - ig_edge_energy << std::endl;	
+				std::cout << " twobody energy discrepancy: " << ii << " " << jj << " " << edge_energy << " " << ig_edge_energy << " " << edge_energy - ig_edge_energy << std::endl;
 			}
 		}
 	}
@@ -1061,7 +1134,7 @@ assign_random_continuous_rotamer(
 	} else {
 		/// resatc.idealize_active_restype(); -- need this if we ever allow the input sidechain!
 		if ( rotset.get_n_baserotamers_for_rotblock( ran_rotblock_for_ranrot ) != 0 ) {
-			// i.e. not gly or ala.		
+			// i.e. not gly or ala.
 			Real rand_btw_0_and_1 = RG.uniform();
 			Size const ran_baserot_ind = rotset.pick_baserotamer_from_rotblock( ran_rotblock_for_ranrot, rand_btw_0_and_1 );
 			dunbrack::DunbrackRotamerSampleData const & rotdata =
@@ -1080,8 +1153,13 @@ assign_random_continuous_rotamer(
 			utility::vector1< Real > const & ii_chi_samples = ran_restype->proton_chi_samples( ii );
 			utility::vector1< Real > const & ii_chi_extra_samples = ran_restype->proton_chi_extra_samples( ii );
 
-			// assume extra samples has its largest value in the last position
-			Real iichi_sdev = ii_chi_extra_samples[ ii_chi_extra_samples.size() ];
+			Real iichi_sdev;
+			if ( ii_chi_extra_samples.size() == 0 ) {
+				iichi_sdev = 10;
+			} else {
+				// assume extra samples has its largest value in the last position
+				iichi_sdev = ii_chi_extra_samples[ ii_chi_extra_samples.size() ];
+			}
 
 			Real rand_btw_0_and_1 = RG.uniform();
 			Size sample = static_cast< Size > ( ii_chi_samples.size() * rand_btw_0_and_1 ) + 1;
@@ -1093,68 +1171,63 @@ assign_random_continuous_rotamer(
 	}
 }
 
+
 void
-stochastic_pack(
+off_rotamer_pack_setup(
 	pose::Pose & pose,
 	scoring::ScoreFunction const & sfxn,
-	task::PackerTaskCOP task
+	task::PackerTaskCOP task,
+	rotamer_set::ContinuousRotamerSetsOP & rotsets,
+	scmin::AtomTreeCollectionOP & atc,
+	interaction_graph::SimpleInteractionGraphOP & ig
 )
 {
-	/// 1. Create the classes that will be used in the stochastic packer
-	////   (misc setup)
-	///    a. The AtomTreeCollection
-	///    b. The ContinuousRotamerSet
-	///    c. The Packer Neighbor Graph / SimpleIG
-	/// 2. Begin annealing
-	///    a. Assign random sequence structure
-	///    b. loop over temperatures
-	///    c.    loop over fixed temperature n iterations
-	///    d.        select residue to undergo substitution
-	///    e.        select residue type on that residue
-   ///    f.        select random chi for that restype
-	///    g.        set coords for that residue
-	///    h.        compute new energy -> deltaE
-	///    i.        metropolis accept/reject
-	///    j.           restore previous state, or save new state
+	// 1 (misc setup)
+	pack_scorefxn_pose_handshake( pose, sfxn);
+	sfxn.setup_for_packing( pose, task->repacking_residues(), task->designing_residues() );
 
+	// 1a
+	atc = new scmin::AtomTreeCollection( pose, *task );
+
+	// 1b
+	rotsets = new rotamer_set::ContinuousRotamerSets( pose, *task );
+
+	// 1c
+	ig = new interaction_graph::SimpleInteractionGraph;
+	ig->set_scorefunction( sfxn );
+	ig->set_pose_no_initialize( pose );
+	graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, task );
+	//for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	//	ig.get_simple_node( ii )->set_current( pose.residue( ii ).clone() );
+	//}
+	ig->copy_connectivity( *packer_neighbor_graph );
+}
+
+void
+off_rotamer_pack_optimize(
+	rotamer_set::ContinuousRotamerSets const & rotsets,
+	scmin::AtomTreeCollectionOP atc,
+	interaction_graph::SimpleInteractionGraph & ig,
+	scmin::SidechainStateAssignment & best_state
+)
+{
 #ifdef APL_FULL_DEBUG
 	pose::Pose debug_pose( pose );
 	sfxn( debug_pose );
 #endif
 
 
-	// 1 (misc setup)
-	Real start_score( sfxn( pose ) );
-	pack_scorefxn_pose_handshake( pose, sfxn);
-	sfxn.setup_for_packing( pose, task->repacking_residues(), task->designing_residues() );
-
-	// 1a
-	scmin::AtomTreeCollectionOP atc = new scmin::AtomTreeCollection( pose, *task );
-
-	// 1b
-	rotamer_set::ContinuousRotamerSets rotsets( pose, *task );
-	Size const n_sample_rots = rotsets.n_sample_rotamers();
-
-	// 1c
-	interaction_graph::SimpleInteractionGraph ig;
-	ig.set_scorefunction( sfxn );
-	ig.set_pose_no_initialize( pose );
-	graph::GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, task );
-	//for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-	//	ig.get_simple_node( ii )->set_current( pose.residue( ii ).clone() );
-	//}
-	ig.copy_connectivity( *packer_neighbor_graph );
-
 	/// 2.
-	utility::vector1< Real > temps =	initialize_temperatures_stochastic_pack();
-	scmin::SidechainStateAssignment curr_state( rotsets.nmoltenres() ), best_state( rotsets.nmoltenres() );
+	Size const n_sample_rots = rotsets.n_sample_rotamers();
+	utility::vector1< Real > temps =	initialize_temperatures_off_rotamer_pack();
+	scmin::SidechainStateAssignment curr_state( rotsets.nmoltenres() );
 
 	for ( Size ii = 1; ii <= temps.size(); ++ii ) {
 		Real ii_temperature = temps[ ii ];
 		/// 6.
 		Size naccepts( 0 );
 		Real accum_deltaE( 0 );
-		Size const jj_end = 5 * n_inner_iterations( ii_temperature, n_sample_rots );
+		Size const jj_end = n_inner_iterations( ii_temperature, n_sample_rots );
 		for ( Size jj = 1; jj <= jj_end; ++jj ) {
 
 			Size const random_sample_rot = static_cast< Size > ( n_sample_rots * RG.uniform() + 1 );
@@ -1219,7 +1292,7 @@ stochastic_pack(
 							//std::cout << "Accepted new best " << best_state.energy() << " " << totalE << " discrepancy: " << best_state.energy() - totalE << std::endl;
 						}
 					}
-				
+
 				}
 				//Real totalE = ig.total_energy(); //get_total_energy_for_state( pose, bgres, sfxn, *mingraph, *scminmap, curr_state, atc, *rotsets );
 				//if( ! curr_state.any_unassigned() && std::abs( totalE - curr_state.energy() ) > 1e-5 ) {
@@ -1238,7 +1311,16 @@ stochastic_pack(
 			<< " accept rate: " << ((double) naccepts )/ jj_end << " avg deltaE: " << accum_deltaE / ( naccepts == 0 ? 1 : naccepts ) << std::endl;
 
 	}
+}
 
+void
+off_rotamer_pack_update_pose(
+	pose::Pose & pose,
+	rotamer_set::ContinuousRotamerSets const & rotsets,
+	scmin::AtomTreeCollectionOP atc,
+	scmin::SidechainStateAssignment const & best_state
+)
+{
 	/// 8.
 	for ( Size ii = 1; ii <= rotsets.nmoltenres(); ++ii ) {
 		Size iiresid = rotsets.moltenresid_2_resid( ii );
@@ -1246,8 +1328,47 @@ stochastic_pack(
 		pose.replace_residue( iiresid, atc->moltenres_atomtree_collection( ii ).active_residue(), false );
 	}
 
+}
+
+void
+off_rotamer_pack(
+	pose::Pose & pose,
+	scoring::ScoreFunction const & sfxn,
+	task::PackerTaskCOP task
+)
+{
+	/// 1. Create the classes that will be used in the stochastic packer
+	////   (misc setup)
+	///    a. The AtomTreeCollection
+	///    b. The ContinuousRotamerSet
+	///    c. The Packer Neighbor Graph / SimpleIG
+	/// 2. Begin annealing
+	///    a. Assign random sequence structure
+	///    b. loop over temperatures
+	///    c.    loop over fixed temperature n iterations
+	///    d.        select residue to undergo substitution
+	///    e.        select residue type on that residue
+	///    f.        select random chi for that restype
+	///    g.        set coords for that residue
+	///    h.        compute new energy -> deltaE
+	///    i.        metropolis accept/reject
+	///    j.           restore previous state, or save new state
+
+	Real start_score( sfxn( pose ) );
+
+	rotamer_set::ContinuousRotamerSetsOP rotsets;
+	scmin::AtomTreeCollectionOP atc;
+	interaction_graph::SimpleInteractionGraphOP ig;
+
+	off_rotamer_pack_setup( pose, sfxn, task, rotsets, atc, ig );
+
+	scmin::SidechainStateAssignment best_state( rotsets->nmoltenres() );
+	off_rotamer_pack_optimize( *rotsets, atc, *ig, best_state );
+
+	off_rotamer_pack_update_pose( pose, *rotsets, atc, best_state );
+
 	Real final_score( sfxn( pose ) );
-	TR << "stochastic pack final score: " << final_score << " start_score: " << start_score << std::endl;
+	TR << "off-rotamer pack final score: " << final_score << " start_score: " << start_score << std::endl;
 
 }
 

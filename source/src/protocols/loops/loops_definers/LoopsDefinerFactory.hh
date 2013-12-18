@@ -25,13 +25,20 @@
 
 // Platform Headers
 #include <core/pose/Pose.fwd.hh>
+
+// Utility Headers
 #include <utility/factory/WidgetRegistrator.hh>
+#include <utility/vector1.hh>
 
 // C++ Headers
 #include <map>
 
-#include <utility/vector1.hh>
-
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace protocols {
 namespace loops {
@@ -53,6 +60,10 @@ private: // constructors
 
 	LoopsDefinerFactory const &
 	operator=( LoopsDefinerFactory const & ); // unimplemented
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static LoopsDefinerFactory * create_singleton_instance();
 
 public:
 
@@ -78,6 +89,20 @@ public:
 	LoopsDefinerOP
 	create_loops_definer(
 		std::string const & type_name);
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
 
 private:
 

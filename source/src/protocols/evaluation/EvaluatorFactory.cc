@@ -24,19 +24,18 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector0.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
+// Utility Headers
+#include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
 // C++ Headers
 #include <sstream>
 
-//Auto Headers
-#include <utility/vector1.hh>
-
-
-
-
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace evaluation {
@@ -56,6 +55,32 @@ static basic::Tracer tr("protocols.evaluator.EvaluatorFactory");
 
 EvaluatorFactory * EvaluatorFactory::instance_( 0 );
 
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex EvaluatorFactory::singleton_mutex_;
+
+std::mutex & EvaluatorFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+EvaluatorFactory * EvaluatorFactory::get_instance()
+{
+	boost::function< EvaluatorFactory * () > creator = boost::bind( &EvaluatorFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+EvaluatorFactory *
+EvaluatorFactory::create_singleton_instance()
+{
+	return new EvaluatorFactory;
+}
+
+
 /// @details Private constructor insures correctness of singleton.
 EvaluatorFactory::EvaluatorFactory() {}
 
@@ -64,17 +89,6 @@ EvaluatorFactory::EvaluatorFactory(
 ) {}
 
 EvaluatorFactory::~EvaluatorFactory() {}
-
-
-EvaluatorFactory *
-EvaluatorFactory::get_instance()
-{
-	if ( instance_ == 0 ) {
-		instance_ = new EvaluatorFactory;
-	}
-	return instance_;
-}
-
 
 void
 EvaluatorFactory::factory_register(
@@ -93,7 +107,7 @@ EvaluatorFactory::add_evaluators(
 	tr.Trace << "generate Evaluator of type " << type_name << std::endl;
 
 	bool found(false);
-	
+
 	for(EvaluatorCreatorMap::const_iterator type = types_.begin(), type_end = types_.end(); type != type_end; ++type) {
 		if(type->first == type_name){
 			type->second->add_evaluators(eval);

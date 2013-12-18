@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
-/// @file 
-/// @brief 
+/// @file
+/// @brief
 /// @author Neil King ( neilking@uw.edu )
 /// @author Javier Castellanos ( javiercv@uw.edu )
 
@@ -17,11 +17,17 @@
 
 #include <core/types.hh>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace devel {
 namespace matdes {
 
-class SymmetrizerSampler 
+class SymmetrizerSampler
 {
 	typedef core::Real Real;
 
@@ -33,14 +39,33 @@ public:
 	Real get_radial_disp() { return current_radial_disp_; }
 	void step();
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
 private:
 	// Don't implement the methods belowed, this class is a singleton.
 	SymmetrizerSampler();
 	SymmetrizerSampler(SymmetrizerSampler const&);
 	void operator=(SymmetrizerSampler const&);
 
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static SymmetrizerSampler * create_singleton_instance();
 
 private:
+	static SymmetrizerSampler * instance_;
+
 	Real angle_min_;
 	Real angle_max_;
 	Real angle_step_;

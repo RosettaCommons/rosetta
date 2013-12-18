@@ -11,23 +11,48 @@
 /// @brief  enumerate some distributions and map them to strings
 /// @author Gordon Lemmon
 
+// Unit headers
 #include <protocols/ligand_docking/DistributionMap.hh>
 
-// Unit Headers
-///////////////////////////////////////////////////////////////////////
+// Utility headers
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace protocols {
 namespace ligand_docking {
 
 DistributionMap* DistributionMap::instance_( 0 );
 
-Distribution DistributionMap::operator[](std::string distribution){
-	return distribution_map_[distribution];
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex DistributionMap::singleton_mutex_;
+
+std::mutex & DistributionMap::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+DistributionMap * DistributionMap::get_instance()
+{
+	boost::function< DistributionMap * () > creator = boost::bind( &DistributionMap::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
 }
 
-DistributionMap* DistributionMap::get_instance(){
-	if ( instance_ == 0 ) instance_ = new DistributionMap();
-	return instance_;
+DistributionMap *
+DistributionMap::create_singleton_instance()
+{
+	return new DistributionMap;
+}
+
+Distribution DistributionMap::operator[](std::string distribution){
+	return distribution_map_[distribution];
 }
 
 DistributionMap::DistributionMap(){

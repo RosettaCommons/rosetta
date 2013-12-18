@@ -20,9 +20,16 @@
 #include <mpi.h>
 #endif
 
+// Unit headers
 #include <utility/SimulateMPI.fwd.hh>
+
+// Package headers
+#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/FArray2A.hh>
+#include <utility/pointer/ReferenceCount.hh>
+
+// C++ headers
+#include <list>
 #include <string>
 
 namespace utility {
@@ -35,21 +42,83 @@ namespace utility {
 ///processor, other messages can be sent and received. See
 ///test/utility/simulate_mpi.cxxtest for examples.
 
+enum simulate_mpi_message_type {
+	smpi_char = 1,
+  smpi_integer,
+	smpi_string,
+	smpi_double,
+	smpi_integers,
+	smpi_doubles
+};
+
+class SimulateMPIMessage : public pointer::ReferenceCount {
+public:
+	SimulateMPIMessage();
+	void src( platform::Size source );
+	void dst( platform::Size destination );
+	platform::Size src() const { return src_; }
+	platform::Size dst() const { return dst_; }
+	void mark_as_processed();
+	bool processed() const;
+
+	/// @brief the SimulateMPIData class is responsible for setting the index of a message
+	void set_index( platform::Size setting );
+
+	void set_char_msg( char setting );
+	void set_integer_msg( int setting );
+	void set_string_msg( std::string const & setting );
+	void set_double_msg( double setting );
+	void set_integers_msg( utility::vector1< int > const & setting );
+	void set_doubles_msg( utility::vector1< double > const & setting );
+
+	platform::Size index() const { return index_; }
+	simulate_mpi_message_type msg_type() const { return msg_type_; }
+	char char_msg() const { return char_msg_; }
+	int  integer_msg() const { return integer_msg_; }
+	std::string const & string_msg() const { return string_msg_; }
+	double double_msg() const { return double_msg_; }
+	utility::vector1< int > const & integers_msg() const { return integers_msg_; }
+	utility::vector1< double > const & doubles_msg() const { return doubles_msg_; }
+
+private:
+	platform::Size index_;
+	platform::Size src_;
+	platform::Size dst_;
+	bool processed_;
+	simulate_mpi_message_type msg_type_;
+	char char_msg_;
+	int  integer_msg_;
+	std::string string_msg_;
+	double double_msg_;
+	utility::vector1< int > integers_msg_;
+	utility::vector1< double > doubles_msg_;
+};
 
 
-struct SimulateMPIData {
-	SimulateMPIData();
-	SimulateMPIData(SimulateMPIData const &);
+class SimulateMPIData {
+public:
+	typedef std::list< SimulateMPIMessageOP > MsgQueue;
+public:
+	SimulateMPIData( platform::Size nprocs );
 
-	int mpi_rank_;
-	int mpi_nprocs_;
+	int mpi_nprocs() const { return	mpi_nprocs_; }
 
-	ObjexxFCL::FArray2D< std::string > proc_string_buf_;
-	ObjexxFCL::FArray2D< char > proc_char_buf_;
-	ObjexxFCL::FArray2D< int > proc_integer_buf_;
-	ObjexxFCL::FArray2D< vector1< int > > proc_integers_buf_;
-	ObjexxFCL::FArray2D< double > proc_double_buf_;
-	ObjexxFCL::FArray2D< vector1< double > > proc_doubles_buf_;
+	void queue_message( SimulateMPIMessageOP msg );
+
+	SimulateMPIMessageOP pop_next_message_for_node_of_type( platform::Size dst, simulate_mpi_message_type msg_type );
+	SimulateMPIMessageOP pop_next_message_of_type( platform::Size dst, platform::Size src, simulate_mpi_message_type msg_type );
+
+private:
+	void clear_processed_msgs( MsgQueue & );
+
+private:
+
+	platform::Size mpi_nprocs_;
+	platform::Size nmessages_;
+	MsgQueue all_messages_;
+	vector0< MsgQueue > messages_for_node_;
+	vector0< MsgQueue > messages_from_node_;
+	vector0< vector0< MsgQueue > > messages_;
 
 };
 
@@ -57,8 +126,8 @@ struct SimulateMPIData {
 class SimulateMPI {
 
 private:
+	// private and unimplemented
 	SimulateMPI();
-
 	SimulateMPI( SimulateMPI const & src );
 
 public:
@@ -67,10 +136,6 @@ public:
 	bool
 	simulate_mpi();
 
-	/* static
-	SimulateMPI *
-	get_simulation(); */
-	
 	static
 	void
 	initialize_simulation( int nprocs );
@@ -84,12 +149,12 @@ public:
 	mpi_rank();
 
 	static
-	void
-	set_mpi_nprocs( int value );
+	int
+	mpi_nprocs();
 
 	static
 	int
-	mpi_nprocs();
+	receive_integer_from_anyone();
 
 	static
 	std::string
@@ -154,6 +219,7 @@ public:
 private:
 
 	static SimulateMPIData * simulation_;
+	static int rank_;
 
 };
 

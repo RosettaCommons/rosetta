@@ -29,13 +29,24 @@
 // C++ headers
 #include <string>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
+
 namespace protocols {
 namespace noesy_assign {
 
 class CovalentCompliance {
 private:
-  //Singleton Class
+  /// @breif Private constructor for singleton class
   CovalentCompliance();
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static CovalentCompliance * create_singleton_instance();
 
 public:
   static CovalentCompliance const* get_instance();
@@ -43,6 +54,20 @@ public:
   void load_dist_table( std::string const& file );
   bool is_compliant( core::id::NamedAtomID const& atom1, core::id::NamedAtomID const& atom2, core::Real cutoff = 5.0 ) const;
   core::Real distance( core::id::NamedAtomID const& atom1, core::id::NamedAtomID const& atom2 ) const;
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
 
 private:
   static CovalentCompliance* instance_;

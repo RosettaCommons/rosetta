@@ -25,13 +25,20 @@
 
 // Platform Headers
 #include <core/pose/Pose.fwd.hh>
+
+// Utility Headers
 #include <utility/factory/WidgetRegistrator.hh>
+#include <utility/vector1.hh>
 
 // C++ Headers
 #include <map>
 
-#include <utility/vector1.hh>
-
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace protocols {
 namespace loops {
@@ -45,6 +52,10 @@ class LoopMoverFactory {
 
 	LoopMoverFactory const &
 	operator=( LoopMoverFactory const & ); // unimplemented
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static LoopMoverFactory * create_singleton_instance();
 
 public:
 
@@ -85,6 +96,20 @@ private:
 	create_loop_mover(
 		std::string const & type_name
 	);
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
 
 private:
 

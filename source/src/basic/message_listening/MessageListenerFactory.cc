@@ -16,11 +16,19 @@
 #include <basic/message_listening/DbMoverMessageListener.hh>
 #include <basic/message_listening/MessageListenerFactory.hh>
 
+// Utility headers
 #include <utility/exit.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
+// Basic headers
 #include <basic/Tracer.hh>
 
+// C++ headers
 #include <map>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace basic{
 namespace message_listening{
@@ -29,13 +37,28 @@ static basic::Tracer TR("basic.message_listening.MessageListenerFactory");
 
 MessageListenerFactory* MessageListenerFactory::instance_(0);
 
-MessageListenerFactory* MessageListenerFactory::get_instance()
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex MessageListenerFactory::singleton_mutex_;
+
+std::mutex & MessageListenerFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+MessageListenerFactory * MessageListenerFactory::get_instance()
 {
-	if(instance_ == 0)
-	{
-		instance_ = new MessageListenerFactory();
-	}
+	boost::function< MessageListenerFactory * () > creator = boost::bind( &MessageListenerFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
+}
+
+MessageListenerFactory *
+MessageListenerFactory::create_singleton_instance()
+{
+	return new MessageListenerFactory;
 }
 
 MessageListenerFactory::MessageListenerFactory()

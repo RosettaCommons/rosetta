@@ -30,6 +30,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/io/FileContentsMap.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
@@ -492,11 +493,11 @@ public:
 
 	core::Size num_states() const;
 	core::Size num_npd_properties() const;
+	core::Size num_npd_properties_for_state( core::Size state_id ) const;
 
 	virtual core::Real   evaluate( StateEnergies const &, StateEnergies const & npd_properties, Entity const &  );
 	virtual StateIndices select_relevant_states( StateEnergies const & en, StateEnergies const & npd, Entity const & );
 
-	void initialize_from_input_file( DaemonSetOP daemon_set, std::istream & input );
 
 	ExpressionCOP
 	variable_expression( numeric::expression_parser::ArithmeticASTValue const & ) const;
@@ -509,14 +510,25 @@ public:
 
 	/// @brief Pair a file name with a string -- instead of opening a file
 	/// when asked to read this file, the DAF will use the contents of the file
-	/// as provided.
+	/// as provided.  Useful for testing purposes.
 	void add_file_contents( std::string const & fname, std::string const & contents );
 
 	std::string state_name( Size state_index ) const;
 
-private:
+	StructureFileNames const &
+	file_inputs_for_job( int job_index ) const;
 
+	/// @brief Initialize from an input stream without trying to communicate with
+	/// remote nodes
 	void read_all_variables_from_input_file( std::istream & input );
+
+	std::list< std::pair< Size, std::string > >::const_iterator
+	npd_variable_indices_for_state_begin( core::Size state_id ) const;
+
+	std::list< std::pair< Size, std::string > >::const_iterator
+	npd_variable_indices_for_state_end( core::Size state_id ) const;
+
+private:
 
 	void
 	initialize_scanner();
@@ -648,69 +660,6 @@ private:
 		Size line_number
 	);
 
-	void
-	initialize_pack_daemons( DaemonSetOP daemon_set );
-
-	void
-	count_file_reads(
-		std::map< std::string, Size > & total_reads,
-		std::map< std::string, Size > & reads_completed
-	) const;
-
-	void
-	increment_total_read_count_for_file(
-		std::string const & fname,
-		std::map< std::string, Size > & total_reads,
-		std::map< std::string, Size > & reads_completed
-	) const;
-
-
-	std::string
-	get_file_contents(
-		std::string const & filename,
-		std::map< std::string, Size > const & total_reads,
-		std::map< std::string, Size > & reads_completed,
-		std::map< std::string, std::string > & file_contents_map
-	) const;
-
-
-	void initialize_daemon_with_all_states(
-		DaemonSetOP daemon_set,
-		std::map< std::string, Size > const & total_reads,
-		std::map< std::string, Size > & reads_completed
-	);
-
-	void
-	distribute_jobs_to_remote_daemons(
-		DaemonSetOP daemon_set,
-		std::map< std::string, Size > const & total_reads,
-		std::map< std::string, Size > & reads_completed
-	);
-
-	StructureFileNames const &
-	file_inputs_for_job( int job_index ) const;
-
-	void
-	assign_jobs_to_local_daemon_set(
-		std::list< int > const & job_indices,
-		DaemonSetOP daemon_set,
-		std::map< std::string, Size > const & total_reads,
-		std::map< std::string, Size > & reads_completed,
-		std::map< std::string, std::string > & file_contents_map
-	) const;
-
-	void
-	assign_jobs_to_remote_daemon_sets(
-		int proc_id,
-		std::list< int > const & job_indices,
-		std::map< std::string, Size > const & total_reads,
-		std::map< std::string, Size > & reads_completed,
-		std::map< std::string, std::string > & file_contents_map
-	) const;
-
-	bool verify_remote_daemon_set_initialization_successful( int proc_id ) const;
-	void send_success_message_to_remote_daemon_set( int proc_id ) const;
-	void send_error_message_to_remote_daemon_sets() const;
 
 	void
 	assign_state_energies_to_variables_and_subexpressions(
@@ -723,6 +672,16 @@ private:
 	/// @brief used to determine the number of requested NPD properties that will be
 	/// calculated; used to size the variable_expressions_for_npd_properties_ array.
 	Size count_num_npd_properties() const;
+
+protected:
+
+	void
+	count_file_reads();
+
+	std::string
+	get_file_contents(
+		std::string const & filename
+	);
 
 private:
 
@@ -785,7 +744,41 @@ private:
 
 	IterativeVectorExpressionOP focused_iterative_vector_expression_;
 
-	std::map< std::string, std::string > file_contents_;
+	utility::io::FileContentsMapOP file_contents_;
+
+};
+
+class DynamicAggregateFunctionDriver : public DynamicAggregateFunction
+{
+public:
+	void initialize_from_input_file( DaemonSetOP daemon_set, std::istream & input );
+
+private:
+
+	/// @brief After the input stream has been read, assign the states to particular nodes and to the
+	/// the pack daemon on this node.
+	void initialize_pack_daemons( DaemonSetOP daemon_set );
+
+	void distribute_jobs_to_remote_daemons( DaemonSetOP daemon_set );
+
+	void assign_jobs_to_local_daemon_set( std::list< int > const & job_indices, DaemonSetOP daemon_set );
+
+	void
+	assign_jobs_to_remote_daemon_sets(
+		int proc_id,
+		std::list< int > const & job_indices
+	);
+
+	bool verify_remote_daemon_set_initialization_successful( int proc_id ) const;
+	void send_success_message_to_remote_daemon_set( int proc_id ) const;
+	void send_error_message_to_remote_daemon_sets() const;
+
+	void initialize_daemon_with_all_states(
+		DaemonSetOP daemon_set
+	);
+
+
+
 
 };
 

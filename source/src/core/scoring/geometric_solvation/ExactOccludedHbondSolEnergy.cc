@@ -13,27 +13,16 @@
 #include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergy.hh>
 #include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergyCreator.hh>
 
-// AUTO-REMOVED #include <core/init/init.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Atom.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/TenANeighborGraph.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 
 #include <core/scoring/hbonds/HBondDatabase.hh>
@@ -42,22 +31,14 @@
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/constants.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh> //ws
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondTypeManager.hh> //ws
 
-// AUTO-REMOVED #include <numeric/constants.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 
-//#include <core/scoring/ScoreFunction.hh>
-//#include <core/scoring/ScoreFunctionFactory.hh>
-
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 // C++ Headers
 #include <cmath>
@@ -75,6 +56,11 @@
 #include <core/id/DOF_ID_Map.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
+#include <numeric/xyz.functions.hh>
+#include <ObjexxFCL/FArray3D.hh>
+#include <basic/options/option.hh>
+
+// Utility headers
 #include <utility/Bound.hh>
 #include <utility/string_util.hh>
 #include <utility/vector0_bool.hh>
@@ -82,9 +68,11 @@
 #include <utility/keys/SmallKeyVector.hh>
 #include <utility/options/BooleanOption.hh>
 #include <utility/options/OptionCollection.hh>
-#include <numeric/xyz.functions.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <basic/options/option.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 //Vector dummy_res_energy_vector_;
 
@@ -134,17 +122,33 @@ core::Real const LK_MATCHING_WEIGHT_EXACT = { 0.387829 };
 core::Real const SKIP_HBONDER_CUT = { -0.1 };
 
 GridInfo* GridInfo::instance_( 0 );
-WaterWeightGridSet* WaterWeightGridSet::instance_( 0 );
 
-//singleton class
-GridInfo * GridInfo::get_instance()
-{
-	if ( instance_ == 0 )
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+	std::mutex GridInfo::singleton_mutex_;
+
+	std::mutex & GridInfo::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+	/// @brief static function to get the instance of ( pointer to) this singleton class
+	GridInfo * GridInfo::get_instance()
 	{
-		 instance_ = new GridInfo();
+		boost::function< GridInfo * () > creator = boost::bind( &GridInfo::create_singleton_instance );
+		utility::thread::safely_create_singleton( creator, instance_ );
+		return instance_;
 	}
-	return instance_;
+
+GridInfo *
+GridInfo::create_singleton_instance()
+{
+	return new GridInfo;
 }
+
+
+WaterWeightGridSet* WaterWeightGridSet::instance_( 0 );
 
 
 // private constructor
@@ -172,16 +176,30 @@ GridInfo::GridInfo() {
 
 }
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
 
-//singleton class
+std::mutex WaterWeightGridSet::singleton_mutex_;
+
+std::mutex & WaterWeightGridSet::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
 WaterWeightGridSet * WaterWeightGridSet::get_instance()
 {
-	if ( instance_ == 0 )
-	{
-		 instance_ = new WaterWeightGridSet();
-	}
+	boost::function< WaterWeightGridSet * () > creator = boost::bind( &WaterWeightGridSet::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
 }
+
+WaterWeightGridSet *
+WaterWeightGridSet::create_singleton_instance()
+{
+	return new WaterWeightGridSet;
+}
+
 
 // private constructor
 WaterWeightGridSet::WaterWeightGridSet() :

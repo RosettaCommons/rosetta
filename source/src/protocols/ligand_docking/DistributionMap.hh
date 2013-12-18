@@ -14,8 +14,16 @@
 #ifndef INCLUDED_protocols_ligand_docking_DistributionMap_hh
 #define INCLUDED_protocols_ligand_docking_DistributionMap_hh
 
+// C++ headers
 #include <map>
 #include <string>
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace protocols {
 namespace ligand_docking {
@@ -31,9 +39,28 @@ public:
 	Distribution operator[](std::string distribution);
 	static DistributionMap* get_instance();
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
 private:
 	DistributionMap(); // private constructor
 
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static DistributionMap * create_singleton_instance();
+
+private:
 	static DistributionMap* instance_; // pointer to the singleton class
 	std::map< std::string, Distribution > distribution_map_;
 

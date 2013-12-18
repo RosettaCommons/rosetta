@@ -18,13 +18,20 @@
 // AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 // AUTO-REMOVED #include <protocols/filters/Filter.hh>
 
+#include <basic/Tracer.hh>
+
+// Utility headers
 #include <utility/exit.hh> // runtime_assert, throw utility::excn::EXCN_RosettaScriptsOption
 #include <utility/tag/Tag.hh>
-
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
-#include <basic/Tracer.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+
 
 namespace protocols {
 namespace moves {
@@ -34,6 +41,29 @@ static basic::Tracer TR( "protocols.moves.MoverFactory" );
 
 MoverFactory * MoverFactory::instance_( 0 );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex MoverFactory::singleton_mutex_;
+
+std::mutex & MoverFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+MoverFactory * MoverFactory::get_instance()
+{
+	boost::function< MoverFactory * () > creator = boost::bind( &MoverFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+MoverFactory *
+MoverFactory::create_singleton_instance()
+{
+	return new MoverFactory;
+}
 
 MoverFactory::MoverFactory()
 {
@@ -49,15 +79,6 @@ MoverFactory::MoverFactory()
 }
 
 MoverFactory::~MoverFactory(){}
-
-MoverFactory *
-MoverFactory::get_instance() {
-	if ( ! instance_ ) {
-		MoverFactory * instance_local = new MoverFactory;
-		instance_ = instance_local;
-	}
-	return instance_;
-}
 
 ///@brief add a Mover prototype, using its default type name as the map key
 void

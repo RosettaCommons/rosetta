@@ -158,7 +158,7 @@ public:
 	n_sample_rotamers() const;
 
 	Size
-	moltenres_for_sample_rot( Size sample_rotno );
+	moltenres_for_sample_rot( Size sample_rotno ) const;
 
 	Size
 	full_sample_rot_index_2_moltenres_sample_rot_index( Size sample_rotno ) const;

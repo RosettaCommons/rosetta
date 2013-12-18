@@ -33,6 +33,12 @@
 	#include <utility/tag/Tag.hh>
 #endif
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace core {
 namespace pack {
@@ -58,9 +64,26 @@ public:
 ///@brief return new ResLvlTaskOperation by key lookup in rlto_map_ (new ResLvlTaskOperation parses Tag if provided)
 	ResLvlTaskOperationOP newRLTO( std::string const & ) const;
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
 private:
 	ResLvlTaskOperationFactory();
 	virtual ~ResLvlTaskOperationFactory();
+	// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static ResLvlTaskOperationFactory * create_singleton_instance();
 
 	static ResLvlTaskOperationFactory * instance_;
 	RLTOC_Map rltoc_map_;

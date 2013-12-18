@@ -38,10 +38,36 @@ mpi_nprocs()
 	return return_val;
 }
 
+/// @details This call will block until some node sends an integer.  Useful in
+/// server/client arrangements where node 0 waits for a node to say "I'm ready
+/// to communicate with you" before then sending several other messages.  In
+/// order for this to work, node 0 first needs to wait for a communication from
+/// anyone and then needs to know which node it is that it will receive specific
+/// communications from (so that it doesn't confuse messages that may be coming
+/// from other nodes with the messages its waiting for from the particular node).
+/// That is, node 0 must only be willing to wait for communication from anyone
+/// in one spot, and after that, must accept messages only from a single process.
+/// For this to work, the message that node 0 must accept is the mpi-rank of the
+/// process it's about to have further communications with.  The client node is
+/// effectively saying "Me me me.  Talk to me."
+int
+receive_integer_from_anyone()
+{
+	//std::cerr << "receive_integer_from_anyone " << mpi_rank() << std::endl;
+
+	int communicating_node;
+	MPI_Status status;
+	MPI_Recv( &communicating_node, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status );
+	return communicating_node;
+}
+
+
 std::string
 receive_string_from_node(
 	int source
 ) {
+	//std::cerr << "receive_string_from_node " << mpi_rank() << std::endl;
+
 	std::string return_val;
 	int len( 0 );
 	int tag( 1 );
@@ -60,6 +86,8 @@ send_string_to_node(
 	int destination,
 	std::string const & message
 ) {
+	//std::cerr << "send_string_to_node " << mpi_rank() << std::endl;
+
 	int tag( 1 );
 	int len( message.size() );
 	MPI_Send( &len, 1, MPI_INT, destination, tag, MPI_COMM_WORLD );
@@ -71,6 +99,8 @@ char
 receive_char_from_node(
 	int source
 ) {
+	//std::cerr << "receive_char_from_node " << mpi_rank() << std::endl;
+
 	char return_val = 0;
 	int tag( 1 );
 	MPI_Status stat;
@@ -83,6 +113,7 @@ send_char_to_node(
 	int destination,
 	char message
 ) {
+	//std::cerr << "send_char_to_node " << mpi_rank() << std::endl;
 	int tag( 1 );
 	MPI_Send( &message, 1, MPI_CHAR, destination, tag, MPI_COMM_WORLD );
 }
@@ -91,6 +122,8 @@ int
 receive_integer_from_node(
 	int source
 ) {
+	//std::cerr << "receive_integer_from_node " << mpi_rank() << std::endl;
+
 	int return_val(0);
 	int tag( 1 );
 	MPI_Status stat;
@@ -104,6 +137,8 @@ send_integer_to_node(
 	int destination,
 	int message
 ) {
+	//std::cerr << "send_integer_to_node " << mpi_rank() << std::endl;
+
 	int tag( 1 );
 	MPI_Send( &message, 1, MPI_INT, destination, tag, MPI_COMM_WORLD );
 }
@@ -113,6 +148,8 @@ utility::vector1< int >
 receive_integers_from_node(
 	int source
 ) {
+	//std::cerr << "receive_integers_from_node " << mpi_rank() << std::endl;
+
 	utility::vector1< int > return_val;
 	int len( 0 );
 	int tag( 1 );
@@ -134,6 +171,8 @@ send_integers_to_node(
 	int destination,
 	utility::vector1< int > const & message
 ) {
+	//std::cerr << "send_integers_to_node " << mpi_rank() << std::endl;
+
 	int tag( 1 );
 	int len( message.size() );
 	MPI_Send( &len, 1, MPI_INT, destination, tag, MPI_COMM_WORLD );
@@ -146,6 +185,8 @@ double
 receive_double_from_node(
 	int source
 ) {
+	//std::cerr << "receive_double_from_node " << mpi_rank() << std::endl;
+
 	double return_val(0);
 	int tag( 1 );
 	MPI_Status stat;
@@ -159,6 +200,8 @@ send_double_to_node(
 	int destination,
 	double message
 ) {
+	//std::cerr << "send_double_to_node " << mpi_rank() << std::endl;
+
 	int tag( 1 );
 	MPI_Send( &message, 1, MPI_DOUBLE, destination, tag, MPI_COMM_WORLD );
 }
@@ -169,6 +212,8 @@ utility::vector1< double >
 receive_doubles_from_node(
 	int source
 ) {
+	//std::cerr << "receive_doubles_from_node " << mpi_rank() << std::endl;
+
 	utility::vector1< double > return_val;
 	int len( 0 );
 	int tag( 1 );
@@ -190,6 +235,8 @@ send_doubles_to_node(
 	int destination,
 	utility::vector1< double > const & message
 ) {
+	//std::cerr << "send_doubles_to_node " << mpi_rank() << std::endl;
+
 	int tag( 1 );
 	int len( message.size() );
 	MPI_Send( &len, 1, MPI_INT, destination, tag, MPI_COMM_WORLD );
@@ -218,13 +265,25 @@ mpi_rank() {
 int
 mpi_nprocs()
 {
-	if(SimulateMPI::simulate_mpi()){
+	if (SimulateMPI::simulate_mpi()){
 		return SimulateMPI::mpi_nprocs();
 	} else {
 		int return_val( 0 );
 		return return_val;
 	}
 }
+
+int
+receive_integer_from_anyone()
+{
+	if(SimulateMPI::simulate_mpi()){
+		return SimulateMPI::receive_integer_from_anyone();
+	} else {
+		int return_val = 0;
+		return return_val;
+	}
+}
+
 
 std::string
 receive_string_from_node(

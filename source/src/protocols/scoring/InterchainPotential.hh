@@ -35,11 +35,17 @@
 #include <ObjexxFCL/FArray3D.hh>
 
 #include <protocols/scoring/InterfaceInfo.fwd.hh>
+
+// Utility headers
 #include <utility/vector1.hh>
 
 
-// C++
-
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace protocols {
 namespace scoring {
@@ -91,7 +97,26 @@ public:
 	InterfaceInfo const & interface_from_pose( core::pose::Pose const & ) const;
 	InterfaceInfo & nonconst_interface_from_pose( core::pose::Pose & ) const;
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
 private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
+private:
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static InterchainPotential * create_singleton_instance();
+
 	InterchainPotential();
 	InterchainPotential( InterchainPotential const & src );
 	InterchainPotential & operator = ( InterchainPotential const & rhs );

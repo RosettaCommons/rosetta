@@ -84,6 +84,11 @@
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace core {
 namespace scoring {
@@ -92,18 +97,29 @@ namespace scoring {
 ///////////////////////////////////////////////////////////////////////////////
 ScoringManager* ScoringManager::instance_( 0 );
 
-///////////////////////////////////////////////////////////////////////////////
-//singleton class
-/// SAFE singleton initialization; static from within a function ensures
-/// proper load-time behavior
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex ScoringManager::singleton_mutex_;
+
+std::mutex & ScoringManager::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
 ScoringManager * ScoringManager::get_instance()
 {
-	if ( instance_ == 0 ) {
-		 instance_ = new ScoringManager();
-	}
+	boost::function< ScoringManager * () > creator = boost::bind( &ScoringManager::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
 }
 
+ScoringManager *
+ScoringManager::create_singleton_instance()
+{
+	return new ScoringManager;
+}
 
 ScoringManager::~ScoringManager() {}
 

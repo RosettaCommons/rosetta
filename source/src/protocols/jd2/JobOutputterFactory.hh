@@ -29,6 +29,12 @@
 
 #include <utility/vector1.hh>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace protocols {
 namespace jd2 {
@@ -67,6 +73,20 @@ public:
 	///@brief return JobOutputter defined by output parameters (contained in option system and #defines for MPI, etc).  The difference is that if the option system, etc, says nothing about output (which as of this writing defaults to PDBJobOutputter), this function leaves the input Outputter unchanged.  This allows overriding the default outputter choice in your executable (without abusing the mutability of the options system)
 	JobOutputterOP get_new_JobOutputter( JobOutputterOP default_jobout );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
 private:
 	JobOutputterOP get_JobOutputter_from_string( std::string const & job_outputter_type );
 
@@ -75,6 +95,10 @@ private:
 	// Unimplemented -- uncopyable
 	JobOutputterFactory( JobOutputterFactory const & );
 	JobOutputterFactory const & operator = ( JobOutputterFactory const & );
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static JobOutputterFactory * create_singleton_instance();
 
 private:
 	static JobOutputterFactory * instance_;

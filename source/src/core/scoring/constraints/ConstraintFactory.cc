@@ -19,23 +19,12 @@
 #include <core/scoring/constraints/ConstraintCreator.hh>
 
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
-//#include <core/scoring/constraints/AtomPairConstraint.hh>
-//#include <core/scoring/constraints/DunbrackConstraint.hh>
-//#include <core/scoring/constraints/AmbiguousConstraint.hh>
-//#include <core/scoring/constraints/KofNConstraint.hh>
-//#include <core/scoring/constraints/AngleConstraint.hh>
-//#include <core/scoring/constraints/BigBinConstraint.hh>
-//#include <core/scoring/constraints/DihedralConstraint.hh>
-//#include <core/scoring/constraints/BindingSiteConstraint.hh>
-//#include <core/scoring/constraints/BindingSiteConstraintResidues.hh>
-//#include <core/scoring/constraints/CoordinateConstraint.hh>
-//#include <core/scoring/constraints/MultiConstraint.hh>
-//#include <core/scoring/constraints/LocalCoordinateConstraint.hh>
-//#include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
-//#include <core/scoring/constraints/AmbiguousNMRConstraint.hh>
-//#include <core/scoring/constraints/ResidueTypeConstraint.hh>
 
 namespace core {
 namespace scoring {
@@ -43,17 +32,32 @@ namespace constraints {
 
 ConstraintFactory * ConstraintFactory::instance_( 0 );
 
-/// @details Private constructor insures correctness of singleton.
-ConstraintFactory::ConstraintFactory() {}
+#ifdef MULTI_THREADED
+#ifdef CXX11
 
-ConstraintFactory *
-ConstraintFactory::get_instance()
+std::mutex ConstraintFactory::singleton_mutex_;
+
+std::mutex & ConstraintFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+ConstraintFactory * ConstraintFactory::get_instance()
 {
-	if ( instance_ == 0 ) {
-		instance_ = new ConstraintFactory;
-	}
+	boost::function< ConstraintFactory * () > creator = boost::bind( &ConstraintFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
 }
+
+ConstraintFactory *
+ConstraintFactory::create_singleton_instance()
+{
+	return new ConstraintFactory;
+}
+
+/// @details Private constructor insures correctness of singleton.
+ConstraintFactory::ConstraintFactory() {}
 
 /*
 void
@@ -117,6 +121,7 @@ ConstraintFactory::get_cst_names() const {
 	return cst_names;
 }
 
+/// @details WARNING WARNING WARNING NOT THREADSAFE!
 void ConstraintFactory::replace_creator( ConstraintCreatorCOP creator )
 {
 	cst_types_[ creator->keyname() ] = creator;

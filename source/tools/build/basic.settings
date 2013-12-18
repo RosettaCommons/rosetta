@@ -641,6 +641,20 @@ settings = {
         },
     },
 
+    "gcc, cxx11thread" : {
+        "appends" : {
+            "flags" : {
+                "cxx"        : [ "std=c++0x" ],
+            },
+            "defines"       : [ "MULTI_THREADED", "CXX11" ],
+            "libraries"     : [ "pthread" ]
+        },
+        "removes" : {
+            "flags" : {
+                "cxx"        : [ "std=c++98" ],
+            },
+        },
+    },
     "gcc, mysql" : {
         "appends" : {
             "defines"       : [ "USEMYSQL" ],

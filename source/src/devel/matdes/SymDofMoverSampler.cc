@@ -7,25 +7,40 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //
-/// @file 
-/// @brief 
+/// @file
+/// @brief
 /// @author Jacob Bale ( balej@uw.edu )
 
 // Unit headers
 #include <devel/matdes/SymDofMoverSampler.hh>
 
+// Project headers
+#include <protocols/jd2/JobDistributor.hh>
+
 // Utility headers
 #include <utility/exit.hh>
-#include <basic/Tracer.hh>
 #include <utility/vector1.hh>
-#include <protocols/jd2/JobDistributor.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// Basic headers
+#include <basic/Tracer.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+
+// ObjexxFCL headers
 #include <ObjexxFCL/format.hh>
+
+// C++ headers
 #include <string>
 
 static basic::Tracer TR("devel.matdes.SymDofMoverSampler");
 
 namespace devel {
 namespace matdes {
+
+SymDofMoverSampler * SymDofMoverSampler::instance_( 0 );
 
 SymDofMoverSampler::SymDofMoverSampler():
 	sym_dof_names_(),
@@ -41,12 +56,29 @@ SymDofMoverSampler::SymDofMoverSampler():
 	current_radial_disps_()
 	{ }
 
-//static 
-SymDofMoverSampler& 
-SymDofMoverSampler::get_instance()
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex SymDofMoverSampler::singleton_mutex_;
+
+std::mutex & SymDofMoverSampler::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+SymDofMoverSampler & SymDofMoverSampler::get_instance()
 {
-	static SymDofMoverSampler instance; // Guaranteed to be destroyed,Instantiated on first use.
-	return instance;
+	boost::function< SymDofMoverSampler * () > creator = boost::bind( &SymDofMoverSampler::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return *instance_;
+}
+
+SymDofMoverSampler *
+SymDofMoverSampler::create_singleton_instance()
+{
+	return new SymDofMoverSampler;
 }
 
 void
@@ -67,7 +99,7 @@ SymDofMoverSampler::set_radial_disps( utility::vector1<Real> radial_disps) {
 void
 SymDofMoverSampler::set_angle_ranges(utility::vector1<Real> angles_range_min, utility::vector1<Real> angles_range_max, utility::vector1<Real> angle_steps) {
 	if ( angles_range_min.size() != angles_range_max.size() || angles_range_min.size() != angle_steps.size() ) {
-		utility_exit_with_message("SymDofMoverSampler angle lists are not all the same length");		
+		utility_exit_with_message("SymDofMoverSampler angle lists are not all the same length");
 	}
 	for (Size i = 1; i <= angles_range_min.size(); i++) {
 		if( angle_steps[i] > angles_range_max[i] - angles_range_min[i]) {
@@ -84,7 +116,7 @@ SymDofMoverSampler::set_angle_ranges(utility::vector1<Real> angles_range_min, ut
 void
 SymDofMoverSampler::set_radial_disp_ranges(utility::vector1<Real> radial_disps_range_min, utility::vector1<Real> radial_disps_range_max, utility::vector1<Real> radial_disp_steps ) {
 	if ( radial_disps_range_min.size() != radial_disps_range_max.size() || radial_disps_range_min.size() != radial_disp_steps.size() ) {
-		utility_exit_with_message("SymDofMoverSampler radial disps lists are not all the same length");		
+		utility_exit_with_message("SymDofMoverSampler radial disps lists are not all the same length");
 	}
 	for (Size i = 1; i <= radial_disps_range_min.size(); i++) {
 		if( radial_disp_steps[i] > radial_disps_range_max[i] - radial_disps_range_min[i]) {
@@ -117,7 +149,7 @@ SymDofMoverSampler::step() {
 	if(new_angles[1] <= angles_range_max_[1] && !(angles_range_min_[1] == angles_range_max_[1]) ) {
 		current_angles_[1] = new_angles[1];
   }	else {
-		current_angles_[1] = angles_range_min_[1];	
+		current_angles_[1] = angles_range_min_[1];
 		if( new_radial_disps[1] <= radial_disps_range_max_[1] && !(radial_disps_range_min_[1] == radial_disps_range_max_[1]) ) {
 			current_radial_disps_[1] = new_radial_disps[1];
 		} else {

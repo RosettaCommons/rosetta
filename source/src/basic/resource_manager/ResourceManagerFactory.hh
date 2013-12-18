@@ -27,6 +27,13 @@
 #include <map>
 #include <string>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
+
 namespace basic {
 namespace resource_manager {
 
@@ -39,6 +46,10 @@ class ResourceManagerFactory {
 private:
 	ResourceManagerFactory(); // singleton, private constructor
 
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static ResourceManagerFactory * create_singleton_instance();
+
 public:
 
 	/// Should only be called by the ResourceManager in its singleton construction!
@@ -49,6 +60,20 @@ public:
 
 	void
 	factory_register( ResourceManagerCreatorOP creator );
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
 
 private:
 	static ResourceManagerFactory * instance_;

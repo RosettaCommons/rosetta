@@ -74,6 +74,9 @@ sources = {
 	"tag" : [
  		"Tag",
 	],
+	"thread" : [
+ 		"ReadWriteMutex",
+	],
 
 }
 include_path = [ "#external/cxxtest", "#" ]

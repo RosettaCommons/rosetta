@@ -87,7 +87,7 @@ public:
 	typedef std::map< std::string, TaskOperationOP > TaskLayers;
 	typedef std::pair< std::string, TaskOperationOP > TaskLayer;
 
-	// Layer Residues is a map of maps, the first key is the layer(core, boundary, intermediate) 
+	// Layer Residues is a map of maps, the first key is the layer(core, boundary, intermediate)
 	// and the second key is the secondary structure (L,E,H). The values are string of one letter
 	// code aminoacids to be used in each layer.
 	typedef std::map<  std::string, std::string > LayerDefinitions;
@@ -170,7 +170,7 @@ private:
 	/// @brief add helix capping ?
 	bool add_helix_capping_;
 
-	/// @brief use original sequence for not designed layer ? 
+	/// @brief use original sequence for not designed layer ?
 	bool use_original_;
 
 	///@brief

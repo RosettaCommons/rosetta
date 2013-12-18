@@ -18,10 +18,19 @@
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SilentStructCreator.fwd.hh>
 
+// Utility headers
 #include <utility/vector1.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
+// C++ headers
 #include <map>
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace core {
 namespace io {
@@ -33,6 +42,10 @@ private:
 
 	SilentStructFactory(SilentStructFactory const &); // unimplemented
 	SilentStructFactory const & operator=( SilentStructFactory const & ); // unimplemented
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static SilentStructFactory * create_singleton_instance();
 public:
 	static SilentStructFactory * get_instance();
 
@@ -61,6 +74,20 @@ public:
 	SilentStructOP get_silent_struct_in();
 	SilentStructOP get_silent_struct_out();
 	SilentStructOP get_silent_struct_out( core::pose::Pose const & pose );
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
 
 private:
 

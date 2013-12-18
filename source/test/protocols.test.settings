@@ -193,6 +193,7 @@ sources = {
 	"pack_daemon" : [
 		"DynamicAggregateFunction",
 		"EntityCorrespondence",
+		"MultistateFitnessFunction",
 		"PackDaemon",
 	],
 

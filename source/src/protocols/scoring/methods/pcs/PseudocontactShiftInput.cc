@@ -40,17 +40,18 @@
 
 // Utility headers
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
-// Numeric headers
-
-// Objexx headers
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 // C++ headers
 #include <sstream>
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+
 
 namespace protocols{
 namespace scoring{
@@ -282,14 +283,6 @@ PCS_data_input_manager::PCS_data_input_manager(){
 
 }
 
-PCS_data_input_manager *
-PCS_data_input_manager::get_instance(){
-	if ( instance_ == 0 ){
-		 instance_ = new PCS_data_input_manager();
-	}
-	return instance_;
-}
-
 PCS_data_input
 PCS_data_input_manager::get_input_data(utility::vector1<std::string> const & filenames, utility::vector1<core::Real> const & weight){
 	std::string id;
@@ -317,6 +310,30 @@ PCS_data_input_manager::get_input_data(utility::vector1<std::string> const & fil
 }
 
 PCS_data_input_manager * PCS_data_input_manager::instance_( 0 );
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex PCS_data_input_manager::singleton_mutex_;
+
+std::mutex & PCS_data_input_manager::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+PCS_data_input_manager * PCS_data_input_manager::get_instance()
+{
+	boost::function< PCS_data_input_manager * () > creator = boost::bind( &PCS_data_input_manager::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+PCS_data_input_manager *
+PCS_data_input_manager::create_singleton_instance()
+{
+	return new PCS_data_input_manager;
+}
 
 }//namespace pcs
 }//namespace methods

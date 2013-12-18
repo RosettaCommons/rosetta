@@ -51,10 +51,17 @@
 //#include <core/chemical/CSDAtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+// Utility thread headers
+#include <utility/thread/ReadWriteMutex.hh>
+#endif
+#endif
+
 // C++
 #include <map>
-
-// Commented by inclean daemon #include <string>
 
 namespace core {
 namespace chemical {
@@ -65,9 +72,6 @@ namespace chemical {
 ///input and initialized once. They can be later retrieved by querying this class.
 class ChemicalManager
 {
-public:
-
-
 public:
 	static ChemicalManager * get_instance();
 
@@ -102,8 +106,6 @@ public:
 	ResidueTypeSet &
 	nonconst_residue_type_set( std::string const & tag );
 
-
-
 private:
 	typedef std::map< std::string, AtomTypeSetOP > AtomTypeSets;
 	typedef std::map< std::string, ElementSetOP > ElementSets;
@@ -113,9 +115,64 @@ private:
 //	typedef std::map< std::string, CSDAtomTypeSetOP > CSDAtomTypeSets;
 	typedef std::map< std::string, ResidueTypeSetOP > ResidueTypeSets;
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
 private:
+	static std::mutex singleton_mutex_;
+
+	utility::thread::ReadWriteMutex elem_mutex_;
+	utility::thread::ReadWriteMutex atomtype_mutex_;
+	utility::thread::ReadWriteMutex orbtype_mutex_;
+	utility::thread::ReadWriteMutex mmatomtype_mutex_;
+	utility::thread::ReadWriteMutex restype_mutex_;
+	utility::thread::ReadWriteMutex idealbondlength_mutex_;
+
+#endif
+#endif
+
+private:
+
 	/// @brief private constructor
 	ChemicalManager();
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static ChemicalManager * create_singleton_instance();
+
+	/// @brief Go and create an atom type set.  Should be called only after it's been
+	/// determined safe (and neccessary) to construct it.
+	AtomTypeSetOP create_atom_type_set( std::string const & tag ) const;
+
+	/// @brief Go and create an element type set.  Should be called only after it's been
+	/// determined safe (and neccessary) to construct it.
+	ElementSetOP create_element_set( std::string const & tag ) const;
+
+	/// @brief Go and create an orbital type set.  Should be called only after it's been
+	/// determined safe (and neccessary) to construct it.
+	orbitals::OrbitalTypeSetOP create_orbital_type_set( std::string const & tag ) const;
+
+	/// @brief Go and create an mm atom type set.  Should be called only after it's been
+	/// determined safe (and neccessary) to construct it.
+	MMAtomTypeSetOP create_mm_atom_type_set( std::string const & tag ) const;
+
+	/// @brief Go and create a residue type set.  Should be called only after it's been
+	/// determined safe (and neccessary) to construct it.
+	ResidueTypeSetOP create_residue_type_set( std::string const & tag ) const;
+
+	/// @brief Go and create an ideal bond length set.  Should be called only after it's been
+	/// determined safe (and neccessary) to construct it.
+	IdealBondLengthSetOP
+	create_ideal_bond_length_set( std::string const & tag ) const;
+
+private: // data
+
 	/// @brief static data member holding pointer to the singleton class itself
 	static ChemicalManager * instance_;
 
@@ -127,11 +184,13 @@ private:
 	OrbitalTypeSets orbital_type_sets_;
 	/// @brief lookup map for querying mm_atom_type_set by name tag
 	MMAtomTypeSets mm_atom_type_sets_;
-	/// @brief lookup map for querying csd_atom_type_set by name tag
-//	CSDAtomTypeSets csd_atom_type_sets_;
+	///// @brief lookup map for querying csd_atom_type_set by name tag
+  ////CSDAtomTypeSets csd_atom_type_sets_;
+
 	/// @brief lookup map for querying residue_type_set by name tag
 	ResidueTypeSets residue_type_sets_;
 
+	/// @brief lookup map for the set of ideal bond lengths
 	IdealBondLengthSets ideal_bond_length_sets_;
 };
 

@@ -16,7 +16,7 @@
 
 #include <utility/mpi_util.hh>
 #include <utility/SimulateMPI.hh>
-
+#include <utility/excn/Exceptions.hh>
 
 class SimulateMPITests : public CxxTest::TestSuite {
 
@@ -46,7 +46,12 @@ public:
 		SimulateMPI::set_mpi_rank(0);
 		std::string message(receive_string_from_node(2));
 		TS_ASSERT(message == orig_message);
-		TS_ASSERT(receive_string_from_node(2) == "");
+		try {
+			std::string m2 = receive_string_from_node(2);
+			TS_ASSERT( false );
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			TS_ASSERT_EQUALS( e.msg(), "Could not retrieve a smpi_string message to 0 from 2; message queue is empty" );
+		}
 	}
 
 	void test_char() {
@@ -60,7 +65,12 @@ public:
 		SimulateMPI::set_mpi_rank(0);
 		char message(receive_char_from_node(2));
 		TS_ASSERT(message == orig_message);
-		TS_ASSERT(receive_char_from_node(2) == 0);
+		try {
+			char m2 = receive_char_from_node(2);
+			TS_ASSERT( false );
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			TS_ASSERT_EQUALS( e.msg(), "Could not retrieve a smpi_char message to 0 from 2; message queue is empty" );
+		}
 	}
 
 	void test_integer() {
@@ -74,7 +84,13 @@ public:
 		SimulateMPI::set_mpi_rank(0);
 		int message(receive_integer_from_node(2));
 		TS_ASSERT(message == orig_message);
-		TS_ASSERT(receive_integer_from_node(2) == 0);
+
+		try {
+			int m2 = receive_integer_from_node(2);
+			TS_ASSERT( false );
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			TS_ASSERT_EQUALS( e.msg(), "Could not retrieve a smpi_integer message to 0 from 2; message queue is empty" );
+		}
 	}
 
 	void test_integers() {
@@ -89,7 +105,13 @@ public:
 		SimulateMPI::set_mpi_rank(0);
 		vector1< int > message(receive_integers_from_node(2));
 		TS_ASSERT(message[1] == orig_message[1]);
-		TS_ASSERT(receive_integers_from_node(2) == vector1<int>());
+
+		try {
+			vector1< int > m2 = receive_integers_from_node(2);
+			TS_ASSERT( false );
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			TS_ASSERT_EQUALS( e.msg(), "Could not retrieve a smpi_integers message to 0 from 2; message queue is empty" );
+		}
 	}
 
 
@@ -104,7 +126,13 @@ public:
 		SimulateMPI::set_mpi_rank(0);
 		double message(receive_double_from_node(2));
 		TS_ASSERT(message == orig_message);
-		TS_ASSERT(receive_double_from_node(2) == 0);
+		try {
+			double m2 = receive_double_from_node(2);
+			TS_ASSERT( false );
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			TS_ASSERT_EQUALS( e.msg(), "Could not retrieve a smpi_double message to 0 from 2; message queue is empty" );
+		}
+
 	}
 
 	void test_doubles() {
@@ -119,7 +147,12 @@ public:
 		SimulateMPI::set_mpi_rank(0);
 		vector1< double > message(receive_doubles_from_node(2));
 		TS_ASSERT(message[1] == orig_message[1]);
-		TS_ASSERT(receive_doubles_from_node(2) == vector1<double>());
+		try {
+			vector1< double > m2 = receive_doubles_from_node(2);
+			TS_ASSERT( false );
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			TS_ASSERT_EQUALS( e.msg(), "Could not retrieve a smpi_doubles message to 0 from 2; message queue is empty" );
+		}
 	}
 
 

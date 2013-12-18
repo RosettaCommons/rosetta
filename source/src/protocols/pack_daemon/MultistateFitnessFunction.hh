@@ -39,6 +39,50 @@
 namespace protocols {
 namespace pack_daemon {
 
+
+class TopEntitySet : public utility::pointer::ReferenceCount
+{
+public:
+	typedef protocols::genetic_algorithm::Entity          Entity;
+	typedef protocols::genetic_algorithm::EntityOP        EntityOP;
+	typedef utility::vector1< core::Real >                StateEnergies;
+	typedef std::pair< StateEnergies, StateEnergies >     StateEnergiesAndNPDs;
+	typedef std::pair< EntityOP, StateEnergiesAndNPDs >   EntityAndScore;
+	typedef utility::vector1< EntityAndScore >            EntityHistory;
+public:
+	TopEntitySet();
+
+	core::Size size() const;
+	EntityAndScore const & operator[] ( core::Size index ) const;
+	EntityAndScore & operator[] ( core::Size index );
+
+	void desired_entity_history_size( core::Size setting );
+	core::Size desired_entity_history_size() const;
+	void clear();
+
+	/// @brief Update the internal history after receiving a new entity;
+	/// returns the list of entities that are to be discarded.  The boolean
+	/// added_new_entity is set to true if the given entity was added to the
+	/// the list of top entities.
+	std::list< genetic_algorithm::EntityOP >
+	update_entity_history(
+		Entity const & ent,
+		StateEnergiesAndNPDs const & seanpds,
+		bool & added_new_entity
+	);
+
+	core::Size
+	index_of_entity( Entity const & ent ) const;
+
+	/// @breif remove the worst entity from the set and return it
+	EntityAndScore pop();
+
+private:
+	Size          desired_entity_history_size_;
+	Size          n_tied_for_worst_;
+	EntityHistory top_entities_;
+};
+
 class MultistateFitnessFunction : public protocols::genetic_algorithm::FitnessFunction
 {
 public:
@@ -47,12 +91,13 @@ public:
 	typedef protocols::genetic_algorithm::EntityOP        EntityOP;
 	typedef utility::vector1< core::Real >                StateEnergies;
 	typedef std::pair< StateEnergies, StateEnergies >     StateEnergiesAndNPDs;
-	typedef std::pair< EntityOP, StateEnergiesAndNPDs >   EntityAndScore;
-	typedef utility::vector1< EntityAndScore >            EntityHistory;
 	typedef core::pose::PoseOP                            PoseOP;
 	typedef core::pose::Pose                              Pose;
 	typedef core::Real                                    Real;
 	typedef core::Size                                    Size;
+
+	typedef std::pair< EntityOP, StateEnergiesAndNPDs >   EntityAndScore;
+	typedef utility::vector1< EntityAndScore >            EntityHistory;
 
 public:
 	MultistateFitnessFunction();
@@ -108,9 +153,7 @@ private:
 	StateEnergies npd_properties_;
 	MultistateAggregateFunctionOP aggregate_;
 
-	Size desired_entity_history_size_;
-	Size n_tied_for_worst_;
-	EntityHistory   top_entities_; // use STL heap operations
+	TopEntitySet  top_entities_;
 
 };
 

@@ -33,13 +33,20 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
+#include <utility/thread/ReadWriteMutex.hh>
 
 //C++ Headers
 #include <vector>
 
+// ObjexxFCL Headers
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
-
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace core {
 namespace pack {
@@ -302,10 +309,29 @@ public:
 	/// @brief return a pointer to the SASA radii used by NACCESS, with polar atom radii expanded
 	utility::vector1< Real >* get_NACCESS_SASA_radii_with_expanded_polars( Real polar_expansion_radius = 1.0 );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
 private:
 	/// @brief private constructor
 	RotamerDotsRadiusData();
 
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static RotamerDotsRadiusData * create_singleton_instance();
+
+private:
 	/// @brief static data member holding pointer to the singleton class itself
 	static RotamerDotsRadiusData * instance_;
 

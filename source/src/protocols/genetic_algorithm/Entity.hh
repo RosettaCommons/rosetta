@@ -38,6 +38,13 @@
 // AUTO-REMOVED #include <iostream>
 #include <map>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
+
 namespace protocols {
 namespace genetic_algorithm {
 
@@ -95,8 +102,26 @@ public:
 
 	//void register_creator( EntityElementCreatorOP creator );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
 private:
 	EntityElementFactory();
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static EntityElementFactory * create_singleton_instance();
+private:
 	static EntityElementFactory * instance_;
 
 };
@@ -144,6 +169,8 @@ public:
 	virtual bool operator == ( Entity const & other ) const;
 	virtual bool operator < ( Entity const & other ) const;
 	virtual void show( std::ostream & os ) const;
+	virtual std::string to_string() const;
+	virtual std::string traits_string() const;
 
 	virtual void write_checkpoint( std::ostream & os ) const;
 	virtual bool read_checkpoint( std::istream & is );

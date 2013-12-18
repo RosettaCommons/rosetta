@@ -44,6 +44,13 @@
 #include <map>
 #include <string>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
+
 namespace basic {
 namespace resource_manager {
 
@@ -76,6 +83,12 @@ public:
 protected:
 	/// @brief singleton, private constructor
 	ResourceManager();
+
+private:
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	/// Not clear that this is appropriate for the ResourceManager.
+	static ResourceManager * create_singleton_instance();
 
 protected: // Derived class interface
 
@@ -305,6 +318,19 @@ public: // Options interface
 	has_option(
 		utility::options::StringVectorOptionKey key ) const = 0;
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
 
 private:
 	static ResourceManager * instance_;

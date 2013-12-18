@@ -129,11 +129,14 @@ options = {
         # Build boost MPI and serialization dependent code (requires these libraries to be installed in /usr/local/lib)
         "boost_mpi",
 
-				# Build using link-time optimization. Include whole program optimization as well
-				"lto",
+       	# Build using link-time optimization. Include whole program optimization as well
+        "lto",
 
 	# Build with Boost thread library
 	"boost_thread",
+
+        # Build with the C++11 thread utilities enabled
+        "cxx11thread",
 
 	# Enable APBS integration
 	"apbs",

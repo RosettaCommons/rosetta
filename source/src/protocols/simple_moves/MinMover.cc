@@ -438,10 +438,7 @@ MinMover::parse_dof_task_type(
 			utility_exit_with_message("TaskOperation " + t_o_key + " not found in basic::datacache::DataMap.");
 		}
 	}
-	dof_tasks_[
-		std::make_pair<core::id::DOF_Type, core::id::TorsionType>(
-			dof_type, torsion_type)] =
-		task_factory;
+	dof_tasks_[	std::make_pair(dof_type, torsion_type)] =	task_factory;
 }
 
 void

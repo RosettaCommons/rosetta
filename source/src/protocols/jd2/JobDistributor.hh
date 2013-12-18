@@ -39,6 +39,13 @@
 	#include <protocols/jd2/Job.hh>
 #endif
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
+
 namespace protocols {
 namespace jd2 {
 
@@ -222,6 +229,10 @@ protected:
 
 private:
 
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static JobDistributor * create_singleton_instance();
+
 	JobInputterOP job_inputter_;
 	JobOutputterOP job_outputter_;
 	ParserOP parser_;
@@ -236,12 +247,7 @@ private:
 	/// @brief access into jobs_ bector indicating the previous job.  Used with the -jd2:delete_old_poses option for deleting unnecessary poses
 	core::Size last_completed_job_;
 
-	//this is if NOT defined - keep this static pointer for singleton management only in non-multithreaded case
-#ifndef MULTITHREADED
 	static JobDistributor * instance_;
-#endif
-	// necessary for destroying instance_ when JobDistributorDestroyer is finished.
-	//static JobDistributorDestroyer destroyer_;
 
 	///BATCH interface:
 	/// @details the BATCH interface of the JobDistributor is used to allow consecutive execution of a set of jobs with different flags
@@ -303,6 +309,19 @@ protected:
 	/// @brief Default callback function for signal handling
 	static void jd2_signal_handler(int Signal);
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
 
 private:
 

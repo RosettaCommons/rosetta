@@ -45,9 +45,8 @@ namespace genetic_algorithm {
 
 static basic::Tracer TR("protocols.genetic_algorithm");
 
-GeneticAlgorithm::GeneticAlgorithm() :
+GeneticAlgorithmBase::GeneticAlgorithmBase() :
 	utility::pointer::ReferenceCount(),
-	fitness_function_(0),
 	entity_randomizer_(0),
 	entity_template_(0),
 	current_generation_(1),
@@ -61,14 +60,14 @@ GeneticAlgorithm::GeneticAlgorithm() :
 	checkpoint_rename_(false)
 {}
 
-GeneticAlgorithm::~GeneticAlgorithm()
+GeneticAlgorithmBase::~GeneticAlgorithmBase()
 {
 	// ensure that checkpoint files are not accidentally reused
 	if (checkpoint_rename_) rename_checkpoint_files();
 }
 
 Entity::OP
-GeneticAlgorithm::add_entity( EntityElements const & traits )
+GeneticAlgorithmBase::add_entity( EntityElements const & traits )
 {
 	EntityOP entity;
 	TraitEntityHashMap::iterator hash_it( entity_cache_.find( traits ) );
@@ -91,7 +90,7 @@ GeneticAlgorithm::add_entity( EntityElements const & traits )
 }
 
 Entity::OP
-GeneticAlgorithm::add_entity( EntityOP entity )
+GeneticAlgorithmBase::add_entity( EntityOP entity )
 {
 	runtime_assert( entity );
 	TraitEntityHashMap::iterator hash_it( entity_cache_.find( entity->traits() ) );
@@ -111,7 +110,7 @@ GeneticAlgorithm::add_entity( EntityOP entity )
 }
 
 Entity::OP
-GeneticAlgorithm::add_parent_entity( EntityElements const & traits )
+GeneticAlgorithmBase::add_parent_entity( EntityElements const & traits )
 {
 	EntityOP entity;
 	TraitEntityHashMap::iterator hash_it( entity_cache_.find( traits ) );
@@ -130,7 +129,7 @@ GeneticAlgorithm::add_parent_entity( EntityElements const & traits )
 }
 
 Entity::OP
-GeneticAlgorithm::add_parent_entity( EntityOP entity )
+GeneticAlgorithmBase::add_parent_entity( EntityOP entity )
 {
 	runtime_assert( entity );
 	TraitEntityHashMap::iterator hash_it( entity_cache_.find( entity->traits() ) );
@@ -144,11 +143,11 @@ GeneticAlgorithm::add_parent_entity( EntityOP entity )
 	return entity;
 }
 
-void GeneticAlgorithm::clear_parents() { parent_entities_.clear(); }
+void GeneticAlgorithmBase::clear_parents() { parent_entities_.clear(); }
 
 
 void
-GeneticAlgorithm::add_parents_from_current_generation()
+GeneticAlgorithmBase::add_parents_from_current_generation()
 {
 	runtime_assert(generations_[current_generation_].size());
 
@@ -161,7 +160,7 @@ GeneticAlgorithm::add_parents_from_current_generation()
 
 ///@brief add the best entities from the previous generation
 void
-GeneticAlgorithm::propagate_best_from_previous_generation( core::Size size /* = 1 */, bool unique /* = true */ )
+GeneticAlgorithmBase::propagate_best_from_previous_generation( core::Size size /* = 1 */, bool unique /* = true */ )
 {
 	runtime_assert(current_generation_ > 1);
 
@@ -180,7 +179,7 @@ GeneticAlgorithm::propagate_best_from_previous_generation( core::Size size /* = 
 }
 
 core::Real
-GeneticAlgorithm::best_fitness_from_current_generation() const
+GeneticAlgorithmBase::best_fitness_from_current_generation() const
 {
 	core::Real best( 0.0 ); bool first_found = false;
 	for ( Size ii = 1; ii <= generations_[ current_generation_].size(); ++ii ) {
@@ -194,9 +193,17 @@ GeneticAlgorithm::best_fitness_from_current_generation() const
 	return best;
 }
 
+void GeneticAlgorithmBase::set_rand( EntityRandomizerOP r ) { entity_randomizer_ = r; }
 
 void
-GeneticAlgorithm::fill_with_random_entities( core::Size size /* = 0 */ )
+GeneticAlgorithmBase::set_max_generations( core::Size s )
+{
+	max_generations_ = s;
+	if (generations_.size() < max_generations_) generations_.resize(max_generations_);
+}
+
+void
+GeneticAlgorithmBase::fill_with_random_entities( core::Size size /* = 0 */ )
 {
 	if ( size == 0 ) size = max_population_size_;
 	while ( generations_[current_generation_].size() < size ) {
@@ -205,7 +212,7 @@ GeneticAlgorithm::fill_with_random_entities( core::Size size /* = 0 */ )
 }
 
 void
-GeneticAlgorithm::fill_with_perturbations_of_existing_entities( core::Size size /* = 0 */ )
+GeneticAlgorithmBase::fill_with_perturbations_of_existing_entities( core::Size size /* = 0 */ )
 {
 	core::Size start_size = generations_[ current_generation_ ].size();
 	for ( core::Size ii = 1; ii <= start_size; ++ii ) {
@@ -229,7 +236,7 @@ GeneticAlgorithm::fill_with_perturbations_of_existing_entities( core::Size size 
 
 ///@brief add entities that are recombinants of fit parents
 void
-GeneticAlgorithm::fill_by_crossover( core::Size size /* = 0 */ )
+GeneticAlgorithmBase::fill_by_crossover( core::Size size /* = 0 */ )
 {
 	runtime_assert(parent_entities_.size());
 
@@ -248,7 +255,7 @@ GeneticAlgorithm::fill_by_crossover( core::Size size /* = 0 */ )
 
 ///@brief add entities that are mutants of fit parents
 void
-GeneticAlgorithm::fill_by_mutation( core::Size size /* = 0 */ )
+GeneticAlgorithmBase::fill_by_mutation( core::Size size /* = 0 */ )
 {
 	runtime_assert(parent_entities_.size());
 
@@ -261,29 +268,6 @@ GeneticAlgorithm::fill_by_mutation( core::Size size /* = 0 */ )
 	}
 }
 
-void
-GeneticAlgorithm::evaluate_fitnesses()
-{
-	write_generations_checkpoint();
-	core::Size num_uncached(0);
-	for ( pop_iter it( generations_[current_generation_].begin() ), end( generations_[current_generation_].end() );
-	      it != end; ++it ) {
-		if ( ! (*it)->fitness_valid() ) {
-			//TR << "Evaluating fitness for entity " << (*it).get() << std::endl;
-			//if ( (*it) != entity_cache_[ (*it)->traits() ] ) {
-			//	TR << "WEIRD: Evaluating fitness for entity that is not in the cache" << std::endl;
-			//}
-			// entity's fitness not valid
-			fitness_function_->evaluate( **it );
-			// allow intermediate checkpointing for very large populations
-			++num_uncached;
-			if ( checkpoint_write_interval_ && num_uncached % checkpoint_write_interval_ == 0 ) {
-				write_entities_checkpoint();
-			}
-		}
-	}
-	write_entities_checkpoint();
-}
 
 /// @brief progress to the next generation and generate new entities
 /// @details
@@ -295,7 +279,7 @@ GeneticAlgorithm::evaluate_fitnesses()
 /// 4. Generates new entities by crossover and/or mutation
 /// 5. Clears the parent entities now that they have been used
 void
-GeneticAlgorithm::evolve_next_generation()
+GeneticAlgorithmBase::evolve_next_generation()
 {
 	// if parents were not already added, use the current generation as parents
 	if (parent_entities_.size() == 0) add_parents_from_current_generation();
@@ -312,7 +296,7 @@ GeneticAlgorithm::evolve_next_generation()
 }
 
 bool
-GeneticAlgorithm::current_generation_complete()
+GeneticAlgorithmBase::current_generation_complete()
 {
 	for (core::Size i = 1; i <= generations_[current_generation_].size(); ++i) {
 		if (!generations_[current_generation_][i]->fitness_valid()) return false;
@@ -322,26 +306,17 @@ GeneticAlgorithm::current_generation_complete()
 }
 
 bool
-GeneticAlgorithm::complete()
+GeneticAlgorithmBase::complete()
 {
 	if (current_generation_ < max_generations_) return false;
 	if (current_generation_ == max_generations_ && !current_generation_complete()) return false;
 	return true;
 }
 
-void GeneticAlgorithm::set_func( FitnessFunctionOP f ) { fitness_function_ = f; }
-void GeneticAlgorithm::set_rand( EntityRandomizerOP r ) { entity_randomizer_ = r; }
-
-void
-GeneticAlgorithm::set_max_generations( core::Size s )
-{
-	max_generations_ = s;
-	if (generations_.size() < max_generations_) generations_.resize(max_generations_);
-}
 
 ///@brief returns variable number of best (const) entities via vector of pointers to them
 Entity::CAPs
-GeneticAlgorithm::best_entities( core::Size num ) // nonconst method to permit sort
+GeneticAlgorithmBase::best_entities( core::Size num ) // nonconst method to permit sort
 {
 	std::sort( generations_[current_generation_].begin(), generations_[current_generation_].end(), lt_OP_deref< Entity > );
 	EntityCAPs best_entities;
@@ -356,7 +331,7 @@ GeneticAlgorithm::best_entities( core::Size num ) // nonconst method to permit s
 
 ///@brief pick two random entities from an unordered vector, return the one whose fitness is better
 Entity const &
-GeneticAlgorithm::tournament_select(
+GeneticAlgorithmBase::tournament_select(
 	utility::vector1< EntityCOP > const & pvec
 ) const
 {
@@ -366,24 +341,24 @@ GeneticAlgorithm::tournament_select(
   return ( e1.fitness() < e2.fitness() ? e1 : e2 );
 }
 
-GeneticAlgorithm::TraitEntityHashMap &
-GeneticAlgorithm::entity_cache() { return entity_cache_; }
+GeneticAlgorithmBase::TraitEntityHashMap &
+GeneticAlgorithmBase::entity_cache() { return entity_cache_; }
 
-GeneticAlgorithm::TraitEntityHashMap const &
-GeneticAlgorithm::entity_cache() const { return entity_cache_; }
+GeneticAlgorithmBase::TraitEntityHashMap const &
+GeneticAlgorithmBase::entity_cache() const { return entity_cache_; }
 
 utility::vector1<utility::vector1< EntityOP > > const &
-GeneticAlgorithm::generations() const { return generations_; }
+GeneticAlgorithmBase::generations() const { return generations_; }
 
 ///@brief true const (read-only) access to entity population
 Entity::COPs
-GeneticAlgorithm::population( core::Size gen_num ) const
+GeneticAlgorithmBase::population( core::Size gen_num ) const
 {
 	return generations_[gen_num];
 }
 
 void
-GeneticAlgorithm::print_generation_statistics(
+GeneticAlgorithmBase::print_generation_statistics(
 	std::ostream & os,
 	core::Size gen_num
 ) const
@@ -448,7 +423,7 @@ GeneticAlgorithm::print_generation_statistics(
 }
 
 void
-GeneticAlgorithm::print_population( std::ostream & os ) const
+GeneticAlgorithmBase::print_population( std::ostream & os ) const
 {
 	for ( pop_const_iter it( generations_[current_generation_].begin() ), end( generations_[current_generation_].end() );
 				it != end; ++it ) {
@@ -459,7 +434,7 @@ GeneticAlgorithm::print_population( std::ostream & os ) const
 
 
 void
-GeneticAlgorithm::print_cache( std::ostream & os ) const
+GeneticAlgorithmBase::print_cache( std::ostream & os ) const
 {
 	for ( TraitEntityHashMap::const_iterator it( entity_cache_.begin() ), end( entity_cache_.end() );
 				it != end; ++it ) {
@@ -472,7 +447,7 @@ GeneticAlgorithm::print_cache( std::ostream & os ) const
 }
 
 std::string
-GeneticAlgorithm::entities_checkpoint_filename(std::string suffix /* = "" */) const
+GeneticAlgorithmBase::entities_checkpoint_filename(std::string suffix /* = "" */) const
 {
 	if ( checkpoint_prefix_ == "" ) return "";
 	std::string filename(checkpoint_prefix_ + ".ga.entities");
@@ -482,7 +457,7 @@ GeneticAlgorithm::entities_checkpoint_filename(std::string suffix /* = "" */) co
 }
 
 bool
-GeneticAlgorithm::read_entities_checkpoint( bool overwrite /* = false */ )
+GeneticAlgorithmBase::read_entities_checkpoint( bool overwrite /* = false */ )
 {
 	// if cache is not empty, then loading from checkpoint file is assumed not necessary by default
 	if ( !entity_cache_.empty() && !overwrite ) return false;
@@ -510,7 +485,7 @@ GeneticAlgorithm::read_entities_checkpoint( bool overwrite /* = false */ )
 }
 
 bool
-GeneticAlgorithm::write_entities_checkpoint() const
+GeneticAlgorithmBase::write_entities_checkpoint() const
 {
 	if ( checkpoint_prefix_ == "" ) return false;
 	std::string const filename(entities_checkpoint_filename());
@@ -535,7 +510,7 @@ GeneticAlgorithm::write_entities_checkpoint() const
 }
 
 std::string
-GeneticAlgorithm::generations_checkpoint_filename(std::string suffix /* = "" */) const
+GeneticAlgorithmBase::generations_checkpoint_filename(std::string suffix /* = "" */) const
 {
 	if ( checkpoint_prefix_ == "" ) return "";
 	std::string filename(checkpoint_prefix_ + ".ga.generations");
@@ -547,7 +522,7 @@ GeneticAlgorithm::generations_checkpoint_filename(std::string suffix /* = "" */)
 
 /// This seems to duplicate the functionality of the Entity's write_checkpoint function...
 bool
-GeneticAlgorithm::write_generations_checkpoint() const
+GeneticAlgorithmBase::write_generations_checkpoint() const
 {
 	if ( checkpoint_prefix_ == "" ) return false;
 	std::string const filename(generations_checkpoint_filename());
@@ -585,7 +560,7 @@ GeneticAlgorithm::write_generations_checkpoint() const
 }
 
 bool
-GeneticAlgorithm::read_generations_checkpoint()
+GeneticAlgorithmBase::read_generations_checkpoint()
 {
 	if ( checkpoint_prefix_ == "" ) return false;
 	std::string const filename(generations_checkpoint_filename());
@@ -625,7 +600,7 @@ GeneticAlgorithm::read_generations_checkpoint()
 }
 
 bool
-GeneticAlgorithm::read_checkpoint()
+GeneticAlgorithmBase::read_checkpoint()
 {
 	// entities should be read first
 	if ( !read_entities_checkpoint() ) return false;
@@ -634,7 +609,7 @@ GeneticAlgorithm::read_checkpoint()
 }
 
 void
-GeneticAlgorithm::rename_checkpoint_files() const
+GeneticAlgorithmBase::rename_checkpoint_files() const
 {
 	if ( checkpoint_prefix_ == "" ) return;
 
@@ -649,12 +624,12 @@ GeneticAlgorithm::rename_checkpoint_files() const
 	}
 }
 
-EntityCOP GeneticAlgorithm::entity_template() const { return entity_template_; }
-void GeneticAlgorithm::set_entity_template( EntityCOP entity ) { entity_template_ = entity; }
+EntityCOP GeneticAlgorithmBase::entity_template() const { return entity_template_; }
+void GeneticAlgorithmBase::set_entity_template( EntityCOP entity ) { entity_template_ = entity; }
 
 
 Entity::OP
-GeneticAlgorithm::new_entity()
+GeneticAlgorithmBase::new_entity()
 {
 	if (entity_template_) {
 		return entity_template_->clone();
@@ -662,6 +637,60 @@ GeneticAlgorithm::new_entity()
 		return new Entity;
 	}
 }
+
+GeneticAlgorithmBase::pop_iter       GeneticAlgorithmBase::current_generation_begin()
+{ return generations_[current_generation_].begin(); }
+
+GeneticAlgorithmBase::pop_iter       GeneticAlgorithmBase::current_generation_end()
+{ return generations_[current_generation_].end(); }
+
+GeneticAlgorithmBase::pop_const_iter GeneticAlgorithmBase::current_generation_begin() const
+{ return generations_[current_generation_].begin(); }
+
+GeneticAlgorithmBase::pop_const_iter GeneticAlgorithmBase::current_generation_end() const
+{ return generations_[current_generation_].end(); }
+
+GeneticAlgorithmBase::EntityOP       GeneticAlgorithmBase::curr_gen_entity( core::Size index )
+{ return generations_[current_generation_][ index ]; }
+
+core::Size GeneticAlgorithmBase::checkpoint_write_interval() const
+{ return checkpoint_write_interval_; }
+
+
+GeneticAlgorithm::GeneticAlgorithm() :
+	GeneticAlgorithmBase(),
+	fitness_function_(0)
+{}
+
+GeneticAlgorithm::~GeneticAlgorithm() {}
+
+void
+GeneticAlgorithm::set_func( FitnessFunctionOP f ) { fitness_function_ = f; }
+
+void
+GeneticAlgorithm::evaluate_fitnesses()
+{
+	write_generations_checkpoint();
+	core::Size num_uncached(0);
+	for ( pop_iter it( current_generation_begin() ), end( current_generation_end() );
+	      it != end; ++it ) {
+		if ( ! (*it)->fitness_valid() ) {
+			//TR << "Evaluating fitness for entity " << (*it).get() << std::endl;
+			//if ( (*it) != entity_cache_[ (*it)->traits() ] ) {
+			//	TR << "WEIRD: Evaluating fitness for entity that is not in the cache" << std::endl;
+			//}
+			// entity's fitness not valid
+			fitness_function_->evaluate( **it );
+			// allow intermediate checkpointing for very large populations
+			++num_uncached;
+			if ( checkpoint_write_interval() && num_uncached % checkpoint_write_interval() == 0 ) {
+				write_entities_checkpoint();
+			}
+		}
+	}
+	write_entities_checkpoint();
+}
+
 
 
 } // namespace genetic_algorithm

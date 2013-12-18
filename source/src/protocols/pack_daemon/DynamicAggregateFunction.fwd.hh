@@ -68,12 +68,19 @@ class SurrogateVariableExpression;
 typedef utility::pointer::owning_ptr< SurrogateVariableExpression > SurrogateVariableExpressionOP;
 typedef utility::pointer::owning_ptr< SurrogateVariableExpression const > SurrogateVariableExpressionCOP;
 
+class FileContentsMap;
+typedef utility::pointer::owning_ptr< FileContentsMap > FileContentsMapOP;
+typedef utility::pointer::owning_ptr< FileContentsMap const > FileContentsMapCOP;
+
 class DynamicAggregateFunction;
 
 typedef utility::pointer::owning_ptr< DynamicAggregateFunction > DynamicAggregateFunctionOP;
 typedef utility::pointer::owning_ptr< DynamicAggregateFunction const > DynamicAggregateFunctionCOP;
-//typedef utility::pointer::access_ptr< DynamicAggregateFunction > DynamicAggregateFunctionAP;
-//typedef utility::pointer::access_ptr< DynamicAggregateFunction const > DynamicAggregateFunctionCAP;
+
+class DynamicAggregateFunctionDriver;
+
+typedef utility::pointer::owning_ptr< DynamicAggregateFunctionDriver > DynamicAggregateFunctionDriverOP;
+typedef utility::pointer::owning_ptr< DynamicAggregateFunctionDriver const > DynamicAggregateFunctionDriverCOP;
 
 class EntityFuncExpressionCreator;
 

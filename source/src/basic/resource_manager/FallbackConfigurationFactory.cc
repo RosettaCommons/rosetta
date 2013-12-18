@@ -21,11 +21,39 @@
 // utility headers
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace basic {
 namespace resource_manager {
 
 FallbackConfigurationFactory * FallbackConfigurationFactory::instance_( 0 );
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex FallbackConfigurationFactory::singleton_mutex_;
+std::mutex & FallbackConfigurationFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+FallbackConfigurationFactory * FallbackConfigurationFactory::get_instance()
+{
+	boost::function< FallbackConfigurationFactory * () > creator = boost::bind( &FallbackConfigurationFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+FallbackConfigurationFactory *
+FallbackConfigurationFactory::create_singleton_instance()
+{
+	return new FallbackConfigurationFactory;
+}
 
 FallbackConfigurationFactory::FallbackConfigurationFactory() :
 	throw_on_double_registration_( false )
@@ -39,14 +67,6 @@ FallbackConfigurationFactory::create_fallback_configuration( std::string const &
 		throw utility::excn::EXCN_Msg_Exception( "No FallbackConfigurationCreator resposible for the FallbackConfiguration named " + resource_description + " was found in the FallbackConfigurationFactory.  Was it correctly registered?" );
 	}
 	return iter->second->create_fallback_configuration();
-}
-
-FallbackConfigurationFactory *
-FallbackConfigurationFactory::get_instance() {
-	if ( instance_ == 0 ) {
-		instance_ = new FallbackConfigurationFactory;
-	}
-	return instance_;
 }
 
 void

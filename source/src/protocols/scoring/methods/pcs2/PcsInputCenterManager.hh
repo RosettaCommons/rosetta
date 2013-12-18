@@ -50,6 +50,13 @@
 // AUTO-REMOVED #include <string>
 #include <map>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
+
 namespace protocols{
 namespace scoring{
 namespace methods{
@@ -60,8 +67,27 @@ class PcsInputCenterManager {
 private:
 	PcsInputCenterManager(); //Construct
 
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static PcsInputCenterManager * create_singleton_instance();
+
+private:
 	static PcsInputCenterManager * instance_;
 	std::map<std::string, PcsInputCenter> PcsInputCenter_all_;
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
 
 public:
 	static PcsInputCenterManager *

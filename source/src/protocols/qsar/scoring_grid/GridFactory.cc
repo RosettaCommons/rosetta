@@ -18,13 +18,41 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
 GridFactory * GridFactory::instance_(0);
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+	std::mutex GridFactory::singleton_mutex_;
+
+	std::mutex & GridFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+	/// @brief static function to get the instance of ( pointer to) this singleton class
+	GridFactory * GridFactory::get_instance()
+	{
+		boost::function< GridFactory * () > creator = boost::bind( &GridFactory::create_singleton_instance );
+		utility::thread::safely_create_singleton( creator, instance_ );
+		return instance_;
+	}
+
+GridFactory *
+GridFactory::create_singleton_instance()
+{
+	return new GridFactory;
+}
 
 GridFactory::GridFactory()
 {
@@ -37,17 +65,6 @@ GridFactory::GridFactory()
 
 GridFactory::~GridFactory()
 { }
-
-GridFactory *
-GridFactory::get_instance()
-{
-	if(!instance_)
-	{
-		GridFactory * instance_local = new GridFactory;
-		instance_ = instance_local;
-	}
-	return instance_;
-}
 
 
 ///@brief add a Grid prototype, using it's default type name as the map key

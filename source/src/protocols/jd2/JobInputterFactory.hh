@@ -29,6 +29,12 @@
 
 #include <utility/vector1.hh>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace protocols {
 namespace jd2 {
@@ -64,6 +70,20 @@ public:
 	///@brief return JobInputter defined by input parameters (contained in option system and #defines for MPI, etc)
 	JobInputterOP get_new_JobInputter();
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
 private:
 	JobInputterOP get_JobInputter_from_string( std::string const & job_inputter_type );
 
@@ -72,6 +92,10 @@ private:
 	// Unimplemented -- uncopyable
 	JobInputterFactory( JobInputterFactory const & );
 	JobInputterFactory const & operator = ( JobInputterFactory const & );
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static JobInputterFactory * create_singleton_instance();
 
 private:
 	static JobInputterFactory * instance_;

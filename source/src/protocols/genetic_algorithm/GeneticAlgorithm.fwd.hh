@@ -19,6 +19,11 @@
 namespace protocols {
 namespace genetic_algorithm {
 
+class GeneticAlgorithmBase;
+
+typedef  utility::pointer::owning_ptr< GeneticAlgorithmBase >  GeneticAlgorithmBaseOP;
+typedef  utility::pointer::owning_ptr< GeneticAlgorithmBase const >  GeneticAlgorithmBaseCOP;
+
 class GeneticAlgorithm;
 
 typedef  utility::pointer::owning_ptr< GeneticAlgorithm >  GeneticAlgorithmOP;

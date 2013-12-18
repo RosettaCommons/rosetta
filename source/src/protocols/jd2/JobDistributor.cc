@@ -43,14 +43,16 @@
 #include <protocols/moves/PyMolMover.hh>
 
 // Utility headers
-#include <basic/options/option.hh>
+#include <utility/thread/threadsafe_creation.hh>
 #include <utility/exit.hh>
-#include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>
-// AUTO-REMOVED #include <ctime>
 
+// Basic headers
+#include <basic/options/option.hh>
+#include <basic/Tracer.hh>
 #include <basic/prof.hh>
 #include <basic/datacache/BasicDataCache.hh>
+
 #ifdef BOINC
 #include <protocols/boinc/boinc.hh>
 #endif
@@ -63,70 +65,78 @@
 #include <utility/vector1.hh>
 #ifndef __native_client__
 #include <csignal>
-#endif 
+#endif
 
 #ifdef WIN32
 #include <iterator>
 #endif
 
-namespace protocols
-{
-namespace jd2
-{
+namespace protocols {
+namespace jd2 {
 static basic::Tracer tr("protocols.jd2.JobDistributor");
 } //jd2
 } //protocols
 
-//multithreaded case requires special pointers
-#ifdef MULTITHREADED
+//// APL Disalbing this code for the time being.  I need to find out who uses it!
+////multithreaded case requires special pointers
+//#ifdef MULTITHREADED
+//
+//#include <boost/thread/tss.hpp>
+//
+//namespace protocols
+//{
+//	namespace jd2
+//	{
+//		boost::thread_specific_pointer< JobDistributor > jd_ptr;
+//
+//		JobDistributor *
+//		JobDistributor::get_instance()
+//		{
+//			if ( jd_ptr.get() == 0 )
+//			{
+//				jd_ptr.reset( JobDistributorFactory::create_job_distributor() );
+//			}
+//			return jd_ptr.get();
+//		}
+//
+//	} //jd2
+//} //protocols
+//
+////non-multithreaded case behaves like a singleton
+//#else
 
-#include <boost/thread/tss.hpp>
-
-namespace protocols
-{
-	namespace jd2
-	{
-		boost::thread_specific_pointer< JobDistributor > jd_ptr;
-
-		JobDistributor *
-		JobDistributor::get_instance()
-		{
-			if ( jd_ptr.get() == 0 )
-			{
-				jd_ptr.reset( JobDistributorFactory::create_job_distributor() );
-			}
-			return jd_ptr.get();
-		}
-
-	} //jd2
-} //protocols
-
-//non-multithreaded case behaves like a singleton
-#else
-
-namespace protocols
-{
-namespace jd2
-{
+namespace protocols {
+namespace jd2 {
 
 JobDistributor * JobDistributor::instance_ = 0; //this pointer starts null
-//JobDistributorDestroyer JobDistributor::destroyer_;
 
-JobDistributor *
-JobDistributor::get_instance()
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex JobDistributor::singleton_mutex_;
+
+std::mutex & JobDistributor::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+JobDistributor * JobDistributor::get_instance()
 {
-	if (instance_ == 0)
-	{
-		instance_ = JobDistributorFactory::create_job_distributor();
-		//	destroyer_.set_job_distributor(instance_);
-	}
+	boost::function< JobDistributor * () > creator = boost::bind( &JobDistributor::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
 }
 
+JobDistributor *
+JobDistributor::create_singleton_instance()
+{
+	return JobDistributorFactory::create_job_distributor();
+}
+
+
 } //jd2
 } //protocols
-
-#endif
 
 namespace protocols
 {

@@ -94,7 +94,7 @@ public:
 
 	void test_initialize_empty_DAF() {
 		DaemonSetOP ds = new DaemonSet;
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 
 		std::istringstream iss( "FITNESS 3.0 + 4.0" );
 
@@ -111,7 +111,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -131,7 +131,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -160,7 +160,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -189,7 +189,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -221,7 +221,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -251,7 +251,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -281,7 +281,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -313,7 +313,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -344,7 +344,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -378,7 +378,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -414,7 +414,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -439,7 +439,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -468,7 +468,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -497,7 +497,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -526,7 +526,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -555,7 +555,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -585,7 +585,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -617,7 +617,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -652,7 +652,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -675,7 +675,7 @@ public:
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 		ds->add_npdpro_calculator_creator( new TestCalculatorCreator );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -695,7 +695,7 @@ public:
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 		ds->add_npdpro_calculator_creator( new TestCalculatorCreator );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -721,7 +721,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -746,7 +746,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -771,7 +771,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -802,7 +802,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -831,7 +831,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -861,7 +861,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -886,7 +886,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -916,7 +916,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );
@@ -946,7 +946,7 @@ public:
 		std::istringstream corr_resfile( corr_resfile_string );
 		ds->set_entity_resfile( corr_resfile, "unnamed" );
 
-		DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->add_file_contents( "1l2y.pdb", trp_cage_ideal() );
 		daf->add_file_contents( "1l2y.correspondence.txt", "1 9 A\n2 13 A\n" );
 		daf->add_file_contents( "1l2y.secondary.resfile", "NATRO\nstart\n9 A NATAA\n13 A NATAA\n" );

@@ -27,6 +27,12 @@
 #include <utility/vector1.hh>
 #include <map>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace core {
 namespace pack {
@@ -74,14 +80,35 @@ public:
 	static const core::Real MAX_HPATCH_SCORE;
 	static const core::Size HPATCH_SCORE_BIN_SIZE;
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
 private:
 	/// @brief private constructor
 	SurfacePotential();
-	/// @brief static data member holding pointer to the singleton class itself
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static SurfacePotential * create_singleton_instance();
 
 	void read_average_res_hASA_database_file();
 	void read_hASA_score_database_file();
 	void read_hpatch_score_database_file();
+
+private:
+	/// @brief static data member holding pointer to the singleton class itself
+	static SurfacePotential* instance_;
 
 	// outer vector holds AA's; inner vector holds neighbor counts. Residues always have at least 1 neighbor because
 	// num_neighbors_counting_self() is always used to determine number of neighbors
@@ -90,8 +117,6 @@ private:
 
 	// vector which holds the values read from scoring/score_functions/SurfacePotential/hpatch_score.txt
 	std::vector< core::Real > patcharea_to_score_;
-
-	static SurfacePotential* instance_;
 
 	static const core::Size MAX_PATCH_SURFACE_AREA;
 	static const core::Real MAX_SURFACE_ENERGY;

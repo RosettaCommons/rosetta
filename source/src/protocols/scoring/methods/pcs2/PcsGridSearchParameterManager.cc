@@ -42,14 +42,15 @@
 
 // Utility headers
 #include <utility/exit.hh>
-
-// ObjexxFCL Headers
+#include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
 // C++ headers
 #include <iostream>
 
-#include <utility/vector1.hh>
-
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 static basic::Tracer TR_PcsGridSearchParameterManager("protocols.scoring.methods.pcs.PcsGridSearchParameterManager");
 
@@ -58,9 +59,34 @@ namespace scoring{
 namespace methods{
 namespace pcs2{
 
+PcsGridSearchParameterManager * PcsGridSearchParameterManager::instance_( 0 );
 
-PcsGridSearchParameterManager::PcsGridSearchParameterManager(){
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex PcsGridSearchParameterManager::singleton_mutex_;
+
+std::mutex & PcsGridSearchParameterManager::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+PcsGridSearchParameterManager * PcsGridSearchParameterManager::get_instance()
+{
+	boost::function< PcsGridSearchParameterManager * () > creator = boost::bind( &PcsGridSearchParameterManager::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
 }
+
+PcsGridSearchParameterManager *
+PcsGridSearchParameterManager::create_singleton_instance()
+{
+	return new PcsGridSearchParameterManager;
+}
+
+
+PcsGridSearchParameterManager::PcsGridSearchParameterManager() {}
 
 void
 PcsGridSearchParameterManager::re_init(){
@@ -99,15 +125,7 @@ PcsGridSearchParameterManager::get_grid_search_parameters(core::Size i_multi_dat
 	return(grid_s_p_all_[i_multi_data]);
 }
 
-PcsGridSearchParameterManager *
-PcsGridSearchParameterManager::get_instance(){
-	if ( instance_ == 0 ){
-		 instance_ = new PcsGridSearchParameterManager();
-	}
-	return instance_;
-}
 
-PcsGridSearchParameterManager * PcsGridSearchParameterManager::instance_( 0 );
 
 
 }//namespace pcs2

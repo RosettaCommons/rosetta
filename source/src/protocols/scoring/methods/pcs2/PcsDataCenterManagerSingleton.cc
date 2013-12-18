@@ -29,8 +29,6 @@
  /// @last_modified February 2010
  ////////////////////////////////////////////////
 
-
-
 // Unit headers
 #include <protocols/scoring/methods/pcs2/PcsDataCenterManagerSingleton.hh>
 
@@ -44,15 +42,12 @@
 
 // Utility headers
 #include <utility/exit.hh>
-
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
-
-// Numeric headers
-
-// Objexx headers
-
-// C++ headers
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace protocols{
 namespace scoring{
@@ -92,15 +87,6 @@ PcsDataCenterManagerSingleton::PcsDataCenterManagerSingleton(PcsEnergyParameterM
 	}
 }
 
-PcsDataCenterManagerSingleton *
-PcsDataCenterManagerSingleton::get_instance(PcsEnergyParameterManager & pcs_e_p_m){
-	if ( instance_ == 0 ){
-		 instance_ = new PcsDataCenterManagerSingleton(pcs_e_p_m);
-	}
-	return instance_;
-}
-
-
 utility::vector1<PcsDataCenter> &
 PcsDataCenterManagerSingleton::get_PCS_data_all() {
 	return (PCS_data_all_);
@@ -124,6 +110,32 @@ PcsDataCenterManagerSingleton::get_n_multi_data() const{
 
 
 PcsDataCenterManagerSingleton * PcsDataCenterManagerSingleton::instance_( 0 );
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex PcsDataCenterManagerSingleton::singleton_mutex_;
+
+std::mutex & PcsDataCenterManagerSingleton::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+PcsDataCenterManagerSingleton * PcsDataCenterManagerSingleton::get_instance(PcsEnergyParameterManager & pcs_e_p_m)
+{
+	boost::function< PcsDataCenterManagerSingleton * () > creator = boost::bind(
+		&PcsDataCenterManagerSingleton::create_singleton_instance,
+		boost::ref( pcs_e_p_m ) );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+PcsDataCenterManagerSingleton *
+PcsDataCenterManagerSingleton::create_singleton_instance( PcsEnergyParameterManager & pcs_e_p_m )
+{
+	return new PcsDataCenterManagerSingleton( pcs_e_p_m );
+}
 
 }//namespcacs PCS
 }//namespace methods

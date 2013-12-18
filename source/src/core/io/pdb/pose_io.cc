@@ -311,6 +311,16 @@ void extract_scores(
 	utility::io::ozstream & out
 )
 {
+	extract_scores( pose, out.filename(), out );
+}
+
+
+void extract_scores(
+	core::pose::Pose const & pose,
+	std::string const & filename,
+	std::ostream & out
+)
+{
 // 	if(!pose.energies().energies_updated()){
 // 		out << "Pose's energies were not current, PDBJobOutputter will not force update" << std::endl;
 // 		return;
@@ -328,7 +338,7 @@ void extract_scores(
 	}
 	// This version is formatted for easy parsing by R, Excel, etc.
 	out << "# All scores below are weighted scores, not raw scores.\n";
-	out << "#BEGIN_POSE_ENERGIES_TABLE " << out.filename() << "\n";
+	out << "#BEGIN_POSE_ENERGIES_TABLE " << filename << "\n";
 	out << "label";
 	foreach(core::scoring::ScoreType score_type, score_types){
 		out << " " << name_from_score_type(score_type);
@@ -359,7 +369,7 @@ void extract_scores(
 			out << " " << restrict_prec(rsd_total) << "\n";
 		}
 	}
-	out << "#END_POSE_ENERGIES_TABLE " << out.filename() << "\n";
+	out << "#END_POSE_ENERGIES_TABLE " << filename << "\n";
 }
 
 

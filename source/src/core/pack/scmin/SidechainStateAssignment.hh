@@ -14,30 +14,31 @@
 #ifndef INCLUDED_core_pack_scmin_SidechainStateAssignment_HH
 #define INCLUDED_core_pack_scmin_SidechainStateAssignment_HH
 
-// Package Headers
-// AUTO-REMOVED #include <core/pack/scmin/AtomTreeCollection.hh>
+// Unit headers
+#include <core/pack/scmin/SidechainStateAssignment.fwd.hh>
 
-// utility
-#include <utility/vector1.hh>
-
+// Package headers
 #include <core/types.hh>
 #include <core/pack/scmin/AtomTreeCollection.fwd.hh>
 
+// Utility headers
+#include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 namespace core {
 namespace pack {
 namespace scmin {
 
-
-/// A simple class for tracking a network state and its energy where
+/// @brief A simple class for tracking a network state and its energy where
 /// each sidechain's state is described by a series of chi angles.
-class SidechainStateAssignment {
+class SidechainStateAssignment : public utility::pointer::ReferenceCount {
 public:
 	SidechainStateAssignment( Size nmoltenres );
 	SidechainStateAssignment( SidechainStateAssignment const & );
 	SidechainStateAssignment const &
 	operator = ( SidechainStateAssignment const & );
 
+	Size nmoltenres() const { return nmoltenres_; }
 	scmin::ResidueAtomTreeCollectionMomento & state_momento( Size moltenresid );
 	void assign_state( Size moltenresid, Size orig_rotid );
 	void assign_energy( Real energy );

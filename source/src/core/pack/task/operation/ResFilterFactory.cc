@@ -22,6 +22,11 @@
 #include <core/pack/task/operation/ResFilter.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace core {
 namespace pack {
@@ -31,16 +36,33 @@ namespace operation {
 // special singleton functions
 // initialize
 ResFilterFactory * ResFilterFactory::instance_( 0 );
-// get pointer to singleton
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex ResFilterFactory::singleton_mutex_;
+
+std::mutex & ResFilterFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
 ResFilterFactory * ResFilterFactory::get_instance()
 {
-	if ( ! instance_ ) {
-		instance_ = new ResFilterFactory();
-	}
+	boost::function< ResFilterFactory * () > creator = boost::bind( &ResFilterFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
 }
 
+ResFilterFactory *
+ResFilterFactory::create_singleton_instance()
+{
+	return new ResFilterFactory;
+}
+
 ResFilterFactory::ResFilterFactory() {}
+
 ResFilterFactory::~ResFilterFactory(){}
 
 void

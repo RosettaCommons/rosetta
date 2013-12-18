@@ -21,7 +21,15 @@
 #include <utility/vector1.hh>
 #include <utility/factory/WidgetRegistrator.hh>
 
+// C++ Headers
 #include <map>
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace core {
 namespace sequence {
@@ -48,6 +56,26 @@ public:
 
 	SequenceCreatorCOP
 	get_creator( std::string const & type_name );
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
+private:
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static SequenceFactory * create_singleton_instance();
 
 private:
 

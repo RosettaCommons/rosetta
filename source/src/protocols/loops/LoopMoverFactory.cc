@@ -21,18 +21,23 @@
 
 // Project Headers
 #include <protocols/loops/Loops.hh>
-#include <utility/vector0.hh>
-#include <utility/exit.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 
+// Utility headers
+#include <utility/vector1.hh>
+#include <utility/vector0.hh>
+#include <utility/exit.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 // C++ Headers
 #include <sstream>
 
-//Auto Headers
-#include <utility/vector1.hh>
 
 namespace protocols {
 namespace loops {
@@ -47,6 +52,30 @@ static basic::Tracer tr("protocols.loops.LoopMoverFactory");
 
 LoopMoverFactory * LoopMoverFactory::instance_( 0 );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex LoopMoverFactory::singleton_mutex_;
+
+std::mutex & LoopMoverFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+LoopMoverFactory * LoopMoverFactory::get_instance()
+{
+	boost::function< LoopMoverFactory * () > creator = boost::bind( &LoopMoverFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+LoopMoverFactory *
+LoopMoverFactory::create_singleton_instance()
+{
+	return new LoopMoverFactory;
+}
+
 /// @details Private constructor insures correctness of singleton.
 LoopMoverFactory::LoopMoverFactory() {}
 
@@ -55,17 +84,6 @@ LoopMoverFactory::LoopMoverFactory(
 ) {}
 
 LoopMoverFactory::~LoopMoverFactory() {}
-
-
-LoopMoverFactory *
-LoopMoverFactory::get_instance()
-{
-	if ( instance_ == 0 ) {
-		instance_ = new LoopMoverFactory;
-	}
-	return instance_;
-}
-
 
 loop_mover::LoopMoverOP
 LoopMoverFactory::create_loop_mover(

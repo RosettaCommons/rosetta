@@ -21,6 +21,7 @@
 #include <protocols/pack_daemon/MultistateAggregateFunction.hh>
 #include <protocols/pack_daemon/MultistateFitnessFunction.hh>
 #include <protocols/pack_daemon/PackDaemon.hh>
+#include <protocols/pack_daemon/util.hh>
 
 /// Core headers
 #include <devel/init.hh>
@@ -49,6 +50,7 @@
 // Protocols headers
 #include <protocols/genetic_algorithm/Entity.hh>
 #include <protocols/genetic_algorithm/EntityRandomizer.hh>
+#include <protocols/genetic_algorithm/Mutate1Randomizer.hh>
 #include <protocols/genetic_algorithm/GeneticAlgorithm.hh>
 #include <protocols/multistate_design/util.hh>
 
@@ -129,48 +131,20 @@ public:
 	}
 };*/
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief different set of choices at each position in Entity's traits
-class Mutate1Randomizer : public protocols::genetic_algorithm::PositionSpecificRandomizer {
-public:
-	typedef protocols::genetic_algorithm::PositionSpecificRandomizer parent;
 
-public:
-
-	virtual ~Mutate1Randomizer() {}
-
-	virtual void mutate( protocols::genetic_algorithm::Entity & entity )
-	{
-		if ( mutation_rate() == 1.0 ) {
-			for ( Size ii = 1; ii <= entity.traits().size(); ++ii ) {
-				core::Size const n_mutation_choices( choices()[ ii ].size() );
-				Size new_element_ind = static_cast< core::Size >( numeric::random::uniform() * n_mutation_choices ) + 1;
-				entity.set_entity_element( ii, choices()[ ii ][ new_element_ind ] );
-			}
-		} else {
-			Size pos_to_mutate = static_cast< Size > ( entity.traits().size() * numeric::random::uniform() ) + 1;
-			core::Size const n_mutation_choices( choices()[ pos_to_mutate ].size() );
-			Size new_element_ind = static_cast< core::Size >( numeric::random::uniform() * n_mutation_choices ) + 1;
-			entity.set_entity_element( pos_to_mutate, choices()[ pos_to_mutate ][ new_element_ind ] );
-		}
-	}
-
-};
-
-
-protocols::genetic_algorithm::EntityElements
-entity_elements_from_1letterstring(
-	std::string const & input
-)
-{
-	protocols::genetic_algorithm::EntityElements elements( input.size() );
-	for ( core::Size ii = 0, count = 1; ii < input.size(); ++ii, ++count ) {
-		std::ostringstream output;
-		output << "AA:" << count << ":" << input[ ii ];
-		elements[ count ] = protocols::genetic_algorithm::EntityElementFactory::get_instance()->element_from_string( output.str() );
-	}
-	return elements;
-}
+//protocols::genetic_algorithm::EntityElements
+//entity_elements_from_1letterstring(
+//	std::string const & input
+//)
+//{
+//	protocols::genetic_algorithm::EntityElements elements( input.size() );
+//	for ( core::Size ii = 0, count = 1; ii < input.size(); ++ii, ++count ) {
+//		std::ostringstream output;
+//		output << "AA:" << count << ":" << input[ ii ];
+//		elements[ count ] = protocols::genetic_algorithm::EntityElementFactory::get_instance()->element_from_string( output.str() );
+//	}
+//	return elements;
+//}
 
 std::string
 read_native_sequence_for_entity_elements( core::Size n_designed_positions )
@@ -468,7 +442,7 @@ int main( int argc, char ** argv )
 
 	if ( mpi_rank() == 0 ) {
 		protocols::pack_daemon::MPIMultistateFitnessFunctionOP func = new protocols::pack_daemon::MPIMultistateFitnessFunction;
-		protocols::pack_daemon::DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
+		protocols::pack_daemon::DynamicAggregateFunctionDriverOP daf = new DynamicAggregateFunctionDriver;
 		daf->set_num_entity_elements( ds->entity_task()->total_residue() );
 		daf->set_score_function( *sfxn ); // assume one score function for the entire
 		utility::io::izstream daf_file( daf_filename );
@@ -494,16 +468,11 @@ int main( int argc, char ** argv )
 		ga.set_frac_by_recomb( option[ ms::fraction_by_recombination ]() );
 
 		// set up sequence randomizer
-		Mutate1Randomizer::OP rand = new Mutate1Randomizer;
+		protocols::genetic_algorithm::Mutate1RandomizerOP rand = new protocols::genetic_algorithm::Mutate1Randomizer;
 		// reset the default value of 1.0, but the mutation-rate variable is not used by the Mutate1Randomizer!
 		rand->set_mutation_rate( 0.0 /*option[ ms::mutate_rate ]()*/ );
+		protocols::pack_daemon::initialize_ga_randomizer_from_entity_task( rand, ds->entity_task() );
 
-		for ( Size ii = 1; ii <= ds->entity_task()->total_residue(); ++ii ) {
-			EntityElements ii_elements =
-				protocols::multistate_design::list_amino_acid_options(
-				ii, ds->entity_task()->residue_task( ii ) );
-			rand->append_choices( ii_elements );
-		}
 		// done setting up randomizer
 		ga.set_rand( rand );
 		ga.set_func( func );
@@ -519,12 +488,12 @@ int main( int argc, char ** argv )
 				if ( seedseqs[ ii ].size() != ds->entity_task()->total_residue() ) {
 					utility_exit_with_message( "Input seed sequence " + seedseqs[ ii ] + " has " + utility::to_string( seedseqs[ ii ].size() ) + " elements; must have the same number of elements as the number specified in the entity resfile (" + utility::to_string( ds->entity_task()->total_residue()) + ")" );
 				}
-				ga.add_entity( entity_elements_from_1letterstring( seedseqs[ ii ] ) );
+				ga.add_entity( protocols::multistate_design::entity_elements_from_1letterstring( seedseqs[ ii ] ) );
 			}
 		}
 		if ( option[ msd::seed_sequence_from_input_pdb ].user() ) {
 			std::string seq = read_native_sequence_for_entity_elements( ds->entity_task()->total_residue() );
-			ga.add_entity( entity_elements_from_1letterstring( seq ) );
+			ga.add_entity( protocols::multistate_design::entity_elements_from_1letterstring( seq ) );
 		}
 
 		if ( option[ msd::fill_gen1_from_seed_sequences ] && option[ msd::seed_sequences ].user() ) {

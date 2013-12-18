@@ -74,7 +74,7 @@ MatchResidues::compute_comb( core::pose::Pose const & pose, VecSize const & comb
 	for(Size i = 1; i < comb.size(); i++) {
 		const core::id::AtomID mod_id(pose.residue_type( comb[i] ).atom_index( "CA" ), comb[i] );
 		const core::id::AtomID ref_id(pose.residue_type( reference_residues_indexes_[i] ).atom_index( "CA" ), reference_residues_indexes_[i]);
-		atom_id_map.insert( std::make_pair< core::id::AtomID, core::id::AtomID >(mod_id, ref_id) );
+		atom_id_map.insert( std::make_pair(mod_id, ref_id) );
 	}
 	return  core::scoring::rms_at_all_corresponding_atoms(pose, reference_pose_, atom_id_map); 
 }

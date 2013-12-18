@@ -39,41 +39,68 @@
 #include <string>
 
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
-bool protocols::noesy_assign::PeakAssignmentParameters::options_registered_( false );
+namespace protocols {
+namespace noesy_assign {
 
-protocols::noesy_assign::PeakAssignmentParameters* protocols::noesy_assign::PeakAssignmentParameters::instance_( NULL );
+#ifdef MULTI_THREADED
+#ifdef CXX11
 
-protocols::noesy_assign::PeakAssignmentParameters const*
-protocols::noesy_assign::PeakAssignmentParameters::get_instance() {
-  if ( instance_ ) return instance_;
-  instance_ = new PeakAssignmentParameters;
-  instance_->set_options_from_cmdline();
-  return instance_;
+std::mutex PeakAssignmentParameters::singleton_mutex_;
+
+std::mutex & PeakAssignmentParameters::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+PeakAssignmentParameters const * PeakAssignmentParameters::get_instance()
+{
+	boost::function< PeakAssignmentParameters * () > creator = boost::bind( &PeakAssignmentParameters::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
 }
 
+PeakAssignmentParameters *
+PeakAssignmentParameters::create_singleton_instance()
+{
+	PeakAssignmentParameters * inst = new PeakAssignmentParameters;
+  inst->set_options_from_cmdline();
+  return inst;
+}
+
+bool PeakAssignmentParameters::options_registered_( false );
+
+PeakAssignmentParameters* PeakAssignmentParameters::instance_( NULL );
+
+/// @details DANGER DANGER DANGER! NOT IN ANY WAY THREADSAFE!!!
 void
-protocols::noesy_assign::PeakAssignmentParameters::reset() {
+PeakAssignmentParameters::reset() {
 	if ( instance_ ) delete instance_;
 	instance_ = NULL;
 }
 
-protocols::noesy_assign::PeakAssignmentParameters*
-protocols::noesy_assign::PeakAssignmentParameters::get_nonconst_instance() {
+/// @details DANGER DANGER DANGER! NOT IN ANY WAY THREADSAFE!!!
+PeakAssignmentParameters*
+PeakAssignmentParameters::get_nonconst_instance() {
   if ( instance_ ) return instance_;
   instance_ = new PeakAssignmentParameters;
   instance_->set_options_from_cmdline();
   return instance_;
 }
 
-void protocols::noesy_assign::PeakAssignmentParameters::set_cycle( core::Size cycle ) {
+void PeakAssignmentParameters::set_cycle( core::Size cycle ) {
 	if ( instance_ ) delete instance_;
 	instance_ = new PeakAssignmentParameters;
 	instance_->set_options_from_cmdline( cycle );
 }
 
-void protocols::noesy_assign::PeakAssignmentParameters::register_options() {
+void PeakAssignmentParameters::register_options() {
   using namespace basic::options;
   using namespace OptionKeys;
   if ( options_registered_ ) return;
@@ -159,7 +186,7 @@ void protocols::noesy_assign::PeakAssignmentParameters::register_options() {
 static basic::Tracer tr("protocols.noesy_assign.parameters");
 
 
-void protocols::noesy_assign::PeakAssignmentParameters::set_options_from_cmdline( core::Size cycle_selector ) {
+void PeakAssignmentParameters::set_options_from_cmdline( core::Size cycle_selector ) {
   using namespace basic::options::OptionKeys;
   using namespace basic::options;
 
@@ -254,7 +281,7 @@ void protocols::noesy_assign::PeakAssignmentParameters::set_options_from_cmdline
 	show_on_tracer();
 }
 
-void protocols::noesy_assign::PeakAssignmentParameters::show( std::ostream& os ) const {
+void PeakAssignmentParameters::show( std::ostream& os ) const {
 	os << " ============== cycle-dependent parameter selection for Noesy peak assignment =============== " << std::endl;
 	os << "   cycle: " << cycle_selector_ << std::endl;
 	os << "----------------------------------------------------------------------------------------------" << std::endl;
@@ -299,14 +326,18 @@ void protocols::noesy_assign::PeakAssignmentParameters::show( std::ostream& os )
 	os << "==============================================================================================" << std::endl;
 }
 
-void protocols::noesy_assign::PeakAssignmentParameters::show_on_tracer() const {
+void PeakAssignmentParameters::show_on_tracer() const {
 	show( tr.Info );
 }
 
 
+}
+}
+
 namespace protocols {
 namespace noesy_assign {
-using namespace core;
+
+using namespace core; //???
 
 }
 }

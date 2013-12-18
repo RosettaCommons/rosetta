@@ -37,15 +37,18 @@
 #include <protocols/topology_broker/FibrilModelingClaimer.hh>
 #include <protocols/topology_broker/BasicJumpClaimer.hh>
 
-// Utility headers
-#include <basic/Tracer.hh>
-
 // C/C++ headers
 #include <sstream>
 #include <string>
 
+// Utility headers
+#include <basic/Tracer.hh>
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 static basic::Tracer tr("protocols.topo_broker", basic::t_info);
 
@@ -53,7 +56,31 @@ namespace protocols {
 namespace topology_broker {
 
 // Singleton initialization
-TopologyClaimerFactory* TopologyClaimerFactory::instance_ = NULL;
+TopologyClaimerFactory * TopologyClaimerFactory::instance_( 0 );
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex TopologyClaimerFactory::singleton_mutex_;
+
+std::mutex & TopologyClaimerFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+TopologyClaimerFactory const & TopologyClaimerFactory::get_instance()
+{
+	boost::function< TopologyClaimerFactory * () > creator = boost::bind( &TopologyClaimerFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return *instance_;
+}
+
+TopologyClaimerFactory *
+TopologyClaimerFactory::create_singleton_instance()
+{
+	return new TopologyClaimerFactory;
+}
 
 // Registers commonly used claimers with the name returned by claimer->type()
 TopologyClaimerFactory::TopologyClaimerFactory() {
@@ -81,13 +108,6 @@ TopologyClaimerFactory::TopologyClaimerFactory() {
 
 TopologyClaimerFactory::~TopologyClaimerFactory() {
 	delete instance_;
-}
-
-TopologyClaimerFactory const& TopologyClaimerFactory::get_instance() {
-	if (!instance_)
-		instance_ = new TopologyClaimerFactory();
-
-	return *instance_;
 }
 
 void TopologyClaimerFactory::add_type(TopologyClaimerOP claimer) {

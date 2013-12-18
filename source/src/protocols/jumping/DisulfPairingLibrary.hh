@@ -53,6 +53,12 @@
 #include <protocols/jumping/DisulfPairingsList.fwd.hh>
 #include <utility/vector1.hh>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace protocols {
 namespace jumping {
@@ -137,8 +143,28 @@ private:
 class StandardDisulfPairingLibrary : public DisulfPairingLibrary {
 public:
 	static StandardDisulfPairingLibrary* get_instance();
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
 private:
 	StandardDisulfPairingLibrary() {};
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static StandardDisulfPairingLibrary * create_singleton_instance();
+private:
 	static StandardDisulfPairingLibrary* instance_;
 };
 

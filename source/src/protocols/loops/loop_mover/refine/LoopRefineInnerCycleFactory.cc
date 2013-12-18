@@ -31,6 +31,11 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 // C++ Headers
 #include <sstream>
@@ -68,6 +73,30 @@ void LoopRefineInnerCycleFactory::setup_known_types()
 
 LoopRefineInnerCycleFactory * LoopRefineInnerCycleFactory::instance_( 0 );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex LoopRefineInnerCycleFactory::singleton_mutex_;
+
+std::mutex & LoopRefineInnerCycleFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+LoopRefineInnerCycleFactory * LoopRefineInnerCycleFactory::get_instance()
+{
+	boost::function< LoopRefineInnerCycleFactory * () > creator = boost::bind( &LoopRefineInnerCycleFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+LoopRefineInnerCycleFactory *
+LoopRefineInnerCycleFactory::create_singleton_instance()
+{
+	return new LoopRefineInnerCycleFactory;
+}
+
 /// @details Private constructor insures correctness of singleton.
 LoopRefineInnerCycleFactory::LoopRefineInnerCycleFactory()
 {
@@ -78,13 +107,6 @@ LoopRefineInnerCycleFactory::LoopRefineInnerCycleFactory( const LoopRefineInnerC
 
 LoopRefineInnerCycleFactory::~LoopRefineInnerCycleFactory() {}
 
-LoopRefineInnerCycleFactory * LoopRefineInnerCycleFactory::get_instance()
-{
-	if ( instance_ == 0 ) {
-		instance_ = new LoopRefineInnerCycleFactory;
-	}
-	return instance_;
-}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// END OF BOILER PLATE CODE //////////////////////////////////////

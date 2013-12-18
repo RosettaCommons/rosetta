@@ -13,10 +13,13 @@
 /// @author Ron Jacak
 
 // Unit Headers
+#include <core/pack/interaction_graph/RotamerDots.hh>
+
+// Project headers
+#include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Atom.hh>
-#include <core/pack/interaction_graph/RotamerDots.hh>
 #include <core/scoring/sasa.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
@@ -32,24 +35,23 @@
 // Numeric Headers
 #include <numeric/constants.hh> // pi
 #include <numeric/xyzVector.hh> // to get distance
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
+#include <utility/thread/threadsafe_creation.hh>
+#include <utility/options/BooleanVectorOption.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <cstring>
 #include <vector>
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 
-#include <core/chemical/AtomType.hh>
-#include <utility/options/BooleanVectorOption.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <boost/algorithm/string/erase.hpp>
 
+// Boost headers
+#include <boost/algorithm/string/erase.hpp>
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 static basic::Tracer TR_DS("core.pack.interaction_graph.RotamerDots.DotSphere");
 static basic::Tracer TR_RD("core.pack.interaction_graph.RotamerDots.RotamerDots");
@@ -1612,12 +1614,28 @@ RotamerDots::initialize_dot_coords( utility::vector1< core::Vector > & dot_coord
 /// @brief set initial value as no instance
 RotamerDotsRadiusData* RotamerDotsRadiusData::instance_( 0 );
 
-/// @brief static function to get the instance of (pointer to) this singleton class
-RotamerDotsRadiusData* RotamerDotsRadiusData::get_instance() {
-	if ( instance_ == 0 ) {
-		instance_ = new RotamerDotsRadiusData();
-	}
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex RotamerDotsRadiusData::singleton_mutex_;
+
+std::mutex & RotamerDotsRadiusData::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+RotamerDotsRadiusData * RotamerDotsRadiusData::get_instance()
+{
+	boost::function< RotamerDotsRadiusData * () > creator = boost::bind( &RotamerDotsRadiusData::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
+}
+
+RotamerDotsRadiusData *
+RotamerDotsRadiusData::create_singleton_instance()
+{
+	return new RotamerDotsRadiusData;
 }
 
 /// @brief private constructor to guarantee the singleton

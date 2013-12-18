@@ -119,8 +119,8 @@ public:
 	PackerTaskCOP task() const;
 	TaskFactoryCOP task_factory() const;
 
-	void stochastic_pack( bool );
-	bool stochastic_pack() const;
+	void off_rotamer_pack( bool );
+	bool off_rotamer_pack() const;
 
 private:
 	// pointers to data that are passed in
@@ -128,7 +128,7 @@ private:
 	PackerTaskCOP task_;
 	TaskFactoryCOP task_factory_;
 
-	bool stochastic_pack_; // calls stochastic_pack instead of min_pack if true
+	bool off_rotamer_pack_; // calls off_rotamer_pack instead of min_pack if true
 	bool nonideal_,cartesian_;
 };
 

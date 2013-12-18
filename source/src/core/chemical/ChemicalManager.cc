@@ -69,6 +69,17 @@
 
 #include <core/chemical/ResidueType.hh>
 
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+#endif
+#endif
 
 
 namespace core {
@@ -76,56 +87,122 @@ namespace chemical {
 
 static basic::Tracer TR("core.chemical.ChemicalManager");
 
+//
+
 /// @brief set initial value as no instance
 ChemicalManager* ChemicalManager::instance_( 0 );
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex ChemicalManager::singleton_mutex_;
+
+std::mutex & ChemicalManager::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
 
 /// @brief static function to get the instance of ( pointer to) this singleton class
 ChemicalManager * ChemicalManager::get_instance()
 {
-	if ( instance_ == 0 )
-	{
-		 instance_ = new ChemicalManager();
-	}
+	boost::function< ChemicalManager * () > creator = boost::bind( &ChemicalManager::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
 }
 
+
+
 /// @brief private constructor to guarantee the singleton
 ChemicalManager::ChemicalManager(){}
+
+ChemicalManager *
+ChemicalManager::create_singleton_instance()
+{
+	return new ChemicalManager;
+}
 
 /// @details if the tag is not in the map, input it from a database file and add it
 /// to the map for future look-up.
 AtomTypeSetCAP
 ChemicalManager::atom_type_set( std::string const & tag )
 {
-	AtomTypeSets::const_iterator iter( atom_type_sets_.find( tag ) );
+	AtomTypeSets::const_iterator iter;
+	{ // scope for the read lock guard
+#if defined MULTI_THREADED && CXX11
+		utility::thread::ReadLockGuard lock( atomtype_mutex_ );
+#endif
+		iter = atom_type_sets_.find( tag );
+	}
 	if ( iter == atom_type_sets_.end() ) {
-		// read from file
-		std::string const directory( basic::database::full_name( "chemical/atom_type_sets/"+tag+"/" ) );
-		AtomTypeSetOP new_set( new AtomTypeSet( directory ) );
-		// optionally add extra parameters from files given on the command line (see util.hh)
-		modify_atom_properties_from_command_line( tag, *new_set );
-		// optionally add extra parameters from files given on the command line (see util.hh)
-		add_atom_type_set_parameters_from_command_line( tag, *new_set );
-		// store the new atom type set
-		iter = atom_type_sets_.insert( std::make_pair( tag, new_set ) ).first;
+
+		// bind the relevant atom-type-set creation function and its arguments so that
+		// it can be passed to the utility::thread::create_and_insert function.
+		boost::function< utility::pointer::owning_ptr< AtomTypeSet > () > func =
+			boost::bind( &ChemicalManager::create_atom_type_set, this, boost::cref(tag) );
+
+#if defined MULTI_THREADED && defined CXX11
+		iter = utility::thread::create_and_insert( func, atomtype_mutex_, tag, atom_type_sets_ );
+#else
+		AtomTypeSetOP newset = func();
+		iter = atom_type_sets_.insert( std::make_pair( tag, newset ) ).first;
+#endif
 	}
 	return iter->second();
 }
+
+///@details Actually go and create an AtomTypeSet
+AtomTypeSetOP
+ChemicalManager::create_atom_type_set(
+	std::string const & tag
+) const
+{
+	std::string const directory( basic::database::full_name( "chemical/atom_type_sets/"+tag+"/" ) );
+	AtomTypeSetOP new_set( new AtomTypeSet( directory ) );
+	// optionally add extra parameters from files given on the command line (see util.hh)
+	modify_atom_properties_from_command_line( tag, *new_set );
+	// optionally add extra parameters from files given on the command line (see util.hh)
+	add_atom_type_set_parameters_from_command_line( tag, *new_set );
+	return new_set;
+}
+
 
 /// @details if the tag is not in the map, input it from a database file and add it
 /// to the map for future look-up.
 ElementSetCAP
 ChemicalManager::element_set( std::string const & tag )
 {
-	ElementSets::const_iterator iter( element_sets_.find( tag ) );
+	ElementSets::const_iterator iter;
+	{ // scope for the ReadLockGuard
+#if defined MULTI_THREADED && defined CXX11
+		utility::thread::ReadLockGuard lock( elem_mutex_ );
+#endif
+		iter = element_sets_.find( tag );
+	}
 	if ( iter == element_sets_.end() ) {
-		// read from file
-		std::string const filename( basic::database::full_name( "chemical/element_sets/"+tag+"/element_properties.txt" ));
-		ElementSetOP new_set( new ElementSet() );
-		new_set->read_file( filename );
-		iter = element_sets_.insert( std::make_pair( tag, new_set ) ).first;
+
+		// bind the relevant atom-type-set creation function and its arguments so that
+		// it can be passed to the utility::thread::create_and_insert function.
+		boost::function< utility::pointer::owning_ptr< ElementSet > () > func =
+			boost::bind( &ChemicalManager::create_element_set, this, boost::cref(tag) );
+
+#if defined MULTI_THREADED && defined CXX11
+		iter = utility::thread::create_and_insert( func, elem_mutex_, tag, element_sets_ );
+#else
+		ElementSetOP newset = func();
+		iter = element_sets_.insert( std::make_pair( tag, newset ) ).first;
+#endif
 	}
 	return iter->second();
+}
+
+ElementSetOP
+ChemicalManager::create_element_set( std::string const & tag ) const
+{
+	// read from file
+	std::string const filename( basic::database::full_name( "chemical/element_sets/"+tag+"/element_properties.txt" ));
+	ElementSetOP new_set( new ElementSet() );
+	new_set->read_file( filename );
+	return new_set;
 }
 
 /// @details if the tag is not in the map, input it from a database file and add it
@@ -133,14 +210,36 @@ ChemicalManager::element_set( std::string const & tag )
 orbitals::OrbitalTypeSetCAP
 ChemicalManager::orbital_type_set( std::string const & tag )
 {
-	OrbitalTypeSets::const_iterator iter( orbital_type_sets_.find( tag ) );
+	OrbitalTypeSets::const_iterator iter;
+	{
+#if defined MULTI_THREADED && CXX11
+		utility::thread::ReadLockGuard lock( orbtype_mutex_ );
+#endif
+		iter = orbital_type_sets_.find( tag );
+	}
 	if ( iter == orbital_type_sets_.end() ) {
-		// read from file
-		std::string const directory( basic::database::full_name( "chemical/orbital_type_sets/"+tag+"/" ) );
-		orbitals::OrbitalTypeSetOP new_set( new orbitals::OrbitalTypeSet( directory ) );
-		iter = orbital_type_sets_.insert( std::make_pair( tag, new_set ) ).first;
+
+		// bind the relevant atom-type-set creation function and its arguments so that
+		// it can be passed to the utility::thread::create_and_insert function.
+		boost::function< utility::pointer::owning_ptr< orbitals::OrbitalTypeSet > () > func =
+			boost::bind( &ChemicalManager::create_orbital_type_set, this, boost::cref(tag) );
+
+#if defined MULTI_THREADED && defined CXX11
+		iter = utility::thread::create_and_insert( func, orbtype_mutex_, tag, orbital_type_sets_ );
+#else
+		orbitals::OrbitalTypeSetOP newset = func();
+		iter = orbital_type_sets_.insert( std::make_pair( tag, newset ) ).first;
+#endif
 	}
 	return iter->second();
+}
+
+orbitals::OrbitalTypeSetOP
+ChemicalManager::create_orbital_type_set( std::string const & tag ) const
+{
+	// read from file
+	std::string const directory( basic::database::full_name( "chemical/orbital_type_sets/"+tag+"/" ) );
+	return new orbitals::OrbitalTypeSet( directory );
 }
 
 /// @details if the tag is not in the map, input it from a database file and add it
@@ -148,15 +247,38 @@ ChemicalManager::orbital_type_set( std::string const & tag )
 MMAtomTypeSetCAP
 ChemicalManager::mm_atom_type_set( std::string const & tag )
 {
-	MMAtomTypeSets::const_iterator iter( mm_atom_type_sets_.find( tag ) );
+	MMAtomTypeSets::const_iterator iter;
+	{
+#if defined MULTI_THREADED && CXX11
+		utility::thread::ReadLockGuard lock( mmatomtype_mutex_ );
+#endif
+		iter = mm_atom_type_sets_.find( tag );
+	}
 	if ( iter == mm_atom_type_sets_.end() ) {
-		// read from file
-		std::string const filename( basic::database::full_name( "chemical/mm_atom_type_sets/"+tag+"/mm_atom_properties.txt" ));
-		MMAtomTypeSetOP new_set( new MMAtomTypeSet() );
-		new_set->read_file( filename );
-		iter = mm_atom_type_sets_.insert( std::make_pair( tag, new_set ) ).first;
+
+		// bind the relevant mm-atom-type-set creation function and its arguments so that
+		// it can be passed to the utility::thread::create_and_insert function.
+		boost::function< utility::pointer::owning_ptr< MMAtomTypeSet > () > func =
+			boost::bind( &ChemicalManager::create_mm_atom_type_set, this, boost::cref(tag) );
+
+#if defined MULTI_THREADED && defined CXX11
+		iter = utility::thread::create_and_insert( func, mmatomtype_mutex_, tag, mm_atom_type_sets_ );
+#else
+		MMAtomTypeSetOP newset = func();
+		iter = mm_atom_type_sets_.insert( std::make_pair( tag, newset ) ).first;
+#endif
 	}
 	return iter->second();
+}
+
+MMAtomTypeSetOP
+ChemicalManager::create_mm_atom_type_set( std::string const & tag ) const
+{
+	// read from file
+	std::string const filename( basic::database::full_name( "chemical/mm_atom_type_sets/"+tag+"/mm_atom_properties.txt" ));
+	MMAtomTypeSetOP new_set( new MMAtomTypeSet() );
+	new_set->read_file( filename );
+	return new_set;
 }
 
 
@@ -208,208 +330,233 @@ ChemicalManager::residue_type_set( std::string tag )
 		} //final case - if both are false - leave tag as-is
 	} //if ( tag == "rna" ) {
 
-	ResidueTypeSets::const_iterator iter( residue_type_sets_.find( tag ) );
+	ResidueTypeSets::const_iterator iter;
+	{ // scope for the ReadLockGuard
+#if defined MULTI_THREADED && defined CXX11
+		utility::thread::ReadLockGuard lock( restype_mutex_ );
+#endif
+		iter = residue_type_sets_.find( tag );
+	}
 	if ( iter == residue_type_sets_.end() ) {
-		// Look for additional residue .params files specified on the cmd line
-		std::vector< std::string > extra_params_files;
-		std::vector< std::string > extra_patch_files;
-		std::vector<core::chemical::ResidueTypeOP> extra_residues;
 
-		if(tag == FA_STANDARD) {
+		// bind the relevant residue-type-set creation function and its arguments so that
+		// it can be passed to the utility::thread::create_and_insert function.
+		boost::function< utility::pointer::owning_ptr< ResidueTypeSet > () > func =
+			boost::bind( &ChemicalManager::create_residue_type_set, this, boost::cref(tag) );
 
-			//this whole thing is desperately in need of some method extraction
-			utility::options::FileVectorOption & fvec
-				= basic::options::option[ basic::options::OptionKeys::in::file::extra_res_fa ];
-			for(Size i = 1, e = fvec.size(); i <= e; ++i) {
-				utility::file::FileName fname = fvec[i];
-				extra_params_files.push_back(fname.name());
-			}
+#if defined MULTI_THREADED && defined CXX11
+		iter = utility::thread::create_and_insert( func, restype_mutex_, tag, residue_type_sets_ );
+#else
+		ResidueTypeSetOP newset = func();
+		iter = residue_type_sets_.insert( std::make_pair( tag, newset ) ).first;
+#endif
+	}
+	return iter->second();
+}
 
-			utility::options::PathVectorOption & pvec
-				= basic::options::option[basic::options::OptionKeys::in::file::extra_res_path];
-			// convert Pathname->string->char*, glob it, convert char*->string
-			for(Size i=1, e= pvec.size(); i<=e; i++){
-				utility::vector1<std::string> files;
-				std::string directory=pvec[i].name();
+ResidueTypeSetOP
+ChemicalManager::create_residue_type_set( std::string const & tag ) const {
+	// Look for additional residue .params files specified on the cmd line
+	std::vector< std::string > extra_params_files;
+	std::vector< std::string > extra_patch_files;
+	std::vector<core::chemical::ResidueTypeOP> extra_residues;
 
-				utility::file::list_dir(directory, files);
-				TR.Debug<< std::endl;
-				for(size_t j=1; j<= files.size(); j++){
-					if (files[j].find("param")!=std::string::npos){
-						TR.Debug << files[j]<< ", ";
-						std::string path= directory+'/'+files[j];
-						extra_params_files.push_back(path);
-					}
-				}
-				TR.Debug<< std::endl;
-			}
+	if(tag == FA_STANDARD) {
 
-			utility::options::PathVectorOption & pvec_batch
-				= basic::options::option[basic::options::OptionKeys::in::file::extra_res_batch_path];
-			for(Size i=1, e= pvec_batch.size(); i<=e; i++){
-				utility::vector1<std::string> subdirs;
-				std::string directory=pvec_batch[i].name();
-
-				utility::file::list_dir(directory, subdirs);
-				TR.Debug<< std::endl;
-				for(size_t j=1; j<= subdirs.size();++j)
-				{
-					if(subdirs[j] == "." || subdirs[j] == "..")
-					{
-						continue;
-					}
-					utility::vector1<std::string> files;
-					utility::file::list_dir(directory+"/"+subdirs[j],files);
-					for(size_t k=1; k<= files.size(); k++){
-						if (files[k].find("param")!=std::string::npos){
-							TR.Debug << files[k]<< ", ";
-							std::string path= directory+'/'+subdirs[j]+'/'+files[k];
-							extra_params_files.push_back(path);
-						}
-					}
-				}
-
-			}
-
-			utility::options::FileVectorOption & mdlvec
-				= basic::options::option[basic::options::OptionKeys::in::file::extra_res_mol];
-			core::chemical::AtomTypeSetCAP atom_types = atom_type_set("fa_standard");
-			core::chemical::ElementSetCAP elements = element_set("fa_standard");
-			core::chemical::MMAtomTypeSetCAP mm_atom_types = mm_atom_type_set("fa_standard");
-			core::chemical::orbitals::OrbitalTypeSetCAP orbital_types = orbital_type_set("fa_standard");
-			for(Size i=1, e = mdlvec.size(); i <= e;++i)
-			{
-				utility::file::FileName filename = mdlvec[i];
-				core::chemical::sdf::MolFileParser parser(filename.name());
-				parser.parse_mol_file(atom_types, elements, mm_atom_types, orbital_types);
-				extra_residues.push_back(parser.GetResidueTypeOP());
-			}
-
-			if(basic::options::option[basic::options::OptionKeys::in::file::extra_res_database].user())
-			{
-				utility::sql_database::DatabaseMode::e database_mode(
-					utility::sql_database::database_mode_from_name(
-						basic::options::option[basic::options::OptionKeys::in::file::extra_res_database_mode]));
-				std::string database_name(basic::options::option[basic::options::OptionKeys::in::file::extra_res_database]);
-				std::string database_pq_schema(basic::options::option[basic::options::OptionKeys::in::file::extra_res_pq_schema]);
-
-
-				utility::sql_database::sessionOP db_session(
-					basic::database::get_db_session(database_mode, database_name, database_pq_schema));
-
-				ResidueDatabaseIO residue_database_interface;
-
-				if(basic::options::option[basic::options::OptionKeys::in::file::extra_res_database_resname_list].user())
-				{
-					utility::file::FileName residue_list = basic::options::option[basic::options::OptionKeys::in::file::extra_res_database_resname_list];
-					utility::io::izstream residue_name_file(residue_list);
-					std::string residue_name;
-					while(residue_name_file >> residue_name)
-					{
-						//residue_name_file >> residue_name;
-						//TR <<residue_name <<std::endl;
-						ResidueTypeOP new_residue(
-							residue_database_interface.read_residuetype_from_database(
-								atom_types,
-								elements,
-								mm_atom_types,
-								orbital_types,
-								"fa_standard",
-								residue_name,
-								db_session));
-						extra_residues.push_back(new_residue);
-					}
-
-				}else
-				{
-					utility::vector1<std::string> residue_names_in_database( residue_database_interface.get_all_residues_in_database(db_session));
-					for(Size index =1; index <= residue_names_in_database.size();++index)
-					{
-						ResidueTypeOP new_residue(
-							residue_database_interface.read_residuetype_from_database(
-								atom_types,
-								elements,
-								mm_atom_types,
-								orbital_types,
-								"fa_standard",
-								residue_names_in_database[index],
-								db_session));
-						extra_residues.push_back(new_residue);
-					}
-				}
-			}
-
-			// Patches
-			utility::options::FileVectorOption & pfvec
-				= basic::options::option[ basic::options::OptionKeys::in::file::extra_patch_fa ];
-			for(Size i = 1, e = pfvec.size(); i <= e; ++i) {
-				extra_patch_files.push_back( pfvec[i].name());
-			}
-
-		} else if(tag == CENTROID) {
-			utility::options::FileVectorOption & fvec
-				= basic::options::option[ basic::options::OptionKeys::in::file::extra_res_cen ];
-			for(Size i = 1, e = fvec.size(); i <= e; ++i) {
-				utility::file::FileName fname = fvec[i];
-				extra_params_files.push_back(fname.name());
-			}
-			// Patches
-			utility::options::FileVectorOption & pfvec
-				= basic::options::option[ basic::options::OptionKeys::in::file::extra_patch_cen ];
-			for(Size i = 1, e = pfvec.size(); i <= e; ++i) {
-				extra_patch_files.push_back( pfvec[i].name());
-			}
-		}
-
-		// generically specify extra res (not necessarily part of fa_standard) -- will get added to
-		//  any and every residue_type_set instantiated.
+		//this whole thing is desperately in need of some method extraction -- holy cow it does!
 		utility::options::FileVectorOption & fvec
-			= basic::options::option[ basic::options::OptionKeys::in::file::extra_res ];
+			= basic::options::option[ basic::options::OptionKeys::in::file::extra_res_fa ];
 		for(Size i = 1, e = fvec.size(); i <= e; ++i) {
 			utility::file::FileName fname = fvec[i];
 			extra_params_files.push_back(fname.name());
 		}
 
-		// read from file
-		TR.Debug << "CHEMICAL_MANAGER: read residue types: " << tag << std::endl;
-		// redirecting to new icoor folder
-		std::string temp_str( basic::database::full_name( "chemical/residue_type_sets/"+tag ) );
-		if ( tag == FA_STANDARD ) {
-			if ( basic::options::option[basic::options::OptionKeys::corrections::chemical::icoor_05_2009]) {
-				temp_str += "_05.2009_icoor";
-			} else if ( basic::options::option[basic::options::OptionKeys::mistakes::chemical::pre_talaris2013_geometries ]) {
-				temp_str += "_pre_talaris2013";
+		utility::options::PathVectorOption & pvec
+			= basic::options::option[basic::options::OptionKeys::in::file::extra_res_path];
+		// convert Pathname->string->char*, glob it, convert char*->string
+		for(Size i=1, e= pvec.size(); i<=e; i++){
+			utility::vector1<std::string> files;
+			std::string directory=pvec[i].name();
+
+			utility::file::list_dir(directory, files);
+			TR.Debug<< std::endl;
+			for(size_t j=1; j<= files.size(); j++){
+				if (files[j].find("param")!=std::string::npos){
+					TR.Debug << files[j]<< ", ";
+					std::string path= directory+'/'+files[j];
+					extra_params_files.push_back(path);
+				}
 			}
-		} else if ( tag == CENTROID ) {
-			if ( basic::options::option[basic::options::OptionKeys::mistakes::chemical::pre_talaris2013_geometries ]) {
-				temp_str += "_pre_talaris2013";
-			}
+			TR.Debug<< std::endl;
 		}
-		temp_str += "/";
 
+		utility::options::PathVectorOption & pvec_batch
+			= basic::options::option[basic::options::OptionKeys::in::file::extra_res_batch_path];
+		for(Size i=1, e= pvec_batch.size(); i<=e; i++){
+			utility::vector1<std::string> subdirs;
+			std::string directory=pvec_batch[i].name();
 
-		std::string const directory( temp_str );
-		ResidueTypeSetOP new_set( new ResidueTypeSet( tag, directory, extra_params_files, extra_patch_files ) );
-		ResidueTypeSetCAP new_setCAP(*new_set);
+			utility::file::list_dir(directory, subdirs);
+			TR.Debug<< std::endl;
+			for ( size_t j=1; j<= subdirs.size();++j) {
+				if ( subdirs[j] == "." || subdirs[j] == "..") {
+					continue;
+				}
+				utility::vector1<std::string> files;
+				utility::file::list_dir(directory+"/"+subdirs[j],files);
+				for(size_t k=1; k<= files.size(); k++){
+					if (files[k].find("param")!=std::string::npos){
+						TR.Debug << files[k]<< ", ";
+						std::string path= directory+'/'+subdirs[j]+'/'+files[k];
+						extra_params_files.push_back(path);
+					}
+				}
+			}
 
-		for(core::Size index =0 ;index < extra_residues.size();++index)
+		}
+
+		utility::options::FileVectorOption & mdlvec
+			= basic::options::option[basic::options::OptionKeys::in::file::extra_res_mol];
+
+		// this function itself does not (directly) modify any member data of class ChemicalManager,
+		// but it is allowed to (indirectly) modify the singleton instance (which, to be fair,
+		// is this instance) through singleton accessor functions.  In particular,
+		// it will lead to the creation of the following *Sets for fa_standard.
+		core::chemical::AtomTypeSetCAP atom_types = ChemicalManager::get_instance()->atom_type_set("fa_standard");
+		core::chemical::ElementSetCAP elements = ChemicalManager::get_instance()->element_set("fa_standard");
+		core::chemical::MMAtomTypeSetCAP mm_atom_types = ChemicalManager::get_instance()->mm_atom_type_set("fa_standard");
+		core::chemical::orbitals::OrbitalTypeSetCAP orbital_types = ChemicalManager::get_instance()->orbital_type_set("fa_standard");
+
+		for(Size i=1, e = mdlvec.size(); i <= e;++i)
 		{
-			//TR << extra_residues[index]->name3() <<std::endl;
-			new_set->add_residue_type(extra_residues[index]);
-			extra_residues[index]->residue_type_set(new_setCAP);
-			ResidueTypeSetCAP new_set_cap(new_set.get());
-			extra_residues[index]->residue_type_set(new_set_cap);
+			utility::file::FileName filename = mdlvec[i];
+			core::chemical::sdf::MolFileParser parser(filename.name());
+			parser.parse_mol_file(atom_types, elements, mm_atom_types, orbital_types);
+			extra_residues.push_back(parser.GetResidueTypeOP());
 		}
 
-		iter = residue_type_sets_.insert( std::make_pair( tag, new_set ) ).first;
+		if(basic::options::option[basic::options::OptionKeys::in::file::extra_res_database].user())
+		{
+			utility::sql_database::DatabaseMode::e database_mode(
+				utility::sql_database::database_mode_from_name(
+					basic::options::option[basic::options::OptionKeys::in::file::extra_res_database_mode]));
+			std::string database_name(basic::options::option[basic::options::OptionKeys::in::file::extra_res_database]);
+			std::string database_pq_schema(basic::options::option[basic::options::OptionKeys::in::file::extra_res_pq_schema]);
 
+
+			utility::sql_database::sessionOP db_session(
+				basic::database::get_db_session(database_mode, database_name, database_pq_schema));
+
+			ResidueDatabaseIO residue_database_interface;
+
+			if(basic::options::option[basic::options::OptionKeys::in::file::extra_res_database_resname_list].user())
+			{
+				utility::file::FileName residue_list = basic::options::option[basic::options::OptionKeys::in::file::extra_res_database_resname_list];
+				utility::io::izstream residue_name_file(residue_list);
+				std::string residue_name;
+				while(residue_name_file >> residue_name)
+				{
+					//residue_name_file >> residue_name;
+					//TR <<residue_name <<std::endl;
+					ResidueTypeOP new_residue(
+						residue_database_interface.read_residuetype_from_database(
+							atom_types,
+							elements,
+							mm_atom_types,
+							orbital_types,
+							"fa_standard",
+							residue_name,
+							db_session));
+					extra_residues.push_back(new_residue);
+				}
+
+			}else
+			{
+				utility::vector1<std::string> residue_names_in_database( residue_database_interface.get_all_residues_in_database(db_session));
+				for(Size index =1; index <= residue_names_in_database.size();++index)
+				{
+					ResidueTypeOP new_residue(
+						residue_database_interface.read_residuetype_from_database(
+							atom_types,
+							elements,
+							mm_atom_types,
+							orbital_types,
+							"fa_standard",
+							residue_names_in_database[index],
+							db_session));
+					extra_residues.push_back(new_residue);
+				}
+			}
+		}
+
+		// Patches
+		utility::options::FileVectorOption & pfvec
+			= basic::options::option[ basic::options::OptionKeys::in::file::extra_patch_fa ];
+		for(Size i = 1, e = pfvec.size(); i <= e; ++i) {
+			extra_patch_files.push_back( pfvec[i].name());
+		}
+
+	} else if(tag == CENTROID) {
+		utility::options::FileVectorOption & fvec
+			= basic::options::option[ basic::options::OptionKeys::in::file::extra_res_cen ];
+		for(Size i = 1, e = fvec.size(); i <= e; ++i) {
+			utility::file::FileName fname = fvec[i];
+			extra_params_files.push_back(fname.name());
+		}
+		// Patches
+		utility::options::FileVectorOption & pfvec
+			= basic::options::option[ basic::options::OptionKeys::in::file::extra_patch_cen ];
+		for(Size i = 1, e = pfvec.size(); i <= e; ++i) {
+			extra_patch_files.push_back( pfvec[i].name());
+		}
 	}
-	return iter->second();
-}
 
+	// generically specify extra res (not necessarily part of fa_standard) -- will get added to
+	//  any and every residue_type_set instantiated.
+	utility::options::FileVectorOption & fvec
+		= basic::options::option[ basic::options::OptionKeys::in::file::extra_res ];
+	for(Size i = 1, e = fvec.size(); i <= e; ++i) {
+		utility::file::FileName fname = fvec[i];
+		extra_params_files.push_back(fname.name());
+	}
+
+	// read from file
+	TR.Debug << "CHEMICAL_MANAGER: read residue types: " << tag << std::endl;
+	// redirecting to new icoor folder
+	std::string temp_str( basic::database::full_name( "chemical/residue_type_sets/"+tag ) );
+	if ( tag == FA_STANDARD ) {
+		if ( basic::options::option[basic::options::OptionKeys::corrections::chemical::icoor_05_2009]) {
+			temp_str += "_05.2009_icoor";
+		} else if ( basic::options::option[basic::options::OptionKeys::mistakes::chemical::pre_talaris2013_geometries ]) {
+			temp_str += "_pre_talaris2013";
+		}
+	} else if ( tag == CENTROID ) {
+		if ( basic::options::option[basic::options::OptionKeys::mistakes::chemical::pre_talaris2013_geometries ]) {
+			temp_str += "_pre_talaris2013";
+		}
+	}
+	temp_str += "/";
+
+
+	std::string const directory( temp_str );
+	ResidueTypeSetOP new_set( new ResidueTypeSet( tag, directory, extra_params_files, extra_patch_files ) );
+	ResidueTypeSetCAP new_setCAP(*new_set);
+
+	for(core::Size index =0 ;index < extra_residues.size();++index)
+	{
+		//TR << extra_residues[index]->name3() <<std::endl;
+		new_set->add_residue_type(extra_residues[index]);
+		extra_residues[index]->residue_type_set(new_setCAP);
+		ResidueTypeSetCAP new_set_cap(new_set.get());
+		extra_residues[index]->residue_type_set(new_set_cap);
+	}
+
+	return new_set;
+}
 
 ///@ details if the tag is not in the map, input it from a database file and add it
 ///to the map for future look-up.
+/// THIS FUNCTION IS DECIDEDLY NOT THREADSAFE!
 ResidueTypeSet &
 ChemicalManager::nonconst_residue_type_set( std::string const & tag )
 {
@@ -424,15 +571,38 @@ ChemicalManager::nonconst_residue_type_set( std::string const & tag )
 IdealBondLengthSetCAP
 ChemicalManager::ideal_bond_length_set( std::string const & tag )
 {
-	IdealBondLengthSets::const_iterator iter( ideal_bond_length_sets_.find( tag ) );
+	IdealBondLengthSets::const_iterator iter;
+	{ // scope for the ReadLockGuard
+#if defined MULTI_THREADED && defined CXX11
+		utility::thread::ReadLockGuard lock( idealbondlength_mutex_ );
+#endif
+		iter = ideal_bond_length_sets_.find( tag );
+	}
 	if ( iter == ideal_bond_length_sets_.end() ) {
-		// read from file
-		std::string const filename( basic::database::full_name( "chemical/atom_type_sets/"+tag+"/ideal_bond_lengths.txt" ));
-		IdealBondLengthSetOP new_set( new IdealBondLengthSet() );
-		new_set->read_file( filename );
-		iter = ideal_bond_length_sets_.insert( std::make_pair( tag, new_set ) ).first;
+
+		// bind the relevant ideal-bond-length-set creation function and its arguments so that
+		// it can be passed to the utility::thread::create_and_insert function.
+		boost::function< utility::pointer::owning_ptr< IdealBondLengthSet > () > func =
+			boost::bind( &ChemicalManager::create_ideal_bond_length_set, this, boost::cref(tag) );
+
+#if defined MULTI_THREADED && defined CXX11
+		iter = utility::thread::create_and_insert( func, idealbondlength_mutex_, tag, ideal_bond_length_sets_ );
+#else
+		IdealBondLengthSetOP newset = func();
+		iter = ideal_bond_length_sets_.insert( std::make_pair( tag, newset ) ).first;
+#endif
 	}
 	return iter->second();
+}
+
+IdealBondLengthSetOP
+ChemicalManager::create_ideal_bond_length_set( std::string const & tag ) const
+{
+	// read from file
+	std::string const filename( basic::database::full_name( "chemical/atom_type_sets/"+tag+"/ideal_bond_lengths.txt" ));
+	IdealBondLengthSetOP new_set( new IdealBondLengthSet() );
+	new_set->read_file( filename );
+	return new_set;
 }
 
 // global data

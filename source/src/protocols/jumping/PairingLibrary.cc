@@ -38,13 +38,17 @@
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/JumpSRFD.hh>
 #include <core/fragment/JumpingFrame.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2A.hh>
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// Basic headers
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 
@@ -52,14 +56,12 @@
 #include <numeric/random/random.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzMatrix.fwd.hh>
+#include <numeric/xyz.functions.hh>
 
 // C++ headers
 #include <cstdlib>
 #include <string>
 
-#include <core/scoring/dssp/PairingsList.hh>
-#include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
 
 static basic::Tracer tr("protocols.jumping");
 
@@ -712,14 +714,32 @@ PairingLibrary::generate_jump_frags(
 		} // loop over orientations and pleatings
 } // method
 
-StandardPairingLibrary* StandardPairingLibrary::instance_( NULL );
+StandardPairingLibrary* StandardPairingLibrary::instance_( 0 );
 
-StandardPairingLibrary* StandardPairingLibrary::get_instance() {
-	if ( instance_ == NULL ) {
-		instance_ = new StandardPairingLibrary();
-		instance_->read_from_file( basic::database::full_name("scoring/score_functions/jump_templates_SSpairs_v2.dat") );
-	};
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex StandardPairingLibrary::singleton_mutex_;
+
+std::mutex & StandardPairingLibrary::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+StandardPairingLibrary * StandardPairingLibrary::get_instance()
+{
+	boost::function< StandardPairingLibrary * () > creator = boost::bind( &StandardPairingLibrary::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
+}
+
+StandardPairingLibrary *
+StandardPairingLibrary::create_singleton_instance()
+{
+	StandardPairingLibrary * instance = new StandardPairingLibrary;
+	instance->read_from_file( basic::database::full_name("scoring/score_functions/jump_templates_SSpairs_v2.dat") );
+	return instance;
 }
 
 } // jumping

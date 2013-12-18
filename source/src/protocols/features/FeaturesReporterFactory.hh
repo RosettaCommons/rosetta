@@ -35,19 +35,29 @@
 
 #include <utility/vector1.hh>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace protocols {
 namespace features {
 
 /// Create Features Reporters
 class FeaturesReporterFactory {
-
+private:
 	// Private constructor to make it singleton managed
 	FeaturesReporterFactory();
 	FeaturesReporterFactory(const FeaturesReporterFactory & src); // unimplemented
 
 	FeaturesReporterFactory const &
 	operator=( FeaturesReporterFactory const & ); // unimplemented
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static FeaturesReporterFactory * create_singleton_instance();
 
 public:
 
@@ -75,6 +85,21 @@ public:
 	// get_creator( std::string const & type_name );
 
 	utility::vector1<std::string> get_all_features_names();
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
 private:
 
 	static FeaturesReporterFactory * instance_;

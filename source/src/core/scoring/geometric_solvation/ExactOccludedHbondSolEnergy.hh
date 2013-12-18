@@ -35,7 +35,12 @@
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <utility/vector1.hh>
 
-
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace core {
 namespace scoring {
@@ -59,9 +64,28 @@ public:
 	core::Real yorigin() const { return yorigin_; };
 	core::Real zorigin() const { return zorigin_; };
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
 private:
 	//private constructor
 	GridInfo();
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static GridInfo * create_singleton_instance();
+
+private:
 	static GridInfo * instance_;
 
 	// private member data
@@ -85,13 +109,33 @@ public:
 	core::Real
 	get_sum_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const;
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
 private:
 	//private constructor
 	WaterWeightGridSet();
-	static WaterWeightGridSet * instance_;
 
 	core::Real fill_water_grid( std::vector < std::vector < std::vector <core::Real> > > & water_weights,
 		hbonds::HBEvalTuple const & hbond_eval_type, GridInfo const & grid_info, bool const water_is_donor);
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static WaterWeightGridSet * create_singleton_instance();
+
+private:
+	static WaterWeightGridSet * instance_;
 
 	// private member data
 	std::map< hbonds::HBEvalType, std::vector < std::vector < std::vector <core::Real> > > > all_water_weights_;

@@ -72,7 +72,11 @@
 #include <protocols/jumping/DisulfPairingsList.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 static basic::Tracer tr("protocols.jumping");
 
@@ -470,18 +474,35 @@ DisulfPairingLibrary::generate_jump_frags(
 	}
 } // method
 
+StandardDisulfPairingLibrary* StandardDisulfPairingLibrary::instance_( 0 );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
 
-StandardDisulfPairingLibrary* StandardDisulfPairingLibrary::instance_( NULL );
+std::mutex StandardDisulfPairingLibrary::singleton_mutex_;
 
-StandardDisulfPairingLibrary* StandardDisulfPairingLibrary::get_instance() {
-	if ( instance_ == NULL ) {
-		instance_ = new StandardDisulfPairingLibrary();
-		std::cout << "READING START" << std::endl;
-		instance_->read_from_file( basic::database::full_name("sampling/disulfide_jump_database_wip.dat") );
-		std::cout << "READING END" << std::endl;
-	};
+std::mutex & StandardDisulfPairingLibrary::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+StandardDisulfPairingLibrary * StandardDisulfPairingLibrary::get_instance()
+{
+	boost::function< StandardDisulfPairingLibrary * () > creator = boost::bind( &StandardDisulfPairingLibrary::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
+}
+
+StandardDisulfPairingLibrary *
+StandardDisulfPairingLibrary::create_singleton_instance()
+{
+	StandardDisulfPairingLibrary * instance = new StandardDisulfPairingLibrary;
+	instance = new StandardDisulfPairingLibrary();
+	std::cout << "READING START" << std::endl;
+	instance->read_from_file( basic::database::full_name("sampling/disulfide_jump_database_wip.dat") );
+	std::cout << "READING END" << std::endl;
+	return instance;
 }
 
 } // jumping

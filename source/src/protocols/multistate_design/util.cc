@@ -19,10 +19,11 @@
 #include <protocols/multistate_design/MultiStatePacker.hh>
 // AUTO-REMOVED #include <protocols/multistate_design/SingleState.hh> // REQUIRED FOR WINDOWS
 
+
 // Project headers
 #include <core/chemical/ResidueType.hh>
 #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh> // REQUIRED FOR WINDOWS 
+// AUTO-REMOVED #include <core/pose/Pose.hh> // REQUIRED FOR WINDOWS
 
 // C++ headers
 #include <set>
@@ -58,6 +59,21 @@ list_amino_acid_options(
 	}
 	return choices;
 }
+
+protocols::genetic_algorithm::EntityElements
+entity_elements_from_1letterstring(
+	std::string const & input
+)
+{
+	protocols::genetic_algorithm::EntityElements elements( input.size() );
+	for ( core::Size ii = 0, count = 1; ii < input.size(); ++ii, ++count ) {
+		std::ostringstream output;
+		output << "AA:" << count << ":" << input[ ii ];
+		elements[ count ] = protocols::genetic_algorithm::EntityElementFactory::get_instance()->element_from_string( output.str() );
+	}
+	return elements;
+}
+
 
 }
 }

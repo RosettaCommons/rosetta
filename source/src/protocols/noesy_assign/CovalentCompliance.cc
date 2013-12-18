@@ -13,13 +13,12 @@
 // Unit Headers
 #include <protocols/noesy_assign/CovalentCompliance.hh>
 
-// Package Headers
-
-// Project Headers
-
 // Utility headers
+#include <utility/thread/threadsafe_creation.hh>
 
-// C++ headers
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace protocols {
 namespace noesy_assign {
@@ -91,22 +90,36 @@ bool fall_back( core::id::NamedAtomID const& _atom1, core::id::NamedAtomID const
 
 CovalentCompliance* CovalentCompliance::instance_( 0 );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex CovalentCompliance::singleton_mutex_;
+
+std::mutex & CovalentCompliance::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+CovalentCompliance const * CovalentCompliance::get_instance()
+{
+	boost::function< CovalentCompliance * () > creator = boost::bind( &CovalentCompliance::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+CovalentCompliance *
+CovalentCompliance::create_singleton_instance()
+{
+	return new CovalentCompliance;
+}
+
 CovalentCompliance::CovalentCompliance() :
   covalent_distances_( NULL )
 {}
 
-CovalentCompliance const* CovalentCompliance::get_instance() {
-  if ( instance_ == 0 ) {
-    instance_ = new CovalentCompliance();
-  }
-  return instance_;
-}
-
 CovalentCompliance* CovalentCompliance::get_nonconst_instance() {
-  if ( instance_ == 0 ) {
-    instance_ = new CovalentCompliance();
-  }
-  return instance_;
+  return const_cast< CovalentCompliance * > ( get_instance() );
 }
 
 void CovalentCompliance::load_dist_table( std::string const& file ) {

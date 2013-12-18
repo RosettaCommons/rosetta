@@ -254,62 +254,73 @@ LayerDesignOperation::write_pymol_script( core::pose::Pose const & pose, toolbox
 	}
 }
 
+/// @details Indirection to get around c++11 flexibility in initializing
+/// maps.  Used in set_default_layer_residues below.  Idea stolen from
+/// this thread on github:
+/// https://github.com/ethz-asl/libpointmatcher/issues/13
+template< class T >
+LayerDesignOperation::LayerDefinitions
+makeMap( T const & map_initializer )
+{
+	LayerDesignOperation::LayerDefinitions m = map_initializer;
+	return m;
+}
 
 void
 LayerDesignOperation::set_default_layer_residues() {
 	TR << "Initializing the layers with the default residues" << std::endl;
 	boost::assign::insert(layer_residues_)
-		      ("core", boost::assign::map_list_of
-					 		("all",							"AFILPVWYDNST")
-							("Loop", 						"AFILPVWY")
-							("Strand",	 				"FILVWY")
-							("Helix", 					"AFILVWY")
-							("HelixStart", 			"AFILVWYP")
-							("HelixCapping", 		"DNST")
-					)
-					("boundary", boost::assign::map_list_of
-							("all", 						"ADEFGIKLNPQRSTVWY")
-							("Loop", 						"ADEFGIKLNPQRSTVWY")
-							("Strand",	 				"DEFIKLNQRSTVWY")
-							("Helix", 					"ADEIKLNQRSTVWY")
-							("HelixStart", 			"ADEIKLNQRSTVWYP")
-							("HelixCapping", 		"DNST")
-					)
-					("surface", boost::assign::map_list_of
-							("all", 						"DEGHKNPQRST")
-							("Loop", 						"DEGHKNPQRST")
-							("Strand",	 				"DEHKNQRST")
-							("Helix", 					"DEHKNQRST")
-							("HelixStart",			"DEHKNQRSTP")
-							("HelixCapping", 		"DNST")
-					)
-					("Nterm", boost::assign::map_list_of
-					 ("all", "ACDEFGHIKLMNPQRSTVWY")
-					)
-					("Cterm", boost::assign::map_list_of
-					 ("all", "ACDEFGHIKLMNPQRSTVWY")
-					);
+		      (std::string("core"), makeMap( boost::assign::map_list_of
+					 		(std::string("all"),		          std::string("AFILPVWYDNST"))
+							(std::string("Loop"), 	          std::string("AFILPVWY"))
+							(std::string("Strand"),	          std::string("FILVWY"))
+							(std::string("Helix"), 	          std::string("AFILVWY"))
+							(std::string("HelixStart"),       std::string("AFILVWYP"))
+							(std::string("HelixCapping"),     std::string("DNST"))
+					))
+					(std::string("boundary"), makeMap( boost::assign::map_list_of
+							(std::string("all"),              std::string("ADEFGIKLNPQRSTVWY"))
+							(std::string("Loop"),             std::string("ADEFGIKLNPQRSTVWY"))
+							(std::string("Strand"),           std::string("DEFIKLNQRSTVWY"))
+							(std::string("Helix"),            std::string("ADEIKLNQRSTVWY"))
+							(std::string("HelixStart"),       std::string("ADEIKLNQRSTVWYP"))
+							(std::string("HelixCapping"),     std::string("DNST"))
+					))
+					(std::string("surface"), makeMap( boost::assign::map_list_of
+							(std::string("all"),              std::string("DEGHKNPQRST"))
+							(std::string("Loop"),             std::string("DEGHKNPQRST"))
+							(std::string("Strand"),           std::string("DEHKNQRST"))
+							(std::string("Helix"),            std::string("DEHKNQRST"))
+							(std::string("HelixStart"),       std::string("DEHKNQRSTP"))
+							(std::string("HelixCapping"),     std::string("DNST"))
+					))
+					(std::string("Nterm"), makeMap( boost::assign::map_list_of
+							(std::string("all"),              std::string("ACDEFGHIKLMNPQRSTVWY"))
+					))
+					(std::string("Cterm"), makeMap( boost::assign::map_list_of
+							(std::string("all"),              std::string("ACDEFGHIKLMNPQRSTVWY"))
+					));
 
 	boost::assign::insert(design_layer_)
-		("core", false )
-		("boundary", false )
-		("surface", false )
-		("Nterm", false )
-		("Cterm", false );
+		(std::string("core"), false )
+		(std::string("boundary"), false )
+		(std::string("surface"), false )
+		(std::string("Nterm"), false )
+		(std::string("Cterm"), false );
 
 	boost::assign::insert(layer_specification_)
-		("core", DESIGNABLE)
-		("boundary", DESIGNABLE)
-		("surface", DESIGNABLE)
-		("Nterm", DESIGNABLE)
-		("Cterm", DESIGNABLE);
+		(std::string("core"), DESIGNABLE)
+		(std::string("boundary"), DESIGNABLE)
+		(std::string("surface"), DESIGNABLE)
+		(std::string("Nterm"), DESIGNABLE)
+		(std::string("Cterm"), DESIGNABLE);
 
 	boost::assign::insert(layer_operation_)
-		("core", DESIGN)
-		("boundary", DESIGN)
-		("surface", DESIGN)
-		("Nterm", DESIGN)
-		("Cterm", DESIGN);
+		(std::string("core"), DESIGN)
+		(std::string("boundary"), DESIGN)
+		(std::string("surface"), DESIGN)
+		(std::string("Nterm"), DESIGN)
+		(std::string("Cterm"), DESIGN);
 }
 
 utility::vector1<bool>
@@ -539,240 +550,241 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 void
 LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 {
-    using core::pack::task::operation::TaskOperationFactory;
-    typedef std::pair< std::string, bool > DesignLayerPair;
-    
-    use_original_ = tag->getOption< bool >( "use_original_non_designed_layer", 1 );
-    
-    String design_layers = tag->getOption< String >( "layer", "core_boundary_surface_Nterm_Cterm" );
-    if (design_layers == "all")
-        design_layers = "core_boundary_surface_Nterm_Cterm";
-    if (design_layers == "other" || design_layers == "user")
-        design_layers = "";
-    utility::vector1< String > layers( utility::string_split( design_layers, '_' ) );
-    BOOST_FOREACH(std::string &  layer, layers) {
-        design_layer_[ layer ] = true;
-    }
-    
-    repack_non_designed_residues_ = tag->getOption< bool >("repack_non_design", 1);
-    
-    srbl_->set_design_layer( true, true, true);
-    
-    if( tag->hasOption( "pore_radius" ) ) {
-        srbl_->pore_radius( tag->getOption< Real >( "pore_radius" ) );
-    }
-    
-    if( tag->hasOption( "core" ) ) {
-        srbl_->sasa_core( tag->getOption< Real >( "core" ) );
-    }
-    if( tag->hasOption( "surface" ) ) {
-        srbl_->sasa_surface( tag->getOption< Real >( "surface" ) );
-    }
-    
-    if( tag->hasOption( "core_E" ) ) {
-        srbl_->sasa_core( tag->getOption< Real >( "core_E" ), "E" );
-    }
-    if( tag->hasOption( "core_L" ) ) {
-        srbl_->sasa_core( tag->getOption< Real >( "core_L" ), "L" );
-    }
-    if( tag->hasOption( "core_H" ) ) {
-        srbl_->sasa_core( tag->getOption< Real >( "core_H" ), "H" );
-    }
-    
-    if( tag->hasOption( "surface_E" ) ) {
-        srbl_->sasa_surface( tag->getOption< Real >( "surface_E" ), "E" );
-    }
-    if( tag->hasOption( "surface_L" ) ) {
-        srbl_->sasa_surface( tag->getOption< Real >( "surface_L" ), "L" );
-    }
-    if( tag->hasOption( "surface_H" ) ) {
-        srbl_->sasa_surface( tag->getOption< Real >( "surface_H" ), "H" );
-    }
-    
-    if( tag->hasOption( "make_rasmol_script" ) ) {
-        srbl_->make_rasmol_format_file( tag->getOption< bool >( "make_rasmol_script" ) );
-    }
-    
-    if( tag->hasOption( "blueprint" ) ) {
-        blueprint_ = new protocols::jd2::parser::BluePrint( tag->getOption< std::string >("blueprint") );
-    }
-    
-    set_verbose( tag->getOption< bool >( "verbose", false ) );
-    set_restrict_restypes( tag->getOption< bool >( "restrict_restypes", true ) );
-    make_pymol_script( tag->getOption< bool >("make_pymol_script", false) );
-    
-    BOOST_FOREACH( utility::tag::TagCOP const layer_tag, tag->getTags() ){
-        
-        std::string layer = layer_tag->getName(); // core, residue, boundary or taskoperation
-        if( layer == "core" || layer =="boundary" || layer == "surface" ||  layer == "Nterm" ||  layer == "Cterm" )
-        {
-            TR << "redefining default layer " << layer << std::endl;
-        } else if(layer == "CombinedTasks" ) {
-            std::string comb_name = layer_tag->getOption< std::string >("name");
-            TR << "Making a combined task named "<< comb_name << std::endl;
-            utility::vector1< TaskOperationOP > task_ops;
-            BOOST_FOREACH( utility::tag::TagCOP const task_tag, layer_tag->getTags() ) {
-                std::string task_op_type = task_tag->getName();
-                TaskOperationOP task = TaskOperationFactory::get_instance()->newTaskOperation(task_op_type, datamap, task_tag);
-                task_ops.push_back( task );
-            }
-            CombinedTaskOperationOP comb = new CombinedTaskOperation( task_ops );
-            task_layers_[ comb_name ] = comb;
-            design_layer_[ comb_name ] = true;
-            layer_residues_[ comb_name ] = std::map< std::string, std::string >();
-            layer_operation_[ comb_name ] = DESIGN;
-            layer_specification_[ comb_name ] = DESIGNABLE;
-            
-        } else if( TaskOperationFactory::get_instance()->has_type(layer) ) {
-            std::string task_op_type = layer;
-            std::string task_name = layer_tag->getOption< std::string >("name");
-            TR << "Defining new layer from task type "<< layer << " named " << task_name << std::endl;
-            layer = task_name;
-            TaskOperationOP task = TaskOperationFactory::get_instance()->newTaskOperation(task_op_type, datamap, layer_tag);
-            // store the task to use it in apply to find the designable residues for the layer
-            // and add the extra layer to layer_residues_.
-            task_layers_[ task_name ] = task;
-            design_layer_[ task_name ] = true;
-            layer_residues_[ task_name ] = std::map< std::string, std::string >();
-            layer_operation_[ task_name ] = DESIGN;
-            layer_specification_[ task_name ] = DESIGNABLE;
-            
-        } else {
-            utility_exit_with_message( "Invalid layer " + layer + ", valid layers are core, boundary, surface, TaskOperations or CombinedTasks" );
-        }
-        
-        BOOST_FOREACH( utility::tag::TagCOP const secstruct_tag, layer_tag->getTags() ) {
-            std::string secstruct = secstruct_tag->getName(); // Strand, Helix, Loop, HelixCapping
-            if( secstruct == "all" &&  secstruct_tag->hasOption("copy_layer") ) {
-                const std::string layer_to_copy = secstruct_tag->getOption< std::string >("copy_layer");
-                TR << "Copying definitions from layer " << layer_to_copy << " to layer " << layer << std::endl;
-                layer_residues_[ layer ] = layer_residues_[ layer_to_copy ];
-            }
-            if( secstruct == "all" &&  secstruct_tag->hasOption("aa") ) {
-                const std::string aas = secstruct_tag->getOption< std::string >("aa");
-                LayerResidues::iterator lrs =  layer_residues_.find( layer );
-                TR << "Assigning residues " << aas << " to layer " << lrs->first << std::endl;
-                for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
-                    std::set<char> temp_def_res_set;
-                    temp_def_res_set.insert( aas.begin(), aas.end() );
-                    layer_residues_[ lrs->first ][ ld->first ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
-                }
-            }
-            if( secstruct == "all" &&  secstruct_tag->hasOption("append") ) {
-                const std::string aas = secstruct_tag->getOption< std::string >("append");
-                LayerResidues::iterator lrs =  layer_residues_.find( layer );
-                TR << "Appending residues " << aas << " to layer " << lrs->first << std::endl;
-                for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
-                    std::set<char> temp_def_res_set( ld->second.begin(), ld->second.end());
-                    temp_def_res_set.insert( aas.begin(), aas.end() );
-                    layer_residues_[ lrs->first ][ ld->first ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
-                }
-            }
-            
-            if( secstruct == "all" &&  secstruct_tag->hasOption("exclude") ) {
-                const std::string aas = secstruct_tag->getOption< std::string >("exclude");
-                LayerResidues::iterator lrs =  layer_residues_.find( layer );
-                TR << "Excluding residues " << aas << " from layer " << lrs->first << std::endl;
-                for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
-                    std::set<char> temp_def_res_set( ld->second.begin(), ld->second.end());
-                    BOOST_FOREACH(char aa, aas)
-                    temp_def_res_set.erase(aa);
-                    layer_residues_[ lrs->first ][ ld->first ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
-                }
-            }
-            
-            // Set layer behaivour
-            if( secstruct == "all" &&  secstruct_tag->hasOption("operation") ) {
-                const std::string operation_str = secstruct_tag->getOption< std::string >("operation");
-                TR << "Apply operation  " << operation_str << " to layer " << layer << std::endl;
-                if ( operation_str == "design" ) {
-                    layer_operation_[ layer ] = DESIGN;
-                } else if ( operation_str == "no_design" ) {
-                    layer_operation_[ layer ] = NO_DESIGN;
-                } else if ( operation_str == "omit" ) {
-                    layer_operation_[ layer ] = OMIT;
-                } else {
-                    utility_exit_with_message( "Invalid operation " + operation_str + " specified for layer " + layer + ". Valid options are \"design\", \"no_design\", and \"omit\"." );
-                }
-            }
-            
-            if( secstruct == "all" &&  secstruct_tag->hasOption("specification") ) {
-                const std::string specification = secstruct_tag->getOption< std::string >("specification");
-                TR << "Apply specification  " << specification << " to layer " << layer << std::endl;
-                if ( specification == "designable" ) {
-                    layer_specification_[ layer ] = DESIGNABLE;
-                } else if ( specification == "repackable" ) {
-                    layer_specification_[ layer ] = PACKABLE;
-                } else if ( specification == "fixed" ) {
-                    layer_specification_[ layer ] = FIXED;
-                } else {
-                    utility_exit_with_message( "Invalid specification " + specification + " for layer " + layer + ". Valid options are \"designable\", \"packable\", and \"fixed\"." );
-                }
-            }
-            
-            
-            if( secstruct_tag->hasOption("aa") ) {
-                std::string aas = secstruct_tag->getOption< std::string >("aa");
-                TR << "Setting layer residues for " << layer << " "<< secstruct <<" to " << aas << std::endl;
-                layer_residues_[ layer ][ secstruct ] = aas;
-            }
-            
-            if( secstruct_tag->hasOption("append") ) {
-                std::string aas = secstruct_tag->getOption< std::string >("append");
-                TR << "Appending residues "<< aas << " to layer " << layer << " "<< secstruct << std::endl;
-                const std::string layer_res = layer_residues_[ layer ][ secstruct ];
-                std::set<char> temp_def_res_set( layer_res.begin(), layer_res.end());
-                temp_def_res_set.insert( aas.begin(), aas.end() );
-                layer_residues_[ layer ][ secstruct ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
-            }
-            
-            if( secstruct_tag->hasOption("exclude") ) {
-                std::string aas = secstruct_tag->getOption< std::string >("exclude");
-                TR << "Excluding residues "<< aas << " to layer " << layer << " "<< secstruct << std::endl;
-                const std::string layer_res = layer_residues_[ layer ][ secstruct ];
-                std::set<char> temp_def_res_set( layer_res.begin(), layer_res.end());
-                BOOST_FOREACH(char aa, aas)
-                temp_def_res_set.erase(aa);
-                layer_residues_[ layer ][ secstruct ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
-            }
-        }
-        
-        // fill empty the empty layers of the task layers with the residues at the 'all' layer
-        std::set< std::string > ss_def_names; // pick the ss names from the core layer
-        LayerResidues::const_iterator default_layer_it = layer_residues_.find("core");
-        BOOST_FOREACH(LayerDefinition const & layer_def, default_layer_it->second )
-        ss_def_names.insert( layer_def.first );
-        ss_def_names.erase("all");
-        
-        // check if layer ss is defined and if not fill it up
-        BOOST_FOREACH(TaskLayer  const & task_layer, task_layers_) {
-            const std::string all_layers_residues = (layer_residues_.count(task_layer.first)) ? layer_residues_[ task_layer.first ][ "all" ] : "ARNDCEQGHILKMFPSTWYV";
-            BOOST_FOREACH( std::string const & ss_def_name, ss_def_names){
-                LayerDefinitions::iterator ld_it = layer_residues_[ task_layer.first ].find( ss_def_name );
-                if( ld_it == layer_residues_[ task_layer.first ].end() ) {
-                    TR << "layer " << task_layer.first << " has no specification for residues in " << ss_def_name << ", the layer will be filled with the residues defined for all secondary structure types." << std::endl;
-                    layer_residues_[ task_layer.first ][ ss_def_name ] = all_layers_residues;
-                }
-            }
-        }
-        
-    }
-    
-    TR << "Layers to be designed:";
-    BOOST_FOREACH( DesignLayerPair l_p, design_layer_)  {
-        if( l_p.second )
-            TR << "\t" << l_p.first;
-    }
-    TR << std::endl;
-    // print the layer definitions
-    TR << std::endl;
-    BOOST_FOREACH( Layer const &  layer, layer_residues_) {
-        TR << "Layer " << layer.first << std::endl;
-        BOOST_FOREACH( LayerDefinition const & layer_def, layer.second ) {
-            TR << "\t" << ObjexxFCL::format::LJ(15,layer_def.first) << "aa = " << layer_def.second << std::endl;
-        }
-        TR << std::endl;
-    }
+	using core::pack::task::operation::TaskOperationFactory;
+	typedef std::pair< std::string, bool > DesignLayerPair;
+
+	use_original_ = tag->getOption< bool >( "use_original_non_designed_layer", 1 );
+
+	String design_layers = tag->getOption< String >( "layer", "core_boundary_surface_Nterm_Cterm" );
+	if (design_layers == "all")
+		design_layers = "core_boundary_surface_Nterm_Cterm";
+	if (design_layers == "other" || design_layers == "user")
+		design_layers = "";
+	utility::vector1< String > layers( utility::string_split( design_layers, '_' ) );
+	BOOST_FOREACH(std::string &  layer, layers) {
+		design_layer_[ layer ] = true;
+	}
+
+	repack_non_designed_residues_ = tag->getOption< bool >("repack_non_design", 1);
+
+	srbl_->set_design_layer( true, true, true);
+
+	if( tag->hasOption( "pore_radius" ) ) {
+		srbl_->pore_radius( tag->getOption< Real >( "pore_radius" ) );
+	}
+
+	if( tag->hasOption( "core" ) ) {
+		srbl_->sasa_core( tag->getOption< Real >( "core" ) );
+	}
+	if( tag->hasOption( "surface" ) ) {
+		srbl_->sasa_surface( tag->getOption< Real >( "surface" ) );
+	}
+
+	if( tag->hasOption( "core_E" ) ) {
+		srbl_->sasa_core( tag->getOption< Real >( "core_E" ), "E" );
+	}
+	if( tag->hasOption( "core_L" ) ) {
+		srbl_->sasa_core( tag->getOption< Real >( "core_L" ), "L" );
+	}
+	if( tag->hasOption( "core_H" ) ) {
+		srbl_->sasa_core( tag->getOption< Real >( "core_H" ), "H" );
+	}
+
+	if( tag->hasOption( "surface_E" ) ) {
+		srbl_->sasa_surface( tag->getOption< Real >( "surface_E" ), "E" );
+	}
+	if( tag->hasOption( "surface_L" ) ) {
+		srbl_->sasa_surface( tag->getOption< Real >( "surface_L" ), "L" );
+	}
+	if( tag->hasOption( "surface_H" ) ) {
+		srbl_->sasa_surface( tag->getOption< Real >( "surface_H" ), "H" );
+	}
+
+	if( tag->hasOption( "make_rasmol_script" ) ) {
+		srbl_->make_rasmol_format_file( tag->getOption< bool >( "make_rasmol_script" ) );
+	}
+
+	if( tag->hasOption( "blueprint" ) ) {
+		blueprint_ = new protocols::jd2::parser::BluePrint( tag->getOption< std::string >("blueprint") );
+	}
+
+	set_verbose( tag->getOption< bool >( "verbose", false ) );
+	set_restrict_restypes( tag->getOption< bool >( "restrict_restypes", true ) );
+	make_pymol_script( tag->getOption< bool >("make_pymol_script", false) );
+
+	BOOST_FOREACH( utility::tag::TagCOP const layer_tag, tag->getTags() ){
+
+		std::string layer = layer_tag->getName(); // core, residue, boundary or taskoperation
+		if( layer == "core" || layer =="boundary" || layer == "surface" ||  layer == "Nterm" ||  layer == "Cterm" )
+		{
+			TR << "redefining default layer " << layer << std::endl;
+		} else if(layer == "CombinedTasks" ) {
+			std::string comb_name = layer_tag->getOption< std::string >("name");
+			TR << "Making a combined task named "<< comb_name << std::endl;
+			utility::vector1< TaskOperationOP > task_ops;
+			BOOST_FOREACH( utility::tag::TagCOP const task_tag, layer_tag->getTags() ) {
+				std::string task_op_type = task_tag->getName();
+				TaskOperationOP task = TaskOperationFactory::get_instance()->newTaskOperation(task_op_type, datamap, task_tag);
+				task_ops.push_back( task );
+			}
+			CombinedTaskOperationOP comb = new CombinedTaskOperation( task_ops );
+			task_layers_[ comb_name ] = comb;
+			design_layer_[ comb_name ] = true;
+			layer_residues_[ comb_name ] = std::map< std::string, std::string >();
+			layer_operation_[ comb_name ] = DESIGN;
+			layer_specification_[ comb_name ] = DESIGNABLE;
+
+		} else if( TaskOperationFactory::get_instance()->has_type(layer) ) {
+			std::string task_op_type = layer;
+			std::string task_name = layer_tag->getOption< std::string >("name");
+			TR << "Defining new layer from task type "<< layer << " named " << task_name << std::endl;
+			layer = task_name;
+			TaskOperationOP task = TaskOperationFactory::get_instance()->newTaskOperation(task_op_type, datamap, layer_tag);
+			// store the task to use it in apply to find the designable residues for the layer
+			// and add the extra layer to layer_residues_.
+			task_layers_[ task_name ] = task;
+			design_layer_[ task_name ] = true;
+			layer_residues_[ task_name ] = std::map< std::string, std::string >();
+			layer_operation_[ task_name ] = DESIGN;
+			layer_specification_[ task_name ] = DESIGNABLE;
+
+		} else {
+			utility_exit_with_message( "Invalid layer " + layer + ", valid layers are core, boundary, surface, TaskOperations or CombinedTasks" );
+		}
+
+		BOOST_FOREACH( utility::tag::TagCOP const secstruct_tag, layer_tag->getTags() ) {
+			std::string secstruct = secstruct_tag->getName(); // Strand, Helix, Loop, HelixCapping
+			if( secstruct == "all" &&  secstruct_tag->hasOption("copy_layer") ) {
+				const std::string layer_to_copy = secstruct_tag->getOption< std::string >("copy_layer");
+				TR << "Copying definitions from layer " << layer_to_copy << " to layer " << layer << std::endl;
+				layer_residues_[ layer ] = layer_residues_[ layer_to_copy ];
+			}
+			if( secstruct == "all" &&  secstruct_tag->hasOption("aa") ) {
+				const std::string aas = secstruct_tag->getOption< std::string >("aa");
+				LayerResidues::iterator lrs =  layer_residues_.find( layer );
+				TR << "Assigning residues " << aas << " to layer " << lrs->first << std::endl;
+				for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
+					std::set<char> temp_def_res_set;
+					temp_def_res_set.insert( aas.begin(), aas.end() );
+					layer_residues_[ lrs->first ][ ld->first ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
+				}
+			}
+			if( secstruct == "all" &&  secstruct_tag->hasOption("append") ) {
+				const std::string aas = secstruct_tag->getOption< std::string >("append");
+				LayerResidues::iterator lrs =  layer_residues_.find( layer );
+				TR << "Appending residues " << aas << " to layer " << lrs->first << std::endl;
+				for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
+					std::set<char> temp_def_res_set( ld->second.begin(), ld->second.end());
+					temp_def_res_set.insert( aas.begin(), aas.end() );
+					layer_residues_[ lrs->first ][ ld->first ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
+				}
+			}
+
+			if( secstruct == "all" &&  secstruct_tag->hasOption("exclude") ) {
+				const std::string aas = secstruct_tag->getOption< std::string >("exclude");
+				LayerResidues::iterator lrs =  layer_residues_.find( layer );
+				TR << "Excluding residues " << aas << " from layer " << lrs->first << std::endl;
+				for(LayerDefinitions::iterator ld = lrs->second.begin(); ld != lrs->second.end(); ld++) {
+					std::set<char> temp_def_res_set( ld->second.begin(), ld->second.end());
+					BOOST_FOREACH(char aa, aas)
+					temp_def_res_set.erase(aa);
+					layer_residues_[ lrs->first ][ ld->first ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
+				}
+			}
+
+			// Set layer behaivour
+			if( secstruct == "all" &&  secstruct_tag->hasOption("operation") ) {
+				const std::string operation_str = secstruct_tag->getOption< std::string >("operation");
+				TR << "Apply operation  " << operation_str << " to layer " << layer << std::endl;
+				if ( operation_str == "design" ) {
+					layer_operation_[ layer ] = DESIGN;
+				} else if ( operation_str == "no_design" ) {
+					layer_operation_[ layer ] = NO_DESIGN;
+				} else if ( operation_str == "omit" ) {
+					layer_operation_[ layer ] = OMIT;
+				} else {
+					utility_exit_with_message( "Invalid operation " + operation_str + " specified for layer " + layer + ". Valid options are \"design\", \"no_design\", and \"omit\"." );
+				}
+			}
+
+			if( secstruct == "all" &&  secstruct_tag->hasOption("specification") ) {
+				const std::string specification = secstruct_tag->getOption< std::string >("specification");
+				TR << "Apply specification  " << specification << " to layer " << layer << std::endl;
+				if ( specification == "designable" ) {
+					layer_specification_[ layer ] = DESIGNABLE;
+				} else if ( specification == "repackable" ) {
+					layer_specification_[ layer ] = PACKABLE;
+				} else if ( specification == "fixed" ) {
+					layer_specification_[ layer ] = FIXED;
+				} else {
+					utility_exit_with_message( "Invalid specification " + specification + " for layer " + layer + ". Valid options are \"designable\", \"packable\", and \"fixed\"." );
+				}
+			}
+
+
+			if( secstruct_tag->hasOption("aa") ) {
+				std::string aas = secstruct_tag->getOption< std::string >("aa");
+				TR << "Setting layer residues for " << layer << " "<< secstruct <<" to " << aas << std::endl;
+				layer_residues_[ layer ][ secstruct ] = aas;
+			}
+
+			if( secstruct_tag->hasOption("append") ) {
+				std::string aas = secstruct_tag->getOption< std::string >("append");
+				TR << "Appending residues "<< aas << " to layer " << layer << " "<< secstruct << std::endl;
+				const std::string layer_res = layer_residues_[ layer ][ secstruct ];
+				std::set<char> temp_def_res_set( layer_res.begin(), layer_res.end());
+				temp_def_res_set.insert( aas.begin(), aas.end() );
+				layer_residues_[ layer ][ secstruct ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
+			}
+
+			if( secstruct_tag->hasOption("exclude") ) {
+				std::string aas = secstruct_tag->getOption< std::string >("exclude");
+				TR << "Excluding residues "<< aas << " to layer " << layer << " "<< secstruct << std::endl;
+				const std::string layer_res = layer_residues_[ layer ][ secstruct ];
+				std::set<char> temp_def_res_set( layer_res.begin(), layer_res.end());
+				BOOST_FOREACH(char aa, aas)
+				temp_def_res_set.erase(aa);
+				layer_residues_[ layer ][ secstruct ] = std::string(temp_def_res_set.begin(), temp_def_res_set.end() );
+			}
+		}
+
+		// fill empty the empty layers of the task layers with the residues at the 'all' layer
+		std::set< std::string > ss_def_names; // pick the ss names from the core layer
+		LayerResidues::const_iterator default_layer_it = layer_residues_.find("core");
+		BOOST_FOREACH(LayerDefinition const & layer_def, default_layer_it->second )
+		ss_def_names.insert( layer_def.first );
+		ss_def_names.erase("all");
+
+		// check if layer ss is defined and if not fill it up
+		BOOST_FOREACH(TaskLayer  const & task_layer, task_layers_) {
+			const std::string all_layers_residues = (layer_residues_.count(task_layer.first)) ? layer_residues_[ task_layer.first ][ "all" ] : "ARNDCEQGHILKMFPSTWYV";
+			BOOST_FOREACH( std::string const & ss_def_name, ss_def_names){
+				LayerDefinitions::iterator ld_it = layer_residues_[ task_layer.first ].find( ss_def_name );
+				if( ld_it == layer_residues_[ task_layer.first ].end() ) {
+					TR << "layer " << task_layer.first << " has no specification for residues in " << ss_def_name << ", the layer will be filled with the residues defined for all secondary structure types." << std::endl;
+					layer_residues_[ task_layer.first ][ ss_def_name ] = all_layers_residues;
+				}
+			}
+		}
+
+	}
+
+	TR << "Layers to be designed:";
+	BOOST_FOREACH( DesignLayerPair l_p, design_layer_)  {
+		if( l_p.second )
+			TR << "\t" << l_p.first;
+	}
+	TR << std::endl;
+	// print the layer definitions
+	TR << std::endl;
+	BOOST_FOREACH( Layer const &  layer, layer_residues_) {
+		TR << "Layer " << layer.first << std::endl;
+		BOOST_FOREACH( LayerDefinition const & layer_def, layer.second ) {
+			TR << "\t" << ObjexxFCL::format::LJ(15,layer_def.first) << "aa = " << layer_def.second << std::endl;
+		}
+		TR << std::endl;
+	}
+
 }
 
 } // flxbb

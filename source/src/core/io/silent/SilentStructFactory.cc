@@ -15,21 +15,25 @@
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
+// Basic headers
+#include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
 // Package headers
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructCreator.hh>
 
-#include <basic/Tracer.hh>
-
+// Utility headers
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace core {
 namespace io {
@@ -42,13 +46,29 @@ SilentStructFactory * SilentStructFactory::instance_( 0 );
 /// @details Private constructor insures correctness of singleton.
 SilentStructFactory::SilentStructFactory() {}
 
-SilentStructFactory *
-SilentStructFactory::get_instance()
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex SilentStructFactory::singleton_mutex_;
+
+std::mutex & SilentStructFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+SilentStructFactory * SilentStructFactory::get_instance()
 {
-	if ( instance_ == 0 ) {
-		instance_ = new SilentStructFactory;
-	}
+	boost::function< SilentStructFactory * () > creator = boost::bind( &SilentStructFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
+}
+
+SilentStructFactory *
+SilentStructFactory::create_singleton_instance()
+{
+	return new SilentStructFactory;
 }
 
 void

@@ -62,7 +62,11 @@
 #include <core/conformation/PointGraphData.hh>
 #include <core/graph/UpperEdgeGraph.hh>
 #include <core/pose/util.tmpl.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 
 
@@ -88,12 +92,28 @@ const core::Size SurfacePotential::HPATCH_SCORE_BIN_SIZE = 50;
 /// @brief set initial value as no instance
 SurfacePotential* SurfacePotential::instance_( 0 );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
 
-/// @brief static function to get the instance of (pointer to) this singleton class
-SurfacePotential* SurfacePotential::get_instance() {
-	if ( instance_ == 0 )
-		instance_ = new SurfacePotential();
+std::mutex SurfacePotential::singleton_mutex_;
+
+std::mutex & SurfacePotential::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+SurfacePotential * SurfacePotential::get_instance()
+{
+	boost::function< SurfacePotential * () > creator = boost::bind( &SurfacePotential::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
+}
+
+SurfacePotential *
+SurfacePotential::create_singleton_instance()
+{
+	return new SurfacePotential;
 }
 
 /// @brief private constructor to guarantee the singleton

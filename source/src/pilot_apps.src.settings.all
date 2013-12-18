@@ -33,8 +33,8 @@ sources = {
 	"pilot/andrew" : [
 		"domain_assembly_jd2",
 		#"optest",
-		#"mpi_msd",
 		"measure_catalytic_geometry",
+		"mmt_msd",
 		"version_scorefunction", #Note: used for scorefunction version tests; no itest needed
 		"analyze_rtmin_failures",
 		"find_buns",

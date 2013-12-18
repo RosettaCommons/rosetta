@@ -19,12 +19,12 @@
 
 // Utility Headers
 #include <utility/exit.hh>
-
-// C++ headers
-// AUTO-REMOVED #include <iostream>
-
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace protocols {
 namespace jd2 {
@@ -32,15 +32,32 @@ namespace parser {
 
 DataLoaderFactory * DataLoaderFactory::instance_( 0 );
 
-DataLoaderFactory::~DataLoaderFactory() {}
+#ifdef MULTI_THREADED
+#ifdef CXX11
 
-DataLoaderFactory *
-DataLoaderFactory::get_instance() {
-	if ( !instance_ ) {
-		instance_ = new DataLoaderFactory;
-	}
+std::mutex DataLoaderFactory::singleton_mutex_;
+
+std::mutex & DataLoaderFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+DataLoaderFactory * DataLoaderFactory::get_instance()
+{
+	boost::function< DataLoaderFactory * () > creator = boost::bind( &DataLoaderFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
 }
+
+DataLoaderFactory *
+DataLoaderFactory::create_singleton_instance()
+{
+	return new DataLoaderFactory;
+}
+
+
+DataLoaderFactory::~DataLoaderFactory() {}
 
 void
 DataLoaderFactory::factory_register( DataLoaderCreatorOP creator )

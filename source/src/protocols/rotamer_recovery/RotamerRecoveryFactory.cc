@@ -21,26 +21,24 @@
 
 // Package Headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
-#include <utility/vector0.hh>
-
-// Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // C++ Headers
 #include <string>
 #include <sstream>
 
-//Auto Headers
+// Utility headers
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
+#include <utility/vector0.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace rotamer_recovery {
@@ -55,6 +53,30 @@ static basic::Tracer tr("protocols.rotamer_recovery.RotamerRecoveryFactory");
 
 RotamerRecoveryFactory * RotamerRecoveryFactory::instance_( 0 );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex RotamerRecoveryFactory::singleton_mutex_;
+
+std::mutex & RotamerRecoveryFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+RotamerRecoveryFactory * RotamerRecoveryFactory::get_instance()
+{
+	boost::function< RotamerRecoveryFactory * () > creator = boost::bind( &RotamerRecoveryFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+RotamerRecoveryFactory *
+RotamerRecoveryFactory::create_singleton_instance()
+{
+	return new RotamerRecoveryFactory;
+}
+
 /// @details Private constructor insures correctness of singleton.
 RotamerRecoveryFactory::RotamerRecoveryFactory() {}
 
@@ -63,17 +85,6 @@ RotamerRecoveryFactory::RotamerRecoveryFactory(
 ) {}
 
 RotamerRecoveryFactory::~RotamerRecoveryFactory() {}
-
-
-RotamerRecoveryFactory *
-RotamerRecoveryFactory::get_instance()
-{
-	if ( instance_ == 0 ) {
-		instance_ = new RotamerRecoveryFactory;
-	}
-	return instance_;
-}
-
 
 void
 RotamerRecoveryFactory::factory_register(

@@ -17,12 +17,17 @@
 // Package headers
 #include <protocols/filters/BasicFilters.hh>
 #include <basic/Tracer.hh>
+
+// Utility headers
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
 #include <utility/tag/Tag.hh>
-
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace protocols {
 namespace filters {
@@ -32,20 +37,35 @@ static basic::Tracer TR( "protocols.filters.FilterFactory" );
 
 FilterFactory * FilterFactory::instance_( 0 );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex FilterFactory::singleton_mutex_;
+
+std::mutex & FilterFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+FilterFactory * FilterFactory::get_instance()
+{
+	boost::function< FilterFactory * () > creator = boost::bind( &FilterFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+FilterFactory *
+FilterFactory::create_singleton_instance()
+{
+	return new FilterFactory;
+}
+
 
 FilterFactory::FilterFactory()
 {}
 
 FilterFactory::~FilterFactory(){}
-
-FilterFactory *
-FilterFactory::get_instance() {
-	if ( ! instance_ ) {
-		FilterFactory * instance_local = new FilterFactory;
-		instance_ = instance_local;
-	}
-	return instance_;
-}
 
 ///@brief add a Filter prototype, using its default type name as the map key
 void

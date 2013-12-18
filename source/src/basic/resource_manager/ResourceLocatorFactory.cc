@@ -21,7 +21,11 @@
 // utility headers
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace basic {
 namespace resource_manager {
@@ -30,6 +34,30 @@ namespace resource_manager {
 ResourceLocatorFactory::~ResourceLocatorFactory() {}
 
 ResourceLocatorFactory * ResourceLocatorFactory::instance_( 0 );
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex ResourceLocatorFactory::singleton_mutex_;
+
+std::mutex & ResourceLocatorFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+ResourceLocatorFactory * ResourceLocatorFactory::get_instance()
+{
+	boost::function< ResourceLocatorFactory * () > creator = boost::bind( &ResourceLocatorFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+ResourceLocatorFactory *
+ResourceLocatorFactory::create_singleton_instance()
+{
+	return new ResourceLocatorFactory;
+}
 
 ///@details Create a resource locator from a tags object
 ///@input locator_type This is the type of the resource locator, e.g., DatabaseResourceLocator
@@ -52,15 +80,6 @@ ResourceLocatorFactory::create_resource_locator(
 		locator->parse_my_tag( tags );
 	}
 	return locator;
-}
-
-ResourceLocatorFactory *
-ResourceLocatorFactory::get_instance()
-{
-	if ( ! instance_ ) {
-		instance_ = new ResourceLocatorFactory;
-	}
-	return instance_;
 }
 
 void

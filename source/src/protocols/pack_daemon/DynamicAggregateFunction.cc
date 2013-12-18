@@ -19,33 +19,28 @@
 // Unit headers
 #include <protocols/pack_daemon/DynamicAggregateFunction.hh>
 
+// Package headers
+#include <protocols/pack_daemon/PackDaemon.hh>
+
 // Project headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+#include <core/import_pose/import_pose.hh>
+
 #include <basic/Tracer.hh>
 #include <numeric/expression_parser/Arithmetic.hh>
 #include <protocols/multistate_design/MultiStatePacker.hh>
-// AUTO-REMOVED #include <protocols/multistate_design/SingleState.hh>  // REQUIRED FOR WINDOWS (APL NOTE: why?)
 
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
 #include <utility/mpi_util.hh>
 #include <utility/excn/Exceptions.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-
-// C++ headers
-// AUTO-REMOVED #include <cmath>
-// AUTO-REMOVED #include <cctype>
-
-#include <core/import_pose/import_pose.hh>
-#include <protocols/pack_daemon/PackDaemon.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
+#include <utility/io/FileContentsMap.hh>
 
 
 namespace protocols {
@@ -551,9 +546,14 @@ SurrogateVariableExpression::differentiate( std::string const & varname ) const
 	return root_expression_->differentiate( varname );
 }
 
+
 ///////
 
-DynamicAggregateFunction::DynamicAggregateFunction() : num_entity_elements_( 0 ) {}
+DynamicAggregateFunction::DynamicAggregateFunction() :
+	num_entity_elements_( 0 ),
+	file_contents_( new utility::io::FileContentsMap )
+{}
+
 DynamicAggregateFunction::~DynamicAggregateFunction() {}
 
 void
@@ -591,6 +591,13 @@ DynamicAggregateFunction::num_npd_properties() const
 	return variable_expressions_for_npd_properties_.size();
 }
 
+core::Size
+DynamicAggregateFunction::num_npd_properties_for_state( core::Size state_id ) const
+{
+	return npd_variable_indices_for_states_[ state_id ].size();
+}
+
+
 core::Real
 DynamicAggregateFunction::evaluate( StateEnergies const & state_energies, StateEnergies const & npd_properties, Entity const & entity )
 {
@@ -624,7 +631,7 @@ DynamicAggregateFunction::select_relevant_states(
 )
 {
 	/// return them all for now.
-	//StateIndices indices( variable_expressions_for_states_.size() );
+	//StateIndices indices( num_states() );
 	//for ( Size ii = 1; ii <= indices.size(); ++ii ) {
 	//	indices[ ii ] = ii;
 	//}
@@ -658,22 +665,6 @@ DynamicAggregateFunction::select_relevant_states(
 		TR << "  FitnessFunction relevant state indices " << return_indices[ ii ] << std::endl;
 	}
 	return return_indices;
-}
-
-void DynamicAggregateFunction::initialize_from_input_file(
-	DaemonSetOP daemon_set,
-	std::istream & input
-)
-{
-	try {
-		read_all_variables_from_input_file( input );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-		send_error_message_to_remote_daemon_sets();
-		TR << "Initialization from input file failed with exception: " << e.msg() << std::endl;
-		TR << "Remote daemon sets are spinning down" << std::endl;
-		throw e;
-	}
-	initialize_pack_daemons( daemon_set );
 }
 
 /// @details returns a VariableExpressionOP or VectorVariableExpressionOP given a particular
@@ -823,7 +814,7 @@ void DynamicAggregateFunction::add_file_contents(
 	std::string const & fname,
 	std::string const & contents
 ){
-	file_contents_[ fname ] = contents;
+	file_contents_->set_file_contents( fname, contents );
 }
 
 std::string
@@ -832,7 +823,11 @@ DynamicAggregateFunction::state_name( Size state_index ) const
 	return variable_expressions_for_states_[ state_index ]->name();
 }
 
-
+StructureFileNames const &
+DynamicAggregateFunction::file_inputs_for_job( int job_index ) const
+{
+	return files_for_state_[ job_index ];
+}
 
 void DynamicAggregateFunction::read_all_variables_from_input_file( std::istream & input )
 {
@@ -951,6 +946,18 @@ void DynamicAggregateFunction::read_all_variables_from_input_file( std::istream 
 	/// that the vector-variables are only handed to vector functions.
 	/// I don't know the best way to do that.
 }
+
+std::list< std::pair< core::Size, std::string > >::const_iterator
+DynamicAggregateFunction::npd_variable_indices_for_state_begin( core::Size state_id ) const
+{
+	return npd_variable_indices_for_states_[ state_id ].begin();
+}
+
+std::list< std::pair< core::Size, std::string > >::const_iterator
+DynamicAggregateFunction::npd_variable_indices_for_state_end( core::Size state_id ) const {
+	return npd_variable_indices_for_states_[ state_id ].end();
+}
+
 
 void
 DynamicAggregateFunction::initialize_scanner()
@@ -1135,16 +1142,12 @@ DynamicAggregateFunction::process_POSE_ENERGY_line(
 	TR << "  Importing pose from pdb file '" << pdb_name << "'" << std::endl;
 	//core::import_pose::pose_from_pdb( pose, pdb_name );
 	std::string pdb_string;
-	if ( file_contents_.find( pdb_name ) != file_contents_.end() ) {
-		pdb_string = file_contents_[ pdb_name ];
-	} else {
-		try {
-			pdb_string = utility::file_contents( pdb_name );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			throw utility::excn::EXCN_Msg_Exception( "Failed to open pdb file named '"
+	try {
+		pdb_string = file_contents_->get_file_contents( pdb_name );
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Failed to open pdb file named '"
 			+ pdb_name + "' given in the POSE_ENERGY command on line " + utility::to_string( line_number)
 			+ "of the DynamicAggregateFunction fitness file" );
-		}
 	}
 
 	core::pose::Pose pose;
@@ -1192,17 +1195,13 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 	input_line >> fname;
 
 	std::istringstream pdbvec_file;
-	if ( file_contents_.find( fname ) != file_contents_.end() ) {
-		pdbvec_file.str( file_contents_[ fname ] );
-	} else {
-		try {
-			std::string fc = utility::file_contents( fname );
-			pdbvec_file.str( fc );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			throw utility::excn::EXCN_Msg_Exception( "Failed to open pdb list file named '"
+	try {
+		std::string fc = file_contents_->get_file_contents( fname );
+		pdbvec_file.str( fc );
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Failed to open pdb list file named '"
 			+ fname + "' given in the POSE_ENERGY_VECTOR command on line " + utility::to_string( line_number)
 			+ "of the DynamicAggregateFunction fitness file" );
-		}
 	}
 
 	std::list< std::string > pdb_names;
@@ -1230,16 +1229,12 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 		TR << "  Importing pose from pdb file " << *iter << std::endl;
    	//core::import_pose::pose_from_pdb( pose, pdb_name );
 		std::string pdb_string;
-		if ( file_contents_.find( *iter ) != file_contents_.end() ) {
-			pdb_string = file_contents_[ *iter ];
-		} else {
-			try {
-				pdb_string = utility::file_contents( *iter );
-			} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-				throw utility::excn::EXCN_Msg_Exception( "Failed to open pdb file named '"
+		try {
+			pdb_string = file_contents_->get_file_contents( *iter );
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			throw utility::excn::EXCN_Msg_Exception( "Failed to open pdb file named '"
 				+ *iter + "' given in the POSE_ENERGY_VECTOR command on line " + utility::to_string( line_number)
 				+ "of the DynamicAggregateFunction fitness file" );
-			}
 		}
 		core::pose::Pose pose;
    	core::import_pose::pose_from_pdbstring( pose, pdb_string, *iter );
@@ -1650,11 +1645,12 @@ DynamicAggregateFunction::process_ENTITY_FUNCTION_line(
 	entfunc->set_num_entity_elements( num_entity_elements_ );
 	std::string entfunc_contents;
 
-	std::map< std::string, std::string >::const_iterator fc_iter = file_contents_.find( entityfunc_file );
-	if ( fc_iter == file_contents_.end() ) {
-		entfunc_contents = utility::file_contents( entityfunc_file );
-	} else {
-		entfunc_contents = fc_iter->second;
+	try {
+		entfunc_contents = file_contents_->get_file_contents( entityfunc_file );
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Failed to open the entity function file file named '"
+			+ entityfunc_file + "' given in the ENTITY_FUNCTION command on line " + utility::to_string( line_number)
+			+ "of the DynamicAggregateFunction fitness file" );
 	}
 
 	std::istringstream iss( entfunc_contents );
@@ -1719,15 +1715,11 @@ DynamicAggregateFunction::read_state_vector_file(
 )
 {
 	std::istringstream strucvec_file;
-	if ( file_contents_.find( fname ) != file_contents_.end() ) {
-		strucvec_file.str( file_contents_[ fname ] );
-	} else {
-		try {
-			std::string fc = utility::file_contents( fname );
-			strucvec_file.str( fc );
-		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-			throw utility::excn::EXCN_Msg_Exception( "Failed to open state vector file named '" + fname + "' which was listed on line " + utility::to_string( variable_names_dec_line_[ vec_varname ] ) );
-		}
+	try {
+		std::string fc = file_contents_->get_file_contents( fname );
+		strucvec_file.str( fc );
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		throw utility::excn::EXCN_Msg_Exception( "Failed to open state vector file named '" + fname + "' which was listed on line " + utility::to_string( variable_names_dec_line_[ vec_varname ] ) );
 	}
 	Size svline_num( 0 );
 	utility::vector1< StructureFileNames > state_triples;
@@ -1960,7 +1952,7 @@ DynamicAggregateFunction::turn_expression_ASTs_into_expressions(
 	VectorExpressionCreator expression_creator( *this );
 	// start counting from the number of states (states) -- the sub-expressions start indexing
 	// at num-states + 1.
-	//Size count_variable_index = variable_expressions_for_states_.size();
+	//Size count_variable_index = num_states();
 	scalar_expressions_.clear();
 
 	ASTPrinter printer;
@@ -2087,335 +2079,41 @@ DynamicAggregateFunction::verify_variable_name_or_throw(
 
 }
 
-
 void
-DynamicAggregateFunction::initialize_pack_daemons( DaemonSetOP daemon_set )
+DynamicAggregateFunction::count_file_reads()
 {
-	/// Look at all the files that need to be read.  If any file needs to be read
-	/// multiple times, then keep the contents of that file in memory until its no longer needed.
+	file_contents_->delete_contents_at_nread_limit( true );
+	file_contents_->refuse_unexpected_files( true );
 
-	std::map< std::string, Size > total_read_counts_for_files;
-	std::map< std::string, Size > read_counts_for_files;
-	count_file_reads( total_read_counts_for_files, read_counts_for_files );
-
-	std::map< std::string, std::string > file_contents;
-
-	/// Distribute the states across the nodes available for this job.  Some states will be assigned to this
-	/// pack daemon, unless there are more nodes than states.
-
-#ifdef USEMPI
-	distribute_jobs_to_remote_daemons( daemon_set, total_read_counts_for_files, read_counts_for_files );
-#else
-	initialize_daemon_with_all_states( daemon_set, total_read_counts_for_files, read_counts_for_files );
-#endif
-	daemon_set->setup_daemons();
-}
-
-void
-DynamicAggregateFunction::count_file_reads(
-	std::map< std::string, Size > & total_reads,
-	std::map< std::string, Size > & reads_completed
-) const
-{
 	for ( std::map< std::string, StructureFileNames >::const_iterator
 			iter = named_state_data_file_names_.begin(), iter_end = named_state_data_file_names_.end();
 			iter != iter_end; ++iter ) {
 		StructureFileNames const & sfn = iter->second;
-		increment_total_read_count_for_file( sfn.pdb_name_, total_reads, reads_completed );
-		increment_total_read_count_for_file( sfn.correspondence_file_name_, total_reads, reads_completed );
-		increment_total_read_count_for_file( sfn.resfile_name_, total_reads, reads_completed );
+		file_contents_->increment_nread_limit( sfn.pdb_name_ );
+		file_contents_->increment_nread_limit( sfn.correspondence_file_name_ );
+		file_contents_->increment_nread_limit( sfn.resfile_name_ );
 	}
 	for ( std::map< std::string, utility::vector1< StructureFileNames > >::const_iterator
 			iter = state_vector_data_file_names_.begin(), iter_end = state_vector_data_file_names_.end();
 			iter != iter_end; ++iter ) {
 		for ( Size ii = 1; ii <= iter->second.size(); ++ii ) {
 			StructureFileNames const & sfn = iter->second[ ii ];
-			increment_total_read_count_for_file( sfn.pdb_name_, total_reads, reads_completed );
-			increment_total_read_count_for_file( sfn.correspondence_file_name_, total_reads, reads_completed );
-			increment_total_read_count_for_file( sfn.resfile_name_, total_reads, reads_completed );
+			file_contents_->increment_nread_limit( sfn.pdb_name_ );
+			file_contents_->increment_nread_limit( sfn.correspondence_file_name_ );
+			file_contents_->increment_nread_limit( sfn.resfile_name_ );
 		}
 	}
 
-}
-
-void
-DynamicAggregateFunction::increment_total_read_count_for_file(
-	std::string const & fname,
-	std::map< std::string, Size > & total_reads,
-	std::map< std::string, Size > & reads_completed
-) const
-{
-	std::map< std::string, Size >::iterator iter = total_reads.find( fname );
-	if ( iter == total_reads.end() ) {
-		total_reads[ fname ] = 1;
-		reads_completed[ fname ] = 0;
-	} else {
-		++( iter->second );
-	}
 }
 
 std::string
 DynamicAggregateFunction::get_file_contents(
-	std::string const & filename,
-	std::map< std::string, Size > const & total_reads,
-	std::map< std::string, Size > & reads_completed,
-	std::map< std::string, std::string > & file_contents_map
-) const
-{
-	std::map< std::string, Size >::const_iterator tr_iter = total_reads.find( filename );
-	std::map< std::string, Size >::iterator rc_iter = reads_completed.find( filename );
-	if ( tr_iter == total_reads.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Unexpected file read requested: " + filename );
-	}
-	if ( rc_iter == reads_completed.end() ) {
-		throw utility::excn::EXCN_Msg_Exception( "Reads-completed map does not contain an entry for file: " + filename );
-	}
-
-	if ( tr_iter->second == 1 ) {
-		++reads_completed[ filename ];
-		std::map< std::string, std::string >::const_iterator fc_iter = file_contents_.find( filename );
-		if ( fc_iter == file_contents_.end() ) {
-			return utility::file_contents( filename );
-		} else {
-			return fc_iter->second;
-		}
-	} else if ( tr_iter->second == rc_iter->second ) {
-		std::map< std::string, std::string >::iterator fc_iter = file_contents_map.find( filename );
-		if ( fc_iter == file_contents_map.end() ) {
-			throw utility::excn::EXCN_Msg_Exception( "file-contents map does not contain an entry for file that has been read before: " + filename );
-		}
-		std::string fc = fc_iter->second;
-		file_contents_map.erase( fc_iter );
-		return fc;
-	}
-
-	// else
-	std::map< std::string, std::string >::const_iterator fc_iter = file_contents_.find( filename );
-
-	std::string fc = ( fc_iter == file_contents_.end() ? utility::file_contents( filename ) : fc_iter->second);
-	file_contents_map[ filename ] = fc;
-	++(rc_iter->second);
-	return fc;
-
-}
-
-void
-DynamicAggregateFunction::initialize_daemon_with_all_states(
-	DaemonSetOP daemon_set,
-	std::map< std::string, Size > const & total_reads,
-	std::map< std::string, Size > & reads_completed
+	std::string const & filename
 )
 {
-	int nstructs = variable_expressions_for_states_.size();
-	std::list< int > joblist;
-	for ( int ii = 1; ii <= nstructs; ++ii ) joblist.push_back( ii );
-	std::map< std::string, std::string > file_contents_map;
-
-	// move to try-catch block  --- assign_jobs_to_local_daemon_set( joblist, daemon_set, total_reads, reads_completed, file_contents_map );
-
-	try {
-		assign_jobs_to_local_daemon_set( joblist, daemon_set, total_reads, reads_completed, file_contents_map );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-		TR << "Error from daemon-set initialization \n";
-		TR <<  e.msg();
-		TR << std::endl;
-		throw e;
-	}
-
-
+	return file_contents_->get_file_contents( filename );
 }
 
-
-void
-DynamicAggregateFunction::distribute_jobs_to_remote_daemons(
-	DaemonSetOP daemon_set,
-	std::map< std::string, Size > const & total_reads,
-	std::map< std::string, Size > & reads_completed
-)
-{
-	std::map< std::string, std::string > file_contents_map;
-
-	int MPI_nprocs = utility::mpi_nprocs();
-	int nstructs = variable_expressions_for_states_.size();
-
-	int njobs_per_cpu = static_cast< int > ( std::ceil( (double) nstructs / MPI_nprocs ));
-	/// Assign myself fewer states than to all other nodes if the number of states is not evenly divisible
-	/// by the number of processors.
-
-	int overhang = njobs_per_cpu * MPI_nprocs - nstructs;
-
-	utility::vector0< std::list< int > > job_assignments( MPI_nprocs );
-	if ( overhang == 0 ) {
-		int state_count = 0;
-		for ( int ii = 0; ii < MPI_nprocs; ++ii ) {
-			for ( int jj = 1; jj <= njobs_per_cpu; ++jj ) {
-				++state_count;
-				job_assignments[ ii ].push_back( state_count );
-			}
-		}
-	} else if ( overhang == 1 && njobs_per_cpu == 1 ) {
-		int state_count = 0;
-		for ( int ii = 1; ii < MPI_nprocs; ++ii ) {
-			++state_count;
-			job_assignments[ ii ].push_back( state_count );
-		}
-	} else {
-		int state_count = 0;
-		for ( int ii = 0; ii < MPI_nprocs; ++ii ) {
-			int ii_n_jobs = ii < overhang ? njobs_per_cpu - 1 : njobs_per_cpu;
-			for ( int jj = 1; jj <= ii_n_jobs; ++jj ) {
-				++state_count;
-				job_assignments[ ii ].push_back( state_count );
-			}
-		}
-	}
-
-	// Now assign jobs to nodes.
-	for ( int ii = 1; ii < MPI_nprocs; ++ii ) {
-		assign_jobs_to_remote_daemon_sets( ii, job_assignments[ ii ], total_reads, reads_completed, file_contents_map );
-	}
-	bool jobs_successfully_initialized( true );
-
-	std::string error_message;
-
-	try {
-		assign_jobs_to_local_daemon_set( job_assignments[ 0 ], daemon_set, total_reads, reads_completed, file_contents_map );
-	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
-		error_message += "Error from node 0\n";
-		error_message += e.msg();
-		TR << e.msg() << std::endl;
-		jobs_successfully_initialized = false;
-	}
-
-	for ( int ii = 1; ii < MPI_nprocs; ++ii ) {
-		if ( ! verify_remote_daemon_set_initialization_successful( ii ) ) {
-			error_message += "Error from node " + utility::to_string( ii ) + "\n";
-			std::string remote_message = utility::receive_string_from_node( ii );
-			error_message += remote_message + "\n";
-			TR << remote_message << std::endl;
-			jobs_successfully_initialized = false;
-		}
-	}
-
-	if ( jobs_successfully_initialized ) {
-		for ( int ii = 1; ii < MPI_nprocs; ++ii ) {
-			send_success_message_to_remote_daemon_set( ii );
-		}
-	} else {
-		send_error_message_to_remote_daemon_sets();
-#ifdef USEMPI
-		MPI_Finalize();
-#endif
-		utility_exit_with_message( error_message );
-	}
-}
-
-StructureFileNames const &
-DynamicAggregateFunction::file_inputs_for_job( int job_index ) const
-{
-	return files_for_state_[ job_index ];
-}
-
-
-void
-DynamicAggregateFunction::assign_jobs_to_local_daemon_set(
-	std::list< int > const & job_indices,
-	DaemonSetOP daemon_set,
-	std::map< std::string, Size > const & tr /*total_reads*/,
-	std::map< std::string, Size > & rc /*reads_completed*/,
-	std::map< std::string, std::string > & fcm /*file_contents_map*/
-) const
-{
-	for ( std::list< int >::const_iterator iter = job_indices.begin(),
-			iter_end = job_indices.end(); iter != iter_end; ++iter ) {
-		int state_id = *iter;
-		StructureFileNames const & sfn = file_inputs_for_job( state_id );
-		core::pose::Pose pose;
-		core::import_pose::pose_from_pdbstring( pose, get_file_contents( sfn.pdb_name_, tr, rc, fcm ));
-		std::istringstream corr_stream( get_file_contents( sfn.correspondence_file_name_, tr, rc, fcm ) );
-		std::istringstream resfile_stream( get_file_contents( sfn.resfile_name_, tr, rc, fcm ) );
-		daemon_set->add_pack_daemon(
-			state_id,
-			sfn.pdb_name_,
-			pose,
-			sfn.correspondence_file_name_,
-			corr_stream,
-			sfn.resfile_name_,
-			resfile_stream );
-		for ( std::list< std::pair< Size, std::string > >::const_iterator
-				npditer = npd_variable_indices_for_states_[ state_id ].begin(),
-				npditer_end = npd_variable_indices_for_states_[ state_id ].end();
-				npditer != npditer_end; ++npditer ) {
-			daemon_set->add_npd_property_calculator_for_state( state_id, npditer->second, npditer->first );
-		}
-	}
-
-}
-
-void
-DynamicAggregateFunction::assign_jobs_to_remote_daemon_sets(
-	int proc_id,
-	std::list< int > const & job_indices,
-	std::map< std::string, Size > const & tr /*total_reads*/,
-	std::map< std::string, Size > & rc /*reads_completed*/,
-	std::map< std::string, std::string > & fcm /*file_contents_map*/
-) const
-{
-	utility::send_integer_to_node( proc_id, add_daemon );
-
-	int ndaemons = job_indices.size();
-	utility::send_integer_to_node( proc_id, ndaemons );
-	for ( std::list< int >::const_iterator iter = job_indices.begin(),
-			iter_end = job_indices.end(); iter != iter_end; ++iter ) {
-		int state_id = *iter;
-		StructureFileNames const & sfn = file_inputs_for_job( state_id );
-		utility::send_integer_to_node( proc_id, state_id );
-		utility::send_string_to_node( proc_id, sfn.pdb_name_ );
-		utility::send_string_to_node( proc_id,	get_file_contents( sfn.pdb_name_, tr, rc, fcm ));
-		utility::send_string_to_node( proc_id, sfn.correspondence_file_name_ );
-		utility::send_string_to_node( proc_id,	get_file_contents( sfn.correspondence_file_name_, tr, rc, fcm ));
-		utility::send_string_to_node( proc_id, sfn.resfile_name_ );
-		utility::send_string_to_node( proc_id,	get_file_contents( sfn.resfile_name_, tr, rc, fcm ));
-		int n_npd_properties_to_send = npd_variable_indices_for_states_[ state_id ].size();
-		utility::send_integer_to_node( proc_id, n_npd_properties_to_send );
-		//int count_npd = 0;
-		for ( std::list< std::pair< Size, std::string > >::const_iterator
-				npditer = npd_variable_indices_for_states_[ state_id ].begin(),
-				npditer_end = npd_variable_indices_for_states_[ state_id ].end();
-				npditer != npditer_end; ++npditer) {
-			//++count_npd;
-			utility::send_integer_to_node( proc_id, npditer->first );
-			utility::send_string_to_node( proc_id, npditer->second );
-		}
-	}
-
-}
-
-bool DynamicAggregateFunction::verify_remote_daemon_set_initialization_successful( int proc_id ) const
-{
-	int message = utility::receive_integer_from_node( proc_id );
-	if ( message == success_message ) return true;
-	if ( message == error_message ) return false;
-
-	throw utility::excn::EXCN_Msg_Exception( "Expected either a success_message or an error_message "
-		"after initializing remote daemon sets from process " +
-		utility::to_string( proc_id ) + " but received " + utility::to_string( message ) );
-	return false;
-}
-
-
-void DynamicAggregateFunction::send_success_message_to_remote_daemon_set( int proc_id ) const
-{
-	utility::send_integer_to_node( proc_id, success_message );
-}
-
-void DynamicAggregateFunction::send_error_message_to_remote_daemon_sets() const
-{
-	int MPI_nprocs = utility::mpi_nprocs();
-	for ( int ii = 1; ii < MPI_nprocs; ++ii ) {
-		utility::send_integer_to_node( ii, error_message );
-	}
-}
 
 void
 DynamicAggregateFunction::assign_state_energies_to_variables_and_subexpressions(
@@ -2435,7 +2133,7 @@ DynamicAggregateFunction::assign_state_energies_to_variables_and_subexpressions(
 		}
 	}
 
-	for ( Size ii = 1; ii <= variable_expressions_for_states_.size(); ++ii ) {
+	for ( Size ii = 1; ii <= num_states(); ++ii ) {
 		if ( verbose ) {
 			TR << "Assigning value " << state_energies[ ii ] << " to VariableExpression " << ii << std::endl;
 		}
@@ -2481,6 +2179,241 @@ DynamicAggregateFunction::count_num_npd_properties() const
 	}
 	return count;
 }
+
+////////////////////////////////////////////////
+///////// DynamicAggregateFunctionDriver ///////
+////////////////////////////////////////////////
+
+void DynamicAggregateFunctionDriver::initialize_from_input_file(
+	DaemonSetOP daemon_set,
+	std::istream & input
+)
+{
+	try {
+		read_all_variables_from_input_file( input );
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		send_error_message_to_remote_daemon_sets();
+		TR << "Initialization from input file failed with exception: " << e.msg() << std::endl;
+		TR << "Remote daemon sets are spinning down" << std::endl;
+		throw e;
+	}
+	initialize_pack_daemons( daemon_set );
+}
+
+void
+DynamicAggregateFunctionDriver::initialize_pack_daemons( DaemonSetOP daemon_set )
+{
+	/// Look at all the files that need to be read.  If any file needs to be read
+	/// multiple times, then keep the contents of that file in memory until its no longer needed.
+
+	count_file_reads();
+
+	/// Distribute the states across the nodes available for this job.  Some states will be assigned to this
+	/// pack daemon, unless there are more nodes than states.
+
+#ifdef USEMPI
+	distribute_jobs_to_remote_daemons( daemon_set );
+#else
+	initialize_daemon_with_all_states( daemon_set );
+#endif
+	daemon_set->setup_daemons();
+}
+
+void
+DynamicAggregateFunctionDriver::distribute_jobs_to_remote_daemons(
+	DaemonSetOP daemon_set
+)
+{
+	int MPI_nprocs = utility::mpi_nprocs();
+	int nstructs = num_states();
+
+	int njobs_per_cpu = static_cast< int > ( std::ceil( (double) nstructs / MPI_nprocs ));
+	/// Assign myself fewer states than to all other nodes if the number of states is not evenly divisible
+	/// by the number of processors.
+
+	int overhang = njobs_per_cpu * MPI_nprocs - nstructs;
+
+	utility::vector0< std::list< int > > job_assignments( MPI_nprocs );
+	if ( overhang == 0 ) {
+		int state_count = 0;
+		for ( int ii = 0; ii < MPI_nprocs; ++ii ) {
+			for ( int jj = 1; jj <= njobs_per_cpu; ++jj ) {
+				++state_count;
+				job_assignments[ ii ].push_back( state_count );
+			}
+		}
+	} else if ( overhang == 1 && njobs_per_cpu == 1 ) {
+		int state_count = 0;
+		for ( int ii = 1; ii < MPI_nprocs; ++ii ) {
+			++state_count;
+			job_assignments[ ii ].push_back( state_count );
+		}
+	} else {
+		int state_count = 0;
+		for ( int ii = 0; ii < MPI_nprocs; ++ii ) {
+			int ii_n_jobs = ii < overhang ? njobs_per_cpu - 1 : njobs_per_cpu;
+			for ( int jj = 1; jj <= ii_n_jobs; ++jj ) {
+				++state_count;
+				job_assignments[ ii ].push_back( state_count );
+			}
+		}
+	}
+
+	// Now assign jobs to nodes.
+	for ( int ii = 1; ii < MPI_nprocs; ++ii ) {
+		assign_jobs_to_remote_daemon_sets( ii, job_assignments[ ii ] );
+	}
+	bool jobs_successfully_initialized( true );
+
+	std::string error_message;
+
+	try {
+		assign_jobs_to_local_daemon_set( job_assignments[ 0 ], daemon_set );
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		error_message += "Error from node 0\n";
+		error_message += e.msg();
+		TR << e.msg() << std::endl;
+		jobs_successfully_initialized = false;
+	}
+
+	for ( int ii = 1; ii < MPI_nprocs; ++ii ) {
+		if ( ! verify_remote_daemon_set_initialization_successful( ii ) ) {
+			error_message += "Error from node " + utility::to_string( ii ) + "\n";
+			std::string remote_message = utility::receive_string_from_node( ii );
+			error_message += remote_message + "\n";
+			TR << remote_message << std::endl;
+			jobs_successfully_initialized = false;
+		}
+	}
+
+	if ( jobs_successfully_initialized ) {
+		for ( int ii = 1; ii < MPI_nprocs; ++ii ) {
+			send_success_message_to_remote_daemon_set( ii );
+		}
+	} else {
+		send_error_message_to_remote_daemon_sets();
+#ifdef USEMPI
+		MPI_Finalize();
+#endif
+		utility_exit_with_message( error_message );
+	}
+}
+
+void
+DynamicAggregateFunctionDriver::assign_jobs_to_local_daemon_set(
+	std::list< int > const & job_indices,
+	DaemonSetOP daemon_set
+)
+{
+	for ( std::list< int >::const_iterator iter = job_indices.begin(),
+			iter_end = job_indices.end(); iter != iter_end; ++iter ) {
+		int state_id = *iter;
+		StructureFileNames const & sfn = file_inputs_for_job( state_id );
+		core::pose::Pose pose;
+		core::import_pose::pose_from_pdbstring( pose, get_file_contents( sfn.pdb_name_ ));
+		std::istringstream corr_stream( get_file_contents( sfn.correspondence_file_name_ ) );
+		std::istringstream resfile_stream( get_file_contents( sfn.resfile_name_ ) );
+		daemon_set->add_pack_daemon(
+			state_id,
+			sfn.pdb_name_,
+			pose,
+			sfn.correspondence_file_name_,
+			corr_stream,
+			sfn.resfile_name_,
+			resfile_stream );
+		for ( std::list< std::pair< Size, std::string > >::const_iterator
+				npditer = npd_variable_indices_for_state_begin( state_id ),
+				npditer_end = npd_variable_indices_for_state_end( state_id );
+				npditer != npditer_end; ++npditer ) {
+			daemon_set->add_npd_property_calculator_for_state( state_id, npditer->second, npditer->first );
+		}
+	}
+
+}
+
+void
+DynamicAggregateFunctionDriver::assign_jobs_to_remote_daemon_sets(
+	int proc_id,
+	std::list< int > const & job_indices
+)
+{
+	utility::send_integer_to_node( proc_id, add_daemon );
+
+	int ndaemons = job_indices.size();
+	utility::send_integer_to_node( proc_id, ndaemons );
+	for ( std::list< int >::const_iterator iter = job_indices.begin(),
+			iter_end = job_indices.end(); iter != iter_end; ++iter ) {
+		int state_id = *iter;
+		StructureFileNames const & sfn = file_inputs_for_job( state_id );
+		utility::send_integer_to_node( proc_id, state_id );
+		utility::send_string_to_node( proc_id, sfn.pdb_name_ );
+		utility::send_string_to_node( proc_id,	get_file_contents( sfn.pdb_name_ ));
+		utility::send_string_to_node( proc_id, sfn.correspondence_file_name_ );
+		utility::send_string_to_node( proc_id,	get_file_contents( sfn.correspondence_file_name_ ));
+		utility::send_string_to_node( proc_id, sfn.resfile_name_ );
+		utility::send_string_to_node( proc_id,	get_file_contents( sfn.resfile_name_ ));
+		int n_npd_properties_to_send = num_npd_properties_for_state( state_id );
+		utility::send_integer_to_node( proc_id, n_npd_properties_to_send );
+		//int count_npd = 0;
+		for ( std::list< std::pair< Size, std::string > >::const_iterator
+				npditer = npd_variable_indices_for_state_begin( state_id ),
+				npditer_end = npd_variable_indices_for_state_end( state_id );
+				npditer != npditer_end; ++npditer) {
+			//++count_npd;
+			utility::send_integer_to_node( proc_id, npditer->first );
+			utility::send_string_to_node( proc_id, npditer->second );
+		}
+	}
+
+}
+
+bool DynamicAggregateFunctionDriver::verify_remote_daemon_set_initialization_successful( int proc_id ) const
+{
+	int message = utility::receive_integer_from_node( proc_id );
+	if ( message == success_message ) return true;
+	if ( message == error_message ) return false;
+
+	throw utility::excn::EXCN_Msg_Exception( "Expected either a success_message or an error_message "
+		"after initializing remote daemon sets from process " +
+		utility::to_string( proc_id ) + " but received " + utility::to_string( message ) );
+	return false;
+}
+
+
+void DynamicAggregateFunctionDriver::send_success_message_to_remote_daemon_set( int proc_id ) const
+{
+	utility::send_integer_to_node( proc_id, success_message );
+}
+
+void DynamicAggregateFunctionDriver::send_error_message_to_remote_daemon_sets() const
+{
+	int MPI_nprocs = utility::mpi_nprocs();
+	for ( int ii = 1; ii < MPI_nprocs; ++ii ) {
+		utility::send_integer_to_node( ii, error_message );
+	}
+}
+
+void
+DynamicAggregateFunctionDriver::initialize_daemon_with_all_states(
+	DaemonSetOP daemon_set
+)
+{
+	int nstructs = num_states();
+	std::list< int > joblist;
+	for ( int ii = 1; ii <= nstructs; ++ii ) joblist.push_back( ii );
+
+	try {
+		assign_jobs_to_local_daemon_set( joblist, daemon_set );
+	} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+		TR << "Error from daemon-set initialization \n";
+		TR <<  e.msg();
+		TR << std::endl;
+		throw e;
+	}
+}
+
+
+
 
 ////////////////////////////////////////////////
 ///////// EntityFuncExpressionCreator //////////

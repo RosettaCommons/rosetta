@@ -1,0 +1,35 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   core/pack/scmin/SidechainStateAssignment.fwd.hh
+/// @brief  Foward declaration for the SidechainStateAssignment class
+/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+
+#ifndef INCLUDED_core_pack_scmin_SidechainStateAssignment_FWD_HH
+#define INCLUDED_core_pack_scmin_SidechainStateAssignment_FWD_HH
+
+// Utility headers
+#include <utility/pointer/owning_ptr.hh>
+
+namespace core {
+namespace pack {
+namespace scmin {
+
+/// A simple class for tracking a network state and its energy where
+/// each sidechain's state is described by a series of chi angles.
+class SidechainStateAssignment;
+
+typedef utility::pointer::owning_ptr< SidechainStateAssignment > SidechainStateAssignmentOP;
+typedef utility::pointer::owning_ptr< SidechainStateAssignment const > SidechainStateAssignmentCOP;
+
+} // namespace scmin
+} // namespace pack
+} // namespace core
+
+#endif

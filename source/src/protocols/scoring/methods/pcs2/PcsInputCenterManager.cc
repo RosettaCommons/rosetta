@@ -33,26 +33,17 @@
 
 // Unit headers
 #include <protocols/scoring/methods/pcs2/PcsInputCenterManager.hh>
-// AUTO-REMOVED #include <protocols/scoring/methods/pcs2/PcsInputCenter.fwd.hh>
-//#include <protocols/scoring/methods/pcs2/PcsGridSearchParameterManager.hh>
-//#include <protocols/scoring/methods/pcs2/PcsEnergyParameterManager.hh>
-
-// Package headers
 
 // Project headers
 #include <basic/Tracer.hh>
 
 // Utility headers
-
-// Numeric headers
-
-// Objexx headers
-
-// C++ headers
-// AUTO-REMOVED #include <iostream>
-
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace protocols{
 namespace scoring{
@@ -63,14 +54,6 @@ basic::Tracer TR_PcsInputCenterManager("protocols.scoring.methods.pcs.PcsInputCe
 
 PcsInputCenterManager::PcsInputCenterManager(){
 	TR_PcsInputCenterManager << "Empty constructor called" << std::endl;
-}
-
-PcsInputCenterManager *
-PcsInputCenterManager::get_instance(){
-	if ( instance_ == 0 ){
-		 instance_ = new PcsInputCenterManager();
-	}
-	return instance_;
 }
 
 std::ostream &
@@ -141,6 +124,30 @@ PcsInputCenterManager::get_PcsInputCenter_for(utility::vector1<std::string> cons
 }
 
 PcsInputCenterManager * PcsInputCenterManager::instance_( 0 );
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex PcsInputCenterManager::singleton_mutex_;
+
+std::mutex & PcsInputCenterManager::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+PcsInputCenterManager * PcsInputCenterManager::get_instance()
+{
+	boost::function< PcsInputCenterManager * () > creator = boost::bind( &PcsInputCenterManager::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+PcsInputCenterManager *
+PcsInputCenterManager::create_singleton_instance()
+{
+	return new PcsInputCenterManager;
+}
 
 }//namespace pcs2
 }//namespace methods

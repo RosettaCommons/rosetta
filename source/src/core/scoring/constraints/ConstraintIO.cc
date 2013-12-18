@@ -48,7 +48,11 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 static basic::Tracer tr("core.io.constraints");
 
@@ -56,12 +60,28 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-ConstraintIO*
-ConstraintIO::get_instance() {
-	if ( instance_ == 0 ) {
-		instance_ = new ConstraintIO();
-	}
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex ConstraintIO::singleton_mutex_;
+
+std::mutex & ConstraintIO::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+ConstraintIO * ConstraintIO::get_instance()
+{
+	boost::function< ConstraintIO * () > creator = boost::bind( &ConstraintIO::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
+}
+
+ConstraintIO *
+ConstraintIO::create_singleton_instance()
+{
+	return new ConstraintIO;
 }
 
 func::FuncFactory & ConstraintIO::get_func_factory(void) {

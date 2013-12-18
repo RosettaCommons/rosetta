@@ -105,7 +105,7 @@ void ContinuousRotamerSet::build_rotamers(
 			// OK -- two options -- we're dealing with a Dunbrack library, in which case, we should
 			// store DunbrackRotamerSampleData, or, we're dealing with some other kind of library,
 			// in which case, we need to quit (TO DO: support ligand rotamers)
-			dunbrack::SingleResidueDunbrackLibraryCAP dunlib =	
+			dunbrack::SingleResidueDunbrackLibraryCAP dunlib =
 				dynamic_cast<dunbrack::SingleResidueDunbrackLibrary const * > ( rotlib() );
 			if ( dunlib ) {
 				samples_[ count_restype_ind ] = dunlib->get_all_rotamer_samples( pose.phi( resid ), pose.psi( resid ) );
@@ -140,7 +140,7 @@ void ContinuousRotamerSet::build_rotamers(
 		n_baserots_total_ += n_baserotamers_for_rotblock_[ ii ];
 		n_samplingrots_total_ += n_samplingrots_for_rotblock_[ ii ];
 		if ( ii == input_rotamer_rotblock_ ) {
-			// mark the input rotamer as the last rotamer of the samplingrots for its restype. 
+			// mark the input rotamer as the last rotamer of the samplingrots for its restype.
 			input_rotamer_samplingrot_index_ = n_samplingrots_for_rotblock_[ ii ] + samplingrot_offsets_[ ii ];
 		}
 	}
@@ -165,7 +165,7 @@ ContinuousRotamerSet::get_n_residue_types() const
 	return n_restypes_;
 }
 
-/// 
+///
 //Size
 //ContinuousRotamerSet::get_residue_type_begin( Size which_restype ) const
 //{
@@ -292,7 +292,7 @@ ContinuousRotamerSets::ContinuousRotamerSets(
 		++count_moltenres;
 		moltenresid_2_resid_[ count_moltenres ] = ii;
 		resid_2_moltenresid_[ ii ] = count_moltenres;
-		rotamer_sets_[ ii ].build_rotamers( pose, ii, task );
+		rotamer_sets_[ count_moltenres ].build_rotamers( pose, ii, task );
 	}
 
 	n_sample_rotamers_ = 0;
@@ -336,7 +336,7 @@ ContinuousRotamerSets::n_sample_rotamers() const
 }
 
 Size
-ContinuousRotamerSets::moltenres_for_sample_rot( Size sample_rotno )
+ContinuousRotamerSets::moltenres_for_sample_rot( Size sample_rotno ) const
 {
 	return moltenres_for_sample_rot_[ sample_rotno ];
 }

@@ -21,6 +21,7 @@
 
 // Package headers
 #include <protocols/pack_daemon/EntityCorrespondence.hh>
+#include <protocols/pack_daemon/util.hh>
 
 // Project headers
 // AUTO-REMOVED #include <protocols/multistate_design/SingleState.hh>  // REQUIRED FOR WINDOWS
@@ -485,38 +486,12 @@ void DaemonSet::set_entity_resfile(
 	std::string const & resfile_name
 )
 {
-	using namespace core::pack::task;
-	using namespace core::pose;
 
 	if ( ! daemons_.empty() ) {
 		utility_exit_with_message( "Entity resfile must be set before any daemons may be added and all daemons must use the same correspondece file" );
 	}
 
-	if ( (resfile >> num_entities_ ).fail() ) {
-		utility_exit_with_message( "Error reading the number of entities from entity resfile " + resfile_name );
-	}
-
-	Pose ala_pose;
-	std::string ala_seq( num_entities_, 'A' );
-	core::pose::make_pose_from_sequence( ala_pose, ala_seq, core::chemical::FA_STANDARD );
-	entity_task_ = TaskFactory::create_packer_task( ala_pose );
-
-	entity_resfile_ = new ResfileContents( ala_pose, resfile );
-
-	/// apply the resfile operations to the entity_task_ for later error checking
-	for ( Size ii = 1; ii <= entity_task_->total_residue(); ++ii ) {
-
-		std::list< ResfileCommandCOP > const & ii_command_list(
-			entity_resfile_->specialized_commands_exist_for_residue( ii ) ?
-			entity_resfile_->commands_for_residue( ii )
-			: entity_resfile_->default_commands() );
-
-		for ( std::list< ResfileCommandCOP >::const_iterator
-				iter = ii_command_list.begin(), iter_end = ii_command_list.end();
-				iter != iter_end; ++iter ) {
-			(*iter)->residue_action( *entity_task_, ii );
-		}
-	}
+	create_entity_resfile_contents( resfile, resfile_name, entity_resfile_, entity_task_, num_entities_ );
 
 }
 
@@ -613,27 +588,9 @@ DaemonSet::add_pack_daemon(
 
 	/// Setup the task
 	PackerTaskOP task = task_factory_->create_task_and_apply_taskoperations( pose );
-	ResfileContents secondary_resfile_contents( pose, secondary_resfile );
+	ResfileContentsOP secondary_resfile_contents = new ResfileContents( pose, secondary_resfile );
 
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		Size ii_entity = ec->entity_for_residue( ii );
-		std::list< ResfileCommandCOP > const & ii_command_list(
-			ii_entity != 0 ? (
-				entity_resfile_->specialized_commands_exist_for_residue( ii_entity ) ?
-				entity_resfile_->commands_for_residue( ii_entity ) :
-				entity_resfile_->default_commands()
-			) :
-			(
-				secondary_resfile_contents.specialized_commands_exist_for_residue( ii ) ?
-				secondary_resfile_contents.commands_for_residue( ii ) :
-				secondary_resfile_contents.default_commands() ));
-
-		for ( std::list< ResfileCommandCOP >::const_iterator
-				iter = ii_command_list.begin(), iter_end = ii_command_list.end();
-				iter != iter_end; ++iter ) {
-			(*iter)->residue_action( *task, ii );
-		}
-	}
+	initialize_task_from_entity_resfile_and_secondary_resfile( pose, ec, *entity_resfile_, *secondary_resfile_contents, task );
 	task->initialize_from_command_line();
 
 	/// At this point, the packer task is initialized and ready to be handed to the

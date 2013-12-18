@@ -17,11 +17,10 @@
 
 
 // Unit headers
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 
-
-// AUTO-REMOVED
+// Package headers
+#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.fwd.hh>
 
 
 #ifdef WIN32
@@ -31,12 +30,11 @@
 	#include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
 #endif
 
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/types.hh>
 
@@ -44,16 +42,14 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.fwd.hh>
-// AUTO-REMOVED #include <set>
-
-#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.fwd.hh>
 #include <utility/vector1.hh>
 
-
-
-//Utility Headers
-
-// C++ Headers
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace protocols {
 namespace toolbox {
@@ -244,7 +240,25 @@ protected:
 
 	utility::vector1< EnzConstraintParametersOP > cst_pairs_; // contains information about the residue pair constraints
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
 private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
+private:
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static EnzConstraintIO * create_singleton_instance();
 
 	//void
 	//clear_pose_specific_data();
@@ -279,7 +293,7 @@ private:
 	//utility::vector1< core::scoring::constraints::ConstraintCOP > favor_native_constraints_;
 
 	//a static version for generic access
-	static EnzConstraintIOOP generic_instance_;
+	static EnzConstraintIO * generic_instance_;
 
 };  // class EnzConstraintIO
 

@@ -38,14 +38,17 @@
 #include <utility/json_spirit/json_spirit_writer.h>
 #include <utility/json_spirit/json_spirit_reader.h>
 #include <utility/file/file_sys_util.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
 //STL headers
 #include <iostream>
 #include <fstream>
 #include <map>
 
-//Auto Headers
+
+// Boost headers
 #include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace protocols {
 namespace qsar {
@@ -55,13 +58,28 @@ static basic::Tracer GridManagerTracer("protocols.qsar.scoring_grid.GridManager"
 
 GridManager* GridManager::instance_(0);
 
-GridManager* GridManager::get_instance()
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex GridManager::singleton_mutex_;
+
+std::mutex & GridManager::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+GridManager * GridManager::get_instance()
 {
-	if(instance_ == 0)
-	{
-		instance_ = new GridManager();
-	}
+	boost::function< GridManager * () > creator = boost::bind( &GridManager::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
+}
+
+GridManager *
+GridManager::create_singleton_instance()
+{
+	return new GridManager;
 }
 
 void GridManager::reset()

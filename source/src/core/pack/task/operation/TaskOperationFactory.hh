@@ -37,6 +37,12 @@
 
 #include <utility/vector0.hh>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace core {
 namespace pack {
@@ -73,11 +79,29 @@ public:
 ///@brief fills vector with new TaskOperations from xml-like tag file
 	void newTaskOperations(	TaskOperationOPs &, basic::datacache::DataMap & datamap, std::string const & ) const;
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
 private:
 	// private constructor/destructor
 	TaskOperationFactory();
 	virtual ~TaskOperationFactory();
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static TaskOperationFactory * create_singleton_instance();
 
+private:
 	static TaskOperationFactory * instance_;
 	TaskOperationCreatorMap task_operation_creator_map_;
 };

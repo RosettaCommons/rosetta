@@ -54,6 +54,12 @@
 
 // C++ headers
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace protocols {
 namespace scoring {
@@ -142,6 +148,10 @@ private:
 
 	PCS_Energy_parameters_manager();
 
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static PCS_Energy_parameters_manager * create_singleton_instance();
+
 	core::Real grid_edge_;
 	core::Real grid_step_;
 	core::Real grid_small_cutoff_;
@@ -160,6 +170,20 @@ private:
 	utility::vector1< bool > vec_exclude_residues_;
 	bool vec_exclude_residues_exists_;
 	bool vec_exclude_residues_changed_;
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
 
 public:
 

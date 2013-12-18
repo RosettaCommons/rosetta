@@ -1,4 +1,4 @@
-// -*- mode:c++{}tab-width:2{}indent-tabs-mode:t{}show-trailing-whitespace:t{}rm-trailing-spaces:t -*-
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -53,7 +53,7 @@ namespace pack_daemon {
 struct EntityHistoryLT
 {
 public:
-	typedef MultistateFitnessFunction::EntityAndScore EntityAndScore;
+	typedef TopEntitySet::EntityAndScore EntityAndScore;
 
 public:
 	bool operator () ( EntityAndScore const & a, EntityAndScore const & b ) {
@@ -61,10 +61,156 @@ public:
 	}
 };
 
-
-MultistateFitnessFunction::MultistateFitnessFunction() :
-	desired_entity_history_size_( 1 ),
+TopEntitySet::TopEntitySet() :
+	desired_entity_history_size_( 0 ),
 	n_tied_for_worst_( 0 )
+{
+}
+
+core::Size
+TopEntitySet::size() const
+{
+	return top_entities_.size();
+}
+
+TopEntitySet::EntityAndScore const &
+TopEntitySet::operator[] ( core::Size index ) const {
+	return top_entities_[ index ];
+}
+
+TopEntitySet::EntityAndScore &
+TopEntitySet::operator[] ( core::Size index ) {
+	return top_entities_[ index ];
+}
+
+void
+TopEntitySet::desired_entity_history_size( core::Size setting )
+{
+	desired_entity_history_size_ = setting;
+	top_entities_.clear();
+	top_entities_.reserve( 2 * desired_entity_history_size_ );
+	n_tied_for_worst_ = 0;
+}
+
+void
+TopEntitySet::clear()
+{
+	top_entities_.clear();
+	n_tied_for_worst_ = 0;
+}
+
+core::Size
+TopEntitySet::desired_entity_history_size() const
+{
+	return desired_entity_history_size_;
+}
+
+std::list< TopEntitySet::EntityOP >
+TopEntitySet::update_entity_history(
+	Entity const & ent,
+	StateEnergiesAndNPDs const & seanpds,
+	bool & added_new_entity
+)
+{
+	added_new_entity = false;
+	std::list< EntityOP > removed_entities;
+
+	if ( top_entities_.size() < desired_entity_history_size_ ) {
+		// 1. handle the cases when the heap is not yet full
+
+		if ( top_entities_.size() == 0 ) {
+			// a. first element added to the heap
+			n_tied_for_worst_ = 1;
+		} else if ( ent.fitness() == top_entities_.front().first->fitness() ) {
+			// b. tied with the worst element in the heap
+			++n_tied_for_worst_;
+		} else if (ent.fitness() > top_entities_.front().first->fitness() ) {
+			// c. worse than the worst element in the heap -- a new low!
+			n_tied_for_worst_ = 1;
+		}
+
+		top_entities_.push_back( std::make_pair( new Entity( ent ), seanpds ) );
+		std::push_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
+		added_new_entity = true;
+
+	} else if ( ent.fitness() <= top_entities_.front().first->fitness() ) {
+		// 2. handle the cases when the heap is full
+		if ( top_entities_.front().first->fitness() == ent.fitness() ) {
+			// a. Tie between the new entity and the worst entity in the heap
+			++n_tied_for_worst_;
+		} else {
+			// b. Not a tie -- maybe we can remove some of the entities that are tied for worst
+			assert( n_tied_for_worst_ <= top_entities_.size() );
+			if ( top_entities_.size() + 1 - n_tied_for_worst_ >= desired_entity_history_size_ ) {
+				// start popping entities from the heap
+				ASSERT_ONLY( core::Real const old_worst_fitness = top_entities_.front().first->fitness();)
+				for ( Size ii = 1; ii <= n_tied_for_worst_; ++ii ) {
+					assert( top_entities_.front().first->fitness() == old_worst_fitness );
+					removed_entities.push_back( top_entities_.front().first );
+					std::pop_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
+					top_entities_.pop_back();
+				}
+
+				/// now, if the new entity has the same fitness as the current worst entity, determine how many entities are tied for worst.
+				if ( top_entities_.size() != 0 && ent.fitness() == top_entities_.front().first->fitness() ) {
+					utility::vector1< EntityAndScore > worst_entities; worst_entities.reserve( top_entities_.size() );
+					core::Real const new_worst_fitness = top_entities_.front().first->fitness();
+					n_tied_for_worst_ = 1; // count from 1, because the entity we're about to add will also be among the set of the worst
+					while ( top_entities_.size() != 0 && top_entities_.front().first->fitness() == new_worst_fitness ) {
+						worst_entities.push_back( top_entities_.front() );
+						std::pop_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
+						top_entities_.pop_back();
+						++n_tied_for_worst_;
+					}
+					/// ok -- we know how many entities are tied for worst.  put these entities back
+					/// into the heap
+					for ( Size ii = 1; ii <= worst_entities.size(); ++ii ) {
+						top_entities_.push_back( worst_entities[ ii ] );
+						std::push_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
+					}
+				} else {
+					/// we just emptied out the history; the element we're about to add
+					/// will be the worst element in the history -- so save the fact that the number
+					/// of entities tied for last place is now 1.
+					n_tied_for_worst_ = 1;
+				}
+			}
+
+		}
+		top_entities_.push_back( std::make_pair( new Entity( ent ), seanpds ) );
+		std::push_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
+		added_new_entity = true;
+	}
+
+	return removed_entities;
+}
+
+core::Size
+TopEntitySet::index_of_entity( Entity const & ent ) const
+{
+	for ( core::Size ii = 1; ii <= top_entities_.size(); ++ii ) {
+		if ( *top_entities_[ ii ].first == ent ) {
+			return ii;
+		}
+	}
+	return 0;
+}
+
+
+TopEntitySet::EntityAndScore
+TopEntitySet::pop()
+{
+	if ( top_entities_.size() == 0 ) {
+		EntityAndScore empty;
+		return empty;
+	}
+	EntityAndScore worst = top_entities_.front();
+	std::pop_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
+	return worst;
+}
+
+
+MultistateFitnessFunction::MultistateFitnessFunction()
 {
 	set_history_size( 1 ); // at the very least, store the optimal solution!
 }
@@ -129,23 +275,18 @@ MultistateAggregateFunctionCOP MultistateFitnessFunction::aggregate_function() c
 
 void MultistateFitnessFunction::set_history_size( core::Size history_size )
 {
-	//TR << "Set history size " << history_size << std::endl;
-	desired_entity_history_size_ = history_size;
-	top_entities_.resize( 0 );
-	top_entities_.reserve( 2 * history_size ); // leave extra room for likely ties
-	n_tied_for_worst_ = 0;
+	top_entities_.desired_entity_history_size( history_size );
 }
 
 void MultistateFitnessFunction::clear_history()
 {
-	top_entities_.resize( 0 );
-	n_tied_for_worst_ = 0;
+	top_entities_.clear();
 }
 
 std::list< std::pair< MultistateFitnessFunction::Size, MultistateFitnessFunction::PoseOP > >
 MultistateFitnessFunction::recover_relevant_poses_for_entity( Entity const & ent )
 {
-	Size entity_index = which_top_entity( ent );
+	Size entity_index = top_entities_.index_of_entity( ent );
 	if ( entity_index == 0 ) {
 		std::cerr << "Failed to find desired top entity: " << ent << std::endl;
 		std::cerr << "Top entities:" << std::endl;
@@ -238,88 +379,18 @@ MultistateAggregateFunctionOP MultistateFitnessFunction::aggregate_function()
 	return aggregate_;
 }
 
-core::Size
-MultistateFitnessFunction::which_top_entity( Entity const & ent ) const
-{
-	for ( Size ii = 1; ii <= top_entities_.size(); ++ii ) {
-		if ( *top_entities_[ ii ].first == ent ) {
-			return ii;
-		}
-	}
-	return 0;
-}
 
 void
 MultistateFitnessFunction::update_entity_history( Entity const & ent )
 {
+	StateEnergiesAndNPDs seanpd = make_pair( state_energies_, npd_properties_ );
+	bool added_entity( false );
+	std::list< genetic_algorithm::EntityOP > discarded = top_entities_.update_entity_history( ent, seanpd, added_entity );
 
-	if ( top_entities_.size() < desired_entity_history_size_ ) {
-		// 1. handle the cases when the heap is not yet full
+	if ( added_entity ) instruct_daemons_to_keep_last_entity();
 
-		if ( top_entities_.size() == 0 ) {
-			// a. first element added to the heap
-			n_tied_for_worst_ = 1;
-		} else if ( ent.fitness() == top_entities_.front().first->fitness() ) {
-			// b. tied with the worst element in the heap
-			++n_tied_for_worst_;
-		} else if (ent.fitness() > top_entities_.front().first->fitness() ) {
-			// c. worse than the worst element in the heap -- a new low!
-			n_tied_for_worst_ = 1;
-		}
-
-		StateEnergiesAndNPDs seanpd = make_pair( state_energies_, npd_properties_ );
-		top_entities_.push_back( std::make_pair( new Entity( ent ), seanpd ) );
-		std::push_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
-		instruct_daemons_to_keep_last_entity();
-
-	} else if ( ent.fitness() <= top_entities_.front().first->fitness() ) {
-		// 2. handle the cases when the heap is full
-		if ( top_entities_.front().first->fitness() == ent.fitness() ) {
-			// a. Tie between the new entity and the worst entity in the heap
-			++n_tied_for_worst_;
-		} else {
-			// b. Not a tie -- maybe we can remove some of the entities that are tied for worst
-			assert( n_tied_for_worst_ <= top_entities_.size() );
-			if ( top_entities_.size() + 1 - n_tied_for_worst_ >= desired_entity_history_size_ ) {
-				// start popping entities from the heap
-				ASSERT_ONLY(Real const old_worst_fitness = top_entities_.front().first->fitness();)
-				for ( Size ii = 1; ii <= n_tied_for_worst_; ++ii ) {
-					assert( top_entities_.front().first->fitness() == old_worst_fitness );
-					instruct_daemons_to_drop_entity( *top_entities_.front().first );
-					std::pop_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
-					top_entities_.pop_back();
-				}
-
-				/// now, determine how many entities are tied for worst.
-				if ( top_entities_.size() != 0 ) {
-					utility::vector1< EntityAndScore > worst_entities; worst_entities.reserve( top_entities_.size() );
-					Real const new_worst_fitness = top_entities_.front().first->fitness();
-					n_tied_for_worst_ = 0;
-					while ( top_entities_.size() != 0 && top_entities_.front().first->fitness() == new_worst_fitness ) {
-						worst_entities.push_back( top_entities_.front() );
-						std::pop_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
-						top_entities_.pop_back();
-						++n_tied_for_worst_;
-					}
-					/// ok -- we know how many entities are tied for worst.  put these entities back
-					/// into the heap
-					for ( Size ii = 1; ii <= n_tied_for_worst_; ++ii ) {
-						top_entities_.push_back( worst_entities[ ii ] );
-						std::push_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
-					}
-				} else {
-					/// we just emptied out the history; the element we're about to add
-					/// will be the worst element in the history -- so save the fact that the number
-					/// of entities tied for last place is now 1.
-					n_tied_for_worst_ = 1;
-				}
-			}
-
-		}
-		StateEnergiesAndNPDs seanpd = make_pair( state_energies_, npd_properties_ );
-		top_entities_.push_back( std::make_pair( new Entity( ent ), seanpd ) );
-		std::push_heap( top_entities_.begin(), top_entities_.end(), EntityHistoryLT() );
-		instruct_daemons_to_keep_last_entity();
+	for ( std::list< genetic_algorithm::EntityOP >::iterator iter = discarded.begin(); iter != discarded.end(); ++iter ) {
+		instruct_daemons_to_drop_entity( **iter );
 	}
 
 }

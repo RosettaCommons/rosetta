@@ -33,6 +33,7 @@ sources = {
 		"Entity",
 		"EntityRandomizer",
 		"GeneticAlgorithm",
+		"Mutate1Randomizer",
 	],
 	"protocols/inputter": [
 		"FastaInputter",

@@ -23,8 +23,11 @@
 //utility headers
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
-// Boost Headers
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
@@ -35,6 +38,30 @@ namespace basic {
 namespace resource_manager {
 
 ResourceOptionsFactory * ResourceOptionsFactory::instance_( 0 );
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex ResourceOptionsFactory::singleton_mutex_;
+
+std::mutex & ResourceOptionsFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+ResourceOptionsFactory * ResourceOptionsFactory::get_instance()
+{
+	boost::function< ResourceOptionsFactory * () > creator = boost::bind( &ResourceOptionsFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+ResourceOptionsFactory *
+ResourceOptionsFactory::create_singleton_instance()
+{
+	return new ResourceOptionsFactory;
+}
 
 ResourceOptionsFactory::~ResourceOptionsFactory() {}
 
@@ -63,15 +90,6 @@ ResourceOptionsFactory::create_resource_options(
 	ResourceOptionsOP resource_options = (*iter).second->create_options();
 	resource_options->parse_my_tag( tag );
 	return resource_options;
-}
-
-ResourceOptionsFactory *
-ResourceOptionsFactory::get_instance()
-{
-	if ( ! instance_ ) {
-		instance_ = new ResourceOptionsFactory;
-	}
-	return instance_;
 }
 
 void

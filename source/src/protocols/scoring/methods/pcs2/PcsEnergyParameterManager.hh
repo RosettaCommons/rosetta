@@ -37,17 +37,12 @@
 
 #include <utility/vector1.hh>
 
-
-// Project headers
-
-// Utility headers
-
-// Numeric headers
-
-// Objexx headers
-
-// C++ headers
-//#include <iostream>
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace protocols {
 namespace scoring {
@@ -63,6 +58,21 @@ public:
 	friend std::ostream &
 	operator<<(std::ostream& out, const PcsEnergyParameterManager &me);
 
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
 private:
 
 	PcsEnergyParameterManager();
@@ -70,6 +80,10 @@ private:
 	~PcsEnergyParameterManager();
 
 	PcsEnergyParameterManager(PcsEnergyParameterManager const & other);
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static PcsEnergyParameterManager * create_singleton_instance();
 
 	PcsEnergyParameterManager&
 	operator=( PcsEnergyParameterManager const & other );

@@ -16,10 +16,21 @@
 
 // Package Headers
 #include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pack/scmin/AtomTreeCollection.fwd.hh>
+#include <core/pack/scmin/SCMinMinimizerMap.fwd.hh>
+#include <core/pack/scmin/SidechainStateAssignment.fwd.hh>
+#include <core/pack/rotamer_set/ContinuousRotamerSet.fwd.hh>
+#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
+#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
+#include <core/pack/interaction_graph/SimpleInteractionGraph.fwd.hh>
 
 // Project Headers
+#include <core/types.hh>
+#include <core/graph/Graph.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/MinimizationGraph.fwd.hh>
+#include <core/optimization/MinimizerOptions.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -38,10 +49,76 @@ min_pack(
 );
 
 void
-stochastic_pack(
+min_pack_setup(
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunction const & sfxn,
+	task::PackerTaskOP task,
+	bool cartesian,
+	bool nonideal,
+	rotamer_set::RotamerSetsOP & rotsets,
+	scmin::SCMinMinimizerMapOP & scminmap,
+	scoring::MinimizationGraphOP & mingraph,
+	scmin::AtomTreeCollectionOP & atc,
+	optimization::MinimizerOptionsOP & min_options
+);
+
+void
+min_pack_optimize(
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunction const & sfxn,
+	task::PackerTaskOP task,
+	rotamer_set::RotamerSetsOP rotsets,
+	scmin::SCMinMinimizerMapOP scminmap,
+	scoring::MinimizationGraphOP mingraph,
+	scmin::AtomTreeCollectionOP atc,
+	optimization::MinimizerOptions const & min_options,
+	scmin::SidechainStateAssignment & best_state
+);
+
+void
+min_pack_place_opt_rotamers_on_pose(
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunction const & sfxn,
+	rotamer_set::RotamerSetsOP rotsets,
+	scmin::AtomTreeCollectionOP atc,
+	scmin::SidechainStateAssignment const & best_state,
+	Real start_score
+);
+
+/// @brief Interface to a version of the packer that uses very little memory
+/// and simultaneously is able to go off rotamer and explore more of sidechain
+/// conformation space.  Quite a bit faster than the min-packer.
+void
+off_rotamer_pack(
 	pose::Pose & pose,
 	scoring::ScoreFunction const & sfxn,
 	task::PackerTaskCOP task
+);
+
+void
+off_rotamer_pack_setup(
+	pose::Pose & pose,
+	scoring::ScoreFunction const & sfxn,
+	task::PackerTaskCOP task,
+	rotamer_set::ContinuousRotamerSetsOP & rotsets,
+	scmin::AtomTreeCollectionOP & atc,
+	interaction_graph::SimpleInteractionGraphOP & ig
+);
+
+void
+off_rotamer_pack_optimize(
+	rotamer_set::ContinuousRotamerSets const & rotsets,
+	scmin::AtomTreeCollectionOP atc,
+	interaction_graph::SimpleInteractionGraph & ig,
+	scmin::SidechainStateAssignment & best_state
+);
+
+void
+off_rotamer_pack_update_pose(
+	pose::Pose & pose,
+	rotamer_set::ContinuousRotamerSets const & rotsets,
+	scmin::AtomTreeCollectionOP atc,
+	scmin::SidechainStateAssignment const & best_state
 );
 
 } // namespace pack

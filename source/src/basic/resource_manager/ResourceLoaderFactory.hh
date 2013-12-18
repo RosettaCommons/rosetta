@@ -27,6 +27,13 @@
 #include <map>
 #include <string>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
+
 namespace basic {
 namespace resource_manager {
 
@@ -74,7 +81,7 @@ public:
 
 	/// @brief Only useful for unit testing.  Since factory registration happens (sometimes) at
 	/// load time, there may be no one to catch a thrown exception in the event of a name collision
-	/// two FallbackConfigurationCreators that register for the same 
+	/// two FallbackConfigurationCreators that register for the same
 	void
 	set_throw_on_double_registration();
 
@@ -82,6 +89,24 @@ private:
 
 	/// singleton has a private constructor
 	ResourceLoaderFactory();
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static ResourceLoaderFactory * create_singleton_instance();
 
 private:
 	static ResourceLoaderFactory * instance_;

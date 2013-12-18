@@ -24,7 +24,11 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 
 namespace core {
@@ -33,25 +37,36 @@ namespace picking_old {
 
 
 // static initialization
-FragmentLibraryManager * FragmentLibraryManager::instance_ = NULL;
+FragmentLibraryManager * FragmentLibraryManager::instance_( 0 );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex FragmentLibraryManager::singleton_mutex_;
+
+std::mutex & FragmentLibraryManager::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+FragmentLibraryManager * FragmentLibraryManager::get_instance()
+{
+	boost::function< FragmentLibraryManager * () > creator = boost::bind( &FragmentLibraryManager::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+FragmentLibraryManager *
+FragmentLibraryManager::create_singleton_instance()
+{
+	return new FragmentLibraryManager;
+}
 
 /// @brief default constructor
 FragmentLibraryManager::FragmentLibraryManager() :
 	vall_( NULL )
 {}
-
-
-/// @brief return singleton instance of manager
-FragmentLibraryManager * FragmentLibraryManager::get_instance() {
-	// TODO: we need proper locking support here for multi-threaded access
-	if ( instance_ == NULL ) {
-		instance_ = new FragmentLibraryManager();
-	}
-
-	return instance_;
-}
-
 
 /// @brief return instance of standard Vall library
 vall::VallLibrary const & FragmentLibraryManager::get_Vall() const {

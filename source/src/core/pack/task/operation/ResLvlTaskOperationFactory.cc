@@ -24,10 +24,18 @@
 
 #include <core/pack/task/operation/ResLvlTaskOperation.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationCreator.hh>
+
+// Utility headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// C++ headers
 #include <iostream>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace core {
 namespace pack {
@@ -37,13 +45,29 @@ namespace operation {
 // special singleton functions
 // initialize
 ResLvlTaskOperationFactory * ResLvlTaskOperationFactory::instance_( 0 );
-// get pointer to singleton
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex ResLvlTaskOperationFactory::singleton_mutex_;
+
+std::mutex & ResLvlTaskOperationFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
 ResLvlTaskOperationFactory * ResLvlTaskOperationFactory::get_instance()
 {
-	if ( ! instance_ ) {
-		instance_ = new ResLvlTaskOperationFactory();
-	}
+	boost::function< ResLvlTaskOperationFactory * () > creator = boost::bind( &ResLvlTaskOperationFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
+}
+
+ResLvlTaskOperationFactory *
+ResLvlTaskOperationFactory::create_singleton_instance()
+{
+	return new ResLvlTaskOperationFactory;
 }
 
 void

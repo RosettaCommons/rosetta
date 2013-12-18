@@ -23,7 +23,13 @@
 // C/C++ headers
 #include <map>
 
-//Auto Headers
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
+
 namespace protocols {
 namespace topology_broker {
 
@@ -31,7 +37,7 @@ namespace topology_broker {
 /// Commonly used TopologyClaimers are registered in the constructor. Additional
 /// claimers can be registered after the fact using the add_type() method.
 class TopologyClaimerFactory : boost::noncopyable {
- public:
+public:
   /// @brief Returns an instance to the singleton
   static TopologyClaimerFactory const& get_instance();
 
@@ -47,7 +53,21 @@ class TopologyClaimerFactory : boost::noncopyable {
   /// newTopologyClaimer(<name>).
   void add_type(TopologyClaimerOP claimer);
 
- private:
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
+private:
   /// @brief Constructs a new instance and initializes the lookup table
   /// <claimers_> with commonly used types
   TopologyClaimerFactory();
@@ -55,12 +75,19 @@ class TopologyClaimerFactory : boost::noncopyable {
   /// @brief Frees resources associated with this object
   ~TopologyClaimerFactory();
 
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static TopologyClaimerFactory * create_singleton_instance();
+
+private:
+
   /// @brief A map that associates claimer names with claimer types. Used by the
   /// newTopologyClaimer() method to instantiate new claimers by name.
   mutable std::map<std::string, TopologyClaimerOP> claimers_;
 
   /// @brief A pointer to the singleton instance of the factory object.
   /// Resources associated with the object are released on destruction.
+	/// APL Question: Should this be one-instance-per-program (singleton) or one-instance-per-job?
   static TopologyClaimerFactory* instance_;
 };
 

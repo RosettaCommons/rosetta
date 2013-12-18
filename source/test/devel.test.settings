@@ -10,6 +10,11 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
+	"mmt_msd" : [
+		"MMTMinPackingJob",
+		"MMTDriver",
+		"MMTReceiver",
+	],
         "denovo_design" : [
                 "BuildSheet",
                 "GenericSimulatedAnnealer",

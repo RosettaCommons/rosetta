@@ -30,7 +30,11 @@ using namespace ObjexxFCL;
 #include <sstream>
 
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace protocols {
 namespace genetic_algorithm {
@@ -96,12 +100,28 @@ EntityElementCreator::~EntityElementCreator() {}
 
 EntityElementFactory * EntityElementFactory::instance_( 0 );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex EntityElementFactory::singleton_mutex_;
+
+std::mutex & EntityElementFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
 EntityElementFactory * EntityElementFactory::get_instance()
 {
-	if ( ! instance_ ) {
-		instance_ = new EntityElementFactory;
-	}
+	boost::function< EntityElementFactory * () > creator = boost::bind( &EntityElementFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
 	return instance_;
+}
+
+EntityElementFactory *
+EntityElementFactory::create_singleton_instance()
+{
+	return new EntityElementFactory;
 }
 
 EntityElementOP
@@ -303,6 +323,24 @@ void Entity::show( std::ostream & os ) const
 	}
 	os << " and fitness " << format::F(6,3,this->fitness());
 }
+
+std::string Entity::to_string() const {
+	std::ostringstream ostr;
+	show( ostr );
+	return ostr.str();
+}
+
+std::string Entity::traits_string() const
+{
+	std::ostringstream os;
+	for ( EntityElements::const_iterator
+			it( traits_.begin() ), end( traits_.end() );
+			it != end; ++it ) {
+		os << " " << (*it)->to_string();
+	}
+	return os.str();
+}
+
 
 void
 Entity::write_checkpoint(

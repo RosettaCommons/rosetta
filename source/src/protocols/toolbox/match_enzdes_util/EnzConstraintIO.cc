@@ -16,7 +16,6 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
 
 // Package headers
-//#include <core/scoring/constraints/SequenceProfileConstraint.hh> //msa
 #include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
@@ -29,40 +28,35 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh> //reading remarks
 #include <core/pose/PDBPoseMap.hh> //for PDB-info-to-resid functionality
-// AUTO-REMOVED #include <core/io/pdb/file_data.hh> //reading remarks
-//MSA
-//#include <core/sequence/SequenceProfile.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 #include <core/scoring/ScoreFunction.hh> //scoring ambiguous constraints
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/Constraints.hh>
-//#include <core/scoring/constraints/ResidueTypeConstraint.hh>
 
-// AUTO-REMOVED #include <core/pack/task/PackerTask.hh> //favor_native_res
 #include <basic/options/option.hh> //options
 
 // Utility Headers
-//#include <utility/pointer/ReferenceCount.hh>
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
+#include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+
+// C++ headers
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
 
+// Basic Headers
 #include <basic/Tracer.hh>
 
 // option key includes
-
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
-
-#include <utility/vector1.hh>
-
-//#include <basic/options/keys/in.OptionKeys.gen.hh>
-
 
 
 static basic::Tracer tr("protocols.toolbox.match_enzdes_util.EnzConstraintIO");
@@ -71,7 +65,36 @@ namespace protocols {
 namespace toolbox {
 namespace match_enzdes_util {
 
-EnzConstraintIOOP EnzConstraintIO::generic_instance_ = NULL;
+EnzConstraintIO * EnzConstraintIO::generic_instance_( 0 );
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex EnzConstraintIO::singleton_mutex_;
+
+std::mutex & EnzConstraintIO::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+EnzConstraintIO * EnzConstraintIO::get_instance()
+{
+	boost::function< EnzConstraintIO * () > creator = boost::bind( &EnzConstraintIO::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, generic_instance_ );
+	return generic_instance_;
+}
+
+EnzConstraintIO *
+EnzConstraintIO::create_singleton_instance()
+{
+	using namespace core::chemical;
+
+	EnzConstraintIO * instance = new EnzConstraintIO( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+	instance->read_enzyme_cstfile( basic::options::option[basic::options::OptionKeys::enzdes::cstfile]);
+
+	return instance;
+}
 
 ///@ brief constructor for EnzConstraintIO class, builds up function types
 EnzConstraintIO::EnzConstraintIO (core::chemical::ResidueTypeSetCAP src_restype_set) {
@@ -82,23 +105,6 @@ EnzConstraintIO::EnzConstraintIO (core::chemical::ResidueTypeSetCAP src_restype_
 }
 
 EnzConstraintIO::~EnzConstraintIO() {}
-
-EnzConstraintIO*
-EnzConstraintIO::get_instance(){
-
-	using namespace core::chemical;
-
-	if( !generic_instance_ ){
-
-		generic_instance_ = new EnzConstraintIO( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
-		generic_instance_->read_enzyme_cstfile( basic::options::option[basic::options::OptionKeys::enzdes::cstfile]);
-
-	}
-
-	return &(*generic_instance_);
-
-} //get_instance
-
 
 /// @brief reads the enzyme cstfile and for each block of residue residue constraints, creates a new
 /// @brief instance of EnzConstraintParameters

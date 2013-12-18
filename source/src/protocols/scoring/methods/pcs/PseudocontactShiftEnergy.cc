@@ -55,6 +55,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/thread/threadsafe_creation.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
@@ -67,6 +68,10 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 namespace protocols {
 namespace scoring {
@@ -555,14 +560,6 @@ PCS_Energy::version() const
 	return 1; // Initial versioning
 }
 
-PCS_Energy_parameters_manager *
-PCS_Energy_parameters_manager::get_instance(){
-	if ( instance_ == 0 ){
-		instance_ = new PCS_Energy_parameters_manager();
-	}
-	return instance_;
-}
-
 PCS_Energy_parameters_manager::PCS_Energy_parameters_manager(){
 	/*
 //Do I need to initialize to some values?? In principle no.
@@ -719,80 +716,105 @@ PCS_Energy_parameters_manager::print_grid_param() const{
 }
 
 
-	//	void
-	//	PCS_Energy_parameters_manager::print_grid_param() const;
+//	void
+//	PCS_Energy_parameters_manager::print_grid_param() const;
 
-	core::Real
-	PCS_Energy_parameters_manager::get_grid_edge() const{
-		return grid_edge_;
-	}
+core::Real
+PCS_Energy_parameters_manager::get_grid_edge() const{
+	return grid_edge_;
+}
 
-	core::Real
-	PCS_Energy_parameters_manager::get_grid_step() const{
-		return grid_step_;
-	}
+core::Real
+PCS_Energy_parameters_manager::get_grid_step() const{
+	return grid_step_;
+}
 
-	core::Real
-	PCS_Energy_parameters_manager::get_grid_small_cutoff() const{
-		return grid_small_cutoff_;
-	}
+core::Real
+PCS_Energy_parameters_manager::get_grid_small_cutoff() const{
+	return grid_small_cutoff_;
+}
 
-	core::Real
-	PCS_Energy_parameters_manager::get_grid_large_cutoff() const{
-		return grid_large_cutoff_;
-	}
+core::Real
+PCS_Energy_parameters_manager::get_grid_large_cutoff() const{
+	return grid_large_cutoff_;
+}
 
-	core::Real
-	PCS_Energy_parameters_manager::get_grid_cone_angle_cutoff() const{
-		return grid_cone_angle_cutoff_;
-	}
+core::Real
+PCS_Energy_parameters_manager::get_grid_cone_angle_cutoff() const{
+	return grid_cone_angle_cutoff_;
+}
 
-	std::string
-	PCS_Energy_parameters_manager::get_grid_atom_name_1() const{
-		return grid_atom_name_1_;
-	}
+std::string
+PCS_Energy_parameters_manager::get_grid_atom_name_1() const{
+	return grid_atom_name_1_;
+}
 
-	std::string
-	PCS_Energy_parameters_manager::get_grid_atom_name_2() const{
-		return grid_atom_name_2_;
-	}
+std::string
+PCS_Energy_parameters_manager::get_grid_atom_name_2() const{
+	return grid_atom_name_2_;
+}
 
-	core::Size
-	PCS_Energy_parameters_manager::get_grid_residue_num_1() const{
-		return grid_residue_num_1_;
-	}
+core::Size
+PCS_Energy_parameters_manager::get_grid_residue_num_1() const{
+	return grid_residue_num_1_;
+}
 
-	core::Size
-	PCS_Energy_parameters_manager::get_grid_residue_num_2() const{
-		return grid_residue_num_2_;
-	}
+core::Size
+PCS_Energy_parameters_manager::get_grid_residue_num_2() const{
+	return grid_residue_num_2_;
+}
 
-	core::Real
-	PCS_Energy_parameters_manager::get_grid_k_vector() const{
-		return grid_k_vector_;
-	}
+core::Real
+PCS_Energy_parameters_manager::get_grid_k_vector() const{
+	return grid_k_vector_;
+}
 
-	bool
-	PCS_Energy_parameters_manager::get_minimize_best_tensor() const{
-		return minimize_best_tensor_;
-	}
+bool
+PCS_Energy_parameters_manager::get_minimize_best_tensor() const{
+	return minimize_best_tensor_;
+}
 
-	core::Real
-	PCS_Energy_parameters_manager::get_pcs_weight() const{
-		return pcs_weight_;
-	}
+core::Real
+PCS_Energy_parameters_manager::get_pcs_weight() const{
+	return pcs_weight_;
+}
 
-	utility::vector1<std::string> const &
-	PCS_Energy_parameters_manager::get_vector_filename() const{
-		return vec_filename_;
-	}
+utility::vector1<std::string> const &
+PCS_Energy_parameters_manager::get_vector_filename() const{
+	return vec_filename_;
+}
 
-	utility::vector1<core::Real> const &
-	PCS_Energy_parameters_manager::get_vector_weight() const{
-		return vec_individual_weight_;
-	}
+utility::vector1<core::Real> const &
+PCS_Energy_parameters_manager::get_vector_weight() const{
+	return vec_individual_weight_;
+}
 
 PCS_Energy_parameters_manager * PCS_Energy_parameters_manager::instance_( 0 );
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex PCS_Energy_parameters_manager::singleton_mutex_;
+
+std::mutex & PCS_Energy_parameters_manager::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+PCS_Energy_parameters_manager * PCS_Energy_parameters_manager::get_instance()
+{
+	boost::function< PCS_Energy_parameters_manager * () > creator = boost::bind( &PCS_Energy_parameters_manager::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+PCS_Energy_parameters_manager *
+PCS_Energy_parameters_manager::create_singleton_instance()
+{
+	return new PCS_Energy_parameters_manager;
+}
+
 
 } // pcs
 } // methods

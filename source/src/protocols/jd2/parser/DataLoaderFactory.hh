@@ -25,6 +25,13 @@
 // c++ headers
 #include <map>
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
+
 namespace protocols {
 namespace jd2 {
 namespace parser {
@@ -55,6 +62,24 @@ private:
 	// Unimplemented -- uncopyable
 	DataLoaderFactory( DataLoaderFactory const & );
 	DataLoaderFactory const & operator = ( DataLoaderFactory const & );
+
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static DataLoaderFactory * create_singleton_instance();
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
 
 private:
 	/// Singleton instance pointer

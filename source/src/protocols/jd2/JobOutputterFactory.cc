@@ -26,6 +26,12 @@
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
 #include <basic/Tracer.hh>
 
+#include <utility/thread/threadsafe_creation.hh>
+
+// Boost headers
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+
 namespace protocols {
 namespace jd2 {
 
@@ -33,19 +39,34 @@ static basic::Tracer TR( "protocols.jd2.JobOutputterFactory" );
 
 JobOutputterFactory * JobOutputterFactory::instance_( 0 );
 
+#ifdef MULTI_THREADED
+#ifdef CXX11
+
+std::mutex JobOutputterFactory::singleton_mutex_;
+
+std::mutex & JobOutputterFactory::singleton_mutex() { return singleton_mutex_; }
+
+#endif
+#endif
+
+/// @brief static function to get the instance of ( pointer to) this singleton class
+JobOutputterFactory * JobOutputterFactory::get_instance()
+{
+	boost::function< JobOutputterFactory * () > creator = boost::bind( &JobOutputterFactory::create_singleton_instance );
+	utility::thread::safely_create_singleton( creator, instance_ );
+	return instance_;
+}
+
+JobOutputterFactory *
+JobOutputterFactory::create_singleton_instance()
+{
+	return new JobOutputterFactory;
+}
+
 JobOutputterFactory::JobOutputterFactory()
 {}
 
 JobOutputterFactory::~JobOutputterFactory(){}
-
-JobOutputterFactory *
-JobOutputterFactory::get_instance() {
-	if ( ! instance_ ) {
-		JobOutputterFactory * instance_local = new JobOutputterFactory;
-		instance_ = instance_local;
-	}
-	return instance_;
-}
 
 ///@brief add a JobOutputter prototype, using its default type name as the map key
 void

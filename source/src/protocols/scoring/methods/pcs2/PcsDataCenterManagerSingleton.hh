@@ -38,16 +38,15 @@
 // Project headers
 #include <core/types.hh>
 
+// Utility headers
 #include <utility/vector1.hh>
 
-
-// Utility headers
-
-// Numeric headers
-
-// ObjexxFCL headers
-
-// c++ headers
+#ifdef MULTI_THREADED
+#ifdef CXX11
+// C++11 Headers
+#include <thread>
+#endif
+#endif
 
 namespace protocols{
 namespace scoring{
@@ -55,6 +54,21 @@ namespace methods{
 namespace pcs2{
 
 class PcsDataCenterManagerSingleton {
+
+#ifdef MULTI_THREADED
+#ifdef CXX11
+public:
+
+	/// @brief This public method is meant to be used only by the
+	/// utility::thread::safely_create_singleton function and not meant
+	/// for any other purpose.  Do not use.
+	static std::mutex & singleton_mutex();
+
+private:
+	static std::mutex singleton_mutex_;
+#endif
+#endif
+
 private:
 
   utility::vector1<PcsDataCenter> PCS_data_all_;
@@ -64,9 +78,14 @@ public:
 	static PcsDataCenterManagerSingleton *
 	get_instance(PcsEnergyParameterManager & pcs_e_p_m);
 
+private:
   PcsDataCenterManagerSingleton(PcsEnergyParameterManager & pcs_e_p_m); //construct
 
+	/// @brief private singleton creation function to be used with
+	/// utility::thread::threadsafe_singleton
+	static PcsDataCenterManagerSingleton * create_singleton_instance(PcsEnergyParameterManager & pcs_e_p_m);
 
+public:
 	/// @brief Give me the number of lanthanide
   core::Size
   get_n_multi_data() const;
