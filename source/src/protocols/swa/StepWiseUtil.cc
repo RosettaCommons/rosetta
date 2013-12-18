@@ -1879,6 +1879,9 @@ rotate( pose::Pose & pose, Matrix const M,
 		FullModelInfo const & full_model_info = const_full_model_info( pose );
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 		utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+		utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
+		
+		if ( fixed_domain_map[ res ] != 0 ) return;
 
 		if ( res > 1 &&
 				 res_list[ res ] - 1 == res_list[ res - 1 ] &&
