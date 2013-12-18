@@ -42,6 +42,7 @@ sources = {
 	],
 	"io" : [
 		"izstream",
+		"FileContentsMap",
 		"zipstream",
 	],
        "options": [
@@ -79,12 +80,14 @@ sources = {
 	],
 
 }
+
 include_path = [ "#external/cxxtest", "#" ]
 library_path = []
 libraries    = [ "sqlite3", "cppdb", "utility", "ObjexxFCL", "z", ]
 subprojects  = []
 testinputfiles = [
     "io/no_final_newline.txt",
+    "io/simple_input_file.txt",
     "io/zipped_file.txt.gz",
 ]
 

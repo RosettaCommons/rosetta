@@ -150,23 +150,26 @@ FileContentsMap::get_file_contents( std::string const & filename )
 
 	++(rc_iter->second);
 
-	if ( rl_iter->second == 1 && delete_contents_at_nread_limit_ && fc_iter == file_contents_.end() ) {
-		return utility::file_contents( filename );
-	}
+	if ( delete_contents_at_nread_limit_ ) {
 
-	if ( delete_contents_at_nread_limit_ && rc_iter->second == 1 && fc_iter == file_contents_.end() ) {
-		// this is the first time we're reading the file, so we have to load it.
-		file_contents_[ filename ] = utility::file_contents( filename );
-		fc_iter = file_contents_.find( filename );
-	}
-
-	if ( rl_iter->second != 0 && rl_iter->second == rc_iter->second ) {
-		if ( fc_iter == file_contents_.end() ) {
-			throw utility::excn::EXCN_Msg_Exception( "file-contents map does not contain an entry for file that has been read before: " + filename );
+		if ( rl_iter->second == 1 && fc_iter == file_contents_.end() ) {
+			return utility::file_contents( filename );
 		}
-		std::string fc = fc_iter->second;
-		if ( delete_contents_at_nread_limit_ ) file_contents_.erase( fc_iter );
-		return fc;
+
+		if ( rc_iter->second == 1 && fc_iter == file_contents_.end() ) {
+			// this is the first time we're reading the file, so we have to load it.
+			file_contents_[ filename ] = utility::file_contents( filename );
+			fc_iter = file_contents_.find( filename );
+		}
+
+		if ( rl_iter->second != 0 && rl_iter->second == rc_iter->second ) {
+			if ( fc_iter == file_contents_.end() ) {
+				throw utility::excn::EXCN_Msg_Exception( "file-contents map does not contain an entry for file that has been read before: " + filename );
+			}
+			std::string fc = fc_iter->second;
+			if ( delete_contents_at_nread_limit_ ) file_contents_.erase( fc_iter );
+			return fc;
+		}
 	}
 
 	// otherwise, we're not deleting the contents of the file
@@ -186,12 +189,18 @@ std::string const &
 FileContentsMap::get_file_contents_ref( std::string const & filename )
 {
 	std::map< std::string, platform::Size >::iterator rc_iter = read_counts_.find( filename );
+	std::map< std::string, platform::Size >::iterator rl_iter = read_limit_.find( filename );
 	std::map< std::string, std::string >::iterator fc_iter = file_contents_.find( filename );
 
 	if ( rc_iter == read_counts_.end() ) {
 		read_counts_[ filename ] = 1;
 	} else {
 		++(rc_iter->second);
+	}
+
+	if ( rl_iter == read_limit_.end() ) {
+		// mark an indefinite read limit for this file.
+		read_limit_[ filename ] = 0;
 	}
 
 	if ( fc_iter == file_contents_.end() ) {
