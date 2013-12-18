@@ -37,6 +37,7 @@
 #include <numeric/random/random.hh>
 #include <numeric/NumericTraits.hh>
 #include <numeric/fourier/FFT.hh>
+#include <numeric/constants.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
@@ -79,6 +80,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
 #define DEG2RAD 0.0174532925199433
+#define RAD2DEG 57.295779513082323
 
 static basic::Tracer TR("cryst.design");
 
@@ -93,6 +95,7 @@ OPT_1GRP_KEY(Real, crystdock, trans_step)
 OPT_1GRP_KEY(Real, crystdock, rot_step)
 OPT_1GRP_KEY(Integer, crystdock, nmodels)
 OPT_1GRP_KEY(Boolean, crystdock, debug)
+OPT_1GRP_KEY(Boolean, crystdock, debug_exact)
 
 ////////////////////////////////////////////////
 // helper functions
@@ -112,6 +115,10 @@ inline double min_mod(double x,double y) {
 	double r=std::fmod(x,y); if (r<-0.5*y) r+=y;if (r>=0.5*y) r-=y;
 	return r;
 }
+
+inline double sign(double x) {return (x >= 0.0) ? 1.0 : -1.0;}
+inline double norm4(double a, double b, double c, double d) {return sqrt(a * a + b * b + c * c + d * d);}
+
 
 /// trilinear interpolation with periodic boundaries
 template <class S>
@@ -151,8 +158,10 @@ core::Real interp_linear(
 }
 
 ////////////////////////////////////////////////
+// rotation stuff
 
-void euler2rot( core::Real a, core::Real b, core::Real g, numeric::xyzMatrix<Real> &R) {
+void
+euler2rot( core::Real a, core::Real b, core::Real g, numeric::xyzMatrix<Real> &R) {
 	R.xx() = -sin(DEG2RAD*a)*cos(DEG2RAD*b)*sin(DEG2RAD*g) + cos(DEG2RAD*a)*cos(DEG2RAD*g);
 	R.xy() =  cos(DEG2RAD*a)*cos(DEG2RAD*b)*sin(DEG2RAD*g) + sin(DEG2RAD*a)*cos(DEG2RAD*g);
 	R.xz() =  sin(DEG2RAD*b)*sin(DEG2RAD*g);
@@ -164,157 +173,235 @@ void euler2rot( core::Real a, core::Real b, core::Real g, numeric::xyzMatrix<Rea
 	R.zz() =  cos(DEG2RAD*b);
 }
 
+// angle of rotation from rotation matrix
+// an abomination of 0- and 1- indexing
+core::Real
+R2ang(numeric::xyzMatrix<Real> R) {
+	Real q0 = ( R(1,1) + R(2,2) + R(3,3) + 1.0) / 4.0;
+	Real q1 = ( R(1,1) - R(2,2) - R(3,3) + 1.0) / 4.0;
+	Real q2 = (-R(1,1) + R(2,2) - R(3,3) + 1.0) / 4.0;
+	Real q3 = (-R(1,1) - R(2,2) + R(3,3) + 1.0) / 4.0;
 
-////////////////////////////////////////////////
+	if (q0 < 0.0) q0 = 0.0f; else q0 = sqrt(q0);
+	if (q1 < 0.0) q1 = 0.0f; else q1 = sqrt(q1);
+	if (q2 < 0.0) q2 = 0.0f; else q2 = sqrt(q2);
+	if (q3 < 0.0) q3 = 0.0f; else q3 = sqrt(q3);
 
-// write density grids in MRC
-// debugging only for now
-void
-writeMRC(FArray3D<Real> density, std::string mapfilename) {
-	const int CCP4HDSIZE = 1024;  // size of CCP4/MRC header
-	std::fstream outx( (mapfilename).c_str() , std::ios::binary | std::ios::out );
-
-	float buff_f, buff_vf[3];
-	int buff_i, buff_vi[3], symBytes = 0;
-
-	if (!outx ) {
-		std::cerr << "Error opening " << mapfilename << " for writing." << std::endl;
-		return;
+	if(q0 >= q1 && q0 >= q2 && q0 >= q3) {
+		q1 *= sign(R(3,2) - R(2,3));
+		q2 *= sign(R(1,3) - R(3,1));
+		q3 *= sign(R(2,1) - R(1,2));
+	} else if(q1 >= q0 && q1 >= q2 && q1 >= q3) {
+		q0 *= sign(R(3,2) - R(2,3));
+		q2 *= sign(R(2,1) + R(1,2));
+		q3 *= sign(R(1,3) + R(3,1));
+	} else if(q2 >= q0 && q2 >= q1 && q2 >= q3) {
+		q0 *= sign(R(1,3) - R(3,1));
+		q1 *= sign(R(2,1) + R(1,2));
+		q3 *= sign(R(3,2) + R(2,3));
+	} else if(q3 >= q0 && q3 >= q1 && q3 >= q2) {
+		q0 *= sign(R(2,1) - R(1,2));
+		q1 *= sign(R(3,1) + R(1,3));
+		q2 *= sign(R(3,2) + R(2,3));
 	}
+	Real r = norm4(q0, q1, q2, q3);
+	q0 /= r; q1 /= r; q2 /= r; q3 /= r;
+	Real angle = 2*RAD2DEG*std::fabs(acos(q0));
 
-	// extent
-	buff_vi[0] = density.u1(); buff_vi[1] = density.u2(); buff_vi[2] = density.u3();
-	outx.write(reinterpret_cast <char*>(buff_vi), sizeof(int)*3);
-
-	// mode
-	buff_i = 2;
-	outx.write(reinterpret_cast <char*>(&buff_i), sizeof(int));
-
-	// origin
-	int ori_int[3] = {0,0,0};
- 	outx.write(reinterpret_cast <char*>(ori_int), sizeof(int)*3);
-
- 	// grid
-	int grid[3] = {density.u1(),density.u2(),density.u3()};
- 	outx.write(reinterpret_cast <char*>(&grid[0]), sizeof(int)*3);
-
-	// cell params
-	float cellDimensions[3] = {density.u1(),density.u2(),density.u3()};
-	float cellAngles[3] = {90,90,90};
-	outx.write(reinterpret_cast <char*>(&cellDimensions), sizeof(float)*3);
-	outx.write(reinterpret_cast <char*>(&cellAngles), sizeof(float)*3);
-
-	// crs2xyz
-	buff_vi[0] = 1; buff_vi[1] = 2; buff_vi[2] = 3;
-	outx.write(reinterpret_cast <char*>(buff_vi), sizeof(int)*3);
-
-	// min, max, mean dens
-	buff_vf[0] = -100.0; buff_vf[1] = 100.0; buff_vf[2] = 0.0;
-	outx.write(reinterpret_cast <char*>(buff_vf), sizeof(float)*3);
-
-	// 4 bytes junk
-	buff_i = 0;
-	outx.write(reinterpret_cast <char*>(&buff_i), sizeof(int));
-
-	// symmops
-	outx.write(reinterpret_cast <char*>(&symBytes), sizeof(int));
-
-	// 104 bytes junk
-	buff_i = 0;
-	for (int i=0; i<25; ++i) {
-		outx.write(reinterpret_cast <char*>(&buff_i), sizeof(int));
-	}
-
-	// alt origin (MRC)
-	float ori_float[3]={0,0,0};
- 	outx.write(reinterpret_cast <char*>(ori_float), sizeof(float)*3);
-
-	// Write "MAP" at byte 208, indicating a CCP4 file.
-	char buff_s[80]; strcpy(buff_s, "MAP DD");
-	outx.write(reinterpret_cast <char*>(buff_s), 8);
-
-	// fill remainder of head with junk
-	int nJunkWords = (CCP4HDSIZE - 216) /4;
-	buff_i = 0;
-	for (int i=0; i<nJunkWords; ++i) {
-		outx.write(reinterpret_cast <char*>(&buff_i), sizeof(int));
-	}
-
-	// data
-	int coord[3];
-	for (coord[2] = 1; coord[2] <= density.u3(); coord[2]++) {
-		for (coord[1] = 1; coord[1] <= density.u2(); coord[1]++) {
-			for (coord[0] = 1; coord[0] <= density.u1(); coord[0]++) {
-				buff_f = (float) density(coord[0],coord[1],coord[2]);
-				outx.write(reinterpret_cast <char*>(&buff_f), sizeof(float));
-			}
-		}
-	}
+	return (angle);
 }
 
 
-
 ////////////////////////////////////////////////
 
-// Uniformly (roughly) sample rotation space
-// Input in DEGREES
+// Uniformly sample rotation space
+//   * use idea from A. Yershova, et al, International Journal of Robotics Research, 2009. to get SO3 samples from S1+S2 uniform sampling
+//   * use icosahedral embedding to generate approximately uniform coverage of S2
+
+struct Quat {
+	Real x_,y_,z_,w_;
+	Quat() {
+		x_=0; y_=0; z_=0; w_=1;
+	}
+	Quat( Real x_in,Real y_in,Real z_in,Real w_in) {
+		x_=x_in; y_=y_in; z_=z_in; w_=w_in;
+	}
+	numeric::xyzMatrix<Real> asR() const {
+		if (1-w_*w_ < 1e-6)
+			return numeric::xyzMatrix<core::Real>::rows(1,0,0, 0,1,0, 0,0,1);
+
+		Real xx = x_*x_, xy = x_*y_, xz = x_*z_, xw = x_*w_;
+		Real yy = y_*y_, yz = y_*z_, yw = y_*w_;
+		Real zz = z_*z_, zw = z_*w_;
+		Real ww = w_*w_;
+
+		return numeric::xyzMatrix<core::Real>::rows(
+			1 - 2 * ( yy+zz ) ,     2 * ( xy-zw ) ,     2 * ( xz+yw ) ,
+			    2 * ( xy+zw ) , 1 - 2 * ( xx+zz ) ,     2 * ( yz-xw ) ,
+			    2 * ( xz-yw ) ,     2 * ( yz+xw ) , 1 - 2 * ( xx+yy ) );
+	}
+};
+
+
 class UniformRotationSampler {
 private:
-	core::Real step_;
-
-	int a_,b_,g_,amax_,bmax_,gmax_;
-	core::Real astep_,bstep_,gstep_;
+	utility::vector1< Quat > rotlist_;
+	Real theta_;
 
 public:
-	UniformRotationSampler(Real step_in) {
-		step_ = step_in;
-		a_ = g_ = b_ = 0;
-		if (option[ crystdock::debug ]) {
-			amax_ = bmax_ = gmax_ = 1;
-			astep_ = bstep_ = gstep_ = 90.0;
-		} else {
-			bmax_ = (Size) std::floor( 0.5 + 180.0 / step_ );
-			gmax_ = (Size) std::floor( 0.5 + 360.0 / step_ );
-			amax_ = std::floor( 0.5 + gmax_ * sin(DEG2RAD*90.0/bmax_) );
-			if (amax_ == 0) amax_ = 1;
-			bstep_ = 180.0 / bmax_;
-			gstep_ = 360.0 / gmax_;
-			astep_ = 360.0 / amax_;
+	Size
+	nrots() const { return rotlist_.size(); }
+
+	void get(Size ii, numeric::xyzMatrix<Real> &R) const {
+		R = rotlist_[ii].asR();
+	}
+
+	void
+	generateIcosahedralSamples(utility::vector1<numeric::xyzVector<Real> > &ico, Size nsub) {
+		using numeric::constants::d::pi;
+		Real theta = 26.56505117707799 * pi / 180.0;
+		Real stheta = sin(theta);
+		Real ctheta = cos(theta);
+		ico.clear();
+
+		ico.push_back(numeric::xyzVector<Real>(0.0,0.0,-1.0));
+		Real phi = pi / 5.0;
+		for (int i=0; i<5; ++i) {
+		  ico.push_back(numeric::xyzVector<Real>( ctheta * cos(phi), ctheta * sin(phi), -stheta ));
+		  phi += 2.0 * pi / 5.0;
+		}
+		phi = 0.0;
+		for (int i=0; i<5; ++i) {
+		  ico.push_back(numeric::xyzVector<Real>( ctheta * cos(phi), ctheta * sin(phi), stheta ));
+		  phi += 2.0 * pi / 5.0;
+		}
+		ico.push_back(numeric::xyzVector<Real>(0.0,0.0,1.0));
+		Size TRIS[][3] = {
+			{0,2,1}, {0,3,2}, {0,4,3}, {0,5,4}, {0,1,5}, {1,2,7}, {2,3,8}, {3,4,9}, {4,5,10}, {5,1,6},
+			{1,7,6}, {2,8,7}, {3,9,8}, {4,10,9}, {5,6,10}, {6,7,11}, {7,8,11}, {8,9,11}, {9,10,11}, {10,6,11}
+		};
+		Size EDGES[][2] =  {
+			{0,1}, {0,2}, {0,3}, {0,4}, {0,5}, {1,2}, {1,5}, {1,6}, {1,7}, {2,3}, {2,7}, {2,8}, {3,4}, {3,8}, {3,9},
+			{4,5}, {4,9}, {4,10}, {5,6}, {5,10}, {6,7}, {6,10}, {6,11}, {7,8}, {7,11}, {8,9}, {8,11}, {9,10}, {9,11}, {10,11}
+		};
+
+		// subdivide edges
+		for (int i=0; i<30; ++i) {
+			numeric::xyzVector<Real> a = ico[EDGES[i][0]+1];
+			numeric::xyzVector<Real> b = ico[EDGES[i][1]+1];
+			numeric::xyzVector<Real> ab = b-a;
+			for (int j=1; j<nsub; ++j) {
+				numeric::xyzVector<Real> new_j;
+				new_j = a+(((Real)j)/((Real)nsub))*ab;
+				new_j = new_j/new_j.length();
+		  		ico.push_back(new_j);
+			}
+		}
+
+		// subdivide faces
+		for (int i=0; i<20; ++i) {
+			numeric::xyzVector<Real> a = ico[TRIS[i][0]+1];
+			numeric::xyzVector<Real> b = ico[TRIS[i][1]+1];
+			numeric::xyzVector<Real> c = ico[TRIS[i][2]+1];
+			numeric::xyzVector<Real> ab = b-a;
+			numeric::xyzVector<Real> ac = c-a;
+			for (int j=1; j<nsub-1; ++j)
+			for (int k=j; k<nsub-1; ++k) {
+				numeric::xyzVector<Real> new_j;
+				new_j = a + ((Real)j)/((Real)nsub)*ac + ((Real)(nsub-1-k))/((Real)nsub)*ab;
+				new_j = new_j/new_j.length();
+		  		ico.push_back(new_j);
+			}
 		}
 	}
 
-	bool hasNext() {
-		return (b_!=bmax_);
+	UniformRotationSampler(Real theta) {
+		theta_ = theta;
+		if (theta<=1e-6) {
+			rotlist_.resize(1);
+			return;
+		}
+
+		using numeric::constants::d::pi;
+		int S1subs = (int)std::floor(360.0 / theta + 0.5);
+		int S2subs = (int)std::floor(60.0 / theta + 0.5);
+
+		utility::vector1<numeric::xyzVector<Real> > ico;
+		generateIcosahedralSamples(ico, S2subs);
+
+		int nsamples = S1subs*ico.size();
+		rotlist_.resize( nsamples );
+		int counter=1;
+
+		// precompute cos/sin (psi/2)for S1
+		utility::vector1<core::Real> cos_psi_over_2(S1subs), sin_psi_over_2(S1subs);
+		for (int j=0; j<S1subs; ++j) {
+			Real psi_over_2 = j*pi/((Real)S1subs);
+			cos_psi_over_2[j+1] = cos(psi_over_2);
+			sin_psi_over_2[j+1] = sin(psi_over_2);
+		}
+		for (int i=1; i<=ico.size(); ++i) {
+			// convert to spherical ASSUMES NORMALIZED
+			Real theta = pi-acos( ico[i][2] );
+			Real phi = atan2( ico[i][1], ico[i][0] ) + pi;
+			for (int j=0; j<S1subs; ++j) {
+				Real psi = 2.0*j*pi/((Real)S1subs);
+				Real w = sin(theta/2)*sin(phi+psi/2);
+				Real x = cos(theta/2)*cos(psi/2);
+				Real y = cos(theta/2)*sin(psi/2);
+				Real z = sin(theta/2)*cos(phi+psi/2);
+				rotlist_[counter++] = Quat(x,y,z,w);
+			}
+		}
 	}
 
-	void getNext(numeric::xyzMatrix<Real> &R, Real &alpha, Real &beta, Real &gamma) {
-		alpha = astep_*(0.5+a_);
-		beta  = bstep_*(0.5+b_);
-		gamma = gstep_*(0.5+g_);
+	void
+	remove_redundant(
+			utility::vector1<core::kinematics::RT> const &symmops,
+			xyzMatrix<Real> const &i2c, xyzMatrix<Real> const &c2i ) {
 
-		if (b_ >= bmax_) {  // past the end
-			alpha = beta = gamma = 0;
-		} else {
-			// increment
-			if (++g_ >= gmax_) {
-				g_ = 0;
+		utility::vector1<bool> tokeep(rotlist_.size(), true);
+		utility::vector1<xyzMatrix<Real> > Rs(rotlist_.size());
+		utility::vector1<xyzMatrix<Real> > Rinvs(rotlist_.size());
 
-				if (++a_ >= amax_) {
-					a_ = 0;
-					if (++b_ < bmax_) {
-						// get new a_ limits
-						amax_ = std::floor( 0.5 + gmax_ * sin(DEG2RAD*bstep_*(0.5+b_)) );
-						if (amax_ == 0) amax_ = 1;
-						astep_ = 360.0 / amax_;
+		for (int i=1; i<=rotlist_.size(); ++i) {
+			Rs[i] = rotlist_[i].asR();
+			Rinvs[i] = numeric::inverse( Rs[i] );
+		}
+
+
+		for (int s=2; s<=symmops.size(); ++s) {
+			numeric::xyzMatrix<Real> S = symmops[s].get_rotation();
+			if (S.xy()==0 && S.xz()==0 && S.yz()==0 && S.yx()==0 && S.zx()==0 && S.zy()==0 && S.xx()==1 && S.yy()==1 && S.zz()==1)
+				continue; // identity
+
+			// cartesian-space S
+			xyzMatrix<Real> Scart = i2c*S*c2i;
+
+			for (int i=1; i<=rotlist_.size(); ++i) {
+				if (!tokeep[i]) { continue; }
+				xyzMatrix<Real> SR = Scart*Rs[i];
+				for (int j=i+1; j<=rotlist_.size(); ++j) {
+					if (!tokeep[j]) { continue; }
+
+					Real ang_ij = R2ang( SR*Rinvs[j] );
+					if (ang_ij<0.65*theta_) {
+						tokeep[j]=false;
 					}
 				}
 			}
 		}
 
-		std::cerr << "getNext() = euler(" << alpha << "," << beta << "," << gamma << ")" << std::endl;
-		euler2rot(alpha,beta,gamma, R);
+		utility::vector1< Quat > rotlist_old = rotlist_;
+		rotlist_.clear();
+		for (int i=1; i<=rotlist_old.size(); ++i) {
+			if (tokeep[i]) rotlist_.push_back(rotlist_old[i]);
+		}
+
+		std::cerr << "Trimmed rot list has " << rotlist_.size() << " rotations (was " << rotlist_old.size() << ")\n";
 	}
 };
+
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -368,14 +455,14 @@ public:
 // fpd this class is used for storing hits over all rotations
 //    same top-N priority_queue but much larger store
 struct InterfaceHit {
-	InterfaceHit( Real score_in, Real x_in, Real y_in, Real z_in, Real alpha_in, Real beta_in, Real gamma_in ) {
+	InterfaceHit( Real score_in, Real x_in, Real y_in, Real z_in, Size rot_index_in ) {
 		score=score_in;
 		x=x_in; y=y_in; z=z_in;
-		alpha=alpha_in; beta=beta_in; gamma=gamma_in;
+		rot_index=rot_index_in;
 	}
 	Real score;
 	Real x,y,z;
-	Real alpha, beta, gamma;
+	Size rot_index;
 };
 
 class InterfaceHitComparitor {
@@ -426,6 +513,15 @@ enum SpacegroupSetting {
 	TETRAGONAL,
 	HEXAGONAL,  // includes trigonal
 	CUBIC
+};
+
+struct CheshireCell {
+	CheshireCell() {};
+	CheshireCell( xyzVector<Real> low_in, xyzVector<Real> high_in ) {
+		low=low_in;
+		high=high_in;
+	}
+	xyzVector<Real> low, high;
 };
 
 class Spacegroup {
@@ -535,7 +631,7 @@ public:
 	}
 
 	// get symmops
-	void get_symmops(utility::vector1<core::kinematics::RT> &rt_out) const;
+	void get_symmops(utility::vector1<core::kinematics::RT> &rt_out, CheshireCell &cc) const;
 
 	// get symmops
 	std::string pdbname() const;
@@ -557,19 +653,106 @@ public:
 
 class CrystDock : public protocols::moves::Mover {
 private:
-	core::Real ca_clashdist_, cb_clashdist_;
+	core::Real ca_clashdist_, cb_clashdist_, n_clashdist_, c_clashdist_, o_clashdist_;
 	core::Real interfacedist_;
 
 	xyzMatrix<Real> i2c_, c2i_;
 
 public:
 	CrystDock() {
-		ca_clashdist_ = 2.5;
-		cb_clashdist_ = 1.7;
+		n_clashdist_  = 1.75;   // ros VDW=1.75
+		ca_clashdist_ = 2.00;   // ros VDW=2.0
+		c_clashdist_  = 2.00;   // ros VDW=2.0
+		o_clashdist_  = 1.55;   // ros VDW=1.55
+		cb_clashdist_ = 2.00;   // ros VDW=2.0
 		interfacedist_ = 5.0;
 	}
 
 	virtual std::string get_name() const { return "CrystDock"; }
+
+	// write density grids in MRC --  debugging only for now
+	void
+	writeMRC(FArray3D<Real> density, Spacegroup const &sg, std::string mapfilename) {
+		const int CCP4HDSIZE = 1024;  // size of CCP4/MRC header
+		std::fstream outx( (mapfilename).c_str() , std::ios::binary | std::ios::out );
+
+		float buff_f, buff_vf[3];
+		int buff_i, buff_vi[3], symBytes = 0;
+
+		if (!outx ) {
+			std::cerr << "Error opening " << mapfilename << " for writing." << std::endl;
+			return;
+		}
+
+		// extent
+		buff_vi[0] = density.u1(); buff_vi[1] = density.u2(); buff_vi[2] = density.u3();
+		outx.write(reinterpret_cast <char*>(buff_vi), sizeof(int)*3);
+
+		// mode
+		buff_i = 2;
+		outx.write(reinterpret_cast <char*>(&buff_i), sizeof(int));
+
+		// origin
+		int ori_int[3] = {0,0,0};
+		outx.write(reinterpret_cast <char*>(ori_int), sizeof(int)*3);
+
+		// grid
+		int grid[3] = {density.u1(),density.u2(),density.u3()};
+		outx.write(reinterpret_cast <char*>(&grid[0]), sizeof(int)*3);
+
+		// cell params
+		float cellDimensions[3] = {sg.A(),sg.B(),sg.C()};
+		float cellAngles[3] = {sg.alpha(),sg.beta(),sg.gamma()};
+		outx.write(reinterpret_cast <char*>(&cellDimensions), sizeof(float)*3);
+		outx.write(reinterpret_cast <char*>(&cellAngles), sizeof(float)*3);
+
+		// crs2xyz
+		buff_vi[0] = 1; buff_vi[1] = 2; buff_vi[2] = 3;
+		outx.write(reinterpret_cast <char*>(buff_vi), sizeof(int)*3);
+
+		// min, max, mean dens
+		buff_vf[0] = -100.0; buff_vf[1] = 100.0; buff_vf[2] = 0.0;
+		outx.write(reinterpret_cast <char*>(buff_vf), sizeof(float)*3);
+
+		// 4 bytes junk
+		buff_i = 0;
+		outx.write(reinterpret_cast <char*>(&buff_i), sizeof(int));
+
+		// symmops
+		outx.write(reinterpret_cast <char*>(&symBytes), sizeof(int));
+
+		// 104 bytes junk
+		buff_i = 0;
+		for (int i=0; i<25; ++i) {
+			outx.write(reinterpret_cast <char*>(&buff_i), sizeof(int));
+		}
+
+		// alt origin (MRC)
+		float ori_float[3]={0,0,0};
+		outx.write(reinterpret_cast <char*>(ori_float), sizeof(float)*3);
+
+		// Write "MAP" at byte 208, indicating a CCP4 file.
+		char buff_s[80]; strcpy(buff_s, "MAP DD");
+		outx.write(reinterpret_cast <char*>(buff_s), 8);
+
+		// fill remainder of head with junk
+		int nJunkWords = (CCP4HDSIZE - 216) /4;
+		buff_i = 0;
+		for (int i=0; i<nJunkWords; ++i) {
+			outx.write(reinterpret_cast <char*>(&buff_i), sizeof(int));
+		}
+
+		// data
+		int coord[3];
+		for (coord[2] = 1; coord[2] <= density.u3(); coord[2]++) {
+			for (coord[1] = 1; coord[1] <= density.u2(); coord[1]++) {
+				for (coord[0] = 1; coord[0] <= density.u1(); coord[0]++) {
+					buff_f = (float) density(coord[0],coord[1],coord[2]);
+					outx.write(reinterpret_cast <char*>(&buff_f), sizeof(float));
+				}
+			}
+		}
+	}
 
 	void setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &rho_cb, Spacegroup const &sg, Real trans_step) {
 		Real ATOM_MASK_PADDING = 2.0;
@@ -594,35 +777,44 @@ public:
 		rho_ca.dimension( ngridA, ngridB, ngridC ); rho_ca = 1;
 		rho_cb.dimension( ngridA, ngridB, ngridC ); rho_cb = 1;
 
-		// loop over CAs
+		// loop over bb heavyatoms
 		for (int i=1 ; i<=(int)pose.total_residue(); ++i) {
 			if (!pose.residue(i).is_protein()) continue;
-			numeric::xyzVector< core::Real> CA = pose.residue(i).atom(2).xyz();
-			numeric::xyzVector< core::Real> atm_idx = c2i_*CA;
-			numeric::xyzVector< core::Real> atm_j, del_ij;
-			atm_idx[0] = pos_mod (atm_idx[0], (Real)ngridA);
-			atm_idx[1] = pos_mod (atm_idx[1], (Real)ngridB);
-			atm_idx[2] = pos_mod (atm_idx[2], (Real)ngridC);
 
-			for (int z=1; z<=ngridC; ++z) {
-				atm_j[2] = z-1;
-				del_ij[2] = min_mod(atm_idx[2] - atm_j[2], (Real)ngridC);
-				del_ij[0] = del_ij[1] = 0.0;
-				if ((i2c_*del_ij).length_squared() > (ca_clashdist_+ATOM_MASK_PADDING)*(ca_clashdist_+ATOM_MASK_PADDING)) continue;
-				for (int y=1; y<=ngridB; ++y) {
-					atm_j[1] = y-1;
-					del_ij[1] = min_mod(atm_idx[1] - atm_j[1], (Real)ngridB);
-					del_ij[0] = 0.0;
-					if ((i2c_*del_ij).length_squared() > (ca_clashdist_+ATOM_MASK_PADDING)*(ca_clashdist_+ATOM_MASK_PADDING)) continue;
-					for (int x=1; x<=ngridA; ++x) {
-						atm_j[0] = x-1;
-						del_ij[0] = min_mod(atm_idx[0] - atm_j[0], (Real)ngridA);
-						numeric::xyzVector< core::Real > cart_del_ij = i2c_*del_ij;
-						core::Real d2 = (cart_del_ij).length_squared();
-						if (d2 <= (ca_clashdist_+ATOM_MASK_PADDING)*(ca_clashdist_+ATOM_MASK_PADDING)) {
-							core::Real doff = sqrt(d2) - ca_clashdist_;
-							core::Real sig = 1 / ( 1 + exp ( -6*doff ) );   // '6' is sigmoid dropoff
-							rho_ca(x,y,z) *= sig;
+			for (int j=1; j<=4; ++j) {
+				core::Real clashdist;
+				if (j==1) clashdist = n_clashdist_;
+				if (j==2) clashdist = ca_clashdist_;
+				if (j==3) clashdist = c_clashdist_;
+				if (j==4) clashdist = o_clashdist_;
+
+				numeric::xyzVector< core::Real> xyz_j = pose.residue(i).atom(2).xyz();
+				numeric::xyzVector< core::Real> atm_idx = c2i_*xyz_j;
+				numeric::xyzVector< core::Real> atm_j, del_ij;
+				atm_idx[0] = pos_mod (atm_idx[0], (Real)ngridA);
+				atm_idx[1] = pos_mod (atm_idx[1], (Real)ngridB);
+				atm_idx[2] = pos_mod (atm_idx[2], (Real)ngridC);
+
+				for (int z=1; z<=ngridC; ++z) {
+					atm_j[2] = z-1;
+					del_ij[2] = min_mod(atm_idx[2] - atm_j[2], (Real)ngridC);
+					del_ij[0] = del_ij[1] = 0.0;
+					if ((i2c_*del_ij).length_squared() > (clashdist+ATOM_MASK_PADDING)*(clashdist+ATOM_MASK_PADDING)) continue;
+					for (int y=1; y<=ngridB; ++y) {
+						atm_j[1] = y-1;
+						del_ij[1] = min_mod(atm_idx[1] - atm_j[1], (Real)ngridB);
+						del_ij[0] = 0.0;
+						if ((i2c_*del_ij).length_squared() > (clashdist+ATOM_MASK_PADDING)*(clashdist+ATOM_MASK_PADDING)) continue;
+						for (int x=1; x<=ngridA; ++x) {
+							atm_j[0] = x-1;
+							del_ij[0] = min_mod(atm_idx[0] - atm_j[0], (Real)ngridA);
+							numeric::xyzVector< core::Real > cart_del_ij = i2c_*del_ij;
+							core::Real d2 = (cart_del_ij).length_squared();
+							if (d2 <= (clashdist+ATOM_MASK_PADDING)*(clashdist+ATOM_MASK_PADDING)) {
+								core::Real doff = sqrt(d2) - clashdist;
+								core::Real sig = 1 / ( 1 + exp ( -6*doff ) );   // '6' is sigmoid dropoff ... (reso dependent?)
+								rho_ca(x,y,z) *= sig;
+							}
 						}
 					}
 				}
@@ -699,13 +891,6 @@ public:
 			r_rho_ca(x,y,z) = rho_ca_rx;
 			r_rho_cb(x,y,z) = rho_cb_rx;
 		}
-
-		if (option[ crystdock::debug ] ) {
-			static int i=1;
-			std::ostringstream oss;
-			oss << "rot"<<i++<<".mrc";
-			writeMRC( r_rho_ca, oss.str() );
-		}
 	}
 
 	void center_pose_at_origin( Pose & pose ) {
@@ -734,13 +919,11 @@ public:
 		pose.pdb_info()->set_crystinfo(ci);
 	}
 
-	void dump_transformed_pdb( Pose pose, InterfaceHit ih, std::string outname ) {
+	void dump_transformed_pdb( Pose pose, InterfaceHit ih, UniformRotationSampler const &urs, std::string outname ) {
 		numeric::xyzMatrix<Real> R;
-		euler2rot(ih.alpha,ih.beta,ih.gamma, R);
+		urs.get( ih.rot_index, R );
 		numeric::xyzVector<Real> T (ih.x, ih.y, ih.z);
-
 		pose.apply_transform_Rx_plus_v( R,T );
-
 		pose.dump_pdb( outname );
 	}
 
@@ -909,7 +1092,7 @@ public:
 		bool SLICE_NONE = (!SLICE_X && !SLICE_Y && !SLICE_Z);
 
 		if (SLICE_NONE) {  // case A
-			if (option[ crystdock::debug ]) std::cerr << "SLICE_NONE!\n";
+			if (option[ crystdock::debug ]|| option[ crystdock::debug_exact ]) std::cerr << "SLICE_NONE!\n";
 			transform_map_offset1( rho, S, working_trans);
 			transform_map_offset1( Srho, S, working_strans);
 
@@ -924,7 +1107,7 @@ public:
 			conv_out.dimension( rho.u1(),rho.u2(),rho.u3() );
 			conv_out = dotProd;
 		} else {
-			if (option[ crystdock::debug ]) std::cerr << "SLICE_ONE! " << SLICE_X << " " << SLICE_Y << " " << SLICE_Z << "\n";
+			if (option[ crystdock::debug ]|| option[ crystdock::debug_exact ]) std::cerr << "SLICE_ONE! " << SLICE_X << " " << SLICE_Y << " " << SLICE_Z << "\n";
 
 			xyzMatrix<Real> Sadjusted = S;
 			if (SLICE_X) Sadjusted.xx() = 1;
@@ -948,13 +1131,19 @@ public:
 			option[ crystdock::A ],option[ crystdock::B ],option[ crystdock::C ],
 			option[ crystdock::alpha ],option[ crystdock::beta ],option[ crystdock::gamma ] );
 
+		Real rotstep = option[ crystdock::rot_step ];
+
 		// center pose at origin
 		center_pose_at_origin( pose );
 		add_crystinfo_to_pose( pose, sg );
 
 		// lookup symmops
 		utility::vector1<core::kinematics::RT> rts;
-		sg.get_symmops( rts );
+		CheshireCell cc;
+		sg.get_symmops( rts, cc );
+		if (option[ crystdock::debug ] || option[ crystdock::debug_exact ] )
+			std::cerr << "search [ " << cc.low[0] <<","<< cc.low[1] <<","<< cc.low[2] << " : "
+			          << cc.high[0] <<","<< cc.high[1] <<","<< cc.high[2] << "]" << std::endl;
 
 		// compute rho_ca, rho_cb
 		FArray3D<Real> rho_ca, rho_cb, r_rho_ca, r_rho_cb;
@@ -963,9 +1152,20 @@ public:
 		Size Npoints = rho_ca.u1()*rho_ca.u2()*rho_ca.u3();
 		Real voxel_volume = sg.volume() / Npoints;
 
-		if (option[ crystdock::debug ]) {
-			writeMRC( rho_ca, "ca_mask.mrc" );
-			writeMRC( rho_cb, "cb_mask.mrc" );
+		xyzVector<Size> ccIndexLow(
+			(Size)std::floor(cc.low[0]*rho_ca.u1()+1.5),
+			(Size)std::floor(cc.low[1]*rho_ca.u2()+1.5),
+			(Size)std::floor(cc.low[2]*rho_ca.u3()+1.5));
+		xyzVector<Size> ccIndexHigh(
+			(Size)std::floor(cc.high[0]*rho_ca.u1()+0.5),
+			(Size)std::floor(cc.high[1]*rho_ca.u2()+0.5),
+			(Size)std::floor(cc.high[2]*rho_ca.u3()+0.5));
+
+
+		if (option[ crystdock::debug ]|| option[ crystdock::debug_exact ]) {
+			writeMRC( rho_ca, sg, "ca_mask.mrc" );
+			writeMRC( rho_cb, sg, "cb_mask.mrc" );
+			rotstep = 0;
 		}
 
 		// space for intermediate results
@@ -980,22 +1180,28 @@ public:
 		core::Size nnonclashing = 0;
 
 		// foreach rotation
-		UniformRotationSampler urs( option[ crystdock::rot_step ] );
-		while (urs.hasNext()) {
-			int ctr=1;
-			urs.getNext(r_local, alpha, beta, gamma);
+		UniformRotationSampler urs( rotstep );
+		urs.remove_redundant( rts, i2c_, c2i_ );
+		Size nrots = urs.nrots();
+		for (int ctr=1; ctr<=nrots; ++ctr) {
+			std::cerr << "Rotation " << ctr << " of " << nrots << std::endl;
+			urs.get(ctr, r_local);
+
 			resample_maps( rho_ca, rho_cb, r_local, r_rho_ca, r_rho_cb );
 
-			if (option[ crystdock::debug ] ) {
-				std::ostringstream oss; oss << "rot"<<ctr<<".pdb";
-				dump_transformed_pdb( pose, InterfaceHit( 0,0,0,0, alpha, beta, gamma ), oss.str() );
+			if (option[ crystdock::debug ]|| option[ crystdock::debug_exact ] ) {
+				std::ostringstream oss1; oss1 << "rot"<<ctr<<".mrc";
+				writeMRC( r_rho_ca, sg, oss1.str() );
+				std::ostringstream oss2; oss2 << "rot"<<ctr<<".pdb";
+				dump_transformed_pdb( pose, InterfaceHit( 0,0,0,0, ctr ), urs, oss2.str() );
 			}
+
 			// store info
 			FArray3D<Real> collision_map, ex_collision_map;
 			collision_map.dimension( rho_ca.u1() , rho_ca.u2() , rho_ca.u3() );
 			collision_map=0;
 
-			if (option[ crystdock::debug ] ) {
+			if (option[ crystdock::debug_exact ] ) {
 				ex_collision_map.dimension( rho_ca.u1() , rho_ca.u2() , rho_ca.u3() );
 				ex_collision_map=0;
 			}
@@ -1009,15 +1215,20 @@ public:
 
 				transform_map( r_rho_ca, rts[s].get_rotation(), rts[s].get_translation(), working_s);
 				do_convolution( r_rho_ca, working_s, resample, conv_out);
-				for (int i=0; i<Npoints; ++i) collision_map[i] += conv_out[i];
+				//for (int i=0; i<Npoints; ++i) collision_map[i] += conv_out[i];
+				for (int z=ccIndexLow[2]; z<=ccIndexHigh[2]; ++z)
+				for (int y=ccIndexLow[1]; y<=ccIndexHigh[1]; ++y)
+				for (int x=ccIndexLow[0]; x<=ccIndexHigh[0]; ++x) {
+					 collision_map(x,y,z) += conv_out(x,y,z);
+				}
 
 				// debug: exact CA fft
-				if (option[ crystdock::debug ] ) {
+				if (option[ crystdock::debug_exact ] ) {
 					FArray3D<Real> shift_rho_ca, s_shift_rho_ca;
 					shift_rho_ca.dimension( rho_ca.u1() , rho_ca.u2() , rho_ca.u3() );
-					for (int sz=0; sz<rho_ca.u3(); ++sz)
-					for (int sy=0; sy<rho_ca.u2(); ++sy)
-					for (int sx=0; sx<rho_ca.u1(); ++sx) {
+					for (int sz=ccIndexLow[2]-1; sz<=ccIndexHigh[2]-1; ++sz)
+					for (int sy=ccIndexLow[1]-1; sy<=ccIndexHigh[1]-1; ++sy)
+					for (int sx=ccIndexLow[0]-1; sx<=ccIndexHigh[0]-1; ++sx) {
 						for (int z=1; z<=rho_ca.u3(); ++z)
 						for (int y=1; y<=rho_ca.u2(); ++y)
 						for (int x=1; x<=rho_ca.u1(); ++x) {
@@ -1040,48 +1251,49 @@ public:
 				for (int i=0; i<Npoints; ++i) interface_map[i].add_interface( SingleInterface(s, conv_out[i]) );
 			}
 
-			if (option[ crystdock::debug ] ) {
+			if (option[ crystdock::debug ] || option[ crystdock::debug_exact ]) {
 				std::ostringstream oss; oss << "collisionmap_"<<ctr<<".mrc";
 				FArray3D<Real> collision_map_dump = collision_map;
 				for (int i=0; i<Npoints; ++i) collision_map_dump[i] = 1-collision_map[i];
-				writeMRC( collision_map_dump, oss.str() );
+				writeMRC( collision_map_dump, sg, oss.str() );
 
-				std::ostringstream oss2; oss2 << "ex_collisionmap_"<<ctr<<".mrc";
-				for (int i=0; i<Npoints; ++i) collision_map_dump[i] = 1-ex_collision_map[i];
-				writeMRC( collision_map_dump, oss2.str() );
+				if( option[ crystdock::debug_exact ] ) {
+					std::ostringstream oss2; oss2 << "ex_collisionmap_"<<ctr<<".mrc";
+					for (int i=0; i<Npoints; ++i) collision_map_dump[i] = 1-ex_collision_map[i];
+					writeMRC( collision_map_dump, sg, oss2.str() );
 
-				// get correl
-				Real x2=0,y2=0,xy=0,x=0,y=0;
-				for (int i=0; i<Npoints; ++i) {
-					x2+=collision_map[i]*collision_map[i];
-					y2+=ex_collision_map[i]*ex_collision_map[i];
-					xy+=collision_map[i]*ex_collision_map[i];
-					x+=collision_map[i];
-					y+=ex_collision_map[i];
+					// get correl
+					Real x2=0,y2=0,xy=0,x=0,y=0;
+					for (int i=0; i<Npoints; ++i) {
+						x2 += collision_map[i] * collision_map[i];
+						y2 += ex_collision_map[i] * ex_collision_map[i];
+						xy += collision_map[i] * ex_collision_map[i];
+						x  += collision_map[i];
+						y  += ex_collision_map[i];
+					}
+					Real correl = (Npoints*xy - x*y) / std::sqrt( (Npoints*x2-x*x) * (Npoints*y2-y*y) );
+					std::cerr << "correl = " << correl << std::endl;
+
+					collision_map = ex_collision_map;
 				}
-				Real correl = (Npoints*xy - x*y) / std::sqrt( (Npoints*x2-x*x) * (Npoints*y2-y*y) );
-				std::cerr << "correl = " << correl << std::endl;
-
-				collision_map = ex_collision_map;
 			}
 
 			// now add nonclashing interfaces to the DB
-			for (int x=1; x<=rho_ca.u1(); ++x)
-			for (int y=1; y<=rho_ca.u2(); ++y)
-			for (int z=1; z<=rho_ca.u3(); ++z) {
+			for (int z=ccIndexLow[2]; z<=ccIndexHigh[2]; ++z)
+			for (int y=ccIndexLow[1]; y<=ccIndexHigh[1]; ++y)
+			for (int x=ccIndexLow[0]; x<=ccIndexHigh[0]; ++x) {
 				if (collision_map(x,y,z) < 1.0) {
 					nnonclashing++;
 					core::Real score_xyz = voxel_volume * sg.get_interface_score( interface_map(x,y,z) );
 					xyzVector<Real> xyz((Real)x-1,(Real)y-1,(Real)z-1);
 					xyz = i2c_*xyz;
-					IDB.add_interface( InterfaceHit( score_xyz, xyz[0],xyz[1],xyz[2], alpha, beta, gamma ) );
+					IDB.add_interface( InterfaceHit( score_xyz, xyz[0],xyz[1],xyz[2], ctr ) );
 				}
 			}
 			if (IDB.size()>0)
 				std::cerr << IDB.size() << " of " << nnonclashing << " nonclashing configurations; min_score = " << IDB.top().score << std::endl;
 			else
 				std::cerr << IDB.size() << " configurations" << std::endl;
-			ctr++;
 		}
 
 		// DONE!  dump hits to stdout
@@ -1089,7 +1301,7 @@ public:
 		for (int i=1; i<=nhits; ++i) {
 			InterfaceHit ih = IDB.pop();
 			std::cerr << i << ": " << ih.score << " " << ih.x << " "  << ih.y << " "  << ih.z << " "
-				<< ih.alpha  << " " << ih.beta  << " " << ih.gamma  << " " << std::endl;
+				<< ih.rot_index  << " " << std::endl;
 
 			// Treat tags as file names so that we put the number before the extension.
 			std::string base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
@@ -1097,7 +1309,7 @@ public:
 			utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
 			base_name = out_name.base();
 			std::string outname = base_name+"_"+right_string_of( i, 8, '0' )+".pdb";
-			dump_transformed_pdb( pose, ih, outname );
+			dump_transformed_pdb( pose, ih, urs, outname );
 
 			// debug: dump exact maps
 			if (option[ crystdock::debug ] && i==nhits) {
@@ -1122,8 +1334,8 @@ public:
 				}
 				transform_map( shift_rho_ca, rts[2].get_rotation(), rts[2].get_translation(), s_shift_rho_ca);
 
-				writeMRC( shift_rho_ca, "shift_rho_ca.mrc" );
-				writeMRC( s_shift_rho_ca, "s_shift_rho_ca.mrc" );
+				writeMRC( shift_rho_ca, sg, "shift_rho_ca.mrc" );
+				writeMRC( s_shift_rho_ca, sg, "s_shift_rho_ca.mrc" );
 			}
 		}
 	}
@@ -1164,6 +1376,7 @@ try {
 	NEW_OPT(crystdock::rot_step, "rotational stepsize (deg)", 10);
 	NEW_OPT(crystdock::nmodels, "#models", 1000);
 	NEW_OPT(crystdock::debug, "debug mode", false);
+	NEW_OPT(crystdock::debug_exact, "debug mode with exact calcs (slow!)", false);
 
 	devel::init( argc, argv );
 	protocols::viewer::viewer_main( my_main );
@@ -1178,30 +1391,30 @@ try {
 ///
 ///
 ///
-void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) const {
+void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out, CheshireCell &cc) const {
 	//fpd -- P1 will require special logic and we can't use FFT anyway
 	//if ( name_ == "P1" ) {
 	//	rt_out.resize(1);
 	//	rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
-	//	//cheshire = [ 0,0 ; 0,0 ; 0,0 ];
+	//	cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(0 ,0 ,0 ) );
 	//}
 	if ( name_ == "P121" || name_ == "P2") {
 		rt_out.resize(2);
 		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
 		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
-		//cheshire = [ 0,1/2 ; 0,0 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>(0,0,0),xyzVector<Real>(0.5,0,0.5) );
 	}
 	else if ( name_ == "P1211" || name_ == "P21" ) {
 		rt_out.resize(2);
 		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
 		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0,0) );
-		//cheshire = [ 0,1/2 ; 0,0 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(0.5 ,0 ,0.5 ) );
 	}
 	else if ( name_ == "C121" || name_ == "C2" ) {
 		rt_out.resize(2);
 		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
 		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0.5,0) );
-		//cheshire = [ 0,1/2 ; 0,0 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(0.5 ,0 ,0.5 ) );
 	}
 	else if ( name_ == "P4" ) {
 		rt_out.resize(4);
@@ -1209,7 +1422,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
 		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
-		//cheshire = [ 0,1 ; 0,1/2 ; 0,0 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,0.5 ,0 ) );
 	}
 	else if ( name_ == "P41" ) {
 		rt_out.resize(4);
@@ -1217,7 +1430,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.25) );
 		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0.5) );
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.75) );
-		//cheshire = [ 0,1 ; 0,1/2 ; 0,0 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,0.5 ,0 ) );
 	}
 	else if ( name_ == "P42" ) {
 		rt_out.resize(4);
@@ -1225,7 +1438,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.5) );
 		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.5) );
-		//cheshire = [ 0,1 ; 0,1/2 ; 0,0 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,0.5 ,0 ) );
 	}
 	else if ( name_ == "P43" ) {
 		rt_out.resize(4);
@@ -1233,7 +1446,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.75) );
 		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , xyzVector<Real>(0,0,0.5) );
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , xyzVector<Real>(0,0,0.25) );
-		//cheshire = [ 0,1 ; 0,1/2 ; 0,0 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,0.5 ,0 ) );
 	}
 	else if ( name_ == "I4" ) {
 		rt_out.resize(8);
@@ -1246,7 +1459,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[4+ii] = rt_out[ii];
 			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
 		}
-		//cheshire = [ 0,1 ; 0,1/2 ; 0,0 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,0.5 ,0 ) );
 	}
 	else if ( name_ == "I41" ) {
 		rt_out.resize(8);
@@ -1259,7 +1472,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[4+ii] = rt_out[ii];
 			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
 		}
- 		//cheshire = [ 0,1 ; 0,1/2 ; 0,0 ];
+ 		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,0.5 ,0 ) );
 	}
 	else if ( name_ == "P422" ) {
 		rt_out.resize(8);
@@ -1271,7 +1484,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
 		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
 		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
-		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,0.5 ,0.5 ) );
 	}
 	else if ( name_ == "P4212" ) {
 		rt_out.resize(8);
@@ -1283,7 +1496,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
 		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0.5,0) );
 		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
-		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,0.5 ,0.5 ) );
 	}
 	else if ( name_ == "P4122" ) {
 		rt_out.resize(8);
@@ -1295,7 +1508,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.75) );
 		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
 		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.25) );
-		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,0.5 ,0.5 ) );
 	}
 	else if ( name_ == "P41212" ) {
 		rt_out.resize(8);
@@ -1307,7 +1520,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
 		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0.5,0.25) );
 		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.5) );
-		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,0.5 ,0.5 ) );
 	}
 	else if ( name_ == "P4222" ) {
 		rt_out.resize(8);
@@ -1319,7 +1532,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.5) );
 		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
 		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.5) );
-		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,0.5 ,0.5 ) );
 	}
 	else if ( name_ == "P42212" ) {
 		rt_out.resize(8);
@@ -1331,7 +1544,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
 		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0.5,0.5) );
 		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
-		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,0.5 ,0.5 ) );
 	}
 	else if ( name_ == "P4322" ) {
 		rt_out.resize(8);
@@ -1343,7 +1556,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.25) );
 		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
 		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.75) );
-		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,0.5 ,0.5 ) );
 	}
 	else if ( name_ == "P43212" ) {
 		rt_out.resize(8);
@@ -1355,7 +1568,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0) );
 		rt_out[7] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0.5,0.75) );
 		rt_out[8] = core::kinematics::RT( xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , xyzVector<Real>(0,0,0.5) );
-		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,0.5 ,0.5 ) );
 	}
 	else if ( name_ == "I422" ) {
 		rt_out.resize(16);
@@ -1372,7 +1585,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[8+ii] = rt_out[ii];
 			rt_out[8+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
 		}
-		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,0.5 ,0.5 ) );
 	}
 	else if ( name_ == "I4122" ) {
 		rt_out.resize(16);
@@ -1389,7 +1602,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[8+ii] = rt_out[ii];
 			rt_out[8+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
 		}
-		//cheshire = [ 0,1 ; 0,1/2 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,0.5 ,0.5 ) );
 	}
 	else if ( name_ == "P23" ) {
 		rt_out.resize(12);
@@ -1405,7 +1618,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , xyzVector<Real>(0,0,0) );
 		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , xyzVector<Real>(0,0,0) );
 		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0,0,0) );
-		//cheshire = [0,1;0,1;0,1];
+		cc = CheshireCell( xyzVector<Real>(0,0,0),xyzVector<Real>(1,1,1) );
 	}
 	else if ( name_ == "F23" ) {
 		rt_out.resize(48);
@@ -1430,7 +1643,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[24+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0,0.5) );
 			rt_out[36+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
 		}
-		//cheshire = [ [0,1/2;0,1/2;0,1/2] ];
+		cc = CheshireCell( xyzVector<Real>( 0,0,0),xyzVector<Real>(0.5,0.5,0.5 ) );
 	}
 	else if ( name_ == "I23" ) {
 		rt_out.resize(24);
@@ -1450,7 +1663,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[12+ii] = rt_out[ii];
 			rt_out[12+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
 		}
-		//cheshire = [ [0,1;0,1;0,1] ];
+		cc = CheshireCell( xyzVector<Real>( 0,0,0),xyzVector<Real>(1,1,1 ) );
 	}
 	else if ( name_ == "P213" ) {
 		rt_out.resize(12);
@@ -1466,7 +1679,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , xyzVector<Real>(0.5,0.5,0) );
 		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , xyzVector<Real>(0,0.5,0.5) );
 		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0.5,0,0.5) );
-		//cheshire = [ [0,1;0,1;0,1] ];
+		cc = CheshireCell( xyzVector<Real>( 0,0,0),xyzVector<Real>(1,1,1 ) );
 	}
 	else if ( name_ == "I213" ) {
 		rt_out.resize(24);
@@ -1486,7 +1699,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[12+ii] = rt_out[ii];
 			rt_out[12+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
 		}
-		//cheshire = [ [0,1;0,1;0,1] ];
+		cc = CheshireCell( xyzVector<Real>( 0,0,0),xyzVector<Real>(1,1,1 ) );
 	}
 	else if ( name_ == "P432" ) {
 		rt_out.resize(24);
@@ -1514,7 +1727,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[22] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0,0,0) );
 		rt_out[23] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , xyzVector<Real>(0,0,0) );
 		rt_out[24] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , xyzVector<Real>(0,0,0) );
-		//cheshire = [ [0,1;0,1;0,1] ];
+		cc = CheshireCell( xyzVector<Real>( 0,0,0),xyzVector<Real>(1,1,1 ) );
 	}
 	else if ( name_ == "P4232" ) {
 		rt_out.resize(24);
@@ -1542,7 +1755,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[22] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0,0,0) );
 		rt_out[23] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , xyzVector<Real>(0.5,0.5,0.5) );
 		rt_out[24] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , xyzVector<Real>(0.5,0.5,0.5) );
-		//cheshire = [ [0,1;0,1;0,1] ];
+		cc = CheshireCell( xyzVector<Real>( 0,0,0),xyzVector<Real>(1,1,1 ) );
 	}
 	else if ( name_ == "F432" ) {
 		rt_out.resize(96);
@@ -1579,7 +1792,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[48+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0,0.5) );
 			rt_out[72+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
 		}
-		//cheshire = [ [0,1/2;0,1/2;0,1/2] ];
+		cc = CheshireCell( xyzVector<Real>( 0,0,0),xyzVector<Real>(0.5,0.5,0.5 ) );
 	}
 	else if ( name_ == "F4132" ) {
 		rt_out.resize(96);
@@ -1616,7 +1829,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[48+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0,0.5) );
 			rt_out[72+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
 		}
-		//cheshire = [ [0,1/2;0,1/2;0,1/2] ];
+		cc = CheshireCell( xyzVector<Real>( 0,0,0),xyzVector<Real>(0.5,0.5,0.5 ) );
 	}
 	else if ( name_ == "I432" ) {
 		rt_out.resize(48);
@@ -1649,7 +1862,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[24+ii] = rt_out[ii];
 			rt_out[24+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
 		}
-		//cheshire = [ [0,1;0,1;0,1] ];
+		cc = CheshireCell( xyzVector<Real>( 0,0,0),xyzVector<Real>(1,1,1 ) );
 	}
 	else if ( name_ == "P4332" ) {
 		rt_out.resize(24);
@@ -1677,7 +1890,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[22] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0.5,0,0.5) );
 		rt_out[23] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , xyzVector<Real>(0.75,0.75,0.25) );
 		rt_out[24] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , xyzVector<Real>(0.75,0.25,0.75) );
-		//cheshire = [ [0,1;0,1;0,1] ];
+		cc = CheshireCell( xyzVector<Real>( 0,0,0),xyzVector<Real>(1,1,1 ) );
 	}
 	else if ( name_ == "P4132" ) {
 		rt_out.resize(24);
@@ -1705,7 +1918,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[22] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , xyzVector<Real>(0.5,0,0.5) );
 		rt_out[23] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,1,   0,-1,0,   1,0,0)  , xyzVector<Real>(0.25,0.25,0.75) );
 		rt_out[24] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,0,-1,   0,1,0,   1,0,0)  , xyzVector<Real>(0.25,0.75,0.25) );
-		//cheshire = [ [0,1;0,1;0,1] ];
+		cc = CheshireCell( xyzVector<Real>( 0,0,0),xyzVector<Real>(1,1,1 ) );
 	}
 	else if ( name_ == "I4132" ) {
 		rt_out.resize(48);
@@ -1738,28 +1951,28 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[24+ii] = rt_out[ii];
 			rt_out[24+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
 		}
-		//cheshire = [ [0,1;0,1;0,1] ];
+		cc = CheshireCell( xyzVector<Real>( 0,0,0),xyzVector<Real>(1,1,1 ) );
 	}
 	else if (name_ == "P3") {
 		rt_out.resize(3);
 		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
 		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
 		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
-		// cheshire = [ 0,2/3 ; 0,2/3 ; 0,0 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(2.0/3.0 ,2.0/3.0 ,0 ) );
 	}
 	else if (name_ == "P31") {
 		rt_out.resize(3);
 		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
 		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
 		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
-		// cheshire = [ 0,2/3 ; 0,2/3 ; 0,0 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(2.0/3.0 ,2.0/3.0 ,0 ) );
 	}
 	else if (name_ == "P32") {
 		rt_out.resize(3);
 		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
 		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   1,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
 		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
-		// cheshire = [ 0,2/3 ; 0,2/3 ; 0,0 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(2.0/3.0 ,2.0/3.0 ,0 ) );
 	}
 	else if (name_ == "H3") {
 		rt_out.resize(9);
@@ -1773,7 +1986,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[6+ii] = rt_out[ii];
 			rt_out[6+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.333333333333333,0.666666666666667,0.666666666666667) );
 		}
-		// cheshire = [ 0,2/3 ; 0,2/3 ; 0,0 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(2.0/3.0 ,2.0/3.0 ,0 ) );
 	}
 	else if (name_ == "P312") {
 		rt_out.resize(6);
@@ -1783,7 +1996,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
 		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
-		// cheshire = [ 0,2/3 ; 0,2/3 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(2.0/3.0 ,2.0/3.0 ,0.5 ) );
 	}
 	else if (name_ == "P321") {
 		rt_out.resize(6);
@@ -1793,7 +2006,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
 		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
-		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,1 ,0.5 ) );
 	}
 	else if (name_ == "P3112") {
 		rt_out.resize(6);
@@ -1803,7 +2016,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
 		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
-		// cheshire = [ 0,2/3 ; 0,2/3 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(2.0/3.0 ,2.0/3.0 ,0.5 ) );
 	}
 	else if (name_ == "P3121") {
 		rt_out.resize(6);
@@ -1813,7 +2026,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
 		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
-		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,1 ,0.5 ) );
 	}
 	else if (name_ == "P3212") {
 		rt_out.resize(6);
@@ -1823,7 +2036,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,-1,0,   -1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
 		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,0,0,   1,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
-		// cheshire = [ 0,2/3 ; 0,2/3 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(2.0/3.0 ,2.0/3.0 ,0.5 ) );
 	}
 	else if (name_ == "P3221") {
 		rt_out.resize(6);
@@ -1833,7 +2046,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
 		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  1,-1,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
-		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,1 ,0.5 ) );
 	}
 	else if (name_ == "H32") {
 		rt_out.resize(18);
@@ -1850,7 +2063,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[12+ii] = rt_out[ii];
 			rt_out[12+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.333333333333333,0.666666666666667,0.666666666666667) );
 		}
-		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,1 ,0.5 ) );
 	}
 	else if (name_ == "P6") {
 		rt_out.resize(6);
@@ -1860,7 +2073,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
 		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
-		// cheshire = [ 0,1 ; 0,1 ; 0,0 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,1 ,0 ) );
 	}
 	else if (name_ == "P61") {
 		rt_out.resize(6);
@@ -1870,7 +2083,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.5) );
 		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0.833333333333333) );
-		// cheshire = [ 0,1 ; 0,1 ; 0,0 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,1 ,0 ) );
 	}
 	else if (name_ == "P65") {
 		rt_out.resize(6);
@@ -1880,7 +2093,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.5) );
 		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0.166666666666667) );
-		// cheshire = [ 0,1 ; 0,1 ; 0,0 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,1 ,0 ) );
 	}
 	else if (name_ == "P62") {
 		rt_out.resize(6);
@@ -1890,7 +2103,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
 		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
-		// cheshire = [ 0,1 ; 0,1 ; 0,0 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,1 ,0 ) );
 	}
 	else if (name_ == "P64") {
 		rt_out.resize(6);
@@ -1900,7 +2113,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
 		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0.666666666666667) );
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0.333333333333333) );
-		// cheshire = [ 0,1 ; 0,1 ; 0,0 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,1 ,0 ) );
 	}
 	else if (name_ == "P63") {
 		rt_out.resize(6);
@@ -1910,7 +2123,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , xyzVector<Real>(0,0,0.5) );
 		rt_out[5] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   -1,0,0,   0,0,1)  , xyzVector<Real>(0,0,0) );
 		rt_out[6] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   -1,1,0,   0,0,1)  , xyzVector<Real>(0,0,0.5) );
-		// cheshire = [ 0,1 ; 0,1 ; 0,0 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,1 ,0 ) );
 	}
 	else if (name_ == "P622") {
 		rt_out.resize(12);
@@ -1926,7 +2139,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
 		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
 		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
-		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,1 ,0.5 ) );
 	}
 	else if (name_ == "P6122") {
 		rt_out.resize(12);
@@ -1942,7 +2155,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
 		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.5) );
 		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
-		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,1 ,0.5 ) );
 	}
 	else if (name_ == "P6522") {
 		rt_out.resize(12);
@@ -1958,7 +2171,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
 		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.5) );
 		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
-		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,1 ,0.5 ) );
 	}
 	else if (name_ == "P6222") {
 		rt_out.resize(12);
@@ -1974,7 +2187,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
 		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
 		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
-		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,1 ,0.5 ) );
 	}
 	else if (name_ == "P6422") {
 		rt_out.resize(12);
@@ -1990,7 +2203,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0.333333333333333) );
 		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
 		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.666666666666667) );
-		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,1 ,0.5 ) );
 	}
 	else if (name_ == "P6322") {
 		rt_out.resize(12);
@@ -2006,7 +2219,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[10] = core::kinematics::RT( xyzMatrix<Real>::rows(  0,1,0,   1,0,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
 		rt_out[11] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,1,0,   0,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.5) );
 		rt_out[12] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   -1,1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
-		// cheshire = [ 0,1 ; 0,1 ; 0,1/2 ];
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(1 ,1 ,0.5 ) );
 	}
 	else if (name_ == "P222") {
 		rt_out.resize(4);
@@ -2014,7 +2227,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , xyzVector<Real>(0,0,0) );
 		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
-		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+		cc = CheshireCell( xyzVector<Real>(0, 0, 0),xyzVector<Real>(0.5 ,0.5 ,0.5) );
 	}
 	else if (name_ == "P2221") {
 		rt_out.resize(4);
@@ -2022,7 +2235,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , xyzVector<Real>(0,0,0.5) );
 		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0,0,0) );
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , xyzVector<Real>(0,0,0.5) );
-		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+		cc = CheshireCell( xyzVector<Real>(0, 0, 0),xyzVector<Real>(0.5 ,0.5 ,0.5) );
 	}
 	else if (name_ == "P21212") {
 		rt_out.resize(4);
@@ -2030,7 +2243,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , xyzVector<Real>(0,0,0) );
 		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0.5,0.5,0) );
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , xyzVector<Real>(0.5,0.5,0) );
-		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+		cc = CheshireCell( xyzVector<Real>(0, 0, 0),xyzVector<Real>(0.5 ,0.5 ,0.5) );
 	}
 	else if (name_ == "P212121") {
 		rt_out.resize(4);
@@ -2038,7 +2251,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0, 1)  , xyzVector<Real>(0.5,0,0.5) );
 		rt_out[3] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1)  , xyzVector<Real>(0.5,0.5,0) );
 		rt_out[4] = core::kinematics::RT( xyzMatrix<Real>::rows(  -1,0,0,   0, 1,0,   0,0,-1)  , xyzVector<Real>(0,0.5,0.5) );
-		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+		cc = CheshireCell( xyzVector<Real>(0, 0, 0),xyzVector<Real>(0.5 ,0.5 ,0.5) );
 	}
 	else if (name_ == "C2221") {
 		rt_out.resize(8);
@@ -2051,7 +2264,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[4+ii] = rt_out[ii];
 			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
 		}
-		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+		cc = CheshireCell( xyzVector<Real>(0, 0, 0),xyzVector<Real>(0.5 ,0.5 ,0.5) );
 	}
 	else if (name_ == "C222") {
 		rt_out.resize(8);
@@ -2064,7 +2277,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[4+ii] = rt_out[ii];
 			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
 		}
-		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+		cc = CheshireCell( xyzVector<Real>(0, 0, 0),xyzVector<Real>(0.5 ,0.5 ,0.5) );
 	}
 	else if (name_ == "F222") {
 		rt_out.resize(16);
@@ -2081,7 +2294,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[8+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0,0.5) );
 			rt_out[12+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0) );
 		}
-		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+		cc = CheshireCell( xyzVector<Real>(0, 0, 0),xyzVector<Real>(0.5 ,0.5 ,0.5) );
 	}
 	else if (name_ == "I222") {
 		rt_out.resize(8);
@@ -2094,7 +2307,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[4+ii] = rt_out[ii];
 			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
 		}
-		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+		cc = CheshireCell( xyzVector<Real>(0, 0, 0),xyzVector<Real>(0.5 ,0.5 ,0.5) );
 	}
 	else if (name_ == "I212121") {
 		rt_out.resize(8);
@@ -2107,7 +2320,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out) con
 			rt_out[4+ii] = rt_out[ii];
 			rt_out[4+ii].set_translation( rt_out[ii].get_translation() + numeric::xyzVector<Real>(0.5,0.5,0.5) );
 		}
-		// cheshire = [0,1/2 ; 0,1/2 ; 0,1/2];
+		cc = CheshireCell( xyzVector<Real>(0, 0, 0),xyzVector<Real>(0.5 ,0.5 ,0.5) );
 	}
 }
 
