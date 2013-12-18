@@ -38,13 +38,13 @@
 // Protocols headers
 #include <protocols/genetic_algorithm/Entity.hh>
 #include <protocols/genetic_algorithm/EntityRandomizer.hh>
-#include <protocols/pack_daemon/DynamicAggregateFunction.hh> // for FileContentsMap
 
 // Utility headers
 #include <utility/SimulateMPI.hh>
 #include <utility/mpi_util.hh>
 #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/io/FileContentsMap.hh>
 
 // --------------- Test Class --------------- //
 
@@ -111,7 +111,7 @@ public:
 	typedef std::list< std::pair< std::string, core::Real > > SeqsAndEnergies;
 
 private:
-	protocols::pack_daemon::FileContentsMapOP fc_;
+	utility::io::FileContentsMapOP fc_;
 
 public:
 
@@ -146,7 +146,7 @@ public:
 		rand->append_sequence( "MG" ); // gen3
 		mmt_driver.set_randomizer( rand );
 
-		fc_ = new protocols::pack_daemon::FileContentsMap;
+		fc_ = new utility::io::FileContentsMap;
 		fc_->set_file_contents( "ubq.pdb", ubq_twores_string() );
 		fc_->set_file_contents( "ubq.corr", "1 1 _\n2 2 _\n" );
 		fc_->set_file_contents( "ubq_entity.resfile", "2\nstart\n1 A PIKAA AM\n2 A PIKAA GQ\n" );

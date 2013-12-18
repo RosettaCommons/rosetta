@@ -46,6 +46,7 @@ cd %(workdir)s
 #kdrew: a bogus option is passed in which will throw an exception, if not caught, an 'Abort trap' should appear
 
 #kdrew: test all apps in bin directory with bogus input option
+echo "App exception handling log" > log
 for app in %(bin)s/*.%(binext)s 
 do
 	app_prefix=$( echo $app | sed 's:.%(binext)s::' | sed 's:/: :g' | awk '{print $NF}')
