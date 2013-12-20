@@ -730,7 +730,6 @@ FileData::create_working_data(
 		}
 	}
 
-	convert_nucleic_acid_residue_info_to_standard( rinfo );
 }
 
 
@@ -873,7 +872,7 @@ write_additional_pdb_data(
 			}
 		}
 	}
-	
+
 	// Added by Daniel-Adriano Silva, used to write the PDBInfoLabels to the REMARK
 	// First test that the pdb_info() is not empty
 	if ( pose.pdb_info() ){
@@ -891,7 +890,7 @@ write_additional_pdb_data(
 			}
 		}
 	}
-	
+
 }
 
 
@@ -983,6 +982,7 @@ build_pose_as_is1(
 	// Some residues in the input file may be discarded (missing atoms, unrecognized, etc)
 	utility::vector1< Size > pose_to_rinfo;
 	fd.create_working_data( rinfos, options );
+	fixup_rinfo_based_on_residue_type_set( rinfos, residue_set );
 	Strings pose_resids;
 	utility::vector1<ResidueTemps> pose_temps;
 
@@ -1659,6 +1659,14 @@ pose_from_pose(
 	build_pose_as_is1( fd, new_pose, residue_set, missing, options );
 }
 
+
+void
+fixup_rinfo_based_on_residue_type_set( 	utility::vector1< ResidueInformation > & rinfos,
+																			 	chemical::ResidueTypeSet const & residue_set ){
+	bool const force_RNA = ( residue_set.name() == core::chemical::RNA  ||
+													 residue_set.name() == "rna_phenix" );
+	convert_nucleic_acid_residue_info_to_standard( rinfos, force_RNA );
+}
 
 } // namespace pdb
 } // namespace io

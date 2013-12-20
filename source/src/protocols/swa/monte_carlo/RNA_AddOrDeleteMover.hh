@@ -56,11 +56,17 @@ public:
 	void set_skip_deletions( bool const setting ){ skip_deletions_ = setting; }
 
 	void set_sample_res( utility::vector1< Size > const & setting ){ sample_res_ = setting; }
+	void set_bulge_res( utility::vector1< Size > const & setting ){ bulge_res_ = setting; }
 
 	void set_minimize_single_res( bool const setting );
 
 	void set_disallow_skip_bulge( bool const & setting ){ disallow_skip_bulge_ = setting; }
 	bool disallow_skip_bulge() const{ return disallow_skip_bulge_; }
+
+private:
+
+	utility::vector1< Size >
+	figure_out_actual_sample_res( pose::Pose const & pose ) const;
 
 private:
 
@@ -70,6 +76,7 @@ private:
 	bool skip_deletions_;
 	bool disallow_skip_bulge_;
 	utility::vector1< Size > sample_res_;
+	utility::vector1< Size > bulge_res_;
 	SWA_MoveSelectorOP swa_move_selector_;
 };
 

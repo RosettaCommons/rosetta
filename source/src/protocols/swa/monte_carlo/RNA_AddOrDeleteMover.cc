@@ -20,6 +20,7 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/util.hh>
@@ -66,7 +67,7 @@ namespace monte_carlo {
 
   //////////////////////////////////////////////////////////////////////////
 	bool
-  RNA_AddOrDeleteMover::apply( core::pose::Pose & pose, std::string & move_type )
+  RNA_AddOrDeleteMover::apply( core::pose::Pose & pose, std::string & move_type /* just used by monte carlo*/ )
 	{
 		utility::vector1< Size > const moving_res_list = core::pose::full_model_info::get_moving_res_from_full_model_info( pose );
 
@@ -78,7 +79,8 @@ namespace monte_carlo {
 		swa_move_selector_->set_disallow_delete( disallow_delete );
 		swa_move_selector_->set_disallow_skip_bulge( disallow_skip_bulge_ );
 		swa_move_selector_->set_disallow_resample( true );
-		swa_move_selector_->get_random_move_element_at_chain_terminus( pose, swa_move, sample_res_ /* empty means no filter on what residues can be added */ );
+		utility::vector1< Size > const actual_sample_res = figure_out_actual_sample_res( pose );
+		swa_move_selector_->get_random_move_element_at_chain_terminus( pose, swa_move, actual_sample_res );
 
 		if ( swa_move.move_type() == NO_ADD_OR_DELETE ) {
 			move_type = "no move";
@@ -105,6 +107,27 @@ namespace monte_carlo {
 	RNA_AddOrDeleteMover::set_minimize_single_res( bool const setting ){
 		rna_add_mover_->set_minimize_single_res( setting );
 		rna_delete_mover_->set_minimize_after_delete( !setting );
+	}
+
+	///////////////////////////////////////////////////////////////////////////////
+	utility::vector1< Size >
+	RNA_AddOrDeleteMover::figure_out_actual_sample_res( pose::Pose const & pose ) const{
+
+		utility::vector1< Size > sample_res;
+		if ( sample_res_.size() > 0 ){ // user provided
+			sample_res = sample_res_;
+		} else { // all are allowed
+			std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
+			for ( Size n = 1; n <= full_sequence.size(); n++ )	sample_res.push_back( n );
+		}
+
+		// get rid of bulge_res.
+		utility::vector1< Size > actual_sample_res;
+		for ( Size n = 1; n <= sample_res.size(); n++ ){
+			if ( bulge_res_.has_value( sample_res[n] ) ) continue;
+			actual_sample_res.push_back( sample_res[n] );
+		}
+		return actual_sample_res;
 	}
 
 

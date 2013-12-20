@@ -94,10 +94,10 @@ namespace monte_carlo {
 
 		PoseOP sliced_out_pose_op = new Pose;
 		slice_out_pose( pose, *sliced_out_pose_op, residues_to_delete );
-		if ( sliced_out_pose_op->total_residue() > 1 ) full_model_info.add_other_pose( sliced_out_pose_op );
+		if ( check_for_fixed_domain( *sliced_out_pose_op ) ) full_model_info.add_other_pose( sliced_out_pose_op );
 
-		fix_up_residue_type_variants( *sliced_out_pose_op ); // now make this include chain terminus!
-		fix_up_residue_type_variants( pose ); // now make this include chain terminus!
+		fix_up_residue_type_variants( *sliced_out_pose_op );
+		fix_up_residue_type_variants( pose );
 
 		clear_constraints_recursively( pose );
 

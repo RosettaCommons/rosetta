@@ -84,10 +84,6 @@ namespace monte_carlo {
 		utility::vector1< Size >
 		get_partition_res( utility::vector1< bool > const & partition_definition, bool const setting );
 
-		bool
-		check_for_fixed_domain( pose::Pose const & pose,
-														utility::vector1< Size> const & partition_res );
-
 		void
 		get_split_move_elements( pose::Pose & pose,
 														 utility::vector1< SWA_Move > & swa_moves );

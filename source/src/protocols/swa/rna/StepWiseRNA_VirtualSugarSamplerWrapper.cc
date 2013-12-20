@@ -23,6 +23,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/chemical/rna/RNA_Util.hh> // for SYN
 #include <ObjexxFCL/string.functions.hh>
 #include <basic/Tracer.hh>
 
@@ -131,7 +132,7 @@ StepWiseRNA_VirtualSugarSamplerWrapper::do_the_sampling( core::pose::Pose & pose
 	}
 
 	// infer anchor/reference res for each virtual sugar based on pose fold tree and variants.
-	reference_res_for_each_virtual_sugar_ = get_reference_res_for_each_virtual_sugar( pose, job_parameters_->working_moving_suite() );
+	reference_res_for_each_virtual_sugar_ = get_reference_res_for_each_virtual_sugar( pose );
 
 	if ( !initialize_parameters( pose ) ) return false;
 
@@ -181,9 +182,12 @@ is_sugar_virtual( pose::Pose const & pose, Size const & n ){
 bool
 StepWiseRNA_VirtualSugarSamplerWrapper::setup_sugar_modeling( pose::Pose const & pose, Size const moving_res, SugarModeling & sugar_modeling ){
 
+	using namespace core::chemical::rna;
+
 	if ( !is_sugar_virtual( pose, moving_res ) ) return false;
 
 	sugar_modeling = SugarModeling( moving_res, reference_res_for_each_virtual_sugar_[ moving_res ] );
+	if ( job_parameters_->working_force_syn_chi_res_list().has_value( moving_res ) ) sugar_modeling.moving_res_base_state = SYN;
 
 	// model bulge?
 	// this is assumed to be the residue immediately adjacent to the moving_residue,

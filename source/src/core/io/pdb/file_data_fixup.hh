@@ -62,7 +62,7 @@ convert_res_name( std::string const & name );
 std::string
 convert_atom_name( std::string const & res_name, std::string atom_name );
 
-void convert_nucleic_acid_residue_info_to_standard( 	utility::vector1< ResidueInformation > & rinfo );
+	void convert_nucleic_acid_residue_info_to_standard( 	utility::vector1< ResidueInformation > & rinfo, bool const force_RNA = false );
 
 bool is_potential_old_DNA( std::string const & res_name );
 
@@ -73,7 +73,7 @@ bool is_NA( std::string const & res_name );
 bool missing_O2prime( utility::vector1< AtomInformation > const & atoms );
 
 // @brief  This is a pretty good framework and could allow for other crazy nucleic acid atom name schemes.
-void convert_nucleic_acid_atom_names_to_standard( ResidueInformation & rinfo  );
+	void convert_nucleic_acid_atom_names_to_standard( ResidueInformation & rinfo, bool const force_RNA = false  );
 
 void convert_nucleic_acid_atom_name_to_standard( AtomInformation & atom_info );
 

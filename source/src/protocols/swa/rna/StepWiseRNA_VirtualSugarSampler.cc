@@ -688,10 +688,6 @@ StepWiseRNA_VirtualSugarSampler::virtualize_distal_partition( pose::Pose & viewe
 	bool const moving_res_partition    = partition( sugar_modeling_.moving_res );
 	bool const reference_res_partition = partition( sugar_modeling_.reference_res );
 	runtime_assert( moving_res_partition != reference_res_partition );
-	//	if ( sugar_modeling_.bulge_res > 0 ){
-		//		bool const bulge_res_partition     = partition( sugar_modeling_.bulge_res );
-		//		runtime_assert( bulge_res_partition == reference_res_partition );
-	//	}
 
 	for ( Size seq_num = 1; seq_num <= nres; seq_num++ ){
 		if ( seq_num == sugar_modeling_.moving_res ) continue;

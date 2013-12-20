@@ -435,6 +435,10 @@ void pose_from_pose(
 	FileDataOptions const & options
 );
 
+void
+fixup_rinfo_based_on_residue_type_set( 	utility::vector1< ResidueInformation > & rinfos,
+																			 	chemical::ResidueTypeSet const & residue_set );
+
 } // namespace pdb
 } // namespace io
 } // namespace core

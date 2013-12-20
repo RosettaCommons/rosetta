@@ -155,7 +155,7 @@ namespace monte_carlo {
 		utility::vector1< Size > const & moving_res = get_moving_res_from_full_model_info( pose );
 		if ( ! minimize_single_res_ ) stepwise_rna_modeler_->set_minimize_res( moving_res );
 		clear_constraints_recursively( pose );
-		
+
 		if ( native_pose_ ) {
 			superimpose_recursively_and_add_constraints( pose, *native_pose_, constraint_x0_, constraint_tol_ );
 		}

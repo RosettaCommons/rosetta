@@ -98,6 +98,8 @@ namespace rna {
 
 		void set_allow_syn_pyrimidine( bool const & setting ){ allow_syn_pyrimidine_ = setting; }
 
+		void set_syn_chi_res_list( utility::vector1< core::Size > const & setting ){ syn_chi_res_list_ = setting;}
+
 		void set_extra_chi( bool const & setting ){ extra_chi_ = setting; }
 
 		void set_use_phenix_geo( bool const & setting ){ use_phenix_geo_ = setting; }
@@ -181,15 +183,15 @@ namespace rna {
 		void set_minimizer_output_before_o2prime_pack( bool const & setting ){ minimizer_output_before_o2prime_pack_ = setting; }
 
 		void set_minimizer_rename_tag( bool const & setting ){ minimizer_rename_tag_ = setting; }
-		
-	  	void
-	    set_minimizer_extra_minimize_res( utility::vector1< core::Size > setting ){ minimizer_extra_minimize_res_ = setting; }
-		
-	  	void
-	  	set_minimizer_allow_variable_bond_geometry( bool const setting ){ minimizer_allow_variable_bond_geometry_ = setting; }
-		
-	  	void
-	  	set_minimizer_vary_bond_geometry_frequency( core::Real const setting ) { minimizer_vary_bond_geometry_frequency_ = setting; }
+
+		void
+		set_minimizer_extra_minimize_res( utility::vector1< core::Size > setting ){ minimizer_extra_minimize_res_ = setting; }
+
+		void
+		set_minimizer_allow_variable_bond_geometry( bool const setting ){ minimizer_allow_variable_bond_geometry_ = setting; }
+
+		void
+		set_minimizer_vary_bond_geometry_frequency( core::Real const setting ) { minimizer_vary_bond_geometry_frequency_ = setting; }
 
 
 		StepWiseRNA_JobParametersOP
@@ -206,7 +208,7 @@ namespace rna {
 
 		void initialize_variables();
 
-		void initialize_job_parameters( pose::Pose & pose );
+		void initialize_job_parameters_and_root( pose::Pose & pose );
 
 		void
 		do_residue_sampling( pose::Pose & pose, utility::vector1< PoseOP > & pose_list );
@@ -219,6 +221,9 @@ namespace rna {
 
 		void
 		add_to_pose_list( utility::vector1< pose::PoseOP > & pose_list, pose::Pose const & pose, std::string const pose_tag ) const;
+
+		void
+		setup_root_based_on_full_model_info( pose::Pose & pose, StepWiseRNA_JobParametersCOP & job_parameters );
 
 	private:
 
@@ -282,14 +287,13 @@ namespace rna {
 		bool sampler_assert_no_virt_sugar_sampling_;
 		bool sampler_try_sugar_instantiation_;
 		bool allow_base_pair_only_centroid_screen_;
-
-		// this is new, not in ERRASER (swa_rna_analytical_closure)
 		bool minimizer_perform_o2prime_pack_;
 		bool minimizer_output_before_o2prime_pack_;
 		bool minimizer_rename_tag_;
-		core::Real minimizer_vary_bond_geometry_frequency_;
-	  	bool minimizer_allow_variable_bond_geometry_;
-	  	utility::vector1< core::Size > minimizer_extra_minimize_res_;
+		bool minimizer_allow_variable_bond_geometry_;
+		Real minimizer_vary_bond_geometry_frequency_;
+		utility::vector1< core::Size > minimizer_extra_minimize_res_;
+		utility::vector1< core::Size > syn_chi_res_list_;
 
 		StepWiseRNA_MinimizerOP stepwise_rna_minimizer_;
 		kinematics::MoveMapOP minimize_move_map_;

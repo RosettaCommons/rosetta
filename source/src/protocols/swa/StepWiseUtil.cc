@@ -840,7 +840,7 @@ rotate( pose::Pose & pose, Matrix const M,
 	bool
 	residue_is_bulged( pose::Pose const & pose, Size const & resid ) {
 		boost::unordered_map < core::Size , core::Size > num_stacks = pose.get_stacking_map();
-		
+
 		if ( num_stacks[ resid ] < 2 ) {
 			return true;
 		}
@@ -1177,7 +1177,6 @@ rotate( pose::Pose & pose, Matrix const M,
 	get_number_missing_residue_connections( pose::Pose & pose ) {
 
 		using namespace core::pose::full_model_info;
-
 		utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map( pose );
 		utility::vector1< Size > const & cutpoint_open = const_full_model_info( pose ).cutpoint_open_in_full_model();
 		utility::vector1< Size > const & fixed_domain_map = const_full_model_info( pose ).fixed_domain_map();
@@ -1321,6 +1320,40 @@ rotate( pose::Pose & pose, Matrix const M,
 			ResidueTypeSet const & rsd_set( rsd->residue_type_set() );
 			ResidueType const & new_rsd_type( rsd_set.get_residue_type_with_variant_removed( rsd->type(), LOWER_TERMINUS ) );
 			rsd = new Residue( new_rsd_type, true );
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	find_root_without_virtual_ribose( kinematics::FoldTree const & f, pose::Pose const & pose ){
+		for ( Size n = 1; n <= f.nres(); n++ ){
+			if ( f.possible_root( n ) && !pose.residue_type( n ).has_variant_type( "VIRTUAL_RIBOSE" ) ){
+				return n;
+			}
+		}
+		utility_exit_with_message( "Fail: find_root_without_virtual_ribose" );
+		return 0;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	try_reroot_at_fixed_domain( pose::Pose & pose ){
+
+		using namespace core::pose::full_model_info;
+		kinematics::FoldTree f = pose.fold_tree();
+		utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map( pose );
+		Size new_root( 0 );
+		for ( Size n = 1; n <= f.nres(); n++ ){
+			if ( pose_domain_map[ n ] > 0 &&
+					 f.possible_root( n ) &&
+					 ( n == 1 || f.is_cutpoint( n - 1 ) ||
+						 pose_domain_map[ n - 1 ] != pose_domain_map[ n ] ) ){
+				new_root = n; break;
+			}
+		}
+		if ( new_root > 0 ){
+			f.reorder( new_root );
+			pose.fold_tree( f );
 		}
 	}
 
@@ -1603,6 +1636,8 @@ rotate( pose::Pose & pose, Matrix const M,
 		full_model_info.set_res_list( apply_numbering( residues_to_retain, original_res_list )  );
 		update_pdb_info_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering.
 
+		//		try_reroot_at_fixed_domain( pose );
+
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1880,8 +1915,8 @@ rotate( pose::Pose & pose, Matrix const M,
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 		utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
 		utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
-		
-		if ( fixed_domain_map[ res ] != 0 ) return;
+
+		if ( fixed_domain_map[ res_list[ res ] ] != 0 ) return;
 
 		if ( res > 1 &&
 				 res_list[ res ] - 1 == res_list[ res - 1 ] &&
@@ -2078,5 +2113,27 @@ rotate( pose::Pose & pose, Matrix const M,
 
 		return moving_chainbreak_res;
 	}
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	check_for_fixed_domain( pose::Pose const & pose,
+													utility::vector1< Size> const & partition_res ){
+		utility::vector1< Size > const domain_map = core::pose::full_model_info::get_fixed_domain_from_full_model_info_const( pose );
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
+		for ( Size i = 1; i <= partition_res.size(); i++ ){
+			if ( domain_map[ partition_res[ i ] ] > 0 ) return true;
+		}
+		return false;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	check_for_fixed_domain( pose::Pose const & pose ){
+		utility::vector1< Size > partition_res;
+		for ( Size i = 1; i <= pose.total_residue(); i++ ) partition_res.push_back( i );
+		return check_for_fixed_domain( pose, partition_res );
+	}
+
 }
 }

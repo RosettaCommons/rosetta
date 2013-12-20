@@ -206,7 +206,7 @@ namespace monte_carlo {
 				char newrestype = full_sequence[ res_to_add_in_full_model_numbering - 1 ];
 				choose_random_if_unspecified_nucleotide( newrestype );
 
-				TR << "I want to add: " << newrestype << " before " << res_to_build_off << std::endl;
+				TR.Debug << "I want to add: " << newrestype << " before " << res_to_build_off << std::endl;
 
 				chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
 
@@ -246,7 +246,7 @@ namespace monte_carlo {
 
 		viewer_pose = pose;
 
-		TR << TR.Blue << pose.fold_tree() << TR.Reset << std::endl;
+		TR << TR.Blue << pose.fold_tree() << TR.Reset;
 		TR << TR.Blue << pose.annotated_sequence() << TR.Reset << std::endl;
 
 		if ( start_added_residue_in_aform_ ){
@@ -259,7 +259,7 @@ namespace monte_carlo {
 
 		if ( suite_num > 0 ) rna_torsion_mover_->sample_near_suite_torsion( viewer_pose, suite_num, sample_range_large_);
 		if ( nucleoside_num > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( viewer_pose, nucleoside_num, sample_range_large_);
-		
+
 		clear_constraints_recursively( pose );
 
 		if ( native_pose_ ) {

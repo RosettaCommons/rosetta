@@ -10,8 +10,6 @@
 /// @file swa_monte_carlo.cc
 /// @author Rhiju Das (rhiju@stanford.edu)
 
-// Most of following needs to be pushed to its own class...
-
 // libRosetta headers
 #include <core/types.hh>
 
@@ -40,6 +38,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <basic/options/keys/swa.OptionKeys.gen.hh>
 #include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option_macros.hh>
@@ -75,6 +74,7 @@ OPT_KEY( Boolean, allow_skip_bulge )
 OPT_KEY( Boolean, erraser )
 OPT_KEY( Boolean, skip_deletions )
 OPT_KEY( Boolean, verbose_scores )
+OPT_KEY( Boolean, allow_variable_bond_geometry )
 OPT_KEY( Real, temperature )
 OPT_KEY( Real, add_delete_frequency )
 OPT_KEY( Real, just_min_after_mutation_frequency )
@@ -169,7 +169,6 @@ stepwise_monte_carlo()
 	// Following could go to a FullModelSetup class.
 	// read starting pose(s) from disk
 	utility::vector1< std::string > const & input_files = option[ in::file::s ]();
-
 	utility::vector1< pose::PoseOP > input_poses;
 	for ( Size n = 1; n <= input_files.size(); n++ ) 	input_poses.push_back( get_pdb_and_cleanup( input_files[ n ], rsd_set ) );
 	if ( option[ full_model::other_poses ].user() ) get_other_poses( input_poses, option[ full_model::other_poses ](), rsd_set );
@@ -187,14 +186,7 @@ stepwise_monte_carlo()
 
 	// actual pose to be sampled...
 	pose::Pose & pose = *input_poses[ 1 ];
-	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 800, 800 );
-
-//	Real const rmsd_weight = scorefxn->get_weight( swm_rmsd );
-//
-//	if ( rmsd_weight > 0 ) {
-//		scorefxn->set_weight( coordinate_constraint, rmsd_weight );
-//		scorefxn->set_weight( swm_rmsd, 0.001 );
-//	}
+	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500 );
 
 	RNA_StepWiseMonteCarlo stepwise_rna_monte_carlo ( scorefxn, native_pose, option[ constraint_x0 ](), option[ constraint_tol ]() );
 
@@ -212,7 +204,9 @@ stepwise_monte_carlo()
 	stepwise_rna_monte_carlo.set_allow_skip_bulge( option[ allow_skip_bulge ]() );
 	stepwise_rna_monte_carlo.set_temperature( option[ temperature ]() );
 	stepwise_rna_monte_carlo.set_extra_minimize_res( option[ extra_min_res ]() );
-
+	stepwise_rna_monte_carlo.set_syn_chi_res_list( option[ OptionKeys::swa::rna::force_syn_chi_res_list]() );
+	stepwise_rna_monte_carlo.set_bulge_res( option[ basic::options::OptionKeys::swa::rna::bulge_res ]() );
+	stepwise_rna_monte_carlo.set_minimizer_allow_variable_bond_geometry( option[ allow_variable_bond_geometry ]() );
 	// following can be simplified if we make corrected_geo default to true from command-line.
 	stepwise_rna_monte_carlo.set_use_phenix_geo(  option[ corrected_geo ].user()  ? option[corrected_geo ]() : true );
 
@@ -272,6 +266,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( temperature, "Monte Carlo temperature", 1.0 );
 	NEW_OPT( add_delete_frequency, "Frequency of add/delete vs. resampling", 0.5 );
 	NEW_OPT( minimize_single_res_frequency, "Frequency with which to minimize the residue that just got rebuilt, instead of all", 0.0 );
+	NEW_OPT( allow_variable_bond_geometry, "In 10% of moves, let bond angles & distance change", true );
 	NEW_OPT( switch_focus_frequency, "Frequency with which to switch the sub-pose that is being modeled", 0.5 );
 	NEW_OPT( just_min_after_mutation_frequency, "After a mutation, how often to just minimize (without further sampling the mutated residue)", 0.5 );
 	NEW_OPT( sample_res, "specify particular residues that should be rebuilt (as opposed to all missing in starting PDB)", blank_size_vector );

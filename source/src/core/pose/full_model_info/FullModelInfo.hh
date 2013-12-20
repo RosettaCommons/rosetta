@@ -9,8 +9,7 @@
 
 /// @file   core/scoring/methods/FullModelInfo.hh
 /// @brief  Statistically derived rotamer pair potential class implementation
-/// @author Phil Bradley
-/// @author Andrew Leaver-Fay
+/// @author Rhiju Das
 
 #ifndef INCLUDED_core_pose_full_model_info_FullModelInfo_hh
 #define INCLUDED_core_pose_full_model_info_FullModelInfo_hh

@@ -23,6 +23,7 @@
 #include <protocols/swa/StepWiseUtil.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
@@ -32,6 +33,7 @@
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 #include <ObjexxFCL/string.functions.hh>
+#include <utility/string_util.hh>
 
 using namespace core;
 
@@ -100,16 +102,17 @@ RNA_StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 	bool success( true );
 	Real const missing_weight_interval = max_missing_weight_ / cycles_;
 	//missing_weight_interval /= cycles_;
-	Real missing_weight = missing_weight_interval;
+	Real missing_weight( missing_weight_interval ), before_move_score( 0.0 ), after_move_score( 0.0 );
 
 	while (  k <= cycles_ ){
 		//scorefxn_->set_weight( missing_res, missing_weight );
 		//clear_constraints_recursively( pose );
 
 		if ( success ) {
-			TR << std::endl << TR.Blue << "Embarking on cycle " << k << " of " << cycles_ << TR.Reset << std::endl;
-			show_scores( pose, "Before-move score:" );
-			TR << "Weight of missing residue score term is " << missing_weight << std::endl;
+		  TR << std::endl << TR.Blue << "Embarking on cycle " << k << " of " << cycles_ << TR.Reset << std::endl;
+			before_move_score = show_scores( pose, "Before-move score:" );
+			TR << "Modeling: " << make_tag_with_dashes(get_res_list_from_full_model_info( pose ) ) << std::endl;
+			if ( missing_weight != 0.0 ) TR << "Weight of missing residue score term is " << missing_weight << std::endl;
 		}
 
 		if ( RG.uniform() < switch_focus_frequency_ ) switch_focus_among_poses_randomly( pose );
@@ -123,7 +126,8 @@ RNA_StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 
 		if ( !success ) continue;
 		k++;
-		show_scores( pose, "After-move score:" );
+		after_move_score = show_scores( pose, "After-move score:" );
+		TR << "Score changed from: " << before_move_score << " to  " << after_move_score << std::endl;
 
 		scoring::EMapVector & energy_map = pose.energies().total_energies();
 		Real const chainbreak_score = energy_map[linear_chainbreak];
@@ -171,9 +175,10 @@ RNA_StepWiseMonteCarlo::initialize_movers(){
 	stepwise_rna_modeler->set_kic_sampling_if_relevant( erraser_ );
 	stepwise_rna_modeler->set_num_random_samples( num_random_samples_ );
 	stepwise_rna_modeler->set_num_pose_minimize( 1 );
-	stepwise_rna_modeler->set_minimizer_allow_variable_bond_geometry( true );
+	stepwise_rna_modeler->set_minimizer_allow_variable_bond_geometry( minimizer_allow_variable_bond_geometry_ );
 	stepwise_rna_modeler->set_minimizer_vary_bond_geometry_frequency( 0.1 );
 	stepwise_rna_modeler->set_minimizer_extra_minimize_res( extra_minimize_res_ );
+	stepwise_rna_modeler->set_syn_chi_res_list( syn_chi_res_list_ );
 
 	// maybe RNA_AddMover could just hold a copy of RNA_ResampleMover...
 	rna_add_mover_ = new RNA_AddMover( scorefxn_, native_pose_, constraint_x0_, constraint_tol_ );
@@ -190,6 +195,7 @@ RNA_StepWiseMonteCarlo::initialize_movers(){
 	rna_add_or_delete_mover_->set_sample_res( sample_res_ );
 	rna_add_or_delete_mover_->set_skip_deletions( skip_deletions_ ); // for testing only
 	rna_add_or_delete_mover_->set_disallow_skip_bulge( !allow_skip_bulge_ );
+	rna_add_or_delete_mover_->set_bulge_res( bulge_res_ );
 
 	rna_resample_mover_ = new RNA_ResampleMover( stepwise_rna_modeler->clone_modeler(), native_pose_, constraint_x0_, constraint_tol_ );
 	rna_resample_mover_->set_just_min_after_mutation_frequency( just_min_after_mutation_frequency_ );
@@ -224,14 +230,12 @@ RNA_StepWiseMonteCarlo::switch_focus_among_poses_randomly( pose::Pose & pose ) c
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
+Real
 RNA_StepWiseMonteCarlo::show_scores( core::pose::Pose & pose,
 																		 std::string const tag ){
-
-	TR << tag << " " << ( *scorefxn_ )( pose ) << std::endl;
-	if ( verbose_scores_ ) {
-		scorefxn_->show( TR, pose );
-	}
+	//	TR << tag << " " << ( *scorefxn_ )( pose ) << std::endl;
+	if ( verbose_scores_ ) scorefxn_->show( TR, pose );
+	return (*scorefxn_)( pose );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -308,6 +308,13 @@ namespace swa {
 	utility::vector1< Size >
 	figure_out_moving_chain_break_res( pose::Pose const & pose, kinematics::MoveMap const & mm );
 
+	bool
+	check_for_fixed_domain( pose::Pose const & pose,
+													utility::vector1< Size> const & partition_res );
+
+	bool
+	check_for_fixed_domain( pose::Pose const & pose );
+
 
 }
 }

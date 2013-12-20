@@ -379,7 +379,6 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void StepWiseRNA_JobParameters::set_is_working_res( utility::vector1< core::Size > const & setting ){
 		is_working_res_ = setting;
-
 		update_working_sequence();
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
@@ -511,7 +510,8 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseRNA_JobParameters::set_force_syn_chi_res_list( utility::vector1< core::Size > const & setting ){
-		force_syn_chi_res_list_ = setting;
+		force_syn_chi_res_list_ =
+ setting;
 		working_force_syn_chi_res_list_ = apply_full_to_sub_mapping( force_syn_chi_res_list_, is_working_res_, full_to_sub_ );
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////

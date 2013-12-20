@@ -213,6 +213,7 @@ StepWiseRNA_Modeler::operator=( StepWiseRNA_Modeler const & src )
 	minimizer_vary_bond_geometry_frequency_ = src.minimizer_vary_bond_geometry_frequency_;
 	minimizer_allow_variable_bond_geometry_ = src.minimizer_allow_variable_bond_geometry_;
 	minimizer_extra_minimize_res_ = src.minimizer_extra_minimize_res_;
+	syn_chi_res_list_ = src.syn_chi_res_list_;
 	return *this;
 }
 
@@ -240,7 +241,7 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 	using namespace core::scoring;
 	using namespace protocols::swa::rna;
 
-	initialize_job_parameters( pose );
+	initialize_job_parameters_and_root( pose );
 
 	utility::vector1< PoseOP > pose_list;
 	do_residue_sampling( pose, pose_list );
@@ -252,9 +253,10 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 
 //////////////////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_Modeler::initialize_job_parameters( pose::Pose & pose ){
+StepWiseRNA_Modeler::initialize_job_parameters_and_root( pose::Pose & pose ){
 	if ( job_parameters_ ) return;
 	job_parameters_ = setup_job_parameters_for_swa_with_full_model_info( moving_res_list_, pose );
+	setup_root_based_on_full_model_info( pose, job_parameters_ );
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -367,12 +369,12 @@ StepWiseRNA_Modeler::do_minimizing( pose::Pose & pose, utility::vector1< PoseOP 
 	stepwise_rna_minimizer_->set_minimize_and_score_sugar ( minimize_and_score_sugar_ );
 	stepwise_rna_minimizer_->set_user_input_VDW_bin_screener ( user_input_VDW_bin_screener_ );
 	stepwise_rna_minimizer_->set_output_minimized_pose_list( output_minimized_pose_list_ );
-	
+
 	if ( minimize_move_map_ ) {
 		stepwise_rna_minimizer_->set_move_map_list( make_vector1( *minimize_move_map_ ) );
 		stepwise_rna_minimizer_->set_allow_insert( allow_insert_ );
 	}
-	
+
 	stepwise_rna_minimizer_->set_perform_o2prime_pack(  minimizer_perform_o2prime_pack_ );
 	stepwise_rna_minimizer_->set_output_before_o2prime_pack( minimizer_output_before_o2prime_pack_ );
 	stepwise_rna_minimizer_->set_rename_tag( minimizer_rename_tag_ );
@@ -462,9 +464,6 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 		Size floating_base_anchor_res( 0 );
 		if ( floating_base ){
 			floating_base_anchor_res = get_anchor_res( rebuild_res, pose );
-			//if ( floating_base_anchor_res == rebuild_res + 2 ) floating_base_bulge_res = rebuild_res + 1;
-			//			if ( floating_base_anchor_res == rebuild_res - 2 ) floating_base_bulge_res = rebuild_res - 1;
-			//TR << TR.Red << "Floating_base bulge_res " << floating_base_bulge_res << TR.Reset << std::endl;
 			partition_definition = get_partition_definition_floating_base( pose, rebuild_res );
 		} else {
 			partition_definition = get_partition_definition( pose, rebuild_suite );
@@ -585,12 +584,14 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 		stepwise_rna_job_parameters_setup.apply();
 		job_parameters = stepwise_rna_job_parameters_setup.job_parameters();
 		job_parameters->set_working_native_pose( get_native_pose() );
+		job_parameters->set_force_syn_chi_res_list( syn_chi_res_list_ ); // will get automatically converted to working numbering.
+
 		TR.Debug << "past job_parameters initialization " << std::endl;
 	}
 
 	// If setup_job_parameters_for_swa() is called, then the user has not supplied their own StepWiseRNA_JobParameters object to the modeler. This means that StepWiseRNAMinimizer will not be generating a move map on its own, so we need to supply it with an AllowInsert object in order to handle the possibility of variable bond geometries.
 	allow_insert_ = new toolbox::AllowInsert(pose); // Default constructor that allows everything to move
-	
+
 	// user input minimize_res...
 	if ( minimize_res_.size() > 0 ) { // specifying more residues which could move during the minimize step -- standard for SWM.
 		fixed_res_.clear();
@@ -622,7 +623,7 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 
 	if ( fixed_res_.size() > 0 ) 	job_parameters->set_working_fixed_res( fixed_res_ ); // is this necessary if we just supply movemap?
 	job_parameters->set_working_native_alignment( fixed_res_ );
-	
+
 	//Now we perform the additional task of updating the AllowInsert object based on any optional additional residues that the user wants minimized, as specified in minimizer_extra_minimize_res. The intended mode of operation is that the user decides on extra_minimize_res at the high level for an entire SWM run, and then changes minimize_res_ to control a specific minimization event.
 	update_allow_insert_with_extra_minimize_res( pose, allow_insert_, minimizer_extra_minimize_res_ );
 
@@ -692,6 +693,58 @@ StepWiseRNA_Modeler::add_to_pose_list( utility::vector1< core::pose::PoseOP > & 
 	core::pose::PoseOP pose_op = pose.clone();
 	tag_into_pose( *pose_op, pose_tag );
 	pose_list.push_back( pose_op );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_Modeler::setup_root_based_on_full_model_info( pose::Pose & pose, StepWiseRNA_JobParametersCOP & job_parameters ){
+
+	using namespace core::kinematics;
+
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
+	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+	std::string const full_sequence = full_model_info.full_sequence();
+
+	utility::vector1< Size > root_partition_res;
+	if ( job_parameters_->working_moving_res()  > 0 ){
+		ObjexxFCL::FArray1D < bool > const & partition_definition = job_parameters->partition_definition();
+		utility::vector1< Size > partition_res0, partition_res1;
+		for ( Size i = 1; i <= pose.total_residue(); i++ ){
+			if ( partition_definition( i ) ) partition_res0.push_back( i );
+			else partition_res1.push_back( i );
+		}
+		if ( partition_res0.size() == partition_res1.size() ) return;
+
+		bool const root_partition = ( partition_res0.size() > partition_res1.size() );
+		root_partition_res = root_partition ? partition_res0 : partition_res1;
+	} else {
+		for ( Size i = 1; i <= pose.total_residue(); i++ ) root_partition_res.push_back( i );
+	}
+
+	Size new_root( 0 ), possible_root( 0 );
+	for ( Size n = 1; n <= root_partition_res.size(); n++ ){
+		Size const i = root_partition_res[ n ];
+		if ( !pose.fold_tree().possible_root( i ) ) continue;
+		if ( res_list[ i ] == 1 ||
+				 cutpoint_open_in_full_model.has_value( res_list[ i ] - 1 ) ){ // great, nothing will ever get prepended here.
+			new_root = i; break;
+		}
+		if ( res_list[ i ] == full_sequence.size() ||
+				 cutpoint_open_in_full_model.has_value( res_list[ i ] ) ){ // great, nothing will ever get appended here.
+			new_root = i; break;
+		}
+		if ( possible_root == 0) possible_root = i;
+	}
+	if ( new_root == 0 ){
+		runtime_assert( possible_root > 0 );
+		new_root = possible_root;
+	}
+
+	FoldTree f = pose.fold_tree();
+	if ( new_root == f.root() ) return;
+	f.reorder( new_root );
+	pose.fold_tree( f );
 }
 
 

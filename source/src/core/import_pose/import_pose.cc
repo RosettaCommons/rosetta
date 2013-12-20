@@ -118,7 +118,7 @@ read_additional_pdb_data(
 	//TR.Debug << "Setting PDBinfo-labels from PDB file." << std::endl;
 	for ( i=1; i<= lines.size(); ++i ) {
 		std::string const & line( lines[i] );
-		if( line.size() > 21 && line.substr(0,21) == "REMARK PDBinfo-LABEL:" ){ 
+		if( line.size() > 21 && line.substr(0,21) == "REMARK PDBinfo-LABEL:" ){
 			//Parse and split string
 			utility::vector1 < std::string > remark_values;
 			utility::vector1 < std::string > tmp_remark_values = utility::string_split(line, ' ');
@@ -133,7 +133,7 @@ read_additional_pdb_data(
 			//Check that we have at least two elements left ([1]=index, [2-n]=PDBinfo-labels)
 			if (remark_values.size() > 1){
 				core::Size tmp_ndx=atoi(remark_values[1].c_str());
-				if ( tmp_ndx <= pose.total_residue() ) { 
+				if ( tmp_ndx <= pose.total_residue() ) {
 					for ( Size j=2; j<= remark_values.size(); ++j ) {
 						pose.pdb_info()->add_reslabel(tmp_ndx,remark_values[j]);
 					}
@@ -193,6 +193,7 @@ pose_from_pdb(
 )
 {
 	ImportPoseOptions options;
+	if ( residue_set.name() == core::chemical::RNA ) options.set_rna( true );
 	pose_from_pdb(pose, residue_set, filenames_string, options, read_fold_tree);
 }
 
@@ -321,6 +322,7 @@ poses_from_pdbs(
 	using core::pose::Pose;
 
 	ImportPoseOptions options;
+	if ( residue_set.name() == core::chemical::RNA ) options.set_rna( true );
 
 	vector1< Pose > poses;
 	typedef vector1< string >::const_iterator vec_it;
@@ -400,6 +402,7 @@ pose_from_pdb(
 )
 {
 	ImportPoseOptions options;
+	if ( residue_set.name() == core::chemical::RNA ) options.set_rna( true );
 	pose_from_pdb( poses, residue_set, filename, options, read_fold_tree );
 }
 
@@ -519,6 +522,7 @@ pose_from_pdbstring(
 	std::string const & filename
 ){
 	ImportPoseOptions options;
+	if ( residue_set.name() == core::chemical::RNA ) options.set_rna( true );
 	pose_from_pdbstring( pose, pdbcontents, residue_set, options, filename );
 }
 
@@ -570,6 +574,7 @@ void build_pose(
 )
 {
 	ImportPoseOptions options; // read from the command line
+	if ( residue_set.name() == core::chemical::RNA ) options.set_rna( true );
 	build_pose( fd, pose, residue_set, options);
 }
 

@@ -92,17 +92,28 @@ namespace monte_carlo {
 
 		void set_sample_res( utility::vector1<Size> const & setting ){ sample_res_ = setting; }
 		utility::vector1<Size> sample_res() const{ return sample_res_; }
-		
+
+		void set_bulge_res( utility::vector1<Size> const & setting ){ bulge_res_ = setting; }
+		utility::vector1<Size> bulge_res() const{ return bulge_res_; }
+
 		void set_extra_minimize_res( utility::vector1< core::Size > const & setting ){ extra_minimize_res_ = setting; }
 
 		void set_allow_skip_bulge( bool const & setting ){ allow_skip_bulge_ = setting; }
 		bool allow_skip_bulge() const{ return allow_skip_bulge_; }
 
+		void set_syn_chi_res_list( utility::vector1< core::Size > const & setting ){ syn_chi_res_list_ = setting;}
+
+		void
+		set_minimizer_allow_variable_bond_geometry( bool const setting ){ minimizer_allow_variable_bond_geometry_ = setting; }
+
+		void
+		set_minimizer_vary_bond_geometry_frequency( core::Real const setting ) { minimizer_vary_bond_geometry_frequency_ = setting; }
+
 	private:
 
 		void initialize_movers();
 
-		void show_scores( core::pose::Pose & pose, std::string const tag );
+		Real show_scores( core::pose::Pose & pose, std::string const tag );
 
 		bool
 		switch_focus_among_poses_randomly( pose::Pose & pose ) const;
@@ -123,10 +134,13 @@ namespace monte_carlo {
 		core::Real add_delete_frequency_;
 		core::Real minimize_single_res_frequency_;
 		bool minimize_single_res_;
+		bool minimizer_allow_variable_bond_geometry_;
+		Real minimizer_vary_bond_geometry_frequency_;
 		core::Real switch_focus_frequency_;
 		core::Real just_min_after_mutation_frequency_;
 		core::Real temperature_;
-		utility::vector1<Size> sample_res_;
+		utility::vector1< Size > sample_res_;
+		utility::vector1< Size > bulge_res_; // disallow addition of these.
 		core::Real constraint_x0_;
 		core::Real constraint_tol_;
 
@@ -141,6 +155,7 @@ namespace monte_carlo {
 
 		core::pose::PoseOP native_pose_;
 		utility::vector1< core::Size > extra_minimize_res_;
+		utility::vector1< core::Size > syn_chi_res_list_;
 	};
 
 } //monte_carlo

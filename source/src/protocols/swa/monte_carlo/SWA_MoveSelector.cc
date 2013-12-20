@@ -106,14 +106,34 @@ namespace monte_carlo {
 		return partition_res;
 	}
 
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// don't break up any fixed domains by a split.
 	bool
-	SWA_MoveSelector::check_for_fixed_domain( pose::Pose const & pose,
-																						utility::vector1< Size> const & partition_res ){
-		utility::vector1< Size > const domain_map = core::pose::full_model_info::get_fixed_domain_from_full_model_info_const( pose );
-		for ( Size i = 1; i <= partition_res.size(); i++ ){
-			if ( domain_map[ partition_res[ i ] ] > 0 ) return true;
+	partition_splits_a_fixed_domain( utility::vector1< Size > const & partition_definition,
+																	 utility::vector1< Size > const & domain_map ){
+		// parse out which residues go into each domain.
+		Size num_domains( 0 );
+		utility::vector1< Size > blank_vector;
+		utility::vector1< utility::vector1< Size > > all_domain_res;
+		for ( Size i = 1; i <= domain_map.size(); i++ ){
+			Size const & domain = domain_map[ i ];
+			for ( Size n = all_domain_res.size(); n < domain; n++ ) all_domain_res.push_back( blank_vector );
+			if ( domain > 0 ) all_domain_res[ domain ].push_back( i );
 		}
+		for ( Size n = 1; n <= all_domain_res.size(); n++ ){
+			// for this domain, check if all residues are in a single partition.
+			bool in_partition_0( false ), in_partition_1( false );
+			for ( Size k = 1; k <= all_domain_res[ n ].size(); k++ ){
+				if ( partition_definition[ all_domain_res[ n ][ k ] ] ) {
+					in_partition_0 = true;
+				} else {
+					in_partition_1 = true;
+				}
+				if ( in_partition_0 && in_partition_1 ) return true;
+			}
+		}
+
 		return false;
 	}
 
@@ -137,7 +157,9 @@ namespace monte_carlo {
 			if ( !pose.fold_tree().is_cutpoint( i ) &&
 					 ( domain_map[ i ] != domain_map[ i+1 ] ||
 						 domain_map[ i ] == 0 || domain_map [ i+1 ] == 0 ) ){
+
 				partition_definition = get_partition_definition( pose, i /*suite*/ );
+				if ( partition_splits_a_fixed_domain( partition_definition, domain_map ) ) continue;
 
 				partition_res1 = get_partition_res( partition_definition, true );
 				partition_res2 = get_partition_res( partition_definition, false );
@@ -156,7 +178,10 @@ namespace monte_carlo {
 		// now look at jumps. Note that, currently, additions by jump are only for single residues, so only
 		// split cases in which single residues are deleted.
 		for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
+
 			partition_definition = get_partition_definition_by_jump( pose, n );
+			if ( partition_splits_a_fixed_domain( partition_definition, domain_map ) ) continue;
+
 			partition_res1 = get_partition_res( partition_definition, true );
 			partition_res2 = get_partition_res( partition_definition, false );
 			if ( partition_res1.size() == 1 && check_for_fixed_domain( pose, partition_res2 ) ){

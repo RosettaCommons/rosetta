@@ -111,7 +111,7 @@ convert_atom_name( std::string const & res_name, std::string atom_name )
 //  but actually easier to do it later when we actually are instantiating ResidueType and have Rosetta's
 //  ideal coordinates.
 void
-convert_nucleic_acid_residue_info_to_standard( 	utility::vector1< ResidueInformation > & all_rinfo ){
+convert_nucleic_acid_residue_info_to_standard( 	utility::vector1< ResidueInformation > & all_rinfo, bool const force_RNA /* = false*/ ){
 
 	// following is to show warnings or cap number.
 	static Size nfix( 0 );
@@ -126,7 +126,7 @@ convert_nucleic_acid_residue_info_to_standard( 	utility::vector1< ResidueInforma
 		std::string const original_name = rinfo.resName;
 
 		// first establish if this is DNA or RNA (or something else)
-		if ( is_potential_old_DNA( rinfo.resName ) && missing_O2prime( rinfo.atoms ) ) 	{
+		if ( !force_RNA && is_potential_old_DNA( rinfo.resName ) && missing_O2prime( rinfo.atoms ) ) 	{
 			rinfo.resName.replace( 1, 1, "D" ); // A --> dA
 			if ( ++nfix <= max_fix || show_all_fixup ) TR << "Converting residue name " <<  original_name <<  " to " << rinfo.resName << std::endl;
 			for ( Size n = 1 ; n <= rinfo.atoms.size(); n++ ) rinfo.atoms[ n ].resName = rinfo.resName;
@@ -139,7 +139,7 @@ convert_nucleic_acid_residue_info_to_standard( 	utility::vector1< ResidueInforma
 		}
 
 		// Now apply atom mapping.
-		if ( is_NA( rinfo.resName ) )	convert_nucleic_acid_atom_names_to_standard( rinfo );
+		if ( is_NA( rinfo.resName ) )	convert_nucleic_acid_atom_names_to_standard( rinfo, force_RNA );
 
 	}
 
@@ -197,7 +197,7 @@ missing_O2prime( utility::vector1< AtomInformation > const & atoms ){
 //////////////////////////////////////////////////////////////////////////////////////////
 // @brief  This is a pretty good framework and could allow for other crazy nucleic acid atom name schemes.
 void
-convert_nucleic_acid_atom_names_to_standard( ResidueInformation & rinfo ){
+convert_nucleic_acid_atom_names_to_standard( ResidueInformation & rinfo, bool const force_RNA /*= false*/ ){
 
 	// following is to show warnings or cap number.
 	static Size nfix( 0 );

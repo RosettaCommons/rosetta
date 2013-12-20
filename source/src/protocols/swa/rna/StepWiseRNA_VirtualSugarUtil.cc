@@ -275,6 +275,7 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 		utility::vector1< utility::vector1< Size > > possible_reference_res_lists;
 
 		TR.Debug << "FIGURING OUT ANCHOR RES " << std::endl;
+		TR.Debug << pose.annotated_sequence() << std::endl;
 		TR.Debug << pose.fold_tree() << std::endl;
 
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
@@ -297,7 +298,7 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 			Size virt_sugar_res;
 			for ( Size i = 1; i <= num_virtual_sugar_res; i++ ){
 				virt_sugar_res = virtual_sugar_res[i];
-				if ( reference_res_for_each_virtual_sugar[ virt_sugar_res  ] == 0 &&
+				if ( reference_res_for_each_virtual_sugar[ virt_sugar_res ] == 0 &&
 						 possible_reference_res_lists[ i ] .size() == 1 ){
 					found_reference_res = possible_reference_res_lists[ i ][ 1 ];
 					reference_res_for_each_virtual_sugar[ virt_sugar_res ] = found_reference_res;
@@ -310,13 +311,13 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 			// the sugar cannot be an anchor for any other res -- an *assumption*.
 			// eliminate from the list of possibilities
 			for ( Size i = 1; i <= num_virtual_sugar_res; i++ ){
-				utility::vector1< Size > const & possible_reference_res_list = possible_reference_res_lists[ i ];
-				utility::vector1< Size > new_list;
-				for ( Size k = 1; k <= possible_reference_res_list.size(); k++ ){
-					if ( /*possible_reference_res_list[k] != found_reference_res &&*/
-							 possible_reference_res_list[k] != virt_sugar_res )  new_list.push_back( possible_reference_res_list[k] );
-				}
-				possible_reference_res_lists[i] = new_list;
+			 	utility::vector1< Size > const & possible_reference_res_list = possible_reference_res_lists[ i ];
+			 	utility::vector1< Size > new_list;
+			 	for ( Size k = 1; k <= possible_reference_res_list.size(); k++ ){
+			 		if ( /*possible_reference_res_list[k] != found_reference_res &&*/
+							possible_reference_res_list[k] != virt_sugar_res )  new_list.push_back( possible_reference_res_list[k] );
+			 	}
+			 	possible_reference_res_lists[i] = new_list;
 			}
 
 		}
@@ -329,6 +330,28 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< Size >
+	get_possible_reference_res_list_from_pose_without_fold_tree( Size const virtual_sugar_res,
+																															 pose::Pose const & pose,
+																															 Size const  moving_suite /* for old-school poses without jumps already setup*/){
+		utility::vector1< Size > possible_reference_res_list;
+		Size possible_reference_res( 0 );
+		possible_reference_res = look_for_non_jump_reference_to_previous( virtual_sugar_res, pose, moving_suite );
+		if ( possible_reference_res == 0 ) possible_reference_res = look_for_jumps_to_previous( virtual_sugar_res, pose, true /*force_upstream*/ );
+		if ( possible_reference_res > 0 ) possible_reference_res_list.push_back( possible_reference_res );
+
+		possible_reference_res = look_for_non_jump_reference_to_next( virtual_sugar_res, pose, moving_suite );
+		if ( possible_reference_res == 0 ) possible_reference_res = look_for_jumps_to_next( virtual_sugar_res, pose, true /*force_upstream*/ );
+		if ( possible_reference_res > 0 ) possible_reference_res_list.push_back( possible_reference_res );
+
+		TR << pose.fold_tree() << std::endl;
+		TR << "ASSUMING MOVING_SUITE " << moving_suite << std::endl;
+		TR << "REFERENCE_RES_LIST FOR " << virtual_sugar_res << " is " << possible_reference_res_list << std::endl;
+
+		return possible_reference_res_list;
+	}
+
 	////////////////////////////////////////////////////////////////
 	// Following is seriously hacky. Must be a better way. -- Rhiju
 	utility::vector1< Size >
@@ -337,21 +360,17 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 																	 bool const check_for_non_jump /* for old-school poses without jumps already setup */,
 																	 Size const  moving_suite /* for old-school poses without jumps already setup*/){
 
+		if ( check_for_non_jump ) return get_possible_reference_res_list_from_pose_without_fold_tree( virtual_sugar_res, pose, moving_suite );
+
 		utility::vector1< Size > possible_reference_res_list;
 		Size possible_reference_res( 0 );
-
-		if ( check_for_non_jump ) possible_reference_res = look_for_non_jump_reference_to_previous( virtual_sugar_res, pose, moving_suite );
-		if ( possible_reference_res == 0 ) possible_reference_res = look_for_jumps_to_previous( virtual_sugar_res, pose, true /*force_upstream*/ );
-		if ( possible_reference_res == 0 ) possible_reference_res = look_for_jumps_to_previous( virtual_sugar_res, pose, false /*force_upstream*/ );
+		possible_reference_res = look_for_jumps_to_previous( virtual_sugar_res, pose, false /*force_upstream*/ );
 		if ( possible_reference_res > 0 ) possible_reference_res_list.push_back( possible_reference_res );
 
-		possible_reference_res = 0;
-		if ( check_for_non_jump ) possible_reference_res = look_for_non_jump_reference_to_next( virtual_sugar_res, pose, moving_suite );
-		if ( possible_reference_res == 0 ) possible_reference_res = look_for_jumps_to_next( virtual_sugar_res, pose, true /*force_upstream*/ );
-		if ( possible_reference_res == 0 ) possible_reference_res = look_for_jumps_to_next( virtual_sugar_res, pose, false /*force_upstream*/ );
+		possible_reference_res = look_for_jumps_to_next( virtual_sugar_res, pose, false /*force_upstream*/ );
 		if ( possible_reference_res > 0 ) possible_reference_res_list.push_back( possible_reference_res );
 
-		TR.Debug << "REFERENCE_RES_LIST FOR " << virtual_sugar_res << " is " << possible_reference_res_list << std::endl;
+		TR << "REFERENCE_RES_LIST FOR " << virtual_sugar_res << " is " << possible_reference_res_list << std::endl;
 
 		return possible_reference_res_list;
 	}
@@ -365,6 +384,12 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 		Size i = virtual_sugar_res - 1;
 		while ( i >= 1 ) { // look for jumps with reference residue 'upstream'
 			Size const jump_nr = pose.fold_tree().jump_nr( i, virtual_sugar_res );
+
+			// argh debugging.
+			//			TR << "CHECKING virtual_sugar_res " << virtual_sugar_res << " to i " << i << "  JUMP_NR " << jump_nr;
+			//			if ( jump_nr > 0 ) TR << " UPSTREAM RES " <<  pose.fold_tree().upstream_jump_residue( jump_nr )<< "  DOWNSTREAM_RES " << pose.fold_tree().downstream_jump_residue( jump_nr );
+			//			TR << std::endl;
+
 			if ( jump_nr > 0 && (!force_upstream || pose.fold_tree().upstream_jump_residue( jump_nr ) == i ) ) {
 				return i;
 			}
