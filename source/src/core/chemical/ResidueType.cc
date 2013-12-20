@@ -522,7 +522,7 @@ ResidueType::atom_name( Size const index ) const
 Size
 ResidueType::atom_base( Size const atomno ) const
 {
-	//PyAssert((atomno > 0) && (atomno < natoms()), "ResidueType::atom_base( Size const atomno ): atomno is not in this ResidueType!");
+	PyAssert((atomno > 0) && (atomno <= ordered_atoms_.size()), "ResidueType::atom_base( Size const atomno ): atomno is not in this ResidueType!");
 	return graph_[ordered_atoms_[atomno]].atom_base();
 
 }
@@ -531,7 +531,7 @@ ResidueType::atom_base( Size const atomno ) const
 Size
 ResidueType::abase2( Size const atomno ) const
 {
-	PyAssert((atomno > 0) && (atomno <=  natoms()), "ResidueType::abase2( Size const atomno ): atomno is not in this ResidueType!");
+	PyAssert((atomno > 0) && (atomno <=  ordered_atoms_.size()), "ResidueType::abase2( Size const atomno ): atomno is not in this ResidueType!");
 	return graph_[ordered_atoms_[atomno]].abase2();
 }
 

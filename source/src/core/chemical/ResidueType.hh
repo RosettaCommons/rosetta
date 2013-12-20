@@ -23,7 +23,7 @@
 /// is controlled through PatchOperations.cc.  If the residue_type of a residue is modified, the indices of atoms and
 /// mmatoms and everything associated with those indices must be redefined.  This reordering of indices is taken care
 /// of with the function reorder_primary_data().
-///�
+///
 /// Setting of primary data and then reordering is important.  Primary data for the following are described:
 ///
 /// Atoms: Setting of atoms includes indexing the atoms into vectors, saving their names into vectors/maps, saving the
@@ -1026,36 +1026,36 @@ public:
 		std::string const & stub_atom2,
 		std::string const & stub_atom3
 	);
-    
+
     //////////////////////////////////////////////////////////////////////
 	/////////////////////////GRAPHS/////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
     const HeavyAtomGraph
     heavy_atoms();
-    
+
     const AcceptorAtomGraph
     acceptor_atoms();
-    
+
     const HeavyAtomWithPolarHydrogensGraph
     heavy_atom_with_polar_hydrogens();
-    
+
     const HeavyAtomWithHydrogensGraph
     heavy_atom_with_hydrogens();
-    
+
     const HydrogenAtomGraph
     hydrogens();
-    
+
     const PolarHydrogenGraph
     polar_hydrogens();
-    
+
     const APolarHydrogenGraph
     apolar_hydrogens();
-    
+
     const AromaticAtomGraph
     aromatic_atoms();
-    
-    
-    
+
+
+
 	//////////////////////////////////////////////////////////////////////
 	/////////////////////////residues/////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -1229,10 +1229,10 @@ public:
 
 	/// @brief  Check if atom is virtual.
 	bool is_virtual( Size const & atomno ) const;
-	
+
     /// @brief  Check if residue is 'VIRTUAL_RESIDUE'
 	bool is_virtual_residue() const;
-	
+
     /// @brief is an adduct-modified residue?
 	bool is_adduct() const { return is_adduct_; }
 
@@ -1728,8 +1728,8 @@ private:
     // Graph structures for residuetype
 	ResidueGraph graph_; // Stores Atoms and Bonds as Nodes and Edges. First as duplicate material, then on its own.
 
-    
-    
+
+
 	/// vector of atoms:
 	/**
 		 \note not pointers but Atom objects
