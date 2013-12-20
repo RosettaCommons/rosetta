@@ -31,6 +31,10 @@ namespace pack {
 namespace task {
 namespace residue_selector {
 
+/// @brief The NotResidueSelector negates the input of one loaded ResidueSelector, i.e., it selects
+/// all unselected residues and deselects the selected ones. The ResidueSelector to be negated can
+/// be pulled in through RosettaScipt using the selector option, subtags for ResidueSelectors known
+/// to the ResidueSelectorFactory or programmatically using set_residue_selector.
 class NotResidueSelector : public ResidueSelector {
 public:
 	// derived from base class

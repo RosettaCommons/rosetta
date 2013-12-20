@@ -4147,6 +4147,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-free_sugar_bonus</b> \<Real\><dt>
+<dd>Amount to reward virtualization of a sugar/ribose</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
 <dt><b>-rg_local_span</b> \<IntegerVector\><dt>
 <dd>First,last res in rg_local. For example to calc rg_local from 1-20 would be 1,20</dd><br>
 <dd>Default: 0</dd><br>
@@ -11139,9 +11144,29 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "--"</dd><br>
 </dl>
 <dl>
+<dt><b>-da_require_buried</b> \<File\><dt>
+<dd>Input file containing residues to be buried in the domain interface</dd><br>
+<dd>Default: "--"</dd><br>
+</dl>
+<dl>
 <dt><b>-da_start_pdb</b> \<File\><dt>
 <dd>input pdb for linker optimization</dd><br>
 <dd>Default: "--"</dd><br>
+</dl>
+<dl>
+<dt><b>-run_fullatom</b> \<Boolean\><dt>
+<dd>Run fullatom stage of the protocol</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-run_centroid</b> \<Boolean\><dt>
+<dd>Run centroid stage of the protocol</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-run_centroid_abinitio</b> \<Boolean\><dt>
+<dd>Run centroid abinitio stage of the protocol</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-da_nruns</b> \<Integer\><dt>
@@ -11157,6 +11182,14 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-da_linker_file_rna</b> \<File\><dt>
 <dd>input file with moveable RNA definitions</dd><br>
 <dd>Default: "--"</dd><br>
+</dl>
+<dl>
+<dt><b>-residues_repack_only</b> \<String\><dt>
+<dd>Residues not to be redesigned under any circumstances</dd><br>
+</dl>
+<dl>
+<dt><b>-da_eval_pose_map</b> \<File\><dt>
+<dd>input file that maps pose coordinates to structurally related positions of native pose</dd><br>
 </dl>
  </li>
 <li><h2>remodel</h2>

@@ -125,6 +125,7 @@ sources = {
 		"task/residue_selector/NumNeighborsSelector",
 		"task/residue_selector/OrResidueSelector",
 		"task/residue_selector/ResidueSelectorFactory",
+		"task/residue_selector/NeighborhoodResidueSelector",
 		"scmin/AtomTreeCollection",
 		"scmin/SCMinMinimizerMap",
 		"scmin/SCMinMultifunc",

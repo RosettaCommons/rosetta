@@ -99,7 +99,7 @@ public:
 			or_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			std::string expected = "Failed to access required option 'selectors' from OrResidueSelector::parse_my_tag.\nOption selectors not found.\n";
+			std::string expected = "No ResidueSelectors given to the OrResidueSelector; OrResidueSelector requires at least one ResidueSelector as input\n";
 			TS_ASSERT_EQUALS( e.msg(), expected );
 		}
 
@@ -124,5 +124,43 @@ public:
 		}
 	}
 
+	void test_OrResidueSelector_parse_subtag() {
+		std::string tag_string = "<Or name=or_rs>\n\t<Index resnums=2-4 />\n\t<Index resnums=3-5 />\n</Or>";
+		std::stringstream ss( tag_string );
+		utility::tag::TagOP tag = new utility::tag::Tag;
+		tag->read( ss );
+		basic::datacache::DataMap dm;
+
+		ResidueSelectorOP or_rs = new OrResidueSelector;
+		try {
+			or_rs->parse_my_tag( tag, dm );
+		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			TS_ASSERT( false ); 
+		}
+
+		core::pose::Pose trpcage = create_trpcage_ideal_pose();
+		ResidueSubset subset( trpcage.total_residue(), false );
+		or_rs->apply( trpcage, subset );
+		for ( core::Size ii = 1; ii <= trpcage.total_residue(); ++ii ) {
+			TS_ASSERT_EQUALS( subset[ ii ], (ii >= 2 && ii <= 5) );
+		}
+	}
+
+	void test_OrResidueSelector_fail_parse_subtag() {
+		std::string tag_string = "<Or name=and_rs>\n\t<Index resnums=2-4 />\n\t<Bogus />\n</Or>";
+		std::stringstream ss( tag_string );
+		utility::tag::TagOP tag = new utility::tag::Tag;
+		tag->read( ss );
+		basic::datacache::DataMap dm;
+
+		ResidueSelectorOP and_rs = new OrResidueSelector;
+		try {
+			and_rs->parse_my_tag( tag, dm );
+			TS_ASSERT( false ); // parsing should fail here
+		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			std::string err_msg =  "No ResidueSelectorCreator with the name 'Bogus' has been registered with the ResidueSelectorFactory";
+			TS_ASSERT( e.msg() == err_msg );
+		}
+	}
 
 };

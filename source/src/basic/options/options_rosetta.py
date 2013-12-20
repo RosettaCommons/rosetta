@@ -4704,10 +4704,16 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option( 'da_setup_option_file','File', desc='input list of pdbs and linker sequences', default='--' ),
 		Option( 'da_setup_output_pdb','File',desc='PDB file output by DomainAssemblySetup',default='--' ),
 		Option( 'da_linker_file','File',desc='input file with linker definitions',default='--' ),
+		Option( 'da_require_buried','File',desc='Input file containing residues to be buried in the domain interface',default='--'),
 		Option( 'da_start_pdb','File',desc='input pdb for linker optimization',default='--' ),
+		Option( 'run_fullatom','Boolean', desc='Run fullatom stage of the protocol', legal=['true','false'], default='false'),
+		Option( 'run_centroid','Boolean', desc='Run centroid stage of the protocol', legal=['true','false'], default='false'),
+		Option( 'run_centroid_abinitio','Boolean', desc='Run centroid abinitio stage of the protocol', legal=['true','false'], default='true'),
 		Option( 'da_nruns','Integer', desc='number of runs', default='1' ),
 		Option( 'da_start_pdb_num','Integer', desc='starting number for output pdb files', default='1' ),
 		Option( 'da_linker_file_rna','File', desc='input file with moveable RNA definitions', default='--' ),
+		Option( 'residues_repack_only','String', desc='Residues not to be redesigned under any circumstances'),
+		Option( 'da_eval_pose_map','File', desc='input file that maps pose coordinates to structurally related positions of native pose'),
 	),
 
 	##remodel

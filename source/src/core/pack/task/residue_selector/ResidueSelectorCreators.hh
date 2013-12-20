@@ -41,25 +41,19 @@ public:
 	virtual std::string keyname() const;
 };
 
-class JumpDownstreamSelectorCreator : public ResidueSelectorCreator {
+class NotResidueSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
 };
 
-class JumpUpstreamSelectorCreator : public ResidueSelectorCreator {
+class ResidueIndexSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
 };
 
 class NeighborhoodResidueSelectorCreator : public ResidueSelectorCreator {
-public:
-	virtual ResidueSelectorOP create_residue_selector() const;
-	virtual std::string keyname() const;
-};
-
-class NotResidueSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;
@@ -77,7 +71,13 @@ public:
 	virtual std::string keyname() const;
 };
 
-class ResidueIndexSelectorCreator : public ResidueSelectorCreator {
+class JumpUpstreamSelectorCreator : public ResidueSelectorCreator {
+public:
+	virtual ResidueSelectorOP create_residue_selector() const;
+	virtual std::string keyname() const;
+};
+
+class JumpDownstreamSelectorCreator : public ResidueSelectorCreator {
 public:
 	virtual ResidueSelectorOP create_residue_selector() const;
 	virtual std::string keyname() const;

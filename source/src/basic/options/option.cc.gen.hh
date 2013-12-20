@@ -746,11 +746,11 @@ option.add( basic::options::OptionKeys::jumps::topology_file, "read a file with 
 option.add( basic::options::OptionKeys::jumps::bb_moves, "Apply bb_moves ( wobble, small, shear) during stage3 and stage 4." ).def(false);
 option.add( basic::options::OptionKeys::jumps::no_wobble, "Don t apply the useless wobble during stage3 and stage 4." ).def(false);
 option.add( basic::options::OptionKeys::jumps::no_shear, "Don t apply the useless shear during stage3 and stage 4." ).def(false);
+option.add( basic::options::OptionKeys::jumps::no_sample_ss_jumps, "sample jump-frags during folding" ).def(false);
+option.add( basic::options::OptionKeys::jumps::invrate_jump_move, "give 5 here to have 5 torsion moves for each jump move" ).def(10);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::no_sample_ss_jumps, "sample jump-frags during folding" ).def(false);
-option.add( basic::options::OptionKeys::jumps::invrate_jump_move, "give 5 here to have 5 torsion moves for each jump move" ).def(10);
-option.add( basic::options::OptionKeys::jumps::chainbreak_weight_stage1, "the weight on chainbreaks" ).def(1.0);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::chainbreak_weight_stage1, "the weight on chainbreaks" ).def(1.0);
 option.add( basic::options::OptionKeys::jumps::chainbreak_weight_stage2, "the weight on chainbreaks" ).def(1.0);
 option.add( basic::options::OptionKeys::jumps::chainbreak_weight_stage3, "the weight on chainbreaks" ).def(1.0);
 option.add( basic::options::OptionKeys::jumps::chainbreak_weight_stage4, "the weight on chainbreaks" ).def(1.0);
@@ -1491,13 +1491,13 @@ option.add( basic::options::OptionKeys::membrane::membrane, "membrane option gro
 option.add( basic::options::OptionKeys::membrane::normal_cycles, "number of membrane normal cycles" ).def(100);
 option.add( basic::options::OptionKeys::membrane::normal_mag, "magnitude of membrane normal angle search (degrees)" ).def(5);
 option.add( basic::options::OptionKeys::membrane::center_mag, "magnitude of membrane normal center search (Angstroms)" ).def(1);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::membrane::smooth_move_frac, "No description" ).def(0.5);
+option.add( basic::options::OptionKeys::membrane::smooth_move_frac, "No description" ).def(0.5);
 option.add( basic::options::OptionKeys::membrane::no_interpolate_Mpair, "No description" ).def(false);
 option.add( basic::options::OptionKeys::membrane::Menv_penalties, "No description" ).def(false);
 option.add( basic::options::OptionKeys::membrane::Membed_init, "No description" ).def(false);
-option.add( basic::options::OptionKeys::membrane::Fa_Membed_update, "No description" ).def(false);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::membrane::Fa_Membed_update, "No description" ).def(false);
 option.add( basic::options::OptionKeys::membrane::center_search, "perform membrane center search" ).def(false);
 option.add( basic::options::OptionKeys::membrane::normal_search, "perform membrane normal search" ).def(false);
 option.add( basic::options::OptionKeys::membrane::center_max_delta, "magnitude of maximum membrane width deviation during membrane center search (Angstroms)" ).def(5);
@@ -2236,15 +2236,15 @@ option.add( basic::options::OptionKeys::optE::starting_refEs, "IterativeOptEDriv
 option.add( basic::options::OptionKeys::optE::repeat_swarm_optimization_until_fitness_improves, "After the first time though the particle swarm optimization phase, if the end fitness is not better than the start fitness, recreate the swarm around the start dofs and repeat the swarm optimization." ).def(false);
 option.add( basic::options::OptionKeys::optE::design_with_minpack, "Use the min-packer to design in the sequence recovery stages." ).def(false);
 option.add( basic::options::OptionKeys::optE::limit_bad_scores, "Quit after 100,000 inf or NaN errors in optE objective function" );
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::rescore::rescore, "rescore option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::optE::rescore::rescore, "rescore option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::optE::rescore::weights, "Weight set to use when rescoring optE partition functions" );
 option.add( basic::options::OptionKeys::optE::rescore::context_round, "Integer of the context PDBs generated during design to use to measure the pNatAA" );
 option.add( basic::options::OptionKeys::optE::rescore::outlog, "File to which the OptEPosition data should be written" );
 option.add( basic::options::OptionKeys::optE::rescore::measure_sequence_recovery, "When rescoring a weight set, run design with that weight set and measure the sequence recovery." ).def(false);
 option.add( basic::options::OptionKeys::optE::no_design_pdb_output, "Do not write out the designed pdbs to the workdir_ directories over the course of the optE run" );
-option.add( basic::options::OptionKeys::backrub::backrub, "backrub option group" ).legal(true).def(true);
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::backrub::backrub, "backrub option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::backrub::pivot_residues, "residues for which contiguous stretches can contain segments (internal residue numbers, defaults to all residues)" ).def(utility::vector1<int>());
 option.add( basic::options::OptionKeys::backrub::pivot_atoms, "main chain atoms usable as pivots" ).def(utility::vector1<std::string>(1, "CA"));
 option.add( basic::options::OptionKeys::backrub::min_atoms, "minimum backrub segment size (atoms)" ).def(3);
@@ -2296,10 +2296,16 @@ option.add( basic::options::OptionKeys::DomainAssembly::da_setup, "run DomainAss
 option.add( basic::options::OptionKeys::DomainAssembly::da_setup_option_file, "input list of pdbs and linker sequences" ).def("--");
 option.add( basic::options::OptionKeys::DomainAssembly::da_setup_output_pdb, "PDB file output by DomainAssemblySetup" ).def("--");
 option.add( basic::options::OptionKeys::DomainAssembly::da_linker_file, "input file with linker definitions" ).def("--");
+option.add( basic::options::OptionKeys::DomainAssembly::da_require_buried, "Input file containing residues to be buried in the domain interface" ).def("--");
 option.add( basic::options::OptionKeys::DomainAssembly::da_start_pdb, "input pdb for linker optimization" ).def("--");
+option.add( basic::options::OptionKeys::DomainAssembly::run_fullatom, "Run fullatom stage of the protocol" ).legal(true).legal(false).def(false);
+option.add( basic::options::OptionKeys::DomainAssembly::run_centroid, "Run centroid stage of the protocol" ).legal(true).legal(false).def(false);
+option.add( basic::options::OptionKeys::DomainAssembly::run_centroid_abinitio, "Run centroid abinitio stage of the protocol" ).legal(true).legal(false).def(true);
 option.add( basic::options::OptionKeys::DomainAssembly::da_nruns, "number of runs" ).def(1);
 option.add( basic::options::OptionKeys::DomainAssembly::da_start_pdb_num, "starting number for output pdb files" ).def(1);
 option.add( basic::options::OptionKeys::DomainAssembly::da_linker_file_rna, "input file with moveable RNA definitions" ).def("--");
+option.add( basic::options::OptionKeys::DomainAssembly::residues_repack_only, "Residues not to be redesigned under any circumstances" );
+option.add( basic::options::OptionKeys::DomainAssembly::da_eval_pose_map, "input file that maps pose coordinates to structurally related positions of native pose" );
 option.add( basic::options::OptionKeys::remodel::remodel, "remodel option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::remodel::help, "help menu." );
 option.add( basic::options::OptionKeys::remodel::autopilot, "autopilot" );

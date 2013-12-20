@@ -9,7 +9,7 @@
 
 
 // Unit headers
-#include <devel/domain_assembly/DomainAssemblyMover.hh>
+#include <devel/domain_assembly/RedesignDomainAssemblyMover.hh>
 
 // Project headers
 #include <protocols/jd2/JobDistributor.hh>

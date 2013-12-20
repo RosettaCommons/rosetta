@@ -26,10 +26,16 @@ namespace DomainAssembly { extern BooleanOptionKey const da_setup; }
 namespace DomainAssembly { extern FileOptionKey const da_setup_option_file; }
 namespace DomainAssembly { extern FileOptionKey const da_setup_output_pdb; }
 namespace DomainAssembly { extern FileOptionKey const da_linker_file; }
+namespace DomainAssembly { extern FileOptionKey const da_require_buried; }
 namespace DomainAssembly { extern FileOptionKey const da_start_pdb; }
+namespace DomainAssembly { extern BooleanOptionKey const run_fullatom; }
+namespace DomainAssembly { extern BooleanOptionKey const run_centroid; }
+namespace DomainAssembly { extern BooleanOptionKey const run_centroid_abinitio; }
 namespace DomainAssembly { extern IntegerOptionKey const da_nruns; }
 namespace DomainAssembly { extern IntegerOptionKey const da_start_pdb_num; }
 namespace DomainAssembly { extern FileOptionKey const da_linker_file_rna; }
+namespace DomainAssembly { extern StringOptionKey const residues_repack_only; }
+namespace DomainAssembly { extern FileOptionKey const da_eval_pose_map; }
 
 } // namespace OptionKeys
 } // namespace options

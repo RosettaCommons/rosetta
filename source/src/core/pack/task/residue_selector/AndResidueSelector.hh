@@ -34,6 +34,10 @@ namespace pack {
 namespace task {
 namespace residue_selector {
 
+/// @brief The AndResidueSelector combines the output of multiple ResidueSelectors using AND
+/// logic, i.e., only residues selected by ALL contained ResidueSelectors will be selected.
+/// ResidueSelecters can be pulled in from a DataMap, from subtags (for ResidueSelectors
+/// known to the ResidueSelectorFactory) or programmatically through %add_residue_selector.
 class AndResidueSelector : public ResidueSelector {
 public:
 	// derived from base class

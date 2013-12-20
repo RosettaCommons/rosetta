@@ -96,7 +96,7 @@ public:
 			not_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			std::string expected = "Failed to access required option 'selector' from NotResidueSelector::parse_my_tag.\nOption selector not found.\n";
+			std::string expected = "No ResidueSelector given to the NotResidueSelector; NotResidueSelector requires a ResidueSelector as input\n";
 			TS_ASSERT_EQUALS( e.msg(), expected );
 		}
 	}

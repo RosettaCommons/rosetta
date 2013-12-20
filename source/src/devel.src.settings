@@ -92,6 +92,8 @@ sources = {
 		"domain_assembly_setup",
 		"DomainAssemblyMover",
 		"DomainAssemblyReader",
+		"RedesignDomainAssemblyMover",
+		"DomainAssemblyJobInputter",
 	],
 	"devel/domain_insertion": [
 		"FusePosesNtoCMover",

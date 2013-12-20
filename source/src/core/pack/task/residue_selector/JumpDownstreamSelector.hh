@@ -35,7 +35,8 @@ namespace task {
 namespace residue_selector {
 
 /// @brief The JumpDownstreamSelector returns a ResidueSubset, i.e. a utility::vector1< bool > containing
-/// 'true' for residue positions which lie downstream of a given jump in the FoldTree.
+/// 'true' for residue positions which lie downstream of a given jump in the FoldTree. The jump is
+/// specified by an integer index.
 class JumpDownstreamSelector : public ResidueSelector {
 public:
 	// derived from base class

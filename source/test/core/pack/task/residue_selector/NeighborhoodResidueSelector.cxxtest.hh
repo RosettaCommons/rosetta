@@ -92,7 +92,7 @@ public:
 			neighbor_rs->parse_my_tag( tag, dm );
 			TS_ASSERT ( false );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			std::string expected_err =  "NeighborhoodResidueSelector takes EITHER 'selector' OR 'resnum' tags, not both!\n";
+			std::string expected_err =  "NeighborhoodResidueSelector takes EITHER 'selector' OR 'resnum' options, not both!\n";
 			TS_ASSERT ( e.msg() == expected_err );
 		}
 	}
@@ -215,8 +215,45 @@ public:
 			std::cerr << "Exception! " << e.msg();
 			TS_ASSERT( false );
 		}
-
 	}
+
+	//make sure to fail if ResidueSelector subtags are provided as well as the resnums option
+	void test_NeighborhoodSelector_fail_subtag_and_resnums() {
+		std::string tag_string = "<Neighbor name=neighbor_rs resnums=4-8>\n\t<Index resnums=2-3 />\n</Neighbor>";
+		std::stringstream ss( tag_string );
+		utility::tag::TagPtr tag = new utility::tag::Tag;
+		tag->read( ss );
+		basic::datacache::DataMap dm;
+
+		ResidueSelectorOP neighbor_rs = new NeighborhoodResidueSelector;
+		try {
+			neighbor_rs->parse_my_tag( tag, dm );
+			TS_ASSERT( false ); // this parsing should fail
+		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			std::string expected = "NeighborhoodResidueSelector takes EITHER a 'resnums' tag or a selector subtag, not both!\n";
+			TS_ASSERT_EQUALS( e.msg(), expected );
+		}
+	}
+
+	//make sure to fail if ResidueSelector subtags are provided as well as a selector option
+	void test_NeighborhoodSelector_fail_subtag_and_selector() {
+		std::string tag_string = "<Neighbor name=neighbor_rs selector=odd>\n\t<Index resnums=2-3 />\n</Neighbor>";
+		std::stringstream ss( tag_string );
+		utility::tag::TagPtr tag = new utility::tag::Tag;
+		tag->read( ss );
+		basic::datacache::DataMap dm;
+
+		ResidueSelectorOP neighbor_rs = new NeighborhoodResidueSelector;
+		try {
+			neighbor_rs->parse_my_tag( tag, dm );
+			TS_ASSERT( false ); // this parsing should fail
+		} catch ( utility::excn::EXCN_Msg_Exception e ) {
+			std::string expected = "NeighborhoodResidueSelector can only have one ResidueSelector loaded!\n"; 
+			TS_ASSERT_EQUALS( e.msg(), expected );
+		}
+	}
+
+
 	
 	bool
 	check_calculation( core::pose::Pose const & pose,

@@ -1,0 +1,13 @@
+# score3 from rosetta++, used in stage 4 of the ClassicAbinitio protocol.
+env     1.0
+pair    1.0
+cbeta   1.0
+vdw     2.0
+rg      3.0
+cenpack 1.0
+hs_pair 1.0
+ss_pair 1.0
+rsigma  1.0
+sheet   1.0
+
+STRAND_STRAND_WEIGHTS 0 6

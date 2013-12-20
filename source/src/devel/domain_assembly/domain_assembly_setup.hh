@@ -36,28 +36,28 @@ public:
   }
 
   void set_input_pose (core::pose::Pose & pose) { input_pose_ = pose; }
-  core::pose::Pose get_input_pose () { return input_pose_; }
+  core::pose::Pose get_input_pose () const { return input_pose_; }
 
   void set_processed_pose (core::pose::Pose & pose) { processed_pose_ = pose; }
-  core::pose::Pose get_processed_pose () { return processed_pose_; }
+  core::pose::Pose get_processed_pose () const { return processed_pose_; }
 
   void set_Nterm_linker ( std::string & linker ) { Nterm_linker_ = linker; }
-  std::string get_Nterm_linker () { return Nterm_linker_; }
+  std::string get_Nterm_linker () const { return Nterm_linker_; }
 
   void set_Cterm_linker ( std::string & linker ) { Cterm_linker_ = linker; }
-  std::string get_Cterm_linker () { return Cterm_linker_; }
+  std::string get_Cterm_linker () const { return Cterm_linker_; }
 
   void set_trim_nterm ( core::Size & i ) { trim_nterm_ = i; }
-  core::Size get_trim_nterm () { return trim_nterm_; }
+  core::Size get_trim_nterm () const { return trim_nterm_; }
 
   void set_trim_cterm ( core::Size & i ) { trim_cterm_ = i; }
-  core::Size get_trim_cterm () { return trim_cterm_; }
+  core::Size get_trim_cterm () const { return trim_cterm_; }
 
   void set_domain_begin ( core::Size & i ) { domain_begin_ = i; }
-  core::Size get_domain_begin () { return domain_begin_; }
+  core::Size get_domain_begin () const { return domain_begin_; }
 
   void set_domain_end ( core::Size & i ) { domain_end_ = i; }
-  core::Size get_domain_end () { return domain_end_; }
+  core::Size get_domain_end () const { return domain_end_; }
 
   ///@brief truncates and adds linker to a domain
   ///  fills processed_pose
@@ -66,6 +66,14 @@ public:
 
 ///@brief builds a full length pose from a set of input pdbs
 void assemble_domains_setup();
+
+///@brief calls process domain to add linkers/truncate domains
+void process_domains( utility::vector1< DomainInfo > & domains );
+
+///@brief connect the domains
+///If using with pdbs files that contain RNA.  The RNA must either be at the beginning of the first pdb input
+///or at the end of the last pdb input, otherwise the connect domains function will fail and crash
+void connect_domains( utility::vector1< DomainInfo > domains, core::pose::Pose & full_pose );
 
 // @brief optimizes linkers in a multidomain protein
 // shouldn't be in this file void assemble_domains_optimize();

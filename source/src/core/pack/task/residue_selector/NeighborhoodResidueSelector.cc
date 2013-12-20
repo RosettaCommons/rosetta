@@ -21,6 +21,7 @@
 // Package headers
 #include <core/pose/selection.hh>
 #include <core/conformation/Residue.hh>
+#include <core/pack/task/residue_selector/ResidueSelectorFactory.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -84,7 +85,10 @@ NeighborhoodResidueSelector::parse_my_tag(
 {
 	if( tag->hasOption("selector") ) {
 		if(tag->hasOption("resnums")) {
-			throw utility::excn::EXCN_Msg_Exception( "NeighborhoodResidueSelector takes EITHER 'selector' OR 'resnum' tags, not both!\n" );
+			throw utility::excn::EXCN_Msg_Exception( "NeighborhoodResidueSelector takes EITHER 'selector' OR 'resnum' options, not both!\n" );
+		}
+		if( tag->size() > 1 ) { // 1 if no subtags exist
+			throw utility::excn::EXCN_Msg_Exception( "NeighborhoodResidueSelector can only have one ResidueSelector loaded!\n" );
 		}
 		// grab the ResidueSelector from the selector option
 		// and then grab each of the indicated residue selectors from the datamap.
@@ -107,7 +111,23 @@ NeighborhoodResidueSelector::parse_my_tag(
 			error_msg << e.msg();
 			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
 		}
-	} else { // no selector option - look for direct specification of resnums.
+	} else if (tag->size() > 1 ) { // get focus selector from tag
+		if( tag->hasOption("resnums") ) {
+			throw utility::excn::EXCN_Msg_Exception( "NeighborhoodResidueSelector takes EITHER a 'resnums' tag or a selector subtag, not both!\n" );
+		}
+
+		utility::vector0< utility::tag::TagCOP > const & tags = tag->getTags();
+		if(tags.size() > 1) {
+			throw utility::excn::EXCN_Msg_Exception( "NeighborhoodResidueSelector takes at most one ResidueSelector to determine the focus!\n" );
+		}
+		ResidueSelectorCOP rs = ResidueSelectorFactory::get_instance()->new_residue_selector(
+				tags.front()->getName(),
+				tags.front(),
+				datamap
+			);
+		set_focus_selector( rs );
+
+	} else { // do not get focus from ResidueSelectors but load resnums string instead
 		try {
 			set_focus ( tag->getOption< std::string >( "resnums" ) );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {

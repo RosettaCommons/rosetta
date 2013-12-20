@@ -16,11 +16,12 @@
 
 // Unit headers
 #include <core/pack/task/residue_selector/OrResidueSelector.fwd.hh>
+#include <core/pack/task/residue_selector/ResidueSelector.hh>
 
 // Package headers
 #include <core/types.hh>
-#include <core/pack/task/residue_selector/ResidueSelector.hh>
 #include <core/pose/Pose.hh>
+#include <core/pack/task/residue_selector/ResidueSelectorCreator.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -34,6 +35,10 @@ namespace pack {
 namespace task {
 namespace residue_selector {
 
+/// @brief The OrResidueSelector combines the output of multiple ResidueSelectors using OR
+/// logic, i.e., residues selected by ANY of the contained ResidueSelectors will be selected.
+/// ResidueSelecters can be pulled in from a DataMap, from subtags (for ResidueSelectors
+/// known to the ResidueSelectorFactory) or programmatically through %add_residue_selector.
 class OrResidueSelector : public ResidueSelector {
 public:
 	// derived from base class

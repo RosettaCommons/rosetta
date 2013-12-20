@@ -1,9 +1,3 @@
-namespace optE { namespace rescore { BooleanOptionKey const rescore( "optE:rescore" );  } }
-namespace optE { namespace rescore { FileOptionKey const weights( "optE:rescore:weights" );  } }
-namespace optE { namespace rescore { IntegerOptionKey const context_round( "optE:rescore:context_round" );  } }
-namespace optE { namespace rescore { FileOptionKey const outlog( "optE:rescore:outlog" );  } }
-namespace optE { namespace rescore { BooleanOptionKey const measure_sequence_recovery( "optE:rescore:measure_sequence_recovery" );  } }
-namespace optE { BooleanOptionKey const no_design_pdb_output( "optE:no_design_pdb_output" );  }
 namespace backrub { BooleanOptionKey const backrub( "backrub" );  }
 namespace backrub { IntegerVectorOptionKey const pivot_residues( "backrub:pivot_residues" );  }
 namespace backrub { StringVectorOptionKey const pivot_atoms( "backrub:pivot_atoms" );  }
@@ -56,10 +50,16 @@ namespace DomainAssembly { BooleanOptionKey const da_setup( "DomainAssembly:da_s
 namespace DomainAssembly { FileOptionKey const da_setup_option_file( "DomainAssembly:da_setup_option_file" );  }
 namespace DomainAssembly { FileOptionKey const da_setup_output_pdb( "DomainAssembly:da_setup_output_pdb" );  }
 namespace DomainAssembly { FileOptionKey const da_linker_file( "DomainAssembly:da_linker_file" );  }
+namespace DomainAssembly { FileOptionKey const da_require_buried( "DomainAssembly:da_require_buried" );  }
 namespace DomainAssembly { FileOptionKey const da_start_pdb( "DomainAssembly:da_start_pdb" );  }
+namespace DomainAssembly { BooleanOptionKey const run_fullatom( "DomainAssembly:run_fullatom" );  }
+namespace DomainAssembly { BooleanOptionKey const run_centroid( "DomainAssembly:run_centroid" );  }
+namespace DomainAssembly { BooleanOptionKey const run_centroid_abinitio( "DomainAssembly:run_centroid_abinitio" );  }
 namespace DomainAssembly { IntegerOptionKey const da_nruns( "DomainAssembly:da_nruns" );  }
 namespace DomainAssembly { IntegerOptionKey const da_start_pdb_num( "DomainAssembly:da_start_pdb_num" );  }
 namespace DomainAssembly { FileOptionKey const da_linker_file_rna( "DomainAssembly:da_linker_file_rna" );  }
+namespace DomainAssembly { StringOptionKey const residues_repack_only( "DomainAssembly:residues_repack_only" );  }
+namespace DomainAssembly { FileOptionKey const da_eval_pose_map( "DomainAssembly:da_eval_pose_map" );  }
 namespace remodel { BooleanOptionKey const remodel( "remodel" );  }
 namespace remodel { BooleanOptionKey const help( "remodel:help" );  }
 namespace remodel { BooleanOptionKey const autopilot( "remodel:autopilot" );  }

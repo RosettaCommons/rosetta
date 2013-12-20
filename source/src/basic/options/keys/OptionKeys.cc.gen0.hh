@@ -741,3 +741,5 @@ namespace jumps { FileOptionKey const topology_file( "jumps:topology_file" );  }
 namespace jumps { BooleanOptionKey const bb_moves( "jumps:bb_moves" );  }
 namespace jumps { BooleanOptionKey const no_wobble( "jumps:no_wobble" );  }
 namespace jumps { BooleanOptionKey const no_shear( "jumps:no_shear" );  }
+namespace jumps { BooleanOptionKey const no_sample_ss_jumps( "jumps:no_sample_ss_jumps" );  }
+namespace jumps { IntegerOptionKey const invrate_jump_move( "jumps:invrate_jump_move" );  }

@@ -101,7 +101,6 @@ JumpDownstreamSelectorCreator::keyname() const {
 	return JumpDownstreamSelector::class_name();
 }
 
-
 } //namespace residue_selector
 } //namespace task
 } //namespace pack

@@ -17,6 +17,7 @@
 #include <core/pack/task/residue_selector/ResidueSelectorCreators.hh>
 
 // Package headers
+#include <core/pack/task/residue_selector/ResidueSelectorFactory.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Basic headers
@@ -68,29 +69,43 @@ void OrResidueSelector::parse_my_tag(
 {
 	// grab the comma-separated list of residue selectors that should be ORed together
 	// from the tag, and then grab each of the indicated residue selectors from the datamap.
-	std::string selectors_str;
-	try {
-		selectors_str = tag->getOption< std::string >( "selectors" );
-	} catch ( utility::excn::EXCN_Msg_Exception e ) {
-		std::stringstream error_msg;
-		error_msg << "Failed to access required option 'selectors' from OrResidueSelector::parse_my_tag.\n";
-		error_msg << e.msg();
-		throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
-	}
-	utility::vector1< std::string > selector_names = utility::string_split( selectors_str, ',' );
-
 	std::list< ResidueSelectorCOP > local_selectors;
-	for ( core::Size ii = 1; ii <= selector_names.size(); ++ii ) {
+	if( tag->hasOption( "selectors" ) ) {
+		std::string selectors_str;
 		try {
-			ResidueSelectorCOP selector = datamap.get< ResidueSelector const * >( "ResidueSelector", selector_names[ ii ] );
-			local_selectors.push_back( selector );
+			selectors_str = tag->getOption< std::string >( "selectors" );
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::stringstream error_msg;
-			error_msg << "Failed to find ResidueSelector named '" << selector_names[ ii ] << "' from the Datamap from OrResidueSelector::parse_my_tag.\n";
+			error_msg << "Failed to access option 'selectors' from OrResidueSelector::parse_my_tag.\n";
 			error_msg << e.msg();
 			throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
 		}
+		utility::vector1< std::string > selector_names = utility::string_split( selectors_str, ',' );
+	
+	
+		for ( core::Size ii = 1; ii <= selector_names.size(); ++ii ) {
+			try {
+				ResidueSelectorCOP selector = datamap.get< ResidueSelector const * >( "ResidueSelector", selector_names[ ii ] );
+				local_selectors.push_back( selector );
+			} catch ( utility::excn::EXCN_Msg_Exception e ) {
+				std::stringstream error_msg;
+				error_msg << "Failed to find ResidueSelector named '" << selector_names[ ii ] << "' from the Datamap from OrResidueSelector::parse_my_tag.\n";
+				error_msg << e.msg();
+				throw utility::excn::EXCN_Msg_Exception( error_msg.str() );
+			}
+		}
 	}
+	// add selectors from tags
+	for(utility::vector0< utility::tag::TagCOP >::const_iterator itag = tag->getTags().begin();
+			itag != tag->getTags().end(); ++itag) {
+		ResidueSelectorCOP rs = ResidueSelectorFactory::get_instance()->new_residue_selector(
+				(*itag)->getName(),
+				(*itag),
+				datamap
+			);
+		local_selectors.push_back( rs );	
+	}
+
 
 	if ( local_selectors.size() == 0 ) {
 		std::stringstream error_msg;
