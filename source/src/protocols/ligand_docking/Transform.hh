@@ -36,15 +36,20 @@ public:
 	core::Real move_distance;
 	core::Real box_size;
 	core::Real angle;
+	core::Real rmsd;
 	core::Size cycles;
 	core::Real temperature;
 	core::Size repeats;
 	Transform_info():
 		chain(""),
-		move_distance(0),
-		box_size(0),
-		angle(0),
+		chain_id(0),
+		jump_id(0),
+		move_distance(0.0),
+		box_size(0.0),
+		angle(0.0),
+		rmsd(0.0),
 		cycles(0),
+		temperature(0.0),
 		repeats(1){};
 	Transform_info(Transform_info const & other) :
 		chain(other.chain),
@@ -53,6 +58,7 @@ public:
 		move_distance(other.move_distance),
 		box_size(other.box_size),
 		angle(other.angle),
+		rmsd(other.rmsd),
 		cycles(other.cycles),
 		temperature(other.temperature),
 		repeats(other.repeats){}
@@ -99,6 +105,9 @@ private:
 	
 	/// @brief output the ligand residues to a pdb file
 	void dump_conformer(core::conformation::UltraLightResidue & residue, utility::io::ozstream & output);
+	
+	/// @brief return true if the rmsd is within the specified cutoff
+	bool check_rmsd(core::conformation::UltraLightResidue const & start, core::conformation::UltraLightResidue const& current) const;
 
 private:
 	//qsar::scoring_grid::GridManagerOP grid_manager_;
@@ -106,6 +115,7 @@ private:
 	utility::vector1< core::conformation::ResidueOP >  ligand_conformers_;
 	bool optimize_until_score_is_negative_;
 	bool output_sampled_space_;
+	bool check_rmsd_;
 	std::string sampled_space_file_;
     core::Real initial_perturb_;
 

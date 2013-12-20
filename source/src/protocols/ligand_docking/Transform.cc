@@ -63,7 +63,7 @@ std::string TransformCreator::mover_name()
 	return "Transform";
 }
 
-Transform::Transform(): Mover("Transform"), transform_info_(),optimize_until_score_is_negative_(false), output_sampled_space_(false),initial_perturb_(0.0)
+Transform::Transform(): Mover("Transform"), transform_info_(),optimize_until_score_is_negative_(false), output_sampled_space_(false),check_rmsd_(false),initial_perturb_(0.0)
 {
 
 }
@@ -75,6 +75,7 @@ Transform::Transform(Transform const & other) :
 	ligand_conformers_(other.ligand_conformers_),
 	optimize_until_score_is_negative_(other.optimize_until_score_is_negative_),
 	output_sampled_space_(other.output_sampled_space_),
+	check_rmsd_(other.check_rmsd_),
 	sampled_space_file_(other.sampled_space_file_),
 	initial_perturb_(other.initial_perturb_)
 {}
@@ -86,7 +87,7 @@ Transform::Transform(
 	core::Real const & angle,
 	core::Size const & cycles,
 	core::Real const & temp
-) : Mover("Transform"), transform_info_(),optimize_until_score_is_negative_(false), output_sampled_space_(false)
+) : Mover("Transform"), transform_info_(),optimize_until_score_is_negative_(false),output_sampled_space_(false),check_rmsd_(false)
 {
 	transform_info_.chain = chain;
 	transform_info_.box_size = box_size;
@@ -147,6 +148,12 @@ void Transform::parse_my_tag
 	initial_perturb_ = tag->getOption<core::Real>("initial_perturb",0.0);
     
 
+	if(tag->hasOption("rmsd"))
+	{
+		check_rmsd_ = true;
+		transform_info_.rmsd = tag->getOption<core::Real>("rmsd");
+	}
+	
 	if(tag->hasOption("sampled_space_file"))
 	{
 		output_sampled_space_ = true;
@@ -179,6 +186,7 @@ void Transform::apply(core::pose::Pose & pose)
     core::pose::Pose best_pose(pose);
     core::pose::Pose starting_pose(pose);
     core::conformation::UltraLightResidue best_ligand(&pose.residue(begin));
+	core::conformation::UltraLightResidue original_ligand(best_ligand);
 
 	core::Real temperature = transform_info_.temperature;
 	core::Vector original_center(original_residue.xyz(original_residue.nbr_atom()));
@@ -271,6 +279,10 @@ void Transform::apply(core::pose::Pose & pose)
 				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
 
+			}else if(check_rmsd_ && !check_rmsd(original_ligand, ligand_residue)) //reject the new pose
+			{
+				ligand_residue = last_accepted_ligand_residue;
+				rejected_moves++;
 			}else if(probability < 1 && RG.uniform() >= probability)  //reject the new pose
 			{
 				ligand_residue = last_accepted_ligand_residue;
@@ -290,7 +302,7 @@ void Transform::apply(core::pose::Pose & pose)
 
 			}
 			transform_tracer << last_score << " " <<current_score <<std::endl;
-			if(last_score < best_score)
+			if(last_score <= best_score)
 			{
 				best_score = last_score;
 				best_ligand = last_accepted_ligand_residue;
@@ -301,8 +313,11 @@ void Transform::apply(core::pose::Pose & pose)
 			}
 			
 		}
-
-		transform_tracer <<"percent acceptance: "<< accepted_moves << " " << (core::Real)accepted_moves/(core::Real)rejected_moves <<" " << rejected_moves <<std::endl;
+		core::Real accept_ratio =(core::Real)accepted_moves/((core::Real)accepted_moves
+		+(core::Real)rejected_moves);
+		transform_tracer <<"percent acceptance: "<< accepted_moves << " " << accept_ratio<<" " << rejected_moves <<std::endl;
+		
+		jd2::JobDistributor::get_instance()->current_job()->add_string_real_pair("Transform_accept_ratio", accept_ratio);
 		best_ligand.update_conformation(best_pose.conformation());
 	}
 
@@ -370,5 +385,26 @@ void Transform::dump_conformer(core::conformation::UltraLightResidue & residue, 
 	}
 }
 	
+bool Transform::check_rmsd(core::conformation::UltraLightResidue const & start, core::conformation::UltraLightResidue const& current) const
+{
+	assert(start.natoms() == current.natoms());
+	
+	core::Real total_distance =0.0;
+	for(core::Size atomno = 1; atomno <= start.natoms();++atomno)
+	{
+		total_distance += start[atomno].distance(current[atomno]);
+	}
+	
+	core::Real rmsd = sqrt(total_distance/start.natoms());
+	
+	if(rmsd <= transform_info_.rmsd)
+	{
+		return true;
+	}else
+	{
+		return false;
+	}
+	
+}
 }
 }

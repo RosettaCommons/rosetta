@@ -348,7 +348,22 @@ void InterfaceAnalyzerMover::apply( core::pose::Pose & pose )
 		
 	}
 	//check for multichain poses
-	if(pose.conformation().num_chains() > 2){
+	core::Size ligand_chain_id = 0;
+	if(ligand_chain_.size() != 0)
+	{
+		ligand_chain_id = core::pose::get_chain_id_from_chain(ligand_chain_, pose);
+	}
+	if(pose.conformation().num_chains() == ligand_chain_id)
+	{
+		//If the ligand chain is the last chain in the pose we don't need to reorder
+		core::Size ligand_jump = core::pose::get_jump_id_from_chain_id(ligand_chain_id, pose);
+		interface_jump_ = ligand_jump ;
+		set_pose_info( pose );
+		if(!calcs_ready_){
+			register_calculators();
+			calcs_ready_ = true;
+		}
+	}else if(pose.conformation().num_chains() > 2){
 		if (multichain_constructor_){
 			
 
