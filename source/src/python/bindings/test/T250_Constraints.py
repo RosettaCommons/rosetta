@@ -1,5 +1,8 @@
 
 from rosetta import *
+
+import rosetta.core.scoring.func
+
 rosetta.init()
 
 
@@ -17,7 +20,7 @@ print 'Score before constraints applied:', scorefxn(pose)
 hterm2 = AtomID(1, 55)
 gterm2 = AtomID(1, 5)
 
-GF = constraints.GaussianFunc( 4.0, 2.0 )
+GF = rosetta.core.scoring.func.GaussianFunc( 4.0, 2.0 )
 apc = constraints.AtomPairConstraint( hterm2, gterm2, GF )
 pose.add_constraint( apc )
 

@@ -91,8 +91,9 @@ namespace full_model_info {
 	utility::vector1< Size >
 	figure_out_pose_domain_map( core::pose::Pose & pose );
 
-	utility::vector1< Size >
-	figure_out_pose_domain_map_const( core::pose::Pose const & pose );
+	// Undefined, commenting out to fix PyRosetta build
+	// utility::vector1< Size >
+	// figure_out_pose_domain_map_const( core::pose::Pose const & pose );
 
 	core::conformation::Residue const &
 	get_residue( Size const seqpos_in_full_model,

@@ -28,62 +28,73 @@ namespace swa {
 namespace monte_carlo {
 
 
-	void
-	get_delete_move_elements( pose::Pose & pose, utility::vector1< SWA_Move > & swa_moves );
+	// Undefined, commenting out to fix PyRosetta build
+	// void
+	// get_delete_move_elements( pose::Pose & pose, utility::vector1< SWA_Move > & swa_moves );
 
 	// Undefined, commenting out to fix PyRosetta build
 	// void
 	// get_resample_move_elements( pose::Pose & pose, utility::vector1< SWA_Move > & swa_moves );
 
-	void
-	remove_from_consideration_first_multi_residue_move_element( utility::vector1< SWA_Move > & swa_moves, bool remove_even_if_not_singlet );
+	// Undefined, commenting out to fix PyRosetta build
+	// void
+	// remove_from_consideration_first_multi_residue_move_element( utility::vector1< SWA_Move > & swa_moves, bool remove_even_if_not_singlet );
 
-	void
-	get_resample_terminal_move_elements( pose::Pose & pose, utility::vector1< SWA_Move > & swa_moves );
+	// Undefined, commenting out to fix PyRosetta build
+	// void
+	// get_resample_terminal_move_elements( pose::Pose & pose, utility::vector1< SWA_Move > & swa_moves );
 
-	void
-	get_terminal_move_elements( pose::Pose & pose,
-																 utility::vector1< SWA_Move > & swa_moves,
-																 MoveType const & move_type );
+	// Undefined, commenting out to fix PyRosetta build
+	// void
+	// get_terminal_move_elements( pose::Pose & pose,
+	// 															 utility::vector1< SWA_Move > & swa_moves,
+	// 															 MoveType const & move_type );
 
-	void
-	get_resample_internal_move_elements( pose::Pose & pose,
-																					utility::vector1< SWA_Move > & swa_moves );
+	// Undefined, commenting out to fix PyRosetta build
+	// void
+	// get_resample_internal_move_elements( pose::Pose & pose,
+	// 																				utility::vector1< SWA_Move > & swa_moves );
 
 
-	void
-	get_internal_move_elements( pose::Pose & pose,
-																 utility::vector1< SWA_Move > & swa_moves,
-																 MoveType const & move_type );
+	// Undefined, commenting out to fix PyRosetta build
+	// void
+	// get_internal_move_elements( pose::Pose & pose,
+	// 															 utility::vector1< SWA_Move > & swa_moves,
+	// 															 MoveType const & move_type );
 
-	Attachments
-	get_attachments( pose::Pose & pose, MoveElement const & move_element );
+	// Undefined, commenting out to fix PyRosetta build
+	// Attachments
+	// get_attachments( pose::Pose & pose, MoveElement const & move_element );
 
-	Attachments
-	get_attachments( pose::Pose & pose, Size const & moving_res );
+	// Undefined, commenting out to fix PyRosetta build
+	// Attachments
+	// get_attachments( pose::Pose & pose, Size const & moving_res );
 
 	// Undefined, commenting out to fix PyRosetta build
 	// void get_add_move_elements( pose::Pose & pose, utility::vector1< SWA_Move > & swa_moves );
 
-	void
-	get_random_move_element_at_chain_terminus( pose::Pose & pose,
-																						 SWA_Move & swa_move,
-																						 bool const disallow_delete,
-																						 bool const disallow_resample,
-																						 bool const disallow_skip_bulge,
-																						 utility::vector1< Size > const & sample_res );
+	// Undefined, commenting out to fix PyRosetta build
+	// void
+	// get_random_move_element_at_chain_terminus( pose::Pose & pose,
+	// 																					 SWA_Move & swa_move,
+	// 																					 bool const disallow_delete,
+	// 																					 bool const disallow_resample,
+	// 																					 bool const disallow_skip_bulge,
+	// 																					 utility::vector1< Size > const & sample_res );
 
-	void
-	get_random_move_element_at_chain_terminus( pose::Pose & pose,
-																						 SWA_Move & swa_move,
-																						 bool const disallow_delete,
-																						 bool const disallow_resample = true,
-																						 bool const disallow_skip_bulge = true );
+	// Undefined, commenting out to fix PyRosetta build
+	// void
+	// get_random_move_element_at_chain_terminus( pose::Pose & pose,
+	// 																					 SWA_Move & swa_move,
+	// 																					 bool const disallow_delete,
+	// 																					 bool const disallow_resample = true,
+	// 																					 bool const disallow_skip_bulge = true );
 
-	void
-	filter_by_sample_res(utility::vector1< SWA_Move > & swa_moves,
-											 utility::vector1< Size > const & sample_res,
-											 utility::vector1< Size > const & res_list );
+	// Undefined, commenting out to fix PyRosetta build
+	// void
+	// filter_by_sample_res(utility::vector1< SWA_Move > & swa_moves,
+	// 										 utility::vector1< Size > const & sample_res,
+	// 										 utility::vector1< Size > const & res_list );
 
 
 } // monte_carlo
