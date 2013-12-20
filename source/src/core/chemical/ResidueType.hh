@@ -980,6 +980,12 @@ public:
 		Vector const & xyz_in
 	);
 
+	void
+	set_shadowing_atom(
+		std::string const & atom,
+		std::string const & atom_being_shadowed
+	);
+
 	/// @brief Reassign Rosetta atom types based on the current heuristics.
 	/// emap is a map of VD->element strings. If an atom is not present in the element map,
 	/// attempt to get the element string from the current type (it's an error if it doesn't have one.)
@@ -1010,10 +1016,8 @@ public:
 	orbitals::ICoorOrbitalData const &
 	orbital_icoor_data(Size const orbital_index) const;
 
-
 	orbitals::ICoorOrbitalData const &
 	new_orbital_icoor_data(Size const orbital_index) const;
-
 
 	///@brief set OrbitalICoor for an orbital
 	void
@@ -1027,33 +1031,32 @@ public:
 		std::string const & stub_atom3
 	);
 
-    //////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
 	/////////////////////////GRAPHS/////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
-    const HeavyAtomGraph
-    heavy_atoms();
+	const HeavyAtomGraph
+	heavy_atoms();
 
-    const AcceptorAtomGraph
-    acceptor_atoms();
+	const AcceptorAtomGraph
+	acceptor_atoms();
 
-    const HeavyAtomWithPolarHydrogensGraph
-    heavy_atom_with_polar_hydrogens();
+	const HeavyAtomWithPolarHydrogensGraph
+	heavy_atom_with_polar_hydrogens();
 
-    const HeavyAtomWithHydrogensGraph
-    heavy_atom_with_hydrogens();
+	const HeavyAtomWithHydrogensGraph
+	heavy_atom_with_hydrogens();
 
-    const HydrogenAtomGraph
-    hydrogens();
+	const HydrogenAtomGraph
+	hydrogens();
 
-    const PolarHydrogenGraph
-    polar_hydrogens();
+	const PolarHydrogenGraph
+	polar_hydrogens();
 
-    const APolarHydrogenGraph
-    apolar_hydrogens();
+	const APolarHydrogenGraph
+	apolar_hydrogens();
 
-    const AromaticAtomGraph
-    aromatic_atoms();
-
+	const AromaticAtomGraph
+	aromatic_atoms();
 
 
 	//////////////////////////////////////////////////////////////////////
@@ -1064,25 +1067,27 @@ public:
 	/// @brief Add a chi (side-chain) angle defined by four atoms.
 	void
 	add_chi(
-			Size const chino,
-			std::string const & atom_name1,
-			std::string const & atom_name2,
-			std::string const & atom_name3,
-			std::string const & atom_name4
+		Size const chino,
+		std::string const & atom_name1,
+		std::string const & atom_name2,
+		std::string const & atom_name3,
+		std::string const & atom_name4
 	);
 
 	/// @brief Add a chi (side-chain) angle defined by four atoms to the end of the list of chis.
-	void add_chi(std::string const & atom_name1,
-			std::string const & atom_name2,
-			std::string const & atom_name3,
-			std::string const & atom_name4);
+	void add_chi(
+		std::string const & atom_name1,
+		std::string const & atom_name2,
+		std::string const & atom_name3,
+		std::string const & atom_name4);
 
 	/// @brief Add a nu (internal cyclic) angle defined by four atoms.
-	void add_nu(core::uint const nu_index,
-			std::string const & atom_name1,
-			std::string const & atom_name2,
-			std::string const & atom_name3,
-			std::string const & atom_name4);
+	void add_nu(
+		core::uint const nu_index,
+		std::string const & atom_name1,
+		std::string const & atom_name2,
+		std::string const & atom_name3,
+		std::string const & atom_name4);
 
 	/// @brief redefine a chi angle based on four atoms
 	//    Added by Andy M. Chen in June 2009
@@ -1499,6 +1504,14 @@ public:
 		return bondangle_atom_sets_.size();
 	}
 
+	/// @brief Return the index of the atom that the "atom_shadowing"
+	/// atom is shadowing; returns zero if the "atom_shadowing" atom is
+	/// not shadowing anyone.
+	Size
+	atom_being_shadowed( Size atom_shadowing ) const {
+		return atom_shadowed_[ atom_shadowing ];
+	}
+
 	/// @brief print intraresidue bond angles to standard out
 	void
 	print_bondangles() const; // for debug
@@ -1728,8 +1741,6 @@ private:
     // Graph structures for residuetype
 	ResidueGraph graph_; // Stores Atoms and Bonds as Nodes and Edges. First as duplicate material, then on its own.
 
-
-
 	/// vector of atoms:
 	/**
 		 \note not pointers but Atom objects
@@ -1763,7 +1774,7 @@ private:
 
 	**/
 
-    utility::vector1< Orbital > orbitals_;
+	utility::vector1< Orbital > orbitals_;
 	//////////////////////////////////////////////////////////////////
 	// ints -- see the WARNING above if these are atom indices
 	/// number of atoms
@@ -1804,6 +1815,12 @@ private:
 	utility::vector1< bondangle_atom_set > bondangle_atom_sets_;
 	/// all intra-residue bond angles that each atom "participates" in.
 	utility::vector1< utility::vector1< Size > > bondangles_for_atom_;
+
+	/// Data to describe virtual atoms that should shadow other atoms for the sake
+	/// of keeping inter-residue cycles closed when working with an atom tree, e.g.
+	/// NV shadows N on proline. For each atom, the following vector lists the index
+	/// of the atom it is shadowing.
+	utility::vector1< Size > atom_shadowed_;
 
 	//// Data for controlling chi.  Dependent data, computed in update_last_controlling_chi()
 
@@ -2047,8 +2064,8 @@ private:
 	////////////////
 	core::chemical::rna::RNA_ResidueType rna_residuetype_;
 
-    // A container for residue properties unique to carbohydrates.
-    core::chemical::carbohydrates::CarbohydrateInfoOP carbohydrate_info_;
+	// A container for residue properties unique to carbohydrates.
+	core::chemical::carbohydrates::CarbohydrateInfoOP carbohydrate_info_;
 
 	////////////////
 	/// status

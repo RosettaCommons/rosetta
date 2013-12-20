@@ -370,6 +370,11 @@ read_topology_file(
 /// used by the residue-type-patching system to avoid applying
 /// patches to certain residue types.  E.g., "VARIANT DISULFIDE".
 /// from CYD.params.
+///
+/// VIRTUAL_SHADOW:
+/// Declares the first atom as a shadower of the second atom, implying
+/// that the atoms ought to be restrained to lie directly on top of each
+/// other. E.g. "VIRTUAL_SHADOW NV N" from PRO.params.
 ResidueTypeOP
 read_topology_file(
 		utility::io::izstream & data,
@@ -699,6 +704,10 @@ read_topology_file(
 				n_bins_per_rot[i] = bin_size;
 			}
 			rsd->set_ncaa_rotlib_n_bin_per_rot( n_bins_per_rot );
+		} else if ( tag == "VIRTUAL_SHADOW" ) {
+			std::string shadower, shadowee;
+			l >> shadower >> shadowee;
+			rsd->set_shadowing_atom( shadower, shadowee );
 		} /*else if( tag== "ORBITALS" ){ //begin parsing orbital information
 			if(basic::options::option[ basic::options::OptionKeys::in::add_orbitals]){
 

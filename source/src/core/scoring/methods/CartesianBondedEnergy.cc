@@ -1333,6 +1333,21 @@ IdealParametersDatabase::create_parameters_for_restype(
 	}
 	*/
 
+	// Virtual shadows: for the sake of working with virtual atoms that are
+	// used to keep intra-residue rings closed, apply a loose constraint between
+	// the virtual shadow on top of the atom it's shadowing.
+	for ( Size ii = 1; ii <= rsd_type.natoms(); ++ii ) {
+		Size ii_shadowee = rsd_type.atom_being_shadowed(ii);
+		if ( ii_shadowee == 0 ) continue;
+		ResidueCartBondedParameters::Size2 ids;
+		ids[1] = ii; ids[2] = ii_shadowee;
+
+		// weak constraint; distance of 0, spring constant of 10
+		CartBondedParametersOP params_ii = new BBIndepCartBondedParameters( 0, 10 );
+		restype_params->add_length_parameter( ids, params_ii );
+	}
+
+
 	/// Keep track of the bond angles and lengths that are used in the backbone dependent calculations
 
 	// loop over all bb-dep angles and bonds;
@@ -1533,7 +1548,7 @@ CartesianBondedEnergy::setup_for_derivatives(
 	pose::Pose & pose,
 	ScoreFunction const &
 ) const {
-	idealize_proline_nvs(pose);
+	//idealize_proline_nvs(pose);
 }
 
 void
@@ -1543,7 +1558,7 @@ CartesianBondedEnergy::setup_for_scoring(
 ) const {
 	using namespace methods;
 
-	idealize_proline_nvs(pose);
+	//idealize_proline_nvs(pose);
 
 	// create LR energy container
 	LongRangeEnergyType const & lr_type( long_range_type() );

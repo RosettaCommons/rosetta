@@ -209,6 +209,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 	dihedrals_for_atom_(residue_type.dihedrals_for_atom_),
 	bondangle_atom_sets_(residue_type.bondangle_atom_sets_),
 	bondangles_for_atom_(residue_type.bondangles_for_atom_),
+	atom_shadowed_(residue_type.atom_shadowed_),
 	last_controlling_chi_(residue_type.last_controlling_chi_),
 	atoms_last_controlled_by_chi_(residue_type.atoms_last_controlled_by_chi_),
 	atoms_with_orb_index_(residue_type.atoms_with_orb_index_),
@@ -681,6 +682,7 @@ ResidueType::add_atom(
 	atom_2_residue_connection_map_.resize( ordered_atoms_.size() );
 	graph_atom->atom_base(ordered_atoms_.size()); // base defaults to self
 	orbital_bonded_neighbor_.resize(ordered_atoms_.size());
+	atom_shadowed_.resize( ordered_atoms_.size(), 0 );
 
 }
 
@@ -1466,38 +1468,38 @@ ResidueType::reorder_primary_data(AtomIndices const & old2new)
 
 		AtomIndices & new_bonded_neighbors(graph_[old_ordered_atoms[old_index]].bonded_neighbors());
 		AtomIndices const old_bonded_neighbors( new_bonded_neighbors );
-        utility::vector1<BondName> & new_bonded_neighbor_types = graph_[ old_ordered_atoms[old_index]].bonded_neighbor_types();
-        utility::vector1<BondName> const old_bonded_neighbor_types( new_bonded_neighbor_types );
+		utility::vector1<BondName> & new_bonded_neighbor_types = graph_[ old_ordered_atoms[old_index]].bonded_neighbor_types();
+		utility::vector1<BondName> const old_bonded_neighbor_types( new_bonded_neighbor_types );
 
 
 		orbital_bonded_neighbor_[new_index] = old_orbital_bonded_neighbor[old_index];
 
 		new_bonded_neighbors.clear(); // this is a reference to the Atom member
 		new_bonded_neighbor_types.clear(); // this is a reference to the Atom member
-        for ( Size j=1, j_end = old_bonded_neighbors.size(); j<= j_end; ++j )
-        {
-        	Size const old_nbr( old_bonded_neighbors[j] );
-        	Size const new_nbr( old2new[ old_nbr ] );
-        	if ( new_nbr ){
-        		new_bonded_neighbors.push_back( new_nbr );
-        		new_bonded_neighbor_types.push_back( old_bonded_neighbor_types[ j ] ); // only push_back types that weren't deleted
-        	}
-        }
+		for ( Size j=1, j_end = old_bonded_neighbors.size(); j<= j_end; ++j )
+		{
+			Size const old_nbr( old_bonded_neighbors[j] );
+			Size const new_nbr( old2new[ old_nbr ] );
+			if ( new_nbr ){
+				new_bonded_neighbors.push_back( new_nbr );
+				new_bonded_neighbor_types.push_back( old_bonded_neighbor_types[ j ] ); // only push_back types that weren't deleted
+			}
+		}
 
 
-        AtomIndices & new_cut_bond_nbrs = graph_[ old_ordered_atoms[old_index]].cut_bond_neighbors();
-        AtomIndices const old_cut_bond_nbrs( new_cut_bond_nbrs );
-        new_cut_bond_nbrs.clear(); // this is a reference to the Atom member
-        for ( Size j=1, j_end = old_cut_bond_nbrs.size(); j<= j_end; ++j )
-        {
-            Size const old_nbr( old_cut_bond_nbrs[j] );
-            if ( old2new[ old_nbr ] ) new_cut_bond_nbrs.push_back( old2new[ old_nbr ] );
-        }
+		AtomIndices & new_cut_bond_nbrs = graph_[ old_ordered_atoms[old_index]].cut_bond_neighbors();
+		AtomIndices const old_cut_bond_nbrs( new_cut_bond_nbrs );
+		new_cut_bond_nbrs.clear(); // this is a reference to the Atom member
+		for ( Size j=1, j_end = old_cut_bond_nbrs.size(); j<= j_end; ++j )
+		{
+			Size const old_nbr( old_cut_bond_nbrs[j] );
+			if ( old2new[ old_nbr ] ) new_cut_bond_nbrs.push_back( old2new[ old_nbr ] );
+		}
 
 
-        if( graph_[ordered_atoms_[new_index]].parent() ){ // If the parent is 0, it is still 0
-            graph_[ordered_atoms_[new_index]].parent( old2new[ graph_[ordered_atoms_[new_index]].parent() ] );
-        }
+		if( graph_[ordered_atoms_[new_index]].parent() ){ // If the parent is 0, it is still 0
+			graph_[ordered_atoms_[new_index]].parent( old2new[ graph_[ordered_atoms_[new_index]].parent() ] );
+		}
 
 
 		VD vd = ordered_atoms_[ new_index ];
@@ -1577,6 +1579,20 @@ ResidueType::reorder_primary_data(AtomIndices const & old2new)
 	for ( Size i=1; i<= old_actcoord_atoms.size(); ++i ) {
 		Size new_index =  old2new[ old_actcoord_atoms[i]];
 		if(new_index) actcoord_atoms_.push_back(new_index); // if atom hasn't been deleted
+	}
+
+	// virtual shadows
+	utility::vector1< Size > old_atom_shadowed = atom_shadowed_;
+	atom_shadowed_.resize( natoms() );
+	std::fill( atom_shadowed_.begin(), atom_shadowed_.end(), 0 );
+	for ( Size ii = 1; ii <= old_atom_shadowed.size(); ++ii ) {
+		Size const ii_new_ind = old2new[ ii ];
+		if ( ii_new_ind == 0 ) continue;
+		Size const old_shadowee = old_atom_shadowed[ ii ];
+		if ( old_shadowee == 0 ) continue;
+		// in the event that the old_shadowee is no longer in the residue, then we
+		// would also set atom_shadowed_[ ii_new_ind ] to zero.
+		atom_shadowed_[ ii_new_ind ] = old2new[ old_shadowee ];
 	}
 
 	// nbr_atom_
@@ -1674,24 +1690,24 @@ ResidueType::update_derived_data()
 
 	}
 
-    // setup the hydrogen information
-    for(Size Aindex=1; Aindex<= ordered_atoms_.size(); ++Aindex){
-        graph_[ordered_atoms_[Aindex]].heavyatom_has_polar_hydrogens(0);
-    }
+	// setup the hydrogen information
+	for(Size Aindex=1; Aindex<= ordered_atoms_.size(); ++Aindex){
+		graph_[ordered_atoms_[Aindex]].heavyatom_has_polar_hydrogens(0);
+	}
 
-    // donor heavy atoms, acceptor heavy atoms, donor hydrogen atoms setup.
+	// donor heavy atoms, acceptor heavy atoms, donor hydrogen atoms setup.
 	// Must be executed after Hpos_polar_ and accpt_pos_ have been updated.
 	for ( Size ii = 1; ii <= Hpos_polar_.size(); ++ii ) {
 		Size hind = Hpos_polar_[ ii ];
 		Size base = atom_base(hind);
-        graph_[ordered_atoms_[base]].heavyatom_has_polar_hydrogens(1);
+		graph_[ordered_atoms_[base]].heavyatom_has_polar_hydrogens(1);
 	}
 
 
 	// now setup abase2
-    for(Size ii=1; ii <= ordered_atoms_.size(); ++ii){
-        graph_[ordered_atoms_[ii]].abase2( 0 ); /// DEPRECATED
-    }
+	for(Size ii=1; ii <= ordered_atoms_.size(); ++ii){
+		graph_[ordered_atoms_[ii]].abase2( 0 ); /// DEPRECATED
+	}
 
 
 	for ( Size ii=1, ii_end= accpt_pos_.size(); ii<= ii_end; ++ii ) {
@@ -1701,7 +1717,7 @@ ResidueType::update_derived_data()
 		assert( i_base != 0 );
 		AtomIndices const & i_nbrs(bonded_neighbor(i));
 		if ( i_nbrs.size() == 0 ) {
-		        utility_exit_with_message( "failed to set abase2 for acceptor atom, it has no nbrs!" );
+				utility_exit_with_message( "failed to set abase2 for acceptor atom, it has no nbrs!" );
 		} else if ( i_nbrs.size() == 1 ) {
 			assert( i_nbrs[1] == i_base );
 			graph_[ordered_atoms_[i]].abase2(atom_base(i_base));
@@ -1718,7 +1734,7 @@ ResidueType::update_derived_data()
 					}
 				}
 			}
-            assert(abase2(i)!= i && abase2(i) != i_base && abase2(i) != 0 );
+			assert(abase2(i)!= i && abase2(i) != i_base && abase2(i) != 0 );
 		} else if ( i_nbrs[1] == i_base ) {
 			graph_[ordered_atoms_[i]].abase2( i_nbrs[2] );
 		} else {
@@ -1874,9 +1890,9 @@ ResidueType::update_derived_data()
 		rna_residuetype_.rna_update_last_controlling_chi(this, last_controlling_chi_, atoms_last_controlled_by_chi_);
 
 		rna_residuetype_.update_derived_rna_data(this);
-    } else if (is_carbohydrate_) {
-        carbohydrate_info_ = new chemical::carbohydrates::CarbohydrateInfo(this);
-        update_last_controlling_chi();
+	} else if (is_carbohydrate_) {
+		carbohydrate_info_ = new chemical::carbohydrates::CarbohydrateInfo(this);
+		update_last_controlling_chi();
 	} else {
 		update_last_controlling_chi();
 	}
@@ -2404,6 +2420,20 @@ ResidueType::set_ideal_xyz(
 }
 
 void
+ResidueType::set_shadowing_atom(
+	std::string const & atom,
+	std::string const & atom_being_shadowed
+)
+{
+	if ( atom_shadowed_.size() == natoms() ) {
+		atom_shadowed_.resize( natoms(), 0 );
+	}
+	Size const index_shadower( atom_index(atom) );
+	Size const index_shadowee( atom_index(atom_being_shadowed) );
+	atom_shadowed_[ index_shadower ] = index_shadowee;
+}
+
+void
 ResidueType::set_ideal_xyz(
 	Size index,
 	Vector const & xyz_in
@@ -2705,7 +2735,7 @@ ResidueType::retype_atoms(ElementMap const & emap, bool preserve) {
 core::chemical::carbohydrates::CarbohydrateInfoCOP
 ResidueType::carbohydrate_info() const
 {
-    return carbohydrate_info_;
+	return carbohydrate_info_;
 }
 
 void
