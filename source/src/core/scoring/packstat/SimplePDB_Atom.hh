@@ -38,6 +38,7 @@ struct SimplePDB_Atom
 		num(-12345),
 		resnum(),
 		chain(),
+		icode(),
 		x(),
 		y(),
 		z(),
@@ -51,7 +52,7 @@ struct SimplePDB_Atom
 
 	std::string ATOM, type, res, lastcol, whole_line;
 	int num, resnum;
-	char chain;
+	char chain,icode;
 	PackstatReal x, y, z, occ, bfac, sasa, radius;
 	numeric::xyzVector<PackstatReal> xyz;
 

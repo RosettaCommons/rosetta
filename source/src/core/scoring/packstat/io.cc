@@ -109,6 +109,7 @@ operator>> (
 	read_stoopid<string>(buf,17,20,atom.res );
 	read_stoopid<char  >(buf,21,21,atom.chain );
 	read_stoopid<int   >(buf,22,26,atom.resnum );
+	read_stoopid<char  >(buf,26,26,atom.icode);
 	read_stoopid<PackstatReal >(buf,29,37,atom.x );
 	read_stoopid<PackstatReal >(buf,38,45,atom.y );
 	read_stoopid<PackstatReal >(buf,46,54,atom.z );

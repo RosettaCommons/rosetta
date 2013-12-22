@@ -80,11 +80,13 @@ SimplePDB::get_res_centers() const
 	Size num_res = 0;
 	int last_res_num = -12345;
 	char last_chain = '*';
+	char last_icode = ' ';
 	for( SPAtomCIter i = atoms_.begin(); i != atoms_.end(); ++i ) {
-		if( i->resnum != last_res_num || i->chain != last_chain ) {
+		if( i->resnum != last_res_num || i->chain != last_chain  || i->icode != last_icode) {
 			num_res++;
 			last_res_num = i->resnum;
 			last_chain = i->chain;
+			last_icode = i->icode;
 		}
 	}
 	vector1< xyzVector<PackstatReal> > centers;
@@ -94,7 +96,7 @@ SimplePDB::get_res_centers() const
 	last_chain = '*';
 	Size res_atom_count = 0;
 	for( SPAtomCIter i = atoms_.begin(); i != atoms_.end(); ++i ) {
-		if( i->resnum != last_res_num || i->chain != last_chain ) {
+		if( i->resnum != last_res_num || i->chain != last_chain || i->icode != last_icode) {
 			if( num_res > 0 ) {
 				if( res_atom_count >= MIN_RES_ATOM_COUNT ){
 					centers.push_back(center/res_atom_count);

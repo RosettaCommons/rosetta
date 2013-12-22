@@ -74,6 +74,7 @@ private:
 	std::string ligand_chain_;
 	core::Size bin_count_;
 	core::Real smoothing_factor_;
+	core::Real range_squared_;
 	utility::vector1<rdf::RDFBaseOP> rdf_functions_;
 
 }; // class ComputeLigandRDF

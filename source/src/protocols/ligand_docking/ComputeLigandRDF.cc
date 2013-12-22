@@ -73,7 +73,7 @@ ComputeLigandRDFCreator::mover_name()
 }
 
 
-ComputeLigandRDF::ComputeLigandRDF() : mode_(""),ligand_chain_(""),bin_count_(100), smoothing_factor_(100.0)
+ComputeLigandRDF::ComputeLigandRDF() : mode_(""),ligand_chain_(""),bin_count_(100), smoothing_factor_(100.0),range_squared_(100.0)
 {
 	
 }
@@ -89,6 +89,7 @@ ComputeLigandRDF::ComputeLigandRDF(ComputeLigandRDF const & that) :
 	ligand_chain_(that.ligand_chain_),
 	bin_count_(that.bin_count_),
 	smoothing_factor_(that.smoothing_factor_),
+	range_squared_(that.range_squared_),
 	rdf_functions_(that.rdf_functions_)
 {
 	
@@ -162,6 +163,10 @@ void ComputeLigandRDF::parse_my_tag
 		throw utility::excn::EXCN_RosettaScriptsOption("Mover 'ComputeLigandRDF' must have a mode of either 'pocket' or 'interface'");
 	}
 	
+	bin_count_ = tag->getOption<core::Size>("bin_count",100);
+	smoothing_factor_ = tag->getOption<core::Real>("smoothing_factor",100);
+	range_squared_ = pow(tag->getOption<core::Real>("range",10.0),2.0);
+	
 	utility::vector0< TagCOP >::const_iterator begin=tag->getTags().begin();
 	utility::vector0< TagCOP >::const_iterator end=tag->getTags().end();
 	
@@ -200,7 +205,6 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::ligand_pr
 		for(core::Size ligand_atom_index = 1; ligand_atom_index <= ligand_residue.natoms();++ligand_atom_index)
 		{
 			core::id::AtomID ligand_atom_id(ligand_atom_index,ligand_resnum);
-			//every residue within 12 A of ligand
 			core::Vector ligand_atom_coords(ligand_residue.xyz(ligand_atom_index));
 			for ( core::graph::Graph::EdgeListConstIter
 				ir  = graph.get_node( ligand_resnum )->const_edge_list_begin(),
@@ -215,8 +219,12 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::ligand_pr
 				core::conformation::Residue protein_residue(pose.conformation().residue((*ir)->get_other_ind(ligand_resnum)));
 				for(core::Size protein_atom_index = 1; protein_atom_index <= protein_residue.natoms();++protein_atom_index)
 				{
-					core::id::AtomID protein_atom_id(protein_atom_index,protein_resnum);
-					atom_pair_list.push_back(std::make_pair(ligand_atom_id,protein_atom_id));
+					core::Vector protein_atom_coords(protein_residue.xyz(protein_atom_index));
+					if(protein_atom_coords.distance_squared(ligand_atom_coords) <= range_squared_)
+					{
+						core::id::AtomID protein_atom_id(protein_atom_index,protein_resnum);
+						atom_pair_list.push_back(std::make_pair(ligand_atom_id,protein_atom_id));
+					}
 				}
 			}
 		}
@@ -258,13 +266,19 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::protein_p
 
 	for(core::Size outer_atom_index = 1; outer_atom_index <= binding_pocket_atoms.size();++outer_atom_index)
 	{
+		core::Vector outer_atom_coords(pose.xyz(binding_pocket_atoms[outer_atom_index]));
 		for(core::Size inner_atom_index = outer_atom_index; inner_atom_index <= binding_pocket_atoms.size();++inner_atom_index)
 		{
 			if(outer_atom_index == inner_atom_index)
 			{
 				continue;
 			}
-			atom_pair_list.push_back(std::make_pair(binding_pocket_atoms[outer_atom_index],binding_pocket_atoms[inner_atom_index]));
+			core::Vector inner_atom_coords(pose.xyz(binding_pocket_atoms[inner_atom_index]));
+			
+			if(outer_atom_coords.distance_squared(inner_atom_coords) <= range_squared_)
+			{
+				atom_pair_list.push_back(std::make_pair(binding_pocket_atoms[outer_atom_index],binding_pocket_atoms[inner_atom_index]));
+			}
 		}
 	}
 	return compute_rdf(pose,atom_pair_list);
@@ -276,7 +290,7 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::compute_r
 	utility::vector1<std::pair<core::id::AtomID, core::id::AtomID> > const & atom_pairs )
 {
 	compute_rdf_tracer << "Computing " << bin_count_ << " bin RDF using " << atom_pairs.size() << " atom pairs" <<std::endl;
-	core::Real step_size = 10.0/static_cast<core::Real>(bin_count_);
+	core::Real step_size = sqrt(range_squared_)/static_cast<core::Real>(bin_count_);
 
 	std::map<std::string, utility::vector1<core::Real> > rdf_map;
 	utility::vector1<core::Real> rdf_vector(bin_count_,0);
