@@ -1,0 +1,11 @@
+Jared Adolf-Bryfogle (jadolfbr@gmail.com)
+
+How to ADD numbering schemes to Rosetta:
+1) Add the information to numbering_scheme_definitions.txt (DEFINES and individual residues)
+   Look in source/test/protocols/antibody for Chothia and North_AHO 1bln renumbered antibodies
+
+2) Check AntibodyEnum and AntibodyEnumManager to make sure your scheme is already there.  If not, add it.  
+
+   
+How to ADD cdr definitions to Rosetta:
+ -Repeat the above for cdr_definitions.txt file.

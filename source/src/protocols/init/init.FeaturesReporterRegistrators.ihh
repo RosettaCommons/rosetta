@@ -65,5 +65,6 @@ static FeaturesReporterRegistrator< strand_assembly::SandwichFeaturesCreator > S
 static FeaturesReporterRegistrator< strand_assembly::StrandBundleFeaturesCreator > StrandBundleFeaturesCreator_registrator;
 //static FeaturesReporterRegistrator< BatchFeaturesCreator > BatchFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< ResidueGridScoresFeaturesCreator >  ResidueGridScoresFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< protocols::antibody::clusters::CDRClusterFeaturesCreator > CDRClusterFeaturesCreator_registrator;
 
 } //namespace protocols

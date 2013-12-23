@@ -5680,7 +5680,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-dualspace</b> \<Boolean\><dt>
-<dd>Do 3 FastRelax cycles of internal coordinate relax followed by two cycles of Cartesian relax - cat_bonded energy term is required, pro_close energy term should be turned off, and use of -relax::minimize_bond_angles is recommended</dd><br>
+<dd>Do 3 FastRelax cycles of internal coordinate relax followed by two cycles of Cartesian relax - cart_bonded energy term is required, pro_close energy term should be turned off, and use of -relax::minimize_bond_angles is recommended</dd><br>
 </dl>
 <dl>
 <dt><b>-ramady</b> \<Boolean\><dt>
@@ -12275,6 +12275,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Antibody option group</dd><br>
 </dl>
 <dl>
+<dt><b>-numbering_scheme</b> \<String\><dt>
+<dd>The numbering scheme of the PDB file. Options are: Chothia_Scheme, Enhanced_Chothia_Scheme, AHO_Scheme, IMGT_Scheme. Kabat_Scheme is also accepted, but not fully supported due to H1 numbering conventions.  Use Kabat_Scheme with caution.</dd><br>
+<dd>Default: "Chothia_Scheme"</dd><br>
+</dl>
+<dl>
+<dt><b>-cdr_definition</b> \<String\><dt>
+<dd>The CDR definition to use.  Current Options are: Chothia, Aroop, North, Kabat, Martin</dd><br>
+<dd>Default: "Aroop"</dd><br>
+</dl>
+<dl>
 <dt><b>-graft_l1</b> \<Boolean\><dt>
 <dd>Graft CDR L1 from template</dd><br>
 <dd>Default: false</dd><br>
@@ -12463,11 +12473,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-camelid_constraints</b> \<Boolean\><dt>
 <dd>Display constraints file for use with camelid H3 modeler</dd><br>
 <dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-numbering_scheme</b> \<String\><dt>
-<dd>the numbering scheme such as chothia or aho</dd><br>
-<dd>Default: "chothia"</dd><br>
 </dl>
  </li>
 <li><h2>antibody:design</h2>

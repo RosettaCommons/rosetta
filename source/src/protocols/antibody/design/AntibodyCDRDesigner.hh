@@ -29,6 +29,7 @@ namespace protocols {
 namespace antibody {
 namespace design {
 	using namespace protocols::antibody;
+	using namespace protocols::antibody::clusters;
 	using namespace core::scoring;
 	
 	struct CDRDesignInstructions{
@@ -37,7 +38,7 @@ namespace design {
 	};
 
 ///@brief Designs antibody CDR structures using a variety of different methods.  Main methods involve using cluster-based sequence probability statistics and conservative design strategies 
-/// to limit unknown structural effects caused by aggressive design.  Uses Modified_AHO numbering and cluster-based design.  Part of Rosetta Antibody Designer.
+/// to limit unknown structural effects caused by aggressive design.  Uses North_AHO numbering and cluster-based design.  Part of Rosetta Antibody Designer.
 ///
 class AntibodyCDRDesigner : public protocols::moves::Mover {
 

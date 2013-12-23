@@ -18,9 +18,9 @@
 
 #include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
-#include <protocols/antibody/CDRClusterEnum.hh>
+#include <protocols/antibody/clusters/CDRClusterEnum.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/CDRClusterEnumManager.hh>
+#include <protocols/antibody/clusters/CDRClusterEnumManager.hh>
 
 
 //Core Headers
@@ -70,6 +70,7 @@ using namespace protocols::features;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace protocols::antibody;
+using namespace protocols::antibody::clusters;
 
 typedef std::map< CDRNameEnum, CDRGraftInstructions > GraftInstructions;
 typedef std::map< CDRNameEnum, CDRDesignInstructions > DesignInstructions;
@@ -98,10 +99,6 @@ AntibodyDatabaseManager::start_database_session(std::string const database_path)
 
 vector1< CDRNameEnum >
 AntibodyDatabaseManager::load_cdr_design_data(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, std::map<core::Size,AAProbabilities>& prob_set, core::Size const cutoff, DesignInstructions & instructions) {
-	if (! ab_info->clusters_setup()){
-		utility_exit_with_message("Cluster information must be set in AntibodyInfo to load the design probabilities");
-	}
-	
 	TR << "Loading CDR cluster statistics " << std::endl;
 	vector1<CDRNameEnum> cdrs_with_no_data;
 	
@@ -116,9 +113,9 @@ AntibodyDatabaseManager::load_cdr_design_data(AntibodyInfoCOP ab_info, core::pos
 		}
 
 
-		std::pair<CDRClusterEnum, core::Real > cluster_pair = ab_info->get_CDR_cluster(cdr);
-		CDRClusterEnum cluster = cluster_pair.first;
-		if (cluster == NA){
+		CDRClusterOP cdr_cluster = ab_info->get_CDR_cluster(cdr);
+		CDRClusterEnum cluster = cdr_cluster->cluster();
+		if (cluster == NA ){
 			cdrs_with_no_data.push_back(cdr);
 			TR << ab_info->get_CDR_Name(cdr) << " is of unknown cluster.  No design probability data added. Using conservative mutations instead." << std::endl;
 			continue;
@@ -311,10 +308,10 @@ AntibodyDatabaseManager::load_cdrs_for_grafting(AntibodyInfoCOP ab_info, GraftIn
 		}
 		if (instructions[cdr].stay_native_cluster){
 			col += 1;
-			std::pair<CDRClusterEnum, core::Real> cluster = ab_info->get_CDR_cluster(cdr);
-			if(cluster.first == NA){
+			CDRClusterOP cdr_cluster = ab_info->get_CDR_cluster(cdr);
+			if(cdr_cluster->cluster()  == NA){
 				utility_exit_with_message(ab_info->get_CDR_Name(cdr)+" : Unable to identify cluster.  Modify StayNativeCluster in instructions or download new AntibodyDatabase + update Rosetta for new definitions.");
-			select_statement.bind(col, ab_info->get_cluster_name(cluster.first));
+			select_statement.bind(col, ab_info->get_cluster_name(cdr_cluster->cluster()));
 			}
 		}
 		

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   apps/pilot/jadolfbr/cluster_utilities/identify_cdr_clusters.cc
-/// @brief This relaxes a CDR using cluster constraints.  Modified_AHO numbering required.
+/// @brief This relaxes a CDR using cluster constraints.  North_AHO numbering required.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/jd2/JobDistributor.hh>
@@ -40,7 +40,7 @@ using namespace protocols::antibody::design;
 
 ///Documentation:
 // This utility app relaxes all CDRs of a an input PDB or list of PDBs using cluster-based dihedral constraints.
-// Use: JD2 enabled.  Modified_Aho numbering scheme required.  To get this: [insert IgClassify website]. No options other than input and output for now.
+// Use: JD2 enabled.  North_AHO numbering scheme required.  To get this: [insert IgClassify website]. No options other than input and output for now.
 
 class RelaxCDRsMover : public protocols::moves::Mover {
 public:
@@ -58,7 +58,7 @@ public:
 	apply(core::pose::Pose & pose){
 
 		//Setup Instances
-		AntibodyInfoOP ab_info = new AntibodyInfo(pose, Modified_AHO);
+		AntibodyInfoOP ab_info = new AntibodyInfo(pose, AHO_Scheme, North);
 		ScoreFunctionOP scorefxn = core::scoring::getScoreFunction(true);
 		AntibodyDesignModeler modeler = AntibodyDesignModeler(ab_info);
 	

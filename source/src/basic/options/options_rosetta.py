@@ -2571,7 +2571,7 @@ Options = Option_Group( '',
 		Option( 'membrane',                  'Boolean', desc='Do membrane relax', default='false' ),
 		Option( 'centroid_mode',             'Boolean', desc="Use centroid relax protocol", default='false'),
 		Option( 'default_repeats',            'Integer', desc='Default number of repeats done by FastRelax. Has no effect if a custom script is used!', default='5' ),
-		Option( 'dualspace',                 'Boolean', desc='Do 3 FastRelax cycles of internal coordinate relax followed by two cycles of Cartesian relax - cat_bonded energy term is required, pro_close energy term should be turned off, and use of -relax::minimize_bond_angles is recommended' ),
+		Option( 'dualspace',                 'Boolean', desc='Do 3 FastRelax cycles of internal coordinate relax followed by two cycles of Cartesian relax - cart_bonded energy term is required, pro_close energy term should be turned off, and use of -relax::minimize_bond_angles is recommended' ),
 
 		## Options for Sequence Relax
 		Option( 'ramady',                    'Boolean', desc='Run ramady code which aleviates stuck bad ramachandran energies', default='false' ),
@@ -5027,6 +5027,14 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			desc='Antibody option group',
 			legal='true', default='true'
 			),
+		Option('numbering_scheme', 'String',
+			desc='The numbering scheme of the PDB file. Options are: Chothia_Scheme, Enhanced_Chothia_Scheme, AHO_Scheme, IMGT_Scheme. Kabat_Scheme is also accepted, but not fully supported due to H1 numbering conventions.  Use Kabat_Scheme with caution.',
+			default='Chothia_Scheme'
+			),
+		Option('cdr_definition', 'String',
+			desc='The CDR definition to use.  Current Options are: Chothia, Aroop, North, Kabat, Martin',
+			default='Aroop'
+			),
 		Option( 'graft_l1', 'Boolean',
 			desc='Graft CDR L1 from template',
 			default='false'
@@ -5176,10 +5184,6 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option( 'camelid_constraints','Boolean',
 			desc='Display constraints file for use with camelid H3 modeler',
 			default='false' ),
-		Option('numbering_scheme', 'String',
-			desc='the numbering scheme such as chothia or aho',
-			default='chothia'),
-
 		Option_Group( 'design',
 			Option('instructions', 'String',
 				desc='Path for instruction file',

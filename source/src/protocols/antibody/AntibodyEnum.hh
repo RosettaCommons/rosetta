@@ -49,23 +49,35 @@ enum CDRNameEnum {
 };
 
 enum AntibodyNumberingSchemeEnum {
-    Aroop = 1,
-    Chothia,
-    Kabat,
-    Enhanced_Chothia,
-    AHO,
-    Modified_AHO,
-    IMGT,
+	Chothia_Scheme = 1,
+	Kabat_Scheme,
+	Enhanced_Chothia_Scheme,
+	IMGT_Scheme,
+	AHO_Scheme,
 
-    AntibodyNumberingSchemeEnum_start = Aroop,
-    AntibodyNumberingSchemeEnum_total = IMGT
+    AntibodyNumberingSchemeEnum_start = Chothia_Scheme,
+    AntibodyNumberingSchemeEnum_total = AHO_Scheme,
+	NONE
 };
 
+enum CDRDefinitionEnum {
+	Chothia = 1,
+	Aroop,
+	Kabat,
+	Martin,
+	North,
+	
+	CDRDefinitionEnum_start = Chothia,
+	CDRDefinitionEnum_total = North
+	
+};
+
+
 ///Main enumerator for AntibodyNumbering.
-enum AntibodyNumberingEnum {
-    start = 1,
-    stop,
-    AntibodyNumberingEnum_total = stop
+enum CDRLandmarkEnum {
+    cdr_start = 1,
+    cdr_end,
+    CDRLandmarkEnum_total = cdr_end
 };
 
 enum H3BaseTypeEnum {
@@ -89,14 +101,7 @@ enum PackingAngleEnum {
 };
 
 
-//////////////////////////////////////////////////////////////////////////////
-// TypeDefs
-//
-//
-/// @brief Used for either CDR or PackingAngle numbering. See AntibodyInfo.set_NumberingInfo
-typedef vector1< vector1<Size> > AntibodyNumbering;
-
-}//antibody2
+}//antibody
 }//protocols
 #endif	//#ifndef INCLUDED_protocols/antibody/AntibodyEnum_HH
 

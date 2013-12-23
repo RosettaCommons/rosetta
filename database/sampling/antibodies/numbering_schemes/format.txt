@@ -1,9 +1,0 @@
-Not currently used.
-All Numbering schemes must have: type start stop
-Type strings must be given as per protocols/antibodies/AntibodyEnumManager.cc
-Please look at current examples.
-
-Packing angle residues can be found by superposition of an antibody with a documented numbering scheme.
-
-Order of types is not important
- 

@@ -18,6 +18,7 @@
 #include <protocols/antibody/design/DesignInstructionsParser.hh>
 #include <protocols/antibody/design/AntibodyDatabaseManager.hh>
 #include <protocols/antibody/design/util.hh>
+#include <protocols/antibody/clusters/util.hh>
 #include <protocols/antibody/util.hh>
 
 #include <core/pack/pack_rotamers.hh>
@@ -50,13 +51,15 @@ namespace protocols {
 namespace antibody {
 namespace design {
 	using namespace protocols::antibody;
+	using namespace protocols::antibody::clusters;
+	
 	using namespace core::pack::task::operation;
 	using namespace protocols::toolbox::task_operations;
 
 AntibodyCDRDesigner::AntibodyCDRDesigner(AntibodyInfoOP ab_info){
 	ab_info_ = ab_info;
-	if (ab_info_->get_Current_AntibodyNumberingScheme()!="Modified_AHO"){
-		utility_exit_with_message("Antibody Design Protocol requires the Modified AHO numbering scheme");
+	if (ab_info_->get_current_AntibodyNumberingScheme()!="AHO_Scheme" && ab_info_->get_current_CDRDefinition() != "North"){
+		utility_exit_with_message("Antibody Design Protocol requires AHO_scheme and North definitions");
 	}
 	
 	scorefxn_ = core::scoring::getScoreFunction();
@@ -69,8 +72,8 @@ AntibodyCDRDesigner::AntibodyCDRDesigner(AntibodyInfoOP ab_info){
 
 AntibodyCDRDesigner::AntibodyCDRDesigner(AntibodyInfoOP ab_info, std::string instruction_path){
 	ab_info_ = ab_info;
-	if (ab_info_->get_Current_AntibodyNumberingScheme()!="Modified_AHO"){
-		utility_exit_with_message("Antibody Design Protocol requires the Modified AHO numbering scheme");
+	if (ab_info_->get_current_AntibodyNumberingScheme()!="AHO_Scheme" && ab_info_->get_current_CDRDefinition() != "North"){
+		utility_exit_with_message("Antibody Design Protocol requires AHO_scheme and North definitions");
 	}
 	
 	scorefxn_ = core::scoring::getScoreFunction();
@@ -198,9 +201,6 @@ AntibodyCDRDesigner::set_design_method(DesignTypeEnum const design_method){
 std::map< core::Size, std::map< core::chemical::AA, core::Real > >
 AntibodyCDRDesigner::setup_probability_data(core::pose::Pose& pose){
 	AntibodyDatabaseManager manager = AntibodyDatabaseManager();
-	if (! ab_info_->clusters_setup()){
-		ab_info_->setup_CDR_clusters(pose);
-	}
 	std::map< core::Size, std::map< core::chemical::AA, core::Real > > prob_set;
 	vector1<CDRNameEnum> no_data_cdrs= manager.load_cdr_design_data(ab_info_, pose, prob_set, prob_cutoff_, instructions_);
 	
@@ -367,9 +367,8 @@ AntibodyCDRDesigner::setup_constraints(core::pose::Pose & pose){
 	for (core::SSize i = 1; i<= CDRNameEnum_total; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		bool constraint_result;
-		
 		if (! cdr_has_constraints(pose, cdr, "DihedralConstraint")){
-			constraint_result = protocols::antibody::add_harmonic_cluster_constraint(ab_info_, pose, ab_info_->get_CDR_cluster(cdr).first);
+			constraint_result = protocols::antibody::add_harmonic_cluster_constraint(ab_info_, pose, ab_info_->get_CDR_cluster(cdr)->cluster());
 		}
 		if (! constraint_result && ! cdr_has_constraints(pose, cdr, "CoordinateConstraint")){
 			core::Size start_res = ab_info_->get_CDR_start(cdr, pose);
@@ -391,7 +390,7 @@ AntibodyCDRDesigner::apply(core::pose::Pose& pose){
 		using namespace core::pack::task;
 		using namespace protocols::toolbox::task_operations;
 
-		if (! protocols::antibody::check_if_pose_renumbered_for_clusters(pose)){
+		if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
 			utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
 		}
 		

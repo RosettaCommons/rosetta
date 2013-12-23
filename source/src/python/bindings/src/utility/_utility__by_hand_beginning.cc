@@ -14,7 +14,7 @@
 #include "core/coarse/Translator.hh"
 #include "core/coarse/CoarseEtable.hh"
 
-#include <protocols/antibody/CDRClusterEnum.hh>
+#include <protocols/antibody/clusters/CDRClusterEnum.hh>
 
 // for AP wrapping
 #include <core/pose/Pose.hh>

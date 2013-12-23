@@ -9,7 +9,7 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/antibody/design/AntibodyGraftDesigner.hh
-/// @brief Class that initially designs antibodies through grafting using an AntibodyDatabase + Modified_AHO numbering scheme
+/// @brief Class that initially designs antibodies through grafting using an AntibodyDatabase + North_AHO numbering scheme
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
@@ -22,7 +22,7 @@
 #include <protocols/antibody/design/AntibodyDesignModeler.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/CDRClusterEnum.hh>
+#include <protocols/antibody/clusters/CDRClusterEnum.hh>
 
 // Protocol Includes
 #include <protocols/grafting/AnchoredGraftMover.hh>
@@ -42,6 +42,8 @@ namespace antibody{
 namespace design{
 	using namespace protocols::antibody;
 	using namespace protocols::grafting;
+	using namespace protocols::antibody::clusters;
+	
 	using namespace utility;
 	using namespace core;
 	using namespace core::scoring;
@@ -369,7 +371,7 @@ private:
 	//run_stochastic_graft_algorithm(pose::Pose & pose, vector1< CDRNameEnum > & cdrs_to_design);
 	
 	
-	map< CDRNameEnum, CDRClusterEnum > native_clusters_; //Native North cluster
+	map< CDRNameEnum, CDRClusterOP> native_clusters_; //Native North cluster
 	map< CDRNameEnum,  CDRGraftInstructions > cdr_instructions_;
 	map< CDRNameEnum, SamplingWeights > sampling_instructions_;
 	

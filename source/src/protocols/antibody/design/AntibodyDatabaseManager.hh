@@ -41,6 +41,7 @@ namespace design{
 	using namespace utility;
 	using namespace core::pose;
 	using namespace protocols::antibody;
+	using namespace protocols::antibody::clusters;
 	
 typedef std::map< CDRNameEnum, CDRGraftInstructions > GraftInstructions;
 typedef std::map< CDRNameEnum, CDRDesignInstructions > DesignInstructions;

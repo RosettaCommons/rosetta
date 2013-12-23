@@ -9,12 +9,13 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/antibody/design/AntibodyGraftDesigner.cc
-/// @brief Class that initially designs antibodies through grafting using an AntibodyDatabase + Modified_AHO numbering scheme
+/// @brief Class that initially designs antibodies through grafting using an AntibodyDatabase + North_AHO numbering scheme
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 // Project Includes
 #include <protocols/antibody/design/AntibodyGraftDesigner.hh>
-#include <protocols/antibody/CDRClusterEnum.hh>
+#include <protocols/antibody/clusters/CDRClusterEnum.hh>
+#include <protocols/antibody/clusters/util.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/util.hh>
@@ -62,6 +63,7 @@ namespace antibody{
 namespace design{
 	using namespace protocols::antibody;
 	using namespace protocols::grafting;
+	using namespace protocols::antibody::clusters;
 	using namespace core;
 	using core::Size;
 	
@@ -73,8 +75,8 @@ AntibodyGraftDesigner::AntibodyGraftDesigner(AntibodyInfoOP ab_info):
 	ab_info_=ab_info;
 	max_linear_chainbreak_ = .35;
 	modeler_ = new AntibodyDesignModeler(ab_info_);
-	if (ab_info_->get_Current_AntibodyNumberingScheme()!="Modified_AHO"){
-		utility_exit_with_message("Antibody Design Protocol requires the Modified AHO numbering scheme");
+	if (ab_info_->get_current_AntibodyNumberingScheme()!="AHO_Scheme" && ab_info_->get_current_CDRDefinition() != "North"){
+		utility_exit_with_message("Antibody Design Protocol requires AHO_scheme and North definitions");
 	}
 	read_command_line_options();
 	set_defaults();
@@ -88,8 +90,8 @@ AntibodyGraftDesigner::AntibodyGraftDesigner(AntibodyInfoOP & ab_info, std::stri
 	ab_info_=ab_info;
 	max_linear_chainbreak_ = .35;
 	modeler_ = new AntibodyDesignModeler(ab_info_);
-	if (ab_info_->get_Current_AntibodyNumberingScheme()!="Modified_AHO"){
-		utility_exit_with_message("Antibody Design Protocol requires the Modified AHO numbering scheme");
+	if (ab_info_->get_current_AntibodyNumberingScheme()!="AHO_Scheme" && ab_info_->get_current_CDRDefinition() != "North"){
+		utility_exit_with_message("Antibody Design Protocol requires AHO_scheme and North definitions");
 	}
 	read_command_line_options();
 	instruction_path_ = instruction_path;
@@ -336,8 +338,7 @@ AntibodyGraftDesigner::setup_native_clusters(pose::Pose & pose){
 	
 	for (Size i=1; i<=CDRNameEnum_total; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
-		std::pair<CDRClusterEnum, core::Real> cluster_pair = ab_info_->get_CDR_cluster(cdr);
-		native_clusters_[cdr] = cluster_pair.first;
+		native_clusters_[cdr] = ab_info_->get_CDR_cluster(cdr);
 	}
 }
 
@@ -687,7 +688,7 @@ AntibodyGraftDesigner::run_deterministic_graft_algorithm(pose::Pose & pose){
 void
 AntibodyGraftDesigner::apply(pose::Pose & pose){
 
-	if (! protocols::antibody::check_if_pose_renumbered_for_clusters(pose)){
+	if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
 		utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
 	}
 	

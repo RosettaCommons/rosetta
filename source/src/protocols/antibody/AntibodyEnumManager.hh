@@ -48,6 +48,7 @@ public:
 	bool
 	cdr_name_is_present(std::string const & cdr_name) const;
 
+	
 	////////////////// Numbering Schemes ///////////////////////////////////////
 
 	AntibodyNumberingSchemeEnum
@@ -56,7 +57,22 @@ public:
 	std::string
 	numbering_scheme_enum_to_string(AntibodyNumberingSchemeEnum const numbering_scheme) const;
 
-
+	bool
+	numbering_scheme_is_present(std::string numbering_scheme) const;
+	
+	
+	////////////////// CDR Definitions  ///////////////////////////////////////
+	
+	CDRDefinitionEnum
+	cdr_definition_string_to_enum(std::string const & cdr_definition) const;
+	
+	std::string
+	cdr_definition_enum_to_string(CDRDefinitionEnum const cdr_definition) const;
+	
+	bool
+	cdr_definition_is_present(std::string const & cdr_definition) const;
+	
+	
 	////////////////// H3 Base Type ////////////////////////////////////////////
 
 	H3BaseTypeEnum
@@ -65,7 +81,19 @@ public:
 	std::string
 	h3_base_type_enum_to_string(H3BaseTypeEnum const base_type) const;
 
-
+	
+	///////////////// Antibody Landmarks ////////////////////////////////////////////
+	
+	CDRLandmarkEnum
+	cdr_landmark_string_to_enum(std::string const & landmark) const;
+	
+	std::string
+	cdr_landmark_enum_to_string(CDRLandmarkEnum const landmark) const;
+	
+	bool
+	cdr_landmark_is_present(std::string const & landmark) const;
+	
+	
 	///////////////// Packing Angle ////////////////////////////////////////////
 
 	PackingAngleEnum
@@ -89,11 +117,17 @@ private:
 	utility::vector1< std::string >  numbering_scheme_to_string_;
 	std::map< std::string, AntibodyNumberingSchemeEnum > numbering_scheme_to_enum_;
 
+	utility::vector1< std::string >  cdr_definition_to_string_;
+	std::map< std::string, CDRDefinitionEnum > cdr_definition_to_enum_;
+	
 	utility::vector1< std::string >  h3_base_type_to_string_;
 	std::map< std::string, H3BaseTypeEnum > h3_base_type_to_enum_;
 
 	utility::vector1< std::string >  packing_angle_to_string_;
 	std::map< std::string, PackingAngleEnum > packing_angle_to_enum_;
+	
+	utility::vector1< std::string > cdr_landmark_to_string_;
+	std::map< std::string, CDRLandmarkEnum > cdr_landmark_to_enum_;
 };
 }
 }

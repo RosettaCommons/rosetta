@@ -29,6 +29,7 @@ save_tables <- function(
 	output_formats,
 	table_title=NULL,
 	caption=caption,
+  quote_strings=F,
 	...
 ) {
 	extra_args <- list(...)
@@ -124,7 +125,15 @@ save_tables <- function(
 					write.csv(
 						x=table,
 						file=full_path,
-						row.names=FALSE)
+						row.names=FALSE,
+            quote=quote_strings)
+				} else if(as.character(fmt$id) == "output_tab_delimited_table") {
+          write.table(
+            table,
+            full_path,
+            sep="\t",
+            row.names=F,
+            quote=quote_strings)
 				}
 			}, error=function(e){
 				cat("\n")

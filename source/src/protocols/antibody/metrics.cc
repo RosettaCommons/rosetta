@@ -125,7 +125,7 @@ vl_vh_orientation_coords ( const pose::Pose & pose_in, const protocols::antibody
 std::pair<core::Real,core::Real>
 kink_dihedral(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info, bool debug) {
 
-	Size kb = ab_info.kink_begin();
+	Size kb = ab_info.kink_begin(pose);
 	core::conformation::Residue kr0 = pose.residue(kb);
 	core::conformation::Residue kr1 = pose.residue(kb+1);
 	core::conformation::Residue kr2 = pose.residue(kb+2);
@@ -152,11 +152,11 @@ kink_dihedral(const core::pose::Pose & pose, const protocols::antibody::Antibody
 core::Real
 kink_bb_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info) {
 
-	Size Di = ab_info.kink_anion_residue();  // N-1
+	Size Di = ab_info.kink_anion_residue(pose);  // N-1
 	core::conformation::Residue D  = pose.residue(Di);
 	Vector DN = D.xyz("N");
 
-	Size Ri = ab_info.kink_cation_residue();  // 0
+	Size Ri = ab_info.kink_cation_residue(pose);  // 0
 	core::conformation::Residue R  = pose.residue(Ri);
 	Vector RO = R.xyz("O");
 
@@ -192,12 +192,12 @@ kink_RD_Hbond(const core::pose::Pose & pose, const protocols::antibody::Antibody
 core::Real
 kink_Trp_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info) {
 
-	Size Wi = ab_info.kink_trp(); // N+1
+	Size Wi = ab_info.kink_trp(pose); // N+1
 	core::conformation::Residue W  = pose.residue(Wi);
 	if (W.name3() != "TRP") return 0.0;
 	Vector W_NE1 = W.xyz("NE1");
 
-	Size kb1 = ab_info.kink_begin(); // N-2
+	Size kb1 = ab_info.kink_begin(pose); // N-2
 	core::conformation::Residue kb = pose.residue(kb1);
 	Vector kb1_O = kb.xyz("O");
 

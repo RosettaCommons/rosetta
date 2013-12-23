@@ -477,7 +477,7 @@ void VarSolDRotamerDots::initialize_sasa_arrays() {
 				radii_[ ii ][ 3 ] = 1.9;
 				radii_[ ii ][ 4 ] = 2.0;
 				radii_[ ii ][ 5 ] = 2.1;
-			} else if ( iiattype.atom_type_name() == "Haro" ) {			
+			} else if ( iiattype.atom_type_name() == "Haro" ) {
 				radii_[ ii ].resize( 1 );
 				radii_[ ii ][ 1 ] = 1.0 + 1.4;
 			} else {
@@ -1777,13 +1777,13 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 //
 //	// so we take two "offsets" into the "masks" table: 1) the one that normally gets used to figure out which dots are covered
 //	// by the neighboring atom, and 2) one that's one "step" in, which represents the "ring" of dots that's just past the ones
-//	// that are covered by the neighboring atom. if we then take the inverse (negate) the normally used mask, we'll get 0's 
+//	// that are covered by the neighboring atom. if we then take the inverse (negate) the normally used mask, we'll get 0's
 //	// whereever there are dots covered by the other atom (instead of 1's) and 1's everywhere else. if we logical AND that
 //	// result with the dots that one "step" in, we'll get 1's at just the ring of dots that's next to the ones that are covered.
 //
-//	// if we then logical AND the ring of dots with all of the exposed dots on this atom, we can determine if there are any 
+//	// if we then logical AND the ring of dots with all of the exposed dots on this atom, we can determine if there are any
 //	// exposed dots adjacent to the intersection circle.
-//	
+//
 //	for ( Size bb = 1, bblia = (*RotamerDots::lg_masks_).index( bb, masknum1a ), bblib = (*RotamerDots::lg_masks_).index( bb, masknum1b );
 //			bb <= RotamerDots::num_bytes_; ++bb, ++bblia, ++bblib ) {
 //		ring1[ bb ] = (*RotamerDots::lg_masks_)[ bblib ] & ~ (*RotamerDots::lg_masks_)[ bblia ];

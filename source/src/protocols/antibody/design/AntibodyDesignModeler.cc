@@ -16,7 +16,7 @@
 #include <protocols/antibody/design/AntibodyDesignModeler.hh>
 #include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
-#include <protocols/antibody/CDRClusterEnum.hh>
+#include <protocols/antibody/clusters/CDRClusterEnum.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/util.hh>
 
@@ -67,6 +67,7 @@ using namespace core::pose;
 using namespace core::scoring;           
 using namespace protocols::simple_moves;
 using namespace protocols::toolbox::task_operations;
+using namespace protocols::antibody::clusters;
 using core::Size;      
 using std::string;
             

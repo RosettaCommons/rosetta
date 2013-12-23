@@ -13,6 +13,7 @@
 
 
 #include <protocols/antibody/design/AntibodyCDRDesigner.hh>
+#include <protocols/antibody/clusters/util.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -40,10 +41,10 @@ class Designer : public protocols::moves::Mover {
 	
 	void
 	apply(core::pose::Pose pose){
-		if (! protocols::antibody::check_if_pose_renumbered_for_clusters(pose)){
+		if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
 			utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.")
 		}
-		AntibodyInfoOP ab_info = new AntibodyInfo(pose, Modified_AHO);
+		AntibodyInfoOP ab_info = new AntibodyInfo(pose, North_AHO);
 		ab_info->show(std::cout);
 		ab_info->setup_CDR_clusters(pose);
 		AntibodyCDRDesigner des = new AntibodyCDRDesigner(ab_info);

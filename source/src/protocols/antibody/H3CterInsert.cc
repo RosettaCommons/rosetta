@@ -208,15 +208,11 @@ void H3CterInsert::read_H3_cter_fragment( ) {
 	Size cdr_h3_size = (     ab_info_->get_CDR_loop(h3).stop() - ab_info_->get_CDR_loop(h3).start()  ) + 1;
 
 	TR<<"cdr_h3_size="<<cdr_h3_size<<std::endl;
-	utility::vector1< char > aa_1name = ab_info_->get_CDR_sequence_with_stem(h3,2,2);
+	std::string aa_1name = ab_info_->get_CDR_sequence_with_stem(h3,2,2);
 
-	TR<<"aa_1name.size()="<<aa_1name.size()<<std::endl;
+	TR<<"aa_1name.size()="<<aa_1name.length()<<std::endl;
 
-	std::string tttttt="";
-	for(Size i=1; i<=aa_1name.size(); i++) {
-		tttttt+=aa_1name[i];
-	}
-	TR<<tttttt<<std::endl;
+	TR<<aa_1name<<std::endl;
 
 
 

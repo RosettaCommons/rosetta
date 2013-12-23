@@ -18,8 +18,11 @@
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/AntibodyEnumManager.hh>
-#include <protocols/antibody/CDRClusterEnum.hh>
-#include <protocols/antibody/CDRClusterEnumManager.hh>
+#include <protocols/antibody/AntibodyNumberingParser.hh>
+#include <protocols/antibody/clusters/CDRClusterEnum.hh>
+#include <protocols/antibody/clusters/CDRClusterEnumManager.hh>
+#include <protocols/antibody/clusters/CDRClusterSet.hh>
+#include <protocols/antibody/clusters/CDRCluster.hh>
 
 // Rosetta Headers
 #include <protocols/loops/Loop.hh>
@@ -33,12 +36,13 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////
-using namespace core;
-using namespace utility;
+
 namespace protocols {
 namespace antibody {
 
-
+using namespace core;
+using namespace utility;
+using namespace protocols::antibody::clusters;
 
 struct FrameWork {
 	Size    start;
@@ -50,12 +54,20 @@ struct FrameWork {
 /// @brief This class is used to get all relevant information you would need when dealing with an antibody.
 ///  @details It mainly holds numbering information, but passes out a variety of Rosetta specific objects like movemaps, Loops, taskfactories, etc.
 ///  as well as other information such as CDR cluster type, camelid, H3 types, etc.
-class AntibodyInfo : public pointer::ReferenceCount {
-
+class AntibodyInfo : public utility::pointer::ReferenceCount {
+	
 public:
+	
+	///@brief Constructor that Loads default numbering scheme and cdr definition from options (Chothia/Aroop)
+	AntibodyInfo( pose::Pose const & pose, bool const & cdr_pdb_numbered = true);
+	
+	///@brief Constructor that uses the numbering scheme and cdr_definition given.
 	AntibodyInfo( pose::Pose const & pose,
-	              AntibodyNumberingSchemeEnum const & numbering_scheme = Aroop,
-	              bool const & cdr_pdb_numbered = true);
+			AntibodyNumberingSchemeEnum const & numbering_scheme,
+			CDRDefinitionEnum const & cdr_definition,
+			bool const & cdr_pdb_numbered = true);
+	
+
 
 	//Default destructor
 	virtual ~AntibodyInfo();
@@ -64,14 +76,17 @@ public:
 
 	/// @brief: get the current numbering scheme being used
 	std::string
-	get_Current_AntibodyNumberingScheme();
-
+	get_current_AntibodyNumberingScheme() const ;
+	
+	std::string
+	get_current_CDRDefinition()  const;
+	
 	/// @brief get the length of the cdr
 	Size
 	get_CDR_length(CDRNameEnum const & cdr_name) const;
 	
 	Size
-	get_CDR_length(CDRNameEnum const & cdr_name, pose::Pose const & pose);
+	get_CDR_length(CDRNameEnum const & cdr_name, core::pose::Pose const & pose, CDRDefinitionEnum const & transform) const;
 	
 	std::string
 	get_CDR_Name(CDRNameEnum const & cdr_name) const;
@@ -102,23 +117,32 @@ public:
 	/// @brief Return PDB residue number of CDR start residue
 	Size
 	get_CDR_start_PDB_num(CDRNameEnum const & cdr_name) const {
-		return cdr_numbering_[cdr_name][start];
+		return numbering_info_.cdr_numbering[cdr_name][cdr_start]->resnum();
 	}
 
 	/// @brief Return PDB residue number of CDR end residue
 	Size
 	get_CDR_end_PDB_num(CDRNameEnum const & cdr_name) const {
-		return cdr_numbering_[cdr_name][stop]; // PDB numbering
+		return numbering_info_.cdr_numbering[cdr_name][cdr_end]->resnum(); // PDB numbering
 	}
 
+	
 	/// @brief Return pose number of CDR start residue
 	Size
 	get_CDR_start(CDRNameEnum const & cdr_name, pose::Pose const & pose) const;
-
-	/// @brief Return pose number of CDR end residue
+	
+	// @brief Return pose number of CDR start residue in the definition of the numbering scheme of transform.
+	Size
+	get_CDR_start(CDRNameEnum const & cdr_name, pose::Pose const & pose, CDRDefinitionEnum const & transform) const;
+	
+	/// @brief Return pose number of CDR end residue in the definition of the numbering scheme of transform.
 	Size
 	get_CDR_end(CDRNameEnum const & cdr_name, pose::Pose const & pose) const; // pose numbering
+	
+	Size
+	get_CDR_end(CDRNameEnum const & cdr_name, pose::Pose const & pose, CDRDefinitionEnum const & transform) const;
 
+	
 	/// @brief return the framework numbering information
 	vector1< vector1<FrameWork> >
 	get_AntibodyFrameworkInfo() const ;
@@ -140,63 +164,84 @@ public:
 	}
 
 	/// @brief return pose residue number of the first residue of the H3 kink
-	 Size
-	kink_begin() const {
-	return get_CDR_loop(h3).stop() - 2;
+	Size
+	kink_begin(pose::Pose const & pose) const {
+		 return get_CDR_loop(h3, pose, Aroop).stop() - 2;
+	 }
+
+	/// @brief return pose residue number of the last residue of the H3 kink
+	Size
+	kink_end(pose::Pose const & pose) const {
+		return get_CDR_loop(h3, pose, Aroop).stop() + 1;
 	}
 
 	/// @brief return pose residue number of the last residue of the H3 kink
 	Size
-	kink_end() const {
-		return get_CDR_loop(h3).stop() + 1;
-	}
-
-	/// @brief return pose residue number of the last residue of the H3 kink
-	Size
-	kink_trp() const {
-		return get_CDR_loop(h3).stop() + 1;
+	kink_trp(pose::Pose const & pose) const {
+		return get_CDR_loop(h3, pose, Aroop).stop() + 1;
 	}
 
 	  /// @brief return pose residue number of the kink 'anion' (typically Asp/Glu) residue in the kink bulge HBond
 	Size
-	kink_anion_residue() const {
-		return get_CDR_loop(h3).stop() - 1;
+	kink_anion_residue(pose::Pose const & pose) const {
+		return get_CDR_loop(h3, pose, Aroop).stop() - 1;
 	}
 
 	/// @brief return pose residue number of the kink 'cation' (typically Arg/Lys) residue in the kink bulge HBond
 	Size
-	kink_cation_residue() const {
-		return get_CDR_loop(h3).start() - 1;
+	kink_cation_residue(pose::Pose const & pose) const {
+		return get_CDR_loop(h3, pose, Aroop).start() - 1;
 	}
     
 	/// @brief return side chain anion atoms (typically Asp/Glu oxygens) in the kink bulge HBond
 	std::vector<Vector>
-	kink_anion_atoms(const core::pose::Pose & pose) const;
+	kink_anion_atoms(const pose::Pose & pose) const;
     
 	/// @brief return side chain cation atoms (typically Lys/His nitrogens) in the kink bulge HBond
 	std::vector<Vector>
-	kink_cation_atoms(const core::pose::Pose & pose) const;
-    
+	kink_cation_atoms(const pose::Pose & pose) const;
+   
+public:
+	///////////////////////////////////////////////////
+	//Landmark Transform
+	//
+	//
+	
 
+	///@brief Used to get a residue number of a particular place in the framework or conserved residue in the CDR.  Use this instead of PDBInfo.
+	///
+	///@details If the current numbering scheme is not 'scheme', will return the equivalent position of the current numbering scheme using the transform scheme file in the database.  
+	/// Should not be used for residues within CDRs since numbering schemes vary greatly in their within cdr alignments and numbering.  Use get_CDR_start/end/loop functions with relative positions for this purpose.
+	/// Returns 0 if residue is not found in pose
+	core::Size
+	get_landmark_resnum(pose::Pose const & pose, 
+		AntibodyNumberingSchemeEnum const scheme,
+		char const chain,
+		Size const pdb_resnum,
+		char const insertion_code=' ') const;
+	
+	
 public:
 	//////////////////////////////////////////////////
 	//CDR Clusters
 	//
 	//
 
-	/// @brief setup the clustering information for each CDR
+	/// @brief setup the clustering information for each CDR to totalCDRLoops
 	void
 	setup_CDR_clusters(pose::Pose const & pose);
-
-	///@brief Check if the Cluster information is already set.  Useful for protocols.
-	bool
-	clusters_setup() const;
 	
-	/// @brief get the cdr's cluster identity and distance to cluster using it's structure
+	/// @brief get the cdr's cluster identity and distance to cluster using it's structure as a CDRCluster object.
 	/// @details See North, B., A. Lehmann, et al. (2011). JMB 406(2): 228-256.
 	///  Must use setup_CDR_clusters first.
-	std::pair < CDRClusterEnum, Real >
+	/// @note If this AbInfo does not have all 6 chains, CDRClusterOP may be NULL if the CDR is not present to begin with.
+	///
+	CDRClusterOP
 	get_CDR_cluster(CDRNameEnum const cdr_name) const;
+	
+	///@brief Check to make sure AbInfo has a cluster object for this CDR.  In that all 6 CDRs not nessessarily present for each antibody.
+	bool
+	has_cluster_for_cdr(CDRNameEnum const cdr_name) const;
 	
 	std::string
 	get_cluster_name(CDRClusterEnum const cluster) const;
@@ -216,16 +261,21 @@ public:
 	//
 	//
 	/// @brief return the sequence of a particular CDR loop
-	vector1<char>
+	std::string
 	get_CDR_sequence_with_stem( CDRNameEnum const & cdr_name,
 	                            Size left_stem = 0,
 	                            Size right_stem = 0) const;
 
+	std::string
+	get_CDR_sequence_with_stem( CDRNameEnum const & cdr_name,
+			core::pose::Pose const & pose,
+			CDRDefinitionEnum const & transform,
+			Size left_stem = 0,
+			Size right_stem = 0) const;
+	
 	/// @brief return the antibody sequence of LH or just H for camelid
-	vector1<char> const &
-	get_antibody_sequence() const {
-		return ab_sequence_;
-	}
+	std::string
+	get_antibody_sequence() const;
 
 
 public:
@@ -237,25 +287,24 @@ public:
 	
 	/// @brief return the loop of a certain loop type
 	loops::Loop
-	get_CDR_loop( CDRNameEnum const & cdr_name ) const {
-		return (*get_CDR_in_loopsop(cdr_name))[1];
-	}
+	get_CDR_loop( CDRNameEnum const & cdr_name ) const;
 	
 	///@brief return the loop of a certain loop type on the fly
 	loops::Loop
 	get_CDR_loop( CDRNameEnum const & cdr_name, pose::Pose const & pose) const;
-
+	
+/// @brief return the loop of a certain loop type in definitions of the numbering scheme transform.
+	loops::Loop
+	get_CDR_loop( CDRNameEnum const & cdr_name, pose::Pose const & pose, CDRDefinitionEnum const & transform) const;
+	
+	
 	/// @brief return the loop of a certain loop type
 	loops::LoopsOP
-	get_CDR_in_loopsop( CDRNameEnum const & cdr_name ) const {
-		return vector1_loopsop_having_cdr_[cdr_name];
-	}
+	get_CDR_in_loopsop( CDRNameEnum const & cdr_name ) const;
 	
 	/// @brief return a LoopsOP object, initialized upon class construction.
 	loops::LoopsOP
-	get_AllCDRs_in_loopsop() const {
-		return loopsop_having_allcdrs_;
-	}
+	get_AllCDRs_in_loopsop() const;
 	
 	///@brief On-the-fly CDR LoopsOP
 	loops::LoopsOP
@@ -263,7 +312,7 @@ public:
 	
 public:
 	///////////////////////////////////////////////////
-	//FoldTrees
+	//FoldTrees         
 	//
 	//
 	// FoldTrees //TODO: find a way to remove setup_simple_fold_tree
@@ -370,7 +419,21 @@ private:
 	//  Examples:
 	//           cdr_numbering_[h1][start]
 	//           packing_numbering_[VL_sheet_1][stop]
-	void setup_numbering_info_for_scheme(AntibodyNumberingSchemeEnum const & numbering_scheme);
+	void setup_numbering_info_for_scheme(AntibodyNumberingSchemeEnum const & numbering_scheme, CDRDefinitionEnum const & cdr_definition);
+	
+	///@brief Gets transform for numbering scheme.  Allows const qualification for other functions.
+	vector1< vector1< PDBLandmarkOP > >
+	get_cdr_definition_transform(CDRDefinitionEnum const cdr_definition) const;
+	
+	///@brief Is the transform from our numbering scheme to cdr_definition defined?
+	bool
+	cdr_definition_transform_present(CDRDefinitionEnum const cdr_definition) const;
+	
+	vector1< PDBLandmarkOP >
+	get_numbering_scheme_landmarks(AntibodyNumberingSchemeEnum const numbering_scheme) const;
+	
+	bool
+	numbering_scheme_transform_present(AntibodyNumberingSchemeEnum const numbering_scheme) const;
 	
 	/// @brief setup the CDR loops objects based on the input numbering scheme
 	void setup_CDRsInfo( pose::Pose const & pose );
@@ -381,9 +444,7 @@ private:
 	/// @brief setup the residues used to calculate VL/VH packing angle
 	void setup_VL_VH_packing_angle( pose::Pose const & pose );
 
-	/// @brief calculate the clustering for each CDR
-	void set_cdr_cluster(pose::Pose const & pose, CDRNameEnum const & cdr_name);
-
+	
 	/// @brief predict H3 cterminus base as Kinked or Extended
 	void predict_H3_base_type( pose::Pose const & pose ) ;
 	void detect_and_set_camelid_CDR_H3_stem_type( pose::Pose const & pose );
@@ -419,13 +480,8 @@ private:
 	vector1<char> ab_sequence_;
 	std::map<Size, char> sequence_map_; //Residue number sequence map
 	vector1< Size > packing_angle_residues_;
-
-	// Clusters - not set on construction.
-	vector1< CDRClusterEnum > cdr_clusters_;
-	vector1< core::Real > cdr_cluster_distances_;
-
+	vector1<vector1< Size > > packing_angle_numbering_; //In Chothia_Scheme numbering.
 	/// Antibody properties
-	AntibodyNumberingSchemeEnum numbering_scheme_;
 	H3BaseTypeEnum predicted_H3_base_type_;
 	CDRNameEnum total_cdr_loops_;
 	vector1<char> Chain_IDs_for_CDRs_;
@@ -433,15 +489,20 @@ private:
 	
 	Size L_chain_;
 	Size H_chain_;
-
+	
+	CDRClusterSetOP cdr_cluster_set_;
+	
 	///Internal Per-Scheme Numbering
-	AntibodyNumbering cdr_numbering_;
-	AntibodyNumbering packing_angle_numbering_;
+	AntibodyNumbering numbering_info_;
+	vector1< vector1< core::Size> > current_transform_;
+	
 	// AntibodyNumbering framework_numbering_;
 
 	//Enum Managers
-	AntibodyEnumManagerOP antibody_manager_;
+	AntibodyEnumManagerOP enum_manager_;
 	CDRClusterEnumManagerOP cdr_cluster_manager_;
+	
+	AntibodyNumberingParserOP numbering_parser_;
 
 };
 

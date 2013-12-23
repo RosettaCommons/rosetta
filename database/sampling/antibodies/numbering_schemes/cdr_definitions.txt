@@ -1,0 +1,15 @@
+#Defines a CDR definition using a numbering scheme (chain:pdb_res:insertion_code).
+
+DEFINES Chothia:Chothia_Scheme Aroop:Chothia_Scheme North:AHO_Scheme Martin:AHO_Scheme Kabat:AHO_Scheme
+L1 cdr_start	L:24:~	L:24:~	L:24:~	L:24:~	L:24:~
+L1 cdr_end	L:34:~	L:34:~	L:42:~	L:42:~	L:42:~
+L2 cdr_start	L:50:~	L:50:~	L:57:~	L:58:~	L:57:~
+L2 cdr_end	L:56:~	L:56:~	L:72:~	L:72:~	L:72:~
+L3 cdr_start	L:89:~	L:89:~	L:107:~	L:107:~	L:107:~
+L3 cdr_end	L:97:~	L:97:~	L:138:~	L:138:~	L:138:~
+H1 cdr_start	H:26:~	H:26:~	H:24:~	H:27:~	H:38:~
+H1 cdr_end	H:32:~	H:35:~	H:42:~	H:42:~	H:42:~
+H2 cdr_start	H:52:~	H:50:~	H:57:~	H:57:~	H:56:~
+H2 cdr_end	H:56:~	H:65:~	H:69:~	H:69:~	H:74:~
+H3 cdr_start	H:95:~	H:95:~	H:107:~	H:109:~ H:109:~
+H3 cdr_end	H:102:~	H:102:~	H:138:~	H:138:~	H:138:~

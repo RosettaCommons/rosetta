@@ -10,6 +10,8 @@
 /// @file   protocols/antibody/AntibodyInfo.cxxtest.hh
 /// @brief  tests for the AntibodyInfo class
 /// @author Jared Adolf-Bryfogle
+/// @author Jeff Gray
+
 
 // Test headers
 #include <test/UMoverTest.hh>
@@ -20,109 +22,176 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/util.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
-#include <protocols/antibody/CDRClusterEnum.hh>
+#include <protocols/antibody/clusters/CDRClusterEnum.hh>
 
 // Core Headers
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Residue.hh>
+#include <utility/vector1.hh>
 
 // Protocol Headers
 #include <basic/Tracer.hh>
+#include <boost/foreach.hpp>
 
+#define BFE BOOST_FOREACH
 using namespace protocols::antibody;
+using utility::vector1;
 
 static basic::Tracer TR("protocols.antibody.AntibodyInfoTest");
-class AntibodyInfoTest : public CxxTest::TestSuite {
-	core::pose::Pose ab_pose_m_aho; //Full PDB
+class AntibodyInfoTests : public CxxTest::TestSuite {
+	core::pose::Pose ab_pose_aho; //Full PDB
 	core::pose::Pose ab_pose_chothia;
-	AntibodyInfoOP ab_info_m_aho;
+	AntibodyInfoOP ab_info_north_aho;
 	AntibodyInfoOP ab_info_chothia;
 	AntibodyInfoOP ab_info_aroop;
+	std::map< core::Size,  std::map< core::Size,  vector1< core::Size > > > numbering;//[scheme][start/end][cdr][pose number].  Used to test numbering and transforms.
+	typedef std::map<CDRDefinitionEnum, std::pair< core::pose::Pose, AntibodyInfoOP> >  AbInfos;
+	AbInfos infos;
 	
 public:
 	
 	void setUp(){
 		
 		core_init();
-		core::import_pose::pose_from_pdb(ab_pose_m_aho, "protocols/antibody/2j88.pdb");
-		core::import_pose::pose_from_pdb(ab_pose_chothia, "protocols/antibody/pdb1bln_chothia.pdb");
-		ab_info_m_aho = new AntibodyInfo(ab_pose_m_aho, Modified_AHO);
-		ab_info_chothia = new AntibodyInfo(ab_pose_chothia, Chothia);
-		ab_info_aroop = new AntibodyInfo(ab_pose_chothia, Aroop);
-		//Add another pose to test other numbering scheme.
+		core::import_pose::pose_from_pdb(ab_pose_aho, "protocols/antibody/1bln_AB_aho.pdb");
+		core::import_pose::pose_from_pdb(ab_pose_chothia, "protocols/antibody/1bln_AB_chothia.pdb");
+		ab_info_north_aho = new AntibodyInfo(ab_pose_aho, AHO_Scheme, North);
+		ab_info_chothia = new AntibodyInfo(ab_pose_chothia, Chothia_Scheme, Chothia);
+		ab_info_aroop = new AntibodyInfo(ab_pose_chothia, Chothia_Scheme, Aroop);
+		
+		infos[North] = std::make_pair(ab_pose_aho, ab_info_north_aho);
+		infos[Chothia] = std::make_pair(ab_pose_chothia, ab_info_chothia);
+		infos[Aroop] = std::make_pair(ab_pose_chothia, ab_info_aroop);
+		
+		numbering[North][cdr_start].resize(6);
+		numbering[North][cdr_end].resize(6);
+		
+		numbering[Chothia][cdr_start].resize(6);
+		numbering[Chothia][cdr_end].resize(6);
+
+		numbering[Aroop][cdr_start].resize(6);
+		numbering[Aroop][cdr_end].resize(6);
+		
+		//North Aho
+		numbering[North][cdr_start][l1] = 24;
+		numbering[North][cdr_start][l2] = 54;
+		numbering[North][cdr_start][l3] = 94;
+		numbering[North][cdr_start][h1] = 135;
+		numbering[North][cdr_start][h2] = 162;
+		numbering[North][cdr_start][h3] = 209;
+		numbering[North][cdr_end][l1] = 39;
+		numbering[North][cdr_end][l2] = 61;
+		numbering[North][cdr_end][l3] = 102;
+		numbering[North][cdr_end][h1] = 147;
+		numbering[North][cdr_end][h2] = 171;
+		numbering[North][cdr_end][h3] = 220;
+
+		//Chothia
+		numbering[Chothia][cdr_start][l1] = 24;
+		numbering[Chothia][cdr_start][l2] = 55;
+		numbering[Chothia][cdr_start][l3] = 94;
+		numbering[Chothia][cdr_start][h1] = 138;
+		numbering[Chothia][cdr_start][h2] =164;
+		numbering[Chothia][cdr_start][h3] =211 ;
+		numbering[Chothia][cdr_end][l1] = 39;
+		numbering[Chothia][cdr_end][l2] = 61;
+		numbering[Chothia][cdr_end][l3] = 102;
+		numbering[Chothia][cdr_end][h1] = 144;
+		numbering[Chothia][cdr_end][h2] = 169;
+		numbering[Chothia][cdr_end][h3] = 220;
+
+		//Aroop
+		numbering[Aroop][cdr_start][l1] = 24;
+		numbering[Aroop][cdr_start][l2] = 55;
+		numbering[Aroop][cdr_start][l3] = 94;
+		numbering[Aroop][cdr_start][h1] = 138;
+		numbering[Aroop][cdr_start][h2] =162;
+		numbering[Aroop][cdr_start][h3] =211 ;
+		numbering[Aroop][cdr_end][l1] = 39;
+		numbering[Aroop][cdr_end][l2] = 61;
+		numbering[Aroop][cdr_end][l3] = 102;
+		numbering[Aroop][cdr_end][h1] = 147;
+		numbering[Aroop][cdr_end][h2] = 178;
+		numbering[Aroop][cdr_end][h3] = 220;
+		
 	}
 	
 	void tearDown(){
-		ab_pose_m_aho.clear();
+		ab_pose_aho.clear();
+		ab_pose_chothia.clear();
 	}
     
-	void test_cdr_numbering(){
+	void test_cdr_numbering_and_transform(){
 		
-		//Please add for aroop/etc.
 		
-		//Starting Numbers
-		//Modified Aho
-		TS_ASSERT_EQUALS(24, ab_info_m_aho->get_CDR_start(l1, ab_pose_m_aho));
-		TS_ASSERT_EQUALS(48, ab_info_m_aho->get_CDR_start(l2, ab_pose_m_aho));
-		TS_ASSERT_EQUALS(88, ab_info_m_aho->get_CDR_start(l3, ab_pose_m_aho));
-		TS_ASSERT_EQUALS(127, ab_info_m_aho->get_CDR_start(h1, ab_pose_m_aho));
-		TS_ASSERT_EQUALS(156, ab_info_m_aho->get_CDR_start(h2, ab_pose_m_aho));
-		TS_ASSERT_EQUALS(202, ab_info_m_aho->get_CDR_start(h3, ab_pose_m_aho));
-		//Chothia
-		TS_ASSERT_EQUALS(24, ab_info_chothia->get_CDR_start(l1, ab_pose_chothia));
-		TS_ASSERT_EQUALS(55, ab_info_chothia->get_CDR_start(l2, ab_pose_chothia));
-		TS_ASSERT_EQUALS(94, ab_info_chothia->get_CDR_start(l3, ab_pose_chothia));
-		TS_ASSERT_EQUALS(140, ab_info_chothia->get_CDR_start(h1, ab_pose_chothia));
-		TS_ASSERT_EQUALS(166, ab_info_chothia->get_CDR_start(h2, ab_pose_chothia));
-		TS_ASSERT_EQUALS(213, ab_info_chothia->get_CDR_start(h3, ab_pose_chothia));
-        //Aroop
-		TS_ASSERT_EQUALS(24, ab_info_aroop->get_CDR_start(l1, ab_pose_chothia));
-		TS_ASSERT_EQUALS(55, ab_info_aroop->get_CDR_start(l2, ab_pose_chothia));
-		TS_ASSERT_EQUALS(94, ab_info_aroop->get_CDR_start(l3, ab_pose_chothia));
-		TS_ASSERT_EQUALS(140, ab_info_aroop->get_CDR_start(h1, ab_pose_chothia));
-		TS_ASSERT_EQUALS(164, ab_info_aroop->get_CDR_start(h2, ab_pose_chothia));
-		TS_ASSERT_EQUALS(213, ab_info_aroop->get_CDR_start(h3, ab_pose_chothia));
 		
-		//Ending Numbers
-		//Modified Aho
-		TS_ASSERT_EQUALS(34, ab_info_m_aho->get_CDR_end(l1, ab_pose_m_aho));
-		TS_ASSERT_EQUALS(55, ab_info_m_aho->get_CDR_end(l2, ab_pose_m_aho));
-		TS_ASSERT_EQUALS(95, ab_info_m_aho->get_CDR_end(l3, ab_pose_m_aho));
-		TS_ASSERT_EQUALS(141, ab_info_m_aho->get_CDR_end(h1, ab_pose_m_aho));
-		TS_ASSERT_EQUALS(164, ab_info_m_aho->get_CDR_end(h2, ab_pose_m_aho));
-		TS_ASSERT_EQUALS(210, ab_info_m_aho->get_CDR_end(h3, ab_pose_m_aho));
-		//Chothia
-		TS_ASSERT_EQUALS(39, ab_info_chothia->get_CDR_end(l1, ab_pose_chothia));
-		TS_ASSERT_EQUALS(61, ab_info_chothia->get_CDR_end(l2, ab_pose_chothia));
-		TS_ASSERT_EQUALS(102, ab_info_chothia->get_CDR_end(l3, ab_pose_chothia));
-		TS_ASSERT_EQUALS(146, ab_info_chothia->get_CDR_end(h1, ab_pose_chothia));
-		TS_ASSERT_EQUALS(171, ab_info_chothia->get_CDR_end(h2, ab_pose_chothia));
-		TS_ASSERT_EQUALS(222, ab_info_chothia->get_CDR_end(h3, ab_pose_chothia));
-		//Aroop
-		TS_ASSERT_EQUALS(39, ab_info_aroop->get_CDR_end(l1, ab_pose_chothia));
-		TS_ASSERT_EQUALS(61, ab_info_aroop->get_CDR_end(l2, ab_pose_chothia));
-		TS_ASSERT_EQUALS(102, ab_info_aroop->get_CDR_end(l3, ab_pose_chothia));
-		TS_ASSERT_EQUALS(149, ab_info_aroop->get_CDR_end(h1, ab_pose_chothia));
-		TS_ASSERT_EQUALS(180, ab_info_aroop->get_CDR_end(h2, ab_pose_chothia));
-		TS_ASSERT_EQUALS(222, ab_info_aroop->get_CDR_end(h3, ab_pose_chothia));
+		BFE(AbInfos::value_type outer_info, infos){
+			CDRDefinitionEnum outer_definition = outer_info.first;
+			
+			std::pair<core::pose::Pose, AntibodyInfoOP > outer_pair = outer_info.second;
+			AntibodyInfoOP outer_ab_info = outer_pair.second;
+			std::string outer_definition_str = outer_ab_info->get_current_CDRDefinition();
+			
+			for (core::Size i = 1; i<= 6; ++i){
+				CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+				
+				//TR<< "Testing: "<< outer_scheme_str << std::endl;
+				TS_ASSERT_EQUALS(numbering[outer_definition][cdr_start][cdr], outer_ab_info->get_CDR_loop(cdr).start());
+				TS_ASSERT_EQUALS(numbering[outer_definition][cdr_end][cdr], outer_ab_info->get_CDR_loop(cdr).stop());
+				
+				//Test each numbering transform
+				BFE(AbInfos::value_type inner_info, infos){
+					CDRDefinitionEnum inner_definition = inner_info.first;
+					std::pair< core::pose::Pose, AntibodyInfoOP > inner_pair = inner_info.second;
+					AntibodyInfoOP inner_ab_info = inner_pair.second;
+					std::string inner_definition_str = inner_ab_info->get_current_CDRDefinition();
+					//TR<< "Testing: "<< outer_definition_str << " to " << inner_definition_str << std::endl;
+					TS_ASSERT_EQUALS(numbering[inner_definition][cdr_start][cdr], outer_ab_info->get_CDR_loop(cdr, outer_pair.first, inner_definition).start());
+					TS_ASSERT_EQUALS(numbering[inner_definition][cdr_end][cdr], outer_ab_info->get_CDR_loop(cdr, outer_pair.first, inner_definition).stop());
+					
+					//Test Full transform
+					//outer_ab_info->set_transform_cdr_definition(inner_scheme);
+					//TS_ASSERT_EQUALS(numbering[inner_scheme][cdr_start][cdr], outer_ab_info->get_CDR_loop(cdr).start());
+					//TS_ASSERT_EQUALS(numbering[inner_scheme][cdr_end][cdr], outer_ab_info->get_CDR_loop(cdr).stop());
+					//outer_ab_info->clear_transform_cdr_definition();
+				}
+			}
+		}
+		
+		//Here, we test Numbering scheme/Landmark access.
+		
+		core::Size chothia_num = ab_pose_chothia.pdb_info()->pdb2pose('L', 43);
+		core::Size aho_num = ab_info_north_aho->get_landmark_resnum(ab_pose_aho, Chothia_Scheme, 'L', 43);
+		TS_ASSERT_EQUALS(chothia_num, aho_num);
 		
 	}
     
 	void test_info_functions(){
-		TS_ASSERT_EQUALS("L1", ab_info_m_aho->get_CDR_Name(l1));
-		TS_ASSERT_EQUALS("Modified_AHO", ab_info_m_aho->get_Current_AntibodyNumberingScheme());
-		TS_ASSERT_EQUALS(false, ab_info_m_aho->get_pose_has_antigen());
-		TS_ASSERT_EQUALS(11, ab_info_m_aho->get_CDR_length(l1));
-		TS_ASSERT_EQUALS('H', ab_info_m_aho->get_CDR_chain(h3));
-		TS_ASSERT(! ab_info_m_aho->get_pose_has_antigen());
-		TS_ASSERT_EQUALS(24, ab_info_m_aho->get_CDR_start_PDB_num(l1));
-		TS_ASSERT_EQUALS(CDRNameEnum_total, ab_info_m_aho->get_total_num_CDRs());
-		TS_ASSERT_EQUALS(0, ab_info_m_aho->get_antigen_chains().size());
+		TS_ASSERT_EQUALS("L1", ab_info_north_aho->get_CDR_Name(l1));
+		TS_ASSERT_EQUALS("AHO_Scheme", ab_info_north_aho->get_current_AntibodyNumberingScheme());
+		TS_ASSERT_EQUALS("North", ab_info_north_aho->get_current_CDRDefinition());
+		
+		TS_ASSERT_EQUALS("Chothia", ab_info_chothia->get_current_CDRDefinition());
+		TS_ASSERT_EQUALS("Chothia_Scheme", ab_info_aroop->get_current_AntibodyNumberingScheme());
+		TS_ASSERT_EQUALS("Aroop", ab_info_aroop->get_current_CDRDefinition());
+		
+		TS_ASSERT_EQUALS(false, ab_info_north_aho->get_pose_has_antigen());
+		TS_ASSERT_EQUALS(16, ab_info_north_aho->get_CDR_length(l1));
+		TS_ASSERT_EQUALS('H', ab_info_north_aho->get_CDR_chain(h3));
+		TS_ASSERT(! ab_info_north_aho->get_pose_has_antigen());
+		TS_ASSERT_EQUALS(24, ab_info_north_aho->get_CDR_start_PDB_num(l1));
+		TS_ASSERT_EQUALS(CDRNameEnum_total, ab_info_north_aho->get_total_num_CDRs());
+		TS_ASSERT_EQUALS(0, ab_info_north_aho->get_antigen_chains().size());
 		
 		//Test Camelid
 		TS_ASSERT(! ab_info_chothia->is_camelid());
 		
+		//Test Chothia numbering with North definitions in cluster
+		TS_ASSERT_EQUALS("L1-16-1", ab_info_chothia->get_cluster_name(ab_info_chothia->get_CDR_cluster(l1)->cluster()));
+		TS_ASSERT_EQUALS("L2-8-1", ab_info_chothia->get_cluster_name(ab_info_chothia->get_CDR_cluster(l2)->cluster()));
+		TS_ASSERT_EQUALS("L3-9-2", ab_info_chothia->get_cluster_name(ab_info_chothia->get_CDR_cluster(l3)->cluster()));
 		//CDR Sequence + Antibody Sequence
 		
 	}
@@ -141,33 +210,33 @@ public:
 	void test_tf_functions(){
 		return;
 	}
-	
+	void test_numbering_transform(){
+		
+	}
 	void test_kink_functions(){
 		// Aroop
-		TS_ASSERT_EQUALS(220,ab_info_aroop->kink_begin());
-		TS_ASSERT_EQUALS(223,ab_info_aroop->kink_end());
-		TS_ASSERT_EQUALS(223,ab_info_aroop->kink_trp());
-		core::conformation::Residue	Wres = ab_pose_chothia.residue(ab_info_aroop->kink_trp());
-		core::conformation::Residue	Ares = ab_pose_chothia.residue(ab_info_aroop->kink_anion_residue());
-		core::conformation::Residue	Cres = ab_pose_chothia.residue(ab_info_aroop->kink_cation_residue());
+		TS_ASSERT_EQUALS(218,ab_info_aroop->kink_begin(ab_pose_chothia));
+		TS_ASSERT_EQUALS(221,ab_info_aroop->kink_end(ab_pose_chothia));
+		TS_ASSERT_EQUALS(221,ab_info_aroop->kink_trp(ab_pose_chothia));
+		core::conformation::Residue	Wres = ab_pose_chothia.residue(ab_info_aroop->kink_trp(ab_pose_chothia));
+		core::conformation::Residue	Ares = ab_pose_chothia.residue(ab_info_aroop->kink_anion_residue(ab_pose_chothia));
+		core::conformation::Residue	Cres = ab_pose_chothia.residue(ab_info_aroop->kink_cation_residue(ab_pose_chothia));
 		TS_ASSERT_EQUALS("TRP",Wres.name3());
 		TS_ASSERT_EQUALS("ALA",Ares.name3());  // (not an anion in this PDB, but Ala is in the right position)
 		TS_ASSERT_EQUALS("ARG",Cres.name3());
 
 
-		// Modified_AHO
-		TS_ASSERT_EQUALS(208,ab_info_m_aho->kink_begin());
-		TS_ASSERT_EQUALS(211,ab_info_m_aho->kink_end());
-		TS_ASSERT_EQUALS(211,ab_info_m_aho->kink_trp());
-		core::conformation::Residue	WresAHO = ab_pose_m_aho.residue(ab_info_m_aho->kink_trp());
-		core::conformation::Residue	AresAHO = ab_pose_m_aho.residue(ab_info_m_aho->kink_anion_residue());
-		core::conformation::Residue	CresAHO = ab_pose_m_aho.residue(ab_info_m_aho->kink_cation_residue());
+		// Modified_AHO - Also a test of transform as kinks are defined in chothia/aroop and must transform numbering from north_aho
+		TS_ASSERT_EQUALS(218,ab_info_north_aho->kink_begin(ab_pose_aho));
+		TS_ASSERT_EQUALS(221,ab_info_north_aho->kink_end(ab_pose_aho));
+		TS_ASSERT_EQUALS(221,ab_info_north_aho->kink_trp(ab_pose_aho));
+		core::conformation::Residue	WresAHO = ab_pose_aho.residue(ab_info_north_aho->kink_trp(ab_pose_aho));
+		core::conformation::Residue	AresAHO = ab_pose_aho.residue(ab_info_north_aho->kink_anion_residue(ab_pose_aho));
+		core::conformation::Residue	CresAHO = ab_pose_aho.residue(ab_info_north_aho->kink_cation_residue(ab_pose_aho));
 		TS_ASSERT_EQUALS("TRP",WresAHO.name3());
-		TS_ASSERT_EQUALS("ASP",AresAHO.name3());
+		TS_ASSERT_EQUALS("ALA",AresAHO.name3());  // (not an anion in this PDB, but Ala is in the right position)
+		TS_ASSERT_EQUALS("ARG",CresAHO.name3());
 
-		// // the following test is broken because NumberingScheme and LoopDefinitions need to be decoupled.
-		// // ie, it only works when AbInfo uses Aroop numbering.  see email of 8/8 to JA/DK - JG
-		// TS_ASSERT_EQUALS("LEU",CresAHO.name3());  // (not a cation in this PDB, but Leu is in the right position)
 
 		// TODO: add tests for kink_anion_atoms and kink_cation_atoms
 		return;

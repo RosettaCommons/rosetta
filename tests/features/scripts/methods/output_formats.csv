@@ -24,5 +24,6 @@ output_small_pdf	plot	.pdf	5	6.5	300	1	FALSE	TRUE
 output_small_eps	plot	.eps	5	6.5	300	1	FALSE	TRUE
 output_html	table	.html	NA	NA	NA	NA	TRUE	FALSE
 output_csv	table	.csv	NA	NA	NA	NA	TRUE	FALSE
+output_tab_delimited_table	table	.txt	NA	NA	NA	NA	TRUE	FALSE
 output_latex_table	table	.tex	NA	NA	NA	NA	FALSE	FALSE
 output_latex_sideways_table	table	.tex	NA	NA	NA	NA	FALSE	FALSE

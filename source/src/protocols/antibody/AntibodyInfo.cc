@@ -18,8 +18,8 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/AntibodyEnumManager.hh>
-#include <protocols/antibody/CDRClusterEnum.hh>
-#include <protocols/antibody/CDRClusterEnumManager.hh>
+#include <protocols/antibody/clusters/CDRClusterEnum.hh>
+#include <protocols/antibody/clusters/CDRClusterEnumManager.hh>
 
 // Core Headers
 #include <core/scoring/constraints/ConstraintIO.hh>
@@ -52,18 +52,20 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
+#include <utility/string_util.hh>
 
 //Options
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/antibody.OptionKeys.gen.hh>
 
 // Basic headers
 #include <numeric/NumericTraits.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <math.h>
-#include <utility/string_util.hh>
+
 
 // Boost headers
 #include <boost/algorithm/string/classification.hpp>
@@ -77,19 +79,32 @@ static basic::Tracer TR("antibody.AntibodyInfo");
 namespace protocols {
 namespace antibody {
 
-
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
 
 
 
 AntibodyInfo::AntibodyInfo( pose::Pose const & pose,
-                            AntibodyNumberingSchemeEnum const & numbering_scheme,
-                            bool const & cdr_pdb_numbered) :
+		AntibodyNumberingSchemeEnum const & numbering_scheme,
+		CDRDefinitionEnum const & cdr_definition,
+		bool const & cdr_pdb_numbered) :
 	framework_info_(NULL)
 
 {
+	enum_manager_ = new AntibodyEnumManager();
 	set_default();
 
-	numbering_scheme_ = numbering_scheme;
+	numbering_info_.numbering_scheme = numbering_scheme;
+	numbering_info_.cdr_definition = cdr_definition;
+	cdr_pdb_numbered_ = cdr_pdb_numbered;
+
+	identify_antibody(pose);
+	init(pose);
+}
+
+AntibodyInfo::AntibodyInfo(const pose::Pose& pose, const bool& cdr_pdb_numbered) {
+	enum_manager_ = new AntibodyEnumManager();
+	set_default();
 	cdr_pdb_numbered_ = cdr_pdb_numbered;
 
 	identify_antibody(pose);
@@ -103,7 +118,21 @@ void AntibodyInfo::set_default() {
 	InputPose_has_antigen_ = false;
 	predicted_H3_base_type_ = Kinked;
 	loopsop_having_allcdrs_=NULL;
-	numbering_scheme_ = Aroop;
+	
+	
+	
+	std::string numbering_scheme = option [OptionKeys::antibody::numbering_scheme]();
+	if (numbering_scheme == "Kabat_Scheme"){
+		TR <<"Kabat Numbering scheme is not fully supported due to H1 numbering.  Use with caution. http://www.bioinf.org.uk/abs/" <<std::endl;
+	}
+	std::string cdr_definition = option [OptionKeys::antibody::cdr_definition]();
+	if (! (enum_manager_->numbering_scheme_is_present(numbering_scheme) || enum_manager_->cdr_definition_is_present(cdr_definition))){
+		utility_exit_with_message("-numbering_scheme or -cdr_definition not recognized"
+		"Recognized Numbering Schemes: Chothia_Scheme, Enhanced_Chothia_Scheme, AHO_Scheme, Kabat_Scheme, IMGT_Scheme"
+		"Recognized CDR Definitions: Chothia, Aroop, North, Martin, Kabat");
+	}
+	numbering_info_.numbering_scheme = enum_manager_->numbering_scheme_string_to_enum(numbering_scheme);
+	numbering_info_.cdr_definition = enum_manager_->cdr_definition_string_to_enum(cdr_definition);
 }
 
 void AntibodyInfo::init(pose::Pose const & pose) {
@@ -111,10 +140,14 @@ void AntibodyInfo::init(pose::Pose const & pose) {
 	if(is_camelid_) total_cdr_loops_ = camelid_last_loop;
 	else            total_cdr_loops_ = num_cdr_loops;
 
-	antibody_manager_ = new AntibodyEnumManager();
+	
+	numbering_parser_ = new AntibodyNumberingParser(enum_manager_);
+	
+	
 	cdr_cluster_manager_ = new CDRClusterEnumManager();
-
-	setup_numbering_info_for_scheme(numbering_scheme_);
+	cdr_cluster_set_ = new CDRClusterSet(this);
+	
+	setup_numbering_info_for_scheme(numbering_info_.numbering_scheme, numbering_info_.cdr_definition);
 
 	setup_CDRsInfo(pose) ;
 
@@ -123,162 +156,126 @@ void AntibodyInfo::init(pose::Pose const & pose) {
 	setup_VL_VH_packing_angle( pose );
 
 	predict_H3_base_type( pose );
+	setup_CDR_clusters( pose );
 
 }
 
-void AntibodyInfo::setup_numbering_info_for_scheme(AntibodyNumberingSchemeEnum const & numbering_scheme) {
+void AntibodyInfo::setup_numbering_info_for_scheme(AntibodyNumberingSchemeEnum const & numbering_scheme, CDRDefinitionEnum const & cdr_definition) {
 
 	//////////////////////////////////////////////////////////////////////
-	///Feb 2013-
-	///Refactored by Jared Adolf-Bryfogle to use Enums and hold the information rather then creating the vectors
-	// every time this function was called.
-	// Old code is left for reference.
-
-
-	//Setup the vector
-
-	//TODO: Move this for loop setup stuff to a separate function and then
-	//      it can be done in one line:
-	//      AntibodyNumbering(num_cdr_loops, vector1< core::Size >(AntibodyNumberingEnum_total, 0))
-	//      This wasn't done here because it requires knowing the internal
-	//      structure of the AntibodyNumbering typedef, which is not stylish.
-	//CDRs
-	cdr_numbering_.resize(num_cdr_loops);
-	for (core::Size i =1; i <= num_cdr_loops; ++i) {
-		cdr_numbering_[i].resize(AntibodyNumberingEnum_total);
-	}
-
-	//PackingAngleNumbers
+	///Oct 2013-
+	///Refactored by Jared Adolf-Bryfogle 
+	
+	numbering_info_ = numbering_parser_->get_antibody_numbering(numbering_scheme, cdr_definition);
+	
 	packing_angle_numbering_.resize(PackingAngleEnum_total);
 	for (core::Size i=1; i <= PackingAngleEnum_total; ++i) {
-		packing_angle_numbering_[i].resize(AntibodyNumberingEnum_total);
+		packing_angle_numbering_[i].resize(2);
 	}
+	
+	packing_angle_numbering_[VL_sheet_1][1] = 35;
+	packing_angle_numbering_[VL_sheet_1][2] = 38;
+	packing_angle_numbering_[VL_sheet_2][1] = 85;
+	packing_angle_numbering_[VL_sheet_2][2] = 88;
 
+	packing_angle_numbering_[VH_sheet_1][1] = 36;
+	packing_angle_numbering_[VH_sheet_1][2] = 39;
+	packing_angle_numbering_[VH_sheet_2][1] = 89;
+	packing_angle_numbering_[VH_sheet_2][2] = 92;
+	
+}
 
-	//**********************************************************************************
-	//  Aroop Numbering                                                                *
-	//    citation:
-	//**********************************************************************************
-	if(numbering_scheme == Aroop ) {
+bool AntibodyInfo::cdr_definition_transform_present(const CDRDefinitionEnum cdr_definition) const{
+	std::map< CDRDefinitionEnum, vector1< vector1< PDBLandmarkOP > > >::const_iterator iter( numbering_info_.cdr_definition_transform.find( cdr_definition ) );
+	return iter != numbering_info_.cdr_definition_transform.end();
+}
 
+vector1< vector1< PDBLandmarkOP > >
+AntibodyInfo::get_cdr_definition_transform(const CDRDefinitionEnum cdr_definition) const {
+	
 
-		//First and last residue number of each cdr
-		cdr_numbering_[h1][start] = 26;   cdr_numbering_[h1][stop] = 35;
-		cdr_numbering_[h2][start] = 50;   cdr_numbering_[h2][stop] = 65;
-		cdr_numbering_[h3][start] = 95;   cdr_numbering_[h3][stop] = 102;
-
-
-		cdr_numbering_[l1][start] = 24;    cdr_numbering_[l1][stop] = 34;
-		cdr_numbering_[l2][start] = 50;    cdr_numbering_[l2][stop] = 56;
-		cdr_numbering_[l3][start] =  89;   cdr_numbering_[l3][stop] = 97;
-
-		// VL-VH packing angle residues
-		packing_angle_numbering_[VL_sheet_1][start] = 35;
-		packing_angle_numbering_[VL_sheet_1][stop] = 38;
-		packing_angle_numbering_[VL_sheet_2][start] = 85;
-		packing_angle_numbering_[VL_sheet_2][stop] = 88;
-
-		packing_angle_numbering_[VH_sheet_1][start] = 36;
-		packing_angle_numbering_[VH_sheet_1][stop] = 39;
-		packing_angle_numbering_[VH_sheet_2][start] = 89;
-		packing_angle_numbering_[VH_sheet_2][stop] = 92;
+	if (! cdr_definition_transform_present(cdr_definition)){
+		utility_exit_with_message("Numbering scheme transform: "+enum_manager_->cdr_definition_enum_to_string(cdr_definition)+\
+			" not present for current numbering scheme: "+enum_manager_->cdr_definition_enum_to_string(numbering_info_.cdr_definition));
 	}
-	//**********************************************************************************
-	//  Chothia Numbering                                                              *
-	//    citation:
-	//**********************************************************************************
-	else if(numbering_scheme == Chothia ) {
-
-		//First and last residue number of each cdr
-		cdr_numbering_[l1][start] = 24;     cdr_numbering_[l1][stop] = 34;
-		cdr_numbering_[l2][start] = 50;     cdr_numbering_[l2][stop] = 56;
-		cdr_numbering_[l3][start] =  89;    cdr_numbering_[l3][stop] = 97;
-
-		cdr_numbering_[h1][start] = 26;    cdr_numbering_[h1][stop] = 32;
-		cdr_numbering_[h2][start] = 52;    cdr_numbering_[h2][stop] = 56;
-		cdr_numbering_[h3][start] = 95;    cdr_numbering_[h3][stop] = 102;
-
-		// VL-VH packing angle residues
-		packing_angle_numbering_[VL_sheet_1][start] = 35;
-		packing_angle_numbering_[VL_sheet_1][stop] = 38;
-		packing_angle_numbering_[VL_sheet_2][start] = 85;
-		packing_angle_numbering_[VL_sheet_2][stop] = 88;
-
-		packing_angle_numbering_[VH_sheet_1][start] = 36;
-		packing_angle_numbering_[VH_sheet_1][stop] = 39;
-		packing_angle_numbering_[VH_sheet_2][start] = 89;
-		packing_angle_numbering_[VH_sheet_2][stop] = 92;
-
-		// VL-VH packing angle residues
-		//pack_angle_start.push_back(35); pack_angle_stop.push_back(38);  //VL
-		//pack_angle_start.push_back(85); pack_angle_stop.push_back(88);  //VL
-		//pack_angle_start.push_back(36); pack_angle_stop.push_back(39);  //VH
-		//pack_angle_start.push_back(89); pack_angle_stop.push_back(92);  //VH
+	else{
+		std::map< CDRDefinitionEnum,vector1< vector1< PDBLandmarkOP > > >::const_iterator iter( numbering_info_.cdr_definition_transform.find( cdr_definition ) );
+		return iter->second;
 	}
+}
 
-	//**********************************************************************************
-	//  Kabat Numbering                                                                *
-	//    citation:
-	//**********************************************************************************
-	else if(numbering_scheme == Kabat ) {
+
+bool
+AntibodyInfo::numbering_scheme_transform_present(const AntibodyNumberingSchemeEnum numbering_scheme) const {
+
+	std::map< AntibodyNumberingSchemeEnum,vector1< PDBLandmarkOP > > ::const_iterator iter( numbering_info_.numbering_scheme_transform.find( numbering_scheme ) );
+	return iter != numbering_info_.numbering_scheme_transform.end();
+}
+
+vector1< PDBLandmarkOP >
+AntibodyInfo::get_numbering_scheme_landmarks(const AntibodyNumberingSchemeEnum numbering_scheme) const {
+	if (numbering_scheme_transform_present(numbering_scheme)){
+		std::map< AntibodyNumberingSchemeEnum,vector1< PDBLandmarkOP > > ::const_iterator iter( numbering_info_.numbering_scheme_transform.find( numbering_scheme ) );
+		return iter->second;
 	}
-	//**********************************************************************************
-	//  Enhanced_Chothia Numbering                                                     *
-	//    Abhinandan, K.R. and Martin, A.C.R. (2008) Immunology, 45, 3832-3839.        *
-	//**********************************************************************************
-	else if(numbering_scheme == Enhanced_Chothia) {
+	else {
+		utility_exit_with_message("Undefined Antibody numbering scheme in scheme definitions: "+enum_manager_->numbering_scheme_enum_to_string(numbering_scheme));
 	}
-	//**********************************************************************************
-	//  AHO Numbering                                                                  *
-	//    A. Honegger & A. Plückthun. (2001) J. Mol. Biol, 309 (2001)657-670
-	//**********************************************************************************
-	else if(numbering_scheme == AHO) {
+	
+}
+
+core::Size
+AntibodyInfo::get_landmark_resnum(core::pose::Pose const & pose, const AntibodyNumberingSchemeEnum scheme, const char chain, const core::Size pdb_resnum,  const char insertion_code) const {
+	
+	//No conversion is nessassary.
+	if (scheme == numbering_info_.numbering_scheme) {
+		return pose.pdb_info()->pdb2pose(chain, pdb_resnum, insertion_code);
+		TR << "scheme equals numbering scheme" << std::endl;
 	}
-	//**********************************************************************************
-	//  Modified Honegger-Plückthun (Aho) Numbering                                                                   *
-	//    North, B., A. Lehmann, et al. (2011). JMB 406(2): 228-256. (Not described in paper)
-	//**********************************************************************************
-	else if(numbering_scheme == Modified_AHO) {
-
-		//First and last residue number of each cdr
-		cdr_numbering_[l1][start] = 24;     cdr_numbering_[l1][stop] = 42;
-		cdr_numbering_[l2][start] = 57;     cdr_numbering_[l2][stop] = 72;
-		cdr_numbering_[l3][start] =  107;  cdr_numbering_[l3][stop] = 138;
-
-		cdr_numbering_[h1][start] = 24;    cdr_numbering_[h1][stop] = 42;
-		cdr_numbering_[h2][start] = 57;    cdr_numbering_[h2][stop] = 69;
-		cdr_numbering_[h3][start] = 107;  cdr_numbering_[h3][stop] = 138;
-
-		// VL-VH packing angle residues - Look at the symmetry!
-		packing_angle_numbering_[VL_sheet_1][start] = 43;
-		packing_angle_numbering_[VL_sheet_1][stop] = 46;
-		packing_angle_numbering_[VL_sheet_2][start] = 103;
-		packing_angle_numbering_[VL_sheet_2][stop] = 106;
-
-		packing_angle_numbering_[VH_sheet_1][start] = 43;
-		packing_angle_numbering_[VH_sheet_1][stop] = 46;
-		packing_angle_numbering_[VH_sheet_2][start] = 103;
-		packing_angle_numbering_[VH_sheet_2][stop] = 106;
+	
+	
+	///Check to make sure both schemes are present.
+	if (! numbering_scheme_transform_present(scheme)){
+		utility_exit_with_message("Numbering scheme landmark info requested, "+enum_manager_->numbering_scheme_enum_to_string(scheme)+ " not present in scheme transform");
 	}
-	//**********************************************************************************
-	//  IMGT Numbering                                                                 *
-	//    citation:
-	//**********************************************************************************
-	else if(numbering_scheme == IMGT) {
-	} else {
-		utility_exit_with_message("the numbering schemes can only be 'Aroop','Chothia','Kabat', 'Enhanced_Chothia', 'AHO', Modified_AHO', 'IMGT' !!!!!! ");
+	
+	if (! numbering_scheme_transform_present(numbering_info_.numbering_scheme)){
+		utility_exit_with_message("Numbering scheme landmark for numbering scheme of current PDB,"+enum_manager_->numbering_scheme_enum_to_string(numbering_info_.numbering_scheme)+" not present");
 	}
+	
+	
+	vector1< PDBLandmarkOP > landmarks = get_numbering_scheme_landmarks(scheme);
+	PDBLandmarkOP query_landmark = new PDBLandmark(chain, pdb_resnum, insertion_code);
+	
+	//TR<< "Need "<< enum_manager_->numbering_scheme_enum_to_string(scheme)<< " in " << enum_manager_->numbering_scheme_enum_to_string(numbering_info_.numbering_scheme) << std::endl;
+	for (core::Size i = 1; i <= landmarks.size(); ++i){
+		PDBLandmark landmark = *landmarks[i];
+		if (landmark == *query_landmark){
+			PDBLandmarkOP new_landmark = get_numbering_scheme_landmarks(numbering_info_.numbering_scheme)[i];
+			//TR << "Matched "<< chain << " "<<pdb_resnum << " " << insertion_code << std::endl;
+			//TR << "To " << new_landmark->chain() << " " << new_landmark->resnum() << " " << new_landmark->insertion_code()<< std::endl; 
+			return pose.pdb_info()->pdb2pose(new_landmark->chain(), new_landmark->resnum(), new_landmark->insertion_code());
 
-	//local_numbering_info.push_back(start);
-	//local_numbering_info.push_back(stop);
-	//local_numbering_info.push_back(pack_angle_start);
-	//local_numbering_info.push_back(pack_angle_stop);
-	//return local_numbering_info;
+		}
+		else {
+			continue;
+		}
+	}
+	
+	///We have reached the end, and the pdb landmark is not found.
+	
+	utility_exit_with_message("Requested landmark resnum "+utility::to_string(chain)+" "+utility::to_string(pdb_resnum)+" "+utility::to_string(insertion_code)+" not found. ");
+}
+
+
+std::string
+AntibodyInfo::get_current_AntibodyNumberingScheme()  const {
+	return enum_manager_->numbering_scheme_enum_to_string(numbering_info_.numbering_scheme);
 }
 
 std::string
-AntibodyInfo::get_Current_AntibodyNumberingScheme() {
-	return antibody_manager_->numbering_scheme_enum_to_string(numbering_scheme_);
+AntibodyInfo::get_current_CDRDefinition()   const {
+	return enum_manager_->cdr_definition_enum_to_string(numbering_info_.cdr_definition);
 }
 
 void AntibodyInfo::identify_antibody(pose::Pose const & pose){
@@ -395,19 +392,11 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 	loopsop_having_allcdrs_ = new loops::Loops();
 
 	for (Size i=start_cdr_loop; i<=total_cdr_loops_; ++i ) {
-		loop_start_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs_[i], cdr_numbering_[i][start]);
+		loop_start_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs_[i], numbering_info_.cdr_numbering[i][cdr_start]->resnum());
+		loop_stop_in_pose= pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs_[i], numbering_info_.cdr_numbering[i][cdr_end]->resnum());
 		if(i != h3 ) {
-			loop_stop_in_pose= pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs_[i], cdr_numbering_[i][stop]);
 			cut_position = (loop_stop_in_pose - loop_start_in_pose +1) /2 + loop_start_in_pose;
 		} else {
-			loop_stop_in_pose  = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs_[i], cdr_numbering_[i][stop]+1 );
-			loop_stop_in_pose -=1;
-			// JQX:
-			// One should always see 95-102 as the positions for your H3 in your FR02.pdb, but as a matter of fact,
-			// the antibody script just copied h3.pdb (heavy atoms) into the FR02.pdb, sometimes one sees the stop
-			// postition pdb number 98, not 102, if the h3.pdb is short. Therefore, one useing the pdb number 102 to
-			// define h3 fails!
-			// of PDB number 103, then minus 1 will give you the last residue of h3.
 			cut_position = (loop_start_in_pose +1 ) ;
 			// JQX:
 			// why this is different compared to other cuts of other loops?
@@ -438,8 +427,6 @@ vector1< vector1<FrameWork> >
 AntibodyInfo::get_AntibodyFrameworkInfo() const {
 	if (framework_info_.empty()) {
 		utility_exit_with_message("Numbering scheme setup failed for Framework.");
-	} else if (numbering_scheme_ != Aroop) {
-		utility_exit_with_message("Framework info only currently works for Aroop numbering scheme.");
 	} else {
 		return framework_info_;
 	}
@@ -447,17 +434,13 @@ AntibodyInfo::get_AntibodyFrameworkInfo() const {
 
 H3BaseTypeEnum
 AntibodyInfo::get_Predicted_H3BaseType() const {
-	if (numbering_scheme_ != Aroop) {
-		utility_exit_with_message("H3 Base type is only currently correct for Aroop numbering scheme.");
-	} else {
-		return predicted_H3_base_type_;
-	}
+	return predicted_H3_base_type_;
 }
 
 void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
 
-	//TODO jadolfbr.  This is a hardcoded nightmare.
-	//Used only by align_to_native in antibody_util.  Needs to be refactored for other numbering schemes
+	//JAB using landmarks to refactor.  Still don't quite know exactly why these residues.
+	//
 
 	FrameWork frmwk;
 	vector1<FrameWork> Lfr, Hfr;
@@ -478,124 +461,107 @@ void AntibodyInfo::setup_FrameWorkInfo( pose::Pose const & pose ) {
 		H_end_pos_num=pose.conformation().chain_end(H_chain_);;
 
 
-		if (  L_begin_pos_num   >=    pose.pdb_info()->pdb2pose('L',23)   )  {
+		if (  L_begin_pos_num   >=    get_landmark_resnum(pose, Chothia_Scheme, 'L', 23)   )  {
 			throw excn::EXCN_Msg_Exception( "L chain 1st residue starting after L 23, framework definition failed!!! " );
 		}
-		if (  L_end_pos_num     <=    pose.pdb_info()->pdb2pose('L', 97)    ) {
+		if (  L_end_pos_num     <=    get_landmark_resnum(pose, Chothia_Scheme, 'L', 97)   ) {
 			throw excn::EXCN_Msg_Exception( "L chain last residue ending before L 97, framework definition failed!!! " );
 		}
 	}
 
 
-	if (    H_begin_pos_num    >=     pose.pdb_info()->pdb2pose('H', 26 )      ) {
+	if (    H_begin_pos_num    >=     get_landmark_resnum(pose, Chothia_Scheme, 'H', 26 )      ) {
 		throw excn::EXCN_Msg_Exception( "H chain 1st residue starting after H 26, framework definition failed!!! " );
 	}
 
-	if (    H_end_pos_num      <=     pose.pdb_info()->pdb2pose('H', 103)      ) {
+	if (    H_end_pos_num      <=     get_landmark_resnum(pose, Chothia_Scheme, 'H', 103)      ) {
 		throw excn::EXCN_Msg_Exception( "H chain last residue ending before H 103, framework definition failed!!! " );
 	}
 
 
-	switch (numbering_scheme_) {
-	case Aroop:
-		if(! is_camelid_) {
-			frmwk.chain_name='L';
-			if(   L_begin_pos_num <= pose.pdb_info()->pdb2pose('L',5)      ) { // <= 5
-				frmwk.start=pose.pdb_info()->pdb2pose('L',5);
-				frmwk.stop=pose.pdb_info()->pdb2pose('L',6);
-				Lfr.push_back(frmwk);
-			} else if (     L_begin_pos_num   <=    pose.pdb_info()->pdb2pose('L',6)        ) { // 5 <= x <= 6
-				frmwk.start=L_begin_pos_num;
-				frmwk.stop=pose.pdb_info()->pdb2pose('L',6);
-				Lfr.push_back(frmwk);
-			}
-			if(   L_begin_pos_num   <=    pose.pdb_info()->pdb2pose('L',10)      ) { // <= 10
-				frmwk.start=pose.pdb_info()->pdb2pose('L',10);
-				frmwk.stop=pose.pdb_info()->pdb2pose('L',23);
-				Lfr.push_back(frmwk);
-			} else if (   L_begin_pos_num   <=    pose.pdb_info()->pdb2pose('L',23)           ) { //  10 <= x <=23
-				frmwk.start=L_begin_pos_num;
-				frmwk.stop=pose.pdb_info()->pdb2pose('L',23);
-				Lfr.push_back(frmwk);
-			}
-			frmwk.start=pose.pdb_info()->pdb2pose('L',35);
-			frmwk.stop=pose.pdb_info()->pdb2pose('L',38);
+	if(! is_camelid_) {
+		frmwk.chain_name='L';
+		if(   L_begin_pos_num <= get_landmark_resnum(pose, Chothia_Scheme, 'L',5)      ) { // <= 5
+			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',5);
+			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',6);
 			Lfr.push_back(frmwk);
-			frmwk.start=pose.pdb_info()->pdb2pose('L',45);
-			frmwk.stop=pose.pdb_info()->pdb2pose('L',49);
+		} else if (     L_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'L',6)        ) { // 5 <= x <= 6
+			frmwk.start=L_begin_pos_num;
+			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',6);
 			Lfr.push_back(frmwk);
-			frmwk.start=pose.pdb_info()->pdb2pose('L',57);
-			frmwk.stop=pose.pdb_info()->pdb2pose('L',66);
-			Lfr.push_back(frmwk);
-			frmwk.start=pose.pdb_info()->pdb2pose('L',71);
-			frmwk.stop=pose.pdb_info()->pdb2pose('L',88);
-			Lfr.push_back(frmwk);
-			if (   L_end_pos_num   >=    pose.pdb_info()->pdb2pose('L',105)      ) {
-				frmwk.start=pose.pdb_info()->pdb2pose('L',98);
-				frmwk.stop=pose.pdb_info()->pdb2pose('L',105);
-				Lfr.push_back(frmwk);
-			} else {
-				frmwk.start=pose.pdb_info()->pdb2pose('L',98);
-				frmwk.stop=L_end_pos_num;
-				Lfr.push_back(frmwk);
-			}
 		}
-
-		frmwk.chain_name='H';
-		if(   H_begin_pos_num   <=    pose.pdb_info()->pdb2pose('H',5)      ) { // <= 5
-			frmwk.start=pose.pdb_info()->pdb2pose('H',5);
-			frmwk.stop=pose.pdb_info()->pdb2pose('H',6);
-			Hfr.push_back(frmwk);
-		} else if (   H_begin_pos_num   <=    pose.pdb_info()->pdb2pose('H',6)      ) { // 5 <= x <= 6
-			frmwk.start=H_begin_pos_num;
-			frmwk.stop=pose.pdb_info()->pdb2pose('H',6);
-			Hfr.push_back(frmwk);
+		if(   L_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'L',10)      ) { // <= 10
+			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',10);
+			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',23);
+			Lfr.push_back(frmwk);
+		} else if (   L_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'L',23)           ) { //  10 <= x <=23
+			frmwk.start=L_begin_pos_num;
+			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',23);
+			Lfr.push_back(frmwk);
 		}
-		if(   H_begin_pos_num   <=    pose.pdb_info()->pdb2pose('H',10)      ) { // <= 10
-			frmwk.start=pose.pdb_info()->pdb2pose('H',10);
-			frmwk.stop=pose.pdb_info()->pdb2pose('H',25);
-			Hfr.push_back(frmwk);
-		} else if(   H_begin_pos_num   <=    pose.pdb_info()->pdb2pose('H',25)      ) { //  10 <= x <=25
-			frmwk.start=H_begin_pos_num;
-			frmwk.stop=pose.pdb_info()->pdb2pose('H',25);
-			Hfr.push_back(frmwk);
-		}
-		frmwk.start=pose.pdb_info()->pdb2pose('H',36);
-		frmwk.stop=pose.pdb_info()->pdb2pose('H',39);
-		Hfr.push_back(frmwk);
-		frmwk.start=pose.pdb_info()->pdb2pose('H',46);
-		frmwk.stop=pose.pdb_info()->pdb2pose('H',49);
-		Hfr.push_back(frmwk);
-		frmwk.start=pose.pdb_info()->pdb2pose('H',66);
-		frmwk.stop=pose.pdb_info()->pdb2pose('H',94);
-		Hfr.push_back(frmwk);
-		if(   H_end_pos_num >=  pose.pdb_info()->pdb2pose('H',110)         ) {
-			frmwk.start=pose.pdb_info()->pdb2pose('H',103);
-			frmwk.stop=pose.pdb_info()->pdb2pose('H',110);
-			Hfr.push_back(frmwk);
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',35);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',38);
+		Lfr.push_back(frmwk);
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',45);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',49);
+		Lfr.push_back(frmwk);
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',57);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',66);
+		Lfr.push_back(frmwk);
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',71);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',88);
+		Lfr.push_back(frmwk);
+		if (   L_end_pos_num   >=    get_landmark_resnum(pose, Chothia_Scheme, 'L',105)      ) {
+			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',98);
+			frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'L',105);
+			Lfr.push_back(frmwk);
 		} else {
-			frmwk.start=pose.pdb_info()->pdb2pose('H',103);
-			frmwk.stop=H_end_pos_num;
-			Hfr.push_back(frmwk);
+			frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'L',98);
+			frmwk.stop=L_end_pos_num;
+			Lfr.push_back(frmwk);
 		}
-		break;
-	case Chothia:
-		break;
-	case Kabat:
-		break;
-	case Enhanced_Chothia:
-		break;
-	case AHO:
-		break;
-	case Modified_AHO:
-		break;
-	case IMGT:
-		break;
-	default:
-		utility_exit_with_message("the numbering schemes can only be 'Aroop','Chothia','Kabat', 'Enhanced_Chothia', 'AHO', 'IMGT' !!!!!! ");
-		break;
 	}
 
+	frmwk.chain_name='H';
+	if(   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'H',5)      ) { // <= 5
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',5);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',6);
+		Hfr.push_back(frmwk);
+	} else if (   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'H',6)      ) { // 5 <= x <= 6
+		frmwk.start=H_begin_pos_num;
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',6);
+		Hfr.push_back(frmwk);
+	}
+	if(   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'H',10)      ) { // <= 10
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',10);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',25);
+		Hfr.push_back(frmwk);
+	} else if(   H_begin_pos_num   <=    get_landmark_resnum(pose, Chothia_Scheme, 'H',25)      ) { //  10 <= x <=25
+		frmwk.start=H_begin_pos_num;
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',25);
+		Hfr.push_back(frmwk);
+	}
+	frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',36);
+	frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',39);
+	Hfr.push_back(frmwk);
+	frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',46);
+	frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',49);
+	Hfr.push_back(frmwk);
+	frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',66);
+	frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',94);
+	Hfr.push_back(frmwk);
+	if(   H_end_pos_num >=  get_landmark_resnum(pose, Chothia_Scheme, 'H',110)         ) {
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',103);
+		frmwk.stop=get_landmark_resnum(pose, Chothia_Scheme, 'H',110);
+		Hfr.push_back(frmwk);
+	} else {
+		frmwk.start=get_landmark_resnum(pose, Chothia_Scheme, 'H',103);
+		frmwk.stop=H_end_pos_num;
+		Hfr.push_back(frmwk);
+	}
+	
+	
+	
 	if (Lfr.size()>0)  {
 		framework_info_.push_back(Lfr);
 	}
@@ -622,8 +588,8 @@ void AntibodyInfo::setup_VL_VH_packing_angle( pose::Pose const & pose ) {
 	Size packing_angle_start_in_pose, packing_angle_stop_in_pose;
 
 	for (Size i=1; i<=PackingAngleEnum_total; ++i) {
-		packing_angle_start_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_packing_angle[i], packing_angle_numbering_[i][start]);
-		packing_angle_stop_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_packing_angle[i], packing_angle_numbering_[i][stop]);
+		packing_angle_start_in_pose = get_landmark_resnum(pose, Chothia_Scheme, Chain_IDs_for_packing_angle[i], packing_angle_numbering_[i][1]);
+		packing_angle_stop_in_pose = get_landmark_resnum(pose, Chothia_Scheme, Chain_IDs_for_packing_angle[i], packing_angle_numbering_[i][2]);
 		for (Size j=packing_angle_start_in_pose; j<=packing_angle_stop_in_pose; j++) {
 			packing_angle_residues_.push_back( j );
 		}
@@ -653,14 +619,15 @@ void AntibodyInfo::detect_and_set_camelid_CDR_H3_stem_type(pose::Pose const & po
 
 	bool kinked_H3 (false);
 	bool extended_H3 (false);
-
+	
+	
 	// extract single letter aa codes for the chopped loop residues
 	vector1< char > cdr_h3_sequence;
-	for( Size ii = get_CDR_loop(h3).start() - 2; ii <= get_CDR_loop(h3).stop(); ++ii )
+	for( Size ii = get_CDR_loop(h3, pose, Aroop).start() - 2; ii <= get_CDR_loop(h3, pose, Aroop).stop(); ++ii )
 		cdr_h3_sequence.push_back( pose.sequence()[ii-1] );
 
 	// Rule for extended
-	if( ( ( get_CDR_loop(h3).stop() - get_CDR_loop(h3).start() ) ) >= 12 ) {
+	if( ( ( get_CDR_loop(h3, pose, Aroop).stop() - get_CDR_loop(h3, pose, Aroop).start() ) ) >= 12 ) {
 		if( ( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'Y' ) ||
 		        ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'W' ) ||
 		        ( cdr_h3_sequence[ cdr_h3_sequence.size() - 3 ] == 'F' ) ) &&
@@ -683,7 +650,10 @@ void AntibodyInfo::detect_and_set_camelid_CDR_H3_stem_type(pose::Pose const & po
 	if (kinked_H3) predicted_H3_base_type_ = Kinked;
 	if (extended_H3) predicted_H3_base_type_ = Extended;
 	if (!kinked_H3 && !extended_H3) predicted_H3_base_type_ = Neutral;
-	TR << "AC Finished Detecting Camelid CDR H3 Stem Type: " << antibody_manager_->h3_base_type_enum_to_string(predicted_H3_base_type_) << std::endl;
+
+	TR << "AC Finished Detecting Camelid CDR H3 Stem Type: " << enum_manager_->h3_base_type_enum_to_string(predicted_H3_base_type_) << std::endl;
+	
+	
 }
 
 
@@ -693,9 +663,10 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( pose::Pose const & p
 	bool kinked_H3 (false);
 	bool is_H3( false );
 
+	
 	// extract single letter aa codes for the chopped loop residues
 	vector1< char > cdr_h3_sequence;
-	for( Size ii = get_CDR_loop(h3).start() - 2; ii <= get_CDR_loop(h3).stop()+1 ; ++ii )
+	for( Size ii = get_CDR_loop(h3, pose, Aroop).start() - 2; ii <= get_CDR_loop(h3, pose, Aroop).stop()+1 ; ++ii )
 		cdr_h3_sequence.push_back( pose.sequence()[ii-1] );
 
 	// Rule 1a for standard kink
@@ -723,7 +694,7 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( pose::Pose const & p
 		}
 
 		if( !is_basic ) {
-			Size L49_pose_number = pose.pdb_info()->pdb2pose( 'L', 49 );
+			Size L49_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 49);
 			char aa_code_L49 = pose.residue( L49_pose_number ).name1();
 			if( aa_code_L49 == 'R' || aa_code_L49 == 'K')
 				is_basic = true;
@@ -744,7 +715,7 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( pose::Pose const & p
 		is_H3 = true;
 		if( !is_H3 ) {
 			bool is_basic( false ); // Special basic residue exception flag
-			Size L46_pose_number = pose.pdb_info()->pdb2pose( 'L', 46 );
+			Size L46_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 46);
 			char aa_code_L46 = pose.residue( L46_pose_number ).name1();
 			if( aa_code_L46 == 'R' || aa_code_L46 == 'K')
 				is_basic = true;
@@ -768,18 +739,14 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type( pose::Pose const & p
 	if (kinked_H3) predicted_H3_base_type_ = Kinked;
 	if (extended_H3) predicted_H3_base_type_ = Extended;
 	if (!kinked_H3 && !extended_H3) predicted_H3_base_type_ = Neutral;
-	TR << "AC Finished Detecting Regular CDR H3 Stem Type: " << antibody_manager_->h3_base_type_enum_to_string(predicted_H3_base_type_) << std::endl;
+	TR << "AC Finished Detecting Regular CDR H3 Stem Type: " << enum_manager_->h3_base_type_enum_to_string(predicted_H3_base_type_) << std::endl;
+	
 } // detect_regular_CDR_H3_stem_type()
 
 
 void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose const & pose ) {
 	TR << "AC Detecting Regular CDR H3 Stem Type" << std::endl;
 
-	if (numbering_scheme_ != Aroop) {
-		TR << "Stem type could not be set."<<std::endl;
-		predicted_H3_base_type_ = Unknown;
-		return;
-	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////HACK/////////////////////////////////////////////////////
 
@@ -789,21 +756,35 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
 
 	// extract single letter aa codes for the chopped loop residues
 	vector1< char > cdr_h3_sequence;
-	for( Size ii = get_CDR_loop(h3).start() - 2; ii <= get_CDR_loop(h3).stop() + 1; ++ii )
+	std::string seq = "";
+	core::Size start = get_CDR_loop(h3, pose, Aroop).start() - 2;
+	core::Size end = get_CDR_loop(h3, pose, Aroop).stop() + 1;
+	
+	//TR << "Start: "<<start<<"End:"<<end<<std::endl;
+	for( Size ii = get_CDR_loop(h3, pose, Aroop).start() - 2; ii <= get_CDR_loop(h3, pose, Aroop).stop() + 1; ++ii ){
+		//TR<< utility::to_string(pose.sequence()[ii-1])<< std::endl;
+		seq = seq+utility::to_string(pose.sequence()[ii-1]);
 		cdr_h3_sequence.push_back( pose.sequence()[ii-1] );
+	}
 	//for (Size i=1; i<=cdr_h3_sequence.size();++i){    TR<<cdr_h3_sequence[i];} TR<<std::endl;
 
 	/// @author: Daisuke Kuroda (dkuroda1981@gmail.com) 06/18/2012
 	///
-	/// @last_modified 06/18/2012
+	/// @last_modified 10/24/2013 (JAB)
 	///
 	/// @reference Kuroda et al. Proteins. 2008 Nov 15;73(3):608-20.
 	///			   Koliansnikov et al. J Bioinform Comput Biol. 2006 Apr;4(2):415-24.
 
+	
+	//JAB note.  Changed to use CDR start/end as landmarks for Aroop/Chothia numbering L46/L49/L36.
+	// This can be refactored as new landmarks and added to CDRLandmarkEnum and the antibody numbering scheme files in the database if desired.
+
 	// This is only for rule 1b
+	core::Size cdr_length = cdr_h3_sequence.size();
+	TR <<"CDR Length: "<<cdr_length << " "<<seq<<std::endl;
 	bool is_basic( false ); // Special basic residue exception flag
 	if( !is_basic ) {
-		Size L49_pose_number = pose.pdb_info()->pdb2pose( 'L', 49 );
+		Size L49_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 49);
 		char aa_code_L49 = pose.residue( L49_pose_number ).name1();
 		if( aa_code_L49 == 'R' || aa_code_L49 == 'K')
 			is_basic = true;
@@ -813,18 +794,18 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
 	if( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] == 'D') &&
 	        ( ( cdr_h3_sequence[ 2 ] == 'K') || (cdr_h3_sequence[2] == 'R') ) &&
 	        ( ( cdr_h3_sequence[ 1 ] == 'K') || (cdr_h3_sequence[1] == 'R') ) ) {
-		// Rule 1d for extened form with salt bridge
+		// Rule 1d for extended form with salt bridge
 		extended_H3 = true;
 	} else if( ( cdr_h3_sequence[ cdr_h3_sequence.size() - 2 ] == 'D') &&
 	           ( ( cdr_h3_sequence[ 2 ] == 'K') || ( cdr_h3_sequence[ 2 ] == 'R') ) &&
 	           ( ( cdr_h3_sequence[ 1 ] != 'K') && ( cdr_h3_sequence[ 1 ] != 'R') ) ) {
 		// Rule 1c for kinked form with salt bridge with/without Notable signal (L46)
 		// Special basic residue exception flag
-		Size L46_pose_number = pose.pdb_info()->pdb2pose( 'L', 46 );
+		Size L46_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 46);
 		char aa_code_L46 = pose.residue( L46_pose_number ).name1();
 
 		// Special Tyr residue exception flag
-		Size L36_pose_number = pose.pdb_info()->pdb2pose( 'L', 36 );
+		Size L36_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 36);
 		char aa_code_L36 = pose.residue( L36_pose_number ).name1();
 
 		if( ( aa_code_L46 == 'R' || aa_code_L46 == 'K') && aa_code_L36 != 'Y' ) {
@@ -874,34 +855,121 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
 	if (kinked_H3) predicted_H3_base_type_ = Kinked;
 	if (extended_H3) predicted_H3_base_type_ = Extended;
 	if (!kinked_H3 && !extended_H3) predicted_H3_base_type_ = Neutral;
-	TR << "AC Finished Detecting Regular CDR H3 Stem Type: " << antibody_manager_->h3_base_type_enum_to_string(predicted_H3_base_type_) << std::endl;
+	TR << "AC Finished Detecting Regular CDR H3 Stem Type: " << enum_manager_->h3_base_type_enum_to_string(predicted_H3_base_type_) << std::endl;
 
 	TR << "AC Finished Detecting Regular CDR H3 Stem Type: "
 	   << "Kink: " << kinked_H3 << " Extended: " << extended_H3 << std::endl;
+	
 } // detect_regular_CDR_H3_stem_type()
 
-std::pair <CDRClusterEnum, Real>
-AntibodyInfo::get_CDR_cluster(CDRNameEnum const cdr_name) const  {
-	if (cdr_clusters_.empty()){
-		utility_exit_with_message("CDR clusters not setup.  Cannot proceed.");
-	}
-	return std::make_pair(cdr_clusters_[cdr_name], cdr_cluster_distances_[cdr_name]);
-}
 
 Size
 AntibodyInfo::get_CDR_start(CDRNameEnum const & cdr_name, pose::Pose const & pose) const {
-	return pose.pdb_info()->pdb2pose(Chain_IDs_for_CDRs_[cdr_name], cdr_numbering_[cdr_name][start]);
+	
+	PDBLandmark landmark = *(numbering_info_.cdr_numbering[cdr_name][cdr_start]);
+	return pose.pdb_info()->pdb2pose(Chain_IDs_for_CDRs_[cdr_name], landmark.resnum(), landmark.insertion_code());
+
 }
 
 Size
+AntibodyInfo::get_CDR_start(CDRNameEnum const & cdr_name, pose::Pose const &  pose, CDRDefinitionEnum const & transform) const {
+	
+	if (transform == numbering_info_.cdr_definition){
+		return get_CDR_start(cdr_name, pose);
+	}
+	else {
+		PDBLandmark landmark = *(get_cdr_definition_transform(transform)[cdr_name][cdr_start]);
+		return pose.pdb_info()->pdb2pose(Chain_IDs_for_CDRs_[cdr_name], landmark.resnum(), landmark.insertion_code());
+	}
+}
+
+
+Size
 AntibodyInfo::get_CDR_end(CDRNameEnum const & cdr_name, pose::Pose const & pose) const {
-	return pose.pdb_info()->pdb2pose(Chain_IDs_for_CDRs_[cdr_name], cdr_numbering_[cdr_name][stop]);
+	PDBLandmark landmark = *(numbering_info_.cdr_numbering[cdr_name][cdr_end]);
+	return pose.pdb_info()->pdb2pose(Chain_IDs_for_CDRs_[cdr_name], landmark.resnum(), landmark.insertion_code());
+}
+
+Size
+AntibodyInfo::get_CDR_end(CDRNameEnum const & cdr_name, pose::Pose const & pose, CDRDefinitionEnum const & transform) const {
+	
+	if (transform == numbering_info_.cdr_definition){
+		return get_CDR_end(cdr_name, pose);
+	}
+	else {
+		PDBLandmark landmark = *(get_cdr_definition_transform(transform)[cdr_name][cdr_end]);
+		return pose.pdb_info()->pdb2pose(Chain_IDs_for_CDRs_[cdr_name], landmark.resnum(), landmark.insertion_code());
+	}
+}
+
+	/// @brief return the loop of a certain loop type
+loops::Loop
+AntibodyInfo::get_CDR_loop( CDRNameEnum const & cdr_name ) const {
+	
+	loops::Loop loop = (*vector1_loopsop_having_cdr_[cdr_name])[1];
+	return loop;
+}
+	
+
+
+loops::Loop
+AntibodyInfo::get_CDR_loop( CDRNameEnum const & cdr_name, pose::Pose const & pose) const {
+	
+	core::Size start = get_CDR_start(cdr_name, pose);
+	core::Size stop =  get_CDR_end(cdr_name, pose);
+	core::Size cutpoint = (stop-start+1)/2+start;
+	protocols::loops::Loop cdr_loop = protocols::loops::Loop(start, stop, cutpoint);
+	return cdr_loop;
+	
+}
+
+loops::Loop
+AntibodyInfo::get_CDR_loop(CDRNameEnum const & cdr_name, core::pose::Pose const & pose, CDRDefinitionEnum const & transform) const{
+	
+	if (transform == numbering_info_.cdr_definition){
+		return get_CDR_loop(cdr_name, pose);
+	}
+	else {
+		core::Size start = get_CDR_start(cdr_name, pose, transform);
+		core::Size stop =  get_CDR_end(cdr_name, pose, transform);
+		core::Size cutpoint = (stop-start+1)/2+start;
+		protocols::loops::Loop cdr_loop = protocols::loops::Loop(start, stop, cutpoint);
+		return cdr_loop;
+	}
+	
+}
+
+loops::LoopsOP
+AntibodyInfo::get_CDR_loops(pose::Pose const & pose) const {
+	
+	protocols::loops::LoopsOP cdr_loops = new loops::Loops;
+	for (Size i = 1; i <= total_cdr_loops_; ++i){
+		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		protocols::loops::Loop cdr_loop =get_CDR_loop(cdr, pose);
+		cdr_loops->add_loop(cdr_loop);
+	}
+	return cdr_loops;
+}
+
+/// @brief return the loop of a certain loop type
+loops::LoopsOP
+AntibodyInfo::get_CDR_in_loopsop( CDRNameEnum const & cdr_name ) const {
+	
+	return vector1_loopsop_having_cdr_[cdr_name];
+
+}
+	
+/// @brief return a LoopsOP object, initialized upon class construction.
+loops::LoopsOP
+AntibodyInfo::get_AllCDRs_in_loopsop() const {
+
+	return loopsop_having_allcdrs_;
 }
 
 
 std::vector<Vector>
 AntibodyInfo::kink_anion_atoms(const core::pose::Pose & pose) const {
-	Size resi = get_CDR_loop(h3).stop() - 1;
+	Size resi = get_CDR_loop(h3, pose, Aroop).stop() - 1;
 	core::conformation::Residue res = pose.residue(resi);
 	//print "H3_N-1 (%i): %s" % (resi,res.name3())
 	std::vector<Vector> atoms;
@@ -921,7 +989,7 @@ AntibodyInfo::kink_anion_atoms(const core::pose::Pose & pose) const {
 /// @brief return side chain cation atoms (typically Lys/His nitrogens) in the kink bulge HBond
 std::vector<Vector>
 AntibodyInfo::kink_cation_atoms(const core::pose::Pose & pose) const {
-	Size resi = get_CDR_loop(h3).start() - 1;
+	Size resi = get_CDR_loop(h3, pose, Aroop).start() - 1;
 	core::conformation::Residue res = pose.residue(resi);
 	//print "H3_0   (%i): %s" % (resi,res.name3())
 	std::vector<Vector> atoms;
@@ -943,139 +1011,34 @@ void
 AntibodyInfo::setup_CDR_clusters(pose::Pose const & pose) {
 
 	TR << "Setting up CDR Clusters" << std::endl;
-	cdr_clusters_.clear();
-	cdr_cluster_distances_.clear();
-	
-	cdr_clusters_.resize(CDRNameEnum_total);
-	cdr_cluster_distances_.resize(CDRNameEnum_total);
-	
+
+	cdr_cluster_set_->clear();
 	for (core::Size i=1; i<=total_cdr_loops_; ++i) {
 		CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
-		set_cdr_cluster(pose, cdr_name);
+		cdr_cluster_set_->identify_and_set_cdr_cluster(pose, cdr_name);
+		CDRClusterOP cluster_id = get_CDR_cluster(cdr_name);
+		//TR <<get_CDR_Name(cdr_name)+" North cluster: "<< get_cluster_name(cluster_id->cluster()) +" normalized_distance(deg): "<< cluster_id->normalized_distance_in_degrees() << std::endl;
 	}
+}
+
+CDRClusterOP
+AntibodyInfo::get_CDR_cluster(CDRNameEnum const cdr_name) const  {
+	
+	if (cdr_cluster_set_->empty(cdr_name)){
+		utility_exit_with_message("CDR cluster does not exist for CDR. ");
+	}
+	
+	return cdr_cluster_set_->get_cluster_data(cdr_name);
 }
 
 bool
-AntibodyInfo::clusters_setup() const {
-	if (!cdr_clusters_.empty()){
-		return true;
-	} else {
-		return false;
-	}
-}
-
-void
-AntibodyInfo::set_cdr_cluster(pose::Pose const & pose, CDRNameEnum const & cdr_name) {
-	using std::string;
-	using std::map;
-	using core::Size;
-	using core::Real;
-
-	string cdr;
-	Size length;
-	string cluster;
-	string type;
-	string fullcluster;
-	string ss;
-	string phis;
-	string psis;
-	string omegas;
-	Real PI = numeric::NumericTraits<Real>::pi();
-	string const path = "sampling/antibodies/cluster_center_dihedrals.txt";
-
-
-	Size cdr_length = get_CDR_length(cdr_name, pose);
-	loops::Loop loop = get_CDR_loop(cdr_name, pose);
-	Size start = loop.start();
-
-	//Get current cdr phi, psi, omega Once.
-	utility::io::izstream clus_stream;
-	basic::database::open(clus_stream, path);
-	map <string, vector1< Real > > pose_angles;
-	string model_ss;
-	Real cis_cutoff = 90.00;
-	for (Size resnum = start; resnum<=(start+cdr_length-1); resnum++) {
-		pose_angles["phi"].push_back(pose.phi(resnum));
-		pose_angles["psi"].push_back(pose.psi(resnum));
-		//Pythonic way of doing it, may need to change.
-		if (std::abs(pose.omega(resnum))>=cis_cutoff) {
-			model_ss = model_ss+"T";
-		} else {
-			model_ss = model_ss+"C";
-		}
-	}
-
-	TR <<"CDR: "<<get_CDR_Name(cdr_name)<<" "<<cdr_length<<" "<<model_ss<<std::endl;
-
-	map <Real, string > k_distances_to_cluster;
-	vector1< Real > k_distances;
-	Size line_count = 0;
-	bool cluster_found = false;
-	while ( ! clus_stream.eof() ) {
-		//TR << "Reading file..line"<<line_count<<std::endl;
-		++line_count;
-		clus_stream >> cdr >> length >> cluster >> type >> fullcluster >> ss >> phis >> psis >> omegas;
-		//Should I do the measuring here, or actually put the data in ram, then go through the data?
-		//TR << cdr <<" "<<length<<" "<<ss<<std::endl;
-		if (cdr==get_CDR_Name(cdr_name) && length==cdr_length && ss==model_ss) {
-			cluster_found=true;
-			Real k_distance_to_cluster=0.0;
-			//Calculate, add into cluster_distances.
-			map <string, vector1 <string> > cluster_angles;
-
-			boost::split(cluster_angles["phi"], phis, boost::is_any_of(","));
-			boost::split(cluster_angles["psi"], psis, boost::is_any_of(","));
-			//boost::split(cluster_angles["omega"], omegas, boost::is_any_of(":"));
-
-			//Calculate:
-			for (Size i=1; i<=cdr_length; i++) {
-				//Need to convert angles to positive values for now.
-				std::istringstream phi_stream(cluster_angles["phi"][i]);
-				std::istringstream psi_stream(cluster_angles["psi"][i]);
-				Real phi;
-				Real psi;
-				phi_stream >> phi;
-				psi_stream >> psi;
-
-				Real phi_d = (2 * (1- cos ((pose_angles["phi"][i]-phi)*PI/180)));
-				Real psi_d = (2 * (1- cos ((pose_angles["psi"][i]-psi)*PI/180)));
-				k_distance_to_cluster = k_distance_to_cluster+phi_d+psi_d;
-
-			}
-			k_distances_to_cluster[k_distance_to_cluster]=fullcluster;
-			k_distances.push_back(k_distance_to_cluster);
-		} else {
-			continue;
-		}
-
-	}//End while Loop
-
-	clus_stream.close();
-
-	///Take the minimum distance as the cluster.
-
-	if (! cluster_found) {
-		TR <<"Cluster not found for CDR "<<get_CDR_Name(cdr_name)<<std::endl;
-		cdr_clusters_[cdr_name] = NA;
-		cdr_cluster_distances_[cdr_name] = 1000;
-		return;
-	} else {
-		
-		//Get minimum and set cluster.
-		Real d = utility::min(k_distances);
-		string found_cluster = k_distances_to_cluster[d];
-		TR << get_CDR_Name(cdr_name) <<" cluster found as " << found_cluster << " at k_distance: " << d <<std::endl;
-		//TR <<"Setting this as closest cluster, as no cutoff is yet set. PLEASE manually compare structures.  " <<std::endl;
-		CDRClusterEnum cluster_enum = cdr_cluster_manager_->cdr_cluster_string_to_enum(found_cluster);
-		cdr_clusters_[cdr_name] = cluster_enum;
-		cdr_cluster_distances_[cdr_name] = d;
-		return;
-	}
+AntibodyInfo::has_cluster_for_cdr(const CDRNameEnum cdr_name) const {
+	return !cdr_cluster_set_->empty(cdr_name);
 }
 
 std::string
 AntibodyInfo::get_CDR_Name(CDRNameEnum const & cdr_name) const {
-	return antibody_manager_->cdr_name_enum_to_string(cdr_name);
+	return enum_manager_->cdr_name_enum_to_string(cdr_name);
 }
 
 Size
@@ -1086,9 +1049,9 @@ AntibodyInfo::get_CDR_length(CDRNameEnum const & cdr_name) const {
 }
 
 Size
-AntibodyInfo::get_CDR_length(CDRNameEnum const & cdr_name, core::pose::Pose const & pose){
-	loops::Loop cdr_loop = get_CDR_loop(cdr_name, pose);
-	Size len = cdr_loop.stop() - cdr_loop.start()+1;
+AntibodyInfo::get_CDR_length(CDRNameEnum const & cdr_name, core::pose::Pose const & pose, CDRDefinitionEnum const & transform) const {
+	loops::Loop cdr_loop = get_CDR_loop(cdr_name, pose, transform);
+	Size len = cdr_loop.stop()-cdr_loop.start()+1;
 	return len;
 }
 
@@ -1106,7 +1069,7 @@ CDRNameEnum
 AntibodyInfo::get_cdr_enum_for_cluster(CDRClusterEnum const cluster) const {
 		std::string cluster_string = cdr_cluster_manager_->cdr_cluster_enum_to_string(cluster);
 		utility::vector1< std::string > cluster_vec = utility::string_split(cluster_string, '-');
-		return antibody_manager_->cdr_name_string_to_enum(cluster_vec[1]);
+		return enum_manager_->cdr_name_string_to_enum(cluster_vec[1]);
 	}
 	
 core::Size
@@ -1116,28 +1079,6 @@ AntibodyInfo::get_cluster_length(CDRClusterEnum const cluster) const {
 		return utility::string2int(cluster_vec[2]);
 	}
 
-loops::Loop
-AntibodyInfo::get_CDR_loop( CDRNameEnum const & cdr_name, pose::Pose const & pose) const {
-	
-	core::Size start = get_CDR_start(cdr_name, pose);
-	core::Size stop =  get_CDR_end(cdr_name, pose);
-	core::Size cutpoint = (stop-start)/2+start;
-	protocols::loops::Loop cdr_loop = protocols::loops::Loop(start, stop, cutpoint);
-	return cdr_loop;
-	
-}
-
-loops::LoopsOP
-AntibodyInfo::get_CDR_loops(pose::Pose const & pose) const {
-	
-	protocols::loops::LoopsOP cdr_loops;
-	for (Size i = 1; i <= total_cdr_loops_; ++i){
-		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
-		protocols::loops::Loop cdr_loop =get_CDR_loop(cdr, pose);
-		cdr_loops->add_loop(cdr_loop);
-	}
-	return cdr_loops;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 ///                                                                          ///
@@ -1165,7 +1106,7 @@ kinematics::FoldTreeCOP AntibodyInfo::get_FoldTree_AllCDRs (pose::Pose const & p
 	using namespace kinematics;
 
 	kinematics::FoldTreeOP f = new FoldTree();
-	loops::fold_tree_from_loops(pose, *loopsop_having_allcdrs_, *f);
+	loops::fold_tree_from_loops(pose, *(get_AllCDRs_in_loopsop()), *f);
 	return f;
 
 } // all_cdr_fold_tree()
@@ -1208,7 +1149,7 @@ AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose const & pose ) const {
 
 	// Make sure rb jumps do not reside in the loop region
 	// NOTE: This check is insufficient.  Perhaps the jump adjustment should be done in a while loop.
-	for(loops::Loops::const_iterator it= loopsop_having_allcdrs_->begin(), it_end = loopsop_having_allcdrs_->end();
+	for(loops::Loops::const_iterator it= get_AllCDRs_in_loopsop()->begin(), it_end = get_AllCDRs_in_loopsop()->end();
 		it != it_end; ++it) {
 		if (light_chain_COM >= (it->start() - 1) && light_chain_COM <= (it->stop() + 1)) {
 			light_chain_COM = it->stop() + 2;
@@ -1513,8 +1454,8 @@ AntibodyInfo::get_MoveMap_for_AllCDRsSideChains_and_H3backbone(pose::Pose const 
 	utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
 	utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
 
-	TR<<"start: "<<get_CDR_start(h3, pose)<<std::endl;
-	TR<<"end  : "<<get_CDR_end(h3, pose)<<std::endl;
+	//TR<<"start: "<<get_CDR_start(h3, pose)<<std::endl;
+	//TR<<"end  : "<<get_CDR_end(h3, pose)<<std::endl;
 	for(Size ii=get_CDR_start(h3, pose); ii<=get_CDR_end(h3, pose); ii++){
 		bb_is_flexible[ii] = true;
 		TR<<"Setting Residue "<< ii<<" to be true"<<std::endl;
@@ -1582,7 +1523,7 @@ pack::task::TaskFactoryOP
 AntibodyInfo::get_TaskFactory_AllCDRs(pose::Pose & pose)  const {
 
 	vector1< bool> sc_is_packable( pose.total_residue(), false );
-	select_loop_residues( pose, *loopsop_having_allcdrs_, true/*include_neighbors*/, sc_is_packable);
+	select_loop_residues( pose, *get_AllCDRs_in_loopsop(), true/*include_neighbors*/, sc_is_packable);
 
 	using namespace pack::task;
 	using namespace pack::task::operation;
@@ -1935,7 +1876,8 @@ AntibodyInfo::identify_CDR_from_a_sequence(std::string const & querychain) {
 
 
 
-vector1<char> AntibodyInfo::get_CDR_sequence_with_stem(CDRNameEnum const & cdr_name,
+std::string
+AntibodyInfo::get_CDR_sequence_with_stem(CDRNameEnum const & cdr_name,
         Size left_stem ,
         Size right_stem ) const {
 	vector1<char> sequence;
@@ -1945,17 +1887,40 @@ vector1<char> AntibodyInfo::get_CDR_sequence_with_stem(CDRNameEnum const & cdr_n
 		std::map< Size, char >::const_iterator iter(sequence_map_.find(i)); //To keep const
 		sequence.push_back(iter->second);
 	}
-	return sequence;
+	std::string seq(sequence.begin(), sequence.end());
+	return seq ;
 }
 
-scoring::ScoreFunctionCOP get_Pack_ScoreFxn(void) {
+std::string
+AntibodyInfo::get_CDR_sequence_with_stem(CDRNameEnum const & cdr_name, core::pose::Pose const & pose, CDRDefinitionEnum const & transform, Size left_stem , Size right_stem) const {
+
+	vector1<char> sequence;
+	loops::Loop the_loop = get_CDR_loop(cdr_name, pose, transform);
+
+	for (Size i=the_loop.start()-left_stem; i<=the_loop.stop()+right_stem; ++i) {
+		std::map< Size, char >::const_iterator iter(sequence_map_.find(i)); //To keep const
+		sequence.push_back(iter->second);
+	}
+	std::string seq(sequence.begin(), sequence.end());
+	return seq ;
+}
+
+std::string
+AntibodyInfo::get_antibody_sequence() const {
+	std::string seq(ab_sequence_.begin(), ab_sequence_.end());
+	return seq;
+}
+
+scoring::ScoreFunctionCOP
+get_Pack_ScoreFxn(void) {
 	static scoring::ScoreFunctionOP pack_scorefxn = 0;
 	if(pack_scorefxn == 0) {
 		pack_scorefxn = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	}
 	return pack_scorefxn;
 }
-scoring::ScoreFunctionCOP get_Dock_ScoreFxn(void) {
+scoring::ScoreFunctionCOP
+get_Dock_ScoreFxn(void) {
 	static scoring::ScoreFunctionOP dock_scorefxn = 0;
 	if(dock_scorefxn == 0) {
 		dock_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
@@ -1964,7 +1929,8 @@ scoring::ScoreFunctionCOP get_Dock_ScoreFxn(void) {
 	}
 	return dock_scorefxn;
 }
-scoring::ScoreFunctionCOP get_LoopCentral_ScoreFxn(void) {
+scoring::ScoreFunctionCOP
+get_LoopCentral_ScoreFxn(void) {
 	static scoring::ScoreFunctionOP loopcentral_scorefxn = 0;
 	if(loopcentral_scorefxn == 0) {
 		loopcentral_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
@@ -1972,7 +1938,8 @@ scoring::ScoreFunctionCOP get_LoopCentral_ScoreFxn(void) {
 	}
 	return loopcentral_scorefxn;
 }
-scoring::ScoreFunctionCOP get_LoopHighRes_ScoreFxn(void) {
+scoring::ScoreFunctionCOP
+get_LoopHighRes_ScoreFxn(void) {
 	static scoring::ScoreFunctionOP loophighres_scorefxn = 0;
 	if(loophighres_scorefxn == 0) {
 		loophighres_scorefxn = scoring::getScoreFunction();
@@ -1985,7 +1952,7 @@ scoring::ScoreFunctionCOP get_LoopHighRes_ScoreFxn(void) {
 	
 AntibodyEnumManagerOP
 AntibodyInfo::get_antibody_enum_manager() const {
-	return antibody_manager_;
+	return enum_manager_;
 }
 
 CDRClusterEnumManagerOP
@@ -2015,16 +1982,15 @@ std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info )  {
 	}
 
 	out << line_marker << " Predict H3 Cterminus Base:";
-	out <<"  "<<ab_info.antibody_manager_->h3_base_type_enum_to_string(ab_info.predicted_H3_base_type_)<<std::endl;
+	out <<"  "<<ab_info.enum_manager_->h3_base_type_enum_to_string(ab_info.predicted_H3_base_type_)<<std::endl;
 
 	out << line_marker << space( 74 ) << std::endl;
 	for (CDRNameEnum i=start_cdr_loop; i<=ab_info.total_cdr_loops_; i=CDRNameEnum(i+1) ) {
 		out << line_marker << " "+ab_info.get_CDR_Name(i)+" info: "<<std::endl;
 		out << line_marker << "           length:  "<< ab_info.get_CDR_loop(i).length() <<std::endl;
 		out << line_marker << "         sequence:  ";
-		for (Size j=1; j<=ab_info.get_CDR_sequence_with_stem(i,0,0).size(); ++j) {
-			out << ab_info.get_CDR_sequence_with_stem(i,0,0)[j] ;
-		}
+		//out<<  line_marker << "  north_cluster: "<< ab_info.cdr_cluster_manager_->cdr_cluster_enum_to_string(ab_info.get_CDR_cluster(i)->cluster()) <<std::endl;
+		out << ab_info.get_CDR_sequence_with_stem(i,0,0) ;
 		out <<std::endl;
 		out << line_marker << "        loop_info:  "<< ab_info.get_CDR_loop(i)<<std::endl;
 	}

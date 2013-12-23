@@ -17,7 +17,7 @@
 #include <protocols/antibody/design/AntibodyGraftDesigner.hh>
 #include <protocols/antibody/design/AntibodyDesignEnum.hh>
 #include <protocols/antibody/AntibodyEnumManager.hh>
-#include <protocols/antibody/CDRClusterEnumManager.hh>
+#include <protocols/antibody/clusters/CDRClusterEnumManager.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 
 #include <utility/string_util.hh>
@@ -41,6 +41,7 @@ namespace design {
 
 	using namespace boost;
 	using namespace protocols::antibody;
+	using namespace protocols::antibody::clusters;
 	using std::string;
 	
 	typedef std::map< CDRNameEnum, CDRGraftInstructions > GraftInstructions;
@@ -66,6 +67,9 @@ DesignInstructionsParser::check_path() {
 		if (check2.good()){
 			instructions_path_ = basic::database::full_name(instructions_path_);
 			return;
+		}
+		else{
+			utility_exit_with_message("Instructions file path not good.  Please check path.");
 		}
 	}
 }

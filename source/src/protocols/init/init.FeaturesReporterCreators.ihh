@@ -62,3 +62,4 @@
 #include <protocols/features/strand_assembly/StrandBundleFeaturesCreator.hh>
 //#include <protocols/features/strand_assembly/ReportAADistributionFromDBCreator.hh>
 #include <protocols/features/ResidueGridScoresFeaturesCreator.hh>
+#include <protocols/antibody/clusters/CDRClusterFeaturesCreator.hh>

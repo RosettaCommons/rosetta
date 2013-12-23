@@ -18,7 +18,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-
+#include <utility/pointer/access_ptr.hh>
 
 // C++ Headers
 namespace protocols {
@@ -29,6 +29,8 @@ class AntibodyInfo;
 
 typedef utility::pointer::owning_ptr< AntibodyInfo > AntibodyInfoOP;
 typedef utility::pointer::owning_ptr< AntibodyInfo const > AntibodyInfoCOP;
+typedef  utility::pointer::access_ptr< AntibodyInfo >  AntibodyInfoAP;
+typedef  utility::pointer::access_ptr< AntibodyInfo const >  AntibodyInfoCAP;
 
 
 

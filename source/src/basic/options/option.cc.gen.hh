@@ -1180,7 +1180,7 @@ option.add( basic::options::OptionKeys::relax::thorough, "Do a preset, large cyc
 option.add( basic::options::OptionKeys::relax::membrane, "Do membrane relax" ).def(false);
 option.add( basic::options::OptionKeys::relax::centroid_mode, "Use centroid relax protocol" ).def(false);
 option.add( basic::options::OptionKeys::relax::default_repeats, "Default number of repeats done by FastRelax. Has no effect if a custom script is used!" ).def(5);
-option.add( basic::options::OptionKeys::relax::dualspace, "Do 3 FastRelax cycles of internal coordinate relax followed by two cycles of Cartesian relax - cat_bonded energy term is required, pro_close energy term should be turned off, and use of -relax::minimize_bond_angles is recommended" );
+option.add( basic::options::OptionKeys::relax::dualspace, "Do 3 FastRelax cycles of internal coordinate relax followed by two cycles of Cartesian relax - cart_bonded energy term is required, pro_close energy term should be turned off, and use of -relax::minimize_bond_angles is recommended" );
 option.add( basic::options::OptionKeys::relax::ramady, "Run ramady code which aleviates stuck bad ramachandran energies" ).def(false);
 option.add( basic::options::OptionKeys::relax::ramady_rms_limit, "(ramady-only) Reject rama changes which perturb structure by more than this" ).def(0.5);
 option.add( basic::options::OptionKeys::relax::ramady_cutoff, "(ramady-only) Cutoff at which a rama is considered bad" ).def(2.0);
@@ -2529,6 +2529,8 @@ option.add( basic::options::OptionKeys::csa::useZ, "Use absolute zaxis for scori
 option.add( basic::options::OptionKeys::dc::dc, "dc option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::dc::useZ, "Use absolute zaxis for scoring dc" );
 option.add( basic::options::OptionKeys::antibody::antibody, "Antibody option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::antibody::numbering_scheme, "The numbering scheme of the PDB file. Options are: Chothia_Scheme, Enhanced_Chothia_Scheme, AHO_Scheme, IMGT_Scheme. Kabat_Scheme is also accepted, but not fully supported due to H1 numbering conventions.  Use Kabat_Scheme with caution." ).def("Chothia_Scheme");
+option.add( basic::options::OptionKeys::antibody::cdr_definition, "The CDR definition to use.  Current Options are: Chothia, Aroop, North, Kabat, Martin" ).def("Aroop");
 option.add( basic::options::OptionKeys::antibody::graft_l1, "Graft CDR L1 from template" ).def(false);
 option.add( basic::options::OptionKeys::antibody::l1_template, "Choose specified template for CDR L1 grafting" ).def("l1.pdb");
 option.add( basic::options::OptionKeys::antibody::graft_l2, "Graft CDR L2 from template" ).def(false);
@@ -2567,7 +2569,6 @@ option.add( basic::options::OptionKeys::antibody::snug_loops, "Allow CDR loop ba
 option.add( basic::options::OptionKeys::antibody::input_fv, "input antibody variable (Fv) region" ).def("FR02.pdb");
 option.add( basic::options::OptionKeys::antibody::camelid, "Camelid input with only heavy (VH) chain" ).def(false);
 option.add( basic::options::OptionKeys::antibody::camelid_constraints, "Display constraints file for use with camelid H3 modeler" ).def(false);
-option.add( basic::options::OptionKeys::antibody::numbering_scheme, "the numbering scheme such as chothia or aho" ).def("chothia");
 option.add( basic::options::OptionKeys::antibody::design::design, "design option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::antibody::design::instructions, "Path for instruction file" ).def("/sampling/antibodies/design/default_instructions.txt");
 option.add( basic::options::OptionKeys::antibody::design::antibody_database, "Path to the Antibody Database.  Download from dunbrack.fccc.edu" ).def("/sampling/antibodies/antibody_database_rosetta.db");

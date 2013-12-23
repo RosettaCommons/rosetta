@@ -8,12 +8,12 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody_design/CDRClusterEnumManager.fwd.hh
+/// @file protocols/antibody/clusters/CDRClusterEnumManager.fwd.hh
 /// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody_CDRClusterEnumManager_fwd_hh
-#define INCLUDED_protocols_antibody_CDRClusterEnumManager_fwd_hh
+#ifndef INCLUDED_protocols_antibody_clusters_CDRClusterEnumManager_fwd_hh
+#define INCLUDED_protocols_antibody_clusters_CDRClusterEnumManager_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -21,14 +21,15 @@
 
 namespace protocols {
 namespace antibody {
-
+namespace clusters {
+	
 // Forward
 class CDRClusterEnumManager;
 
 typedef utility::pointer::owning_ptr< CDRClusterEnumManager > CDRClusterEnumManagerOP;
 typedef utility::pointer::owning_ptr< CDRClusterEnumManager const > CDRClusterEnumManagerCOP;
 
-
+} //namespace clusters
 } //namespace antibody
 } //namespace protocols
 

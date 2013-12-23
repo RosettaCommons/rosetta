@@ -9,7 +9,7 @@
 
 /// @file   apps/pilot/jadolfbr/cluster_utilities/identify_cdr_clusters.cc
 ///
-/// @brief This identifies CDR clusters of antibody.  Modified_AHO numbering required.
+/// @brief This identifies CDR clusters of antibody.  North_AHO numbering required.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/jd2/JobDistributor.hh>
@@ -20,6 +20,8 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/util.hh>
+#include <protocols/antibody/clusters/util.hh>
+
 #include <protocols/moves/Mover.hh>
 
 #include <core/pose/Pose.hh>
@@ -37,7 +39,7 @@
 using namespace protocols::antibody;
 
 
-//Documentation:  This application identifies the CDR cluster in an antibody, renumbered with Modified_AHO (Used by North clusters).  Works with one PDB.  Prints to screen
+//Documentation:  This application identifies the CDR cluster in an antibody, renumbered with North_AHO (Used by North clusters).  Works with one PDB.  Prints to screen
 //  Use: Renumber antibody using [http://dunbrack.fccc.edu/IgClassify/] (Not quite done).  Outputs info, and appends it to a new PDB that it will write.  
 //  Reference: North, B., A. Lehmann, et al. (2011). JMB 406(2): 228-256.
 class IdentifyCDRClusters : public protocols::moves::Mover{
@@ -55,18 +57,18 @@ public:
 	void
 	apply(core::pose::Pose & pose){
 		
-		if (! protocols::antibody::check_if_pose_renumbered_for_clusters(pose)){
+		if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
 			utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please visit www.xxx.edu");
 		}
-		AntibodyInfoOP ab_info = new AntibodyInfo(pose, Modified_AHO);
+		AntibodyInfoOP ab_info = new AntibodyInfo(pose, AHO_Scheme, North);
 		ab_info->show(std::cout);
 		ab_info->setup_CDR_clusters(pose);
 		
 		
 		for (core::Size i = 1; i<=CDRNameEnum_total; ++i){
 			CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
-			std::pair<CDRClusterEnum, core::Real> result = ab_info->get_CDR_cluster(cdr_name);
-			std::string output = "REMARK CLUSTER "+ ab_info->get_cluster_name(result.first) +" "+utility::to_string(result.second);
+			CDRClusterOP result = ab_info->get_CDR_cluster(cdr_name);
+			std::string output = "REMARK CLUSTER "+ ab_info->get_cluster_name(result->cluster()) +" "+utility::to_string(result->distance());
 			//std::cout << output;
 			protocols::jd2::JobDistributor::get_instance()->current_job()->add_string(output);
 		}

@@ -31,7 +31,9 @@ namespace protocols {
 namespace antibody {
 namespace design {
 
-using namespace protocols::antibody;	
+using namespace protocols::antibody;
+using namespace protocols::antibody::clusters;
+
 using std::string;
 using utility::vector1;
 

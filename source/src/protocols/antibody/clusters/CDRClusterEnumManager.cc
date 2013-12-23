@@ -8,12 +8,12 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody_design/CDRClusterEnumManager.cc
+/// @file protocols/antibody/clusters/CDRClusterEnumManager.cc
 /// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#include <protocols/antibody/CDRClusterEnumManager.hh>
-#include <protocols/antibody/CDRClusterEnum.hh>
+#include <protocols/antibody/clusters/CDRClusterEnumManager.hh>
+#include <protocols/antibody/clusters/CDRClusterEnum.hh>
 
 #include <map>
 #include <string>
@@ -24,6 +24,8 @@
 
 namespace protocols {
 namespace antibody {
+namespace clusters {
+	
 
 CDRClusterEnumManager::CDRClusterEnumManager() {
 	setup();
@@ -400,6 +402,7 @@ CDRClusterEnumManager::cdr_cluster_is_present(std::string const & cluster) const
 	return iter != string_to_enum_.end();
 }
 
+}//clusters
 }//Antibody
 }//Protocols
 

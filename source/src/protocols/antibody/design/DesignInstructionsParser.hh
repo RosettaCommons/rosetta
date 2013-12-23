@@ -29,6 +29,7 @@ namespace design {
 
 	using namespace utility;
 	using namespace protocols::antibody;
+	using namespace protocols::antibody::clusters;
 	using std::string;
 	
 ///@brief Lightweight class for parsing design instructions.

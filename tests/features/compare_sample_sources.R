@@ -173,6 +173,7 @@ initialize_packages <- function(opt, base_dir){
 		"rjson",
 		"xtable")
 
+
 	if(!is.null(opt$ncores)){
 		libraries <- c(libraries, "doMC")
 	}
@@ -200,7 +201,8 @@ initialize_method_scripts <- function(base_dir) {
 		"scripts/methods/comparison_statistics.R",
 		"scripts/methods/generate_plot_webpage.R",
 		"scripts/methods/vector_math.R",
-		"scripts/methods/color_palettes.R")
+		"scripts/methods/color_palettes.R",
+    "scripts/methods/util.R")
 	for(inc in includes){
 		tryCatch(source(paste(base_dir, inc, sep="/")), error=function(e){
 			cat(paste(

@@ -69,6 +69,7 @@ static basic::Tracer TR("antibody.util");
 
 
 using namespace core;
+using namespace protocols::antibody::clusters;
 namespace protocols {
 namespace antibody {
 
@@ -677,13 +678,9 @@ void align_to_native( core::pose::Pose & pose,
 std::map< CDRNameEnum, bool>
 add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, core::pose::Pose & pose){
 	std::map< CDRNameEnum, bool> result;
-	if (!ab_info->clusters_setup()){
-		ab_info->setup_CDR_clusters(pose);
-	}
-
 	for (core::Size i=1; i<=ab_info->get_total_num_CDRs(); ++i){
 		CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
-		result[cdr_name] = add_harmonic_cluster_constraint(ab_info, pose, ab_info->get_CDR_cluster(cdr_name).first);
+		result[cdr_name] = add_harmonic_cluster_constraint(ab_info, pose, ab_info->get_CDR_cluster(cdr_name)->cluster());
 	}
 	return result;
 }
@@ -692,13 +689,9 @@ std::map< CDRNameEnum, bool>
 add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, core::pose::Pose & pose, utility::vector1< core::scoring::constraints::ConstraintCOP > constraints){
 	
 	std::map< CDRNameEnum, bool> result;
-	if (!ab_info->clusters_setup()){
-		ab_info->setup_CDR_clusters(pose);
-	}
-
 	for (core::Size i=1; i<=ab_info->get_total_num_CDRs(); ++i){
 		CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
-		result[cdr_name] = add_harmonic_cluster_constraint(ab_info, pose, ab_info->get_CDR_cluster(cdr_name).first, constraints);
+		result[cdr_name] = add_harmonic_cluster_constraint(ab_info, pose, ab_info->get_CDR_cluster(cdr_name)->cluster(), constraints);
 	}
 	return result;
 }
@@ -771,56 +764,7 @@ get_harmonic_cluster_constraint_filename(AntibodyInfoCOP ab_info, CDRClusterEnum
 	return fname;
 }
 
-bool
-check_if_pose_renumbered_for_clusters(core::pose::Pose const & pose){
-	
 
-	if (core::pose::has_chain("L", pose)){
-		//L1
-		if (pose.residue(pose.pdb_info()->pdb2pose('L', 23)).name1() != 'C'){
-			TR << "Problem with L1 starting anchor residue name" <<std::endl;
-			return false;
-		}
-		if (pose.residue(pose.pdb_info()->pdb2pose('L', 43)).name1() != 'W'){
-			TR << "Problem with L1 ending anchor residue name" <<std::endl;
-			return false;
-		}
-		
-		//L3
-		if (pose.residue(pose.pdb_info()->pdb2pose('L', 106)).name1() != 'C'){
-			TR << "Problem with L3 starting anchor residue name" <<std::endl;
-			return false;
-		}
-		if (pose.residue(pose.pdb_info()->pdb2pose('L', 139)).name1() != 'F'){
-			TR << "Problem with L3 ending anchor residue name" <<std::endl;
-			return false;
-		}
-	}
-	
-	if (core::pose::has_chain("H", pose)){
-		//H1
-		if (pose.residue(pose.pdb_info()->pdb2pose('H', 23)).name1() != 'C'){
-			TR << "Problem with H1 starting anchor residue name" <<std::endl;
-			return false;
-		}
-		if (pose.residue(pose.pdb_info()->pdb2pose('H', 43)).name1() != 'W'){
-			TR << "Problem with H1 ending anchor residue name" <<std::endl;
-			return false;
-		}
-		
-		//H3
-		if (pose.residue(pose.pdb_info()->pdb2pose('H', 106)).name1() != 'C'){
-			TR << "Problem with H3 starting anchor residue name" <<std::endl;
-			return false;
-		}
-		if (pose.residue(pose.pdb_info()->pdb2pose('H', 139)).name1() != 'W'){
-			TR << "Problem with H3 ending anchor residue name" <<std::endl;
-			return false;
-		}
-	}
-	
-	return true;
-}
 
 } // namespace antibody
 } // namespace protocols

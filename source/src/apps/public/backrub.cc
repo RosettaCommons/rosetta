@@ -373,7 +373,7 @@ void BackrubProtocol::apply( core::pose::Pose& pose ){
 	}
 
 	backrubmover_->clear_segments();
-	backrubmover_->set_input_pose(&pose);// hmm, is that okay?
+	backrubmover_->set_input_pose( pose.clone() ); // hmm, is that okay? NO NO NO it is not.
 	backrubmover_->add_mainchain_segments_from_options();
 
 	TR << "Score After PDB Load:" << std::endl;

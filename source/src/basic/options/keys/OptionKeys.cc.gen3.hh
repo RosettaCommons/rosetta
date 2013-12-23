@@ -283,6 +283,8 @@ namespace csa { BooleanOptionKey const useZ( "csa:useZ" );  }
 namespace dc { BooleanOptionKey const dc( "dc" );  }
 namespace dc { BooleanOptionKey const useZ( "dc:useZ" );  }
 namespace antibody { BooleanOptionKey const antibody( "antibody" );  }
+namespace antibody { StringOptionKey const numbering_scheme( "antibody:numbering_scheme" );  }
+namespace antibody { StringOptionKey const cdr_definition( "antibody:cdr_definition" );  }
 namespace antibody { BooleanOptionKey const graft_l1( "antibody:graft_l1" );  }
 namespace antibody { StringOptionKey const l1_template( "antibody:l1_template" );  }
 namespace antibody { BooleanOptionKey const graft_l2( "antibody:graft_l2" );  }
@@ -321,7 +323,6 @@ namespace antibody { BooleanOptionKey const snug_loops( "antibody:snug_loops" );
 namespace antibody { FileOptionKey const input_fv( "antibody:input_fv" );  }
 namespace antibody { BooleanOptionKey const camelid( "antibody:camelid" );  }
 namespace antibody { BooleanOptionKey const camelid_constraints( "antibody:camelid_constraints" );  }
-namespace antibody { StringOptionKey const numbering_scheme( "antibody:numbering_scheme" );  }
 namespace antibody { namespace design { BooleanOptionKey const design( "antibody:design" );  } }
 namespace antibody { namespace design { StringOptionKey const instructions( "antibody:design:instructions" );  } }
 namespace antibody { namespace design { StringOptionKey const antibody_database( "antibody:design:antibody_database" );  } }

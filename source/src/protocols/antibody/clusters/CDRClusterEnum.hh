@@ -8,16 +8,18 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody/CDRClusterEnum.hh
+/// @file protocols/antibody/clusters/CDRClusterEnum.hh
 /// @brief Enumerators for antibody clusters
 /// @author Jared Adolf_Bryfogle (jadolfbr@gmail.com)
 
 
-#ifndef INCLUDED_protocols_antibody_CDRClusterEnum_hh
-#define INCLUDED_protocols_antibody_CDRClusterEnum_hh
+#ifndef INCLUDED_protocols_antibody_clusters_CDRClusterEnum_hh
+#define INCLUDED_protocols_antibody_clusters_CDRClusterEnum_hh
 
 namespace protocols {
 namespace antibody {
+namespace clusters {
+	
 
 /// Identified antibody CDR Clusters
 /// See North, Lehmann, Dunbrack. (2011). JMB 406(2): 228-256.
@@ -143,9 +145,9 @@ enum CDRClusterEnum {
     CDRClusterEnum_total = NA
 };
 
-
-}
-}
+} //clusters
+} //antibody
+} //protocols
 
 #endif	//INCLUDED_protocols_antibody_CDRClusterEnum.hh
 

@@ -22,6 +22,8 @@ namespace options {
 namespace OptionKeys {
 
 namespace antibody { extern BooleanOptionKey const antibody; }
+namespace antibody { extern StringOptionKey const numbering_scheme; }
+namespace antibody { extern StringOptionKey const cdr_definition; }
 namespace antibody { extern BooleanOptionKey const graft_l1; }
 namespace antibody { extern StringOptionKey const l1_template; }
 namespace antibody { extern BooleanOptionKey const graft_l2; }
@@ -60,7 +62,6 @@ namespace antibody { extern BooleanOptionKey const snug_loops; }
 namespace antibody { extern FileOptionKey const input_fv; }
 namespace antibody { extern BooleanOptionKey const camelid; }
 namespace antibody { extern BooleanOptionKey const camelid_constraints; }
-namespace antibody { extern StringOptionKey const numbering_scheme; }
 namespace antibody { namespace design { extern BooleanOptionKey const design; } }
 namespace antibody { namespace design { extern StringOptionKey const instructions; } }
 namespace antibody { namespace design { extern StringOptionKey const antibody_database; } }

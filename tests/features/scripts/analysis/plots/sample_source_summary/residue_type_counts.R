@@ -13,7 +13,7 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "residue_type_counts",
 author = "Matthew O'Meara",
 brief_description = "",
-feature_reporter_dependencies = c("ResidueFeatures"),
+feature_reporter_dependencies = c("ResidueFeatures", "ResidueTypesFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 

@@ -29,13 +29,14 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnumManager.hh>
-#include <protocols/antibody/CDRClusterEnumManager.hh>
+#include <protocols/antibody/clusters/CDRClusterEnumManager.hh>
 
 //Utility Headers
 #include <utility/vector1.hh>
 
 
 using namespace core;
+using namespace protocols::antibody::clusters;
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace antibody {
@@ -114,7 +115,7 @@ cutpoint_separation(core::pose::Pose & pose_in, Size cutpoint);
 
 
 /// @brief Adds dihedral harmonic constraints to Pose CDRs using cluster info in AntibodyInfo
-/// @details Currently requires Modified_AHO numbering. Returns map of success/failure
+/// @details Currently requires North_AHO numbering. Returns map of success/failure
 std::map<CDRNameEnum, bool>
 add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, pose::Pose & pose);
 
@@ -125,7 +126,7 @@ add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, pose::Pose & pose, util
 
 
 /// @brief Adds a harmonic constraint to a Pose CDR based on cluster type
-/// @details Currently requires Modified_AHO numbering.
+/// @details Currently requires North_AHO numbering.
 bool
 add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, pose::Pose & pose, CDRClusterEnum const cluster);
 
@@ -134,16 +135,9 @@ add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, pose::Pose & pose, CDRC
 bool
 add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, pose::Pose & pose, CDRClusterEnum const cluster, utility::vector1< core::scoring::constraints::ConstraintCOP > constraints);
 
-
 /// @brief Gets the cluster constraint name.  Returns NA if not found.
 std::string
 get_harmonic_cluster_constraint_filename(AntibodyInfoCOP ab_info, CDRClusterEnum const cluster);
-
-
-///@brief Very basic way to check to make sure pose residues are Modified_AHO (North, et al) scheme, which allows the clustering.
-///@details If any of these anchor residues that are checked are missing, it will return false.
-bool
-check_if_pose_renumbered_for_clusters(pose::Pose const & pose);
 
 } //namespace antibody
 } //namespace protocols

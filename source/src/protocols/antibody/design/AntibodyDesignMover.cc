@@ -17,6 +17,7 @@
 #include <protocols/antibody/design/AntibodyDatabaseManager.hh>
 #include <protocols/antibody/design/AntibodyGraftDesigner.hh>
 #include <protocols/antibody/design/AntibodyCDRDesigner.hh>
+#include <protocols/antibody/clusters/util.hh>
 
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/util.hh>
@@ -54,6 +55,8 @@ using namespace basic::options::OptionKeys;
 using namespace core::scoring;
 using namespace protocols::antibody;
 using namespace core::import_pose;
+using namespace protocols::antibody::clusters;
+
 using core::pose::Pose;
 using std::string;
 
@@ -197,7 +200,7 @@ AntibodyDesignMover::model_post_design(core::pose::Pose& pose){
 	
 	SnugDockOP snug = new SnugDock();
 	snug->set_scorefxn(scorefxn_->clone());
-	snug->set_antibody_info(new AntibodyInfo(pose, Modified_AHO));//Updated info for movemaps, foldtrees.
+	snug->set_antibody_info(new AntibodyInfo(pose, AHO_Scheme, North));//Updated info for movemaps, foldtrees.
 	
 	snug->apply(pose);
 	
@@ -222,8 +225,8 @@ AntibodyDesignMover::add_cluster_comments_to_pose(core::pose::Pose& pose){
 	
 	for (core::SSize i = 1; i <= 6; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
-		std::pair<CDRClusterEnum, core::Real> result = ab_info_->get_CDR_cluster(cdr);
-		std::string output = "CLUSTER "+ ab_info_->get_cluster_name(result.first) +" "+utility::to_string(result.second);
+		CDRClusterOP result = ab_info_->get_CDR_cluster(cdr);
+		std::string output = "CLUSTER "+ ab_info_->get_cluster_name(result->cluster()) +" "+utility::to_string(result->distance());
 		core::pose::add_comment(pose, "REMARK "+ab_info_->get_CDR_Name(cdr), output);
 		
 	}
@@ -235,18 +238,17 @@ AntibodyDesignMover::apply(core::pose::Pose& pose){
 	///Setup Objects///
 	
 
-	if (! protocols::antibody::check_if_pose_renumbered_for_clusters(pose)){
+	if (! protocols::antibody::clusters::check_if_pose_renumbered_for_clusters(pose)){
 		utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
 	}
 	
 	if (! ab_info_){
-		ab_info_ = new AntibodyInfo(pose, Modified_AHO);
-		ab_info_->setup_CDR_clusters(pose);
+		ab_info_ = new AntibodyInfo(pose, AHO_Scheme, North);
 		ab_info_->show(TR);
 
 	}
-	if (ab_info_->get_Current_AntibodyNumberingScheme() != "Modified_AHO"){
-		utility_exit_with_message("Antibody Design Protocol requires the Modified AHO numbering scheme");
+	if (ab_info_->get_current_AntibodyNumberingScheme()!="AHO_Scheme" && ab_info_->get_current_CDRDefinition() != "North"){
+		utility_exit_with_message("Antibody Design Protocol requires AHO_scheme and North definitions");
 	}
 	
 	setup_scorefxn(scorefxn_);
