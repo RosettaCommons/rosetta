@@ -3412,6 +3412,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'normal_cycles', 'Integer', default='100', desc='number of membrane normal cycles'),
 		Option( 'normal_mag', 'Real', default='5', desc='magnitude of membrane normal angle search (degrees)'),
 		Option( 'center_mag', 'Real', default='1', desc='magnitude of membrane normal center search (Angstroms)' ),
+		Option( 'thickness', 'Real', default='15', desc='one leaflet hydrocarbon thickness for solvation calculations (Angstroms)' ),
 		Option( 'smooth_move_frac', 'Real', default='0.5'),
 		Option( 'no_interpolate_Mpair', 'Boolean', default='false'),
 		Option( 'Menv_penalties','Boolean',default='false'),

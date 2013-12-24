@@ -69,6 +69,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 	core::kinematics::FoldTree new_ft;
 	new_ft.clear();
 	core::conformation::Conformation const conf( pose.conformation() );
+	TR<<"Number of chains in pose: "<<conf.num_chains()<<std::endl;
 	core::Size chain_count( 1 );
 	utility::vector1< core::Size > new_residue_numbers;
 	new_residue_numbers.clear();
@@ -76,6 +77,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 	positions_in_new_pose.clear();
 	foreach( char const chaini, chain_order() ){
 		core::Size const chain( chaini - '0' );
+		TR<<"Now at chain: "<<chain<<std::endl;
 		runtime_assert( chain > 0 && chain <= conf.num_chains() );
 		core::Size const chain_begin( conf.chain_begin( chain ) );
 		core::Size const chain_end(   conf.chain_end(   chain ) );

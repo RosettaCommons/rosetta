@@ -25,6 +25,7 @@ namespace membrane { extern BooleanOptionKey const membrane; }
 namespace membrane { extern IntegerOptionKey const normal_cycles; }
 namespace membrane { extern RealOptionKey const normal_mag; }
 namespace membrane { extern RealOptionKey const center_mag; }
+namespace membrane { extern RealOptionKey const thickness; }
 namespace membrane { extern RealOptionKey const smooth_move_frac; }
 namespace membrane { extern BooleanOptionKey const no_interpolate_Mpair; }
 namespace membrane { extern BooleanOptionKey const Menv_penalties; }

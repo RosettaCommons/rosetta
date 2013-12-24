@@ -469,6 +469,7 @@ sources = {
 		"AddChainMover",
 		"AddConstraintsToCurrentConformationMover",
 		"AddJobPairData",
+		"AlignChainMover",
 		"ModifyVariantTypeMover",
 		"BackboneMover",
 		"BBConRotMover",

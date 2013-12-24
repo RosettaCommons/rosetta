@@ -163,6 +163,7 @@
 #include <protocols/protein_interface_design/movers/DisulfideMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/DockAndRetrieveSidechainsCreator.hh>
 #include <protocols/simple_moves/DumpPdbCreator.hh>
+#include <protocols/simple_moves/AlignChainMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/FavorNativeResiduePreCycleCreator.hh>
 #include <protocols/protein_interface_design/movers/FavorNonNativeResiduePreCycleCreator.hh>
 #include <protocols/protein_interface_design/movers/HotspotDisjointedFoldTreeMoverCreator.hh>

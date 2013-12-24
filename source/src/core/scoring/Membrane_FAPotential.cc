@@ -72,7 +72,7 @@ Membrane_FAEmbed::Membrane_FAEmbed( Membrane_FAEmbed const & src ) :
 void
 Membrane_FAEmbed::initialize(pose::Pose const & pose)
 {
-  thickness_=15.0;
+  thickness_=basic::options::option[ basic::options::OptionKeys::membrane::thickness ]();
   steepness_=10.0;
   Fa_Membed_update_=basic::options::option[ basic::options::OptionKeys::membrane::Fa_Membed_update ]();
   allocate_appropriate_memory( pose );

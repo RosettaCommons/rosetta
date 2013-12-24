@@ -7236,6 +7236,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 1</dd><br>
 </dl>
 <dl>
+<dt><b>-thickness</b> \<Real\><dt>
+<dd>one leaflet hydrocarbon thickness for solvation calculations (Angstroms)</dd><br>
+<dd>Default: 15</dd><br>
+</dl>
+<dl>
 <dt><b>-smooth_move_frac</b> \<Real\><dt>
 <dd>No description</dd><br>
 <dd>Default: 0.5</dd><br>
