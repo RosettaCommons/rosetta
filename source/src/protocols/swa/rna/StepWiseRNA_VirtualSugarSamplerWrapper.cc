@@ -108,6 +108,7 @@ StepWiseRNA_VirtualSugarSamplerWrapper::StepWiseRNA_VirtualSugarSamplerWrapper( 
 	integration_test_mode_( false ),
 	use_phenix_geo_( false ),
 	legacy_mode_( false ),
+	keep_base_fixed_( false ),
 	success_( false )
 {}
 
@@ -160,6 +161,7 @@ StepWiseRNA_VirtualSugarSamplerWrapper::do_sugar_sampling( pose::Pose & viewer_p
 	virtual_sugar_sampler.set_integration_test_mode( integration_test_mode_ );
 	virtual_sugar_sampler.set_use_phenix_geo( use_phenix_geo_ );
 	virtual_sugar_sampler.set_legacy_mode( legacy_mode_ );
+	virtual_sugar_sampler.set_keep_base_fixed( keep_base_fixed_ );
 	virtual_sugar_sampler.set_choose_random( choose_random_ );
 
 	virtual_sugar_sampler.apply( viewer_pose );

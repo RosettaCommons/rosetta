@@ -164,11 +164,6 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 	}
 
 	/////////////////////////////////////////////////////
-	scoring::constraints::ConstraintSetOP save_pose_constraints = pose.constraint_set()->clone();
-	if (use_coordinate_constraints_) core::scoring::constraints::add_coordinate_constraints( pose, coord_sdev_ );
-	scoring::constraints::ConstraintSetOP pose_constraints_with_coordinate_tethers = pose.constraint_set()->clone();
-
-	/////////////////////////////////////////////////////
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol( 0.0000025);
 	bool const use_nblist( true );
@@ -180,6 +175,11 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 	if (!allow_insert_) allow_insert_ = new toolbox::AllowInsert( pose ); // initialized to let all dofs move.
 	update_allow_insert_with_extra_minimize_res( pose );
  	setup_movemap( mm, pose );
+
+	/////////////////////////////////////////////////////
+	scoring::constraints::ConstraintSetOP save_pose_constraints = pose.constraint_set()->clone();
+	if (use_coordinate_constraints_) core::scoring::constraints::add_coordinate_constraints( pose, coord_sdev_ );
+	scoring::constraints::ConstraintSetOP pose_constraints_with_coordinate_tethers = pose.constraint_set()->clone();
 
 	utility::vector1< Size > moving_chainbreaks = swa::figure_out_moving_chain_break_res( pose, mm );
 	RNA_LoopCloser rna_loop_closer;

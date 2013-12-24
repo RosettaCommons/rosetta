@@ -64,6 +64,8 @@ namespace rna {
 
 		void set_choose_random( bool const & setting ) { choose_random_ = setting;	}
 
+		void set_keep_base_fixed( bool const & setting ) { keep_base_fixed_ = setting;	}
+
 		void set_integration_test_mode( bool const & setting ){ integration_test_mode_ = setting; }
 
 		void set_virtual_sugar_is_from_prior_step( bool const & setting ) { virtual_sugar_is_from_prior_step_ = setting;	}
@@ -132,12 +134,12 @@ namespace rna {
 		std::string tag_;
 		bool use_phenix_geo_;
 		bool legacy_mode_;
+		bool keep_base_fixed_;
 		bool choose_random_;
 		bool integration_test_mode_;
 		bool virtual_sugar_is_from_prior_step_;
 		bool const do_chain_closure_;
 		bool const first_minimize_with_fixed_base_;
-		bool const keep_base_fixed_;
 		Size const max_tries_for_random_overall_;
 		Size const max_tries_for_random_sugar_setup_;
 		bool sugar_setup_success_;
@@ -146,6 +148,7 @@ namespace rna {
 
 		utility::vector1 < core::Size > distal_partition_pos_;
 		utility::vector1 < core::Size > already_virtualized_res_list_;
+		bool moving_phosphate_virtualized_;
 
 		core::scoring::constraints::ConstraintSetOP original_constraint_set_;
 

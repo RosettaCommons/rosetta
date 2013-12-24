@@ -69,6 +69,7 @@ namespace swa { namespace rna { extern IntegerVectorOptionKey const virtual_res;
 namespace swa { namespace rna { extern IntegerVectorOptionKey const bulge_res; } }
 namespace swa { namespace rna { extern BooleanOptionKey const rebuild_bulge_mode; } }
 namespace swa { namespace rna { extern BooleanOptionKey const choose_random; } }
+namespace swa { namespace rna { extern BooleanOptionKey const virtual_sugar_keep_base_fixed; } }
 namespace swa { namespace rna { extern IntegerOptionKey const num_random_samples; } }
 namespace swa { namespace rna { extern BooleanOptionKey const filter_user_alignment_res; } }
 namespace swa { namespace rna { extern BooleanOptionKey const output_pdb; } }

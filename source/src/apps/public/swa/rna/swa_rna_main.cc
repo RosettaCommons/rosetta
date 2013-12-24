@@ -306,6 +306,7 @@ swa_rna_sample()
 		if ( option[ num_pose_minimize ].user() ) stepwise_rna_modeler.set_num_pose_minimize( option[ num_pose_minimize ]() );
 		stepwise_rna_modeler.set_output_minimized_pose_list( !multiple_shots );
 		stepwise_rna_modeler.set_virtual_sugar_legacy_mode( option[ virtual_sugar_legacy_mode ] );
+		stepwise_rna_modeler.set_virtual_sugar_keep_base_fixed( option[ OptionKeys::swa::rna::virtual_sugar_keep_base_fixed ]() );
 
 		// newer options
 		stepwise_rna_modeler.set_VDW_rep_delete_matching_res ( option[ VDW_rep_delete_matching_res ]() );

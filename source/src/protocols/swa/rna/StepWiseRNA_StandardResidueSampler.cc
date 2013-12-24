@@ -467,8 +467,7 @@ StepWiseRNA_StandardResidueSampler::setup_rotamer_sampler( pose::Pose const & po
 	sampler->set_extra_beta( extra_beta_rotamer_ );
 	sampler->set_extra_chi(	extra_chi_ );
 	sampler->set_random( choose_random_ );
-	if ( close_chain_to_distal_ && finer_sampling_at_chain_closure_  )
-			sampler->set_bin_size( 10 );
+	if ( close_chain_to_distal_ && finer_sampling_at_chain_closure_  )	sampler->set_bin_size( 10 );
 	sampler->init();
 
 	return sampler;

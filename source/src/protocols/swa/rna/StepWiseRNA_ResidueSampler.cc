@@ -245,6 +245,7 @@ StepWiseRNA_ResidueSampler::instantiate_any_virtual_sugars( pose::Pose & pose ){
 	virtual_sugar_sampler_wrapper_->set_use_phenix_geo ( use_phenix_geo_  );
 	virtual_sugar_sampler_wrapper_->set_legacy_mode ( virtual_sugar_legacy_mode_  );
 	virtual_sugar_sampler_wrapper_->set_choose_random ( choose_random_  );
+	virtual_sugar_sampler_wrapper_->set_keep_base_fixed ( virtual_sugar_keep_base_fixed_  );
 	virtual_sugar_sampler_wrapper_->set_integration_test_mode( integration_test_mode_ ); //Should set after setting sampler_native_screen_rmsd_cutoff, fast, medium_fast options.
 	virtual_sugar_sampler_wrapper_->apply( pose );
 	pose = pose_save;

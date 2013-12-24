@@ -120,7 +120,8 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 		skip_chainbreak_torsions_( basic::options::option[ basic::options::OptionKeys::score::rna_torsion_skip_chainbreak ]() ),
 		verbose_( false ),
 		use_new_potential_( false ),
-		use_2prime_OH_potential_( basic::options::option[ basic::options::OptionKeys::score::use_2prime_OH_potential ]() )
+		use_2prime_OH_potential_( basic::options::option[ basic::options::OptionKeys::score::use_2prime_OH_potential ]() ),
+		syn_G_potential_bonus_( basic::options::option[ basic::options::OptionKeys::score::syn_G_potential_bonus ]() )
 	{
 		if( basic::options::option[ basic::options::OptionKeys::score::rna_torsion_potential ].user() ){
 
@@ -221,6 +222,8 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 									 fade_delta_south_->func( delta ) * chi_south_potential_others_->func( chi ) ); //chi
 				}
 			}
+			if ( rsd.aa() == core::chemical::na_rgu && syn_G_potential_bonus_ != 0.0 ) score += chi_potential_syn_guanosine_bonus_->func( chi );
+
 		}
 
 		if(verbose_)  TR << "nu2 torsion" << std::endl;
@@ -433,6 +436,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 					if ( rsd.aa() == core::chemical::na_rgu ) {
 						dE_dtorsion += ( fade_delta_north_->dfunc( delta ) * chi_north_potential_guanosine_->func( chi ) +
 														 fade_delta_south_->dfunc( delta ) * chi_south_potential_guanosine_->func( chi ) );
+
 					}else{
 						dE_dtorsion += ( fade_delta_north_->dfunc( delta ) * chi_north_potential_others_->func( chi ) +
 														 fade_delta_south_->dfunc( delta ) * chi_south_potential_others_->func( chi ) );
@@ -492,12 +496,13 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 					if ( rsd.aa() == core::chemical::na_rgu ) {
 						dE_dtorsion = ( fade_delta_north_->func( delta ) * chi_north_potential_guanosine_->dfunc( chi ) +
 														fade_delta_south_->func( delta ) * chi_south_potential_guanosine_->dfunc( chi ) );
-
 					} else {
 						dE_dtorsion = ( fade_delta_north_->func( delta ) * chi_north_potential_others_->dfunc( chi ) +
 														fade_delta_south_->func( delta ) * chi_south_potential_others_->dfunc( chi ) );
 					}
 				}
+
+				if ( rsd.aa() == core::chemical::na_rgu && syn_G_potential_bonus_ != 0.0 ) dE_dtorsion += chi_potential_syn_guanosine_bonus_->dfunc( chi );
 
 				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
 				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
@@ -592,6 +597,9 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 				initialize_potential_from_file( chi_south_potential_others_, "chi_south_potential.txt" );
 			}
 		}
+
+		chi_potential_syn_guanosine_bonus_ = new core::scoring::func::FadeFunc( -120.0/*cutoff_lower*/, 0.0 /*cutoff_upper*/, 10.0 /*fade_zone*/,
+																																						syn_G_potential_bonus_ /*well depth*/, 0 );
 
 	}
 

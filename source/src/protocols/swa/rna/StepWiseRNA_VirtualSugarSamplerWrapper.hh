@@ -76,6 +76,9 @@ namespace rna {
 		set_legacy_mode( bool const & setting ) { legacy_mode_ = setting;	}
 
 		void
+		set_keep_base_fixed( bool const & setting ) { keep_base_fixed_ = setting;	}
+
+		void
 		set_choose_random( bool const & setting ) { choose_random_ = setting;	}
 
 		bool const & success() const{ return success_; }
@@ -130,6 +133,7 @@ namespace rna {
 		bool integration_test_mode_;
 		bool use_phenix_geo_;
 		bool legacy_mode_;
+		bool keep_base_fixed_;
 		bool choose_random_;
 
 		bool do_not_sample_multiple_virtual_sugar_;

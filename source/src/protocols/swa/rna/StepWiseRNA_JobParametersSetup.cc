@@ -89,6 +89,7 @@ namespace rna {
 		skip_complicated_stuff_( false ),
 		force_fold_tree_( false ),
 		force_user_defined_jumps_( false ),
+		force_internal_( false ),
 		assert_jump_point_in_fixed_res_( true )
   {
 		output_title_text( "Enter StepWiseRNA_JobParametersSetup::constructor", TR.Debug );
@@ -1056,11 +1057,11 @@ namespace rna {
 		core::Size fake_working_moving_suite;
 		InternalWorkingResidueParameter internal_working_res_params;
 
-		if ( working_moving_res == 1 || fold_tree.is_cutpoint( working_moving_res - 1 ) ) { //prepend
+		if ( ( working_moving_res == 1 || fold_tree.is_cutpoint( working_moving_res - 1 ) ) && !force_internal_ ) { //prepend
 
 			fake_working_moving_suite = first_working_moving_res ;
 
-		} else if ( fold_tree.is_cutpoint( working_moving_res ) || working_moving_res == nres ){
+		} else if ( ( fold_tree.is_cutpoint( working_moving_res ) || working_moving_res == nres )  && !force_internal_ ){
 
 			fake_working_moving_suite = first_working_moving_res - 1;
 
@@ -1159,7 +1160,7 @@ namespace rna {
 			}
 
 			if ( found_possible_working_res != 1 ){
-				TR << "found_possible_working_res = " << found_possible_working_res << std::endl;
+				TR.Debug << "found_possible_working_res = " << found_possible_working_res << std::endl;
 				utility_exit_with_message( "found_possible_working_res != 1. Cannot figure out use case!" );
 			}
 
@@ -1431,17 +1432,21 @@ namespace rna {
 		if ( job_parameters_->floating_base_anchor_res() > 0 ) { // residue is connected by jump ){
 			is_prepend = ( job_parameters_->moving_res() < job_parameters_->floating_base_anchor_res() );
 			is_internal = false;
-		}	else if ( working_moving_res == 1 ||
-				 fold_tree.is_cutpoint( working_moving_res - 1 ) ) {
+		}	else if ( ( working_moving_res == 1 ||
+									fold_tree.is_cutpoint( working_moving_res - 1 ) ) && !force_internal_ ){
 			is_prepend = true;
 			is_internal = false;
-		} else if ( fold_tree.is_cutpoint( working_moving_res ) || working_moving_res == nres ){ //Are we sure that the 3' res of the chain will always be a cutpoint?
+		} else if ( ( fold_tree.is_cutpoint( working_moving_res ) ||
+									working_moving_res == nres ) && !force_internal_ ){
+			//Are we sure that the 3' res of the chain will always be a cutpoint? No, that's why I
+			// put in the force_internal_ override. There are cases where moving residue has
+			// a covalent connection to next residue and then a jump to previous (which could come
+			// from a skip bulge move)
 			is_prepend = false;
 			is_internal = false;
 		} else { //The problematic internal case....this case is quite complicated....
 
 			TR.Debug << "is_internal case " << std::endl;
-
 			is_internal = true;
 
 			bool const can_append = check_can_append( working_moving_res_list ); //[14, 13, 12]
@@ -1449,6 +1454,8 @@ namespace rna {
 
 			Size const possible_working_res_1 = internal_params.possible_working_res_1; //lower
 			Size const possible_working_res_2 = internal_params.possible_working_res_2; //upper
+
+			TR.Debug << can_append << " " << can_prepend << " " << possible_working_res_1 << " " << possible_working_res_2 << std::endl;
 
 			Size found_actual_working_res = 0;
 			utility::vector1< core::Size > actual_working_moving_res_list;

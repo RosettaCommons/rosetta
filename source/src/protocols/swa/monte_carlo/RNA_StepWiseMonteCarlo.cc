@@ -69,7 +69,8 @@ namespace monte_carlo {
 		native_pose_( native_pose ),
 		constraint_x0_( constraint_x0 ),
 		constraint_tol_( constraint_tol ),
-		allow_skip_bulge_( false )
+		allow_skip_bulge_( false ),
+		virtual_sugar_keep_base_fixed_( false )
 {
 	using namespace core::scoring;
 	max_missing_weight_ = scorefxn_->get_weight( missing_res );
@@ -103,6 +104,7 @@ RNA_StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 	Real const missing_weight_interval = max_missing_weight_ / cycles_;
 	//missing_weight_interval /= cycles_;
 	Real missing_weight( missing_weight_interval ), before_move_score( 0.0 ), after_move_score( 0.0 );
+	switch_focus_among_poses_randomly( pose );
 
 	while (  k <= cycles_ ){
 		//scorefxn_->set_weight( missing_res, missing_weight );
@@ -178,6 +180,7 @@ RNA_StepWiseMonteCarlo::initialize_movers(){
 	stepwise_rna_modeler->set_minimizer_allow_variable_bond_geometry( minimizer_allow_variable_bond_geometry_ );
 	stepwise_rna_modeler->set_minimizer_vary_bond_geometry_frequency( 0.1 );
 	stepwise_rna_modeler->set_minimizer_extra_minimize_res( extra_minimize_res_ );
+	stepwise_rna_modeler->set_virtual_sugar_keep_base_fixed( virtual_sugar_keep_base_fixed_ );
 	stepwise_rna_modeler->set_syn_chi_res_list( syn_chi_res_list_ );
 
 	// maybe RNA_AddMover could just hold a copy of RNA_ResampleMover...
@@ -217,7 +220,7 @@ RNA_StepWiseMonteCarlo::switch_focus_among_poses_randomly( pose::Pose & pose ) c
 	if ( focus_pose_idx == 0 ) return false;
 
 	Real const score_before_switch_focus = (*scorefxn_)( pose );
-	TR.Debug << "SWITCHING FOCUS! SWITCHING FOCUS! SWITCHING FOCUS! SWITCHING FOCUS! to: " << focus_pose_idx << std::endl;
+	TR.Debug << TR.Green << "SWITCHING FOCUS! SWITCHING FOCUS! SWITCHING FOCUS! SWITCHING FOCUS! to: " << focus_pose_idx << TR.Reset << std::endl;
 	switch_focus_to_other_pose( pose, focus_pose_idx );
 	Real const score_after_switch_focus = (*scorefxn_)( pose );
 

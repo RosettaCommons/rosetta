@@ -98,13 +98,14 @@ StepWiseRNA_VirtualSugarSampler::StepWiseRNA_VirtualSugarSampler( StepWiseRNA_Jo
 	use_phenix_geo_( false ),
 	integration_test_mode_( false ),
 	virtual_sugar_is_from_prior_step_( true ),
-	legacy_mode_( true ), //for comparison to original code -- deprecate in 2014?
+	legacy_mode_( false ), //for comparison to original code -- may deprecate in 2014.
+	keep_base_fixed_( false ),
 	do_chain_closure_( true || legacy_mode_ ),
 	first_minimize_with_fixed_base_( false ),
-	keep_base_fixed_( false ),
 	max_tries_for_random_overall_( 12 ),
 	max_tries_for_random_sugar_setup_( 1 ),
-	sugar_setup_success_( false )
+	sugar_setup_success_( false ),
+	moving_phosphate_virtualized_( false )
 {
 }
 
@@ -127,7 +128,7 @@ StepWiseRNA_VirtualSugarSampler::apply( pose::Pose & viewer_pose ){
 	Size const max_tries = choose_random_ ? max_tries_for_random_sugar_setup_ : 1;
 	for ( Size ntries = 1; ntries <= max_tries; ntries++ ){
 		TR << TR.Green << "On sampling try: " << ntries << TR.Reset << std::endl;
-		TR << TR.Green << "Will sample residue " << sugar_modeling_.moving_res << " -- reference res: " << sugar_modeling_.reference_res <<  std::endl;
+		TR << TR.Green << "Will sample residue " << sugar_modeling_.moving_res << " -- reference res: " << sugar_modeling_.reference_res <<  TR.Reset << std::endl;
 		TR << TR.Green << viewer_pose.fold_tree() << TR.Reset << std::endl;
 		apply( viewer_pose, pose_list );
 		if ( pose_list.size() > 0 || !sugar_setup_success_ ) break;
@@ -141,6 +142,7 @@ StepWiseRNA_VirtualSugarSampler::apply( pose::Pose & viewer_pose ){
 ////////July 21, 2011 Moved from StepWiseRNA_ResidueSampler.cc ////////////////////////////////////////////////
 ////////Code used to be part of the function StepWiseRNA_ResidueSampler::previous_floating_base_chain_closure();
 
+// RD 2013 -- following is Parin's warning. I think it is deprecated now, all cases are handled... no need to back-recurse through all virtual sugars.
 //Dec 9, 2010
 //Warning, currently the code doesn't handle the case of i-1, i-3 (and potentially i-5 and so on) bulges very well. Basically will sample the sugar conformation of base i. But even though base i-2, i-4 have virtual sugars, these sugars are not sampled (use the one that currently exist in the pose) which is NOT a complete fail, since the sugar did pass distance check of chain_closable_screener (correctly implement this on Dec 9,2010) and VDW screening.
 //Possible ways to fix this (HOWEVER lets not fix this until we actual find a REAL existing case where i-1 and i-3 are bulge res):
@@ -221,7 +223,7 @@ StepWiseRNA_VirtualSugarSampler::setup_sugar_conformations( utility::vector1< Po
 	Size const three_prime_gap_res = sugar_modeling_.is_prepend ? sugar_modeling_.reference_res : sugar_modeling_.moving_res;
 
 	// Deprecate soon:
-	//	TR << TR.Red << "MOVING " << sugar_modeling_.moving_res << "  BULGE " << sugar_modeling_.bulge_res << "  REFERENCE " << sugar_modeling_.reference_res << " IS_PREPEND " << sugar_modeling_.is_prepend << " MOVING_SUITE " << moving_suite << " sugar_modeling:FIVE_PRIME_CHAINBREAK " << sugar_modeling_.five_prime_chain_break << " FIVE_PRIME_GAP_RES " << five_prime_gap_res << TR.Reset << std::endl;
+	//	TR << TR.Red << "MOVING " << sugar_modeling_.moving_res << "  BULGE " << sugar_modeling_.bulge_res << "  REFERENCE " << sugar_modeling_.reference_res << " IS_PREPEND " << sugar_modeling_.is_prepend << " MOVING_SUITE " << moving_suite << " sugar_modeling:FIVE_PRIME_CHAINBREAK " << sugar_modeling_.five_prime_chain_break << " FIVE_PRIME_GAP_RES " << five_prime_gap_res << " DO_MINIMIZE " << do_minimize << TR.Reset << std::endl;
 
 	screener::ChainClosableScreener chain_closable_screener( five_prime_gap_res, three_prime_gap_res, 1 /*gap_size -- problem!?*/);
 	screener::AtrRepScreener atr_rep_screener( pose, sugar_modeling_.moving_res, sugar_modeling_.reference_res, 0 /*gap_size = 0 forces loose rep_cutoff (10.0 )*/ );
@@ -234,9 +236,12 @@ StepWiseRNA_VirtualSugarSampler::setup_sugar_conformations( utility::vector1< Po
 	pose_list.clear();
 	for ( sampler.reset(); sampler.not_end(); ++sampler ) {
 		count++;
-		if ( choose_random_ && count > max_tries_for_random_sugar_setup_ ) break;
-		pose = pose_init;
+		if ( choose_random_ && count > max_tries_for_random_sugar_setup_ ){
+			pose_list.push_back( pose.clone() ); // this routine must return something with an instantiated sugar, even if its a fail.
+			break;
+		}
 
+		pose = pose_init;
 		// following *must* be mistake... should occur below inside actual chain_closure..
 		if ( legacy_mode_) {
 			add_harmonic_chain_break_constraint( pose, sugar_modeling_.five_prime_chain_break );
@@ -295,10 +300,10 @@ StepWiseRNA_VirtualSugarSampler::minimize_sugar( pose::Pose & pose_with_sugar ){
 	mm.set_chi( false );
 	mm.set_jump( false );
 
-	if ( first_minimize_with_fixed_base_ ){
-		mm.set( TorsionID( sugar_modeling_.moving_res, id::BB, 4 ), true );
-		mm.set( TorsionID( sugar_modeling_.moving_res, id::BB, 5 ), true );
-		mm.set( TorsionID( sugar_modeling_.moving_res, id::BB, 6 ), true );
+	if ( first_minimize_with_fixed_base_ || keep_base_fixed_ ){
+		mm.set( TorsionID( sugar_modeling_.moving_res, id::CHI, 1 ), true ); // nucleosidic chi
+		mm.set( TorsionID( sugar_modeling_.moving_res, id::CHI, 2 ), true ); // sugar torsion
+		mm.set( TorsionID( sugar_modeling_.moving_res, id::CHI, 3 ), true ); // sugar torsion
 		minimizer.run( pose_with_sugar, mm, *( sugar_scorefxn_without_ch_bond ), options_standard );
 	}
 
@@ -358,7 +363,7 @@ StepWiseRNA_VirtualSugarSampler::get_sugar_setup_scorefxns( scoring::ScoreFuncti
 	//This makes sure that there are no chain_break score involved.
 
 	//Sept 20, 2011 To solve the problem with the floating base res exploding when minimizing
-	//Problem case occur when flaoting base res is the 1st working res
+	//Problem case occur when floating base res is the 1st working res
 	//Note that this error doesn't seem to occur if virtual_sugar is sampled in same step as SAMPLER/ (no Hbond_tripped!)
 	//The non-rescale scorefxn does however causes the floating base from moving far away from the starting
 	//point even in the same step as SAMPLER case
@@ -424,7 +429,7 @@ StepWiseRNA_VirtualSugarSampler::restore_pose_variants_after_chain_closure( util
 		Pose & pose = *(pose_list[n]);
 		remove_chain_break_variants( pose, sugar_modeling_.five_prime_chain_break );
 		apply_virtual_rna_residue_variant_type( pose, sugar_modeling_.bulge_res );
-		pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE",  sugar_modeling_.five_prime_chain_break + 1 ); // what is this for?
+		pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE",  sugar_modeling_.five_prime_chain_break + 1 );
 		( *sampling_scorefxn )( pose ); //for output purposes...
 	}
 }
@@ -694,6 +699,17 @@ StepWiseRNA_VirtualSugarSampler::virtualize_distal_partition( pose::Pose & viewe
 		if ( partition( seq_num ) == moving_res_partition ) distal_partition_pos_.push_back( seq_num );
 	}
 
+	// moving residues's phosphate could be part of distal partition...
+	moving_phosphate_virtualized_ = false;
+	if ( !pose.residue( sugar_modeling_.moving_res ).has_variant_type( "VIRTUAL_PHOSPHATE" ) &&
+			 !pose.residue( sugar_modeling_.moving_res ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" /*same as virtual phosphate*/ ) ){
+		pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", sugar_modeling_.moving_res );
+		// If phosphate instantiated, I thought there should always be a connection to a distal 5' residue..
+		// but that's not the case at a cutpoint_closed. -- rhiju.
+		//		runtime_assert( distal_partition_pos_.has_value( sugar_modeling_.moving_res - 1 ) )
+		moving_phosphate_virtualized_ = true;
+	}
+
 	for ( Size ii = 1; ii <= distal_partition_pos_.size(); ii++ ){
 		Size const seq_num = distal_partition_pos_[ii];
 		if ( pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
@@ -703,9 +719,9 @@ StepWiseRNA_VirtualSugarSampler::virtualize_distal_partition( pose::Pose & viewe
 		}
 	}
 
-	if ( job_parameters_->gap_size() == 0 ){
-		runtime_assert ( !pose.residue( job_parameters_->five_prime_chain_break_res() + 1 ).has_variant_type( "VIRTUAL_PHOSPHATE" ) );
-	}
+	//	if ( job_parameters_->gap_size() == 0 ){
+	//		runtime_assert ( !pose.residue( job_parameters_->five_prime_chain_break_res() + 1 ).has_variant_type( "VIRTUAL_PHOSPHATE" ) );
+	//	}
 	viewer_pose = pose;
 }
 
@@ -723,14 +739,16 @@ StepWiseRNA_VirtualSugarSampler::reinstantiate_distal_partition( utility::vector
 void
 StepWiseRNA_VirtualSugarSampler::reinstantiate_distal_partition( pose::Pose & current_pose ){
 
+	if ( moving_phosphate_virtualized_ ) pose::remove_variant_type_from_pose_residue( current_pose, "VIRTUAL_PHOSPHATE", sugar_modeling_.moving_res );
+
 	for ( Size ii = 1; ii <= distal_partition_pos_.size(); ii++ ){
 		Size const seq_num = distal_partition_pos_[ii];
 		if ( already_virtualized_res_list_.has_value( seq_num ) ) continue;
 		pose::remove_variant_type_from_pose_residue( current_pose, "VIRTUAL_RNA_RESIDUE", seq_num );
 	}
-	if ( job_parameters_->gap_size() == 0 ) {
-		pose::remove_variant_type_from_pose_residue( current_pose, "VIRTUAL_PHOSPHATE", job_parameters_->five_prime_chain_break_res() + 1 );
-	}
+	//	if ( job_parameters_->gap_size() == 0 ) {
+	//	//		pose::remove_variant_type_from_pose_residue( current_pose, "VIRTUAL_PHOSPHATE", job_parameters_->five_prime_chain_break_res() + 1 );
+	//	}
 }
 
 //////////////////////////////////////////////////////////////////////////

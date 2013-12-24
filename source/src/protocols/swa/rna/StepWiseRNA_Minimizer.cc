@@ -134,7 +134,7 @@ std::string
 StepWiseRNA_Minimizer::get_name() const {
 	return "StepWiseRNA_Minimizer";
 }
-			
+
 //////////////////////////////////////////
 
 void
@@ -181,7 +181,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 	//Check scorefxn
 	TR.Debug << "check scorefxn" << std::endl;
 	scorefxn_->show( TR.Debug, dummy_pose );
-	
+
 	bool vary_bond_geometry( false );
 	if ( allow_variable_bond_geometry_ && ( RG.uniform() < vary_bond_geometry_frequency_ ) ) {
 		vary_bond_geometry = true;
@@ -243,7 +243,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 			core::kinematics::MoveMap mm = move_map_list_[round];
 
 			moving_chainbreaks = figure_out_moving_chain_break_res( pose, mm );
-			
+
 			if ( vary_bond_geometry ) {
 				TR << "Performing variable geometry minimization..." << std::endl;
 				scorefxn_->set_weight( rna_bond_geometry, 8.0 );
@@ -473,7 +473,6 @@ StepWiseRNA_Minimizer::pass_all_pose_screens( core::pose::Pose & pose, std::stri
 
 			if ( ( three_prime_rsd.has_variant_type( "VIRTUAL_RNA_RESIDUE" ) == false ) && ( three_prime_rsd.has_variant_type( "VIRTUAL_RIBOSE" ) == false ) ){
 				if ( ( three_prime_delta > 1.0 && three_prime_delta < 179.00 ) == false ){
-
 					TR.Debug << "gap_size == 0, " << in_tag << " discarded: three_prime_chain_break_res = " << ( five_prime_chain_break_res + 1 ) << " three_prime_CB_delta = " << three_prime_delta << " is out of range " << std::endl;
 					pass_screen = false;
 				}

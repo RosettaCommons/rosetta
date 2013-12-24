@@ -28,19 +28,9 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/chemical/ChemicalManager.hh>
-//#include <core/chemical/util.hh>
-
-//#include <core/id/AtomID_Map.hh>
-//TRANSCLUDED in MoveMap #include <core/id/AtomID.hh>
-//#include <core/id/NamedAtomID.hh>
-//TRANSCLUDED in MoveMap #include <core/id/DOF_ID.hh>
-//#include <core/id/TorsionID.hh>
-
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/MoveMap.hh>
-
-//#include <core/pose/util.hh>
 #include <core/pose/annotated_sequence.hh>
 
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -50,13 +40,12 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-//#include <core/types.hh>
-//#include <utility/exit.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
 
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 
 
@@ -336,8 +325,9 @@ bool
 ConstrainToIdealMover::i_want_this_atom_to_move( core::conformation::Residue const & residue2, core::Size const & k )
 {
 
-	if (k > residue2.first_sidechain_atom() && k != core::chemical::rna::first_base_atom_index( residue2 ) ) return false;
-	
+	if (k > residue2.first_sidechain_atom() &&
+			k != core::chemical::rna::first_base_atom_index( residue2 ) ) return false;
+
 	core::id::AtomID id( k, residue2.seqpos() );
 	if ( !allow_insert_->get( id ) ) return false;
 
@@ -356,24 +346,13 @@ ConstrainToIdealMover::i_want_this_atom_to_move( core::pose::Pose const & pose, 
 {
 	core::conformation::Residue const & residue( pose.residue( atom_id.rsd() ) );
 	core::Size const & k( atom_id.atomno() );
-	
-	if (k > residue.first_sidechain_atom() && k != core::chemical::rna::first_base_atom_index( residue ) ) return false;
-	
-	if ( !allow_insert_->get( atom_id ) ) return false;
-	
-	if ( residue.is_virtual( k ) ) return false;
-	
-	return true;
-	//return i_want_this_atom_to_move( pose.residue( atom_id.rsd() ) ,
-																	 //atom_id.atomno() );
-
+	return i_want_this_atom_to_move( residue, k );
 }
 //////////////////////////////////////////////////////////////////////////////
 // Following has not (yet) been carefully debugged. --Rhiju
 //copied from src/protocols/rna/RNA_Minimizer.cc, SVN #44771
 void
 ConstrainToIdealMover::vary_bond_geometry(
-	//core::kinematics::MoveMap & mm,
 	core::pose::Pose & pose,
 	core::pose::Pose const & pose_reference ) {
 
@@ -398,6 +377,7 @@ ConstrainToIdealMover::vary_bond_geometry(
 
 		for (core::Size j = 1; j <= residue.natoms(); j++ ) {
 
+			//			TR << "checking: " << j << " " << residue.atom_name( j ) <<  i_want_this_atom_to_move( residue, j ) << std::endl;
 			if ( !i_want_this_atom_to_move( residue, j ) ) continue;
 
 			core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
@@ -508,17 +488,26 @@ apply_ideal_coordinates_for_alternative_pucker( core::pose::Pose const & pose, c
 {
 
 	using namespace core::chemical::rna;
+	using namespace core::pose::rna;
 	RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 
 	core::Real const DELTA_CUTOFF( rna_fitted_torsion_info.delta_cutoff() );
+	bool const use_phenix_geo = basic::options::option[  basic::options::OptionKeys::rna::corrected_geo ]();
 
 	for (core::Size n = 1; n <= pose.total_residue(); n++ ) {
+		if ( !pose.residue_type( n ).is_RNA() ) continue;
 		core::Real const delta = pose.residue( n ).mainchain_torsion( DELTA );
-		if ( delta > DELTA_CUTOFF ) {
-			core::pose::rna::apply_ideal_c2endo_sugar_coords( pose_reference, n );
+		if ( use_phenix_geo ){
+			apply_pucker( pose_reference, n,
+										( delta < DELTA_CUTOFF ) ? NORTH : SOUTH,
+										false /*skip_same_state*/,
+										true /*idealize_coord*/ );
+		} else {
+			if ( delta > DELTA_CUTOFF ) core::pose::rna::apply_ideal_c2endo_sugar_coords( pose_reference, n );
 		}
 	}
 
+	//	pose_reference.dump_pdb( "REFERENCE.pdb" );
 }
 
 ///////////////////////////////////////////////////

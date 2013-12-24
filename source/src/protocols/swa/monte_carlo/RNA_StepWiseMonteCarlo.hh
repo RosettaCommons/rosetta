@@ -101,6 +101,9 @@ namespace monte_carlo {
 		void set_allow_skip_bulge( bool const & setting ){ allow_skip_bulge_ = setting; }
 		bool allow_skip_bulge() const{ return allow_skip_bulge_; }
 
+		void set_virtual_sugar_keep_base_fixed( bool const & setting ){ virtual_sugar_keep_base_fixed_ = setting; }
+		bool virtual_sugar_keep_base_fixed() const{ return virtual_sugar_keep_base_fixed_; }
+
 		void set_syn_chi_res_list( utility::vector1< core::Size > const & setting ){ syn_chi_res_list_ = setting;}
 
 		void
@@ -152,6 +155,7 @@ namespace monte_carlo {
 		Real max_missing_weight_;
 		Real chainbreak_weight_;
 		bool allow_skip_bulge_;
+		bool virtual_sugar_keep_base_fixed_;
 
 		core::pose::PoseOP native_pose_;
 		utility::vector1< core::Size > extra_minimize_res_;

@@ -163,7 +163,7 @@ stepwise_monte_carlo()
 	PoseOP native_pose;
 	if ( option[ in::file::native ].user() ) {
 		native_pose = get_pdb_and_cleanup( option[ in::file::native ](), rsd_set );
-		native_pose->dump_pdb( option[ in::file::native ](), "n");
+		//		native_pose->dump_pdb( option[ in::file::native ](), "n");
 	}
 
 	// Following could go to a FullModelSetup class.
@@ -206,6 +206,7 @@ stepwise_monte_carlo()
 	stepwise_rna_monte_carlo.set_extra_minimize_res( option[ extra_min_res ]() );
 	stepwise_rna_monte_carlo.set_syn_chi_res_list( option[ OptionKeys::swa::rna::force_syn_chi_res_list]() );
 	stepwise_rna_monte_carlo.set_bulge_res( option[ basic::options::OptionKeys::swa::rna::bulge_res ]() );
+	stepwise_rna_monte_carlo.set_virtual_sugar_keep_base_fixed( option[ OptionKeys::swa::rna::virtual_sugar_keep_base_fixed ]() );
 	stepwise_rna_monte_carlo.set_minimizer_allow_variable_bond_geometry( option[ allow_variable_bond_geometry ]() );
 	// following can be simplified if we make corrected_geo default to true from command-line.
 	stepwise_rna_monte_carlo.set_use_phenix_geo(  option[ corrected_geo ].user()  ? option[corrected_geo ]() : true );

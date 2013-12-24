@@ -86,6 +86,12 @@ apply_pucker(
 		bool const skip_same_state = false,
 		bool const idealize_coord = true );
 
+// DEPRECATED
+void
+apply_ideal_c2endo_sugar_coords(
+																pose::Pose & pose,
+																Size const i );
+
 } //ns rna
 } //ns pose
 } //ns core

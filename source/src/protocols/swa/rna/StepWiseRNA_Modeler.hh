@@ -106,6 +106,8 @@ namespace rna {
 
 		void set_virtual_sugar_legacy_mode( bool const & setting ){ virtual_sugar_legacy_mode_ = setting; }
 
+		void set_virtual_sugar_keep_base_fixed( bool const & setting ){ virtual_sugar_keep_base_fixed_ = setting; }
+
 		void set_kic_sampling( bool const & setting ){ kic_sampling_ = setting; }
 
 		void set_kic_sampling_if_relevant( bool const & setting ){ kic_sampling_if_relevant_ = setting; }
@@ -252,6 +254,7 @@ namespace rna {
 		bool extra_chi_;
 		bool use_phenix_geo_;
 		bool virtual_sugar_legacy_mode_;
+		bool virtual_sugar_keep_base_fixed_;
 		bool kic_sampling_;
 		bool kic_sampling_if_relevant_;
 		bool centroid_screen_;

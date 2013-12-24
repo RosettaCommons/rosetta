@@ -345,9 +345,9 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 		if ( possible_reference_res == 0 ) possible_reference_res = look_for_jumps_to_next( virtual_sugar_res, pose, true /*force_upstream*/ );
 		if ( possible_reference_res > 0 ) possible_reference_res_list.push_back( possible_reference_res );
 
-		TR << pose.fold_tree() << std::endl;
-		TR << "ASSUMING MOVING_SUITE " << moving_suite << std::endl;
-		TR << "REFERENCE_RES_LIST FOR " << virtual_sugar_res << " is " << possible_reference_res_list << std::endl;
+		TR.Debug << pose.fold_tree() << std::endl;
+		TR.Debug << "ASSUMING MOVING_SUITE " << moving_suite << std::endl;
+		TR.Debug << "REFERENCE_RES_LIST FOR " << virtual_sugar_res << " is " << possible_reference_res_list << std::endl;
 
 		return possible_reference_res_list;
 	}
@@ -370,7 +370,7 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 		possible_reference_res = look_for_jumps_to_next( virtual_sugar_res, pose, false /*force_upstream*/ );
 		if ( possible_reference_res > 0 ) possible_reference_res_list.push_back( possible_reference_res );
 
-		TR << "REFERENCE_RES_LIST FOR " << virtual_sugar_res << " is " << possible_reference_res_list << std::endl;
+		TR.Debug << "REFERENCE_RES_LIST FOR " << virtual_sugar_res << " is " << possible_reference_res_list << std::endl;
 
 		return possible_reference_res_list;
 	}
@@ -384,12 +384,6 @@ copy_bulge_res_and_sugar_torsion( SugarModeling const & sugar_modeling, core::po
 		Size i = virtual_sugar_res - 1;
 		while ( i >= 1 ) { // look for jumps with reference residue 'upstream'
 			Size const jump_nr = pose.fold_tree().jump_nr( i, virtual_sugar_res );
-
-			// argh debugging.
-			//			TR << "CHECKING virtual_sugar_res " << virtual_sugar_res << " to i " << i << "  JUMP_NR " << jump_nr;
-			//			if ( jump_nr > 0 ) TR << " UPSTREAM RES " <<  pose.fold_tree().upstream_jump_residue( jump_nr )<< "  DOWNSTREAM_RES " << pose.fold_tree().downstream_jump_residue( jump_nr );
-			//			TR << std::endl;
-
 			if ( jump_nr > 0 && (!force_upstream || pose.fold_tree().upstream_jump_residue( jump_nr ) == i ) ) {
 				return i;
 			}

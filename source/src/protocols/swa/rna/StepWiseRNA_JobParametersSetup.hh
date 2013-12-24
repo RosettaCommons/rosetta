@@ -136,6 +136,9 @@ namespace rna {
 		set_force_user_defined_jumps( bool const setting ){ force_user_defined_jumps_ = setting; }
 
 		void
+		set_force_internal( bool const setting ){ force_internal_ = setting; }
+
+		void
 		force_fold_tree( core::kinematics::FoldTree const & fold_tree );
 
   private:
@@ -231,6 +234,7 @@ namespace rna {
 		bool skip_complicated_stuff_;
 		bool force_fold_tree_;
 		bool force_user_defined_jumps_;
+		bool force_internal_;
 		bool assert_jump_point_in_fixed_res_;
   };
 

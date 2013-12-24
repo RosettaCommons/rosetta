@@ -14,6 +14,7 @@
 // Unit headers
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -470,6 +471,18 @@ check_full_model_info_OK( pose::Pose const & pose ){
 						 pose.fold_tree().is_cutpoint( i ) ){
 					TR << "There appears to be a strand boundary at " << res_list[ i ] << " so adding to cutpoint_in_full_model." << std::endl;
 					cutpoint_open_in_full_model.push_back( res_list[ i ] );
+				}
+				if ( (res_list[ i+1 ] > res_list[ i ] + 1) && !pose.fold_tree().is_cutpoint(i) ){
+					TR << "Adding jump between non-contiguous residues [in full model numbering]: " << res_list[i] << " and " << res_list[ i+1 ] << std::endl;
+					// skipped a residue -- there should be a cutpoint here!
+					core::kinematics::FoldTree f = pose.fold_tree();
+					Size const new_jump = f.new_jump( i, i+1, i );
+					if ( pose.residue_type( i ).is_RNA() && pose.residue_type( i+1 ).is_RNA() ){
+						f.set_jump_atoms( new_jump,
+															chemical::rna::default_jump_atom( pose.residue( f.upstream_jump_residue( new_jump ) ) ),
+															chemical::rna::default_jump_atom( pose.residue( f.downstream_jump_residue( new_jump ) ) ) );
+					}
+					pose.fold_tree( f );
 				}
 			}
 		}

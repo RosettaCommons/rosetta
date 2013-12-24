@@ -4152,6 +4152,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 0.0</dd><br>
 </dl>
 <dl>
+<dt><b>-syn_G_potential_bonus</b> \<Real\><dt>
+<dd>Amount to reward syn chi conformation of guanosine</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
 <dt><b>-rg_local_span</b> \<IntegerVector\><dt>
 <dd>First,last res in rg_local. For example to calc rg_local from 1-20 would be 1,20</dd><br>
 <dd>Default: 0</dd><br>
@@ -13287,6 +13292,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-choose_random</b> \<Boolean\><dt>
 <dd>ask swa residue sampler for a random solution</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-virtual_sugar_keep_base_fixed</b> \<Boolean\><dt>
+<dd>When instantiating virtual sugar, keep base fixed -- do not spend a lot of time to minimize!</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>

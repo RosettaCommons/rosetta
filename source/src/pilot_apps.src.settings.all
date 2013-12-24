@@ -647,7 +647,7 @@ sources = {
 		#"score_jd2_replonly",
 	],
 	"pilot/rhiju" : [
-		#"rna_test",
+		"rna_test",
 		#"rna_assemble_test",
                 "add_delete_monte_carlo",
                 "erraser_monte_carlo",

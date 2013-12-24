@@ -94,7 +94,7 @@ namespace geometric_solvation {
     conformation::Residue const & polar_rsd,
     conformation::Residue const & occ_rsd,
     pose::Pose const & pose ) const;
-    
+
   Real
   geometric_sol_one_way_sc(
                               conformation::Residue const & polar_rsd,
@@ -107,17 +107,17 @@ namespace geometric_solvation {
                                 conformation::Residue const & polar_rsd,
                                 conformation::Residue const & occ_rsd,
                                 pose::Pose const & pose ) const;
-        
+
     bool
     atom_is_donor_h( conformation::Residue const & rsd, Size const atm ) const;
-    
+
     bool
     atom_is_acceptor( conformation::Residue const & rsd, Size const atm ) const;
-    
+
     bool
     atom_is_heavy( conformation::Residue const & rsd, Size const atm ) const;
-    
-    
+
+
     void
     get_atom_atom_geometric_solvation_for_donor(
                                                 Size const & don_h_atm,
@@ -129,7 +129,7 @@ namespace geometric_solvation {
                                                 bool const update_deriv = false,
                                                 hbonds::HBondDerivs & deriv = hbonds::DUMMY_DERIVS
                                                 ) const;
-    
+
     void
     get_atom_atom_geometric_solvation_for_acceptor(
                                                    Size const & acc_atm,
@@ -141,7 +141,7 @@ namespace geometric_solvation {
                                                    bool const update_deriv = false,
                                                    hbonds::HBondDerivs & deriv = hbonds::DUMMY_DERIVS
                                                    ) const;
-        
+
     void
     eval_atom_derivative_intra_RNA(
         id::AtomID const & atom_id,
@@ -151,14 +151,12 @@ namespace geometric_solvation {
         Vector & F2
     ) const;
 
-	private:
-
 	Real
 	eval_atom_energy(
 		id::AtomID const & atom_id,
 		pose::Pose const & pose
 	) const;
-    
+
 
 private:
 
@@ -177,8 +175,8 @@ private:
 		conformation::Residue const & acc_rsd,
 		conformation::Residue const & occ_rsd,
 		pose::Pose const & pose ) const;
-    
-    
+
+
   //test optimization function
   //by Joseph Yesselman 9/5/13
   // should remove!
@@ -189,33 +187,33 @@ private:
     conformation::Residue const & don_rsd,
     conformation::Residue const & occ_rsd,
     pose::Pose const & pose ) const;
-    
+
   inline
   Real
   acceptorRes_occludingRes_geometric_sol_one_way_bb_bb(
     conformation::Residue const & acc_rsd,
     conformation::Residue const & occ_rsd,
     pose::Pose const & pose ) const;
- 
+
     inline
     Real
     donorRes_occludingRes_geometric_sol_one_way_sc(
                                                       conformation::Residue const & don_rsd,
                                                       conformation::Residue const & occ_rsd,
                                                       pose::Pose const & pose ) const;
-    
+
     inline
     Real
     acceptorRes_occludingRes_geometric_sol_one_way_sc(
                                                          conformation::Residue const & acc_rsd,
                                                          conformation::Residue const & occ_rsd,
                                                          pose::Pose const & pose ) const;
-    
+
   ///////////////////////////////////////////////////////////
 
-  
-    
-    
+
+
+
 
 	inline
 	Real

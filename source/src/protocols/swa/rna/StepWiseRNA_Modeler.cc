@@ -96,6 +96,7 @@ StepWiseRNA_Modeler::initialize_variables(){
 	extra_chi_ = false;
 	use_phenix_geo_ = false;
 	virtual_sugar_legacy_mode_ = false;
+	virtual_sugar_keep_base_fixed_ = false;
 	kic_sampling_ = false;
 	kic_sampling_if_relevant_ = false;
 	centroid_screen_ = true;
@@ -175,6 +176,7 @@ StepWiseRNA_Modeler::operator=( StepWiseRNA_Modeler const & src )
 	extra_chi_ = src.extra_chi_;
 	use_phenix_geo_ = src.use_phenix_geo_;
 	virtual_sugar_legacy_mode_ = src.virtual_sugar_legacy_mode_;
+	virtual_sugar_keep_base_fixed_ = src.virtual_sugar_keep_base_fixed_;
 	kic_sampling_ = src.kic_sampling_;
 	kic_sampling_if_relevant_ = src.kic_sampling_if_relevant_;
 	centroid_screen_ = src.centroid_screen_;
@@ -299,6 +301,8 @@ StepWiseRNA_Modeler::do_residue_sampling( pose::Pose & pose,
 		stepwise_rna_residue_sampler.set_sample_ONLY_multiple_virtual_sugar( sample_ONLY_multiple_virtual_sugar_ );
 		stepwise_rna_residue_sampler.set_assert_no_virt_sugar_sampling( sampler_assert_no_virt_sugar_sampling_ );
 		stepwise_rna_residue_sampler.set_try_sugar_instantiation( sampler_try_sugar_instantiation_ );
+		stepwise_rna_residue_sampler.set_virtual_sugar_legacy_mode( virtual_sugar_legacy_mode_ );
+		stepwise_rna_residue_sampler.set_virtual_sugar_keep_base_fixed( virtual_sugar_keep_base_fixed_ );
 
 		base_centroid_screener_ = new screener::StepWiseRNA_BaseCentroidScreener ( pose, job_parameters_ );
 		base_centroid_screener_->set_floating_base( job_parameters_->floating_base() );
@@ -445,17 +449,22 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 		input_res1 = not_rebuild_res;
 
 		Size rebuild_suite( 0 );
-		bool floating_base( false );
-		bool const cut_at_previous =  (rebuild_res == 1) || pose.fold_tree().is_cutpoint( rebuild_res - 1 );
-		bool const cut_at_next     =  (rebuild_res == pose.total_residue() ) || pose.fold_tree().is_cutpoint( rebuild_res );
-		if ( cut_at_next && !cut_at_previous ){
-			rebuild_suite = rebuild_res - 1;
-		} else if ( cut_at_previous && !cut_at_next ){
-			rebuild_suite = rebuild_res;
-		} else if ( !cut_at_previous && !cut_at_next ){ // internal
-			rebuild_suite = rebuild_res;
-		} else {
+		bool floating_base( false ), is_internal( false );
+		bool cut_at_previous =  (rebuild_res == 1) || pose.fold_tree().is_cutpoint( rebuild_res - 1 );
+		bool cut_at_next     =  (rebuild_res == pose.total_residue() ) || pose.fold_tree().is_cutpoint( rebuild_res );
+		if ( cut_at_next && cut_at_previous ){
 			floating_base = true;
+		} else {
+			cut_at_previous = cut_at_previous && !check_jump_to_previous_residue_in_chain( pose, rebuild_res, moving_res );
+			cut_at_next     = cut_at_next     && !check_jump_to_subsequent_residue_in_chain( pose, rebuild_res, moving_res );
+			if ( !cut_at_previous  && cut_at_next ){
+				rebuild_suite = rebuild_res - 1;
+			} else if ( cut_at_previous && !cut_at_next ){
+				rebuild_suite = rebuild_res;
+			} else if ( !cut_at_previous && !cut_at_next ){ // internal
+				rebuild_suite = rebuild_res;
+				is_internal = true;
+			}
 		}
 
 		// for internal moves, need to be smart about input_res definitions -- 'domains' that are separated by moving residue.
@@ -501,7 +510,7 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 			}
 		}
 
-		TR.Debug << "INPUT_RES1 " << make_tag_with_dashes(input_res1) << " INPUT_RES2 " << make_tag_with_dashes(input_res2) << " REBUILD_RES " << rebuild_res << " REBUILD_SUITE " <<  rebuild_suite << " CUTPOINT_CLOSED " << cutpoint_closed << std::endl;
+		TR.Debug << "INPUT_RES1 " << make_tag_with_dashes(input_res1) << " INPUT_RES2 " << make_tag_with_dashes(input_res2) << " REBUILD_RES " << rebuild_res << " REBUILD_SUITE " <<  rebuild_suite << " CUTPOINT_CLOSED " << cutpoint_closed << " FLOATING_BASE " << floating_base << std::endl;
 
 		// if there's really just a single nucleotide being rebuilt, its nucleoside is not fixed.
 		// but if there's a whole chunk of stuff, its sugar & base are assumed fixed.
@@ -509,7 +518,10 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 		// should now include the 'moving res' [unless re-specified by user down below].
 
 		// check if this is an 'internal' move.
-		if ( input_res1.size() > 1 && input_res2.size() > 1 ) fixed_res_guess.push_back( rebuild_res );
+		if ( input_res1.size() > 1 && input_res2.size() > 1 ) {
+			fixed_res_guess.push_back( rebuild_res );
+			runtime_assert( is_internal );
+		}
 
 		// To specify that the suite moves, we actually need to directly address the movemap... see below.
 		if ( rebuild_suite > 0 ) suites_that_must_be_minimized.push_back( rebuild_suite );
@@ -519,7 +531,8 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 				suites_that_must_be_minimized.push_back( cutpoint_closed[i] );
 				if ( !pose.fold_tree().is_cutpoint( cutpoint_closed[i] ) ) utility_exit_with_message( "StepWiseRNA requires a chainbreak right at sampled residue" );
 			}
-			if ( rebuild_res == 1 || rebuild_res == pose.total_residue() ) utility_exit_with_message( "StepWiseRNA requires that residue is not at terminus!");
+			// following does not hold anymore -- there can be a floating base at the beginning or end.
+			//			if ( rebuild_res == 1 || rebuild_res == pose.total_residue() ) utility_exit_with_message( "StepWiseRNA requires that residue is not at terminus!");
 		}
 
 		std::string full_sequence = full_model_info.full_sequence();
@@ -537,6 +550,7 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 		//		stepwise_rna_job_parameters_setup.set_cutpoint_closed_list( full_model_info.sub_to_full( cutpoint_closed ) );
 		stepwise_rna_job_parameters_setup.set_fixed_res( full_model_info.sub_to_full( fixed_res_guess ) );
 		stepwise_rna_job_parameters_setup.set_floating_base( floating_base );
+		if ( is_internal ) stepwise_rna_job_parameters_setup.set_force_internal( true );
 		if ( floating_base ){
 			stepwise_rna_job_parameters_setup.set_assert_jump_point_in_fixed_res( false );
 			stepwise_rna_job_parameters_setup.set_floating_base_anchor_res( full_model_info.sub_to_full( floating_base_anchor_res ) );
@@ -586,6 +600,7 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 		job_parameters->set_working_native_pose( get_native_pose() );
 		job_parameters->set_force_syn_chi_res_list( syn_chi_res_list_ ); // will get automatically converted to working numbering.
 
+		if ( is_internal ) runtime_assert( job_parameters->is_internal() );
 		TR.Debug << "past job_parameters initialization " << std::endl;
 	}
 

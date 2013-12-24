@@ -173,12 +173,20 @@ namespace screener {
 		if ( delta_rep_score_ < (  -0.1 ) ){
 			// changed from -0.01 after triggering in SWM runs -- rhiju, sep. 2013.
 			std::string const message = "delta_rep_score_ = " + string_of( delta_rep_score_ ) + " rep_score = " + string_of( rep_score ) + " base_rep_score = " + string_of( base_rep_score_ );
+			std::cerr << "WORKING MOVING RES " << working_moving_res_ << "  WORKING REFERENCE RES " << working_reference_res_ << "  GAP_SIZE " << gap_size_ << "  IS_PREPEND" << is_prepend_ << "  IS_INTERNAL" << is_internal_ << "  SEPARATE " << separate_moving_residue_to_estimate_baseline_ << std::endl;
+			std::cerr << current_pose_screen.fold_tree() << std::endl;
+			std::cerr << current_pose_screen.annotated_sequence() << std::endl;
+			current_pose_screen.dump_pdb( "PROBLEM.pdb" );
 			utility_exit_with_message( "delta_rep_score_ < (  -0.1 ), " + message );
 		}
 
 		if ( delta_atr_score_ > (  +0.1 ) ){
 			// changed from +0.01 after triggering in SWM runs -- rhiju, sep. 2013.
 			std::string const message = "delta_atr_score_ = " + string_of( delta_atr_score_ ) + " atr_score = " + string_of( atr_score ) + " base_atr_score = " + string_of( base_atr_score_ );
+			std::cerr << "WORKING MOVING RES " << working_moving_res_ << "  WORKING REFERENCE RES " << working_reference_res_ << "  GAP_SIZE " << gap_size_ << "  IS_PREPEND" << is_prepend_ << "  IS_INTERNAL" << is_internal_ << "  SEPARATE " << separate_moving_residue_to_estimate_baseline_ << std::endl;
+			std::cerr << current_pose_screen.fold_tree() << std::endl;
+			std::cerr << current_pose_screen.annotated_sequence() << std::endl;
+			current_pose_screen.dump_pdb( "PROBLEM.pdb" );
 			utility_exit_with_message( "delta_atr_score_ > (  +0.1 ), " + message );
 		}
 

@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-namespace optE { namespace rescore { FileOptionKey const weights( "optE:rescore:weights" );  } }
-namespace optE { namespace rescore { IntegerOptionKey const context_round( "optE:rescore:context_round" );  } }
-namespace optE { namespace rescore { FileOptionKey const outlog( "optE:rescore:outlog" );  } }
-namespace optE { namespace rescore { BooleanOptionKey const measure_sequence_recovery( "optE:rescore:measure_sequence_recovery" );  } }
-namespace optE { BooleanOptionKey const no_design_pdb_output( "optE:no_design_pdb_output" );  }
-=======
->>>>>>> 86723fa89b3d20e3a1d65158aaa9868cbae3f41a
-namespace backrub { BooleanOptionKey const backrub( "backrub" );  }
 namespace backrub { IntegerVectorOptionKey const pivot_residues( "backrub:pivot_residues" );  }
 namespace backrub { StringVectorOptionKey const pivot_atoms( "backrub:pivot_atoms" );  }
 namespace backrub { IntegerOptionKey const min_atoms( "backrub:min_atoms" );  }
@@ -493,6 +484,7 @@ namespace swa { namespace rna { IntegerVectorOptionKey const virtual_res( "swa:r
 namespace swa { namespace rna { IntegerVectorOptionKey const bulge_res( "swa:rna:bulge_res" );  } }
 namespace swa { namespace rna { BooleanOptionKey const rebuild_bulge_mode( "swa:rna:rebuild_bulge_mode" );  } }
 namespace swa { namespace rna { BooleanOptionKey const choose_random( "swa:rna:choose_random" );  } }
+namespace swa { namespace rna { BooleanOptionKey const virtual_sugar_keep_base_fixed( "swa:rna:virtual_sugar_keep_base_fixed" );  } }
 namespace swa { namespace rna { IntegerOptionKey const num_random_samples( "swa:rna:num_random_samples" );  } }
 namespace swa { namespace rna { BooleanOptionKey const filter_user_alignment_res( "swa:rna:filter_user_alignment_res" );  } }
 namespace swa { namespace rna { BooleanOptionKey const output_pdb( "swa:rna:output_pdb" );  } }

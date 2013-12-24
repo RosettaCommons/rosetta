@@ -14,6 +14,7 @@
 
 #include <protocols/rna/RNA_HelixAssembler.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/PDBInfo.hh>
 #include <utility/vector1.hh>
 #include <core/chemical/AA.hh>
@@ -301,6 +302,10 @@ RNA_HelixAssembler::build_on_base_pair( pose::Pose & pose, Size const & n, char 
 
 	append_Aform_residue(  pose, n - 1, seq1 );
 	prepend_Aform_residue( pose, n + 1, seq2 );
+
+	using namespace core::pose::full_model_info;
+	FullModelInfoOP full_model_info = new FullModelInfo( pose );
+	set_full_model_info( pose, full_model_info );
 }
 
 
