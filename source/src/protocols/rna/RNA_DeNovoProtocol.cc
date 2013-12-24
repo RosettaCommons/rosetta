@@ -554,6 +554,7 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 	rna_minimizer_->vary_bond_geometry( vary_bond_geometry_ );
 	rna_minimizer_->set_extra_minimize_res( extra_minimize_res_ );
 	rna_minimizer_->set_move_first_rigid_body( move_first_rigid_body_ );
+	rna_minimizer_->use_coordinate_constraints( minimizer_use_coordinate_constraints_ );
 
 	rna_relaxer_ = new RNA_Relaxer( rna_fragment_mover_, rna_minimizer_);
 	rna_relaxer_->simple_rmsd_cutoff_relax( simple_rmsd_cutoff_relax_ );

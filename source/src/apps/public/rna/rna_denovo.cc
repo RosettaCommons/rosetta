@@ -105,6 +105,7 @@ OPT_KEY( Boolean, filter_chain_closure_halfway )
 OPT_KEY( IntegerVector, output_res_num )
 OPT_KEY( Boolean, refine_native )
 OPT_KEY( Boolean, bps_moves )
+OPT_KEY( Boolean, minimizer_use_coordinate_constraints )
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -243,6 +244,7 @@ rna_denovo_test()
 	rna_de_novo_protocol.set_output_filters(  option[ output_filters ] );
 	rna_de_novo_protocol.set_autofilter(  option[ autofilter ] );
 	rna_de_novo_protocol.set_bps_moves(  option[ bps_moves ] );
+	rna_de_novo_protocol.set_minimizer_use_coordinate_constraints( option[ minimizer_use_coordinate_constraints ]() );
 	if ( option[ in::file::silent_struct_type ]() == "binary_rna"  || option[ binary_output ]() )	rna_de_novo_protocol.set_binary_rna_output( true );
 
 	rna_de_novo_protocol.simple_rmsd_cutoff_relax( option[ simple_relax ] );
@@ -351,6 +353,7 @@ try {
   NEW_OPT( refine_silent_file, "Name of the silent file to be refined.", "" );
   NEW_OPT( refine_native, "Refine starting from the native pose", false );
   NEW_OPT( bps_moves, "Base pair step moves", false );
+  NEW_OPT( minimizer_use_coordinate_constraints, "Use coordinate constraints for first round of minimizer", true );
 
 	option.add_relevant( basic::options::OptionKeys::rna::vary_geometry );
 	option.add_relevant( basic::options::OptionKeys::rna::vall_torsions );

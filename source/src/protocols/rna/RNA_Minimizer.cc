@@ -33,16 +33,12 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/chemical/rna/RNA_Util.hh>
-
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
-
 #include <protocols/simple_moves/ConstrainToIdealMover.hh>
-
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 
 //Minimizer stuff
 #include <core/kinematics/MoveMap.hh>
@@ -57,28 +53,19 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-
-// AUTO-REMOVED #include <numeric/conversions.hh>
-
-// External library headers
-
 
 //C++ headers
 #include <vector>
 #include <string>
 #include <iostream>
 #include <sstream>
-// AUTO-REMOVED #include <fstream>
 #ifdef WIN32
 #include <ctime>
 #endif
 
-
 // option key includes
-
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 
@@ -88,7 +75,6 @@
 //Auto Headers
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
-
 
 using namespace core;
 using basic::T;
@@ -101,7 +87,7 @@ namespace rna {
 RNA_Minimizer::RNA_Minimizer():
     Mover(),
     deriv_check_( false ),
-    use_coordinate_constraints_( false ),
+    use_coordinate_constraints_( true ),
     coord_sdev_( 10.0 * std::sqrt(10.0) ), // awkward, but matches an old setting.
     coord_cst_weight_( 1.0 ),
     rounds_( basic::options::option[ basic::options::OptionKeys::rna::minimize_rounds ] ),
@@ -109,7 +95,6 @@ RNA_Minimizer::RNA_Minimizer():
     perform_minimizer_run_( true ),
     vary_bond_geometry_( false ),
     include_default_linear_chainbreak_( true ),
-    verbose_( false ), //Parin S. Jan 07, 2012
     do_dump_pdb_( false ),
     move_first_rigid_body_( false ),
 		close_loops_( true ),
@@ -134,36 +119,15 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( verbose_ ) {
-		TR << "Check it! SEQUENCE " << pose.sequence() << std::endl;
-	  TR << "In protocols.rna.rna_minimizer.apply()" << std::endl;
-		TR << "min_type_=" << min_type_ << std::endl;
-		protocols::swa::rna::output_boolean("deriv_check_: ", deriv_check_, TR ); std::cout << std::endl;
-		protocols::swa::rna::output_boolean("use_coordinate_constraints_: ", use_coordinate_constraints_, TR ); std::cout << std::endl;
-		protocols::swa::rna::output_boolean("skip_o2prime_trials_: ", skip_o2prime_trials_, TR ); std::cout << std::endl;
-		protocols::swa::rna::output_boolean("perform_minimizer_run_: ", perform_minimizer_run_, TR ); std::cout << std::endl;
-		protocols::swa::rna::output_boolean("vary_bond_geometry_: ", vary_bond_geometry_, TR ); std::cout << std::endl;
-		protocols::swa::rna::output_boolean("include_default_linear_chainbreak_: ", include_default_linear_chainbreak_, TR ); std::cout << std::endl;
-		protocols::swa::rna::output_boolean("do_dump_pdb_: ", do_dump_pdb_, TR ); std::cout << std::endl;
-		protocols::swa::rna::output_boolean("verbose_: ", verbose_, TR ); std::cout << std::endl;
-	}
-
-
 	time_t pdb_start_time = time(NULL);
-
+	scoring::constraints::ConstraintSetOP save_pose_constraints = pose.constraint_set()->clone();
 	if (pose.constraint_set()->has_constraints() ){
 		if ( !scorefxn_->has_nonzero_weight( atom_pair_constraint ) )  scorefxn_->set_weight( atom_pair_constraint, 1.0 );
 		if ( !scorefxn_->has_nonzero_weight( coordinate_constraint ) ) scorefxn_->set_weight( coordinate_constraint, 1.0 );
 	}
-
 	if ( vary_bond_geometry_ ) scorefxn_->set_weight( rna_bond_geometry, 1.0 );
+	if( include_default_linear_chainbreak_ && !scorefxn_->has_nonzero_weight( linear_chainbreak ) )	scorefxn_->set_weight( linear_chainbreak, 5.0 );
 
-	if( include_default_linear_chainbreak_ && !scorefxn_->has_nonzero_weight( linear_chainbreak ) ){
-		// New as of 2011 (based on results with minimizing in SWA work
-		scorefxn_->set_weight( linear_chainbreak, 5.0 );
-	}
-
-	/////////////////////////////////////////////////////
 	AtomTreeMinimizer minimizer;
 	float const dummy_tol( 0.0000025);
 	bool const use_nblist( true );
@@ -176,8 +140,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 	update_allow_insert_with_extra_minimize_res( pose );
  	setup_movemap( mm, pose );
 
-	/////////////////////////////////////////////////////
-	scoring::constraints::ConstraintSetOP save_pose_constraints = pose.constraint_set()->clone();
+	scoring::constraints::ConstraintSetOP pose_constraints_without_coordinate_tethers = pose.constraint_set()->clone();
 	if (use_coordinate_constraints_) core::scoring::constraints::add_coordinate_constraints( pose, coord_sdev_ );
 	scoring::constraints::ConstraintSetOP pose_constraints_with_coordinate_tethers = pose.constraint_set()->clone();
 
@@ -202,7 +165,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 				if ( !minimize_scorefxn_->has_nonzero_weight( coordinate_constraint ) ) minimize_scorefxn_->set_weight( coordinate_constraint, coord_cst_weight_ );
 				pose.constraint_set( pose_constraints_with_coordinate_tethers );
 			} else {
-				pose.constraint_set( save_pose_constraints );
+				pose.constraint_set( pose_constraints_without_coordinate_tethers );
 			}
 		}
 		TR << "Minimizing...round= " << r << std::endl;
@@ -217,13 +180,10 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 
 	pose.constraint_set( save_pose_constraints );
 
-	if(verbose_) std::cout << "----------After minimizing:----------" << std::endl;
-
 	(*scorefxn_)( pose );
 	scorefxn_->show( std::cout, pose );
 
 	TR << "RNA minimizer finished in " << (long)(pdb_end_time - pdb_start_time) << " seconds." << std::endl;
-
 
 }
 
@@ -245,7 +205,6 @@ RNA_Minimizer::show(std::ostream & output) const
 				"\nSkip o2prime trials:       " << (skip_o2prime_trials_ ? "True" : "False") <<
 				"\nPerform minimizer run:    " << (perform_minimizer_run_ ? "True" : "False") <<
 				"\nVary bond geometry:       " << (vary_bond_geometry_ ? "True" : "False") <<
-				"\nSet verbose:              " << (verbose_ ? "True" : "False") <<
 				"\nDump pdb:                 " << (do_dump_pdb_ ? "True" : "False") <<
 				"\nMove first rigid body:    " << (move_first_rigid_body_ ? "True" : "False") <<
 				"\nMin type:                 " << min_type_ <<
@@ -299,22 +258,20 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 
 		if ( !pose.residue(i).is_RNA() ) continue;
 
-			for (Size j = 1; j <= NUM_RNA_TORSIONS; j++) {
-				id::TorsionID rna_torsion_id( i, id::BB, j );
-				if ( j > NUM_RNA_MAINCHAIN_TORSIONS) rna_torsion_id = id::TorsionID( i, id::CHI, j - NUM_RNA_MAINCHAIN_TORSIONS );
+		for (Size j = 1; j <= NUM_RNA_TORSIONS; j++) {
+			id::TorsionID rna_torsion_id( i, id::BB, j );
+			if ( j > NUM_RNA_MAINCHAIN_TORSIONS) rna_torsion_id = id::TorsionID( i, id::CHI, j - NUM_RNA_MAINCHAIN_TORSIONS );
 
-				if ( !allow_insert_->get( rna_torsion_id, pose.conformation() ) ) continue;
+			if ( !allow_insert_->get( rna_torsion_id, pose.conformation() ) ) continue;
 
-				// this is not general. Sigh:
-				if ( pose.residue(i).has_variant_type("VIRTUAL_PHOSPHATE") && ( j == 1 || j == 2 || j == 3 ) ) continue;
+			// this is not general. Sigh:
+			if ( pose.residue(i).has_variant_type("VIRTUAL_PHOSPHATE") && ( j == 1 || j == 2 || j == 3 ) ) continue;
 
-				//				DOF_ID dof_id( pose.conformation().dof_id_from_torsion_id( rna_torsion_id ) );
-				mm.set( rna_torsion_id, true );
+			//				DOF_ID dof_id( pose.conformation().dof_id_from_torsion_id( rna_torsion_id ) );
+			mm.set( rna_torsion_id, true );
 
-			}
-
+		}
 	}
-
 
 	// jumps
 	for (Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){

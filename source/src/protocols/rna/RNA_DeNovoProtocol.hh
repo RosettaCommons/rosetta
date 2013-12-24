@@ -232,6 +232,9 @@ public:
 	void
 	set_bps_moves( Size const setting ){ bps_moves_ = setting; }
 
+	void
+	set_minimizer_use_coordinate_constraints( Size const setting ){ minimizer_use_coordinate_constraints_ = setting; }
+
 private:
 
 	void
@@ -414,6 +417,7 @@ private:
 	utility::vector1<core::pose::PoseOP> refine_pose_list_;
 	bool refine_pose_;
 	bool bps_moves_;
+	bool minimizer_use_coordinate_constraints_;
 
 }; // class RNA_DeNovoProtocol
 
