@@ -109,7 +109,7 @@ CDRClusterFeatures::features_reporter_dependencies() const {
 }
 
 void
-CDRClusterFeatures::parse_my_tag(const utility::tag::TagCOP tag, basic::datacache::DataMap&, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &) {
+CDRClusterFeatures::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::DataMap&, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &) {
 	cdrs_.clear();
 	AntibodyEnumManagerOP enum_manager = new AntibodyEnumManager();
 	std::string cdrs = tag->getOption< std::string >("cdrs", "L1,L2,L3,H1,H2,H3");

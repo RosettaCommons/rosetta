@@ -781,7 +781,6 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
 
 	// This is only for rule 1b
 	core::Size cdr_length = cdr_h3_sequence.size();
-	TR <<"CDR Length: "<<cdr_length << " "<<seq<<std::endl;
 	bool is_basic( false ); // Special basic residue exception flag
 	if( !is_basic ) {
 		Size L49_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 49);
