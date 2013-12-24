@@ -743,4 +743,3 @@ namespace membrane { RealOptionKey const thickness( "membrane:thickness" );  }
 namespace membrane { RealOptionKey const smooth_move_frac( "membrane:smooth_move_frac" );  }
 namespace membrane { BooleanOptionKey const no_interpolate_Mpair( "membrane:no_interpolate_Mpair" );  }
 namespace membrane { BooleanOptionKey const Menv_penalties( "membrane:Menv_penalties" );  }
-namespace membrane { BooleanOptionKey const Membed_init( "membrane:Membed_init" );  }

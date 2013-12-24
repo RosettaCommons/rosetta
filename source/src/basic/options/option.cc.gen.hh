@@ -1496,10 +1496,10 @@ option.add( basic::options::OptionKeys::membrane::thickness, "one leaflet hydroc
 option.add( basic::options::OptionKeys::membrane::smooth_move_frac, "No description" ).def(0.5);
 option.add( basic::options::OptionKeys::membrane::no_interpolate_Mpair, "No description" ).def(false);
 option.add( basic::options::OptionKeys::membrane::Menv_penalties, "No description" ).def(false);
-option.add( basic::options::OptionKeys::membrane::Membed_init, "No description" ).def(false);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::membrane::Fa_Membed_update, "No description" ).def(false);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::membrane::Membed_init, "No description" ).def(false);
+option.add( basic::options::OptionKeys::membrane::Fa_Membed_update, "No description" ).def(false);
 option.add( basic::options::OptionKeys::membrane::center_search, "perform membrane center search" ).def(false);
 option.add( basic::options::OptionKeys::membrane::normal_search, "perform membrane normal search" ).def(false);
 option.add( basic::options::OptionKeys::membrane::center_max_delta, "magnitude of maximum membrane width deviation during membrane center search (Angstroms)" ).def(5);

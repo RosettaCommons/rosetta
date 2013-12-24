@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+namespace optE { BooleanOptionKey const no_design_pdb_output( "optE:no_design_pdb_output" );  }
+namespace backrub { BooleanOptionKey const backrub( "backrub" );  }
+=======
+>>>>>>> ca2f0799aa0643dac43835c0df0d32606d225f11
 namespace backrub { IntegerVectorOptionKey const pivot_residues( "backrub:pivot_residues" );  }
 namespace backrub { StringVectorOptionKey const pivot_atoms( "backrub:pivot_atoms" );  }
 namespace backrub { IntegerOptionKey const min_atoms( "backrub:min_atoms" );  }

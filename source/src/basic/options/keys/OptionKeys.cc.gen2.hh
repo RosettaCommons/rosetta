@@ -1,3 +1,4 @@
+namespace membrane { BooleanOptionKey const Membed_init( "membrane:Membed_init" );  }
 namespace membrane { BooleanOptionKey const Fa_Membed_update( "membrane:Fa_Membed_update" );  }
 namespace membrane { BooleanOptionKey const center_search( "membrane:center_search" );  }
 namespace membrane { BooleanOptionKey const normal_search( "membrane:normal_search" );  }
