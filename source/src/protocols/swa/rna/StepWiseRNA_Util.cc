@@ -257,6 +257,8 @@ namespace rna {
 		bool const is_cutpoint_open = ( pose.fold_tree().is_cutpoint( seq_num ) && !is_cutpoint_closed );
 		if ( apply_check ){
 			if ( is_cutpoint_open ) {
+				std::cerr << pose.annotated_sequence() << std::endl;
+				std::cerr << pose.fold_tree();
 				utility_exit_with_message( "Cannot apply VIRTUAL_RNA_RESIDUE VARIANT TYPE to seq_num: " + string_of( seq_num ) + ". The residue is 5' of a OPEN cutpoint" );
 			}
 			if ( pose.total_residue() == seq_num ) {

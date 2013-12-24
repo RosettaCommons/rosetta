@@ -4144,12 +4144,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-geom_sol_correct_acceptor_base</b> \<Boolean\><dt>
 <dd>Fixed definition of base atom for acceptors to match hbonds_geom</dd><br>
-<dd>Default: false</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-free_sugar_bonus</b> \<Real\><dt>
 <dd>Amount to reward virtualization of a sugar/ribose</dd><br>
-<dd>Default: 0.0</dd><br>
+<dd>Default: -1.0</dd><br>
 </dl>
 <dl>
 <dt><b>-syn_G_potential_bonus</b> \<Real\><dt>
@@ -8521,7 +8521,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-corrected_geo</b> \<Boolean\><dt>
 <dd>Use PHENIX-based RNA sugar close energy and params files</dd><br>
-<dd>Default: false</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-vary_geometry</b> \<Boolean\><dt>

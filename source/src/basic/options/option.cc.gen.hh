@@ -865,8 +865,8 @@ option.add( basic::options::OptionKeys::score::bonded_params_dir, "Spring consta
 option.add( basic::options::OptionKeys::score::extra_improper_file, "Add extra parameters for improper torsions" );
 option.add( basic::options::OptionKeys::score::pro_close_planar_constraint, "stdev of CD,N,CA,prevC trigonal planar constraint in pro_close energy method" ).def(0.1);
 option.add( basic::options::OptionKeys::score::linear_bonded_potential, "use linear (instead of quadratic) bonded potential" ).def(false);
-option.add( basic::options::OptionKeys::score::geom_sol_correct_acceptor_base, "Fixed definition of base atom for acceptors to match hbonds_geom" ).def(false);
-option.add( basic::options::OptionKeys::score::free_sugar_bonus, "Amount to reward virtualization of a sugar/ribose" ).def(0.0);
+option.add( basic::options::OptionKeys::score::geom_sol_correct_acceptor_base, "Fixed definition of base atom for acceptors to match hbonds_geom" ).def(true);
+option.add( basic::options::OptionKeys::score::free_sugar_bonus, "Amount to reward virtualization of a sugar/ribose" ).def(-1.0);
 option.add( basic::options::OptionKeys::score::syn_G_potential_bonus, "Amount to reward syn chi conformation of guanosine" ).def(0.0);
 option.add( basic::options::OptionKeys::score::rg_local_span, "First,last res in rg_local. For example to calc rg_local from 1-20 would be 1,20" ).def(0);
 option.add( basic::options::OptionKeys::score::unmodifypot, "Do not call modify pot to add extra repulsive interactions between Obb/Obb atom types at distances beneath 3.6 Angstroms" );
@@ -1496,10 +1496,10 @@ option.add( basic::options::OptionKeys::membrane::thickness, "one leaflet hydroc
 option.add( basic::options::OptionKeys::membrane::smooth_move_frac, "No description" ).def(0.5);
 option.add( basic::options::OptionKeys::membrane::no_interpolate_Mpair, "No description" ).def(false);
 option.add( basic::options::OptionKeys::membrane::Menv_penalties, "No description" ).def(false);
+option.add( basic::options::OptionKeys::membrane::Membed_init, "No description" ).def(false);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::membrane::Membed_init, "No description" ).def(false);
-option.add( basic::options::OptionKeys::membrane::Fa_Membed_update, "No description" ).def(false);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::membrane::Fa_Membed_update, "No description" ).def(false);
 option.add( basic::options::OptionKeys::membrane::center_search, "perform membrane center search" ).def(false);
 option.add( basic::options::OptionKeys::membrane::normal_search, "perform membrane normal search" ).def(false);
 option.add( basic::options::OptionKeys::membrane::center_max_delta, "magnitude of maximum membrane width deviation during membrane center search (Angstroms)" ).def(5);
@@ -1758,7 +1758,7 @@ option.add( basic::options::OptionKeys::fldsgn::fullatom_sfx_patch, "filename of
 option.add( basic::options::OptionKeys::fldsgn::run_flxbb, "run flxbb at the given stage" );
 option.add( basic::options::OptionKeys::rna::rna, "rna option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rna::minimize_rounds, "The number of rounds of minimization." ).def(2);
-option.add( basic::options::OptionKeys::rna::corrected_geo, "Use PHENIX-based RNA sugar close energy and params files" ).def(false);
+option.add( basic::options::OptionKeys::rna::corrected_geo, "Use PHENIX-based RNA sugar close energy and params files" ).def(true);
 option.add( basic::options::OptionKeys::rna::vary_geometry, "Let bond lengths and angles vary from ideal in minimizer" ).def(false);
 option.add( basic::options::OptionKeys::rna::skip_coord_constraints, "Skip first stage of minimize with coordinate constraints" ).def(false);
 option.add( basic::options::OptionKeys::rna::skip_o2prime_trials, "No O2* packing in minimizer" ).def(false);
