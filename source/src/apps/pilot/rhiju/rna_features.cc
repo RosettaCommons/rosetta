@@ -30,8 +30,8 @@
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/sasa.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
-#include <protocols/rna/RNA_BasePairClassifier.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/RNA_BasePairClassifier.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds.hh>
@@ -173,7 +173,7 @@ get_rna_base_pairing_status( core::pose::Pose & pose,
 	(*scorefxn)( pose );
 	scorefxn->show( std::cout, pose );
 
-	protocols::rna::classify_base_pairs( pose, base_pair_list, is_bulged ); // could also get 'energies' for each base pair...
+	protocols::farna::classify_base_pairs( pose, base_pair_list, is_bulged ); // could also get 'energies' for each base pair...
 
 	for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
 		scoring::rna::Base_pair const base_pair = base_pair_list[ n ];
@@ -215,7 +215,7 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 	using namespace core::scoring;
 	using namespace core::kinematics;
 	using namespace core::id;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 	using namespace chemical::rna;
 
 	vector1< std::string > feature_names;

@@ -9,8 +9,6 @@
 
 /// @file   core/scoring/rna/RNA_PairwiseLowResolutionEnergy.cc
 /// @brief  Statistically derived rotamer pair potential class implementation
-/// @author Phil Bradley
-/// @author Andrew Leaver-Fay
 /// @author Rhiju Das
 
 

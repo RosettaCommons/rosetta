@@ -13,7 +13,7 @@
 // AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
-#include <protocols/rna/RNA_FragmentsClasses.fwd.hh>
+#include <protocols/farna/RNA_FragmentsClasses.fwd.hh>
 
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -70,7 +70,7 @@ void
 optimize_linkers_rna_fullatom_mode(
   core::kinematics::MoveMapOP & mm,
   core::pose::Pose & full_pose,
-  protocols::rna::RNA_FragmentsOP & all_rna_fragments
+  protocols::farna::RNA_FragmentsOP & all_rna_fragments
 );
 
 ///@brief a helper function for the domain assembly protocol. Selects

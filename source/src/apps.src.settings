@@ -179,13 +179,15 @@ sources = {
 	"public/surface_docking": [
 		"surface_docking",
 	],
-	"public/swa/rna": [
+	"public/stepwise/assembly/rna": [
 		"swa_rna_main",
 		"swa_rna_util",
 		"erraser_minimizer",
-		"stepwise_monte_carlo",
 	],
-	"public/swa/protein": [
+	"public/stepwise/monte_carlo/rna": [
+		"swm_rna",
+	],
+	"public/stepwise/assembly/protein": [
 		"swa_protein_main",
         ],
 	"public/rosetta_scripts": [

@@ -40,7 +40,7 @@
 
 #include <core/pose/PDBInfo.hh>
 
-#include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
 
 #include <protocols/viewer/viewers.hh>
 
@@ -223,7 +223,7 @@ prepare_threaded_model(
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::pose;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 	using namespace utility;
 
 	// following creates pose from scratch! Assumes that we need to add/delete, and it changes the
@@ -354,7 +354,7 @@ rna_thread_test(){
 	std::string template_file = option[ in::file::s ][1];
 	core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 	core::import_pose::pose_from_pdb( pose, *rsd_set, template_file );
-	protocols::rna::figure_out_reasonable_rna_fold_tree( pose );
+	protocols::farna::figure_out_reasonable_rna_fold_tree( pose );
 
 	////////////////////////////////////////////////
 	//Read in fasta file or user-inputted sequence
@@ -388,7 +388,7 @@ rna_thread_test(){
 	prepare_threaded_model( pose, target_sequence_from_alignment,
 													template_sequence_from_alignment,
 													sequence_mask, option[ seq_offset ]() );
-	protocols::rna::virtualize_5prime_phosphates( pose );
+	protocols::farna::virtualize_5prime_phosphates( pose );
 
 	std::string outfile( "threaded.pdb" );
 	if ( option[ out::file::o ].user() ) outfile = option[ out::file::o ]();

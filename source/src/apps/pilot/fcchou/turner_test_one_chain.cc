@@ -59,10 +59,10 @@
 #include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/swa/StepWiseUtil.hh>
-#include <protocols/rna/RNA_SuiteAssign.hh>
-#include <protocols/swa/StepWiseClusterer.hh>
-#include <protocols/swa/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/farna/RNA_SuiteAssign.hh>
+#include <protocols/stepwise/StepWiseClusterer.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
 #include <core/init/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
@@ -254,7 +254,7 @@ setup_one_chain_pose ( pose::Pose & pose, bool is_virtualize = true ) {
 	using namespace io::silent;
 	using namespace id;
 	using namespace protocols::swa;
-	using namespace protocols::swa::rna;
+	using namespace protocols::stepwise::enumerate::rna;
 	using namespace chemical::rna;
 
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
@@ -1304,8 +1304,8 @@ one_chain_torsion_cluster(){
 	Size n_id (0), curr_id(99999), pre_id(99999), curr_index(0);
 	//////////////////////////////
 	//Initialize suite test
-	protocols::rna::RNA_suite_list const suite_list;
-	utility::vector1 <protocols::rna::suite_info> const & all_suites = suite_list.full_list();
+	protocols::farna::RNA_suite_list const suite_list;
+	utility::vector1 <protocols::farna::suite_info> const & all_suites = suite_list.full_list();
 	utility::vector1 <std::string> suite_names;	
 	utility::vector1 <Size> suite_counts;
 	for (Size i = 1; i <= all_suites.size(); ++i) {
@@ -1432,7 +1432,7 @@ one_chain_torsion_cluster(){
 			++n_accpet;
 			
 			//Calculate suite
-			std::pair< std::string, std::pair <Size, Real> > suite = protocols::rna::suite_assign(pose, 2);
+			std::pair< std::string, std::pair <Size, Real> > suite = protocols::farna::suite_assign(pose, 2);
 			suite_index = suite.second.first;
 			if (suite_index == 0) suite_index = suite_names.size();
 			++suite_counts[suite_index];
@@ -1559,7 +1559,7 @@ torsion2decoy () {
 	nucleoside_torsion.push_back(torsion[6]);
 	apply_nucleoside_torsion(nucleoside_torsion, pose, 1);
 	apply_suite_torsion( suite_torsion, pose, 1 );
-	std::pair< std::string, std::pair <Size, Real> > suite = protocols::rna::suite_assign(pose, 2);
+	std::pair< std::string, std::pair <Size, Real> > suite = protocols::farna::suite_assign(pose, 2);
 	std::cout << suite.first << ' ' << suite.second.second << std::endl;
 	pose.dump_pdb("decoy.pdb");
 }

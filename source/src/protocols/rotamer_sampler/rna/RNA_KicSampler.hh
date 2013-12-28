@@ -110,9 +110,11 @@ public:
 	}
 
 	void set_fast( core::Real const setting ) {
-		extra_chi_ = false;
-		extra_epsilon_ = false;
-		set_and_reinit( bin_size_, 40.0 /*setting*/ );
+		if ( setting ){
+			extra_chi_ = false;
+			extra_epsilon_ = false;
+			set_and_reinit( bin_size_, 40.0 /*setting*/ );
+		}
 	}
 
 	/// @brief Max # of step for trying in random samping

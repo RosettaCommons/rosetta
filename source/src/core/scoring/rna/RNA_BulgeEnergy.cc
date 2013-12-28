@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/RNA_BulgeEnergy.cc
 /// @brief  RNA_Bulge energy method implementation
-/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Rhiju Das
 
 // Unit headers
 #include <core/scoring/rna/RNA_BulgeEnergy.hh>

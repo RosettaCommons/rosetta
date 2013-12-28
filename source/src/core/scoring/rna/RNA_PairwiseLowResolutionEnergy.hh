@@ -9,7 +9,6 @@
 
 /// @file   core/scoring/rna/RNA_PairwiseLowResolutionEnergy.hh
 /// @brief  Statistically derived rotamer pair potential class declaration
-/// @author Phil Bradley
 /// @author Rhiju Das
 
 
@@ -22,9 +21,7 @@
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/Stub.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

@@ -13,9 +13,9 @@
 #ifndef INCLUDED_protocols_coarse_rna_CoarseRNA_Fragments_HH
 #define INCLUDED_protocols_coarse_rna_CoarseRNA_Fragments_HH
 
-#include <protocols/rna/RNA_Fragments.hh>
+#include <protocols/farna/RNA_Fragments.hh>
 #include <protocols/toolbox/AllowInsert.fwd.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_MatchType.hh>
+// AUTO-REMOVED #include <protocols/farna/RNA_MatchType.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/types.hh>
@@ -62,7 +62,7 @@ namespace coarse_rna{
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	class CoarseRNA_Fragments : public protocols::rna::RNA_Fragments {
+	class CoarseRNA_Fragments : public protocols::farna::RNA_Fragments {
 	public:
 
 		//Constructor -- needs vall_torsions_file to get started.

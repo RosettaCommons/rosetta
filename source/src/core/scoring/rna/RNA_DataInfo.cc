@@ -9,27 +9,16 @@
 
 /// @file   core/scoring/methods/RNA_DataInfo.cc
 /// @brief  Statistically derived rotamer pair potential class implementation
-/// @author Phil Bradley
-/// @author Andrew Leaver-Fay
 /// @author Rhiju Das
-
 
 // Unit headers
 #include <core/scoring/rna/RNA_DataInfo.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_DataInfo.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/chemical/rna/RNA_Util.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 #include <utility/vector1.hh>
 

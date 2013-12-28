@@ -99,8 +99,8 @@
 
 //////////////////////////////////////////////////////////
 
-#include <protocols/rna/RNA_ProtocolUtil.hh>
-#include <protocols/rna/RNA_BasePairClassifier.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/RNA_BasePairClassifier.hh>
 
 
 #include <core/scoring/rms_util.tmpl.hh>
@@ -111,8 +111,8 @@
 
 
 
-#include <protocols/rna/RNA_LoopCloser.hh>
-#include <protocols/rna/RNA_LoopCloser.fwd.hh>
+#include <protocols/farna/RNA_LoopCloser.hh>
+#include <protocols/farna/RNA_LoopCloser.fwd.hh>
 
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 
@@ -221,7 +221,7 @@ pdb_to_silent_file_simple(){
 	core::import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
 
 	// NEW! from rhiju -- pay attention to chain breaks.
-	protocols::rna::figure_out_reasonable_rna_fold_tree( pose );
+	protocols::farna::figure_out_reasonable_rna_fold_tree( pose );
 
 	if(pose.residue(1).atom(1).xyz().length() < 2.0){
 	    numeric::xyzMatrix< Real > R( 0.0 );

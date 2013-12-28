@@ -19,12 +19,10 @@
 #include <core/chemical/VariantType.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/AtomTree.hh>
-// AUTO-REMOVED #include <core/kinematics/util.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/AtomPointer.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/AA.hh>
 
 // Project headers

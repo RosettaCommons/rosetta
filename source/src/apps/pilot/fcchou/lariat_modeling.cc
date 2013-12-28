@@ -23,7 +23,7 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/rna/RNA_SuiteAssign.hh>
+#include <protocols/farna/RNA_SuiteAssign.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -38,9 +38,9 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>
-#include <protocols/rna/RNA_IdealCoord.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
-#include <protocols/swa/rna/StepWiseRNA_Util.hh>
+#include <protocols/farna/RNA_IdealCoord.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 #include <numeric/random/random.hh>
@@ -107,7 +107,7 @@ void
 apply_torsion_set( Pose & pose, utility::vector1 < utility::vector1 < Real > > const & torsion_set )
 {
 	using namespace id;
-	static protocols::rna::RNA_IdealCoord const ideal_coord_rna;
+	static protocols::farna::RNA_IdealCoord const ideal_coord_rna;
 	Size const total_res = pose.total_residue();
 	Size moving_suite;
 
@@ -180,7 +180,7 @@ lariat_modeling ()
 	if ( option[ in::file::native ].user() ) {
 		pdb_name = option[in::file::native]();
 		import_pose::pose_from_pdb ( pose, *rsd_set, pdb_name );
-		protocols::rna::make_phosphate_nomenclature_matches_mini(pose);
+		protocols::farna::make_phosphate_nomenclature_matches_mini(pose);
 	} else {
 		utility_exit_with_message("User must specify -native option!");
 	}
@@ -194,7 +194,7 @@ lariat_modeling ()
 	core::scoring::ScoreFunctionOP scorefxn =
 			ScoreFunctionFactory::create_score_function ( score_weight_file );
 
-	protocols::rna::RNA_IdealCoord const ideal_coord_rna;
+	protocols::farna::RNA_IdealCoord const ideal_coord_rna;
 	Size const total_res = pose.total_residue();
 	for (Size i = total_res - 2; i <= total_res; ++i) {
 		ideal_coord_rna.apply( pose, i );

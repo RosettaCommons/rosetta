@@ -9,19 +9,15 @@
 
 /// @file   core/scoring/methods/RNA_BaseBasePotential.cc
 /// @brief  Statistically derived rotamer pair potential class implementation
-/// @author Phil Bradley
-/// @author Andrew Leaver-Fay
-
+/// @author Rhiju Das
 
 // Unit headers
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_CentroidInfo.fwd.hh>
 
 // Package headers
 
 // Project headers
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
@@ -62,7 +58,7 @@ RNA_CentroidInfo::get_base_centroid( conformation::Residue const & rsd ) const
 {
 	bool const verbose = false;
 
-	return get_rna_base_centroid( rsd, verbose);	
+	return get_rna_base_centroid( rsd, verbose);
 }
 
 
@@ -104,7 +100,7 @@ RNA_CentroidInfo::update( pose::Pose const & pose )
 {
 	initialize_base_centroids_and_stubs( pose );
 }
-  
+
 
 
 }

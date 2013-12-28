@@ -15,8 +15,8 @@
 
 #include <protocols/coarse_rna/CoarseRNA_Fragments.hh>
 #include <protocols/toolbox/AllowInsert.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
-#include <protocols/rna/RNA_SecStructInfo.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/RNA_SecStructInfo.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
@@ -67,7 +67,7 @@ SourcePositions::~SourcePositions() {}
 CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// This sort of repeats a lot of stuff in protocols/rna/RNA_Fragments
+	// This sort of repeats a lot of stuff in protocols/farna/RNA_Fragments
 	//
 	//  Not quite sure whether we should unify, or make subclasses of a Fragments class...
 	//
@@ -93,8 +93,8 @@ CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
 		if ( frag_source_file_.substr( frag_source_file_.size()-4, frag_source_file_.size() ) == ".pdb" ){
 			Pose pose;
 			import_pose::pose_from_pdb( pose, *rsd_set, frag_source_file_ );
-			protocols::rna::figure_out_secstruct( pose );
-			frag_source_secstruct_ = protocols::rna::get_rna_secstruct( pose );
+			protocols::farna::figure_out_secstruct( pose );
+			frag_source_secstruct_ = protocols::farna::get_rna_secstruct( pose );
 			frag_source_pose_ = new MiniPose( pose );
 		} else {
 
@@ -175,7 +175,7 @@ CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
 	void
 	CoarseRNA_Fragments::find_source_positions( SequenceSecStructPair const & key ){
 
-		using namespace protocols::rna;
+		using namespace protocols::farna;
 
 		SourcePositionsOP source_positions = new SourcePositions;
 
@@ -236,7 +236,7 @@ CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
 																						std::string const RNA_secstruct_string,
 																						Size const type ){
 
-		std::string const RNA_string_local = protocols::rna::convert_based_on_match_type( RNA_string, type );
+		std::string const RNA_string_local = protocols::farna::convert_based_on_match_type( RNA_string, type );
 
 		SequenceSecStructPair const key( std::make_pair( RNA_string_local, RNA_secstruct_string ) );
 
@@ -272,7 +272,7 @@ CoarseRNA_Fragments::~CoarseRNA_Fragments() {}
 		std::string const & RNA_sequence( pose.sequence() );
 		std::string const & RNA_string = RNA_sequence.substr( position - 1, size );
 
-		std::string const & RNA_secstruct( protocols::rna::get_rna_secstruct( pose ) );
+		std::string const & RNA_secstruct( protocols::farna::get_rna_secstruct( pose ) );
 		std::string const & RNA_secstruct_string = RNA_secstruct.substr( position - 1, size );
 
 		return pick_random_fragment( RNA_string, RNA_secstruct_string, type );

@@ -19,8 +19,8 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
-#include <protocols/swa/StepWiseUtil.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/stepwise/StepWiseUtil.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -79,7 +79,7 @@ get_pose_and_numbering( std::string const pdb_file, pose::Pose & pose, utility::
 
 	using namespace core::chemical;
 	using namespace core::pose;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -191,7 +191,7 @@ get_pdbs_and_superimpose( pose::Pose & pose1 /* the 'parent pose'*/,
 
 		// now superimpose based on this subset. Copied from RNA_DeNovoProtocol.cc
 		id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
-			protocols::swa::create_alignment_id_map( pose2, pose1, superimpose_res_map ); // perhaps this should move to toolbox.
+			protocols::stepwise::create_alignment_id_map( pose2, pose1, superimpose_res_map ); // perhaps this should move to toolbox.
 		core::scoring::superimpose_pose( pose2, pose1, alignment_atom_id_map_native );
 	} else {
 		std::cout << "WARNING: no overlap residues found or specified (by -superimpose_res)!!!! " << std::endl;
@@ -280,7 +280,7 @@ graft_pdb( pose::Pose const & pose1, pose::Pose const & pose2,
 	using namespace core::chemical;
 	using namespace core::kinematics;
 	using namespace basic::options;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 
 	Pose pose_target;
 

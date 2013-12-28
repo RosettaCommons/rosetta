@@ -5497,7 +5497,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 
 	################################
 	# step-wise assembly options
-	Option_Group( 'swa',
+	Option_Group( 'stepwise',
 		Option( 's1', 'StringVector',desc="input file(s)"),
 		Option( 's2', 'StringVector',desc="input file(s)"),
 		Option( 'silent1', 'StringVector',desc="input file"),
@@ -5510,9 +5510,68 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option( 'input_res2', 'IntegerVector',desc='Residues already present in starting file2',default=[]),
 		Option( 'backbone_only1', 'Boolean', desc="just copy protein backbone DOFS, useful for homology modeling"),
 		Option( 'backbone_only2', 'Boolean', desc="just copy protein backbone DOFS, useful for homology modeling"),
-
+    Option_Group( 'monte_carlo',
+	    Option( 'verbose_scores', 'Boolean', desc= "Show all score components", default='false' ),
+	    Option( 'skip_deletions', 'Boolean', desc= "no delete moves -- just for testing", default='false' ),
+	    Option( 'erraser', 'Boolean', desc= "Use KIC sampling", default='true' ),
+	    Option( 'allow_internal_moves', 'Boolean', desc= "Allow moves in which internal cutpoints are created to allow ERRASER rebuilds", default='false' ),
+	    Option( 'allow_skip_bulge', 'Boolean', desc= "Allow moves in which an intervening residue is skipped and the next one is modeled as floating base", default='false' ),
+	    Option( 'cycles', 'Integer', desc= "Number of Monte Carlo cycles", default='50' ),
+	    Option( 'temperature', 'Real', desc= "Monte Carlo temperature", default='1.0' ),
+	    Option( 'add_delete_frequency', 'Real', desc= "Frequency of add/delete vs. resampling", default='0.5' ),
+	    Option( 'minimize_single_res_frequency', 'Real', desc= "Frequency with which to minimize the residue that just got rebuilt, instead of all", default='0.0' ),
+	    Option( 'allow_variable_bond_geometry', 'Boolean', desc= "In 10% of moves, let bond angles & distance change", default='true' ),
+	    Option( 'switch_focus_frequency', 'Real', desc= "Frequency with which to switch the sub-pose that is being modeled", default='0.5' ),
+      Option( 'just_min_after_mutation_frequency', 'Real', desc= "After a mutation, how often to just minimize (without further sampling the mutated residue)", default='0.5' ),
+	    Option( 'constraint_x0', 'Real', desc= "Target RMSD value for constrained runs", default='0.5' ),
+	    Option( 'constraint_tol', 'Real', desc= "Size of flat region for coordinate constraints", default='0.5' ),
+		  Option( 'extra_min_res', 'IntegerVector', desc= "specify residues other than those being built that should be minimized", default=[] ),
+		  Option( 'make_movie', 'Boolean', desc= "create silent files in movie/ with all steps and accepted steps", default='false' ),
+ 							),
     Option_Group( 'rna',
+	    Option( 'sampler_num_pose_kept', 'Integer', desc="set_num_pose_kept by ResidueSampler )", default='108' ),
 	    Option( 'sample_res', 'IntegerVector', desc="residues to build, the first element is the actual sample res while the other are the bulge residues", default=[] ),
+		  Option( 'sampler_native_rmsd_screen', 'Boolean', desc= "native_rmsd_screen ResidueSampler", default='false' ),
+		  Option( 'sampler_native_screen_rmsd_cutoff', 'Real', desc= "sampler_native_screen_rmsd_cutoff", default='2.0' ),
+		  Option( 'sampler_cluster_rmsd', 'Real', desc= " Clustering rmsd of conformations in the sampler", default='0.5' ), #DO NOT CHANGE THIS,
+		  Option( 'native_edensity_score_cutoff', 'Real', desc= "native_edensity_score_cutoff", default='-1.0' ), #Fang's electron density code,
+		  Option( 'sampler_perform_o2prime_pack', 'Boolean', desc= "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", default='true' ),
+		  Option( 'sampler_use_green_packer', 'Boolean', desc= "use packer instead of rotamer trials for O2' optimization", default='false' ),
+		  Option( 'VERBOSE', 'Boolean', desc= "VERBOSE", default='false' ),
+		  Option( 'distinguish_pucker', 'Boolean', desc= "distinguish pucker when cluster:both in sampler and clusterer", default='true' ),
+		  Option( 'finer_sampling_at_chain_closure', 'Boolean', desc= "Samplerer: finer_sampling_at_chain_closure", default='false' ), #Jun 9, 201,
+		  Option( 'PBP_clustering_at_chain_closure', 'Boolean', desc= "Samplerer: PBP_clustering_at_chain_closure", default='false' ),
+		  Option( 'sampler_allow_syn_pyrimidine', 'Boolean', desc="sampler_allow_syn_pyrimidine", default='false' ), #Nov 15, 2010
+		  Option( 'sampler_extra_chi_rotamer', 'Boolean', desc="Samplerer: extra_syn_chi_rotamer", default='false' ),
+	    Option( 'sampler_extra_beta_rotamer', 'Boolean', desc="Samplerer: extra_beta_rotamer", default='false' ),
+	    Option( 'sampler_extra_epsilon_rotamer', 'Boolean', desc="Samplerer: extra_epsilon_rotamer", default='true' ), #Change this to true on April 9, 2011
+	    Option( 'force_centroid_interaction', 'Boolean', desc="Require base stack or pair even for single residue loop closed (which could also be bulges!)", default='false' ), #for SWM
+	    Option( 'virtual_sugar_legacy_mode', 'Boolean', desc="In virtual sugar sampling, use legacy protocol to match Parin's original workflow", default='false' ),
+	    Option( 'erraser', 'Boolean', desc="Use KIC sampling", default='false' ),
+	    Option( 'centroid_screen', 'Boolean', desc="centroid_screen", default='true' ),
+	    Option( 'VDW_atr_rep_screen', 'Boolean', desc="classic VDW_atr_rep_screen", default='true' ),
+	    Option( 'skip_sampling', 'Boolean', desc="no sampling step in rna_swa residue sampling", default='false' ),
+	    Option( 'minimizer_perform_minimize', 'Boolean', desc="minimizer_perform_minimize", default='true' ),
+	    Option( 'minimize_and_score_native_pose', 'Boolean', desc="minimize_and_score_native_pose ", default='false' ), #Sept 15, 2010
+	    Option( 'rm_virt_phosphate', 'Boolean', desc="Remove virtual phosphate patches during minimization", default='false' ),
+	    Option( 'VDW_rep_alignment_RMSD_CUTOFF', 'Real', desc="use with VDW_rep_screen_info", default='0.001' ), #Nov 12, 2010
+	    Option( 'VDW_rep_delete_matching_res', 'StringVector', desc="delete residues in VDW_rep_pose that exist in the working_pose", default=[] ), #Feb 20, 2011
+	    Option( 'VDW_rep_screen_physical_pose_clash_dist_cutoff', 'Real', desc="The distance cutoff for VDW_rep_screen_with_physical_pose", default='1.2' ), #March 23, 2011
+	    Option( 'integration_test', 'Boolean', desc=" integration_test ", default='false' ), #March 16, 2012
+	    Option( 'allow_bulge_at_chainbreak', 'Boolean', desc="Allow sampler to replace chainbreak res with virtual_rna_variant if it looks have bad fa_atr score.", default='true' ),
+	    Option( 'parin_favorite_output', 'Boolean', desc=" parin_favorite_output ", default='true' ), #Change to true on Oct 10, 2010
+	    Option( 'reinitialize_CCD_torsions', 'Boolean', desc="Samplerer: reinitialize_CCD_torsions: Reinitialize_CCD_torsion to zero before every CCD chain closure", default='false' ),
+	    Option( 'sample_both_sugar_base_rotamer', 'Boolean', desc="Samplerer: Super hacky for SQUARE_RNA", default='false' ),
+	    Option( 'sampler_include_torsion_value_in_tag', 'Boolean', desc="Samplerer:include_torsion_value_in_tag", default='true' ),
+	    Option( 'sampler_assert_no_virt_sugar_sampling', 'Boolean', desc="sampler_assert_no_virt_sugar_sampling", default='false' ), #July 28, 2011
+	    Option( 'sampler_try_sugar_instantiation', 'Boolean', desc="for floating base sampling, try to instantiate sugar if it looks promising", default='false' ), #July 28, 2011
+	    Option( 'do_not_sample_multiple_virtual_sugar', 'Boolean', desc=" Samplerer: do_not_sample_multiple_virtual_sugar ", default='false' ),
+	    Option( 'sample_ONLY_multiple_virtual_sugar', 'Boolean', desc=" Samplerer: sample_ONLY_multiple_virtual_sugar ", default='false' ),
+	    Option( 'allow_base_pair_only_centroid_screen', 'Boolean', desc="allow_base_pair_only_centroid_screen", default='false' ), #This only effect floating base sampling + dinucleotide.. deprecate option
+	    Option( 'minimizer_output_before_o2prime_pack', 'Boolean', desc="minimizer_output_before_o2prime_pack", default='false' ),
+	    Option( 'minimizer_perform_o2prime_pack', 'Boolean', desc="perform O2' hydrogen packing inside StepWiseRNA_Minimizer", default='true' ), #Jan 19, 2012
+	    Option( 'minimizer_rename_tag', 'Boolean', desc="Reorder and rename the tag by the energy_score", default='true' ), #March 15, 2012
+			Option( 'num_pose_minimize','Integer', desc='optional: set_num_pose_minimize by Minimizer', default='999999' ),
 		  Option( 'fixed_res', 'IntegerVector', desc='Do not move these residues during minimization.', default=[] ),
       Option( 'minimize_res', 'IntegerVector', desc='alternative to fixed_res', default=[] ),
 	    Option( 'alignment_res', 'StringVector', desc="align_res_list", default=[] ),
@@ -5546,8 +5605,8 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 	    Option( 'bulge_res', 'IntegerVector', desc="optional: residues to be turned into a bulge variant", default=[] ),
 	    Option( 'rebuild_bulge_mode', 'Boolean', desc="rebuild_bulge_mode", default="false" ),
 	    Option( 'choose_random', 'Boolean', desc="ask swa residue sampler for a random solution", default="false" ),
-	    Option( 'virtual_sugar_keep_base_fixed', 'Boolean', desc="When instantiating virtual sugar, keep base fixed -- do not spend a lot of time to minimize!", default="false" ),
-	    Option( 'num_random_samples', 'Integer', desc="Number of samples from swa residue sampler before minimizing best", default="1" ),
+	    Option( 'virtual_sugar_keep_base_fixed', 'Boolean', desc="When instantiating virtual sugar, keep base fixed -- do not spend a lot of time to minimize!", default="true" ),
+	    Option( 'num_random_samples', 'Integer', desc="In choose_random/monte-carlo mode, number of samples from swa residue sampler before minimizing best", default="20" ),
 	    Option( 'filter_user_alignment_res', 'Boolean', desc=" filter_user_alignment_res ", default="true" ),
 	    Option( 'output_pdb', 'Boolean', desc="output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.", default="false" ),
 		),
@@ -5555,7 +5614,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 	),
 
 	################################
-	# full_model_info --> may replace swa stuff above.
+	# full_model_info --> may replace stepwise stuff above.
 	Option_Group( 'full_model',
     Option( 'cutpoint_open',   'IntegerVector',desc='open cutpoints in full model',default=[]),
 		Option( 'cutpoint_closed', 'IntegerVector',desc='closed cutpoints in full model',default=[]),

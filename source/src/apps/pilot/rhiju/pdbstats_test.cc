@@ -19,7 +19,7 @@
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
 
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
@@ -687,7 +687,7 @@ rna_stack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Si
 	using namespace core::chemical;
 	using namespace core::kinematics;
 	using namespace core::scoring;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 	using namespace chemical::rna;
 
 	Size const nres = pose.total_residue();

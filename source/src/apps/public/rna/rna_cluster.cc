@@ -13,7 +13,6 @@
 
 // libRosetta headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/sequence/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -22,9 +21,8 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-//RNA stuff.
-#include <protocols/swa/StepWiseClusterer.hh>
-
+//RNA stuff -- move this?
+#include <protocols/stepwise/enumerate/general/StepWiseClusterer.hh>
 
 // C++ headers
 #include <iostream>
@@ -63,7 +61,7 @@ cluster_test(){
 	if ( ! option[ in::file::silent ].user() ) utility_exit_with_message( "The rna_cluster executable requires silent input [with -in:file:silent], and models need to be scored. The clustering algorithm starts with the lowest scoring models and works its way up." );
 
 	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
-	protocols::swa::StepWiseClusterer stepwise_clusterer( silent_files_in );
+	protocols::stepwise::enumerate::general::StepWiseClusterer stepwise_clusterer( silent_files_in );
 
 	Size max_decoys( 400 );
 	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];

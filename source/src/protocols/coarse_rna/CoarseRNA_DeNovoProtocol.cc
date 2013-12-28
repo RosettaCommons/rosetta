@@ -23,12 +23,12 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/toolbox/AllowInsert.hh>
-#include <protocols/rna/MultipleDomainMover.hh>
-#include <protocols/rna/RNA_ChunkLibrary.hh>
-#include <protocols/rna/RNA_FragmentMover.hh>
-#include <protocols/rna/RNA_StructureParameters.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
-#include <protocols/rna/RNA_DataReader.hh>
+#include <protocols/farna/MultipleDomainMover.hh>
+#include <protocols/farna/RNA_ChunkLibrary.hh>
+#include <protocols/farna/RNA_FragmentMover.hh>
+#include <protocols/farna/RNA_StructureParameters.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/RNA_DataReader.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.hh>
 #include <core/scoring/rms_util.hh>
@@ -113,8 +113,8 @@ CoarseRNA_DeNovoProtocol::CoarseRNA_DeNovoProtocol(
 		all_rna_fragments_file_( basic::database::full_name("1jj2_coarse_coords.txt") ),
 		jump_library_file_( basic::database::full_name("chemical/rna/1jj2_coarse_jumps.dat" ) ),
 		lores_scorefxn_( "coarse_rna.wts" ),
-		rna_structure_parameters_( new protocols::rna::RNA_StructureParameters ),
-		rna_data_reader_( new protocols::rna::RNA_DataReader ),
+		rna_structure_parameters_( new protocols::farna::RNA_StructureParameters ),
+		rna_data_reader_( new protocols::farna::RNA_DataReader ),
 		rna_loop_closer_( new protocols::coarse_rna::CoarseRNA_LoopCloser ),
 		close_loops_( false ),
 		choose_best_solution_( false ),
@@ -155,7 +155,7 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 
 	rna_data_reader_->initialize( pose, rna_data_file_ );
 
-	if( input_res_.size() > 0 )	rna_chunk_library_ = new protocols::rna::RNA_ChunkLibrary( chunk_silent_files_, pose, input_res_ );
+	if( input_res_.size() > 0 )	rna_chunk_library_ = new protocols::farna::RNA_ChunkLibrary( chunk_silent_files_, pose, input_res_ );
 	rna_structure_parameters_->set_allow_insert( rna_chunk_library_->allow_insert() );
 	rna_structure_parameters_->setup_fold_tree_and_jumps_and_variants( pose );
 
@@ -165,8 +165,8 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 
 	if ( dump_pdb_) std::cout << "Allow insert: " << std::endl;	rna_structure_parameters_->allow_insert()->show();
 
-	protocols::rna::RNA_FragmentsOP rna_fragments = new CoarseRNA_Fragments( all_rna_fragments_file_ );
-	frag_mover_ = new protocols::rna::RNA_FragmentMover( rna_fragments, rna_structure_parameters_->allow_insert() );
+	protocols::farna::RNA_FragmentsOP rna_fragments = new CoarseRNA_Fragments( all_rna_fragments_file_ );
+	frag_mover_ = new protocols::farna::RNA_FragmentMover( rna_fragments, rna_structure_parameters_->allow_insert() );
 
 	rna_data_reader_->initialize( pose, rna_data_file_ );
 	initialize_constraints( pose );
@@ -177,11 +177,11 @@ void CoarseRNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 	rna_loop_closer_->set_allow_insert( rna_structure_parameters_->allow_insert() );
 	if ( choose_best_solution_ ) rna_loop_closer_->choose_best_solution_based_on_score_function( denovo_scorefxn_ );
 
-	multiple_domain_mover_ = new protocols::rna::MultipleDomainMover( pose, rna_loop_closer_ );
+	multiple_domain_mover_ = new protocols::farna::MultipleDomainMover( pose, rna_loop_closer_ );
 	domain_move_frequency_ = 0.0;
 	domain_move_frequency_ =  ( multiple_domain_mover_->num_domains() > 1 && !freeze_domains_ ) ? 0.7: 0.0;
 
-	if ( check_pairing_dists_ ) 	protocols::rna::print_internal_coords( pose );
+	if ( check_pairing_dists_ ) 	protocols::farna::print_internal_coords( pose );
 
 	if (dump_pdb_) pose.dump_pdb( "start.pdb" );
 	std::cout << "FOLD TREE " << pose.fold_tree();

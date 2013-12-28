@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/RNA_TorsionPotential.hh
 /// @brief  RNA_TorsionPotential potential class delcaration
-/// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
+/// @author Rhiju Das
 
 #ifndef INCLUDED_core_scoring_rna_RNA_TorsionPotential_HH
 #define INCLUDED_core_scoring_rna_RNA_TorsionPotential_HH
@@ -21,7 +21,6 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
 #include <core/scoring/func/SumFunc.fwd.hh>
 #include <core/scoring/func/SumFunc.hh>

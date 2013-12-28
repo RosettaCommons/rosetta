@@ -53,10 +53,10 @@ public:
 	virtual bool not_end() const;
 
 	/// @brief Apply the current rotamer to pose
-	virtual void apply( core::pose::Pose & pose ){}
+	virtual void apply( core::pose::Pose & ){}
 
 	/// @brief Apply the i-th rotamer to pose
-	virtual void apply( core::pose::Pose & pose, Size const i ){}
+	virtual void apply( core::pose::Pose &, Size const ){}
 
 	/// @brief Get the total number of rotamers in sampler
 	virtual core::Size size() const {

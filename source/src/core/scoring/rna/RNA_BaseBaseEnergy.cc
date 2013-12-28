@@ -8,9 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/rna/RNA_BaseBaseEnergy.cc
-/// @brief  Statistically derived rotamer pair potential class implementation
-/// @author Phil Bradley
-/// @author Andrew Leaver-Fay
+/// @brief  Statistically derived base-base energy
 /// @author Rhiju Das
 
 

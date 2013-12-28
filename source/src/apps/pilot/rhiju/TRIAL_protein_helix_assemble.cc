@@ -37,7 +37,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Ramachandran.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
 
 #include <protocols/viewer/viewers.hh>
 
@@ -64,29 +64,29 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 //StepWiseProtein!
-#include <protocols/swa/StepWiseClusterer.hh>
-#include <protocols/swa/StepWisePoseSetup.hh>
-#include <protocols/swa/StepWiseJobParameters.hh>
-#include <protocols/swa/StepWiseUtil.hh>
-#include <protocols/swa/StepWiseDoNothingSampleGenerator.hh>
-#include <protocols/swa/StepWiseCombineSampleGenerator.hh>
-#include <protocols/swa/StepWiseIdentitySampleGenerator.hh>
-#include <protocols/swa/StepWisePoseCombineSampleGenerator.hh>
-#include <protocols/swa/protein/StepWiseBetaAntiParallelJumpSampleGenerator.hh>
-#include <protocols/swa/protein/StepWiseBetaAntiParallelUtil.hh>
-#include <protocols/swa/protein/StepWiseProteinFilterer.hh>
-#include <protocols/swa/protein/StepWiseProteinLoopBridger.hh>
-#include <protocols/swa/protein/StepWiseProteinPoseMinimizer.hh>
-#include <protocols/swa/protein/StepWiseProteinScreener.hh>
-#include <protocols/swa/protein/StepWiseProteinUtil.hh>
-//#include <protocols/swa/protein/StepWiseProteinResidueSampler.hh>
-#include <protocols/swa/protein/StepWiseProteinPacker.hh>
-#include <protocols/swa/protein/StepWiseProteinFragmentSampleGenerator.hh>
-#include <protocols/swa/protein/StepWiseProteinJumpSampleGenerator.hh>
-#include <protocols/swa/protein/StepWiseProteinMainChainSampleGenerator.hh>
-#include <protocols/swa/protein/StepWiseProteinPacker.hh>
-#include <protocols/swa/protein/MainChainTorsionSet.hh>
-#include <protocols/swa/InputStreamWithResidueInfo.hh>
+#include <protocols/stepwise/StepWiseClusterer.hh>
+#include <protocols/stepwise/StepWisePoseSetup.hh>
+#include <protocols/stepwise/StepWiseJobParameters.hh>
+#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/stepwise/StepWiseDoNothingSampleGenerator.hh>
+#include <protocols/stepwise/StepWiseCombineSampleGenerator.hh>
+#include <protocols/stepwise/StepWiseIdentitySampleGenerator.hh>
+#include <protocols/stepwise/StepWisePoseCombineSampleGenerator.hh>
+#include <protocols/stepwise/protein/StepWiseBetaAntiParallelJumpSampleGenerator.hh>
+#include <protocols/stepwise/protein/StepWiseBetaAntiParallelUtil.hh>
+#include <protocols/stepwise/protein/StepWiseProteinFilterer.hh>
+#include <protocols/stepwise/protein/StepWiseProteinLoopBridger.hh>
+#include <protocols/stepwise/protein/StepWiseProteinPoseMinimizer.hh>
+#include <protocols/stepwise/protein/StepWiseProteinScreener.hh>
+#include <protocols/stepwise/protein/StepWiseProteinUtil.hh>
+//#include <protocols/stepwise/protein/StepWiseProteinResidueSampler.hh>
+#include <protocols/stepwise/protein/StepWiseProteinPacker.hh>
+#include <protocols/stepwise/protein/StepWiseProteinFragmentSampleGenerator.hh>
+#include <protocols/stepwise/protein/StepWiseProteinJumpSampleGenerator.hh>
+#include <protocols/stepwise/protein/StepWiseProteinMainChainSampleGenerator.hh>
+#include <protocols/stepwise/protein/StepWiseProteinPacker.hh>
+#include <protocols/stepwise/protein/MainChainTorsionSet.hh>
+#include <protocols/stepwise/InputStreamWithResidueInfo.hh>
 
 //clustering
 #include <protocols/cluster/cluster.hh>
@@ -141,9 +141,9 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 //RNA stuff.
-//#include <protocols/rna/RNA_FragmentsClasses.hh>
-//#include <protocols/rna/RNA_DeNovoProtocol.hh>
-//#include <protocols/rna/RNA_StructureParameters.hh>
+//#include <protocols/farna/RNA_FragmentsClasses.hh>
+//#include <protocols/farna/RNA_DeNovoProtocol.hh>
+//#include <protocols/farna/RNA_StructureParameters.hh>
 
 //Job dsitributor
 #include <protocols/jobdist/JobDistributors.hh>

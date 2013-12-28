@@ -20,8 +20,6 @@
 
 // Project headers
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -32,7 +30,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 // C++
 

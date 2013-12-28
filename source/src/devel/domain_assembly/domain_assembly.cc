@@ -51,10 +51,10 @@
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 // Headers for RNA
-#include <protocols/rna/FullAtomRNA_Fragments.hh>
+#include <protocols/farna/FullAtomRNA_Fragments.hh>
 #include <basic/database/open.hh>
-#include <protocols/rna/RNA_FragmentMover.hh>
-#include <protocols/rna/RNA_FragmentMover.fwd.hh>
+#include <protocols/farna/RNA_FragmentMover.hh>
+#include <protocols/farna/RNA_FragmentMover.fwd.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -96,7 +96,7 @@ using namespace protocols;
 using namespace protocols::moves;
 using namespace protocols::viewer;
 using namespace basic::options;
-using namespace rna;
+using namespace farna;
 using namespace ObjexxFCL::format;
 //using namespace basic::options::OptionKeys;
 using namespace chemical;
@@ -446,7 +446,7 @@ void
 optimize_linkers_rna_fullatom_mode(
   kinematics::MoveMapOP & mm,
 	pose::Pose & full_pose,
-	protocols::rna::RNA_FragmentsOP & all_rna_fragments,
+	protocols::farna::RNA_FragmentsOP & all_rna_fragments,
 	utility::vector1< std::pair< Size, Size > > linker_rna
 )
 {

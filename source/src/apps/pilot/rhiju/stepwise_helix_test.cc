@@ -47,7 +47,7 @@
 #include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/swa/StepWiseUtil.hh>
+#include <protocols/stepwise/StepWiseUtil.hh>
 
 // C++ headers
 //#include <cstdlib>
@@ -603,7 +603,7 @@ figure_out_best_alpha_beta_gamma(
 	get_euler_axes( moment_of_inertia2, xaxis2, yaxis2, zaxis2, m1, m2, m3, M2 );
 
 	Real alpha, beta, gamma;
-	protocols::swa::get_euler_angles( alpha, beta, gamma, M1, M2 );
+	protocols::stepwise::get_euler_angles( alpha, beta, gamma, M1, M2 );
 
 	std::cout << "ALPHA:    " << alpha << std::endl;
 	std::cout << "BETA:     " << beta << std::endl;
@@ -782,7 +782,7 @@ spinner_test(){
 			for ( Size k = 1; k <= N_SAMPLE; k++ ){
 				Real const gamma = static_cast< Real >( k ) * gamma_increment + 0.01;
 
-				protocols::swa::create_euler_rotation( M, alpha, beta, gamma, axis1, axis2, axis3 );
+				protocols::stepwise::create_euler_rotation( M, alpha, beta, gamma, axis1, axis2, axis3 );
 
 				rotate( pose, M, pose_start, moving_res );
 

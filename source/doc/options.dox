@@ -13061,10 +13061,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
  </li>
-<li><h2>swa</h2>
+<li><h2>stepwise</h2>
 <dl>
-<dt><b>-swa</b> \<Boolean\><dt>
-<dd>swa option group</dd><br>
+<dt><b>-stepwise</b> \<Boolean\><dt>
+<dd>stepwise option group</dd><br>
 </dl>
 <dl>
 <dt><b>-s1</b> \<StringVector\><dt>
@@ -13119,15 +13119,311 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>just copy protein backbone DOFS, useful for homology modeling</dd><br>
 </dl>
  </li>
-<li><h2>swa:rna</h2>
+<li><h2>stepwise:monte_carlo</h2>
+<dl>
+<dt><b>-monte_carlo</b> \<Boolean\><dt>
+<dd>monte_carlo option group</dd><br>
+</dl>
+<dl>
+<dt><b>-verbose_scores</b> \<Boolean\><dt>
+<dd>Show all score components</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-skip_deletions</b> \<Boolean\><dt>
+<dd>no delete moves -- just for testing</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-erraser</b> \<Boolean\><dt>
+<dd>Use KIC sampling</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-allow_internal_moves</b> \<Boolean\><dt>
+<dd>Allow moves in which internal cutpoints are created to allow ERRASER rebuilds</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-allow_skip_bulge</b> \<Boolean\><dt>
+<dd>Allow moves in which an intervening residue is skipped and the next one is modeled as floating base</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-cycles</b> \<Integer\><dt>
+<dd>Number of Monte Carlo cycles</dd><br>
+<dd>Default: 50</dd><br>
+</dl>
+<dl>
+<dt><b>-temperature</b> \<Real\><dt>
+<dd>Monte Carlo temperature</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-add_delete_frequency</b> \<Real\><dt>
+<dd>Frequency of add/delete vs. resampling</dd><br>
+<dd>Default: 0.5</dd><br>
+</dl>
+<dl>
+<dt><b>-minimize_single_res_frequency</b> \<Real\><dt>
+<dd>Frequency with which to minimize the residue that just got rebuilt, instead of all</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
+<dt><b>-allow_variable_bond_geometry</b> \<Boolean\><dt>
+<dd>In 10% of moves, let bond angles & distance change</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-switch_focus_frequency</b> \<Real\><dt>
+<dd>Frequency with which to switch the sub-pose that is being modeled</dd><br>
+<dd>Default: 0.5</dd><br>
+</dl>
+<dl>
+<dt><b>-just_min_after_mutation_frequency</b> \<Real\><dt>
+<dd>After a mutation, how often to just minimize (without further sampling the mutated residue)</dd><br>
+<dd>Default: 0.5</dd><br>
+</dl>
+<dl>
+<dt><b>-constraint_x0</b> \<Real\><dt>
+<dd>Target RMSD value for constrained runs</dd><br>
+<dd>Default: 0.5</dd><br>
+</dl>
+<dl>
+<dt><b>-constraint_tol</b> \<Real\><dt>
+<dd>Size of flat region for coordinate constraints</dd><br>
+<dd>Default: 0.5</dd><br>
+</dl>
+<dl>
+<dt><b>-extra_min_res</b> \<IntegerVector\><dt>
+<dd>specify residues other than those being built that should be minimized</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-make_movie</b> \<Boolean\><dt>
+<dd>create silent files in movie/ with all steps and accepted steps</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+ </li>
+<li><h2>stepwise:rna</h2>
 <dl>
 <dt><b>-rna</b> \<Boolean\><dt>
 <dd>rna option group</dd><br>
 </dl>
 <dl>
+<dt><b>-sampler_num_pose_kept</b> \<Integer\><dt>
+<dd>set_num_pose_kept by ResidueSampler )</dd><br>
+<dd>Default: 108</dd><br>
+</dl>
+<dl>
 <dt><b>-sample_res</b> \<IntegerVector\><dt>
 <dd>residues to build, the first element is the actual sample res while the other are the bulge residues</dd><br>
 <dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-sampler_native_rmsd_screen</b> \<Boolean\><dt>
+<dd>native_rmsd_screen ResidueSampler</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-sampler_native_screen_rmsd_cutoff</b> \<Real\><dt>
+<dd>sampler_native_screen_rmsd_cutoff</dd><br>
+<dd>Default: 2.0</dd><br>
+</dl>
+<dl>
+<dt><b>-sampler_cluster_rmsd</b> \<Real\><dt>
+<dd> Clustering rmsd of conformations in the sampler</dd><br>
+<dd>Default: 0.5</dd><br>
+</dl>
+<dl>
+<dt><b>-native_edensity_score_cutoff</b> \<Real\><dt>
+<dd>native_edensity_score_cutoff</dd><br>
+<dd>Default: -1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-sampler_perform_o2prime_pack</b> \<Boolean\><dt>
+<dd>perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-sampler_use_green_packer</b> \<Boolean\><dt>
+<dd>use packer instead of rotamer trials for O2' optimization</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-VERBOSE</b> \<Boolean\><dt>
+<dd>VERBOSE</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-distinguish_pucker</b> \<Boolean\><dt>
+<dd>distinguish pucker when cluster:both in sampler and clusterer</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-finer_sampling_at_chain_closure</b> \<Boolean\><dt>
+<dd>Samplerer: finer_sampling_at_chain_closure</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-PBP_clustering_at_chain_closure</b> \<Boolean\><dt>
+<dd>Samplerer: PBP_clustering_at_chain_closure</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-sampler_allow_syn_pyrimidine</b> \<Boolean\><dt>
+<dd>sampler_allow_syn_pyrimidine</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-sampler_extra_chi_rotamer</b> \<Boolean\><dt>
+<dd>Samplerer: extra_syn_chi_rotamer</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-sampler_extra_beta_rotamer</b> \<Boolean\><dt>
+<dd>Samplerer: extra_beta_rotamer</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-sampler_extra_epsilon_rotamer</b> \<Boolean\><dt>
+<dd>Samplerer: extra_epsilon_rotamer</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-force_centroid_interaction</b> \<Boolean\><dt>
+<dd>Require base stack or pair even for single residue loop closed (which could also be bulges!)</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-virtual_sugar_legacy_mode</b> \<Boolean\><dt>
+<dd>In virtual sugar sampling, use legacy protocol to match Parin's original workflow</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-erraser</b> \<Boolean\><dt>
+<dd>Use KIC sampling</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-centroid_screen</b> \<Boolean\><dt>
+<dd>centroid_screen</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-VDW_atr_rep_screen</b> \<Boolean\><dt>
+<dd>classic VDW_atr_rep_screen</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-skip_sampling</b> \<Boolean\><dt>
+<dd>no sampling step in rna_swa residue sampling</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-minimizer_perform_minimize</b> \<Boolean\><dt>
+<dd>minimizer_perform_minimize</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-minimize_and_score_native_pose</b> \<Boolean\><dt>
+<dd>minimize_and_score_native_pose </dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-rm_virt_phosphate</b> \<Boolean\><dt>
+<dd>Remove virtual phosphate patches during minimization</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-VDW_rep_alignment_RMSD_CUTOFF</b> \<Real\><dt>
+<dd>use with VDW_rep_screen_info</dd><br>
+<dd>Default: 0.001</dd><br>
+</dl>
+<dl>
+<dt><b>-VDW_rep_delete_matching_res</b> \<StringVector\><dt>
+<dd>delete residues in VDW_rep_pose that exist in the working_pose</dd><br>
+<dd>Default: []</dd><br>
+</dl>
+<dl>
+<dt><b>-VDW_rep_screen_physical_pose_clash_dist_cutoff</b> \<Real\><dt>
+<dd>The distance cutoff for VDW_rep_screen_with_physical_pose</dd><br>
+<dd>Default: 1.2</dd><br>
+</dl>
+<dl>
+<dt><b>-integration_test</b> \<Boolean\><dt>
+<dd> integration_test </dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-allow_bulge_at_chainbreak</b> \<Boolean\><dt>
+<dd>Allow sampler to replace chainbreak res with virtual_rna_variant if it looks have bad fa_atr score.</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-parin_favorite_output</b> \<Boolean\><dt>
+<dd> parin_favorite_output </dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-reinitialize_CCD_torsions</b> \<Boolean\><dt>
+<dd>Samplerer: reinitialize_CCD_torsions: Reinitialize_CCD_torsion to zero before every CCD chain closure</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-sample_both_sugar_base_rotamer</b> \<Boolean\><dt>
+<dd>Samplerer: Super hacky for SQUARE_RNA</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-sampler_include_torsion_value_in_tag</b> \<Boolean\><dt>
+<dd>Samplerer:include_torsion_value_in_tag</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-sampler_assert_no_virt_sugar_sampling</b> \<Boolean\><dt>
+<dd>sampler_assert_no_virt_sugar_sampling</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-sampler_try_sugar_instantiation</b> \<Boolean\><dt>
+<dd>for floating base sampling, try to instantiate sugar if it looks promising</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-do_not_sample_multiple_virtual_sugar</b> \<Boolean\><dt>
+<dd> Samplerer: do_not_sample_multiple_virtual_sugar </dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-sample_ONLY_multiple_virtual_sugar</b> \<Boolean\><dt>
+<dd> Samplerer: sample_ONLY_multiple_virtual_sugar </dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-allow_base_pair_only_centroid_screen</b> \<Boolean\><dt>
+<dd>allow_base_pair_only_centroid_screen</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-minimizer_output_before_o2prime_pack</b> \<Boolean\><dt>
+<dd>minimizer_output_before_o2prime_pack</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-minimizer_perform_o2prime_pack</b> \<Boolean\><dt>
+<dd>perform O2' hydrogen packing inside StepWiseRNA_Minimizer</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-minimizer_rename_tag</b> \<Boolean\><dt>
+<dd>Reorder and rename the tag by the energy_score</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-num_pose_minimize</b> \<Integer\><dt>
+<dd>optional: set_num_pose_minimize by Minimizer</dd><br>
+<dd>Default: 999999</dd><br>
 </dl>
 <dl>
 <dt><b>-fixed_res</b> \<IntegerVector\><dt>
@@ -13297,12 +13593,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-virtual_sugar_keep_base_fixed</b> \<Boolean\><dt>
 <dd>When instantiating virtual sugar, keep base fixed -- do not spend a lot of time to minimize!</dd><br>
-<dd>Default: false</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-num_random_samples</b> \<Integer\><dt>
-<dd>Number of samples from swa residue sampler before minimizing best</dd><br>
-<dd>Default: 1</dd><br>
+<dd>In choose_random/monte-carlo mode, number of samples from swa residue sampler before minimizing best</dd><br>
+<dd>Default: 20</dd><br>
 </dl>
 <dl>
 <dt><b>-filter_user_alignment_res</b> \<Boolean\><dt>

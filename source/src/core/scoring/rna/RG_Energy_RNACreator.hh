@@ -9,7 +9,7 @@
 
 /// @file   src/core/scoring/rna/RG_Energy_RNACreator.hh
 /// @brief  Declaration for the class that connects RG_Energy_RNA with the ScoringManager
-/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Rhiju Das
 
 #ifndef INCLUDED_core_scoring_rna_RG_Energy_RNACreator_hh
 #define INCLUDED_core_scoring_rna_RG_Energy_RNACreator_hh

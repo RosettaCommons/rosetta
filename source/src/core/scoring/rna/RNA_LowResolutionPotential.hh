@@ -9,8 +9,7 @@
 
 /// @file   core/scoring/methods/RNA_LowResolutionPotential.hh
 /// @brief  Statistically derived rotamer pair potential class implementation
-/// @author Phil Bradley
-/// @author Andrew Leaver-Fay
+/// @author Rhiju Das
 
 #ifndef INCLUDED_core_scoring_rna_RNA_LowResolutionPotential_hh
 #define INCLUDED_core_scoring_rna_RNA_LowResolutionPotential_hh

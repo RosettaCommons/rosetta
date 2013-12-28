@@ -41,6 +41,7 @@
 #include <basic/options/keys/robert.OptionKeys.gen.hh>
 #include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/stepwise.OptionKeys.gen.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 #include <basic/options/keys/membrane.OptionKeys.gen.hh>
 #include <basic/options/keys/loopfcst.OptionKeys.gen.hh>
@@ -59,7 +60,6 @@
 #include <basic/options/keys/pb_potential.OptionKeys.gen.hh>
 #include <basic/options/keys/AnchoredDesign.OptionKeys.gen.hh>
 #include <basic/options/keys/MM.OptionKeys.gen.hh>
-#include <basic/options/keys/swa.OptionKeys.gen.hh>
 #include <basic/options/keys/rdc.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>

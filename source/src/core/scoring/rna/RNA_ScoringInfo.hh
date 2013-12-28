@@ -9,8 +9,7 @@
 
 /// @file   core/scoring/methods/RNA_ScoringInfo.hh
 /// @brief  Statistically derived rotamer pair potential class implementation
-/// @author Phil Bradley
-/// @author Andrew Leaver-Fay
+/// @author Rhiju Das
 
 #ifndef INCLUDED_core_scoring_rna_RNA_ScoringInfo_hh
 #define INCLUDED_core_scoring_rna_RNA_ScoringInfo_hh
@@ -30,7 +29,6 @@
 #include <basic/datacache/CacheableData.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // Numceric Headers
 #include <numeric/xyzVector.fwd.hh>

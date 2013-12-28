@@ -9,7 +9,7 @@
 
 /// @file   src/core/scoring/rna/RNA_PairwiseLowResolutionEnergyCreator.hh
 /// @brief  Declaration for the class that connects RNA_PairwiseLowResolutionEnergy with the ScoringManager
-/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Rhiju Das
 
 #ifndef INCLUDED_core_scoring_rna_RNA_PairwiseLowResolutionEnergyCreator_hh
 #define INCLUDED_core_scoring_rna_RNA_PairwiseLowResolutionEnergyCreator_hh

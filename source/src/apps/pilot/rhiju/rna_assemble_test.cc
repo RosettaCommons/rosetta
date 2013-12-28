@@ -53,14 +53,14 @@
 #include <protocols/idealize/idealize.hh>
 #include <protocols/viewer/viewers.hh>
 
-#include <protocols/rna/RNA_StructureParameters.fwd.hh>
-#include <protocols/rna/RNA_StructureParameters.hh>
-#include <protocols/rna/RNA_ChunkLibrary.hh>
-#include <protocols/rna/RNA_ChunkLibrary.fwd.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
-#include <protocols/rna/RNA_HelixAssembler.hh>
-#include <protocols/rna/RNA_LoopCloser.hh>
-#include <protocols/rna/RNA_Minimizer.hh>
+#include <protocols/farna/RNA_StructureParameters.fwd.hh>
+#include <protocols/farna/RNA_StructureParameters.hh>
+#include <protocols/farna/RNA_ChunkLibrary.hh>
+#include <protocols/farna/RNA_ChunkLibrary.fwd.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/stepwise/enumerate/rna/helix/RNA_HelixAssembler.hh>
+#include <protocols/farna/RNA_LoopCloser.hh>
+#include <protocols/farna/RNA_Minimizer.hh>
 
 //Minimizer stuff
 #include <core/kinematics/MoveMap.hh>
@@ -148,7 +148,7 @@ rna_assemble_test()
 	using namespace core::options;
 	using namespace core::options::OptionKeys;
 	using namespace core::io::silent;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 	using namespace core::kinematics;
 	using namespace core::scoring::constraints;
 
@@ -210,7 +210,7 @@ rna_assemble_test()
 	pose.dump_pdb( "chimera.pdb" );
 
 
-	protocols::rna::RNA_LoopCloser rna_loop_closer;
+	protocols::farna::RNA_LoopCloser rna_loop_closer;
 
 	//	ScoreFunctionOP const lores_scorefxn = ScoreFunctionFactory::create_score_function( RNA_LORES_WTS );
 	rna_loop_closer.close_loops_carefully( pose, rna_structure_parameters->connections() );
@@ -249,7 +249,7 @@ void
 score_and_minimize( pose::Pose & pose, pose::Pose const & native_pose,
 										std::string const & tag,
 										std::string const & silent_file,
-										protocols::rna::RNA_ChunkLibrary const & //rna_chunk_library
+										protocols::farna::RNA_ChunkLibrary const & //rna_chunk_library
 										)
 {
 
@@ -266,7 +266,7 @@ score_and_minimize( pose::Pose & pose, pose::Pose const & native_pose,
 	//	std::cout << tag << " --> " << atom_pair_constraint_score << std::endl;
 
 	static SilentFileData silent_file_data;
-	static protocols::rna::RNA_Minimizer rna_minimizer;
+	static protocols::farna::RNA_Minimizer rna_minimizer;
 	rna_minimizer.skip_o2prime_trials( true );
 	//	rna_minimizer.set_allow_insert( rna_chunk_library.allow_insert() );
 
@@ -296,7 +296,7 @@ score_and_minimize( pose::Pose & pose, pose::Pose const & native_pose,
 
 /////////////////////////////////////////////////
 void
-insert_chunk( pose::Pose & pose, protocols::rna::RNA_ChunkLibrary const & rna_chunk_library,
+insert_chunk( pose::Pose & pose, protocols::farna::RNA_ChunkLibrary const & rna_chunk_library,
 							Size const chunk_set_index,
 							utility::vector1 < Size > const & chunk_numbers_in,
 							std::string const & silent_file,
@@ -344,7 +344,7 @@ rna_assemble_all_combinations_test()
 	using namespace core::options;
 	using namespace core::options::OptionKeys;
 	using namespace core::io::silent;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 
 	// setup residue types
 	core::chemical::ResidueTypeSetCAP rsd_set;
@@ -410,7 +410,7 @@ rna_build_helix_test_OLD(){
 	using namespace core::pose;
 	using namespace core::kinematics;
 	using namespace core::io::silent;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 
 	std::string full_sequence;
 	if ( option[ in::file::fasta ].user() ) {
@@ -471,7 +471,7 @@ rna_build_helix_test_precompute(){
 	using namespace core::conformation;
 	using namespace core::io::silent;
 	using namespace core::io::pose_stream;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 
 	std::string full_sequence;
 	if ( option[ in::file::fasta ].user() ) {

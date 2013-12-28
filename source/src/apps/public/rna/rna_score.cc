@@ -37,8 +37,8 @@
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/swa/StepWiseUtil.hh>
-#include <protocols/rna/RNA_StructureParameters.hh>
+#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/farna/RNA_StructureParameters.hh>
 #include <core/pose/PDBInfo.hh>
 
 // C++ headers
@@ -74,7 +74,7 @@ rna_score_test()
 	using namespace core::io::silent;
 	using namespace core::import_pose::pose_stream;
 	using namespace core::pose::full_model_info;
-	using namespace protocols::swa;
+	using namespace protocols::stepwise;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -149,7 +149,7 @@ rna_score_test()
 		input->fill_pose( pose, *rsd_set );
 		i++;
 
-		protocols::rna::RNA_StructureParameters parameters;
+		protocols::farna::RNA_StructureParameters parameters;
                 if ( option[params_file].user() ) {
                         parameters.initialize(
                                         pose, option[params_file],

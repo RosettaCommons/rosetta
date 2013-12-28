@@ -18,7 +18,6 @@
 // Package Headers
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/HarmonicFunc.fwd.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
@@ -35,7 +34,6 @@
 
 // Utility headers
 #include <numeric/conversions.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 #include <core/conformation/Residue.hh>
 #include <utility/vector1.hh>

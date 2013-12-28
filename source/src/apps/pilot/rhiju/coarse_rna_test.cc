@@ -69,14 +69,14 @@
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 
 #include <protocols/toolbox/AllowInsert.hh>
-#include <protocols/rna/MultipleDomainMover.hh>
-#include <protocols/rna/RNA_ChunkLibrary.hh>
-#include <protocols/rna/RNA_DataReader.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
-#include <protocols/rna/RNA_SecStructInfo.hh>
-#include <protocols/rna/RNA_StructureParameters.hh>
-#include <protocols/swa/rna/StepWiseRNA_Util.hh>
-#include <protocols/swa/StepWiseUtil.hh>
+#include <protocols/farna/MultipleDomainMover.hh>
+#include <protocols/farna/RNA_ChunkLibrary.hh>
+#include <protocols/farna/RNA_DataReader.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/RNA_SecStructInfo.hh>
+#include <protocols/farna/RNA_StructureParameters.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/StepWiseUtil.hh>
 #include <protocols/coarse_rna/CoarseRNA_DeNovoProtocol.hh>
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.hh>
 
@@ -191,7 +191,7 @@ coarse_frag_test(){
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "coarse_rna" );
 	Pose pose;
-	protocols::rna::make_extended_coarse_pose( pose, fasta_sequence.sequence() );
+	protocols::farna::make_extended_coarse_pose( pose, fasta_sequence.sequence() );
 
 	// visualize it.
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
@@ -233,14 +233,14 @@ coarse_frag_test(){
 
 /////////////////////////////////////////////////
 void
-pdb_stats( pose::Pose const & pose, utility::vector1< protocols::swa::rna::PuckerState > const & pucker_states ) {
+pdb_stats( pose::Pose const & pose, utility::vector1< protocols::stepwise::enumerate::rna::PuckerState > const & pucker_states ) {
 
 	using namespace core::id;
 	using namespace core::chemical::rna;
 	using namespace core::kinematics;
 	using numeric::angle_radians;
 	using numeric::conversions::degrees;
-	using namespace protocols::swa::rna;
+	using namespace protocols::stepwise::enumerate::rna;
 
 	utility::io::ozstream out1( "dists_angles_torsions.txt" );
 	utility::io::ozstream out2( "cen_xyz_diff_frames.txt" );
@@ -391,10 +391,10 @@ icoor_test(){
 	// Figure out icoor
 	std::string full_sequence = "acguacguacgu";
 	make_pose_from_sequence( pose, full_sequence, *rsd_set );
-	protocols::rna::make_coarse_pose( pose, coarse_pose );
+	protocols::farna::make_coarse_pose( pose, coarse_pose );
 	coarse_pose.dump_pdb( "extended.pdb" );
 
-	protocols::rna::make_extended_coarse_pose( coarse_pose, pose.sequence() );
+	protocols::farna::make_extended_coarse_pose( coarse_pose, pose.sequence() );
 	coarse_pose.dump_pdb( "coarse_extended.pdb" );
 }
 
@@ -406,7 +406,7 @@ convert_to_coarse_test(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -417,7 +417,7 @@ convert_to_coarse_test(){
 	import_pose::pose_from_pdb( pose, *rsd_set, infile );
 	figure_out_reasonable_rna_fold_tree( pose );
 
-	protocols::rna::make_coarse_pose( pose, coarse_pose );
+	protocols::farna::make_coarse_pose( pose, coarse_pose );
 	std::cout << "--------------------" << std::endl;
 	std::cout << "Check out coarse.pdb" << std::endl;
 	std::cout << "--------------------" << std::endl;
@@ -450,8 +450,8 @@ output_minipose_coords_test(){
 	std::string infile  = option[ in ::file::s ][1];
 	import_pose::pose_from_pdb( pose, *rsd_set, infile );
 
-	protocols::rna::figure_out_secstruct( pose );
-	std::string secstruct( protocols::rna::get_rna_secstruct( pose ) );
+	protocols::farna::figure_out_secstruct( pose );
+	std::string secstruct( protocols::farna::get_rna_secstruct( pose ) );
 
 	utility::io::ozstream out1( "coarse_coords.txt" );
 
@@ -481,7 +481,7 @@ pdbstats_test(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
-	using namespace protocols::swa::rna;
+	using namespace protocols::stepwise::enumerate::rna;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -494,7 +494,7 @@ pdbstats_test(){
 	utility::vector1< PuckerState > pucker_states;
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) pucker_states.push_back( Get_residue_pucker_state( pose, n ) );
 
-	protocols::rna::make_coarse_pose( pose, coarse_pose );
+	protocols::farna::make_coarse_pose( pose, coarse_pose );
 	coarse_pose.dump_pdb( "coarse.pdb" );
 
 	// How about some pdb_stats?
@@ -586,9 +586,9 @@ create_bp_jump_database_test( ){
 void
 general_initialize( 	pose::Pose & pose,
 											pose::PoseOP & native_pose,
-											protocols::rna::RNA_StructureParametersOP & rna_structure_parameters_,
+											protocols::farna::RNA_StructureParametersOP & rna_structure_parameters_,
 											protocols::coarse_rna::CoarseRNA_LoopCloserOP & rna_loop_closer_,
-											protocols::rna::RNA_ChunkLibraryOP & rna_chunk_library_,
+											protocols::farna::RNA_ChunkLibraryOP & rna_chunk_library_,
 											protocols::toolbox::AllowInsertOP &  allow_insert_
 ){
 
@@ -599,7 +599,7 @@ general_initialize( 	pose::Pose & pose,
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::coarse_rna;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 	using namespace core::pose;
 
 	///////////////////////////////////////////////////////////////////////////
@@ -608,7 +608,7 @@ general_initialize( 	pose::Pose & pose,
 	// read in desired sequence.
 	core::sequence::Sequence fasta_sequence = *(core::sequence::read_fasta_file( option[ in::file::fasta ]()[1] )[1]);
 
-	protocols::rna::make_extended_coarse_pose( pose, fasta_sequence.sequence() );
+	protocols::farna::make_extended_coarse_pose( pose, fasta_sequence.sequence() );
 	pose.dump_pdb( "extended.pdb" );
 
 	// native?
@@ -632,9 +632,9 @@ general_initialize( 	pose::Pose & pose,
 
 	utility::vector1< Size > input_res_( option[ input_res ]() );
 	if( input_res_.size() > 0 ) {
-		rna_chunk_library_ = new protocols::rna::RNA_ChunkLibrary( chunk_silent_files_, pose, input_res_ );
+		rna_chunk_library_ = new protocols::farna::RNA_ChunkLibrary( chunk_silent_files_, pose, input_res_ );
 	} else {
-		rna_chunk_library_ = new protocols::rna::RNA_ChunkLibrary( chunk_silent_files_, pose, rna_structure_parameters_->connections() );
+		rna_chunk_library_ = new protocols::farna::RNA_ChunkLibrary( chunk_silent_files_, pose, rna_structure_parameters_->connections() );
 	}
 
 	rna_structure_parameters_->set_allow_insert( rna_chunk_library_->allow_insert() );
@@ -673,7 +673,7 @@ coarse_rb_test(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::coarse_rna;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 	using namespace protocols::moves;
 	using namespace protocols::toolbox;
 	using namespace core::pose;
@@ -885,7 +885,7 @@ pdb_little_motif_test(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::coarse_rna;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 	using namespace core::pose;
 
 	// native?
@@ -895,7 +895,7 @@ pdb_little_motif_test(){
 	std::string infile  = option[ in::file::s ][1];
 	import_pose::pose_from_pdb( pose, *rsd_set_coarse, infile );
 
-	protocols::rna::make_coarse_pose( pose, coarse_pose );
+	protocols::farna::make_coarse_pose( pose, coarse_pose );
 
 	std::map< Size, Size > partner;
 	figure_out_base_pair_partner( pose, partner );
@@ -1067,7 +1067,7 @@ determine_delx_dely_delz_alpha_beta_gamma( pose::Pose const & pose,
 	Real const	delz = centroid2(3) - centroid1(3);
 
 	Real alpha, beta, gamma;
-	protocols::swa::get_euler_angles( alpha, beta, gamma, M1, M2, false /*verbose*/ );
+	protocols::stepwise::get_euler_angles( alpha, beta, gamma, M1, M2, false /*verbose*/ );
 
 	out << alpha << ' ' << beta << ' ' << gamma << ' ' << delx << ' ' << dely << ' ' << delz << std::endl;
 
@@ -1084,7 +1084,7 @@ tar_motif_test(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::coarse_rna;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 	using namespace core::pose;
 
 	pose::Pose pose;
@@ -1134,7 +1134,7 @@ tar_motif_test(){
 			}
 
 			Pose mini_pose;
-			protocols::swa::pdbslice( mini_pose, pose, motif_res );
+			protocols::stepwise::pdbslice( mini_pose, pose, motif_res );
 
 			reorient_to_base_pair_coordinate_system( mini_pose, 1, motif_res.size() );
 
@@ -1174,7 +1174,7 @@ mismatch_test(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::coarse_rna;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 	using namespace core::pose;
 
 	pose::Pose pose;
@@ -1225,7 +1225,7 @@ mismatch_test(){
 			for ( Size k = 0; k <= 2; k++ )	 motif_res.push_back( partner[i+2] + k );
 
 			Pose mini_pose;
-			protocols::swa::pdbslice( mini_pose, pose, motif_res );
+			protocols::stepwise::pdbslice( mini_pose, pose, motif_res );
 
 			reorient_to_base_pair_coordinate_system( mini_pose, 1, motif_res.size() );
 
@@ -1259,7 +1259,7 @@ enumerate_map_test(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::coarse_rna;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 	using namespace protocols::toolbox;
 	using namespace core::pose;
 
@@ -1498,7 +1498,7 @@ coarse_to_full_test( ){
 	make_pose_from_sequence( pose_scratch, pose_coarse.sequence(), *rsd_set_full );
 	pose_scratch.dump_pdb( "scratch_full.pdb" );
 
-	protocols::rna::make_coarse_pose( pose_scratch, pose_scratch_coarsened );
+	protocols::farna::make_coarse_pose( pose_scratch, pose_scratch_coarsened );
 	pose_scratch.dump_pdb( "scratch_coarse.pdb" );
 
 	Pose pose = pose_scratch;
@@ -1550,7 +1550,7 @@ coarse_rna_denovo_test(){
 
 	// create extended coarse grained pose.
 	pose::Pose pose;
-	protocols::rna::make_extended_coarse_pose( pose, fasta_sequence.sequence() );
+	protocols::farna::make_extended_coarse_pose( pose, fasta_sequence.sequence() );
 
 	// native?
 	pose::PoseOP native_pose;

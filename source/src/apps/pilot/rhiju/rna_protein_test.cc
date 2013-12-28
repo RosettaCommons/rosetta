@@ -88,8 +88,8 @@
 #include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
-// AUTO-REMOVED #include <protocols/rna/RNA_FragmentsClasses.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_DeNovoProtocol.hh>
+// AUTO-REMOVED #include <protocols/farna/RNA_FragmentsClasses.hh>
+// AUTO-REMOVED #include <protocols/farna/RNA_DeNovoProtocol.hh>
 
 //Job dsitributor
 #include <protocols/jobdist/JobDistributors.hh>

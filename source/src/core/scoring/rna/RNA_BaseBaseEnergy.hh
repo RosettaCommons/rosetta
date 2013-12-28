@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/rna/RNA_BaseBaseEnergy.hh
-/// @brief  Statistically derived rotamer pair potential class declaration
-/// @author Phil Bradley
+/// @brief  Statistically derived base-base energy
+/// @author Rhiju Das
 
 
 #ifndef INCLUDED_core_scoring_rna_RNA_BaseBaseEnergy_hh

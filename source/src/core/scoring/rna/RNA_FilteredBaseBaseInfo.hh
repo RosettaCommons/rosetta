@@ -8,9 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/methods/RNA_FilteredBaseBasePotential.hh
-/// @brief  Statistically derived rotamer pair potential class implementation
-/// @author Phil Bradley
-/// @author Andrew Leaver-Fay
+/// @brief  Statistically derived RNA potential
+/// @author Rhiju Das
 
 #ifndef INCLUDED_core_scoring_rna_RNA_FilteredBaseBaseInfo_hh
 #define INCLUDED_core_scoring_rna_RNA_FilteredBaseBaseInfo_hh
@@ -21,7 +20,6 @@
 //#include <core/conformation/Residue.fwd.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.fwd.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/rna/RNA_DataInfo.hh>
@@ -29,7 +27,6 @@
 #include <basic/datacache/CacheableData.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // ObjexxFCL
 #include <ObjexxFCL/FArray2D.hh>

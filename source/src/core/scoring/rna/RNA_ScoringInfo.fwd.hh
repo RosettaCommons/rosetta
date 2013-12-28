@@ -15,13 +15,10 @@
 #ifndef INCLUDED_core_scoring_rna_RNA_ScoringInfo_fwd_hh
 #define INCLUDED_core_scoring_rna_RNA_ScoringInfo_fwd_hh
 
-// AUTO-REMOVED #include <core/types.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>

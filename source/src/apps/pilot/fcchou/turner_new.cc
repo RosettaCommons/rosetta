@@ -24,7 +24,7 @@
 #include <protocols/viewer/viewers.hh>
 
 #include <protocols/moves/SimulatedTempering.hh>
-#include <protocols/rna/RNA_HelixAssembler.hh>
+#include <protocols/stepwise/enumerate/rna/helix/RNA_HelixAssembler.hh>
 #include <protocols/rotamer_sampler/rna/RNA_McSuite.hh>
 #include <protocols/rotamer_sampler/rna/RNA_McMultiSuite.hh>
 
@@ -122,7 +122,7 @@ PoseOP pose_setup(
 	std::string const & seq2,
 	Size const len1
 ) {
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 	RNA_HelixAssembler assembler;
 	assembler.use_phenix_geo( true );
 	PoseOP pose( assembler.build_init_pose( seq1, seq2 ) );

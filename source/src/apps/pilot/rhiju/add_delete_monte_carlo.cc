@@ -85,24 +85,24 @@
 
 //////////////////////////////////////////////////////////
 #include <protocols/viewer/viewers.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
-#include <protocols/rna/RNA_LoopCloser.hh>
-#include <protocols/swa/rna/StepWiseRNA_PoseSetupFromCommandLine.hh>
-#include <protocols/swa/rna/StepWiseRNA_OutputData.hh>
-#include <protocols/swa/rna/StepWiseRNA_ResidueSampler.hh>
-#include <protocols/swa/rna/StepWiseRNA_PoseSetup.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_PoseSetup.hh>
-#include <protocols/swa/rna/StepWiseRNA_JobParametersSetup.hh>
-#include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/RNA_LoopCloser.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_PoseSetupFromCommandLine.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_OutputData.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_ResidueSampler.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_PoseSetup.fwd.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_PoseSetup.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_JobParametersSetup.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_JobParameters.hh>
 
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <protocols/swa/monte_carlo/RNA_AddMover.hh>
-#include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
-#include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.hh>
-#include <protocols/swa/monte_carlo/RNA_O2PrimeMover.hh>
-#include <protocols/swa/monte_carlo/RNA_TorsionMover.hh>
-#include <protocols/swa/monte_carlo/RNA_AddDeleteMonteCarlo.hh>
-#include <protocols/swa/monte_carlo/SWA_Move.hh>
+#include <protocols/stepwise/monte_carlo/rna/RNA_AddMover.hh>
+#include <protocols/stepwise/monte_carlo/rna/RNA_DeleteMover.hh>
+#include <protocols/stepwise/monte_carlo/rna/RNA_AddOrDeleteMover.hh>
+#include <protocols/stepwise/monte_carlo/rna/RNA_O2PrimeMover.hh>
+#include <protocols/stepwise/monte_carlo/rna/RNA_TorsionMover.hh>
+#include <protocols/stepwise/monte_carlo/rna/RNA_AddDeleteMonteCarlo.hh>
+#include <protocols/stepwise/monte_carlo/SWA_Move.hh>
 
 #include <numeric/random/random.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -272,7 +272,7 @@ OPT_KEY( Boolean, start_added_residue_in_aform )
 OPT_KEY( Boolean, skip_delete )
 OPT_KEY( Boolean, disallow_deletion_of_last_residue )
 
-using namespace protocols::swa::monte_carlo;
+using namespace protocols::stepwise::monte_carlo;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -285,7 +285,8 @@ swa_rna_sample()
   using namespace core::scoring;
   using namespace core::io::silent;
   using namespace core::pose::full_model_info;
-	using namespace protocols::swa::rna;
+	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::monte_carlo::rna;
 	using namespace protocols::moves;
 
 	clock_t const time_start( clock() );

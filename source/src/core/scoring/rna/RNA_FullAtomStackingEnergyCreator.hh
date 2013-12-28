@@ -9,7 +9,7 @@
 
 /// @file   src/core/scoring/rna/RNA_FullAtomStackingEnergyCreator.hh
 /// @brief  Declaration for the class that connects RNA_FullAtomStackingEnergy with the ScoringManager
-/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Rhiju Das
 
 #ifndef INCLUDED_core_scoring_rna_RNA_FullAtomStackingEnergyCreator_hh
 #define INCLUDED_core_scoring_rna_RNA_FullAtomStackingEnergyCreator_hh

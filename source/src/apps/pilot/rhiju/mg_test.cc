@@ -34,7 +34,7 @@
 #include <core/id/AtomID.hh>
 #include <core/kinematics/Jump.hh>
 
-#include <protocols/swa/StepWiseUtil.hh>
+#include <protocols/stepwise/StepWiseUtil.hh>
 #include <protocols/viewer/viewers.hh>
 
 #include <basic/options/option.hh>
@@ -107,7 +107,7 @@ void	strip_out_magnesiums( pose::Pose & pose ){
 		slice_res.push_back( n );
 	}
 
-	protocols::swa::pdbslice( pose, slice_res );
+	protocols::stepwise::pdbslice( pose, slice_res );
 
 }
 

@@ -48,18 +48,18 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 //StepWiseProtein!
-#include <protocols/swa/StepWiseClusterer.hh>
-#include <protocols/swa/StepWisePoseSetup.hh>
-#include <protocols/swa/StepWisePoseSampleGenerator.hh>
-#include <protocols/swa/StepWiseDoNothingSampleGenerator.hh>
-#include <protocols/swa/InputStreamWithResidueInfo.hh>
-#include <protocols/swa/protein/StepWiseProteinMainChainSampleGenerator.hh>
-#include <protocols/swa/protein/StepWiseProteinPoseSetup.hh>
-#include <protocols/swa/protein/StepWiseProteinScreener.hh>
-#include <protocols/swa/protein/StepWiseProteinUtil.hh>
-#include <protocols/swa/protein/StepWiseProteinResidueSampler.hh>
-#include <protocols/swa/protein/StepWiseProteinPacker.hh>
-#include <protocols/swa/protein/MainChainTorsionSet.hh>
+#include <protocols/stepwise/StepWiseClusterer.hh>
+#include <protocols/stepwise/StepWisePoseSetup.hh>
+#include <protocols/stepwise/StepWisePoseSampleGenerator.hh>
+#include <protocols/stepwise/StepWiseDoNothingSampleGenerator.hh>
+#include <protocols/stepwise/InputStreamWithResidueInfo.hh>
+#include <protocols/stepwise/protein/StepWiseProteinMainChainSampleGenerator.hh>
+#include <protocols/stepwise/protein/StepWiseProteinPoseSetup.hh>
+#include <protocols/stepwise/protein/StepWiseProteinScreener.hh>
+#include <protocols/stepwise/protein/StepWiseProteinUtil.hh>
+#include <protocols/stepwise/protein/StepWiseProteinResidueSampler.hh>
+#include <protocols/stepwise/protein/StepWiseProteinPacker.hh>
+#include <protocols/stepwise/protein/MainChainTorsionSet.hh>
 
 //clustering
 #include <protocols/cluster/cluster.hh>
@@ -351,7 +351,7 @@ each_aa_test(){
 	using namespace core::pose;
 	using namespace core::scoring;
 	using namespace protocols::swa;
-	using namespace protocols::swa::protein;
+	using namespace protocols::stepwise::protein;
 
 	utility::vector1< Size > blank_size_vector;
 	Size cutpoint_closed = 0;

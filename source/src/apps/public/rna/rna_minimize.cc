@@ -41,10 +41,10 @@
 #include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
-#include <protocols/rna/RNA_StructureParameters.hh>
-#include <protocols/rna/RNA_Minimizer.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
-#include <protocols/swa/StepWiseUtil.hh> // for other_pose.
+#include <protocols/farna/RNA_StructureParameters.hh>
+#include <protocols/farna/RNA_Minimizer.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/stepwise/StepWiseUtil.hh> // for other_pose.
 #include <protocols/toolbox/AllowInsert.hh>
 
 // C++ headers
@@ -88,8 +88,8 @@ rna_fullatom_minimize_test()
 	using namespace core::import_pose::pose_stream;
 	using namespace core::pose::full_model_info;
 	using namespace protocols::toolbox;
-	using namespace protocols::rna;
-	using namespace protocols::swa;
+	using namespace protocols::farna;
+	using namespace protocols::stepwise;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -129,7 +129,7 @@ rna_fullatom_minimize_test()
 	}
 
 	// minimizer setup
-	protocols::rna::RNA_Minimizer rna_minimizer;
+	protocols::farna::RNA_Minimizer rna_minimizer;
 	rna_minimizer.deriv_check( option[ OptionKeys::rna::deriv_check ]() );
 	rna_minimizer.use_coordinate_constraints( !option[ OptionKeys::rna::skip_coord_constraints]() );
 	rna_minimizer.skip_o2prime_trials( option[ OptionKeys::rna::skip_o2prime_trials] );
@@ -210,7 +210,7 @@ rna_fullatom_minimize_test()
 			utility::vector1< Size > superimpose_res;
 			for ( Size k = 1; k <= pose.total_residue(); ++k ) superimpose_res.push_back( k );
 			core::id::AtomID_Map< id::AtomID > const & alignment_atom_id_map_native =
-			protocols::swa::create_alignment_id_map( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
+			protocols::stepwise::create_alignment_id_map( pose, native_pose, superimpose_res ); // perhaps this should move to toolbox.
 			core::scoring::superimpose_pose( pose, native_pose, alignment_atom_id_map_native );
 			core::scoring::superimpose_pose( pose_init, native_pose, alignment_atom_id_map_native );
 		}

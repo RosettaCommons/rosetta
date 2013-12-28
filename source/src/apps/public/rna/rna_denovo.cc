@@ -33,9 +33,9 @@
 #include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
-#include <protocols/rna/RNA_DeNovoProtocol.hh>
-#include <protocols/rna/RNA_StructureParameters.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/RNA_DeNovoProtocol.hh>
+#include <protocols/farna/RNA_StructureParameters.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
 //#include <protocols/moves/PyMolMover.hh>
 
 // C++ headers
@@ -118,7 +118,7 @@ rna_denovo_test()
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////
@@ -201,7 +201,7 @@ rna_denovo_test()
 	bool const relax_structure = option[ relax_rna ];
 	bool const is_allow_bulge = option[ allow_bulge ];
 
-  protocols::rna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct,
+  protocols::farna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct,
                                                            silent_file,
                                                            heat_structure,
                                                            minimize_structure,
@@ -363,7 +363,6 @@ try {
 	// setup
 	////////////////////////////////////////////////////////////////////////////
 	core::init::init(argc, argv);
-
 
 	////////////////////////////////////////////////////////////////////////////
 	// end of setup

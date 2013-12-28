@@ -27,7 +27,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray3D.fwd.hh>

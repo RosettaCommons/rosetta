@@ -83,21 +83,21 @@
 
 
 //////////////////////////////////////////////////////////
-#include <protocols/swa/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
-#include <protocols/swa/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.hh>
-#include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_Minimizer.hh>
-#include <protocols/swa/rna/StepWiseRNA_AnalyticalLoopCloseSampler.hh>
-#include <protocols/swa/rna/StepWiseRNA_PoseSetup.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_PoseSetup.hh>
-#include <protocols/swa/rna/StepWiseRNA_Clusterer.hh>
-#include <protocols/swa/rna/StepWiseRNA_JobParametersSetup.hh>
-#include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
-#include <protocols/swa/StepWiseClusterer.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_BaseCentroidScreener.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Minimizer.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_AnalyticalLoopCloseSampler.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_PoseSetup.fwd.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_PoseSetup.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Clusterer.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_JobParametersSetup.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_JobParameters.hh>
+#include <protocols/stepwise/StepWiseClusterer.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_VDW_BinScreener.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
@@ -237,7 +237,7 @@ get_working_directory() {
 
 utility::vector1< core::Size >
 get_fixed_res ( core::Size const nres ) {
-	using namespace protocols::swa::rna;
+	using namespace protocols::stepwise::enumerate::rna;
 	utility::vector1< Size > actual_fixed_res_list;
 	actual_fixed_res_list.clear();
 	utility::vector1< core::Size > const fixed_res_list = option[ fixed_res  ]();
@@ -302,7 +302,7 @@ is_nonempty_input_silent_file ( std::string const input_silent_file, std::string
 
 utility::vector1< core::Size >
 get_input_res ( core::Size const nres , std::string const pose_num ) {
-	using namespace protocols::swa::rna;
+	using namespace protocols::stepwise::enumerate::rna;
 	utility::vector1< core::Size > input_res_list;
 	utility::vector1< core::Size > missing_res_list;
 
@@ -343,7 +343,7 @@ get_input_res ( core::Size const nres , std::string const pose_num ) {
 
 utility::vector1< std::string >
 get_silent_file_tags() {
-	using namespace protocols::swa::rna;
+	using namespace protocols::stepwise::enumerate::rna;
 	bool tags_from_command_line = false;
 	bool tags_from_filterer_outfile = false;
 	utility::vector1< std::string > input_silent_file_tags;
@@ -454,9 +454,9 @@ create_scorefxn() {
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-protocols::swa::rna::StepWiseRNA_JobParametersOP
+protocols::stepwise::enumerate::rna::StepWiseRNA_JobParametersOP
 setup_rna_job_parameters ( bool check_for_previously_closed_cutpoint_with_input_pose = false ) {
-	using namespace protocols::swa::rna;
+	using namespace protocols::stepwise::enumerate::rna;
 	using namespace ObjexxFCL;
 	///////////////////////////////
 	// Read in sequence.
@@ -512,7 +512,7 @@ setup_rna_job_parameters ( bool check_for_previously_closed_cutpoint_with_input_
 
 
 void
-setup_copy_DOF_input ( protocols::swa::rna::StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup ) {
+setup_copy_DOF_input ( protocols::stepwise::enumerate::rna::StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup ) {
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// StepWisePoseSetup should create the starting pose.
 	// This class might eventually be united with the protein StepWisePoseSetup.
@@ -558,14 +558,14 @@ setup_copy_DOF_input ( protocols::swa::rna::StepWiseRNA_PoseSetupOP & stepwise_r
 	stepwise_rna_pose_setup->set_silent_files_in ( silent_files_in );
 }
 
-protocols::swa::rna::StepWiseRNA_PoseSetupOP
-setup_pose_setup_class(protocols::swa::rna::StepWiseRNA_JobParametersOP & job_parameters, bool const copy_DOF=true){
+protocols::stepwise::enumerate::rna::StepWiseRNA_PoseSetupOP
+setup_pose_setup_class(protocols::stepwise::enumerate::rna::StepWiseRNA_JobParametersOP & job_parameters, bool const copy_DOF=true){
 
   using namespace core::pose;
   using namespace core::chemical;
   using namespace core::kinematics;
   using namespace core::scoring;
-	using namespace protocols::swa::rna;
+	using namespace protocols::stepwise::enumerate::rna;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -577,7 +577,7 @@ setup_pose_setup_class(protocols::swa::rna::StepWiseRNA_JobParametersOP & job_pa
 		import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
 		std::cout << "native_pose->fold_tree(): " << native_pose->fold_tree();
 		std::cout << "native_pose->annotated_sequence(true): " << native_pose->annotated_sequence( true ) << std::endl;
-		protocols::rna::make_phosphate_nomenclature_matches_mini( *native_pose);
+		protocols::farna::make_phosphate_nomenclature_matches_mini( *native_pose);
 	}
 
 
@@ -607,7 +607,7 @@ rna_resample_test() {
 	using namespace core::chemical;
 	using namespace core::kinematics;
 	using namespace core::scoring;
-	using namespace protocols::swa::rna;
+	using namespace protocols::stepwise::enumerate::rna;
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set ( RNA );
 

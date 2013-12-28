@@ -9,7 +9,7 @@
 
 /// @file   src/core/scoring/rna/RNA_DataBackboneEnergyCreator.hh
 /// @brief  Declaration for the class that connects RNA_DataBackboneEnergy with the ScoringManager
-/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Rhiju Das
 
 #ifndef INCLUDED_core_scoring_rna_RNA_DataBackboneEnergyCreator_hh
 #define INCLUDED_core_scoring_rna_RNA_DataBackboneEnergyCreator_hh

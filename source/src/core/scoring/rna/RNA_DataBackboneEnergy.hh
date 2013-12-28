@@ -9,7 +9,6 @@
 
 /// @file   core/scoring/rna/RNA_DataBackboneEnergy.hh
 /// @brief  Statistically derived rotamer pair potential class declaration
-/// @author Phil Bradley
 /// @author Rhiju Das
 
 
@@ -28,7 +27,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 #include <utility/vector1.hh>
 

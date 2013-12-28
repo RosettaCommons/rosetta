@@ -48,7 +48,7 @@
 #include <core/import_pose/import_pose.hh>
 
 
-#include <protocols/swa/StepWiseUtil.hh> //has euler angle stuff.
+#include <protocols/stepwise/StepWiseUtil.hh> //has euler angle stuff.
 
 #include <protocols/viewer/viewers.hh>
 
@@ -206,7 +206,7 @@ centroid_dist( core::pose::Pose & pose ){
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-// This is imported from protocols/swa/RigidBodySampler.cco
+// This is imported from protocols/stepwise/RigidBodySampler.cco
 Real
 sample_all_rotations_at_jump( pose::Pose & pose, Size const num_jump, scoring::ScoreFunctionOP scorefxn = 0 ){
 
@@ -251,7 +251,7 @@ sample_all_rotations_at_jump( pose::Pose & pose, Size const num_jump, scoring::S
 
 			for ( gamma_ = gamma_min_local; gamma_ <= gamma_max_local;  gamma_ += gamma_increment_local ){
 
-				protocols::swa::create_euler_rotation( M, alpha_, beta_, gamma_, axis1, axis2, axis3 );
+				protocols::stepwise::create_euler_rotation( M, alpha_, beta_, gamma_, axis1, axis2, axis3 );
 
 				kinematics::Jump jump = pose.jump( num_jump );
 				jump.set_rotation( M );

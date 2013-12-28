@@ -37,7 +37,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Ramachandran.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
 
 #include <protocols/viewer/viewers.hh>
 
@@ -62,7 +62,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 //StepWise!
-#include <protocols/swa/StepWiseClusterer.hh>
+#include <protocols/stepwise/StepWiseClusterer.hh>
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/ccd_closure.hh>
@@ -130,9 +130,9 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray1D.hh>
 //RNA stuff.
-//#include <protocols/rna/RNA_FragmentsClasses.hh>
-//#include <protocols/rna/RNA_DeNovoProtocol.hh>
-//#include <protocols/rna/RNA_StructureParameters.hh>
+//#include <protocols/farna/RNA_FragmentsClasses.hh>
+//#include <protocols/farna/RNA_DeNovoProtocol.hh>
+//#include <protocols/farna/RNA_StructureParameters.hh>
 
 //Job dsitributor
 #include <protocols/jobdist/JobDistributors.hh>

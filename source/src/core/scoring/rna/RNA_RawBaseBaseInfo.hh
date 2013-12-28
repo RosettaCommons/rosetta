@@ -9,8 +9,7 @@
 
 /// @file   core/scoring/methods/RNA_RawBaseBasePotential.hh
 /// @brief  Statistically derived rotamer pair potential class implementation
-/// @author Phil Bradley
-/// @author Andrew Leaver-Fay
+/// @author Rhiju Das
 
 #ifndef INCLUDED_core_scoring_rna_RNA_RawBaseBaseInfo_hh
 #define INCLUDED_core_scoring_rna_RNA_RawBaseBaseInfo_hh
@@ -21,11 +20,9 @@
 //#include <core/conformation/Residue.fwd.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>

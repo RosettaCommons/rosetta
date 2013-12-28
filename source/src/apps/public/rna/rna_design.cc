@@ -55,9 +55,9 @@
 #include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
-// AUTO-REMOVED #include <protocols/rna/RNA_DeNovoProtocol.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_StructureParameters.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
+// AUTO-REMOVED #include <protocols/farna/RNA_DeNovoProtocol.hh>
+// AUTO-REMOVED #include <protocols/farna/RNA_StructureParameters.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
 
 
 // C++ headers
@@ -117,7 +117,7 @@ rna_sequence_recovery_metrics( pose::Pose const & reference_pose, utility::vecto
 	// Get information on ss, ds, ts residues in native pose.
 	Size const nres = pose.total_residue();
 	FArray1D_int struct_type( nres, -1 );
-	protocols::rna::check_base_pair( pose, struct_type );
+	protocols::farna::check_base_pair( pose, struct_type );
 
 	FArray1D_float recovery( nres, 0.0 );
 	for (Size n = 1; n <= pose_list.size(); n++ ) {
@@ -196,7 +196,7 @@ rna_design_test()
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
 	core::import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
-	protocols::rna::ensure_phosphate_nomenclature_matches_mini( pose );
+	protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
 
 	dump_pdb( pose, "start.pdb");
 	pose::Pose save_pose( pose );
@@ -256,7 +256,7 @@ rna_design_test()
 	std::string outfile( pdb_file );
 	Size pos( pdb_file.find( ".pdb" ) );
 	outfile.replace( pos, 4, ".pack.txt" );
-	protocols::rna::export_packer_results( results, pose_list, scorefxn, outfile, option[ dump ] );
+	protocols::farna::export_packer_results( results, pose_list, scorefxn, outfile, option[ dump ] );
 
 	std::string sequence_recovery_file( pdb_file );
 	sequence_recovery_file.replace( pos, 4, ".sequence_recovery.txt" );
@@ -289,7 +289,7 @@ ss_ds_ts_assign_test()
 	for (Size n = 1; n <= pdb_files.size(); n++ )  {
 		std::string const & pdb_file = pdb_files[ n ] ;
 		core::import_pose::pose_from_pdb( *pose_op, *rsd_set, pdb_file );
-		protocols::rna::ensure_phosphate_nomenclature_matches_mini( *pose_op );
+		protocols::farna::ensure_phosphate_nomenclature_matches_mini( *pose_op );
 
 		std::string sequence_recovery_file( pdb_file );
 		Size pos( pdb_file.find( ".pdb" ) );

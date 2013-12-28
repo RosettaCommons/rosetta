@@ -22,7 +22,6 @@
 // Project headers
 
 // Utility headers
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>

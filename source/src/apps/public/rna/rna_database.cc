@@ -27,7 +27,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/swa/StepWiseUtil.hh>
+#include <protocols/stepwise/StepWiseUtil.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/init/init.hh>
@@ -44,7 +44,7 @@
 #include <ObjexxFCL/format.hh>
 
 //RNA stuff.
-#include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
 
 
 // C++ headers
@@ -112,10 +112,10 @@ create_rna_vall_torsions_test( ){
 	  pose::Pose pose;
 		core::import_pose::pose_from_pdb( pose, *rsd_set, infiles[n] );
 	  /////////////////////////////////////////
-	  protocols::rna::make_phosphate_nomenclature_matches_mini( pose );
+	  protocols::farna::make_phosphate_nomenclature_matches_mini( pose );
 	  /////////////////////////////////////////
 
-		protocols::rna::create_rna_vall_torsions( pose, torsions_out, exclude_res_list );
+		protocols::farna::create_rna_vall_torsions( pose, torsions_out, exclude_res_list );
 
 		std::cout << "***********************************************************" << std::endl;
 		std::cout << "Put torsions from PDB file " <<  infiles[n] << " into " << outfile << std::endl;
@@ -277,7 +277,7 @@ create_bp_jump_database_test( ){
 	using namespace core::scoring::rna;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 
 	utility::vector1< core::Size > const exclude_res_list = option[exclude_res]();
 
@@ -430,8 +430,8 @@ create_base_pair_step_database_test( ){
 	using namespace core::io::silent;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	using namespace protocols::rna;
-	using namespace protocols::swa;
+	using namespace protocols::farna;
+	using namespace protocols::stepwise;
 
 	utility::vector1< core::Size > const exclude_res_list = option[exclude_res]();
 
@@ -468,7 +468,7 @@ create_base_pair_step_database_test( ){
 				utility::vector1< int > const base_pair_res = utility::tools::make_vector1( i, i+1, j-1, j);
 
 				pose::Pose bps_pose;
-				protocols::swa::pdbslice( bps_pose, pose, base_pair_res );
+				protocols::stepwise::pdbslice( bps_pose, pose, base_pair_res );
 
 				std::string bps_seq = get_bps_seq( base_pair_res, sequence );
 				std::string bps_tag = get_bps_tag( base_pair_res, intag, pose );

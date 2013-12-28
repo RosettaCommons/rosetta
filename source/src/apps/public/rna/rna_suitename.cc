@@ -24,7 +24,7 @@
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
 
 // C++ headers
 #include <iostream>
@@ -51,7 +51,7 @@ rna_suitename()
 	using namespace core::import_pose::pose_stream;
 	using namespace core::chemical;
 	using namespace core::pose::rna;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -69,9 +69,9 @@ rna_suitename()
 		input->fill_pose( pose, *rsd_set );
 		i++;
 
-		protocols::rna::ensure_phosphate_nomenclature_matches_mini( pose );
-		protocols::rna::figure_out_reasonable_rna_fold_tree( pose );
-		protocols::rna::virtualize_5prime_phosphates( pose ); // should we have this on by deafult?
+		protocols::farna::ensure_phosphate_nomenclature_matches_mini( pose );
+		protocols::farna::figure_out_reasonable_rna_fold_tree( pose );
+		protocols::farna::virtualize_5prime_phosphates( pose ); // should we have this on by deafult?
 
 		std::cout << "-----Pose " << i << "-----" << std::endl;
 		for (Size j = 1; j <= pose.total_residue(); ++j){

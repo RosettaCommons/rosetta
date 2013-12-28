@@ -63,7 +63,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
 
 int main(int argc, char *argv[])
 {
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 	//std::cout << "It has " << test_pose.total_residue() << " total residues." << std::endl;
 	/*chemical::ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 	pose_from_pdb(test_pose, *rsd_set, "/home/boon/data/test_rna.pdb");
-	protocols::rna::make_phosphate_nomenclature_matches_mini( test_pose );
+	protocols::farna::make_phosphate_nomenclature_matches_mini( test_pose );
 	// setup a packer task
 	pack::task::PackerTaskOP task ( core::pack::task::TaskFactory::create_packer_task( test_pose ) );
 	task->initialize_from_command_line().or_include_current( true );

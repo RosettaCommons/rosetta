@@ -37,7 +37,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Ramachandran.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
 
 #include <protocols/viewer/viewers.hh>
 
@@ -62,14 +62,14 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 //StepWiseProtein!
-#include <protocols/swa/StepWiseClusterer.hh>
-#include <protocols/swa/protein/StepWiseProteinFilterer.hh>
-#include <protocols/swa/protein/StepWiseProteinPoseMinimizer.hh>
-#include <protocols/swa/protein/StepWiseProteinPoseSetup.hh>
-#include <protocols/swa/protein/StepWiseProteinScreener.hh>
-#include <protocols/swa/protein/StepWiseProteinUtil.hh>
-#include <protocols/swa/protein/StepWiseProteinResidueSampler.hh>
-#include <protocols/swa/protein/MainChainTorsionSet.hh>
+#include <protocols/stepwise/StepWiseClusterer.hh>
+#include <protocols/stepwise/protein/StepWiseProteinFilterer.hh>
+#include <protocols/stepwise/protein/StepWiseProteinPoseMinimizer.hh>
+#include <protocols/stepwise/protein/StepWiseProteinPoseSetup.hh>
+#include <protocols/stepwise/protein/StepWiseProteinScreener.hh>
+#include <protocols/stepwise/protein/StepWiseProteinUtil.hh>
+#include <protocols/stepwise/protein/StepWiseProteinResidueSampler.hh>
+#include <protocols/stepwise/protein/MainChainTorsionSet.hh>
 
 //clustering
 #include <protocols/cluster/cluster.hh>
@@ -135,9 +135,9 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray1D.hh>
 //RNA stuff.
-//#include <protocols/rna/RNA_FragmentsClasses.hh>
-//#include <protocols/rna/RNA_DeNovoProtocol.hh>
-//#include <protocols/rna/RNA_StructureParameters.hh>
+//#include <protocols/farna/RNA_FragmentsClasses.hh>
+//#include <protocols/farna/RNA_DeNovoProtocol.hh>
+//#include <protocols/farna/RNA_StructureParameters.hh>
 
 //Job dsitributor
 #include <protocols/jobdist/JobDistributors.hh>
@@ -261,7 +261,7 @@ sample_rama_test()
 	using namespace ObjexxFCL::format;
 	using namespace core::options;
 	using namespace core::options::OptionKeys;
-	using namespace protocols::swa::protein;
+	using namespace protocols::stepwise::protein;
 
 	// Read in protein
 	ResidueTypeSetCAP rsd_set;
@@ -373,7 +373,7 @@ minimizer_test()
 	using namespace core::io::silent;
 	using namespace core::io::pose_stream;
 	using namespace core::pose;
-	using namespace protocols::swa::protein;
+	using namespace protocols::stepwise::protein;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
@@ -581,14 +581,14 @@ sample_trp_test()
 	for (Size i1 = 1; i1 <= N_SAMPLE; i1++ ) {
 		for (Size j1 = 1; j1 <= N_SAMPLE; j1++ ) {
 
-			pose.set_chi( 1, n, protocols::swa::protein::get_rotamer_angle( i1, N_SAMPLE ) );
-			pose.set_chi( 2, n, protocols::swa::protein::get_rotamer_angle( j1, N_SAMPLE ) );
+			pose.set_chi( 1, n, protocols::stepwise::protein::get_rotamer_angle( i1, N_SAMPLE ) );
+			pose.set_chi( 2, n, protocols::stepwise::protein::get_rotamer_angle( j1, N_SAMPLE ) );
 			green_packer->apply( pose );
 
 			( *scorefxn )( pose );
 			setPoseExtraScores( pose, "trp_rms", get_sidechain_rmsd( pose, start_pose, n )  );
 			std::string const tag = "S_"+ lead_zero_string_of( ++count, 5 );
-			protocols::swa::protein::output_silent_struct( pose, native_pose_op, silent_file, tag );
+			protocols::stepwise::protein::output_silent_struct( pose, native_pose_op, silent_file, tag );
 
 		}
 	}
@@ -721,7 +721,7 @@ sample_trp_tyr_test()
 	std::string silent_file = silent_file_null;
 	{
 		std::string tag = "S_0";
-		protocols::swa::protein::output_silent_struct( pose_null, start_pose_op, silent_file, tag );
+		protocols::stepwise::protein::output_silent_struct( pose_null, start_pose_op, silent_file, tag );
 	}
 	pose = pose_null;
 	(*scorefxn)( pose );
@@ -739,13 +739,13 @@ sample_trp_tyr_test()
 	for (Size i1 = 1; i1 <= N_SAMPLE; i1++ ) {
 		for (Size j1 = 1; j1 <= N_SAMPLE; j1++ ) {
 
-			pose.set_chi( 1, n_trp, protocols::swa::protein::get_rotamer_angle( i1, N_SAMPLE ) );
-			pose.set_chi( 2, n_trp, protocols::swa::protein::get_rotamer_angle( j1, N_SAMPLE ) );
+			pose.set_chi( 1, n_trp, protocols::stepwise::protein::get_rotamer_angle( i1, N_SAMPLE ) );
+			pose.set_chi( 2, n_trp, protocols::stepwise::protein::get_rotamer_angle( j1, N_SAMPLE ) );
 
 			( *scorefxn )( pose );
 			add_chi_tags( pose, native_pose, n_trp, n_tyr );
 			std::string const tag = "S_"+ lead_zero_string_of( ++count, 5 );
-			protocols::swa::protein::output_silent_struct( pose, start_pose_op, silent_file, tag );
+			protocols::stepwise::protein::output_silent_struct( pose, start_pose_op, silent_file, tag );
 
 		}
 	}
@@ -759,13 +759,13 @@ sample_trp_tyr_test()
 	for (Size i1 = 1; i1 <= N_SAMPLE; i1++ ) {
 		for (Size j1 = 1; j1 <= N_SAMPLE; j1++ ) {
 
-			pose.set_chi( 1, n_tyr, protocols::swa::protein::get_rotamer_angle( i1, N_SAMPLE ) );
-			pose.set_chi( 2, n_tyr, protocols::swa::protein::get_rotamer_angle( j1, N_SAMPLE ) );
+			pose.set_chi( 1, n_tyr, protocols::stepwise::protein::get_rotamer_angle( i1, N_SAMPLE ) );
+			pose.set_chi( 2, n_tyr, protocols::stepwise::protein::get_rotamer_angle( j1, N_SAMPLE ) );
 
 			( *scorefxn )( pose );
 			add_chi_tags( pose, native_pose, n_trp, n_tyr );
 			std::string const tag = "S_"+ lead_zero_string_of( ++count, 5 );
-			protocols::swa::protein::output_silent_struct( pose, start_pose_op, silent_file, tag );
+			protocols::stepwise::protein::output_silent_struct( pose, start_pose_op, silent_file, tag );
 
 		}
 	}
@@ -782,19 +782,19 @@ sample_trp_tyr_test()
 	for (Size i1 = 1; i1 <= N_SAMPLE; i1++ ) {
 		for (Size j1 = 1; j1 <= N_SAMPLE; j1++ ) {
 
-			pose.set_chi( 1, n_trp, protocols::swa::protein::get_rotamer_angle( i1, N_SAMPLE ) );
-			pose.set_chi( 2, n_trp, protocols::swa::protein::get_rotamer_angle( j1, N_SAMPLE ) );
+			pose.set_chi( 1, n_trp, protocols::stepwise::protein::get_rotamer_angle( i1, N_SAMPLE ) );
+			pose.set_chi( 2, n_trp, protocols::stepwise::protein::get_rotamer_angle( j1, N_SAMPLE ) );
 
 			for (Size p1 = 1; p1 <= N_SAMPLE; p1++ ) {
 				for (Size q1 = 1; q1 <= N_SAMPLE; q1++ ) {
 
-					pose.set_chi( 1, n_tyr, protocols::swa::protein::get_rotamer_angle( p1, N_SAMPLE ) );
-					pose.set_chi( 2, n_tyr, protocols::swa::protein::get_rotamer_angle( q1, N_SAMPLE ) );
+					pose.set_chi( 1, n_tyr, protocols::stepwise::protein::get_rotamer_angle( p1, N_SAMPLE ) );
+					pose.set_chi( 2, n_tyr, protocols::stepwise::protein::get_rotamer_angle( q1, N_SAMPLE ) );
 
 					( *scorefxn )( pose );
 					add_chi_tags( pose, native_pose, n_trp, n_tyr );
 					std::string const tag = "S_"+ lead_zero_string_of( ++count, 5 );
-					protocols::swa::protein::output_silent_struct( pose, start_pose_op, silent_file, tag );
+					protocols::stepwise::protein::output_silent_struct( pose, start_pose_op, silent_file, tag );
 
 				}
 			}
@@ -834,7 +834,7 @@ rebuild_test(){
 	using namespace core::io::silent;
 	using namespace core::pose;
 	using namespace core::pack;
-	using namespace protocols::swa::protein;
+	using namespace protocols::stepwise::protein;
 
 	// A lot of the following might be better handled by a JobDistributor!?
 
@@ -965,7 +965,7 @@ rebuild_test(){
 // 	/////////////////////////////
 // 	// Have an option to read structure back in from disk?  may be useful for checkpointing.
 // 	// For now just take in silent structs prepared by the stepwise_residue_sampler.
-// 	protocols::swa::StepWiseClusterer stepwise_clusterer(  stepwise_residue_sampler.silent_file_data() );
+// 	protocols::stepwise::StepWiseClusterer stepwise_clusterer(  stepwise_residue_sampler.silent_file_data() );
 // 	Size max_decoys( 400 );
 // 	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
 // 	stepwise_clusterer.set_max_decoys( max_decoys );
@@ -1301,7 +1301,7 @@ cluster_outfile_test(){
 	using namespace core::options::OptionKeys;
 
 	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
-	protocols::swa::StepWiseClusterer stepwise_clusterer( silent_files_in );
+	protocols::stepwise::StepWiseClusterer stepwise_clusterer( silent_files_in );
 
 	Size max_decoys( 400 );
 	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
@@ -1384,8 +1384,8 @@ score12_plot_test()
 		for (Size i1 = 1; i1 <= N_SAMPLE; i1++ ) {
 			for (Size j1 = 1; j1 <= N_SAMPLE; j1++ ) {
 
-				Real const phi = protocols::swa::protein::get_rotamer_angle( i1, N_SAMPLE );
-				Real const psi = protocols::swa::protein::get_rotamer_angle( j1, N_SAMPLE );
+				Real const phi = protocols::stepwise::protein::get_rotamer_angle( i1, N_SAMPLE );
+				Real const psi = protocols::stepwise::protein::get_rotamer_angle( j1, N_SAMPLE );
 				pose.set_phi( 2, phi );
 				pose.set_psi( 2, psi );
 
@@ -1544,7 +1544,7 @@ color_by_lj_test()
 	using namespace core::id;
 	using namespace core::scoring;
 	using namespace core::kinematics;
-	using namespace protocols::rna;
+	using namespace protocols::farna;
 	using namespace core::scoring::etable;
 
 	ResidueTypeSetCAP rsd_set;

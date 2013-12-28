@@ -22,11 +22,8 @@
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.fwd.hh>
 #include <core/scoring/rna/RNA_DataInfo.hh>
-// AUTO-REMOVED #include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/id/AtomID.hh>
 
 // Project headers
@@ -39,7 +36,6 @@
 #include <core/chemical/ChemicalManager.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <utility/exit.hh>
 

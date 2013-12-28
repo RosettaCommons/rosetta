@@ -37,7 +37,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Ramachandran.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
 
 #include <protocols/viewer/viewers.hh>
 
@@ -62,9 +62,9 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 //StepWise!
-#include <protocols/swa/StepWiseClusterer.hh>
-#include <protocols/swa/StepWiseUtil.hh>
-#include <protocols/swa/protein/StepWiseProteinUtil.hh>
+#include <protocols/stepwise/StepWiseClusterer.hh>
+#include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/stepwise/protein/StepWiseProteinUtil.hh>
 
 //clustering
 #include <protocols/cluster/cluster.hh>
@@ -126,9 +126,9 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray1D.hh>
 //RNA stuff.
-//#include <protocols/rna/RNA_FragmentsClasses.hh>
-//#include <protocols/rna/RNA_DeNovoProtocol.hh>
-//#include <protocols/rna/RNA_StructureParameters.hh>
+//#include <protocols/farna/RNA_FragmentsClasses.hh>
+//#include <protocols/farna/RNA_DeNovoProtocol.hh>
+//#include <protocols/farna/RNA_StructureParameters.hh>
 
 //Job dsitributor
 #include <protocols/jobdist/JobDistributors.hh>
@@ -334,7 +334,7 @@ parse_pathway_test(){
 
 			utility::vector1 < Size > slice_res;
 			for ( Size n = i; n <= j; n++ ) slice_res.push_back( n );
-			protocols::swa::pdbslice( pose, slice_res );
+			protocols::stepwise::pdbslice( pose, slice_res );
 
 			if ( i > 1 && add_peptide_plane_ ) {
 				//Pose pose_copy = pose;
@@ -385,7 +385,7 @@ stepwise_template_test(){
 	using namespace core::io::pose_stream;
 	using namespace core::pose;
 	using namespace core::pack;
-	using namespace protocols::swa::protein;
+	using namespace protocols::stepwise::protein;
 	using namespace protocols::swa;
 
 	//////////////////////////
@@ -592,7 +592,7 @@ cluster_outfile_test(){
 	using namespace core::options::OptionKeys;
 
 	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
-	protocols::swa::StepWiseClusterer stepwise_clusterer( silent_files_in );
+	protocols::stepwise::StepWiseClusterer stepwise_clusterer( silent_files_in );
 
 	Size max_decoys( 400 );
 	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];

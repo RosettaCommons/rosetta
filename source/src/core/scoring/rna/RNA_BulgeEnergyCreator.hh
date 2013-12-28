@@ -9,7 +9,7 @@
 
 /// @file   src/core/scoring/methods/RNA_BulgeEnergyCreator.hh
 /// @brief  Declaration for the class that connects RNA_BulgeEnergy with the ScoringManager
-/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Rhiju Das
 
 #ifndef INCLUDED_core_scoring_rna_RNA_BulgeEnergyCreator_hh
 #define INCLUDED_core_scoring_rna_RNA_BulgeEnergyCreator_hh

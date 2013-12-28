@@ -42,10 +42,11 @@
 
 
 //////////////////////////////////////////////////////////
-#include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
-#include <protocols/swa/rna/StepWiseRNA_Util.hh>
-#include <protocols/swa/TransientCutpointHandler.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Modeler.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_ModelerOptions.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/monte_carlo/rna/TransientCutpointHandler.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
@@ -131,8 +132,9 @@ erraser_monte_carlo()
   using namespace core::io::silent;
   using namespace core::optimization;
   using namespace core::import_pose;
-	using namespace protocols::swa;
-	using namespace protocols::swa::rna;
+	using namespace protocols::stepwise;
+	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::monte_carlo::rna;
 	using namespace protocols::moves;
 
 	clock_t const time_start( clock() );
@@ -142,8 +144,8 @@ erraser_monte_carlo()
 
 	pose::Pose pose;
 	import_pose::pose_from_pdb( pose, *rsd_set, option[ in::file::s ][1] );
-	protocols::rna::figure_out_reasonable_rna_fold_tree( pose );
-	protocols::rna::virtualize_5prime_phosphates( pose );
+	protocols::farna::figure_out_reasonable_rna_fold_tree( pose );
+	protocols::farna::virtualize_5prime_phosphates( pose );
 	setup_design_res( pose );
 
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 400, 400 );
@@ -171,7 +173,7 @@ erraser_monte_carlo()
 	MinimizerOptions options( "dfpmin", dummy_tol, use_nblist, false, false );
 	options.nblist_auto_update( true );
 	MoveMap move_map;
-	figure_out_swa_rna_movemap( move_map, pose, sample_res_list );
+	figure_out_stepwise_rna_movemap( move_map, pose, sample_res_list );
 
 	// encapsulate this:
 	if ( cart_min_ ){
@@ -186,7 +188,7 @@ erraser_monte_carlo()
 	// monte carlo setup.
 	MonteCarloOP monte_carlo_ = new MonteCarlo( pose, *scorefxn, option[ temperature]() );
 
-	for ( Size n = 1; n <= option[ cycles ](); n++ ){
+	for ( Size n = 1; n <= Size( option[ cycles ]() ); n++ ){
 
 		Size const erraser_res = RG.random_element( sample_res_list );
 		bool const did_mutation = mutate_res_if_allowed( pose, erraser_res );
@@ -197,13 +199,15 @@ erraser_monte_carlo()
 		cutpoint_handler.put_in_cutpoints( pose );
 
 		StepWiseRNA_Modeler erraser_modeler( erraser_res, scorefxn );
-		erraser_modeler.set_choose_random( true );
-		erraser_modeler.set_force_centroid_interaction( true );
-		erraser_modeler.set_kic_sampling( true );
+		StepWiseRNA_ModelerOptionsOP modeler_options = new StepWiseRNA_ModelerOptions;
+		modeler_options->set_choose_random( true );
+		modeler_options->set_force_centroid_interaction( true );
+		modeler_options->set_kic_sampling_if_relevant( true );
+		modeler_options->set_use_phenix_geo( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+		modeler_options->set_num_random_samples( option[ num_random_samples ]() );
+		modeler_options->set_num_pose_minimize( 1 );
+		erraser_modeler.set_options( modeler_options );
 		if ( !option[ minimize_single_res ]() )  erraser_modeler.set_minimize_res( sample_res_list );
-		erraser_modeler.set_use_phenix_geo( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
-		erraser_modeler.set_num_random_samples( option[ num_random_samples ]() );
-		erraser_modeler.set_num_pose_minimize( 1 );
 
 		erraser_modeler.apply( pose );
 		std::string move_type = erraser_modeler.get_num_sampled() ? "erraser" : "erraser_no_op";

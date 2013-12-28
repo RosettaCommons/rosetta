@@ -9,8 +9,7 @@
 
 /// @file   core/scoring/methods/RNA_CentroidInfo.hh
 /// @brief  Statistically derived rotamer pair potential class implementation
-/// @author Phil Bradley
-/// @author Andrew Leaver-Fay
+/// @author Rhiju Das
 
 #ifndef INCLUDED_core_scoring_rna_RNA_CentroidInfo_hh
 #define INCLUDED_core_scoring_rna_RNA_CentroidInfo_hh
@@ -24,7 +23,6 @@
 #include <core/kinematics/Stub.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // Numceric Headers
 #include <numeric/xyzVector.hh>
@@ -57,7 +55,7 @@ RNA_CentroidInfo(): calculated_(false) {};
 
 	void
 	update( pose::Pose const & pose );
-  
+
   Size
   size() const {
     return base_centroids_.size();

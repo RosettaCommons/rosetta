@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/RG_Energy_RNA.cc
 /// @brief  Radius of gyration energy function definition.
-/// @author James Thompson
+/// @author Rhiju Das
 
 
 // Unit headers
@@ -20,8 +20,6 @@
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -30,7 +28,6 @@
 
 
 // Utility headers
-// AUTO-REMOVED #include <basic/prof.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/scoring/EnergyMap.hh>

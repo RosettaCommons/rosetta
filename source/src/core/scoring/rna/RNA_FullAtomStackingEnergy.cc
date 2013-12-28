@@ -9,8 +9,6 @@
 
 /// @file   core/scoring/rna/RNA_FullAtomStacking.cc
 /// @brief  Statistically derived rotamer pair potential class implementation
-/// @author Phil Bradley
-/// @author Andrew Leaver-Fay
 /// @author Rhiju Das
 
 
@@ -41,7 +39,6 @@
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 //Auto Headers
 #include <core/id/AtomID.hh>
@@ -145,12 +142,12 @@ RNA_FullAtomStackingEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction 
 		NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::FA_STACK_NBLIST ) );
 		nblist.prepare_for_scoring( pose, scfxn, *this );
 	}
-	
+
 	pose.clear_stacking_map();
 }
 
 void
-RNA_FullAtomStackingEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & scfxn) const
+RNA_FullAtomStackingEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
   pose.update_residue_neighbors();
 
@@ -561,12 +558,12 @@ RNA_FullAtomStackingEnergy::finalize_total_energy(
   rna_centroid_info.calculated() = false;
 
 	if ( pose.energies().use_nblist() ) return;
-	
+
 	//Energies & energies( pose.energies() );
-	
+
 	//num_stacks_.clear();
 	boost::unordered_map < core::Size , core::Size > const & stacking_map = pose.get_stacking_map();
-	
+
 	for ( boost::unordered_map < core::Size , core::Size >::const_iterator
 		 it=stacking_map.begin(), it_end = stacking_map.end(); it != it_end; ++it ) {
 		if ( it->second > 1 ) {

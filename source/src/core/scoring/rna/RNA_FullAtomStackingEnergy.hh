@@ -9,9 +9,7 @@
 
 /// @file   core/scoring/rna/RNA_FullAtomStacking.hh
 /// @brief  Statistically derived rotamer pair potential class declaration
-/// @author Phil Bradley
 /// @author Rhiju Das
-
 
 #ifndef INCLUDED_core_scoring_rna_RNA_FullAtomStackingEnergy_HH
 #define INCLUDED_core_scoring_rna_RNA_FullAtomStackingEnergy_HH
@@ -63,7 +61,7 @@ public:
 	virtual
 	void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn) const;
-    
+
     void
     setup_for_minimizing(
         pose::Pose & pose,

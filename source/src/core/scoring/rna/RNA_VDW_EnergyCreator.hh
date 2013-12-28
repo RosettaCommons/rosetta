@@ -9,7 +9,7 @@
 
 /// @file   src/core/scoring/rna/RNA_VDW_EnergyCreator.hh
 /// @brief  Declaration for the class that connects RNA_VDW_Energy with the ScoringManager
-/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @author Rhiju Das
 
 #ifndef INCLUDED_core_scoring_rna_RNA_VDW_EnergyCreator_hh
 #define INCLUDED_core_scoring_rna_RNA_VDW_EnergyCreator_hh

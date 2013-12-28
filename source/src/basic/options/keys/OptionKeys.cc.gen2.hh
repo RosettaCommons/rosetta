@@ -1,33 +1,3 @@
-namespace membrane { BooleanOptionKey const Fa_Membed_update( "membrane:Fa_Membed_update" );  }
-namespace membrane { BooleanOptionKey const center_search( "membrane:center_search" );  }
-namespace membrane { BooleanOptionKey const normal_search( "membrane:normal_search" );  }
-namespace membrane { IntegerOptionKey const center_max_delta( "membrane:center_max_delta" );  }
-namespace membrane { IntegerOptionKey const normal_start_angle( "membrane:normal_start_angle" );  }
-namespace membrane { IntegerOptionKey const normal_delta_angle( "membrane:normal_delta_angle" );  }
-namespace membrane { IntegerOptionKey const normal_max_angle( "membrane:normal_max_angle" );  }
-namespace membrane { BooleanOptionKey const debug( "membrane:debug" );  }
-namespace membrane { BooleanOptionKey const fixed_membrane( "membrane:fixed_membrane" );  }
-namespace membrane { RealVectorOptionKey const membrane_center( "membrane:membrane_center" );  }
-namespace membrane { RealVectorOptionKey const membrane_normal( "membrane:membrane_normal" );  }
-namespace membrane { BooleanOptionKey const view( "membrane:view" );  }
-namespace membrane { BooleanOptionKey const Mhbond_depth( "membrane:Mhbond_depth" );  }
-namespace casp { BooleanOptionKey const casp( "casp" );  }
-namespace casp { StringOptionKey const decoy( "casp:decoy" );  }
-namespace casp { StringOptionKey const wt( "casp:wt" );  }
-namespace casp { StringOptionKey const rots( "casp:rots" );  }
-namespace casp { RealOptionKey const opt_radius( "casp:opt_radius" );  }
-namespace casp { BooleanOptionKey const repack( "casp:repack" );  }
-namespace casp { BooleanOptionKey const sc_min( "casp:sc_min" );  }
-namespace casp { BooleanOptionKey const sequential( "casp:sequential" );  }
-namespace casp { RealOptionKey const num_iterations( "casp:num_iterations" );  }
-namespace casp { StringOptionKey const weight_file( "casp:weight_file" );  }
-namespace casp { StringOptionKey const refine_res( "casp:refine_res" );  }
-namespace pose_metrics { BooleanOptionKey const pose_metrics( "pose_metrics" );  }
-namespace pose_metrics { RealOptionKey const atomic_burial_cutoff( "pose_metrics:atomic_burial_cutoff" );  }
-namespace pose_metrics { RealOptionKey const sasa_calculator_probe_radius( "pose_metrics:sasa_calculator_probe_radius" );  }
-namespace pose_metrics { RealOptionKey const interface_cutoff( "pose_metrics:interface_cutoff" );  }
-namespace pose_metrics { IntegerOptionKey const min_sequence_separation( "pose_metrics:min_sequence_separation" );  }
-namespace pose_metrics { RealOptionKey const contact_cutoffE( "pose_metrics:contact_cutoffE" );  }
 namespace pose_metrics { RealOptionKey const neighbor_by_distance_cutoff( "pose_metrics:neighbor_by_distance_cutoff" );  }
 namespace pose_metrics { RealOptionKey const inter_group_neighbors_cutoff( "pose_metrics:inter_group_neighbors_cutoff" );  }
 namespace pose_metrics { RealOptionKey const semiex_water_burial_cutoff( "pose_metrics:semiex_water_burial_cutoff" );  }
@@ -744,3 +714,48 @@ namespace optE { namespace rescore { FileOptionKey const outlog( "optE:rescore:o
 namespace optE { namespace rescore { BooleanOptionKey const measure_sequence_recovery( "optE:rescore:measure_sequence_recovery" );  } }
 namespace optE { BooleanOptionKey const no_design_pdb_output( "optE:no_design_pdb_output" );  }
 namespace backrub { BooleanOptionKey const backrub( "backrub" );  }
+namespace backrub { IntegerVectorOptionKey const pivot_residues( "backrub:pivot_residues" );  }
+namespace backrub { StringVectorOptionKey const pivot_atoms( "backrub:pivot_atoms" );  }
+namespace backrub { IntegerOptionKey const min_atoms( "backrub:min_atoms" );  }
+namespace backrub { IntegerOptionKey const max_atoms( "backrub:max_atoms" );  }
+namespace bbg { BooleanOptionKey const bbg( "bbg" );  }
+namespace bbg { RealOptionKey const factorA( "bbg:factorA" );  }
+namespace bbg { RealOptionKey const factorB( "bbg:factorB" );  }
+namespace bbg { BooleanOptionKey const ignore_improper_res( "bbg:ignore_improper_res" );  }
+namespace bbg { BooleanOptionKey const fix_short_segment( "bbg:fix_short_segment" );  }
+namespace flexpack { BooleanOptionKey const flexpack( "flexpack" );  }
+namespace flexpack { namespace annealer { BooleanOptionKey const annealer( "flexpack:annealer" );  } }
+namespace flexpack { namespace annealer { RealOptionKey const inner_iteration_scale( "flexpack:annealer:inner_iteration_scale" );  } }
+namespace flexpack { namespace annealer { RealOptionKey const outer_iteration_scale( "flexpack:annealer:outer_iteration_scale" );  } }
+namespace flexpack { namespace annealer { RealOptionKey const fixbb_substitutions_scale( "flexpack:annealer:fixbb_substitutions_scale" );  } }
+namespace flexpack { namespace annealer { RealOptionKey const pure_movebb_substitutions_scale( "flexpack:annealer:pure_movebb_substitutions_scale" );  } }
+namespace flexpack { namespace annealer { RealOptionKey const rotsub_movebb_substitutions_scale( "flexpack:annealer:rotsub_movebb_substitutions_scale" );  } }
+namespace hotspot { BooleanOptionKey const hotspot( "hotspot" );  }
+namespace hotspot { BooleanOptionKey const allow_gly( "hotspot:allow_gly" );  }
+namespace hotspot { BooleanOptionKey const allow_proline( "hotspot:allow_proline" );  }
+namespace hotspot { BooleanOptionKey const benchmark( "hotspot:benchmark" );  }
+namespace hotspot { StringVectorOptionKey const residue( "hotspot:residue" );  }
+namespace hotspot { FileOptionKey const hashfile( "hotspot:hashfile" );  }
+namespace hotspot { FileOptionKey const target( "hotspot:target" );  }
+namespace hotspot { IntegerOptionKey const target_res( "hotspot:target_res" );  }
+namespace hotspot { RealOptionKey const target_dist( "hotspot:target_dist" );  }
+namespace hotspot { FileOptionKey const density( "hotspot:density" );  }
+namespace hotspot { FileOptionKey const weighted_density( "hotspot:weighted_density" );  }
+namespace hotspot { FileOptionKey const rms_target( "hotspot:rms_target" );  }
+namespace hotspot { FileOptionKey const rms_hotspot( "hotspot:rms_hotspot" );  }
+namespace hotspot { IntegerOptionKey const rms_hotspot_res( "hotspot:rms_hotspot_res" );  }
+namespace hotspot { BooleanOptionKey const rescore( "hotspot:rescore" );  }
+namespace hotspot { RealOptionKey const threshold( "hotspot:threshold" );  }
+namespace hotspot { BooleanOptionKey const sc_only( "hotspot:sc_only" );  }
+namespace hotspot { BooleanOptionKey const fxnal_group( "hotspot:fxnal_group" );  }
+namespace hotspot { BooleanOptionKey const cluster( "hotspot:cluster" );  }
+namespace hotspot { BooleanOptionKey const colonyE( "hotspot:colonyE" );  }
+namespace hotspot { IntegerOptionKey const length( "hotspot:length" );  }
+namespace hotspot { BooleanOptionKey const envhb( "hotspot:envhb" );  }
+namespace hotspot { RealOptionKey const angle( "hotspot:angle" );  }
+namespace hotspot { IntegerOptionKey const angle_res( "hotspot:angle_res" );  }
+namespace parser { BooleanOptionKey const parser( "parser" );  }
+namespace parser { StringOptionKey const protocol( "parser:protocol" );  }
+namespace parser { StringVectorOptionKey const script_vars( "parser:script_vars" );  }
+namespace parser { BooleanOptionKey const view( "parser:view" );  }
+namespace parser { StringOptionKey const patchdock( "parser:patchdock" );  }

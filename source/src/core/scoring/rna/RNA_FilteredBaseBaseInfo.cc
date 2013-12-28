@@ -8,9 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/methods/RNA_RawBaseBaseInfo.cc
-/// @brief  Statistically derived rotamer pair potential class implementation
-/// @author Phil Bradley
-/// @author Andrew Leaver-Fay
+/// @brief  Statistically derived RNA potential
 /// @author Rhiju Das
 
 

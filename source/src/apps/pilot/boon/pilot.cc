@@ -46,11 +46,11 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_KIC.hh>
-#include <protocols/rna/RNA_DeNovoProtocol.hh>
-#include <protocols/rna/RNA_Minimizer.hh>
+#include <protocols/farna/RNA_DeNovoProtocol.hh>
+#include <protocols/farna/RNA_Minimizer.hh>
 
 int main(int argc, char *argv[])
 {
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 
 	/////////////////////////////////////RNA_Minimizer///////////////////////////////////////////////////
 	// minimizer setup
-	protocols::rna::RNA_Minimizer rna_minimizer;
+	protocols::farna::RNA_Minimizer rna_minimizer;
 	rna_minimizer.deriv_check( true );
 	rna_minimizer.use_coordinate_constraints( false );
 	rna_minimizer.skip_o2prime_trials( true );
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 	bool const relax_structure = false;
 	bool const is_allow_bulge = false;
 
-  protocols::rna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct,
+  protocols::farna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct,
                                                              silent_file,
                                                              heat_structure,
                                                              minimize_structure,

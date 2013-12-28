@@ -57,14 +57,14 @@
 #include <protocols/idealize/idealize.hh>
 #include <protocols/viewer/viewers.hh>
 
-#include <protocols/rna/RNA_StructureParameters.fwd.hh>
-#include <protocols/rna/RNA_StructureParameters.hh>
-#include <protocols/rna/RNA_ChunkLibrary.hh>
-#include <protocols/rna/RNA_ChunkLibrary.fwd.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
-#include <protocols/rna/RNA_HelixAssembler.hh>
-#include <protocols/rna/RNA_LoopCloser.hh>
-#include <protocols/rna/RNA_Minimizer.hh>
+#include <protocols/farna/RNA_StructureParameters.fwd.hh>
+#include <protocols/farna/RNA_StructureParameters.hh>
+#include <protocols/farna/RNA_ChunkLibrary.hh>
+#include <protocols/farna/RNA_ChunkLibrary.fwd.hh>
+#include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/stepwise/enumerate/rna/helix/RNA_HelixAssembler.hh>
+#include <protocols/farna/RNA_LoopCloser.hh>
+#include <protocols/farna/RNA_Minimizer.hh>
 
 //Minimizer stuff
 #include <core/kinematics/MoveMap.hh>
@@ -246,7 +246,7 @@ protein_helix_test(){
   using namespace core::pose;
   using namespace core::kinematics;
   using namespace core::io::silent;
-  using namespace protocols::rna;
+  using namespace protocols::farna;
 
   // What is the sequence?
   std::string full_sequence;

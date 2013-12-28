@@ -20,7 +20,6 @@
 
 // Project headers
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
@@ -39,13 +38,11 @@
 
 // Utility headers
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/utility.functions.hh>
 
 #include <ObjexxFCL/FArray2A.hh>
 
 #include <numeric/conversions.hh>
 #include <numeric/xyzMatrix.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/interpolation/periodic_range/full/interpolation.hh>
 
 // C++

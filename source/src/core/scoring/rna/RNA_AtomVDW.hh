@@ -28,7 +28,6 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray4D.hh>
 
 #include <map>
