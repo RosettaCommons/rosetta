@@ -1507,6 +1507,10 @@ build_pose_as_is1(
 		std::string const key;
 		std::string const value;
 		utility::vector1<std::string> comment_line(utility::string_split(line,' '));
+		if (comment_line.size()<2){
+			getline( data, line );
+			continue;
+		}
 		core::pose::add_comment(pose,comment_line[1],comment_line[2]);
 		getline( data, line );
 	}

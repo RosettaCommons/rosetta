@@ -117,6 +117,7 @@ private:
 
 	ProteinInterfaceDesignOperationOP protein_interface_design_; //dflt NULL; this is used to define which residues are considered to be interface, for conservation_cutoff_interface_design_
 	core::Real conservation_cutoff_protein_interface_design_; // dflt -100000;
+	core::Size chain_num_; //dflt set to 1
 };
 
 /// @brief a Task operation that will check whether the amino acid at a

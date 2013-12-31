@@ -208,6 +208,7 @@ public:
 
 	void rb_adjust_template( core::pose::Pose const & pose ) const; // adjust the template_pose_ according the rb state of the current pose (if rb_sensitive is on)
 	void protein_family( std::string const s) {protein_family_=s;}; //setter of the protein_family tag option
+	core::Size chain_num(){return chain_num_;};
 
 
 private:
@@ -255,6 +256,7 @@ private:
 	std::string Pdb4LetName_;
 	std::string protein_family_;
 	std::map< std::string, utility::vector1< std::string > > order_segments_;
+	core::Size chain_num_;
 
 	//A map form protein family name to the order of the segments (eg. <"antibodies",<L1_L2,L3,H1_H2,H3>>)
 

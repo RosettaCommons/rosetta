@@ -93,8 +93,12 @@ PSSM2BfactorMover::apply( Pose & pose )
           SequenceProfileConstraintCOP seqprof_cst( dynamic_cast< SequenceProfileConstraint const * >( c() ) );
           runtime_assert( seqprof_cst );
           core::Size const seqpos( seqprof_cst->seqpos() );
+          TR<<"sepos="<<seqpos<<std::endl;
+          //If the seqprof and the seqpos are not aligned we need to use the seqprofcons mapping
+          core::id::SequenceMapping SM = * seqprof_cst->profile_mapping();
+          TR<<"seqpos_mapping:"<<SM[seqpos]<<std::endl;
           SequenceProfileCOP seqprof_pos( seqprof_cst->sequence_profile() );
-          core::Real const PSSM_score( seqprof_pos->prof_row( seqpos )[ order[ pose.residue( seqpos ).name1() ] ] );
+          core::Real const PSSM_score( seqprof_pos->prof_row( SM[seqpos] )[ order[ pose.residue( seqpos ).name1() ] ] );
           //Jun13 Gideon Lapidoth and Chris Norn added this so user can choose cut off PSSM values
 		
           core::Real min = 0.0 ;// Minimum Bfactor level used for pymol coloring
@@ -116,7 +120,7 @@ PSSM2BfactorMover::apply( Pose & pose )
 
           std::ostringstream residuesSpecificPSSMScores;
           for (int i = 1; i<=20; ++i){
-              residuesSpecificPSSMScores << seqprof_pos->prof_row( seqpos )[i] << " ";
+              residuesSpecificPSSMScores << seqprof_pos->prof_row( SM[seqpos] )[i] << " ";
           }
           
           std::ostringstream PSSM_resNo;

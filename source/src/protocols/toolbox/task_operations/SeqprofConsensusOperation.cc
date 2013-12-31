@@ -120,7 +120,10 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 	if( !seqprof ){
 		seqprof = new core::sequence::SequenceProfile;
 		tr<<"Sequence profile was not set until now. Attempting to read sequence profile from the pose's sequenceprofile constraints..."<<std::endl;
-		 ConstraintCOPs constraints( pose.constraint_set()->get_all_constraints() );
+
+		 core::pose::PoseOP chain = pose.split_by_chain(chain_num_);
+		 ConstraintCOPs constraints( chain->constraint_set()->get_all_constraints() );
+		 tr<<"total number of residues in chain:"<<chain->total_residue()<<std::endl;
 		 tr<<"Total number of constraints in pose: "<<constraints.size()<<std::endl;
 		 core::Size cst_num( 0 );
 		 foreach( ConstraintCOP const c, constraints ){
@@ -139,15 +142,16 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		utility_exit_with_message("No sequence profile set. option -in:file:pssm not specified? no filename in tag specified? Sequence profile constraints not added to pose by other movers/filters?");
 
 	core::Size asymmetric_unit_res( pose.total_residue() );
+	tr<<"  Pose is NOT--SYMETRIC!!!"<<std::endl;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		tr<<" Pose is SYMETRIC!!!"<<std::endl;
     core::conformation::symmetry::SymmetricConformation const & SymmConf (
       dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
     asymmetric_unit_res = SymmConf.Symmetry_Info()->num_independent_residues();
 		task.request_symmetrize_by_intersection();
   }
 	core::Size last_res (asymmetric_unit_res <= seqprof->profile().size() ? pose.total_residue() : seqprof->profile().size() - 1 /*seqprof has size n+1 compared to its real contents; heaven knows why...*/ );
-
-
+	tr<< "FOR DEBUGGING!: last_res="<<last_res<<std::endl;
 /// following paragraph determines where PIDO and RestrictToAlignedInterface are defined.
 /// These are used in the following loop to restrict conservation profiles differently
 	utility::vector1< core::Size > designable_interface, designable_aligned_segments;
@@ -163,9 +167,11 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		designable_aligned_segments = protocols::rosetta_scripts::residue_packer_states( pose, temp_tf, true/*designable*/, false/*packable*/ );
 	}
 
-	tr<<"Allowing the following identities:\n";
+	tr<<"Allowing the following identities:"<<std::endl;
 	runtime_assert( (seqprof->profile()).size()>=last_res );
+
 	for( core::Size i = 1; i <= last_res; ++i){
+
 		core::Real position_min_prob = min_aa_probability_;
 		if( protein_interface_design()() != NULL && std::find( designable_interface.begin(), designable_interface.end(), i ) != designable_interface.end() )
 			position_min_prob = conservation_cutoff_protein_interface_design();
@@ -233,6 +239,7 @@ SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 		tr<<"Seqprof not loaded. Expecting another mover/filter to provide a sequence profile..."<<std::endl;
 	}
 	if( tag->hasOption("min_aa_probability") ) min_aa_probability_ = tag->getOption< Real >("min_aa_probability" );
+	chain_num_=tag->getOption< Size >("chain_num",1 );
 	if( tag->hasOption("probability_larger_than_current") ) prob_larger_current_ = tag->getOption< bool >("probability_larger_than_current");
 
 	if( tag->hasOption("ignore_pose_profile_length_mismatch") ) ignore_pose_profile_length_mismatch_ = tag->getOption< bool >("ignore_pose_profile_length_mismatch");
