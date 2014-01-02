@@ -264,10 +264,10 @@ public:
 		core::Size j_resnum_2,
 		core::Size j_resnum_3);
 
-	core::Size round(
+	core::Size round_to_Size(
 		core::Real x);
 
-	core::Real round_to_real(
+	core::Real round_to_Real(
 		core::Real x);
 
 	core::Real calculate_dihedral_w_4_resnums(
@@ -644,6 +644,14 @@ public:
 		core::pose::Pose const & pose,
 		core::Size	sw_can_by_sh_id);
 
+	core::Size
+	report_avg_b_factor_CB_at_each_component (
+		StructureID struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::pose::Pose const & pose,
+		core::Size	sw_can_by_sh_id);
+
+
 
 	bool
 	check_whether_this_pdb_should_be_excluded (
@@ -948,6 +956,9 @@ private:
 
 	core::Real
 	distance_cutoff_for_electrostatic_interactions_;
+
+	core::Real
+	CB_b_facor_cutoff_for_electrostatic_interactions_;
 
 
 	bool

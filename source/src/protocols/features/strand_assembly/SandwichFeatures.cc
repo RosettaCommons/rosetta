@@ -42,6 +42,7 @@
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh> // for dssp application
+#include <core/pose/PDBInfo.hh> // maybe for PDBInfoCOP
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -65,7 +66,7 @@
 #include <core/id/NamedAtomID.hh>
 
 //C library
-#include <math.h> // for round and sqrt
+#include <math.h> // for round, floor, ceil, trunc, sqrt
 
 //External Headers
 #include <cppdb/frontend.h>
@@ -425,7 +426,8 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	Column sw_res_size	("sw_res_size",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
 
 	Column multimer_is_suspected	("multimer_is_suspected",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
-	
+	Column avg_b_factor_CB_at_each_component	("avg_b_factor_CB_at_each_component",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+
 	// Schema
 	// PrimaryKey
 	utility::vector1<Column> primary_key_columns_sw_by_components;
@@ -575,6 +577,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	sw_by_components.add_column(avg_dihedral_angle_between_core_strands_across_facing_sheets);
 	sw_by_components.add_column(sw_res_size);
 	sw_by_components.add_column(multimer_is_suspected);
+	sw_by_components.add_column(avg_b_factor_CB_at_each_component);
 	sw_by_components.add_column(component_size);
 
 	
@@ -1705,7 +1708,7 @@ SandwichFeatures::see_whether_sheet_is_antiparallel(
 
 
 		Real to_be_rounded = (strands_from_i[i].get_start() + strands_from_i[i].get_end())/(2.0);
-		Size cen_resnum = round(to_be_rounded);
+		Size cen_resnum = round_to_Size(to_be_rounded);
 		vector_of_central_resnum.push_back(cen_resnum);
 	}
 	// <end> Get central residues of edge strands
@@ -2022,7 +2025,7 @@ SandwichFeatures::check_sw_by_dis(
 
 
 Size
-SandwichFeatures::round(
+SandwichFeatures::round_to_Size(
 					Real x)
 {
 	Size rounded = static_cast <Size> (floor(x+.5));
@@ -2031,12 +2034,12 @@ SandwichFeatures::round(
 
 
 Real
-SandwichFeatures::round_to_real(
+SandwichFeatures::round_to_Real(
 					Real x)
 {
 	Real rounded = floor(x+.2);
 	return rounded;
-} //round_to_real
+} //round_to_Real
 
 
 // is_this_strand_at_edge
@@ -2118,7 +2121,7 @@ SandwichFeatures::is_this_strand_at_edge	(
 
 	// <begin> calculate minimum distance between strands
 		Real to_be_rounded_i = (strands_from_sheet_i[index_having_min_dis].get_start() + strands_from_sheet_i[index_having_min_dis].get_end())/(2.0);
-		Size cen_resnum_of_the_closest_strand = round(to_be_rounded_i);
+		Size cen_resnum_of_the_closest_strand = round_to_Size(to_be_rounded_i);
 
 		Real min_inter_strand_dis = 9999;
 		
@@ -2163,7 +2166,7 @@ SandwichFeatures::is_this_strand_at_edge	(
 
 		// <begin> calculate minimum distance between strands
 			to_be_rounded_i = (strands_from_sheet_i[index_having_second_min_dis].get_start() + strands_from_sheet_i[index_having_second_min_dis].get_end())/(2.0);
-			Size cental_resnum_of_the_2nd_closest_strand = round(to_be_rounded_i);
+			Size cental_resnum_of_the_2nd_closest_strand = round_to_Size(to_be_rounded_i);
 
 			min_inter_strand_dis = 9999;
 			
@@ -2292,7 +2295,7 @@ SandwichFeatures::get_central_residues_in_each_of_two_edge_strands(
 		}// I ignore a unrepresentative strand
 
 		Real to_be_rounded_i = (strands_from_sheet_i[i].get_start() + strands_from_sheet_i[i].get_end())/(2.0);
-		Size cen_resnum_i = round(to_be_rounded_i);
+		Size cen_resnum_i = round_to_Size(to_be_rounded_i);
 		vector_of_central_residues_in_sheet_i.push_back(cen_resnum_i);
 	}
 	Size array_size = vector_of_central_residues_in_sheet_i.size();
@@ -2493,7 +2496,7 @@ SandwichFeatures::judge_facing(
 		// Index of SandwichFragment starts with '1' not '0' 
 	{
 		Real to_be_rounded_i = (start_end_res_num_in_the_longest_strand_in_sheet_j[1].get_start() + start_end_res_num_in_the_longest_strand_in_sheet_j[1].get_end())/(2.0);
-		Size cen_resnum_of_smaller_sheet = round(to_be_rounded_i);
+		Size cen_resnum_of_smaller_sheet = round_to_Size(to_be_rounded_i);
 
 		Real distance_1 = pose.residue(cen_resnum_of_smaller_sheet).atom("CA").xyz().distance(pose.residue(start_end_res_num_in_the_longest_strand_in_sheet_i[1].get_start()).atom("CA").xyz());
 		Real distance_2 = pose.residue(cen_resnum_of_smaller_sheet).atom("CA").xyz().distance(pose.residue(start_end_res_num_in_the_longest_strand_in_sheet_i[1].get_end()).atom("CA").xyz());
@@ -2516,7 +2519,7 @@ SandwichFeatures::judge_facing(
 	else
 	{
 		Real to_be_rounded_i = (start_end_res_num_in_the_longest_strand_in_sheet_i[1].get_start() + start_end_res_num_in_the_longest_strand_in_sheet_i[1].get_end())/(2.0);
-		Size cen_resnum_of_smaller_sheet = round(to_be_rounded_i);
+		Size cen_resnum_of_smaller_sheet = round_to_Size(to_be_rounded_i);
 
 		Real distance_1 = pose.residue(cen_resnum_of_smaller_sheet).atom("CA").xyz().distance(pose.residue(start_end_res_num_in_the_longest_strand_in_sheet_j[1].get_start()).atom("CA").xyz());
 		Real distance_2 = pose.residue(cen_resnum_of_smaller_sheet).atom("CA").xyz().distance(pose.residue(start_end_res_num_in_the_longest_strand_in_sheet_j[1].get_end()).atom("CA").xyz());
@@ -2903,7 +2906,7 @@ SandwichFeatures::get_cen_res_in_other_sheet(
 	for(Size i=0; i<vector_of_residue_begin.size(); i++ )
 	{
 		Real to_be_rounded_i = (vector_of_residue_begin[i] + vector_of_residue_end[i])/(2.0);
-		Size cen_resnum_i = round(to_be_rounded_i);
+		Size cen_resnum_i = round_to_Size(to_be_rounded_i);
 		
 		vector_of_cen_residues.push_back(cen_resnum_i);
 	}
@@ -2977,7 +2980,7 @@ SandwichFeatures::get_cen_residues_in_this_sheet(
 	for(Size i=0; i<vector_of_residue_begin.size(); i++ )
 	{
 		Real to_be_rounded_i = (vector_of_residue_begin[i] + vector_of_residue_end[i])/(2.0);
-		Size cen_resnum_i = round(to_be_rounded_i);
+		Size cen_resnum_i = round_to_Size(to_be_rounded_i);
 		
 		vector_of_cen_residues.push_back(cen_resnum_i);
 	}
@@ -3307,7 +3310,7 @@ SandwichFeatures::determine_heading_direction_by_vector
 		}
 
 		Real to_be_rounded_ii = (residue_begin + residue_end)/(2.0);
-		Size cen_resnum_ii = round(to_be_rounded_ii);
+		Size cen_resnum_ii = round_to_Size(to_be_rounded_ii);
 
 		vector<Size>	vector_of_cen_residues;
 		vector_of_cen_residues.clear();	// Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
@@ -3657,6 +3660,7 @@ SandwichFeatures::report_number_of_inward_pointing_charged_AAs_in_a_pair_of_edge
 
 
 
+
 Size
 SandwichFeatures::report_dihedral_angle_between_core_strands_across_facing_sheets	(
 	StructureID struct_id,
@@ -3700,7 +3704,7 @@ SandwichFeatures::report_dihedral_angle_between_core_strands_across_facing_sheet
 	}
 
 	Real avg_dihedral_angle_between_core_strands_across_facing_sheets = total_dihedral_angle_between_core_strands_across_facing_sheets	/ count_dihedral_angle_between_core_strands_across_facing_sheets;
-	Real rounded_dihedral = round_to_real(avg_dihedral_angle_between_core_strands_across_facing_sheets);
+	Real rounded_dihedral = round_to_Real(avg_dihedral_angle_between_core_strands_across_facing_sheets);
 	//// <end> report average dihedral angles between core strands between facing sheets
 
 			
@@ -3723,6 +3727,89 @@ SandwichFeatures::report_dihedral_angle_between_core_strands_across_facing_sheet
 	
 	return 0;
 } //	SandwichFeatures::report_dihedral_angle_between_core_strands_across_facing_sheets
+
+
+
+
+Size
+SandwichFeatures::report_avg_b_factor_CB_at_each_component	(
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
+	Pose const & pose,
+	Size sw_can_by_sh_id)
+{
+	//// <begin> retrieve residue_begin, residue_end at each component
+	string select_string =
+	"SELECT\n"
+	"	residue_begin, residue_end\n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	(struct_id = ?) \n"
+	"	AND	(sw_can_by_sh_id = ?);";
+
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+	select_statement.bind(1,	struct_id);
+	select_statement.bind(2,	sw_can_by_sh_id);
+	result res(basic::database::safely_read_from_database(select_statement));
+
+	utility::vector1<Size> vector_of_residue_begin;
+	utility::vector1<Size> vector_of_residue_end;
+
+	while(res.next())
+	{
+		Size residue_begin,	residue_end;
+		res >> residue_begin	>>	residue_end;
+		vector_of_residue_begin.push_back(residue_begin);
+		vector_of_residue_end.push_back(residue_end);
+	}
+	//// <end> retrieve residue_begin, residue_end at each component
+
+
+	pose::PDBInfoCOP info = pose.pdb_info();
+	if ( info )
+	{
+		for(Size i=1; i<=vector_of_residue_begin.size(); i++)
+		{
+			Real	sum_of_b_factor_CB_at_each_component	=	0;
+			Size	count_atoms	=	0;
+			for(Size resid=vector_of_residue_begin[i];	resid<=vector_of_residue_end[i];	resid++)
+			{
+				Real B_factor_of_CB = info->temperature( resid, 5 ); // '5' atom will be 'H' for Gly
+				sum_of_b_factor_CB_at_each_component	=	sum_of_b_factor_CB_at_each_component	+	B_factor_of_CB;
+				count_atoms++;
+				//for ( Size ii = 1; ii <= info->natoms( resid ); ++ii )
+				//{
+				//	std::cout << "Temperature on " << resid << " " << ii << " " << info->temperature( resid, ii ) << std::endl;
+				//}
+			}
+			Real	avg_b_factor_CB_at_each_component	=	sum_of_b_factor_CB_at_each_component/count_atoms;
+
+			// <begin> UPDATE sw_by_components table
+			string insert =
+			"UPDATE sw_by_components set \n"
+			"avg_b_factor_CB_at_each_component = ? \n"
+			"WHERE\n"
+			"	(struct_id = ?) \n"
+			"	AND	(sw_can_by_sh_id = ?) \n"
+			"	AND	(residue_begin = ?) ;";
+
+			statement insert_stmt(basic::database::safely_prepare_statement(insert,	db_session));
+
+			int	rounded_avg_b_factor = round(avg_b_factor_CB_at_each_component);
+			insert_stmt.bind(1,	rounded_avg_b_factor);
+			insert_stmt.bind(2,	struct_id);
+			insert_stmt.bind(3,	sw_can_by_sh_id);
+			insert_stmt.bind(4,	vector_of_residue_begin[i]);
+
+			basic::database::safely_write_to_database(insert_stmt);
+			// <end> UPDATE sw_by_components table
+
+		}
+	}
+	return 0;
+} //	SandwichFeatures::report_avg_b_factor_CB_at_each_component
+
 
 
 
@@ -5023,13 +5110,13 @@ SandwichFeatures::add_dssp_ratio_in_sw (
 
 	statement update_statement(basic::database::safely_prepare_statement(update,	db_session));
 
-	Real rounded = round_to_real(H_num*100/dssp_pose.total_residue());
+	Real rounded = round_to_Real(H_num*100/dssp_pose.total_residue());
 	update_statement.bind(1,	rounded);
 
-	rounded = round_to_real(E_num*100/dssp_pose.total_residue());
+	rounded = round_to_Real(E_num*100/dssp_pose.total_residue());
 	update_statement.bind(2,	rounded);
 
-	rounded = round_to_real(L_num*100/dssp_pose.total_residue());
+	rounded = round_to_Real(L_num*100/dssp_pose.total_residue());
 	update_statement.bind(3,	rounded);
 
 	update_statement.bind(4,	struct_id);
@@ -6317,13 +6404,15 @@ SandwichFeatures::parse_my_tag(
 
 
 	distance_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("distance_cutoff_for_electrostatic_interactions", 6.1);
+	CB_b_facor_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("CB_b_facor_cutoff_for_electrostatic_interactions", 60);
+		//"Values of 60 or greater may imply disorder (for example, free movement of a side chain or alternative side-chain conformations). Values of 20 and 5 correspond to uncertainties of 0.5 and 0.25 angstroms, respectively."
+		//http://spdbv.vital-it.ch/TheMolecularLevel/SPVTut/text/STut09aTN.html
 
 
 	///////// development options ///////
 	do_not_connect_sheets_by_loops_ = tag->getOption<bool>("do_not_connect_sheets_by_loops", false);
 					//	definition: if true, don't connect sheets by loops
 	extract_sandwich_ = tag->getOption<bool>("extract_sandwich", true);
-
 
 
 
@@ -7361,6 +7450,10 @@ SandwichFeatures::report_features(
 				);
 
 
+			report_avg_b_factor_CB_at_each_component(struct_id,	db_session, pose,
+				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
+				);
+
 			if (write_AA_kind_files_)
 			{
 				// <begin> write AA_kind to a file
@@ -7385,7 +7478,7 @@ SandwichFeatures::report_features(
 				for (Size i =1; i<=(vec_AA_kind.size()); i++)
 				{
 					Real percent = vec_AA_kind[i]*100/static_cast<Real>(sw_res_size);
-					Size rounded_percent = round(percent);
+					Size rounded_percent = round_to_Size(percent);
 					AA_kind_file << rounded_percent << "	" ;
 				}
 
@@ -7399,6 +7492,8 @@ SandwichFeatures::report_features(
 				AA_kind_file.close();
 				// <end> write AA_kind to a file
 			}
+
+
 	
 		}
 		else // chance_of_being_canonical_sw = false
@@ -7493,6 +7588,7 @@ SandwichFeatures::report_features(
 		}
 		// <end> store surface RKDE to a database table
 
+		// <begin> count number of electrostatic_interactions_of_surface_residues_in_a_strand
 		Size tag_len = tag.length();
 		string pdb_file_name = tag.substr(0, tag_len-5);
 		string ElectroStatic_file_name = pdb_file_name + "_electrostatic_interactions_of_surface_residues_in_a_strand.txt";
@@ -7544,6 +7640,17 @@ SandwichFeatures::report_features(
 						continue;
 					}
 					Size	other_residue_num	=	vector_of_residue_num_of_surface_rkde[other_residue_i];
+
+					// <begin> check whether "other_residue" has low atom position uncertainty
+					pose::PDBInfoCOP info = pose.pdb_info();
+					Real B_factor_of_CB = info->temperature( other_residue_num, 5 ); // '5' atom will be 'H' for Gly
+					if (B_factor_of_CB	>	CB_b_facor_cutoff_for_electrostatic_interactions_)
+					{
+						continue;	// this	"other_residue" has too high atom position uncertainty, so let's not use this residue when counting number of electrostatic interactions
+					}
+					// <end> check whether "other_residue" has low atom position uncertainty
+
+
 					numeric::xyzVector< core::Real > xyz_of_other_terminal_atom;
 					if (pose.residue_type(other_residue_num).name3() == "ARG")
 					{
@@ -7594,6 +7701,7 @@ SandwichFeatures::report_features(
 			}
 		}
 		ElectroStatic_file.close();
+		// <end> count number of electrostatic_interactions_of_surface_residues_in_a_strand
 	}
 	/// <end> write_electrostatic_interactions_of_surface_residues_in_a_strand
 
