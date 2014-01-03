@@ -229,7 +229,7 @@ copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::
 	//	}
 	core::kinematics::FoldTree const saved_ft( target.fold_tree() );
 	TR<<"DEBUG: copy_stretch foldtree: "<<saved_ft<<std::endl;
-	TR<<" from res "<<from_res<<" to res "<<to_res<< "residue_diff"<<std::endl;
+	TR<<" from res "<<from_res<<" to res "<<to_res<<" residue_diff"<<std::endl;
 	protocols::protein_interface_design::movers::LoopLengthChange llc;
 	llc.loop_start( from_res );
 	llc.loop_end( to_res );
@@ -899,6 +899,7 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
 
 	rb_sensitive( tag->getOption< bool >( "rb_sensitive", false ) );
+	chain_num_=tag->getOption< core::Size >( "chain_num", 1 );
 	//if this flag is present then we don't use the subtags, get all pssm data from the database
 	if(( tag->hasOption( "segment" ) )&&(!sub_tags.empty())){//if both tags are turned on exit with error msg.
 		utility_exit_with_message( "it appears you are trying to run both \"segment\" and sub tags \"segments\" simoutansiously, this is not a valid option. Please only choose one\n");
@@ -997,7 +998,7 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 	add_sequence_constraints_only( tag->getOption< bool >( "add_sequence_constraints_only", false ) );
 	if( add_sequence_constraints_only() ){
 		TR<<"add_sequence_constraints only set to true. Therefore not parsing any of the other Splice flags."<<std::endl;
-		chain_num_=tag->getOption< core::Size >( "chain_num", 1 );
+		
 		return;
 	}
 
@@ -1150,8 +1151,7 @@ Splice::read_torsion_database(){
 	TR<<"Reading torsion database"<<std::endl;
 	utility::io::izstream data( torsion_database_fname_ );
 	if ( !data ) {
-		TR << "cannot open torsion database " << torsion_database_fname_ << std::endl;
-		utility_exit();
+		utility_exit_with_message("cannot open torsion database " + torsion_database_fname_ +"\n");
 	}
 	std::string line;
 	while( getline( data, line ) ) {
@@ -1534,6 +1534,7 @@ Splice::add_sequence_constraints( core::pose::Pose & pose){
 		TR<<"After removal the total number of constraints is: "<<pose.constraint_set()->get_all_constraints().size()<<std::endl;
 		/// then impose new sequence constraints
 		core::sequence::SequenceProfileOP seqprof( generate_sequence_profile(pose) );
+		TR<<"chain_num: "<< chain_num_<<std::endl;
 		TR<<"Chain length/seqprof size: "<<pose.conformation().chain_end( chain_num_ ) - pose.conformation().chain_begin( chain_num_ ) + 1<<", "<<seqprof->size()-1<<std::endl;
 		/*		std::string pdb_dump_fname_("after_splice.pdb");
 		std::ofstream out( pdb_dump_fname_.c_str() );
