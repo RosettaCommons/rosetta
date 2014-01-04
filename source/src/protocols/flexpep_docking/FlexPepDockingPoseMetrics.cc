@@ -418,6 +418,10 @@ FlexPepDockingPoseMetrics::calc_interface_metrics( core::pose::Pose & pose, Size
 void
 FlexPepDockingPoseMetrics::calc_pep_scores
 ( core::pose::Pose const & pose, Real& pepScore, Real& pepScore_noref ) const {
+	
+	pepScore = 0.0;
+	pepScore_noref = 0.0;
+
 	for (int i=flags_->peptide_first_res(); i <= flags_->peptide_last_res(); ++i)	{
 		using namespace core::scoring;
 		Real ienergy = pose.energies().residue_total_energy(i);
