@@ -75,6 +75,8 @@ public:
 
 	utility::vector1< Size > const & conventional_numbering() const { return conventional_numbering_;}
 
+	void clear_res_list();
+
 	void clear_other_pose_list();
 
 	utility::vector1< core::pose::PoseOP > const & other_pose_list() const { return other_pose_list_; }
@@ -87,7 +89,7 @@ public:
 
 	Size sub_to_full( Size const & res ) const;
 
-	void add_other_pose( core::pose::PoseOP & pose );
+	void add_other_pose( core::pose::PoseOP pose );
 
 	// set properties of full model.
 	void set_full_sequence( std::string const & setting ) { full_sequence_ = setting;}
@@ -107,6 +109,8 @@ public:
 	Size find_index_in_other_pose_list( pose::Pose const & pose ) const;
 
 	Size get_idx_for_other_pose_with_residue( Size const input_res ) const;
+
+	Size get_idx_for_other_pose( pose::Pose const & pose ) const;
 
 	utility::vector1< Size > chains_in_full_model() const;
 

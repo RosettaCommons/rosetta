@@ -166,6 +166,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-s</b> \<FileVector\><dt>
 <dd>Name(s) of single PDB file(s) to process</dd><br>
+<dd>Default: []</dd><br>
 </dl>
 <dl>
 <dt><b>-l</b> \<FileVector\><dt>
@@ -580,10 +581,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-input_res</b> \<IntegerVector\><dt>
 <dd>Residues already present in starting file</dd><br>
+<dd>Default: []</dd><br>
 </dl>
 <dl>
 <dt><b>-minimize_res</b> \<IntegerVector\><dt>
 <dd>Residues to minimize</dd><br>
+<dd>Default: []</dd><br>
 </dl>
 <dl>
 <dt><b>-md_schfile</b> \<String\><dt>
@@ -13140,7 +13143,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
 <dl>
-<dt><b>-allow_internal_moves</b> \<Boolean\><dt>
+<dt><b>-allow_internal_hinge_moves</b> \<Boolean\><dt>
+<dd>Allow moves in which internal suites are sampled (hinge-like motions)</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-allow_internal_local_moves</b> \<Boolean\><dt>
 <dd>Allow moves in which internal cutpoints are created to allow ERRASER rebuilds</dd><br>
 <dd>Default: false</dd><br>
 </dl>
@@ -13148,6 +13156,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-allow_skip_bulge</b> \<Boolean\><dt>
 <dd>Allow moves in which an intervening residue is skipped and the next one is modeled as floating base</dd><br>
 <dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-allow_from_scratch</b> \<Boolean\><dt>
+<dd>Allow modeling of 'free' dinucleotides that are not part of input poses</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-allow_split_off</b> \<Boolean\><dt>
+<dd>Allow chunks that do not contain fixed domains to split off after nucleating on fixed domains.</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-cycles</b> \<Integer\><dt>

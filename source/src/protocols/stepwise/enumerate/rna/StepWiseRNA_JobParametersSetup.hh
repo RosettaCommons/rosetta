@@ -116,6 +116,9 @@ namespace rna {
 		set_rebuild_bulge_mode( bool const setting );
 
 		void
+		set_sample_both_sugar_base_rotamer( bool const setting );
+
+		void
 		set_input_tags( utility::vector1< std::string > const & setting ){ input_tags_ = setting; } //Only called if check_for_previously_closed_cutpoint_with_input_pose is true
 
 		void

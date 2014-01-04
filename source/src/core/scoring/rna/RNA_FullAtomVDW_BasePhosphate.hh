@@ -39,7 +39,7 @@ public:
 public:
 
 	/// @brief ctor
-	RNA_FullAtomVDW_BasePhosphate( etable::TableLookupEtableEnergy const & etable_energy_in, etable::Etable const & etable_in);
+	RNA_FullAtomVDW_BasePhosphate( etable::TableLookupEtableEnergy const & etable_energy_in, etable::Etable const & etable_in );
 
 	/// @brief dtor
 	virtual ~RNA_FullAtomVDW_BasePhosphate();

@@ -97,7 +97,7 @@
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_VirtualSugarSampler.hh>
+#include <protocols/stepwise/enumerate/rna/sugar/StepWiseRNA_VirtualSugarSampler.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_Minimizer.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_ResidueSampler.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_Modeler.hh>
@@ -767,6 +767,7 @@ setup_rna_job_parameters( bool check_for_previously_closed_cutpoint_with_input_p
 	stepwise_rna_job_parameters_setup.set_floating_base_anchor_res( option[ OptionKeys::stepwise::rna::floating_base_anchor_res ]() );
 	if ( option[ OptionKeys::stepwise::rna::floating_base_anchor_res ]() ) runtime_assert( option[ OptionKeys::stepwise::rna::force_user_defined_jumps ]() );
 	stepwise_rna_job_parameters_setup.set_rebuild_bulge_mode( option[ basic::options::OptionKeys::stepwise::rna::rebuild_bulge_mode]() );
+	stepwise_rna_job_parameters_setup.set_sample_both_sugar_base_rotamer( option[ basic::options::OptionKeys::stepwise::rna::sample_both_sugar_base_rotamer]() );
 
 	/////////////////////////////Sept 1, 2010////////////
 	if ( check_for_previously_closed_cutpoint_with_input_pose ){

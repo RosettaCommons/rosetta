@@ -37,7 +37,7 @@
 
 using ObjexxFCL::format::I;
 
-static basic::Tracer tr("core.scoring.rna.RNA_VDW_Energy");
+static basic::Tracer tr( "core.scoring.rna.RNA_VDW_Energy" );
 
 namespace core {
 namespace scoring {
@@ -128,12 +128,12 @@ RNA_VDW_Energy::residue_pair_energy(
 	Size const pos2 = rsd2.seqpos();
 
 	if ( !rsd1.is_RNA() && !is_magnesium[ pos1 ] ) return;
-	if ( !rsd2.is_RNA() && !is_magnesium[ pos2 ]) return;
+	if ( !rsd2.is_RNA() && !is_magnesium[ pos2 ] ) return;
 
 	char const which_nucleotide1 = rsd1.name1(); //a,c,g,u
 	char const which_nucleotide2 = rsd2.name1(); //a,c,g,u
 
-	Real score(0.0);
+	Real score( 0.0 );
 
 	//Precomputed list of atom numbers... cached inside the pose.
 	utility::vector1< utility::vector1< Size > > const &
@@ -148,9 +148,9 @@ RNA_VDW_Energy::residue_pair_energy(
 	for ( Size m = 1; m <= num_vdw_atoms1; ++m ) {
 
 		Size const i = atom_numbers1[ m ];
-		if (rsd1.is_virtual(i) ) continue;
+		if ( rsd1.is_virtual( i ) ) continue;
 
-		Vector const & i_xyz( rsd1.xyz(i) );
+		Vector const & i_xyz( rsd1.xyz( i ) );
 
 		utility::vector1< Size > const & atom_numbers2 ( atom_numbers_for_vdw_calculation[ pos2 ]  );
 		Size const num_vdw_atoms2( atom_numbers2.size() );
@@ -158,10 +158,10 @@ RNA_VDW_Energy::residue_pair_energy(
 		for ( Size n = 1; n <= num_vdw_atoms2; ++n ) {
 
 			Size const j = atom_numbers2[ n ];
-			if (rsd2.is_virtual(j) ) continue;
+			if ( rsd2.is_virtual( j ) ) continue;
 
 			Real const bump_dsq( rna_atom_vdw_.bump_parameter( m, n, which_nucleotide1, which_nucleotide2 ) );
-			Real const clash( bump_dsq - i_xyz.distance_squared( rsd2.xyz(j) ) );
+			Real const clash( bump_dsq - i_xyz.distance_squared( rsd2.xyz( j ) ) );
 
 			if ( clash > 0.0 ) {
 
@@ -228,7 +228,7 @@ RNA_VDW_Energy::eval_atom_derivative(
 	int const pos1_map( domain_map( pos1 ) );
 	bool const pos1_fixed( pos1_map != 0 );
 
-	Vector const & i_xyz( rsd1.xyz(i) );
+	Vector const & i_xyz( rsd1.xyz( i ) );
 
 	utility::vector1< utility::vector1< Size > > const &
 			atom_numbers_for_vdw_calculation( rna_scoring_info.atom_numbers_for_vdw_calculation() );
@@ -247,7 +247,7 @@ RNA_VDW_Energy::eval_atom_derivative(
 			iru  = energy_graph.get_node( pos1 )->const_edge_list_begin(),
 			irue = energy_graph.get_node( pos1 )->const_edge_list_end();
 			iru != irue; ++iru ) {
-		Size const pos2( (*iru)->get_other_ind( pos1 ) );
+		Size const pos2( ( *iru )->get_other_ind( pos1 ) );
 
 		if ( pos1_fixed && pos1_map == domain_map( pos2 ) ) continue; // fixed wrt one another
 
@@ -264,7 +264,7 @@ RNA_VDW_Energy::eval_atom_derivative(
 
 			Size const j = atom_numbers2[ n ];
 
-			Vector const & j_xyz( rsd2.xyz(j) );
+			Vector const & j_xyz( rsd2.xyz( j ) );
 			Vector const f2( i_xyz - j_xyz );
 			Real const dis2( f2.length_squared() );
 			Real const bump_dsq( rna_atom_vdw_.bump_parameter( m, n, which_nucleotide1, which_nucleotide2 ) );
@@ -325,7 +325,7 @@ RNA_VDW_Energy::setup_atom_numbers_for_vdw_calculation( pose::Pose & pose ) cons
 	atom_numbers_for_vdw_calculation.resize( total_residue );
 	is_magnesium.resize( total_residue );
 
-	for (Size i = 1; i <= total_residue; i++ ) {
+	for ( Size i = 1; i <= total_residue; i++ ) {
 		conformation::Residue const & rsd( pose.residue( i ) );
 
 		is_magnesium[ i ] = ( rsd.name3() == " MG" );
@@ -336,9 +336,9 @@ RNA_VDW_Energy::setup_atom_numbers_for_vdw_calculation( pose::Pose & pose ) cons
 			char const which_nucleotide = rsd.name1();
 			//What atom names to look at?
 			utility::vector1< std::string > const vdw_atom_list = rna_atom_vdw_.vdw_atom_list( which_nucleotide );
-			for (Size m = 1; m <= vdw_atom_list.size(); m++ ){
+			for ( Size m = 1; m <= vdw_atom_list.size(); m++ ){
 				Size const vdw_atom_index =  rsd.atom_index( vdw_atom_list[ m ] );
-				atom_numbers_for_vdw_calculation[ i ].push_back( vdw_atom_index);
+				atom_numbers_for_vdw_calculation[ i ].push_back( vdw_atom_index );
 				//std::cout << i << " " << rsd.name1() << " " << m << " of " << vdw_atom_list.size() << ": " << vdw_atom_list[ m ] << " " << vdw_atom_index << std::endl;
 			}
 

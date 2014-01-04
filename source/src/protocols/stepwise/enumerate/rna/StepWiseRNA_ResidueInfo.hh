@@ -53,11 +53,8 @@ namespace rna {
 	core::Size
 	get_max_seq_num_from_res_map( std::map< core::Size, core::Size > const & my_map );
 
-
 	void
 	output_res_map( std::map< core::Size, core::Size > const & my_map, core::Size const max_seq_num );
-
-	// Undefined, commenting out to fix PyRosetta build  void output_is_prepend_map(std::map< core::Size, bool > const & my_map, core::Size const max_seq_num);
 
 	void
 	output_residue_list( utility::vector1< Residue_info > residue_list );
@@ -69,16 +66,16 @@ namespace rna {
 	get_residue_from_seq_num( core::Size const & seq_num, utility::vector1 < Residue_info > const & residue_list );
 
 	bool
-	Contain_residue_at_seq_num( core::Size seq_num, utility::vector1 < Residue_info > const & residue_list );
+	contain_residue_at_seq_num( core::Size seq_num, utility::vector1 < Residue_info > const & residue_list );
 
 	utility::vector1 < utility::vector1 < Residue_info > >
-	Create_strand_list( utility::vector1 < Residue_info > const & residue_list );
+	create_strand_list( utility::vector1 < Residue_info > const & residue_list );
 
 	utility::vector1 < Residue_info >
-	Set_Difference( utility::vector1 < Residue_info > const & residue_list_1, utility::vector1 < Residue_info > const & residue_list_2 );
+	set_difference( utility::vector1 < Residue_info > const & residue_list_1, utility::vector1 < Residue_info > const & residue_list_2 );
 
 	utility::vector1 < Residue_info >
-	Set_Union( utility::vector1 < Residue_info > const & residue_list_1, utility::vector1 < Residue_info > const & residue_list_2 );
+	set_union( utility::vector1 < Residue_info > const & residue_list_1, utility::vector1 < Residue_info > const & residue_list_2 );
 
 	bool
 	residue_list_sort_criterion( Residue_info residue_info_1, Residue_info residue_info_2 );

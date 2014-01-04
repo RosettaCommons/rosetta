@@ -17,7 +17,7 @@
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_PoseSetup.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_VirtualSugarUtil.hh>
+#include <protocols/stepwise/enumerate/rna/sugar/StepWiseRNA_VirtualSugarUtil.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
 #include <protocols/farna/RNA_ProtocolUtil.hh>
 #include <core/chemical/util.hh>
@@ -242,7 +242,7 @@ StepWiseRNA_PoseSetup::setup_native_pose( core::pose::Pose & pose ){
 		// Rhiju -- prefer to align pose to native pose...
 		align_poses( pose, "working_pose", ( *working_native_pose ), "working_native_pose", act_working_alignment );
 
-	} else{ //March 17, 2012 (Previous) Standard. This ensures that adding native_pdb does not change the final output silent_struct coordinates.
+	} else{ //March 17, 2012 (Previous) Classic. This ensures that adding native_pdb does not change the final output silent_struct coordinates.
 		align_poses( ( *working_native_pose ), "working_native_pose", pose, "working_pose", act_working_alignment );
 
 	}
@@ -843,7 +843,7 @@ StepWiseRNA_PoseSetup::verify_protonated_H1_adenosine_variants( pose::Pose & pos
 void
 StepWiseRNA_PoseSetup::update_fold_tree_at_virtual_sugars( pose::Pose & pose ){
 
-	std::map< Size, Size > const reference_res_for_each_virtual_sugar = get_reference_res_for_each_virtual_sugar_without_fold_tree( pose,  job_parameters_->working_moving_suite() );
+	std::map< Size, Size > const reference_res_for_each_virtual_sugar = sugar::get_reference_res_for_each_virtual_sugar_without_fold_tree( pose,  job_parameters_->working_moving_suite() );
 
 	TR.Debug << "BEFORE VIRTUAL SUGAR UPDATE " << pose.fold_tree() << std::endl;
 	for ( std::map< Size, Size >::const_iterator it = reference_res_for_each_virtual_sugar.begin();

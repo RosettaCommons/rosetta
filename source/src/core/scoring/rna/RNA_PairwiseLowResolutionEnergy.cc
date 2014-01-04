@@ -147,7 +147,7 @@ RNA_PairwiseLowResolutionEnergy::setup_for_derivatives( pose::Pose & pose, Score
 void
 RNA_PairwiseLowResolutionEnergy::setup_for_packing(
 	pose::Pose & pose,
-	utility::vector1< bool > const & ,
+	utility::vector1< bool > const &,
 	utility::vector1< bool > const & designing_residues
 ) const
 {
@@ -199,7 +199,7 @@ RNA_PairwiseLowResolutionEnergy::residue_pair_energy(
 
 	////////////////////////////////////////////////////////////////////////////////
 	emap[ rna_base_backbone ]     += rna_low_resolution_potential_.rna_base_backbone_pair_energy( rsd1, rsd2,
-																													centroid1, centroid2, stub1, stub2);
+																													centroid1, centroid2, stub1, stub2 );
 
 	////////////////////////////////////////////////////////////////////////////////
 	emap[ rna_backbone_backbone ] += rna_low_resolution_potential_.rna_backbone_backbone_pair_energy( rsd1, rsd2 );
@@ -250,9 +250,9 @@ RNA_PairwiseLowResolutionEnergy::rna_base_pair_pairwise_pair_energy(
 	conformation::Residue const & rsd2
 ) const
 {
-	ObjexxFCL::FArray3D< Real > const & base_pair_array ( rna_raw_base_base_info_->base_pair_array() );
+	ObjexxFCL::FArray3D < Real > const & base_pair_array ( rna_raw_base_base_info_->base_pair_array() );
 	Real score( 0.0 );
-	for (Size i = 1; i <= NUM_EDGES; i++ ){
+	for ( Size i = 1; i <= NUM_EDGES; i++ ){
 	  score += base_pair_array( rsd1.seqpos(), rsd2.seqpos(), i );
 	  score += base_pair_array( rsd2.seqpos(), rsd1.seqpos(), i );
 	}
@@ -266,9 +266,9 @@ RNA_PairwiseLowResolutionEnergy::rna_base_axis_pairwise_pair_energy(
 	conformation::Residue const & rsd2
 ) const
 {
-	ObjexxFCL::FArray3D< Real > const & base_axis_array ( rna_raw_base_base_info_->base_axis_array() );
+	ObjexxFCL::FArray3D < Real > const & base_axis_array ( rna_raw_base_base_info_->base_axis_array() );
 	Real score( 0.0 );
-	for (Size i = 1; i <= NUM_EDGES; i++ ){
+	for ( Size i = 1; i <= NUM_EDGES; i++ ){
 	  score += base_axis_array( rsd1.seqpos(), rsd2.seqpos(), i );
 	  score += base_axis_array( rsd2.seqpos(), rsd1.seqpos(), i );
 	}
@@ -282,9 +282,9 @@ RNA_PairwiseLowResolutionEnergy::rna_base_stagger_pairwise_pair_energy(
 	conformation::Residue const & rsd2
 ) const
 {
-	ObjexxFCL::FArray3D< Real > const & base_stagger_array ( rna_raw_base_base_info_->base_stagger_array() );
+	ObjexxFCL::FArray3D < Real > const & base_stagger_array ( rna_raw_base_base_info_->base_stagger_array() );
 	Real score( 0.0 );
-	for (Size i = 1; i <= NUM_EDGES; i++ ){
+	for ( Size i = 1; i <= NUM_EDGES; i++ ){
 	  score += base_stagger_array( rsd1.seqpos(), rsd2.seqpos(), i );
 	  score += base_stagger_array( rsd2.seqpos(), rsd1.seqpos(), i );
 	}
@@ -298,7 +298,7 @@ RNA_PairwiseLowResolutionEnergy::rna_base_stack_pairwise_pair_energy(
 	conformation::Residue const & rsd2
 ) const
 {
-	ObjexxFCL::FArray2D< Real > const & stack_array ( rna_raw_base_base_info_->base_stack_array() );
+	ObjexxFCL::FArray2D < Real > const & stack_array ( rna_raw_base_base_info_->base_stack_array() );
 	return stack_array( rsd1.seqpos(), rsd2.seqpos() );
 }
 
@@ -309,7 +309,7 @@ RNA_PairwiseLowResolutionEnergy::rna_base_stack_axis_pairwise_pair_energy(
 	conformation::Residue const & rsd2
 ) const
 {
-	ObjexxFCL::FArray2D< Real > const & stack_axis_array ( rna_raw_base_base_info_->base_stack_axis_array() );
+	ObjexxFCL::FArray2D < Real > const & stack_axis_array ( rna_raw_base_base_info_->base_stack_axis_array() );
 	return stack_axis_array( rsd1.seqpos(), rsd2.seqpos() );
 }
 
@@ -418,13 +418,13 @@ RNA_PairwiseLowResolutionEnergy::clean_up_rna_two_body_energy_tables(
 
 	scoring::EnergyGraph & energy_graph( pose.energies().energy_graph() );
 
-	for (Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 
 		for ( graph::Graph::EdgeListIter
-				iru  = energy_graph.get_node(i)->upper_edge_list_begin(),
-				irue = energy_graph.get_node(i)->upper_edge_list_end();
+				iru  = energy_graph.get_node( i )->upper_edge_list_begin(),
+				irue = energy_graph.get_node( i )->upper_edge_list_end();
 				iru != irue; ++iru ) {
-			Size const j( (*iru)->get_second_node_ind() );
+			Size const j( ( *iru )->get_second_node_ind() );
 
 			raw_base_base_info.copy_values( raw_base_base_info_save, i, j );
 			raw_base_base_info.copy_values( raw_base_base_info_save, j, i );

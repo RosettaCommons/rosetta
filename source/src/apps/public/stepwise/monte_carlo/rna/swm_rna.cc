@@ -83,6 +83,7 @@ stepwise_monte_carlo()
 	// read starting pose(s) from disk
 	utility::vector1< std::string > const & input_files = option[ in::file::s ]();
 	utility::vector1< pose::PoseOP > input_poses;
+	if ( input_files.size() == 0 ) input_poses.push_back( new Pose ); // just a blank pose for now.
 	for ( Size n = 1; n <= input_files.size(); n++ ) 	input_poses.push_back( get_pdb_and_cleanup( input_files[ n ], rsd_set ) );
 	if ( option[ full_model::other_poses ].user() ) get_other_poses( input_poses, option[ full_model::other_poses ](), rsd_set );
 	fill_full_model_info_from_command_line( input_poses ); 	//FullModelInfo (minimal object needed for add/delete)
@@ -156,11 +157,11 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::minimize_single_res_frequency );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::switch_focus_frequency );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::just_min_after_mutation_frequency );
-		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_internal_moves );
+		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_internal_hinge_moves );
+		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_internal_local_moves );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_skip_bulge );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::temperature );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::extra_min_res );
-		option.add_relevant( basic::options::OptionKeys::stepwise::rna::bulge_res );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_variable_bond_geometry );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::constraint_x0 );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::constraint_tol );
@@ -170,6 +171,8 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::rna::force_syn_chi_res_list );
 		option.add_relevant( OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed );
 		option.add_relevant( OptionKeys::stepwise::rna::force_centroid_interaction );
+		option.add_relevant( basic::options::OptionKeys::stepwise::rna::bulge_res );
+		option.add_relevant( basic::options::OptionKeys::stepwise::rna::terminal_res );
 		option.add_relevant( OptionKeys::rna::corrected_geo );
 
 		core::init::init(argc, argv);

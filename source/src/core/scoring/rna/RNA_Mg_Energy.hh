@@ -153,7 +153,7 @@ private:
 	Real
 	get_gaussian_score(
 										 GaussianParameter const & mg_potential_gaussian_parameter,
-										 Real const d) const;
+										 Real const d ) const;
 
 	Real
 	get_cos_theta( core::conformation::Residue const & rsd1,

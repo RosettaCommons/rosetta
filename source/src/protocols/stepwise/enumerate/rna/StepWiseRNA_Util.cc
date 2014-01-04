@@ -147,15 +147,10 @@ namespace rna {
 		using namespace core::scoring;
 		using namespace core::optimization;
 
-
 		AtomTreeMinimizer minimizer;
-
 		scoring::constraints::ConstraintSetOP save_pose_constraints = pose.constraint_set()->clone();
-
 		core::scoring::constraints::add_coordinate_constraints( pose );
-
 		minimizer.run( pose, mm, *( scorefxn ), options );
-
 		pose.constraint_set( save_pose_constraints );
 
 	}
@@ -163,7 +158,6 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
 	check_can_prepend( utility::vector1< core::Size > const & seq_num_list ){
-
 		for ( Size n = 1; n <= seq_num_list.size() - 1; n++ ){ //[11, 12, 13]
 			if ( ( seq_num_list[n] + 1 ) != seq_num_list[n + 1] ) return false;
 		}
@@ -173,7 +167,6 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
 	check_can_append( utility::vector1< core::Size > const & seq_num_list ){
-
 		for ( Size n = 1; n <= seq_num_list.size() - 1; n++ ){ //[14, 13, 12]
 			if ( ( seq_num_list[n] - 1 ) != seq_num_list[n + 1] ) return false;
 		}
@@ -219,7 +212,6 @@ namespace rna {
 
 		utility::vector1< Size > working_cutpoint_closed_list;
 		working_cutpoint_closed_list.clear(); //empty list
-
 		apply_virtual_rna_residue_variant_type( pose, seq_num, working_cutpoint_closed_list, apply_check );
 	}
 
@@ -319,45 +311,24 @@ namespace rna {
 	void
 	remove_all_variant_types( pose::Pose & pose ){
 
-
 		for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
 
 			if ( pose.residue( seq_num ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-
 			utility::vector1< core::chemical::VariantType > target_variants( pose.residue( seq_num ).type().variant_types() );
-
-			if ( target_variants.size() != pose.residue( seq_num ).type().variant_types().size() ){
-				utility_exit_with_message( "target_variants.size() != pose.residue( seq_num ).type().variant_types().size()" );
-			}
-
+			runtime_assert ( target_variants.size() == pose.residue( seq_num ).type().variant_types().size() );
 			Size skip_variant_count = 0;
-
 			for ( Size i = 1; i <= target_variants.size(); i++ ) {
-				//TR << "seq_num=" << seq_num << " variant_type[" << i << "]=" << target_variants[i] << std::endl;
-
-				if ( pose.residue( seq_num ).type().has_variant_type( target_variants[i] ) == false ) utility_exit_with_message( "pose.residue( seq_num ).type().has_variant_type( target_variants[i] ) == false!" );
-
+				runtime_assert ( pose.residue( seq_num ).type().has_variant_type( target_variants[i] ) );
 				bool skip_this_variant = false;
-
 				if ( target_variants[i] == "LOWER_TERMINUS" ) skip_this_variant = true;
-
 				if ( target_variants[i] == "UPPER_TERMINUS" ) skip_this_variant = true;
-
 				if ( skip_this_variant ){
 					skip_variant_count++;
 					continue;
 				}
-
 				pose::remove_variant_type_from_pose_residue( pose, target_variants[i], seq_num );
-
 			}
-
-			if ( pose.residue( seq_num ).type().variant_types().size() != skip_variant_count ){
-				TR << "pose.residue( seq_num ).type().variant_types().size() = " << pose.residue( seq_num ).type().variant_types().size() << std::endl;
-				TR << "skip_variant_count = " << skip_variant_count << std::endl;
-				utility_exit_with_message( "pose.residue( seq_num ).type().variant_types().size() != skip_variant_count" );
-			}
-
+			runtime_assert( pose.residue( seq_num ).type().variant_types().size() == skip_variant_count );
 		}
 
 	}
@@ -367,22 +338,13 @@ namespace rna {
 	apply_full_to_sub_mapping( utility::vector1< Size > const & res_vector, utility::vector1< core::Size > const & is_working_res, std::map< core::Size, core::Size > const & full_to_sub ){
 
 		using namespace ObjexxFCL;
-
-		if ( is_working_res.size() == 0 ){
-			utility_exit_with_message( "is_working_res.size() == 0" );
-		}
-
-		if ( full_to_sub.empty() == true ){
-			utility_exit_with_message( "full_to_sub.empty() == true" );
-		}
+		runtime_assert( is_working_res.size() > 0 );
+		runtime_assert ( !full_to_sub.empty() );
 
 		Size const total_res = is_working_res.size();
-
 		utility::vector1< core::Size > working_res_vector;
 		for ( Size n = 1; n <= res_vector.size(); n++ ) {
-
-			if ( res_vector[ n ] > total_res ) utility_exit_with_message( "res_vector[ n ] ( " + string_of( res_vector[ n ] ) + " ) > total_res ( " + string_of( total_res ) + " )!" );
-
+			runtime_assert ( res_vector[ n ] <= total_res );
 			if ( !is_working_res[ res_vector[ n ] ] ) continue;
 			working_res_vector.push_back( full_to_sub.find( res_vector[ n ] )->second );
 		}
@@ -406,19 +368,12 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< Size >
 	apply_sub_to_full_mapping( utility::vector1< Size > const & working_res_vector, StepWiseRNA_JobParametersCOP job_parameters ){
-
 		std::map< core::Size, core::Size > const & sub_to_full( job_parameters->const_sub_to_full() );
-
 		utility::vector1< core::Size > full_res_vector;
 		for ( Size n = 1; n <= working_res_vector.size(); n++ ){
-
-			if ( sub_to_full.find( working_res_vector[ n ] ) == sub_to_full.end() ){
-				utility_exit_with_message( "sub_to_full.find( working_res_vector[ n ] ).end() == sub_to_full.end()!" );
-			}
-
+			runtime_assert( sub_to_full.find( working_res_vector[ n ] ) != sub_to_full.end() );
 			full_res_vector.push_back( sub_to_full.find( working_res_vector[ n ] )->second );
 		}
-
 		return full_res_vector;
 	}
 
@@ -426,30 +381,21 @@ namespace rna {
 	///////////////////////////This should be a function of the job_parameters class///////////////////////
 	void
 	ensure_valid_full_seq_num( Size const full_seq_num, StepWiseRNA_JobParametersCOP const & job_parameters ){
-
 		using namespace ObjexxFCL;
-
 		utility::vector1< core::Size > const & is_working_res = job_parameters->is_working_res();
-
-		if ( full_seq_num < 1 ) utility_exit_with_message( "full_seq_num ( " + string_of( full_seq_num ) + " ) is lesser then 1" );
-
-		if ( full_seq_num > is_working_res.size() ) utility_exit_with_message( "full_seq_num ( " + string_of( full_seq_num ) + " ) is greater than is_working_res.size() ( " + string_of( is_working_res.size() ) + " )" );
-
+		runtime_assert(  full_seq_num >= 1 );
+		runtime_assert(  full_seq_num <= is_working_res.size() );
 	}
 
 	//////////////////////////This should be a function of the job_parameters class/////////////////////////
 	bool
 	check_is_working_res( Size const full_seq_num, StepWiseRNA_JobParametersCOP const & job_parameters ){
-
 		using namespace ObjexxFCL;
-
 		utility::vector1< core::Size > const & is_working_res = job_parameters->is_working_res();
-
 		ensure_valid_full_seq_num( full_seq_num, job_parameters );
-
 		return is_working_res[full_seq_num];
-
 	}
+
 	//////////////////////////This should be a function of the job_parameters class/////////////////////////
 	core::Size
 	check_validity_and_get_working_res( Size const full_seq_num, StepWiseRNA_JobParametersCOP const & job_parameters ){
@@ -688,8 +634,6 @@ namespace rna {
 	void
 	align_poses( core::pose::Pose & moving_pose, std::string const moving_tag, core::pose::Pose const & static_pose, std::string const static_tag, utility::vector1< core::Size > const & working_best_alignment, bool const base_only ){
 
-//		using namespace core::conformation;
-
 		bool found_non_virtual_base = false;
 		for ( Size n = 1; n <= working_best_alignment.size(); n++ ){
 			Size const seq_num = working_best_alignment[n];
@@ -713,18 +657,8 @@ namespace rna {
 
 		//align current_pose to pose_output_list.
 		id::AtomID_Map < id::AtomID > const & alignment_atom_id_map = create_alignment_id_map( moving_pose, static_pose, working_best_alignment, base_only );
-		// for ( Size i = 1; i <= moving_pose.total_residue(); i++ ){
-		// 	for ( Size j = 1; j <= moving_pose.residue( i ).natoms(); j++ ){
-		// 		if ( alignment_atom_id_map( core::id::AtomID(j,i) ) != core::id::BOGUS_ATOM_ID ) {
-		// 			std::cout << "RMSD: Aligning at " << i << " " << moving_pose.residue( i ).atom_name( j ) << std::endl;
-		// 		}
-		// 	}
-		// }
-		// std::cout << std::endl;
-
 		core::scoring::superimpose_pose( moving_pose, static_pose, alignment_atom_id_map );
 
-//				current_pose.dump_pdb( tag+ "_current_pose_after_alignment");
 		if ( check_for_messed_up_structure( moving_pose, moving_tag ) ){
 			std::string error_message = "Error in aligning " + moving_tag + " to " + static_tag + "!";
 			TR << error_message << std::endl;
@@ -1271,7 +1205,7 @@ namespace rna {
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//Create on Sept 24, 2010...should really integrate these rmsd square deviation functions....cause now it is just copy and paste copy
+	//create on Sept 24, 2010...should really integrate these rmsd square deviation functions....cause now it is just copy and paste copy
 	void
 	base_atoms_square_deviation( pose::Pose const & pose1, pose::Pose const & pose2, Size const & moving_res_1, Size const & moving_res_2, Size& atom_count, Real& sum_sd, bool verbose, bool const ignore_virtual_atom ){
 
@@ -1584,7 +1518,7 @@ namespace rna {
 		outstream << "--------------------------------------------------------------------------------------" << std::endl;
 		outstream << "Movemap ( in term of partial_pose seq_num ): " << std::endl;
 		outstream << A( spacing, "res_num" ) << A( spacing, " alpha  " ) << A( spacing, "  beta  " ) << A( spacing, " gamma  " );
-		outstream << A( spacing, " delta  " ) << A( spacing, "eplison " ) << A( spacing, "  zeta  " ) << A( spacing, " chi_1  " );
+		outstream << A( spacing, " delta  " ) << A( spacing, "epsilon " ) << A( spacing, "  zeta  " ) << A( spacing, " chi_1  " );
 		outstream << A( spacing, "  nu_2  " ) << A( spacing, "  nu_1  " ) << A( spacing, "chi_O2' " ) << std::endl;
 
 		for ( Size n = 1; n <= total_residue; n++ ){
@@ -1825,7 +1759,7 @@ namespace rna {
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////
-	//Created on Jan 20, 2012: Meant as the standard function to setup o2prime_pack_task to be called by both StepWiseRNA_ResidueSampler and StepWiseRNA_Minimizer...and in the future also FARFAR_minimizer.
+	//created on Jan 20, 2012: Meant as the standard function to setup o2prime_pack_task to be called by both StepWiseRNA_ResidueSampler and StepWiseRNA_Minimizer...and in the future also FARFAR_minimizer.
 	pack::task::PackerTaskOP
 	create_standard_o2prime_pack_task( pose::Pose const & pose, utility::vector1< core::Size > const & O2prime_pack_seq_num ){
 
@@ -2303,7 +2237,7 @@ namespace rna {
 
 		Size const nres = pose.total_residue();
 
-		kinematics::FoldTree simple_fold_tree( nres ); //Create a simple fold tree
+		kinematics::FoldTree simple_fold_tree( nres ); //create a simple fold tree
 
 		simple_fold_tree.simple_tree( nres ); //Just to make sure.
 
@@ -3094,123 +3028,24 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	figure_out_stepwise_rna_movemap( core::kinematics::MoveMap & mm, core::pose::Pose const & pose, utility::vector1< Size > const & minimize_res ){
+	figure_out_stepwise_rna_movemap( core::kinematics::MoveMap & mm, core::pose::Pose const & pose,
+																	 utility::vector1< Size > const & minimize_res ){
+
 
 		Size const nres( pose.total_residue() );
-		ObjexxFCL::FArray1D < bool > allow_insert( nres, false );
-		for ( Size i = 1; i <= minimize_res.size(); i++ ) allow_insert( minimize_res[ i ] ) = true;
+
+		toolbox::AllowInsertOP allow_insert = new toolbox::AllowInsert( pose );
+		for ( Size n = 1; n <= nres; n++ ) {
+		 	if ( !minimize_res.has_value( n ) ) {
+				allow_insert->set( n, false );
+			}
+			if ( pose.residue_type(n).is_RNA() &&
+					 pose.residue_type(n).has_variant_type( chemical::VIRTUAL_PHOSPHATE ) ) allow_insert->set_phosphate( n, pose, false );
+		}
 		figure_out_stepwise_rna_movemap( mm, pose, allow_insert );
 
 	}
 
-
-	/////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	figure_out_stepwise_rna_movemap( core::kinematics::MoveMap & mm, core::pose::Pose const & pose, ObjexxFCL::FArray1D < bool > const & allow_insert ){
-
-		using namespace core::id;
-		using namespace core::scoring::rna;
-		using namespace core::chemical;
-
-		Size const nres = pose.total_residue();
-		runtime_assert( nres == allow_insert.size() );
-
-		mm.set_bb( false );
-		mm.set_chi( false );
-		mm.set_jump( false );
-
-		// New -- rhiju, june 2013
-		for ( Size i = 1; i <= nres; i++ ){
-			if ( allow_insert( i ) ) {
-				mm.set_bb( i, true );
-				mm.set_chi( i, true );
-			}
-		}
-
-		for ( Size i = 1; i <= nres; i++ ){
-			if ( pose.residue( i ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code.
-			if ( !pose.residue( i ).is_RNA() ) continue;
-
-			utility::vector1< TorsionID > torsion_ids;
-			for ( Size rna_torsion_number = 1; rna_torsion_number <= NUM_RNA_MAINCHAIN_TORSIONS; rna_torsion_number++ ) {
-				torsion_ids.push_back( TorsionID( i, id::BB, rna_torsion_number ) );
-			}
-			for ( Size rna_torsion_number = 1; rna_torsion_number <= NUM_RNA_CHI_TORSIONS; rna_torsion_number++ ) {
-				torsion_ids.push_back( TorsionID( i, id::CHI, rna_torsion_number ) );
-			}
-
-			for ( Size n = 1; n <= torsion_ids.size(); n++ ) {
-				TorsionID const & torsion_id  = torsion_ids[ n ];
-				id::AtomID id1, id2, id3, id4;
-				bool fail = pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
-				if ( fail ) continue; //This part is risky, should also rewrite...
-
-				// Dec 19, 2010..Crap there is a mistake here..should have realize this earlier...
-				//Should allow torsions at the edges to minimize...will have to rewrite this. This effect the gamma and beta angle of the 3' fix res.
-
-				// If there's any atom that is in a moving residue by this torsion, let the torsion move.
-				//  should we handle a special case for cutpoint atoms? I kind of want those all to move.
-				utility::vector1< AtomID > torsion_atom_ids = utility::tools::make_vector1( id1, id2, id3, id4 );
-				for ( Size k = 1; k <= torsion_atom_ids.size(); k++ ){
-					if ( allow_insert( torsion_atom_ids[k].rsd() ) ) {
-						mm.set(  torsion_id, true );
-						TR.Debug << "Setting to move: " << torsion_id << std::endl;
-						break;
-					}
-				}
-				if ( mm.get( torsion_id ) ) continue;
-				//
-				// there is a note above from parin 'Should allow torsions at the edges to minimize...'
-				// it appears fixed, except for cutpoints. Has this caused a problem in SWA & ERRASER at closed cutpoints?
-				// Following code introduced by rhiju on aug. 2013:
-				//
-				if ( pose.residue(i).has_variant_type( CUTPOINT_LOWER ) && allow_insert( i+1 ) ){
-					for ( Size k = 1; k <= torsion_atom_ids.size(); k++ ){
-						if ( pose.residue_type( torsion_atom_ids[k].rsd() ).atom_name( torsion_atom_ids[k].atomno() ) == "OVL1" ||
-								 pose.residue_type( torsion_atom_ids[k].rsd() ).atom_name( torsion_atom_ids[k].atomno() ) == "OVL2" )  {
-							mm.set(  torsion_id, true );
-							TR.Debug << "Setting to move: " << torsion_id << std::endl;
-							break;
-						}
-					}
-				}
-				if ( mm.get( torsion_id ) ) continue;
-
-				if ( pose.residue(i).has_variant_type( CUTPOINT_UPPER ) && allow_insert( i-1 ) ){
-					for ( Size k = 1; k <= torsion_atom_ids.size(); k++ ){
-						if ( pose.residue_type( torsion_atom_ids[k].rsd() ).atom_name( torsion_atom_ids[k].atomno() ) == "OVU1" ){
-							mm.set(  torsion_id, true );
-							TR.Debug << "Setting to move: " << torsion_id << std::endl;
-							break;
-						}
-					}
-				}
-				if ( mm.get( torsion_id ) ) continue;
-
-			}
-		}
-
-
-		// why is this in the internal loop? -- rhiju
-		TR.Debug << "pose.fold_tree().num_jump() = " << pose.fold_tree().num_jump() << std::endl;
-
-		for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
-			Size const jump_pos1( pose.fold_tree().upstream_jump_residue( n ) );
-			Size const jump_pos2( pose.fold_tree().downstream_jump_residue( n ) );
-
-			if ( pose.residue( jump_pos1 ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-			if ( pose.residue( jump_pos2 ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-
-			if ( !pose.residue( jump_pos1 ).is_RNA() ) continue;
-			if ( !pose.residue( jump_pos2 ).is_RNA() ) continue;
-
-			bool const move_jump = allow_insert( jump_pos1 ) || allow_insert( jump_pos2 );
-			if ( move_jump )	mm.set_jump( n, true );
-			TR.Debug << "jump_pos1 = " << jump_pos1 << " jump_pos2 = " << jump_pos2 << " mm.jump = "; output_boolean( move_jump, TR.Debug );  TR.Debug << std::endl;
-
-		}
-
-	}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////
@@ -3269,13 +3104,12 @@ figure_out_stepwise_rna_movemap( core::kinematics::MoveMap & mm, core::pose::Pos
 			for ( Size k = 1; k <= torsion_atom_ids.size(); k++ ){
 				if ( allow_insert->get( torsion_atom_ids[k].rsd() ) ) {
 					mm.set(  torsion_id, true );
+					TR.Debug << "Setting to move: " << torsion_id << std::endl;
 					break;
 				}
 			}
 			if ( mm.get( torsion_id ) ) continue;
 
-
-			//
 			// there is a note above from parin 'Should allow torsions at the edges to minimize...'
 			// it appears fixed, except for cutpoints. Has this caused a problem in SWA & ERRASER at closed cutpoints?
 			// Following code introduced by rhiju on aug. 2013:
@@ -3285,6 +3119,7 @@ figure_out_stepwise_rna_movemap( core::kinematics::MoveMap & mm, core::pose::Pos
 					if ( pose.residue_type( torsion_atom_ids[k].rsd() ).atom_name( torsion_atom_ids[k].atomno() ) == "OVL1" ||
 						pose.residue_type( torsion_atom_ids[k].rsd() ).atom_name( torsion_atom_ids[k].atomno() ) == "OVL2" )  {
 						mm.set(  torsion_id, true );
+						TR.Debug << "Setting to move: " << torsion_id << std::endl;
 						break;
 					}
 				}
@@ -3295,6 +3130,7 @@ figure_out_stepwise_rna_movemap( core::kinematics::MoveMap & mm, core::pose::Pos
 				for ( Size k = 1; k <= torsion_atom_ids.size(); k++ ){
 					if ( pose.residue_type( torsion_atom_ids[k].rsd() ).atom_name( torsion_atom_ids[k].atomno() ) == "OVU1" ){
 						mm.set(  torsion_id, true );
+						TR.Debug << "Setting to move: " << torsion_id << std::endl;
 						break;
 					}
 				}
@@ -3323,6 +3159,7 @@ figure_out_stepwise_rna_movemap( core::kinematics::MoveMap & mm, core::pose::Pos
 		TR.Debug << "jump_pos1 = " << jump_pos1 << " jump_pos2 = " << jump_pos2 << " mm.jump = "; output_boolean( move_jump, TR.Debug );  TR.Debug << std::endl;
 
 	}
+
 
 }
 
@@ -3358,7 +3195,6 @@ update_allow_insert_with_extra_minimize_res( pose::Pose const & pose, toolbox::A
 		atom_ids_to_move.push_back( named_atom_id_to_atom_id( id::NamedAtomID( " OP1", n+1 ), pose ) );
 		atom_ids_to_move.push_back( named_atom_id_to_atom_id( id::NamedAtomID( " P  ", n+1 ), pose ) );
 		atom_ids_to_move.push_back( named_atom_id_to_atom_id( id::NamedAtomID( " O5'", n+1 ), pose ) );
-
 	}
 
 	for ( Size n = 1; n <= atom_ids_to_move.size(); n++ ){

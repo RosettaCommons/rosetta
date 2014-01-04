@@ -28,6 +28,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>
 #include <basic/Tracer.hh>
+#include <numeric/random/random.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -62,7 +63,7 @@
 #include <fstream>
 #include <sstream>
 #include <ObjexxFCL/format.hh>
-#include <set>
+#include <ObjexxFCL/string.functions.hh>
 
 
 //Auto Headers
@@ -71,7 +72,9 @@
 using namespace core;
 using numeric::conversions::degrees;
 using numeric::conversions::radians;
+using ObjexxFCL::string_of;
 
+static numeric::random::RandomGenerator RG(539155021);  // <- Magic number, do not change it!
 static basic::Tracer TR( "protocols.stepwise.StepWiseUtil" );
 
 namespace protocols {
@@ -206,7 +209,7 @@ namespace stepwise {
 		Size spacing=10;
 
 		std::cout << "Movemap (in term of partial_pose seq_num): " << std::endl;
-		std::cout << A(spacing,"res_num") << A(spacing,"alpha") << A(spacing,"beta") << A(8,"gamma") << A(8,"delta") <<A(8,"eplison") <<A(8,"zeta");
+		std::cout << A(spacing,"res_num") << A(spacing,"alpha") << A(spacing,"beta") << A(8,"gamma") << A(8,"delta") <<A(8,"epsilon") <<A(8,"zeta");
 		std::cout << A(spacing,"chi_1") << A(spacing,"nu_2") << A(spacing,"nu_1") << A(8,"chi_O2") << std::endl;
 
 		for(Size n=1; n<= total_residue; n++){
@@ -819,6 +822,7 @@ rotate( pose::Pose & pose, Matrix const M,
 
 		using namespace core::id;
 
+
 		runtime_assert ( n1 >= 1 && n1 <= pose1.total_residue() );
 		runtime_assert ( n2 >= 1 && n2 <= pose2.total_residue() );
 		runtime_assert( pose1.residue_type( n1 ).aa() == pose2.residue_type( n2 ).aa() );
@@ -866,6 +870,8 @@ rotate( pose::Pose & pose, Matrix const M,
 		utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
 		std::string const full_sequence = full_model_info.full_sequence();
 
+		if ( res_list.size() == 0 ) return; // special case -- blank pose.
+
 		// following needs to be updated.
 		utility::vector1< Size > const rmsd_res = full_model_info.moving_res_in_full_model();
 
@@ -890,6 +896,9 @@ rotate( pose::Pose & pose, Matrix const M,
 				runtime_assert( native_pose_local.sequence()[ res_list[ n ] - 1] == pose_nt );
 			}
 		}
+
+		// super special case.
+		if ( calc_rms_res.size() == 0 && pose.total_residue() == 1 ) calc_rms_res.push_back( 1 );
 
 		std::map< AtomID, AtomID > calc_rms_atom_id_map;
 
@@ -1071,6 +1080,8 @@ rotate( pose::Pose & pose, Matrix const M,
 	}
 
 	////////////////////////////////////
+	// Arvind, this is NOT GOOD FORM, should not be
+	// copying so much code. -- rhiju
 	void
 	superimpose_at_fixed_res_and_add_constraints( pose::Pose & pose, pose::Pose const & native_pose, core::Real const & constraint_x0, core::Real const & constraint_tol ) {
 
@@ -1089,6 +1100,8 @@ rotate( pose::Pose & pose, Matrix const M,
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 		utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
 		std::string const full_sequence = full_model_info.full_sequence();
+
+		if ( res_list.size() == 0 ) return;
 
 		// following needs to be updated.
 		utility::vector1< Size > const rmsd_res = full_model_info.moving_res_in_full_model();
@@ -1404,9 +1417,6 @@ rotate( pose::Pose & pose, Matrix const M,
 		using namespace core::pose::full_model_info;
 		using namespace core::pose::datacache;
 		using namespace basic::datacache;
-
-		// following assert may not be absolutely necessary.
-		//		runtime_assert( & const_full_model_info( pose1 ) == & const_full_model_info( pose2 ) );
 
 		// get working_residue information from each pose
 		utility::vector1< Size > const & working_res1 = get_res_list_from_full_model_info_const( pose1 );
@@ -1967,7 +1977,9 @@ rotate( pose::Pose & pose, Matrix const M,
 			if ( at_strand_end && at_strand_beginning ) fix_up_residue_type_variants_at_floating_base( pose,  n );
 		}
 
-		pose_to_fix = pose;
+		// Just copying the conformation() makes sure that other objects (such as other_pose_list) don't get cloned --
+		//  can be important of external functions are holding OPs to those objects.
+		pose_to_fix.conformation() = pose.conformation();
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////
@@ -2010,6 +2022,31 @@ rotate( pose::Pose & pose, Matrix const M,
 
 	}
 
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	switch_focus_among_poses_randomly( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn ) {
+
+		using namespace core::pose;
+		using namespace core::pose::full_model_info;
+		using namespace protocols::stepwise;
+
+		Size const num_other_poses = const_full_model_info( pose ).other_pose_list().size();
+		Size const focus_pose_idx = RG.random_range( 0, num_other_poses );
+		if ( focus_pose_idx == 0 ) return false;
+
+		Real const score_before_switch_focus = ( scorefxn != 0 ) ? (*scorefxn)( pose ) : 0.0;
+		TR.Debug << TR.Green << "SWITCHING FOCUS! SWITCHING FOCUS! SWITCHING FOCUS! SWITCHING FOCUS! to: " << focus_pose_idx << TR.Reset << std::endl;
+		switch_focus_to_other_pose( pose, focus_pose_idx );
+		Real const score_after_switch_focus = ( scorefxn != 0 ) ? (*scorefxn)( pose ) : 0.0;
+
+		// originally set threshold at 0.001, but triggered rare errors. At some point worth tracking down...
+		if (  std::abs( score_before_switch_focus - score_after_switch_focus ) > 0.10 ){
+			utility_exit_with_message( "Energy change after switching pose focus: " + string_of( score_before_switch_focus ) + " to " +string_of( score_after_switch_focus ) );
+		}
+
+		return true;
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// specific for two helix test case. Sort of a unit test. Maybe I should make it a unit test.

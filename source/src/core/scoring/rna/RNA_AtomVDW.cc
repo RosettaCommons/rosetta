@@ -32,7 +32,7 @@
 #include <basic/Tracer.hh>
 
 
-static basic::Tracer tr("core.scoring.rna.RNA_AtomVDW");
+static basic::Tracer tr( "core.scoring.rna.RNA_AtomVDW" );
 
 namespace core {
 namespace scoring {
@@ -41,11 +41,11 @@ namespace rna {
 Size
 rna_residue_name_to_num( char const c )
 {
-	if ( c == 'a') return 1;
-	if ( c == 'c') return 2;
-	if ( c == 'g') return 3;
-	if ( c == 'u') return 4;
-	if ( c == 'Z') return 5; // Mg(2+)
+	if ( c == 'a' ) return 1;
+	if ( c == 'c' ) return 2;
+	if ( c == 'g' ) return 3;
+	if ( c == 'u' ) return 4;
+	if ( c == 'Z' ) return 5; // Mg(2+)
 	tr << "What is this? " << c << std::endl;
 	utility_exit_with_message( "Asked for rna_residue_name_to_num for unknown residue_name" );
 	return 0;
@@ -53,11 +53,11 @@ rna_residue_name_to_num( char const c )
 
 //Why doesn't this helper function already exist in vector class?
 Size
-get_position_in_vector( utility::vector1< std::string> & vec, std::string const element )
+get_position_in_vector( utility::vector1< std::string > & vec, std::string const element )
 {
 	Size count( 1 );
-	for ( utility::vector1<std::string>::iterator iter = vec.begin(); iter < vec.end(); iter++ )	{
-		if (*iter == element) return count;
+	for ( utility::vector1< std::string > ::iterator iter = vec.begin(); iter < vec.end(); iter++ )	{
+		if ( *iter == element ) return count;
 		count++;
 	}
 	vec.push_back( element );
@@ -85,8 +85,8 @@ RNA_AtomVDW::RNA_AtomVDW()
 	char which_residue1, which_residue2;
 	Real input_bump_parameter;
 	while ( getline( stream, line ) ) {
-		lines.push_back(line);
-		std::istringstream l(line);
+		lines.push_back( line );
+		std::istringstream l( line );
 		l >> which_residue1 >> which_residue2 >> atom_name1 >> atom_name2 >> input_bump_parameter;
 
 		Size const pos1 = get_position_in_vector( rna_vdw_atom_[which_residue1], atom_name1 );
@@ -127,7 +127,7 @@ RNA_AtomVDW::vdw_atom_list( char const which_nucleotide ) const
 		return blank_vector;
 	}
 
-	return (iter->second);
+	return ( iter->second );
 }
 
 Real

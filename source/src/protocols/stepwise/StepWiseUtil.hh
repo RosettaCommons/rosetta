@@ -293,6 +293,9 @@ namespace stepwise {
 	void
 	switch_focus_to_other_pose( pose::Pose & pose, Size const & focus_pose_idx );
 
+	bool
+	switch_focus_among_poses_randomly( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn = 0 );
+
 	pose::PoseOP
 	get_pdb_and_cleanup( std::string const input_file,
 											 chemical::ResidueTypeSetCAP rsd_set );

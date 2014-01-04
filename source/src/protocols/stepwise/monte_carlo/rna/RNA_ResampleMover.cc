@@ -16,10 +16,11 @@
 #include <protocols/stepwise/monte_carlo/rna/RNA_ResampleMover.hh>
 #include <protocols/stepwise/monte_carlo/SWA_Move.hh>
 #include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
+#include <protocols/stepwise/monte_carlo/rna/TransientCutpointHandler.hh>
+#include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloOptions.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_ModelerOptions.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
-#include <protocols/stepwise/monte_carlo/rna/TransientCutpointHandler.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -34,6 +35,15 @@
 static numeric::random::RandomGenerator RG(239145021);  // <- Magic number, do not change it!
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.RNA_ResampleMover" );
 
+
+//////////////////////////////////////////////////////////////////////////
+// Makes a choice, based on current pose, and information in full_model_info
+//  as to where to resample nucleotides or chunks.
+//
+// Does not add or delete  [see RNA_AddOrDeleteMover for those functionalities].
+//
+//////////////////////////////////////////////////////////////////////////
+
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
@@ -43,11 +53,8 @@ namespace rna {
 	RNA_ResampleMover::RNA_ResampleMover(	protocols::stepwise::enumerate::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler ):
 		stepwise_rna_modeler_( stepwise_rna_modeler ),
 		swa_move_selector_( new SWA_MoveSelector ),
-		just_min_after_mutation_frequency_( 0.5 ),
-		allow_internal_moves_( false ),
-		minimize_single_res_( false ),
-		constraint_x0_( 0.0 ),
-		constraint_tol_( 0.0 )
+		options_( new StepWiseRNA_MonteCarloOptions ),
+		minimize_single_res_( false )
 	{}
 
 	//Destructor
@@ -74,12 +81,13 @@ namespace rna {
 														std::string & move_type ){
 
 		utility::vector1< SWA_Move > swa_moves;
-		swa_move_selector_->get_resample_terminal_move_elements( pose, swa_moves );
-		if ( allow_internal_moves_ ) swa_move_selector_->get_resample_internal_move_elements( pose, swa_moves );
+		swa_move_selector_->set_allow_internal_hinge( options_->allow_internal_hinge_moves() );
+		swa_move_selector_->set_allow_internal_local( options_->allow_internal_local_moves() );
+		swa_move_selector_->get_resample_move_elements( pose, swa_moves );
 
-		//		TR << "POSSIBLE RESAMPLE MOVES! ";
-		//		for ( Size n = 1; n <= swa_moves.size(); n++ ) TR << swa_moves[n];
-		//		TR << std::endl;
+		TR.Debug << "POSSIBLE RESAMPLE MOVES!";
+		for ( Size n = 1; n <= swa_moves.size(); n++ ) TR.Debug << " " << swa_moves[n];
+		TR.Debug << std::endl;
 
 		if ( swa_moves.size() == 0 ) return false;
 		SWA_Move const & swa_move = RG.random_element( swa_moves );
@@ -113,22 +121,24 @@ namespace rna {
 
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 		Size const num_attachments = swa_move.attachments().size();
-		bool const is_at_terminus = ( num_attachments == 1 );
+		bool const is_single_attachment = ( num_attachments == 1 );
 		Size const move_element_size = swa_move.move_element().size();
 
-		if ( is_at_terminus ) {
+		if ( is_single_attachment ) {
 			Attachment const & attachment = swa_move.attachments()[ 1 ];
 			AttachmentType const & attachment_type = attachment.attachment_type();
 			//			TR << TR.Red << "Attachment " << attachment << TR.Reset << std::endl;
 			if ( move_element_size == 1) {
 				remodel_res = res_list.index( swa_move.moving_res() );
 				remodel_suite = ( attachment_type == ATTACHED_TO_PREVIOUS ) ? remodel_res - 1 : remodel_res;
+				// also possible that this is a 'floating base'
+				if ( attachment_type == JUMP_TO_PREV_IN_CHAIN || attachment_type == JUMP_TO_NEXT_IN_CHAIN ) remodel_suite = 0;
 			} else { // remodel res will be internal... need to supply *suite* number.
 				Size const & attachment_res = attachment.attached_res();
 				if ( attachment_type == ATTACHED_TO_PREVIOUS ){
 					remodel_res = res_list.index( attachment_res );
 				} else {
-					runtime_assert( attachment_type == ATTACHED_TO_NEXT );
+					runtime_assert( attachment_type == ATTACHED_TO_NEXT ); // cannot yet handle jumps.
 					remodel_res = res_list.index( attachment_res ) - 1;
 					runtime_assert( remodel_res == res_list.index( attachment_res - 1 ) );
 				}
@@ -154,32 +164,33 @@ namespace rna {
 		runtime_assert( remodel_res > 0 );
 
 		//		TR << TR.Red << pose.fold_tree() << TR.Reset;
-		//		TR << TR.Red << "Is at terminus: " << is_at_terminus << " num attachments " << num_attachments << TR.Reset << std::endl;
+		//		TR << TR.Red << "Is at terminus: " << is_single_attachment << " num attachments " << num_attachments << TR.Reset << std::endl;
 
 		bool did_mutation( false );
 		// based on 'n' in full_model_info.full_sequence
 		if ( move_element_size == 1 ) did_mutation = mutate_res_if_allowed( pose, full_to_sub( swa_move.moving_res(), pose ) );
-		bool just_min_after_mutation_ = ( did_mutation && ( RG.uniform() < just_min_after_mutation_frequency_ ) );
+		bool just_min_after_mutation = ( did_mutation && ( RG.uniform() < options_->just_min_after_mutation_frequency() ) );
 
 		stepwise_rna_modeler_->set_moving_res_and_reset( remodel_res );
-		stepwise_rna_modeler_->set_skip_sampling( just_min_after_mutation_ );
+		stepwise_rna_modeler_->set_skip_sampling( just_min_after_mutation );
 
 		// LATER SHOULD REPLACE THIS WITH FIXED DOMAIN MAP -- NEED TO UPDATE STEPWISE MODELER -- rhiju.
 		utility::vector1< Size > const & moving_res = get_moving_res_from_full_model_info( pose );
 		if ( ! minimize_single_res_ ) stepwise_rna_modeler_->set_minimize_res( moving_res );
-		clear_constraints_recursively( pose );
 
+		clear_constraints_recursively( pose );
 		if ( get_native_pose() ) {
-			superimpose_recursively_and_add_constraints( pose, *get_native_pose(), constraint_x0_, constraint_tol_ );
+			superimpose_recursively_and_add_constraints( pose, *get_native_pose(),
+																									 options_->constraint_x0(), options_->constraint_tol() );
 		}
 
-		if ( is_at_terminus ){
+		if ( is_single_attachment ){
 
 			move_type = "resample_terminus";
 			stepwise_rna_modeler_->apply( pose );
 
 		} else {
-			runtime_assert( allow_internal_moves_ );
+			runtime_assert( options_->allow_internal_local_moves() );
 			move_type = "resample_internal_local";
 
 			TR << "Going to set up TRANSIENT_CUTPOINT_HANDLER with " << remodel_suite << " " << cutpoint_suite << std::endl;
@@ -192,10 +203,16 @@ namespace rna {
 		}
 
 		if ( did_mutation ) move_type += "-mut";
-		if ( just_min_after_mutation_ ) move_type = "mut";
+		if ( just_min_after_mutation ) move_type = "mut";
 
 		return true;
 
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	RNA_ResampleMover::set_options( StepWiseRNA_MonteCarloOptionsCOP options ){
+		options_ = options;
 	}
 
 

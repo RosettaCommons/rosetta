@@ -45,7 +45,7 @@
 using ObjexxFCL::format::I;
 using namespace core::chemical::rna;
 
-static basic::Tracer tr("core.scoring.rna.RNA_Mg_Energy");
+static basic::Tracer tr( "core.scoring.rna.RNA_Mg_Energy" );
 
 namespace core {
 namespace scoring {
@@ -151,8 +151,8 @@ RNA_Mg_Energy::get_cos_theta( core::conformation::Residue const & rsd1,
 
   Vector dummy, xyz_base;
 
-  if ( rsd1.heavyatom_is_an_acceptor(i) ){
-    chemical::Hybridization acc_hybrid( rsd1.atom_type( i ).hybridization());
+  if ( rsd1.heavyatom_is_an_acceptor( i ) ){
+    chemical::Hybridization acc_hybrid( rsd1.atom_type( i ).hybridization() );
     make_hbBasetoAcc_unitvector(
 				*hbond_options_,
 				acc_hybrid,
@@ -197,9 +197,9 @@ RNA_Mg_Energy::residue_pair_energy_one_way(
   // get magnesium position
   Size const j = 1;  //First atom of Mg2+ residue is assumed to be Mg2+ atom.
   runtime_assert( rsd2.atom_name( j ) ==  "MG  " );
-  if (rsd2.is_virtual(j) ) return;
+  if ( rsd2.is_virtual( j ) ) return;
 
-  Vector const & j_xyz = rsd2.xyz(j);
+  Vector const & j_xyz = rsd2.xyz( j );
 
   // Loop over potential ligand positions.
   Size const pos1 = rsd1.seqpos();
@@ -222,8 +222,8 @@ RNA_Mg_Energy::residue_pair_energy_one_way(
   for ( Size m = 1; m <= atom_numbers1.size(); ++m ) {
 
     Size const i = atom_numbers1[ m ];
-    if (rsd1.is_virtual(i) ) continue;
-    Vector const & i_xyz( rsd1.xyz(i) );
+    if ( rsd1.is_virtual( i ) ) continue;
+    Vector const & i_xyz( rsd1.xyz( i ) );
 
     Distance d = ( i_xyz - j_xyz ).length();
 
@@ -244,9 +244,9 @@ RNA_Mg_Energy::residue_pair_energy_one_way(
 	binding_score *= angle_potential;
       }
 
-      if ( verbose_ && std::abs(binding_score) >  0.1 ) tr <<  "Mg " << rsd2.seqpos() << "   direct to ligand " << pos1 << ' ' << rsd1.atom_name(i)  << "   cos_angle " << cos_theta << "  score: " <<  binding_score  << std::endl;
+      if ( verbose_ && std::abs( binding_score ) >  0.1 ) tr <<  "Mg " << rsd2.seqpos() << "   direct to ligand " << pos1 << ' ' << rsd1.atom_name( i )  << "   cos_angle " << cos_theta << "  score: " <<  binding_score  << std::endl;
 
-      if (is_phosphate_oxygen) {
+      if ( is_phosphate_oxygen ) {
 	phosphate_scores.push_back( binding_score ); // will get added in later
       } else {
 	score += binding_score;
@@ -273,7 +273,7 @@ RNA_Mg_Energy::residue_pair_energy_one_way(
 	}
 	score_indirect += binding_score_indirect;
 
-	if ( verbose_ && std::abs(binding_score_indirect) >  0.1 ) tr <<  "Mg " << rsd2.seqpos() << " indirect to ligand " << pos1 << ' ' << rsd1.atom_name(i) << "  score: " <<  binding_score_indirect << std::endl;
+	if ( verbose_ && std::abs( binding_score_indirect ) >  0.1 ) tr <<  "Mg " << rsd2.seqpos() << " indirect to ligand " << pos1 << ' ' << rsd1.atom_name( i ) << "  score: " <<  binding_score_indirect << std::endl;
 
       }
     }
@@ -314,7 +314,7 @@ RNA_Mg_Energy::get_gaussian_potential_score(
 Real
 RNA_Mg_Energy::get_gaussian_score(
 					    GaussianParameter const & mg_potential_gaussian_parameter,
-					    Real const d) const
+					    Real const d ) const
 { // later expand to do derivative calculation
 
   Real const a     = mg_potential_gaussian_parameter.amplitude;

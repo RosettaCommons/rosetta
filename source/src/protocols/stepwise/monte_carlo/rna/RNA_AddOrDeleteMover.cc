@@ -15,6 +15,7 @@
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddOrDeleteMover.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddMover.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_DeleteMover.hh>
+#include <protocols/stepwise/monte_carlo/rna/RNA_FromScratchMover.hh>
 #include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloOptions.hh>
 
@@ -32,8 +33,8 @@ using core::Real;
 using namespace core::pose::full_model_info;
 
 //////////////////////////////////////////////////////////////////////////
-// Removes one residue from a 5' or 3' chain terminus, and appropriately
-// updates the pose full_model_info object.
+// Makes a choice, based on current pose, and information in full_model_info
+//  as to whether to add or delete nucleotide and chunks, and where.
 //////////////////////////////////////////////////////////////////////////
 
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.RNA_AddOrDeleteMover" ) ;
@@ -47,9 +48,11 @@ namespace rna {
   //////////////////////////////////////////////////////////////////////////
   //constructor!
 	RNA_AddOrDeleteMover::RNA_AddOrDeleteMover( RNA_AddMoverOP rna_add_mover,
-																							RNA_DeleteMoverOP rna_delete_mover ) :
+																							RNA_DeleteMoverOP rna_delete_mover,
+																							RNA_FromScratchMoverOP rna_from_scratch_mover ) :
 		rna_add_mover_( rna_add_mover ),
 		rna_delete_mover_( rna_delete_mover ),
+		rna_from_scratch_mover_( rna_from_scratch_mover ),
 		disallow_deletion_of_last_residue_( false ),
 		swa_move_selector_( new SWA_MoveSelector )
 	{}
@@ -76,25 +79,26 @@ namespace rna {
 		if ( options_->skip_deletions() ) disallow_delete = true;
 
 		SWA_Move swa_move;
-		swa_move_selector_->set_disallow_delete( disallow_delete );
-		swa_move_selector_->set_disallow_skip_bulge( !options_->allow_skip_bulge() );
-		swa_move_selector_->set_disallow_resample( true );
+		swa_move_selector_->set_allow_delete( !disallow_delete );
+		swa_move_selector_->set_allow_skip_bulge( options_->allow_skip_bulge() );
+		swa_move_selector_->set_allow_from_scratch( options_->allow_from_scratch() );
+		swa_move_selector_->set_allow_resample_during_add_delete( false ); // old option.
 		utility::vector1< Size > const actual_sample_res = figure_out_actual_sample_res( pose );
 		swa_move_selector_->get_random_move_element_at_chain_terminus( pose, swa_move, actual_sample_res );
 
-		if ( swa_move.move_type() == NO_MOVE ) {
-			move_type = "no move";
-			return false;
-		}
+		move_type = to_string( swa_move.move_type() );
+		std::transform(move_type.begin(), move_type.end(), move_type.begin(), ::tolower); // this is why we love c
+
+		if ( swa_move.move_type() == NO_MOVE ) return false;
 
 		TR << swa_move << std::endl;
 		TR.Debug << "Starting from: " << pose.annotated_sequence() << std::endl;
 		if ( swa_move.move_type() == DELETE ) {
-			move_type = "delete";
 			rna_delete_mover_->apply( pose, swa_move.move_element() );
+		} else if ( swa_move.move_type() == FROM_SCRATCH ) {
+			rna_from_scratch_mover_->apply( pose, swa_move.move_element() );
 		} else {
 			runtime_assert( swa_move.move_type() == ADD );
-			move_type = "add";
 			rna_add_mover_->apply( pose, swa_move.moving_res(), swa_move.attached_res() );
 		}
 		TR.Debug << "Ended with: " << pose.annotated_sequence() << std::endl;

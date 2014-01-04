@@ -58,14 +58,14 @@ RNA_CentroidInfo::get_base_centroid( conformation::Residue const & rsd ) const
 {
 	bool const verbose = false;
 
-	return get_rna_base_centroid( rsd, verbose);
+	return get_rna_base_centroid( rsd, verbose );
 }
 
 
 kinematics::Stub
 RNA_CentroidInfo::get_base_coordinate_system( conformation::Residue const & rsd, Vector const & centroid ) const
 {
-  return kinematics::Stub(get_rna_base_coordinate_system(rsd, centroid), centroid );
+  return kinematics::Stub( get_rna_base_coordinate_system( rsd, centroid ), centroid );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -76,15 +76,15 @@ RNA_CentroidInfo::initialize_base_centroids_and_stubs( pose::Pose const & pose )
   base_centroids_.clear();
   base_stubs_.clear();
 
-  for (Size i = 1; i <= pose.total_residue(); i++ ){
-    conformation::Residue const & res_i  ( pose.residue(i) );
+  for ( Size i = 1; i <= pose.total_residue(); i++ ){
+    conformation::Residue const & res_i  ( pose.residue( i ) );
 
     Vector centroid_i( 0.0  );
     kinematics::Stub stub_i;
 
     if ( res_i.is_RNA() ) {
       centroid_i = get_base_centroid( res_i );
-      stub_i     = get_base_coordinate_system(res_i, centroid_i );
+      stub_i     = get_base_coordinate_system( res_i, centroid_i );
     }
 
     base_centroids_.push_back( centroid_i );

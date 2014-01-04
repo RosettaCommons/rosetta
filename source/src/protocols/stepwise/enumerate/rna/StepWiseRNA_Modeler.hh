@@ -80,6 +80,8 @@ namespace rna {
 
 		void set_minimize_res( utility::vector1< Size > const & setting ){ minimize_res_ = setting; fixed_res_.clear(); }
 
+		void set_terminal_res( utility::vector1< Size > const & setting ){ terminal_res_ = setting; }
+
 		void set_rmsd_res_list( utility::vector1< Size > const & setting ){ rmsd_res_list_ = setting; }
 
 		void set_syn_chi_res_list( utility::vector1< core::Size > const & setting ){ syn_chi_res_list_ = setting;}
@@ -130,13 +132,15 @@ namespace rna {
 		StepWiseRNA_JobParametersCOP job_parameters_;
 		pose::PoseCOP native_pose_;
 
+		scoring::ScoreFunctionOP scorefxn_;
+		std::string silent_file_;
+
+		// maybe following should go into options?
 		utility::vector1< Size > moving_res_list_;
 		utility::vector1< Size > fixed_res_;
 		utility::vector1< Size > minimize_res_;
 		utility::vector1< Size > rmsd_res_list_;
-		scoring::ScoreFunctionOP scorefxn_;
-		std::string silent_file_;
-
+		utility::vector1< Size > terminal_res_;
 		utility::vector1< core::Size > minimizer_extra_minimize_res_;
 		utility::vector1< core::Size > syn_chi_res_list_;
 

@@ -50,12 +50,20 @@ namespace monte_carlo {
 																							 utility::vector1< Size > const & sample_res /*leave empty if no filter*/);
 
 		void
+		get_resample_move_elements( pose::Pose & pose,
+																utility::vector1< SWA_Move > & swa_moves );
+
+		void
 		get_resample_terminal_move_elements( pose::Pose & pose,
 																				 utility::vector1< SWA_Move > & swa_moves );
 
 		void
 		get_resample_internal_move_elements( pose::Pose & pose,
 																				 utility::vector1< SWA_Move > & swa_moves );
+
+		void
+		get_resample_internal_local_move_elements( pose::Pose & pose,
+																							 utility::vector1< SWA_Move > & swa_moves );
 
 		void
 		get_delete_move_elements( pose::Pose & pose,
@@ -67,14 +75,23 @@ namespace monte_carlo {
 		Attachments
 		get_attachments( pose::Pose & pose, MoveElement const & move_element );
 
-		void set_disallow_delete( bool const & setting ){ disallow_delete_ = setting; }
-		bool disallow_delete() const{ return disallow_delete_; }
+		void set_allow_delete( bool const & setting ){ allow_delete_ = setting; }
+		bool allow_delete() const{ return allow_delete_; }
 
-		void set_disallow_resample( bool const & setting ){ disallow_resample_ = setting; }
-		bool disallow_resample() const{ return disallow_resample_; }
+		void set_allow_resample_during_add_delete( bool const & setting ){ allow_resample_during_add_delete_ = setting; }
+		bool allow_resample_during_add_delete() const{ return allow_resample_during_add_delete_; }
 
-		void set_disallow_skip_bulge( bool const & setting ){ disallow_skip_bulge_ = setting; }
-		bool disallow_skip_bulge() const{ return disallow_skip_bulge_; }
+		void set_allow_skip_bulge( bool const & setting ){ allow_skip_bulge_ = setting; }
+		bool allow_skip_bulge() const{ return allow_skip_bulge_; }
+
+		void set_allow_internal_hinge( bool const & setting ){ allow_internal_hinge_ = setting; }
+		bool allow_internal_hinge() const{ return allow_internal_hinge_; }
+
+		void set_allow_internal_local( bool const & setting ){ allow_internal_local_ = setting; }
+		bool allow_internal_local() const{ return allow_internal_local_; }
+
+		void set_allow_from_scratch( bool const & setting ){ allow_from_scratch_ = setting; }
+		bool allow_from_scratch() const{ return allow_from_scratch_; }
 
 		void set_delete_terminal_only( bool const & setting ){ delete_terminal_only_ = setting; }
 		bool delete_terminal_only() const{ return delete_terminal_only_; }
@@ -86,7 +103,8 @@ namespace monte_carlo {
 
 		void
 		get_split_move_elements( pose::Pose & pose,
-														 utility::vector1< SWA_Move > & swa_moves );
+														 utility::vector1< SWA_Move > & swa_moves,
+														 MoveType const move_type );
 
 		void
 		remove_from_consideration_first_multi_residue_move_element( utility::vector1< SWA_Move > & swa_moves,
@@ -104,18 +122,31 @@ namespace monte_carlo {
 
 		void
 		get_add_move_elements( pose::Pose & pose,
-													 utility::vector1< SWA_Move > & swa_moves,
-													 bool const disallow_skip_bulge );
+													 utility::vector1< SWA_Move > & swa_moves );
+
+		void
+		get_from_scratch_move_elements( pose::Pose & pose,
+																		utility::vector1< SWA_Move > & swa_moves );
 
 		void
 		filter_by_sample_res( utility::vector1< SWA_Move > & swa_moves,
 													utility::vector1< Size > const & sample_res );
 
+		bool
+		check_for_fixed_domain_or_from_scratch(  pose::Pose const & pose,
+																						 utility::vector1< Size> const & partition_res ) const;
+
+		bool
+		already_instantiated_in_pose( pose::Pose const & pose, Size const & resnum_in_full_model_numbering ) const;
+
 	private:
 
-		bool disallow_delete_;
-		bool disallow_resample_;
-		bool disallow_skip_bulge_;
+		bool allow_delete_;
+		bool allow_resample_during_add_delete_;
+		bool allow_skip_bulge_;
+		bool allow_internal_hinge_;
+		bool allow_internal_local_;
+		bool allow_from_scratch_;
 		bool delete_terminal_only_;
 
 	};

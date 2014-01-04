@@ -208,7 +208,7 @@ protected:
 
 	inline
 	etable::coulomb::Coulomb const &
-	coulomb() const {return coulomb_; }
+	coulomb() const { return coulomb_; }
 
 private:
 

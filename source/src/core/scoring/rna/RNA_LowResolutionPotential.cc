@@ -75,7 +75,7 @@ RNA_LowResolutionPotential::RNA_LowResolutionPotential():
 	////////////////////////////////////////////
 	rna_basepair_radius_cutoff_( 8.0 ),
 	rna_basepair_stagger_cutoff_( 3.0 ),
-	rna_basepair_radius_cutoff2_( rna_basepair_radius_cutoff_ * rna_basepair_radius_cutoff_) , // 64.0
+	rna_basepair_radius_cutoff2_( rna_basepair_radius_cutoff_ * rna_basepair_radius_cutoff_ ), // 64.0
 	basepair_xy_bin_width_( 2.0 ),
 	basepair_xy_num_bins_( 10 ),
 	basepair_xy_table_size_( 10 ),
@@ -116,7 +116,7 @@ RNA_LowResolutionPotential::RNA_LowResolutionPotential():
 	rna_repulse_all_( true ),
 	num_RNA_base_pair_orientations_( 2 ), /*parallel/anti*/
 	num_RNA_backbone_oxygen_atoms_( 6 ), /*backbone oxygens*/
-	num_RNA_res_types_( 4 ),/*a/c/g/u*/
+	num_RNA_res_types_( 4 ), /*a/c/g/u*/
 	o2prime_index_within_special_backbone_atoms_( 6 ),
 	o2p_index_within_special_backbone_atoms_( 2 ),
 	interpolate_( true ), //Turn this off to match Rosetta++, up to bug fixes; turn it on to allow correct derivative calculation.
@@ -127,7 +127,7 @@ RNA_LowResolutionPotential::RNA_LowResolutionPotential():
 	// These don't *have* to be hard-wired numbers.
 	// if we're more clever about the file read-in.
 	// For now, just copy what was in Rosetta++.
-	rna_basepair_xy_.dimension( basepair_xy_num_bins_, basepair_xy_num_bins_, num_RNA_base_pair_orientations_ , num_RNA_res_types_, 4 /*a/c/g/u*/);
+	rna_basepair_xy_.dimension( basepair_xy_num_bins_, basepair_xy_num_bins_, num_RNA_base_pair_orientations_, num_RNA_res_types_, 4 /*a/c/g/u*/ );
 	rna_axis_.dimension( axis_num_bins_ );
 	rna_stagger_.dimension( stagger_num_bins_ );
 	rna_base_backbone_xy_.dimension( base_backbone_num_bins_, base_backbone_num_bins_,
@@ -168,20 +168,20 @@ RNA_LowResolutionPotential::initialize_rna_basepair_xy(){
 
 	if ( !data_stream ) {
 		std::cerr << "Can't find specified basepair potential file: " << filename << std::endl;
-		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
+		utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
 		return;
 	}
 
-	std::cout << "Reading basepair x-y potential file: " << filename << std::endl;;
+	std::cout << "Reading basepair x - y potential file: " << filename << std::endl; ;
 	// read data
 	Size res1, res2, xbin, ybin, direction;
 	Real potential;
 	while ( data_stream >> xbin ) {
 		data_stream >> ybin >> res1 >> res2 >> direction >> potential >> skip ;
-		rna_basepair_xy_( xbin, ybin, res1 , res2, direction) = potential;
+		rna_basepair_xy_( xbin, ybin, res1, res2, direction ) = potential;
 	}
 
-	std::cout << "Finished reading basepair x-y potential file: " << filename << std::endl;;
+	std::cout << "Finished reading basepair x - y potential file: " << filename << std::endl; ;
 
 	//close file
 	data_stream.close();
@@ -230,12 +230,12 @@ void
 RNA_LowResolutionPotential::initialize_RNA_backbone_oxygen_atoms(){
 
 	RNA_backbone_oxygen_atoms_.clear();
-	RNA_backbone_oxygen_atoms_.push_back( " OP2");
-	RNA_backbone_oxygen_atoms_.push_back( " OP1");
-	RNA_backbone_oxygen_atoms_.push_back( " O5'");
-	RNA_backbone_oxygen_atoms_.push_back( " O4'");
-	RNA_backbone_oxygen_atoms_.push_back( " O3'");
-	RNA_backbone_oxygen_atoms_.push_back( " O2'");
+	RNA_backbone_oxygen_atoms_.push_back( " OP2" );
+	RNA_backbone_oxygen_atoms_.push_back( " OP1" );
+	RNA_backbone_oxygen_atoms_.push_back( " O5'" );
+	RNA_backbone_oxygen_atoms_.push_back( " O4'" );
+	RNA_backbone_oxygen_atoms_.push_back( " O3'" );
+	RNA_backbone_oxygen_atoms_.push_back( " O2'" );
 
 	//Useful for preventing string lookups:
 	o2p_index_within_special_backbone_atoms_    =  2;
@@ -254,18 +254,18 @@ RNA_LowResolutionPotential::initialize_rna_base_backbone_xy(){
   utility::io::izstream data_stream( basic::database::full_name( filename ) );
 
 	if ( !data_stream ) {
-		std::cerr << "Can't find specified non-base-base potential file: " << filename << std::endl;
-		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
+		std::cerr << "Can't find specified non - base - base potential file: " << filename << std::endl;
+		utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
 		return;
 	}
 
-	std::cout << "Reading non-base-base x-y potential file: " << filename << std::endl;;
+	std::cout << "Reading non - base - base x - y potential file: " << filename << std::endl; ;
 	// read data
 	Size res1, xbin, ybin, atomindex;
 	Real potential;
 	while ( data_stream >> xbin ) {
 		data_stream >> ybin >> res1 >> atomindex >> potential >> skip ;
-		rna_base_backbone_xy_( xbin, ybin, res1 , atomindex) = potential;
+		rna_base_backbone_xy_( xbin, ybin, res1, atomindex ) = potential;
 	}
 
 	//close file
@@ -295,15 +295,15 @@ RNA_LowResolutionPotential::initialize_rna_backbone_backbone()
   utility::io::izstream data_stream(  basic::database::full_name( filename )  );
 
 	if ( !data_stream ) {
-		std::cerr << "Can't find specified RNA backbone-backbone potential file: " << filename << std::endl;
-		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
+		std::cerr << "Can't find specified RNA backbone - backbone potential file: " << filename << std::endl;
+		utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
 		return;
 	}
 
-	std::cout << "Reading RNA backbone backbone potential file: " << filename << std::endl;;
+	std::cout << "Reading RNA backbone backbone potential file: " << filename << std::endl; ;
 	// read data
 	Size rbin;
-	Real r1,r2,potential;
+	Real r1, r2, potential;
 	while ( data_stream >> r1 ) {
 		data_stream >> r2 >> rbin >> potential >> skip ;
 		rna_backbone_backbone_potential_( rbin ) = potential;
@@ -344,7 +344,7 @@ RNA_LowResolutionPotential::get_rna_basepair_xy(
 		Real & deriv_y,
 		Real & deriv_z ) const
 {
-	Size const theta_bin = (cos_theta < 0) ?  1 : 2;
+	Size const theta_bin = ( cos_theta < 0 ) ?  1 : 2;
 
 	assert( res_i.is_RNA() );
 	assert( res_j.is_RNA() );
@@ -352,8 +352,8 @@ RNA_LowResolutionPotential::get_rna_basepair_xy(
 	Size const res_i_bin = convert_acgu_to_1234( res_i.name1() );
 	Size const res_j_bin = convert_acgu_to_1234( res_j.name1() );
 
-	assert( res_i_bin > 0);
-	assert( res_j_bin > 0);
+	assert( res_i_bin > 0 );
+	assert( res_j_bin > 0 );
 
 	Real value( 0.0 );
 	deriv_x = 0.0;
@@ -362,8 +362,8 @@ RNA_LowResolutionPotential::get_rna_basepair_xy(
 
 	if ( interpolate_ ) {
 		Real interpolate_value( 0.0 );
-		FArray2A< Real >::IR const zero_index( 0, basepair_xy_num_bins_ - 1);
-		ObjexxFCL::FArray2A< Real > const rna_basepair_xy_for_res_res( rna_basepair_xy_( 1, 1, theta_bin, res_i_bin, res_j_bin ), zero_index, zero_index );
+		FArray2A < Real > ::IR const zero_index( 0, basepair_xy_num_bins_ - 1 );
+		ObjexxFCL::FArray2A < Real > const rna_basepair_xy_for_res_res( rna_basepair_xy_( 1, 1, theta_bin, res_i_bin, res_j_bin ), zero_index, zero_index );
 		using namespace numeric::interpolation::periodic_range::full;
 
 		if ( update_deriv ) {
@@ -389,13 +389,13 @@ RNA_LowResolutionPotential::get_rna_basepair_xy(
 	} else { // old Rosetta++-style, no interpolation
 		Size x_bin, y_bin;
 
-		x_bin = Size( (x + basepair_xy_table_size_) / basepair_xy_bin_width_ ) + 1;
-		y_bin = Size( (y + basepair_xy_table_size_) / basepair_xy_bin_width_ ) + 1;
+		x_bin = Size( ( x + basepair_xy_table_size_ ) / basepair_xy_bin_width_ ) + 1;
+		y_bin = Size( ( y + basepair_xy_table_size_ ) / basepair_xy_bin_width_ ) + 1;
 
-		if (x_bin < 1 ) x_bin = 1;
-		if (y_bin < 1 ) y_bin = 1;
-		if (x_bin > basepair_xy_table_size_ ) x_bin = basepair_xy_table_size_;
-		if (y_bin > basepair_xy_table_size_ ) y_bin = basepair_xy_table_size_;
+		if ( x_bin < 1 ) x_bin = 1;
+		if ( y_bin < 1 ) y_bin = 1;
+		if ( x_bin > basepair_xy_table_size_ ) x_bin = basepair_xy_table_size_;
+		if ( y_bin > basepair_xy_table_size_ ) y_bin = basepair_xy_table_size_;
 
 		value =  rna_basepair_xy_( x_bin, y_bin, theta_bin, res_i_bin, res_j_bin );
 
@@ -497,11 +497,11 @@ RNA_LowResolutionPotential::get_rna_axis_score(
 	// cos_theta_bin = static_cast<int> ( ( cos_theta + 1.0f)/ axis_bin_width_ ) + 1;
 	// Note that above, which was in Rosetta++ is slightly off.
 	// Bin boundaries are [-1.1,-0.9], [-0.9,-0.7], ... [0.9,1.1]. So should be:
-	cos_theta_bin = static_cast<int> ( ( cos_theta + 1.1f)/ axis_bin_width_ ) + 1;
+	cos_theta_bin = static_cast< int > ( ( cos_theta + 1.1f )/ axis_bin_width_ ) + 1;
 
 	Real value ( 0.0 );
 
-	if (interpolate_ ) {
+	if ( interpolate_ ) {
 		Real interpolate_value( 0.0 );
 		//interpolate_value_and_deriv( rna_axis_, axis_bin_width_, cos_theta + 1.0, interpolate_value, deriv );
 		interpolate_value_and_deriv( rna_axis_, axis_bin_width_, cos_theta + 1.1, interpolate_value, deriv );
@@ -533,12 +533,12 @@ RNA_LowResolutionPotential::get_rna_stagger_score( Distance const height, Real &
 	if ( std::abs( height ) > stagger_distance_cutoff_ ) return 0.0;
 
 	if ( interpolate_ ) {
-			interpolate_value_and_deriv( rna_stagger_, stagger_bin_width_, height+2.2, value, deriv );
+			interpolate_value_and_deriv( rna_stagger_, stagger_bin_width_, height + 2.2, value, deriv );
 			//	std::cout << "STAGGER: " << F(8,3,height) << " " << F(8,3,value) << " " << F(8,3,interpolate_value) << std::endl;
 	} else {
 		//Following, from Rosetta++, is slightly off. Bins are at [-2.2,-1.8],[-1.8,-1.6],...[1.8,2.2]
 		//	Size height_bin = static_cast<int> ( (height + 2.0)/ stagger_bin_width_ ) + 1;
-		Size height_bin = static_cast<int> ( (height + 2.2)/ stagger_bin_width_ ) + 1;
+		Size height_bin = static_cast< int > ( ( height + 2.2 )/ stagger_bin_width_ ) + 1;
 		if ( height_bin < 1 || height_bin > stagger_num_bins_ ) height_bin = 1;
 		value = rna_stagger_( height_bin );
 	}
@@ -557,7 +557,7 @@ RNA_LowResolutionPotential::get_rna_base_backbone_xy(
 	bool const update_deriv /* = false */,
     Real & deriv_x /* = dummy_deriv */,
     Real & deriv_y /* = dummy_deriv */,
-	Real & deriv_z /* = dummy_deriv */) const
+	Real & deriv_z /* = dummy_deriv */ ) const
 {
 
 	Real value( 0.0 );
@@ -567,13 +567,13 @@ RNA_LowResolutionPotential::get_rna_base_backbone_xy(
 
 	Size const res_i_bin = convert_acgu_to_1234( res_i.name1() );
 
-	assert( res_i_bin > 0);
-	assert( atom_num_j_bin > 0);
+	assert( res_i_bin > 0 );
+	assert( atom_num_j_bin > 0 );
 
 	if ( interpolate_ ) {
 		//		Real interpolate_value( 0.0 );
-		FArray2A< Real >::IR const zero_index( 0, base_backbone_num_bins_ - 1);
-		ObjexxFCL::FArray2A< Real > const rna_base_backbone_xy_for_res_atom( rna_base_backbone_xy_( 1, 1, res_i_bin, atom_num_j_bin ), zero_index, zero_index );
+		FArray2A < Real > ::IR const zero_index( 0, base_backbone_num_bins_ - 1 );
+		ObjexxFCL::FArray2A < Real > const rna_base_backbone_xy_for_res_atom( rna_base_backbone_xy_( 1, 1, res_i_bin, atom_num_j_bin ), zero_index, zero_index );
 		using namespace numeric::interpolation::periodic_range::full;
 
 		if ( update_deriv || true ) {
@@ -595,13 +595,13 @@ RNA_LowResolutionPotential::get_rna_base_backbone_xy(
 		//		value = interpolate_value;
 	} else { //old school.
 		Size x_bin, y_bin;
-		x_bin = Size( (x + base_backbone_table_size_) ) + 1;
-		y_bin = Size( (y + base_backbone_table_size_) ) + 1;
+		x_bin = Size( ( x + base_backbone_table_size_ ) ) + 1;
+		y_bin = Size( ( y + base_backbone_table_size_ ) ) + 1;
 
-		if (x_bin < 1 ) x_bin = 1;
-		if (y_bin < 1 ) y_bin = 1;
-		if (x_bin > 2 * base_backbone_table_size_) x_bin = 2 * base_backbone_table_size_;
-		if (y_bin > 2 * base_backbone_table_size_) y_bin = 2 * base_backbone_table_size_;
+		if ( x_bin < 1 ) x_bin = 1;
+		if ( y_bin < 1 ) y_bin = 1;
+		if ( x_bin > 2 * base_backbone_table_size_ ) x_bin = 2 * base_backbone_table_size_;
+		if ( y_bin > 2 * base_backbone_table_size_ ) y_bin = 2 * base_backbone_table_size_;
 
 		value = rna_base_backbone_xy_( x_bin, y_bin, res_i_bin, atom_num_j_bin );
 	}
@@ -658,8 +658,8 @@ RNA_LowResolutionPotential::get_rna_backbone_backbone_score(
 	if ( interpolate_ ) {
 		interpolate_value_and_deriv( rna_backbone_backbone_potential_, backbone_backbone_bin_width_, r, value, deriv );
 	} else {
-		Size const bin = static_cast< Size> ( r/ backbone_backbone_bin_width_ ) + 1;
-		if (bin <= backbone_backbone_num_bins_)		value = rna_backbone_backbone_potential_( bin );
+		Size const bin = static_cast< Size > ( r/ backbone_backbone_bin_width_ ) + 1;
+		if ( bin <= backbone_backbone_num_bins_ )		value = rna_backbone_backbone_potential_( bin );
 	}
 
 	value *= rna_backbone_backbone_weight_( atom_num_j_bin );
@@ -688,9 +688,9 @@ RNA_LowResolutionPotential::get_rna_repulsive_score(
 	static Real offset = rna_repulsive_max_penalty_ * exp( -1.0 * rna_repulsive_distance_cutoff_ / rna_repulsive_screen_scale_ );
 
 	deriv = 0.0;
-	if (r < rna_repulsive_distance_cutoff_ ){
+	if ( r < rna_repulsive_distance_cutoff_ ){
 		Real potential = rna_repulsive_max_penalty_ * exp( -1.0 * r/ rna_repulsive_screen_scale_ ) - offset;
-		deriv = -1.0 * (rna_repulsive_max_penalty_ / rna_repulsive_screen_scale_ ) *
+		deriv = -1.0 * ( rna_repulsive_max_penalty_ / rna_repulsive_screen_scale_ ) *
 			exp( -1.0 * r/ rna_repulsive_screen_scale_ );
 
 		potential *=  rna_repulsive_weight_( atom_num_j_bin );
@@ -744,13 +744,13 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
 	rna_raw_base_base_info.resize( total_residue );
 	//	if (rna_raw_base_base_info.calculated()) return;
 
-	ObjexxFCL::FArray3D< Real > & base_pair_array( rna_raw_base_base_info.base_pair_array() );
-	ObjexxFCL::FArray3D< Real > & base_axis_array( rna_raw_base_base_info.base_axis_array() );
-	ObjexxFCL::FArray3D< Real > & base_stagger_array( rna_raw_base_base_info.base_stagger_array() );
-	ObjexxFCL::FArray2D< Real > & base_stack_array( rna_raw_base_base_info.base_stack_array() );
-	ObjexxFCL::FArray2D< Real > & base_stack_axis_array( rna_raw_base_base_info.base_stack_axis_array() );
-	ObjexxFCL::FArray2D< Real > & base_geometry_orientation_array( rna_raw_base_base_info.base_geometry_orientation_array() );
-	ObjexxFCL::FArray2D< Real > & base_geometry_height_array( rna_raw_base_base_info.base_geometry_height_array() );
+	ObjexxFCL::FArray3D < Real > & base_pair_array( rna_raw_base_base_info.base_pair_array() );
+	ObjexxFCL::FArray3D < Real > & base_axis_array( rna_raw_base_base_info.base_axis_array() );
+	ObjexxFCL::FArray3D < Real > & base_stagger_array( rna_raw_base_base_info.base_stagger_array() );
+	ObjexxFCL::FArray2D < Real > & base_stack_array( rna_raw_base_base_info.base_stack_array() );
+	ObjexxFCL::FArray2D < Real > & base_stack_axis_array( rna_raw_base_base_info.base_stack_axis_array() );
+	ObjexxFCL::FArray2D < Real > & base_geometry_orientation_array( rna_raw_base_base_info.base_geometry_orientation_array() );
+	ObjexxFCL::FArray2D < Real > & base_geometry_height_array( rna_raw_base_base_info.base_geometry_height_array() );
 
 	//Following may change in the future, if we
 	// decide to take advantage of "pair_moved" arrays to
@@ -768,7 +768,7 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
 	//Main loop
 	// NOTE: Following evaluates each base pair from both sides, because base pair
 	// terms are asymmetric in i<->j. So loop is over all neighbors!
-	for (Size i = 1; i <= total_residue; i++ ){
+	for ( Size i = 1; i <= total_residue; i++ ){
 		conformation::Residue const & res_i( pose.residue( i ) );
 
 		if ( !res_i.is_RNA() ) continue;
@@ -781,17 +781,17 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
     Vector const & y_i = M_i.col_y();
     Vector const & z_i = M_i.col_z();
 
-		for( graph::Graph::EdgeListConstIter
+		for ( graph::Graph::EdgeListConstIter
 					 iter = energy_graph.get_node( i )->const_edge_list_begin();
 				 iter != energy_graph.get_node( i )->const_edge_list_end();
 				 ++iter ){
 
-			Size j( (*iter)->get_other_ind( i ) );
+			Size j( ( *iter )->get_other_ind( i ) );
 
 			//			if ( !pair_moved(i,j) && rna_array_state_ok ) continue;
 
 			conformation::Residue const & res_j( pose.residue( j ) );
-			if ( !res_j.is_RNA()) continue;
+			if ( !res_j.is_RNA() ) continue;
 
 			Vector const & centroid_j( base_centroids[j] );
 			kinematics::Stub const & stub_j( base_stubs[j] );
@@ -813,13 +813,13 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
 
 			//Is it a base-pair, a base-stack, or do we ignore it?
 			Size edge_bin( 1 );
-			if ( ( std::abs(dist_z) < rna_basepair_stagger_cutoff_ ) ){
+			if ( ( std::abs( dist_z ) < rna_basepair_stagger_cutoff_ ) ){
 				//A possible base pair
 				if ( rho2 < rna_basepair_radius_cutoff2_ ){
 					//BASE PAIR
 					Real temp_rna_bp_score( 0.0 );
 
-					temp_rna_bp_score = get_rna_basepair_xy(dist_x, dist_y, dist_z, cos_theta, res_i, res_j);
+					temp_rna_bp_score = get_rna_basepair_xy( dist_x, dist_y, dist_z, cos_theta, res_i, res_j );
 
 					// Some of the base pairing scores are 0.0. By default, pad by
 					// a tiny tiny amount to make sure that they're still
@@ -829,7 +829,7 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
 					Real zeta_hoogsteen_cutoff( 60.0 ), zeta_sugar_cutoff( -60.0 );
 					get_zeta_cutoff( res_i, zeta_hoogsteen_cutoff, zeta_sugar_cutoff );
 
-					Real const zeta = numeric::conversions::degrees( std::atan2( dist_y, dist_x) );
+					Real const zeta = numeric::conversions::degrees( std::atan2( dist_y, dist_x ) );
 					if ( zeta < zeta_hoogsteen_cutoff && zeta > zeta_sugar_cutoff )      edge_bin = WATSON_CRICK;  //Watson-Crick edge
 					else if ( zeta > zeta_hoogsteen_cutoff )   edge_bin = HOOGSTEEN; // Hoogsteen edge
 					else                       edge_bin = SUGAR; // Sugar edge
@@ -837,17 +837,17 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
 					if ( rna_verbose_ ){
 						Real const theta = numeric::conversions::degrees( numeric::arccos( cos_theta ) );
 						std::cout << " Possible base pair: "
-											<< res_i.name3() << I(3,i) << "-"
-											<< res_j.name3() << I(3,j)
-											<< " edge: " << I(1,edge_bin)
-											<< "  dists " << F(4,2,dist_x)
-											<< " " << F(4,2,dist_y)
-											<< " " << F(4,2,dist_z)
-											<< " theta " << F(5,1, theta)
-											<< "; rho " << F(4,2, std::sqrt( rho2) )
-											<< "; zeta " << F(4,2, zeta )
-											<< "; zeta_cut " << F(4,2, zeta_hoogsteen_cutoff )
-											<< " : SCORE " << F(6,4,temp_rna_bp_score)
+											<< res_i.name3() << I( 3, i ) << "-"
+											<< res_j.name3() << I( 3, j )
+											<< " edge: " << I( 1, edge_bin )
+											<< "  dists " << F( 4, 2, dist_x )
+											<< " " << F( 4, 2, dist_y )
+											<< " " << F( 4, 2, dist_z )
+											<< " theta " << F( 5, 1, theta )
+											<< "; rho " << F( 4, 2, std::sqrt( rho2 ) )
+											<< "; zeta " << F( 4, 2, zeta )
+											<< "; zeta_cut " << F( 4, 2, zeta_hoogsteen_cutoff )
+											<< " : SCORE " << F( 6, 4, temp_rna_bp_score )
 							//												<< " " << get_rna_axis_score( theta) << " " << get_rna_stagger_score( dist_z )
 											<<	std::endl;
 					}
@@ -859,8 +859,8 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
 				}
 			}
 
-			if ( std::abs(dist_z) >= base_stack_min_height_ &&
-					 std::abs(dist_z) <= base_stack_max_height_  &&
+			if ( std::abs( dist_z ) >= base_stack_min_height_ &&
+					 std::abs( dist_z ) <= base_stack_max_height_  &&
 					 rho2 < base_stack_radius2_ ) {
 				//Possible BASE STACK1
 				base_stack_array ( i, j ) = get_rna_stack_score( dist_x, dist_y, dist_z );
@@ -871,7 +871,7 @@ RNA_LowResolutionPotential::update_rna_base_base_interactions(
 			base_geometry_height_array      ( i, j ) = dist_z;
 
 		} //j
-	}//i
+	} //i
 
 	//	rna_raw_base_base_info.set_calculated( true );
 
@@ -928,7 +928,7 @@ RNA_LowResolutionPotential::setup_precise_zeta_cutoffs( chemical::AA const & na_
 	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( RNA );
 	RNA_CentroidInfo rna_centroid_info;
 
-	ResidueOP rsd = ResidueFactory::create_residue( *(rsd_set->aa_map( na_rad ))[1] );
+	ResidueOP rsd = ResidueFactory::create_residue( *( rsd_set->aa_map( na_rad ) )[1] );
 	Vector const & centroid_i = rna_centroid_info.get_base_centroid( *rsd );
 	kinematics::Stub const & stub_i = rna_centroid_info.get_base_coordinate_system( *rsd, centroid_i );
 	Matrix const & M_i( stub_i.M );
@@ -1019,19 +1019,19 @@ RNA_LowResolutionPotential::eval_rna_base_pair_energy_one_way(
 	// Is this necessary?
 	rna_raw_base_base_info.resize( total_residue );
 
-	ObjexxFCL::FArray3D< Real > & base_pair_array( rna_raw_base_base_info.base_pair_array() );
-	ObjexxFCL::FArray3D< Real > & base_axis_array( rna_raw_base_base_info.base_axis_array() );
-	ObjexxFCL::FArray3D< Real > & base_stagger_array( rna_raw_base_base_info.base_stagger_array() );
-	ObjexxFCL::FArray2D< Real > & base_stack_array( rna_raw_base_base_info.base_stack_array() );
-	ObjexxFCL::FArray2D< Real > & base_stack_axis_array( rna_raw_base_base_info.base_stack_axis_array() );
-	ObjexxFCL::FArray2D< Real > & base_geometry_orientation_array( rna_raw_base_base_info.base_geometry_orientation_array() );
-	ObjexxFCL::FArray2D< Real > & base_geometry_height_array( rna_raw_base_base_info.base_geometry_height_array() );
+	ObjexxFCL::FArray3D < Real > & base_pair_array( rna_raw_base_base_info.base_pair_array() );
+	ObjexxFCL::FArray3D < Real > & base_axis_array( rna_raw_base_base_info.base_axis_array() );
+	ObjexxFCL::FArray3D < Real > & base_stagger_array( rna_raw_base_base_info.base_stagger_array() );
+	ObjexxFCL::FArray2D < Real > & base_stack_array( rna_raw_base_base_info.base_stack_array() );
+	ObjexxFCL::FArray2D < Real > & base_stack_axis_array( rna_raw_base_base_info.base_stack_axis_array() );
+	ObjexxFCL::FArray2D < Real > & base_geometry_orientation_array( rna_raw_base_base_info.base_geometry_orientation_array() );
+	ObjexxFCL::FArray2D < Real > & base_geometry_height_array( rna_raw_base_base_info.base_geometry_height_array() );
 
 	Size const i( res_i.seqpos() );
 	Size const j( res_j.seqpos() );
 
 	// Zero out these arrays for the residue pair of interest.
-	for (Size k = 1; k <= NUM_EDGES; k++ ){
+	for ( Size k = 1; k <= NUM_EDGES; k++ ){
 	  base_pair_array( i, j, k ) = 0.0;
 	  base_axis_array( i, j, k ) = 0.0;
 	  base_stagger_array( i, j, k ) = 0.0;
@@ -1063,13 +1063,13 @@ RNA_LowResolutionPotential::eval_rna_base_pair_energy_one_way(
 
 	//Is it a base-pair, a base-stack, or do we ignore it?
 	Size edge_bin( 1 );
-	if ( ( std::abs(dist_z) < rna_basepair_stagger_cutoff_ ) ){
+	if ( ( std::abs( dist_z ) < rna_basepair_stagger_cutoff_ ) ){
 		//A possible base pair
 		if ( rho2 < rna_basepair_radius_cutoff2_ ){
 			//BASE PAIR
 			Real temp_rna_bp_score( 0.0 );
 
-			temp_rna_bp_score = get_rna_basepair_xy(dist_x, dist_y, dist_z, cos_theta, res_i, res_j);
+			temp_rna_bp_score = get_rna_basepair_xy( dist_x, dist_y, dist_z, cos_theta, res_i, res_j );
 
 			// Some of the base pairing scores are 0.0. By default, pad by
 			// a tiny tiny amount to make sure that they're still
@@ -1079,7 +1079,7 @@ RNA_LowResolutionPotential::eval_rna_base_pair_energy_one_way(
 			Real zeta_hoogsteen_cutoff( 60.0 ), zeta_sugar_cutoff( -60.0 );
 			get_zeta_cutoff( res_i, zeta_hoogsteen_cutoff, zeta_sugar_cutoff );
 
-			Real const zeta = numeric::conversions::degrees( std::atan2( dist_y, dist_x) );
+			Real const zeta = numeric::conversions::degrees( std::atan2( dist_y, dist_x ) );
 			if ( zeta < zeta_hoogsteen_cutoff && zeta > zeta_sugar_cutoff )      edge_bin = WATSON_CRICK;  //Watson-Crick edge
 			else if ( zeta > zeta_hoogsteen_cutoff )   edge_bin = HOOGSTEEN; // Hoogsteen edge
 			else                       edge_bin = SUGAR; // Sugar edge
@@ -1087,17 +1087,17 @@ RNA_LowResolutionPotential::eval_rna_base_pair_energy_one_way(
 			if ( rna_verbose_ ){
 				Real const theta = numeric::conversions::degrees( numeric::arccos( cos_theta ) );
 				std::cout << " Possible base pair: "
-									<< res_i.name3() << I(3,i) << "-"
-									<< res_j.name3() << I(3,j)
-									<< " edge: " << I(1,edge_bin)
-									<< "  dists " << F(4,2,dist_x)
-									<< " " << F(4,2,dist_y)
-									<< " " << F(4,2,dist_z)
-									<< " Centroid " << centroid_i(1) << " " << centroid_i(2) << " " << centroid_i(3)
-									<< " CENTROID " << centroid_j(1) << " " << centroid_j(2) << " " << centroid_j(3)
-									<< " theta " << F(5,1, theta)
-									<< "; rho " << F(4,2, std::sqrt( rho2) )
-									<< " : SCORE " << F(6,4,temp_rna_bp_score)
+									<< res_i.name3() << I( 3, i ) << "-"
+									<< res_j.name3() << I( 3, j )
+									<< " edge: " << I( 1, edge_bin )
+									<< "  dists " << F( 4, 2, dist_x )
+									<< " " << F( 4, 2, dist_y )
+									<< " " << F( 4, 2, dist_z )
+									<< " Centroid " << centroid_i( 1 ) << " " << centroid_i( 2 ) << " " << centroid_i( 3 )
+									<< " CENTROID " << centroid_j( 1 ) << " " << centroid_j( 2 ) << " " << centroid_j( 3 )
+									<< " theta " << F( 5, 1, theta )
+									<< "; rho " << F( 4, 2, std::sqrt( rho2 ) )
+									<< " : SCORE " << F( 6, 4, temp_rna_bp_score )
 					//												<< " " << get_rna_axis_score( theta) << " " << get_rna_stagger_score( dist_z )
 									<<	std::endl;
 			}
@@ -1109,8 +1109,8 @@ RNA_LowResolutionPotential::eval_rna_base_pair_energy_one_way(
 		}
 	}
 
-	if ( std::abs(dist_z) >= base_stack_min_height_ &&
-			 std::abs(dist_z) <= base_stack_max_height_  &&
+	if ( std::abs( dist_z ) >= base_stack_min_height_ &&
+			 std::abs( dist_z ) <= base_stack_max_height_  &&
 			 rho2 < base_stack_radius2_ ) {
 		//Possible BASE STACK1
 		base_stack_array ( i, j ) = get_rna_stack_score( dist_x, dist_y, dist_z );
@@ -1155,11 +1155,11 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 	assert( rna_filtered_base_base_info.scale_axis_stagger() );
 
 	// Yea, this is what we need...
-  ObjexxFCL::FArray2D< Real > const & filtered_base_pair_array ( rna_filtered_base_base_info.filtered_base_pair_array() );
-  ObjexxFCL::FArray2D< Real > const & filtered_base_axis_array ( rna_filtered_base_base_info.filtered_base_axis_array() );
-  ObjexxFCL::FArray2D< Real > const & filtered_base_stagger_array( rna_filtered_base_base_info.filtered_base_stagger_array() );
-  ObjexxFCL::FArray2D< Real > const & filtered_base_stack_array( rna_filtered_base_base_info.filtered_base_stack_array() );
-  ObjexxFCL::FArray2D< Real > const & filtered_base_stack_axis_array( rna_filtered_base_base_info.filtered_base_stack_axis_array() );
+  ObjexxFCL::FArray2D < Real > const & filtered_base_pair_array ( rna_filtered_base_base_info.filtered_base_pair_array() );
+  ObjexxFCL::FArray2D < Real > const & filtered_base_axis_array ( rna_filtered_base_base_info.filtered_base_axis_array() );
+  ObjexxFCL::FArray2D < Real > const & filtered_base_stagger_array( rna_filtered_base_base_info.filtered_base_stagger_array() );
+  ObjexxFCL::FArray2D < Real > const & filtered_base_stack_array( rna_filtered_base_base_info.filtered_base_stack_array() );
+  ObjexxFCL::FArray2D < Real > const & filtered_base_stack_axis_array( rna_filtered_base_base_info.filtered_base_stack_axis_array() );
 
 	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	//	assert( rna_centroid_info.calculated()  );
@@ -1177,12 +1177,12 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
-	for( graph::Graph::EdgeListConstIter
+	for ( graph::Graph::EdgeListConstIter
 				 iter = energy_graph.get_node( i )->const_edge_list_begin();
 			 iter != energy_graph.get_node( i )->const_edge_list_end();
 			 ++iter ){
 
-		Size j( (*iter)->get_other_ind( i ) );
+		Size j( ( *iter )->get_other_ind( i ) );
 
 		conformation::Residue const & res_j( pose.residue( j ) );
 
@@ -1198,10 +1198,10 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 		//		Real const theta = numeric::conversions::degrees( numeric::arccos( cos_theta ) );
 
 		//First cycle through all base pairs that count... anything involving this residue?
-		if ( filtered_base_pair_array( i, j) < 0.0 ) {
+		if ( filtered_base_pair_array( i, j ) < 0.0 ) {
 
-			Real const base_axis_score_unscaled    = filtered_base_axis_array(i,j)/filtered_base_pair_array(i,j);
-			Real const base_stagger_score_unscaled = filtered_base_stagger_array(i,j)/filtered_base_pair_array(i,j);
+			Real const base_axis_score_unscaled    = filtered_base_axis_array( i, j )/filtered_base_pair_array( i, j );
+			Real const base_stagger_score_unscaled = filtered_base_stagger_array( i, j )/filtered_base_pair_array( i, j );
 			Real bp_deriv_x( 0.0 ), bp_deriv_y( 0.0 ), bp_deriv_z( 0.0 ), axis_deriv( 0.0 ), stagger_deriv( 0.0 );
 			Real const & basepair_axis_stagger_scaling( rna_filtered_base_base_info.basepair_axis_stagger_scaling() );
 
@@ -1213,7 +1213,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 				Real const dist_z = dot_product( d_ij, z_i );
 				//		Real const rho2 = dist_x*dist_x + dist_y*dist_y;
 
-				get_rna_basepair_xy(dist_x, dist_y, dist_z, cos_theta, res_i, res_j,
+				get_rna_basepair_xy( dist_x, dist_y, dist_z, cos_theta, res_i, res_j,
 														true /*update_deriv*/, bp_deriv_x, bp_deriv_y, bp_deriv_z );
 				get_rna_axis_score( cos_theta, axis_deriv );
 				get_rna_stagger_score( dist_z, stagger_deriv );
@@ -1226,10 +1226,10 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 					* ( weights[ rna_base_pair ] +
 							weights[ rna_base_axis ] * base_axis_score_unscaled +
 							weights[ rna_base_stagger ] *	base_stagger_score_unscaled )
-					- z_i * basepair_axis_stagger_scaling * filtered_base_pair_array(i,j) * weights[ rna_base_stagger ] * stagger_deriv;
+					- z_i * basepair_axis_stagger_scaling * filtered_base_pair_array( i, j ) * weights[ rna_base_stagger ] * stagger_deriv;
 
 				Vector const f1 = cross( f2, centroid_j )
-					- basepair_axis_stagger_scaling * filtered_base_pair_array(i,j) * weights[ rna_base_axis ] * axis_deriv * cross( z_i, z_j );
+					- basepair_axis_stagger_scaling * filtered_base_pair_array( i, j ) * weights[ rna_base_axis ] * axis_deriv * cross( z_i, z_j );
 
 				F1 -= f1;
 				F2 -= f2;
@@ -1244,7 +1244,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 				Real const dist_z = dot_product( d_ji, z_j );
 				//		Real const rho2 = dist_x*dist_x + dist_y*dist_y;
 
-				get_rna_basepair_xy(dist_x, dist_y, dist_z, cos_theta, res_j, res_i,
+				get_rna_basepair_xy( dist_x, dist_y, dist_z, cos_theta, res_j, res_i,
 														true /*update_deriv*/, bp_deriv_x, bp_deriv_y, bp_deriv_z );
 				get_rna_axis_score( cos_theta, axis_deriv );
 				get_rna_stagger_score( dist_z, stagger_deriv );
@@ -1256,10 +1256,10 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 					* ( weights[ rna_base_pair ] +
 							weights[ rna_base_axis ] * base_axis_score_unscaled +
 							weights[ rna_base_stagger ] *	base_stagger_score_unscaled )
-					- z_j * basepair_axis_stagger_scaling * filtered_base_pair_array(j,i) * weights[ rna_base_stagger ] * stagger_deriv;
+					- z_j * basepair_axis_stagger_scaling * filtered_base_pair_array( j, i ) * weights[ rna_base_stagger ] * stagger_deriv;
 
 				Vector const f1 = cross( f2, centroid_i )
-					- basepair_axis_stagger_scaling * filtered_base_pair_array(j,i) * weights[ rna_base_axis ] * axis_deriv * cross( z_j, z_i );
+					- basepair_axis_stagger_scaling * filtered_base_pair_array( j, i ) * weights[ rna_base_axis ] * axis_deriv * cross( z_j, z_i );
 
 				F1 += f1;
 				F2 += f2;
@@ -1267,10 +1267,10 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 				//				std::cout << "BASEPAIR_DERIV2: " << i << " " << j << " " << cos_theta << " " << f1(1) << " " << f2(1) << std::endl;
 			}
 
-		} else if ( filtered_base_stack_array( i, j) < 0.0 ) {
+		} else if ( filtered_base_stack_array( i, j ) < 0.0 ) {
 			//Then cycle through all base stacks that count.
 
-			Real const base_stack_axis_score_unscaled    = filtered_base_stack_axis_array(i,j)/filtered_base_stack_array(i,j);
+			Real const base_stack_axis_score_unscaled    = filtered_base_stack_axis_array( i, j )/filtered_base_stack_array( i, j );
 			Real bs_deriv_x( 0.0 ), bs_deriv_y( 0.0 ), bs_deriv_z( 0.0 ), axis_deriv( 0.0 );
 			Real const & basestack_axis_scaling( rna_filtered_base_base_info.basestack_axis_scaling() );
 
@@ -1289,7 +1289,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 					( weights[ rna_base_stack ] +
 						weights[ rna_base_stack_axis ] * base_stack_axis_score_unscaled );
 				Vector const f1 = cross( f2, centroid_j )
-					- basestack_axis_scaling * weights[ rna_base_stack_axis ] * filtered_base_stack_array(i,j) * axis_deriv * cross( z_i, z_j );
+					- basestack_axis_scaling * weights[ rna_base_stack_axis ] * filtered_base_stack_array( i, j ) * axis_deriv * cross( z_i, z_j );
 
 				F1 -= f1;
 				F2 -= f2;
@@ -1313,7 +1313,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_base_base(
 					( weights[ rna_base_stack ] +
 						weights[ rna_base_stack_axis ] * base_stack_axis_score_unscaled );
 				Vector const f1 = cross( f2, centroid_i )
-					- basestack_axis_scaling * weights[ rna_base_stack_axis ] * filtered_base_stack_array(j,i) * axis_deriv * cross( z_j, z_i );
+					- basestack_axis_scaling * weights[ rna_base_stack_axis ] * filtered_base_stack_array( j, i ) * axis_deriv * cross( z_j, z_i );
 
 				F1 += f1;
 				F2 += f2;
@@ -1337,20 +1337,20 @@ bool
 RNA_LowResolutionPotential::check_for_base_neighbor(
   conformation::Residue const & rsd1,
 	Vector const & heavy_atom_j,
-	Real & atom_cutoff_weight) const
+	Real & atom_cutoff_weight ) const
 {
 
 	atom_cutoff_weight = 1.0;
-	if (!base_backbone_check_atom_neighbor_) return true;
+	if ( !base_backbone_check_atom_neighbor_ ) return true;
 
 	Size const num_heavy_atoms ( rsd1.nheavyatoms() );
 	Size const rna_base_start  ( rsd1.first_sidechain_atom() );
 
 	bool found_a_neighbor = false;
 	Real min_nbr_dist2( 1000.0 );
-	for (Size atom_num_i = rna_base_start; atom_num_i <= num_heavy_atoms; atom_num_i++){
+	for ( Size atom_num_i = rna_base_start; atom_num_i <= num_heavy_atoms; atom_num_i++ ){
 		Vector const & base_heavy_atom_i( rsd1.xyz( atom_num_i ) );
-		Real const nbr_dist2 = (heavy_atom_j - base_heavy_atom_i ).length_squared();
+		Real const nbr_dist2 = ( heavy_atom_j - base_heavy_atom_i ).length_squared();
 		if ( nbr_dist2 < min_nbr_dist2 ){
 			min_nbr_dist2 = nbr_dist2;
 			//			break;
@@ -1361,7 +1361,7 @@ RNA_LowResolutionPotential::check_for_base_neighbor(
 	if ( min_nbr_dist < base_backbone_atom_dist_cutoff_ ) found_a_neighbor = true;
 
 	Real deriv_currently_ignored( 0.0 );
-	if (found_a_neighbor) {
+	if ( found_a_neighbor ) {
 		get_fade_correction( min_nbr_dist,
 												 -base_backbone_atom_dist_cutoff_ /*will not come into play*/,
 												 base_backbone_atom_dist_cutoff_,
@@ -1410,7 +1410,7 @@ RNA_LowResolutionPotential::rna_base_backbone_pair_energy_one_way(
 	Size const i = rsd1.seqpos();
 	Size const j = rsd2.seqpos();
 
-	if ( abs( static_cast<int> (i - j) ) < 2 ) return 0.0;
+	if ( abs( static_cast< int > ( i - j ) ) < 2 ) return 0.0;
 
 	//	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	//	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
@@ -1432,10 +1432,10 @@ RNA_LowResolutionPotential::rna_base_backbone_pair_energy_one_way(
 	//		atom_numbers_for_backbone_score_calculations = rna_scoring_info.atom_numbers_for_backbone_score_calculations();
 
 	// Go over sugar and phosphate oxygen atoms
-	for (Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ){
+	for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ){
 
 		//		std::string const atom_j = RNA_backbone_oxygen_atoms_[ m ];
-		Size const atom_num_j = atom_numbers_for_backbone_score_calculations_[ m ];//atom_numbers_for_backbone_score_calculations( rsd2.seqpos(),  m );
+		Size const atom_num_j = atom_numbers_for_backbone_score_calculations_[ m ]; //atom_numbers_for_backbone_score_calculations( rsd2.seqpos(),  m );
 
 		Vector const heavy_atom_j( rsd2.xyz( atom_num_j ) );
 
@@ -1443,15 +1443,15 @@ RNA_LowResolutionPotential::rna_base_backbone_pair_energy_one_way(
 
 		Real const dist_ij = d_ij.length();
 
-		if (dist_ij < base_backbone_distance_cutoff_ ){
+		if ( dist_ij < base_backbone_distance_cutoff_ ){
 
 			Real const dist_x = dot_product( d_ij, x_i );
 			Real const dist_y = dot_product( d_ij, y_i );
 			Real const dist_z = dot_product( d_ij, z_i );
 
-			Real const rho = std::sqrt( dist_x * dist_x + dist_y * dist_y);
+			Real const rho = std::sqrt( dist_x * dist_x + dist_y * dist_y );
 
-			if ( std::abs(dist_z) > base_backbone_z_cutoff_ ) continue; // Look for atoms in the base plane
+			if ( std::abs( dist_z ) > base_backbone_z_cutoff_ ) continue; // Look for atoms in the base plane
 			if ( rho > base_backbone_rho_cutoff_ ) continue; // Look for atoms in the base plane
 
 			//sanity check...
@@ -1466,13 +1466,13 @@ RNA_LowResolutionPotential::rna_base_backbone_pair_energy_one_way(
 
 			if ( rna_verbose_ ){
 				std::cout <<
-					"BASE-BACKBONE " <<
+					"BASE - BACKBONE " <<
 					rsd1.name3() <<
-					I(3,i) << " " <<
+					I( 3, i ) << " " <<
 					rsd2.atom_name( atom_num_j )  <<  " " <<
-					I(3,j) << " " <<
-					" [" << F(4,2,rho) << ", " << F(4,2,dist_z) << "]:  " <<
-							F(6,2,score_contribution) <<
+					I( 3, j ) << " " <<
+					" [" << F( 4, 2, rho ) << ", " << F( 4, 2, dist_z ) << "]:  " <<
+							F( 6, 2, score_contribution ) <<
 					std::endl;
 			}
 
@@ -1533,23 +1533,23 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_base_backbone(
 		//		Size const num_heavy_atoms ( rsd1.nheavyatoms() );
 		//		Size const rna_base_start( rsd1.first_sidechain_atom() );
 
-		for( graph::Graph::EdgeListConstIter
+		for ( graph::Graph::EdgeListConstIter
 				iter = energy_graph.get_node( i )->const_edge_list_begin();
 				iter != energy_graph.get_node( i )->const_edge_list_end();
 				++iter ){
 
-			Size j( (*iter)->get_other_ind( i ) );
+			Size j( ( *iter )->get_other_ind( i ) );
 
-			if ( abs( static_cast<int>(i - j) ) < 2 ) continue;
+			if ( abs( static_cast< int > ( i - j ) ) < 2 ) continue;
 
 			conformation::Residue const & rsd2( pose.residue( j ) );
 			if ( !rsd2.is_RNA() ) continue;
 
 			// Go over sugar and phosphate oxygen atoms
-			for (Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ){
+			for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ){
 
 				//		std::string const atom_j = RNA_backbone_oxygen_atoms_[ m ];
-				Size const atom_num_j = atom_numbers_for_backbone_score_calculations_[ m ];//atom_numbers_for_backbone_score_calculations( rsd2.seqpos(),  m );
+				Size const atom_num_j = atom_numbers_for_backbone_score_calculations_[ m ]; //atom_numbers_for_backbone_score_calculations( rsd2.seqpos(),  m );
 
 				Vector const heavy_atom_j( rsd2.xyz( atom_num_j ) );
 
@@ -1557,26 +1557,26 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_base_backbone(
 
 				Real const dist_ij = d_ij.length();
 
-				if (dist_ij >= base_backbone_distance_cutoff_ ) continue;
+				if ( dist_ij >= base_backbone_distance_cutoff_ ) continue;
 
 				Real const dist_x = dot_product( d_ij, x_i );
 				Real const dist_y = dot_product( d_ij, y_i );
 				Real const dist_z = dot_product( d_ij, z_i );
 
-				Real const rho = std::sqrt( dist_x * dist_x + dist_y * dist_y);
+				Real const rho = std::sqrt( dist_x * dist_x + dist_y * dist_y );
 
-				if ( std::abs(dist_z) > base_backbone_z_cutoff_ ) continue; // Look for atoms in the base plane
+				if ( std::abs( dist_z ) > base_backbone_z_cutoff_ ) continue; // Look for atoms in the base plane
 				if ( rho > base_backbone_rho_cutoff_ ) continue; // Look for atoms in the base plane
 
 				//sanity check...
 				//make sure we're in H-bonding distance of some base atom.
 				Real atom_cutoff_weight( 1.0 );
-				if (!check_for_base_neighbor( rsd1, heavy_atom_j, atom_cutoff_weight ) ) continue;
+				if ( !check_for_base_neighbor( rsd1, heavy_atom_j, atom_cutoff_weight ) ) continue;
 
 				Real deriv_x( 0.0 ), deriv_y( 0.0 ), deriv_z( 0.0 );
 				get_rna_base_backbone_xy( dist_x, dist_y, dist_z, rsd1, m, true /*update_deriv*/, deriv_x, deriv_y, deriv_z );
 
-				Vector const f2 = -1.0 * ( x_i * deriv_x + y_i * deriv_y + z_i * deriv_z);
+				Vector const f2 = -1.0 * ( x_i * deriv_x + y_i * deriv_y + z_i * deriv_z );
 				Vector const f1 = cross( f2, heavy_atom_j );
 
 				F1 += f1;
@@ -1594,14 +1594,14 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_base_backbone(
 
 		if ( n > 0 ){
 
-			for( graph::Graph::EdgeListConstIter
+			for ( graph::Graph::EdgeListConstIter
 						 iter = energy_graph.get_node( i )->const_edge_list_begin();
 					 iter != energy_graph.get_node( i )->const_edge_list_end();
 					 ++iter ){
 
-				Size j( (*iter)->get_other_ind( i ) );
+				Size j( ( *iter )->get_other_ind( i ) );
 
-				if ( abs( static_cast<int>(i - j) ) < 2 ) continue;
+				if ( abs( static_cast< int > ( i - j ) ) < 2 ) continue;
 
 				conformation::Residue const & rsd2( pose.residue( j ) );
 				if ( !rsd2.is_RNA() ) continue;
@@ -1617,21 +1617,21 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_base_backbone(
 
 				Real const dist_ij = d_ij.length();
 
-				if (dist_ij >= base_backbone_distance_cutoff_ ) continue;
+				if ( dist_ij >= base_backbone_distance_cutoff_ ) continue;
 
 				Real const dist_x = dot_product( d_ij, x_j );
 				Real const dist_y = dot_product( d_ij, y_j );
 				Real const dist_z = dot_product( d_ij, z_j );
 
-				Real const rho = std::sqrt( dist_x * dist_x + dist_y * dist_y);
+				Real const rho = std::sqrt( dist_x * dist_x + dist_y * dist_y );
 
-				if ( std::abs(dist_z) > base_backbone_z_cutoff_ ) continue; // Look for atoms in the base plane
+				if ( std::abs( dist_z ) > base_backbone_z_cutoff_ ) continue; // Look for atoms in the base plane
 				if ( rho > base_backbone_rho_cutoff_ ) continue; // Look for atoms in the base plane
 
 				//sanity check...
 				//make sure we're in H-bonding distance of some base atom.
 				Real atom_cutoff_weight( 1.0 );
-				if (!check_for_base_neighbor( rsd2, heavy_atom_i, atom_cutoff_weight ) ) continue;
+				if ( !check_for_base_neighbor( rsd2, heavy_atom_i, atom_cutoff_weight ) ) continue;
 
 				Real deriv_x( 0.0 ), deriv_y( 0.0 ), deriv_z( 0.0 );
 
@@ -1688,7 +1688,7 @@ RNA_LowResolutionPotential::rna_backbone_backbone_pair_energy_one_way(
 	Size const i( rsd1.seqpos() );
 	Size const j( rsd2.seqpos() );
 
-	if ( abs( static_cast<int>(i - j) ) <= 2 ) return 0.0;
+	if ( abs( static_cast< int > ( i - j ) ) <= 2 ) return 0.0;
 
 	//For speed, a cached set of atom numbers that go with RNA_backbone_oxygen_atoms_ (which is a bunch of strings)
 	//	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
@@ -1699,14 +1699,14 @@ RNA_LowResolutionPotential::rna_backbone_backbone_pair_energy_one_way(
 	Vector const & heavy_atom_i = rsd1.xyz( atom_num_i );
 
 	// Go over sugar and phosphate oxygen atoms!
-	for (Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ){
+	for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ){
 
 		if ( rna_backbone_backbone_weight_( m ) < 0.001 ) continue;
 
 		Size const atom_num_j = atom_numbers_for_backbone_score_calculations_[ m ];
 
 		//Don't double-count 2'-OH <--> 2'-OH interactions
-		if ( atom_num_j == atom_num_i && j < i) continue;
+		if ( atom_num_j == atom_num_i && j < i ) continue;
 
 		Vector const & heavy_atom_j = rsd2.xyz( atom_num_j );
 		Vector const d_ij = heavy_atom_j - heavy_atom_i;
@@ -1722,15 +1722,15 @@ RNA_LowResolutionPotential::rna_backbone_backbone_pair_energy_one_way(
 			std::cout <<
 				"BACKBONE_BACKBONE " <<
 				rsd1.name1() <<
-				I(3,i) << " " <<
-				rsd1.atom_name(atom_num_i) <<
+				I( 3, i ) << " " <<
+				rsd1.atom_name( atom_num_i ) <<
 				" " << rsd1.xyz( atom_num_i )[1] <<
 				" -- " <<
 				rsd2.name1() <<
-				I(3,j) << " " <<
-				rsd2.atom_name(atom_num_j) << " " <<
+				I( 3, j ) << " " <<
+				rsd2.atom_name( atom_num_j ) << " " <<
 				" " << rsd2.xyz( atom_num_j )[1] <<
-				F(6,2,score_contribution) << " [" << dist_ij << "]" <<
+				F( 6, 2, score_contribution ) << " [" << dist_ij << "]" <<
 						std::endl;
 		}
 
@@ -1743,7 +1743,7 @@ RNA_LowResolutionPotential::rna_backbone_backbone_pair_energy_one_way(
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Size
 RNA_LowResolutionPotential::find_backbone_oxygen_atom(
-   ObjexxFCL::FArray2D< Size > const & atom_numbers_for_backbone_score_calculations,
+   ObjexxFCL::FArray2D < Size > const & atom_numbers_for_backbone_score_calculations,
 	 Size const & i,
 	 Size const & atom_num_i ) const
 {
@@ -1751,12 +1751,12 @@ RNA_LowResolutionPotential::find_backbone_oxygen_atom(
 	Size n( 0 );
 	bool is_backbone_oxygen_atom( false );
 
-	for (n = 1; n <= num_RNA_backbone_oxygen_atoms_; n++ ){
-		if ( atom_numbers_for_backbone_score_calculations(i, n) == atom_num_i ) {
+	for ( n = 1; n <= num_RNA_backbone_oxygen_atoms_; n++ ){
+		if ( atom_numbers_for_backbone_score_calculations( i, n ) == atom_num_i ) {
 			is_backbone_oxygen_atom = true; break;
 		}
 	}
-	if (!is_backbone_oxygen_atom) return 0;
+	if ( !is_backbone_oxygen_atom ) return 0;
 
 	return n;
 }
@@ -1771,12 +1771,12 @@ RNA_LowResolutionPotential::find_backbone_oxygen_atom(
 	Size n( 0 );
 	bool is_backbone_oxygen_atom( false );
 
-	for (n = 1; n <= num_RNA_backbone_oxygen_atoms_; n++ ){
+	for ( n = 1; n <= num_RNA_backbone_oxygen_atoms_; n++ ){
 		if ( atom_numbers_for_backbone_score_calculations_[ n ] == atom_num_i ) {
 			is_backbone_oxygen_atom = true; break;
 		}
 	}
-	if (!is_backbone_oxygen_atom) return 0;
+	if ( !is_backbone_oxygen_atom ) return 0;
 
 	return n;
 }
@@ -1820,20 +1820,20 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_backbone_backbone(
 
 		Vector const & heavy_atom_i = rsd1.xyz( atom_num_i );
 
-		for( graph::Graph::EdgeListConstIter
+		for ( graph::Graph::EdgeListConstIter
 				iter = energy_graph.get_node( i )->const_edge_list_begin();
 				iter != energy_graph.get_node( i )->const_edge_list_end();
 				++iter ){
 
-			Size j( (*iter)->get_other_ind( i ) );
+			Size j( ( *iter )->get_other_ind( i ) );
 
-			if ( abs( static_cast<int>(i - j) ) <= 2 ) continue;
+			if ( abs( static_cast< int > ( i - j ) ) <= 2 ) continue;
 
 			conformation::Residue const & rsd2( pose.residue( j ) );
 			if ( !rsd2.is_RNA() ) continue;
 
 			// Go over sugar and phosphate oxygen atoms!
-			for (Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ){
+			for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ){
 
 				if ( rna_backbone_backbone_weight_( m ) < 0.001 ) continue;
 
@@ -1869,14 +1869,14 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_backbone_backbone(
 
 			Vector const heavy_atom_i = rsd1.xyz( atom_num_i );
 
-			for( graph::Graph::EdgeListConstIter
+			for ( graph::Graph::EdgeListConstIter
 						 iter = energy_graph.get_node( i )->const_edge_list_begin();
 					 iter != energy_graph.get_node( i )->const_edge_list_end();
 					 ++iter ){
 
-				Size j( (*iter)->get_other_ind( i ) );
+				Size j( ( *iter )->get_other_ind( i ) );
 
-				if ( abs ( static_cast<int>(i - j) ) <= 2 ) continue;
+				if ( abs ( static_cast< int > ( i - j ) ) <= 2 ) continue;
 
 				conformation::Residue const & rsd2( pose.residue( j ) );
 
@@ -1952,20 +1952,20 @@ RNA_LowResolutionPotential::rna_repulsive_pair_energy_one_way(
 
 	Vector const heavy_atom_i = rsd1.xyz( atom_num_i );
 
-	if ( abs( static_cast<int>( i - j ) ) <= 2 ) return 0.0;
+	if ( abs( static_cast< int > ( i - j ) ) <= 2 ) return 0.0;
 
 	// Go over sugar and phosphate oxygen atoms!
-	for (Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ){
+	for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ){
 
 		if ( rna_repulsive_weight_( m ) < 0.001 ) continue;
 
 		Size const atom_num_j = atom_numbers_for_backbone_score_calculations_[ m ];
 
 		//By default only repel o2p.
-		if (!rna_repulse_all_  &&  m != o2p_index_within_special_backbone_atoms_ ) continue;
+		if ( !rna_repulse_all_  &&  m != o2p_index_within_special_backbone_atoms_ ) continue;
 
 		//Don't double-count OP1 <--> OP1 interactions
-		if (atom_num_j == atom_num_i && j < i) continue;
+		if ( atom_num_j == atom_num_i && j < i ) continue;
 
 		Vector const heavy_atom_j( rsd2.xyz( atom_num_j ) );
 
@@ -1982,12 +1982,12 @@ RNA_LowResolutionPotential::rna_repulsive_pair_energy_one_way(
 			std::cout <<
 				"REPULSIVE " <<
 				rsd1.name3() <<
-				I(3,i) << " " <<
+				I( 3, i ) << " " <<
 				rsd2.atom_name( atom_num_i ) <<  " " <<
 				rsd2.name3() <<
-				I(3,j) << " " <<
+				I( 3, j ) << " " <<
 				rsd2.atom_name( atom_num_j ) <<  " " <<
-				F(6,2,score_contribution) << " [" << dist_ij << "]" <<
+				F( 6, 2, score_contribution ) << " [" << dist_ij << "]" <<
 				std::endl;
 		}
 
@@ -2035,25 +2035,25 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_repulsive(
 
 		Vector const heavy_atom_i = rsd1.xyz( atom_num_i );
 
-		for( graph::Graph::EdgeListConstIter
+		for ( graph::Graph::EdgeListConstIter
 					 iter = energy_graph.get_node( i )->const_edge_list_begin();
 				 iter != energy_graph.get_node( i )->const_edge_list_end();
 				 ++iter ){
 
-			Size j( (*iter)->get_other_ind( i ) );
+			Size j( ( *iter )->get_other_ind( i ) );
 
-			if ( abs( static_cast<int>(i - j) ) <= 2 ) continue;
+			if ( abs( static_cast< int > ( i - j ) ) <= 2 ) continue;
 
 			conformation::Residue const & rsd2( pose.residue( j ) );
 			if ( !rsd2.is_RNA() ) continue;
 
 			// Go over sugar and phosphate oxygen atoms!
-			for (Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ){
+			for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ){
 
 				if ( rna_repulsive_weight_( m ) < 0.001 ) continue;
 
 				//By default only repel o2p.
-				if (!rna_repulse_all_  &&  m != o2p_index_within_special_backbone_atoms_ ) continue;
+				if ( !rna_repulse_all_  &&  m != o2p_index_within_special_backbone_atoms_ ) continue;
 
 				Size const atom_num_j = atom_numbers_for_backbone_score_calculations_[ m ];
 
@@ -2091,17 +2091,17 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_repulsive(
 
 			Vector const heavy_atom_i = rsd1.xyz( atom_num_i );
 
-			for( graph::Graph::EdgeListConstIter
+			for ( graph::Graph::EdgeListConstIter
 						 iter = energy_graph.get_node( i )->const_edge_list_begin();
 					 iter != energy_graph.get_node( i )->const_edge_list_end();
 					 ++iter ){
 
-				Size j( (*iter)->get_second_node_ind() );
+				Size j( ( *iter )->get_second_node_ind() );
 
 				//Edges always have first node < second node. Just in case we picked the wrong one:
-				if (i == j) j = (*iter)->get_first_node_ind();
+				if ( i == j ) j = ( *iter )->get_first_node_ind();
 
-				if ( abs( static_cast<int>(i - j) ) <= 2 ) continue;
+				if ( abs( static_cast< int > ( i - j ) ) <= 2 ) continue;
 
 				conformation::Residue const & rsd2( pose.residue( j ) );
 				if ( !rsd2.is_RNA() ) continue;
@@ -2111,7 +2111,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_repulsive(
 				Size const atom_num_j = atom_numbers_for_backbone_score_calculations_[ m ];
 
 				//By default only repel o2p.
-				if (!rna_repulse_all_  &&  n != o2p_index_within_special_backbone_atoms_ ) continue;
+				if ( !rna_repulse_all_  &&  n != o2p_index_within_special_backbone_atoms_ ) continue;
 
 				// Don't double-count OP1 <--> OP1 interactions
 				//  if (atom_num_j == atom_num_i && j < i) continue;
@@ -2178,7 +2178,7 @@ RNA_LowResolutionPotential::fill_atom_numbers_for_backbone_oxygens( chemical::Re
 	ResidueTypeCOPs const & rsd_types( rsd_set->aa_map( aa ) );
 	ResidueTypeCOP const & rsd_type = rsd_types[ 1 ]; //This better work.
 
-	for (Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ) {
+	for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ) {
 		atom_numbers_for_backbone_score_calculations_.push_back( rsd_type->atom_index( RNA_backbone_oxygen_atoms_[ m ] ) );
 	}
 
@@ -2193,7 +2193,7 @@ RNA_LowResolutionPotential::check_atom_numbers_for_backbone_oxygens( chemical::R
 	ResidueTypeCOPs const & rsd_types( rsd_set->aa_map( aa ) );
 	ResidueTypeCOP const &  rsd_type = rsd_types[ 1 ]; //This better work.
 
-	for (Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ) {
+	for ( Size m = 1; m <= num_RNA_backbone_oxygen_atoms_; m++ ) {
 		if ( atom_numbers_for_backbone_score_calculations_[m] != rsd_type->atom_index( RNA_backbone_oxygen_atoms_[ m ] ) ) return false;
 	}
 
@@ -2279,12 +2279,12 @@ RNA_LowResolutionPotential::check_clear_for_stacking(
 	Vector const & y_i = M_i.col_y();
 	Vector const & z_i = M_i.col_z();
 
-	for (Size j = 1; j <= pose.total_residue(); j++ ) {
-		conformation::Residue const & res_j( pose.residue(j) );
+	for ( Size j = 1; j <= pose.total_residue(); j++ ) {
+		conformation::Residue const & res_j( pose.residue( j ) );
 
-		if (i==j) continue;
+		if ( i == j ) continue;
 
-		for (Size m = 1; m <= res_j.natoms(); m++ ) {
+		for ( Size m = 1; m <= res_j.natoms(); m++ ) {
 
 			Vector const & atom_j( res_j.xyz( m ) );
 
@@ -2295,8 +2295,8 @@ RNA_LowResolutionPotential::check_clear_for_stacking(
 			Real const rho2 = dist_x*dist_x + dist_y*dist_y;
 
 			//			if (d_ij.length() < 6.0) std::cout << dist_z << " " <<  rho2 << std::endl;
-			if ( (sign * dist_z) >= base_stack_min_height_ &&
-					 (sign * dist_z) <= base_stack_max_height_  &&
+			if ( ( sign * dist_z ) >= base_stack_min_height_ &&
+					 ( sign * dist_z ) <= base_stack_max_height_  &&
 					 rho2 < base_stack_radius2_ ) {
 				//Possible BASE STACK1
 				tr << "Found stacking atom on base " << i << ": " << j << " " << res_j.atom_name( m )  << std::endl;
@@ -2304,7 +2304,7 @@ RNA_LowResolutionPotential::check_clear_for_stacking(
 			} //basepair
 
 		} //j
-	}//i
+	} //i
 
 	return true;
 }
@@ -2337,7 +2337,7 @@ RNA_LowResolutionPotential::check_forming_base_pair(
 	if ( !res_i.is_RNA() ) return false;
 	if ( !res_j.is_RNA() ) return false;
 
-	if (i==j) return false;
+	if ( i == j ) return false;
 
 	//Note that this centroid and stubs could be calculated once at the beginning of the scoring!!!
 	Vector const & centroid_i( base_centroids[i] );
@@ -2364,7 +2364,7 @@ RNA_LowResolutionPotential::check_forming_base_pair(
 
 	//Is it a base-pair, a base-stack, or do we ignore it?
 	//Size edge_bin( 1 );
-	if ( ( std::abs(dist_z) < rna_basepair_stagger_cutoff_ ) ){
+	if ( ( std::abs( dist_z ) < rna_basepair_stagger_cutoff_ ) ){
 		//A possible base pair
 		if ( rho2 < rna_basepair_radius_cutoff2_ ){
 			return true;

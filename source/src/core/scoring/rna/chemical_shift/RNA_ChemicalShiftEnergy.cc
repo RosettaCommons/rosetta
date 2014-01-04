@@ -78,7 +78,7 @@ RNA_ChemicalShiftEnergy::clone() const
 
 /////////////////////////////////////////////////////////////////////////////
 void
-RNA_ChemicalShiftEnergy::setup_for_scoring( pose::Pose & , ScoreFunction const & ) const
+RNA_ChemicalShiftEnergy::setup_for_scoring( pose::Pose &, ScoreFunction const & ) const
 {
 
 
@@ -89,7 +89,7 @@ RNA_ChemicalShiftEnergy::setup_for_scoring( pose::Pose & , ScoreFunction const &
 
 /////////////////////////////////////////////////////////////////////////////
 void
-RNA_ChemicalShiftEnergy::setup_for_derivatives( pose::Pose & , ScoreFunction const & ) const
+RNA_ChemicalShiftEnergy::setup_for_derivatives( pose::Pose &, ScoreFunction const & ) const
 {
 
 
@@ -108,7 +108,7 @@ RNA_ChemicalShiftEnergy::finalize_total_energy(
 	EnergyMap & totals
 ) const {
 
-	rna_chemical_shift_potential_.finalize_total_energy(pose, totals);
+	rna_chemical_shift_potential_.finalize_total_energy( pose, totals );
 
 } // finalize_total_energy
 

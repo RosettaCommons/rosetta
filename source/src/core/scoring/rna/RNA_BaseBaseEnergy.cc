@@ -48,7 +48,7 @@ RNA_BaseBaseEnergy::RNA_BaseBaseEnergy():
 	add_score_type( rna_base_axis );
 	add_score_type( rna_base_stagger );
 	add_score_type( rna_base_stack );
-	add_score_type( rna_base_stack_axis );*/
+	add_score_type( rna_base_stack_axis ); */
 }
 
 

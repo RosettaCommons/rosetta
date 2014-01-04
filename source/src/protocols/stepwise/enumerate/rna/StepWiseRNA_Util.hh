@@ -448,19 +448,13 @@ rescale_scorefxn( scoring::ScoreFunctionOP const & starting_scorefxn, Real const
 
 void
 show_scorefxn_weight_lines( scoring::ScoreFunctionOP const & scorefxn, std::string const title );
-//Doesn't work on MAC!!
-//void
-//process_mem_usage(double& vm_usage, double& resident_set, Size count);
-
-void
-figure_out_stepwise_rna_movemap( kinematics::MoveMap & mm, pose::Pose const & pose, ObjexxFCL::FArray1D < bool > const & allow_insert );
 
 void
 figure_out_stepwise_rna_movemap( kinematics::MoveMap & mm, pose::Pose const & pose, utility::vector1< Size > const & minimize_res );
-	
+
 void
 figure_out_stepwise_rna_movemap( core::kinematics::MoveMap & mm, core::pose::Pose const & pose, toolbox::AllowInsertOP const & allow_insert );
-	
+
 void
 update_allow_insert_with_extra_minimize_res( pose::Pose const & pose, toolbox::AllowInsertOP & allow_insert, utility::vector1< core::Size > const & extra_minimize_res );
 
@@ -469,9 +463,6 @@ choose_random_if_unspecified_nucleotide( char & newrestype );
 
 bool
 mutate_res_if_allowed( pose::Pose & pose, Size const mutate_res, Real const mutation_frequency = 0.5 );
-
-//Real
-//pose_selection_by_full_score( utility::vector1< pose::PoseOP > & pose_data_list, pose::Pose & current_pose, std::string const & tag );
 
 std::string
 create_tag( std::string const & prestring, Size const i );

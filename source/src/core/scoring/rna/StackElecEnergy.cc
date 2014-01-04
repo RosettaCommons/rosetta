@@ -71,7 +71,7 @@ using namespace ObjexxFCL::format;
 ////////////////////////////////////////////////////////////////////////////////////
 
 // C++
-static basic::Tracer tr("core.scoring.rna.StackElecEnergy");
+static basic::Tracer tr( "core.scoring.rna.StackElecEnergy" );
 
 namespace core {
 namespace scoring {
@@ -207,12 +207,12 @@ StackElecEnergy::setup_for_minimizing(
         NeighborListOP nblist;
         Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
         Real const XX = coulomb().max_dis() + 2 * tolerated_motion;
-        nblist = new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX);
+        nblist = new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX );
         if ( pose.energies().use_nblist_auto_update() ) {
             nblist->set_auto_update( tolerated_motion );
         }
         // this partially becomes the EtableEnergy classes's responsibility
-        nblist->setup( pose, sfxn, *this);
+        nblist->setup( pose, sfxn, *this );
         energies.set_nblist( EnergiesCacheableDataType::ELEC_NBLIST, nblist );
     }
 }
@@ -267,7 +267,7 @@ StackElecEnergy::get_count_pair_function(
 {
     using namespace etable::count_pair;
 
-    if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return new CountPairNone;
+    if ( ! defines_score_for_residue_pair( rsd1, rsd2, true ) ) return new CountPairNone;
 
     if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
         return CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
@@ -284,7 +284,7 @@ StackElecEnergy::get_intrares_countpair(
     ScoreFunction const &
 ) const
 {
-    utility_exit_with_message( "StackElecEnergy does not define intra-residue pair energies; do not call get_intrares_countpair()" );
+    utility_exit_with_message( "StackElecEnergy does not define intra - residue pair energies; do not call get_intrares_countpair()" );
     return 0;
 }
 
@@ -317,7 +317,7 @@ StackElecEnergy::setup_for_minimizing_for_residue_pair(
     //assert( rsd1.seqpos() < rsd2.seqpos() );
 
     // update the existing nblist if it's already present in the min_data object
-    ResiduePairNeighborListOP nblist( static_cast< ResiduePairNeighborList * > (pair_data.get_data( elec_pair_nblist )() ));
+    ResiduePairNeighborListOP nblist( static_cast< ResiduePairNeighborList * > ( pair_data.get_data( elec_pair_nblist )() ) );
     if ( ! nblist ) nblist = new ResiduePairNeighborList;
 
     /// STOLEN CODE!
@@ -377,12 +377,12 @@ StackElecEnergy::residue_pair_energy_ext(
                 m = neighbs[ ii ].atomno1();
                 if ( rsd1.is_virtual( m ) ) continue;
                 if ( base_base_only_ && !is_rna_base( rsd1, m ) ) continue;
-                Real const m_charge( rsd1.atomic_charge(m) );
+                Real const m_charge( rsd1.atomic_charge( m ) );
                 if ( m_charge == 0.0 ) continue;
                 n = neighbs[ ii ].atomno2();
                 if ( rsd2.is_virtual( n ) ) continue;
                 if ( base_base_only_ && !is_rna_base( rsd2, n ) ) continue;
-                Real const n_charge( rsd2.atomic_charge(n) );
+                Real const n_charge( rsd2.atomic_charge( n ) );
                 if ( n_charge == 0.0 ) continue;
                 Vector const atom_m( rsd1.xyz( m ) );
                 Vector const atom_n( rsd2.xyz( n ) );
@@ -397,7 +397,7 @@ StackElecEnergy::residue_pair_energy_ext(
                         score_base_bb += stack_elec_score;
                     }
                 }
-                if ( is_rna_base( rsd2, n) ) {
+                if ( is_rna_base( rsd2, n ) ) {
                     Real cos_kappa2( 0.0 ); // useful for output...
                     Real const stack_elec_score = get_stack_elec_score( atom_n, atom_m, n_charge, m_charge, M_j, cos_kappa2 );
                     score += stack_elec_score;
@@ -484,7 +484,7 @@ StackElecEnergy::residue_pair_energy_one_way(
 		// following contains virtual check.
 		if ( !is_rna_base( rsd1, m ) ) continue;
 
-		Real const i_charge( rsd1.atomic_charge(m) );
+		Real const i_charge( rsd1.atomic_charge( m ) );
 		if ( i_charge == 0.0 ) continue;
 
     Vector const atom_i( rsd1.xyz( m ) );
@@ -494,7 +494,7 @@ StackElecEnergy::residue_pair_energy_one_way(
 			if ( rsd2.is_virtual( n ) ) continue;
 			if ( base_base_only_ && !is_rna_base( rsd2, n ) ) continue;
 
-			Real const j_charge( rsd2.atomic_charge(n) );
+			Real const j_charge( rsd2.atomic_charge( n ) );
 			if ( j_charge == 0.0 ) continue;
 
       Vector const atom_j( rsd2.xyz( n ) );
@@ -504,7 +504,7 @@ StackElecEnergy::residue_pair_energy_one_way(
 
 			score += stack_elec_score;
 
-			if ( is_rna_base( rsd2, n) ) {
+			if ( is_rna_base( rsd2, n ) ) {
 				score_base_base += stack_elec_score;
 			} else {
 				score_base_bb   += stack_elec_score;
@@ -557,7 +557,7 @@ StackElecEnergy::eval_atom_derivative(
 
 	if ( rsd1.is_virtual( m ) ) return;
 
-	Real const i_charge( rsd1.atomic_charge(m) );
+	Real const i_charge( rsd1.atomic_charge( m ) );
 	if ( i_charge == 0.0 ) return;
     bool res1_is_base = is_rna_base( rsd1, m );
 	if ( base_base_only_ && !res1_is_base ) return;
@@ -572,21 +572,21 @@ StackElecEnergy::eval_atom_derivative(
 
     //assert( pose.energies().use_nblist() );
 	NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
-	AtomNeighbors const & nbrs( nblist.atom_neighbors(i,m) );
+	AtomNeighbors const & nbrs( nblist.atom_neighbors( i, m ) );
 
-    for ( scoring::AtomNeighbors::const_iterator it2=nbrs.begin(),
-         it2e=nbrs.end(); it2 != it2e; ++it2 ) {
+    for ( scoring::AtomNeighbors::const_iterator it2 = nbrs.begin(),
+         it2e = nbrs.end(); it2 != it2e; ++it2 ) {
 		scoring::AtomNeighbor const & nbr( *it2 );
 		Size const j( nbr.rsd() );
-        if ( i==j ) continue;
+        if ( i == j ) continue;
 		Size const n( nbr.atomno() );
 		conformation::Residue const & rsd2( pose.residue( j ) );
 
         if ( rsd2.is_virtual( n ) ) continue;
 
-		Real const j_charge( rsd2.atomic_charge(n) );
+		Real const j_charge( rsd2.atomic_charge( n ) );
 		if ( j_charge == 0.0 ) continue; /// should prune out such atoms when constructing the neighborlist!
-        bool res2_is_base = is_rna_base( rsd2, n);
+        bool res2_is_base = is_rna_base( rsd2, n );
         if ( base_base_only_ && !res2_is_base ) continue;
 
 		Vector const & atom_j( rsd2.xyz( n ) );
@@ -710,7 +710,7 @@ StackElecEnergy::get_stack_elec_score( Vector const & r_i,
 	Real const z = dot( z_i, r_vec );
 	Real const cos_kappa = z / r;
 
-  Real score  = coulomb().eval_atom_atom_fa_elecE( r_i, i_charge, r_j, j_charge);
+  Real score  = coulomb().eval_atom_atom_fa_elecE( r_i, i_charge, r_j, j_charge );
 
   //Orientation dependence
 	cos_kappa2 = cos_kappa * cos_kappa;
@@ -755,7 +755,7 @@ StackElecEnergy::get_stack_elec_deriv( Vector const & r_i,
 	/////////////////////////////////
 	//dE_dcoskappa
 	/////////////////////////////////
-	Real dE_dcoskappa = coulomb().eval_atom_atom_fa_elecE( r_i, i_charge, r_j, j_charge);
+	Real dE_dcoskappa = coulomb().eval_atom_atom_fa_elecE( r_i, i_charge, r_j, j_charge );
   dE_dcoskappa  *= 2 * cos_kappa;
 
 
@@ -767,11 +767,11 @@ StackElecEnergy::get_stack_elec_deriv( Vector const & r_i,
   //Orientation dependence
   dE_dr_over_r *= cos_kappa * cos_kappa ;
 
-	Real const dE_dx = ( dE_dr_over_r ) * x - (dE_dcoskappa) * (x * z)/ (r * r * r) ;
-	Real const dE_dy = ( dE_dr_over_r ) * y - (dE_dcoskappa) * (y * z)/ (r * r * r) ;
-	Real const dE_dz = ( dE_dr_over_r ) * z + (dE_dcoskappa) * (x * x  +  y * y)/ (r * r * r);
+	Real const dE_dx = ( dE_dr_over_r ) * x - ( dE_dcoskappa ) * ( x * z )/ ( r * r * r ) ;
+	Real const dE_dy = ( dE_dr_over_r ) * y - ( dE_dcoskappa ) * ( y * z )/ ( r * r * r ) ;
+	Real const dE_dz = ( dE_dr_over_r ) * z + ( dE_dcoskappa ) * ( x * x  +  y * y )/ ( r * r * r );
 
-  return (dE_dx * x_i + dE_dy * y_i + dE_dz * z_i );
+  return ( dE_dx * x_i + dE_dy * y_i + dE_dz * z_i );
 
 }
 
@@ -807,33 +807,33 @@ StackElecEnergy::finalize_total_energy(
 
         Real score( 0.0 ), score_base_base( 0.0 ), score_base_bb( 0.0 );
 
-        for ( Size i=1, i_end = pose.total_residue(); i<= i_end; ++i ) {
+        for ( Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i ) {
             conformation::Residue const & ires( *resvect[i] );
-            for ( Size ii=1, ii_end=ires.natoms(); ii<= ii_end; ++ii ) {
+            for ( Size ii = 1, ii_end = ires.natoms(); ii <= ii_end; ++ii ) {
                 if ( ires.is_virtual( ii ) ) continue;
                 bool res1_is_base = is_rna_base( ires, ii );
                 if ( base_base_only_ && !res1_is_base ) continue;
-                Real const m_charge( ires.atomic_charge(ii) );
+                Real const m_charge( ires.atomic_charge( ii ) );
                 if ( m_charge == 0.0 ) continue;
                 Vector const atom_m( ires.xyz( ii ) );
                 kinematics::Stub stub_i = base_stubs[i];
                 Matrix const M_i ( stub_i.M );
-                AtomNeighbors const & nbrs( nblist.upper_atom_neighbors(i,ii) );
-                for ( AtomNeighbors::const_iterator nbr_iter=nbrs.begin(),
-                     nbr_end=nbrs.end(); nbr_iter!= nbr_end; ++nbr_iter ) {
+                AtomNeighbors const & nbrs( nblist.upper_atom_neighbors( i, ii ) );
+                for ( AtomNeighbors::const_iterator nbr_iter = nbrs.begin(),
+                     nbr_end = nbrs.end(); nbr_iter != nbr_end; ++nbr_iter ) {
                     AtomNeighbor const & nbr( *nbr_iter );
 
                     Size const  j( nbr.rsd() );
-                    if (i == j) continue;
+                    if ( i == j ) continue;
                     Size const jj( nbr.atomno() );
                     // could reorder the nbr lists so that we dont need this check:
                     //if ( ( j < i ) || ( j == i && jj <= ii ) ) continue;
 
                     conformation::Residue const & jres( *resvect[j] );
-                    if ( jres.is_virtual (jj ) ) continue;
+                    if ( jres.is_virtual ( jj ) ) continue;
                     bool res2_is_base = is_rna_base( jres, jj );
                     if ( base_base_only_ && !res2_is_base ) continue;
-                    Real const n_charge( jres.atomic_charge(jj) );
+                    Real const n_charge( jres.atomic_charge( jj ) );
                     if ( n_charge == 0.0 ) continue;
 
                     Vector const atom_n( jres.xyz( jj ) );

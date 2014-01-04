@@ -86,11 +86,13 @@ namespace rna {
 		Size const & floating_base_anchor_res() const{ return floating_base_anchor_res_;}
 		Size working_floating_base_anchor_res() const;
 		bool const & rebuild_bulge_mode() const{ return rebuild_bulge_mode_;}
+		bool const & sample_both_sugar_base_rotamer() const{ return sample_both_sugar_base_rotamer_;}
 
 		ObjexxFCL::FArray1D < bool > const & partition_definition() const;
 
 		utility::vector1< core::Size > const &  working_fixed_res() const;
 		utility::vector1< core::Size > const &  rmsd_res_list() const;
+		utility::vector1< core::Size > const &  terminal_res() const;
 		utility::vector1< core::Size > const &  working_terminal_res() const;
 		utility::vector1< core::Size > const &  working_moving_partition_pos() const;
 
@@ -101,7 +103,6 @@ namespace rna {
 
 		utility::vector1< core::Size > const & native_alignment() const;
 		utility::vector1< core::Size > const & working_native_alignment() const;
-
 
 		utility::vector1< core::Size > const & global_sample_res_list() const;
 		utility::vector1< core::Size > const & working_global_sample_res_list() const;
@@ -146,6 +147,7 @@ namespace rna {
 		void set_working_native_pose( core::pose::PoseCOP pose );
 		void set_working_fixed_res(	utility::vector1< core::Size > const & working_fixed_res );
 		void set_rmsd_res_list(	utility::vector1< core::Size > const & rmsd_res_list );
+		void set_terminal_res(	utility::vector1< core::Size > const & terminal_res );
 		void set_working_terminal_res(	utility::vector1< core::Size > const & working_terminal_res );
 		void set_working_moving_partition_pos(	utility::vector1< core::Size > const & working_moving_partition_pos );
 		void set_input_res_vectors(	utility::vector1< utility::vector1< Size > > const & setting );
@@ -165,6 +167,7 @@ namespace rna {
 		void set_floating_base( bool const setting ){ floating_base_ = setting; }
 		void set_floating_base_anchor_res( Size const setting ){ floating_base_anchor_res_ = setting; }
 		void set_rebuild_bulge_mode( bool const setting ){ rebuild_bulge_mode_ = setting; }
+		void set_sample_both_sugar_base_rotamer( bool const setting ){ sample_both_sugar_base_rotamer_ = setting; }
 
 		core::pose::PoseCOP	working_native_pose() const;
 
@@ -202,9 +205,10 @@ namespace rna {
 		bool is_prepend_;
 		bool is_internal_;
 		bool add_virt_res_as_root_;
-		bool rebuild_bulge_mode_;
 		bool floating_base_;
 		Size floating_base_anchor_res_;
+		bool rebuild_bulge_mode_;
+		bool sample_both_sugar_base_rotamer_;
 
 		ObjexxFCL::FArray1D < bool > partition_definition_;
 
@@ -212,6 +216,7 @@ namespace rna {
 
 		utility::vector1< core::Size > working_fixed_res_;
 		utility::vector1< core::Size > rmsd_res_list_;
+		utility::vector1< core::Size > terminal_res_;
 		utility::vector1< core::Size > working_terminal_res_;
 		utility::vector1< core::Size > working_moving_partition_pos_;
 		core::kinematics::FoldTree fold_tree_;

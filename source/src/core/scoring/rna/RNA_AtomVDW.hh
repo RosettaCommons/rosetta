@@ -66,7 +66,7 @@ private: //data
 	// I originally had this as a crazy map,
 	// but it was really slow... now its an FArray,
 	// with a helper function to convert a,c,g,u to indices 1,2,3,4.
-	ObjexxFCL::FArray4D <Real> rna_vdw_parameter_;
+	ObjexxFCL::FArray4D < Real > rna_vdw_parameter_;
 
 
 	};

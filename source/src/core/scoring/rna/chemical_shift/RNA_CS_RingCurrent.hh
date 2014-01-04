@@ -32,18 +32,18 @@ namespace rna {
 namespace chemical_shift {
 
 
-numeric::xyzVector<core::Real> 
-ring_pos(conformation::Residue const & rsd, RNA_CS_residue_parameters const & rna_cs_rsd_params, core::Size const ring_ID); //NOTE: ONLY INCLUDE HEAVY ATOMS (no hydrogens!)
+numeric::xyzVector< core::Real > 
+ring_pos( conformation::Residue const & rsd, RNA_CS_residue_parameters const & rna_cs_rsd_params, core::Size const ring_ID ); //NOTE: ONLY INCLUDE HEAVY ATOMS (no hydrogens!)
 
 
 core::Real
-ring_current_effect(numeric::xyzVector<core::Real> const & atom_xyz, conformation::Residue const & source_rsd, RNA_CS_residue_parameters const & rna_cs_rsd_params);
+ring_current_effect( numeric::xyzVector< core::Real > const & atom_xyz, conformation::Residue const & source_rsd, RNA_CS_residue_parameters const & rna_cs_rsd_params );
 
-numeric::xyzVector<core::Real>
-get_ring_current_deriv(numeric::xyzVector<core::Real> const & CS_data_atom_xyz, 
+numeric::xyzVector< core::Real >
+get_ring_current_deriv( numeric::xyzVector< core::Real > const & CS_data_atom_xyz, 
 										  conformation::Residue const & source_rsd, 
 											core::Size const source_ring_ID,
-											RNA_CS_residue_parameters const & source_rsd_CS_params);
+											RNA_CS_residue_parameters const & source_rsd_CS_params );
 
 
 } // chemical_shift

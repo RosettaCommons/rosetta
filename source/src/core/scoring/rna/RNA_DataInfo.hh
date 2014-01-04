@@ -34,7 +34,7 @@ namespace rna {
 class RNA_Datum {
 public:
 
-	RNA_Datum( Size const position, Size const edge, Real const weight){
+	RNA_Datum( Size const position, Size const edge, Real const weight ){
 		position_ = position;
 		edge_ = edge;
 		weight_ = weight;
@@ -69,7 +69,7 @@ public:
   }
 
 	RNA_DataInfo &
-	operator=( RNA_DataInfo const & src );
+	operator = ( RNA_DataInfo const & src );
 
   Size
   size() const {
@@ -84,19 +84,19 @@ public:
 	void
 	add_datum( RNA_Datum const & rna_datum ){ rna_data_.push_back( rna_datum ); }
 
-	ObjexxFCL::FArray1D< bool > const & backbone_burial() const { return backbone_burial_; }
+	ObjexxFCL::FArray1D < bool > const & backbone_burial() const { return backbone_burial_; }
 
-	void set_backbone_burial( ObjexxFCL::FArray1D< bool > const & backbone_burial ){ backbone_burial_ = backbone_burial; }
+	void set_backbone_burial( ObjexxFCL::FArray1D < bool > const & backbone_burial ){ backbone_burial_ = backbone_burial; }
 
-	ObjexxFCL::FArray1D< bool > const & backbone_exposed() const { return backbone_exposed_; }
+	ObjexxFCL::FArray1D < bool > const & backbone_exposed() const { return backbone_exposed_; }
 
-	void set_backbone_exposed( ObjexxFCL::FArray1D< bool > const & backbone_exposed ){ backbone_exposed_ = backbone_exposed; }
+	void set_backbone_exposed( ObjexxFCL::FArray1D < bool > const & backbone_exposed ){ backbone_exposed_ = backbone_exposed; }
 
 private:
 
 	RNA_Data rna_data_;
-	ObjexxFCL::FArray1D< bool > backbone_burial_;
-	ObjexxFCL::FArray1D< bool > backbone_exposed_;
+	ObjexxFCL::FArray1D < bool > backbone_burial_;
+	ObjexxFCL::FArray1D < bool > backbone_exposed_;
 
 };
 

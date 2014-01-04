@@ -25,42 +25,42 @@ namespace rna {
 namespace chemical_shift {
 
 ///////////////////////////////////////////////////////////////
-numeric::xyzVector<core::Real> 
-ring_pos(conformation::Residue const & rsd, RNA_CS_residue_parameters const & rna_cs_rsd_params, Size const ring_ID) //NOTE: ONLY INCLUDE HEAVY ATOMS (no hydrogens!)
+numeric::xyzVector< core::Real > 
+ring_pos( conformation::Residue const & rsd, RNA_CS_residue_parameters const & rna_cs_rsd_params, Size const ring_ID ) //NOTE: ONLY INCLUDE HEAVY ATOMS (no hydrogens!)
 {
 
-	numeric::xyzVector<core::Real> ring_center(0.0, 0.0, 0.0);
+	numeric::xyzVector< core::Real > ring_center( 0.0, 0.0, 0.0 );
 
- 	Size atom_count=0;
+ 	Size atom_count = 0;
  
-	if( rsd.aa()!= rna_cs_rsd_params.aa() ) utility_exit_with_message("rsd.aa()!= rna_cs_rsd_params.aa()!");
+	if ( rsd.aa() != rna_cs_rsd_params.aa() ) utility_exit_with_message( "rsd.aa() != rna_cs_rsd_params.aa()!" );
 
-	Size const maxatoms=rna_cs_rsd_params.get_atomnames_size();
+	Size const maxatoms = rna_cs_rsd_params.get_atomnames_size();
 
-	for (Size count = 1; count < maxatoms; count++){
+	for ( Size count = 1; count < maxatoms; count++ ){
 
-		if(ring_ID==1){
+		if ( ring_ID == 1 ){
 
-			if(dround(rna_cs_rsd_params.atom_data(count, rcl1)!=1)) continue;
+			if ( dround( rna_cs_rsd_params.atom_data( count, rcl1 ) != 1 ) ) continue;
 
-		}else if(ring_ID==2){
+		} else if ( ring_ID == 2 ){
 
-			if(dround(rna_cs_rsd_params.atom_data(count, rcl2)!=1)) continue;
+			if ( dround( rna_cs_rsd_params.atom_data( count, rcl2 ) != 1 ) ) continue;
 
-		}else{
-			utility_exit_with_message("(ring_ID!=1) && (ring_ID!=2), ring_ID=("+ ObjexxFCL::string_of(ring_ID)+")!");
+		} else{
+			utility_exit_with_message( "( ring_ID != 1 ) && ( ring_ID != 2 ), ring_ID = ( " + ObjexxFCL::string_of( ring_ID ) + " )!" );
 		}
 
-		Size const atom_index=rsd.atom_index( rna_cs_rsd_params.get_atomname(count) );
+		Size const atom_index = rsd.atom_index( rna_cs_rsd_params.get_atomname( count ) );
 
-		ring_center+=rsd.xyz(atom_index);
+		ring_center += rsd.xyz( atom_index );
 		atom_count++;
 
 	}
 
-	if(atom_count==0) utility_exit_with_message("atom_count==0!");
+	if ( atom_count == 0 ) utility_exit_with_message( "atom_count == 0!" );
 
-	ring_center=ring_center/atom_count;
+	ring_center = ring_center/atom_count;
 
   return ring_center;
 }
@@ -69,7 +69,7 @@ ring_pos(conformation::Residue const & rsd, RNA_CS_residue_parameters const & rn
 /* derivative of ellintk. expects 0 <= m < 1 as input. 
 */
 static 
-Real dellintk_dm(Real const m) 
+Real dellintk_dm( Real const m ) 
 {
 	//Real const ak0 = 1.38629436112;
 	Real const ak1 = 0.09666344259;
@@ -86,24 +86,24 @@ Real dellintk_dm(Real const m)
 	Real const mr3 = mr * mr * mr;
 	Real const mr4 = mr * mr * mr * mr;
 
-	Real const bd = bk0 + (bk1 * mr) + (bk2 * mr2) + (bk3 * mr3) + (bk4 * mr4);
-	Real const cd = std::log (1.0 / mr);
+	Real const bd = bk0 + ( bk1 * mr ) + ( bk2 * mr2 ) + ( bk3 * mr3 ) + ( bk4 * mr4 );
+	Real const cd = std::log ( 1.0 / mr );
 
 	//DEFINITION: ellintk        =     ad + (bd * cd)
 	//            dellinte_dm    =     dad_dm + (bd * dcd_dm + dbd_dm * cd)
 
-	Real const dad_dm = -1.0 * ( ( ak1 + (2 * ak2 * mr) + (3 * ak3 * mr2) + (4 * ak4 * mr3) ) );
-	Real const dbd_dm = -1.0 * ( ( bk1 + (2 * bk2 * mr) + (3 * bk3 * mr2) + (4 * bk4 * mr3) ) );
-	Real const dcd_dm = +1.0 * ( 1.0 / mr  );
+	Real const dad_dm = -1.0 * ( ( ak1 + ( 2 * ak2 * mr ) + ( 3 * ak3 * mr2 ) + ( 4 * ak4 * mr3 ) ) );
+	Real const dbd_dm = -1.0 * ( ( bk1 + ( 2 * bk2 * mr ) + ( 3 * bk3 * mr2 ) + ( 4 * bk4 * mr3 ) ) );
+	Real const dcd_dm = + 1.0 * ( 1.0 / mr  );
 
-	return ( dad_dm + (bd * dcd_dm + dbd_dm * cd) );
+	return ( dad_dm + ( bd * dcd_dm + dbd_dm * cd ) );
 }
 
 ///////////////////////////////////////////////////////////////
-/* derivative of ellinte. expects 0<=m<1 as input.
+/* derivative of ellinte. expects 0 <= m < 1 as input.
 */
 static 
-Real dellinte_dm(Real const m) 
+Real dellinte_dm( Real const m ) 
 {
 	//Real const ae0 = 1.0          ;
 	Real const ae1 = 0.44325141463;
@@ -120,17 +120,17 @@ Real dellinte_dm(Real const m)
 	Real const mr3 = mr * mr * mr;
 	Real const mr4 = mr * mr * mr * mr;
 
-	Real const bd = be0 + (be1 * mr) + (be2 * mr2) + (be3 * mr3) + (be4 * mr4);
-	Real const cd = std::log(1.0 / mr);
+	Real const bd = be0 + ( be1 * mr ) + ( be2 * mr2 ) + ( be3 * mr3 ) + ( be4 * mr4 );
+	Real const cd = std::log( 1.0 / mr );
 
 	//DEFINITION: ellinte        =     ad + (bd * cd)
 	//            dellinte_dm    =     dad_dm + (bd * dcd_dm + dbd_dm * cd)
 
-	Real const dad_dm = -1.0 * ( ( ae1 + (2 * ae2 * mr) + (3 * ae3 * mr2 ) + (4 * ae4 * mr3) ) );
-	Real const dbd_dm = -1.0 * ( ( be1 + (2 * be2 * mr) + (3 * be3 * mr2 ) + (4 * be4 * mr3) ) );
-	Real const dcd_dm = +1.0 * ( 1.0 / mr  );
+	Real const dad_dm = -1.0 * ( ( ae1 + ( 2 * ae2 * mr ) + ( 3 * ae3 * mr2 ) + ( 4 * ae4 * mr3 ) ) );
+	Real const dbd_dm = -1.0 * ( ( be1 + ( 2 * be2 * mr ) + ( 3 * be3 * mr2 ) + ( 4 * be4 * mr3 ) ) );
+	Real const dcd_dm = + 1.0 * ( 1.0 / mr  );
 
-	return ( dad_dm + (bd * dcd_dm + dbd_dm * cd) );
+	return ( dad_dm + ( bd * dcd_dm + dbd_dm * cd ) );
 }
 
 ///////////////////////////////////////////////////////////////
@@ -140,7 +140,7 @@ Real dellinte_dm(Real const m)
    Dover publications 1965
 */
 static 
-Real ellintk(Real const m) //ellintk( m = 0 ) = PI/2
+Real ellintk( Real const m ) //ellintk( m = 0 ) = PI/2
 {
 	Real const ak0 = 1.38629436112;
 	Real const ak1 = 0.09666344259;
@@ -157,22 +157,22 @@ Real ellintk(Real const m) //ellintk( m = 0 ) = PI/2
 	Real const mr3 = mr * mr * mr;
 	Real const mr4 = mr * mr * mr * mr;
 
-	Real const ad = ak0 + (ak1 * mr) + (ak2 * mr2) + (ak3 * mr3) + (ak4 * mr4);
-	Real const bd = bk0 + (bk1 * mr) + (bk2 * mr2) + (bk3 * mr3) + (bk4 * mr4);
-	Real const cd = std::log (1.0 / mr);
+	Real const ad = ak0 + ( ak1 * mr ) + ( ak2 * mr2 ) + ( ak3 * mr3 ) + ( ak4 * mr4 );
+	Real const bd = bk0 + ( bk1 * mr ) + ( bk2 * mr2 ) + ( bk3 * mr3 ) + ( bk4 * mr4 );
+	Real const cd = std::log ( 1.0 / mr );
 
-	return ( ad + (bd * cd) );
+	return ( ad + ( bd * cd ) );
 }
 
 
 ///////////////////////////////////////////////////////////////
 /* ellinte, calculates the E factor of the elliptical integral
-   expects 0<=m<1 as input. This function was defined from formula 17.3.36
+   expects 0 <= m < 1 as input. This function was defined from formula 17.3.36
    Abramowitz and Segun, Handbook of Mathematical Functions, 
    Dover publications 1965
 */
 static 
-Real ellinte(Real const m) //ellinte( m = 0 ) = PI/2
+Real ellinte( Real const m ) //ellinte( m = 0 ) = PI/2
 {
 	Real const ae0 = 1.0          ;
 	Real const ae1 = 0.44325141463;
@@ -189,55 +189,55 @@ Real ellinte(Real const m) //ellinte( m = 0 ) = PI/2
 	Real const mr3 = mr * mr * mr;
 	Real const mr4 = mr * mr * mr * mr;
 
- 	Real const ad = ae0 + (ae1 * mr) + (ae2 * mr2) + (ae3 * mr3) + (ae4 * mr4);
-	Real const bd = be0 + (be1 * mr) + (be2 * mr2) + (be3 * mr3) + (be4 * mr4);
-	Real const cd = std::log (1.0 / mr);
+ 	Real const ad = ae0 + ( ae1 * mr ) + ( ae2 * mr2 ) + ( ae3 * mr3 ) + ( ae4 * mr4 );
+	Real const bd = be0 + ( be1 * mr ) + ( be2 * mr2 ) + ( be3 * mr3 ) + ( be4 * mr4 );
+	Real const cd = std::log ( 1.0 / mr );
 
-	return ( ad + (bd * cd) );
+	return ( ad + ( bd * cd ) );
 }
 
 ///////////////////////////////////////////////////////////////
-/*calculates the cylindrical coordinates for atom_xyz with the origin located ring_center and z-direction equal to base_z_axis  */
+/*calculates the cylindrical coordinates for atom_xyz with the origin located ring_center and z - direction equal to base_z_axis  */
 void 
-get_rho_and_z(numeric::xyzVector<core::Real> const & atom_xyz, numeric::xyzVector<core::Real> const &  ring_center, numeric::xyzVector<core::Real> const & base_z_axis, Real & rho, Real & z)
+get_rho_and_z( numeric::xyzVector< core::Real > const & atom_xyz, numeric::xyzVector< core::Real > const &  ring_center, numeric::xyzVector< core::Real > const & base_z_axis, Real & rho, Real & z )
 {
 
-	numeric::xyzVector<core::Real> const r_vector = atom_xyz - ring_center;
+	numeric::xyzVector< core::Real > const r_vector = atom_xyz - ring_center;
  
 	Real const r_length = r_vector.length();
 
-	if(std::abs(base_z_axis.length()  - 1.0)   > 0.00001) utility_exit_with_message("std::abs(base_z_axis.length()  - 1.0)   > 0.00001 !!");
+	if ( std::abs( base_z_axis.length()  - 1.0 )   > 0.00001 ) utility_exit_with_message( "std::abs( base_z_axis.length()  - 1.0 )   > 0.00001 !!" );
 
-	Real const dot_product = dot(r_vector, base_z_axis) / (r_length); //i.e cos( angle )
+	Real const dot_product = dot( r_vector, base_z_axis ) / ( r_length ); //i.e cos( angle )
 
-	Real const angle = acos(dot_product);
+	Real const angle = acos( dot_product );
 
-	rho = sin (angle) * r_length;
+	rho = sin ( angle ) * r_length;
 	z   = dot_product * r_length;
 
 }
 
 ///////////////////////////////////////////////////////////////
 Real
-delta_ring_current_term( Real const rho, Real const z, Real const ring_radius, Real const ring_z_offset)
+delta_ring_current_term( Real const rho, Real const z, Real const ring_radius, Real const ring_z_offset )
 {
 
 
 	Real const d = rho / ring_radius;
-	Real const hp = (z - ring_z_offset) / ring_radius; 
+	Real const hp = ( z - ring_z_offset ) / ring_radius; 
 
 	Real const hp2 = hp * hp;
 
-	Real const rp = ( (1.0 + d) * (1.0 + d) ) + hp2;
-	Real const sp = ( (1.0 - d) * (1.0 - d) ) + hp2;
-	Real const tp = (1.0 - (d * d) - hp2);
+	Real const rp = ( ( 1.0 + d ) * ( 1.0 + d ) ) + hp2;
+	Real const sp = ( ( 1.0 - d ) * ( 1.0 - d ) ) + hp2;
+	Real const tp = ( 1.0 - ( d * d ) - hp2 );
 
 
-	Real const mp = (4.0 * d) / rp;
+	Real const mp = ( 4.0 * d ) / rp;
 
-	Real const Fp =( 2.0 / std::sqrt (rp) );
-	Real const Gp =( tp / sp );	
-	Real const Hp =( ellintk(mp) + ( Gp * ellinte(mp) ) );
+	Real const Fp = ( 2.0 / std::sqrt ( rp ) );
+	Real const Gp = ( tp / sp );	
+	Real const Hp = ( ellintk( mp ) + ( Gp * ellinte( mp ) ) );
 
 	Real const term = ( Fp ) * ( Hp );
 
@@ -247,28 +247,28 @@ delta_ring_current_term( Real const rho, Real const z, Real const ring_radius, R
 
 ///////////////////////////////////////////////////////////////
 void
-get_ring_current_term_derivatives(Real const rho, Real const z, Real const ring_radius, Real const ring_z_offset, Real & dterm_drho, Real & dterm_dz )
+get_ring_current_term_derivatives( Real const rho, Real const z, Real const ring_radius, Real const ring_z_offset, Real & dterm_drho, Real & dterm_dz )
 {
 
 	Real const d = rho / ring_radius;
-	Real const hp = (z - ring_z_offset) / ring_radius; 
+	Real const hp = ( z - ring_z_offset ) / ring_radius; 
 
 	Real const hp2 = hp * hp;
 
-	Real const rp = ( (1.0 + d) * (1.0 + d) ) + hp2;
-	Real const sp = ( (1.0 - d) * (1.0 - d) ) + hp2;
-	Real const tp = (1.0 - (d * d) - hp2);
+	Real const rp = ( ( 1.0 + d ) * ( 1.0 + d ) ) + hp2;
+	Real const sp = ( ( 1.0 - d ) * ( 1.0 - d ) ) + hp2;
+	Real const tp = ( 1.0 - ( d * d ) - hp2 );
 
 	Real const rp2 = rp * rp;
 	Real const rp3 = rp * rp * rp;
 
 	Real const sp2 = sp * sp;
 
-	Real const mp = (4.0 * d) / rp;
+	Real const mp = ( 4.0 * d ) / rp;
 
-	Real const Fp =( 2.0 / std::sqrt (rp) );
-	Real const Gp =( tp / sp );	
-	Real const Hp =( ellintk(mp) + ( Gp * ellinte(mp) ) );
+	Real const Fp = ( 2.0 / std::sqrt ( rp ) );
+	Real const Gp = ( tp / sp );	
+	Real const Hp = ( ellintk( mp ) + ( Gp * ellinte( mp ) ) );
 
 	//Definition: term = ( Fp ) * ( Hp );
 
@@ -278,18 +278,18 @@ get_ring_current_term_derivatives(Real const rho, Real const z, Real const ring_
 
 	//dpterm_drho = (dFp_drho * Hp) + (Fp * dHp_drho) //Chain rule.
 
-	Real const dFp_drho = ( 1.0 / ring_radius ) * (-2.0 * (1.0 + d) ) * ( 1 / ( sqrt ( rp3 ) ) );
+	Real const dFp_drho = ( 1.0 / ring_radius ) * (  - 2.0 * ( 1.0 + d ) ) * ( 1 / ( sqrt ( rp3 ) ) );
 
 	//EQ: dHp_drho = d_ellintk_drho + (dGp_drho * ellinte(mp) ) + ( Gp * d_ellinte_drho )
 	//EQ: dHp_drho = (d_ellintk_dmp * dmp_drho )  + (dGp_drho * ellinte(mp) ) + ( Gp * dellinte_dmp * dmp_drho )
 
-	Real const dmp_drho = ( 1.0 / ring_radius ) * ( ( rp * 4.0 ) - ( ( 4.0 * d ) * ( 2.0 * (1.0 + d) ) ) ) * ( 1.0 / (rp2) ); //Quotient Rule.
+	Real const dmp_drho = ( 1.0 / ring_radius ) * ( ( rp * 4.0 ) - ( ( 4.0 * d ) * ( 2.0 * ( 1.0 + d ) ) ) ) * ( 1.0 / ( rp2 ) ); //Quotient Rule.
 
-	Real const dGp_drho = ( 1.0 / ring_radius ) * ( ( sp * ( -2.0 * d ) ) - ( tp * (-2.0 * (1.0 - d) ) ) ) * ( 1.0 / (sp2) ); //Quotient Rule.
+	Real const dGp_drho = ( 1.0 / ring_radius ) * ( ( sp * ( -2.0 * d ) ) - ( tp * (  - 2.0 * ( 1.0 - d ) ) ) ) * ( 1.0 / ( sp2 ) ); //Quotient Rule.
 
-	Real const dHp_drho= (dellintk_dm(mp) * dmp_drho )  + (dGp_drho * ellinte(mp) ) + ( Gp * dellinte_dm(mp) * dmp_drho );
+	Real const dHp_drho = ( dellintk_dm( mp ) * dmp_drho )  + ( dGp_drho * ellinte( mp ) ) + ( Gp * dellinte_dm( mp ) * dmp_drho );
 
-	dterm_drho=(dFp_drho * Hp) + (Fp * dHp_drho);
+	dterm_drho = ( dFp_drho * Hp ) + ( Fp * dHp_drho );
 
 
 	/////////////////////////////////
@@ -298,18 +298,18 @@ get_ring_current_term_derivatives(Real const rho, Real const z, Real const ring_
 
 	//dpterm_dz = (dFp_dz * Hp) + (Fp * dHp_dz) //Chain rule.
 
-	Real const dFp_dz = ( 1.0 / ring_radius ) * (-2.0 * ( hp ) ) * ( 1 / ( sqrt ( rp3 ) ) );
+	Real const dFp_dz = ( 1.0 / ring_radius ) * (  - 2.0 * ( hp ) ) * ( 1 / ( sqrt ( rp3 ) ) );
 
 	//EQ: dHp_dz = d_ellintk_dz + (dGp_dz * ellinte(mp) ) + ( Gp * d_ellinte_dz )
 	//EQ: dHp_dz = (d_ellintk_dmp * dmp_dz )  + (dGp_dz * ellinte(mp) ) + ( Gp * dellinte_dmp * dmp_dz )
 
-	Real const dmp_dz = ( 1.0 / ring_radius ) * ( (rp * 0.0 ) - ( ( 4.0 * d ) * ( 2.0 * hp ) ) ) *  ( 1.0 / (rp2) );  //Quotient Rule.
+	Real const dmp_dz = ( 1.0 / ring_radius ) * ( ( rp * 0.0 ) - ( ( 4.0 * d ) * ( 2.0 * hp ) ) ) *  ( 1.0 / ( rp2 ) );  //Quotient Rule.
 
-	Real const dGp_dz = ( 1.0 / ring_radius ) * ( ( sp * ( -2.0 * hp ) ) - ( tp * (2.0 * hp ) ) ) * ( 1.0 / (sp2) );  //Quotient Rule.
+	Real const dGp_dz = ( 1.0 / ring_radius ) * ( ( sp * ( -2.0 * hp ) ) - ( tp * ( 2.0 * hp ) ) ) * ( 1.0 / ( sp2 ) );  //Quotient Rule.
 
-	Real const dHp_dz= (dellintk_dm(mp) * dmp_dz )  + (dGp_dz * ellinte(mp) ) + ( Gp * dellinte_dm(mp) * dmp_dz );
+	Real const dHp_dz = ( dellintk_dm( mp ) * dmp_dz )  + ( dGp_dz * ellinte( mp ) ) + ( Gp * dellinte_dm( mp ) * dmp_dz );
 
-	dterm_dz=(dFp_dz * Hp) + (Fp * dHp_dz);
+	dterm_dz = ( dFp_dz * Hp ) + ( Fp * dHp_dz );
 
 }
 
@@ -320,47 +320,47 @@ get_ring_current_term_derivatives(Real const rho, Real const z, Real const ring_
 //base_z_axis: a vector perpendicular to the plane of the ring (perpendicular to the plane plane)
 
 Real
-delta_ring_current(numeric::xyzVector<core::Real> const & atom_xyz, 
-									numeric::xyzVector<core::Real> const & molecular_ring_center, 
-									numeric::xyzVector<core::Real> const & base_z_axis, 
+delta_ring_current( numeric::xyzVector< core::Real > const & atom_xyz, 
+									numeric::xyzVector< core::Real > const & molecular_ring_center, 
+									numeric::xyzVector< core::Real > const & base_z_axis, 
 									RNA_CS_residue_parameters const & source_rsd_CS_params, 
-									Size const ring_ID)
+									Size const ring_ID )
 {
 
-	Real const rci=source_rsd_CS_params.ring_intensity(ring_ID);
-	Real const rca=source_rsd_CS_params.ring_radius(ring_ID); 
-	Real const rch=source_rsd_CS_params.ring_height(ring_ID);
+	Real const rci = source_rsd_CS_params.ring_intensity( ring_ID );
+	Real const rca = source_rsd_CS_params.ring_radius( ring_ID ); 
+	Real const rch = source_rsd_CS_params.ring_height( ring_ID );
 
-	Real rho=0.0; //rho component of cylindrical coordinate
-	Real z=0.0;   //z   component of cylindrical coordinate
+	Real rho = 0.0; //rho component of cylindrical coordinate
+	Real z = 0.0;   //z   component of cylindrical coordinate
 
-	get_rho_and_z(atom_xyz, molecular_ring_center, base_z_axis, rho, z);
+	get_rho_and_z( atom_xyz, molecular_ring_center, base_z_axis, rho, z );
 
 	//Note definition of mterm and pterm is switched compared to NUCHEMIC!
-	Real const mterm = delta_ring_current_term(rho, z, rca, (-1.0) * rch ); //This is contribution of the ring located at -rca below the molecular_plane
-	Real const pterm = delta_ring_current_term(rho, z, rca, (+1.0) * rch ); //This is contribution of the ring located at +rca above the molecular_plane
+	Real const mterm = delta_ring_current_term( rho, z, rca, (  - 1.0 ) * rch ); //This is contribution of the ring located at -rca below the molecular_plane
+	Real const pterm = delta_ring_current_term( rho, z, rca, (  + 1.0 ) * rch ); //This is contribution of the ring located at +rca above the molecular_plane
 
-	return ( -1.0 * source_rsd_CS_params.ring_current_coeff() * (rci / rca) * (mterm + pterm) ); //Definition uses opposite sign compare to NUCHEMICS!
+	return ( -1.0 * source_rsd_CS_params.ring_current_coeff() * ( rci / rca ) * ( mterm + pterm ) ); //Definition uses opposite sign compare to NUCHEMICS!
 }
 
 ///////////////////////////////////////////////////////////////
 ///The ring_current contribution of source_rsd to the chemical_shift at atom_xyz
 Real
-ring_current_effect(numeric::xyzVector<core::Real> const & atom_xyz, conformation::Residue const & source_rsd, RNA_CS_residue_parameters const & rna_cs_rsd_params){
+ring_current_effect( numeric::xyzVector< core::Real > const & atom_xyz, conformation::Residue const & source_rsd, RNA_CS_residue_parameters const & rna_cs_rsd_params ){
 
 	Real chem_shift = 0.0;
  
 	//RNA_CS_residue_parameters const & rna_cs_rsd_params=rna_cs_params.get_RNA_CS_residue_parameters(source_rsd.aa());
 
-	if( source_rsd.aa()!= rna_cs_rsd_params.aa() ) utility_exit_with_message("rsd.aa()!= rna_cs_rsd_params.aa()!");
+	if ( source_rsd.aa() != rna_cs_rsd_params.aa() ) utility_exit_with_message( "rsd.aa() != rna_cs_rsd_params.aa()!" );
 
-	numeric::xyzMatrix< core::Real > const coordinate_matrix =get_rna_base_coordinate_system_from_CS_params(source_rsd, rna_cs_rsd_params);
+	numeric::xyzMatrix< core::Real > const coordinate_matrix = get_rna_base_coordinate_system_from_CS_params( source_rsd, rna_cs_rsd_params );
 
-	numeric::xyzVector<core::Real> const & base_z_axis=coordinate_matrix.col_z();
+	numeric::xyzVector< core::Real > const & base_z_axis = coordinate_matrix.col_z();
 
-  	for (Size ring_ID = 1; ring_ID <= rna_cs_rsd_params.num_rings(); ring_ID++){
+  	for ( Size ring_ID = 1; ring_ID <= rna_cs_rsd_params.num_rings(); ring_ID++ ){
  
-		chem_shift += delta_ring_current(atom_xyz, ring_pos(source_rsd, rna_cs_rsd_params, ring_ID), base_z_axis, rna_cs_rsd_params, ring_ID);
+		chem_shift += delta_ring_current( atom_xyz, ring_pos( source_rsd, rna_cs_rsd_params, ring_ID ), base_z_axis, rna_cs_rsd_params, ring_ID );
 
 	}
 
@@ -371,17 +371,17 @@ ring_current_effect(numeric::xyzVector<core::Real> const & atom_xyz, conformatio
 ///////////////////////////////////////////////////////////////
 //ONLY USE FOR TESTING PURPOSES!
 Real
-ring_current_effect_individual_ring(numeric::xyzVector<core::Real> const & atom_xyz, conformation::Residue const & source_rsd, RNA_CS_residue_parameters const & rna_cs_rsd_params, Size const source_ring_ID){
+ring_current_effect_individual_ring( numeric::xyzVector< core::Real > const & atom_xyz, conformation::Residue const & source_rsd, RNA_CS_residue_parameters const & rna_cs_rsd_params, Size const source_ring_ID ){
  
 	//RNA_CS_residue_parameters const & rna_cs_rsd_params=rna_cs_params.get_RNA_CS_residue_parameters(source_rsd.aa());
 
-	if( source_rsd.aa()!= rna_cs_rsd_params.aa() ) utility_exit_with_message("rsd.aa()!= rna_cs_rsd_params.aa()!");
+	if ( source_rsd.aa() != rna_cs_rsd_params.aa() ) utility_exit_with_message( "rsd.aa() != rna_cs_rsd_params.aa()!" );
 
-	numeric::xyzMatrix< core::Real > const coordinate_matrix =get_rna_base_coordinate_system_from_CS_params(source_rsd, rna_cs_rsd_params);
+	numeric::xyzMatrix< core::Real > const coordinate_matrix = get_rna_base_coordinate_system_from_CS_params( source_rsd, rna_cs_rsd_params );
 
-	numeric::xyzVector<core::Real> const & base_z_axis=coordinate_matrix.col_z();
+	numeric::xyzVector< core::Real > const & base_z_axis = coordinate_matrix.col_z();
 
-	Real const chem_shift = delta_ring_current(atom_xyz, ring_pos(source_rsd, rna_cs_rsd_params, source_ring_ID), base_z_axis, rna_cs_rsd_params, source_ring_ID);
+	Real const chem_shift = delta_ring_current( atom_xyz, ring_pos( source_rsd, rna_cs_rsd_params, source_ring_ID ), base_z_axis, rna_cs_rsd_params, source_ring_ID );
 
 	return chem_shift;
 }
@@ -390,147 +390,147 @@ ring_current_effect_individual_ring(numeric::xyzVector<core::Real> const & atom_
 //Between the source_ring_ID ring_current center of source_rsd and CS_data_atom_xyz.
 //OK RIGHT NOW CONCERN WITH GETTING THIS FUNCTION RIGHT. OPTIMIZE LATER!
 
-numeric::xyzVector<core::Real>
-get_ring_current_deriv(numeric::xyzVector<core::Real> const & CS_data_atom_xyz, 
+numeric::xyzVector< core::Real >
+get_ring_current_deriv( numeric::xyzVector< core::Real > const & CS_data_atom_xyz, 
 										  conformation::Residue const & source_rsd, 
 											core::Size const source_ring_ID,
-											RNA_CS_residue_parameters const & source_rsd_CS_params){
+											RNA_CS_residue_parameters const & source_rsd_CS_params ){
 
 
 	//Use cylindrical coordinates, ring_effect is a function of z and rho.
 	//RC =( -1.0 * source_rsd_CS_params.ring_current_coeff() * (rci / rca) * (pterm(z, rho) + mterm(z, rho) ) );
 	//Gradient  = dRC/drho * rho_norm + dRC/dz * z_norm  
 
-	Real const rci=source_rsd_CS_params.ring_intensity(source_ring_ID);
-	Real const rca=source_rsd_CS_params.ring_radius(source_ring_ID); 
-	Real const rch=source_rsd_CS_params.ring_height(source_ring_ID);
+	Real const rci = source_rsd_CS_params.ring_intensity( source_ring_ID );
+	Real const rca = source_rsd_CS_params.ring_radius( source_ring_ID ); 
+	Real const rch = source_rsd_CS_params.ring_height( source_ring_ID );
 
-	if( source_rsd.aa()!= source_rsd_CS_params.aa() ) utility_exit_with_message("rsd.aa()!= source_rsd_CS_params.aa()!");
+	if ( source_rsd.aa() != source_rsd_CS_params.aa() ) utility_exit_with_message( "rsd.aa() != source_rsd_CS_params.aa()!" );
 
-	numeric::xyzMatrix< core::Real > const coordinate_matrix =get_rna_base_coordinate_system_from_CS_params(source_rsd, source_rsd_CS_params);
+	numeric::xyzMatrix< core::Real > const coordinate_matrix = get_rna_base_coordinate_system_from_CS_params( source_rsd, source_rsd_CS_params );
 
 
-	numeric::xyzVector<core::Real> const & base_z_axis=coordinate_matrix.col_z();
+	numeric::xyzVector< core::Real > const & base_z_axis = coordinate_matrix.col_z();
 
-	numeric::xyzVector<core::Real> const & molecular_ring_center=ring_pos(source_rsd, source_rsd_CS_params, source_ring_ID);
+	numeric::xyzVector< core::Real > const & molecular_ring_center = ring_pos( source_rsd, source_rsd_CS_params, source_ring_ID );
 
-	Real rho=0.0; //rho component of cylindrical coordinate
-	Real z=0.0;   //z   component of cylindrical coordinate
+	Real rho = 0.0; //rho component of cylindrical coordinate
+	Real z = 0.0;   //z   component of cylindrical coordinate
 
-	get_rho_and_z(CS_data_atom_xyz, molecular_ring_center, base_z_axis, rho, z);	
+	get_rho_and_z( CS_data_atom_xyz, molecular_ring_center, base_z_axis, rho, z );	
 
-	numeric::xyzVector<core::Real> const r_vector = CS_data_atom_xyz - molecular_ring_center;
+	numeric::xyzVector< core::Real > const r_vector = CS_data_atom_xyz - molecular_ring_center;
  
-	numeric::xyzVector<core::Real> const z_vector = (base_z_axis * z); 
+	numeric::xyzVector< core::Real > const z_vector = ( base_z_axis * z ); 
 
-	numeric::xyzVector<core::Real> const rho_vector = r_vector - (base_z_axis * z); 
+	numeric::xyzVector< core::Real > const rho_vector = r_vector - ( base_z_axis * z ); 
 
 	//Real const r_length = r_vector.length();
 
-	numeric::xyzVector<core::Real> const z_norm = z_vector/z; //This gives back base_z_axis!;
+	numeric::xyzVector< core::Real > const z_norm = z_vector/z; //This gives back base_z_axis!;
 
-	numeric::xyzVector<core::Real> const rho_norm = rho_vector/rho;
-
-	/////////////////////////////////////////////////////////////////////
-
-	Real dmterm_drho=0.0;
-	Real dmterm_dz  =0.0;
-	Real dpterm_drho=0.0;
-	Real dpterm_dz  =0.0;
-
-	get_ring_current_term_derivatives( rho, z, rca, (-1.0) * rch, dmterm_drho, dmterm_dz); //This is contribution of the ring located at -rca below the molecular_plane
-
-	get_ring_current_term_derivatives( rho, z, rca, (+1.0) * rch, dpterm_drho, dpterm_dz); //This is contribution of the ring located at +rca above the molecular_plane
-
-	Real const dRC_drho = -1.0 * source_rsd_CS_params.ring_current_coeff() * (rci / rca) * (dmterm_drho + dpterm_drho);
-
-	Real const dRC_dz   = -1.0 * source_rsd_CS_params.ring_current_coeff() * (rci / rca) * (dmterm_dz + dpterm_dz);
+	numeric::xyzVector< core::Real > const rho_norm = rho_vector/rho;
 
 	/////////////////////////////////////////////////////////////////////
 
-	numeric::xyzVector<core::Real> const analytical_gradient=(dRC_drho * rho_norm) + (dRC_dz * z_norm);
+	Real dmterm_drho = 0.0;
+	Real dmterm_dz  = 0.0;
+	Real dpterm_drho = 0.0;
+	Real dpterm_dz  = 0.0;
+
+	get_ring_current_term_derivatives( rho, z, rca, (  - 1.0 ) * rch, dmterm_drho, dmterm_dz ); //This is contribution of the ring located at -rca below the molecular_plane
+
+	get_ring_current_term_derivatives( rho, z, rca, (  + 1.0 ) * rch, dpterm_drho, dpterm_dz ); //This is contribution of the ring located at +rca above the molecular_plane
+
+	Real const dRC_drho = -1.0 * source_rsd_CS_params.ring_current_coeff() * ( rci / rca ) * ( dmterm_drho + dpterm_drho );
+
+	Real const dRC_dz   = -1.0 * source_rsd_CS_params.ring_current_coeff() * ( rci / rca ) * ( dmterm_dz + dpterm_dz );
+
+	/////////////////////////////////////////////////////////////////////
+
+	numeric::xyzVector< core::Real > const analytical_gradient = ( dRC_drho * rho_norm ) + ( dRC_dz * z_norm );
 
 	return analytical_gradient;
 
 	/////////////////////////////////////////////////////////////////////
 	/*
-	bool numerical_check=true;
+	bool numerical_check = true;
 
-	if(numerical_check){
+	if ( numerical_check ){
 
-		bool use_numerical_deriv=false; 
+		bool use_numerical_deriv = false; 
 
 		Real const increment = 0.000005;
 
 		///Numerical dRC_drho
 
-		numeric::xyzVector<core::Real> const RC_rho_plus_xyz= CS_data_atom_xyz + (rho_norm * increment);
-		numeric::xyzVector<core::Real> const RC_rho_minus_xyz= CS_data_atom_xyz - (rho_norm * increment);
+		numeric::xyzVector< core::Real > const RC_rho_plus_xyz = CS_data_atom_xyz + ( rho_norm * increment );
+		numeric::xyzVector< core::Real > const RC_rho_minus_xyz = CS_data_atom_xyz - ( rho_norm * increment );
 
-		Real const RC_rho_plus_effect= ring_current_effect_individual_ring(RC_rho_plus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID);
-		Real const RC_rho_minus_effect= ring_current_effect_individual_ring(RC_rho_minus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID);
+		Real const RC_rho_plus_effect = ring_current_effect_individual_ring( RC_rho_plus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID );
+		Real const RC_rho_minus_effect = ring_current_effect_individual_ring( RC_rho_minus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID );
 
 		Real const dRC_drho_numerical = ( RC_rho_plus_effect - RC_rho_minus_effect ) / ( 2 * increment );
 		
 
-		numeric::xyzVector<core::Real> const RC_z_plus_xyz= CS_data_atom_xyz + (z_norm * increment);
-		numeric::xyzVector<core::Real> const RC_z_minus_xyz= CS_data_atom_xyz - (z_norm * increment);		
+		numeric::xyzVector< core::Real > const RC_z_plus_xyz = CS_data_atom_xyz + ( z_norm * increment );
+		numeric::xyzVector< core::Real > const RC_z_minus_xyz = CS_data_atom_xyz - ( z_norm * increment );		
 
-		Real const RC_z_plus_effect= ring_current_effect_individual_ring(RC_z_plus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID);
-		Real const RC_z_minus_effect= ring_current_effect_individual_ring(RC_z_minus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID);
+		Real const RC_z_plus_effect = ring_current_effect_individual_ring( RC_z_plus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID );
+		Real const RC_z_minus_effect = ring_current_effect_individual_ring( RC_z_minus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID );
 
 		Real const dRC_dz_numerical = ( RC_z_plus_effect - RC_z_minus_effect ) / ( 2 * increment );
 
 		std::cout << "---------------------------------------------------------------------" << std::endl;
-		std::cout << "rho_norm=(" << rho_norm.x() << ", " << rho_norm.y() << ", " << rho_norm.z() << ") rho_norm.length()=" << rho_norm.length();
-		std::cout << " | z_norm =(" << z_norm.x() << ", " << z_norm.y() << ", " << z_norm.z() << ") dRC_drho.length()=" << z_norm.length();
-		std::cout << " | dot(rho_norm, z_norm)= " << dot(rho_norm, z_norm) << std::endl;
-		std::cout << "ring_current_deriv_numerical_check dRC_drho_analytical= " << dRC_drho << " | dRC_drho_numerical= " << dRC_drho_numerical;
-		std::cout << " | dRC_dz_analytical= " << dRC_dz << " | dRC_dz_numerical= " << dRC_dz_numerical << std::endl;
+		std::cout << "rho_norm = ( " << rho_norm.x() << ", " << rho_norm.y() << ", " << rho_norm.z() << " ) rho_norm.length() = " << rho_norm.length();
+		std::cout << " | z_norm = ( " << z_norm.x() << ", " << z_norm.y() << ", " << z_norm.z() << " ) dRC_drho.length() = " << z_norm.length();
+		std::cout << " | dot( rho_norm, z_norm ) = " << dot( rho_norm, z_norm ) << std::endl;
+		std::cout << "ring_current_deriv_numerical_check dRC_drho_analytical = " << dRC_drho << " | dRC_drho_numerical = " << dRC_drho_numerical;
+		std::cout << " | dRC_dz_analytical = " << dRC_dz << " | dRC_dz_numerical = " << dRC_dz_numerical << std::endl;
 
 
-		numeric::xyzVector<core::Real> const numerical_gradient_one=(dRC_drho_numerical * rho_norm) + (dRC_dz_numerical * z_norm);
+		numeric::xyzVector< core::Real > const numerical_gradient_one = ( dRC_drho_numerical * rho_norm ) + ( dRC_dz_numerical * z_norm );
 
 
-		numeric::xyzVector<core::Real> const rosetta_frame_x_vector(1.0, 0.0, 0.0);
-		numeric::xyzVector<core::Real> const rosetta_frame_y_vector(0.0, 1.0, 0.0);
-		numeric::xyzVector<core::Real> const rosetta_frame_z_vector(0.0, 0.0, 1.0);
+		numeric::xyzVector< core::Real > const rosetta_frame_x_vector( 1.0, 0.0, 0.0 );
+		numeric::xyzVector< core::Real > const rosetta_frame_y_vector( 0.0, 1.0, 0.0 );
+		numeric::xyzVector< core::Real > const rosetta_frame_z_vector( 0.0, 0.0, 1.0 );
 
-		numeric::xyzVector<core::Real> const RC_rosetta_frame_x_plus_xyz=  CS_data_atom_xyz + (rosetta_frame_x_vector*increment);
-		numeric::xyzVector<core::Real> const RC_rosetta_frame_x_minus_xyz= CS_data_atom_xyz - (rosetta_frame_x_vector*increment);
+		numeric::xyzVector< core::Real > const RC_rosetta_frame_x_plus_xyz =  CS_data_atom_xyz + ( rosetta_frame_x_vector*increment );
+		numeric::xyzVector< core::Real > const RC_rosetta_frame_x_minus_xyz = CS_data_atom_xyz - ( rosetta_frame_x_vector*increment );
 
-		Real const RC_rosetta_frame_x_plus_effect  = ring_current_effect_individual_ring(RC_rosetta_frame_x_plus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID);
-		Real const RC_rosetta_frame_x_minus_effect = ring_current_effect_individual_ring(RC_rosetta_frame_x_minus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID);
+		Real const RC_rosetta_frame_x_plus_effect  = ring_current_effect_individual_ring( RC_rosetta_frame_x_plus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID );
+		Real const RC_rosetta_frame_x_minus_effect = ring_current_effect_individual_ring( RC_rosetta_frame_x_minus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID );
 
-		Real const dRC_drosettax_numerical = (RC_rosetta_frame_x_plus_effect - RC_rosetta_frame_x_minus_effect ) / ( 2 * increment );
-
-		/////////////
-		numeric::xyzVector<core::Real> const RC_rosetta_frame_y_plus_xyz=  CS_data_atom_xyz + (rosetta_frame_y_vector*increment);
-		numeric::xyzVector<core::Real> const RC_rosetta_frame_y_minus_xyz= CS_data_atom_xyz - (rosetta_frame_y_vector*increment);
-
-		Real const RC_rosetta_frame_y_plus_effect  = ring_current_effect_individual_ring(RC_rosetta_frame_y_plus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID);
-		Real const RC_rosetta_frame_y_minus_effect = ring_current_effect_individual_ring(RC_rosetta_frame_y_minus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID);
-
-		Real const dRC_drosettay_numerical = (RC_rosetta_frame_y_plus_effect - RC_rosetta_frame_y_minus_effect ) / ( 2 * increment );
+		Real const dRC_drosettax_numerical = ( RC_rosetta_frame_x_plus_effect - RC_rosetta_frame_x_minus_effect ) / ( 2 * increment );
 
 		/////////////
-		numeric::xyzVector<core::Real> const RC_rosetta_frame_z_plus_xyz=  CS_data_atom_xyz + (rosetta_frame_z_vector*increment);
-		numeric::xyzVector<core::Real> const RC_rosetta_frame_z_minus_xyz= CS_data_atom_xyz - (rosetta_frame_z_vector*increment);
+		numeric::xyzVector< core::Real > const RC_rosetta_frame_y_plus_xyz =  CS_data_atom_xyz + ( rosetta_frame_y_vector*increment );
+		numeric::xyzVector< core::Real > const RC_rosetta_frame_y_minus_xyz = CS_data_atom_xyz - ( rosetta_frame_y_vector*increment );
 
-		Real const RC_rosetta_frame_z_plus_effect  = ring_current_effect_individual_ring(RC_rosetta_frame_z_plus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID);
-		Real const RC_rosetta_frame_z_minus_effect = ring_current_effect_individual_ring(RC_rosetta_frame_z_minus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID);
+		Real const RC_rosetta_frame_y_plus_effect  = ring_current_effect_individual_ring( RC_rosetta_frame_y_plus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID );
+		Real const RC_rosetta_frame_y_minus_effect = ring_current_effect_individual_ring( RC_rosetta_frame_y_minus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID );
 
-		Real const dRC_drosettaz_numerical = (RC_rosetta_frame_z_plus_effect - RC_rosetta_frame_z_minus_effect ) / ( 2 * increment );
+		Real const dRC_drosettay_numerical = ( RC_rosetta_frame_y_plus_effect - RC_rosetta_frame_y_minus_effect ) / ( 2 * increment );
+
+		/////////////
+		numeric::xyzVector< core::Real > const RC_rosetta_frame_z_plus_xyz =  CS_data_atom_xyz + ( rosetta_frame_z_vector*increment );
+		numeric::xyzVector< core::Real > const RC_rosetta_frame_z_minus_xyz = CS_data_atom_xyz - ( rosetta_frame_z_vector*increment );
+
+		Real const RC_rosetta_frame_z_plus_effect  = ring_current_effect_individual_ring( RC_rosetta_frame_z_plus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID );
+		Real const RC_rosetta_frame_z_minus_effect = ring_current_effect_individual_ring( RC_rosetta_frame_z_minus_xyz, source_rsd, source_rsd_CS_params, source_ring_ID );
+
+		Real const dRC_drosettaz_numerical = ( RC_rosetta_frame_z_plus_effect - RC_rosetta_frame_z_minus_effect ) / ( 2 * increment );
 		/////////////
 
-		numeric::xyzVector<core::Real> const numerical_gradient_two=(dRC_drosettax_numerical * rosetta_frame_x_vector) + (dRC_drosettay_numerical * rosetta_frame_y_vector) + (dRC_drosettaz_numerical * rosetta_frame_z_vector);
+		numeric::xyzVector< core::Real > const numerical_gradient_two = ( dRC_drosettax_numerical * rosetta_frame_x_vector ) + ( dRC_drosettay_numerical * rosetta_frame_y_vector ) + ( dRC_drosettaz_numerical * rosetta_frame_z_vector );
 
-		std::cout << "analytical_gradient=( " << analytical_gradient.x() << " , " << analytical_gradient.y() << " , " << analytical_gradient.z() << " )";
-		std::cout << " | numerical_gradient_one=( " << numerical_gradient_one.x() << " , " << numerical_gradient_one.y() << " , " << numerical_gradient_one.z() << " )";
-		std::cout << " | numerical_gradient_two=( " << numerical_gradient_two.x() << " , " << numerical_gradient_two.y() << " , " << numerical_gradient_two.z() << " )" << std::endl;
+		std::cout << "analytical_gradient = ( " << analytical_gradient.x() << ", " << analytical_gradient.y() << ", " << analytical_gradient.z() << " )";
+		std::cout << " | numerical_gradient_one = ( " << numerical_gradient_one.x() << ", " << numerical_gradient_one.y() << ", " << numerical_gradient_one.z() << " )";
+		std::cout << " | numerical_gradient_two = ( " << numerical_gradient_two.x() << ", " << numerical_gradient_two.y() << ", " << numerical_gradient_two.z() << " )" << std::endl;
 		std::cout << "---------------------------------------------------------------------" << std::endl;
 
-		if(use_numerical_deriv) return numerical_gradient_two;
+		if ( use_numerical_deriv ) return numerical_gradient_two;
 	}
 
 

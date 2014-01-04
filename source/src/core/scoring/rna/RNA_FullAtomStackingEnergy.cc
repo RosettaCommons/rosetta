@@ -48,7 +48,7 @@
 
 // C++
 
-static basic::Tracer tr("core.scoring.rna.RNA_FullAtomStackingEnergy");
+static basic::Tracer tr( "core.scoring.rna.RNA_FullAtomStackingEnergy" );
 using namespace core::chemical::rna;
 
 namespace core {
@@ -117,19 +117,19 @@ RNA_FullAtomStackingEnergy::setup_for_minimizing(
         NeighborListOP nblist;
         Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
         Real const XX = dist_cutoff_ + 2 * tolerated_motion;
-        nblist = new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX);
+        nblist = new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX );
         if ( pose.energies().use_nblist_auto_update() ) {
             nblist->set_auto_update( tolerated_motion );
         }
         // this partially becomes the EtableEnergy classes's responsibility
-        nblist->setup( pose, sfxn, *this);
+        nblist->setup( pose, sfxn, *this );
         energies.set_nblist( EnergiesCacheableDataType::FA_STACK_NBLIST, nblist );
     }
 }
 
 ///
 void
-RNA_FullAtomStackingEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn) const
+RNA_FullAtomStackingEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const
 {
   pose.update_residue_neighbors();
 
@@ -176,8 +176,8 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 		residue_pair_energy_one_way( rsd2, rsd1, pose, score_aro2 ) ;
 
 	if ( ( score < 0 ) && !pose.energies().use_nblist() ) {
-		pose.record_stacking_interaction(rsd1.seqpos());
-		pose.record_stacking_interaction(rsd2.seqpos());
+		pose.record_stacking_interaction( rsd1.seqpos() );
+		pose.record_stacking_interaction( rsd2.seqpos() );
 	}
 
   emap[ fa_stack ]       += score;
@@ -223,11 +223,11 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
   for ( Size m = rsd1.first_sidechain_atom(); m <= rsd1.nheavyatoms(); ++m ) {
 	//Need to be careful nheavyatoms count includes hydrogen! when the hydrogen is made virtual..
 
-		if(rsd1.is_virtual(m)) continue;
+		if ( rsd1.is_virtual( m ) ) continue;
 
-		if(m==rsd1.first_sidechain_atom()){
+		if ( m == rsd1.first_sidechain_atom() ){
 			//Consistency check
-			if(rsd1.type().atom_name(m) !=" O2'") utility_exit_with_message( "m==rsd1.first_sidechain_atom() but rsd1.type().atom_name(m) !=\" O2'\" ");
+			if ( rsd1.type().atom_name( m ) != " O2'" ) utility_exit_with_message( "m == rsd1.first_sidechain_atom() but rsd1.type().atom_name( m ) != \" O2'\" " );
 			continue;
 		}
 
@@ -238,11 +238,11 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 
     for ( Size n = atom_num_start; n <= rsd2.nheavyatoms(); ++n ) {
 
-			if(rsd2.is_virtual(n)) continue;
+			if ( rsd2.is_virtual( n ) ) continue;
 
-			if(n==rsd2.first_sidechain_atom() && base_base_only_){
+			if ( n == rsd2.first_sidechain_atom() && base_base_only_ ){
 				//Consistency check
-				if(rsd2.type().atom_name(n) !=" O2'") utility_exit_with_message( "n==rsd2.first_sidechain_atom() but rsd2.type().atom_name(n) !=\" O2'\" ");
+				if ( rsd2.type().atom_name( n ) != " O2'" ) utility_exit_with_message( "n == rsd2.first_sidechain_atom() but rsd2.type().atom_name( n ) != \" O2'\" " );
 				continue;
 			}
 
@@ -259,7 +259,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 				Real const fa_stack_score = get_fa_stack_score( r, M_i );
 				score += fa_stack_score;
 
-				if ( is_aro( rsd1, m) && is_aro( rsd2, n) ) score_aro += fa_stack_score;
+				if ( is_aro( rsd1, m ) && is_aro( rsd2, n ) ) score_aro += fa_stack_score;
 
 				//				Real const cos_kappa_j = dot( r, z_j);
 				//				score += get_score( dist, cos_kappa_j );
@@ -302,19 +302,19 @@ RNA_FullAtomStackingEnergy::check_base_base_OK(
 
 	if ( m < rsd1.first_sidechain_atom()  || m > rsd1.nheavyatoms() ) return false;
 
-	if(m==rsd1.first_sidechain_atom()){
+	if ( m == rsd1.first_sidechain_atom() ){
 		//Consistency check
-		if(rsd1.type().atom_name(m) !=" O2'") utility_exit_with_message( "m==rsd1.first_sidechain_atom() but rsd1.type().atom_name(m) !=\" O2'\" ");
+		if ( rsd1.type().atom_name( m ) != " O2'" ) utility_exit_with_message( "m == rsd1.first_sidechain_atom() but rsd1.type().atom_name( m ) != \" O2'\" " );
 		return false;
 	}
 
 	if ( n > rsd2.nheavyatoms() ) return false;
 
-	if (base_base_only_ && n < rsd2.first_sidechain_atom() ) return false;
+	if ( base_base_only_ && n < rsd2.first_sidechain_atom() ) return false;
 
-	if(n==rsd2.first_sidechain_atom() && base_base_only_){
+	if ( n == rsd2.first_sidechain_atom() && base_base_only_ ){
 		//Consistency check
-		if(rsd2.type().atom_name(n) !=" O2'") utility_exit_with_message( "n==rsd2.first_sidechain_atom() but rsd2.type().atom_name(n) !=\" O2'\" ");
+		if ( rsd2.type().atom_name( n ) != " O2'" ) utility_exit_with_message( "n == rsd2.first_sidechain_atom() but rsd2.type().atom_name( n ) != \" O2'\" " );
 		return false;
 	}
 
@@ -351,7 +351,7 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 	Size const m( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( i ) );
 
-	if (rsd1.is_virtual(m)) return;
+	if ( rsd1.is_virtual( m ) ) return;
 	if ( !rsd1.is_RNA() ) return;
 
 	if ( m > rsd1.nheavyatoms() ) return;
@@ -380,9 +380,9 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 			itere = energy_graph.get_node( i )->const_edge_list_end();
 			iter != itere; ++iter ) {
 
-		Size const j( (*iter)->get_other_ind( i ) );
+		Size const j( ( *iter )->get_other_ind( i ) );
 
-		if ( pos1_fixed && domain_map(i) == domain_map(j) ) continue; //Fixed w.r.t. one another.
+		if ( pos1_fixed && domain_map( i ) == domain_map( j ) ) continue; //Fixed w.r.t. one another.
 
 		conformation::Residue const & rsd2( pose.residue( j ) );
 
@@ -397,7 +397,7 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 		for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
 
 
-			if(rsd2.is_virtual(n)) continue;
+			if ( rsd2.is_virtual( n ) ) continue;
 
 			if ( !check_base_base_OK( rsd1, rsd2, m, n ) && !check_base_base_OK( rsd2, rsd1, n, m ) ) continue; //This screen for nonbase atoms
 
@@ -459,7 +459,7 @@ RNA_FullAtomStackingEnergy::get_fa_stack_score( Vector const r_vec, Matrix const
   //Just use a simple cubic spline to fade from 1 to 0,
   // and to force derivatives to be continuous.
   if ( b > 0.0 ) {
-    b /= (dist_cutoff_ - full_stack_cutoff_ );
+    b /= ( dist_cutoff_ - full_stack_cutoff_ );
     Real const b2 = b*b;
     Real const b3 = b2*b;
     score *= ( 2 * b3 - 3 * b2 + 1 );
@@ -504,13 +504,13 @@ RNA_FullAtomStackingEnergy::get_fa_stack_deriv( Vector const r_vec, Matrix const
   dE_dcoskappa *= 2 * cos_kappa ;
 
   Distance b = r - full_stack_cutoff_;
-	Distance distance_scale = (dist_cutoff_ - full_stack_cutoff_ );
+	Distance distance_scale = ( dist_cutoff_ - full_stack_cutoff_ );
 	b /= distance_scale;
 
 	Real b2( 0.0 ), b3( 0.0 );
   //Just use a simple cubic spline to fade from 1 to 0,
   // and to force derivatives to be continuous.
-  if ( b > 0.0 && b < 1.0) {
+  if ( b > 0.0 && b < 1.0 ) {
     b2 = b*b;
     b3 = b2*b;
     dE_dcoskappa *= ( 2 * b3 - 3 * b2 + 1 );
@@ -526,20 +526,20 @@ RNA_FullAtomStackingEnergy::get_fa_stack_deriv( Vector const r_vec, Matrix const
 
   //Just use a simple cubic spline to fade from 1 to 0,
   // and to force derivatives to be continuous.
-  if ( b > 0.0 && b < 1.0) {
+  if ( b > 0.0 && b < 1.0 ) {
     dE_dr *= ( 6 * b2 - 6 * b );
 		dE_dr /= distance_scale;
   } else {
 		dE_dr = 0.0;
 	}
 
-	Real const dE_dx = ( dE_dr ) * (x/r) - (dE_dcoskappa) * (x * z)/ (r*r*r) ;
-	Real const dE_dy = ( dE_dr ) * (y/r) - (dE_dcoskappa) * (y * z)/ (r*r*r) ;
-	Real const dE_dz = ( dE_dr ) * (z/r) + (dE_dcoskappa) * (x*x + y*y)/ (r*r*r);
+	Real const dE_dx = ( dE_dr ) * ( x/r ) - ( dE_dcoskappa ) * ( x * z )/ ( r*r*r ) ;
+	Real const dE_dy = ( dE_dr ) * ( y/r ) - ( dE_dcoskappa ) * ( y * z )/ ( r*r*r ) ;
+	Real const dE_dz = ( dE_dr ) * ( z/r ) + ( dE_dcoskappa ) * ( x*x + y*y )/ ( r*r*r );
 
 	//	std::cout << " HELLO " << r << " " << dE_dr << " " << dE_dcoskappa << std::endl;
 
-  return (dE_dx * x_i + dE_dy * y_i + dE_dz * z_i );
+  return ( dE_dx * x_i + dE_dy * y_i + dE_dz * z_i );
 
 }
 
@@ -562,10 +562,10 @@ RNA_FullAtomStackingEnergy::finalize_total_energy(
 	//Energies & energies( pose.energies() );
 
 	//num_stacks_.clear();
-	boost::unordered_map < core::Size , core::Size > const & stacking_map = pose.get_stacking_map();
+	boost::unordered_map < core::Size, core::Size > const & stacking_map = pose.get_stacking_map();
 
-	for ( boost::unordered_map < core::Size , core::Size >::const_iterator
-		 it=stacking_map.begin(), it_end = stacking_map.end(); it != it_end; ++it ) {
+	for ( boost::unordered_map < core::Size, core::Size > ::const_iterator
+		 it = stacking_map.begin(), it_end = stacking_map.end(); it != it_end; ++it ) {
 		if ( it->second > 1 ) {
 			totals[ num_stacks ]++;
 			//EnergyMap & emap( energies.onebody_energies( it->first ) );
@@ -595,7 +595,7 @@ RNA_FullAtomStackingEnergy::get_intrares_countpair(
 	ScoreFunction const &
 ) const
 {
-	utility_exit_with_message( "FA_ElecEnergy does not define intra-residue pair energies; do not call get_intrares_countpair()" );
+	utility_exit_with_message( "FA_ElecEnergy does not define intra - residue pair energies; do not call get_intrares_countpair()" );
 	return 0;
 }
 

@@ -32,10 +32,12 @@ namespace monte_carlo {
 	typedef utility::vector1< core::Size >  MoveElement;
 	typedef utility::vector1< Attachment> Attachments;
 
+	// If you add something here, update to_string( AttachmenType ) in SWA_Move.cc
 	enum AttachmentType{ NO_ATTACHMENT = 0, ATTACHED_TO_PREVIOUS, ATTACHED_TO_NEXT,
 											 JUMP_TO_PREV_IN_CHAIN, JUMP_TO_NEXT_IN_CHAIN, LAST_ATTACHMENT_TYPE };
 
-	enum MoveType{ NO_MOVE = 0, ADD, DELETE, RESAMPLE, RESAMPLE_INTERNAL_LOCAL, LAST_ADD_OR_DELETE_CHOICE };
+	// If you add something here, update to_string( MoveType ) in SWA_Move.cc
+	enum MoveType{ NO_MOVE = 0, ADD, DELETE, FROM_SCRATCH, RESAMPLE, RESAMPLE_INTERNAL_LOCAL, LAST_ADD_OR_DELETE_CHOICE };
 
 	std::string to_string( AttachmentType const & attachment_type );
 

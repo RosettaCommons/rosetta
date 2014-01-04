@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file StepWiseRNA_OutputData.cc (Created on Sept 26, 2011)
+/// @file StepWiseRNA_OutputData.cc (created on Sept 26, 2011)
 /// @brief Output silent_file_data functions for Stepwise Assembly RNA.
 /// @detailed
 /// @author Parin Sripakdeevong
@@ -17,7 +17,7 @@
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_OutputData.hh> //Oct 22, 2011...Not sure why the code worked without this!
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_Classes.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_FloatingBaseSamplerUtil.hh> //Sept 26, 2011
+#include <protocols/stepwise/enumerate/rna/rigid_body/StepWiseRNA_FloatingBaseSamplerUtil.hh> //Sept 26, 2011
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_ResidueInfo.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/rotamer_sampler/rigid_body/EulerAngles.hh>

@@ -1593,7 +1593,7 @@ namespace rna {
 	void
 	StepWiseRNA_JobParametersSetup::set_terminal_res( utility::vector1 < core::Size > const & terminal_res ){
 
-
+		job_parameters_->set_terminal_res( terminal_res );
 		job_parameters_->set_working_terminal_res(  apply_full_to_sub_mapping( terminal_res, StepWiseRNA_JobParametersCOP( job_parameters_ ) ) );
 
 
@@ -1773,6 +1773,13 @@ namespace rna {
 	StepWiseRNA_JobParametersSetup::set_rebuild_bulge_mode( bool const setting ){
 
 		job_parameters_->set_rebuild_bulge_mode( setting );
+
+	}
+  //////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseRNA_JobParametersSetup::set_sample_both_sugar_base_rotamer( bool const setting ){
+
+		job_parameters_->set_sample_both_sugar_base_rotamer( setting );
 
 	}
   //////////////////////////////////////////////////////////////////////////

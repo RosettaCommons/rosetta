@@ -72,6 +72,12 @@ public:
 
 	void set_stepwise_rna_modeler( protocols::stepwise::enumerate::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler );
 
+	core::Real const & constraint_x0() const { return constraint_x0_; }
+	void set_constraint_x0(  core::Real const & setting ){ constraint_x0_ = setting; }
+
+	core::Real const & constraint_tol() const { return constraint_tol_; }
+	void set_constraint_tol( core::Real const & setting ){ constraint_tol_ = setting; }
+
 private:
 
 	void sample_by_swa( core::pose::Pose & pose, Size const res_to_add  ) const;

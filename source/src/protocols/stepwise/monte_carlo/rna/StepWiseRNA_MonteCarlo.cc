@@ -18,6 +18,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddMover.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_DeleteMover.hh>
+#include <protocols/stepwise/monte_carlo/rna/RNA_FromScratchMover.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddOrDeleteMover.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_ResampleMover.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloOptions.hh>
@@ -43,12 +44,14 @@ using namespace core;
 
 static numeric::random::RandomGenerator RG(2391021);  // <- Magic number, do not change it!
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.StepWiseRNA_MonteCarlo" );
-using ObjexxFCL::string_of;
 using ObjexxFCL::lead_zero_string_of;
 
 //////////////////////////////////////////////////////////////////////////
 // StepWiseMonteCarlo -- monte carlo minimization framework for
 //  sampling RNA and moves that delete or add residues at chain termini.
+//
+// This is the master Mover.
+//
 //////////////////////////////////////////////////////////////////////////
 
 namespace protocols {
@@ -59,6 +62,7 @@ namespace rna {
 //Constructor
 StepWiseRNA_MonteCarlo::StepWiseRNA_MonteCarlo( core::scoring::ScoreFunctionCOP scorefxn_input ):
 	scorefxn_input_( scorefxn_input ),
+	options_( new StepWiseRNA_MonteCarloOptions ), // can be replaced later
 	minimize_single_res_( false ), // changes during run
 	max_missing_weight_( scorefxn_input->get_weight( scoring::missing_res ) ), // for annealing
 	missing_weight_interval_( 0.0 ), // updated below
@@ -79,28 +83,28 @@ void
 StepWiseRNA_MonteCarlo::apply( core::pose::Pose & pose ) {
 
 	using namespace protocols::moves;
-	using namespace protocols::stepwise;
 	using namespace core::scoring;
 
 	initialize_scorefunction();
 	initialize_movers();
-	initialize_for_movie();
+	initialize_pose_if_empty( pose );
 
 	MonteCarloOP monte_carlo = new MonteCarlo( pose, *scorefxn_, options_->temperature() );
 	show_scores( pose, "Initial score:" );
+	initialize_for_movie( pose );
 
-	Size k( 1 );
+	Size k( 0 );
 	std::string move_type;
 	bool success( true );
 	Real before_move_score( 0.0 ), after_move_score( 0.0 );
-	switch_focus_among_poses_randomly( pose );
+	switch_focus_among_poses_randomly( pose, scorefxn_ );
 
 	////////////////
 	// Main loop
 	////////////////
-	while ( k <= Size( options_->cycles() ) ){
+	while ( k < Size( options_->cycles() ) ){
 
-		if ( success ) before_move_score = display_progress( pose, k );
+		if ( success ) before_move_score = display_progress( pose, k+1 );
 
 		if ( RG.uniform() < options_->switch_focus_frequency() ) switch_focus_among_poses_randomly( pose );
 
@@ -116,14 +120,14 @@ StepWiseRNA_MonteCarlo::apply( core::pose::Pose & pose ) {
 		k++;
 		after_move_score = show_scores( pose, "After-move score:" );
 		TR << "Score changed from: " << before_move_score << " to  " << after_move_score << std::endl;
+		output_movie( pose, k, "TRIAL", movie_file_trial_ );
 
-		if ( options_->make_movie() ) output_to_silent_file( "TRIAL_"+lead_zero_string_of( k, 6 ), movie_file_trial_, pose, get_native_pose() );
 		anneal_missing( monte_carlo );
 		monte_carlo->boltzmann( pose, move_type );
 
 		TR << "Monte Carlo accepted? " << monte_carlo->mc_accepted_string() << std::endl;
 		monte_carlo->show_counters();
-		if ( options_->make_movie() ) output_to_silent_file( "ACCEPTED_"+lead_zero_string_of( k, 6 ), movie_file_accepted_, pose, get_native_pose() );
+		output_movie( pose, k, "ACCEPTED", movie_file_accepted_ );
 	}
 
 	monte_carlo->recover_low( pose );
@@ -151,6 +155,7 @@ StepWiseRNA_MonteCarlo::initialize_movers(){
 	stepwise_rna_modeler->set_options( options_->setup_modeler_options() );
 	stepwise_rna_modeler->set_minimizer_extra_minimize_res( options_->extra_minimize_res() );
 	stepwise_rna_modeler->set_syn_chi_res_list( options_->syn_chi_res_list() );
+	stepwise_rna_modeler->set_terminal_res( options_->terminal_res() );
 
 	// maybe RNA_AddMover could just hold a copy of RNA_ResampleMover...
 	rna_add_mover_ = new RNA_AddMover( scorefxn_ );
@@ -159,27 +164,42 @@ StepWiseRNA_MonteCarlo::initialize_movers(){
 	rna_add_mover_->set_presample_added_residue(  true );
 	rna_add_mover_->set_presample_by_swa(  true );
 	rna_add_mover_->set_stepwise_rna_modeler( stepwise_rna_modeler->clone_modeler() );
-	// don't forget constraints.
+	rna_add_mover_->set_constraint_x0( options_->constraint_x0() );
+	rna_add_mover_->set_constraint_tol( options_->constraint_tol() );
 
 	rna_delete_mover_ = new RNA_DeleteMover;
 	rna_delete_mover_->set_native_pose( get_native_pose() );
 	rna_delete_mover_->set_stepwise_rna_modeler( stepwise_rna_modeler->clone_modeler() );
-	// don't forget constraints.
+	rna_delete_mover_->set_options( options_ );
 
-	rna_add_or_delete_mover_ = new RNA_AddOrDeleteMover( rna_add_mover_, rna_delete_mover_ );
+	if ( options_->allow_from_scratch() ){
+		rna_from_scratch_mover_ = new RNA_FromScratchMover;
+		rna_from_scratch_mover_->set_native_pose( get_native_pose() );
+		rna_from_scratch_mover_->set_stepwise_rna_modeler( stepwise_rna_modeler->clone_modeler() );
+	}
+
+	rna_add_or_delete_mover_ = new RNA_AddOrDeleteMover( rna_add_mover_, rna_delete_mover_, rna_from_scratch_mover_ );
 	rna_add_or_delete_mover_->set_options( options_ );
 
 	rna_resample_mover_ = new RNA_ResampleMover( stepwise_rna_modeler->clone_modeler() );
 	rna_resample_mover_->set_native_pose( get_native_pose() );
-	rna_resample_mover_->set_just_min_after_mutation_frequency( options_->just_min_after_mutation_frequency() );
-	rna_resample_mover_->set_allow_internal_moves( options_->allow_internal_moves() );
+	rna_resample_mover_->set_options( options_ );
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_MonteCarlo::initialize_pose_if_empty( pose::Pose & pose ){
+	if ( pose.total_residue() > 0 ) return;
+
+	runtime_assert( options_->allow_from_scratch() );
+	rna_add_or_delete_mover_->apply( pose );
+	runtime_assert( pose.total_residue() > 0 );
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_MonteCarlo::initialize_for_movie(){
+StepWiseRNA_MonteCarlo::initialize_for_movie( pose::Pose const & pose ){
 	using namespace utility::file;
 
 	if ( !options_->make_movie() ) return;
@@ -190,10 +210,21 @@ StepWiseRNA_MonteCarlo::initialize_for_movie(){
 
 	movie_file_trial_    = out_path_ + "movie/" + model_tag_ + "_trial.out";
 	if ( file_exists( movie_file_trial_ ) ) std::remove( movie_file_trial_.c_str() );
+	output_movie( pose, 0, "TRIAL", movie_file_trial_ );
 
 	movie_file_accepted_ = out_path_ + "movie/" + model_tag_ + "_accepted.out";
 	if ( file_exists( movie_file_accepted_ ) ) std::remove( movie_file_accepted_.c_str() );
+	output_movie( pose, 0, "ACCEPTED", movie_file_accepted_ );
 
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_MonteCarlo::output_movie( pose::Pose const & pose, Size const k, std::string const tag, std::string const & movie_file ){
+	if ( !options_->make_movie() ) return;
+	Pose pose_copy = pose;
+	output_to_silent_file( tag + "_" + lead_zero_string_of( k, 6 ), movie_file, pose_copy, get_native_pose() );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -201,31 +232,6 @@ void
 StepWiseRNA_MonteCarlo::anneal_missing( protocols::moves::MonteCarloOP monte_carlo ){
 	monte_carlo->change_weight( scoring::missing_res, missing_weight_ );
 	missing_weight_ += missing_weight_interval_;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-bool
-StepWiseRNA_MonteCarlo::switch_focus_among_poses_randomly( pose::Pose & pose ) const {
-
-	using namespace core::pose;
-	using namespace core::pose::full_model_info;
-	using namespace protocols::stepwise;
-
-	Size const num_other_poses = const_full_model_info( pose ).other_pose_list().size();
-	Size const focus_pose_idx = RG.random_range( 0, num_other_poses );
-	if ( focus_pose_idx == 0 ) return false;
-
-	Real const score_before_switch_focus = (*scorefxn_)( pose );
-	TR.Debug << TR.Green << "SWITCHING FOCUS! SWITCHING FOCUS! SWITCHING FOCUS! SWITCHING FOCUS! to: " << focus_pose_idx << TR.Reset << std::endl;
-	switch_focus_to_other_pose( pose, focus_pose_idx );
-	Real const score_after_switch_focus = (*scorefxn_)( pose );
-
-	// originally set threshold at 0.001, but triggered rare errors. At some point worth tracking down...
-	if (  std::abs( score_before_switch_focus - score_after_switch_focus ) > 0.10 ){
-		utility_exit_with_message( "Energy change after switching pose focus: " + string_of( score_before_switch_focus ) + " to " +string_of( score_after_switch_focus ) );
-	}
-
-	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

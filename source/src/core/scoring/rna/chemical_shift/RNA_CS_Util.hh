@@ -40,9 +40,9 @@ namespace chemical_shift {
 
 inline 
 core::Size 
-dround(core::Real var)
+dround( core::Real var )
 {
-   return (core::Size(var + 0.5));
+   return ( core::Size( var + 0.5 ) );
 }
 
 

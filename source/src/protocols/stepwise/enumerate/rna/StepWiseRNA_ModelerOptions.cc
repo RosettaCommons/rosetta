@@ -99,7 +99,6 @@ namespace rna {
 		reinitialize_CCD_torsions_ = false;
 		sampler_extra_epsilon_rotamer_ = false;
 		sampler_extra_beta_rotamer_ = false;
-		sample_both_sugar_base_rotamer_ = false;
 		sampler_include_torsion_value_in_tag_ = false;
 		combine_long_loop_mode_ = false;
 		do_not_sample_multiple_virtual_sugar_ = false;
@@ -163,7 +162,6 @@ namespace rna {
 		reinitialize_CCD_torsions_ = src.reinitialize_CCD_torsions_;
 		sampler_extra_epsilon_rotamer_ = src.sampler_extra_epsilon_rotamer_;
 		sampler_extra_beta_rotamer_ = src.sampler_extra_beta_rotamer_;
-		sample_both_sugar_base_rotamer_ = src.sample_both_sugar_base_rotamer_;
 		sampler_include_torsion_value_in_tag_ = src.sampler_include_torsion_value_in_tag_;
 		combine_long_loop_mode_ = src.combine_long_loop_mode_;
 		do_not_sample_multiple_virtual_sugar_ = src.do_not_sample_multiple_virtual_sugar_;
@@ -225,7 +223,6 @@ namespace rna {
 		reinitialize_CCD_torsions_ = option[ OptionKeys::stepwise::rna::reinitialize_CCD_torsions]();
 		sampler_extra_epsilon_rotamer_ = option[ OptionKeys::stepwise::rna::sampler_extra_epsilon_rotamer]();
 		sampler_extra_beta_rotamer_ = option[ OptionKeys::stepwise::rna::sampler_extra_beta_rotamer]();
-		sample_both_sugar_base_rotamer_ = option[ OptionKeys::stepwise::rna::sample_both_sugar_base_rotamer](); //Nov 12, 2010
 		sampler_include_torsion_value_in_tag_ = option[ OptionKeys::stepwise::rna::sampler_include_torsion_value_in_tag]();
 		combine_long_loop_mode_ = option[ basic::options::OptionKeys::stepwise::rna::combine_long_loop_mode]();
 		do_not_sample_multiple_virtual_sugar_ = option[ OptionKeys::stepwise::rna::do_not_sample_multiple_virtual_sugar]();

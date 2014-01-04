@@ -20,6 +20,7 @@
 #include <protocols/stepwise/monte_carlo/rna/RNA_ResampleMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/SWA_Move.fwd.hh>
 #include <protocols/stepwise/monte_carlo/SWA_MoveSelector.fwd.hh>
+#include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloOptions.fwd.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_Modeler.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -59,26 +60,19 @@ namespace rna {
 					 SWA_Move const & swa_move,
 					 std::string & move_type );
 
-
-		void set_just_min_after_mutation_frequency( core::Real const & setting ){ just_min_after_mutation_frequency_ = setting; }
-		core::Real just_min_after_mutation_frequency() const{ return just_min_after_mutation_frequency_; }
-
-		void set_allow_internal_moves( bool const & setting ){ allow_internal_moves_ = setting; }
-		bool allow_internal_moves() const{ return allow_internal_moves_; }
-
 		void set_minimize_single_res( bool const & setting ){ minimize_single_res_ = setting; }
 		bool minimize_single_res() const{ return minimize_single_res_; }
+
+		void
+		set_options( StepWiseRNA_MonteCarloOptionsCOP options );
 
 	private:
 
 		protocols::stepwise::enumerate::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
-		protocols::stepwise::monte_carlo::SWA_MoveSelectorOP swa_move_selector_;
+		SWA_MoveSelectorOP swa_move_selector_;
+		StepWiseRNA_MonteCarloOptionsCOP options_;
 
-		core::Real just_min_after_mutation_frequency_;
-		bool allow_internal_moves_;
 		bool minimize_single_res_;
-		core::Real constraint_x0_;
-		core::Real constraint_tol_;
 
 	};
 

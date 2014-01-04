@@ -118,7 +118,7 @@ RG_Energy_RNA::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) con
 	// divides by nres and not by nres-1.  For the sake of matching r++, it's
 	// being left at nres-1 for now, but is a candidate for change in the near
 	// future.
-	rg_squared /= (nres - 1);
+	rg_squared /= ( nres - 1 );
 	rg_ = sqrt( rg_squared ); //Save in this class
 
 
@@ -198,7 +198,7 @@ RG_Energy_RNA::eval_atom_derivative(
 	if ( atom_num_i == first_base_atom_index( rsd ) ) {
 
 		Vector const v( base_centroids[i] );
-		Vector f2 = ( v - center_of_mass_ )/ ( (nres - 1 ) * rg_ );
+		Vector f2 = ( v - center_of_mass_ )/ ( ( nres - 1 ) * rg_ );
 		Vector f1 = cross( f2, v );
 
 		F1 += weights[ rna_rg ] * f1;

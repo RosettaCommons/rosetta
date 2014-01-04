@@ -251,7 +251,7 @@ namespace rna {
 
 
 	bool
-	Contain_residue_at_seq_num( Size seq_num, utility::vector1 < Residue_info > const & residue_list ){
+	contain_residue_at_seq_num( Size seq_num, utility::vector1 < Residue_info > const & residue_list ){
 
 		for ( Size j = 1; j <= residue_list.size(); j++ ){
 			if ( seq_num == residue_list[j].seq_num ) {
@@ -262,7 +262,7 @@ namespace rna {
 	}
 
 	utility::vector1 < utility::vector1 < Residue_info > >
-	Create_strand_list( utility::vector1 < Residue_info > const & residue_list ){
+	create_strand_list( utility::vector1 < Residue_info > const & residue_list ){
 
 		utility::vector1 < utility::vector1 < Residue_info > > residue_group_list;
 
@@ -296,12 +296,12 @@ namespace rna {
 
 
 	utility::vector1 < Residue_info >
-	Set_Difference( utility::vector1 < Residue_info > const & residue_list_1, utility::vector1 < Residue_info > const & residue_list_2 ){
+	set_difference( utility::vector1 < Residue_info > const & residue_list_1, utility::vector1 < Residue_info > const & residue_list_2 ){
 
 		utility::vector1 < Residue_info >	set_difference_residue_list;
 
 		for ( Size i = 1; i <= residue_list_1.size(); i++ ){
-			if ( Contain_residue_at_seq_num( residue_list_1[i].seq_num, residue_list_2 ) ) continue;
+			if ( contain_residue_at_seq_num( residue_list_1[i].seq_num, residue_list_2 ) ) continue;
 			set_difference_residue_list.push_back( residue_list_1[i] );
 		}
 
@@ -310,12 +310,12 @@ namespace rna {
 	}
 
 	utility::vector1 < Residue_info >
-	Set_Union( utility::vector1 < Residue_info > const & residue_list_1, utility::vector1 < Residue_info > const & residue_list_2 ){
+	set_union( utility::vector1 < Residue_info > const & residue_list_1, utility::vector1 < Residue_info > const & residue_list_2 ){
 
 		utility::vector1 < Residue_info > union_residue_list = residue_list_1;
 
 		for ( Size i = 1; i <= residue_list_2.size(); i++ ){
-			if ( Contain_residue_at_seq_num( residue_list_2[i].seq_num, union_residue_list ) == false ){
+			if ( contain_residue_at_seq_num( residue_list_2[i].seq_num, union_residue_list ) == false ){
 				union_residue_list.push_back( residue_list_2[i] );
 			}
 		}

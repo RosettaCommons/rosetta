@@ -43,12 +43,12 @@ class ChemicalShiftData : public utility::pointer::ReferenceCount{
 
 	public:
 
-		ChemicalShiftData(core::Size const in_seq_num, 
+		ChemicalShiftData( core::Size const in_seq_num, 
 										 chemical::AA const in_res_aa,
 										 std::string const in_atom_name, 
 										 core::Size const in_realatomdata_index,
 										 core::Real const in_exp_shift, 
-										 std::string const in_data_line):
+										 std::string const in_data_line ):
 			seq_num( in_seq_num ),
 			res_aa( in_res_aa ),
 			atom_name( in_atom_name ),
@@ -56,7 +56,7 @@ class ChemicalShiftData : public utility::pointer::ReferenceCount{
 			exp_shift( in_exp_shift ), 
 			//Feb 28, 2012: Warning exp_shift this might be switch due to ambiguity of geminal atoms (H5'/H5'' and etcs) or be a duplicate.
 			//Always use get_best_exp_to_calc_chem_shift_mapping() to get best mapping to specific calc_chem_shift to get actual exp_shift!
-			data_line( in_data_line)
+			data_line( in_data_line )
 		{
 		}
 
@@ -87,75 +87,75 @@ class RNA_ChemicalShiftPotential : public utility::pointer::ReferenceCount{
 	private:
 
 		Size
-		get_realatomdata_index(std::string const & in_atom_name, chemical::AA const res_aa) const;
+		get_realatomdata_index( std::string const & in_atom_name, chemical::AA const res_aa ) const;
 
 		void
-		assert_is_calc_chem_shift_atom(ChemicalShiftData const & CS_data) const;
+		assert_is_calc_chem_shift_atom( ChemicalShiftData const & CS_data ) const;
 
 		bool
-		Is_magnetic_anisotropy_source_atom(core::conformation::Residue const & rsd, Size const atomno) const;
+		Is_magnetic_anisotropy_source_atom( core::conformation::Residue const & rsd, Size const atomno ) const;
 
 		bool
-		atom_has_exp_chemical_shift_data(core::conformation::Residue const & rsd, Size const atomno) const;
+		atom_has_exp_chemical_shift_data( core::conformation::Residue const & rsd, Size const atomno ) const;
 
 		utility::vector1 < ChemicalShiftData > const & 
-		get_matching_CS_data_entry(Size const seq_num, std::string const in_atom_name) const;
+		get_matching_CS_data_entry( Size const seq_num, std::string const in_atom_name ) const;
 
 		utility::vector1< std::string > 
-		string_list(std::string const string_one) const;
+		string_list( std::string const string_one ) const;
 
 		utility::vector1< std::string > 
-		string_list(std::string const string_one, std::string const string_two) const;
+		string_list( std::string const string_one, std::string const string_two ) const;
 
 		
 
 		void
-		import_exp_chemical_shift_data(std::string exp_CS_data_filename, 
+		import_exp_chemical_shift_data( std::string exp_CS_data_filename, 
 																 utility::vector1 < core::Size > include_res_list,
-																 utility::vector1 < utility::vector1< std::string > > const & proton_entry_list);
+																 utility::vector1 < utility::vector1< std::string > > const & proton_entry_list );
 
 		void
-		get_best_exp_to_calc_chem_shift_mapping(utility::vector1 < ChemicalShiftData > const & EXP_chem_shift_data_entry, 
+		get_best_exp_to_calc_chem_shift_mapping( utility::vector1 < ChemicalShiftData > const & EXP_chem_shift_data_entry, 
 																					utility::vector1 < Real > const & calc_chem_shift_entry, 
 														 							utility::vector1 < Real > & actual_exp_chem_shift_entry,
-														 							utility::vector1 < bool > & do_include_CS_data) const; 
+														 							utility::vector1 < bool > & do_include_CS_data ) const; 
 
 		core::Real
-		get_calc_chem_shift_value(ChemicalShiftData const & CS_data, pose::Pose const & pose) const;
+		get_calc_chem_shift_value( ChemicalShiftData const & CS_data, pose::Pose const & pose ) const;
 
 		void
-		update_calc_chem_shift_list(pose::Pose const & pose, utility::vector1 < utility::vector1 < Real > > & cal_chem_shift_list) const;
+		update_calc_chem_shift_list( pose::Pose const & pose, utility::vector1 < utility::vector1 < Real > > & cal_chem_shift_list ) const;
 
 		core::Real
-		get_chemical_shift_energy(utility::vector1 < utility::vector1 < Real > > const & calc_chem_shift_list) const;
+		get_chemical_shift_energy( utility::vector1 < utility::vector1 < Real > > const & calc_chem_shift_list ) const;
 
 		void
 		get_deriv_for_chemical_shift_data_atom(	pose::Pose const & pose,
 																					conformation::Residue const & CS_data_rsd,
 																					Size const CS_data_atomno,
 																					Vector & f1,
-																					Vector & f2) const;
+																					Vector & f2 ) const;
 
 		void
 		get_ring_current_deriv_for_src_base(	pose::Pose const & pose,
 																				conformation::Residue const & rc_source_rsd,
 																				Size const chi1_torsion_atomnno,
 																				Vector & f1,
-																				Vector & f2) const;
+																				Vector & f2 ) const;
 
 		void
 		get_magnetic_anisotropy_deriv_for_src_base( pose::Pose const & pose,
 																							conformation::Residue const & ma_source_rsd,
 																							Size const chi1_torsion_atomnno,
 																							Vector & f1,
-																							Vector & f2) const;
+																							Vector & f2 ) const;
 
 		void
 		get_magnetic_anisotropy_deriv_for_src_atom( pose::Pose const & pose,
 																							conformation::Residue const & ma_source_rsd,
 																							Size const ma_source_atomno,
 																							Vector & f1,
-																							Vector & f2) const; 
+																							Vector & f2 ) const; 
 
 
 
@@ -167,7 +167,7 @@ class RNA_ChemicalShiftPotential : public utility::pointer::ReferenceCount{
 	/////////////////////////////////////////////////////////////////////////////
 
 		void
-		finalize_total_energy( pose::Pose const & pose, EnergyMap & totals) const;
+		finalize_total_energy( pose::Pose const & pose, EnergyMap & totals ) const;
 
 		/////////////////////////////////
 		void

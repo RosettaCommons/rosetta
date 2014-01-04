@@ -144,11 +144,11 @@ private:
 
 
 	/// these guys are taken from the etable
-	ObjexxFCL::FArray3D< Real > const & ljatr_;
-	ObjexxFCL::FArray3D< Real > const & ljrep_;
+	ObjexxFCL::FArray3D < Real > const & ljatr_;
+	ObjexxFCL::FArray3D < Real > const & ljrep_;
 
-	ObjexxFCL::FArray3D< Real > const & dljatr_;
-	ObjexxFCL::FArray3D< Real > const & dljrep_;
+	ObjexxFCL::FArray3D < Real > const & dljatr_;
+	ObjexxFCL::FArray3D < Real > const & dljrep_;
 
 	Real const safe_max_dis2_;
 	Real const get_bins_per_A2_;

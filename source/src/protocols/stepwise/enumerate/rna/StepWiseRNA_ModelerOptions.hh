@@ -49,15 +49,12 @@ namespace rna {
 		/// @brief Describe this instance to a given output stream
 		virtual
 		void
-		show(
-				 std::ostream & out) const{}
+		show( std::ostream & ) const{}
 
 		/// @brief Initialize from the recursive "tag" structure.
 		virtual
 		void
-		parse_my_tag(
-								 utility::tag::TagCOP tag
-								 ){}
+		parse_my_tag( utility::tag::TagCOP ){}
 
 		/// @brief The class name (its type) for a particular ResourceOptions instance.
 		/// This function allows for better error message delivery.
@@ -187,9 +184,6 @@ namespace rna {
 		bool const & sampler_extra_beta_rotamer() const { return sampler_extra_beta_rotamer_; }
 		void set_sampler_extra_beta_rotamer( bool const & setting ){ sampler_extra_beta_rotamer_ = setting; }
 
-		bool const & sample_both_sugar_base_rotamer() const { return sample_both_sugar_base_rotamer_; }
-		void set_sample_both_sugar_base_rotamer( bool const & setting ){ sample_both_sugar_base_rotamer_ = setting; }
-
 		bool const & sampler_include_torsion_value_in_tag() const { return sampler_include_torsion_value_in_tag_; }
 		void set_sampler_include_torsion_value_in_tag( bool const & setting ){ sampler_include_torsion_value_in_tag_ = setting; }
 
@@ -271,7 +265,6 @@ namespace rna {
 		bool reinitialize_CCD_torsions_;
 		bool sampler_extra_epsilon_rotamer_;
 		bool sampler_extra_beta_rotamer_;
-		bool sample_both_sugar_base_rotamer_;
 		bool sampler_include_torsion_value_in_tag_;
 		bool combine_long_loop_mode_;
 		bool do_not_sample_multiple_virtual_sugar_;

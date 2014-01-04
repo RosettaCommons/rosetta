@@ -247,8 +247,13 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 				if ( options_->perform_minimize() ) minimizer.run( pose, new_mm, *(scorefxn_ ), options );
 				scorefxn_->set_weight( rna_bond_geometry, original_geometry_weight_ );
 			}
-
 			if ( options_->perform_minimize() ) minimizer.run( pose, mm, *( scorefxn_ ), options );
+			// scoring::rna::RNA_TorsionPotential rna_torsion_potential;
+			// rna_torsion_potential.set_verbose( true );
+			// rna_torsion_potential.eval_intrares_energy( pose.residue( 1 ), pose );
+			// rna_torsion_potential.residue_pair_energy( pose.residue( 1 ), pose.residue( 2 ), pose );
+			// rna_torsion_potential.eval_intrares_energy( pose.residue( 2 ), pose );
+
 			if ( options_->minimizer_perform_o2prime_pack() ) o2prime_trials( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
 
 			if ( close_chainbreak ){

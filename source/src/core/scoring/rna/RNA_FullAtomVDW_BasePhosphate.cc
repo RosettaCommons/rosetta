@@ -60,7 +60,7 @@ RNA_FullAtomVDW_BasePhosphateCreator::create_energy_method(
 ) const {
 
 
-	etable::Etable const & etable_in= *( ScoringManager::get_instance()->etable( options.etable_type() ) );
+	etable::Etable const & etable_in = *( ScoringManager::get_instance()->etable( options.etable_type() ) );
 
 	etable::TableLookupEtableEnergy etable_energy_in( etable_in, options );
 
@@ -75,7 +75,7 @@ RNA_FullAtomVDW_BasePhosphateCreator::create_energy_method(
 		fa_intra_RNA_base_phos_rep,
 		fa_intra_RNA_base_phos_sol );
 
-	return new RNA_FullAtomVDW_BasePhosphate( etable_energy_in, etable_in);
+	return new RNA_FullAtomVDW_BasePhosphate( etable_energy_in, etable_in );
 }
 
 
@@ -95,10 +95,10 @@ RNA_FullAtomVDW_BasePhosphate::RNA_FullAtomVDW_BasePhosphate(
 	etable::Etable const & etable_in
 ):
 	parent( new RNA_FullAtomVDW_BasePhosphateCreator ),
-	etable_energy_( etable_energy_in), //Hacky thing, created the etable_energy_ energy_method to get access to its function.
+	etable_energy_( etable_energy_in ), //Hacky thing, created the etable_energy_ energy_method to get access to its function.
 	//etable_energy_( *(new etable::EtableEnergy(etable_energy_in)) ),
 	//etable_energy_( *( new etable::EtableEnergy( etable_in, opts ) ) ),
-	etable_(etable_in)
+	etable_( etable_in )
 {
 
 	//etable_energy_.set_scoretypes( fa_intra_RNA_base_phos_atr, fa_intra_RNA_base_phos_rep, unfolded);
@@ -149,7 +149,7 @@ RNA_FullAtomVDW_BasePhosphate::residue_fast_pair_energy_attached_H(
 
 
 	// Heavy Atom in res1 to Hs in res2
-	for ( Size i = at2hbegin; i<= at2hend; ++i )
+	for ( Size i = at2hbegin; i <= at2hend; ++i )
 	{
 		Atom const & H2( res2.atom( i ) );
 		weight = 1.0;
@@ -158,16 +158,16 @@ RNA_FullAtomVDW_BasePhosphate::residue_fast_pair_energy_attached_H(
 
 
 	// Hs in res1 to heavy Atom and Hs in res2
-	for ( Size i = at1hbegin; i<= at1hend; ++i )
+	for ( Size i = at1hbegin; i <= at1hend; ++i )
 	{
-		Atom const & H1( res1.atom(i) );
+		Atom const & H1( res1.atom( i ) );
 		weight = 1.0;
 		// H in res1 to heavy Atom in res2
 		etable_energy_.pair_energy_H( H1, atom2, weight, emap );
 
 		// H in res1 to Hs in res2
-		for ( Size j = at2hbegin; j<= at2hend; ++j ) {
-			Atom const & H2( res2.atom(j) );
+		for ( Size j = at2hbegin; j <= at2hend; ++j ) {
+			Atom const & H2( res2.atom( j ) );
 			weight = 1.0f;
 			etable_energy_.pair_energy_H( H1, H2, weight, emap );
 		}
@@ -186,16 +186,16 @@ RNA_FullAtomVDW_BasePhosphate::residue_energy(
 	//runtime_assert(false);
 	//utility_exit_with_message("Why am I here?");
 
-	if(rsd.is_RNA()==false) return;
+	if ( rsd.is_RNA() == false ) return;
 
 
 	DistanceSquared dsq;
 
 	//Weight const weight=1.0;
-	Real const weight=1.0;
+	Real const weight = 1.0;
 
 	// get hydrogen interaction cutoff
-	Real const Hydrogen_interaction_cutoff2=( etable_energy_.hydrogen_interaction_cutoff2() );
+	Real const Hydrogen_interaction_cutoff2 = ( etable_energy_.hydrogen_interaction_cutoff2() );
 
 	EnergyMap mock_emap;
 
@@ -207,84 +207,84 @@ RNA_FullAtomVDW_BasePhosphate::residue_energy(
 	Size const rsdnheavyatoms = rsd.nheavyatoms();
 
 	// Atom pairs
-	for ( Size i=1; i <= rsdnheavyatoms; ++i ) {
-		Atom const & atom1( rsd.atom(i) );
-		for ( Size j=i+1; j <= rsdnheavyatoms; ++j ) {
-			Atom const & atom2( rsd.atom(j) );
+	for ( Size i = 1; i <= rsdnheavyatoms; ++i ) {
+		Atom const & atom1( rsd.atom( i ) );
+		for ( Size j = i + 1; j <= rsdnheavyatoms; ++j ) {
+			Atom const & atom2( rsd.atom( j ) );
 
-			bool base_phosphate_atom_pair=false;
+			bool base_phosphate_atom_pair = false;
 
-			if( rsd.RNA_type().atom_is_phosphate( i ) && rsd.RNA_type().is_RNA_base_atom( j ) ) base_phosphate_atom_pair=true;
-			if( rsd.RNA_type().atom_is_phosphate( j ) && rsd.RNA_type().is_RNA_base_atom( i ) ) base_phosphate_atom_pair=true;
+			if ( rsd.RNA_type().atom_is_phosphate( i ) && rsd.RNA_type().is_RNA_base_atom( j ) ) base_phosphate_atom_pair = true;
+			if ( rsd.RNA_type().atom_is_phosphate( j ) && rsd.RNA_type().is_RNA_base_atom( i ) ) base_phosphate_atom_pair = true;
 
-			if(base_phosphate_atom_pair==false) continue;
+			if ( base_phosphate_atom_pair == false ) continue;
 
-			if(rsd.path_distance( i, j ) < 4){
-				 std::cout << "rsd.name3()=" << rsd.name3() << " rsd.seqpos() = " << rsd.seqpos() << std::endl;
-				 std::cout << "i= " << i << " j=" << j << std::endl;
-				 std::cout << "rsd.atom_name(i)= " << rsd.atom_name(i) << " rsd.atom_name(j)=" << rsd.atom_name(j) << std::endl;
-				 std::cout << "rsd.path_distance( i, j )=" << rsd.path_distance( i, j ) << std::endl;
+			if ( rsd.path_distance( i, j ) < 4 ){
+				 std::cout << "rsd.name3() = " << rsd.name3() << " rsd.seqpos() = " << rsd.seqpos() << std::endl;
+				 std::cout << "i = " << i << " j = " << j << std::endl;
+				 std::cout << "rsd.atom_name( i ) = " << rsd.atom_name( i ) << " rsd.atom_name( j ) = " << rsd.atom_name( j ) << std::endl;
+				 std::cout << "rsd.path_distance( i, j ) = " << rsd.path_distance( i, j ) << std::endl;
 
-				 std::cout << "rsdnheavyatoms= " << rsdnheavyatoms << std::endl;
-				 std::cout << "rsd.first_sidechain_atom()= " << rsd.first_sidechain_atom() << std::endl;
-				 for ( Size atomno=1; atomno <= rsdnheavyatoms; ++atomno ) {
-				 	 std::cout << "rsd.atom_name(" << atomno << " )= " << rsd.atom_name(atomno) << std::endl;
+				 std::cout << "rsdnheavyatoms = " << rsdnheavyatoms << std::endl;
+				 std::cout << "rsd.first_sidechain_atom() = " << rsd.first_sidechain_atom() << std::endl;
+				 for ( Size atomno = 1; atomno <= rsdnheavyatoms; ++atomno ) {
+				 	 std::cout << "rsd.atom_name( " << atomno << " ) = " << rsd.atom_name( atomno ) << std::endl;
 				 }
 
-				 std::cout << "rsd.nchi()=" << rsd.nchi() << std::endl;
+				 std::cout << "rsd.nchi() = " << rsd.nchi() << std::endl;
 
-				 utility::vector1< utility::vector1< Size > > const & chi_atoms_list=rsd.type().chi_atoms();
-				 utility::vector1< utility::vector1< Size > > const & all_chi_atoms_list=rsd.type().atoms_last_controlled_by_chi(); /*chi # 1 must be nucleic acid "chi"*/
+				 utility::vector1< utility::vector1< Size > > const & chi_atoms_list = rsd.type().chi_atoms();
+				 utility::vector1< utility::vector1< Size > > const & all_chi_atoms_list = rsd.type().atoms_last_controlled_by_chi(); /*chi # 1 must be nucleic acid "chi"*/
 
 
-				 for(Size chi_id=1; chi_id<=chi_atoms_list.size(); chi_id++){
+				 for ( Size chi_id = 1; chi_id <= chi_atoms_list.size(); chi_id++ ){
 					 std::cout << std::endl;
-					 std::cout << "chi_atoms_list[" << chi_id<< "].size()=" << chi_atoms_list[chi_id].size() << std::endl;
-					 for(Size n=1; n<=chi_atoms_list[chi_id].size(); n++){
-						 Size const atomno=chi_atoms_list[chi_id][n];
-					 	 std::cout << "rsd.atom_name(" << atomno << " )= " << rsd.atom_name(atomno) << std::endl;
+					 std::cout << "chi_atoms_list[" << chi_id << "].size() = " << chi_atoms_list[chi_id].size() << std::endl;
+					 for ( Size n = 1; n <= chi_atoms_list[chi_id].size(); n++ ){
+						 Size const atomno = chi_atoms_list[chi_id][n];
+					 	 std::cout << "rsd.atom_name( " << atomno << " ) = " << rsd.atom_name( atomno ) << std::endl;
 					 }
 
 				 }
-				 for(Size chi_id=1; chi_id<=chi_atoms_list.size(); chi_id++){
+				 for ( Size chi_id = 1; chi_id <= chi_atoms_list.size(); chi_id++ ){
 					 std::cout << std::endl;
-					 std::cout << "all_chi_atoms_list[" << chi_id<< "].size()=" << all_chi_atoms_list[chi_id].size() << std::endl;
-					 for(Size n=1; n<=all_chi_atoms_list[chi_id].size(); n++){
-						 Size const atomno=all_chi_atoms_list[chi_id][n];
-					 	 std::cout << "rsd.atom_name(" << atomno << " )= " << rsd.atom_name(atomno) << std::endl;
+					 std::cout << "all_chi_atoms_list[" << chi_id << "].size() = " << all_chi_atoms_list[chi_id].size() << std::endl;
+					 for ( Size n = 1; n <= all_chi_atoms_list[chi_id].size(); n++ ){
+						 Size const atomno = all_chi_atoms_list[chi_id][n];
+					 	 std::cout << "rsd.atom_name( " << atomno << " ) = " << rsd.atom_name( atomno ) << std::endl;
 					 }
 
 				 }
 
-				 utility_exit_with_message("rsd.path_distance( i, j ) < 4");
+				 utility_exit_with_message( "rsd.path_distance( i, j ) < 4" );
 			}
 
-			Real const START_fa_atr=mock_emap[fa_intra_RNA_base_phos_atr];
-			Real const START_fa_rep=mock_emap[fa_intra_RNA_base_phos_rep];
+			Real const START_fa_atr = mock_emap[fa_intra_RNA_base_phos_atr];
+			Real const START_fa_rep = mock_emap[fa_intra_RNA_base_phos_rep];
 
 			etable_energy_.atom_pair_energy( atom1, atom2, weight, mock_emap, dsq );
 
-			if(rsd.is_virtual(i) || rsd.is_virtual(j)){
-				Real const diff_fa_atr_E=mock_emap[fa_intra_RNA_base_phos_atr]-START_fa_atr;
-				Real const diff_fa_rep_E=mock_emap[fa_intra_RNA_base_phos_rep]-START_fa_rep;
+			if ( rsd.is_virtual( i ) || rsd.is_virtual( j ) ){
+				Real const diff_fa_atr_E = mock_emap[fa_intra_RNA_base_phos_atr] - START_fa_atr;
+				Real const diff_fa_rep_E = mock_emap[fa_intra_RNA_base_phos_rep] - START_fa_rep;
 
-				if(diff_fa_atr_E>0.001 || diff_fa_atr_E<-0.001){
-					std::cout << "At least one of the atoms in the pair " << i << "," << j << " | res= " << rsd.seqpos() << " is virtual";
-					std::cout << " but diff_fa_atr_E= " << diff_fa_atr_E << " is non-zero!" <<std::endl;
-					utility_exit_with_message("at least one of the atom in the pair is virtual BUT diff_fa_atr_E>0.001 || diff_fa_atr_E<-0.001");
+				if ( diff_fa_atr_E > 0.001 || diff_fa_atr_E <  - 0.001 ){
+					std::cout << "At least one of the atoms in the pair " << i << ", " << j << " | res = " << rsd.seqpos() << " is virtual";
+					std::cout << " but diff_fa_atr_E = " << diff_fa_atr_E << " is non - zero!" << std::endl;
+					utility_exit_with_message( "at least one of the atom in the pair is virtual BUT diff_fa_atr_E > 0.001 || diff_fa_atr_E <  - 0.001" );
 				}
 
 
 
-				if(diff_fa_rep_E>0.001 || diff_fa_rep_E<-0.001){
-					std::cout << "At least one of the atoms in the pair " << i << "," << j << " | res= " << rsd.seqpos() << " is virtual";
-					std::cout << " but diff_fa_rep_E= " << diff_fa_rep_E << " is non-zero!" <<std::endl;
-					utility_exit_with_message("at least one of the atom in the pair is virtual BUT diff_fa_rep_E>0.001 || diff_fa_rep_E<-0.001");
+				if ( diff_fa_rep_E > 0.001 || diff_fa_rep_E <  - 0.001 ){
+					std::cout << "At least one of the atoms in the pair " << i << ", " << j << " | res = " << rsd.seqpos() << " is virtual";
+					std::cout << " but diff_fa_rep_E = " << diff_fa_rep_E << " is non - zero!" << std::endl;
+					utility_exit_with_message( "at least one of the atom in the pair is virtual BUT diff_fa_rep_E > 0.001 || diff_fa_rep_E <  - 0.001" );
 				}
 			}
 
 			if ( dsq < Hydrogen_interaction_cutoff2 ) {
-				residue_fast_pair_energy_attached_H(rsd, i, rsd, j, rhbegin[ i ], rhend[ i ], rhbegin[ j ], rhend[ j ], mock_emap);
+				residue_fast_pair_energy_attached_H( rsd, i, rsd, j, rhbegin[ i ], rhend[ i ], rhbegin[ j ], rhend[ j ], mock_emap );
 			}
 		}
 	}
@@ -324,45 +324,45 @@ RNA_FullAtomVDW_BasePhosphate::eval_atom_derivative(
 ) const
 {
 
-	if(weights[ fa_intra_RNA_base_phos_sol] != 0.0){
+	if ( weights[ fa_intra_RNA_base_phos_sol] != 0.0 ){
 		//Please refer to paragraph at the end of RNA_FullAtomVDW_BasePhosphate::residue_energy for explanation.
 		//Again, if you want to implement this term, please ensure your implementation works properly (i.e. perform numerical_derivative_check() and etc),
 		//before committing the code to TRUNK!)
 		// Parin S. (sripakpa@stanford.edu). Jan 11, 2012
-		utility_exit_with_message("weights[ fa_intra_RNA_base_phos_sol ] != 0.0, but this term is not yet implemented!");
+		utility_exit_with_message( "weights[ fa_intra_RNA_base_phos_sol ] != 0.0, but this term is not yet implemented!" );
 	}
 
 	Size const seq_num = id.rsd();
 
-	if(pose.residue( seq_num ).is_RNA()==false) return;
+	if ( pose.residue( seq_num ).is_RNA() == false ) return;
 
-	conformation::Residue const & rsd= pose.residue( seq_num );
+	conformation::Residue const & rsd = pose.residue( seq_num );
 
 	conformation::Atom const & atom1( rsd.atom( id.atomno() ) );
 
-	Real const cp_weight=1.0;
+	Real const cp_weight = 1.0;
 
 	//std::cout << "eval_atom_deriv: seq_num=" << id.rsd() << " id.atomno()=" << id.atomno() << "[" << rsd.atom_name(id.atomno()) <<"]" << std::endl;
 
 
-	Vector f1,f2;
-	for ( Size nbr_atomno=1; nbr_atomno<=rsd.natoms(); nbr_atomno++ ) {
+	Vector f1, f2;
+	for ( Size nbr_atomno = 1; nbr_atomno <= rsd.natoms(); nbr_atomno++ ) {
 
- 		if( rsd.is_virtual( id.atomno() ) ) continue; //Is this necessary?
- 		if( rsd.is_virtual( nbr_atomno  ) ) continue; //Is this necessary?
+ 		if ( rsd.is_virtual( id.atomno() ) ) continue; //Is this necessary?
+ 		if ( rsd.is_virtual( nbr_atomno  ) ) continue; //Is this necessary?
 
-		bool base_phosphate_atom_pair=false;
+		bool base_phosphate_atom_pair = false;
 
-		if( rsd.RNA_type().atom_is_phosphate( id.atomno() ) && rsd.RNA_type().is_RNA_base_atom( nbr_atomno  ) ) base_phosphate_atom_pair=true;
-		if( rsd.RNA_type().atom_is_phosphate( nbr_atomno  ) && rsd.RNA_type().is_RNA_base_atom( id.atomno() ) ) base_phosphate_atom_pair=true;
+		if ( rsd.RNA_type().atom_is_phosphate( id.atomno() ) && rsd.RNA_type().is_RNA_base_atom( nbr_atomno  ) ) base_phosphate_atom_pair = true;
+		if ( rsd.RNA_type().atom_is_phosphate( nbr_atomno  ) && rsd.RNA_type().is_RNA_base_atom( id.atomno() ) ) base_phosphate_atom_pair = true;
 
-		if(base_phosphate_atom_pair==false) continue;
+		if ( base_phosphate_atom_pair == false ) continue;
 
-		if(rsd.path_distance( nbr_atomno, id.atomno() ) < 4) utility_exit_with_message("rsd.path_distance( nbr_atomno, id.atomno() ) < 4");
+		if ( rsd.path_distance( nbr_atomno, id.atomno() ) < 4 ) utility_exit_with_message( "rsd.path_distance( nbr_atomno, id.atomno() ) < 4" );
 
 		conformation::Atom const & atom2( rsd.atom( nbr_atomno ) );
 
-		Real const dE_dR_over_r= etable_energy_.intrares_evaluator().eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 );
+		Real const dE_dR_over_r = etable_energy_.intrares_evaluator().eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 );
 
 		if ( dE_dR_over_r != 0.0 ) {
 			F1 += dE_dR_over_r * cp_weight * f1;
@@ -381,9 +381,9 @@ RNA_FullAtomVDW_BasePhosphate::setup_for_scoring( pose::Pose & pose, scoring::Sc
 {
 
 
-	if (pose.total_residue()>0) {
-		if ( pose.residue(1).type().atom_type_set_ptr() != etable_.atom_set() ) {
-			utility_exit_with_message( "Illegal attempt to score with non-identical atom set between pose and etable " );
+	if ( pose.total_residue() > 0 ) {
+		if ( pose.residue( 1 ).type().atom_type_set_ptr() != etable_.atom_set() ) {
+			utility_exit_with_message( "Illegal attempt to score with non - identical atom set between pose and etable " );
 		}
 	}
 
@@ -395,9 +395,9 @@ void
 RNA_FullAtomVDW_BasePhosphate::setup_for_derivatives( pose::Pose & pose, scoring::ScoreFunction const & /*scfxn*/ ) const
 {
 
-	if (pose.total_residue()>0) {
-		if ( pose.residue(1).type().atom_type_set_ptr() != etable_.atom_set() ) {
-			utility_exit_with_message( "Illegal attempt to score with non-identical atom set between pose and etable " );
+	if ( pose.total_residue() > 0 ) {
+		if ( pose.residue( 1 ).type().atom_type_set_ptr() != etable_.atom_set() ) {
+			utility_exit_with_message( "Illegal attempt to score with non - identical atom set between pose and etable " );
 		}
 	}
 
@@ -412,9 +412,9 @@ RNA_FullAtomVDW_BasePhosphate::setup_for_packing( pose::Pose & pose, pack::task:
 	//NOT SURE IF THIS WORKS!
 
 
-	if (pose.total_residue()>0) {
-		if ( pose.residue(1).type().atom_type_set_ptr() != etable_.atom_set() ) {
-			utility_exit_with_message( "Illegal attempt to score with non-identical atom set between pose and etable " );
+	if ( pose.total_residue() > 0 ) {
+		if ( pose.residue( 1 ).type().atom_type_set_ptr() != etable_.atom_set() ) {
+			utility_exit_with_message( "Illegal attempt to score with non - identical atom set between pose and etable " );
 		}
 	}
 

@@ -43,7 +43,7 @@ RNA_DataInfo::RNA_DataInfo( RNA_DataInfo const & src ) :
 }
 
 RNA_DataInfo &
-RNA_DataInfo::operator=( RNA_DataInfo const & src ){
+RNA_DataInfo::operator = ( RNA_DataInfo const & src ){
 
 	rna_data_ = src.rna_data_;
 	backbone_burial_ = src.backbone_burial_;

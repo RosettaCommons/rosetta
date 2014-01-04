@@ -43,7 +43,7 @@ class RNA_CentroidInfo: public basic::datacache::CacheableData  {
 
 public:
 
-RNA_CentroidInfo(): calculated_(false) {};
+RNA_CentroidInfo(): calculated_( false ) {};
 
   RNA_CentroidInfo( RNA_CentroidInfo const & src );
 
@@ -74,7 +74,7 @@ RNA_CentroidInfo(): calculated_(false) {};
   }
 
   void
-  set_calculated( bool const & setting)
+  set_calculated( bool const & setting )
   {
     calculated_ = setting;
   }

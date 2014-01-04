@@ -38,8 +38,11 @@ namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const monte
 namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const verbose_scores; } }
 namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const skip_deletions; } }
 namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const erraser; } }
-namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const allow_internal_moves; } }
+namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const allow_internal_hinge_moves; } }
+namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const allow_internal_local_moves; } }
 namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const allow_skip_bulge; } }
+namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const allow_from_scratch; } }
+namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const allow_split_off; } }
 namespace stepwise { namespace monte_carlo { extern IntegerOptionKey const cycles; } }
 namespace stepwise { namespace monte_carlo { extern RealOptionKey const temperature; } }
 namespace stepwise { namespace monte_carlo { extern RealOptionKey const add_delete_frequency; } }

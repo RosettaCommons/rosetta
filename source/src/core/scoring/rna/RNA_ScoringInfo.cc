@@ -69,7 +69,7 @@ rna_scoring_info_from_pose( pose::Pose const & pose )
 	//using core::pose::datacache::CacheableDataType::RNA_SCORING_INFO;
 
 	assert( pose.data().has( core::pose::datacache::CacheableDataType::RNA_SCORING_INFO ) );
-	return *( static_cast< RNA_ScoringInfo const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::RNA_SCORING_INFO)() ) );
+	return *( static_cast< RNA_ScoringInfo const * > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::RNA_SCORING_INFO )() ) );
 }
 
 /// @details Either returns a non-const reference to the rna_scoring object already stored
@@ -81,7 +81,7 @@ nonconst_rna_scoring_info_from_pose( pose::Pose & pose )
 	//using core::pose::datacache::CacheableDataType::RNA_SCORING_INFO;
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::RNA_SCORING_INFO ) ) {
-		return *( static_cast< RNA_ScoringInfo * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RNA_SCORING_INFO )() ));
+		return *( static_cast< RNA_ScoringInfo * > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RNA_SCORING_INFO )() ) );
 	}
 	// else
 	RNA_ScoringInfoOP rna_scoring_info = new RNA_ScoringInfo();

@@ -52,9 +52,10 @@ namespace rna {
 		is_prepend_( false ),
 		is_internal_( false ),
 		add_virt_res_as_root_( false ),
-		rebuild_bulge_mode_( false ),
 		floating_base_( false ),
-		floating_base_anchor_res_( 0 )
+		floating_base_anchor_res_( 0 ),
+		rebuild_bulge_mode_( false ),
+		sample_both_sugar_base_rotamer_( false )
 	{
 
 		//These vectors and map should be empty to begin with, but not harm to ensure this.
@@ -254,6 +255,10 @@ namespace rna {
 	utility::vector1< core::Size > const & StepWiseRNA_JobParameters::rmsd_res_list() const{
 		if ( rmsd_res_list_.size() == 0 ) utility_exit_with_message( "rmsd_res_list_.size() == 0" );
 		return rmsd_res_list_;
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< core::Size > const & StepWiseRNA_JobParameters::terminal_res() const{
+		return terminal_res_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< core::Size > const & StepWiseRNA_JobParameters::working_terminal_res() const{
@@ -459,6 +464,11 @@ namespace rna {
 	StepWiseRNA_JobParameters::set_rmsd_res_list(	utility::vector1< core::Size > const & rmsd_res_list ){
 		rmsd_res_list_ = rmsd_res_list;
 		sort_seq_num_list( rmsd_res_list_ );
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseRNA_JobParameters::set_terminal_res(	utility::vector1< core::Size > const & terminal_res ){
+		terminal_res_ = terminal_res;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void

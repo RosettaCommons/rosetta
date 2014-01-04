@@ -101,6 +101,7 @@ sources = {
 		"pmut_scan_parallel",
 		"sequence_recovery",
 		"beta_peptide_modeling",
+	        "rna_design",
 		"supercharge",
                 "zinc_heterodimer_design",
                 #"zinc1_homodimer_setup", #protein interface with one zinc
@@ -119,6 +120,14 @@ sources = {
 	"public/enzdes": [
 		"CstfileToTheozymePDB",
 		"enzyme_design",
+	],
+        "public/farna": [
+	    "rna_cluster",
+	    "rna_database",
+	    "rna_denovo",
+	    "rna_extract",
+	    "rna_minimize",
+	    "rna_score",
 	],
 	"public/flexpep_docking": [
 		"BuildPeptide",
@@ -164,30 +173,23 @@ sources = {
 	"public/pocket": [
 		"pocket_measure",
 	],
-	"public/rna": [
-		"rna_cluster",
-		"rna_database",
-		"rna_denovo",
-		"rna_design",
-		"rna_extract",
-		"rna_helix",
-		"rna_minimize",
-		"rna_score",
-        "rna_thread",
-        "rna_suitename",
+        "public/rna_util": [
+	    "rna_thread",
+	    "rna_suitename",
 	],
 	"public/surface_docking": [
-		"surface_docking",
+	    "surface_docking",
 	],
-	"public/stepwise/assembly/rna": [
-		"swa_rna_main",
-		"swa_rna_util",
-		"erraser_minimizer",
+	"public/stepwise/enumerate/rna": [
+	    "rna_helix",
+	    "swa_rna_main",
+	    "swa_rna_util",
+	    "erraser_minimizer",
 	],
 	"public/stepwise/monte_carlo/rna": [
 		"swm_rna",
 	],
-	"public/stepwise/assembly/protein": [
+	"public/stepwise/enumerate/protein": [
 		"swa_protein_main",
         ],
 	"public/rosetta_scripts": [

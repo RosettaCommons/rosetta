@@ -43,13 +43,11 @@ namespace screener {
 										Size const reference_res,
 										Size const gap_size,
 										bool const is_internal = false,
-										bool const separate_moving_residue_to_estimate_baseline = true );
+										bool const separate_moving_residue_to_estimate_baseline = true,
+										bool const sample_both_sugar_base_rotamer = false );
 
 		//destructor
 		~AtrRepScreener();
-
-		void
-		set_sample_both_sugar_base_rotamer( bool const & setting ){ sample_both_sugar_base_rotamer_ = setting; }
 
 		Real delta_atr_score() const{ return delta_atr_score_; }
 		Real delta_rep_score() const{ return delta_rep_score_; }
@@ -82,6 +80,7 @@ namespace screener {
 		Size const gap_size_;
 		bool const is_prepend_;
 		bool const is_internal_;
+		bool const sample_both_sugar_base_rotamer_;
 		bool const separate_moving_residue_to_estimate_baseline_;
 
 		Real rep_cutoff_;
@@ -89,7 +88,6 @@ namespace screener {
 		Real base_rep_score_;
 		Real delta_atr_score_;
 		Real delta_rep_score_;
-		bool sample_both_sugar_base_rotamer_;
 		bool output_pdb_;
 		bool verbose_;
 		bool kic_sampling_;

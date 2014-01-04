@@ -21,6 +21,7 @@
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloOptions.fwd.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_DeleteMover.fwd.hh>
+#include <protocols/stepwise/monte_carlo/rna/RNA_FromScratchMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddOrDeleteMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_ResampleMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
@@ -72,15 +73,17 @@ namespace rna {
 
 		void initialize_movers();
 
-		void initialize_for_movie();
+		void initialize_for_movie( pose::Pose const & pose );
+
+		void initialize_pose_if_empty( pose::Pose & pose );
+
+		void
+		output_movie( pose::Pose const & pose, Size const k, std::string const tag, std::string const & movie_file );
 
 		Real
 		display_progress( pose::Pose & pose, Size const cycle_num );
 
 		Real show_scores( core::pose::Pose & pose, std::string const tag );
-
-		bool
-		switch_focus_among_poses_randomly( pose::Pose & pose ) const;
 
 		void
 		set_minimize_single_res( bool const minimize_single_res );
@@ -96,6 +99,7 @@ namespace rna {
 		StepWiseRNA_MonteCarloOptionsCOP options_;
 		RNA_DeleteMoverOP rna_delete_mover_;
 		RNA_AddMoverOP rna_add_mover_;
+		RNA_FromScratchMoverOP rna_from_scratch_mover_;
 		RNA_AddOrDeleteMoverOP rna_add_or_delete_mover_;
 		RNA_ResampleMoverOP rna_resample_mover_;
 

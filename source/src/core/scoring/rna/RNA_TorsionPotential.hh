@@ -74,7 +74,9 @@ public:
 
 
 	//Real
-	//	compute_torsion_potential( Size const & torsion_number, Real const & value, Real const & delta , Real const & next_alpha ) const;
+	//	compute_torsion_potential( Size const & torsion_number, Real const & value, Real const & delta, Real const & next_alpha ) const;
+
+	void set_verbose( bool const setting ){ verbose_ = setting; }
 
 private:
 
@@ -92,23 +94,23 @@ private:
 	init_fade_functions();
 
 	bool
-	Should_score_torsion( core::pose::Pose const & pose, core::id::TorsionID const & torsion_id) const;
+	Should_score_torsion( core::pose::Pose const & pose, core::id::TorsionID const & torsion_id ) const;
 
 	bool
 	get_f1_f2( core::id::TorsionID const & torsion_id,
 					 core::pose::Pose const & pose, core::id::AtomID const & id, Vector & f1, Vector & f2 ) const;
 
 	void
-	Output_boolean(std::string const & tag, bool boolean) const;
+	Output_boolean( std::string const & tag, bool boolean ) const;
 
 	bool
-	Is_cutpoint_closed_atom(core::conformation::Residue const & rsd, core::id::AtomID const & id) const;
+	Is_cutpoint_closed_atom( core::conformation::Residue const & rsd, core::id::AtomID const & id ) const;
 
 	void
-	print_torsion_info(core::pose::Pose const & pose, id::TorsionID const & torsion_id) const;
+	print_torsion_info( core::pose::Pose const & pose, id::TorsionID const & torsion_id ) const;
 
 	bool
-	Is_cutpoint_closed_torsion( core::pose::Pose const & pose, core::id::TorsionID const & torsion_id) const;
+	Is_cutpoint_closed_torsion( core::pose::Pose const & pose, core::id::TorsionID const & torsion_id ) const;
 
 	std::string path_to_torsion_files_;
 
@@ -129,7 +131,7 @@ private:
 	core::scoring::func::SumFuncOP fade_alpha_ap_;
 
 	bool const skip_chainbreak_torsions_;
-	bool const verbose_;
+	bool verbose_;
 	bool use_new_potential_;
 	bool const use_2prime_OH_potential_;
 	Real const syn_G_potential_bonus_;

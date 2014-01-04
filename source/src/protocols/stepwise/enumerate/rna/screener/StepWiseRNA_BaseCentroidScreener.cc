@@ -470,8 +470,7 @@ namespace screener {
 
 			for ( Size m = 1; m <= moving_residues_.size(); m++ ) {
 				Size const & moving_res = moving_residues_[ m ];
-				if ( verbose ) TR << "about to check stack: " << terminal_res << " " << moving_res << " " << stacked_on_terminal_res_in_original_pose_( terminal_res, moving_res ) << std::endl;
-				TR << "checking: " << terminal_res << " on " << moving_res << " : " <<  check_base_stack( terminal_res, moving_res, false ) << std::endl;
+				if ( verbose ) TR << "about to check stack: " << terminal_res << " " << moving_res << " " << stacked_on_terminal_res_in_original_pose_( terminal_res, moving_res ) << " " <<  check_base_stack( terminal_res, moving_res, false ) << std::endl;
 				if ( !stacked_on_terminal_res_in_original_pose_( terminal_res, moving_res ) &&
 						 check_base_stack( terminal_res, moving_res, verbose  ) ) return false;
 			}

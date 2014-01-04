@@ -178,6 +178,7 @@ namespace monte_carlo {
 			move_type_name[ NO_MOVE ] = "NO_MOVE";
 			move_type_name[ ADD ]    = "ADD";
 			move_type_name[ DELETE ] = "DELETE";
+			move_type_name[ FROM_SCRATCH ] = "FROM_SCRATCH";
 			move_type_name[ RESAMPLE ] = "RESAMPLE";
 			move_type_name[ RESAMPLE_INTERNAL_LOCAL ] = "RESAMPLE_INTERNAL_LOCAL";
 			init = true;

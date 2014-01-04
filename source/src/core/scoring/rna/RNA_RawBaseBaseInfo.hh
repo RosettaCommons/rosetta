@@ -43,7 +43,7 @@ class RNA_RawBaseBaseInfo : public basic::datacache::CacheableData {
 
 public:
 
-	RNA_RawBaseBaseInfo(): calculated_(false) {};
+	RNA_RawBaseBaseInfo(): calculated_( false ) {};
 
   RNA_RawBaseBaseInfo( RNA_RawBaseBaseInfo const & src );
 
@@ -84,26 +84,26 @@ public:
   }
 
   void
-  set_calculated( bool const & setting)
+  set_calculated( bool const & setting )
   {
     calculated_ = setting;
   }
 
-  ObjexxFCL::FArray3D< Real > & base_pair_array()  { return  base_pair_array_; }
-  ObjexxFCL::FArray3D< Real > & base_axis_array()  { return  base_axis_array_; }
-  ObjexxFCL::FArray3D< Real > & base_stagger_array()  { return  base_stagger_array_; }
-  ObjexxFCL::FArray2D< Real > & base_stack_array()  { return  base_stack_array_; }
-  ObjexxFCL::FArray2D< Real > & base_stack_axis_array()  { return  base_stack_axis_array_; }
-  ObjexxFCL::FArray2D< Real > & base_geometry_orientation_array()  { return  base_geometry_orientation_array_; }
-  ObjexxFCL::FArray2D< Real > & base_geometry_height_array()  { return  base_geometry_height_array_; }
+  ObjexxFCL::FArray3D < Real > & base_pair_array()  { return  base_pair_array_; }
+  ObjexxFCL::FArray3D < Real > & base_axis_array()  { return  base_axis_array_; }
+  ObjexxFCL::FArray3D < Real > & base_stagger_array()  { return  base_stagger_array_; }
+  ObjexxFCL::FArray2D < Real > & base_stack_array()  { return  base_stack_array_; }
+  ObjexxFCL::FArray2D < Real > & base_stack_axis_array()  { return  base_stack_axis_array_; }
+  ObjexxFCL::FArray2D < Real > & base_geometry_orientation_array()  { return  base_geometry_orientation_array_; }
+  ObjexxFCL::FArray2D < Real > & base_geometry_height_array()  { return  base_geometry_height_array_; }
 
-  ObjexxFCL::FArray3D< Real > const & base_pair_array() const { return  base_pair_array_; }
-  ObjexxFCL::FArray3D< Real > const & base_axis_array() const { return  base_axis_array_; }
-  ObjexxFCL::FArray3D< Real > const & base_stagger_array() const { return  base_stagger_array_; }
-  ObjexxFCL::FArray2D< Real > const & base_stack_array() const { return  base_stack_array_; }
-  ObjexxFCL::FArray2D< Real > const & base_stack_axis_array() const { return  base_stack_axis_array_; }
-  ObjexxFCL::FArray2D< Real > const & base_geometry_orientation_array() const { return  base_geometry_orientation_array_; }
-  ObjexxFCL::FArray2D< Real > const & base_geometry_height_array() const { return  base_geometry_height_array_; }
+  ObjexxFCL::FArray3D < Real > const & base_pair_array() const { return  base_pair_array_; }
+  ObjexxFCL::FArray3D < Real > const & base_axis_array() const { return  base_axis_array_; }
+  ObjexxFCL::FArray3D < Real > const & base_stagger_array() const { return  base_stagger_array_; }
+  ObjexxFCL::FArray2D < Real > const & base_stack_array() const { return  base_stack_array_; }
+  ObjexxFCL::FArray2D < Real > const & base_stack_axis_array() const { return  base_stack_axis_array_; }
+  ObjexxFCL::FArray2D < Real > const & base_geometry_orientation_array() const { return  base_geometry_orientation_array_; }
+  ObjexxFCL::FArray2D < Real > const & base_geometry_height_array() const { return  base_geometry_height_array_; }
 
 
 private:
@@ -112,14 +112,14 @@ private:
   //The third dimension here refers to the edge of the base that is pairing.
   // Note that these are "scratch" arrays, not filtered to avoid,
   // e.g. one base edge forming multiple base pairs.
-  ObjexxFCL::FArray3D< Real > base_pair_array_;
-  ObjexxFCL::FArray3D< Real > base_axis_array_;
-  ObjexxFCL::FArray3D< Real > base_stagger_array_;
-  ObjexxFCL::FArray2D< Real > base_stack_array_;
-  ObjexxFCL::FArray2D< Real > base_stack_axis_array_;
+  ObjexxFCL::FArray3D < Real > base_pair_array_;
+  ObjexxFCL::FArray3D < Real > base_axis_array_;
+  ObjexxFCL::FArray3D < Real > base_stagger_array_;
+  ObjexxFCL::FArray2D < Real > base_stack_array_;
+  ObjexxFCL::FArray2D < Real > base_stack_axis_array_;
 
-  ObjexxFCL::FArray2D< Real > base_geometry_orientation_array_;
-  ObjexxFCL::FArray2D< Real > base_geometry_height_array_;
+  ObjexxFCL::FArray2D < Real > base_geometry_orientation_array_;
+  ObjexxFCL::FArray2D < Real > base_geometry_height_array_;
 
   bool calculated_;
 

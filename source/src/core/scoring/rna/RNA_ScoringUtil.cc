@@ -34,22 +34,22 @@ get_fade_correction(
 	fade_value = 1.0;
 	fade_deriv = 0.0;
 
-	if (z < cutoff_lower || z > cutoff_upper ){
+	if ( z < cutoff_lower || z > cutoff_upper ){
 		fade_value = 0.0;
 	} else if ( z < cutoff_lower + fade_zone ) {
 		//Check little strip near lower cutoff.
-		Real const b = -1.0 * ( z - (cutoff_lower + fade_zone) )/ fade_zone;
+		Real const b = -1.0 * ( z - ( cutoff_lower + fade_zone ) )/ fade_zone;
 		Real const b2 = b*b;
 		Real const b3 = b2*b;
 		fade_value = ( 2 * b3 - 3 * b2 + 1 );
-		fade_deriv = -1.0 * (6 * b2 - 6 * b ) / fade_zone;
+		fade_deriv = -1.0 * ( 6 * b2 - 6 * b ) / fade_zone;
 	} else if ( z > cutoff_upper - fade_zone ) {
 		//Check little strip near upper cutoff.
-		Real const b =  ( z - (cutoff_upper - fade_zone) )/ fade_zone;
+		Real const b =  ( z - ( cutoff_upper - fade_zone ) )/ fade_zone;
 		Real const b2 = b*b;
 		Real const b3 = b2*b;
 		fade_value = ( 2 * b3 - 3 * b2 + 1 );
-		fade_deriv = (6 * b2 - 6 * b ) / fade_zone;
+		fade_deriv = ( 6 * b2 - 6 * b ) / fade_zone;
 	}
 
 	return;

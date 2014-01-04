@@ -33,10 +33,10 @@
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
-namespace core {
-namespace scoring {
-namespace rna {
-namespace chemical_shift {
+namespace core { 
+namespace scoring { 
+namespace rna { 
+namespace chemical_shift { 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ namespace chemical_shift {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-enum atomitem{oshi = 1, xdir, ydir, zdir, csca, suga, rcl1, rcl2, rcl3, maca, maqx, maqw, maqy, maqz, marx, mary, marz, chco, chrg, last_atomdesc};
+enum atomitem{ oshi = 1, xdir, ydir, zdir, csca, suga, rcl1, rcl2, rcl3, maca, maqx, maqw, maqy, maqz, marx, mary, marz, chco, chrg, last_atomdesc}; 
                    //1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    19              20
 
         //const char* const atomdesc[] = {"OSHI", "XDIR", "YDIR", "ZDIR", "CSCA", "SUGA",
@@ -75,40 +75,40 @@ enum atomitem{oshi = 1, xdir, ydir, zdir, csca, suga, rcl1, rcl2, rcl3, maca, ma
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class RNA_CS_residue_parameters : public utility::pointer::ReferenceCount {
+class RNA_CS_residue_parameters : public utility::pointer::ReferenceCount { 
 
 
 	public:
 
-		RNA_CS_residue_parameters(chemical::AA const & res_aa);
+		RNA_CS_residue_parameters( chemical::AA const & res_aa ); 
 
-		~RNA_CS_residue_parameters();
+		~RNA_CS_residue_parameters(); 
 
-		std::string const base_name() const;
+		std::string const base_name() const; 
 
-		Size num_rings() const;
+		Size num_rings() const; 
 
-		Real ring_intensity(Size const ring_ID) const;
+		Real ring_intensity( Size const ring_ID ) const; 
 
-		Real ring_radius(Size const ring_ID) const;
+		Real ring_radius( Size const ring_ID ) const; 
 
-		Real ring_height(Size const ring_ID) const;
+		Real ring_height( Size const ring_ID ) const; 
 
-		Size get_atomnames_size() const;
+		Size get_atomnames_size() const; 
 
-		std::string const get_atomname(Size const count) const;
+		std::string const get_atomname( Size const count ) const; 
 
 		//Undefinded, commenting out to fix PyRosetta build utility::vector1< std::string > const & get_ring_center_representative_atoms() const;
 
-		Real atom_data(Size const atom, atomitem const item) const;
+		Real atom_data( Size const atom, atomitem const item ) const; 
 
-		Real ring_current_coeff() const;
+		Real ring_current_coeff() const; 
 
-		Real magentic_anisotropy_r_coeff() const;
+		Real magentic_anisotropy_r_coeff() const; 
 
-		Real magentic_anisotropy_q_coeff() const;
+		Real magentic_anisotropy_q_coeff() const; 
 
-		chemical::AA aa() const;
+		chemical::AA aa() const; 
 
 	private:
 
@@ -121,48 +121,48 @@ class RNA_CS_residue_parameters : public utility::pointer::ReferenceCount {
 		core::Real const MACQ_; //This constant does not depend on specific RNA base, but moved here for convenient.
 		core::Real const MACR_; //This constant does not depend on specific RNA base, but moved here for convenient.
 
-		std::string BASE_;
-		core::Size num_rings_;
+		std::string BASE_; 
+		core::Size num_rings_; 
 
 
 		utility::vector1< core::Real > ring_intensity_; //RCI ring current intensity (relative to benzene?)
 		utility::vector1< core::Real > ring_radius_;    //RCR: Radius of the ring (Angstrom)
 		utility::vector1< core::Real > ring_height_;     //RCH: Distance of the ring current loops to the molecular plane (Angstrom)
 
-		utility::vector1< std::string > atomnames_;
+		utility::vector1< std::string > atomnames_; 
 
 		utility::vector1< utility::vector1< core::Real > > realatomdata_;  //[maxdiffbases][maxatoms][last_atomdesc];
 
-};
+}; 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class RNA_CS_parameters : public utility::pointer::ReferenceCount {
+class RNA_CS_parameters : public utility::pointer::ReferenceCount { 
 
 
 	//COMM RNA data set without charge
 
 	public:
 
-		RNA_CS_parameters();
+		RNA_CS_parameters(); 
 
 
-	  ~RNA_CS_parameters();
+	  ~RNA_CS_parameters(); 
 
 	public:
 
 		RNA_CS_residue_parameters const &
-		get_RNA_CS_residue_parameters(chemical::AA const res_aa) const;
+		get_RNA_CS_residue_parameters( chemical::AA const res_aa ) const; 
 
 
 	private:
-		std::string COMM_;
-		RNA_CS_residue_parameters const CS_RAD_params_;
-		RNA_CS_residue_parameters const CS_RGU_params_;
-		RNA_CS_residue_parameters const CS_RCY_params_;
-		RNA_CS_residue_parameters const CS_URA_params_;
+		std::string COMM_; 
+		RNA_CS_residue_parameters const CS_RAD_params_; 
+		RNA_CS_residue_parameters const CS_RGU_params_; 
+		RNA_CS_residue_parameters const CS_RCY_params_; 
+		RNA_CS_residue_parameters const CS_URA_params_; 
 
-};
+}; 
 
 
 

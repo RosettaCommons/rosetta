@@ -36,7 +36,7 @@ option.add( basic::options::OptionKeys::in::path::fragments, "Fragment file inpu
 option.add( basic::options::OptionKeys::in::path::pdb, "PDB file input search paths" );
 option.add( basic::options::OptionKeys::in::path::database, "Database file input search paths.  If the database is not found the ROSETTA3_DB environment variable is tried." );
 option.add( basic::options::OptionKeys::in::file::file, "Input file option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::in::file::s, "Name(s) of single PDB file(s) to process" );
+option.add( basic::options::OptionKeys::in::file::s, "Name(s) of single PDB file(s) to process" ).def();
 option.add( basic::options::OptionKeys::in::file::l, "File(s) containing list(s) of PDB files to process" );
 option.add( basic::options::OptionKeys::in::file::list, "File(s) containing list(s) of PDB files.  PDBs on the same line become one pose" );
 option.add( basic::options::OptionKeys::in::file::screening_list, "Files containing lists of PDB files. all permutations of the files in the list become poses" );
@@ -130,8 +130,8 @@ option.add( basic::options::OptionKeys::in::file::fold_tree, "User defined fold 
 option.add( basic::options::OptionKeys::in::file::obey_ENDMDL, "Stop reading a PDB after ENDMDL card; effectively read only first model in multimodel NMR PDBs" ).def(false);
 option.add( basic::options::OptionKeys::in::file::new_chain_order, "ensures chain from different MODEL records have differnet mini chains" ).def(false);
 option.add( basic::options::OptionKeys::in::file::ddg_predictions_file, "File that contains mutational ddG information. Used by ddG task operation/filter." ).def("");
-option.add( basic::options::OptionKeys::in::file::input_res, "Residues already present in starting file" );
-option.add( basic::options::OptionKeys::in::file::minimize_res, "Residues to minimize" );
+option.add( basic::options::OptionKeys::in::file::input_res, "Residues already present in starting file" ).def();
+option.add( basic::options::OptionKeys::in::file::minimize_res, "Residues to minimize" ).def();
 option.add( basic::options::OptionKeys::in::file::md_schfile, "File name containing MD schedule" );
 option.add( basic::options::OptionKeys::in::file::read_pdb_link_records, "Sets whether or not the LINK records in PDB files are read.  The default value is false." ).shortd( "Read LINK records?" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::in::file::native_contacts, "native contacts pair list for fnat/fnon-nat calculation in Docking" );
@@ -2702,8 +2702,11 @@ option.add( basic::options::OptionKeys::stepwise::monte_carlo::monte_carlo, "mon
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::verbose_scores, "Show all score components" ).def(false);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::skip_deletions, "no delete moves -- just for testing" ).def(false);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::erraser, "Use KIC sampling" ).def(true);
-option.add( basic::options::OptionKeys::stepwise::monte_carlo::allow_internal_moves, "Allow moves in which internal cutpoints are created to allow ERRASER rebuilds" ).def(false);
+option.add( basic::options::OptionKeys::stepwise::monte_carlo::allow_internal_hinge_moves, "Allow moves in which internal suites are sampled (hinge-like motions)" ).def(true);
+option.add( basic::options::OptionKeys::stepwise::monte_carlo::allow_internal_local_moves, "Allow moves in which internal cutpoints are created to allow ERRASER rebuilds" ).def(false);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::allow_skip_bulge, "Allow moves in which an intervening residue is skipped and the next one is modeled as floating base" ).def(false);
+option.add( basic::options::OptionKeys::stepwise::monte_carlo::allow_from_scratch, "Allow modeling of 'free' dinucleotides that are not part of input poses" ).def(false);
+option.add( basic::options::OptionKeys::stepwise::monte_carlo::allow_split_off, "Allow chunks that do not contain fixed domains to split off after nucleating on fixed domains." ).def(true);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::cycles, "Number of Monte Carlo cycles" ).def(50);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::temperature, "Monte Carlo temperature" ).def(1.0);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::add_delete_frequency, "Frequency of add/delete vs. resampling" ).def(0.5);

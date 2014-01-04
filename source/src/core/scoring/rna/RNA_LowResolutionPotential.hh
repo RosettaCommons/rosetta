@@ -82,17 +82,17 @@ public:
 		Vector const & centroid1,
 		Vector const & centroid2,
 		core::kinematics::Stub const & stub1,
-		core::kinematics::Stub const & stub2) const;
+		core::kinematics::Stub const & stub2 ) const;
 
 	Real
 	rna_backbone_backbone_pair_energy(
 		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2) const;
+		conformation::Residue const & rsd2 ) const;
 
 	Real
 	rna_repulsive_pair_energy(
 		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2) const;
+		conformation::Residue const & rsd2 ) const;
 
 	// void initialize_atom_numbers_for_backbone_score_calculations( pose::Pose & pose ) const; // Deprecated.Commenting out to make Python bindings compile.
 
@@ -155,7 +155,7 @@ public:
 		Vector const & centroid1,
 		Vector const & centroid2,
 		core::kinematics::Stub const & stub1,
-		core::kinematics::Stub const & stub2) const;
+		core::kinematics::Stub const & stub2 ) const;
 
 	void
 	more_precise_base_pair_classification( bool const & value ){ more_precise_base_pair_classification_ = value; }
@@ -171,18 +171,18 @@ private:
 		Vector const & centroid1,
 		Vector const & centroid2,
 		core::kinematics::Stub const & stub1,
-		core::kinematics::Stub const & stub2) const;
+		core::kinematics::Stub const & stub2 ) const;
 
 	Real
 	rna_base_backbone_pair_energy_one_way(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		Vector const & centroid1,
-		core::kinematics::Stub const & stub1) const;
+		core::kinematics::Stub const & stub1 ) const;
 
 	Size
 	find_backbone_oxygen_atom(
-     ObjexxFCL::FArray2D< Size > const & atom_number_for_backbone_score_calculations,
+     ObjexxFCL::FArray2D < Size > const & atom_number_for_backbone_score_calculations,
 		 Size const & i,
 		 Size const & atom_num_i ) const;
 
@@ -213,7 +213,7 @@ private:
 
 	Real get_rna_axis_score(
    Real const cos_theta,
-	 Real & deriv = dummy_deriv) const;
+	 Real & deriv = dummy_deriv ) const;
 
 	Real get_rna_stagger_score( Distance const height, Real & deriv = dummy_deriv ) const;
 
@@ -275,7 +275,7 @@ private:
 	check_for_base_neighbor(
     conformation::Residue const & rsd1,
 		Vector const & heavy_atom_j,
-		Real & atom_cutoff_weight) const;
+		Real & atom_cutoff_weight ) const;
 
 	void
 	setup_precise_zeta_cutoffs( chemical::AA const & na_rad,
@@ -293,22 +293,22 @@ private:
 private: // data
 
 	// Knowledge-based statistics -- read in from files?
-	ObjexxFCL::FArray5D< Real > rna_basepair_xy_;
-	ObjexxFCL::FArray1D< Real > rna_stagger_;
-	ObjexxFCL::FArray1D< Real > rna_axis_;
+	ObjexxFCL::FArray5D < Real > rna_basepair_xy_;
+	ObjexxFCL::FArray1D < Real > rna_stagger_;
+	ObjexxFCL::FArray1D < Real > rna_axis_;
 
 	utility::vector1< std::string > RNA_backbone_oxygen_atoms_;
 	utility::vector1< Size > atom_numbers_for_backbone_score_calculations_;
 
-	ObjexxFCL::FArray4D< Real > rna_base_backbone_xy_;
+	ObjexxFCL::FArray4D < Real > rna_base_backbone_xy_;
 
-	ObjexxFCL::FArray1D< Real > rna_backbone_backbone_weight_;
-	ObjexxFCL::FArray1D< Real > rna_backbone_backbone_potential_;
+	ObjexxFCL::FArray1D < Real > rna_backbone_backbone_weight_;
+	ObjexxFCL::FArray1D < Real > rna_backbone_backbone_potential_;
 
-	ObjexxFCL::FArray1D< Real > rna_repulsive_weight_;
+	ObjexxFCL::FArray1D < Real > rna_repulsive_weight_;
 
-	ObjexxFCL::FArray1D< Real > zeta_hoogsteen_cutoff_precise_;
-	ObjexxFCL::FArray1D< Real > zeta_sugar_cutoff_precise_;
+	ObjexxFCL::FArray1D < Real > zeta_hoogsteen_cutoff_precise_;
+	ObjexxFCL::FArray1D < Real > zeta_sugar_cutoff_precise_;
 
 	//Some parameters for scoring.
 	Distance const rna_basepair_radius_cutoff_;

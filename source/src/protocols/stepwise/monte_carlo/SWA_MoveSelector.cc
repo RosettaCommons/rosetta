@@ -46,15 +46,58 @@ namespace monte_carlo {
 
 	//Constructor
 	SWA_MoveSelector::SWA_MoveSelector():
-		disallow_delete_( false ),
-		disallow_resample_( false ),
-		disallow_skip_bulge_( false ),
+		allow_delete_( true ),
+		allow_resample_during_add_delete_( false ),
+		allow_skip_bulge_( false ),
+		allow_from_scratch_( false ),
 		delete_terminal_only_( false )
 	{}
 
 	//Destructor
 	SWA_MoveSelector::~SWA_MoveSelector()
 	{}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	SWA_MoveSelector::get_random_move_element_at_chain_terminus( pose::Pose & pose,
+																															 SWA_Move & swa_move,
+																															 utility::vector1< Size > const & sample_res /*leave empty if no filter*/) {
+
+		using namespace core::pose::full_model_info;
+
+		utility::vector1< SWA_Move >  swa_moves;
+
+		if ( allow_resample_during_add_delete_ )   get_resample_terminal_move_elements( pose, swa_moves );
+		if ( allow_delete_ )     get_delete_move_elements( pose, swa_moves );
+		if ( allow_from_scratch_ )   get_from_scratch_move_elements( pose, swa_moves );
+		get_add_move_elements( pose, swa_moves );
+
+		if ( sample_res.size() > 0 ) filter_by_sample_res( swa_moves, sample_res );
+		for ( Size n = 1; n <= swa_moves.size(); n++ )	TR.Debug << swa_moves[ n ] << std::endl;
+
+		if ( swa_moves.size() == 0 ){
+			swa_move = SWA_Move();
+			return;
+		}
+
+		swa_move =  RG.random_element( swa_moves );
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	SWA_MoveSelector::get_resample_move_elements( pose::Pose & pose,
+																								utility::vector1< SWA_Move > & swa_moves ) {
+		if ( allow_internal_hinge_ ){
+			get_resample_internal_move_elements( pose, swa_moves );
+		} else {
+			get_resample_terminal_move_elements( pose, swa_moves );
+		}
+
+		if ( allow_internal_local_ ){
+			get_resample_internal_local_move_elements( pose, swa_moves );
+		}
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
@@ -70,7 +113,16 @@ namespace monte_carlo {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	SWA_MoveSelector::get_resample_internal_move_elements( pose::Pose & pose,
-																			 utility::vector1< SWA_Move > & swa_moves ) {
+																								utility::vector1< SWA_Move > & swa_moves ) {
+		utility::vector1< SWA_Move > swa_moves_internal;
+		get_split_move_elements( pose, swa_moves_internal, RESAMPLE );
+		for ( Size n = 1; n <= swa_moves_internal.size(); n++ ) swa_moves.push_back( swa_moves_internal[ n ] );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	SWA_MoveSelector::get_resample_internal_local_move_elements( pose::Pose & pose,
+																															 utility::vector1< SWA_Move > & swa_moves ) {
 
 		utility::vector1< SWA_Move > swa_moves_internal;
 		get_internal_move_elements( pose, swa_moves_internal, RESAMPLE_INTERNAL_LOCAL );
@@ -79,10 +131,12 @@ namespace monte_carlo {
 		for ( Size n = 1; n <= swa_moves_internal.size(); n++ ) swa_moves.push_back( swa_moves_internal[ n ] );
 	}
 
+
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	SWA_MoveSelector::get_delete_move_elements( pose::Pose & pose,
-														utility::vector1< SWA_Move > & swa_moves ) {
+																							utility::vector1< SWA_Move > & swa_moves ) {
 
 		utility::vector1< SWA_Move > swa_moves_delete;
 		if ( delete_terminal_only_ ){ // original mode. doesn't actually permit detailed balance with pose 'merges'
@@ -90,7 +144,7 @@ namespace monte_carlo {
 			// don't delete a multi_residue_move_element if its the only one!
 			remove_from_consideration_first_multi_residue_move_element( swa_moves_delete, false /*remove_even_if_not_singlet*/ );
 		} else { // opposites of all possible merges, I think.
-			get_split_move_elements( pose, swa_moves );
+			get_split_move_elements( pose, swa_moves_delete, DELETE );
 		}
 		for ( Size n = 1; n <= swa_moves_delete.size(); n++ ) swa_moves.push_back( swa_moves_delete[ n ] );
 	}
@@ -139,7 +193,8 @@ namespace monte_carlo {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	SWA_MoveSelector::get_split_move_elements( pose::Pose & pose,
-																						 utility::vector1< SWA_Move > & swa_moves ) {
+																						 utility::vector1< SWA_Move > & swa_moves,
+																						 MoveType const move_type ) {
 
 		using namespace protocols::stepwise::enumerate::rna;
 
@@ -162,13 +217,13 @@ namespace monte_carlo {
 
 				partition_res1 = get_partition_res( partition_definition, true );
 				partition_res2 = get_partition_res( partition_definition, false );
-				if ( check_for_fixed_domain( pose, partition_res1 )  ) {
+				if ( check_for_fixed_domain_or_from_scratch( pose, partition_res1 )  ) {
 					swa_moves_split.push_back( SWA_Move( full_model_info.sub_to_full(partition_res2),
-																							 Attachment( full_model_info.sub_to_full(i), ATTACHED_TO_PREVIOUS ), DELETE ) );
+																							 Attachment( full_model_info.sub_to_full(i), ATTACHED_TO_PREVIOUS ), move_type ) );
 				}
-				if ( check_for_fixed_domain( pose, partition_res2 ) ) {
+				if ( check_for_fixed_domain_or_from_scratch( pose, partition_res2 ) ) {
 					swa_moves_split.push_back( SWA_Move( full_model_info.sub_to_full(partition_res1),
-																							 Attachment( full_model_info.sub_to_full(i+1), ATTACHED_TO_NEXT ), DELETE ) );
+																							 Attachment( full_model_info.sub_to_full(i+1), ATTACHED_TO_NEXT ), move_type ) );
 				}
 
 			}
@@ -183,13 +238,13 @@ namespace monte_carlo {
 
 			partition_res1 = get_partition_res( partition_definition, true );
 			partition_res2 = get_partition_res( partition_definition, false );
-			if ( partition_res1.size() == 1 && check_for_fixed_domain( pose, partition_res2 ) ){
+			if ( partition_res1.size() == 1 && check_for_fixed_domain_or_from_scratch( pose, partition_res2 ) ){
 				Size const anchor_res = get_anchor_res( partition_res1[1], pose );
 				AttachmentType type = ( anchor_res > partition_res1[1] ) ? JUMP_TO_NEXT_IN_CHAIN : JUMP_TO_PREV_IN_CHAIN;
 				swa_moves_split.push_back( SWA_Move( full_model_info.sub_to_full(partition_res1),
 																						 Attachment( full_model_info.sub_to_full(anchor_res), type ), DELETE ) );
 			}
-			if ( partition_res2.size() == 1 && check_for_fixed_domain( pose, partition_res1 ) ){
+			if ( partition_res2.size() == 1 && check_for_fixed_domain_or_from_scratch( pose, partition_res1 ) ){
 				Size const anchor_res = get_anchor_res( partition_res2[1], pose );
 				AttachmentType type = ( anchor_res > partition_res2[1] ) ? JUMP_TO_NEXT_IN_CHAIN : JUMP_TO_PREV_IN_CHAIN;
 				swa_moves_split.push_back( SWA_Move( full_model_info.sub_to_full(partition_res2),
@@ -199,12 +254,20 @@ namespace monte_carlo {
 		for ( Size n = 1; n <= swa_moves_split.size(); n++ ) swa_moves.push_back( swa_moves_split[ n ] );
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	SWA_MoveSelector::check_for_fixed_domain_or_from_scratch(  pose::Pose const & pose,
+																														 utility::vector1< Size> const & partition_res ) const {
+		if ( allow_from_scratch_ ) return true;
+		return check_for_fixed_domain( pose, partition_res );
+	}
+
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// The point of this function is to allow big move_elements to remain fixed. It may not be entirely necessary.
 	void
 	SWA_MoveSelector::remove_from_consideration_first_multi_residue_move_element( utility::vector1< SWA_Move > & swa_moves,
-																																bool remove_even_if_not_singlet ){
+																																								bool remove_even_if_not_singlet ){
 
 		Size number_of_multi_residue_move_elements( 0 ), first_multi_residue_move_element( 0 );
 		for ( Size n = 1; n <= swa_moves.size(); n++ ) {
@@ -238,6 +301,7 @@ namespace monte_carlo {
 
 		using namespace core::pose::full_model_info;
 
+		if ( get_res_list_from_full_model_info( pose ).size() == 0 ) return;
 		utility::vector1< MoveElement > const & move_elements = get_move_elements_from_full_model_info( pose );
 
 		Size const num_move_elements( move_elements.size() );
@@ -246,7 +310,10 @@ namespace monte_carlo {
 			MoveElement const & move_element = move_elements[ n ];
 			utility::vector1< Attachment > attachments = get_attachments( pose, move_element );
 			// at least for now, each move_element should be connected to another one.
-			if ( attachments.size() == 0 ) runtime_assert( num_move_elements == 1 );
+			if ( attachments.size() == 0 ) {
+				runtime_assert( num_move_elements == 1 );
+				continue;
+			}
 			if ( attachments.size() > 1 ) continue; // not a terminal
 
 			// for now, floating base can only handle single residues.
@@ -348,19 +415,65 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
+	SWA_MoveSelector::get_from_scratch_move_elements( pose::Pose & pose,
+																										utility::vector1< SWA_Move > & swa_moves ){
+		// for RNA, these are dinucleotides that would be 'freely floating' -- not attached
+		// to the current pose (or its sisters).
+		FullModelInfo const & full_model_info = const_full_model_info( pose );
+		utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+		Size nres_full = full_model_info.full_sequence().size();
+
+		Attachments const blank_attachments;
+
+		for ( Size n = 1; n < nres_full; n++ ){
+			if ( cutpoint_open_in_full_model.has_value( n ) ) continue; // must be contiguous dinucleotide.
+			if ( already_instantiated_in_pose( pose, n     ) ) continue;
+			if ( already_instantiated_in_pose( pose, n + 1 ) ) continue;
+			// if ( n > 1 &&
+			// 		 !cutpoint_open_in_full_model.has_value( n - 1 ) &&
+			// 		 already_instantiated_in_pose( pose, n - 1 ) ) continue;
+			// if ( (n + 1) < nres_full &&
+			// 		 !cutpoint_open_in_full_model.has_value( n + 1 ) &&
+			// 		 already_instantiated_in_pose( pose, n + 2 ) ) continue;
+			swa_moves.push_back( SWA_Move( utility::tools::make_vector1( n, n+1 ), blank_attachments, FROM_SCRATCH ) );
+		}
+
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	SWA_MoveSelector::already_instantiated_in_pose( pose::Pose const & pose, Size const & resnum_in_full_model_numbering ) const {
+
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
+		if ( res_list.size() == 0 ) return false;
+
+		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+			if ( res_list[ n ] == resnum_in_full_model_numbering ) return true;
+		}
+
+		utility::vector1< PoseOP > const & other_pose_list = const_full_model_info( pose ).other_pose_list();
+		for ( Size k = 1; k <= other_pose_list.size(); k++ ){
+			if ( already_instantiated_in_pose( *(other_pose_list[ k ]), resnum_in_full_model_numbering ) ) return true;
+		}
+
+		return false;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
 	SWA_MoveSelector::get_add_move_elements( pose::Pose & pose,
-												 utility::vector1< SWA_Move > & swa_moves,
-												 bool const disallow_skip_bulge ){
+																					 utility::vector1< SWA_Move > & swa_moves ){
 
 		using namespace core::pose::full_model_info;
 
 		Size const & nres( pose.total_residue() );
 		kinematics::FoldTree const & fold_tree( pose.fold_tree() );
-
 		FullModelInfo const & full_model_info = const_full_model_info( pose );
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 		utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
 		Size nres_full = full_model_info.full_sequence().size();
+
+		if ( res_list.size() == 0 ) return;
 
 		utility::vector1< bool > is_cutpoint_in_full_pose;
 		for ( Size i = 1; i <= nres_full; i++ ) is_cutpoint_in_full_pose.push_back( false );
@@ -378,7 +491,7 @@ namespace monte_carlo {
 					swa_moves.push_back( SWA_Move( i_full + 1, Attachment( i_full, ATTACHED_TO_PREVIOUS ), ADD ) );
 
 					// bulge skip...
-					if ( !disallow_skip_bulge &&
+					if ( allow_skip_bulge_ &&
 							 (i == nres || res_list[ i ] + 2 < res_list[ i+1 ]) &&
 							 i_full < (nres_full - 1)  &&
 							 !is_cutpoint_in_full_pose[ i_full + 1 ] ){
@@ -405,7 +518,7 @@ namespace monte_carlo {
 					swa_moves.push_back( SWA_Move( i_full - 1, Attachment( i_full, ATTACHED_TO_NEXT), ADD ) );
 
 					// bulge skip...
-					if ( !disallow_skip_bulge &&
+					if ( allow_skip_bulge_ &&
 							 (i == 1 || res_list[ i ] - 2 > res_list[ i - 1 ]) &&
 							 i_full > 2 &&
 							 !is_cutpoint_in_full_pose[ i_full - 2 ] ){
@@ -430,32 +543,6 @@ namespace monte_carlo {
 		utility::vector1< Size > sample_res; /*leave empty if no filter*/
 		get_random_move_element_at_chain_terminus( pose, swa_move,
 																							 sample_res );
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	SWA_MoveSelector::get_random_move_element_at_chain_terminus( pose::Pose & pose,
-																						 SWA_Move & swa_move,
-																						 utility::vector1< Size > const & sample_res /*leave empty if no filter*/) {
-
-		using namespace core::pose::full_model_info;
-
-		utility::vector1< SWA_Move >  swa_moves;
-
-		if ( !disallow_resample_ )   get_resample_terminal_move_elements( pose, swa_moves );
-		if ( !disallow_delete_ )     get_delete_move_elements( pose, swa_moves );
-		get_add_move_elements( pose, swa_moves, disallow_skip_bulge_ );
-
-		if ( sample_res.size() > 0 ) filter_by_sample_res( swa_moves, sample_res );
-		for ( Size n = 1; n <= swa_moves.size(); n++ )	TR.Debug << swa_moves[ n ] << std::endl;
-
-		if ( swa_moves.size() == 0 ){
-			swa_move = SWA_Move();
-			return;
-		}
-
-		swa_move =  RG.random_element( swa_moves );
-
 	}
 
 

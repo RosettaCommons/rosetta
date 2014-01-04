@@ -26,6 +26,7 @@
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_DeleteMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddOrDeleteMover.fwd.hh>
+#include <protocols/stepwise/monte_carlo/rna/RNA_FromScratchMover.fwd.hh>
 
 
 namespace protocols {
@@ -40,7 +41,8 @@ public:
 
 
 	RNA_AddOrDeleteMover( RNA_AddMoverOP rna_add_mover,
-												RNA_DeleteMoverOP rna_delete_mover );
+												RNA_DeleteMoverOP rna_delete_mover,
+												RNA_FromScratchMoverOP rna_from_scratch_mover );
 
 	//destructor -- necessary? -- YES destructors are necessary.
 	~RNA_AddOrDeleteMover();
@@ -69,6 +71,7 @@ private:
 
 	RNA_AddMoverOP rna_add_mover_;
 	RNA_DeleteMoverOP rna_delete_mover_;
+	RNA_FromScratchMoverOP rna_from_scratch_mover_;
 	bool disallow_deletion_of_last_residue_;
 	SWA_MoveSelectorOP swa_move_selector_;
 	StepWiseRNA_MonteCarloOptionsCOP options_;

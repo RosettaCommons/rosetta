@@ -56,7 +56,7 @@ FreeMoietyEnergy::FreeMoietyEnergy() :
 	parent( new FreeMoietyEnergyCreator ),
 	free_suite_bonus_( -1.0 ), // this is ad hoc for now.
 	free_2HOprime_bonus_( -1.0 ), // this is ad hoc for now.
-	free_sugar_bonus_( basic::options::option[ basic::options::OptionKeys::score::free_sugar_bonus ] )
+	free_sugar_bonus_( basic::options::option[ basic::options::OptionKeys::score::free_sugar_bonus ] ) // this is -1.0 by default (also ad hoc)
 {}
 
 FreeMoietyEnergy::~FreeMoietyEnergy() {}

@@ -42,6 +42,7 @@ namespace screener {
 		gap_size_(    job_parameters->gap_size() ),
 		is_prepend_(  job_parameters->is_prepend() ),
 		is_internal_(  job_parameters->is_internal() ),
+		sample_both_sugar_base_rotamer_( job_parameters->sample_both_sugar_base_rotamer() ),
 		separate_moving_residue_to_estimate_baseline_( true )
 	{
 		initialize_parameters();
@@ -55,13 +56,15 @@ namespace screener {
 																	Size const reference_res,
 																	Size const gap_size,
 																	bool const is_internal /* = false */,
-																	bool const separate_moving_residue_to_estimate_baseline /* = true */
+																	bool const separate_moving_residue_to_estimate_baseline, /* = true */
+																	bool const sample_both_sugar_base_rotamer /* = false */
 																	):
 		working_moving_res_( moving_res    ),
 		working_reference_res_( reference_res ),
 		gap_size_( gap_size ),
 		is_prepend_(  working_reference_res_ > working_moving_res_ ),
 		is_internal_( is_internal ),
+		sample_both_sugar_base_rotamer_( sample_both_sugar_base_rotamer ),
 		separate_moving_residue_to_estimate_baseline_( separate_moving_residue_to_estimate_baseline  )
 	{
 		initialize_parameters();
@@ -90,7 +93,6 @@ namespace screener {
 		base_rep_score_ = 0.0;
 		delta_atr_score_ = 0.0;
 		delta_rep_score_ = 0.0;
-		sample_both_sugar_base_rotamer_ = false;
 		verbose_ = false;
 		output_pdb_ = false;
 		kic_sampling_ = false;
@@ -120,8 +122,11 @@ namespace screener {
 
 		if ( sample_both_sugar_base_rotamer_ ){ //Nov 15, 2010
 			Size const extra_sample_sugar_base_res = ( is_prepend_ ) ? ( working_moving_res_ + 1 ) : ( working_moving_res_ - 1 );
-			if ( verbose_ ) TR.Debug << "extra_sample_sugar_base_res = " << extra_sample_sugar_base_res << std::endl;
+			TR << "base_pose_screen extra_sample_sugar_base_res = " << extra_sample_sugar_base_res << std::endl;
 			pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_RIBOSE", extra_sample_sugar_base_res );
+			//pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_RNA_RESIDUE", extra_sample_sugar_base_res );
+			TR << base_pose_screen.annotated_sequence() << std::endl;
+			TR << base_pose_screen.fold_tree() << std::endl;
 		}
 
 		// I think this should work... push apart different parts of the structure so that whatever fa_atr, fa_rep is left is

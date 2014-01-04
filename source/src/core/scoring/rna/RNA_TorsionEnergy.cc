@@ -118,7 +118,7 @@ RNA_TorsionEnergy::eval_atom_derivative(
 }
 
 
-void RNA_TorsionEnergy::indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required */) const {}
+void RNA_TorsionEnergy::indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required */ ) const {}
 
 /// @brief RNA_PairwiseLowResolutionEnergy distance cutoff
 Distance

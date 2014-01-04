@@ -36,11 +36,12 @@ namespace rna {
 	//Constructor
 	StepWiseRNA_MonteCarloOptions::StepWiseRNA_MonteCarloOptions():
 		verbose_scores_( false ),
-		force_centroid_interaction_( false ), // this used to be true -- need to decide whether bulges are OK.
+		force_centroid_interaction_( true ),
 		use_phenix_geo_( true ),
 		skip_deletions_( false ),
 		erraser_( true ),
-		allow_internal_moves_( false ),
+		allow_internal_hinge_moves_( true ),
+		allow_internal_local_moves_( false ),
 		num_random_samples_( 20 ),
 		cycles_( 500 ),
 		add_delete_frequency_( 0.5 ),
@@ -51,6 +52,8 @@ namespace rna {
 		just_min_after_mutation_frequency_( 0.5 ),
 		temperature_( 1.0 ),
 		allow_skip_bulge_( false ),
+		allow_from_scratch_( false ),
+		allow_split_off_( true ),
 		virtual_sugar_keep_base_fixed_( false ),
 		constraint_x0_( 0.0 ),
 		constraint_tol_( 0.0 ),
@@ -75,14 +78,19 @@ namespace rna {
 		set_switch_focus_frequency( option[ OptionKeys::stepwise::monte_carlo::switch_focus_frequency ]() );
 		set_sample_res( option[ OptionKeys::stepwise::rna::sample_res ]() );
 		set_just_min_after_mutation_frequency( option[ OptionKeys::stepwise::monte_carlo::just_min_after_mutation_frequency ]() );
-		set_allow_internal_moves( option[ OptionKeys::stepwise::monte_carlo::allow_internal_moves ]() );
+		set_allow_internal_hinge_moves( option[ OptionKeys::stepwise::monte_carlo::allow_internal_hinge_moves ]() );
+		set_allow_internal_local_moves( option[ OptionKeys::stepwise::monte_carlo::allow_internal_local_moves ]() );
 		set_allow_skip_bulge( option[ OptionKeys::stepwise::monte_carlo::allow_skip_bulge ]() );
+		set_allow_from_scratch( option[ OptionKeys::stepwise::monte_carlo::allow_from_scratch ]() );
+		set_allow_split_off( option[ OptionKeys::stepwise::monte_carlo::allow_split_off ]() );
 		set_temperature( option[ OptionKeys::stepwise::monte_carlo::temperature ]() );
 		set_extra_minimize_res( option[ OptionKeys::stepwise::monte_carlo::extra_min_res ]() );
 		set_syn_chi_res_list( option[ OptionKeys::stepwise::rna::force_syn_chi_res_list]() );
+		set_terminal_res( option[ OptionKeys::stepwise::rna::terminal_res]() );
 		set_bulge_res( option[ basic::options::OptionKeys::stepwise::rna::bulge_res ]() );
 		set_virtual_sugar_keep_base_fixed( option[ OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed ]() );
-		set_force_centroid_interaction( option[ OptionKeys::stepwise::rna::force_centroid_interaction ]() );
+		force_centroid_interaction_ = true; // note default is different from stepwise enumeration
+		if ( option[ OptionKeys::stepwise::rna::force_centroid_interaction ].user() ) set_force_centroid_interaction( option[ OptionKeys::stepwise::rna::force_centroid_interaction ]() );
 		set_minimizer_allow_variable_bond_geometry( option[ OptionKeys::stepwise::monte_carlo::allow_variable_bond_geometry ]() );
 		set_use_phenix_geo(  option[ OptionKeys::rna::corrected_geo ] );
 		set_constraint_x0(	option[ OptionKeys::stepwise::monte_carlo::constraint_x0 ]() );

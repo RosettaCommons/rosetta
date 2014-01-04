@@ -109,7 +109,7 @@ main( int argc, char* argv[] )
 	devel::init(argc, argv);
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
 
-	if(basic::options::option[ basic::options::OptionKeys::in::file::s ].active())
+	if(basic::options::option[ basic::options::OptionKeys::in::file::s ].user())
 		utility_exit_with_message("do not use -s with zinc_heterodimer_design (program uses internally)");
 
 	//basic::options::option[ basic::options::OptionKeys::run::skip_set_reasonable_fold_tree ].value(true);

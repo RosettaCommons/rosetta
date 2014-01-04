@@ -82,7 +82,7 @@ public:
   }
 
   void
-  set_calculated( bool const & setting)
+  set_calculated( bool const & setting )
   {
     calculated_ = setting;
   }
@@ -90,17 +90,17 @@ public:
 	void
 	carry_out_filtering( RNA_RawBaseBaseInfo const & raw_base_base_info );
 
-  ObjexxFCL::FArray2D< Real > & filtered_base_pair_array()  { return  filtered_base_pair_array_; }
-  ObjexxFCL::FArray2D< Real > & filtered_base_axis_array()  { return  filtered_base_axis_array_; }
-  ObjexxFCL::FArray2D< Real > & filtered_base_stagger_array()  { return  filtered_base_stagger_array_; }
-  ObjexxFCL::FArray2D< Real > & filtered_base_stack_array()  { return  filtered_base_stack_array_; }
-  ObjexxFCL::FArray2D< Real > & filtered_base_stack_axis_array()  { return  filtered_base_stack_axis_array_; }
+  ObjexxFCL::FArray2D < Real > & filtered_base_pair_array()  { return  filtered_base_pair_array_; }
+  ObjexxFCL::FArray2D < Real > & filtered_base_axis_array()  { return  filtered_base_axis_array_; }
+  ObjexxFCL::FArray2D < Real > & filtered_base_stagger_array()  { return  filtered_base_stagger_array_; }
+  ObjexxFCL::FArray2D < Real > & filtered_base_stack_array()  { return  filtered_base_stack_array_; }
+  ObjexxFCL::FArray2D < Real > & filtered_base_stack_axis_array()  { return  filtered_base_stack_axis_array_; }
 
-  ObjexxFCL::FArray2D< Real > const & filtered_base_pair_array() const { return  filtered_base_pair_array_; }
-  ObjexxFCL::FArray2D< Real > const & filtered_base_axis_array() const { return  filtered_base_axis_array_; }
-  ObjexxFCL::FArray2D< Real > const & filtered_base_stagger_array() const { return  filtered_base_stagger_array_; }
-  ObjexxFCL::FArray2D< Real > const & filtered_base_stack_array() const { return  filtered_base_stack_array_; }
-  ObjexxFCL::FArray2D< Real > const & filtered_base_stack_axis_array() const { return  filtered_base_stack_axis_array_; }
+  ObjexxFCL::FArray2D < Real > const & filtered_base_pair_array() const { return  filtered_base_pair_array_; }
+  ObjexxFCL::FArray2D < Real > const & filtered_base_axis_array() const { return  filtered_base_axis_array_; }
+  ObjexxFCL::FArray2D < Real > const & filtered_base_stagger_array() const { return  filtered_base_stagger_array_; }
+  ObjexxFCL::FArray2D < Real > const & filtered_base_stack_array() const { return  filtered_base_stack_array_; }
+  ObjexxFCL::FArray2D < Real > const & filtered_base_stack_axis_array() const { return  filtered_base_stack_axis_array_; }
 
 	Real const & get_total_base_pair_score() const { return total_base_pair_score_; }
 	Real const & get_total_base_axis_score() const { return total_base_axis_score_; }
@@ -131,11 +131,11 @@ private:
   //The third dimension here refers to the edge of the filtered_base that is pairing.
   // Note that these are "scratch" arrays, not filtered to avoid,
   // e.g. one filtered_base edge forming multiple filtered_base pairs.
-  ObjexxFCL::FArray2D< Real > filtered_base_pair_array_;
-  ObjexxFCL::FArray2D< Real > filtered_base_axis_array_;
-  ObjexxFCL::FArray2D< Real > filtered_base_stagger_array_;
-  ObjexxFCL::FArray2D< Real > filtered_base_stack_array_;
-  ObjexxFCL::FArray2D< Real > filtered_base_stack_axis_array_;
+  ObjexxFCL::FArray2D < Real > filtered_base_pair_array_;
+  ObjexxFCL::FArray2D < Real > filtered_base_axis_array_;
+  ObjexxFCL::FArray2D < Real > filtered_base_stagger_array_;
+  ObjexxFCL::FArray2D < Real > filtered_base_stack_array_;
+  ObjexxFCL::FArray2D < Real > filtered_base_stack_axis_array_;
 
 	Energy_base_pair_list  scored_base_pair_list_;
 	Energy_base_stack_list scored_base_stack_list_;

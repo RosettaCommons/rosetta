@@ -19,7 +19,7 @@
 #include <protocols/stepwise/StepWiseUtil.hh> //Dec 23, 2011
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/stepwise/enumerate/rna/screener/StepWiseRNA_VDW_BinScreener.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_FloatingBaseSamplerUtil.hh>
+#include <protocols/stepwise/enumerate/rna/rigid_body/StepWiseRNA_FloatingBaseSamplerUtil.hh>
 #include <protocols/rotamer_sampler/rigid_body/RigidBodyUtil.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 

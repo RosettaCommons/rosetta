@@ -20,8 +20,8 @@
 
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_ModelerOptions.fwd.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_VirtualSugarSamplerWrapper.fwd.hh>
-#include <protocols/stepwise/enumerate/rna/SugarModeling.hh>
+#include <protocols/stepwise/enumerate/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.fwd.hh>
+#include <protocols/stepwise/enumerate/rna/sugar/SugarModeling.hh>
 #include <protocols/stepwise/enumerate/rna/screener/StepWiseRNA_BaseCentroidScreener.fwd.hh>
 #include <protocols/stepwise/enumerate/rna/screener/StepWiseRNA_VDW_BinScreener.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
@@ -84,7 +84,7 @@ private:
 	check_res_not_bulged();
 
 	void
-	standard_sampling_WRAPPER( core::pose::Pose & pose );
+	standard_sampling( core::pose::Pose & pose );
 
 	void
 	floating_base_sampling( core::pose::Pose & pose );
@@ -103,7 +103,7 @@ private:
 	StepWiseRNA_ModelerOptionsCOP options_;
 	screener::StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
 	screener::StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
-	StepWiseRNA_VirtualSugarSamplerWrapperOP virtual_sugar_sampler_wrapper_;
+	sugar::StepWiseRNA_VirtualSugarJustInTimeInstantiatorOP virtual_sugar_just_in_time_instantiator_;
 	std::string sampling_silent_file_;
 
 };

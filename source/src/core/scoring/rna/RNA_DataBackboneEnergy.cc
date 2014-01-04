@@ -173,24 +173,24 @@ RNA_DataBackboneEnergy::residue_pair_energy(
 	//		rna_filtered_base_base_info.set_calculated( false );
 	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	rna::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
-	ObjexxFCL::FArray1D <bool> const & rna_data_backbone_burial( rna_data_info.backbone_burial() );
-	ObjexxFCL::FArray1D <bool> const & rna_data_backbone_exposed( rna_data_info.backbone_exposed() );
+	ObjexxFCL::FArray1D < bool > const & rna_data_backbone_burial( rna_data_info.backbone_burial() );
+	ObjexxFCL::FArray1D < bool > const & rna_data_backbone_exposed( rna_data_info.backbone_exposed() );
 
-	if (rna_data_backbone_burial.size() == 0.0 ) return;
+	if ( rna_data_backbone_burial.size() == 0.0 ) return;
 
 	assert( rna_data_backbone_burial.size() == pose.total_residue() );
 
 	if ( rna_data_backbone_burial( rsd1.seqpos() ) ) {
-		emap[ rna_data_backbone ]         += well_depth_burial_ * get_sugar_env_score( rsd1 /*buried sugar*/, rsd2 /*other*/);
+		emap[ rna_data_backbone ]         += well_depth_burial_ * get_sugar_env_score( rsd1 /*buried sugar*/, rsd2 /*other*/ );
 	} else if ( rna_data_backbone_exposed( rsd1.seqpos() )  ) {
-		emap[ rna_data_backbone ]         += well_depth_exposed_ * get_sugar_env_score( rsd1 /*buried sugar*/, rsd2 /*other*/);
+		emap[ rna_data_backbone ]         += well_depth_exposed_ * get_sugar_env_score( rsd1 /*buried sugar*/, rsd2 /*other*/ );
 	}
 
 
 	if ( rna_data_backbone_burial( rsd2.seqpos() ) ) {
-		emap[ rna_data_backbone ]         += well_depth_burial_ * get_sugar_env_score( rsd2 /*buried sugar*/, rsd1 /*other*/);
+		emap[ rna_data_backbone ]         += well_depth_burial_ * get_sugar_env_score( rsd2 /*buried sugar*/, rsd1 /*other*/ );
 	} else if ( rna_data_backbone_exposed( rsd2.seqpos() )  ) {
-		emap[ rna_data_backbone ]         += well_depth_exposed_ * get_sugar_env_score( rsd2 /*buried sugar*/, rsd1 /*other*/);
+		emap[ rna_data_backbone ]         += well_depth_exposed_ * get_sugar_env_score( rsd2 /*buried sugar*/, rsd1 /*other*/ );
 	}
 
 }
@@ -236,7 +236,7 @@ RNA_DataBackboneEnergy::get_sugar_env_score( core::conformation::Residue const &
 bool
 RNA_DataBackboneEnergy::check_sugar_atom( Size const & n ) const {
 
-	for (Size i=1; i <= atom_numbers_sugar_.size(); i++ ) {
+	for ( Size i = 1; i <= atom_numbers_sugar_.size(); i++ ) {
 		if ( atom_numbers_sugar_[i] == n ) return true;
 	}
 	return false;
@@ -266,10 +266,10 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 
   rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
 	rna::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
-	ObjexxFCL::FArray1D <bool> const & rna_data_backbone_burial( rna_data_info.backbone_burial() );
-	ObjexxFCL::FArray1D <bool> const & rna_data_backbone_exposed( rna_data_info.backbone_exposed() );
+	ObjexxFCL::FArray1D < bool > const & rna_data_backbone_burial( rna_data_info.backbone_burial() );
+	ObjexxFCL::FArray1D < bool > const & rna_data_backbone_exposed( rna_data_info.backbone_exposed() );
 
-	if (rna_data_backbone_burial.size() == 0.0 ) return;
+	if ( rna_data_backbone_burial.size() == 0.0 ) return;
 
 	assert( rna_data_backbone_burial.size() == pose.total_residue() );
 
@@ -288,16 +288,16 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 			itere = energy_graph.get_node( i )->const_edge_list_end();
 			iter != itere; ++iter ) {
 
-		Size const j( (*iter)->get_other_ind( i ) );
+		Size const j( ( *iter )->get_other_ind( i ) );
 
-		if ( pos1_fixed && domain_map(i) == domain_map(j) ) continue; //Fixed w.r.t. one another.
+		if ( pos1_fixed && domain_map( i ) == domain_map( j ) ) continue; //Fixed w.r.t. one another.
 
 		conformation::Residue const & rsd2( pose.residue( j ) );
 
 		if ( ! rsd2.is_RNA() ) continue;
 
 		// This could be faster if split into separate loops.
-		if ( rna_data_backbone_burial( i ) && check_sugar_atom( m )) { // other heavy atoms are possible buriers
+		if ( rna_data_backbone_burial( i ) && check_sugar_atom( m ) ) { // other heavy atoms are possible buriers
 
 			for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
 				Vector const heavy_atom_j( rsd2.xyz( n ) );
@@ -315,7 +315,7 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 		}
 
 
-		if ( rna_data_backbone_exposed( i ) && check_sugar_atom( m )) { // other heavy atoms are possible buriers
+		if ( rna_data_backbone_exposed( i ) && check_sugar_atom( m ) ) { // other heavy atoms are possible buriers
 
 			for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
 				Vector const heavy_atom_j( rsd2.xyz( n ) );
@@ -338,14 +338,14 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 
 			for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
 
-				if (! check_sugar_atom( n ) ) continue;
+				if ( ! check_sugar_atom( n ) ) continue;
 
 				Vector const heavy_atom_j( rsd2.xyz( n ) );
 				Vector r = heavy_atom_j - heavy_atom_i;
 				Real const dist = r.length();
 				Real const deriv = burial_function_->dfunc( dist );
 
-				Vector const force_vector_j = deriv * (-r) / dist;
+				Vector const force_vector_j = deriv * (  - r ) / dist;
 				Vector const f1 = -1.0 * cross( force_vector_j, heavy_atom_i );
 				Vector const f2 = -1.0 * force_vector_j;
 				F1 +=  -1.0 * well_depth_burial_ * weights[ rna_data_backbone ] * f1;
@@ -359,14 +359,14 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 
 			for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
 
-				if (! check_sugar_atom( n ) ) continue;
+				if ( ! check_sugar_atom( n ) ) continue;
 
 				Vector const heavy_atom_j( rsd2.xyz( n ) );
 				Vector r = heavy_atom_j - heavy_atom_i;
 				Real const dist = r.length();
 				Real const deriv = burial_function_->dfunc( dist );
 
-				Vector const force_vector_j = deriv * (-r) / dist;
+				Vector const force_vector_j = deriv * (  - r ) / dist;
 				Vector const f1 = -1.0 * cross( force_vector_j, heavy_atom_i );
 				Vector const f2 = -1.0 * force_vector_j;
 				F1 +=  -1.0 * well_depth_exposed_ * weights[ rna_data_backbone ] * f1;

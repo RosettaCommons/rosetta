@@ -205,11 +205,6 @@ FullModelInfo::get_cutpoint_open_from_pdb_info( pose::Pose const & pose ) const 
 			continue;
 		}
 
-		//		if ( pose.fold_tree().is_cutpoint( n ) &&
-		//				 !pose.residue( n ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
-		//				 !pose.residue( n+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
-		//			cutpoint_open.push_back( n );
-		//		}
 	}
 
 	return cutpoint_open;
@@ -260,19 +255,48 @@ FullModelInfo::clear_other_pose_list() {
 	other_pose_list_.clear();
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
+void
+FullModelInfo::clear_res_list() {
+	res_list_.clear();
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Size
 FullModelInfo::get_idx_for_other_pose_with_residue( Size const input_res ) const {
+	Size idx( 0 );
 	for ( Size i = 1; i <= other_pose_list_.size(); i++ ){
-		utility::vector1< Size > const & daughter_res_list = const_full_model_info( *other_pose_list_[i] ).res_list();
-		if ( daughter_res_list.has_value( input_res ) ) return i;
+		utility::vector1< Size > const & other_pose_res_list = const_full_model_info( *other_pose_list_[i] ).res_list();
+		if ( other_pose_res_list.has_value( input_res ) ) {
+			runtime_assert( idx == 0 ); // should be at most only one other pose with this residue number
+			idx = i;
+		}
 	}
-	return 0;
+	return idx;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Size
+FullModelInfo::get_idx_for_other_pose( pose::Pose const & pose ) const {
+	Size idx( 0 );
+	if ( pose.total_residue() > 0 ){
+		Size const resnum = get_res_list_from_full_model_info_const( pose )[ 1 ];
+		idx = get_idx_for_other_pose_with_residue( resnum );
+	} else {
+		for ( Size i = 1; i <= other_pose_list_.size(); i++ ){
+			if ( other_pose_list_[i]->total_residue() == 0 ){
+				runtime_assert( idx == 0 ); // only one blank pose allowed in other_pose_list.
+				idx = i;
+			}
+		}
+	}
+	runtime_assert( idx > 0 );
+	return idx;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-FullModelInfo::add_other_pose( core::pose::PoseOP & pose )
+FullModelInfo::add_other_pose( core::pose::PoseOP pose )
 {
 	other_pose_list_.push_back( pose );
 }

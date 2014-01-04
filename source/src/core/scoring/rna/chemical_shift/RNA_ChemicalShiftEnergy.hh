@@ -55,10 +55,10 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose & , ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const;
 
 	void
-	setup_for_derivatives( pose::Pose & , ScoreFunction const & ) const;
+	setup_for_derivatives( pose::Pose &, ScoreFunction const & ) const;
 
 	/////////////////////////////////
 	void

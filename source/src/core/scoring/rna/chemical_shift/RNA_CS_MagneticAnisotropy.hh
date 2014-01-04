@@ -31,15 +31,15 @@ namespace scoring {
 namespace rna {
 namespace chemical_shift {
 
-numeric::xyzVector<core::Real>
-get_delta_magnetic_anisotropy_deriv(numeric::xyzVector<core::Real> const & CS_data_atom_xyz, 
-										 							numeric::xyzVector<core::Real> const & source_atom_xyz,
+numeric::xyzVector< core::Real >
+get_delta_magnetic_anisotropy_deriv( numeric::xyzVector< core::Real > const & CS_data_atom_xyz, 
+										 							numeric::xyzVector< core::Real > const & source_atom_xyz,
 																	numeric::xyzMatrix< core::Real > const & base_coordinate_matrix, 
 																	RNA_CS_residue_parameters const & source_rsd_CS_params,
-																	Size const realatomdata_index);
+																	Size const realatomdata_index );
 
 core::Real
-magnetic_anisotropy_effect(numeric::xyzVector<core::Real> const & atom_xyz, conformation::Residue const & source_rsd, RNA_CS_residue_parameters const & source_rsd_CS_params);
+magnetic_anisotropy_effect( numeric::xyzVector< core::Real > const & atom_xyz, conformation::Residue const & source_rsd, RNA_CS_residue_parameters const & source_rsd_CS_params );
 
 
 } // chemical_shift

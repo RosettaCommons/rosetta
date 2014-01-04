@@ -60,7 +60,7 @@ public:
 
 	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const;
 
     void
     setup_for_minimizing(
@@ -71,7 +71,7 @@ public:
 
 	virtual
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & scfxn) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & scfxn ) const;
 
 	virtual
 	void

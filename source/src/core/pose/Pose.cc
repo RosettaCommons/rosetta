@@ -173,7 +173,7 @@ Pose::operator=( Pose const & src )
 	} else {
 		constraint_set_ = 0;
 	}
-	
+
 	num_stacks_ = src.num_stacks_;
 
 	// transfer remaining observers that honor the Conformation::TRANSFER
@@ -1446,19 +1446,19 @@ void Pose::transfer_constraint_set( const pose::Pose &pose ){
 	}
 	else constraint_set_ = pose.constraint_set_;
 }
-	
+
 void
 Pose::clear_stacking_map()
 {
 	num_stacks_.clear();
 }
-	
+
 void
 Pose::record_stacking_interaction( core::Size const & resid ) const
 {
 	num_stacks_[ resid ]++;
 }
-	
+
 const boost::unordered_map< core::Size, core::Size >&
 Pose::get_stacking_map() const
 {

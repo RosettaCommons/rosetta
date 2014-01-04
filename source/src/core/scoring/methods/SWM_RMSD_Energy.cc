@@ -219,10 +219,10 @@ SWM_RMSD_Energy::superimpose_at_fixed_res( pose::Pose & pose, pose::Pose const &
 
 	//rms_map_.insert( calc_rms_atom_id_map.begin(), calc_rms_atom_id_map.end() );
 
-	//		for ( std::map < AtomID, AtomID >::const_iterator it = calc_rms_atom_id_map.begin();
-	//					it != calc_rms_atom_id_map.end(); it++ ){
-	//			TR << it->first << " mapped to " << it->second << std::endl;
-	//		}
+	//for ( std::map < AtomID, AtomID >::const_iterator it = calc_rms_atom_id_map.begin();
+	//				it != calc_rms_atom_id_map.end(); it++ ){
+	//		TR << it->first << " mapped to " << it->second << std::endl;
+	//	}
 
 	// define superposition atoms. Should be over atoms in any fixed domains. This should be
 	// the 'inverse' of calc_rms atoms.
@@ -342,7 +342,6 @@ SWM_RMSD_Energy::superimpose_at_fixed_res_and_add_constraints( pose::Pose const 
 	}
 
 	std::map< AtomID, AtomID > calc_rms_atom_id_map;
-
 	for ( Size k = 1; k <= calc_rms_res.size(); k++ ){
 		Size const n = calc_rms_res[ k ];
 		for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ){

@@ -268,6 +268,9 @@ check_full_model_info_OK( pose::Pose const & pose ){
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 	std::string const & sequence = full_model_info.full_sequence();
 
+	// very special case -- blank pose. could generalize to any pose with a virtual residue at end
+	if ( res_list.size() == 0 && pose.total_residue() == 1 && pose.residue_type( 1 ).name3() == "XXX" ) return true;
+
 	if ( res_list.size() != pose.total_residue() ) {
 		TR << "res_list size != pose.total_residue() " << res_list.size() << " " << pose.total_residue() << std::endl;
 		return false;

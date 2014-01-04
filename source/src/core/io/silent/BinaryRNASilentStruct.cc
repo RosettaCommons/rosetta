@@ -410,7 +410,9 @@ void BinaryRNASilentStruct::fill_pose (
 	using namespace core::chemical;
 	ResidueTypeSetCAP residue_set;
 	//	std::cout << "RESIDUE TYPE SET RNA " << std::endl;
-	if ( one_letter_sequence()[0] != 'Z' /* Mg(2+) */ && atm_coords_[1].size() < 8 ) { //hmm, may be dangerous.
+	if ( one_letter_sequence()[0] != 'Z' /* Mg(2+) */ &&
+			 one_letter_sequence()[0] != 'X' &&
+			 atm_coords_[1].size() < 8 ) { //hmm, may be dangerous.
 		residue_set = ChemicalManager::get_instance()->residue_type_set( COARSE_RNA );
 	} else {
 		residue_set = ChemicalManager::get_instance()->residue_type_set( RNA );

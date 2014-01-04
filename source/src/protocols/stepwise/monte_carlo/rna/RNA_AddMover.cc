@@ -28,6 +28,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <numeric/random/random.hh>
@@ -39,10 +40,13 @@ using core::Real;
 using utility::make_tag_with_dashes;
 
 //////////////////////////////////////////////////////////////////////////
-// Removes one residue from a 5' or 3' chain terminus, and appropriately
-// updates the pose full_model_info object.
+// Adds one residue to a 5' or 3' chain terminus, and appropriately
+//  updates the pose full_model_info object.
+//
+// Now updated to add whole chunks (if stored in another pose), and also
+//  to add nucleotides 'by jump' (a.k.a. the skip-bulge move).
+//
 //////////////////////////////////////////////////////////////////////////
-
 static numeric::random::RandomGenerator RG(2555512);  // <- Magic number, do not change it!
 
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.RNA_AddMover" ) ;
@@ -100,7 +104,7 @@ namespace rna {
 		using namespace protocols::stepwise::enumerate::rna;
 
 		Pose pose = viewer_pose; // hard copy -- try to avoid graphics problems when variants are added.
-		runtime_assert( pose.total_residue() > 1 );
+		runtime_assert( pose.total_residue() >= 1 );
 		ResidueTypeSet const & rsd_set = pose.residue_type( 1 ).residue_type_set();
 
 		Size suite_num( 0 ), nucleoside_num( 0 ); // will record which new dofs added.
@@ -228,6 +232,8 @@ namespace rna {
 			}
 
 		}
+
+		if ( pose.total_residue() == 2 && pose.fold_tree().num_jump() == 0 ) pose.fold_tree( kinematics::FoldTree( 2 ) ); //special case.
 
 		fix_up_residue_type_variants( pose );
 

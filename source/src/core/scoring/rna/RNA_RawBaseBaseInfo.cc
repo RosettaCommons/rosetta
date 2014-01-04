@@ -87,15 +87,15 @@ RNA_RawBaseBaseInfo::zero()
 void
 RNA_RawBaseBaseInfo::copy_values( RNA_RawBaseBaseInfo const & src, Size const & i, Size const & j )
 {
-	for (Size k = 1; k <= NUM_EDGES; k++ ){
-		base_pair_array_(i,j,k) = src.base_pair_array_(i,j,k);
-		base_stagger_array_(i,j,k) = src.base_stagger_array_(i,j,k);
-		base_axis_array_(i,j,k) = src.base_axis_array_(i,j,k);
+	for ( Size k = 1; k <= NUM_EDGES; k++ ){
+		base_pair_array_( i, j, k ) = src.base_pair_array_( i, j, k );
+		base_stagger_array_( i, j, k ) = src.base_stagger_array_( i, j, k );
+		base_axis_array_( i, j, k ) = src.base_axis_array_( i, j, k );
 	}
-	base_stack_array_(i,j) = src.base_stack_array_(i,j);
-  base_stack_axis_array_(i,j) = src.base_stack_axis_array_(i,j);
-  base_geometry_orientation_array_(i,j) = src.base_geometry_orientation_array_(i,j);
-  base_geometry_height_array_(i,j) = src.base_geometry_height_array_(i,j);
+	base_stack_array_( i, j ) = src.base_stack_array_( i, j );
+  base_stack_axis_array_( i, j ) = src.base_stack_axis_array_( i, j );
+  base_geometry_orientation_array_( i, j ) = src.base_geometry_orientation_array_( i, j );
+  base_geometry_height_array_( i, j ) = src.base_geometry_height_array_( i, j );
 }
 
 }
