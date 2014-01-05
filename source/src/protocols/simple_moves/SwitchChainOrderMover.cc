@@ -26,6 +26,7 @@ static basic::Tracer TR("protocols.simple_moves.SwitchChainOrderMover");
 
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
+#include <utility/string_util.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <core/pose/Pose.hh>
@@ -34,6 +35,13 @@ static basic::Tracer TR("protocols.simple_moves.SwitchChainOrderMover");
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+//options Includes
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
+#include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
+#include <basic/options/keys/OptionKeys.hh>
+
 
 namespace protocols {
 namespace simple_moves {
@@ -101,7 +109,15 @@ SwitchChainOrderMover::apply( Pose & pose )
 	core::pose::create_subpose( pose, positions_in_new_pose, new_ft, new_pose );
 	new_pose.update_residue_neighbors();
 	new_pose.pdb_info( new core::pose::PDBInfo( new_pose, true ) ); //reinitialize the PDBInfo
-	pose.clear();
+	
+	//When applying switch then comments are erased from the pose. adding condition that if -pdb comments true flag is turned on then copy comments to new pose. gideonla 1/5/13
+	if (basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments ].value()){
+		std::map< std::string, std::string > const comments = core::pose::get_all_comments( pose );
+		for( std::map< std::string, std::string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
+		core::pose::add_comment(new_pose,i->first,i->second);	
+		}
+	}
+	pose.clear();	
 	pose = new_pose;
 	pose.conformation().detect_disulfides();
 	( *scorefxn() ) ( pose );

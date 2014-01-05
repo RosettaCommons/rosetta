@@ -150,6 +150,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
     asymmetric_unit_res = SymmConf.Symmetry_Info()->num_independent_residues();
 		task.request_symmetrize_by_intersection();
   }
+	tr<< "the size of sequence profile is: "<<seqprof->profile().size() - 1 <<std::endl;
 	core::Size last_res (asymmetric_unit_res <= seqprof->profile().size() ? pose.total_residue() : seqprof->profile().size() - 1 /*seqprof has size n+1 compared to its real contents; heaven knows why...*/ );
 	tr<< "FOR DEBUGGING!: last_res="<<last_res<<std::endl;
 /// following paragraph determines where PIDO and RestrictToAlignedInterface are defined.
