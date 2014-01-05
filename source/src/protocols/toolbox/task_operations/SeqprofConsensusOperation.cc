@@ -169,9 +169,13 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 	}
 
 	tr<<"Allowing the following identities:"<<std::endl;
-	runtime_assert( (seqprof->profile()).size()>=last_res );
 
-	for( core::Size i = 1; i <= last_res; ++i){
+	core::Size const resi_begin = ( chain_num_ == 0 ? 1 : pose.conformation().chain_begin( chain_num_ ) );
+	core::Size const resi_end   = ( chain_num_ == 0 ? pose.total_residue() : pose.conformation().chain_end( chain_num_ ) );
+
+	runtime_assert( (seqprof->profile()).size()>=resi_end - resi_begin );
+
+	for( core::Size i = resi_begin; i <= resi_end; ++i){
 
 		core::Real position_min_prob = min_aa_probability_;
 		if( protein_interface_design()() != NULL && std::find( designable_interface.begin(), designable_interface.end(), i ) != designable_interface.end() )
