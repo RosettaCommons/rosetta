@@ -955,6 +955,7 @@ private:
 	allowed_deviation_for_turn_type_id_;
 
 	core::Real
+	//double
 	distance_cutoff_for_electrostatic_interactions_;
 
 	core::Real

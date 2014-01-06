@@ -426,7 +426,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	Column sw_res_size	("sw_res_size",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
 
 	Column multimer_is_suspected	("multimer_is_suspected",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
-	Column avg_b_factor_CB_at_each_component	("avg_b_factor_CB_at_each_component",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column avg_b_factor_CB_at_each_component	("avg_b_factor_CB_at_each_component",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
 
 	// Schema
 	// PrimaryKey
@@ -3796,7 +3796,7 @@ SandwichFeatures::report_avg_b_factor_CB_at_each_component	(
 
 			statement insert_stmt(basic::database::safely_prepare_statement(insert,	db_session));
 
-			int	rounded_avg_b_factor = round(avg_b_factor_CB_at_each_component);
+			Real	rounded_avg_b_factor = round(avg_b_factor_CB_at_each_component);
 			insert_stmt.bind(1,	rounded_avg_b_factor);
 			insert_stmt.bind(2,	struct_id);
 			insert_stmt.bind(3,	sw_can_by_sh_id);
@@ -6402,11 +6402,13 @@ SandwichFeatures::parse_my_tag(
 
 	allowed_deviation_for_turn_type_id_ = tag->getOption<Real>("allowed_deviation_for_turn_type_id", 40.0);
 
+	distance_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("distance_cutoff_for_electrostatic_interactions", 7.0);
+		//"N-O bridges follow only one, that is, they have at least a pair of side-chain functional-group nitrogen and oxygen atoms within 4A distance, but the side-chain functional-group centroids are > 4A apart."
+		// source: 2002_Close-Range Electrostatic Interactions in Proteins
 
-	distance_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("distance_cutoff_for_electrostatic_interactions", 6.1);
 	CB_b_facor_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("CB_b_facor_cutoff_for_electrostatic_interactions", 60);
 		//"Values of 60 or greater may imply disorder (for example, free movement of a side chain or alternative side-chain conformations). Values of 20 and 5 correspond to uncertainties of 0.5 and 0.25 angstroms, respectively."
-		//http://spdbv.vital-it.ch/TheMolecularLevel/SPVTut/text/STut09aTN.html
+		// source: http://spdbv.vital-it.ch/TheMolecularLevel/SPVTut/text/STut09aTN.html
 
 
 	///////// development options ///////
@@ -7595,7 +7597,26 @@ SandwichFeatures::report_features(
 		ofstream ElectroStatic_file;
 			
 		ElectroStatic_file.open(ElectroStatic_file_name.c_str());
-		ElectroStatic_file << "surface_residue_number	surface_residue_type	number_of_attractions	number_of_repulsions" << endl;
+
+		string number_of_attractions_title;
+		string head_attrac = "attrac_by_centroid_w_";
+		number_of_attractions_title.append(head_attrac);
+
+		string number_of_repulsions_title;
+		string head_repul = "repul_by_centroid_w_";
+		number_of_repulsions_title.append(head_repul);
+
+		std::ostringstream cutoff;
+		cutoff << distance_cutoff_for_electrostatic_interactions_;
+		std::string cutoff_str = cutoff.str();
+		number_of_attractions_title.append(cutoff_str);
+		number_of_repulsions_title.append(cutoff_str);
+
+		string tail		=	"_A";
+		number_of_attractions_title.append(tail);
+		number_of_repulsions_title.append(tail);
+
+		ElectroStatic_file << "resNum	type	"	<<	number_of_attractions_title	<<	"	"	<<	number_of_repulsions_title << "	salt_bridge	C_C_bridge	N_O_bridge	longer_range_ion_pair"	<<	endl;
 
 		utility::vector1<Size>	vector_of_unique_distinct_sw_ids	=	get_distinct_sw_id_from_sw_by_components_table	(struct_id,	db_session);
 
@@ -7612,27 +7633,87 @@ SandwichFeatures::report_features(
 				Size	residue_num	=	vector_of_residue_num_of_surface_rkde[residue_i];
 				ElectroStatic_file	<< residue_num	<<	"	"	<<	pose.residue_type(residue_num).name3();
 
-				numeric::xyzVector< core::Real > xyz_of_terminal_atom;
+				numeric::xyzVector< core::Real > xyz_of_centroid_of_RKDE;
+				numeric::xyzVector< core::Real > xyz_of_terminal_atom_of_RK;	// for R/K
+				numeric::xyzVector< core::Real > xyz_of_terminal_atom_1_of_DE;
+				numeric::xyzVector< core::Real > xyz_of_terminal_atom_2_of_DE;
 
 				if (pose.residue_type(residue_num).name3() == "ARG")
 				{
-					xyz_of_terminal_atom =	pose.residue(residue_num).atom(" NH1").xyz();
+					xyz_of_centroid_of_RKDE.x()	=
+							(pose.residue(residue_num).atom(" NE ").xyz().x()
+						+	pose.residue(residue_num).atom(" CZ ").xyz().x()
+						+	pose.residue(residue_num).atom(" NH1").xyz().x()
+						+	pose.residue(residue_num).atom(" NH2").xyz().x())/4;
+
+					xyz_of_centroid_of_RKDE.y()	=
+							(pose.residue(residue_num).atom(" NE ").xyz().y()
+						+	pose.residue(residue_num).atom(" CZ ").xyz().y()
+						+	pose.residue(residue_num).atom(" NH1").xyz().y()
+						+	pose.residue(residue_num).atom(" NH2").xyz().y())/4;
+
+					xyz_of_centroid_of_RKDE.z()	=
+							(pose.residue(residue_num).atom(" NE ").xyz().z()
+						+	pose.residue(residue_num).atom(" CZ ").xyz().z()
+						+	pose.residue(residue_num).atom(" NH1").xyz().z()
+						+	pose.residue(residue_num).atom(" NH2").xyz().z())/4;
+
+					xyz_of_terminal_atom_of_RK =	pose.residue(residue_num).atom(" CZ ").xyz();
 				}
 				else	if (pose.residue_type(residue_num).name3() == "LYS")
 				{
-					xyz_of_terminal_atom =	pose.residue(residue_num).atom(" NZ ").xyz();
+					xyz_of_centroid_of_RKDE =	pose.residue(residue_num).atom(" NZ ").xyz();
+					xyz_of_terminal_atom_of_RK =	pose.residue(residue_num).atom(" NZ ").xyz();
 				}
 				else	if (pose.residue_type(residue_num).name3() == "ASP")
 				{
-					xyz_of_terminal_atom =	pose.residue(residue_num).atom(" OD1").xyz();
+					xyz_of_centroid_of_RKDE.x()	=
+							(pose.residue(residue_num).atom(" CG ").xyz().x()
+						+	pose.residue(residue_num).atom(" OD1").xyz().x()
+						+	pose.residue(residue_num).atom(" OD2").xyz().x())/3;
+
+					xyz_of_centroid_of_RKDE.y()	=
+							(pose.residue(residue_num).atom(" CG ").xyz().y()
+						+	pose.residue(residue_num).atom(" OD1").xyz().y()
+						+	pose.residue(residue_num).atom(" OD2").xyz().y())/3;
+
+					xyz_of_centroid_of_RKDE.z()	=
+							(pose.residue(residue_num).atom(" CG ").xyz().z()
+						+	pose.residue(residue_num).atom(" OD1").xyz().z()
+						+	pose.residue(residue_num).atom(" OD2").xyz().z())/3;
+
+					xyz_of_terminal_atom_1_of_DE =	pose.residue(residue_num).atom(" OD1").xyz();
+					xyz_of_terminal_atom_2_of_DE =	pose.residue(residue_num).atom(" OD2").xyz();
 				}
 				else	//if (pose.residue_type(residue_num).name3() == "GLU")
 				{
-					xyz_of_terminal_atom =	pose.residue(residue_num).atom(" OE1").xyz();
+					xyz_of_centroid_of_RKDE.x()	=
+							(pose.residue(residue_num).atom(" CD ").xyz().x()
+						+	pose.residue(residue_num).atom(" OE1").xyz().x()
+						+	pose.residue(residue_num).atom(" OE2").xyz().x())/3;
+
+					xyz_of_centroid_of_RKDE.y()	=
+							(pose.residue(residue_num).atom(" CD ").xyz().y()
+						+	pose.residue(residue_num).atom(" OE1").xyz().y()
+						+	pose.residue(residue_num).atom(" OE2").xyz().y())/3;
+
+					xyz_of_centroid_of_RKDE.z()	=
+							(pose.residue(residue_num).atom(" CD ").xyz().z()
+						+	pose.residue(residue_num).atom(" OE1").xyz().z()
+						+	pose.residue(residue_num).atom(" OE2").xyz().z())/3;
+
+					xyz_of_terminal_atom_1_of_DE =	pose.residue(residue_num).atom(" OE1").xyz();
+					xyz_of_terminal_atom_2_of_DE =	pose.residue(residue_num).atom(" OE2").xyz();
 				}
 
-				Size	number_of_attractions	=	0;
-				Size	number_of_repulsions	=	0;
+				Size	number_of_attractions_by_centroid	=	0;
+				Size	number_of_repulsions_by_centroid	=	0;
+
+				Size	number_of_salt_bridge	=	0;
+				Size	number_of_C_C_bridge	=	0;
+				Size	number_of_N_O_bridge	=	0;
+				Size	number_of_longer_range_ion_pair	=	0;
+
 				for(Size other_residue_i=1; other_residue_i<=vector_of_residue_num_of_surface_rkde.size(); other_residue_i++)
 				{
 					if	(other_residue_i	==	residue_i)
@@ -7651,53 +7732,173 @@ SandwichFeatures::report_features(
 					// <end> check whether "other_residue" has low atom position uncertainty
 
 
-					numeric::xyzVector< core::Real > xyz_of_other_terminal_atom;
+					numeric::xyzVector< core::Real > xyz_of_centroid_of_other_RKDE;
+					numeric::xyzVector< core::Real > xyz_of_terminal_atom_of_other_RK;	// for R/K
+					numeric::xyzVector< core::Real > xyz_of_terminal_atom_1_of_other_DE;
+					numeric::xyzVector< core::Real > xyz_of_terminal_atom_2_of_other_DE;
+
+
 					if (pose.residue_type(other_residue_num).name3() == "ARG")
 					{
-						xyz_of_other_terminal_atom =	pose.residue(other_residue_num).atom(" NH1").xyz();
+						xyz_of_centroid_of_other_RKDE.x()	=
+							(pose.residue(other_residue_num).atom(" NE ").xyz().x()
+						+	pose.residue(other_residue_num).atom(" CZ ").xyz().x()
+						+	pose.residue(other_residue_num).atom(" NH1").xyz().x()
+						+	pose.residue(other_residue_num).atom(" NH2").xyz().x())/4;
+
+						xyz_of_centroid_of_other_RKDE.y()	=
+							(pose.residue(other_residue_num).atom(" NE ").xyz().y()
+						+	pose.residue(other_residue_num).atom(" CZ ").xyz().y()
+						+	pose.residue(other_residue_num).atom(" NH1").xyz().y()
+						+	pose.residue(other_residue_num).atom(" NH2").xyz().y())/4;
+
+						xyz_of_centroid_of_other_RKDE.z()	=
+							(pose.residue(other_residue_num).atom(" NE ").xyz().z()
+						+	pose.residue(other_residue_num).atom(" CZ ").xyz().z()
+						+	pose.residue(other_residue_num).atom(" NH1").xyz().z()
+						+	pose.residue(other_residue_num).atom(" NH2").xyz().z())/4;
+
+						xyz_of_terminal_atom_of_other_RK =	pose.residue(other_residue_num).atom(" CZ ").xyz();
 					}
 					else	if (pose.residue_type(other_residue_num).name3() == "LYS")
 					{
-						xyz_of_other_terminal_atom =	pose.residue(other_residue_num).atom(" NZ ").xyz();
+						xyz_of_centroid_of_other_RKDE =	pose.residue(other_residue_num).atom(" NZ ").xyz();
+						xyz_of_terminal_atom_of_other_RK =	pose.residue(other_residue_num).atom(" NZ ").xyz();
 					}
 					else	if (pose.residue_type(other_residue_num).name3() == "ASP")
 					{
-						xyz_of_other_terminal_atom =	pose.residue(other_residue_num).atom(" OD1").xyz();
+						xyz_of_centroid_of_other_RKDE.x()	=
+							(pose.residue(other_residue_num).atom(" CG ").xyz().x()
+						+	pose.residue(other_residue_num).atom(" OD1").xyz().x()
+						+	pose.residue(other_residue_num).atom(" OD2").xyz().x())/3;
+
+						xyz_of_centroid_of_other_RKDE.y()	=
+							(pose.residue(other_residue_num).atom(" CG ").xyz().y()
+						+	pose.residue(other_residue_num).atom(" OD1").xyz().y()
+						+	pose.residue(other_residue_num).atom(" OD2").xyz().y())/3;
+
+						xyz_of_centroid_of_other_RKDE.z()	=
+							(pose.residue(other_residue_num).atom(" CG ").xyz().z()
+						+	pose.residue(other_residue_num).atom(" OD1").xyz().z()
+						+	pose.residue(other_residue_num).atom(" OD2").xyz().z())/3;
+
+						xyz_of_terminal_atom_1_of_other_DE =	pose.residue(other_residue_num).atom(" OD1").xyz();
+						xyz_of_terminal_atom_2_of_other_DE =	pose.residue(other_residue_num).atom(" OD2").xyz();
 					}
 					else	//if (pose.residue_type(other_residue_num).name3() == "GLU")
 					{
-						xyz_of_other_terminal_atom =	pose.residue(other_residue_num).atom(" OE1").xyz();
+						xyz_of_centroid_of_other_RKDE.x()	=
+							(pose.residue(other_residue_num).atom(" CD ").xyz().x()
+						+	pose.residue(other_residue_num).atom(" OE1").xyz().x()
+						+	pose.residue(other_residue_num).atom(" OE2").xyz().x())/3;
+
+						xyz_of_centroid_of_other_RKDE.y()	=
+							(pose.residue(other_residue_num).atom(" CD ").xyz().y()
+						+	pose.residue(other_residue_num).atom(" OE1").xyz().y()
+						+	pose.residue(other_residue_num).atom(" OE2").xyz().y())/3;
+
+						xyz_of_centroid_of_other_RKDE.z()	=
+							(pose.residue(other_residue_num).atom(" CD ").xyz().z()
+						+	pose.residue(other_residue_num).atom(" OE1").xyz().z()
+						+	pose.residue(other_residue_num).atom(" OE2").xyz().z())/3;
+
+						xyz_of_terminal_atom_1_of_other_DE =	pose.residue(other_residue_num).atom(" OE1").xyz();
+						xyz_of_terminal_atom_2_of_other_DE =	pose.residue(other_residue_num).atom(" OE2").xyz();
 					}
 
-					Real distance = xyz_of_terminal_atom.distance(xyz_of_other_terminal_atom);
-					if (distance < distance_cutoff_for_electrostatic_interactions_)
-					{
-						if	((pose.residue_type(residue_num).name3() == "ARG") || (pose.residue_type(residue_num).name3() == "LYS"))
-						{
-							if	((pose.residue_type(other_residue_num).name3() == "ASP") || (pose.residue_type(other_residue_num).name3() == "GLU"))
-							{
-								number_of_attractions++;
-							}
-							else
-							{
-								number_of_repulsions++;
-							}
-						}
-						else // (pose.residue_type(residue_num).name3() == "ASP") || (pose.residue_type(residue_num).name3() == "GLU")
-						{
-							if	((pose.residue_type(other_residue_num).name3() == "ASP") || (pose.residue_type(other_residue_num).name3() == "GLU"))
-							{
-								number_of_repulsions++;
-							}
-							else
-							{
-								number_of_attractions++;
-							}
-						}
+					Real distance_between_centroid = xyz_of_centroid_of_RKDE.distance(xyz_of_centroid_of_other_RKDE);
+						TR << "distance_between_centroid:	"	<<	distance_between_centroid	<<	endl;
 
+					if	((pose.residue_type(residue_num).name3() == "ARG") || (pose.residue_type(residue_num).name3() == "LYS"))
+					{
+						if	(pose.residue_type(other_residue_num).name3() == "ASP"	||	pose.residue_type(other_residue_num).name3() == "GLU")
+						{
+							if (distance_between_centroid < distance_cutoff_for_electrostatic_interactions_)
+							{
+								number_of_attractions_by_centroid++;
+							}
+							Real distance_between_terminal_atom_1 = xyz_of_terminal_atom_of_RK.distance(xyz_of_terminal_atom_1_of_other_DE);
+							Real distance_between_terminal_atom_2 = xyz_of_terminal_atom_of_RK.distance(xyz_of_terminal_atom_2_of_other_DE);
+							if	(distance_between_centroid < 7.0)
+							{
+								if	(distance_between_centroid < 4.0)
+								{
+									if	(distance_between_terminal_atom_1 < 4.0 ||	distance_between_terminal_atom_2	< 4.0)
+									{
+										number_of_salt_bridge++;
+									}
+									else
+									{
+										number_of_C_C_bridge++;
+									}
+								}
+								else
+								{
+									if	(distance_between_terminal_atom_1 < 4.0 ||	distance_between_terminal_atom_2	< 4.0)
+									{
+										number_of_N_O_bridge++;
+									}
+									else
+									{
+										number_of_longer_range_ion_pair++;
+									}
+								}
+							}
+						}
+						else
+						{
+							if (distance_between_centroid < distance_cutoff_for_electrostatic_interactions_)
+							{
+								number_of_repulsions_by_centroid++;
+							}
+						}
+					}
+					else // (pose.residue_type(residue_num).name3() == "ASP") || (pose.residue_type(residue_num).name3() == "GLU")
+					{
+						if	((pose.residue_type(other_residue_num).name3() == "ASP") || (pose.residue_type(other_residue_num).name3() == "GLU"))
+						{
+							if (distance_between_centroid < distance_cutoff_for_electrostatic_interactions_)
+							{
+								number_of_repulsions_by_centroid++;
+							}
+						}
+						else
+						{
+							if (distance_between_centroid < distance_cutoff_for_electrostatic_interactions_)
+							{
+								number_of_attractions_by_centroid++;
+							}
+							Real distance_between_terminal_atom_1 = xyz_of_terminal_atom_of_other_RK.distance(xyz_of_terminal_atom_1_of_DE);
+							Real distance_between_terminal_atom_2 = xyz_of_terminal_atom_of_other_RK.distance(xyz_of_terminal_atom_2_of_DE);
+							if	(distance_between_centroid < 7.0)
+							{
+								if	(distance_between_centroid < 4.0)
+								{
+									if	(distance_between_terminal_atom_1 < 4.0 ||	distance_between_terminal_atom_2	< 4.0)
+									{
+										number_of_salt_bridge++;
+									}
+									else
+									{
+										number_of_C_C_bridge++;
+									}
+								}
+								else
+								{
+									if	(distance_between_terminal_atom_1 < 4.0 ||	distance_between_terminal_atom_2	< 4.0)
+									{
+										number_of_N_O_bridge++;
+									}
+									else
+									{
+										number_of_longer_range_ion_pair++;
+									}
+								}
+							}
+						}
 					}
 				}
-				ElectroStatic_file	<<	"	"	<< number_of_attractions	<< "	"	<<	number_of_repulsions	<<	endl;
+				ElectroStatic_file	<<	"	"	<< number_of_attractions_by_centroid	<< "	"	<<	number_of_repulsions_by_centroid	<<	"	"	<<	number_of_salt_bridge	<<	"	"	<<	number_of_C_C_bridge	<<	"	"	<<	number_of_N_O_bridge	<<	"	"	<<	number_of_longer_range_ion_pair	<<	endl;
 			}
 		}
 		ElectroStatic_file.close();
@@ -7859,7 +8060,6 @@ SandwichFeatures::report_features(
 		ofstream resfile_stream;
 		
 		resfile_stream.open(resfile_name.c_str());
-
 		
 		resfile_stream << "EX 1 NOTAA C" << endl;
 		resfile_stream << "USE_INPUT_SC" << endl;
