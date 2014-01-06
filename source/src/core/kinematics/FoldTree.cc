@@ -145,13 +145,20 @@ FoldTree::delete_jump_and_intervening_cutpoint( int const jump_number )
 void
 FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin, int jump_end )
 {
-	PyAssert( (jump_begin>0) && (jump_begin<=static_cast<int>(num_jump())),
+	// PyAssert( (jump_begin>0) && (jump_begin<=static_cast<int>(num_jump())),
+	// 		"FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin , int jump_end ): "
+	// 		"input variable jump_begin has a meaningless value");
+	// PyAssert( (jump_end>0) && (jump_end<=static_cast<int>(num_jump())),
+	// 		"FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin , int jump_end ): "
+	// 		"input variable jump_end has a meaningless value");
+
+	PyAssert( is_jump_point(jump_begin),
 			"FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin , int jump_end ): "
 			"input variable jump_begin has a meaningless value");
-	PyAssert( (jump_end>0) && (jump_end<=static_cast<int>(num_jump())),
+	PyAssert( is_jump_point(jump_end),
 			"FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin , int jump_end ): "
 			"input variable jump_end has a meaningless value");
-//	PyAssert( is_jump_point( jump_begin ) && is_jump_point( jump_end ), 'FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin , int jump_end ): input variables are not jump points');
+
 	assert( is_jump_point( jump_begin ) && is_jump_point( jump_end ) );
 
 	if ( jump_begin > jump_end ) {

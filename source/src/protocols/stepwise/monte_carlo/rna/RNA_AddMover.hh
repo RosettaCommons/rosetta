@@ -38,7 +38,7 @@ namespace rna {
 class RNA_AddMover: public protocols::moves::Mover {
 public:
 
-	RNA_AddMover( core::scoring::ScoreFunctionOP scorefxn, core::pose::PoseOP native_pose, core::Real constraint_x0, core::Real constraint_tol );
+	// Undefined, commenting out to fix PyRosetta buildRNA_AddMover( core::scoring::ScoreFunctionOP scorefxn, core::pose::PoseOP native_pose, core::Real constraint_x0, core::Real constraint_tol );
 
 	RNA_AddMover( core::scoring::ScoreFunctionOP scorefxn );
 

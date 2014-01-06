@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/simple_moves/ChainSplitMover.hh 
+/// @file protocols/simple_moves/ChainSplitMover.hh
 /// @brief Declaration of ChainSplitMover which splits a pose into two chains at a given cutpoint
 
 
@@ -41,12 +41,12 @@ public:
 	virtual std::string get_name() const;
 
 	/// @brief Retrieve the cutpoint at which the pose will be split
-	core::Size cutpoint( ) const ; 
+	// Undefined, commenting out to fix PyRosetta build  core::Size cutpoint( ) const ;
 
 	/// @brief Set the cutpoint at which the pose will be split. Pose coordinates!
-	void cutpoint( core::Size splitpoint );
+	// Undefined, commenting out to fix PyRosetta build  void cutpoint( core::Size splitpoint );
 private:
-	core::Size cutpoint_;	
+	core::Size cutpoint_;
 };
 
 } // simple_moves
