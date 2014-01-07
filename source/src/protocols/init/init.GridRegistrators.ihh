@@ -24,6 +24,7 @@ static GridRegistrator<HbaGridCreator> reg_HbaGridCreator;
 static GridRegistrator<HbdGridCreator> reg_HbdGridCreator;
 static GridRegistrator<VdwGridCreator> reg_VdwGridCreator;
 static GridRegistrator<ChargeGridCreator> reg_ChargeGridCreator;
+static GridRegistrator<ShapeGridCreator> reg_ShapeGridCreator;
 static GridRegistrator<SolvationGridCreator> reg_SolvationGridCreator;
 static GridRegistrator<SolvationMetaGridCreator> reg_SolvationMetaGridCreator;
 static GridRegistrator<LigandPropertyScoreCreator> reg_LigandPropertyScoreCreator;

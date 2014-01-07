@@ -314,7 +314,7 @@ void RenderGridsToKinemage::setup_three_color_scheme()
 		current_color.x(current_color.x()+red_step_high);
 		current_color.y(current_color.y()+green_step_high);
 		current_color.z(current_color.z()+blue_step_high);
-		std::string color_bin_string(utility::to_string<core::Size>(bin));
+		std::string color_bin_string(utility::to_string<core::Size>(bin+half_bins));
 		ColorGradient new_color(current_color,current_low,current_high,grid_name_+"_"+color_bin_string+"_color");
 		color_data_.push_back(new_color);
 		current_low = current_high;

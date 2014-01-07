@@ -148,11 +148,20 @@ void GridManager::make_new_grid(utility::tag::TagCOP const tag)
 {
 
 	std::string name= tag->getName();
+	
+	//Sometimes creating grids can be time consuming
+	//so check before we do something that calls a grid constructor.
+	//Access the various options anyways so we don't die for unaccessed options. 
 	core::Real weight = tag->getOption<core::Real>("weight");
-	grid_weights_.insert(std::make_pair(name,weight));
-	GridManagerTracer.Debug << name <<std::endl;
-	GridBaseOP new_grid(GridFactory::get_instance()->new_grid(tag));
-	insert_grid(name, new_grid);
+	tag->getOption<std::string>("grid_type");
+	if(grid_map_.find(name) == grid_map_.end())
+	{
+		grid_weights_.insert(std::make_pair(name,weight));
+		GridManagerTracer.Debug << name <<std::endl;
+		GridBaseOP new_grid(GridFactory::get_instance()->new_grid(tag));
+		insert_grid(name, new_grid);
+	}
+
 
 
 }

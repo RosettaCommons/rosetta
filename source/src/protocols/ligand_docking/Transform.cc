@@ -46,7 +46,7 @@ namespace ligand_docking {
 
 static numeric::random::RandomGenerator RG(23459);
 
-static basic::Tracer transform_tracer("protocols.ligand_docking.ligand_options.transform", basic::t_debug);
+static basic::Tracer transform_tracer("protocols.ligand_docking.Transform");
 
 std::string TransformCreator::keyname() const
 {
@@ -301,15 +301,14 @@ void Transform::apply(core::pose::Pose & pose)
 				accepted_moves++;
 
 			}
-			transform_tracer << last_score << " " <<current_score <<std::endl;
 			if(last_score <= best_score)
 			{
 				best_score = last_score;
 				best_ligand = last_accepted_ligand_residue;
-				transform_tracer << "accepting new pose" << std::endl;
+				//transform_tracer << "accepting new pose" << std::endl;
 			}else
 			{
-				transform_tracer << "not accepting new pose" << std::endl;
+				//transform_tracer << "not accepting new pose" << std::endl;
 			}
 			
 		}
@@ -326,7 +325,9 @@ void Transform::apply(core::pose::Pose & pose)
 		sampled_space.close();
 	}
 	pose = best_pose;
-
+	
+	transform_tracer << "Accepted pose with grid score: " << best_score << std::endl;
+	
 }
 
     

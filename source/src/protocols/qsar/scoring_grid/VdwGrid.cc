@@ -70,7 +70,7 @@ VdwGrid::VdwGrid() : SingleGrid("VdwGrid"), cutoff_(10.0)
 }
 
 void
-VdwGrid::parse_my_tag(utility::tag::TagCOP const /*tag*/){
+VdwGrid::parse_my_tag(utility::tag::TagCOP  /*tag*/){
 
 }
 

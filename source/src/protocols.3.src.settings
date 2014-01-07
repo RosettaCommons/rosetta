@@ -58,7 +58,7 @@ sources = {
 		"BindingSiteConstraint",
 		"CombinedConstraintEvaluator",
 		"CombinedConstraintEvaluatorCreator",
-                "COMCoordinateConstraint",
+		"COMCoordinateConstraint",
 		"ConstraintEvaluator",
 		"ConstraintEvaluatorCreator",
 		"MaxSeqSepConstraintSet",
@@ -296,7 +296,7 @@ sources = {
 		"GridCreator",
 		"GridFactory",
 		"GridManager",
-        	"ClassicGrid",
+		"ClassicGrid",
 		"ChargeGrid",
 		"HbaGrid",
 		"HbdGrid",
@@ -305,6 +305,7 @@ sources = {
 		"ScoringGridLoader",
 		"ScoreNormalization",
 		"VdwGrid",
+		"ShapeGrid",
 		"SolvationGrid",
 		"SolvationMetaGrid"
 	],
@@ -321,9 +322,9 @@ sources = {
 		"util",
 		"WorkUnit_BatchRelax",
 	],
-        "protocols/pb_potential": [
-                "SetupPoissonBoltzmannPotential",
-        ],
+	"protocols/pb_potential": [
+		"SetupPoissonBoltzmannPotential",
+	],
 	"protocols/rigid": [
 		"PoseMembraneRigidBodyMover",
 		"RB_geometry",
@@ -613,7 +614,7 @@ sources = {
 	],
 	"protocols/toolbox/pose_manipulation": [
 		"pose_manipulation",
-  ],
+	],
 	"protocols/toolbox/pose_metric_calculators": [
 		"BuriedUnsatisfiedPolarsCalculator",
 		"CatPiCalculator",
