@@ -164,6 +164,14 @@ void ScreeningJobInputter::fill_jobs(Jobs & jobs)
 			throw utility::excn::EXCN_BadInput("a group in screening file " + file_name + " does not contain the element 'group_name' or is misformatted");
 		}
 
+		utility::json_spirit::mArray startfrom_data;
+		bool startfrom_present = false;
+		if(group_map.find("startfrom") != group_map.end())
+		{
+			startfrom_data = group_map["startfrom"].get_array();
+			startfrom_present = true;
+		}
+		
 		try
 		{
 			protein_path_data = group_map["proteins"].get_array();
@@ -210,6 +218,18 @@ void ScreeningJobInputter::fill_jobs(Jobs & jobs)
 					if(native_present)
 					{
 						current_job->add_string_string_pair("native_path",native_string);
+					}
+					
+					if(startfrom_present)
+					{
+						core::Real xcoord = startfrom_data[0].get_real();
+						core::Real ycoord = startfrom_data[1].get_real();
+						core::Real zcoord = startfrom_data[2].get_real();
+						
+						current_job->add_string_real_pair("start_x", xcoord);
+						current_job->add_string_real_pair("start_y", ycoord);
+						current_job->add_string_real_pair("start_z", zcoord);
+						
 					}
 					jobs.push_back( current_job );
 					TR << "pushing " << input_tag << " nstruct index " << index << std::endl;

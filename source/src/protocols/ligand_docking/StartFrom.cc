@@ -121,7 +121,7 @@ StartFrom::parse_my_tag(
 	if ( ! tag->hasOption("chain") ) throw utility::excn::EXCN_RosettaScriptsOption("'StartFrom' mover requires chain tag");
 
 	chain_ = tag->getOption<std::string>("chain");
-
+	
 	foreach(utility::tag::TagCOP child_tag, tag->getTags()){
 		std::string name= child_tag->getName();
 		if( name == "features"){
@@ -188,6 +188,22 @@ void StartFrom::chain(std::string const & chain)
 }
 
 void StartFrom::apply(core::pose::Pose & pose){
+	
+	//If we've already stored a startfrom, use that
+	
+	jd2::Job::StringRealPairs string_real_data(jd2::JobDistributor::get_instance()->current_job()->get_string_real_pairs());
+	
+	if(string_real_data.find("start_x") != string_real_data.end())
+	{
+		std::string pdb_tag = "default";
+		core::Vector start_coords;
+		start_coords.x(string_real_data["start_x"]);
+		start_coords.y(string_real_data["start_y"]);
+		start_coords.z(string_real_data["start_z"]);
+		coords(start_coords,pdb_tag);
+		start_from_tracer << "Using starting coords stored in job" <<std::endl;
+	}
+	
 	assert(!starting_points_.empty() || !potential_starting_positions_.empty());
 	int const starting_point_index= numeric::random::RG.random_range(1, starting_points_.size());
 
