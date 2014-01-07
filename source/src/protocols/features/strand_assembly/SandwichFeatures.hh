@@ -336,6 +336,16 @@ public:
 		core::Size sheet_id,
 		core::Size num_strands_from_sheet);
 
+	void
+	report_number_of_electrostatic_interactions_of_residues	(
+		std::string tag,
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::pose::Pose const & pose,
+		std::string	dssp_code,
+		std::string	heading_direction);
+
+
 	utility::vector1<SandwichFragment>
 	prepare_to_fill_sw_by_components(
 		StructureID struct_id,
@@ -713,10 +723,12 @@ public:
 		core::Size sheet_id);
 
 	utility::vector1<Size>
-	retrieve_residue_num_of_surface_rkde(
+	retrieve_residue_num_of_rkde(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
-		core::Size	sw_can_by_sh_id);
+		core::Size	sw_can_by_sh_id,
+		std::string	dssp_code,
+		std::string	heading_direction);
 
 	bool
 	check_whether_sheets_are_connected_with_near_bb_atoms(
@@ -800,15 +812,24 @@ public:
 	);
 
 	void
-	update_surface_rkde(
+	update_rkde_in_strands(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
-		core::Size surface_RKDE_PK_id_counter,
+		core::Size RKDE_in_strands_PK_id_counter,
 		std::string tag,
 		core::Size sw_can_by_sh_id,
 		core::Size residue_number,
-		std::string	residue_type);
+		std::string	residue_type,
+		std::string	heading_direction);
 
+	void
+	update_rkde(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::Size RKDE_PK_id_counter,
+		std::string tag,
+		core::Size residue_number,
+		std::string	residue_type);
 
 
 private:
@@ -911,6 +932,12 @@ private:
 
 	bool
 	write_electrostatic_interactions_of_surface_residues_in_a_strand_;
+
+	bool
+	write_electrostatic_interactions_of_all_residues_in_a_strand_;
+
+	bool
+	write_electrostatic_interactions_of_all_residues_;
 
 	core::Size
 	max_starting_loop_size_;
