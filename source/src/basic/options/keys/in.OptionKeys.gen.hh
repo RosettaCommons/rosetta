@@ -40,7 +40,6 @@ namespace in { extern BooleanOptionKey const detect_disulf; }
 namespace in { extern RealOptionKey const detect_disulf_tolerance; }
 namespace in { extern FileOptionKey const fix_disulf; }
 namespace in { extern BooleanOptionKey const missing_density_to_jump; }
-namespace in { extern BooleanOptionKey const use_stupid_foldtree_format; }
 namespace in { extern IntegerVectorOptionKey const target_residues; }
 namespace in { extern IntegerVectorOptionKey const replonly_residues; }
 namespace in { extern BooleanOptionKey const replonly_loops; }

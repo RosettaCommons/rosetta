@@ -17,7 +17,6 @@ namespace in { BooleanOptionKey const detect_disulf( "in:detect_disulf" );  }
 namespace in { RealOptionKey const detect_disulf_tolerance( "in:detect_disulf_tolerance" );  }
 namespace in { FileOptionKey const fix_disulf( "in:fix_disulf" );  }
 namespace in { BooleanOptionKey const missing_density_to_jump( "in:missing_density_to_jump" );  }
-namespace in { BooleanOptionKey const use_stupid_foldtree_format( "in:use_stupid_foldtree_format" );  }
 namespace in { IntegerVectorOptionKey const target_residues( "in:target_residues" );  }
 namespace in { IntegerVectorOptionKey const replonly_residues( "in:replonly_residues" );  }
 namespace in { BooleanOptionKey const replonly_loops( "in:replonly_loops" );  }
@@ -759,3 +758,4 @@ namespace jumps { BooleanOptionKey const filter_templates( "jumps:filter_templat
 namespace templates { BooleanOptionKey const templates( "templates" );  }
 namespace templates { FileOptionKey const config( "templates:config" );  }
 namespace templates { BooleanOptionKey const fix_aligned_residues( "templates:fix_aligned_residues" );  }
+namespace templates { FileOptionKey const fix_frag_file( "templates:fix_frag_file" );  }

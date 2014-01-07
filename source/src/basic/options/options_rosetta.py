@@ -168,8 +168,6 @@ Options = Option_Group( '',
 				desc='If missing density is found in input pdbs, replace with a jump',
 				default = 'false'),
 
-		Option( 'use_stupid_foldtree_format', 'Boolean',
-				desc="use the fold-tree format that existed for one week after revision 21447", default='false' ),
 		Option( 'target_residues', 'IntegerVector', desc = 'which residue numbers to pass for getDistConstraints' ),
 		Option( 'replonly_residues', 'IntegerVector', desc = 'residue numbers regarded as repulsive-only residues' ),
 		Option( 'replonly_loops', 'Boolean', desc = 'all loops will be regarded as repulsive-only', default='false' ),

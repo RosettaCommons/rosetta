@@ -78,44 +78,22 @@ operator >>( std::istream & is, Edge & e )
 {
 	std::string tag;
 
-//============================================
-// this is a temporary hack to allow read of the fold-tree format that existed for the weeks from revision 21447 30/3 -> 8/4 2008
-// in a couple of weeks this support shall be removed
- 	if ( basic::options::option[ basic::options::OptionKeys::in::use_stupid_foldtree_format ] ) {
 
-		is >> tag;
-		if ( ! (tag == "EDGE" ) ) {
-			tr.Trace << "failed reading EDGE tag --- found instead: " << tag << std::endl;
-			is.setstate( std::ios_base::failbit );
-			return is;
-		}
-		is >> e.start_ >> e.stop_ >> e.label_;
-		if ( e.label() == Edge::CHEMICAL ) is >> e.start_atom_ >> e.stop_atom_;
+	//Removed temp foldtree hack from 08 - JAB
+	is >> tag;
+	if ( ! (tag == "EDGE" || tag == "JEDGE") ) {
+		tr.Trace << "failed reading EDGE tag --- found instead: " << tag << std::endl;
+		is.setstate( std::ios_base::failbit );
+		return is;
+	}
+	is >> e.start_ >> e.stop_ >> e.label_;
+	if ( e.label() == Edge::CHEMICAL ) is >> e.start_atom_ >> e.stop_atom_;
 
-		e.start_atom_ = ""; e.stop_atom_ = "";
-		if ( e.is_jump() ) {
-			is >> e.start_atom_;
-			is >> e.stop_atom_;
-		} else return is;
-	} else { // normal ( new ) format
-//=================================================
-// END OF TEMPORARY HACK
-
-		is >> tag;
-		if ( ! (tag == "EDGE" || tag == "JEDGE") ) {
-			tr.Trace << "failed reading EDGE tag --- found instead: " << tag << std::endl;
-			is.setstate( std::ios_base::failbit );
-			return is;
-		}
-		is >> e.start_ >> e.stop_ >> e.label_;
-		if ( e.label() == Edge::CHEMICAL ) is >> e.start_atom_ >> e.stop_atom_;
-
-		e.start_atom_ = ""; e.stop_atom_ = "";
-		if ( e.is_jump() && tag == "JEDGE" ) {
-			is >> e.start_atom_;
-			is >> e.stop_atom_;
-		} else return is;
-	} // from here both pathways are the same.
+	e.start_atom_ = ""; e.stop_atom_ = "";
+	if ( e.is_jump() && tag == "JEDGE" ) {
+		is >> e.start_atom_;
+		is >> e.stop_atom_;
+	} else return is;
 	if ( e.start_atom_ == "X" ) e.start_atom_ = "";
 	if ( e.stop_atom_ == "X" ) e.stop_atom_ = "";
 

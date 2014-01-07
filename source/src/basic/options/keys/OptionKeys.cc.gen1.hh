@@ -1,4 +1,3 @@
-namespace templates { FileOptionKey const fix_frag_file( "templates:fix_frag_file" );  }
 namespace templates { IntegerOptionKey const fix_margin( "templates:fix_margin" );  }
 namespace templates { IntegerOptionKey const min_nr_large_frags( "templates:min_nr_large_frags" );  }
 namespace templates { IntegerOptionKey const min_nr_small_frags( "templates:min_nr_small_frags" );  }
@@ -759,3 +758,4 @@ namespace pose_metrics { RealOptionKey const sasa_calculator_probe_radius( "pose
 namespace pose_metrics { RealOptionKey const interface_cutoff( "pose_metrics:interface_cutoff" );  }
 namespace pose_metrics { IntegerOptionKey const min_sequence_separation( "pose_metrics:min_sequence_separation" );  }
 namespace pose_metrics { RealOptionKey const contact_cutoffE( "pose_metrics:contact_cutoffE" );  }
+namespace pose_metrics { RealOptionKey const neighbor_by_distance_cutoff( "pose_metrics:neighbor_by_distance_cutoff" );  }

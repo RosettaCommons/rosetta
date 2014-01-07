@@ -22,7 +22,6 @@ option.add( basic::options::OptionKeys::in::detect_disulf, "Forcably enable or d
 option.add( basic::options::OptionKeys::in::detect_disulf_tolerance, "disulf tolerance" ).def(0.5);
 option.add( basic::options::OptionKeys::in::fix_disulf, "Specify disulfide connectivity via a file.  Disulfides are specified as two whitespace-seperated residue indices per line.  This option replaces the old '-run:fix_disulf' option." );
 option.add( basic::options::OptionKeys::in::missing_density_to_jump, "If missing density is found in input pdbs, replace with a jump" ).def(false);
-option.add( basic::options::OptionKeys::in::use_stupid_foldtree_format, "use the fold-tree format that existed for one week after revision 21447" ).def(false);
 option.add( basic::options::OptionKeys::in::target_residues, "which residue numbers to pass for getDistConstraints" );
 option.add( basic::options::OptionKeys::in::replonly_residues, "residue numbers regarded as repulsive-only residues" );
 option.add( basic::options::OptionKeys::in::replonly_loops, "all loops will be regarded as repulsive-only" ).def(false);
@@ -764,10 +763,10 @@ option.add( basic::options::OptionKeys::jumps::filter_templates, "filter hybridi
 option.add( basic::options::OptionKeys::templates::templates, "templates option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::templates::config, "read a list of templates and alignments" ).def("templates.dat");
 option.add( basic::options::OptionKeys::templates::fix_aligned_residues, "pick only from template fragments and then keep these residues fixed" ).def(false);
+option.add( basic::options::OptionKeys::templates::fix_frag_file, " fragments from this file are picked once in beginning and then kept fixed" ).def("");
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::templates::fix_frag_file, " fragments from this file are picked once in beginning and then kept fixed" ).def("");
-option.add( basic::options::OptionKeys::templates::fix_margin, "keep n residues at edges of fixed fragments moveable" ).def(1);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::templates::fix_margin, "keep n residues at edges of fixed fragments moveable" ).def(1);
 option.add( basic::options::OptionKeys::templates::min_nr_large_frags, "how many large fragments should be present" ).def(100000);
 option.add( basic::options::OptionKeys::templates::min_nr_small_frags, "how many small fragments should be present" ).def(100000);
 option.add( basic::options::OptionKeys::templates::no_pick_fragments, "no further fragment picking from templates" ).def(false);
@@ -1527,10 +1526,10 @@ option.add( basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radi
 option.add( basic::options::OptionKeys::pose_metrics::interface_cutoff, "distance in angstroms (def. 10.0) for calculating what residues are at an interface via InterfaceNeighborDefinitionCalculator" ).def(10.0);
 option.add( basic::options::OptionKeys::pose_metrics::min_sequence_separation, " minimum number of sequence positions that two residues need to be apart to count as nonlocal in the NonlocalContactsCalculator" ).def(6);
 option.add( basic::options::OptionKeys::pose_metrics::contact_cutoffE, " maximum interaction energy allowed between two residues to count as a contact in the NonlocalContactsCalculator" ).def(-1.0);
+option.add( basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff, "distance in angstroms (def. 10.0) for calculating neighbors of a residue via NeighborByDistanceCalculator" ).def(10.0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff, "distance in angstroms (def. 10.0) for calculating neighbors of a residue via NeighborByDistanceCalculator" ).def(10.0);
-option.add( basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff, "distance in angstroms (def. 10.0) for calculating interfaces between domains with InterGroupNeighborsCalculator" ).def(10.0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff, "distance in angstroms (def. 10.0) for calculating interfaces between domains with InterGroupNeighborsCalculator" ).def(10.0);
 option.add( basic::options::OptionKeys::pose_metrics::semiex_water_burial_cutoff, "water hbond states fraction cutiff for SemiExplicitWaterUnsatisfiedPolarsCalculator (0.0,1.0)" ).def(0.25);
 option.add( basic::options::OptionKeys::ddg::ddg, "ddg option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::ddg::avg_rot_cst_enrg, "No description" ).def(false);
@@ -2290,10 +2289,10 @@ option.add( basic::options::OptionKeys::parser::protocol, "File name for the xml
 option.add( basic::options::OptionKeys::parser::script_vars, "Variable substitutions for xml parser, in the form of name=value" );
 option.add( basic::options::OptionKeys::parser::view, "Use the viewer?" );
 option.add( basic::options::OptionKeys::parser::patchdock, "Patchdock output file name." );
+option.add( basic::options::OptionKeys::parser::patchdock_random_entry, "Pick a random patchdock entry between two entry numbers. inclusive" ).n(2);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::parser::patchdock_random_entry, "Pick a random patchdock entry between two entry numbers. inclusive" ).n(2);
-option.add( basic::options::OptionKeys::DomainAssembly::DomainAssembly, "DomainAssembly option group" ).legal(true).def(true);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DomainAssembly::DomainAssembly, "DomainAssembly option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DomainAssembly::da_setup, "run DomainAssembly setup routine" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::DomainAssembly::da_setup_option_file, "input list of pdbs and linker sequences" ).def("--");
 option.add( basic::options::OptionKeys::DomainAssembly::da_setup_output_pdb, "PDB file output by DomainAssemblySetup" ).def("--");

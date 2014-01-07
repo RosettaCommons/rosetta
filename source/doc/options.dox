@@ -96,11 +96,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
-<dt><b>-use_stupid_foldtree_format</b> \<Boolean\><dt>
-<dd>use the fold-tree format that existed for one week after revision 21447</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
 <dt><b>-target_residues</b> \<IntegerVector\><dt>
 <dd>which residue numbers to pass for getDistConstraints</dd><br>
 </dl>
