@@ -354,14 +354,15 @@ def replace_init(cls, init):
 
 def Vector1(list_in):
     """Creates a Vector1 object, deducing type from the given list."""
-    if all([isinstance(x, int) for x in list_in]):
+
+    if all([isinstance(x, bool) for x in list_in]):
+        t = utility.vector1_bool
+    elif all([isinstance(x, int) for x in list_in]):
         t = utility.vector1_int
     elif all([isinstance(x, float) or isinstance(x, int) for x in list_in]):
         t = utility.vector1_double
     elif all([isinstance(x, str) for x in list_in]):
         t = utility.vector1_string
-    elif all([isinstance(x, bool) for x in list_in]):
-        t = utility.vector1_bool
     elif all([isinstance(x, core.id.AtomID) for x in list_in]):
         t = utility.vector1_AtomID
     else:
