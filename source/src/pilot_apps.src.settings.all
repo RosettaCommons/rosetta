@@ -638,6 +638,9 @@ sources = {
     "ragul_get_ligand_hbonds",
     "ragul_get_delphi_phimap",
 	],
+    "pilot/ralford" : [
+        "membrane_foldtree",
+    ],
 	"pilot/rayyrw" : [
 		"partial_thread", #Note: used for comparative modeling; no itest needed
 		#"replonly",
