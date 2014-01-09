@@ -50,7 +50,7 @@ AlterSpecDisruptionDriver::AlterSpecDisruptionDriver( utility::vector1< std::str
 		true,  //do repack separated pose
 		false); //do not bother with JD2 tracer name hookups
 
-	IAM_->set_use_resfile(false);
+	//IAM_->set_use_resfile(false);
 	IAM_->set_use_centroid_dG(false);
 	IAM_->set_compute_packstat(false); //should be redundant
 	IAM_->set_compute_interface_sc(false);

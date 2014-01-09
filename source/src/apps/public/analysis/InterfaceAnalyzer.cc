@@ -54,16 +54,17 @@ basic::options::BooleanOptionKey const pack_separated("pack_separated");
 basic::options::BooleanOptionKey const use_jobname("use_jobname");
 basic::options::BooleanOptionKey const add_regular_scores_to_scorefile("add_regular_scores_to_scorefile");
 basic::options::BooleanOptionKey const use_resfile("use_resfile");
+basic::options::StringOptionKey const interface("interface");
 
 // mover deffinition
 class IAMover : public protocols::moves::Mover {
 public:
 
-  IAMover();
+	IAMover();
 
 	virtual ~IAMover() {};
 
-  virtual void apply( core::pose::Pose& pose );
+	virtual void apply( core::pose::Pose& pose );
 
 	virtual
 	std::string
@@ -71,10 +72,10 @@ public:
 		return "IAMover";
 	}
 
-  void assign_IA_mover(core::pose::Pose & pose);
+	void assign_IA_mover(core::pose::Pose & pose);
 
 private:
-  protocols::analysis::InterfaceAnalyzerMoverOP IAM_;
+	protocols::analysis::InterfaceAnalyzerMoverOP IAM_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 };
 
@@ -93,12 +94,8 @@ void IAMover::assign_IA_mover(core::pose::Pose & pose){
 	bool const jobname = basic::options::option[ use_jobname ].value();
 
 	//if 2 chains, or no multichain ctor, use interface_jump constructor
-  if((num_chains <= 2) || (!basic::options::option[fixedchains].active()) ){
-
-		if (num_chains > 2 ){
-			TR.Warning << "WARNING more than two chains present but no -fixedchains declared.  Interface calculations unreliable!" << std::endl;
-		}
-
+	if((num_chains <= 2) ){
+		TR << "Computing interface between two chains in pose" << std::endl;
 		core::Size const interface_jump = basic::options::option[ jumpnum ].value();
 		IAM_ = new protocols::analysis::InterfaceAnalyzerMover(
 			 interface_jump,
@@ -110,39 +107,52 @@ void IAMover::assign_IA_mover(core::pose::Pose & pose){
 			 jobname
 		);
 	}
-
-	//else, fixedchains must be active, obey it
-  else { //(basic::options::option[fixedchains].active())
-    utility::vector1<std::string> fixed_chains_string (basic::options::option[fixedchains].value());
-    //parse the fixed chains to figure out pose chain nums
-    std::set< int > fixed_chains; //This is a set of the CHAIN IDs, not residue ids
-    TR << "Fixed chains are: " ;
-    for(core::Size j = 1; j <= fixed_chains_string.size(); ++j){
-      char this_chain (fixed_chains_string[ j ][0]);
-      for (core::Size i = 1; i<=pose.total_residue(); ++i){
+	else if (basic::options::option[fixedchains].active()){ 
+		utility::vector1<std::string> fixed_chains_string (basic::options::option[fixedchains].value());
+		//parse the fixed chains to figure out pose chain nums
+		std::set< int > fixed_chains; //This is a set of the CHAIN IDs, not residue ids
+		TR << "Fixed chains are: " ;
+		for(core::Size j = 1; j <= fixed_chains_string.size(); ++j){
+			char this_chain (fixed_chains_string[ j ][0]);
+			for (core::Size i = 1; i<=pose.total_residue(); ++i){
 				if (pose.pdb_info()->chain( i ) == this_chain){
 					fixed_chains.insert( pose.chain(i) );
 					break; //once we know something about the chain we can skip - we just need the chain id
 				}
-      }
-      TR << this_chain << ", ";
-    }
-    TR << "these will be moved together." << std::endl;
+			}
+			TR << this_chain << ", ";
+		}
+		TR << "these will be moved together." << std::endl;
 
-    IAM_ = new protocols::analysis::InterfaceAnalyzerMover(
-		 fixed_chains,
-		 tracer,
-		 scorefxn_,
-		 comp_packstat,
-		 pack_in,
-		 pack_sep,
-		 jobname
+		IAM_ = new protocols::analysis::InterfaceAnalyzerMover(
+			fixed_chains,
+			tracer,
+			scorefxn_,
+			comp_packstat,
+			pack_in,
+			pack_sep,
+			jobname
 		);
-  }
+	}
+	else if (basic::options::option[interface].active()){
+		std::string dock_chains = basic::options::option[interface].value();
+		TR << "Using interface definition: "<<dock_chains <<std::endl;
+		IAM_ = new protocols::analysis::InterfaceAnalyzerMover(
+			dock_chains,
+			tracer,
+			scorefxn_,
+			comp_packstat,
+			pack_in,
+			pack_sep,
+			jobname
+		);
+	}
+	else{
+		utility_exit_with_message("More than two chains present but no -fixedchains or -interface declared.   Aborting.");
+	}
+	//IAM_->set_use_resfile(basic::options::option[use_resfile].value());
 
-	IAM_->set_use_resfile(basic::options::option[use_resfile].value());
-
-  return;
+	return;
 } //end assign_IA_mover
 
 ///begin apply
@@ -155,8 +165,8 @@ void IAMover::apply( core::pose::Pose & pose ) {
 		return;
   }
 
-  //fill the interface analyzer mover
-  assign_IA_mover( pose );
+	//fill the interface analyzer mover
+	assign_IA_mover( pose );
 
 	//now apply and get cool data and stuff
 	IAM_->apply(pose);
@@ -181,7 +191,7 @@ main( int argc, char* argv[] )
 	option.add( pack_separated, "pack the separated chains at the separated dG phase").def(false);
 	option.add( use_jobname, "appended _0001 job name for output instead of input pose name").def(false);
 	option.add( use_resfile, "use a resfile during the packing stages").def(false);
-
+	option.add( interface, "dock_chains interface definition, optional, ex LH_A.  Can handle any number of chains. ");
 	devel::init(argc, argv);
 
 	protocols::jd2::JobDistributor::get_instance()->go(new IAMover());

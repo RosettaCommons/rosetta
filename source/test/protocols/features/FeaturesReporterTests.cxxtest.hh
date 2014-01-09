@@ -97,12 +97,12 @@ public:
 
 		database_filename_ = "features_reporter_tests.db3";
 		utility::file::file_delete(database_filename_);
-    db_session_ = basic::database::get_db_session(database_filename_);
+		db_session_ = basic::database::get_db_session(database_filename_);
 
 		//Need this to run the features reporter. Adds orbitals to residues
 		//basic::options::option[ basic::options::OptionKeys::in::add_orbitals](true); // apl disabling as this screws up the singleton FA_STANDARD residue type set
-		pose_1ten_ = fullatom_poseop_from_string( pdb_string_1ten() );
-
+		//pose_1ten_ = fullatom_poseop_from_string( pdb_string_1ten() );
+		pose_1ten_ = core::import_pose::pose_from_pdb("protocols/features/2J88.pdb");
 		relevant_residues_ = utility::vector1< bool >(pose_1ten_->total_residue(), true);
 		batch_id_ = 0;
 
@@ -141,14 +141,15 @@ public:
 		features_reporters_.push_back(new RotamerRecoveryFeatures(score_function_));
 		features_reporters_.push_back(new SaltBridgeFeatures());
 		features_reporters_.push_back(new StructureScoresFeatures(score_function_));
-    features_reporters_.push_back(new strand_assembly::SandwichFeatures());
-    features_reporters_.push_back(new strand_assembly::StrandBundleFeatures());
+		features_reporters_.push_back(new strand_assembly::SandwichFeatures());
+		features_reporters_.push_back(new strand_assembly::StrandBundleFeatures());
 		features_reporters_.push_back(new UnrecognizedAtomFeatures());
 	}
 
 	void test_main() {
 		write_full_schema(db_session_);
-    do_test_type_name();
+		do_test_type_name();
+		//do_test_report_features(); JAB - tried to enable this so each features reporter is actually tested, but I get an exceeded the timeout error from run.py
 	}
 
 	void write_full_schema(utility::sql_database::sessionOP db_session) {
@@ -162,12 +163,12 @@ public:
 		}
 	}
 
-  void do_test_type_name() {
-    using protocols::features::FeaturesReporterOP;
-    foreach(FeaturesReporterOP const & reporter, features_reporters_){
-      TS_ASSERT_DIFFERS(reporter->type_name(), "Unknown_FeaturesReporter");
-    }
-  }
+	void do_test_type_name() {
+		using protocols::features::FeaturesReporterOP;
+		foreach(FeaturesReporterOP const & reporter, features_reporters_){
+			TS_ASSERT_DIFFERS(reporter->type_name(), "Unknown_FeaturesReporter");
+		}
+	}
 
 	void do_test_report_features() {
 		using protocols::features::FeaturesReporterOP;

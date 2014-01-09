@@ -1000,7 +1000,7 @@ ObjexxFCL::FArray2D_ubyte const & get_masks() {
 Real
 calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
 	utility::vector1< Real > & rsd_sasa, utility::vector1< Real > & rsd_hydrophobic_sasa, Real const probe_radius,
-	bool use_naccess_sasa_radii ) {
+	bool use_naccess_sasa_radii) {
 
 	// an atomID map is needed for the calc_per_atom_sasa method; it stores the actual calculated sasa for every atom
 	core::id::AtomID_Map< core::Real > atom_sasa;

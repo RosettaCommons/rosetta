@@ -59,17 +59,17 @@
 static basic::Tracer TR("protocols.grafting.AnchoredGraftMover");
 namespace protocols {
 namespace grafting {
-    using namespace core::scoring;
-    using namespace core::pose;
-    using namespace core::pack::task;
+	using namespace core::scoring;
+	using namespace core::pose;
+	using namespace core::pack::task;
 	using namespace basic::options;
-    using namespace protocols::loops;
+	using namespace protocols::loops;
 
 AnchoredGraftMover::AnchoredGraftMover(const Size start, Size const end)
 	:GraftMoverBase(start, end, "AnchoredGraftMover")
 {
 	//moves::Mover("GraftMover"),
-    set_defaults();
+	set_defaults();
 }
 
 
@@ -89,9 +89,9 @@ AnchoredGraftMover::set_defaults(){
 
 	set_test_control_mode(false);
 	set_use_default_movemap_from_flexibility(true);
-    set_scaffold_flexibility(2, 2);
-    set_insert_flexibility(0, 0);
-    set_cycles(300);
+	set_scaffold_flexibility(2, 2);
+	set_insert_flexibility(0, 0);
+	set_cycles(300);
 
 }
 
@@ -121,7 +121,7 @@ AnchoredGraftMover::set_insert_flexibility(Size Nter_insert_flexibility, Size Ct
 
 void
 AnchoredGraftMover::set_cycles(Size cycles){
-    cycles_=cycles;
+	cycles_=cycles;
 }
 
 void
@@ -194,15 +194,15 @@ AnchoredGraftMover::set_test_control_mode(bool test_control_mode){
 
 void
 AnchoredGraftMover::set_use_default_movemap_from_flexibility(bool def){
-    use_default_movemap_=def;
+	use_default_movemap_=def;
 }
 
 void
 AnchoredGraftMover::set_movemaps(const MoveMapOP scaffold_mm, const MoveMapOP insert_mm){
     
-    scaffold_movemap_ = scaffold_mm;
-    insert_movemap_ = insert_mm;
-    use_default_movemap_=false;
+	scaffold_movemap_ = scaffold_mm;
+	insert_movemap_ = insert_mm;
+	use_default_movemap_=false;
 
 }
 
@@ -210,7 +210,7 @@ void
 AnchoredGraftMover::apply(Pose & pose){
 	//No Local copy since we will be messing with scaffold_pose anyway.
 
-    setup_movemap_and_regions(pose);
+	setup_movemap_and_regions(pose);
     
 	//Run the insertion.
 	Pose combined = insert_piece(pose);
@@ -227,12 +227,12 @@ AnchoredGraftMover::apply(Pose & pose){
     
 	Loop Nter_loop;
 	Loop Cter_loop;
-    LoopsOP loop_set = new Loops();
-    std::map< Loop, loop_closure::ccd::CcdLoopClosureMoverOP > loop_set_map; //Would not work without owning pointer.
+	LoopsOP loop_set = new Loops();
+	std::map< Loop, loop_closure::ccd::CcdLoopClosureMoverOP > loop_set_map; //Would not work without owning pointer.
 
-    //Assert that none or only one boolean for the close type is set.
+	//Assert that none or only one boolean for the close type is set.
 
-    if (double_loop_double_arm_){
+	if (double_loop_double_arm_){
 
 		Nter_loop = Loop(Nter_loop_start_, Nter_loop_end_+1, Nter_loop_end_);//(LEFT LOOP)
 		Cter_loop = Loop(Cter_loop_start_-1, Cter_loop_end_, Cter_loop_start_-1);//(RIGHT LOOP)
@@ -240,16 +240,16 @@ AnchoredGraftMover::apply(Pose & pose){
 		core::pose::add_variant_type_to_pose_residue(combined, core::chemical::CUTPOINT_UPPER, Nter_loop.cut()+1 );
 
 
-        loop_set->add_loop(Nter_loop);
-        loop_set->add_loop(Cter_loop);
+		loop_set->add_loop(Nter_loop);
+		loop_set->add_loop(Cter_loop);
 		FoldTreeFromLoops ft_loop = FoldTreeFromLoops();
 		ft_loop.loops(loop_set);
 		ft_loop.apply(combined);
 
-        loop_closure::ccd::CcdLoopClosureMover close_for_Nter_loop(Nter_loop, movemap_);
-        loop_closure::ccd::CcdLoopClosureMover close_for_Cter_loop(Cter_loop, movemap_);
-        loop_set_map[Nter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Nter_loop, movemap_);
-        loop_set_map[Cter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Cter_loop, movemap_);
+		 loop_closure::ccd::CcdLoopClosureMover close_for_Nter_loop(Nter_loop, movemap_);
+		loop_closure::ccd::CcdLoopClosureMover close_for_Cter_loop(Cter_loop, movemap_);
+		loop_set_map[Nter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Nter_loop, movemap_);
+		loop_set_map[Cter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Cter_loop, movemap_);
         
 	}
 
@@ -260,42 +260,39 @@ AnchoredGraftMover::apply(Pose & pose){
 		core::pose::add_variant_type_to_pose_residue(combined, core::chemical::CUTPOINT_UPPER, Nter_loop.cut()+1 );
 
 
-        loop_set->add_loop(Nter_loop);
-        loop_set->add_loop(Cter_loop);
+		loop_set->add_loop(Nter_loop);
+		loop_set->add_loop(Cter_loop);
 		FoldTreeFromLoops ft_loop = FoldTreeFromLoops();
 		ft_loop.loops(loop_set);
 		ft_loop.apply(combined);
 
-        loop_closure::ccd::CcdLoopClosureMover close_for_Nter_loop(Nter_loop, movemap_);
-        loop_closure::ccd::CcdLoopClosureMover close_for_Cter_loop(Cter_loop, movemap_);
-        loop_set_map[Nter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Nter_loop, movemap_);
-        loop_set_map[Cter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Cter_loop, movemap_);
+		loop_closure::ccd::CcdLoopClosureMover close_for_Nter_loop(Nter_loop, movemap_);
+		loop_closure::ccd::CcdLoopClosureMover close_for_Cter_loop(Cter_loop, movemap_);
+		loop_set_map[Nter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Nter_loop, movemap_);
+		loop_set_map[Cter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Cter_loop, movemap_);
 	}
 	else if (single_loop_double_arm_){
 	    
 		setup_single_loop_double_arm_remodeling_foldtree(combined, Nter_loop_start_, Cter_loop_end_);
 		Cter_loop = Loop(Nter_loop_start_, Cter_loop_end_, insert_end);
-        loop_set->add_loop(Cter_loop);
+		loop_set->add_loop(Cter_loop);
         
-        loop_closure::ccd::CcdLoopClosureMover close_for_Cter_loop(Cter_loop, movemap_);
-        loop_set_map[Cter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Cter_loop, movemap_);
+		loop_closure::ccd::CcdLoopClosureMover close_for_Cter_loop(Cter_loop, movemap_);
+		loop_set_map[Cter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Cter_loop, movemap_);
         
 	}
 	else{   //single_loop_single_arm
 
 		setup_single_loop_single_arm_remodeling_foldtree(combined, Nter_loop_start_, Cter_loop_end_);
 		Cter_loop = Loop(Nter_loop_start_, Cter_loop_end_, Cter_loop_end_-1);
-        loop_set->add_loop(Cter_loop);
+		loop_set->add_loop(Cter_loop);
         
-        loop_closure::ccd::CcdLoopClosureMover close_for_Cter_loop(Cter_loop, movemap_);
-        loop_set_map[Cter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Cter_loop, movemap_);
+		loop_closure::ccd::CcdLoopClosureMover close_for_Cter_loop(Cter_loop, movemap_);
+		loop_set_map[Cter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Cter_loop, movemap_);
         
 	}
 	core::pose::add_variant_type_to_pose_residue(combined, core::chemical::CUTPOINT_LOWER, Cter_loop.cut() );
 	core::pose::add_variant_type_to_pose_residue(combined, core::chemical::CUTPOINT_UPPER, Cter_loop.cut()+1 );
-
-
-
 
 
 
@@ -305,7 +302,7 @@ AnchoredGraftMover::apply(Pose & pose){
 	using namespace core::id;
 
 	//Idealize the All residues in Movemap since they will all help close the loop(s).
-    //combined.dump_pdb("before_idealize.pdb");
+	//combined.dump_pdb("before_idealize.pdb");
 
 	//Order of idealization matters here.
 	//Nter regions
@@ -385,19 +382,16 @@ AnchoredGraftMover::apply(Pose & pose){
 	TR << "start " << ((*cen_scorefxn_))(combined) << std::endl;
 
 	for( core::Size i(1); i<=cycles_; ++i){
-
 		if (!skip_sampling_){small.apply(combined);}
 
-        for (protocols::loops::Loops::const_iterator it=loop_set->begin(), it_end=loop_set->end(); it!=it_end; ++it){
+		for (protocols::loops::Loops::const_iterator it=loop_set->begin(), it_end=loop_set->end(); it!=it_end; ++it){
 
-        	loop_set_map[*it]->apply(combined);
+			loop_set_map[*it]->apply(combined);
+			combined.conformation().insert_ideal_geometry_at_polymer_bond(it->cut());
+			min_mover.apply(combined);
 
 			combined.conformation().insert_ideal_geometry_at_polymer_bond(it->cut());
-
-            min_mover.apply(combined);
-
-			combined.conformation().insert_ideal_geometry_at_polymer_bond(it->cut());
-        }
+		}
         
 		if(mc.boltzmann(combined)) TR << i << " " << ((*cen_scorefxn_))(combined) << std::endl;
           
@@ -434,16 +428,16 @@ AnchoredGraftMover::repack_connection_and_residues_in_movemap(Pose & pose, Score
 	task->temporarily_fix_everything();
 
 	task->temporarily_set_pack_residue(start_, true);
-    task->temporarily_set_pack_residue(start_+1, true);
+	task->temporarily_set_pack_residue(start_+1, true);
     
-    task->temporarily_set_pack_residue(end_, true);
-    task->temporarily_set_pack_residue(end_-1, true);
+	task->temporarily_set_pack_residue(end_, true);
+	task->temporarily_set_pack_residue(end_-1, true);
     
-    for (Size i=1; i<=pose.total_residue(); ++i){
-        if (movemap_->get_chi(i)){
-            task->temporarily_set_pack_residue(i, true);
-        }
-    }
+	for (Size i=1; i<=pose.total_residue(); ++i){
+		if (movemap_->get_chi(i)){
+			task->temporarily_set_pack_residue(i, true);
+		}
+	}
     
 	protocols::simple_moves::PackRotamersMoverOP packer = new protocols::simple_moves::PackRotamersMover(fa_scorefxn, task);
 	packer->apply(pose);
@@ -456,19 +450,19 @@ AnchoredGraftMover::repack_connection_and_residues_in_movemap_and_piece(Pose & p
 	task->restrict_to_repacking();
 	task->temporarily_fix_everything();
 	task->temporarily_set_pack_residue(start_, true);
-    task->temporarily_set_pack_residue(start_+1, true);
+	task->temporarily_set_pack_residue(start_+1, true);
     
-    task->temporarily_set_pack_residue(end_, true);
-    task->temporarily_set_pack_residue(end_-1, true);
+	task->temporarily_set_pack_residue(end_, true);
+	task->temporarily_set_pack_residue(end_-1, true);
     
-    for (Size i=1; i<=pose.total_residue(); ++i){
-        if (movemap_->get_chi(i)){
-            task->temporarily_set_pack_residue(i, true);
-        }
-    }
-    for (Size i=start_+2; i<=end_-2; ++i){
-        task->temporarily_set_pack_residue(i, true);
-    }
+	for (Size i=1; i<=pose.total_residue(); ++i){
+		if (movemap_->get_chi(i)){
+			task->temporarily_set_pack_residue(i, true);
+		}
+	}
+	for (Size i=start_+2; i<=end_-2; ++i){
+		task->temporarily_set_pack_residue(i, true);
+	}
     
 	protocols::simple_moves::PackRotamersMoverOP packer = new protocols::simple_moves::PackRotamersMover(fa_scorefxn, task);
 	packer->apply(pose);

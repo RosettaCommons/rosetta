@@ -38,3 +38,4 @@ std::string ScoreFunctionFeaturesCreator::type_name() const {
 
 } //namespace features
 } //namespace protocols
+

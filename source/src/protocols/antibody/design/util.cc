@@ -24,23 +24,6 @@ namespace design {
 	using namespace protocols::antibody;
 	using namespace utility;
 	
-std::string
-get_string_for_IN(core::Size const n){
-	std::string result;
-	if (n==1){
-		result = "(?)";
-		return result;
-	}
-	else{
-		result = "(?";
-		for (core::Size i =2; i<=n; ++i){
-			result += ",?";
-		}
-		result += ")";
-		return result;
-	}
-}
-
 void
 get_all_graft_permutations(
 		vector1<core::Size > & cdr_set_totals,

@@ -166,7 +166,7 @@ DomainAssemblyMover::evaluate_pose( core::pose::Pose const & pose) const {
 	protocols::analysis::InterfaceAnalyzerMover interface_mover;
 	interface_mover.apply( pose_to_eval );
 
-	interface_mover.set_tracer(true);
+	interface_mover.set_use_tracer(true);
 	interface_mover.report_data();
 }
 

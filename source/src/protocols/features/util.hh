@@ -89,6 +89,10 @@ std::string serialize_residue_xyz_coords(core::conformation::Residue const & res
 
 utility::vector1< numeric::xyzVector<core::Real> > deserialize_xyz_coords(std::string const & data, core::Size natoms);
 
+///@brief Returns (?,?,?) With question marks of length n to help create database query.
+std::string
+get_question_mark_string(core::Size const n);
+
 } //features
 } //protocols
 

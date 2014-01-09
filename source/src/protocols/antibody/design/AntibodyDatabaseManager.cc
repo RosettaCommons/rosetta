@@ -31,6 +31,7 @@
 //Database Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <protocols/features/ProteinSilentReport.hh>
+#include <protocols/features/util.hh>
 #include <basic/database/sql_utils.hh>
 #include <boost/uuid/uuid.hpp>
 #include <cppdb/frontend.h>
@@ -263,26 +264,26 @@ AntibodyDatabaseManager::load_cdrs_for_grafting(AntibodyInfoCOP ab_info, GraftIn
 					total_true+=1;
 				}
 			}
-			base_statement += get_string_for_IN(total_true);
+			base_statement += get_question_mark_string(total_true);
 		}
 		
 		//Optional part of Query
 		//Using the IN keyword, could have just as easily done OR
 		if (instructions[cdr].include_only_clusters.size() >= 1){
 			base_statement += " AND fullcluster IN";
-			base_statement += get_string_for_IN(instructions[cdr].include_only_clusters.size());
+			base_statement += get_question_mark_string(instructions[cdr].include_only_clusters.size());
 		}
 		if (instructions[cdr].leave_out_clusters.size() >= 1){
 			base_statement += " AND fullcluster NOT IN";
-			base_statement += get_string_for_IN(instructions[cdr].leave_out_clusters.size());
+			base_statement += get_question_mark_string(instructions[cdr].leave_out_clusters.size());
 		}
 		if (instructions[cdr].include_only_pdb_ids.size() >= 1){
 			base_statement += " AND PDB IN";
-			base_statement += get_string_for_IN(instructions[cdr].include_only_pdb_ids.size());
+			base_statement += get_question_mark_string(instructions[cdr].include_only_pdb_ids.size());
 		}
 		if (instructions[cdr].leave_out_pdb_ids.size() >= 1){
 			base_statement += " AND PDB NOT IN";
-			base_statement += get_string_for_IN(instructions[cdr].leave_out_pdb_ids.size());
+			base_statement += get_question_mark_string(instructions[cdr].leave_out_pdb_ids.size());
 		}
 		
 		//Add stuff from Instructions

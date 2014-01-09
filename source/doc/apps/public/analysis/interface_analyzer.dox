@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@author Steven Lewis, P. Ben Stranges
+///@author Steven Lewis, P. Ben Stranges, Jared Adolf-Bryfogle
 /*!
 
 @page InterfaceAnalyzer Documentation for the InterfaceAnalyzer application
 
 @section metadata Metadata
-Last updated 1/20/12 by Steven Lewis.  The PI is Brian Kuhlman, bkuhlman@email.unc.edu.
+Last updated 11/24/13 by Jared Adolf-Bryfogle.  The PI is Brian Kuhlman, bkuhlman@email.unc.edu.
 
 @section code_demos Code and Demo
 InterfaceAnalyzer has a suite of integration test/demos at rosetta/rosetta_tests/integration/tests/InterfaceAnalyzer.  The application resides at rosetta/rosetta_source/src/apps/public/analysis/InterfaceAnalyzer.cc, and its mover at rosetta/rosetta_source/src/protocols/anchored_design/InterfaceAnalyzerMover.*
@@ -41,13 +41,12 @@ The interface is detected via InterfaceNeighborDefinitionCalculator for two-chai
 
 @section limits Limitations
 This code does not directly support ddG's of binding, but you can get that effect by running it a few times with pre-mutated structures.  Any metric not listed in this file can't be directly calculated.
-
-The -fixedchains option is not tested beyond three chains.  It will probably work but use it with care.
+The -fixedchains option has not been thoroughly tested beyond three chains.  It will probably work but use it with care.
 
 There is no way to output the intermediate separated chains when using the separated packing options - you are free to poke around in the code and place dump_pdb statements if you want them.
 
 @section modes Modes
-The two major modes are for two-chain and multichain interfaces.  For two-chain interfaces, you need to do nothing.  For interfaces involving more than two chains, you can tell the code which chains are in which group, to define the interface.  You can only get an interface between two groups.
+The two major modes are for two-chain and multichain interfaces.  For two-chain interfaces, you need to do nothing - but defining the interface won't hurt.  For interfaces involving more than two chains, you need to tell the code which chains are in which group. Define the interface either through the -fixedchain or -interface options.  
 
 Another variable that might count as a "mode" is tracer vs. PDB output.  For this standalone executeable, printing results to the screen (and not bothering to output "result" PDBs matching the input) is desired (and defaulted).  When InterfaceAnalyzerMover is used as part of a protocol it is more common to prefer the latter.
 
@@ -56,10 +55,11 @@ Another variable that might count as a "mode" is tracer vs. PDB output.  For thi
 
 @section ft_options Options
 Describe the options your protocol uses.
-@li -jumpnum (integer) - which jump number should be used to determine across which chains to make the interface?  NOT RECOMMENDED - use -fixedchains instead.
-@li -compute_packstat (bool) - activates packstat calculation; can be slow so it defaults to off. See the paper on RosettaHoles to find out more about this statistic (Protein Sci. 2009 Jan;18(1):229-39.).
+@li -interface (string) - Multichain option. Which chains define the interface? example -interface LH_A to get the interface between chain groups LH and A.  Works for sub interfaces such as L_H by ignoring any chains not specified in calculations. Not tested thoroughly beyond three chains.
+@li -fixedchains (string) - Multichain option.  Which chains are in the two groups to define the interface?  example: -fixedchains A B to keep chains A and B together, and C separate, out of a pose that contains A, B, and C.  Note a space between A and B.  Analogous to -interface option.  Includes all chains of the pose. Not tested thoroughly beyond three chains.
+
+@li -compute_packstat (bool) - activates packstat calculation; can be slow for large interfacesso it defaults to off. See the paper on RosettaHoles to find out more about this statistic (Protein Sci. 2009 Jan;18(1):229-39.).
 @li -tracer_data_print (bool) - print to a tracer (true) or a scorefile (false)?  Combine the true version with -out:jd2:no_output and the false with out:file:score_only (scorefile).
-@li -fixedchains (string) - which chains are in the two groups to define the interface?  example: -fixedchains A B to keep chains A and B together, and C separate, out of a pose that contains A, B, and C.  Note a space between A and B.  Not tested beyond three chains.
 @li -pack_input (bool) - prepack before separating chains when calculating binding energy?  Useful if these are non-Rosetta inputs
 @li -pack_separated (bool) - repack the exposed interfaces when calculating binding energy?  Usually a good idea.
 @li -add_regular_scores_to_scorefile (bool) - performs a regular score12 score operation in addition to the InterfaceAnalyzer operations.  Useful so that you don't have to combine scorefiles from score.cc or your original protocol.  If you do not use this option, you may get extra fields full of zeroes in your scorefile.
@@ -68,8 +68,8 @@ Describe the options your protocol uses.
 @li -score:weights  weightsfile - weight set for the scorefunction, defaults to Score12
 @li -score:patch patchfile - patch file for the scorefunction, defaults to Score12
 @li -pose_metrics::inter_group_neighbors_cutoff (real) - If using the multichain constructor (the -fixedchains option), this controls how far apart neighbors are detected - a residue is at the interface if it is within X angstroms of a residue in the other group; I think distances are determined by the nbr_atom position, which the residue params file defines as usually c-beta.  Defaults to 10 Angstroms.
-@li -pose_metrics::interface_cutoff (real) - If detecting the interface between two chains, this sets the detection limit for neighbors.  A residue is at the interface if it is within X angstroms of a residue in the other group; I think distances are determined by the nbr_atom position, which the residue params file defines as usually c-beta.
-
+@li -pose_metrics::interface_cutoff (real) - If detecting the interface between two chains, this sets the detection limit for neighbors.  A residue is at the interface if it is within X angstroms of a residue in the other group; I think distances are determined by the nbr_atom position, which the residue params file defines as usually c-beta. 
+ 
 General Rosetta/JD2 options are accepted: in:file:s, in:file:l, in:file:silent for input; -database for the database, etc.
 @li It is STRONGLY suggested you use -out:file:score_only (scorefile) OR -out:jd2:no_output (bool) to supress echoing input structures as outputs.
 

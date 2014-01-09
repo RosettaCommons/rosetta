@@ -28,9 +28,7 @@ namespace design{
 using namespace protocols::antibody;
 using namespace utility;
 
-///@brief Returns (?,?,?) With question marks of length n to help create database query using IN operator
-std::string
-get_string_for_IN(core::Size const n);
+
 
 ///@brief Gets all possible graft permutations.
 ///@details all_permutations is a list of vectors corresponding to cdrs_to_design vector.  Essentially, each inner index describes a position in the cdr_set.

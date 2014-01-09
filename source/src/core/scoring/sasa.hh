@@ -39,11 +39,11 @@ void get_orientation( Vector const & a_xyz, Vector const & b_xyz, int & phi_inde
 void get_2way_orientation( Vector const & a_xyz, Vector const & b_xyz,
 	int & phi_a2b_index, int & theta_a2b_index, int & phi_b2a_index, int & theta_b2a_index, Real distance_ijxyz );
 
-/// returns total sasa
+///@brief Return total SASA
 Real calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_sasa, utility::vector1< Real > & rsd_sasa,
 	Real const probe_radius, bool const use_big_polar_H = false );
 
-//only for side-chains
+//@brief Return total SASA for side chains
 Real calc_per_atom_sasa_sc( pose::Pose const & pose, utility::vector1< Real > & rsd_sasa, bool normalize);
 	Real normalizing_area(char const res);
 
@@ -87,7 +87,10 @@ ObjexxFCL::FArray2D_int const & get_angles();
 ObjexxFCL::FArray2D_ubyte const & get_masks();
 
 Real calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
-	utility::vector1< Real > & rsd_sasa, utility::vector1< Real > & rsd_hydrophobic_sasa, Real const probe_radius, bool use_naccess_sasa_radii = false );
+	utility::vector1< Real > & rsd_sasa, 
+	utility::vector1< Real > & rsd_hydrophobic_sasa,
+	Real const probe_radius,
+	bool use_naccess_sasa_radii = false);
 
 // Undefined, commenting out to fix PyRosetta build  void print_dot_bit_string( utility::vector1< ObjexxFCL::ubyte > & values );
 

@@ -23,7 +23,9 @@ namespace analysis{
 
 //Forwards and OP typedefs
 class InterfaceAnalyzerMover;
+
 typedef utility::pointer::owning_ptr< InterfaceAnalyzerMover > InterfaceAnalyzerMoverOP;
+typedef utility::pointer::owning_ptr< InterfaceAnalyzerMover const > InterfaceAnalyzerMoverCOP;
 
 }//analysis
 }//protocols

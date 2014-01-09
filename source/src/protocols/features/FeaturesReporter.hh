@@ -134,6 +134,12 @@ public:
 		StructureID,
 		utility::sql_database::sessionOP ) {}
 
+	//
+	// The idea here is when you specify a set of residues for which you want to extract features,
+	// and the feature type involves multiple residues
+	// --explicit mode means that all residues of the feature must be specified, and implicit mode mode means that at least one of the residues has to be specified.
+	//
+	
 	void
 	set_relevant_residues_mode(
 		RelevantResiduesMode::T setting);

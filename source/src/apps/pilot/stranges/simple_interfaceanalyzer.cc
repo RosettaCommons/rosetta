@@ -178,7 +178,7 @@ void IAMover::apply( core::pose::Pose & pose ) {
 
 	//now apply and get cool data and stuff
 	IAM_->apply(pose);
-	//core::Real total_sasa( IAM_->get_total_sasa() );
+	//core::Real total_sasa( IAM_->get_total_complexed_sasa() );
 	core::Real whole_protein_energy( IAM_->get_complex_energy() );
 	core::Real interface_delta_sasa( IAM_->get_interface_delta_sasa() );
 	core::Real separated_interface_energy( IAM_->get_separated_interface_energy() );

@@ -13,7 +13,7 @@ feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
 id = "bidentite_energy_gap",
 author = "Matthew O'Meara",
 brief_description = "",
-feature_reporter_dependencies = c("StructureFeatures", "ResidueFeatures", "SaltBridgeFeatures", "PdbDataFeatures"),
+feature_reporter_dependencies = c("StructureFeatures", "ResidueFeatures", "SaltBridgeFeatures", "PdbDataFeatures", "ResidueScoreFeatures"),
 run=function(self, sample_sources, output_dir, output_formats){
 
 problem_region <- data.frame(xmin=-119, xmax=-116)

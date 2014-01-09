@@ -432,5 +432,22 @@ utility::vector1< numeric::xyzVector<core::Real> > deserialize_xyz_coords(std::s
 	return xyz_vector;
 }
 
+std::string
+get_question_mark_string(core::Size const n){
+	std::string result;
+	if (n==1){
+		result = "(?)";
+		return result;
+	}
+	else{
+		result = "(?";
+		for (core::Size i =2; i<=n; ++i){
+			result += ",?";
+		}
+		result += ")";
+		return result;
+	}
+}
+
 } //namespace protocols
 } //namespace features

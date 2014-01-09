@@ -55,6 +55,7 @@ sources = {
 	"features" : [
 		"BetaTurnDetectionFeatures",
 		"FeaturesReporterTests",
+		"InterfaceFeaturesTests",
 		"ProteinSilentReportTests",
 		"CoordSerializationTests",
 	],
@@ -352,6 +353,7 @@ testinputfiles = [
 	"enzdes/mcfi_test.cst",
 	"enzdes/parse_cst_test.xml",
 	"enzdes/resfile_remap.resfile",
+	"features/2J88.pdb",
 	"forge/remodel/bad_pair.blueprint",
 	"forge/remodel/test.blueprint",
 	"forge/remodel/test.pdb",
