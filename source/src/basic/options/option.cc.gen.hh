@@ -1312,6 +1312,7 @@ option.add( basic::options::OptionKeys::packing::packing, "Packing option group"
 option.add( basic::options::OptionKeys::packing::repack_only, "Disable design at all positions" ).def(false);
 option.add( basic::options::OptionKeys::packing::prevent_repacking, "Disable repacking (or design) at all positions" ).def(false);
 option.add( basic::options::OptionKeys::packing::cenrot_cutoff, "Cutoff to generate centroid rotamers" ).def(0.16);
+option.add( basic::options::OptionKeys::packing::ignore_ligand_chi, "Disable param file chi-angle based rotamer generation in SingleLigandRotamerLibrary" ).def(false);
 option.add( basic::options::OptionKeys::packing::ndruns, "Number of fixbb packing iterations.  Each time packing occurs, it will pack this many times and return only the best result.  Implemented at level of PackRotamersMover." ).lower(1).def(1);
 option.add( basic::options::OptionKeys::packing::soft_rep_design, "Use larger LJ radii for softer potential" );
 option.add( basic::options::OptionKeys::packing::use_electrostatic_repulsion, "Use electrostatic repulsion" );
@@ -1526,10 +1527,10 @@ option.add( basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radi
 option.add( basic::options::OptionKeys::pose_metrics::interface_cutoff, "distance in angstroms (def. 10.0) for calculating what residues are at an interface via InterfaceNeighborDefinitionCalculator" ).def(10.0);
 option.add( basic::options::OptionKeys::pose_metrics::min_sequence_separation, " minimum number of sequence positions that two residues need to be apart to count as nonlocal in the NonlocalContactsCalculator" ).def(6);
 option.add( basic::options::OptionKeys::pose_metrics::contact_cutoffE, " maximum interaction energy allowed between two residues to count as a contact in the NonlocalContactsCalculator" ).def(-1.0);
-option.add( basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff, "distance in angstroms (def. 10.0) for calculating neighbors of a residue via NeighborByDistanceCalculator" ).def(10.0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff, "distance in angstroms (def. 10.0) for calculating interfaces between domains with InterGroupNeighborsCalculator" ).def(10.0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff, "distance in angstroms (def. 10.0) for calculating neighbors of a residue via NeighborByDistanceCalculator" ).def(10.0);
+option.add( basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff, "distance in angstroms (def. 10.0) for calculating interfaces between domains with InterGroupNeighborsCalculator" ).def(10.0);
 option.add( basic::options::OptionKeys::pose_metrics::semiex_water_burial_cutoff, "water hbond states fraction cutiff for SemiExplicitWaterUnsatisfiedPolarsCalculator (0.0,1.0)" ).def(0.25);
 option.add( basic::options::OptionKeys::ddg::ddg, "ddg option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::ddg::avg_rot_cst_enrg, "No description" ).def(false);
@@ -2289,10 +2290,10 @@ option.add( basic::options::OptionKeys::parser::protocol, "File name for the xml
 option.add( basic::options::OptionKeys::parser::script_vars, "Variable substitutions for xml parser, in the form of name=value" );
 option.add( basic::options::OptionKeys::parser::view, "Use the viewer?" );
 option.add( basic::options::OptionKeys::parser::patchdock, "Patchdock output file name." );
-option.add( basic::options::OptionKeys::parser::patchdock_random_entry, "Pick a random patchdock entry between two entry numbers. inclusive" ).n(2);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DomainAssembly::DomainAssembly, "DomainAssembly option group" ).legal(true).def(true);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::parser::patchdock_random_entry, "Pick a random patchdock entry between two entry numbers. inclusive" ).n(2);
+option.add( basic::options::OptionKeys::DomainAssembly::DomainAssembly, "DomainAssembly option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DomainAssembly::da_setup, "run DomainAssembly setup routine" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::DomainAssembly::da_setup_option_file, "input list of pdbs and linker sequences" ).def("--");
 option.add( basic::options::OptionKeys::DomainAssembly::da_setup_output_pdb, "PDB file output by DomainAssemblySetup" ).def("--");

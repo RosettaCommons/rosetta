@@ -25,6 +25,7 @@ namespace packing { extern BooleanOptionKey const packing; }
 namespace packing { extern BooleanOptionKey const repack_only; }
 namespace packing { extern BooleanOptionKey const prevent_repacking; }
 namespace packing { extern RealOptionKey const cenrot_cutoff; }
+namespace packing { extern BooleanOptionKey const ignore_ligand_chi; }
 namespace packing { extern IntegerOptionKey const ndruns; }
 namespace packing { extern BooleanOptionKey const soft_rep_design; }
 namespace packing { extern BooleanOptionKey const use_electrostatic_repulsion; }

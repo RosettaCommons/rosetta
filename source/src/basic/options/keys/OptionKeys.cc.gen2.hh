@@ -1,3 +1,4 @@
+namespace pose_metrics { RealOptionKey const neighbor_by_distance_cutoff( "pose_metrics:neighbor_by_distance_cutoff" );  }
 namespace pose_metrics { RealOptionKey const inter_group_neighbors_cutoff( "pose_metrics:inter_group_neighbors_cutoff" );  }
 namespace pose_metrics { RealOptionKey const semiex_water_burial_cutoff( "pose_metrics:semiex_water_burial_cutoff" );  }
 namespace ddg { BooleanOptionKey const ddg( "ddg" );  }
@@ -758,4 +759,3 @@ namespace parser { StringOptionKey const protocol( "parser:protocol" );  }
 namespace parser { StringVectorOptionKey const script_vars( "parser:script_vars" );  }
 namespace parser { BooleanOptionKey const view( "parser:view" );  }
 namespace parser { StringOptionKey const patchdock( "parser:patchdock" );  }
-namespace parser { IntegerVectorOptionKey const patchdock_random_entry( "parser:patchdock_random_entry" );  }

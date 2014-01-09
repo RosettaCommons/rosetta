@@ -544,6 +544,7 @@ namespace packing { BooleanOptionKey const packing( "packing" );  }
 namespace packing { BooleanOptionKey const repack_only( "packing:repack_only" );  }
 namespace packing { BooleanOptionKey const prevent_repacking( "packing:prevent_repacking" );  }
 namespace packing { RealOptionKey const cenrot_cutoff( "packing:cenrot_cutoff" );  }
+namespace packing { BooleanOptionKey const ignore_ligand_chi( "packing:ignore_ligand_chi" );  }
 namespace packing { IntegerOptionKey const ndruns( "packing:ndruns" );  }
 namespace packing { BooleanOptionKey const soft_rep_design( "packing:soft_rep_design" );  }
 namespace packing { BooleanOptionKey const use_electrostatic_repulsion( "packing:use_electrostatic_repulsion" );  }
@@ -758,4 +759,3 @@ namespace pose_metrics { RealOptionKey const sasa_calculator_probe_radius( "pose
 namespace pose_metrics { RealOptionKey const interface_cutoff( "pose_metrics:interface_cutoff" );  }
 namespace pose_metrics { IntegerOptionKey const min_sequence_separation( "pose_metrics:min_sequence_separation" );  }
 namespace pose_metrics { RealOptionKey const contact_cutoffE( "pose_metrics:contact_cutoffE" );  }
-namespace pose_metrics { RealOptionKey const neighbor_by_distance_cutoff( "pose_metrics:neighbor_by_distance_cutoff" );  }

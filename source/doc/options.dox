@@ -6341,6 +6341,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 0.16</dd><br>
 </dl>
 <dl>
+<dt><b>-ignore_ligand_chi</b> \<Boolean\><dt>
+<dd>Disable param file chi-angle based rotamer generation in SingleLigandRotamerLibrary</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-ndruns</b> \<Integer\><dt>
 <dd>Number of fixbb packing iterations.  Each time packing occurs, it will pack this many times and return only the best result.  Implemented at level of PackRotamersMover.</dd><br>
 <dd>Range: 1-</dd><br>

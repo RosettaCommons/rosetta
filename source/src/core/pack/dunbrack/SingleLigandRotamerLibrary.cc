@@ -49,6 +49,8 @@
 #include <set>
 
 #include <utility/vector1.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 
 namespace core {
@@ -315,13 +317,19 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 	RotamerVector & rotamers //utility::vector1< conformation::ResidueOP >
 ) const
 {
+
 	//std::cout << "SingleLigandRotamerLibrary :: fill_rotamer_vector() being called...\n";
 	//rotamers.clear(); // am I supposed to do this?  No: might contain rotamers for other residue types already!
 	int const start_size = rotamers.size();
 
-	bool const expand_proton_chi = ( concrete_residue->n_proton_chi() != 0 );
+	bool expand_proton_chi = ( concrete_residue->n_proton_chi() != 0 );
 	Size const max_total_rotamers = 21654; // = 401 rotamers * 54 hydroxyl variations = 401 * (2 * 3^3)
 	RotamerVector new_rotamers;
+
+	if(basic::options::option[ basic::options::OptionKeys::packing::ignore_ligand_chi]() == true)
+	{
+		expand_proton_chi = false;
+	}
 
 	// Logic for creating proton_chi rotamers copied from APL (RotamerSet_.cc)
 	utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets;
@@ -348,6 +356,7 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 	} else {
 		new_rotamers.reserve( rotamers_.size() );
 	}
+
 
 	// Fill new_rotamers with new Residues, including proton_chi expansions
 	for(Size i = 1; i <= rotamers_.size(); ++i)

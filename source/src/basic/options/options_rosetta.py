@@ -2801,6 +2801,7 @@ Options = Option_Group( '',
 		Option( 'repack_only', 'Boolean', desc='Disable design at all positions', default='false' ),
 		Option( 'prevent_repacking', 'Boolean', desc='Disable repacking (or design) at all positions', default='false' ),
 		Option( 'cenrot_cutoff', 'Real', desc='Cutoff to generate centroid rotamers', default='0.16' ),
+		Option( 'ignore_ligand_chi', 'Boolean', desc='Disable param file chi-angle based rotamer generation in SingleLigandRotamerLibrary', default='false' ),
 		Option( 'ndruns', 'Integer',
 			desc='Number of fixbb packing iterations.  Each time packing occurs, it will pack this many times and return only the best result.  Implemented at level of PackRotamersMover.',
 			lower='1', default='1'
