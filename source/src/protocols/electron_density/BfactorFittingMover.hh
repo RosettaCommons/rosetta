@@ -36,7 +36,7 @@ public:
 		core::Real rmax,
 		core::Real radius_exp,
 		core::Real scorescale,
-		bool exact );
+		bool exact, bool verbose );
 
 	virtual ~BfactorMultifunc() {}
 
@@ -45,6 +45,9 @@ public:
 
 	virtual	void
 	dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const;
+
+	virtual	void
+	dump( core::optimization::Multivec const & x1, core::optimization::Multivec const & x2 ) const;
 
 	// helper functions
 	void
@@ -62,6 +65,7 @@ private:
 	core::Real rmax_;        // max radius (def 5)
 	core::Real radius_exp_;  // weigh neighbors by 1/r^thisval (def 1)
 	bool exact_;
+	bool verbose_;
 
 	// handles AtomID <-> vector index mapping
 	core::id::AtomID_Map< core::Size > atom_indices_;
@@ -100,6 +104,7 @@ private:
 	std::string minimizer_;
 	bool init_;
 	bool exact_;
+	bool verbose_;
 
 	bool opt_to_fsc_;
 	core::Real res_low_,res_high_;

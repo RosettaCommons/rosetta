@@ -90,7 +90,9 @@ public:
 		core::Real sigma_eff = sigma_;
 		core::Real B_eff = B;
 		if (B<0) B_eff = 0;
-		else if (B<1) B_eff = 0.1*B*B;
+		else if (B<1) B_eff = B*B;
+		else if (B>590) B_eff = 600-(1.0/10.0)*(600-B)*(600-B);  // to do: make the upper limit selectable
+		else if (B>600) B_eff = 600;
 		core::Real s = sigma_eff + B_eff/4;
 		core::Real k = M_PI*M_PI/s;
 		return k;
@@ -101,13 +103,15 @@ public:
 		core::Real sigma_eff = sigma_;
 
 		core::Real B_eff = B;
-		if (B<0) B_eff = 0;
-		else if (B<10) B_eff = 0.1*B*B;
+		if (B<0 || B>600) return 0;                             // to do: make the upper limit selectable
+		else if (B<1) B_eff = B*B;
+		else if (B>590) B_eff = 600-(1.0/10.0)*(600-B)*(600-B);  // to do: make the upper limit selectable
+
 		core::Real s = sigma_eff + B_eff/4;
 		core::Real dkdb = -M_PI*M_PI/(4*s*s);
 
-		if (B<0) dkdb = 0;
-		else if (B<1) dkdb *= 0.2*B;
+		if (B<1) dkdb *= 2*B;
+		if (B>590) dkdb *= (1.0/5.0)*(600-B);
 
 		return dkdb;
 	}

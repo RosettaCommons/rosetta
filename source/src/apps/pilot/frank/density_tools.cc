@@ -66,6 +66,7 @@ OPT_1GRP_KEY(Real, denstools, lowres)
 OPT_1GRP_KEY(Real, denstools, hires)
 OPT_1GRP_KEY(Boolean, denstools, rescale_map)
 OPT_1GRP_KEY(Boolean, denstools, verbose)
+OPT_1GRP_KEY(Boolean, denstools, super_verbose)
 OPT_1GRP_KEY(Boolean, denstools, dump_map_and_mask)
 OPT_1GRP_KEY(Boolean, denstools, mask)
 OPT_1GRP_KEY(Boolean, denstools, mask_modelmap)
@@ -190,10 +191,10 @@ densityTools()
 	bool bin_squared =  option[ denstools::bin_squared ]();
 	utility::vector1< core::Real > resobins, mapI, mapIprime, modelI, modelSum;
 	utility::vector1< core::Size > resobin_counts;
-	utility::vector1< core::Real > mapAltI, mapmapFSC, mapmapError;
+	utility::vector1< core::Real > mapAltI, mapmapFSC, mapmapPhaseError, mapmapCplxError;
 	utility::vector1< core::Real > perResCC;
 
-	utility::vector1< core::Real > modelmapFSC, normModelmapFSC, modelmapError, MLE, markedBins;
+	utility::vector1< core::Real > modelmapFSC, modelmapPhaseError, markedBins;
 
 	// resolution limits for analysis
 	core::Real hires = option[ denstools::hires ]();
@@ -202,6 +203,7 @@ densityTools()
 	bool mask = option[ denstools::mask ]();
 	bool mask_modelmap = option[ denstools::mask_modelmap ]();
 	bool rescale_map = option[ denstools::rescale_map ]();
+	bool superverbose = option[ denstools::super_verbose ]();
 
 	if (mask) mask_modelmap = false;
 
@@ -235,19 +237,18 @@ densityTools()
 		std::string mapfile = option[ edensity::alt_mapfile ];
 		core::Real mapreso = option[ edensity::mapreso ]();
 		core::Real mapsampling = option[ edensity::grid_spacing ]();
-		//std::cerr << "Loading alternate density map " << mapfile << std::endl;
 		mapAlt.readMRCandResize( mapfile , mapreso , mapsampling );
 
 		if (userpose && mask ) mapAlt.maskDensityMap( pose, 0 );
 
 		if (rescale_map) mapAltI = mapAlt.getIntensities(nresobins, lowres, hires);
-		core::scoring::electron_density::getDensityMap().getFSC( mapAlt.data(), nresobins, lowres, hires, mapmapFSC, mapmapError, bin_squared );
+
+		//core::scoring::electron_density::getDensityMap().getFSC( mapAlt.data(), nresobins, lowres, hires, mapmapFSC, mapmapError, bin_squared, superverbose );
+		core::scoring::electron_density::getDensityMap().getMapMapError(mapAlt.data(), nresobins, lowres, hires, mapmapFSC, mapmapPhaseError, mapmapCplxError, bin_squared);
 	}
 
 	// [3] model-map stats (intensity + model v map FSC + RSCC + per-res corrleations)
-	Real estErr=0;
-	Real errorSum_S2=0, fsc=0;
-	normModelmapFSC.resize( nresobins, 0 );
+	Real modelMapFSCsum=0, errPhase=0, errCplx=0, probCplx=0, RSCC;
 	markedBins.resize( nresobins, 0 );
 
 	if (userpose) {
@@ -276,43 +277,33 @@ densityTools()
 			}
 		}
 
+		core::scoring::electron_density::getDensityMap().calcRhoC( pose );
 		if (rescale_map) core::scoring::electron_density::getDensityMap().getIntensities( pose, nresobins, lowres, hires, modelI, bin_squared );
 
-		core::scoring::electron_density::getDensityMap().getFSC( pose, nresobins, lowres, hires, modelmapFSC, modelmapError, mask_modelmap, bin_squared, mask_radius );
-
-		if (usermap)
-			// ML-weighted phase error
-			core::scoring::electron_density::getDensityMap().getMLE(
-				pose, nresobins, lowres, hires, mapmapError, MLE, errorSum_S2, mask_modelmap, bin_squared, mask_radius );
-
-		// normalized FSC
-		for (Size i=1; i<=resobins.size(); ++i) {
-			core::Real ratio = 0;
-			if (usermap) {
-				if (mapmapFSC[i]>0.1 && modelmapFSC[i]/sqrt(mapmapFSC[i]) > 0.01)
-					normModelmapFSC[i] = log( modelmapFSC[i]/sqrt(mapmapFSC[i]) );
-				else
-					normModelmapFSC[i] = log( 0.01 );
-			}
+		//core::scoring::electron_density::getDensityMap().getFSC( pose, nresobins, lowres, hires, modelmapFSC, modelmapError, mask_modelmap, bin_squared, mask_radius, superverbose );
+		if (!usermap) {
+			mapmapPhaseError.resize( nresobins, 0.1 );
+			mapmapCplxError.resize( nresobins, 0.1 );
 		}
 
-		// now sum over reso bins
+		core::scoring::electron_density::getDensityMap().getModelMapError(
+			pose, nresobins, lowres, hires, mapmapPhaseError, mapmapCplxError, modelmapFSC, modelmapPhaseError, errPhase, errCplx, probCplx, mask_modelmap, bin_squared, mask_radius );
+		RSCC = core::scoring::electron_density::getDensityMap().getRSCC( pose );
+
+		// ML-weighted phase error
+		//core::scoring::electron_density::getDensityMap().getMLE(
+		//	pose, nresobins, lowres, hires, mapmapError, MLE, errorSum_S2, mask_modelmap, bin_squared, mask_radius );
+
+		// sum FSC over reso bins
 		core::Real ncount=0,ncountWt=0;
 		for (Size i=1; i<=resobins.size(); ++i) {
-			if (!mask && mapmapFSC[i] < 0.2) break;
-			if (mask && mapmapFSC[i] < 0.5) break;
-			if (resobins[i] < 1.0/15.0) continue;
-
+			if (!mask && usermap && mapmapFSC[i] < 0.2) break;
+			if (mask && usermap && mapmapFSC[i] < 0.5) break;
 			markedBins[i] = 1;
-
-			core::Real wt = bin_squared ? 1/resobins[i] : 1;
-			estErr += wt*normModelmapFSC[i];
-			ncountWt += wt;
-			fsc += modelmapFSC[i];
+			modelMapFSCsum += modelmapFSC[i];
 			ncount += 1;
 		}
-		estErr /= ncountWt;
-		fsc /= ncount;
+		modelMapFSCsum /= ncount;
 	}
 
 	// [5] optionally: rescale maps to target intensity
@@ -342,7 +333,7 @@ densityTools()
 			if (rescale_map && userpose)  std::cerr << " I_model" ;
 			if (usermap)  std::cerr << " FSC_mapmap";
 			if (userpose)  std::cerr << " marked FSC_mapmodel";
-			if (userpose && usermap) std::cerr << " NormFSC_mapmodel MLE_mapmodel";
+			if (userpose && usermap) std::cerr << " errPhase_mapmodel";
 			std::cerr << std::endl;
 		for (Size i=1; i<=resobins.size(); ++i) {
 			std::cerr << resobins[i] << " " << resobin_counts[i];
@@ -351,7 +342,7 @@ densityTools()
 			if (rescale_map && userpose)  std::cerr << " " << modelI[i];
 			if (usermap)  std::cerr << " " << mapmapFSC[i] ;
 			if (userpose)  std::cerr << " " << markedBins[i]  << " " << modelmapFSC[i] ;
-			if (userpose && usermap) std::cerr << " " << normModelmapFSC[i] << " " << MLE[i];
+			if (userpose && usermap) std::cerr << " " << modelmapPhaseError[i];
 			std::cerr << std::endl;
 		}
 	}
@@ -371,7 +362,9 @@ densityTools()
 
 	// compact
 	if (userpose) {
-		std::cerr << pdbfile << " error " << fsc << " " << estErr << " " << errorSum_S2 <<  std::endl;
+		std::cerr << pdbfile << " error " << RSCC << " " << modelMapFSCsum;
+		if (usermap)  std::cerr << " " << errPhase << " " << errCplx << " " << probCplx;
+		std::cerr << std::endl;
 	}
 }
 
@@ -395,6 +388,7 @@ main( int argc, char * argv [] )
 	NEW_OPT(denstools::mask_radius, "radius for masking", 0.0);
 	NEW_OPT(denstools::perres, "output per-residue stats", false);
 	NEW_OPT(denstools::verbose, "dump extra output", false);
+	NEW_OPT(denstools::super_verbose, "dump a lot of extra output", false);
 	NEW_OPT(denstools::bin_squared, "bin uniformly in 1/res^2 (default bins 1/res)", false);
 
 	devel::init( argc, argv );

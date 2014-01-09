@@ -160,24 +160,65 @@ public:
 	void
 	getIntensities( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso, utility::vector1< core::Real > &Imodel, bool S2_bin=false);
 
-	/// @brief Compute model-map FSC
+	/// @brief Compute map-map FSC & errors
+	void
+	getMapMapError(
+			ObjexxFCL::FArray3D< float > const &map2,
+			core::Size nbuckets, core::Real maxreso, core::Real minreso,
+			utility::vector1< core::Real >& FSC,
+			utility::vector1< core::Real >& phaseError,
+			utility::vector1< core::Real >& complexPlaneError,
+			bool S2_bin=false);
+
+	/// @brief Compute model-map FSC & errors
+	void
+	getModelMapError(
+			poseCoords const &pose,
+			core::Size nbuckets, core::Real maxreso, core::Real minreso,
+			utility::vector1< core::Real > const &mapmapPhaseError,
+			utility::vector1< core::Real > const &mapmapComplexPlaneError,
+			utility::vector1< core::Real >& FSC,
+			utility::vector1< core::Real >& phaseError,
+			core::Real &phaseErrorSum,
+			core::Real &complexPlaneErrorK,
+			core::Real &complexPlaneErrorProb,
+			bool masked=false, bool S2_bin=false, core::Real mask_radius=0);
+
+	/// @brief Compute model-map FSC & errors
+	void
+	getFSC(
+			poseCoords const &pose,
+			core::Size nbuckets, core::Real maxreso, core::Real minreso,
+			utility::vector1< core::Real >& FSC,
+			bool masked=false, bool S2_bin=false, core::Real mask_radius=0) {
+		utility::vector1< core::Real > mapmapPhaseError(nbuckets,0.1);
+		utility::vector1< core::Real > mapmapComplexPlaneError(nbuckets,0.1);
+		utility::vector1< core::Real > phaseError;
+		core::Real phaseErrorSum, complexPlaneErrorK, complexPlaneErrorProb;
+		getModelMapError(
+				pose, nbuckets, maxreso, minreso,
+				mapmapPhaseError, mapmapComplexPlaneError,
+				FSC, phaseError, phaseErrorSum, complexPlaneErrorK, complexPlaneErrorProb, masked, S2_bin, mask_radius );
+	}
+
+/*  OLD VERSIONS
 	void
 	getFSC(
 		poseCoords const &pose,
 		core::Size nbuckets,
 		core::Real maxreso, core::Real minreso,
 		utility::vector1< core::Real >&, utility::vector1< core::Real > &,
-		bool masked=false, bool S2_bin=false, core::Real mask_radius=0.0 );
+		bool masked=false, bool S2_bin=false, core::Real mask_radius=0.0, bool verbose=false );
 
-	/// @brief Compute model-map FSC
+	/// @brief Compute model-map expected phase error
 	void
 	getMLE(
 		poseCoords const &pose,
 		core::Size nbuckets,
 		core::Real maxreso, core::Real minreso,
-		utility::vector1< core::Real > const &, utility::vector1< core::Real >&,
-		Real &errS2,
-		bool masked=false, bool S2_bin=false, core::Real mask_radius=0.0 );
+		utility::vector1< core::Real > const &,
+		utility::vector1< core::Real >&, Real &errS2,
+		bool masked=false, bool S2_bin=false, bool phase_only=false, core::Real mask_radius=0.0 );
 
 	/// @brief Compute map-map FSC
 	void
@@ -186,7 +227,8 @@ public:
 			core::Size nbuckets,
 			core::Real maxreso, core::Real minreso,
 			utility::vector1< core::Real >&, utility::vector1< core::Real > &,
-			bool S2_bin=false);
+			bool S2_bin=false, bool phase_only=false, bool verbose=false);
+*/
 
 	/// @brief Compute model-map RSCC
 	core::Real

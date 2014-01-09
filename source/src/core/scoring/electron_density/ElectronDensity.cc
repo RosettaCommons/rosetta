@@ -1411,8 +1411,7 @@ ElectronDensity::getIntensities(
 	poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso,
 	utility::vector1< core::Real > &Imodel, bool S2_bin/*=false*/) {
 
-	// rhoc & FrhoC
-	calcRhoC( pose );
+	runtime_assert( Frho_calc.u1() != 0 );
 
 	// fft
 	if (Fdensity.u1() == 0) numeric::fourier::fft3(density, Fdensity);
@@ -1594,310 +1593,16 @@ ElectronDensity::maskDensityMap( poseCoords const &pose, core::Real radius ) {
 	density_change_trigger();
 }
 
-
-/// @brief Compute model-map FSC, masked by the pose
+/// @brief Compute map-map FSC & errors
 void
-ElectronDensity::getFSC(
-		poseCoords const &pose,
-		core::Size nbuckets,
-		core::Real maxreso,
-		core::Real minreso,
-		utility::vector1< core::Real > &modelmapFSC,
-		utility::vector1< core::Real > &modelmapSigma,
-		bool masked/*=false*/,
-		bool S2_bin/*=false*/,
-		Real mask_radius/*=0*/ ) {
-
-	//////////////
-	// 1 compute mask
-	ObjexxFCL::FArray3D< float > *densityMasked=NULL;
-	ObjexxFCL::FArray3D< float > densityCopy;
-
-	if (masked) {
-		core::Real radius = mask_radius>0 ? mask_radius : ATOM_MASK;
-		ObjexxFCL::FArray3D< float > mask;
-		mask.dimension(density.u1() , density.u2() , density.u3());
-		mask=1.0;
-		densityCopy = density;
-
-		for (int i=1 ; i<=(int)pose.size(); ++i) {
-			numeric::xyzVector< core::Real> cartX = pose[i].x_ - getTransform();
-			numeric::xyzVector< core::Real> fracX = c2f*cartX;
-			numeric::xyzVector< core::Real> atm_j, del_ij, atm_idx;
-			atm_idx[0] = pos_mod (fracX[0]*grid[0] - origin[0] + 1 , (double)grid[0]);
-			atm_idx[1] = pos_mod (fracX[1]*grid[1] - origin[1] + 1 , (double)grid[1]);
-			atm_idx[2] = pos_mod (fracX[2]*grid[2] - origin[2] + 1 , (double)grid[2]);
-			for (int z=1; z<=density.u3(); ++z) {
-				atm_j[2] = z;
-				del_ij[2] = (atm_idx[2] - atm_j[2]) / grid[2];
-				if (del_ij[2] > 0.5) del_ij[2]-=1.0; if (del_ij[2] < -0.5) del_ij[2]+=1.0;
-				del_ij[0] = del_ij[1] = 0.0;
-				if ((f2c*del_ij).length_squared() > (radius+ATOM_MASK_PADDING)*(radius+ATOM_MASK_PADDING)) continue;
-				for (int y=1; y<=density.u2(); ++y) {
-					atm_j[1] = y;
-					del_ij[1] = (atm_idx[1] - atm_j[1]) / grid[1] ;
-					if (del_ij[1] > 0.5) del_ij[1]-=1.0; if (del_ij[1] < -0.5) del_ij[1]+=1.0;
-					del_ij[0] = 0.0;
-					if ((f2c*del_ij).length_squared() > (radius+ATOM_MASK_PADDING)*(radius+ATOM_MASK_PADDING)) continue;
-					for (int x=1; x<=density.u1(); ++x) {
-						atm_j[0] = x;
-						del_ij[0] = (atm_idx[0] - atm_j[0]) / grid[0];
-						if (del_ij[0] > 0.5) del_ij[0]-=1.0; if (del_ij[0] < -0.5) del_ij[0]+=1.0;
-						numeric::xyzVector< core::Real > cart_del_ij = (f2c*del_ij);  // cartesian offset from (x,y,z) to atom_i
-						core::Real d2 = (cart_del_ij).length_squared();
-						if (d2 <= (radius+ATOM_MASK_PADDING)*(radius+ATOM_MASK_PADDING)) {
-							core::Real sigmoid_msk = exp( d2 - (radius)*(radius)  );
-							core::Real inv_msk = 1/(1+sigmoid_msk);
-							mask(x,y,z) *= (1 - inv_msk);
-						}
-					}
-				}
-			}
-		}
-
-		//////////////
-		// 2 apply to map
-		for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i)
-			densityCopy[i] *= (1-mask[i]);
-
-		densityMasked = &densityCopy;
-	} else {
-		densityMasked = &density;
-	}
-
-	numeric::fourier::fft3(*densityMasked, Fdensity);
-
-	//////////////
-	// 3 get FSC
-	Real min_allowed = sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
-	Real max_allowed = std::min( sqrt(S2( 1,0,0 )), sqrt(S2( 0,1,0 )) );
-	max_allowed = std::min( max_allowed, sqrt(S2( 0,0,1 )) );
-	if (minreso>min_allowed) {
-		TR << "Forcing res min to " << 1/min_allowed << std::endl;
-		minreso = min_allowed;
-	}
-	if (maxreso<max_allowed) {
-		TR << "Forcing res max to " << 1/max_allowed << std::endl;
-		maxreso = max_allowed;
-	}
-
-	if (S2_bin) {
-		minreso = minreso*minreso;
-		maxreso = maxreso*maxreso;
-	}
-	Real step = (minreso-maxreso)/nbuckets;
-
-	calcRhoC( pose );
-	numeric::xyzVector< core::Real > del_ij;
-	utility::vector1<core::Real> num(nbuckets, 0.0), denom1(nbuckets, 0.0), denom2(nbuckets, 0.0), counter(nbuckets, 0.0);
-
-	modelmapFSC.resize(nbuckets);
-	modelmapSigma.resize(nbuckets);
-	for (Size i=1; i<=nbuckets; ++i) modelmapSigma[i] = 0;
-
-	int H,K,L;
-	for (int z=1; z<=(int)density.u3(); ++z) {
-		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
-		for (int y=1; y<=(int)density.u2(); ++y) {
-			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
-			for (int x=1; x<=(int)density.u1(); ++x) {
-				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
-				Real s_i = (S2(H,K,L));
-				if (!S2_bin) s_i=sqrt(s_i);
-				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
-				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
-					Real num_i = std::real( Frho_calc(x,y,z) * std::conj( Fdensity(x,y,z) ) );
-
-					num[bucket_i] += num_i;
-					denom1[bucket_i] += std::abs( Frho_calc(x,y,z) ) * std::abs( Frho_calc(x,y,z) );
-					denom2[bucket_i] += std::abs( Fdensity(x,y,z) ) * std::abs( Fdensity(x,y,z) );
-
-					Real denom_i = std::abs(Fdensity(x,y,z)) * std::abs( Frho_calc(x,y,z) );
-					Real err = 0;
-					if (denom_i > 0) {
-						Real ratio_i = std::max( std::min( num_i/denom_i,1.0) , 0.0 );
-						err =  acos( ratio_i );
-					}
-
-					modelmapSigma[bucket_i] += err;
-					counter[bucket_i] += 1;
-				}
-			}
-		}
-	}
-
-	// clear Fdensity since it's masked
-	Fdensity.clear();
-
-	for (Size i=1; i<=nbuckets; ++i) {
-		denom1[i] = sqrt(denom1[i]);
-		denom2[i] = sqrt(denom2[i]);
-		modelmapFSC[i] = num[i] / (denom1[i]*denom2[i]);
-		modelmapSigma[i] = sqrt( modelmapSigma[i] / counter[i] );
-	}
-}
-
-/// @brief Compute model-map FSC, masked by the pose
-void
-ElectronDensity::getMLE(
-		poseCoords const &pose,
-		core::Size nbuckets,
-		core::Real maxreso, core::Real minreso,
-		utility::vector1< core::Real > const &mapmapSigma,
-		utility::vector1< core::Real > &modelmapSigma,
-		Real &errS2,
-		bool masked/*=false*/, bool S2_bin/*=false*/,
-		Real mask_radius/*=0*/ ) {
-	//////////////
-	// 1 compute mask
-	ObjexxFCL::FArray3D< float > *densityMasked=NULL;
-	ObjexxFCL::FArray3D< float > densityCopy;
-
-	if (masked) {
-		core::Real radius = mask_radius>0 ? mask_radius : ATOM_MASK;
-		ObjexxFCL::FArray3D< float > mask;
-		mask.dimension(density.u1() , density.u2() , density.u3());
-		mask=1.0;
-		densityCopy = density;
-
-		for (int i=1 ; i<=(int)pose.size(); ++i) {
-			numeric::xyzVector< core::Real> cartX = pose[i].x_ - getTransform();
-			numeric::xyzVector< core::Real> fracX = c2f*cartX;
-			numeric::xyzVector< core::Real> atm_j, del_ij, atm_idx;
-			atm_idx[0] = pos_mod (fracX[0]*grid[0] - origin[0] + 1 , (double)grid[0]);
-			atm_idx[1] = pos_mod (fracX[1]*grid[1] - origin[1] + 1 , (double)grid[1]);
-			atm_idx[2] = pos_mod (fracX[2]*grid[2] - origin[2] + 1 , (double)grid[2]);
-			for (int z=1; z<=density.u3(); ++z) {
-				atm_j[2] = z;
-				del_ij[2] = (atm_idx[2] - atm_j[2]) / grid[2];
-				if (del_ij[2] > 0.5) del_ij[2]-=1.0; if (del_ij[2] < -0.5) del_ij[2]+=1.0;
-				del_ij[0] = del_ij[1] = 0.0;
-				if ((f2c*del_ij).length_squared() > (radius+ATOM_MASK_PADDING)*(radius+ATOM_MASK_PADDING)) continue;
-				for (int y=1; y<=density.u2(); ++y) {
-					atm_j[1] = y;
-					del_ij[1] = (atm_idx[1] - atm_j[1]) / grid[1] ;
-					if (del_ij[1] > 0.5) del_ij[1]-=1.0; if (del_ij[1] < -0.5) del_ij[1]+=1.0;
-					del_ij[0] = 0.0;
-					if ((f2c*del_ij).length_squared() > (radius+ATOM_MASK_PADDING)*(radius+ATOM_MASK_PADDING)) continue;
-					for (int x=1; x<=density.u1(); ++x) {
-						atm_j[0] = x;
-						del_ij[0] = (atm_idx[0] - atm_j[0]) / grid[0];
-						if (del_ij[0] > 0.5) del_ij[0]-=1.0; if (del_ij[0] < -0.5) del_ij[0]+=1.0;
-						numeric::xyzVector< core::Real > cart_del_ij = (f2c*del_ij);  // cartesian offset from (x,y,z) to atom_i
-						core::Real d2 = (cart_del_ij).length_squared();
-						if (d2 <= (radius+ATOM_MASK_PADDING)*(radius+ATOM_MASK_PADDING)) {
-							core::Real sigmoid_msk = exp( d2 - (radius)*(radius)  );
-							core::Real inv_msk = 1/(1+sigmoid_msk);
-							mask(x,y,z) *= (1 - inv_msk);
-						}
-					}
-				}
-			}
-		}
-
-		//////////////
-		// 2 apply to map
-		for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i)
-			densityCopy[i] *= (1-mask[i]);
-
-		densityMasked = &densityCopy;
-	} else {
-		densityMasked = &density;
-	}
-
-	numeric::fourier::fft3(*densityMasked, Fdensity);
-
-	//////////////
-	// 3 get FSC
-	Real min_allowed = sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
-	Real max_allowed = std::min( sqrt(S2( 1,0,0 )), sqrt(S2( 0,1,0 )) );
-	max_allowed = std::min( max_allowed, sqrt(S2( 0,0,1 )) );
-	if (minreso>min_allowed) {
-		TR << "Forcing res min to " << 1/min_allowed << std::endl;
-		minreso = min_allowed;
-	}
-	if (maxreso<max_allowed) {
-		TR << "Forcing res max to " << 1/max_allowed << std::endl;
-		maxreso = max_allowed;
-	}
-
-	if (S2_bin) {
-		minreso = minreso*minreso;
-		maxreso = maxreso*maxreso;
-	}
-	Real step = (minreso-maxreso)/nbuckets;
-
-	calcRhoC( pose );
-	numeric::xyzVector< core::Real > del_ij;
-	utility::vector1<core::Real> num(nbuckets, 0.0), counter(nbuckets, 0.0);
-
-	modelmapSigma.resize(nbuckets);
-	for (Size i=1; i<=nbuckets; ++i) modelmapSigma[i] = 0;
-
-	int H,K,L;
-	errS2 = 0.0;
-	Real wt1=0, wtS=0, wtS2=0;
-	for (int z=1; z<=(int)density.u3(); ++z) {
-		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
-		for (int y=1; y<=(int)density.u2(); ++y) {
-			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
-			for (int x=1; x<=(int)density.u1(); ++x) {
-				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
-				Real s_i = (S2(H,K,L));
-				if (!S2_bin) s_i=sqrt(s_i);
-				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
-				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
-					Real num_i = std::real( Frho_calc(x,y,z) * std::conj( Fdensity(x,y,z) ) );
-
-					num[bucket_i] += num_i;
-
-					Real denom_i = std::abs(Fdensity(x,y,z)) * std::abs( Frho_calc(x,y,z) );
-					Real err_j = 0;
-					if (denom_i > 0) {
-						Real ratio_i = std::max( std::min( num_i/denom_i,1.0) , 0.0 );
-						err_j =  acos( ratio_i );
-					}
-
-					Real err_k = mapmapSigma[bucket_i];
-					std::complex<Real> ml_error = exp( err_j*err_j / (std::complex<Real>(0,1)-2*err_k*err_k) );
-					ml_error /= sqrt( 1.0+2.0*std::complex<Real>(0,1)*err_k*err_k );
-
-					Real err = -std::arg( ml_error );  // E (phase_error)^2
-
-					modelmapSigma[bucket_i] += err;
-
-					errS2 += (1.0/(s_i*s_i))*err;
-					wtS2+=(1.0/(s_i*s_i));
-
-					counter[bucket_i] += 1;
-				}
-			}
-		}
-	}
-
-	errS2 = sqrt( errS2 / wtS2 );
-
-	// clear Fdensity since it's masked
-	Fdensity.clear();
-
-	for (Size i=1; i<=nbuckets; ++i) {
-		modelmapSigma[i] = sqrt( modelmapSigma[i] / counter[i] );
-	}
-}
-
-
-
-/// @brief Compute the FSC in the specified resolution range
-void
-ElectronDensity::getFSC(
-		ObjexxFCL::FArray3D< float > const &density2,
-		core::Size nbuckets,
-		core::Real maxreso,
-		core::Real minreso,
-		utility::vector1< core::Real > &mapmapFSC,
-		utility::vector1< core::Real > &mapmapSigma,
-		bool S2_bin/*=false*/) {
-
+ElectronDensity::getMapMapError(
+			ObjexxFCL::FArray3D< float > const &density2,
+			core::Size nbuckets, core::Real maxreso, core::Real minreso,
+			utility::vector1< core::Real >& FSC,
+			utility::vector1< core::Real >& phaseError,
+			utility::vector1< core::Real >& complexPlaneError,
+			bool S2_bin/*=false*/)
+{
 	Real min_allowed = sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
 	Real max_allowed = std::min( sqrt(S2( 1,0,0 )), sqrt(S2( 0,1,0 )) );
 	max_allowed = std::min( max_allowed, sqrt(S2( 0,0,1 )) );
@@ -1920,26 +1625,27 @@ ElectronDensity::getFSC(
 
 	// fft
 	ObjexxFCL::FArray3D< std::complex<double> > Fdensity2;
-	if (Fdensity.u1() == 0)
-		numeric::fourier::fft3(density, Fdensity);
+	numeric::fourier::fft3(density, Fdensity);
 	numeric::fourier::fft3(density2, Fdensity2);
 
 	// correl
-	numeric::xyzVector< core::Real > del_ij;
 	utility::vector1<core::Real> num(nbuckets, 0.0), denom1(nbuckets, 0.0), denom2(nbuckets, 0.0), counter(nbuckets, 0.0);
-	mapmapFSC.resize(nbuckets);
-	mapmapSigma.resize(nbuckets);
+	FSC.resize(nbuckets);
+	phaseError.resize(nbuckets);
+	complexPlaneError.resize(nbuckets);
 
-	for (Size i=1; i<=nbuckets; ++i) mapmapSigma[i] = 0;
+	for (Size i=1; i<=nbuckets; ++i) {
+		FSC[i] = phaseError[i] = complexPlaneError[i] = 0;
+	}
 
-
+	// PASS 1: FSC, phase error
 	int H,K,L;
 	for (int z=1; z<=(int)density.u3(); ++z) {
 		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
 		for (int y=1; y<=(int)density.u2(); ++y) {
 			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
-			for (int x=1; x<=(int)density.u1(); ++x) {
-				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
+			for (int x=1; x<=(int)density.u1()/2; ++x) {
+				L = x-1;
 				Real s_i = (S2(H,K,L));
 				if (!S2_bin) s_i=sqrt(s_i);
 				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
@@ -1947,18 +1653,63 @@ ElectronDensity::getFSC(
 					Real num_i = std::real( Fdensity2(x,y,z) * std::conj( Fdensity(x,y,z) ) );
 
 					num[bucket_i] += num_i;    // |E_1|*|E_2|*cos(a_1-a_2)
-					denom1[bucket_i] += std::abs( Fdensity2(x,y,z) ) * std::abs( Fdensity2(x,y,z) );
-					denom2[bucket_i] += std::abs( Fdensity(x,y,z) ) * std::abs( Fdensity(x,y,z) );
+					denom1[bucket_i] += std::abs( Fdensity(x,y,z) ) * std::abs( Fdensity(x,y,z) );
+					denom2[bucket_i] += std::abs( Fdensity2(x,y,z) ) * std::abs( Fdensity2(x,y,z) );
+
+					Real scale = (H==0 || K==0 || L==0) ? 0.5 : 1.0;
+					counter[bucket_i] += scale;
 
 					Real denom_i = std::abs(Fdensity(x,y,z)) * std::abs( Fdensity2(x,y,z) );
-					Real err = 0;
-					if (denom_i > 0) {
-						Real ratio_i = std::max( std::min( num_i/denom_i,1.0) , -1.0 );
-						err =  acos( ratio_i );
+					if (denom_i <= 1e-6) continue;
+
+					Real ratio_i = std::max( std::min( num_i/denom_i,1.0) , -1.0 );
+
+					Real err = acos( ratio_i );
+					if (H==0 || K==0 || L==0) err = std::min( err, M_PI-err );
+
+					phaseError[bucket_i] += scale*err*err;
+				}
+			}
+		}
+	}
+
+	// PASS 2: complex plane error (pass 1 is needed to normalize amplitudes)
+	for (int z=1; z<=(int)density.u3(); ++z) {
+		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
+		for (int y=1; y<=(int)density.u2(); ++y) {
+			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
+			for (int x=1; x<=(int)density.u1()/2; ++x) {
+				L = x-1;
+				Real s_i = (S2(H,K,L));
+				if (!S2_bin) s_i=sqrt(s_i);
+				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
+				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
+					// reflections, normalized in each shell
+					std::complex< Real > E1 = sqrt(counter[bucket_i]/denom1[bucket_i]) * Fdensity(x,y,z);
+
+					if (std::abs( E1 ) <= 1e-2) continue;
+
+					std::complex< Real > E2 = sqrt(counter[bucket_i]/denom2[bucket_i]) * Fdensity2(x,y,z);
+
+					// find distance in cplx plane
+					Real ratio_i = std::real( E1 * std::conj(E2) ) / (std::abs(E1) * std::abs(E2));
+					Real del_ampl = std::abs( E2 ) / std::abs( E1 );
+
+					ratio_i = std::max( -1.0, ratio_i );
+					ratio_i = std::min( 1.0, ratio_i );
+					Real delX = del_ampl * ratio_i - 1;
+
+					// centrics
+					Real scale=1.0;
+					if (H==0 || K==0 || L==0) {
+						delX = std::min( delX, -del_ampl * ratio_i - 1 );
+						scale=0.5;
 					}
 
-					mapmapSigma[bucket_i] += err*err;
-					counter[bucket_i] += 1;
+					Real delY = del_ampl * sqrt( 1-ratio_i*ratio_i );
+					Real err = ( delX*delX + delY*delY );
+
+					complexPlaneError[bucket_i] += scale*err;
 				}
 			}
 		}
@@ -1967,17 +1718,327 @@ ElectronDensity::getFSC(
 	for (Size i=1; i<=nbuckets; ++i) {
 		denom1[i] = sqrt(denom1[i]);
 		denom2[i] = sqrt(denom2[i]);
-		mapmapFSC[i] = num[i] / (denom1[i]*denom2[i]);
-		mapmapSigma[i] = sqrt( mapmapSigma[i] / counter[i] );
+		FSC[i] = num[i] / (denom1[i]*denom2[i]);
+		phaseError[i] = sqrt( phaseError[i] / counter[i] );
+		complexPlaneError[i] = sqrt( complexPlaneError[i] / counter[i] );
+	}
+}
+
+
+
+/// @brief Compute model-map FSC & errors
+void
+ElectronDensity::getModelMapError(
+			poseCoords const &pose,
+			core::Size nbuckets, core::Real maxreso, core::Real minreso,
+			utility::vector1< core::Real > const &mapmapPhaseError,
+			utility::vector1< core::Real > const &mapmapComplexPlaneError,
+			utility::vector1< core::Real >& FSC,
+			utility::vector1< core::Real >& phaseError,
+			core::Real &phaseErrorSum,
+			core::Real &complexPlaneErrorK,
+			core::Real &complexPlaneErrorProb,
+			bool masked/*=false*/, bool S2_bin/*=false*/, core::Real mask_radius/*=0*/)
+{
+	runtime_assert( Frho_calc.u1() != 0 );  // make sure calcRhoC was called first
+
+	Real min_allowed = sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
+	Real max_allowed = std::min( sqrt(S2( 1,0,0 )), sqrt(S2( 0,1,0 )) );
+	max_allowed = std::min( max_allowed, sqrt(S2( 0,0,1 )) );
+	if (minreso>min_allowed) {
+		TR << "Forcing res min to " << 1/min_allowed << std::endl;
+		minreso = min_allowed;
+	}
+	if (maxreso<max_allowed) {
+		TR << "Forcing res max to " << 1/max_allowed << std::endl;
+		maxreso = max_allowed;
 	}
 
-	return;
+	if (S2_bin) {
+		minreso = minreso*minreso;
+		maxreso = maxreso*maxreso;
+	}
+	Real step = (minreso-maxreso)/nbuckets;
+
+	ObjexxFCL::FArray3D< float > *densityMasked=NULL;
+	ObjexxFCL::FArray3D< float > densityCopy;
+
+	// correl
+	utility::vector1<core::Real> num(nbuckets, 0.0), denom1(nbuckets, 0.0), denom2(nbuckets, 0.0), counter(nbuckets, 0.0);
+	FSC.resize(nbuckets);
+	phaseError.resize(nbuckets);
+	for (Size i=1; i<=nbuckets; ++i) {
+		FSC[i] = phaseError[i] = 0;
+	}
+
+	// mask map
+	if (masked) {
+		core::Real radius = mask_radius>0 ? mask_radius : ATOM_MASK;
+		ObjexxFCL::FArray3D< float > mask;
+		mask.dimension(density.u1() , density.u2() , density.u3());
+		mask=1.0;
+		densityCopy = density;
+
+		for (int i=1 ; i<=(int)pose.size(); ++i) {
+			numeric::xyzVector< core::Real> cartX = pose[i].x_ - getTransform();
+			numeric::xyzVector< core::Real> fracX = c2f*cartX;
+			numeric::xyzVector< core::Real> atm_j, del_ij, atm_idx;
+			atm_idx[0] = pos_mod (fracX[0]*grid[0] - origin[0] + 1 , (double)grid[0]);
+			atm_idx[1] = pos_mod (fracX[1]*grid[1] - origin[1] + 1 , (double)grid[1]);
+			atm_idx[2] = pos_mod (fracX[2]*grid[2] - origin[2] + 1 , (double)grid[2]);
+			for (int z=1; z<=density.u3(); ++z) {
+				atm_j[2] = z;
+				del_ij[2] = (atm_idx[2] - atm_j[2]) / grid[2];
+				if (del_ij[2] > 0.5) del_ij[2]-=1.0; if (del_ij[2] < -0.5) del_ij[2]+=1.0;
+				del_ij[0] = del_ij[1] = 0.0;
+				if ((f2c*del_ij).length_squared() > (radius+ATOM_MASK_PADDING)*(radius+ATOM_MASK_PADDING)) continue;
+				for (int y=1; y<=density.u2(); ++y) {
+					atm_j[1] = y;
+					del_ij[1] = (atm_idx[1] - atm_j[1]) / grid[1] ;
+					if (del_ij[1] > 0.5) del_ij[1]-=1.0; if (del_ij[1] < -0.5) del_ij[1]+=1.0;
+					del_ij[0] = 0.0;
+					if ((f2c*del_ij).length_squared() > (radius+ATOM_MASK_PADDING)*(radius+ATOM_MASK_PADDING)) continue;
+					for (int x=1; x<=density.u1(); ++x) {
+						atm_j[0] = x;
+						del_ij[0] = (atm_idx[0] - atm_j[0]) / grid[0];
+						if (del_ij[0] > 0.5) del_ij[0]-=1.0; if (del_ij[0] < -0.5) del_ij[0]+=1.0;
+						numeric::xyzVector< core::Real > cart_del_ij = (f2c*del_ij);  // cartesian offset from (x,y,z) to atom_i
+						core::Real d2 = (cart_del_ij).length_squared();
+						if (d2 <= (radius+ATOM_MASK_PADDING)*(radius+ATOM_MASK_PADDING)) {
+							core::Real sigmoid_msk = exp( d2 - (radius)*(radius)  );
+							core::Real inv_msk = 1/(1+sigmoid_msk);
+							mask(x,y,z) *= (1 - inv_msk);
+						}
+					}
+				}
+			}
+		}
+
+		for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i)
+			densityCopy[i] *= (1-mask[i]);
+
+		densityMasked = &densityCopy;
+	} else {
+		densityMasked = &density;
+	}
+
+	numeric::fourier::fft3(*densityMasked, Fdensity);
+
+	// PASS 1: FSC, expected phase error
+	int H,K,L;
+	Real wtS2=0;
+	phaseErrorSum = 0;
+	for (int z=1; z<=(int)density.u3(); ++z) {
+		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
+		for (int y=1; y<=(int)density.u2(); ++y) {
+			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
+			for (int x=1; x<=(int)density.u1()/2; ++x) {
+				L = x-1;
+				Real s_i = (S2(H,K,L));
+				if (!S2_bin) s_i=sqrt(s_i);
+				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
+				if (S2_bin) s_i=sqrt(s_i);
+				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
+					Real num_i = std::real( Frho_calc(x,y,z) * std::conj( Fdensity(x,y,z) ) );
+
+					num[bucket_i] += num_i;
+					denom1[bucket_i] += std::abs( Fdensity(x,y,z) ) * std::abs( Fdensity(x,y,z) );
+					denom2[bucket_i] += std::abs( Frho_calc(x,y,z) ) * std::abs( Frho_calc(x,y,z) );
+
+					Real scale = (H==0 || K==0 || L==0) ? 0.5 : 1.0;
+					counter[bucket_i] += scale;
+
+					Real denom_i = std::abs( Fdensity(x,y,z)) * std::abs( Frho_calc(x,y,z) );
+					if (denom_i <= 1e-6) continue;
+
+					Real ratio_i = std::max( std::min( num_i/denom_i,1.0) , 0.0 );
+
+					Real err_j =  acos( ratio_i );
+					if (H==0 || K==0 || L==0) err_j = std::min( err_j, M_PI-err_j );
+
+					Real err_k = mapmapPhaseError[bucket_i];
+					std::complex<Real> ml_error = exp( err_j*err_j / (std::complex<Real>(0,1)-2*err_k*err_k) );
+					ml_error /= sqrt( 1.0+2.0*std::complex<Real>(0,1)*err_k*err_k );
+
+					Real err = -std::arg( ml_error );  // E (phase_error)^2
+					phaseError[bucket_i] += err;
+
+					phaseErrorSum += (1.0/(s_i*s_i))*err;
+					wtS2+=(1.0/(s_i*s_i));
+				}
+			}
+		}
+	}
+	phaseErrorSum = sqrt( phaseErrorSum / wtS2 );
+
+	// pass 2: error in cplx plane
+	// iterate to optimize a parameter k
+	// use newton's method
+
+	// 2a compute cplx plane distance for each reflection
+	ObjexxFCL::FArray3D< float > dists;
+	dists.dimension(density.u1(),density.u2(),density.u3());
+
+	for (int z=1; z<=(int)density.u3(); ++z) {
+		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
+		for (int y=1; y<=(int)density.u2(); ++y) {
+			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
+			for (int x=1; x<=(int)density.u1()/2; ++x) {
+				L = x-1;
+				Real s_i = (S2(H,K,L));
+				if (!S2_bin) s_i=sqrt(s_i);
+				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
+				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
+					// reflections, normalized in each shell
+					std::complex< Real > E1 = sqrt(counter[bucket_i] / denom1[bucket_i]) * Fdensity(x,y,z);
+					if (std::abs( E1 ) <= 1e-2) continue;
+					std::complex< Real > E2 = sqrt(counter[bucket_i] / denom2[bucket_i]) * Frho_calc(x,y,z);
+
+					// find distance in cplx plane
+					Real ratio_i = std::real( E1 * std::conj(E2) ) / (std::abs(E1) * std::abs(E2));
+					Real del_ampl = std::abs( E2 ) / std::abs( E1 );
+					Real delX = del_ampl * ratio_i - 1;
+
+					// centrics
+					Real scale=1.0;
+					if (H==0 || K==0 || L==0) {
+						delX = std::min( delX, -del_ampl * ratio_i - 1 );
+						scale=0.5;
+					}
+
+					Real delY = del_ampl * sqrt( 1-ratio_i*ratio_i );
+					dists(x,y,z) = std::sqrt( delX*delX + delY*delY );
+				}
+			}
+		}
+	}
+
+	// pass 3A: find good starting point for optimization
+	Real bestK=1.0, bestF=-1e30;
+	Real f, fprime, fprimeprime, delf=1;
+	int CYC=0;
+	while (CYC<=10) {
+		f=0;
+		switch (CYC) {
+			case 0:  complexPlaneErrorK=0.1; break;
+			case 1:  complexPlaneErrorK=0.2; break;
+			case 2:  complexPlaneErrorK=0.4; break;
+			case 3:  complexPlaneErrorK=0.6; break;
+			case 4:  complexPlaneErrorK=0.8; break;
+			case 5:  complexPlaneErrorK=1.2; break;
+			case 6:  complexPlaneErrorK=1.6; break;
+			case 7:  complexPlaneErrorK=2.4; break;
+			case 8:  complexPlaneErrorK=4.8; break;
+			case 9:  complexPlaneErrorK=7.2; break;
+			default: complexPlaneErrorK=9.6;
+		}
+		for (int z=1; z<=(int)density.u3(); ++z) {
+			H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
+			for (int y=1; y<=(int)density.u2(); ++y) {
+				K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
+				for (int x=1; x<=(int)density.u1()/2; ++x) {
+					L = x-1;
+					Real s_i = (S2(H,K,L));
+					if (!S2_bin) s_i=sqrt(s_i);
+					int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
+					if (S2_bin) s_i=sqrt(s_i);
+
+					if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
+						Real d_i = dists(x,y,z), sig_i = mapmapComplexPlaneError[ bucket_i ];
+						Real fpart = (complexPlaneErrorK*complexPlaneErrorK*s_i*s_i+sig_i*sig_i);
+						f -= d_i*d_i/(2*fpart);
+						f -= log (2*M_PI*fpart);
+					}
+				}
+			}
+		}
+		if (f>bestF) {
+			bestF=f;
+			bestK=complexPlaneErrorK;
+		}
+		TR << " ITER " << CYC << ": f(" << complexPlaneErrorK << ")=" << f << std::endl;
+		CYC++;
+	}
+
+	complexPlaneErrorK = bestK; // initial guess
+	f = 0;
+
+	// pass 3B: newton's method to converge
+	while (CYC<=30 && delf>1e-4) {
+		Real fprev=f;
+		f = fprime = fprimeprime = 0;
+		Real nfprime = 0, nfprimeprime = 0, fp1, fm1, f0;
+		for (int z=1; z<=(int)density.u3(); ++z) {
+			H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
+			for (int y=1; y<=(int)density.u2(); ++y) {
+				K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
+				for (int x=1; x<=(int)density.u1()/2; ++x) {
+					L = x-1;
+					Real s_i = (S2(H,K,L));
+					if (!S2_bin) s_i=sqrt(s_i);
+					int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
+					if (S2_bin) s_i=sqrt(s_i);
+
+					if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
+						Real d_i = dists(x,y,z), sig_i = mapmapComplexPlaneError[ bucket_i ];
+
+						Real fpart = (complexPlaneErrorK*complexPlaneErrorK*s_i*s_i+sig_i*sig_i);
+						Real fpart_P1 = ((complexPlaneErrorK+0.001)*(complexPlaneErrorK+0.001)*s_i*s_i+sig_i*sig_i);
+						Real fpart_M1 = ((complexPlaneErrorK-0.001)*(complexPlaneErrorK-0.001)*s_i*s_i+sig_i*sig_i);
+
+						f0 = -d_i*d_i/(2*fpart) - log (2*M_PI*fpart);
+						f += f0;
+
+						// [DEBUG] numeric
+						fp1 = -d_i*d_i/(2*fpart_P1) - log (2*M_PI*fpart_P1);
+						fm1 = - d_i*d_i/(2*fpart_M1) - log (2*M_PI*fpart_M1);
+						nfprime += (fp1-fm1)/0.002;
+						nfprimeprime += (fp1-2*f0+fm1)/(0.001*0.001);
+
+						// analytic
+						Real fprime0 =  d_i*d_i*complexPlaneErrorK*s_i*s_i / (fpart*fpart) - 2*complexPlaneErrorK*s_i*s_i / (fpart);
+						fprime += fprime0;
+
+						Real fprimeprime0 =
+							- 4*d_i*d_i*complexPlaneErrorK*complexPlaneErrorK*s_i*s_i*s_i*s_i / (fpart*fpart*fpart)
+							+ d_i*d_i*s_i*s_i / (fpart*fpart)
+							+ 4*complexPlaneErrorK*complexPlaneErrorK*s_i*s_i*s_i*s_i / (fpart*fpart)
+							- 2*s_i*s_i / (fpart);
+
+						fprimeprime += fprimeprime0;
+					}
+				}
+			}
+		}
+
+		// update
+		Real complexPlaneErrorKprev = complexPlaneErrorK;
+		complexPlaneErrorK -= fprime/fprimeprime;
+		complexPlaneErrorProb = f;
+
+		delf = std::abs(f-fprev) / std::abs(f+fprev);
+
+		// info
+		TR << " ITER " << CYC << ": f(" << complexPlaneErrorKprev << ")=" << f << "  delF=" << delf << "   X_new=" << complexPlaneErrorK << std::endl;
+		TR << "      " << fprime << " v " << nfprime << std::endl;
+		TR << "      " << fprimeprime << " v " << nfprimeprime << std::endl;
+		CYC++;
+	}
+
+	for (Size i=1; i<=nbuckets; ++i) {
+		denom1[i] = sqrt(denom1[i]);
+		denom2[i] = sqrt(denom2[i]);
+		FSC[i] = num[i] / (denom1[i]*denom2[i]);
+		phaseError[i] = sqrt( phaseError[i] / counter[i] );
+	}
+
+	// clear Fdensity since it's masked
+	Fdensity.clear();
 }
 
 core::Real
 ElectronDensity::getRSCC( poseCoords const &pose ) {
-	// rhoc & FrhoC
-	calcRhoC( pose );
+	runtime_assert( rho_calc.u1() != 0 );  // make sure calcRhoC was called first
 
 	core::Real sumC_i=0, sumO_i=0, sumCO_i=0, vol_i=0, CC_i=0;
  	core::Real sumO2_i=0.0, sumC2_i=0.0, varC_i=0, varO_i=0;
@@ -2000,6 +2061,8 @@ ElectronDensity::getRSCC( poseCoords const &pose ) {
 		CC_i = 0;
 	else
 		CC_i = (sumCO_i - sumC_i*sumO_i/ vol_i) / sqrt( varC_i * varO_i );
+
+	//std::cerr << "score1 = " <<  CC_i << std::endl;
 
 	return CC_i;
 }
@@ -2569,6 +2632,7 @@ void ElectronDensity::rescale_fastscoring_temp_bins(core::pose::Pose const &pose
 			}
 
 			// compute RSCC
+			calcRhoC( litePose );
 			RSCC[kbin] = getRSCC(litePose);
 			if (RSCC[kbin] > RSCC_ref) {
 				RSCC_ref = RSCC[kbin];
@@ -4096,8 +4160,8 @@ core::Real ElectronDensity::matchRes(
 		idxX_high[1] = std::max(idxX[1],idxX_high[1]);
 		idxX_high[2] = std::max(idxX[2],idxX_high[2]);
 	}
-	
-	int firstMaskedAtom = 1; 
+
+	int firstMaskedAtom = 1;
 	int lastMaskedAtom = atmList.size();
 	if (basic::options::option[ basic::options::OptionKeys::edensity::unmask_bb ]())
 		firstMaskedAtom = rsd.last_backbone_atom()+1;
@@ -4243,7 +4307,7 @@ core::Real ElectronDensity::matchRes(
 		}
 	}
 
-	
+
 	if (basic::options::option[ basic::options::OptionKeys::edensity::debug ]() && resid == 1) {
     ElectronDensity(rho_obs,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_obs.mrc");
     ElectronDensity(inv_rho_mask,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_mask.mrc");
@@ -4534,6 +4598,12 @@ ElectronDensity::dCCdBs(
 	// 1 get rhoc
 	core::scoring::electron_density::poseCoords litePose;
 
+	// we need to compute derived quantities so may as well recompute this
+	rho_calc.dimension(density.u1() , density.u2() , density.u3());
+	inv_rho_mask.dimension(density.u1() , density.u2() , density.u3());
+	rho_calc=0.0;
+	inv_rho_mask = 1.0;
+
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		core::conformation::symmetry::SymmetricConformation const & SymmConf (
@@ -4548,6 +4618,7 @@ ElectronDensity::dCCdBs(
 
 		core::Size natoms = rsd_i.nheavyatoms();
 		for (int j=1; j<=natoms; ++j) {
+			if ( rsd_i.atom_type(j).is_virtual() ) continue;
 			core::conformation::Atom const &atom_j( rsd_i.atom(j) );
 			core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 
@@ -4607,7 +4678,7 @@ ElectronDensity::dCCdBs(
 
 						int idx = (z-1)*density.u2()*density.u1() + (y-1)*density.u1() + x-1;
 						rho_dx_pt[i].push_back ( idx );
-						rho_dx_bs[i].push_back ( -atm*(2*d2*k - 3)*dk / k );
+						rho_dx_bs[i].push_back ( atm*dk*(1.5/k - d2) );
 					}
 				}
 			}
@@ -4633,7 +4704,7 @@ ElectronDensity::dCCdBs(
 	if (varC_i > 0 && varO_i > 0)
 		CC_i = (sumCO_i - sumC_i*sumO_i/ vol_i) / sqrt( varC_i * varO_i );
 
-	//std::cerr << CC_i << std::endl;
+	//std::cerr << "score2 = " << CC_i << std::endl;
 
 	// dCCdbs
 	for (int i=1 ; i<=natoms; ++i) {
@@ -4660,6 +4731,15 @@ ElectronDensity::dCCdBs(
 
 		dE_dvars[i] = (g*fprime - f*gprime) / (g*g);
 	}
+
+	// numeric
+	//for (int i=1;i<=4; ++i) {
+	//	litePose[i].B_ += 1;
+	//	core::scoring::electron_density::getDensityMap().calcRhoC( litePose );
+	//	Real CC_i_p = core::scoring::electron_density::getDensityMap().getRSCC(litePose);
+	//	std::cerr << "atom " << i << "  N: " << (CC_i_p-CC_i) / 1 << "  A:" << dE_dvars[i] << std::endl;
+	//	litePose[i].B_ -= 1;
+	//}
 }
 
 /////////////////////////////////////

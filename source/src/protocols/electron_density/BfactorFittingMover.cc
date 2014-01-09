@@ -93,8 +93,8 @@ BfactorMultifunc::BfactorMultifunc(
 		core::Real rmax,
 		core::Real radius_exp,
 		core::Real scorescale,
-		bool exact ) :
-	pose_(pose_in), wt_adp_(wt_adp), wt_dens_(wt_dens), rmax_(rmax), radius_exp_(radius_exp), scorescale_( scorescale ), exact_( exact )
+		bool exact, bool verbose ) :
+	pose_(pose_in), wt_adp_(wt_adp), wt_dens_(wt_dens), rmax_(rmax), radius_exp_(radius_exp), scorescale_( scorescale ), exact_( exact ), verbose_(verbose)
 {
 	B_EPS=0.0001;
 
@@ -152,7 +152,9 @@ BfactorMultifunc::multivec2poseBfacts( core::optimization::Multivec const &y, co
 
 	for (core::Size i = 1; i <= natoms; ++i) {
 		core::id::AtomID a_i = moving_atoms_[i];
-		pose.pdb_info()->temperature( a_i.rsd(), a_i.atomno(), std::max(y[i],0.0) );
+		// fpd! upper limit must match what is in xray_scattering.hh
+		//  THIS SHOULD BE SELECTABLE
+		pose.pdb_info()->temperature( a_i.rsd(), a_i.atomno(), std::min(std::max(y[i],0.0),600.0) );
 	}
 }
 
@@ -172,6 +174,7 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 	}
 
 	core::Real dens_score = 0;
+	core::Size natom=0;
 	if (!exact_) {
 		for ( Size i = 1; i <= pose_copy.total_residue(); ++i ) {
 			if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
@@ -188,6 +191,7 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 
 			core::Size natoms = rsd_i.nheavyatoms();
 			for (int j=1; j<=natoms; ++j) {
+				if ( rsd_i.atom_type(j).is_virtual() ) continue;
 				core::conformation::Atom const &atom_j( rsd_i.atom(j) );
 				core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 
@@ -198,12 +202,15 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 				litePose.push_back( coord_j );
 			}
 		}
+		core::scoring::electron_density::getDensityMap().calcRhoC( litePose );
 		dens_score -= (moving_atoms_.size()/10.0) * core::scoring::electron_density::getDensityMap().getRSCC(litePose);
+		natom = litePose.size();
 	}
 
 
 	// [[2]]  constraint score
 	core::Real cst_score=0;
+	core::Size nedge=0;
 	if (wt_adp_ != 0) {
 		core::scoring::EnergyGraph const & energy_graph( pose_copy.energies().energy_graph() );
 		Size const nres( energy_graph.num_nodes() );
@@ -222,11 +229,12 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 					core::Real B_l = pose_copy.pdb_info()->temperature( i, l );
 					if (atom_indices_[core::id::AtomID(l,i)] == 0) continue;
 
-					core::Real dist_kl = (rsd1.atom( k ).xyz() - rsd1.atom( l ).xyz()).length_squared();
+					core::Real dist_kl = (rsd1.atom( k ).xyz() - rsd1.atom( l ).xyz()).length();
 					if (radius_exp_ != 1.0) dist_kl = std::pow( dist_kl, radius_exp_ );
 
 					if (dist_kl < rmax_) {
 						cst_score += (B_k-B_l)*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS) );
+						nedge++;
 					}
 				}
 			}
@@ -249,16 +257,23 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 						core::Real B_l = pose_copy.pdb_info()->temperature( j, l );
 						if (atom_indices_[core::id::AtomID(l,j)] == 0) continue;
 
-						core::Real dist_kl = (rsd1.atom( k ).xyz() - rsd2.atom( l ).xyz()).length_squared();
+						core::Real dist_kl = (rsd1.atom( k ).xyz() - rsd2.atom( l ).xyz()).length();
 						if (radius_exp_ != 1.0) dist_kl = std::pow( dist_kl, radius_exp_ );
 
 						if (dist_kl < rmax_) {
 							cst_score += (B_k-B_l)*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS) );
+							nedge++;
 						}
 					}
 				}
 			}
 		}
+	}
+
+	if (verbose_) {
+		//core::optimization::Multivec varsCopy = vars;
+		std::cerr << "[score] evaluated " << natom << " atoms and " << nedge << " edges" << std::endl;
+		std::cerr << "[score] score = " << scorescale_* (wt_dens_*dens_score + wt_adp_*cst_score) << " [ " << dens_score << " , " << cst_score << " ] " << std::endl;
 	}
 
 	return ( scorescale_* (wt_dens_*dens_score + wt_adp_*cst_score) );
@@ -286,6 +301,7 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 	}
 
 	// [[2]]  constraint deriv
+	core::Size nedge=0;
 	if (wt_adp_ != 0) {
 		core::conformation::symmetry::SymmetryInfoOP symm_info;
 		if ( core::pose::symmetry::is_symmetric(pose_copy) ) {
@@ -302,6 +318,7 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 			core::conformation::Residue const & rsd1 ( pose_copy.residue(i) );
 			if ( rsd1.aa() == core::chemical::aa_vrt ) continue;
 
+			// intra-res
 			core::Size natoms = rsd1.nheavyatoms();
 			for (int k=1; k<=natoms; ++k) {
 				core::Real B_k = pose_copy.pdb_info()->temperature( i, k );
@@ -310,7 +327,7 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 					core::Real B_l = pose_copy.pdb_info()->temperature( i, l );
 					if (atom_indices_[core::id::AtomID(l,i)] == 0) continue;
 
-					core::Real dist_kl = (rsd1.atom( k ).xyz() - rsd1.atom( l ).xyz()).length_squared();
+					core::Real dist_kl = (rsd1.atom( k ).xyz() - rsd1.atom( l ).xyz()).length();
 					if (radius_exp_ != 1.0) dist_kl = std::pow( dist_kl, radius_exp_ );
 
 					if (dist_kl < rmax_) {
@@ -318,11 +335,12 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 						core::Size atomL = atom_indices_[ core::id::AtomID( l,i ) ];
 
 						core::Real cst_kl = (B_k-B_l)*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS)*(B_k+B_l+B_EPS) );
-						core::Real dcst_dbk = cst_kl + 2*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS) );
-						core::Real dcst_dbl = cst_kl + 2*(B_l-B_k) / ( dist_kl*(B_k+B_l+B_EPS) );
+						core::Real dcst_dbk = -cst_kl + 2*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS) );
+						core::Real dcst_dbl = -cst_kl - 2*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS) );
 
 						dE_dvars[ atomK ] += scorescale_*wt_adp_*dcst_dbk;
 						dE_dvars[ atomL ] += scorescale_*wt_adp_*dcst_dbl;
+						nedge++;
 					}
 				}
 			}
@@ -337,7 +355,7 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 				if ( rsd2.aa() == core::chemical::aa_vrt ) continue;
 				core::Size natoms2 = rsd2.nheavyatoms();
 
-				// inter-atom
+				// inter-res
 				for (int k=1; k<=natoms; ++k) {
 					core::Real B_k = pose_copy.pdb_info()->temperature( i, k );
 					if (atom_indices_[core::id::AtomID(k,i)] == 0) continue;
@@ -346,7 +364,7 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 						core::Real B_l = pose_copy.pdb_info()->temperature( j, l );
 						if (atom_indices_[core::id::AtomID(l,j)] == 0) continue;
 
-						core::Real dist_kl = (rsd1.atom( k ).xyz() - rsd2.atom( l ).xyz()).length_squared();
+						core::Real dist_kl = (rsd1.atom( k ).xyz() - rsd2.atom( l ).xyz()).length();
 						if (radius_exp_ != 1.0) dist_kl = std::pow( dist_kl, radius_exp_ );
 
 						if (dist_kl < rmax_) {
@@ -354,11 +372,12 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 							core::Size atomL = atom_indices_[ core::id::AtomID( l,j ) ];
 
 							core::Real cst_kl = (B_k-B_l)*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS)*(B_k+B_l+B_EPS) );
-							core::Real dcst_dbk = cst_kl + 2*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS) );
-							core::Real dcst_dbl = cst_kl + 2*(B_l-B_k) / ( dist_kl*(B_k+B_l+B_EPS) );
+							core::Real dcst_dbk = -cst_kl + 2*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS) );
+							core::Real dcst_dbl = -cst_kl - 2*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS) );
 
 							dE_dvars[ atomK ] += scorescale_*wt_adp_*dcst_dbk;
 							dE_dvars[ atomL ] += scorescale_*wt_adp_*dcst_dbl;
+							nedge++;
 						}
 					}
 				}
@@ -366,11 +385,39 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 		}
 	}
 
-	// debug
-	if (basic::options::option[ basic::options::OptionKeys::edensity::debug ]()) {
-		//core::optimization::Multivec varsCopy = vars;
+	//core::optimization::Multivec varsCopy = vars;
+	if (verbose_) {
 		core::Real score = (*this)(vars);
-		std::cerr << "score = " << score << std::endl;
+		std::cerr << "[deriv] evaluated " << vars.size() << " atoms and " << nedge << " edges" << std::endl;
+		std::cerr << "[deriv] score = " << score << std::endl;
+	}
+	//for (int i=1; i<=vars.size(); ++i) {
+	//	varsCopy[i]+=0.05;
+	//	core::Real scorep = (*this)(varsCopy);
+	//	varsCopy[i]-=0.1;
+	//	core::Real scorem = (*this)(varsCopy);
+	//	varsCopy[i]+=0.05;
+	//	std::cerr << "[deriv] x:" << i << "  B: " << vars[i] << "  A: " << dE_dvars[i] << "  N: " << 10*(scorep-scorem) << "    r: " <<
+	//			dE_dvars[i]/(1000*(scorep-scorem)) << std::endl;
+	//}
+}
+
+void
+BfactorMultifunc::dump( core::optimization::Multivec const & x1, core::optimization::Multivec const & x2 ) const {
+	// debug
+	if (verbose_) {
+		// core::optimization::Multivec varsCopy = x1;
+		// core::optimization::Multivec dE_dvars;
+		// this->dfunc(x1,dE_dvars);
+		//
+		// core::Real score = (*this)(x1);
+		// std::cerr << "[deriv] score = " << score << std::endl;
+		// for (int i=1; i<=x1.size(); ++i) {
+		// 	varsCopy[i]+=1;
+		// 	core::Real scorep = (*this)(varsCopy);
+		// 	varsCopy[i]-=1;
+		// 	std::cerr << "[deriv] x:" << i << "  B: " << x1[i] << "  A: " << dE_dvars[i] << "  N: " << (scorep-score) << "    r: " << dE_dvars[i]/(scorep-score) << std::endl;
+		//}
 	}
 }
 
@@ -381,16 +428,18 @@ BfactorFittingMover::BfactorFittingMover() : moves::Mover() {
 }
 
 void BfactorFittingMover::init() {
-	wt_adp_ = 0.1;
+	wt_adp_ = 0.001;
 	wt_dens_ = 1.0;
 	rmax_ = 5.0;
 	radius_exp_ = 1;
 	max_iter_ = 200;
-	scorescale_ = 100.0;
-	minimizer_ = "dfpmin_armijo";
+	scorescale_ = 5000.0;
+	//minimizer_ = "dfpmin_armijo";
+	minimizer_ = "lbfgs_armijo_nonmonotone_atol";
 	init_ = true;
 	exact_ = false;
 	opt_to_fsc_ = false;
+	verbose_ = false;
 
 	weights_to_scan_.clear();
 	weights_to_scan_.push_back(10);
@@ -412,11 +461,11 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 		utility_exit_with_message( "Bfactor optimization _must_ be run with the -cryst::crystal_refine option" );
 	}
 
-	core::optimization::MinimizerOptions options( minimizer_, 1e-6, true, false, false );
+	core::optimization::MinimizerOptions options( minimizer_, 1e-4, true, false, false );
 	options.max_iter(max_iter_);
 
 	// set up optimizer
-	BfactorMultifunc f_b( pose, wt_adp_, wt_dens_, rmax_, radius_exp_, scorescale_, exact_);
+	BfactorMultifunc f_b( pose, wt_adp_, wt_dens_, rmax_, radius_exp_, scorescale_, exact_, verbose_);
 	core::optimization::Minimizer minimizer( f_b, options );
 
 	// make sure interaction graphs are set up
@@ -462,7 +511,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 			for (int i=1; i<=litePose.size(); ++i) litePose[i].B_ = weights_to_scan_[j];
 
 			utility::vector1< core::Real > modelmapFSC(nresbins_,1.0), modelmapError(nresbins_,1.0);
-			core::scoring::electron_density::getDensityMap().getFSC( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmapFSC, modelmapError );
+			core::scoring::electron_density::getDensityMap().getFSC( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmapFSC );
 			core::Real thisScore = 0;
 			for (Size i=1; i<=modelmapFSC.size(); ++i) thisScore+=modelmapFSC[i];
 			thisScore /= modelmapFSC.size();
@@ -534,6 +583,9 @@ BfactorFittingMover::parse_my_tag(
 	}
 	if ( tag->hasOption("exact") ) {
 		exact_ = tag->getOption<bool>("exact");
+	}
+	if ( tag->hasOption("verbose") ) {
+		verbose_ = tag->getOption<bool>("verbose");
 	}
 
 	//
