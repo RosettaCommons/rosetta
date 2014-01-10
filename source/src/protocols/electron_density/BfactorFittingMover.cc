@@ -93,8 +93,9 @@ BfactorMultifunc::BfactorMultifunc(
 		core::Real rmax,
 		core::Real radius_exp,
 		core::Real scorescale,
-		bool exact, bool verbose ) :
-	pose_(pose_in), wt_adp_(wt_adp), wt_dens_(wt_dens), rmax_(rmax), radius_exp_(radius_exp), scorescale_( scorescale ), exact_( exact ), verbose_(verbose)
+		bool exact, bool verbose, bool deriv_check ) :
+	pose_(pose_in), wt_adp_(wt_adp), wt_dens_(wt_dens), rmax_(rmax), radius_exp_(radius_exp), scorescale_( scorescale ),
+	exact_( exact ), verbose_(verbose), deriv_check_( deriv_check )
 {
 	B_EPS=0.0001;
 
@@ -135,7 +136,7 @@ BfactorMultifunc::poseBfacts2multivec( core::pose::Pose & pose, core::optimizati
 	for (core::Size i = 1; i <= natoms; ++i) {
 		core::id::AtomID a_i = moving_atoms_[i];
 		core::Real B = pose.pdb_info()->temperature( a_i.rsd(), a_i.atomno() );
-		y[i] = B;
+		y[i] = log( B );
 	}
 }
 
@@ -154,7 +155,7 @@ BfactorMultifunc::multivec2poseBfacts( core::optimization::Multivec const &y, co
 		core::id::AtomID a_i = moving_atoms_[i];
 		// fpd! upper limit must match what is in xray_scattering.hh
 		//  THIS SHOULD BE SELECTABLE
-		pose.pdb_info()->temperature( a_i.rsd(), a_i.atomno(), std::min(std::max(y[i],0.0),600.0) );
+		pose.pdb_info()->temperature( a_i.rsd(), a_i.atomno(), std::min(std::max( exp( y[i] ) ,0.0),600.0) );
 	}
 }
 
@@ -272,7 +273,7 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 
 	if (verbose_) {
 		//core::optimization::Multivec varsCopy = vars;
-		std::cerr << "[score] evaluated " << natom << " atoms and " << nedge << " edges" << std::endl;
+		//std::cerr << "[score] evaluated " << natom << " atoms and " << nedge << " edges" << std::endl;
 		std::cerr << "[score] score = " << scorescale_* (wt_dens_*dens_score + wt_adp_*cst_score) << " [ " << dens_score << " , " << cst_score << " ] " << std::endl;
 	}
 
@@ -292,12 +293,12 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 			core::id::AtomID a_i = moving_atoms_[i];
 			core::Real dCCdb = core::scoring::electron_density::getDensityMap().dCCdB_fastRes(
 				a_i.atomno(), a_i.rsd(), pose_copy.residue( a_i.rsd() ), pose_copy );
-			dE_dvars[ i ] = -scorescale_*wt_dens_*dCCdb;
+			dE_dvars[ i ] = -scorescale_*wt_dens_*dCCdb * exp(vars[i]);
 		}
 	} else {
 		core::scoring::electron_density::getDensityMap().dCCdBs( pose_copy, dE_dvars );
 		for (core::Size i = 1; i <= vars.size(); ++i)
-			dE_dvars[i] *= -(moving_atoms_.size()/10.0)*scorescale_*wt_dens_;
+			dE_dvars[i] *= -(moving_atoms_.size()/10.0)*scorescale_*wt_dens_ * exp(vars[i]);
 	}
 
 	// [[2]]  constraint deriv
@@ -338,8 +339,8 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 						core::Real dcst_dbk = -cst_kl + 2*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS) );
 						core::Real dcst_dbl = -cst_kl - 2*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS) );
 
-						dE_dvars[ atomK ] += scorescale_*wt_adp_*dcst_dbk;
-						dE_dvars[ atomL ] += scorescale_*wt_adp_*dcst_dbl;
+						dE_dvars[ atomK ] += scorescale_*wt_adp_*dcst_dbk * exp(vars[atomK]);
+						dE_dvars[ atomL ] += scorescale_*wt_adp_*dcst_dbl * exp(vars[atomL]);
 						nedge++;
 					}
 				}
@@ -375,8 +376,8 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 							core::Real dcst_dbk = -cst_kl + 2*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS) );
 							core::Real dcst_dbl = -cst_kl - 2*(B_k-B_l) / ( dist_kl*(B_k+B_l+B_EPS) );
 
-							dE_dvars[ atomK ] += scorescale_*wt_adp_*dcst_dbk;
-							dE_dvars[ atomL ] += scorescale_*wt_adp_*dcst_dbl;
+							dE_dvars[ atomK ] += scorescale_*wt_adp_*dcst_dbk * exp(vars[atomK]);
+							dE_dvars[ atomL ] += scorescale_*wt_adp_*dcst_dbl * exp(vars[atomL]);
 							nedge++;
 						}
 					}
@@ -385,39 +386,32 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 		}
 	}
 
-	//core::optimization::Multivec varsCopy = vars;
 	if (verbose_) {
 		core::Real score = (*this)(vars);
-		std::cerr << "[deriv] evaluated " << vars.size() << " atoms and " << nedge << " edges" << std::endl;
+		//std::cerr << "[deriv] evaluated " << vars.size() << " atoms and " << nedge << " edges" << std::endl;
 		std::cerr << "[deriv] score = " << score << std::endl;
 	}
-	//for (int i=1; i<=vars.size(); ++i) {
-	//	varsCopy[i]+=0.05;
-	//	core::Real scorep = (*this)(varsCopy);
-	//	varsCopy[i]-=0.1;
-	//	core::Real scorem = (*this)(varsCopy);
-	//	varsCopy[i]+=0.05;
-	//	std::cerr << "[deriv] x:" << i << "  B: " << vars[i] << "  A: " << dE_dvars[i] << "  N: " << 10*(scorep-scorem) << "    r: " <<
-	//			dE_dvars[i]/(1000*(scorep-scorem)) << std::endl;
-	//}
 }
 
 void
 BfactorMultifunc::dump( core::optimization::Multivec const & x1, core::optimization::Multivec const & x2 ) const {
 	// debug
-	if (verbose_) {
-		// core::optimization::Multivec varsCopy = x1;
-		// core::optimization::Multivec dE_dvars;
-		// this->dfunc(x1,dE_dvars);
-		//
-		// core::Real score = (*this)(x1);
-		// std::cerr << "[deriv] score = " << score << std::endl;
-		// for (int i=1; i<=x1.size(); ++i) {
-		// 	varsCopy[i]+=1;
-		// 	core::Real scorep = (*this)(varsCopy);
-		// 	varsCopy[i]-=1;
-		// 	std::cerr << "[deriv] x:" << i << "  B: " << x1[i] << "  A: " << dE_dvars[i] << "  N: " << (scorep-score) << "    r: " << dE_dvars[i]/(scorep-score) << std::endl;
-		//}
+	if (deriv_check_) {
+ 		 core::optimization::Multivec varsCopy = x1;
+ 		 core::optimization::Multivec dE_dvars;
+ 		 this->dfunc(x1,dE_dvars);
+
+ 		 core::Real score = (*this)(x1);
+ 		 std::cerr << "[deriv] score = " << score << std::endl;
+ 		 for (int i=1; i<=x1.size(); ++i) {
+ 		 	varsCopy[i]+=0.0001;
+ 		 	core::Real scorep = (*this)(varsCopy);
+ 		 	varsCopy[i]-=0.0002;
+ 		 	core::Real scoren = (*this)(varsCopy);
+ 		 	varsCopy[i]+=0.0001;
+ 		 	std::cerr << "[deriv] x:" << i << "  B: " << x1[i] << "  A: " << dE_dvars[i] << "  N: "
+ 				<< (scorep-scoren)/0.0002 << "    r: " << 0.0002*dE_dvars[i]/(scorep-score) << std::endl;
+ 		}
 	}
 }
 
@@ -440,6 +434,7 @@ void BfactorFittingMover::init() {
 	exact_ = false;
 	opt_to_fsc_ = false;
 	verbose_ = false;
+	deriv_check_ = false;
 
 	weights_to_scan_.clear();
 	weights_to_scan_.push_back(10);
@@ -465,7 +460,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 	options.max_iter(max_iter_);
 
 	// set up optimizer
-	BfactorMultifunc f_b( pose, wt_adp_, wt_dens_, rmax_, radius_exp_, scorescale_, exact_, verbose_);
+	BfactorMultifunc f_b( pose, wt_adp_, wt_dens_, rmax_, radius_exp_, scorescale_, exact_, verbose_, deriv_check_);
 	core::optimization::Minimizer minimizer( f_b, options );
 
 	// make sure interaction graphs are set up
@@ -511,7 +506,8 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 			for (int i=1; i<=litePose.size(); ++i) litePose[i].B_ = weights_to_scan_[j];
 
 			utility::vector1< core::Real > modelmapFSC(nresbins_,1.0), modelmapError(nresbins_,1.0);
-			core::scoring::electron_density::getDensityMap().getFSC( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmapFSC );
+			core::scoring::electron_density::getDensityMap().getFSC(
+				litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmapFSC );
 			core::Real thisScore = 0;
 			for (Size i=1; i<=modelmapFSC.size(); ++i) thisScore+=modelmapFSC[i];
 			thisScore /= modelmapFSC.size();
@@ -527,7 +523,8 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 		for (int i=1; i<=y.size(); ++i) y[i] = bestVal;
 	} else if (init_) {
 		for (core::Size j=1; j<=nvalues; ++j) {
-			for (int i=1; i<=y.size(); ++i) y[i] = weights_to_scan_[j];
+			for (int i=1; i<=y.size(); ++i)
+				y[i] = log( weights_to_scan_[j] );
 			core::Real thisScore = f_b(y);
 			TR << "B=" << weights_to_scan_[j] << ": score=" << thisScore << std::endl;
 			if (thisScore<bestScore || j==1) {
@@ -535,7 +532,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 				bestVal = weights_to_scan_[j];
 			}
 		}
-		for (int i=1; i<=y.size(); ++i) y[i] = bestVal;
+		for (int i=1; i<=y.size(); ++i) y[i] = log(bestVal);
 	}
 
 	if (!opt_to_fsc_) {
@@ -586,6 +583,10 @@ BfactorFittingMover::parse_my_tag(
 	}
 	if ( tag->hasOption("verbose") ) {
 		verbose_ = tag->getOption<bool>("verbose");
+	}
+
+	if ( tag->hasOption("deriv_check") ) {
+		deriv_check_ = tag->getOption<bool>("deriv_check");
 	}
 
 	//
