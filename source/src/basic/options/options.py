@@ -156,6 +156,10 @@ def main(args):
         f = KeepSameFile("./../../../doc/options.dox", 'wb')
         f.write( options_class.getDoxygenPage(Options) )
         num_changed_files += f.close()
+        print "Generating Markdown docs...",
+        f = KeepSameFile("./../../../doc/full-options-list.md", 'wb')
+        f.write( options_class.getMarkdownPage(Options) )
+        num_changed_files += f.close()
         print " Done!"
         print "number of files updated:",num_changed_files
         print "Total %s options." % len(Options)

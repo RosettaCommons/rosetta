@@ -169,6 +169,24 @@ class Option:
         return s
 
 
+    def getMarkdownRow(self):
+        #Unfortunately, pure markdown doesn't have a defintion list element - steal HTML
+        def smStr(s): return s or ''
+
+        s =  '<dt><b>-%(name)s</b> \\<%(ctype)s\\></dt>\n' % {'name':self.name, 'ctype':self.ctype}
+        s += '<dd>' + self.desc + '<br/>'
+        if self.lower or self.upper:
+            s += 'Range: ' + smStr(self.lower) + '-' + smStr(self.upper) + '<br/>'
+        if self.legal=='true' and self.default=='true': pass #s += ' |\n'
+        else:
+            if type(self.default) == type( [] ): df = str( self.default )
+            else: df = smStr(self.default)
+
+            if df: s += 'Default: ' + df + '<br/>'
+
+        s += '</dd>\n'
+        return s
+
 
 
 def Option_Group(group, *args):
@@ -225,3 +243,25 @@ def getDoxygenPage(opt_list):
         s += o.getDoxygenRow()
         prevGroup = o.group
     return s + "</ul>\n */\n"
+
+
+def getMarkdownPage(opt_list):
+    s =  "# List of Rosetta command line options.\n\n"
+    s += "_(This is automatically generated file, do not edit!)_\n\n"
+    s += "_Note that some application specific options may not be present in this list._\n\n"
+    s += "[[_TOC_]]\n"
+    in_dl = False
+    prevGroup = []
+    for o in opt_list:
+        if prevGroup != o.group:  # Generating new group
+            hlevel=min(6, len(o.group.split(":"))+1)
+            if in_dl:
+                s += "</dl>\n"
+            s += "+ <h"+str(hlevel)+">-" + (o.group or '') + "</h"+str(hlevel)+">\n"
+            s += "<dl>\n"
+            in_dl = True
+        s += o.getMarkdownRow()
+        prevGroup = o.group
+    if in_dl:
+        s += "</dl>"
+    return s + "\n"
