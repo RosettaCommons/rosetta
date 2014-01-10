@@ -61,6 +61,8 @@ sources = {
 		"ProteinResidueConformationFeaturesCreator",
 		"ProteinRMSDFeatures",
 		"ProteinRMSDFeaturesCreator",
+		"ProteinRMSDNoSuperpositionFeatures",
+		"ProteinRMSDNoSuperpositionFeaturesCreator",
 		"ProteinSilentReport",
 		"ProtocolFeatures",
 		#"ProtocolFeaturesCreator",

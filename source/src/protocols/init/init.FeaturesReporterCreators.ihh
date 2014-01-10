@@ -34,6 +34,7 @@
 #include <protocols/features/ProteinBondGeometryFeaturesCreator.hh>
 #include <protocols/features/ProteinResidueConformationFeaturesCreator.hh>
 #include <protocols/features/ProteinRMSDFeaturesCreator.hh>
+#include <protocols/features/ProteinRMSDNoSuperpositionFeaturesCreator.hh>
 //#include <protocols/features/ProtocolFeaturesCreator.hh>
 #include <protocols/features/RadiusOfGyrationFeaturesCreator.hh>
 #include <protocols/features/ResidueBurialFeaturesCreator.hh>
