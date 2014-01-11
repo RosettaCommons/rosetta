@@ -902,6 +902,7 @@ option.add( basic::options::OptionKeys::score::elec_min_dis, "changes the minimu
 option.add( basic::options::OptionKeys::score::elec_max_dis, "changes the maximum distance cut-off for hack-elec energy" ).def(5.5);
 option.add( basic::options::OptionKeys::score::elec_die, "changes the dielectric constant for hack-elec energy" ).def(10.0);
 option.add( basic::options::OptionKeys::score::elec_r_option, "changes the dielectric from distance dependent to distance independent" ).def(false);
+option.add( basic::options::OptionKeys::score::intrares_elec_correction_scale, "Intrares elec scaling factor for free DOF atoms" ).def(0.05);
 option.add( basic::options::OptionKeys::score::smooth_fa_elec, "Smooth the discontinuities in the elec energy function using a sigmoidal term" ).def(true);
 option.add( basic::options::OptionKeys::score::facts_GBpair_cut, "GBpair interaction distance cutoff (same as elec_max_dis)" ).def(10.0);
 option.add( basic::options::OptionKeys::score::facts_kappa, "GBpair interaction screening factor" ).def(12.0);

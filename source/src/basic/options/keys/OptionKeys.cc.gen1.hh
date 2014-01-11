@@ -131,6 +131,7 @@ namespace score { RealOptionKey const elec_min_dis( "score:elec_min_dis" );  }
 namespace score { RealOptionKey const elec_max_dis( "score:elec_max_dis" );  }
 namespace score { RealOptionKey const elec_die( "score:elec_die" );  }
 namespace score { BooleanOptionKey const elec_r_option( "score:elec_r_option" );  }
+namespace score { RealOptionKey const intrares_elec_correction_scale( "score:intrares_elec_correction_scale" );  }
 namespace score { BooleanOptionKey const smooth_fa_elec( "score:smooth_fa_elec" );  }
 namespace score { RealOptionKey const facts_GBpair_cut( "score:facts_GBpair_cut" );  }
 namespace score { RealOptionKey const facts_kappa( "score:facts_kappa" );  }

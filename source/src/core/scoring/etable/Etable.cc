@@ -104,14 +104,14 @@ Etable::Etable(
 	lj_switch_dis2sigma       ( options.lj_switch_dis2sigma ),
 	max_dis2                  ( max_dis_*max_dis_ ),
 	etable_disbins            ( static_cast< int >( max_dis2 * bins_per_A2)+1),
+	lj_hbond_OH_donor_dis     ( options.lj_hbond_OH_donor_dis ),
+	lj_hbond_hdis             ( options.lj_hbond_hdis ),
 
 	// hard-coded for now
 	lj_use_lj_deriv_slope     ( true ),
 	lj_slope_intercept        ( 0.0 ),
 	lj_use_hbond_radii        ( true ),
-	lj_hbond_OH_donor_dis     ( options.lj_hbond_OH_donor_dis ),
 	lj_hbond_dis              ( 3.0 ),
-	lj_hbond_hdis             ( options.lj_hbond_hdis ),
 	lj_hbond_accOch_dis       ( 2.80 ), // unused
 	lj_hbond_accOch_hdis      ( 1.75 ), // unused
 	lj_use_water_radii        ( true ),
@@ -131,6 +131,8 @@ Etable::Etable(
 	max_hydrogen_lj_radius_( 0.0 ),
 	slim_( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] ) // command-line option -- bad form; see note above.
 {
+
+	std::cout << "so, what at Etable.cc?" << lj_hbond_hdis << std::endl;
 
 	dimension_etable_arrays();
 	initialize_from_input_atomset( atom_set_in );

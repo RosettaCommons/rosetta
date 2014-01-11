@@ -4326,6 +4326,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-intrares_elec_correction_scale</b> \<Real\><dt>
+<dd>Intrares elec scaling factor for free DOF atoms</dd><br>
+<dd>Default: 0.05</dd><br>
+</dl>
+<dl>
 <dt><b>-smooth_fa_elec</b> \<Boolean\><dt>
 <dd>Smooth the discontinuities in the elec energy function using a sigmoidal term</dd><br>
 <dd>Default: true</dd><br>

@@ -17,27 +17,41 @@
 // AUTO-REMOVED #include <core/scoring/types.hh>
 
 #include <core/types.hh>
-
+#include <utility/tag/Tag.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 namespace core {
 namespace scoring {
 namespace etable {
 
-class EtableOptions {
+class EtableOptions : public utility::pointer::ReferenceCount {
 
 public:
 
 	EtableOptions();
+	~EtableOptions();
+
+	EtableOptions( EtableOptions const & src );
+
+	EtableOptions const & 
+	operator=( EtableOptions const & src );
+
+	friend
+	bool
+	operator==( EtableOptions const & a, EtableOptions const & b );
+
+	void 
+	parse_my_tag( utility::tag::TagCOP tag );
 
 public:
 
 	Real max_dis;
-	int bins_per_A2;
+	int  bins_per_A2;
 	Real Wradius;
 	Real lj_switch_dis2sigma;
 	bool disable_polar_desolvation;
 	Real lj_hbond_OH_donor_dis;
-	Real lj_hbond_hdis;
+	Real lj_hbond_hdis; 
 
 private:
 

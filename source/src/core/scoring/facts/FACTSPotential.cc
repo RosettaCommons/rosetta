@@ -595,8 +595,9 @@ void FACTSPotential::atompair_scale( FACTSRsdTypeInfoCOP factstype1,
       // Rule from 1-4
       // BB-BB
     } else if(
-	      (rsd1.atom_is_backbone(atm1) || rsd1.atom_name(atm1).compare( " CB " ) == 0 ) &&
-	      (rsd2.atom_is_backbone(atm2) || rsd2.atom_name(atm2).compare( " CB " ) == 0 )){
+							//(rsd1.atom_is_backbone(atm1) || rsd1.atom_name(atm1).compare( " CB " ) == 0 ) &&
+							//(rsd2.atom_is_backbone(atm2) || rsd2.atom_name(atm2).compare( " CB " ) == 0 )){
+							rsd1.atom_is_backbone(atm1) && rsd2.atom_is_backbone(atm2) ){
       self_pair = true;
 
       // Removed: this doesn't look important
@@ -606,10 +607,20 @@ void FACTSPotential::atompair_scale( FACTSRsdTypeInfoCOP factstype1,
       //scale_elec = 0.0;
       //} else 
 
+      if( path_dist <= 5 ){
+				scale_solv = adjbb_solv_scale( path_dist - 2 );
+				scale_elec = adjbb_elec_scale( path_dist - 2 );
+
+      } else { // Decoupled case ( spanned by more than phi+psi )
+				scale_solv = adjbb_solv_scale( 5 );
+				scale_elec = adjbb_elec_scale( 5 );
+			}
+	
+				/*
       if( path_dist <= 4 ){
 				scale_solv = adjbb_solv_scale( path_dist - 2 );
 				scale_elec = adjbb_elec_scale( path_dist - 2 );
-	
+
       } else if( is_atm1_CO || is_atm2_NH ){ // path_dist > 4 but coupled by peptide bond
 				scale_solv = adjbb_solv_scale( 3 );
 				scale_elec = adjbb_elec_scale( 3 );
@@ -617,11 +628,12 @@ void FACTSPotential::atompair_scale( FACTSRsdTypeInfoCOP factstype1,
       } else if( path_dist == 6 ){ // Decoupled case ( spanned by more than phi+psi )
 				scale_solv = adjbb_solv_scale( 5 );
 				scale_elec = adjbb_elec_scale( 5 );
-	
+
       } else {
 				scale_solv = 1.0;
 				scale_elec = 1.0;
       }
+				*/
 
       // BB-SC
     } else if(( !rsd1.atom_is_backbone(atm1) && rsd2.atom_is_backbone(atm2)) ||

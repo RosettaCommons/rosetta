@@ -24,8 +24,11 @@
 #include <core/io/pdb/pose_io.hh>
 
 #include <core/scoring/constraints/CoordinateConstraint.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
+
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -432,6 +435,20 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 		local_movemap.set_jump( pose.num_jump(), true );
 	} // if constrain_coords_
 
+	// Support for RosettaScripts
+	if ( cst_files_.size() > 0 ){
+		// To preserve? let's just turn off  
+		//core::scoring::constraints::ConstraintSetOP
+		//	save_pose_constraint_set = pose.constraint_set()->clone();
+
+		for( Size i_cst = 1; i_cst <= cst_files_.size(); ++i_cst ){
+			std::string const filename = cst_files( i_cst );
+			ConstraintSetOP user_csts 
+				= ConstraintIO::get_instance()->read_constraints_new( filename, 
+          new ConstraintSet, pose );
+			pose.constraint_set( user_csts );
+		}
+	} // if constrain_user_defined_
 
 	if ( option[ OptionKeys::relax::sc_cst_maxdist ].user() && option[ OptionKeys::relax::sc_cst_maxdist ]() > 0 ) {
 		// derive a set of side-chain restraints

@@ -591,6 +591,11 @@ private:
 		Size atype2
 	);
 
+
+public:
+	Real get_lj_hbond_OH_donor_dis() const { return lj_hbond_OH_donor_dis; }
+	Real get_lj_hbond_dis() const { return lj_hbond_dis; }
+
 private:
 
 	chemical::AtomTypeSetCAP atom_set_;
@@ -605,13 +610,13 @@ private:
 	Real const lj_switch_dis2sigma; // actual value used for switch
 	Real const max_dis2;
 	int const etable_disbins;
+	Real const lj_hbond_OH_donor_dis;
+	Real const lj_hbond_dis;
 
 	// hard-coded for now
 	bool const lj_use_lj_deriv_slope;
 	Real const lj_slope_intercept;
 	bool const lj_use_hbond_radii;
-	Real const lj_hbond_OH_donor_dis;
-	Real const lj_hbond_dis;
 	Real const lj_hbond_hdis;
 	Real const lj_hbond_accOch_dis;
 	Real const lj_hbond_accOch_hdis;

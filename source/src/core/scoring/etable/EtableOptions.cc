@@ -56,6 +56,53 @@ EtableOptions::EtableOptions() :
 
 }
 
+// Another constructor
+EtableOptions::EtableOptions( EtableOptions const & src ) :
+	ReferenceCount( src )
+{
+	*this = src;
+}
+
+EtableOptions::~EtableOptions(){}
+
+EtableOptions const &
+EtableOptions::operator=( EtableOptions const & src )
+{
+	max_dis = src.max_dis;
+	bins_per_A2 = src.bins_per_A2;
+	Wradius = src.Wradius;
+	lj_switch_dis2sigma = src.lj_switch_dis2sigma;
+	disable_polar_desolvation = src.disable_polar_desolvation;
+	lj_hbond_OH_donor_dis = src.lj_hbond_OH_donor_dis;
+	lj_hbond_hdis = src.lj_hbond_hdis;
+	return *this;
+}
+
+bool
+operator==( EtableOptions const & a, EtableOptions const & b )
+{
+	return (( a.max_dis == b.max_dis ) &&
+					( a.bins_per_A2 == b.bins_per_A2 ) &&
+					( a.Wradius == b.Wradius ) &&
+					( a.lj_switch_dis2sigma == b.lj_switch_dis2sigma ) &&
+					( a.disable_polar_desolvation == b.disable_polar_desolvation ) &&
+					( a.lj_hbond_OH_donor_dis == b.lj_hbond_OH_donor_dis ) &&
+					( a.lj_hbond_hdis == b.lj_hbond_hdis ) );
+}
+
+void
+EtableOptions::parse_my_tag(
+	utility::tag::TagCOP tag
+) {
+	if( tag->hasOption( "lj_hbond_OH_donor_dis" )) {
+		lj_hbond_OH_donor_dis = tag->getOption<core::Real>( "lj_hbond_OH_donor_dis" );
+	}
+
+	if( tag->hasOption( "lj_hbond_hdis" )) {
+		lj_hbond_hdis = tag->getOption<core::Real>( "lj_hbond_hdis" );
+	}
+}
+
 } // etable
 } // scoring
 } // core

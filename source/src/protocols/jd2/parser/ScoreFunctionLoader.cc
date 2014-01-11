@@ -22,6 +22,7 @@
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/etable/EtableOptions.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
@@ -98,6 +99,7 @@ void ScoreFunctionLoader::load_data(
 			if( mod_tag->getName() == "Set" ){
 				core::scoring::methods::EnergyMethodOptions emoptions( in_scorefxn->energy_method_options() );
 				emoptions.hbond_options().parse_my_tag(mod_tag);
+				emoptions.etable_options().parse_my_tag(mod_tag);
 
 				if( mod_tag->hasOption( "softrep_etable" )) {
 					if ( mod_tag->getOption<bool>( "softrep_etable" )) {

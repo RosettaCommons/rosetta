@@ -16,6 +16,7 @@
 #include <core/types.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/etable/EtableOptions.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
@@ -57,7 +58,9 @@ EnergyMethodOptions::EnergyMethodOptions():
 	elec_no_dis_dep_die_(false),
 	smooth_fa_elec_( false ),
 	exclude_DNA_DNA_(true), // rosetta++ default
+	intrares_elec_correction_scale_( 0.0 ),
 	hbond_options_(new hbonds::HBondOptions()),
+	etable_options_(new core::scoring::etable::EtableOptions()),
 	cst_max_seq_sep_(core::SZ_MAX),
 	cartbonded_len_(-1.0),
 	cartbonded_ang_(-1.0),
@@ -80,6 +83,7 @@ void EnergyMethodOptions::initialize_from_options() {
 	elec_no_dis_dep_die_ = basic::options::option[ basic::options::OptionKeys::score::elec_r_option ]();
 	smooth_fa_elec_ = basic::options::option[ basic::options::OptionKeys::score::smooth_fa_elec ]();
 	exclude_DNA_DNA_ = basic::options::option[basic::options::OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
+	intrares_elec_correction_scale_ = basic::options::option[ basic::options::OptionKeys::score::intrares_elec_correction_scale ]();
 }
 
 /// copy constructor
@@ -109,7 +113,9 @@ EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 		elec_no_dis_dep_die_ = src.elec_no_dis_dep_die_;
 		smooth_fa_elec_ = src.smooth_fa_elec_;
 		exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
+		intrares_elec_correction_scale_ = src.intrares_elec_correction_scale_;
 		hbond_options_ = new hbonds::HBondOptions( *(src.hbond_options_) );
+		etable_options_ = new etable::EtableOptions( *(src.etable_options_) );
 		cst_max_seq_sep_ = src.cst_max_seq_sep_;
 		bond_angle_central_atoms_to_score_ = src.bond_angle_central_atoms_to_score_;
 		bond_angle_residue_type_param_set_ = src.bond_angle_residue_type_param_set_;
@@ -228,6 +234,16 @@ EnergyMethodOptions::exclude_DNA_DNA( bool const setting ) {
 	hbond_options_->exclude_DNA_DNA( setting );
 }
 
+core::Real
+EnergyMethodOptions::intrares_elec_correction_scale() const {
+	return intrares_elec_correction_scale_;
+}
+
+void
+EnergyMethodOptions::intrares_elec_correction_scale( core::Real const setting ) {
+  intrares_elec_correction_scale_ = setting;
+}
+
 hbonds::HBondOptions const &
 EnergyMethodOptions::hbond_options() const {
 	return *hbond_options_;
@@ -240,7 +256,22 @@ EnergyMethodOptions::hbond_options() {
 
 void
 EnergyMethodOptions::hbond_options( hbonds::HBondOptions const & opts ) {
-	hbond_options_ = new hbonds::HBondOptions( opts );
+ 	hbond_options_ = new hbonds::HBondOptions( opts );
+}
+
+etable::EtableOptions const &
+EnergyMethodOptions::etable_options() const {
+	return *etable_options_;
+}
+
+etable::EtableOptions &
+EnergyMethodOptions::etable_options() {
+	return *etable_options_;
+}
+
+void
+EnergyMethodOptions::etable_options( etable::EtableOptions const & opts ) {
+	etable_options_ = new etable::EtableOptions( opts );
 }
 
 std::string const &
@@ -383,6 +414,8 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.smooth_fa_elec_ == b.smooth_fa_elec_ ) &&
 		( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
 		( * (a.hbond_options_) == * (b.hbond_options_) ) &&
+		( * (a.etable_options_) == * (b.etable_options_) ) &&
+		( a.intrares_elec_correction_scale_ == b.intrares_elec_correction_scale_ ) &&
 		( a.cst_max_seq_sep_ == b.cst_max_seq_sep_ ) &&
 		( a.cartbonded_len_ == b.cartbonded_len_ ) &&
 		( a.cartbonded_ang_ == b.cartbonded_ang_ ) &&
@@ -533,6 +566,9 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 
 	option_keys.push_back("exclude_DNA_DNA");
 	option_values.push_back(exclude_DNA_DNA_ ? "1" : "0");
+
+	option_keys.push_back("intrares_elec_correction_scale");
+	option_values.push_back(boost::lexical_cast<std::string>(intrares_elec_correction_scale_));
 
 	option_keys.push_back("cst_max_seq_sep");
 	option_values.push_back(boost::lexical_cast<std::string>(cst_max_seq_sep_));

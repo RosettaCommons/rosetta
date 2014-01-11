@@ -107,7 +107,7 @@ protected:
 	int minimize_bondlength_subset() const { return minimize_bondlength_subset_; }
 	int minimize_bondangle_subset() const { return minimize_bondangle_subset_; }
 	bool limit_aroma_chi2() const { return limit_aroma_chi2_; }
-
+	std::string cst_files( core::Size const i ) const { return cst_files_[i]; }
 
 	// Mutators -------------------------------------
 	void fix_omega( bool fix_omega ) { fix_omega_ = fix_omega; }
@@ -120,6 +120,7 @@ protected:
 	void initialize_movemap( core::pose::Pose const & pose, core::kinematics::MoveMap & movemap );
 	void set_up_constraints( core::pose::Pose &pose,  core::kinematics::MoveMap & local_movemap );
 	void output_debug_structure( core::pose::Pose & pose, std::string prefix );
+	void add_cst_files( std::string const cstfile){ cst_files_.push_back( cstfile ); }
 
 private:
   // Essentially MoveMap settings
@@ -137,6 +138,7 @@ private:
 	bool explicit_ramp_constraints_;
 	bool ramp_down_constraints_;
 	bool constrain_relax_segments_;
+	utility::vector1< std::string > cst_files_;
 
 	// The minimizer algorithm
   std::string min_type_;

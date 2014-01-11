@@ -106,6 +106,7 @@ namespace score { extern RealOptionKey const elec_min_dis; }
 namespace score { extern RealOptionKey const elec_max_dis; }
 namespace score { extern RealOptionKey const elec_die; }
 namespace score { extern BooleanOptionKey const elec_r_option; }
+namespace score { extern RealOptionKey const intrares_elec_correction_scale; }
 namespace score { extern BooleanOptionKey const smooth_fa_elec; }
 namespace score { extern RealOptionKey const facts_GBpair_cut; }
 namespace score { extern RealOptionKey const facts_kappa; }

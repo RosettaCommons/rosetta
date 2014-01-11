@@ -48,6 +48,7 @@ EtableEnergyCreator::create_energy_method(
 	/// The command line option needs to override the EnergyMethodOptions because an Etable initialized with
 	/// the analytic_etable_evaluation flag on will not have allocated the large etables necessary for the
 	/// TableLookupEtableEnergy class.
+	std::cout << "PHB Creating EtableEnergy!" << std::endl;
 	if ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] || options.analytic_etable_evaluation() ) {
 		return new AnalyticEtableEnergy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
 	} else {
@@ -172,6 +173,8 @@ AnalyticEtableEnergy::AnalyticEtableEnergy(
 	intrares_evaluator_( etable_in ),
 	interres_evaluator_( etable_in )
 {
+	std::cout << "PHB: EtableEnergy.cc, Creating analytic Etable!" << std::endl;
+	std::cout << "and, option is: " << etable_in.get_lj_hbond_dis() << " " <<  options.etable_options().lj_hbond_hdis << std::endl;
 	intrares_evaluator_.set_scoretypes( fa_intra_atr, fa_intra_rep, fa_intra_sol );
 	interres_evaluator_.set_scoretypes( fa_atr, fa_rep, fa_sol );
 }
