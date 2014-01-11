@@ -381,8 +381,19 @@ namespace pH { BooleanOptionKey const pH_mode( "pH:pH_mode" );  }
 namespace pH { BooleanOptionKey const keep_input_protonation_state( "pH:keep_input_protonation_state" );  }
 namespace pH { RealOptionKey const value_pH( "pH:value_pH" );  }
 namespace pH { namespace calc_pka { BooleanOptionKey const calc_pka( "pH:calc_pka" );  } }
-namespace pH { namespace calc_pka { IntegerOptionKey const pka_for_resno( "pH:calc_pka:pka_for_resno" );  } }
+namespace pH { namespace calc_pka { BooleanOptionKey const pka_all( "pH:calc_pka:pka_all" );  } }
+namespace pH { namespace calc_pka { RealVectorOptionKey const pka_for_resnos( "pH:calc_pka:pka_for_resnos" );  } }
 namespace pH { namespace calc_pka { StringOptionKey const pka_for_chainno( "pH:calc_pka:pka_for_chainno" );  } }
+namespace pH { namespace calc_pka { BooleanOptionKey const pH_neighbor_pack( "pH:calc_pka:pH_neighbor_pack" );  } }
+namespace pH { namespace calc_pka { RealOptionKey const pka_rad( "pH:calc_pka:pka_rad" );  } }
+namespace pH { namespace calc_pka { BooleanOptionKey const pH_prepack( "pH:calc_pka:pH_prepack" );  } }
+namespace pH { namespace calc_pka { BooleanOptionKey const pH_relax( "pH:calc_pka:pH_relax" );  } }
+namespace pH { namespace calc_pka { BooleanOptionKey const rotamer_prot_stats( "pH:calc_pka:rotamer_prot_stats" );  } }
+namespace pH { FileVectorOptionKey const pH_unbound( "pH:pH_unbound" );  }
+namespace pH { BooleanOptionKey const output_raw_scores( "pH:output_raw_scores" );  }
+namespace pH { BooleanOptionKey const pre_process( "pH:pre_process" );  }
+namespace pH { StringOptionKey const cognate_partners( "pH:cognate_partners" );  }
+namespace pH { FileOptionKey const cognate_pdb( "pH:cognate_pdb" );  }
 namespace run { BooleanOptionKey const run( "run" );  }
 namespace run { FileVectorOptionKey const batches( "run:batches" );  }
 namespace run { BooleanOptionKey const no_prof_info_in_silentout( "run:no_prof_info_in_silentout" );  }
@@ -751,11 +762,3 @@ namespace jumps { RealOptionKey const increase_chainbreak( "jumps:increase_chain
 namespace jumps { BooleanOptionKey const overlap_chainbreak( "jumps:overlap_chainbreak" );  }
 namespace jumps { RealOptionKey const sep_switch_accelerate( "jumps:sep_switch_accelerate" );  }
 namespace jumps { BooleanOptionKey const dump_frags( "jumps:dump_frags" );  }
-namespace jumps { IntegerOptionKey const njumps( "jumps:njumps" );  }
-namespace jumps { IntegerOptionKey const max_strand_gap_allowed( "jumps:max_strand_gap_allowed" );  }
-namespace jumps { RealOptionKey const contact_score( "jumps:contact_score" );  }
-namespace jumps { BooleanOptionKey const filter_templates( "jumps:filter_templates" );  }
-namespace templates { BooleanOptionKey const templates( "templates" );  }
-namespace templates { FileOptionKey const config( "templates:config" );  }
-namespace templates { BooleanOptionKey const fix_aligned_residues( "templates:fix_aligned_residues" );  }
-namespace templates { FileOptionKey const fix_frag_file( "templates:fix_frag_file" );  }

@@ -1030,17 +1030,27 @@ Options = Option_Group( '',
 
 	###################################################################################
 
-  	# Residue protonation state options #krishna
+	# Residue protonation state options
 	Option_Group( 'pH' ,
-    	  Option( 'pH_mode', 'Boolean', desc="Allow protonated/deprotonated versions of the residues based on pH", default='false' ),
-    	  Option( 'keep_input_protonation_state', 'Boolean', desc="Read in residue protonation states from input pdb?", default='false' ),
-          Option( 'value_pH', 'Real', desc="pH value input for the pHEnergy score", default = '7.0' ),
-
-  	  Option_Group( 'calc_pka',
-      	    Option( 'pka_for_resno', 'Integer', desc="Residue no whose pKa value is to be determined", default = '-1' ),
-            Option( 'pka_for_chainno', 'String', desc= "Chain no of the residue whose pKa is to be determined", default = 'A' ),
-          ),
-        ),
+		Option( 'pH_mode', 'Boolean', desc="Allow protonated/deprotonated versions of the residues based on pH", default='false' ),
+		Option( 'keep_input_protonation_state', 'Boolean', desc="Read in residue protonation states from input pdb?", default='false' ),
+		Option( 'value_pH', 'Real', desc="pH value input for the pHEnergy score", default = '7.0' ),
+		Option_Group( 'calc_pka',
+			Option( 'pka_all', 'Boolean', desc="Calculate pKa values for all protonatable protein residues in the PDB?", default='false' ),
+			Option( 'pka_for_resnos', 'RealVector', desc="Residue no whose pKa value is to be determined", default = '0' ),
+			Option( 'pka_for_chainno', 'String', desc="Chain no of the residue whose pKa is to be determined", default = 'A' ),
+			Option( 'pH_neighbor_pack', 'Boolean', desc="Pack the neighbors while calculating pKa?", default='false' ),
+			Option( 'pka_rad', 'Real', desc="Radius of repack", default = '5.0' ),
+			Option( 'pH_prepack', 'Boolean', desc="Prepack structure before calculating pKa values?", default='false' ),
+			Option( 'pH_relax', 'Boolean', desc="Relax structure before calculating pKa values?", default='false' ),
+			Option( 'rotamer_prot_stats', 'Boolean', desc="Get rotamer protonation statistics when titrating?", default='false' ),
+		),
+		Option( 'pH_unbound', 'FileVector', desc="Name(s) of unbound receptor and ligand PDB file(s)" ),
+		Option( 'output_raw_scores', 'Boolean', desc="Return raw scores contributing to interface score?" ),
+		Option( 'pre_process', 'Boolean', desc="Refine rigid body orientation?" ),
+		Option( 'cognate_partners', 'String', desc="Chain IDs for the cognate complex", default='_' ),
+		Option( 'cognate_pdb', 'File', desc="File containing the cognate Antigen-Antibody complex" ),
+	),
 
 	###################################################################################
 

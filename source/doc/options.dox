@@ -1834,14 +1834,67 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>calc_pka option group</dd><br>
 </dl>
 <dl>
-<dt><b>-pka_for_resno</b> \<Integer\><dt>
+<dt><b>-pka_all</b> \<Boolean\><dt>
+<dd>Calculate pKa values for all protonatable protein residues in the PDB?</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-pka_for_resnos</b> \<RealVector\><dt>
 <dd>Residue no whose pKa value is to be determined</dd><br>
-<dd>Default: -1</dd><br>
+<dd>Default: 0</dd><br>
 </dl>
 <dl>
 <dt><b>-pka_for_chainno</b> \<String\><dt>
 <dd>Chain no of the residue whose pKa is to be determined</dd><br>
 <dd>Default: "A"</dd><br>
+</dl>
+<dl>
+<dt><b>-pH_neighbor_pack</b> \<Boolean\><dt>
+<dd>Pack the neighbors while calculating pKa?</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-pka_rad</b> \<Real\><dt>
+<dd>Radius of repack</dd><br>
+<dd>Default: 5.0</dd><br>
+</dl>
+<dl>
+<dt><b>-pH_prepack</b> \<Boolean\><dt>
+<dd>Prepack structure before calculating pKa values?</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-pH_relax</b> \<Boolean\><dt>
+<dd>Relax structure before calculating pKa values?</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-rotamer_prot_stats</b> \<Boolean\><dt>
+<dd>Get rotamer protonation statistics when titrating?</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+ </li>
+<li><h2>pH</h2>
+<dl>
+<dt><b>-pH_unbound</b> \<FileVector\><dt>
+<dd>Name(s) of unbound receptor and ligand PDB file(s)</dd><br>
+</dl>
+<dl>
+<dt><b>-output_raw_scores</b> \<Boolean\><dt>
+<dd>Return raw scores contributing to interface score?</dd><br>
+</dl>
+<dl>
+<dt><b>-pre_process</b> \<Boolean\><dt>
+<dd>Refine rigid body orientation?</dd><br>
+</dl>
+<dl>
+<dt><b>-cognate_partners</b> \<String\><dt>
+<dd>Chain IDs for the cognate complex</dd><br>
+<dd>Default: "_"</dd><br>
+</dl>
+<dl>
+<dt><b>-cognate_pdb</b> \<File\><dt>
+<dd>File containing the cognate Antigen-Antibody complex</dd><br>
 </dl>
  </li>
 <li><h2>run</h2>

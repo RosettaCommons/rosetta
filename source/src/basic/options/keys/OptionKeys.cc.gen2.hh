@@ -1,3 +1,8 @@
+namespace pose_metrics { RealOptionKey const atomic_burial_cutoff( "pose_metrics:atomic_burial_cutoff" );  }
+namespace pose_metrics { RealOptionKey const sasa_calculator_probe_radius( "pose_metrics:sasa_calculator_probe_radius" );  }
+namespace pose_metrics { RealOptionKey const interface_cutoff( "pose_metrics:interface_cutoff" );  }
+namespace pose_metrics { IntegerOptionKey const min_sequence_separation( "pose_metrics:min_sequence_separation" );  }
+namespace pose_metrics { RealOptionKey const contact_cutoffE( "pose_metrics:contact_cutoffE" );  }
 namespace pose_metrics { RealOptionKey const neighbor_by_distance_cutoff( "pose_metrics:neighbor_by_distance_cutoff" );  }
 namespace pose_metrics { RealOptionKey const inter_group_neighbors_cutoff( "pose_metrics:inter_group_neighbors_cutoff" );  }
 namespace pose_metrics { RealOptionKey const semiex_water_burial_cutoff( "pose_metrics:semiex_water_burial_cutoff" );  }
@@ -757,5 +762,3 @@ namespace hotspot { IntegerOptionKey const angle_res( "hotspot:angle_res" );  }
 namespace parser { BooleanOptionKey const parser( "parser" );  }
 namespace parser { StringOptionKey const protocol( "parser:protocol" );  }
 namespace parser { StringVectorOptionKey const script_vars( "parser:script_vars" );  }
-namespace parser { BooleanOptionKey const view( "parser:view" );  }
-namespace parser { StringOptionKey const patchdock( "parser:patchdock" );  }

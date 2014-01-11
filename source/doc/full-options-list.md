@@ -845,10 +845,35 @@ _Note that some application specific options may not be present in this list._
 <dl>
 <dt><b>-calc_pka</b> \<Boolean\></dt>
 <dd>calc_pka option group<br/></dd>
-<dt><b>-pka_for_resno</b> \<Integer\></dt>
-<dd>Residue no whose pKa value is to be determined<br/>Default: -1<br/></dd>
+<dt><b>-pka_all</b> \<Boolean\></dt>
+<dd>Calculate pKa values for all protonatable protein residues in the PDB?<br/>Default: false<br/></dd>
+<dt><b>-pka_for_resnos</b> \<RealVector\></dt>
+<dd>Residue no whose pKa value is to be determined<br/>Default: 0<br/></dd>
 <dt><b>-pka_for_chainno</b> \<String\></dt>
 <dd>Chain no of the residue whose pKa is to be determined<br/>Default: "A"<br/></dd>
+<dt><b>-pH_neighbor_pack</b> \<Boolean\></dt>
+<dd>Pack the neighbors while calculating pKa?<br/>Default: false<br/></dd>
+<dt><b>-pka_rad</b> \<Real\></dt>
+<dd>Radius of repack<br/>Default: 5.0<br/></dd>
+<dt><b>-pH_prepack</b> \<Boolean\></dt>
+<dd>Prepack structure before calculating pKa values?<br/>Default: false<br/></dd>
+<dt><b>-pH_relax</b> \<Boolean\></dt>
+<dd>Relax structure before calculating pKa values?<br/>Default: false<br/></dd>
+<dt><b>-rotamer_prot_stats</b> \<Boolean\></dt>
+<dd>Get rotamer protonation statistics when titrating?<br/>Default: false<br/></dd>
+</dl>
++ <h2>-pH</h2>
+<dl>
+<dt><b>-pH_unbound</b> \<FileVector\></dt>
+<dd>Name(s) of unbound receptor and ligand PDB file(s)<br/></dd>
+<dt><b>-output_raw_scores</b> \<Boolean\></dt>
+<dd>Return raw scores contributing to interface score?<br/></dd>
+<dt><b>-pre_process</b> \<Boolean\></dt>
+<dd>Refine rigid body orientation?<br/></dd>
+<dt><b>-cognate_partners</b> \<String\></dt>
+<dd>Chain IDs for the cognate complex<br/>Default: "_"<br/></dd>
+<dt><b>-cognate_pdb</b> \<File\></dt>
+<dd>File containing the cognate Antigen-Antibody complex<br/></dd>
 </dl>
 + <h2>-run</h2>
 <dl>

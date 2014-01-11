@@ -386,8 +386,19 @@ option.add( basic::options::OptionKeys::pH::pH_mode, "Allow protonated/deprotona
 option.add( basic::options::OptionKeys::pH::keep_input_protonation_state, "Read in residue protonation states from input pdb?" ).def(false);
 option.add( basic::options::OptionKeys::pH::value_pH, "pH value input for the pHEnergy score" ).def(7.0);
 option.add( basic::options::OptionKeys::pH::calc_pka::calc_pka, "calc_pka option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::pH::calc_pka::pka_for_resno, "Residue no whose pKa value is to be determined" ).def(-1);
+option.add( basic::options::OptionKeys::pH::calc_pka::pka_all, "Calculate pKa values for all protonatable protein residues in the PDB?" ).def(false);
+option.add( basic::options::OptionKeys::pH::calc_pka::pka_for_resnos, "Residue no whose pKa value is to be determined" ).def(0);
 option.add( basic::options::OptionKeys::pH::calc_pka::pka_for_chainno, "Chain no of the residue whose pKa is to be determined" ).def("A");
+option.add( basic::options::OptionKeys::pH::calc_pka::pH_neighbor_pack, "Pack the neighbors while calculating pKa?" ).def(false);
+option.add( basic::options::OptionKeys::pH::calc_pka::pka_rad, "Radius of repack" ).def(5.0);
+option.add( basic::options::OptionKeys::pH::calc_pka::pH_prepack, "Prepack structure before calculating pKa values?" ).def(false);
+option.add( basic::options::OptionKeys::pH::calc_pka::pH_relax, "Relax structure before calculating pKa values?" ).def(false);
+option.add( basic::options::OptionKeys::pH::calc_pka::rotamer_prot_stats, "Get rotamer protonation statistics when titrating?" ).def(false);
+option.add( basic::options::OptionKeys::pH::pH_unbound, "Name(s) of unbound receptor and ligand PDB file(s)" );
+option.add( basic::options::OptionKeys::pH::output_raw_scores, "Return raw scores contributing to interface score?" );
+option.add( basic::options::OptionKeys::pH::pre_process, "Refine rigid body orientation?" );
+option.add( basic::options::OptionKeys::pH::cognate_partners, "Chain IDs for the cognate complex" ).def("_");
+option.add( basic::options::OptionKeys::pH::cognate_pdb, "File containing the cognate Antigen-Antibody complex" );
 option.add( basic::options::OptionKeys::run::run, "Run option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::run::batches, "batch_flag_files" ).def("");
 option.add( basic::options::OptionKeys::run::no_prof_info_in_silentout, "no time-columns appears in score/silent - files" ).def(false);
@@ -756,7 +767,9 @@ option.add( basic::options::OptionKeys::jumps::increase_chainbreak, "multiply ra
 option.add( basic::options::OptionKeys::jumps::overlap_chainbreak, "use the overlap chainbrak term in stage4" ).def(false);
 option.add( basic::options::OptionKeys::jumps::sep_switch_accelerate, "constraints and chainbreak depend on in-chain-separation. Accelerate their enforcement 1+num_cuts()*<this_factor>" ).def(0.4);
 option.add( basic::options::OptionKeys::jumps::dump_frags, "dump jump_fragments " ).def(false);
-option.add( basic::options::OptionKeys::jumps::njumps, "number_of_jumps to select from library for each trajectory (membrane mode)" ).def(1);
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::njumps, "number_of_jumps to select from library for each trajectory (membrane mode)" ).def(1);
 option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
 option.add( basic::options::OptionKeys::jumps::contact_score, "the strand-weight will have a weight * contact_order component" ).def(0.0);
 option.add( basic::options::OptionKeys::jumps::filter_templates, "filter hybridization protocol templates" ).def(false);
@@ -764,9 +777,7 @@ option.add( basic::options::OptionKeys::templates::templates, "templates option 
 option.add( basic::options::OptionKeys::templates::config, "read a list of templates and alignments" ).def("templates.dat");
 option.add( basic::options::OptionKeys::templates::fix_aligned_residues, "pick only from template fragments and then keep these residues fixed" ).def(false);
 option.add( basic::options::OptionKeys::templates::fix_frag_file, " fragments from this file are picked once in beginning and then kept fixed" ).def("");
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::templates::fix_margin, "keep n residues at edges of fixed fragments moveable" ).def(1);
+option.add( basic::options::OptionKeys::templates::fix_margin, "keep n residues at edges of fixed fragments moveable" ).def(1);
 option.add( basic::options::OptionKeys::templates::min_nr_large_frags, "how many large fragments should be present" ).def(100000);
 option.add( basic::options::OptionKeys::templates::min_nr_small_frags, "how many small fragments should be present" ).def(100000);
 option.add( basic::options::OptionKeys::templates::no_pick_fragments, "no further fragment picking from templates" ).def(false);
@@ -1522,14 +1533,14 @@ option.add( basic::options::OptionKeys::casp::num_iterations, "number of iterati
 option.add( basic::options::OptionKeys::casp::weight_file, "what weight-file to use?" );
 option.add( basic::options::OptionKeys::casp::refine_res, "specifies file that contains which residues to refine" );
 option.add( basic::options::OptionKeys::pose_metrics::pose_metrics, "pose_metrics option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff, " maximum SASA that is allowed for an atom to count as buried for the BuriedUnsatisfiedPolarsCalculator" ).def(0.3);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff, " maximum SASA that is allowed for an atom to count as buried for the BuriedUnsatisfiedPolarsCalculator" ).def(0.3);
 option.add( basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius, " the probe radius used in the SASA calculator (and thus implicitly in the BuriedUnsatisfiedPolarsCalculator" ).def(1.4);
 option.add( basic::options::OptionKeys::pose_metrics::interface_cutoff, "distance in angstroms (def. 10.0) for calculating what residues are at an interface via InterfaceNeighborDefinitionCalculator" ).def(10.0);
 option.add( basic::options::OptionKeys::pose_metrics::min_sequence_separation, " minimum number of sequence positions that two residues need to be apart to count as nonlocal in the NonlocalContactsCalculator" ).def(6);
 option.add( basic::options::OptionKeys::pose_metrics::contact_cutoffE, " maximum interaction energy allowed between two residues to count as a contact in the NonlocalContactsCalculator" ).def(-1.0);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff, "distance in angstroms (def. 10.0) for calculating neighbors of a residue via NeighborByDistanceCalculator" ).def(10.0);
+option.add( basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff, "distance in angstroms (def. 10.0) for calculating neighbors of a residue via NeighborByDistanceCalculator" ).def(10.0);
 option.add( basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff, "distance in angstroms (def. 10.0) for calculating interfaces between domains with InterGroupNeighborsCalculator" ).def(10.0);
 option.add( basic::options::OptionKeys::pose_metrics::semiex_water_burial_cutoff, "water hbond states fraction cutiff for SemiExplicitWaterUnsatisfiedPolarsCalculator (0.0,1.0)" ).def(0.25);
 option.add( basic::options::OptionKeys::ddg::ddg, "ddg option group" ).legal(true).def(true);
@@ -2288,11 +2299,11 @@ option.add( basic::options::OptionKeys::hotspot::angle_res, "Residue to use for 
 option.add( basic::options::OptionKeys::parser::parser, "parser option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::parser::protocol, "File name for the xml parser protocol" );
 option.add( basic::options::OptionKeys::parser::script_vars, "Variable substitutions for xml parser, in the form of name=value" );
-option.add( basic::options::OptionKeys::parser::view, "Use the viewer?" );
-option.add( basic::options::OptionKeys::parser::patchdock, "Patchdock output file name." );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::parser::patchdock_random_entry, "Pick a random patchdock entry between two entry numbers. inclusive" ).n(2);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::parser::view, "Use the viewer?" );
+option.add( basic::options::OptionKeys::parser::patchdock, "Patchdock output file name." );
+option.add( basic::options::OptionKeys::parser::patchdock_random_entry, "Pick a random patchdock entry between two entry numbers. inclusive" ).n(2);
 option.add( basic::options::OptionKeys::DomainAssembly::DomainAssembly, "DomainAssembly option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DomainAssembly::da_setup, "run DomainAssembly setup routine" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::DomainAssembly::da_setup_option_file, "input list of pdbs and linker sequences" ).def("--");

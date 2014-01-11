@@ -23,7 +23,6 @@
 #include <core/pose/util.hh>
 
 #include <devel/init.hh>
-#include <utility/excn/Exceptions.hh>
 
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
@@ -32,7 +31,7 @@
 
 #include <basic/Tracer.hh>
 #include <string>
-//#include <iostream>
+#include <iostream>
 
 //JD headers
 #include <protocols/jd2/JobDistributor.hh>
@@ -75,6 +74,7 @@ public:
     //setting up residue details
     std::string pdb_file_name = option[ OptionKeys::in::file::s ]()[1];
     int pdb_res_no = option[ OptionKeys::pH::calc_pka::pka_for_resno](); //int deliberately used for the following condition
+    Real repack_rad = option[ OptionKeys::pH::calc_pka::pka_rad]();
 
     if ( pdb_res_no < 0 ){
       TR << "PLEASE ENTER RESIDUE NO FOR WHICH PKA IS TO BE CALCULATED AND TRY AGAIN" << std::endl;
@@ -108,25 +108,19 @@ public:
 
       pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( curr_pose ));
 
-      Vector const  & nbr_atom( curr_pose.residue(res_no).nbr_atom_xyz() );
-
+      conformation::Residue const & res1 = curr_pose.residue( res_no );
+    
       for ( Size ii = 1; ii <= curr_pose.total_residue() ; ++ii) {
+
+        conformation::Residue const & res2 = pose.residue( ii );
 
         if ( ii == res_no ) {
           task->nonconst_residue_task( ii ).restrict_to_repacking();
         }
 
-/*
-        else if ( nbr_atom.distance( curr_pose.residue(ii).nbr_atom_xyz() ) < 8.0 &&
-                ( curr_pose.residue(ii).name3() == "ASP" ||
-                  curr_pose.residue(ii).name3() == "GLU" ||
-                  curr_pose.residue(ii).name3() == "HIS" ||
-                  curr_pose.residue(ii).name3() == "TYR" ||
-                  curr_pose.residue(ii).name3() == "LYS" ) ) {
-          task->nonconst_residue_task( ii ).restrict_to_repacking();
-        }
-*/
-        else if ( nbr_atom.distance( curr_pose.residue(ii).nbr_atom_xyz() ) < 8.0 ) {
+//        else if ( curr_pose.residue(res_no).xyz("CA").distance(curr_pose.residue(ii).xyz("CA")) < repack_rad ){
+
+        else if ( res1.xyz( res1.nbr_atom() ).distance( res2.xyz( res2.nbr_atom()) ) < repack_rad ) {
           task->nonconst_residue_task( ii ).restrict_to_repacking();
         }
 
@@ -136,7 +130,7 @@ public:
 
       }
 
-//      std::cout << *task << std::endl;
+      std::cout << *task << std::endl;
 
       scoring::ScoreFunctionOP score_fxn( scoring::getScoreFunction() );
       scoring::methods::pHEnergy::set_pH ( curr_pH );
@@ -162,24 +156,19 @@ public:
 
       pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( curr_pose ));
 
-      Vector const  & nbr_atom( curr_pose.residue(res_no).nbr_atom_xyz() );
+      conformation::Residue const & res1 = curr_pose.residue( res_no );
 
       for ( Size ii = 1; ii <= curr_pose.total_residue() ; ++ii) {
+
+        conformation::Residue const & res2 = pose.residue( ii );
 
         if ( ii == res_no ) {
           task->nonconst_residue_task( ii ).restrict_to_repacking();
         }
-/*
-        else if ( nbr_atom.distance( curr_pose.residue(ii).nbr_atom_xyz() ) < 8.0 &&
-                ( curr_pose.residue(ii).name3() == "ASP" ||
-                  curr_pose.residue(ii).name3() == "GLU" ||
-                  curr_pose.residue(ii).name3() == "HIS" ||
-                  curr_pose.residue(ii).name3() == "TYR" ||
-                  curr_pose.residue(ii).name3() == "LYS" ) ) {
-          task->nonconst_residue_task( ii ).restrict_to_repacking();
-        }
-*/
-        else if ( nbr_atom.distance( curr_pose.residue(ii).nbr_atom_xyz() ) < 8.0 ) {
+
+//        else if ( curr_pose.residue(res_no).xyz("CA").distance(curr_pose.residue(ii).xyz("CA")) < repack_rad ){
+
+        else if ( res1.xyz( res1.nbr_atom() ).distance( res2.xyz( res2.nbr_atom()) ) < repack_rad ) {
           task->nonconst_residue_task( ii ).restrict_to_repacking();
         }
 
@@ -230,9 +219,11 @@ public:
       pka_value = 14.0;   //If it doesn't titrate return 14
     }
 
-    TR << "PKA FOR\t" << res_name3 << "\t" << pdb_res_no << "\t" << pdb_file_name << "\t" << ipka << "\t" << pka_value << std::endl;
+    TR << "PKA FOR\t" << res_name3 << "\t" << pdb_chain_no << "\t" << pdb_res_no << "\t" << pdb_file_name << "\t" << ipka << "\t" << pka_value << std::endl;
 
   }
+
+      std::string get_name() const { return "PhProtocol"; }
 
   virtual
   protocols::moves::MoverOP
@@ -262,7 +253,6 @@ typedef utility::pointer::owning_ptr< PhProtocol > PhProtocolOP;
 int
 main( int argc, char * argv [] )
 {
-    try {
 //  using namespace protocols;
 //  using namespace protocols::jobdist;
 //  using namespace protocols::moves;
@@ -274,10 +264,7 @@ main( int argc, char * argv [] )
 //  protocols::jobdist::main_plain_mover( *pH_test );
 
   protocols::jd2::JobDistributor::get_instance()->go(pH_test);
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-    }
-    return 0;
+
 }
 
 

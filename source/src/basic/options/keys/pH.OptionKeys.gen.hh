@@ -26,8 +26,19 @@ namespace pH { extern BooleanOptionKey const pH_mode; }
 namespace pH { extern BooleanOptionKey const keep_input_protonation_state; }
 namespace pH { extern RealOptionKey const value_pH; }
 namespace pH { namespace calc_pka { extern BooleanOptionKey const calc_pka; } }
-namespace pH { namespace calc_pka { extern IntegerOptionKey const pka_for_resno; } }
+namespace pH { namespace calc_pka { extern BooleanOptionKey const pka_all; } }
+namespace pH { namespace calc_pka { extern RealVectorOptionKey const pka_for_resnos; } }
 namespace pH { namespace calc_pka { extern StringOptionKey const pka_for_chainno; } }
+namespace pH { namespace calc_pka { extern BooleanOptionKey const pH_neighbor_pack; } }
+namespace pH { namespace calc_pka { extern RealOptionKey const pka_rad; } }
+namespace pH { namespace calc_pka { extern BooleanOptionKey const pH_prepack; } }
+namespace pH { namespace calc_pka { extern BooleanOptionKey const pH_relax; } }
+namespace pH { namespace calc_pka { extern BooleanOptionKey const rotamer_prot_stats; } }
+namespace pH { extern FileVectorOptionKey const pH_unbound; }
+namespace pH { extern BooleanOptionKey const output_raw_scores; }
+namespace pH { extern BooleanOptionKey const pre_process; }
+namespace pH { extern StringOptionKey const cognate_partners; }
+namespace pH { extern FileOptionKey const cognate_pdb; }
 
 } // namespace OptionKeys
 } // namespace options
