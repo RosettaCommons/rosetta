@@ -175,40 +175,40 @@ ReferenceEnergy::residue_energy(
 	*/
 
 	switch ( rsd.type().aa() ) {
-		case aa_ala: emap[ ref ] +=  0.593; break;
-		case aa_cys: emap[ ref ] +=  0.355; break;
-		//    case aa_asp: emap[ ref ] +=  -1.287; break;
+		case aa_ala: emap[ ref ] +=  0.16; break;
+		case aa_cys: emap[ ref ] +=  1.70; break;
+		//    case aa_asp: emap[ ref ] +=  -0.67; break;
 		case aa_asp:
-			emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? -0.879 : -1.287;
+			emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? -0.262 : -0.67;
 			break;
-		//    case aa_glu: emap[ ref ] +=  -1.554; break;
+		//    case aa_glu: emap[ ref ] +=  -0.81; break;
 		case aa_glu:
-	    	emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? -1.554 : -1.554;
+	    	emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? -0.81 : -0.81;
 	    	break;
-	    case aa_phe: emap[ ref ] +=  0.430; break;
-	    case aa_gly: emap[ ref ] +=  0.141; break;
-	    //    case aa_his: emap[ ref ] +=  0.357; break;
+	    case aa_phe: emap[ ref ] +=  0.63; break;
+	    case aa_gly: emap[ ref ] +=  -0.17; break;
+	    //    case aa_his: emap[ ref ] +=  0.56; break;
 	    case aa_his:
-	    	emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? 0.085 : 0.357;
+	    	emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? 0.288 : 0.56;
 	    	break;
-	    case aa_ile: emap[ ref ] +=  0.832; break;
-	    //    case aa_lys: emap[ ref ] +=  -0.287; break;
+	    case aa_ile: emap[ ref ] +=  0.24; break;
+	    //    case aa_lys: emap[ ref ] +=  -0.65; break;
 	    case aa_lys:
-	    	emap[ ref ] += (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? -0.287 : -0.287;
+	    	emap[ ref ] += (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? -0.65 : -0.65;
 	    	break;
-	    case aa_leu: emap[ ref ] +=  0.602; break;
-	    case aa_met: emap[ ref ] +=  0.159; break;
-	    case aa_asn: emap[ ref ] +=  -0.942; break;
-	    case aa_pro: emap[ ref ] +=  -0.219; break;
-	    case aa_gln: emap[ ref ] +=  -1.178; break;
-	    case aa_arg: emap[ ref ] +=  -0.149; break;
-	    case aa_ser: emap[ ref ] +=  0.177; break;
-	    case aa_thr: emap[ ref ] +=  0.164; break;
-	    case aa_val: emap[ ref ] +=  0.745; break;
-	    case aa_trp: emap[ ref ] +=  0.929; break;
-	    //    case aa_tyr: emap[ ref ] +=  0.132; break;
+	    case aa_leu: emap[ ref ] +=  -0.10; break;
+	    case aa_met: emap[ ref ] +=  -0.34; break;
+	    case aa_asn: emap[ ref ] +=  -0.89; break;
+	    case aa_pro: emap[ ref ] +=  0.02; break;
+	    case aa_gln: emap[ ref ] +=  -0.97; break;
+	    case aa_arg: emap[ ref ] +=  -0.98; break;
+	    case aa_ser: emap[ ref ] +=  -0.37; break;
+	    case aa_thr: emap[ ref ] +=  -0.27; break;
+	    case aa_val: emap[ ref ] +=  0.29; break;
+	    case aa_trp: emap[ ref ] +=  0.91; break;
+	    //    case aa_tyr: emap[ ref ] +=  0.51; break;
 	    case aa_tyr:
-	    	emap[ ref ] += (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? -0.14 : 0.132;
+	    	emap[ ref ] += (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? 0.238 : 0.51;
 	    	break;
 	    default:
 	    	utility_exit();
