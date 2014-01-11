@@ -451,7 +451,7 @@ SetMMAtomType::apply( ResidueType & rsd ) const
 }
 
 
-/// helper function
+// helper function
 std::string
 expand_icoor_atom_name( std::string name, ResidueType const & rsd )
 {
@@ -463,7 +463,6 @@ expand_icoor_atom_name( std::string name, ResidueType const & rsd )
 		//std::cout << "name after replace: " << name << std::endl;
 	}
 	return name;
-
 }
 
 SetICoor::SetICoor(
@@ -500,6 +499,7 @@ SetICoor::apply( ResidueType & rsd ) const
 	rsd.set_icoor( atom, phi_, theta_, d_, stub1, stub2, stub3, rebuild_icoor_xyz );
 	return false;
 }
+
 
 PrependMainchainAtom::PrependMainchainAtom( std::string const & atom_name_in ) :
 	atom_name_( atom_name_in )

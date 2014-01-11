@@ -131,6 +131,12 @@ CarbohydrateInfo::show(std::ostream & output) const
 			break;
 	}
 	switch (ring_size_) {
+		case 3:
+			ring_form = "oxirose";
+			break;
+		case 4:
+			ring_form = "oxetose";
+			break;
 		case 5:
 			ring_form = "furanose";
 			break;
@@ -226,8 +232,19 @@ CarbohydrateInfo::base_name() const
 {
 	using namespace std;
 
-	string root = root_from_code(residue_type_->name3());
+	string const code = residue_type_->name3();
+	string const root = root_from_code(code);
 
+	// First cover accepted trivial names.
+	if (code == "Gly") {
+		return root + "aldehyde";
+	} else if (code == "DHA") {
+		return root + "one";
+	} else if (code == "Neu" || code == "Kdn") {
+		return root + "ate";
+	}
+
+	// Then cover other names systematically.
 	// The order here matters. Follow IUPAC priority rules.
 	if (is_uronic_acid()) {
 		return root + "uronic acid";
@@ -448,6 +465,20 @@ CarbohydrateInfo::read_and_set_properties()
 					stereochem_ = 'D';
 					stereochem_is_set = true;
 				}
+			} else if (property == "OXIROSE") {
+				if (ring_size_is_set && (ring_size_ != 3)) {
+					utility_exit_with_message("A sugar cannot have multiple ring sizes; check the .params file.");
+				} else {
+					ring_size_ = 3;
+					ring_size_is_set = true;
+				}
+			} else if (property == "OXETOSE") {
+				if (ring_size_is_set && (ring_size_ != 4)) {
+					utility_exit_with_message("A sugar cannot have multiple ring sizes; check the .params file.");
+				} else {
+					ring_size_ = 4;
+					ring_size_is_set = true;
+				}
 			} else if (property == "FURANOSE") {
 				if (ring_size_is_set && (ring_size_ != 5)) {
 					utility_exit_with_message("A sugar cannot have multiple ring sizes; check the .params file.");
@@ -595,6 +626,13 @@ CarbohydrateInfo::determine_IUPAC_names()
 {
 	using namespace std;
 
+	// Determine root.
+	string const code = residue_type_->name3();
+	string const root = root_from_code(code);
+
+	// Flag for special cases.
+	bool const is_Neu = (code == "Neu");
+
 	// Determine prefixes.
 	stringstream long_prefixes(stringstream::out);
 	stringstream short_prefixes(stringstream::out);
@@ -612,10 +650,16 @@ CarbohydrateInfo::determine_IUPAC_names()
 	// TODO: How do I alphabetize substitutions?  I'll need a vector to sort.  For now, order by position.
 	for (uint position = 1; position <= n_carbons_; ++position) {
 		if (modifications_[position] == "amino sugar") {
-			long_prefixes << position << "-amino-" << position << "-deoxy-";
+			if (!is_Neu) {  // (Neu is by definition an amino sugar.)
+				long_prefixes << position << "-amino-" << position << "-deoxy-";
+			}
 		}
 		if (modifications_[position] == "acetylamino sugar") {
-			long_prefixes << position << "-(N-acetylamino)-" << position << "-deoxy-";
+			if (is_Neu) {  // (Neu is by definition an amino sugar.)
+				long_prefixes << position << "-acetyl-";
+			} else {
+				long_prefixes << position << "-(N-acetylamino)-" << position << "-deoxy-";
+			}
 		}
 		if (modifications_[position] == "acetyl sugar") {
 			long_prefixes << position << "-acetyl-";
@@ -623,23 +667,27 @@ CarbohydrateInfo::determine_IUPAC_names()
 	}
 
 	// Stereochemistry
-	long_prefixes << stereochem_ << '-';
-	short_prefixes << stereochem_ << '-';
-
-	// Determine root.
-	string code = residue_type_->name3();
-	string root = root_from_code(code);
+	if (!is_Neu) {  // (Neu is by definition D.)
+		long_prefixes << stereochem_ << '-';
+		short_prefixes << stereochem_ << '-';
+	}
 
 	// Determine suffix.
 	stringstream long_suffix(stringstream::out);
 	stringstream short_suffix(stringstream::out);
 	switch (ring_size_) {
+		case 3:
+			long_suffix << "ooxir";
+		case 4:
+			long_suffix << "ooxet";
 		case 5:
 			long_suffix << "ofuran";
 			short_suffix << 'f';
 			break;
 		case 6:
-			long_suffix << "opyran";
+			if (!is_Neu) {  // (For some odd reason, "opyran" is not use with Neu, though "p" is....)
+				long_suffix << "opyran";
+			}
 			short_suffix << 'p';
 			break;
 		case 7:
@@ -663,9 +711,15 @@ CarbohydrateInfo::determine_IUPAC_names()
 				long_suffix << "uronate";
 				short_suffix << "A";
 			} else {
-				long_suffix << "ose";
+				if (is_Neu) {
+					long_suffix << "ate";  // TODO: Rework such that all acids get "ate" or "ic acid".
+				} else {
+					long_suffix << "ose";
+				}
 				if (is_amino_sugar()) {
-					short_suffix << "N";
+					if (!is_Neu) {  // (Neu is by definition an amino sugar.)
+						short_suffix << "N";
+					}
 				}
 			}
 		}
@@ -674,9 +728,15 @@ CarbohydrateInfo::determine_IUPAC_names()
 			long_suffix << "uronoyl";
 			short_suffix << "A";
 		} else {
-			long_suffix << "osyl";
+			if (is_Neu) {
+				long_suffix << "yl";
+			} else {
+				long_suffix << "osyl";
+			}
 			if (is_amino_sugar()) {
-				short_suffix << "N";
+				if (!is_Neu) {  // (Neu is by definition an amino sugar.)
+					short_suffix << "N";
+				}
 			}
 			if (is_acetylated()) {
 				short_suffix << "Ac";

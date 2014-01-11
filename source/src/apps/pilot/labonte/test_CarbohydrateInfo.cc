@@ -76,9 +76,10 @@ main(int argc, char *argv[])
 		devel::init(argc, argv);
 
 		// Declare variables.
-		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, psicose;
+		Pose /*maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, psicose,*/
+				neuraminate;
 
-		cout << "---------------------------------------------------------------------------------------------" << endl;
+		/*cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing maltotriose:" << endl;
 
 		pose_from_pdb(maltotriose, PATH + "maltotriose.pdb");
@@ -116,12 +117,13 @@ main(int argc, char *argv[])
 		cout << maltotriose.chain_sequence(1) << endl;
 
 
-		cout << "---------------------------------------------------------------------------------------------" << endl;
-		cout << "Importing branched amylopectin fragment:" << endl;
+		// TODO: How did this break?
+		//cout << "---------------------------------------------------------------------------------------------" << endl;
+		//cout << "Importing branched amylopectin fragment:" << endl;
 
-		pose_from_pdb(amylopectin, PATH + "amylopectin_fragment.pdb");
+		//pose_from_pdb(amylopectin, PATH + "amylopectin_fragment.pdb");
 
-		test_sugar(amylopectin);
+		//test_sugar(amylopectin);
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
@@ -164,7 +166,15 @@ main(int argc, char *argv[])
 
 		test_sugar(psicose);
 
-		cout << *psicose.residue(1).carbohydrate_info()->ring_conformer_set();
+		cout << *psicose.residue(1).carbohydrate_info()->ring_conformer_set();*/
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing alpha-neuraminic acid:" << endl;
+
+		pose_from_pdb(neuraminate, PATH + "Neu.pdb");
+
+		test_sugar(neuraminate);
 
 	} catch (utility::excn::EXCN_Base const & e) {
 		cerr << "Caught exception: " << e.msg() << endl;

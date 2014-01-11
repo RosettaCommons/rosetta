@@ -2025,8 +2025,8 @@ ResidueType::has_atom_name( std::string const & name ) const
 Size
 ResidueType::atom_index( std::string const & name ) const
 {
-	//// NOTE: Currently we have to iterate twice because atom_graph_index stores vertex_descriptors not indices.
-	//// A substantial change to the interface will fix this but everyone's code will need to switch to
+	// NOTE: Currently we have to iterate twice because atom_graph_index stores vertex_descriptors not indices.
+	// A substantial change to the interface will fix this, but everyone's code will need to switch too.
 
 	NameVDMap::const_iterator graph_iter
 		( atom_graph_index_.find( name ) );

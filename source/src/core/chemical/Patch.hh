@@ -9,35 +9,25 @@
 
 /// @file
 /// @author Phil Bradley
-// see Patch.cc to understand what's going on
+
+// See Patch.cc to understand what's going on.
 
 #ifndef INCLUDED_core_chemical_Patch_hh
 #define INCLUDED_core_chemical_Patch_hh
 
-
-// // Unit headers
+// Unit headers
 #include <core/chemical/Patch.fwd.hh>
 
-// // Package headers
+// Package headers
 #include <core/chemical/PatchOperation.hh>
 #include <core/chemical/ResidueSelector.hh>
 
+// Utility headers
 #include <utility/vector1.hh>
 
 
-// Project headers
-
-// Utility headers
-// Commented by inclean daemon #include <utility/vector1.hh>
-// Commented by inclean daemon #include <utility/pointer/owning_ptr.hh>
-// Commented by inclean daemon #include <utility/pointer/ReferenceCount.hh>
-
-// C++ headers
-
 namespace core {
 namespace chemical {
-
-
 
 /// @brief the string used to create new residue names after patching
 extern std::string const patch_linker;
@@ -89,7 +79,6 @@ private:
 	ResidueSelector selector_;
 	/// @brief operations to done in this PatchCase
 	utility::vector1< PatchOperationOP > operations_;
-
 };
 
 
@@ -160,11 +149,7 @@ private:
 
 };
 
-
-
 } // chemical
 } // core
-
-
 
 #endif
