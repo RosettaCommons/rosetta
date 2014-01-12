@@ -146,6 +146,8 @@ public:
 	AnalyticEtableEvaluator( Etable const & etable );
 	~AnalyticEtableEvaluator();
 
+	//Etable etable() const { return etable_; }
+
 	/// Atom pair energy inline type resolution functions
 	void
 	residue_atom_pair_energy(
@@ -346,7 +348,6 @@ public:
 		atom_pair_energy( at1, at2, 1.0, atr, rep, solv, d2dummy );
 		return sum_energies( atr, rep, solv );
 	}
-
 
 private:
 

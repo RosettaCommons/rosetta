@@ -591,10 +591,9 @@ private:
 		Size atype2
 	);
 
-
 public:
 	Real get_lj_hbond_OH_donor_dis() const { return lj_hbond_OH_donor_dis; }
-	Real get_lj_hbond_dis() const { return lj_hbond_dis; }
+	Real get_lj_hbond_hdis() const { return lj_hbond_hdis; }
 
 private:
 

@@ -132,8 +132,6 @@ Etable::Etable(
 	slim_( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] ) // command-line option -- bad form; see note above.
 {
 
-	std::cout << "so, what at Etable.cc?" << lj_hbond_hdis << std::endl;
-
 	dimension_etable_arrays();
 	initialize_from_input_atomset( atom_set_in );
 	calculate_nblist_distance_thresholds( options );

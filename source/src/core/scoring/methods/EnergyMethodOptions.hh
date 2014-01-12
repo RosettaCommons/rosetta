@@ -177,7 +177,7 @@ public:
  	etable::EtableOptions &
  	etable_options();
 
- 	/// @breif Set the hbond options object -- makes a deep copy
+ 	/// @breif Set the etable options object -- makes a deep copy
  	void
  	etable_options( etable::EtableOptions const & opts );
 

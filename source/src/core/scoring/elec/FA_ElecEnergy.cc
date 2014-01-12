@@ -125,8 +125,7 @@ FA_ElecEnergy::FA_ElecEnergy( methods::EnergyMethodOptions const & options ):
 	coulomb_( options ),
 	exclude_protein_protein_( options.exclude_protein_protein_fa_elec() ),
 	exclude_monomer_( options.exclude_monomer_fa_elec() ),
-	exclude_DNA_DNA_( options.exclude_DNA_DNA() ),
-	intrares_elec_correction_scale_( options.intrares_elec_correction_scale() )
+	exclude_DNA_DNA_( options.exclude_DNA_DNA() )
 {
 	coulomb_.initialize();
 }
@@ -138,8 +137,7 @@ FA_ElecEnergy::FA_ElecEnergy( FA_ElecEnergy const & src ):
 	coulomb_( src.coulomb() ),
 	exclude_protein_protein_( src.exclude_protein_protein_ ),
 	exclude_monomer_( src.exclude_monomer_ ),
-	exclude_DNA_DNA_( src.exclude_DNA_DNA_ ),
-	intrares_elec_correction_scale_( src.intrares_elec_correction_scale_ )
+	exclude_DNA_DNA_( src.exclude_DNA_DNA_ )
 {
 	coulomb_.initialize();
 }
@@ -204,7 +202,6 @@ FA_ElecEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & s
 void
 FA_ElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const
 {
-
 	set_nres_mono(pose);
 	pose.update_residue_neighbors();
 	if ( pose.energies().use_nblist() ) {
@@ -287,7 +284,6 @@ FA_ElecEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-
 	if ( pose.energies().use_nblist() ) return;
 
 	using namespace etable::count_pair;
@@ -357,9 +353,7 @@ FA_ElecEnergy::residue_pair_energy(
 					for ( Size ll = jj_hatbegin; ll <= jj_hatend; ++ll ) {
 						weight = 1.0;
 						path_dist = 0;
-						bool const is_cp( cpfxn->count( kk, ll, weight, path_dist ) );
-
-						if ( is_cp ) score += score_atom_pair( rsd1, rsd2, kk, ll, emap, weight, d2 );
+						if ( cpfxn->count( kk, ll, weight, path_dist )) score += score_atom_pair( rsd1, rsd2, kk, ll, emap, weight, d2 );
 					}
 				}
 			}
@@ -421,27 +415,13 @@ FA_ElecEnergy::residue_pair_energy(
 	//std::cout << rsd1.seqpos() << ' ' << rsd2.seqpos() << ' ' << score << std::endl;
 }
 
-void
-FA_ElecEnergy::eval_intrares_energy(
-		conformation::Residue const & rsd,
-		pose::Pose const & ,
-		ScoreFunction const &,
-		EnergyMap & emap
-  ) const
-{
-	// go here if intrares dof correction
-	if ( intrares_correction( rsd ) && intrares_elec_correction_scale() > 1e-6 ){
-		Real const score = score_intrares_correction( rsd, emap );
-		emap[ fa_elec ] += score;
-		return;
-	}
-}
-
 bool
 FA_ElecEnergy::minimize_in_whole_structure_context( pose::Pose const & pose ) const
 {
 	return pose.energies().use_nblist_auto_update();
 }
+
+
 
 bool
 FA_ElecEnergy::defines_score_for_residue_pair(
@@ -450,9 +430,8 @@ FA_ElecEnergy::defines_score_for_residue_pair(
 	bool res_moving_wrt_eachother
 ) const
 {
-
 	if ( rsd1.seqpos() == rsd2.seqpos() ) {
-		return true; // Let pass here; check with other filter
+		return false;
 	} else if ( exclude_protein_protein_ && rsd1.is_protein() && rsd2.is_protein() ) {
 		return false;
 	} else if ( exclude_monomer_ && monomer_test( rsd1.seqpos(), rsd2.seqpos()) ) {
@@ -464,19 +443,6 @@ FA_ElecEnergy::defines_score_for_residue_pair(
 	return res_moving_wrt_eachother;
 }
 
-bool
-FA_ElecEnergy::intrares_correction(
-	conformation::Residue const & rsd1
-) const
-{
-
-	// Correction for Ser/Thr intrares elec
-	if( rsd1.aa() == core::chemical::aa_ser || rsd1.aa() == core::chemical::aa_thr ){
-		return true;
-	} else {
-		return false;
-	}
-}
 
 bool
 FA_ElecEnergy::use_extended_residue_pair_energy_interface() const
@@ -556,11 +522,10 @@ FA_ElecEnergy::eval_residue_pair_derivatives(
 {
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
-	// This is not for intrares
 	assert( rsd1.seqpos() < rsd2.seqpos() );
 	assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( elec_pair_nblist )() ));
-	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
 
+	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
 	weight_triple wtrip;
@@ -650,21 +615,6 @@ FA_ElecEnergy::eval_atom_derivative(
 }
 
 void
-FA_ElecEnergy::eval_intrares_derivatives(
-	conformation::Residue const & rsd1,
-	ResSingleMinimizationData const & ,
-	pose::Pose const & ,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & atom_derivs
-) const {
-	// Route for intrares correction
-	if( intrares_correction( rsd1 ) ){
-		eval_intrares_correction_derivatives( rsd1, weights, atom_derivs );
-		return;
-	}
-}
-
-void
 FA_ElecEnergy::backbone_backbone_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
@@ -678,8 +628,7 @@ FA_ElecEnergy::backbone_backbone_energy(
 
 	Real score(0.0);
 
-	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true ) ) return;
-	if ( rsd1.seqpos() == rsd2.seqpos() ) return;
+	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return;
 
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
@@ -744,8 +693,7 @@ FA_ElecEnergy::backbone_sidechain_energy(
 
 	Real score(0.0);
 
-	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true ) ) return;
-	if ( rsd1.seqpos() == rsd2.seqpos() ) return;
+	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return;
 
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
@@ -813,7 +761,6 @@ FA_ElecEnergy::sidechain_sidechain_energy(
 	Real score(0.0);
 
 	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return;
-	if ( rsd1.seqpos() == rsd2.seqpos() ) return;
 
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		// assuming only a single bond right now -- generalizing to arbitrary topologies
@@ -935,8 +882,7 @@ FA_ElecEnergy::evaluate_rotamer_pair_energies(
 
 	// Since a rotamer set may include multiple residue types,
 	// we'll make our decision based on what's currently in the Pose.
-	if ( ! defines_score_for_residue_pair(pose.residue(set1.resid()), pose.residue(set2.resid()), true ) ) return;
-	if( pose.residue(set1.resid()).seqpos() == pose.residue(set2.resid()).seqpos() ) return;
+	if ( ! defines_score_for_residue_pair(pose.residue(set1.resid()), pose.residue(set2.resid()), true) ) return;
 
 	using namespace methods;
 	using namespace trie;
@@ -1014,7 +960,6 @@ FA_ElecEnergy::evaluate_rotamer_background_energies(
 	// Since a rotamer set may include multiple residue types,
 	// we'll make our decision based on what's currently in the Pose.
 	if ( ! defines_score_for_residue_pair( pose.residue(set.resid()), residue, true) ) return;
-	if ( pose.residue(set.resid()).seqpos() == residue.seqpos() ) return;
 
 	using namespace methods;
 	using namespace trie;
@@ -1116,7 +1061,6 @@ FA_ElecEnergy::get_count_pair_function(
 	using namespace etable::count_pair;
 
 	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return new CountPairNone;
-	if ( rsd1.seqpos() == rsd2.seqpos() ) return new CountPairNone;
 
 	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		return CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
@@ -1247,9 +1191,7 @@ FA_ElecEnergy::get_count_pair_function_trie(
 	using namespace etable::etrie;
 
 	TrieCountPairBaseOP tcpfxn;
-
-	if ( ! defines_score_for_residue_pair(res1, res2, true ) ) return new TrieCountPairNone();
-	if( res1.seqpos() == res2.seqpos() ) return new TrieCountPairNone();
+	if ( ! defines_score_for_residue_pair(res1, res2, true) ) return new TrieCountPairNone();
 
 	/// code needs to be added here to deal with multiple bonds (and psuedubonds!) between residues,
 	/// but ultimately, this code is incompatible with designing both disulfides and non-disulfies
@@ -1298,91 +1240,6 @@ FA_ElecEnergy::score_atom_pair(
 		 << " dist " << rsd1.xyz(at1).distance( rsd2.xyz(at2) ) << " energy " << energy << " cpwt " << cpweight << " d2 " << d2 << std::endl;
 	*/
 	return energy;
-}
-
-// Define special rules when intrares correction is necessary
-// This is not generic yet; just use in hacky way for now
-inline
-Real
-FA_ElecEnergy::score_intrares_correction(
-	conformation::Residue const & res1,
-	EnergyMap & emap
-) const
-{
-	
-	Size at1, at2;
-
-	if( res1.aa() == core::chemical::aa_ser && res1.has("H") && res1.has("HG") ){
-		at1 = res1.atom_index("H");
-		at2 = res1.atom_index("HG");
-
-	} else if ( res1.aa() == core::chemical::aa_thr && res1.has("H") && res1.has("HG1") ){
-		at1 = res1.atom_index("H");
-		at2 = res1.atom_index("HG1");
-
-	} else {
-		return 0.0;
-	}
-
-	Real d2( res1.xyz(at1).distance_squared( res1.xyz(at2) ) );
-
-	Real energy = intrares_elec_correction_scale()*
-		          coulomb().eval_atom_atom_fa_elecE(
-							res1.xyz(at1), res1.atomic_charge(at1),
-							res1.xyz(at2), res1.atomic_charge(at2), d2);
-
-	emap[ fa_elec_sc_sc ] += energy;
-	return energy;
-}
-
-inline
-void
-FA_ElecEnergy::eval_intrares_correction_derivatives(
-	conformation::Residue const & res1,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & atom_derivs
-) const
-{
-
-	Size at1, at2;
-	if( res1.aa() == core::chemical::aa_ser && res1.has("H") && res1.has("HG")){
-		at1 = res1.atom_index("H");
-		at2 = res1.atom_index("HG");
-
-	} else if ( res1.aa() == core::chemical::aa_thr && res1.has("H") && res1.has("HG1") ){
-		at1 = res1.atom_index("H");
-		at2 = res1.atom_index("HG1");
-
-	} else {
-		return;
-	}
-
-	weight_triple wtrip;
-	setup_weight_triple( weights, wtrip );
-
-	Vector const & atom1xyz( res1.xyz( at1 ) );
-	Vector const & atom2xyz( res1.xyz( at2 ) );
-	Real const at1_charge( res1.atomic_charge( at1 ) );
-	Real const at2_charge( res1.atomic_charge( at2 ) );
-
-	Vector f2 = ( atom1xyz - atom2xyz );
-	Real const dis2( f2.length_squared() );
-	Real const dE_dr_over_r = coulomb().eval_dfa_elecE_dr_over_r( dis2, at1_charge, at2_charge );
-
-	if ( dE_dr_over_r != 0.0 ) {
-		Real sfxn_weight = intrares_elec_correction_scale()*
-			elec_weight( res1.atom_is_backbone( at1 ), res1.atom_is_backbone( at2 ), wtrip );
-
-		//sfxn_weight *= 0.5; Intrares scaling
-
-		Vector f1 = atom1xyz.cross( atom2xyz );
-		f1 *= dE_dr_over_r * sfxn_weight;
-		f2 *= dE_dr_over_r * sfxn_weight;
-		atom_derivs[ at1 ].f1() += f1;
-		atom_derivs[ at1 ].f2() += f2;
-		atom_derivs[ at2 ].f1() -= f1;
-		atom_derivs[ at2 ].f2() -= f2;
-	}
 }
 
 

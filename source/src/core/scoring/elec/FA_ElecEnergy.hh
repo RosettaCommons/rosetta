@@ -137,11 +137,6 @@ public:
 		bool res_moving_wrt_eachother
 	) const;
 
-	bool
-	intrares_correction(
-		conformation::Residue const & res1
-  ) const;
-
 	virtual
 	bool
 	use_extended_residue_pair_energy_interface() const;
@@ -169,16 +164,10 @@ public:
 		ResPairMinimizationData & data_cache
 	) const;
 
-	virtual
-	void
-	eval_intrares_derivatives(
-	 conformation::Residue const & rsd1,
-	  ResSingleMinimizationData const & ,
-	  pose::Pose const & ,
-	  EnergyMap const & weights,
-	  utility::vector1< DerivVectorPair > & atom_derivs
-	) const;
-
+	/// @brief Evaluate the atom derivative f1/f2 vectors for all atoms on rsd1
+	/// in response to the atoms on rsd2, and all the atoms on rsd2 as they
+	/// in response to the atoms on rsd1.  This method is used with the
+	/// MinimizationGraph and when nblist_autoupdate is not in use.
 	virtual
 	void
 	eval_residue_pair_derivatives(
@@ -207,6 +196,7 @@ public:
 		Vector & F1,
 		Vector & F2
 	) const;
+
 
 	virtual
 	void
@@ -249,11 +239,11 @@ public:
 	virtual
 	void
 	eval_intrares_energy(
-		conformation::Residue const & rsd,
-		pose::Pose const & ,
-		ScoreFunction const & ,
-		EnergyMap & emap
-  ) const;
+		conformation::Residue const &,
+		pose::Pose const &,
+		ScoreFunction const &,
+		EnergyMap &
+	) const {}
 
 	virtual
 	void
@@ -283,7 +273,7 @@ public:
 
 	virtual
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return true; }
+	defines_intrares_energy( EnergyMap const & /*weights*/ ) const { return false; }
 
 	/// @brief Interface function for class NeighborList.
 	etable::count_pair::CountPairFunctionCOP
@@ -446,21 +436,6 @@ private:
 		Real & d2
 	) const;
 
-	inline
-	Real
-	score_intrares_correction(
-		conformation::Residue const & res1,
-		EnergyMap & emap
-	) const;
-
-	inline
-	void
-	eval_intrares_correction_derivatives(
-		conformation::Residue const & res1,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & atom_derivs
-	) const;
-
 	void
 	set_nres_mono(
 		core::pose::Pose const & pose
@@ -471,9 +446,6 @@ private:
 		Size irsd,
 		Size jrsd
 	) const;
-
-	inline
-	Real intrares_elec_correction_scale() const { return intrares_elec_correction_scale_; }
 
 
 protected:
@@ -489,8 +461,6 @@ private:
 	bool exclude_protein_protein_;
 	bool exclude_monomer_;
 	bool exclude_DNA_DNA_;
-
-	Real intrares_elec_correction_scale_;
 
 	//mutable Real elec_weight_; // used during trie-vs-trie algorithm
 	mutable Real wbb_bb_;

@@ -57,7 +57,9 @@
 
 // Package headers
 #include <core/scoring/methods/EnergyMethodCreator.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/etable/Etable.hh>
+#include <core/scoring/etable/EtableOptions.hh>
 #include <core/scoring/memb_etable/MembEtable.hh>
 
 #include <core/scoring/mm/MMTorsionLibrary.hh>
@@ -699,11 +701,12 @@ ScoringManager::get_UnfoldedStatePotential( std::string const & type ) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// This function is only called from pilot apps, but let's keep
 void
 ScoringManager::add_etable( std::string const & name, etable::EtableOP etable )
 {
-	assert( etables_.count(name) == 0 );
-	etables_[ name ] = etable;
+	assert( etables_by_string_.count(name) == 0 );
+	etables_by_string_[ name ] = etable;
 }
 
 //XRW_B_T1
@@ -748,18 +751,85 @@ ScoringManager::memb_etable( std::string const & table_id ) const //pba
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// New logic for etable - 01/07/14 Hahnbeom Park
+// one weak point of this method is that, change in frequently called but less relevant options
+// such as weights, will invoke another etable construction.
+// we can pro
+etable::EtableCAP
+ScoringManager::etable( methods::EnergyMethodOptions const &options_in ) const
+{
+	using namespace etable;
+
+	// Search by EtableOptions, rather than its name
+	// still string keys couldn't be fully removed because of using "SOFT" etable as cmd...
+	std::string const table_id = options_in.etable_type();
+
+	// Search through iterator
+	utility::vector1< std::pair< methods::EnergyMethodOptions, etable::EtableOP > >::const_iterator it;
+
+	// Iterating 
+	for( it = etables_by_method_.begin(); it != etables_by_method_.end(); ++it ){
+		methods::EnergyMethodOptions Eopt1 = it->first;
+		if ( Eopt1 == options_in ) return (it->second)();
+	}
+
+	// add if no matching EtableOption is found
+	if( it == etables_by_method_.end() ){
+		EtableOP etable_ptr;
+		std::pair< methods::EnergyMethodOptions, etable::EtableOP > etable_pair;
+
+		if ( table_id == FA_STANDARD_SOFT ) {
+			// soft rep etable: modified radii and also change to lj_switch_dis2sigma
+			methods::EnergyMethodOptions options_loc( options_in );
+			options_loc.etable_options().lj_switch_dis2sigma = 0.91;
+			etable_ptr =
+				( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+											options_loc.etable_options(), "SOFT" ) );
+
+		} else if ( table_id.substr(0, FA_STANDARD_DEFAULT.size() + 1 ) == FA_STANDARD_DEFAULT+"_" ) {
+			// original comments: note we check for soft rep 1st since that would match this as well -- confusing??
+			// apply a modification of the radii/wdepths
+			std::string const alternate_parameters( table_id.substr( FA_STANDARD_DEFAULT.size() + 1 ) );
+			etable_ptr =
+				( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+											options_in.etable_options(), alternate_parameters ) );
+
+		} else { // General way of adding
+			etable_ptr =
+				( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+											options_in.etable_options() ) );
+
+		}
+
+		etable_pair = std::make_pair( options_in, etable_ptr ); // options_in, not options_loc!
+		etables_by_method_.push_back( etable_pair );
+	}
+
+	for( it = etables_by_method_.begin(); it != etables_by_method_.end(); ++it ){
+		methods::EnergyMethodOptions Eopt1 = it->first;
+		if ( Eopt1 == options_in ) return (it->second)();
+	}
+
+	// What if still not found?
+	if( it == etables_by_method_.end() ) utility_exit_with_message( "Etable not found!" );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Support for previous version; 
+// This function may not be called through usual score function calls, 
+// but still necessary for whom direct call is necessary
 etable::EtableCAP
 ScoringManager::etable( std::string const & table_id ) const
 {
 	using namespace etable;
 
-	if ( etables_.find( table_id ) == etables_.end() ) {
+	if ( etables_by_string_.find( table_id ) == etables_by_string_.end() ) {
 		// try to build if possible
 		if ( table_id == FA_STANDARD_DEFAULT ) {
 			EtableOP etable_ptr
 				( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
 											EtableOptions() ) );
-			etables_[ table_id ] = etable_ptr;
+			etables_by_string_[ table_id ] = etable_ptr;
 		} else if ( table_id == FA_STANDARD_SOFT ) {
 			// soft rep etable: modified radii and also change to lj_switch_dis2sigma
 			EtableOptions options;
@@ -767,7 +837,7 @@ ScoringManager::etable( std::string const & table_id ) const
 			EtableOP etable_ptr
 				( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
 											options, "SOFT" ) );
-			etables_[ table_id ] = etable_ptr;
+			etables_by_string_[ table_id ] = etable_ptr;
 
 		} else if ( table_id.substr(0, FA_STANDARD_DEFAULT.size() + 1 ) == FA_STANDARD_DEFAULT+"_" ) {
 			// note we check for soft rep 1st since that would match this as well -- confusing??
@@ -776,17 +846,14 @@ ScoringManager::etable( std::string const & table_id ) const
 			EtableOP etable_ptr
 				( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
 											EtableOptions(), alternate_parameters ) );
-			etables_[ table_id ] = etable_ptr;
+			etables_by_string_[ table_id ] = etable_ptr;
 
 		} else {
-			std::cout << "1:" << table_id.substr(0, FA_STANDARD_DEFAULT.size() + 1 ) << '\n' <<
-				"2:" << FA_STANDARD_DEFAULT+"_" << std::endl;
 			utility_exit_with_message("unrecognized etable: "+table_id );
 		}
 	}
-	return (etables_.find( table_id )->second)();
+	return (etables_by_string_.find( table_id )->second)();
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////

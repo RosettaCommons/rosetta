@@ -76,6 +76,7 @@
 // AUTO-REMOVED #include <core/scoring/types.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/etable/Etable.fwd.hh>
+#include <core/scoring/etable/EtableOptions.hh>
 #include <core/scoring/memb_etable/MembEtable.fwd.hh> //pba
 //XRW_B_T1
 //#include <core/coarse/CoarseEtable.fwd.hh>
@@ -222,11 +223,9 @@ public:
 	add_etable( std::string const & name, etable::EtableOP etable );
 
 	//XRW_B_T1
-	/*
 	///
-	void
-	add_coarse_etable( std::string const & name, coarse::CoarseEtableOP etable );
-	*/
+	//void
+	//add_coarse_etable( std::string const & name, coarse::CoarseEtableOP etable );
 	//XRW_E_T1
 
 	///pba
@@ -237,13 +236,16 @@ public:
 	etable::MembEtableCAP
 	memb_etable( std::string const & table_id ) const;
 
-	///
+	// New logic
+	etable::EtableCAP
+	etable( methods::EnergyMethodOptions const &options_in ) const;
+
+	/// old
 	etable::EtableCAP
 	etable( std::string const & etable_id ) const;
 
 	//XRW_B_T1
 	/*
-	///
 	coarse::CoarseEtableCAP
 	coarse_etable( std::string const & etable_id ) const;
 	*/
@@ -325,11 +327,17 @@ private:
 
   mutable interface::DDPlookupOP DDP_lookup_table_;
 	// data
-	mutable std::map< std::string, etable::EtableOP > etables_;
+
+	// original map using string as key, let's keep it
+	mutable std::map< std::string, etable::EtableOP > etables_by_string_;
+
+	// new map for etables using EnergyMethodOptions as key
+	// In order to avoid defining comparison operator, using "vector of std::pair" instead of std::map
+	mutable utility::vector1< std::pair< methods::EnergyMethodOptions, etable::EtableOP > > etables_by_method_;
 	//XRW_B_T1
 	//mutable std::map< std::string, coarse::CoarseEtableOP > coarse_etables_;
 	//XRW_E_T1
-  	mutable std::map< std::string, etable::MembEtableOP > memb_etables_; //pba
+	mutable std::map< std::string, etable::MembEtableOP > memb_etables_; //pba
 
 
 	// NCAA rot lib map
