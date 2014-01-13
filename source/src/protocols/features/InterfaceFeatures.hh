@@ -25,27 +25,27 @@ namespace features {
 
 	using namespace protocols::analysis;
 	using utility::vector1;
-	
-	
+
+
 ///@brief Analyzes interfaces and interface residues of a pose mainly using InterfaceAnalayzerMover.
 /// By default, will analyze every interface with and report any that have dSASA > cutoff.  Interfaces to report can be set via code or RS.
 ///
-///@details  Should work (but untested) with most ligands if loaded, rna chains, and dna chains.  
+///@details  Should work (but untested) with most ligands if loaded, rna chains, and dna chains.
 /// Note that interfacial waters and ions are currently ignored, but separate features reporters may soon be in the works to accomplish this.
 ///
 /// Most main functions are virtual so you can derive from this and have more-specific interface analysis, such as an AntibodyInterfaceFeature class.
 ///
 class InterfaceFeatures : public FeaturesReporter {
 
-	
-	
+
+
 public:
 	InterfaceFeatures();
 
 	InterfaceFeatures(core::scoring::ScoreFunctionCOP scorefxn);
-	
-	
-	InterfaceFeatures( InterfaceFeatures const & );
+
+
+	// Undefined, commenting out to fix PyRosetta build  InterfaceFeatures( InterfaceFeatures const & );
 
 	virtual ~InterfaceFeatures();
 
@@ -54,7 +54,7 @@ public:
 	type_name() const;
 
 	///@brief generate the table schemas and write them to the database
-	
+
 	virtual void
 	write_schema_to_db(
 		utility::sql_database::sessionOP db_session) const;
@@ -78,50 +78,50 @@ public:
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
 		StructureID struct_id,
-		utility::sql_database::sessionOP db_session);		
-	
-	
+		utility::sql_database::sessionOP db_session);
+
+
 	////////////////////////////////////////////////////////////////////////////
 	//Options
 	//
-	
-	///@brief Set the fixed chain combinations that will be analyzed.  Default is all of them.  
+
+	///@brief Set the fixed chain combinations that will be analyzed.  Default is all of them.
 	///@details Example:  AB_C would analyze the interface between AB and C, keeping AB fixed while separating C.
 	/// Note that here, you can also give A_C   and a new pose would be created with only A and C so that this interface can be tested.
 	/// Note also that multiple pose interfaces can be set.
 	void
 	set_interface_chains(vector1< std::string > interfaces);
-	
+
 	///@brief Pack the interface before separation? Default is false.
 	void
 	set_pack_separated(bool const pack_separated );
-	
+
 	///@brief Pack the interface after separation?  Default is true.
 	void
 	set_pack_together(bool const pack_together );
-	
+
 	///@brief Compute the packstat score?  Default true
 	void
 	set_compute_packstat(bool const compute_packstat);
-	
+
 	void
 	set_defaults();
-	
+
 	///@brief Set the reporter to only include interfaces >dSASA_cutoff.
 	void
 	set_dSASA_cutoff(core::Real dSASA_cutoff);
-	
+
 	////////////////////////////////////////////////////////////////////////////
 	virtual void
 	write_interface_schema_to_db(utility::sql_database::sessionOP db_session) const;
-	
+
 	virtual void
 	write_interface_residues_schema_to_db(utility::sql_database::sessionOP db_session) const;
-	
+
 	virtual void
 	write_interface_side_schema_to_db(utility::sql_database::sessionOP db_session) const;
-	
-	
+
+
 	virtual void
 	report_interface_features(
 		core::pose::Pose const & pose,
@@ -129,7 +129,7 @@ public:
 		utility::sql_database::sessionOP db_session,
 		std::string const chains_side1,
 		std::string const chains_side2) const;
-	
+
 	virtual void
 	report_interface_side_features(
 		core::pose::Pose const & pose,
@@ -139,7 +139,7 @@ public:
 		std::string const chains_side2,
 		protocols::analysis::InterfaceRegion const region,
 		std::string const region_string) const;
-	
+
 	virtual void
 	report_interface_residue_features(
 		core::pose::Pose const & pose,
@@ -147,14 +147,14 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		std::string const chains_side1,
-		std::string const chains_side2) const;		
+		std::string const chains_side2) const;
 
-	///@brief Gets all possible interface combinations of a given pose.  
+	///@brief Gets all possible interface combinations of a given pose.
 	void
 	make_interface_combos(core::pose::Pose const & pose, vector1<std::string> & interfaces);
-	
+
 private:
-	
+
 	///@brief Writes interface data to the database from analyzer.  InterfaceAnalyzer's apply should be called already.
 	//void
 	//write_interface_data_row_to_db(
@@ -162,7 +162,7 @@ private:
 		//utility::sql_database::sessionOP db_session,
 		//std::string const chains_side1,
 		//std::string const chains_side2) const;
-	
+
 	void
 	write_interface_residue_data_row_to_db(
 		StructureID struct_id,
@@ -172,41 +172,40 @@ private:
 		std::string const side,
 		core::Size const resnum,
 		protocols::analysis::PerResidueInterfaceData const & interface_data) const;
-	
-	
+
+
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	
-	///@brief Recursive function. Get all orders of ex ABCD. 
+
+
+	///@brief Recursive function. Get all orders of ex ABCD.
 	void
 	get_all_string_combos(std::string & interface, std::string current, vector1<std::string> & chains) const;
-	
+
 	void
 	get_length_combos(std::string current, vector1<std::string> & sizes) const;
-	
+
 	bool
 	interface_exists(vector1<std::string> & interfaces, std::string & dock_chains) const;
-	
+
 	bool
 	chains_exist_in_pose(core::pose::Pose const & pose, std::string const interface) const;
-	
+
 	std::string
 	get_all_pose_chains(core::pose::Pose const & pose);
-	
+
 private:
-	
+
 	protocols::analysis::InterfaceAnalyzerMoverOP interface_analyzer_;
 	core::scoring::ScoreFunctionCOP scorefxn_;
 	vector1< std::string > interfaces_;
-	
+
 	bool pack_together_;
 	bool pack_separated_;
 	bool compute_packstat_;
 	core::Real dSASA_cutoff_;
-		
+
 };
 }
 }
 
 #endif	//#ifndef INCLUDED_protocols/antibody_design_INTERFACEFEATURES_HH
-
