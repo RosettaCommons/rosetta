@@ -91,9 +91,11 @@ OPT_1GRP_KEY(Real, crystdock, C)
 OPT_1GRP_KEY(Real, crystdock, alpha)
 OPT_1GRP_KEY(Real, crystdock, beta)
 OPT_1GRP_KEY(Real, crystdock, gamma)
+OPT_1GRP_KEY(Real, crystdock, maxclash)
 OPT_1GRP_KEY(Real, crystdock, trans_step)
 OPT_1GRP_KEY(Real, crystdock, rot_step)
 OPT_1GRP_KEY(Integer, crystdock, nmodels)
+OPT_1GRP_KEY(Integer, crystdock, rotnum)
 OPT_1GRP_KEY(Boolean, crystdock, debug)
 OPT_1GRP_KEY(Boolean, crystdock, debug_exact)
 
@@ -119,13 +121,62 @@ inline double min_mod(double x,double y) {
 inline double sign(double x) {return (x >= 0.0) ? 1.0 : -1.0;}
 inline double norm4(double a, double b, double c, double d) {return sqrt(a * a + b * b + c * c + d * d);}
 
-
-/// trilinear interpolation with periodic boundaries
+/// backward interpolation (unrotated->rotated)
+///    used to generate grids
 template <class S>
 core::Real interp_linear(
-	ObjexxFCL::FArray3D< S > const & data ,
-	numeric::xyzVector< core::Real > const & idxX) {
+		ObjexxFCL::FArray3D< S > const & data ,
+		numeric::xyzVector< core::Real > const & idxX, bool debug=false ) {
 
+	numeric::xyzVector<int> pt000, pt111;
+	numeric::xyzVector< core::Real > fpart,neg_fpart;
+	numeric::xyzVector<int> srcgrid(data.u1(),data.u2(),data.u3());
+
+	// 0->1-based indexing
+	pt000[0] = (int)(floor(idxX[0]+1e-6))+1;
+	pt000[1] = (int)(floor(idxX[1]+1e-6))+1;
+	pt000[2] = (int)(floor(idxX[2]+1e-6))+1;
+
+	// bound check
+	if (pt000[0] < -srcgrid[0]/2+1 || pt000[0] >= srcgrid[0]/2+1) return 0.0;
+	if (pt000[1] < -srcgrid[1]/2+1 || pt000[1] >= srcgrid[1]/2+1) return 0.0;
+	if (pt000[2] < -srcgrid[2]/2+1 || pt000[2] >= srcgrid[2]/2+1) return 0.0;
+	if (pt000[0] <= 0 ) pt000[0] += srcgrid[0];
+	if (pt000[1] <= 0 ) pt000[1] += srcgrid[1];
+	if (pt000[2] <= 0 ) pt000[2] += srcgrid[2];
+
+	// interpolation coeffs
+	fpart[0] = idxX[0]-floor(idxX[0]); neg_fpart[0] = 1-fpart[0];
+	fpart[1] = idxX[1]-floor(idxX[1]); neg_fpart[1] = 1-fpart[1];
+	fpart[2] = idxX[2]-floor(idxX[2]); neg_fpart[2] = 1-fpart[2];
+
+	S retval = (S)0.0;
+
+	pt111[0] = (pt000[0]+1); if (pt111[0]>srcgrid[0]) pt111[0]=1;
+	pt111[1] = (pt000[1]+1); if (pt111[1]>srcgrid[1]) pt111[1]=1;
+	pt111[2] = (pt000[2]+1); if (pt111[2]>srcgrid[2]) pt111[2]=1;
+
+	retval += neg_fpart[0]*neg_fpart[1]*neg_fpart[2] * data(pt000[0],pt000[1],pt000[2]);
+	retval += neg_fpart[0]*neg_fpart[1]*    fpart[2] * data(pt000[0],pt000[1],pt111[2]);
+	retval += neg_fpart[0]*    fpart[1]*neg_fpart[2] * data(pt000[0],pt111[1],pt000[2]);
+	retval += neg_fpart[0]*    fpart[1]*    fpart[2] * data(pt000[0],pt111[1],pt111[2]);
+	retval +=     fpart[0]*neg_fpart[1]*neg_fpart[2] * data(pt111[0],pt000[1],pt000[2]);
+	retval +=     fpart[0]*neg_fpart[1]*    fpart[2] * data(pt111[0],pt000[1],pt111[2]);
+	retval +=     fpart[0]*    fpart[1]*neg_fpart[2] * data(pt111[0],pt111[1],pt000[2]);
+	retval +=     fpart[0]*    fpart[1]*    fpart[2] * data(pt111[0],pt111[1],pt111[2]);
+
+	return (core::Real)retval;
+}
+
+
+/// forward interpolation (rotated <- unrotated)
+///    used to quickly clash check
+/*
+template <class S>
+void increment_interp_linear(
+		ObjexxFCL::FArray3D< S > & data ,
+		numeric::xyzVector< core::Real > const & idxX,
+		core::Real value) {
 	int pt000[3], pt111[3];
 	core::Real fpart[3],neg_fpart[3];
 	int grid[3];
@@ -144,18 +195,16 @@ core::Real interp_linear(
 	fpart[1] = idxX[1]-floor(idxX[1]); neg_fpart[1] = 1-fpart[1];
 	fpart[2] = idxX[2]-floor(idxX[2]); neg_fpart[2] = 1-fpart[2];
 
-	S retval = (S)0.0;
-	retval+= neg_fpart[0]*neg_fpart[1]*neg_fpart[2] * data(pt000[0],pt000[1],pt000[2]);
-	retval+= neg_fpart[0]*neg_fpart[1]*    fpart[2] * data(pt000[0],pt000[1],pt111[2]);
-	retval+= neg_fpart[0]*    fpart[1]*neg_fpart[2] * data(pt000[0],pt111[1],pt000[2]);
-	retval+= neg_fpart[0]*    fpart[1]*    fpart[2] * data(pt000[0],pt111[1],pt111[2]);
-	retval+= fpart[0]*neg_fpart[1]*neg_fpart[2] * data(pt111[0],pt000[1],pt000[2]);
-	retval+= fpart[0]*neg_fpart[1]*    fpart[2] * data(pt111[0],pt000[1],pt111[2]);
-	retval+= fpart[0]*    fpart[1]*neg_fpart[2] * data(pt111[0],pt111[1],pt000[2]);
-	retval+= fpart[0]*    fpart[1]*    fpart[2] * data(pt111[0],pt111[1],pt111[2]);
-
-	return retval;
+	data(pt000[0],pt000[1],pt000[2]) += neg_fpart[0]*neg_fpart[1]*neg_fpart[2] * value;
+	data(pt000[0],pt000[1],pt111[2]) += neg_fpart[0]*neg_fpart[1]*    fpart[2] * value;
+	data(pt000[0],pt111[1],pt000[2]) += neg_fpart[0]*    fpart[1]*neg_fpart[2] * value;
+	data(pt000[0],pt111[1],pt111[2]) += neg_fpart[0]*    fpart[1]*    fpart[2] * value;
+	data(pt111[0],pt000[1],pt000[2]) += fpart[0]*neg_fpart[1]*neg_fpart[2] * value;
+	data(pt111[0],pt000[1],pt111[2]) += fpart[0]*neg_fpart[1]*    fpart[2] * value;
+	data(pt111[0],pt111[1],pt000[2]) += fpart[0]*    fpart[1]*neg_fpart[2] * value;
+	data(pt111[0],pt111[1],pt111[2]) += fpart[0]*    fpart[1]*    fpart[2] * value;
 }
+*/
 
 ////////////////////////////////////////////////
 // rotation stuff
@@ -398,7 +447,7 @@ public:
 			if (tokeep[i]) rotlist_.push_back(rotlist_old[i]);
 		}
 
-		std::cerr << "Trimmed rot list has " << rotlist_.size() << " rotations (was " << rotlist_old.size() << ")\n";
+		TR << "Trimmed rot list has " << rotlist_.size() << " rotations (was " << rotlist_old.size() << ")\n";
 	}
 };
 
@@ -625,7 +674,7 @@ public:
 
 		// report
 		if (a_!=a_in || b_!=b_in || c_!=c_in || alpha_!=alpha_in || beta_!=beta_in || gamma_!=gamma_in) {
-			std::cerr << "Overriding input crystal parameters with [ "
+			TR << "Overriding input crystal parameters with [ "
 			          << a_ << "," << b_ << "," << c_ << " , " << alpha_ << ","  << beta_ << ","  << gamma_ << " ]" << std::endl;
 		}
 	}
@@ -656,23 +705,26 @@ private:
 	core::Real ca_clashdist_, cb_clashdist_, n_clashdist_, c_clashdist_, o_clashdist_;
 	core::Real interfacedist_;
 
+	xyzVector<int> grid_, oversamplegrid_;
+
 	xyzMatrix<Real> i2c_, c2i_;
 
 public:
 	CrystDock() {
+		// to do: make these options
 		n_clashdist_  = 1.75;   // ros VDW=1.75
 		ca_clashdist_ = 2.00;   // ros VDW=2.0
 		c_clashdist_  = 2.00;   // ros VDW=2.0
 		o_clashdist_  = 1.55;   // ros VDW=1.55
-		cb_clashdist_ = 2.00;   // ros VDW=2.0
-		interfacedist_ = 5.0;
+		cb_clashdist_ = 1.50;   // ros VDW=2.0
+		interfacedist_ = 4.0;
 	}
 
 	virtual std::string get_name() const { return "CrystDock"; }
 
 	// write density grids in MRC --  debugging only for now
 	void
-	writeMRC(FArray3D<Real> density, Spacegroup const &sg, std::string mapfilename) {
+	writeMRC(FArray3D<Real> density, Spacegroup const &sg, std::string mapfilename, bool is_oversampled=false) {
 		const int CCP4HDSIZE = 1024;  // size of CCP4/MRC header
 		std::fstream outx( (mapfilename).c_str() , std::ios::binary | std::ios::out );
 
@@ -680,7 +732,7 @@ public:
 		int buff_i, buff_vi[3], symBytes = 0;
 
 		if (!outx ) {
-			std::cerr << "Error opening " << mapfilename << " for writing." << std::endl;
+			TR << "Error opening " << mapfilename << " for writing." << std::endl;
 			return;
 		}
 
@@ -701,7 +753,14 @@ public:
 		outx.write(reinterpret_cast <char*>(&grid[0]), sizeof(int)*3);
 
 		// cell params
-		float cellDimensions[3] = {sg.A(),sg.B(),sg.C()};
+		Real Aeff=sg.A(), Beff=sg.B(), Ceff=sg.C();
+		if (is_oversampled) {
+			Aeff *= ((Real)oversamplegrid_[0]) / ((Real)grid_[0]);
+			Beff *= ((Real)oversamplegrid_[1]) / ((Real)grid_[1]);
+			Ceff *= ((Real)oversamplegrid_[2]) / ((Real)grid_[2]);
+		}
+
+		float cellDimensions[3] = {Aeff,Beff,Ceff};
 		float cellAngles[3] = {sg.alpha(),sg.beta(),sg.gamma()};
 		outx.write(reinterpret_cast <char*>(&cellDimensions), sizeof(float)*3);
 		outx.write(reinterpret_cast <char*>(&cellAngles), sizeof(float)*3);
@@ -754,28 +813,41 @@ public:
 		}
 	}
 
+	// build occupancy and interaction masks from pose
+	// since we will be sampling rotations from this map, we sample over a larger volume than the unit cell
 	void setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &rho_cb, Spacegroup const &sg, Real trans_step) {
 		Real ATOM_MASK_PADDING = 2.0;
+		Real UNIT_CELL_PADDING = 4.0;  // IN GRID POINTS!
 
 		Size minmult = sg.minmult();
 
 		// find true grid
-		Size ngridA = minmult*(Size)std::floor(sg.A()/(minmult*trans_step) + 0.5);
-		Size ngridB = minmult*(Size)std::floor(sg.B()/(minmult*trans_step) + 0.5);
-		Size ngridC = minmult*(Size)std::floor(sg.C()/(minmult*trans_step) + 0.5);
-		Real true_stepA = sg.A()/ngridA;
-		Real true_stepB = sg.B()/ngridB;
-		Real true_stepC = sg.C()/ngridC;
+		grid_[0] = minmult*(Size)std::floor(sg.A()/(minmult*trans_step) + 0.5);
+		grid_[1] = minmult*(Size)std::floor(sg.B()/(minmult*trans_step) + 0.5);
+		grid_[2] = minmult*(Size)std::floor(sg.C()/(minmult*trans_step) + 0.5);
 
 		xyzMatrix<Real> i2f, f2i;
-		f2i = xyzMatrix<Real>::rows( (Real)ngridA,0,0,  0,(Real)ngridB,0,  0,0,(Real)ngridC );
-		i2f = xyzMatrix<Real>::rows( 1.0/((Real)ngridA),0,0,  0,1.0/((Real)ngridB),0,  0,0,1.0/((Real)ngridC) );
+		f2i = xyzMatrix<Real>::rows( (Real)grid_[0],0,0,  0,(Real)grid_[1],0,  0,0,(Real)grid_[2] );
+		i2f = xyzMatrix<Real>::rows( 1.0/((Real)grid_[0]),0,0,  0,1.0/((Real)grid_[1]),0,  0,0,1.0/((Real)grid_[2]) );
 
 		i2c_ = sg.f2c()*i2f;
 		c2i_ = f2i*sg.c2f();
 
-		rho_ca.dimension( ngridA, ngridB, ngridC ); rho_ca = 1;
-		rho_cb.dimension( ngridA, ngridB, ngridC ); rho_cb = 1;
+
+		// find oversampled grid
+		oversamplegrid_ = xyzVector<int>(0,0,0);
+		for (int i=1 ; i<=(int)pose.total_residue(); ++i) {
+			if (!pose.residue(i).is_protein()) continue;
+			for (int j=1; j<=4; ++j) {
+				numeric::xyzVector< core::Real> xyz_j = pose.residue(i).atom(j).xyz();
+				numeric::xyzVector< core::Real> atm_idx = c2i_*xyz_j;
+				for (int k=0; k<3; ++k) oversamplegrid_[k] = std::max(oversamplegrid_[k], 2*(int)std::floor( (atm_idx[k]+UNIT_CELL_PADDING) )+1 );
+			}
+		}
+		TR << "Base grid = [" <<  oversamplegrid_[0] << " , " <<  oversamplegrid_[1]<< " , " << oversamplegrid_[2] << "]" << std::endl;
+
+		rho_ca.dimension( oversamplegrid_[0], oversamplegrid_[1], oversamplegrid_[2] ); rho_ca = 1;
+		rho_cb.dimension( oversamplegrid_[0], oversamplegrid_[1], oversamplegrid_[2] ); rho_cb = 1;
 
 		// loop over bb heavyatoms
 		for (int i=1 ; i<=(int)pose.total_residue(); ++i) {
@@ -788,26 +860,23 @@ public:
 				if (j==3) clashdist = c_clashdist_;
 				if (j==4) clashdist = o_clashdist_;
 
-				numeric::xyzVector< core::Real> xyz_j = pose.residue(i).atom(2).xyz();
+				numeric::xyzVector< core::Real> xyz_j = pose.residue(i).atom(j).xyz();
 				numeric::xyzVector< core::Real> atm_idx = c2i_*xyz_j;
 				numeric::xyzVector< core::Real> atm_j, del_ij;
-				atm_idx[0] = pos_mod (atm_idx[0], (Real)ngridA);
-				atm_idx[1] = pos_mod (atm_idx[1], (Real)ngridB);
-				atm_idx[2] = pos_mod (atm_idx[2], (Real)ngridC);
 
-				for (int z=1; z<=ngridC; ++z) {
+				for (int z=1; z<=oversamplegrid_[2]; ++z) {
 					atm_j[2] = z-1;
-					del_ij[2] = min_mod(atm_idx[2] - atm_j[2], (Real)ngridC);
+					del_ij[2] = min_mod(atm_idx[2] - atm_j[2], (Real)oversamplegrid_[2]);
 					del_ij[0] = del_ij[1] = 0.0;
 					if ((i2c_*del_ij).length_squared() > (clashdist+ATOM_MASK_PADDING)*(clashdist+ATOM_MASK_PADDING)) continue;
-					for (int y=1; y<=ngridB; ++y) {
+					for (int y=1; y<=oversamplegrid_[1]; ++y) {
 						atm_j[1] = y-1;
-						del_ij[1] = min_mod(atm_idx[1] - atm_j[1], (Real)ngridB);
+						del_ij[1] = min_mod(atm_idx[1] - atm_j[1], (Real)oversamplegrid_[1]);
 						del_ij[0] = 0.0;
 						if ((i2c_*del_ij).length_squared() > (clashdist+ATOM_MASK_PADDING)*(clashdist+ATOM_MASK_PADDING)) continue;
-						for (int x=1; x<=ngridA; ++x) {
+						for (int x=1; x<=oversamplegrid_[0]; ++x) {
 							atm_j[0] = x-1;
-							del_ij[0] = min_mod(atm_idx[0] - atm_j[0], (Real)ngridA);
+							del_ij[0] = min_mod(atm_idx[0] - atm_j[0], (Real)oversamplegrid_[0]);
 							numeric::xyzVector< core::Real > cart_del_ij = i2c_*del_ij;
 							core::Real d2 = (cart_del_ij).length_squared();
 							if (d2 <= (clashdist+ATOM_MASK_PADDING)*(clashdist+ATOM_MASK_PADDING)) {
@@ -827,23 +896,20 @@ public:
 			numeric::xyzVector< core::Real> CB = pose.residue(i).atom(5).xyz();
 			numeric::xyzVector< core::Real> atm_idx = c2i_*CB;
 			numeric::xyzVector< core::Real> atm_j, del_ij;
-			atm_idx[0] = pos_mod (atm_idx[0], (Real)ngridA);
-			atm_idx[1] = pos_mod (atm_idx[1], (Real)ngridB);
-			atm_idx[2] = pos_mod (atm_idx[2], (Real)ngridC);
 
-			for (int z=1; z<=ngridC; ++z) {
+			for (int z=1; z<=oversamplegrid_[2]; ++z) {
 				atm_j[2] = z-1;
-				del_ij[2] = min_mod(atm_idx[2] - atm_j[2], (Real)ngridC);
+				del_ij[2] = min_mod(atm_idx[2] - atm_j[2], (Real)oversamplegrid_[2]);
 				del_ij[0] = del_ij[1] = 0.0;
 				if ((i2c_*del_ij).length_squared() > (interfacedist_+ATOM_MASK_PADDING)*(interfacedist_+ATOM_MASK_PADDING)) continue;
-				for (int y=1; y<=ngridB; ++y) {
+				for (int y=1; y<=oversamplegrid_[1]; ++y) {
 					atm_j[1] = y-1;
-					del_ij[1] = min_mod(atm_idx[1] - atm_j[1], (Real)ngridB);
+					del_ij[1] = min_mod(atm_idx[1] - atm_j[1], (Real)oversamplegrid_[1]);
 					del_ij[0] = 0.0;
 					if ((i2c_*del_ij).length_squared() > (interfacedist_+ATOM_MASK_PADDING)*(interfacedist_+ATOM_MASK_PADDING)) continue;
-					for (int x=1; x<=ngridA; ++x) {
+					for (int x=1; x<=oversamplegrid_[0]; ++x) {
 						atm_j[0] = x-1;
-						del_ij[0] = min_mod(atm_idx[0] - atm_j[0], (Real)ngridA);
+						del_ij[0] = min_mod(atm_idx[0] - atm_j[0], (Real)oversamplegrid_[0]);
 						numeric::xyzVector< core::Real > cart_del_ij = i2c_*del_ij;
 						core::Real d2 = (cart_del_ij).length_squared();
 						if (d2 <= (interfacedist_+ATOM_MASK_PADDING)*(interfacedist_+ATOM_MASK_PADDING)) {
@@ -861,7 +927,7 @@ public:
 		}
 
 		// factor CA mask out of CB mask; invert both
-		for (int i=0 ; i<ngridA*ngridB*ngridC; ++i) {
+		for (int i=0 ; i<oversamplegrid_[0]*oversamplegrid_[1]*oversamplegrid_[2]; ++i) {
 			rho_cb[i] = (1-rho_cb[i])*rho_ca[i];
 			rho_ca[i] = (1-rho_ca[i]);
 		}
@@ -870,26 +936,69 @@ public:
 	// trilinear interpolation of map subject to real-space rotation
 	void resample_maps(
 			FArray3D<Real> const &rho_ca, FArray3D<Real> const &rho_cb,
-			xyzMatrix<Real> R,
+			xyzMatrix<Real> R, Spacegroup const &sg,
 			FArray3D<Real> &r_rho_ca, FArray3D<Real> &r_rho_cb ) {
-		r_rho_ca.dimension( rho_ca.u1(), rho_ca.u2(), rho_ca.u3() );
-		r_rho_cb.dimension( rho_cb.u1(), rho_cb.u2(), rho_cb.u3() );
+		r_rho_ca.dimension( grid_[0], grid_[1], grid_[2] ); r_rho_ca=0;
+		r_rho_cb.dimension( grid_[0], grid_[1], grid_[2] ); r_rho_cb=0;
 
 		xyzMatrix<Real> Ri = numeric::inverse(R);
-		int nx=rho_ca.u1(), ny=rho_ca.u2(), nz=rho_ca.u3();
 
+		// smarter logic here could possibly save some time
+		for (int a=-1; a<=1; ++a)
+		for (int b=-1; b<=1; ++b)
+		for (int c=-1; c<=1; ++c) {
+			for (int z=1; z<=grid_[2]; ++z)
+			for (int y=1; y<=grid_[1]; ++y)
+			for (int x=1; x<=grid_[0]; ++x) {
+				int cx=x-1,cy=y-1,cz=z-1;
+				if (cx>grid_[0]/2) cx -= grid_[0];
+				if (cy>grid_[1]/2) cy -= grid_[1];
+				if (cz>grid_[2]/2) cz -= grid_[2];
+
+				cx += a*grid_[0];
+				cy += b*grid_[1];
+				cz += c*grid_[2];
+
+				xyzMatrix<Real> Rgridspace = c2i_*Ri*i2c_;
+				xyzVector<Real> rx = Rgridspace*xyzVector<Real>(cx,cy,cz);
+
+				Real rho_ca_rx = interp_linear( rho_ca, rx );
+				Real rho_cb_rx = interp_linear( rho_cb, rx );
+				r_rho_ca(x,y,z) += rho_ca_rx;
+				r_rho_cb(x,y,z) += rho_cb_rx;
+			}
+//std::ostringstream oss; oss << "shift"<<a<<"_"<<b<<"_"<<c<<".mrc";
+//writeMRC( r_rho_ca, sg, oss.str(), false );
+
+		}
+	}
+
+	void get_self_interactions(
+			FArray3D<Real> const &r_rho_ca, FArray3D<Real> const &r_rho_cb,
+			Real &ca_overlap, Real &cb_overlap ) {
+		int nx=grid_[0], ny=grid_[1], nz=grid_[2];
+		ca_overlap = cb_overlap = 0;
+
+		// to compute these quantities exactly, we need the product of overlaps; we have the sum
+		// we therefor assume:
+		//   1 ) values <1 all come from 1 component (underestimation)
+		//   2 ) values >1 are equally split between the two (overestimation)
+		// add a buffer to handle interpolation effects
+		// hopefully the over- and under- estimate cancel out
 		for (int z=1; z<=nz; ++z)
 		for (int y=1; y<=ny; ++y)
 		for (int x=1; x<=nx; ++x) {
-			int cx=x-1,cy=y-1,cz=z-1;
-			if (cx>nx/2) cx -= nx;
-			if (cy>ny/2) cy -= ny;
-			if (cz>nz/2) cz -= nz;
-			xyzVector<Real> rx = c2i_*Ri*i2c_*xyzVector<Real>(cx,cy,cz);
-			Real rho_ca_rx = interp_linear( rho_ca, rx+1 );
-			Real rho_cb_rx = interp_linear( rho_cb, rx+1 );
-			r_rho_ca(x,y,z) = rho_ca_rx;
-			r_rho_cb(x,y,z) = rho_cb_rx;
+			if (r_rho_ca(x,y,z) > 1.000) {
+				//if (r_rho_ca(x,y,z) > 1.0) TR << x<<","<<y<<","<<z<<": "<<r_rho_ca(x,y,z)<<std::endl;
+				ca_overlap += (r_rho_ca(x,y,z)/2.0)*(r_rho_ca(x,y,z)/2.0);
+			}
+			if (r_rho_cb(x,y,z) > 1.000)
+				cb_overlap += (r_rho_cb(x,y,z)/2.0)*(r_rho_cb(x,y,z)/2.0);
+		}
+
+		if (option[ crystdock::debug ]) {
+			TR << "ca_overlap = " << ca_overlap << std::endl;
+			TR << "cb_overlap = " << cb_overlap << std::endl;
 		}
 	}
 
@@ -1092,7 +1201,7 @@ public:
 		bool SLICE_NONE = (!SLICE_X && !SLICE_Y && !SLICE_Z);
 
 		if (SLICE_NONE) {  // case A
-			if (option[ crystdock::debug ]|| option[ crystdock::debug_exact ]) std::cerr << "SLICE_NONE!\n";
+			if (option[ crystdock::debug ]|| option[ crystdock::debug_exact ]) TR << "SLICE_NONE!\n";
 			transform_map_offset1( rho, S, working_trans);
 			transform_map_offset1( Srho, S, working_strans);
 
@@ -1101,13 +1210,13 @@ public:
 			for (int i=0; i<Npoints; ++i) Fworking_trans[i] *= std::conj(Fworking_strans[i]);
 			numeric::fourier::ifft3(Fworking_trans, conv_out);
 		} else if (SLICE_ALL) {
-			if (option[ crystdock::debug ]) std::cerr << "SLICE_ALL!\n";
+			if (option[ crystdock::debug ]) TR << "SLICE_ALL!\n";
 			core::Real dotProd=0;
 			for (int i=0; i<Npoints; ++i) dotProd += rho[i]*Srho[i];
 			conv_out.dimension( rho.u1(),rho.u2(),rho.u3() );
 			conv_out = dotProd;
 		} else {
-			if (option[ crystdock::debug ]|| option[ crystdock::debug_exact ]) std::cerr << "SLICE_ONE! " << SLICE_X << " " << SLICE_Y << " " << SLICE_Z << "\n";
+			if (option[ crystdock::debug ]|| option[ crystdock::debug_exact ]) TR << "SLICE_ONE! " << SLICE_X << " " << SLICE_Y << " " << SLICE_Z << "\n";
 
 			xyzMatrix<Real> Sadjusted = S;
 			if (SLICE_X) Sadjusted.xx() = 1;
@@ -1132,6 +1241,7 @@ public:
 			option[ crystdock::alpha ],option[ crystdock::beta ],option[ crystdock::gamma ] );
 
 		Real rotstep = option[ crystdock::rot_step ];
+		Real maxclash = option[ crystdock::maxclash ];
 
 		// center pose at origin
 		center_pose_at_origin( pose );
@@ -1142,30 +1252,33 @@ public:
 		CheshireCell cc;
 		sg.get_symmops( rts, cc );
 		if (option[ crystdock::debug ] || option[ crystdock::debug_exact ] )
-			std::cerr << "search [ " << cc.low[0] <<","<< cc.low[1] <<","<< cc.low[2] << " : "
+			TR << "search [ " << cc.low[0] <<","<< cc.low[1] <<","<< cc.low[2] << " : "
 			          << cc.high[0] <<","<< cc.high[1] <<","<< cc.high[2] << "]" << std::endl;
 
 		// compute rho_ca, rho_cb
 		FArray3D<Real> rho_ca, rho_cb, r_rho_ca, r_rho_cb;
 
 		setup_maps( pose, rho_ca, rho_cb, sg, option[ crystdock::trans_step ]);
-		Size Npoints = rho_ca.u1()*rho_ca.u2()*rho_ca.u3();
+
+		Size Npoints = grid_[0]*grid_[1]*grid_[2];
 		Real voxel_volume = sg.volume() / Npoints;
 
 		xyzVector<Size> ccIndexLow(
-			(Size)std::floor(cc.low[0]*rho_ca.u1()+1.5),
-			(Size)std::floor(cc.low[1]*rho_ca.u2()+1.5),
-			(Size)std::floor(cc.low[2]*rho_ca.u3()+1.5));
+			(Size)std::floor(cc.low[0]*grid_[0]+1.5),
+			(Size)std::floor(cc.low[1]*grid_[1]+1.5),
+			(Size)std::floor(cc.low[2]*grid_[2]+1.5));
 		xyzVector<Size> ccIndexHigh(
-			(Size)std::floor(cc.high[0]*rho_ca.u1()+0.5),
-			(Size)std::floor(cc.high[1]*rho_ca.u2()+0.5),
-			(Size)std::floor(cc.high[2]*rho_ca.u3()+0.5));
+			(Size)std::floor(cc.high[0]*grid_[0]+0.5),
+			(Size)std::floor(cc.high[1]*grid_[1]+0.5),
+			(Size)std::floor(cc.high[2]*grid_[2]+0.5));
 
+		for (int i=0; i<3; i++)
+			if (ccIndexHigh[i]<ccIndexLow[i])
+				ccIndexHigh[i]=ccIndexLow[i];
 
 		if (option[ crystdock::debug ]|| option[ crystdock::debug_exact ]) {
-			writeMRC( rho_ca, sg, "ca_mask.mrc" );
-			writeMRC( rho_cb, sg, "cb_mask.mrc" );
-			rotstep = 0;
+			writeMRC( rho_ca, sg, "ca_mask.mrc", true );
+			writeMRC( rho_cb, sg, "cb_mask.mrc", true );
 		}
 
 		// space for intermediate results
@@ -1182,12 +1295,18 @@ public:
 		// foreach rotation
 		UniformRotationSampler urs( rotstep );
 		urs.remove_redundant( rts, i2c_, c2i_ );
-		Size nrots = urs.nrots();
-		for (int ctr=1; ctr<=nrots; ++ctr) {
-			std::cerr << "Rotation " << ctr << " of " << nrots << std::endl;
+
+		Size lowerbound = 1, upperbound = urs.nrots();
+		if ( option[ crystdock::rotnum ].user() ) {
+			lowerbound = upperbound = option[ crystdock::rotnum ]();
+			runtime_assert( upperbound<=urs.nrots() );
+		}
+
+		for (int ctr=lowerbound; ctr<=upperbound ; ++ctr) {
+			TR << "Rotation " << ctr << " of " << urs.nrots() << std::endl;
 			urs.get(ctr, r_local);
 
-			resample_maps( rho_ca, rho_cb, r_local, r_rho_ca, r_rho_cb );
+			resample_maps( rho_ca, rho_cb, r_local, sg, r_rho_ca, r_rho_cb );
 
 			if (option[ crystdock::debug ]|| option[ crystdock::debug_exact ] ) {
 				std::ostringstream oss1; oss1 << "rot"<<ctr<<".mrc";
@@ -1198,16 +1317,29 @@ public:
 
 			// store info
 			FArray3D<Real> collision_map, ex_collision_map;
-			collision_map.dimension( rho_ca.u1() , rho_ca.u2() , rho_ca.u3() );
+			collision_map.dimension( grid_[0] , grid_[1] , grid_[2] );
 			collision_map=0;
 
 			if (option[ crystdock::debug_exact ] ) {
-				ex_collision_map.dimension( rho_ca.u1() , rho_ca.u2() , rho_ca.u3() );
+				ex_collision_map.dimension( grid_[0] , grid_[1] , grid_[2] );
 				ex_collision_map=0;
 			}
 
 			FArray3D<InterfaceInfo> interface_map;
-			interface_map.dimension( rho_ca.u1() , rho_ca.u2() , rho_ca.u3() );
+			interface_map.dimension( grid_[0] , grid_[1] , grid_[2] );
+
+			// get "P1" interactions
+			Real self_ca, self_cb;
+			get_self_interactions( r_rho_ca, r_rho_cb , self_ca, self_cb );
+			if (self_ca >= maxclash) {
+				TR << "   self clashing!" << std::endl;
+				writeMRC( r_rho_ca, sg, "clash.mrc" );
+				continue;   // no need to continue
+			}
+
+			//UNCOMMENT to add self interfaces
+			//  before doing this get_interface_score needs to be smarter about what interfaces constitute a fully connected lattice
+			//	for (int i=0; i<Npoints; ++i) interface_map[i].add_interface( SingleInterface(s, conv_out[i]) );
 
 			// foreach symmop
 			for (int s=2; s<=rts.size(); ++s) {   // s==1 is always identity
@@ -1215,7 +1347,6 @@ public:
 
 				transform_map( r_rho_ca, rts[s].get_rotation(), rts[s].get_translation(), working_s);
 				do_convolution( r_rho_ca, working_s, resample, conv_out);
-				//for (int i=0; i<Npoints; ++i) collision_map[i] += conv_out[i];
 				for (int z=ccIndexLow[2]; z<=ccIndexHigh[2]; ++z)
 				for (int y=ccIndexLow[1]; y<=ccIndexHigh[1]; ++y)
 				for (int x=ccIndexLow[0]; x<=ccIndexHigh[0]; ++x) {
@@ -1225,13 +1356,13 @@ public:
 				// debug: exact CA fft
 				if (option[ crystdock::debug_exact ] ) {
 					FArray3D<Real> shift_rho_ca, s_shift_rho_ca;
-					shift_rho_ca.dimension( rho_ca.u1() , rho_ca.u2() , rho_ca.u3() );
+					shift_rho_ca.dimension( grid_[0] , grid_[1] , grid_[2] );
 					for (int sz=ccIndexLow[2]-1; sz<=ccIndexHigh[2]-1; ++sz)
 					for (int sy=ccIndexLow[1]-1; sy<=ccIndexHigh[1]-1; ++sy)
 					for (int sx=ccIndexLow[0]-1; sx<=ccIndexHigh[0]-1; ++sx) {
-						for (int z=1; z<=rho_ca.u3(); ++z)
-						for (int y=1; y<=rho_ca.u2(); ++y)
-						for (int x=1; x<=rho_ca.u1(); ++x) {
+						for (int z=1; z<=grid_[2]; ++z)
+						for (int y=1; y<=grid_[1]; ++y)
+						for (int x=1; x<=grid_[0]; ++x) {
 							int cx = pos_mod( x-sx-1 , rho_ca.u1() ) + 1;
 							int cy = pos_mod( y-sy-1 , rho_ca.u2() ) + 1;
 							int cz = pos_mod( z-sz-1 , rho_ca.u3() ) + 1;
@@ -1254,12 +1385,12 @@ public:
 			if (option[ crystdock::debug ] || option[ crystdock::debug_exact ]) {
 				std::ostringstream oss; oss << "collisionmap_"<<ctr<<".mrc";
 				FArray3D<Real> collision_map_dump = collision_map;
-				for (int i=0; i<Npoints; ++i) collision_map_dump[i] = 1-collision_map[i];
+				for (int i=0; i<Npoints; ++i) collision_map_dump[i] = maxclash-collision_map[i];
 				writeMRC( collision_map_dump, sg, oss.str() );
 
 				if( option[ crystdock::debug_exact ] ) {
 					std::ostringstream oss2; oss2 << "ex_collisionmap_"<<ctr<<".mrc";
-					for (int i=0; i<Npoints; ++i) collision_map_dump[i] = 1-ex_collision_map[i];
+					for (int i=0; i<Npoints; ++i) collision_map_dump[i] = maxclash-ex_collision_map[i];
 					writeMRC( collision_map_dump, sg, oss2.str() );
 
 					// get correl
@@ -1272,7 +1403,7 @@ public:
 						y  += ex_collision_map[i];
 					}
 					Real correl = (Npoints*xy - x*y) / std::sqrt( (Npoints*x2-x*x) * (Npoints*y2-y*y) );
-					std::cerr << "correl = " << correl << std::endl;
+					TR << "correl = " << correl << std::endl;
 
 					collision_map = ex_collision_map;
 				}
@@ -1282,7 +1413,7 @@ public:
 			for (int z=ccIndexLow[2]; z<=ccIndexHigh[2]; ++z)
 			for (int y=ccIndexLow[1]; y<=ccIndexHigh[1]; ++y)
 			for (int x=ccIndexLow[0]; x<=ccIndexHigh[0]; ++x) {
-				if (collision_map(x,y,z) < 1.0) {
+				if (collision_map(x,y,z) < maxclash) {
 					nnonclashing++;
 					core::Real score_xyz = voxel_volume * sg.get_interface_score( interface_map(x,y,z) );
 					xyzVector<Real> xyz((Real)x-1,(Real)y-1,(Real)z-1);
@@ -1291,17 +1422,16 @@ public:
 				}
 			}
 			if (IDB.size()>0)
-				std::cerr << IDB.size() << " of " << nnonclashing << " nonclashing configurations; min_score = " << IDB.top().score << std::endl;
+				TR << IDB.size() << " of " << nnonclashing << " nonclashing configurations; min_score = " << IDB.top().score << std::endl;
 			else
-				std::cerr << IDB.size() << " configurations" << std::endl;
+				TR << IDB.size() << " configurations" << std::endl;
 		}
 
 		// DONE!  dump hits to stdout
 		int nhits = IDB.size();
 		for (int i=1; i<=nhits; ++i) {
 			InterfaceHit ih = IDB.pop();
-			std::cerr << i << ": " << ih.score << " " << ih.x << " "  << ih.y << " "  << ih.z << " "
-				<< ih.rot_index  << " " << std::endl;
+			TR << i << ": " << ih.score << " " << ih.x << " "  << ih.y << " "  << ih.z << " " << ih.rot_index  << " " << std::endl;
 
 			// Treat tags as file names so that we put the number before the extension.
 			std::string base_name = protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag();
@@ -1320,9 +1450,9 @@ public:
 				int sz = pos_mod( (int)xyz[2] , rho_ca.u3() );
 
 				FArray3D<Real> shift_rho_ca, s_shift_rho_ca;
-				shift_rho_ca.dimension( rho_ca.u1() , rho_ca.u2() , rho_ca.u3() );
+				shift_rho_ca.dimension( grid_[0], grid_[1],grid_[2] );
 
-				std::cerr << "dumping shift(" << sx << "," << sy << "," << sz << ")\n";
+				TR << "dumping shift(" << sx << "," << sy << "," << sz << ")" << std::endl;
 
 				for (int z=1; z<=rho_ca.u3(); ++z)
 				for (int y=1; y<=rho_ca.u2(); ++y)
@@ -1332,9 +1462,9 @@ public:
 					int cz = pos_mod( z-sz-1 , rho_ca.u3() ) + 1;
 					shift_rho_ca(x,y,z) = r_rho_ca(cx,cy,cz);
 				}
-				transform_map( shift_rho_ca, rts[2].get_rotation(), rts[2].get_translation(), s_shift_rho_ca);
-
 				writeMRC( shift_rho_ca, sg, "shift_rho_ca.mrc" );
+
+				transform_map( shift_rho_ca, rts[2].get_rotation(), rts[2].get_translation(), s_shift_rho_ca);
 				writeMRC( s_shift_rho_ca, sg, "s_shift_rho_ca.mrc" );
 			}
 		}
@@ -1372,11 +1502,13 @@ try {
 	NEW_OPT(crystdock::alpha, "unit cell alpha", 90);
 	NEW_OPT(crystdock::beta, "unit cell beta", 90);
 	NEW_OPT(crystdock::gamma, "unit cell gamma", 90);
+	NEW_OPT(crystdock::maxclash, "max allowed clashscore", 5);
 	NEW_OPT(crystdock::trans_step, "translational stepsize (A)", 1);
-	NEW_OPT(crystdock::rot_step, "rotational stepsize (deg)", 10);
-	NEW_OPT(crystdock::nmodels, "#models", 1000);
-	NEW_OPT(crystdock::debug, "debug mode", false);
-	NEW_OPT(crystdock::debug_exact, "debug mode with exact calcs (slow!)", false);
+	NEW_OPT(crystdock::rot_step, "rotational stepsize (degrees) ([debug] 0 searches input rotation only)", 10);
+	NEW_OPT(crystdock::nmodels, "number of models to output", 1000);
+	NEW_OPT(crystdock::rotnum, "[debug] only run a single rotation", 0);
+	NEW_OPT(crystdock::debug, "[debug] dump intermediate info", false);
+	NEW_OPT(crystdock::debug_exact, "[debug] debug mode with exact (non-FFT) calculations (slow!)", false);
 
 	devel::init( argc, argv );
 	protocols::viewer::viewer_main( my_main );
@@ -1392,12 +1524,11 @@ try {
 ///
 ///
 void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out, CheshireCell &cc) const {
-	//fpd -- P1 will require special logic and we can't use FFT anyway
-	//if ( name_ == "P1" ) {
-	//	rt_out.resize(1);
-	//	rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
-	//	cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(0 ,0 ,0 ) );
-	//}
+	if ( name_ == "P1" ) {
+		rt_out.resize(1);
+		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
+		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(0 ,0 ,0 ) );
+	}
 	if ( name_ == "P121" || name_ == "P2") {
 		rt_out.resize(2);
 		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
@@ -1407,7 +1538,7 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out, Che
 	else if ( name_ == "P1211" || name_ == "P21" ) {
 		rt_out.resize(2);
 		rt_out[1] = core::kinematics::RT( xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0.5,0,0) );
+		rt_out[2] = core::kinematics::RT( xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , xyzVector<Real>(0,0.5,0) );
 		cc = CheshireCell( xyzVector<Real>( 0, 0, 0),xyzVector<Real>(0.5 ,0 ,0.5 ) );
 	}
 	else if ( name_ == "C121" || name_ == "C2" ) {
