@@ -1521,8 +1521,8 @@ rotate( pose::Pose & pose, Matrix const M,
 		ObjexxFCL::FArray2D< int > jump_point_( 2, num_cuts, 0 );
 		ObjexxFCL::FArray1D< int > cuts_( num_cuts, 0 );
 		for ( Size i = 1; i <= num_cuts; i++ ) {
-			jump_point_( 1, i ) = jump_partners1[ i ];
-			jump_point_( 2, i ) = jump_partners2[ i ];
+			jump_point_( 1, i ) = std::min( jump_partners1[ i ], jump_partners2[ i ] );
+			jump_point_( 2, i ) = std::max( jump_partners1[ i ], jump_partners2[ i ] );
 			cuts_( i ) = cuts[ i ];
 		}
 		f.tree_from_jumps_and_cuts( pose.total_residue(), num_cuts, jump_point_, cuts_ );
@@ -1732,8 +1732,8 @@ rotate( pose::Pose & pose, Matrix const M,
 		ObjexxFCL::FArray2D< int > jump_point_( 2, num_cuts, 0 );
 		ObjexxFCL::FArray1D< int > cuts_( num_cuts, 0 );
 		for ( Size i = 1; i <= num_cuts; i++ ) {
-			jump_point_( 1, i ) = jump_partners1[ i ];
-			jump_point_( 2, i ) = jump_partners2[ i ];
+			jump_point_( 1, i ) = std::min( jump_partners1[ i ], jump_partners2[ i ] );
+			jump_point_( 2, i ) = std::max( jump_partners1[ i ], jump_partners2[ i ] );
 			cuts_( i ) = cuts[ i ];
 		}
 		f_slice.tree_from_jumps_and_cuts( sliced_out_pose.total_residue(), num_cuts, jump_point_, cuts_ );

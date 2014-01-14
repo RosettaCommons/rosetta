@@ -167,7 +167,7 @@ StackElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scf
   rna_centroid_info.update( pose );
 
   if ( pose.energies().use_nblist() ) {
-    NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
+    NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::STACK_ELEC_NBLIST ) );
     nblist.prepare_for_scoring( pose, scfxn, *this );
   }
 
@@ -199,21 +199,20 @@ StackElecEnergy::setup_for_minimizing(
     //set_nres_mono(pose);
 
     if ( pose.energies().use_nblist() ) {
-	//if ( true ) {
-        // stash our nblist inside the pose's energies object
-        Energies & energies( pose.energies() );
+			// stash our nblist inside the pose's energies object
+			Energies & energies( pose.energies() );
 
-        // setup the atom-atom nblist
-        NeighborListOP nblist;
-        Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
-        Real const XX = coulomb().max_dis() + 2 * tolerated_motion;
-        nblist = new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX );
-        if ( pose.energies().use_nblist_auto_update() ) {
-            nblist->set_auto_update( tolerated_motion );
-        }
-        // this partially becomes the EtableEnergy classes's responsibility
-        nblist->setup( pose, sfxn, *this );
-        energies.set_nblist( EnergiesCacheableDataType::ELEC_NBLIST, nblist );
+			// setup the atom-atom nblist
+			NeighborListOP nblist;
+			Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
+			Real const XX = coulomb().max_dis() + 2 * tolerated_motion;
+			nblist = new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX );
+			if ( pose.energies().use_nblist_auto_update() ) {
+				nblist->set_auto_update( tolerated_motion );
+			}
+			// this partially becomes the EtableEnergy classes's responsibility
+			nblist->setup( pose, sfxn, *this );
+			energies.set_nblist( EnergiesCacheableDataType::STACK_ELEC_NBLIST, nblist );
     }
 }
 
@@ -571,7 +570,7 @@ StackElecEnergy::eval_atom_derivative(
     Matrix const M_i ( stub_i.M );
 
     //assert( pose.energies().use_nblist() );
-	NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
+	NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::STACK_ELEC_NBLIST ) );
 	AtomNeighbors const & nbrs( nblist.atom_neighbors( i, m ) );
 
     for ( scoring::AtomNeighbors::const_iterator it2 = nbrs.begin(),
@@ -796,7 +795,7 @@ StackElecEnergy::finalize_total_energy(
         //EnergyMap tbenergy_map;
         // add in contributions from the nblist atom-pairs
         NeighborList const & nblist
-        ( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
+        ( pose.energies().nblist( EnergiesCacheableDataType::STACK_ELEC_NBLIST ) );
 
         nblist.check_domain_map( pose.energies().domain_map() );
         utility::vector1< conformation::Residue const * > resvect;
