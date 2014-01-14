@@ -25,6 +25,7 @@
 // C++ headers
 #include <algorithm>
 #include <cmath>
+#include <complex>
 
 
 namespace numeric {
@@ -72,62 +73,32 @@ std_dev( Iterator first, Iterator last, T )
 	return std_dev_with_provided_mean( first, last, meanval );
 }
 
-template< class T >
-T errfc( T x, double tol=1e-12);
+//FPD erf and erfc with real & imaginary arguments
+//    code borrowed from http://ab-initio.mit.edu/Faddeeva
 
-template< class T >
-T errf( T x, double tol=1e-12);
+// compute w(z) = exp(-z^2) erfc(-iz) [ Faddeeva / scaled complex error func ]
+std::complex<double> w(std::complex<double> z,double relerr=0);
+double w_im(double x); // special-case code for Im[w(x)] of real x
 
-///@brief error function (provided since it is not available on all platforms' math.h)
-///       implemented using a Taylor series expansion
-template< class T >
-T errf( T x, double tol/*=1e-12*/) {
-	static const double two_sqrtpi = 1.128379167095512574;        // 2/sqrt(pi)
-	if (fabs(x) > 2.2) {
-		return 1.0 - errfc(x);     // use continued fraction when fabs(x) > 2.2
-	}
-	double sum=x, term=x, xsqr=x*x;
-	int j= 1;
-	do {
-		term*= xsqr/j;
-		sum-= term/(2*j+1);
-		++j;
-		term*= xsqr/j;
-		sum+= term/(2*j+1);
-		++j;
-	} while (fabs(term/sum) > tol);
-	return two_sqrtpi*sum;
-}
+// compute erfcx(z) = exp(z^2) erfc(z)
+std::complex<double> errfcx(std::complex<double> z, double relerr=0);
+double errfcx(double x);
 
-/// @brief complementary error function (provided since it is not available on
-/// all platforms' math.h)
-///       implemented as continued fraction
-template< class T >
-T errfc( T x, double tol/*=1e-12*/) {
-	static const double one_sqrtpi = 0.564189583547756287;        // 1/sqrt(pi)
-	if (fabs(x) < 2.2) {
-		return 1.0 - errf(x);  // use series when fabs(x) < 2.2
-	}
-	if (x<0) {               // continued fraction only valid for x>0
-		return 2.0 - errfc(-x);
-	}
-	double a=1,b=x;        //last two convergent numerators
-	double c=x,d=x*x+0.5;  //last two convergent denominators
-	double q1,q2= b/d;     //last two convergents (a/c and b/d)
-	double n= 1.0, t;
-	do {
-		t = a*n+b*x;
-		a = b;
-		b = t;
-		t = c*n+d*x;
-		c = d;
-		d = t;
-		n += 0.5;
-		q1 = q2;
-		q2 = b/d;
-	} while (fabs(q1-q2)/q2 > tol);
-	return one_sqrtpi*exp(-x*x)*q2;
-}
+// compute erf(z), the error function of complex arguments
+std::complex<double> errf(std::complex<double> z, double relerr=0);
+double errf(double x);
+
+// compute erfi(z) = -i erf(iz), the imaginary error function
+std::complex<double> errfi(std::complex<double> z, double relerr=0);
+double errfi(double x);
+
+// compute erfc(z) = 1 - erf(z), the complementary error function
+std::complex<double> errfc(std::complex<double> z, double relerr=0);
+double errfc(double x);
+
+// compute Dawson(z) = sqrt(pi)/2  *  exp(-z^2) * erfi(z)
+std::complex<double> Dawson(std::complex<double> z, double relerr=0);
+double Dawson(double x); // special case for real x
 
 /// @brief Returns the Kullback-Leibler divergence (aka relative entropy)
 /// between two discrete probability distributions.
@@ -137,12 +108,12 @@ numeric::Real kl_divergence(
 );
 
 
-numeric::Real 
+numeric::Real
 corrcoef(
 					utility::vector1< numeric::Real > const & vec1,
 					utility::vector1< numeric::Real > const & vec2);
 
-numeric::Real 
+numeric::Real
 corrcoef_with_provided_mean_and_std_dev(
 																				 utility::vector1< numeric::Real > const & vec1,
 																				 numeric::Real m1,
@@ -151,12 +122,12 @@ corrcoef_with_provided_mean_and_std_dev(
 																				 numeric::Real m2,
 																				 numeric::Real sd2);
 
-numeric::Real 
+numeric::Real
 cov(
 					utility::vector1< numeric::Real > const & vec1,
 					utility::vector1< numeric::Real > const & vec2);
 
-numeric::Real 
+numeric::Real
 cov_with_provided_mean(
 																				 utility::vector1< numeric::Real > const & vec1,
 																				 numeric::Real m1,

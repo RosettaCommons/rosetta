@@ -327,11 +327,11 @@ densityTools()
 
 	// verbose
 	if ( option[ denstools::verbose ]() ) {
-			std::cerr << "1/res count";
+			std::cerr << "res count";
 			if (rescale_map)              std::cerr << " I_map1";
 			if (rescale_map && usermap)   std::cerr << " I_map2";
 			if (rescale_map && userpose)  std::cerr << " I_model" ;
-			if (usermap)  std::cerr << " FSC_mapmap";
+			if (usermap)  std::cerr << " FSC_mapmap" << " errPhase_mapmap";
 			if (userpose)  std::cerr << " marked FSC_mapmodel";
 			if (userpose && usermap) std::cerr << " errPhase_mapmodel";
 			std::cerr << std::endl;
@@ -340,7 +340,7 @@ densityTools()
 			if (rescale_map)              std::cerr << " " << mapI[i];
 			if (rescale_map && usermap)   std::cerr << " " << mapAltI[i];
 			if (rescale_map && userpose)  std::cerr << " " << modelI[i];
-			if (usermap)  std::cerr << " " << mapmapFSC[i] ;
+			if (usermap)  std::cerr << " " << mapmapFSC[i]<< " " << mapmapPhaseError[i] ;
 			if (userpose)  std::cerr << " " << markedBins[i]  << " " << modelmapFSC[i] ;
 			if (userpose && usermap) std::cerr << " " << modelmapPhaseError[i];
 			std::cerr << std::endl;

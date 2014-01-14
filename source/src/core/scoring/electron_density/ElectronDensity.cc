@@ -64,6 +64,8 @@
 #include <utility/string_util.hh>
 #include <ObjexxFCL/format.hh>
 
+#include <boost/math/special_functions/bessel.hpp>
+
 // C++ headers
 #include <fstream>
 #include <limits>
@@ -1663,11 +1665,12 @@ ElectronDensity::getMapMapError(
 					if (denom_i <= 1e-6) continue;
 
 					Real ratio_i = std::max( std::min( num_i/denom_i,1.0) , -1.0 );
+					Real fX = ratio_i;
+					//Real fY = sqrt( 1-ratio_i*ratio_i );
 
-					Real err = acos( ratio_i );
-					if (H==0 || K==0 || L==0) err = std::min( err, M_PI-err );
+					if (H==0 || K==0 || L==0) fX = std::abs(fX);
 
-					phaseError[bucket_i] += scale*err*err;
+					phaseError[bucket_i] += scale*fX;
 				}
 			}
 		}
@@ -1702,7 +1705,7 @@ ElectronDensity::getMapMapError(
 					// centrics
 					Real scale=1.0;
 					if (H==0 || K==0 || L==0) {
-						delX = std::min( delX, -del_ampl * ratio_i - 1 );
+						delX = std::min( delX, 1 + del_ampl * ratio_i );
 						scale=0.5;
 					}
 
@@ -1719,7 +1722,11 @@ ElectronDensity::getMapMapError(
 		denom1[i] = sqrt(denom1[i]);
 		denom2[i] = sqrt(denom2[i]);
 		FSC[i] = num[i] / (denom1[i]*denom2[i]);
-		phaseError[i] = sqrt( phaseError[i] / counter[i] );
+
+		phaseError[i] = abs( phaseError[i]) / counter[i] ;
+		phaseError[i] = phaseError[i] * (2-phaseError[i]*phaseError[i]) / (1-phaseError[i]*phaseError[i]);  // approx von mises Kappa
+		phaseError[i] = sqrt(1/phaseError[i]);  // convert Kappa to sigma^2
+
 		complexPlaneError[i] = sqrt( complexPlaneError[i] / counter[i] );
 	}
 }
@@ -1856,12 +1863,19 @@ ElectronDensity::getModelMapError(
 					Real err_j =  acos( ratio_i );
 					if (H==0 || K==0 || L==0) err_j = std::min( err_j, M_PI-err_j );
 
-					Real err_k = mapmapPhaseError[bucket_i];
-					std::complex<Real> ml_error = exp( err_j*err_j / (std::complex<Real>(0,1)-2*err_k*err_k) );
-					ml_error /= sqrt( 1.0+2.0*std::complex<Real>(0,1)*err_k*err_k );
+					// cap map-map error at 4 (where phase is essentially random)
+					//    to avoid numeric artifacts
+					Real err_k = std::min( mapmapPhaseError[bucket_i] , 4.0 );
 
+					// The expected value of phase error:
+					// \[Integral]E^(-((-j + x)^2/(2 k^2)) - I Abs[x])/(  k Sqrt[2 \[Pi]]) \[DifferentialD]{x}
+					// -Arg[1/2 E^(-I j - k^2/2) (1 + Erf[(j - I k^2)/(Sqrt[2] k)] + E^(2 I j) Erfc[(j + I k^2)/(Sqrt[2] k)])
+					std::complex<Real> ml_error = 0.5 *
+							exp( -std::complex<Real>(0,1)*err_j - 0.5*err_k*err_k ) *
+							( 1.0 + numeric::statistics::errf( (err_j-std::complex<Real>(0,1.0)*err_k*err_k) / (err_k*sqrt(2.0)) ) +
+							  exp(2.0*std::complex<Real>(0,1.0)*err_j) * numeric::statistics::errfc( (err_j+std::complex<Real>(0,1)*err_k*err_k) / (err_k*sqrt(2.0)) ) );
 					Real err = -std::arg( ml_error );  // E (phase_error)^2
-					phaseError[bucket_i] += err;
+					phaseError[bucket_i] += scale*err;
 
 					phaseErrorSum += (1.0/(s_i*s_i))*err;
 					wtS2+=(1.0/(s_i*s_i));
@@ -1869,12 +1883,11 @@ ElectronDensity::getModelMapError(
 			}
 		}
 	}
-	phaseErrorSum = sqrt( phaseErrorSum / wtS2 );
+	phaseErrorSum = ( phaseErrorSum / wtS2 );
 
 	// pass 2: error in cplx plane
 	// iterate to optimize a parameter k
 	// use newton's method
-
 	// 2a compute cplx plane distance for each reflection
 	ObjexxFCL::FArray3D< float > dists;
 	dists.dimension(density.u1(),density.u2(),density.u3());
@@ -2029,7 +2042,7 @@ ElectronDensity::getModelMapError(
 		denom1[i] = sqrt(denom1[i]);
 		denom2[i] = sqrt(denom2[i]);
 		FSC[i] = num[i] / (denom1[i]*denom2[i]);
-		phaseError[i] = sqrt( phaseError[i] / counter[i] );
+		phaseError[i] = ( phaseError[i] / counter[i] );
 	}
 
 	// clear Fdensity since it's masked
