@@ -157,6 +157,9 @@ namespace rna {
 		utility::vector1< core::Size > const & terminal_res() const { return terminal_res_; }
 		void set_terminal_res(  utility::vector1< core::Size > const & setting ){  terminal_res_ = setting; }
 
+		bool const & sampler_perform_phosphate_pack() const { return sampler_perform_phosphate_pack_; }
+		void set_sampler_perform_phosphate_pack( bool const & setting ){ sampler_perform_phosphate_pack_ = setting; }
+
 	private:
 
 		bool verbose_scores_;
@@ -186,6 +189,7 @@ namespace rna {
 		core::Real constraint_x0_;
 		core::Real constraint_tol_;
 		bool make_movie_;
+		bool sampler_perform_phosphate_pack_;
 		utility::vector1< core::Size > extra_minimize_res_;
 		utility::vector1< core::Size > syn_chi_res_list_;
 		utility::vector1< core::Size > terminal_res_;

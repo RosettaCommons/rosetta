@@ -115,8 +115,10 @@ namespace screener {
 
 		if ( output_pdb_ ) base_pose_screen.dump_pdb( "base_atr_rep_before.pdb" );
 
+		pose::remove_variant_type_from_pose_residue( base_pose_screen, "FIVE_PRIME_PHOSPHATE", working_moving_res_ );
 		pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_PHOSPHATE", working_moving_res_ ); //May 7...
 		if ( ( working_moving_res_ + 1 ) <= nres ){
+			pose::remove_variant_type_from_pose_residue( base_pose_screen, "FIVE_PRIME_PHOSPHATE", working_moving_res_ + 1 );
 			pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_PHOSPHATE", working_moving_res_ + 1 ); //May 7...
 		}
 

@@ -15,48 +15,32 @@
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED
-//#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/chemical/rna/RNA_Util.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_ScoringInfo.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/rna/RNA_ResidueLevelTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/sequence/util.hh>
-// AUTO-REMOVED #include <core/io/silent/RNA_SilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <basic/basic.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
 #include <core/init/init.hh>
 
 #include <core/io/pdb/pose_io.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
-// AUTO-REMOVED #include <numeric/conversions.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
-// AUTO-REMOVED #include <protocols/farna/RNA_DeNovoProtocol.hh>
-// AUTO-REMOVED #include <protocols/farna/RNA_StructureParameters.hh>
 #include <protocols/farna/RNA_ProtocolUtil.hh>
 
 
@@ -223,7 +207,7 @@ rna_design_test()
 
 		if ( option[ disable_o2prime_rotamers ]() ) task->nonconst_residue_task(ii).sample_proton_chi( false );
 
-		if ( option[ sample_chi ]() ) task->nonconst_residue_task(ii).sample_rna_chi( true );
+		if ( option[ sample_chi ]() ) task->nonconst_residue_task(ii).nonconst_rna_task().set_sample_rna_chi( true );
 
 		// Can input this from command line:
 		//		task->nonconst_residue_task( ii ).or_ex4( true );

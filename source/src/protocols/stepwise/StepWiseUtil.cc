@@ -1349,18 +1349,32 @@ rotate( pose::Pose & pose, Matrix const M,
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	definite_terminal_root( pose::Pose const & pose, Size const i ){
+		using namespace core::pose::full_model_info;
+		FullModelInfo const & full_model_info = const_full_model_info( pose );
+		utility::vector1< Size > const & res_list = full_model_info.res_list();
+		utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+		if ( res_list[ i ] == 1 ||
+				 cutpoint_open_in_full_model.has_value( res_list[ i ] - 1 ) ){ // great, nothing will ever get prepended here.
+			return true;
+		}
+		if ( res_list[ i ] == full_model_info.size() ||
+				 cutpoint_open_in_full_model.has_value( res_list[ i ] ) ){ // great, nothing will ever get appended here.
+			return true;
+		}
+		return false;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	try_reroot_at_fixed_domain( pose::Pose & pose ){
 
 		using namespace core::pose::full_model_info;
 		kinematics::FoldTree f = pose.fold_tree();
-		utility::vector1< Size > const pose_domain_map = figure_out_pose_domain_map( pose );
 		Size new_root( 0 );
 		for ( Size n = 1; n <= f.nres(); n++ ){
-			if ( pose_domain_map[ n ] > 0 &&
-					 f.possible_root( n ) &&
-					 ( n == 1 || f.is_cutpoint( n - 1 ) ||
-						 pose_domain_map[ n - 1 ] != pose_domain_map[ n ] ) ){
+			if ( definite_terminal_root( pose, n ) ){
 				new_root = n; break;
 			}
 		}
@@ -1574,12 +1588,8 @@ rotate( pose::Pose & pose, Matrix const M,
 		runtime_assert( res_to_add < pose.total_residue() );
 		if ( check_fold_tree ) runtime_assert( pose.fold_tree().is_cutpoint( res_to_add ) );
 
-		if ( pose.residue_type( res_to_add ).has_variant_type( UPPER_TERMINUS ) ) {
-			remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS, res_to_add );
-		}
-		if ( pose.residue_type( res_to_add + 1 ).has_variant_type( LOWER_TERMINUS ) ) {
-			remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS, res_to_add + 1 );
-		}
+		remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS, res_to_add );
+		remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS, res_to_add + 1 );
 
 		if ( pose.residue_type( res_to_add ).is_RNA() ){
 			// could also keep track of alpha, beta, etc.
@@ -1856,22 +1866,18 @@ rotate( pose::Pose & pose, Matrix const M,
 				 ! cutpoint_open_in_full_model.has_value( res_list[ res ]) ){
 
 			// can happen after additions
-			if ( pose.residue_type( res + 1 ).has_variant_type( VIRTUAL_PHOSPHATE) ) {
-				remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, res + 1 );
-			}
+			remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, res + 1 );
 
 			// can happen after additions
 			correctly_add_cutpoint_variants( pose, res );
 
 			// leave virtual riboses in this should actually get instantiated by the modeler
-			//if ( pose.residue_type( res ).has_variant_type( "VIRTUAL_RIBOSE" ) )	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", res );
+			//	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", res );
 
 		} else{
 
 			// can happen after deletions
-			if ( pose.residue_type( res ).has_variant_type( CUTPOINT_LOWER ) ){
-				remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, res );
-			}
+			remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, res );
 
 		}
 
@@ -1900,23 +1906,22 @@ rotate( pose::Pose & pose, Matrix const M,
 			correctly_add_cutpoint_variants( pose, res - 1 );
 
 			// This should actually be instantiated by the modeler.
-			//if ( pose.residue_type( res ).has_variant_type( "VIRTUAL_RIBOSE" ) )	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", res );
+			//	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", res );
 
 		} else {
 
 			// can happen after additions
-			if ( pose.residue_type( res ).is_RNA() && !pose.residue_type( res ).has_variant_type( "VIRTUAL_PHOSPHATE" ) ) {
+			if ( pose.residue_type( res ).is_RNA() && !pose.residue_type( res ).has_variant_type( "FIVE_PRIME_PHOSPHATE" ) ){
 				add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res );
 			}
 
 			// can happen after deletions
-			if ( pose.residue_type( res ).has_variant_type( CUTPOINT_UPPER ) ){
-				remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, res );
-			}
+			remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, res );
 
 		}
 	}
 
+	////////////////////////////////////////////////////////////////////
 	void
 	fix_up_residue_type_variants_at_floating_base( pose::Pose & pose, Size const res ) {
 
@@ -1936,9 +1941,7 @@ rotate( pose::Pose & pose, Matrix const M,
 				 res_list[ res ] + 1 == res_list[ res + 1 ] &&
 				 ! cutpoint_open_in_full_model.has_value( res_list[ res ]) ) return;
 
-		if ( !pose.residue_type( res ).has_variant_type( "VIRTUAL_RIBOSE" ) )	{
-			add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", res );
-		}
+		add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", res );
 
 	}
 
@@ -1952,12 +1955,16 @@ rotate( pose::Pose & pose, Matrix const M,
 
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
 
+			remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS, n );
+			remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS, n );
+
 			// Are we at a strand beginning?
 			bool const at_strand_beginning = ( n == 1 || pose.fold_tree().is_cutpoint( n-1 ) );
 			if ( at_strand_beginning ) {
 				fix_up_residue_type_variants_at_strand_beginning( pose, n );
 			} else { // make sure there is nothing crazy here
-				if ( pose.residue_type( n ).has_variant_type( VIRTUAL_PHOSPHATE ) )	remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, n );
+				remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, n );
+				remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", n );
 				// don't remove virtual sugars -- those will be instantiated inside the residue sampler
 				//				if ( pose.residue_type( n ).has_variant_type( "VIRTUAL_RIBOSE" ) )	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", n );
 				runtime_assert( !pose.residue_type( n ).has_variant_type( CUTPOINT_UPPER ) );
@@ -1970,6 +1977,7 @@ rotate( pose::Pose & pose, Matrix const M,
 			} else {
 				// don't remove virtual sugars -- those will be instantiated inside the residue sampler
 				//				if ( pose.residue_type( n ).has_variant_type( "VIRTUAL_RIBOSE" ) )	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", n );
+				remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", n );
 				runtime_assert( !pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) );
 			}
 
@@ -2169,6 +2177,19 @@ rotate( pose::Pose & pose, Matrix const M,
 		utility::vector1< Size > partition_res;
 		for ( Size i = 1; i <= pose.total_residue(); i++ ) partition_res.push_back( i );
 		return check_for_fixed_domain( pose, partition_res );
+	}
+
+	///////////////////////////////////////////////////////////////
+	void
+	make_variants_match( pose::Pose & pose,
+											 pose::Pose const & reference_pose,
+											 Size const & n,
+											 chemical::VariantType const variant_type ){
+		if ( reference_pose.residue( n ).has_variant_type( variant_type ) ){
+			add_variant_type_to_pose_residue( pose, variant_type, n );
+		} else {
+			remove_variant_type_from_pose_residue( pose, variant_type, n );
+		}
 	}
 
 } //stepwise

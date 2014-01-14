@@ -27,6 +27,8 @@
 
 // Project headers
 #include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/rna/RNA_ResidueType.hh>
 #include <basic/Tracer.hh>
 
 // Numeric headers
@@ -48,7 +50,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 // Numeric Headers
@@ -240,7 +241,7 @@ get_hb_don_chem_type(
 			return hbdon_GENERIC_SC; break;
 		}
 	}
-	utility_exit_with_message( "ERROR: Unknown Hydrogen Bond donor type for: " + don_rsd.name1() + I(3, don_rsd.seqpos()) + " " + don_rsd.atom_name( datm) + ".  Using hbdon_GENERIC_SC.");
+	utility_exit_with_message( "ERROR: Unknown Hydrogen Bond donor type for: " + A(don_rsd.name1()) + I(3, don_rsd.seqpos()) + " " + don_rsd.atom_name( datm) + ".  Using hbdon_GENERIC_SC.");
 	return hbdon_NONE;
 }
 
@@ -273,9 +274,12 @@ get_hb_acc_chem_type(
 				return hbacc_RRI_DNA;
 			}
 		}else if ( acc_rsd.is_RNA() ){
-			if (aname == " OP2" || aname == " OP1" || aname == " O3P"){
+			if (aname == " OP2" || aname == " OP1" || aname == " O3P" ||
+					aname == "XOP2" || aname == "XOP1" ||
+					aname == "YOP2" || aname == "YOP1" ){
 				return hbacc_PCA_RNA;
-			} else if (aname == " O5'" || aname == " O3'"){
+			} else if (aname == " O5'" || aname == " O3'" ||
+								 aname == "YO5'" || aname == "XO3'" ){
 				return hbacc_PES_RNA;
 			} else if (aname == " O4'"){
 				return hbacc_RRI_RNA;
@@ -421,8 +425,15 @@ get_hb_acc_chem_type(
 				return hbacc_NONE; break;
 			}
 		}
+		if ( acc_rsd.is_RNA() ){
+			if (aname == "XOP2" || aname == "XOP1" || aname == "YOP1" || aname == "YOP2" ){
+				return hbacc_PCA_RNA;
+			} else if (aname == "XO5'" || aname == "XO3'" || aname == "YO5'" ){
+				return hbacc_PES_RNA;
+			}
+		}
 	}
-	utility_exit_with_message( "unknown Hydrogen Bond acceptor type for: " + acc_rsd.name1() + I(3,acc_rsd.seqpos()) + " " + acc_rsd.atom_name( aatm) );
+	utility_exit_with_message( "unknown Hydrogen Bond acceptor type for: " + A(acc_rsd.name1()) + I(3,acc_rsd.seqpos()) + " " + acc_rsd.atom_name( aatm) );
 	return hbacc_NONE;
 }
 

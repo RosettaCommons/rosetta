@@ -18,15 +18,16 @@
 
 #include <protocols/stepwise/enumerate/rna/suite/StepWiseRNA_ClassicResidueSampler.fwd.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_ModelerOptions.fwd.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Classes.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_PoseSelection.hh>
+#include <protocols/stepwise/enumerate/rna/o2prime/O2PrimePacker.fwd.hh>
+#include <protocols/stepwise/enumerate/rna/phosphate/MultiPhosphateSampler.fwd.hh>
 #include <protocols/stepwise/enumerate/rna/screener/StepWiseRNA_BaseCentroidScreener.fwd.hh>
 #include <protocols/stepwise/enumerate/rna/screener/StepWiseRNA_VDW_BinScreener.fwd.hh>
 #include <protocols/stepwise/enumerate/rna/screener/AtrRepScreener.fwd.hh>
 #include <protocols/stepwise/enumerate/rna/screener/ChainBreakScreener.fwd.hh>
 #include <protocols/stepwise/enumerate/rna/screener/ChainClosableScreener.fwd.hh>
-#include <protocols/stepwise/enumerate/rna/O2PrimePacker.fwd.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_JobParameters.fwd.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Classes.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_PoseSelection.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <protocols/rotamer_sampler/RotamerBase.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -146,7 +147,8 @@ namespace suite {
 		screener::StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
 		pose::PoseOP screening_pose_;
 		StepWiseRNA_PoseSelectionOP pose_selection_;
-		O2PrimePackerOP o2prime_packer_;
+		o2prime::O2PrimePackerOP o2prime_packer_;
+		phosphate::MultiPhosphateSamplerOP phosphate_sampler_;
 
 		StepWiseRNA_ModelerOptionsCOP options_;
 

@@ -36,6 +36,7 @@
 #include <basic/Tracer.hh>
 #include <core/chemical/AtomType.hh>
 #include <ObjexxFCL/format.hh>
+#include <core/chemical/rna/RNA_ResidueType.hh>
 
 //pba membrane specific hbond
 #include <core/scoring/Membrane_FAPotential.hh>

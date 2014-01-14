@@ -10,6 +10,9 @@
 ../fa_standard/patches/nucleic/rna/Virtual_Ribose.txt
 ../fa_standard/patches/nucleic/rna/Protonated_H1_Adenosine.txt
 ../fa_standard/patches/nucleic/rna/Virtual_Backbone_Except_C1prime.txt
-../fa_standard/patches/nucleic/rna/3prime_end_OH.txt
-../fa_standard/patches/nucleic/rna/5prime_end_OH.txt
-../fa_standard/patches/nucleic/rna/5prime_end_phosphate.txt
+#../fa_standard/patches/nucleic/rna/3prime_end_OH.txt
+#../fa_standard/patches/nucleic/rna/5prime_end_OH.txt
+#../fa_standard/patches/nucleic/rna/5prime_packable_phosphate.txt
+#../fa_standard/patches/nucleic/rna/3prime_packable_phosphate.txt
+../fa_standard/patches/nucleic/rna/5prime_phosphate.txt
+../fa_standard/patches/nucleic/rna/3prime_phosphate.txt

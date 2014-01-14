@@ -369,7 +369,7 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 		// check if this is an 'internal' move.
 		if ( input_res1.size() > 1 && input_res2.size() > 1 ) {
 			fixed_res_guess.push_back( rebuild_res );
-			runtime_assert( is_internal );
+			is_internal = true;
 		}
 
 		// To specify that the suite moves, we actually need to directly address the movemap... see below.
@@ -575,11 +575,6 @@ StepWiseRNA_Modeler::setup_root_based_on_full_model_info( pose::Pose & pose, Ste
 
 	using namespace core::kinematics;
 
-	FullModelInfo const & full_model_info = const_full_model_info( pose );
-	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
-	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
-	std::string const full_sequence = full_model_info.full_sequence();
-
 	utility::vector1< Size > root_partition_res;
 	if ( job_parameters_->working_moving_res()  > 0 ){
 		ObjexxFCL::FArray1D < bool > const & partition_definition = job_parameters->partition_definition();
@@ -600,15 +595,10 @@ StepWiseRNA_Modeler::setup_root_based_on_full_model_info( pose::Pose & pose, Ste
 	for ( Size n = 1; n <= root_partition_res.size(); n++ ){
 		Size const i = root_partition_res[ n ];
 		if ( !pose.fold_tree().possible_root( i ) ) continue;
-		if ( res_list[ i ] == 1 ||
-				 cutpoint_open_in_full_model.has_value( res_list[ i ] - 1 ) ){ // great, nothing will ever get prepended here.
+		if ( definite_terminal_root( pose, i ) ) {
 			new_root = i; break;
 		}
-		if ( res_list[ i ] == full_sequence.size() ||
-				 cutpoint_open_in_full_model.has_value( res_list[ i ] ) ){ // great, nothing will ever get appended here.
-			new_root = i; break;
-		}
-		if ( possible_root == 0) possible_root = i;
+		if ( possible_root == 0) possible_root = i; // not as desirable, but sometimes necessary
 	}
 	if ( new_root == 0 ){
 		runtime_assert( possible_root > 0 );
@@ -616,6 +606,7 @@ StepWiseRNA_Modeler::setup_root_based_on_full_model_info( pose::Pose & pose, Ste
 	}
 
 	FoldTree f = pose.fold_tree();
+	//	TR << TR.Red << "SETTING NEW ROOT " << new_root << " compared to old " << f.root() << TR.Reset << std::endl;
 	if ( new_root == f.root() ) return;
 	f.reorder( new_root );
 	pose.fold_tree( f );

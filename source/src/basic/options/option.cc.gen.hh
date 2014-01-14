@@ -767,10 +767,10 @@ option.add( basic::options::OptionKeys::jumps::increase_chainbreak, "multiply ra
 option.add( basic::options::OptionKeys::jumps::overlap_chainbreak, "use the overlap chainbrak term in stage4" ).def(false);
 option.add( basic::options::OptionKeys::jumps::sep_switch_accelerate, "constraints and chainbreak depend on in-chain-separation. Accelerate their enforcement 1+num_cuts()*<this_factor>" ).def(0.4);
 option.add( basic::options::OptionKeys::jumps::dump_frags, "dump jump_fragments " ).def(false);
+option.add( basic::options::OptionKeys::jumps::njumps, "number_of_jumps to select from library for each trajectory (membrane mode)" ).def(1);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::njumps, "number_of_jumps to select from library for each trajectory (membrane mode)" ).def(1);
-option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
 option.add( basic::options::OptionKeys::jumps::contact_score, "the strand-weight will have a weight * contact_order component" ).def(0.0);
 option.add( basic::options::OptionKeys::jumps::filter_templates, "filter hybridization protocol templates" ).def(false);
 option.add( basic::options::OptionKeys::templates::templates, "templates option group" ).legal(true).def(true);
@@ -878,6 +878,7 @@ option.add( basic::options::OptionKeys::score::linear_bonded_potential, "use lin
 option.add( basic::options::OptionKeys::score::geom_sol_correct_acceptor_base, "Fixed definition of base atom for acceptors to match hbonds_geom" ).def(true);
 option.add( basic::options::OptionKeys::score::free_sugar_bonus, "Amount to reward virtualization of a sugar/ribose" ).def(-1.0);
 option.add( basic::options::OptionKeys::score::syn_G_potential_bonus, "Amount to reward syn chi conformation of guanosine" ).def(0.0);
+option.add( basic::options::OptionKeys::score::pack_phosphate_penalty, "Amount to penalize instantiation of a 5' or 3' phosphate" ).def(0.25);
 option.add( basic::options::OptionKeys::score::rg_local_span, "First,last res in rg_local. For example to calc rg_local from 1-20 would be 1,20" ).def(0);
 option.add( basic::options::OptionKeys::score::unmodifypot, "Do not call modify pot to add extra repulsive interactions between Obb/Obb atom types at distances beneath 3.6 Angstroms" );
 option.add( basic::options::OptionKeys::score::saxs::saxs, "saxs option group" ).legal(true).def(true);
@@ -2300,10 +2301,10 @@ option.add( basic::options::OptionKeys::hotspot::angle_res, "Residue to use for 
 option.add( basic::options::OptionKeys::parser::parser, "parser option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::parser::protocol, "File name for the xml parser protocol" );
 option.add( basic::options::OptionKeys::parser::script_vars, "Variable substitutions for xml parser, in the form of name=value" );
+option.add( basic::options::OptionKeys::parser::view, "Use the viewer?" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::parser::view, "Use the viewer?" );
-option.add( basic::options::OptionKeys::parser::patchdock, "Patchdock output file name." );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::parser::patchdock, "Patchdock output file name." );
 option.add( basic::options::OptionKeys::parser::patchdock_random_entry, "Pick a random patchdock entry between two entry numbers. inclusive" ).n(2);
 option.add( basic::options::OptionKeys::DomainAssembly::DomainAssembly, "DomainAssembly option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DomainAssembly::da_setup, "run DomainAssembly setup routine" ).legal(true).legal(false).def(false);
@@ -2738,6 +2739,7 @@ option.add( basic::options::OptionKeys::stepwise::rna::sampler_native_screen_rms
 option.add( basic::options::OptionKeys::stepwise::rna::sampler_cluster_rmsd, " Clustering rmsd of conformations in the sampler" ).def(0.5);
 option.add( basic::options::OptionKeys::stepwise::rna::native_edensity_score_cutoff, "native_edensity_score_cutoff" ).def(-1.0);
 option.add( basic::options::OptionKeys::stepwise::rna::sampler_perform_o2prime_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler" ).def(true);
+option.add( basic::options::OptionKeys::stepwise::rna::sampler_perform_phosphate_pack, "perform terminal phosphate packing inside StepWiseRNA_ResidueSampler" ).def(false);
 option.add( basic::options::OptionKeys::stepwise::rna::sampler_use_green_packer, "use packer instead of rotamer trials for O2' optimization" ).def(false);
 option.add( basic::options::OptionKeys::stepwise::rna::VERBOSE, "VERBOSE" ).def(false);
 option.add( basic::options::OptionKeys::stepwise::rna::distinguish_pucker, "distinguish pucker when cluster:both in sampler and clusterer" ).def(true);

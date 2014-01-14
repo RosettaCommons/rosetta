@@ -24,6 +24,7 @@
 #include <core/pack/rotamer_set/RotamerLinks.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pack/task/IGEdgeReweightContainer.fwd.hh>
+#include <core/pack/task/rna/RNA_ResidueLevelTask.fwd.hh>
 
 // Project Headers
 #include <core/chemical/ResidueTypeSet.fwd.hh>
@@ -144,9 +145,6 @@ public:
 	virtual void sample_proton_chi( bool setting ) = 0;
 	virtual bool sample_proton_chi() const = 0;
 
-	virtual void sample_rna_chi( bool setting ) = 0;
-	virtual bool sample_rna_chi() const = 0;
-
 	virtual void or_optimize_h( bool setting ) = 0;
 	virtual bool optimize_h() const = 0;
 	virtual void or_preserve_c_beta( bool setting ) = 0;
@@ -242,6 +240,10 @@ public:
 	virtual
 	std::string
 	command_string() const = 0;
+
+	virtual rna::RNA_ResidueLevelTask const & rna_task() const = 0;
+
+	virtual rna::RNA_ResidueLevelTask & nonconst_rna_task() = 0;
 
 };
 
@@ -482,7 +484,7 @@ private:
 	virtual
 	PackerTask &
 	operator=(PackerTask const &) = 0;
-	
+
 };
 
 //NOTE: parse_resfile is now an independent function in ResfileReader.hh, not a member function of the PackerTask hierarchy

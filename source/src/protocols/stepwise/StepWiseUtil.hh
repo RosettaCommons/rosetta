@@ -24,12 +24,11 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <string>
-#include <map>
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/VariantType.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 
@@ -318,6 +317,18 @@ namespace stepwise {
 	bool
 	check_for_fixed_domain( pose::Pose const & pose );
 
+
+	void
+	make_variants_match( pose::Pose & pose,
+											 pose::Pose const & reference_pose,
+											 Size const & n,
+											 chemical::VariantType const variant_type );
+
+	void
+	try_reroot_at_fixed_domain( pose::Pose & pose );
+
+	bool
+	definite_terminal_root( pose::Pose const & pose, Size const i );
 
 } //stepwise
 } //protocols

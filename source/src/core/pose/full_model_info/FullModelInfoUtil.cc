@@ -440,7 +440,7 @@ check_full_model_info_OK( pose::Pose const & pose ){
 		FullModelInfoOP full_model_info =	new FullModelInfo( desired_sequence );
 
 		utility::vector1< Size > cutpoint_open_in_full_model;
-		if( option[ full_model::cutpoint_open ].user() )	cutpoint_open_in_full_model = option[ full_model::cutpoint_open ]();
+		if ( option[ full_model::cutpoint_open ].user()) cutpoint_open_in_full_model = option[ full_model::cutpoint_open ]();
 
 		utility::vector1< Size > input_res_list = option[ in::file::input_res ]();
 		utility::vector1< utility::vector1< Size > > pose_res_lists;

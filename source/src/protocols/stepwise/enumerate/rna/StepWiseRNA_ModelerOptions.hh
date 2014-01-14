@@ -94,6 +94,9 @@ namespace rna {
 		bool const & sampler_perform_o2prime_pack() const { return sampler_perform_o2prime_pack_; }
 		void set_sampler_perform_o2prime_pack( bool const & setting ){ sampler_perform_o2prime_pack_ = setting; }
 
+		bool const & sampler_perform_phosphate_pack() const { return sampler_perform_phosphate_pack_; }
+		void set_sampler_perform_phosphate_pack( bool const & setting ){ sampler_perform_phosphate_pack_ = setting; }
+
 		bool const & use_green_packer() const { return use_green_packer_; }
 		void set_use_green_packer( bool const & setting ){ use_green_packer_ = setting; }
 
@@ -234,6 +237,7 @@ namespace rna {
 		core::Real cluster_rmsd_;
 		core::Real native_edensity_score_cutoff_;
 		bool sampler_perform_o2prime_pack_;
+		bool sampler_perform_phosphate_pack_;
 		bool use_green_packer_;
 		bool verbose_;
 		bool distinguish_pucker_;

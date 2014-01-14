@@ -13,3 +13,8 @@
 ../fa_standard/patches/nucleic/rna/3prime_end_OH.txt
 ../fa_standard/patches/nucleic/rna/5prime_end_OH.txt
 ../fa_standard/patches/nucleic/rna/5prime_end_phosphate.txt
+#../fa_standard/patches/nucleic/rna/5prime_packable_phosphate.txt
+#../fa_standard/patches/nucleic/rna/3prime_packable_phosphate.txt
+../fa_standard/patches/nucleic/rna/5prime_phosphate.txt
+../fa_standard/patches/nucleic/rna/3prime_phosphate.txt
+

@@ -73,16 +73,6 @@ build_dna_rotamers(
 	utility::vector1< conformation::ResidueOP > & rotamers
 );
 
-void
-build_rna_rotamers(
-	Size const resid,
-	pose::Pose const & pose,
-	chemical::ResidueTypeCOP concrete_residue,
-	pack::task::PackerTask const & task,
-	utility::vector1< conformation::ResidueOP > & rotamers,
-	Size & id_for_current_rotamer
-);
-
 
 /// @brief Make a rotamer (Residue) for every combination of torsion angle in the rotamer bins listed in the params
 /// file for the given Residue.

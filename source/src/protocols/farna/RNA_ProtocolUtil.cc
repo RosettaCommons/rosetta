@@ -34,8 +34,9 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/MoveMap.hh>
-
-
+#include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/hbonds/hbonds.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -427,7 +428,7 @@ create_rna_vall_torsions( pose::Pose & pose,
 
 //////////////////////////////////////////////////////////////////////////////////////
 Real
-get_o1p_o2p_sign( pose::Pose const & pose ) {
+get_op2_op1_sign( pose::Pose const & pose ) {
 
 	Real sign= 0;
 	bool found_valid_sign=false;
@@ -450,9 +451,9 @@ get_o1p_o2p_sign( pose::Pose const & pose ) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
-//This version used to be called get_o1p_o2p_sign_parin()
+//This version used to be called get_op2_op1_sign_parin()
 Real
-get_o1p_o2p_sign( pose::Pose const & pose , Size res_num) {
+get_op2_op1_sign( pose::Pose const & pose , Size res_num) {
 
 	if(res_num > pose.total_residue()) utility_exit_with_message("res_num > pose.total_residue()");
 
@@ -479,11 +480,11 @@ assert_phosphate_nomenclature_matches_mini( pose::Pose const & pose){
 
 	for(Size res_num=1; res_num<=pose.total_residue(); res_num++){
 
-		Real sign1 = get_o1p_o2p_sign( pose,  res_num);
+		Real sign1 = get_op2_op1_sign( pose,  res_num);
 
 		pose::Pose mini_pose; //Could move this part outside the for loop
 		make_pose_from_sequence( mini_pose, "aa", pose.residue(res_num).residue_type_set() );
-		Real const sign2 = get_o1p_o2p_sign( mini_pose);
+		Real const sign2 = get_op2_op1_sign( mini_pose);
 
 		if ( sign1 * sign2 < 0 ) {
 
@@ -510,11 +511,11 @@ void
 ensure_phosphate_nomenclature_matches_mini( pose::Pose & pose )
 {
 	runtime_assert( pose.total_residue() > 1 );
-	Real sign1 = get_o1p_o2p_sign( pose );
+	Real sign1 = get_op2_op1_sign( pose );
 
 	pose::Pose mini_pose;
 	make_pose_from_sequence( mini_pose, "aa", pose.residue(1).residue_type_set() );
-	Real sign2 = get_o1p_o2p_sign( mini_pose );
+	Real sign2 = get_op2_op1_sign( mini_pose );
 
 	if ( sign1 * sign2 > 0 ) return;
 
@@ -550,9 +551,9 @@ make_phosphate_nomenclature_matches_mini( pose::Pose & pose)
 
 		pose::Pose mini_pose; //Could move this part outside of the for loop
 		make_pose_from_sequence( mini_pose, "aa", pose.residue( res_num ).residue_type_set());
-		Real const sign2 = get_o1p_o2p_sign( mini_pose);
+		Real const sign2 = get_op2_op1_sign( mini_pose);
 
-		Real sign1 = get_o1p_o2p_sign( pose,  res_num);
+		Real sign1 = get_op2_op1_sign( pose,  res_num);
 
 		if ( sign1 * sign2 < 0 ) {
 
@@ -1131,7 +1132,6 @@ print_internal_coords( core::pose::Pose const & pose ) {
 			core::kinematics::tree::AtomCOP input_stub_atom1( current_atom->input_stub_atom1() );
 			core::kinematics::tree::AtomCOP input_stub_atom2( current_atom->input_stub_atom2() );
 			core::kinematics::tree::AtomCOP input_stub_atom3( current_atom->input_stub_atom3() );
-
 			if ( !(current_atom && input_stub_atom1 && input_stub_atom2 && input_stub_atom3) )  continue;
 
 			if ( current_atom->is_jump() ) {
@@ -1433,6 +1433,34 @@ process_input_file( std::string const & input_file,
 		utility_exit_with_message(  "No structure found in input file  " + input_file );
 	}
 
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+void
+print_hbonds( pose::Pose & pose ){
+
+	using namespace core::scoring;
+
+	hbonds::HBondOptionsOP hbond_options( new hbonds::HBondOptions() );
+	hbond_options->use_hb_env_dep( false );
+	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( hbond_options ) );
+
+	hbonds::fill_hbond_set( pose, false /*calc deriv*/, *hbond_set );
+
+	for (Size i = 1; i <= hbond_set->nhbonds(); i++ ) {
+		hbonds::HBond const & hbond( hbond_set->hbond( i ) );
+
+		Size const don_res_num = hbond.don_res();
+		Size const don_hatm = hbond.don_hatm();
+
+		Size const acc_res_num = hbond.acc_res();
+		Size const acc_atm = hbond.acc_atm();
+
+		std::cout << "HBOND: " << pose.residue( don_res_num ).name1() << don_res_num <<
+			" " << pose.residue( don_res_num ).atom_name( don_hatm ) << " --- " <<
+			pose.residue( acc_res_num).name1() << acc_res_num << " " << pose.residue( acc_res_num ).atom_name( acc_atm ) << " ==> " << hbond.energy()
+							<< std::endl;
+	}
 }
 
 

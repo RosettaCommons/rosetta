@@ -246,9 +246,6 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 				continue;
 			}
 
-
-
-
       Vector const heavy_atom_j( rsd2.xyz( n ) );
       Vector r = heavy_atom_j - heavy_atom_i;
       Real const dist2 = r.length_squared();

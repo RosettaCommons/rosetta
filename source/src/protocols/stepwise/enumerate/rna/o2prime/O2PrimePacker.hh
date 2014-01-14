@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/enumerate/rna/O2PrimePacker.hh
+/// @file protocols/stepwise/enumerate/rna/o2prime/O2PrimePacker.hh
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
@@ -16,7 +16,7 @@
 #define INCLUDED_protocols_stepwise_rna_O2PrimePacker_HH
 
 #include <utility/pointer/ReferenceCount.hh>
-#include <protocols/stepwise/enumerate/rna/O2PrimePacker.fwd.hh>
+#include <protocols/stepwise/enumerate/rna/o2prime/O2PrimePacker.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -30,6 +30,7 @@ namespace protocols {
 namespace stepwise {
 namespace enumerate {
 namespace rna {
+namespace o2prime {
 
 	class O2PrimePacker: public utility::pointer::ReferenceCount {
 
@@ -83,6 +84,7 @@ namespace rna {
 
 	};
 
+} //o2prime
 } //rna
 } //enumerate
 } //stepwise

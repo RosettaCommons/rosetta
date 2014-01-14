@@ -44,7 +44,6 @@ sources = {
         "RotamerOneValueComb",
         "RotamerSizedAny",
         "RotamerSizedComb",
-        "util",
     ],
     "protocols/rotamer_sampler/rna": [
         "RNA_ChiRotamer",
@@ -99,7 +98,6 @@ sources = {
 	"StepWisePoseCombineSampleGenerator",
     ],
     "protocols/stepwise/enumerate/rna": [
-	"O2PrimePacker",
 	"StepWiseRNA_Clusterer",
 	"StepWiseRNA_CombineLongLoopFilterer",
 	"StepWiseRNA_JobParametersSetup",
@@ -115,9 +113,27 @@ sources = {
 	"StepWiseRNA_ResidueSampler",
 	"StepWiseRNA_Util",
     ],
+    "protocols/stepwise/enumerate/rna/helix": [
+	"RNA_HelixAssembler",
+    ],
     "protocols/stepwise/enumerate/rna/rigid_body/": [
 	"StepWiseRNA_FloatingBaseSampler",
 	"StepWiseRNA_FloatingBaseSamplerUtil",
+    ],
+    "protocols/stepwise/enumerate/rna/o2prime/": [
+	"O2PrimePacker",
+    ],
+    "protocols/stepwise/enumerate/rna/phosphate/": [
+	"MultiPhosphateSampler",
+	"PhosphateMove",
+	"PhosphateMover",
+    ],
+    "protocols/stepwise/enumerate/rna/screener": [
+	"ChainClosableScreener",
+	"ChainBreakScreener",
+	"AtrRepScreener",
+	"StepWiseRNA_BaseCentroidScreener",
+	"StepWiseRNA_VDW_BinScreener",
     ],
     "protocols/stepwise/enumerate/rna/sugar/": [
 	"SugarModeling",
@@ -128,16 +144,6 @@ sources = {
     ],
     "protocols/stepwise/enumerate/rna/suite/": [
 	"StepWiseRNA_ClassicResidueSampler",
-    ],
-    "protocols/stepwise/enumerate/rna/helix": [
-	"RNA_HelixAssembler",
-    ],
-    "protocols/stepwise/enumerate/rna/screener": [
-	"ChainClosableScreener",
-	"ChainBreakScreener",
-	"AtrRepScreener",
-	"StepWiseRNA_BaseCentroidScreener",
-	"StepWiseRNA_VDW_BinScreener",
     ],
     "protocols/stepwise/enumerate/legacy/": [
 	"RigidBodySampler",

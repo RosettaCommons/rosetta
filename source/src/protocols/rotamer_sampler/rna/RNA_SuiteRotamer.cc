@@ -18,11 +18,11 @@
 #include <protocols/rotamer_sampler/rna/RNA_NucleosideRotamer.hh>
 #include <protocols/rotamer_sampler/RotamerOneTorsion.hh>
 #include <protocols/rotamer_sampler/RotamerSizedComb.hh>
-#include <protocols/rotamer_sampler/util.hh>
 
 // Project headers
 #include <core/id/TorsionID.hh>
 #include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_SamplerUtil.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/pose/rna/RNA_Util.hh>
 #include <basic/Tracer.hh>
@@ -97,12 +97,7 @@ void RNA_SuiteRotamer::init() {
 //////////////////////////////////////////////////////////////////////////
 void RNA_SuiteRotamer::init_standard() {
 	using namespace core::id;
-	TorsionList full_torsions;
-	add_values_from_center( full_torsions, 0, 180, bin_size_ );
-	//Avoid sampling both -180 and 180 deg
-	Real const epsil =  0.001; //Arbitary small number
-	if ( 360 - ( full_torsions.back() - full_torsions.front() ) < epsil )
-			full_torsions.pop_back();
+	TorsionList full_torsions = get_full_torsions( bin_size_ );
 
 	RNA_FittedTorsionInfo const torsion_info;
 	//Setup the rotamer samplers
@@ -142,21 +137,7 @@ void RNA_SuiteRotamer::init_standard() {
 			/////Epsilon rotamers/////
 			//default: center +- 20 deg
 			//extra_epsilon: center +- 60 deg
-			TorsionList epsilon_torsions;
-			Real center = ( pucker_states_lower_[i] == NORTH ) ?
-					torsion_info.epsilon_north() : torsion_info.epsilon_south();
-			Real max_range = 20;
-			if ( extra_epsilon_ ) {
-				max_range = 60;
-				//Choice made by Parin, to cover the uneven tails of
-				//epsilons distributions by extra_epsilon mode.
-				if ( pucker_states_lower_[i] == NORTH ) {
-					center -= 20;
-				} else {
-					center += 20;
-				}
-			}
-			add_values_from_center( epsilon_torsions, center, max_range, bin_size_ );
+			TorsionList epsilon_torsions = get_epsilon_torsions( (pucker_states_lower_[i] == NORTH), extra_epsilon_, bin_size_ );
 			RotamerOneTorsionOP epsilon_rotamer = new RotamerOneTorsion(
 					TorsionID( rsd_id_, BB, EPSILON ), epsilon_torsions );
 			new_rotamer_agg->add_rotamer( epsilon_rotamer );

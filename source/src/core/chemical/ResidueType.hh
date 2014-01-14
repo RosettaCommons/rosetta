@@ -74,11 +74,8 @@
 #include <core/chemical/ResidueConnection.fwd.hh>
 #endif
 #include <core/chemical/sdf/MolData.hh>
-#include <core/chemical/rna/RNA_ResidueType.hh>
-// only compiles with the .hh below; anyone know why I can't use the .fwd.hh here? ~Labonte
+#include <core/chemical/rna/RNA_ResidueType.fwd.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
-
-
 
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
@@ -1623,12 +1620,7 @@ public:
 	}
 
 	///////////////////////////////////////////////////////////////
-	core::chemical::rna::RNA_ResidueType const &
-	RNA_type() const{
-
-		return rna_residuetype_;
-
-	}
+	core::chemical::rna::RNA_ResidueType const &	RNA_type() const;
 
 	/// @brief  Return the CarbohydrateInfo object containing sugar-specific properties for this residue.
 	core::chemical::carbohydrates::CarbohydrateInfoCOP carbohydrate_info() const;
@@ -2062,7 +2054,7 @@ private:
 	AtomIndices force_bb_;
 
 	////////////////
-	core::chemical::rna::RNA_ResidueType rna_residuetype_;
+	core::chemical::rna::RNA_ResidueTypeOP rna_residue_type_;
 
 	// A container for residue properties unique to carbohydrates.
 	core::chemical::carbohydrates::CarbohydrateInfoOP carbohydrate_info_;

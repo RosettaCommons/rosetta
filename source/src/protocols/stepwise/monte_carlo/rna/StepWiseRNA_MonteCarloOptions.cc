@@ -57,7 +57,8 @@ namespace rna {
 		virtual_sugar_keep_base_fixed_( false ),
 		constraint_x0_( 0.0 ),
 		constraint_tol_( 0.0 ),
-		make_movie_( false )
+		make_movie_( false ),
+		sampler_perform_phosphate_pack_( false )
 	{}
 
 	//Destructor
@@ -96,6 +97,7 @@ namespace rna {
 		set_constraint_x0(	option[ OptionKeys::stepwise::monte_carlo::constraint_x0 ]() );
 		set_constraint_tol(	option[ OptionKeys::stepwise::monte_carlo::constraint_tol ]() );
 		set_make_movie(	option[ OptionKeys::stepwise::monte_carlo::make_movie ]() );
+		sampler_perform_phosphate_pack_ = option[ OptionKeys::stepwise::rna::sampler_perform_phosphate_pack ]();
 	}
 
 
@@ -113,6 +115,7 @@ namespace rna {
 		modeler_options->set_minimizer_allow_variable_bond_geometry( minimizer_allow_variable_bond_geometry() );
 		modeler_options->set_minimizer_vary_bond_geometry_frequency( minimizer_vary_bond_geometry_frequency() );
 		modeler_options->set_virtual_sugar_keep_base_fixed( virtual_sugar_keep_base_fixed() );
+		modeler_options->set_sampler_perform_phosphate_pack( sampler_perform_phosphate_pack() );
 
 		return modeler_options;
 	}

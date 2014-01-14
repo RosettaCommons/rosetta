@@ -14,8 +14,9 @@
 // Unit Headers
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
 
-
 // Package Headers
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_ResidueType.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/pose/rna/RNA_Util.hh>
 
@@ -121,7 +122,8 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 		verbose_( false ),
 		use_new_potential_( false ),
 		use_2prime_OH_potential_( basic::options::option[ basic::options::OptionKeys::score::use_2prime_OH_potential ]() ),
-		syn_G_potential_bonus_( basic::options::option[ basic::options::OptionKeys::score::syn_G_potential_bonus ]() )
+		syn_G_potential_bonus_( basic::options::option[ basic::options::OptionKeys::score::syn_G_potential_bonus ]() ),
+		rna_fitted_torsion_info_( new chemical::rna::RNA_FittedTorsionInfo )
 	{
 		if ( basic::options::option[ basic::options::OptionKeys::score::rna_torsion_potential ].user() ){
 
@@ -164,6 +166,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 	RNA_TorsionPotential::eval_intrares_energy( core::conformation::Residue const & rsd, pose::Pose const & pose ) const
 	{
 		using core::id::TorsionID;
+		using numeric::principal_angle_degrees;
 
 		if ( !rsd.is_RNA() ) return 0.0;
 
@@ -174,30 +177,30 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 		}
 		Real score( 0.0 );
 
-		Real const beta = numeric::principal_angle_degrees( rsd.mainchain_torsion( BETA ) );
-		Real const gamma = numeric::principal_angle_degrees(  rsd.mainchain_torsion( GAMMA ) );
-		Real const delta = numeric::principal_angle_degrees(  rsd.mainchain_torsion( DELTA ) );
-		Real const chi = numeric::principal_angle_degrees(  rsd.chi( CHI - NUM_RNA_MAINCHAIN_TORSIONS ) );
-		Real const nu2 = numeric::principal_angle_degrees(  rsd.chi( NU2 - NUM_RNA_MAINCHAIN_TORSIONS ) );
-		Real const nu1 = numeric::principal_angle_degrees(  rsd.chi( NU1 - NUM_RNA_MAINCHAIN_TORSIONS ) );
-		Real const o2h = numeric::principal_angle_degrees(  rsd.chi( O2H - NUM_RNA_MAINCHAIN_TORSIONS ) );
+		Real const beta  = principal_angle_degrees( rsd.mainchain_torsion( BETA ) );
+		Real const gamma = principal_angle_degrees(  rsd.mainchain_torsion( GAMMA ) );
+		Real const delta = principal_angle_degrees(  rsd.mainchain_torsion( DELTA ) );
+		Real const chi   = principal_angle_degrees(  rsd.chi( CHI - NUM_RNA_MAINCHAIN_TORSIONS ) );
+		Real const nu2   = principal_angle_degrees(  rsd.chi( NU2 - NUM_RNA_MAINCHAIN_TORSIONS ) );
+		Real const nu1   = principal_angle_degrees(  rsd.chi( NU1 - NUM_RNA_MAINCHAIN_TORSIONS ) );
+		Real const o2h   = principal_angle_degrees(  rsd.chi( O2H - NUM_RNA_MAINCHAIN_TORSIONS ) );
 
 		if ( verbose_ ) TR << "Beta torsion" << std::endl;
-		if ( Should_score_torsion( pose, TorsionID( rsd.seqpos(), id::BB, BETA ) ) ) {
+		if ( should_score_torsion( pose, TorsionID( rsd.seqpos(), id::BB, BETA ) ) ) {
 			Real const beta_score = beta_potential_->func( beta ); //beta
 			score += beta_score;
 			if ( verbose_ )  TR << "beta score " << beta_score << std::endl;
 		}
 
 		if ( verbose_ ) TR << "Gamma torsion" << std::endl;
-		if ( Should_score_torsion( pose, TorsionID( rsd.seqpos(), id::BB, GAMMA ) ) ) {
+		if ( should_score_torsion( pose, TorsionID( rsd.seqpos(), id::BB, GAMMA ) ) ) {
 			Real const gamma_score = gamma_potential_->func( gamma ); //gamma
 			score += gamma_score;
 			if ( verbose_ )  TR << "gamma score " << gamma_score << std::endl;
 		}
 
 		if ( verbose_ ) TR << "Delta torsion" << std::endl;
-		if ( Should_score_torsion( pose, TorsionID( rsd.seqpos(), id::BB, DELTA ) ) ) {
+		if ( should_score_torsion( pose, TorsionID( rsd.seqpos(), id::BB, DELTA ) ) ) {
 			Real const delta_score = ( fade_delta_north_->func( delta ) * delta_north_potential_->func( delta ) +
 											fade_delta_south_->func( delta ) * delta_south_potential_->func( delta ) ); //delta
 			score += delta_score;
@@ -205,7 +208,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 		}
 
 		if ( verbose_ )  TR << "Chi torsion" << std::endl;
-		if ( Should_score_torsion( pose, TorsionID( rsd.seqpos(), id::CHI, CHI - NUM_RNA_MAINCHAIN_TORSIONS ) ) ) {
+		if ( should_score_torsion( pose, TorsionID( rsd.seqpos(), id::CHI, CHI - NUM_RNA_MAINCHAIN_TORSIONS ) ) ) {
 			Real chi_score( 0.0 );
 			if ( use_new_potential_ ) {
 				if ( rsd.aa() == core::chemical::na_rgu || rsd.aa() == core::chemical::na_rad  ) {
@@ -230,7 +233,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 		}
 
 		if ( verbose_ )  TR << "nu2 torsion" << std::endl;
-		if ( Should_score_torsion( pose, TorsionID( rsd.seqpos(), id::CHI, NU2 - NUM_RNA_MAINCHAIN_TORSIONS ) ) ) {
+		if ( should_score_torsion( pose, TorsionID( rsd.seqpos(), id::CHI, NU2 - NUM_RNA_MAINCHAIN_TORSIONS ) ) ) {
 			Real const nu2_score = ( fade_delta_north_->func( delta ) * nu2_north_potential_->func( nu2 ) +
 															 fade_delta_south_->func( delta ) * nu2_south_potential_->func( nu2 ) ); //nu2
 			score += nu2_score;
@@ -239,18 +242,55 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
 		if ( verbose_ )  TR << "nu1 torsion" << std::endl;
 
-		if ( Should_score_torsion( pose, TorsionID( rsd.seqpos(), id::CHI, NU1 - NUM_RNA_MAINCHAIN_TORSIONS ) ) ) {
+		if ( should_score_torsion( pose, TorsionID( rsd.seqpos(), id::CHI, NU1 - NUM_RNA_MAINCHAIN_TORSIONS ) ) ) {
 			Real const nu1_score = ( fade_delta_north_->func( delta ) * nu1_north_potential_->func( nu1 ) +
 										fade_delta_south_->func( delta ) * nu1_south_potential_->func( nu1 ) ); //nu1
 			score += nu1_score;
 			if ( verbose_ )  TR << "nu1 score " << nu1_score << std::endl;
 		}
 
-		if ( use_2prime_OH_potential_ && use_new_potential_ && Should_score_torsion( pose, TorsionID( rsd.seqpos(), id::CHI, O2H - NUM_RNA_MAINCHAIN_TORSIONS ) ) ) {
+		if ( use_2prime_OH_potential_ && use_new_potential_ && should_score_torsion( pose, TorsionID( rsd.seqpos(), id::CHI, O2H - NUM_RNA_MAINCHAIN_TORSIONS ) ) ) {
 			Real const o2h_score = ( fade_delta_north_->func( delta ) * o2h_north_potential_->func( o2h ) +
 															 fade_delta_south_->func( delta ) * o2h_south_potential_->func( o2h ) ); //o2h
 			score += o2h_score;
 			if ( verbose_ )  TR << "o2h score " << o2h_score << std::endl;
+		}
+
+		/////////////////////// new 'packable phosphate' variants /////////////////
+		chemical::rna::RNA_ResidueType rna_type = rsd.type().RNA_type();
+		if ( rna_type.chi_number_pseudoalpha() > 0 ){
+			Real const pseudoalpha = principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudoalpha() ) );
+			Real const pseudoalpha_score = alpha_potential_->func( pseudoalpha );
+			if ( verbose_ ) TR << "Pseudoalpha torsion: " << pseudoalpha << "  score: " << pseudoalpha_score << std::endl;
+			score += pseudoalpha_score;
+		}
+		if ( rna_type.chi_number_pseudobeta() > 0 ){
+			Real const pseudobeta = principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudobeta() ) );
+			Real const pseudobeta_score = beta_potential_->func( pseudobeta );
+			score += pseudobeta_score;
+			if ( verbose_ ) TR << "Pseudobeta torsion: " << pseudobeta << "  score: " << pseudobeta_score << std::endl;
+		}
+		if ( rna_type.chi_number_pseudogamma() > 0 ){
+			Real const pseudogamma = principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudogamma() ) );
+			Real const pseudogamma_score = gamma_potential_->func( pseudogamma );
+			score += pseudogamma_score;
+			if ( verbose_ ) TR << "Pseudogamma torsion: " << pseudogamma << "  score: " << pseudogamma_score << std::endl;
+		}
+		if ( rna_type.chi_number_pseudoepsilon() > 0 ){
+			Real const pseudoepsilon = principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudoepsilon() ) );
+			Real const pseudoepsilon_score = ( fade_delta_north_->func( delta ) * epsilon_north_potential_->func( pseudoepsilon ) +
+																				 fade_delta_south_->func( delta ) * epsilon_south_potential_->func( pseudoepsilon ) );
+			score += pseudoepsilon_score;
+			if ( verbose_ ) TR << "Pseudoepsilon torsion: " << rsd.seqpos() << " -- " << pseudoepsilon << "  score: " << pseudoepsilon_score << std::endl;
+		}
+		if ( rna_type.chi_number_pseudozeta() > 0 ){
+			Real const pseudozeta = principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudozeta() ) );
+			Real const next_alpha = rna_fitted_torsion_info_->alpha_aform();
+			Real const pseudozeta_score = ( fade_alpha_sc_minus_->func( next_alpha ) * zeta_alpha_sc_minus_potential_->func( pseudozeta ) +
+																			fade_alpha_sc_plus_->func( next_alpha )  * zeta_alpha_sc_plus_potential_->func( pseudozeta ) +
+																			fade_alpha_ap_->func( next_alpha )       * zeta_alpha_ap_potential_->func( pseudozeta ) );
+			score += pseudozeta_score;
+			if ( verbose_) TR << "Pseudozeta torsion: " << rsd.seqpos() << " -- " << pseudozeta << "  score: " << pseudozeta_score << std::endl;
 		}
 
 		return score;
@@ -261,18 +301,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 	Real
 	RNA_TorsionPotential::residue_pair_energy( core::conformation::Residue const & rsd1, core::conformation::Residue const & rsd2, pose::Pose const & pose ) const
 	{
-
 		using namespace core::id;
-
-		// CAN WE ASSUME rsd1 < rsd2 ???
-
-//THESE ASSERTION FAIL!! TRY RERUN ~/minirosetta/test/Mar_27_torsion_potential_fix/1zih/new_RNA_TorssionPotential/trail_2/output.txt
-//		if((rsd1.seqpos() < rsd2.seqpos())==false){
-//			TR << "rsd1.seqpos()= " << rsd1.seqpos() << " rsd2.seqpos()= " << rsd2.seqpos() << std::endl;
-//			utility_exit_with_message( "(rsd1.seqpos() < rsd2.seqpos())==false" );
-//		}
-
-//		assert( rsd1.seqpos() < rsd2.seqpos() );
 
 		if ( rsd1.seqpos() != ( rsd2.seqpos() - 1 ) ) return 0.0;
 		if ( !rsd1.is_RNA() ) return 0.0;
@@ -286,13 +315,13 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
 		Real score( 0.0 );
 
-		Real const delta = numeric::principal_angle_degrees(  rsd1.mainchain_torsion( DELTA ) );
-		Real const epsilon = numeric::principal_angle_degrees(  rsd1.mainchain_torsion( EPSILON ) );
-		Real const zeta = numeric::principal_angle_degrees(  rsd1.mainchain_torsion( ZETA ) );
+		Real const delta      = numeric::principal_angle_degrees(  rsd1.mainchain_torsion( DELTA ) );
+		Real const epsilon    = numeric::principal_angle_degrees(  rsd1.mainchain_torsion( EPSILON ) );
+		Real const zeta       = numeric::principal_angle_degrees(  rsd1.mainchain_torsion( ZETA ) );
 		Real const next_alpha = numeric::principal_angle_degrees(  rsd2.mainchain_torsion( ALPHA ) );
 
 		if ( verbose_ )  TR << "epsilon torsion " << epsilon << std::endl;
-		if ( Should_score_torsion( pose, TorsionID( rsd1.seqpos(), id::BB, EPSILON ) ) ) {
+		if ( should_score_torsion( pose, TorsionID( rsd1.seqpos(), id::BB, EPSILON ) ) ) {
 			Real const epsilon_score = ( fade_delta_north_->func( delta ) * epsilon_north_potential_->func( epsilon ) +
 																	 fade_delta_south_->func( delta ) * epsilon_south_potential_->func( epsilon ) );
 			score += epsilon_score;
@@ -300,7 +329,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 		}
 
 		if ( verbose_ )  TR << "zeta torsion " << zeta << std::endl;
-		if ( Should_score_torsion( pose, TorsionID( rsd1.seqpos(), id::BB, ZETA ) ) ) {
+		if ( should_score_torsion( pose, TorsionID( rsd1.seqpos(), id::BB, ZETA ) ) ) {
 			Real const zeta_score = ( fade_alpha_sc_minus_->func( next_alpha ) * zeta_alpha_sc_minus_potential_->func( zeta ) +
 																fade_alpha_sc_plus_->func( next_alpha )  * zeta_alpha_sc_plus_potential_->func( zeta ) +
 																fade_alpha_ap_->func( next_alpha )       * zeta_alpha_ap_potential_->func( zeta ) );
@@ -309,7 +338,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 		}
 
 		if ( verbose_ )  TR << "next alpha torsion " << next_alpha << std::endl;
-		if ( Should_score_torsion( pose, TorsionID( rsd2.seqpos(), id::BB, ALPHA ) ) ) {
+		if ( should_score_torsion( pose, TorsionID( rsd2.seqpos(), id::BB, ALPHA ) ) ) {
 			Real const alpha_score = alpha_potential_->func( next_alpha );
 			score += alpha_score;
 			if ( verbose_ )  TR << "next alpha score " << alpha_score << std::endl;
@@ -336,7 +365,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 				TR << "In get_f1_f2_function: ";
 				TR << " atom_id: " << id << std::endl;
 			}
-		  if ( Should_score_torsion( pose, torsion_id ) == false ) return false;
+		  if ( !should_score_torsion( pose, torsion_id ) ) return false;
 
 			Real theta( 0.0 );
 			// copied from DihedralConstraint. Better work, damnit.
@@ -368,6 +397,8 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 																						 Vector & F2
 																						 ) const{
 
+		using numeric::principal_angle_degrees;
+
 		Real const radians2degrees = 1.0 / radians( 1.0 );
 
 		Size const current_seqpos( id.rsd() );
@@ -385,16 +416,16 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
 			conformation::Residue const & rsd( pose.residue( seqpos ) );
 
-			Real const alpha = numeric::principal_angle_degrees(   rsd.mainchain_torsion( ALPHA ) );
-			Real const beta = numeric::principal_angle_degrees(   rsd.mainchain_torsion( BETA ) );
-			Real const gamma = numeric::principal_angle_degrees(   rsd.mainchain_torsion( GAMMA ) );
-			Real const delta = numeric::principal_angle_degrees(   rsd.mainchain_torsion( DELTA ) );
-			Real const epsilon = numeric::principal_angle_degrees( rsd.mainchain_torsion( EPSILON ) );
-			Real const zeta = numeric::principal_angle_degrees(    rsd.mainchain_torsion( ZETA ) );
-			Real const chi  = numeric::principal_angle_degrees(   rsd.chi( CHI - NUM_RNA_MAINCHAIN_TORSIONS ) );
-			Real const nu2  = numeric::principal_angle_degrees(   rsd.chi( NU2 - NUM_RNA_MAINCHAIN_TORSIONS ) );
-			Real const nu1  = numeric::principal_angle_degrees(   rsd.chi( NU1 - NUM_RNA_MAINCHAIN_TORSIONS ) );
-			Real const o2h  = numeric::principal_angle_degrees(   rsd.chi( O2H - NUM_RNA_MAINCHAIN_TORSIONS ) );
+			Real const alpha =   principal_angle_degrees(   rsd.mainchain_torsion( ALPHA ) );
+			Real const beta  =   principal_angle_degrees(   rsd.mainchain_torsion( BETA ) );
+			Real const gamma =   principal_angle_degrees(   rsd.mainchain_torsion( GAMMA ) );
+			Real const delta =   principal_angle_degrees(   rsd.mainchain_torsion( DELTA ) );
+			Real const epsilon = principal_angle_degrees( rsd.mainchain_torsion( EPSILON ) );
+			Real const zeta =    principal_angle_degrees(    rsd.mainchain_torsion( ZETA ) );
+			Real const chi  =    principal_angle_degrees(   rsd.chi( CHI - NUM_RNA_MAINCHAIN_TORSIONS ) );
+			Real const nu2  =    principal_angle_degrees(   rsd.chi( NU2 - NUM_RNA_MAINCHAIN_TORSIONS ) );
+			Real const nu1  =    principal_angle_degrees(   rsd.chi( NU1 - NUM_RNA_MAINCHAIN_TORSIONS ) );
+			Real const o2h  =    principal_angle_degrees(   rsd.chi( O2H - NUM_RNA_MAINCHAIN_TORSIONS ) );
 
 			Vector f1( 0.0 ), f2( 0.0 );
 
@@ -462,7 +493,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
 				if ( seqpos < nres && pose.residue( seqpos + 1 ).is_RNA() ){
 					dE_dtorsion += ( fade_delta_north_->dfunc( delta ) * epsilon_north_potential_->func( epsilon ) +
-																	 fade_delta_south_->dfunc( delta ) * epsilon_south_potential_->func( epsilon ) );
+													 fade_delta_south_->dfunc( delta ) * epsilon_south_potential_->func( epsilon ) );
 				}
 
 				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
@@ -546,7 +577,53 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
 				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
 			}
+
+			/////////////////////// new 'packable phosphate' variants /////////////////
+			if ( seqpos != current_seqpos ) continue;
+			chemical::rna::RNA_ResidueType rna_type = pose.residue( current_seqpos ).type().RNA_type();
+			if ( rna_type.chi_number_pseudoalpha() > 0 && get_f1_f2( id::TorsionID( seqpos, id::CHI, rna_type.chi_number_pseudoalpha() ),	pose, id, f1, f2 ) ){
+				Real const pseudoalpha = principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudoalpha() ) );
+				Real const dE_dtorsion = alpha_potential_->dfunc( pseudoalpha );
+				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
+				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
+			}
+			if ( rna_type.chi_number_pseudobeta() > 0 && get_f1_f2( id::TorsionID( seqpos, id::CHI, rna_type.chi_number_pseudobeta() ),	pose, id, f1, f2 ) ){
+				Real const pseudobeta = principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudobeta() ) );
+				Real const dE_dtorsion = beta_potential_->dfunc( pseudobeta );
+				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
+				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
+			}
+			if ( rna_type.chi_number_pseudogamma() > 0 && get_f1_f2( id::TorsionID( seqpos, id::CHI, rna_type.chi_number_pseudogamma() ),	pose, id, f1, f2 ) ){
+				Real const pseudogamma = principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudogamma() ) );
+				Real const dE_dtorsion = gamma_potential_->dfunc( pseudogamma );
+				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
+				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
+			}
+			if ( rna_type.chi_number_pseudoepsilon() > 0 && get_f1_f2( id::TorsionID( seqpos, id::CHI, rna_type.chi_number_pseudoepsilon() ),	pose, id, f1, f2 ) ){
+				Real const pseudoepsilon = principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudoepsilon() ) );
+				Real const dE_dtorsion = ( fade_delta_north_->func( delta ) * epsilon_north_potential_->dfunc( pseudoepsilon ) +
+																	 fade_delta_south_->func( delta ) * epsilon_south_potential_->dfunc( pseudoepsilon ) );
+				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
+				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
+
+				get_f1_f2( id::TorsionID( seqpos, id::BB, DELTA ),	pose, id, f1, f2 ); // delta contribution...
+				Real const dE_dtorsion_delta = ( fade_delta_north_->dfunc( delta ) * epsilon_north_potential_->func( pseudoepsilon ) +
+																				 fade_delta_south_->dfunc( delta ) * epsilon_south_potential_->func( pseudoepsilon ) );
+				F1 += radians2degrees * dE_dtorsion_delta * weights[ rna_torsion ] * f1;
+				F2 += radians2degrees * dE_dtorsion_delta * weights[ rna_torsion ] * f2;
+
+			}
+			if ( rna_type.chi_number_pseudozeta() > 0 && get_f1_f2( id::TorsionID( seqpos, id::CHI, rna_type.chi_number_pseudozeta() ),	pose, id, f1, f2 ) ){
+				Real const pseudozeta = principal_angle_degrees( rsd.chi( rna_type.chi_number_pseudozeta() ) );
+				Real const next_alpha = rna_fitted_torsion_info_->alpha_aform();
+				Real const dE_dtorsion = ( fade_alpha_sc_minus_->func( next_alpha ) * zeta_alpha_sc_minus_potential_->dfunc( pseudozeta ) +
+																	 fade_alpha_sc_plus_->func( next_alpha )  * zeta_alpha_sc_plus_potential_->dfunc( pseudozeta ) +
+																	 fade_alpha_ap_->func( next_alpha )       * zeta_alpha_ap_potential_->dfunc( pseudozeta ) );
+				F1 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f1;
+				F2 += radians2degrees * dE_dtorsion * weights[ rna_torsion ] * f2;
+			}
 		}
+
 	}
 
 
@@ -638,8 +715,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
 		using namespace scoring::constraints;
 
-		RNA_FittedTorsionInfo rna_torsion_fitted_info;
-		Real const DELTA_CUTOFF_ = rna_torsion_fitted_info.delta_cutoff();
+		Real const DELTA_CUTOFF_ = rna_fitted_torsion_info_->delta_cutoff();
 
 		// FadeFunc initialized with min, max, fade-width, and function value.
 		fade_delta_north_ = new func::FadeFunc(
@@ -697,7 +773,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	RNA_TorsionPotential::Is_cutpoint_closed_atom( core::conformation::Residue const & rsd, id::AtomID const & id ) const{
+	RNA_TorsionPotential::is_cutpoint_closed_atom( core::conformation::Residue const & rsd, id::AtomID const & id ) const{
 		std::string const & atom_name = rsd.type().atom_name( id.atomno() );
 
 		if ( atom_name == "OVU1" || atom_name == "OVL1" || atom_name == "OVL2" ){
@@ -709,7 +785,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	RNA_TorsionPotential::Is_cutpoint_closed_torsion( pose::Pose const & pose, id::TorsionID const & torsion_id ) const
+	RNA_TorsionPotential::is_cutpoint_closed_torsion( pose::Pose const & pose, id::TorsionID const & torsion_id ) const
 	{
 		using namespace ObjexxFCL;
 
@@ -784,7 +860,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	bool
-	RNA_TorsionPotential::Should_score_torsion( pose::Pose const & pose, id::TorsionID const & torsion_id ) const
+	RNA_TorsionPotential::should_score_torsion( pose::Pose const & pose, id::TorsionID const & torsion_id ) const
 	{
 
 		id::AtomID id1, id2, id3, id4;
@@ -807,25 +883,25 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 		if ( !rsd_1.is_RNA() || !rsd_2.is_RNA() || !rsd_3.is_RNA() || !rsd_4.is_RNA() ) return false;  //Rhiju's added this between r47018 and r46616
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		bool Is_virtual_torsion = ( rsd_1.is_virtual( id1.atomno() ) || rsd_2.is_virtual( id2.atomno() ) || rsd_3.is_virtual( id3.atomno() ) || rsd_4.is_virtual( id4.atomno() ) );
+		bool is_virtual_torsion = ( rsd_1.is_virtual( id1.atomno() ) || rsd_2.is_virtual( id2.atomno() ) || rsd_3.is_virtual( id3.atomno() ) || rsd_4.is_virtual( id4.atomno() ) );
 
-		if ( Is_virtual_torsion && verbose_ ) print_torsion_info( pose, torsion_id );
+		if ( is_virtual_torsion && verbose_ ) print_torsion_info( pose, torsion_id );
 
 		/////////////////////Check for cutpoint_closed (Since these torsions will contain virtual atom(s), but want to score these torsions!///////////////////////////////
-		bool const METHOD_ONE_Is_cutpoint_closed_torsion = Is_cutpoint_closed_torsion( pose, torsion_id );
-		bool const METHOD_TWO_Is_cutpoint_closed_torsion = ( Is_cutpoint_closed_atom( rsd_1, id1 ) || Is_cutpoint_closed_atom( rsd_2, id2 ) || Is_cutpoint_closed_atom( rsd_3, id3 ) || Is_cutpoint_closed_atom( rsd_4, id4 ) );
+		bool const METHOD_ONE_is_cutpoint_closed_torsion = is_cutpoint_closed_torsion( pose, torsion_id );
+		bool const METHOD_TWO_is_cutpoint_closed_torsion = ( is_cutpoint_closed_atom( rsd_1, id1 ) || is_cutpoint_closed_atom( rsd_2, id2 ) || is_cutpoint_closed_atom( rsd_3, id3 ) || is_cutpoint_closed_atom( rsd_4, id4 ) );
 
-		if ( METHOD_ONE_Is_cutpoint_closed_torsion != METHOD_TWO_Is_cutpoint_closed_torsion ){
-			Output_boolean( " METHOD_ONE_Is_cutpoint_closed_torsion = ", METHOD_ONE_Is_cutpoint_closed_torsion );
-			Output_boolean( " METHOD_TWO_Is_cutpoint_closed_torsion = ", METHOD_TWO_Is_cutpoint_closed_torsion );
-			Output_boolean( " Is_virtual_torsion = ", Is_virtual_torsion ); TR << std::endl;
+		if ( METHOD_ONE_is_cutpoint_closed_torsion != METHOD_TWO_is_cutpoint_closed_torsion ){
+			Output_boolean( " METHOD_ONE_is_cutpoint_closed_torsion = ", METHOD_ONE_is_cutpoint_closed_torsion );
+			Output_boolean( " METHOD_TWO_is_cutpoint_closed_torsion = ", METHOD_TWO_is_cutpoint_closed_torsion );
+			Output_boolean( " is_virtual_torsion = ", is_virtual_torsion ); TR << std::endl;
 			print_torsion_info( pose, torsion_id );
-			utility_exit_with_message( "METHOD_ONE_Is_cutpoint_closed_torsion != METHOD_TWO_Is_cutpoint_closed_torsion !!" );
+			utility_exit_with_message( "METHOD_ONE_is_cutpoint_closed_torsion != METHOD_TWO_is_cutpoint_closed_torsion !!" );
 		}
 
-		if ( METHOD_ONE_Is_cutpoint_closed_torsion && !Is_virtual_torsion ){
+		if ( METHOD_ONE_is_cutpoint_closed_torsion && !is_virtual_torsion ){
 			print_torsion_info( pose, torsion_id );
-			utility_exit_with_message( "METHOD_ONE_Is_cutpoint_closed_torsion == true && Is_virtual_torsion == false !!" );
+			utility_exit_with_message( "METHOD_ONE_is_cutpoint_closed_torsion == true && is_virtual_torsion == false !!" );
 		}
 
 
@@ -837,7 +913,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 
 		bool const inter_residue_torsion = ( rsd_1.seqpos() != rsd_4.seqpos() );
 
-		bool Is_chain_break_torsion = false;
+		bool is_chain_break_torsion = false;
 
 		if ( inter_residue_torsion ){
 
@@ -850,23 +926,23 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 			//Note that cutpoint_closed_torsions are NOT considered as chain_break_torsion since we want to score them EVEN when skip_chainbreak_torsions_=true!
 			//Necessary since for cutpoint_closed_torsions, the max O3_prime_to_P_bond_dist might be violated during stages of the Fragment Assembly and Stepwise Assembly where the chain is not yet closed.
 
-			Is_chain_break_torsion = ( violate_max_O3_prime_to_P_bond_dist == true && METHOD_ONE_Is_cutpoint_closed_torsion == false );
+			is_chain_break_torsion = ( violate_max_O3_prime_to_P_bond_dist == true && METHOD_ONE_is_cutpoint_closed_torsion == false );
 
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		bool should_score_this_torsion = true; //Warning before Jan 20, 2012, this used to be "Size should_score_this_torsion= true;"
 
-		if ( Is_virtual_torsion == true && METHOD_ONE_Is_cutpoint_closed_torsion == false ) should_score_this_torsion = false;
+		if ( is_virtual_torsion == true && METHOD_ONE_is_cutpoint_closed_torsion == false ) should_score_this_torsion = false;
 
-		if ( skip_chainbreak_torsions_ && Is_chain_break_torsion ) should_score_this_torsion = false;
+		if ( skip_chainbreak_torsions_ && is_chain_break_torsion ) should_score_this_torsion = false;
 
 		if ( verbose_ ){
 			Output_boolean( " should_score_torsion = ", should_score_this_torsion );
-			Output_boolean( " | Is_cutpoint_closed_torsion = ", METHOD_ONE_Is_cutpoint_closed_torsion );
-			Output_boolean( " | Is_virtual_torsion = ", Is_virtual_torsion );
+			Output_boolean( " | is_cutpoint_closed_torsion = ", METHOD_ONE_is_cutpoint_closed_torsion );
+			Output_boolean( " | is_virtual_torsion = ", is_virtual_torsion );
 			Output_boolean( " | skip_chainbreak_torsions_ = ", skip_chainbreak_torsions_ );
-			Output_boolean( " | Is_chain_break_torsion   = ", Is_chain_break_torsion ) ;
+			Output_boolean( " | is_chain_break_torsion   = ", is_chain_break_torsion ) ;
 			TR << std::endl;
 		}
 

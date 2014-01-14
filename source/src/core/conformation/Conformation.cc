@@ -2969,6 +2969,9 @@ Conformation::backbone_torsion_angle_atoms(
 			}	else if ( rsd.has_variant_type( "N_ACETYLATION" ) ) {
 				id1.rsd() = seqpos;
 				id1.atomno() = rsd.atom_index( " CP " );
+			} else if ( rsd.has_variant_type( "FIVE_PRIME_PHOSPHATE" ) ){
+				id1.rsd() = seqpos;
+				id1.atomno() = rsd.atom_index( "XO3'" );
 			} else {
 				// first bb-torsion is not well-defined
 				return true; // FAILURE
@@ -3033,6 +3036,18 @@ Conformation::backbone_torsion_angle_atoms(
 					assert( torsion == 3 );
 					id3.atomno() = rsd.atom_index( " NR ");
 					id4.atomno() = rsd.atom_index( " CS ");
+				}
+			} else if ( rsd.has_variant_type( "THREE_PRIME_PHOSPHATE" ) ) {
+				//ugly again. -- rhiju.
+				id3.rsd() = seqpos;
+				id4.rsd() = seqpos;
+				if ( torsion+1 == ntorsions ) /*epsilon*/ {
+					id3.atomno() = mainchain[ torsion+1 ];
+					id4.atomno() = rsd.atom_index( "YP  ");
+				} else {
+					assert( torsion == ntorsions ); /*zeta*/
+					id3.atomno() = rsd.atom_index( "YP  ");
+					id4.atomno() = rsd.atom_index( "YO5'");
 				}
 			} else {
 				// last two bb-torsions not well-defined

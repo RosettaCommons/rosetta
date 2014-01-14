@@ -99,6 +99,7 @@ stepwise_monte_carlo()
 	// actual pose to be sampled...
 	pose::Pose & pose = *input_poses[ 1 ];
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500 );
+	try_reroot_at_fixed_domain( pose );
 
 	StepWiseRNA_MonteCarlo stepwise_rna_monte_carlo( scorefxn );
 	StepWiseRNA_MonteCarloOptionsOP options = new StepWiseRNA_MonteCarloOptions;

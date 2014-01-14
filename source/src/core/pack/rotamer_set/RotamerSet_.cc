@@ -17,6 +17,7 @@
 // Package Headers
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/rotamer_set/rotamer_building_functions.hh>
+#include <core/pack/rotamer_set/rna_rotamer_building_functions.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
@@ -317,7 +318,7 @@ RotamerSet_::build_rotamers_for_concrete(
 				for(core::Size i=1; i<=suggested_rotamers.size(); i++) {
 					if(suggested_rotamers[i]->nchi() > 0) {
 						for(core::Size j=1; j<=suggested_rotamers[i]->nchi(); j++) {
-							suggested_rotamers[i]->set_chi(j, -1.0*suggested_rotamers[i]->chi(j)); 
+							suggested_rotamers[i]->set_chi(j, -1.0*suggested_rotamers[i]->chi(j));
 						}
 					}
 				}

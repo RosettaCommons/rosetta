@@ -70,10 +70,10 @@ create_rna_vall_torsions( core::pose::Pose & pose,
 													utility::vector1 <core::Size> const & exclude_res_list );
 
 core::Real
-get_o1p_o2p_sign( core::pose::Pose const & pose );
+get_op2_op1_sign( core::pose::Pose const & pose );
 
 core::Real
-get_o1p_o2p_sign( core::pose::Pose const & pose , core::Size res_num);
+get_op2_op1_sign( core::pose::Pose const & pose , core::Size res_num);
 
 void
 assert_phosphate_nomenclature_matches_mini( core::pose::Pose const & pose);
@@ -174,6 +174,9 @@ process_input_file( std::string const & silent_file,
 										utility::vector1< core::pose::PoseOP > & pose_list,
 										bool is_pdb = false,
 										bool coarse_rna  = false );
+
+void
+print_hbonds( core::pose::Pose & pose );
 
 
 } //farna

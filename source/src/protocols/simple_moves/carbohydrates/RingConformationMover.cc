@@ -18,6 +18,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/carbohydrates/RingConformerSet.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/kinematics/MoveMap.hh>

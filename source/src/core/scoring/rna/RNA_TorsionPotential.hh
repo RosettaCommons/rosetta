@@ -16,7 +16,7 @@
 
 // Unit Headers
 #include <core/scoring/rna/RNA_TorsionPotential.fwd.hh>
-#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -94,7 +94,7 @@ private:
 	init_fade_functions();
 
 	bool
-	Should_score_torsion( core::pose::Pose const & pose, core::id::TorsionID const & torsion_id ) const;
+	should_score_torsion( core::pose::Pose const & pose, core::id::TorsionID const & torsion_id ) const;
 
 	bool
 	get_f1_f2( core::id::TorsionID const & torsion_id,
@@ -104,13 +104,13 @@ private:
 	Output_boolean( std::string const & tag, bool boolean ) const;
 
 	bool
-	Is_cutpoint_closed_atom( core::conformation::Residue const & rsd, core::id::AtomID const & id ) const;
+	is_cutpoint_closed_atom( core::conformation::Residue const & rsd, core::id::AtomID const & id ) const;
 
 	void
 	print_torsion_info( core::pose::Pose const & pose, id::TorsionID const & torsion_id ) const;
 
 	bool
-	Is_cutpoint_closed_torsion( core::pose::Pose const & pose, core::id::TorsionID const & torsion_id ) const;
+	is_cutpoint_closed_torsion( core::pose::Pose const & pose, core::id::TorsionID const & torsion_id ) const;
 
 	std::string path_to_torsion_files_;
 
@@ -135,6 +135,7 @@ private:
 	bool use_new_potential_;
 	bool const use_2prime_OH_potential_;
 	Real const syn_G_potential_bonus_;
+	chemical::rna::RNA_FittedTorsionInfoOP rna_fitted_torsion_info_;
 
 };
 

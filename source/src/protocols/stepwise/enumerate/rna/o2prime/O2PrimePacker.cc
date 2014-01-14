@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/enumerate/rna/O2PrimePacker.cc
+/// @file protocols/stepwise/enumerate/rna/o2prime/O2PrimePacker.cc
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#include <protocols/stepwise/enumerate/rna/O2PrimePacker.hh>
+#include <protocols/stepwise/enumerate/rna/o2prime/O2PrimePacker.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
 #include <protocols/simple_moves/GreenPacker.hh>
@@ -30,6 +30,7 @@ namespace protocols {
 namespace stepwise {
 namespace enumerate {
 namespace rna {
+namespace o2prime {
 
 	//Constructor
 	O2PrimePacker::O2PrimePacker( pose::Pose const & pose,
@@ -163,6 +164,7 @@ O2PrimePacker::copy_all_o2prime_torsions( core::pose::Pose & mod_pose ) const {
 pose::Pose &
 O2PrimePacker::pose(){ return o2prime_pack_pose_; }
 
+} //o2prime
 } //rna
 } //enumerate
 } //stepwise

@@ -1,4 +1,3 @@
-namespace jumps { IntegerOptionKey const njumps( "jumps:njumps" );  }
 namespace jumps { IntegerOptionKey const max_strand_gap_allowed( "jumps:max_strand_gap_allowed" );  }
 namespace jumps { RealOptionKey const contact_score( "jumps:contact_score" );  }
 namespace jumps { BooleanOptionKey const filter_templates( "jumps:filter_templates" );  }
@@ -107,6 +106,7 @@ namespace score { BooleanOptionKey const linear_bonded_potential( "score:linear_
 namespace score { BooleanOptionKey const geom_sol_correct_acceptor_base( "score:geom_sol_correct_acceptor_base" );  }
 namespace score { RealOptionKey const free_sugar_bonus( "score:free_sugar_bonus" );  }
 namespace score { RealOptionKey const syn_G_potential_bonus( "score:syn_G_potential_bonus" );  }
+namespace score { RealOptionKey const pack_phosphate_penalty( "score:pack_phosphate_penalty" );  }
 namespace score { IntegerVectorOptionKey const rg_local_span( "score:rg_local_span" );  }
 namespace score { BooleanOptionKey const unmodifypot( "score:unmodifypot" );  }
 namespace score { namespace saxs { BooleanOptionKey const saxs( "score:saxs" );  } }

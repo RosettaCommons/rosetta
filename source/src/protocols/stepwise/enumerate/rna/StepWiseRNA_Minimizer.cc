@@ -36,6 +36,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
+#include <core/chemical/rna/RNA_Util.hh> // for DELTA
 #include <basic/Tracer.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>

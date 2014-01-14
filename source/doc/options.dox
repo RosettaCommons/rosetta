@@ -4208,6 +4208,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 0.0</dd><br>
 </dl>
 <dl>
+<dt><b>-pack_phosphate_penalty</b> \<Real\><dt>
+<dd>Amount to penalize instantiation of a 5' or 3' phosphate</dd><br>
+<dd>Default: 0.25</dd><br>
+</dl>
+<dl>
 <dt><b>-rg_local_span</b> \<IntegerVector\><dt>
 <dd>First,last res in rg_local. For example to calc rg_local from 1-20 would be 1,20</dd><br>
 <dd>Default: 0</dd><br>
@@ -13320,6 +13325,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-sampler_perform_o2prime_pack</b> \<Boolean\><dt>
 <dd>perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler</dd><br>
 <dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-sampler_perform_phosphate_pack</b> \<Boolean\><dt>
+<dd>perform terminal phosphate packing inside StepWiseRNA_ResidueSampler</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-sampler_use_green_packer</b> \<Boolean\><dt>

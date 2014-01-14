@@ -94,7 +94,7 @@ RNA_Minimizer::RNA_Minimizer():
     skip_o2prime_trials_( false ),
     perform_minimizer_run_( true ),
     vary_bond_geometry_( false ),
-    include_default_linear_chainbreak_( true ),
+    include_default_linear_chainbreak_( true  ),
     do_dump_pdb_( false ),
     move_first_rigid_body_( false ),
 		close_loops_( true ),
@@ -258,16 +258,14 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 
 		if ( !pose.residue(i).is_RNA() ) continue;
 
-		for (Size j = 1; j <= NUM_RNA_TORSIONS; j++) {
+		for (Size j = 1; j <= ( NUM_RNA_MAINCHAIN_TORSIONS + pose.residue(i).type().nchi() ); j++) {
+
 			id::TorsionID rna_torsion_id( i, id::BB, j );
 			if ( j > NUM_RNA_MAINCHAIN_TORSIONS) rna_torsion_id = id::TorsionID( i, id::CHI, j - NUM_RNA_MAINCHAIN_TORSIONS );
-
 			if ( !allow_insert_->get( rna_torsion_id, pose.conformation() ) ) continue;
 
 			// this is not general. Sigh:
 			if ( pose.residue(i).has_variant_type("VIRTUAL_PHOSPHATE") && ( j == 1 || j == 2 || j == 3 ) ) continue;
-
-			//				DOF_ID dof_id( pose.conformation().dof_id_from_torsion_id( rna_torsion_id ) );
 			mm.set( rna_torsion_id, true );
 
 		}

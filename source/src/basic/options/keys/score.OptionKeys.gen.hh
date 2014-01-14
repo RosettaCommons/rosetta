@@ -82,6 +82,7 @@ namespace score { extern BooleanOptionKey const linear_bonded_potential; }
 namespace score { extern BooleanOptionKey const geom_sol_correct_acceptor_base; }
 namespace score { extern RealOptionKey const free_sugar_bonus; }
 namespace score { extern RealOptionKey const syn_G_potential_bonus; }
+namespace score { extern RealOptionKey const pack_phosphate_penalty; }
 namespace score { extern IntegerVectorOptionKey const rg_local_span; }
 namespace score { extern BooleanOptionKey const unmodifypot; }
 namespace score { namespace saxs { extern BooleanOptionKey const saxs; } }

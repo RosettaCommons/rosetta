@@ -18,6 +18,7 @@
 // Package headers
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 
 // Project headers
 #include <core/id/AtomID.hh>

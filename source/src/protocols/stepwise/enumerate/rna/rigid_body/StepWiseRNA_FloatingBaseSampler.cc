@@ -27,7 +27,7 @@
 #include <protocols/stepwise/enumerate/rna/screener/ChainBreakScreener.hh>
 #include <protocols/stepwise/enumerate/rna/screener/AtrRepScreener.hh>
 #include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamer.hh>
-#include <protocols/stepwise/enumerate/rna/O2PrimePacker.hh>
+#include <protocols/stepwise/enumerate/rna/o2prime/O2PrimePacker.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
@@ -343,7 +343,7 @@ StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_screeners( pose:
 		remove_virtual_O2Prime_hydrogen( pose );
 		// weird -- following should not be necessary, but commenting it out changes results.
 		if ( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_RIBOSE" ) ) pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", moving_res_ );
-		o2prime_packer_ = new O2PrimePacker( pose, scorefxn_, job_parameters_->working_moving_partition_pos() /* moving_res_*/ );
+		o2prime_packer_ = new o2prime::O2PrimePacker( pose, scorefxn_, job_parameters_->working_moving_partition_pos() /* moving_res_*/ );
 	} else {
 		add_virtual_O2Prime_hydrogen( pose );
 	}

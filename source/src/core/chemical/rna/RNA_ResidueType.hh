@@ -43,46 +43,50 @@ namespace rna {
 class RNA_ResidueType : public utility::pointer::ReferenceCount {
 
 
-	public:
+public:
 
 	RNA_ResidueType();
 
 	virtual ~RNA_ResidueType();
 
-	///////////////////////////Implemented for fast lookup! Parin Sripakdeevong, June 25th, 2011//////////////////
-	private:
+///////////////////////////Implemented for fast lookup! Parin Sripakdeevong, June 25th, 2011//////////////////
+private:
+
+	utility::vector1< Size > const
+	figure_out_chi_order() const;
 
 	void
-	rna_note_chi_controls_atom( core::Size const chi, core::Size const atomno, utility::vector1< core::Size > & last_controlling_chi);
-
+	rna_note_chi_controls_atom( core::Size const chi, core::Size const atomno,
+															utility::vector1< core::Size > & last_controlling_chi,
+															utility::vector1< core::Size > const & chi_order );
 
 	public:
 
 	void
-	update_derived_rna_data(ResidueTypeCOP const residue_type_in);
+	update_derived_rna_data( ResidueTypeCOP const residue_type_in );
 
 	void
-	rna_update_last_controlling_chi(ResidueTypeCOP const residue_type_in,
+	rna_update_last_controlling_chi( ResidueTypeCOP const residue_type_in,
 																utility::vector1< core::Size > & last_controlling_chi,
-																utility::vector1< AtomIndices >  &  atoms_last_controlled_by_chi);
-	
+																utility::vector1< AtomIndices >  &  atoms_last_controlled_by_chi );
+
 	////////////Fast lookup functions///////
 
 	utility::vector1< bool > const &
-	Is_virtual_atom_list() const;
+	is_virtual() const;
 
 	bool
 	atom_is_virtual( Size const atomno ) const;
 
 	utility::vector1< bool > const &
-	Is_phosphate_atom_list() const;
+	is_phosphate() const;
 
 	/// @brief quick lookup: is the atom with the given index is part of the RNA phosphate or not?
 	bool
 	atom_is_phosphate( Size const atomno ) const;
 
 	utility::vector1< bool > const &
-	Is_RNA_base_atom_list() const;
+	is_RNA_base() const;
 
 	bool
 	is_RNA_base_atom( Size const atomno ) const;
@@ -100,10 +104,10 @@ class RNA_ResidueType : public utility::pointer::ReferenceCount {
 	p_atom_index() const;
 
 	Size
-	o1p_atom_index() const;
+	op2_atom_index() const;
 
 	Size
-	o2p_atom_index() const;
+	op1_atom_index() const;
 
 	Size
 	o5prime_atom_index() const;
@@ -120,12 +124,18 @@ class RNA_ResidueType : public utility::pointer::ReferenceCount {
 	Size
 	c2prime_atom_index() const;
 
-	Size
+ 	Size
 	c4prime_atom_index() const;
 
-	///////////////////////////////////////////////////////////////////////////////////////
+	Size chi_number_pseudoalpha() const { return chi_number_pseudoalpha_;}
+	Size chi_number_pseudobeta() const { return chi_number_pseudobeta_;}
+	Size chi_number_pseudogamma() const { return chi_number_pseudogamma_;}
+	Size chi_number_pseudoepsilon() const { return chi_number_pseudoepsilon_;}
+	Size chi_number_pseudozeta() const { return chi_number_pseudozeta_;}
 
-	public:
+///////////////////////////////////////////////////////////////////////////////////////
+
+public:
 
 	//o2prime atom
 	core::Size o2prime_index_;
@@ -133,8 +143,8 @@ class RNA_ResidueType : public utility::pointer::ReferenceCount {
 
 	//Phosphate atoms
 	core::Size p_atom_index_;
-	core::Size o1p_atom_index_;
-	core::Size o2p_atom_index_;
+	core::Size op2_atom_index_;
+	core::Size op1_atom_index_;
 	core::Size o5prime_index_;
 	core::Size o3prime_index_;
 
@@ -146,14 +156,18 @@ class RNA_ResidueType : public utility::pointer::ReferenceCount {
 
 	AtomIndices base_atom_list_;
 
-	utility::vector1< bool > Is_RNA_base_atom_list_;
-	utility::vector1< bool > Is_phosphate_atom_list_;
+	utility::vector1< bool > is_RNA_base_;
+	utility::vector1< bool > is_phosphate_;
 	//For fast look whether atom is VIRTUAL type.
-	utility::vector1< bool > Is_virtual_atom_list_;
-	//AtomIndices base_heavy_atoms_;
-	//AtomIndices base_hydrogen_atoms_;
-	
+	utility::vector1< bool > is_virtual_;
+
 	ResidueTypeCOP residue_type_; //Pointer to the main ResidueType object that this RNA_ResidueType object belongs to.
+
+	Size chi_number_pseudoalpha_;
+	Size chi_number_pseudobeta_;
+	Size chi_number_pseudogamma_;
+	Size chi_number_pseudoepsilon_;
+	Size chi_number_pseudozeta_;
 
 }; //RNA_ResidueType
 

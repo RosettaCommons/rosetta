@@ -23,8 +23,8 @@
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
-// AUTO-REMOVED #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/IGEdgeReweightContainer.hh>
+#include <core/pack/task/rna/RNA_ResidueLevelTask.hh>
 
 //Project Headers
 #include <core/conformation/Residue.hh>
@@ -85,7 +85,6 @@ ResidueLevelTask_::ResidueLevelTask_(
 	disabled_( false ),
 	design_disabled_( false ),
 	sample_proton_chi_( true ),
-	sample_rna_chi_( false ),
 	ex1_( false ),
 	ex2_( false ),
 	ex3_( false ),
@@ -142,6 +141,7 @@ ResidueLevelTask_::ResidueLevelTask_(
 		// for non-amino acids, default is to include only the existing residuetype
 		allowed_residue_types_.push_back( & (original_residue.type()) ); // fix this: creating CAP from const &
 	}
+	if ( original_residue.is_RNA() ) rna_task_ = new rna::RNA_ResidueLevelTask;
 	// The intention is for all ResidueTasks to *start off* as repackable.
 	// Some, like protein AAs and DNA, also start off designable.
 	determine_if_designing();
@@ -152,8 +152,9 @@ ResidueLevelTask_::ResidueLevelTask_(
 	runtime_assert( ! allowed_residue_types_.empty() );
 }
 
-ResidueLevelTask_::~ResidueLevelTask_() {}
+ResidueLevelTask_::ResidueLevelTask_() {}
 
+ResidueLevelTask_::~ResidueLevelTask_() {}
 
 ExtraRotSample
 ResidueLevelTask_::extrachi_sample_level(
@@ -486,17 +487,6 @@ bool ResidueLevelTask_::sample_proton_chi() const
 {
 	return sample_proton_chi_;
 }
-
-void ResidueLevelTask_::sample_rna_chi( bool setting )
-{
-	sample_rna_chi_ = setting;
-}
-
-bool ResidueLevelTask_::sample_rna_chi() const
-{
-	return sample_rna_chi_;
-}
-
 
 bool ResidueLevelTask_::ex1() const
 {
@@ -1085,10 +1075,11 @@ ResidueLevelTask_::append_rotamerset_operation(
 	rotsetops_.push_back( rotsetop );
 }
 
+rna::RNA_ResidueLevelTask const &
+ResidueLevelTask_::rna_task() const{ return *rna_task_; }
 
-
-
-
+rna::RNA_ResidueLevelTask &
+ResidueLevelTask_::nonconst_rna_task() { return *rna_task_; }
 
 void
 ResidueLevelTask_::update_union( ResidueLevelTask const & t )
@@ -1141,7 +1132,6 @@ ResidueLevelTask_::update_union( ResidueLevelTask const & t )
 	flip_HNQ_                    |= o.flip_HNQ_;
 	fix_his_tautomer_            |= o.fix_his_tautomer_;
 	sample_proton_chi_           |= o.sample_proton_chi_;
-	sample_rna_chi_              |= o.sample_rna_chi_;
 	ex1_                         |= o.ex1_;
 	ex2_                         |= o.ex2_;
 	ex3_                         |= o.ex3_;
@@ -1233,7 +1223,6 @@ ResidueLevelTask_::update_intersection( ResidueLevelTask const & t )
 	flip_HNQ_                    &= o.flip_HNQ_;
 	fix_his_tautomer_            &= o.fix_his_tautomer_;
 	sample_proton_chi_           &= o.sample_proton_chi_;
-	sample_rna_chi_              &= o.sample_rna_chi_;
 	ex1_                         &= o.ex1_;
 	ex2_                         &= o.ex2_;
 	ex3_                         &= o.ex3_;
@@ -1278,7 +1267,6 @@ ResidueLevelTask_::update_commutative(
 	disabled_                     |= o.disabled_;
 	design_disabled_              |= o.design_disabled_;
 	sample_proton_chi_            = o.sample_proton_chi_; // <--- apparently sample_proton_chi is not commutatively assigned
-	sample_rna_chi_               = o.sample_rna_chi_; // <--- apparently sample_rna_chi is not commutatively assigned
 	ex1_                          |= o.ex1_;
 	ex2_                          |= o.ex2_;
 	ex3_                          |= o.ex3_;
@@ -1883,7 +1871,6 @@ PackerTask_::show_residue_task( std::ostream & out, Size resid ) const {
 			"\n" << " \tflip HIS/ASN/GLN?\t\t" << (residue_task(resid).flip_HNQ() ? "TRUE" : "FALSE")<<
 			"\n" << " \tfix HIS tautamer?\t\t" << (residue_task(resid).fix_his_tautomer() ? "TRUE" : "FALSE") <<
 			"\n" << " \tsample proton chi?\t\t" << (residue_task(resid).sample_proton_chi() ? "TRUE" : "FALSE") <<
-			"\n" << " \tsample RNA chi?\t\t\t" << (residue_task(resid).sample_rna_chi() ? "TRUE" : "FALSE") <<
 			"\n" << " \textra chi cutoff:\t\t" << residue_task(resid).extrachi_cutoff() <<
 			"\n" << " \textra rotamer for chi 1\t\t" << (residue_task(resid).ex1() ? "TRUE" : "FALSE") <<
 			"\n" << " \textra rotamer for chi 2\t\t" << (residue_task(resid).ex2() ? "TRUE" : "FALSE") <<
@@ -2305,7 +2292,6 @@ PackerTask_::operator=(PackerTask const &){
 	utility_exit_with_message("illegal");
 	return *this;
 }
-
 
 } //namespace task
 } //namespace pack

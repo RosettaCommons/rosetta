@@ -16,7 +16,6 @@
 #include <protocols/rotamer_sampler/rna/RNA_KicSampler.hh>
 
 // Package headers
-#include <protocols/rotamer_sampler/util.hh>
 #include <protocols/rotamer_sampler/RotamerSizedComb.hh>
 #include <protocols/rotamer_sampler/rna/RNA_KinematicCloser.hh>
 #include <protocols/rotamer_sampler/rna/RNA_ChiRotamer.hh>
@@ -26,6 +25,7 @@
 // Project headers
 #include <core/id/TorsionID.hh>
 #include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_SamplerUtil.hh>
 #include <core/pose/rna/RNA_Util.hh>
 #include <core/pose/rna/RNA_SuiteName.hh>
 #include <core/pose/Pose.hh>

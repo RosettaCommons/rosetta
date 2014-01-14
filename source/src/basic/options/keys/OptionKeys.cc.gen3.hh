@@ -1,4 +1,3 @@
-namespace parser { BooleanOptionKey const view( "parser:view" );  }
 namespace parser { StringOptionKey const patchdock( "parser:patchdock" );  }
 namespace parser { IntegerVectorOptionKey const patchdock_random_entry( "parser:patchdock_random_entry" );  }
 namespace DomainAssembly { BooleanOptionKey const DomainAssembly( "DomainAssembly" );  }
@@ -434,6 +433,7 @@ namespace stepwise { namespace rna { RealOptionKey const sampler_native_screen_r
 namespace stepwise { namespace rna { RealOptionKey const sampler_cluster_rmsd( "stepwise:rna:sampler_cluster_rmsd" );  } }
 namespace stepwise { namespace rna { RealOptionKey const native_edensity_score_cutoff( "stepwise:rna:native_edensity_score_cutoff" );  } }
 namespace stepwise { namespace rna { BooleanOptionKey const sampler_perform_o2prime_pack( "stepwise:rna:sampler_perform_o2prime_pack" );  } }
+namespace stepwise { namespace rna { BooleanOptionKey const sampler_perform_phosphate_pack( "stepwise:rna:sampler_perform_phosphate_pack" );  } }
 namespace stepwise { namespace rna { BooleanOptionKey const sampler_use_green_packer( "stepwise:rna:sampler_use_green_packer" );  } }
 namespace stepwise { namespace rna { BooleanOptionKey const VERBOSE( "stepwise:rna:VERBOSE" );  } }
 namespace stepwise { namespace rna { BooleanOptionKey const distinguish_pucker( "stepwise:rna:distinguish_pucker" );  } }

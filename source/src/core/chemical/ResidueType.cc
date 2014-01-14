@@ -66,6 +66,8 @@
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/rna/RNA_ResidueType.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 
 // Numeric headers
 #include <numeric/xyz.functions.hh>
@@ -290,7 +292,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 	n_polymeric_residue_connections_( residue_type.n_polymeric_residue_connections_ ),
 	delete_atoms_(residue_type.delete_atoms_),
 	force_bb_(residue_type.force_bb_),
-	rna_residuetype_(residue_type.rna_residuetype_),
+	rna_residue_type_(residue_type.rna_residue_type_),
 	carbohydrate_info_(residue_type.carbohydrate_info_),
 	finalized_(residue_type.finalized_),
 	defined_adducts_(residue_type.defined_adducts_),
@@ -1555,6 +1557,7 @@ ResidueType::reorder_primary_data(AtomIndices const & old2new)
 
 	// chi_atoms_
 	for ( Size i=1; i<= chi_atoms_.size(); ++i ) {
+		if ( chi_atoms_[i].size() != 4 ) continue;
 		for ( Size j=1; j<= 4; ++j ) {
 			chi_atoms_[i][j] = old2new[ chi_atoms_[i][j] ];
 		}
@@ -1881,15 +1884,12 @@ ResidueType::update_derived_data()
 
 
 	if(is_RNA_){ //reinitialize and RNA derived data.
-		//Reinitialize rna_residuetype_ object! This also make sure rna_residuetype_ didn't inherit anything from the previous update!
-		//It appears that the rna_residuetype_ is shared across multiple ResidueType object, if the rna_residuetype_ is not reinitialized here!
-
-		rna_residuetype_ = *( core::chemical::rna::RNA_ResidueTypeOP( new core::chemical::rna::RNA_ResidueType ) );
-
+		//Reinitialize rna_residue_type_ object! This also make sure rna_residue_type_ didn't inherit anything from the previous update!
+		//It appears that the rna_residue_type_ is shared across multiple ResidueType object, if the rna_residue_type_ is not reinitialized here!
+		rna_residue_type_ = new core::chemical::rna::RNA_ResidueType;
 		//update_last_controlling_chi is treated separately for RNA case. Parin Sripakdeevong, June 26, 2011
-		rna_residuetype_.rna_update_last_controlling_chi(this, last_controlling_chi_, atoms_last_controlled_by_chi_);
-
-		rna_residuetype_.update_derived_rna_data(this);
+		rna_residue_type_->rna_update_last_controlling_chi( this, last_controlling_chi_, atoms_last_controlled_by_chi_);
+		rna_residue_type_->update_derived_rna_data( this );
 	} else if (is_carbohydrate_) {
 		carbohydrate_info_ = new chemical::carbohydrates::CarbohydrateInfo(this);
 		update_last_controlling_chi();
@@ -3073,6 +3073,12 @@ ResidueType::is_virtual( Size const & atomno ) const
 bool
 ResidueType::is_virtual_residue() const{
 	return ( has_variant_type( "VIRTUAL_RESIDUE" ) );
+}
+
+///////////////////////////////////////////////////////////////
+core::chemical::rna::RNA_ResidueType const &
+ResidueType::RNA_type() const{
+	return ( *rna_residue_type_ );
 }
 
 

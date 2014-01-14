@@ -116,7 +116,7 @@ public:
 
 	utility::vector1< Size > moving_res_in_full_model() const;
 
-	Size size(){ return full_sequence_.size(); }
+	Size size() const { return full_sequence_.size(); }
 
 private:
 

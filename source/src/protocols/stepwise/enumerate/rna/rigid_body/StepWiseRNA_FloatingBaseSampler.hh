@@ -28,7 +28,7 @@
 #include <protocols/stepwise/enumerate/rna/screener/AtrRepScreener.fwd.hh>
 #include <protocols/stepwise/enumerate/rna/screener/ChainBreakScreener.fwd.hh>
 #include <protocols/stepwise/enumerate/rna/screener/ChainClosableScreener.fwd.hh>
-#include <protocols/stepwise/enumerate/rna/O2PrimePacker.fwd.hh>
+#include <protocols/stepwise/enumerate/rna/o2prime/O2PrimePacker.fwd.hh>
 #include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamer.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
@@ -173,7 +173,7 @@ namespace rna {
 		utility::vector1 < conformation::ResidueOP > moving_rsd_at_origin_list_, screening_moving_rsd_at_origin_list_, sugar_screening_moving_rsd_at_origin_list_;
 		StepWiseRNA_PoseSelectionOP pose_selection_;
 
-		O2PrimePackerOP o2prime_packer_;
+		o2prime::O2PrimePackerOP o2prime_packer_;
 
 		kinematics::Stub reference_stub_;
 		utility::vector1 < core::kinematics::Stub > other_residues_base_list_;

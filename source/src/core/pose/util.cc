@@ -1474,7 +1474,7 @@ copy_dofs(
 		//		}
 
 		// There's one more case ... if this atom is at a junction between the copied pose and the rest of the structure, that could be bad news.
-		// happens with o1p, o2p at junctions.
+		// happens with op2, op1 at junctions.
 		if ( false ){
 
 			bool problem_with_sister( false );
@@ -2084,6 +2084,8 @@ add_variant_type_to_pose_residue(
 	)
 {
 	runtime_assert( seqpos != 0 );
+	if ( pose.residue( seqpos ).has_variant_type( variant_type ) ) return;
+
 	conformation::Residue const & old_rsd( pose.residue( seqpos ) );
 
 	// the type of the desired variant residue
@@ -2105,6 +2107,8 @@ remove_variant_type_from_pose_residue(
 	Size const seqpos
 	)
 {
+	if ( !pose.residue( seqpos ).has_variant_type( variant_type ) ) return;
+
 	conformation::Residue const & old_rsd( pose.residue( seqpos ) );
 
 	// the type of the desired variant residue

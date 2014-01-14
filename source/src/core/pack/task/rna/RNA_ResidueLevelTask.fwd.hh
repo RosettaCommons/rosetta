@@ -7,29 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/enumerate/rna/O2PrimePacker.fwd.hh
-/// @brief 
+/// @file core/pack/task/rna/RNA_ResidueLevelTask.fwd.hh
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_rna_O2PrimePacker_FWD_HH
-#define INCLUDED_protocols_stepwise_rna_O2PrimePacker_FWD_HH
+#ifndef INCLUDED_core_pack_task_rna_RNA_ResidueLevelTask_FWD_HH
+#define INCLUDED_core_pack_task_rna_RNA_ResidueLevelTask_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace protocols {
-namespace stepwise {
-namespace enumerate {
+namespace core {
+namespace pack {
+namespace task {
 namespace rna {
-	
-	class O2PrimePacker;
-	typedef utility::pointer::owning_ptr< O2PrimePacker > O2PrimePackerOP;
-	typedef utility::pointer::owning_ptr< O2PrimePacker const > O2PrimePackerCOP;
-	
+
+	class RNA_ResidueLevelTask;
+	typedef utility::pointer::owning_ptr< RNA_ResidueLevelTask > RNA_ResidueLevelTaskOP;
+	typedef utility::pointer::owning_ptr< RNA_ResidueLevelTask const > RNA_ResidueLevelTaskCOP;
+
 } //rna
-} //enumerate
-} //stepwise
-} //protocols
+} //task
+} //pack
+} //core
 
 #endif

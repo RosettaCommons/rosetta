@@ -99,6 +99,7 @@ sources = {
 		"ContinuousRotamerSet",
 		"FixbbRotamerSets",
 		"rotamer_building_functions",
+		"rna_rotamer_building_functions",
 		"RotamerSet",
 		"RotamerSet_",
 		"RotamerSetFactory",
@@ -131,6 +132,9 @@ sources = {
 		"ResfileReader",
 		"RotamerSampleOptions",
 		"TaskFactory",
+	],
+	"core/pack/task/rna": [
+		"RNA_ResidueLevelTask",
 	],
 	"core/pack/task/operation": [
 		"NoRepackDisulfides",

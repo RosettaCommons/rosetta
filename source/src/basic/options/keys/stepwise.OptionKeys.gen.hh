@@ -62,6 +62,7 @@ namespace stepwise { namespace rna { extern RealOptionKey const sampler_native_s
 namespace stepwise { namespace rna { extern RealOptionKey const sampler_cluster_rmsd; } }
 namespace stepwise { namespace rna { extern RealOptionKey const native_edensity_score_cutoff; } }
 namespace stepwise { namespace rna { extern BooleanOptionKey const sampler_perform_o2prime_pack; } }
+namespace stepwise { namespace rna { extern BooleanOptionKey const sampler_perform_phosphate_pack; } }
 namespace stepwise { namespace rna { extern BooleanOptionKey const sampler_use_green_packer; } }
 namespace stepwise { namespace rna { extern BooleanOptionKey const VERBOSE; } }
 namespace stepwise { namespace rna { extern BooleanOptionKey const distinguish_pucker; } }

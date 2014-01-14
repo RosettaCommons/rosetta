@@ -25,6 +25,7 @@
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
+#include <core/pack/task/rna/RNA_ResidueLevelTask.fwd.hh>
 
 // Project Headers
 #include <core/chemical/ChemicalManager.hh>
@@ -60,7 +61,7 @@ public:
 		conformation::Residue const & original_residue
 	);
 
-	ResidueLevelTask_(){}
+	ResidueLevelTask_();
 
 	///@brief dtor
 	virtual ~ResidueLevelTask_();
@@ -156,12 +157,6 @@ public:
 
 	///@brief sample proton chi.
 	virtual bool sample_proton_chi() const;
-
-	///@brief sample proton chi.
-	virtual void sample_rna_chi( bool setting );
-
-	///@brief sample proton chi.
-	virtual bool sample_rna_chi() const;
 
 	virtual bool ex1() const;
 	virtual bool ex2() const;
@@ -331,7 +326,9 @@ private: // private methods
 	///should return the string "POLAR".
 	std::string	task_mode() const;
 
+	rna::RNA_ResidueLevelTask const & rna_task() const;
 
+	rna::RNA_ResidueLevelTask & nonconst_rna_task();
 
 	void
 	do_restrict_absent_canonical_aas( utility::vector1<bool> const & allowed_aas );
@@ -367,7 +364,6 @@ private: // private methods
 		ar & disabled_;
 		ar & design_disabled_;
 		ar & sample_proton_chi_;
-		ar & sample_rna_chi_;
 		ar & ex1_;
 		ar & ex2_;
 		ar & ex3_;
@@ -437,7 +433,6 @@ private: // private methods
 		ar & disabled_;
 		ar & design_disabled_;
 		ar & sample_proton_chi_;
-		ar & sample_rna_chi_;
 		ar & ex1_;
 		ar & ex2_;
 		ar & ex3_;
@@ -517,8 +512,6 @@ private:
 
 	bool sample_proton_chi_;
 
-	bool sample_rna_chi_;
-
 	bool ex1_;
 	bool ex2_;
 	bool ex3_;
@@ -546,8 +539,9 @@ private:
 	rotamer_set::RotamerOperations rotamer_operations_;
 	rotamer_set::RotSetOperationList rotsetops_;
 
-
 	std::vector<std::string> mode_tokens_;
+
+	rna::RNA_ResidueLevelTaskOP rna_task_;
 
 };
 
@@ -885,7 +879,6 @@ public:
 	/// outside of rotamer_trials and rtmin would lead to disasterous behaviors
 	virtual void temporarily_set_pack_residue( int resid, bool setting );
 
-
 private: // private methods
 	void
 	update_n_to_be_packed() const;
@@ -977,6 +970,7 @@ private:
 
 	// sheffler
 	PackerTaskSymmetryStatus symmetry_status_;
+
 };
 
 //NOTE: parse_resfile is now an independent function in ResfileReader.hh, not a member function of the PackerTask hierarchy

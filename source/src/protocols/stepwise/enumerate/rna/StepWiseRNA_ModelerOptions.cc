@@ -69,6 +69,7 @@ namespace rna {
 		cluster_rmsd_ = 0.5;
 		native_edensity_score_cutoff_ = -1;
 		sampler_perform_o2prime_pack_ = true;
+		sampler_perform_phosphate_pack_ = false;
 		use_green_packer_ = false;
 		verbose_ = false;
 		distinguish_pucker_ = true;
@@ -132,6 +133,7 @@ namespace rna {
 		cluster_rmsd_ = src.cluster_rmsd_;
 		native_edensity_score_cutoff_ = src.native_edensity_score_cutoff_;
 		sampler_perform_o2prime_pack_ = src.sampler_perform_o2prime_pack_;
+		sampler_perform_phosphate_pack_ = src.sampler_perform_phosphate_pack_;
 		use_green_packer_ = src.use_green_packer_;
 		verbose_ = src.verbose_;
 		distinguish_pucker_ = src.distinguish_pucker_;
@@ -193,6 +195,7 @@ namespace rna {
 		cluster_rmsd_ =	option[ OptionKeys::stepwise::rna::sampler_cluster_rmsd ]() ;
 		native_edensity_score_cutoff_ = option[ OptionKeys::stepwise::rna::native_edensity_score_cutoff]();
 		sampler_perform_o2prime_pack_ = option[ OptionKeys::stepwise::rna::sampler_perform_o2prime_pack ]();
+		sampler_perform_phosphate_pack_ = option[ OptionKeys::stepwise::rna::sampler_perform_phosphate_pack ]();
 		use_green_packer_ = option[ OptionKeys::stepwise::rna::sampler_use_green_packer ]();
 		verbose_ = option[ VERBOSE ]();
 		distinguish_pucker_ = option[ OptionKeys::stepwise::rna::distinguish_pucker]();

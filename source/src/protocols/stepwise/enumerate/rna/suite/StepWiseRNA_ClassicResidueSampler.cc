@@ -20,7 +20,8 @@
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_PoseSelection.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
-#include <protocols/stepwise/enumerate/rna/O2PrimePacker.hh>
+#include <protocols/stepwise/enumerate/rna/o2prime/O2PrimePacker.hh>
+#include <protocols/stepwise/enumerate/rna/phosphate/MultiPhosphateSampler.hh>
 #include <protocols/stepwise/enumerate/rna/screener/StepWiseRNA_VDW_BinScreener.hh>
 #include <protocols/stepwise/enumerate/rna/screener/AtrRepScreener.hh>
 #include <protocols/stepwise/enumerate/rna/screener/ChainClosableScreener.hh>
@@ -225,6 +226,23 @@ namespace suite {
 				}
 			}
 
+			if ( options_->sampler_perform_phosphate_pack() ){
+
+				/////////////////////////////////////////
+				// TOTAL HACK! DO NOT CHECK IN!
+				//if ( ( pose.residue( 1 ).xyz( " C5'" ) - pose.residue( 9 ).xyz( " H1 " ) ).length() > 8.0 ) continue;
+				/////////////////////////////////////////
+
+				rotamer_sampler_->apply( phosphate_sampler_->pose() );
+				if ( close_chain_to_distal_ ) chain_break_screener_->copy_CCD_torsions( phosphate_sampler_->pose() );
+				phosphate_sampler_->sample_phosphates();
+				phosphate_sampler_->copy_phosphates( o2prime_packer_->pose() );
+				phosphate_sampler_->copy_phosphates( pose );
+				// static Size q( 0 );
+				// if ( phosphate_sampler_->instantiated_some_phosphate() ) pose.dump_pdb( "INSTANTIATED_"+string_of( ++q )+".pdb" );
+				// if ( q == 2 ) exit( 0 );
+			}
+
 			if ( options_->sampler_perform_o2prime_pack() ){
 				if ( add_bulge ) apply_bulge_variant( o2prime_packer_->pose() );
 				o2prime_packer_->sample_o2prime_hydrogen();
@@ -235,7 +253,8 @@ namespace suite {
 			if ( options_->sampler_include_torsion_value_in_tag() ) tag += create_rotamer_string( pose, moving_res_, is_prepend_ );
 
 			///////Add pose to pose_list if pose has good score///////////
-			Pose selected_pose = pose; // the reason for this copy is that we might apply a bulge variant, and that can produce thread conflicts with graphics.
+			Pose selected_pose = pose; // the reason for this copy is that we might apply a variant, which can produce thread conflicts with graphics.
+
 			if ( add_bulge ) apply_bulge_variant( selected_pose );
 			pose_selection_->pose_selection_by_full_score( selected_pose, tag );
 
@@ -270,12 +289,18 @@ namespace suite {
 			TR.Debug << "Enforcing contact between LAST_APPEND_RES: " << last_append_res_ << " and LAST_PREPEND_RES: " << last_prepend_res_  << std::endl;
 			TR.Debug << "atom_atom_overlap_dist_cutoff " << atom_atom_overlap_dist_cutoff_ << std::endl;
 		}
+
+		if ( options_->sampler_perform_phosphate_pack() ){
+			phosphate_sampler_ = new phosphate::MultiPhosphateSampler( pose );
+			phosphate_sampler_->set_moving_partition_res( working_moving_partition_pos_ );
+		}
+
 		/////////////////////////////// O2prime sampling/virtualization //////////////////////////
 		Pose pose_with_virtual_O2prime_hydrogen = pose;
 		add_virtual_O2Prime_hydrogen( pose_with_virtual_O2prime_hydrogen );
 
 		if ( options_->sampler_perform_o2prime_pack() ) {
-			o2prime_packer_ = new O2PrimePacker( pose, scorefxn_, working_moving_partition_pos_ /* moving_res_*/ );
+			o2prime_packer_ = new o2prime::O2PrimePacker( pose, scorefxn_, working_moving_partition_pos_ /* moving_res_*/ );
 			o2prime_packer_->set_use_green_packer( options_->use_green_packer() ); // green_packer not on by default
 			o2prime_packer_->set_partition_definition( job_parameters_->partition_definition() ); // would be needed for green packer
 		} else {
@@ -293,7 +318,10 @@ namespace suite {
 		//Necessary for the case where gap_size_ == 0. In this case, Pose_setup does not automatically create a VIRTUAL_PHOSPHATE.///
 		//However since screening_pose is scored before the CCD correctly positions the chain_break phosphate atoms, ///////////////
 		// the VIRTUAL_PHOSPHATE is needed to prevent artificial clashes. Parin Jan 28, 2010////////////////////////////////////
-		if ( close_chain_to_distal_ ) pose::add_variant_type_to_pose_residue( *screening_pose_, "VIRTUAL_PHOSPHATE", five_prime_chain_break_res_ + 1 );
+		if ( close_chain_to_distal_ ) {
+			pose::remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", five_prime_chain_break_res_ + 1 );
+			pose::add_variant_type_to_pose_residue( *screening_pose_, "VIRTUAL_PHOSPHATE", five_prime_chain_break_res_ + 1 );
+		}
 
 		chain_closable_screener_ = new screener::ChainClosableScreener( five_prime_chain_break_res_, gap_size_ );
 
