@@ -93,6 +93,7 @@ static FilterRegistrator< protocols::simple_filters::BuriedUnsatHbondFilterCreat
 static FilterRegistrator< protocols::simple_filters::ConservedPosMutationFilterCreator > reg_ConservedPosMutationFilterCreator;
 static FilterRegistrator< protocols::simple_filters::DdgFilterCreator > reg_DdgFilterCreator;
 static FilterRegistrator< protocols::simple_filters::DeltaFilterCreator > reg_DeltaFilterCreator;
+static FilterRegistrator< protocols::simple_filters::DisulfideEntropyFilterCreator > reg_DisulfideEntropyFilterCreator;
 static FilterRegistrator< protocols::simple_filters::EnergyPerResidueFilterCreator > reg_EnergyPerResidueFilterCreator;
 static FilterRegistrator< protocols::simple_filters::ExpiryFilterCreator > reg_ExpiryFilterCreator;
 static FilterRegistrator< protocols::simple_filters::NonSequentialNeighborsFilterCreator > reg_NonSequentialNeighborsFilterCreator;

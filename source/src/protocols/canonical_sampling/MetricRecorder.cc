@@ -20,6 +20,15 @@
 // Other project headers or inline function headers
 // AUTO-REMOVED #include <core/io/raw_data/ScoreStruct.hh>
 #include <core/pose/Pose.hh>
+//Gabe testing
+#include <core/chemical/AA.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/util.hh>
+//#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/types.hh>
+#include <core/id/AtomID.hh>
+//End gabe testing
 #include <core/scoring/Energies.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -152,8 +161,28 @@ MetricRecorder::parse_my_tag(
 
 			add_torsion(pose, rsd, type, torsion, name);
 
+		} else if (subtag->getName() == "AllChi") {
+			for ( Size i = 1; i <= pose.total_residue(); ++i) {
+				for (Size j = 1; j <= pose.residue_type(i).nchi(); ++j) {
+					std::ostringstream name_stream;
+					name_stream << pose.residue_type(i).name3() << "_" << i << "_Chi" << j ;
+					std::ostringstream res_id_str;
+					res_id_str << i;
+					add_torsion(pose, res_id_str.str(), "CHI", j, name_stream.str());
+				}
+			}
+
+		} else if (subtag->getName() == "AllBB") {
+			for ( Size i = 1; i <= pose.total_residue(); ++i) {
+				std::ostringstream res_id_str;
+				res_id_str << i;
+				add_torsion(pose, res_id_str.str(), "BB", 1, pose.residue_type(i).name3() + "_" + res_id_str.str() + "_phi");
+				add_torsion(pose, res_id_str.str(), "BB", 2, pose.residue_type(i).name3() + "_" + res_id_str.str() + "_psi");
+				add_torsion(pose, res_id_str.str(), "BB", 3, pose.residue_type(i).name3() + "_" + res_id_str.str() + "_omega");
+			}
+
 		} else {
-			utility_exit_with_message("Parsed unknown metric type in MetricRecorder");
+			utility_exit_with_message("Parsed unknown metric type in MetricRecorder" + subtag->getName());
 		}
 	}
 }

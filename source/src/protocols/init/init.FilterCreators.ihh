@@ -78,6 +78,7 @@
 #include <protocols/simple_filters/ConservedPosMutationFilterCreator.hh>
 #include <protocols/simple_filters/DdgFilterCreator.hh>
 #include <protocols/simple_filters/DeltaFilterCreator.hh>
+#include <protocols/simple_filters/DisulfideEntropyFilterCreator.hh>
 #include <protocols/simple_filters/FileExistFilterCreator.hh>
 #include <protocols/simple_filters/FileRemoveFilterCreator.hh>
 #include <protocols/simple_filters/EnergyPerResidueFilterCreator.hh>

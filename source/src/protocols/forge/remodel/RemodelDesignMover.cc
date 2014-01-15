@@ -567,7 +567,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 }
 
 
-bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utility::vector1<std::pair<Size,Size> > & disulf_partners, const core::Energy & match_rt_limit) {
+bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utility::vector1<std::pair<Size,Size> > & disulf_partners, const core::Energy & match_rt_limit, const Size & rosetta_scripts_min_loop_) {
 
 	using core::scoring::disulfides::DisulfideMatchingPotential;
 	using namespace core::chemical;
@@ -672,7 +672,7 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 
 	for ( utility::vector1<Size>::iterator itr = cen_res.begin(), end=cen_res.end(); itr!=end; itr++ ) {
 		for ( utility::vector1<Size>::iterator itr2 = nbr_res.begin(), end2=nbr_res.end(); itr2!=end2 ; itr2++ ) {
-			if (nbr_res != cen_res || *itr2 > *itr) {
+			if (nbr_res != cen_res || (*itr2 > (*itr + rosetta_scripts_min_loop_))) {
 				TR << "DISULF trying disulfide between " << *itr << " and " << *itr2 << std::endl;
 				// distance check
 				if ( pose.residue(*itr).aa() != aa_gly && pose.residue(*itr2).aa() != aa_gly ) {

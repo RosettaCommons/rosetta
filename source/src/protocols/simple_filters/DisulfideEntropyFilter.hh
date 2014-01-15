@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/simple_filters/AveragePathLengthFilter.hh
-/// @brief Filter on the average covalent path length between residues, including disulfides
+/// @file protocols/simple_filters/DisulfideEntropyFilter.hh
+/// @brief Filter on the entropic effect of disulfide linkage
 /// @author Gabriel Rocklin (grocklin@gmail.com)
 
-#ifndef INCLUDED_protocols_simple_filters_AveragePathLengthFilter_hh
-#define INCLUDED_protocols_simple_filters_AveragePathLengthFilter_hh
+#ifndef INCLUDED_protocols_simple_filters_DisulfideEntropyFilter_hh
+#define INCLUDED_protocols_simple_filters_DisulfideEntropyFilter_hh
 
 //unit headers
-#include <protocols/simple_filters/AveragePathLengthFilter.fwd.hh>
+#include <protocols/simple_filters/DisulfideEntropyFilter.fwd.hh>
 
 // Project Headers
 #include <core/scoring/ScoreFunction.hh>
@@ -29,21 +29,21 @@
 namespace protocols {
 namespace simple_filters {
 
-class AveragePathLengthFilter : public filters::Filter
+class DisulfideEntropyFilter : public filters::Filter
 {
 public:
 	//default ctor
-	AveragePathLengthFilter();
+	DisulfideEntropyFilter();
 
-	AveragePathLengthFilter(core::Real path_tightness, core::Real max_path_length)
+	DisulfideEntropyFilter(core::Real tightness_, core::Real lower_bound_)
 
 	;
 
-	AveragePathLengthFilter(
-		AveragePathLengthFilter const & src
+	DisulfideEntropyFilter(
+		DisulfideEntropyFilter const & src
 	);
 
-	virtual ~AveragePathLengthFilter();
+	virtual ~DisulfideEntropyFilter();
 
 	bool
 	apply(
@@ -68,6 +68,11 @@ public:
 	) const;
 
 	core::Real
+	compute_residual(
+		core::pose::Pose const & pose
+	) const;
+
+	core::Real
 	compute(
 		core::pose::Pose const & pose
 	) const;
@@ -82,18 +87,18 @@ public:
 	);
 
 	core::Real
-	max_path_length() const;
+	lower_bound() const;
 
 	void
-	max_path_length(
+	lower_bound(
 		core::Real value
 	);
 
 	core::Real
-	path_tightness() const;
+	tightness() const;
 
 	void
-	path_tightness(
+	tightness(
 		core::Real value
 	);
 
@@ -101,8 +106,8 @@ public:
 
 
 private:
-	core::Real path_tightness_;
-	core::Real max_path_length_;
+	core::Real tightness_;
+	core::Real lower_bound_;
 
 
 };

@@ -104,7 +104,7 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/moves/PyMolMover.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
-#include <protocols/simple_filters/AveragePathLengthFilter.hh>
+#include <protocols/simple_filters/DisulfideEntropyFilter.hh>
 #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/symmetry/SetupNCSMover.hh> // dihedral constraint
@@ -201,6 +201,7 @@ RemodelMover::RemodelMover() :
 	rosetta_scripts_match_rt_limit_ = 1;
 	rosetta_scripts_min_disulfides_ = 1;
 	rosetta_scripts_max_disulfides_ = 1;
+	rosetta_scripts_min_loop_ = 1;
 	last_input_pose_ = NULL;
 	rosetta_scripts_ = false;
 
@@ -235,6 +236,7 @@ RemodelMover::RemodelMover( RemodelMover const & rval )
 	rosetta_scripts_match_rt_limit_( rval.rosetta_scripts_match_rt_limit_),
 	rosetta_scripts_min_disulfides_( rval.rosetta_scripts_min_disulfides_),
 	rosetta_scripts_max_disulfides_( rval.rosetta_scripts_max_disulfides_),
+	rosetta_scripts_min_loop_( rval.rosetta_scripts_min_loop_),
 	rosetta_scripts_( rval.rosetta_scripts_),
 	last_input_pose_(rval.last_input_pose_),
 	accumulator_(rval.accumulator_)
@@ -887,7 +889,7 @@ void RemodelMover::apply( Pose & pose ) {
 					match_rt_limit = option[OptionKeys::remodel::match_rt_limit];
 				}
 
-				disulfPass = designMover.find_disulfides_in_the_neighborhood( pose, disulf_partners, match_rt_limit );
+				disulfPass = designMover.find_disulfides_in_the_neighborhood( pose, disulf_partners, match_rt_limit, rosetta_scripts_min_loop_ );
 				if ( disulfPass != true ) {
 					i--; //for now control disulf with num_trajectory flag, too.
 					continue;
@@ -1236,8 +1238,8 @@ void RemodelMover::apply( Pose & pose ) {
 			
 			//rank poses by score, unless we are doing fast_disulfide, in which case we want to rank by path length.
 			if (rosetta_scripts_fast_disulfide_) {
-				simple_filters::AveragePathLengthFilterOP average_path_length=new simple_filters::AveragePathLengthFilter();
-				score = average_path_length->compute( *(*it) );
+				simple_filters::DisulfideEntropyFilterOP DisulfideEntropy=new simple_filters::DisulfideEntropyFilter();
+				score = - DisulfideEntropy->compute_residual( *(*it) );
 			}	else {
 				simple_filters::ScoreTypeFilter const pose_total_score( scorefxn, total_score, 100 );
 				score = pose_total_score.compute( *(*it) );
@@ -2354,7 +2356,12 @@ RemodelMover::parse_my_tag(
 	}
 	TR << "Setting max_disulfides " << rosetta_scripts_max_disulfides_ << std::endl;
 
-
+	if( tag->hasOption("min_loop") ) {
+		rosetta_scripts_min_loop_ = tag->getOption< core::Real >( "min_loop", 1 ); 
+	}	else {
+		rosetta_scripts_min_loop_ = 1;
+	}
+	TR << "Setting min_loop " << rosetta_scripts_min_loop_ << std::endl;
 }
 
 

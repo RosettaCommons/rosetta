@@ -103,18 +103,22 @@ AveragePathLengthFilter::path_tightness(
 
 void
 AveragePathLengthFilter::parse_my_tag(
-	utility::tag::TagPtr const tag,
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &,
 	filters::Filters_map const &,
 	moves::Movers_map const &,
 	core::pose::Pose const &
 ) {
+
 	if(tag->hasOption("path_tightness")){
-		path_tightness(tag->getOption< core::Real >("path_tightness"));
+		path_tightness(tag->getOption< core::Real >("path_tightness",1));
+		TR << "setting path_tightness" << std::endl;
 	}
 
+
 	if(tag->hasOption("max_path_length")){
-		max_path_length(tag->getOption< core::Real >("max_path_length"));
+		max_path_length(tag->getOption< core::Real >("max_path_length",99999));
+		TR << "setting max_path_length" << std::endl;
 	}
 
 }

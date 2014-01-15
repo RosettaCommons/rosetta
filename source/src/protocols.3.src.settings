@@ -397,6 +397,7 @@ sources = {
 		"DdgFilter",
 		"DeltaFilter",
 		"DomainInterfaceFilter",
+		"DisulfideEntropyFilter",
 		"ExpiryFilter",
 		"FileExistFilter",
 		"FileRemoveFilter",

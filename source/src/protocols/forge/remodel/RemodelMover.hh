@@ -484,6 +484,7 @@ private: // data
     core::Real rosetta_scripts_match_rt_limit_ ;
     Size rosetta_scripts_min_disulfides_ ;
 	Size rosetta_scripts_max_disulfides_ ;
+	Size rosetta_scripts_min_loop_ ;
 	bool rosetta_scripts_ ;
 
 	//for saving results from multiple runs
