@@ -122,7 +122,7 @@ void switch_to_fa(PoseWrap & pw) {
 	for(Size attach = pw.attach; attach < pw.nsub*pw.nres; attach += pw.nres) {
 		for(Size i = 1; i <= pw.pose.residue(attach).natoms(); ++i) {
 			std::string aname = pw.pose.residue(attach).atom_name(i);
-			if( cen.residue(attach).type().has_atom_name(aname) ) {
+			if( cen.residue(attach).type().has(aname) ) {
 				// std::cerr << "setting coords for res " << attach << " atom " << aname << std::endl;
 				pw.pose.set_xyz(core::id::AtomID(i,attach),cen.residue(attach).xyz(aname));
 			} else {
@@ -144,7 +144,7 @@ void switch_to_cen(PoseWrap & pw) {
 	for(Size attach = pw.attach; attach < pw.nsub*pw.nres; attach += pw.nres) {
 		for(Size i = 1; i <= pw.pose.residue(attach).natoms(); ++i) {
 			std::string aname = pw.pose.residue(attach).atom_name(i);
-			if( fa.residue(attach).type().has_atom_name(aname) ) {
+			if( fa.residue(attach).type().has(aname) ) {
 				// std::cerr << "setting coords for res " << attach << " atom " << aname << std::endl;
 				pw.pose.set_xyz(core::id::AtomID(i,attach),fa.residue(attach).xyz(aname));
 			} else {

@@ -1515,10 +1515,10 @@ Conformation::fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bo
 		// If neither atom is found (neither fullatom nor centroid) throw an error.
 		Size l_bond_atom, u_bond_atom;
 
-		bool l_has_sg  = l_res.type().has_atom_name("SG");
-		bool u_has_sg  = u_res.type().has_atom_name("SG");
-		bool l_has_cen = l_res.type().has_atom_name("CEN");
-		bool u_has_cen = u_res.type().has_atom_name("CEN");
+		bool l_has_sg  = l_res.type().has("SG");
+		bool u_has_sg  = u_res.type().has("SG");
+		bool l_has_cen = l_res.type().has("CEN");
+		bool u_has_cen = u_res.type().has("CEN");
 
 		if( l_has_sg ) {
 			l_bond_atom = l_res.atom_index( "SG" );
@@ -1643,9 +1643,9 @@ Conformation::detect_disulfides()
 
 		//Determine which atom makes the disulfide bond
 		Size ii_sg_atomno(0);
-		if(ii_res.type().has_atom_name("SG")) {
+		if(ii_res.type().has("SG")) {
 			ii_sg_atomno = residue( cysid_2_resid[ ii ] ).atom_index( "SG" );
-		} else if(ii_res.type().has_atom_name("CEN")) {
+		} else if(ii_res.type().has("CEN")) {
 			ii_sg_atomno = residue( cysid_2_resid[ ii ] ).atom_index( "CEN" );
 		} else {
 			TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< ii_resid <<std::endl;
@@ -1732,9 +1732,9 @@ Conformation::detect_disulfides()
 				Size jj_resid  = best_neighbor;
 				Residue const & jj_res = residue( jj_resid );
 				Size jj_sg_atomno(0);
-				if(jj_res.type().has_atom_name("SG")) {
+				if(jj_res.type().has("SG")) {
 					jj_sg_atomno = jj_res.atom_index( "SG" );
-				} else if(jj_res.type().has_atom_name("CEN")) {
+				} else if(jj_res.type().has("CEN")) {
 					jj_sg_atomno = jj_res.atom_index( "CEN" );
 				} else {
 					TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;

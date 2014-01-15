@@ -570,7 +570,7 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 		if ( pose.residue( ii ).aa() == chemical::aa_cys &&
 				pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) &&
 				resid_2_disulfide_index_[ ii ] == NO_DISULFIDE &&
-				pose.residue_type( ii ).has_atom_name( "SG" ) // full atom residue
+				pose.residue_type( ii ).has( "SG" ) // full atom residue
 				) {
 			++count_disulfides;
 			Size const ii_connect_atom( pose.residue( ii ).atom_index( "SG" ) );
@@ -619,7 +619,7 @@ FullatomDisulfideEnergyContainer::disulfides_changed( pose::Pose const & pose )
 			if ( pose.residue( ii ).aa() != chemical::aa_cys ||
 					disulfide_residue_types_[ ii ]() != & (pose.residue_type( ii )) ||
 					/// subsumed by residue type check ! pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) ||
-					! pose.residue_type( ii ).has_atom_name( "SG" ) || //no longer full atom
+					! pose.residue_type( ii ).has( "SG" ) || //no longer full atom
 					pose.residue( ii ).connect_map(
 						pose.residue( ii ).type().residue_connection_id_for_atom(
 							pose.residue( ii ).atom_index( "SG" ) ) ).resid() !=

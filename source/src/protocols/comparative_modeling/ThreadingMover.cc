@@ -332,9 +332,9 @@ void ThreadingMover::apply(
 
 			// fix OXT/O ambiguity in template
 			if ( !template_pose_.residue_type(t_resi).has( atom_name ) ) {
-				if ( template_pose_.residue_type(t_resi).has_atom_name("OXT") && atom_name == " O  " )
+				if ( template_pose_.residue_type(t_resi).has("OXT") && atom_name == " O  " )
 					t_atom_name = " OXT";
-				else if ( template_pose_.residue_type(t_resi).has_atom_name("O") && atom_name == " OXT" )
+				else if ( template_pose_.residue_type(t_resi).has("O") && atom_name == " OXT" )
 					t_atom_name = " O  ";
 			}
 

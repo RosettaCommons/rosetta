@@ -2011,16 +2011,6 @@ ResidueType::nonadduct_variants_match( ResidueType const & other ) const
 }
 
 
-bool
-ResidueType::has_atom_name( std::string const & name ) const
-{
-	NameVDMap::const_iterator graph_iter
-		( atom_graph_index_.find( name ) );
-	if ( graph_iter == atom_graph_index_.end() ) {
-		return false;
-	}
-	return true;
-}
 
 Size
 ResidueType::atom_index( std::string const & name ) const

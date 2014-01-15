@@ -446,11 +446,6 @@ public:
 	atom_name( Size const index ) const;
 
 
-	/// @brief Check if residue type has an atom by a given atomname
-	bool
-	has_atom_name( std::string const & name ) const;
-
-
 	/// @brief get atom index by name
 	Size
 	atom_index( std::string const & name ) const;

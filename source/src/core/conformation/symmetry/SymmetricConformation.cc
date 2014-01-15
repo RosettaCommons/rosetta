@@ -819,9 +819,9 @@ SymmetricConformation::detect_disulfides()
 
 		//Determine which atom makes the disulfide bond
 		Size ii_sg_atomno(0);
-		if(ii_res.type().has_atom_name("SG")) {
+		if(ii_res.type().has("SG")) {
 			ii_sg_atomno = residue( cysid_2_resid[ ii ] ).atom_index( "SG" );
-		} else if(ii_res.type().has_atom_name("CEN")) {
+		} else if(ii_res.type().has("CEN")) {
 			ii_sg_atomno = residue( cysid_2_resid[ ii ] ).atom_index( "CEN" );
 		} else {
 			TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< ii_resid <<std::endl;
@@ -907,9 +907,9 @@ SymmetricConformation::detect_disulfides()
 				Size jj_resid  = best_neighbor;
 				Residue const & jj_res = residue( jj_resid );
 				Size jj_sg_atomno(0);
-				if(jj_res.type().has_atom_name("SG")) {
+				if(jj_res.type().has("SG")) {
 					jj_sg_atomno = jj_res.atom_index( "SG" );
-				} else if(jj_res.type().has_atom_name("CEN")) {
+				} else if(jj_res.type().has("CEN")) {
 					jj_sg_atomno = jj_res.atom_index( "CEN" );
 				} else {
 					TR.Error << "Error: Can't find an atom to disulfide bond from at residue "<< jj_resid <<std::endl;

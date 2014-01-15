@@ -89,7 +89,7 @@ void NoRepackDisulfides::apply( Pose const & pose, PackerTask & task ) const {
 			bool no_repack = true;
 
 			// try and double-check if possible
-			if ( res.type().has_atom_name( "SG" ) ) {
+			if ( res.type().has( "SG" ) ) {
 				// check its partner to see if it's really the case
 				Size const sg_index = res.atom_index( "SG" );
 				Size const sg_conn_index = res.type().residue_connection_id_for_atom( sg_index );

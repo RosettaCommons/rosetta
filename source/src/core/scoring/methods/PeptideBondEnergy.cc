@@ -107,7 +107,7 @@ PeptideBondEnergy::residue_pair_energy(
 	std::string const bbC_( "C" );
 
 	// make certain that both require atoms are present.
-	if ( !rsd1.type().has_atom_name(bbN_) || !rsd2.type().has_atom_name(bbC_) )
+	if ( !rsd1.type().has(bbN_) || !rsd2.type().has(bbC_) )
 		return;
 	// make sure we're bonded and in relatively the right sequence orientation
 	if ( !rsd1.is_bonded(rsd2) || ( rsd1.seqpos() > rsd2.seqpos() ) )

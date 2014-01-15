@@ -625,8 +625,8 @@ void ResidueLevelTask_::or_fix_his_tautomer( bool setting )
 	//but how do we decide tautomer?  ResidueType offers two options: string comparisons of the names, and checking which atoms are present.  We're going with the latter.
 
 	//which hydrogen atoms are present in the original residue?  We'll check both and vainly hope this won't break if somone tries protonation variants.
-	bool HIS(original_residue_type_->has_atom_name(" HE2")); //HIS
-	bool HIS_D(original_residue_type_->has_atom_name(" HD1")); //HIS_D
+	bool HIS(original_residue_type_->has(" HE2")); //HIS
+	bool HIS_D(original_residue_type_->has(" HD1")); //HIS_D
 
 	for ( ResidueTypeCOPListIter
 					allowed_iter = allowed_residue_types_.begin(),
@@ -638,8 +638,8 @@ void ResidueLevelTask_::or_fix_his_tautomer( bool setting )
 
 		if ((*allowed_iter)->aa() == chemical::aa_his) { //we only want to look at histidines
 			//which hydrogen atoms are present in the residue we're checking?
-			bool comp_HIS((*allowed_iter)->has_atom_name(" HE2")); //HIS
-			bool comp_HIS_D((*allowed_iter)->has_atom_name(" HD1")); //HIS_D
+			bool comp_HIS((*allowed_iter)->has(" HE2")); //HIS
+			bool comp_HIS_D((*allowed_iter)->has(" HD1")); //HIS_D
 
 			if ( (HIS != comp_HIS) || (HIS_D != comp_HIS_D) ) {
 				allowed_residue_types_.erase( allowed_iter );

@@ -184,9 +184,9 @@ FullatomDisulfideEnergy::defines_score_for_residue_pair(
 	using namespace chemical;
 	return res_moving_wrt_eachother && res1.aa() == aa_cys && res2.aa() == aa_cys &&
 		res1.has_variant_type( DISULFIDE ) && res2.has_variant_type( DISULFIDE ) &&
-		res1.type().has_atom_name( "SG" ) &&
+		res1.type().has( "SG" ) &&
 		res1.connect_map( res1.type().residue_connection_id_for_atom( res1.atom_index( "SG" ) ) ).resid() == res2.seqpos() &&
-		res2.type().has_atom_name( "SG" ) &&
+		res2.type().has( "SG" ) &&
 		res2.connect_map( res2.type().residue_connection_id_for_atom( res2.atom_index( "SG" ) ) ).resid() == res1.seqpos();
 }
 

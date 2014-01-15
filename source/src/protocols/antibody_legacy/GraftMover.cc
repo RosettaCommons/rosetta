@@ -214,7 +214,7 @@ void GraftMover::apply( pose::Pose & pose_in ) {
 			if( !allow_repack[i] ) {
 				for( Size j=1; j <= packed_rsd.natoms(); ++j ) {
 					std::string const & atom_name( packed_rsd.atom_name(j) );
-					if( original_rsd.type().has_atom_name( atom_name ) )
+					if( original_rsd.type().has( atom_name ) )
 						pose_in.set_xyz( id::AtomID( packed_rsd.atom_index(
 						                                 atom_name),i), original_rsd.xyz( atom_name ) );
 				}
@@ -289,7 +289,7 @@ void GraftMover::apply( pose::Pose & pose_in ) {
 			if( !allow_repack[i] ) {
 				for( Size j=1; j <= packed_rsd.natoms(); ++j ) {
 					std::string const & atom_name( packed_rsd.atom_name(j) );
-					if( original_rsd.type().has_atom_name( atom_name ) )
+					if( original_rsd.type().has( atom_name ) )
 						pose_in.set_xyz( id::AtomID( packed_rsd.atom_index(
 						                                 atom_name),i), original_rsd.xyz( atom_name ) );
 				}
@@ -420,7 +420,7 @@ void GraftOneMover::apply( pose::Pose & pose_in ) {
 			pose_in.set_secstruct( i, 'X' );
 		for( Size j=1; j <= template_rsd.natoms(); ++j ) {
 			std::string const & atom_name( template_rsd.atom_name(j) );
-			if( orientable_rsd.type().has_atom_name( atom_name ) )
+			if( orientable_rsd.type().has( atom_name ) )
 				pose_in.set_xyz( id::AtomID( orientable_rsd.atom_index(
 				                                 atom_name),i), template_rsd.xyz(
 				                     atom_name ) );

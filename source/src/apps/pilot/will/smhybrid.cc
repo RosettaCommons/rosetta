@@ -1328,7 +1328,7 @@ struct PoseWrap : public ReferenceCount {
 				for(Size attach = attach_rsd_[ath]; attach < nsub*nres; attach += nres) {
 					for(Size i = 1; i <= pose.residue(attach).natoms(); ++i) {
 						string aname = pose.residue(attach).atom_name(i);
-						if( cen.residue(attach).type().has_atom_name(aname) ) {
+						if( cen.residue(attach).type().has(aname) ) {
 							// TR << "switch_to_fa: setting coords for res " << attach << " atom " << aname << std::endl;
 							pose.set_xyz(core::id::AtomID(i,attach),cen.residue(attach).xyz(aname));
 						} else {
@@ -1431,7 +1431,7 @@ struct PoseWrap : public ReferenceCount {
 				for(Size i = 1; i <= pose.residue(attach).natoms(); ++i) {
 					string aname = pose.residue(attach).atom_name(i);
 					// if(aname=="CEN")
-					if( fa.residue(attach).type().has_atom_name(aname) ) {
+					if( fa.residue(attach).type().has(aname) ) {
 						// TR << "switch_to_cen: setting coords for res " << attach << " atom " << aname << std::endl;
 						pose.set_xyz(core::id::AtomID(i,attach),fa.residue(attach).xyz(aname));
 					} else {

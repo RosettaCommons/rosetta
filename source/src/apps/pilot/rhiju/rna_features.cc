@@ -327,7 +327,7 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 			for ( Size k = 1; k <= rsd_type.nheavyatoms(); k++ ){
 				std::string atom_name = rsd_type.atom_name( k );
 				Real sasa_value = 0.0;
-				if ( rsd.type().has_atom_name( atom_name ) ){
+				if ( rsd.type().has( atom_name ) ){
 					AtomID atom_id = pose::named_atom_id_to_atom_id( NamedAtomID( atom_name, i ), pose );
 					sasa_value = atom_sasa[ atom_id ];
 				}

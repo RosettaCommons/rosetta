@@ -1916,7 +1916,7 @@ form_disulfide(Conformation & conformation, Size lower_res, Size upper_res)
 	// Break existing disulfide bonds to lower
 	if( conformation.residue(lower_res).aa() == chemical::aa_cys &&
 			conformation.residue( lower_res ).has_variant_type( chemical::DISULFIDE ) &&
-			conformation.residue_type( lower_res ).has_atom_name( "SG" ) // full atom residue
+			conformation.residue_type( lower_res ).has( "SG" ) // full atom residue
 			)
 	{
 		Size const connect_atom( conformation.residue( lower_res ).atom_index( "SG" ) );
@@ -1953,7 +1953,7 @@ form_disulfide(Conformation & conformation, Size lower_res, Size upper_res)
 	// Break existing disulfide bonds to upper
 	if( conformation.residue(upper_res).aa() == chemical::aa_cys &&
 			conformation.residue( upper_res ).has_variant_type( chemical::DISULFIDE ) &&
-			conformation.residue_type( upper_res ).has_atom_name( "SG" ) // full atom residue
+			conformation.residue_type( upper_res ).has( "SG" ) // full atom residue
 			)
 	{
 		Size const connect_atom( conformation.residue( upper_res ).atom_index( "SG" ) );
@@ -2009,10 +2009,10 @@ is_disulfide_bond( conformation::Conformation const& conformation, Size residueA
 
 	//bonded
 	Size a_connect_atom;
-	if( A.type().has_atom_name( "SG" ) )
+	if( A.type().has( "SG" ) )
 		a_connect_atom = A.atom_index( "SG" );
 	else {
-		runtime_assert( A.type().has_atom_name( "CEN" ) ); //should be fa or centroid
+		runtime_assert( A.type().has( "CEN" ) ); //should be fa or centroid
 		a_connect_atom = A.atom_index( "CEN" );
 	}
 	for ( Size connection = A.type().n_residue_connections(); connection >= 1; --connection ) {
@@ -2038,9 +2038,9 @@ disulfide_bonds( conformation::Conformation const& conformation, utility::vector
 		if( !(res.aa() == chemical::aa_cys && res.has_variant_type(chemical::DISULFIDE) ))
 			continue;
 		Size connect_atom( 0);
-		if( res.type().has_atom_name( "SG" ))
+		if( res.type().has( "SG" ))
 			connect_atom = res.atom_index( "SG" );
-		else if( res.type().has_atom_name( "CEN" ))
+		else if( res.type().has( "CEN" ))
 			connect_atom = res.atom_index( "CEN" );
 		else {
 			TR.Warning << "Warning: unable to establish which atom to use for the disulfide to residue "

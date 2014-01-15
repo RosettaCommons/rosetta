@@ -33,12 +33,12 @@ DisulfideAtomIndices::DisulfideAtomIndices( conformation::Residue const & res ) 
 	derivative_atom_types_[ c_alpha_index_ ] = CYS_C_ALPHA;
 	derivative_atom_types_[ c_beta_index_  ] = CYS_C_BETA;
 
-	if( res.type().has_atom_name("SG") ) {
+	if( res.type().has("SG") ) {
 		disulf_atom_index_ = res.atom_index( "SG" );
 		derivative_atom_types_[ disulf_atom_index_ ] = CYS_S_GAMMA;
 	}
 	else {
-		assert(res.type().has_atom_name("CEN") );//disulfides form to SG or CEN only
+		assert(res.type().has("CEN") );//disulfides form to SG or CEN only
 
 		disulf_atom_index_ = res.atom_index( "CEN" );
 		derivative_atom_types_[ disulf_atom_index_ ] = CYS_CEN;

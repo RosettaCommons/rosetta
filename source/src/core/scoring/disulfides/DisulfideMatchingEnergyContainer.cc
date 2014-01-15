@@ -561,7 +561,7 @@ DisulfideMatchingEnergyContainer::find_disulfides( pose::Pose const & pose )
 		if ( res.aa() == chemical::aa_cys &&
 				res.has_variant_type( chemical::DISULFIDE ) &&
 				resid_2_disulfide_index_[ ii ] == NO_DISULFIDE &&
-				( pose.residue_type( ii ).has_atom_name( "CEN" ) || pose.residue_type( ii ).has_atom_name( "SG" ) )
+				( pose.residue_type( ii ).has( "CEN" ) || pose.residue_type( ii ).has( "SG" ) )
 			 ) {
 			++count_disulfides;
 
@@ -569,7 +569,7 @@ DisulfideMatchingEnergyContainer::find_disulfides( pose::Pose const & pose )
 			//This code originally forgot to put the whole SG bit in so maybe this is a hack. I don't care!
 			// -rv
 			Size ii_connect_atom(0);
-			if ( pose.residue_type( ii ).has_atom_name( "CEN" ) ) {
+			if ( pose.residue_type( ii ).has( "CEN" ) ) {
 				ii_connect_atom = res.atom_index( "CEN" );
 			} else {
 				ii_connect_atom = res.atom_index( "SG" );
@@ -623,7 +623,7 @@ DisulfideMatchingEnergyContainer::disulfides_changed( pose::Pose const & pose )
 			if ( res.aa() != chemical::aa_cys ||
 					disulfide_residue_types_[ ii ]() != & (pose.residue_type( ii )) ||
 					/// subsumed by residue type check ! pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) ||
-					! pose.residue_type( ii ).has_atom_name( "CEN" ) || // not centroid
+					! pose.residue_type( ii ).has( "CEN" ) || // not centroid
 					res.connect_map(
 						res.type().residue_connection_id_for_atom(
 							res.atom_index( "CEN" ) ) ).resid() !=

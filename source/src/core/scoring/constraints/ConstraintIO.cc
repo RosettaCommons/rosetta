@@ -131,8 +131,8 @@ ConstraintIO::read_cst_atom_pairs(
 							<< std::endl;
 
 		if ( res1>pose.total_residue() || res2> pose.total_residue() ||
-		     ( !pose.residue_type( res1 ).has_atom_name( name1 ) ) ||
-		     ( !pose.residue_type( res2 ).has_atom_name( name2 ) )
+		     ( !pose.residue_type( res1 ).has( name1 ) ) ||
+		     ( !pose.residue_type( res2 ).has( name2 ) )
 		){
 
 			tr.Error << "error in constraint (no such atom in pose!)"
@@ -237,8 +237,8 @@ ConstraintIO::read_cst_coordinates(
 							<< std::endl;
 
 		if ( res1>pose.total_residue() || res2> pose.total_residue() ||
-		     ( !pose.residue_type( res1 ).has_atom_name( name1 ) ) ||
-		     ( !pose.residue_type( res2 ).has_atom_name( name2 ) )
+		     ( !pose.residue_type( res1 ).has( name1 ) ) ||
+		     ( !pose.residue_type( res2 ).has( name2 ) )
 		){
 			tr.Error << "error in constraint (no such atom in pose!)"
 									<< name1 << " " << name2 << " " << res1 << " " << res2 << " func: " << func_type << std::endl;

@@ -172,11 +172,11 @@ void RelaxProtocolBase::initialize_movemap(
 		} else if ( minimize_bondlength_subset_ == 3) {
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 				core::conformation::Residue const &res_i = pose.residue(ii);
-				if (res_i.type().has_atom_name( " C  "))
+				if (res_i.type().has( " C  "))
 					movemap.set( DOF_ID( AtomID( res_i.atom_index(" C  "), ii ), core::id::D ), true );
-				if (res_i.type().has_atom_name( " CA "))
+				if (res_i.type().has( " CA "))
 					movemap.set( DOF_ID( AtomID( res_i.atom_index(" CA "), ii ), core::id::D ), true );
-				if (res_i.type().has_atom_name( " CB "))
+				if (res_i.type().has( " CB "))
 					movemap.set( DOF_ID( AtomID( res_i.atom_index(" CB "), ii ), core::id::D ), true );
 			}
 		}
@@ -216,13 +216,13 @@ void RelaxProtocolBase::initialize_movemap(
 		} else if ( minimize_bondangle_subset_ == 3) {
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 				core::conformation::Residue const &res_i = pose.residue(ii);
-				if (res_i.type().has_atom_name( " C  "))
+				if (res_i.type().has( " C  "))
 					movemap.set( DOF_ID( AtomID( res_i.atom_index(" C  "), ii ), core::id::THETA ), true );
 			}
 		} else if ( minimize_bondangle_subset_ == 4) {
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 				core::conformation::Residue const &res_i = pose.residue(ii);
-				if (res_i.type().has_atom_name( " CB "))
+				if (res_i.type().has( " CB "))
 					movemap.set( DOF_ID( AtomID( res_i.atom_index(" CB "), ii ), core::id::THETA ), true );
 			}
 		}

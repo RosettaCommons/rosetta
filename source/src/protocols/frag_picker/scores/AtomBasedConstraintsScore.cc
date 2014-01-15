@@ -105,7 +105,7 @@ void AtomBasedConstraintsScore::do_caching(VallChunkOP chunk) {
 		chemical::ResidueType const & ith_res_type = pose->residue_type(i);
 		for (it = constrainable_atoms_.begin(); it
 				!= constrainable_atoms_.end(); ++it) {
-			if(! ith_res_type.has_atom_name( it->first ))
+			if(! ith_res_type.has( it->first ))
 			  continue;
 			id::NamedAtomID idAtom(it->first, i);
 			numeric::xyzVector<Real> xyz = pose->xyz(idAtom);

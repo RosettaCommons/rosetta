@@ -1511,8 +1511,8 @@ setup_matching_atoms_with_given_names( core::pose::Pose const & pose1, core::pos
 		for ( Size n = 1; n <= atom_names_to_find.size(); n++ ) {
 			std::string const & atom_name = atom_names_to_find[ n ];
 
-			if ( !rsd_type1.has_atom_name( atom_name )  ) continue;
-			if ( !rsd_type2.has_atom_name( atom_name )  ) continue;
+			if ( !rsd_type1.has( atom_name )  ) continue;
+			if ( !rsd_type2.has( atom_name )  ) continue;
 
 			Size const j1 = rsd1.atom_index( atom_name );
 			if( rsd1.is_virtual( j1 )) continue;

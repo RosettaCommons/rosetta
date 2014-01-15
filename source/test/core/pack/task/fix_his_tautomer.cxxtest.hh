@@ -105,7 +105,7 @@ public:
 					allowed_end = task->residue_task( ii ).allowed_residue_types_end();
 					allowed_iter != allowed_end; ++allowed_iter ) {
 				if ( (*allowed_iter)->aa() != core::chemical::aa_his ) continue;
-				if ( (*allowed_iter)->has_atom_name(proton) ) {
+				if ( (*allowed_iter)->has(proton) ) {
 					present = true;
 				}
 			}

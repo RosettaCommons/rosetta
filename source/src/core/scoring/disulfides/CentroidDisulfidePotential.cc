@@ -236,8 +236,8 @@ CentroidDisulfidePotential::disulfide_params(
 			restype_set->name_map("ALA"), res2, conformation) );
 	}
 	//Make sure they both have CB now
-	assert(res1_ptr->type().has_atom_name("CB"));
-	assert(res2_ptr->type().has_atom_name("CB"));
+	assert(res1_ptr->type().has("CB"));
+	assert(res2_ptr->type().has("CB"));
 
 	Vector const& calpha_1 ( res1_ptr->xyz("CA") );
 	Vector const& cbeta_1  ( res1_ptr->xyz("CB") );
@@ -256,8 +256,8 @@ CentroidDisulfidePotential::disulfide_params(
 	backbone_dihedral   = dihedral_degrees(n_1, calpha_1, calpha_2, c_2);
 
 	centroid_distance_sq = -1;
-	if( res1_ptr->type().has_atom_name("CEN") &&
-		res2_ptr->type().has_atom_name("CEN") )
+	if( res1_ptr->type().has("CEN") &&
+		res2_ptr->type().has("CEN") )
 	{
 		Vector const& cen_1( res1_ptr->xyz("CEN"));
 		Vector const& cen_2( res2_ptr->xyz("CEN"));

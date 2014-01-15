@@ -184,7 +184,7 @@ MMBondAngleEnergy::residue_pair_energy(
 
 			should_score1 = false;
 			for ( Size central_atomindex = 1; central_atomindex <= central_atoms_to_score_.size(); ++central_atomindex) {
-				if (rsd_type1.has_atom_name(central_atoms_to_score_[central_atomindex]) &&
+				if (rsd_type1.has(central_atoms_to_score_[central_atomindex]) &&
 				    rsd_type1.atom_index(central_atoms_to_score_[central_atomindex]) == resconn_atomno1) {
 					should_score1 = true;
 					break;
@@ -193,7 +193,7 @@ MMBondAngleEnergy::residue_pair_energy(
 
 			should_score2 = false;
 			for ( Size central_atomindex = 1; central_atomindex <= central_atoms_to_score_.size(); ++central_atomindex) {
-				if (rsd_type2.has_atom_name(central_atoms_to_score_[central_atomindex]) &&
+				if (rsd_type2.has(central_atoms_to_score_[central_atomindex]) &&
 				    rsd_type2.atom_index(central_atoms_to_score_[central_atomindex]) == resconn_atomno2) {
 					should_score2 = true;
 					break;
