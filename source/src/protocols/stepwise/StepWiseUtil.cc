@@ -1490,10 +1490,14 @@ rotate( pose::Pose & pose, Matrix const M,
 				rsd = pose2.residue( j ).clone();
 			}
 
-			if ( k == merge_res ) remove_upper_terminus( rsd );
+			if ( k == merge_res ) {
+				remove_upper_terminus( rsd );
+				rsd = remove_variant_type_from_residue( *rsd, "THREE_PRIME_PHOSPHATE", pose ); // got to be safe.
+			}
 			if ( k == ( merge_res + 1)  ) {
 				runtime_assert( after_cutpoint );
 				remove_lower_terminus( rsd );
+				rsd = remove_variant_type_from_residue( *rsd, "FIVE_PRIME_PHOSPHATE", pose ); // got to be safe.
 				after_cutpoint = false; // we're merging after all.
 			}
 			if ( n == 1 || !after_cutpoint ){
@@ -1590,6 +1594,10 @@ rotate( pose::Pose & pose, Matrix const M,
 
 		remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS, res_to_add );
 		remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS, res_to_add + 1 );
+
+		remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", res_to_add );
+		remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, res_to_add + 1 );
+		remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", res_to_add + 1 );
 
 		if ( pose.residue_type( res_to_add ).is_RNA() ){
 			// could also keep track of alpha, beta, etc.
@@ -1864,9 +1872,6 @@ rotate( pose::Pose & pose, Matrix const M,
 		if ( res < pose.total_residue() &&
 				 res_list[ res ] + 1 == res_list[ res + 1 ] &&
 				 ! cutpoint_open_in_full_model.has_value( res_list[ res ]) ){
-
-			// can happen after additions
-			remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, res + 1 );
 
 			// can happen after additions
 			correctly_add_cutpoint_variants( pose, res );

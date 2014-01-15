@@ -53,6 +53,8 @@ namespace phosphate {
 		void
 		copy_phosphates( pose::Pose & mod_pose ) const;
 
+		void reset_to_original_pose();
+
 		void set_screen_all( bool const & setting ){ screen_all_ = setting; }
 		bool screen_all() const{ return screen_all_; }
 
@@ -95,7 +97,7 @@ namespace phosphate {
 
 	private:
 
-		pose::PoseOP pose_with_original_phosphates_;
+		pose::PoseCOP pose_with_original_phosphates_;
 		pose::PoseOP phosphate_sample_pose_;
 		scoring::ScoreFunctionOP scorefxn_;
 		Real const phosphate_takeoff_donor_distance_cutoff2_;

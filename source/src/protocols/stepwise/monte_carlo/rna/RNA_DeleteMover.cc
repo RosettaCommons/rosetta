@@ -17,6 +17,7 @@
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloOptions.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_ModelerOptions.hh>
+#include <protocols/stepwise/enumerate/rna/phosphate/MultiPhosphateSampler.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
 
 // libRosetta headers
@@ -212,6 +213,14 @@ namespace rna {
 	RNA_DeleteMover::minimize_after_delete( pose::Pose & pose ) const{
 
 		using namespace core::pose::full_model_info;
+
+		// normally happens with sampling -- this is important for seeing if terminal phosphates that
+		// previously instantiated due to contact with deleted residues need to *disappear* now.
+		if ( options_->sampler_perform_phosphate_pack() ){
+			protocols::stepwise::enumerate::rna::phosphate::MultiPhosphateSampler phosphate_sampler( pose );
+			phosphate_sampler.sample_phosphates(); // samples on internal clone of pose.
+			phosphate_sampler.copy_phosphates( pose );
+		}
 
 		stepwise_rna_modeler_->set_skip_sampling( true );
 		stepwise_rna_modeler_->set_moving_res_and_reset( 0 );

@@ -127,6 +127,7 @@ sources = {
 	"MultiPhosphateSampler",
 	"PhosphateMove",
 	"PhosphateMover",
+	"PhosphateUtil",
     ],
     "protocols/stepwise/enumerate/rna/screener": [
 	"ChainClosableScreener",

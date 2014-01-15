@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/enumerate/rna/phosphate/PhosphateMover.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/enumerate/rna/phosphate/PhosphateUtil.hh>
 #include <core/chemical/rna/RNA_SamplerUtil.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
@@ -65,6 +65,7 @@ namespace phosphate {
 		do_screening_ = true;
 		screen_for_donor_contact_ = true;
 		instantiated_phosphate_ = false;
+		force_phosphate_instantiation_ = false; // do not check in as true, just for testing
 		number_score_calls_ = 0;
 	}
 
@@ -125,8 +126,8 @@ namespace phosphate {
 			runtime_assert( !pose.residue( sample_res ).has_variant_type( "VIRTUAL_RIBOSE" ) );
 
 			pose_free_ = pose.clone();
-			remove_variant_type_from_pose_residue( *pose_free_, "FIVE_PRIME_PHOSPHATE", sample_res);
-			add_variant_type_to_pose_residue( *pose_free_, "VIRTUAL_PHOSPHATE", sample_res);
+			remove_variant_type_from_pose_residue( *pose_free_, "FIVE_PRIME_PHOSPHATE", sample_res );
+			add_variant_type_to_pose_residue( *pose_free_, "VIRTUAL_PHOSPHATE", sample_res );
 
 		} else {
 			runtime_assert( !pose.residue( sample_res ).has_variant_type( "FIVE_PRIME_PHOSPHATE" ) );
@@ -134,9 +135,9 @@ namespace phosphate {
 
 			pose_free_ = pose.clone();
 
-			remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", sample_res);
-			remove_variant_type_from_pose_residue( pose, "LOWER_TERMINUS", sample_res);
-			remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", sample_res);
+			remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", sample_res );
+			remove_variant_type_from_pose_residue( pose, "LOWER_TERMINUS", sample_res );
+			remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", sample_res );
 			add_variant_type_to_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", sample_res );
 			correctly_position_five_prime_phosphate( pose, sample_res );
 
@@ -148,12 +149,15 @@ namespace phosphate {
 	void
 	PhosphateMover::setup_variants_and_free_pose_for_three_prime_phosphate( pose::Pose & pose ){
 
+		Size const sample_res = phosphate_move_.rsd();
+
 		if ( pose.residue( phosphate_move_.rsd() ).has_variant_type( "THREE_PRIME_PHOSPHATE" ) ){
 			pose_free_ = pose.clone();
-			remove_variant_type_from_pose_residue( *pose_free_, "THREE_PRIME_PHOSPHATE", phosphate_move_.rsd());
+			remove_variant_type_from_pose_residue( *pose_free_, "THREE_PRIME_PHOSPHATE", sample_res );
 		} else {
 			pose_free_ = pose.clone();
-			add_variant_type_to_pose_residue( pose, "THREE_PRIME_PHOSPHATE", phosphate_move_.rsd());
+			remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", sample_res );
+			add_variant_type_to_pose_residue( pose, "THREE_PRIME_PHOSPHATE", sample_res );
 		}
 
 	}
@@ -244,10 +248,9 @@ namespace phosphate {
 				}
 			}
 		}
-		if ( score_best < score_free ){
+		if ( score_best < score_free || force_phosphate_instantiation_ ){
 			pose = pose_best;
 			instantiated_phosphate_ = true;
-			//			pose.dump_pdb( "HEY.pdb" );
 		} else {
 			pose = *pose_free_;
 		}
@@ -293,7 +296,7 @@ namespace phosphate {
 			}
 		}
 		//TR << "score for sample with 3' phosphate " << score_best << " vs free " << score_free;
-		if ( score_best < score_free ){
+		if ( score_best < score_free || force_phosphate_instantiation_ ){
 			pose = pose_best;
 			instantiated_phosphate_ = true;
 		} else {

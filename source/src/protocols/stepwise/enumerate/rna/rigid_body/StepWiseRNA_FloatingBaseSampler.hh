@@ -29,6 +29,7 @@
 #include <protocols/stepwise/enumerate/rna/screener/ChainBreakScreener.fwd.hh>
 #include <protocols/stepwise/enumerate/rna/screener/ChainClosableScreener.fwd.hh>
 #include <protocols/stepwise/enumerate/rna/o2prime/O2PrimePacker.fwd.hh>
+#include <protocols/stepwise/enumerate/rna/phosphate/MultiPhosphateSampler.fwd.hh>
 #include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamer.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
@@ -174,6 +175,7 @@ namespace rna {
 		StepWiseRNA_PoseSelectionOP pose_selection_;
 
 		o2prime::O2PrimePackerOP o2prime_packer_;
+		phosphate::MultiPhosphateSamplerOP phosphate_sampler_;
 
 		kinematics::Stub reference_stub_;
 		utility::vector1 < core::kinematics::Stub > other_residues_base_list_;

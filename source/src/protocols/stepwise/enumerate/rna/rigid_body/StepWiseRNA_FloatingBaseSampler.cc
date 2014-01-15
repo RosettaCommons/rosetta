@@ -28,6 +28,8 @@
 #include <protocols/stepwise/enumerate/rna/screener/AtrRepScreener.hh>
 #include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamer.hh>
 #include <protocols/stepwise/enumerate/rna/o2prime/O2PrimePacker.hh>
+#include <protocols/stepwise/enumerate/rna/phosphate/MultiPhosphateSampler.hh>
+#include <protocols/stepwise/enumerate/rna/phosphate/PhosphateUtil.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
@@ -171,7 +173,7 @@ StepWiseRNA_FloatingBaseSampler::apply( core::pose::Pose & pose ){
 	initialize_rigid_body_sampler( pose );
 	initialize_other_residues_base_list( pose ); 	// places where floating base can 'dock'
 
-	sampler_->apply( pose, *moving_rsd_at_origin_list_[1] ); // just to see something in graphics viewer.
+	//	sampler_->apply( pose, *moving_rsd_at_origin_list_[1] ); // just to see something in graphics viewer.
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// MAIN LOOP
@@ -272,6 +274,15 @@ StepWiseRNA_FloatingBaseSampler::apply( core::pose::Pose & pose ){
 				chain_break_to_anchor_screener_->copy_CCD_torsions( pose );
 			}
 
+			if ( options_->sampler_perform_phosphate_pack() ){
+				sampler_->apply( phosphate_sampler_->pose(), moving_rsd_at_origin );
+				if ( close_chain_to_distal_ ) chain_break_to_distal_screener_->copy_CCD_torsions( phosphate_sampler_->pose() );
+				if ( close_chain_to_anchor_ ) chain_break_to_anchor_screener_->copy_CCD_torsions( phosphate_sampler_->pose() );
+				phosphate_sampler_->sample_phosphates();
+				phosphate_sampler_->copy_phosphates( o2prime_packer_->pose() );
+				phosphate_sampler_->copy_phosphates( pose );
+			}
+
 			////////////////////////////////////////////////////////////////////////////////////////////////////////
 			bool instantiate_sugar = check_moving_sugar( pose );
 			if ( options_->sampler_perform_o2prime_pack() ){
@@ -284,6 +295,12 @@ StepWiseRNA_FloatingBaseSampler::apply( core::pose::Pose & pose ){
 			Pose selected_pose = pose; // the reason for this copy is that we might apply a bulge variant, and that can produce thread conflicts with graphics.
 			if ( instantiate_sugar ) instantiate_moving_sugar_and_o2prime( selected_pose );
 			pose_selection_->pose_selection_by_full_score( selected_pose, tag );
+
+			if ( options_->sampler_perform_phosphate_pack() ){ // reset phosphates. This is pretty inelegant.
+				phosphate_sampler_->reset_to_original_pose();
+				if ( options_->sampler_perform_o2prime_pack() ) phosphate_sampler_->copy_phosphates( o2prime_packer_->pose() );
+				phosphate_sampler_->copy_phosphates( pose );
+			}
 
 			if ( options_->verbose() ) output_data( silent_file_, tag, true, pose, get_native_pose(), job_parameters_ );
 			num_success++;
@@ -303,17 +320,21 @@ StepWiseRNA_FloatingBaseSampler::apply( core::pose::Pose & pose ){
 	pose_selection_->finalize();
 	output_count_data();
 
-	// can put this back in pretty easily...
 	if ( options_->verbose() ) analyze_base_bin_map( base_bin_map_, "test/" );
 
 	pose_list_ = pose_selection_->pose_list();
 	TR.Debug << "floating base sampling time : " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_screeners( pose::Pose & pose  ){
+
+	// Basic setup. This is a floating base, after all.
+	pose::remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", moving_res_ );
+	pose::remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", moving_res_ );
+	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", moving_res_ );
+	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", moving_res_ );
 
 	//runtime_assert( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_PHOSPHATE" ) );
 	//	runtime_assert( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_RIBOSE" ) );
@@ -331,6 +352,7 @@ StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_screeners( pose:
 	if ( user_input_VDW_bin_screener_ ) user_input_VDW_bin_screener_->reference_xyz_consistency_check( reference_stub_.v );
 
 	screening_pose_ = pose_with_virtual_O2prime_hydrogen.clone(); //Hard copy, used for clash checking
+	phosphate::remove_terminal_phosphates( *screening_pose_ );
 	if ( close_chain_to_distal_ ) pose::add_variant_type_to_pose_residue( *screening_pose_, "VIRTUAL_PHOSPHATE", five_prime_chain_break_res_ + 1 ); //May 31, 2010
 
 	sugar_screening_pose_ = screening_pose_->clone(); //Hard copy. Used for trying out sugar at moving residue.
@@ -342,10 +364,17 @@ StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_screeners( pose:
 	if ( options_->sampler_perform_o2prime_pack() ) {
 		remove_virtual_O2Prime_hydrogen( pose );
 		// weird -- following should not be necessary, but commenting it out changes results.
-		if ( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_RIBOSE" ) ) pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", moving_res_ );
+		//		if ( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_RIBOSE" ) ) pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", moving_res_ );
 		o2prime_packer_ = new o2prime::O2PrimePacker( pose, scorefxn_, job_parameters_->working_moving_partition_pos() /* moving_res_*/ );
 	} else {
 		add_virtual_O2Prime_hydrogen( pose );
+	}
+
+	if ( options_->sampler_perform_phosphate_pack() ){
+		phosphate_sampler_ = new phosphate::MultiPhosphateSampler( pose );
+		utility::vector1< Size > const & working_moving_partition_pos_ = job_parameters_->working_moving_partition_pos();
+		runtime_assert( working_moving_partition_pos_.size() == 1 ); //generalize later.
+		phosphate_sampler_->set_moving_partition_res( working_moving_partition_pos_ );
 	}
 
 	atr_rep_screener_ = new screener::AtrRepScreener( pose_with_virtual_O2prime_hydrogen, job_parameters_ );
@@ -369,8 +398,8 @@ StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_screeners( pose:
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Setup Residue of moving and reference of various rsd conformation (syn/anti chi, 2' and 3' endo) with
 	// base at origin coordinate frame
-	moving_rsd_at_origin_list_                 = setup_residue_at_origin_list(	pose,	moving_res_, options_->extra_chi(), options_->use_phenix_geo() );
-	screening_moving_rsd_at_origin_list_	     = setup_residue_at_origin_list( *screening_pose_, moving_res_, options_->extra_chi(), options_->use_phenix_geo() );
+	moving_rsd_at_origin_list_                 = setup_residue_at_origin_list(	pose,	                 moving_res_, options_->extra_chi(), options_->use_phenix_geo() );
+	screening_moving_rsd_at_origin_list_	     = setup_residue_at_origin_list( *screening_pose_,       moving_res_, options_->extra_chi(), options_->use_phenix_geo() );
 	sugar_screening_moving_rsd_at_origin_list_ = setup_residue_at_origin_list( *sugar_screening_pose_, moving_res_,	options_->extra_chi(), options_->use_phenix_geo() );
 	runtime_assert ( moving_rsd_at_origin_list_.size() == screening_moving_rsd_at_origin_list_.size() );
 	runtime_assert ( moving_rsd_at_origin_list_.size() == sugar_screening_moving_rsd_at_origin_list_.size() );

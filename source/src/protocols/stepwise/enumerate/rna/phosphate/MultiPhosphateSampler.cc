@@ -15,7 +15,7 @@
 
 #include <protocols/stepwise/enumerate/rna/phosphate/MultiPhosphateSampler.hh>
 #include <protocols/stepwise/enumerate/rna/phosphate/PhosphateMover.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/enumerate/rna/phosphate/PhosphateUtil.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/conformation/Residue.hh>
@@ -85,6 +85,12 @@ namespace phosphate {
 
 	////////////////////////////////////////////////////////////////////
 	void
+	MultiPhosphateSampler::reset_to_original_pose(){
+		phosphate_sample_pose_ = pose_with_original_phosphates_->clone();
+	}
+
+	////////////////////////////////////////////////////////////////////
+	void
 	MultiPhosphateSampler::copy_phosphates( pose::Pose & mod_pose ) const {
 		copy_over_phosphate_variants( mod_pose, *phosphate_sample_pose_, phosphate_move_list_ );
 	}
@@ -109,12 +115,14 @@ namespace phosphate {
 				Size const seqpos_in_full_model = res_list[ n ];
 				if ( ( n == 1 || pose.fold_tree().is_cutpoint( n - 1 ) ) &&
 						 seqpos_in_full_model > 1 &&
-						 !cutpoint_open_in_full_model.has_value( seqpos_in_full_model - 1 ) ){
+						 !cutpoint_open_in_full_model.has_value( seqpos_in_full_model - 1 ) &&
+						 !pose.residue_type( n ).has_variant_type( "CUTPOINT_UPPER" ) ){
 					phosphate_move_list.push_back( PhosphateMove( n, FIVE_PRIME_PHOSPHATE ) );
 				}
 				if ( ( n == pose.total_residue() || pose.fold_tree().is_cutpoint( n ) ) &&
 						 seqpos_in_full_model < nres_full_model &&
-						 !cutpoint_open_in_full_model.has_value( seqpos_in_full_model ) ){
+						 !cutpoint_open_in_full_model.has_value( seqpos_in_full_model ) &&
+						 !pose.residue_type( n ).has_variant_type( "CUTPOINT_LOWER" ) ){
 					phosphate_move_list.push_back( PhosphateMove( n, THREE_PRIME_PHOSPHATE ) );
 				}
 			}
@@ -150,9 +158,17 @@ namespace phosphate {
 			}
 		}
 
+		// check phosphates that make cross-partition contacts.
 		find_phosphate_contacts_other_partition( partition_res1, partition_res2, pose,
 																						phosphate_move_list, actual_phosphate_move_list );
 		find_phosphate_contacts_other_partition( partition_res2, partition_res1, pose,
+																						phosphate_move_list, actual_phosphate_move_list );
+
+		// need to also add in any phosphates that made cross-contact partitions in *original* pose.
+		// those need to be re-evaluated.
+		find_phosphate_contacts_other_partition( partition_res1, partition_res2, *pose_with_original_phosphates_,
+																						phosphate_move_list, actual_phosphate_move_list );
+		find_phosphate_contacts_other_partition( partition_res2, partition_res1, *pose_with_original_phosphates_,
 																						phosphate_move_list, actual_phosphate_move_list );
 
 		return actual_phosphate_move_list;
@@ -168,6 +184,7 @@ namespace phosphate {
 
 		for ( Size i = 1; i <= phosphate_move_list.size(); i++ ){
 			PhosphateMove const & phosphate_move = phosphate_move_list[ i ];
+			if ( actual_phosphate_move_list.has_value( phosphate_move ) ) continue;
 			Size const n = phosphate_move.rsd();
 			if ( !partition_res1.has_value( n ) ) continue;
 			Vector const phosphate_takeoff_xyz = (phosphate_move.terminus() == FIVE_PRIME_PHOSPHATE) ?
@@ -212,11 +229,13 @@ namespace phosphate {
 
 		runtime_assert( pose.total_residue() == reference_pose.total_residue() );
 
+		//		TR << "MOD POSE  " <<  pose.annotated_sequence() << std::endl;
+		//		TR << "REFERENCE " << reference_pose.annotated_sequence() << std::endl;
+
 		for ( Size i = 1; i <= phosphate_move_list.size(); i++ ){
 			PhosphateMove const & phosphate_move = phosphate_move_list[ i ];
 			Size const & n = phosphate_move.rsd();
 			PhosphateTerminus const & terminus = phosphate_move.terminus();
-
 			//			TR << phosphate_move << std::endl;
 
 			utility::vector1< TorsionID > torsion_ids;
@@ -225,7 +244,9 @@ namespace phosphate {
 				if ( pose.residue( n ).has_variant_type( "FIVE_PRIME_PHOSPHATE" ) ){
 					make_variants_match( pose, reference_pose, n, "FIVE_PRIME_PHOSPHATE" );
 					make_variants_match( pose, reference_pose, n, "VIRTUAL_PHOSPHATE" );
+					make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
 				} else { // order matters, since there's not variant with both virtual phosphate and five prime phosphate
+					make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
 					make_variants_match( pose, reference_pose, n, "VIRTUAL_PHOSPHATE" );
 					make_variants_match( pose, reference_pose, n, "FIVE_PRIME_PHOSPHATE" );
 					added_new_phosphate = pose.residue( n ).has_variant_type( "FIVE_PRIME_PHOSPHATE" );
@@ -238,6 +259,7 @@ namespace phosphate {
 				torsion_ids.push_back( TorsionID( n, id::BB, GAMMA ) );
 			} else {
 				runtime_assert( terminus == THREE_PRIME_PHOSPHATE );
+				make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
 				make_variants_match( pose, reference_pose, n, "THREE_PRIME_PHOSPHATE" );
 				torsion_ids.push_back( TorsionID( n, id::BB, EPSILON ) );
 				torsion_ids.push_back( TorsionID( n, id::BB, ZETA ) );

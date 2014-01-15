@@ -397,7 +397,8 @@ StepWiseRNA_VirtualSugarJustInTimeInstantiator::do_consistency_checks(){
 	if ( is_current_sugar_virt_ ){ //Consistency test.
 		// runtime_assert( gap_size_ == 0 ); // not true for internal suites.
 	}
-	runtime_assert( gap_size_ == 0 || num_virtual_sugar_ <= 1 );
+	// not true after some kinds of merges!
+	//	runtime_assert( gap_size_ == 0 || num_virtual_sugar_ <= 1 );
 
 	if ( floating_base ){
 		if ( is_five_prime_chain_break_sugar_virt_ ){ //This is rare since floating_base sampling is not often used at chain-closure step!

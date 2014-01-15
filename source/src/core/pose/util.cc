@@ -2030,6 +2030,8 @@ remove_variant_type_from_residue(
 	pose::Pose const & pose
 	)
 {
+	if ( !old_rsd.has_variant_type( variant_type ) ) return old_rsd.clone();
+
 	// the type of the desired variant residue
 	core::chemical::ResidueTypeSet const & rsd_set( old_rsd.residue_type_set() );
 	core::chemical::ResidueType const & new_rsd_type( rsd_set.get_residue_type_with_variant_removed( old_rsd.type(), variant_type ) );
@@ -2056,6 +2058,9 @@ add_variant_type_to_residue(
 	chemical::VariantType const & variant_type,
 	pose::Pose const & pose
 	) {
+
+	if ( old_rsd.has_variant_type( variant_type ) ) return old_rsd.clone();
+
 	// the type of the desired variant residue
 	chemical::ResidueTypeSet const & rsd_set( old_rsd.residue_type_set() );
 	chemical::ResidueType const & new_rsd_type( rsd_set.get_residue_type_with_variant_added( old_rsd.type(), variant_type ) );

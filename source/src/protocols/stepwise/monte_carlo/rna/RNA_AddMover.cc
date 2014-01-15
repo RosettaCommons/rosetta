@@ -96,144 +96,29 @@ namespace rna {
   void
   RNA_AddMover::apply( core::pose::Pose & viewer_pose, Size const res_to_add_in_full_model_numbering, Size const res_to_build_off_in_full_model_numbering )
 	{
-
-		using namespace core::chemical;
-		using namespace core::chemical::rna;
 		using namespace core::pose;
 		using namespace core::pose::full_model_info;
-		using namespace protocols::stepwise::enumerate::rna;
 
 		Pose pose = viewer_pose; // hard copy -- try to avoid graphics problems when variants are added.
 		runtime_assert( pose.total_residue() >= 1 );
-		ResidueTypeSet const & rsd_set = pose.residue_type( 1 ).residue_type_set();
 
-		Size suite_num( 0 ), nucleoside_num( 0 ); // will record which new dofs added.
-		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
+		// will record which new dofs added.
+		suite_num_ = 0;
+		nucleoside_num_ = 0;
+
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
-		std::string const & full_sequence  = full_model_info.full_sequence();
-
-		runtime_assert( res_list.has_value( res_to_build_off_in_full_model_numbering ) );
-		runtime_assert( !res_list.has_value( res_to_add_in_full_model_numbering ) );
-		Size const res_to_build_off = res_list.index( res_to_build_off_in_full_model_numbering );
+		res_to_add_in_full_model_numbering_       = res_to_add_in_full_model_numbering;
+		res_to_build_off_in_full_model_numbering_ = res_to_build_off_in_full_model_numbering;
+		runtime_assert( res_list.has_value( res_to_build_off_in_full_model_numbering_ ) );
+		runtime_assert( !res_list.has_value( res_to_add_in_full_model_numbering_ ) );
 
 		// need to encapsulate the following residue addition & domain addition functions...
-		if ( res_to_add_in_full_model_numbering > res_to_build_off_in_full_model_numbering ) {
-			Size const offset = res_to_add_in_full_model_numbering - res_to_build_off_in_full_model_numbering;
-			// addition to strand ending (append)
-			runtime_assert( res_to_build_off == pose.total_residue() ||
-											res_list[ res_to_build_off ] < res_list[ res_to_build_off + 1 ] - 1 );
-			runtime_assert( res_list[ res_to_build_off ] < full_sequence.size() );
-
-			Size const res_to_add = res_to_build_off + 1;
-			Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( res_to_add_in_full_model_numbering );
-
-			if ( other_pose_idx ){ // addition of a domain (a whole sister pose)
-				runtime_assert( offset == 1);
-				Pose & other_pose = *(full_model_info.other_pose_list()[ other_pose_idx ]);
-				Size const res_to_build_off_in_full_model_numbering = res_list[ res_to_build_off ];
-				merge_in_other_pose( pose, other_pose, res_to_build_off_in_full_model_numbering );
-
-				nonconst_full_model_info( pose ).remove_other_pose_at_idx( other_pose_idx );
-
-				suite_num = get_res_list_from_full_model_info( pose ).index( res_to_build_off_in_full_model_numbering );
-				nucleoside_num = 0; // don't sample sugar pucker or side chain -- that will screw up the (fixed) domain structure.
-
-			} else { // single residue addition -- can this just be combine with above?
-
-				char newrestype = full_sequence[ res_to_add_in_full_model_numbering - 1 ];
-				choose_random_if_unspecified_nucleotide( newrestype );
-				chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
-				chemical::ResidueTypeCOPs const & rsd_type_list( rsd_set.aa_map( my_aa ) );
-
-				// iterate over rsd_types, pick one.
-				chemical::ResidueType const & rsd_type = *rsd_type_list[1];
-				core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
-
-				remove_variant_type_from_pose_residue( pose, "UPPER_TERMINUS", res_to_build_off ); // got to be safe.
-
-				if ( offset == 1){
-					pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
-					suite_num = res_to_add - 1;
-				} else {
-					runtime_assert( offset > 1 );
-					pose.insert_residue_by_jump( *new_rsd, res_to_add, res_to_build_off,
-																			 default_jump_atom( pose.residue( res_to_build_off ) ),
-																			 default_jump_atom( *new_rsd ) );
-					add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add );
-					if ( res_to_add_in_full_model_numbering < res_list[ res_to_build_off+1 ]-1 ) {
-						add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", res_to_add );
-					}
-					suite_num = 0;
-				}
-
-				reorder_full_model_info_after_append( pose, res_to_add, offset );
-
-				nucleoside_num = res_to_add;
-			}
+		if ( res_to_add_in_full_model_numbering_ > res_to_build_off_in_full_model_numbering_ ) {
+			do_append(  pose );
 		} else {
-
-			// addition to strand beginning (prepend)
-			runtime_assert( res_to_add_in_full_model_numbering < res_to_build_off_in_full_model_numbering );
-			Size const offset = res_to_build_off_in_full_model_numbering - res_to_add_in_full_model_numbering;
-			Size const res_to_add = res_to_build_off;
-			Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( res_to_add_in_full_model_numbering );
-
-			TR << "About to add onto " << res_to_build_off_in_full_model_numbering << " the following residue (in full model numbering) " << res_to_add_in_full_model_numbering << " which may be part of other pose " << other_pose_idx << std::endl;
-
-			if ( other_pose_idx ){ // addition of a domain (a whole sister pose)
-				runtime_assert( offset == 1 );
-				Pose & other_pose = *(full_model_info.other_pose_list()[ other_pose_idx ]);
-				merge_in_other_pose( pose, other_pose, res_to_build_off_in_full_model_numbering - 1 /*merge_res*/ );
-
-				nonconst_full_model_info( pose ).remove_other_pose_at_idx( other_pose_idx );
-
-				suite_num = get_res_list_from_full_model_info( pose ).index( res_to_add_in_full_model_numbering );
-				nucleoside_num = 0; // don't sample sugar pucker or side chain -- that will screw up the (fixed) domain structure.
-
-			} else {  // single residue addition -- can this just be combine with above?
-
-				runtime_assert( res_list[ res_to_add ] > 1 );
-
-				char newrestype = full_sequence[ res_to_add_in_full_model_numbering - 1 ];
-				choose_random_if_unspecified_nucleotide( newrestype );
-
-				TR.Debug << "I want to add: " << newrestype << " before " << res_to_build_off << std::endl;
-
-				chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
-
-				chemical::ResidueTypeCOPs const & rsd_type_list( rsd_set.aa_map( my_aa ) );
-
-				// iterate over rsd_types, pick one.
-				chemical::ResidueType const & rsd_type = *rsd_type_list[1];
-
-				core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
-
-				remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add ); // got to be safe.
-				remove_variant_type_from_pose_residue( pose, "LOWER_TERMINUS", res_to_add ); // got to be safe.
-
-				if ( offset == 1){
-					pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
-					suite_num = res_to_add;
-				} else {
-					runtime_assert( offset > 1 );
-					pose.insert_residue_by_jump( *new_rsd, res_to_add, res_to_build_off,
-																			 default_jump_atom( pose.residue( res_to_build_off ) ),
-																			 default_jump_atom( *new_rsd ) );
-					if ( res_to_add_in_full_model_numbering > res_list[ res_to_build_off-1 ]+1 ) {
-						add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", res_to_add );
-						add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add+1 );
-					}
-					suite_num = 0;
-				}
-				reorder_full_model_info_after_prepend( pose, res_to_add, offset );
-
-				// initialize with a random torsion... ( how about an A-form + perturbation ... or go to a 'reasonable' rotamer)
-				nucleoside_num = res_to_add;
-			}
-
+			do_prepend( pose );
 		}
-
-		if ( pose.total_residue() == 2 && pose.fold_tree().num_jump() == 0 ) pose.fold_tree( kinematics::FoldTree( 2 ) ); //special case.
+		if ( pose.total_residue() == 2 && pose.fold_tree().num_jump() == 0 ) pose.fold_tree( kinematics::FoldTree( 2 ) ); //special 'from scratch' case.
 
 		fix_up_residue_type_variants( pose );
 
@@ -243,15 +128,15 @@ namespace rna {
 		TR << TR.Blue << pose.annotated_sequence() << TR.Reset << std::endl;
 
 		if ( start_added_residue_in_aform_ ){
-			if ( suite_num > 0 ) rna_torsion_mover_->apply_suite_torsion_Aform( viewer_pose, suite_num );
-			if ( nucleoside_num > 0 ) rna_torsion_mover_->apply_nucleoside_torsion_Aform( viewer_pose, nucleoside_num );
+			if ( suite_num_ > 0 ) rna_torsion_mover_->apply_suite_torsion_Aform( viewer_pose, suite_num_ );
+			if ( nucleoside_num_ > 0 ) rna_torsion_mover_->apply_nucleoside_torsion_Aform( viewer_pose, nucleoside_num_ );
 		} else {
-			if ( suite_num > 0 ) rna_torsion_mover_->apply_random_suite_torsion( viewer_pose, suite_num );
-			if ( nucleoside_num > 0 ) rna_torsion_mover_->apply_random_nucleoside_torsion( viewer_pose, nucleoside_num );
+			if ( suite_num_ > 0 ) rna_torsion_mover_->apply_random_suite_torsion( viewer_pose, suite_num_ );
+			if ( nucleoside_num_ > 0 ) rna_torsion_mover_->apply_random_nucleoside_torsion( viewer_pose, nucleoside_num_ );
 		}
 
-		if ( suite_num > 0 ) rna_torsion_mover_->sample_near_suite_torsion( viewer_pose, suite_num, sample_range_large_);
-		if ( nucleoside_num > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( viewer_pose, nucleoside_num, sample_range_large_);
+		if ( suite_num_ > 0 ) rna_torsion_mover_->sample_near_suite_torsion( viewer_pose, suite_num_, sample_range_large_);
+		if ( nucleoside_num_ > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( viewer_pose, nucleoside_num_, sample_range_large_);
 
 		clear_constraints_recursively( pose );
 
@@ -264,51 +149,222 @@ namespace rna {
 		///////////////////////////////////
 		if ( presample_added_residue_ ){
 			if ( presample_by_swa_ ){
-				Size swa_sample_res = nucleoside_num;
-				if ( swa_sample_res == 0) swa_sample_res = suite_num; // nucleoside_num = 0 in domain addition.
+				Size swa_sample_res = nucleoside_num_;
+				if ( swa_sample_res == 0) swa_sample_res = suite_num_; // nucleoside_num_ = 0 in domain addition.
 				sample_by_swa( viewer_pose, swa_sample_res );
 			} else {
-				sample_by_monte_carlo_internal( viewer_pose, nucleoside_num, suite_num );
+				sample_by_monte_carlo_internal( viewer_pose );
 			}
 		}
 
 	}
 
 
+	////////////////////////////////////////////////////////////////////////
+	void
+  RNA_AddMover::do_append( core::pose::Pose & pose ){
+
+		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
+		std::string const & full_sequence  = full_model_info.full_sequence();
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
+		Size const res_to_build_off = res_list.index( res_to_build_off_in_full_model_numbering_ );
+
+		Size const offset = res_to_add_in_full_model_numbering_ - res_to_build_off_in_full_model_numbering_;
+		// addition to strand ending (append)
+		runtime_assert( res_to_build_off == pose.total_residue() ||
+										res_list[ res_to_build_off ] < res_list[ res_to_build_off + 1 ] - 1 );
+		runtime_assert( res_list[ res_to_build_off ] < full_sequence.size() );
+
+		Size const res_to_add = res_to_build_off + 1;
+		Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( res_to_add_in_full_model_numbering_ );
+
+		if ( other_pose_idx ){ // addition of a domain (a whole sister pose)
+			append_other_pose( pose, offset, other_pose_idx );
+		} else { // single residue addition -- can this just be combine with above?
+			append_residue( pose, offset );
+		}
+
+	}
+
+	////////////////////////////////////////////////////////////////////////
+ 	void
+  RNA_AddMover::do_prepend( core::pose::Pose & pose ){
+
+		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
+		runtime_assert( res_to_add_in_full_model_numbering_ < res_to_build_off_in_full_model_numbering_ );
+		Size const offset = res_to_build_off_in_full_model_numbering_ - res_to_add_in_full_model_numbering_;
+		Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( res_to_add_in_full_model_numbering_ );
+
+		TR << "About to add onto " << res_to_build_off_in_full_model_numbering_ << " the following residue (in full model numbering) " << res_to_add_in_full_model_numbering_ << " which may be part of other pose " << other_pose_idx << std::endl;
+
+		if ( other_pose_idx ){ // addition of a domain (a whole sister pose)
+			prepend_other_pose( pose, offset, other_pose_idx );
+		} else {  // single residue addition -- can this just be combine with above?
+			prepend_residue( pose, offset );
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////
+	void
+	RNA_AddMover::append_other_pose( pose::Pose & pose, Size const offset,
+																	 Size const other_pose_idx ){
+
+		runtime_assert( offset == 1);
+		runtime_assert( other_pose_idx > 0);
+		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
+		Pose & other_pose = *(full_model_info.other_pose_list()[ other_pose_idx ]);
+		merge_in_other_pose( pose, other_pose, res_to_build_off_in_full_model_numbering_ );
+		nonconst_full_model_info( pose ).remove_other_pose_at_idx( other_pose_idx );
+		suite_num_ = get_res_list_from_full_model_info( pose ).index( res_to_build_off_in_full_model_numbering_ );
+		nucleoside_num_ = 0; // don't sample sugar pucker or side chain -- that will screw up the (fixed) domain structure.
+	}
+
+	////////////////////////////////////////////////////////////////////////
+	void
+	RNA_AddMover::prepend_other_pose( pose::Pose & pose, Size const offset,
+																		Size const other_pose_idx ){
+		runtime_assert( offset == 1 );
+		runtime_assert( other_pose_idx > 0);
+		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
+		Pose & other_pose = *(full_model_info.other_pose_list()[ other_pose_idx ]);
+		merge_in_other_pose( pose, other_pose, res_to_build_off_in_full_model_numbering_ - 1 /*merge_res*/ );
+		nonconst_full_model_info( pose ).remove_other_pose_at_idx( other_pose_idx );
+		suite_num_ = get_res_list_from_full_model_info( pose ).index( res_to_add_in_full_model_numbering_ );
+		nucleoside_num_ = 0; // don't sample sugar pucker or side chain -- that will screw up the (fixed) domain structure.
+	}
+
+	////////////////////////////////////////////////////////////////////////
+	void
+	RNA_AddMover::append_residue( pose::Pose & pose, Size const offset ){
+
+		using namespace core::chemical;
+		using namespace core::chemical::rna;
+		using namespace protocols::stepwise::enumerate::rna;
+
+		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
+		std::string const & full_sequence  = full_model_info.full_sequence();
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
+		Size const res_to_build_off = res_list.index( res_to_build_off_in_full_model_numbering_ );
+		Size const res_to_add = res_to_build_off + 1;
+
+		char newrestype = full_sequence[ res_to_add_in_full_model_numbering_ - 1 ];
+		choose_random_if_unspecified_nucleotide( newrestype );
+		chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
+		ResidueTypeSet const & rsd_set = pose.residue_type( 1 ).residue_type_set();
+		chemical::ResidueTypeCOPs const & rsd_type_list( rsd_set.aa_map( my_aa ) );
+
+		// iterate over rsd_types, pick one.
+		chemical::ResidueType const & rsd_type = *rsd_type_list[1];
+		core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
+
+		remove_variant_type_from_pose_residue( pose, "UPPER_TERMINUS", res_to_build_off ); // got to be safe.
+		remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", res_to_build_off ); // got to be safe.
+		if ( offset == 1){
+			pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
+			suite_num_ = res_to_add - 1;
+		} else {
+			runtime_assert( offset > 1 );
+			pose.insert_residue_by_jump( *new_rsd, res_to_add, res_to_build_off,
+																	 default_jump_atom( pose.residue( res_to_build_off ) ),
+																	 default_jump_atom( *new_rsd ) );
+			add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add );
+			if ( res_to_add_in_full_model_numbering_ < res_list[ res_to_build_off+1 ]-1 ) {
+				add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", res_to_add );
+			}
+			suite_num_ = 0;
+		}
+
+		reorder_full_model_info_after_append( pose, res_to_add, offset );
+
+		nucleoside_num_ = res_to_add;
+	}
+
+
+	////////////////////////////////////////////////////////////////////////
+	void
+	RNA_AddMover::prepend_residue( pose::Pose & pose, Size const offset ){
+
+		using namespace core::chemical;
+		using namespace core::chemical::rna;
+		using namespace protocols::stepwise::enumerate::rna;
+
+		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
+		std::string const & full_sequence  = full_model_info.full_sequence();
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
+		Size const res_to_build_off = res_list.index( res_to_build_off_in_full_model_numbering_ );
+		Size const res_to_add = res_to_build_off;
+
+		runtime_assert( res_list[ res_to_add ] > 1 );
+
+		char newrestype = full_sequence[ res_to_add_in_full_model_numbering_ - 1 ];
+		choose_random_if_unspecified_nucleotide( newrestype );
+
+		TR.Debug << "I want to add: " << newrestype << " before " << res_to_build_off << std::endl;
+
+		chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
+
+		ResidueTypeSet const & rsd_set = pose.residue_type( 1 ).residue_type_set();
+		chemical::ResidueTypeCOPs const & rsd_type_list( rsd_set.aa_map( my_aa ) );
+
+		// iterate over rsd_types, pick one.
+		chemical::ResidueType const & rsd_type = *rsd_type_list[1];
+
+		core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
+
+		remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add ); // got to be safe.
+		remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", res_to_build_off ); // got to be safe.
+		remove_variant_type_from_pose_residue( pose, "LOWER_TERMINUS", res_to_add ); // got to be safe.
+
+		if ( offset == 1){
+			pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
+			suite_num_ = res_to_add;
+		} else {
+			runtime_assert( offset > 1 );
+			pose.insert_residue_by_jump( *new_rsd, res_to_add, res_to_build_off,
+																	 default_jump_atom( pose.residue( res_to_build_off ) ),
+																	 default_jump_atom( *new_rsd ) );
+			if ( res_to_add_in_full_model_numbering_ > res_list[ res_to_build_off-1 ]+1 ) {
+				add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", res_to_add );
+				add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add+1 );
+			}
+			suite_num_ = 0;
+		}
+		reorder_full_model_info_after_prepend( pose, res_to_add, offset );
+
+		// initialize with a random torsion... ( how about an A-form + perturbation ... or go to a 'reasonable' rotamer)
+		nucleoside_num_ = res_to_add;
+	}
+
 	////////////////////////////////////////////////////////////////////
 	void
 	RNA_AddMover::sample_by_swa( pose::Pose & pose, Size const res_to_add ) const{
-
 		using namespace core::pose::full_model_info;
-
 		runtime_assert( stepwise_rna_modeler_ != 0 );
-
 		TR.Debug << "presampling by stepwise." << res_to_add << std::endl;
 		stepwise_rna_modeler_->set_moving_res_and_reset( res_to_add );
 		if ( !minimize_single_res_ ) stepwise_rna_modeler_->set_minimize_res( get_moving_res_from_full_model_info( pose ) );
 		stepwise_rna_modeler_->apply( pose );
-
 	}
 
 
 	////////////////////////////////////////////////////////////////////
 	void
-	RNA_AddMover::sample_by_monte_carlo_internal( pose::Pose &  pose, Size const nucleoside_num, Size const suite_num ) const {
+	RNA_AddMover::sample_by_monte_carlo_internal( pose::Pose & pose ) const {
 
 		using namespace protocols::moves;
 
-		TR.Debug << "presampling added residue! " << nucleoside_num << " over " << internal_cycles_ << " cycles " << std::endl;
+		TR.Debug << "presampling added residue! " << nucleoside_num_ << " over " << internal_cycles_ << " cycles " << std::endl;
 		MonteCarloOP monte_carlo_internal = new MonteCarlo( pose, *scorefxn_, kT_ );
 
 		std::string move_type( "" );
 		for ( Size count_internal = 1; count_internal <= internal_cycles_; count_internal++ ){
 
-			rna_torsion_mover_->sample_near_suite_torsion( pose, suite_num, sample_range_large_);
-			if ( nucleoside_num > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_large_);
+			rna_torsion_mover_->sample_near_suite_torsion( pose, suite_num_, sample_range_large_);
+			if ( nucleoside_num_ > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num_, sample_range_large_);
 			monte_carlo_internal->boltzmann( pose, move_type );
 
-			rna_torsion_mover_->sample_near_suite_torsion( pose, suite_num, sample_range_small_);
-			if ( nucleoside_num > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_small_);
+			rna_torsion_mover_->sample_near_suite_torsion( pose, suite_num_, sample_range_small_);
+			if ( nucleoside_num_ > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num_, sample_range_small_);
 			monte_carlo_internal->boltzmann( pose, move_type );
 			//std::cout << "During presampling: " << (*scorefxn_)( pose );
 		} // monte carlo cycles

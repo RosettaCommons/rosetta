@@ -44,7 +44,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("core.optimization");
+static basic::Tracer TR("core.optimization.LineMinimizer");
 
 namespace core {
 namespace optimization {

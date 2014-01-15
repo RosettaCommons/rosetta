@@ -48,6 +48,12 @@ namespace phosphate {
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	PhosphateMove::operator== ( PhosphateMove const & other) const{
+		return ( rsd_ == other.rsd() && terminus_ == other.terminus() );
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////
 	std::ostream &
 	operator <<( std::ostream & os, PhosphateMove const & phosphate_move )
 	{

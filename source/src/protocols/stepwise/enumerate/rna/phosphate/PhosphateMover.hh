@@ -99,6 +99,7 @@ namespace phosphate {
 		bool do_screening_;
 		bool screen_for_donor_contact_;
 		bool instantiated_phosphate_;
+		bool force_phosphate_instantiation_;
 
 		pose::PoseOP pose_free_;
 

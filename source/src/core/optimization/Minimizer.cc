@@ -43,7 +43,7 @@ namespace optimization {
 
 using namespace ObjexxFCL;
 
-static basic::Tracer TR( "core.optimization.LineMinimizer" );
+static basic::Tracer TR( "core.optimization.Minimizer" );
 
 // set the function and the options
 Minimizer::Minimizer(
@@ -426,6 +426,8 @@ Minimizer::dfpmin_armijo(
 										 HESSIN(i,j) = 0.0;
 									}
 									if ( HESSIN(i,i) < 0.01 ) HESSIN(i,i) = 0.01;
+									std::cerr << "HESSIN for (i,i): " << i << ' ' << HESSIN(i,i) << std::endl;
+									std::cerr << "G for (i): " << i << ' ' << G[i] << std::endl;
 									XI[i] = -HESSIN(i,i)*G[i];
 									line_min->_deriv_sum += XI[i]*G[i];
 							 }

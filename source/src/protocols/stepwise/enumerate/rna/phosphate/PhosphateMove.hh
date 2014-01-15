@@ -50,6 +50,8 @@ namespace phosphate {
 		//destructor
 		~PhosphateMove();
 
+		bool operator== ( PhosphateMove const & other) const;
+
 	public:
 
 		core::Size rsd() const { return rsd_; }

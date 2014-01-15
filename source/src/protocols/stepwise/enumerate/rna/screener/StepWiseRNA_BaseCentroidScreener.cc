@@ -162,7 +162,7 @@ namespace screener {
 		for ( Size n = 1; n <= terminal_res_.size(); n++ ) {
 
 			Size const terminal_res = terminal_res_[ n ];
-			if ( is_virtual_base_( terminal_res ) == true ){
+			if ( is_virtual_base_( terminal_res ) ){
 				utility_exit_with_message( "working_res: " + string_of( terminal_res ) + " is a terminal res but has a virtual! " );
 			}
 

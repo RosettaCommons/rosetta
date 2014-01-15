@@ -1906,51 +1906,6 @@ namespace rna {
 
 	}
 
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	correctly_position_five_prime_phosphate_SLOW( pose::Pose & pose, Size const res ) {
-		using namespace core::chemical;
-		ResidueTypeSet const & rsd_set = pose.residue( res ).residue_type_set();
-		conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set.aa_map( aa_from_name( "RAD") )[1] ) ) ;
-		pose.prepend_polymer_residue_before_seqpos( *new_rsd, res, true );
-		pose.delete_polymer_residue( res );
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	correctly_position_five_prime_phosphate( pose::Pose & pose, Size const res ) {
-		using namespace core::chemical;
-		using namespace core::conformation;
-		using namespace core::id;
-
-		// reposition XO3' "manually".
-		Residue const & rsd = pose.residue( res );
-		Vector const & P_xyz = rsd.xyz( " P  " );
-		Vector const & O5prime_xyz = rsd.xyz( " O5'" );
-		Vector const & C5prime_xyz = rsd.xyz( " C5'" );
-		Vector const & OP2_xyz     = rsd.xyz( " OP2" );
-		Vector const & XO3prime_xyz  = rsd.xyz( "XO3'" );
-		Real const OP2_dihedral      = dihedral_degrees( OP2_xyz,      P_xyz, O5prime_xyz, C5prime_xyz );
-		Real const XO3prime_dihedral = dihedral_degrees( XO3prime_xyz, P_xyz, O5prime_xyz, C5prime_xyz );
-		static Real const desired_XO3prime_OP2_offset = 114.6; // from rna_phenix files.
-		Real const rotation_amount = ( desired_XO3prime_OP2_offset  - ( XO3prime_dihedral - OP2_dihedral ) );
-		//		TR << "ROTATION AMOUNT " << rotation_amount << std::endl;
-		AtomID XO3prime_ID = AtomID( rsd.atom_index( "XO3'"), res );
-		DOF_ID XO3prime_DOF_ID(XO3prime_ID, PHI );
-		//		pose.dump_pdb( "START.pdb" );
-		//		TR << "DOF ORIGINAL: " << pose.dof( XO3prime_DOF_ID ) << std::endl;
-		pose.set_dof( XO3prime_DOF_ID, pose.dof( XO3prime_DOF_ID ) + numeric::conversions::radians( rotation_amount ) );
-		//		TR << "DOF NEW     : " << pose.dof( XO3prime_DOF_ID ) << std::endl;
-		//		Vector const XO3prime_xyz_NEW  = pose.residue( res ).xyz( "XO3'" );
-		//		Real const XO3prime_dihedral_NEW = dihedral_degrees( XO3prime_xyz_NEW, P_xyz, O5prime_xyz, C5prime_xyz );
-		//		TR << "DESIRED OFFSET " << desired_XO3prime_OP2_offset << "  and actual: " << XO3prime_dihedral_NEW - OP2_dihedral << " from original: " << XO3prime_dihedral - OP2_dihedral << std::endl;
-		//		pose.dump_pdb( "END.pdb" );
-		//		exit( 0 );
-
-	}
-
-
 	void
 	copy_torsions_FROM_TO( core::id::TorsionID const start_torsion_ID, core::id::TorsionID const end_torsion_ID, core::pose::Pose const & template_pose, core::pose::Pose & pose ){
 

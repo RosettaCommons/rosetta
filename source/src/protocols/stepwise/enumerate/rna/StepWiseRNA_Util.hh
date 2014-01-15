@@ -305,9 +305,6 @@ void
 correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size const five_prime_chainbreak,  bool verbose = false );
 
 void
-correctly_position_five_prime_phosphate( pose::Pose & pose, Size const res );
-
-void
 copy_torsions_FROM_TO( id::TorsionID const start_torsion_ID, id::TorsionID const end_torsion_ID, pose::Pose const & template_pose, pose::Pose & pose );
 
 core::Size

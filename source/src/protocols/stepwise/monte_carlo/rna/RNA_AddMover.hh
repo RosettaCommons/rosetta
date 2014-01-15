@@ -82,7 +82,27 @@ private:
 
 	void sample_by_swa( core::pose::Pose & pose, Size const res_to_add  ) const;
 
-	void sample_by_monte_carlo_internal( core::pose::Pose &  pose, Size const nucleoside_num, Size const suite_num ) const;
+	void sample_by_monte_carlo_internal( core::pose::Pose & pose ) const;
+
+	void
+  do_append( core::pose::Pose & pose );
+
+ 	void
+  do_prepend( core::pose::Pose & pose );
+
+	void
+	append_other_pose( pose::Pose & pose, Size const offset,
+										 Size const other_pose_idx );
+
+	void
+	prepend_other_pose( pose::Pose & pose, Size const offset,
+											Size const other_pose_idx );
+
+	void
+	append_residue( pose::Pose & pose, Size const offset );
+
+	void
+	prepend_residue( pose::Pose & pose, Size const offset );
 
 private:
 
@@ -102,6 +122,10 @@ private:
 	core::Real constraint_tol_;
 
 	protocols::stepwise::enumerate::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
+
+	Size suite_num_, nucleoside_num_;
+	Size res_to_add_in_full_model_numbering_, res_to_build_off_in_full_model_numbering_;
+
 
 };
 

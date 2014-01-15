@@ -22,6 +22,7 @@
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
 #include <protocols/stepwise/enumerate/rna/o2prime/O2PrimePacker.hh>
 #include <protocols/stepwise/enumerate/rna/phosphate/MultiPhosphateSampler.hh>
+#include <protocols/stepwise/enumerate/rna/phosphate/PhosphateUtil.hh>
 #include <protocols/stepwise/enumerate/rna/screener/StepWiseRNA_VDW_BinScreener.hh>
 #include <protocols/stepwise/enumerate/rna/screener/AtrRepScreener.hh>
 #include <protocols/stepwise/enumerate/rna/screener/ChainClosableScreener.hh>
@@ -227,20 +228,11 @@ namespace suite {
 			}
 
 			if ( options_->sampler_perform_phosphate_pack() ){
-
-				/////////////////////////////////////////
-				// TOTAL HACK! DO NOT CHECK IN!
-				//if ( ( pose.residue( 1 ).xyz( " C5'" ) - pose.residue( 9 ).xyz( " H1 " ) ).length() > 8.0 ) continue;
-				/////////////////////////////////////////
-
 				rotamer_sampler_->apply( phosphate_sampler_->pose() );
 				if ( close_chain_to_distal_ ) chain_break_screener_->copy_CCD_torsions( phosphate_sampler_->pose() );
 				phosphate_sampler_->sample_phosphates();
 				phosphate_sampler_->copy_phosphates( o2prime_packer_->pose() );
 				phosphate_sampler_->copy_phosphates( pose );
-				// static Size q( 0 );
-				// if ( phosphate_sampler_->instantiated_some_phosphate() ) pose.dump_pdb( "INSTANTIATED_"+string_of( ++q )+".pdb" );
-				// if ( q == 2 ) exit( 0 );
 			}
 
 			if ( options_->sampler_perform_o2prime_pack() ){
@@ -310,18 +302,20 @@ namespace suite {
 
 		kic_sampling_ = ( options_->kic_sampling_if_relevant() && close_chain_to_distal_ );
 
-		atr_rep_screener_ = new screener::AtrRepScreener( pose_with_virtual_O2prime_hydrogen, job_parameters_ );
-		atr_rep_screener_->set_kic_sampling( kic_sampling_ );
-
 		screening_pose_ = pose_with_virtual_O2prime_hydrogen.clone(); //Hard copy
+		phosphate::remove_terminal_phosphates( *screening_pose_ );
+
+		// wait shouldn't this happen below? after all virtualization is complete?
+		//atr_rep_screener_ = new screener::AtrRepScreener( *screening_pose_, job_parameters_ );
+		//		atr_rep_screener_->set_kic_sampling( kic_sampling_ );
 
 		//Necessary for the case where gap_size_ == 0. In this case, Pose_setup does not automatically create a VIRTUAL_PHOSPHATE.///
 		//However since screening_pose is scored before the CCD correctly positions the chain_break phosphate atoms, ///////////////
 		// the VIRTUAL_PHOSPHATE is needed to prevent artificial clashes. Parin Jan 28, 2010////////////////////////////////////
-		if ( close_chain_to_distal_ ) {
-			pose::remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", five_prime_chain_break_res_ + 1 );
-			pose::add_variant_type_to_pose_residue( *screening_pose_, "VIRTUAL_PHOSPHATE", five_prime_chain_break_res_ + 1 );
-		}
+		if ( close_chain_to_distal_ )	pose::add_variant_type_to_pose_residue( *screening_pose_,      "VIRTUAL_PHOSPHATE",    five_prime_chain_break_res_ + 1 );
+
+		atr_rep_screener_ = new screener::AtrRepScreener( *screening_pose_, job_parameters_ );
+		atr_rep_screener_->set_kic_sampling( kic_sampling_ );
 
 		chain_closable_screener_ = new screener::ChainClosableScreener( five_prime_chain_break_res_, gap_size_ );
 

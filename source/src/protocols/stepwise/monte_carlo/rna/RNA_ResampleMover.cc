@@ -163,7 +163,9 @@ namespace rna {
 		}
 		runtime_assert( remodel_res > 0 );
 
-		//		TR << TR.Red << pose.fold_tree() << TR.Reset;
+		// trying to catch last bugs.
+		TR << pose.fold_tree() << TR.Reset;
+		TR << pose.annotated_sequence() << std::endl;
 		//		TR << TR.Red << "Is at terminus: " << is_single_attachment << " num attachments " << num_attachments << TR.Reset << std::endl;
 
 		bool did_mutation( false );
