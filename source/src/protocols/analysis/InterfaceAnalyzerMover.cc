@@ -343,9 +343,9 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 	if(ligand_chain_.size() != 0)
 	{
 		core::Size ligand_chain_id = core::pose::get_chain_id_from_chain(ligand_chain_, pose);
-		for (core::Size i = 1; pose.conformation().num_chains(); ++i){
+		for (core::Size i = 1; i <= pose.conformation().num_chains(); ++i){
 			if (ligand_chain_id != i){
-				char chain = core::pose::get_chain_from_chain_id(ligand_chain_id, pose);
+				char chain = core::pose::get_chain_from_chain_id(i, pose);
 				fixed_chains_.insert( chain );
 			}
 		}

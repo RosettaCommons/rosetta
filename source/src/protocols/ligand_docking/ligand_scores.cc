@@ -66,7 +66,8 @@ append_interface_deltas(
 		core::Size jump_id,
 		protocols::jd2::JobOP job,
 		core::pose::Pose const & after,
-		const core::scoring::ScoreFunctionOP scorefxn
+		const core::scoring::ScoreFunctionOP scorefxn,
+		std::string const & prefix
 ){
 	core::pose::PoseOP after_copy = new core::pose::Pose( after );
 
@@ -89,7 +90,13 @@ append_interface_deltas(
 	{
 		std::ostringstream touching;
 		touching << "ligand_is_touching_"<< ligand_chain;
-		job->add_string_real_pair(touching.str(), are_touching);
+		if(prefix == "")
+		{
+			job->add_string_real_pair(touching.str(), are_touching);
+		}else
+		{
+			job->add_string_real_pair(prefix + "_" + touching.str(), are_touching);
+		}
 	}
 
 	// Now pull apart by 500 A to determine the reference E for calculating interface E.
@@ -102,7 +109,13 @@ append_interface_deltas(
 	{
 		std::ostringstream delta;
 		delta<< "interface_delta_"<< ligand_chain;
-		job->add_string_real_pair(delta.str(), together_score - separated_score);
+		if(prefix == "")
+		{
+			job->add_string_real_pair(delta.str(), together_score - separated_score);
+		}else
+		{
+			job->add_string_real_pair(prefix + "_" + delta.str(), together_score - separated_score);
+		}
 	}
 
 	// Interface delta, broken down by component
@@ -114,7 +127,14 @@ append_interface_deltas(
 		{
 			std::ostringstream if_score;
 			if_score<< "if_"<< ligand_chain<< '_' << name_from_score_type(ii);
-			job->add_string_real_pair(if_score.str(), component_score);
+			if(prefix == "")
+			{
+				job->add_string_real_pair(if_score.str(), component_score);
+			}else
+			{
+				job->add_string_real_pair(prefix + "_" + if_score.str(), component_score);
+			}
+			
 		}
 	}
 }
@@ -125,6 +145,7 @@ append_interface_deltas(
 	protocols::jd2::JobOP job,
 	core::pose::Pose const & after,
 	const core::scoring::ScoreFunctionOP scorefxn,
+	std::string const & prefix,
 	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
 	)
 {
@@ -151,7 +172,13 @@ append_interface_deltas(
 	{
 		std::ostringstream touching;
 		touching << "ligand_is_touching_"<< ligand_chain;
-		job->add_string_real_pair(touching.str(), are_touching);
+		if(prefix == "")
+		{
+			job->add_string_real_pair(touching.str(), are_touching);
+		}else
+		{
+			job->add_string_real_pair(prefix + "_" + touching.str(), are_touching);
+		}
 	}
 	
 	// Now pull apart by 500 A to determine the reference E for calculating interface E.
@@ -164,7 +191,14 @@ append_interface_deltas(
 	{
 		std::ostringstream delta;
 		delta<< "interface_delta_"<< ligand_chain;
-		job->add_string_real_pair(delta.str(), together_score - separated_score);
+		if(prefix == "")
+		{
+			job->add_string_real_pair(delta.str(), together_score - separated_score);
+		}else
+		{
+			job->add_string_real_pair(prefix + "_" + delta.str(), together_score - separated_score);
+		}
+		
 	}
 	
 	// Interface delta, broken down by component
@@ -177,7 +211,13 @@ append_interface_deltas(
 		{
 			std::ostringstream if_score;
 			if_score<< "if_"<< ligand_chain<< '_' << name_from_score_type(ii);
-			job->add_string_real_pair(if_score.str(), component_score);
+			if(prefix == "")
+			{
+				job->add_string_real_pair(if_score.str(), component_score);
+			}else
+			{
+				job->add_string_real_pair(prefix + "_" + if_score.str(), component_score);
+			}
 		}
 	}
 }
@@ -189,7 +229,8 @@ append_ligand_travel(
 		core::Size jump_id,
 		protocols::jd2::JobOP job,
 		core::pose::Pose const & before,
-		core::pose::Pose const & after
+		core::pose::Pose const & after,
+		std::string const & prefix
 ){
 	core::Vector const before_vector= protocols::geometry::downstream_centroid_by_jump(before, jump_id);
 	core::Vector const after_vector= protocols::geometry::downstream_centroid_by_jump(after, jump_id);
@@ -198,14 +239,21 @@ append_ligand_travel(
 	{
 		std::ostringstream centroid;
 		centroid<< "ligand_centroid_travel_"<< ligand_chain;
-		job->add_string_real_pair(centroid.str(), before_vector.distance(after_vector));
+		if(prefix == "")
+		{
+			job->add_string_real_pair(centroid.str(), before_vector.distance(after_vector));
+		}else
+		{
+			job->add_string_real_pair(prefix + "_" + centroid.str(), before_vector.distance(after_vector));
+		}
 	}
 }
 
 void append_ligand_grid_scores(
 		core::Size jump_id,
 		protocols::jd2::JobOP job,
-		core::pose::Pose const & after
+		core::pose::Pose const & after,
+		std::string const & prefix
 )
 {
 	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
@@ -226,18 +274,32 @@ void append_ligand_grid_scores(
 	foreach(qsar::scoring_grid::ScoreMap::value_type grid_score, grid_scores){
 		std::ostringstream score_label;
 		score_label << grid_score.first << "_grid_" <<ligand_chain;
-		job->add_string_real_pair(score_label.str(),grid_score.second);
+		if(prefix == "")
+		{
+			job->add_string_real_pair(score_label.str(),grid_score.second);
+		}else
+		{
+			job->add_string_real_pair(prefix + "_" + score_label.str(),grid_score.second);
+		}
+		
 	}
 
 	std::ostringstream score_label;
 	score_label << "total_score_" <<ligand_chain;
-	job->add_string_real_pair(score_label.str(),total_score);
+	if(prefix == "")
+	{
+		job->add_string_real_pair(score_label.str(),total_score);
+	}else
+	{
+		job->add_string_real_pair(prefix + "_" + score_label.str(),total_score);
+	}
 }
 
 void append_ligand_grid_scores(
 		core::Size jump_id,
 		protocols::jd2::JobOP job,
 		core::pose::Pose const & after,
+		std::string const & prefix,
 		protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
 )
 {
@@ -260,12 +322,25 @@ void append_ligand_grid_scores(
 	foreach(qsar::scoring_grid::ScoreMap::value_type grid_score, grid_scores){
 		std::ostringstream score_label;
 		score_label << grid_score.first << "_grid_" <<ligand_chain;
-		job->add_string_real_pair(score_label.str(),(*normalization_function)(grid_score.second,residues));
+		if(prefix == "")
+		{
+			job->add_string_real_pair(score_label.str(),(*normalization_function)(grid_score.second,residues));
+		}else
+		{
+			job->add_string_real_pair(prefix + "_" + score_label.str(),(*normalization_function)(grid_score.second,residues));
+		}
 	}
 
 	std::ostringstream score_label;
 	score_label << "total_score_" <<ligand_chain;
-	job->add_string_real_pair(score_label.str(),total_score);
+	if(prefix == "")
+	{
+		job->add_string_real_pair(score_label.str(),total_score);
+	}else
+	{
+		job->add_string_real_pair(prefix + "_" + score_label.str(),total_score);
+	}
+	
 }
 
 ///@brief Calculate radius of gyration for downstream non-H atoms
@@ -274,7 +349,8 @@ void
 append_radius_of_gyration(
 		core::Size jump_id,
 		protocols::jd2::JobOP job,
-		core::pose::Pose const & before
+		core::pose::Pose const & before,
+		std::string const & prefix
 ){
 
 	core::Real lig_rg = 0;
@@ -296,7 +372,13 @@ append_radius_of_gyration(
 	{
 		std::ostringstream centroid;
 		centroid<< "ligand_radius_of_gyration_"<< ligand_chain;
-		job->add_string_real_pair(centroid.str(), lig_rg);
+		if(prefix == "")
+		{
+			job->add_string_real_pair(centroid.str(), lig_rg);
+		}else
+		{
+			job->add_string_real_pair(prefix + "_" + centroid.str(), lig_rg);
+		}
 	}
 
 
@@ -307,7 +389,8 @@ append_ligand_RMSD(
 		core::Size const jump_id,
 		protocols::jd2::JobOP job,
 		core::pose::Pose const & before,
-		core::pose::Pose const & after
+		core::pose::Pose const & after,
+		std::string const & prefix
 ){
 	assert(before.num_jump() >= jump_id);
 	assert(after.num_jump() >= jump_id);
@@ -317,9 +400,9 @@ append_ligand_RMSD(
 	core::Size const end = before.conformation().chain_end(chain_id);
 
 	if (end-begin > 0){
-		append_multi_residue_ligand_RMSD(jump_id, job, before, after);
+		append_multi_residue_ligand_RMSD(jump_id, job, before, after,prefix);
 	}else{
-		append_automorphic_rmsd(begin, job, before, after);
+		append_automorphic_rmsd(begin, job, before, after,prefix);
 	}
 }
 
@@ -328,7 +411,8 @@ append_multi_residue_ligand_RMSD(
 		core::Size jump_id,
 		protocols::jd2::JobOP job,
 		core::pose::Pose const & before,
-		core::pose::Pose const & after
+		core::pose::Pose const & after,
+		std::string const & prefix
 ){
 	core::pose::Pose before_ligand;
 	core::pose::Pose after_ligand;
@@ -354,7 +438,13 @@ append_multi_residue_ligand_RMSD(
 		);
 		std::ostringstream rms_no_super;
 		rms_no_super<< "ligand_rms_no_super_"<< ligand_chain;
-		job->add_string_real_pair(rms_no_super.str(), ligand_rms_no_super);
+		if(prefix == "")
+		{
+			job->add_string_real_pair(rms_no_super.str(), ligand_rms_no_super);
+		}else
+		{
+			job->add_string_real_pair(prefix + "_" + rms_no_super.str(), ligand_rms_no_super);
+		}
 	}
 	{
 		core::Real ligand_rms_with_super= core::scoring::rmsd_with_super(
@@ -364,7 +454,13 @@ append_multi_residue_ligand_RMSD(
 		);
 		std::ostringstream rms_with_super;
 		rms_with_super<< "ligand_rms_with_super_"<< ligand_chain;
-		job->add_string_real_pair(rms_with_super.str(), ligand_rms_with_super);
+		if(prefix == "")
+		{
+			job->add_string_real_pair(rms_with_super.str(), ligand_rms_with_super);
+		}else
+		{
+			job->add_string_real_pair(prefix + "_" + rms_with_super.str(), ligand_rms_with_super);
+		}
 	}
 }
 
@@ -373,7 +469,8 @@ append_automorphic_rmsd(
 		core::Size ligand_residue_id,
 		protocols::jd2::JobOP job,
 		core::pose::Pose const & before,
-		core::pose::Pose const & after
+		core::pose::Pose const & after,
+		std::string const & prefix
 ){
 
 	char const ligand_chain= before.pdb_info()->chain(ligand_residue_id);
@@ -386,7 +483,13 @@ append_automorphic_rmsd(
 
 		std::ostringstream rms_no_super;
 		rms_no_super<< "ligand_rms_no_super_"<< ligand_chain;
-		job->add_string_real_pair(rms_no_super.str(), ligand_rms_no_super);
+		if(prefix == "")
+		{
+			job->add_string_real_pair(rms_no_super.str(), ligand_rms_no_super);
+		}else
+		{
+			job->add_string_real_pair(prefix + "_" + rms_no_super.str(), ligand_rms_no_super);
+		}
 	}
 	{
 		core::Real ligand_rms_with_super= core::scoring::automorphic_rmsd(
@@ -396,7 +499,13 @@ append_automorphic_rmsd(
 		);
 		std::ostringstream rms_with_super;
 		rms_with_super<< "ligand_rms_with_super_"<< ligand_chain;
-		job->add_string_real_pair(rms_with_super.str(), ligand_rms_with_super);
+		if(prefix == "")
+		{
+			job->add_string_real_pair(rms_with_super.str(), ligand_rms_with_super);
+		}else
+		{
+			job->add_string_real_pair(prefix + "_" + rms_with_super.str(), ligand_rms_with_super);
+		}
 	}
 
 }

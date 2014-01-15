@@ -40,7 +40,8 @@ append_interface_deltas(
 		core::Size jump_id,
 		protocols::jd2::JobOP job,
 		core::pose::Pose const & after,
-		const core::scoring::ScoreFunctionOP scorefxn
+		const core::scoring::ScoreFunctionOP scorefxn,
+		std::string const & prefix
 );
 
 	
@@ -50,6 +51,7 @@ append_interface_deltas(
 		protocols::jd2::JobOP job,
 		core::pose::Pose const & after,
 		const core::scoring::ScoreFunctionOP scorefxn,
+		std::string const & prefix,
 		protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
 );
 
@@ -58,14 +60,8 @@ append_ligand_travel(
 		core::Size jump_id,
 		protocols::jd2::JobOP job,
 		core::pose::Pose const & before,
-		core::pose::Pose const & after
-);
-
-void
-append_ligand_grid_scores(
-		core::Size jump_id,
-		protocols::jd2::JobOP job,
-		core::pose::Pose const & after
+		core::pose::Pose const & after,
+		std::string const & prefix
 );
 
 void
@@ -73,6 +69,15 @@ append_ligand_grid_scores(
 		core::Size jump_id,
 		protocols::jd2::JobOP job,
 		core::pose::Pose const & after,
+		std::string const & prefix
+);
+
+void
+append_ligand_grid_scores(
+		core::Size jump_id,
+		protocols::jd2::JobOP job,
+		core::pose::Pose const & after,
+		std::string const & prefix,
 		protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
 );
 
@@ -80,7 +85,8 @@ void
 append_radius_of_gyration(
 		core::Size jump_id,
 		protocols::jd2::JobOP job,
-		core::pose::Pose const & before
+		core::pose::Pose const & before,
+		std::string const & prefix
 );
 
 void
@@ -88,7 +94,8 @@ append_ligand_RMSD(
 		core::Size jump_id,
 		protocols::jd2::JobOP job,
 		core::pose::Pose const & before,
-		core::pose::Pose const & after
+		core::pose::Pose const & after,
+		std::string const & prefix
 );
 
 void
@@ -96,7 +103,8 @@ append_multi_residue_ligand_RMSD(
 		core::Size jump_id,
 		protocols::jd2::JobOP job,
 		core::pose::Pose const & before,
-		core::pose::Pose const & after
+		core::pose::Pose const & after,
+		std::string const & prefix
 );
 
 void
@@ -104,7 +112,8 @@ append_automorphic_rmsd(
 		core::Size ligand_residue_id,
 		protocols::jd2::JobOP job,
 		core::pose::Pose const & before,
-		core::pose::Pose const & after
+		core::pose::Pose const & after,
+		std::string const & prefix
 );
 
 } // namespace ligand_docking

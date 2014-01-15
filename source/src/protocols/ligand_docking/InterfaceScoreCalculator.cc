@@ -75,7 +75,8 @@ InterfaceScoreCalculator::InterfaceScoreCalculator():
 		native_(NULL),
 		score_fxn_(NULL),
 		normalization_function_(NULL),
-		compute_grid_scores_(true)
+		compute_grid_scores_(true),
+		prefix_("")
 {}
 
 InterfaceScoreCalculator::InterfaceScoreCalculator(InterfaceScoreCalculator const & that):
@@ -85,7 +86,8 @@ InterfaceScoreCalculator::InterfaceScoreCalculator(InterfaceScoreCalculator cons
 		native_(that.native_),
 		score_fxn_(that.score_fxn_),
 		normalization_function_(that.normalization_function_),
-		compute_grid_scores_(that.compute_grid_scores_)
+		compute_grid_scores_(that.compute_grid_scores_),
+		prefix_(that.prefix_)
 {}
 
 InterfaceScoreCalculator::~InterfaceScoreCalculator() {}
@@ -157,6 +159,8 @@ InterfaceScoreCalculator::parse_my_tag(
 	}
 	compute_grid_scores_ = tag->getOption<bool>("compute_grid_scores", true);
 	
+	prefix_ = tag->getOption<std::string>("prefix","");
+	
 	
 }
 
@@ -194,9 +198,22 @@ void InterfaceScoreCalculator::add_scores_to_job(
 	foreach(ScoreType score_type, score_types){
 		std::string const score_term = name_from_score_type(score_type);
 		core::Real const weight = score_fxn_->get_weight(score_type);
-		job->add_string_real_pair(score_term,  weight * pose.energies().total_energies()[ score_type ]);
+		if(prefix_ == "")
+		{
+			job->add_string_real_pair(score_term,  weight * pose.energies().total_energies()[ score_type ]);
+		}else
+		{
+			job->add_string_real_pair(prefix_+ "_" + score_term,  weight * pose.energies().total_energies()[ score_type ]);
+		}
 	}
-	job->add_string_real_pair(name_from_score_type(core::scoring::total_score), tot_score);
+	if(prefix_ == "")
+	{
+		job->add_string_real_pair(name_from_score_type(core::scoring::total_score), tot_score);
+	}
+	else
+	{
+		job->add_string_real_pair(prefix_+"_"+name_from_score_type(core::scoring::total_score), tot_score);
+	}
 	
 }
 
@@ -223,10 +240,10 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 		foreach(core::Size jump_id, jump_ids){
 			if(normalization_function_)
 			{
-				append_interface_deltas(jump_id,job,after,score_fxn_,normalization_function_);
+				append_interface_deltas(jump_id,job,after,score_fxn_,prefix_,normalization_function_);
 			}else
 			{
-				append_interface_deltas(jump_id, job, after, score_fxn_);
+				append_interface_deltas(jump_id, job, after, score_fxn_,prefix_);
 			}
 			append_ligand_docking_scores(jump_id, after, job);
 		}
@@ -244,19 +261,19 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 	if(native_)
 	{
 
-		append_ligand_travel(jump_id, job, *native_, after);
-		append_radius_of_gyration(jump_id, job, *native_);
-		append_ligand_RMSD(jump_id, job, *native_, after);
+		append_ligand_travel(jump_id, job, *native_, after,prefix_);
+		append_radius_of_gyration(jump_id, job, *native_,prefix_);
+		append_ligand_RMSD(jump_id, job, *native_, after,prefix_);
 	}
 
 	if(compute_grid_scores_)
 	{
 		if(normalization_function_ && !protocols::qsar::scoring_grid::GridManager::get_instance()->is_normalization_enabled())
 		{
-			append_ligand_grid_scores(jump_id,job,after,normalization_function_);
+			append_ligand_grid_scores(jump_id,job,after,prefix_,normalization_function_);
 		}else
 		{
-			append_ligand_grid_scores(jump_id,job,after);
+			append_ligand_grid_scores(jump_id,job,after,prefix_);
 		}
 	}
 
