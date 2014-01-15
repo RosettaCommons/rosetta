@@ -55,8 +55,10 @@ def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     compiler = platform['compiler']
     extras   = ','.join(platform['extras'])
 
+    command_line = tests[test].command.format(compiler=compiler, jobs=jobs, extras=extras)
+
     if debug: res, output = 0, 'build.py: debug is enabled, skippig build phase...\n'
-    else: res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].command.format(compiler=compiler, jobs=jobs, extras=extras)), return_='tuple')
+    else: res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line), return_='tuple')
 
     # re-running builds in case we got error - so we can get nice error message
     if res and tests[test].incremental:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].command.format(compiler=compiler, jobs=1, extras=extras)), return_='tuple')
@@ -65,7 +67,7 @@ def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
     res_code = _S_failed_ if res else _S_finished_
 
-    if not res: output = output.split('\n')[-1]  # truncating log for passed builds.
+    if not res: output = 'Running: {}\n'.format(command_line) + output.split('\n')[-1]  # truncating log for passed builds.
 
     r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
 

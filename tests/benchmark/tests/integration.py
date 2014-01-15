@@ -41,7 +41,7 @@ def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     raise BenchmarkError('Integration Test script does not support run_test! Use run_test_suite instead!')
 
 
-def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
+def run_itegration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
     ''' Run TestSuite.
         Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
     '''
@@ -60,7 +60,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     if debug:
         res, output = 0, 'integration.py: debug is enabled, skippig build...\n'
     else:
-        res, output = execute('Compiling...', 'cd {}/source && ./scons.py bin mode=release cxx={compiler} extras={extras} -j{jobs}'.format(rosetta_dir, jobs=jobs, compiler=compiler, extras=extras), return_='tuple')
+        res, output = execute('Compiling...', 'cd {}/source && ./scons.py bin mode={mode} cxx={compiler} extras={extras} -j{jobs}'.format(rosetta_dir, jobs=jobs, mode=mode, compiler=compiler, extras=extras), return_='tuple')
 
     full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
 
@@ -79,7 +79,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
         #if os.path.isdir(files_location): TR('Removing old ref dir %s...' % files_location);  shutil.rmtree(files_location)  # remove old dir if any
 
         #output_json = working_dir + '/output.json'  , output_json=output_json   --yaml={output_json}
-        command_line = 'cd {}/tests/integration && ./integration.py --compiler={compiler} --extras={extras} --timeout=480 -j{jobs}'.format(rosetta_dir, jobs=jobs, compiler=compiler, extras=extras)
+        command_line = 'cd {}/tests/integration && ./integration.py --mode={mode} --compiler={compiler} --extras={extras} --timeout=480 -j{jobs}'.format(rosetta_dir, jobs=jobs, mode=mode, compiler=compiler, extras=extras)
         TR( 'Running integration script: {}'.format(command_line) )
 
         if debug: res, output = 0, 'integration.py: debug is enabled, skippig integration script run...\n'
@@ -107,8 +107,12 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
 
 def run(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False, debug=False):
-    if test: return run_test(test, rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    else: return run_test_suite(rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    if not test:          return run_itegration_tests('release', rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'debug': return run_itegration_tests('debug',   rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    else: raise BenchmarkError('Integration Test script does not support run with test="{}"!'.format(test))
+
+    #if test: return run_test(test, rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    #else: return run_test_suite(rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
 
 # compare results of two tests run (new vs. previous)
