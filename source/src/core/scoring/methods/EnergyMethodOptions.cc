@@ -499,9 +499,9 @@ EnergyMethodOptions::write_score_function_method_options_table_schema(
 	using namespace basic::database::schema_generator;
 
 	Column batch_id("batch_id", new DbInteger(), true);
-	Column score_function_name("score_function_name", new DbText(), true);
-	Column option_key("option_key", new DbText(), true);
-	Column option_value("option_value", new DbText(), true);
+	Column score_function_name("score_function_name", new DbText(255), true);
+	Column option_key("option_key", new DbText(255), true);
+	Column option_value("option_value", new DbText(255), true);
 
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(batch_id);
@@ -595,7 +595,7 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 		break;
 	case utility::sql_database::DatabaseMode::mysql:
 	case utility::sql_database::DatabaseMode::postgres:
-		statement_string = "INSERT IGNORE INTO score_function_weights (batch_id, score_function_name, option_key, option_value) VALUES (?,?,?,?);";
+		statement_string = "INSERT IGNORE INTO score_function_method_options (batch_id, score_function_name, option_key, option_value) VALUES (?,?,?,?);";
 		break;
 	default:
 		utility_exit_with_message(
