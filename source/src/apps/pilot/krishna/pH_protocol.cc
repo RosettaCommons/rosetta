@@ -493,7 +493,15 @@ typedef utility::pointer::owning_ptr< PhProtocol > PhProtocolOP;
 int
 main( int argc, char * argv [] )
 {
-  devel::init(argc, argv);
-  PhProtocolOP pH_test(new PhProtocol);
-  protocols::jd2::JobDistributor::get_instance()->go(pH_test);
+	try{
+
+	devel::init(argc, argv);
+	PhProtocolOP pH_test(new PhProtocol);
+	protocols::jd2::JobDistributor::get_instance()->go(pH_test);
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "Caught Exception " << e.msg() << std::endl;
+	}
+
+	return 0;
 }
