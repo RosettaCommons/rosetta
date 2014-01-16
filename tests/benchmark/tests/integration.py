@@ -119,7 +119,7 @@ def run(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbo
 # take two dict and two paths
 # must return standard dict with results
 def compare(test, results, files_path, previous_results, previous_files_path):
-    if test: raise BenchmarkError('Integration Test script does not support compare function for {} test!'.format(test))
+    #if test: raise BenchmarkError('Integration Test script does not support compare function for {} test!'.format(test))
 
     results = dict(tests={}, summary=dict(total=0, failed=0, failed_tests=[]), config={})
 
