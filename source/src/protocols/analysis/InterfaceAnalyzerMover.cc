@@ -345,8 +345,8 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 		core::Size ligand_chain_id = core::pose::get_chain_id_from_chain(ligand_chain_, pose);
 		for (core::Size i = 1; i <= pose.conformation().num_chains(); ++i){
 			if (ligand_chain_id != i){
-				char chain = core::pose::get_chain_from_chain_id(i, pose);
-				fixed_chains_.insert( chain );
+				//char chain = core::pose::get_chain_from_chain_id(i, pose);
+				fixed_chains_.insert( static_cast<int>(i) );
 			}
 		}
 		
@@ -574,8 +574,9 @@ void InterfaceAnalyzerMover::make_multichain_interface_set( core::pose::Pose & p
 	using namespace core;
 	using namespace utility;
 	std::set<Size> fixed_side_residues, other_side_residues;
-	std::set<core::Size> fixed_chain_nums ;
+	std::set<core::Size> fixed_chain_nums;
 	std::set<core::Size> other_chain_nums;
+	
 	//itterate over all residues determine what part of the interface they are
 	//also select what chain(s) are upstream and downstream of the interface
 	for( Size ii = 1; ii<= pose.total_residue(); ++ii){
@@ -1020,7 +1021,6 @@ void InterfaceAnalyzerMover::calc_per_residue_data( core::pose::Pose & complexed
 		TR << "No interface detected.  Skipping per residue data calculation." << std::endl;
 		return;
 	}
-	
 	for( std::set< core::Size >::const_iterator it(interface_set_.begin()), end(interface_set_.end());
 			 it != end; ++it){
 		complexed_residue_score = complexed_pose.energies().residue_total_energies( *it )[ ScoreType( total_score ) ];
@@ -1054,20 +1054,24 @@ void InterfaceAnalyzerMover::calc_per_residue_data( core::pose::Pose & complexed
 				aromatic_dSASA[region] += per_residue_data_.dSASA[*it];
 			}
 		}
-			
 		//SS
-		if (dssp.get_dssp_secstruct(*it) =='E'){
-			data_.ss_sheet_nres[region] += 1;
-			data_.ss_sheet_nres[total] += 1;
+		//skip non-protein residues for SS calculation
+		if(complexed_pose.residue(*it).is_protein())
+		{
+			if (dssp.get_dssp_secstruct(*it) =='E'){
+				data_.ss_sheet_nres[region] += 1;
+				data_.ss_sheet_nres[total] += 1;
+			}
+			else if (dssp.get_dssp_secstruct(*it) == 'H'){
+				data_.ss_helix_nres[region] += 1;
+				data_.ss_helix_nres[total] += 1;
+			}
+			else{
+				data_.ss_loop_nres[region] += 1;
+				data_.ss_loop_nres[total] += 1;
+			}
 		}
-		else if (dssp.get_dssp_secstruct(*it) == 'H'){
-			data_.ss_helix_nres[region] += 1;
-			data_.ss_helix_nres[total] += 1;
-		}
-		else{
-			data_.ss_loop_nres[region] += 1;
-			data_.ss_loop_nres[total] += 1;
-		}
+
 	}
 	
 	per_residue_data_.dG = calc_per_residue_dG(complexed_pose, per_residue_data_.separated_energy, per_residue_data_.complexed_energy);
