@@ -159,12 +159,7 @@ def select_arch(supported, os, requested, expected = None):
     - It's not clear if uname() can tell if a platform is 64-bit.
 """
 
-    if not expected:
-        expected = _get_arch()
-
-    # Map names we've seen from _get_arch() to their build system names.
-    # All unspecified cases default to 'expected'.
-    actual = {
+    processor_translation = {
         # Results from platform.processor()
         "i386": "x86",
         "i486": "x86",
@@ -179,20 +174,35 @@ def select_arch(supported, os, requested, expected = None):
         "athlon" : "x86",
         "Power Macintosh" : "ppc",
 
-	# Some architectures for Gentoo Linux:
-	"Intel(R) Core(TM)2 CPU T7400 @ 2.16GHz" : "x86",
-	'Intel(R) Xeon(TM) CPU 3.00GHz' : "x86",
-	'Intel(R) Core(TM) i7 CPU Q 720 @ 1.60GHz' : "x86",
-    }.get(expected, expected)
+	# Some architectures for Gentoo Linux -- should be handled by the processor.machine() fallback
+	#"Intel(R) Core(TM)2 CPU T7400 @ 2.16GHz" : "x86",
+	#'Intel(R) Xeon(TM) CPU 3.00GHz' : "x86",
+	#'Intel(R) Core(TM) i7 CPU Q 720 @ 1.60GHz' : "x86",
+    }
+
+    if not expected:
+        actual = _get_arch()
+        actual = processor_translation.get(actual,actual)
+    else:
+        actual = processor_translation.get(expected,expected)
 
     # Windows returns a blank string.  Assume it's running on x86.
     if actual == "":
         if os == "windows":
             actual = "x86"
 
-    # Look up translated name in the default os names.
     if actual not in supported.arch:
-        raise KeyError, "Processor architecture '%s' is unsupported." % (actual)
+        if expected:
+            #We got an explicit expected platform - don't be clever.
+            raise KeyError, "Processor architechture '%s' is unsupported." % (expected)
+        #Some platforms use more specific strings in platform.processor() e.g. "Intel(R) Core(TM)2 CPU T7400 @ 2.16GHz"
+        # platform.machine() often gives better results. (We only use machine() as fallback to match historical behavior.)
+        machine = _get_machine()
+        machine = processor_translation.get( machine, machine )
+        if machine not in supported.arch:
+            raise KeyError, "Processor '%s' with machine designation '%s' is unsupported." % (actual, machine)
+        else:
+            actual = machine
 
     if requested != "*" and requested != actual:
         raise ValueError, "Actual processor architecture '%s' does not match requested version '%s'" % (actual, requested)
@@ -283,10 +293,10 @@ to be parsed out.
         # New versions of Apple provided clang return: "Apple clang version 2.0 (tags/Apple/clang-137) (based on LLVM 2.9svn)..."
         if compiler_output:
             full_version = compiler_output.split()[2]
-            if full_version == 'version' and compiler == 'clang': 
+            if full_version == 'version' and compiler == 'clang':
                 full_version = compiler_output.split()[3]
             version = ".".join(full_version.split(".")[0:2])
-            
+
         else:
             full_version = "*"#None
             version = "*"#None
@@ -317,6 +327,14 @@ def _get_arch():
         return platform.processor() or _uname()[4]
     else:
         return _uname()[4]
+
+def _get_machine():
+    """Ask Python what the machine designation is.
+    """
+    if globals().has_key("platform"):
+        return platform.machine()
+    else:
+        raise SystemError, "Unable to get machine designation -- use a more recent Python version."
 
 def _get_arch_size():
     """Ask Python what the architecture size is.
