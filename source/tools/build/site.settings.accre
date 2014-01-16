@@ -1,30 +1,38 @@
 # -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
-# (c) Copyright Rosetta Commons Member Institutions.
-# (c) This file is part of the Rosetta software suite and is made available under license.
-# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+#
+# Copy this file into user.settings:
+#
+#   cp user.settings.template user.settings
+#
+# and customize to fit your site's environment
+# DO NOT make changes to this template
+# DO NOT try and check in user.settings
 
-#These are settings for compiling MPI executables on the Vanderbilt ACCRE cluster
 
 # Settings here are added to the combined build settings, after all basic
-# settings, to allow you to override anything you need to.  They can in turn
-# be overriden by user settings and project settings respectively.
+# and site settings, to allow you to override anything you need to.
+# They can in turn be overriden by the project settings.
 #
-# Typically you want to prepend to one of the settings listed to expand your
-# paths, but you can also append, override, or remove settings.
+# NOTE: At some point this file will allow you to have multiple settings
+# and select between them from the options.  For now there is only the
+# single "user" settings.
 
+import os
 settings = {
     "user" : {
         "prepends" : {
            "include_path" : [
-				"/usr/local/mpich2/latest/x86_64/gcc46/ether/include",],
+		   		"/blue/meilerlab/apps/Linux2/noarch/mysql/5.1.48/include/mysql/",
+				],
            "library_path" : [ 
-				"/usr/local/mpich2/latest/x86_64/gcc46/ether/lib",
-                "/usr/lib64",],
+				"/blue/meilerlab/apps/Linux2/x86_64/lib",
+				"/blue/meilerlab/apps/Linux2/x86_64/lib",],
+			"flags" : {
+				"link" : ["Wl,-rpath=/blue/meilerlab/apps/Linux2/x86_64/lib"]
+			}
         },
         "appends" : {
-            "defines"    : [ "MPICH_IGNORE_CXX_SEEK" ],        
+            "defines"    : [ "MPICH_IGNORE_CXX_SEEK","__USE_XOPEN2K8" ],        
             # Uncomment the line below and the "import os" line above
             # to let SCons find ICC (assuming it's on your PATH already)
             #"program_path"  : os.environ["PATH"].split(":"),
@@ -32,12 +40,13 @@ settings = {
             # Uncomment the line below to begin building the "devel" project too.
             #"projects": { "src" : [ "devel", ], },
             "flags" : {
-              "link" : ["lmpich", "lpmpich","fPIC"],
+              "link" : ["lm", "lglib-2.0",  "lmpich","fPIC"],
               },
         },
         "overrides" : {
-		"cxx": "/usr/local/mpich2/latest/x86_64/gcc46/ether/bin/mpicxx",
-		"cc": "/usr/local/mpich2/latest/x86_64/gcc46/ether/bin/mpicc",
+		"ENV" : os.environ,
+		"cxx": "mpicxx",
+		"cc": "mpicc",    
         },
         "removes" : {
           "flags" : {

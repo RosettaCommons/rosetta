@@ -34,6 +34,8 @@ def svn_version():
             url = os.popen("git remote -v |grep fetch |awk '{print $2}'|head -n1").read().strip()
             if url == "":
                 url = "unknown"
+        else:
+            url="unknown"
 
         commit_date = os.popen("git log %s -1 --format='%%ci'" % ver).read().strip()  #[:-6]
     else:
