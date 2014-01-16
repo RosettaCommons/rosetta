@@ -293,8 +293,7 @@ DisulfideEntropyFilter::compute(
     // Return dimensionless entropy ln (P_n) rather than multiplying by R
     //
 
-
-    return -log(std::pow(0.17827, disulf_config.size()) * std::pow(determinant(m), -1.5));
+    return -log(std::pow(static_cast<float>(0.17827), static_cast<int>(disulf_config.size())) * std::pow(static_cast<double>(determinant(m)), static_cast<double>(-1.5)));
 
 
     //
