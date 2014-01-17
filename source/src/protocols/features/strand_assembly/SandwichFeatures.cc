@@ -82,10 +82,17 @@
 #include <basic/database/schema_generator/Constraint.hh>
 
 // basic c++
+#include <algorithm>	// for avg,min,max
 #include <fstream>
 #include <iostream>
+#include <numeric>
 //#include <stdio.h>     //for remove( ) and rename( )
 #include <stdlib.h> // for abs()
+#include <vector>
+
+template <typename T, size_t N> const T* mybegin(const T (&a)[N]) { return a; }    
+template <typename T, size_t N> const T* myend  (const T (&a)[N]) { return a+N; }
+// reference:	http://stackoverflow.com/questions/9874802/how-can-i-get-the-max-or-min-value-in-a-vector-c
 
 
 // exception handling
@@ -797,9 +804,18 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 	number_of_attractions_title.append(tail);
 	number_of_repulsions_title.append(tail);
 
-	ElectroStatic_file << "resNum	type	"	<<	number_of_attractions_title	<<	"	"	<<	number_of_repulsions_title << "	salt_bridge	C_C_bridge	N_O_bridge	longer_range_ion_pair"	<<	endl;
+	ElectroStatic_file << "resNum	type	"	<<	number_of_attractions_title	<<	"	"	<<	number_of_repulsions_title << "	attrac_minus_repul	salt_bridge	CC_bridge	NO_bridge	sum_of_salt_CC_NO_bridges	longer_range_ion_pair"	<<	endl;
 
 	utility::vector1<Size>	vector_of_unique_distinct_sw_ids	=	get_distinct_sw_id_from_sw_by_components_table	(struct_id,	db_session);
+
+	std::vector<int> vec_number_of_attractions_by_centroid;
+	std::vector<int> vec_number_of_repulsions_by_centroid;
+	std::vector<int> vec_net_attrac_by_centroid;
+	std::vector<int> vec_number_of_salt_bridges;
+	std::vector<int> vec_number_of_CC_bridges;
+	std::vector<int> vec_number_of_NO_bridges;
+	std::vector<int> vec_sum_of_salt_CC_NO_bridges;
+	std::vector<int> vec_number_of_longer_range_ion_pair;
 
 	for(Size sw_ii=1; sw_ii<=vector_of_unique_distinct_sw_ids.size(); sw_ii++) // per each beta-sandwich
 	{
@@ -898,8 +914,8 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 				xyz_of_terminal_atom_2_of_DE =	pose.residue(residue_num).atom(" OE2").xyz();
 			}
 
-			Size	number_of_attractions_by_centroid	=	0;
-			Size	number_of_repulsions_by_centroid	=	0;
+			int	number_of_attractions_by_centroid	=	0;
+			int	number_of_repulsions_by_centroid	=	0;
 
 			Size	number_of_salt_bridge	=	0;
 			Size	number_of_C_C_bridge	=	0;
@@ -912,7 +928,14 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 				{
 					continue;
 				}
+
 				Size	other_residue_num	=	vector_of_residue_num_of_rkde[other_residue_i];
+
+				if ((other_residue_num - residue_num) < primary_seq_distance_cutoff_for_electrostatic_interactions_)
+					//	other_residue_num should be always higher than	residue_num
+				{
+					continue;
+				}
 
 				// <begin> check whether "other_residue" has low atom position uncertainty
 				pose::PDBInfoCOP info = pose.pdb_info();
@@ -1006,7 +1029,6 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 				}
 
 				Real distance_between_centroid = xyz_of_centroid_of_RKDE.distance(xyz_of_centroid_of_other_RKDE);
-					//TR << "distance_between_centroid:	"	<<	distance_between_centroid	<<	endl;
 
 				if	(pose.residue_type(residue_num).name3() == "ARG")
 				{
@@ -1024,7 +1046,7 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 						{
 							if	(distance_between_centroid < 4.0)
 							{
-								if	(distance_1_between_terminal_atoms < 4.0 ||	distance_2_between_terminal_atoms	< 4.0
+								if	(distance_1_between_terminal_atoms	< 4.0 ||	distance_2_between_terminal_atoms	< 4.0
 								||	distance_3_between_terminal_atoms	< 4.0 ||	distance_4_between_terminal_atoms	< 4.0)
 								{
 									number_of_salt_bridge++;
@@ -1036,7 +1058,7 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 							}
 							else
 							{
-								if	(distance_1_between_terminal_atoms < 4.0 ||	distance_2_between_terminal_atoms	< 4.0
+								if	(distance_1_between_terminal_atoms	< 4.0 ||	distance_2_between_terminal_atoms	< 4.0
 								||	distance_3_between_terminal_atoms	< 4.0 ||	distance_4_between_terminal_atoms	< 4.0)
 								{
 									number_of_N_O_bridge++;
@@ -1181,9 +1203,72 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 					}
 				}
 			}
-			ElectroStatic_file	<<	"	"	<< number_of_attractions_by_centroid	<< "	"	<<	number_of_repulsions_by_centroid	<<	"	"	<<	number_of_salt_bridge	<<	"	"	<<	number_of_C_C_bridge	<<	"	"	<<	number_of_N_O_bridge	<<	"	"	<<	number_of_longer_range_ion_pair	<<	endl;
-		}
+
+			vec_number_of_attractions_by_centroid.push_back(number_of_attractions_by_centroid);
+			vec_number_of_repulsions_by_centroid.push_back(number_of_repulsions_by_centroid);
+			vec_net_attrac_by_centroid.push_back(number_of_attractions_by_centroid-number_of_repulsions_by_centroid);
+			vec_number_of_salt_bridges.push_back(number_of_salt_bridge);
+			vec_number_of_CC_bridges.push_back(number_of_C_C_bridge);
+			vec_number_of_NO_bridges.push_back(number_of_N_O_bridge);
+			vec_sum_of_salt_CC_NO_bridges.push_back(number_of_salt_bridge+number_of_C_C_bridge+number_of_N_O_bridge);
+			vec_number_of_longer_range_ion_pair.push_back(number_of_longer_range_ion_pair);
+
+			ElectroStatic_file	<<	"	"	<< number_of_attractions_by_centroid	<< "	"	<<	number_of_repulsions_by_centroid	<<	"	"	<<	number_of_attractions_by_centroid-number_of_repulsions_by_centroid	<<	"	"	<<	number_of_salt_bridge	<<	"	"	<<	number_of_C_C_bridge	<<	"	"	<<	number_of_N_O_bridge	<<	"	"	<<	number_of_salt_bridge+number_of_C_C_bridge+number_of_N_O_bridge	<<	"	"	<<		number_of_longer_range_ion_pair	<<	endl;
+		} // per each residue
 	}
+
+	// report avg (min~max)
+	// warning: this avg (min~max) assumes that I deal with 1 sandwich per 1 pdb file
+	float	avg_attrac	=	std::accumulate(vec_number_of_attractions_by_centroid.begin(),		vec_number_of_attractions_by_centroid.end(),	0)	/	static_cast<float>(vec_number_of_attractions_by_centroid.size());
+
+	float	avg_repul	=	std::accumulate(vec_number_of_repulsions_by_centroid.begin(),		vec_number_of_repulsions_by_centroid.end(),	0)	/	static_cast<float>(vec_number_of_repulsions_by_centroid.size());
+
+	float	avg_net_attrac	=	std::accumulate(vec_net_attrac_by_centroid.begin(),		vec_net_attrac_by_centroid.end(),	0)	/	static_cast<float>(vec_net_attrac_by_centroid.size());
+
+	float	avg_salt_bridges	=	std::accumulate(vec_number_of_salt_bridges.begin(),		vec_number_of_salt_bridges.end(),	0)	/	static_cast<float>(vec_number_of_salt_bridges.size());
+
+	float	avg_CC_bridges	=	std::accumulate(vec_number_of_CC_bridges.begin(),		vec_number_of_CC_bridges.end(),	0)	/	static_cast<float>(vec_number_of_CC_bridges.size());
+
+	float	avg_NO_bridges	=	std::accumulate(vec_number_of_NO_bridges.begin(),		vec_number_of_NO_bridges.end(),	0)	/	static_cast<float>(vec_number_of_NO_bridges.size());
+
+	float	avg_sum_of_salt_CC_NO_bridges	=	std::accumulate(vec_sum_of_salt_CC_NO_bridges.begin(),		vec_sum_of_salt_CC_NO_bridges.end(),	0)	/	static_cast<float>(vec_sum_of_salt_CC_NO_bridges.size());
+
+	float	avg_number_of_longer_range_ion_pair	=	std::accumulate(vec_number_of_longer_range_ion_pair.begin(),		vec_number_of_longer_range_ion_pair.end(),	0)	/	static_cast<float>(vec_number_of_longer_range_ion_pair.size());
+
+	int	min_attrac	=	*std::min_element(vec_number_of_attractions_by_centroid.begin(),	vec_number_of_attractions_by_centroid.end());
+	int	max_attrac	=	*std::max_element(vec_number_of_attractions_by_centroid.begin(),	vec_number_of_attractions_by_centroid.end());
+
+	int	min_repul	=	*std::min_element(vec_number_of_repulsions_by_centroid.begin(),	vec_number_of_repulsions_by_centroid.end());
+	int	max_repul	=	*std::max_element(vec_number_of_repulsions_by_centroid.begin(),	vec_number_of_repulsions_by_centroid.end());
+
+	int	min_net_attrac	=	*std::min_element(vec_net_attrac_by_centroid.begin(),	vec_net_attrac_by_centroid.end());
+	int	max_net_attrac	=	*std::max_element(vec_net_attrac_by_centroid.begin(),	vec_net_attrac_by_centroid.end());
+
+	int	min_salt_bridge	=	*std::min_element(vec_number_of_salt_bridges.begin(),	vec_number_of_salt_bridges.end());
+	int	max_salt_bridge	=	*std::max_element(vec_number_of_salt_bridges.begin(),	vec_number_of_salt_bridges.end());
+
+	int	min_CC_bridge	=	*std::min_element(vec_number_of_CC_bridges.begin(),	vec_number_of_CC_bridges.end());
+	int	max_CC_bridge	=	*std::max_element(vec_number_of_CC_bridges.begin(),	vec_number_of_CC_bridges.end());
+
+	int	min_NO_bridge	=	*std::min_element(vec_number_of_NO_bridges.begin(),	vec_number_of_NO_bridges.end());
+	int	max_NO_bridge	=	*std::max_element(vec_number_of_NO_bridges.begin(),	vec_number_of_NO_bridges.end());
+
+	int	min_sum_of_salt_CC_NO_bridges	=	*std::min_element(vec_sum_of_salt_CC_NO_bridges.begin(),	vec_sum_of_salt_CC_NO_bridges.end());
+	int	max_sum_of_salt_CC_NO_bridges	=	*std::max_element(vec_sum_of_salt_CC_NO_bridges.begin(),	vec_sum_of_salt_CC_NO_bridges.end());
+
+	int	min_number_of_longer_range_ion_pair	=	*std::min_element(vec_number_of_longer_range_ion_pair.begin(),	vec_number_of_longer_range_ion_pair.end());
+	int	max_number_of_longer_range_ion_pair	=	*std::max_element(vec_number_of_longer_range_ion_pair.begin(),	vec_number_of_longer_range_ion_pair.end());
+
+	ElectroStatic_file	<<	"avg	(min~max)	";
+	ElectroStatic_file	<< round_to_float(avg_attrac)	<<	" ("	<<	min_attrac	<<	"~"	<<	max_attrac	<<	")	";
+	ElectroStatic_file	<< round_to_float(avg_repul)	<<	" ("	<<	min_repul	<<	"~"	<<	max_repul	<<	")	";
+	ElectroStatic_file	<< round_to_float(avg_net_attrac)	<<	" ("	<<	min_net_attrac	<<	"~"	<<	max_net_attrac	<<	")	";
+	ElectroStatic_file	<< round_to_float(avg_salt_bridges)	<<	" ("	<<	min_salt_bridge	<<	"~"	<<	max_salt_bridge	<<	")	";
+	ElectroStatic_file	<< round_to_float(avg_CC_bridges)	<<	" ("	<<	min_CC_bridge	<<	"~"	<<	max_CC_bridge	<<	")	";
+	ElectroStatic_file	<< round_to_float(avg_NO_bridges)	<<	" ("	<<	min_NO_bridge	<<	"~"	<<	max_NO_bridge	<<	")	";
+	ElectroStatic_file	<< round_to_float(avg_sum_of_salt_CC_NO_bridges)	<<	" ("	<<	min_sum_of_salt_CC_NO_bridges	<<	"~"	<<	max_sum_of_salt_CC_NO_bridges	<<	")	";
+	ElectroStatic_file	<< round_to_float(avg_number_of_longer_range_ion_pair)	<<	" ("	<<	min_number_of_longer_range_ion_pair	<<	"~"	<<	max_number_of_longer_range_ion_pair	<<	")	"	<<	endl;
+
 	ElectroStatic_file.close();
 }
 
@@ -2508,6 +2593,13 @@ SandwichFeatures::round_to_Size(
 	return rounded;
 } //round
 
+
+float
+SandwichFeatures::round_to_float(
+					float x)
+{
+	return floor((x	*	10)	+	0.5)	/	10;
+} //round
 
 Real
 SandwichFeatures::round_to_Real(
@@ -6936,6 +7028,8 @@ SandwichFeatures::parse_my_tag(
 
 	allowed_deviation_for_turn_type_id_ = tag->getOption<Real>("allowed_deviation_for_turn_type_id", 40.0);
 
+
+	///	electrostatic_interactions related
 	distance_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("distance_cutoff_for_electrostatic_interactions", 7.0);
 		//"N-O bridges follow only one, that is, they have at least a pair of side-chain functional-group nitrogen and oxygen atoms within 4A distance, but the side-chain functional-group centroids are > 4A apart."
 		// source: 2002_Close-Range Electrostatic Interactions in Proteins
@@ -6943,6 +7037,9 @@ SandwichFeatures::parse_my_tag(
 	CB_b_facor_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("CB_b_facor_cutoff_for_electrostatic_interactions", 60);
 		//"Values of 60 or greater may imply disorder (for example, free movement of a side chain or alternative side-chain conformations). Values of 20 and 5 correspond to uncertainties of 0.5 and 0.25 angstroms, respectively."
 		// source: http://spdbv.vital-it.ch/TheMolecularLevel/SPVTut/text/STut09aTN.html
+
+	primary_seq_distance_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("primary_seq_distance_cutoff_for_electrostatic_interactions", 4);
+		// rationale for default value: I hypothesize that electrostatic interaction between 38E and 41K of Tencon do not stabilize that much
 
 
 	///////// development options ///////
@@ -8032,8 +8129,6 @@ SandwichFeatures::report_features(
 				AA_kind_file.close();
 				// <end> write AA_kind to a file
 			}
-
-
 	
 		}
 		else // chance_of_being_canonical_sw = false
@@ -8148,7 +8243,6 @@ SandwichFeatures::report_features(
 			// <begin> store RKDE to a database table
 			for(Size ii=1; ii<=pose.total_residue(); ii++ )
 			{
-					TR << "ii:" << ii << endl;
 				if (
 					(pose.residue_type(ii).name3() == "ARG")
 					||	(pose.residue_type(ii).name3() == "LYS")
@@ -8174,7 +8268,6 @@ SandwichFeatures::report_features(
 			// <end> report number of electrostatic_interactions_of_all_residues
 
 		}
-
 
 	}
 	/// <end> write_electrostatic_interactions_of_surface_residues_in_a_strand

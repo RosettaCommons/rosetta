@@ -267,6 +267,9 @@ public:
 	core::Size round_to_Size(
 		core::Real x);
 
+	float round_to_float(
+		float x);
+
 	core::Real round_to_Real(
 		core::Real x);
 
@@ -982,11 +985,13 @@ private:
 	allowed_deviation_for_turn_type_id_;
 
 	core::Real
-	//double
 	distance_cutoff_for_electrostatic_interactions_;
 
 	core::Real
 	CB_b_facor_cutoff_for_electrostatic_interactions_;
+
+	core::Size
+	primary_seq_distance_cutoff_for_electrostatic_interactions_;
 
 
 	bool
