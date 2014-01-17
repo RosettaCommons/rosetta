@@ -40,6 +40,7 @@
 // Basic Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/Tracer.hh>
 
@@ -119,6 +120,7 @@ PoseConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db
 	pose_conformations.add_column( Column("annotated_sequence", new DbText()) );
 	pose_conformations.add_column( Column("total_residue", new DbInteger()) );
 	pose_conformations.add_column( Column("fullatom", new DbInteger()) );
+	pose_conformations.add_column( Column("ideal", new DbInteger()) ); // 0 if not ideal, 1 if ideal
 
 	pose_conformations.write(db_session);
 
@@ -295,13 +297,40 @@ PoseConformationFeatures::report_features_implementation(
 	pose_conformation_insert.add_column("annotated_sequence");
 	pose_conformation_insert.add_column("total_residue");
 	pose_conformation_insert.add_column("fullatom");
+	pose_conformation_insert.add_column("ideal");
 
 	RowDataBaseOP annotated_sequence_data = new RowData<string>("annotated_sequence",annotated_sequence);
 	RowDataBaseOP total_residue_data = new RowData<Size>("total_residue",pose.total_residue());
 	RowDataBaseOP fullatom_data = new RowData<bool>("fullatom",pose.is_fullatom());
 
+	// KAB -
+	// Determine if pose is ideal
+	// Saving this here lets the database pose loader know later if it should load backbone torsions
+	// This code and the comment below were copied from ProteinResidueConformationFeatures
+
+	//If you have a non ideal structure, and you store both cartesian coordinates and backbone
+	//chi angles and read them into a pose, most of the backbone oxygens will be placed in correctly
+	//I currently have absolutely no idea why this is, but this fixes it.
+	//It is worth noting that the current implementation of Binary protein silent files does the same thing
+	bool ideal = true;
+	bool residue_status;
+	if(!basic::options::option[basic::options::OptionKeys::out::file::force_nonideal_structure]()) {
+		core::conformation::Conformation const & conformation(pose.conformation());
+		for(core::Size resn=1; resn <= pose.n_residue();++resn){
+			residue_status = core::conformation::is_ideal_position(resn,conformation);
+			if(!residue_status){
+				ideal = false;
+				break;
+			}
+		}
+	}
+	else {
+		ideal = false;
+	}
+	RowDataBaseOP ideal_data = new RowData<bool>("ideal", ideal);
+
 	pose_conformation_insert.add_row(
-		utility::tools::make_vector(struct_id_data,annotated_sequence_data,total_residue_data,fullatom_data));
+		utility::tools::make_vector(struct_id_data,annotated_sequence_data,total_residue_data,fullatom_data, ideal_data));
 
 	pose_conformation_insert.write_to_database(db_session);
 	return 0;
@@ -333,15 +362,16 @@ void
 PoseConformationFeatures::load_into_pose(
 	sessionOP db_session,
 	StructureID struct_id,
-	Pose & pose
+	Pose & pose,
+	bool & ideal
 ){
-	load_sequence(db_session, struct_id, pose);
+	ideal = load_sequence(db_session, struct_id, pose);
 	load_fold_tree(db_session, struct_id, pose);
 	load_jumps(db_session, struct_id, pose);
 	load_chain_endings(db_session, struct_id, pose);
 }
 
-void
+bool
 PoseConformationFeatures::load_sequence(
 	sessionOP db_session,
 	StructureID struct_id,
@@ -350,18 +380,19 @@ PoseConformationFeatures::load_sequence(
 
 	if(!basic::database::table_exists(db_session, "pose_conformations")){
 		TR << "WARNING: pose_conformations table does not exist and thus respective data will not be added to the pose!" << std::endl;
-		return;
+		return true; // Assume structure is ideal
 	}
 
 
 	string annotated_sequence;
-	Size total_residue, fullatom;
+	Size total_residue, fullatom, ideal;
 	{
 		std::string statement_string =
 			"SELECT\n"
 			"	annotated_sequence,\n"
 			"	total_residue,\n"
-			"	fullatom\n"
+			"	fullatom,\n"
+			" ideal\n"
 			"FROM\n"
 			"	pose_conformations\n"
 			"WHERE\n"
@@ -375,7 +406,7 @@ PoseConformationFeatures::load_sequence(
 			error_message << "Unable to locate structure with struct_id '" << struct_id << "'";
 			utility_exit_with_message(error_message.str());
 		}
-		res >> annotated_sequence >> total_residue >> fullatom;
+		res >> annotated_sequence >> total_residue >> fullatom >> ideal;
 	}
 	ResidueTypeSetCAP residue_set(
 		ChemicalManager::get_instance()->residue_type_set(
@@ -409,6 +440,8 @@ PoseConformationFeatures::load_sequence(
 		make_pose_from_sequence(pose, annotated_sequence, *residue_set);
 		runtime_assert(pose.total_residue() == total_residue );
 	}
+
+	return ideal;
 }
 
 

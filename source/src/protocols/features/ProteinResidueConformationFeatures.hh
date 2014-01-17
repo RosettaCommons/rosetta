@@ -72,17 +72,23 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
+	/// @param[in] ideal - Is the input structure ideal?
 	void
 	load_into_pose(
 		utility::sql_database::sessionOP db_session,
 		StructureID struct_id,
-		core::pose::Pose & pose);
+		core::pose::Pose & pose,
+		bool ideal
+	);
 
+	/// @param[in] ideal - Is the input structure ideal? If so, load backbone torsions into pose
 	void
 	load_conformation(
 		utility::sql_database::sessionOP db_session,
 		StructureID struct_id,
-		core::pose::Pose & pose);
+		core::pose::Pose & pose,
+		bool ideal
+	);
 
 private:
 	void

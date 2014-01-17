@@ -200,11 +200,13 @@ ProteinSilentReport::load_pose(
 	StructureID struct_id,
 	Pose & pose){
 
-	pose_conformation_features_->load_into_pose(db_session, struct_id, pose);
+	bool ideal = true; // Set by load_into_pose, and then used by protein_residue_conformation_features to determine
+                     // if backbone torsions should be loaded into pose
+	pose_conformation_features_->load_into_pose(db_session, struct_id, pose, ideal);
 	pdb_data_features_->load_into_pose(db_session,struct_id,pose);
 	job_data_features_->load_into_pose(db_session, struct_id, pose);
 	pose_comments_features_->load_into_pose(db_session, struct_id, pose);
-	protein_residue_conformation_features_->load_into_pose(db_session, struct_id, pose);
+	protein_residue_conformation_features_->load_into_pose(db_session, struct_id, pose, ideal);
 	residue_conformation_features_->load_into_pose(db_session,struct_id,pose);
 }
 

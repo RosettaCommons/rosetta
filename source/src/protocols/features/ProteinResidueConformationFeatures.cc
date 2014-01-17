@@ -201,23 +201,29 @@ ProteinResidueConformationFeatures::report_features(
 ){
 	bool fullatom(pose.is_fullatom());
 
-	//check to see if this structure is ideal
+	// Check to see if this structure is ideal
+	// KAB - this code has also been copied to PoseConformationFeatures
+	// so that that features reporter can save if the pose is ideal.
+	// Theoretically, it could be possible to remove the duplication,
+	// but it would probably be have to cached in pose or somewhere,
+	// and as force_nonideal_structure is the default option, it is unlikely
+	// this code will not be run very often
 	bool ideal = true;
 	if(!basic::options::option[basic::options::OptionKeys::out::file::force_nonideal_structure]())
-	{
-		core::conformation::Conformation const & conformation(pose.conformation());
-		for(core::Size resn=1; resn <= pose.n_residue();++resn){
-			if(!check_relevant_residues( relevant_residues, resn )) continue;
-			bool residue_status(core::conformation::is_ideal_position(resn,conformation));
-			if(!residue_status){
-				ideal = false;
-				break;
+		{
+			core::conformation::Conformation const & conformation(pose.conformation());
+			for(core::Size resn=1; resn <= pose.n_residue();++resn){
+				if(!check_relevant_residues( relevant_residues, resn )) continue;
+				bool residue_status(core::conformation::is_ideal_position(resn,conformation));
+				if(!residue_status){
+					ideal = false;
+					break;
+				}
 			}
+		}else
+		{
+			ideal = false;
 		}
-	}else
-	{
-		ideal = false;
-	}
 
 	InsertGenerator conformation_insert("protein_residue_conformation");
 	conformation_insert.add_column("struct_id");
@@ -259,21 +265,10 @@ ProteinResidueConformationFeatures::report_features(
 		}
 		std::string secstruct = utility::to_string<char>(pose.secstruct(i));
 
-		Real phi = 0.0;
-		Real psi = 0.0;
-		Real omega = 0.0;
+		Real phi = resi.mainchain_torsion(1);
+		Real psi = resi.mainchain_torsion(2);
+		Real omega = resi.mainchain_torsion(3);
 
-		//If you have a non ideal structure, and you store both cartesian coordinates and backbone
-		//chi angles and read them into a pose, most of the backbone oxygens will be placed in correctly
-		//I currently have absolutely no idea why this is, but this fixes it.
-		//It is worth noting that the current implementation of Binary protein silent files does the same thing
-
-		if(ideal)
-		{
-			 phi = resi.mainchain_torsion(1);
-			 psi = resi.mainchain_torsion(2);
-			 omega = resi.mainchain_torsion(3);
-		}
 		Real chi1 = fullatom && resi.nchi() >= 1 ? resi.chi(1) : 0.0;
 		Real chi2 = fullatom && resi.nchi() >= 2 ? resi.chi(2) : 0.0;
 		Real chi3 = fullatom && resi.nchi() >= 3 ? resi.chi(3) : 0.0;
@@ -294,6 +289,9 @@ ProteinResidueConformationFeatures::report_features(
 			struct_id_data,seqpos_data,secstruct_data,phi_data,
 			psi_data,omega_data,chi1_data,chi2_data,chi3_data,chi4_data));
 
+		// KAB - We're still only saving coordinate data if the structure is not ideal
+		// If anyone is interested in saving this data always, you probably can make it happen now that we save if a structure
+		// is ideal or not in the pose_conformations table. This is what I did in order to always save backbone torsions.
 		if(!ideal)
 		{
 			if(compact_residue_schema_)
@@ -355,16 +353,18 @@ void
 ProteinResidueConformationFeatures::load_into_pose(
 	sessionOP db_session,
 	StructureID struct_id,
-	Pose & pose
+	Pose & pose,
+	bool ideal
 ){
-	load_conformation(db_session, struct_id, pose);
+	load_conformation(db_session, struct_id, pose, ideal);
 }
 
 void
 ProteinResidueConformationFeatures::load_conformation(
 	sessionOP db_session,
 	StructureID struct_id,
-	Pose & pose
+	Pose & pose,
+	bool ideal
 ){
 
 	if(!basic::database::table_exists(db_session, "protein_residue_conformation")){
@@ -411,7 +411,7 @@ ProteinResidueConformationFeatures::load_conformation(
 				// WARNING why are you storing non-protein in the ProteinSilentReport?
 				continue;
 			}
-			if(!(phi < 0.00001 && psi < 0.00001 && omega < 0.00001) )
+			if( ideal && !(phi < 0.00001 && psi < 0.00001 && omega < 0.00001) )
 			{
 				pose.set_phi(seqpos,phi);
 				pose.set_psi(seqpos,psi);

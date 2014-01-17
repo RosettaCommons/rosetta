@@ -72,15 +72,20 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
+	/// @brief Load information from pose_conformations into pose
+	/// @param[in,out] ideal - true if structure is ideal, false if not
 	void
 	load_into_pose(
 		utility::sql_database::sessionOP db_session,
 		StructureID struct_id,
-		core::pose::Pose & pose);
+		core::pose::Pose & pose,
+		bool & ideal
+	);
 
 private:
 
-	void
+	/// @return true if structure is ideal, false if not
+	bool
 	load_sequence(
 		utility::sql_database::sessionOP db_session,
 		StructureID struct_id,
