@@ -79,17 +79,18 @@ GoapRsdType::GoapRsdType(){}
 GoapRsdType::~GoapRsdType(){}
 
 void
-GoapRsdType::setup_rsdtype( chemical::ResidueType const & rsd ){
+GoapRsdType::setup_rsdtype( chemical::ResidueTypeCOP rsd ){
 
-  Size const natom( rsd.natoms() );
+  Size const natom( rsd->natoms() );
 
+	natom_ = natom;
   is_using_.resize( natom, false );
 	atmid_.resize( natom, 0 );
   atmname_using_.resize( 0 );
   connected_by_twobonds_.resize( natom, false );
   i2_.resize( natom, 0 );
   i3_.resize( natom, 0 );
-	name_ = rsd.name();
+	name_ = rsd->name();
 }
 
 void 
@@ -119,7 +120,7 @@ GoapRsdType::setup_connectivity( chemical::ResidueType const &rsd )
 
     } else if( atmname.compare(" O  ") == 0 ){
       i2 = rsd.atom_index(" C  ");
-      i3 = rsd.atom_index(" CA "); // just dummy
+      i3 = rsd.atom_index(" CA "); 
 
     } else {
       i2 = root_atom_[iatm]; 
@@ -192,29 +193,42 @@ GoapEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & )  const
   // These arrays are set as mutable to pass "const" declaration
   xn_.resize( pose.total_residue() );
   xd_.resize( pose.total_residue() );
+	eval_res_.resize( pose.total_residue(), true );
   Vector const I( 0.0 );
 
   // Assign dipole vectors for current pose
   for( Size ires = 1; ires <= pose.total_residue(); ++ires ){
+
     conformation::Residue const &rsd = pose.residue( ires );
-		chemical::AA const &aa = pose.residue(ires).aa();
+		//chemical::AA const &aa = pose.residue(ires).aa();
     chemical::ResidueType const &rsdtype = pose.residue(ires).type();
+
+    // Energy won't work for terminus residues! this might change in the future,
+    // but will require additional care for connectivity :)
+		//std::cout << "ires " << ires << " " << rsdtype.aa() << " " << rsdtype.is_protein() << std::endl;
+    if( rsdtype.is_terminus() || rsdtype.aa() > chemical::num_canonical_aas ){
+			eval_res_[ires] = false;
+			continue;
+		}
 
     xn_[ires].resize( rsd.natoms(), I );
     xd_[ires].resize( rsd.natoms(), I );
 
-    // Energy won't work for terminus residues! this might change in the future,
-    // but will require additional care for connectivity :)
-    if( rsdtype.is_terminus() ) continue;
+    GoapRsdTypeMap::const_iterator it = rsdtypemap_.find( rsdtype.name3() );
+		if( it == rsdtypemap_.end() ) continue;
 
-    GoapRsdTypeMap::const_iterator it = rsdtypemap_.find( &rsdtype );
     GoapRsdTypeOP goaptype = it->second;
 
     for( Size iatm = 1; iatm <= rsd.natoms(); ++iatm ){
       if( !goaptype->is_using( iatm ) ) continue;
 
       Vector xn1, xd1;
-      calculate_dipoles( pose, rsd, goaptype, iatm, xn1, xd1 );
+      bool result = calculate_dipoles( pose, rsd, goaptype, iatm, xn1, xd1 );
+			if( !result ){
+				eval_res_[ires] = false;
+				TR.Debug << "Warning: Skipping " << rsd.seqpos() << " due to dipole setup failure for atom " << iatm << std::endl;
+				break;
+			}
 
 			//std::cout << "xn1, xd1: " << std::setw(4) << rsd.name() << std::setw(5) << rsd.atom_name(iatm);
 			//printf("%4d %4d %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f\n",
@@ -223,6 +237,8 @@ GoapEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & )  const
       xd_[ires][iatm] = xd1;
     }
   }
+
+	//std::cout << "end setup!" << std::endl;
 }
 
 void 
@@ -280,20 +296,16 @@ GoapEnergy::read_angle_definitions( std::string const connection_file ){
 			break;
     }
 
-		//std::cout << line << std::endl;
-		//std::cout << "read_type ?" << read_type << std::endl;
-
     chemical::ResidueType const &rsdtype = rsdtypeset->name_map( s1 );
-		//chemical::AA const &aa = aa_from_name( s1 );
 
-		GoapRsdTypeMap::const_iterator it = rsdtypemap_.find( &rsdtype );
+		GoapRsdTypeMap::const_iterator it = rsdtypemap_.find( s1 );
 
 		if( it == rsdtypemap_.end() ){
 			GoapRsdTypeOP rsdtypeinfo = new GoapRsdType;
 			//std::cout << "Adding new residue info for " << rsdtype.name() << std::endl;
-			rsdtypeinfo->setup_rsdtype( rsdtype );
-			rsdtypemap_[ &rsdtype ] = rsdtypeinfo;
-			it = rsdtypemap_.find( &rsdtype );
+			rsdtypeinfo->setup_rsdtype( &rsdtype );
+			rsdtypemap_[ s1 ] = rsdtypeinfo;
+			it = rsdtypemap_.find( s1 );
 		}
 
 		GoapRsdTypeOP rsdtypeinfo = it->second;
@@ -356,10 +368,10 @@ GoapEnergy::read_angle_definitions( std::string const connection_file ){
   GoapRsdTypeMap::const_iterator it;
 
   for( it = rsdtypemap_.begin(); it != rsdtypemap_.end(); ++it ){
-    chemical::ResidueTypeCOP rsdtype = it->first;
     GoapRsdTypeOP rsdtypeinfo = it->second;
+    chemical::ResidueType const &rsdtype = rsdtypeset->name_map( it->first );
 
-    rsdtypeinfo->setup_connectivity( *rsdtype );
+    rsdtypeinfo->setup_connectivity( rsdtype );
   }
 }
 
@@ -474,15 +486,18 @@ GoapEnergy::residue_pair_energy( conformation::Residue const &rsd1,
 				EnergyMap & emap
 				) const
 {
+
+	//std::cout << "Respair start: " << rsd1.seqpos() << " " << rsd2.seqpos() << std::endl;
+
   // Passing terminus is original Goap convention
-  if( rsd1.is_terminus() || rsd2.is_terminus() ) return;
+  if( !eval_res( rsd1.seqpos() ) || !eval_res( rsd2.seqpos() ) ) return;
 
 	// Evaluate angle term only if sequence separation is long enough
 	bool const evaluate_angle_term( std::abs(int(rsd1.seqpos() - rsd2.seqpos())) >= int(MIN_SEQ_SEPARATIONS) );
 
 	// pass if sequence separation is under MIN_SEQ_SEPARATIONS
-  GoapRsdTypeOP rsd1type = rsdtypemap_[ &rsd1.type() ];
-  GoapRsdTypeOP rsd2type = rsdtypemap_[ &rsd2.type() ];
+  GoapRsdTypeOP rsd1type = rsdtypemap_[ rsd1.name3() ];
+  GoapRsdTypeOP rsd2type = rsdtypemap_[ rsd2.name3() ];
 
 	Real const MAX_D2_CUT( max_dis_*max_dis_ );
 	Size const res1( rsd1.seqpos() );
@@ -492,7 +507,8 @@ GoapEnergy::residue_pair_energy( conformation::Residue const &rsd1,
   Real Eang_sum( 0.0 );
 
   for( Size atm1 = 1; atm1 <= rsd1.natoms(); ++atm1 ){
-    if( !rsd1type->is_using( atm1 ) ) continue;
+    if( atm1 > rsd1type->natom() ) continue;
+		if( !rsd1type->is_using( atm1 ) ) continue;
 
 		Size const atype1( rsd1type->atmid(atm1) );
 		// Just make sure
@@ -502,9 +518,9 @@ GoapEnergy::residue_pair_energy( conformation::Residue const &rsd1,
     Vector const &xd1 = xd( res1, atm1 );
     Vector const &xyz1 = rsd1.xyz( atm1 );
 
-
     for( Size atm2 = 1; atm2 <= rsd2.natoms(); ++atm2 ){
-      if( !rsd2type->is_using( atm2 ) ) continue;
+      if( atm2 > rsd2type->natom() ) continue;
+			if( !rsd2type->is_using( atm2 ) ) continue;
 
 			Size const atype2( rsd2type->atmid(atm2) );
 			if( atype2 == 0 ) continue;
@@ -517,25 +533,29 @@ GoapEnergy::residue_pair_energy( conformation::Residue const &rsd1,
 
       Real const d2 = dxyz.dot( dxyz );
 
-      if ( d2 > MAX_D2_CUT ) continue;
+      if ( !(d2 <= MAX_D2_CUT ) )continue;
 
       Real const dis( std::sqrt( d2 ) );
 
       Real const Edist = get_distance_score( dis, atype1, atype2 );
 			Edist_sum += Edist;
 
-			//printf("atm1/atm2/type1/type2/d/Edist/Eang: %3d %3d %3d %3d", atm1, atm2, atype1, atype2);
-			//std::cout << std::setw(5) << rsd1.atom_name( atm1 ) << std::setw(5) << rsd2.atom_name( atm2 );
-			//printf(" %8.3f %8.3f", dis, Edist );
+			/*
+			printf("atm1/atm2/type1/type2/d/Edist/Eang: %3d %3d %3d %3d", atm1, atm2, atype1, atype2);
+			std::cout << std::setw(5) << rsd1.atom_name( atm1 ) << std::setw(5) << rsd2.atom_name( atm2 );
+			printf(" %8.3f %8.3f", dis, Edist );
+			std::cout << std::endl;
+			*/
 
 			if( evaluate_angle_term ){
 				Real const Eang = get_angle_score( dis, atype1, atype2, xn1, xd1, xn2, xd2, xyz1, xyz2 );
 				Eang_sum += Eang;
-				//printf("atm1/atm2/type1/type2/d/Edist/Eang: %3d %3d %3d %3d", atm1, atm2, atype1, atype2);
-				//std::cout << std::setw(5) << rsd1.atom_name( atm1 ) << std::setw(5) << rsd2.atom_name( atm2 );
-				//printf(" %8.3f %8.3f %8.3f\n", dis, Edist, Eang );
+				/*
+				printf("atm1/atm2/type1/type2/d/Edist/Eang: %3d %3d %3d %3d", atm1, atm2, atype1, atype2);
+				std::cout << std::setw(5) << rsd1.atom_name( atm1 ) << std::setw(5) << rsd2.atom_name( atm2 );
+				printf(" %8.3f %8.3f %8.3f\n", dis, Edist, Eang );
+				*/
 			}
-			//std::cout << std::endl;
 
     }
   }
@@ -546,6 +566,7 @@ GoapEnergy::residue_pair_energy( conformation::Residue const &rsd1,
   emap[ scoring::goap       ] += Edist_sum+Eang_sum;
   emap[ scoring::goap_dist  ] += Edist_sum;
   emap[ scoring::goap_angle ] += Eang_sum;
+
 }
 
 Real
@@ -553,8 +574,10 @@ GoapEnergy::get_distance_score( Real const dist,
 			       Size const atype1,
 			       Size const atype2 ) const
 {
-  Size const binno = distbin_map( (Size)(dist*2) );
-  
+	Size const kbin = (Size)(dist*2);
+  Size const binno = distbin_map( kbin );
+	if( binno == 0 ) return 0.0;
+
   if( continuous() ){
     // cubic spline
     return 0.0;
@@ -580,7 +603,10 @@ GoapEnergy::get_angle_score( Real const dist,
 			     ) const
 {
   Real score( 0.0 );
-  Size const binno = distbin_map( (Size)(dist*2) );
+
+	Size const kbin = (Size)(dist*2);
+  Size const binno = distbin_map( kbin );
+	if( binno == 0 ) return 0.0;
 
 	Vector const dxyz( xyz2 - xyz1 );
   Vector const vt = dxyz/dist; // 1->2
@@ -613,6 +639,8 @@ GoapEnergy::get_angle_score( Real const dist,
 	printf("xd1,xd2: %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f\n", 
 				 xd1[0],xd1[1],xd1[2],
 				 xd2[0],xd2[1],xd2[2]);
+	printf("vt: %8.3f %8.3f %8.3f\n",
+				 vt[0],vt[1],vt[2]);
 	printf("angle: %8.3f %8.3f %8.3f %8.3f %8.3f\n", 
 				 phi1,phi2,cs1,cs2,dih);
 	printf("mm: %3d %3d %3d %3d %3d\n",mm1,mm2,mm3,mm4,mm5);
@@ -631,7 +659,7 @@ GoapEnergy::get_angle_score( Real const dist,
 
   return score*1.0e-4; // revert by scaling factor
 }
-void 
+bool
 GoapEnergy::calculate_dipoles( pose::Pose const &pose, 
 			      conformation::Residue const &rsd1,
 			      GoapRsdTypeCOP rsdtype,
@@ -643,7 +671,7 @@ GoapEnergy::calculate_dipoles( pose::Pose const &pose,
 
   Size const i2( rsdtype->i2(atm1) );
   Size const i3( rsdtype->i3(atm1) );
-  bool const connected_by_twobonds( rsdtype->connected_by_twobonds(atm1) );
+  bool connected_by_twobonds = rsdtype->connected_by_twobonds(atm1);
 
   Vector xyz1 = rsd1.xyz( atm1 );
   Vector xyz3 = rsd1.xyz( i3 );
@@ -652,12 +680,16 @@ GoapEnergy::calculate_dipoles( pose::Pose const &pose,
   Vector xyz2;
   if( i2 == 999 ){
     Size const i_prv( rsd1.seqpos() - 1 );
-    assert( i_prv > 0 );
 
-    conformation::Residue const &rsd_prv( pose.residue( i_prv ) );
-    assert( rsd_prv.has(" C  ") );
+    if( i_prv == 0 ){
+			return false;
 
-    xyz2 = rsd_prv.xyz( rsd_prv.atom_index(" C  ") );
+		} else {
+			conformation::Residue const &rsd_prv( pose.residue( i_prv ) );
+			assert( rsd_prv.has(" C  ") );
+			Size const iatm = rsd_prv.atom_index(" C  ");
+			xyz2 = rsd_prv.xyz( iatm );
+		}
 
   } else {
     xyz2 = rsd1.xyz( i2 );
@@ -676,10 +708,18 @@ GoapEnergy::calculate_dipoles( pose::Pose const &pose,
   //normalize
   Real const xx1 = std::sqrt( xd.dot( xd ));
   Real const xx2 = std::sqrt( xn.dot( xn ));
+
   xd /= xx1;
   xn /= xx2;
 
+	//Make sure xn & xd does not blow up - by making it an arbitrary normalized vector
+	// This will invoke dummy outputs for unlikely poses, but will be safe from SegFault
+	Vector I( 0.0 ); I[0] = 1.0;
+	if( xx1 != xx1 || xx1 < 1.0e-6 ) xd = I;
+	if( xx2 != xx2 || xx2 < 1.0e-6 ) xn = I;
+
 	// xd, xn are returned Vectors
+	return true;
 }
 
 //////////////////////////////////////////////////////

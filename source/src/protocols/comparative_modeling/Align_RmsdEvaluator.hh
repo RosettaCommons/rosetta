@@ -39,7 +39,8 @@ public:
 		core::pose::PoseCOP native_pose,
 		std::string tag = "",
 		bool calc_gdt = true,
-		core::sequence::SequenceAlignmentOP aln = 0
+		core::sequence::SequenceAlignmentOP aln = 0,
+		bool gdt_by_TM = false
 	);
 
 	~Align_RmsdEvaluator();
@@ -73,8 +74,17 @@ public:
 		return calc_gdt_;
 	}
 
+	void gdt_by_TM( bool const setting ) {
+		gdt_by_TM_ = setting;
+	}
+
+	bool gdt_by_TM() const {
+		return gdt_by_TM_;
+	}
+
 private:
 	bool calc_gdt_;
+	bool gdt_by_TM_;
 	bool report_gdt_components_;
 }; // Align_RmsdEvaluator
 

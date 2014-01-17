@@ -30,7 +30,7 @@ namespace methods {
   typedef utility::pointer::owning_ptr< GoapEnergy > GoapEnergyOP;
 
   //typedef std::map< chemical::AA const *, GoapRsdTypeOP > GoapRsdTypeMap;
-  typedef std::map< chemical::ResidueType const *, GoapRsdTypeOP > GoapRsdTypeMap;
+  typedef std::map< std::string, GoapRsdTypeOP > GoapRsdTypeMap;
 
 } // methods
 } // scoring

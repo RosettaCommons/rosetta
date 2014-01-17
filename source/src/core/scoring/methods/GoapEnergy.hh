@@ -52,7 +52,7 @@ public:
 
   ~GoapRsdType();
 
-  void setup_rsdtype( chemical::ResidueType const &rsd );
+  void setup_rsdtype( chemical::ResidueTypeCOP rsd );
   void setup_connectivity( chemical::ResidueType const &rsd );
 
 	// Set
@@ -65,6 +65,7 @@ public:
 
   // Accessors
 
+	Size natom() const { return natom_;}
 	Size nusing() const { return atmname_using_.size(); }
   std::string atmname_using( Size const i ) const { return atmname_using_[i]; }
   bool is_using( Size const i ) const { return is_using_[i]; }
@@ -74,7 +75,8 @@ public:
 	Size atmid( Size const i ) const { return atmid_[i]; }
 	std::string name() const { return name_; }
 
-private:  
+private:
+	Size natom_;
   utility::vector1< std::string > atmname_using_;
   utility::vector1< bool > is_using_;
   utility::vector1< bool > connected_by_twobonds_;
@@ -177,7 +179,17 @@ public:
   Vector xd( Size const resno, Size const atmno ) const { return xd_[resno][atmno]; }
   Real max_dis() const { return max_dis_; }
 	bool continuous() const { return continuous_; }
-	Size distbin_map( Size const i ) const { return distbin_map_.find(i)->second; }
+	bool eval_res( Size const resno ) const { return eval_res_[resno]; }
+
+	Size distbin_map( Size const i ) const { 
+		std::map< Size const, Size >::const_iterator it;
+		it = distbin_map_.find(i);
+		if( it == distbin_map_.end() ){
+			return 0;
+		} else {
+			return it->second;
+		}
+	}
 
 private:
 
@@ -195,7 +207,7 @@ private:
 												 std::string const angle_file );
 
 
-  void 
+	bool
   calculate_dipoles( pose::Pose const &pose, 
 		     conformation::Residue const &rsd1,
 		     GoapRsdTypeCOP rsdtype,
@@ -230,7 +242,7 @@ private:
   { 
     Real cosang = v1.dot(v2);
     cosang /= std::sqrt( v1.dot(v1) * v2.dot(v2) );
-    
+
     return cosang;
   }
 
@@ -264,6 +276,7 @@ private:
 	mutable GoapRsdTypeMap rsdtypemap_;
   mutable utility::vector1< utility::vector1< Vector > > xn_;
   mutable utility::vector1< utility::vector1< Vector > > xd_;
+	mutable utility::vector1< bool > eval_res_;
 
 	ObjexxFCL::FArray3D< Real > distance_table_; // 167, 167, 20
 	ObjexxFCL::FArray5D< int > angle_table_; // 167, 167, 20, 12, 5: store as integer by mulitplying 1e4

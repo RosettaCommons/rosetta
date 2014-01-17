@@ -47,6 +47,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/scoring/TMscore.hh>
 
 // Utility headers
 #include <basic/prof.hh>
@@ -1000,6 +1001,62 @@ CA_gdtmm(
 ) {
 	core::Real m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
 	return CA_gdtmm( pose1, pose2, residue_selection, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
+}
+
+///////// GDT values by TMscore
+void
+CA_gdttm(
+	core::pose::Pose const& pose1,
+	core::pose::Pose const& pose2,
+	core::Real &gdttm_score,
+	core::Real &gdtha_score,
+	std::list< Size > residue_selection //the std::list can be sorted! -- note std::sort can be applied to vectors
+) {
+	int natoms;
+	FArray2D< core::Real > p1a( 3, pose1.total_residue() );
+	FArray2D< core::Real > p2a( 3, pose2.total_residue() );
+	PredicateOP pred( new SelectedResPredicate( residue_selection, new IsProteinCAPredicate ) );
+	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred() );
+
+	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "WARNING: In CA_gdtmm " << residue_selection.size()
+			<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl; }
+
+	TMscore tm( p1a );
+	tm.apply( p2a );
+	gdttm_score = tm.get_GDTTS();
+	gdtha_score = tm.get_GDTHA();
+}
+
+void
+CA_gdttm(
+	core::pose::Pose const& pose1,
+	core::pose::Pose const& pose2,
+	core::Real &gdttm_score,
+	core::Real &gdtha_score
+) {
+	int natoms;
+	FArray2D< core::Real > p1a( 3, pose1.total_residue() );
+	FArray2D< core::Real > p2a( 3, pose2.total_residue() );
+	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, is_protein_CA );
+
+	TMscore tm( p1a );
+	tm.apply( p2a );
+	gdttm_score = tm.get_GDTTS();
+	gdtha_score = tm.get_GDTHA();
+}
+
+void
+xyz_gdttm(
+	FArray2D< core::Real > p1a,
+	FArray2D< core::Real > p2a,
+	core::Real &gdttm_score,
+	core::Real &gdtha_score
+) {
+
+	TMscore tm( p1a );
+	tm.apply( p2a );
+	gdttm_score = tm.get_GDTTS();
+	gdtha_score = tm.get_GDTHA();
 }
 
 /// @details  Superimpose mod_pose onto ref_pose using the AtomID mapping, which maps atoms in mod_pose onto

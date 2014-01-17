@@ -519,6 +519,7 @@ option.add( basic::options::OptionKeys::evaluation::pool, "find closest matching
 option.add( basic::options::OptionKeys::evaluation::rmsd, "[vector/pairs] tripletts: rmsd_target (or NATIVE / IRMS) col_name selection_file (or FULL)" );
 option.add( basic::options::OptionKeys::evaluation::chirmsd, "[vector/tripletts]: rmsd_target (or NATIVE / IRMS ) col_name selection_file ( or FULL) " );
 option.add( basic::options::OptionKeys::evaluation::gdtmm, "for each rmsd evaluator also a gdtmm evaluator is created" ).def(false);
+option.add( basic::options::OptionKeys::evaluation::gdttm, "for each rmsd evaluator also a gdttm evaluator is created" ).def(false);
 option.add( basic::options::OptionKeys::evaluation::score_with_rmsd, "score the pose on the same subset of atoms as in the rmsd poses" );
 option.add( basic::options::OptionKeys::evaluation::constraints, "[vector] evaluate against these constraint sets" );
 option.add( basic::options::OptionKeys::evaluation::constraints_column, "[vector] use xxx as column name: cst_xxx" );

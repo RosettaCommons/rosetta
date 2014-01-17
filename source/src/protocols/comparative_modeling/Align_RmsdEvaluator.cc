@@ -47,10 +47,12 @@ Align_RmsdEvaluator::Align_RmsdEvaluator(
 	core::pose::PoseCOP native_pose,
 	std::string tag,
 	bool calc_gdt,
-	core::sequence::SequenceAlignmentOP aln
+	core::sequence::SequenceAlignmentOP aln,
+	bool gdt_by_TM
 ) :
 	AlignEvaluator( native_pose, tag, true, aln ),
 	calc_gdt_ (calc_gdt),
+	gdt_by_TM_( gdt_by_TM ),
 	report_gdt_components_(false)
 {}
 
@@ -63,6 +65,7 @@ Align_RmsdEvaluator::apply(
 	using core::Real;
 	using ObjexxFCL::FArray2D;
 	using core::scoring::xyz_gdtmm;
+	using core::scoring::xyz_gdttm;
 
 	int n_atoms;
 	FArray2D< Real > p1a, p2a;
@@ -88,19 +91,8 @@ Align_RmsdEvaluator::apply(
 	}
 
 	if ( calc_gdt() ) {
-		tr.Debug << "computing gdtmm for " << tag() << std::endl;
-		Real m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
-		Real gdtmm = xyz_gdtmm( p1a, p2a, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
-		ss.add_energy ( "gdtmm_" + tag(), coverage * gdtmm );
-		if ( report_gdt_components() ) {
-			ss.add_energy( "m11", m_1_1 );
-			ss.add_energy( "m22", m_2_2 );
-			ss.add_energy( "m33", m_3_3 );
-			ss.add_energy( "m43", m_4_3 );
-			ss.add_energy( "m74", m_7_4 );
-		}
 
-		// high-accuracy statistics
+		// required for high-accuracy statistics
 		core::id::SequenceMapping mapping = get_alignment(pose)->sequence_mapping(1, 2);
 		std::map<Size, Size> residues;
 		for (Size idx_mod = 1; idx_mod <= mapping.size1(); ++idx_mod) {
@@ -110,12 +102,34 @@ Align_RmsdEvaluator::apply(
 			}
 		}
 
-		tr.Debug << "computing high-accuracy statistics for " << tag() << std::endl;
-		ss.add_energy("gdtha_" + tag(), core::scoring::gdtha(*native_pose(), pose, residues));
-		ss.add_energy("gdtsc_" + tag(), core::scoring::gdtsc(*native_pose(), pose, residues));
+		if( gdt_by_TM() ){
+			tr.Debug << "computing gdttm for " << tag() << std::endl;
+			Real gdttm, gdtha;
+			xyz_gdttm( p1a, p2a, gdttm, gdtha );
 
-		tr.Debug << "computing maxsub for " << tag() << std::endl;
-		ss.add_energy( "maxsub_" + tag(), core::scoring::xyz_maxsub( p1a, p2a, n_atoms ) );
+			ss.add_energy( "gdttm_" + tag(), coverage * gdttm );
+			ss.add_energy( "gdtha_" + tag(), coverage * gdtha );
+
+		} else {
+			tr.Debug << "computing gdtmm for " << tag() << std::endl;
+			Real m_1_1, m_2_2, m_3_3, m_4_3, m_7_4;
+			Real gdtmm = xyz_gdtmm( p1a, p2a, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
+			ss.add_energy ( "gdtmm_" + tag(), coverage * gdtmm );
+			if ( report_gdt_components() ) {
+				ss.add_energy( "m11", m_1_1 );
+				ss.add_energy( "m22", m_2_2 );
+				ss.add_energy( "m33", m_3_3 );
+				ss.add_energy( "m43", m_4_3 );
+				ss.add_energy( "m74", m_7_4 );
+			}
+
+			tr.Debug << "computing high-accuracy statistics for " << tag() << std::endl;
+			ss.add_energy("gdtha_" + tag(), core::scoring::gdtha(*native_pose(), pose, residues));
+			ss.add_energy("gdtsc_" + tag(), core::scoring::gdtsc(*native_pose(), pose, residues));
+
+			tr.Debug << "computing maxsub for " << tag() << std::endl;
+			ss.add_energy( "maxsub_" + tag(), core::scoring::xyz_maxsub( p1a, p2a, n_atoms ) );
+		}
 	}
 }
 

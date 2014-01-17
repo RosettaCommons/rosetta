@@ -514,6 +514,7 @@ namespace evaluation { FileOptionKey const pool( "evaluation:pool" );  }
 namespace evaluation { FileVectorOptionKey const rmsd( "evaluation:rmsd" );  }
 namespace evaluation { FileVectorOptionKey const chirmsd( "evaluation:chirmsd" );  }
 namespace evaluation { BooleanOptionKey const gdtmm( "evaluation:gdtmm" );  }
+namespace evaluation { BooleanOptionKey const gdttm( "evaluation:gdttm" );  }
 namespace evaluation { BooleanOptionKey const score_with_rmsd( "evaluation:score_with_rmsd" );  }
 namespace evaluation { FileVectorOptionKey const constraints( "evaluation:constraints" );  }
 namespace evaluation { FileVectorOptionKey const constraints_column( "evaluation:constraints_column" );  }

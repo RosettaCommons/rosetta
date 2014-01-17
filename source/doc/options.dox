@@ -2470,6 +2470,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-gdttm</b> \<Boolean\><dt>
+<dd>for each rmsd evaluator also a gdttm evaluator is created</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-score_with_rmsd</b> \<Boolean\><dt>
 <dd>score the pose on the same subset of atoms as in the rmsd poses</dd><br>
 </dl>

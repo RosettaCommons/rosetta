@@ -37,6 +37,7 @@ namespace evaluation { extern FileOptionKey const pool; }
 namespace evaluation { extern FileVectorOptionKey const rmsd; }
 namespace evaluation { extern FileVectorOptionKey const chirmsd; }
 namespace evaluation { extern BooleanOptionKey const gdtmm; }
+namespace evaluation { extern BooleanOptionKey const gdttm; }
 namespace evaluation { extern BooleanOptionKey const score_with_rmsd; }
 namespace evaluation { extern FileVectorOptionKey const constraints; }
 namespace evaluation { extern FileVectorOptionKey const constraints_column; }

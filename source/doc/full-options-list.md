@@ -1123,6 +1123,8 @@ _Note that some application specific options may not be present in this list._
 <dd>[vector/tripletts]: rmsd_target (or NATIVE / IRMS ) col_name selection_file ( or FULL) <br/></dd>
 <dt><b>-gdtmm</b> \<Boolean\></dt>
 <dd>for each rmsd evaluator also a gdtmm evaluator is created<br/>Default: false<br/></dd>
+<dt><b>-gdttm</b> \<Boolean\></dt>
+<dd>for each rmsd evaluator also a gdttm evaluator is created<br/>Default: false<br/></dd>
 <dt><b>-score_with_rmsd</b> \<Boolean\></dt>
 <dd>score the pose on the same subset of atoms as in the rmsd poses<br/></dd>
 <dt><b>-constraints</b> \<FileVector\></dt>
@@ -1960,6 +1962,8 @@ _Note that some application specific options may not be present in this list._
 <dd>changes the dielectric constant for hack-elec energy<br/>Default: 10.0<br/></dd>
 <dt><b>-elec_r_option</b> \<Boolean\></dt>
 <dd>changes the dielectric from distance dependent to distance independent<br/>Default: false<br/></dd>
+<dt><b>-intrares_elec_correction_scale</b> \<Real\></dt>
+<dd>Intrares elec scaling factor for free DOF atoms<br/>Default: 0.05<br/></dd>
 <dt><b>-smooth_fa_elec</b> \<Boolean\></dt>
 <dd>Smooth the discontinuities in the elec energy function using a sigmoidal term<br/>Default: true<br/></dd>
 <dt><b>-facts_GBpair_cut</b> \<Real\></dt>

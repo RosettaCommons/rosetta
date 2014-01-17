@@ -486,6 +486,32 @@ superimpose_pose(
 	std::map< id::AtomID, id::AtomID > const & atom_map // from mod_pose to ref_pose
 );
 
+/// @brief Calculate gdttm score based on the C-alpha positions in pose1 and pose2.
+void
+CA_gdttm(
+	core::pose::Pose const& pose1,
+	core::pose::Pose const& pose2,
+	core::Real &gdttm_score,
+	core::Real &gdtha_score,
+	std::list< Size > residue_selection //the std::list can be sorted! -- note std::sort can be applied to vectors
+);
+
+void
+CA_gdttm(
+	core::pose::Pose const& pose1,
+	core::pose::Pose const& pose2,
+	core::Real &gdttm_score,
+	core::Real &gdtha_score
+);
+
+void
+xyz_gdttm(
+	FArray2D< core::Real > p1a,
+	FArray2D< core::Real > p2a,
+	core::Real &gdttm_score,
+	core::Real &gdtha_score
+);
+
 /// @brief  Superimpose mod_pose onto ref_pose using the mapping of atoms from
 /// mod_pose to ref_pose given by atom_map
 Real

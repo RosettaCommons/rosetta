@@ -154,6 +154,7 @@ sources = {
 		"SS_Info",
 		"SS_Killhairpins_Info",
 		"TenANeighborGraph",
+		"TMscore",
 		"TwelveANeighborGraph",
 		"UnfoldedStatePotential",
 		"util",
