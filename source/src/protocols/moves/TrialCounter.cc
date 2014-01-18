@@ -20,6 +20,9 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+#include <utility/vector1.hh>
+#include <boost/foreach.hpp>
+
 static basic::Tracer tr("protocols.moves.TrialCounter");
 
 namespace protocols {
@@ -76,16 +79,25 @@ TrialCounter::show( std::ostream& os, std::string line_header, bool endline ) co
 	} // for
 }
 
-core::Size TrialCounter::trial( std::string const& tag ) {
-	return trial_counter_[ tag ];
+utility::vector1< std::string > const TrialCounter::tags() const {
+	utility::vector1< std::string > tags;
+	std::map< std::string, int >::const_iterator it;
+	for (it = trial_counter_.begin(); it != trial_counter_.end(); ++it) {
+		tags.push_back(it->first);
+	}
+	return tags;
 }
 
-core::Size TrialCounter::accepted( std::string const& tag ) {
-	return accept_counter_[ tag ];
+core::Size TrialCounter::trial( std::string const& tag ) const {
+	return trial_counter_.at( tag );
 }
 
-core::Real TrialCounter::energy_drop( std::string const& tag ) {
-	return energy_drop_counter_[ tag ];
+core::Size TrialCounter::accepted( std::string const& tag ) const {
+	return accept_counter_.at( tag );
+}
+
+core::Real TrialCounter::energy_drop( std::string const& tag ) const {
+	return energy_drop_counter_.at( tag );
 }
 
 void TrialCounter::count_trial( std::string const& tag ) {

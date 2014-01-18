@@ -440,6 +440,16 @@ public:
 	///     MonteCarlo.show_state
 	void show_counters() const;
 
+	/// @brief Return statistics for each type of move that has been attempted 
+	/// during this simulation.
+	///
+	/// example(s):
+	///     mc.counters()
+	/// See also:
+	///     MonteCarlo
+	///     MonteCarlo.show_counters
+	///     MonteCarlo.reset_counters
+	TrialCounter const counters() const;
 
 	/// @brief Returns the total number of trials since the last reset
 	/// @note: MonteCarlo.boltzmann(pose) updates the number of trials

@@ -64,7 +64,7 @@ public:
 	// is used by several of the tests to compare against.
 	void setUp() {
 		core_init();
-		core::pose::make_pose_from_sequence(pose, "VVVV", "fa_standard", false);
+		core::pose::make_pose_from_sequence(pose, "AAAA", "fa_standard", false);
 
 		pose.set_phi(1, 296); pose.set_psi(1, 319);		// alpha helix
 		pose.set_phi(2, 235); pose.set_psi(2, 138);		// beta strand
@@ -77,11 +77,11 @@ public:
 	// Test the score function on a handful of points, as defined in setup().
 	void test_eval_rama_score_residue() {
 		Ramachandran rama;
-		Real expected[] = {0, -0.2578, -0.9390, 2.7557, 4.9683};
+		Real expected[] = {-0.8499, 0.8068, 0.4680, 8.7792};
 
 		for (Size i = 1; i <= pose.total_residue(); i++) {
 			Real observed = rama.eval_rama_score_residue(pose.residue(i));
-			TS_ASSERT_DELTA(observed, expected[i], 1e-4);
+			TS_ASSERT_DELTA(observed, expected[i-1], 1e-4);
 		}
 	}
 
@@ -116,8 +116,8 @@ public:
 			bool is_forbidden = rama.phipsi_in_forbidden_rama(
 					pose.aa(i), pose.phi(i), pose.psi(i));
 
-			TS_ASSERT_EQUALS(is_allowed, expected[i]);
-			TS_ASSERT_EQUALS(is_forbidden, not expected[i]);
+			TS_ASSERT_EQUALS(is_allowed, expected[i-1]);
+			TS_ASSERT_EQUALS(is_forbidden, not expected[i-1]);
 		}
 	}
 

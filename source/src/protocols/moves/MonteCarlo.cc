@@ -202,6 +202,12 @@ MonteCarlo::reset_counters()
 	counter_.reset();
 }
 
+/////////////////////////////////////////////////////////////////////////////
+TrialCounter const
+MonteCarlo::counters() const {
+	return counter_;
+}
+
 ///@detail return number of trials since last reset
 core::Size
 MonteCarlo::total_trials() const {

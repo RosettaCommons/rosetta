@@ -27,6 +27,9 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
+// C++ headers
+#include <map>
+
 namespace protocols {
 namespace moves {
 
@@ -39,10 +42,10 @@ public:
   void count_accepted( std::string const& );
   void count_energy_drop( std::string const&, core::Real );
 
-  core::Size trial( std::string const& );
-  core::Size accepted( std::string const& );
-  core::Real energy_drop( std::string const& );
-
+  core::Size trial( std::string const& ) const;
+  core::Size accepted( std::string const& ) const;
+  core::Real energy_drop( std::string const& ) const;
+	utility::vector1< std::string > const tags () const;
 
   void show( std::ostream&, std::string line_header="", bool with_end_line = true ) const;
   void show() const;
