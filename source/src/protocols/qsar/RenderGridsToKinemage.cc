@@ -345,8 +345,8 @@ void RenderGridsToKinemage::write_points(utility::io::ozstream & kin_file)
 			core::Vector coords(point_iterator->first);
 			core::Real value(point_iterator->second);
 
-			//if it is a 1 color grid, don't output zero points
-			if( !(color_mode_ = 1 && value == 0) )
+			//don't output zero points
+			if( value != 0.0)
 			{
 				kin_file <<"{" << master_name << "_points} " << current_color.color_name << " " <<
 					coords.x() << " " << coords.y() << " " << coords.z() <<std::endl;

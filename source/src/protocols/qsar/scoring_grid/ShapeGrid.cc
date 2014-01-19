@@ -129,7 +129,7 @@ void ShapeGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
 				kdcoords[1] = query_coords.x();
 				kdcoords[2] = query_coords.y();
 				kdcoords[3] = query_coords.z();
-				numeric::kdtree::KDPointList nearest_residues(numeric::kdtree::nearest_neighbors(residue_tree, kdcoords, 5, 10.0));
+				numeric::kdtree::KDPointList nearest_residues(numeric::kdtree::nearest_neighbors(residue_tree, kdcoords, 10, 10.0));
 				
 				core::Real score_for_grid = get_point_score(nearest_residues, query_coords);
 				this->set_point(query_coords, score_for_grid);
@@ -257,9 +257,13 @@ core::Real ShapeGrid::get_point_score(numeric::kdtree::KDPointList const & neare
 		core::Real phi = numeric::dihedral_degrees(ha, ca, cb, query_coords);
 		std::string res_name3(residue->name3());
 		core::Real score = get_score_from_angles(res_name3, distance, theta, phi);
-		
+		if(score < 0)
+		{
+			total_score += score;
+		}
 		//We don't want to penalize empty space, so a sigmoid smoothing function is applied based on the distance from CB.
 		
+		/*
 		//if the distance < 4.0 A, the smoothing factor will be 1 and we can avoid computing an exp
 		if(distance < 4.0)
 		{
@@ -269,6 +273,7 @@ core::Real ShapeGrid::get_point_score(numeric::kdtree::KDPointList const & neare
 			core::Real smooth_score = score*(-(1.0/(1.0+std::exp(-3.0*distance+18.0)))+1.0);
 			total_score += smooth_score;
 		}
+		 */
 	}
 	return total_score/(core::Real)nearest_residues.size();
 }

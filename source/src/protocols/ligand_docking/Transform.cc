@@ -191,7 +191,7 @@ void Transform::apply(core::pose::Pose & pose)
 	core::Real temperature = transform_info_.temperature;
 	core::Vector original_center(original_residue.xyz(original_residue.nbr_atom()));
 
-
+	ligand_conformers_.clear();
 	rotamers_for_trials(pose,begin,ligand_conformers_);
 	transform_tracer << "Considering " << ligand_conformers_.size() << " conformers during sampling" << std::endl;
 	core::Size accepted_moves = 0;
