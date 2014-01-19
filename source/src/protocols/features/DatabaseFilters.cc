@@ -1,3 +1,4 @@
+
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
@@ -150,10 +151,14 @@ WriteDeletePair get_write_delete_pair(
 	//See if our current model is better
 	if(current_model_score < cutoff_score )
 	{
+		TR <<"Current score is " <<current_model_score << ". Best score is " << cutoff_score <<
+		". Deleting struct_id " <<struct_id_to_remove <<std::endl;
 		utility::vector1<StructureID> struct_ids_to_delete(1,struct_id_to_remove);
 		return WriteDeletePair(true, struct_ids_to_delete);
 	}else
 	{
+		TR <<"Current score is " <<current_model_score << ". Best score is " << cutoff_score <<
+		". Discarding current pose" <<std::endl;
 		return WriteDeletePair(false, utility::vector1<StructureID>());
 	}
 

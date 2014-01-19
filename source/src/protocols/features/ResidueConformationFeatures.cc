@@ -334,12 +334,18 @@ ResidueConformationFeatures::delete_record(
 	statement angle_stmt(basic::database::safely_prepare_statement("DELETE FROM nonprotein_residue_angles WHERE struct_id = ?;\n",db_session));
 	angle_stmt.bind(1,struct_id);
 	basic::database::safely_write_to_database(angle_stmt);
-	statement coords_stmt(basic::database::safely_prepare_statement("DELETE FROM residue_atom_coords WHERE struct_id = ?;",db_session));
-	coords_stmt.bind(1,struct_id);
-	basic::database::safely_write_to_database(coords_stmt);
-	statement compact_coords_stmt(basic::database::safely_prepare_statement("DELETE FROM compact_residue_atom_coords WHERE struct_id = ?;",db_session));
-	compact_coords_stmt.bind(1,struct_id);
-	basic::database::safely_write_to_database(compact_coords_stmt);
+	if(compact_residue_schema_)
+	{
+		
+		statement compact_coords_stmt(basic::database::safely_prepare_statement("DELETE FROM compact_residue_atom_coords WHERE struct_id = ?;",db_session));
+		compact_coords_stmt.bind(1,struct_id);
+		basic::database::safely_write_to_database(compact_coords_stmt);
+	}else
+	{
+		statement coords_stmt(basic::database::safely_prepare_statement("DELETE FROM residue_atom_coords WHERE struct_id = ?;",db_session));
+		coords_stmt.bind(1,struct_id);
+		basic::database::safely_write_to_database(coords_stmt);
+	}
 }
 
 void

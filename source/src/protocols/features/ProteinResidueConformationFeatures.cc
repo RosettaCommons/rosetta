@@ -339,13 +339,17 @@ ProteinResidueConformationFeatures::delete_record(
 	statement conf_stmt(basic::database::safely_prepare_statement("DELETE FROM protein_residue_conformation WHERE struct_id = ?;\n",db_session));
 	conf_stmt.bind(1,struct_id);
 	basic::database::safely_write_to_database(conf_stmt);
-	statement atom_stmt(basic::database::safely_prepare_statement("DELETE FROM residue_atom_coords WHERE struct_id = ?;\n",db_session));
-	atom_stmt.bind(1,struct_id);
-	basic::database::safely_write_to_database(atom_stmt);
-	statement compact_coords_stmt(basic::database::safely_prepare_statement("DELETE FROM compact_residue_atom_coords WHERE struct_id = ?;",db_session));
-	compact_coords_stmt.bind(1,struct_id);
-	basic::database::safely_write_to_database(compact_coords_stmt);
-
+	if(compact_residue_schema_)
+	{
+		statement compact_coords_stmt(basic::database::safely_prepare_statement("DELETE FROM compact_residue_atom_coords WHERE struct_id = ?;",db_session));
+		compact_coords_stmt.bind(1,struct_id);
+		basic::database::safely_write_to_database(compact_coords_stmt);
+	}else
+	{
+		statement atom_stmt(basic::database::safely_prepare_statement("DELETE FROM residue_atom_coords WHERE struct_id = ?;\n",db_session));
+		atom_stmt.bind(1,struct_id);
+		basic::database::safely_write_to_database(atom_stmt);
+	}
 }
 
 
