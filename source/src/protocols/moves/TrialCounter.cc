@@ -89,15 +89,21 @@ utility::vector1< std::string > const TrialCounter::tags() const {
 }
 
 core::Size TrialCounter::trial( std::string const& tag ) const {
-	return trial_counter_.at( tag );
+	std::map< std::string, int >::const_iterator it;
+	it = trial_counter_.find( tag );
+	return (it != trial_counter_.end()) ? it->second : 0;
 }
 
 core::Size TrialCounter::accepted( std::string const& tag ) const {
-	return accept_counter_.at( tag );
+	std::map< std::string, int >::const_iterator it;
+	it = accept_counter_.find( tag );
+	return (it != accept_counter_.end()) ? it->second : 0;
 }
 
 core::Real TrialCounter::energy_drop( std::string const& tag ) const {
-	return energy_drop_counter_.at( tag );
+	std::map< std::string, core::Real >::const_iterator it;
+	it = energy_drop_counter_.find( tag );
+	return (it != energy_drop_counter_.end()) ? it->second : 0;
 }
 
 void TrialCounter::count_trial( std::string const& tag ) {
