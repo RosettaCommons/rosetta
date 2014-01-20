@@ -110,7 +110,9 @@ TMscore::get_ali_params()
 
 	core::Size i( 0 );
   for(i=1; i<=n_init_max-1; ++i){
-		core::Size const denom = (core::Size)( std::pow( 2.0, (i-1)) );
+		core::Size denom( 1.0 );
+		for( core::Size j=0; j<=i-1; ++j ) denom *= 2;
+
     L_ini_.push_back( core::Size(nseq_ / denom) );
     if(L_ini_[i] <= L_ini_min ){
       L_ini_[i] = L_ini_min;
