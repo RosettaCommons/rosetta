@@ -175,13 +175,13 @@ Splice::Splice() :
 					splice_filter_( NULL ),
 					use_sequence_profiles_( false ),
 					segment_type_( "" ),
-					profile_weight_away_from_interface_( 1.0 ),
-					restrict_to_repacking_chain2_( true ),
-					design_shell_(6.0),
-					repack_shell_(8.0),
 					scorefxn_(NULL),
 					Pdb4LetName_("")
 {
+	profile_weight_away_from_interface_( 1.0 ),
+	restrict_to_repacking_chain2_ = true;
+	design_shell_ = 6.0;
+	repack_shell_ = 8.0;
 	add_sequence_constraints_only_ = false;
 	torsion_database_.clear();
 	delta_lengths_.clear();

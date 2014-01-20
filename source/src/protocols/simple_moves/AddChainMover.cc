@@ -63,9 +63,10 @@ AddChainMover::AddChainMover()
 	: moves::Mover("AddChain"),
 	fname_( "" ),
 	new_chain_( true ),
-	random_access_( false ),
-    swap_chain_number_( 0 )
+    	scorefxn_( NULL )
 {
+	random_access_( false ),
+	swap_chain_number_( 0 ),
 }
 
 utility::vector1< numeric::xyzVector< core::Real > >
