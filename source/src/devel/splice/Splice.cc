@@ -178,7 +178,7 @@ Splice::Splice() :
 					scorefxn_(NULL),
 					Pdb4LetName_("")
 {
-	profile_weight_away_from_interface_( 1.0 ),
+	profile_weight_away_from_interface_ = 1.0;
 	restrict_to_repacking_chain2_ = true;
 	design_shell_ = 6.0;
 	repack_shell_ = 8.0;
