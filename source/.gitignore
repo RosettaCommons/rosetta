@@ -26,7 +26,6 @@ CMakeFiles
 /xcode/Rosetta.xcodeproj/xcuserdata
 /ide/build
 /internal.dat
-
 /.unit_test_results.yaml
 /config.log
 /.sconf_temp
@@ -37,6 +36,8 @@ GTAGS
 GPATH
 GSYMS
 GRTAGS
-
+/xcode/Rosetta.xcodeproj/*
 BuildPyRosetta.sh
 get_commit_id.sh
+/diffs*
+/compile*

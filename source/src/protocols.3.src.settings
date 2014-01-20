@@ -481,6 +481,7 @@ sources = {
 		"ConsensusDesignMover",
 		"ConstrainToIdealMover",
 		"ConstraintSetMover",
+		"ContingentAcceptMover",
 		"CutChainMover",
 		"ddG",
 		"DesignRepackMover",

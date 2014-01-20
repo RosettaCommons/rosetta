@@ -779,7 +779,9 @@ Splice::apply( core::pose::Pose & pose )
 		TR<<std::endl;
 		TR<<"Weighted score function before ccd:"<<std::endl;
 		scorefxn()->show(pose);//before ccd starts make sure we have all constratins in place, gidoenla Jul13
-		ccd_mover.apply( pose );
+		
+       
+        ccd_mover.apply( pose );
 		TR<<"Weighted score function after ccd:"<<std::endl;
 		scorefxn()->show(pose);//before ccd starts make sure we have all constratins in place, gidoenla Jul13
 		//pose.dump_pdb("after_ccd.pdb");
@@ -850,7 +852,21 @@ Splice::apply( core::pose::Pose & pose )
 		}
 	}// fi ccd
 	else{ // if no ccd, still need to thread sequence
-		//Debugging, remove after, gideonla aug13
+        //If a filter (such as the bb clash dectection filter is defined) it should be tested here.
+        if( splice_filter() && !splice_filter()->apply( pose ) ){
+            //std::ostringstream convert_filter;
+            //std::string Result_filter;
+            //convert_filter << splice_filter()->score( pose );
+            //Result_filter = convert_filter.str();
+            
+            TR<<"Failing before design because filter reports failure (splice filter)!"<<std::endl;
+            //TR<<"Filter value is: "<<Result_filter<<std::endl;
+            set_last_move_status( protocols::moves::FAIL_RETRY );
+            retrieve_values();
+            return;
+        }
+        
+        //Debugging, remove after, gideonla aug13
 		//TR<<"NOT DOING CCD, DOING REPACKING INSTEAD"<<std::endl;
 		PackerTaskOP ptask = tf()->create_task_and_apply_taskoperations( pose );
 		protocols::simple_moves::PackRotamersMover prm( scorefxn(), ptask );
@@ -1329,7 +1345,7 @@ void
 Splice::splice_filter( protocols::filters::FilterOP f ){
 	splice_filter_ = f;
 }
-
+    
 void//is anyone using this function ? gideonla. NOv13
 Splice::read_splice_segments( std::string const segment_type, std::string const segment_name, std::string const file_name ){
 	if(use_sequence_profiles_){

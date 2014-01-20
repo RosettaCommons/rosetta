@@ -62,9 +62,12 @@ public:
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	bool two_step() const{ return two_step_; }
 	void two_step( bool const b ) { two_step_ = b; }
+
+	bool multi_use() const{ return multi_use_; }
+	void multi_use( bool const b ) { multi_use_ = b; }
 private:
 	PoseOP init_pose_;
-	bool allsc_, ensure_variant_matching_, two_step_; // two_step: dflt false; on first apply, record sidechains, on second apply, enforce them.
+	bool allsc_, ensure_variant_matching_, two_step_,multi_use_; // two_step: dflt false; on first apply, record sidechains, on second apply, enforce them.
 	core::Size jumpid_;
 	utility::pointer::owning_ptr< basic::datacache::DataMapObj< bool > > first_apply_; // internal for two_step_
 };

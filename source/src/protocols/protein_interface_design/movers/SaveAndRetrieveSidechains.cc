@@ -106,6 +106,9 @@ SaveAndRetrieveSidechains::apply( Pose & pose )
 		first_apply_->obj = false;
 		return;
 	}
+	if (multi_use()) {
+        first_apply_->obj = true;
+  }
 	TR << "Retrieving sidechains..."<<std::endl;
 	Size nres = pose.total_residue();
 	if (nres != init_pose_->total_residue() && core::pose::symmetry::is_symmetric(pose)) {
@@ -165,6 +168,7 @@ SaveAndRetrieveSidechains::parse_my_tag( TagCOP const tag, basic::datacache::Dat
 {
 	first_apply_->obj = true;
 	allsc_ = tag->getOption<bool>( "allsc", 0 );
+	multi_use( tag->getOption< bool >( "multi_use", false ) );
 	two_step( tag->getOption< bool >( "two_step", false ) );
 	if( !two_step() )
 		init_pose_ = new core::pose::Pose( pose );

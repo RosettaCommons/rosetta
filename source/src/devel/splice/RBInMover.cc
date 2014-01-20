@@ -30,6 +30,8 @@ static basic::Tracer TR("devel.splice.RBInMover");
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <string>
+//#include <sstream>
+#include <core/pose/util.hh>
 #include <algorithm>
 #include <utility/io/izstream.hh>
 #include <protocols/protein_interface_design/movers/SetAtomTree.hh>
@@ -181,6 +183,15 @@ RBInMover::apply( Pose & pose ){
 		set_fold_tree( pose );
     TR<<"Setting jump now"<<std::endl;
     pose.set_jump( 1, jump_library_[ current_entry_ ] );
+
+    // Update RBO comment
+    //std::ostream RBMoveStream;
+    //RBMoveStream<<jump_library_[ current_entry_ ];
+    //std::string RBMoveString = RBMoveStream.str();
+    //std::replace( RBMoveString.begin(), RBMoveString.end(), ' ', ',');
+    //TR<<"Current RBO jump: "<<RBMoveString<<std::endl;
+    //core::pose::add_comment(pose,"RBO ",RBMoveString);
+
     ++current_entry_;
 	checkpoint();
 }

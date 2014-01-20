@@ -64,7 +64,7 @@ AddChainMover::AddChainMover()
 	fname_( "" ),
 	new_chain_( true ),
 	random_access_( false ),
-    swap_chain_no_( 0 )
+    swap_chain_number_( 0 )
 {
 }
 
@@ -80,7 +80,7 @@ Ca_coords( core::pose::Pose const & pose, utility::vector1< core::Size > const p
 }
     
 void AddChainMover::add_new_chain( core::pose::Pose & pose ) const {// pose is passed by reference. So function does not return anything but modifies pose, and leave it modified. The function is const as it does not modify private member data.
-    if( swap_chain_no()!=0 )
+    if( swap_chain_number()!=0 )
 		return;
     TR<<"AddChainMover is adding a new chain to pose: "<<std::endl;
 
@@ -105,12 +105,14 @@ void AddChainMover::add_new_chain( core::pose::Pose & pose ) const {// pose is p
 	(*scorefxn())( pose );
 	pose.pdb_info( new core::pose::PDBInfo( pose, true ) ); //reinitialize the PDBInfo
 	TR<<"After addchain, total residues: "<<pose.total_residue()<<std::endl;
+
+	core::pose::add_comment(pose,"AddedChainName ",curr_fname);
 }
 
 void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
-    if( swap_chain_no()==0 )
+    if( swap_chain_number()==0 )
 		return;
-    TR<<"AddChainMover will swap chain: "<<swap_chain_no()<<std::endl;
+    TR<<"AddChainMover will swap chain: "<<swap_chain_number()<<std::endl;
     
     using namespace core::pose;
     using namespace protocols::toolbox;
@@ -133,7 +135,7 @@ void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
     utility::vector1< PoseOP > pose_chains( pose.split_by_chain() ); // splits pose into a vector of poses, with one chain per pose
     
     Pose template_pose;
-    append_pose_to_pose( template_pose, *pose_chains[ swap_chain_no() ], true ); // the template chain is the chain that will be swapped
+    append_pose_to_pose( template_pose, *pose_chains[ swap_chain_number() ], true ); // the template chain is the chain that will be swapped
     
     // Now I should align new_chain to template_pose
     utility::vector1< core::Size > template_positions;
@@ -154,25 +156,27 @@ void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
 	superposition_transform( init_coords, ref_coords, rotation, to_init_center, to_fit_center );
 	apply_superposition_transform( new_chain, rotation, to_init_center, to_fit_center );
     
-    // new_chain is aligned to template_pose. Now everything that is not swap_chain_no in pose_chains should be combined with new_chain in pose.
+    // new_chain is aligned to template_pose. Now everything that is not swap_chain_number in pose_chains should be combined with new_chain in pose.
     Pose new_pose;
-    for (core::Size i = 1; i<swap_chain_no(); ++i) {
+    for (core::Size i = 1; i<swap_chain_number(); ++i) {
         append_pose_to_pose( new_pose, *pose_chains[i], true ); // true here means that it will be appended as new chain. I'm using a * here to dereference the OP.
     }
     append_pose_to_pose( new_pose, new_chain, true ); // Why new_chain()???
-    for (core::Size i = swap_chain_no() + 1; i <= pose_chains.size(); ++i) {
+    for (core::Size i = swap_chain_number() + 1; i <= pose_chains.size(); ++i) {
         append_pose_to_pose( new_pose, *pose_chains[i], true );
     }
     
-    // Now add the comments from pose to new_pose
+     // Now add the comments from pose to new_pose, and while doing this update the AddedChainName to the new chain name.
     std::map< std::string, std::string > const comments = core::pose::get_all_comments( pose );
     std::map< std::string, std::string>::const_iterator it;
-    
+   
     for (it = comments.begin(); it != comments.end(); ++it){
-        core::pose::add_comment(new_pose,it->first,it->second);
+	if (it->first == "AddedChainName ") // update AddedChain name
+           core::pose::add_comment(new_pose,"AddedChainName ",curr_fname);
+        else
+           core::pose::add_comment(new_pose,it->first,it->second);
     }
-    
-    
+	
     // Assign new_pose to pose and update score/disulfides/neighbors.
     pose = new_pose;
 	pose.conformation().detect_disulfides();
@@ -185,8 +189,8 @@ void AddChainMover::swap_chain( core::pose::Pose & pose ) const {
 void
 AddChainMover::apply( Pose & pose )
 {
-    //runtime_assert( !new_chain() != (swap_chain_no()!=0) ); // You cannot do both new chain and swap chain!
-    //runtime_assert( ( new_chain() && swap_chain_no()==0) || (!new_chain() && swap_chain_no()!=0)); // You cannot do both new chain and swap chain and you have to do one of the two...
+    //runtime_assert( !new_chain() != (swap_chain_number()!=0) ); // You cannot do both new chain and swap chain!
+    //runtime_assert( ( new_chain() && swap_chain_number()==0) || (!new_chain() && swap_chain_number()!=0)); // You cannot do both new chain and swap chain and you have to do one of the two...
     add_new_chain(pose);
     swap_chain(pose);
     
@@ -228,7 +232,7 @@ AddChainMover::parse_my_tag(
 //		fname( split_names[ random_num ] );
 	}
 	new_chain( tag->getOption< bool >( "new_chain", 1 ) );
-    swap_chain_no( tag->getOption< core::Size >( "swap_chain_no", 0 ) );
+    swap_chain_number( tag->getOption< core::Size >( "swap_chain_number", 0 ) );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	TR<<"AddChain sets fname: "<<fname()<<" new_chain: "<<new_chain()<<std::endl;
 }
