@@ -73,7 +73,7 @@ T ss_pred             EEEEEEEECCEEEE----EECCCcEEEEEECCEEEEEEEECCEEEEEEEEEC
 @endverbatim
 
 
-@limits Limitations
+@section limits Limitations
 
 @li The script does not handle any other input format.
 

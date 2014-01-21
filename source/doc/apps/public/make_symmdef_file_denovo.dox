@@ -21,7 +21,7 @@ All the code is contained in the Python script rosetta/rosetta_source/src/apps/p
 @section purpose Purpose
 This script automatically creates symmetry definition files corresponding to the specified symmetry. It currently covers cyclical and dihedral symmetry.
 
-@limits Limitations
+@section limits Limitations
 This routine does not create symmetry definition files for all types of symmetries. These have to be made by hand, see @ref symmetry "the symmetry definition guide",  or from a template by application of @ref make_symmdef_file "make_symmdef_file" to a known protein complex.
 
 @section ft_options Options

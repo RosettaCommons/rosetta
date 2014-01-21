@@ -154,7 +154,7 @@ When running Rosetta, the 1t3r.params and 1t3r_confs.pdb files must be in the sa
 
 
 @section prep_receptor Preparing the protein receptor for docking
-Only sidechains near the initial ligand position are repacked during docking, to save time.  This means *all* sidechains should be repacked before docking, so that any pre-existing clashes (according to Rosetta's energy function) can be resolved.  Otherwise, a ligand placed near the clashing residues will allow them to repack and thus gain a large energy bonus that does not accurately reflect its binding affinity in that position.  A program <code>ligand_rpkmin</code> is provided for this purpose;  one should use the same </code>-ex#</code> flags as will be used during docking.
+Only sidechains near the initial ligand position are repacked during docking, to save time.  This means *all* sidechains should be repacked before docking, so that any pre-existing clashes (according to Rosetta's energy function) can be resolved.  Otherwise, a ligand placed near the clashing residues will allow them to repack and thus gain a large energy bonus that does not accurately reflect its binding affinity in that position.  A program <code>ligand_rpkmin</code> is provided for this purpose;  one should use the same <code>-ex#</code> flags as will be used during docking.
 
 @verbatim
 ~/rosetta/rosetta_source/bin/ligand_rpkmin.macosgccrelease -database ~/rosetta/rosetta_database/ -ex1 -ex2 -ex1aro -extrachi_cutoff 1 \

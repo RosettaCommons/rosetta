@@ -32,10 +32,10 @@ BuildPeptide requires a fasta file in standard format as input.
 <table border=1 cellspacing=0 cellpadding=0>
   <tr>
 	<td width=213>
-   <b>Flag</span></b></p>
+   <b>Flag</b></p>
    </td>
    <td width=120>
-   <b>Description</span></b></p>
+   <b>Description</b></p>
    </td>
    <td width=99>
    <b>Type</b></p>

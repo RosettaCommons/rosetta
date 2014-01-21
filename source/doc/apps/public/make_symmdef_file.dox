@@ -21,7 +21,7 @@ All the code is contained in the Perl script src/apps/public/symmetry/make_symmd
 @section purpose Purpose
 This script automatically creates symmetry definition files corresponding to the symmetry in some template PDB.  If the template is not symmetrical it is "symmetrized" by the script.
 
-@limits Limitations
+@section limits Limitations
 This routine does not create symmetry definition files for ab initio symmetric modeling with fold_and_dock. Use See @ref make_symmdef_file_denovo "make_symmdef_file_denovo" instead.
 
 If the input PDB is very asymmetric, the output PDB may be very far from the input.  Generally this is undesirable; you may want to model this system asymmetrically.
@@ -34,7 +34,7 @@ The following symmetry types are currently unsupported by the script:
 <li> General 3D symmetries are not available in the script.  The CRYST mode assumes a fixed unit cell size; systems where the unit cell size may change are not created by the script.
 </ul>
 
-@modes Modes
+@section modes Modes
 
 The script currently recognizes three different symmetry types:  noncrystallographic (point) symmetries, crystallographic symmetry, and helical symmetry.  A fourth (experimental) option, "pseudo-symmetry," models a nonsymmetric system using the symmetry machinery to attempt to reduce the conformational space (and running time) of the search at the cost of some accuracy.
 

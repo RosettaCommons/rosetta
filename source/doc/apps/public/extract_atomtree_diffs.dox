@@ -27,10 +27,10 @@ This app extracts a pdb with associated rosetta scoring from an atomtree_diff fo
 @section algorithm Algorithm
 The atomtree_diff format silent file stores many pdbs in a compact form. It stores the full pdb record of a first, reference, structure and for all subsequent structures only stores the difference (diff) between the atomtree of the structure and the reference structure. This application can extract all of the structures in a silent file to separate pdbs (the default behavior) or only the desired structures (as specified with the "tags" option).
 
-@limits Limitations
+@section limits Limitations
 This app is only for extraction of pdbs from atomtree_diff format silent files, not from "standard" silent files. atomtree_diff format silent files are generated, for example, by the ligand_dock application.
 
-@modes Modes
+@section modes Modes
 The default mode extracts all structures in a silent file. Use of the "tags" options will limit the extraction only to the specified structures.
 
 @section inputs Input Files

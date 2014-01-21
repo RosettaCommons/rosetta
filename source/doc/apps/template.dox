@@ -28,10 +28,10 @@ What is this code supposed to do?  What sorts of problems does it solve?
 @section algorithm Algorithm
 Broadly, how does this code work?  Does it have a centroid phase?  A fullatom phase?  Does it run repacking every so often?
 
-@limits Limitations
+@section limits Limitations
 What does this code NOT do?  You'll find a lot of academic users try to get code to do things it was never intended to do, warn them off here.
 
-@modes Modes
+@section modes Modes
 If your protocol is a massive multimodal beast (loop modeling, etc), then describe the different modes here. All sections below this should be split for each mode as necessary.  You may have only one major mode (fixbb).
 
 @section inputs Input Files

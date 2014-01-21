@@ -248,10 +248,10 @@ Command line options affecting this stage
 
 
 
-@limits Limitations
+@section limits Limitations
 As previously mentioned, this code needs a match as input, i.e. a pdb with substrate and catalytic residues. It cannot compute theozymes or find placements of theozymes in a scaffold.
 
-@modes Modes
+@section modes Modes
 At the moment there is only one mode, which is described in this document. In the next release, a flexbb mode will be added, which generates a small localized ensemble of the backbone regions surrounding the acitve site and considers these different backbones during the design stage. Also, a backbone remodelling protocol is being developed which will allow for larger changes to the backbone before the design stage.
 The overall framework for these additional modes will be the same though.
 

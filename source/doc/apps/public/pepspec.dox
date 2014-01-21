@@ -29,12 +29,12 @@ Many cell signalling events and protein-protein interactions are mediated by pep
 @section algorithm Algorithm
 The pepspec application implements an anchored, flexible-backbone peptide docking and design algorithm in which the sequence and structure of the peptide are simultaneously optimized. Rather than performing global peptide docking searches, pepspec requires as input an approximate location for a key "anchor" residue of the peptide; the remainder of the peptide is assembled from fragments as in de novo structure prediction and refined with simultaneous sequence optimization. Backbone flexibility of the protein is optionally incorporated implicitly by docking into a structural ensemble for the protein partner. 
 
-@limits Limitations
+@section limits Limitations
 This application is *NOT* for structure prediction of an entire protein. You need to have a model of the peptide-binding protein, although this model may be derived from experiment, homology modeling, or de novo protein folding.
 This applcation does *NOT* move the backbone of the input protein structure. Backbone ensembles can be generated with the <A href="https://www.rosettacommons.org/internal/doc/mini/all_else/backrub.html">backrub</A> or <A href="https://www.rosettacommons.org/internal/doc/mini/all_else/relax_commands.html">relax</A> applications.
 This application does *NOT* support de novo docking of the peptide anchor residue; you need to have at bare minimum a model of a protein-peptide complex homologous to your target protein. To dock a single residue with no knowledge of where the binding pocket might be, you may consider using the <A href="https://www.rosettacommons.org/internal/doc/mini/all_else/ligand_dock.html">docking</A> application.
 
-@modes Modes
+@section modes Modes
 This application has two major modes: Anchor Docking and Peptide Design.
 Anchor Docking:
 	If you already have a structure of the target protein bound to an N-mer peptide, you may not need to do this step. If you need to dock an anchor residue onto your protein, then the anchor docking mode allows you to use structures of homologous protein-peptide complexes to predict the position of the anchor residue on your target protein. You provide a single structure of your target protein or an ensemble of structures, along with a set of homologous complexes. The homologues must be aligned to the target protein! The algorithm uses the relative positions of the homologues’ anchor residues to dock a new anchor residue to your target protein, and outputs the structures and associated score data for use in the next step.

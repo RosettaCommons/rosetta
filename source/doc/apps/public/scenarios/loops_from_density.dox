@@ -14,13 +14,13 @@ The code for this application is in src/apps/public/scenarios/loops_from_density
 @section purpose Purpose
 This is a simple routine aimed at automatically creating loopfiles for remodeling structures into density.  It finds the regions of the structure with worst local fit to density, and rebuilds them, limiting how far into secondary structure elements are rebuilt.
 
-@limits Limitations
+@section limits Limitations
 This routine does not perform loop modeling.  Rather, it creates input files for the @ref loopmodel "loopmodeling application" automatically.  Please the the demo in 'demo/electron_density/cryoEM_tutoral/scenario4_loop_remodel' to see the role this application plays in a model-building pipeline.
 
 @section inputs Input Files
 Data must be input as a PDB file(s) with -s/-l.
 
-Density maps must be provided with -edensity:map_file (see @density_map_scoring "density-fitting").
+Density maps must be provided with -edensity:map_file (see @ref density_map_scoring "density-fitting").
 
 @section ft_options Options
 There are only 4 options that are useful to the protocol's output:

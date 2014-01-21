@@ -106,5 +106,5 @@ scores_from_program: 0.000000 0.998400
 
 The first two lines represent the identifier of the query and template sequences, and 1be9A.pdb must provided on the command-line with the -in:file:template_pdb option (listed above). The string "1be9A_4" should be a unique identifier for the sequence alignment. Alignment identifiers are stored in silent-files, and each structure in a silent-file should store which alignment was used as a template for model building.
 
-#See the @ref abinitiorelax_score_extract_options "AbinitioRelax extract options" and @ref abinitiorelax_cluster_options "AbinitioRelax cluster options" for information on how to extract PDBs and cluster silent-files from comparative modeling.
+See the @ref abinitiorelax_score_extract_options "AbinitioRelax extract options" and @ref abinitiorelax_cluster_options "AbinitioRelax cluster options" for information on how to extract PDBs and cluster silent-files from comparative modeling.
 */

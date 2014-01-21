@@ -15,7 +15,7 @@
 <br/>
 <br/>
 
-@subsection AdditionalAsserts Additional asserts.
+@section AdditionalAsserts Additional asserts.
 
 Literally compare files, line by line: TS_ASSERT_FILE_EQ. This assert will pass if files are equal and generate unit test error otherwise. Example:
 
@@ -38,7 +38,7 @@ Compare files as a string of double numbers: TS_ASSERT_FILE_EQ_AS_DOUBLE. This c
 @endcode
 
 <br/>
-@subsection AdditionalFunctions Additional functions.
+@section AdditionalFunctions Additional functions.
 inline void core_init_with_additional_options( std::string const & commandline_in )  Reinitialize option system in middle of the test with additional arguments. Actual command line that will be used is equal original command line (which was supplied to unit test executable) + new arguments supplied to the function.
 
      Please note that this function do not delete any singletons that already was allocated (for example ResidueSet). If you need to re-initialize  such singleton  - delete them by hand before  calling this function.

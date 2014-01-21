@@ -162,7 +162,7 @@ start
 # ........................ the intersection set {ASP, GLU, HIS}
 @endcode
 
-@usbsection Commands for noncanonical residue types
+@subsection Commands for noncanonical residue types
 Noncanonical residue types do not obey the AND-commutativity in command order that the rest of the resfile displays; this is because they default to "off" position, and must perforce be activated instead of deactivated to use.  The command to turn OFF the canonical types is EMPTY, and the command to turn ON a noncanonical type is "NC <ResidueTypeName>".
 
 @code

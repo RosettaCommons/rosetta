@@ -55,7 +55,7 @@ You need two files:
 @li The @ref secstruct secondary structure file: the secondary structure that you are assuming. This file needs to be a text file with one line, giving the RNA secondary structure in dot bracket notation. For example '((....))' denotes a hairpin structure in which the first two and last two bases are paired.
 
 @subsection optional Optional additional files:
-@li A @ref constraints_file constraints file. This can specify bases that should make contact, based on experimental or phylogenetic information. See below for an example.
+@li A @ref constraint_file constraints file. This can specify bases that should make contact, based on experimental or phylogenetic information. See below for an example.
 @li Native pdb file, if all-heavy-atom rmsd's are desired. Must be in Rosetta's PDB @ref format for RNA.
 
 

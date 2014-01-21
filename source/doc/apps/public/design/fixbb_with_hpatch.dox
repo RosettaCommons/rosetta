@@ -21,12 +21,12 @@
 This document was last edited on June 22, 2011 by Ron Jacak. The code was written by Ron Jacak and Andrew Leaver-Fay. The corresponding PI is Brian Kuhlman (bkuhlman@email.unc.edu).
 
 @section code_demos Code and Demos
-The hpatch score is meant to be used primarily with fixed backbone design, using the \ref fixed_backbone "fixbb application". See <code>rosetta/rosetta_tests/integration/tests/fixbb/</code> for an example of a fixed backbone design simulation and all the necessary input files.
+The hpatch score is meant to be used primarily with fixed backbone design, using the \ref fixbb "fixbb application". See <code>rosetta/rosetta_tests/integration/tests/fixbb/</code> for an example of a fixed backbone design simulation and all the necessary input files.
 To activate the hpatch score during a fixed backbone design simulation, one additional flag needs to be added on the command line (described below).
 
 Because the hpatch score is a nonpairwise-decomposable score term, the logic for evaluating the score is contained inside InteractionGraph classes.  These classes serve two purposes: they hold the rotamer-pair energies that are used during sequence optimization, and they evaluate the non-pairwise
 decomposable score terms. Most of the code is contained in <code>rosetta/rosetta_source/src/core/pack/interaction_graph/</code>.  The hpatch score can be optimized using any application that performs design, but the most common way to use the score is via the fixbb application.  The
-\ref fixed_backbone "fixbb application" lives in <code>rosett/rosetta_source/src/apps/public/design/fixbb.cc</code> and invokes the <code>PackRotamersMover</code> that lives in <code>rosetta/rosetta_source/src/protocols/moves/PackRotamersMover.cc</code>
+\ref fixbb "fixbb application" lives in <code>rosetta/rosetta_source/src/apps/public/design/fixbb.cc</code> and invokes the <code>PackRotamersMover</code> that lives in <code>rosetta/rosetta_source/src/protocols/moves/PackRotamersMover.cc</code>
 
 @section refs References
 We recommend the following articles for further studies of RosettaDesign methodology and applications:
@@ -179,7 +179,7 @@ Because the <code>fixbb</code> application uses the \ref jd2 "JD2 job_distributo
 
 @section postprocess Post Processing
 
-The \ref fixed_backbone "fixbb application" is commonly used for sequence-recovery tests; the \ref sequence_recovery "sequence_recovery" application can be used to measure the sequence recovery between a native and a redesigned protein.
+The \ref fixbb "fixbb application" is commonly used for sequence-recovery tests; the \ref sequence_recovery "sequence_recovery" application can be used to measure the sequence recovery between a native and a redesigned protein.
 
 @section new_stuff New things since last release
 The hpatch score is being released for the first time with Rosetta v3.3.

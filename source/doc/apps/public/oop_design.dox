@@ -51,16 +51,16 @@ oop_design requires the following inputs:
 <table border=1 cellspacing=0 cellpadding=0>
   <tr>
 	<td width=213>
-   <b>Flag</span></b></p>
+   <b>Flag</b></p>
    </td>
    <td width=120>
-   <b>Description</span></b></p>
+   <b>Description</b></p>
    </td>
    <td width=99>
    <b>Type</b></p>
    </td>
    <td width=104>
-   <b>Default</span></b></p>
+   <b>Default</b></p>
    </td>
   </tr>
  <tr><td>
@@ -199,6 +199,7 @@ More information on common Rosetta flags can be found in the <A href="https://ww
 
 @subsection examples Example runs
 
+<ol>
 <li> generate 1000 (or more) models
 
 \verbatim

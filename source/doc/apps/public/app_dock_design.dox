@@ -11,7 +11,7 @@
 /*!
 @page app_dock_design Dock Design Parser Applications
 
-@metadata Metadata
+@section metadata Metadata
 This document was written by Sarel Fleishman and edited by Yi liu
 
 @section tutorial Tutorial
@@ -288,7 +288,7 @@ sidechain: should we count backbone-sidechain and sidechain-sidechain hbonds?
 @endverbatim
 
 <li> Filters for poses that place a neighbour of the types specified around a target residue in the partner protein.
-@verbati
+@verbatim
 <NeighborType name=(neighbor_filter &string) "res_num/pdb_num see above" distance=(8.0 &Real)>
 	<Neighbor type=(&3-letter aa code)/>
 </NeighborType>

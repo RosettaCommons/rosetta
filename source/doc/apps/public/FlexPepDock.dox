@@ -103,16 +103,16 @@ Note that the \ref ppk "-flexpep_prepack" and \ref minOnly "-flexPepDockingMinim
 <table border=1 cellspacing=0 cellpadding=0>
   <tr>
 	<td width=213>
-   <b>Flag</span></b></p>
+   <b>Flag</b></p>
    </td>
    <td width=120>
-   <b>Description</span></b></p>
+   <b>Description</b></p>
    </td>
    <td width=99>
    <b>Type</b></p>
    </td>
    <td width=104>
-   <b>Default</span></b></p>
+   <b>Default</b></p>
    </td>
   </tr>
  <tr><td>
@@ -610,7 +610,7 @@ The output of a FlexPepDock run is a score file (score.sc by default) and k mode
 				<B>total_score</B><SUP>*</SUP>
 			</TD>
 			<TD >
-				Total score of the complex</B>
+				<B>Total score of the complex</B>
 			</TD>
 		</TR>
 		<TR VALIGN=TOP>
@@ -713,5 +713,5 @@ The output of a FlexPepDock run is a score file (score.sc by default) and k mode
 
 @section postprocess Post Processing
 
-Except for model selection by total score or reweighted score, and possibly clustering (see \ref tips "Tips" section), no special post-processing steps are needed. For the \em ab-initio protocol, the protocol capture README file in <code>protocol_capture/FlexPepDock_AbInitio/</code> contains all the information needed for clustering. However, advanced users may optionally use Rosetta \ref cluster_commands directly for assessing whether top-scoring models converge to a consensus solution. For FlexPepDock Refinement, clustering is an optional step, and is not considered an integral part of the Refinement protocol, as described and tested in Raveh <EM>et al.</EM>
+Except for model selection by total score or reweighted score, and possibly clustering (see \ref tips "Tips" section), no special post-processing steps are needed. For the \em ab-initio protocol, the protocol capture README file in <code>protocol_capture/FlexPepDock_AbInitio/</code> contains all the information needed for clustering. However, advanced users may optionally use Rosetta \ref cluster directly for assessing whether top-scoring models converge to a consensus solution. For FlexPepDock Refinement, clustering is an optional step, and is not considered an integral part of the Refinement protocol, as described and tested in Raveh <EM>et al.</EM>
 */

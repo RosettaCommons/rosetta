@@ -91,7 +91,7 @@ The following options are sometimes useful when running the reference energy fit
 \li <code>-skip_set_reasonable_fold_tree</code> : Avoid the call to set_reasonable_fold_tree when a Pose is created from a PDB file.  May or may not be necessary for the set of input PDBs that you are using.
 \li <code>-optE:n_design_cycles</code> : Set the number of iterations that optE should take through the outer loop
 \li <code>-optE:design_with_minpack</code> : When performing sequence redesign in the inner loop, use the min packer instead of the discrete packer.
-\li <code>-multi_cool_annealer <int> : Use the multicool annealer in the design steps (slower, doesn't seem to produce better reference energies).  "10" is the recommended value for this integer option.
+\li <code>-multi_cool_annealer <int></code> : Use the multicool annealer in the design steps (slower, doesn't seem to produce better reference energies).  "10" is the recommended value for this integer option.
 \li <code>-optE:optE_soft_rep</code> : Use the softrep Lennard-Jones parameters in optE.
 \li <code>-optE:no_hb_env_dependence</code> : Disable the environmental dependence  in the hydrogen bond term
 \li <code>-optE:no_hb_env_dependence_DNA</code> : Disable the environmental dependence  in the hydrogen bond term for DNA

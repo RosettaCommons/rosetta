@@ -78,11 +78,11 @@ Rosetta-mode, surface cutoff and input reference energies for the desired charge
 
 
 
-@limits Limitations
+@section limits Limitations
 This code does NOT predict the net charge that will be sufficient to prevent aggregation and promote refolding, or to mediate nonviral cell entry of cationic proteins.  The protocol should be run numerous times to achieve a spectrum of net charges, and several variants should be tested at the bench.
 
 
-@modes Modes
+@section modes Modes
 Two modes are implemented, these are refered to AvNAPSA supercharge (Asc) and Rosetta supercharge (Rsc).
 AvNAPSA supercharge philosophy (Asc): mutate the most exposed polar residues to minimize structural change or destabilization.  Only DE-RK-NQ residues can be mutated.
 Rosetta supercharge philosophy (Rsc): mutate residue positions that preserve and/or add favorable surface interactions.  Hydrophobic and small polar surface residues can also be mutated.

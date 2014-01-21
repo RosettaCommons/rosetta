@@ -29,7 +29,7 @@ AnchoredDesign is the main protocol discussed here. This protocol is meant to de
 @section inputs Input Files
 See rosetta/rosetta_tests/integration/tests/AnchoredDesign/ for example usage.
 
-AnchoredDesign requires as inputs a starting structure, an anchor specification, and a loops specification (@ref loopmodeling).  The starting structure needs to have the anchor grafted into the scaffold (see @ref AnchoredPDBCreator and its documentation), and the anchor needs to be docked properly relative to the target.  The anchor/target interaction WILL NOT CHANGE, since it was drawn from a crystal structure.  The relationship between the scaffold and rest of the system is treated flexibly; the scaffold does need to be connected to the anchor but it's fine if the scaffold crashes horribly into the target (that will be worked out by the protocol).
+AnchoredDesign requires as inputs a starting structure, an anchor specification, and a loops specification (@ref loopmodel).  The starting structure needs to have the anchor grafted into the scaffold (see @ref AnchoredPDBCreator and its documentation), and the anchor needs to be docked properly relative to the target.  The anchor/target interaction WILL NOT CHANGE, since it was drawn from a crystal structure.  The relationship between the scaffold and rest of the system is treated flexibly; the scaffold does need to be connected to the anchor but it's fine if the scaffold crashes horribly into the target (that will be worked out by the protocol).
 
 Note that the AnchoredDesign protocol respects the start, end, cut, and extended fields of the loop file.  It ignores the skip_rate field.
 
@@ -77,7 +77,7 @@ General options:  All packing namespace options loaded by the PackerTask are res
 @li packing::resfile - string - a @ref resfiles resfile if you want one
 @li in::file::frag3 - string - fragments if you've got them
 @li run::min_type - string - minimizer type.  dfpmin_armijo_nonmonotone used for production.
-@li loops::loop_file - string - loops file, @ref loopmodeling describes it
+@li loops::loop_file - string - loops file, @ref loopmodel describes it
 
 PoseMetricCalculator flags include:
 @li pose_metrics::interface_cutoff - real - interface depth for determining where to repack
@@ -147,7 +147,7 @@ LAM_total -12.4113
 In this particular example, position 29 is clearly problematic: the peptide bond distance is too short, as reported by the pbnd_dst, pbnd_sc, and cbreak columns.  You can also see that position 30 has an awful ramachandran score.  Good structures will have no fields out of range of the lower scores in this example.
 
 
-Finally, InterfaceAnalyzer puts results at the end of the PDB file as well; read about it here: @ref InterfaceAnalyzer_doc.  Again, throw out models with poor interfaces as determined by InterfaceAnalyzer.
+Finally, InterfaceAnalyzer puts results at the end of the PDB file as well; read about it here: @ref InterfaceAnalyzer.  Again, throw out models with poor interfaces as determined by InterfaceAnalyzer.
 
 @section testing_mode Options for testing/debugging/experimental modes
 These modes are not suggested for public use.

@@ -30,15 +30,15 @@ The scipt sidechain_cst_3.py  prepares a set of coordinate constraints for use w
 The subsequent algorithm is identical to relax, except the sidechain heavy atom coordinate constraints from the script are added, and the constraints are not turned off during the relax run (this is the always_constrained_relax_script). 
 Briefly, in the relax protocol cycles of repack/minimize are run while ramping up and down the repulsive weight in the rosetta score function. Relax without any constraints can move the structure 2-3 angstroms from the starting position, hence the need for this constrained version.
 
-@limits Limitations
+@section limits Limitations
 This is not "normal" relax, that is to say, it will not find the global energy minimum for your structure, it will only find a good energy that is consistent with the input atom positions. 
 
-@modes Modes
+@section modes Modes
 This protocol is a specialized mode of relax.
 
 @section inputs Input Files
 The raw input is just a pdb. The sidechain constraints are prepared with the script:
-<code>python rosetta/rosetta_source/src/apps/public/relax_w_allatom_cst/sidechain_cst_3.py 1A99_1A99.pdb 0.1 0.5</code.
+<code>python rosetta/rosetta_source/src/apps/public/relax_w_allatom_cst/sidechain_cst_3.py 1A99_1A99.pdb 0.1 0.5</code>.
 This will produce the file yourpdb_sc.cst, which is an input to relax.
 
 @section ft_options Options

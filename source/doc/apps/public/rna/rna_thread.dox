@@ -52,7 +52,7 @@ gguuggguugggaaguaucauggcuaaucaccaugaugcaaucggguugaacacuuaau---------------------
 ----------------------------------------gccgugugccuugc-----gccgggaaaccaga-------uggugucaaauucggcgaaaccuaagcgcccgcccgggcguauggcaacg---------------------ccgagccaagcuucgcagccauugcacuccggcugcgaugaagguguagagacuagacggcacccaccuaaggcaaacgcuauggugc---------------------------------gcaaggcauaaggcauaguccagggaguggcgaagccacacaa----accag---acggcc-------------
 @endverbatim
 
-If you just want to mutate sequence, can supply this on command line by -seq; see below @rna_mutate.
+If you just want to mutate sequence, can supply this on command line by -seq; see below @ref rna_mutate.
 
 @subsection command_line How to run with this file.
 @verbatim

@@ -27,10 +27,10 @@ This protocol designs zinc-mediated heterodimers.  One partner contains a three-
 @section algorithm Algorithm
 Prior to running this protocol, RosettaMatch is used to design three-residue zinc sites on a protein surface.  Next, the target protein containing a surface histidine (Ubq-H68) is docked to the open coordination site of zinc.  The ubiquitin rigid-body orientation to the designed zinc-binding scaffold is sampled as if the ubiquitin were a giant protein-sized rotamer.  This is done using inverse-rotamer sampling of Ubq-H68 chi1 and chi2 angles (SidechainMover), as well as free rotation about the His68-zinc coordination axis (RotateJumpAxisMover).  There is a centroid phase that evaluates overall shape complementarity of the target and scaffold, this phase is coupled to a full-atom pose to remember the conformation of the zinc coordinating residues.
 
-@limits Limitations
+@section limits Limitations
 The lowest-scoring centroid pose is the only pose that enters into full-atom interface design.  Perhaps a better way to do it would be to design every non-clashing backbone orientation.  There is no backbone minimization or sampling in this protocol.  The zinc site remains fixed during interface design.
 
-@modes Modes
+@section modes Modes
 The biggest difference in 'mode' is whether or not you want to output all of the rigid-body perturbed structures for viewing/debugging.  See command-line options.
 
 @section inputs Input Files

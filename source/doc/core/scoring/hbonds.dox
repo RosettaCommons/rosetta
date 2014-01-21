@@ -36,7 +36,7 @@ steps. First identify all the relevent bonds, second classify the
 hydrogen bonds based on their chemical type, environment, background
 hbonds etc, and then third score the hydrogen bonds.
 
-@secion identification Identification
+@section identification Identification
 
 The goal of the identification step is to create an HBondSet object
 that contains exactly the hydrogen bonds of interest. If it containst

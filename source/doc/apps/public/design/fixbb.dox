@@ -29,7 +29,7 @@ run.  The centroid-mode run is already a "production run" in that it cannot be m
 
 The majority of the classes for the fixbb application live in <code>rosetta/rosetta_source/src/core/pack</code>.
 The main interface class is the <code>PackerTask</code> which lives in <code>rosetta/rosetta_source/src/core/pack/task</code>.
-Rotamers are held in instances of class <core>RotamerSet</code> which are in turn held in an instance of class
+Rotamers are held in instances of class <code>RotamerSet</code> which are in turn held in an instance of class
 <code>RotamerSets</code>; these classes live in <code>rosetta/rosetta_source/src/core/pack/rotamer_set</code>.  Rotamer-pair
 energies are held in one of several "interaction graph" classes, which live in namespace
 <code>core::pack::interaction_graph</code>.  The annealer classes live in <code>rosetta/rosetta_source/src/core/pack/annealer</code>
@@ -74,7 +74,7 @@ may be controlled on the command line by specifying a weights file (or both a we
 By default, the fixbb application uses the "score12" score function by default (the combination of
 "standard.wts" and "score12.wts_patch").
 
-@limits Limitations
+@section limits Limitations
 
 There are three serious limitations worth considering: 1) fixed backbone design does
 not sample backbone conformation space, and therefore cannot guarantee that the new sequence

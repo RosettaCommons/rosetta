@@ -182,11 +182,11 @@ output.
 In the standard protocol, 5000 models are independently built for each
 target.
 
-@limits Limitations
+@section limits Limitations
 This version does not include all the features of the original RosettaAntibody.
 Thus this release cannot model classical antibody variable regions.
 
-@modes Modes
+@section modes Modes
 The protocol is divided into two stages. The first stage (Grafting phase)
 involves building a crude model of the VHH by incorporating all the templates. The
 second stage (Loop Building phase) involves ab initio loop building of the CDR H3,

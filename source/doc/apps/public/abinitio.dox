@@ -168,7 +168,7 @@ Example: <code>rosetta_demos/abinitio/input_files/S_00000001.pdb</code>, <code>r
 
 @section postprocess Post Processing
 
-We recommend generating up to 20,000 to 30,000 models of the target sequence and of up to 10 homologs and then using the @ref cluster_commands  "Cluster application" to identify the most frequently sampled conformations.  In a general case, at least one of the top 5-10 clusters by size may have models with the lowest rmsd to the native structure.
+We recommend generating up to 20,000 to 30,000 models of the target sequence and of up to 10 homologs and then using the @ref cluster  "Cluster application" to identify the most frequently sampled conformations.  In a general case, at least one of the top 5-10 clusters by size may have models with the lowest rmsd to the native structure.
 
 In an ideal case, your sequence will have many homologs identified by search tools like PSI-BLAST. Sequence alignments can be extremely helpful in model selection. For example, conserved hydrophobic positions most likely represent the core of the protein so models that have sidechains exposed in such positions may be discarded. The same logic applies to conserved polar positions which are most likely on the surface.  Additionally, conserved cysteine pairs may represent disulphides. Tools like Jalview to view alignments and PyMOL to view models are extremely helpful for model selection in this respect.
 

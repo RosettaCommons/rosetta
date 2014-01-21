@@ -23,7 +23,7 @@ The protocol is divded into 4 phases:
 
 The first two phases may be done in <i>either</i> all-atom or centroid mode.  Loop modelling is always done in centroid mode, while all-torsion minimization is always fullatom.
 
-@limits Limitations
+@section limits Limitations
 
 This code assumes the starting C-alpha model contains some errors.  If you want a reasonable backbone model with <i>exactly</i> the C-alpha coordinates specified a geometric tool like MaxSprout may be more appropriate.
 

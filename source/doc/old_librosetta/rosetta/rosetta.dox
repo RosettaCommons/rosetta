@@ -12,8 +12,6 @@
 /// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
 
 
-/// @mainpage
-///
 /// libRosetta is a library of components used by the Rosetta application for
 /// biomolecular structure prediction, docking, and design.  libRosetta replaces
 /// procedural code dependent on many global arrays with a collection of modular

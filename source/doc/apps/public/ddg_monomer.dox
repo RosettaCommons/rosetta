@@ -96,7 +96,7 @@ B) Low Resolution Protocol:
 
 This protocol only allows sidechain conformational flexibility.  It optimizes the rotamers for the residues in the neighborhood of the mutation; those with CBeta atoms within 8 Angstroms of the CBeta atom of the mutated residue (or Calpha for glycine).  The same set of residues is optimized for both the wild-type and mutant structures.  The optimization is performed a recommended 50 times for both the wildtype and point-mutant, and the scores (and optional PDBs) are written out.
 
-@limits Limitations
+@section limits Limitations
 
 The high-resolution protocol is designed to limit the amount of conformational flexibility allowed to protein backbones as the amount of noise that seeps into the protocol from increased flexibility tends to drown out the signal that might be gained by searching a larger region of conformation space.  The result is that this protocol is probably not well suited to model several mutations simultaneously where backbone motion would be expected.
 

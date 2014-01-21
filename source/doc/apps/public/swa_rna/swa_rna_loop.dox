@@ -53,7 +53,7 @@ You need two files:
 @li The @ref fasta file: this is the sequence file of the full-length RNA. The fasta file has the RNA name on the first line (after >), and the sequence on the second line. Valid letters are a, c, g and u. An example fasta file is available at rosetta/demos/SWA_RNA_loop/rosetta_inputs/fasta.
 
 @subsection Optional additional files:
-@li The native_PDB file: A PDB file containing the 'native' crystallographic or NMR structure. This PDB file should contain the coordinates of the coordinates of the native loop nucleotides plus the surrounding nucleotides inherited from @ref templte_PDB. The supplied native_PDB file is not used to guide the modeling process and only used for reporting the RMSD of the generated rosetta models to the native loop. An example is available at rosetta/demos/SWA_RNA_loop/rosetta_inputs/native.pdb. Supplied PDB file must be in Rosetta RNA PDB format (see @ref Note on PDB format for RNA).
+@li The native_PDB file: A PDB file containing the 'native' crystallographic or NMR structure. This PDB file should contain the coordinates of the coordinates of the native loop nucleotides plus the surrounding nucleotides inherited from @ref template_PDB. The supplied native_PDB file is not used to guide the modeling process and only used for reporting the RMSD of the generated rosetta models to the native loop. An example is available at rosetta/demos/SWA_RNA_loop/rosetta_inputs/native.pdb. Supplied PDB file must be in Rosetta RNA PDB format (see @ref Note on PDB format for RNA).
 
 @section pre_process Preprocessing of input files
 

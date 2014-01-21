@@ -36,10 +36,10 @@ If a candidate structure passes that filter, then AnchorFinder basically prints 
 
 It then looks for anchor regions in that structure (regions of high loopness and many cross-interface neighbors) and collects those windows in another file, default name goodfile.out.
 
-@limits Limitations
+@section limits Limitations
 This code looks for anchors only in a vague sense, you still need to look at the suggested anchors before use.  Also, it cannot tell if your input structures are biological heterodimers, homodimers, crystal dimers, octamers, 3 identical heterodimers in one asymmetric unit, etc.  If you already know what protein you want to look for anchors in, your eyes are better than this code anyway: load it up in PyMOL and just look.  If you have 20 possibilities it's useful.
 
-@modes Modes
+@section modes Modes
 Nominally, "looking for benchmark proteins" is a mode (that only the original author will ever use), and "looking for anchors in protein dimer X" is a mode that you might use.  The code is used identically, although you'd use a large number of inputs for the first and few for the second.
 
 @section inputs Input Files

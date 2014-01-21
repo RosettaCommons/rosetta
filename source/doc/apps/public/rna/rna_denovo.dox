@@ -96,7 +96,7 @@ rna_denovo.<exe> -fasta chunk002_1lnt_.fasta -native chunk002_1lnt_RNA.pdb -para
 -out::file::silent chunk002_1lnt.out -cycles 1000 -minimize_rna -database <path to database>
 @endverbatim
 
-This command line also includes the "native" pdb, and will result in heavy-atom rmsd scores being calculated. Note again that the native pdb should have residues marked rA, rC, rG, and rU (see notes on PDB @format below). The code again takes about 1 minute to generate two models. Finally, there are some notes on forcing other kinds of pairs below [@ref obligate].
+This command line also includes the "native" pdb, and will result in heavy-atom rmsd scores being calculated. Note again that the native pdb should have residues marked rA, rC, rG, and rU (see notes on PDB @ref format below). The code again takes about 1 minute to generate two models. Finally, there are some notes on forcing other kinds of pairs below [@ref obligate].
 
 
 
@@ -235,7 +235,7 @@ rna_score.<exe> -database <path to database>  -s <pdb file> [<pdb file 2> ...] -
  grep SCORE SCORE.out
 @endverbatim
 
-But this is not recommended if you are trying to score a model deposited in the PDB or created by other software -- see next @just_minimize.
+But this is not recommended if you are trying to score a model deposited in the PDB or created by other software -- see next @ref just_minimize.
 
 @subsection just_minimize How do I just minimize?
 If you take a PDB created outside Rosetta, very small clashes may be strongly penalized by the Rosetta all-atom potential. Instead of scoring, you should probably do a short minimize, run:
