@@ -144,7 +144,7 @@ screen_phosphates()
 	//	scorefxn->show( pose_copy );
 
 	TR << "WITH SCREEN PHOS " << ( *scorefxn )( pose ) << std::endl;
-	//	scorefxn->show( pose );
+	// scorefxn->show( pose );
 	//	protocols::farna::print_hbonds( pose );
 	pose.dump_pdb( "SCREEN_POSE.pdb" );
 

@@ -76,7 +76,7 @@ namespace rna {
 
 		//always have something in play!!?? Or permit removal??!! need to check this carefully.
 		bool disallow_delete  = disallow_deletion_of_last_residue_ && ( moving_res_list.size() <= 1 );
-		if ( options_->skip_deletions() ) disallow_delete = true;
+		if ( options_->skip_deletions() || 	options_->rebuild_bulge_mode() ) disallow_delete = true;
 
 		SWA_Move swa_move;
 		swa_move_selector_->set_allow_delete( !disallow_delete );

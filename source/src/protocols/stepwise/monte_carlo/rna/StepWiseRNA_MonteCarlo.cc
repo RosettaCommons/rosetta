@@ -142,6 +142,13 @@ StepWiseRNA_MonteCarlo::initialize_scorefunction(){
 	scorefxn_->set_weight( scoring::missing_res, 0.0 );
 	missing_weight_interval_ = max_missing_weight_ / static_cast<Real>( options_->cycles() );
 	missing_weight_ =  missing_weight_interval_;
+
+	if ( options_->rebuild_bulge_mode() ){
+		missing_weight_ = 100.0;
+		missing_weight_interval_ = 0.0;
+		scorefxn_->set_weight( scoring::missing_res, missing_weight_ );
+		scorefxn_->set_weight( scoring::loop_close, 0.0 );
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

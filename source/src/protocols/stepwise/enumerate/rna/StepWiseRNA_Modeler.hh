@@ -125,6 +125,11 @@ namespace rna {
 		add_to_pose_list( utility::vector1< pose::PoseOP > & pose_list, pose::Pose const & pose, std::string const pose_tag ) const;
 
 		void
+		figure_out_root_partition_res( pose::Pose const & pose, StepWiseRNA_JobParametersCOP job_parameters,
+																	 utility::vector1< Size > & root_partition_res,
+																	 utility::vector1< Size > & moving_partition_res );
+
+		void
 		setup_root_based_on_full_model_info( pose::Pose & pose, StepWiseRNA_JobParametersCOP & job_parameters );
 
 	private:

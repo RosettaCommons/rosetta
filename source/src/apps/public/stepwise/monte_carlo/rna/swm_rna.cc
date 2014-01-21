@@ -172,6 +172,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::rna::force_syn_chi_res_list );
 		option.add_relevant( OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed );
 		option.add_relevant( OptionKeys::stepwise::rna::force_centroid_interaction );
+		option.add_relevant( OptionKeys::stepwise::rna::rebuild_bulge_mode );
 		option.add_relevant( basic::options::OptionKeys::stepwise::rna::bulge_res );
 		option.add_relevant( basic::options::OptionKeys::stepwise::rna::terminal_res );
 		option.add_relevant( OptionKeys::rna::corrected_geo );

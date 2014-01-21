@@ -151,8 +151,9 @@ namespace sugar {
 		utility::vector1 < core::Size > distal_partition_pos_;
 		utility::vector1 < core::Size > already_virtualized_res_list_;
 		bool moving_phosphate_virtualized_;
+		PoseOP pose_with_original_terminal_phosphates_;
 
-		core::scoring::constraints::ConstraintSetOP original_constraint_set_;
+ 		core::scoring::constraints::ConstraintSetOP original_constraint_set_;
 
 	};
 

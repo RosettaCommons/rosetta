@@ -61,14 +61,16 @@ namespace phosphate {
 	MultiPhosphateSampler::sample_phosphates(){
 
 		phosphate_move_list_ = initialize_phosphate_move_list( *phosphate_sample_pose_ );
+		TR << "About to sample (all): " << phosphate_move_list_.size() << std::endl;
 		copy_over_phosphate_variants( *phosphate_sample_pose_, *pose_with_original_phosphates_, phosphate_move_list_ );
+		TR << "About to sample (aCtual): " << actual_phosphate_move_list_.size() << std::endl;
 
 		actual_phosphate_move_list_ = check_moved( phosphate_move_list_, *phosphate_sample_pose_ );
 
 		// note that the mover will instantiate or virtualize phosphates as it sees fit.
 		instantiated_some_phosphate_ = false;
 		for ( Size i = 1; i <= actual_phosphate_move_list_.size(); i++ ){
-			//			TR << "About to sample: " << actual_phosphate_move_list_[i] << std::endl;
+			TR << "About to sample: " << actual_phosphate_move_list_[i] << std::endl;
 			PhosphateMover phosphate_mover( actual_phosphate_move_list_[i], scorefxn_ );
 			phosphate_mover.apply( *phosphate_sample_pose_ );
 			if ( phosphate_mover.instantiated_phosphate() ) instantiated_some_phosphate_ = true;
@@ -216,67 +218,6 @@ namespace phosphate {
 
 		return false;
 	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	MultiPhosphateSampler::copy_over_phosphate_variants( pose::Pose & pose_input,
-																											 pose::Pose const & reference_pose,
-																											 utility::vector1< PhosphateMove > const & phosphate_move_list ) const {
-		using namespace core::id;
-		using namespace core::chemical::rna;
-
-		Pose pose = pose_input; // to prevent some problems with graphics thread
-
-		runtime_assert( pose.total_residue() == reference_pose.total_residue() );
-
-		//		TR << "MOD POSE  " <<  pose.annotated_sequence() << std::endl;
-		//		TR << "REFERENCE " << reference_pose.annotated_sequence() << std::endl;
-
-		for ( Size i = 1; i <= phosphate_move_list.size(); i++ ){
-			PhosphateMove const & phosphate_move = phosphate_move_list[ i ];
-			Size const & n = phosphate_move.rsd();
-			PhosphateTerminus const & terminus = phosphate_move.terminus();
-			//			TR << phosphate_move << std::endl;
-
-			utility::vector1< TorsionID > torsion_ids;
-			if ( terminus == FIVE_PRIME_PHOSPHATE ){
-				bool added_new_phosphate( false );
-				if ( pose.residue( n ).has_variant_type( "FIVE_PRIME_PHOSPHATE" ) ){
-					make_variants_match( pose, reference_pose, n, "FIVE_PRIME_PHOSPHATE" );
-					make_variants_match( pose, reference_pose, n, "VIRTUAL_PHOSPHATE" );
-					make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
-				} else { // order matters, since there's not variant with both virtual phosphate and five prime phosphate
-					make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
-					make_variants_match( pose, reference_pose, n, "VIRTUAL_PHOSPHATE" );
-					make_variants_match( pose, reference_pose, n, "FIVE_PRIME_PHOSPHATE" );
-					added_new_phosphate = pose.residue( n ).has_variant_type( "FIVE_PRIME_PHOSPHATE" );
-				}
-				if ( added_new_phosphate ){
-					correctly_position_five_prime_phosphate( pose, n);
-				}
-				torsion_ids.push_back( TorsionID( n, id::BB, ALPHA ) );
-				torsion_ids.push_back( TorsionID( n, id::BB, BETA ) );
-				torsion_ids.push_back( TorsionID( n, id::BB, GAMMA ) );
-			} else {
-				runtime_assert( terminus == THREE_PRIME_PHOSPHATE );
-				make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
-				make_variants_match( pose, reference_pose, n, "THREE_PRIME_PHOSPHATE" );
-				torsion_ids.push_back( TorsionID( n, id::BB, EPSILON ) );
-				torsion_ids.push_back( TorsionID( n, id::BB, ZETA ) );
-			}
-
-			for ( Size m = 1; m <= torsion_ids.size(); m++ ) {
-				pose.set_torsion( torsion_ids[m], reference_pose.torsion( torsion_ids[m] ) );
-			}
-
-			make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
-
-		}
-
-		pose_input = pose; // to prevent some problems with graphics thread
-
-	}
-
 
 	////////////////////////////////////////////////////////////////////////
 	pose::Pose &

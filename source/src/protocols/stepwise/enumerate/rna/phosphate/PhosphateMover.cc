@@ -105,6 +105,10 @@ namespace phosphate {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	PhosphateMover::setup_variants_and_free_pose_for_terminal_phosphate( pose::Pose & pose  ){
+
+		//		TR << pose.annotated_sequence() << std::endl;
+		//		TR << phosphate_move_ << std::endl;
+
 		if ( phosphate_move_.terminus() == FIVE_PRIME_PHOSPHATE ){
 			setup_variants_and_free_pose_for_five_prime_phosphate( pose );
 		} else {
@@ -123,6 +127,12 @@ namespace phosphate {
 		if ( pose.residue( sample_res ).has_variant_type( "FIVE_PRIME_PHOSPHATE" ) ){
 
 			runtime_assert( !pose.residue( sample_res ).has_variant_type( "VIRTUAL_PHOSPHATE" ) );
+			if ( pose.residue( sample_res ).has_variant_type( "VIRTUAL_RIBOSE" ) ){
+				std::cerr << pose.fold_tree() << std::endl;
+				std::cerr << pose.annotated_sequence() << std::endl;
+				std::cerr << phosphate_move_ << std::endl;
+			}
+
 			runtime_assert( !pose.residue( sample_res ).has_variant_type( "VIRTUAL_RIBOSE" ) );
 
 			pose_free_ = pose.clone();
@@ -136,8 +146,8 @@ namespace phosphate {
 			pose_free_ = pose.clone();
 
 			remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", sample_res );
-			remove_variant_type_from_pose_residue( pose, "LOWER_TERMINUS", sample_res );
-			remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", sample_res );
+			remove_variant_type_from_pose_residue( pose, "LOWER_TERMINUS",    sample_res );
+			remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE",    sample_res );
 			add_variant_type_to_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", sample_res );
 			correctly_position_five_prime_phosphate( pose, sample_res );
 
@@ -296,6 +306,12 @@ namespace phosphate {
 			}
 		}
 		//TR << "score for sample with 3' phosphate " << score_best << " vs free " << score_free;
+
+		std::cout << "WITH PHOSPHATE: " << std::endl;
+		scorefxn_->show( pose_best );
+		std::cout << "W/O  PHOSPHATE: " << std::endl;
+		scorefxn_->show( *pose_free_ );
+
 		if ( score_best < score_free || force_phosphate_instantiation_ ){
 			pose = pose_best;
 			instantiated_phosphate_ = true;

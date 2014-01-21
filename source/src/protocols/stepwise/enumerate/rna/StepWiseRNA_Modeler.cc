@@ -463,6 +463,12 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 		TR.Debug << "past job_parameters initialization " << std::endl;
 	}
 
+	// a little touch up. there is a re-rooting of the pose that happens later, but the pose is const here.
+	// however, this is our opportunity to update job_parameters.
+	utility::vector1< Size > root_partition_res, moving_partition_res;
+	figure_out_root_partition_res( pose, job_parameters, root_partition_res, moving_partition_res );
+	job_parameters->set_working_moving_partition_pos( moving_partition_res );
+
 	// If setup_job_parameters_for_stepwise_) is called, then the user has not supplied their own StepWiseRNA_JobParameters object to the modeler. This means that StepWiseRNAMinimizer will not be generating a move map on its own, so we need to supply it with an AllowInsert object in order to handle the possibility of variable bond geometries.
 	allow_insert_ = new toolbox::AllowInsert(pose); // Default constructor that allows everything to move
 
@@ -534,6 +540,8 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 		minimize_move_map_->set( TorsionID( suite_num+1, id::BB, 3 ), true ); // gamma
 	}
 
+	utility::vector1< Size > blah = job_parameters->working_moving_partition_pos();
+
 	return job_parameters;
 }
 
@@ -569,27 +577,56 @@ StepWiseRNA_Modeler::add_to_pose_list( utility::vector1< core::pose::PoseOP > & 
 	pose_list.push_back( pose_op );
 }
 
+
+///////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_Modeler::figure_out_root_partition_res( pose::Pose const & pose,
+																										StepWiseRNA_JobParametersCOP job_parameters,
+																										utility::vector1< Size > & root_partition_res,
+																										utility::vector1< Size > & moving_partition_res ){
+	root_partition_res.clear();
+	moving_partition_res.clear();
+	Size const & moving_res = job_parameters->working_moving_res();
+	if ( moving_res > 0 ){
+		ObjexxFCL::FArray1D < bool > const & partition_definition = job_parameters->partition_definition();
+		utility::vector1< Size > partition_res0, partition_res1;
+		for ( Size i = 1; i <= pose.total_residue(); i++ ){
+			if ( !partition_definition( i ) ) partition_res0.push_back( i );
+			else partition_res1.push_back( i );
+		}
+		int root_partition( -1 );
+		if ( partition_res0.size() > partition_res1.size() ){
+			root_partition = 0;
+			runtime_assert( partition_res1.has_value( moving_res ) );
+		} else if ( partition_res0.size() < partition_res1.size() ){
+			root_partition = 1;
+			runtime_assert( partition_res0.has_value( moving_res ) );
+		} else { // internal. moving_res corresponds to 5' residue of suite that is moved.
+			root_partition = ( partition_res1.has_value( moving_res ) );
+		}
+
+		if ( root_partition == 0 ){
+			for ( Size i = 1; i <= partition_res0.size(); i++ ) root_partition_res.push_back(   partition_res0[i] );
+			for ( Size i = 1; i <= partition_res1.size(); i++ ) moving_partition_res.push_back( partition_res1[i] );
+		} else {
+			for ( Size i = 1; i <= partition_res0.size(); i++ ) moving_partition_res.push_back( partition_res0[i] );
+			for ( Size i = 1; i <= partition_res1.size(); i++ ) root_partition_res.push_back(   partition_res1[i] );
+		}
+	} else {
+		for ( Size i = 1; i <= pose.total_residue(); i++ ) root_partition_res.push_back( i );
+	}
+
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_Modeler::setup_root_based_on_full_model_info( pose::Pose & pose, StepWiseRNA_JobParametersCOP & job_parameters ){
 
 	using namespace core::kinematics;
 
-	utility::vector1< Size > root_partition_res;
-	if ( job_parameters_->working_moving_res()  > 0 ){
-		ObjexxFCL::FArray1D < bool > const & partition_definition = job_parameters->partition_definition();
-		utility::vector1< Size > partition_res0, partition_res1;
-		for ( Size i = 1; i <= pose.total_residue(); i++ ){
-			if ( partition_definition( i ) ) partition_res0.push_back( i );
-			else partition_res1.push_back( i );
-		}
-		if ( partition_res0.size() == partition_res1.size() ) return;
-
-		bool const root_partition = ( partition_res0.size() > partition_res1.size() );
-		root_partition_res = root_partition ? partition_res0 : partition_res1;
-	} else {
-		for ( Size i = 1; i <= pose.total_residue(); i++ ) root_partition_res.push_back( i );
-	}
+	utility::vector1< Size > root_partition_res, moving_partition_res;
+	figure_out_root_partition_res( pose, job_parameters,
+																 root_partition_res, moving_partition_res );
 
 	Size new_root( 0 ), possible_root( 0 );
 	for ( Size n = 1; n <= root_partition_res.size(); n++ ){
@@ -598,15 +635,20 @@ StepWiseRNA_Modeler::setup_root_based_on_full_model_info( pose::Pose & pose, Ste
 		if ( definite_terminal_root( pose, i ) ) {
 			new_root = i; break;
 		}
-		if ( possible_root == 0) possible_root = i; // not as desirable, but sometimes necessary
+		if ( possible_root == 0 ) possible_root = i; // not as desirable, but sometimes necessary
 	}
 	if ( new_root == 0 ){
+		if ( possible_root == 0 ){
+			std::cerr << pose.fold_tree() << std::endl;
+			std::cerr << "MOVING_RES " <<  moving_res_list_ << std::endl;
+			std::cerr << "ROOT_PARTITION_RES " << root_partition_res << std::endl;
+			std::cerr << "MOVING_PARTITION_RES " << moving_partition_res << std::endl;
+		}
 		runtime_assert( possible_root > 0 );
 		new_root = possible_root;
 	}
 
 	FoldTree f = pose.fold_tree();
-	//	TR << TR.Red << "SETTING NEW ROOT " << new_root << " compared to old " << f.root() << TR.Reset << std::endl;
 	if ( new_root == f.root() ) return;
 	f.reorder( new_root );
 	pose.fold_tree( f );

@@ -89,12 +89,6 @@ namespace phosphate {
 																			 utility::vector1< Size > const & other_partition_res,
 																			 Vector const & takeoff_xyz ) const;
 
-
-		void
-		copy_over_phosphate_variants( pose::Pose & pose,
-																	pose::Pose const & reference_pose,
-																	utility::vector1< PhosphateMove > const & phosphate_move_list ) const;
-
 	private:
 
 		pose::PoseCOP pose_with_original_phosphates_;

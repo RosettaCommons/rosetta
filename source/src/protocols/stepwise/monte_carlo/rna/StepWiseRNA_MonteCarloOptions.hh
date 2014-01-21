@@ -160,6 +160,9 @@ namespace rna {
 		bool const & sampler_perform_phosphate_pack() const { return sampler_perform_phosphate_pack_; }
 		void set_sampler_perform_phosphate_pack( bool const & setting ){ sampler_perform_phosphate_pack_ = setting; }
 
+		bool const & rebuild_bulge_mode() const { return rebuild_bulge_mode_; }
+		void set_rebuild_bulge_mode( bool const & setting ){ rebuild_bulge_mode_ = setting; }
+
 	private:
 
 		bool verbose_scores_;
@@ -190,6 +193,7 @@ namespace rna {
 		core::Real constraint_tol_;
 		bool make_movie_;
 		bool sampler_perform_phosphate_pack_;
+		bool rebuild_bulge_mode_;
 		utility::vector1< core::Size > extra_minimize_res_;
 		utility::vector1< core::Size > syn_chi_res_list_;
 		utility::vector1< core::Size > terminal_res_;

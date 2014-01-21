@@ -16,18 +16,19 @@
 //////////////////////////////////
 #include <protocols/stepwise/enumerate/rna/sugar/StepWiseRNA_VirtualSugarSampler.hh>
 #include <protocols/stepwise/enumerate/rna/sugar/StepWiseRNA_VirtualSugarUtil.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_OutputData.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Modeler.hh> // for nice, encapsulated chain closer.
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_ModelerOptions.hh>
+#include <protocols/stepwise/enumerate/rna/phosphate/PhosphateUtil.hh>
 #include <protocols/stepwise/enumerate/rna/screener/StepWiseRNA_VDW_BinScreener.hh>
 #include <protocols/stepwise/enumerate/rna/screener/AtrRepScreener.hh>
 #include <protocols/stepwise/enumerate/rna/screener/ChainClosableScreener.hh>
 #include <protocols/stepwise/enumerate/rna/screener/ChainBreakScreener.hh>
-#include <protocols/farna/RNA_LoopCloser.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_JobParameters.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_OutputData.hh>
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Modeler.hh> // for nice, encapsulated chain closer.
+#include <protocols/stepwise/enumerate/rna/StepWiseRNA_ModelerOptions.hh>
 #include <protocols/rotamer_sampler/rna/RNA_SuiteRotamer.hh>
 #include <protocols/rotamer_sampler/rna/RNA_NucleosideRotamer.hh>
+#include <protocols/farna/RNA_LoopCloser.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/types.hh>
@@ -677,8 +678,9 @@ StepWiseRNA_VirtualSugarSampler::virtualize_distal_partition( pose::Pose & viewe
 	Pose pose = viewer_pose; // using a 'scratch' pose, because applying variants can confuse graphics viewers.
 	distal_partition_pos_.clear();
 	already_virtualized_res_list_.clear();
-	Size const nres = job_parameters_->working_sequence().size();
 
+
+	Size const nres = job_parameters_->working_sequence().size();
 	ObjexxFCL::FArray1D < bool > partition( nres, false );
 	Size const jump = pose.fold_tree().jump_nr( sugar_modeling_.moving_res, sugar_modeling_.reference_res );
 	runtime_assert( jump > 0 );
@@ -704,6 +706,9 @@ StepWiseRNA_VirtualSugarSampler::virtualize_distal_partition( pose::Pose & viewe
 		moving_phosphate_virtualized_ = true;
 	}
 
+	pose_with_original_terminal_phosphates_ = pose.clone();
+	phosphate::remove_terminal_phosphates( pose, distal_partition_pos_ );
+
 	for ( Size ii = 1; ii <= distal_partition_pos_.size(); ii++ ){
 		Size const seq_num = distal_partition_pos_[ii];
 		if ( pose.residue( seq_num ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
@@ -713,9 +718,6 @@ StepWiseRNA_VirtualSugarSampler::virtualize_distal_partition( pose::Pose & viewe
 		}
 	}
 
-	//	if ( job_parameters_->gap_size() == 0 ){
-	//		runtime_assert ( !pose.residue( job_parameters_->five_prime_chain_break_res() + 1 ).has_variant_type( "VIRTUAL_PHOSPHATE" ) );
-	//	}
 	viewer_pose = pose;
 }
 
@@ -740,6 +742,8 @@ StepWiseRNA_VirtualSugarSampler::reinstantiate_distal_partition( pose::Pose & cu
 		if ( already_virtualized_res_list_.has_value( seq_num ) ) continue;
 		pose::remove_variant_type_from_pose_residue( current_pose, "VIRTUAL_RNA_RESIDUE", seq_num );
 	}
+
+	phosphate::copy_over_phosphate_variants( current_pose, *pose_with_original_terminal_phosphates_, distal_partition_pos_ );
 	//	if ( job_parameters_->gap_size() == 0 ) {
 	//	//		pose::remove_variant_type_from_pose_residue( current_pose, "VIRTUAL_PHOSPHATE", job_parameters_->five_prime_chain_break_res() + 1 );
 	//	}

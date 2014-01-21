@@ -121,9 +121,6 @@ public:
 private:
 
 	utility::vector1< Size >
-	get_res_num_from_pdb_info( pose::Pose const & pose ) const;
-
-	utility::vector1< Size >
 	get_cutpoint_open_from_pdb_info( pose::Pose const & pose ) const;
 
 	void

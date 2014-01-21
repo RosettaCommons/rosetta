@@ -113,7 +113,7 @@ namespace monte_carlo {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	SWA_MoveSelector::get_resample_internal_move_elements( pose::Pose & pose,
-																								utility::vector1< SWA_Move > & swa_moves ) {
+																												 utility::vector1< SWA_Move > & swa_moves ) {
 		utility::vector1< SWA_Move > swa_moves_internal;
 		get_split_move_elements( pose, swa_moves_internal, RESAMPLE );
 		for ( Size n = 1; n <= swa_moves_internal.size(); n++ ) swa_moves.push_back( swa_moves_internal[ n ] );
@@ -242,13 +242,13 @@ namespace monte_carlo {
 				Size const anchor_res = get_anchor_res( partition_res1[1], pose );
 				AttachmentType type = ( anchor_res > partition_res1[1] ) ? JUMP_TO_NEXT_IN_CHAIN : JUMP_TO_PREV_IN_CHAIN;
 				swa_moves_split.push_back( SWA_Move( full_model_info.sub_to_full(partition_res1),
-																						 Attachment( full_model_info.sub_to_full(anchor_res), type ), DELETE ) );
+																						 Attachment( full_model_info.sub_to_full(anchor_res), type ), move_type ) );
 			}
 			if ( partition_res2.size() == 1 && check_for_fixed_domain_or_from_scratch( pose, partition_res1 ) ){
 				Size const anchor_res = get_anchor_res( partition_res2[1], pose );
 				AttachmentType type = ( anchor_res > partition_res2[1] ) ? JUMP_TO_NEXT_IN_CHAIN : JUMP_TO_PREV_IN_CHAIN;
 				swa_moves_split.push_back( SWA_Move( full_model_info.sub_to_full(partition_res2),
-																						 Attachment( full_model_info.sub_to_full(anchor_res), type ), DELETE ) );
+																						 Attachment( full_model_info.sub_to_full(anchor_res), type ), move_type ) );
 			}
 		}
 		for ( Size n = 1; n <= swa_moves_split.size(); n++ ) swa_moves.push_back( swa_moves_split[ n ] );

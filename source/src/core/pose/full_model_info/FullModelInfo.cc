@@ -121,22 +121,6 @@ FullModelInfo::FullModelInfo( FullModelInfo const & src ) :
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 FullModelInfo::~FullModelInfo(){}
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< Size >
-FullModelInfo::get_res_num_from_pdb_info( pose::Pose const & pose ) const {
-
-	utility::vector1< Size > resnum;
-
-	PDBInfoCOP pdb_info = pose.pdb_info();
-
-	if ( pdb_info )	{
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( pdb_info->number( n ) );
-	} else {
-		for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( n );
-	}
-
-	return resnum;
-}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void

@@ -1946,6 +1946,9 @@ rotate( pose::Pose & pose, Matrix const M,
 				 res_list[ res ] + 1 == res_list[ res + 1 ] &&
 				 ! cutpoint_open_in_full_model.has_value( res_list[ res ]) ) return;
 
+		if ( pose.residue_type( res ).has_variant_type( "FIVE_PRIME_PHOSPHATE" ) )  return;
+		if ( pose.residue_type( res ).has_variant_type( "THREE_PRIME_PHOSPHATE" ) ) return;
+
 		add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", res );
 
 	}

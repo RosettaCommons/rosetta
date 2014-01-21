@@ -443,6 +443,7 @@ check_full_model_info_OK( pose::Pose const & pose ){
 		if ( option[ full_model::cutpoint_open ].user()) cutpoint_open_in_full_model = option[ full_model::cutpoint_open ]();
 
 		utility::vector1< Size > input_res_list = option[ in::file::input_res ]();
+		bool const get_res_list_from_pdb = !option[ in::file::input_res ].user();
 		utility::vector1< utility::vector1< Size > > pose_res_lists;
 		utility::vector1< Size > domain_map( desired_sequence.size(), 0 );
 		Size input_res_count( 0 );
@@ -451,6 +452,11 @@ check_full_model_info_OK( pose::Pose const & pose ){
 
 			Pose & pose = *pose_pointers[n];
 			utility::vector1< Size > input_res_for_pose;
+
+			if ( get_res_list_from_pdb ){
+				utility::vector1< Size >  const res_list = get_res_num_from_pdb_info( pose );
+				for ( Size n = 1; n <= res_list.size(); n++ ) input_res_list.push_back( res_list[n] );
+			}
 
 			for ( Size k = 1; k <= pose.total_residue(); k++ ){
 				input_res_count++;
@@ -589,6 +595,23 @@ check_full_model_info_OK( pose::Pose const & pose ){
 		core::conformation::Residue const & rsd = get_residue( seqpos_in_full_model, pose, found_residue );
 		runtime_assert( found_residue );
 		return rsd;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< Size >
+	get_res_num_from_pdb_info( pose::Pose const & pose ) {
+
+		utility::vector1< Size > resnum;
+
+		PDBInfoCOP pdb_info = pose.pdb_info();
+
+		if ( pdb_info )	{
+			for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( pdb_info->number( n ) );
+		} else {
+			for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( n );
+		}
+
+		return resnum;
 	}
 
 }

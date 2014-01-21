@@ -99,6 +99,9 @@ namespace full_model_info {
 	get_residue( Size const seqpos_in_full_model,
 							 pose::Pose const & pose );
 
+	utility::vector1< Size >
+	get_res_num_from_pdb_info( pose::Pose const & pose );
+
 
 }
 }

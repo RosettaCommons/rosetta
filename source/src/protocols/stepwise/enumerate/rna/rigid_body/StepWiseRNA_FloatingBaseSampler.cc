@@ -330,11 +330,18 @@ StepWiseRNA_FloatingBaseSampler::apply( core::pose::Pose & pose ){
 void
 StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_screeners( pose::Pose & pose  ){
 
-	// Basic setup. This is a floating base, after all.
-	pose::remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", moving_res_ );
-	pose::remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", moving_res_ );
-	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", moving_res_ );
-	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", moving_res_ );
+	// cleanup variants for pose -- remove terminal phosphates on floating base
+	// it would be more general instead to split and 'prepack' phosphates with MultiPhosphateScreener
+	// that function would also hold for ClassicResidueSampler.
+	remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", moving_res_ );
+	remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", moving_res_ );
+	if ( !pose.residue( moving_res_ ).has_variant_type( "CUTPOINT_UPPER" ) ) {
+		add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", moving_res_ );
+	}
+	if ( !pose.residue( moving_res_ ).has_variant_type( "CUTPOINT_UPPER" ) &&
+			 !pose.residue( moving_res_ ).has_variant_type( "CUTPOINT_LOWER" ) ){
+		add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", moving_res_ );
+	}
 
 	//runtime_assert( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_PHOSPHATE" ) );
 	//	runtime_assert( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_RIBOSE" ) );
@@ -348,12 +355,13 @@ StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_screeners( pose:
 
 	////////////////////////////////////////Screeners///////////////////////////////////////////////////
 	VDW_bin_screener_ = new screener::StepWiseRNA_VDW_BinScreener();
+	// perhaps this should use the screening_pose_, which has terminal phosphates virtualized too.
 	VDW_bin_screener_->setup_using_working_pose( pose_with_virtual_O2prime_hydrogen, job_parameters_ );
 	if ( user_input_VDW_bin_screener_ ) user_input_VDW_bin_screener_->reference_xyz_consistency_check( reference_stub_.v );
 
 	screening_pose_ = pose_with_virtual_O2prime_hydrogen.clone(); //Hard copy, used for clash checking
 	phosphate::remove_terminal_phosphates( *screening_pose_ );
-	if ( close_chain_to_distal_ ) pose::add_variant_type_to_pose_residue( *screening_pose_, "VIRTUAL_PHOSPHATE", five_prime_chain_break_res_ + 1 ); //May 31, 2010
+	if ( close_chain_to_distal_ ) add_variant_type_to_pose_residue( *screening_pose_, "VIRTUAL_PHOSPHATE", five_prime_chain_break_res_ + 1 ); //May 31, 2010
 
 	sugar_screening_pose_ = screening_pose_->clone(); //Hard copy. Used for trying out sugar at moving residue.
 	pose::remove_variant_type_from_pose_residue( *sugar_screening_pose_, "VIRTUAL_RIBOSE", moving_res_ );
@@ -373,11 +381,18 @@ StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_screeners( pose:
 	if ( options_->sampler_perform_phosphate_pack() ){
 		phosphate_sampler_ = new phosphate::MultiPhosphateSampler( pose );
 		utility::vector1< Size > const & working_moving_partition_pos_ = job_parameters_->working_moving_partition_pos();
+		if ( working_moving_partition_pos_.size() != 1 ){
+			std::cerr << pose.fold_tree() << std::endl;
+			std::cerr << pose.annotated_sequence() << std::endl;
+			std::cerr << "MOVING_RES " << moving_res_ << std::endl;
+			std::cerr << "PARTITION_POS " << working_moving_partition_pos_ << std::endl;
+		}
 		runtime_assert( working_moving_partition_pos_.size() == 1 ); //generalize later.
 		phosphate_sampler_->set_moving_partition_res( working_moving_partition_pos_ );
 	}
 
-	atr_rep_screener_ = new screener::AtrRepScreener( pose_with_virtual_O2prime_hydrogen, job_parameters_ );
+	//	atr_rep_screener_ = new screener::AtrRepScreener( pose_with_virtual_O2prime_hydrogen, job_parameters_ );
+	atr_rep_screener_ = new screener::AtrRepScreener( *screening_pose_, job_parameters_ );
 	atr_rep_screener_with_instantiated_sugar_ = new screener::AtrRepScreener( *sugar_screening_pose_, job_parameters_ );
 
 	// this seems like overkill, but anchor sugar modeling can involve minimizing, and the 'anchor' residue moves.
