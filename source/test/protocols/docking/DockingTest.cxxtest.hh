@@ -21,6 +21,7 @@
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/docking/DockingHighRes.hh>
+#include <protocols/docking/EllipsoidalRandomizationMover.hh>
 
 // Package headers
 #include <protocols/docking/metrics.hh>
@@ -44,6 +45,10 @@
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+
+#include <basic/options/option.hh> //needed to set option
+// option key includes
+#include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/vector0.hh>
@@ -219,7 +224,7 @@ public:
 		UT << std::endl;
 		centroid_pose.dump_pdb(UT);
 	}
-
+	
 	void test_DockingRigidBodyMinimize() {
 		using protocols::simple_moves::MinMover;
 		using protocols::simple_moves::MinMoverOP;
@@ -253,5 +258,60 @@ public:
 		TS_ASSERT( dockerprot1->docking_highres_mover() != dockerprot2->docking_highres_mover() );
 		TS_ASSERT( dockerprot1->perturber() != dockerprot2->perturber() );
 		TS_ASSERT( dynamic_cast< protocols::simple_moves::SwitchResidueTypeSetMover const * > ( dockerprot2->to_centroid()() ) );
+	}
+	
+	void test_EllipsoidalRandomizationMover() {
+		using protocols::docking::EllipsoidalRandomizationMover;
+		
+		basic::options::option[ basic::options::OptionKeys::docking::partners ].value( "E_I" );
+		
+		protocols::docking::EllipsoidalRandomizationMoverOP mover = new EllipsoidalRandomizationMover( rb_jump, false );
+		mover->apply( fullatom_pose );
+		
+		core::Real a_axis = mover->get_a_axis();
+		core::Real b_axis = mover->get_b_axis();
+		core::Real c_axis = mover->get_c_axis();
+		
+		core::Vector c_alpha_centroid = mover->get_c_alpha_centroid();
+		core::Vector c_alpha_plane_centroid = mover->get_spin_center();
+		core::Vector c_alpha_non_ellipsoid_centroid = mover->get_c_alpha_non_ellipsoid_centroid();
+		
+		core::Vector random_point_on_ellipsoid = mover->get_random_point_on_ellipsoid();
+		core::Real should_be_one = ( random_point_on_ellipsoid.x() * random_point_on_ellipsoid.x() ) / ( a_axis * a_axis ) +
+									( random_point_on_ellipsoid.y() * random_point_on_ellipsoid.y() ) / ( b_axis * b_axis ) +
+									( random_point_on_ellipsoid.z() * random_point_on_ellipsoid.z() ) / ( c_axis * c_axis );
+		
+		core::Vector ellipsoid_normal = mover->normal_to_ellipsoid( random_point_on_ellipsoid );
+		core::Real should_be_one_too = ( ellipsoid_normal.x() * ellipsoid_normal.x()) +
+										( ellipsoid_normal.y() * ellipsoid_normal.y()) +
+										( ellipsoid_normal.z() * ellipsoid_normal.z());
+		
+		core::Vector normal_to_plane = mover->get_normal_to_plane();
+		core::Vector slide_axis = mover->get_slide_axis();
+		
+		core::Real beta_sample = mover->single_beta_sample( 1.0, 1.0 );
+		
+		core::Real tolerance = 0.001;
+				
+		TS_ASSERT_DELTA( a_axis, 11.586, tolerance );
+		TS_ASSERT_DELTA( b_axis, 8.331, tolerance );
+		TS_ASSERT_DELTA( c_axis, 15.997, tolerance );
+		TS_ASSERT_DELTA( c_alpha_centroid.x(), 44.094, tolerance );
+		TS_ASSERT_DELTA( c_alpha_centroid.y(), 33.088, tolerance );
+		TS_ASSERT_DELTA( c_alpha_centroid.z(), 33.046, tolerance );
+		TS_ASSERT_DELTA( c_alpha_plane_centroid.x(), 31.114, tolerance );
+		TS_ASSERT_DELTA( c_alpha_plane_centroid.y(), 29.683, tolerance );
+		TS_ASSERT_DELTA( c_alpha_plane_centroid.z(), 29.135, tolerance );
+		TS_ASSERT_DELTA( c_alpha_non_ellipsoid_centroid.x(), 23.415, tolerance );
+		TS_ASSERT_DELTA( c_alpha_non_ellipsoid_centroid.y(), 26.422, tolerance );
+		TS_ASSERT_DELTA( c_alpha_non_ellipsoid_centroid.z(), 22.750, tolerance );
+		TS_ASSERT_DELTA( should_be_one, 1.000, tolerance );
+		TS_ASSERT_DELTA( should_be_one_too, 1.000, tolerance );
+		TS_ASSERT_DELTA( normal_to_plane.x(), -1.0 * slide_axis.x(), tolerance );
+		TS_ASSERT_DELTA( normal_to_plane.y(), -1.0 * slide_axis.y(), tolerance );
+		TS_ASSERT_DELTA( normal_to_plane.z(), -1.0 * slide_axis.z(), tolerance );
+		TS_ASSERT( beta_sample >= 0.0 );
+		TS_ASSERT( beta_sample <= 1.0 );
+		
 	}
 };

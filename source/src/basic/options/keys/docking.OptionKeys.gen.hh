@@ -32,6 +32,7 @@ namespace docking { extern BooleanOptionKey const docking_local_refine; }
 namespace docking { extern BooleanOptionKey const low_res_protocol_only; }
 namespace docking { extern BooleanOptionKey const randomize1; }
 namespace docking { extern BooleanOptionKey const randomize2; }
+namespace docking { extern BooleanOptionKey const use_ellipsoidal_randomization; }
 namespace docking { extern BooleanOptionKey const spin; }
 namespace docking { extern RealVectorOptionKey const dock_pert; }
 namespace docking { extern RealOptionKey const uniform_trans; }

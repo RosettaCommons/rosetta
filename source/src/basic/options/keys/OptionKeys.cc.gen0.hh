@@ -312,6 +312,7 @@ namespace docking { BooleanOptionKey const docking_local_refine( "docking:dockin
 namespace docking { BooleanOptionKey const low_res_protocol_only( "docking:low_res_protocol_only" );  }
 namespace docking { BooleanOptionKey const randomize1( "docking:randomize1" );  }
 namespace docking { BooleanOptionKey const randomize2( "docking:randomize2" );  }
+namespace docking { BooleanOptionKey const use_ellipsoidal_randomization( "docking:use_ellipsoidal_randomization" );  }
 namespace docking { BooleanOptionKey const spin( "docking:spin" );  }
 namespace docking { RealVectorOptionKey const dock_pert( "docking:dock_pert" );  }
 namespace docking { RealOptionKey const uniform_trans( "docking:uniform_trans" );  }

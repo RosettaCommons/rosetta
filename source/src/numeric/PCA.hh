@@ -41,7 +41,25 @@ namespace numeric {
 	template< typename T >
 	inline
 	xyzMatrix< T >
-	principal_components( utility::vector1< xyzVector< T > > const & coords )
+	principal_components( utility::vector1< xyzVector< T > > const & coords ){
+		return principal_components_and_eigenvalues(coords).first;
+	}
+	
+	/// @brief return a vector containing the eigenvalues corresponding to the
+	/// first 3 principal components of the given set of points.
+	template< typename T >
+	inline
+	xyzVector< T >
+	principal_component_eigenvalues( utility::vector1< xyzVector< T > > const & coords ){
+		return principal_components_and_eigenvalues(coords).second;
+	}
+	
+	/// @brief return a pair containing a matrix of the first 3 principal components
+	/// and a vector of the corresponding eigenvalues of the given set of points.
+	template< typename T >
+	inline
+	std::pair<xyzMatrix<T>, xyzVector<T> >
+	principal_components_and_eigenvalues( utility::vector1< xyzVector< T > > const & coords )
 	{
 		Size n_coords = coords.size();
 		
@@ -85,9 +103,18 @@ namespace numeric {
 		sorted_evecs.col_y(sorted_val_vec_pairs[2].second);
 		sorted_evecs.col_z(sorted_val_vec_pairs[3].second);
 		
-		return sorted_evecs;
+		xyzVector< T > sorted_evals;
+		sorted_evals.x(sorted_val_vec_pairs[1].first);
+		sorted_evals.y(sorted_val_vec_pairs[2].first);
+		sorted_evals.z(sorted_val_vec_pairs[3].first);
+		
+		std::pair<xyzMatrix<T>, xyzVector<T> > evecs_and_evals;
+		evecs_and_evals = (std::make_pair(sorted_evecs, sorted_evals));
+		
+		return evecs_and_evals;
 	}
 
+	
 }//namespace
 
 #endif  // INCLUDED_numeric_PCA_hh

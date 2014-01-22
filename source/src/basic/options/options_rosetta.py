@@ -812,6 +812,11 @@ Options = Option_Group( '',
 			desc='Randomize the second docking partner.',
 			default='false'
 			),
+		Option('use_ellipsoidal_randomization', 'Boolean',
+			short='Use ellipsoidal docking randomization.',
+			desc='Modify docking randomization to use ellipsoidal rather than spherical method.',
+			default='false'
+			),
 		Option('spin', 'Boolean',
 			short='Spin a second docking partner.',
 			desc='Spin a second docking partner around axes from center of mass of partner1 to partner2',

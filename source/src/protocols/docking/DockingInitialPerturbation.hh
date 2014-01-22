@@ -88,6 +88,9 @@ public:
 	/// @brief set functions
 	void set_randomize1(bool randomize1){ randomize1_ = randomize1; }
 	void set_randomize2(bool randomize2){ randomize2_ = randomize2; }
+	void set_use_ellipsoidal_randomization(bool use_ellipsoidal_randomization){
+		use_ellipsoidal_randomization_ = use_ellipsoidal_randomization;
+	}
 	void set_dock_pert(utility::vector1< core::Real > dock_pert){
 		dock_pert_ = dock_pert;
 		if_dock_pert_ = true;
@@ -118,6 +121,7 @@ private:
 
 	bool randomize1_;
 	bool randomize2_;
+	bool use_ellipsoidal_randomization_;
 	bool spin_;
 	bool if_dock_pert_;
 	bool if_uniform_trans_;
@@ -126,6 +130,9 @@ private:
 
 	utility::vector1< core::Real > dock_pert_;
 	core::Real uniform_trans_;
+	
+	core::Vector slide_axis_;
+	core::Vector spin_center_;
 
 	protocols::docking::RigidBodyInfoOP rigid_body_info_;
 };  // class DockingInitialPerturbation
@@ -140,6 +147,8 @@ public:
 
 	// constructor with arguments
 	DockingSlideIntoContact( core::Size const rb_jump );
+	
+	DockingSlideIntoContact( core::Size const rb_jump, core::Vector const slide_axis );
 
 	//destructor
 	~DockingSlideIntoContact();
@@ -155,6 +164,7 @@ private:
 
 	// which jump to use for docking
 	core::Size rb_jump_;
+	core::Vector slide_axis_; //used if a specific slide axis is specified in the constructor
 };  // class DockingSlideIntoContact
 
 std::ostream &operator<< ( std::ostream &os, DockingSlideIntoContact const &mover );

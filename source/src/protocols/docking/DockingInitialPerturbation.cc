@@ -23,6 +23,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/docking/RigidBodyInfo.hh> // zhe
+#include <protocols/docking/EllipsoidalRandomizationMover.hh> // NM
 #include <basic/datacache/DataMap.hh> // zhe
 
 #include <core/pose/Pose.hh>
@@ -158,12 +159,15 @@ DockingInitialPerturbation::set_default()
 {
 	randomize1_ = false;
 	randomize2_ = false;
+	use_ellipsoidal_randomization_ = false;
 	if_dock_pert_ = false;
 	if_uniform_trans_ = false;
 	spin_ = false;
 	center_at_interface_ = false;
 	//	dock_pert_ = new utility::vector1< Real >(NULL);
 	//	uniform_trans_ = NULL;
+	slide_axis_.zero();
+	spin_center_.zero();
 }
 
 protocols::moves::MoverOP
@@ -189,6 +193,9 @@ DockingInitialPerturbation::init_from_options()
 
 	if ( option[ OptionKeys::docking::randomize2 ].user() )
 		set_randomize2(option[ OptionKeys::docking::randomize2 ]());
+	
+	if ( option[ OptionKeys::docking::use_ellipsoidal_randomization ].user() )
+		set_use_ellipsoidal_randomization(option[ OptionKeys::docking::use_ellipsoidal_randomization ]());
 
 	if ( option[ OptionKeys::docking::dock_pert ].user() )
 		set_dock_pert(option[ OptionKeys::docking::dock_pert ]());
@@ -211,6 +218,7 @@ DockingInitialPerturbation::register_options()
 
 	option.add_relevant( OptionKeys::docking::randomize1 );
 	option.add_relevant( OptionKeys::docking::randomize2 );
+	option.add_relevant( OptionKeys::docking::use_ellipsoidal_randomization );
 	option.add_relevant( OptionKeys::docking::dock_pert );
 	option.add_relevant( OptionKeys::docking::uniform_trans );
 	option.add_relevant( OptionKeys::docking::spin );
@@ -262,13 +270,40 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 
 	if ( randomize1_ ) {
 		TR << "randomize1: true" << std::endl;
+		if ( use_ellipsoidal_randomization_ ) {
+			TR << "use_ellipsoidal_randomization: true" << std::endl;
+			EllipsoidalRandomizationMover mover( jump_number, true );
+			mover.apply( pose );
+			slide_axis_ = mover.get_slide_axis();
+			spin_center_ = mover.get_spin_center();
+			// Partners need to start in contact for ellipsoidal randomization to work
+			if ( randomize2_ && !pose.is_fullatom() ) {
+				DockingSlideIntoContact slide( jump_number, slide_axis_ );
+				slide.apply( pose );
+				TR.Debug << "centroid mode, DockingSlideIntoContact applied" << std::endl;
+			} else if ( randomize2_ ) {
+				FaDockingSlideIntoContact slide( jump_number, slide_axis_ );
+				slide.apply( pose );
+				TR.Debug << "fa-standard mode, FaDockingSlideIntoContact applied" << std::endl;
+			}
+		} else {
 		rigid::RigidBodyRandomizeMover mover( pose, jump_number, rigid::partner_upstream );
 		mover.apply( pose );
+		}
 	}
+	
 	if ( randomize2_ ) {
 		TR << "randomize2: true" << std::endl;
+		if ( use_ellipsoidal_randomization_ ) {
+			TR << "use_ellipsoidal_randomization: true" << std::endl;
+			EllipsoidalRandomizationMover mover( jump_number, false );
+			mover.apply( pose );
+			slide_axis_ = mover.get_slide_axis();
+			spin_center_ = mover.get_spin_center();
+		} else {
 		rigid::RigidBodyRandomizeMover mover( pose, jump_number, rigid::partner_downstream );
 		mover.apply( pose );
+		}
 	}
 	if ( if_dock_pert_ ) {
 		// DO NOT supply default values for this option -- reasonable values differ for protein and ligand protocols.
@@ -300,15 +335,19 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 	if ( spin_ ) {
 		TR << "axis_spin: true" << std::endl;
 		rigid::RigidBodySpinMover mover( jump_number );
+		if (slide_axis_.length() != 0){
+			mover.spin_axis( slide_axis_ );
+			mover.rot_center( spin_center_ );
+		}
 		mover.apply( pose );
 	}
 	// DO NOT do this for e.g. ligand docking
 	if ( slide_ && !pose.is_fullatom() ) {
-		DockingSlideIntoContact slide( jump_number );
+		DockingSlideIntoContact slide( jump_number, slide_axis_ );
 		slide.apply( pose );
 		TR.Debug << "centroid mode, DockingSlideIntoContact applied" << std::endl;
 	} else if ( slide_ ) {
-		FaDockingSlideIntoContact slide( jump_number );
+		FaDockingSlideIntoContact slide( jump_number, slide_axis_ );
 		slide.apply( pose );
 		TR.Debug << "fa-standard mode, FaDockingSlideIntoContact applied" << std::endl;
 	}
@@ -345,6 +384,10 @@ DockingInitialPerturbation::parse_my_tag(
 	if ( tag->hasOption( "randomize2" ) ) {
 		set_randomize2( tag->getOption<bool>( "randomize2" ) );
 	}
+	
+	if ( tag->hasOption( "use_ellipsoidal_randomization" ) ) {
+		set_use_ellipsoidal_randomization( tag->getOption<bool>( "use_ellipsoidal_randomization" ) );
+	}
 
 	if ( tag->hasOption( "dock_pert" ) && tag->getOption<bool>( "dock_pert" ) ) {
 		dock_pert_.push_back( tag->getOption<core::Real>("trans" ) );
@@ -376,6 +419,7 @@ DockingSlideIntoContact::DockingSlideIntoContact() : Mover()
 	using namespace core::scoring;
 	Mover::type( "DockingSlideIntoContact" );
 	rb_jump_ = 1;
+	slide_axis_(0.0);
 	scorefxn_ = ScoreFunctionFactory::create_score_function( CENTROID_WTS, DOCK_LOW_PATCH );
 	scorefxn_ = ScoreFunctionFactory::create_score_function( "interchain_cen" );
 }
@@ -383,7 +427,7 @@ DockingSlideIntoContact::DockingSlideIntoContact() : Mover()
 //constructor
 DockingSlideIntoContact::DockingSlideIntoContact(
 		core::Size const rb_jump
-) : Mover(), rb_jump_(rb_jump)
+) : Mover(), rb_jump_(rb_jump), slide_axis_(0.0)
 {
 	using namespace core::scoring;
 	Mover::type( "DockingSlideIntoContact" );
@@ -391,6 +435,17 @@ DockingSlideIntoContact::DockingSlideIntoContact(
 	scorefxn_ = ScoreFunctionFactory::create_score_function( "interchain_cen" );
 }
 
+DockingSlideIntoContact::DockingSlideIntoContact(
+	core::Size const rb_jump,
+	core::Vector const slide_axis
+): Mover(), rb_jump_(rb_jump), slide_axis_(slide_axis)
+{
+	using namespace core::scoring;
+	Mover::type( "DockingSlideIntoContact" );
+	scorefxn_ = ScoreFunctionFactory::create_score_function( CENTROID_WTS, DOCK_LOW_PATCH );
+	scorefxn_ = ScoreFunctionFactory::create_score_function( "interchain_cen" );
+}
+	
 //destructor
 DockingSlideIntoContact::~DockingSlideIntoContact() {}
 
@@ -399,7 +454,14 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 {
 	using namespace moves;
 
-	rigid::RigidBodyTransMover mover( pose, rb_jump_ );
+	rigid::RigidBodyTransMoverOP mover;
+	
+	if (slide_axis_.length() != 0){
+		mover = new rigid::RigidBodyTransMover( slide_axis_, rb_jump_ );
+	}
+	else{
+		mover = new rigid::RigidBodyTransMover( pose, rb_jump_ );
+	}
 	( *scorefxn_ )( pose );
 
 	TR << "sliding into contact" << std::endl;
@@ -408,7 +470,7 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 	core::Size counter( 0 );
 	// first try moving away from each other
 	while ( pose.energies().total_energies()[ scoring::interchain_vdw ] > 0.1 && counter <= counter_breakpoint ) {
-		mover.apply( pose );
+		mover->apply( pose );
 		( *scorefxn_ )( pose );
 		++counter;
 	}
@@ -420,9 +482,9 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 	counter = 0;
 	// then try moving towards each other
 	TR << "Moving together" << std::endl;
-	mover.trans_axis().negate();
+	mover->trans_axis().negate();
 	while ( counter <= counter_breakpoint && pose.energies().total_energies()[ scoring::interchain_vdw ] < 0.1 ) {
-		mover.apply( pose );
+		mover->apply( pose );
 		( *scorefxn_ )( pose );
 		++counter;
 	}
@@ -432,8 +494,8 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 		return;
 	}
 	// move away again until just touching
-	mover.trans_axis().negate();
-	mover.apply( pose );
+	mover->trans_axis().negate();
+	mover->apply( pose );
 }
 
 std::string

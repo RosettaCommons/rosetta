@@ -317,6 +317,7 @@ option.add( basic::options::OptionKeys::docking::docking_local_refine, "Do a loc
 option.add( basic::options::OptionKeys::docking::low_res_protocol_only, "Run only low resolution docking, skip high resolution docking" ).shortd( "Only low resolution" ).def(false);
 option.add( basic::options::OptionKeys::docking::randomize1, "Randomize the first docking partner." ).shortd( "Randomize the first docking partner." ).def(false);
 option.add( basic::options::OptionKeys::docking::randomize2, "Randomize the second docking partner." ).shortd( "Randomize the second docking partner." ).def(false);
+option.add( basic::options::OptionKeys::docking::use_ellipsoidal_randomization, "Modify docking randomization to use ellipsoidal rather than spherical method." ).shortd( "Use ellipsoidal docking randomization." ).def(false);
 option.add( basic::options::OptionKeys::docking::spin, "Spin a second docking partner around axes from center of mass of partner1 to partner2" ).shortd( "Spin a second docking partner." ).def(false);
 option.add( basic::options::OptionKeys::docking::dock_pert, "Do a small perturbation with partner two: -dock_pert ANGSTROMS DEGREES.  Good values for protein docking are 3 A and 8 deg." ).shortd( "Do a small perturbation with partner two: -dock_pert ANGSTROMS DEGREES." ).n(2);
 option.add( basic::options::OptionKeys::docking::uniform_trans, "No description" ).shortd( "Uniform random repositioning within a sphere of the given radius." );
