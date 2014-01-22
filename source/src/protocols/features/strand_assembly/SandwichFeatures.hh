@@ -942,6 +942,9 @@ private:
 	bool
 	write_electrostatic_interactions_of_all_residues_;
 
+	bool
+	write_beta_sheet_capping_info_;
+
 	core::Size
 	max_starting_loop_size_;
 
@@ -983,6 +986,9 @@ private:
 
 	core::Real
 	allowed_deviation_for_turn_type_id_;
+
+	int
+	primary_seq_distance_cutoff_for_beta_sheet_capping_;
 
 	core::Real
 	distance_cutoff_for_electrostatic_interactions_;

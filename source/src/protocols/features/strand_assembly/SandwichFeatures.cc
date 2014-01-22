@@ -753,6 +753,7 @@ SandwichFeatures::get_full_strands_from_sheet(
 	return all_strands;
 }
 
+
 void
 SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 	string	tag,
@@ -1235,29 +1236,111 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 
 	float	avg_number_of_longer_range_ion_pair	=	std::accumulate(vec_number_of_longer_range_ion_pair.begin(),		vec_number_of_longer_range_ion_pair.end(),	0)	/	static_cast<float>(vec_number_of_longer_range_ion_pair.size());
 
-	int	min_attrac	=	*std::min_element(vec_number_of_attractions_by_centroid.begin(),	vec_number_of_attractions_by_centroid.end());
-	int	max_attrac	=	*std::max_element(vec_number_of_attractions_by_centroid.begin(),	vec_number_of_attractions_by_centroid.end());
 
-	int	min_repul	=	*std::min_element(vec_number_of_repulsions_by_centroid.begin(),	vec_number_of_repulsions_by_centroid.end());
-	int	max_repul	=	*std::max_element(vec_number_of_repulsions_by_centroid.begin(),	vec_number_of_repulsions_by_centroid.end());
+	int	min_attrac;
+	int	max_attrac;
+	if (vec_number_of_attractions_by_centroid.size()	==	0)
+	{
+		min_attrac	=	0;
+		max_attrac	=	0;
+	}
+	else
+	{
+		min_attrac	=	*std::min_element(vec_number_of_attractions_by_centroid.begin(),	vec_number_of_attractions_by_centroid.end());
+		max_attrac	=	*std::max_element(vec_number_of_attractions_by_centroid.begin(),	vec_number_of_attractions_by_centroid.end());
+	}
 
-	int	min_net_attrac	=	*std::min_element(vec_net_attrac_by_centroid.begin(),	vec_net_attrac_by_centroid.end());
-	int	max_net_attrac	=	*std::max_element(vec_net_attrac_by_centroid.begin(),	vec_net_attrac_by_centroid.end());
 
-	int	min_salt_bridge	=	*std::min_element(vec_number_of_salt_bridges.begin(),	vec_number_of_salt_bridges.end());
-	int	max_salt_bridge	=	*std::max_element(vec_number_of_salt_bridges.begin(),	vec_number_of_salt_bridges.end());
+	int	min_repul;
+	int	max_repul;
+	if (vec_number_of_repulsions_by_centroid.size()	==	0)
+	{
+		min_repul	=	0;
+		max_repul	=	0;
+	}
+	else
+	{
+		min_repul	=	*std::min_element(vec_number_of_repulsions_by_centroid.begin(),	vec_number_of_repulsions_by_centroid.end());
+		max_repul	=	*std::max_element(vec_number_of_repulsions_by_centroid.begin(),	vec_number_of_repulsions_by_centroid.end());
+	}
 
-	int	min_CC_bridge	=	*std::min_element(vec_number_of_CC_bridges.begin(),	vec_number_of_CC_bridges.end());
-	int	max_CC_bridge	=	*std::max_element(vec_number_of_CC_bridges.begin(),	vec_number_of_CC_bridges.end());
+	int	min_net_attrac;
+	int	max_net_attrac;
+	if	(vec_net_attrac_by_centroid.size()	==	0)
+	{
+		min_net_attrac	=	0;
+		max_net_attrac	=	0;
+	}
+	else
+	{
+		min_net_attrac	=	*std::min_element(vec_net_attrac_by_centroid.begin(),	vec_net_attrac_by_centroid.end());
+		max_net_attrac	=	*std::max_element(vec_net_attrac_by_centroid.begin(),	vec_net_attrac_by_centroid.end());
+	}
 
-	int	min_NO_bridge	=	*std::min_element(vec_number_of_NO_bridges.begin(),	vec_number_of_NO_bridges.end());
-	int	max_NO_bridge	=	*std::max_element(vec_number_of_NO_bridges.begin(),	vec_number_of_NO_bridges.end());
+	int	min_salt_bridge;
+	int	max_salt_bridge;
+	if (vec_number_of_salt_bridges.size()	==	0)
+	{
+		min_salt_bridge	=	0;
+		max_salt_bridge	=	0;
+	}
+	else
+	{
+		min_salt_bridge	=	*std::min_element(vec_number_of_salt_bridges.begin(),	vec_number_of_salt_bridges.end());
+		max_salt_bridge	=	*std::max_element(vec_number_of_salt_bridges.begin(),	vec_number_of_salt_bridges.end());
+	}
 
-	int	min_sum_of_salt_CC_NO_bridges	=	*std::min_element(vec_sum_of_salt_CC_NO_bridges.begin(),	vec_sum_of_salt_CC_NO_bridges.end());
-	int	max_sum_of_salt_CC_NO_bridges	=	*std::max_element(vec_sum_of_salt_CC_NO_bridges.begin(),	vec_sum_of_salt_CC_NO_bridges.end());
+	int	min_CC_bridge;
+	int	max_CC_bridge;
+	if (vec_number_of_CC_bridges.size()	==	0)
+	{
+		min_CC_bridge	=	0;
+		max_CC_bridge	=	0;
+	}
+	else
+	{
+		min_CC_bridge	=	*std::min_element(vec_number_of_CC_bridges.begin(),	vec_number_of_CC_bridges.end());
+		max_CC_bridge	=	*std::max_element(vec_number_of_CC_bridges.begin(),	vec_number_of_CC_bridges.end());
+	}
 
-	int	min_number_of_longer_range_ion_pair	=	*std::min_element(vec_number_of_longer_range_ion_pair.begin(),	vec_number_of_longer_range_ion_pair.end());
-	int	max_number_of_longer_range_ion_pair	=	*std::max_element(vec_number_of_longer_range_ion_pair.begin(),	vec_number_of_longer_range_ion_pair.end());
+	int	min_NO_bridge;
+	int	max_NO_bridge;
+	if (vec_number_of_NO_bridges.size()	==	0)
+	{
+		min_NO_bridge	=	0;
+		max_NO_bridge	=	0;
+	}
+	else
+	{
+		min_NO_bridge	=	*std::min_element(vec_number_of_NO_bridges.begin(),	vec_number_of_NO_bridges.end());
+		max_NO_bridge	=	*std::max_element(vec_number_of_NO_bridges.begin(),	vec_number_of_NO_bridges.end());
+	}
+
+	int	min_sum_of_salt_CC_NO_bridges;
+	int	max_sum_of_salt_CC_NO_bridges;
+	if	(vec_sum_of_salt_CC_NO_bridges.size()	==	0)
+	{
+		min_sum_of_salt_CC_NO_bridges	=	0;
+		max_sum_of_salt_CC_NO_bridges	=	0;
+	}
+	else
+	{
+		min_sum_of_salt_CC_NO_bridges	=	*std::min_element(vec_sum_of_salt_CC_NO_bridges.begin(),	vec_sum_of_salt_CC_NO_bridges.end());
+		max_sum_of_salt_CC_NO_bridges	=	*std::max_element(vec_sum_of_salt_CC_NO_bridges.begin(),	vec_sum_of_salt_CC_NO_bridges.end());
+	}
+
+	int	min_number_of_longer_range_ion_pair;
+	int	max_number_of_longer_range_ion_pair;
+	if (vec_number_of_longer_range_ion_pair.size()	==	0)
+	{
+		min_number_of_longer_range_ion_pair	=	0;
+		max_number_of_longer_range_ion_pair	=	0;
+	}
+	else
+	{
+		min_number_of_longer_range_ion_pair	=	*std::min_element(vec_number_of_longer_range_ion_pair.begin(),	vec_number_of_longer_range_ion_pair.end());
+		max_number_of_longer_range_ion_pair	=	*std::max_element(vec_number_of_longer_range_ion_pair.begin(),	vec_number_of_longer_range_ion_pair.end());
+	}
 
 	ElectroStatic_file	<<	"avg	(min~max)	";
 	ElectroStatic_file	<< round_to_float(avg_attrac)	<<	" ("	<<	min_attrac	<<	"~"	<<	max_attrac	<<	")	";
@@ -7028,6 +7111,8 @@ SandwichFeatures::parse_my_tag(
 
 	allowed_deviation_for_turn_type_id_ = tag->getOption<Real>("allowed_deviation_for_turn_type_id", 40.0);
 
+	primary_seq_distance_cutoff_for_beta_sheet_capping_ = tag->getOption<int>("primary_seq_distance_cutoff_for_beta_sheet_capping", 2);
+
 
 	///	electrostatic_interactions related
 	distance_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("distance_cutoff_for_electrostatic_interactions", 7.0);
@@ -7038,7 +7123,7 @@ SandwichFeatures::parse_my_tag(
 		//"Values of 60 or greater may imply disorder (for example, free movement of a side chain or alternative side-chain conformations). Values of 20 and 5 correspond to uncertainties of 0.5 and 0.25 angstroms, respectively."
 		// source: http://spdbv.vital-it.ch/TheMolecularLevel/SPVTut/text/STut09aTN.html
 
-	primary_seq_distance_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("primary_seq_distance_cutoff_for_electrostatic_interactions", 4);
+	primary_seq_distance_cutoff_for_electrostatic_interactions_ = tag->getOption<Size>("primary_seq_distance_cutoff_for_electrostatic_interactions", 4);
 		// rationale for default value: I hypothesize that electrostatic interaction between 38E and 41K of Tencon do not stabilize that much
 
 
@@ -7075,7 +7160,8 @@ SandwichFeatures::parse_my_tag(
 	write_electrostatic_interactions_of_surface_residues_in_a_strand_ = tag->getOption<bool>("write_electrostatic_interactions_of_surface_residues_in_a_strand", false);
 	write_electrostatic_interactions_of_all_residues_in_a_strand_ = tag->getOption<bool>("write_electrostatic_interactions_of_all_residues_in_a_strand", false);
 	write_electrostatic_interactions_of_all_residues_ = tag->getOption<bool>("write_electrostatic_interactions_of_all_residues", false);
-
+	write_beta_sheet_capping_info_ = tag->getOption<bool>("write_beta_sheet_capping_info", false);
+		// reference: 2008_beta-Sheet capping- Signals that initiate and terminate beta-sheet formation, Journal of Structural Biology FarzadFard et al.,
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -7144,6 +7230,7 @@ SandwichFeatures::report_features(
 		write_electrostatic_interactions_of_surface_residues_in_a_strand_	=	true;
 		write_electrostatic_interactions_of_all_residues_in_a_strand_	=	true;
 		write_electrostatic_interactions_of_all_residues_	=	true;
+		write_beta_sheet_capping_info_	=	true;
 	}
 
 
@@ -7710,8 +7797,6 @@ SandwichFeatures::report_features(
 		//// <end> count AA with direction
 	}
 
-
-
 /////////////////// <end> fill a table 'sw_by_components' by secondary_structure_segments
 		TR.Info << "<end> fill a table 'sw_by_components' by secondary_structure_segments" << endl;
 
@@ -8272,6 +8357,129 @@ SandwichFeatures::report_features(
 	}
 	/// <end> write_electrostatic_interactions_of_surface_residues_in_a_strand
 
+
+	// <begin> write_beta_sheet_capping_info_
+	if (write_beta_sheet_capping_info_ && canonical_sw_extracted_from_this_pdb_file)
+	{
+		int	number_of_strands_where_capping_is_checked	=	0;
+		int	number_of_strands_with_2_cappings	=	0;
+		int	number_of_strands_with_1_capping	=	0;
+
+		utility::vector1<Size> residue_begin_of_strands_with_1_capping;
+		utility::vector1<Size> residue_begin_of_strands_with_0_capping;
+
+		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++) // per each beta-strand
+		{
+			int residue_begin	=	bs_of_sw_can_by_sh[ii].get_start();
+			int residue_end	=	bs_of_sw_can_by_sh[ii].get_end();
+			if (residue_end	-	residue_begin	<	2)
+			{
+				continue;	// this strand should be too short like "short_edge"
+			}
+			number_of_strands_where_capping_is_checked++;
+
+			bool	capping_near_begin	=	false;
+			bool	capping_near_end	=	false;
+			for(int jj	=	residue_begin	-	primary_seq_distance_cutoff_for_beta_sheet_capping_;
+				jj	<=	residue_begin	+	primary_seq_distance_cutoff_for_beta_sheet_capping_;
+				jj++) // per each beta-strand
+			{
+				if	(jj	<=	0)
+				{
+					capping_near_begin	=	true;	// I assume that capping_near_begin is not necessary for the first strand
+					break;
+					//continue;
+				}
+				if (
+				(pose.residue_type(jj).name3() == "GLY")
+				||	(pose.residue_type(jj).name3() == "ASP")
+				||	(pose.residue_type(jj).name3() == "ASN")
+				||	(pose.residue_type(jj).name3() == "PRO")
+				)
+				{
+					capping_near_begin	=	true;
+					break;
+				}
+			}
+			for(int jj	=	residue_end	-	primary_seq_distance_cutoff_for_beta_sheet_capping_;
+				jj	<=	residue_end	+	primary_seq_distance_cutoff_for_beta_sheet_capping_;
+				jj++) // per each beta-strand
+			{
+				if	(jj	>	static_cast<int>(pose.total_residue()))
+				{
+					capping_near_end	=	true;	// I assume that capping_near_end is not necessary for the last strand
+					break;
+					//continue;
+				}
+				if (
+				(pose.residue_type(jj).name3() == "GLY")
+				||	(pose.residue_type(jj).name3() == "ASP")
+				||	(pose.residue_type(jj).name3() == "ASN")
+				||	(pose.residue_type(jj).name3() == "PRO")
+				)
+				{
+					capping_near_end	=	true;
+					break;
+				}
+			}
+			if (capping_near_begin	&&	capping_near_end)
+			{
+				number_of_strands_with_2_cappings++;
+			}
+			else if	(capping_near_begin	||	capping_near_end)
+			{
+				number_of_strands_with_1_capping++;
+				residue_begin_of_strands_with_1_capping.push_back(residue_begin);
+			}
+			else
+			{
+				residue_begin_of_strands_with_0_capping.push_back(residue_begin);
+			}
+		}
+		Size tag_len = tag.length();
+		string pdb_file_name = tag.substr(0, tag_len-5);
+		string info_file_name = pdb_file_name + "_beta_sheet_capping_info.txt";
+		ofstream info_file;
+
+		info_file.open(info_file_name.c_str());
+		info_file << "number_of_strands_where_capping_is_checked	number_of_strands_with_2_cappings	number_of_strands_with_1_capping		number_of_strands_with_0_capping	residue_begin_of_strands_with_1_capping	residue_begin_of_strands_with_0_capping" << endl;
+
+		info_file
+			<< number_of_strands_where_capping_is_checked << "	"
+			<< number_of_strands_with_2_cappings	<<	"	"
+			<< number_of_strands_with_1_capping	<<	"	"
+			<<	number_of_strands_where_capping_is_checked	-	number_of_strands_with_2_cappings	-	number_of_strands_with_1_capping	<<	"	";
+
+		for	(Size	kk	=	1;		kk	<=	residue_begin_of_strands_with_1_capping.size();	kk++)
+		{
+			if (kk	==	residue_begin_of_strands_with_1_capping.size())
+			{
+				info_file <<	residue_begin_of_strands_with_1_capping[kk];
+			}
+			else
+			{
+				info_file <<	residue_begin_of_strands_with_1_capping[kk]	<<	",";
+			}
+		}
+
+		info_file << "	";
+
+		for	(Size	kk	=	1;		kk	<=	residue_begin_of_strands_with_0_capping.size();	kk++)
+		{
+			if (kk	==	residue_begin_of_strands_with_0_capping.size())
+			{
+				info_file <<	residue_begin_of_strands_with_0_capping[kk];
+			}
+			else
+			{
+				info_file <<	residue_begin_of_strands_with_0_capping[kk]	<<	",";
+			}
+		}
+
+		info_file << endl;
+		info_file.close();
+	}
+	// <end> write_beta_sheet_capping_info_
 
 
 	// <begin> write AA_dis to a file
