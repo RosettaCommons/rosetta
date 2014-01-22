@@ -5551,7 +5551,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		  Option( 'sampler_cluster_rmsd', 'Real', desc= " Clustering rmsd of conformations in the sampler", default='0.5' ), #DO NOT CHANGE THIS,
 		  Option( 'native_edensity_score_cutoff', 'Real', desc= "native_edensity_score_cutoff", default='-1.0' ), #Fang's electron density code,
 		  Option( 'sampler_perform_o2prime_pack', 'Boolean', desc= "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", default='true' ),
-		  Option( 'sampler_perform_phosphate_pack', 'Boolean', desc= "perform terminal phosphate packing inside StepWiseRNA_ResidueSampler", default='false' ),
+		  Option( 'sampler_perform_phosphate_pack', 'Boolean', desc= "perform terminal phosphate packing inside StepWiseRNA_ResidueSampler", default='true' ),
 		  Option( 'sampler_use_green_packer', 'Boolean', desc= "use packer instead of rotamer trials for O2' optimization", default='false' ),
 		  Option( 'VERBOSE', 'Boolean', desc= "VERBOSE", default='false' ),
 		  Option( 'distinguish_pucker', 'Boolean', desc= "distinguish pucker when cluster:both in sampler and clusterer", default='true' ),

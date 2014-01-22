@@ -101,13 +101,7 @@ namespace rna {
 
 		// do the slice.
 		PoseOP sliced_out_pose_op = new Pose;
-		TR << "BEFORE SPLIT: " << pose.annotated_sequence() << std::endl;
-		TR << "BEFORE SPLIT: " << pose.fold_tree() << std::endl;
 		slice_out_pose( pose, *sliced_out_pose_op, residues_to_delete );
-		TR << "AFTER SPLIT1: " << pose.annotated_sequence() << std::endl;
-		TR << "AFTER SPLIT1: " << pose.fold_tree() << std::endl;
-		TR << "AFTER SPLIT2: " << sliced_out_pose_op->annotated_sequence() << std::endl;
-		TR << "AFTER SPLIT2: " << sliced_out_pose_op->fold_tree() << std::endl;
 
 		// get rid of pieces that are single residues. no need to hold on to those.
 		bool keep_remainder_pose( true ), keep_sliced_out_pose( true );

@@ -69,7 +69,7 @@ namespace rna {
 		cluster_rmsd_ = 0.5;
 		native_edensity_score_cutoff_ = -1;
 		sampler_perform_o2prime_pack_ = true;
-		sampler_perform_phosphate_pack_ = false;
+		sampler_perform_phosphate_pack_ = true;
 		use_green_packer_ = false;
 		verbose_ = false;
 		distinguish_pucker_ = true;

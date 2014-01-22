@@ -1,0 +1,8 @@
+-s nobulge_motif_solution_RNA.pdb 
+-input_res 1-2 4 6-7 8-13 
+-full_model:cutpoint_open 7 
+-fasta motif_solution.fasta  
+-output_virtual  
+-do_screening  
+-set_weights rna_torsion 1.0 
+-screen_all_phosphates

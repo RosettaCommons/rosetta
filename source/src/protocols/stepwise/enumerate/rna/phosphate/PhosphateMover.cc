@@ -307,11 +307,6 @@ namespace phosphate {
 		}
 		//TR << "score for sample with 3' phosphate " << score_best << " vs free " << score_free;
 
-		std::cout << "WITH PHOSPHATE: " << std::endl;
-		scorefxn_->show( pose_best );
-		std::cout << "W/O  PHOSPHATE: " << std::endl;
-		scorefxn_->show( *pose_free_ );
-
 		if ( score_best < score_free || force_phosphate_instantiation_ ){
 			pose = pose_best;
 			instantiated_phosphate_ = true;

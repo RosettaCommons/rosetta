@@ -61,16 +61,13 @@ namespace phosphate {
 	MultiPhosphateSampler::sample_phosphates(){
 
 		phosphate_move_list_ = initialize_phosphate_move_list( *phosphate_sample_pose_ );
-		TR << "About to sample (all): " << phosphate_move_list_.size() << std::endl;
 		copy_over_phosphate_variants( *phosphate_sample_pose_, *pose_with_original_phosphates_, phosphate_move_list_ );
-		TR << "About to sample (aCtual): " << actual_phosphate_move_list_.size() << std::endl;
 
 		actual_phosphate_move_list_ = check_moved( phosphate_move_list_, *phosphate_sample_pose_ );
 
 		// note that the mover will instantiate or virtualize phosphates as it sees fit.
 		instantiated_some_phosphate_ = false;
 		for ( Size i = 1; i <= actual_phosphate_move_list_.size(); i++ ){
-			TR << "About to sample: " << actual_phosphate_move_list_[i] << std::endl;
 			PhosphateMover phosphate_mover( actual_phosphate_move_list_[i], scorefxn_ );
 			phosphate_mover.apply( *phosphate_sample_pose_ );
 			if ( phosphate_mover.instantiated_phosphate() ) instantiated_some_phosphate_ = true;

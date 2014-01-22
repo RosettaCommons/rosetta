@@ -58,7 +58,7 @@ namespace rna {
 		constraint_x0_( 0.0 ),
 		constraint_tol_( 0.0 ),
 		make_movie_( false ),
-		sampler_perform_phosphate_pack_( false ),
+		sampler_perform_phosphate_pack_( true ),
 		rebuild_bulge_mode_( false )
 	{}
 
