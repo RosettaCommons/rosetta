@@ -108,46 +108,93 @@ RmsdFilter::compute( core::pose::Pose const & pose ) const
 	core::pose::Pose native = *reference_pose_;
 	core::Real rmsd( 0.0 );
   if ( specify_both_spans_ ) {
-		if (CA_only_) {
-			std::map<core::Size, core::Size> correspondence;
-	    for (core::Size i=0; i<end_native_-begin_native_; ++i)
-				correspondence[begin_native_+i]=begin_pose_+i;
-			rmsd=core::scoring::CA_rmsd( native, copy_pose, correspondence);
+
+    if (CA_only_) {
+      if ( superimpose_ ) {
+         FArray2D_double pose_coordinates_;
+         FArray2D_double ref_coordinates_;
+         pose_coordinates_.redimension(3, 1*(end_native_-begin_native_), 0.0);
+         ref_coordinates_.redimension(3, 1*(end_native_-begin_native_), 0.0);
+
+        core::Size n_at = 1;
+         for (core::Size i = 0; i < end_native_-begin_native_; ++i) {
+           for (core::Size d = 1; d <= 3; ++d) {
+             pose_coordinates_(d, n_at) = copy_pose.xyz(core::id::NamedAtomID("CA", begin_pose_+i))[d - 1];
+             ref_coordinates_(d, n_at) = native.xyz(core::id::NamedAtomID("CA", begin_native_+i))[d - 1];
+           }
+           n_at++;
+        }
+
+        rmsd = numeric::model_quality::rms_wrapper((end_native_-begin_native_), pose_coordinates_, ref_coordinates_);
+    } else {
+        core::Real sum2( 0.0 );
+        core::Size natoms( 0 );
+        for (core::Size i = 0; i < end_native_-begin_native_; ++i) {
+            core::Vector diff = copy_pose.xyz(core::id::NamedAtomID("CA", begin_pose_+i))-native.xyz(core::id::NamedAtomID("CA", begin_native_+i));
+            sum2 += diff.length_squared();
+            natoms += 1;
+        }
+        rmsd = std::sqrt(sum2 / natoms);
+    }
+
 	} else {
+
+    if ( superimpose_ ) {
       FArray2D_double pose_coordinates_;
       FArray2D_double ref_coordinates_;
       pose_coordinates_.redimension(3, 4*(end_native_-begin_native_), 0.0);
       ref_coordinates_.redimension(3, 4*(end_native_-begin_native_), 0.0);
-  
+
       core::Size n_at = 1;
       for (core::Size i = 0; i < end_native_-begin_native_; ++i) {
-  
+
         for (core::Size d = 1; d <= 3; ++d) {
           pose_coordinates_(d, n_at) = copy_pose.xyz(core::id::NamedAtomID("N", begin_pose_+i))[d - 1];
           ref_coordinates_(d, n_at) = native.xyz(core::id::NamedAtomID("N", begin_native_+i))[d - 1];
         }
         n_at++;
-  
+
         for (core::Size d = 1; d <= 3; ++d) {
           pose_coordinates_(d, n_at) = copy_pose.xyz(core::id::NamedAtomID("CA", begin_pose_+i))[d - 1];
           ref_coordinates_(d, n_at) = native.xyz(core::id::NamedAtomID("CA", begin_native_+i))[d - 1];
         }
         n_at++;
-  
+
         for (core::Size d = 1; d <= 3; ++d) {
           pose_coordinates_(d, n_at) = copy_pose.xyz(core::id::NamedAtomID("C", begin_pose_+i))[d - 1];
           ref_coordinates_(d, n_at) = native.xyz(core::id::NamedAtomID("C", begin_native_+i))[d - 1];
         }
         n_at++;
-  
+
         for (core::Size d = 1; d <= 3; ++d) {
           pose_coordinates_(d, n_at) = copy_pose.xyz(core::id::NamedAtomID("O", begin_pose_+i))[d - 1];
           ref_coordinates_(d, n_at) = native.xyz(core::id::NamedAtomID("O", begin_native_+i))[d - 1];
         }
         n_at++;
       }
- 		 rmsd = numeric::model_quality::rms_wrapper(4*(end_native_-begin_native_), pose_coordinates_, ref_coordinates_);
+
+     rmsd = numeric::model_quality::rms_wrapper(4*(end_native_-begin_native_), pose_coordinates_, ref_coordinates_);
+    } else {
+        core::Real sum2( 0.0 );
+        core::Size natoms( 0 );
+        for (core::Size i = 0; i < end_native_-begin_native_; ++i) {
+            core::Vector diff1 = copy_pose.xyz(core::id::NamedAtomID("N", begin_pose_+i))-native.xyz(core::id::NamedAtomID("N", begin_native_+i));
+            sum2 += diff1.length_squared();
+            natoms += 1;
+            core::Vector diff2 = copy_pose.xyz(core::id::NamedAtomID("CA", begin_pose_+i))-native.xyz(core::id::NamedAtomID("CA", begin_native_+i));
+            sum2 += diff2.length_squared();
+            natoms += 1;
+            core::Vector diff3 = copy_pose.xyz(core::id::NamedAtomID("C", begin_pose_+i))-native.xyz(core::id::NamedAtomID("C", begin_native_+i));
+            sum2 += diff3.length_squared();
+            natoms += 1;
+            core::Vector diff4 = copy_pose.xyz(core::id::NamedAtomID("O", begin_pose_+i))-native.xyz(core::id::NamedAtomID("O", begin_native_+i));
+            sum2 += diff4.length_squared();
+            natoms += 1;
+        }
+      rmsd = std::sqrt(sum2 / natoms);
+    }
   }
+
 
 		return rmsd;
 	}
