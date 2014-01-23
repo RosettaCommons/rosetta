@@ -413,16 +413,12 @@ ProteinSilentStruct_Template<T>::fill_struct(
 			//			utility_exit();
 	}
 
-	decoy_tag( tag );
-	if ( tag == "empty_tag" ) set_tag_from_pose( pose );
+  SilentStruct::fill_struct( pose, tag );
 
 	using namespace core::chemical;
 	fullatom( pose.is_fullatom() );
 
-	energies_from_pose( pose );
-
 	// conformation information
-	sequence( pose.annotated_sequence( true /* show-all-variants */ ) );
 	resize( pose.total_residue() );
 	static const std::string important_atom = "CA";
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {

@@ -127,17 +127,10 @@ BinaryProteinSilentStruct::fill_struct(
 	core::pose::Pose const & pose,
 	std::string tag
 ) {
-	tr.Trace << "binary:fill_struct... " << std::endl;
-	decoy_tag( tag );
 
-	if ( tag == "empty_tag" ) set_tag_from_pose( pose );
+  Parent::fill_struct( pose, tag );
 
 	fullatom( pose.is_fullatom() );
-	tr.Trace << "get energies from pose..." << std::endl;
-	energies_from_pose( pose );
-
-	// conformation information
-	sequence( pose.annotated_sequence( true ) );
 
 	if( !core::pose::symmetry::is_symmetric(pose) ) {
 		resize( pose.total_residue() );

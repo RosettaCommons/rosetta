@@ -135,6 +135,17 @@ void SilentStruct::fill_pose(
 	tr.Error << "SilentStruct::fill_pose method stubbed out!" << std::endl;
 }
 
+void SilentStruct::fill_struct( core::pose::Pose const & pose,
+                                std::string tag ) {
+	decoy_tag( tag );
+	if ( tag == "empty_tag" ) set_tag_from_pose( pose );
+
+  tr.Trace << "get energies from pose..." << std::endl;
+  energies_from_pose( pose );
+
+  sequence( pose.annotated_sequence( true /* show-all-variants */ ) );
+}
+
 void SilentStruct::finish_pose(
 	core::pose::Pose & pose
 ) const

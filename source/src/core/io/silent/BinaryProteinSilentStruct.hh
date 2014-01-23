@@ -46,6 +46,8 @@ namespace silent {
 //class BinaryProteinSilentStruct : public ProteinSilentStruct {
 class BinaryProteinSilentStruct : public SilentStruct {
 
+  typedef SilentStruct Parent;
+
 public:
 
 	/// @brief Constructors.

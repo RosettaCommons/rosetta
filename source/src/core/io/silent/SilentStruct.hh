@@ -95,11 +95,14 @@ namespace silent {
 		scoreline_prefix( std::string const & prefix );
 		std::string scoreline_prefix() const;
 
-		/// @brief opposite of fill_pose
+		/// @brief opposite of fill_pose -- superclass provides
+    /// functionality used by most SilentStruct types, and is
+    /// optionally called at the beginning of the subclass's
+    /// fill_struct method. As of this writing, used only by
+    /// protein SilentStructs
 		virtual void fill_struct(
 			core::pose::Pose const & pose,
-			std::string tag = "empty_tag"
-		) = 0;
+			std::string tag = "empty_tag" );
 
 		/// @brief calls optH if command line requests optH.
 		/// must be called by derived classes.

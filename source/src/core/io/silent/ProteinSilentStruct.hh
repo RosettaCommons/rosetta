@@ -44,6 +44,8 @@ namespace silent {
 template <class T>
 class ProteinSilentStruct_Template : public SilentStruct {
 
+typedef SilentStruct Parent;
+
 public:
 	ProteinSilentStruct_Template(
 		core::pose::Pose const & pose,
