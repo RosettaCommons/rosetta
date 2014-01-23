@@ -1536,10 +1536,10 @@ option.add( basic::options::OptionKeys::casp::sequential, "should mutations be c
 option.add( basic::options::OptionKeys::casp::num_iterations, "number of iterations to perform" );
 option.add( basic::options::OptionKeys::casp::weight_file, "what weight-file to use?" );
 option.add( basic::options::OptionKeys::casp::refine_res, "specifies file that contains which residues to refine" );
+option.add( basic::options::OptionKeys::pose_metrics::pose_metrics, "pose_metrics option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::pose_metrics::pose_metrics, "pose_metrics option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff, " maximum SASA that is allowed for an atom to count as buried for the BuriedUnsatisfiedPolarsCalculator" ).def(0.3);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff, " maximum SASA that is allowed for an atom to count as buried for the BuriedUnsatisfiedPolarsCalculator" ).def(0.3);
 option.add( basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius, " the probe radius used in the SASA calculator (and thus implicitly in the BuriedUnsatisfiedPolarsCalculator" ).def(1.4);
 option.add( basic::options::OptionKeys::pose_metrics::interface_cutoff, "distance in angstroms (def. 10.0) for calculating what residues are at an interface via InterfaceNeighborDefinitionCalculator" ).def(10.0);
 option.add( basic::options::OptionKeys::pose_metrics::min_sequence_separation, " minimum number of sequence positions that two residues need to be apart to count as nonlocal in the NonlocalContactsCalculator" ).def(6);
@@ -2303,11 +2303,11 @@ option.add( basic::options::OptionKeys::hotspot::angle_res, "Residue to use for 
 option.add( basic::options::OptionKeys::parser::parser, "parser option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::parser::protocol, "File name for the xml parser protocol" );
 option.add( basic::options::OptionKeys::parser::script_vars, "Variable substitutions for xml parser, in the form of name=value" );
+option.add( basic::options::OptionKeys::parser::view, "Use the viewer?" );
+option.add( basic::options::OptionKeys::parser::patchdock, "Patchdock output file name." );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::parser::view, "Use the viewer?" );
-option.add( basic::options::OptionKeys::parser::patchdock, "Patchdock output file name." );
-option.add( basic::options::OptionKeys::parser::patchdock_random_entry, "Pick a random patchdock entry between two entry numbers. inclusive" ).n(2);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::parser::patchdock_random_entry, "Pick a random patchdock entry between two entry numbers. inclusive" ).n(2);
 option.add( basic::options::OptionKeys::DomainAssembly::DomainAssembly, "DomainAssembly option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DomainAssembly::da_setup, "run DomainAssembly setup routine" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::DomainAssembly::da_setup_option_file, "input list of pdbs and linker sequences" ).def("--");
@@ -2589,6 +2589,7 @@ option.add( basic::options::OptionKeys::antibody::camelid_constraints, "Display 
 option.add( basic::options::OptionKeys::antibody::design::design, "design option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::antibody::design::instructions, "Path for instruction file" ).def("/sampling/antibodies/design/default_instructions.txt");
 option.add( basic::options::OptionKeys::antibody::design::antibody_database, "Path to the Antibody Database.  Download from dunbrack.fccc.edu" ).def("/sampling/antibodies/antibody_database_rosetta.db");
+option.add( basic::options::OptionKeys::antibody::design::design_cdrs, "Design these CDRs in graft and sequence design steps (if enabled).  Use instead of an instruction file.  If an instruction file is given, will override FIX options for both stages." );
 option.add( basic::options::OptionKeys::antibody::design::do_graft_design, "Run the GraftDesign step for low-resolution cluster-based CDR structural sampling. Overrides instruction file." ).def(true);
 option.add( basic::options::OptionKeys::antibody::design::do_post_graft_design_modeling, "Run dock/min modeling step after the graft design step if run." ).def(false);
 option.add( basic::options::OptionKeys::antibody::design::do_sequence_design, "Run the CDRDesign step for high-resolution cluster-based CDR sequence design. Overrides instruction file." ).def(true);
@@ -2598,16 +2599,16 @@ option.add( basic::options::OptionKeys::antibody::design::top_graft_designs, "Nu
 option.add( basic::options::OptionKeys::antibody::design::initial_perturb, "Run the docking perturber post graft.  Controlled by command-line flags.  See docking manual.  It will at least slide into contact." ).def(false);
 option.add( basic::options::OptionKeys::antibody::design::use_deterministic, "Use the deterministic algorithm if graft rounds is <= number of possible permutations.  This involves multiple grafts per permutation in random CDR order, but always starts with the starting structure.  You only try each full permutation once, but no monte carlo boltzmann propagation of good models or designs occur.  Will still, however, keep the top x best structures found after each graft round has completed." ).def(false);
 option.add( basic::options::OptionKeys::antibody::design::dump_post_graft_designs, "Write the top ensembles to file directly after the graft-design step and after any optional modeling." ).def(false);
-option.add( basic::options::OptionKeys::antibody::design::interface_dis, "Interface distance cutoff.  Used for repacking of interface, etc." ).def(4.0);
-option.add( basic::options::OptionKeys::antibody::design::neighbor_dis, "Neighbor distance cutoff.  Used for repacking after graft, minimization, etc." ).def(3.5);
+option.add( basic::options::OptionKeys::antibody::design::interface_dis, "Interface distance cutoff.  Used for repacking of interface, etc." ).def(6.0);
+option.add( basic::options::OptionKeys::antibody::design::neighbor_dis, "Neighbor distance cutoff.  Used for repacking after graft, minimization, etc." ).def(4.0);
 option.add( basic::options::OptionKeys::antibody::design::dock_post_graft, "Run a short lowres + highres docking step after each graft and before any minimization. Inner/Outer loops for highres are hard coded, while low-res can be changed through regular low_res options." ).def(false);
 option.add( basic::options::OptionKeys::antibody::design::pack_post_graft, "Pack CDR and neighbors after each graft.  Before any docking or minimization." ).def(true);
 option.add( basic::options::OptionKeys::antibody::design::rb_min_post_graft, "Minimize the ab-ag interface post graft and any docking/cdr min by minimizing the jump" ).def(false);
 option.add( basic::options::OptionKeys::antibody::design::design_post_graft, "Design during any time the packer is called post graft.  This includes relax, high-res docking, etc.  Used to increasing sampling of potential designs." ).def(false);
-option.add( basic::options::OptionKeys::antibody::design::dock_rounds, "Number of rounds for post_graft docking.  If you are seeing badly docked structures, increase this value." ).def(1);
+option.add( basic::options::OptionKeys::antibody::design::dock_rounds, "Number of rounds for post_graft docking.  If you are seeing badly docked structures, increase this value." ).def(2);
 option.add( basic::options::OptionKeys::antibody::design::ab_dock_chains, "Override the antibody dock chains.  Used for if your creating a bivalent antibody where only L or H is docking antigen.  Also used if you are creating an antibody where you are only interested in L or H primarily being the binding site.  Changing the default is not recommended for general use." ).def("LH");
 option.add( basic::options::OptionKeys::antibody::design::design_method, "Design method to use." ).legal("fixbb").legal("flxbb").legal("relaxed_design").def("fixbb");
-option.add( basic::options::OptionKeys::antibody::design::design_rounds, "Number of CDRDesign rounds" ).def(3);
+option.add( basic::options::OptionKeys::antibody::design::design_rounds, "Number of CDRDesign rounds.  If using relaxed_design, only one round recommended." ).def(3);
 option.add( basic::options::OptionKeys::antibody::design::design_scorefxn, "Scorefunction to use during design.  Orbitals_talaris2013_softrep works well for fixedbb, orbitals_talaris2013 works well for relaxed design. If not set will use the main scorefunction set." );
 option.add( basic::options::OptionKeys::antibody::design::benchmark_basic_design, "Used to benchmark basic design vs probabilistic vs conservative.  Not for general use." ).def(false);
 option.add( basic::options::OptionKeys::antibody::design::use_filters, "Use filters after graft step and design step.  Defaults false for now to optimize sensitivity" ).def(false);
@@ -2615,6 +2616,7 @@ option.add( basic::options::OptionKeys::antibody::design::stats_cutoff, "Value f
 option.add( basic::options::OptionKeys::antibody::design::sample_zero_probs_at, "Value for probabilstic design.  Probability that a normally zero prob will be chosen as a potential residue each time packer task is called.  Increase to increase variablility of positions.  Use with caution." ).def(0);
 option.add( basic::options::OptionKeys::antibody::design::conservative_h3_design, "Use a conservative strategy for H3 design. Instructions file overwrites this setting" ).def(true);
 option.add( basic::options::OptionKeys::antibody::design::turn_conservation, "try to conserve turn structure using known turn-based conservative mutations during conservative design." ).def(true);
+option.add( basic::options::OptionKeys::antibody::design::extend_native_cdrs, "extend native CDRs as part of the graft design step.  Used for benchmarking" ).def(false);
 option.add( basic::options::OptionKeys::flexPepDocking::flexPepDocking, "flexPepDocking option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::flexPepDocking::params_file, "parameters file that describe the complex details, like anchor residues, etc." );
 option.add( basic::options::OptionKeys::flexPepDocking::peptide_anchor, "Set the peptide anchor residue mannualy (instead of using the center of mass" ).lower(1).def(1);

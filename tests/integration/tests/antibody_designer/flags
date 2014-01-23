@@ -15,7 +15,7 @@
 
 -antibody:design:do_post_design_modeling false
 -antibody:design:do_post_graft_design_modeling false
-
+#-antibody:design:randomize_graft_cdrs true
 -antibody:design:dock_post_graft true
 -antibody:design:top_graft_designs 2
 
@@ -25,6 +25,7 @@
 -antibody:design:interface_dis 1.0
 -antibody:design:neighbor_dis 1.0
 
+-antibody:design:dump_post_graft_designs
 -run:test_cycles # reduce the number of high resolution snugdock cycles
 -loops:max_inner_cycles 3 # make the ccd loop refinement go faster
 -docking:docking_centroid_outer_cycles 1 # make the low resolution docking phase of the test fast

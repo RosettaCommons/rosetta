@@ -692,6 +692,8 @@ _Note that some application specific options may not be present in this list._
 <dd>Randomize the first docking partner.<br/>Default: false<br/></dd>
 <dt><b>-randomize2</b> \<Boolean\></dt>
 <dd>Randomize the second docking partner.<br/>Default: false<br/></dd>
+<dt><b>-use_ellipsoidal_randomization</b> \<Boolean\></dt>
+<dd>Modify docking randomization to use ellipsoidal rather than spherical method.<br/>Default: false<br/></dd>
 <dt><b>-spin</b> \<Boolean\></dt>
 <dd>Spin a second docking partner around axes from center of mass of partner1 to partner2<br/>Default: false<br/></dd>
 <dt><b>-dock_pert</b> \<RealVector\></dt>
@@ -1908,6 +1910,8 @@ _Note that some application specific options may not be present in this list._
 <dd>Amount to reward virtualization of a sugar/ribose<br/>Default: -1.0<br/></dd>
 <dt><b>-syn_G_potential_bonus</b> \<Real\></dt>
 <dd>Amount to reward syn chi conformation of guanosine<br/>Default: 0.0<br/></dd>
+<dt><b>-pack_phosphate_penalty</b> \<Real\></dt>
+<dd>Amount to penalize instantiation of a 5' or 3' phosphate<br/>Default: 0.25<br/></dd>
 <dt><b>-rg_local_span</b> \<IntegerVector\></dt>
 <dd>First,last res in rg_local. For example to calc rg_local from 1-20 would be 1,20<br/>Default: 0<br/></dd>
 <dt><b>-unmodifypot</b> \<Boolean\></dt>
@@ -5685,6 +5689,8 @@ _Note that some application specific options may not be present in this list._
 <dd>Path for instruction file<br/>Default: "/sampling/antibodies/design/default_instructions.txt"<br/></dd>
 <dt><b>-antibody_database</b> \<String\></dt>
 <dd>Path to the Antibody Database.  Download from dunbrack.fccc.edu<br/>Default: "/sampling/antibodies/antibody_database_rosetta.db"<br/></dd>
+<dt><b>-design_cdrs</b> \<StringVector\></dt>
+<dd>Design these CDRs in graft and sequence design steps (if enabled).  Use instead of an instruction file.  If an instruction file is given, will override FIX options for both stages.<br/></dd>
 <dt><b>-do_graft_design</b> \<Boolean\></dt>
 <dd>Run the GraftDesign step for low-resolution cluster-based CDR structural sampling. Overrides instruction file.<br/>Default: true<br/></dd>
 <dt><b>-do_post_graft_design_modeling</b> \<Boolean\></dt>
@@ -5704,9 +5710,9 @@ _Note that some application specific options may not be present in this list._
 <dt><b>-dump_post_graft_designs</b> \<Boolean\></dt>
 <dd>Write the top ensembles to file directly after the graft-design step and after any optional modeling.<br/>Default: false<br/></dd>
 <dt><b>-interface_dis</b> \<Real\></dt>
-<dd>Interface distance cutoff.  Used for repacking of interface, etc.<br/>Default: 4.0<br/></dd>
+<dd>Interface distance cutoff.  Used for repacking of interface, etc.<br/>Default: 6.0<br/></dd>
 <dt><b>-neighbor_dis</b> \<Real\></dt>
-<dd>Neighbor distance cutoff.  Used for repacking after graft, minimization, etc.<br/>Default: 3.5<br/></dd>
+<dd>Neighbor distance cutoff.  Used for repacking after graft, minimization, etc.<br/>Default: 4.0<br/></dd>
 <dt><b>-dock_post_graft</b> \<Boolean\></dt>
 <dd>Run a short lowres + highres docking step after each graft and before any minimization. Inner/Outer loops for highres are hard coded, while low-res can be changed through regular low_res options.<br/>Default: false<br/></dd>
 <dt><b>-pack_post_graft</b> \<Boolean\></dt>
@@ -5716,13 +5722,13 @@ _Note that some application specific options may not be present in this list._
 <dt><b>-design_post_graft</b> \<Boolean\></dt>
 <dd>Design during any time the packer is called post graft.  This includes relax, high-res docking, etc.  Used to increasing sampling of potential designs.<br/>Default: false<br/></dd>
 <dt><b>-dock_rounds</b> \<Integer\></dt>
-<dd>Number of rounds for post_graft docking.  If you are seeing badly docked structures, increase this value.<br/>Default: 1<br/></dd>
+<dd>Number of rounds for post_graft docking.  If you are seeing badly docked structures, increase this value.<br/>Default: 2<br/></dd>
 <dt><b>-ab_dock_chains</b> \<String\></dt>
 <dd>Override the antibody dock chains.  Used for if your creating a bivalent antibody where only L or H is docking antigen.  Also used if you are creating an antibody where you are only interested in L or H primarily being the binding site.  Changing the default is not recommended for general use.<br/>Default: "LH"<br/></dd>
 <dt><b>-design_method</b> \<String\></dt>
 <dd>Design method to use.<br/>Default: "fixbb"<br/></dd>
 <dt><b>-design_rounds</b> \<Integer\></dt>
-<dd>Number of CDRDesign rounds<br/>Default: 3<br/></dd>
+<dd>Number of CDRDesign rounds.  If using relaxed_design, only one round recommended.<br/>Default: 3<br/></dd>
 <dt><b>-design_scorefxn</b> \<String\></dt>
 <dd>Scorefunction to use during design.  Orbitals_talaris2013_softrep works well for fixedbb, orbitals_talaris2013 works well for relaxed design. If not set will use the main scorefunction set.<br/></dd>
 <dt><b>-benchmark_basic_design</b> \<Boolean\></dt>
@@ -5737,6 +5743,8 @@ _Note that some application specific options may not be present in this list._
 <dd>Use a conservative strategy for H3 design. Instructions file overwrites this setting<br/>Default: true<br/></dd>
 <dt><b>-turn_conservation</b> \<Boolean\></dt>
 <dd>try to conserve turn structure using known turn-based conservative mutations during conservative design.<br/>Default: true<br/></dd>
+<dt><b>-extend_native_cdrs</b> \<Boolean\></dt>
+<dd>extend native CDRs as part of the graft design step.  Used for benchmarking<br/>Default: false<br/></dd>
 </dl>
 + <h2>-flexPepDocking</h2>
 <dl>
@@ -6013,6 +6021,8 @@ _Note that some application specific options may not be present in this list._
 <dd>native_edensity_score_cutoff<br/>Default: -1.0<br/></dd>
 <dt><b>-sampler_perform_o2prime_pack</b> \<Boolean\></dt>
 <dd>perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler<br/>Default: true<br/></dd>
+<dt><b>-sampler_perform_phosphate_pack</b> \<Boolean\></dt>
+<dd>perform terminal phosphate packing inside StepWiseRNA_ResidueSampler<br/>Default: true<br/></dd>
 <dt><b>-sampler_use_green_packer</b> \<Boolean\></dt>
 <dd>use packer instead of rotamer trials for O2' optimization<br/>Default: false<br/></dd>
 <dt><b>-VERBOSE</b> \<Boolean\></dt>

@@ -113,7 +113,7 @@ AntibodyGraftDesigner::set_defaults(){
 	set_cdr_cluster_centers_only_range(CDRNameEnum_start, CDRNameEnum_total, false);
 	set_cdr_min_length_range(CDRNameEnum_start, CDRNameEnum_total, 1);
 	set_cdr_max_length_range(CDRNameEnum_start, CDRNameEnum_total, 50); //Something absurd.
-	read_instructions(instruction_path_);//Any settings found in this file override these defaults.  
+	read_instructions(instruction_path_);//Any settings found in this file override these defaults. 
 }
 
 void
@@ -127,6 +127,8 @@ AntibodyGraftDesigner::read_command_line_options(){
 	set_dock_rounds(basic::options::option [basic::options::OptionKeys::antibody::design::dock_rounds]());
 	initial_perturb_ = basic::options::option [basic::options::OptionKeys::antibody::design::initial_perturb] ();
 	use_deterministic_algorithm_ = basic::options::option [basic::options::OptionKeys::antibody::design::use_deterministic]();
+	//benchmark_ = basic::options::option [basic::options::OptionKeys::antibody::design::benchmark_graft_designer]();
+	extend_native_cdrs_ = basic::options::option [basic::options::OptionKeys::antibody::design::extend_native_cdrs]();
 }
 
 void
@@ -357,7 +359,7 @@ AntibodyGraftDesigner::read_instructions(std::string instruction_path){
 }
 
 void
-AntibodyGraftDesigner::fix_pdb_info(pose::Pose pose, CDRNameEnum cdr, CDRClusterEnum cluster, core::Size original_start, core::Size original_pdb_end) {
+AntibodyGraftDesigner::fix_pdb_info(pose::Pose & pose, CDRNameEnum cdr, CDRClusterEnum cluster, core::Size original_start, core::Size original_pdb_end) {
   
 	//using core::pose::PDBInfo;
   
@@ -395,6 +397,17 @@ AntibodyGraftDesigner::set_default_graft_settings(){
 	graft_mover_->set_scaffold_flexibility(2, 2);
 	graft_mover_->set_insert_flexibility(0, 0);
 	graft_mover_->set_use_double_loop_double_CCD_arms(true);
+	//graft_mover_->set_skip_sampling(true);
+}
+
+void
+AntibodyGraftDesigner::extend_native_cdrs(pose::Pose & pose, vector1<CDRNameEnum>& cdrs_to_design) {
+	
+	for (core::Size i = 1; i <= cdrs_to_design.size(); ++i){
+		TR << "Randomizing native CDR structure: "<< ab_info_->get_CDR_name(cdrs_to_design[i]) << std::endl;
+		modeler_->extend_CDR(pose, cdrs_to_design[i]);
+	}
+	//pose.dump_pdb("extend_test.pdb");
 }
 
 bool
@@ -416,12 +429,13 @@ AntibodyGraftDesigner::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Size i
 		graft_mover_->set_cycles(40);
 	}
 	
-	//If the superposition is really wacky for some reason, we can get chainbreaks.  To overcome this, 
-	core::Size max_attempts = 3;
+	//If the superposition is really wacky for some reason, we can get chainbreaks.  To overcome this,:
+	//Next - need to min on a jump or multiple jumps as this adaptation does not always work - but it will take too many cycles to use normal graft algorithm.
+	core::Size max_attempts = 1;
 	bool ca_only = false;
+	pose::Pose temp_pose = pose;
 	for (core::Size i = 1; i <= max_attempts; ++i){
 		pose::Pose piece = pose::Pose(*(cdr_set_[cdr][index]));
-		pose::Pose temp_pose = pose;
 		graft_mover_->set_piece(piece, overhang_, overhang_);
 		graft_mover_->superimpose_overhangs_heavy(temp_pose, ca_only , true); //Superimposes first heavy atoms of overhang
 		graft_mover_->apply(temp_pose);
@@ -430,10 +444,11 @@ AntibodyGraftDesigner::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Size i
 		//Is there a chainbreak?
 		bool cb = false;
 		core::Real cb_score;
-		for (core::Size pos = start - graft_mover_->get_nterm_scaffold_flexibility(); pos <= end + graft_mover_->get_cterm_scaffold_flexibility(); pos++){
+		TR << "Checking chainbreak" << std::endl;
+		for (core::Size pos = start - graft_mover_->get_nterm_scaffold_flexibility(); pos <= end + graft_mover_->get_cterm_scaffold_flexibility(); ++pos){
 			cb_score = protocols::forge::methods::linear_chainbreak(temp_pose, pos);
 			if (cb_score >= max_linear_chainbreak_){
-				
+				TR << "Chainbreak found" << std::endl;
 				cb = true;
 				break;
 			}
@@ -441,14 +456,14 @@ AntibodyGraftDesigner::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Size i
 		
 		//Increase sampling to do a better graft
 		if (cb && i <  max_attempts){
-			TR << "Linear chainbreak found from graft. Increasing flexibility and cycles." << std::endl;
+			TR << "Linear chainbreak found from graft. Increasing flexibility." << std::endl;
 			TR << "Value: " << cb_score << std::endl;
-			graft_mover_->set_use_double_loop_double_CCD_arms(false);
-			graft_mover_->set_use_double_loop_quad_CCD_arms(true);
+			//graft_mover_->set_use_double_loop_double_CCD_arms(false);
+			//graft_mover_->set_use_double_loop_quad_CCD_arms(true);
 			graft_mover_->set_scaffold_flexibility(graft_mover_->get_nterm_scaffold_flexibility()+1, graft_mover_->get_cterm_scaffold_flexibility()+1);
-			graft_mover_->set_insert_flexibility(2, 2);
-			graft_mover_->set_cycles(50*i);
-			ca_only = true;
+			graft_mover_->set_insert_flexibility(1, 1);
+			//graft_mover_->set_cycles(20);
+			//ca_only = true;
 		}
 		else if (cb && i == max_attempts){
 			//Still a chainbreak
@@ -468,6 +483,7 @@ AntibodyGraftDesigner::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Size i
 	pose.pdb_info()->copy(*((cdr_set_[cdr][index])->pdb_info()), 1 + overhang_, (cdr_set_[cdr][index])->total_residue()-overhang_, start+1);
 	pose.pdb_info()->obsolete(false);
 	
+	TR << "PDBInfo Set" << std::endl;
 	modeler_->set_cdr_only(cdr, true);
 	
 	
@@ -483,7 +499,7 @@ AntibodyGraftDesigner::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Size i
 	if (use_coordinate_constraints){
 
 		//This needs to change to dihedral constraints - but what will the standard deviation be?
-		TR << "Adding coordinate constraints for "<< ab_info_->get_CDR_Name(cdr) << std::endl;
+		TR << "Adding coordinate constraints for "<< ab_info_->get_CDR_name(cdr) << std::endl;
 		core::scoring::constraints::add_coordinate_constraints(pose, start_res, end_res, .5 /* just a little give */, false /* include_sc */);
 	}
 	
@@ -493,6 +509,7 @@ AntibodyGraftDesigner::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Size i
 	std::string antigen(antigen_chains.begin(), antigen_chains.end());
 	std::string dock_chains = modeler_->get_ab_dock_chains()+"_"+antigen;
 	
+	TR << "Beginning post-graft min" << std::endl;
 	if (initial_perturb_){
 		core::kinematics::FoldTree ft = pose.fold_tree();
 		vector1< int > movable_jumps(1, 1);
@@ -560,7 +577,7 @@ AntibodyGraftDesigner::graft_cdr(pose::Pose& pose, CDRNameEnum cdr, core::Size i
 	if (rb_min_post_graft_){
 		modeler_->minimize_interface(pose, dock_chains, true /* min_interface */);
 	}
-	check_for_top_designs(pose);
+	TR << "Graft complete" << std::endl;
 	return true;
 }
 
@@ -640,6 +657,7 @@ AntibodyGraftDesigner::run_basic_mc_algorithm(pose::Pose& pose, vector1<CDRNameE
 		
 		bool graft_successful = graft_cdr(pose, cdr_type, cdr_index);
 		if ( graft_successful ){
+			check_for_top_designs(pose);
 			mc_->boltzmann(pose);
 		}
 		else{
@@ -652,9 +670,10 @@ AntibodyGraftDesigner::run_basic_mc_algorithm(pose::Pose& pose, vector1<CDRNameE
 }
 
 void
-AntibodyGraftDesigner::run_deterministic_graft_algorithm(pose::Pose & pose){
-	//Note:  Not feasible with >= 4 CDRs to try at each position.
+AntibodyGraftDesigner::run_deterministic_graft_algorithm(pose::Pose & pose,vector1<CDRNameEnum>& cdrs_to_design){
+	//Note:  Not feasible with >= 4 CDRs to try at each position. Should not be used with docking on.
 	
+	/*
 	vector1< vector1< Size > > cdr_index_list = get_cdr_set_index_list();
 	
 	TR << "Running deterministic graft algorithm on  " << cdr_index_list.size() << " permutations. " << std::endl;
@@ -662,24 +681,41 @@ AntibodyGraftDesigner::run_deterministic_graft_algorithm(pose::Pose & pose){
 		TR << "Graft round: " << i << std::endl;
 		pose::Pose trial_pose = pose;
 		
-		//Graft each CDR in the index from the starting pose (In a random order). 
-		vector1< Size > choose_cdrs(6, 0); //Choose from this vector, poping each element.
-		for (core::Size temp = 1; temp<= choose_cdrs.size(); ++temp){
-			choose_cdrs[temp] = temp;
-		}
-		for ( core::Size x = 1; x <= 6; ++x){
-			core::Size choose_cdr_index= RG.random_range(1, choose_cdrs.size());
-			core::Size cdr_num = choose_cdrs[choose_cdr_index];
-			choose_cdrs.erase(choose_cdrs.begin() + choose_cdr_index - 1);
-			
-			CDRNameEnum cdr = static_cast<CDRNameEnum>(cdr_num);
-			if (cdr_set_[cdr].size() != 0){
-				graft_cdr(trial_pose, cdr, cdr_index_list[i][cdr_num]);
-				mc_->eval_lowest_score_pose(trial_pose, false, true);
+		//Graft each CDR in the index from the starting pose.  Same order every time.
+		//All grafts should be closed for this to be OK.
+		
+		for (core::Size x = 1; x <= 6; ++x) {
+			if (cdr_index_list[i][x] != 0){
+				CDRNameEnum cdr = static_cast<CDRNameEnum>(x);
+				bool graft_successful = graft_cdr(trial_pose, cdr, cdr_index_list[i][x]);
+				if (! graft_successful){
+					TR << "Graft unsuccessful.  Skipping combination..." << std::endl;
+					break;
+				}
 			}
+			//Only check for top designs after all combinations have been grafted.
+			check_for_top_designs(trial_pose);
+			mc_->eval_lowest_score_pose(trial_pose, false, true);
 		}
 		
 	} //End grafting
+	*/
+	
+	//Temporary fix to deterministically graft one CDR.  Needs to be fixed correctly soon.
+	CDRNameEnum cdr = cdrs_to_design[1];
+	
+	for (core::Size i = 1; i <= cdr_set_[cdr].size(); ++i){
+		TR << "Graft round: " << i << std::endl;
+		pose::Pose trial_pose = pose;
+		bool graft_successful = graft_cdr(trial_pose, cdr, i);
+		if (! graft_successful){
+			TR << "Graft unsuccessful.  Skipping combination..." << std::endl;
+			continue;
+		}
+		//Only check for top designs after all combinations have been grafted.
+		check_for_top_designs(trial_pose);
+		mc_->eval_lowest_score_pose(trial_pose, false, true);
+	}
 	
 	mc_->recover_low(pose);
 	mc_->show_counters();
@@ -710,7 +746,7 @@ AntibodyGraftDesigner::apply(pose::Pose & pose){
 	TR << "///////////////////////////////////////////////////////////////////////////////////////////////////////////////" <<std::endl;
 	for (core::Size i=1; i<=6; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
-		TR << "//////// " << ab_info_->get_CDR_Name(cdr) << " ///////////////////////////////////////////////"<< std::endl;
+		TR << "//////// " << ab_info_->get_CDR_name(cdr) << " ///////////////////////////////////////////////"<< std::endl;
 		TR << "//// "<< std::endl;
 		TR << "///  Graft? " << std::boolalpha << cdr_instructions_[cdr].graft << std::endl;
 		//TR << "///  Relax? " << std::boolalpha << cdr_instructions_[cdr].relax << std::endl;
@@ -759,7 +795,9 @@ AntibodyGraftDesigner::apply(pose::Pose & pose){
 		return;
 	}
 	
-	
+	if (extend_native_cdrs_){
+		extend_native_cdrs(pose, cdrs_to_design);
+	}
 	graft_mover_ = new AnchoredGraftMover(ab_info_->get_CDR_start(cdrs_to_design[1], pose)-1, ab_info_->get_CDR_end(cdrs_to_design[1], pose)+1);
 	
 	//TR << "Superimposing ALL CDRs to graft onto target."<<std::endl;
@@ -779,6 +817,7 @@ AntibodyGraftDesigner::apply(pose::Pose & pose){
 	//Graft Settings.  Get optimal here!
 	set_default_graft_settings();
 	
+	
 	modeler_->set_scorefunction(scorefxn_);
 	
 	total_permutations_ = 1;
@@ -788,7 +827,7 @@ AntibodyGraftDesigner::apply(pose::Pose & pose){
 	TR<< "///// Total CDRs in set /////"<<std::endl;
 	for(core::Size i = 1; i<=6; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
-		TR << "/// "<<ab_info_->get_CDR_Name(cdr)<<" "<<cdr_set_[cdr].size()<<std::endl;
+		TR << "/// "<<ab_info_->get_CDR_name(cdr)<<" "<<cdr_set_[cdr].size()<<std::endl;
 	}
 	
 	TR <<"Total possible CDR combinations: "<< total_permutations_ << std::endl;
@@ -797,8 +836,12 @@ AntibodyGraftDesigner::apply(pose::Pose & pose){
 	core::Real native_score = (*scorefxn_)(pose);
 	scorefxn_->show(pose);
 	
-	if ((total_permutations_ <= graft_rounds_) && (use_deterministic_algorithm_ == true)  && (graft_rounds_ <= 10000)){
-		run_deterministic_graft_algorithm(pose);
+	//if ((total_permutations_ <= graft_rounds_) && (use_deterministic_algorithm_ == true)  && (graft_rounds_ <= 10000)){
+	//	run_deterministic_graft_algorithm(pose);
+	//}
+	//Temporary quick fix.
+	if (cdrs_to_design.size() == 1 && use_deterministic_algorithm_){
+		run_deterministic_graft_algorithm(pose, cdrs_to_design);
 	}
 	else{
 		//run_random_graft_algorithm(pose, cdrs_to_design);

@@ -347,7 +347,7 @@ private:
 	///@brief.  If rounds >= number of possible combinations - Try them all. 
 	///@details Grafts CDRs on the input structure, in a random order.  
 	void
-	run_deterministic_graft_algorithm(pose::Pose & pose);
+	run_deterministic_graft_algorithm(pose::Pose & pose, vector1<CDRNameEnum>& cdrs_to_design);
 	
 	///@brief Basic mc algorithm that randomly samples from the cdr set.
 	void
@@ -358,7 +358,11 @@ private:
 	
 	///@brief Fix PDB info as somehow the code for pdbinfo changed and my other method no longer works.  No idea why.
 	void
-	fix_pdb_info(pose::Pose pose, CDRNameEnum cdr, CDRClusterEnum cluster, core::Size original_start, core::Size original_pdb_end);
+	fix_pdb_info(pose::Pose & pose, CDRNameEnum cdr, CDRClusterEnum cluster, core::Size original_start, core::Size original_pdb_end);
+	
+	///@brief Extend the native CDRs to be designed for benchmarking.
+	void
+	extend_native_cdrs(pose::Pose & pose, vector1<CDRNameEnum> & cdrs_to_design);
 	
 	void
 	set_default_graft_settings();
@@ -406,6 +410,10 @@ private:
 	bool initial_perturb_; //Run DockingInitialPerturber post graft
 	bool use_deterministic_algorithm_;
 	core::Real max_linear_chainbreak_;  //Sometimes the graft completely fails unfortunately.  May edit the graft code itself soon.
+
+	//Benchmarking
+	bool extend_native_cdrs_;
+	bool benchmark_;
 };
 }
 }

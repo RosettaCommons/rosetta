@@ -128,6 +128,7 @@ void
 AnchoredGraftMover::set_default_cen_scorefunction(){
 	cen_scorefxn_ = new ScoreFunction();
 	cen_scorefxn_->set_weight( chainbreak,  20.00);
+	cen_scorefxn_->set_weight( linear_chainbreak, 20.00);
 	cen_scorefxn_->set_weight( cbeta,       1.0 );
 	cen_scorefxn_->set_weight( vdw,         1.0 );
 	cen_scorefxn_->set_weight( pair,        1.0 );
@@ -143,6 +144,10 @@ AnchoredGraftMover::set_cen_scorefunction(ScoreFunctionOP score){
 	cen_scorefxn_ = score->clone();
 	if (cen_scorefxn_->get_weight(chainbreak) == 0.0){
 		cen_scorefxn_->set_weight(chainbreak, 20.00);
+	}
+	
+	if (cen_scorefxn_->get_weight(linear_chainbreak) == 0.0){
+		cen_scorefxn_->set_weight(linear_chainbreak, 20.00);
 	}
 }
 
@@ -162,6 +167,7 @@ AnchoredGraftMover::set_use_smooth_centroid_settings(bool use_smooth){
 		std::string def_score = option [OptionKeys::relax::centroid::weights]();
 		cen_scorefxn_ = ScoreFunctionFactory::create_score_function(def_score);
 		cen_scorefxn_->set_weight(chainbreak, 20.00);
+		cen_scorefxn_->set_weight(linear_chainbreak, 20.00);
 	} else {
 		set_default_cen_scorefunction();
 	}
@@ -246,8 +252,6 @@ AnchoredGraftMover::apply(Pose & pose){
 		ft_loop.loops(loop_set);
 		ft_loop.apply(combined);
 
-		 loop_closure::ccd::CcdLoopClosureMover close_for_Nter_loop(Nter_loop, movemap_);
-		loop_closure::ccd::CcdLoopClosureMover close_for_Cter_loop(Cter_loop, movemap_);
 		loop_set_map[Nter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Nter_loop, movemap_);
 		loop_set_map[Cter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Cter_loop, movemap_);
         
@@ -266,8 +270,6 @@ AnchoredGraftMover::apply(Pose & pose){
 		ft_loop.loops(loop_set);
 		ft_loop.apply(combined);
 
-		loop_closure::ccd::CcdLoopClosureMover close_for_Nter_loop(Nter_loop, movemap_);
-		loop_closure::ccd::CcdLoopClosureMover close_for_Cter_loop(Cter_loop, movemap_);
 		loop_set_map[Nter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Nter_loop, movemap_);
 		loop_set_map[Cter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Cter_loop, movemap_);
 	}
@@ -277,7 +279,6 @@ AnchoredGraftMover::apply(Pose & pose){
 		Cter_loop = Loop(Nter_loop_start_, Cter_loop_end_, insert_end);
 		loop_set->add_loop(Cter_loop);
         
-		loop_closure::ccd::CcdLoopClosureMover close_for_Cter_loop(Cter_loop, movemap_);
 		loop_set_map[Cter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Cter_loop, movemap_);
         
 	}
@@ -287,7 +288,6 @@ AnchoredGraftMover::apply(Pose & pose){
 		Cter_loop = Loop(Nter_loop_start_, Cter_loop_end_, Cter_loop_end_-1);
 		loop_set->add_loop(Cter_loop);
         
-		loop_closure::ccd::CcdLoopClosureMover close_for_Cter_loop(Cter_loop, movemap_);
 		loop_set_map[Cter_loop]=new loop_closure::ccd::CcdLoopClosureMover(Cter_loop, movemap_);
         
 	}
@@ -354,7 +354,7 @@ AnchoredGraftMover::apply(Pose & pose){
 
 	//centroidize the pose before we do stuff to it - sidechains are expensive and unnecessary
 	protocols::simple_moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
-	protocols::simple_moves::ReturnSidechainMover return_sidechains( combined );
+	protocols::simple_moves::ReturnSidechainMoverOP return_sidechains = new  protocols::simple_moves::ReturnSidechainMover(combined );
 	typeset_swap.apply( combined );
 
 	//combined.dump_pdb("combined_preclose_cen.pdb");
@@ -384,24 +384,25 @@ AnchoredGraftMover::apply(Pose & pose){
 	for( core::Size i(1); i<=cycles_; ++i){
 		if (!skip_sampling_){small.apply(combined);}
 
-		for (protocols::loops::Loops::const_iterator it=loop_set->begin(), it_end=loop_set->end(); it!=it_end; ++it){
+			for (protocols::loops::Loops::const_iterator it=loop_set->begin(), it_end=loop_set->end(); it!=it_end; ++it){
 
-			loop_set_map[*it]->apply(combined);
-			combined.conformation().insert_ideal_geometry_at_polymer_bond(it->cut());
-			min_mover.apply(combined);
+				loop_set_map[*it]->apply(combined);
 
-			combined.conformation().insert_ideal_geometry_at_polymer_bond(it->cut());
+				combined.conformation().insert_ideal_geometry_at_polymer_bond(it->cut());
+
+				min_mover.apply(combined);
+
+				combined.conformation().insert_ideal_geometry_at_polymer_bond(it->cut());
 		}
         
 		if(mc.boltzmann(combined)) TR << i << " " << ((*cen_scorefxn_))(combined) << std::endl;
-          
 	}
         
 	mc.recover_low(combined);
 	TR << "finish " << ((*cen_scorefxn_))(combined) << std::endl;
 	//combined.conformation().insert_ideal_geometry_at_polymer_bond(Cter_loop.cut());
 
-	return_sidechains.apply( combined );
+	return_sidechains->apply( combined );
 
 
 

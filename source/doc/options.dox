@@ -12577,6 +12577,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "/sampling/antibodies/antibody_database_rosetta.db"</dd><br>
 </dl>
 <dl>
+<dt><b>-design_cdrs</b> \<StringVector\><dt>
+<dd>Design these CDRs in graft and sequence design steps (if enabled).  Use instead of an instruction file.  If an instruction file is given, will override FIX options for both stages.</dd><br>
+</dl>
+<dl>
 <dt><b>-do_graft_design</b> \<Boolean\><dt>
 <dd>Run the GraftDesign step for low-resolution cluster-based CDR structural sampling. Overrides instruction file.</dd><br>
 <dd>Default: true</dd><br>
@@ -12624,12 +12628,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-interface_dis</b> \<Real\><dt>
 <dd>Interface distance cutoff.  Used for repacking of interface, etc.</dd><br>
-<dd>Default: 4.0</dd><br>
+<dd>Default: 6.0</dd><br>
 </dl>
 <dl>
 <dt><b>-neighbor_dis</b> \<Real\><dt>
 <dd>Neighbor distance cutoff.  Used for repacking after graft, minimization, etc.</dd><br>
-<dd>Default: 3.5</dd><br>
+<dd>Default: 4.0</dd><br>
 </dl>
 <dl>
 <dt><b>-dock_post_graft</b> \<Boolean\><dt>
@@ -12654,7 +12658,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-dock_rounds</b> \<Integer\><dt>
 <dd>Number of rounds for post_graft docking.  If you are seeing badly docked structures, increase this value.</dd><br>
-<dd>Default: 1</dd><br>
+<dd>Default: 2</dd><br>
 </dl>
 <dl>
 <dt><b>-ab_dock_chains</b> \<String\><dt>
@@ -12668,7 +12672,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-design_rounds</b> \<Integer\><dt>
-<dd>Number of CDRDesign rounds</dd><br>
+<dd>Number of CDRDesign rounds.  If using relaxed_design, only one round recommended.</dd><br>
 <dd>Default: 3</dd><br>
 </dl>
 <dl>
@@ -12704,6 +12708,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-turn_conservation</b> \<Boolean\><dt>
 <dd>try to conserve turn structure using known turn-based conservative mutations during conservative design.</dd><br>
 <dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-extend_native_cdrs</b> \<Boolean\><dt>
+<dd>extend native CDRs as part of the graft design step.  Used for benchmarking</dd><br>
+<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>flexPepDocking</h2>
@@ -13339,7 +13348,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-sampler_perform_phosphate_pack</b> \<Boolean\><dt>
 <dd>perform terminal phosphate packing inside StepWiseRNA_ResidueSampler</dd><br>
-<dd>Default: false</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-sampler_use_green_packer</b> \<Boolean\><dt>

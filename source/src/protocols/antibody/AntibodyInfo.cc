@@ -1016,7 +1016,7 @@ AntibodyInfo::setup_CDR_clusters(pose::Pose const & pose) {
 		CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
 		cdr_cluster_set_->identify_and_set_cdr_cluster(pose, cdr_name);
 		CDRClusterOP cluster_id = get_CDR_cluster(cdr_name);
-		//TR <<get_CDR_Name(cdr_name)+" North cluster: "<< get_cluster_name(cluster_id->cluster()) +" normalized_distance(deg): "<< cluster_id->normalized_distance_in_degrees() << std::endl;
+		//TR <<get_CDR_name(cdr_name)+" North cluster: "<< get_cluster_name(cluster_id->cluster()) +" normalized_distance(deg): "<< cluster_id->normalized_distance_in_degrees() << std::endl;
 	}
 }
 
@@ -1036,8 +1036,13 @@ AntibodyInfo::has_cluster_for_cdr(const CDRNameEnum cdr_name) const {
 }
 
 std::string
-AntibodyInfo::get_CDR_Name(CDRNameEnum const & cdr_name) const {
+AntibodyInfo::get_CDR_name(CDRNameEnum const & cdr_name) const {
 	return enum_manager_->cdr_name_enum_to_string(cdr_name);
+}
+
+CDRNameEnum
+AntibodyInfo::get_CDR_name_enum(std::string const & cdr_name) const {
+	return enum_manager_->cdr_name_string_to_enum(cdr_name);
 }
 
 Size
@@ -1985,7 +1990,7 @@ std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info )  {
 
 	out << line_marker << space( 74 ) << std::endl;
 	for (CDRNameEnum i=start_cdr_loop; i<=ab_info.total_cdr_loops_; i=CDRNameEnum(i+1) ) {
-		out << line_marker << " "+ab_info.get_CDR_Name(i)+" info: "<<std::endl;
+		out << line_marker << " "+ab_info.get_CDR_name(i)+" info: "<<std::endl;
 		out << line_marker << "           length:  "<< ab_info.get_CDR_loop(i).length() <<std::endl;
 		out << line_marker << "         sequence:  ";
 		//out<<  line_marker << "  north_cluster: "<< ab_info.cdr_cluster_manager_->cdr_cluster_enum_to_string(ab_info.get_CDR_cluster(i)->cluster()) <<std::endl;

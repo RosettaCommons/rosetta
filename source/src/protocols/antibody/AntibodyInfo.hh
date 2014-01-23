@@ -89,8 +89,11 @@ public:
 	get_CDR_length(CDRNameEnum const & cdr_name, core::pose::Pose const & pose, CDRDefinitionEnum const & transform) const;
 	
 	std::string
-	get_CDR_Name(CDRNameEnum const & cdr_name) const;
+	get_CDR_name(CDRNameEnum const & cdr_name) const;
 
+	CDRNameEnum
+	get_CDR_name_enum(std::string const & cdr_name) const;
+	
 	char
 	get_CDR_chain(CDRNameEnum const & cdr_name) const {
 		return Chain_IDs_for_CDRs_[cdr_name];

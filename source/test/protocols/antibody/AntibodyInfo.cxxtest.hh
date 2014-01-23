@@ -169,7 +169,7 @@ public:
 	}
     
 	void test_info_functions(){
-		TS_ASSERT_EQUALS("L1", ab_info_north_aho->get_CDR_Name(l1));
+		TS_ASSERT_EQUALS("L1", ab_info_north_aho->get_CDR_name(l1));
 		TS_ASSERT_EQUALS("AHO_Scheme", ab_info_north_aho->get_current_AntibodyNumberingScheme());
 		TS_ASSERT_EQUALS("North", ab_info_north_aho->get_current_CDRDefinition());
 		

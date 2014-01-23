@@ -65,6 +65,7 @@ namespace antibody { extern BooleanOptionKey const camelid_constraints; }
 namespace antibody { namespace design { extern BooleanOptionKey const design; } }
 namespace antibody { namespace design { extern StringOptionKey const instructions; } }
 namespace antibody { namespace design { extern StringOptionKey const antibody_database; } }
+namespace antibody { namespace design { extern StringVectorOptionKey const design_cdrs; } }
 namespace antibody { namespace design { extern BooleanOptionKey const do_graft_design; } }
 namespace antibody { namespace design { extern BooleanOptionKey const do_post_graft_design_modeling; } }
 namespace antibody { namespace design { extern BooleanOptionKey const do_sequence_design; } }
@@ -91,6 +92,7 @@ namespace antibody { namespace design { extern IntegerOptionKey const stats_cuto
 namespace antibody { namespace design { extern IntegerOptionKey const sample_zero_probs_at; } }
 namespace antibody { namespace design { extern BooleanOptionKey const conservative_h3_design; } }
 namespace antibody { namespace design { extern BooleanOptionKey const turn_conservation; } }
+namespace antibody { namespace design { extern BooleanOptionKey const extend_native_cdrs; } }
 
 } // namespace OptionKeys
 } // namespace options

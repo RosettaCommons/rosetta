@@ -270,7 +270,7 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 		}
 		polar_loop_sasa = loop_sasa - hydrop_loop_sasa;
 		/////////////////////out CDR values//////////////////////////////////////////////
-		TR << "Loop " << ab_info.get_CDR_Name(loop) << ": CDR_sasa " << loop_sasa
+		TR << "Loop " << ab_info.get_CDR_name(loop) << ": CDR_sasa " << loop_sasa
 			 << "\tCDR hydrophobic sasa " << hydrop_loop_sasa 
 		   << "\tCDR polar sasa " << polar_loop_sasa << std::endl;
 		///////////////////////////////out paratope values////////////////////////////////////
@@ -326,7 +326,7 @@ paratope_charge( core::pose::Pose const & pose, const protocols::antibody::Antib
 		}
 		loop_charge = plus_charge + minus_charge;
 		paratope_charge += loop_charge;
-		TR << "Loop " << ab_info.get_CDR_Name(loop) << ": "
+		TR << "Loop " << ab_info.get_CDR_name(loop) << ": "
 		   << std::setw(3) << minus_charge << " anions, "
 			 << std::setw(3) << plus_charge  << " cations = "
 		   << std::setw(3) << loop_charge  << " total charge" << std::endl;

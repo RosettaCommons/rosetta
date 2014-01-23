@@ -5209,8 +5209,9 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 				default='/sampling/antibodies/design/default_instructions.txt'),
 			Option('antibody_database', 'String',
 				desc='Path to the Antibody Database.  Download from dunbrack.fccc.edu',
-				default='/sampling/antibodies/antibody_database_rosetta.db'
-                                ),
+				default='/sampling/antibodies/antibody_database_rosetta.db'),
+			Option('design_cdrs', 'StringVector',
+				desc = "Design these CDRs in graft and sequence design steps (if enabled).  Use instead of an instruction file.  If an instruction file is given, will override FIX options for both stages."),
       Option('do_graft_design', 'Boolean',
       		desc='Run the GraftDesign step for low-resolution cluster-based CDR structural sampling. Overrides instruction file.',
 				default='true'),
@@ -5243,10 +5244,10 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 				),
 			Option('interface_dis', 'Real',
 				desc='Interface distance cutoff.  Used for repacking of interface, etc.',
-				default='4.0'),
+				default='6.0'),
 			Option('neighbor_dis', 'Real',
 				desc='Neighbor distance cutoff.  Used for repacking after graft, minimization, etc.',
-				default='3.5'
+				default='4.0'
 				),
 			Option('dock_post_graft', 'Boolean',
 				desc='Run a short lowres + highres docking step after each graft and before any minimization. Inner/Outer loops for highres are hard coded, while low-res can be changed through regular low_res options.',
@@ -5263,7 +5264,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 				),
 			Option('dock_rounds', 'Integer',
 				desc='Number of rounds for post_graft docking.  If you are seeing badly docked structures, increase this value.',
-				default='1'),
+				default='2'),
 			Option('ab_dock_chains', 'String',
 				desc='Override the antibody dock chains.  Used for if your creating a bivalent antibody where only L or H is docking antigen.  Also used if you are creating an antibody where you are only interested in L or H primarily being the binding site.  Changing the default is not recommended for general use.',
 				default='LH'
@@ -5273,7 +5274,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 				legal = ['fixbb', 'flxbb', 'relaxed_design'],
 				default='fixbb'),
 			Option('design_rounds', 'Integer',
-				desc="Number of CDRDesign rounds",
+				desc="Number of CDRDesign rounds.  If using relaxed_design, only one round recommended.",
 				default='3'),
 			Option('design_scorefxn', 'String',
 				desc="Scorefunction to use during design.  Orbitals_talaris2013_softrep works well for fixedbb, orbitals_talaris2013 works well for relaxed design. If not set will use the main scorefunction set."
@@ -5296,6 +5297,9 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			Option('turn_conservation', 'Boolean',
 				desc='try to conserve turn structure using known turn-based conservative mutations during conservative design.',
 				default='true'),
+			Option('extend_native_cdrs', 'Boolean',
+				desc = 'extend native CDRs as part of the graft design step.  Used for benchmarking',
+				default='false'), 
 		), #design
 	), # antibody
 

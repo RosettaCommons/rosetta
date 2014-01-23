@@ -33,6 +33,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
+#include <core/kinematics/MoveMap.hh>
 
 //Protocol Headers
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
@@ -46,6 +47,9 @@
 #include <protocols/docking/util.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
+#include <protocols/loops/loops_main.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/loops/util.hh>
 
 // Basic Headers
 #include <basic/options/option.hh>
@@ -138,6 +142,27 @@ AntibodyDesignModeler::set_cdr_range(CDRNameEnum const cdr_start, CDRNameEnum co
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		set_cdr(cdr, setting);
 	}
+}
+
+void
+AntibodyDesignModeler::extend_CDR(Pose& pose, CDRNameEnum cdr) const {
+	
+	core::Size start = ab_info_->get_CDR_start(cdr, pose);
+	core::Size end = ab_info_->get_CDR_end(cdr, pose);
+	
+	protocols::loops::Loop cdr_loop  = protocols::loops::Loop(start+2, end-2, start+3);
+	protocols::loops::Loops cdr_loops = protocols::loops::Loops();
+	cdr_loops.add_loop(cdr_loop);
+	
+	core::kinematics::FoldTree original_ft = pose.fold_tree();
+	core::kinematics::FoldTree loop_ft = core::kinematics::FoldTree();
+	
+	protocols::loops::fold_tree_from_loops(pose, cdr_loops, loop_ft);
+	pose.fold_tree(loop_ft);
+	protocols::loops::set_extended_torsions_and_idealize_loops(pose, cdr_loops);
+
+	pose.fold_tree(original_ft);
+	
 }
 
 void

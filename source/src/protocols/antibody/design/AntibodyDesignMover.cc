@@ -37,9 +37,11 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 
+//Options
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 
@@ -227,8 +229,24 @@ AntibodyDesignMover::add_cluster_comments_to_pose(core::pose::Pose& pose){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		CDRClusterOP result = ab_info_->get_CDR_cluster(cdr);
 		std::string output = "CLUSTER "+ ab_info_->get_cluster_name(result->cluster()) +" "+utility::to_string(result->distance());
-		core::pose::add_comment(pose, "REMARK "+ab_info_->get_CDR_Name(cdr), output);
+		core::pose::add_comment(pose, "REMARK "+ab_info_->get_CDR_name(cdr), output);
 		
+	}
+}
+
+void
+AntibodyDesignMover::read_command_line_design_options() {
+	//Overrides Instruction file and defaults.
+	if (option [OptionKeys::antibody::design::design_cdrs].user()){
+		utility::vector1<std::string> cdrs = option [OptionKeys::antibody::design::design_cdrs]();
+		for (core::Size i = 1; i <= cdrs.size(); ++i){
+			antibody::CDRNameEnum cdr_enum = ab_info_->get_CDR_name_enum(cdrs[i]);
+			graft_designer_->set_cdr_range(CDRNameEnum_start, CDRNameEnum_total, false);
+			seq_designer_->set_cdr_range(CDRNameEnum_start, CDRNameEnum_total, false);
+			
+			graft_designer_->set_cdr(cdr_enum, true);
+			seq_designer_->set_cdr(cdr_enum, true);
+		}
 	}
 }
 
@@ -269,7 +287,9 @@ AntibodyDesignMover::apply(core::pose::Pose& pose){
 		seq_designer_ = new AntibodyCDRDesigner(ab_info_);
 		seq_designer_->set_scorefxn(design_scorefxn_);
 	}
-        
+    
+	read_command_line_design_options();
+	
 	(*scorefxn_)(pose);
 	scorefxn_->show(TR, pose);
 	
@@ -328,15 +348,12 @@ AntibodyDesignMover::apply(core::pose::Pose& pose){
 			}
 			TR << "Designed ensemble " << i << std::endl;
 			scorefxn_->show(*final_pose_ensemble[i]);
-			pose = *final_pose_ensemble[i];
+			
 		}
 	}
 	
 	//Any post-design modeling? Any filters?
 	//Reorder pose ensemble before output
-	
-	ab_info_->setup_CDR_clusters(pose);
-	add_cluster_comments_to_pose(pose);
 	for (core::Size i = 1; i <= final_pose_ensemble.size(); ++i){
 		TR << "Pose " << i << ": " << (*scorefxn_)(*final_pose_ensemble[i]) << std::endl;
 		ab_info_->setup_CDR_clusters(*final_pose_ensemble[i]);
@@ -345,8 +362,14 @@ AntibodyDesignMover::apply(core::pose::Pose& pose){
 	
 	//Output final ensembles.
 	
-	output_ensemble(final_pose_ensemble, 2, final_pose_ensemble.size(), "ensemble");
-	TR << "Added pose comments for cluster info.  Use -pdb_comments option to have it output to pdb file." << std::endl;
+	pose = *final_pose_ensemble[1];
+	if (final_pose_ensemble.size() > 1){
+		output_ensemble(final_pose_ensemble, 1, final_pose_ensemble.size(), "ensemble");
+	}
+	
+	if (! option [OptionKeys::out::file::pdb_comments]()){
+		TR << "Added pose comments for cluster info.  Use -pdb_comments option to have it output to pdb file." << std::endl;
+	}
 	TR << "Complete." << std::endl;
 	
 }

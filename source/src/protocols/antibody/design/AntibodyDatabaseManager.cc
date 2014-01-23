@@ -118,7 +118,7 @@ AntibodyDatabaseManager::load_cdr_design_data(AntibodyInfoCOP ab_info, core::pos
 		CDRClusterEnum cluster = cdr_cluster->cluster();
 		if (cluster == NA ){
 			cdrs_with_no_data.push_back(cdr);
-			TR << ab_info->get_CDR_Name(cdr) << " is of unknown cluster.  No design probability data added. Using conservative mutations instead." << std::endl;
+			TR << ab_info->get_CDR_name(cdr) << " is of unknown cluster.  No design probability data added. Using conservative mutations instead." << std::endl;
 			continue;
 		}
 		
@@ -143,7 +143,7 @@ AntibodyDatabaseManager::load_cdr_design_data(AntibodyInfoCOP ab_info, core::pos
 		while(prob_result.next()){
 			
 			if (prob_result.empty()) {
-				TR << ab_info->get_CDR_Name(cdr) << " has no design probability data.  Using conservative mutations instead." << std::endl;
+				TR << ab_info->get_CDR_name(cdr) << " has no design probability data.  Using conservative mutations instead." << std::endl;
 				break;
 			}
 			
@@ -245,7 +245,7 @@ AntibodyDatabaseManager::load_cdrs_for_grafting(AntibodyInfoCOP ab_info, GraftIn
 				instructions[cdr].cluster_types[type]=true;
 			}
 			
-			TR << ab_info->get_CDR_Name(cdr)<< 
+			TR << ab_info->get_CDR_name(cdr)<< 
 					"Staying native cluster.  Ignoring CLUSTER + CENTER settings for this CDR.\n" <<
 					"If PDBID INCLUDEONLY is set, please check that these PDBs have CDRs that match your cluster\n"<<std::endl;
 			base_statement += " AND fullcluster=?\n";
@@ -290,7 +290,7 @@ AntibodyDatabaseManager::load_cdrs_for_grafting(AntibodyInfoCOP ab_info, GraftIn
 		base_statement = base_statement+";";
 		TR.Debug<<"Final Statement: "<< base_statement << std::endl;
 		cppdb::statement select_statement(basic::database::safely_prepare_statement(base_statement, db_session_));
-		select_statement.bind(1, ab_info->get_CDR_Name(cdr));
+		select_statement.bind(1, ab_info->get_CDR_name(cdr));
 		select_statement.bind(2, (int)instructions[cdr].cluster_centers_only);
 		select_statement.bind(3, instructions[cdr].min_length); //This SHOULD get compared to int.
 		select_statement.bind(4, instructions[cdr].max_length);
@@ -311,7 +311,7 @@ AntibodyDatabaseManager::load_cdrs_for_grafting(AntibodyInfoCOP ab_info, GraftIn
 			col += 1;
 			CDRClusterOP cdr_cluster = ab_info->get_CDR_cluster(cdr);
 			if(cdr_cluster->cluster()  == NA){
-				utility_exit_with_message(ab_info->get_CDR_Name(cdr)+" : Unable to identify cluster.  Modify StayNativeCluster in instructions or download new AntibodyDatabase + update Rosetta for new definitions.");
+				utility_exit_with_message(ab_info->get_CDR_name(cdr)+" : Unable to identify cluster.  Modify StayNativeCluster in instructions or download new AntibodyDatabase + update Rosetta for new definitions.");
 			select_statement.bind(col, ab_info->get_cluster_name(cdr_cluster->cluster()));
 			}
 		}
@@ -355,7 +355,7 @@ AntibodyDatabaseManager::load_cdrs_for_grafting(AntibodyInfoCOP ab_info, GraftIn
 			
 			//Convert from my database to Rosetta input
 			boost::to_lower(pdbid); //Original structures are lower case to distinguish chain easily in filename.
-			std::string pdbid_in = pdbid+original_chain+"_"+ab_info->get_CDR_Name(cdr)+"_0001";
+			std::string pdbid_in = pdbid+original_chain+"_"+ab_info->get_CDR_name(cdr)+"_0001";
 			
 			if (manager->cdr_cluster_is_present(cluster)){
 				

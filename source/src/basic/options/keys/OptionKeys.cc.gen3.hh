@@ -1,5 +1,3 @@
-namespace parser { BooleanOptionKey const view( "parser:view" );  }
-namespace parser { StringOptionKey const patchdock( "parser:patchdock" );  }
 namespace parser { IntegerVectorOptionKey const patchdock_random_entry( "parser:patchdock_random_entry" );  }
 namespace DomainAssembly { BooleanOptionKey const DomainAssembly( "DomainAssembly" );  }
 namespace DomainAssembly { BooleanOptionKey const da_setup( "DomainAssembly:da_setup" );  }
@@ -282,6 +280,7 @@ namespace antibody { BooleanOptionKey const camelid_constraints( "antibody:camel
 namespace antibody { namespace design { BooleanOptionKey const design( "antibody:design" );  } }
 namespace antibody { namespace design { StringOptionKey const instructions( "antibody:design:instructions" );  } }
 namespace antibody { namespace design { StringOptionKey const antibody_database( "antibody:design:antibody_database" );  } }
+namespace antibody { namespace design { StringVectorOptionKey const design_cdrs( "antibody:design:design_cdrs" );  } }
 namespace antibody { namespace design { BooleanOptionKey const do_graft_design( "antibody:design:do_graft_design" );  } }
 namespace antibody { namespace design { BooleanOptionKey const do_post_graft_design_modeling( "antibody:design:do_post_graft_design_modeling" );  } }
 namespace antibody { namespace design { BooleanOptionKey const do_sequence_design( "antibody:design:do_sequence_design" );  } }
@@ -308,6 +307,7 @@ namespace antibody { namespace design { IntegerOptionKey const stats_cutoff( "an
 namespace antibody { namespace design { IntegerOptionKey const sample_zero_probs_at( "antibody:design:sample_zero_probs_at" );  } }
 namespace antibody { namespace design { BooleanOptionKey const conservative_h3_design( "antibody:design:conservative_h3_design" );  } }
 namespace antibody { namespace design { BooleanOptionKey const turn_conservation( "antibody:design:turn_conservation" );  } }
+namespace antibody { namespace design { BooleanOptionKey const extend_native_cdrs( "antibody:design:extend_native_cdrs" );  } }
 namespace flexPepDocking { BooleanOptionKey const flexPepDocking( "flexPepDocking" );  }
 namespace flexPepDocking { StringOptionKey const params_file( "flexPepDocking:params_file" );  }
 namespace flexPepDocking { IntegerOptionKey const peptide_anchor( "flexPepDocking:peptide_anchor" );  }

@@ -164,8 +164,15 @@ public:
 	dock_H_L_high_res(Pose & pose, int first_cycle=4, int second_cycle=45) const;
 	
 
-	
+	///////////////////////////////////////////////////////////////////////////////////////
+	// Benchmarking
+	//
+	//
 
+	///@brief Randomizes the dihedrals of the CDR.
+	void
+	extend_CDR(Pose & pose, CDRNameEnum cdr) const;
+	
 	
 
 	

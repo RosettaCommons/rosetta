@@ -62,6 +62,7 @@ AntibodyCDRDesigner::AntibodyCDRDesigner(AntibodyInfoOP ab_info){
 		utility_exit_with_message("Antibody Design Protocol requires AHO_scheme and North definitions");
 	}
 	
+	set_use_cluster_constraints(true);
 	scorefxn_ = core::scoring::getScoreFunction();
 	set_cdr_range(CDRNameEnum_start, CDRNameEnum_total, true);
 	set_use_conservative_design_range(CDRNameEnum_start, CDRNameEnum_total, false);
@@ -76,6 +77,7 @@ AntibodyCDRDesigner::AntibodyCDRDesigner(AntibodyInfoOP ab_info, std::string ins
 		utility_exit_with_message("Antibody Design Protocol requires AHO_scheme and North definitions");
 	}
 	
+	set_use_cluster_constraints(true);
 	scorefxn_ = core::scoring::getScoreFunction();
 	set_cdr_range(CDRNameEnum_start, CDRNameEnum_total, true);
 	set_use_conservative_design_range(CDRNameEnum_start, CDRNameEnum_total, false);
@@ -196,6 +198,11 @@ AntibodyCDRDesigner::no_design_proline(const bool setting) {
 void
 AntibodyCDRDesigner::set_design_method(DesignTypeEnum const design_method){
 	design_method_ = design_method;
+}
+
+void
+AntibodyCDRDesigner::set_use_cluster_constraints(const bool setting) {
+	use_cluster_constraints_ = setting;
 }
 
 std::map< core::Size, std::map< core::chemical::AA, core::Real > >
@@ -375,7 +382,7 @@ AntibodyCDRDesigner::setup_constraints(core::pose::Pose & pose){
 			core::Size end_res = ab_info_->get_CDR_end(cdr, pose);
 			//This needs to change to dihedral constraints - but what will the standard deviation be?
 			
-			TR << "Adding coordinate constraints for " << ab_info_->get_CDR_Name(cdr) << std::endl;
+			TR << "Adding coordinate constraints for " << ab_info_->get_CDR_name(cdr) << std::endl;
 			core::scoring::constraints::add_coordinate_constraints(pose, start_res, end_res, .5, false /* include_sc */);
 		}
 	}
@@ -403,13 +410,17 @@ AntibodyCDRDesigner::apply(core::pose::Pose& pose){
 		packer.task_factory(tf);
 		
 		//////////Setup//////////////////////////
-		if (scorefxn_->get_weight(dihedral_constraint) == 0.0){
-			scorefxn_->set_weight(dihedral_constraint, 1.0);
-		}
+
 		
 		scorefxn_->set_weight(chainbreak, 100);
 		
-		setup_constraints(pose);
+		if (use_cluster_constraints_){
+			if (scorefxn_->get_weight(dihedral_constraint) == 0.0){
+				scorefxn_->set_weight(dihedral_constraint, 1.0);
+			}
+			setup_constraints(pose);
+		}
+		
 		
 		scorefxn_->show(pose);
 		

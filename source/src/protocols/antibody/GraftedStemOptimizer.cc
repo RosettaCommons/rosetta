@@ -152,7 +152,7 @@ GraftedStemOptimizer::setup_protocol(pose::Pose & pose) {
 void
 GraftedStemOptimizer::apply( pose::Pose & pose ) {
 
-	TRG<<"Optimizing the stem of the Grafted CDR   "<< ab_info_->get_CDR_Name(cdr_name_) <<" ............"<<std::endl;
+	TRG<<"Optimizing the stem of the Grafted CDR   "<< ab_info_->get_CDR_name(cdr_name_) <<" ............"<<std::endl;
 
 	setup_protocol(pose);
 
@@ -217,7 +217,7 @@ GraftedStemOptimizer::apply( pose::Pose & pose ) {
 	TRG<<"Score After Stem Optimization: "<<(*scorefxn_)(pose)<<std::endl;
 
 
-	TRG<<"Stem of CDR "<<ab_info_->get_CDR_Name(cdr_name_) <<" has finished!!!"<<std::endl;
+	TRG<<"Stem of CDR "<<ab_info_->get_CDR_name(cdr_name_) <<" has finished!!!"<<std::endl;
 
 
 }
@@ -276,7 +276,7 @@ GraftedStemOptimizer::get_N_C_stems_foldtree( pose::Pose const & pose ) const  {
 
 
 	//TRG<<"##################################################"<<std::endl;
-	//TRG<<ab_info_->get_CDR_Name(cdr_name_) <<std::endl;
+	//TRG<<ab_info_->get_CDR_name(cdr_name_) <<std::endl;
 	//TRG<<"start = "<<cdr_loop_->start() <<std::endl;
 	//TRG<<"stop  = "<<cdr_loop_->stop()  <<std::endl;
 	//TRG<<*ft<<std::endl;

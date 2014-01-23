@@ -110,6 +110,10 @@ public:
 	
 private:
 	
+	///@brief Sets command line driven CDR design.   This is mainly for testing, but makes the whole algorithm controllable without a specific instruction file.
+	void
+	read_command_line_design_options();
+	
 	///@brief Set constraint and chainbreak score on scorefunction if not already set.
 	void setup_scorefxn(ScoreFunctionOP scorefxn);
 	

@@ -167,7 +167,7 @@ CDRClusterFeatures::report_features(core::pose::Pose const & pose, utility::vect
 			stmt.bind(2, ab_info->get_CDR_start(cdr, pose, North));
 			stmt.bind(3, ab_info->get_CDR_end(cdr, pose, North));
 			stmt.bind(4, str_chain);
-			stmt.bind(5, ab_info->get_CDR_Name(cdr));
+			stmt.bind(5, ab_info->get_CDR_name(cdr));
 			stmt.bind(6, ab_info->get_CDR_length(cdr, pose, North));
 			stmt.bind(7, ab_info->get_cluster_name(cluster->cluster()) );
 			stmt.bind(8, cluster->distance());

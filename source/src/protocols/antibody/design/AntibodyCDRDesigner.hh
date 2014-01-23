@@ -97,6 +97,7 @@ public:
 	//
 	//
 	
+	
 	void
 	set_rounds(core::Size const rounds);
 	
@@ -141,6 +142,10 @@ public:
 	/// Use for benchmarking.
 	void
 	set_basic_design(bool const setting);
+	
+	///@brief Should we use the cdr cluster CircularHarmonic constraints?  Default true - this is mainly used for benchmarking.
+	void
+	set_use_cluster_constraints(bool const setting);
 	
 public:
 	
@@ -206,6 +211,7 @@ private:
 	bool turn_conservation_; //Setting to use turn-based conservation during conservative design
 	bool no_design_proline_;
 	bool basic_design_; //Do not use fancy taskops and data.  Simply design the CDRs using chosen method.
+	bool use_cluster_constraints_;
 	
 	std::map<CDRNameEnum, CDRDesignInstructions> instructions_;
 	std::string instruction_path_;

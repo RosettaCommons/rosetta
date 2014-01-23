@@ -104,7 +104,7 @@ void GraftOneCDRLoop::finalize_setup() {
 void GraftOneCDRLoop::apply( pose::Pose & pose_in ) {
 
 
-	TRG<<"Start to Graft CDRs   "<< ab_info_->get_CDR_Name(cdr_name_) <<" ............"<<std::endl;
+	TRG<<"Start to Graft CDRs   "<< ab_info_->get_CDR_name(cdr_name_) <<" ............"<<std::endl;
 	TRG<<"flank_size: "<<flank_size_<<std::endl;
 
 	finalize_setup();
@@ -123,7 +123,7 @@ void GraftOneCDRLoop::apply( pose::Pose & pose_in ) {
 	// TRG<<"query_size="<<query_size<<std::endl;
 	// TRG<<"truncated_pose will be from "<<query_start-flank_size_<<" to "<<query_end+flank_size_<<std::endl;
 	pose::Pose truncated_pose( pose_in, query_start-flank_size_, query_end+flank_size_ );
-	pose::Pose template_pose = ab_t_info_->get_one_template_pose(ab_info_->get_CDR_Name(cdr_name_)) ;
+	pose::Pose template_pose = ab_t_info_->get_one_template_pose(ab_info_->get_CDR_name(cdr_name_)) ;
 	TRG<< "template_pose: "<<std::endl;
 	TRG<< template_pose<<std::endl;
 

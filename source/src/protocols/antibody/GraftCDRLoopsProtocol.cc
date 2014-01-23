@@ -262,7 +262,7 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
 	TR<<" Checking Ab_TemplateInfo object: "<<std::endl<<*ab_t_info_<<std::endl<<std::endl;
 
 	for (CDRNameEnum it = start_cdr_loop; it <= ab_info_->get_total_num_CDRs(); it=CDRNameEnum(it+1) ) {
-		TR << "Creating movers for " << ab_info_->get_CDR_Name(it) << std::endl;
+		TR << "Creating movers for " << ab_info_->get_CDR_name(it) << std::endl;
 		TR << "                  start (chothia): "<<ab_info_->get_CDR_loop(it).start()<<std::endl;
 		TR << "                   stop (chothia): "<<ab_info_->get_CDR_loop(it).stop()<<std::endl;
 

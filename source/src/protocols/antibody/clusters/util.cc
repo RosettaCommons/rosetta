@@ -39,7 +39,7 @@ std::string
 get_pose_cis_trans_conformation(core::pose::Pose const & pose, core::Size const start, core::Size const end){
 	std::string model_ss;
 	core::Real cis_cutoff = 90.0;
-	for (core::Size resnum = start; resnum <= (end); ++resnum) {
+	for (core::Size resnum = start-1; resnum <= end-1; ++resnum) {
 		if (std::abs(pose.omega(resnum)) >= cis_cutoff) {
 			model_ss = model_ss+"T";
 		} else {
