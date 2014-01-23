@@ -104,7 +104,7 @@ class ligand_ncaa_ptm_manager:
         print os.environ['PYROSETTA_DATABASE']+'/chemical/residue_type_sets/fa_standard/residue_types.txt'
         print "It is recommended to switch at least the statistical residue-based pair potential to the coulumbic atom-based fa_elec potential (Ligands/PTM)"
         print "Consider using the mm_std scorefunction for NCAA (No DNA)"
-        print "Consider using the orbitals scorefunction for DNA/RNA/NCAA (No Ligands)"
+        print "Consider using the orbitals scorefunction for DNA/RNA/NCAA"
         print "Note that this may increase run time, especially for larger selections"
         #print "In preliminary results, it has also been shown to increase rotamer recovery for cannonical AA's (unpublished/Dunbrack Lab)"
         #print "To add a variant type to a pose, use the Per Residue Control in the advanced menu."
@@ -295,7 +295,7 @@ class ligand_ncaa_ptm_manager:
         """
         Sets the orbitals scorefunction.
         """
-        self.score_class.set_scorefunction('orbitals')
+        self.score_class.set_scorefunction('orbitals_talaris2013')
         print "Orbitals Scorefunction created by Steven Combs - Meiler Lab, Vanderbilt University"
         print "No paper to cite as of yet."
         
