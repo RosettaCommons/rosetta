@@ -362,8 +362,10 @@ class CppFunction:
             return False
 
         tp = [self.returnType] + map(lambda x: x.type_, self.argsTypes)
+
+
         for a in tp:  # check if function contain types that we don't know how to deal with yet...
-            #print a
+            #print self.name, a.T()
             if a.T().find('___XQWERTY___') >= 0: return False
             if a.T().find('::std::pair<boost::unordered_detail::hash_iterator_equivalent_keys<std::allocator<std::pair<') >= 0: return False
 
@@ -728,6 +730,10 @@ class CppClass:
         if self.incomplete: return False
         for b in self.bases:
             if b.type_.T() == '::boost::noncopyable_::noncopyable': return False
+
+        # Some exceptions...
+        if self.context+self.name == '::protocols::neighbor::Neighborhood': return False  # temporary disabling wrapping of protocols::neighbor::Neighborhood because we could not compile it on Linux GCC-4.1 due to function pointer in constructor
+
         return True
 
     def isPublicMembersWrappable(self):
@@ -1452,4 +1458,3 @@ ToDo:
  - docs for enums
 
 '''
-
