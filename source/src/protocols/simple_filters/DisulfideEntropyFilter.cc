@@ -128,7 +128,7 @@ DisulfideEntropyFilter::parse_my_tag(
 
 
 	if(tag->hasOption("lower_bound")){
-		lower_bound(tag->getOption< core::Real >("lower_bound_",0));
+		lower_bound(tag->getOption< core::Real >("lower_bound",0));
 		TR << "setting lower_bound" << std::endl;
 	}
 
@@ -200,14 +200,15 @@ int determinant_sign(const bnu::permutation_matrix<std::size_t>& pm)
     return pm_sign;
 }
  
-core::Real determinant( bnu::matrix<core::Real>& m ) {
+core::Real determinant( bnu::matrix<core::Real> const & m ) {
     bnu::permutation_matrix<std::size_t> pm(m.size1());
     core::Real det = 1.0;
-    if( bnu::lu_factorize(m,pm) ) {
+    bnu::matrix<core::Real> m_copy = m;
+    if( bnu::lu_factorize(m_copy,pm) ) {
         det = 0.0;
     } else {
-        for(core::Size i = 0; i < m.size1(); i++) 
-            det *= m(i,i); // multiply by elements on diagonal
+        for(core::Size i = 0; i < m_copy.size1(); i++) 
+            det *= m_copy(i,i); // multiply by elements on diagonal
         det = det * determinant_sign( pm );
     }
     return det;
@@ -267,7 +268,12 @@ DisulfideEntropyFilter::compute(
                 m(j,i) = 0;
                 //TR << "0   ";
             } else {
-            	m(i, j) = disulf_config[i+1].second - disulf_config[j+1].first; // fill matrix
+            	if (disulf_config[i+1].second < disulf_config[j+1].second) {
+                    m(i, j) = disulf_config[i+1].second - disulf_config[j+1].first; // fill matrix                    
+                } else {
+                    m(i, j) = disulf_config[j+1].second - disulf_config[j+1].first;
+                }
+
                 m(j, i) = m(i, j);
                 //TR << m(i,j) << "  ";
             }
@@ -292,6 +298,16 @@ DisulfideEntropyFilter::compute(
     //
     // Return dimensionless entropy ln (P_n) rather than multiplying by R
     //
+
+    //TR << "t1 " << static_cast<float>(0.17827) << std::endl;
+    //TR << "t2 " << static_cast<int>(disulf_config.size()) << std::endl;
+    //TR << "pow1 " << std::pow(static_cast<float>(0.17827), static_cast<int>(disulf_config.size())) << std::endl;
+    //TR << "m " << m << std::endl;
+    //TR << "t3 " << static_cast<double>(determinant(m)) << std::endl;
+    //TR << "m " << m << std::endl;
+    //TR << "t4 " << static_cast<double>(-1.5) << std::endl;
+    //TR << "pow2 " << std::pow(static_cast<double>(determinant(m)), static_cast<double>(-1.5)) << std::endl;
+    //TR << "-log " << -log(std::pow(static_cast<float>(0.17827), static_cast<int>(disulf_config.size())) * std::pow(static_cast<double>(determinant(m)), static_cast<double>(-1.5))) << std::endl;
 
     return -log(std::pow(static_cast<float>(0.17827), static_cast<int>(disulf_config.size())) * std::pow(static_cast<double>(determinant(m)), static_cast<double>(-1.5)));
 
