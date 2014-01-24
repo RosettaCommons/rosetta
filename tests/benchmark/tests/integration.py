@@ -57,16 +57,18 @@ def run_itegration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_d
     compiler = platform['compiler']
     extras   = ','.join(platform['extras'])
 
+    build_command_line = './scons.py bin mode={mode} cxx={compiler} extras={extras} -j{jobs}'.format(jobs=jobs, mode=mode, compiler=compiler, extras=extras)
+
     if debug:
         res, output = 0, 'integration.py: debug is enabled, skippig build...\n'
     else:
-        res, output = execute('Compiling...', 'cd {}/source && ./scons.py bin mode={mode} cxx={compiler} extras={extras} -j{jobs}'.format(rosetta_dir, jobs=jobs, mode=mode, compiler=compiler, extras=extras), return_='tuple')
+        res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, build_command_line), return_='tuple')
 
     full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
 
     if res:
         results[_StateKey_] = _S_build_failed_
-        results[_LogKey_]   = full_log
+        results[_LogKey_]   = 'Compiling: {}\n'.format(build_command_line) + full_log
         return results
 
     else:
@@ -79,7 +81,9 @@ def run_itegration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_d
         #if os.path.isdir(files_location): TR('Removing old ref dir %s...' % files_location);  shutil.rmtree(files_location)  # remove old dir if any
 
         #output_json = working_dir + '/output.json'  , output_json=output_json   --yaml={output_json}
-        command_line = 'cd {}/tests/integration && ./integration.py --mode={mode} --compiler={compiler} --extras={extras} --timeout=480 -j{jobs}'.format(rosetta_dir, jobs=jobs, mode=mode, compiler=compiler, extras=extras)
+        timeout = 60*8 if mode == 'release' else 60*60  # setting timeout to 8min on release and one hour on debug
+
+        command_line = 'cd {}/tests/integration && ./integration.py --mode={mode} --compiler={compiler} --extras={extras} --timeout={timeout} -j{jobs}'.format(rosetta_dir, jobs=jobs, mode=mode, compiler=compiler, extras=extras, timeout=timeout)
         TR( 'Running integration script: {}'.format(command_line) )
 
         if debug: res, output = 0, 'integration.py: debug is enabled, skippig integration script run...\n'
@@ -89,7 +93,7 @@ def run_itegration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_d
 
         if res:
             results[_StateKey_] = _S_script_failed_
-            results[_LogKey_]   = output  # ommiting compilation log and only including integration.py output
+            results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including integration.py output
             return results
 
     for d in os.listdir(files_location):
@@ -102,7 +106,7 @@ def run_itegration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_d
             if os.path.isfile(command_sh): os.remove(command_sh)  # deleting non-tempalte command.sh files to avoid stroing absolute paths in database
 
     results[_StateKey_] = _S_queued_for_comparison_
-    results[_LogKey_]   = output  # ommiting compilation log and only including integration.py output
+    results[_LogKey_]   =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including integration.py output
     return results
 
 
