@@ -5,10 +5,11 @@
 set(CPPDB_SOVERSION 0)
 
 # General settings
-
-include_directories(../../external/dbio/sqlite3)
-include_directories(../../external/dbio)
-include_directories(../../external)
+# We use the SYSTEM directive here to avoid printing warning about code in the external headers
+# (Warnings in the .cc and .cpp files themselves will still be printed.)
+include_directories(SYSTEM ../../external/dbio/sqlite3)
+include_directories(SYSTEM ../../external/dbio)
+include_directories(SYSTEM ../../external)
 
 option(DISABLE_SQLITE	"Link sqlite3 backend into the libcppdb" OFF)
 

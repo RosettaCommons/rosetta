@@ -14,14 +14,17 @@ SET(CMAKE_CXX_ARCHIVE_APPEND "<CMAKE_AR> q  <TARGET> <LINK_FLAGS> <OBJECTS>")
 # include / link dirs
 INCLUDE_DIRECTORIES(../..)
 INCLUDE_DIRECTORIES(../../src)
-INCLUDE_DIRECTORIES(../../external/cxxtest)
 
 # external libraries
+# We use the SYSTEM directive here to avoid printing warning in the external libraries
+
+INCLUDE_DIRECTORIES(SYSTEM ../../external/cxxtest)
+
 CMAKE_POLICY( SET CMP0015 NEW )
-INCLUDE_DIRECTORIES(../../external/boost_1_46_1)
+INCLUDE_DIRECTORIES(SYSTEM ../../external/boost_1_46_1)
 LINK_DIRECTORIES(../../external/boost_1_46_1)
 
-INCLUDE_DIRECTORIES(../../external/include)
+INCLUDE_DIRECTORIES(SYSTEM ../../external/include)
 LINK_DIRECTORIES(../../external/lib)
 
 # Platform-specific includes

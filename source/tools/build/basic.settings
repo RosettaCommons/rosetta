@@ -121,8 +121,9 @@ settings = {
     "gcc" : {
         "appends" : {
             "flags" : {
-                "cc"        : [ "std=c99", "isystem external/boost_1_46_1/"],
-                "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/" ],
+                #The "isystem" items here are to tell gcc to not print warnings from these external headers 
+                "cc"        : [ "std=c99", "isystem external/boost_1_46_1/", "isystem external/include/"],
+                "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/", "isystem external/include/"],
                 "compile"   : [ "pipe", "ffor-scope" ],
                 "warn"      : [ "Wall", "Wextra", "pedantic", "Wno-long-long" ],
                 # By default, warn as much as possible.
@@ -1229,8 +1230,9 @@ settings = {
             "flags" : {
                 # We don't use any C -- but if we did would it really
                 # be C99?  Are there portability issues?
-                "cc"        : [ "std=c99", "isystem external/boost_1_46_1/" ],
-                "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/" ],
+                # (The "isystem" directives here are to tell clang not to print warnings found in these extenal headers.)
+                "cc"        : [ "std=c99", "isystem external/boost_1_46_1/", "isystem external/include/" ],
+                "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/", "isystem external/include/" ],
                 "compile"   : [ "pipe", "Qunused-arguments", 'DUNUSUAL_ALLOCATOR_DECLARATION', 'ftemplate-depth-256', "stdlib=libstdc++", ],
 			        # flags for Clang C++ lib:
 		                #'D__ROSETTA_CLANG__', 'DBOOST_NO_0X_HDR_INITIALIZER_LIST -DBOOST_DETAIL_NO_CONTAINER_FWD -DBOOST_NO_0X_HDR_TUPLE ',],  # 'std=c++98',  "stdlib=libstdc++" ],  # Sergey: adding BOOST_NO_0X_HDR_INITIALIZER_LIST because our boost version could not figure it out on it own
