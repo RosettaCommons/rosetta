@@ -30,6 +30,7 @@
 
 #include <protocols/forge/remodel/RemodelRotamerLinksCreator.hh>
 
+#include <protocols/toolbox/task_operations/DatabaseThreadCreator.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperationCreator.hh>
 #include <protocols/toolbox/task_operations/JointSequenceOperationCreator.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2OperationCreator.hh>

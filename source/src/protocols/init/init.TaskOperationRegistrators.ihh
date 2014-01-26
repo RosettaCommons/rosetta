@@ -59,6 +59,7 @@ static TaskOperationRegistrator< protocols::toolbox::task_operations::SeqprofCon
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SelectResiduesWithinChainOperationCreator > SelectResiduesWithinChainCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SetIGTypeOperationCreator > SetIGTypeOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::ThreadSequenceOperationCreator > ThreadSequenceOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::DatabaseThreadCreator > DatabaseThreadCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SelectBySASAOperationCreator > SelectBySASAOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SelectByDensityFitOperationCreator > SelectByDensityFitOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictNativeResiduesOperationCreator > RestrictNativeResiduesOperationCreator_registrator;

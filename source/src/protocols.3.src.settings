@@ -647,6 +647,7 @@ sources = {
 		"SpecialRotamerRotSetOps",
 	],
 	"protocols/toolbox/task_operations": [
+		"DatabaseThread",
 		"DesignAroundOperation",
 		"InterfaceTaskOperation",
 		"JointSequenceOperation",
