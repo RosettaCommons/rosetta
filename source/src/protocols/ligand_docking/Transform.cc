@@ -337,9 +337,15 @@ void Transform::translate_ligand(core::conformation::UltraLightResidue & residue
 		distance*RG.uniform(),
 		distance*RG.uniform(),
 		distance*RG.uniform());
+
+	core::Real angle = 360;
+
+	numeric::xyzMatrix<core::Real> rotation(
+		numeric::z_rotation_matrix_degrees( angle*RG.uniform() ) * (
+			numeric::y_rotation_matrix_degrees( angle*RG.uniform() ) *
+			numeric::x_rotation_matrix_degrees( angle*RG.uniform() ) ));
     
-	
-	residue.slide(translation);
+	residue.transform(rotation,translation);
 }
 void Transform::transform_ligand(core::conformation::UltraLightResidue & residue)
 {
