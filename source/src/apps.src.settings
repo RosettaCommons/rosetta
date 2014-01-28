@@ -121,7 +121,7 @@ sources = {
 		"CstfileToTheozymePDB",
 		"enzyme_design",
 	],
-        "public/farna": [
+    "public/farna": [
 	    "rna_cluster",
 	    "rna_database",
 	    "rna_denovo",
@@ -173,7 +173,7 @@ sources = {
 	"public/pocket": [
 		"pocket_measure",
 	],
-        "public/rna_util": [
+    "public/rna_util": [
 	    "rna_thread",
 	    "rna_suitename",
 	],

@@ -148,7 +148,6 @@ OPT_KEY( Boolean, filter_for_previous_clash )
 OPT_KEY( Boolean, filterer_undercount_sugar_rotamers )
 OPT_KEY( Boolean, clusterer_two_stage_clustering )
 OPT_KEY( Boolean, clusterer_keep_pose_in_memory )
-OPT_KEY( Boolean, finer_sampling_at_chain_closure )
 OPT_KEY( StringVector, 	VDW_rep_screen_info )
 OPT_KEY( Boolean, graphic )
 OPT_KEY( Real, Real_parameter_one )
@@ -821,11 +820,9 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::rna::sampler_native_screen_rmsd_cutoff );
 		option.add_relevant( OptionKeys::stepwise::rna::sampler_cluster_rmsd );
 		option.add_relevant( OptionKeys::stepwise::rna::native_edensity_score_cutoff );
-		option.add_relevant( OptionKeys::stepwise::rna::sampler_perform_o2prime_pack );
 		option.add_relevant( OptionKeys::stepwise::rna::sampler_use_green_packer );
 		option.add_relevant( OptionKeys::stepwise::rna::VERBOSE );
 		option.add_relevant( OptionKeys::stepwise::rna::distinguish_pucker );
-		option.add_relevant( OptionKeys::stepwise::rna::finer_sampling_at_chain_closure );
 		option.add_relevant( OptionKeys::stepwise::rna::PBP_clustering_at_chain_closure );
 		option.add_relevant( OptionKeys::stepwise::rna::sampler_allow_syn_pyrimidine );
 		option.add_relevant( OptionKeys::stepwise::rna::sampler_extra_chi_rotamer );

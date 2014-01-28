@@ -26,7 +26,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <protocols/farna/RNA_SuiteAssign.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
@@ -62,7 +61,6 @@
 #include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/stepwise/StepWiseClusterer.hh>
 #include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
@@ -135,7 +133,7 @@ typedef std::pair< unsigned int, float[4]> RNA_scores; //count, total_score, hbo
 typedef std::pair< core::Size, utility::vector1< utility::vector1< Real > > > Torsions;
 /*
 //////////Binary IO////////////////
-void 
+void
 write_scores( utility::vector1 < RNA_scores > const & scores, std::string const & out_name) {
 	std::ofstream out_file (out_name.c_str(), std::ios::out | std::ios::binary);
 	Size const vector_size = scores.size();
@@ -177,7 +175,7 @@ get_suite_ideal_A_form_torsions(){
 				ideal_A_form_torsions[i] -= 360;
 			} else if (ideal_A_form_torsions[i] <=  0) {
 				ideal_A_form_torsions[i] += 360;
-			}	
+			}
 		}
 	}
 
@@ -185,7 +183,7 @@ get_suite_ideal_A_form_torsions(){
 }
 //////////////////////////////////
 void
-apply_suite_torsions( utility::vector1< Real > const & torsion_set, 
+apply_suite_torsions( utility::vector1< Real > const & torsion_set,
 											pose::Pose & pose,
 											Size const moving_suite,
 											bool const sample_3prime_pucker = true){
@@ -224,7 +222,7 @@ apply_suite_torsions( utility::vector1< Real > const & torsion_set,
 }
 //////////////////////////////////
 void
-initialize_o2prime_pack( pose::Pose const & pose, 
+initialize_o2prime_pack( pose::Pose const & pose,
 												scoring::ScoreFunctionOP const scorefxn,
 												scoring::ScoreFunctionOP o2prime_pack_scorefxn,
 												pack::task::PackerTaskOP o2prime_pack_task ) {
@@ -301,11 +299,11 @@ create_random_torsions(utility::vector1< Real > & torsion_list, bool const modif
 }
 //////////////////////////////////
 void
-sample_near_current_torsion(utility::vector1< Real > & torsion_list, 
-														Real const stddev, 
+sample_near_current_torsion(utility::vector1< Real > & torsion_list,
+														Real const stddev,
 														utility::vector1< Real > const & upper_bound,
 														utility::vector1< Real > const & lower_bound,
-														bool const modify_pucker = true, 
+														bool const modify_pucker = true,
 														bool const cyclic = true) {
 	static const Real delta_north = rna_fitted_torsion_info.delta_north();
 	static const Real delta_south = rna_fitted_torsion_info.delta_south();
@@ -386,7 +384,7 @@ read_rigid_body_settings( std::string const infile,
 }
 //////////////////////////////////
 void
-apply_rigid_body_settings( pose::Pose & pose, 
+apply_rigid_body_settings( pose::Pose & pose,
 													 pose::Pose const & pose_start,
 													 utility::vector1< Size > moving_res,
 													 Real const alpha,
@@ -429,7 +427,7 @@ setup_double_helix_pose ( pose::Pose & pose){
 	if ( option[ seq ].user() ) sequence = option[ seq ]();
 	if ( sequence.size() % 2 != 0) {
 		utility_exit_with_message( "Improper sequence length: should be multiples of 2" );
-	}	
+	}
 
 	pose::make_pose_from_sequence( pose, sequence, *rsd_set );
 	Size n_res = pose.n_residue();
@@ -494,11 +492,10 @@ update_system(utility::vector1< Real > & torsion_list, Real const sampling_range
 
 	static bool need_upper_lower_initiate = true;
 	static utility::vector1< Real > const A_form_torsion = get_suite_ideal_A_form_torsions();
-	static Size const torsion_list_size = A_form_torsion.size();	
-	static Real delta_torsion;
+	static Size const torsion_list_size = A_form_torsion.size();
 	static utility::vector1< Real >  upper_bound, lower_bound;
 
-	if (need_upper_lower_initiate) { 
+	if (need_upper_lower_initiate) {
 		for ( Size i = 1; i <= torsion_list_size; ++i ) {
 			if (sample_near_1a_) {
 				upper_bound.push_back(A_form_torsion[i] + 40);
@@ -561,7 +558,7 @@ rmsd_compute (core::pose::Pose const & pose1, core::pose::Pose const & pose2) {
 	return sqrt(sum_rmsd / double(n_atom) );
 }
 ///////////////////////////////////
-bool 
+bool
 is_atom_clash (core::pose::Pose const & pose, Real const dist_cutoff = 1.2) {
 	Size const n_res = pose.total_residue();
 	Real const dist_cutoff_sq = dist_cutoff * dist_cutoff;
@@ -643,7 +640,7 @@ double_helix_test(){
 	std::string const sequence = option[ seq ]();
 	Size const n_res = pose.n_residue();
 
-	// initialize for o2prime rotamer trials. 	
+	// initialize for o2prime rotamer trials.
 	PackerTaskOP o2prime_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
 	ScoreFunctionOP o2prime_pack_scorefxn = new ScoreFunction;
 	if ( option[ o2prime_trials ]() ) {
@@ -670,7 +667,7 @@ double_helix_test(){
 
 	bool const is_kT_inf = (kT_sys > 999);
 	Real sampling_range = kT_sys * 4.0 / double(n_res - 2);
-	Real score = (*scorefxn)( pose );	
+	Real score = (*scorefxn)( pose );
 	Real score_new, score_saved, rep_score;
 	Size bin;
 	Size n_accpet = 0;
@@ -706,7 +703,7 @@ double_helix_test(){
 	///////////////////////////////////
 
 	for (Size cycle = 1; cycle <= num_cycle; cycle++) {
-	
+
 		for (Size i = 1; i <= torsion_list_size; ++i) {
 			if (is_kT_inf) {
 				update_system( suite_torsion_new[i], 9999 );
@@ -778,7 +775,7 @@ double_helix_test(){
 		}
 		if (hist[i] != 0) last_bin = i;
 	}
-	
+
 	ozstream out;
 	out.open( outfile );
 	out << "Score N_sample" << std::endl;
@@ -878,7 +875,7 @@ helix_ST(){
 	for (Size i = 1; i <= n_temp; ++i) std::cout << weight_list[i] << ' ';
 	std::cout << std::endl;
 
-	// initialize for o2prime rotamer trials. 	
+	// initialize for o2prime rotamer trials.
 	PackerTaskOP o2prime_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
 	ScoreFunctionOP o2prime_pack_scorefxn = new ScoreFunction;
 	if ( option[ o2prime_trials ]() ) {
@@ -940,7 +937,7 @@ helix_ST(){
 	clock_t const time_start( clock() );
 	Real lowest_score = 999;
 	Pose lowest_pose = pose;
-	
+
 	//Start MC
 	for (Size cycle = 1; cycle <= num_cycle; cycle++) {
 		//Normal MCMC
@@ -969,7 +966,7 @@ helix_ST(){
 			score = score_new;
 			suite_torsion = suite_torsion_new;
 			++n_accpet;
-			
+
 			if (score < lowest_score) {
 				lowest_score = score;
 				lowest_pose = pose;
@@ -1040,7 +1037,7 @@ helix_ST(){
 		Real const kT = kT_sys_list[id];
 		std::ostringstream oss;
 		oss << outfile << '_' << std::fixed << std::setprecision(2) << kT << ".out";
-	
+
 		ozstream out;
 		out.open( oss.str() );
 		out << "Score N_sample" << std::endl;

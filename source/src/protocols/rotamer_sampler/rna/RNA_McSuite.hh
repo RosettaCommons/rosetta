@@ -59,8 +59,6 @@ public:
 
 	/// @brief Set if only sample near A form rotamers
 	void set_sample_near_a_form( bool const setting ) {
-		pucker_flip_rate_ = 0;
-		init_pucker_ = 1;
 		set_and_reinit( sample_near_a_form_, setting );
 	}
 

@@ -182,11 +182,11 @@ main( int argc, char * argv [] ) {
 ///	}
 
 	core::chemical::ResidueTypeSetCAP rsd_set;
-				if ( option[ in::file::fullatom ]() ) {
-				rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-				} else {
-				rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
-				}
+	if ( option[ in::file::fullatom ]() ) {
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	} else {
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
+	}
 
 
 	// Cluster the first up-to-400 structures by calculating a full rms matrix
@@ -224,11 +224,11 @@ main( int argc, char * argv [] ) {
 
 	// Post processing
 	int time_total = time(NULL);
-	clustering->sort_each_group_by_energy();
-	if ( option[ sort_groups_by_energy ].user() ){
+	// clustering->sort_each_group_by_energy();
+	if ( option[ sort_groups_by_energy ] ){
 		clustering->sort_groups_by_energy();
 	}
-	if ( option[ remove_singletons ].user() ){
+	if ( option[ remove_singletons ] ){
  		clustering->remove_singletons();
 	}
 	if ( option[ limit_cluster_size ].user() ){
@@ -246,11 +246,11 @@ main( int argc, char * argv [] ) {
 	if ( option[ limit_total_structures ].user() ){
 		clustering->limit_total_structures( option[ limit_total_structures] );
 	}
-	if ( option[ remove_highest_energy_member ].user() ){
+	if ( option[ remove_highest_energy_member ] ){
 		clustering->remove_highest_energy_member_of_each_group();
 	}
 
-	if ( option[ export_only_low ].user() ){
+	if ( option[ export_only_low ] ){
 		clustering->sort_each_group_by_energy();
 		clustering->sort_groups_by_energy( );
 		clustering->export_only_low( option[ export_only_low ]() );

@@ -720,13 +720,13 @@ identify_intra_res_hbonds(
 		int const base2( rsd.abase2( aatm ) );
 		assert( base2 > 0 && base != base2 );
 
-		if( rsd.RNA_type().atom_is_phosphate(aatm)==false) continue;
+		if ( !rsd.RNA_type().atom_is_phosphate( aatm ) ) continue;
 
 		for ( chemical::AtomIndices::const_iterator hnum  = rsd.Hpos_polar().begin(),	hnume = rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 			Size const hatm( *hnum );
 			Size const datm(rsd.atom_base(hatm));
 
-			if( rsd.RNA_type().is_RNA_base_atom( datm )==false ) continue;
+			if( !rsd.RNA_type().is_RNA_base_atom( datm ) ) continue;
 
 			if( rsd.path_distance( aatm, datm ) < 4) utility_exit_with_message("rsd.path_distance(aatm, datm) < 4"); //consistency check
 

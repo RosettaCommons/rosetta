@@ -187,11 +187,11 @@ apply_nucleoside( Nucleoside_Torsion const & nucleoside,
 
 	if (nucleoside[0]  < 115) { //North
 		if ( pose.torsion( TorsionID( residue, id::BB, 4 ) ) > 115) {
-			ideal_coord_rna.apply(pose, residue, true);
+			// ideal_coord_rna.apply(pose, residue, true);
 		}
 	} else { //South
 		if ( pose.torsion( TorsionID( residue, id::BB, 4 ) ) < 115) {
-			ideal_coord_rna.apply(pose, residue, false);
+			// ideal_coord_rna.apply(pose, residue, false);
 		}
 	}
 
@@ -384,7 +384,7 @@ setup_pose ( pose::Pose & pose){
 
 	utility::vector1< Real > const & rbs = reference_rigid_body_settings[ option[ fixed_pair_state_number ]() ];
 	apply_rigid_body_settings( pose, pose, strand2_res, rbs );
-	pose.dump_pdb("init.pdb");
+	// pose.dump_pdb("init.pdb");
 }
 //////////////////////////////////
 //Random angle sampling functions
@@ -627,7 +627,6 @@ MC_run () {
 
 	Pose pose;
 	setup_pose(pose);
-	scorefxn -> show(pose);
 
 	bool const is_output_min_pose = option[ output_min_pose ]();
 	bool const is_save_torsions = option[ save_torsions ]();
@@ -726,8 +725,36 @@ MC_run () {
 	Real min_score = score;
 	clock_t const time_start( clock() );
 
-	///////////////////////////////////
+	/*
+	// Debug codes //
+	std::ofstream myfile;
+	myfile.open( "old_test.txt" );
+	for ( Size n = 1; n <= num_cycle; ++n ) {
+		backbones_new = backbones;
+		nucleosides_new = nucleosides;
 
+		update_backbone( backbones_new, backbones_mode, stdev_bp[kT_id],
+										 stdev_free[kT_id], lowerbound_bp, upperbound_bp);
+		update_nucleoside( nucleosides_new, nucleosides_mode,  stdev_bp[kT_id],
+											 stdev_free[kT_id], lowerbound_bp, upperbound_bp, pucker_prob[kT_id]);
+		backbones = backbones_new;
+		nucleosides = nucleosides_new;
+
+		apply_all( backbones_new, nucleosides_new, pose );
+		utility::vector1<float> torsions;
+		get_torsion_list(torsions, backbones, nucleosides, len1);
+		for ( Size i = 1; i <= torsions.size(); ++i ) {
+			myfile << torsions[i] << ' ';
+		}
+		myfile << std::endl;
+	}
+	myfile.close();
+	// //////////////
+*/
+	apply_all( backbones, nucleosides, pose );
+	pose.dump_pdb("init_old.pdb");
+	scorefxn -> show(pose);
+	///////////////////////////////////
 	for (Size cycle = 1; cycle <= num_cycle; cycle++) {
 		backbones_new = backbones;
 		nucleosides_new = nucleosides;
@@ -801,6 +828,7 @@ MC_run () {
 	if (is_save_score_terms) get_score_terms(data_list[kT_id], pose, scorefxns);
 	if (is_save_base_steps) get_base_steps(data_list[kT_id], pose);
 	////////////////////
+	pose.dump_pdb("final_old.pdb");
 
 	std::cout << "Total number of cycles = " << num_cycle << std::endl;
 	std::cout << "Accept rate:" << (1.0 * n_accpet / num_cycle) << std::endl;

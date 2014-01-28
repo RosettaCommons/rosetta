@@ -45,7 +45,7 @@ RNA_McSuite::RNA_McSuite( Size const rsd_id ):
 	sample_bb_( true ),
 	sample_lower_nucleoside_( false ),
 	sample_upper_nucleoside_( true ),
-	pucker_flip_rate_( 0 ),
+	pucker_flip_rate_( 0.1 ),
 	gaussian_stdev_( 20 ),
 	a_form_range_( 60 ),
 	init_pucker_( NORTH )
@@ -107,7 +107,6 @@ void RNA_McSuite::init() {
 				rsd_id_ - 1 + i, pucker_flip_rate_, init_pucker_ );
 		sugar_sampler->set_skip_same_pucker( skip_same_pucker_ );
 		sugar_sampler->set_idealize_coord( idealize_coord_ );
-		sugar_sampler->set_flip_rate( pucker_flip_rate_ );
 		chi_samplers_.push_back( chi_sampler );
 		sugar_samplers_.push_back( sugar_sampler );
 	}
