@@ -42,7 +42,7 @@
 
 #include <protocols/protein_interface_design/filters/AtomicContactCountFilter.hh>
 
-#include <protocols/jd2/DockDesignParser.hh>
+#include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
@@ -67,7 +67,7 @@ namespace
       {
         core_init();
 				// Initialize dock design parser to setup pose metric calculators. 
-				protocols::jd2::DockDesignParser parser;
+				protocols::rosetta_scripts::RosettaScriptsParser parser;
       }
 
 			std::string AtomicContactCount_pose_string()

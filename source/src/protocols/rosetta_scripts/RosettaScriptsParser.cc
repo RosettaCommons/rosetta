@@ -8,12 +8,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/jd2/DockDesignParser.cc
+/// @file   protocols/rosetta_scripts/RosettaScriptsParser.cc
 /// @brief  August 2008 job distributor as planned at RosettaCon08 - Interface base class Parser
 /// @author Sarel Fleishman sarelf@u.washington.edu
 
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/DockDesignParser.hh>
+#include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 
 // Package headers
 #include <protocols/jd2/parser/DataLoader.hh>
@@ -86,23 +86,24 @@
 
 
 namespace protocols {
-namespace jd2 { // why is this in namespace jd2?
+namespace rosetta_scripts {
 
 using namespace core;
 	using namespace basic::options;
 	using namespace scoring;
 using namespace moves;
+using namespace jd2;
 
-static basic::Tracer TR( "protocols.jd2.DockDesignParser" );
+static basic::Tracer TR( "protocols.rosetta_scripts.RosettaScriptsParser" );
 
-DockDesignParser::DockDesignParser() :
+RosettaScriptsParser::RosettaScriptsParser() :
 	Parser()
 	//,ddfilter_factory_( new DockDesignFilterFactory )
 {
 	register_factory_prototypes();
 }
 
-DockDesignParser::~DockDesignParser(){}
+RosettaScriptsParser::~RosettaScriptsParser(){}
 
 typedef utility::tag::TagCOP TagCOP;
 typedef utility::vector0< TagCOP > TagCOPs;
@@ -128,7 +129,7 @@ typedef utility::vector0< TagCOP > TagCOPs;
 /// Notice that the order of the sections by which the protocol is written doesn't matter, BUT the order of the
 /// mover-filter pairs in PROTOCOLS section does matter.
 bool
-DockDesignParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & in_mover, bool new_input, std::string const xml_fname ){
+RosettaScriptsParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & in_mover, bool new_input, std::string const xml_fname ){
 
 	bool modified_pose( false );
 
@@ -163,7 +164,7 @@ DockDesignParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & in_mo
 	return modified_pose;
 }
 
-MoverOP DockDesignParser::parse_protocol_tag(Pose & pose, utility::tag::TagCOP protocol_tag)
+MoverOP RosettaScriptsParser::parse_protocol_tag(Pose & pose, utility::tag::TagCOP protocol_tag)
 {
 	bool modified_pose = false;
 
@@ -177,7 +178,7 @@ MoverOP DockDesignParser::parse_protocol_tag(Pose & pose, utility::tag::TagCOP p
 	return mover;
 }
 
-MoverOP DockDesignParser::parse_protocol_tag(TagCOP protocol_tag)
+MoverOP RosettaScriptsParser::parse_protocol_tag(TagCOP protocol_tag)
 {
 	Pose temp_pose;
 	bool modified_pose = false;
@@ -192,7 +193,7 @@ MoverOP DockDesignParser::parse_protocol_tag(TagCOP protocol_tag)
 	return mover;
 }
 
-MoverOP DockDesignParser::generate_mover_for_protocol(Pose & pose, bool & modified_pose, TagCOP tag)
+MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & modified_pose, TagCOP tag)
 {
 	protocols::rosetta_scripts::ParsedProtocolOP protocol( new protocols::rosetta_scripts::ParsedProtocol );
 
@@ -352,7 +353,7 @@ MoverOP DockDesignParser::generate_mover_for_protocol(Pose & pose, bool & modifi
 ///
 ///Having the return value be passed through a parameter is to get around some copy-constructor limitations of C++ streams.
 void
-DockDesignParser::substitute_variables_in_stream( std::istream & in, utility::options::StringVectorOption const& script_vars, std::stringstream & out){
+RosettaScriptsParser::substitute_variables_in_stream( std::istream & in, utility::options::StringVectorOption const& script_vars, std::stringstream & out){
 	using namespace std;
 	//Parse variable substitutions
 	map<string,string> var_map;
@@ -400,10 +401,10 @@ DockDesignParser::substitute_variables_in_stream( std::istream & in, utility::op
 ///by allowing runtime registration of derived class prototypes. However, this requires
 ///pre-registration of a derived type with the factory prior to asking the factory to return an
 ///instance of that type. This method registers those additional derived classes that are available for
-///construction in the DockDesignParser context.
+///construction in the RosettaScriptsParser context.
 /// TO-DO: replace this manual factory registration system with a load-time-initialized singleton scheme (see r32404 for example)
 void
-DockDesignParser::register_factory_prototypes()
+RosettaScriptsParser::register_factory_prototypes()
 {
 	// note: TaskOperations are now registered with a singleton factory at load time using apl's creator/registrator scheme
 

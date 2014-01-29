@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/jd2/DockDesignParser.hh
+/// @file   protocols/rosetta_scripts/RosettaScriptsParser.hh
 /// @brief  header file for Parser class, part of August 2008 job distributor
 /// @author Sarel Fleishman sarelf@u.washington.edu
 
 
-#ifndef INCLUDED_protocols_jd2_DockDesignParser_hh
-#define INCLUDED_protocols_jd2_DockDesignParser_hh
+#ifndef INCLUDED_protocols_rosetta_scripts_RosettaScriptsParser_hh
+#define INCLUDED_protocols_rosetta_scripts_RosettaScriptsParser_hh
 
 //unit headers
 #include <protocols/moves/Mover.fwd.hh>
@@ -36,10 +36,10 @@
 
 
 namespace protocols {
-namespace jd2 {
+namespace rosetta_scripts {
 
 /// @brief Reading the xml file and generating the mover
-class DockDesignParser : public Parser
+class RosettaScriptsParser : public protocols::jd2::Parser
 {
 public:
 	typedef protocols::moves::MoverFactory MoverFactory;
@@ -48,8 +48,8 @@ public:
 	//typedef protocols::protein_interface_design::DockDesignFilterFactoryOP DockDesignFilterFactoryOP;
 
 public:
-	DockDesignParser();
-	virtual ~DockDesignParser();
+	RosettaScriptsParser();
+	virtual ~RosettaScriptsParser();
 
 	virtual
 	bool
@@ -76,7 +76,7 @@ private:
 
 }; // Parser
 
-} // namespace jd2
+} // namespace rosetta_scripts
 } // namespace protocols
 
-#endif //INCLUDED_protocols_jd2_DockDesignParser_HH
+#endif //INCLUDED_protocols_jd2_RosettaScriptsParser_HH

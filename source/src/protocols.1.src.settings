@@ -41,7 +41,6 @@ sources = {
 		"AtomTreeDiffJobOutputter",
 		"BatchJobInputter",
 		"BOINCJobDistributor",
-		"DockDesignParser",
 		"FileJobOutputter",
 		"FileSystemJobDistributor",
 		"InnerJob",
@@ -138,6 +137,7 @@ sources = {
 	],
 	"protocols/rosetta_scripts": [
 		"ParsedProtocol",
+		"RosettaScriptsParser",
 		"SavePoseMover",
 		"util",
 	],

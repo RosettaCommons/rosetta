@@ -24,10 +24,9 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <protocols/rpc/rpc.hh>
-#include <protocols/jd2/DockDesignParser.hh>
+#include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/DockDesignParser.hh>
 #include <core/init/init.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/excn/Exceptions.hh>
@@ -247,10 +246,10 @@ JSON_RPC::JSON_RPC( JSON_RPC const & json_rpc) : ReferenceCount(json_rpc) {
         }
         utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
         provider->add_input_file( "script.xml", xmlscript_ );
-        protocols::jd2::DockDesignParser ddp;
+        protocols::rosetta_scripts::RosettaScriptsParser rsp;
         protocols::jd2::JobCOP job;
         protocols::moves::MoverOP protocol;
-        ddp.generate_mover_from_pose( job, outputpose_ , protocol, true, "script.xml" );
+        rsp.generate_mover_from_pose( job, outputpose_ , protocol, true, "script.xml" );
         protocol->apply( outputpose_ );
       }
       

@@ -25,7 +25,10 @@ def svn_version():
     '''
     rootdir = os.getcwd()
     while os.path.basename(rootdir) and os.path.basename(rootdir) != 'main' and not \
-            (os.path.exists(os.path.join( rootdir, ".git" )) and os.path.exists('source') and os.path.exists('database') and os.path.exists('tests')):
+            (os.path.exists(os.path.join( rootdir, ".git" )) and
+             os.path.exists(os.path.join( rootdir, 'source')) and
+             os.path.exists(os.path.join( rootdir, 'database')) and
+             os.path.exists(os.path.join( rootdir, 'tests'))):
         rootdir = os.path.dirname(rootdir) # Walk up directory tree to "main" directory, or root of filesystem.
 
     #Check if we're in a git repository - if not, skip gracefully (so git doesn't throw warnings in releases.)

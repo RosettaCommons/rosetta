@@ -29,7 +29,7 @@
 
 #include <protocols/jd2/JobOutputterFactory.hh>
 
-#include <protocols/jd2/DockDesignParser.hh>
+#include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 
 #include <basic/options/option.hh>
 // option key includes
@@ -155,7 +155,7 @@ ParserOP
 JobDistributorFactory::create_parser()
 {
 	if ( option[ OptionKeys::jd2::dd_parser ].user() )
-		return new DockDesignParser;
+		return new protocols::rosetta_scripts::RosettaScriptsParser;
 	return NULL;
 }
 
