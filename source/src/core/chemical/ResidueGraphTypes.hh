@@ -19,7 +19,7 @@
 /// Acceptor atom graph has been filtered so that every node and edge in the graph is associated with an acceptor
 /// atom. The properties of the filtered graphs can be determined by any criteria. Currently, atom types are used
 /// as the metric to filter the graphs. This does not have to be the case. Graphs can be filtered based on the
-/// atoms, orbitals, etc etc. It is up to your immagination. The unit tests for these show examples of how to use
+/// atoms, orbitals, etc etc. It is up to your imagination. The unit tests for these show examples of how to use
 /// the filtered graphs.
 ///
 /// Each filter graph has an operator that is used to determine if a node should be in the graph. An iterator through
@@ -40,197 +40,197 @@
 
 // Package headers
 
+
 namespace core {
-    namespace chemical {
-        
-        /////////////////////////////////////////
-        /////////// Graph typedefs //////////////
-        
-        typedef boost::undirected_graph<
+namespace chemical {
+
+/////////////////////////////////////////
+/////////// Graph typedefs //////////////
+
+typedef boost::undirected_graph<
 		Atom, // struct with properties of a node
 		Bond // struct with properties of an edge
 		/*,ResidueType*/
-        > ResidueGraph;
-        
-        typedef ResidueGraph::vertex_descriptor VD;
-        typedef ResidueGraph::edge_descriptor ED;
-        typedef utility::vector1< VD > VDs;
-        
-        typedef boost::graph_traits<ResidueGraph>::vertex_iterator VIter;
-        typedef boost::graph_traits<ResidueGraph>::edge_iterator EIter;
-        typedef std::pair<VIter, VIter> VIterPair;
-        
-        typedef boost::graph_traits<ResidueGraph>::out_edge_iterator OutEdgeIter;
-        //typedef boost::graph_traits<ResidueGraph>::in_edge_iterator InEdgeIter; // Out and in edges are the same in an undirected_graph
-        typedef std::pair<OutEdgeIter, OutEdgeIter> OutEdgeIterPair;
-        
-        typedef std::map< std::string, VD > NameVDMap;
-        typedef std::pair<std::string, VD> NameVDPair;
-        typedef std::pair<NameVDMap::iterator, bool> NameVDInserted;
-        
-        /////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////
-        ////////// PREDICATES for FILTERED GRAPHS ///////////////////
-        ////////////////////////////////////////////////////////////
-        
+		> ResidueGraph;
 
-        /// @brief The filter responsible for obtaining all heavy atoms.
-        class HeavyAtomFilter{
-        public:
-            HeavyAtomFilter(){};
-            HeavyAtomFilter(ResidueGraph& graph, AtomTypeSetCAP atom_types):graph_(&graph),atom_types_(atom_types){};
-            bool operator()(VD const vd) const;
-        private:
-            ResidueGraph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
-            AtomTypeSetCAP atom_types_;
-        };
-        typedef boost::filtered_graph<ResidueGraph, boost::keep_all, HeavyAtomFilter> HeavyAtomGraph;
-        typedef HeavyAtomGraph::vertex_descriptor HeavyAtomVD;
-        typedef HeavyAtomGraph::edge_descriptor HeavyAtomED;
-        typedef boost::graph_traits<HeavyAtomGraph>::vertex_iterator HeavyAtomVIter;
-        typedef boost::graph_traits<HeavyAtomGraph>::edge_iterator HeavyAtomEIter;
-        typedef boost::graph_traits<HeavyAtomGraph>::out_edge_iterator HeavyAtomOutEdgeIter;
-        typedef std::pair<HeavyAtomOutEdgeIter, HeavyAtomOutEdgeIter> HeavyAtomOutEdgeIterPair;
-        typedef std::pair<HeavyAtomVIter, HeavyAtomVIter> HeavyAtomVIterPair;
-        
+typedef ResidueGraph::vertex_descriptor VD;
+typedef ResidueGraph::edge_descriptor ED;
+typedef utility::vector1< VD > VDs;
 
-        ////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////
-
-        /// @brief The filter responsible for obtaining all acceptor atoms.
-        class AcceptorAtomFilter{
-        public:
-        	AcceptorAtomFilter(){};
-        	AcceptorAtomFilter(ResidueGraph& graph, AtomTypeSetCAP atom_types):graph_(&graph),atom_types_(atom_types){};
-            bool operator()(VD const vd) const;
-        private:
-            ResidueGraph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
-            AtomTypeSetCAP atom_types_;
-        };
-        typedef boost::filtered_graph<ResidueGraph, boost::keep_all, AcceptorAtomFilter> AcceptorAtomGraph;
-        typedef boost::graph_traits<AcceptorAtomGraph>::vertex_iterator AcceptorAtomVIter;
-        typedef boost::graph_traits<AcceptorAtomGraph>::edge_iterator AcceptorAtomEIter;
-        typedef std::pair<AcceptorAtomVIter, AcceptorAtomVIter> AcceptorAtomVIterPair;
-
-        ////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////
-        
-        /// @brief The filter responsible for obtaining all heavy atoms with polar hydrogens attached to them.
-        class HeavyAtomWithPolarHydrogensFilter{
-        public:
-            HeavyAtomWithPolarHydrogensFilter(){};
-            HeavyAtomWithPolarHydrogensFilter(ResidueGraph& graph, AtomTypeSetCAP atom_types):graph_(&graph),atom_types_(atom_types){};
-            bool operator()(VD const vd) const;
-        private:
-            ResidueGraph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
-            AtomTypeSetCAP atom_types_;
-        };
-        typedef boost::filtered_graph<ResidueGraph, boost::keep_all, HeavyAtomWithPolarHydrogensFilter> HeavyAtomWithPolarHydrogensGraph;
-        typedef boost::graph_traits<HeavyAtomWithPolarHydrogensGraph>::vertex_iterator HeavyAtomWithPolarHydrogensVIter;
-        typedef boost::graph_traits<HeavyAtomWithPolarHydrogensGraph>::edge_iterator HeavyAtomWithPolarHydrogensEIter;
-        typedef std::pair<HeavyAtomWithPolarHydrogensVIter, HeavyAtomWithPolarHydrogensVIter> HeavyAtomWithPolarHydrogensVIterPair;
-        
-        ////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////
-        
-        /// @brief The filter responsible for finding heavy atoms with hydrogens.
-        class HeavyAtomWithHydrogensFilter{
-        public:
-        	HeavyAtomWithHydrogensFilter(){};
-        	HeavyAtomWithHydrogensFilter(ResidueGraph& graph, AtomTypeSetCAP atom_types):graph_(&graph),atom_types_(atom_types){};
-            bool operator()(VD const vd) const;
-        private:
-            ResidueGraph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
-            AtomTypeSetCAP atom_types_;
-        };
-        typedef boost::filtered_graph<ResidueGraph, boost::keep_all, HeavyAtomWithHydrogensFilter> HeavyAtomWithHydrogensGraph;
-        typedef boost::graph_traits<HeavyAtomWithHydrogensGraph>::vertex_iterator HeavyAtomWithHydrogensVIter;
-        typedef boost::graph_traits<HeavyAtomWithHydrogensGraph>::edge_iterator HeavyAtomWithHydrogensEIter;
-        typedef std::pair<HeavyAtomWithHydrogensVIter, HeavyAtomWithHydrogensVIter> HeavyAtomWithHydrogensVIterPair;
-
-        ////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////
+typedef boost::graph_traits<ResidueGraph>::vertex_iterator VIter;
+typedef boost::graph_traits<ResidueGraph>::edge_iterator EIter;
+typedef std::pair<VIter, VIter> VIterPair;
+typedef std::pair<EIter, EIter > EIterPair;
 
 
-        /// @brief The filter responsible for all hydrogens.
-        class HydrogenAtomFilter{
-        public:
-            HydrogenAtomFilter(){};
-            HydrogenAtomFilter(ResidueGraph& graph, AtomTypeSetCAP atom_types):graph_(&graph),atom_types_(atom_types){};
-            bool operator()(VD const vd) const;
-        private:
-            ResidueGraph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
-            AtomTypeSetCAP atom_types_;
-        };
-        typedef boost::filtered_graph<ResidueGraph, boost::keep_all, HydrogenAtomFilter> HydrogenAtomGraph;
-        typedef HydrogenAtomGraph::vertex_descriptor HydrogenAtomVD;
-        typedef HydrogenAtomGraph::edge_descriptor HydrogenAtomED;
-        typedef boost::graph_traits<HydrogenAtomGraph>::vertex_iterator HydrogenAtomVIter;
-        typedef boost::graph_traits<HydrogenAtomGraph>::edge_iterator HHydrogenAtomEIter;
-        typedef boost::graph_traits<HydrogenAtomGraph>::out_edge_iterator HydrogenAtomOutEdgeIter;
-        typedef std::pair<HydrogenAtomOutEdgeIter, HydrogenAtomOutEdgeIter> HydrogenAtomOutEdgeIterPair;
-        typedef std::pair<HydrogenAtomVIter, HydrogenAtomVIter> HydrogenAtomVIterPair;
-        
-        
+typedef boost::graph_traits<ResidueGraph>::out_edge_iterator OutEdgeIter;
+//typedef boost::graph_traits<ResidueGraph>::in_edge_iterator InEdgeIter; // Out and in edges are the same in an undirected_graph
+typedef std::pair<OutEdgeIter, OutEdgeIter> OutEdgeIterPair;
 
-        ////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////
+typedef std::map< std::string, VD > NameVDMap;
+typedef std::pair<std::string, VD> NameVDPair;
+typedef std::pair<NameVDMap::iterator, bool> NameVDInserted;
 
-        /// @brief The filter responsible for all aromatic atoms.
-        class AromaticAtomFilter{
-        public:
-            AromaticAtomFilter(){};
-            AromaticAtomFilter(ResidueGraph& graph, AtomTypeSetCAP atom_types):graph_(&graph),atom_types_(atom_types){};
-            bool operator()(VD const vd) const;
-        private:
-            ResidueGraph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
-            AtomTypeSetCAP atom_types_;
-        };
-        typedef boost::filtered_graph<ResidueGraph, boost::keep_all, AromaticAtomFilter> AromaticAtomGraph;
-        typedef boost::graph_traits<AromaticAtomGraph>::vertex_iterator AromaticAtomVIter;
-        typedef boost::graph_traits<AromaticAtomGraph>::edge_iterator AromaticAtomEIter;
-        typedef std::pair<AromaticAtomVIter, AromaticAtomVIter> AromaticAtomVIterPair;
-
-        
-        ////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////
-
-        /// @brief The filter responsible for all polar hydrogens.
-        class PolarHydrogenFilter{
-        public:
-            PolarHydrogenFilter(){};
-            PolarHydrogenFilter(ResidueGraph& graph, AtomTypeSetCAP atom_types):graph_(&graph),atom_types_(atom_types){};
-            bool operator()(VD const vd) const;
-        private:
-            ResidueGraph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
-            AtomTypeSetCAP atom_types_;
-        };
-        typedef boost::filtered_graph<ResidueGraph, boost::keep_all, PolarHydrogenFilter> PolarHydrogenGraph;
-        typedef boost::graph_traits<PolarHydrogenGraph>::vertex_iterator PolarHydrogenVIter;
-        typedef boost::graph_traits<PolarHydrogenGraph>::edge_iterator PolarHydrogenEIter;
-        typedef std::pair<PolarHydrogenVIter, PolarHydrogenVIter> PolarHydrogenVIterPair;
-        
-        /// @brief The filter responsible for all apolar hydrogens.
-        class APolarHydrogenFilter{
-        public:
-            APolarHydrogenFilter(){};
-            APolarHydrogenFilter(ResidueGraph& graph, AtomTypeSetCAP atom_types):graph_(&graph),atom_types_(atom_types){};
-            bool operator()(VD const vd) const;
-        private:
-            ResidueGraph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
-            AtomTypeSetCAP atom_types_;
-        };
-        typedef boost::filtered_graph<ResidueGraph, boost::keep_all, APolarHydrogenFilter> APolarHydrogenGraph;
-        typedef boost::graph_traits<APolarHydrogenGraph>::vertex_iterator APolarHydrogenVIter;
-        typedef boost::graph_traits<APolarHydrogenGraph>::edge_iterator APolarHydrogenEIter;
-        typedef std::pair<APolarHydrogenVIter, APolarHydrogenVIter> APolarHydrogenVIterPair;
+/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+////////// PREDICATES for FILTERED GRAPHS ///////////////////
+////////////////////////////////////////////////////////////
 
 
-        
-        
-    }
-}
+/// @brief The filter responsible for obtaining all heavy atoms.
+class HeavyAtomFilter{
+public:
+	HeavyAtomFilter(){};
+	HeavyAtomFilter(ResidueGraph& graph, AtomTypeSetCAP atom_types):graph_(&graph),atom_types_(atom_types){};
+	bool operator()(VD const vd) const;
+private:
+	ResidueGraph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
+	AtomTypeSetCAP atom_types_;
+};
+typedef boost::filtered_graph<ResidueGraph, boost::keep_all, HeavyAtomFilter> HeavyAtomGraph;
+typedef HeavyAtomGraph::vertex_descriptor HeavyAtomVD;
+typedef HeavyAtomGraph::edge_descriptor HeavyAtomED;
+typedef boost::graph_traits<HeavyAtomGraph>::vertex_iterator HeavyAtomVIter;
+typedef boost::graph_traits<HeavyAtomGraph>::edge_iterator HeavyAtomEIter;
+typedef boost::graph_traits<HeavyAtomGraph>::out_edge_iterator HeavyAtomOutEdgeIter;
+typedef std::pair<HeavyAtomOutEdgeIter, HeavyAtomOutEdgeIter> HeavyAtomOutEdgeIterPair;
+typedef std::pair<HeavyAtomVIter, HeavyAtomVIter> HeavyAtomVIterPair;
+
+
+
+
+////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 
+/// @brief The filter responsible for obtaining all acceptor atoms.
+class AcceptorAtomFilter{
+public:
+	AcceptorAtomFilter(){};
+	AcceptorAtomFilter(ResidueGraph& graph, AtomTypeSetCAP atom_types):graph_(&graph),atom_types_(atom_types){};
+	bool operator()(VD const vd) const;
+private:
+	ResidueGraph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
+	AtomTypeSetCAP atom_types_;
+};
+typedef boost::filtered_graph<ResidueGraph, boost::keep_all, AcceptorAtomFilter> AcceptorAtomGraph;
+typedef boost::graph_traits<AcceptorAtomGraph>::vertex_iterator AcceptorAtomVIter;
+typedef boost::graph_traits<AcceptorAtomGraph>::edge_iterator AcceptorAtomEIter;
+typedef std::pair<AcceptorAtomVIter, AcceptorAtomVIter> AcceptorAtomVIterPair;
+
+////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+/// @brief The filter responsible for obtaining all heavy atoms with polar hydrogens attached to them.
+class HeavyAtomWithPolarHydrogensFilter{
+public:
+	HeavyAtomWithPolarHydrogensFilter(){};
+	HeavyAtomWithPolarHydrogensFilter(ResidueGraph& graph, AtomTypeSetCAP atom_types):graph_(&graph),atom_types_(atom_types){};
+	bool operator()(VD const vd) const;
+private:
+	ResidueGraph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
+	AtomTypeSetCAP atom_types_;
+};
+typedef boost::filtered_graph<ResidueGraph, boost::keep_all, HeavyAtomWithPolarHydrogensFilter> HeavyAtomWithPolarHydrogensGraph;
+typedef boost::graph_traits<HeavyAtomWithPolarHydrogensGraph>::vertex_iterator HeavyAtomWithPolarHydrogensVIter;
+typedef boost::graph_traits<HeavyAtomWithPolarHydrogensGraph>::edge_iterator HeavyAtomWithPolarHydrogensEIter;
+typedef std::pair<HeavyAtomWithPolarHydrogensVIter, HeavyAtomWithPolarHydrogensVIter> HeavyAtomWithPolarHydrogensVIterPair;
+
+////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+/// @brief The filter responsible for finding heavy atoms with hydrogens.
+class HeavyAtomWithHydrogensFilter{
+public:
+	HeavyAtomWithHydrogensFilter(){};
+	HeavyAtomWithHydrogensFilter(ResidueGraph& graph, AtomTypeSetCAP atom_types):graph_(&graph),atom_types_(atom_types){};
+	bool operator()(VD const vd) const;
+private:
+	ResidueGraph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
+	AtomTypeSetCAP atom_types_;
+};
+typedef boost::filtered_graph<ResidueGraph, boost::keep_all, HeavyAtomWithHydrogensFilter> HeavyAtomWithHydrogensGraph;
+typedef boost::graph_traits<HeavyAtomWithHydrogensGraph>::vertex_iterator HeavyAtomWithHydrogensVIter;
+typedef boost::graph_traits<HeavyAtomWithHydrogensGraph>::edge_iterator HeavyAtomWithHydrogensEIter;
+typedef std::pair<HeavyAtomWithHydrogensVIter, HeavyAtomWithHydrogensVIter> HeavyAtomWithHydrogensVIterPair;
+
+////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+
+/// @brief The filter responsible for all hydrogens.
+class HydrogenAtomFilter{
+public:
+	HydrogenAtomFilter(){};
+	HydrogenAtomFilter(ResidueGraph& graph, AtomTypeSetCAP atom_types):graph_(&graph),atom_types_(atom_types){};
+	bool operator()(VD const vd) const;
+private:
+	ResidueGraph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
+	AtomTypeSetCAP atom_types_;
+};
+typedef boost::filtered_graph<ResidueGraph, boost::keep_all, HydrogenAtomFilter> HydrogenAtomGraph;
+typedef HydrogenAtomGraph::vertex_descriptor HydrogenAtomVD;
+typedef HydrogenAtomGraph::edge_descriptor HydrogenAtomED;
+typedef boost::graph_traits<HydrogenAtomGraph>::vertex_iterator HydrogenAtomVIter;
+typedef boost::graph_traits<HydrogenAtomGraph>::edge_iterator HHydrogenAtomEIter;
+typedef boost::graph_traits<HydrogenAtomGraph>::out_edge_iterator HydrogenAtomOutEdgeIter;
+typedef std::pair<HydrogenAtomOutEdgeIter, HydrogenAtomOutEdgeIter> HydrogenAtomOutEdgeIterPair;
+typedef std::pair<HydrogenAtomVIter, HydrogenAtomVIter> HydrogenAtomVIterPair;
+
+
+
+////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+/// @brief The filter responsible for all aromatic atoms.
+class AromaticAtomFilter{
+public:
+	AromaticAtomFilter(){};
+	AromaticAtomFilter(ResidueGraph& graph, AtomTypeSetCAP atom_types):graph_(&graph),atom_types_(atom_types){};
+	bool operator()(VD const vd) const;
+private:
+	ResidueGraph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
+	AtomTypeSetCAP atom_types_;
+};
+typedef boost::filtered_graph<ResidueGraph, boost::keep_all, AromaticAtomFilter> AromaticAtomGraph;
+typedef boost::graph_traits<AromaticAtomGraph>::vertex_iterator AromaticAtomVIter;
+typedef boost::graph_traits<AromaticAtomGraph>::edge_iterator AromaticAtomEIter;
+typedef std::pair<AromaticAtomVIter, AromaticAtomVIter> AromaticAtomVIterPair;
+
+
+////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+/// @brief The filter responsible for all polar hydrogens.
+class PolarHydrogenFilter{
+public:
+	PolarHydrogenFilter(){};
+	PolarHydrogenFilter(ResidueGraph& graph, AtomTypeSetCAP atom_types):graph_(&graph),atom_types_(atom_types){};
+	bool operator()(VD const vd) const;
+private:
+	ResidueGraph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
+	AtomTypeSetCAP atom_types_;
+};
+typedef boost::filtered_graph<ResidueGraph, boost::keep_all, PolarHydrogenFilter> PolarHydrogenGraph;
+typedef boost::graph_traits<PolarHydrogenGraph>::vertex_iterator PolarHydrogenVIter;
+typedef boost::graph_traits<PolarHydrogenGraph>::edge_iterator PolarHydrogenEIter;
+typedef std::pair<PolarHydrogenVIter, PolarHydrogenVIter> PolarHydrogenVIterPair;
+
+/// @brief The filter responsible for all apolar hydrogens.
+class APolarHydrogenFilter{
+public:
+	APolarHydrogenFilter(){};
+	APolarHydrogenFilter(ResidueGraph& graph, AtomTypeSetCAP atom_types):graph_(&graph),atom_types_(atom_types){};
+	bool operator()(VD const vd) const;
+private:
+	ResidueGraph * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
+	AtomTypeSetCAP atom_types_;
+};
+typedef boost::filtered_graph<ResidueGraph, boost::keep_all, APolarHydrogenFilter> APolarHydrogenGraph;
+typedef boost::graph_traits<APolarHydrogenGraph>::vertex_iterator APolarHydrogenVIter;
+typedef boost::graph_traits<APolarHydrogenGraph>::edge_iterator APolarHydrogenEIter;
+typedef std::pair<APolarHydrogenVIter, APolarHydrogenVIter> APolarHydrogenVIterPair;
+
+}
+}
 
 #endif

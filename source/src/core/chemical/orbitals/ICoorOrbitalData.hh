@@ -51,6 +51,7 @@
 
 #include <core/types.hh>
 #include <string>
+#include <core/chemical/ResidueGraphTypes.hh>
 
 //Auto Headers
 namespace core{
@@ -64,15 +65,6 @@ public:
 	/// @brief default constructor
 	ICoorOrbitalData();
 
-	/// @brief construct ICoorAtomID by atom name and its ResidueType
-	ICoorOrbitalData(
-			Real phi,
-			Real theta,
-			Real distance,
-			std::string stub1,
-			std::string stub2,
-			std::string stub3
-	);
 
 	ICoorOrbitalData(
 		Real phi,
@@ -80,7 +72,10 @@ public:
 		Real distance,
 		Size stub1,
 		Size stub2,
-		Size stub3
+		Size stub3,
+		VD v1,
+		VD v2,
+		VD v3
 	);
 
 
@@ -89,9 +84,6 @@ public:
 	Real phi() const;
 	Real theta() const;
 	Real distance() const;
-	std::string stub1() const;
-	std::string stub2() const;
-	std::string stub3() const;
 
 	Vector
 	build(
@@ -103,29 +95,55 @@ public:
 
 	void replace_stub1(const core::Size atom1 )
 	{
-		s_stub1_=atom1;
+		stub1_=atom1;
 	}
 
 	void replace_stub2(const core::Size atom2)
 	{
-		s_stub2_=atom2;
+		stub2_=atom2;
 	}
 	void replace_stub3(const core::Size atom3)
 	{
-		s_stub3_=atom3;
+		stub3_=atom3;
 	}
 
 	core::Size get_stub1()
 	{
-		return s_stub1_;
+		return stub1_;
 	}
 	core::Size get_stub2()
 	{
-		return s_stub2_;
+		return stub2_;
 	}
 	core::Size get_stub3()
 	{
-		return s_stub3_;
+		return stub3_;
+	}
+
+	VD const vertex1()
+	{
+		return vertex1_;
+	}
+	VD const vertex2()
+	{
+		return vertex2_;
+	}
+	VD const vertex3()
+	{
+		return vertex3_;
+	}
+
+	void vertex1(VD const vertex)
+	{
+		vertex1_=vertex;
+	}
+	void vertex2(VD const vertex)
+	{
+		vertex2_=vertex;
+	}
+	void vertex3(VD const vertex)
+	{
+		vertex3_=vertex;
 	}
 
 
@@ -133,13 +151,15 @@ private:
 	Real phi_;
 	Real theta_;
 	Real distance_;
-	std::string stub1_;
-	std::string stub2_;
-	std::string stub3_;
 
-	Size s_stub1_;
-	Size s_stub2_;
-	Size s_stub3_;
+	Size stub1_;
+	Size stub2_;
+	Size stub3_;
+
+	VD vertex1_;
+	VD vertex2_;
+	VD vertex3_;
+
 
 
 

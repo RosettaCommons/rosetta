@@ -7,31 +7,48 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin ResidueType
+/// @file ResidueType.cc
 ///
 /// @brief
 /// A class for defining a type of residue
 ///
 /// @details
-/// This class contains the "chemical" information for residues. This does not contain the actual xyz coordinates of a
-/// particular residue in a specific peptide.  (xyz coordinates are found in core/conformation/Residue.hh).  A residue
-/// in Rosetta can be a ligand, DNA, amino acid, or basically anything.  A residue is read in through residue_io.cc and
-/// read from parameter files, generally located in the database chemical/residue_types.  For ligands, or anything that
-/// is not one of the natural 20 AAs, a parameter has to be provided to rosetta through the -extra_res_fa flag.
-/// residue_io.cc sets private member data in ResidueType.  The primary data that are set are: atoms, mmatoms,
+/// This class contains the "chemical" information for residues as well as the ideal xyz and internal coordinates for a
+/// residue (generated xyz coordinates are found in core/conformation/Residue.hh).  A residuetype in rosetta can be a
+/// ligand, DNA, amino acid, or basically anything. ResidueTypes are generated through params files, which are read from
+/// the database chemical/residue_types.  For ligands, a parameter has to be provided to rosetta through the -extra_res_fa
+/// flag. Primary data is set through the residue_io.cc class. The primary data that are set are: atoms, mmatoms,
 /// orbitals, and properties of the particular residue type.  These properties can be modified through patches, which
-/// is controlled through PatchOperations.cc.  If the residue_type of a residue is modified, the indices of atoms and
-/// mmatoms and everything associated with those indices must be redefined.  This reordering of indices is taken care
-/// of with the function reorder_primary_data().
+/// is controlled through PatchOperations.cc.
 ///
-/// Setting of primary data and then reordering is important.  Primary data for the following are described:
+/// The data structure of a residuetype is based on a boost::graph implementation. Vertex descriptors (VD, yeah, I know,
+/// the name is kind of bad..) are the atoms while the edge descriptors (ED, yet another bad name) are the bonds. Initially,
+/// when a residuetype is constructed, the following primary data is set:
+///
+///	atom_base_;
+///	chi_atoms_;
+///	nu_atoms_;
+///	mainchain_atoms_;
+///	nbr_atom_;
+///	actcoord_atoms_;
+///	cut_bond_neighbor_;
+//	atom_shadowed_;
+///
+/// When this data is set, it is set based on vertex descriptors. Because vertex descriptors never change, like atom
+/// indices, there is no need to reorder this primary data; however, because Rosetta relies heavily on atom indices
+/// to access data, atom indices for the above data has to be generated. To do this, when finalized is called, a function
+/// specifically designed to generate the atom indices for the primary data is called: generate_atom_indices. This function
+/// iterates over the vertex descriptors assigned in each primary data and creates private data based on atom indices. For
+/// example, atom_base_ has atom_base_indices_. When the function atom_base(atomno) is called, the private data atom_base_indices_
+/// is called. This allows for the external interface of ResidueType to be accessed by atom indices while the internal
+/// functions in ResidueType work off of vertex descriptors. This also removes the need to have old2new reordering scheme.
+///
 ///
 /// Atoms: Setting of atoms includes indexing the atoms into vectors, saving their names into vectors/maps, saving the
-/// associated mm_atom_type into a vector, saving bond connections into vectors, etc, etc.  Since everything is
-/// allocated into vectors, it is easy to reorder those vectors.  On any given residue, the heavy atoms are put into
-/// the vector first, (their indices are first,) and hydrogens are put in last.
+/// associated mm_atom_type into a vector, saving bond connections into vectors, etc, etc.On any given residue, the
+/// heavy atoms are put into the vector first, (their indices are first,) and hydrogens are put in last.
 ///
-/// Properties: Properties of a residue include things like DNA, PROTEIN, SC_ORBITALS, CHARGED, etc.  These properties
+/// Properties: Properties of a residue include things like DNA, PROTEIN, CHARGED, etc.  These properties
 /// indicate the type of residue it is and what properties are associated with the residue.  They are set when read in.
 /// Several lines of code must be modified to get them to work, all found here in ResidueType.cc.
 ///
@@ -80,7 +97,7 @@
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
-
+#include <boost/graph/floyd_warshall_shortest.hpp>
 #include <core/types.hh>
 
 // Numeric headers
@@ -95,7 +112,7 @@
 
 // C++ headers
 #include <map>
-
+#include <functional>
 #include <core/chemical/VariantType.fwd.hh>
 #include <utility/vector1.hh>
 
@@ -120,14 +137,14 @@ public:
 	/**
 		 We use the AtomTypeSet object to assign atom_types to atoms inside
 		 add_atom, and to identify (polar) hydrogens, acceptors, etc.
-	**/
+	 **/
 
 	ResidueType(
-		AtomTypeSetCAP atom_types,
-		ElementSetCAP element_types,
-		MMAtomTypeSetCAP mm_atom_types,
-		orbitals::OrbitalTypeSetCAP orbital_types//,
-//		CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd atom types until they have been fully implemented
+			AtomTypeSetCAP atom_types,
+			ElementSetCAP element_types,
+			MMAtomTypeSetCAP mm_atom_types,
+			orbitals::OrbitalTypeSetCAP orbital_types//,
+			//		CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd atom types until they have been fully implemented
 	);
 
 	ResidueType(ResidueType const & residue_type);
@@ -162,9 +179,9 @@ public:
 	{
 		return atom_types_;
 	}
-//private: // For refactoring
+	//private: // For refactoring
 	Atom & atom(Size const atom_index);
-//public:
+	//public:
 	Atom const & atom(Size const atom_index) const;
 	Atom & atom(std::string const & atom_name);
 	Atom const & atom(std::string const & atom_name) const;
@@ -178,8 +195,8 @@ public:
 	atom_type( Size const atomno ) const;
 
 	/// @brief Get the chemical atom_type index number for this atom by its index number in this residue
-//	int
-//	atom_type_index( Size const atomno ) const;
+	//	int
+	//	atom_type_index( Size const atomno ) const;
 
 	/// @brief number of atoms
 	Size
@@ -277,20 +294,20 @@ public:
 	AtomIndices const &
 	bonded_neighbor( Size const atomno ) const;
 
+
 	utility::vector1<BondName> const & bonded_neighbor_types(Size const atomno) const;
 
 	/// @brief indices of the bonded neighbors for an atom
 	AtomIndices const &
 	cut_bond_neighbor( Size const atomno ) const
 	{
-		return graph_[ ordered_atoms_[atomno] ].cut_bond_neighbors();
+		return cut_bond_neighbor_indices_[atomno];
 	}
 
 	/// @brief indices of the bonded neighbors for an atom, shortcut for bonded_neighbor(atomno)
 	AtomIndices const &
 	nbrs( Size const atomno ) const
 	{
-		//return bonded_neighbor_[ atomno ];
 		return bonded_neighbor(atomno);
 	}
 
@@ -298,28 +315,31 @@ public:
 	AtomIndices const &
 	chi_atoms( Size const chino ) const
 	{
-		return chi_atoms_[ chino ];
+		assert(chino <= chi_atoms_indices_.size());
+		return chi_atoms_indices_[ chino ];
+
 	}
 
 	/// @brief indices of the atoms which are used to define all the chi angles
 	utility::vector1< AtomIndices > const &
 	chi_atoms() const
 	{
-		return chi_atoms_;
+		return chi_atoms_indices_;
 	}
 
 	/// @brief Return indices of the atoms used to define a given nu (internal ring) angle.
 	AtomIndices const &
 	nu_atoms(core::uint const nu_index) const
 	{
-		return nu_atoms_[nu_index];
+		assert(nu_index <= nu_atoms_indices_.size());
+		return nu_atoms_indices_[nu_index];
 	}
 
 	/// @brief Return list of indices of the atoms used to define all the nu (internal ring) angles.
 	utility::vector1< AtomIndices > const &
 	nu_atoms() const
 	{
-		return nu_atoms_;
+		return nu_atoms_indices_;
 	}
 
 
@@ -407,7 +427,7 @@ public:
 	AtomIndices const &
 	mainchain_atoms() const
 	{
-		return mainchain_atoms_;
+		return mainchain_atoms_indices_;
 	}
 
 
@@ -415,22 +435,19 @@ public:
 	Size
 	mainchain_atom( Size const atm) const
 	{
-		return mainchain_atoms_[atm];
+		return mainchain_atoms_indices_[atm];
 	}
 
 
 	/// @brief set indices of all mainchain atoms
 	void
-	set_mainchain_atoms( AtomIndices const & mainchain )
-	{
-		mainchain_atoms_ = mainchain;
-	}
+	set_mainchain_atoms( AtomIndices const & mainchain );
 
 	/// @brief is this atom present in this residue?
 	bool
 	has( std::string const & atom_name ) const
 	{
-		return atom_graph_index_.find(atom_name) != atom_graph_index_.end();
+		return atom_name_to_vd_.find(atom_name) != atom_name_to_vd_.end();
 	}
 
 	/// @brief get index of an atom's base atom
@@ -492,8 +509,8 @@ public:
 	{
 		assert( finalized_ );
 		assert( atomno <= natoms() );
- 		return ( ( atomno <= n_backbone_heavyatoms_ ) ||
- 						 ( atomno > nheavyatoms_ && atomno < first_sidechain_hydrogen_ ) );
+		return ( ( atomno <= n_backbone_heavyatoms_ ) ||
+				( atomno > nheavyatoms_ && atomno < first_sidechain_hydrogen_ ) );
 	}
 
 	/// @brief quick lookup: is the atom with the given index a hydrogen or not?
@@ -534,7 +551,13 @@ public:
 	AtomIndices const &
 	actcoord_atoms() const
 	{
-		return actcoord_atoms_;
+		return actcoord_atoms_indices_;
+
+	}
+
+	VD const & get_vertex(Size atomno) const
+	{
+		return ordered_atoms_[atomno];
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -559,8 +582,8 @@ public:
 	chemical::orbitals::OrbitalType const &
 	orbital_type(int const orbital_index) const;
 
-//	core::Size
-//	orbital_type_index( Size const orb_index ) const;
+	//	core::Size
+	//	orbital_type_index( Size const orb_index ) const;
 
 
 	/// @brief number of orbitals
@@ -574,7 +597,7 @@ public:
 	utility::vector1<core::Size> const &
 	bonded_orbitals(Size const atomno)const
 	{
-		return orbital_bonded_neighbor_[atomno];
+		return graph_[ ordered_atoms_[atomno] ].bonded_orbitals();
 	}
 
 
@@ -591,14 +614,6 @@ public:
 	{
 		return atoms_with_orb_index_;
 	}
-
-
-	/// @brief orbital name by index
-//	std::string const &
-//	orbital_name( Size const index ) const
-//	{
-//		return orbitals_[index].name();
-//	}
 
 
 	/// @brief get orbital index by name
@@ -798,10 +813,10 @@ public:
 	/// @brief add an atom into this residue
 	void
 	add_atom(
-		std::string const & atom_name,
-		std::string const & atom_type_name,
-		std::string const & mm_atom_type_name,
-		Real const charge /*
+			std::string const & atom_name,
+			std::string const & atom_type_name,
+			std::string const & mm_atom_type_name,
+			Real const charge /*
 		std::string const & count_pair_lower_name,
 		std::string const & count_pair_upper_name,
 		std::string const & count_pair_special*/
@@ -819,24 +834,24 @@ public:
 	/// @brief set atom type
 	void
 	set_atom_type(
-		std::string const & atom_name,
-		std::string const & atom_type_name
+			std::string const & atom_name,
+			std::string const & atom_type_name
 	);
 
 
 	/// @brief set mm atom type
 	void
 	set_mm_atom_type(
-		std::string const & atom_name,
-		std::string const & mm_atom_type_name
+			std::string const & atom_name,
+			std::string const & mm_atom_type_name
 	);
 
 
 	/// @brief add a bond between atom1 and atom2, if bond type is not specified, default to SingleBond
 	void
 	add_bond(
-		std::string const & atom_name1,
-		std::string const & atom_name2
+			std::string const & atom_name1,
+			std::string const & atom_name2
 	);
 
 	// @brief add a bond between atom1 and atom2, specifying a bond type (SingleBond, DoubleBond, TripleBond, AromaticBond)
@@ -845,8 +860,8 @@ public:
 	/// @brief add a bond between atom1 and atom2, if bond type is not specified, default to a SingleBond
 	void
 	add_cut_bond(
-		std::string const & atom_name1,
-		std::string const & atom_name2
+			std::string const & atom_name1,
+			std::string const & atom_name2
 	);
 
 
@@ -856,14 +871,15 @@ public:
 	void
 	nbr_atom( std::string const & atom_name )
 	{
-		nbr_atom_ = atom_index( atom_name );
+		nbr_atom_ = ordered_atoms_[atom_index( atom_name )];
+		nbr_atom_indices_ = atom_index( atom_name );
 	}
 
 	/// @brief get nbr_atom used to define residue-level neighbors
 	Size
 	nbr_atom() const
 	{
-		return nbr_atom_;
+		return nbr_atom_indices_;
 	}
 
 	/// @brief set nbr_radius_ used to define residue-level neighbors
@@ -897,8 +913,8 @@ public:
 	/// @brief sets atom_base[ atom1 ] = atom2
 	void
 	set_atom_base(
-		std::string const & atom_name1,
-		std::string const & atom_name2
+			std::string const & atom_name1,
+			std::string const & atom_name2
 	);
 
 
@@ -909,7 +925,7 @@ public:
 		 atoms back into force_bb_ list and add the new one. Afterwards, the new
 		 backbone heavy atom list will be generated in finalize() using info from
 		 force_bb_.
-	**/
+	 **/
 	void
 	set_backbone_heavyatom( std::string const & name );
 
@@ -924,28 +940,28 @@ public:
 	/// @brief set AtomICoor for an atom
 	void
 	set_icoor(
-		std::string const & atm,
-		Real const phi,
-		Real const theta,
-		Real const d,
-		std::string const & stub_atom1,
-		std::string const & stub_atom2,
-		std::string const & stub_atom3,
-		bool const update_xyz = false
+			std::string const & atm,
+			Real const phi,
+			Real const theta,
+			Real const d,
+			std::string const & stub_atom1,
+			std::string const & stub_atom2,
+			std::string const & stub_atom3,
+			bool const update_xyz = false
 	);
 
 	/// @brief set AtomICoor for an atom
 	void
 	set_icoor(
-		Size const & index,
-		std::string const & atm,
-		Real const phi,
-		Real const theta,
-		Real const d,
-		std::string const & stub_atom1,
-		std::string const & stub_atom2,
-		std::string const & stub_atom3,
-		bool const update_xyz = false
+			Size const & index,
+			std::string const & atm,
+			Real const phi,
+			Real const theta,
+			Real const d,
+			std::string const & stub_atom1,
+			std::string const & stub_atom2,
+			std::string const & stub_atom3,
+			bool const update_xyz = false
 	);
 
 	void assign_neighbor_atom();
@@ -954,28 +970,28 @@ public:
 
 	/// @brief calculate AtomICoor for an atom and set it
 	void calculate_icoor(
-		std::string const & child,
-		std::string const & stub_atom1,
-		std::string const & stub_atom2,
-		std::string const & stub_atom3
+			std::string const & child,
+			std::string const & stub_atom1,
+			std::string const & stub_atom2,
+			std::string const & stub_atom3
 	);
 
 	void
 	set_ideal_xyz(
-		std::string const & atm,
-		Vector const & xyz_in
+			std::string const & atm,
+			Vector const & xyz_in
 	);
 
 	void
 	set_ideal_xyz(
-		Size index,
-		Vector const & xyz_in
+			Size index,
+			Vector const & xyz_in
 	);
 
 	void
 	set_shadowing_atom(
-		std::string const & atom,
-		std::string const & atom_being_shadowed
+			std::string const & atom,
+			std::string const & atom_being_shadowed
 	);
 
 	/// @brief Reassign Rosetta atom types based on the current heuristics.
@@ -992,8 +1008,8 @@ public:
 	///@brief add an orbital onto a residue based upon atom
 	void
 	add_orbital(
-		std::string & orbital_name,
-		std::string & orbital_type_name
+			std::string & orbital_name,
+			std::string & orbital_type_name
 	);
 
 	///@brief add an orbital bond between an atom and an orbital.
@@ -1001,8 +1017,8 @@ public:
 	/// you must have the atom as the first and orbital as the second.
 	void
 	add_orbital_bond(
-		std::string const & atom_name1,
-		std::string const & orbital_name
+			std::string const & atom_name1,
+			std::string const & orbital_name
 	);
 
 	orbitals::ICoorOrbitalData const &
@@ -1014,13 +1030,13 @@ public:
 	///@brief set OrbitalICoor for an orbital
 	void
 	set_orbital_icoor_id(
-		std::string const & orbital,
-		Real const phi,
-		Real const theta,
-		Real const d,
-		std::string const & stub_atom1,
-		std::string const & stub_atom2,
-		std::string const & stub_atom3
+			std::string const & orbital,
+			Real const phi,
+			Real const theta,
+			Real const d,
+			std::string const & stub_atom1,
+			std::string const & stub_atom2,
+			std::string const & stub_atom3
 	);
 
 	//////////////////////////////////////////////////////////////////////
@@ -1059,53 +1075,53 @@ public:
 	/// @brief Add a chi (side-chain) angle defined by four atoms.
 	void
 	add_chi(
-		Size const chino,
-		std::string const & atom_name1,
-		std::string const & atom_name2,
-		std::string const & atom_name3,
-		std::string const & atom_name4
+			Size const chino,
+			std::string const & atom_name1,
+			std::string const & atom_name2,
+			std::string const & atom_name3,
+			std::string const & atom_name4
 	);
 
 	/// @brief Add a chi (side-chain) angle defined by four atoms to the end of the list of chis.
 	void add_chi(
-		std::string const & atom_name1,
-		std::string const & atom_name2,
-		std::string const & atom_name3,
-		std::string const & atom_name4);
+			std::string const & atom_name1,
+			std::string const & atom_name2,
+			std::string const & atom_name3,
+			std::string const & atom_name4);
 
 	/// @brief Add a nu (internal cyclic) angle defined by four atoms.
 	void add_nu(
-		core::uint const nu_index,
-		std::string const & atom_name1,
-		std::string const & atom_name2,
-		std::string const & atom_name3,
-		std::string const & atom_name4);
+			core::uint const nu_index,
+			std::string const & atom_name1,
+			std::string const & atom_name2,
+			std::string const & atom_name3,
+			std::string const & atom_name4);
 
 	/// @brief redefine a chi angle based on four atoms
 	//    Added by Andy M. Chen in June 2009
 	//    This is needed for certain PTM's
 	void
 	redefine_chi(
-		Size const chino,
-		std::string const & atom_name1,
-		std::string const & atom_name2,
-		std::string const & atom_name3,
-		std::string const & atom_name4
+			Size const chino,
+			std::string const & atom_name1,
+			std::string const & atom_name2,
+			std::string const & atom_name3,
+			std::string const & atom_name4
 	);
 
 	void
 	set_proton_chi(
-		Size chino,
-		utility::vector1< Real > dihedral_samples,
-		utility::vector1< Real > extra_samples
+			Size chino,
+			utility::vector1< Real > dihedral_samples,
+			utility::vector1< Real > extra_samples
 	);
 
 	/// @brief Add a rotamer bin for a given chi.
 	void
 	add_chi_rotamer(
-		Size const chino,
-		Real const mean,
-		Real const sdev
+			Size const chino,
+			Real const mean,
+			Real const sdev
 	);
 
 	/// @brief Adds a chi rotamer bin to the highest-indexed chi in the list of chis for this ResidueType.
@@ -1227,10 +1243,10 @@ public:
 	/// @brief  Check if atom is virtual.
 	bool is_virtual( Size const & atomno ) const;
 
-    /// @brief  Check if residue is 'VIRTUAL_RESIDUE'
+	/// @brief  Check if residue is 'VIRTUAL_RESIDUE'
 	bool is_virtual_residue() const;
 
-    /// @brief is an adduct-modified residue?
+	/// @brief is an adduct-modified residue?
 	bool is_adduct() const { return is_adduct_; }
 
 	void set_adduct_flag( bool adduct_in ) { is_adduct_ = adduct_in; }
@@ -1417,7 +1433,7 @@ public:
 		 could be "aa_unk"
 
 		 Not clear what AA is -- maybe an int, maybe an enum, maybe a "key"
-	**/
+	 **/
 	AA const &
 	aa() const
 	{
@@ -1501,7 +1517,7 @@ public:
 	/// not shadowing anyone.
 	Size
 	atom_being_shadowed( Size atom_shadowing ) const {
-		return atom_shadowed_[ atom_shadowing ];
+		return atom_shadowed_indices_[ atom_shadowing ];
 	}
 
 	/// @brief print intraresidue bond angles to standard out
@@ -1645,7 +1661,7 @@ public:
 	core::Size
 	smallest_ring_size( VD const & atom, core::Size const & max_size = 999999) const;
 
-///////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////
 
 
 public:
@@ -1673,14 +1689,14 @@ private:
 
 	/// set up atom ordering map old2new, called by finalize()
 	void
-	setup_atom_ordering( AtomIndices & old2new );
+	setup_atom_ordering();
 
 	///// GRAPH FUNCTION to provide backward compatibility ////////
 	void order_atoms();
 
 	/// reorder primary data in ResidueType given the old2new map, called by finalize()
 	void
-	reorder_primary_data( AtomIndices const & old2new );
+	generate_atom_indices();
 
 	/// update derived data in ResidueType, called by finalize()
 	void
@@ -1702,6 +1718,8 @@ private:
 	///@ recursive function to assign internal coordinates
 	void assign_internal_coordinates(std::string const & current_atom);
 
+
+
 	/////////////////////////////////////////////////////////////////////////////
 	// data, see WARNING below
 	/////////////////////////////////////////////////////////////////////////////
@@ -1712,7 +1730,7 @@ private:
 	/**
 			used to define the set of allowed atomtypes for this residue and
 			their properties
-	*/
+	 */
 	AtomTypeSetCAP atom_types_;
 	ElementSetCAP elements_;
 	/// MMAtomTypeSet
@@ -1720,13 +1738,15 @@ private:
 	/// Orbital types
 	orbitals::OrbitalTypeSetCAP orbital_types_;
 
-//	CSDAtomTypeSetCAP csd_atom_types_;
-
 
 	ResidueTypeSetCAP residue_type_set_;
 
-    // Graph structures for residuetype
+	// Graph structures for residuetype
 	ResidueGraph graph_; // Stores Atoms and Bonds as Nodes and Edges. First as duplicate material, then on its own.
+	std::map<VD, Size> vd_to_index_; //vertex descriptor to an atom index
+	std::map<VD, VD> atom_base_; //the atom base
+	std::map<VD, VD> abase2_; //the base of the atom base
+
 
 	/// vector of atoms:
 	/**
@@ -1747,24 +1767,21 @@ private:
 		 WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
 		 WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
 
-		 If you add new properties that are associated with atoms and therefore
-		 depend on the atom order, and that get set during Residue creation
-		 before the call to finalize(), then you have to make sure to update them
-		 in finalize() if the atom order changes
+		 If you add new properties that are associated with atoms, You need
+		 to make sure that you iterate over the VDs! Then in the generate
+		 indices function, associate your VDs to atom ordering.
 
-		 in general, anything that might be sensitive to atom order should
-		 be updated in finalize using the old2new mapping
+		 There is no more old2new ordering!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		 WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
 		 WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
 		 WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
 
-	**/
+	 **/
 
 	utility::vector1< Orbital > orbitals_;
 	//////////////////////////////////////////////////////////////////
 	// ints -- see the WARNING above if these are atom indices
-	/// number of atoms
 	/// number of heavy atoms
 	Size nheavyatoms_;
 	/// number of hbond_acceptors
@@ -1786,29 +1803,30 @@ private:
 	//////////////////////////////////////////////////////////////////////
 	// per-atom properties
 	/// indices of the atoms psuedo bonded atoms. Used in orbital code
-	utility::vector1< utility::vector1<core::Size > > orbital_bonded_neighbor_;
+	utility::vector1< AtomIndices > bonded_neighbor_;
+	utility::vector1<utility::vector1<BondName> > bonded_neighbor_type_;
+	std::map<VD, utility::vector1<VD> > cut_bond_neighbor_;
 	/// indices of each heavyatom's first attached hydrogen
 	utility::vector1< Size        > attached_H_begin_;
 	/// indices of each heavyatom's last attached hydrogen
 	utility::vector1< Size        > attached_H_end_;
+	utility::vector1<VD> parents_;
+	std::map< VD, AtomICoor > icoor_;
 
 	//// Data for the mm potentials.  List all of the intra-residue dihedral angles and bond angles.
-
 	/// vector of sets of atoms that make up dihedral angles in the residue
 	utility::vector1< dihedral_atom_set > dihedral_atom_sets_;
 	/// all intra-residue dihedral angles that each atom "participates" in.
 	utility::vector1< utility::vector1< Size > > dihedrals_for_atom_;
 	/// vector of sets of atoms that make up bond angles in the residue
 	utility::vector1< bondangle_atom_set > bondangle_atom_sets_;
-	/// all intra-residue bond angles that each atom "participates" in.
 	utility::vector1< utility::vector1< Size > > bondangles_for_atom_;
 
 	/// Data to describe virtual atoms that should shadow other atoms for the sake
 	/// of keeping inter-residue cycles closed when working with an atom tree, e.g.
 	/// NV shadows N on proline. For each atom, the following vector lists the index
 	/// of the atom it is shadowing.
-	utility::vector1< Size > atom_shadowed_;
-
+	std::map<VD, VD> atom_shadowed_;
 	//// Data for controlling chi.  Dependent data, computed in update_last_controlling_chi()
 
 	/// for each atom, the last controlling chi angle for that atom.  a chi of 0 represents
@@ -1849,18 +1867,21 @@ private:
 	///
 	/// mainchain_atoms are those atoms on the shortest path from polymer lower_connect
 	/// to upper_connect. For protein, this will be N, CA and C.
-	AtomIndices mainchain_atoms_;
+	utility::vector1<VD> mainchain_atoms_;
+
 	/// indices of action coordinate centers
 	/**
 			the geometric center of the atoms listed defined the residue's
 			"action coordinate"
-	**/
-	AtomIndices actcoord_atoms_;
+	 **/
+	utility::vector1< VD > actcoord_atoms_;
+
 
 	///////////////////////////////////////////////////////////////////////////
 	// vectors of vectors of indices
 	// indices of four atoms to build each chi angle
-	utility::vector1< AtomIndices > chi_atoms_;
+
+	utility::vector1<utility::vector1<VD> > chi_atoms_;
 	utility::vector1< bool        > is_proton_chi_;
 	utility::vector1< Size        > proton_chis_;
 	utility::vector1< Size        > chi_2_proton_chi_;
@@ -1868,13 +1889,13 @@ private:
 	utility::vector1< utility::vector1< Real > > proton_chi_extra_samples_;
 
 	// indices of four atoms to build each nu angle
-	utility::vector1<AtomIndices> nu_atoms_;
+	utility::vector1<utility::vector1<VD> > nu_atoms_;
 
 	/// number of bonds separated between any pair of atoms in this residue
 	utility::vector1< utility::vector1< int > > path_distance_;
 
 	/// atom index lookup by atom name string
-	NameVDMap atom_graph_index_;
+	std::map< std::string, VD > atom_name_to_vd_;//atom_graph_index_;
 
 	/// Legacy/backward compatibility device holds an ordered list of nodes' indices
 	VDs ordered_atoms_; // Position in the vector represents Atom in "ordered arrangement"
@@ -1886,7 +1907,7 @@ private:
 	/**
 			pair<Real,Real>  ==>  mean,sdev
 			for each chi angle i and rotamer j: chi_rotamers_[i][j]
-	**/
+	 **/
 	utility::vector1< utility::vector1< std::pair< Real, Real > > >chi_rotamers_;
 
 	std::string rotamer_library_name_;
@@ -1914,7 +1935,6 @@ private:
 	bool is_protein_;
 	bool is_charged_;
 	bool is_polar_;
-	//bool has_orbitals_;
 	bool has_sc_orbitals_;
 	bool is_aromatic_;
 	bool is_DNA_;
@@ -1970,7 +1990,7 @@ private:
 
 	// for rsd-rsd neighbor calculations
 	/// atom used for calculating residue-level neighbors
-	Size nbr_atom_;
+	VD nbr_atom_;
 	/// radius cutoff to define neighors
 	Real nbr_radius_;
 
@@ -1984,7 +2004,7 @@ private:
 	/// number of actcoord atoms
 	/**
 			the geometric center of the atoms listed defined the residue's "action coordinate"
-	**/
+	 **/
 	Size n_actcoord_atoms_;
 
 	/// the unprocessed metadata
@@ -2044,9 +2064,8 @@ private:
 	// These arrays are temporary, will be cleared in finalize():
 	/// a list of atom indices to be deleted
 	/** in the next call to finalize(), used in delete_atom which is called during patching**/
-	AtomIndices delete_atoms_;
 	/// atom indices forced to be considered backbone
-	AtomIndices force_bb_;
+	utility::vector1<VD> force_bb_;
 
 	////////////////
 	core::chemical::rna::RNA_ResidueTypeOP rna_residue_type_;
@@ -2054,24 +2073,26 @@ private:
 	// A container for residue properties unique to carbohydrates.
 	core::chemical::carbohydrates::CarbohydrateInfoOP carbohydrate_info_;
 
+
+	//ALL THE Indexed data
+	utility::vector1<Size> atom_base_indices_;
+	utility::vector1<Size> abase2_indices_;
+	utility::vector1< AtomIndices > chi_atoms_indices_;
+	utility::vector1<AtomIndices> nu_atoms_indices_;
+	AtomIndices mainchain_atoms_indices_;
+	Size nbr_atom_indices_;
+	AtomIndices actcoord_atoms_indices_;
+	utility::vector1< AtomIndices > cut_bond_neighbor_indices_;
+	utility::vector1< Size > atom_shadowed_indices_;
+
+
+
 	////////////////
 	/// status
 	bool finalized_;
 
-	//XRW_B_T1
-	/*
-	// coarse residues have this set, NULL otherwise
-	mutable coarse::TranslatorCAP translator_;
-	*/
-	//XRW_E_T1
-
 	// Adducts defined for this residue
 	utility::vector1< Adduct > defined_adducts_;
-
-
-	// may (?) also want: cp_atom_num, ta
-	// angle_neighbor, dihe_neighbor, water properties
-	//
 
 
 	// boost serialize stuff

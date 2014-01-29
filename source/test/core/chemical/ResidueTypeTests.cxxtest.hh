@@ -183,13 +183,7 @@ public:
 		add_bond( rsd, "CB", "2HB");
 		add_bond( rsd, "CB", "3HB");
 
-		rsd.nbr_atom("CB");
-		TS_ASSERT_EQUALS(rsd.nbr_atom(), rsd.atom_index("CB"));
-		rsd.nbr_radius(3.4473);
-		TS_ASSERT_EQUALS(rsd.nbr_radius(), 3.4473);
-		rsd.add_actcoord_atom("CB");
-		TS_ASSERT_EQUALS(rsd.actcoord_atoms().size(), (core::Size) 1);
-
+		
 		rsd.set_icoor("N", 0.000000, 0.000000, 0.000000, "N",  "CA", "C");
 		rsd.set_icoor("CA", 0.000000, 180.000000, 1.458001, "N",  "CA", "C");
 		rsd.set_icoor("C", 0.000000, 68.800003, 1.523258, "CA",  "N", "C");
@@ -203,6 +197,20 @@ public:
 		rsd.set_icoor("LOWER", -150.000000,  58.300003, 1.328685, "N",  "CA", "C");
 		rsd.set_icoor("H", -180.000000,  60.849998,   1.010000, "N",  "CA", "LOWER");
 
+		rsd.nbr_atom("CB");
+		rsd.nbr_radius(3.4473);
+		rsd.add_actcoord_atom("CB");
+
+
+		rsd.finalize();
+
+
+		TS_ASSERT_EQUALS(rsd.nbr_atom(), rsd.atom_index("CB"));
+		TS_ASSERT_EQUALS(rsd.nbr_radius(), 3.4473);
+		TS_ASSERT_EQUALS(rsd.actcoord_atoms().size(), (core::Size) 1);
+
+		//TS_ASSERT_EQUALS( rsd.chi_atoms( rsd.atom_index("CA")).size(), (core::Size) 3); // we have to "add_chi" first and ALA has no chi listed
+		
 		// For the purposes of a unit test, we'll just add_chi (and add_nu, too) anyway, even though both are meaning-
 		// less for alanine. ~Labonte
 		rsd.add_chi(1, "N", "CA", "CB", "1HB");
@@ -279,6 +287,7 @@ public:
         rsd.add_cut_bond(rsd.atom_name(2), rsd.atom_name(3));
         rsd.add_cut_bond(rsd.atom_name(2), rsd.atom_name(4));
         rsd.finalize();
+
 
         utility::vector1<core::Size> neigh(rsd.cut_bond_neighbor(2));
         TS_ASSERT_EQUALS(rsd.atom_name(neigh[1]), " N  ");

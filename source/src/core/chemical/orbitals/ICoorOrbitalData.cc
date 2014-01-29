@@ -63,29 +63,14 @@ ICoorOrbitalData::ICoorOrbitalData():
 			phi_(0.0),
 			theta_(0.0),
 			distance_(0.0),
-			stub1_(""),
-			stub2_(""),
-			stub3_("")
-
+			stub1_(0),
+			stub2_(0),
+			stub3_(0),
+			vertex1_(0),
+			vertex2_(0),
+			vertex3_(0)
 {}
 
-/// @brief construct ICoorOrbitalData.
-ICoorOrbitalData::ICoorOrbitalData(
-		Real phi,
-		Real theta,
-		Real distance,
-		std::string stub1,
-		std::string stub2,
-		std::string stub3
-
-):
-phi_(phi),
-theta_(theta),
-distance_(distance),
-stub1_(stub1),
-stub2_(stub2),
-stub3_(stub3)
-{}
 
 
 //Testing size orbitals
@@ -95,14 +80,20 @@ ICoorOrbitalData::ICoorOrbitalData(
 		Real distance,
 		Size stub1,
 		Size stub2,
-		Size stub3
+		Size stub3,
+		VD vertex1,
+		VD vertex2,
+		VD vertex3
 ):
 phi_(phi),
 theta_(theta),
 distance_(distance),
-s_stub1_(stub1),
-s_stub2_(stub2),
-s_stub3_(stub3)
+stub1_(stub1),
+stub2_(stub2),
+stub3_(stub3),
+vertex1_(vertex1),
+vertex2_(vertex2),
+vertex3_(vertex3)
 {
 
 }
@@ -126,26 +117,6 @@ Real ICoorOrbitalData::distance() const
 {
 	return distance_;
 }
-
-///@brief return the stub1 for a given orbital
-std::string ICoorOrbitalData::stub1() const
-{
-	return stub1_;
-}
-
-///@brief return the stub2 for a given orbital
-std::string ICoorOrbitalData::stub2() const
-{
-	return stub2_;
-}
-
-///@brief return the stub3 for a given orbital
-std::string ICoorOrbitalData::stub3() const
-{
-	return stub3_;
-}
-
-
 
 
 

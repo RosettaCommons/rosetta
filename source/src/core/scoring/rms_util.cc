@@ -297,7 +297,7 @@ automorphic_rmsd(
 	core::Real best_rms = 1e99;
 	int counter = 0;
 	// Make atom-number translation table
-	ResidueTypeCOP rsd1_type( &(rsd1.type()) );
+	ResidueTypeCOP rsd1_type( rsd1.type().clone() );
 	AutomorphismIterator ai( rsd1_type );
 	AtomIndices old2new( ai.next() );
 	// For each permutation of automorphisms...

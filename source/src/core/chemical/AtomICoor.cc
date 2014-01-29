@@ -69,10 +69,12 @@ ICoorAtomID::ICoorAtomID(
 	if ( name.size() <= 4 ) {
 		type_ = INTERNAL;
 		atomno_ = rsd_type.atom_index( name );
+		vd_ = rsd_type.get_vertex(atomno_);
 	} else if ( name.substr(0,4) == "CONN" ) {
 		type_ = CONNECT;
 		assert( is_int( name.substr(4) ) );
 		atomno_ = int_of( name.substr(4) );
+		vd_ = rsd_type.get_vertex(atomno_);
 		assert( atomno_ > 0 && atomno_ <= rsd_type.n_residue_connections() );
 	} else if ( name == "LOWER" ) {
 		type_ = POLYMER_LOWER; atomno_ = 0;

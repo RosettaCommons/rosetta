@@ -29,7 +29,7 @@
 
 // Unit headers
 #include <core/chemical/Atom.fwd.hh>
-#include <core/chemical/AtomICoor.hh>
+//#include <core/chemical/AtomICoor.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 #include <core/chemical/Bond.fwd.hh> // only for Temp BondName
@@ -64,13 +64,6 @@ public:
 		atom_type_index_(0),
 		mm_atom_type_index_(0),
 		charge_(0),
-		atom_base_(0),
-		abase2_(0),
-		parent_(0),
-		bonded_neighbors_(),
-		bonded_neighbor_types_(),
-		cut_bond_neighbors_(),
-		icoor_(),
 		ideal_xyz_(),
 		is_acceptor_(0),
 		is_polar_hydrogen_(0),
@@ -88,8 +81,7 @@ public:
 			Size const atom_type_index,
 			Size const mm_atom_type_index,
 			Real const charge,
-			Vector const ideal_xyz,
-			AtomICoor const icoor = AtomICoor()
+			Vector const ideal_xyz
 
 	):
 		name_( name_in ),
@@ -97,13 +89,6 @@ public:
 		atom_type_index_(atom_type_index),
 		mm_atom_type_index_(mm_atom_type_index),
 		charge_(charge),
-		atom_base_(0),
-		abase2_(0),
-		parent_(0),
-		bonded_neighbors_(),
-		bonded_neighbor_types_(),
-		cut_bond_neighbors_(),
-		icoor_(icoor),
 		ideal_xyz_(ideal_xyz),
 		heavyatom_has_polar_hydrogens_(0),
 		is_acceptor_(0),
@@ -111,7 +96,8 @@ public:
 		is_hydrogen_(0),
 		is_haro_(0),
 		is_virtual_(0),
-		has_orbitals_(0)
+		has_orbitals_(0),
+		bonded_orbitals_()
 	{
 
 	}
@@ -123,13 +109,6 @@ public:
 		atom_type_index_(src.atom_type_index_),
 		mm_atom_type_index_(src.mm_atom_type_index_),
 		charge_(src.charge_),
-		atom_base_(src.atom_base_),
-		abase2_(src.abase2_),
-		parent_(src.parent_),
-		bonded_neighbors_(src.bonded_neighbors_),
-		bonded_neighbor_types_(src.bonded_neighbor_types_),
-		cut_bond_neighbors_(src.cut_bond_neighbors_),
-		icoor_(src.icoor_),
 		ideal_xyz_(src.ideal_xyz_),
 		heavyatom_has_polar_hydrogens_(src.heavyatom_has_polar_hydrogens_),
 		is_acceptor_(src.is_acceptor_),
@@ -137,7 +116,8 @@ public:
 		is_hydrogen_(src.is_hydrogen_),
 		is_haro_(src.is_haro_),
 		is_virtual_(src.is_virtual_),
-		has_orbitals_(src.has_orbitals_)
+		has_orbitals_(src.has_orbitals_),
+		bonded_orbitals_(src.bonded_orbitals_)
 
 
 	{}
@@ -155,12 +135,6 @@ public:
 				atom_type_index_ == atom.atom_type_index_ &&
 				mm_atom_type_index_ == atom.mm_atom_type_index_ &&
 				charge_ == atom.charge_ &&
-				atom_base_ == atom.atom_base_ &&
-				abase2_ == atom.abase2_ &&
-				parent_ == atom.parent_ &&
-				bonded_neighbors_ == atom.bonded_neighbors_ &&
-				bonded_neighbor_types_ == atom.bonded_neighbor_types_ &&
-				cut_bond_neighbors_ == atom.cut_bond_neighbors_ &&
 				ideal_xyz_ == atom.ideal_xyz_ &&
 				heavyatom_has_polar_hydrogens_ == atom.heavyatom_has_polar_hydrogens_ &&
 				is_acceptor_ == atom.is_acceptor_ &&
@@ -168,21 +142,20 @@ public:
 				is_hydrogen_ == atom.is_hydrogen_ &&
 				is_haro_ == atom.is_haro_ &&
 				is_virtual_ == atom.is_virtual_ &&
-				has_orbitals_ == atom.has_orbitals_ ;
+				has_orbitals_ == atom.has_orbitals_  &&
+				bonded_orbitals_ == atom.bonded_orbitals_;
 	}
 
 	// Const Getters
-	std::string const& name() const { return name_; };
+	std::string const& name() const { return name_; }
 	//std::string const& type_name() const { return type_name_; };
-	std::string const& mm_name() const { return mm_name_; };
-	Size const& atom_type_index() const { return atom_type_index_; };
-	Size const& mm_atom_type_index() const { return mm_atom_type_index_; };
-	Real const& charge() const { return charge_; };
+	std::string const& mm_name() const { return mm_name_; }
+	Size const& atom_type_index() const { return atom_type_index_; }
+	Size const& mm_atom_type_index() const { return mm_atom_type_index_; }
+	Real const& charge() const { return charge_; }
 	Vector const& ideal_xyz() const { return ideal_xyz_; };
-	AtomICoor const& icoor() const { return icoor_; };
-	AtomIndices const& bonded_neighbors() const{ return bonded_neighbors_;}
-	utility::vector1<BondName> const& bonded_neighbor_types() const{ return bonded_neighbor_types_;}
-	AtomIndices const& cut_bond_neighbors() const{ return cut_bond_neighbors_;}
+	utility::vector1<Size> const & bonded_orbitals() const{return bonded_orbitals_;}
+	utility::vector1<Size>  & bonded_orbitals() {return bonded_orbitals_;}
 	bool heavyatom_has_polar_hydrogens() const{ return heavyatom_has_polar_hydrogens_;}
 	bool is_acceptor() const{ return is_acceptor_;}
 	bool is_polar_hydrogen() const{ return is_polar_hydrogen_;}
@@ -191,13 +164,6 @@ public:
 	bool is_virtual() const{return is_virtual_;}
 	bool has_orbitals() const{return has_orbitals_;}
 	// Non-const getters
-	AtomICoor & icoor() { return icoor_; };
-	AtomIndices & bonded_neighbors(){ return bonded_neighbors_;}
-	utility::vector1<BondName> & bonded_neighbor_types() { return bonded_neighbor_types_;}
-	AtomIndices & cut_bond_neighbors(){ return cut_bond_neighbors_;}
-	Size atom_base()const{return atom_base_;}
-	Size abase2()const{return abase2_;}
-	Size parent() const{return parent_;}
 
 
 	// Setters
@@ -206,13 +172,8 @@ public:
 	void mm_name( std::string const & name ) { mm_name_ = name; };
 	void atom_type_index( Size const & atom_type_index ) { atom_type_index_ = atom_type_index; };
 	void mm_atom_type_index( Size const & mm_atom_type_index ) { mm_atom_type_index_ = mm_atom_type_index; };
-	void atom_base(Size atom_base){atom_base_ = atom_base;}
-	void abase2(Size abase2){abase2_ = abase2;}
 	void charge( Real const & charge ) { charge_ = charge; };
 	void ideal_xyz( Vector const & ideal_xyz) { ideal_xyz_= ideal_xyz; };
-	void bonded_neighbors( AtomIndices const & bonded_neighbors) { bonded_neighbors_ = bonded_neighbors; }
-	void icoor( AtomICoor const & icoor) { icoor_ = icoor; };
-	void parent(Size parent){parent_ = parent;}
 	void heavyatom_has_polar_hydrogens( bool heavyatom_has_polar_hydrogens){ heavyatom_has_polar_hydrogens_ = heavyatom_has_polar_hydrogens;}
 	void is_polar_hydrogen(bool polar){is_polar_hydrogen_ = polar;}
 	void is_hydrogen(bool hydrogen){is_hydrogen_= hydrogen;}
@@ -227,13 +188,6 @@ private:
 	Size atom_type_index_;
 	Size mm_atom_type_index_;
 	Real charge_;
-	Size atom_base_;
-	Size abase2_;
-	Size parent_;
-	AtomIndices bonded_neighbors_;
-	utility::vector1<BondName> bonded_neighbor_types_;
-	AtomIndices cut_bond_neighbors_;
-	AtomICoor icoor_;
 	Vector ideal_xyz_;
 	bool heavyatom_has_polar_hydrogens_; // is an atom both a heavy atom and chemically bonded to a polar hydrogen?
 	bool is_acceptor_; // is an atom both a heavy atom and capable of accepting hydrogen bonds?
@@ -242,6 +196,7 @@ private:
 	bool is_haro_;
 	bool is_virtual_;
 	bool has_orbitals_;
+	utility::vector1<Size> bonded_orbitals_;
 
 
 

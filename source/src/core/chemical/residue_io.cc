@@ -839,6 +839,7 @@ read_topology_file(
 		}
 
 
+		//rsd->finalize(); //we finalize right here so that we can update the derived data
 		// if polymer, fill in upper/lower connect and mainchain info
 		if ( rsd->is_polymer() ) {
 
@@ -846,11 +847,11 @@ read_topology_file(
 			if ( rsd->upper_connect_id() && rsd->upper_connect_atom() && rsd->lower_connect_id() && rsd->lower_connect_atom() ) {
 				Size upper_connect( rsd->upper_connect_atom() ), lower_connect( rsd->lower_connect_atom() );
 				AtomIndices mainchain;
-				FArray2D_int D( get_residue_path_distances( *rsd ) );
+				FArray2D_int D( get_residue_path_distances(*rsd) );
 				uint atom( lower_connect );
 				while ( atom != upper_connect ) {
 					mainchain.push_back( atom );
-					AtomIndices const & nbrs( rsd->nbrs( atom ) );
+					AtomIndices const nbrs( rsd->nbrs( atom ) );
 					int min_d( D( atom, upper_connect ) );
 					uint next_atom( atom );
 					//std::cout << "setup mainchain: " << rsd->name() << ' ' << rsd->atom_name( atom ) << ' ' <<

@@ -1478,14 +1478,14 @@ public:
 	}
 
 	/// @brief Return the AtomIndices of each set of four atoms defining each nu angle.
-	utility::vector1<AtomIndices> const &
+	utility::vector1<AtomIndices> const
 	nu_atoms() const
 	{
 		return rsd_type_.nu_atoms();
 	}
 
 	/// @brief Return the AtomIndices of the four atoms defining the specified nu angle.
-	AtomIndices const &
+	AtomIndices const
 	nu_atoms(core::uint const index) const
 	{
 		return rsd_type_.nu_atoms(index);

@@ -24,7 +24,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 // AUTO-REMOVED #include <core/id/AtomID.hh>
-
+#include <core/chemical/ResidueGraphTypes.hh>
 // Utility headers
 #include <utility/exit.hh>
 
@@ -69,7 +69,8 @@ public:
 	/// @brief default constructor
 	ICoorAtomID():
 		type_( INTERNAL ),
-		atomno_( 0 )
+		atomno_( 0 ),
+		vd_(0)
 	{}
 
 	/// @brief construct ICoorAtomID by atom name and its ResidueType
@@ -77,6 +78,15 @@ public:
 		std::string name,
 		ResidueType const & rsd_type
 	);
+
+/*	ICoorAtomID(ICoorAtomID id) :
+		type_(id.type_),
+		atomno_(id.atomno_),
+		vd_(id.vd_)
+	{
+
+	}*/
+
 
 public:
 	/// @brief get ICoorAtomID atomno
@@ -91,6 +101,16 @@ public:
 	atomno( int const atomno_in )
 	{
 		atomno_ = atomno_in;
+	}
+
+	VD
+	vertex(){
+		return vd_;
+	}
+
+	void
+	vertex( VD vertex ){
+		vd_ = vertex;
 	}
 
 	/// @brief get ICoordAtomID type
@@ -167,6 +187,8 @@ private:
 	Type type_;
 	/// atom's index number
 	Size atomno_;
+	/// vertex descriptor associated with the icoor
+	VD vd_;
 };
 
 /// @brief A basic class containing info of internal coordinates needed for building an atom within a ResidueType

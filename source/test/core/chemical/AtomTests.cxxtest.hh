@@ -57,8 +57,7 @@ public:
 	void test_atom_initialization() {
 
 		Vector xyz(1,2,3);
-		AtomICoor icoor;
-		Atom atom ("test", "mm_test", 1, 2, 1, xyz, icoor);
+		Atom atom ("test", "mm_test", 1, 2, 1, xyz);
 
  		TS_ASSERT_EQUALS("test", atom.name());
  		TS_ASSERT_EQUALS("mm_test", atom.mm_name());
@@ -66,7 +65,6 @@ public:
  		TS_ASSERT_EQUALS(2, (int) atom.mm_atom_type_index());
  		TS_ASSERT_EQUALS(1, atom.charge());
  		TS_ASSERT_EQUALS(xyz, atom.ideal_xyz());
- 		TS_ASSERT_EQUALS(0, atom.icoor().phi() + atom.icoor().theta() + atom.icoor().d() ); // icoor doesn't have an operator==
 
 	}
 
@@ -79,7 +77,6 @@ public:
 		atom.charge(1);
 		atom.charge(1);
 		atom.ideal_xyz(Vector(1,2,3));
-		atom.icoor(AtomICoor());
 
  		TS_ASSERT_EQUALS("test", atom.name());
  		TS_ASSERT_EQUALS("mm_test", atom.mm_name());
@@ -87,7 +84,6 @@ public:
  		TS_ASSERT_EQUALS(2, (int) atom.mm_atom_type_index());
  		TS_ASSERT_EQUALS(1, atom.charge());
  		TS_ASSERT_EQUALS(Vector(1,2,3), atom.ideal_xyz());
- 		TS_ASSERT_EQUALS(0, atom.icoor().phi() + atom.icoor().theta() + atom.icoor().d() ); // icoor doesn't have an operator==
 	}
 
 };
