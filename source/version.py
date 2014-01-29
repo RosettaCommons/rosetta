@@ -24,7 +24,8 @@ def svn_version():
     There's no good way to know when the version summary will change, either, so we just generate the file every time.
     '''
     rootdir = os.getcwd()
-    while os.path.basename(rootdir) and os.path.basename(rootdir) != 'main':
+    while os.path.basename(rootdir) and os.path.basename(rootdir) != 'main' and not \
+            (os.path.exists(os.path.join( rootdir, ".git" )) and os.path.exists('source') and os.path.exists('database') and os.path.exists('tests')):
         rootdir = os.path.dirname(rootdir) # Walk up directory tree to "main" directory, or root of filesystem.
 
     #Check if we're in a git repository - if not, skip gracefully (so git doesn't throw warnings in releases.)
