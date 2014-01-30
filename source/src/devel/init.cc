@@ -99,7 +99,6 @@
 #include <devel/znhash/SymmZnMoversAndTaskOpsCreators.hh>
 #include <devel/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>
 #include <devel/matdes/BuildingBlockInterfaceOperationCreator.hh>
-#include <devel/matdes/RestrictToNonzeroSASAOperationCreator.hh>
 #include <devel/matdes/RestrictIdentitiesOperationCreator.hh>
 #include <devel/matdes/RetrieveStoredTaskOperationCreator.hh>
 
@@ -154,7 +153,6 @@ static core::pack::task::operation::TaskOperationRegistrator< devel::denovo_desi
 static core::pack::task::operation::TaskOperationRegistrator< devel::denovo_design::task_operations::DesignRandomRegionOperationCreator > reg_DesignRandomRegionOperationCreator;
 core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnCoordinationResiduesTaskOpCreator > reg_DisableZnCoordinationResiduesTaskOpCreator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::BuildingBlockInterfaceOperationCreator > BuildingBlockInterfaceOperationCreator_registrator;
-static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictToNonzeroSASAOperationCreator > RestrictToNonzeroSASAOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictIdentitiesOperationCreator > RestrictIdentitiesOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RetrieveStoredTaskOperationCreator > RetrieveStoredTaskOperationCreator_registrator;
 

@@ -36,6 +36,7 @@ option.add( basic::options::OptionKeys::in::path::pdb, "PDB file input search pa
 option.add( basic::options::OptionKeys::in::path::database, "Database file input search paths.  If the database is not found the ROSETTA3_DB environment variable is tried." );
 option.add( basic::options::OptionKeys::in::file::file, "Input file option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::in::file::s, "Name(s) of single PDB file(s) to process" ).def();
+option.add( basic::options::OptionKeys::in::file::t, "Name(s) of second PDB file(s) to process (pairs with -s)" );
 option.add( basic::options::OptionKeys::in::file::l, "File(s) containing list(s) of PDB files to process" );
 option.add( basic::options::OptionKeys::in::file::list, "File(s) containing list(s) of PDB files.  PDBs on the same line become one pose" );
 option.add( basic::options::OptionKeys::in::file::screening_list, "Files containing lists of PDB files. all permutations of the files in the list become poses" );

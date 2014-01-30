@@ -38,7 +38,6 @@
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
-#include <devel/matdes/util.hh>
 
 using basic::Warning;
 static basic::Tracer TR("devel.matdes.ExtractSubpose");
@@ -196,7 +195,7 @@ ExtractSubpose::apply(Pose & pose) {
 			resis.push_back(i);
 			}
 	} else {
-		resis = devel::matdes::get_neighbor_sub_resis(pose, contact_dist_, sym_dof_name_list[1]);
+		resis = core::pose::symmetry::get_intracomponent_and_neighbor_resis(pose, sym_dof_name_list[1], contact_dist_);
 	}
 	core::io::pdb::pose_from_pose(pose_out, pose, resis);
 	pose_out.dump_pdb(prefix_ + protocols::jd2::JobDistributor::get_instance()->current_output_name() + suffix_ + ".pdb");

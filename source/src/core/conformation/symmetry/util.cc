@@ -364,6 +364,7 @@ setup_symmetric_conformation(
 		component_bounds[chain].second = src_conformation.chain_end(ic);
 	}
 	symm_info_raw.set_multicomponent_info(
+		symmdata.get_num_components(),
 		symmdata.get_components(),
 		component_bounds,
 		symmdata.get_subunit_name_to_component(),

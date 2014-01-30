@@ -25,6 +25,7 @@
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
+#include <utility/string_util.hh>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -143,15 +144,45 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 	} else {
 		if ( multicomp_ ) {
 			// MULTI COMPONENT SYMM
-			int sym_aware_jump_id = 0;
 			runtime_assert( sym_dof_name() != "" );
-			sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name() );
+			utility::vector1<std::string> sym_dof_name_list = utility::string_split( sym_dof_name() , ',' );
 
-			tr << "Using jump_id " << sym_aware_jump_id << " to partition pose" << std::endl;
-			if(!scc_.Calc( pose, sym_aware_jump_id ))
+			Size sym_dof_index = 1;
+
+			if( sym_dof_name_list.size() > 1) {
+				Size intracontact_count = 0;
+ 				for (core::Size i=1; i<=sym_dof_name_list.size(); i++) {
+					if( core::pose::symmetry::intracomponent_contact(pose, sym_dof_name_list[i], 12.0)) {
+						intracontact_count++;
+						sym_dof_index = i;
+					}
+				}
+				if( intracontact_count > 1) {
+					tr.Warning << "Intracontacts detected between multiple components.  Calculating sc based off of the last component with intracontacts.  Separate sc calculations are recommended for each component with intracontacts." << std::endl;
+				}
+			}
+					
+			utility::vector1<Size> full_intracomp_resis = core::pose::symmetry::get_full_intracomponent_resis(pose, sym_dof_name_list[sym_dof_index]);
+			utility::vector1<Size> full_intracomp_neighbor_resis = core::pose::symmetry::get_full_intracomponent_neighbor_resis(pose, sym_dof_name_list[sym_dof_index], 12.0 );
+			
+			//core::pose::Pose full_intracomp_subpose = core::pose::symmetry::get_full_intracomponent_subpose(pose, sym_dof_name_list[sym_dof_index]);
+			//core::pose::Pose full_intracomp_neighbor_subpose = core::pose::symmetry::get_full_intracomponent_neighbor_subpose(pose, sym_dof_name_list[sym_dof_index], 12.0);
+			//full_intracomp_subpose.dump_pdb("full_intracomp_subpose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
+			//full_intracomp_neighbor_subpose.dump_pdb("full_intracomp_neighbor_subpose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
+			
+ 			for (core::Size i=1; i<=full_intracomp_resis.size(); i++) {
+				scc_.AddResidue(0,pose.residue(full_intracomp_resis[i]));
+			}
+ 			for (core::Size i=1; i<=full_intracomp_neighbor_resis.size(); i++) {
+				scc_.AddResidue(1,pose.residue(full_intracomp_neighbor_resis[i]));
+			}
+
+			//tr << "Using jump_id " << sym_aware_jump_id << " to partition pose" << std::endl;
+			//if(!scc_.Calc( pose, sym_aware_jump_id ))
+			if(!scc_.Calc())
 				return 0;
 
-			utility::vector1<Size> subs = core::pose::symmetry::get_jump_name_to_subunits( pose, sym_dof_name() );
+			utility::vector1<Size> subs = core::pose::symmetry::get_jump_name_to_subunits( pose, sym_dof_name_list[sym_dof_index] );
 			nsubs_scalefactor = (Real) subs.size() ;
 		} else {
 			// SINGLE COMPONENT SYMM

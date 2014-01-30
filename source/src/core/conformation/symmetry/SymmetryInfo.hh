@@ -222,6 +222,7 @@ public:
 
 	void
 	set_multicomponent_info(
+		Size const & num_components,
 		utility::vector1<char> const & components,
 		std::map<char,std::pair<Size,Size> > const & component_bounds,
 		std::map<std::string,char> const & name2component,
@@ -229,6 +230,7 @@ public:
 		std::map<std::string,utility::vector1<Size> > const & jname2subunits
 	);
 
+	Size const & get_num_components() const;
 	utility::vector1<char> const & get_components() const;
 	std::map<char,std::pair<Size,Size> > const & get_component_bounds() const;
 	std::map<std::string,char> const & get_subunit_name_to_component() const;
@@ -320,6 +322,7 @@ private:
 	std::map<Size,std::string> jnum2dofname_;
 	std::map<std::string,Size> dofname2jnum_;
 
+	Size num_components_;
 	utility::vector1<char> components_;
 	std::map<char,std::pair<Size,Size> > component_bounds_;
 	std::map<std::string,char> name2component_;

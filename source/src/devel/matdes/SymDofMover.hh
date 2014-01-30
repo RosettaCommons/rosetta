@@ -56,12 +56,12 @@ public:
   // --- virtual functions from mover ---
   virtual std::string get_name() const { return "SymDofMover"; }
   virtual void apply(Pose& pose);
-	virtual void trans_pose( Pose & pose, numeric::xyzVector<Real> const & trans, Size start, Size end );
-	virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, Size start, Size end );
-	virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, numeric::xyzVector<Real> const & cen, Size start, Size end );
-	virtual void rot_pose( Pose & pose, numeric::xyzVector<Real> const & axis, double const & ang, Size start, Size end );
-	virtual void rot_pose( Pose & pose, numeric::xyzVector<Real> const & axis, double const & ang, numeric::xyzVector<Real> const & cen, Size start, Size end );
-	virtual void alignaxis(core::pose::Pose & pose, numeric::xyzVector<Real> newaxis, numeric::xyzVector<Real> oldaxis, numeric::xyzVector<Real> cen , Size start, Size end );
+	// virtual void trans_pose( Pose & pose, numeric::xyzVector<Real> const & trans, Size start, Size end );
+	// virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, Size start, Size end );
+	// virtual void rot_pose( Pose & pose, numeric::xyzMatrix<Real> const & rot, numeric::xyzVector<Real> const & cen, Size start, Size end );
+	// virtual void rot_pose( Pose & pose, numeric::xyzVector<Real> const & axis, double const & ang, Size start, Size end );
+	// virtual void rot_pose( Pose & pose, numeric::xyzVector<Real> const & axis, double const & ang, numeric::xyzVector<Real> const & cen, Size start, Size end );
+	// virtual void alignaxis(core::pose::Pose & pose, numeric::xyzVector<Real> newaxis, numeric::xyzVector<Real> oldaxis, numeric::xyzVector<Real> cen , Size start, Size end );
 
 	// --- virtual copy constructors
 	virtual MoverOP clone() const;
@@ -72,10 +72,12 @@ public:
 
 
 	virtual void parse_my_tag( TagCOP tag,
-														 basic::datacache::DataMap &,
+														 DataMap &,
 														 Filters_map const &,
 														 Movers_map const &,
 														 Pose const & );
+
+	void add_components_to_pose_if_necessary(Pose & pose);
 
 private:
 	utility::vector1<std::string> get_sym_dof_names();
@@ -83,11 +85,13 @@ private:
 	utility::vector1<Real> get_angles();
 
 private:
-	char axis_;
-	std::string flip_about_axis_;
-	bool align_axis_;
 	bool auto_range_;
+	std::string sampling_mode_;
 	std::string symm_file_;
+	utility::vector1<std::string> translation_axes_;
+	utility::vector1<std::string> rotation_axes_;
+	utility::vector1<std::string> flip_input_about_axes_;
+	utility::vector1<std::string> align_input_axes_to_symdof_axes_;
 	utility::vector1<std::string> sym_dof_names_;
 	utility::vector1<Real> radial_disps_;
 	utility::vector1<Real> angles_;
@@ -100,8 +104,6 @@ private:
 	utility::vector1<Real> angle_steps_;
 	utility::vector1<Real> radial_disp_deltas_;
 	utility::vector1<Real> angle_deltas_;
-	std::string sampling_mode_;
-
 };
 
 } // matdes

@@ -31,6 +31,7 @@ namespace in { namespace path { PathVectorOptionKey const pdb( "in:path:pdb" ); 
 namespace in { namespace path { PathVectorOptionKey const database( "in:path:database" );  } }
 namespace in { namespace file { BooleanOptionKey const file( "in:file" );  } }
 namespace in { namespace file { FileVectorOptionKey const s( "in:file:s" );  } }
+namespace in { namespace file { FileVectorOptionKey const t( "in:file:t" );  } }
 namespace in { namespace file { FileVectorOptionKey const l( "in:file:l" );  } }
 namespace in { namespace file { FileVectorOptionKey const list( "in:file:list" );  } }
 namespace in { namespace file { FileVectorOptionKey const screening_list( "in:file:screening_list" );  } }

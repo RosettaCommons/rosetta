@@ -55,6 +55,7 @@ namespace in { namespace path { extern PathVectorOptionKey const database; } }
 namespace in { namespace file { extern BooleanOptionKey const file; } }
 namespace in { namespace file { extern FileVectorOptionKey const s; } }
 namespace in { namespace file { extern FileVectorOptionKey const l; } }
+namespace in { namespace file { extern FileVectorOptionKey const t; } }
 namespace in { namespace file { extern FileVectorOptionKey const list; } }
 namespace in { namespace file { extern FileVectorOptionKey const screening_list; } }
 namespace in { namespace file { extern FileOptionKey const screening_job_file; } }

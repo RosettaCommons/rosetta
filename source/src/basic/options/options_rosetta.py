@@ -199,6 +199,7 @@ Options = Option_Group( '',
 		Option_Group( 'file',
 			Option( 'file', 'Boolean', desc="Input file option group", legal='true', default='true' ),
 			Option( 's', 'FileVector', desc="Name(s) of single PDB file(s) to process", default=[] ),
+			Option( 't', 'FileVector', desc="Name(s) of second PDB file(s) to process (pairs with -s)" ),
 			Option( 'l', 'FileVector',  # TODO remove this option or move list to l
 					desc="File(s) containing list(s) of PDB files to process" ),
 			Option( 'list', 'FileVector',

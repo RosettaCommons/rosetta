@@ -36,7 +36,6 @@
 #include <core/conformation/symmetry/util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/io/pdb/file_data.hh>
-#include <devel/matdes/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 namespace devel {
@@ -138,11 +137,10 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 	core::Real cutoff2 = distance_cutoff_*distance_cutoff_;
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 	core::Size monomer_lower_bound = 0;
-	//core::Size monomer_upper_bound = 0;  // unused ~Labonte
 	core::Size ir, jr;
 	core::Size base = 0;
 	utility::vector1<core::Size> sub_pose_resis, neighbor_resis;
-	core::Size count = 0; Real if_score = 0;
+	core::Size count = 0; core::Real if_score = 0;
 	utility::vector1<std::string> sym_dof_name_list;
 
 	// Partition pose according to specified jump and symmetry information
@@ -173,7 +171,7 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 			int sym_aware_jump_id;
 			sym_aware_jump_id = core::pose::symmetry::sym_dof_jump_num( pose, sym_dof_name_list[i] );
 			pose.fold_tree().partition_by_jump( sym_aware_jump_id, is_upstream );
-			sub_pose_resis = devel::matdes::get_neighbor_sub_resis(pose, contact_dist_, sym_dof_name_list[i]);
+			sub_pose_resis = core::pose::symmetry::get_intracomponent_and_neighbor_resis(pose, sym_dof_name_list[i], contact_dist_);
 			core::io::pdb::pose_from_pose(sub_pose, pose, sub_pose_resis);
 
 			//pose.dump_pdb("pose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
@@ -232,7 +230,7 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 			Size nres_monomer = symm_info->num_independent_residues();
 			for (core::Size i=1; i<=symm_info->subunits(); ++i)
 				if (!is_upstream( (i-1)*nres_monomer + 1 )) intra_subs.push_back(i);
-			sub_pose = get_neighbor_subs (pose, intra_subs);
+			sub_pose = core::pose::symmetry::get_buildingblock_and_neighbor_subs (pose, intra_subs);
 
 			core::scoring::packing::HolesResult hr(core::scoring::packing::compute_holes_score(sub_pose, hp));
 			for (core::Size ir=1; ir<=nres_monomer; ir++) {
@@ -262,8 +260,8 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 		}
 	}
 
-	TR << "final if_score / count = " << if_score << " / " << count << " = " << (if_score / (Real)count) << std::endl;
-	return if_score / (Real)count;
+	TR << "final if_score / count = " << if_score << " / " << count << " = " << (if_score / (core::Real)count) << std::endl;
+	return if_score / (core::Real)count;
 }
 
 core::Real

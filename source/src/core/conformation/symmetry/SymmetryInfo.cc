@@ -1437,6 +1437,11 @@ SymmetryInfo::num_slidablejumps() const {
 	return retval;
 }
 
+Size const &
+SymmetryInfo::get_num_components() const {
+	return num_components_;
+}
+
 utility::vector1<char> const &
 SymmetryInfo::get_components() const {
 	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
@@ -1466,6 +1471,7 @@ SymmetryInfo::get_jump_name_to_subunits() const {
 	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	return jname2subunits_;
 }
+
 std::pair<Size,Size> const & 
 SymmetryInfo::get_component_bounds(char c) const {
 	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
@@ -1532,22 +1538,22 @@ SymmetryInfo::get_jump_name_to_subunits(std::string const & jname) const {
 	return jname2subunits_.find(jname)->second;
 }
 
-
 void 
 SymmetryInfo::set_multicomponent_info(
+	Size const & num_components,
 	utility::vector1<char> const & components,
 	std::map<char,std::pair<Size,Size> > const & component_bounds,
 	std::map<std::string,char> const & name2component,
 	std::map<std::string,utility::vector1<char> > const & jname2component,
-		std::map<std::string,utility::vector1<Size> > const & jname2subunits
+	std::map<std::string,utility::vector1<Size> > const & jname2subunits
 ){
+	num_components_ = num_components;
 	components_ = components;
 	component_bounds_ = component_bounds;
 	name2component_ = name2component;
 	jname2components_ = jname2component;
 	jname2subunits_ = jname2subunits;
 }
-
 
 } // symmetry
 } // conformation
