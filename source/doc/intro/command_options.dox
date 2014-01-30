@@ -1,0 +1,71 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+
+/*!
+@page command_options How to use Rosetta Options and the command line
+The command line is composed of two major parts.  First, a path to an application executable is required. Second part is a list of options for the particular Rosetta simulation.
+
+@section in_line Options listed on the command line
+Options can be listed with the command. Options, and arguments to the options, are separated by whitespace.  A single or double colon is using to clarify options when there are multiple separate options with the same name. Multiple layers of colons may be needed.
+@verbatim
+fixbb.macgccrelease -in:file:s myinput.pdb -database mypath
+@endverbatim
+
+@section in_file Options listed in a file
+Options can also be written in a flag file. In this file, put one option on each line, still using the colon or double colon is using to specify the layers.  An example options file appears below.
+@verbatim
+ -database /home/yiliu/Programing/branches/rosetta_database
+ -in:file:s 1l2y_centroid.pdb
+ -in:centroid_input
+ -score:weights centroid_des.wts
+@endverbatim
+If this file were called “option”, then it would be used like this (notice the @ symbol):
+@verbatim
+fixbb.macgccrelease @option
+@endverbatim
+
+@section group Options Groups and Layers
+Options in Rosetta are grouped by their functional and protocol usages. Each group has at least one layer, the parent layer. Most of the groups have one or more sub-layers holding multiple options. It is good to specify the whole set of layers when you use options since there might be two options have the same name but in different groups. You can use single or double colon to separate the layers.
+
+For example:
+@verbatim
+fixbb.linuxgccrelease -in:file:s myinput.pdb -out:file:o myoutput
+fixbb.linuxgccrelease -in::file::s myinput.pdb -packing::ex1
+@endverbatim
+
+@section types Option Types
+All the option types are pre-defined, and you can figure out the the type of parameters of each option by reading the option types.
+Here is a list of Rosetta options types:
+<ol>
+<li> Boolean, BooleanVector
+<li> Integer, IntegerVector
+<li> Real, RealVector
+<li> String, StringVector
+<li> File, FileVector
+<li> Path, PathVector
+</ol>
+
+For Example:
+Option "database" is a Path type option, so it is followed by path format parameters as
+@verbatim
+-database yourpath/rosetta_database
+@endverbatim
+Option "ex1" is a Boolean type option and set to be false by default, so you can activate it as
+@verbatim
+-packing:ex1
+@endverbatim
+Option "nstruct" is a Integer type option, you can use it as
+@verbatim
+-nstruct 10
+@endverbatim
+
+@section help Getting help with options
+There are a few good places to look for help.  First, the documentation.  Second, if you pass -help as a flag on the command line, Rosetta will spit out all existing options and then quit (ignoring other flags).
+*/

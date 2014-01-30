@@ -15,7 +15,7 @@
 
 /*!
 
-@page remodel Documentation for RosettaRemodel
+@page rosettaremodel Documentation for RosettaRemodel
 
 \ref remodel_algorithm "Remodel Use Cases" <br>
 &nbsp;&nbsp;&nbsp; \ref remodel_basic "Basic remodelling tasks" <br>

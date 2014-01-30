@@ -9,12 +9,12 @@
 
 /*!
 
-@page sqlite3_interface Interface for SQLite3 Database Library
+@page database_support Interface for SQLite3 Database Library
 
 @section metadata Metadata
 Last edited 01/14/11.  Matthew O'Meara mattjomeara@gmail.com.
 
-@secion overview Overview of Relational Databases
+@section overview Overview of Relational Databases
 
 Relational Databases are standard datastructures for persistent managment of
 large quantities of data.  Compared with flat file formats, relational
@@ -112,7 +112,7 @@ The general process of using a database involves the following three basic tasks
 Currently only SQLite3 databases are supported, though if adding more
 database types will be doable.  To establish a session, resquest a
 session from the DatabaseSessionManager.
-@berbatim
+@verbatim
   #include <utility/sql_database/DatabaseSessionManager.hh>
 
   //...

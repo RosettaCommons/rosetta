@@ -102,14 +102,17 @@ n2c
 4th line and all lines below show start and end residue numbers of each of the predicted transmembrane helices (current format repeats these numbers twice).
 
 4. Generate .lips4 file.
-@verbatim
+
 BRD4.lips4 - lipophilicity prediction file created using run_lips.pl script as follows (note that blastpgp and nr database are necessary to run run_lips.pl script
 
 @verbatim
 run_lips.pl <fasta file> <span file> <path to blastpgp> <path to nr database> <path to alignblast.pl script>
+@endverbatim
 
-Example command: <path to mini>/mini/src/apps/public/membrane_abinitio/run_lips.pl BRD4.fasta BRD4.span /work/bjornw/Apps/blast/bin/blastpgp /scratch/shared/genomes/nr ~bjornw/mini/src/apps/public/membrane_abinitio/alignblast.pl
+Example command:
 @verbatim
+ <path to mini>/mini/src/apps/public/membrane_abinitio/run_lips.pl BRD4.fasta BRD4.span /work/bjornw/Apps/blast/bin/blastpgp /scratch/shared/genomes/nr ~bjornw/mini/src/apps/public/membrane_abinitio/alignblast.pl
+@endverbatim
 
 Sample lips4 file:
 

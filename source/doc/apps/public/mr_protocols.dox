@@ -32,7 +32,7 @@ An interface to this application will be included in a (relatively soon) future 
 
 The mr_protocols application is used for performing template-based comparative modeling constrained by poorly phased density data, such as that resulting from weak molecular replacement solutions.  It runs rosetta's standard comparative modelling, where gaps and insertions in the template are first rebuilt from backbone fragments.  Additionally missing density in the template PDB is rebuilt.  Only gaps up to a prespecified length (generally 8 residues) are rebuilt.   Finally, an allatom relax -- constrained to experimental density -- allows for small backbone motion in the aligned regions of the template, as well as repositioning of the sidechains.
 
-The density constraint uses a scoring function derived from the density correlation of a model and a density map.  This term is described in [DiMaio et al, JMB 2009]; some additional reading may be found in the @ref density_map_scoring "scoring structures with density" section.  This method has been shown to be particularly effective in solving structures via molecular replacement from templates in the 20-30% sequence identity range.
+The density constraint uses a scoring function derived from the density correlation of a model and a density map.  This term is described in DiMaio et al, JMB 2009; some additional reading may be found in the @ref density_map_scoring "scoring structures with density" section.  This method has been shown to be particularly effective in solving structures via molecular replacement from templates in the 20-30% sequence identity range.
 
 
 @section inputs Input Files
