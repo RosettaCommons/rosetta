@@ -770,9 +770,9 @@ read_topology_file(
 
 			phi = radians(phi); theta = radians(theta); // in degrees in the file for human readability
 
-			//This code should probably be extracted to a util function
+			// This code should probably be extracted to a util function
 			if ( natoms > 1 ) {
-				/// build the cartesian coords for the new atom:
+				// build the Cartesian coords for the new atom:
 				if ( child_atom == parent_atom ) {
 					assert( rsd_xyz.empty() ); // first atom
 					rsd_xyz[ child_atom ] = Vector( 0.0 );
@@ -838,45 +838,47 @@ read_topology_file(
 			}
 		}
 
-
-		//rsd->finalize(); //we finalize right here so that we can update the derived data
-		// if polymer, fill in upper/lower connect and mainchain info
+		// If polymer, fill list of main chain atoms.
 		if ( rsd->is_polymer() ) {
-
-			// fill in the mainchain info -- shortest path between upper connect and lower connect
-			if ( rsd->upper_connect_id() && rsd->upper_connect_atom() && rsd->lower_connect_id() && rsd->lower_connect_atom() ) {
+			// Test that this is really a polymer residue.
+			if ( rsd->upper_connect_id() && rsd->upper_connect_atom() &&
+					rsd->lower_connect_id() && rsd->lower_connect_atom() ) {
 				Size upper_connect( rsd->upper_connect_atom() ), lower_connect( rsd->lower_connect_atom() );
 				AtomIndices mainchain;
-				FArray2D_int D( get_residue_path_distances(*rsd) );
-				uint atom( lower_connect );
-				while ( atom != upper_connect ) {
-					mainchain.push_back( atom );
-					AtomIndices const nbrs( rsd->nbrs( atom ) );
-					int min_d( D( atom, upper_connect ) );
-					uint next_atom( atom );
-					//std::cout << "setup mainchain: " << rsd->name() << ' ' << rsd->atom_name( atom ) << ' ' <<
-					//	min_d << std::endl;
-
-					for ( uint i=1; i<= nbrs.size(); ++i ) {
-						uint const nbr( nbrs[i] );
-						if ( D( nbr, upper_connect ) < min_d ) {
-							min_d = D( nbr, upper_connect );
-							next_atom = nbr;
-						}
+				if (!rsd->is_NA()) {  // Default main chain: defined by order in .params file
+					for (uint atom = lower_connect; atom <= upper_connect; ++atom) {
+						mainchain.push_back(atom);
 					}
-					assert( next_atom != atom );
+				} else /* rsd->is_NA() */ {  // Alternative main chain: defined by shortest path from LOWER to UPPER
+					FArray2D_int D( get_residue_path_distances( *rsd ) );
+					uint atom( lower_connect );
+					while ( atom != upper_connect ) {
+						mainchain.push_back( atom );
+						AtomIndices const & nbrs( rsd->nbrs( atom ) );
+						int min_d( D( atom, upper_connect ) );
+						uint next_atom( atom );
 
-					atom = next_atom;
+						for ( uint i=1; i<= nbrs.size(); ++i ) {
+							uint const nbr( nbrs[i] );
+							if ( D( nbr, upper_connect ) < min_d ) {
+								min_d = D( nbr, upper_connect );
+								next_atom = nbr;
+							}
+						}
+						assert( next_atom != atom );
+
+						atom = next_atom;
+					}
+					mainchain.push_back( upper_connect );
 				}
-				mainchain.push_back( upper_connect );
 				rsd->set_mainchain_atoms( mainchain );
 			} else {
-				tr.Warning << "WARNING: Residue " << rsd->name() << " claims it's a polymer, but it doesn't have the appropriate UPPER and LOWER connection points specifed." << std::endl;
+				tr.Warning << "WARNING: Residue " << rsd->name() << " claims it's a polymer, " <<
+						"but it doesn't have the appropriate UPPER and LOWER connection points specified." << std::endl;
 			}
 		}
 
-		// now also need to store the information about the geometry
-		// at the links...
+		// now also need to store the information about the geometry at the links...
 
 	} // scope
 

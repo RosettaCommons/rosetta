@@ -83,7 +83,7 @@ CHI_ROTAMERS 4 120 0
 CHI_ROTAMERS 4 180 0
 CHI_ROTAMERS 4 240 0
 CHI_ROTAMERS 4 300 0
-CHI 5  C4   C5   C6   O6
+CHI 5  C4   C5   C6   O6   # duplicates BB 5
 CHI 6  C5   C6   O6   HO6  # duplicates BB 6
 NU 1  VO5  C1   C2   C3    # duplicates BB 1, but defined differently
 NU 2  C1   C2   C3   C4    # duplicates BB 2
@@ -92,6 +92,7 @@ NU 4  C3   C4   C5   O5    # duplicates BB 4, but defined differently
 PROPERTIES  POLAR CARBOHYDRATE ALDOSE D_SUGAR PYRANOSE ALPHA_SUGAR
 NBR_ATOM  C4
 NBR_RADIUS 6.967819
+FIRST_SIDECHAIN_ATOM O1
 # must build main chain 1st!
 ICOOR_INTERNAL    C1     0.000000    0.000000    0.000000   C1    C2    C3
 ICOOR_INTERNAL    C2     0.000000    0.000000    1.527772   C1    C2    C3

@@ -848,11 +848,11 @@ public:
 		return rsd_type_.mainchain_atoms();
 	}
 
-	/// @brief ??? Returns the number of the residue's mainchain atoms
+	/// @brief Returns the atom index of the residue's ith mainchain atom
 	Size
-	mainchain_atom( Size const atm ) const
+	mainchain_atom( Size const i ) const
 	{
-		return rsd_type_.mainchain_atom( atm );
+		return rsd_type_.mainchain_atom( i );
 	}
 
 	/// @brief Returns the number of the residue's mainchain atoms

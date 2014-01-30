@@ -58,12 +58,16 @@ test_sugar(Pose & sugar)
 	Size n_res = sugar.total_residue();
 	for (core::uint i = 1; i <= n_res; ++i) {
 		Residue res = sugar.residue(i);
-		//cout << res << endl << endl;
 		cout << "Residue " << i << ": " << endl;
 		cout << " 3-Letter Code: " << res.name3();
 		cout << "  1-Letter Code: " << res.name1() << endl;
 		cout << " PDB ID: " << sugar.pdb_info()->pose2pdb(i) << endl;
-		cout << res << endl << endl;
+		cout << res << endl;
+		cout << "Main chain atom indices: ";
+		for (core::uint j = 1; j <= res.mainchain_atoms().size(); ++j) {
+			cout << res.mainchain_atom(j) << ", ";
+		}
+		cout << endl << endl;
 	}
 }
 
@@ -76,10 +80,10 @@ main(int argc, char *argv[])
 		devel::init(argc, argv);
 
 		// Declare variables.
-		Pose /*maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, psicose,*/
+		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, psicose,
 				neuraminate;
 
-		/*cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing maltotriose:" << endl;
 
 		pose_from_pdb(maltotriose, PATH + "maltotriose.pdb");
@@ -166,7 +170,7 @@ main(int argc, char *argv[])
 
 		test_sugar(psicose);
 
-		cout << *psicose.residue(1).carbohydrate_info()->ring_conformer_set();*/
+		cout << *psicose.residue(1).carbohydrate_info()->ring_conformer_set();
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;

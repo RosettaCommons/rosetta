@@ -105,19 +105,24 @@ align_virtual_atoms_in_carbohydrate_residue(conformation::Conformation & conf, u
 	using namespace id;
 	using namespace conformation;
 
+	TR << " Aligning virtual atoms on residue " << sequence_position << "..." << endl;
+
 	ResidueCAP res = & conf.residue(sequence_position);
 
 	// Find and align VOX, if applicable.
 	if (res->carbohydrate_info()->is_cyclic()) {
+		TR << "  Aligning VOX..." << endl;
 		uint x = res->carbohydrate_info()->cyclic_oxygen();
 		uint OX = res->atom_index(res->carbohydrate_info()->cyclic_oxygen_name());
 		uint VOX = res->atom_index("VO" + string(1, x + '0'));
 
 		conf.set_xyz(AtomID(VOX, sequence_position), conf.xyz(AtomID(OX, sequence_position)));
+		TR << "  VOX aligned." << endl;
 	}
 
 	// Find and align OY and HOY, if applicable.
-	if (!res->is_lower_terminus()) {
+	/*if (!res->is_lower_terminus()) {
+		TR << "  Aligning OY and HOY..." << endl;
 		uint y = res->carbohydrate_info()->anomeric_carbon();
 		uint OY = res->atom_index("O" + string(1, y + '0'));
 		uint HOY = res->atom_index("HO" + string(1, y + '0'));
@@ -127,12 +132,21 @@ align_virtual_atoms_in_carbohydrate_residue(conformation::Conformation & conf, u
 		uint OY_ref = parent_res->connect_atom(*res);
 		uint HOY_ref = parent_res->atom_index(atom_next_to_connect_atom(*parent_res, parent_res->atom_name(OY_ref)));
 
-		conf.set_xyz(AtomID(OY, sequence_position), conf.xyz(AtomID(OY_ref, parent_res_seqpos)));
 		conf.set_xyz(AtomID(HOY, sequence_position), conf.xyz(AtomID(HOY_ref, parent_res_seqpos)));
-	}
+		TR << "  HOY aligned." << endl;
+
+		TR << "   Updating torsions..." << endl;
+		ResidueCAP dummy = & conf.residue(sequence_position);  // to trigger private method commented below
+		//conf.update_residue_torsions(res->seqpos(), false);
+		TR << "   Torsions updated." << endl;
+
+		conf.set_xyz(AtomID(OY, sequence_position), conf.xyz(AtomID(OY_ref, parent_res_seqpos)));
+		TR << "  OY aligned." << endl;
+	}*/
 
 	// Find and align HOZ(s), if applicable.
 	if (!res->is_upper_terminus()) {
+		TR << "  Aligning HOZ..." << endl;
 		uint z = res->carbohydrate_info()->mainchain_glycosidic_bond_acceptor();
 		uint HOZ = res->atom_index("HO" + string(1, z + '0'));
 
@@ -141,6 +155,7 @@ align_virtual_atoms_in_carbohydrate_residue(conformation::Conformation & conf, u
 		uint HOZ_ref = downstream_res->atom_index(downstream_res->carbohydrate_info()->anomeric_carbon_name());
 
 		conf.set_xyz(AtomID(HOZ, sequence_position), conf.xyz(AtomID(HOZ_ref, downstream_res_seqpos)));
+		TR << "  HOZ aligned." << endl;
 	}
 	Size n_branches = res->carbohydrate_info()->n_branches();
 	for (uint branch_num = 1; branch_num <= n_branches; ++branch_num) {
@@ -155,6 +170,8 @@ align_virtual_atoms_in_carbohydrate_residue(conformation::Conformation & conf, u
 
 		conf.set_xyz(AtomID(HOZ, sequence_position), conf.xyz(AtomID(HOZ_ref, branch_res_seqpos)));
 	}
+
+	TR << " All virtual atoms aligned." << endl;
 }
 
 // Set coordinates of virtual atoms (used as angle reference points) within a saccharide residue of the given pose.

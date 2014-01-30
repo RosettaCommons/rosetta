@@ -1864,16 +1864,12 @@ private:
 	AtomIndices all_sc_atoms_;
 
 	/// @brief indices of all mainchain atoms
-	///
-	/// mainchain_atoms are those atoms on the shortest path from polymer lower_connect
+	/// @details mainchain_atoms are those atoms on a path from polymer lower_connect
 	/// to upper_connect. For protein, this will be N, CA and C.
 	utility::vector1<VD> mainchain_atoms_;
 
-	/// indices of action coordinate centers
-	/**
-			the geometric center of the atoms listed defined the residue's
-			"action coordinate"
-	 **/
+	/// @brief indices of action coordinate centers
+	/// @details the geometric center of the atoms listed defined the residue's "action coordinate"
 	utility::vector1< VD > actcoord_atoms_;
 
 
