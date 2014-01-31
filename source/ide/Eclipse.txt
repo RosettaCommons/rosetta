@@ -1,3 +1,7 @@
 Instructions for building with Eclipse are posted on the wiki:
 
 https://wiki.rosettacommons.org/index.php/Eclipse_Setup
+
+A formatting style sheet for Eclipse can be found in this directory.
+To use: Import the file Rosetta3style.xml
+from Window:Preferences:C/C++:Code Style:Formatter
