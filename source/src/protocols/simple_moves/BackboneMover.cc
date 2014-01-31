@@ -415,7 +415,7 @@ bool SmallMover::make_move( core::pose::Pose & pose )
 	new_psi_ = basic::periodic_range( old_psi_ - small_angle_ + RG.uniform() * big_angle_, 360.0 );
 
 	// Always accept carbohydrate moves for now....
-	if (current_rsd.is_protein()) {
+	if ( current_rsd.is_protein() && current_rsd.aa() != chemical::aa_unk ) {
 		old_rama_score_ = rama.eval_rama_score_residue( current_rsd.aa(), old_phi_, old_psi_ );
 		new_rama_score_ = rama.eval_rama_score_residue( current_rsd.aa(), new_phi_, new_psi_ );
 
@@ -578,7 +578,7 @@ bool protocols::simple_moves::ShearMover::make_move( core::pose::Pose & pose )
 	new_phi_ = basic::periodic_range( old_phi_ - shear_delta, 360.0 );
 
 	// Always accept carbohydrate moves for now....
-	if (current_rsd.is_protein()) {
+	if ( current_rsd.is_protein() &&  current_rsd.aa() != chemical::aa_unk ) {
 		// rama for phi of resnum and psi of resnum-1
 		old_rama_score_ =  rama.eval_rama_score_residue( current_rsd.aa(), old_phi_, pose.psi(resnum_));
 		new_rama_score_ =  rama.eval_rama_score_residue( current_rsd.aa(), new_phi_, pose.psi(resnum_));
@@ -590,7 +590,7 @@ bool protocols::simple_moves::ShearMover::make_move( core::pose::Pose & pose )
 	old_psi_ = pose.psi(resnum_-1);
 	new_psi_ = basic::periodic_range( old_psi_ + shear_delta, 360.0 );
 
-	if (current_rsd.is_protein()) {
+	if ( current_rsd.is_protein() &&  prev_rsd.aa() != chemical::aa_unk ) {
 		// rama for residue resnum-1
 		old_rama_score_ =  rama.eval_rama_score_residue( prev_rsd.aa(), pose.phi(resnum_-1), old_psi_ );
 		new_rama_score_ =  rama.eval_rama_score_residue( prev_rsd.aa(), pose.phi(resnum_-1), new_psi_ );
