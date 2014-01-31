@@ -101,12 +101,14 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	core::Real fsc1=0.0, fsc2=0.0;
 
 	// train map
+	core::scoring::electron_density::getDensityMap().calcRhoC( litePose );
 	core::scoring::electron_density::getDensityMap().getFSC( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap1FSC, mask_, bin_squared_ );
 
 	for (Size i=1; i<=modelmap1FSC.size(); ++i) fsc1+=modelmap1FSC[i];
 	fsc1 /= modelmap1FSC.size();
 
 	if (testmap_ && testmap_->isMapLoaded()) {
+		testmap_->calcRhoC( litePose );  // this is redundant
 		testmap_->getFSC( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelmap2FSC, mask_, bin_squared_ );
 		for (Size i=1; i<=modelmap2FSC.size(); ++i) fsc2+=modelmap2FSC[i];
 		fsc2 /= modelmap2FSC.size();

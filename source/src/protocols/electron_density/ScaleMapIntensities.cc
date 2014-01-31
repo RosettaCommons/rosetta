@@ -114,6 +114,7 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		////
 		//// use model
 		////
+		core::scoring::electron_density::getDensityMap().calcRhoC( litePose );
 		core::scoring::electron_density::getDensityMap().getIntensities( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelI, bin_squared_ );
 
 		if (mask_) {
