@@ -122,12 +122,12 @@ main(int argc, char *argv[])
 
 
 		// TODO: How did this break?
-		//cout << "---------------------------------------------------------------------------------------------" << endl;
-		//cout << "Importing branched amylopectin fragment:" << endl;
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing branched amylopectin fragment:" << endl;
 
-		//pose_from_pdb(amylopectin, PATH + "amylopectin_fragment.pdb");
+		pose_from_pdb(amylopectin, PATH + "amylopectin_fragment.pdb");
 
-		//test_sugar(amylopectin);
+		test_sugar(amylopectin);
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
