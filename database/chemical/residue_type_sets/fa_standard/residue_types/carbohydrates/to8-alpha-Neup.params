@@ -10,19 +10,22 @@ ATOM  C6  CH1   X   0.04
 ATOM  C7  CH1   X   0.14
 ATOM  C8  CH1   X   0.14
 ATOM  O8  OOC   X   -0.66
-ATOM  HO8 VIRT VIRT 0.43   # to next residue; allows for consistent chi angles
+ATOM  HO8 VIRT VIRT 0.00   # to next residue; allows for consistent chi angles
 ATOM  C1  COO   X   0.52
 ATOM  C9  CH2   X   0.05
 ATOM 1O1  OOC   X   -0.76
 ATOM 2O1  OOC   X   -0.76
-ATOM  O2  VIRT VIRT 0.00   # for internal res, virtual to previous residue; allows for consistent chi angles; replaced with real atoms by patch for lower terminus
+ATOM  O2  VIRT VIRT 0.00   # for internal res, virtual to previous residue; allows for consistent chi angles; replaced with real atom by patch for lower terminus
+ATOM  O3  VIRT VIRT 0.00   # allows for consistent chi angles
 ATOM  O4  OH    X   -0.66
 ATOM  N5  Nlys  X   -0.30
 ATOM  O6  OOC   X   -0.13
 ATOM  VO6 VIRT VIRT 0.00   # to superimpose with O6
 ATOM  O7  OH    X   -0.66
 ATOM  O9  OH    X   -0.66
-ATOM  HO2 VIRT VIRT 0.0    # for internal res, virtual; allows for consistent chi angles; replaced with real atoms by patch for lower terminus
+ATOM H1O1 VIRT VIRT 0.00   # allows for consistent chi angles; replaced with real atom for a protonated patch
+ATOM  HO2 VIRT VIRT 0.0    # for internal res, virtual; allows for consistent chi angles; replaced with real atom by patch for lower terminus
+ATOM HO3  VIRT VIRT 0.00   # allows for consistent chi angles
 ATOM 1H3  Hapo  X   0.09   # pro-S
 ATOM 2H3  Hapo  X   0.09   # pro-R
 ATOM  H4  Hapo  X   0.09
@@ -61,7 +64,10 @@ BOND  C8   C9
 BOND  C9   O9
 BOND  C1  1O1
 BOND  C1  2O1
+BOND 1O1  H1O1
 BOND  O2   HO2
+BOND  C3   O3
+BOND  O3  HO3
 BOND  C3  1H3
 BOND  C3  2H3
 BOND  C4   H4
@@ -77,7 +83,7 @@ BOND  C8   H8
 BOND  C9  1H9
 BOND  C9  2H9
 BOND  O9   HO9
-CHI 1  C2   C1  1O1   2O1  # meaningless chi; this is just a placeholder; should I add a virtual H2O1 for a protonate patch to use?
+CHI 1  C2   C1  1O1  H1O1  # meaningless chi; this is just a placeholder
 CHI 2  VO6  C2   O2   HO2  # cannot use O6 to define torsion, since atom tree doesn't treat it as connected; chi(O6-C2-O2-H) -- chi(2) is ambiguous
 CHI_ROTAMERS 2   0 0
 CHI_ROTAMERS 2  60 0
@@ -85,7 +91,7 @@ CHI_ROTAMERS 2 120 0
 CHI_ROTAMERS 2 180 0
 CHI_ROTAMERS 2 240 0
 CHI_ROTAMERS 2 300 0
-CHI 3  C2   C3  1H3   2H3  # meaningless chi; this is just a placeholder
+CHI 3  C2   C3   O3   HO3  # meaningless chi; this is just a placeholder
 CHI 4  C3   C4   O4   HO4
 CHI_ROTAMERS 4   0 0
 CHI_ROTAMERS 4  60 0
@@ -118,7 +124,7 @@ CHI_ROTAMERS 9 120 0
 CHI_ROTAMERS 9 180 0
 CHI_ROTAMERS 9 240 0
 CHI_ROTAMERS 9 300 0
-CHI 10  VO6  C2   C1  1O1   # chi(O6-C2-C1-O) -- chi(2) is ambiguous; duplicates BB 5
+CHI 10  VO6   C2   C1  1O1   # chi(O6-C2-C1-O) -- chi(2) is ambiguous; duplicates BB 5
 CHI_ROTAMERS 10   0 0
 CHI_ROTAMERS 10  60 0
 CHI_ROTAMERS 10 120 0
@@ -157,13 +163,16 @@ ICOOR_INTERNAL    C9   178.796536   69.706481    1.533804   C8    C7    C6
 ICOOR_INTERNAL  LOWER -171.866263   70.670487    1.438104   C2    C3    C4
 ICOOR_INTERNAL    O2  -171.866263   70.670487    1.438104   C2    C3    C4
 ICOOR_INTERNAL   1O1  -168.982701   58.806538    1.297254   C1    C2    C3
-ICOOR_INTERNAL   2O1  -174.274412   61.393840    1.283012   C1    C2   1O1
+ICOOR_INTERNAL   2O1    16.7429     61.393840    1.283012   C1    C2    C3
+ICOOR_INTERNAL    O3   -48.8355     71.048       1.5        C3    C2    C1
 ICOOR_INTERNAL    O4   117.916905   68.944369    1.460957   C4    C3    C5
 ICOOR_INTERNAL    N5  -122.690379   69.447507    1.536366   C5    C4    C6
 ICOOR_INTERNAL   VO6   -55.0917     71.25        1.46771    C2    C3    C4  # must build as branch from main chain
 ICOOR_INTERNAL    O7   120.592929   78.229971    1.413762   C7    C6    C8
 ICOOR_INTERNAL    O9   174.858983   73.799381    1.424053   C9    C8    C7
+ICOOR_INTERNAL   H1O1 -180.0        120.0        1.05      1O1    C1    C2
 ICOOR_INTERNAL    HO2   62.272749   70.463075    1.050176   O2    C2    C1
+ICOOR_INTERNAL    HO3   62.272749   70.463075    1.050176   O3    C3    C2
 ICOOR_INTERNAL   1H3  -120.277363   71.047729    1.089780   C3    C2    C4
 ICOOR_INTERNAL   2H3  -119.460456   71.002786    1.089360   C3    C2   1H3
 ICOOR_INTERNAL    H4   122.254513   69.863869    1.090751   C4    C3    O4
