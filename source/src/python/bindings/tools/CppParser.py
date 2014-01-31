@@ -420,13 +420,17 @@ class CppFunction:
         #elif endsWith(self.returnType.T(), ' const', ['']):  # const &, const *, ... &, ... *
         #    return '    , boost::python::return_value_policy< boost::python::reference_existing_object >()\n'
 
+	# The boost::graph vertex descriptors and edge descriptors are implemented with void pointers
+	# which gives boost::python a headache. Tell boost::python to treat them as opaque objects.
+        elif    self.returnType.T().endswith('core::chemical::VD') \
+             or self.returnType.T().endswith('core::chemical::VD const &') \
+             or self.returnType.T().endswith('core::chemical::ED'):
+            return '    , boost::python::return_value_policy< boost::python::return_by_value >()\n'
+
+
         elif self.returnType.T().endswith(' *') or self.returnType.T().endswith(' &'):  # ... &, ... *
             return '    , boost::python::return_value_policy< boost::python::reference_existing_object >()\n'
 
-	# The boost::graph vertex descriptors and edge descriptors are implemented with void pointers
-	# which gives boost::python a headache. Tell boost::python to treat them as opaque objects.
-        elif self.returnType.T().endswith('core::chemical::VD') or self.returnType.T().endswith('core::chemical::ED'):
-            return '    , boost::python::return_value_policy< boost::python::return_by_value >()\n'
 
 
         return ''

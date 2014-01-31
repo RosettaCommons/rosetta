@@ -27,7 +27,7 @@ namespace simple_moves {
 class ContingentAcceptMover : public moves::Mover {
 public:
 	ContingentAcceptMover();
-	ContingentAcceptMover(core::Real const min_in , core::Real const max_in);
+	// Undefined, commenting out to fix PyRosetta build  ContingentAcceptMover(core::Real const min_in , core::Real const max_in);
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
@@ -44,16 +44,16 @@ public:
 
 		protocols::filters::FilterOP filter() const;
 		void filter( protocols::filters::FilterOP f );
-    
+
     protocols::moves::MoverOP mover() const;
     void mover( protocols::moves::MoverOP m );
 
    // protocols::filters::mover_FilterOP filter() const { return filter_; };
 	//	void filter( protocols::filters::FilterOP f ){ filter_ = f; }
-    
+
   //  protocols::moves::MoverOP mover() const { return mover_; };
-	//	void mover( protocols::moves::MoverOP m ){ mover_ = m; }   
-    
+	//	void mover( protocols::moves::MoverOP m ){ mover_ = m; }
+
 	core::Real delta() const { return delta_; }
 	void delta( core::Real const s ){ delta_ = s; }
 

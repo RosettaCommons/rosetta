@@ -120,15 +120,15 @@ public:
 		return stub3_;
 	}
 
-	VD const vertex1()
+	VD vertex1()
 	{
 		return vertex1_;
 	}
-	VD const vertex2()
+	VD vertex2()
 	{
 		return vertex2_;
 	}
-	VD const vertex3()
+	VD vertex3()
 	{
 		return vertex3_;
 	}
