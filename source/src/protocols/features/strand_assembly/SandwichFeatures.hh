@@ -725,7 +725,7 @@ public:
 		utility::sql_database::sessionOP db_session,
 		core::Size sheet_id);
 
-	utility::vector1<Size>
+	utility::vector1<int>
 	retrieve_residue_num_of_rkde(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
@@ -988,13 +988,23 @@ private:
 	allowed_deviation_for_turn_type_id_;
 
 	int
-	primary_seq_distance_cutoff_for_beta_sheet_capping_;
+	primary_seq_distance_cutoff_for_beta_sheet_capping_before_N_term_capping_;
+
+	int
+	primary_seq_distance_cutoff_for_beta_sheet_capping_after_N_term_capping_;
+
+	int
+	primary_seq_distance_cutoff_for_beta_sheet_capping_before_C_term_capping_;
+
+	int
+	primary_seq_distance_cutoff_for_beta_sheet_capping_after_C_term_capping_;
+
 
 	core::Real
 	distance_cutoff_for_electrostatic_interactions_;
 
 	core::Real
-	CB_b_facor_cutoff_for_electrostatic_interactions_;
+	CB_b_factor_cutoff_for_electrostatic_interactions_;
 
 	core::Size
 	primary_seq_distance_cutoff_for_electrostatic_interactions_;

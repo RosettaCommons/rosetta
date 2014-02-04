@@ -85,6 +85,8 @@
 #include <algorithm>	// for avg,min,max
 #include <fstream>
 #include <iostream>
+#include <cmath>	// for std::abs				// reference:	http://www.cplusplus.com/reference/cmath/abs/
+
 #include <numeric>
 //#include <stdio.h>     //for remove( ) and rename( )
 #include <stdlib.h> // for abs()
@@ -820,7 +822,7 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 
 	for(Size sw_ii=1; sw_ii<=vector_of_unique_distinct_sw_ids.size(); sw_ii++) // per each beta-sandwich
 	{
-		utility::vector1<Size>	vector_of_residue_num_of_rkde	=
+		utility::vector1<int>	vector_of_residue_num_of_rkde	=
 			retrieve_residue_num_of_rkde(
 				struct_id,
 				db_session,
@@ -830,7 +832,18 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 				);
 		for(Size residue_i=1; residue_i<=vector_of_residue_num_of_rkde.size(); residue_i++)
 		{
-			Size	residue_num	=	vector_of_residue_num_of_rkde[residue_i];
+			int	residue_num	=	vector_of_residue_num_of_rkde[residue_i];
+
+			// <begin> check whether "current" residue has low atom position uncertainty
+			pose::PDBInfoCOP info = pose.pdb_info();
+			Real B_factor_of_CB = info->temperature( residue_num, 5 ); // '5' atom will be 'H' for Gly, otherwise typycal CB
+			if (B_factor_of_CB	>	CB_b_factor_cutoff_for_electrostatic_interactions_)
+			{
+					TR	<<	"residue_num:	"	<<	residue_num	<< " is dropped by too high CB_b_factor" << endl;
+				continue;	// this	"current" residue has too high atom position uncertainty, so let's not use this residue when counting number of electrostatic interactions
+			}
+			// <end> check whether "current" residue has low atom position uncertainty
+
 			ElectroStatic_file	<< residue_num	<<	"	"	<<	pose.residue_type(residue_num).name3();
 
 			numeric::xyzVector< core::Real > xyz_of_centroid_of_RKDE;
@@ -930,19 +943,21 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 					continue;
 				}
 
-				Size	other_residue_num	=	vector_of_residue_num_of_rkde[other_residue_i];
+				int	other_residue_num	=	vector_of_residue_num_of_rkde[other_residue_i];
 
-				if ((other_residue_num - residue_num) < primary_seq_distance_cutoff_for_electrostatic_interactions_)
-					//	other_residue_num should be always higher than	residue_num
+//					TR	<< "residue_num:	"	<<	residue_num	<<	endl;
+//					TR	<< "other_residue_num:	"	<<	other_residue_num	<<	endl;
+
+				if (std::abs(other_residue_num - residue_num) < primary_seq_distance_cutoff_for_electrostatic_interactions_)
 				{
 					continue;
 				}
 
 				// <begin> check whether "other_residue" has low atom position uncertainty
-				pose::PDBInfoCOP info = pose.pdb_info();
-				Real B_factor_of_CB = info->temperature( other_residue_num, 5 ); // '5' atom will be 'H' for Gly
-				if (B_factor_of_CB	>	CB_b_facor_cutoff_for_electrostatic_interactions_)
+				 B_factor_of_CB = info->temperature( other_residue_num, 5 ); // '5' atom will be 'H' for Gly
+				if (B_factor_of_CB	>	CB_b_factor_cutoff_for_electrostatic_interactions_)
 				{
+						TR	<<	"other_residue_num:	"	<<	other_residue_num	<< " is dropped by too high CB_b_factor" << endl;
 					continue;	// this	"other_residue" has too high atom position uncertainty, so let's not use this residue when counting number of electrostatic interactions
 				}
 				// <end> check whether "other_residue" has low atom position uncertainty
@@ -1030,6 +1045,7 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 				}
 
 				Real distance_between_centroid = xyz_of_centroid_of_RKDE.distance(xyz_of_centroid_of_other_RKDE);
+				//	TR	<< "distance_between_centroid: "	<< distance_between_centroid << endl;
 
 				if	(pose.residue_type(residue_num).name3() == "ARG")
 				{
@@ -6282,7 +6298,7 @@ SandwichFeatures::get_list_of_residues_in_sheet_i(
 
 
 
-utility::vector1<Size>
+utility::vector1<int>
 SandwichFeatures::retrieve_residue_num_of_rkde(
 	StructureID struct_id,
 	sessionOP db_session,
@@ -6304,7 +6320,7 @@ SandwichFeatures::retrieve_residue_num_of_rkde(
 		select_statement.bind(1,	struct_id);
 		result res(basic::database::safely_read_from_database(select_statement));
 	
-		utility::vector1<Size> vector_of_residue_num_of_rkde;
+		utility::vector1<int> vector_of_residue_num_of_rkde;
 		Size	residue_num_of_rkde;
 		while(res.next())
 		{
@@ -6333,7 +6349,7 @@ SandwichFeatures::retrieve_residue_num_of_rkde(
 			select_statement.bind(3,	sw_can_by_sh_id);
 			result res(basic::database::safely_read_from_database(select_statement));
 		
-			utility::vector1<Size> vector_of_residue_num_of_rkde;
+			utility::vector1<int> vector_of_residue_num_of_rkde;
 			Size	residue_num_of_rkde;
 			while(res.next())
 			{
@@ -6358,7 +6374,7 @@ SandwichFeatures::retrieve_residue_num_of_rkde(
 			select_statement.bind(2,	sw_can_by_sh_id);
 			result res(basic::database::safely_read_from_database(select_statement));
 		
-			utility::vector1<Size> vector_of_residue_num_of_rkde;
+			utility::vector1<int> vector_of_residue_num_of_rkde;
 			Size	residue_num_of_rkde;
 			while(res.next())
 			{
@@ -7111,7 +7127,14 @@ SandwichFeatures::parse_my_tag(
 
 	allowed_deviation_for_turn_type_id_ = tag->getOption<Real>("allowed_deviation_for_turn_type_id", 40.0);
 
-	primary_seq_distance_cutoff_for_beta_sheet_capping_ = tag->getOption<int>("primary_seq_distance_cutoff_for_beta_sheet_capping", 2);
+
+	primary_seq_distance_cutoff_for_beta_sheet_capping_before_N_term_capping_ = tag->getOption<int>("primary_seq_distance_cutoff_for_beta_sheet_capping_before_N_term_capping", 2);
+
+	primary_seq_distance_cutoff_for_beta_sheet_capping_after_N_term_capping_ = tag->getOption<int>("primary_seq_distance_cutoff_for_beta_sheet_capping_after_N_term_capping", 0);
+
+	primary_seq_distance_cutoff_for_beta_sheet_capping_before_C_term_capping_ = tag->getOption<int>("primary_seq_distance_cutoff_for_beta_sheet_capping_before_C_term_capping", 0);
+
+	primary_seq_distance_cutoff_for_beta_sheet_capping_after_C_term_capping_ = tag->getOption<int>("primary_seq_distance_cutoff_for_beta_sheet_capping_after_C_term_capping", 2);
 
 
 	///	electrostatic_interactions related
@@ -7119,7 +7142,7 @@ SandwichFeatures::parse_my_tag(
 		//"N-O bridges follow only one, that is, they have at least a pair of side-chain functional-group nitrogen and oxygen atoms within 4A distance, but the side-chain functional-group centroids are > 4A apart."
 		// source: 2002_Close-Range Electrostatic Interactions in Proteins
 
-	CB_b_facor_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("CB_b_facor_cutoff_for_electrostatic_interactions", 60);
+	CB_b_factor_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("CB_b_factor_cutoff_for_electrostatic_interactions", 60);
 		//"Values of 60 or greater may imply disorder (for example, free movement of a side chain or alternative side-chain conformations). Values of 20 and 5 correspond to uncertainties of 0.5 and 0.25 angstroms, respectively."
 		// source: http://spdbv.vital-it.ch/TheMolecularLevel/SPVTut/text/STut09aTN.html
 
@@ -8380,8 +8403,8 @@ SandwichFeatures::report_features(
 
 			bool	capping_near_begin	=	false;
 			bool	capping_near_end	=	false;
-			for(int jj	=	residue_begin	-	primary_seq_distance_cutoff_for_beta_sheet_capping_;
-				jj	<=	residue_begin	+	primary_seq_distance_cutoff_for_beta_sheet_capping_;
+			for(int jj	=	residue_begin	-	primary_seq_distance_cutoff_for_beta_sheet_capping_before_N_term_capping_;
+				jj	<=	residue_begin	+	primary_seq_distance_cutoff_for_beta_sheet_capping_after_N_term_capping_;
 				jj++) // per each beta-strand
 			{
 				if	(jj	<=	0)
@@ -8401,8 +8424,8 @@ SandwichFeatures::report_features(
 					break;
 				}
 			}
-			for(int jj	=	residue_end	-	primary_seq_distance_cutoff_for_beta_sheet_capping_;
-				jj	<=	residue_end	+	primary_seq_distance_cutoff_for_beta_sheet_capping_;
+			for(int jj	=	residue_end	-	primary_seq_distance_cutoff_for_beta_sheet_capping_before_C_term_capping_;
+				jj	<=	residue_end	+	primary_seq_distance_cutoff_for_beta_sheet_capping_after_C_term_capping_;
 				jj++) // per each beta-strand
 			{
 				if	(jj	>	static_cast<int>(pose.total_residue()))
