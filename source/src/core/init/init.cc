@@ -528,7 +528,6 @@ static ResLvlTaskOperationRegistrator< AddBehaviorRLTCreator > AddBehaviorRLTCre
 // register ResFilterCreators
 static ResFilterRegistrator< ResidueHasPropertyCreator > ResidueHasPropertyCreator_registrator;
 static ResFilterRegistrator< ResiduePDBInfoHasLabelCreator > ResiduePDBInfoHasLabelCreator_registrator;
-static ResFilterRegistrator< ResiduePDBInfoLacksLabelCreator > ResiduePDBInfoLacksLabelCreator_registrator;
 static ResFilterRegistrator< ResidueLacksPropertyCreator > ResidueLacksPropertyCreator_registrator;
 static ResFilterRegistrator< ResidueName3IsCreator > ResidueName3IsCreator_registrator;
 static ResFilterRegistrator< ResidueName3IsntCreator > ResidueName3IsntCreator_registrator;

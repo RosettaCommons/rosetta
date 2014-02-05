@@ -71,7 +71,7 @@ public:
 		//TR << A(width, rss) << I(width,rs->residue_types().size()) << endl;
 
 		ResidueType const & serine = rs->name_map( "SER" );
-		TS_ASSERT_DELTA(serine.molecular_mass(), 87, delta_percent);
+		TS_ASSERT_DELTA(serine.mass(), 87.0900, delta_percent);
 
 		ResidueTypeOP modser = serine.clone();
 		modser->nbr_radius( 15.0);

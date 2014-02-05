@@ -90,8 +90,7 @@ public:
 		AtomTypeSetCAP atom_types,
 		ElementSetCAP elements,
 		MMAtomTypeSetCAP mm_atom_types,
-		orbitals::OrbitalTypeSetCAP orbital_types//,
-//		CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd atomtypes until I have had a chance to fully implement them
+		orbitals::OrbitalTypeSetCAP orbital_types
 	);
 
 	void
@@ -100,8 +99,7 @@ public:
 		AtomTypeSetCAP atom_types,
 		ElementSetCAP elements,
 		MMAtomTypeSetCAP mm_atom_types,
-		orbitals::OrbitalTypeSetCAP orbital_types//,
-//		CSDAtomTypeSetCAP csd_atom_types kwk commenting out the csd atomtypes until I have had a chance to implement them
+		orbitals::OrbitalTypeSetCAP orbital_types
 	);
 
 

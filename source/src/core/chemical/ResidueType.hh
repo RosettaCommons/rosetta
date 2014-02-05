@@ -69,7 +69,8 @@
 #define INCLUDED_core_chemical_ResidueType_hh
 
 //#include <boost/graph/undirected_graph.hpp>
-
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/copy.hpp>
 // Unit headers
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
@@ -83,6 +84,8 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
+#include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
+#include <core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh>
 #ifdef WIN32
 #include <core/chemical/Orbital.hh>
 #include <core/chemical/ResidueConnection.hh>
@@ -144,7 +147,6 @@ public:
 			ElementSetCAP element_types,
 			MMAtomTypeSetCAP mm_atom_types,
 			orbitals::OrbitalTypeSetCAP orbital_types//,
-			//		CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd atom types until they have been fully implemented
 	);
 
 	ResidueType(ResidueType const & residue_type);
@@ -179,20 +181,29 @@ public:
 	{
 		return atom_types_;
 	}
+
 	//private: // For refactoring
 	Atom & atom(Size const atom_index);
 	//public:
 	Atom const & atom(Size const atom_index) const;
+	Atom & atom(VD const vd);
+	Atom const & atom(VD const vd) const;
 	Atom & atom(std::string const & atom_name);
 	Atom const & atom(std::string const & atom_name) const;
 
 	Orbital const & orbital(Size const orbital_index) const;
 	Orbital const & orbital(std::string const & orbital_name) const;
 
+	Bond & bond(ED const ed);
+	Bond const & bond(ED const ed) const;
 
 	/// @brief Get the chemical atom_type for this atom by it index number in this residue
 	AtomType const &
 	atom_type( Size const atomno ) const;
+
+	/// @brief Get the chemical atom_type for this atom by it index number in this residue
+	AtomType const &
+	atom_type( VD const vd) const;
 
 	/// @brief Get the chemical atom_type index number for this atom by its index number in this residue
 	//	int
@@ -231,6 +242,20 @@ public:
 	nbonds() const
 	{
 		return nbonds_;
+	}
+
+	/// @brief number of bonds for given atom
+	Size
+	nbonds( Size atom ) const
+	{
+		return boost::out_degree( ordered_atoms_[ atom ] , graph_);
+	}
+
+	/// @brief number of bonds for given atom
+	Size
+	nbonds( VD atom ) const
+	{
+		return boost::out_degree( atom , graph_ );
 	}
 
 	/// @brief path distance (number of bonds separated) between a pair of atoms
@@ -293,6 +318,9 @@ public:
 
 	AtomIndices const &
 	bonded_neighbor( Size const atomno ) const;
+
+	AdjacentIterPair
+	bonded_neighbor_iterators( VD const & atom ) const;
 
 
 	utility::vector1<BondName> const & bonded_neighbor_types(Size const atomno) const;
@@ -467,6 +495,9 @@ public:
 	Size
 	atom_index( std::string const & name ) const;
 
+	Size
+	atom_index( VD const & vd) const;
+
 	/// @brief get the vertex descriptor from the name of the atom.
 	VD
 	vd_from_name( std::string const & name) const;
@@ -502,6 +533,17 @@ public:
 		return first_sidechain_hydrogen_;
 	}
 
+	VIterPair atom_iterators() const {
+		return boost::vertices(graph_);
+	}
+
+	EIterPair bond_iterators() const {
+		return boost::edges(graph_);
+	}
+
+	OutEdgeIterPair bond_iterators( VD const & atom ) const {
+		return boost::out_edges(atom, graph_);
+	}
 
 	/// @brief is a backbone atom (heavy or hydorgen)?
 	bool
@@ -572,6 +614,17 @@ public:
 
 
 	/// @brief Get the MM atom_type index number for this atom by its index number in this residue
+
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	///////////////// Gasteiger Atom Type Functions              //////////////////////
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+
+	/// @brief Get the MM atom_type for this atom by its index number in this residue
+	gasteiger::GasteigerAtomTypeDataCOP
+	gasteiger_atom_type( Size const atomno ) const;
+
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -798,15 +851,6 @@ public:
 
 
 	//////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
-	///////////////// methods for building residue////////////////////////
-	//////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////
-
-
-	//////////////////////////////////////////////////////////////////////
 	/////////////////////////atoms////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 
@@ -846,6 +890,15 @@ public:
 			std::string const & mm_atom_type_name
 	);
 
+	/// @brief Manually set the gasteiger typeset - will use the default set otherwise
+	void set_gasteiger_typeset( gasteiger::GasteigerAtomTypeSetCOP gasteiger_atom_types );
+
+	/// @brief set gasteiger atom type
+	void
+	set_gasteiger_atom_type(
+		std::string const & atom_name,
+		std::string const & gasteiger_atom_type_name
+	);
 
 	/// @brief add a bond between atom1 and atom2, if bond type is not specified, default to SingleBond
 	void
@@ -898,16 +951,9 @@ public:
 
 	/// @brief get the molecular weight of this residue
 	core::Real const &
-	molecular_mass() const
+	mass() const //mass
 	{
-		return molecular_mass_;
-	}
-
-	/// @brief get the molecular weight of this residue
-	core::Real const &
-	molar_mass() const
-	{
-		return molar_mass_;
+		return mass_;
 	}
 
 	/// @brief sets atom_base[ atom1 ] = atom2
@@ -1661,8 +1707,6 @@ public:
 	core::Size
 	smallest_ring_size( VD const & atom, core::Size const & max_size = 999999) const;
 
-	///////////////////////////////////////////////////////////////////////////////////////////
-
 
 public:
 	////////////////////////////////////////////////////////////////////////////
@@ -1735,6 +1779,8 @@ private:
 	ElementSetCAP elements_;
 	/// MMAtomTypeSet
 	MMAtomTypeSetCAP mm_atom_types_;
+	/// GasteigerAtomTypeSet
+	gasteiger::GasteigerAtomTypeSetCOP gasteiger_atom_types_;
 	/// Orbital types
 	orbitals::OrbitalTypeSetCAP orbital_types_;
 
@@ -1994,8 +2040,8 @@ private:
 	// used to overlay residues during packing.
 	bool force_nbr_atom_orient_;
 
-	Real molecular_mass_;
-	Real molar_mass_;
+	//Real mass_;
+	Real mass_;
 
 	/// number of actcoord atoms
 	/**

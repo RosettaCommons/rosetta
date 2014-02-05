@@ -1,0 +1,131 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file core/chemical/gasteiger/GasteigerAtomTypeSet.cc
+/// @author Rocco Moretti (rmorettiase@gmail.com)
+
+// Unit headers
+#include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
+
+#include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
+#include <core/chemical/ElementSet.hh>
+#include <core/chemical/Element.hh>
+
+// Project headers
+#include <basic/Tracer.hh>
+#include <utility/string_util.hh>
+#include <utility/io/izstream.hh>  
+
+// C++ headers
+#include <fstream>
+#include <iostream>
+#include <string>
+
+namespace core {
+namespace chemical {
+namespace gasteiger {
+
+static basic::Tracer tr("core.chemical.gasteiger.GasteigerAtomTypeSet");
+
+GasteigerAtomTypeSet::GasteigerAtomTypeSet() {}
+
+GasteigerAtomTypeSet::GasteigerAtomTypeSet( ElementSetCAP element_set ):
+			element_set_( element_set )
+	{}
+
+GasteigerAtomTypeSet::~GasteigerAtomTypeSet() {}
+
+/// @details Initialize a GasteigerAtomTypeSet from an external file "filename",
+/// and set parameters and properties for each Atom.
+/// Refer to rosetta_database/chemical/gasteiger/atom_types/atom_properties.txt
+/// for file format
+void
+GasteigerAtomTypeSet::read_file( std::string const & filename )
+{
+	utility::io::izstream data( filename.c_str() );
+
+	if ( !data.good() ) utility_exit_with_message( "Unable to open gasteiger atom type file: "+filename );
+
+	// now parse the rest of the file
+	{
+		using namespace basic;
+
+		char next;
+		std::string line;
+		while ( data.good() ) {
+			while ( next=data.peek(), next == ' ' || next == '\n' || next == '\t' ) { data.get(); } // Discard leading whitespace
+			if ( ! data.good() ) {
+				break;
+			}
+			if ( data.peek() == '#' ) {
+				getline( data,line ); // Discard the comment line
+				continue;
+			}
+			GasteigerAtomTypeDataOP atom = new GasteigerAtomTypeData;
+			atom->read( data, element_set_);
+			if ( data.good() ) {
+				atom_types_.push_back( atom );
+				std::string symbol( atom->get_name() );
+				if ( atom_type_index_.count( symbol ) ) {
+					utility_exit_with_message("GasteigerAtomTypeSet:: duplicate atom type symbol "+symbol);
+				}
+				atom_type_index_[ symbol ] = atom_types_.size();
+				tr.Debug << "New Bcl atom type: " << symbol << std::endl;
+			}
+		}
+	}
+}
+
+/// @brief Check if there is an element_type associated with an element_symbol string
+bool
+GasteigerAtomTypeSet::contains_atom_type( std::string const & atom_type_name ) const
+{
+	std::map< std::string, core::Size >::const_iterator
+		iter( atom_type_index_.find( atom_type_name ) );
+	return iter != atom_type_index_.end();
+}
+
+
+/// @brief Lookup the element index by the element_symbol string
+Size
+GasteigerAtomTypeSet::atom_type_index( std::string const & atom_type_name ) const
+{
+	std::map< std::string, core::Size >::const_iterator
+		iter( atom_type_index_.find( atom_type_name ) );
+	if ( iter == atom_type_index_.end() ) {
+		utility_exit_with_message("unrecognized atom_type_name "+atom_type_name);
+	}
+	return iter->second;
+}
+
+/// @brief Lookup the element index by the element_symbol string
+GasteigerAtomTypeDataCOP
+GasteigerAtomTypeSet::atom_type( std::string const & atom_type_name ) const
+{
+	return atom_types_[ atom_type_index( atom_type_name ) ];
+}
+
+
+/// @brief Lookup an Atom by 1-based indexing
+GasteigerAtomTypeDataCOP
+GasteigerAtomTypeSet::operator[] ( Size const index ) const
+{
+	return atom_types_[ index ];
+}
+
+/// @brief Return the associated element type set.
+ElementSetCAP
+GasteigerAtomTypeSet::element_set() const {
+	return element_set_;
+}
+
+
+} // gasteiger
+} // chemical
+} // core

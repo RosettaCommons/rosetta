@@ -155,7 +155,7 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
 
 	if( utility::file::file_exists( filename ) ) {
 		chemical::AtomTypeSetCAP atom_types = chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
-		chemical::ElementSetCAP elements = chemical::ChemicalManager::get_instance()->element_set("fa_standard");
+		chemical::ElementSetCAP elements = chemical::ChemicalManager::get_instance()->element_set("default");
 		chemical::MMAtomTypeSetCAP mm_atom_types = chemical::ChemicalManager::get_instance()->mm_atom_type_set("fa_standard");
 		chemical::orbitals::OrbitalTypeSetCAP orbital_types = chemical::ChemicalManager::get_instance()->orbital_type_set("fa_standard");
 		chemical::ResidueTypeSetCAP rsd_type_set = chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");

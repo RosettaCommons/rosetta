@@ -1015,6 +1015,10 @@ def write_param_file(f, molfile, name, frag_id, base_confs, max_confs, amino_aci
         assert nbr.name == " CB "
     f.write("NBR_ATOM %s\n" % nbr.name)
     f.write("NBR_RADIUS %f\n" % nbr_dist)
+    # Formal charges
+    for a in atoms:
+        if a.formal_charge:
+            f.write("CHARGE %s FORMAL %d\n" % (a.name, a.formal_charge))
     # Convention seems to be a depth-first traversal from the root.
     # I don't know whether this matters, but it's the easy way anyhow.
     def write_icoords(a):
@@ -1427,14 +1431,12 @@ and for visualizing exactly what was done to the ligand.
     if options.recharge is not None:
         net_charge = float(options.recharge)
     else:
+        #Handle official MDL format formal charges.
+        for a in m.atoms:
+            net_charge += a.formal_charge
+        # KWK's convention -- difference is one space versus two.
         for line in m.footer:
-            # KWK's convention
             if line.startswith("M CHG"): net_charge = float(line[5:])
-            # Official MDL format (integer only)
-            # Oops, this isn't right!  MDL records N atom1 charge1 atom2 charge2 ...
-            elif line.startswith("M  CHG"):
-                charge_fields = line.split()[3:]
-                net_charge = sum(int(c) for i,c in enumerate(charge_fields) if i%2 == 1)
     assign_partial_charges(m.atoms, net_charge, options.recharge is not None)
     assign_rotatable_bonds(m.bonds)
     assign_rigid_ids(m.atoms)

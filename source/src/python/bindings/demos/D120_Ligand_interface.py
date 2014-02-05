@@ -232,7 +232,7 @@ def generate_nonstandard_residue_set(params_list):
 
     # element_sets were added to the chemical database and changed the syntax
     #    of read_files
-    elements = ChemicalManager.get_instance().element_set('fa_standard')
+    elements = ChemicalManager.get_instance().element_set('default')
     res_set.read_files(params_list, atoms, elements, mm_atoms, orbitals)
 
     return res_set

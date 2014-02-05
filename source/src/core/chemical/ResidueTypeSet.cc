@@ -94,7 +94,6 @@ ResidueTypeSet::ResidueTypeSet(
 		ElementSetCAP elements;
 		MMAtomTypeSetCAP mm_atom_types;
 		orbitals::OrbitalTypeSetCAP orbital_types;
-		//CSDAtomTypeSetCAP csd_atom_types; kwk commenting out until there are fully implemented
 
 		std::string const list_filename( directory + "residue_types.txt" );
 		utility::io::izstream data( list_filename.c_str() );
@@ -145,34 +144,20 @@ ResidueTypeSet::ResidueTypeSet(
 			} else if(tag == "ORBITAL_TYPE_SET"){
 				l >> tag;
 				orbital_types = ChemicalManager::get_instance()->orbital_type_set(tag);
-			// kwk commenting out until the CSD_ATOM_TYPE_SET has been fully implemented
-			//} else if ( tag == "CSD_ATOM_TYPE_SET" ) {
-			//	l >> tag;
-			//	csd_atom_types = ChemicalManager::get_instance()->csd_atom_type_set( tag );
-			//XRW_B_T1
-			/*
-			} else if ( tag == "COARSE_RULE" ) {
-				l >> tag; // the ruleset
-				coarsify_rule_set = new coarse::RuleSet(tag);
-				l >> tag; // the fine residue set
-				fine_res_set = ChemicalManager::get_instance()->residue_type_set( tag );
-			*/
-			//XRW_E_T1
 			} else {
 				std::string const filename( directory + line );
 
 				ResidueTypeOP rsd_type( read_topology_file(
-						filename, atom_types, elements, mm_atom_types, orbital_types, this ) ); //, csd_atom_types ) );
+						filename, atom_types, elements, mm_atom_types, orbital_types, this ) );
 
-				//kwk commenting out csd_atom_types until they have been fully implemented
 				residue_types_.push_back( rsd_type );
 			}
 		}
 
 		foreach(std::string filename, extra_res_param_files){
 			ResidueTypeOP rsd_type( read_topology_file(
-					filename, atom_types, elements, mm_atom_types, orbital_types, this ) ); //, csd_atom_types ) );
-			// kwk commenting out csd atom types until they have been fully implemented
+					filename, atom_types, elements, mm_atom_types, orbital_types, this ) );
+
 			if (basic::options::option[ basic::options::OptionKeys::in::add_orbitals]) {
 				orbitals::AssignOrbitals add_orbitals_to_residue(rsd_type);
 				add_orbitals_to_residue.assign_orbitals();
@@ -287,8 +272,7 @@ ResidueTypeSet::read_list_of_residues(
 	AtomTypeSetCAP atom_types,
 	ElementSetCAP elements,
 	MMAtomTypeSetCAP mm_atom_types,
-	orbitals::OrbitalTypeSetCAP orbital_types//,
-//	CSDAtomTypeSetCAP csd_atom_types //kwk commented out until they hae been fully implemented
+	orbitals::OrbitalTypeSetCAP orbital_types
 )
 {
 	// read the files
@@ -303,7 +287,7 @@ ResidueTypeSet::read_list_of_residues(
 		data.close();
 	}
 
-	read_files( filenames, atom_types, elements, mm_atom_types, orbital_types ); // , csd_atom_types ); //kwk commented out csd atom types until they have been fully implemented
+	read_files( filenames, atom_types, elements, mm_atom_types, orbital_types );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -313,13 +297,11 @@ ResidueTypeSet::read_files(
 	AtomTypeSetCAP atom_types,
 	ElementSetCAP elements,
 	MMAtomTypeSetCAP mm_atom_types,
-	orbitals::OrbitalTypeSetCAP orbital_types//,
-//	CSDAtomTypeSetCAP csd_atom_types //kwk commented out csd atomtypes until they have been fully implemented
+	orbitals::OrbitalTypeSetCAP orbital_types
 )
 {
 	for ( Size ii=1; ii<= filenames.size(); ++ii ) {
-		ResidueTypeOP rsd_type( read_topology_file( filenames[ii], atom_types, elements, mm_atom_types,orbital_types, this ) ); //, csd_atom_types ) );
-		//Commented out csd_atom_types until they have been fully implemented
+		ResidueTypeOP rsd_type( read_topology_file( filenames[ii], atom_types, elements, mm_atom_types,orbital_types, this ) );
 		residue_types_.push_back( rsd_type );
 	}
 

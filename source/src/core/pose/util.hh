@@ -626,14 +626,7 @@ num_chi_angles(
 );
 
 core::Real
-molecular_mass(
-		core::Size begin,
-		core::Size const end,
-		core::pose::Pose const & pose
-);
-
-core::Real
-molar_mass(
+mass(
 		core::Size begin,
 		core::Size const end,
 		core::pose::Pose const & pose

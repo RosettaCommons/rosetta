@@ -7,9 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/chemical/ElementSet.cc
-/// @brief
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @file core/chemical/bcl/ElementSet.cc
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 // Unit headers
 #include <core/chemical/ElementSet.hh>
@@ -23,86 +22,115 @@
 // C++ headers
 #include <fstream>
 #include <iostream>
-
-#include <utility/vector1.hh>
-
+#include <string>
 
 namespace core {
 namespace chemical {
 
-static basic::Tracer tr("core.chemical");
 
-ElementSet::ElementSet():
-	element_index_(),
-	elements_()
-{
-}
+static basic::Tracer tr("core.chemical.bcl.ElementSet");
+
+ElementSet::ElementSet() {}
 
 ElementSet::~ElementSet() {}
 
 /// @details Initialize an ElementSet from an external file "filename",
 /// and set parameters and properties for each Element.
-/// Refer to rosetta_database_/chemical/element_sets/fa_standard/element_properties.txt
+/// Refer to rosetta_database/chemical/bcl/elements/element_properties.txt
 /// for file format
 void
 ElementSet::read_file( std::string const & filename )
 {
 	utility::io::izstream data( filename.c_str() );
 
-	if ( !data.good() ) utility_exit_with_message( "Unable to open element file: "+filename );
+	if ( !data.good() ) utility_exit_with_message( "Unable to open bcl element file: "+filename );
 
 	// now parse the rest of the file
 	{
 		using namespace basic;
 
+		char next;
 		std::string line;
-		// parse the header line
-		getline( data, line ); // throw out the header line (currently it is just for file readability)
-		while ( getline( data,line ) ) {
-			utility::trim(line, " \t\n"); // remove leading and trailing spaces
-			if ( line.empty() > 0 ) continue; //skip blank lines
-			if ( line.find("#",0) == 0 ) continue; // skip comment lines
-
-			std::istringstream l( line );
-			std::string symbol, name;
-			Real weight;
-			Size z, mass;
-
-			l >> z;
-
-			if ( l.fail() ) {
-				utility_exit_with_message("bad line: "+line);
+		while ( data.good() ) {
+			while ( next=data.peek(), next == ' ' || next == '\n' || next == '\t' ) { data.get(); } // Discard leading whitespace
+			if ( data.peek() == '#' ) {
+				getline( data,line ); // Discard the comment line
+				continue;
 			}
-
-			l >> symbol >> name >> weight >> mass;
-
-			if ( l.fail() ) {
-				utility_exit_with_message("bad line: "+line);
+			if ( data.peek() == 'E' ) { // Beginning of "Element:" tag
+				ElementOP element = new Element;
+				data >> *element;
+				if ( data.good() ) {
+					elements_.push_back( element );
+					std::string symbol( element->get_chemical_symbol() );
+					if ( element_index_.count( symbol ) ) {
+						utility_exit_with_message("ElementSet:: duplicate element symbol "+symbol);
+					}
+					element_index_[ symbol ] = elements_.size();
+					tr.Debug << "New Bcl element: " << symbol << std::endl;
+				}
+			} else {
+				getline( data, line );
+				if ( data.good() ) {
+					utility_exit_with_message("Problem with Bcl Elements file. Expecting 'Element:' tag, found:'" + line + "'");
+				}
 			}
-
-			Element* e( new Element( z, symbol, name, weight, mass) );
-
-			// add this to the list
-			elements_.push_back( e );
-			if ( element_index_.count( symbol ) ) {
-				utility_exit_with_message("ElementSet:: duplicate element symbol "+symbol);
-			}
-			element_index_[ symbol ] = elements_.size();
-			tr.Debug << "New element: " << symbol << std::endl;
 		}
 	}
 }
 
-/// @details This function iterates over each element in the element_index_ map and
-/// prints both keys. It is only used for debugging.
-void
-ElementSet::print_all_types()
+/// @brief Check if there is an element_type associated with an element_symbol string
+bool
+ElementSet::contains_element_type( std::string const & element_symbol ) const
 {
-	for( std::map< std::string, int >::const_iterator i = element_index_.begin(), e = element_index_.end(); i != e; ++i )
-		{
-			std::cout << (*i).first << " " << (*i).second << std::endl;
-		}
+	std::map< std::string, core::Size >::const_iterator
+		iter( element_index_.find( element_symbol ) );
+	// If we can't find it straight-away, we may need to title case it.
+	// (BCL elements are title cased: Cl versus CL)
+	if( iter == element_index_.end() && element_symbol.size() >=1 && element_symbol.size() <= 2 ) {
+		std::string title( 1, std::toupper(element_symbol[0]) );
+		if( element_symbol.size() == 2 ) { title += std::tolower( element_symbol[1] ); }
+		iter = element_index_.find( title );
+	}
+	return iter != element_index_.end();
 }
+
+
+/// @brief Lookup the element index by the element_symbol string
+Size
+ElementSet::element_index( std::string const & element_symbol ) const
+{
+	std::map< std::string, core::Size >::const_iterator
+		iter( element_index_.find( element_symbol ) );
+	// If we can't find it straight-away, we may need to title case it.
+	// (BCL elements are title cased: Cl versus CL)
+	if( iter == element_index_.end() && element_symbol.size() >=1 && element_symbol.size() <= 2 ) {
+		std::string title( 1, std::toupper(element_symbol[0]) );
+		if( element_symbol.size() == 2 ) { title += std::tolower( element_symbol[1] ); }
+		iter = element_index_.find( title );
+	}
+	if( iter == element_index_.end() ) {
+		utility_exit_with_message( "unrecognized element_symbol '"+element_symbol+"'" );
+	}
+	return iter->second;
+}
+
+/// @brief Lookup the element index by the element_symbol string
+ElementCOP
+ElementSet::element( std::string const & element_symbol ) const
+{
+	return elements_[ element_index( element_symbol ) ];
+}
+
+
+/// @brief Lookup an Element by 1-based indexing
+ElementCOP
+ElementSet::operator[] ( Size const index ) const
+{
+	return elements_[ index ];
+}
+
+
 
 } // chemical
 } // core

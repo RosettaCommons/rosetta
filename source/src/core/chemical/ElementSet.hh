@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/chemical/ElementSet.hh
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @file core/chemical/bcl/ElementSet.hh
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 
 #ifndef INCLUDED_core_chemical_ElementSet_hh
@@ -17,32 +17,26 @@
 
 // Unit headers
 #include <core/chemical/ElementSet.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/Element.hh>
+#include <core/chemical/Element.fwd.hh>
 
 // Project headers
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
-// Commented by inclean daemon #include <string>
+
 #include <map>
 
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 #include <core/types.hh>
-#include <core/chemical/Element.fwd.hh>
-
-
-
 
 namespace core {
 namespace chemical {
 
-
-/// @brief A set of Elements
+/// @brief A set of Bcl Elements
 ///
 /// @details This class contains a vector of pointers each of which points to an
 /// Element and the vector index is looked up by an element_name string
@@ -64,43 +58,23 @@ public:
 
 	/// @brief Check if there is an element_type associated with an element_symbol string
 	bool
-	contains_element_type( std::string const & element_symbol ) const
-	{
-		std::map< std::string, int >::const_iterator
-			iter( element_index_.find( element_symbol ) );
-		return iter != element_index_.end();
-	}
-
+	contains_element_type( std::string const & element_symbol ) const;
 
 	/// @brief Lookup the element index by the element_symbol string
-	int
-	element_index( std::string const & element_symbol ) const
-	{
-		std::map< std::string, int >::const_iterator
-			iter( element_index_.find( element_symbol ) );
-		if ( iter == element_index_.end() ) {
-			utility_exit_with_message("unrecognized element_symbol "+element_symbol);
-		}
-		return iter->second;
-	}
+	Size
+	element_index( std::string const & element_symbol ) const;
 
+	/// @brief Lookup the element index by the element_symbol string
+	ElementCOP
+	element( std::string const & element_symbol ) const;
 
 	/// @brief Lookup an Element by 1-based indexing
-	Element const &
-	operator[] ( Size const index ) const
-	{
-		return *( elements_[ index ] );
-	}
-
+	ElementCOP
+	operator[] ( Size const index ) const;
 
 	/// @brief Load the ElementSet from a file
 	void
 	read_file( std::string const & filename );
-
-	/// @brief Print all of the symbols of all of the Elements in the set. Usefull for debuging.
-	void
-	print_all_types();
-
 
 	// data
 private:
@@ -108,17 +82,17 @@ private:
 	/// @brief element_index_ lookup map
 	///
 	/// @details element_index_ allows lookup of the element by its symbol
-	std::map< std::string, int > element_index_;
+	std::map< std::string, core::Size > element_index_;
 
 	/// @brief a collection of Elements,
 	///
 	/// @details Element has data of atom properties, and it can be
 	/// looked up by element_index.
-	utility::vector1< Element* > elements_;
+	utility::vector1< ElementOP > elements_;
 
 };
 
 } // chemical
 } // core
 
-#endif // INCLUDED_core_chemical_ElementSet_HH
+#endif

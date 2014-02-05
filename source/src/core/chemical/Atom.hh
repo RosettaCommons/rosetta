@@ -32,7 +32,10 @@
 //#include <core/chemical/AtomICoor.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
-#include <core/chemical/Bond.fwd.hh> // only for Temp BondName
+//#include <core/chemical/Bond.fwd.hh> // only for Temp BondName
+#include <core/chemical/gasteiger/GasteigerAtomTypeData.fwd.hh>
+#include <core/chemical/Element.hh>
+
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -58,20 +61,11 @@ class Atom {
 
 public:
 
-	Atom():
-		name_(""),
-		mm_name_(""),
-		atom_type_index_(0),
-		mm_atom_type_index_(0),
-		charge_(0),
-		ideal_xyz_(),
-		is_acceptor_(0),
-		is_polar_hydrogen_(0),
-		is_hydrogen_(0),
-		is_haro_(0),
-		is_virtual_(0),
-		has_orbitals_(0)
-	{}
+	/// @brief Construct a new atom type with its name and element.
+	///
+	/// @details All its properties are unset by default.
+	///
+	Atom();
 
 
 	/// @brief Construct a new atom with the type it is, the mm type, and the name.
@@ -80,47 +74,16 @@ public:
 			std::string const mm_name,
 			Size const atom_type_index,
 			Size const mm_atom_type_index,
+			ElementCOP element,
 			Real const charge,
 			Vector const ideal_xyz
-
-	):
-		name_( name_in ),
-		mm_name_(mm_name),
-		atom_type_index_(atom_type_index),
-		mm_atom_type_index_(mm_atom_type_index),
-		charge_(charge),
-		ideal_xyz_(ideal_xyz),
-		heavyatom_has_polar_hydrogens_(0),
-		is_acceptor_(0),
-		is_polar_hydrogen_(0),
-		is_hydrogen_(0),
-		is_haro_(0),
-		is_virtual_(0),
-		has_orbitals_(0),
-		bonded_orbitals_()
-	{
-
-	}
-
-	Atom(Atom const & src) :
-		name_( src.name_ ),
-		//type_name_(src.type_name),
-		mm_name_(src.mm_name_),
-		atom_type_index_(src.atom_type_index_),
-		mm_atom_type_index_(src.mm_atom_type_index_),
-		charge_(src.charge_),
-		ideal_xyz_(src.ideal_xyz_),
-		heavyatom_has_polar_hydrogens_(src.heavyatom_has_polar_hydrogens_),
-		is_acceptor_(src.is_acceptor_),
-		is_polar_hydrogen_(src.is_polar_hydrogen_),
-		is_hydrogen_(src.is_hydrogen_),
-		is_haro_(src.is_haro_),
-		is_virtual_(src.is_virtual_),
-		has_orbitals_(src.has_orbitals_),
-		bonded_orbitals_(src.bonded_orbitals_)
+	);
 
 
-	{}
+	Atom(Atom const & src);
+
+	//destructor (default)
+	~Atom();
 
 	void
 	print( std::ostream & out ) const;
@@ -134,8 +97,11 @@ public:
 				mm_name_ == atom.mm_name_ &&
 				atom_type_index_ == atom.atom_type_index_ &&
 				mm_atom_type_index_ == atom.mm_atom_type_index_ &&
+				element_ == atom.element_ &&
+				formal_charge_ == atom.formal_charge_ &&
 				charge_ == atom.charge_ &&
 				ideal_xyz_ == atom.ideal_xyz_ &&
+				gasteiger_atom_type_ == atom.gasteiger_atom_type_ &&
 				heavyatom_has_polar_hydrogens_ == atom.heavyatom_has_polar_hydrogens_ &&
 				is_acceptor_ == atom.is_acceptor_ &&
 				is_polar_hydrogen_ == atom.is_polar_hydrogen_ &&
@@ -146,12 +112,17 @@ public:
 				bonded_orbitals_ == atom.bonded_orbitals_;
 	}
 
+	Atom & operator =(Atom const & atom);
+
 	// Const Getters
 	std::string const& name() const { return name_; }
 	//std::string const& type_name() const { return type_name_; };
 	std::string const& mm_name() const { return mm_name_; }
 	Size const& atom_type_index() const { return atom_type_index_; }
 	Size const& mm_atom_type_index() const { return mm_atom_type_index_; }
+	ElementCOP element_type() const {return element_;}
+	gasteiger::GasteigerAtomTypeDataCOP gasteiger_atom_type() const;
+	int const& formal_charge() const { return formal_charge_; }
 	Real const& charge() const { return charge_; }
 	Vector const& ideal_xyz() const { return ideal_xyz_; };
 	utility::vector1<Size> const & bonded_orbitals() const{return bonded_orbitals_;}
@@ -168,10 +139,11 @@ public:
 
 	// Setters
 	void name( std::string const & name ) { name_ = name; };
-	//std::string const& type_name() const { return type_name_; };
 	void mm_name( std::string const & name ) { mm_name_ = name; };
 	void atom_type_index( Size const & atom_type_index ) { atom_type_index_ = atom_type_index; };
 	void mm_atom_type_index( Size const & mm_atom_type_index ) { mm_atom_type_index_ = mm_atom_type_index; };
+	void gasteiger_atom_type( core::chemical::gasteiger::GasteigerAtomTypeDataCOP gasteiger_atom_type );
+	void formal_charge( int charge ) { formal_charge_ = charge; }
 	void charge( Real const & charge ) { charge_ = charge; };
 	void ideal_xyz( Vector const & ideal_xyz) { ideal_xyz_= ideal_xyz; };
 	void heavyatom_has_polar_hydrogens( bool heavyatom_has_polar_hydrogens){ heavyatom_has_polar_hydrogens_ = heavyatom_has_polar_hydrogens;}
@@ -187,6 +159,11 @@ private:
 	std::string mm_name_;
 	Size atom_type_index_;
 	Size mm_atom_type_index_;
+	ElementCOP element_;
+	/// Gasteiger atom-type
+	gasteiger::GasteigerAtomTypeDataCOP gasteiger_atom_type_;
+	/// The formal (integral) charge on the atom.
+	int formal_charge_;
 	Real charge_;
 	Vector ideal_xyz_;
 	bool heavyatom_has_polar_hydrogens_; // is an atom both a heavy atom and chemically bonded to a polar hydrogen?
@@ -197,7 +174,6 @@ private:
 	bool is_virtual_;
 	bool has_orbitals_;
 	utility::vector1<Size> bonded_orbitals_;
-
 
 
 };

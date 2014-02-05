@@ -35,7 +35,9 @@ namespace chemical {
 /// @brief relies on class Graph to find all pairs shortest path information
 ObjexxFCL::FArray2D_int
 get_residue_path_distances( ResidueType const & res );
-
+    
+    
+    
 }
 }
 

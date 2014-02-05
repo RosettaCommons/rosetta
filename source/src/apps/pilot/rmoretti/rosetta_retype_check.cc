@@ -57,7 +57,7 @@ try {
 
 	core::chemical::ChemicalManager * chem_mang = core::chemical::ChemicalManager::get_instance();
 	core::chemical::AtomTypeSetCAP atom_types = chem_mang->atom_type_set("fa_standard");
-	core::chemical::ElementSetCAP elements = chem_mang->element_set("fa_standard");
+	core::chemical::ElementSetCAP elements = chem_mang->element_set("default");
 	core::chemical::MMAtomTypeSetCAP mm_atom_types = chem_mang->mm_atom_type_set("fa_standard");
 	core::chemical::orbitals::OrbitalTypeSetCAP orbital_types = chem_mang->orbital_type_set("fa_standard");
 

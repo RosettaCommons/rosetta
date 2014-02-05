@@ -17,7 +17,7 @@
 ///
 ///
 /// @author
-/// Gordon Lemmon
+/// Gordon Lemmon, Rocco Moretti (rmorettiase@gmail.com)
 ///
 /////////////////////////////////////////////////////////////////////////
 
@@ -41,19 +41,33 @@ class Bond {
 
 public:
 
-	Bond(): distance_(0), bond_name_(BondName()), cut_bond_(false){}
-	Bond(Real d, BondName name, bool cut_bond = false): distance_(d), bond_name_(name), cut_bond_(cut_bond){}
+	Bond();
+	Bond(Real d, BondName name, bool cut_bond = false);
+	Bond(Real d, BondOrder order, BondConjugability conj,  BondAromaticity aroma, BondRingness ring = UnknownRingness, BondIsometry isom = UnknownIsometry, bool cut_bond = false);
 
 // Setters
 	void distance(Real distance){
 		distance_ = distance;
 	}
-	void bond_name(BondName bond_name){
-		bond_name_ = bond_name;
-	}
+	void bond_name(BondName bond_name);
+
 	void cut_bond(bool cut_bond){
 		cut_bond_ = cut_bond;
 	}
+	void order(BondOrder order);
+
+	void conjugability(BondConjugability conjug){
+		conjug_ = conjug;
+	}
+	void aromaticity(BondAromaticity aroma);
+
+	void ringness(BondRingness ring){
+		ring_ = ring;
+	}
+	void isometry(BondIsometry isom){
+		isometry_ = isom;
+	}
+
 
 // Getters
 	Real distance() const {
@@ -65,17 +79,63 @@ public:
 	bool cut_bond() const {
 		return cut_bond_;
 	}
+	BondOrder order() const {
+		return order_ ;
+	}
+	BondConjugability conjugability() const {
+		return conjug_ ;
+	}
+	BondAromaticity aromaticity() const {
+		return aroma_ ;
+	}
+	BondRingness ringness() const {
+		return ring_ ;
+	}
+	BondIsometry isometry() const {
+		return isometry_ ;
+	}
+
+// General functions
 
 	void print( std::ostream & out ) const;
 
 	friend
 	std::ostream & operator<<(std::ostream & out, Bond const & bond );
 
+// Derived Data Access.
+
+	/// @brief Reset the internal data such that it matches the appropriate value for the SDF datatype.
+	///
+	/// Substitution (taken from) for BCL's FindBondTypeFromSDFInfo( const size_t &SDF_ID)
+	void SetSDFType( const core::Size SDF_ID);
+
+	core::Size GetNumberOfElectrons() const;
+	core::Size GetMinimumElectrons() const;
+	core::Size GetMaximumElectrons() const;
+
+	bool IsBondOrderKnown() const { return order_ != UnknownBondOrder; }
+
+	bool IsBondInRing() const { return ring_ == BondInRing; }
+
+	core::Size GetSDFileID() const;
+	core::Size GetSDAltFileID() const;
+
 private:
 
 	Real distance_;
-	BondName bond_name_; // this is an enum defined in ResidueType.fwd.hh
 	bool cut_bond_;
+	// The following enums are defined in Bond.fwd.hh
+	BondName bond_name_;
+	/// @brief The bond order (single double triple ..)
+	BondOrder order_;
+	/// @brief Can the bond participate in a conjugated system
+	BondConjugability conjug_;
+	/// @brief Is the bond in an aromatic ring? (Distinct from being conjgatable and in a ring.)
+	BondAromaticity aroma_;
+	/// @brief Is the bond in a ring?
+	BondRingness ring_;
+	/// @brief For double bonds, what's the E/Z isometry?
+	BondIsometry isometry_;
 };
 
 

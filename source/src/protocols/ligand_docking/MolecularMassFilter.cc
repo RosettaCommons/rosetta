@@ -36,7 +36,7 @@
 namespace protocols {
 namespace ligand_docking {
 
-static basic::Tracer molecular_mass_tracer( "protocols.ligand_docking.MolecularMassFilter" );
+static basic::Tracer mass_tracer( "protocols.ligand_docking.MolecularMassFilter" );
 
 bool
 MolecularMassFilter::apply( core::pose::Pose const & pose ) const {
@@ -49,8 +49,8 @@ MolecularMassFilter::apply( core::pose::Pose const & pose ) const {
 	//core::Real mass=0;
 
 
-	if(	core::pose::molecular_mass(start,end,pose) > mass_limit_ ){
-		molecular_mass_tracer<< "Reached atom limit"<< std::endl;
+	if(	core::pose::mass(start,end,pose) > mass_limit_ ){
+		mass_tracer<< "Reached atom limit"<< std::endl;
 		return false;
 	}
 	return true;
@@ -61,7 +61,7 @@ MolecularMassFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::dataca
 {
 
 	if ( tag->getName() != "MolecularMass" ) {
-		molecular_mass_tracer << " received incompatible Tag " << tag << std::endl;
+		mass_tracer << " received incompatible Tag " << tag << std::endl;
 		assert(false);
 		return;
 	}

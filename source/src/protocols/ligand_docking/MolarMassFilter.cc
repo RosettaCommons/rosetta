@@ -49,7 +49,7 @@ MolarMassFilter::apply( core::pose::Pose const & pose ) const {
 	//core::Real mass=0;
 
 
-	if(	core::pose::molar_mass(start,end,pose) > mass_limit_ ){
+	if(	core::pose::mass(start,end,pose) > mass_limit_ ){
 		atom_tracer<< "Reached atom limit"<< std::endl;
 		return false;
 	}

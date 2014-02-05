@@ -2551,27 +2551,14 @@ core::Size num_chi_angles(
 }
 
 core::Real
-molecular_mass(
+mass(
 		core::Size begin,
 		core::Size const end,
 		core::pose::Pose const & pose
 ){
 	core::Real mass = 0;
 	for (; begin <= end; ++begin) {
-		mass += pose.residue(begin).type().molecular_mass();
-	}
-	return mass;
-}
-
-core::Real
-molar_mass(
-		core::Size begin,
-		core::Size const end,
-		core::pose::Pose const & pose
-){
-	core::Real mass = 0;
-	for (; begin <= end; ++begin) {
-		mass += pose.residue(begin).type().molar_mass();
+		mass += pose.residue(begin).type().mass();
 	}
 	return mass;
 }

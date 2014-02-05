@@ -53,6 +53,7 @@ private:
 	std::list<std::string> compose_ctab(core::conformation::ResidueCOP residue);
 	std::list<std::string> compose_atoms(core::conformation::ResidueCOP residue);
 	std::list<std::string> compose_bonds(core::conformation::ResidueCOP residue);
+	std::list<std::string> compose_properties(core::conformation::ResidueCOP residue);
 	std::list<std::string> compose_typeinfo(core::conformation::ResidueCOP residue);
 	std::list<std::string> compose_nbr_atom(core::conformation::ResidueCOP residue);
 	std::list<std::string> compose_job_info();

@@ -94,7 +94,7 @@ class RigidLigandBuilderTests : public CxxTest::TestSuite {
 			restype_set.read_files(
 				carbaryl_list,
 				ChemicalManager::get_instance()->atom_type_set( FA_STANDARD ),
-				ChemicalManager::get_instance()->element_set( FA_STANDARD ),
+				ChemicalManager::get_instance()->element_set( "default" ),
 				ChemicalManager::get_instance()->mm_atom_type_set( FA_STANDARD ),
 				ChemicalManager::get_instance()->orbital_type_set(FA_STANDARD));
 		}
@@ -105,7 +105,7 @@ class RigidLigandBuilderTests : public CxxTest::TestSuite {
 			restype_set.read_files(
 				carbaryl_list,
 				ChemicalManager::get_instance()->atom_type_set( FA_STANDARD ),
-				ChemicalManager::get_instance()->element_set( FA_STANDARD ),
+				ChemicalManager::get_instance()->element_set( "default" ),
 				ChemicalManager::get_instance()->mm_atom_type_set( FA_STANDARD ),
 				ChemicalManager::get_instance()->orbital_type_set(FA_STANDARD));
 		}

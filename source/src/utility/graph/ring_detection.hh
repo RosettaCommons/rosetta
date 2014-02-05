@@ -16,17 +16,20 @@
 
 #include <utility/graph/BFS_prune.hh>
 #include <utility/vector0.hh>
-
 #include <platform/types.hh>
 
 #include <map>
 
+
+#include <platform/types.hh>
+
 namespace utility {
 namespace graph {
 
+
+
 // As a header, we reall shouldn't have tracers here ...
 // static basic::Tracer TR("utility.graph.ring_detection");
-
 /// @brief A class to implement the behavior of the smallest ring size finding algorithm, accessible through the smallest_ring_size() function below.
 /// @details Based on BCL's smallest ring size detection algorithm.
 
@@ -102,7 +105,6 @@ public:
 /// @brief A boost graph-based function to find the size of the smallest ring for a given vertex.
 /// Will return the maximum ring size, or 999999 for no ring. If there is a maximum ring size,
 /// That can be set to limit the amount of search needed.
-
 template < class Graph >
 platform::Size
 smallest_ring_size( typename boost::graph_traits< Graph>::vertex_descriptor const & vd, Graph const & graph, platform::Size const & max_ring_size = 2*999999 ) {

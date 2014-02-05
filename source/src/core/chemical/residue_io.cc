@@ -181,6 +181,13 @@ read_topology_file(
 /// describing the chemical nature of the bond.  See the "BondName"
 /// enumeration for acceptable bond types.
 ///
+/// CHARGE:
+/// Declares a charge for a particular atom.
+/// Format CHARGE atom type value
+/// Currently valid types are FORMAL. (Partial charges are handled above.)
+/// E.g. "CHARGE OG2 FORMAL -1"
+///
+///
 /// CHI:
 /// A misnomer for non-amino acids, declares a side-chain dihedral, its index, and the four atoms that define it.
 /// E.g., "CHI 2  CA   CB   CG   CD1" from PHE.params.
@@ -496,6 +503,7 @@ read_topology_file(
 		std::string const & line( lines[i] );
 		std::istringstream l( line );
 		std::string tag,atom1,atom2,atom3,atom4, rotate, orbitals_tag, orbital;
+		core::Real value;
 		core::Size bond_type;
 		l >> tag;
 		if ( l.fail() ) continue;
@@ -512,11 +520,6 @@ read_topology_file(
 			} else if ( tag == "LIGAND" ) {
 				rsd->add_property( tag );
 			}
-			// want to know if we're a polymer for other setup decisions
-//		} else if ( tag == "CSD_TYPE" ) { //kwk commenting out until CSD types have been fully implemented
-//			l >> atom1 >> atom2;
-//			rsd->set_csd_atom_type( atom1, atom2 );
-//
 		} else if ( tag == "BOND" ) {
 			l >> atom1 >> atom2;
 			rsd->add_bond( atom1, atom2 );
@@ -525,10 +528,19 @@ read_topology_file(
 			l >> atom1 >> atom2 >> bond_type;
 			// apl Note: this cast could easily fail and there's no error checking
 			rsd->add_bond(atom1, atom2, static_cast<core::chemical::BondName>(bond_type));
+		} else if ( tag == "CHARGE" ) {
+			l >> atom1;
+			// We should allow multiple charges on one line, but since we now just have the one, hold off.
+			l >> tag;
+			if( tag == "FORMAL" ) {
+				l >> value;
+				rsd->atom( atom1 ).formal_charge( int(value) );
+			} else {
+				utility_exit_with_message("ERROR: Invalid charge type '"+tag+"' in topology file.");
+			}
 		} else if ( tag == "CUT_BOND" ) {
 			l >> atom1 >> atom2;
 			rsd->add_cut_bond( atom1, atom2 );
-
 		} else if ( tag == "CHI" ) {
 			Size chino;
 			l >> chino >> atom1 >> atom2 >> atom3 >> atom4;
@@ -591,7 +603,6 @@ read_topology_file(
 				rsd->add_property( tag );
 				l >> tag;
 			}
-
 		} else if (tag == "NUMERIC_PROPERTY"){
 			core::Real value = 0.0;
 			l >> tag >> value;
@@ -704,43 +715,17 @@ read_topology_file(
 				n_bins_per_rot[i] = bin_size;
 			}
 			rsd->set_ncaa_rotlib_n_bin_per_rot( n_bins_per_rot );
-		} else if ( tag == "VIRTUAL_SHADOW" ) {
+		}  else if ( tag == "VIRTUAL_SHADOW" ) {
 			std::string shadower, shadowee;
 			l >> shadower >> shadowee;
 			rsd->set_shadowing_atom( shadower, shadowee );
-		} /*else if( tag== "ORBITALS" ){ //begin parsing orbital information
-			if(basic::options::option[ basic::options::OptionKeys::in::add_orbitals]){
-
-
-				l >> orbitals_tag; //looking at the second set of text of the params file
-				if(orbitals_tag == "BOND"){ //add pseudo bonds that will be used for iccor
-					l >> atom1 >> orbital;
-					rsd->add_orbital_bond( atom1, orbital );
-				} else if( orbitals_tag == "ICOOR_INTERNAL"){
-					Real phi, theta, d;
-					std::string child_atom(""),  parent_atom(""), angle_atom(""), torsion_atom("");
-					l >> child_atom >> phi >> theta >> d >> parent_atom >> angle_atom >> torsion_atom;
-
-					phi = radians(phi); theta = radians(theta);
-					rsd->set_orbital_icoor_id(child_atom, phi, theta, d, parent_atom, angle_atom, torsion_atom);
-				}
-				else { //assign the name of the orbital and the orbital type. This actually happens first
-					std::string orbital_type_name("");
-					//std::string orbital_name(l);
-					//
-
-					l >> orbital_type_name; //the orbital type, which is defined in OrbitalType.hh
-
-					rsd->add_orbital( orbitals_tag, orbital_type_name); //orbitals tag is the name of the orbital
-					++norbitals;
-				}
-			}
-
-		}*/
+		} else if ( tag == "ATOM" || tag == "ICOOR_INTERNAL" ){
+			; // ATOM lines handled above, ICOOR_INTERNAL lines handled below
+		} else {
+			tr.Warning << "WARNING: Ignoring line starting with '" << tag << "' when parsing topology file." << std::endl;
+		}
 
 	} // i=1,nlines
-
-	//rsd->print_bonded_orbitals(); check to see if orbitals are being bonded
 
 
 	if ( !found_AA_record ) {
@@ -1018,6 +1003,13 @@ write_topology_file(
 	out << "NBR_ATOM " << rsd.atom_name( rsd.nbr_atom() ) << " \n";
 	out << "NBR_RADIUS " << rsd.nbr_radius() << " \n";
 	if (rsd.force_nbr_atom_orient()) { out << "ORIENT_ATOM NBR\n"; }
+
+	// Charges
+	for (Size i=1; i <= rsd.natoms(); ++i){
+		if( rsd.atom(i).formal_charge() != 0 ) {
+			out << "CHARGE " << rsd.atom_name( i ) << " FORMAL  " << rsd.atom(i).formal_charge() << " \n";
+		}
+	}
 
 	// actcoord atoms
 	if ( rsd.actcoord_atoms().size() > 0 ){

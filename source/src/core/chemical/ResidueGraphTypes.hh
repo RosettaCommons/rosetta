@@ -57,15 +57,30 @@ typedef ResidueGraph::vertex_descriptor VD;
 typedef ResidueGraph::edge_descriptor ED;
 typedef utility::vector1< VD > VDs;
 
-typedef boost::graph_traits<ResidueGraph>::vertex_iterator VIter;
-typedef boost::graph_traits<ResidueGraph>::edge_iterator EIter;
-typedef std::pair<VIter, VIter> VIterPair;
-typedef std::pair<EIter, EIter > EIterPair;
+// A note regarding iterator "const-ness":
+// Unlike iterators for the standard library containers, which can be dereferenced to directly obtain container members,
+// the boost graph iterators dereference to vertex/edge descriptors, which are functionally equivalent to index values
+// (though internal implementation details differ).
+// The const-ness of the container doesn't transfer over to the vertex/edge descriptors,
+// any more than the const-ness of a utility::vector1 transfers over to the core::Size you use to index it.
+// For this reason, you don't need both const and non-const versions of boost::graph iterators,
+// and functions returning iterators can be considered 'const' against the class/graph.
+// (Actual modification of the graph would require a seperate non-const function call against the graph.)
+//
+// ref: http://lists.boost.org/Archives/boost/2001/07/14838.php
 
+typedef boost::graph_traits<ResidueGraph>::vertex_iterator VIter;
+typedef std::pair<VIter, VIter> VIterPair;
+
+typedef boost::graph_traits<ResidueGraph>::edge_iterator EIter;
+typedef std::pair<EIter, EIter> EIterPair;
 
 typedef boost::graph_traits<ResidueGraph>::out_edge_iterator OutEdgeIter;
 //typedef boost::graph_traits<ResidueGraph>::in_edge_iterator InEdgeIter; // Out and in edges are the same in an undirected_graph
 typedef std::pair<OutEdgeIter, OutEdgeIter> OutEdgeIterPair;
+
+typedef boost::graph_traits<ResidueGraph>::adjacency_iterator AdjacentIter;
+typedef std::pair<AdjacentIter, AdjacentIter> AdjacentIterPair;
 
 typedef std::map< std::string, VD > NameVDMap;
 typedef std::pair<std::string, VD> NameVDPair;

@@ -49,7 +49,7 @@ class RmsUtilTest : public CxxTest::TestSuite {
     if(!residue_set.has_name("QC1")) params_files.push_back("core/scoring/1pqc.params");
     residue_set.read_files(params_files,
       ChemicalManager::get_instance()->atom_type_set( FA_STANDARD ),
-      ChemicalManager::get_instance()->element_set( FA_STANDARD ),
+      ChemicalManager::get_instance()->element_set( "default" ),
       ChemicalManager::get_instance()->mm_atom_type_set( FA_STANDARD ),
       ChemicalManager::get_instance()->orbital_type_set(FA_STANDARD));//,
   }

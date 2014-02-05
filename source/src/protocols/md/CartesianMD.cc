@@ -228,7 +228,7 @@ void CartesianMD::do_initialize( core::pose::Pose &pose,
 
 	// Mass setup
 	core::chemical::ElementSetCAP element_set
-		( core::chemical::ChemicalManager::get_instance()->element_set("fa_standard") );
+		( core::chemical::ChemicalManager::get_instance()->element_set("default") );
 	core::chemical::ResidueTypeSetCAP rsdtype_set
 		( core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
@@ -237,9 +237,10 @@ void CartesianMD::do_initialize( core::pose::Pose &pose,
 		Size resno = AtomID.rsd();
 		Size atmno = AtomID.atomno();
 
-		std::string const element_name = pose.residue(resno).atom_type(atmno).element();
-		int const element_index = element_set->element_index(element_name);
-		mass_[iatm] = (*element_set)[element_index].mass();
+		//std::string const element_name = pose.residue(resno).atom_type(atmno).element();
+		//int const element_index = element_set->element_index(element_name);
+		//mass_[iatm] = (*element_set)[element_index]->weight();
+		mass_[iatm] = pose.residue_type(resno).atom(atmno).element_type()->weight();
 
 	}
 

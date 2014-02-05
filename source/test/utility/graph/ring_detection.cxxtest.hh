@@ -29,16 +29,16 @@ typedef boost::graph_traits<Graph>::edge_descriptor ED;
 namespace {
 
 class RingDetectionTest : public CxxTest::TestSuite {
- public:
+public:
 
-  void setUp() {
-  }
+	void setUp() {
+	}
 
-  void tearDown() {
+	void tearDown() {
 	}
 
 	void test_benzene() {
-    Graph g(12);
+		Graph g(12);
 		boost::add_edge(0, 1, g);
 		boost::add_edge(1, 2, g);
 		boost::add_edge(2, 3, g);
@@ -62,8 +62,8 @@ class RingDetectionTest : public CxxTest::TestSuite {
 	} 
 
 	void test_cubane() {
-    Graph g(8);
-    //face 1
+		Graph g(8);
+		//face 1
 		boost::add_edge(0, 1, g);
 		boost::add_edge(1, 2, g);
 		boost::add_edge(2, 3, g);
@@ -85,8 +85,8 @@ class RingDetectionTest : public CxxTest::TestSuite {
 	}
 
 	void test_indole() {
-    Graph g(9);
-    //ring1
+		Graph g(9);
+		//ring1
 		boost::add_edge(0, 1, g);
 		boost::add_edge(1, 2, g);
 		boost::add_edge(2, 3, g);
@@ -115,7 +115,7 @@ class RingDetectionTest : public CxxTest::TestSuite {
 	void test_early_out() {
 		//This tries to test against a possible "early out" bug. 
 		//You can get n+1 rings before you get n rings, even with BFS
-    Graph g(9);
+		Graph g(9);
 		// Welcome ... windowpane!
 		boost::add_edge(0, 1, g);
 		boost::add_edge(0, 2, g);

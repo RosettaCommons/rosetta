@@ -416,7 +416,7 @@ def generate_nonstandard_residue_set(params_list):
     res_set = ChemicalManager.get_instance().nonconst_residue_type_set("fa_standard")
     res_set.read_files(Vector1(params_list),
 	           ChemicalManager.get_instance().atom_type_set("fa_standard"),
-               ChemicalManager.get_instance().element_set('fa_standard'),
+               ChemicalManager.get_instance().element_set('default'),
 	           ChemicalManager.get_instance().mm_atom_type_set("fa_standard"),
                ChemicalManager.get_instance().orbital_type_set("fa_standard"),)
     return res_set

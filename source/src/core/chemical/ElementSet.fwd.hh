@@ -7,25 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/core/chemical/ElementSet.fwd.hh
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @file src/core/chemical/gasteiger/ElementTypeSet.fwd.hh
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 
 #ifndef INCLUDED_core_chemical_ElementSet_fwd_hh
 #define INCLUDED_core_chemical_ElementSet_fwd_hh
 
-#include <utility/pointer/access_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace chemical {
+
 
 class ElementSet;
 
 typedef  utility::pointer::access_ptr< ElementSet > ElementSetAP;
 typedef  utility::pointer::access_ptr< ElementSet const > ElementSetCAP;
 typedef  utility::pointer::owning_ptr< ElementSet > ElementSetOP;
-//typedef  utility::pointer::owning_ptr< ElementSet const > ElementSetCOP;
+typedef  utility::pointer::owning_ptr< ElementSet const > ElementSetCOP;
+
 
 }
 }

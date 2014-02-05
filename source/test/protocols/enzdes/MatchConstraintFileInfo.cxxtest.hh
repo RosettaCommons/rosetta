@@ -94,7 +94,7 @@ public:
 		if(!residue_set.has_name("D2MX")) params_files.push_back("protocols/enzdes/D2MX.params");
 		residue_set.read_files(params_files,
 			ChemicalManager::get_instance()->atom_type_set( FA_STANDARD ),
-			ChemicalManager::get_instance()->element_set( FA_STANDARD ),
+			ChemicalManager::get_instance()->element_set( "default" ),
 			ChemicalManager::get_instance()->mm_atom_type_set( FA_STANDARD ),
 			ChemicalManager::get_instance()->orbital_type_set(FA_STANDARD));//,
 			//ChemicalManager::get_instance()->csd_atom_type_set( FA_STANDARD ));

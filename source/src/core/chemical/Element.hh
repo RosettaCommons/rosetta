@@ -6,82 +6,226 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+//
+// This file is based off of code from the Biochemistry Library (BCL).
+// The BCL is copyright Vanderbilt University (Meiler Lab), a RosettaCommons member
 
 /// @file   core/chemical/Element.hh
-/// @brief  Molecular mechanics atom type class
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
-
+/// @brief  The data for the element types
+/// @author Rosetta conversion: Rocco Moretti (rmorettiase@gmail.com)
 
 #ifndef INCLUDED_core_chemical_Element_hh
 #define INCLUDED_core_chemical_Element_hh
 
-// Unit headers
 #include <core/chemical/Element.fwd.hh>
 
-// Project headers
+#include <core/chemical/ElectronConfiguration.hh>
+
 #include <core/types.hh>
 
-// C++ headers
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector0.hh>
+
+#include <iostream>
 #include <string>
 
 namespace core {
 namespace chemical {
 
-/// @brief class to describe Elements
-///
-/// @details class to describe elements
-/// Borrows heavily and functions similarly to the rosetta atom type class, AtomType
-///
-class Element
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//!
+//! @class Element
+//! @brief stores element properties
+//! @details This is a low level helper class to store element properties
+//!
+//! @see @link example_chemistry_element_type_data.cpp @endlink
+//! @author meilerj, woetzen, mendenjl
+//! @date 08/31/2005
+//!
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class Element : public utility::pointer::ReferenceCount
 {
 
 public:
 
-	///  @brief Construct a new Element with its name
-	Element(
-			Size const z,
-			std::string const & symbol,
-			std::string const & name,
-			Real const weight,
-			Size const mass
-	):
-		z_(z),
-		symbol_(symbol),
-		name_( name ),
-		weight_( weight ),
-		mass_( mass )
-	{}
-	/// @brief Return the atomic number
-	core::Size z() const { return z_; }
-	/// @brief Return the element symbol
-	std::string const& symbol() const { return symbol_; }
+	///////////
+	// Enums //
+	///////////
+
+	//! enum  properties for element types
+	enum Properties
+	{
+		Mass,                //!< Mass
+		CovalentRadius,      //!< CovalentRadius
+		VDWaalsRadius,       //!< VdWaalsRadius
+		NumberOfProperties   //!< Number of properties
+	};
+
+	//! @brief element type property as string
+	//! @param PROPERTY the property desired
+	//! @return the property as string
+	static const std::string &get_property_name( const Properties &PROPERTY);
+
+
+public:
+
+
+	//////////////////////////////////
+	// construction and destruction //
+	//////////////////////////////////
+
+	//! @brief construct undefined element
+	Element();
+
+	//! @brief construct element from all its data
+	//! @param ATOMIC_NUMBER           - number in the PSE
+	//! @param PERIOD                  - in which period is the element
+	//! @param MAIN_GROUP              - in which of the main groups does the element belong (0 for transition metals)
+	//! @param CHEMICAL_SYMBOL         - one or two letters as in international PSE, first letter capital
+	//! @param CHEMICAL_NAME           - full international name (first letter capital)
+	//! @param MASS                    - the atomic mass as a weighted avergage of all isotopes
+	//! @param COVALENT_RADIUS         - radius of atom with electrons
+	//! @param VDW_RADIUS              - vdw radius
+	//! @param ELECTRON_CONFIGURATION  - the electron configuration
+	Element
+	(
+			const core::Size ATOMIC_NUMBER,
+			const core::Size PERIOD,
+			const core::Size MAIN_GROUP,
+			const std::string &CHEMICAL_SYMBOL,
+			const std::string &CHEMICAL_NAME,
+			const core::Real MASS,
+			const core::Real COVALENT_RADIUS,
+			const core::Real VDW_RADIUS,
+			const ElectronConfiguration &ELECTRON_CONFIGURATION
+	);
+
+	//! @brief virtual copy constructor
+	ElementOP Clone() const;
+
+	/////////////////
+	// data access //
+	/////////////////
+
+	//! @brief atomic number
+	//! @return atomic number
+	core::Size get_atomic_number() const
+	{
+		return atomic_number_;
+	}
+
+	//! @return Period
+	core::Size get_period() const
+	{
+		return period_;
+	}
+
+	//! @return main Group #
+	core::Size get_main_group() const
+	{
+		return main_group_;
+	}
+
+	//! @brief GetChemicalSymbol
+	//! @return chemical symbol one or two letters as AtomName
+	const std::string &get_chemical_symbol() const
+	{
+		return chemical_symbol_;
+	}
+
+	//! @brief GetChemicalName
+	//! @return full chemical name
+	const std::string &get_chemical_name() const
+	{
+		return chemical_name_;
+	}
+
+	//! @brief element type property as core::Real
+	//! @param PROPERTY the property desired
+	//! @return the property as core::Real
+	core::Real get_property( const Element::Properties &PROPERTY) const
+	{
+		return properties_[ PROPERTY];
+	}
+
+	//! @brief electron configuration
+	//! @return the ElectronConfiguration
+	const ElectronConfiguration &get_electron_configuration() const
+	{
+		return electron_configuration_;
+	}
+
+
+	//! @brief tell whether this element type can participate in a conjugated system
+	//! @return true if this element can participate in a common conjugated system
+	//! Specifically tests if the element has 1-4 valence electrons in P orbitals
+	bool is_conjugatable() const
+	{
+		const core::Size n_valence_p( electron_configuration_.valence_electrons_p());
+
+		return n_valence_p > 0 && n_valence_p < 5;
+	}
+
+
+	///This is legacy code from old element set
 	/// @brief Return the full name of the Element
-	std::string const& name() const { return name_; }
-	/// @brief the weight of this element (an average of all isotopes)
-	Real weight() const { return weight_; }
-	/// @brief The mass of the most common
-	core::Size mass() const { return mass_; }
+	Real weight() const { return properties_[Mass]; }
+
+
+
+	//////////////////////
+	// input and output //
+	//////////////////////
+
+public:
+
+
+	//! @brief read from std::istream
+	//! @param ISTREAM input stream
+	//! @return istream which was read from
+	std::istream &read( std::istream &ISTREAM);
+
+	//! @brief write to std::ostream
+	//! @param OSTREAM output stream
+	//! @return ostream which was written to
+	std::ostream &write( std::ostream &OSTREAM) const;
+
 
 private:
-	/// @brief #of protons+neutrons for most common isotope
-	Size z_;
 
-	/// @brief symbol of the element
-	std::string const symbol_;
+//////////
+// data //
+//////////
 
-	/// @brief name of the element
-	std::string const name_;
-
-	/// @brief atomic weight (average weight of all isotopes)
-	Real weight_;
-	/// @brief #of protons+neutrons for most common isotope
-	Size mass_;
-};
-
-
-} // chemical
-} // core
+core::Size                 atomic_number_;                            //!< atomic number
+core::Size                 period_;                                  //!< Period
+core::Size                 main_group_;                               //!< Group # in the main group (1-8) such as transistion metals
+std::string            chemical_symbol_;                          //!< ChemicalSymbol
+std::string            chemical_name_;                            //!< ChemicalName
+ElectronConfiguration  electron_configuration_;                   //!< electron configuration
+utility::vector0< core::Real > properties_; //!< real-valued properties
 
 
 
-#endif // INCLUDED_core_chemical_Element_HH
+
+}; // class Element
+
+inline std::ostream &
+operator<< (std::ostream & out, Element const & obj ){
+	return obj.write( out );
+}
+
+inline std::istream &
+operator>> (std::istream & in, Element & obj ){
+	return obj.read( in );
+}
+
+
+
+
+} // namespace core
+} // namespace chemical
+
+#endif

@@ -47,8 +47,8 @@
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/IdealBondLengthSet.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
+#include <core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
-//#include <core/chemical/CSDAtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #ifdef MULTI_THREADED
@@ -83,6 +83,9 @@ public:
 	ElementSetCAP
 	element_set( std::string const & tag );
 
+	//ElementSetCOP
+	//gasteiger_element_type_set(std::string const & tag);
+
 	/// @brief query ideal_bond_lengths
 	IdealBondLengthSetCAP ideal_bond_length_set(std::string const & tag);
 
@@ -90,9 +93,9 @@ public:
 	MMAtomTypeSetCAP
 	mm_atom_type_set( std::string const & tag );
 
-	/// @brief query csd_atom_type_set by a name tag
-//	CSDAtomTypeSetCAP
-//	csd_atom_type_set( std::string const & tag );
+	/// @brief query gasteiger_atom_type_set by a name tag
+	gasteiger::GasteigerAtomTypeSetCOP
+	gasteiger_atom_type_set( std::string const & tag = "default" );
 
 	/// @brief query orbital_type_set by a name tag
 	orbitals::OrbitalTypeSetCAP
@@ -112,7 +115,7 @@ private:
 	typedef std::map< std::string, IdealBondLengthSetOP> IdealBondLengthSets;
 	typedef std::map< std::string, orbitals::OrbitalTypeSetOP > OrbitalTypeSets;
 	typedef std::map< std::string, MMAtomTypeSetOP > MMAtomTypeSets;
-//	typedef std::map< std::string, CSDAtomTypeSetOP > CSDAtomTypeSets;
+	typedef std::map< std::string, gasteiger::GasteigerAtomTypeSetOP > GasteigerAtomTypeSets;
 	typedef std::map< std::string, ResidueTypeSetOP > ResidueTypeSets;
 
 #ifdef MULTI_THREADED
@@ -180,13 +183,13 @@ private: // data
 	AtomTypeSets atom_type_sets_;
 	/// @brief lookup map for querying element_type_set by name tag
 	ElementSets element_sets_;
+
 	///@brief lookup map for querying orbital_type_set by name tag.
 	OrbitalTypeSets orbital_type_sets_;
 	/// @brief lookup map for querying mm_atom_type_set by name tag
 	MMAtomTypeSets mm_atom_type_sets_;
-	///// @brief lookup map for querying csd_atom_type_set by name tag
-  ////CSDAtomTypeSets csd_atom_type_sets_;
-
+	/// @brief lookup map for querying gasteiger_atom_type_set by name tag
+	GasteigerAtomTypeSets gasteiger_atom_type_sets_;
 	/// @brief lookup map for querying residue_type_set by name tag
 	ResidueTypeSets residue_type_sets_;
 

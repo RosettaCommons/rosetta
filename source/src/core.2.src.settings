@@ -24,6 +24,7 @@ sources = {
 		"ChemicalManager",
 		"Element",
 		"ElementSet",
+		"ElectronConfiguration",
 		"IdealBondLengthSet",
 		"MMAtomType",
 		"MMAtomTypeSet",
@@ -43,6 +44,15 @@ sources = {
 		"ResidueTypeSet",
 		"util",
 		"VariantType",
+	],
+
+	"core/chemical/gasteiger": [
+		"GasteigerAtomTypeData",
+		"GasteigerAtomTypeSet",
+		"GasteigerAtomTyper",
+		#"ElectronConfiguration",
+		#"Element",
+		#"ElementTypeSet",
 	],
 
 	"core/chemical/rna": [

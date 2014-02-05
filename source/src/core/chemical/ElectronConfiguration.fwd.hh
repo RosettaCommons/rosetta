@@ -7,44 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @author Ian W. Davis
+/// @file   core/chemical/bcl/ElectronConfiguration.fwd.hh
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 
-#ifndef INCLUDED_core_chemical_CSDAtomType_hh
-#define INCLUDED_core_chemical_CSDAtomType_hh
-
-
-// C++ headers
-#include <string>
+#ifndef INCLUDED_core_chemical_ElectronConfiguration_fwd_hh
+#define INCLUDED_core_chemical_ElectronConfiguration_fwd_hh
 
 namespace core {
 namespace chemical {
 
-/// @brief Basic "conformational" atom type derived from analysis of Cambridge Structure Database.
-class CSDAtomType {
-
-public:
-
-	///  @brief Construct a new CSDAtomType with its name
-	CSDAtomType( std::string const & name_in):
-		name_( name_in )
-	{}
-
-	/// @brief Return the name of the CSDAtomType
-	std::string const& name() const { return name_; };
-
-	// data
-private:
-
-	/// name
-	std::string const name_;
-};
-
+class ElectronConfiguration;
 
 } // chemical
 } // core
 
 
 
-#endif // INCLUDED_core_chemical_CSDAtomType_HH
+#endif // INCLUDED_core_chemical_Atom_FWD_HH

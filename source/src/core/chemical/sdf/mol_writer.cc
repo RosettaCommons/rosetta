@@ -29,11 +29,15 @@
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
+#include <basic/Tracer.hh>
+
 #define foreach BOOST_FOREACH
 
 namespace core {
 namespace chemical {
 namespace sdf {
+
+static basic::Tracer tr("core.chemical.sdf.mol_writer");
 
 
 using std::setfill;
@@ -174,6 +178,7 @@ std::list<std::string> MolWriter::compose_ctab(core::conformation::ResidueCOP re
 
 	std::list<std::string> atom_lines = this->compose_atoms(residue);
 	std::list<std::string> bond_lines = this->compose_bonds(residue);
+	std::list<std::string> prop_lines = this->compose_properties(residue);
 
 	if(ctab_mode_ == V3000)
 	{
@@ -183,6 +188,7 @@ std::list<std::string> MolWriter::compose_ctab(core::conformation::ResidueCOP re
 
 	lines.insert(lines.end(),atom_lines.begin(),atom_lines.end());
 	lines.insert(lines.end(),bond_lines.begin(),bond_lines.end());
+	lines.insert(lines.end(),prop_lines.begin(),prop_lines.end());
 
 	if(ctab_mode_ == V3000)
 	{
@@ -332,6 +338,45 @@ std::list<std::string> MolWriter::compose_bonds(core::conformation::ResidueCOP r
 	{
 		lines.push_back(end_header);
 	}
+	return lines;
+}
+
+std::list<std::string> MolWriter::compose_properties(core::conformation::ResidueCOP residue)
+{
+	runtime_assert( residue );
+	std::list<std::string> lines;
+	if(ctab_mode_ == V3000)
+	{
+		// Properties block is V2000 specific.
+		return lines;
+	}
+
+	////////////
+	// Charges:
+	utility::vector1< core::Size > charged_atoms;
+	for( core::Size ii(1); ii <= residue->natoms(); ++ii) {
+		if( residue->type().atom(ii).formal_charge() != 0) {
+			charged_atoms.push_back( ii );
+		}
+	}
+	// V2000 CHG lines can only have 8 atoms max per line
+	for( core::Size b(1), e(9); b <= charged_atoms.size(); b += 8, e+=8 ) {
+		core::Size const end( std::min( e, charged_atoms.size()+1 ) );
+		core::Size const nentries = end - b;
+		runtime_assert( nentries >=1 && nentries <= 8 );
+		std::string line( boost::str( boost::format("M  CHG%3d") % nentries ) );
+		for( core::Size n(b); n < end; ++n ) {
+			line.append( boost::str( boost::format(" %3d %3d")
+			% charged_atoms[n]
+			% residue->type().atom(charged_atoms[n]).formal_charge() ));
+		}
+		line.append( "\n" );
+		lines.push_back( line );
+	}
+
+	////////////
+	// Other Properties?
+
 	return lines;
 }
 

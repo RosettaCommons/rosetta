@@ -36,11 +36,11 @@ public:
 		protocols::filters::Filter( "MolecularMass" )
 	{}
 
-	MolecularMassFilter(std::string chain, core::Size molecular_mass_limit ) :
+	MolecularMassFilter(std::string chain, core::Size mass_limit ) :
 		//utility::pointer::ReferenceCount(),
 		protocols::filters::Filter( "MolecularMass" ),
 		chain_(chain),
-		mass_limit_(molecular_mass_limit)
+		mass_limit_(mass_limit)
 	{}
 
 	MolecularMassFilter( MolecularMassFilter const & init ) :

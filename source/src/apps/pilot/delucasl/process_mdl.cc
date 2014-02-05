@@ -65,7 +65,7 @@ int main(int argc, char*argv[])
   core::chemical::orbitals::OrbitalTypeSetCAP orbital_types =
 		  core::chemical::ChemicalManager::get_instance()->orbital_type_set("fa_standard");
   core::chemical::ElementSetCAP element_set =
-		  core::chemical::ChemicalManager::get_instance()->element_set("fa_standard");
+		  core::chemical::ChemicalManager::get_instance()->element_set("default");
 
   std::list<std::string>::iterator file_list_it;
   for(file_list_it = file_list.begin(); file_list_it != file_list.end();++file_list_it)

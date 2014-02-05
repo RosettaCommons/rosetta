@@ -78,11 +78,14 @@
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/Element.hh>
 #include <core/chemical/ElementSet.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/MMAtomType.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
+#include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
 #include <core/chemical/rna/RNA_ResidueType.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 
@@ -184,8 +187,7 @@ interchangeability_group_(),
 //nbr_atom_(1),
 nbr_radius_( 0 ),
 force_nbr_atom_orient_(false),
-molecular_mass_(0),
-molar_mass_(0),
+mass_(0),
 n_actcoord_atoms_( 0 ),
 lower_connect_id_( 0 ),
 upper_connect_id_( 0 ),
@@ -205,133 +207,132 @@ ResidueType::~ResidueType()
 }
 
 ResidueType::ResidueType(ResidueType const & residue_type):
-									utility::pointer::ReferenceCount(),
-									atom_types_( residue_type.atom_types_ ),
-									elements_( residue_type.elements_ ),
-									mm_atom_types_( residue_type.mm_atom_types_ ),
-									orbital_types_( residue_type.orbital_types_ ),
-									residue_type_set_( residue_type.residue_type_set_ ),
-									graph_(residue_type.graph_),
-									vd_to_index_(),
-									atom_base_(residue_type.atom_base_),
-									abase2_(residue_type.abase2_),
-									orbitals_(residue_type.orbitals_),
-									nheavyatoms_(residue_type.nheavyatoms_),
-									n_hbond_acceptors_(residue_type.n_hbond_acceptors_),
-									n_hbond_donors_(residue_type.n_hbond_donors_),
-									n_orbitals_(residue_type.n_orbitals_),
-									n_backbone_heavyatoms_(residue_type.n_backbone_heavyatoms_),
-									first_sidechain_hydrogen_( residue_type.first_sidechain_hydrogen_ ),
-									ndihe_( residue_type.ndihe_ ),
-									nbonds_(residue_type.nbonds_),
-									//orbital_bonded_neighbor_(residue_type.orbital_bonded_neighbor_),
-									bonded_neighbor_(residue_type.bonded_neighbor_),
-									bonded_neighbor_type_(residue_type.bonded_neighbor_type_),
-									cut_bond_neighbor_(residue_type.cut_bond_neighbor_),
-									attached_H_begin_(residue_type.attached_H_begin_),
-									attached_H_end_(residue_type.attached_H_end_),
-									parents_(residue_type.parents_),
-									icoor_(residue_type.icoor_),
-									dihedral_atom_sets_(residue_type.dihedral_atom_sets_),
-									dihedrals_for_atom_(residue_type.dihedrals_for_atom_),
-									bondangle_atom_sets_(residue_type.bondangle_atom_sets_),
-									bondangles_for_atom_(residue_type.bondangles_for_atom_),
-									atom_shadowed_(residue_type.atom_shadowed_),
-									last_controlling_chi_(residue_type.last_controlling_chi_),
-									atoms_last_controlled_by_chi_(residue_type.atoms_last_controlled_by_chi_),
-									atoms_with_orb_index_(residue_type.atoms_with_orb_index_),
-									Haro_index_(residue_type.Haro_index_),
-									Hpol_index_(residue_type.Hpol_index_),
-									accpt_pos_(residue_type.accpt_pos_),
-									Hpos_polar_(residue_type.Hpos_polar_),
-									Hpos_apolar_(residue_type.Hpos_apolar_),
-									accpt_pos_sc_(residue_type.accpt_pos_sc_),
-									Hpos_polar_sc_(residue_type.Hpos_polar_sc_),
-									all_bb_atoms_(residue_type.all_bb_atoms_),
-									all_sc_atoms_(residue_type.all_sc_atoms_),
-									mainchain_atoms_(residue_type.mainchain_atoms_),
-									actcoord_atoms_(residue_type.actcoord_atoms_),
-									chi_atoms_(residue_type.chi_atoms_),
-									is_proton_chi_(residue_type.is_proton_chi_),
-									proton_chis_(residue_type.proton_chis_),
-									chi_2_proton_chi_(residue_type.chi_2_proton_chi_),
-									proton_chi_samples_(residue_type.proton_chi_samples_),
-									proton_chi_extra_samples_(residue_type.proton_chi_extra_samples_),
-									nu_atoms_(residue_type.nu_atoms_),
-									path_distance_(residue_type.path_distance_),
-									atom_name_to_vd_(), /// This must be regenerated below to hold the new new vertex_descriptors
-									ordered_atoms_(), // This must be regenerated to hold the new vertex_descriptors
-									orbitals_index_(residue_type.orbitals_index_),
-									chi_rotamers_(residue_type.chi_rotamers_),
-									rotamer_library_name_( residue_type.rotamer_library_name_ ),
-									use_ncaa_rotlib_( residue_type.use_ncaa_rotlib_ ),
-									ncaa_rotlib_path_( residue_type.ncaa_rotlib_path_),
-									ncaa_rotlib_n_rots_( residue_type.ncaa_rotlib_n_rots_ ),
-									ncaa_rotlib_n_bins_per_rot_(residue_type.ncaa_rotlib_n_bins_per_rot_),
-									properties_(residue_type.properties_),
-									is_polymer_( residue_type.is_polymer_ ),
-									is_protein_( residue_type.is_protein_ ),
-									is_charged_( residue_type.is_charged_ ),
-									is_polar_( residue_type.is_polar_ ),
-									has_sc_orbitals_(residue_type.has_sc_orbitals_),
-									is_aromatic_( residue_type.is_aromatic_ ),
-									is_DNA_( residue_type.is_DNA_ ),
-									is_RNA_( residue_type.is_RNA_ ),
-									is_NA_( residue_type.is_NA_ ),
-									is_carbohydrate_( residue_type.is_carbohydrate_ ),
-									is_ligand_( residue_type.is_ligand_ ),
-									is_surface_( residue_type.is_surface_ ),
-									is_terminus_( residue_type.is_terminus_ ),
-									is_lower_terminus_( residue_type.is_lower_terminus_ ),
-									is_upper_terminus_( residue_type.is_upper_terminus_ ),
-									is_branch_lower_terminus_( residue_type.is_branch_lower_terminus_ ),
-									is_acetylated_nterminus_( residue_type.is_acetylated_nterminus_ ),
-									is_methylated_cterminus_( residue_type.is_methylated_cterminus_ ),
-									is_coarse_( residue_type.is_coarse_ ), //currently for coarse_RNA only
-									is_adduct_( residue_type.is_adduct_ ),
-									variant_types_( residue_type.variant_types_ ),
-									numeric_properties_(residue_type.numeric_properties_),
-									string_properties_(residue_type.string_properties_),
-									aa_( residue_type.aa_ ),
-									rotamer_aa_( residue_type.rotamer_aa_ ),
-									name_( residue_type.name_),
-									name3_( residue_type.name3_),
-									name1_(residue_type.name1_),
-									interchangeability_group_( residue_type.interchangeability_group_ ),
-									nbr_atom_(residue_type.nbr_atom_),
-									nbr_radius_( residue_type.nbr_radius_ ),
-									force_nbr_atom_orient_(residue_type.force_nbr_atom_orient_),
-									molecular_mass_(residue_type.molecular_mass_),
-									molar_mass_(residue_type.molar_mass_),
-									n_actcoord_atoms_( residue_type.n_actcoord_atoms_ ),
-									mol_data_(residue_type.mol_data_),
-									residue_connections_(residue_type.residue_connections_),
-									atom_2_residue_connection_map_(residue_type.atom_2_residue_connection_map_),
-									atoms_within_one_bond_of_a_residue_connection_(residue_type.atoms_within_one_bond_of_a_residue_connection_),
-									within1bonds_sets_for_atom_(residue_type.within1bonds_sets_for_atom_),
-									atoms_within_two_bonds_of_a_residue_connection_(residue_type.atoms_within_two_bonds_of_a_residue_connection_),
-									within2bonds_sets_for_atom_(residue_type.within2bonds_sets_for_atom_),
-									lower_connect_id_( residue_type.lower_connect_id_ ),
-									upper_connect_id_( residue_type.upper_connect_id_ ),
-									n_non_polymeric_residue_connections_( residue_type.n_non_polymeric_residue_connections_ ),
-									n_polymeric_residue_connections_( residue_type.n_polymeric_residue_connections_ ),
-									force_bb_(residue_type.force_bb_),
-									rna_residue_type_(residue_type.rna_residue_type_),
-									carbohydrate_info_(residue_type.carbohydrate_info_),
-									atom_base_indices_(residue_type.atom_base_indices_),
-									abase2_indices_(residue_type.abase2_indices_),
-									chi_atoms_indices_(residue_type.chi_atoms_indices_),
-									nu_atoms_indices_(residue_type.nu_atoms_indices_),
-									mainchain_atoms_indices_(residue_type.mainchain_atoms_indices_),
-									nbr_atom_indices_(residue_type.nbr_atom_indices_),
-									actcoord_atoms_indices_(residue_type.actcoord_atoms_indices_),
-									cut_bond_neighbor_indices_(residue_type.cut_bond_neighbor_indices_),
-									atom_shadowed_indices_(residue_type.atom_shadowed_indices_),
-									finalized_(residue_type.finalized_),
-									defined_adducts_(residue_type.defined_adducts_),
-									nondefault_(residue_type.nondefault_),
-									base_restype_name_(residue_type.base_restype_name_),
-									serialized_(residue_type.serialized_)
+			utility::pointer::ReferenceCount(),
+			atom_types_( residue_type.atom_types_ ),
+			elements_( residue_type.elements_ ),
+			mm_atom_types_( residue_type.mm_atom_types_ ),
+			orbital_types_( residue_type.orbital_types_ ),
+			residue_type_set_( residue_type.residue_type_set_ ),
+			graph_(residue_type.graph_),
+			vd_to_index_(),
+			atom_base_(residue_type.atom_base_),
+			abase2_(residue_type.abase2_),
+			orbitals_(residue_type.orbitals_),
+			nheavyatoms_(residue_type.nheavyatoms_),
+			n_hbond_acceptors_(residue_type.n_hbond_acceptors_),
+			n_hbond_donors_(residue_type.n_hbond_donors_),
+			n_orbitals_(residue_type.n_orbitals_),
+			n_backbone_heavyatoms_(residue_type.n_backbone_heavyatoms_),
+			first_sidechain_hydrogen_( residue_type.first_sidechain_hydrogen_ ),
+			ndihe_( residue_type.ndihe_ ),
+			nbonds_(residue_type.nbonds_),
+			//orbital_bonded_neighbor_(residue_type.orbital_bonded_neighbor_),
+			bonded_neighbor_(residue_type.bonded_neighbor_),
+			bonded_neighbor_type_(residue_type.bonded_neighbor_type_),
+			cut_bond_neighbor_(residue_type.cut_bond_neighbor_),
+			attached_H_begin_(residue_type.attached_H_begin_),
+			attached_H_end_(residue_type.attached_H_end_),
+			parents_(residue_type.parents_),
+			icoor_(residue_type.icoor_),
+			dihedral_atom_sets_(residue_type.dihedral_atom_sets_),
+			dihedrals_for_atom_(residue_type.dihedrals_for_atom_),
+			bondangle_atom_sets_(residue_type.bondangle_atom_sets_),
+			bondangles_for_atom_(residue_type.bondangles_for_atom_),
+			atom_shadowed_(residue_type.atom_shadowed_),
+			last_controlling_chi_(residue_type.last_controlling_chi_),
+			atoms_last_controlled_by_chi_(residue_type.atoms_last_controlled_by_chi_),
+			atoms_with_orb_index_(residue_type.atoms_with_orb_index_),
+			Haro_index_(residue_type.Haro_index_),
+			Hpol_index_(residue_type.Hpol_index_),
+			accpt_pos_(residue_type.accpt_pos_),
+			Hpos_polar_(residue_type.Hpos_polar_),
+			Hpos_apolar_(residue_type.Hpos_apolar_),
+			accpt_pos_sc_(residue_type.accpt_pos_sc_),
+			Hpos_polar_sc_(residue_type.Hpos_polar_sc_),
+			all_bb_atoms_(residue_type.all_bb_atoms_),
+			all_sc_atoms_(residue_type.all_sc_atoms_),
+			mainchain_atoms_(residue_type.mainchain_atoms_),
+			actcoord_atoms_(residue_type.actcoord_atoms_),
+			chi_atoms_(residue_type.chi_atoms_),
+			is_proton_chi_(residue_type.is_proton_chi_),
+			proton_chis_(residue_type.proton_chis_),
+			chi_2_proton_chi_(residue_type.chi_2_proton_chi_),
+			proton_chi_samples_(residue_type.proton_chi_samples_),
+			proton_chi_extra_samples_(residue_type.proton_chi_extra_samples_),
+			nu_atoms_(residue_type.nu_atoms_),
+			path_distance_(residue_type.path_distance_),
+			atom_name_to_vd_(), /// This must be regenerated below to hold the new new vertex_descriptors
+			ordered_atoms_(), // This must be regenerated to hold the new vertex_descriptors
+			orbitals_index_(residue_type.orbitals_index_),
+			chi_rotamers_(residue_type.chi_rotamers_),
+			rotamer_library_name_( residue_type.rotamer_library_name_ ),
+			use_ncaa_rotlib_( residue_type.use_ncaa_rotlib_ ),
+			ncaa_rotlib_path_( residue_type.ncaa_rotlib_path_),
+			ncaa_rotlib_n_rots_( residue_type.ncaa_rotlib_n_rots_ ),
+			ncaa_rotlib_n_bins_per_rot_(residue_type.ncaa_rotlib_n_bins_per_rot_),
+			properties_(residue_type.properties_),
+			is_polymer_( residue_type.is_polymer_ ),
+			is_protein_( residue_type.is_protein_ ),
+			is_charged_( residue_type.is_charged_ ),
+			is_polar_( residue_type.is_polar_ ),
+			has_sc_orbitals_(residue_type.has_sc_orbitals_),
+			is_aromatic_( residue_type.is_aromatic_ ),
+			is_DNA_( residue_type.is_DNA_ ),
+			is_RNA_( residue_type.is_RNA_ ),
+			is_NA_( residue_type.is_NA_ ),
+			is_carbohydrate_( residue_type.is_carbohydrate_ ),
+			is_ligand_( residue_type.is_ligand_ ),
+			is_surface_( residue_type.is_surface_ ),
+			is_terminus_( residue_type.is_terminus_ ),
+			is_lower_terminus_( residue_type.is_lower_terminus_ ),
+			is_upper_terminus_( residue_type.is_upper_terminus_ ),
+			is_branch_lower_terminus_( residue_type.is_branch_lower_terminus_ ),
+			is_acetylated_nterminus_( residue_type.is_acetylated_nterminus_ ),
+			is_methylated_cterminus_( residue_type.is_methylated_cterminus_ ),
+			is_coarse_( residue_type.is_coarse_ ), //currently for coarse_RNA only
+			is_adduct_( residue_type.is_adduct_ ),
+			variant_types_( residue_type.variant_types_ ),
+			numeric_properties_(residue_type.numeric_properties_),
+			string_properties_(residue_type.string_properties_),
+			aa_( residue_type.aa_ ),
+			rotamer_aa_( residue_type.rotamer_aa_ ),
+			name_( residue_type.name_),
+			name3_( residue_type.name3_),
+			name1_(residue_type.name1_),
+			interchangeability_group_( residue_type.interchangeability_group_ ),
+			nbr_atom_(residue_type.nbr_atom_),
+			nbr_radius_( residue_type.nbr_radius_ ),
+			force_nbr_atom_orient_(residue_type.force_nbr_atom_orient_),
+			mass_(residue_type.mass_),
+			n_actcoord_atoms_( residue_type.n_actcoord_atoms_ ),
+			mol_data_(residue_type.mol_data_),
+			residue_connections_(residue_type.residue_connections_),
+			atom_2_residue_connection_map_(residue_type.atom_2_residue_connection_map_),
+			atoms_within_one_bond_of_a_residue_connection_(residue_type.atoms_within_one_bond_of_a_residue_connection_),
+			within1bonds_sets_for_atom_(residue_type.within1bonds_sets_for_atom_),
+			atoms_within_two_bonds_of_a_residue_connection_(residue_type.atoms_within_two_bonds_of_a_residue_connection_),
+			within2bonds_sets_for_atom_(residue_type.within2bonds_sets_for_atom_),
+			lower_connect_id_( residue_type.lower_connect_id_ ),
+			upper_connect_id_( residue_type.upper_connect_id_ ),
+			n_non_polymeric_residue_connections_( residue_type.n_non_polymeric_residue_connections_ ),
+			n_polymeric_residue_connections_( residue_type.n_polymeric_residue_connections_ ),
+			force_bb_(residue_type.force_bb_),
+			rna_residue_type_(residue_type.rna_residue_type_),
+			carbohydrate_info_(residue_type.carbohydrate_info_),
+			atom_base_indices_(residue_type.atom_base_indices_),
+			abase2_indices_(residue_type.abase2_indices_),
+			chi_atoms_indices_(residue_type.chi_atoms_indices_),
+			nu_atoms_indices_(residue_type.nu_atoms_indices_),
+			mainchain_atoms_indices_(residue_type.mainchain_atoms_indices_),
+			nbr_atom_indices_(residue_type.nbr_atom_indices_),
+			actcoord_atoms_indices_(residue_type.actcoord_atoms_indices_),
+			cut_bond_neighbor_indices_(residue_type.cut_bond_neighbor_indices_),
+			atom_shadowed_indices_(residue_type.atom_shadowed_indices_),
+			finalized_(residue_type.finalized_),
+			defined_adducts_(residue_type.defined_adducts_),
+			nondefault_(residue_type.nondefault_),
+			base_restype_name_(residue_type.base_restype_name_),
+			serialized_(residue_type.serialized_)
 {
 	//when you copy vertex descriptors from cached data, the vertex descriptors are pointing to the old copied graph. New vertexs are assigned.
 	//you have to map the old vertex to the new vertex.
@@ -526,6 +527,12 @@ Atom & ResidueType::atom(Size const atom_index){
 Atom const & ResidueType::atom(Size const atom_index) const{
 	return graph_[ ordered_atoms_[atom_index] ];
 }
+Atom & ResidueType::atom(VD const vd){
+	return graph_[ vd ];
+}
+Atom const & ResidueType::atom(VD const vd) const{
+	return graph_[ vd ];
+}
 Atom & ResidueType::atom(std::string const & atom_name){
 	return graph_[ atom_name_to_vd_[atom_name] ];
 }
@@ -541,6 +548,12 @@ Orbital const & ResidueType::orbital(std::string const & orbital_name) const{
 	return orbitals_[ orbital_index(orbital_name) ];
 }
 
+Bond & ResidueType::bond(ED const ed){
+	return graph_[ ed ];
+}
+Bond const & ResidueType::bond(ED const ed) const{
+	return graph_[ ed ];
+}
 
 /// @brief set the atom which connects to the lower connection
 void
@@ -676,6 +689,18 @@ ResidueType::atom_type( Size const atomno ) const
 	return ( *atom_types_ )[ graph_[ ordered_atoms_[atomno] ].atom_type_index() ];
 }
 
+AtomType const &
+ResidueType::atom_type( VD const vd ) const
+{
+	//TODO: Is there a better way of validating the VD instead of checking all the ordered atoms?
+	PyAssert( (vd != ResidueGraph::null_vertex() ) &&
+			( std::find(ordered_atoms_.begin(), ordered_atoms_.end(), vd) != ordered_atoms_.end()),
+			"ResidueType::atom_type( VD const vd ): vd is not in this ResidueType!");
+	assert( (vd != ResidueGraph::null_vertex()) &&
+			( std::find(ordered_atoms_.begin(), ordered_atoms_.end(), vd) != ordered_atoms_.end()) );
+	return ( *atom_types_ )[ graph_[ vd ].atom_type_index() ];
+}
+
 /// @brief Get the atom name by index
 std::string const &
 ResidueType::atom_name( Size const index ) const
@@ -712,6 +737,11 @@ AtomIndices const &
 ResidueType::bonded_neighbor( Size const atomno ) const
 {
 	return bonded_neighbor_[atomno];
+}
+
+AdjacentIterPair
+ResidueType::bonded_neighbor_iterators( VD const & atom ) const {
+	return boost::adjacent_vertices( atom, graph_ );
 }
 
 utility::vector1<BondName> const &
@@ -801,11 +831,30 @@ ResidueType::add_atom(
 	Size const type( atom_types_->atom_type_index( atom_type_name ) );
 	Size const mm_type( mm_atom_types_->atom_type_index( mm_atom_type_name ) );
 
+	if ( (*atom_types_)[type].is_acceptor() ) ++n_hbond_acceptors_;
+	if ( (*atom_types_)[type].is_donor() ) ++n_hbond_donors_;
+
+
+	//get the element information
+	ElementCOP element;
+	if( elements_ )	{ // Be robust if elements_ isn't defined.
+		std::string const & element_name= (*atom_types_)[type].element();
+		int const element_index = elements_->element_index(element_name);
+		//std::cout << elements_->element_index(element_name) << " " << element_name << std::endl;
+		element = (*elements_)[element_index];
+		mass_ += element->weight();
+		//mass_ += (*elements_)[element_index]->weight();
+	} else {
+		tr.Warning << "WARNING Elements set undefined." << std::endl;
+	}
+
+
+
 	Atom atom(
 			atom_name,
 			mm_atom_type_name,
 			type, mm_type,
-			charge,
+			element, charge,
 			Vector(0.0)
 	);
 
@@ -815,21 +864,8 @@ ResidueType::add_atom(
 	ordered_atoms_.push_back(v);
 	AtomAP graph_atom = &graph_[v];
 
-	//graph_atom->icoor( AtomICoor( 0.0, 0.0, 0.0, atom_name, atom_name, atom_name, *this ) );
-	// store the name
 
-	if ( (*atom_types_)[type].is_acceptor() ) ++n_hbond_acceptors_;
-	if ( (*atom_types_)[type].is_donor() ) ++n_hbond_donors_;
 
-	// add the atomic weight of this atom
-	if( elements_ )	{ // Be robust if elements_ isn't defined.
-		std::string const & element_name= (*atom_types_)[type].element();
-		int const element_index = elements_->element_index(element_name);
-		molecular_mass_ += (*elements_)[element_index].mass();
-		molar_mass_ += (*elements_)[element_index].weight();
-	} else {
-		tr.Warning << "WARNING Elements set undefined." << std::endl;
-	}
 
 	parents_.push_back(0);
 
@@ -914,24 +950,45 @@ ResidueType::mm_atom_type( Size const atomno ) const
 	return ( *mm_atom_types_ )[graph_[ ordered_atoms_[atomno] ].mm_atom_type_index() ];
 }
 
+/// @brief Manually set the gasteiger typeset - will use the default set otherwise
+void ResidueType::set_gasteiger_typeset( gasteiger::GasteigerAtomTypeSetCOP gasteiger_atom_types ) {
+	gasteiger_atom_types_ = gasteiger_atom_types;
+}
+
+/// @brief set gasteiger atom type
+void
+ResidueType::set_gasteiger_atom_type(
+		std::string const & atom_name,
+		std::string const & gasteiger_atom_type_name
+)
+{
+	if ( ! gasteiger_atom_types_ ) {
+		gasteiger_atom_types_ = ChemicalManager::get_instance()->gasteiger_atom_type_set();
+	}
+	gasteiger::GasteigerAtomTypeDataCOP gasteiger_type = gasteiger_atom_types_->atom_type( gasteiger_atom_type_name );
+	Atom & a = graph_[ atom_name_to_vd_[atom_name] ];
+	a.gasteiger_atom_type( gasteiger_type );
+}
+
+/// @brief Get the Gasteiger atom_type for this atom by its index number in this residue
+gasteiger::GasteigerAtomTypeDataCOP
+ResidueType::gasteiger_atom_type( Size const atomno ) const
+{
+	return graph_[ ordered_atoms_[atomno] ].gasteiger_atom_type();
+}
 VD
 ResidueType::vd_from_name( std::string const & name) const{
-	NameVDMap::const_iterator atom_graph_index_iter( atom_name_to_vd_.find( name ) );
-	if ( atom_graph_index_iter == atom_name_to_vd_.end() ) {
+	NameVDMap::const_iterator atom_name_to_vd_iter( atom_name_to_vd_.find( name ) );
+	if ( atom_name_to_vd_iter == atom_name_to_vd_.end() ) {
 		tr.Error << "atom name : " << name << " not available in residue " << name3() << std::endl;
 		show_all_atom_names( tr.Error );
 		tr.Error << std::endl;
 		assert(false);
 	}
 
-	return atom_graph_index_iter->second;
+	return atom_name_to_vd_iter->second;
 }
 
-VD
-ResidueType::vd_from_index(Size const & atomno) const{
-	if( ! atomno ) { return ResidueGraph::null_vertex(); }
-	return ordered_atoms_[atomno];
-}
 
 orbitals::OrbitalType const &
 ResidueType::orbital_type(int const orbital_index)const
@@ -2150,7 +2207,7 @@ ResidueType::nonadduct_variants_match( ResidueType const & other ) const
 Size
 ResidueType::atom_index( std::string const & name ) const
 {
-	// NOTE: Currently we have to iterate twice because atom_graph_index stores vertex_descriptors not indices.
+	// NOTE: Currently we have to iterate twice because atom_name_to_vd_ stores vertex_descriptors not indices.
 	// A substantial change to the interface will fix this, but everyone's code will need to switch too.
 
 	NameVDMap::const_iterator graph_iter
@@ -2194,6 +2251,30 @@ ResidueType::atom_index( std::string const & name ) const
 
 	return ordered_index;
 }
+
+/// @brief get atom index by VD
+Size
+ResidueType::atom_index( VD const & vd) const{
+	//// NOTE: Currently we have to iterate twice because atom_name_to_vd_ stores vertex_descriptors not indices.
+	//// A substantial change to the interface will fix this but everyone's code will need to switch to
+	if( vd == ResidueGraph::null_vertex()) return 0;
+
+	for( core::Size ii(1); ii <= ordered_atoms_.size(); ++ii ) {
+		if( ordered_atoms_[ii] == vd ) { return ii; }
+	}
+	tr.Error << "VD" << vd << " not available in residue " << name3() << std::endl;
+	show_all_atom_names( tr.Error );
+	tr.Error << std::endl;
+	utility_exit_with_message("unknown vertex descriptor in " + name3() );
+	return 0;
+}
+
+VD ResidueType::vd_from_index(Size const & atomno) const{
+
+	if( ! atomno ) return ResidueGraph::null_vertex();
+	return ordered_atoms_[atomno];
+}
+
 
 core::Size
 ResidueType::orbital_index( std::string const & name ) const
@@ -2252,7 +2333,6 @@ ResidueType::update_actcoord( conformation::Residue & rot ) const
 	}
 }
 
-
 /// @details set AtomICoor for an atom
 ///
 /// will update the xyz coords as well if desired, useful inside a patching operation where new
@@ -2275,39 +2355,39 @@ ResidueType::set_icoor(
 
 	Size const atomno( vd_to_index_.find(id.vertex())->second);
 	switch ( id.type() ) {
-	case ICoorAtomID::INTERNAL:
-		if ( graph_.num_vertices() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
-		if ( ordered_atoms_.size() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
-		//graph_[ordered_atoms_[ atomno ]].icoor( ic );
-		icoor_[ ordered_atoms_[atomno] ] = ic;
+		case ICoorAtomID::INTERNAL:
+			if ( graph_.num_vertices() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
+			if ( ordered_atoms_.size() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
+			//graph_[ordered_atoms_[ atomno ]].icoor( ic );
+			icoor_[ ordered_atoms_[atomno] ] = ic;
 
-		// update atom_base?
-		if ( ( stub_atom1 != atm ) && has( stub_atom1 ) &&
-				( atom_base_.find(ordered_atoms_[atomno]) == atom_base_.end() ||
-						vd_to_index_.find((atom_base_.find(ordered_atoms_[atomno])->second))->second == atomno ) ) {
-			set_atom_base( atm, stub_atom1 );
-		}
-		if ( update_xyz ) {
-			set_ideal_xyz( atm, ic.build( *this ) );
-			//std::cout << "building coords for atm " << name_ << ' ' << atm << ' ' <<
-			//		ic.build(*this)(1) << ' ' <<
-			//		ic.build(*this)(2) << ' ' <<
-			//		ic.build(*this)(3) << std::endl;
-		}
-		break;
-	case ICoorAtomID::CONNECT:
-		residue_connections_[ atomno ].icoor( ic );
-		break;
-	case ICoorAtomID::POLYMER_LOWER:
-		assert( lower_connect_id_ != 0 );
-		residue_connections_[ lower_connect_id_ ].icoor( ic );
-		break;
-	case ICoorAtomID::POLYMER_UPPER:
-		assert( upper_connect_id_ != 0 );
-		residue_connections_[ upper_connect_id_ ].icoor( ic );
-		break;
-	default:
-		utility_exit_with_message( "unrecognized stub atom id type!" );
+			// update atom_base?
+			if ( ( stub_atom1 != atm ) && has( stub_atom1 ) &&
+					( atom_base_.find(ordered_atoms_[atomno]) == atom_base_.end() ||
+							vd_to_index_.find((atom_base_.find(ordered_atoms_[atomno])->second))->second == atomno ) ) {
+				set_atom_base( atm, stub_atom1 );
+			}
+			if ( update_xyz ) {
+				set_ideal_xyz( atm, ic.build( *this ) );
+				//std::cout << "building coords for atm " << name_ << ' ' << atm << ' ' <<
+				//		ic.build(*this)(1) << ' ' <<
+				//		ic.build(*this)(2) << ' ' <<
+				//		ic.build(*this)(3) << std::endl;
+			}
+			break;
+		case ICoorAtomID::CONNECT:
+			residue_connections_[ atomno ].icoor( ic );
+			break;
+		case ICoorAtomID::POLYMER_LOWER:
+			assert( lower_connect_id_ != 0 );
+			residue_connections_[ lower_connect_id_ ].icoor( ic );
+			break;
+		case ICoorAtomID::POLYMER_UPPER:
+			assert( upper_connect_id_ != 0 );
+			residue_connections_[ upper_connect_id_ ].icoor( ic );
+			break;
+		default:
+			utility_exit_with_message( "unrecognized stub atom id type!" );
 	}
 }
 
@@ -2328,37 +2408,37 @@ ResidueType::set_icoor(
 
 	Size const atomno( vd_to_index_.find(id.vertex())->second );
 	switch ( id.type() ) {
-	case ICoorAtomID::INTERNAL:
-		if ( ordered_atoms_.size() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
-		icoor_[ ordered_atoms_[atomno] ] = ic;
-		//graph_[ordered_atoms_[ atomno ]].icoor( ic );
-		// update atom_base?
-		if ( ( stub_atom1 != atm ) && has( stub_atom1 ) &&
-				(  atom_base_.find(ordered_atoms_[atomno]) == atom_base_.end() ||
-						vd_to_index_.find((atom_base_.find(ordered_atoms_[atomno])->second))->second == atomno) ) {
-			set_atom_base( atm, stub_atom1 );
-		}
-		if ( update_xyz ) {
-			set_ideal_xyz( atm, ic.build( *this ) );
-			//std::cout << "building coords for atm " << name_ << ' ' << atm << ' ' <<
-			//		ic.build(*this)(1) << ' ' <<
-			//		ic.build(*this)(2) << ' ' <<
-			//		ic.build(*this)(3) << std::endl;
-		}
-		break;
-	case ICoorAtomID::CONNECT:
-		residue_connections_[ atomno ].icoor( ic );
-		break;
-	case ICoorAtomID::POLYMER_LOWER:
-		assert( lower_connect_id_ != 0 );
-		residue_connections_[ lower_connect_id_ ].icoor( ic );
-		break;
-	case ICoorAtomID::POLYMER_UPPER:
-		assert( upper_connect_id_ != 0 );
-		residue_connections_[ upper_connect_id_ ].icoor( ic );
-		break;
-	default:
-		utility_exit_with_message( "unrecognized stub atom id type!" );
+		case ICoorAtomID::INTERNAL:
+			if ( ordered_atoms_.size() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
+			icoor_[ ordered_atoms_[atomno] ] = ic;
+			//graph_[ordered_atoms_[ atomno ]].icoor( ic );
+			// update atom_base?
+			if ( ( stub_atom1 != atm ) && has( stub_atom1 ) &&
+					(  atom_base_.find(ordered_atoms_[atomno]) == atom_base_.end() ||
+							vd_to_index_.find((atom_base_.find(ordered_atoms_[atomno])->second))->second == atomno) ) {
+				set_atom_base( atm, stub_atom1 );
+			}
+			if ( update_xyz ) {
+				set_ideal_xyz( atm, ic.build( *this ) );
+				//std::cout << "building coords for atm " << name_ << ' ' << atm << ' ' <<
+				//		ic.build(*this)(1) << ' ' <<
+				//		ic.build(*this)(2) << ' ' <<
+				//		ic.build(*this)(3) << std::endl;
+			}
+			break;
+		case ICoorAtomID::CONNECT:
+			residue_connections_[ atomno ].icoor( ic );
+			break;
+		case ICoorAtomID::POLYMER_LOWER:
+			assert( lower_connect_id_ != 0 );
+			residue_connections_[ lower_connect_id_ ].icoor( ic );
+			break;
+		case ICoorAtomID::POLYMER_UPPER:
+			assert( upper_connect_id_ != 0 );
+			residue_connections_[ upper_connect_id_ ].icoor( ic );
+			break;
+		default:
+			utility_exit_with_message( "unrecognized stub atom id type!" );
 	}
 }
 
@@ -2670,23 +2750,23 @@ ResidueType::retype_atoms(ElementMap const & emap, bool preserve) {
 
 				if( retype_is_virtual(t_element) ) { continue; }
 				switch( graph_[*bonds].bond_name() ) {
-				case SingleBond:
-					if( t_element == "H" ) { ++num_H; }
-					break;
-				case DoubleBond:
-					saturated = false;
-					if ( t_element != "O" ) { ++num_dbl_nonO; }
-					break;
-				case TripleBond:
-					saturated = false;
-					break;
-				case AromaticBond:
-					saturated = false;
-					if ( t_element != "O" ) { ++num_aro_nonO; }
-					if ( t_element == "N" ) { ++num_aro_N; } // really if, not else if
-					break;
-				default:
-					break;
+					case SingleBond:
+						if( t_element == "H" ) { ++num_H; }
+						break;
+					case DoubleBond:
+						saturated = false;
+						if ( t_element != "O" ) { ++num_dbl_nonO; }
+						break;
+					case TripleBond:
+						saturated = false;
+						break;
+					case AromaticBond:
+						saturated = false;
+						if ( t_element != "O" ) { ++num_aro_nonO; }
+						if ( t_element == "N" ) { ++num_aro_N; } // really if, not else if
+						break;
+					default:
+						break;
 				}
 			}
 			if( saturated ) {
@@ -3134,6 +3214,7 @@ ResidueType::select_orient_atoms(
 }
 
 /// @brief A graph-based function to determine the size of the smallest ring that involves a given atom.
+
 core::Size
 ResidueType::smallest_ring_size( VD const & atom, core::Size const & max_size /*= 999999*/ ) const
 {

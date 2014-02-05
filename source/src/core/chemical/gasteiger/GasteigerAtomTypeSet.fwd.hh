@@ -7,26 +7,28 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/core/chemical/AtomTypeSet.fwd.hh
-/// @author Ian W. Davis
+/// @file src/core/chemical/gasteiger/GasteigerAtomTypeSet.fwd.hh
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 
-#ifndef INCLUDED_core_chemical_CSDAtomTypeSet_fwd_hh
-#define INCLUDED_core_chemical_CSDAtomTypeSet_fwd_hh
+#ifndef INCLUDED_core_chemical_gasteiger_GasteigerAtomTypeSet_fwd_hh
+#define INCLUDED_core_chemical_gasteiger_GasteigerAtomTypeSet_fwd_hh
 
 #include <utility/pointer/access_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace core {
 namespace chemical {
+namespace gasteiger {
 
-class CSDAtomTypeSet;
+class GasteigerAtomTypeSet;
 
-typedef  utility::pointer::access_ptr< CSDAtomTypeSet > CSDAtomTypeSetAP;
-typedef  utility::pointer::access_ptr< CSDAtomTypeSet const > CSDAtomTypeSetCAP;
-typedef  utility::pointer::owning_ptr< CSDAtomTypeSet > CSDAtomTypeSetOP;
-typedef  utility::pointer::owning_ptr< CSDAtomTypeSet const > CSDAtomTypeSetCOP;
+typedef  utility::pointer::access_ptr< GasteigerAtomTypeSet > GasteigerAtomTypeSetAP;
+typedef  utility::pointer::access_ptr< GasteigerAtomTypeSet const > GasteigerAtomTypeSetCAP;
+typedef  utility::pointer::owning_ptr< GasteigerAtomTypeSet > GasteigerAtomTypeSetOP;
+typedef  utility::pointer::owning_ptr< GasteigerAtomTypeSet const > GasteigerAtomTypeSetCOP;
 
+}
 }
 }
 

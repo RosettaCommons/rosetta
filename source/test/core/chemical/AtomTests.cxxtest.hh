@@ -19,6 +19,7 @@
 // Unit Headers
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/Atom.hh>
+#include <core/chemical/Element.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -57,7 +58,8 @@ public:
 	void test_atom_initialization() {
 
 		Vector xyz(1,2,3);
-		Atom atom ("test", "mm_test", 1, 2, 1, xyz);
+		core::chemical::ElementOP element;
+		Atom atom ("test", "mm_test", 1, 2, element, 1, xyz);
 
  		TS_ASSERT_EQUALS("test", atom.name());
  		TS_ASSERT_EQUALS("mm_test", atom.mm_name());

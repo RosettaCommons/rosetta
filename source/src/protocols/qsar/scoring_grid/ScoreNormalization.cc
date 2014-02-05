@@ -89,14 +89,14 @@ core::Real MolecularWeightNormalization::operator()(core::Real const & input_sco
 	core::Real total_mass = 0.0;
 	for(core::Size i = 1; i <= residues.size(); ++i)
 	{
-		total_mass += residues[i]->type().molar_mass();
+		total_mass += residues[i]->type().mass();
 	}
 	return input_score/total_mass;
 }
 
 core::Real MolecularWeightNormalization::operator()(core::Real const & input_score, core::conformation::Residue const & residue)
 {
-	return input_score/residue.type().molar_mass();
+	return input_score/residue.type().mass();
 }
 
 

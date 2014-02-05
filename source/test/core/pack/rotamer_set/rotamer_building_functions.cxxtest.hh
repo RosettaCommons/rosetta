@@ -71,7 +71,7 @@ public:
  		// Instantiate default chemical type sets.
 		ResidueTypeSet & res_type_set = ChemicalManager::get_instance()->nonconst_residue_type_set("fa_standard");
 		AtomTypeSetCAP atom_type_set = ChemicalManager::get_instance()->atom_type_set("fa_standard");
-		ElementSetCAP element_set = ChemicalManager::get_instance()->element_set("fa_standard");
+		ElementSetCAP element_set = ChemicalManager::get_instance()->element_set("default");
 		MMAtomTypeSetCAP mm_atom_type_set = ChemicalManager::get_instance()->mm_atom_type_set("fa_standard");
 		OrbitalTypeSetCAP orbital_type_set = ChemicalManager::get_instance()->orbital_type_set("fa_standard");
 

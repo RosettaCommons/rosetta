@@ -7,20 +7,28 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @author P. Douglas Renfrew (renfrew@unc.edu)
+/// @file   core/chemical/ElmentType.fwd.hh
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 
 #ifndef INCLUDED_core_chemical_Element_fwd_hh
 #define INCLUDED_core_chemical_Element_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
+
 namespace core {
 namespace chemical {
 
+
 class Element;
+
+typedef  utility::pointer::owning_ptr< Element >  ElementOP;
+typedef  utility::pointer::owning_ptr< Element const >  ElementCOP;
+
+
 } // chemical
 } // core
 
 
 
-#endif // INCLUDED_core_chemical_Element_HH
+#endif // INCLUDED_core_chemical_Atom_FWD_HH

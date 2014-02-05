@@ -34,6 +34,8 @@
 // Rosetta headers
 #include <core/chemical/Atom.hh>
 
+#include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
+
 // Utility headers
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
@@ -44,6 +46,93 @@
 namespace core {
 namespace chemical {
 
+Atom::Atom():
+		name_(""),
+		mm_name_(""),
+		atom_type_index_(0),
+		mm_atom_type_index_(0),
+		element_(0),
+		gasteiger_atom_type_(0),
+		formal_charge_(0),
+		charge_(0),
+		ideal_xyz_(),
+		is_acceptor_(0),
+		is_polar_hydrogen_(0),
+		is_hydrogen_(0),
+		is_haro_(0),
+		is_virtual_(0),
+		has_orbitals_(0)
+{}
+
+Atom::Atom(
+		std::string const & name_in,
+		std::string const mm_name,
+		Size const atom_type_index,
+		Size const mm_atom_type_index,
+		ElementCOP element,
+		Real const charge,
+		Vector const ideal_xyz
+
+):
+	name_( name_in ),
+	mm_name_(mm_name),
+	atom_type_index_(atom_type_index),
+	mm_atom_type_index_(mm_atom_type_index),
+	element_(element),
+	gasteiger_atom_type_(0),
+	formal_charge_(0),
+	charge_(charge),
+	ideal_xyz_(ideal_xyz)
+{}
+
+Atom::Atom(Atom const & src) :
+	name_( src.name_ ),
+	mm_name_(src.mm_name_),
+	atom_type_index_(src.atom_type_index_),
+	mm_atom_type_index_(src.mm_atom_type_index_),
+	element_(src.element_),
+	gasteiger_atom_type_(src.gasteiger_atom_type_),
+	formal_charge_(src.formal_charge_),
+	charge_(src.charge_),
+	ideal_xyz_(src.ideal_xyz_),
+	heavyatom_has_polar_hydrogens_(0),
+	is_acceptor_(0),
+	is_polar_hydrogen_(0),
+	is_hydrogen_(0),
+	is_haro_(0),
+	is_virtual_(0),
+	has_orbitals_(0),
+	bonded_orbitals_()
+{}
+
+Atom::~Atom(){}
+
+//because you have an owning pointer in private member data, you need to implement an = operator
+Atom & Atom::operator =(Atom const & rhs){
+	name_= rhs.name_;
+	mm_name_ = rhs.mm_name_;
+	atom_type_index_ = rhs.atom_type_index_;
+	mm_atom_type_index_ = rhs.mm_atom_type_index_;
+	element_ = rhs.element_;
+	formal_charge_ = rhs.formal_charge_;
+	charge_ = rhs.charge_;
+	ideal_xyz_ = rhs.ideal_xyz_;
+	gasteiger_atom_type_ = rhs.gasteiger_atom_type_;
+	heavyatom_has_polar_hydrogens_ = rhs.heavyatom_has_polar_hydrogens_;
+	is_acceptor_ = rhs.is_acceptor_;
+	is_polar_hydrogen_ = rhs.is_polar_hydrogen_;
+	is_hydrogen_ = rhs.is_hydrogen_;
+	is_haro_ = rhs.is_haro_;
+	is_virtual_ = rhs.is_virtual_;
+	has_orbitals_ = rhs.has_orbitals_;
+	bonded_orbitals_ = rhs.bonded_orbitals_;
+	return *this;
+}
+
+gasteiger::GasteigerAtomTypeDataCOP Atom::gasteiger_atom_type() const { return gasteiger_atom_type_; }
+
+void Atom::gasteiger_atom_type( core::chemical::gasteiger::GasteigerAtomTypeDataCOP gasteiger_atom_type ) { gasteiger_atom_type_ = gasteiger_atom_type; }
+
 void
 Atom::print(
 	std::ostream & out
@@ -53,11 +142,15 @@ Atom::print(
 	out << "MM Name: " << mm_name() << std::endl;
 	out << "atom_type_index: " << atom_type_index() << std::endl;
 	out << "mm_atom_type_index: " << mm_atom_type_index() << std::endl;
+	if( gasteiger_atom_type() ) {
+		out << "gasteiger_atom_type: " << gasteiger_atom_type()->get_name() << std::endl;
+	} else {
+		out << "gasteiger_atom_type: (None)" << std::endl;
+	}
 	out << "charge: " << charge() << std::endl;
-	//out << "xyz: " << xyz() << std::endl;
-	//out << "icoor: " << icoor() << std::endl;
 	out << std::endl;
 }
+
 
 std::ostream &
 operator<< (std::ostream & out, Atom const & atom ){

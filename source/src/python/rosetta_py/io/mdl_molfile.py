@@ -95,6 +95,7 @@ class Atom:
         self.is_ring = False
         self.ring_size = 0
         self.partial_charge = None
+        self.formal_charge = 0
 
     def copy(self):
         '''Return a semi-shallow copy of this Atom, with bonds[] and heavy_bonds[] set to empty lists.'''
@@ -219,6 +220,17 @@ def file_or_filename(func):
     g.__dict__.update(func.__dict__)
     return g
 
+def assign_mdl_charges(line, atoms):
+    '''Assigns formal charges based on the MDL M  CHG line.'''
+    nentries = int(line[6:9])
+    line = line[9:].split()
+    if( nentries*2 != len(line) ):
+        print "Warning: Malformed charge line. Ignoring."
+        return
+    for i in range(nentries):
+        atom = int(line[2*i]);
+        charge = int(line[2*i + 1])
+        atoms[atom-1].formal_charge = charge # 1 based to zero-based indexing
 
 def read_mdl_molfile(f, do_find_rings=True):
     '''Reads a molfile and returns a Molfile object.
@@ -267,9 +279,31 @@ def read_mdl_molfile(f, do_find_rings=True):
         line = f.readline()
         if line == "" or line.startswith("$$$$"): break
         elif line.startswith("M  END"): continue
-        molfile.footer.append(line)
+        elif line.startswith("M  CHG"):
+            assign_mdl_charges(line, atoms)
+        else:
+            molfile.footer.append(line)
     if do_find_rings: find_rings(bonds)
     return molfile
+
+def write_mdl_charges(f, molfile, atom_idx):
+    charged_atoms = []
+    for a in molfile.atoms:
+        if a.formal_charge != 0:
+            charged_atoms.append(a)
+    # CHG lines can only have a maximum of 8 atoms
+    b = 0
+    e = 8
+    while b < len(charged_atoms):
+        end = min(e, len(charged_atoms) )
+        nentries = end-b
+        assert nentries <= 8
+        f.write("M  CHG%3d" % nentries)
+        for n in range(b,end):
+            f.write(" %3d %3d" % (atom_idx[charged_atoms[n]], charged_atoms[n].formal_charge) )
+        f.write("\n")
+        b += 8
+        e += 8
 
 def write_mdl_molfile(f, molfile):
     '''Writes a Molfile object to a file.
@@ -300,6 +334,7 @@ def write_mdl_molfile(f, molfile):
     for b in molfile.bonds:
         # For now we discard the rest of the fields, so just make them zeros
         f.write("%3i%3i%3i  0  0  0  0\n" % (atom_idx[b.a1], atom_idx[b.a2], b.order))
+    write_mdl_charges(f, molfile, atom_idx)
     f.writelines(molfile.footer)
     f.write("M  END\n")
     f.flush() # close() ruins StringIO objects!

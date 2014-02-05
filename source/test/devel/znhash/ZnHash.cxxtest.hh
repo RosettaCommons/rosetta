@@ -96,7 +96,7 @@ public:
 			core::chemical::ResidueTypeOP znx_restype = read_topology_file(
 				"devel/znhash/ZNX.params",
 				core::chemical::ChemicalManager::get_instance()->atom_type_set( core::chemical::FA_STANDARD ),
-				core::chemical::ChemicalManager::get_instance()->element_set( core::chemical::FA_STANDARD ),
+				core::chemical::ChemicalManager::get_instance()->element_set( "default" ),
 				core::chemical::ChemicalManager::get_instance()->mm_atom_type_set( core::chemical::FA_STANDARD ),
 				core::chemical::ChemicalManager::get_instance()->orbital_type_set( core::chemical::FA_STANDARD ),
 				core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )

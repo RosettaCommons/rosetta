@@ -1,0 +1,190 @@
+# This is the standard atom type data for the BCL (Biochemical Library)
+#
+# Values were derived from the BCL atom type initializers 
+# on 18-Oct-2013 by Rocco Moretti using apps/pilot/rmoretti/bootstrap_bcl_types.cc
+#
+# File format (space separated)
+# * atom type name (Gasteiger)
+# * element symbol
+# * hybridization (numeric: 0=Unhybridized, 1=SP, 2=SP2, 3=SP3 )
+# * number of hybrid orbitals in sigma binding
+# * number of hybrid orbitals not in binding (e.g. empty or lone pairs)
+# * set of orbitals in pi bonding
+#      starts with "pi", then the set of orbitals
+#      0=S 1=Px, 2=Py, 3=Pz, 4=Dxy, 5=Dxz, 6=Dyz, 7=Dz2, 8=Dx2y2
+#      no numbers means an empty set
+# * set of orbitals not in bonding
+#      similar to pi bonding, but with "nb" instead of "pi"
+# * ionization potential of the sigma valence state
+# * electron affinity of the sigma valence state
+# * ionization potential of the pi valence state
+# * electron affinity of the pi valence state
+# * ionization potential of the lone pair
+# * electron affinity of the lone pair
+# * additive atomic polarizability
+#
+# If any of the last 7 properties are unknown or undefined, 
+# it can be represented with the string "nan"
+#
+#
+H_S H 0 0 0 pi0 nb 13.6 0.75 nan nan nan nan 0.387 
+Li_S Li 0 0 0 pi0 nb 5.39 0.82 nan nan nan nan nan 
+Li_P Li 0 0 0 pi1 nb 3.54 0.56 nan nan nan nan nan 
+Be_SP Be 0 0 0 pi01 nb 9.92 3.18 5.96 0.11 nan nan nan 
+Be_PP Be 0 0 0 pi12 nb nan nan 6.11 0.76 nan nan nan 
+Be_DiDi Be 1 2 0 pi nb 8.58 0.99 nan nan nan nan nan 
+Be_DiPi Be 1 1 0 pi2 nb 8.02 0.92 6.04 0.43 nan nan nan 
+Be_TrTr Be 2 2 0 pi nb 7.61 0.59 nan nan nan nan nan 
+Be_TrPi Be 2 1 0 pi3 nb 7.38 0.63 6.06 0.54 nan nan nan 
+Be_TeTe Be 3 2 0 pi nb 7.18 0.51 nan nan nan nan nan 
+B_SPP B 0 0 0 pi012 nb 14.91 5.7 8.42 0.32 nan nan nan 
+B_PPP B 0 0 0 pi123 nb 8.4 3.46 nan nan nan nan nan 
+B_DiDiPi B 1 2 0 pi3 nb 12.55 2.12 8.23 0.44 nan nan nan 
+B_DiPiPi B 1 1 0 pi23 nb 11.66 2.56 8.41 1.89 nan nan nan 
+B_TrTrTr B 2 3 0 pi nb 11.29 1.38 nan nan nan nan nan 
+B_TrTrPi B 2 2 0 pi3 nb 10.97 1.87 8.33 1.42 nan nan nan 
+B_TeTeTe B 3 3 0 pi nb 10.43 1.53 nan nan nan nan nan 
+C_SPPP C 0 0 0 pi0123 nb 21.01 8.91 11.27 0.34 nan nan nan 
+C_DiDiPiPi C 1 2 0 pi23 nb 17.42 3.34 11.19 0.1 nan nan 1.283 
+C_TrTrTrPi C 2 3 0 pi3 nb 15.62 1.95 11.16 0.03 nan nan 1.352 
+C_TeTeTeTe C 3 4 0 pi nb 14.61 1.34 nan nan nan nan 1.061 
+N_S2PPP N 0 0 0 pi123 nb0 nan nan 13.94 0.84 nan nan nan 
+N_SP2PP N 0 0 0 pi023 nb1 26.92 14.05 14.42 2.54 nan nan nan 
+N_Di2DiPiPi N 1 1 1 pi23 nb 23.91 7.45 14.18 1.66 37.024 17.254 0.956 
+N_DiDiPi2Pi N 1 2 0 pi3 nb1 22.1 6.84 14.11 2.14 nan nan 1.012 
+N_Tr2TrTrPi N 2 2 1 pi3 nb 20.6 5.14 14.12 1.78 34.645 15.107 1.03 
+N_TrTrTrPi2 N 2 3 0 pi nb1 19.72 4.92 nan nan nan nan 1.09 
+N_Te2TeTeTe N 3 3 1 pi nb 18.93 4.15 nan nan 33.313 14.153 0.964 
+O_S2P2PP O 0 0 0 pi12 nb03 17.28 2.01 nan nan nan nan nan 
+O_SP2P2P O 0 0 0 pi01 nb23 36.07 18.44 18.53 3.4 nan nan nan 
+O_Di2Di2PiPi O 1 0 2 pi23 nb nan nan 17.28 2.01 nan nan nan 
+O_Di2DiPi2Pi O 1 1 1 pi3 nb2 30.17 10.23 17.91 2.71 nan nan 0.569 
+O_DiDiPi2Pi2 O 1 2 0 pi nb23 28.71 9.51 nan nan nan nan 0.637 
+O_Tr2Tr2TrPi O 2 1 2 pi3 nb 26.65 7.49 17.7 2.47 42.534 20.154 0.569 
+O_Tr2TrTrPi2 O 2 2 1 pi nb3 26.14 7.32 nan nan nan nan 0.274 
+O_Te2Te2TeTe O 3 2 2 pi nb 24.39 6.11 nan nan 40.358 18.708 0.637 
+F_S2P2P2P F 0 0 0 pi3 nb012 20.86 3.5 nan nan 26.368 13.378 0.296 
+F_SP2P2P2 F 0 0 0 pi0 nb123 38.24 24.37 nan nan 26.368 13.378 0.296 
+Na_S Na 0 0 0 pi0 nb 5.14 0.47 nan nan nan nan nan 
+Na_P Na 0 0 0 pi1 nb 3.04 0.09 nan nan nan nan nan 
+Mg_SP Mg 0 0 0 pi01 nb 8.95 2.8 4.52 0.06 nan nan nan 
+Mg_PP Mg 0 0 0 pi12 nb 5.65 0.01 nan nan nan nan nan 
+Mg_DiDi Mg 1 2 0 pi nb 7.1 1.08 nan nan nan nan nan 
+Mg_DiPi Mg 1 1 0 pi3 nb 7.3 0.78 5.09 0.03 nan nan nan 
+Mg_TrTr Mg 2 2 0 pi nb 6.54 0.52 nan nan nan nan nan 
+Mg_TrPi Mg 2 1 0 pi3 nb 6.75 0.38 5.27 0.02 nan nan nan 
+Mg_TeTe Mg 3 2 0 pi nb 6.28 0.32 nan nan nan nan nan 
+Al_SPP Al 0 0 0 pi012 nb 12.27 4.92 6.47 1.37 nan nan nan 
+Al_PPP Al 0 0 0 pi123 nb 6.5 4.89 nan nan nan nan nan 
+Al_DiDiPi Al 1 2 0 pi3 nb 9.91 2.61 6.36 1.45 nan nan nan 
+Al_DiPiPi Al 1 1 0 pi23 nb 9.39 3.66 6.49 3.13 nan nan nan 
+Al_TrTrTr Al 2 3 0 pi nb 8.83 2.11 nan nan nan nan nan 
+Al_TrTrPi Al 2 2 0 pi3 nb 8.65 2.94 6.43 2.58 nan nan nan 
+Al_TeTeTe Al 3 3 0 pi nb 8.17 2.58 nan nan nan nan nan 
+Si_SPPP Si 0 0 0 pi0123 nb 17.31 6.94 9.19 2.82 nan nan nan 
+Si_DiDiPiPi Si 1 2 0 pi23 nb 14.06 4.07 9.18 2.2 nan nan nan 
+Si_TrTrTrPi Si 2 3 0 pi3 nb 12.61 3.2 9.17 2 nan nan nan 
+Si_TeTeTeTe Si 3 4 0 pi nb 11.82 2.78 nan nan nan nan nan 
+P_S2PPP P 0 0 0 pi123 nb0 nan nan 10.73 1.42 31.172 18.612 nan 
+P_SP2PP P 0 0 0 pi023 nb1 20.2 8.48 12.49 1.98 nan nan nan 
+P_Di2DiPiPi P 1 1 1 pi23 nb 17.53 4.95 11.61 1.68 nan nan 1.525 
+P_DiDiPi2Pi P 1 2 0 pi3 nb1 16.78 4.77 11.89 2.02 nan nan nan 
+P_Tr2TrTrPi P 2 2 1 pi3 nb 15.59 3.74 11.64 1.8 nan nan 1.643 
+P_TrTrTrPi2 P 2 3 0 pi nb1 15.18 3.76 nan nan nan nan 1.739 
+P_Te2TeTeTe P 3 3 1 pi nb 14.57 3.24 nan nan 24.041 12.095 1.538 
+S_S2P2PP S 0 0 0 pi12 nb03 12.39 2.38 nan nan 22.977 11.053 nan 
+S_SP2P2P S 0 0 0 pi01 nb23 20.08 11.54 13.32 3.5 nan nan nan 
+S_Di2Di2PiPi S 1 0 2 pi23 nb nan nan 12.39 2.38 nan nan nan 
+S_Di2DiPi2Pi S 1 1 1 pi3 nb2 17.78 6.96 12.86 2.94 nan nan 3.729 
+S_DiDiPi2Pi2 S 1 2 0 pi nb23 17.42 6.8 nan nan nan nan nan 
+S_Tr2Tr2TrPi S 2 1 2 pi3 nb 16.33 5.43 12.7 2.76 nan nan 3.729 
+S_Tr2TrTrPi2 S 2 2 1 pi nb3 16.27 5.49 nan nan nan nan 2.7 
+S_Te2Te2TeTe S 3 2 2 pi nb 15.5 4.77 nan nan 27.728 13.638 3 
+Cl_S2P2P2P Cl 0 0 0 pi3 nb012 15.03 3.73 nan nan 26.368 13.378 2.315 
+Cl_SP2P2P2 Cl 0 0 0 pi0 nb123 24.02 14.45 nan nan 26.368 13.378 2.315 
+K_S K 0 0 0 pi0 nb 4.341 1.95 nan nan nan nan nan 
+K_P K 0 0 0 pi1 nb 2.7 1.195 nan nan nan nan nan 
+Be_S Be 0 0 0 pi0 nb 18.21 9.32 nan nan nan nan nan 
+Be_P Be 0 0 0 pi1 nb nan nan 14.25 5.32 nan nan nan 
+B_SP B 0 0 0 pi01 nb 25.4 14.05 19.4 7.38 nan nan nan 
+B_PP B 0 0 0 pi12 nb 18.91 7.37 nan nan nan nan nan 
+B_DiDi B 1 2 0 pi nb 23.48 9.64 nan nan nan nan nan 
+B_DiPi B 1 1 0 pi2 nb 22.16 8.94 19.16 7.37 nan nan nan 
+B_TrTr B 2 2 0 pi nb 21.72 8.33 nan nan nan nan nan 
+B_TrPi B 2 1 0 pi3 nb 21.08 8.02 19.08 7.37 nan nan nan 
+B_TeTe B 3 2 0 pi nb 20.93 7.88 nan nan nan nan nan 
+C_SPP C 0 0 0 pi012 nb 33.03 19.42 23.93 9.91 nan nan nan 
+C_PPP C 0 0 0 pi123 nb nan nan 23.29 11.65 nan nan nan 
+C_DiDiPi C 1 2 0 pi2 nb 29.85 13.29 23.86 9.83 nan nan nan 
+C_DiPiPi C 1 1 0 pi23 nb 28.16 12.96 23.61 10.78 nan nan nan 
+C_TrTrTr C 2 3 0 pi nb 28.14 11.83 nan nan nan nan nan 
+C_TrTrPi C 2 2 0 pi3 nb 27.36 11.91 23.68 10.45 nan nan nan 
+C_TeTeTe C 3 3 0 pi nb 26.71 11.37 nan nan nan nan nan 
+N_SPPP N 0 0 0 pi0123 nb 41.84 25.59 28.69 12.48 nan nan nan 
+N_DiDiPiPi N 1 2 0 pi23 nb 37 17.24 28.7 12.06 nan nan nan 
+N_TrTrTrPi N 2 3 0 pi3 nb 34.62 15.09 28.71 11.96 nan nan nan 
+N_TeTeTeTe N 3 4 0 pi nb 33.29 14.14 nan nan nan nan nan 
+O_S2PPP O 0 0 0 pi123 nb0 nan nan 34.15 14.61 nan nan nan 
+O_SP2PP O 0 0 0 pi012 nb3 51.41 32.29 34.22 15.86 nan nan nan 
+O_Di2DiPiPi O 1 1 1 pi23 nb 46.8 23.45 34.19 15.24 nan nan nan 
+O_DiDiPi2Pi O 1 2 0 pi3 nb2 44.56 22.34 33.95 15.53 nan nan nan 
+O_Tr2TrTrPi O 2 2 1 pi3 nb 42.49 20.15 34.08 15.3 nan nan nan 
+O_TrTrTrPi2 O 2 3 0 pi nb3 41.39 19.64 nan nan nan nan nan 
+O_Te2TeTeTe O 3 3 1 pi nb 40.31 18.7 nan nan nan nan nan 
+Mg_S Mg 0 0 0 pi0 nb 15.03 7.64 nan nan nan nan nan 
+Mg_P Mg 0 0 0 pi1 nb nan nan 10.6 4.67 nan nan nan 
+Al_SP Al 0 0 0 pi01 nb 20.15 11.32 13.48 5.99 nan nan nan 
+Al_PP Al 0 0 0 pi12 nb nan nan 14.34 6.03 nan nan nan 
+Al_DiDi Al 1 2 0 pi nb 17.47 8 nan nan nan nan nan 
+Al_DiPi Al 1 1 0 pi2 nb 17.25 7.59 13.92 6 nan nan nan 
+Al_TrTr Al 2 2 0 pi nb 16.28 7.01 nan nan nan nan nan 
+Al_TrPi Al 2 1 0 pi3 nb 16.28 6.74 14.06 5.92 nan nan nan 
+Al_TeTe Al 3 2 0 pi nb 15.75 6.64 nan nan nan nan nan 
+Si_SPP Si 0 0 0 pi012 nb 24.68 14.93 16.56 8.61 nan nan nan 
+Si_PPP Si 0 0 0 pi123 nb nan nan 16.56 11.42 nan nan nan 
+Si_DiDiPi Si 1 2 0 pi2 nb 21.43 10.95 16.5 8.6 nan nan nan 
+Si_DiPiPi Si 1 1 0 pi23 nb 20.62 11.56 16.55 10.02 nan nan nan 
+Si_TrTrTr Si 2 3 0 pi nb 19.96 9.99 nan nan nan nan nan 
+Si_TrTrPi Si 2 2 0 pi3 nb 19.62 10.57 16.53 9.54 nan nan nan 
+Si_TeTeTe Si 3 3 0 pi nb 18.97 10.08 nan nan nan nan nan 
+P_SPPP P 0 0 0 pi0123 nb 31.24 18.61 20.72 11.55 nan nan nan 
+P_DiDiPiPi P 1 2 0 pi23 nb 27.01 14.05 20.69 10.96 nan nan nan 
+P_TrTrTrPi P 2 3 0 pi3 nb 25.14 12.72 20.68 10.76 nan nan nan 
+P_TeTeTeTe P 3 4 0 pi nb 24.1 12.09 nan nan nan nan nan 
+S_S2PPP S 0 0 0 pi123 nb0 nan nan 22.91 11.05 nan nan nan 
+S_SP2PP S 0 0 0 pi012 nb3 35.18 21.13 24.49 11.98 nan nan nan 
+S_Di2DiPiPi S 1 1 1 pi23 nb 31.57 16.09 23.7 11.51 nan nan nan 
+S_DiDiPi2Pi S 1 2 0 pi3 nb2 30.61 15.78 24 11.92 nan nan nan 
+S_Tr2TrTrPi S 2 2 1 pi3 nb 28.99 14.38 23.74 11.65 nan nan nan 
+S_TrTrTrPi2 S 2 3 0 pi nb3 28.51 14.33 nan nan nan nan nan 
+S_Te2TeTeTe S 3 3 1 pi nb 27.65 13.64 nan nan nan nan nan 
+O_Te2Te2Te2Te O 3 1 3 pi nb 6.11 0 nan nan nan nan nan 
+P_TeTeTeTePi P 3 4 0 pi3 nb 17.704 5.694 5.385 -0.015 nan nan 1.523 
+S_TeTeTeTePiPi S 3 4 0 pi23 nb 20.59 6.69 5.39 -2.85 nan nan nan 
+Br_SP2P2P2 Br 0 0 0 pi0 nb123 22.081 14.315 nan nan 26.368 13.378 3.013 
+Br_S2P2P2P Br 0 0 0 pi3 nb012 13.108 3.516 nan nan 26.368 13.378 3.013 
+I_SP2P2P2 I 0 0 0 pi0 nb123 18.01 13.23 nan nan 26.368 13.378 5.415 
+I_S2P2P2P I 0 0 0 pi3 nb012 12.677 3.375 nan nan 26.368 13.378 5.415 
+Se_Te2Te2TeTe Se 3 2 2 pi nb 20.908 10.469 nan nan nan nan nan 
+S_Te2TeTeTePi S 3 3 1 pi3 nb 18.136 5.708 2.283 -4.393 nan nan nan 
+N_TrTrTrPi2Pi N 2 3 0 pi3 nb2 nan nan nan nan nan nan nan 
+Sn_TeTeTeTe Sn 3 4 0 pi nb 10.4 5.39 nan nan nan nan nan 
+Ge_TeTeTeTe Ge 3 4 0 pi nb 11.48 4.66 nan nan nan nan nan 
+B_TeTeTeTe B 3 4 0 pi nb 1.53 0 nan nan nan nan nan 
+B_TrTrTrPi B 2 3 0 pi3 nb 1.87 0 nan nan nan nan nan 
+Cl_S2P2P2P2 Cl 0 0 0 pi nb0123 14.45 0 nan nan nan nan nan 
+Se_Di2DiPi2Pi Se 1 1 1 pi3 nb2 17.29 6.44 13.06 2.28 nan nan nan 
+Te_Te2Te2TeTe Te 3 2 2 pi nb 15.11 4.2 nan nan nan nan nan 
+I_S2P2P2P2 I 0 0 0 pi nb0123 13.38 0 nan nan 26.368 13.378 5.573 
+As_Te2TeTeTe As 3 3 1 pi nb 12.8 3.81 nan nan nan nan nan 
+N_TrTrTrPiPi N 2 3 0 pi23 nb nan nan nan nan nan nan nan 
+P_TrTrTrPiPi P 2 3 0 pi23 nb nan nan nan nan nan nan nan 
+N_TeTeTeTePi N 3 4 0 pi3 nb nan nan nan nan nan nan nan 
+N_DiDiPi2Pi2 N 1 2 0 pi nb23 nan nan nan nan nan nan nan 
+N_Di2DiPi2Pi N 1 1 1 pi3 nb2 nan nan nan nan nan nan nan 
+N_Tr2TrTrPi2 N 2 2 1 pi nb3 nan nan nan nan nan nan nan 
+N_Te2Te2TeTe N 3 2 2 pi nb nan nan nan nan nan nan nan 
+H_ H 0 0 0 pi nb 27.2 13.6 nan nan nan nan nan 
+Li_ Li 0 0 0 pi nb 10.78 5.39 nan nan nan nan nan 
+Na_ Na 0 0 0 pi nb 10.28 5.14 nan nan nan nan nan 
+K_ K 0 0 0 pi nb 8.682 4.341 nan nan nan nan nan 

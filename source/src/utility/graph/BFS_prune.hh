@@ -159,31 +159,32 @@ void breadth_first_search_prune
 class null_bfs_prune_visitor {
 public:
 	template <class Vertex, class Graph>
-	bool initialize_vertex(Vertex, Graph&) { return false; }
+	bool initialize_vertex(Vertex, Graph& ) { return false; }
 
 	template <class Vertex, class Graph>
-	bool discover_vertex(Vertex, Graph&) { return false; }
+	bool discover_vertex(Vertex , Graph& ) { return false; }
 
 	template <class Vertex, class Graph>
-	bool examine_vertex(Vertex, Graph&) { return false; }
+	bool examine_vertex(Vertex , Graph& ) { return false; }
 
 	template <class Edge, class Graph>
-	bool examine_edge(Edge, Graph&) { return false; }
+	bool examine_edge(Edge , Graph& ) { return false; }
 
 	template <class Edge, class Graph>
-	bool tree_edge(Edge, Graph&) { return false; }
+	bool tree_edge(Edge , Graph& ) { return false; }
 
 	template <class Edge, class Graph>
-	bool non_tree_edge(Edge, Graph&) { return false; }
+	bool non_tree_edge(Edge , Graph& ) { return false; }
 
 	template <class Edge, class Graph>
-	bool gray_target(Edge, Graph&) { return false; }
+	bool gray_target(Edge , Graph& ) { return false; }
 
 	template <class Edge, class Graph>
-	bool black_target(Edge, Graph&) { return false; }
+	bool black_target(Edge , Graph& ) { return false; }
 
 	template <class Vertex, class Graph>
-	bool finish_vertex(Vertex, Graph&) { return false; }
+	bool finish_vertex(Vertex , Graph& ) { return false; }
+
 };
 
 } // namespace graph

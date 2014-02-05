@@ -134,7 +134,7 @@ public:
 		// minirosett_database/chemical/atom_type_sets/<tag>
 		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
 		// minirosetta_database/chemical/element_sets/<tag>
-		ElementSetCAP element_types = cm->element_set(tag);
+		ElementSetCAP element_types = cm->element_set("default");
 		// minirosetta_database/chemical/mm_atom_type_sets/<tag>
 		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
 		// minirosetta_database/chemical/orbital_type_sets/<tag>
@@ -320,7 +320,7 @@ public:
 		ChemicalManager * cm(ChemicalManager::get_instance());
 		string const tag(FA_STANDARD);
 		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
-		ElementSetCAP element_types = cm->element_set(tag);
+		ElementSetCAP element_types = cm->element_set("default");
 		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
 		OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
 		ResidueTypeSet rsd_types;

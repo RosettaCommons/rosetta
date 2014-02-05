@@ -1,0 +1,373 @@
+# This is the standard atom type data for the BCL (Biochemical Library)
+#
+# Values were derived from the BCL atom type initializers 
+# on 18-Oct-2013 by Rocco Moretti using apps/pilot/rmoretti/bootstrap_bcl_types.cc
+#
+# File format (whitespace separated, three consecutive lines per element)
+# >> First line (General properties)
+# * constant string "Element:"
+# * element symbol
+# * element name (currently American English conventions)
+# * atomic number
+# * period (periodic table row)
+# * group (periodic table column) - 
+#      currently only for the s&p block, using numbers 1-8, 
+#      like the old Roman numeral group system without the letters
+#      Transition (d block) and f block metals get "0"
+# * constant value of '8' (number of following properties)
+# * molecular mass (isotopically averaged)
+# * gyromagnetic ratio
+# * covalent radius
+# * VdW radius
+# * melting point of plain element in natural form
+# * boiling point of plain element in natural form
+# * electronegativity
+# * first ionization potential
+# * Pymol color, red component (0.0 - 1.0)
+# * Pymol color, green component (0.0 - 1.0)
+# * Pymol color, blue component (0.0 - 1.0)
+# >> Second line (Electron configuration properties)
+# * constant string "ElectronConfiguration:"
+# * valence electrons in S & P orbitals
+# * valence electrons in S, P & D orbitals
+# ** 28 values listing the number of electrons in 1S, 1P, 1D, 1F, 2S, 2P ... orbitals
+# >> Third line (Element structure factor properties)  
+# * constant string "ElementStructureFactor:"
+# ** 4 values: Crommer Mann coefficients A1, A2, A3, A4
+# ** 4 values: Crommer Mann coefficients B1, B2, B3, B4
+# * Crommer Mann coefficient C
+# * volume of solvent scattering due to atom (A^3)
+#
+# For unknown or inapplicable values all of the electron configuration, 
+# all of the element structure factor,
+# and most of the general properties (except atomic number and pymol color) use: "nan"
+#
+#
+Element: H Hydrogen 1 1 1 8 1.01 2.6751e+08 0.32 1.2 14.03 20.27 2.2 13.6 0.9 0.9 0.9 
+    ElectronConfiguration: 1 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 0.493002 0.322912 0.140191 0.04081 10.5109 26.1257 3.14236 57.7997 0.003038 5.1495 
+Element: He Helium 2 1 8 8 4 2.0378e+08 0.93 1.22 0.95 4.22 nan 24.59 0.85098 1 1 
+    ElectronConfiguration: 2 2 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 0.8734 0.6309 0.3112 0.178 9.1037 3.3568 22.9276 0.9821 0.064 nan 
+Element: Li Lithium 3 2 1 8 6.94 1.0396e+08 1.23 1.52 453.7 1615 1 5.39 0.8 0.501961 1 
+    ElectronConfiguration: 1 1 1 2 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 1.1282 0.7508 0.6175 0.4653 3.9546 1.0524 85.3905 168.261 0.0377 nan 
+Element: Be Beryllium 4 2 2 8 9.01 3.759e+07 0.9 1.7 1551 3243 1.6 9.32 0.760784 1 0 
+    ElectronConfiguration: 2 2 1 2 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 1.5919 1.1278 0.5391 0.7029 43.6427 1.8623 103.483 0.542 0.0385 nan 
+Element: B Boron 5 2 3 8 10.81 8.5796e+07 0.82 2.08 2573 4275 2 8.3 1 0.709804 0.709804 
+    ElectronConfiguration: 3 3 1 2 0 0 0 2 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 2.0545 1.3326 1.0979 0.7068 23.2185 1.021 60.3498 0.1403 -0.1932 nan 
+Element: C Carbon 6 2 4 8 12.01 6.7263e+07 0.77 1.85 3773 5100 2.6 11.26 0.2 1 0.2 
+    ElectronConfiguration: 4 4 1 2 0 0 0 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 2.31 1.02 1.5886 0.865 20.8439 10.2075 0.5687 51.6512 0.2156 16.4452 
+Element: N Nitrogen 7 2 5 8 14.01 -2.7117e+07 0.75 1.54 63.14 77.35 3 14.53 0.2 0.2 1 
+    ElectronConfiguration: 5 5 1 2 0 0 0 2 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 12.2126 3.1322 2.0125 1.1663 0.0057 9.8933 28.9975 0.5826 -11.529 2.49169 
+Element: O Oxygen 8 2 6 8 16 3.6264e+07 0.73 1.4 50.35 90.18 3.4 13.62 1 0.3 0.3 
+    ElectronConfiguration: 6 6 1 2 0 0 0 2 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 3.0485 2.2868 1.5463 0.867 13.2771 5.7011 0.3239 32.9089 0.2508 9.13621 
+Element: F Fluorine 9 2 7 8 19 2.5171e+08 0.72 1.35 53.48 84.95 4 17.42 0.701961 1 1 
+    ElectronConfiguration: 7 7 1 2 0 0 0 2 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 3.5392 2.6412 1.517 1.0243 10.2825 4.2944 0.2615 26.1476 0.2776 nan 
+Element: Ne Neon 10 2 8 8 20.18 2.1117e+07 0.71 1.6 24.55 27.1 nan 21.56 0.701961 0.890196 0.960784 
+    ElectronConfiguration: 8 8 1 2 0 0 0 2 6 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 3.9553 3.1125 1.4546 1.1251 8.4042 3.4262 0.2306 21.7184 0.3515 nan 
+Element: Na Sodium 11 3 1 8 22.99 7.0761e+07 1.54 2.31 371 1156 0.9 5.14 0.670588 0.360784 0.94902 
+    ElectronConfiguration: 1 1 2 2 0 0 0 2 6 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 4.7626 3.1736 1.2674 1.1128 3.285 8.8422 0.3136 129.424 0.676 nan 
+Element: Mg Magnesium 12 3 2 8 24.31 1.6377e+07 1.36 1.73 922 1363 1.3 7.65 0.541176 1 0 
+    ElectronConfiguration: 2 2 2 2 0 0 0 2 6 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 5.4204 2.1735 1.2269 2.3073 2.8275 79.2611 0.3808 7.1937 0.8584 nan 
+Element: Al Aluminum 13 3 3 8 26.98 6.9705e+07 1.18 2.05 933.25 2740 1.6 5.99 0.74902 0.65098 0.65098 
+    ElectronConfiguration: 3 3 2 2 0 0 0 2 6 0 0 2 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 6.4202 1.9002 1.5936 1.9646 3.0387 0.7426 31.5472 85.0886 1.1151 nan 
+Element: Si Silicon 14 3 4 8 28.09 5.3146e+07 1.11 2 1683 2628 1.9 8.15 0.941176 0.784314 0.627451 
+    ElectronConfiguration: 4 4 2 2 0 0 0 2 6 0 0 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 6.2915 3.0353 1.9891 1.541 2.4386 32.3337 0.6785 81.6937 1.1407 nan 
+Element: P Phosphorus 15 3 5 8 30.97 1.0829e+08 1.06 1.9 317.3 553 2.2 10.49 1 0.501961 0 
+    ElectronConfiguration: 5 5 2 2 0 0 0 2 6 0 0 2 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 6.4345 4.1791 1.78 1.4908 1.9067 27.157 0.526 68.1645 1.1149 nan 
+Element: S Sulfur 16 3 6 8 32.07 2.0534e+07 1.02 1.85 388.36 717.75 2.6 10.36 0.9 0.775 0.25 
+    ElectronConfiguration: 6 6 2 2 0 0 0 2 6 0 0 2 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 6.9053 5.2034 1.4379 1.5863 1.4679 22.2151 0.2536 56.172 0.8669 25.7475 
+Element: Cl Chlorine 17 3 7 8 35.45 2.6211e+07 0.99 1.81 172.16 239.1 3.2 12.97 0.121569 0.941176 0.121569 
+    ElectronConfiguration: 7 7 2 2 0 0 0 2 6 0 0 2 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 11.4604 7.1964 6.2556 1.6455 0.0104 1.1662 18.5194 47.7784 -9.5574 nan 
+Element: Ar Argon 18 3 8 8 39.95 nan 0.98 1.91 83.81 87.3 nan 15.76 0.501961 0.819608 0.890196 
+    ElectronConfiguration: 8 8 2 2 0 0 0 2 6 0 0 2 6 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 7.4845 6.7723 0.6539 1.6442 0.9072 14.8407 43.8983 33.3929 1.4445 nan 
+Element: K Potassium 19 4 1 8 39.1 1.2482e+07 2.03 2.31 336.35 1032 0.8 4.34 0.560784 0.25098 0.831373 
+    ElectronConfiguration: 1 1 3 2 0 0 0 2 6 0 0 2 6 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 8.2186 7.4398 1.0519 0.8659 12.7949 0.7748 213.187 41.6841 1.4228 nan 
+Element: Ca Calcium 20 4 2 8 40.08 1.8001e+07 1.74 1.97 1112 1757 1 6.11 0.239216 1 0 
+    ElectronConfiguration: 2 2 3 2 0 0 0 2 6 0 0 2 6 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 8.6266 7.3873 1.5899 1.0211 10.4421 0.6599 85.7484 178.437 1.3751 nan 
+Element: Sc Scandium 21 4 0 8 44.96 6.4984e+07 1.44 1.7 1812 3104 1.4 6.54 0.901961 0.901961 0.901961 
+    ElectronConfiguration: nan 3 3 2 0 0 0 2 6 0 0 2 6 1 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 9.189 7.3679 1.6409 1.468 9.0213 0.5729 136.108 51.3531 1.3329 nan 
+Element: Ti Titanium 22 4 0 8 47.88 1.5081e+07 1.32 1.7 1933 3560 1.5 6.82 0.74902 0.760784 0.780392 
+    ElectronConfiguration: nan 4 3 2 0 0 0 2 6 0 0 2 6 2 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 9.7595 7.3558 1.6991 1.9021 7.8508 0.5 35.6338 116.105 1.2807 nan 
+Element: V Vanadium 23 4 0 8 50.94 7.0363e+07 1.22 1.7 2175 3682 1.6 6.74 0.65098 0.65098 0.670588 
+    ElectronConfiguration: nan 5 3 2 0 0 0 2 6 0 0 2 6 3 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 10.2971 7.3511 2.0703 2.0571 6.8657 0.4385 26.8938 102.478 1.2199 nan 
+Element: Cr Chromium 24 4 0 8 52 1.5119e+07 1.18 1.7 2130 2945 1.7 6.77 0.541176 0.6 0.780392 
+    ElectronConfiguration: nan 6 3 2 0 0 0 2 6 0 0 2 6 4 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 10.6406 7.3537 3.324 1.4922 6.1038 0.392 20.2626 98.7399 1.1832 nan 
+Element: Mn Manganese 25 4 0 8 54.94 6.6195e+07 1.17 1.7 1517 2235 1.6 7.44 0.611765 0.478431 0.780392 
+    ElectronConfiguration: nan 7 3 2 0 0 0 2 6 0 0 2 6 5 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 11.2819 7.3573 3.0193 2.2441 5.3409 0.3432 17.8674 83.7543 1.0896 nan 
+Element: Fe Iron 26 4 0 8 55.85 8.6618e+06 1.17 1.7 1808 3023 1.8 7.87 0.878431 0.4 0.2 
+    ElectronConfiguration: nan 8 3 2 0 0 0 2 6 0 0 2 6 6 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 11.7695 7.3573 3.5222 2.3045 4.7611 0.3072 15.3535 76.8805 1.0369 nan 
+Element: Co Cobalt 27 4 0 8 58.93 6.3472e+07 1.16 1.7 1768 3143 1.9 7.86 0.941176 0.564706 0.627451 
+    ElectronConfiguration: nan 9 3 2 0 0 0 2 6 0 0 2 6 7 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 12.2841 7.3409 4.0034 2.3488 4.2791 0.2784 13.5359 71.1692 1.0118 nan 
+Element: Ni Nickel 28 4 0 8 58.69 2.3905e+07 1.15 1.7 1726 3005 1.9 7.64 0.313726 0.815686 0.313726 
+    ElectronConfiguration: nan 10 3 2 0 0 0 2 6 0 0 2 6 8 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 12.8376 7.292 4.4438 2.38 3.8785 0.2565 12.1763 66.3421 1.0341 nan 
+Element: Cu Copper 29 4 0 8 63.55 7.0965e+07 1.17 1.7 1357.6 2840 1.9 7.73 0.784314 0.501961 0.2 
+    ElectronConfiguration: nan 11 3 2 0 0 0 2 6 0 0 2 6 10 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 13.338 7.1676 5.6158 1.6735 3.5828 0.247 11.3966 64.8126 1.191 nan 
+Element: Zn Zinc 30 4 0 8 65.39 1.6738e+07 1.25 1.7 692.73 1180 1.7 9.39 0.490196 0.501961 0.690196 
+    ElectronConfiguration: nan 12 3 2 0 0 0 2 6 0 0 2 6 10 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 14.0743 7.0318 5.1652 2.41 3.2655 0.2333 10.3163 58.7097 1.3041 nan 
+Element: Ga Gallium 31 4 3 8 69.72 8.1583e+07 1.26 1.7 302.9 2676 1.8 6 0.760784 0.560784 0.560784 
+    ElectronConfiguration: 3 13 3 2 0 0 0 2 6 0 0 2 6 10 0 2 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 15.2354 6.7006 4.3591 2.9623 3.0669 0.2412 10.7805 61.4135 1.7189 nan 
+Element: Ge Germanium 32 4 4 8 72.61 9.3312e+06 1.22 1.7 1210.4 3103 2 7.9 0.4 0.560784 0.560784 
+    ElectronConfiguration: 4 14 3 2 0 0 0 2 6 0 0 2 6 10 0 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 16.0816 6.3747 3.7068 3.683 2.8509 0.2516 11.4468 54.7625 2.1313 nan 
+Element: As Arsenic 33 4 5 8 74.92 4.5806e+07 1.2 2 1081 876 2.2 9.81 0.741176 0.501961 0.890196 
+    ElectronConfiguration: 5 15 3 2 0 0 0 2 6 0 0 2 6 10 0 2 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 16.6723 6.0701 3.4313 4.2779 2.6345 0.2647 12.9479 47.7972 2.531 nan 
+Element: Se Selenium 34 4 6 8 78.96 5.102e+07 1.16 2 494 958 2.6 9.75 1 0.631373 0 
+    ElectronConfiguration: 6 16 3 2 0 0 0 2 6 0 0 2 6 10 0 2 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 17.0006 5.8196 3.9731 4.3543 2.4098 0.2726 15.2372 43.8163 2.8409 28.7309 
+Element: Br Bromine 35 4 7 8 79.9 7.2246e+07 1.14 2.1 265.9 332.25 3 11.81 0.65098 0.160784 0.160784 
+    ElectronConfiguration: 7 17 3 2 0 0 0 2 6 0 0 2 6 10 0 2 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 17.1789 5.2358 5.6377 3.9851 2.1723 16.5796 0.2609 41.4328 2.9557 nan 
+Element: Kr Krypton 36 4 8 8 83.8 nan 1.12 2.1 115.78 119.8 nan 14 0.360784 0.721569 0.819608 
+    ElectronConfiguration: 8 18 3 2 0 0 0 2 6 0 0 2 6 10 0 2 6 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 17.3555 6.7286 5.5493 3.5375 1.9384 16.5623 0.2261 39.3972 2.825 nan 
+Element: Rb Rubidium 37 5 1 8 85.47 8.7532e+07 2.16 1.7 312.64 961 0.8 4.18 0.439216 0.180392 0.690196 
+    ElectronConfiguration: 1 1 4 2 0 0 0 2 6 0 0 2 6 10 0 2 6 0 0 1 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 17.1784 9.6435 5.1399 1.5292 1.7888 17.3151 0.2748 164.934 3.4873 nan 
+Element: Sr Strontium 38 5 2 8 87.62 1.1594e+07 1.91 1.7 1042 1657 1 5.7 0 1 0 
+    ElectronConfiguration: 2 2 4 2 0 0 0 2 6 0 0 2 6 10 0 2 6 0 0 2 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 17.5663 9.8184 5.422 2.6694 1.5564 14.0988 0.1664 132.376 2.5064 nan 
+Element: Y Yttrium 39 5 0 8 88.91 1.3108e+07 1.62 1.7 1799 3611 1.2 6.38 0.580392 1 1 
+    ElectronConfiguration: nan 3 4 2 0 0 0 2 6 0 0 2 6 10 0 2 6 1 0 2 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 17.776 10.2946 5.72629 3.26588 1.4029 12.8006 0.125599 104.354 1.91213 nan 
+Element: Zr Zirconium 40 5 0 8 91.22 2.4868e+07 1.45 1.7 2125 4650 1.3 6.84 0.580392 0.878431 0.878431 
+    ElectronConfiguration: nan 4 4 2 0 0 0 2 6 0 0 2 6 10 0 2 6 2 0 2 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 17.8765 10.948 5.41732 3.65721 1.27618 11.916 0.117622 87.6627 2.06929 nan 
+Element: Nb Niobium 41 5 0 8 92.91 6.5476e+07 1.34 1.7 2741 5017 1.6 6.88 0.45098 0.760784 0.788235 
+    ElectronConfiguration: nan 5 4 2 0 0 0 2 6 0 0 2 6 10 0 2 6 4 0 1 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 17.6142 12.0144 4.04183 3.53346 1.18865 11.766 0.204785 69.7957 3.75591 nan 
+Element: Mo Molybdenum 42 5 0 8 95.94 1.7433e+07 1.3 1.7 2890 4885 2.2 7.1 0.329412 0.709804 0.709804 
+    ElectronConfiguration: nan 6 4 2 0 0 0 2 6 0 0 2 6 10 0 2 6 5 0 1 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 3.7025 17.2356 12.8876 3.7429 0.2772 1.0958 11.004 61.6584 4.3875 nan 
+Element: Tc Technetium 43 5 0 8 98 6.0211e+07 1.27 1.7 2473 5150 1.9 7.28 0.231373 0.619608 0.619608 
+    ElectronConfiguration: nan 7 4 2 0 0 0 2 6 0 0 2 6 10 0 2 6 6 0 1 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 19.1301 11.0948 4.64901 2.71263 0.864132 8.14487 21.5707 86.8472 5.40428 nan 
+Element: Ru Ruthenium 44 5 0 8 101.07 1.3833e+07 1.25 1.7 2523 4173 2.2 7.37 0.141176 0.560784 0.560784 
+    ElectronConfiguration: nan 8 4 2 0 0 0 2 6 0 0 2 6 10 0 2 6 7 0 1 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 19.2674 12.9182 4.86337 1.56756 0.80852 8.43467 24.7997 94.2928 5.37874 nan 
+Element: Rh Rhodium 45 5 0 8 102.91 8.5201e+06 1.25 1.7 2239 4000 2.3 7.46 0.0392157 0.490196 0.54902 
+    ElectronConfiguration: nan 9 4 2 0 0 0 2 6 0 0 2 6 10 0 2 6 8 0 1 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 19.2957 14.3501 4.73425 1.28918 0.751536 8.21758 25.8749 98.6062 5.328 nan 
+Element: Pd Palladium 46 5 0 8 106.42 1.2241e+07 1.28 1.7 1825 3237 2.2 8.34 0 0.411765 0.521569 
+    ElectronConfiguration: nan 10 3 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 0 0 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 19.3319 15.5017 5.29537 0.605844 0.698655 7.98929 25.2052 76.8986 5.26593 nan 
+Element: Ag Silver 47 5 0 8 107.87 1.245e+07 1.34 1.7 1234 2436 1.9 7.58 0.752941 0.752941 0.752941 
+    ElectronConfiguration: nan 11 4 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 0 1 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 19.2808 16.6885 4.8045 1.0463 0.6446 7.4726 24.6605 99.8156 5.179 nan 
+Element: Cd Cadmium 48 5 0 8 112.41 5.9329e+07 1.48 1.7 594.18 1038 1.7 8.99 1 0.85098 0.560784 
+    ElectronConfiguration: nan 12 4 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 0 2 0 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 19.2214 17.6444 4.461 1.6029 0.5946 6.9089 24.7008 87.4825 5.0694 nan 
+Element: In Indium 49 5 3 8 114.82 5.8619e+07 1.44 1.7 429.76 2346 1.8 5.79 0.65098 0.458824 0.45098 
+    ElectronConfiguration: 3 13 4 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 0 2 1 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 19.1624 18.5596 4.2948 2.0396 0.5476 6.3776 25.8499 92.8029 4.9391 nan 
+Element: Sn Tin 50 5 4 8 118.71 9.9757e+07 1.41 1.7 505.06 2543 2 7.34 0.4 0.501961 0.501961 
+    ElectronConfiguration: 4 14 4 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 0 2 2 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 19.1889 19.1005 4.4585 2.4663 5.8303 0.5031 26.8909 83.9571 4.7821 nan 
+Element: Sb Antimony 51 5 5 8 121.76 6.4018e+07 1.4 2.2 903.9 1860 2.1 8.64 0.619608 0.388235 0.709804 
+    ElectronConfiguration: 5 15 4 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 0 2 3 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 19.6418 19.0455 5.0371 2.6827 5.3034 0.4607 27.9074 75.2825 4.5909 nan 
+Element: Te Tellurium 52 5 6 8 127.6 8.4399e+07 1.36 2.2 722.65 1261 2.1 9.01 0.831373 0.478431 0 
+    ElectronConfiguration: 6 16 4 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 0 2 4 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 19.9644 19.0138 6.14487 2.5239 4.81742 0.420885 28.5284 70.8403 4.352 nan 
+Element: I Iodine 53 5 7 8 126.9 5.3526e+07 1.33 2.15 386.7 458.4 2.7 10.45 0.580392 0 0.580392 
+    ElectronConfiguration: 7 17 4 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 0 2 5 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 20.1472 18.9949 7.5138 2.2735 4.347 0.3814 27.766 66.8776 4.0712 nan 
+Element: Xe Xenon 54 5 8 8 131.29 7.3988e+07 1.31 2.16 161.3 165.03 nan 12.13 0.258824 0.619608 0.690196 
+    ElectronConfiguration: 8 18 4 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 0 2 6 0 0 0 0 0 0 0 0 0 0 
+    ElementStructureFactor: 20.2933 19.0298 8.9767 1.99 3.9282 0.344 26.4659 64.2658 3.7118 nan 
+Element: Cs Cesium 55 6 1 8 132.91 0 2.35 1.7 301.55 944 0.8 3.89 0.341176 0.0901961 0.560784 
+    ElectronConfiguration: 1 1 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 0 2 6 0 0 1 0 0 0 0 0 0 0 
+    ElementStructureFactor: 20.3892 19.1062 10.662 1.4953 3.569 0.3107 24.3879 213.904 3.3352 nan 
+Element: Ba Barium 56 6 2 8 137.33 0 1.98 1.7 1002 2171 0.9 5.21 0 0.788235 0 
+    ElectronConfiguration: 2 2 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 0 2 6 0 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 20.3361 19.297 10.888 2.6959 3.216 0.2756 20.2073 167.202 2.7731 nan 
+Element: La Lanthanum 57 6 0 8 138.91 0 1.69 1.7 1193 3730 1.1 5.58 0.439216 0.831373 1 
+    ElectronConfiguration: nan 3 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 0 2 6 1 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 20.578 19.599 11.3727 3.28719 2.94817 0.244475 18.7726 133.124 2.14678 nan 
+Element: Ce Cerium 58 6 0 8 140.12 0 1.65 1.7 1071 3699 1.1 5.54 1 1 0.780392 
+    ElectronConfiguration: nan 4 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 1 2 6 1 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 21.1671 19.7695 11.8513 3.33049 2.81219 0.226836 17.6083 127.113 1.86264 nan 
+Element: Pr Praseodymium 59 6 0 8 140.91 0 1.65 1.7 1204 3785 1.1 5.46 0.85098 1 0.780392 
+    ElectronConfiguration: nan 5 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 3 2 6 0 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 22.044 19.6697 12.3856 2.82428 2.77393 0.222087 16.7669 143.644 2.0583 nan 
+Element: Nd Neodymium 60 6 0 8 144.24 0 1.64 1.7 1289 3341 1.1 5.53 0.780392 1 0.780392 
+    ElectronConfiguration: nan 6 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 4 2 6 0 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 22.6845 19.6847 12.774 2.85137 2.66248 0.210628 15.885 137.903 1.98486 nan 
+Element: Pm Promethium 61 6 0 8 145 0 1.63 1.7 1204 3785 1.1 5.55 0.639216 1 0.780392 
+    ElectronConfiguration: nan 7 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 5 2 6 0 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 23.3405 19.6095 13.1235 2.87516 2.5627 0.202088 15.1009 132.721 2.02876 nan 
+Element: Sm Samarium 62 6 0 8 150.36 0 1.62 1.7 1345 2064 1.2 5.64 0.560784 1 0.780392 
+    ElectronConfiguration: nan 8 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 6 2 6 0 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 24.0042 19.4258 13.4396 2.89604 2.47274 0.196451 14.3996 128.007 2.20963 nan 
+Element: Eu Europium 63 6 0 8 151.97 0 1.85 1.7 1095 1870 1.2 5.67 0.380392 1 0.780392 
+    ElectronConfiguration: nan 9 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 7 2 6 0 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 24.6274 19.0886 13.7603 2.9227 2.3879 0.1942 13.7546 123.174 2.5745 nan 
+Element: Gd Gadolinium 64 6 0 8 157.25 0 1.61 1.7 1585 3539 1.2 6.15 0.270588 1 0.780392 
+    ElectronConfiguration: nan 10 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 7 2 6 1 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 25.0709 19.0798 13.8518 3.54545 2.25341 0.181951 12.9331 101.398 2.4196 nan 
+Element: Tb Terbium 65 6 0 8 158.93 0 1.59 1.7 1630 3296 1.2 5.86 0.188235 1 0.780392 
+    ElectronConfiguration: nan 11 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 9 2 6 0 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 25.8976 18.2185 14.3167 2.95354 2.24256 0.196143 12.6648 115.362 3.58324 nan 
+Element: Dy Dysprosium 66 6 0 8 162.5 0 1.59 1.7 1685 2835 1.2 5.94 0.121569 1 0.780392 
+    ElectronConfiguration: nan 12 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 10 2 6 0 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 26.507 17.6383 14.5596 2.96577 2.1802 0.202172 12.1899 111.874 4.29728 nan 
+Element: Ho Holmium 67 6 0 8 164.93 0 1.58 1.7 1743 2968 1.2 6.02 0 1 0.611765 
+    ElectronConfiguration: nan 13 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 11 2 6 0 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 26.9049 17.294 14.5583 3.63837 2.07051 0.19794 11.4407 92.6566 4.56796 nan 
+Element: Er Erbium 68 6 0 8 167.26 0 1.57 1.7 1795 3136 1.2 6.1 0 0.901961 0.458824 
+    ElectronConfiguration: nan 14 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 12 2 6 0 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 27.6563 16.4285 14.9779 2.98233 2.07356 0.223545 11.3604 105.703 5.92046 nan 
+Element: Tm Thulium 69 6 0 8 168.93 0 1.56 1.7 1818 2220 1.3 6.18 0 0.831373 0.321569 
+    ElectronConfiguration: nan 15 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 13 2 6 0 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 28.1819 15.8851 15.1542 2.98706 2.02859 0.238849 10.9975 102.961 6.75621 nan 
+Element: Yb Ytterbium 70 6 0 8 173.04 0 1.74 1.7 1097 1467 1.1 6.25 0 0.74902 0.219608 
+    ElectronConfiguration: nan 16 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 0 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 28.6641 15.4345 15.3087 2.98963 1.9889 0.257119 10.6647 100.417 7.56672 nan 
+Element: Lu Lutetium 71 6 0 8 174.97 0 1.56 1.7 1936 3668 1.3 5.43 0 0.670588 0.141176 
+    ElectronConfiguration: nan 17 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 1 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 28.9476 15.2208 15.1 3.71601 1.90182 9.98519 0.261033 84.3298 7.97628 nan 
+Element: Hf Hafnium 72 6 0 8 178.49 0 1.44 1.7 2500 4876 1.3 6.65 0.301961 0.760784 1 
+    ElectronConfiguration: nan 18 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 2 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 29.144 15.1726 14.7586 4.30013 1.83262 9.5999 0.275116 72.029 8.58154 nan 
+Element: Ta Tantalum 73 6 0 8 180.95 0 1.34 1.7 3269 5698 1.5 7.89 0.301961 0.65098 1 
+    ElectronConfiguration: nan 19 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 3 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 29.2024 15.2293 14.5135 4.76492 1.77333 9.37046 0.295977 63.3644 9.24354 nan 
+Element: W Tungsten 74 6 0 8 183.85 0 1.3 1.7 3680 5928 2.4 7.98 0.129412 0.580392 0.839216 
+    ElectronConfiguration: nan 20 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 4 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 29.0818 15.43 14.4327 5.11982 1.72029 9.2259 0.321703 57.056 9.8875 nan 
+Element: Re Rhenium 75 6 0 8 186.21 0 1.28 1.7 3453 5900 1.9 7.88 0.14902 0.490196 0.670588 
+    ElectronConfiguration: nan 21 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 5 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 28.7621 15.7189 14.5564 5.44174 1.67191 9.09227 0.3505 52.0861 10.472 nan 
+Element: Os Osmium 76 6 0 8 190.2 0 1.26 1.7 3300 5285 2.2 8.7 0.14902 0.4 0.588235 
+    ElectronConfiguration: nan 22 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 6 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 28.1894 16.155 14.9305 5.67589 1.62903 8.97948 0.382661 48.1647 11.0005 nan 
+Element: Ir Iridium 77 6 0 8 192.22 0 1.27 1.7 2716 4701 2.2 9.1 0.0901961 0.329412 0.529412 
+    ElectronConfiguration: nan 23 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 7 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 27.3049 16.7296 15.6115 5.83377 1.59279 8.86553 0.417916 45.0011 11.4722 nan 
+Element: Pt Platinum 78 6 0 8 195.08 0 1.3 1.72 2045 4100 2.3 9 0.815686 0.815686 0.878431 
+    ElectronConfiguration: nan 24 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 9 0 1 0 0 0 0 0 0 0 
+    ElementStructureFactor: 27.0059 17.7639 15.7131 5.7837 1.51293 8.81174 0.424593 38.6103 11.6883 nan 
+Element: Au Gold 79 6 0 8 196.97 0 1.34 1.66 1337.58 3080 2.5 9.23 1 0.819608 0.137255 
+    ElectronConfiguration: nan 25 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 0 1 0 0 0 0 0 0 0 
+    ElementStructureFactor: 16.8819 18.5913 25.5582 5.86 0.4611 8.6216 1.4826 36.3956 12.0658 nan 
+Element: Hg Mercury 80 6 0 8 200.59 0 1.49 1.55 234.28 630 2 10.44 0.721569 0.721569 0.815686 
+    ElectronConfiguration: nan 26 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 0 2 0 0 0 0 0 0 0 
+    ElementStructureFactor: 20.6809 19.0417 21.6575 5.9676 0.545 8.4484 1.5729 38.3246 12.6089 nan 
+Element: Tl Thallium 81 6 3 8 204.38 0 1.48 1.7 577 1746 2 6.11 0.65098 0.329412 0.301961 
+    ElectronConfiguration: 3 27 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 0 2 1 0 0 0 0 0 0 
+    ElementStructureFactor: 27.5446 19.1584 15.538 5.52593 0.65515 8.70751 1.96347 45.8149 13.1746 nan 
+Element: Pb Lead 82 6 4 8 207.2 0 1.47 1.7 600.6 2013 2.3 7.42 0.341176 0.34902 0.380392 
+    ElectronConfiguration: 4 28 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 0 2 2 0 0 0 0 0 0 
+    ElementStructureFactor: 31.0617 13.0637 18.442 5.9696 0.6902 2.3576 8.618 47.2579 13.4118 nan 
+Element: Bi Bismuth 83 6 5 8 208.98 0 1.46 1.7 544.52 1837 2 7.29 0.619608 0.309804 0.709804 
+    ElectronConfiguration: 5 29 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 0 2 3 0 0 0 0 0 0 
+    ElementStructureFactor: 33.3689 12.951 16.5877 6.4692 0.704 2.9238 8.7937 48.0093 13.5782 nan 
+Element: Po Polonium 84 6 6 8 209 0 1.46 1.7 527 1235 2 8.42 0.670588 0.360784 0 
+    ElectronConfiguration: 6 30 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 0 2 4 0 0 0 0 0 0 
+    ElementStructureFactor: 34.6726 15.4733 13.1138 7.02588 0.700999 3.55078 9.55642 47.0045 13.677 nan 
+Element: At Astatine 85 6 7 8 210 0 1.45 1.7 575 610 2.2 9.65 0.458824 0.309804 0.270588 
+    ElectronConfiguration: 7 31 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 0 2 5 0 0 0 0 0 0 
+    ElementStructureFactor: 35.3163 19.0211 9.49887 7.42518 0.68587 3.97458 11.3824 45.4715 13.7108 nan 
+Element: Rn Radon 86 6 8 8 222 0 0 1.7 202 211 nan 10.75 0.258824 0.509804 0.588235 
+    ElectronConfiguration: 8 32 5 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 0 2 6 0 0 0 0 0 0 
+    ElementStructureFactor: 35.5631 21.2816 8.0037 7.4433 0.6631 4.0691 14.0422 44.2473 13.6905 nan 
+Element: Fr Francium 87 7 1 8 223 0 0 1.7 300 950 0.7 3.83 0.258824 0 0.4 
+    ElectronConfiguration: 1 1 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 0 2 6 0 0 1 0 0 0 
+    ElementStructureFactor: 35.9299 23.0547 12.1439 2.11253 0.646453 4.17619 23.1052 150.645 13.7247 nan 
+Element: Ra Radium 88 7 2 8 226.03 0 0 1.7 973 1809 0.9 5.28 0 0.490196 0 
+    ElectronConfiguration: 2 2 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 0 2 6 0 0 2 0 0 0 
+    ElementStructureFactor: 35.763 22.9064 12.4739 3.21097 0.616341 3.87135 19.9887 142.325 13.6211 nan 
+Element: Ac Actinium 89 7 0 8 227 0 0 1.7 1323 3473 1.1 5.17 0.439216 0.670588 0.980392 
+    ElectronConfiguration: nan 3 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 0 1 6 1 0 2 0 0 0 
+    ElementStructureFactor: 35.6597 23.1032 12.5977 4.08655 0.589092 3.65155 18.599 117.02 13.5266 nan 
+Element: Th Thorium 90 7 0 8 232.04 0 1.65 1.7 2028 5061 1.3 6.08 0 0.729412 1 
+    ElectronConfiguration: nan 4 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 0 2 6 2 0 2 0 0 0 
+    ElementStructureFactor: 35.5645 23.4219 12.7473 4.80703 0.563359 3.46204 17.8309 99.1722 13.4314 nan 
+Element: Pa Protactinium 91 7 0 8 213.04 0 0 1.7 2113 4300 1.5 5.89 0 0.631373 1 
+    ElectronConfiguration: nan 5 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 2 1 6 1 0 2 0 0 0 
+    ElementStructureFactor: 35.8847 23.2948 14.1891 4.17287 0.547751 3.41519 16.9235 105.251 13.4287 nan 
+Element: U Uranium 92 7 0 8 238.03 0 1.42 1.7 1405 4407 1.4 6.05 0 0.560784 1 
+    ElectronConfiguration: nan 6 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 3 1 6 1 0 2 0 0 0 
+    ElementStructureFactor: 36.0228 23.4128 14.9491 4.188 0.5293 3.3253 16.0927 100.613 13.3966 nan 
+Element: Np Neptunium 93 7 0 8 237.05 0 0 1.7 913 4175 1.4 6.19 0 0.501961 1 
+    ElectronConfiguration: nan 7 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 4 1 6 1 0 2 0 0 0 
+    ElementStructureFactor: 36.1874 23.5964 15.6402 4.1855 0.511929 3.25396 15.3622 97.4908 13.3573 nan 
+Element: Pu Plutonium 94 7 0 8 244 0 0 1.7 913 3503 1.3 6.06 0 0.419608 1 
+    ElectronConfiguration: nan 8 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 6 2 6 0 0 2 0 0 0 
+    ElementStructureFactor: 35.5103 22.5787 12.7766 4.92159 0.498626 2.96627 11.9484 22.7502 13.2116 nan 
+Element: Am Americium 95 7 0 8 243 0 0 1.7 1267 2880 1.3 5.99 0.329412 0.360784 0.94902 
+    ElectronConfiguration: nan 9 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 7 2 6 0 0 2 0 0 0 
+    ElementStructureFactor: 36.6706 24.0992 17.3415 3.49331 0.483629 3.20647 14.3136 102.273 13.3592 nan 
+Element: Cm Curium 96 7 0 8 247 0 0 1.7 1340 3383 1.3 6.02 0.470588 0.360784 0.890196 
+    ElectronConfiguration: nan 10 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 7 1 6 1 0 2 0 0 0 
+    ElementStructureFactor: 36.6488 24.4096 17.399 4.21665 0.465154 3.08997 13.4346 88.4834 13.2887 nan 
+Element: Bk Berkelium 97 7 0 8 247 0 0 1.7 1259 0 1.3 6.23 0.541176 0.309804 0.890196 
+    ElectronConfiguration: nan 11 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 9 2 6 0 0 2 0 0 0 
+    ElementStructureFactor: 36.7881 24.7736 17.8919 4.23284 0.451018 3.04619 12.8946 86.003 13.2754 nan 
+Element: Cf Californium 98 7 0 8 251 0 0 1.7 1173 0 1.3 6.3 0.631373 0.211765 0.831373 
+    ElectronConfiguration: nan 12 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 10 2 6 0 0 2 0 0 0 
+    ElementStructureFactor: 36.9185 25.1995 18.3317 4.24391 0.437533 3.00775 12.4044 83.7881 13.2674 nan 
+Element: Es Einsteinium 99 7 0 8 252 0 0 1.7 1133 0 1.3 6.42 0.701961 0.121569 0.831373 
+    ElectronConfiguration: nan 13 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 11 2 6 0 0 2 0 0 0 
+    ElementStructureFactor: nan nan nan nan nan nan nan nan nan nan 
+Element: Fm Fermium 100 7 0 8 257 0 0 1.7 0 0 1.3 6.5 0.701961 0.121569 0.729412 
+    ElectronConfiguration: nan 14 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 12 2 6 0 0 2 0 0 0 
+    ElementStructureFactor: nan nan nan nan nan nan nan nan nan nan 
+Element: Md Mendelevium 101 7 0 8 258 0 0 1.7 0 0 1.3 6.58 0.701961 0.0509804 0.65098 
+    ElectronConfiguration: nan 15 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 13 2 6 0 0 2 0 0 0 
+    ElementStructureFactor: nan nan nan nan nan nan nan nan nan nan 
+Element: No Nobelium 102 7 0 8 259 0 0 1.7 0 0 1.3 6.65 0.741176 0.0509804 0.529412 
+    ElectronConfiguration: nan 16 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 14 2 6 0 0 2 0 0 0 
+    ElementStructureFactor: nan nan nan nan nan nan nan nan nan nan 
+Element: Lr Lawrencium 103 7 0 8 260 0 0 1.7 0 0 0 0 0.780392 0 0.4 
+    ElectronConfiguration: nan 17 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 14 2 6 1 0 2 0 0 0 
+    ElementStructureFactor: nan nan nan nan nan nan nan nan nan nan 
+Element: Rf Rutherfordium 104 7 0 8 261 0 0 1.7 0 0 0 0 0.8 0 0.34902 
+    ElectronConfiguration: nan 18 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 14 2 6 2 0 2 0 0 0 
+    ElementStructureFactor: nan nan nan nan nan nan nan nan nan nan 
+Element: Db Dubnium 105 7 0 8 262 0 0 1.7 0 0 0 0 0.819608 0 0.309804 
+    ElectronConfiguration: nan 19 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 14 2 6 3 0 2 0 0 0 
+    ElementStructureFactor: nan nan nan nan nan nan nan nan nan nan 
+Element: Sg Seaborgium 106 7 0 8 263 0 0 1.7 0 0 0 0 0.85098 0 0.270588 
+    ElectronConfiguration: nan 20 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 14 2 6 4 0 2 0 0 0 
+    ElementStructureFactor: nan nan nan nan nan nan nan nan nan nan 
+Element: Bh Bohrium 107 7 0 8 262 0 0 1.7 0 0 0 0 0.878431 0 0.219608 
+    ElectronConfiguration: nan 21 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 14 2 6 5 0 2 0 0 0 
+    ElementStructureFactor: nan nan nan nan nan nan nan nan nan nan 
+Element: Hs Hassium 108 7 0 8 265 0 0 1.7 0 0 0 0 0.901961 0 0.180392 
+    ElectronConfiguration: nan 22 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 14 2 6 6 0 2 0 0 0 
+    ElementStructureFactor: nan nan nan nan nan nan nan nan nan nan 
+Element: Mt Meitnerium 109 7 0 8 266 0 0 1.7 0 0 0 0 0.921569 0 0.14902 
+    ElectronConfiguration: nan 23 6 2 0 0 0 2 6 0 0 2 6 10 0 2 6 10 14 2 6 10 14 2 6 7 0 2 0 0 0 
+    ElementStructureFactor: nan nan nan nan nan nan nan nan nan nan 
+
