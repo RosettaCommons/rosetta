@@ -46,8 +46,9 @@ void UltraLightResidue::update_conformation(Conformation & conformation) const
 
 void UltraLightResidue::transform(numeric::xyzMatrix<core::Real> const & rotation_matrix, core::Vector const & translation_vector)
 {
-	center_ = numeric::center_of_mass(coords_)+translation_vector;
-	numeric::xyzTransform<core::Real> transformer(numeric::xyzTransform<core::Real>::rot(rotation_matrix,center_));
+	PointPosition old_center = numeric::center_of_mass(coords_);
+	center_ = old_center+translation_vector;
+	numeric::xyzTransform<core::Real> transformer(numeric::xyzTransform<core::Real>::rot(rotation_matrix,old_center,center_));
 	for(utility::vector1<PointPosition>::iterator it = coords_.begin(); it != coords_.end(); ++it)
 	{
 		*it = transformer*(*it);
