@@ -116,6 +116,16 @@ private:
 	std::string property_;
 };
 
+class ResidueLacksProperty : public ResidueHasProperty {
+public:
+	typedef ResidueHasProperty parent;
+public:
+	ResidueLacksProperty();
+	ResidueLacksProperty( std::string const & );
+	virtual bool operator() ( Pose const &, Size ) const;
+	virtual ResFilterOP clone() const;
+};
+
 class ResiduePDBInfoHasLabel : public ResFilter {
 public:
   typedef ResFilter parent;
@@ -130,14 +140,14 @@ private:
   std::string property_;
 };
 
-class ResidueLacksProperty : public ResidueHasProperty {
+class ResiduePDBInfoLacksLabel : public ResiduePDBInfoHasLabel {
 public:
-	typedef ResidueHasProperty parent;
+  typedef ResiduePDBInfoHasLabel parent;
 public:
-	ResidueLacksProperty();
-	ResidueLacksProperty( std::string const & );
-	virtual bool operator() ( Pose const &, Size ) const;
-	virtual ResFilterOP clone() const;
+  ResiduePDBInfoLacksLabel();
+  ResiduePDBInfoLacksLabel( std::string const & );
+  virtual bool operator() ( Pose const &, Size ) const;
+  virtual ResFilterOP clone() const;
 };
 
 class ResidueName3Is : public ResFilter {

@@ -514,10 +514,10 @@ namespace protocols
 				utility::vector1< motif2scaffold_data >::iterator it_fragments = v_m2s_data.begin();
 				while( it_fragments != v_m2s_data.end()) 
 				{
-					core::Size motif_scaffold_clash_count   =0;
-					core::Size scaffold_context_clash_count =0;
+					core::Size motif_scaffold_clash_count   = 0;
+					core::Size scaffold_context_clash_count = 0;
 					
-					//Rotate/translate and stitch the motif and the scaffold
+					//Rotate/translate the scaffold to the motif position and Create a copy where the insertion residues are missing
 					core::pose::Pose p_frankenstein=MotifGraftMover::stich_motif_in_scaffold_by_indexes_rotation_and_translation(p_scaffold, p_motif_, (*it_fragments), true);
 					core::pose::Pose p_this_motif;
 					//Create a copy of the motif witout the first and last residue (likely to clash always or most times)
@@ -536,14 +536,19 @@ namespace protocols
 					
 					///Count number of clashes between the scaffold, motif and context
 					core::Size clash_score = 0;
-					motif_scaffold_clash_count   = MotifGraftMover::count_clashes_between_two_poses( p_this_motif, p_scaffold, clash_cutoff );
+					motif_scaffold_clash_count   = MotifGraftMover::count_clashes_between_two_poses( p_this_motif, p_frankenstein, clash_cutoff );
 					if (motif_scaffold_clash_count <= clash_cutoff ){
 						scaffold_context_clash_count = MotifGraftMover::count_clashes_between_two_poses( p_frankenstein, p_contextStructure_, ( clash_cutoff - motif_scaffold_clash_count ) );
 						clash_score = motif_scaffold_clash_count + scaffold_context_clash_count;
 					}else{
 						clash_score = motif_scaffold_clash_count;
+						TR.Info << "Clash Score Test Failed" << std::endl;
 					}
-
+					///For Debug:
+					///p_this_motif.dump_pdb( "testthisMotif.pdb" );
+					///p_frankenstein.dump_pdb( "testfranky.pdb" );
+					///p_contextStructure_.dump_pdb( "testcontext.pdb" );
+					
 					//Join the contextStructure and epigraft(frankenstein) in a single pose (reuse the container frankenstein)
 					//Alex: can I reuse the pose like this? Is/will the size dynamicaly re-allocated?
 					//core::Real r_epigraft_score = MotifGraftMover::get_clash_score_from_pose(p_frankenstein, scorefxn_);
@@ -567,6 +572,7 @@ namespace protocols
 						//remove from the vector those elements that can't pass the clash test
 						TR.Debug << "A epigraft failed the clash score test with a value of: " << clash_score << std::endl;
 						it_fragments = v_m2s_data.erase(it_fragments);
+						
 					}
 				}
 			}
@@ -646,37 +652,37 @@ namespace protocols
 										xyzv_tmpCoorB = p_B.residue(ib).atom(jb).xyz();
 										if ( ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() < 2.25 ){
 											clash_counter+=1;
+											///TR.Info << "TEST-clash: " << ia << " " << ib << " " << elementA << " " << elementB << " " << ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() << std::endl;
 											continue;
 										}
-										//TR.Info <<  "TEST C-C " << std::endl;
 									}else if ( ((elementA == "C") && (elementB == "N")) || ((elementA == "N") && (elementB == "C")) ){
 										xyzv_tmpCoorB = p_B.residue(ib).atom(jb).xyz();
 										if ( ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() < 2.02 ){
 											clash_counter+=1;
+											///TR.Info << "TEST-clash: " << ia << " " << ib << " " << elementA << " " << elementB << " " << ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() << std::endl;
 											continue;
 										}
-										//TR.Info <<  "TEST C-N " << std::endl;
 									}else if ( ((elementA == "C") && (elementB == "O")) || ((elementA == "O") && (elementB == "C")) ){
 										xyzv_tmpCoorB = p_B.residue(ib).atom(jb).xyz();
 										if ( ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() < 1.96 ){
 											clash_counter+=1;
+											///TR.Info << "TEST-clash: " << ia << " " << ib << " " << elementA << " " << elementB << " " << ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() << std::endl;
 											continue;
 										}
-										//TR.Info <<  "TEST C-O " << std::endl;
 									}else if ( ((elementA == "C") && (elementB == "S")) || ((elementA == "S") && (elementB == "C")) ){
 										xyzv_tmpCoorB = p_B.residue(ib).atom(jb).xyz();
 										if ( ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() < 2.13 ){
 											clash_counter+=1;
+											///TR.Info << "TEST-clash: " << ia << " " << ib << " " << elementA << " " << elementB << " " << ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() << std::endl;
 											continue;
 										}
-										//TR.Info <<  "TEST C-S " << std::endl;
 									}else if ( ((elementA == "N") && (elementB == "O")) || ((elementA == "O") && (elementB == "N")) ){
 										xyzv_tmpCoorB = p_B.residue(ib).atom(jb).xyz();
 										if ( ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() < 1.70 ){
 											clash_counter+=1;
+											///TR.Info << "TEST-clash: " << ia << " " << ib << " " << elementA << " " << elementB << " " << ( xyzv_tmpCoorA - xyzv_tmpCoorB ).norm() << std::endl;
 											continue;
 										}
-										//TR.Info <<  "TEST N-O " << std::endl;
 									}
 									//Early termination
 									if ( clash_counter > clash_cutoff ){

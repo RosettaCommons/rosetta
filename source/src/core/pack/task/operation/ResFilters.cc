@@ -228,6 +228,28 @@ void ResidueHasProperty::parse_tag( TagCOP tag )
 	if ( tag->hasOption("property") ) property_ = tag->getOption<std::string>("property");
 }
 
+// begin ResidueLacksProperty
+ResidueLacksProperty::ResidueLacksProperty()
+  : parent()
+{}
+
+ResidueLacksProperty::ResidueLacksProperty( std::string const & str )
+  : parent( str )
+{}
+
+bool ResidueLacksProperty::operator() ( Pose const & pose, Size index ) const
+{
+  return ( ! parent::operator()( pose, index ) );
+}
+
+ResFilterOP
+ResidueLacksPropertyCreator::create_res_filter() const {
+  return new ResidueLacksProperty;
+}
+
+ResFilterOP ResidueLacksProperty::clone() const { return new ResidueLacksProperty( *this ); }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 //begin ResiduePDBInfoHasLabel
 ResiduePDBInfoHasLabel::ResiduePDBInfoHasLabel()
   : parent()
@@ -255,28 +277,29 @@ void ResiduePDBInfoHasLabel::parse_tag( TagCOP tag )
 {
   if ( tag->hasOption("property") ) property_ = tag->getOption<std::string>("property");
 }
+//end ResiduePDBInfoHasLabel
 
-
-// begin ResidueLacksProperty
-ResidueLacksProperty::ResidueLacksProperty()
-	: parent()
+//begin ResiduePDBInfoLacksLabel
+ResiduePDBInfoLacksLabel::ResiduePDBInfoLacksLabel()
+  : parent()
 {}
 
-ResidueLacksProperty::ResidueLacksProperty( std::string const & str )
-	: parent( str )
+ResiduePDBInfoLacksLabel::ResiduePDBInfoLacksLabel( std::string const & str )
+  : parent( str )
 {}
 
-bool ResidueLacksProperty::operator() ( Pose const & pose, Size index ) const
+bool ResiduePDBInfoLacksLabel::operator() ( Pose const & pose, Size index ) const
 {
-	return ( ! parent::operator()( pose, index ) );
+  return ( ! parent::operator()( pose, index ) );
 }
 
 ResFilterOP
-ResidueLacksPropertyCreator::create_res_filter() const {
-	return new ResidueLacksProperty;
+ResiduePDBInfoLacksLabelCreator::create_res_filter() const {
+  return new ResiduePDBInfoLacksLabel;
 }
 
-ResFilterOP ResidueLacksProperty::clone() const { return new ResidueLacksProperty( *this ); }
+ResFilterOP ResiduePDBInfoLacksLabel::clone() const { return new ResiduePDBInfoLacksLabel( *this ); }
+//end ResiduePDBInfoLacksLabel
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // begin ResidueName3Is
