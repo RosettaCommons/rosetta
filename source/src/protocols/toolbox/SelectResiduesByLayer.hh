@@ -96,6 +96,11 @@ public:  // mutator
 		make_rasmol_format_file_ = b;
 	}
 
+	void use_sidechain_neighbors( bool const b )
+	{
+		use_sidechain_neighbors_ = b;
+	}
+
 	/// @brief
 	void exclude_aatypes_for_selection( utility::vector1< AA > const & aas );
 
@@ -104,7 +109,6 @@ public:  // mutator
 
 
 public:  // accessor
-
 
 	/// @brief accessbile surface are of each residue
 	Real rsd_sasa( Size const i ) const;
@@ -120,6 +124,8 @@ public:  // accessor
 
 	/// @brief selected residues on surface
 	utility::vector1< Size > const & selected_surface_residues() const;
+
+	bool use_sidechain_neighbors() const;
 
 
 public: // main operation
@@ -139,6 +145,10 @@ private: // helper functions
 	/// @brief
 	utility::vector1< Real > const
 	calc_rsd_sasa( Pose const & pose ) const;
+
+	utility::vector1< Real > const
+	calc_sc_neighbors( Pose const & pose ) const;
+
 
 
 protected:
@@ -179,6 +189,8 @@ protected:
 
 	/// @brief create rasmol format script for selected residues; red: surface, blue: core, green: boundary
 	bool make_rasmol_format_file_;
+
+	bool use_sidechain_neighbors_;
 
  	/// @brief output in rasmol format
 

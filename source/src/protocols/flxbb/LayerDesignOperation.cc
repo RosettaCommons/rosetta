@@ -458,8 +458,15 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 
 		char ss( secstruct[i] );
 		TR << "Residue " << i << std::endl;
-		TR << "    ss=" << ss << " "
-			 << "    Sasa=" << ObjexxFCL::format::F( 6, 2, srbl_->rsd_sasa( i ) ) << std::endl;
+		TR << "    ss=" << ss << " ";
+		
+		if (srbl_->use_sidechain_neighbors()) {
+			TR << "Neighbors=" << ObjexxFCL::format::F( 5, 2, srbl_->rsd_sasa( i ) ) << std::endl;
+		} else { 
+
+			TR << "    Sasa=" << ObjexxFCL::format::F( 6, 2, srbl_->rsd_sasa( i ) ) << std::endl;
+		}
+
 		TR << "    basic layer = " << srbl_layer << std::endl;
 
 		// If there are no active layers and the working layer is designable
@@ -568,6 +575,14 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	repack_non_designed_residues_ = tag->getOption< bool >("repack_non_design", 1);
 
 	srbl_->set_design_layer( true, true, true);
+
+	if( tag->hasOption( "use_sidechain_neighbors" ) ) {
+		srbl_->use_sidechain_neighbors( tag->getOption< bool >( "use_sidechain_neighbors" ) );
+
+		srbl_->sasa_core( 5.2);
+		srbl_->sasa_surface( 2.0 );
+
+	}
 
 	if( tag->hasOption( "pore_radius" ) ) {
 		srbl_->pore_radius( tag->getOption< Real >( "pore_radius" ) );
