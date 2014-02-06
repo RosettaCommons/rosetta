@@ -689,7 +689,7 @@ void to_radians ( // {{{1
 		utility::vector1<Real> & degrees) {
 
 	using numeric::conversions::to_radians;
-	for (int i = 1; i < degrees.size(); i++) {
+	for (Size i = 1; i < degrees.size(); i++) {
 		to_radians(degrees[i]);
 	}
 }
@@ -698,7 +698,7 @@ void to_degrees ( // {{{1
 		utility::vector1<Real> & radians) {
 
 	using numeric::conversions::to_degrees;
-	for (int i = 1; i < radians.size(); i++) {
+	for (Size i = 1; i < radians.size(); i++) {
 		to_degrees(radians[i]);
 	}
 }

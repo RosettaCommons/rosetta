@@ -38,7 +38,7 @@ BalancedKicSampler::BalancedKicSampler(loggers::LoggerOP logger) {
 }
 
 bool BalancedKicSampler::apply(
-		Pose & pose, Loop const & loop, ScoreFunctionCOP score_function) {
+		Pose & pose, Loop const & loop, ScoreFunctionCOP) {
 
 	mover_.set_loop(loop);
 	mover_.apply(pose);

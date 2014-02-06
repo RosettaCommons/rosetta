@@ -38,7 +38,7 @@ WalkingPerturber::WalkingPerturber(Real magnitude)
 	: magnitude_ (magnitude) {}
 
 void WalkingPerturber::perturb_subset(
-		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
+		Pose const &, IndexList const & residues, ClosureProblemOP problem) {
 
 	foreach (Size residue, residues) {
 		Real phi = problem->phi(residue, DEGREES) + magnitude_ * gaussian();

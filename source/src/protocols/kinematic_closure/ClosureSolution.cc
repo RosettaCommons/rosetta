@@ -72,9 +72,9 @@ ClosureSolution::ClosureSolution(
 		ParameterList const & bond_lengths)
 
 		: problem_(problem), index_(index),
-		  torsion_angles_(torsion_angles),
-		  bond_angles_(bond_angles),
 		  bond_lengths_(bond_lengths),
+		  bond_angles_(bond_angles),
+		  torsion_angles_(torsion_angles),
 		  jacobian_(-1) {}
 
 void ClosureSolution::apply(Pose & pose) const { // {{{1

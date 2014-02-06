@@ -40,7 +40,7 @@ void Perturber::perturb_with_balance(
 /// that no balanced implementation of this algorithm exists.
 
 void Perturber::perturb_subset_with_balance(
-		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
+		Pose const &, IndexList const &, ClosureProblemOP) {
 
 	utility_exit_with_message(
 			"The " + get_name() + " perturber can not sample without bias.");

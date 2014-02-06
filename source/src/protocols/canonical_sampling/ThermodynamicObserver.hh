@@ -51,7 +51,7 @@ public:
 	/// the pose is the role of the ThermodynamicMover class.  The role of this 
 	/// class is to simply observe the poses being generated.
 	virtual
-	void apply( core::pose::Pose& ) {};
+	void apply(core::pose::Pose &) {};
 
 	/// @brief Callback executed before any Monte Carlo trials are attempted.
 	/// @details The @a cycle parameter gives the number of times that the 
@@ -60,10 +60,7 @@ public:
 	virtual
 	void
 	initialize_simulation(
-		core::pose::Pose & pose,
-		MetropolisHastingsMover const & mover,
-		core::Size cycle
-	) {};
+		core::pose::Pose &, MetropolisHastingsMover const &, core::Size) {};
 
 	/// @brief Callback executed after the Metropolis criterion is evaluated.
 	virtual

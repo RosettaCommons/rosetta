@@ -32,7 +32,7 @@ FixedPivots::FixedPivots(Size start, Size stop, Size cut) {
 	cut_ = cut;
 }
 
-Loop FixedPivots::pick(Pose const & pose, Loop const & loop) {
+Loop FixedPivots::pick(Pose const &, Loop const &) {
 	return Loop(start_, stop_, cut_);
 }
 

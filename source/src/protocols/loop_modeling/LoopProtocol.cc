@@ -65,13 +65,13 @@ LoopProtocol::~LoopProtocol() {} // {{{1
 void LoopProtocol::apply(Pose & pose) { // {{{1
 	start_protocol(pose);
 
-	for (int i = 1; i <= iterations_[1]; i++) {
+	for (Size i = 1; i <= iterations_[1]; i++) {
 		ramp_score_function(i);
 
-		for (int j = 1; j <= iterations_[2]; j++) {
+		for (Size j = 1; j <= iterations_[2]; j++) {
 			ramp_temperature(j);
 
-			for (int k = 1; k <= iterations_[3]; k++) {
+			for (Size k = 1; k <= iterations_[3]; k++) {
 				attempt_loop_move(pose, i, j, k);
 			}
 		}
@@ -146,7 +146,7 @@ void LoopProtocol::ramp_score_function(Size iteration) { // {{{1
 	}
 }
 
-void LoopProtocol::ramp_temperature(Size iteration) { // {{{1
+void LoopProtocol::ramp_temperature(Size /*iteration*/) { // {{{1
 	if (ramp_temperature_) {
 		Real temperature = monte_carlo_->temperature();
 		monte_carlo_->set_temperature(temperature * temperature_scale_factor_);

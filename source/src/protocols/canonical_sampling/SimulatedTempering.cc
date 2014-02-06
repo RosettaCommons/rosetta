@@ -177,9 +177,7 @@ SimulatedTempering::finalize_simulation( std::string const& output_name ) {
 
 core::Real
 SimulatedTempering::temperature_move(
-		core::pose::Pose & pose,
-		MetropolisHastingsMover & mover,
-		core::Real score ) {
+		core::pose::Pose &, MetropolisHastingsMover &, core::Real score ) {
 
 	check_temp_consistency();
 	if ( !time_for_temp_move() ) return temperature();

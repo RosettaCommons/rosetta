@@ -96,7 +96,7 @@ void ClosureProblem::solve(SolutionList & solutions) const { // {{{1
 	ParameterMatrix solution_torsions;
 	ParameterMatrix solution_angles;
 	ParameterMatrix solution_lengths;
-	int num_solutions;
+	int num_solutions = 0;
 
 	IndexList order(3);
 	order[1] = 1;
@@ -121,7 +121,7 @@ void ClosureProblem::solve(SolutionList & solutions) const { // {{{1
 	solutions.clear();
 	solutions.resize(num_solutions);
 
-	for (Size index = 1; index <= num_solutions; index++) {
+	for (Size index = 1; index <= (Size) num_solutions; index++) {
 		solutions[index] = new ClosureSolution(
 				this, index,
 				solution_torsions[index],

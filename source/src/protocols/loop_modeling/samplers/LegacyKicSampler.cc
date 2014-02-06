@@ -45,7 +45,7 @@ LegacyKicSampler::LegacyKicSampler() { // {{{1
 }
 
 bool LegacyKicSampler::apply( // {{{1
-		Pose & pose, Loop const & loop, ScoreFunctionCOP score_function) {
+		Pose & pose, Loop const & loop, ScoreFunctionCOP) {
 
 	Size pivot_1 = loop.start();
 	Size pivot_3 = loop.stop();

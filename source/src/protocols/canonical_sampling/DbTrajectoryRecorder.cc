@@ -132,11 +132,9 @@ void DbTrajectoryRecorder::finalize_simulation( // {{{1
 }
 
 bool DbTrajectoryRecorder::restart_simulation( // {{{1
-		core::pose::Pose & pose,
-		MetropolisHastingsMover& mover,
-		core::Size& cycle,
-		core::Size& temp_level,
-		core::Real& temperature) {
+		core::pose::Pose &,
+		MetropolisHastingsMover &,
+		core::Size &, core::Size &, core::Real &) {
 
 	utility_exit_with_message(
 			"DbTrajectoryRecorder does not support restarting trajectories.");

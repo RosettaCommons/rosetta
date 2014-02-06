@@ -138,16 +138,17 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 	}
 
 	using namespace core;
-	bool restart = false;
 	core::Size cycle_number = 0;
-	Size temp_level = 0;
-	Real temperature = -1.0;
 
 	// The restarting features is currently disabled.  The following line of code 
 	// is being used in its place, and should be removed if this feature is ever 
 	// enabled again.
 	tempering_->initialize_simulation(pose, *this, cycle_number);
 	/*
+	bool restart = false;
+	Size temp_level = 0;
+	Real temperature = -1.0;
+
 	for (core::Size i = 1; i <= observers_.size() && !restart; ++i) {
 		TR << "Attempting restart using " << observers_[i]->get_name() << std::endl;
 		restart = observers_[i]->restart_simulation(pose, *this, cycle_number, temp_level, temperature );

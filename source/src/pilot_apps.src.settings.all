@@ -317,7 +317,7 @@ sources = {
 		"david_recompute_score_and_rmsd",
 		"david_align_and_recompute_score_and_rmsd",
 		"david_align_append_and_recompute_score_and_rmsd",
-		"david_find_best_pocket",
+		#"david_find_best_pocket",
     "david_find_exemplar",
     "david_find_pocket_exemplar",
 		"david_find_best_contact_pocket",

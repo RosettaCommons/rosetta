@@ -43,9 +43,9 @@ public:
 	
 	/// @brief Setup the task.
 	virtual void setup(
-			core::pose::Pose & pose,
-			protocols::loops::Loop const & loop,
-			core::scoring::ScoreFunctionOP score_function) {}
+			core::pose::Pose &,
+			protocols::loops::Loop const &,
+			core::scoring::ScoreFunctionOP) {}
 
 	/// @brief Make a change to the given pose and/or decide whether or not 
 	/// further processing should be done.
@@ -55,7 +55,7 @@ public:
 			core::scoring::ScoreFunctionCOP score_function) = 0;
 
 	/// @brief Allow the task to respond 
-	virtual void debrief(bool was_accepted) {}
+	virtual void debrief(bool /*was_accepted*/) {}
 
 };
 

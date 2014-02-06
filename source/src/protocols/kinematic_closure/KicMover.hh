@@ -23,7 +23,7 @@
 
 // Protocol headers
 #include <protocols/moves/Mover.hh>
-#include <protocols/loops/Loop.fwd.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loop_modeling/loggers/Logger.fwd.hh>
 
 // Utility headers

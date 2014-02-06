@@ -35,7 +35,7 @@ KicSampler::KicSampler(loggers::LoggerOP logger) {
 }
 
 bool KicSampler::apply(
-		Pose & pose, Loop const & loop, ScoreFunctionCOP score_function) {
+		Pose & pose, Loop const & loop, ScoreFunctionCOP) {
 
 	mover_.set_loop(loop);
 	mover_.apply(pose);

@@ -45,7 +45,7 @@ VicinityPerturber::VicinityPerturber(Pose const & target)
 	: target_(target), spread_(10 /*degrees*/) {}
 
 void VicinityPerturber::perturb_subset(
-		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
+		Pose const &, IndexList const & residues, ClosureProblemOP problem) {
 
 	foreach (Size i, problem->nonpivot_residues()) {
 		problem->perturb_phi(i, target_.phi(i) + spread_ * gaussian(), DEGREES);
@@ -54,7 +54,7 @@ void VicinityPerturber::perturb_subset(
 }
 
 void VicinityPerturber::perturb_subset_with_balance(
-		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
+		Pose const &, IndexList const & residues, ClosureProblemOP problem) {
 
 	Real fwhm = 2 * sqrt(2 * log(2)) * spread_;
 

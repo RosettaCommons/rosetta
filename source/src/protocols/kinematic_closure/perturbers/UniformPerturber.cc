@@ -31,7 +31,7 @@ namespace kinematic_closure {
 namespace perturbers {
 
 void UniformPerturber::perturb_subset(
-		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
+		Pose const &, IndexList const & residues, ClosureProblemOP problem) {
 
 	using numeric::random::uniform;
 	using numeric::conversions::DEGREES;

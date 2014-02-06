@@ -28,7 +28,7 @@ namespace kinematic_closure {
 namespace perturbers {
 
 void BondAnglePerturber::perturb_subset(
-		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
+		Pose const &, IndexList const & residues, ClosureProblemOP problem) {
 
 	using numeric::random::gaussian;
 	using numeric::conversions::DEGREES;

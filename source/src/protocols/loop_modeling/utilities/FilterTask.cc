@@ -26,7 +26,7 @@ FilterTask::FilterTask(FilterOP filter) {
 }
 
 bool FilterTask::apply(
-		Pose & pose, Loop const & loop, ScoreFunctionCOP score_function) {
+		Pose & pose, Loop const &, ScoreFunctionCOP) {
 
 	return filter_->apply(pose);
 }

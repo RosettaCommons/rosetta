@@ -31,7 +31,7 @@ namespace pivot_pickers {
 
 using namespace std;
 
-Loop StandardPivots::pick(Pose const & pose, Loop const & loop) {
+Loop StandardPivots::pick(Pose const &, Loop const & loop) {
 	int loop_start = loop.start();
 	int loop_stop = loop.stop();
 	int pivot_1, pivot_2, pivot_3;

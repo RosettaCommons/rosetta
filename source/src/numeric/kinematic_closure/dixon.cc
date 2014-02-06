@@ -435,7 +435,7 @@ void dixon_eig( // {{{1
 		PseudoMatrix const & B,
 		PseudoMatrix const & C,
 		PseudoMatrix const & D,
-		vector1<int> const & order,
+		vector1<int> const & /*order*/,
 		PseudoMatrix & cos,
 		PseudoMatrix & sin,
 		PseudoMatrix & u,
@@ -980,7 +980,7 @@ void test_dixon() {
   utility::vector1<utility::vector1<Real> > tau; // dixon output
   utility::vector1<utility::vector1<Real> > cos; // dixon output
   utility::vector1<utility::vector1<Real> > sin; // dixon output
-	int nsol;
+	int nsol = 0;
 
   // Allocate A,B,C,D
 	for (int i=1; i<=3; i++) {

@@ -25,7 +25,7 @@ namespace protocols {
 namespace kinematic_closure {
 namespace pivot_pickers {
 
-Loop EndToEndPivots::pick(Pose const & pose, Loop const & loop) {
+Loop EndToEndPivots::pick(Pose const &, Loop const & loop) {
 	runtime_assert(loop.start() < loop.stop());
 
 	Size pivot_1 = loop.start();

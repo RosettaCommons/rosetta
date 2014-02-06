@@ -11,6 +11,7 @@
 /// @author Kale Kundert
 
 // Unit Headers
+#include <numeric/types.hh>
 #include <numeric/kinematic_closure/vector.hh>
 #include <numeric/xyzVector.hh>
 
@@ -54,7 +55,7 @@ Coordinate norm (Coordinate const &a) { // {{{1
 // Overloaded Operators
  
 std::ostream& operator << (std::ostream &out, ParameterList const &x) { // {{{1
-	for (int i = 1; i <= x.size(); i++) {
+	for (Size i = 1; i <= x.size(); i++) {
 		std::string prefix = (i == 1) ? "[" : " ";
 		std::string suffix = (i == x.size()) ? "]" : ",";
 
@@ -64,7 +65,7 @@ std::ostream& operator << (std::ostream &out, ParameterList const &x) { // {{{1
 }
 
 std::ostream& operator << (std::ostream &out, ParameterMatrix const &xx) { // {{{1
-	for (int i = 1; i <= xx.size(); i++) {
+	for (Size i = 1; i <= xx.size(); i++) {
 		std::string prefix = (i == 1) ? "[" : " ";
 		std::string suffix = (i == xx.size()) ? "]" : ",";
 
