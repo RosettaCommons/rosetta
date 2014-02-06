@@ -11,46 +11,27 @@
 /// @brief ThermodynamicObserver methods implemented
 /// @author
 
-
 // Unit Headers
 #include <protocols/canonical_sampling/ThermodynamicObserver.hh>
-
-
-// Package Headers
-
-// Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-
-
 
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
-
 #include <utility/vector1.hh>
-
-
-// C++ Headers
 
 using basic::T;
 using basic::Error;
 using basic::Warning;
 
-//static basic::Tracer TR( "protocols.canonical_sampling.ThermodynamicObserver" );
-
 namespace protocols {
 namespace canonical_sampling {
 
-///@brief
-ThermodynamicObserver::ThermodynamicObserver(
-) : Mover()
-{
+ThermodynamicObserver::ThermodynamicObserver() : Mover() {
 	Mover::type( "ThermodynamicObserver" );
 }
 
 ThermodynamicObserver::~ThermodynamicObserver() {}
 
-} //moves
-} //protocols
+} // canonical_sampling
+} // protocols
 

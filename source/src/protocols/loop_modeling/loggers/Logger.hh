@@ -56,11 +56,11 @@ public:
 // Behavior Methods
 protected:
 
-	virtual void log_beginning_(Pose const & pose) {}
-	virtual void log_iteration_(Pose const & pose) {}
-	virtual void log_task_(Pose const & pose, string name, bool successful) {}
-	virtual void log_monte_carlo_(MonteCarlo const & monte_carlo) {}
-	virtual void log_ending_(Pose const & pose) {}
+	virtual void log_beginning_(Pose const & /*pose*/) {}
+	virtual void log_iteration_(Pose const & /*pose*/) {}
+	virtual void log_task_(Pose const & /*pose*/, string /*name*/, bool) {}
+	virtual void log_monte_carlo_(MonteCarlo const & /*monte_carlo*/) {}
+	virtual void log_ending_(Pose const & /*pose*/) {}
 
 // Private Helpers
 protected:

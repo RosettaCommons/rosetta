@@ -27,7 +27,7 @@
 #include <protocols/loop_modeling/LoopMover.hh>
 #include <protocols/kinematic_closure/ClosureProblem.hh>
 #include <protocols/kinematic_closure/ClosureSolution.hh>
-#include <protocols/kinematic_closure/samplers/BalancedKicSampler.hh>
+#include <protocols/kinematic_closure/BalancedKicMover.hh>
 #include <protocols/kinematic_closure/perturbers/Perturber.hh>
 #include <protocols/kinematic_closure/perturbers/RamaPerturber.hh>
 #include <protocols/kinematic_closure/perturbers/UniformPerturber.hh>
@@ -87,7 +87,7 @@ using protocols::kinematic_closure::ClosureProblemOP;
 using protocols::kinematic_closure::ClosureSolution;
 using protocols::kinematic_closure::ClosureSolutionCOP;
 using protocols::kinematic_closure::SolutionList;
-using protocols::kinematic_closure::samplers::BalancedKicSampler;
+using protocols::kinematic_closure::BalancedKicMover;
 using protocols::kinematic_closure::perturbers::PerturberOP;
 using protocols::kinematic_closure::perturbers::RamaPerturber;
 using protocols::kinematic_closure::perturbers::UniformPerturber;
@@ -154,7 +154,7 @@ public:
 		else utility_exit_with_message("Unknown closure move: " + closure_move_);
 	}
 
-	string get_name() const { return "KicSampler"; }
+	string get_name() const { return "ClosureMover"; }
 
 protected:
 
@@ -188,7 +188,7 @@ protected:
 		problem->solve(perturbed_solutions);
 
 		// Pick a solution to apply.
-		solution = BalancedKicSampler::pick_solution(
+		solution = BalancedKicMover::pick_solution(
 				unperturbed_solutions, perturbed_solutions);
 		solution->apply(pose);
 	}

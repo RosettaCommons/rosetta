@@ -103,8 +103,8 @@ canonical_sampling_main(){
 	if( use_hierarchy ) {}
 
   core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
-  //protocols::canonical_sampling::CanonicalSamplingMoverOP csm(new protocols::canonical_sampling::CanonicalSamplingMover(sfxn,pool_ptr,1000));
-	protocols::canonical_sampling::CanonicalSamplingMoverOP csm(new CanonicalSamplingMover);
+  //CanonicalSamplingMoverOP csm(new CanonicalSamplingMover(sfxn,pool_ptr,1000));
+	CanonicalSamplingMoverOP csm(new CanonicalSamplingMover);
 		csm->set_scorefunction(sfxn);
 
 	if( !use_fast_sc_moves ){

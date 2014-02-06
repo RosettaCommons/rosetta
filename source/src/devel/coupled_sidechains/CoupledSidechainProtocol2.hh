@@ -22,7 +22,6 @@
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 
 #include <protocols/canonical_sampling/SimulatedTempering.hh>
-#include <protocols/canonical_sampling/MultiTemperatureTrialCounter.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 
 #include <core/pack/interaction_graph/SimpleInteractionGraph.hh>

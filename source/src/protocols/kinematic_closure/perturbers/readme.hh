@@ -9,4 +9,4 @@
 /// ensure the backbone remains closed.  There is a great deal of flexibility 
 /// in how the non-pivot torsions are chosen.  This namespace provides a number 
 /// of different algorithms to sample these torsions.  These algorithms can be 
-/// mixed in matched in any way you'd like using samplers::KicSampler.
+/// mixed in matched in any way you'd like using samplers::KicMover.

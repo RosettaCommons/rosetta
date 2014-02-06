@@ -20,10 +20,12 @@
 namespace protocols {
 namespace canonical_sampling {
 
+/// @brief RosettaScripts factory for MetropolisHastingsMover.
 class MetropolisHastingsMoverCreator : public protocols::moves::MoverCreator {
 public:
 	virtual moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
+	/// @brief Static alias for keyname().  Not sure why this is needed.
 	static std::string mover_name();
 };
 

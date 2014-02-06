@@ -478,7 +478,7 @@ ReportToDB::parse_my_tag(
 	}
 
 	if(tag->hasOption("db_mode")){
-		throw utility::excn::EXCN_RosettaScriptsOption("The 'database_mode' tag has been deprecated. Please use 'database_mode' instead.");
+		throw utility::excn::EXCN_RosettaScriptsOption("The 'db_mode' tag has been deprecated. Please use 'database_mode' instead.");
 	}
 
 	if(tag->hasOption("separate_db_per_mpi_process")){

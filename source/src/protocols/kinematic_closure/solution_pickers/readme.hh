@@ -6,7 +6,7 @@
 /// kinematic closure.
 ///
 /// @details The classes in this namespace are intended to be constructed and 
-/// configured by the programmer, but used internally by samplers::KicSampler.  
+/// configured by the programmer, but used internally by samplers::KicMover.  
 /// So in most cases, you only have to worry about the constructor.  If you 
 /// want to create a new solution picking algorithm, just inherit from 
 /// SolutionPicker and reimplement SolutionPicker::pick_and_apply().

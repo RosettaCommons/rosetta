@@ -24,6 +24,9 @@ class WalkingPerturber : public Perturber {
 
 public:
 
+	/// @brief Constructor.  A magnitude (in degrees) can be specified.
+	WalkingPerturber(Real magnitude=10);
+
 	/// @copydoc Perturber::get_name
 	string get_name() const { return "WalkingPerturber"; }
 
@@ -38,6 +41,9 @@ public:
 			Pose const & pose,
 			IndexList const & residues,
 			ClosureProblemOP problem);
+
+private:
+	Real magnitude_;
 
 };
 

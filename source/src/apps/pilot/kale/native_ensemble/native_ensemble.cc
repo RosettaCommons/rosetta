@@ -1,55 +1,54 @@
-// Comments {{{1
-//
-// Input
-// 1. PDB structure.
-// 2. Loop residues (optional): If not given, all residues will be sampled.  No 
-//    design will be done either way.
-// 3. Algorithm (optional): String that specifies how the simulation should be 
-//    configured.  Don't foresee needing anything more complex at the moment.
-// 4. Backbone:sidechain move ratio (optional): Defaults to 1:10
-//
-// Output
-// 1. Trajectory.  This will be large.  Output to database.
-// 2. Entropy score.  Maybe later.
-
-// Should I write a new application, or should I make the old one work?
-// 1. No need for breadth mover.
-// 2. No need for unbalanced moves.
-// 3. Want to start using database.
-// 4. Will take a while to get going.
-// 5. Have to add moving pivots.
-
 // Headers {{{1
 
 // Core headers
-#include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/svn_version.hh>
 
 // Protocol headers
-#include <protocols/loops/Loop.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/kinematic_closure/samplers/BalancedKicSampler.hh>
+#include <protocols/canonical_sampling/DbTrajectoryRecorder.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
+#include <protocols/canonical_sampling/ParallelTempering.hh>
+#include <protocols/canonical_sampling/ProgressBarObserver.hh>
+#include <protocols/canonical_sampling/MultiTempTrialCounter.hh>
+#include <protocols/canonical_sampling/TemperatureController.hh>
+#include <protocols/kinematic_closure/BalancedKicMover.hh>
 #include <protocols/kinematic_closure/perturbers/RamaPerturber.hh>
 #include <protocols/kinematic_closure/perturbers/WalkingPerturber.hh>
+#include <protocols/kinematic_closure/perturbers/WalkingBondAnglePerturber.hh>
+#include <protocols/kinematic_closure/pivot_pickers/FixedOffsetPivots.hh>
+#include <protocols/loops/Loop.hh>
+#include <protocols/loops/loops_main.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/TrialCounter.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
-#include <protocols/jd2/JobDistributor.hh>
 
 // Utility headers
+#include <basic/database/schema_generator/Column.hh>
+#include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/sql_utils.hh>
 #include <devel/init.hh>
-#include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
+#include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/tools/make_vector1.hh>
 #include <utility/vector1.hh>
+
+// External headers
 #include <boost/foreach.hpp>
+#include <cppdb/frontend.h>
 
 // C++ headers
+#include <ctime>
 #include <string>
 
 #define foreach BOOST_FOREACH
@@ -71,6 +70,22 @@ using core::pack::task::operation::PreventRepackingOP;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
 
+using protocols::canonical_sampling::DbTrajectoryRecorder;
+using protocols::canonical_sampling::DbTrajectoryRecorderOP;
+using protocols::canonical_sampling::MetropolisHastingsMover;
+using protocols::canonical_sampling::MetropolisHastingsMoverOP;
+using protocols::canonical_sampling::ParallelTempering;
+using protocols::canonical_sampling::ProgressBarObserver;
+using protocols::canonical_sampling::MultiTempTrialCounter;
+using protocols::canonical_sampling::MultiTempTrialCounterOP;
+using protocols::canonical_sampling::MultiTempTrialCounterCOP;
+using protocols::canonical_sampling::TemperatureControllerCOP;
+using protocols::kinematic_closure::BalancedKicMover;
+using protocols::kinematic_closure::BalancedKicMoverOP;
+using protocols::kinematic_closure::perturbers::RamaPerturber;
+using protocols::kinematic_closure::perturbers::WalkingPerturber;
+using protocols::kinematic_closure::perturbers::WalkingBondAnglePerturber;
+using protocols::kinematic_closure::pivot_pickers::FixedOffsetPivots;
 using protocols::loops::Loop;
 using protocols::moves::Mover;
 using protocols::moves::MoverOP;
@@ -78,11 +93,8 @@ using protocols::moves::MonteCarlo;
 using protocols::moves::MonteCarloOP;
 using protocols::simple_moves::sidechain_moves::SidechainMover;
 using protocols::simple_moves::sidechain_moves::SidechainMoverOP;
-using protocols::kinematic_closure::samplers::BalancedKicSampler;
-using protocols::kinematic_closure::samplers::BalancedKicSamplerOP;
-using protocols::kinematic_closure::perturbers::RamaPerturber;
-using protocols::kinematic_closure::perturbers::WalkingPerturber;
 
+using utility::tools::make_vector1;
 typedef utility::vector1<Size> IndexList;
 basic::Tracer tr("apps.native_ensemble");
 
@@ -93,6 +105,8 @@ OPT_1GRP_KEY(IntegerVector, native_ensemble, weights)
 OPT_1GRP_KEY(String, native_ensemble, algorithm)
 OPT_1GRP_KEY(Integer, native_ensemble, iterations)
 OPT_1GRP_KEY(Real, native_ensemble, temperature)
+OPT_1GRP_KEY(Real, native_ensemble, frequency)
+OPT_1GRP_KEY(String, native_ensemble, message)
 OPT_1GRP_KEY(Boolean, native_ensemble, quiet)
 
 // }}}1
@@ -110,7 +124,9 @@ public:
 		  algorithm_("rama"),
 			iterations_(1000),
 			temperature_(1),
-			backbone_ratio_(0.1),
+			backbone_weight_(1),
+			sidechain_weight_(1),
+			dump_frequency_(1),
 			quiet_(false) {}
 
 	void apply(Pose & pose);
@@ -122,20 +138,39 @@ public:
 	void set_algorithm(string value) { algorithm_ = value; }
 	void set_iterations(Size value) { iterations_ = value; }
 	void set_temperature(Real value) { temperature_ = value; }
-	void set_weights(Real bb, Real sc) { backbone_ratio_ = bb / (bb + sc); }
+	void set_weights(Real bb, Real sc) {
+		backbone_weight_ = bb;
+		sidechain_weight_ = sc;
+	}
 	void set_weights(IndexList values) { set_weights(values[1], values[2]); }
+	void set_dump_frequency(Size value) { dump_frequency_ = value; }
+	void set_input_file(string value) { input_file_ = value; }
+	void set_description(string value) { description_ = value; }
 	void set_quiet(bool value) { quiet_ = value; }
+
+public:
+	static void register_options();
 
 private:
 	void show_header() const;
 	void show_progress(Size current_iteration) const;
+	void show_footer() const;
+
+	void write_schema_to_db() const;
+	Size write_job_to_db() const;
+	void write_stop_time_to_db(Size id) const;
+	void write_stats_to_db(Size id, MultiTempTrialCounterCOP counter) const;
 
 private:
 	Loop loop_;
 	string algorithm_;
 	Size iterations_;
 	Real temperature_;
-	Real backbone_ratio_;
+	Real backbone_weight_;
+	Real sidechain_weight_;
+	Size dump_frequency_;
+	string input_file_;
+	string description_;
 	bool quiet_;
 };
 
@@ -143,63 +178,99 @@ void NativeEnsemble::apply(Pose & pose) { // {{{1
 
 	// Setup the monte carlo run.
 
+	MetropolisHastingsMoverOP canonical_mc = new MetropolisHastingsMover;
 	ScoreFunctionOP score_function = core::scoring::getScoreFunction();
-	MonteCarloOP monte_carlo = new MonteCarlo(pose, *score_function, 1);
+	MonteCarloOP monte_carlo = new MonteCarlo(
+			pose, *score_function, temperature_);
+
+	canonical_mc->set_ntrials(iterations_);
+	canonical_mc->set_monte_carlo(monte_carlo);
+
 	if (loop_.start() <= 1) loop_ = Loop(2, pose.total_residue() - 1);
+	pose.update_residue_neighbors();
 
-	show_header();
-
-	// Setup the backbone mover.
-
-	BalancedKicSamplerOP backbone_mover = new BalancedKicSampler;
-
-	if (algorithm_ == "rama")
-		backbone_mover->add_perturber(new RamaPerturber);
-	else if (algorithm_ == "walking")
-		backbone_mover->add_perturber(new WalkingPerturber);
-	else
-		utility_exit_with_message("Unknown algorithm: " + algorithm_);
-
-	// Setup the sidechain mover.
+	// Setup the standard backbone and sidechain moves.
 
 	SidechainMoverOP sidechain_mover = new SidechainMover;
+	BalancedKicMoverOP backbone_mover = new BalancedKicMover;
+
 	TaskFactoryOP task_factory = new TaskFactory;
 	PreventRepackingOP prevent_repacking = new PreventRepacking();
 
+	utility::vector1<bool> is_near_loop = 
+		protocols::loops::select_loop_residues(pose, loop_, true, 10.0);
+
 	for (Size i = 1; i <= pose.total_residue(); i++) {
-		if (i < loop_.start() or i > loop_.stop()) {
-			prevent_repacking->include_residue(i);
-		}
+		if (not is_near_loop[i]) prevent_repacking->include_residue(i);
 	}
 
 	task_factory->push_back(new RestrictToRepacking);
 	task_factory->push_back(prevent_repacking);
 
-	sidechain_mover->set_preserve_detailed_balance(true);
 	sidechain_mover->set_task_factory(task_factory);
+	backbone_mover->set_loop(loop_);
+
+	canonical_mc->add_mover(sidechain_mover, sidechain_weight_);
+	canonical_mc->add_mover(backbone_mover, backbone_weight_);
+
+	// Customize the backbone and tempering moves.
+
+	if (algorithm_ == "rama") {
+		backbone_mover->add_perturber(new RamaPerturber);
+	}
+	else if (algorithm_ == "walking") {
+		backbone_mover->add_perturber(new WalkingPerturber(5));
+	}
+	else if (algorithm_ == "rama/para-temp") {
+		canonical_mc->set_tempering(new ParallelTempering);
+	}
+	else if (algorithm_ == "walking/para-temp") {
+		canonical_mc->set_tempering(new ParallelTempering);
+		backbone_mover->add_perturber(new WalkingPerturber(5));
+	}
+	else if (algorithm_ == "rama/bond-angle") {
+		backbone_mover->add_perturber(new RamaPerturber);
+		backbone_mover->add_perturber(new WalkingBondAnglePerturber);
+	}
+	else if (algorithm_ == "walking/bond-angle") {
+		backbone_mover->add_perturber(new WalkingPerturber(5));
+		backbone_mover->add_perturber(new WalkingBondAnglePerturber);
+	}
+	else {
+		utility_exit_with_message("Unknown algorithm: " + algorithm_);
+	}
+
+	TemperatureControllerCOP tempering = canonical_mc->tempering();
+	MultiTempTrialCounterOP trial_counter = new MultiTempTrialCounter(tempering);
+	monte_carlo->set_counter(trial_counter);
+
+	// Setup output.
+
+	write_schema_to_db();
+	Size id = write_job_to_db();
+	DbTrajectoryRecorderOP db_output = new DbTrajectoryRecorder;
+	db_output->set_job_id(id);
+	db_output->stride(dump_frequency_);
+	canonical_mc->add_observer(db_output);
+	canonical_mc->add_observer(new ProgressBarObserver);
+	show_header();
 
 	// Run the monte carlo loop.
 
-	for (int i = 1; i <= iterations_; i++) {
-		string move_name;
-		Real proposal_ratio;
+	canonical_mc->apply(pose);
 
-		if (backbone_ratio_ < numeric::random::uniform()) {
-			backbone_mover->apply(pose, loop_);
-			move_name = "backbone";
-			proposal_ratio = 1;
-		}
-		else {
-			sidechain_mover->apply(pose);
-			move_name = "sidechain";
-			proposal_ratio = sidechain_mover->last_proposal_density_ratio();
-		}
+	// Finalize output and clean up.
 
-		monte_carlo->boltzmann(pose, move_name, proposal_ratio);
-		show_progress(i);
-	}
+	write_stop_time_to_db(id);
+	write_stats_to_db(id, trial_counter);
+	show_footer();
+}
 
-	cerr << endl;
+void NativeEnsemble::register_options() { // {{{1
+	MetropolisHastingsMover::register_options();
+	ParallelTempering::register_options();
+	SidechainMover::register_options();
+	BalancedKicMover::register_options();
 }
 
 void NativeEnsemble::show_header() const { // {{{1
@@ -207,7 +278,7 @@ void NativeEnsemble::show_header() const { // {{{1
 	tr << "Algorithm:   " << algorithm_ << endl;
 	tr << "Iterations:  " << iterations_ << endl;
 	tr << "Temperature: " << temperature_ << endl;
-	tr << "% BB Moves:  " << backbone_ratio_ << endl;
+	tr << "BB:SC Ratio: " << backbone_weight_ << ":" << sidechain_weight_ << endl;
 }
 
 void NativeEnsemble::show_progress(Size current_iteration) const { // {{{1
@@ -215,36 +286,201 @@ void NativeEnsemble::show_progress(Size current_iteration) const { // {{{1
 	cerr << "\r[" << current_iteration << "/" << iterations_ << "]";
 }
 
+void NativeEnsemble::show_footer() const { // {{{1
+	cerr << endl;
+}
+
+void NativeEnsemble::write_schema_to_db() const { // {{{1
+	using utility::sql_database::sessionOP;
+	using namespace basic::database::schema_generator;
+
+	sessionOP db_session = basic::database::get_db_session();
+
+	// Define the jobs table.
+	// Strictly speaking, the loop_begin and loop_end fields should be in their 
+	// own table.  As it is, this schema cannot support multiple loop regions.
+
+	Column id("id", new DbBigInt, false, true);
+	Column command("command", new DbText);
+	Column revision("revision", new DbText);
+	Column algorithm("algorithm", new DbText);
+	Column start_time("start_time", new DbText);
+	Column stop_time("stop_time", new DbText);
+	Column input_file("input_file", new DbText);
+	Column loop_begin("loop_begin", new DbInteger);
+	Column loop_end("loop_end", new DbInteger);
+	Column iterations("iterations", new DbInteger);
+	Column frames("frames", new DbInteger);
+	Column description("description", new DbText);
+
+	Schema jobs("jobs", PrimaryKey(id));
+
+	jobs.add_column(id);
+	jobs.add_column(command);
+	jobs.add_column(revision);
+	jobs.add_column(algorithm);
+	jobs.add_column(start_time);
+	jobs.add_column(stop_time);
+	jobs.add_column(input_file);
+	jobs.add_column(loop_begin);
+	jobs.add_column(loop_end);
+	jobs.add_column(iterations);
+	jobs.add_column(frames);
+	jobs.add_column(description);
+	jobs.write(db_session);
+
+	// Define the moves table.
+
+	Column job_id("job_id", new DbBigInt, false);
+	Column type("type", new DbText, false);
+	Column num_trials("num_trials", new DbBigInt, false);
+	Column num_accepted("num_accepted", new DbBigInt, false);
+	Columns key_columns = make_vector1(job_id, type);
+
+	Schema moves("moves", PrimaryKey(key_columns));
+
+	moves.add_column(num_trials);
+	moves.add_column(num_accepted);
+	moves.write(db_session);
+}
+
+Size NativeEnsemble::write_job_to_db() const { // {{{1
+	using utility::sql_database::sessionOP;
+	using basic::database::safely_prepare_statement;
+	using basic::database::safely_write_to_database;
+
+	// Create a new entry in the jobs table, fill it in with all the information 
+	// that's available right now, and return the job id.
+
+	sessionOP db_session = basic::database::get_db_session();
+	db_session->begin_transaction();
+
+	string const insert_string =
+		"INSERT INTO jobs ("
+		  "command, revision, algorithm, start_time, input_file, "
+		  "loop_begin, loop_end, iterations, frames, description) "
+		"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+
+	string const command = option.get_argv();
+	string const revision = core::minirosetta_svn_version();
+	time_t now = time(0); string const start_time = ctime(&now);
+
+	cppdb::statement insert_statement =
+		safely_prepare_statement(insert_string, db_session);
+
+	insert_statement.bind( 1, command);
+	insert_statement.bind( 2, revision);
+	insert_statement.bind( 3, algorithm_);
+	insert_statement.bind( 4, start_time);
+	insert_statement.bind( 5, input_file_);
+	insert_statement.bind( 6, loop_.start());
+	insert_statement.bind( 7, loop_.stop());
+	insert_statement.bind( 8, iterations_);
+	insert_statement.bind( 9, iterations_ / dump_frequency_);
+	insert_statement.bind(10, description_);
+
+	safely_write_to_database(insert_statement);
+
+	Size id = insert_statement.sequence_last("jobs_id_seq");
+	db_session->force_commit_transaction();
+	return id;
+}
+
+void NativeEnsemble::write_stop_time_to_db(Size id) const { // {{{1
+	using utility::sql_database::sessionOP;
+	using basic::database::safely_prepare_statement;
+	using basic::database::safely_write_to_database;
+
+	// Record the stop time in the jobs table.
+
+	sessionOP db_session = basic::database::get_db_session();
+
+	string const update_string =
+		"UPDATE jobs SET stop_time=? WHERE id=?;";
+
+	time_t now = time(0);
+	string const stop_time = ctime(&now);
+
+	cppdb::statement update_statement =
+		safely_prepare_statement(update_string, db_session);
+
+	update_statement.bind(1, stop_time);
+	update_statement.bind(2, id);
+
+	safely_write_to_database(update_statement);
+}
+
+void NativeEnsemble::write_stats_to_db( // {{{1
+		Size id, MultiTempTrialCounterCOP counter) const {
+
+	using utility::sql_database::sessionOP;
+	using basic::database::safely_prepare_statement;
+	using basic::database::safely_write_to_database;
+	using protocols::moves::TrialCounter;
+
+	// Create a new entry in the moves table with information about which moves 
+	// were used in this simulation and how effective they each were.
+
+	sessionOP db_session = basic::database::get_db_session();
+
+	string const insert_string =
+		"INSERT INTO moves (job_id, type, temp_level, num_trials, num_accepted) "
+		"VALUES (?, ?, ?, ?);";
+
+	for (Size temp_level = 1;
+	     temp_level < counter->num_temp_levels();
+	     temp_level++) {
+
+		TrialCounter const & temp_counter = counter->temp_level(temp_level);
+
+		foreach (string tag, temp_counter.tags()) {
+			Size num_trials = temp_counter.trial(tag);
+			Size num_accepted = temp_counter.accepted(tag);
+
+			cppdb::statement insert_statement =
+				safely_prepare_statement(insert_string, db_session);
+
+			insert_statement.bind(1, id);
+			insert_statement.bind(2, tag);
+			insert_statement.bind(3, temp_level);
+			insert_statement.bind(4, num_trials);
+			insert_statement.bind(5, num_accepted);
+
+			safely_write_to_database(insert_statement);
+		}
+	}
+}
 // }}}1
 
 int main(int argc, char * argv[]) { // {{{1
-	IndexList default_loop(2);
-	default_loop[1] = 0;
-	default_loop[2] = 0;
-
-	IndexList default_weights(2);
-	default_weights[1] = 1;
-	default_weights[2] = 9;
+	IndexList default_loop = make_vector1(0, 0);
+	IndexList default_weights = make_vector1(1, 9);
 
 	NEW_OPT(native_ensemble::loop, "Residues to sample", default_loop);
 	NEW_OPT(native_ensemble::weights, "BB-to-SC move ratio", default_weights);
 	NEW_OPT(native_ensemble::algorithm, "Backbone sampling algorithm", "rama");
 	NEW_OPT(native_ensemble::iterations, "Monte Carlo iterations", 1000);
 	NEW_OPT(native_ensemble::temperature, "Monte Carlo temperature", 1);
+	NEW_OPT(native_ensemble::frequency, "Pose output frequency", 1);
+	NEW_OPT(native_ensemble::message, "Description of the job", "");
 	NEW_OPT(native_ensemble::quiet, "Hide progress updates", false);
+
+	NativeEnsemble::register_options();
 
 	devel::init(argc, argv);
 
 	NativeEnsembleOP app = new NativeEnsemble;
-	Pose pose;
 
 	if (not option[OptionKeys::in::file::s].active()) {
 		utility_exit_with_message("Specify an input PDB using the '-s' flag.");
 	}
+	if (not option[OptionKeys::inout::dbms::database_name].user()) {
+		option[OptionKeys::inout::dbms::database_name].value("sandbox.db");
+	}
 
+	Pose pose;
 	pose_from_pdb(pose, option[OptionKeys::in::file::s][1].name());
 
-	cout << option[OptionKeys::native_ensemble::loop].active() << endl;
 	if (option[OptionKeys::native_ensemble::loop].active()) {
 		app->set_loop(option[OptionKeys::native_ensemble::loop]());
 	}
@@ -253,9 +489,11 @@ int main(int argc, char * argv[]) { // {{{1
 	app->set_algorithm(option[OptionKeys::native_ensemble::algorithm]());
 	app->set_iterations(option[OptionKeys::native_ensemble::iterations]());
 	app->set_temperature(option[OptionKeys::native_ensemble::temperature]());
+	app->set_dump_frequency(option[OptionKeys::native_ensemble::frequency]());
+	app->set_input_file(option[OptionKeys::in::file::s][1].name());
+	app->set_description(option[OptionKeys::native_ensemble::message]());
 	app->set_quiet(option[OptionKeys::native_ensemble::quiet]());
 
-	//protocols::jd2::JobDistributor::get_instance()->go(app);
 	app->apply(pose);
 }
 // }}}1

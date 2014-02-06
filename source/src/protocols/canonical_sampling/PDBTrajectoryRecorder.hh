@@ -8,18 +8,14 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/canonical_sampling/PDBTrajectoryRecorder.hh
-///
 /// @brief
 /// @author
-
 
 #ifndef INCLUDED_protocols_canonical_sampling_PDBTrajectoryRecorder_hh
 #define INCLUDED_protocols_canonical_sampling_PDBTrajectoryRecorder_hh
 
-
 // Project forward headers
 #include <protocols/canonical_sampling/TrajectoryRecorder.hh>
-
 
 // Project headers
 #include <protocols/canonical_sampling/ThermodynamicObserver.hh>
@@ -28,40 +24,27 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <utility/io/ozstream.hh>
 
-
-// External library headers
-
-
 // C++ headers
 #include <string>
-
-
-// Operating system headers
-
-
-// Forward declarations
-
 
 namespace protocols {
 namespace canonical_sampling {
 
-
-	/// @brief
-class PDBTrajectoryRecorder : public protocols::canonical_sampling::TrajectoryRecorder {
+/// @brief Record a trajectory to the PDB file format.
+class PDBTrajectoryRecorder : public TrajectoryRecorder {
 	typedef TrajectoryRecorder Parent;
 public:
-	/// @brief Constructor
+	/// @brief Default constructor.
 	PDBTrajectoryRecorder();
 
-	/// @brief Destructor
+	/// @brief Destructor.
 	~PDBTrajectoryRecorder();
 
-	/// @brief Copy constructor
+	/// @brief Copy constructor.
 	PDBTrajectoryRecorder( PDBTrajectoryRecorder const & );
 
 private:
-	//assignment not allowed
-	/// @brief operator=
+	/// @brief Assignment not allowed.
 	PDBTrajectoryRecorder&
 	operator=( PDBTrajectoryRecorder const & );
 
@@ -90,22 +73,23 @@ public:
 
 	virtual void reset(
 		protocols::moves::MonteCarlo const& mc,
-		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+		MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
 	);
 
 	virtual
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+		MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 private:
 
+	/// @brief Append the given model to the PDB trajectory being written.
 	void
 	write_model(
 		core::pose::Pose const & pose,
-		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+		MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
 	);
 
 	utility::io::ozstream trajectory_stream_;

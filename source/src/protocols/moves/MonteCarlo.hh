@@ -440,6 +440,9 @@ public:
 	///     MonteCarlo.show_state
 	void show_counters() const;
 
+	/// @brief Set the counter to be used for this simulation.
+	void set_counter(TrialCounterOP counter);
+
 	/// @brief Return statistics for each type of move that has been attempted 
 	/// during this simulation.
 	///
@@ -449,7 +452,7 @@ public:
 	///     MonteCarlo
 	///     MonteCarlo.show_counters
 	///     MonteCarlo.reset_counters
-	TrialCounter const counters() const;
+	TrialCounterCOP counter() const;
 
 	/// @brief Returns the total number of trials since the last reset
 	/// @note: MonteCarlo.boltzmann(pose) updates the number of trials
@@ -463,6 +466,20 @@ public:
 	///     MonteCarlo.show_state
 	Size total_trials() const;
 
+	/// @brief Manually record that a move was attempted.
+	/// @details This is intended for moves that are made outside to context of 
+	/// MonteCarlo itself.  Temperature moves are a good example.
+	void count_trial(std::string const & tag);
+
+	/// @brief Manually record that a move was accepted.
+	/// @details This is intended for moves that are made outside to context of 
+	/// MonteCarlo itself.  Temperature moves are a good example.
+	void count_accepted(std::string const & tag);
+
+	/// @brief Manually record that a move produced a change in energy.
+	/// @details This is intended for moves that are made outside to context of 
+	/// MonteCarlo itself.  Temperature moves are a good example.
+	void count_energy_drop(std::string const & tag, core::Real drop);
 
 	/// @brief Returns the score value of the last accepted pose
 	///
@@ -606,7 +623,7 @@ private:
 	MCA mc_accepted_;
 
 	/// @brief diagnostics
-	TrialCounter counter_;
+	TrialCounterOP counter_;
 
 	bool update_boinc_;
 

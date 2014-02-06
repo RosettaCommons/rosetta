@@ -16,7 +16,7 @@
 
 // Unit Headers
 #include <protocols/canonical_sampling/SimulatedTempering.fwd.hh>
-#include <protocols/canonical_sampling/TemperingBase.hh>
+#include <protocols/canonical_sampling/TemperatureController.hh>
 
 #include <protocols/moves/Mover.hh>
 
@@ -33,9 +33,17 @@
 namespace protocols {
 namespace canonical_sampling {
 
-///@details
-class SimulatedTempering : public protocols::canonical_sampling::TemperingBase {
-	typedef TemperingBase Parent;
+/// @details The only way to set the temperature range used for simulated 
+/// annealing is to use the command line.  The relevant options are:
+///
+/// @code
+/// -tempering::temp::range <low> <high>
+/// -tempering::temp::low <low> -tempering::temp::high <high>
+/// @endcode
+
+class SimulatedTempering : public TemperatureController {
+	typedef TemperatureController Parent;
+
 public:
 
 	SimulatedTempering();
@@ -66,25 +74,24 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	/// @brief execute the temperatur move ( called by observer_after_metropolis )
-	/// returns the current temperatur in kT.
-	core::Real
-	temperature_move( core::Real score);
-
-	/// @brief callback executed before any Monte Carlo trials
 	virtual void
 	initialize_simulation(
 		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
-		core::Size cycle   //non-zero if trajectory is restarted
+		MetropolisHastingsMover const & metropolis_hastings_mover,
+		core::Size cycle
 	);
 
-	/// @brief callback executed after all Monte Carlo trials
+	core::Real
+	temperature_move(
+			core::pose::Pose & pose,
+			MetropolisHastingsMover & mover,
+			core::Real score);
+
 	virtual
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+		MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 	void
@@ -105,7 +112,7 @@ protected:
 
 	/// @brief initialize temperatures and weights from file, return false if IO error occurrs
 	virtual
-	bool initialize_from_file( std::string const& filename );
+	bool init_from_file( std::string const& filename );
 
 	virtual
 	void write_to_file( std::string const& file_in, std::string const& output_name, utility::vector1< core::Real > const& wcounts );

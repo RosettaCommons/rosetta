@@ -16,68 +16,92 @@
 
 // Unit Headers
 #include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/canonical_sampling/TemperatureController.hh>
-
-// Project Headers
-#include <protocols/moves/MonteCarlo.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <numeric/random/WeightedSampler.hh>
-
-// Utility Headers
-#include <core/types.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
-
-#include <protocols/canonical_sampling/ThermodynamicMover.fwd.hh>
-#include <protocols/canonical_sampling/ThermodynamicObserver.fwd.hh>
+#include <protocols/canonical_sampling/ThermodynamicMover.hh>
+#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
+#include <protocols/canonical_sampling/TemperatureController.fwd.hh>
 
 #ifdef WIN32
 	#include <protocols/canonical_sampling/ThermodynamicMover.hh>
 	#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #endif
 
+// Core headers
+#include <core/types.hh>
+#include <core/pose/Pose.fwd.hh>
+
+// Project Headers
+#include <protocols/loops/Loop.fwd.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
+
+// Utility Headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <numeric/random/WeightedSampler.hh>
 
 namespace protocols {
 namespace canonical_sampling {
 
-///@details
+/// @brief Manage the main loop of a canonical Monte Carlo simulation.
+///
+/// @details To make the simulation flexible, most aspects of the algorithm 
+/// have been delegated to other classes.  Use the add_mover() methods to 
+/// control which moves are used during the simulation.  Use the 
+/// set_tempering() method to control how the temperature changes during the 
+/// simulation.  This can be used to setup simulated annealing or parallel 
+/// tempering runs.  Management of the score function is delegated to the 
+/// underlying MonteCarlo object, so use set_monte_carlo() to specify a score 
+/// function.  Use add_observer() to keep track of statistics and to record the 
+/// trajectory.
+
 class MetropolisHastingsMover : public protocols::moves::Mover {
 
 public:
 
+	/// @brief Default constructor.
 	MetropolisHastingsMover();
 
+	/// @brief Copy constructor.
 	MetropolisHastingsMover(
 		MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
+	/// @brief Destructor.
 	virtual
 	~MetropolisHastingsMover();
 
+	/// @brief Run the Metropolis-Hastings simulation.
 	virtual
 	void
 	apply( core::pose::Pose & pose );
 
+	/// @brief Return the name of this mover.
 	virtual
 	std::string
 	get_name() const;
 
+	/// @brief Return a copy of this mover.
 	protocols::moves::MoverOP
 	clone() const;
 
+	/// @brief Return a newly instantiated mover.
 	virtual
 	protocols::moves::MoverOP
 	fresh_instance() const;
 
+	/// @brief Return false.  This mover does not need to be reinitialized for 
+	/// each job.
 	virtual
 	bool
 	reinitialize_for_each_job() const;
 
+	/// @brief Return false.  This mover does not need to be reinitialized for 
+	/// new input.
 	virtual
 	bool
 	reinitialize_for_new_input() const;
 
+	/// @brief Use a RosettaScripts tag to configure this mover.
 	virtual
 	void
 	parse_my_tag(
@@ -88,38 +112,52 @@ public:
 		core::pose::Pose const & pose
 	);
 
+	/// @brief Return the MonteCarlo object being used by this simulation.
 	protocols::moves::MonteCarloCOP
 	monte_carlo() const;
 
+	/// @brief Provide a MonteCarlo object to use for this simulation.
 	void
 	set_monte_carlo(
 		protocols::moves::MonteCarloOP monte_carlo
 	);
 
+	/// @brief Return the TemperatureController being used by this simulation.
+	TemperatureControllerCOP
+	tempering() const;
+
+	/// @brief Provide a TemperatureController to use for this simulation.
 	void
 	set_tempering(
 		TemperatureControllerOP
 	);
 
-	TemperatureControllerCOP
-	tempering() const;
-
+	/// @brief Return the number of iterations used by this simulation.
 	core::Size
 	ntrials() const { return ntrials_; }
 
+	/// @brief Set the number of iterations to use for this simulation.
 	void
 	set_ntrials(
 		core::Size ntrials
 	);
 
+	/// @brief Return the file name used by some of the observers to output data. 
 	std::string const &
 	output_name() const;
 
+	/// @brief Set the file name used by some of the observers to output data. 
 	void
 	set_output_name(
 		std::string const & output_name
 	);
 
+	/// @brief Return a file name that is consistent with the given options.
+	/// @details If @a cumulate_jobs is true, the same filename will be returned 
+	/// for different jobs, so that the jobs all get cumulated in the same file.  
+	/// Likewise, if @a cumulate_replicas is true, the same filename will be 
+	/// returned for all replicas.  If either of these options are set, MPI must 
+	/// be enabled.
 	std::string
 	output_file_name(
 		std::string const & suffix,
@@ -127,13 +165,16 @@ public:
 		bool cumulate_replicas = false
 	) const;
 
+	/// @brief Return true if the simulation has been completed.
 	bool
 	finished() const;
 
+	/// @brief Return a randomly chosen mover to use in the next iteration.
 	virtual
 	ThermodynamicMoverOP
 	random_mover();
 
+	/// @brief Add the given mover to the simulation.
 	virtual
 	void
 	add_mover(
@@ -142,27 +183,40 @@ public:
 		utility::tag::TagCOP const& subtag
 	);
 
+	/// @brief Add the given mover to the simulation.
 	virtual void
 	add_mover(
 		ThermodynamicMoverOP mover,
 		core::Real weight
 	);
 
+	/// @brief Convenience method to add a backrub move to the simulation.
 	void
 	add_backrub_mover(
 		core::Real weight
 	);
 
+	/// @brief Convenience method to add a kinematic closure move to the 
+	/// simulation.
+	void
+	add_kic_mover(
+		core::Real weight,
+		protocols::loops::Loop const & loop
+	);
+
+	/// @brief Convenience method to add a small move to the simulation.
 	void
 	add_small_mover(
 		core::Real weight
 	);
 
+	/// @brief Convenience method to add a shear move to the simulation.
 	void
 	add_shear_mover(
 		core::Real weight
 	);
 
+	/// @brief Convenience method to add a sidechain move to the simulation.
 	void
 	add_sidechain_mover(
 		core::Real weight,
@@ -171,6 +225,9 @@ public:
 		bool preserve_cbeta
 	);
 
+	/// @brief Convenience method to add a Monte Carlo sidechain move to the 
+	/// simulation.  This move uses an internal Monte Carlo loop to generate a 
+	/// whole new set of sidechain conformations.
 	void
 	add_sidechain_mc_mover(
 		core::Real weight,
@@ -180,49 +237,63 @@ public:
 		core::Size ntrials
 	);
 
+	/// @brief Add the given observer to this simulation.
 	void
-	add_observer(
-		ThermodynamicObserverOP observer
-	);
+	add_observer( ThermodynamicObserverOP observer);
 
+	/// @brief Return the most recently used ThermodynamicMover.
 	ThermodynamicMover const&
 	last_move() const;
 
+	/// @brief Return true if the last attempted move was accepted.
 	bool
-	last_accepted() const {
-		return last_accepted_;
-	}
+	last_accepted() const { return last_accepted_; }
+
+	/// @copydoc MultiTempTrialCounter::count_trial
+	void count_trial(std::string const & tag);
+
+	/// @copydoc MultiTempTrialCounter::count_accepted
+	void count_accepted(std::string const & tag);
+
+	/// @copydoc MultiTempTrialCounter::count_energy_drop
+	void count_energy_drop(std::string const & tag, core::Real drop);
 
 protected:
 
-	TemperatureControllerOP const&
-	tempering() { return tempering_; }
+	/// @brief Protected non-const access to the TemperatureController.
+	TemperatureControllerOP
+	nonconst_tempering();
 
+	/// @brief Return the mover that was added at the given index.
 	ThermodynamicMoverOP
-	mover_by_index(numeric::Size idx) const
-	{
-		return movers_[idx];
-	}
+	mover_by_index(numeric::Size idx) const { return movers_[idx]; }
 
+	/// @brief Finalize all the movers and observers used in this simulation, and 
+	/// write some debrief statistics to the tracer.
 	void wind_down_simulation( core::pose::Pose& pose);
 
-	//initialize all movers
-	//return cycle number if a restart, 0 otherwise
+	/// @brief Initialize all the movers and observers to be used in this 
+	/// simulation.
 	core::Size prepare_simulation( core::pose::Pose& pose);
 
+	/// @brief Indicate whether or not the last attempted move was accepted.
 	void set_last_accepted( bool setting ) {
 		last_accepted_ = setting;
 	}
 
+	/// @brief Indicate what type of move was last attempted.
 	void set_last_move( ThermodynamicMoverOP setting );
 
-	typedef utility::vector1< ThermodynamicObserverOP > ObserverList;
-	ObserverList const& observers() { return observers_; }
+	/// @brief Return a list of all observers attached to this simulation.
+	utility::vector1< ThermodynamicObserverOP > const& observers() { 
+		return observers_;
+	}
 
+	/// @brief Protected non-const access to the MonteCarlo object.
 	protocols::moves::MonteCarlo& nonconst_monte_carlo();
 private:
 
-	///configurables...
+	// Configurable
 	protocols::moves::MonteCarloOP monte_carlo_;
 	core::Size ntrials_;
 	std::string output_name_;
@@ -230,15 +301,15 @@ private:
 	utility::vector1< ThermodynamicObserverOP > observers_;
 	TemperatureControllerOP tempering_;
 
-	//helper
+	// Helper
 	numeric::random::WeightedSampler weighted_sampler_;
 
-	///some status is necessary for the observers
+	// Some status is necessary for the observers
 	ThermodynamicMoverOP last_move_;
 	bool last_accepted_;
 	core::Size trial_;
 
-	//internal book keeping
+	// Internal book keeping
 	bool output_name_from_job_distributor_;
 
 }; //end MetropolisHastingsMover

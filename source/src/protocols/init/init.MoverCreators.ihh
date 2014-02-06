@@ -28,7 +28,6 @@
 #include <protocols/canonical_sampling/PDBTrajectoryRecorderCreator.hh>
 #include <protocols/canonical_sampling/SilentTrajectoryRecorderCreator.hh>
 #include <protocols/canonical_sampling/SimulatedTemperingCreator.hh>
-#include <protocols/canonical_sampling/TrialCounterObserverCreator.hh>
 
 #include <protocols/comparative_modeling/LoopRelaxMoverCreator.hh>
 #include <protocols/hybridization/HybridizeProtocolCreator.hh>

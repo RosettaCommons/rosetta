@@ -14,17 +14,15 @@
 #ifndef INCLUDED_protocols_moves_TrialCounter_hh
 #define INCLUDED_protocols_moves_TrialCounter_hh
 
-// Unit Headers
+// Unit headers
 #include <protocols/moves/Mover.hh>
+#include <protocols/moves/TrialCounter.fwd.hh>
 
-// Project Headers
-#include <protocols/moves/MonteCarlo.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <numeric/random/WeightedSampler.hh>
-#include <protocols/jd2/Job.fwd.hh>
-
-// Utility Headers
+// Core headers
 #include <core/types.hh>
+
+// Utility headers
+#include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
@@ -33,23 +31,27 @@
 namespace protocols {
 namespace moves {
 
-class TrialCounter {
+class TrialCounter : public utility::pointer::ReferenceCount {
 public:
   TrialCounter() {};
-  void reset();
+  virtual void reset();
 
-  void count_trial( std::string const& );
-  void count_accepted( std::string const& );
-  void count_energy_drop( std::string const&, core::Real );
+  virtual void count_trial( std::string const& );
+  virtual void count_accepted( std::string const& );
+  virtual void count_energy_drop( std::string const&, core::Real );
 
-  core::Size trial( std::string const& ) const;
-  core::Size accepted( std::string const& ) const;
-  core::Real energy_drop( std::string const& ) const;
-	utility::vector1< std::string > const tags () const;
+  virtual core::Size total_trials() const;
+  virtual core::Size trial( std::string const& ) const;
+  virtual core::Size accepted( std::string const& ) const;
+  virtual core::Real energy_drop( std::string const& ) const;
+	virtual utility::vector1< std::string > const tags () const;
 
-  void show( std::ostream&, std::string line_header="", bool with_end_line = true ) const;
   void show() const;
-  core::Size total_trials() const;
+  virtual void show(
+			std::ostream&,
+			std::string line_header="",
+			bool with_end_line = true ) const;
+
 private:
   std::map< std::string, int > trial_counter_;
   std::map< std::string, int > accept_counter_;

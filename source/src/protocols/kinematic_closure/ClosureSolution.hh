@@ -74,6 +74,10 @@ class ClosureSolution : public ReferenceCount, private noncopyable {
 		/// @brief Return the Jacobian for this solution.
 		Real get_jacobian() const;
 
+		/// @ brief Return a distance metric indicating how similar this solution 
+		/// is to the given problem.
+		Real get_distance(ClosureProblemCOP problem) const;
+
 	// Private Helpers {{{1
 	private:
 

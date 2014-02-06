@@ -18,7 +18,7 @@
 
 // Protocol headers
 #include <protocols/loops/Loop.hh>
-#include <protocols/kinematic_closure/samplers/BalancedKicSampler.hh>
+#include <protocols/kinematic_closure/BalancedKicMover.hh>
 #include <protocols/kinematic_closure/perturbers/Perturber.hh>
 #include <protocols/kinematic_closure/pivot_pickers/PivotPicker.hh>
 
@@ -37,29 +37,24 @@ BalancedKicSampler::BalancedKicSampler(loggers::LoggerOP logger) {
 	log_filters(logger);
 }
 
-void BalancedKicSampler::setup(
-		Pose & pose, Loop const & loop, ScoreFunctionOP score_function) {
-
-	sampler_.setup(pose, loop);
-}
-
 bool BalancedKicSampler::apply(
 		Pose & pose, Loop const & loop, ScoreFunctionCOP score_function) {
 
-	sampler_.apply(pose, loop);
+	mover_.set_loop(loop);
+	mover_.apply(pose);
 	return true;
 }
 
 void BalancedKicSampler::add_perturber(PerturberOP perturber) {
-	sampler_.add_perturber(perturber);
+	mover_.add_perturber(perturber);
 }
 
 void BalancedKicSampler::set_pivot_picker(PivotPickerOP picker) {
-	sampler_.set_pivot_picker(picker);
+	mover_.set_pivot_picker(picker);
 }
 
 void BalancedKicSampler::log_filters(loggers::LoggerOP logger) {
-	sampler_.log_filters(logger);
+	mover_.log_filters(logger);
 }
 
 }

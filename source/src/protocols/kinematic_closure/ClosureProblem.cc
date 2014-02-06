@@ -43,8 +43,10 @@
 
 // Utility headers
 #include <utility/exit.hh>
+#include <boost/foreach.hpp>
 #include <iostream>
 
+#define foreach BOOST_FOREACH
 using namespace std;
 
 namespace protocols {
@@ -610,8 +612,6 @@ AtomID ClosureProblem::id_from_index(Size index) const {
 			((index - 1) / 3) + first_residue() - 1);
 }
 // }}}1
-
-
 
 } // end namespace kinematic_closure
 } // end namespace protocols

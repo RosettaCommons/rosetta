@@ -15,51 +15,43 @@
 // Unit Headers
 #include <protocols/canonical_sampling/SidechainMetropolisHastingsMover.hh>
 #include <protocols/canonical_sampling/SidechainMetropolisHastingsMoverCreator.hh>
-
-#include <protocols/simple_moves/sidechain_moves/SidechainMoverBase.hh>
+#include <protocols/canonical_sampling/SidechainMetropolisHastingsMoverCreator.hh>
+#include <protocols/canonical_sampling/ThermodynamicMover.hh>
+#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
+#include <protocols/canonical_sampling/TemperatureController.hh>
 
 // protocols headers
 #include <protocols/backrub/BackrubMover.hh>
-#include <basic/datacache/DataMap.hh>
-
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/jd2/Job.hh>
-
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
-#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
-#include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/canonical_sampling/ThermodynamicMover.hh>
-#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMoverBase.hh>
+#include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // core headers
 #include <core/kinematics/MoveMap.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pack/interaction_graph/SimpleInteractionGraph.hh>
+#include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/types.hh>
+
+// utility headers
+#include <basic/datacache/DataMap.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-
-#include <core/pose/Pose.hh>
-#include <core/pack/interaction_graph/SimpleInteractionGraph.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/conformation/Residue.hh>
-
-#include <core/types.hh>
 #include <basic/Tracer.hh>
-
-
-// numeric headers
 #include <numeric/random/random.hh>
-
-// utility headers
 #include <utility/file/file_sys_util.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
-
-// C++ Headers
 
 using basic::T;
 using basic::Error;
@@ -100,7 +92,7 @@ SidechainMetropolisHastingsMover::SidechainMetropolisHastingsMover( core::Size s
 SidechainMetropolisHastingsMover::SidechainMetropolisHastingsMover(
 	SidechainMetropolisHastingsMover const & other
 ) :
-	protocols::canonical_sampling::MetropolisHastingsMover(other),
+	MetropolisHastingsMover(other),
 	stride_( other.stride_ )
 {}
 
@@ -189,7 +181,7 @@ SidechainMetropolisHastingsMover::apply( core::pose::Pose & pose )
 			set_last_accepted( false );
 		}
 
-		tempering()->temperature_move( current_energy );
+		nonconst_tempering()->temperature_move( pose, *this, current_energy );
 		move->observe_after_metropolis( *this );
 
 		Size model_count( output_count( ct ) );
@@ -237,7 +229,7 @@ SidechainMetropolisHastingsMover::get_name() const
 protocols::moves::MoverOP
 SidechainMetropolisHastingsMover::clone() const
 {
-	return new protocols::canonical_sampling::SidechainMetropolisHastingsMover(*this);
+	return new SidechainMetropolisHastingsMover(*this);
 }
 
 protocols::moves::MoverOP

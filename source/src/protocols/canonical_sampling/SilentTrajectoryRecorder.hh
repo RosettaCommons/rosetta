@@ -12,15 +12,12 @@
 /// @brief
 /// @author
 
-
 #ifndef INCLUDED_protocols_canonical_sampling_SilentTrajectoryRecorder_hh
 #define INCLUDED_protocols_canonical_sampling_SilentTrajectoryRecorder_hh
-
 
 // Project forward headers
 #include <protocols/canonical_sampling/SilentTrajectoryRecorder.fwd.hh>
 #include <protocols/canonical_sampling/TrajectoryRecorder.hh>
-
 
 // Project headers
 #include <protocols/canonical_sampling/ThermodynamicObserver.hh>
@@ -29,36 +26,24 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <utility/io/ozstream.hh>
 
-
-// External library headers
-
-
 // C++ headers
 #include <string>
-
-
-// Operating system headers
-
-
-// Forward declarations
-
 
 namespace protocols {
 namespace canonical_sampling {
 
-
-	/// @brief
-class SilentTrajectoryRecorder : public protocols::canonical_sampling::TrajectoryRecorder {
+/// @brief Record a trajectory to the rosetta-specific silent file format.
+class SilentTrajectoryRecorder : public TrajectoryRecorder {
 public:
 	typedef TrajectoryRecorder Parent;
-	/// @brief Constructor
+	/// @brief Default constructor.
 	SilentTrajectoryRecorder();
 
-	/// @brief Copy constructor
+	/// @brief Copy constructor.
 	SilentTrajectoryRecorder( SilentTrajectoryRecorder const & );
 
 public:
-	/// @brief Associates relevant options with the TemperedDocking class
+	/// @brief Associates relevant options with the TemperedDocking class.
 	static void register_options();
 
 	virtual	protocols::moves::MoverOP	clone() const;
@@ -77,19 +62,19 @@ public:
 
 	virtual void initialize_simulation(
 		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
+		MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle   //non-zero if trajectory is restarted
 	);
 
 	virtual	void observe_after_metropolis(
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+		MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 	virtual
 	bool
 	restart_simulation(
 			 core::pose::Pose & pose,
-			 protocols::canonical_sampling::MetropolisHastingsMover& metropolis_hastings_mover,
+			 MetropolisHastingsMover& metropolis_hastings_mover,
 			 core::Size& cycle,
 			 core::Size& temp_level,
 			 core::Real& temperature
@@ -97,9 +82,11 @@ public:
 
 protected:
 
+	/// @brief Append the given model to the silent file trajectory being 
+	/// written.
 	virtual void 	write_model(
 		core::pose::Pose const & pose,
-		protocols::canonical_sampling::MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
+		MetropolisHastingsMoverCAP metropolis_hastings_mover = 0
 	);
 
 	core::Size score_stride_;

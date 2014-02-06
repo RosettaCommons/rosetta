@@ -12,41 +12,31 @@
 /// @author
 
 
-// Unit Headers
+// Unit headers
 #include <protocols/canonical_sampling/TemperatureController.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 
-
-// protocols headers
-#include <basic/datacache/DataMap.hh>
+// Protocols headers
+#include <protocols/jd2/util.hh>
+#include <protocols/jd2/Job.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
-#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
-#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
-
 #include <protocols/rosetta_scripts/util.hh>
 
-//#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
-#include <protocols/jd2/Job.hh>
-
-// core headers
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
-
-#include <basic/Tracer.hh>
-
+// Core headers
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 
-// numeric headers
+// Utility headers
+#include <basic/datacache/DataMap.hh>
+#include <basic/options/option_macros.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
-
-// utility headers
 #include <utility/file/file_sys_util.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
@@ -56,21 +46,35 @@
 // C++ Headers
 #include <cmath>
 
+OPT_2GRP_KEY( File, tempering, temp, file )
+OPT_2GRP_KEY( Integer, tempering, temp, levels )
+OPT_2GRP_KEY( Real, tempering, temp, low )
+OPT_2GRP_KEY( Real, tempering, temp, high )
+OPT_2GRP_KEY( RealVector, tempering, temp, range )
+OPT_2GRP_KEY( File, tempering, stats, file )
+OPT_2GRP_KEY( Boolean, tempering, stats, silent )
+OPT_2GRP_KEY( Boolean, tempering, stats, line_output )
+OPT_1GRP_KEY( Integer, tempering, stride )
+
 static basic::Tracer tr( "protocols.canonical_sampling.TemperatureController" );
 
 namespace protocols {
 namespace canonical_sampling {
+
+using namespace std;
 using namespace core;
+using core::pose::Pose;
+using protocols::moves::MonteCarloOP;
+using protocols::moves::MonteCarloCOP;
 
-
-std::string
-interpolation_type_enum_to_string( InterpolationType interp_enum ) {
+string interpolation_type_enum_to_string( // {{{1
+		InterpolationType interp_enum ) {
 
 	return interp_enum == linear ? "linear" : "exponential";
 }
 
-InterpolationType
-interpolation_type_string_to_enum( std::string const & interp_string ) {
+InterpolationType interpolation_type_string_to_enum( // {{{1
+		string const & interp_string ) {
 
 	if (interp_string == "linear") {
 		return linear;
@@ -80,68 +84,339 @@ interpolation_type_string_to_enum( std::string const & interp_string ) {
 	return exponential;
 }
 
-TemperatureController::TemperatureController() :
-	protocols::canonical_sampling::ThermodynamicObserver()
-{}
+bool TemperatureController::options_registered_( false ); // {{{1
 
-TemperatureController::TemperatureController(	TemperatureController const & other ) :
-	//utility::pointer::ReferenceCount(),
-	protocols::canonical_sampling::ThermodynamicObserver(other)
-{}
+void TemperatureController::register_options() { // {{{1
+	if ( !options_registered_ ) {
+		options_registered_ = true;
 
-///@brief make a move in temperature space depending on the current score
-void
-TemperatureController::observe_after_metropolis( protocols::canonical_sampling::MetropolisHastingsMover const& ) {
-	Real const score( monte_carlo_->last_accepted_score() );
-	temperature_move( score );
+		NEW_OPT( tempering::temp::file, "file with temperature definitions for simulated tempering, including weights and counts","" );
+		NEW_OPT( tempering::temp::levels, "how many temp-levels, superseded by -tempering::temp::file",10 );
+		NEW_OPT( tempering::temp::range, "min and max temperature, superseded by -tempering::temp::file", 0 );
+		NEW_OPT( tempering::temp::high, "min and max temperature, superseded by -tempering::temperatures or -tempering::temp::range", 3.0 );
+		NEW_OPT( tempering::temp::low, "min and max temperature, superseded by -tempering::temperatures or -tempering::temp::range", 0.5 );
+
+		NEW_OPT( tempering::stats::file, "filename (postfix) for output of tempering statistics (i.e, counts) <job>_.tempering.stats", "tempering.stats" );
+		NEW_OPT( tempering::stats::silent, "write all tempering information as lines into a single file -- similar to silent format", false );
+		NEW_OPT( tempering::stats::line_output, "choose line-output as in silent mode, even when using individual files", false );
+
+		NEW_OPT( tempering::stride, "how often should a temperature switch be attempted", 1);
+	}
+}
+// }}}1
+
+// Public Interfaces
+
+TemperatureController::TemperatureController() { // {{{1
+	set_defaults();
 }
 
-protocols::moves::MonteCarloCOP
-TemperatureController::monte_carlo() const {
+TemperatureController::TemperatureController( // {{{1
+		TemperatureController const & other ) {
+
+	temperatures_ = other.temperatures_;
+	temperature_stride_ = other.temperature_stride_;
+	trust_current_temp_ = other.trust_current_temp_ ;
+	stats_line_output_ = other.stats_line_output_;
+	stats_silent_output_ = other.stats_silent_output_;
+	stats_file_ = other.stats_file_;
+
+	job_ = other.job_;
+	instance_initialized_ = other.instance_initialized_;
+	current_temp_ = other.current_temp_;
+	temp_trial_count_ = other.temp_trial_count_;
+}
+
+void TemperatureController::parse_my_tag( // {{{1
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		pose::Pose const &) {
+
+	// Figure out temperatures...
+	std::string temp_file = tag->getOption< std::string >( "temp_file", "" );
+	bool success( false );
+	if ( temp_file.size() ) {
+		success=init_from_file( temp_file );
+		if ( !success ) tr.Info << "cannot read temperatures from file, will initialize from options... " << std::endl;
+	}
+	if ( !success ) {
+		Real temp_low = tag->getOption< Real >( "temp_low", 0.6 );
+		Real temp_high = tag->getOption< Real >( "temp_high", 3.0 );
+		Size temp_levels = tag->getOption< Size >( "temp_levels", 10 );
+		InterpolationType temp_interpolation = interpolation_type_string_to_enum(tag->getOption< std::string >( "temp_interpolation", "linear" ));
+		generate_temp_range( temp_low, temp_high, temp_levels, temp_interpolation );
+	}
+
+	// Figure out everything else...
+	temperature_stride_ = tag->getOption< Size >( "temp_stride", 100 );
+	trust_current_temp_ = tag->getOption< bool >( "trust_crurrent_temp", true );
+	stats_line_output_ = tag->getOption< bool >( "stats_line_output", false );
+	stats_silent_output_ = tag->getOption< bool >( "stats_silent_output", false );
+	stats_file_ = tag->getOption< std::string >( "stats_file", "" );
+	instance_initialized_ = true;
+}
+
+void TemperatureController::initialize_simulation( // {{{1
+		Pose &, MetropolisHastingsMover const &, Size) {
+
+	if ( !instance_initialized_ ) init_from_options();
+	current_temp_ = temperatures_.size();
+	monte_carlo()->set_temperature( temperatures_[ current_temp_ ] );
+	if ( jd2::jd2_used() ) {
+		job_ = jd2::get_current_job();
+	}
+	tr.Debug << std::setprecision(2);
+	if ( job_ ) {
+		job_->add_string_real_pair( "temperature", monte_carlo()->temperature() );
+		job_->add_string_real_pair( "temp_level", current_temp_ );
+	}
+	temp_trial_count_ = 0;
+}
+
+void TemperatureController::finalize_simulation( // {{{1
+		Pose &, MetropolisHastingsMover const &) {
+
+	job_ = NULL;
+}
+// }}}1
+
+// Getters and Setters
+
+Real TemperatureController::temperature() const { // {{{1
+	return monte_carlo()->temperature();
+}
+
+Real TemperatureController::temperature( Size level ) const { // {{{1
+	return temperatures_[ level ];
+}
+
+Size TemperatureController::temperature_level() const { // {{{1
+	return current_temp_;
+}
+
+Size TemperatureController::n_temp_levels() const { // {{{1
+	return temperatures_.size();
+}
+
+MonteCarloCOP TemperatureController::monte_carlo() const { // {{{1
 	return monte_carlo_;
 }
 
-void
-TemperatureController::set_monte_carlo(
-	protocols::moves::MonteCarloOP monte_carlo
-)
-{
+MonteCarloOP TemperatureController::monte_carlo() { // {{{1
+	return monte_carlo_;
+}
+
+void TemperatureController::set_monte_carlo(MonteCarloOP monte_carlo) { // {{{1
 	monte_carlo_ = monte_carlo;
 }
+// }}}1
 
-protocols::moves::MonteCarloOP
-TemperatureController::monte_carlo() {
-	return monte_carlo_;
+// Protected Helpers
+
+void TemperatureController::set_defaults() { // {{{1
+	//are we the only object controlling temperature in the MC object ?!
+	trust_current_temp_ = true;
+	//how often will no temperature jump occur
 }
 
-/// @brief execute the temperatur move ( called by observer_after_metropolis )
-/// returns the current temperatur in kT.
-core::Real
-TemperatureController::temperature_move( core::pose::Pose&, core::Real score) {
-	return temperature_move( score );
+void TemperatureController::init_from_options() { // {{{1
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core;
+
+	if ( !options_registered_ ) {
+		utility_exit_with_message( "cannot call TemperatureController::init_from_options() unless TemperatureController::register_options() \
+                     on application level before devel::init()" );
+	}
+
+	bool success( false );
+	if ( option[ tempering::temp::file ].user() ) {
+		success=init_from_file( option[ tempering::temp::file ]() );
+		if ( !success ) tr.Info << "cannot read temperatures from file, will initialize from options... " << std::endl;
+	}
+	if ( !success ) {
+		Real temp_high, temp_low;
+		if ( option[ tempering::temp::range ].user() ) {
+			temp_low=option[ tempering::temp::range ]().front();
+			temp_high=option[ tempering::temp::range ]().back();
+		} else {
+			temp_low=option[ tempering::temp::low ]();
+			temp_high=option[ tempering::temp::high ]();
+		}
+		Size const n_levels( option[ tempering::temp::levels ]() );
+		generate_temp_range( temp_low, temp_high, n_levels );
+	}
+	stats_file_ = option[ tempering::stats::file ]();
+	stats_silent_output_ =  option[ tempering::stats::silent ]();
+	stats_line_output_ =  option[ tempering::stats::line_output ]() || stats_silent_output_;
+	temperature_stride_ = option[ tempering::stride ]();
+	instance_initialized_ = true;
 }
 
-std::string
-TemperatureController::get_name() const
-{
-	return "TemperatureController";
+bool TemperatureController::init_from_file( // {{{1
+		string const & filename) {
+
+	clear();
+
+	utility::io::izstream in( filename );
+	if ( !in.good() ) {
+		tr.Error << "cannot open file " << filename << std::endl;
+		return false;
+	}
+	std::string line;
+	getline( in, line );
+	std::istringstream line_stream( line );
+	std::string tag;
+	Size n_levels( 0 );
+
+	line_stream >> tag >> n_levels;
+
+	bool line_format( false );
+	if ( !line_stream.good() ) {
+		tr.Error << "format not recognized in temperature file: " << filename << " at line " << line << std::endl;
+		tr.Error << "excpected TEMPERING or TEMPERING_TABLE" << std::endl;
+		return false;
+	}
+
+	if ( tag == "TEMPERING" ) {
+		line_format=true;
+	} else if ( tag == "TEMPERING_TABLE" ) {
+		line_format=false;
+	} else {
+		tr.Error << "format not recognized in temperature file: " << filename << " at line " << line << std::endl;
+		tr.Error << "excpected TEMPERING or TEMPERING_TABLE" << std::endl;
+		return false;
+	}
+
+	Real temp;
+	if ( line_format ) {
+		for ( Size ct=1; ct <= n_levels; ++ct ) {
+			line_stream >> temp;
+			temperatures_.push_back( temp );
+		}
+		if ( !line_stream.good() ) {
+			tr.Error << "format not recognized in temperature file: " << filename << " at line " << line << std::endl;
+			tr.Error << "excpected TEMPERING N t1 t2 ... tN" << std::endl;
+			return false;
+		}
+		return true;
+	}
+
+	// table format
+	while ( getline( in, line ) ) {
+		std::istringstream line_stream( line );
+		Real temp;
+		line_stream >> temp;
+		if ( !line_stream.good() ) tr.Error << "format error in temperature file: " << filename << " at line " << line << std::endl;
+		temperatures_.push_back( temp );
+	}
+	return true; //succesfully initialized
+}
+
+void TemperatureController::write_to_file( // {{{1
+		string const & file_in, string const & output_name,
+		utility::vector1< Real > const & ) {
+
+	//either write all these things to a single file, or write to <jobname>.file_in
+	std::string file;
+	if ( stats_silent_output_ ) {
+		file=file_in;
+	} else {
+		file=output_name+"."+file_in;
+	}
+
+	//open file
+	utility::io::ozstream out( file, stats_line_output_ ? std::ios::app : std::ios::out );
+
+	//write
+	if ( stats_line_output_ ) { //line format
+		out << "TEMPERING " << n_temp_levels();
+		for ( Size i=1; i <= n_temp_levels(); ++i ) {
+			out << " " << temperatures_[ i ];
+		}
+		out << " " << output_name << std::endl;
+	} else { //table format
+		out << std::setw( 10 );
+		out << "TEMPERING_TABLE " << n_temp_levels() << " " << output_name << std::endl;
+		for ( Size i=1; i <= n_temp_levels(); ++i ) {
+			out << temperatures_[ i ] << std::endl;
+		}
+	}
+}
+
+void TemperatureController::generate_temp_range( // {{{1
+		Real temp_low, Real temp_high, Size n_levels,
+		InterpolationType interpolation /*= linear*/ ) {
+
+	temperatures_.clear();
+	runtime_assert( n_levels >= 2 );
+	tr.Info << "initializing temperatures from " << temp_low << " to " << temp_high << " with " << n_levels << " levels using "
+	        << interpolation_type_enum_to_string(interpolation) << " interpolation." << std::endl;
+	if (interpolation == linear) {
+		Real const temp_step ( (temp_high-temp_low)/(n_levels-1) );
+		for ( Size ct=0; ct<n_levels; ++ct ) {
+			temperatures_.push_back( temp_low+ct*temp_step );
+		}
+	} else if (interpolation == exponential) {
+		Real next_temp( temp_low );
+		Real temp_factor( pow(temp_high/temp_low, 1/Real(n_levels-1)) );
+		for ( Size ct=1; ct<n_levels; ++ct ) {
+			temperatures_.push_back( next_temp );
+			next_temp *= temp_factor;
+		}
+		temperatures_.push_back( temp_high );
+	}
+}
+
+void TemperatureController::set_temperatures( // {{{1
+		utility::vector1< Real > const& temps ) {
+
+	temperatures_ = temps;
+	set_current_temp( temps.size() );
+}
+
+void TemperatureController::set_current_temp( Size new_temp ) { // {{{1
+	current_temp_ = new_temp;
+	Real real_temp = temperatures_[ current_temp_ ];
+	if ( monte_carlo() ) {
+		monte_carlo()->set_temperature( real_temp );
+	}
+	if ( job_ ) {
+		job_->add_string_real_pair( "temperature", real_temp );
+		job_->add_string_real_pair( "temp_level", new_temp );
+	}
+}
+
+bool TemperatureController::check_temp_consistency() { // {{{1
+
+	// We can either trust our current temperature variable or we can extract the 
+	// temperature from our MonteCarlo object.
+
+	if ( !trust_current_temp_ ) {
+		current_temp_=1;
+		Real const mc_temp( monte_carlo()->temperature() );
+		for (	utility::vector1< Real >::const_iterator it = temperatures_.begin();
+					it != temperatures_.end(); ++it ) {
+			if ( *it > mc_temp ) break;
+			++current_temp_;
+		}
+		if ( current_temp_ > temperatures_.size() ) current_temp_ = temperatures_.size();
+	}
+
+	runtime_assert( monte_carlo()->temperature() == temperatures_[ current_temp_ ] );
+	return true;
 }
 
 
-void
-TemperatureController::initialize_simulation(
-	core::pose::Pose &,
-	protocols::canonical_sampling::MetropolisHastingsMover const &,
-	core::Size level,
-	core::Real,
-	core::Size
-) {
-	if ( level != 1 ) {
-		utility_exit_with_message( "TemperatureController - Baseclass doesn't know about different temp-levels" );
-	};
+// }}}1
+void TemperatureController::clear() { // {{{1
+	temperatures_.clear();
+	instance_initialized_ = false;
 }
+// }}}1
 
-
-} //moves
-} //protocols
+} // canonical_sampling
+} // protocols
 

@@ -32,7 +32,6 @@ static MoverRegistrator< canonical_sampling::HamiltonianExchangeCreator > reg_Ha
 static MoverRegistrator< canonical_sampling::PDBTrajectoryRecorderCreator > reg_PDBTrajectoryRecorderCreator;
 static MoverRegistrator< canonical_sampling::SilentTrajectoryRecorderCreator > reg_SilentTrajectoryRecorderCreator;
 static MoverRegistrator< canonical_sampling::SimulatedTemperingCreator > reg_SimulatedTemperingCreator;
-static MoverRegistrator< canonical_sampling::TrialCounterObserverCreator > reg_TrialCounterObserverCreator;
 
 static MoverRegistrator< cryst::SetCrystWeightMoverCreator > reg_SetCrystWeightMoverCreator;
 static MoverRegistrator< cryst::RecomputeDensityMapMoverCreator > reg_RecomputeDensityMapMoverCreator;

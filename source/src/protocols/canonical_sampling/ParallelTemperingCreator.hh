@@ -11,7 +11,6 @@
 ///@brief This class will create instances of Mover ParallelTempering for the MoverFactory
 ///@author Oliver Lange
 
-
 #ifndef INCLUDED_protocols_canonical_sampling_ParallelTemperingCreator_hh
 #define INCLUDED_protocols_canonical_sampling_ParallelTemperingCreator_hh
 
@@ -20,6 +19,7 @@
 namespace protocols {
 namespace canonical_sampling {
 
+/// @brief RosettaScripts factory for ParallelTempering.
 class ParallelTemperingCreator : public protocols::moves::MoverCreator {
 public:
 	virtual moves::MoverOP create_mover() const;

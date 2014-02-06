@@ -94,6 +94,7 @@ MonteCarlo::MonteCarlo(
 	quench_temp_( 0.0 ),
 	last_accept_( 0 ),
 	mc_accepted_( MCA_accepted_score_beat_last ), // init_pose beats the absence of a pose
+	counter_( new TrialCounter ),
 	update_boinc_( true ),
 	total_score_of_last_considered_pose_( 0.0 ),
 	last_accepted_score_( 0.0 ),
@@ -119,6 +120,7 @@ MonteCarlo::MonteCarlo(
 	quench_temp_( 0.0 ),
 	last_accept_( 0 ),
 	mc_accepted_( MCA_accepted_score_beat_last ), // an empty pose beats the absence of a pose
+	counter_( new TrialCounter ),
 	update_boinc_( true ),
 	total_score_of_last_considered_pose_( 0.0 ),
 	last_accepted_score_( 0.0 ),
@@ -187,6 +189,30 @@ MonteCarlo::show_state() const
 	show_counters();
 }
 
+void
+MonteCarlo::set_counter(TrialCounterOP counter)
+{
+	counter_ = counter;
+}
+
+void
+MonteCarlo::count_trial(std::string const & tag)
+{
+	counter_->count_trial(tag);
+}
+
+void
+MonteCarlo::count_accepted(std::string const & tag)
+{
+	counter_->count_accepted(tag);
+}
+
+void
+MonteCarlo::count_energy_drop(std::string const & tag, Real drop)
+{
+	counter_->count_energy_drop(tag, drop);
+}
+
 /////////////////////////////////////////////////////////////////////////////
 
 void
@@ -199,24 +225,24 @@ MonteCarlo::show_scores() const
 void
 MonteCarlo::reset_counters()
 {
-	counter_.reset();
+	counter_->reset();
 }
 
 /////////////////////////////////////////////////////////////////////////////
-TrialCounter const
-MonteCarlo::counters() const {
+TrialCounterCOP
+MonteCarlo::counter() const {
 	return counter_;
 }
 
 ///@detail return number of trials since last reset
 core::Size
 MonteCarlo::total_trials() const {
-	return counter_.total_trials();
+	return counter_->total_trials();
 }
 /////////////////////////////////////////////////////////////////////////////
 void
 MonteCarlo::show_counters() const {
-	counter_.show();
+	counter_->show();
 }
 
 void
@@ -370,12 +396,12 @@ MonteCarlo::boltzmann(
 		}
 	}
 
-	counter_.count_trial( move_type );
+	counter_->count_trial( move_type );
 
 
 #ifdef BOINC_GRAPHICS
 	if( update_boinc_ )
-		boinc::Boinc::update_mc_trial_info( counter_.trial( move_type ), move_type );
+		boinc::Boinc::update_mc_trial_info( counter_->trial( move_type ), move_type );
 #endif
 
 	Real const boltz_factor = ( last_accepted_score() - score ) / temperature_ + inner_score_temperature_delta;
@@ -408,8 +434,8 @@ MonteCarlo::boltzmann(
 	// these are useful but cost a little time to get
 	/// Now handled automatically.  score_function_->accumulate_residue_total_energies( pose );
 
-	counter_.count_accepted( move_type );
-	counter_.count_energy_drop( move_type, score - last_accepted_score() );
+	counter_->count_accepted( move_type );
+	counter_->count_energy_drop( move_type, score - last_accepted_score() );
 	PROF_START( basic::MC_ACCEPT );
 	*last_accepted_pose_ = pose;
 	last_accepted_score_ = score;
@@ -452,7 +478,7 @@ MonteCarlo::boltzmann(
 	Real const score( last_accepted_score_ + score_delta );
 	total_score_of_last_considered_pose_ = score; // save this for the TrialMover so that it may keep statistics.
 
-	counter_.count_trial( move_type );
+	counter_->count_trial( move_type );
 
 	Real const boltz_factor = ( last_accepted_score() - score ) / temperature_;
 	Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) ) * proposal_density_ratio;
@@ -477,8 +503,8 @@ MonteCarlo::boltzmann(
 		mc_accepted_ = MCA_accepted_score_beat_last; // energy is lower than last_accepted
 	}
 
-	counter_.count_accepted( move_type );
-	counter_.count_energy_drop( move_type, score - last_accepted_score() );
+	counter_->count_accepted( move_type );
+	counter_->count_energy_drop( move_type, score - last_accepted_score() );
 	PROF_START( basic::MC_ACCEPT );
 	last_accepted_score_ = score;
 
@@ -585,8 +611,8 @@ MonteCarlo::eval_lowest_score_pose(
 		*lowest_score_pose_ = pose;
 		lowest_score_ = score;
 		if (update_stats){
-			counter_.count_accepted( move_type );
-			counter_.count_energy_drop( move_type, score - last_accepted_score() );
+			counter_->count_accepted( move_type );
+			counter_->count_energy_drop( move_type, score - last_accepted_score() );
 			last_accepted_score_ = score;
 			mc_accepted_ = MCA_accepted_score_beat_low;
 			*last_accepted_pose_ = pose;

@@ -34,15 +34,15 @@ namespace perturbers {
 using numeric::random::gaussian;
 using numeric::conversions::DEGREES;
 
+WalkingPerturber::WalkingPerturber(Real magnitude)
+	: magnitude_ (magnitude) {}
+
 void WalkingPerturber::perturb_subset(
 		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
 
-	// Perturb each angle by around 10 degrees.
-	Real magnitude = 10;
-
 	foreach (Size residue, residues) {
-		Real phi = problem->phi(residue, DEGREES) + magnitude * gaussian();
-		Real psi = problem->psi(residue, DEGREES) + magnitude * gaussian();
+		Real phi = problem->phi(residue, DEGREES) + magnitude_ * gaussian();
+		Real psi = problem->psi(residue, DEGREES) + magnitude_ * gaussian();
 
 		problem->perturb_phi(residue, phi, DEGREES);
 		problem->perturb_psi(residue, psi, DEGREES);

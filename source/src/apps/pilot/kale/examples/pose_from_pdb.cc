@@ -11,22 +11,17 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <stdio.h>  /* defines FILENAME_MAX */
-#include <unistd.h>
-
 using namespace std;
 
 // This program is just supposed to read in a pdb and spit it back out again.
 
 int main(int argc, char** argv) {
 
-	chdir("../src/apps/pilot/kale/examples");
-
 	devel::init(argc, argv);
 
 	core::pose::Pose pose;
 
-	core::import_pose::pose_from_pdb(pose, "structures/linear/4.symmetry.pdb");
+	core::import_pose::pose_from_pdb(pose, "structures/linear/6.symmetry.pdb");
 
 	pose.dump_pdb("pdb_from_pose.pdb");
 }

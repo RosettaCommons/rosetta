@@ -33,7 +33,10 @@ public:
 	MoverCreator();
 	virtual ~MoverCreator();
 
+	/// @brief Return a new mover.
 	virtual MoverOP create_mover() const = 0;
+
+	/// @brief Return the tag name associated with this factory.
 	virtual std::string keyname() const = 0;
 };
 

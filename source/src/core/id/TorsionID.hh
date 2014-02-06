@@ -30,11 +30,21 @@ namespace id {
 
 
 /// @brief  Torsion identifier class
-/// @note   Note the order of the elements in construction calls:
+/// @details Consider a few examples to get a better picture for how torsions 
+/// are uniquely identified:
 ///
-///        ( residue, type, torsion )
+///	@code
+///	#include <core/id/types.hh>
+///	using core::id::BB;
 ///
-///        sort of from least to most specific
+///	TorsionID(253, BB, 1)  // Phi backbone torsion of residue 253.
+///	TorsionID(253, BB, 2)  // Psi backbone torsion of residue 253.
+///	TorsionID(253, BB, 3)  // Omega backbone torsion of residue 253.
+///	@endcode
+///
+/// Note the order of the elements in construction calls (residue, type, 
+/// torsion) go from least to most specific.
+///
 class TorsionID
 {
 public: // Creation

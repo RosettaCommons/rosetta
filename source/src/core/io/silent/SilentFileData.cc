@@ -310,6 +310,9 @@ bool SilentFileData::write_silent_struct(
 	return success;
 }
 
+/// @details Unlike write_silent_struct(), this method writes both the header 
+/// and the body of the silent file to the given stream.  Therefore this is 
+/// probably the more appropriate method to use in high-level codes.
 bool SilentFileData::_write_silent_struct(
 	SilentStruct & s,
 	std::ostream & out,
@@ -318,6 +321,10 @@ bool SilentFileData::_write_silent_struct(
 	return write_silent_struct(s,out,bWriteScoreOnly);
 }
 
+/// @details Note that this method does not write the header to the given 
+/// stream.  As such, I would guess that method is meant for internal use only, 
+/// even though it isn't declared as private.  If you want to write a complete 
+/// silent file to a stream, use the _write_silent_struct() method instead.
 bool SilentFileData::write_silent_struct(
 	SilentStruct & s,
 	std::ostream & out,

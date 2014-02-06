@@ -28,8 +28,6 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/rigid/RigidBodyMover.fwd.hh>
-#include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
-#include <protocols/canonical_sampling/TemperingBase.fwd.hh>
 #include <protocols/docking/RigidBodyInfo.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>

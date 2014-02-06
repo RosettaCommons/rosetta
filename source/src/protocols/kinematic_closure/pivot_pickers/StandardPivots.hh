@@ -22,7 +22,7 @@ namespace pivot_pickers {
 /// loop.
 ///
 /// @details This is the default pivot picking algorithm used by 
-/// samplers::KicSampler.  It works well for most applications, and should only 
+/// samplers::KicMover.  It works well for most applications, and should only 
 /// really need to be swapped out in in favor of custom pivot pickers that take 
 /// into account specific knowledge of the loop being sampled.  Earlier 
 /// versions of this algorithm were biased towards the fount half of the loop.  

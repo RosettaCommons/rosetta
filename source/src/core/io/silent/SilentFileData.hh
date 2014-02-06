@@ -151,14 +151,16 @@ public:
 		bool bWriteScoreOnly = false
 	) const;
 
-	//
+	/// @brief Write the given silent-struct, including the header, to the given 
+	/// ostream.
 	bool _write_silent_struct(
 		SilentStruct & s,
 		std::ostream & out,
 		bool bWriteScoreOnly = false
 	) const;
 
-	/// @brief Write the given silent-struct to the given ostream.
+	/// @brief Write the given silent-struct, minus the header, to the given 
+	/// ostream.
 	bool write_silent_struct(
 		SilentStruct & s,
 		std::ostream & out,

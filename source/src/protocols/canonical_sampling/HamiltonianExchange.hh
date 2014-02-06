@@ -20,11 +20,9 @@
 
 // Unit Headers
 #include <protocols/canonical_sampling/HamiltonianExchange.fwd.hh>
-#include <protocols/canonical_sampling/TemperingBase.hh>
+#include <protocols/canonical_sampling/TemperatureController.hh>
 
 // Project Headers
-//#include <protocols/jd2/Job.fwd.hh>
-
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -36,9 +34,8 @@
 namespace protocols {
 namespace canonical_sampling {
 
-///@details
-class HamiltonianExchange : public protocols::canonical_sampling::TemperingBase {
-	typedef TemperingBase Parent;
+class HamiltonianExchange : public TemperatureController {
+	typedef TemperatureController Parent;
 	typedef utility::vector1< core::Size > GridCoord;
 	typedef utility::vector1< GridCoord > Grid;
 
@@ -77,32 +74,19 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	/// @brief not possible for HamExchange -- exit with ERROR if called
-	core::Real
-	temperature_move( core::Real score );
-
-
-	/// @brief execute the temperatur move ( called by observer_after_metropolis )
-	/// returns the current temperatur in kT.
-	core::Real
-	temperature_move( core::pose::Pose& pose, core::Real score);
-
 	/// @brief callback executed before any Monte Carlo trials
 	virtual void
 	initialize_simulation(
-  	 core::pose::Pose& pose,
-		 MetropolisHastingsMover const& metropolis_hastings_mover,
-		core::Size cycle   //non-zero if trajectory is restarted
+  	core::pose::Pose & pose,
+		MetropolisHastingsMover const & mover,
+		core::Size cycle
 	);
 
-	virtual
-	void
-	initialize_simulation(
+	core::Real
+	temperature_move(
 		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
-		core::Size level,
-		core::Real temperature,
-		core::Size cycle
+		MetropolisHastingsMover & mover,
+		core::Real score
 	);
 
 	/// @brief callback executed after all Monte Carlo trials
@@ -110,7 +94,7 @@ public:
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+		MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 	void show( std::ostream& ) const;
@@ -126,7 +110,7 @@ protected:
 	void clear();
 
 	/// @brief initialize temperatures and weights from file, return false if IO error occurrs
-	virtual bool initialize_from_file( std::string const& filename );
+	virtual bool init_from_file( std::string const& filename );
 
 
 #ifdef USEMPI

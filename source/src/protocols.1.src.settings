@@ -144,6 +144,10 @@ sources = {
 	"protocols/sasa_scores": [
 		"sasapack",
 	],
+	"protocols/trajectory": [
+		"DbTrajectoryReader",
+		"DbTrajectoryWriter",
+	],
 	"protocols/viewer": [
 		"ConformationViewer",
 		"marchingCubes",

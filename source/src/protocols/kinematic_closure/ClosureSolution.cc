@@ -30,9 +30,12 @@
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
+#include <numeric/constants.hh>
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/kinematic_closure/closure.hh>
+
+#include <numeric/angle.functions.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -42,8 +45,8 @@
 #include <Eigen/Dense>
 
 // C++ headers
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 
 #define foreach BOOST_FOREACH
 using namespace std;
@@ -55,9 +58,9 @@ using namespace std;
 using core::Size;
 using core::Real;
 using core::pose::Pose;
+using numeric::constants::r::pi;
 
-// ClosureSolution::ClosureSolution( {{{1
-
+// {{{1
 /// @details This constructor is called by ClosureProblem, which is a friend 
 /// class.  It is declared as private because it should only be called from 
 /// code that has been specifically written to solve a closure problem.
@@ -296,6 +299,25 @@ Real ClosureSolution::get_jacobian() const {
 	}
 
 	return jacobian_;
+}
+
+// {{{1
+/// @details Note that this is not a rigorous distance metric.  It's just meant 
+/// to distinguish one solution that's nearly identical to the given problem 
+/// from several solutions that aren't.
+Real ClosureSolution::get_distance(ClosureProblemCOP problem) const {
+	Real distance = 0;
+
+	for (Size i = 1; i <= problem->num_atoms(); i++) {
+		distance += pow(
+				(bond_lengths_[i] - problem->unperturbed_lengths_[i]) / 1.48, 2);
+		distance += 0.5 - 0.5 * cos(
+				bond_angles_[i] - problem->unperturbed_angles_[i]);
+		distance += 0.5 - 0.5 * cos(
+				torsion_angles_[i] - problem->unperturbed_torsions_[i]);
+	}
+
+	return distance;
 }
 // }}}1
 

@@ -16,13 +16,15 @@
 
 sources = {
     'pilot/kale': [
-        'examples/current_example',
-        'cyclic_poses/load_cyclic_pose',
-        'cyclic_poses/kick_cyclic_pose',
-        'detailed_balance/backbone_tests',
-        'detailed_balance/sidechain_tests',
+        #'examples/current_example',
+        #'cyclic_poses/load_cyclic_pose',
+        #'cyclic_poses/kick_cyclic_pose',
+        #'detailed_balance/backbone_tests',
+        #'detailed_balance/sidechain_tests',
         'native_ensemble/native_ensemble',
-        'kic_refactor/KicSandbox',
+        #'native_ensemble/analysis/trajectory_movie',
+        #'native_ensemble/analysis/query_trajectory',
+        #'kic_refactor/KicSandbox',
         ]
 }
 

@@ -1,0 +1,61 @@
+1. Validate against sidechain order-parameters, to test small-scale sidechain 
+   movements.  These motions remain difficult the predict, according to Tanja.  
+   It is also an ideal application for simulation because the experiment 
+   contains enough data to validate the simulation, but not not so much that 
+   the simulation is pointless.
+
+   I can use Greg Friedland's NMR dataset for this benchmark.  The simulation 
+   will need to touch all sidechains, because we expect there to be significant 
+   nonlocal interactions.  However, the backbone sampling will not need to be 
+   very intense.
+
+   My first impression is that I might want to focus all my sampling inside a 
+   sphere that slowly moves around the structure.  So I'd have three moves: 
+   sample a backbone region within sphere, sample a sidechain within the 
+   sphere, and move the sphere.  The sphere reminds me of a beach ball, so if 
+   this is novel I'll call it beach ball sampling.  It seems that more 
+   concentrated sampling would be better, but I can't quite articulate why...
+
+2. Validate against crystal structures with two distinct loop states, to test 
+   meso-scale backbone movements.  The first step will be to build a set of 
+   benchmark structures by searching the PDB.  I should do this before my next 
+   meeting with Tanja, so we can start curating the set.  For everything I 
+   decide to include, save a pymol session file focused on the alternate 
+   conformations so we can quickly get a feel for what's going on.
+
+   For this benchmark, I will only need to sample the loop regions that have 
+   alternate states.
+
+3. If necessary, improve the performance of the algorithm by implementing 
+   parallel tempering or certain NGK features.  Oliver Lange may have 
+   implemented parallel tempering code in Rosetta, so it would be worth getting 
+   in touch with him to see if there's anything I can build on.  NGK features 
+   that would be useful in a balanced simulation include rama2b sampling and 
+   omega sampling.  Rama2b sampling will have to be adopted to detailed balance 
+   (i.e. constant probability in allowed regions).  It would also make sense to 
+   use the rama2b term in the score function.
+   
+4. Tanja brought up another potential application for ensemble design, which is 
+   to increase the rigidity of designed active sites.  The would be part of an 
+   effort to establish why designed enzymes do not work as well as natural 
+   ones.  The project would start from a number of suboptimal designed enzymes, 
+   and would use both design and saturation mutagenesis to until a number of 
+   improved enzymes were found.  The improved enzymes would be characterized 
+   using crystallography and really intense NMR, in order to determine whether 
+   the original designs were too floppy, too rigid, in the wrong conformation, 
+   or something else.
+
+   The design stage of the project would use ensemble design to try to rigidify 
+   the original active sites.  The project would be interesting in its own 
+   right without the design step, but the design step adds information about 
+   whether or not we can rationally improve our enzyme designs.
+
+5.  We also continued discussing the project of building a repressor via an 
+    unfolded-to-folded transition.  Jaime suggested reading the papers by 
+    Reichheld S and Davidson AR on the tetracyclin repressor system.  The 
+    appeals of the project are that it may be practically useful and that it's 
+    easy to experimentally measure whether or not a region of a protein is 
+    folded.  The downsides are that most of the repressor systems are dimers.  
+    In Jaime's words, "If you find a monomeric repressor system, that's gold."
+
+

@@ -25,7 +25,7 @@ namespace perturbers {
 
 /// @brief Base class for all of the perturber algorithms.
 /// @details Subclasses of Perturber are meant to be created by the programmer 
-/// but called internally by samplers::KicSampler.  If you want to implement a 
+/// but called internally by samplers::KicMover.  If you want to implement a 
 /// new perturber, all you have to do is reimplement perturb_subset().  The 
 /// perturb() method simply calls perturb_subset() with a complete list of 
 /// residues.  If you're algorithm has an implementation which obeys detailed 

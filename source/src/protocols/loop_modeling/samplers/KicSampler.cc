@@ -17,7 +17,7 @@
 
 // Protocols headers
 #include <protocols/loops/Loop.hh>
-#include <protocols/kinematic_closure/samplers/KicSampler.hh>
+#include <protocols/kinematic_closure/KicMover.hh>
 #include <protocols/kinematic_closure/perturbers/Perturber.hh>
 #include <protocols/kinematic_closure/pivot_pickers/PivotPicker.hh>
 #include <protocols/kinematic_closure/solution_pickers/SolutionPicker.hh>
@@ -34,32 +34,28 @@ KicSampler::KicSampler(loggers::LoggerOP logger) {
 	log_filters(logger);
 }
 
-void KicSampler::setup(
-		Pose & pose, Loop const & loop, ScoreFunctionOP score_function) {
-
-	sampler_.setup(pose, loop);
-}
-
 bool KicSampler::apply(
 		Pose & pose, Loop const & loop, ScoreFunctionCOP score_function) {
 
-	return sampler_.apply(pose, loop);
+	mover_.set_loop(loop);
+	mover_.apply(pose);
+	return true;
 }
 
 void KicSampler::add_perturber(PerturberOP perturber) {
-	sampler_.add_perturber(perturber);
+	mover_.add_perturber(perturber);
 }
 
 void KicSampler::set_pivot_picker(PivotPickerOP picker) {
-	sampler_.set_pivot_picker(picker);
+	mover_.set_pivot_picker(picker);
 }
 
 void KicSampler::set_solution_picker(SolutionPickerOP picker) {
-	sampler_.set_solution_picker(picker);
+	mover_.set_solution_picker(picker);
 }
 
 void KicSampler::log_filters(loggers::LoggerOP logger) {
-	sampler_.log_filters(logger);
+	mover_.log_filters(logger);
 }
 
 }

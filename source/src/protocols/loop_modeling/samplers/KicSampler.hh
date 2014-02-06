@@ -22,7 +22,7 @@
 
 // Protocol headers
 #include <protocols/loops/Loop.hh>
-#include <protocols/kinematic_closure/samplers/KicSampler.hh>
+#include <protocols/kinematic_closure/KicMover.hh>
 #include <protocols/kinematic_closure/perturbers/Perturber.fwd.hh>
 #include <protocols/kinematic_closure/pivot_pickers/PivotPicker.fwd.hh>
 #include <protocols/kinematic_closure/solution_pickers/SolutionPicker.fwd.hh>
@@ -43,7 +43,6 @@ public:
 	string get_name() const { return "KicSampler"; }
 
 public:
-	void setup(Pose & pose, Loop const & loop, ScoreFunctionOP score_function);
 	bool apply(Pose & pose, Loop const & loop, ScoreFunctionCOP score_function);
 
 public:
@@ -53,7 +52,7 @@ public:
 	void log_filters(loggers::LoggerOP logger);
 
 private:
-	protocols::kinematic_closure::samplers::KicSampler sampler_;
+	protocols::kinematic_closure::KicMover mover_;
 
 };
 

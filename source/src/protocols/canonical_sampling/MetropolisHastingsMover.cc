@@ -11,62 +11,52 @@
 /// @brief MetropolisHastingsMover methods implemented
 /// @author
 
-
-// Unit Headers
+// Unit headers
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMoverCreator.hh>
+#include <protocols/canonical_sampling/ThermodynamicMover.hh>
+#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
+#include <protocols/canonical_sampling/TemperatureController.hh>
+#include <protocols/canonical_sampling/FixedTemperatureController.hh>
 
-
-// protocols headers
+// Protocol headers
 #include <protocols/backrub/BackrubMover.hh>
-// AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/kinematic_closure/BalancedKicMover.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMCMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/canonical_sampling/ThermodynamicMover.hh>
-#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
-// #include <core/scoring/constraints/ConstraintIO.hh>
-// #include <core/scoring/constraints/ConstraintSet.hh>
-// #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-
-// core headers
+// Core headers
+#include <core/chemical/ResidueType.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh> // REQUIRED FOR WINDOWS
 
-// numeric headers
+// Utility headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <numeric/random/random.hh>
-
-// utility headers
+#include <utility/excn/Exceptions.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
-
-#include <core/chemical/ResidueType.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-//Auto Headers
-#include <utility/excn/Exceptions.hh>
-#include <basic/options/option.hh>
-
-// C++ Headers
-
+using namespace std;
+using namespace core;
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -76,7 +66,6 @@ static numeric::random::RandomGenerator RG(638767547);
 
 namespace protocols {
 namespace canonical_sampling {
-
 
 std::string
 MetropolisHastingsMoverCreator::keyname() const {
@@ -94,38 +83,44 @@ MetropolisHastingsMoverCreator::mover_name() {
 }
 
 MetropolisHastingsMover::MetropolisHastingsMover() :
-	monte_carlo_(0),
-	ntrials_(1000),
-	trial_(0)
-{}
+	monte_carlo_(0), ntrials_(1000), trial_(0) {}
 
+/// @details I'm pretty sure this is doing a shallow copy.  This is not what 
+/// you'd expect the copy constructor to do, so be careful and watch out for 
+/// the subtle kinds of bugs you would get if two simulations were sharing 
+/// their MonteCarlo and TemperatureController objects.  As it is, I don't 
+/// really think this method is being called anywhere.  I'm thinking about 
+/// replacing it with boost::noncopyable.
 MetropolisHastingsMover::MetropolisHastingsMover(
-	MetropolisHastingsMover const & metropolis_hastings_mover
-) :
-	//utility::pointer::ReferenceCount(),
-	Mover(metropolis_hastings_mover),
-	monte_carlo_( new protocols::moves::MonteCarlo(*metropolis_hastings_mover.monte_carlo_) ),
-	ntrials_(metropolis_hastings_mover.ntrials_),
-	output_name_(metropolis_hastings_mover.output_name_),
-	weighted_sampler_(metropolis_hastings_mover.weighted_sampler_),
-	trial_(metropolis_hastings_mover.trial_)
+	MetropolisHastingsMover const & other)
+	: Mover(other),
+	  monte_carlo_( new protocols::moves::MonteCarlo(*other.monte_carlo_) ),
+	  ntrials_(other.ntrials_),
+	  output_name_(other.output_name_),
+	  weighted_sampler_(other.weighted_sampler_),
+	  trial_(other.trial_)
 {
-	for (core::Size i = 1; i <= metropolis_hastings_mover.movers_.size(); ++i) {
-		movers_.push_back(reinterpret_cast<ThermodynamicMover *>(metropolis_hastings_mover.movers_[i]()));
+	for (core::Size i = 1; i <= other.movers_.size(); ++i) {
+		movers_.push_back(reinterpret_cast<ThermodynamicMover *>(other.movers_[i]()));
 	}
 
-	for (core::Size i = 1; i <= metropolis_hastings_mover.observers_.size(); ++i) {
-		observers_.push_back(reinterpret_cast<ThermodynamicObserver *>(metropolis_hastings_mover.observers_[i]()));
+	for (core::Size i = 1; i <= other.observers_.size(); ++i) {
+		observers_.push_back(reinterpret_cast<ThermodynamicObserver *>(other.observers_[i]()));
 	}
 
-	if (metropolis_hastings_mover.tempering_) {
-		tempering_ = reinterpret_cast<TemperatureController *>(metropolis_hastings_mover.tempering_());
+	if (other.tempering_) {
+		tempering_ = reinterpret_cast<TemperatureController *>(other.tempering_());
 		if (monte_carlo_) tempering_->set_monte_carlo(monte_carlo_);
 	}
 }
 
 MetropolisHastingsMover::~MetropolisHastingsMover(){}
 
+/// @details The return value indicates the number of cycles that have already 
+/// been run, if the simulation is not being started or restarted.  I'm not 
+/// totally sure what this means though, and I couldn't see any way for this 
+/// function to return anything other than 0.  The necessary logic might be 
+/// commented out right now.
 core::Size
 MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 	if (output_name() == "") {
@@ -139,25 +134,34 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 	if ( !tempering_ ) {
 		//get this done before "initialize_simulation" is called no movers and observers
 		TR.Info << "no temperature controller in MetropolisHastings defined... generating FixedTemperatureController" << std::endl;
-		tempering_= new protocols::canonical_sampling::FixedTemperatureController( monte_carlo_->temperature() );
+		set_tempering(new FixedTemperatureController(monte_carlo_->temperature()));
 	}
+
 	using namespace core;
 	bool restart = false;
 	core::Size cycle_number = 0;
 	Size temp_level = 0;
 	Real temperature = -1.0;
-// 	for (core::Size i = 1; i <= observers_.size() && !restart; ++i) {
-// 		TR << "Attempting restart using " << observers_[i]->get_name() << std::endl;
-// 		restart = observers_[i]->restart_simulation(pose, *this, cycle_number, temp_level, temperature );
-// 		if ( restart ) TR << "Restarted using " << observers_[i]->get_name() << std::endl;
-// 	}
+
+	// The restarting features is currently disabled.  The following line of code 
+	// is being used in its place, and should be removed if this feature is ever 
+	// enabled again.
+	tempering_->initialize_simulation(pose, *this, cycle_number);
+	/*
+	for (core::Size i = 1; i <= observers_.size() && !restart; ++i) {
+		TR << "Attempting restart using " << observers_[i]->get_name() << std::endl;
+		restart = observers_[i]->restart_simulation(pose, *this, cycle_number, temp_level, temperature );
+		if ( restart ) TR << "Restarted using " << observers_[i]->get_name() << std::endl;
+	}
 
 	if ( !restart ) {
 		cycle_number = 0; //make sure this is zero if we don't have a restart.
 		tempering_->initialize_simulation(pose, *this, cycle_number );
-	} else {
+	}
+	else {
 		tempering_->initialize_simulation(pose, *this, temp_level, temperature, cycle_number );
 	}
+	*/
 
 	for (core::Size i = 1; i <= movers_.size(); ++i) {
 		TR << "Initializing " << movers_[i]->get_name() << std::endl;
@@ -199,7 +203,7 @@ MetropolisHastingsMover::apply( core::pose::Pose& pose ) {
 		);
 		set_last_move( mover );
 		set_last_accepted( accepted );
-		tempering_->temperature_move( pose, monte_carlo_->last_accepted_score() );
+		tempering_->temperature_move(pose, *this, monte_carlo_->last_accepted_score() );
 		mover->observe_after_metropolis(*this);
 		TR.Debug << "current move accepted " << accepted <<std::endl;
 		for (core::Size i = 1; i <= observers_.size(); ++i) {
@@ -248,7 +252,7 @@ MetropolisHastingsMover::get_name() const
 protocols::moves::MoverOP
 MetropolisHastingsMover::clone() const
 {
-	return new protocols::canonical_sampling::MetropolisHastingsMover(*this);
+	return new MetropolisHastingsMover(*this);
 }
 
 protocols::moves::MoverOP
@@ -305,17 +309,13 @@ MetropolisHastingsMover::parse_my_tag(
 		if ( th_mover ) { //its a mover
 			core::Real const weight( subtag->getOption< core::Real >( "sampling_weight", 1 ) );
 			add_mover( th_mover, weight, subtag );
-			// 			add_mover( th_mover, weight );
 		} else if ( th_observer ) { //its an observer
-			//it might also be a tempering module...
-			if ( temp_controller ) { // it is a temperature controller
-				if ( tempering_ ) {
-					throw utility::excn::EXCN_RosettaScriptsOption( "cannot define two TemperatureControllers" );
-				}
-				set_tempering( temp_controller );
-			} else {  //no just an plain old observer
-				add_observer( th_observer );
+			add_observer( th_observer );
+		} else if ( temp_controller ) { // it is a temperature controller
+			if ( tempering_ ) {
+				throw utility::excn::EXCN_RosettaScriptsOption( "cannot define two TemperatureControllers" );
 			}
+			set_tempering( temp_controller );
 		} else { //its something different
 			TR << "Mover is not a ThermodynamicMover or ThermodynamicObserver for XML tag:\n" << subtag << std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("");
@@ -341,17 +341,22 @@ MetropolisHastingsMover::set_monte_carlo(
 	if ( tempering_ ) tempering_->set_monte_carlo( monte_carlo_ );
 }
 
+TemperatureControllerCOP
+MetropolisHastingsMover::tempering() const {
+	return tempering_;
+}
+
+TemperatureControllerOP
+MetropolisHastingsMover::nonconst_tempering() {
+	return tempering_;
+}
+
 void
 MetropolisHastingsMover::set_tempering(
 	TemperatureControllerOP tempering
 ) {
 	tempering_=tempering;
 	if ( monte_carlo_ ) tempering_->set_monte_carlo( monte_carlo_ );
-}
-
-TemperatureControllerCOP
-MetropolisHastingsMover::tempering() const {
-	return tempering_;
 }
 
 void
@@ -420,12 +425,30 @@ MetropolisHastingsMover::last_move() const {
 	return *last_move_;
 }
 
+void MetropolisHastingsMover::count_trial(string const & tag) {
+	monte_carlo_->count_trial(tag);
+}
+
+void MetropolisHastingsMover::count_accepted(string const & tag) {
+	monte_carlo_->count_accepted(tag);
+}
+
+void MetropolisHastingsMover::count_energy_drop(string const & tag, Real drop) {
+	monte_carlo_->count_energy_drop(tag, drop);
+}
+
+/// @details You can control the probability of selecting a particular mover 
+/// via the weight argument to the @ref add_mover() method.
 ThermodynamicMoverOP
 MetropolisHastingsMover::random_mover()
 {
 	return movers_[weighted_sampler_.random_sample(RG)];
 }
 
+/// @details Specify a weight to control how often this mover should be 
+/// invoked.  The weight does not have to be in any particular range.  The 
+/// probability of choosing any particular move will be the weight of that 
+/// sampler divided by the sum of the weights of all the moves.
 void
 MetropolisHastingsMover::add_mover(
 	ThermodynamicMoverOP mover,
@@ -437,6 +460,9 @@ MetropolisHastingsMover::add_mover(
 	weighted_sampler_.add_weight(weight);
 }
 
+/// @details In principle, information about the mover could be extracted from 
+/// the given XML tag, but currently this function is a simple alias for @ref
+/// add_mover().
 void
 MetropolisHastingsMover::add_mover(
         ThermodynamicMoverOP mover,
@@ -444,7 +470,7 @@ MetropolisHastingsMover::add_mover(
         utility::tag::TagCOP const&
         )
 {
-        add_mover( mover, weight );
+	add_mover( mover, weight );
 }
 
 void
@@ -458,6 +484,21 @@ MetropolisHastingsMover::add_backrub_mover(
 	backrub_mover->branchopt().read_database();
 
 	add_mover(backrub_mover, weight);
+}
+
+void
+MetropolisHastingsMover::add_kic_mover(
+	core::Real weight,
+	protocols::loops::Loop const & loop
+)
+{
+	if (!weight) return;
+
+	protocols::kinematic_closure::BalancedKicMoverOP kic_mover(
+			new protocols::kinematic_closure::BalancedKicMover);
+	kic_mover->set_loop(loop);
+
+	add_mover(kic_mover, weight);
 }
 
 void

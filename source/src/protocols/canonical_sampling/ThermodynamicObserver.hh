@@ -33,60 +33,82 @@
 namespace protocols {
 namespace canonical_sampling {
 
-///@details
+/// @brief Base class for reporting and recording data from a simulation.
 class ThermodynamicObserver : public protocols::moves::Mover {
 
 public:
 
-	///@brief
+	/// @brief Default constructor.
 	ThermodynamicObserver();
 
+	/// @brief Destructor.
 	virtual
 	~ThermodynamicObserver();
 
+	/// @brief Callback executed after each move is made.
+	/// @details Even though the argument is a reference to a non-const pose, 
+	/// this method should not make any changes to the pose.  Making changes to 
+	/// the pose is the role of the ThermodynamicMover class.  The role of this 
+	/// class is to simply observe the poses being generated.
 	virtual
 	void apply( core::pose::Pose& ) {};
-	/// @brief callback executed before any Monte Carlo trials
 
-	virtual
-	bool
-	restart_simulation(
-		core::pose::Pose &,
-		protocols::canonical_sampling::MetropolisHastingsMover&,
-		core::Size&,
-		core::Size&,
-		core::Real& 
-	) { return false; }
-
-
+	/// @brief Callback executed before any Monte Carlo trials are attempted.
+	/// @details The @a cycle parameter gives the number of times that the 
+	/// simulation has been restarted.  Since the restart feature is currently 
+	/// commented out, @a cycle should always be 0.
 	virtual
 	void
 	initialize_simulation(
-		core::pose::Pose &,
-		protocols::canonical_sampling::MetropolisHastingsMover const &,
-		core::Size //non-zero if trajectory is restarted
+		core::pose::Pose & pose,
+		MetropolisHastingsMover const & mover,
+		core::Size cycle
 	) {};
 
-	/// @brief callback executed after the Metropolis criterion is evaluated
+	/// @brief Callback executed after the Metropolis criterion is evaluated.
 	virtual
 	void
 	observe_after_metropolis(
-		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
+		MetropolisHastingsMover const & metropolis_hastings_mover
 	) = 0;
 
-	/// @brief callback executed after all Monte Carlo trials
+	/// @brief Callback executed after all Monte Carlo trials are completed.
 	virtual
 	void
 	finalize_simulation(
 		core::pose::Pose &,
-		protocols::canonical_sampling::MetropolisHastingsMover const &
+		MetropolisHastingsMover const &
 	) {};
 
-	/// @brief return false here if a valid pose is not required for "observe"
-	/// i.e. a trialcounter
+	/// @brief Attempt to restart the last simulation that was recorded by this 
+	/// observer.
+	///
+	/// @details For example, consider an observer that records trajectories.  
+	/// This method should open the file that was going to be written, read out 
+	/// the last pose in that trajectory, and assign it to the given pose 
+	/// reference so that the current trajectory can start from the same place.  
+	/// Other observers may help setup other parts of the simulation.
+	///
+	/// This is not a particularly robust system, because it may require several 
+	/// unrelated observers working in concert to properly reconstitute the 
+	/// simulation.  In fact, the restart feature in MetropolisHastingsMover is 
+	/// currently commented out, so this method is never actually invoked.  I 
+	/// would advise reimplementing this method to utility_exit_with_message() in 
+	/// any subclasses you write, so that you don't waste time writing an unused 
+	/// method but so you don't confuse anyone if this feature gets revived in 
+	/// the future.
 	virtual
 	bool
-	requires_pose() { return true; };
+	restart_simulation(
+			core::pose::Pose &,
+			MetropolisHastingsMover&,
+			core::Size &, core::Size &, core::Real & ) { return false; }
+
+	/// @brief Return false if this observer does not require a valid pose.  
+	/// TrialCounterObserver is an example of such an observer.
+	virtual
+	bool
+	requires_pose() { return true; }
 
 private:
 

@@ -55,7 +55,7 @@ ThermodynamicMover::~ThermodynamicMover() {}
 void
 ThermodynamicMover::initialize_simulation(
 	core::pose::Pose & /*pose*/,
-	protocols::canonical_sampling::MetropolisHastingsMover const &, /*metropolis_hastings_mover*/
+	MetropolisHastingsMover const &, /*metropolis_hastings_mover*/
 	core::Size //default=0; non-zero if trajectory is restarted
 )
 {}
@@ -68,14 +68,14 @@ ThermodynamicMover::last_proposal_density_ratio()
 
 void
 ThermodynamicMover::observe_after_metropolis(
-	protocols::canonical_sampling::MetropolisHastingsMover const & /*metropolis_hastings_mover*/
+	MetropolisHastingsMover const & /*metropolis_hastings_mover*/
 )
 {}
 
 void
 ThermodynamicMover::finalize_simulation(
 	core::pose::Pose & /*pose*/,
-	protocols::canonical_sampling::MetropolisHastingsMover const & /*metropolis_hastings_mover*/
+	MetropolisHastingsMover const & /*metropolis_hastings_mover*/
 )
 {}
 
@@ -91,7 +91,7 @@ ThermodynamicMover::last_inner_score_temperature_delta()
 	return 0;
 }
 
-protocols::canonical_sampling::MetropolisHastingsMoverAP
+MetropolisHastingsMoverAP
 ThermodynamicMover::metropolis_hastings_mover()
 {
 	return 0;
@@ -99,10 +99,13 @@ ThermodynamicMover::metropolis_hastings_mover()
 
 void
 ThermodynamicMover::set_metropolis_hastings_mover(
-	protocols::canonical_sampling::MetropolisHastingsMoverAP //metropolis_hastings_mover
+	MetropolisHastingsMoverAP //metropolis_hastings_mover
 )
 {}
 
+
+/// @details Torsion DOFs that would be returned by torsion_id_ranges() are not 
+/// returned by this function too.
 utility::vector1<core::id::DOF_ID_Range>
 ThermodynamicMover::dof_id_ranges(
 	core::pose::Pose & //pose

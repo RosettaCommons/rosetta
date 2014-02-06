@@ -11,56 +11,48 @@
 /// @brief ParallelTempering methods implemented
 /// @author
 
-
-// Unit Headers
+// Unit headers
 #include <protocols/canonical_sampling/ParallelTempering.hh>
 #include <protocols/canonical_sampling/ParallelTemperingCreator.hh>
-
-
-// protocols headers
-#include <basic/datacache/DataMap.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverFactory.hh>
 #include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 
-#include <protocols/rosetta_scripts/util.hh>
-
-//#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
-#include <protocols/jd2/Job.hh>
-
-// core headers
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
-
-#include <basic/Tracer.hh>
-
+// Core headers
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 
-// numeric headers
-#include <numeric/random/random.hh>
+// Protocol headers
+#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/moves/MoverFactory.hh>
+#include <protocols/rosetta_scripts/util.hh>
+#include <protocols/jd2/util.hh>
+#include <protocols/jd2/Job.hh>
 
-// utility headers
+// Utility headers
+#include <basic/datacache/DataMap.hh>
+#include <basic/prof.hh>
+#include <basic/options/option_macros.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 #include <ObjexxFCL/string.functions.hh>
-
-// basic headers
-#include <basic/prof.hh>
+#include <numeric/random/random.hh>
 
 // C++ Headers
 #include <cmath>
 
+using namespace std;
+using namespace core;
+using core::pose::Pose;
+using protocols::moves::MoverOP;
 
 using basic::T;
 using basic::Error;
@@ -69,44 +61,30 @@ using basic::Warning;
 static basic::Tracer tr( "protocols.canonical_sampling.ParallelTempering" );
 static numeric::random::RandomGenerator RG(3227547);
 
-
-bool protocols::canonical_sampling::ParallelTempering::options_registered_( false );
-
-//Mike: when you want to remove these Macros... leave them at least here as comment - since they provide documentation
-void protocols::canonical_sampling::ParallelTempering::register_options() {
-	if ( !options_registered_ ) {
-		options_registered_ = true;
-		Parent::register_options();
-	}
-}
-
 namespace protocols {
 namespace canonical_sampling {
-using namespace core;
 
-std::string
-ParallelTemperingCreator::keyname() const {
+string ParallelTemperingCreator::keyname() const { // {{{1
 	return ParallelTemperingCreator::mover_name();
 }
 
-protocols::moves::MoverOP
-ParallelTemperingCreator::create_mover() const {
+MoverOP ParallelTemperingCreator::create_mover() const { // {{{1
 	return new ParallelTempering;
 }
 
-std::string
-ParallelTemperingCreator::mover_name() {
+string ParallelTemperingCreator::mover_name() { // {{{1
 	return "ParallelTempering";
 }
+// }}}1
 
-ParallelTempering::ParallelTempering() :
-	rank_( -1 ),
-	last_energies_( NULL ),
-	rank2tlevel_( NULL ),
-	tlevel2rank_( NULL ),
-	start_time_(0),
-	total_mpi_wait_time_(0)
-{
+ParallelTempering::ParallelTempering() // {{{1
+	: rank_( -1 ),
+	  last_energies_( NULL ),
+	  rank2tlevel_( NULL ),
+	  tlevel2rank_( NULL ),
+	  start_time_(0),
+	  total_mpi_wait_time_(0) {
+
 #ifndef USEMPI
 	utility_exit_with_message( "ParallelTempering requires MPI build" );
 #endif
@@ -114,18 +92,19 @@ ParallelTempering::ParallelTempering() :
 	mpi_comm_ = MPI_COMM_NULL;
 #endif
 	set_defaults();
+	type("parallel-tempering");
 }
 
-ParallelTempering::ParallelTempering(	ParallelTempering const & other ) :
-	Parent( other ),
-	exchange_schedules_( other.exchange_schedules_ ),
-	last_exchange_schedule_( other.last_exchange_schedule_ ),
-	last_energies_( NULL ),
-	rank2tlevel_( NULL ),
-	tlevel2rank_( NULL ),
-	start_time_( other.start_time_ ),
-	total_mpi_wait_time_( other.total_mpi_wait_time_ )
-{
+ParallelTempering::ParallelTempering(ParallelTempering const & other) // {{{1
+	: Parent( other ),
+	  exchange_schedules_( other.exchange_schedules_ ),
+	  last_exchange_schedule_( other.last_exchange_schedule_ ),
+	  last_energies_( NULL ),
+	  rank2tlevel_( NULL ),
+	  tlevel2rank_( NULL ),
+	  start_time_( other.start_time_ ),
+	  total_mpi_wait_time_( other.total_mpi_wait_time_ ) {
+
 #ifndef USEMPI
 	utility_exit_with_message( "ParallelTempering requires MPI build" );
 #endif
@@ -134,7 +113,9 @@ ParallelTempering::ParallelTempering(	ParallelTempering const & other ) :
 #endif
 }
 
-ParallelTempering& ParallelTempering::operator=( ParallelTempering const& other ) {
+ParallelTempering& ParallelTempering::operator=( // {{{1
+		ParallelTempering const& other ) {
+
 	if ( &other == this ) return *this;
 	deallocate_buffers();
 	Parent::operator=( other );
@@ -147,17 +128,15 @@ ParallelTempering& ParallelTempering::operator=( ParallelTempering const& other 
 	return *this;
 }
 
-ParallelTempering::~ParallelTempering() {
+ParallelTempering::~ParallelTempering() { // {{{1
 	deallocate_buffers();
 }
 
+void ParallelTempering::initialize_simulation( // {{{1
+		pose::Pose & pose,
+		MetropolisHastingsMover const & metropolis_hastings_mover,
+		core::Size cycle) {
 
-void
-ParallelTempering::initialize_simulation(
-	pose::Pose & pose,
-	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover,
-	core::Size cycle //default=0; non-zero if trajectory is restarted
-) {
 	tr.Trace << "ParallelTempering::initialize_simul1... " << std::endl;
 	Parent::initialize_simulation(pose, metropolis_hastings_mover,cycle);
 	tr.Trace << "ParallelTempering::initialize_simul2... " << std::endl;
@@ -176,11 +155,50 @@ ParallelTempering::initialize_simulation(
 	tr.Trace << "Initialized ParallelTempering! " << std::endl;
 }
 
-void
-ParallelTempering::finalize_simulation(
-	pose::Pose& pose,
-	protocols::canonical_sampling::MetropolisHastingsMover const & mhm
-) {
+Real ParallelTempering::temperature_move( // {{{1
+		Pose & MPI_ONLY(pose),
+		MetropolisHastingsMover & MPI_ONLY(mover),
+		Real MPI_ONLY(score)) {
+
+	check_temp_consistency();
+	if ( !time_for_temp_move() ) return temperature();
+
+#ifdef USEMPI
+	double last_energy = score;
+	clock_t time_before_MPI = clock();
+	
+	// Whenever a node reaches MPI_Gather, it will immediately send its last 
+	// energy to the root node.  The root node will wait here until it has 
+	// received a message from every child node.  The child nodes will continue 
+	// on initially, but will wait once they reach MPI_Scatter.  Only after the 
+	// root has heard from all the children and sent out the new temperature 
+	// assignments will the simulation proceed.
+
+	MPI_Gather(
+			&last_energy, 1, MPI_DOUBLE,
+			last_energies_, 1, MPI_DOUBLE,
+			0, mpi_comm() );
+
+	// Change the T_tag and T_rev at the root node.
+	if ( rank()==0 ) shuffle_temperatures(mover, last_energies_ );
+
+	int new_tlevel;
+
+	MPI_Scatter(
+			rank2tlevel_, 1, MPI_INT,
+			&new_tlevel, 1, MPI_INT,
+			0, mpi_comm() );
+
+	total_mpi_wait_time_ += ( clock() - time_before_MPI ) / basic::SHRINK_FACTOR;
+	set_current_temp( new_tlevel );
+#endif
+	return temperature();
+}
+
+void ParallelTempering::finalize_simulation( // {{{1
+		pose::Pose& pose,
+		MetropolisHastingsMover const & mhm) {
+
 	deallocate_buffers();
 	Parent::finalize_simulation( pose, mhm );
 
@@ -215,7 +233,30 @@ ParallelTempering::finalize_simulation(
 	   << total_mpi_wait_time_*clock_factor << " seconds out of " << total_time*clock_factor << " total)" << std::endl;
 }
 
-void ParallelTempering::setup_exchange_schedule( Size nlevels ) {
+void ParallelTempering::allocate_buffers( core::Size nlevels ) { // {{{1
+	tr.Trace << "ParallelTempering::allocate_buffers for " << nlevels << std::endl;
+	deallocate_buffers();
+	last_energies_ = new double[nlevels];
+	rank2tlevel_ = new int[nlevels];
+	tlevel2rank_ = new int[nlevels];
+	for ( Size i=0; i<nlevels; ++i ) {
+		rank2tlevel_[ i ] = i+1; //tlevels enumerate 1..N
+		tlevel2rank_[ i ] = i;   //ranks enumerate 0...N-1
+	}
+}
+
+void ParallelTempering::deallocate_buffers() { // {{{1
+	if ( last_energies_ ) {
+		delete [] last_energies_;
+		delete [] rank2tlevel_;
+		delete [] tlevel2rank_;
+	}
+	last_energies_ = NULL;
+	rank2tlevel_ = NULL;
+	tlevel2rank_ = NULL;
+}
+
+void ParallelTempering::setup_exchange_schedule( Size nlevels ) { // {{{1
 	tr.Trace << "ParallelTempering::setup_exchange_schedule for " << nlevels << std::endl;
 	exchange_schedules_.clear();
 	ExchangeSchedule list;
@@ -245,55 +286,9 @@ void ParallelTempering::setup_exchange_schedule( Size nlevels ) {
 	exchange_schedules_.push_back(list);
 }
 
-void ParallelTempering::allocate_buffers( core::Size nlevels ) {
-	tr.Trace << "ParallelTempering::allocate_buffers for " << nlevels << std::endl;
-	deallocate_buffers();
-	last_energies_ = new double[nlevels];
-	rank2tlevel_ = new int[nlevels];
-	tlevel2rank_ = new int[nlevels];
-	for ( Size i=0; i<nlevels; ++i ) {
-		rank2tlevel_[ i ] = i+1; //tlevels enumerate 1..N
-		tlevel2rank_[ i ] = i; //ranks enumerate 0...N-1
-	}
-}
+void ParallelTempering::shuffle_temperatures( // {{{1
+		MetropolisHastingsMover & mover, double *energies ) {
 
-void ParallelTempering::deallocate_buffers() {
-	if ( last_energies_ ) {
-		delete [] last_energies_;
-		delete [] rank2tlevel_;
-		delete [] tlevel2rank_;
-	}
-	last_energies_ = NULL;
-	rank2tlevel_ = NULL;
-	tlevel2rank_ = NULL;
-}
-
-core::Real
-ParallelTempering::temperature_move( core::Real MPI_ONLY( score ) ) {
-	check_temp_consistency();
-	if ( !time_for_temp_move() ) return temperature();
-
-	//	Size const nlevels( n_temp_levels() );
-#ifdef USEMPI
-	//get infomation
-	double last_energy = score;
-	clock_t time_before_MPI = clock();
-	MPI_Gather(&last_energy, 1, MPI_DOUBLE, last_energies_, 1, MPI_DOUBLE, 0, mpi_comm() );
-
-	  //change the T_tag and T_rev at node0
-	if ( rank()==0 ) shuffle_temperatures( last_energies_ );
-
-	//public the new T_tag
-	int new_tlevel;
-	MPI_Scatter(rank2tlevel_, 1, MPI_INT, &new_tlevel, 1, MPI_INT, 0, mpi_comm() );
-	total_mpi_wait_time_ += ( clock() - time_before_MPI ) / basic::SHRINK_FACTOR;
-	set_current_temp( new_tlevel );
-#endif
-	return temperature();
-}
-
-void
-ParallelTempering::shuffle_temperatures( double *energies ) {
 	last_exchange_schedule_ = ( last_exchange_schedule_ + 1 ) % 2;
 	ExchangeSchedule const& ex( exchange_schedules_[ last_exchange_schedule_ ] );
 
@@ -306,6 +301,7 @@ ParallelTempering::shuffle_temperatures( double *energies ) {
 		Real const delta( ( invT1 - invT2 ) * deltaE );
 
 		++exchange_attempts_[ex[i]];
+		mover.count_trial(type());
 
 		if ( RG.uniform() < std::min( 1.0, std::exp( std::max(-40.0, -delta) ) ) ) {
 			Size tmp;
@@ -321,57 +317,37 @@ ParallelTempering::shuffle_temperatures( double *energies ) {
 			tlevel2rank_[ex[i].second]=tmp;
 
 			++exchange_accepts_[ex[i]];
+			mover.count_accepted(type());
+			mover.count_energy_drop(type(), deltaE);
 		}
 	}
 }
 
-std::string
-ParallelTempering::get_name() const
-{
+string ParallelTempering::get_name() const { // {{{1
 	return "ParallelTempering";
 }
 
-protocols::moves::MoverOP
-ParallelTempering::clone() const
-{
-	return new protocols::canonical_sampling::ParallelTempering(*this);
+MoverOP ParallelTempering::clone() const { // {{{1
+	return new ParallelTempering(*this);
 }
 
-protocols::moves::MoverOP
-ParallelTempering::fresh_instance() const
-{
+MoverOP ParallelTempering::fresh_instance() const { // {{{1
 	return new ParallelTempering;
 }
 
-void
-ParallelTempering::parse_my_tag(
-	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
-	pose::Pose const & pose
-) {
+void ParallelTempering::parse_my_tag( // {{{1
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & data,
+		protocols::filters::Filters_map const & filters,
+		protocols::moves::Movers_map const & movers,
+		pose::Pose const & pose) {
+
 	Parent::parse_my_tag( tag, data, filters, movers, pose );
 }
-
-
-/// handling of options including command-line
-void ParallelTempering::set_defaults() {
-}
-
-/// @brief Assigns user specified values to primitive members using command line options
-void ParallelTempering::init_from_options() {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core;
-	Parent::init_from_options();
-}
+// }}}1
 
 #ifdef USEMPI
-void ParallelTempering::set_mpi_comm( MPI_Comm const& mpi_comm ) {
+void ParallelTempering::set_mpi_comm( MPI_Comm const& mpi_comm ) { // {{{1
 	if ( mpi_comm != MPI_COMM_NULL ) {
 		tr.Trace << "ParallelTempering::Duplicate mpi-communicator" << std::endl;
 		MPI_Comm_dup( mpi_comm, &mpi_comm_ );
@@ -383,7 +359,7 @@ void ParallelTempering::set_mpi_comm( MPI_Comm const& mpi_comm ) {
 		tr.Trace << "ParallelTempering::Duplicate mpi-communicator" << std::endl;
 		mpi_comm_ = MPI_COMM_NULL;
 	}
-}
+} // }}}1
 #endif
 
 } //moves

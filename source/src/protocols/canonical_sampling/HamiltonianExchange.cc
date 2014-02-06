@@ -15,15 +15,14 @@
 // Unit Headers
 #include <protocols/canonical_sampling/HamiltonianExchange.hh>
 #include <protocols/canonical_sampling/HamiltonianExchangeCreator.hh>
-
+#include <protocols/canonical_sampling/ThermodynamicMover.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 
 // protocols headers
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
-#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
-#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -74,19 +73,19 @@ static basic::Tracer tr( "protocols.canonical_sampling.HamiltonianExchange" );
 static numeric::random::RandomGenerator RG(2592747);
 
 
-bool protocols::canonical_sampling::HamiltonianExchange::options_registered_( false );
+namespace protocols {
+namespace canonical_sampling {
+using namespace core;
+
+bool HamiltonianExchange::options_registered_( false );
 
 //Mike: when you want to remove these Macros... leave them at least here as comment - since they provide documentation
-void protocols::canonical_sampling::HamiltonianExchange::register_options() {
+void HamiltonianExchange::register_options() {
 	if ( !options_registered_ ) {
 		options_registered_ = true;
 		Parent::register_options();
 	}
 }
-
-namespace protocols {
-namespace canonical_sampling {
-using namespace core;
 
 std::string
 HamiltonianExchangeCreator::keyname() const {
@@ -164,7 +163,7 @@ HamiltonianExchange::get_name() const
 protocols::moves::MoverOP
 HamiltonianExchange::clone() const
 {
-	return new protocols::canonical_sampling::HamiltonianExchange(*this);
+	return new HamiltonianExchange(*this);
 }
 
 protocols::moves::MoverOP
@@ -208,7 +207,7 @@ void
 HamiltonianExchange::initialize_simulation(
 	 core::pose::Pose& pose,
 		MetropolisHastingsMover const& metropolis_hastings_mover,
-	 core::Size cycle //default=0; non-zero if trajectory is restarted
+	 core::Size cycle
 ) {
 	show( tr.Info );
 	Parent::initialize_simulation( pose, metropolis_hastings_mover,cycle );
@@ -222,21 +221,9 @@ HamiltonianExchange::initialize_simulation(
 }
 
 void
-HamiltonianExchange::initialize_simulation(
-		core::pose::Pose & pose,
-		protocols::canonical_sampling::MetropolisHastingsMover const & mhm,
-		core::Size level,
-		core::Real temp_in,
-		core::Size cycle //default=0; non-zero if trajectory is restarted
-) {
-	Parent::initialize_simulation( pose, mhm, level, temp_in, cycle );
-	monte_carlo()->reset_scorefxn( pose, *hamiltonians_[ level ] );
-}
-
-void
 HamiltonianExchange::finalize_simulation(
 	pose::Pose& pose,
-	protocols::canonical_sampling::MetropolisHastingsMover const & mhm
+	MetropolisHastingsMover const & mhm
 ) {
 	Parent::finalize_simulation( pose, mhm );
 }
@@ -348,14 +335,11 @@ HamiltonianExchange::find_exchange_partner( int& partner, bool& is_master ) {
 }
 
 core::Real
-HamiltonianExchange::temperature_move( core::Real ) {
-	utility_exit_with_message( "HamiltonianExchange::temperature_move() called without pose... HamEx requires pose \
-  to evaluate alternative energy function prior to switching..." );
-	return -1;
-}
+HamiltonianExchange::temperature_move(
+		pose::Pose & MPI_ONLY(pose),
+		MetropolisHastingsMover & MPI_ONLY(mover),
+		core::Real MPI_ONLY(score) ) {
 
-core::Real
-HamiltonianExchange::temperature_move( pose::Pose& MPI_ONLY( pose ), core::Real MPI_ONLY( score ) ) {
 	using namespace ObjexxFCL::format;
 	check_temp_consistency();
 	if ( !time_for_temp_move() ) return temperature();
@@ -490,7 +474,7 @@ private:
 };
 
 
-bool HamiltonianExchange::initialize_from_file( std::string const& filename ) {
+bool HamiltonianExchange::init_from_file( std::string const& filename ) {
 	typedef utility::vector1< PatchOperation > PatchOperationList;
 	PatchOperationList global_patch_operations;
 

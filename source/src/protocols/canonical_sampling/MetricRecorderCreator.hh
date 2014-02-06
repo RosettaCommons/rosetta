@@ -20,6 +20,7 @@
 namespace protocols {
 namespace canonical_sampling {
 
+/// @brief RosettaScripts factory for MetricRecorder.
 class MetricRecorderCreator : public protocols::moves::MoverCreator {
 public:
 	virtual moves::MoverOP create_mover() const;

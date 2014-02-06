@@ -60,7 +60,7 @@
 #include <protocols/simple_moves/sidechain_moves/PerturbRotamerSidechainMover.hh>
 #include <protocols/simple_moves/sidechain_moves/JumpRotamerSidechainMover.hh>
 #include <protocols/simple_moves/sidechain_moves/PerturbChiSidechainMover.hh>
-#include <protocols/canonical_sampling/TrialCounterObserver.hh>
+#include <protocols/canonical_sampling/MultiTempTrialCounter.hh>
 
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
@@ -197,8 +197,8 @@ CoupledSidechainProtocol::setup_objects() {
 	sampler_->set_monte_carlo( mc_object );
 	sampler_->set_tempering( tempering );
 	sampler_->add_observer( new protocols::canonical_sampling::SilentTrajectoryRecorder );
-	sampler_->add_observer( new protocols::canonical_sampling::TrialCounterObserver );
 	sampler_->set_ntrials( ntrials_ );
+	mc_object->set_counter( new protocols::canonical_sampling::MultiTempTrialCounter(tempering) );
 	if ( prob_withinrot_ > 0.0 ) {
 		protocols::simple_moves::sidechain_moves::SidechainMoverBaseOP mover( new protocols::simple_moves::sidechain_moves::PerturbRotamerSidechainMover );
 		//		mover->set_task_factory( task_factory );

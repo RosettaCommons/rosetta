@@ -11,7 +11,6 @@
 /// @brief BackrubSidechainMover methods implemented
 /// @author
 
-
 // Unit Headers
 #include <protocols/backrub/BackrubSidechainMover.hh>
 #include <protocols/backrub/BackrubSidechainMoverCreator.hh>
@@ -23,7 +22,6 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/canonical_sampling/ThermodynamicObserver.hh> // needed for Windows build
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <core/kinematics/FoldTree.hh>
