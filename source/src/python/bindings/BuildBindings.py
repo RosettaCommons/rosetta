@@ -517,7 +517,7 @@ def getCompilerOptions():
     else:
         add_option = '-pipe -ffor-scope -O3 -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s -fPIC'
     #if Platform == 'cygwin' : add_option =''
-    add_option += ' -DBOOST_PYTHON_MAX_ARITY=25 -DPYROSETTA'
+    add_option += ' -DBOOST_PYTHON_MAX_ARITY=32 -DPYROSETTA'
     add_option += (' -DDEBUG' if Options.debug else ' -DNDEBUG')
 
     if not Options.numpy_support:

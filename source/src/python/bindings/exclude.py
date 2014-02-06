@@ -39,7 +39,7 @@ def isFileInScons(fname):
     return fname in _SconsFiles
 
 
-BannedFiles = ['utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utility/options/keys', 'utility/pointer', 'utility/sql_database/sqlite3_interface.hh',
+BannedFiles = ['utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utility/options/keys', 'utility/pointer', #'utility/sql_database/sqlite3_interface.hh',
     'basic/options/keys', 'utility/exit.hh',
     'numeric/xyzVector.hh',
 
