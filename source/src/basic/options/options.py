@@ -153,11 +153,12 @@ def main(args):
 
         # Generating Doxygen docs
         print "Generating Doxygen docs...",
-        f = KeepSameFile("./../../../doc/options.dox", 'wb')
+        f = KeepSameFile("./options.dox", 'wb')
         f.write( options_class.getDoxygenPage(Options) )
         num_changed_files += f.close()
+        print " Done!"
         print "Generating Markdown docs...",
-        f = KeepSameFile("./../../../doc/full-options-list.md", 'wb')
+        f = KeepSameFile("./full-options-list.md", 'wb')
         f.write( options_class.getMarkdownPage(Options) )
         num_changed_files += f.close()
         print " Done!"

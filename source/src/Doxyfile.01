@@ -16,11 +16,8 @@
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-#INPUT                  = src demo doc
-# src/ObjexxFCL src/numeric doc src/utility  src/protocols demo  
+INPUT                  = src demo 
 
-INPUT                  = src doc demo 
-#src demo
 HTML_OUTPUT            = html/all_else
 
 # The EXCLUDE tag can be used to specify files and/or directories that should 
@@ -28,8 +25,6 @@ HTML_OUTPUT            = html/all_else
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
 EXCLUDE                = src/core src/protocols
-
-
 
 #---------------------------------------------------------------------------
 # Project related configuration options
@@ -46,7 +41,7 @@ DOXYFILE_ENCODING      = UTF-8
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded 
 # by quotes) that should identify the project.
 
-PROJECT_NAME           = "Mini Rosetta"
+PROJECT_NAME           = "Rosetta"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. 
 # This could be handy for archiving the generated documentation or 
@@ -1153,7 +1148,7 @@ CLASS_GRAPH            = YES
 # indirect implementation dependencies (inheritance, containment, and 
 # class references variables) of the class with other documented classes.
 
-COLLABORATION_GRAPH    = YES
+COLLABORATION_GRAPH    = NO
 
 # If the GROUP_GRAPHS and HAVE_DOT tags are set to YES then doxygen 
 # will generate a graph for groups, showing the direct groups dependencies

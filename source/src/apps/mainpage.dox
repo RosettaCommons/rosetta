@@ -1,0 +1,43 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/*!
+
+@mainpage Rosetta "all else" Documentation
+
+This is the main page for the code documentation for the non core/protocols section of Rosetta's library. For application and overview documentation see the wiki at <a href="https://wiki.rosettacommons.org">the developer site</a>, or <a href="https://www.rosettacommons.org/manual_guide">the released documentation</a> 
+For convenience, some quick links to important Rosetta classes are listed below.
+Documentation for more classes and functions can be found by looking at the Namespaces, Classes or Files tabs above, or using the search box.
+
+<!-- Feel free to add more links, but please keep them of general interest. This shouldn't become an exhaustive listing. -->
+
+@section numeric_index numeric
+  - @ref numeric::random
+    - @ref RandomGenerator
+
+@section utility_index utility
+	- utility::pointer
+		- @ref owning_ptr
+	- @ref utility::vector1
+	- utility::io
+		- @ref izstream - Read files with compression support
+		- @ref ozstream - Write files with compression support
+  - utility::options
+		-	@ref OptionCollection - The type of the basic::options::option global
+	- @ref src/utility/string_util.hh
+
+@section basic_index basic
+	- @ref basic::Tracer
+  - @ref basic::resource_manager
+    - @ref ResourceManager
+
+@section objexxfcl_index ObjexxFCL
+  - @ref ObjexxFCL::format
+
+*/

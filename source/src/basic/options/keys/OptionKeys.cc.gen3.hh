@@ -1,3 +1,4 @@
+namespace parser { StringVectorOptionKey const script_vars( "parser:script_vars" );  }
 namespace parser { BooleanOptionKey const view( "parser:view" );  }
 namespace parser { StringOptionKey const patchdock( "parser:patchdock" );  }
 namespace parser { IntegerVectorOptionKey const patchdock_random_entry( "parser:patchdock_random_entry" );  }

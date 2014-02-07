@@ -1,0 +1,44 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/*!
+
+@mainpage Rosetta core and protocols Documentation
+
+This is the main page for the documentation of Rosetta's core and protocols library. For application and overview documentation see the wiki at <a href="https://wiki.rosettacommons.org">the developer site</a>, or <a href="https://www.rosettacommons.org/manual_guide">the released documentation</a> 
+For convenience, some quick links to important Rosetta classes are listed below.
+Documentation for more classes and functions can be found by looking at the Namespaces, Classes or Files tabs above, or using the search box.
+
+<!-- Feel free to add more links, but please keep them of general interest. This shouldn't become an exhaustive listing. -->
+
+@section core_index Core
+  - core::chemical
+		-	@ref ResidueType
+  - core::conformation
+    - @ref Residue
+    - @ref Conformation
+  - core::pose
+    - @ref Pose
+  - core::pack::task
+    - @ref TaskFactory
+    - @ref PackerTask
+  - core::scoring
+    - @ref ScoreFunction
+  - 
+@section protocols_index Protocols
+  - protocols::moves
+    - @ref Mover
+  - protocols::jd2
+    - @ref JobDistributor
+  - protocols::loops
+    - @ref Loops
+    - @ref Loop
+	- protocols::filters
+    - @ref Filer 
+*/

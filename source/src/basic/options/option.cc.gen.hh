@@ -770,10 +770,10 @@ option.add( basic::options::OptionKeys::jumps::increase_chainbreak, "multiply ra
 option.add( basic::options::OptionKeys::jumps::overlap_chainbreak, "use the overlap chainbrak term in stage4" ).def(false);
 option.add( basic::options::OptionKeys::jumps::sep_switch_accelerate, "constraints and chainbreak depend on in-chain-separation. Accelerate their enforcement 1+num_cuts()*<this_factor>" ).def(0.4);
 option.add( basic::options::OptionKeys::jumps::dump_frags, "dump jump_fragments " ).def(false);
-option.add( basic::options::OptionKeys::jumps::njumps, "number_of_jumps to select from library for each trajectory (membrane mode)" ).def(1);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::njumps, "number_of_jumps to select from library for each trajectory (membrane mode)" ).def(1);
+option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
 option.add( basic::options::OptionKeys::jumps::contact_score, "the strand-weight will have a weight * contact_order component" ).def(0.0);
 option.add( basic::options::OptionKeys::jumps::filter_templates, "filter hybridization protocol templates" ).def(false);
 option.add( basic::options::OptionKeys::templates::templates, "templates option group" ).legal(true).def(true);
@@ -1539,10 +1539,10 @@ option.add( basic::options::OptionKeys::casp::opt_radius, "optimization radius f
 option.add( basic::options::OptionKeys::casp::repack, "should we repack the structure?" );
 option.add( basic::options::OptionKeys::casp::sc_min, "should we sidechain minimize the structure?" );
 option.add( basic::options::OptionKeys::casp::sequential, "should mutations be considered in sequence or all together?" );
-option.add( basic::options::OptionKeys::casp::num_iterations, "number of iterations to perform" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::casp::weight_file, "what weight-file to use?" );
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::casp::num_iterations, "number of iterations to perform" );
+option.add( basic::options::OptionKeys::casp::weight_file, "what weight-file to use?" );
 option.add( basic::options::OptionKeys::casp::refine_res, "specifies file that contains which residues to refine" );
 option.add( basic::options::OptionKeys::pose_metrics::pose_metrics, "pose_metrics option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff, " maximum SASA that is allowed for an atom to count as buried for the BuriedUnsatisfiedPolarsCalculator" ).def(0.3);
@@ -2308,10 +2308,10 @@ option.add( basic::options::OptionKeys::hotspot::angle, "Maximum allowed angle b
 option.add( basic::options::OptionKeys::hotspot::angle_res, "Residue to use for angle calculation from stubCA, <this option>, and stubCB. Used to determine if stub is pointing towards target. 0 uses the default, which is the targets center of mass" ).def(0);
 option.add( basic::options::OptionKeys::parser::parser, "parser option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::parser::protocol, "File name for the xml parser protocol" );
-option.add( basic::options::OptionKeys::parser::script_vars, "Variable substitutions for xml parser, in the form of name=value" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::parser::view, "Use the viewer?" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::parser::script_vars, "Variable substitutions for xml parser, in the form of name=value" );
+option.add( basic::options::OptionKeys::parser::view, "Use the viewer?" );
 option.add( basic::options::OptionKeys::parser::patchdock, "Patchdock output file name." );
 option.add( basic::options::OptionKeys::parser::patchdock_random_entry, "Pick a random patchdock entry between two entry numbers. inclusive" ).n(2);
 option.add( basic::options::OptionKeys::DomainAssembly::DomainAssembly, "DomainAssembly option group" ).legal(true).def(true);
