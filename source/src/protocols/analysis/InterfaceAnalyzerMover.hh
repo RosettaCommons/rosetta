@@ -209,6 +209,13 @@ public:
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
 
+	//virtual bool
+	//reinitialize_for_new_input() const {return true;}
+	
+	///@brief Explicitly initialize settings on apply - not at the constructor, since this can hold state, and some protocols use apply multiple times.
+	void
+	init_on_new_input(const core::pose::Pose & pose);
+	
 	/// @brief Called by MoverFactory when constructing new Movers. Takes care of the specific mover's parsing.
 	virtual
 	void parse_my_tag(
@@ -514,7 +521,7 @@ private:
 
 	///@brief Initialize the data structure
 	void
-	init_data();
+	init_data(const core::pose::Pose & pose);
 
 	///@brief Setup the scorefunction to include hbond energies in the EnergyGraph.  Yay forums and Rocco for this bug fix!
 	void
@@ -593,8 +600,6 @@ private:
 	std::set< core::Size > interface_set_;
 	utility::vector1< bool > include_residue_; //All residues in the pose minus any that are ignored from dock_chains constructor, or any other function that changes this value.
 
-	std::set< core::Size > side1_set_; //All residues of side1
-	std::set< core::Size > side2_set_; //All residues of side2
 	///@brief group of residue ids of fixed chains and mobile chains (see typedef)
 	group_set chain_groups_;
 	///@brief packer task used to repack pulled apart chains

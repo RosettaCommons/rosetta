@@ -141,8 +141,6 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 ) :
 	Mover(),
 	interface_jump_(interface_jump),
-	chain1_(0),
-	chain2_(0),
 	tracer_(tracer),
 	compute_packstat_(compute_packstat),
 	explicit_constructor_(false),
@@ -155,10 +153,7 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 	task_(0)//,
 {
 	protocols::moves::Mover::type( "InterfaceAnalyzer" );
-	upstream_chains_.insert(0);
-	downstream_chains_.insert(0);
 	if (sf){sf_ = sf->clone();}
-	init_data();
 	set_defaults();
 }
 
@@ -176,8 +171,6 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 	Mover(),
 	interface_jump_(1),
 	fixed_chains_(fixed_chains),
-	chain1_(0),
-	chain2_(0),
 	tracer_(tracer),
 	compute_packstat_(compute_packstat),
 	explicit_constructor_(true),
@@ -191,10 +184,7 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 
 {
 	protocols::moves::Mover::type( "InterfaceAnalyzer" );
-	upstream_chains_.insert(0);
-	downstream_chains_.insert(0);
 	if (sf){sf_ = sf->clone();}
-	init_data();
 	set_defaults();
 }
 
@@ -209,25 +199,19 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 ):
 	Mover(),
 	interface_jump_(1),
-	chain1_(0),
-	chain2_(0),
 	tracer_(tracer),
 	compute_packstat_(compute_packstat),
 	explicit_constructor_(true),
 	pack_input_(pack_input),
 	pack_separated_(pack_separated),
 	use_jobname_(use_jobname),
-	included_nres_(0),
 	//hbond_exposure_ratio_(0),
 	//total_hb_sasa_(0),
 	task_(0)
 
 {
 	protocols::moves::Mover::type( "InterfaceAnalyzer" );
-	upstream_chains_.insert(0);
-	downstream_chains_.insert(0);
 	if (sf){sf_ = sf->clone();}
-	init_data();
 	set_defaults();
 	dock_chains_ = dock_chains;
 }
@@ -268,11 +252,11 @@ InterfaceAnalyzerMover::init_per_residue_data(core::pose::Pose const & pose) {
 	per_residue_data_.dSASA_fraction.resize(pose.total_residue(), 0.0);
 	per_residue_data_.separated_energy.resize(pose.total_residue(), 0.0);
 	per_residue_data_.separated_sasa.resize(pose.total_residue(), 0.0);
-	include_residue_.resize(pose.total_residue(), true);  //By default we don't ignore any residues for whole - pose calculations.
 }
 
 void
-InterfaceAnalyzerMover::init_data() {
+InterfaceAnalyzerMover::init_data(core::pose::Pose const & pose) {
+	
 	
 	data_.sc_value = 0;
 	
@@ -308,7 +292,22 @@ InterfaceAnalyzerMover::init_data() {
 	data_.ss_helix_nres.resize(3, 0);
 		
 	data_.interface_to_surface_fraction.resize(3, 0);
+	data_.interface_residues.resize(3, vector1< bool >(pose.total_residue(), false));
+	
+}
 
+void
+InterfaceAnalyzerMover::init_on_new_input(const core::pose::Pose & pose){
+	init_data(pose);
+	init_per_residue_data(pose);
+	
+	interface_jump_ = 1;
+	chain1_ =1;
+	chain2_ = 1;
+	upstream_chains_.insert(0);
+	downstream_chains_.insert(0);
+	included_nres_ = 0;
+	include_residue_.resize(pose.total_residue(), true);  //By default we don't ignore any residues for whole - pose calculations.
 	
 }
 
@@ -335,8 +334,8 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 	using namespace core;
 	
 	
-	data_.interface_residues.resize(3, vector1< bool >(pose.total_residue(), false));
 	
+	init_on_new_input(pose);
 	core::pose::Pose complexed_pose( pose );
 	
 	//If we've specified a ligand chain, then every other chain is the fixed chain
@@ -1581,7 +1580,6 @@ InterfaceAnalyzerMover::parse_my_tag(
 	//      tracer_(false), //output to tracer
 	//      calcs_ready_(false), //calculators are not ready
 	//      use_jobname_(false), //use the pose name
-	init_data();
 	set_defaults();
 }
 
