@@ -3,7 +3,7 @@
 echo 'Building documentation for each src/doxygen.*'
 
 mkdir html
-cp doc/index.html html/
+cp src/index.html html/
 
 rm -rf html/core+protocols html/all_else
 
