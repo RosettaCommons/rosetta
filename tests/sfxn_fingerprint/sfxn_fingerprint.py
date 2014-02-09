@@ -105,7 +105,7 @@ rm -r ref/; ./ScoreVersion.py    # create reference results using only default s
       help="In selecting binaries, which mode was used? (default: release)",
     )
     parser.add_option("--extras",
-      default="default",
+      default="",
       dest="extras",
       help="in selecting binaries, which options were specified? (default: default)",
     )
@@ -321,8 +321,8 @@ class Worker:
                         else: platform = "_unknown_"
                         compiler = self.opts.compiler
                         mode = self.opts.mode
-                        extras = self.opts.extras
-                        binext = self.opts.extras+"."+platform+compiler+mode
+                        extras = self.opts.extras if self.opts.extras else 'default'
+                        binext = extras+"."+platform+compiler+mode
                         # Read the command from the file "command"
                         cmd = file(path.join(workdir, "command")).read().strip()
                         cmd = cmd % vars() # variable substitution using Python printf style
