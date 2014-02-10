@@ -26,9 +26,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-// C++ headers
-#include <sstream>
-
 
 class CarbohydrateInfoTests : public CxxTest::TestSuite {
 public:
@@ -68,79 +65,6 @@ public:
 
 
 	// Tests ///////////////////////////////////////////////////////////////////
-	// Confirm that carbohydrate properties are loaded correctly.
-	void test_CarbohydrateInfo_show()
-	{
-		using namespace std;
-		using namespace core::conformation;
-
-		TS_TRACE("Testing show() method of CarbohydrateInfo.");
-
-		stringstream output1(stringstream::out);
-		stringstream output2(stringstream::out);
-		stringstream output3(stringstream::out);
-		stringstream expected_out1(stringstream::out);
-		stringstream expected_out2(stringstream::out);
-		stringstream expected_out3(stringstream::out);
-
-		expected_out1 << "Carbohydrate Properties for this Residue:" << endl;
-		expected_out1 << " Basic Name: glucose" << endl;
-		expected_out1 << " IUPAC Name: ->4)-D-glucopyranose" << endl;
-		expected_out1 << " Abbreviation: ->4)-D-Glcp" << endl;
-		expected_out1 << " Classification: aldohexose" << endl;
-		expected_out1 << " Stereochemistry: D" << endl;
-		expected_out1 << " Ring Form: pyranose" << endl;
-		expected_out1 << " Anomeric Form: alpha" << endl;
-		expected_out1 << " Modifications: " << endl;
-		expected_out1 << "  none" << endl;
-		expected_out1 << "" << endl;
-		expected_out1 << " Polymeric Information:" << endl;
-		expected_out1 << "  Main chain connection: (_->4)" << endl;
-		expected_out1 << "  Branch connections: none" << endl;
-
-		expected_out2 << "Carbohydrate Properties for this Residue:" << endl;
-		expected_out2 << " Basic Name: glucose" << endl;
-		expected_out2 << " IUPAC Name: ->4)-alpha-D-glucopyranosyl" << endl;
-		expected_out2 << " Abbreviation: ->4)-alpha-D-Glcp-" << endl;
-		expected_out2 << " Classification: aldohexose" << endl;
-		expected_out2 << " Stereochemistry: D" << endl;
-		expected_out2 << " Ring Form: pyranose" << endl;
-		expected_out2 << " Anomeric Form: alpha" << endl;
-		expected_out2 << " Modifications: " << endl;
-		expected_out2 << "  none" << endl;
-		expected_out2 << "" << endl;
-		expected_out2 << " Polymeric Information:" << endl;
-		expected_out2 << "  Main chain connection: (_->4)" << endl;
-		expected_out2 << "  Branch connections: none" << endl;
-
-		expected_out3 << "Carbohydrate Properties for this Residue:" << endl;
-		expected_out3 << " Basic Name: glucose" << endl;
-		expected_out3 << " IUPAC Name: alpha-D-glucopyranosyl" << endl;
-		expected_out3 << " Abbreviation: alpha-D-Glcp-" << endl;
-		expected_out3 << " Classification: aldohexose" << endl;
-		expected_out3 << " Stereochemistry: D" << endl;
-		expected_out3 << " Ring Form: pyranose" << endl;
-		expected_out3 << " Anomeric Form: alpha" << endl;
-		expected_out3 << " Modifications: " << endl;
-		expected_out3 << "  none" << endl;
-		expected_out3 << "" << endl;
-		expected_out3 << " Polymeric Information:" << endl;
-		expected_out3 << "  Main chain connection: N/A" << endl;
-		expected_out3 << "  Branch connections: none" << endl;
-
-		Residue res1 = maltotriose_.residue(1);
-		res1.carbohydrate_info()->show(output1);
-		TS_ASSERT_EQUALS(output1.str(), expected_out1.str());
-
-		Residue res2 = maltotriose_.residue(2);
-		res2.carbohydrate_info()->show(output2);
-		TS_ASSERT_EQUALS(output2.str(), expected_out2.str());
-
-		Residue res3 = maltotriose_.residue(3);
-		res3.carbohydrate_info()->show(output3);
-		TS_ASSERT_EQUALS(output3.str(), expected_out3.str());
-	}
-
 	// Confirm that CarbohydrateInfo.short_name_ is assigned correctly.
 	void test_Pose_chain_sequence_w_polysaccharide()
 	{

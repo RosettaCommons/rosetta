@@ -88,11 +88,12 @@ patches/AcetylatedProteinNterm.txt
 ### termini
 patches/carbohydrates/lower_terminus.txt
 patches/carbohydrates/upper_terminus.txt
-### glycosylation/branching
+### glycosylation/branching (requires -read_pdb_link_records and -enable_branching flags to patch)
 patches/carbohydrates/N-linked_glycosylation.txt
 patches/carbohydrates/O-linked_glycosylation.txt
 patches/carbohydrates/branch_lower_term.txt
 patches/carbohydrates/2-branch.txt
+patches/carbohydrates/3-branch.txt
 patches/carbohydrates/6-branch.txt
 ### modifications
 patches/carbohydrates/2-amination.txt

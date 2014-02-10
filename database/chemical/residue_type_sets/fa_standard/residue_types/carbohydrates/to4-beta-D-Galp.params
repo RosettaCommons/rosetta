@@ -1,32 +1,32 @@
-NAME ->4)-beta-D-Galp     # ->4)-beta-D-galactopyranosyl
+NAME ->4)-beta-D-Galp      # ->4)-beta-D-galactopyranosyl
 IO_STRING Gal Z            # Note lower case!
 TYPE POLYMER
 AA UNK
-ATOM  C1  CH1   X   0.18   # anomeric carbon
-ATOM  C2  CH1   X   0.13
-ATOM  C3  CH1   X   0.11
-ATOM  C4  CH1   X   0.11
-ATOM  O4  OH    X   -0.38
+ATOM  C1  CH1  CT1  0.18   # anomeric carbon
+ATOM  C2  CH1  CT1  0.13
+ATOM  C3  CH1  CT1  0.11
+ATOM  C4  CH1  CT1  0.11
+ATOM  O4  OH    OS  -0.38
 ATOM  HO4 VIRT VIRT 0.00   # to next residue; allows for consistent chi angles
-ATOM  C5  CH1   X   0.11
-ATOM  O5  OOC   X   -0.34
-ATOM  C6  CH2   X   0.07
+ATOM  C5  CH1  CT1  0.11
+ATOM  O5  OOC   OS  -0.34
+ATOM  C6  CH2  CT2  0.07
 ATOM  O1  VIRT VIRT 0.00   # for internal res, virtual to previous residue; allows for consistent chi angles, although that angle will be NaN; replaced with real atoms by patch for lower terminus
-ATOM  O2  OH    X   -0.39
-ATOM  O3  OH    X   -0.39
+ATOM  O2  OH   OH1  -0.39
+ATOM  O3  OH   OH1  -0.39
 ATOM  VO5 VIRT VIRT 0.00   # to O5; allows for consistent chi angles
-ATOM  O6  OH    X   -0.39
-ATOM  H1  Hapo  X   0.10
+ATOM  O6  OH   OH1  -0.39
+ATOM  H1  Hapo  HA  0.10
 ATOM  HO1 VIRT VIRT 0.00   # for internal res, virtual; allows for consistent chi angles, although that angle will be NaN; replaced with real atoms by patch for lower terminus
-ATOM  H2  Hapo  X   0.07
-ATOM  HO2 Hpol  X   0.21
-ATOM  H3  Hapo  X   0.07
-ATOM  HO3 Hpol  X   0.21
-ATOM  H4  Hapo  X   0.07
-ATOM  H5  Hapo  X   0.07
-ATOM 1H6  Hapo  X   0.06   # pro-S
-ATOM 2H6  Hapo  X   0.06   # pro-R
-ATOM  HO6 Hpol  X   0.21
+ATOM  H2  Hapo  HA  0.07
+ATOM  HO2 Hpol  H   0.21
+ATOM  H3  Hapo  HA  0.07
+ATOM  HO3 Hpol  H   0.21
+ATOM  H4  Hapo  HA  0.07
+ATOM  H5  Hapo  HA  0.07
+ATOM 1H6  Hapo  HA  0.06   # pro-S
+ATOM 2H6  Hapo  HA  0.06   # pro-R
+ATOM  HO6 Hpol  H   0.21
 UPPER_CONNECT O4
 LOWER_CONNECT C1
 BOND  C1   VO5             # cyclic bond

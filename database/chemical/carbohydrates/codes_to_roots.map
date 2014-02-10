@@ -41,6 +41,8 @@ Ido id
 Gal galact
 Tal tal
 
+Fuc fuc  # trivial name for 6-deoxygalactose
+
 # KETOSES
 # Ketotriose
 DHA dihydroxyacet  # TODO: Deal with this special case later.

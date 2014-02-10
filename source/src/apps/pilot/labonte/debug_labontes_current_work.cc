@@ -64,28 +64,31 @@ int main(int argc, char *argv[])
 		Pose pose;
 
 		// import a test pose
-		//pose_from_pdb(pose, "/home/labonte/Workspace/test_input/test.pdb");
-		//pose_from_pdb(pose, "/home/labonte/Workspace/Carbohydrates/test.pdb");
-		pose_from_pdb(pose, "/home/labonte/Workspace/Carbohydrates/N-linked_14-mer_glycan.pdb");
+		pose_from_pdb(pose, "../test/core/chemical/carbohydrates/maltotriose.pdb");
 
-		//cout << pose << endl << endl;
+		cout << pose << endl << endl;
 
 		/*Size n_res = pose.total_residue();
 		for (core::uint i = 1; i <= n_res; ++i) {
 			cout << pose.residue(i) << endl << endl;
 		}*/
 
-		//ScoreFunctionOP sf = getScoreFunction();
-		ScoreFunctionOP sf = ScoreFunctionFactory::create_score_function("mm_std");
+		ScoreFunctionOP sf_std = getScoreFunction();
+		ScoreFunctionOP sf_mm = ScoreFunctionFactory::create_score_function("mm_std");
 
-		cout << "Initial score: " << sf->score(pose) << endl;
+		cout << "Initial score (std): " << endl;
+		sf_std->show(pose);
+		cout << "Initial score (mm): " << endl;
+		sf_mm->show(pose);
 
 		//PackerTaskOP task = TaskFactory::create_packer_task(pose);
-		//PackRotamersMoverOP packer = new PackRotamersMover(sf, task);
+		//PackRotamersMoverOP packer_std = new PackRotamersMover(sf_std, task);
+		//PackRotamersMoverOP packer_mm = new PackRotamersMover(sf_mm, task);
 
-		//packer->apply(pose);
+		//packer_std->apply(pose);
 
-		//cout << "Final score: " << sf->score(pose) << endl;
+		//cout << "Final score (std): " << sf_std->score(pose) << endl;
+		//cout << "Final score (mm): " << sf_mm->score(pose) << endl;
 
 		//pose.dump_pdb("/home/labonte/Workspace/test_output/modified_sugar.pdb", "");
     } catch ( utility::excn::EXCN_Base const & e ) {

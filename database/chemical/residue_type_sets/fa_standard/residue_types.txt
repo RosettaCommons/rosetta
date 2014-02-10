@@ -417,6 +417,7 @@ residue_types/carbohydrates/to4-beta-D-Glcp.params
 residue_types/carbohydrates/to6-alpha-D-Glcp.params
 #### Galactoses
 residue_types/carbohydrates/to4-beta-D-Galp.params
+residue_types/carbohydrates/to4-alpha-L-Fucp.params
 #### Mannoses
 residue_types/carbohydrates/to3-beta-D-Manp.params
 residue_types/carbohydrates/to2-alpha-D-Manp.params

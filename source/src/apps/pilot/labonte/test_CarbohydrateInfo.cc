@@ -38,8 +38,8 @@ using namespace chemical;
 using namespace conformation;
 
 
-string const PATH = "../test/core/chemical/carbohydrates/";
-//string const PATH = "/home/labonte/Workspace/Carbohydrates/";
+//string const PATH = "../test/core/chemical/carbohydrates/";
+string const PATH = "input/";
 
 
 void
@@ -81,7 +81,7 @@ main(int argc, char *argv[])
 
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, psicose,
-				neuraminate;
+				neuraminate, Lex;
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing maltotriose:" << endl;
@@ -113,6 +113,7 @@ main(int argc, char *argv[])
 		ResidueTypeSetCAP residue_set(ChemicalManager::get_instance()->residue_type_set("fa_standard"));
 		make_pose_from_saccharide_sequence(maltotriose, "alpha-D-Glcp-(1->4)-alpha-D-Glcp-(1->4)-D-Glcp", *residue_set);
 
+		// TODO: Figure out what is wrong from sugar poses made from sequences.
 		//test_sugar(maltotriose);
 		cout << endl << maltotriose << endl;
 
@@ -121,7 +122,6 @@ main(int argc, char *argv[])
 		cout << maltotriose.chain_sequence(1) << endl;
 
 
-		// TODO: How did this break?
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing branched amylopectin fragment:" << endl;
 
@@ -135,7 +135,7 @@ main(int argc, char *argv[])
 
 		pose_from_pdb(glycopeptide, PATH + "glycosylated_peptide.pdb");
 
-		//test_sugar(glycoprotein);
+		test_sugar(glycopeptide);
 		cout << endl << glycopeptide << endl;
 
 		cout << "Sequences:" << endl;
@@ -179,6 +179,14 @@ main(int argc, char *argv[])
 		pose_from_pdb(neuraminate, PATH + "Neu.pdb");
 
 		test_sugar(neuraminate);
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing Lewisx:" << endl;
+
+		pose_from_pdb(Lex, PATH + "Lex.pdb");
+
+		test_sugar(Lex);
 
 	} catch (utility::excn::EXCN_Base const & e) {
 		cerr << "Caught exception: " << e.msg() << endl;
