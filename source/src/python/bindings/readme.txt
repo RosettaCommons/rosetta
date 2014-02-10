@@ -10,7 +10,8 @@ location from where you want to execute it.
     Using PyRosetta.
 
 To use PyRosetta you have two options:
-  1. Run it from it file system location. or
+  1. Run it from it file system location.
+ 		or
   2. Set up environment variables so you can use it from any file system location.
 
 To set up environment variables we provide shell script. To use it execute
