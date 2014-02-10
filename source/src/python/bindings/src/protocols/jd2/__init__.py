@@ -15,7 +15,8 @@ def parse_rosettascript(self, protocol_string, starting_pose = None):
 
     return RosettaScriptWrapper(protocol)
 
-DockDesignParser.parse_rosettascript = MethodType(parse_rosettascript, None, DockDesignParser)
+# temporary commenting out due to change in upstream
+#DockDesignParser.parse_rosettascript = MethodType(parse_rosettascript, None, DockDesignParser)
 
 class RosettaScriptWrapper(object):
     def __init__(self, parsed_protocol):
@@ -26,7 +27,7 @@ class RosettaScriptWrapper(object):
 
         If include_partial_result is True return partial application results even
         if non MS_SUCCESS mover status is returned.
-        
+
         Destructively interacts with jd2."""
 
         #Reset jd2 to clear job data.
