@@ -408,7 +408,7 @@ identify_hbonds_1way(
 				(!hbond_set.hbond_options().use_hb_env_dep() ? 1 :
 				get_environment_dependent_weight(hbe_type, don_nb, acc_nb, hbond_set.hbond_options()));
 
-			Real ssdep_weight = (hbe_type.eval_type()==hbw_SR_BB) ?  ssdep_weight_factor : 1.0;
+			Real ssdep_weight = (get_hbond_weight_type(hbe_type.eval_type())==hbw_SR_BB) ?  ssdep_weight_factor : 1.0;
 
 			//////
 			// now we have identified a hbond -> append it into the hbond_set
