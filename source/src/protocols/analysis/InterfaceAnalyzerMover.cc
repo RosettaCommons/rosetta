@@ -229,7 +229,6 @@ InterfaceAnalyzerMover::set_defaults() {
 	skip_reporting_ = false;
 	use_resfile_ = false;
 	use_centroid_ = false;
-	dock_chains_ = "";
 
 }
 
@@ -304,6 +303,7 @@ InterfaceAnalyzerMover::init_on_new_input(const core::pose::Pose & pose){
 	init_data(pose);
 	init_per_residue_data(pose);
 	
+	interface_set_.clear();
 	upstream_chains_.insert(0);
 	downstream_chains_.insert(0);
 	included_nres_ = 0;
@@ -356,7 +356,7 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 	if (explicit_constructor_){
 		//fix the foldtree to reflect the fixed chains we want
 		TR << "Using explicit constructor" << std::endl;
-		if (dock_chains_ != ""){
+		if (dock_chains_.size() != 0){
 			setup_for_dock_chains(complexed_pose, dock_chains_);
 		}
 		
@@ -383,11 +383,8 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 		calcs_ready_ = true;
 	}
 	
-	init_per_residue_data(complexed_pose);
-	
-	//setup an interface set
-	if(interface_set_.empty())  //should always be empty at this point
-		make_interface_set(complexed_pose);
+
+	make_interface_set(complexed_pose);
 
 	
 	//If there are no residues detected at the interface, don't bother with anything else. Report everything as zero and return. 
@@ -395,6 +392,7 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 		if (! skip_reporting_) {
 			report_data();	
 		}
+		TR <<"No Interface detected.  Skipping calculations" <<std::endl;
 		return;
 	}
 		
@@ -1533,6 +1531,7 @@ InterfaceAnalyzerMover::parse_my_tag(
 	set_use_tracer(tag->getOption("tracer", false));
 	set_use_jobname(tag->getOption("use_jobname", false));
 
+	
 	if (tag->hasOption("jump") && tag->hasOption("fixedchains"))
     {
     	throw utility::excn::EXCN_RosettaScriptsOption("Jump and fixedchains are mutually exclusive. Use either jump or fixedchains");
