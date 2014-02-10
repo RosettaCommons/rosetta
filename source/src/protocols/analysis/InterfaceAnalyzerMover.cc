@@ -237,6 +237,7 @@ InterfaceAnalyzerMover::set_defaults() {
 void
 InterfaceAnalyzerMover::init_per_residue_data(core::pose::Pose const & pose) {
 	
+	per_residue_data_ = PerResidueInterfaceData(); //Reinit to clear any data
 	per_residue_data_.regional_avg_per_residue_SASA_int.resize(3,0);
 	per_residue_data_.regional_avg_per_residue_SASA_sep.resize(3,0);
 	per_residue_data_.regional_avg_per_residue_energy_int.resize(3, 0);
@@ -257,7 +258,7 @@ InterfaceAnalyzerMover::init_per_residue_data(core::pose::Pose const & pose) {
 void
 InterfaceAnalyzerMover::init_data(core::pose::Pose const & pose) {
 	
-	
+	data_ = InterfaceData(); //Reinit to clear any data
 	data_.sc_value = 0;
 	
 	data_.dSASA.resize(3, 0);
@@ -298,6 +299,8 @@ InterfaceAnalyzerMover::init_data(core::pose::Pose const & pose) {
 
 void
 InterfaceAnalyzerMover::init_on_new_input(const core::pose::Pose & pose){
+	//Reinit structs to make sure they are clear. 
+	
 	init_data(pose);
 	init_per_residue_data(pose);
 	
@@ -307,6 +310,7 @@ InterfaceAnalyzerMover::init_on_new_input(const core::pose::Pose & pose){
 	upstream_chains_.insert(0);
 	downstream_chains_.insert(0);
 	included_nres_ = 0;
+	include_residue_.clear();
 	include_residue_.resize(pose.total_residue(), true);  //By default we don't ignore any residues for whole - pose calculations.
 	
 }

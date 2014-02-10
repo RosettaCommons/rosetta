@@ -72,6 +72,13 @@ public:
 		return "IAMover";
 	}
 
+	virtual bool reinitialize_for_each_job() const { return true; }
+
+	virtual bool reinitialize_for_new_input() const { return true; }
+	virtual protocols::moves::MoverOP fresh_instance() const {return new IAMover;}
+	
+	
+	
 	void assign_IA_mover(core::pose::Pose & pose);
 
 private:

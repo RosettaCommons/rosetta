@@ -241,7 +241,9 @@ public:
 	report_data();
 
 
+	virtual bool reinitialize_for_each_job() const { return true; }
 
+	virtual bool reinitialize_for_new_input() const { return true; }
 
 
 	///////////////////////////////////////////////////
