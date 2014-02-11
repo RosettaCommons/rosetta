@@ -82,6 +82,7 @@ sources = {
 		#"fast_cm",
 		"fix_alignment_to_match_pdb",
 		"full_length_model",
+		"partial_thread",
 		"score_aln",
 		"score_aln2",
 		"super_aln",

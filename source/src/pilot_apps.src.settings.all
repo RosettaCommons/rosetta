@@ -642,7 +642,6 @@ sources = {
         "membrane_foldtree",
     ],
 	"pilot/rayyrw" : [
-		"partial_thread", #Note: used for comparative modeling; no itest needed
 		#"replonly",
 		#"replonly_fa",
 		#"fastrelax_replonly",
