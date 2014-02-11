@@ -20,7 +20,7 @@
 // Project headers
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
-#include <utility/io/izstream.hh>  
+#include <utility/io/izstream.hh>
 
 // C++ headers
 #include <fstream>
@@ -37,6 +37,12 @@ GasteigerAtomTypeSet::GasteigerAtomTypeSet() {}
 
 GasteigerAtomTypeSet::GasteigerAtomTypeSet( ElementSetCAP element_set ):
 			element_set_( element_set )
+	{}
+
+GasteigerAtomTypeSet::GasteigerAtomTypeSet( GasteigerAtomTypeSet const & other ):
+			element_set_( other.element_set_ ),
+			atom_type_index_( other.atom_type_index_ ),
+			atom_types_( other.atom_types_ )
 	{}
 
 GasteigerAtomTypeSet::~GasteigerAtomTypeSet() {}

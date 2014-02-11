@@ -53,6 +53,7 @@ private:
 public:
 
 	GasteigerAtomTypeSet( ElementSetCAP element_set );
+	GasteigerAtomTypeSet( GasteigerAtomTypeSet const & other );
 	virtual ~GasteigerAtomTypeSet();
 
 	/// @brief Number of atom types in the set
