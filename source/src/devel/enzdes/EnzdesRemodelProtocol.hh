@@ -134,7 +134,10 @@ public:
   void
   set_seq_mapping( core::id::SequenceMappingOP seq_map_in);
 
-  core::id::SequenceMappingOP get_seq_mapping();
+	void
+	set_keep_existing_aa_identities( bool setting );
+
+  core::id::SequenceMappingCOP get_seq_mapping() const;
 
 	utility::vector1< core::Size > get_flex_region( ) const;
 
@@ -243,6 +246,13 @@ private:
 	//try to make the foldtree at the end of apply
 	//look like the input foldtree
 	bool reinstate_initial_foldtree_;
+
+	//keep residues not getting added at their
+	//original identities instead of making them
+	//ala. somewhat arbitrary implementation, still experimental
+	//plus secmatch might still change them
+	bool keep_existing_aa_identities_;
+	utility::vector1< core::chemical::ResidueTypeCAP > init_aa_;
 
 	//which of the regions marked as flexible to remodel
 	core::Size region_to_remodel_;

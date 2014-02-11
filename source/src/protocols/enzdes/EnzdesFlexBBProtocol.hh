@@ -258,7 +258,7 @@ public:
 	}
 
 	utility::vector1< core::Size > const &
-	positions(){
+	positions() const{
 		return positions_;
 	}
 
@@ -338,12 +338,10 @@ public:
 	}
 
 
-protected:
-
-	void
-	get_12A_neighbors(
+	std::set< core::Size >
+	get_10A_neighbors(
 		core::pose::Pose const & pose
-	);
+	) const;
 
 private:
 
@@ -364,7 +362,6 @@ private:
 	//(fragments accessed by their index in the base class FragData list)
 	utility::vector1< SizeRealPair > frag_designabilities_;
 
-	std::set< core::Size > twelve_A_neighbors_;
 	core::Real target_proximity_to_native_conformation_;
 	core::Real target_proximity_to_other_conformations_;
 

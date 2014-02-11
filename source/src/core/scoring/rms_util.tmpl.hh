@@ -94,7 +94,7 @@
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.fwd.hh>
-#include <core/id/SequenceMapping.fwd.hh>
+#include <core/id/SequenceMapping.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/types.hh>
 #include <core/kinematics/AtomPointer.fwd.hh>
@@ -401,7 +401,7 @@ rmsd_with_super(
 	ASSERT_ONLY(core::Size const nres1 = pose1.total_residue();)
 	ASSERT_ONLY(core::Size const nres2 = pose2.total_residue();)
 	assert( nres1 == nres2 );
-	
+
 	std::vector< core::Vector > p1_coords;
 	std::vector< core::Vector > p2_coords;
 
@@ -661,6 +661,50 @@ rmsd_no_super_subset(
 	}
 	return std::sqrt(sum2 / natoms);
 }
+
+/// @brief like function above, but uses sequence mapping,
+/// i.e. sections of poses of different lengths can be compared
+/// at the moment sorta assumes that residues at corresponding
+/// positions have the same identity, mainly becaue the predicates
+/// are structured that way...
+template< class T >
+core::Real
+rmsd_no_super_subset(
+	core::pose::Pose const & pose1,
+	core::pose::Pose const & pose2,
+	ObjexxFCL::FArray1D_bool const & subset,
+	core::id::SequenceMapping const & seqmap,
+	T* predicate
+)
+{
+  core::Size const nres1 = pose1.total_residue();
+  core::Real sum2( 0.0 );
+  core::Size natoms( 0 );
+
+  for ( core::Size i = 1; i <= nres1; ++i ) {
+    if ( subset( i ) ) {
+      core::Size res2 = seqmap[i];
+      runtime_assert(res2 != 0 );
+      Size num_atoms ( pose1.residue(i).natoms() );
+      if ( predicate == is_ligand_heavyatom ||
+	predicate == is_polymer_heavyatom ||
+	predicate == is_heavyatom ) {
+	assert( pose1.residue(i).natoms() == pose2.residue(res2).natoms() );
+      } else if ( num_atoms > pose2.residue(res2).natoms() ){
+	num_atoms = pose2.residue(res2).natoms();
+      }
+      for ( core::Size j = 1; j <= num_atoms; ++j ) {
+	if ( predicate( pose1, pose2, i, j ) ) {
+	  core::Vector diff = pose1.residue(i).xyz(j) - pose2.residue(res2).xyz(j);
+	  sum2 += diff.length_squared();
+	  natoms += 1;
+	}
+      }
+    }
+  }
+  return std::sqrt(sum2 / natoms);
+}
+
 
 /// @brief function to return the biggest deviation between an atom in a pair of poses,
 template< class T >

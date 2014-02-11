@@ -1525,7 +1525,7 @@ EnzdesFlexibleRegion::sort_ensemble_by_designability(
 
 	//first, let's make the right task (and what residues to mutate to alanine in this particular context)
 	utility::vector1< core::Size > other_design_res;
-	get_12A_neighbors( pose );
+	std::set< core::Size > ten_A_neighbors = get_10A_neighbors( pose );
 
 	PackerTaskOP looptask_template = task->clone();
 
@@ -1540,7 +1540,7 @@ EnzdesFlexibleRegion::sort_ensemble_by_designability(
 			}
 
 		else if( looptask_template->pack_residue(i)
-			&& (twelve_A_neighbors_.find( i ) == twelve_A_neighbors_.end() )
+			&& (ten_A_neighbors.find( i ) == ten_A_neighbors.end() )
 			&& !this->contains_seqpos( i ) )
 			{
 				looptask_template->nonconst_residue_task(i).prevent_repacking();
@@ -2189,12 +2189,13 @@ EnzdesFlexibleRegion::remap_resid(
 }
 
 /// @brief requires that the pose was scored
-void
-EnzdesFlexibleRegion::get_12A_neighbors(
+std::set< core::Size >
+EnzdesFlexibleRegion::get_10A_neighbors(
 	core::pose::Pose const & pose
-){
+) const {
 
-	twelve_A_neighbors_.clear();
+	std::set< core::Size > ten_A_neighbors;
+	ten_A_neighbors.clear();
 	//shiat, seems to be complicated to have the scorefxn build the 12a neighbor graph,
 	//so we'll take the ten a one for now...
 	core::scoring::TenANeighborGraph const & cur_graph = pose.energies().tenA_neighbor_graph();
@@ -2206,13 +2207,14 @@ EnzdesFlexibleRegion::get_12A_neighbors(
 
 			core::Size other_res = (*graph_it)->get_other_ind( i );
 			if( !this->contains_seqpos( other_res )
-				&& ( twelve_A_neighbors_.find( other_res) == twelve_A_neighbors_.end() ) )
+				&& ( ten_A_neighbors.find( other_res) == ten_A_neighbors.end() ) )
 				{
-					twelve_A_neighbors_.insert( other_res );
+					ten_A_neighbors.insert( other_res );
 				}
 		}
 	}
-} //determine_12A_neighbors(
+	return ten_A_neighbors;
+} //determine_10A_neighbors(
 
 
 

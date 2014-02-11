@@ -45,12 +45,12 @@
 //#include <protocols/enzdes/EnzdesMovers.hh>
 //#include <core/chemical/ResidueType.hh>
 //#include <basic/options/option.hh>
-//#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask_.hh>
 //#include <core/pose/Pose.hh>
 //#include <core/scoring/ScoreFunction.hh>
 //#include <protocols/ligand_docking/LigandDockProtocol.hh>
 //#include <protocols/moves/MonteCarlo.hh>
-//#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #if defined GL_GRAPHICS
  #include <protocols/viewer/viewers.hh>
@@ -166,7 +166,7 @@ EnzdesRemodelProtocol::apply(
 
 	determine_flexible_regions( pose, orig_task );
 
-	core::id::SequenceMappingOP seq_mapping;
+	core::id::SequenceMappingCOP seq_mapping;
 	PackerTaskOP mod_task = modified_task( pose, *orig_task );
 
 	for( core::Size regcount = 1; regcount <= flex_regions_.size(); ++regcount ){
@@ -244,6 +244,7 @@ EnzdesRemodelMover::EnzdesRemodelMover()
 	remodel_trials_( basic::options::option[basic::options::OptionKeys::enzdes::remodel_trials] ),
 	remodel_secmatch_(basic::options::option[basic::options::OptionKeys::enzdes::remodel_secmatch] ),
 	reinstate_initial_foldtree_(false),
+	keep_existing_aa_identities_(false),
 	region_to_remodel_(1),
 	start_to_current_smap_(NULL),
 	include_existing_conf_as_invrot_target_(false),
@@ -261,6 +262,7 @@ EnzdesRemodelMover::EnzdesRemodelMover()
 	vlb_sfxn_->set_weight(core::scoring::dihedral_constraint, 1.0 );
 	vlb_sfxn_->set_weight(core::scoring::backbone_stub_constraint, 1.0 );
 	non_remodel_match_pos_.clear();
+	init_aa_.clear();
 	user_provided_ss_.clear();
 }
 
@@ -277,6 +279,8 @@ EnzdesRemodelMover::EnzdesRemodelMover( EnzdesRemodelMover const & other )
 	remodel_trials_( other.remodel_trials_ ),
 	remodel_secmatch_( other.remodel_secmatch_ ),
 	reinstate_initial_foldtree_(other.reinstate_initial_foldtree_),
+	keep_existing_aa_identities_(other.keep_existing_aa_identities_),
+	init_aa_(other.init_aa_),
 	region_to_remodel_(other.region_to_remodel_),
 	predesign_filters_(other.predesign_filters_),
 	postdesign_filters_(other.postdesign_filters_),
@@ -301,6 +305,7 @@ EnzdesRemodelMover::EnzdesRemodelMover(
 	remodel_trials_( basic::options::option[basic::options::OptionKeys::enzdes::remodel_trials] ),
 	remodel_secmatch_( basic::options::option[basic::options::OptionKeys::enzdes::remodel_secmatch] ),
 	reinstate_initial_foldtree_(false),
+	keep_existing_aa_identities_(false),
 	region_to_remodel_(1),
 	start_to_current_smap_(NULL),
 	include_existing_conf_as_invrot_target_(false),
@@ -335,6 +340,7 @@ EnzdesRemodelMover::EnzdesRemodelMover(
 
 	non_remodel_match_pos_.clear();
 	user_provided_ss_.clear();
+	init_aa_.clear();
 
 } //enzdes remodel mover constructor
 
@@ -539,6 +545,7 @@ EnzdesRemodelMover::remodel_pose(
 	core::pose::renumber_pdbinfo_based_on_conf_chains( pose );
 	pose.pdb_info()->obsolete( false );
 
+
 	//score the pose in our relevant scorefunction
 	(*enz_prot_->reduced_scorefxn())( pose );
 
@@ -550,6 +557,38 @@ EnzdesRemodelMover::remodel_pose(
 	}
 
 	if( secstruct.size() != flex_region_->length() ) process_length_change( pose, vlb.manager().sequence_mapping() );
+
+	if( keep_existing_aa_identities_ ){
+
+		bool oddlength ( init_aa_.size() % 2 == 0 ? false : true );
+		Size num_aa_each_side_to_replace( init_aa_.size()/2 );
+		if( flex_region_->length() < init_aa_.size() ){
+			num_aa_each_side_to_replace = flex_region_->length() / 2;
+			if( flex_region_->length() % 2 == 0 ) oddlength = false;
+			else oddlength = true;
+		}
+		std::set< Size > res_to_repack;
+		for( Size i = 0; i < num_aa_each_side_to_replace; ++i){
+			pose.replace_residue( flex_region_->start() + i, core::conformation::Residue( *(init_aa_[i+1]), true), true);
+
+			pose.replace_residue( flex_region_->stop() - i, core::conformation::Residue( *(init_aa_[init_aa_.size()-i]), true), true);
+
+			res_to_repack.insert( flex_region_->start() + i ); res_to_repack.insert( flex_region_->stop() - i );
+		}
+		if( oddlength ){
+			res_to_repack.insert( flex_region_->start() + num_aa_each_side_to_replace );
+			pose.replace_residue( flex_region_->start() + num_aa_each_side_to_replace, core::conformation::Residue( *(init_aa_[num_aa_each_side_to_replace+1]), true), true);
+		}
+		core::pack::task::PackerTaskOP task = new core::pack::task::PackerTask_( pose );
+		task->initialize_from_command_line();
+		for( Size i = 1; i <= task->total_residue(); ++i){
+			if( res_to_repack.find( i ) != res_to_repack.end() ) task->nonconst_residue_task( i ).restrict_to_repacking();
+			else task->nonconst_residue_task( i ).prevent_repacking();
+		}
+		protocols::simple_moves::PackRotamersMoverOP packrot = new protocols::simple_moves::PackRotamersMover( &(*enz_prot_->get_scorefxn()), task );
+		packrot->apply( pose );
+		(*enz_prot_->reduced_scorefxn())( pose );
+	} // if(keep_existing_aa_identities)
 
 	enz_prot_->add_pregenerated_enzdes_constraints( pose );
 
@@ -657,6 +696,12 @@ EnzdesRemodelMover::examine_initial_conformation(
 	if( remodel_secmatch_ ){
 		create_target_inverse_rotamers( pose );
 	}
+
+	if( keep_existing_aa_identities_ ){
+		init_aa_.clear();
+		for( Size i = flex_region_->start(); i <= flex_region_->stop(); ++i ) init_aa_.push_back( &(pose.residue_type( i )) );
+	}
+
 
 	//reduce the pose to poly ala
 	utility::vector1< core::Size > ala_pos;
@@ -1337,8 +1382,16 @@ EnzdesRemodelMover::set_seq_mapping(
   start_to_current_smap_ = seq_map_in;
 }
 
-core::id::SequenceMappingOP
-EnzdesRemodelMover::get_seq_mapping() {
+void
+EnzdesRemodelMover::set_keep_existing_aa_identities(
+	bool setting
+)
+{
+	keep_existing_aa_identities_ = setting;
+}
+
+core::id::SequenceMappingCOP
+EnzdesRemodelMover::get_seq_mapping() const {
   return start_to_current_smap_;
 }
 

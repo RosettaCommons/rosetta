@@ -23,6 +23,7 @@
 
 // Project headers
 #include <core/types.hh>
+#include <core/id/SequenceMapping.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -96,6 +97,42 @@ public:
 		Size insert_pos
 	) const;
 
+	/// @brief returns false if remodel mover didn't work
+	bool
+	create_raw_insert_pose(
+		core::pose::Pose & pose,
+		core::Size const insert_pos
+	);
+
+	void
+	relax_raw_insert_pose(
+		core::pose::Pose & pose,
+		core::pose::Pose const & raw_pose,
+		core::Size const insert_pos
+	);
+
+	void
+	evaluate_insert_pose(
+		core::pose::Pose const & start_pose,
+		core::pose::Pose const & rawinsert_pose,
+		core::pose::Pose const & relax_pose,
+		core::Size const insert_pos
+	);
+
+	/*
+	void
+	output_eval_results(
+		core::Size const insert_pos,
+		core::Real const insert_pos_sasa,
+		core::Real const diffsco_raw_start,
+		core::Real const diffsco_relax_start,
+		core::Real const diffsco_anchor,
+		core::Real const rms_neighbors,
+		core::Real const rms_anchors,
+		core::Real const insert_sasa,
+		core::Real const insert_burial
+	);
+	*/
 
 private:
 
@@ -105,9 +142,13 @@ private:
 
 	std::string test_insert_ss_;
 	Real insert_allowed_score_increase_;
+	Size length_of_insert_, num_repeats_;
+	bool pdb_numbering_;
 
 	//actual insertion handled by enzdes machinery
 	protocols::enzdes::EnzdesFlexBBProtocolOP enz_flexbb_prot_;
+
+	core::id::SequenceMappingCOP insert_seqmap_;
 
 };
 
