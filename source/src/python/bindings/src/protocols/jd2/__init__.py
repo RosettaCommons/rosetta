@@ -2,21 +2,11 @@ from __jd2_all_at_once_ import *
 
 import rosetta.utility.tag
 
-from types import MethodType
-
-def parse_rosettascript(self, protocol_string, starting_pose = None):
-    """Parses a rosetta script string into a wrapper executor mover."""
-    tag = rosetta.utility.tag.Tag.create(protocol_string)
-
-    if starting_pose is None:
-        protocol = self.parse_protocol_tag(tag)
-    else:
-        protocol = self.parse_protocol_tag(starting_pose, tag)
-
-    return RosettaScriptWrapper(protocol)
-
-# temporary commenting out due to change in upstream
-#DockDesignParser.parse_rosettascript = MethodType(parse_rosettascript, None, DockDesignParser)
+# Moved to protocols.rosetta_scripts.RosettaScriptsParser due to changes in upstream
+# def parse_rosettascript(self, protocol_string, starting_pose = None):
+#     """Parses a rosetta script string into a wrapper executor mover."""
+#     ...
+#DockDesignParser.parse_rosettascript = ...
 
 class RosettaScriptWrapper(object):
     def __init__(self, parsed_protocol):
