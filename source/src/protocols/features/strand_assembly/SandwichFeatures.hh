@@ -664,6 +664,12 @@ public:
 		core::pose::Pose const & pose,
 		core::Size	sw_can_by_sh_id);
 
+	core::Size
+	report_topology_candidate (
+		StructureID struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::Size	sw_can_by_sh_id);
+
 
 
 	bool

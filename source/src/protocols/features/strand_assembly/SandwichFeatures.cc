@@ -437,6 +437,10 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	Column multimer_is_suspected	("multimer_is_suspected",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
 	Column avg_b_factor_CB_at_each_component	("avg_b_factor_CB_at_each_component",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
 
+	Column topology_candidate	("topology_candidate",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+		// either "fn3" or "not_fn3"
+
+
 	// Schema
 	// PrimaryKey
 	utility::vector1<Column> primary_key_columns_sw_by_components;
@@ -588,6 +592,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	sw_by_components.add_column(sw_res_size);
 	sw_by_components.add_column(multimer_is_suspected);
 	sw_by_components.add_column(avg_b_factor_CB_at_each_component);
+	sw_by_components.add_column(topology_candidate);
 	sw_by_components.add_column(component_size);
 
 	
@@ -4479,6 +4484,74 @@ SandwichFeatures::report_avg_b_factor_CB_at_each_component	(
 
 
 
+Size
+SandwichFeatures::report_topology_candidate	(
+	StructureID struct_id,
+	utility::sql_database::sessionOP db_session,
+	Size sw_can_by_sh_id)
+{
+	// warning: this is NOT a strict fn3 topology determinator, this function is useful only to identify fn3 topology beta-sandwich from so many beta-sandwiches. So additional human inspection is required to confirm fn3 eventually after this function.
+
+	//// <begin> retrieve sw_by_components_bs_id
+	string select_string =
+	"SELECT\n"
+	"	sw_by_components_bs_id	\n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	(struct_id = ?) \n"
+	"	AND	(sheet_id = 1)	\n"
+	"	AND	strand_edge is not null	\n"
+	"	AND	(sw_can_by_sh_id = ?);";
+
+	statement select_statement(basic::database::safely_prepare_statement(select_string,	db_session));
+	select_statement.bind(1,	struct_id);
+	select_statement.bind(2,	sw_can_by_sh_id);
+	result res(basic::database::safely_read_from_database(select_statement));
+
+	utility::vector1<int> vector_of_sw_by_components_bs_id;
+
+	while(res.next())
+	{
+		int sw_by_components_bs_id;
+		res >> sw_by_components_bs_id;
+		vector_of_sw_by_components_bs_id.push_back(sw_by_components_bs_id);
+	}
+	//// <end> retrieve sw_by_components_bs_id
+
+	string	topology_candidate;
+
+	if	(vector_of_sw_by_components_bs_id[1]	==	1 && vector_of_sw_by_components_bs_id[2]	==	3 &&	vector_of_sw_by_components_bs_id[3]	==	9)
+	{
+		topology_candidate	=	"fn3";
+	}
+	else
+	{
+		topology_candidate	=	"not_fn3";
+	}
+
+	// <begin> UPDATE sw_by_components table
+	string insert =
+	"UPDATE sw_by_components set \n"
+	"topology_candidate = ? \n"
+	"WHERE\n"
+	"	(struct_id = ?) \n"
+	"	AND	(sw_can_by_sh_id = ?) ;";
+
+	statement insert_stmt(basic::database::safely_prepare_statement(insert,	db_session));
+
+	insert_stmt.bind(1,	topology_candidate);
+	insert_stmt.bind(2,	struct_id);
+	insert_stmt.bind(3,	sw_can_by_sh_id);
+
+	basic::database::safely_write_to_database(insert_stmt);
+	// <end> UPDATE sw_by_components table
+
+	return 0;
+} //	SandwichFeatures::report_topology_candidate
+
+
+
 
 
 
@@ -8194,8 +8267,11 @@ SandwichFeatures::report_features(
 				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 				);
 
-
 			report_avg_b_factor_CB_at_each_component(struct_id,	db_session, pose,
+				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
+				);
+
+			report_topology_candidate(struct_id,	db_session,
 				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 				);
 
