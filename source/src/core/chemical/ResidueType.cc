@@ -2352,10 +2352,11 @@ ResidueType::set_icoor(
 {
 	ICoorAtomID id( atm, *this );
 	AtomICoor const ic( index, phi, theta, d, stub_atom1, stub_atom2, stub_atom3, *this );
+	Size atomno;
 
-	Size const atomno( vd_to_index_.find(id.vertex())->second);
 	switch ( id.type() ) {
 		case ICoorAtomID::INTERNAL:
+			atomno = vd_to_index_.find(id.vertex())->second;
 			if ( graph_.num_vertices() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
 			if ( ordered_atoms_.size() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
 			//graph_[ordered_atoms_[ atomno ]].icoor( ic );
@@ -2376,6 +2377,7 @@ ResidueType::set_icoor(
 			}
 			break;
 		case ICoorAtomID::CONNECT:
+			atomno = vd_to_index_.find(id.vertex())->second;
 			residue_connections_[ atomno ].icoor( ic );
 			break;
 		case ICoorAtomID::POLYMER_LOWER:
@@ -2405,10 +2407,11 @@ ResidueType::set_icoor(
 {
 	ICoorAtomID id( atm, *this );
 	AtomICoor const ic( phi, theta, d, stub_atom1, stub_atom2, stub_atom3, *this );
+	Size atomno;
 
-	Size const atomno( vd_to_index_.find(id.vertex())->second );
 	switch ( id.type() ) {
 		case ICoorAtomID::INTERNAL:
+			atomno = vd_to_index_.find(id.vertex())->second;
 			if ( ordered_atoms_.size() < atomno ) utility_exit_with_message("ResidueType:: shoudnt get here!");//icoor_.resize(atomno);
 			icoor_[ ordered_atoms_[atomno] ] = ic;
 			//graph_[ordered_atoms_[ atomno ]].icoor( ic );
@@ -2427,6 +2430,7 @@ ResidueType::set_icoor(
 			}
 			break;
 		case ICoorAtomID::CONNECT:
+			atomno = vd_to_index_.find(id.vertex())->second;
 			residue_connections_[ atomno ].icoor( ic );
 			break;
 		case ICoorAtomID::POLYMER_LOWER:

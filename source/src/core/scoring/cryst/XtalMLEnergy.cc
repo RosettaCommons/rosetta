@@ -12,8 +12,10 @@
 /// @author Frank DiMaio
 
 
-#include <core/scoring/cryst/XtalMLEnergy.hh>
+// keep first
 #include <core/scoring/cryst/PhenixInterface.hh>
+
+#include <core/scoring/cryst/XtalMLEnergy.hh>
 
 // Unit headers
 #include <core/scoring/Energies.hh>

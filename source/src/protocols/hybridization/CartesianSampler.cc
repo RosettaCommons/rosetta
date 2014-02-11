@@ -12,6 +12,9 @@
 /// @author Yifan Song
 /// @author Frank DiMaio
 
+//keep first
+#include <core/scoring/cryst/PhenixInterface.hh>
+
 #include <protocols/hybridization/HybridizeProtocolCreator.hh>
 #include <protocols/hybridization/CartesianSampler.hh>
 #include <protocols/hybridization/util.hh>
@@ -45,7 +48,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/cryst/PhenixInterface.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/scoring/Energies.hh>
 #include <core/sequence/util.hh>

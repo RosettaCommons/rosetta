@@ -12,6 +12,9 @@
 /// @detailed
 /// @author Frank DiMaio
 
+// keep first
+#include <core/scoring/cryst/PhenixInterface.hh>
+
 #include <protocols/cryst/cryst_movers.hh>
 #include <protocols/cryst/cryst_movers_creator.hh>
 
@@ -22,7 +25,6 @@
 #include <core/util/cryst_util.hh>
 #include <core/scoring/cryst/util.hh>
 #include <core/scoring/cryst/XtalMLEnergy.hh>
-#include <core/scoring/cryst/PhenixInterface.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 
 #include <core/scoring/ScoreFunction.hh>

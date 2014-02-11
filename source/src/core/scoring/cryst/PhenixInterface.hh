@@ -14,6 +14,10 @@
 #ifndef INCLUDED_core_scoring_cryst_PhenixInterface_hh
 #define INCLUDED_core_scoring_cryst_PhenixInterface_hh
 
+#ifdef WITH_PYTHON
+#include "Python.h"
+#endif
+
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -27,11 +31,6 @@
 #include <string>
 #include <map>
 #include <complex>
-
-#ifdef WITH_PYTHON
-#include "Python.h"
-#endif
-
 namespace core {
 namespace scoring {
 namespace cryst {
