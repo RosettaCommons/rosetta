@@ -1,6 +1,6 @@
 /*!
-@page full_options_list
-Mini rosetta command line option descriptions. <i>(This is automatically generated file, do not edit!)</i>
+@page full_options_list Rosetta command line option descriptions.
+<i>(This is an automatically generated file, do not edit!)</i> Generated: 2014-02-11
 <ul>
 <li><h2>in</h2>
 <dl>

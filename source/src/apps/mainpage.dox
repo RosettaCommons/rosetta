@@ -17,27 +17,29 @@ Documentation for more classes and functions can be found by looking at the Name
 
 <!-- Feel free to add more links, but please keep them of general interest. This shouldn't become an exhaustive listing. -->
 
+@ref full_options_list
+
 @section numeric_index numeric
-  - @ref numeric::random
-    - @ref RandomGenerator
+	- numeric::random
+		- numeric::random::RandomGenerator
 
 @section utility_index utility
 	- utility::pointer
-		- @ref owning_ptr
-	- @ref utility::vector1
+		- utility::pointer::owning_ptr
+	- utility::vector1
 	- utility::io
-		- @ref izstream - Read files with compression support
-		- @ref ozstream - Write files with compression support
-  - utility::options
-		-	@ref OptionCollection - The type of the basic::options::option global
-	- @ref src/utility/string_util.hh
+		- utility::io::izstream - Read files with compression support
+		- utility::io::ozstream - Write files with compression support
+	- utility::options
+		- utility::options::OptionCollection - The type of the basic::options::option global
+	- src/utility/string_util.hh
 
 @section basic_index basic
-	- @ref basic::Tracer
-  - @ref basic::resource_manager
-    - @ref ResourceManager
+	- basic::Tracer
+	- basic::resource_manager
+		- basic::resource_manager::ResourceManager
 
 @section objexxfcl_index ObjexxFCL
-  - @ref ObjexxFCL::format
+	- ObjexxFCL::format
 
 */

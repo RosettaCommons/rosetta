@@ -292,8 +292,16 @@ automorphic_rmsd(
 	using namespace core::chemical;
 	using namespace core::conformation;
 	// name() and total number of atoms may actually be different, if we're comparing e.g. tautomers
-	if( rsd1.type().name3() != rsd2.type().name3() ) utility_exit_with_message("Residue type name3 mismatch");
-	if( rsd1.nheavyatoms()  != rsd2.nheavyatoms()  ) utility_exit_with_message("Residue number-of-heavy-atoms mismatch");
+	if( rsd1.type().name3() != rsd2.type().name3() ) {
+		tr.Error << "Residue type name3 mismatch: " << rsd1.type().name3() << " (" << rsd1.type().name() << " at position " << rsd1.seqpos() << " ) versus "
+				<< rsd2.type().name3() << " (" << rsd2.type().name() << " at position " << rsd2.seqpos() << ")" << std::endl;
+		utility_exit_with_message("Residue type name3 mismatch");
+	}
+	if( rsd1.nheavyatoms()  != rsd2.nheavyatoms()  ) {
+		tr.Error << "Residue number-of-heavy-atoms mismatch: " << rsd1.nheavyatoms() << " (for " << rsd1.type().name() << " at position " << rsd1.seqpos() << " ) versus "
+				<< rsd2.nheavyatoms() << " (for " << rsd2.type().name() << " at position " << rsd2.seqpos() << ")" << std::endl;
+		utility_exit_with_message("Residue number-of-heavy-atoms mismatch");
+	}
 	core::Real best_rms = 1e99;
 	int counter = 0;
 	// Make atom-number translation table

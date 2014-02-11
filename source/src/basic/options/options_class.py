@@ -11,6 +11,7 @@
 
 
 import sys
+import time
 
 KnownTypes=['Boolean', 'Integer', 'Real', 'String', 'File', 'Path', 'BooleanVector', 'IntegerVector', 'RealVector', 'StringVector', 'FileVector', 'PathVector']
 
@@ -233,7 +234,8 @@ def printWikiTable(opt_list):
 
 
 def getDoxygenPage(opt_list):
-    s = "/*!\n@page full_options_list\nMini rosetta command line option descriptions. <i>(This is automatically generated file, do not edit!)</i>\n"
+    s = "/*!\n@page full_options_list Rosetta command line option descriptions.\n"
+    s += "<i>(This is an automatically generated file, do not edit!)</i> Generated: "+time.strftime("%Y-%m-%d")+"\n"
     s += "<ul>\n"
     prevGroup = None
     for o in opt_list:
@@ -247,7 +249,8 @@ def getDoxygenPage(opt_list):
 
 def getMarkdownPage(opt_list):
     s =  "# List of Rosetta command line options.\n\n"
-    s += "_(This is automatically generated file, do not edit!)_\n\n"
+    s += "_(This is an automatically generated file, do not edit!)_\n"
+    s += "Generated: " + time.strftime("%Y-%m-%d") + "\n\n"
     s += "_Note that some application specific options may not be present in this list._\n\n"
     s += "[[_TOC_]]\n"
     in_dl = False

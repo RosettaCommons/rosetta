@@ -19,26 +19,26 @@ Documentation for more classes and functions can be found by looking at the Name
 
 @section core_index Core
   - core::chemical
-		-	@ref ResidueType
+  - core::chemical::ResidueType
   - core::conformation
-    - @ref Residue
-    - @ref Conformation
+    - core::conformation::Residue
+    - core::conformation::Conformation
   - core::pose
-    - @ref Pose
+    - core::pose::Pose
   - core::pack::task
-    - @ref TaskFactory
-    - @ref PackerTask
+    - core::pack::task::TaskFactory
+    - core::pack::task::PackerTask
   - core::scoring
-    - @ref ScoreFunction
+    - core::scoring::ScoreFunction
   - 
 @section protocols_index Protocols
   - protocols::moves
-    - @ref Mover
+    - protocols::moves::Mover
   - protocols::jd2
-    - @ref JobDistributor
+    - protocols::jd2::JobDistributor
   - protocols::loops
-    - @ref Loops
-    - @ref Loop
-	- protocols::filters
-    - @ref Filer 
+    - protocols::loops::Loops
+    - protocols::loops::Loop
+  - protocols::filters
+    - protocols::filters::Filter 
 */
