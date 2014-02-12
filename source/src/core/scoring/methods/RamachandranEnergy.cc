@@ -31,9 +31,10 @@
 
 // Utility headers
 #include <numeric/conversions.hh>
-
 #include <utility/vector1.hh>
 
+//C++ header
+#include <stdio.h>
 
 namespace core {
 namespace scoring {
@@ -78,7 +79,7 @@ RamachandranEnergy::clone() const
 void
 RamachandranEnergy::residue_energy(
 	conformation::Residue const & rsd,
-	pose::Pose const &,
+	pose::Pose const &pose,
 	EnergyMap & emap
 ) const
 {
@@ -89,7 +90,11 @@ RamachandranEnergy::residue_energy(
 
 	if ( rsd.is_protein() && (rsd.aa() <= chemical::num_canonical_aas || (rsd.aa()>=core::chemical::aa_dal && rsd.aa()<=core::chemical::aa_dty /*D-amino acids*/) ) ) {
 		Real rama_score, drama_dphi, drama_dpsi;
-		potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi );
+		if(potential_.is_normally_connected(rsd)) {
+			potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi );
+		} else {
+			potential_.eval_rama_score_residue_nonstandard_connection( pose, rsd, rama_score, drama_dphi, drama_dpsi );
+		}
 		emap[ rama ] += rama_score;
 		}
 }
@@ -106,7 +111,7 @@ RamachandranEnergy::eval_residue_dof_derivative(
 	ResSingleMinimizationData const &, // min_data,
 	id::DOF_ID const &, //dof_id,
 	id::TorsionID const & tor_id,
-	pose::Pose const &, // pose,
+	pose::Pose const & pose, // pose,
 	ScoreFunction const &, // sfxn,
 	EnergyMap const & weights
 ) const
@@ -119,11 +124,15 @@ RamachandranEnergy::eval_residue_dof_derivative(
 	Real deriv(0.0);
 	if ( tor_id.valid() && tor_id.type() == id::BB ) {
 		//conformation::Residue const & rsd( pose.residue( tor_id.rsd() ) );
-		if ( rsd.is_protein() && rsd.aa() != core::chemical::aa_unk && tor_id.torsion() <= 2 ) {
+		if ( rsd.is_protein() && (rsd.aa() <= chemical::num_canonical_aas || (rsd.aa()>=core::chemical::aa_dal && rsd.aa()<=core::chemical::aa_dty /*D-amino acids*/)) && tor_id.torsion() <= 2 ) {
 			Real rama_score, drama_dphi, drama_dpsi;
-			potential_.eval_rama_score_residue( rsd, rama_score,
-				drama_dphi, drama_dpsi );
-			deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
+			if(potential_.is_normally_connected(rsd)) { //If this residue is connected to the N-1 and N+1 residues
+				potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi );
+				deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
+			} else { //If this residue is connected to things out of sequence
+				potential_.eval_rama_score_residue_nonstandard_connection( pose, rsd, rama_score, drama_dphi, drama_dpsi );
+				deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
+			}
 		}
 	}
 	// note that the atomtree PHI dofs are in radians
@@ -151,12 +160,15 @@ RamachandranEnergy::eval_dof_derivative(
 	Real deriv(0.0);
 	if ( tor_id.valid() && tor_id.type() == id::BB ) {
 		conformation::Residue const & rsd( pose.residue( tor_id.rsd() ) );
-		if ( rsd.is_protein() &&
-				 tor_id.torsion() <= 2 ) {
+		if ( rsd.is_protein() && (rsd.aa() <= chemical::num_canonical_aas || (rsd.aa()>=core::chemical::aa_dal && rsd.aa()<=core::chemical::aa_dty /*D-amino acids*/)) && tor_id.torsion() <= 2 ) {
 			Real rama_score, drama_dphi, drama_dpsi;
-			potential_.eval_rama_score_residue( rsd, rama_score,
-				drama_dphi, drama_dpsi );
-			deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
+			if(potential_.is_normally_connected(rsd)) { //If this residue is connected to the N-1 and N+1 residues
+				potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi );
+				deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
+			} else { //If this residue is connected to things out of sequence
+				potential_.eval_rama_score_residue_nonstandard_connection( pose, rsd, rama_score, drama_dphi, drama_dpsi );
+				deriv = ( tor_id.torsion() == 1 ? drama_dphi : drama_dpsi );
+			}
 		}
 	}
 	// note that the atomtree PHI dofs are in radians

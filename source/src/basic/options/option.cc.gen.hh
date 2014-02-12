@@ -841,6 +841,7 @@ option.add( basic::options::OptionKeys::score::output_etables, "Write out etable
 option.add( basic::options::OptionKeys::score::analytic_etable_evaluation, "Instead of interpolating between bins, use an analytic evaluation of the lennard-jones and solvation energis" ).def(true);
 option.add( basic::options::OptionKeys::score::rms_target, "Target of RMS optimization for RMS_Energy EnergyMethod" ).def(0.0);
 option.add( basic::options::OptionKeys::score::ramaneighbors, "Uses neighbor-dependent ramachandran maps" ).def(false);
+option.add( basic::options::OptionKeys::score::rama_score_nonstandard_connections, "Should the rama scorefunction score residues that are connected in unusual ways (e.g. to residues that are not adjacent in linear sequence, or by backbone-to-sidechain connections)?").def(false);
 option.add( basic::options::OptionKeys::score::optH_weights, "Name of weights file (without extension .wts) to use during optH" );
 option.add( basic::options::OptionKeys::score::optH_patch, "Name of weights file (without extension .wts) to use during optH" );
 option.add( basic::options::OptionKeys::score::hbond_params, "Directory name in the database for which hydrogen bond parameters to use." ).def("sp2_elec_params");

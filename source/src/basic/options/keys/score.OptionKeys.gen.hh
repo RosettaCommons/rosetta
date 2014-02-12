@@ -42,6 +42,7 @@ namespace score { extern StringOptionKey const output_etables; }
 namespace score { extern BooleanOptionKey const analytic_etable_evaluation; }
 namespace score { extern RealOptionKey const rms_target; }
 namespace score { extern BooleanOptionKey const ramaneighbors; }
+namespace score { extern BooleanOptionKey const rama_score_nonstandard_connections; }
 namespace score { extern StringOptionKey const optH_weights; }
 namespace score { extern StringOptionKey const optH_patch; }
 namespace score { extern StringOptionKey const hbond_params; }

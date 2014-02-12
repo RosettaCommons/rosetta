@@ -20,6 +20,7 @@
 
 // Project Headers
 #include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/pose/Pose.hh>
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
@@ -46,9 +47,9 @@
 // option key includes
 
 // AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 #include <utility/vector1.hh>
@@ -190,9 +191,15 @@ Ramachandran::eval_rama_score_all(
 		if ( pose.residue(ii).is_protein()  && ! pose.residue(ii).is_terminus() && ! pose.residue(ii).is_virtual_residue() )
 		{
 			Real rama_score,dphi,dpsi;
-			eval_rama_score_residue(pose.residue(ii),rama_score,dphi,dpsi);
-			//std::cout << "Rama: residue " << ii << " = " << rama_score << std::endl;
-			pose_energies.onebody_energies( ii )[rama] = rama_score;
+			if(is_normally_connected(pose.residue(ii))) {
+				eval_rama_score_residue(pose.residue(ii),rama_score,dphi,dpsi);
+				//printf("Residue %i is normal.\n", ii); fflush(stdout); //DELETE ME -- FOR TESTING ONLY
+				//std::cout << "Rama: residue " << ii << " = " << rama_score << std::endl;
+				pose_energies.onebody_energies( ii )[rama] = rama_score;
+			} else {
+				//printf("Residue %i: THIS SHOULD HAPPEN ONLY IF THIS RESIDUE HAS WEIRD CONNECTIONS.", ii); fflush(stdout); //DELETE ME -- FOR TESTING ONLY
+				eval_rama_score_residue_nonstandard_connection(pose, pose.residue(ii),rama_score,dphi,dpsi);
+			}
 		}
 	}
 }
@@ -541,7 +548,51 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 		tb_frequencies['G'] = rama_sampling_table_by_torsion_bin_[get_torsion_bin_index('G')][res_aa].size();
 		tb_frequencies['X'] = rama_sampling_table_by_torsion_bin_[get_torsion_bin_index('X')][res_aa].size();
 	}
-	
+
+///////////////////////////////////////////////////////////////////////////////
+void
+Ramachandran::eval_rama_score_residue_nonstandard_connection(
+	core::pose::Pose const & mypose,
+	conformation::Residue const & res,
+	Real & rama,
+	Real & drama_dphi,
+	Real & drama_dpsi
+) const {
+
+	if(!basic::options::option[basic::options::OptionKeys::score::rama_score_nonstandard_connections] || res.connection_incomplete(1) || res.connection_incomplete(2)) { //If the rama_score_nonstandard_connections flag is not set, OR this is an open terminus, don't score this residue.
+		rama=0.0;
+		drama_dphi=0.0;
+		drama_dpsi=0.0;
+		return;
+	}
+
+	const core::conformation::Residue &lowerres=mypose.residue(res.residue_connection_partner(1));
+	const core::conformation::Residue &upperres=mypose.residue(res.residue_connection_partner(2));
+
+	//NOTE: The following assumes that we're scoring something with an alpha-amino acid backbone!  At the time of this writing (7 Feb 2013), rama checks that the residue being scored is either a standard L- or D-amino acid.
+	Real phi = numeric::nonnegative_principal_angle_degrees(
+				numeric::dihedral_degrees(
+					lowerres.xyz( lowerres.residue_connect_atom_index(res.residue_connection_conn_id(1)) ),
+					res.xyz("N"), //Position of N
+					res.xyz("CA"), //Position of CA
+					res.xyz("C") //Position of C			
+				)
+			);
+	Real psi=numeric::nonnegative_principal_angle_degrees(
+				numeric::dihedral_degrees(
+					res.xyz("N"), //Position of N
+					res.xyz("CA"), //Position of CA
+					res.xyz("C"), //Position of C
+					upperres.xyz( upperres.residue_connect_atom_index(res.residue_connection_conn_id(2)) )
+				)
+			);
+
+	//printf("rsd %lu phi=%.3f psi=%.3f\n", res.seqpos(), phi, psi); fflush(stdout); //DELETE ME
+
+	eval_rama_score_residue( res.aa(), phi, psi, rama, drama_dphi, drama_dpsi );
+
+	return;
+}	
 
 ///////////////////////////////////////////////////////////////////////////////
 Real
@@ -568,19 +619,33 @@ Ramachandran::eval_rama_score_residue(
 	//assert( pose.residue(res).is_protein() );
 	assert( rsd.is_protein() );
 
-	Real const phi
-		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1)));
-	Real const psi
-		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)));
+	//Determine whether connections are incomplete:
+	//bool incomplete_connections = (rsd.has_incomplete_connection(rsd.lower_connect_atom()) || rsd.has_incomplete_connection(rsd.upper_connect_atom()));
 
-	if ( phi == 0.0 || psi == 0.0 || rsd.is_terminus() || rsd.is_virtual_residue() ) { // begin or end of chain
+	if ( 0.0 == nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1)) || 0.0 == nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)) || rsd.is_terminus() || rsd.is_virtual_residue() /*|| incomplete_connections*/) { // begin or end of chain -- don't calculate rama score
 		rama = 0.0;
 		drama_dphi = 0.0;
 		drama_dpsi = 0.0;
 		return;
 	}
 
-	eval_rama_score_residue( rsd.aa(), phi, psi, rama, drama_dphi, drama_dpsi );
+	Real phi=0.0;
+	Real psi=0.0;
+
+
+	if(is_normally_connected(rsd)) { //If this residue is conventionally connected
+		phi = nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1));
+		psi = nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2));
+		eval_rama_score_residue( rsd.aa(), phi, psi, rama, drama_dphi, drama_dpsi );
+	} else { //If this residue is unconventionally connected (should be handled elsewhere)
+		//printf("Residue %lu: THIS SHOULD NEVER OCCUR!\n", rsd.seqpos()); fflush(stdout); //DELETE ME -- FOR TESTING ONLY
+		rama = 0.0;
+		drama_dphi = 0.0;
+		drama_dpsi = 0.0;
+		return;
+	}
+
+	return;
 }
 
 
@@ -732,6 +797,15 @@ void Ramachandran::eval_procheck_rama(
 	Real & /*generous*/
 ) const
 {}
+
+bool
+Ramachandran::is_normally_connected (
+	conformation::Residue const & res
+) const {
+	if(!basic::options::option[basic::options::OptionKeys::score::rama_score_nonstandard_connections]) return true;
+	if (res.connection_incomplete(1) || res.connection_incomplete(2)) return true;
+	return ( (res.residue_connection_partner(1) == res.seqpos()-1) && (res.residue_connection_partner(2) == res.seqpos()+1) );
+}
 
 void
 Ramachandran::read_rama(

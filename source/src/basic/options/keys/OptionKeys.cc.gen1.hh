@@ -67,6 +67,7 @@ namespace score { StringOptionKey const output_etables( "score:output_etables" )
 namespace score { BooleanOptionKey const analytic_etable_evaluation( "score:analytic_etable_evaluation" );  }
 namespace score { RealOptionKey const rms_target( "score:rms_target" );  }
 namespace score { BooleanOptionKey const ramaneighbors( "score:ramaneighbors" );  }
+namespace score { BooleanOptionKey const rama_score_nonstandard_connections( "score:rama_score_nonstandard_connections" );  }
 namespace score { StringOptionKey const optH_weights( "score:optH_weights" );  }
 namespace score { StringOptionKey const optH_patch( "score:optH_patch" );  }
 namespace score { StringOptionKey const hbond_params( "score:hbond_params" );  }

@@ -117,6 +117,19 @@ public:
 		Real & drama_dpsi
 	) const;
 
+	/// @brief Function to evaluate the rama score for residues whose connection partners are not necessarily adjacent
+  /// in linear sequence (e.g. for backbone-cyclized peptides).  Note that this assumes that rama is being used only
+	/// for scoring alpha-amino acids (L- or D-).
+	/// @author Vikram K. Mulligan
+	void
+	eval_rama_score_residue_nonstandard_connection(
+		core::pose::Pose const & mypose,
+		conformation::Residue const & res,
+		Real & rama,
+		Real & drama_dphi,
+		Real & drama_dpsi
+	) const;
+
 	void
 	random_phipsi_from_rama(
 		AA const res_aa,
@@ -190,6 +203,9 @@ public:
 	void eval_procheck_rama( Pose const & a_pose,
 		Real & favorable, Real & allowed, Real & generous ) const;
 
+	/// @brief Function to do a quick check that the upper connection is seqpos+1 and the lower connection is seqpos-1.  Returns true if this is so, false otherwise.
+	/// @author Vikram K. Mulligan
+	bool is_normally_connected ( conformation::Residue const & res ) const;
 
 private:
 
