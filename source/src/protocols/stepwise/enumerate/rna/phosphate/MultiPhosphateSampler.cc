@@ -112,10 +112,12 @@ namespace phosphate {
 			for ( Size n = 1; n <= pose.total_residue(); n++ ){
 				if ( !pose.residue( n ).is_RNA() ) continue;
 				Size const seqpos_in_full_model = res_list[ n ];
+				if ( pose.residue_type( n ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ) continue;
 				if ( ( n == 1 || pose.fold_tree().is_cutpoint( n - 1 ) ) &&
 						 seqpos_in_full_model > 1 &&
 						 !cutpoint_open_in_full_model.has_value( seqpos_in_full_model - 1 ) &&
-						 !pose.residue_type( n ).has_variant_type( "CUTPOINT_UPPER" ) ){
+						 !pose.residue_type( n ).has_variant_type( "CUTPOINT_UPPER" ) &&
+						 !pose.residue_type( n ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ) ){
 					phosphate_move_list.push_back( PhosphateMove( n, FIVE_PRIME_PHOSPHATE ) );
 				}
 				if ( ( n == pose.total_residue() || pose.fold_tree().is_cutpoint( n ) ) &&

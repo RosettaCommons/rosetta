@@ -1061,10 +1061,12 @@ namespace rna {
 		if ( ( working_moving_res == 1 || fold_tree.is_cutpoint( working_moving_res - 1 ) ) && !force_internal_ ) { //prepend
 
 			fake_working_moving_suite = first_working_moving_res ;
+			if ( job_parameters_->floating_base() ) fake_working_moving_suite = working_moving_res;
 
 		} else if ( ( fold_tree.is_cutpoint( working_moving_res ) || working_moving_res == nres )  && !force_internal_ ){
 
 			fake_working_moving_suite = first_working_moving_res - 1;
+			if ( job_parameters_->floating_base() ) fake_working_moving_suite = working_moving_res - 1;
 
 		} else { //internal case...problematic/complicated case....
 
