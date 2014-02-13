@@ -19,6 +19,7 @@
 #endif // BOINC
 
 /// Must have this after BOINC stuff to avoid windows build error
+#include <core/io/silent/util.hh>
 #include <protocols/abinitio/AbrelaxApplication.hh>
 #include <protocols/abinitio/IterativeAbrelax.hh>
 #include <protocols/jd2/archive/ArchiveManager.hh>
@@ -74,6 +75,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
+#include <basic/options/keys/boinc.OptionKeys.gen.hh>
 
 #include <protocols/checkpoint/Checkpoint.hh>
 #include <protocols/jd2/BOINCJobDistributor.hh>
@@ -258,6 +260,15 @@ main( int argc, char * argv [] )
 			);
 		return 0; // makes compiler happy
 		}
+	//---code to do a in spot score cut necessary for running centroid abinitio through boinc
+	double runtime = -1; //-1 does not do filtering
+	double minTimePerModel = 61;  //seconds per model min time for boinc. 
+#ifdef BOINC
+		runtime = protocols::boinc::Boinc::get_boinc_wu_cpu_time();
+#endif
+	if(option[boinc::score_cut_pct].user())
+		core::io::silent::boincOutputFilter(runtime,minTimePerModel); //ideally score cut alone, but an additional filter that allows only 1 structure every 61 seconds.
+
 #ifdef BOINC
 
 	// gzip the output silent files.

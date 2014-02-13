@@ -18,6 +18,7 @@
 
 #include <map>
 #include <string>
+#include <core/types.hh>
 
 namespace core {
 namespace io {
@@ -30,6 +31,7 @@ gzip( void );
 /////////////////////////////////////////////////////////////////
 std::map< std::string, bool >
 initialize_tag_is_done( std::string const & silent_file );
+void boincOutputFilter(core::Real runTime, core::Real minTimePerModel);
 
 } // namespace silent
 } // namespace io

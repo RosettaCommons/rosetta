@@ -1,4 +1,3 @@
-namespace jumps { IntegerOptionKey const njumps( "jumps:njumps" );  }
 namespace jumps { IntegerOptionKey const max_strand_gap_allowed( "jumps:max_strand_gap_allowed" );  }
 namespace jumps { RealOptionKey const contact_score( "jumps:contact_score" );  }
 namespace jumps { BooleanOptionKey const filter_templates( "jumps:filter_templates" );  }
@@ -766,3 +765,4 @@ namespace casp { RealOptionKey const opt_radius( "casp:opt_radius" );  }
 namespace casp { BooleanOptionKey const repack( "casp:repack" );  }
 namespace casp { BooleanOptionKey const sc_min( "casp:sc_min" );  }
 namespace casp { BooleanOptionKey const sequential( "casp:sequential" );  }
+namespace casp { RealOptionKey const num_iterations( "casp:num_iterations" );  }

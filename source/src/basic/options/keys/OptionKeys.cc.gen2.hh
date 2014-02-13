@@ -1,4 +1,3 @@
-namespace casp { RealOptionKey const num_iterations( "casp:num_iterations" );  }
 namespace casp { StringOptionKey const weight_file( "casp:weight_file" );  }
 namespace casp { StringOptionKey const refine_res( "casp:refine_res" );  }
 namespace pose_metrics { BooleanOptionKey const pose_metrics( "pose_metrics" );  }
@@ -509,6 +508,9 @@ namespace boinc { BooleanOptionKey const watchdog( "boinc:watchdog" );  }
 namespace boinc { IntegerOptionKey const watchdog_time( "boinc:watchdog_time" );  }
 namespace boinc { IntegerOptionKey const cpu_run_timeout( "boinc:cpu_run_timeout" );  }
 namespace boinc { FileOptionKey const description_file( "boinc:description_file" );  }
+namespace boinc { RealOptionKey const score_cut_pct( "boinc:score_cut_pct" );  }
+namespace boinc { FileOptionKey const score_cut_fl( "boinc:score_cut_fl" );  }
+namespace boinc { BooleanOptionKey const score_cut_smart_throttle( "boinc:score_cut_smart_throttle" );  }
 namespace LoopModel { BooleanOptionKey const LoopModel( "LoopModel" );  }
 namespace LoopModel { FileOptionKey const input_pdb( "LoopModel:input_pdb" );  }
 namespace LoopModel { FileOptionKey const loop_file( "LoopModel:loop_file" );  }
@@ -764,4 +766,3 @@ namespace hotspot { BooleanOptionKey const envhb( "hotspot:envhb" );  }
 namespace hotspot { RealOptionKey const angle( "hotspot:angle" );  }
 namespace hotspot { IntegerOptionKey const angle_res( "hotspot:angle_res" );  }
 namespace parser { BooleanOptionKey const parser( "parser" );  }
-namespace parser { StringOptionKey const protocol( "parser:protocol" );  }

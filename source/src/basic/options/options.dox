@@ -1,6 +1,6 @@
 /*!
 @page full_options_list Rosetta command line option descriptions.
-<i>(This is an automatically generated file, do not edit!)</i> Generated: 2014-02-11
+<i>(This is an automatically generated file, do not edit!)</i> Generated: 2014-02-13
 <ul>
 <li><h2>in</h2>
 <dl>
@@ -4027,6 +4027,11 @@
 <dl>
 <dt><b>-ramaneighbors</b> \<Boolean\><dt>
 <dd>Uses neighbor-dependent ramachandran maps</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-rama_score_nonstandard_connections</b> \<Boolean\><dt>
+<dd>Should the rama scorefunction score residues that are connected in unusual ways (e.g. to residues that are not adjacent in linear sequence, or by backbone-to-sidechain connections)?</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -9979,6 +9984,19 @@
 <dt><b>-description_file</b> \<File\><dt>
 <dd>work unit description file</dd><br>
 <dd>Default: "rosetta_description.txt"</dd><br>
+</dl>
+<dl>
+<dt><b>-score_cut_pct</b> \<Real\><dt>
+<dd>score cut done on the local nodes by percentage, required to return centroid models</dd><br>
+</dl>
+<dl>
+<dt><b>-score_cut_fl</b> \<File\><dt>
+<dd>temp file where output is stored in</dd><br>
+<dd>Default: "score_cut_tmp.out"</dd><br>
+</dl>
+<dl>
+<dt><b>-score_cut_smart_throttle</b> \<Boolean\><dt>
+<dd>makes absolutely sure you are generating < 1 model per 60 seconds.(set to 65 sec to be safe)</dd><br>
 </dl>
  </li>
 <li><h2>LoopModel</h2>

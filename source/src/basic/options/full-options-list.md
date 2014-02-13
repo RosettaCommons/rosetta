@@ -1,7 +1,7 @@
 # List of Rosetta command line options.
 
 _(This is an automatically generated file, do not edit!)_
-Generated: 2014-02-11
+Generated: 2014-02-13
 
 _Note that some application specific options may not be present in this list._
 
@@ -1833,6 +1833,8 @@ _Note that some application specific options may not be present in this list._
 <dd>Target of RMS optimization for RMS_Energy EnergyMethod<br/>Default: 0.0<br/></dd>
 <dt><b>-ramaneighbors</b> \<Boolean\></dt>
 <dd>Uses neighbor-dependent ramachandran maps<br/>Default: false<br/></dd>
+<dt><b>-rama_score_nonstandard_connections</b> \<Boolean\></dt>
+<dd>Should the rama scorefunction score residues that are connected in unusual ways (e.g. to residues that are not adjacent in linear sequence, or by backbone-to-sidechain connections)?<br/>Default: false<br/></dd>
 <dt><b>-optH_weights</b> \<String\></dt>
 <dd>Name of weights file (without extension .wts) to use during optH<br/></dd>
 <dt><b>-optH_patch</b> \<String\></dt>
@@ -4488,6 +4490,12 @@ _Note that some application specific options may not be present in this list._
 <dd>Maximum time the WU may exceed the users WU time settings. Default is 4 hours.  Used by watchdog.<br/>Default: 14400<br/></dd>
 <dt><b>-description_file</b> \<File\></dt>
 <dd>work unit description file<br/>Default: "rosetta_description.txt"<br/></dd>
+<dt><b>-score_cut_pct</b> \<Real\></dt>
+<dd>score cut done on the local nodes by percentage, required to return centroid models<br/></dd>
+<dt><b>-score_cut_fl</b> \<File\></dt>
+<dd>temp file where output is stored in<br/>Default: "score_cut_tmp.out"<br/></dd>
+<dt><b>-score_cut_smart_throttle</b> \<Boolean\></dt>
+<dd>makes absolutely sure you are generating < 1 model per 60 seconds.(set to 65 sec to be safe)<br/></dd>
 </dl>
 + <h2>-LoopModel</h2>
 <dl>

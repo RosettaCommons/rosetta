@@ -188,7 +188,11 @@ void Boinc::update_pct_complete() {
 	read_and_set_project_prefs(); // get user max cpu run time preference
 	boinc_wu_cpu_time(cpu_time_); // BOINC API call for wu cpu run time
 
-
+double Boinc::get_boinc_wu_cpu_time(){
+		double tmp_cpu_time;
+		boinc_wu_cpu_time(tmp_cpu_time);
+		return(tmp_cpu_time);
+}
 	// Estimate the percentage done depending on the number of decoys already produced:
 	// If we're still working on the first decoy, assume that it may well take more then the user's preferred time, in
 	// fact it may take up to the watchdog timeout in theory (3x runtime!)

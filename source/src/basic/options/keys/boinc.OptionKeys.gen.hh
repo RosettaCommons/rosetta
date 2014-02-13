@@ -35,6 +35,9 @@ namespace boinc { extern BooleanOptionKey const watchdog; }
 namespace boinc { extern IntegerOptionKey const watchdog_time; }
 namespace boinc { extern IntegerOptionKey const cpu_run_timeout; }
 namespace boinc { extern FileOptionKey const description_file; }
+namespace boinc { extern RealOptionKey const score_cut_pct; }
+namespace boinc { extern FileOptionKey const score_cut_fl; }
+namespace boinc { extern BooleanOptionKey const score_cut_smart_throttle; }
 
 } // namespace OptionKeys
 } // namespace options

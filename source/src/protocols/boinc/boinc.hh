@@ -115,7 +115,8 @@ public:
 	/// preference and the total wu_cpu_run_time. Calls BOINC API
 	/// boinc_fraction_done().
 	static void update_pct_complete(void);
-
+	///@brief gets the current runtime for the boinc wu
+	static double get_boinc_wu_cpu_time();
 	/// @brief Is the task finished?
 	static bool worker_is_finished(const int & total_nstruct);
 
