@@ -40,6 +40,8 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
 #include <basic/datacache/CacheableStringFloatMap.hh>
+#include <basic/datacache/WriteableCacheableMap.hh>
+#include <basic/datacache/WriteableCacheableDataFactory.hh>
 
 #include <basic/options/option.hh>
 
@@ -109,6 +111,7 @@ SilentStruct& SilentStruct::operator= ( SilentStruct const& src ) {
 	sequence_ = src.sequence_;
 	silent_comments_ = src.silent_comments_;
 	silent_energies_ = src.silent_energies_;
+  cache_remarks_ = src.cache_remarks_;
 	precision_ = src.precision_;
 	scoreline_prefix_ = src.scoreline_prefix_;
 	residue_numbers_ = src.residue_numbers_;
@@ -144,6 +147,36 @@ void SilentStruct::fill_struct( core::pose::Pose const & pose,
   energies_from_pose( pose );
 
   sequence( pose.annotated_sequence( true /* show-all-variants */ ) );
+
+  extract_writeable_cacheable_data( pose );
+
+}
+
+void SilentStruct::extract_writeable_cacheable_data( core::pose::Pose const& pose ){
+  using namespace basic::datacache;
+  using namespace pose::datacache;
+
+  // Pull out WriteableCacheable datacache items and add them as comments
+  BasicDataCache const& cache = pose.data();
+
+  if( cache.has( CacheableDataType::WRITEABLE_DATA ) ){
+    using namespace basic::datacache;
+    typedef std::map< std::string, std::set< WriteableCacheableDataOP > > DataMap;
+    DataMap const& map = cache.get< WriteableCacheableMap >( CacheableDataType::WRITEABLE_DATA ).map();
+
+    for( DataMap::const_iterator datamap_it = map.begin();
+        datamap_it != map.end(); datamap_it++ ){
+      std::set< WriteableCacheableDataOP > const& dataset = datamap_it->second;
+
+      for( std::set< WriteableCacheableDataOP >::const_iterator set_it = dataset.begin();
+           set_it != dataset.end(); set_it++ ){
+        std::stringstream ss;
+        (*set_it)->write( ss );
+
+        add_comment( "CACHEABLE_DATA", ss.str() );
+      };
+    }
+  }
 }
 
 void SilentStruct::finish_pose(
@@ -161,6 +194,31 @@ void SilentStruct::finish_pose(
 	}
 
 	residue_numbers_into_pose( pose );
+
+  basic::datacache::BasicDataCache& cache = pose.data();
+
+  if( !cache_remarks_.empty() &&
+      !cache.has( core::pose::datacache::CacheableDataType::WRITEABLE_DATA ) ){
+    cache.set( core::pose::datacache::CacheableDataType::WRITEABLE_DATA,
+               new basic::datacache::WriteableCacheableMap() );
+  }
+
+  for( utility::vector1< std::string >::const_iterator comment_it = cache_remarks_.begin();
+       comment_it != cache_remarks_.end(); ++comment_it ){
+    using namespace basic::datacache;
+    using namespace pose::datacache;
+
+    std::stringstream comment_stream( *comment_it );
+
+    std::string data_type;
+    comment_stream >> data_type;
+
+    WriteableCacheableDataOP data = WriteableCacheableDataFactory::get_instance()->new_data_instance( data_type, comment_stream );
+
+    WriteableCacheableMap& map = cache.get< WriteableCacheableMap >( CacheableDataType::WRITEABLE_DATA );
+
+    map[ data_type ].insert( data );
+  }
 
 }
 
@@ -293,6 +351,12 @@ SilentStruct::print_comments( std::ostream & out ) const {
 	) {
 		out << remark << ' ' << it->first << ' ' << it->second << std::endl;
 	}
+
+  for( utility::vector1< std::string >::const_iterator it = cache_remarks_.begin();
+      it != cache_remarks_.end(); ++it ){
+    out << remark << ' ' << *it << std::endl;
+  }
+
 } // print_comments
 
 bool SilentEnergy_sort_by_name( const SilentEnergy &score_energy1, const SilentEnergy &score_energy2 ){
@@ -444,7 +508,15 @@ SilentStruct::copy_scores( const SilentStruct & src_ss ) {
 
 ///////////////////////////////////////////////////////////////////////
 void SilentStruct::add_comment( std::string name, std::string value ) {
-	silent_comments_.insert( std::make_pair( name, value ) );
+  if ( name == "CACHEABLE_DATA" ){
+    cache_remarks_.push_back( value );
+  } else {
+    if( silent_comments_.find( name ) != silent_comments_.end() ){
+      tr.Debug << "SilentStruct::add_comment is overwriting comment with type "
+               << name << std::endl;
+    }
+    silent_comments_.insert( std::make_pair( name, value ) );
+  }
 }
 
 void SilentStruct::comment_from_line( std::string const & line ) {
@@ -467,7 +539,8 @@ void SilentStruct::comment_from_line( std::string const & line ) {
 		val += dummy;
 		line_stream >> dummy;
 	}
-	add_comment( key, val );
+
+  add_comment( key, val );
 }
 
 std::map< std::string, std::string > SilentStruct::get_all_comments() const {

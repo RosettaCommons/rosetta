@@ -75,6 +75,9 @@
 #include <protocols/init/init.MoverCreators.ihh>
 #include <protocols/init/init.MoverRegistrators.ihh>
 
+#include <protocols/init/init.WriteableCacheableDataCreators.ihh>
+#include <protocols/init/init.WriteableCacheableDataRegistrators.ihh>
+
 #include <protocols/init/init.MoverFactory.ihh>
 #include <protocols/init/init.InputterFactory.ihh>
 #include <protocols/init/init.OutputterFactory.ihh>

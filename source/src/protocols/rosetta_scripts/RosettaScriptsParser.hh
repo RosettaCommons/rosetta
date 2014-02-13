@@ -21,7 +21,7 @@
 #include <protocols/jd2/Parser.hh>
 
 #include <protocols/moves/MoverFactory.fwd.hh>
-//#include <protocols/protein_interface_design/DockDesignFilterFactory.fwd.hh>
+#include <protocols/environment/Environment.fwd.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
@@ -66,10 +66,11 @@ public:
 	void register_factory_prototypes();
 
 private:
-	//MoverFactoryOP mover_factory_;
-
-	//DockDesignFilterFactoryOP ddfilter_factory_;
-
+  /// @brief Recursively parse out environment hierarchy from xml tags.
+  void parse_environment( utility::tag::TagCOP tag,
+                          moves::Movers_map& movers,
+                          std::map< std::string, environment::EnvironmentOP >& environments );
+  
 	static
 	void
 	substitute_variables_in_stream( std::istream & in, utility::options::StringVectorOption const& script_vars, std::stringstream & out);

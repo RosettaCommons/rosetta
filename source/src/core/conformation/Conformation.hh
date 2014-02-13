@@ -43,10 +43,12 @@
 #include <core/id/DOF_ID.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
+#include <core/environment/DofPassport.fwd.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/kinematics/DomainMap.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
+
 
 // Utility headers
 #include <utility/pointer/access_ptr.hh>
@@ -594,7 +596,6 @@ public:  // DoFs/xyzs
 	void
 	set_torsion( TorsionID const & id, Real const setting );
 
-
 	/// @brief Returns the torsion angle defined by  <atom[1-4]>
 	Real
 	torsion_angle(
@@ -651,7 +652,6 @@ public:  // DoFs/xyzs
 		Real const setting
 	);
 
-
 	/// @brief Returns the Jump with jump number  <jump_number>
 	const Jump &
 	jump( int const jump_number ) const;
@@ -675,7 +675,6 @@ public:  // DoFs/xyzs
 		AtomID const & id,
 		Jump const & new_jump
 	);
-
 
 	/// @brief access xyz coordinates of an atom
 	PointPosition const &
@@ -756,6 +755,13 @@ public:  // for tracking changes to the structure
 	void
 	reset_move_data();
 
+
+public: //passport managment methods
+
+	virtual void push_passport( core::environment::DofPassportCOP ) {};
+	virtual void pop_passport() {};
+	virtual bool has_passport() const { return false; }
+  virtual bool is_protected() const { return false; }
 
 public:  // observer management
 

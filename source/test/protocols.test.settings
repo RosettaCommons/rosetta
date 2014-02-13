@@ -44,6 +44,10 @@ sources = {
 		"SetupDockingFoldTree",
 	],
 
+        "environment" : [
+                "Environment",
+        ],
+
 	"enzdes" : [
 		"HBondCalculatorsTest",
 		"LigInterfaceConstraints",

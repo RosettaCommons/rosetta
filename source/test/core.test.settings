@@ -43,6 +43,9 @@ sources = {
 		"SymmDataLoader",
 		"SymmetricConformation",
 	],
+        "environment" : [
+                "FoldTreeSketch",
+        ],
 	"fragment" : [
 		"BBTorsionSRFD",
 		"ConstantLengthFragments",

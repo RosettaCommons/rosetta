@@ -112,6 +112,13 @@ sources = {
 		"util",
 		"VirtualCoordinate",
 	],
+	"core/environment": [
+	        "DofPassport",
+		"FoldTreeSketch",
+		"EnvCore",
+		"LocalPosition",
+		"SequenceAnnotation",
+	],
 	"core/id": [
 		"AtomID",
 		"DOF_ID",

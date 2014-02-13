@@ -1199,6 +1199,29 @@ AtomTree::update_internal_coords() const
 	}
 }
 
+id::AtomID
+AtomTree::get_jump_atom_id( StubID const& stub_id1,
+                            StubID const& stub_id2,
+                            int& direction ) const {
+	AtomCOP jump_atom(0);
+	for ( Size i=1; i<= 3; ++i ) {
+		AtomCOP atom1( atom_pointer( stub_id1.atom( i ) ) );
+		for ( Size j=1; j<= 3; ++j ) {
+			AtomCOP atom2( atom_pointer( stub_id2.atom( j ) ) );
+			if ( atom1->is_jump() && atom1->parent() == atom2 ) {
+				assert( !jump_atom );
+				jump_atom = atom1;
+				direction = -1;
+			} else if ( atom2->is_jump() && atom2->parent() == atom1 ) {
+				assert( !jump_atom );
+				jump_atom = atom2;
+				direction = 1;
+			}
+		}
+	}
+
+  return jump_atom->id();
+}
 
 /// @details  Set the transform between two stubs
 /// Returns the atomid of the jump atom which moved.
@@ -1210,26 +1233,9 @@ AtomTree::set_stub_transform(
 	RT const & target_rt
 )
 {
-
-	// look for the connection between these two stubs
-	AtomOP jump_atom(0);
-	int dir(0);
-	for ( Size i=1; i<= 3; ++i ) {
-		AtomOP atom1( atom_pointer( stub_id1.atom( i ) ) );
-		for ( Size j=1; j<= 3; ++j ) {
-			AtomOP atom2( atom_pointer( stub_id2.atom( j ) ) );
-			if ( atom1->is_jump() && atom1->parent() == atom2 ) {
-				assert( !jump_atom );
-				jump_atom = atom1;
-				dir = -1;
-			} else if ( atom2->is_jump() && atom2->parent() == atom1 ) {
-				assert( !jump_atom );
-				jump_atom = atom2;
-				dir = 1;
-			}
-		}
-	}
-	if ( !jump_atom ) {
+  int dir = 0;
+  AtomOP jump_atom = atom_pointer( get_jump_atom_id( stub_id1, stub_id2, dir ) );
+  if ( !jump_atom ) {
 		utility_exit_with_message( "AtomTree::set_stub_transform: No jump between these atoms!" );
 	}
 

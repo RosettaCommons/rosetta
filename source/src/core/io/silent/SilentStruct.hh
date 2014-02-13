@@ -314,6 +314,10 @@ namespace silent {
 		// if this residue has <= 6 atoms: fullatom = false
 		void detect_fullatom( core::Size pos, core::Size natoms, bool &fullatom, bool& well_defined );
 
+    /// @brief add string serialization of all WriteableCacheableData in as comments.
+    /// @param pose a pose containing a datacache with WriteableCacheableData.
+    void extract_writeable_cacheable_data( core::pose::Pose const& pose );
+
 	private:
 		bool strict_column_mode_;
 		Size nres_;
@@ -326,6 +330,7 @@ namespace silent {
 		// output-related data
 		std::map< std::string, std::string > silent_comments_;
 		utility::vector1< SilentEnergy > silent_energies_;
+    utility::vector1< std::string > cache_remarks_;
 
 		utility::vector1< Size > residue_numbers_; // can be derived from PDB info.
 

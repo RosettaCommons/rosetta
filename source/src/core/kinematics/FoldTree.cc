@@ -2290,6 +2290,7 @@ operator <<( std::ostream & os, FoldTree const & t )
 	// line with the tag
 	//  the usual behaviour of objects is not to line-feed
 	//  standard call: std::cout << f << std::endl;   --- would produce two endlines!
+  // JRP: I agree with this. Super lame.
 	return os;
 }
 

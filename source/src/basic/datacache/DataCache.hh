@@ -153,8 +153,7 @@ public: // state
 	/// @brief the number of slots in this cache
 	inline
 	size_t
-	size()
-	{
+	size() const {
 		return data_.size();
 	}
 

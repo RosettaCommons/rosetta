@@ -133,17 +133,20 @@ SymmetricScoreFunction::operator()( pose::Pose & pose ) const
 	// further structure modification will be prevented until scoring is
 	// completed
 	//
+  PROF_START( basic::SCORE_BEGIN_NOTIFY );
 	pose.scoring_begin( *this );
 	//std::cout << "ScoreFunction::operator() 1\n";
 
 	if ( pose.energies().total_energy() != 0.0 ) {
 		TR.Error << "STARTING SCORE NON-ZERO!" << std::endl;
 	}
+	PROF_STOP( basic::SCORE_BEGIN_NOTIFY );
 
 	// ensure that the total_energies are zeroed out -- this happens in Energies.scoring_begin()
 	// unneccessary pose.energies().total_energies().clear();
 	//std::cout << "ScoreFunction::operator() 2\n";
 
+  PROF_START( basic::SCORE_SETUP );
 	// do any setup necessary
 	setup_for_scoring( pose );
 	//std::cout << "ScoreFunction::operator() 3\n";
@@ -151,6 +154,7 @@ SymmetricScoreFunction::operator()( pose::Pose & pose ) const
 	// Make some arrays symmetrical before scoring
 	correct_arrays_for_symmetry( pose );
 
+	PROF_STOP( basic::SCORE_SETUP );
 
 	// evaluate the residue-residue energies that only exist between
 	// neighboring residues
@@ -165,8 +169,12 @@ SymmetricScoreFunction::operator()( pose::Pose & pose ) const
 	eval_long_range_twobody_energies( pose );
 	PROF_STOP ( basic::SCORE_LONG_RANGE_ENERGIES );
 
+  PROF_START( basic::SCORE_ONEBODY_ENERGIES );
 	// evaluate the onebody energies -- rama, dunbrack, ...
 	eval_onebody_energies( pose );
+	PROF_STOP( basic::SCORE_ONEBODY_ENERGIES );
+
+  PROF_START( basic::SCORE_FINALIZE );
 
 	// give energyfunctions a chance update/finalize energies
 	// etable nblist calculation is performed here
@@ -183,16 +191,27 @@ SymmetricScoreFunction::operator()( pose::Pose & pose ) const
 		pose.energies().total_energies() += pose.energies().minimization_graph()->fixed_energies();
 	}
 
+  PROF_STOP( basic::SCORE_FINALIZE );
+
 	//std::cout << "SymSfxn: " <<  pose.energies().use_nblist() << " ";
 	//pose.energies().total_energies().show_if_nonzero_weight( std::cout, weights() );
 	//std::cout << std::endl;
+
+	PROF_START( basic::SCORE_DOT );
 
 	// dot the weights with the scores
 	pose.energies().total_energy() = pose.energies().total_energies().dot( weights() );
 	pose.energies().total_energies()[ total_score ] = pose.energies().total_energy();
 
+	PROF_STOP( basic::SCORE_DOT );
+
+	PROF_START( basic::SCORE_END_NOTIFY );
+
 	// notify that scoring is over
 	pose.scoring_end( *this );
+
+  PROF_STOP( basic::SCORE_END_NOTIFY );
+
 
 	PROF_STOP ( basic::SCORE );
 

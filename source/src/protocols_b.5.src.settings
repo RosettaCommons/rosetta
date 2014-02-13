@@ -39,6 +39,16 @@ sources = {
 		"Templates",
 		"vs_test",
 	],
+	"protocols/environment/movers": [
+		"AbscriptLoopCloserCM",
+	        "AbscriptMover",
+		"AbscriptStageMover",
+		"ConstraintPreparer",
+	        "FragmentCM",
+		"FragmentJumpCM",
+		"JumpSampleData",
+		"StagePreparer",
+	],
 	"protocols/hybridization" : [
 		"CartesianHybridize",
 		"CartesianSampler",

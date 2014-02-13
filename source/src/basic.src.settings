@@ -44,6 +44,8 @@ sources = {
 	"basic/datacache": [
 		"BasicDataCache",
 		"DataMap",
+		"WriteableCacheableDataCreator",
+		"WriteableCacheableDataFactory",
 	],
 	"basic/gpu": [
 		"GPU",
