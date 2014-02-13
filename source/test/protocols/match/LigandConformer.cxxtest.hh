@@ -80,23 +80,13 @@ class LigandConformerTests : public CxxTest::TestSuite {
 		if ( ! restype_set.has_name( "CARBARYL_LG1" ) ) {
 			utility::vector1< std::string > carbaryl_list;
 			carbaryl_list.push_back( "protocols/match/carbaryl_LG1.params" );
-			restype_set.read_files(
-				carbaryl_list,
-				ChemicalManager::get_instance()->atom_type_set( FA_STANDARD ),
-				ChemicalManager::get_instance()->element_set( "default" ),
-				ChemicalManager::get_instance()->mm_atom_type_set( FA_STANDARD ),
-				ChemicalManager::get_instance()->orbital_type_set(FA_STANDARD));
+			restype_set.read_files(carbaryl_list);
 		}
 
 		if ( ! restype_set.has_name( "MBH_LG1" ) ) {
 			utility::vector1< std::string > carbaryl_list;
 			carbaryl_list.push_back( "protocols/match/MBH_LG.params" );
-			restype_set.read_files(
-				carbaryl_list,
-				ChemicalManager::get_instance()->atom_type_set( FA_STANDARD ),
-				ChemicalManager::get_instance()->element_set( "default" ),
-				ChemicalManager::get_instance()->mm_atom_type_set( FA_STANDARD ),
-				ChemicalManager::get_instance()->orbital_type_set(FA_STANDARD));
+			restype_set.read_files(carbaryl_list);
 		}
 
 

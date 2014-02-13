@@ -134,7 +134,7 @@ void ScreeningJobInputter::fill_jobs(Jobs & jobs)
 		{
 			std::string param_name = param_group_data[i].get_str();
 			core::chemical::ChemicalManager::get_instance()->
-				nonconst_residue_type_set(core::chemical::FA_STANDARD).add_residue_type(core::chemical::FA_STANDARD,param_name);
+				nonconst_residue_type_set(core::chemical::FA_STANDARD).add_residue_type(param_name);
 
 		}
 	}
@@ -171,7 +171,7 @@ void ScreeningJobInputter::fill_jobs(Jobs & jobs)
 			startfrom_data = group_map["startfrom"].get_array();
 			startfrom_present = true;
 		}
-		
+
 		try
 		{
 			protein_path_data = group_map["proteins"].get_array();
@@ -219,17 +219,17 @@ void ScreeningJobInputter::fill_jobs(Jobs & jobs)
 					{
 						current_job->add_string_string_pair("native_path",native_string);
 					}
-					
+
 					if(startfrom_present)
 					{
 						core::Real xcoord = startfrom_data[0].get_real();
 						core::Real ycoord = startfrom_data[1].get_real();
 						core::Real zcoord = startfrom_data[2].get_real();
-						
+
 						current_job->add_string_real_pair("start_x", xcoord);
 						current_job->add_string_real_pair("start_y", ycoord);
 						current_job->add_string_real_pair("start_z", zcoord);
-						
+
 					}
 					jobs.push_back( current_job );
 					TR << "pushing " << input_tag << " nstruct index " << index << std::endl;

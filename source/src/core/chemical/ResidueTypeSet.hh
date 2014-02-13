@@ -83,23 +83,37 @@ public:
 		return name_;
 	}
 
+	AtomTypeSetCAP atom_type_set() const { return atom_types_; }
+	ElementSetCAP element_set() const { return elements_; }
+	MMAtomTypeSetCAP mm_atom_type_set() const { return mm_atom_types_; }
+	orbitals::OrbitalTypeSetCAP orbital_type_set() const { return orbital_types_; }
+
+	void atom_type_set(AtomTypeSetCAP atom_types) {
+		runtime_assert( ! atom_types_ ); // Don't change a set default.
+		atom_types_ = atom_types;
+	}
+	void element_set(ElementSetCAP elements) {
+		runtime_assert( ! elements_ ); // Don't change a set default.
+		elements_ = elements;
+	}
+	void mm_atom_type_set(MMAtomTypeSetCAP mm_atom_types) {
+		runtime_assert( ! mm_atom_types_ ); // Don't change a set default.
+		mm_atom_types_ = mm_atom_types;
+	}
+	void orbital_type_set(orbitals::OrbitalTypeSetCAP orbital_types) {
+		runtime_assert( ! orbital_types_ ); // Don't change a set default.
+		orbital_types_ = orbital_types;
+	}
+
 	/// @brief read a list of residue types
 	void
 	read_list_of_residues(
-		std::string const & list_filename,
-		AtomTypeSetCAP atom_types,
-		ElementSetCAP elements,
-		MMAtomTypeSetCAP mm_atom_types,
-		orbitals::OrbitalTypeSetCAP orbital_types
+		std::string const & list_filename
 	);
 
 	void
 	read_files(
-		utility::vector1< std::string > const & filenames,
-		AtomTypeSetCAP atom_types,
-		ElementSetCAP elements,
-		MMAtomTypeSetCAP mm_atom_types,
-		orbitals::OrbitalTypeSetCAP orbital_types
+		utility::vector1< std::string > const & filenames
 	);
 
 
@@ -117,7 +131,7 @@ public:
 	add_residue_type( ResidueTypeOP new_type );
 
 	void
-	add_residue_type(std::string const & tag, std::string const &  filename);
+	add_residue_type( std::string const &  filename );
 
 	/// @brief delete a residue type from the set (Use with care)
 	void
@@ -250,6 +264,14 @@ private:
 
 	/// What does the ChemicalManager call this ResidueTypeSet?
 	std::string name_;
+
+	// The default subsidiary typesets, typically specified in the database summary file.
+	// You can add a residue type with a different subsidiary typeset, but you'll have to
+	// construct it yourself.
+	AtomTypeSetCAP atom_types_;
+	ElementSetCAP elements_;
+	MMAtomTypeSetCAP mm_atom_types_;
+	orbitals::OrbitalTypeSetCAP orbital_types_;
 
 	/// @brief the residues
 	ResidueTypeOPs residue_types_;

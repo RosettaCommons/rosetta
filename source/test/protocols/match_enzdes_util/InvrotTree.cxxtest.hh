@@ -84,12 +84,7 @@ public:
 		ResidueTypeSetCAP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
 		if(!residue_set.has_name("1n1")) params_files.push_back("protocols/match_enzdes_util/1n1.params");
-		residue_set.read_files(params_files,
-		ChemicalManager::get_instance()->atom_type_set( FA_STANDARD ),
-		ChemicalManager::get_instance()->element_set( "default" ),
-		ChemicalManager::get_instance()->mm_atom_type_set( FA_STANDARD ),
-		ChemicalManager::get_instance()->orbital_type_set(FA_STANDARD));//,
-		//ChemicalManager::get_instance()->csd_atom_type_set( FA_STANDARD ));
+		residue_set.read_files(params_files);
 		basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 
 		tim_enz_io = new protocols::toolbox::match_enzdes_util::EnzConstraintIO(& residue_set);

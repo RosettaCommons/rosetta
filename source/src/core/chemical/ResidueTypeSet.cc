@@ -90,11 +90,6 @@ ResidueTypeSet::ResidueTypeSet(
 
 	// read ResidueTypes
 	{
-		AtomTypeSetCAP atom_types;
-		ElementSetCAP elements;
-		MMAtomTypeSetCAP mm_atom_types;
-		orbitals::OrbitalTypeSetCAP orbital_types;
-
 		std::string const list_filename( directory + "residue_types.txt" );
 		utility::io::izstream data( list_filename.c_str() );
 		if ( !data.good() ) {
@@ -134,21 +129,21 @@ ResidueTypeSet::ResidueTypeSet(
 			l >> tag;
 			if ( tag == "ATOM_TYPE_SET" ) {
 				l >> tag;
-				atom_types = ChemicalManager::get_instance()->atom_type_set( tag );
+				atom_types_ = ChemicalManager::get_instance()->atom_type_set( tag );
 			} else if ( tag == "ELEMENT_SET" ) {
 				l >> tag;
-				elements = ChemicalManager::get_instance()->element_set( tag );
+				elements_ = ChemicalManager::get_instance()->element_set( tag );
 			} else if ( tag == "MM_ATOM_TYPE_SET" ) {
 				l >> tag;
-				mm_atom_types = ChemicalManager::get_instance()->mm_atom_type_set( tag );
+				mm_atom_types_ = ChemicalManager::get_instance()->mm_atom_type_set( tag );
 			} else if(tag == "ORBITAL_TYPE_SET"){
 				l >> tag;
-				orbital_types = ChemicalManager::get_instance()->orbital_type_set(tag);
+				orbital_types_ = ChemicalManager::get_instance()->orbital_type_set(tag);
 			} else {
 				std::string const filename( directory + line );
 
 				ResidueTypeOP rsd_type( read_topology_file(
-						filename, atom_types, elements, mm_atom_types, orbital_types, this ) );
+						filename, atom_types_, elements_, mm_atom_types_, orbital_types_, this ) );
 
 				residue_types_.push_back( rsd_type );
 			}
@@ -156,7 +151,7 @@ ResidueTypeSet::ResidueTypeSet(
 
 		foreach(std::string filename, extra_res_param_files){
 			ResidueTypeOP rsd_type( read_topology_file(
-					filename, atom_types, elements, mm_atom_types, orbital_types, this ) );
+					filename, atom_types_, elements_, mm_atom_types_, orbital_types_, this ) );
 
 			if (basic::options::option[ basic::options::OptionKeys::in::add_orbitals]) {
 				orbitals::AssignOrbitals add_orbitals_to_residue(rsd_type);
@@ -268,11 +263,7 @@ ResidueTypeSet::~ResidueTypeSet() {}
 /// stored in the database path
 void
 ResidueTypeSet::read_list_of_residues(
-	std::string const & list_filename,
-	AtomTypeSetCAP atom_types,
-	ElementSetCAP elements,
-	MMAtomTypeSetCAP mm_atom_types,
-	orbitals::OrbitalTypeSetCAP orbital_types
+	std::string const & list_filename
 )
 {
 	// read the files
@@ -287,21 +278,17 @@ ResidueTypeSet::read_list_of_residues(
 		data.close();
 	}
 
-	read_files( filenames, atom_types, elements, mm_atom_types, orbital_types );
+	read_files( filenames );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void
 ResidueTypeSet::read_files(
-	utility::vector1< std::string > const & filenames,
-	AtomTypeSetCAP atom_types,
-	ElementSetCAP elements,
-	MMAtomTypeSetCAP mm_atom_types,
-	orbitals::OrbitalTypeSetCAP orbital_types
+	utility::vector1< std::string > const & filenames
 )
 {
 	for ( Size ii=1; ii<= filenames.size(); ++ii ) {
-		ResidueTypeOP rsd_type( read_topology_file( filenames[ii], atom_types, elements, mm_atom_types,orbital_types, this ) );
+		ResidueTypeOP rsd_type( read_topology_file( filenames[ii], atom_types_, elements_, mm_atom_types_,orbital_types_, this ) );
 		residue_types_.push_back( rsd_type );
 	}
 
@@ -725,21 +712,10 @@ ResidueTypeSet::add_residue_type( ResidueTypeOP new_type )
 }
 
 void
-ResidueTypeSet::add_residue_type(std::string const & tag, std::string const & filename)
+ResidueTypeSet::add_residue_type(std::string const & filename)
 {
-	AtomTypeSetCAP atom_types;
-	ElementSetCAP elements;
-	MMAtomTypeSetCAP mm_atom_types;
-	orbitals::OrbitalTypeSetCAP orbital_types;
-
-	atom_types = ChemicalManager::get_instance()->atom_type_set( tag );
-	elements = ChemicalManager::get_instance()->element_set( tag );
-	mm_atom_types = ChemicalManager::get_instance()->mm_atom_type_set( tag );
-	orbital_types = ChemicalManager::get_instance()->orbital_type_set(tag);
-
-	ResidueTypeOP rsd_type( read_topology_file( filename, atom_types, elements, mm_atom_types, orbital_types, this ) );
+	ResidueTypeOP rsd_type( read_topology_file( filename, atom_types_, elements_, mm_atom_types_, orbital_types_, this ) );
 	add_residue_type(rsd_type);
-
 }
 
 void

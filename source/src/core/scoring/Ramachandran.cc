@@ -29,6 +29,7 @@
 #include <numeric/angle.functions.hh>
 #include <numeric/interpolation/periodic_range/half/interpolation.hh>
 #include <numeric/random/random.hh>
+#include <numeric/xyz.functions.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -230,7 +231,7 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 			Real max_val = 0.0; // maximum probability (above rama_sampling_thold_) observed for this residue
 			utility::vector1< utility::vector1< Real> > res_torsions( max_allowed ); // double vector of allowed torsions for this residue
 			utility::vector1< Real > res_probs( max_allowed ); // rama probs of allowed torsions for this residue (coupled to res_torsions by index)
-			//rama_sampling_table_[aa].resize(max_allowed);  
+			//rama_sampling_table_[aa].resize(max_allowed);
 			for (int i=0; i<n_phi_; i++) {
 				for (int j=0; j<n_psi_; j++) {
 					Real res_prob = rama_for_res(i,j);
@@ -240,7 +241,7 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 						else if (res_prob > max_val) max_val = res_prob;
 						//std::cout << res_prob << std::endl;
 						//res_probs[actual_allowed] = res_prob;
-						
+
 						utility::vector1< Real > torsion(2);
 						Real cur_phi, cur_psi;
 						if (i <= n_phi_ / 2) {
@@ -256,9 +257,9 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 							cur_psi = 0 - (n_psi_ - j);
 						}
 						char cur_tb = ' ';
-						if (torsion_bin != 'X') 
-							cur_tb = core::conformation::get_torsion_bin(cur_phi * 10, cur_psi * 10); //  AS -- how can we get the factor properly / without hard-coding? - also: this takes very long... 
-						if (torsion_bin == 'X' || cur_tb == torsion_bin) { 
+						if (torsion_bin != 'X')
+							cur_tb = core::conformation::get_torsion_bin(cur_phi * 10, cur_psi * 10); //  AS -- how can we get the factor properly / without hard-coding? - also: this takes very long...
+						if (torsion_bin == 'X' || cur_tb == torsion_bin) {
 							actual_allowed++;
 							res_probs[actual_allowed] = res_prob;
 							torsion[1] = static_cast <Real> (/*i*/ cur_phi * binw_);  // phi
@@ -268,13 +269,13 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 					}
 				}
 			}
-			
+
 			if( ((int)aa < (int)1) || ((int)aa > (int)current_rama_sampling_table.size()) ){
 				std::cerr << "AA exceeded size of rama_sampling_table_ AA=" + ObjexxFCL::string_of( aa ) + " size()=" + ObjexxFCL::string_of( current_rama_sampling_table.size() );
 				continue; // Avoid death.
 			}
-			
-			// now populate the rama_sampling_table_ so the torsions are given index 
+
+			// now populate the rama_sampling_table_ so the torsions are given index
 			// space proporionate to their probs
 			current_rama_sampling_table[aa].resize(Size(actual_allowed * (max_val / min_val) * rama_sampling_factor_));
 			Size index=0; // to increment the index into the aa's rama_sampling_table_ vector
@@ -288,7 +289,7 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 						" rama_sampling_table_[aa].size()=" +
 						ObjexxFCL::string_of( current_rama_sampling_table[aa].size() ) +
 						" AA=" + ObjexxFCL::string_of( aa );
-						
+
 						continue; // avoid certain death - we dont yet understand why its failing here occasionally
 					}
 					if( ((int)tor < 1) || ((int)tor > (int)res_torsions.size()) ){
@@ -298,22 +299,22 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 						" AA=" + ObjexxFCL::string_of( aa );
 						continue; // avoid certain death - we dont yet understand why its failing here occasionally
 					}
-					
+
 					current_rama_sampling_table[aa][index] = res_torsions[tor];
 				}
 			}
 			current_rama_sampling_table[aa].resize(index);
 		}
-		
+
 		if (torsion_bin == 'X') {
 			rama_sampling_table_ = current_rama_sampling_table;
 		}
 		core::Size tb_index = get_torsion_bin_index(torsion_bin);
-		if (rama_sampling_table_by_torsion_bin_.size() < tb_index)	
+		if (rama_sampling_table_by_torsion_bin_.size() < tb_index)
 			rama_sampling_table_by_torsion_bin_.resize(tb_index);
 		rama_sampling_table_by_torsion_bin_[tb_index] = current_rama_sampling_table;
 	}
-	
+
 	void
 	Ramachandran::init_uniform_sampling_table() const
 	{
@@ -327,8 +328,8 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 			for (int i = 0; i < n_phi_; i++) {
 				for (int j = 0; j < n_psi_; j++) {
 
-					// We want the sampling table to include each allowed phi/psi bin 
-					// exactly once, to ensure uniform sampling.  Forbidden phi/psi bins 
+					// We want the sampling table to include each allowed phi/psi bin
+					// exactly once, to ensure uniform sampling.  Forbidden phi/psi bins
 					// should not appear in the table:
 
 					if (rama_for_res(i, j) < rama_sampling_thold_) continue;
@@ -360,7 +361,7 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 										  ) const
 	{
 		using numeric::random::uniform;
-		
+
 		if ( rama_sampling_table_.size() == 0 ) {
 			/// Danger -- not threadsafe.
 			init_rama_sampling_table('X');
@@ -372,14 +373,14 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 
 		Size n_torsions = rama_sampling_table_[res_aa2].size();
 		Size index = numeric::random::random_range(1, n_torsions);
-		
-		// Select a random phi/psi bin from the rama_sampling_table_.  This table 
-		// has been setup such that the number of times each psi/psi bin appears is 
-		// proportional to the rama weight of that bin.  Once a bin is chosen, a 
-		// specific phi/psi pair is chosen using a uniform distribution and no 
+
+		// Select a random phi/psi bin from the rama_sampling_table_.  This table
+		// has been setup such that the number of times each psi/psi bin appears is
+		// proportional to the rama weight of that bin.  Once a bin is chosen, a
+		// specific phi/psi pair is chosen using a uniform distribution and no
 		// interpolation.
 
-		// AS Nov 2013 - note that phi/psi bins are lower left corners, so we only 
+		// AS Nov 2013 - note that phi/psi bins are lower left corners, so we only
 		// want to add "noise" from a uniform distribution
 
 		phi = rama_sampling_table_[res_aa2][index][1] + numeric::random::uniform() * binw_;
@@ -391,7 +392,7 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 			psi=360.0-psi;
 		}
 	}
-	
+
 	void
 	Ramachandran::uniform_phipsi_from_allowed_rama(
 											AA const res_aa,
@@ -401,7 +402,7 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 	{
 		using numeric::random::uniform;
 		using numeric::random::random_range;
-		
+
 		if (uniform_sampling_table_.empty()) {
 			init_uniform_sampling_table();
 		}
@@ -420,9 +421,9 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 											Real psi
 											) const
 	{
-		// Figure out which torsion bin the given phi/psi pair is in.  Angles must be 
+		// Figure out which torsion bin the given phi/psi pair is in.  Angles must be
 		// given in degrees, but need not be given in any specific range.
-		
+
 		phi = numeric::nonnegative_principal_angle_degrees(phi);
 		psi = numeric::nonnegative_principal_angle_degrees(psi);
 
@@ -430,7 +431,7 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 		Size psi_bin = floor(psi / binw_);
 
 		// Return true if this bin has a non-zero rama probability.
-		
+
 		FArray2A<Real>::IR const zero_index(0, n_phi_ - 1);
 		FArray2A<Real> const rama_for_res(
 				ram_probabil_(1, 1, 3, aa), zero_index, zero_index);
@@ -451,8 +452,8 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 	///////////////////////////////////////////////////////////////////////////////
 	/// Sample phi/psi torsions with probabilities proportionate to their
 	/// Ramachandran probabilities -- this version performs lookup restricted to specified torsion bins
-	/// based on random_phipsi_from_rama and has the same issue for parallel running	
-	
+	/// based on random_phipsi_from_rama and has the same issue for parallel running
+
 	/// @author Amelie Stein (amelie.stein@ucsf.edu)
 	/// @date Fri May 11 15:52:01 PDT 2012
 	/// @details returns a random phi/psi combination within the given torsion bin -- WARNING: this will only work for the torsion bins that are currently implemented
@@ -461,46 +462,46 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 	Ramachandran::random_phipsi_from_rama_by_torsion_bin(
 														 AA const res_aa,
 														 Real & phi,
-														 Real & psi, 
-														 char const torsion_bin 
+														 Real & psi,
+														 char const torsion_bin
 														 ) const
 	{
-		
-		
+
+
 		//utility::vector1< utility::vector1< utility::vector1< Real > > > current_rama_sampling_table; // depends on the torsion bin
-		
+
 		//if (rama_sampling_table_by_torsion_bin_.find(torsion_bin) == rama_sampling_table_by_torsion_bin_.end()) {
 		if (rama_sampling_table_by_torsion_bin_.size() == 0) {
-			init_rama_sampling_tables_by_torsion_bin();	
+			init_rama_sampling_tables_by_torsion_bin();
 			// not threadsafe either
 			// initialize the table for this torsion bin and residue
 			// TODO: store the original sampling table before doing this, and then write it back after storing the result of this function, so that we don't lose or overwrite this information
 			//std::cerr << " generating rama sampling table for torsion bin " << torsion_bin << std::endl; // make sure that all of this is only done once
-			
+
 		}
-		
+
 		core::Size tb_index = get_torsion_bin_index(torsion_bin);
 		/*
 		 std::map< char, utility::vector1< utility::vector1< utility::vector1< Real > > > >::const_iterator m_iter = rama_sampling_table_by_torsion_bin_.find(torsion_bin);
 		 if (m_iter != rama_sampling_table_by_torsion_bin_.end()) {
 		 //std::cerr << "trying to fetch the table for torsion bin " << torsion_bin << std::endl;
-		 current_rama_sampling_table = m_iter->second; 
+		 current_rama_sampling_table = m_iter->second;
 		 }
-		 
+
 		 std::cerr << " rama sampling table size / # torsion bins" << rama_sampling_table_by_torsion_bin_.size() << std::endl;
 		 std::cerr << " rama sampling table size " << rama_sampling_table_by_torsion_bin_[tb_index].size() << std::endl;
 		 std::cerr << " -- res: " << res_aa << " " << rama_sampling_table_by_torsion_bin_[tb_index][res_aa].size() << std::endl;
 		 */
-		
+
 		Size n_torsions = rama_sampling_table_by_torsion_bin_[tb_index][res_aa].size();
 		Size index = numeric::random::random_range(1, n_torsions);
-		
+
 		/*
 		 // check if for some reason the bins are not populated
 		 std::cerr << current_rama_sampling_table[res_aa][index].size() << " index " << index << std::endl;
-		 for (int i = 0; i < current_rama_sampling_table[res_aa][index].size(); i++) 
+		 for (int i = 0; i < current_rama_sampling_table[res_aa][index].size(); i++)
 		 std::cerr << current_rama_sampling_table[res_aa][index][i] << " - " << i << std::endl;
-		 
+
 		 std::cerr << current_rama_sampling_table[res_aa][index][1] << " index " << index << " / 1" << std::endl;
 		 std::cerr << current_rama_sampling_table[res_aa][index][2] << " index " << index << " / 2" << std::endl;
 		 */
@@ -512,18 +513,18 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 		//std::cout << "res_aa: " << res_aa << std::endl;
 		//std::cout << "phi: " << phi << std::endl;
 		//std::cout << "psi: " << psi << std::endl;
-		
-		
+
+
 	} // random_phipsi_from_rama_by_torsion_bin
-	
-	
-	
-	core::Size Ramachandran::get_torsion_bin_index(char torsion_bin) const 
-	{ 
+
+
+
+	core::Size Ramachandran::get_torsion_bin_index(char torsion_bin) const
+	{
 		return toupper(torsion_bin) - toupper('A') + 1;
 	}
-	
-	
+
+
 	// just to avoid code duplication
 	void
 	Ramachandran::init_rama_sampling_tables_by_torsion_bin() const
@@ -534,13 +535,13 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 		init_rama_sampling_table( 'G' );
 		init_rama_sampling_table( 'X' ); // to allow wildcards in the torsion string
 	}
-	
+
 	void
 	Ramachandran::get_entries_per_torsion_bin( AA const res_aa, std::map< char, core::Size > & tb_frequencies ) const
 	{
 		// check if the tables are initialized, and if not, do so
 		if (rama_sampling_table_by_torsion_bin_.size() == 0) {
-			init_rama_sampling_tables_by_torsion_bin();	
+			init_rama_sampling_tables_by_torsion_bin();
 		}
 		tb_frequencies['A'] = rama_sampling_table_by_torsion_bin_[get_torsion_bin_index('A')][res_aa].size();
 		tb_frequencies['B'] = rama_sampling_table_by_torsion_bin_[get_torsion_bin_index('B')][res_aa].size();
@@ -575,7 +576,7 @@ Ramachandran::eval_rama_score_residue_nonstandard_connection(
 					lowerres.xyz( lowerres.residue_connect_atom_index(res.residue_connection_conn_id(1)) ),
 					res.xyz("N"), //Position of N
 					res.xyz("CA"), //Position of CA
-					res.xyz("C") //Position of C			
+					res.xyz("C") //Position of C
 				)
 			);
 	Real psi=numeric::nonnegative_principal_angle_degrees(
@@ -592,7 +593,7 @@ Ramachandran::eval_rama_score_residue_nonstandard_connection(
 	eval_rama_score_residue( res.aa(), phi, psi, rama, drama_dphi, drama_dpsi );
 
 	return;
-}	
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 Real

@@ -393,6 +393,8 @@ read_topology_file(
 		chemical::ResidueTypeSetCAP rsd_type_set
 )
 {
+	assert( rsd_type_set );
+
 	using id::AtomID;
 	using id::DOF_ID;
 	using numeric::conversions::radians;

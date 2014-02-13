@@ -50,12 +50,7 @@ public:
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
 		if(!residue_set.has_name("ZN1")) params_files.push_back("protocols/ligand_docking/ZN1.params");
 		if(!residue_set.has_name("CP1")) params_files.push_back("protocols/ligand_docking/7cpa.params");
-		residue_set.read_files(params_files,
-			ChemicalManager::get_instance()->atom_type_set( FA_STANDARD ),
-			ChemicalManager::get_instance()->element_set( "default" ),
-			ChemicalManager::get_instance()->mm_atom_type_set( FA_STANDARD ),
-			ChemicalManager::get_instance()->orbital_type_set(FA_STANDARD));//,
-			//ChemicalManager::get_instance()->csd_atom_type_set( FA_STANDARD ));
+		residue_set.read_files(params_files);
 	}
 
 	void tearDown() {}
