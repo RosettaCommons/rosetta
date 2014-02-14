@@ -51,7 +51,7 @@ namespace core {
 namespace scoring {
 namespace dssp {
 
-
+///@details Non-protein residues get a DSSP value of ' '
 class Dssp {
 public:
 
@@ -94,7 +94,6 @@ private:
 	StrandPairingSetOP pair_set_;
 
 	ObjexxFCL::FArray2D_float hbond_bb_pair_score_;
-	core::Size total_residue_;
 };
 
 extern void fill_hbond_bb_pair_score_dssp( core::pose::Pose const&, ObjexxFCL::FArray2D_float &hbond_bb_pair_score_ );

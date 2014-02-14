@@ -761,23 +761,35 @@ read_topology_file(
 			if ( natoms > 1 ) {
 				// build the Cartesian coords for the new atom:
 				if ( child_atom == parent_atom ) {
-					assert( rsd_xyz.empty() ); // first atom
+					if( ! rsd_xyz.empty() ) {
+						utility_exit_with_message("Only the first ICOOR atom in a topology file should list itself as its own parent atom.");
+					}
 					rsd_xyz[ child_atom ] = Vector( 0.0 );
 
 				} else if ( child_atom == angle_atom ) {
-					assert( rsd_xyz.size() == 1 && rsd_xyz.count( parent_atom ) ); // second atom
+					if( rsd_xyz.size() != 1 ) {
+						utility_exit_with_message("Only the second ICOOR atom in a topology file should list itself as its own angle atom.");
+					}
+					if( ! rsd_xyz.count( parent_atom ) ) {
+						utility_exit_with_message("In second ICOOR atom in topology file - parent atom not found.");
+					}
 					rsd_xyz[ child_atom ] = Vector( d, 0.0, 0.0 );
 
 				} else {
 					Vector torsion_xyz;
 					if ( child_atom == torsion_atom ) {
-						assert( rsd_xyz.size() == 2 );
-						assert( rsd_xyz.count( parent_atom ) );
-						assert( rsd_xyz.count( angle_atom ) ); // third atom
+						if( rsd_xyz.size() != 2 ) {
+							utility_exit_with_message("Only the third ICOOR atom in a topology file should list itself as its own dihedral atom.");
+						}
+						if( ! rsd_xyz.count( parent_atom ) || ! rsd_xyz.count( angle_atom ) ) {
+							utility_exit_with_message("In third ICOOR atom in topology file - parent and/or angle atom not found.");
+						}
 						torsion_xyz = Vector( 1.0, 1.0, 0.0 );
 					} else {
-						assert( rsd_xyz.count( parent_atom ) && rsd_xyz.count( angle_atom ) &&
-								rsd_xyz.count( torsion_atom ) );
+						if( ! ( rsd_xyz.count( parent_atom ) && rsd_xyz.count( angle_atom ) &&
+								rsd_xyz.count( torsion_atom ) ) ) {
+							utility_exit_with_message("In ICOOR atom line in topology file: reference atoms must be specified in earlier line. One of "+parent_atom+" or "+angle_atom+" or "+torsion_atom);
+						}
 						torsion_xyz = rsd_xyz[ torsion_atom ];
 					}
 					kinematics::Stub const stub( rsd_xyz[ parent_atom ], rsd_xyz[ angle_atom ], torsion_xyz );

@@ -71,83 +71,10 @@ namespace dssp {
 
 Dssp::Dssp( core::pose::Pose const& pose ) {
 	pair_set_ = NULL;
-	total_residue_ = 0;
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
-		if ( pose.residue(i).is_protein() ) total_residue_++;
-	}
 	compute( pose );
 }
 
 Dssp::~Dssp() {}
-
-//////////////////////////////////////////////////////////////////////////////
-/// @begin fill_hbond_bb_pair_score_
-///
-/// @brief Populates the hbond_bb_pair_score_ array
-///
-/// @detailed
-/// Uses the rosetta hydrogen bond energies computed in hbonds::hbond_set
-/// to fill the hbond_bb_pair_score_ array.  The hbond_set data structure
-/// must already be populated, by (e.g.) full atom scoring.
-/// Entry (i,j) is the backbone
-/// hydrogen bond energy between residues i (acceptor) and j (donor).
-///
-/// @global_read
-/// hbonds::hbond_set
-///
-/// @global_write
-/// dssp_ns::hbond_bb_pair_score_
-///
-/// @remarks
-///
-/// @references
-///
-/// @author olange: ported from original bblum-rosetta++ version $
-///
-/// @last_modified
-//////////////////////////////////////////////////////////////////////////////
-/*
-	void
-	Dssp::fill_hbond_bb_pair_score_() {
-	using namespace hbonds;
-
-	hbond_bb_pair_score_.dimension(misc::total_residue_, misc::total_residue_);
-	hbond_bb_pair_score_ = 0.0f;
-	Size dres, ares, type;
-	float enrg;
-
-	for( Size i = 1; i <= hbond_set.nhbonds(); ++i ) {
-	dres = hbond_set.hbdon_res(i);
-	ares = hbond_set.hbact_res(i);
-	enrg = hbond_set.hbenergies(i);
-	// first index is always acceptor (carboxyl group), second is donor (amyl group)
-	type = hbond_set.hbtype(i);
-	if(type == SRBB_HBTYPE || type == LRBB_HBTYPE)
-	hbond_bb_pair_score_(ares, dres) = enrg;
-	}
-	}
-*/
-
-
-// //////////////////////////////////////////////////////////////////////////////
-// void
-// copy_the_relevant_atoms( FArray3D_float & full_coord_dest,
-// 	FArray3D_float & full_coord_src){
-
-
-// 	for (Size i = 1; i <= total_residue_; i++ ){
-
-// 		Size const natoms( aaproperties_pack::natoms( res(i), res_variant(i) ) );
-
-// 		for ( Size j=1; j<= natoms; ++j ) {
-// 			for ( Size k = 1; k<= 3; ++k ) {
-// 				full_coord_dest( k, j, i ) = full_coord_src( k, j, i );
-// 			}
-// 		}
-
-// 	}
-
-// }
 
 //////////////////////////////////////////////////////////////////////////////
 /// @begin fill_hbond_bb_pair_score__dssp
@@ -160,7 +87,6 @@ Dssp::~Dssp() {}
 /// hydrogen bond energy between residues i (acceptor) and j (donor).
 ///
 /// @global_read
-/// misc::Sizes::total_residue_
 /// misc::current_pose::Eposition
 /// misc::current_pose::full_coord
 /// misc::Sizes::res
@@ -257,13 +183,13 @@ fill_hbond_bb_pair_score_dssp( pose::Pose const& pose, ObjexxFCL::FArray2D_float
 
 void
 Dssp::dssp( FArray1_char &secstruct ) {
-  for( Size i = 1; i <= total_residue_; i++)
+  for( Size i = 1; i <= dssp_secstruct_.size(); i++)
 		secstruct(i) = dssp_secstruct_(i);
 }
 
 void
 Dssp::dssp_featurizer( FArray1_char &secstruct ) {
-	for( Size i = 1; i <= total_residue_; i++ ) {
+	for( Size i = 1; i <= dssp_secstruct_.size(); i++ ) {
 		if( dssp_secstruct_(i) == 'H' || dssp_secstruct_(i) == 'G' || dssp_secstruct_(i) == 'I' ) {
 			secstruct(i) = 'H';
     } else if(dssp_secstruct_(i) == 'B' || dssp_secstruct_(i) == 'E') {
@@ -288,7 +214,6 @@ Dssp::dssp_featurizer( FArray1_char &secstruct ) {
 /// S,T,blank --> L
 ///
 /// @global_read
-/// Sizes::total_residue_
 ///
 /// @global_write
 ///
@@ -302,7 +227,7 @@ Dssp::dssp_featurizer( FArray1_char &secstruct ) {
 //////////////////////////////////////////////////////////////////////////////
 void
 Dssp::dssp_reduced( FArray1_char &secstruct ) {
-	for( Size i = 1; i <= total_residue_; i++ ) {
+	for( Size i = 1; i <= dssp_secstruct_.size(); i++ ) {
 		if( dssp_secstruct_(i) == 'H' || dssp_secstruct_(i) == 'G' || dssp_secstruct_(i) == 'I' ) {
 			secstruct(i) = 'H';
 	    } else if(dssp_secstruct_(i) == 'B' || dssp_secstruct_(i) == 'E') {
@@ -313,10 +238,10 @@ Dssp::dssp_reduced( FArray1_char &secstruct ) {
 
 void
 Dssp::dssp_reduced_IG_as_L_if_adjcent_H( FArray1_char &secstruct ) {
-	for( Size i = 1; i <= total_residue_; i++ ) {
+	for( Size i = 1; i <= dssp_secstruct_.size(); i++ ) {
 		if( dssp_secstruct_(i) == 'H' || dssp_secstruct_(i) == 'G' || dssp_secstruct_(i) == 'I' ) {
 			if( ( dssp_secstruct_(i)=='G'|| dssp_secstruct_(i)=='I' ) &&
-				( (i>1 && dssp_secstruct_(i-1)=='H') || (i<total_residue_ && dssp_secstruct_(i+1)=='H'))
+				( (i>1 && dssp_secstruct_(i-1)=='H') || (i<dssp_secstruct_.size() && dssp_secstruct_(i+1)=='H'))
 			){
 				secstruct(i) = 'L';
 			} else {
@@ -330,7 +255,7 @@ Dssp::dssp_reduced_IG_as_L_if_adjcent_H( FArray1_char &secstruct ) {
 
 void
 Dssp::dssp_reduced_IG_as_L( FArray1_char &secstruct ) {
-	for( Size i = 1; i <= total_residue_; i++ ) {
+	for( Size i = 1; i <= dssp_secstruct_.size(); i++ ) {
 		if( dssp_secstruct_(i) == 'H' ) {
 			secstruct(i) = 'H';
 	    } else if(dssp_secstruct_(i) == 'B' || dssp_secstruct_(i) == 'E') {
@@ -369,7 +294,6 @@ Dssp::dssp_reduced() {
 /// be chalked up to unequal placement of hydrogens.
 ///
 /// @global_read
-/// Sizes::total_residue_
 /// dssp_ns::hbond_bb_pair_score_
 ///
 /// @global_write
@@ -388,21 +312,27 @@ Dssp::compute( pose::Pose const& pose ) {
 
 	float dssp_hbond_threshold = -0.5;
 
-	dssp_secstruct_.dimension(total_residue_);
-
+	core::Size total_residue( pose.total_residue() );
+	ObjexxFCL::FArray1D_bool invalid; //Should we omit this residue when doing DSSP?
+	dssp_secstruct_.dimension(total_residue);
+  invalid.dimension(total_residue);
 
 	fill_hbond_bb_pair_score_dssp( pose, hbond_bb_pair_score_ ); // fills hbond_bb_pair_score_ array
 
 	// Initialize to all loops
-	for ( Size i = 1; i <= total_residue_; i++ ) dssp_secstruct_(i) = ' ';
+	for ( Size i = 1; i <= total_residue; i++ ) {
+		dssp_secstruct_(i) = ' ';
+		invalid(i) = (! pose.residue(i).is_protein()) || ( pose.residue(i).aa() == core::chemical::aa_vrt);
+	}
 
 	bool helix;
 
 	// Record all 5-turn helices (I)
-	if( total_residue_ > 5 ) {
-		for ( Size i=1; i <= total_residue_-5; i++ ) {
+	if( total_residue > 5 ) {
+		for ( Size i=1; i <= total_residue-5; i++ ) {
+			if( invalid(i) || invalid(i+1) || invalid(i+2) || invalid(i+3) || invalid(i+4) || invalid(i+5) ) continue;
 			if ( hbond_bb_pair_score_(i, i + 5) < dssp_hbond_threshold ) {
-				helix = i < total_residue_ - 5 &&
+				helix = i < total_residue - 5 &&
 	        hbond_bb_pair_score_(i + 1, i + 6) < dssp_hbond_threshold;
 				for ( Size j = 1; j < 6; j++) {
 					if ( helix )
@@ -414,10 +344,11 @@ Dssp::compute( pose::Pose const& pose ) {
 		}
 	}
 	// Record all 3-turn helices (G)
-	if( total_residue_ > 3 ) {
-		for ( Size i = 1; i <= total_residue_ - 3; i++ ) {
+	if( total_residue > 3 ) {
+		for ( Size i = 1; i <= total_residue - 3; i++ ) {
+			if( invalid(i) || invalid(i+1) || invalid(i+2) || invalid(i+3) ) continue;
 			if ( hbond_bb_pair_score_(i, i + 3) < dssp_hbond_threshold ) {
-				helix = i < total_residue_ - 3 &&
+				helix = i < total_residue - 3 &&
 	        hbond_bb_pair_score_(i + 1, i + 4) < dssp_hbond_threshold;
 				for ( Size j = 1; j < 4; j++ ) {
 					if ( helix )
@@ -432,16 +363,17 @@ Dssp::compute( pose::Pose const& pose ) {
 	// Record all strands (B and E)
 	pair_set_ = new StrandPairingSet( hbond_bb_pair_score_, dssp_hbond_threshold, pose );
 
-	for ( Size i = 1; i <= total_residue_; i++ ) {
+	for ( Size i = 1; i <= total_residue; i++ ) {
 		char state = pair_set_->dssp_state(i);
 		if ( state != ' ' ) dssp_secstruct_(i) = state;
 	}
 
 	// Record all 4-turn helices (H)
-	if( total_residue_ > 4 ) {
-		for ( Size i = 1; i <= total_residue_ - 4; i++ ) {
+	if( total_residue > 4 ) {
+		for ( Size i = 1; i <= total_residue - 4; i++ ) {
+			if( invalid(i) || invalid(i+1) || invalid(i+2) || invalid(i+3) || invalid(i+4) ) continue;
 			if ( hbond_bb_pair_score_(i, i + 4) < dssp_hbond_threshold ) {
-				helix = i < total_residue_ - 4 &&
+				helix = i < total_residue - 4 &&
 	        hbond_bb_pair_score_(i + 1, i + 5) < dssp_hbond_threshold;
 				for ( Size j = 1; j < 5; j++ ) {
 					if ( helix )
@@ -458,14 +390,9 @@ Dssp::compute( pose::Pose const& pose ) {
 	}
 
 	// Record all tight turns (S), only if still a loop
-	if( total_residue_ > 2 ) {
-		for ( Size i = 3; i <= total_residue_ - 2; i++ ) {
-			if ( !pose.residue(i-2).is_protein() ) continue;
-			if ( !pose.residue(i  ).is_protein() ) continue;
-			if ( !pose.residue(i+2).is_protein() ) continue;
-			if (pose.residue(i-2).aa() == core::chemical::aa_vrt) continue;
-			if (pose.residue(i  ).aa() == core::chemical::aa_vrt) continue;
-			if (pose.residue(i+2).aa() == core::chemical::aa_vrt) continue;
+	if( total_residue > 2 ) {
+		for ( Size i = 3; i <= total_residue - 2; i++ ) {
+			if( invalid(i-2) || invalid(i) || invalid(i+2) ) continue;
 			if ( dssp_secstruct_(i) == ' ' ) {
 				Vector const v1 ( pose.xyz( id::NamedAtomID("CA",i ) ) - pose.xyz(  id::NamedAtomID("CA",i-2 ) ) );
 				Vector const v2 ( pose.xyz( id::NamedAtomID("CA",i+2 ) ) - pose.xyz(  id::NamedAtomID("CA",i ) ) );
@@ -487,7 +414,7 @@ void
 Dssp::insert_ss_into_pose( core::pose::Pose & pose ) {
 	compute( pose );
 	dssp_reduced( dssp_secstruct_ );
-	for ( core::Size i = 1; i <= total_residue_; ++i ) {
+	for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
 		pose.set_secstruct( i, dssp_secstruct_(i) );
 	}
 }
@@ -496,7 +423,7 @@ void
 Dssp::insert_ss_into_pose_no_IG_helix( core::pose::Pose & pose ) {
 	compute( pose );
 	dssp_reduced_IG_as_L( dssp_secstruct_ );
-	for ( core::Size i = 1; i <= total_residue_; ++i ) {
+	for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
 		pose.set_secstruct( i, dssp_secstruct_(i) );
 	}
 }
@@ -504,7 +431,7 @@ Dssp::insert_ss_into_pose_no_IG_helix( core::pose::Pose & pose ) {
 void
 Dssp::insert_dssp_ss_into_pose( core::pose::Pose & pose ) {
 	compute( pose );
-	for ( core::Size i = 1; i <= total_residue_; ++i ) {
+	for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
 		char ss = dssp_secstruct_(i);
 		if(ss==' ') ss = '_';
 		pose.set_secstruct( i, ss );
@@ -513,7 +440,7 @@ Dssp::insert_dssp_ss_into_pose( core::pose::Pose & pose ) {
 void
 Dssp::insert_edge_ss_into_pose( core::pose::Pose & pose ) {
 	compute( pose );
-	for ( core::Size i = 1; i <= total_residue_; ++i ) {
+	for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
 		char ss = dssp_secstruct_(i);
 		if(ss==' ') ss = 'L';
 		if(ss=='E' && num_pairings(i)<2 ) ss = 'U';
@@ -531,7 +458,7 @@ std::string
 Dssp::get_dssp_secstruct() {
 	dssp_reduced( dssp_secstruct_ );
 	std::string sequence;
-	for ( core::Size i = 1; i <= total_residue_;/*pose.total_residue();*/ ++i ) {
+	for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
 		sequence += dssp_secstruct_( i );
 	}
 	return sequence;
@@ -541,7 +468,7 @@ std::string
 Dssp::get_dssp_reduced_IG_as_L_secstruct() {
   dssp_reduced_IG_as_L( dssp_secstruct_ );
   std::string sequence;
-  for ( core::Size i = 1; i <= total_residue_;/*pose.total_residue();*/ ++i ) {
+  for ( core::Size i = 1; i <= dssp_secstruct_.size(); ++i ) {
     sequence += dssp_secstruct_( i );
   }
   return sequence;

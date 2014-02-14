@@ -89,7 +89,6 @@ main( int argc, char * argv [] )
 		basic::Error()
 			<< "ERROR: Exception caught by rosetta_scripts application:"
 			<< excn << std::endl;
-		assert(false); // core dump in debug mode
 		std::exit( 1 );
 	}
 }

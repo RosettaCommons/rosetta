@@ -1320,8 +1320,15 @@ rms_at_corresponding_atoms(
 	for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin();
 				iter != atom_id_map.end(); iter++ ) {
 
-		assert ( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) ==
-						 ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) );
+		// We're passed an explicit map of atoms to match up. Presume that if there's a mismatch, it's intentional.
+		// But let people know about it to be safe.
+		if( tr.Debug.visible() && ( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) !=
+						 ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) ) ) {
+			conformation::Residue const & mod_res( mod_pose.residue( (iter->first).rsd() ) );
+			conformation::Residue const & ref_res( ref_pose.residue( (iter->second).rsd() ) );
+			tr.Debug << "Including distance between " << mod_res.name() << " " << mod_res.atom_name( (iter->first).atomno() )
+					<< " and " << ref_res.name() << " " << ref_res.atom_name ( (iter->second).atomno() ) << " in rmsd calculation." << std::endl;
+		}
 
 		if ( !is_calc_rms[ (iter->first).rsd() ] ) continue;
 
@@ -1346,8 +1353,15 @@ rms_at_all_corresponding_atoms(
 	for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin();
 				iter != atom_id_map.end(); iter++ ) {
 
-		runtime_assert ( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) ==
-										 ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) );
+		// We're passed an explicit map of atoms to match up. Presume that if there's a mismatch, it's intentional.
+		// But let people know about it to be safe.
+		if( tr.Debug.visible() && ( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) !=
+						 ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) ) ) {
+			conformation::Residue const & mod_res( mod_pose.residue( (iter->first).rsd() ) );
+			conformation::Residue const & ref_res( ref_pose.residue( (iter->second).rsd() ) );
+			tr.Debug << "Including distance between " << mod_res.name() << " " << mod_res.atom_name( (iter->first).atomno() )
+					<< " and " << ref_res.name() << " " << ref_res.atom_name ( (iter->second).atomno() ) << " in rmsd calculation." << std::endl;
+		}
 
 		Vector const & p1(  mod_pose.xyz( iter->first ));
 		Vector const & p2(  ref_pose.xyz( iter->second ));
@@ -1385,8 +1399,15 @@ rms_at_corresponding_atoms_no_super(
 	for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin();
 				iter != atom_id_map.end(); iter++ ) {
 
-		assert ( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) ==
-						 ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) );
+		// We're passed an explicit map of atoms to match up. Presume that if there's a mismatch, it's intentional.
+		// But let people know about it to be safe.
+		if( tr.Debug.visible() && ( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) !=
+						 ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) ) ) {
+			conformation::Residue const & mod_res( mod_pose.residue( (iter->first).rsd() ) );
+			conformation::Residue const & ref_res( ref_pose.residue( (iter->second).rsd() ) );
+			tr.Debug << "Including distance between " << mod_res.name() << " " << mod_res.atom_name( (iter->first).atomno() )
+					<< " and " << ref_res.name() << " " << ref_res.atom_name ( (iter->second).atomno() ) << " in rmsd calculation." << std::endl;
+		}
 
 		if ( !is_calc_rms[ (iter->first).rsd() ] ) continue;
 

@@ -1,4 +1,9 @@
+
 cd %(workdir)s
+
+#Make sure we have the output directory
+
+mkdir -p output/output
 
 # Does test actually exist?
 [ -x %(bin)s/surface_docking.%(binext)s ] || exit 1
