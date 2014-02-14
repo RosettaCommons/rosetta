@@ -8,31 +8,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/io/silent/util.hh
-///
-/// @brief utility functions for silent-files
-/// @author James Thompson
+/// @file protocols/boinc/util
+/// @brief utility functions for filtering boinc outputs
+/// @author TJ Brunette tjbrunette@gmail.com
 
-#ifndef INCLUDED_core_io_silent_util_hh
-#define INCLUDED_core_io_silent_util_hh
+#ifndef INCLUDED_protocols_boinc_util_hh
+#define INCLUDED_protocols_boinc_util_hh
 
 #include <map>
 #include <string>
+#include <core/types.hh>
 
-namespace core {
-namespace io {
-namespace silent {
-
-/// @brief gzip all of the files in -out::file::silent().
-void
-gzip( void );
+namespace protocols {
+namespace boinc {
 
 /////////////////////////////////////////////////////////////////
-std::map< std::string, bool >
-initialize_tag_is_done( std::string const & silent_file );
+void boincOutputFilter(core::Real runTime, core::Real minTimePerModel);
 
-} // namespace silent
-} // namespace io
-} // namespace core
+} // namespace protocols
+} // namespace boinc
 
 #endif

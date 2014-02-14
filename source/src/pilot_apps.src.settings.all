@@ -112,7 +112,6 @@ sources = {
         #"outputLayerDesignBurial",
 		"outputAbego",
         "outputSasa",
-        #"inSpotFilter",
         #"outputRama",
         #"cluster_alns", # /#TJ Brunette,Documentation Location,Demo Location */
 		#"identify_homolog_inaccuracies",

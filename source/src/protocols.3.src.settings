@@ -20,6 +20,9 @@ sources = {
 		"BackrubSegment",
 		"BackrubSidechainMover",
 	],
+	"protocols/boinc":[
+		"util",
+	],
 	"protocols/branch_angle": [
 		"BranchAngleOptimizer",
 	],

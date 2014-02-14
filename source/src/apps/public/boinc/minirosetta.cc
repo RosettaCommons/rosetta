@@ -24,6 +24,7 @@
 #include <protocols/abinitio/IterativeAbrelax.hh>
 #include <protocols/jd2/archive/ArchiveManager.hh>
 #include <protocols/abinitio/BrokerMain.hh>
+#include <protocols/boinc/util.hh>
 #include <protocols/comparative_modeling/cm_main.hh>
 #include <protocols/medal/MedalMain.hh>
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
@@ -267,7 +268,7 @@ main( int argc, char * argv [] )
 		runtime = protocols::boinc::Boinc::get_boinc_wu_cpu_time();
 #endif
 	if(option[boinc::score_cut_pct].user())
-		core::io::silent::boincOutputFilter(runtime,minTimePerModel); //ideally score cut alone, but an additional filter that allows only 1 structure every 61 seconds.
+		protocols::boinc::boincOutputFilter(runtime,minTimePerModel); //ideally score cut alone, but an additional filter that allows only 1 structure every 61 seconds.
 
 #ifdef BOINC
 
