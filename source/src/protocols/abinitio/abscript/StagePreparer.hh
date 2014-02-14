@@ -7,38 +7,38 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/StageID.hh
+/// @file src/protocols/abinitio/abscript/StagePreparer.hh
 /// @author Justin Porter
 
-#ifndef INCLUDED_protocols_environment_StageID_hh
-#define INCLUDED_protocols_environment_StageID_hh
+#ifndef INCLUDED_protocols_abinitio_abscript_StagePreparer_hh
+#define INCLUDED_protocols_abinitio_abscript_StagePreparer_hh
 
 // Unit Headers
+#include <protocols/abinitio/abscript/StagePreparer.fwd.hh>
 
 // Package headers
+#include <protocols/environment/ClaimingMover.hh>
 
 // Project headers
-
-// Utility Headers
-#include <utility/vector1.fwd.hh>
-#include <core/types.hh>
+#include <core/pose/Pose.hh>
 
 // C++ Headers
 
+// ObjexxFCL Headers
+
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript{
 
-enum StageID {
-  I = 1,
-  II,
-  IIIa, IIIb,
-  IVa, IVb,
-  END
-};
+class StagePreparer : public protocols::environment::ClaimingMover {
 
-typedef utility::vector1< StageID > StageIDs;
+public:
+  virtual void prepare( core::pose::Pose& pose, core::Real progress ) = 0;
 
-} // environment
+}; // end StagePreparer base class
+
+} // abscript
+} // abinitio
 } // protocols
 
-#endif //INCLUDED_protocols_environment_StageID_hh
+#endif //INCLUDED_protocols_abinitio_abscript_StagePreparer_hh

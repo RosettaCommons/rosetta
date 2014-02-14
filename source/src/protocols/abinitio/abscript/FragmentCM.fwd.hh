@@ -7,32 +7,28 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/StagePreparer.cc
-/// @author Justin Porter
+/// @file FragmentCM.fwd.hh
+/// @brief definition of the FragmentCM class
+/// @author
 
-// Unit Headers
-#include <protocols/environment/movers/StagePreparer.hh>
+#ifndef INCLUDED_protocols_abinitio_abscript_FragmentCM_fwd_hh
+#define INCLUDED_protocols_abinitio_abscript_FragmentCM_fwd_hh
+
+#include <utility/pointer/owning_ptr.hh>
+#include <boost/shared_ptr.hpp>
 
 // Package headers
-#include <core/environment/DofPassport.hh>
-#include <protocols/environment/DofUnlock.hh>
-
-// Project headers
-
-// tracer
-#include <basic/Tracer.hh>
-
-// C++ Headers
-
-// ObjexxFCL Headers
-
-static basic::Tracer tr("protocols.environment.movers.StagePreparer", basic::t_info);
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript{
 
-using namespace core::environment;
+class FragmentCM;
+typedef utility::pointer::owning_ptr< FragmentCM > FragmentCMOP;
+typedef utility::pointer::owning_ptr< FragmentCM const > FragmentCMCOP;
 
-
-} // environment
+} // abscript
+} // abinitio
 } // protocols
+
+#endif //INCLUDED_protocols_moves_FragmentCM_fwd_HH

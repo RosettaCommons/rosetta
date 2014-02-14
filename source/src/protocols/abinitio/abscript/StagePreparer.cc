@@ -7,36 +7,34 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/StagePreparer.hh
+/// @file src/protocols/abinitio/abscript/StagePreparer.cc
 /// @author Justin Porter
 
-#ifndef INCLUDED_protocols_environment_StagePreparer_hh
-#define INCLUDED_protocols_environment_StagePreparer_hh
-
 // Unit Headers
-#include <protocols/environment/movers/StagePreparer.fwd.hh>
+#include <protocols/abinitio/abscript/StagePreparer.hh>
 
 // Package headers
-#include <protocols/environment/ClaimingMover.hh>
+#include <core/environment/DofPassport.hh>
+#include <protocols/environment/DofUnlock.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+
+// tracer
+#include <basic/Tracer.hh>
 
 // C++ Headers
 
 // ObjexxFCL Headers
 
+static basic::Tracer tr("protocols.environment.movers.StagePreparer", basic::t_info);
+
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript{
 
-class StagePreparer : public ClaimingMover {
+using namespace core::environment;
 
-public:
-  virtual void prepare( core::pose::Pose& pose, core::Real progress ) = 0;
 
-}; // end StagePreparer base class
-
-} // environment
+} // abscript
+} // abinitio
 } // protocols
-
-#endif //INCLUDED_protocols_environment_StagePreparer_hh

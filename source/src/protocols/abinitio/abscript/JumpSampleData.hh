@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/JumpSampleData.hh
+/// @file src/protocols/abinitio/abscript/JumpSampleData.hh
 /// @author Justin Porter
 
-#ifndef INCLUDED_protocols_environment_JumpSampleData_hh
-#define INCLUDED_protocols_environment_JumpSampleData_hh
+#ifndef INCLUDED_protocols_abinitio_abscript_JumpSampleData_hh
+#define INCLUDED_protocols_abinitio_abscript_JumpSampleData_hh
 
 // Unit Headers
-#include <protocols/environment/movers/JumpSampleData.fwd.hh>
-#include <protocols/environment/movers/JumpSampleDataCreator.hh>
+#include <protocols/abinitio/abscript/JumpSampleData.fwd.hh>
+#include <protocols/abinitio/abscript/JumpSampleDataCreator.hh>
 
 // Package headers
 
@@ -30,7 +30,8 @@
 // ObjexxFCL Headers
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript{
 
 class JumpSampleData : public basic::datacache::WriteableCacheableData {
   typedef basic::datacache::WriteableCacheableData Parent;
@@ -61,7 +62,8 @@ private:
   std::string moverkey_;
 };
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols
 
-#endif //INCLUDED_protocols_environment_JumpSampleData_hh
+#endif //INCLUDED_protocols_abinitio_abscript_JumpSampleData_hh

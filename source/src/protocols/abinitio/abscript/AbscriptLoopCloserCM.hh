@@ -7,41 +7,46 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/AbscriptLoopCloserCM.hh
+/// @file src/protocols/abinitio/abscript/AbscriptLoopCloserCM.hh
 /// @author Justin Porter
 
-#ifndef INCLUDED_protocols_environment_AbscriptLoopCloserCM_hh
-#define INCLUDED_protocols_environment_AbscriptLoopCloserCM_hh
+#ifndef INCLUDED_protocols_abinitio_abscript_AbscriptLoopCloserCM_hh
+#define INCLUDED_protocols_abinitio_abscript_AbscriptLoopCloserCM_hh
 
 // Unit Headers
-#include <protocols/environment/movers/AbscriptLoopCloserCM.fwd.hh>
+#include <protocols/abinitio/abscript/AbscriptLoopCloserCM.fwd.hh>
 #include <protocols/environment/ClaimingMover.hh>
 
 // Package headers
 
 // Project headers
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <core/fragment/FragSet.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/kinematics/MoveMap.hh>
+
+#include <core/fragment/FragSet.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 // C++ Headers
 
 // ObjexxFCL Headers
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript {
 
-class AbscriptLoopCloserCM : public ClaimingMover {
+class AbscriptLoopCloserCM : public protocols::environment::ClaimingMover {
   typedef ClaimingMover Parent;
+	typedef environment::claims::EnvClaims EnvClaims;
+
 public:
   AbscriptLoopCloserCM( core::fragment::FragSetCOP fragset,
-                core::scoring::ScoreFunctionOP scorefxn );
+												core::scoring::ScoreFunctionOP scorefxn );
 
   virtual ~AbscriptLoopCloserCM() {};
 
-  virtual claims::EnvClaims yield_claims( core::pose::Pose& );
+  virtual EnvClaims yield_claims( core::pose::Pose& );
 
-  virtual void broking_finished( EnvClaimBroker::BrokerResult const& );
+  virtual void broking_finished( environment::EnvClaimBroker::BrokerResult const& );
 
   virtual void passport_updated();
 
@@ -63,7 +68,8 @@ private:
 
 }; // end AbscriptLoopCloserCM base class
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols
 
-#endif //INCLUDED_protocols_environment_AbscriptLoopCloserCM_hh
+#endif //INCLUDED_protocols_abinitio_abscript_AbscriptLoopCloserCM_hh

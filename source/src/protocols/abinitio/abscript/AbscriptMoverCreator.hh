@@ -7,17 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/environment/movers/AbscriptMoverCreator.hh
+///@file protocols/abinitio/abscript/AbscriptMoverCreator.hh
 ///@brief This class will create instances of Mover AbscriptMover for the MoverFactory
 ///@author Justin Porter
 
-#ifndef INCLUDED_protocols_environment_movers_AbscriptMoverCreator_hh
-#define INCLUDED_protocols_environment_movers_AbscriptMoverCreator_hh
+#ifndef INCLUDED_protocols_abinitio_abscript_AbscriptMoverCreator_hh
+#define INCLUDED_protocols_abinitio_abscript_AbscriptMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript {
 
 class AbscriptMoverCreator : public protocols::moves::MoverCreator {
 public:
@@ -26,6 +27,7 @@ public:
   static std::string mover_name();
 };
 
+}
 }
 }
 

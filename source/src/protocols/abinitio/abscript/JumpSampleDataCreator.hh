@@ -7,25 +7,28 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/environment/movers/FragmentJumpCMCreator.hh
+///@file protocols/abinitio/abscript/JumpSampleDataCreator.hh
 ///@brief This class will create instances of Mover AbscriptMover for the MoverFactory
 ///@author Justin Porter
 
-#ifndef INCLUDED_protocols_environment_movers_FragmentJumpCMCreator_hh
-#define INCLUDED_protocols_environment_movers_FragmentJumpCMCreator_hh
+#ifndef INCLUDED_protocols_abinitio_abscript_movers_JumpSampleDataCreator_hh
+#define INCLUDED_protocols_abinitio_abscript_movers_JumpSampleDataCreator_hh
 
-#include <protocols/moves/MoverCreator.hh>
+#include <basic/datacache/WriteableCacheableDataCreator.hh>
+#include <basic/datacache/WriteableCacheableData.fwd.hh>
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript {
 
-class FragmentJumpCMCreator : public protocols::moves::MoverCreator {
+class JumpSampleDataCreator : public basic::datacache::WriteableCacheableDataCreator {
+  typedef basic::datacache::WriteableCacheableDataOP WriteableCacheableDataOP;
 public:
-  virtual moves::MoverOP create_mover() const;
+  virtual WriteableCacheableDataOP create_data( std::istream &in ) const;
   virtual std::string keyname() const;
-  static std::string mover_name();
 };
 
+}
 }
 }
 

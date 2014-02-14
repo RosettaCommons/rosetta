@@ -7,18 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/FragmentCM.hh
+/// @file src/protocols/abinitio/abscript/FragmentCM.hh
 /// @author Justin Porter
 
-#ifndef INCLUDED_protocols_environment_FragmentCM_hh
-#define INCLUDED_protocols_environment_FragmentCM_hh
+#ifndef INCLUDED_protocols_abscript_abinitio_FragmentCM_hh
+#define INCLUDED_protocols_abscript_abinitio_FragmentCM_hh
 
 // Unit Headers
-#include <protocols/environment/movers/FragmentCM.fwd.hh>
+#include <protocols/abinitio/abscript/FragmentCM.fwd.hh>
 
 // Package headers
 #include <protocols/environment/ClaimingMover.hh>
-#include <protocols/simple_moves/FragmentMover.fwd.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 
 // Project headers
 
@@ -27,9 +27,11 @@
 // ObjexxFCL Headers
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript {
 
 class FragmentCM : public protocols::environment::ClaimingMover {
+	typedef environment::claims::EnvClaims EnvClaims;
 
 public:
   FragmentCM();
@@ -42,7 +44,7 @@ public:
 
   virtual ~FragmentCM();
 
-  virtual claims::EnvClaims yield_claims( core::pose::Pose& );
+  virtual EnvClaims yield_claims( core::pose::Pose& );
 
   virtual void initialize( Pose& pose );
 
@@ -63,7 +65,8 @@ private:
 
 }; // end FragmentCM base class
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols
 
-#endif //INCLUDED_protocols_environment_FragmentCM_hh
+#endif //INCLUDED_protocols_abinitio_abscript_FragmentCM_hh

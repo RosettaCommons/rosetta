@@ -14,7 +14,6 @@
 #include <core/environment/SequenceAnnotation.hh>
 
 // Package headers
-#include <protocols/environment/ProtectedConformation.hh>
 
 // Project headers
 #include <utility/excn/Exceptions.hh>

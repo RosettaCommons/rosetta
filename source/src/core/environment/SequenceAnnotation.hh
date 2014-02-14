@@ -19,11 +19,9 @@
 #include <core/environment/SequenceAnnotation.fwd.hh>
 
 // Package headers
-#include <protocols/environment/ProtectedConformation.fwd.hh>
 #include <core/environment/LocalPosition.hh>
 
 // Project headers
-#include <core/conformation/Conformation.fwd.hh>
 #include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
 

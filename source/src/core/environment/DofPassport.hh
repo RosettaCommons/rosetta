@@ -22,8 +22,6 @@
 #include <core/environment/EnvCore.fwd.hh>
 
 // Project headers
-#include <core/pose/Pose.fwd.hh>
-
 #include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 

@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file JumpSampleData.fwd.hh
-/// @brief definition of the JumpSampleData class
-/// @author Justin Porter
+/// @file FragmentJumpCM.fwd.hh
+/// @brief definition of the FragmentJumpCM class
+/// @author
 
-#ifndef INCLUDED_protocols_environment_JumpSampleData_fwd_hh
-#define INCLUDED_protocols_environment_JumpSampleData_fwd_hh
+#ifndef INCLUDED_protocols_abinitio_abscript_FragmentJumpCM_fwd_hh
+#define INCLUDED_protocols_abinitio_abscript_FragmentJumpCM_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <boost/shared_ptr.hpp>
@@ -20,13 +20,15 @@
 // Package headers
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript {
 
-class JumpSampleData;
-typedef utility::pointer::owning_ptr< JumpSampleData > JumpSampleDataOP;
-typedef utility::pointer::owning_ptr< JumpSampleData const > JumpSampleDataCOP;
+class FragmentJumpCM;
+typedef utility::pointer::owning_ptr< FragmentJumpCM > FragmentJumpCMOP;
+typedef utility::pointer::owning_ptr< FragmentJumpCM const > FragmentJumpCMCOP;
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols
 
-#endif //INCLUDED_protocols_moves_JumpSampleData_fwd_HH
+#endif //INCLUDED_protocols_moves_FragmentJumpCM_fwd_HH

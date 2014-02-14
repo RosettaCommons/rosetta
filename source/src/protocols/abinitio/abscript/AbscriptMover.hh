@@ -7,41 +7,51 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/AbscriptMover.hh
+/// @file src/protocols/abinitio/abscript/AbscriptMover.hh
 /// @author Justin Porter
 
-#ifndef INCLUDED_protocols_environment_AbscriptMover_hh
-#define INCLUDED_protocols_environment_AbscriptMover_hh
+#ifndef INCLUDED_protocols_abinitio_abscript_AbscriptMover_hh
+#define INCLUDED_protocols_abinitio_abscript_AbscriptMover_hh
 
 // Unit Headers
-#include <protocols/environment/movers/AbscriptMover.fwd.hh>
+#include <protocols/abinitio/abscript/AbscriptMover.fwd.hh>
 
 // Package headers
 #include <protocols/environment/ClaimingMover.hh>
-#include <protocols/environment/movers/StageID.hh>
-#include <protocols/environment/movers/AbscriptStageMover.hh>
-#include <protocols/environment/movers/StagePreparer.fwd.hh>
-
 #include <protocols/environment/claims/EnvClaim.fwd.hh>
+
+#include <protocols/abinitio/abscript/StageID.hh>
+#include <protocols/abinitio/abscript/AbscriptStageMover.hh>
+#include <protocols/abinitio/abscript/StagePreparer.fwd.hh>
 
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 
 // Project headers
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
+
+#include <core/pose/Pose.hh>
 
 // Utility Headers
 #include <utility/vector0.fwd.hh>
+#include <utility/tag/Tag.hh>
 
 // C++ Headers
 #include <set>
+#include <string>
 
 // ObjexxFCL Headers
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript {
 
 class AbscriptMover : public protocols::environment::ClaimingMover {
+	typedef environment::claims::EnvClaims EnvClaims;
+	typedef environment::ClaimingMoverOP ClaimingMoverOP;
+  typedef std::set<ClaimingMoverOP> MoverSet;
+  typedef std::map< StageID, MoverSet > IDMoverSetMap;
+
 
 public:
   AbscriptMover();
@@ -53,7 +63,7 @@ public:
   virtual std::string get_name() const;
 
   // the Abscript mover does not make any claims itself.
-  virtual claims::EnvClaims yield_claims( core::pose::Pose& );
+  virtual EnvClaims yield_claims( core::pose::Pose& );
 
   virtual void yield_submovers( std::set< ClaimingMoverOP >& ) const;
 
@@ -78,9 +88,6 @@ private:
 
   class StageTracker;
 
-  typedef std::set<ClaimingMoverOP> MoverSet;
-  typedef std::map< StageID, MoverSet > IDMoverSetMap;
-
   void add_default_frags( std::string const& small_frags, std::string const& large_frags );
 
   void parse_subtags( utility::vector0< utility::tag::TagPtr > const&,
@@ -100,7 +107,8 @@ private:
   ClaimingMoverOP closer_;
 }; // end AbscriptMover base class
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols
 
-#endif //INCLUDED_protocols_environment_AbscriptMover_hh
+#endif //INCLUDED_protocols_abinitio_abscript_AbscriptMover_hh

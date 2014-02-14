@@ -7,18 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/ConstraintPreparer.hh
+/// @file src/protocols/abinitio/abscript/ConstraintPreparer.hh
 /// @author Justin Porter
 
-#ifndef INCLUDED_protocols_environment_ConstraintPreparer_hh
-#define INCLUDED_protocols_environment_ConstraintPreparer_hh
+#ifndef INCLUDED_protocols_abinitio_abscript_ConstraintPreparer_hh
+#define INCLUDED_protocols_abinitio_abscript_ConstraintPreparer_hh
 
 // Unit Headers
-#include <protocols/environment/movers/ConstraintPreparer.fwd.hh>
+#include <protocols/abinitio/abscript/ConstraintPreparer.fwd.hh>
 
 // Package headers
 #include <protocols/environment/ClaimingMover.hh>
-#include <protocols/environment/movers/StagePreparer.hh>
+#include <protocols/abinitio/abscript/StagePreparer.hh>
 
 // Project headers
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -30,10 +30,12 @@
 // ObjexxFCL Headers
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript{
 
 class ConstraintPreparer : public StagePreparer {
-typedef StagePreparer Parent;
+	typedef StagePreparer Parent;
+	typedef environment::claims::EnvClaims EnvClaims;
 
 public:
   ConstraintPreparer();
@@ -78,7 +80,7 @@ public:
   void apply( core::pose::Pose& ) { assert(false); };
 
   virtual
-  claims::EnvClaims yield_claims( core::pose::Pose& ) { };
+  EnvClaims yield_claims( core::pose::Pose& );
 
 
 protected:
@@ -96,7 +98,8 @@ private:
 
 }; // end ConstraintPreparer base class
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols
 
-#endif //INCLUDED_protocols_environment_ConstraintPreparer_hh
+#endif //INCLUDED_protocols_abinitio_abscript_ConstraintPreparer_hh

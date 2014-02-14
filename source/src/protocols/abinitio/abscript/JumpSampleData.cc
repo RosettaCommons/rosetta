@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/JumpSampleData.cc
+/// @file src/protocols/abinitio/abscript/JumpSampleData.cc
 /// @author Justin Porter
 
 // Unit Headers
-#include <protocols/environment/movers/JumpSampleData.hh>
+#include <protocols/abinitio/abscript/JumpSampleData.hh>
 
 // Package headers
 
@@ -33,7 +33,8 @@ static basic::Tracer tr("protocols.environment.movers.JumpSampleData", basic::t_
 static std::string const TYPE_NAME = "JumpSampleData";
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript{
 
 basic::datacache::WriteableCacheableDataOP
 JumpSampleDataCreator::create_data( std::istream &in ) const {
@@ -96,5 +97,6 @@ std::string JumpSampleData::datatype() const {
 }
 
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols

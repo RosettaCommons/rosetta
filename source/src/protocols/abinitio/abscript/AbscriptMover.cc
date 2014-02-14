@@ -7,19 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/AbscriptMover.cc
+/// @file src/protocols/abinitio/abscript/AbscriptMover.cc
 /// @author Justin Porter
 
 // Unit Headers
-#include <protocols/environment/movers/AbscriptMover.hh>
+#include <protocols/abinitio/abscript/AbscriptMover.hh>
 
 // Package headers
-#include <protocols/environment/movers/AbscriptMoverCreator.hh>
-#include <protocols/environment/movers/FragmentCM.hh>
-#include <protocols/environment/movers/FragmentJumpCM.hh>
-#include <protocols/environment/movers/AbscriptStageMover.hh>
-#include <protocols/environment/movers/StagePreparer.hh>
-#include <protocols/environment/movers/AbscriptLoopCloserCM.hh>
+#include <protocols/abinitio/abscript/AbscriptMoverCreator.hh>
+#include <protocols/abinitio/abscript/FragmentCM.hh>
+#include <protocols/abinitio/abscript/FragmentJumpCM.hh>
+#include <protocols/abinitio/abscript/AbscriptStageMover.hh>
+#include <protocols/abinitio/abscript/StagePreparer.hh>
+#include <protocols/abinitio/abscript/AbscriptLoopCloserCM.hh>
 
 #include <protocols/environment/claims/EnvClaim.hh>
 
@@ -78,9 +78,12 @@
 static basic::Tracer tr("protocols.environment.movers.AbscriptMover", basic::t_info);
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript {
 
 using namespace core::environment;
+using namespace protocols::environment;
+using namespace protocols::environment::claims;
 
 // If the temperature needs to be altered, the obvious way to do it is through
 // a command line option, which could/will replace this. For some reason, though
@@ -479,8 +482,8 @@ std::map< core::Size, core::Size > AbscriptMover::calculate_iterations( core::po
   return ITERATIONS;
 }
 
-claims::EnvClaims AbscriptMover::yield_claims( core::pose::Pose& ) {
-  claims::EnvClaims claims; return claims;
+EnvClaims AbscriptMover::yield_claims( core::pose::Pose& ) {
+  EnvClaims claims; return claims;
 }
 
 void AbscriptMover::register_preparer( protocols::moves::MoverOP mover, StageIDs const& ids ){
@@ -562,5 +565,6 @@ void AbscriptMover::StageTracker::end_stage( core::pose::Pose& pose ){
   }
 }
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols

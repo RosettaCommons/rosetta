@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/FragmentCM.cc
+/// @file src/protocols/abinitio/abscript/FragmentCM.cc
 /// @author Justin Porter
 
 // Unit Headers
-#include <protocols/environment/movers/FragmentCM.hh>
+#include <protocols/abinitio/abscript/FragmentCM.hh>
 
 // Package headers
 #include <core/environment/DofPassport.hh>
@@ -40,9 +40,11 @@
 static basic::Tracer tr("protocols.environment.movers.FragmentCM", basic::t_info);
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript {
 
 using namespace core::environment;
+using namespace environment;
 
 FragmentCM::FragmentCM():
   ClaimingMover(),
@@ -118,5 +120,6 @@ std::string FragmentCM::get_name() const {
 }
 
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols

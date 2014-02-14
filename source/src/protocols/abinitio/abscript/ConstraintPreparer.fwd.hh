@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file AbscriptStageMover.fwd.hh
-/// @brief definition of the AbscriptStageMover class
-/// @author Justin Porter
+/// @file ConstraintPreparer.fwd.hh
+/// @brief definition of the ConstraintPreparer class
+/// @author
 
-#ifndef INCLUDED_protocols_environment_AbscriptStageMover_fwd_hh
-#define INCLUDED_protocols_environment_AbscriptStageMover_fwd_hh
+#ifndef INCLUDED_protocols_abinitio_abscript_ConstraintPreparer_fwd_hh
+#define INCLUDED_protocols_abinitio_abscript_ConstraintPreparer_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <boost/shared_ptr.hpp>
@@ -20,13 +20,15 @@
 // Package headers
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript{
 
-class AbscriptStageMover;
-typedef utility::pointer::owning_ptr< AbscriptStageMover > AbscriptStageMoverOP;
-typedef utility::pointer::owning_ptr< AbscriptStageMover const > AbscriptStageMoverCOP;
+class ConstraintPreparer;
+typedef utility::pointer::owning_ptr< ConstraintPreparer > ConstraintPreparerOP;
+typedef utility::pointer::owning_ptr< ConstraintPreparer const > ConstraintPreparerCOP;
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols
 
-#endif //INCLUDED_protocols_moves_AbscriptStageMover_fwd_HH
+#endif //INCLUDED_protocols_moves_ConstraintPreparer_fwd_HH

@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/AbscriptLoopCloserCM.cc
+/// @file src/protocols/abinitio/abscript/AbscriptLoopCloserCM.cc
 /// @author Justin Porter
 
 // Unit Headers
-#include <protocols/environment/movers/AbscriptLoopCloserCM.hh>
+#include <protocols/abinitio/abscript/AbscriptLoopCloserCM.hh>
 
 // Package headers
 #include <protocols/environment/claims/TorsionClaim.hh>
@@ -49,9 +49,11 @@
 static basic::Tracer tr("protocols.environment.movers.AbscriptLoopCloserCM", basic::t_info);
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript {
 
 using namespace core::environment;
+using namespace protocols::environment;
 
 AbscriptLoopCloserCM::AbscriptLoopCloserCM( core::fragment::FragSetCOP fragset,
                                             core::scoring::ScoreFunctionOP scorefxn ):
@@ -182,5 +184,6 @@ std::string AbscriptLoopCloserCM::get_name() const {
   return "AbscriptLoopCloserCM";
 }
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols

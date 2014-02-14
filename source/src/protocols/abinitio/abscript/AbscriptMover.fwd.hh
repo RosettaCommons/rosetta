@@ -11,8 +11,8 @@
 /// @brief definition of the AbscriptMover class
 /// @author Justin Porter
 
-#ifndef INCLUDED_protocols_environment_AbscriptMover_fwd_hh
-#define INCLUDED_protocols_environment_AbscriptMover_fwd_hh
+#ifndef INCLUDED_protocols_abinitio_abscript_AbscriptMover_fwd_hh
+#define INCLUDED_protocols_abinitio_abscript_AbscriptMover_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <boost/shared_ptr.hpp>
@@ -20,13 +20,15 @@
 // Package headers
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript{
 
 class AbscriptMover;
 typedef utility::pointer::owning_ptr< AbscriptMover > AbscriptMoverOP;
 typedef utility::pointer::owning_ptr< AbscriptMover const > AbscriptMoverCOP;
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols
 
 #endif //INCLUDED_protocols_moves_AbscriptMover_fwd_HH

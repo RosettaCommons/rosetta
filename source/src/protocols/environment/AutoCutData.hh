@@ -20,10 +20,11 @@
 // Package headers
 
 // Project headers
-#include <protocols/jumping/JumpSample.hh>
+#include <basic/datacache/WriteableCacheableData.hh>
+#include <core/types.hh>
 
 // Utility Headers
-#include <basic/datacache/WriteableCacheableData.hh>
+#include <utility/vector1.hh>
 
 // C++ Headers
 #include <set>

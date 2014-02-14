@@ -277,7 +277,7 @@
 #include <protocols/simple_moves/symmetry/SymPackRotamersMoverCreator.hh>
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMoverCreator.hh>
 
-#include <protocols/environment/movers/AbscriptMoverCreator.hh>
-#include <protocols/environment/movers/ConstraintPreparerCreator.hh>
-#include <protocols/environment/movers/FragmentJumpCMCreator.hh>
+#include <protocols/abinitio/abscript/AbscriptMoverCreator.hh>
+#include <protocols/abinitio/abscript/ConstraintPreparerCreator.hh>
+#include <protocols/abinitio/abscript/FragmentJumpCMCreator.hh>
 

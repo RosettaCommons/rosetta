@@ -7,26 +7,40 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file StagePreparer.fwd.hh
-/// @brief definition of the StagePreparer class
-/// @author
+/// @file src/protocols/abinitio/abscript/StageID.hh
+/// @author Justin Porter
 
-#ifndef INCLUDED_protocols_environment_StagePreparer_fwd_hh
-#define INCLUDED_protocols_environment_StagePreparer_fwd_hh
+#ifndef INCLUDED_protocols_abinitio_abscript_StageID_hh
+#define INCLUDED_protocols_abinitio_abscript_StageID_hh
 
-#include <utility/pointer/owning_ptr.hh>
-#include <boost/shared_ptr.hpp>
+// Unit Headers
 
 // Package headers
 
+// Project headers
+
+// Utility Headers
+#include <utility/vector1.fwd.hh>
+#include <core/types.hh>
+
+// C++ Headers
+
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript{
 
-class StagePreparer;
-typedef utility::pointer::owning_ptr< StagePreparer > StagePreparerOP;
-typedef utility::pointer::owning_ptr< StagePreparer const > StagePreparerCOP;
+enum StageID {
+  I = 1,
+  II,
+  IIIa, IIIb,
+  IVa, IVb,
+  END
+};
 
-} // environment
+typedef utility::vector1< StageID > StageIDs;
+
+} // abscript
+} // abinitio
 } // protocols
 
-#endif //INCLUDED_protocols_moves_StagePreparer_fwd_HH
+#endif //INCLUDED_protocols_abinitio_abscript_StageID_hh

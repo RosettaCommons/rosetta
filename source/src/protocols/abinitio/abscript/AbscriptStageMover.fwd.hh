@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file FragmentCM.fwd.hh
-/// @brief definition of the FragmentCM class
-/// @author
+/// @file AbscriptStageMover.fwd.hh
+/// @brief definition of the AbscriptStageMover class
+/// @author Justin Porter
 
-#ifndef INCLUDED_protocols_environment_FragmentCM_fwd_hh
-#define INCLUDED_protocols_environment_FragmentCM_fwd_hh
+#ifndef INCLUDED_protocols_abinitio_abscript_AbscriptStageMover_fwd_hh
+#define INCLUDED_protocols_abinitio_abscript_AbscriptStageMover_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <boost/shared_ptr.hpp>
@@ -20,13 +20,15 @@
 // Package headers
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript{
 
-class FragmentCM;
-typedef utility::pointer::owning_ptr< FragmentCM > FragmentCMOP;
-typedef utility::pointer::owning_ptr< FragmentCM const > FragmentCMCOP;
+class AbscriptStageMover;
+typedef utility::pointer::owning_ptr< AbscriptStageMover > AbscriptStageMoverOP;
+typedef utility::pointer::owning_ptr< AbscriptStageMover const > AbscriptStageMoverCOP;
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols
 
-#endif //INCLUDED_protocols_moves_FragmentCM_fwd_HH
+#endif //INCLUDED_protocols_moves_AbscriptStageMover_fwd_HH

@@ -7,16 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/ConstraintPreparer.cc
+/// @file src/protocols/abinitio/abscript/ConstraintPreparer.cc
 /// @author Justin Porter
 
 // Unit Headers
-#include <protocols/environment/movers/ConstraintPreparer.hh>
-#include <protocols/environment/movers/ConstraintPreparerCreator.hh>
+#include <protocols/abinitio/abscript/ConstraintPreparer.hh>
+#include <protocols/abinitio/abscript/ConstraintPreparerCreator.hh>
 
 // Package headers
 #include <core/environment/DofPassport.hh>
 #include <protocols/environment/DofUnlock.hh>
+
+#include <protocols/environment/claims/EnvClaim.hh>
 
 // Project headers
 #include <utility/tag/Tag.hh>
@@ -45,9 +47,11 @@
 static basic::Tracer tr("protocols.environment.movers.ConstraintPreparer", basic::t_info);
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript {
 
 using namespace core::environment;
+using namespace protocols::environment;
 
 // creator
 std::string
@@ -75,6 +79,12 @@ ConstraintPreparer::ConstraintPreparer():
   filename_(""),
   constraints_( NULL )
 {}
+
+claims::EnvClaims ConstraintPreparer::yield_claims( core::pose::Pose& ) {
+	claims::EnvClaims e;
+	return e;
+}
+
 
 void ConstraintPreparer::prepare( core::pose::Pose& pose, core::Real ){
   using namespace core::scoring::constraints;
@@ -132,9 +142,10 @@ void ConstraintPreparer::parse_my_tag( utility::tag::TagCOP const tag,
 
 }
 
-void ConstraintPreparer::load_constraints( core::pose::Pose const& pose ){
+void ConstraintPreparer::load_constraints( core::pose::Pose const& ){
   using namespace core::scoring::constraints;
 
+	//TODO: Finish?
 }
 
 void ConstraintPreparer::cst_file( std::string const& filename ){
@@ -171,5 +182,6 @@ std::string ConstraintPreparer::get_name() const {
 }
 
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols

@@ -297,8 +297,8 @@ static MoverRegistrator< simple_moves::symmetry::SymMinMoverCreator > reg_SymMin
 static MoverRegistrator< simple_moves::symmetry::SymPackRotamersMoverCreator > reg_SymPackRotamersMoverCreator;
 static MoverRegistrator< simple_moves::symmetry::SymRotamerTrialsMoverCreator > reg_SymRotamerTrialsMoverCreator;
 
-static MoverRegistrator< environment::AbscriptMoverCreator > reg_AbscriptMoverCreator;
-static MoverRegistrator< environment::ConstraintPreparerCreator > reg_ConstraintPreparerCreator;
-static MoverRegistrator< environment::FragmentJumpCMCreator > reg_FragmentJumpCMCreator;
+static MoverRegistrator< abinitio::abscript::AbscriptMoverCreator > reg_AbscriptMoverCreator;
+static MoverRegistrator< abinitio::abscript::ConstraintPreparerCreator > reg_ConstraintPreparerCreator;
+static MoverRegistrator< abinitio::abscript::FragmentJumpCMCreator > reg_FragmentJumpCMCreator;
 
 } //namespace protocols

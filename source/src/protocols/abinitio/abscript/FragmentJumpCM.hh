@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/FragmentJumpCM.hh
+/// @file src/protocols/abinitio/abscript/FragmentJumpCM.hh
 /// @author Justin Porter
 
-#ifndef INCLUDED_protocols_environment_FragmentJumpCM_hh
-#define INCLUDED_protocols_environment_FragmentJumpCM_hh
+#ifndef INCLUDED_protocols_abinitio_abscript_FragmentJumpCM_hh
+#define INCLUDED_protocols_abinitio_abscript_FragmentJumpCM_hh
 
 // Unit Headers
-#include <protocols/environment/movers/FragmentJumpCM.fwd.hh>
+#include <protocols/abinitio/abscript/FragmentJumpCM.fwd.hh>
 
 // Package headers
-#include <protocols/environment/movers/FragmentCM.hh>
+#include <protocols/abinitio/abscript/FragmentCM.hh>
 
 // Project headers
 #include <protocols/jumping/JumpSample.hh>
@@ -29,10 +29,13 @@
 // ObjexxFCL Headers
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript {
 
 class FragmentJumpCM : public FragmentCM {
   typedef FragmentCM Parent;
+	typedef environment::claims::EnvClaims EnvClaims;
+
 public:
   FragmentJumpCM();
 
@@ -44,7 +47,7 @@ public:
   ~FragmentJumpCM() {};
 
   virtual
-  claims::EnvClaims yield_claims( core::pose::Pose& );
+  EnvClaims yield_claims( core::pose::Pose& );
 
   virtual std::string get_name() const;
 
@@ -80,7 +83,7 @@ protected:
 
   jumping::JumpSample setup_fragments();
 
-  claims::EnvClaims build_claims( jumping::JumpSample const& );
+  EnvClaims build_claims( jumping::JumpSample const& );
 
 private:
   jumping::BaseJumpSetupOP jump_def_;
@@ -91,7 +94,8 @@ private:
 
 }; // end FragmentJumpCM base class
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols
 
-#endif //INCLUDED_protocols_environment_FragmentJumpCM_hh
+#endif //INCLUDED_protocols_abinitio_abscript_FragmentJumpCM_hh

@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/FragmentJumpCM.cc
+/// @file src/protocols/abinitio/abscript/FragmentJumpCM.cc
 /// @author Justin Porter
 
 // Unit Headers
-#include <protocols/environment/movers/FragmentJumpCM.hh>
+#include <protocols/abinitio/abscript/FragmentJumpCM.hh>
 
 // Package headers
 #include <core/environment/DofPassport.hh>
@@ -21,8 +21,8 @@
 #include <protocols/environment/claims/JumpClaim.hh>
 #include <protocols/environment/claims/TorsionClaim.hh>
 
-#include <protocols/environment/movers/JumpSampleData.hh>
-#include <protocols/environment/movers/FragmentJumpCMCreator.hh>
+#include <protocols/abinitio/abscript/JumpSampleData.hh>
+#include <protocols/abinitio/abscript/FragmentJumpCMCreator.hh>
 
 // Project headers
 #include <basic/datacache/BasicDataCache.hh>
@@ -66,9 +66,11 @@
 static basic::Tracer tr("protocols.environment.movers.FragmentJumpCM", basic::t_info);
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript {
 
 using namespace core::environment;
+using namespace protocols::environment;
 
 // creator
 std::string
@@ -93,7 +95,9 @@ FragmentJumpCM::FragmentJumpCM():
 
 FragmentJumpCM::FragmentJumpCM( std::string const& topol_filename,
                                 std::string const& label,
-                                std::string const& moverkey ) {
+                                std::string const& moverkey ) :
+	moverkey_( moverkey )
+{
   set_topology( topol_filename );
   Parent( mover(), label );
 }
@@ -333,5 +337,6 @@ moves::MoverOP FragmentJumpCM::clone() const{
   return new FragmentJumpCM( *this );
 }
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols

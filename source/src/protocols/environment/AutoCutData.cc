@@ -18,6 +18,7 @@
 // Project headers
 
 // Utility Headers
+#include <utility/excn/Exceptions.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>

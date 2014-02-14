@@ -7,19 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/AbscriptStageMover.hh
+/// @file src/protocols/abinitio/abscript/AbscriptStageMover.hh
 /// @author Justin Porter
 
-#ifndef INCLUDED_protocols_environment_AbscriptStageMover_hh
-#define INCLUDED_protocols_environment_AbscriptStageMover_hh
+#ifndef INCLUDED_protocols_abinitio_abscript_AbscriptStageMover_hh
+#define INCLUDED_protocols_abinitio_abscript_AbscriptStageMover_hh
 
 // Unit Headers
-#include <protocols/environment/movers/AbscriptStageMover.fwd.hh>
+#include <protocols/abinitio/abscript/AbscriptStageMover.fwd.hh>
 
 // Package headers
-#include <protocols/environment/movers/StageID.hh>
-#include <protocols/environment/movers/AbscriptMover.hh>
-#include <protocols/environment/movers/StagePreparer.fwd.hh>
+#include <protocols/abinitio/abscript/StageID.hh>
+#include <protocols/abinitio/abscript/AbscriptMover.hh>
+#include <protocols/abinitio/abscript/StagePreparer.fwd.hh>
 
 #include <protocols/environment/ClaimingMover.hh>
 
@@ -28,7 +28,7 @@
 #include <protocols/moves/MoverContainer.fwd.hh>
 
 // Project headers
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
 
@@ -41,9 +41,11 @@
 // ObjexxFCL Headers
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript{
 
 class AbscriptStageMover : public moves::Mover {
+	typedef environment::ClaimingMoverOP ClaimingMoverOP;
   typedef std::set< ClaimingMoverOP > MoverSet;
   typedef std::set< StagePreparerOP > PreparerSet;
 
@@ -99,7 +101,8 @@ private:
   constraints_additional::MaxSeqSepConstraintSetOP constraints_;
 };
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols
 
-#endif //INCLUDED_protocols_environment_AbscriptStageMover_hh
+#endif //INCLUDED_protocols_abinitio_abscript_AbscriptStageMover_hh

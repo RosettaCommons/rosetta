@@ -39,7 +39,7 @@ sources = {
 		"Templates",
 		"vs_test",
 	],
-	"protocols/environment/movers": [
+	"protocols/abinitio/abscript": [
 		"AbscriptLoopCloserCM",
 	        "AbscriptMover",
 		"AbscriptStageMover",

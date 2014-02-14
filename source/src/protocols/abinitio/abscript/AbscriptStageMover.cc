@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/environment/AbscriptStageMover.cc
+/// @file src/protocols/abinitio/abscript/AbscriptStageMover.cc
 /// @author Justin Porter
 
 // Unit Headers
-#include <protocols/environment/movers/AbscriptStageMover.hh>
+#include <protocols/abinitio/abscript/AbscriptStageMover.hh>
 
 // Package headers
-#include <protocols/environment/movers/StagePreparer.hh>
+#include <protocols/abinitio/abscript/StagePreparer.hh>
 
 // Project headers
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -50,7 +50,8 @@
 static basic::Tracer tr("protocols.environment.movers.AbscriptStageMover", basic::t_info);
 
 namespace protocols {
-namespace environment {
+namespace abinitio {
+namespace abscript{
 
 using namespace core::environment;
 
@@ -214,5 +215,6 @@ void AbscriptStageMover::set_chainbreak_ramping( core::Real const slope, core::R
 
 
 
-} // environment
+} // abscript
+} // abinitio
 } // protocols
