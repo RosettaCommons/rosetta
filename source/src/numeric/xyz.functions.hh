@@ -258,6 +258,12 @@ angle_radians(
 	return angle;
 }
 
+// PyRosetta, creating concreate function for template one
+inline double angle_radians_double(
+	xyzVector< double > const & p1,
+	xyzVector< double > const & p2,
+	xyzVector< double > const & p3) { return angle_radians(p1, p2, p3); }
+
 
 /// @brief Plane angle in degrees: angle value returned
 /// @note  Given three positions in a chain ( p1, p2, p3 ), calculates the plane
@@ -276,6 +282,13 @@ angle_degrees(
 	angle_radians( p1, p2, p3, angle );
 	return conversions::degrees(angle);
 }
+
+// PyRosetta, creating concreate function for template one
+inline double angle_degrees_double(
+	xyzVector< double > const & p1,
+	xyzVector< double > const & p2,
+	xyzVector< double > const & p3) { return angle_degrees(p1, p2, p3); }
+
 
 /// @brief Angle between two vectors in radians
 /// @note  Given two vectors (p1->p2 & p3->p4),
@@ -298,6 +311,14 @@ angle_radians(
 	return angle;
 }
 
+// PyRosetta, creating concreate function for template one
+inline double angle_radians_double(
+	xyzVector< double > const & p1,
+	xyzVector< double > const & p2,
+	xyzVector< double > const & p3,
+	xyzVector< double > const & p4) { return angle_radians(p1, p2, p3, p4); }
+
+
 /// @brief Angle between two vectors in radians
 /// @note  Given two vectors (p1->p2 & p3->p4),
 ///	calculate the angle between them
@@ -315,6 +336,14 @@ angle_degrees(
 	T angle = angle_radians( p1, p2, p3, p4 );
 	return conversions::degrees(angle);
 }
+
+// PyRosetta, creating concreate function for template one
+inline double angle_degrees_double(
+	xyzVector< double > const & p1,
+	xyzVector< double > const & p2,
+	xyzVector< double > const & p3,
+	xyzVector< double > const & p4) { return angle_degrees(p1, p2, p3, p4); }
+
 
 /// @brief Dihedral (torsion) angle in radians: angle value passed
 /// @note  Given four positions in a chain ( p1, p2, p3, p4 ), calculates the dihedral
