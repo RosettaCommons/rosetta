@@ -123,6 +123,9 @@ public:
 	/// @brief Returns the 2D vector1 of Real values representing this profile.
 	utility::vector1< utility::vector1< Real > > const & profile() const;
 
+	/// @brief Returns the 2D vector1 of Real values of the probabilties of each aa.
+		utility::vector1< utility::vector1< Real > > const & occurrence_data() const;
+
 	/// @brief Sets the 2D vector1 of Real values representing this profile.
 	void profile(
 		utility::vector1< utility::vector1< Real > > const & new_profile
@@ -148,9 +151,16 @@ public:
 	utility::vector1< Real > const &
 	prof_row( Size pos ) const;
 
+	utility::vector1< Real > const &
+	probability_row( Size pos ) const;
+
 	/// @brief Sets the 1D vector1 of Real values representing this profile at pos X.
 	void prof_row(
 		utility::vector1< Real > const & new_prof_row, core::Size pos 
+	);
+
+	void probabilty_row(
+			utility::vector1< Real > const & new_prob_row, core::Size pos
 	);
 
 	Size size() const { 
@@ -203,6 +213,9 @@ private:
 	bool check_internals_() const;
 	utility::vector1< std::string > alphabet_;
 	utility::vector1< utility::vector1< Real > > profile_;
+	utility::vector1< utility::vector1< Real > > occurrence_data_;//This matrix holds the the % of occurrences of an amino acid in the data base used to construct the pssm matrix.
+																// This data is genrated by psi-blast program as an additional matrix along side the pssm matrix
+
 
 	/// @brief temp used to convert arbitrary scores to/from probabilities
 	core::Real temp_;

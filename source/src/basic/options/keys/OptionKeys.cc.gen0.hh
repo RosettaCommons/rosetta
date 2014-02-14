@@ -207,6 +207,7 @@ namespace out { namespace file { BooleanOptionKey const pdb_parents( "out:file:p
 namespace out { namespace file { BooleanOptionKey const per_chain_renumbering( "out:file:per_chain_renumbering" );  } }
 namespace out { namespace file { BooleanOptionKey const output_torsions( "out:file:output_torsions" );  } }
 namespace out { namespace file { BooleanOptionKey const pdb_comments( "out:file:pdb_comments" );  } }
+namespace out { namespace file { BooleanOptionKey const occurrence_data( "out:file:use_occurrence_data" );  } }
 namespace out { namespace file { BooleanOptionKey const force_nonideal_structure( "out:file:force_nonideal_structure" );  } }
 namespace out { namespace file { BooleanOptionKey const write_pdb_link_records( "out:file:write_pdb_link_records" );  } }
 namespace out { namespace file { BooleanOptionKey const dont_rewrite_dunbrack_database( "out:file:dont_rewrite_dunbrack_database" );  } }

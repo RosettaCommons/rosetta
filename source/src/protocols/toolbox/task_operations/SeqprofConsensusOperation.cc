@@ -46,7 +46,8 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 #include <string>
-
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <utility/vector0.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
@@ -133,6 +134,9 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 				 core::Size const seqpos( seqprof_cst->seqpos() );
 				 SequenceProfileCOP seqprof_pos( seqprof_cst->sequence_profile() );
 				 seqprof->prof_row( seqprof_pos->profile()[ seqpos ], seqpos );
+				 if (basic::options::option[ basic::options::OptionKeys::out::file::occurrence_data ].value()){
+				 seqprof->probabilty_row( seqprof_pos->occurrence_data()[ seqpos ], seqpos );
+				 }
 		     cst_num++;
 		   }
 		 }
@@ -152,7 +156,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
   }
 	tr<< "the size of sequence profile is: "<<seqprof->profile().size() - 1 <<std::endl;
 	core::Size last_res (asymmetric_unit_res <= seqprof->profile().size() ? pose.total_residue() : seqprof->profile().size() - 1 /*seqprof has size n+1 compared to its real contents; heaven knows why...*/ );
-	tr<< "FOR DEBUGGING!: last_res="<<last_res<<std::endl;
+	tr.Debug<< "FOR DEBUGGING!: last_res="<<last_res<<std::endl;
 /// following paragraph determines where PIDO and RestrictToAlignedInterface are defined.
 /// These are used in the following loop to restrict conservation profiles differently
 	utility::vector1< core::Size > designable_interface, designable_aligned_segments;
@@ -183,11 +187,13 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		else if( restrict_to_aligned_segments()() != NULL && std::find( designable_aligned_segments.begin(), designable_aligned_segments.end(), i ) != designable_aligned_segments.end() )
 			position_min_prob = conservation_cutoff_aligned_segments();
 
-		tr<<"At position "<<i<<"min_probability is: "<<position_min_prob<<std::endl;
+		tr<<"At position "<<i<<", min_probability is: "<<position_min_prob<<std::endl;
 
 		if( !pose.residue_type( i ).is_protein() ) continue;
 		//std::cout << "SCO at pos " << i << " allows the following residues: ";
 		utility::vector1< Real > const & pos_profile( (seqprof->profile())[ i - resi_begin + 1 ] );
+		//actual aa proballities and not pssm scores
+
 		utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, false );
 		runtime_assert( pose.residue_type( i ).aa() <= (int) pos_profile.size() );
 		core::Real current_prob( pos_profile[ pose.residue_type( i ).aa() ] );
@@ -215,6 +221,58 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 
 	} //loop over all residues for which profile information exists
 
+	if (basic::options::option[ basic::options::OptionKeys::out::file::occurrence_data ].value()){
+		for( core::Size i = resi_begin; i <= resi_end; ++i){
+			//for all non interface reisdues we allow only reidues that acctualy appear in native proteins.
+			if( protein_interface_design()() != NULL && std::find( designable_interface.begin(), designable_interface.end(), i ) != designable_interface.end() ){
+				tr <<"Residue "<<i<<" is in the interface, not applying occurrence data"<<std::endl;
+				continue;
+			}
+			utility::vector1< Real > const & pos_probability( (seqprof->occurrence_data())[ i - resi_begin + 1 ] );
+			utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, false );
+
+			//	tr<<"The size for the probabilty vector is:"<<pos_probability.size()<<std::endl;
+
+			if( !pose.residue_type( i ).is_protein() ) continue;
+			runtime_assert( pose.residue_type( i ).aa() <= (int) pos_probability.size() );
+			core::Real current_prob( pos_probability[ pose.residue_type( i ).aa() ] );
+			bool has_probabilty=false;
+			for( core::Size aa = core::chemical::aa_ala; aa <= core::chemical::num_canonical_aas; ++aa){
+				if( pos_probability[ aa ] >0)
+					has_probabilty=true;
+			}
+			if (has_probabilty){
+			for( core::Size aa = core::chemical::aa_ala; aa <= core::chemical::num_canonical_aas; ++aa){
+				core::Real prob( pos_probability[ aa ] );
+				if( prob >0 ){
+					keep_aas[ aa ] = true;
+				}
+				if( keep_aas[ aa ] )
+					tr<<core::chemical::oneletter_code_from_aa( static_cast< core::chemical::AA >( aa ) );
+			}
+			}
+			else {//if profile doesn't have probability data we revert to using pssm data
+				core::Real position_min_prob = min_aa_probability_;
+				if( restrict_to_aligned_segments()() != NULL && std::find( designable_aligned_segments.begin(), designable_aligned_segments.end(), i ) != designable_aligned_segments.end() )
+					position_min_prob = conservation_cutoff_aligned_segments();
+				utility::vector1< Real > const & pos_profile( (seqprof->profile())[ i - resi_begin + 1 ] );
+
+				for( core::Size aa = core::chemical::aa_ala; aa <= core::chemical::num_canonical_aas; ++aa){
+					core::Real prob( pos_profile[ aa ] );
+					if( prob >= position_min_prob  ){
+						keep_aas[ aa ] = true;
+					}
+					if( keep_aas[ aa ] )
+						tr<<core::chemical::oneletter_code_from_aa( static_cast< core::chemical::AA >( aa ) );
+				}
+			}
+			tr<<std::endl;
+			//std::cout << " native " << pose.residue_type(i).aa() << " prob=" << native_prob << "." << std::endl;
+
+			task.nonconst_residue_task(i).restrict_absent_canonical_aas( keep_aas );
+
+		} //loop over all residues for which profile information exists
+	}
 	bool prot_res_without_profile_information_exist(false);
 	for( core::Size i = last_res + 1; i <= asymmetric_unit_res; ++i){
 		task.nonconst_residue_task(i).restrict_to_repacking();

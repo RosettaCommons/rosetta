@@ -35,7 +35,8 @@
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <ObjexxFCL/format.hh>
-
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 namespace core {
 namespace sequence {
@@ -177,7 +178,7 @@ void SequenceProfile::read_from_file(
 	std::string line;
 
 	tr.Debug << "reading from " << fn << std::endl;
-
+	//tr << "reading from " << fn << std::endl;
 	// read in two header lines
 	getline( input, line );
 	getline( input, line );
@@ -208,10 +209,14 @@ void SequenceProfile::read_from_file(
 		string aa;
 
 		line_stream >> pos >> aa;
+	//	tr <<"pos: "<<pos<<"aa: "<<aa<<std::endl;
 		if ( line_stream.fail() ) continue;
 
 		utility::vector1< Real > prof_row;
+		utility::vector1< Real > probability_row; //will hold the probabilty vector, gideonla 120214
 		prof_row.resize( order.size() );
+		probability_row.resize( order.size() );
+
 
 		Real score;
 		line_stream >> score;
@@ -222,7 +227,27 @@ void SequenceProfile::read_from_file(
 			++index;
 		}
 
+
+		//using the same while loop to read % matrix in the pssm file. All the numbers after index 20 are stored in the % matrix. I am doing it this way
+		// So I don't have to change anything in the existing code , gideonla 120214
+		if (basic::options::option[ basic::options::OptionKeys::out::file::occurrence_data ].value()){
+		index=1;
+		while ( !line_stream.fail() && index <= order.size() ) {
+			//tr <<"Percentage :"<<score<<std::endl;
+			probability_row[ order[index] ] = score;
+			line_stream >> score;
+			++index;
+		}// end of the while loop
+		if (index<order.size()){//if the probability matrix is missing or corrupt we fill the the % matrix with zeros
+			for (core::Size i(1), end(order.size()); i <= end; ++i) {
+				probability_row[order[i]] = 0;
+			}
+		}
+		occurrence_data_.push_back( probability_row );
+		}
+
 		profile_.push_back( prof_row );
+
 
 		seq += aa;
 	} // while( getline( input, line ) )
@@ -236,7 +261,10 @@ void SequenceProfile::read_from_file(
 		<< profile_.front().size() << "." << std::endl;
 	sequence( seq );
 	id( std::string(fn) );
+	//tr<<" the size of profile_ is: "<<profile_.size()<<" and the size of occurrence_data_ is: "<<occurrence_data_.size()<<std::endl;
 } // read_from_file
+
+
 
 void SequenceProfile::generate_from_sequence( Sequence const & seq, std::string matrix ) {
 	MatrixScoringScheme mat;
@@ -258,6 +286,11 @@ void SequenceProfile::generate_from_sequence( Sequence const & seq, std::string 
 utility::vector1< utility::vector1< Real > > const &
 SequenceProfile::profile() const {
 	return profile_;
+}
+
+utility::vector1< utility::vector1< Real > > const &
+SequenceProfile::occurrence_data() const {
+	return occurrence_data_;
 }
 
 /// @brief Multiply all profile weights by factor
@@ -311,6 +344,12 @@ void SequenceProfile::prof_row( utility::vector1< Real > const & new_prof_row, c
 	profile_[pos] = new_prof_row;
 }
 
+void SequenceProfile::probabilty_row( utility::vector1< Real > const & new_prob_row, core::Size pos ) {
+	if( occurrence_data_.size() <= pos )
+		occurrence_data_.resize(pos+1);
+	occurrence_data_[pos] = new_prob_row;
+}
+
 void SequenceProfile::insert_char(
 	core::Size pos,
 	char new_char
@@ -362,6 +401,13 @@ utility::vector1< Real > const &
 SequenceProfile::prof_row( Size pos ) const {
 	runtime_assert( pos <= profile_.size() );
 	return profile_[ pos ];
+}
+
+/// @brief Returns the vector1 of values at this position.
+utility::vector1< Real > const &
+SequenceProfile::probability_row( Size pos ) const {
+	runtime_assert( pos <= occurrence_data_.size() );
+	return occurrence_data_[ pos ];
 }
 
 void SequenceProfile::scores_to_probs_(

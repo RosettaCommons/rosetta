@@ -18,12 +18,10 @@
 #define foreach BOOST_FOREACH
 // Package headers
 #include <basic/Tracer.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/option_macros.hh>
 #include <core/pose/util.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
@@ -111,6 +109,8 @@ SpliceSegment::read_profile( string const file_name, string const segment_name )
 	utility::file::FileName const fname( file_name );
 	//TR<<"reading sequence profile from "<<file_name<<std::endl;
 	new_seqprof->read_from_file( fname );
+	//TR<< "SpliceSegmentsSeqProf:"<< new_seqprof->prof_row(1)<<std::endl;
+	//TR<< "SpliceSegmentspprobabilty:"<< new_seqprof->probability_row(1)<<std::endl;
 	sequence_profile_.insert( pair< string, SequenceProfileOP >( segment_name, new_seqprof ) );
 }
 
@@ -151,9 +151,14 @@ concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles, util
 			//TR<<"The sequence profile row for this residue is: "<<prof->prof_row(pos)<<std::endl;
 		
 			concatenated_profile->prof_row( prof->prof_row( pos ), current_profile_size );
-		}
+			if (basic::options::option[ basic::options::OptionKeys::out::file::occurrence_data ].value()){
+				//this option is by default false
+				concatenated_profile->probabilty_row( prof->probability_row( pos ), current_profile_size );
+			}
+
+		}//for
 		++current_segment_name;
-	}
+	}//foreach
 	TR<<"concatenated "<<profiles.size()<<" profiles with a total length of "<<current_profile_size<<std::endl;
 	return concatenated_profile;
 }

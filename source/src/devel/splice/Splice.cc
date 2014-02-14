@@ -103,12 +103,10 @@
 #include <core/scoring/Energies.hh>
 #include <numeric/xyz.functions.hh>
 //////////////////////////////////////////////////
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/option_macros.hh>
 #include <core/pose/util.hh>
 ///////////////////////////////////////////////////
 #include <fstream>
@@ -980,8 +978,6 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 						//	TR<<"pssm file:"<<profile_name_file_name[ 2 ]<<",segment name:"<<profile_name_file_name[ 1 ]<<std::endl;
 
 						splice_segment->read_profile( profile_name_file_name[ 2 ], profile_name_file_name[ 1 ] );
-
-
 					}
 
 					splice_segment->read_pdb_profile( pdb_profile_match );
@@ -1561,7 +1557,8 @@ Splice::add_sequence_constraints( core::pose::Pose & pose){
 		if (pose.conformation().num_chains() == 1){//If pose has only one chain (no ligand) than all residues are weighted the same
 			for( core::Size seqpos = pose.conformation().chain_begin( 1 ); seqpos <= pose.conformation().chain_end( 1 ); ++seqpos ) {
 				//TR<<"Now adding constraint to aa: "<<seqpos<<pose.aa(seqpos)<<std::endl;
-				TR<<"The sequence profile row for that residue is: "<<seqprof->prof_row(seqpos)<<std::endl;
+				//TR<<"The sequence profile row for position "<<seqpos<<" is: "<<seqprof->prof_row(seqpos)<<std::endl;
+				//TR<<"The probabilty row for position "<<seqpos<<"is: "<<seqprof->probability_row(seqpos)<<std::endl;
 				SequenceProfileConstraintOP spc( new SequenceProfileConstraint( pose, seqpos, seqprof ) );
 				pose.add_constraint( spc );
 			}
@@ -1717,7 +1714,7 @@ Splice::add_dihedral_constraints( core::pose::Pose & pose, core::pose::Pose cons
 	}
 	core::Real const score_weight( scorefxn()->get_weight( core::scoring::dihedral_constraint ) );
 	TR<<"dihedral_constraint weight is set to "<<score_weight<<std::endl;
-	//scorefxn()->show(pose);
+	scorefxn()->show(pose);
 	//pose.dump_pdb("at_end_of_dihedral_const.pdb");
 }
 

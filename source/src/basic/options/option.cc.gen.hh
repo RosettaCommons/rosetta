@@ -212,6 +212,7 @@ option.add( basic::options::OptionKeys::out::file::pdb_parents, "If the pose con
 option.add( basic::options::OptionKeys::out::file::per_chain_renumbering, "When used in conjunction with renumber_pdb, restarts residue numbering at each chain." ).def(false);
 option.add( basic::options::OptionKeys::out::file::output_torsions, "Output phi, psi, and omega torsions in the PDB output if the pose is ideal." ).def(false);
 option.add( basic::options::OptionKeys::out::file::pdb_comments, "If the pose contains any comment print it as a COMMENT in the pdb file." ).def(false);
+option.add( basic::options::OptionKeys::out::file::occurrence_data, "Use the occurrence data from the pssm file in addition to the pssm data  " ).def(false);
 option.add( basic::options::OptionKeys::out::file::force_nonideal_structure, "Force ResidueConformationFeatures to treat the structure as nonideal.  If you know all your structures are non-ideal this decreases pose output time" ).def(true);
 option.add( basic::options::OptionKeys::out::file::write_pdb_link_records, "Sets whether or not the LINK records in PDB files are written.  The default value is false." ).shortd( "Write LINK records?" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::out::file::dont_rewrite_dunbrack_database, "Disables the default behavior of rewriting the Dunrack library in binary format if a binary version is not found" );
