@@ -45,6 +45,12 @@ namespace gasteiger {
 
 static basic::Tracer TR("core.chemical.gasteiger.GasteigerAtomTypeSet");
 
+void
+PossibleAtomTypesForAtom::gasteiger_atom_type_set( GasteigerAtomTypeSetCOP GASTEIGER_ATOM_TYPE_SET ) {
+	assert( GASTEIGER_ATOM_TYPE_SET );
+	gasteiger_atom_type_set_ = GASTEIGER_ATOM_TYPE_SET;
+}
+
 /// @brief store the atomic environment for each atom type in a map for fast lookup when
 /// determining atom types
 std::map< std::string, PossibleAtomTypesForAtom >

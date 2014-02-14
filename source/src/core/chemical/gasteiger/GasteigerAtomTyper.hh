@@ -135,10 +135,8 @@ public:
 //  //! @return the class name
 //  const std::string &GetClassIdentifier() const;
 
-  void gasteiger_atom_type_set( GasteigerAtomTypeSetCOP GASTEIGER_ATOM_TYPE_SET ) {
-	  assert( GASTEIGER_ATOM_TYPE_SET );
-	  gasteiger_atom_type_set_ = GASTEIGER_ATOM_TYPE_SET;
-  }
+  void gasteiger_atom_type_set( GasteigerAtomTypeSetCOP GASTEIGER_ATOM_TYPE_SET );
+
   //! @brief tell whether a particular hybrid orbital type is possible given what we know about this atom
   //! @param HYBRID the type of hybrid orbital
   //! @return true iff there is a possible atom type for that hybrid orbital

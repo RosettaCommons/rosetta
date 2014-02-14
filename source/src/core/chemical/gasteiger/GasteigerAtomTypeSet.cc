@@ -40,6 +40,7 @@ GasteigerAtomTypeSet::GasteigerAtomTypeSet( ElementSetCAP element_set ):
 	{}
 
 GasteigerAtomTypeSet::GasteigerAtomTypeSet( GasteigerAtomTypeSet const & other ):
+			utility::pointer::ReferenceCount(),
 			element_set_( other.element_set_ ),
 			atom_type_index_( other.atom_type_index_ ),
 			atom_types_( other.atom_types_ )
