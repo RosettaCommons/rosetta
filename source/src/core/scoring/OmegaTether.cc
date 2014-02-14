@@ -118,7 +118,7 @@ OmegaTether::eval_omega_score_residue(
 	Real const psi_angle
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)));
 	Real const omega_angle
-		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(3 + (rsd.has("CM") ? 1 : 0) ))); //Use backbone torsion angle 4 for omega if this is a beta-amino acid.  Test for this by looking for a CM atom.
+		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(3 + ((rsd.has("CM") && rsd.mainchain_torsions().size()==4) ? 1 : 0) ))); //Use backbone torsion angle 4 for omega if this is a beta-amino acid.  Test for this by looking for a CM atom AND by checking the size of the mainchain_torsions vector (since methylated lysine has a CM).
 
 	if ( rsd.is_upper_terminus() || rsd.is_virtual_residue() ) { // begin or end of chain
 		score = 0.0;

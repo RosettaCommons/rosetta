@@ -307,8 +307,8 @@ int main( int argc, char * argv [] ) {
 
 		kinmover->apply(temppose);
 
-		betapeptide_setomega(temppose, 7, 100.0);
-		temppose.update_residue_neighbors();
+		//betapeptide_setomega(temppose, 7, 100.0);
+		//temppose.update_residue_neighbors();
 
 		char outfilename [256];
 		sprintf(outfilename, "out_%04lu.pdb", i);

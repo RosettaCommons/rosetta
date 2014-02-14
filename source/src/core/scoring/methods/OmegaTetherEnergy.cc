@@ -124,12 +124,12 @@ OmegaTetherEnergy::eval_residue_dof_derivative(
 	}
 
 	Real deriv(0.0);
-	if ( tor_id.valid() && tor_id.type() == id::BB && tor_id.torsion() <= (rsd.has("CM") ? 4 : 3)  && rsd.is_protein() ) {
+	if ( tor_id.valid() && tor_id.type() == id::BB && tor_id.torsion() <= ((rsd.has("CM") && rsd.mainchain_torsions().size()==4) ? 4 : 3)  && rsd.is_protein() ) {
 		Real omega_score, dscore_domega, dscore_dphi, dscore_dpsi;
 		potential_.eval_omega_score_residue( rsd, omega_score, dscore_domega, dscore_dphi, dscore_dpsi );
 		if (tor_id.torsion() == 1) deriv = dscore_dphi;
 		if (tor_id.torsion() == 2) deriv = dscore_dpsi;
-		if ((rsd.has("CM") && tor_id.torsion() == 4) || tor_id.torsion() == 3) deriv = dscore_domega; //If this is tor 3, or if this is a beta-amino acid residue and this is tor 4, store the derivative WRT omega.
+		if ((rsd.has("CM") && rsd.mainchain_torsions().size()==4 && tor_id.torsion() == 4) || tor_id.torsion() == 3) deriv = dscore_domega; //If this is tor 3, or if this is a beta-amino acid residue and this is tor 4, store the derivative WRT omega.
 	}
 	return numeric::conversions::degrees( weights[ omega ] * deriv );
 }
