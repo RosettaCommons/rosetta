@@ -649,7 +649,7 @@ StepWiseRNA_Modeler::setup_root_based_on_full_model_info( pose::Pose & pose, Ste
 	}
 
 	FoldTree f = pose.fold_tree();
-	if ( new_root == f.root() ) return;
+	if ( static_cast<int>(new_root) == f.root() ) return;
 	f.reorder( new_root );
 	pose.fold_tree( f );
 }

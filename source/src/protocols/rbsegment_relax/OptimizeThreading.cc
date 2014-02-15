@@ -9,7 +9,7 @@
 
 /// @file
 /// @brief protocols for folding into density
-/// @detailed
+/// @details
 /// @author Frank DiMaio
 
 #include <protocols/rbsegment_relax/OptimizeThreading.hh>
@@ -199,16 +199,16 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 			for (core::Size seg_i = 1; seg_i<=segments.size(); ++seg_i ) {
 				utility::vector1 < RBResidueRange > ncs_segments ( 1, segments[seg_i] );
 				if (ncs) {
-					for (int j=1; j<=ncs->ngroups(); ++j ) {
+					for (core::uint j = 1; j <= ncs->ngroups(); ++j ) {
 						core::Size remap_start = ncs->get_equiv( j, segments[seg_i].start() );
 						core::Size remap_stop = ncs->get_equiv( j, segments[seg_i].end() );
-						for (int k=segments[seg_i].start(); k<=segments[seg_i].end() && remap_start==0; ++k)
+						for (core::uint k = segments[seg_i].start(); k <= segments[seg_i].end() && remap_start == 0; ++k)
 							remap_start = ncs->get_equiv( j,k );
 						if (remap_start==0) continue;  // undefined
-						for (int k=segments[seg_i].end(); k>=segments[seg_i].start() && remap_stop==0; --k)
+						for (core::uint k = segments[seg_i].end(); k >= segments[seg_i].start() && remap_stop == 0; --k)
 							remap_stop = ncs->get_equiv( j,k );
 						//TR.Debug << "NCS: Add segment: " << remap_start << " , " << remap_stop << std::endl;
-						ncs_segments.push_back( RBResidueRange(remap_start,remap_stop) );
+						ncs_segments.push_back( RBResidueRange(remap_start, remap_stop) );
 					}
 				}
 				sshift.set_segment( RBSegment(ncs_segments) );
@@ -238,11 +238,16 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 			{
 				utility::vector1 < RBResidueRange > ncs_segments ( 1, segments[bestSeg] );
 				if (ncs) {
-					for (int j=1; j<=ncs->ngroups(); ++j ) {
-						core::Size remap_start = ncs->get_equiv( j, segments[bestSeg].start() ), remap_stop = ncs->get_equiv( j, segments[bestSeg].end() );
-						for (int k=segments[bestSeg].start(); k<=segments[bestSeg].end() && remap_start==0; ++k) remap_start = ncs->get_equiv( j,k );
+					for (core::uint j=1; j <= ncs->ngroups(); ++j ) {
+						core::Size remap_start = ncs->get_equiv( j, segments[bestSeg].start() ),
+								remap_stop = ncs->get_equiv( j, segments[bestSeg].end() );
+						for (core::uint k = segments[bestSeg].start(); k <= segments[bestSeg].end() && remap_start == 0; ++k) {
+							remap_start = ncs->get_equiv( j, k );
+						}
 						if (remap_start==0) continue;
-						for (int k=segments[bestSeg].end(); k>=segments[bestSeg].start() && remap_stop==0; --k) remap_stop = ncs->get_equiv( j,k );
+						for (core::uint k = segments[bestSeg].end(); k >= segments[bestSeg].start() && remap_stop == 0; --k) {
+							remap_stop = ncs->get_equiv( j, k );
+						}
 						ncs_segments.push_back( RBResidueRange(remap_start,remap_stop) );
 					}
 				}
@@ -269,13 +274,13 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 				// apply movement & score pose
 				utility::vector1 < RBResidueRange > ncs_segments ( 1, segments[seg_i] );
 				if (ncs) {
-					for (int j=1; j<=ncs->ngroups(); ++j ) {
+					for (core::uint j = 1; j <= ncs->ngroups(); ++j ) {
 						core::Size remap_start = ncs->get_equiv( j, segments[seg_i].start() );
 						core::Size remap_stop = ncs->get_equiv( j, segments[seg_i].end() );
-						for (int k=segments[seg_i].start(); k<=segments[seg_i].end() && remap_start==0; ++k)
+						for (core::uint k = segments[seg_i].start(); k <= segments[seg_i].end() && remap_start == 0; ++k)
 							remap_start = ncs->get_equiv( j,k );
 						if (remap_start==0) continue;  // undefined
-						for (int k=segments[seg_i].end(); k>=segments[seg_i].start() && remap_stop==0; --k)
+						for (core::uint k = segments[seg_i].end(); k >= segments[seg_i].start() && remap_stop == 0; --k)
 							remap_stop = ncs->get_equiv( j,k );
 						//TR.Debug << "NCS: Add segment: " << remap_start << " , " << remap_stop << std::endl;
 						ncs_segments.push_back( RBResidueRange(remap_start,remap_stop) );
@@ -422,7 +427,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 
 				// now apply to ncs copies
 				if (ncs) {
-					for (int j=1; j<=ncs->ngroups(); ++j ) {
+					for (core::uint j = 1; j <= ncs->ngroups(); ++j ) {
 						bool all_are_mapped = true;
 						for ( Size k=frame_i->start(); k<=frame_i->stop() && all_are_mapped; ++k )
 							all_are_mapped &= (ncs->get_equiv( j,k )!=0 && loops_->is_loop_residue(ncs->get_equiv( j,k )) );

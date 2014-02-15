@@ -1469,7 +1469,7 @@ ElectronDensity::smooth_intensities(utility::vector1< core::Real > &Is) const {
 
 	Is[1] = 0.65*Is_in[1]+0.23*Is_in[2]+0.12*Is_in[3];
 	Is[2] = 0.3*Is_in[2]+0.35*Is_in[1]+0.23*Is_in[3]+0.12*Is_in[4];
-	for (int i=2; i<=Is.size()-2; ++i) {
+	for (uint i = 2; i <= Is.size() - 2; ++i) {
 		Is[i] = 0.3*Is_in[i]+0.23*Is_in[i-1]+0.23*Is_in[i+1]+0.12*Is_in[i-2]+0.12*Is_in[i+2];
 	}
 	Is[Is.size()-1] = 0.3*Is_in[Is.size()-1]+0.23*Is_in[Is.size()]+0.23*Is_in[Is.size()-2]+0.12*Is_in[Is.size()-3];
@@ -2446,7 +2446,7 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 		numeric::fourier::fft3(dens_std, Frhoo);
 	}
 
-	for (int kbin=nkbins_; kbin>=1; --kbin) {
+	for (uint kbin = nkbins_; kbin >= 1; --kbin) {
 		rhoc = 0.0;
 		numeric::xyzVector< core::Real > del_ij;
 		core::Real k = (kbin-1)*kstep_ + kmin_;
@@ -2505,7 +2505,8 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 		numeric::fourier::fft3(rhoc, Frhoc);
 		Frhoc(1,1,1) = Frhoo(1,1,1) = 0.0;
 
-		TR << "Bin " << kbin << ":  B(C/N/O/S)=" << S_C.B(k) << " / " << S_N.B(k) << " / " << S_O.B(k) << " / " << S_S.B(k) << "  sum=" << Frhoc(1,1,1) << std::endl;
+		TR << "Bin " << kbin << ":  B(C/N/O/S)=" << S_C.B(k) << " / " << S_N.B(k) << " / " << S_O.B(k) << " / " <<
+				S_S.B(k) << "  sum=" << Frhoc(1,1,1) << std::endl;
 
 		// convolute
 		Frhoo(1,1,1) = 0.0;
@@ -2553,7 +2554,7 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 	core::Real scalefactor = (natms/nres);
 	core::Real mu=0.0, sigma=0.5*scalefactor*(max_val-min_val);
 	if (legacy_) mu = 0.5*(max_val-min_val);
-	for (int i=0; i<nkbins_*density.u1()*density.u2()*density.u3(); ++i) {
+	for (uint i = 0; i < nkbins_ * density.u1() * density.u2() * density.u3(); ++i) {
 		fastdens_score[i] = (fastdens_score[i]-mu)/sigma;
 	}
 
@@ -2580,13 +2581,13 @@ void ElectronDensity::rescale_fastscoring_temp_bins(core::pose::Pose const &pose
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
-	for (int i=1; i<=pose.total_residue(); ++i) {
+	for (uint i = 1; i <= pose.total_residue(); ++i) {
 		if (!remap_symm_ && symm_info && !symm_info->bb_is_independent( i ) ) continue;
 		core::conformation::Residue const & rsd_i ( pose.residue(i) );
 		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 
 		core::Size natoms = rsd_i.nheavyatoms();
-		for (int j=1; j<=natoms; ++j) {
+		for (uint j = 1; j <= natoms; ++j) {
 			core::conformation::Atom const &atom_j( rsd_i.atom(j) );
 			core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 
@@ -2605,7 +2606,7 @@ void ElectronDensity::rescale_fastscoring_temp_bins(core::pose::Pose const &pose
 	// get avg K
 	core::Real meanK=0.0;
 	if (!initBs) {
-		for (int i=1; i<=litePose.size(); ++i ) {
+		for (uint i = 1; i <= litePose.size(); ++i ) {
 			std::string &elt_i = litePose[i].elt_;
 			OneGaussianScattering sig_j = get_A( elt_i );
 			meanK += sig_j.k( allBs[i] );
@@ -2613,17 +2614,17 @@ void ElectronDensity::rescale_fastscoring_temp_bins(core::pose::Pose const &pose
 		meanK /= litePose.size();
 	}
 
-	for (int RPT=1; RPT<=5; ++RPT) {
+	for (uint RPT=1; RPT<=5; ++RPT) {
 		core::Size ref=1;
 		core::Real RSCC_ref=-999;
 		utility::vector1< core::Real > RSCC(nkbins_), overlap(nkbins_);
 		numeric::xyzVector< core::Real > fracX, idxX;
-		for (int kbin=nkbins_; kbin>=1; --kbin) {
+		for (uint kbin = nkbins_; kbin >= 1; --kbin) {
 			core::Real k = (kbin-1)*kstep_ + kmin_;
 			if (k==0) continue;
 
 			overlap[kbin] = 0.0;
-			for (int i=1; i<=litePose.size(); ++i ) {
+			for (uint i = 1; i <= litePose.size(); ++i ) {
 				std::string &elt_i = litePose[i].elt_;
 				OneGaussianScattering sig_j = get_A( elt_i );
 
@@ -2637,8 +2638,8 @@ void ElectronDensity::rescale_fastscoring_temp_bins(core::pose::Pose const &pose
 				idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (double)fastgrid[1]);
 				idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (double)fastgrid[2]);
 				idxX = numeric::xyzVector<core::Real>( fracX[0]*fastgrid[0] - fastorigin[0] + 1,
-																							 fracX[1]*fastgrid[1] - fastorigin[1] + 1,
-																							 fracX[2]*fastgrid[2] - fastorigin[2] + 1);
+						fracX[1]*fastgrid[1] - fastorigin[1] + 1,
+						fracX[2]*fastgrid[2] - fastorigin[2] + 1);
 				core::Real score_i = interp_spline( fastdens_score , kbin, idxX );
 				core::Real W = sig_j.a(  ) / 6.0;
 				overlap[kbin] += W*score_i;
@@ -3884,21 +3885,21 @@ numeric::xyzVector< double > ElectronDensity::match_fragment(
 		for (Size i=0;i<3;++i) box_grid[i] = (int) ceil(box_fracX[i]*grid[i]);
 	}
 
-	core::Real sum_mask = 0.;//·[epsilon_f]
+	core::Real sum_mask = 0.;//ï¿½[epsilon_f]
 	for (Size x=0; x < mask.size(); ++x) {
 		sum_mask += mask[x];  // mask sum
 	}
 	//TR << "sum_mask " << F(8,3,sum_mask) << std::endl;
 
-	core::Real sum_mask_rhoc = 0.;//·[epsilon_f*rho_f]
+	core::Real sum_mask_rhoc = 0.;//ï¿½[epsilon_f*rho_f]
 	for (Size x=0; x < mask.size(); ++x) {
 		sum_mask_rhoc += mask[x]*rho_calc[x];
 	}
 	//TR << "sum_mask_rho " << F(8,3,sum_mask_rhoc) << std::endl;
-	core::Real mean_rhoc = sum_mask_rhoc / sum_mask;//·[epsilon_f*rho_f] / ·(epsilon)
+	core::Real mean_rhoc = sum_mask_rhoc / sum_mask;//ï¿½[epsilon_f*rho_f] / ï¿½(epsilon)
 	//TR << "mean_rhoc " << F(8,3,mean_rhoc) << std::endl;
 
-	core::Real sum_mask_rhoc_sq(0.0);//·[epsilon_f*rho_f*rho_f]
+	core::Real sum_mask_rhoc_sq(0.0);//ï¿½[epsilon_f*rho_f*rho_f]
 	for (Size x=0; x < rho_obs.size(); ++x) {
 		sum_mask_rhoc_sq += mask[x]*rho_calc[x]*rho_calc[x];
 	}
@@ -4624,13 +4625,13 @@ ElectronDensity::dCCdBs(
 		symm_info = SymmConf.Symmetry_Info();
 	}
 
-	for (int i=1; i<=pose.total_residue(); ++i) {
+	for (uint i = 1; i <= pose.total_residue(); ++i) {
 		if (symm_info && !symm_info->bb_is_independent( i ) ) continue;
 		core::conformation::Residue const & rsd_i ( pose.residue(i) );
 		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 
 		core::Size natoms = rsd_i.nheavyatoms();
-		for (int j=1; j<=natoms; ++j) {
+		for (uint j = 1; j <= natoms; ++j) {
 			if ( rsd_i.atom_type(j).is_virtual() ) continue;
 			core::conformation::Atom const &atom_j( rsd_i.atom(j) );
 			core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
@@ -4648,7 +4649,7 @@ ElectronDensity::dCCdBs(
 	utility::vector1< utility::vector1< int > > rho_dx_pt(natoms);
 	utility::vector1< utility::vector1< core::Real > > rho_dx_bs(natoms);
 
-	for (int i=1 ; i<=(int)natoms; ++i) {
+	for (uint i = 1 ; i <= natoms; ++i) {
 		std::string elt_i = litePose[i].elt_;
 		OneGaussianScattering sig_j = get_A( elt_i );
 		core::Real B_i = litePose[i].B_;
@@ -4720,13 +4721,13 @@ ElectronDensity::dCCdBs(
 	//std::cerr << "score2 = " << CC_i << std::endl;
 
 	// dCCdbs
-	for (int i=1 ; i<=natoms; ++i) {
+	for (core::uint i = 1; i <= natoms; ++i) {
 		utility::vector1< int > const &rho_dx_pt_i = rho_dx_pt[i];
 		utility::vector1< core::Real > const &rho_dx_bs_i = rho_dx_bs[i];
-		int npoints = rho_dx_pt_i.size();
+		core::Size npoints = rho_dx_pt_i.size();
 
 		core::Real dCOdx_i=0, dC2dx_i=0;
-		for (int n=1; n<=npoints; ++n) {
+		for (core::uint n = 1; n <= npoints; ++n) {
 			const int x(rho_dx_pt_i[n]);
 			core::Real clc_x = rho_calc[x];
 			core::Real obs_x = density[x];
@@ -5150,23 +5151,26 @@ ElectronDensity::readMRCandResize(
 	// to have symmetry records when they do not.
 	mapin.seekg(0, std::ios::end);
 	filesize = mapin.tellg();
-	dataOffset = filesize - 4L*((long long)extent[0]*(long long)extent[1]*(long long)extent[2]);
-	if (dataOffset != (CCP4HDSIZE + symBytes)) {
-		if (dataOffset == CCP4HDSIZE) {
+	dataOffset = filesize - 4L *
+			(static_cast<long long>(extent[0]) * static_cast<long long>(extent[1]) * static_cast<long long>(extent[2]));
+	if (dataOffset != static_cast<unsigned long long>(CCP4HDSIZE + symBytes)) {
+		if (dataOffset == static_cast<unsigned long long>(CCP4HDSIZE)) {
 			// Bogus symmetry record information
-			TR << "[ WARNING ] File contains bogus symmetry record.  Continuing." << std::endl;
+			TR.Warning << "[ WARNING ] File contains bogus symmetry record.  Continuing." << std::endl;
 			symBytes = 0;
-		} else if (dataOffset < CCP4HDSIZE) {
-			TR << "[ ERROR ] File appears truncated and doesn't match header.  Not loading map." << std::endl;
+		} else if (dataOffset < static_cast<unsigned long long>(CCP4HDSIZE)) {
+			TR.Error << "[ ERROR ] File appears truncated and doesn't match header.  Not loading map." << std::endl;
 			return false;
-		} else if ((dataOffset > CCP4HDSIZE) && (dataOffset < (1024*1024))) {
+		} else if ((dataOffset > static_cast<unsigned long long>(CCP4HDSIZE)) && (dataOffset < (1024*1024))) {
 				// Fix for loading SPIDER files which are larger than usual
 		 		// In this specific case, we must absolutely trust the symBytes record
 				dataOffset = CCP4HDSIZE + symBytes;
-				TR << "[ WARNING ]  File is larger than expected and doesn't match header.  Reading anyway." << std::endl;
+				TR.Warning << "[ WARNING ]  File is larger than expected and doesn't match header.  Reading anyway." <<
+						std::endl;
 		} else {
-			TR << "[ ERROR ] File is MUCH larger than expected and doesn't match header.  Not loading map." << std::endl;
-			TR << dataOffset  << std::endl;
+			TR.Error << "[ ERROR ] File is MUCH larger than expected and doesn't match header.  Not loading map." <<
+					std::endl;
+			TR.Error << dataOffset  << std::endl;
 			return false;
 		}
 	}

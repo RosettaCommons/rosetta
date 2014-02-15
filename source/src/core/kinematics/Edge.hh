@@ -37,10 +37,10 @@ namespace kinematics {
 /// \brief single edge of the fold_tree
 ///
 /// an edge is a path between two vertices(start and end residues). it can be
-/// either a continuous segement like a normal piece of polymer ("PEPTIDE" edge,
+/// either a continuous segment like a normal piece of polymer ("PEPTIDE" edge,
 /// index label as "-1"), a chemical connection between two residues ("CHEMICAL
 /// edge), or a rigid-body transformation between two residues ("JUMP" edge,
-/// index label as "1", "2",...). The edge is the basic unit of te fold tree
+/// index label as "1", "2",...). The edge is the basic unit of the fold tree
 /// as it stores info on how to build coordinates of the end residue given that
 /// of the starting residue and degrees of freedom between these two
 /// vertices.

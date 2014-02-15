@@ -412,7 +412,7 @@ make_symmetric_pdb_info(
 	}
 
 	// second pass, map (base chain,clone#) => new chain
-	for (int clone_i = 1; clone_i<=nclones; ++clone_i) {
+	for (uint clone_i = 1; clone_i <= nclones; ++clone_i) {
 		for ( Size res=1; res <= pdb_info_src->nres(); ++res ) {
 			Size res_master = res;
 			if (!symm_info->bb_is_independent(res))
@@ -422,10 +422,10 @@ make_symmetric_pdb_info(
 			Size chn_idx = basic::get_pymol_chain_index_1(chn_id);
 
 			if (symmChainIDMap.find( std::make_pair(chn_idx,clone_i) ) == symmChainIDMap.end()) {
-				int newchainidx;
-				for (newchainidx=1; newchainidx<=nuniqueIDs && used_chainIDs[newchainidx]; ++newchainidx) ;
+				uint newchainidx;
+				for (newchainidx = 1; newchainidx <= nuniqueIDs && used_chainIDs[newchainidx]; ++newchainidx) ;
 
-				if (newchainidx>nuniqueIDs) { // all ids used
+				if (newchainidx > nuniqueIDs) { // all ids used
 					symmChainIDMap[ std::make_pair(chn_idx,clone_i) ] = nuniqueIDs;
 				} else {
 					used_chainIDs[newchainidx] = true;

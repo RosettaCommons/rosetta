@@ -125,8 +125,11 @@ settings = {
                 "cc"        : [ "std=c99", "isystem external/boost_1_46_1/", "isystem external/include/"],
                 "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/", "isystem external/include/"],
                 "compile"   : [ "pipe", "ffor-scope" ],
-                "warn"      : [ "Wall", "Wextra", "pedantic", "Wno-long-long" ],
-                # By default, warn as much as possible.
+                "warn"      : [ "Wall", "Wextra", "pedantic", "Wno-long-long", "Werror=sign-compare" ],
+                # By default, warn about everything except the use of long long, which we need for certain
+                # database functionality.
+                # Certain warnings are treated as errors:
+                # * sign-compare
                 # GCC's `pedantic` option triggers a compilation error in the c++ standard library
                 # when intrinsics are referenced (e.g. in certain portions of Boost). There are 2
                 # options-- 1) remove pedantic warnings; or 2) add the Boost directory to GCC's
@@ -526,6 +529,7 @@ settings = {
     "gcc, test" : {
         "removes" : {
             "flags" : {
+                "warn"      : [ "Werror=sign-compare" ],
                 #"compile"   : [ "fno-exceptions" ],
             },
         },
@@ -1247,7 +1251,7 @@ settings = {
                 #                "Wno-padded",
                 #                "Wno-weak-vtables"
                 #              ],
-                "warn"      : [ "W", "pedantic", "Wno-long-long" ],
+                "warn"      : [ "W", "pedantic", "Wno-long-long", "Werror=sign-compare" ],
             },
         },
     },

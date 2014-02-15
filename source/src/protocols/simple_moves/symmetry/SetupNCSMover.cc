@@ -75,7 +75,7 @@ utility::vector1< core::Size >
 NCSResMapping::get_equiv( core::Size resid ) {
 	utility::vector1< core::Size > retval(1,resid);
 	if ( resid <= nres_ ) {	// tolerate residues that may have been added after NCS was applied
-		for (int i=1; i<=ngroups_; ++i) {
+		for (uint i = 1; i <= ngroups_; ++i) {
 			if (mapping_[i][resid] != 0) retval.push_back( mapping_[i][resid] );
 		}
 	}

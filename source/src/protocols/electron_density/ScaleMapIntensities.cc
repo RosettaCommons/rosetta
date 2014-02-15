@@ -78,13 +78,13 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 	}
-	for (int i=1; i<=pose.total_residue(); ++i) {
+	for (uint i = 1; i <= pose.total_residue(); ++i) {
 		if (asymm_only_ && symm_info && !symm_info->bb_is_independent( i ) ) continue;
 		core::conformation::Residue const & rsd_i ( pose.residue(i) );
 		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 
 		core::Size natoms = rsd_i.nheavyatoms();
-		for (int j=1; j<=natoms; ++j) {
+		for (uint j = 1; j <= natoms; ++j) {
 			core::conformation::Atom const &atom_j( rsd_i.atom(j) );
 			core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 

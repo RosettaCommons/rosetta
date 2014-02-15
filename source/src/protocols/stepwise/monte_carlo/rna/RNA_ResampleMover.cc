@@ -140,7 +140,7 @@ namespace rna {
 				} else {
 					runtime_assert( attachment_type == ATTACHED_TO_NEXT ); // cannot yet handle jumps.
 					remodel_res = res_list.index( attachment_res ) - 1;
-					runtime_assert( remodel_res == res_list.index( attachment_res - 1 ) );
+					runtime_assert( static_cast<int>(remodel_res) == res_list.index( attachment_res - 1 ) );
 				}
 				remodel_suite = remodel_res;
 			}
@@ -158,7 +158,7 @@ namespace rna {
 				remodel_res   = res_list.index( attached_res_prev ); // this is now the *suite*
 				remodel_suite = remodel_res;
 				cutpoint_suite  = res_list.index( attached_res_next ) - 1;
-				runtime_assert( cutpoint_suite == res_list.index( attached_res_next - 1 ) );
+				runtime_assert( static_cast<int>(cutpoint_suite) == res_list.index( attached_res_next - 1 ) );
 			}
 		}
 		runtime_assert( remodel_res > 0 );

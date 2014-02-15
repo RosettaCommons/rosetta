@@ -186,7 +186,7 @@ int main( int argc, char * argv [] ){
 	core::Real separated_polar_sasa = 0.0;
 	core::Real separated_hydrophobic_sasa = 0.0;
 
-	for ( int j = 1, resnum = bound_protein_pose.total_residue(); j <= resnum; ++j ) {
+	for ( core::uint j = 1, resnum = bound_protein_pose.total_residue(); j <= resnum; ++j ) {
 		if ( j == lig_res_num ) continue;
 		complex_sasa += complex_rsd_sasa[j];
 		complex_hydrophobic_sasa += complex_rsd_hsasa[j];

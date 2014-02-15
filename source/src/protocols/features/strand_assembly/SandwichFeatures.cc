@@ -692,11 +692,11 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 }
 
 
-//Select all strand segments reported by the ResidueSecondaryStructureFeatures and save them in a vector
+/// @brief Select all strand segments reported by the ResidueSecondaryStructureFeatures and save them in a vector
 utility::vector1<SandwichFragment>
 SandwichFeatures::get_full_strands(
-   StructureID struct_id,
-   sessionOP db_session)
+		StructureID struct_id,
+		sessionOP db_session)
 {
 	string select_string =
 	"SELECT\n"
@@ -724,12 +724,12 @@ SandwichFeatures::get_full_strands(
 }
 
 
-//Select all strand segments reported by the ResidueSecondaryStructureFeatures and save them in a vector
+/// @brief Select all strand segments reported by the ResidueSecondaryStructureFeatures and save them in a vector
 utility::vector1<SandwichFragment>
 SandwichFeatures::get_full_strands_from_sheet(
-	StructureID struct_id,
-	sessionOP db_session,
-	Size sheet_id)
+		StructureID struct_id,
+		sessionOP db_session,
+		Size sheet_id)
 {
 	string select_string =
 	"SELECT\n"
@@ -763,23 +763,21 @@ SandwichFeatures::get_full_strands_from_sheet(
 
 void
 SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
-	string	tag,
-	StructureID	struct_id,
-	sessionOP	db_session,
-	Pose const & pose,
-	string	dssp_code,
-	string	heading_direction)
+		string	tag,
+		StructureID	struct_id,
+		sessionOP	db_session,
+		Pose const & pose,
+		string	dssp_code,
+		string	heading_direction)
 {
 	Size tag_len = tag.length();
 	string pdb_file_name = tag.substr(0, tag_len-5);
 
 	string ElectroStatic_file_name;
-	if	(dssp_code	==	"all_dssp")
-	{
+	if	(dssp_code	==	"all_dssp") {
 		ElectroStatic_file_name = pdb_file_name + "_electrostatic_interactions_of_all_residues.txt";
 	}
-	else // dssp_code = "E"
-	{
+	else /* dssp_code = "E" */ {
 		if (heading_direction == "surface")
 		{
 			ElectroStatic_file_name = pdb_file_name + "_electrostatic_interactions_of_surface_residues_in_a_strand.txt";
@@ -825,7 +823,7 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 	std::vector<int> vec_sum_of_salt_CC_NO_bridges;
 	std::vector<int> vec_number_of_longer_range_ion_pair;
 
-	for(Size sw_ii=1; sw_ii<=vector_of_unique_distinct_sw_ids.size(); sw_ii++) // per each beta-sandwich
+	for(Size sw_ii=1; sw_ii<=vector_of_unique_distinct_sw_ids.size(); ++sw_ii) // per each beta-sandwich
 	{
 		utility::vector1<int>	vector_of_residue_num_of_rkde	=
 			retrieve_residue_num_of_rkde(
@@ -844,8 +842,10 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 			Real B_factor_of_CB = info->temperature( residue_num, 5 ); // '5' atom will be 'H' for Gly, otherwise typycal CB
 			if (B_factor_of_CB	>	CB_b_factor_cutoff_for_electrostatic_interactions_)
 			{
-					TR	<<	"residue_num:	"	<<	residue_num	<< " is dropped by too high CB_b_factor" << endl;
-				continue;	// this	"current" residue has too high atom position uncertainty, so let's not use this residue when counting number of electrostatic interactions
+				TR	<<	"residue_num:	"	<<	residue_num	<< " is dropped by too high CB_b_factor" << endl;
+				// this	"current" residue has too high atom position uncertainty,
+				// so let's not use this residue when counting number of electrostatic interactions
+				continue;
 			}
 			// <end> check whether "current" residue has low atom position uncertainty
 
@@ -941,7 +941,7 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 			Size	number_of_N_O_bridge	=	0;
 			Size	number_of_longer_range_ion_pair	=	0;
 
-			for(Size other_residue_i=1; other_residue_i<=vector_of_residue_num_of_rkde.size(); other_residue_i++)
+			for(Size other_residue_i=1; other_residue_i<=vector_of_residue_num_of_rkde.size(); ++other_residue_i)
 			{
 				if	(other_residue_i	==	residue_i)
 				{
@@ -953,8 +953,8 @@ SandwichFeatures::report_number_of_electrostatic_interactions_of_residues(
 //					TR	<< "residue_num:	"	<<	residue_num	<<	endl;
 //					TR	<< "other_residue_num:	"	<<	other_residue_num	<<	endl;
 
-				if (std::abs(other_residue_num - residue_num) < primary_seq_distance_cutoff_for_electrostatic_interactions_)
-				{
+				if (core::Size(std::abs(other_residue_num - residue_num)) <
+						primary_seq_distance_cutoff_for_electrostatic_interactions_) {
 					continue;
 				}
 

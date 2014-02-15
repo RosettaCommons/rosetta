@@ -12,7 +12,7 @@
 # Options
 #
 # Override the default.options and site.options.
-# Can be overriden by the the command-line options.
+# Can be overridden by the the command-line options.
 
 # cxx     =
 # cxx_ver =

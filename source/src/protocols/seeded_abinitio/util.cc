@@ -41,22 +41,22 @@ static basic::Tracer TR("protocols.seeded_abinitio.util");
 
 void
 superposition_transform(
-      utility::vector1< numeric::xyzVector< numeric::Real > > & init_coords,
-      utility::vector1< numeric::xyzVector< numeric::Real > > & ref_coords,
-			numeric::xyzMatrix< numeric::Real > & rotation,
-			numeric::xyzVector< numeric::Real > & toCenter,
-			numeric::xyzVector< numeric::Real > & toFitCenter)
+		utility::vector1< numeric::xyzVector< numeric::Real > > & init_coords,
+		utility::vector1< numeric::xyzVector< numeric::Real > > & ref_coords,
+		numeric::xyzMatrix< numeric::Real > & rotation,
+		numeric::xyzVector< numeric::Real > & toCenter,
+		numeric::xyzVector< numeric::Real > & toFitCenter)
 {
-  int count = init_coords.size();
-  runtime_assert(count == ref_coords.size());
+	core::Size count = init_coords.size();
+	runtime_assert(count == ref_coords.size());
 
-  ObjexxFCL::FArray2D< numeric::Real > init_fa( 3, init_coords.size());
-  ObjexxFCL::FArray2D< numeric::Real > ref_fa( 3, ref_coords.size());
+	ObjexxFCL::FArray2D< numeric::Real > init_fa( 3, init_coords.size());
+	ObjexxFCL::FArray2D< numeric::Real > ref_fa( 3, ref_coords.size());
 
-  vector_vector_to_FArray2(init_coords, init_fa);
-  vector_vector_to_FArray2(ref_coords, ref_fa);
+	vector_vector_to_FArray2(init_coords, init_fa);
+	vector_vector_to_FArray2(ref_coords, ref_fa);
 
-  ObjexxFCL::FArray1D< numeric::Real > weights_fa(count, 1);
+	ObjexxFCL::FArray1D< numeric::Real > weights_fa(count, 1);
 
 	protocols::toolbox::superposition_transform(
 			count,

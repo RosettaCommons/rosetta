@@ -426,8 +426,8 @@ make_tag_with_dashes( utility::vector1< int > res_vector ){
 	int start_segment = res_vector[1];
 	int last_res = res_vector[1];
 
-	for (int n = 2; n<= res_vector.size(); n++ ){
-		if ( res_vector[n] != last_res+1 ){
+	for (uint n = 2; n <= res_vector.size(); ++n ){
+		if ( res_vector[n] != last_res + 1 ){
 			res_vector_segments.push_back( std::make_pair( start_segment, last_res ) );
 			start_segment = res_vector[n];
 		}
@@ -435,7 +435,7 @@ make_tag_with_dashes( utility::vector1< int > res_vector ){
 	}
 	res_vector_segments.push_back( std::make_pair( start_segment, last_res ) );
 
-	for (int n = 1; n <= res_vector_segments.size(); n++ ){
+	for (uint n = 1; n <= res_vector_segments.size(); ++n ){
 		if ( n > 1 ) tag += " ";
 		std::pair< int, int > const & segment = res_vector_segments[n];
 		if ( segment.first == segment.second ){
@@ -455,7 +455,7 @@ make_tag( utility::vector1< int > res_vector ){
 	using namespace ObjexxFCL;
 	std::string tag = "";
 
-	for (int n = 1; n <= res_vector.size(); n++ ){
+	for (uint n = 1; n <= res_vector.size(); ++n ){
 		if ( n > 1 ) tag += " ";
 		tag += string_of( res_vector[n] );
 	}

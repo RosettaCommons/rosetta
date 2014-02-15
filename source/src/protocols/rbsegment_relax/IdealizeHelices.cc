@@ -129,41 +129,41 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 
 	// prolines
 	utility::vector1< std::pair<int,int> > corrected_helices;
-	for (int i=1; i<= helices_.size(); ++i) {
-		int start_i=helices_[i].first, stop_i=helices_[i].second;
+	for (core::uint i = 1; i <= helices_.size(); ++i) {
+		core::uint start_i = helices_[i].first, stop_i = helices_[i].second;
 
-		for (int j=start_i+2; j<=stop_i-2; ++j) {
+		for (core::uint j = start_i+2; j <= stop_i - 2; ++j) {
 			if (pose.residue(j).aa() == core::chemical::aa_pro) {
 				if (RG.uniform() <= 0.5) {
-					if (start_i < j-10) corrected_helices.push_back( std::make_pair( start_i, j-6 ) );
-					start_i = j-2;
+					if (start_i < j - 10) corrected_helices.push_back( std::make_pair( start_i, j - 6 ) );
+					start_i = j - 2;
 				}
 			}
 		}
-		if (start_i < stop_i-4) corrected_helices.push_back( std::make_pair( start_i, stop_i ) );
+		if (start_i < stop_i - 4) corrected_helices.push_back( std::make_pair( start_i, stop_i ) );
 
 	}
 
 
 	// for each res range
-	for (int i=1; i<= corrected_helices.size(); ++i) {
-		int start_i=corrected_helices[i].first, stop_i=corrected_helices[i].second;
+	for (core::uint i = 1; i <= corrected_helices.size(); ++i) {
+		core::uint start_i = corrected_helices[i].first, stop_i = corrected_helices[i].second;
 
 		// build ideal pose
 		core::pose::Pose ideal_pose;
-		int len_i = stop_i - start_i + 1;
+		Size len_i = stop_i - start_i + 1;
 		// ideal geometry
-		for (int j=start_i; j<=stop_i; ++j) {
+		for (core::uint j = start_i; j <= stop_i; ++j) {
 			ideal_pose.append_residue_by_bond( pose.residue( j ), true );
 		}
 
-		for (int j=start_i; j<=stop_i; ++j) {
+		for (core::uint j = start_i; j <= stop_i; ++j) {
 			protocols::loops::set_extended_torsions_and_idealize_loops( ideal_pose, protocols::loops::Loops() );
 		}
 
 		// helical
-		for (int j=start_i; j<=stop_i; ++j) {
-			int resid = j-start_i+1;
+		for (core::uint j = start_i; j <= stop_i; ++j) {
+			core::uint resid = j - start_i + 1;
 			ideal_pose.set_phi( resid, -57.8 );
 			ideal_pose.set_psi( resid, -47.0 );
 			ideal_pose.set_omega( resid, 180.0 );
@@ -178,20 +178,25 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 
 		// grab source coords
 		ObjexxFCL::FArray2D< core::Real > init_coords( 3, len_i );
-		for (int j=start_i; j<=stop_i; ++j) {
-			int resid = j-start_i+1;
+		for (core::uint j = start_i; j <= stop_i; ++j) {
+			core::uint resid = j - start_i + 1;
 			numeric::xyzVector< core::Real > x_j = ideal_pose.residue(resid).atom(" CA ").xyz();
 			com1 += x_j;
-			for (int k=0; k<3; ++k)
-				init_coords(k+1,resid) = x_j[k];
+			for (core::uint k = 0; k < 3; ++k) {
+				init_coords(k + 1, resid) = x_j[k];
+			}
 		}
 		com1 /= len_i;
-		for (int j=0; j<len_i; ++j) { for ( int k=0; k<3; ++k ) init_coords(k+1,j+1) -= com1[k]; }
+		for (core::uint j = 0; j < len_i; ++j) {
+			for ( core::uint k = 0; k < 3; ++k ) {
+				init_coords(k + 1, j + 1) -= com1[k];
+			}
+		}
 
 		// grab target coords
 		ObjexxFCL::FArray2D< core::Real > final_coords( 3, len_i );
-		for (int j=start_i; j<=stop_i; ++j) {
-			int resid = j-start_i+1;
+		for (core::uint j = start_i; j <= stop_i; ++j) {
+			core::uint resid = j - start_i + 1;
 			numeric::xyzVector< core::Real > x_j = pose.residue(j).atom(" CA ").xyz();
 
 			// add CSTS
@@ -201,11 +206,15 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 			}
 
 			com2 += x_j;
-			for (int k=0; k<3; ++k)
-				final_coords(k+1,resid) = x_j[k];
+			for (core::uint k = 0; k < 3; ++k)
+				final_coords(k + 1, resid) = x_j[k];
 		}
 		com2 /= len_i;
-		for (int j=0; j<len_i; ++j) { for ( int k=0; k<3; ++k ) final_coords(k+1,j+1) -= com2[k]; }
+		for (core::uint j = 0; j < len_i; ++j) {
+			for ( core::uint k = 0; k < 3; ++k ) {
+				final_coords(k + 1, j + 1) -= com2[k];
+			}
+		}
 
 		// superpose
 		numeric::Real ctx; float rms;
@@ -215,8 +224,8 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 		R.xx( uu(1,1) ); R.xy( uu(2,1) ); R.xz( uu(3,1) );
 		R.yx( uu(1,2) ); R.yy( uu(2,2) ); R.yz( uu(3,2) );
 		R.zx( uu(1,3) ); R.zy( uu(2,3) ); R.zz( uu(3,3) );
-		for (int j=start_i; j<=stop_i; ++j) {
-			int resid = j-start_i+1;
+		for (core::uint j = start_i; j <= stop_i; ++j) {
+			core::uint resid = j - start_i + 1;
 			for ( Size k = 1; k <= ideal_pose.residue_type(resid).natoms(); ++k ) {
 				core::id::AtomID id_src( k, resid );
 				ideal_pose.set_xyz( id_src, R * ( ideal_pose.xyz(id_src) - com1) + com2 );
@@ -231,8 +240,8 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 		minimizer.run( ideal_pose, mm, *scorefxn_, min_options );
 
 		// replace coords
-		for (int j=start_i; j<=stop_i; ++j) {
-			int resid = j-start_i+1;
+		for (core::uint j = start_i; j <= stop_i; ++j) {
+			core::uint resid = j - start_i + 1;
 			for ( Size k = 1; k <= ideal_pose.residue_type(resid).natoms(); ++k ) {
 				core::id::AtomID id_src( k, resid );
 				core::id::AtomID id_tgt( k, j );
@@ -242,16 +251,16 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 
 		// apply to NCS-symmetric copies
 		if (ncs) {
-			for (int n=1; n<=ncs->ngroups(); ++n ) {
+			for (core::uint n = 1; n <= ncs->ngroups(); ++n ) {
 				bool all_are_mapped = true;
-				for ( Size k=start_i; k<=stop_i && all_are_mapped; ++k )
+				for ( Size k = start_i; k <= stop_i && all_are_mapped; ++k )
 					all_are_mapped &= (ncs->get_equiv( n,k )!=0);
 				if (!all_are_mapped) continue;
 
 				core::Size remap_start = ncs->get_equiv( n, start_i );
 				core::Size remap_stop = ncs->get_equiv( n, stop_i );
 
-				if (remap_stop-remap_start != stop_i-start_i) continue;
+				if (remap_stop - remap_start != stop_i - start_i) continue;
 
 				// superimpose
 				ObjexxFCL::FArray1D< numeric::Real > ww( len_i, 1.0 );
@@ -260,23 +269,33 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 
 				// grab source coords
 				ObjexxFCL::FArray2D< core::Real > init_coords( 3, len_i );
-				for (int j=start_i; j<=stop_i; ++j) {
+				for (core::uint j = start_i; j <= stop_i; ++j) {
 					numeric::xyzVector< core::Real > x_j = pose.residue(j).atom(" CA ").xyz();
 					com1 += x_j;
-					for (int k=0; k<3; ++k) init_coords(k+1,j-start_i+1) = x_j[k];
+					for (core::uint k = 0; k < 3; ++k) {
+						init_coords(k + 1, j - start_i + 1) = x_j[k];
+					}
 				}
 				com1 /= len_i;
-				for (int j=0; j<len_i; ++j) { for ( int k=0; k<3; ++k ) init_coords(k+1,j+1) -= com1[k]; }
+				for (core::uint j = 0; j < len_i; ++j) {
+					for ( core::uint k = 0; k < 3; ++k ) {
+						init_coords(k + 1, j + 1) -= com1[k];
+					}
+				}
 
 				// grab target coords
 				ObjexxFCL::FArray2D< core::Real > final_coords( 3, len_i );
-				for (int j=remap_start; j<=remap_stop; ++j) {
+				for (core::uint j = remap_start; j <= remap_stop; ++j) {
 					numeric::xyzVector< core::Real > x_j = pose.residue(j).atom(" CA ").xyz();
 					com2 += x_j;
 					for (int k=0; k<3; ++k) final_coords(k+1,j-remap_start+1) = x_j[k];
 				}
 				com2 /= len_i;
-				for (int j=0; j<len_i; ++j) { for ( int k=0; k<3; ++k ) final_coords(k+1,j+1) -= com2[k]; }
+				for (core::uint j = 0; j < len_i; ++j) {
+					for ( core::uint k = 0; k < 3; ++k ) {
+						final_coords(k + 1, j + 1) -= com2[k];
+					}
+				}
 
 				// superpose
 				numeric::Real ctx; float rms;
@@ -286,8 +305,8 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 				R.xx( uu(1,1) ); R.xy( uu(2,1) ); R.xz( uu(3,1) );
 				R.yx( uu(1,2) ); R.yy( uu(2,2) ); R.yz( uu(3,2) );
 				R.zx( uu(1,3) ); R.zy( uu(2,3) ); R.zz( uu(3,3) );
-				for (int j=start_i; j<=stop_i; ++j) {
-					int offset = j-start_i;
+				for (core::uint j = start_i; j <= stop_i; ++j) {
+					core::uint offset = j - start_i;
 					for ( Size k = 1; k <= pose.residue_type(j).natoms(); ++k ) {
 						core::id::AtomID id_src( k, j );
 						core::id::AtomID id_tgt( k, offset+remap_start );

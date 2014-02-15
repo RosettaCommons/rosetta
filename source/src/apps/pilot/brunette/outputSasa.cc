@@ -74,7 +74,7 @@ std::string calc_burial(Pose const & pose, Real pore_radius, Real boundarySasaTh
     std::string burial = "";
     vector1<Real> sasa_score;
     sasa_score = calc_sasa(pose,pore_radius);
-    for(int ii=1; ii<=pose.total_residue(); ++ii){
+    for(core::uint ii = 1; ii <= pose.total_residue(); ++ii){
         if(sasa_score[ii] < boundarySasaThreshold)
             burial+='C';
         else if(sasa_score[ii] < surfaceSasaThreshold)

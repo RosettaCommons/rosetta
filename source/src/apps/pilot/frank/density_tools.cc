@@ -272,13 +272,17 @@ densityTools()
 			scorefxn->set_weight( core::scoring::elec_dens_window, 1.0 );
 			(*scorefxn)(fullpose);
 
-			for (int r=1; r<=nres; ++r) {
-				perResCC[r] = core::scoring::electron_density::getDensityMap().matchRes( r , fullpose.residue(r), fullpose, NULL , false);
+			for (core::uint r = 1; r <= nres; ++r) {
+				perResCC[r] = core::scoring::electron_density::getDensityMap().matchRes( r , fullpose.residue(r),
+						fullpose, NULL , false);
 			}
 		}
 
 		core::scoring::electron_density::getDensityMap().calcRhoC( pose );
-		if (rescale_map) core::scoring::electron_density::getDensityMap().getIntensities( pose, nresobins, lowres, hires, modelI, bin_squared );
+		if (rescale_map) {
+			core::scoring::electron_density::getDensityMap().getIntensities( pose, nresobins, lowres, hires, modelI,
+					bin_squared );
+		}
 
 		//core::scoring::electron_density::getDensityMap().getFSC( pose, nresobins, lowres, hires, modelmapFSC, modelmapError, mask_modelmap, bin_squared, mask_radius, superverbose );
 		if (!usermap) {
@@ -354,7 +358,7 @@ densityTools()
 	}
 
 	if (userpose && option[ denstools::perres ]()) {
-		for (int r=1; r<=perResCC.size(); ++r) {
+		for (core::uint r = 1; r <= perResCC.size(); ++r) {
 			std::cerr << "residue " << r << "  cc=" << perResCC[r] << std::endl;
 			//std::cerr << "residue " << r << "  resnum " << fullpose.pdb_info()->number(r) << "  cc=" << perResCC[r] << std::endl;
 		}

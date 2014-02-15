@@ -290,8 +290,8 @@ CartesianSampler::apply_fragcsts( core::pose::Pose &working_frag,	core::pose::Po
 	bool cterm = ( pose.fold_tree( ).is_cutpoint(startpos+len-1) );
 
 	if (!nterm) {
-		for (int j=0; j<overlap_; ++j) {
-			for (int i=1; i<=3; ++i) {
+		for (core::uint j = 0; j < overlap_; ++j) {
+			for (core::uint i = 1; i <= 3; ++i) {
 				working_frag.add_constraint(
 					new CoordinateConstraint(
 						core::id::AtomID(i,j+1),
@@ -387,9 +387,9 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 
 	if (selection_bias_ == "none") {
 		maxtries = frame.nr_frags(); // bias-dependent
-		int tries;
+		core::uint tries;
 		bool frag_chosen=false;
-		for (tries = 0; tries<maxtries && !frag_chosen; ++tries) {
+		for (tries = 0; tries < maxtries && !frag_chosen; ++tries) {
 			frag_toget = numeric::random::random_range( 1, frame.nr_frags() );
 			frame.apply( frag_toget, frag );
 			rms = get_transform( pose,  frag,  start,	preT, postT, R);
@@ -443,11 +443,11 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 
 		core::Size nattempts = 0;
 		core::Real best_dens_score = 1e30, best_rms;
-		for (int i=1; i<=frame.nr_frags(); ++i) {
+		for (core::uint i = 1; i <= frame.nr_frags(); ++i) {
 			core::pose::Pose working_frag = frag;
 			frame.apply( i, working_frag );
 			rms = get_transform( pose,  working_frag,  start,	preT, postT, R);
-			if (rms<=rms_cutoff_) {
+			if (rms <= rms_cutoff_) {
 				nattempts++;
 
 				// orient
@@ -499,7 +499,7 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 
 	// apply to NCS-symmetric copies
 	if (ncs) {
-		for (int j=1; j<=ncs->ngroups(); ++j ) {
+		for (core::uint j = 1; j <= ncs->ngroups(); ++j ) {
 			bool all_are_mapped = true;
 			for ( Size k= 0; k< len && all_are_mapped; ++k )
 				all_are_mapped &= (ncs->get_equiv( j,start+k )!=0);
@@ -757,7 +757,7 @@ CartesianSampler::apply( Pose & pose ) {
 	if (fragments_.size() == 0) {
 		if (frag_sizes_.size() == 0) frag_sizes_.push_back(9); // default is 9-mers only
 
-		for (int i=1; i<=frag_sizes_.size(); ++i) {
+		for (core::uint i = 1; i <= frag_sizes_.size(); ++i) {
 			if (fragment_bias_strategy_ == "user" && user_pos_.size() > 0)
 				fragments_.push_back( create_fragment_set_no_ssbias(pose, user_pos_, frag_sizes_[i], nfrags_, force_ss_) );
 			else
@@ -856,7 +856,7 @@ CartesianSampler::apply( Pose & pose ) {
 
 		// restricted movemap
 		// TO DO we should check of chainbreaks
-		// TO DO min window extension (curr 6) should be a parameter
+		// TODO min window extension (curr 6) should be a parameter
 		core::kinematics::MoveMap mm_local;
 		int start_move = std::max(1,insert_pos-6);
 		int stop_move = std::min(nres,insert_pos+library_[i_frag_set][insert_pos].length()+5);
@@ -865,7 +865,7 @@ CartesianSampler::apply( Pose & pose ) {
 			mm_local.set_chi(i,true);
 			// ncs
 			if (ncs) {
-				for (int j=1; j<=ncs->ngroups(); ++j ) {
+				for (core::uint j = 1; j <= ncs->ngroups(); ++j ) {
 					core::Size remap_i = ncs->get_equiv( j, i );
 					if (remap_i!=0) {
 						mm_local.set_bb(remap_i,true);

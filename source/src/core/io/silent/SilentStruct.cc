@@ -1014,9 +1014,9 @@ SilentStruct::fill_struct_with_residue_numbers( pose::Pose const & pose ){
 
 	utility::vector1< Size > residue_numbers;
 	bool residue_numbering_is_interesting( false );
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+	for ( core::uint i = 1; i <= pose.total_residue(); ++i ) {
 		residue_numbers.push_back( pdb_info->number( i ) );
-		if ( pdb_info->number( i ) != i ) residue_numbering_is_interesting = true;
+		if ( pdb_info->number( i ) != static_cast<int>(i) ) residue_numbering_is_interesting = true;
 	}
 
 	if ( !residue_numbering_is_interesting ) return; // leave residue_numbers_ blank.

@@ -183,14 +183,14 @@ UDPSocketClient::show(std::ostream & output) const
 	output << "socket handel: " << socket_h_ << std::endl;
 
 	output << "uuid short: ";
-	for ( unsigned int i(0); i < sizeof(uuid_.shorts_)/sizeof(uuid_.shorts_[0]); i++ ) {
+	for ( unsigned int i(0); i < sizeof(uuid_.shorts_) / sizeof(uuid_.shorts_[0]); ++i ) {
 		output << uuid_.shorts_[i] << " ";
 	}
 	output << std::endl;
 
 	output << "uuid byte: ";
-	for ( char i(0); i < sizeof(uuid_.bytes_)/sizeof(uuid_.bytes_[0]); i++ ) {
-		output << (int)uuid_.bytes_[i] << " ";
+	for ( unsigned char i(0); i < sizeof(uuid_.bytes_) / sizeof(uuid_.bytes_[0]); ++i ) {
+		output << static_cast<int>(uuid_.bytes_[i]) << " ";
 	}
 	output << std::endl;
 

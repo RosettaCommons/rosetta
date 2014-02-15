@@ -27,7 +27,7 @@ using namespace std;
 void AcceptanceRates::log_task_(Pose const & pose, string name, bool successful) {
 	vector<string>::const_iterator begin = task_names_.begin();
 	vector<string>::const_iterator end = task_names_.end();
-	int index = find(begin, end, name) - begin;
+	uint index = find(begin, end, name) - begin;
 	bool name_found = (index < task_names_.size());
 
 	if (name_found == false) {
@@ -53,7 +53,7 @@ void AcceptanceRates::log_ending_(Pose const & pose) {
 	int most_calls = 0;
 	int most_successes = 0;
 
-	for (int i = 0; i < task_names_.size(); i++) {
+	for (uint i = 0; i < task_names_.size(); ++i) {
 		name_chars = max(name_chars, (int) task_names_[i].size());
 		most_calls = max(most_calls, task_calls_[i]);
 		most_successes = max(most_successes, task_successes_[i]);
@@ -67,7 +67,7 @@ void AcceptanceRates::log_ending_(Pose const & pose) {
 	cout << "Acceptance Rates" << endl;
 	cout << underline << endl;
 
-	for (int i = 0; i < task_names_.size(); i++) {
+	for (uint i = 0; i < task_names_.size(); ++i) {
 		string name = task_names_[i];
 		int calls = task_calls_[i];
 		int successes = task_successes_[i];

@@ -260,13 +260,18 @@ void
 SymDofMover::add_components_to_pose_if_necessary(Pose & pose){
 	using namespace basic::options;
 	TR << "checking for additional components" << std::endl;
-	if(option[OptionKeys::in::file::t].user()){
-		runtime_assert_msg(option[OptionKeys::in::file::t]().size()==1,"SymDofMover must have one or no inputs in -t");
+	if (option[OptionKeys::in::file::t].user()) {
+		runtime_assert_msg(option[OptionKeys::in::file::t]().size() == 1,
+				 "SymDofMover must have one or no inputs in -t");
 		core::pose::PoseCOP b = core::import_pose::pose_from_pdb( option[OptionKeys::in::file::t]().front() );
 		Size nres1 = pose.n_residue();
 		core::pose::append_pose_to_pose( pose, *b, true );
-		for(int ir =       1; ir <= nres1           ; ++ir) pose.pdb_info()->chain(ir,'A');
-		for(int ir = nres1+1; ir <= pose.n_residue(); ++ir) pose.pdb_info()->chain(ir,'B');
+		for (core::uint ir =         1; ir <= nres1           ; ++ir) {
+			pose.pdb_info()->chain(static_cast<long int>(ir), 'A');
+		}
+		for (core::uint ir = nres1 + 1; ir <= pose.n_residue(); ++ir) {
+			pose.pdb_info()->chain(static_cast<long int>(ir), 'B');
+		}
 		pose.update_pose_chains_from_pdb_chains();
 		// for(int ir = 1; ir <= pose.n_residue(); ++ir) std::cout << ir << " " << pose.chain(ir) << std::endl;
 		// pose.dump_pdb("combined.pdb");

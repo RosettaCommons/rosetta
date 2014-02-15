@@ -691,7 +691,7 @@ public:
 	}
 
 
-	/// @brief Returns true if  <seqpos>  the the root
+	/// @brief Returns true if  <seqpos>  is the root
 	///
 	inline
 	bool

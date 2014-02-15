@@ -11,35 +11,20 @@
 /// @brief
 /// @author Frank DiMaio
 /// @author Srivatsan Raman
+
 #include <protocols/rbsegment_relax/RBSegmentMover.hh>
-// AUTO-REMOVED #include <protocols/rbsegment_relax/util.hh>
+
 
 // Rosetta Headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-
-// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
-
-// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/BoundConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
 // Random number generator
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
-//
 #include <string>
 
 #include <core/id/AtomID.hh>
@@ -274,7 +259,7 @@ void SequenceShiftMover::apply( core::pose::Pose & pose ) {
 
 void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 	int dir = (shift>0) ? 1 : -1;
-	int mag = std::abs(shift);
+	Size mag = std::abs(shift);
 
 	core::Size nres = hybridization::get_num_residues_nonvirt( pose );
 	while (!pose.residue(nres).is_protein()) nres--;
@@ -295,10 +280,10 @@ void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 
 	for (Size ii=1; ii<=segment_.nContinuousSegments(); ++ii) {
 		// apply to transformation to every atom in this segment
-		int i_start = std::max(segment_[ii].start(), (Size)1);
-		int i_end   = std::min(segment_[ii].end(), nres);
+		core::uint i_start = std::max(segment_[ii].start(), (Size)1);
+		core::uint i_end   = std::min(segment_[ii].end(), nres);
 
-		int nres_seg  = i_end - i_start + 1;
+		Size nres_seg  = i_end - i_start + 1;
 
 		numeric::xyzVector< Real > C1,N1,C2,N2, CA1, CA2;
 		numeric::xyzMatrix< Real > R, R1;
@@ -311,10 +296,10 @@ void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 		R1.yx(0.0);R1.yy(0.0);R1.yz(0.0);
 		R1.zx(0.0);R1.zy(0.0);R1.zz(0.0);
 
-		for ( int i = 0; i < nres_seg-mag; ++i ) {
+		for ( core::uint i = 0; i < nres_seg - mag; ++i ) {
 			// "transform" r_i to r_j
-			Size r_i = (dir==1)? i_start+i : i_end-i;
-			Size r_j = r_i+dir*mag;
+			Size r_i = (dir == 1) ? i_start + i : i_end - i;
+			Size r_j = r_i + dir * mag;
 
 			CA1 = pose.residue(r_i).atom("CA").xyz();
 			C1 = pose.residue(r_i).atom("C").xyz() - CA1;  // offset from CA
@@ -335,28 +320,28 @@ void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
 				atm_ids.push_back( id );
 				atm_xyzs.push_back( newX );
 			}
-if (verbose_) { TR << "align " << r_i << "->" << r_j << std::endl; }
+			if (verbose_) { TR << "align " << r_i << "->" << r_j << std::endl; }
 		}
 
 		// final 'mag+1' residues
 		//    if there is a reference pose, use that
 		//    otherwise, duplicate the last residues' xform
-		for ( int i = 0; i < mag; ++i ) {
-			int r_i = (dir==1)? i_end-i : i_start+i;
-			int r_j = r_i + dir*mag + offsets_[r_i];
+		for ( core::uint i = 0; i < mag; ++i ) {
+			int r_i = (dir == 1) ? i_end - i : i_start + i;
+			int r_j = r_i + dir * mag + offsets_[r_i];
 
 			bool crosses_cut = (ref_pose_.total_residue() == 0);
 			if (!crosses_cut) {
-				if (r_j>r_i) {
-					for (int k = r_i; k<r_j && !crosses_cut; ++k)
+				if (r_j > r_i) {
+					for (int k = r_i; k < r_j && !crosses_cut; ++k)
 						crosses_cut |= ref_pose_.fold_tree().is_cutpoint(k);
 				} else {
-					for (int k = r_i; k>r_j && !crosses_cut; --k)
+					for (int k = r_i; k > r_j && !crosses_cut; --k)
 						crosses_cut |= ref_pose_.fold_tree().is_cutpoint(k-1);
 				}
 			}
 
-			if ( r_j<=nres && r_j >= 1 && !crosses_cut) {
+			if ( r_j <= static_cast<int>(nres) && r_j >= 1 && !crosses_cut) {
 				CA1 = pose.residue(r_i).atom("CA").xyz();
 				C1 = pose.residue(r_i).atom("C").xyz() - CA1;  // offset from CA
 				N1 = pose.residue(r_i).atom("N").xyz() - CA1;  // offset from CA
@@ -367,7 +352,7 @@ if (verbose_) { TR << "align " << r_i << "->" << r_j << std::endl; }
 				// get rotation from (i+dir) to i
 				R1 = numeric::alignVectorSets( C1,N1, C2,N2 );
 
-if (verbose_) { TR << "align " << r_i << "->" << r_j << "using template" << std::endl; }
+				if (verbose_) { TR << "align " << r_i << "->" << r_j << "using template" << std::endl; }
 
 				// apply transformation to every atom in this res
 				for ( Size a_i = 1; a_i<=pose.residue(r_i).natoms(); ++a_i ) {
@@ -397,8 +382,8 @@ if (verbose_) { TR << "align " << r_i << "->" << r_j << "using prev xform" << st
 
 void SequenceShiftMover::trigger_accept() {
 	// apply shift to array and score
-	for (int j=1; j<=segment_.nContinuousSegments(); ++j) {
-		for (int k=(int)segment_[j].start(); k<=(int)segment_[j].end(); ++k) {
+	for (core::uint j = 1; j <= segment_.nContinuousSegments(); ++j) {
+		for (core::uint k = segment_[j].start(); k <= segment_[j].end(); ++k) {
 			offsets_[k] += last_move_;
 		}
 	}
@@ -409,8 +394,8 @@ SequenceShiftMover::score(bool step_fn/*=false*/) {
 	int score_aln=0;
 
 	utility::vector1< int > offsets_working = offsets_;
-	for (int j=1; j<=segment_.nContinuousSegments(); ++j) {
-		for (int k=(int)segment_[j].start(); k<=(int)segment_[j].end(); ++k) {
+	for (core::uint j = 1; j <= segment_.nContinuousSegments(); ++j) {
+		for (core::uint k = segment_[j].start(); k <= segment_[j].end(); ++k) {
 			offsets_working[k] += last_move_;
 		}
 	}
@@ -419,24 +404,32 @@ SequenceShiftMover::score(bool step_fn/*=false*/) {
 	if (step_fn) {
 		if (offsets_working[1] != 0)  score_aln++;
 		if (offsets_working[offsets_.size()] != 0)  score_aln++;
-		for (int j=2; j<=(int)offsets_.size(); ++j) {
-			if (offsets_working[j] != offsets_working[j-1]) {
+		for (core::uint j = 2; j <= offsets_.size(); ++j) {
+			if (offsets_working[j] != offsets_working[j - 1]) {
 				core::Real sc_scale = 1.0;
-				int newj0 = j+offsets_working[j];
-				int newj1 = j-1+offsets_working[j-1];
-				if (newj0>0 && newj1>0 && newj0<=offsets_.size() && newj1<=offsets_.size() && penalty_res_[newj0] && penalty_res_[newj1]) sc_scale = 100.0;
+				int newj0 = j + offsets_working[j];
+				int newj1 = j - 1 + offsets_working[j - 1];
+				if (newj0 > 0 && newj1 > 0 &&
+						newj0 <= static_cast<int>(offsets_.size()) && newj1 <= static_cast<int>(offsets_.size()) &&
+						penalty_res_[newj0] && penalty_res_[newj1]) {
+					sc_scale = 100.0;
+				}
 				score_aln += sc_scale;
 			}
 		}
 	} else {
 		score_aln += abs(offsets_working[1]);
 		score_aln += abs(offsets_working[offsets_.size()]);
-		for (int j=2; j<=(int)offsets_.size(); ++j) {
-			if (offsets_working[j] != offsets_working[j-1]) {
+		for (core::uint j = 2; j <= offsets_.size(); ++j) {
+			if (offsets_working[j] != offsets_working[j - 1]) {
 				core::Real sc_scale = 1.0;
-				int newj0 = j+offsets_working[j];
-				int newj1 = j-1+offsets_working[j-1];
-				if (newj0>0 && newj1>0 && newj0<=offsets_.size() && newj1<=offsets_.size() && penalty_res_[newj0] && penalty_res_[newj1]) sc_scale = 100.0;
+				int newj0 = j + offsets_working[j];
+				int newj1 = j - 1 + offsets_working[j - 1];
+				if (newj0 > 0 && newj1 > 0 &&
+						newj0 <= static_cast<int>(offsets_.size()) && newj1 <= static_cast<int>(offsets_.size()) &&
+						penalty_res_[newj0] && penalty_res_[newj1]) {
+					sc_scale = 100.0;
+				}
 				score_aln += sc_scale * abs(offsets_working[j] - offsets_working[j-1]);
 			}
 		}
@@ -444,10 +437,10 @@ SequenceShiftMover::score(bool step_fn/*=false*/) {
 
 	// penalize unaligned residues
 	utility::vector1<bool> residues_to_rebuild (offsets_working.size(), false);
-	for (int i=1; i<=offsets_working.size(); ++i) {
+	for (int i = 1; i <= static_cast<int>(offsets_working.size()); ++i) {
 		if (residues_to_rebuild[i]) continue;
 		// case 1: alignment passes N- or C- term
-		if (offsets_working[i]+i<1 || offsets_working[i]+i>offsets_working.size()) {
+		if (offsets_working[i] + i < 1 || offsets_working[i] + i > static_cast<int>(offsets_working.size())) {
 			residues_to_rebuild[i]=true;
 			continue;
 		}
@@ -455,7 +448,7 @@ SequenceShiftMover::score(bool step_fn/*=false*/) {
 		// case 2: alignment crosses cutpoint
 		int dir = (offsets_[i]>0) ? 1:-1;
 		int step = (offsets_[i]>0) ? 0:-1;
-		for (int j=i; j!=i+offsets_working[i] && !residues_to_rebuild[i]; j+=dir) {
+		for (int j = i; (j != i + offsets_working[i]) && !residues_to_rebuild[i]; j += dir) {
 			if (ref_pose_.fold_tree().is_cutpoint(j+step)) {
 				residues_to_rebuild[i]=true;
 			}
@@ -463,14 +456,14 @@ SequenceShiftMover::score(bool step_fn/*=false*/) {
 		if (residues_to_rebuild[i]) continue;
 
 		// case 3: another residue is mapped here
-		for (int j=i+1; j<=offsets_working.size(); ++j) {
-			if (offsets_working[i]+i == offsets_working[j]+j) {
-				residues_to_rebuild[i]=residues_to_rebuild[j]=true;
+		for (int j = i + 1; j <= static_cast<int>(offsets_working.size()); ++j) {
+			if (offsets_working[i] + i == offsets_working[j] + j) {
+				residues_to_rebuild[i] = residues_to_rebuild[j]=true;
 			}
 		}
 	}
-	for (int i=1; i<=offsets_working.size(); ++i) {
-		if (residues_to_rebuild[i]) score_aln++;
+	for (core::uint i = 1; i <= offsets_working.size(); ++i) {
+		if (residues_to_rebuild[i]) ++score_aln;
 	}
 
 	return score_aln;
@@ -485,11 +478,11 @@ SequenceShiftMover::get_residues_to_rebuild() {
 
 	utility::vector1<bool> residues_to_rebuild (offsets_.size(), false);
 
-	for (int i=1; i<=offsets_.size(); ++i) {
+	for (int i = 1; i <= static_cast<int>(offsets_.size()); ++i) {
 		if (residues_to_rebuild[i]) continue;
 
 		// case 1: alignment passes N- or C- term
-		if (offsets_[i]+i<1 || offsets_[i]+i>offsets_.size()) {
+		if (offsets_[i] + i < 1 || offsets_[i] + i > static_cast<int>(offsets_.size())) {
 			residues_to_rebuild[i]=true;
 			continue;
 		}
@@ -497,7 +490,7 @@ SequenceShiftMover::get_residues_to_rebuild() {
 		// case 2: alignment crosses cutpoint
 		int dir = (offsets_[i]>0) ? 1:-1;
 		int step = (offsets_[i]>0) ? 0:-1;
-		for (int j=i; j!=i+offsets_[i] && !residues_to_rebuild[i]; j+=dir) {
+		for (int j = i; (j != i + offsets_[i]) && !residues_to_rebuild[i]; j += dir) {
 			if (ref_pose_.fold_tree().is_cutpoint(j+step)) {
 				residues_to_rebuild[i]=true;
 				std::cerr << "at " << i << " cross cut " << j << std::endl;
@@ -506,10 +499,10 @@ SequenceShiftMover::get_residues_to_rebuild() {
 		if (residues_to_rebuild[i]) continue;
 
 		// case 3: another residue is mapped here
-		for (int j=i+1; j<=offsets_.size(); ++j) {
-			if (offsets_[i]+i == offsets_[j]+j) {
+		for (int j = i + 1; j <= static_cast<int>(offsets_.size()); ++j) {
+			if (offsets_[i] + i == offsets_[j] + j) {
 				//std::cerr << "res " << i << " and " << j << " collide" << std::endl;
-				residues_to_rebuild[i]=residues_to_rebuild[j]=true;
+				residues_to_rebuild[i] = residues_to_rebuild[j] = true;
 			}
 		}
 	}
@@ -519,18 +512,19 @@ SequenceShiftMover::get_residues_to_rebuild() {
 
 	//A: extend loops by 1 residue if they do not cross a cut
 	utility::vector1<bool> ext_residues_to_rebuild = residues_to_rebuild;
-	for (int i=1; i<=residues_to_rebuild.size(); ++i) {
-		if (i>1 && residues_to_rebuild[i] && !ref_pose_.fold_tree().is_cutpoint(i-1))
-			ext_residues_to_rebuild[i-1] = true;
-		if (i<residues_to_rebuild.size() && residues_to_rebuild[i] && !ref_pose_.fold_tree().is_cutpoint(i))
-			ext_residues_to_rebuild[i+1] = true;
+	for (core::uint i = 1; i <= residues_to_rebuild.size(); ++i) {
+		if (i > 1 && residues_to_rebuild[i] && !ref_pose_.fold_tree().is_cutpoint(i - 1))
+			ext_residues_to_rebuild[i - 1] = true;
+		if (i < residues_to_rebuild.size() && residues_to_rebuild[i] && !ref_pose_.fold_tree().is_cutpoint(i))
+			ext_residues_to_rebuild[i + 1] = true;
 	}
 	//B: remove "singletons"
 	//C: ensure loops are at least 3 residues long
-	for (int i=1; i<=residues_to_rebuild.size(); ++i) {
-		if (i<residues_to_rebuild.size() && ref_pose_.fold_tree().is_cutpoint(i-1) && ext_residues_to_rebuild[i+1]) {
+	for (core::uint i = 1; i <= residues_to_rebuild.size(); ++i) {
+		if (i < residues_to_rebuild.size() && ref_pose_.fold_tree().is_cutpoint(i - 1) &&
+				ext_residues_to_rebuild[i + 1]) {
 			ext_residues_to_rebuild[i] = true;
-			if (i+1<residues_to_rebuild.size()) ext_residues_to_rebuild[i+2] = true;
+			if (i + 1 < residues_to_rebuild.size()) ext_residues_to_rebuild[i + 2] = true;
 		}
 		if (i>1 && ref_pose_.fold_tree().is_cutpoint(i) && ext_residues_to_rebuild[i-1]) {
 			ext_residues_to_rebuild[i] = true;
@@ -538,8 +532,10 @@ SequenceShiftMover::get_residues_to_rebuild() {
 		}
 	}
 
-	std::cerr << "....|....1....|....2....|....3....|....4....|....5....|....6....|....7....|....8....|....9....|....0" << std::endl;
-	for (int i=1; i<=penalty_res_.size(); ++i) {
+	std::cerr <<
+			"....|....1....|....2....|....3....|....4....|....5....|....6....|....7....|....8....|....9....|....0" <<
+			std::endl;
+	for (core::uint i = 1; i <= penalty_res_.size(); ++i) {
 		if (penalty_res_[i]) {
 			std::cerr << "1";
 		} else {
@@ -549,7 +545,7 @@ SequenceShiftMover::get_residues_to_rebuild() {
 	}
 	std::cerr << std::endl;
 	std::cerr << "---" << std::endl;
-	for (int i=1; i<=offsets_.size(); ++i) {
+	for (core::uint i = 1; i <= offsets_.size(); ++i) {
 		if (ext_residues_to_rebuild[i]) {
 			if (ref_pose_.fold_tree().is_cutpoint(i)) std::cerr << "C";
 			else std::cerr << "1";
@@ -562,7 +558,7 @@ SequenceShiftMover::get_residues_to_rebuild() {
 	}
 	std::cerr << std::endl;
 	std::cerr << "---" << std::endl;
-	for (int i=1; i<=offsets_.size(); ++i) {
+	for (core::uint i = 1; i <= offsets_.size(); ++i) {
 		int off_mag = std::abs(offsets_[i]);
 		if (off_mag!=offsets_[i]) std::cerr << "\x1b[31m";
 		else std::cerr << "\x1b[32m";
@@ -575,7 +571,7 @@ SequenceShiftMover::get_residues_to_rebuild() {
 	std::cerr << "\x1b[39m";
 	std::cerr << std::endl;
 
-	for (int i=1; i<=ext_residues_to_rebuild.size(); ++i) {
+	for (core::uint i = 1; i <= ext_residues_to_rebuild.size(); ++i) {
 		if (!inloop && ext_residues_to_rebuild[i]) {
 			inloop=true;
 			loopstart=i;

@@ -107,7 +107,7 @@ ChunkTrialMover::ChunkTrialMover(
 	highest_tmpl_resnum_ = 0;
 	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
 		for (core::Size ires=1; ires<=template_poses_[i_template]->total_residue(); ++ires) {
-			if (template_poses_[i_template]->pdb_info()->number(ires) > highest_tmpl_resnum_) {
+			if (template_poses_[i_template]->pdb_info()->number(ires) > static_cast<int>(highest_tmpl_resnum_)) {
 				highest_tmpl_resnum_ = template_poses_[i_template]->pdb_info()->number(ires);
 			}
 		}

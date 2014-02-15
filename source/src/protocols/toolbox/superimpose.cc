@@ -103,21 +103,21 @@ superposition_transform(
 
 void
 superposition_transform(
-      utility::vector1< numeric::xyzVector< core::Real > > & init_coords,
-      utility::vector1< numeric::xyzVector< core::Real > > & ref_coords,
-      utility::vector1< core::Real > & coord_weights,
-			numeric::xyzMatrix< core::Real > & rotation,
-			numeric::xyzVector< core::Real > & to_init_center,
-			numeric::xyzVector< core::Real > & to_fit_center)
+		utility::vector1< numeric::xyzVector< core::Real > > & init_coords,
+		utility::vector1< numeric::xyzVector< core::Real > > & ref_coords,
+		utility::vector1< core::Real > & coord_weights,
+		numeric::xyzMatrix< core::Real > & rotation,
+		numeric::xyzVector< core::Real > & to_init_center,
+		numeric::xyzVector< core::Real > & to_fit_center)
 {
-  int count = init_coords.size();
-  runtime_assert(count == ref_coords.size());
+	core::Size count = init_coords.size();
+	runtime_assert(count == ref_coords.size());
 
-  ObjexxFCL::FArray2D< numeric::Real > init_fa( 3, init_coords.size());
-  ObjexxFCL::FArray2D< numeric::Real > ref_fa( 3, ref_coords.size());
+	ObjexxFCL::FArray2D< numeric::Real > init_fa( 3, init_coords.size());
+	ObjexxFCL::FArray2D< numeric::Real > ref_fa( 3, ref_coords.size());
 
-  vector_vector_to_FArray2(init_coords, init_fa);
-  vector_vector_to_FArray2(ref_coords, ref_fa);
+	vector_vector_to_FArray2(init_coords, init_fa);
+	vector_vector_to_FArray2(ref_coords, ref_fa);
 
 	ObjexxFCL::FArray1D< numeric::Real > weights_fa(count, 1);
 	if (coord_weights.size() != 0)
