@@ -391,7 +391,7 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 	int loop_start_in_pose, loop_stop_in_pose, cut_position ;
 	loopsop_having_allcdrs_ = new loops::Loops();
 
-	for (Size i=start_cdr_loop; i<=total_cdr_loops_; ++i ) {
+	for (Size i=start_cdr_loop; i <= Size(total_cdr_loops_); ++i ) {
 		loop_start_in_pose = pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs_[i], numbering_info_.cdr_numbering[i][cdr_start]->resnum());
 		loop_stop_in_pose= pose.pdb_info()->pdb2pose( Chain_IDs_for_CDRs_[i], numbering_info_.cdr_numbering[i][cdr_end]->resnum());
 		if(i != h3 ) {
@@ -942,7 +942,7 @@ loops::LoopsOP
 AntibodyInfo::get_CDR_loops(pose::Pose const & pose) const {
 	
 	protocols::loops::LoopsOP cdr_loops = new loops::Loops;
-	for (Size i = 1; i <= total_cdr_loops_; ++i){
+	for (Size i = 1; i <= Size(total_cdr_loops_); ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		protocols::loops::Loop cdr_loop =get_CDR_loop(cdr, pose);
 		cdr_loops->add_loop(cdr_loop);
@@ -1012,7 +1012,7 @@ AntibodyInfo::setup_CDR_clusters(pose::Pose const & pose) {
 	TR << "Setting up CDR Clusters" << std::endl;
 
 	cdr_cluster_set_->clear();
-	for (core::Size i=1; i<=total_cdr_loops_; ++i) {
+	for (core::Size i=1; i <= core::Size(total_cdr_loops_); ++i) {
 		CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
 		cdr_cluster_set_->identify_and_set_cdr_cluster(pose, cdr_name);
 		CDRClusterOP cluster_id = get_CDR_cluster(cdr_name);

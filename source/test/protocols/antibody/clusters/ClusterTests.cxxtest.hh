@@ -114,7 +114,7 @@ public:
 	void test_cluster_constraints(){
 		
 		std::map< CDRNameEnum, bool > result = add_harmonic_cluster_constraints(ab_info, ab_pose);
-		for (core::Size i = 1; i <= ab_info->get_total_num_CDRs(); ++i){
+		for (core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i){
 			CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
 			TS_ASSERT(result[cdr_name]);
 		}
@@ -123,7 +123,7 @@ public:
 		
 		utility::vector1< core::scoring::constraints::ConstraintCOP > constraints;
 		result = protocols::antibody::add_harmonic_cluster_constraints(ab_info, ab_pose, constraints);
-		for (core::Size i = 1; i <= ab_info->get_total_num_CDRs(); ++i){
+		for (core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i){
 			CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
 			TS_ASSERT(result[cdr_name]);
 		}

@@ -678,7 +678,7 @@ void align_to_native( core::pose::Pose & pose,
 std::map< CDRNameEnum, bool>
 add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, core::pose::Pose & pose){
 	std::map< CDRNameEnum, bool> result;
-	for (core::Size i=1; i<=ab_info->get_total_num_CDRs(); ++i){
+	for (core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i){
 		CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
 		result[cdr_name] = add_harmonic_cluster_constraint(ab_info, pose, ab_info->get_CDR_cluster(cdr_name)->cluster());
 	}
@@ -689,7 +689,7 @@ std::map< CDRNameEnum, bool>
 add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, core::pose::Pose & pose, utility::vector1< core::scoring::constraints::ConstraintCOP > constraints){
 	
 	std::map< CDRNameEnum, bool> result;
-	for (core::Size i=1; i<=ab_info->get_total_num_CDRs(); ++i){
+	for (core::Size i = 1; i <= core::Size(ab_info->get_total_num_CDRs()); ++i){
 		CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
 		result[cdr_name] = add_harmonic_cluster_constraint(ab_info, pose, ab_info->get_CDR_cluster(cdr_name)->cluster(), constraints);
 	}

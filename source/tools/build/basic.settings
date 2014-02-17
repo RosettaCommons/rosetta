@@ -527,9 +527,15 @@ settings = {
     },
 
     "gcc, test" : {
+        "appends" : {
+            "flags" : {
+                #The "isystem" items here are to tell gcc to not print warnings from this external header 
+                "cc"        : [ "isystem external/cxxtest/"],
+                "cxx"       : [ "isystem external/cxxtest/"],
+            },
+        },
         "removes" : {
             "flags" : {
-                "warn"      : [ "Werror=sign-compare" ],
                 #"compile"   : [ "fno-exceptions" ],
             },
         },
@@ -1365,6 +1371,16 @@ settings = {
                 "mode"      : [
                     "g"
                 ],
+            },
+        },
+    },
+    
+    "clang, test" : {
+        "appends" : {
+            "flags" : {
+                #The "isystem" items here are to tell Clang to not print warnings from this external headers 
+                "cc"        : [ "isystem external/cxxtest/"],
+                "cxx"       : [ "isystem external/cxxtest/"],
             },
         },
     },
