@@ -135,44 +135,9 @@ ThreeHelixRepeatGraph::find_paths(
 }
 
 core::pose::Pose
-ThreeHelixRepeatGraph::print_first(
-	EdgeList const & visited_edges,
-	std::map<NodeOP, core::pose::Pose> const & poses
-){
+ThreeHelixRepeatGraph::print_first(EdgeList const &, std::map<NodeOP, core::pose::Pose> const &)
+{
 	return core::pose::Pose();
-//	for(core::Size i=1; i<=visited_edges.size(); ++i)
-//	{
-//		//need to remove one helix from visited_edges[1].first
-//		if(visited_edges[i].second == visited_edges[1].first)
-//		{
-//			NodeOP node_to_trim = visited_edges[i].second;
-//			NodeOP other_node = visited_edges[i].first;
-//			core::pose::Pose const & pose = poses.find(node_to_trim)->second;
-//			
-//			core::Size beginning_of_helix_to_remove=0;
-//			core::Size beginning_of_helix_to_keep=0;
-//			
-//			//keep the helix that is
-//			if(	other_node->helix_1_id() == node_to_trim->helix_1_id() ||
-//				other_node->helix_2_id() == node_to_trim->helix_1_id())
-//			{
-//				beginning_of_helix_to_remove=node_to_trim->helix_1_begin();
-//				beginning_of_helix_to_keep=node_to_trim->helix_2_begin();
-//			}
-//			else{
-//				beginning_of_helix_to_remove=node_to_trim->helix_2_begin();
-//				beginning_of_helix_to_keep=node_to_trim->helix_1_begin();
-//			}
-//			
-//			core::Size helix_size = node_to_trim->helix_1_end() - node_to_trim->helix_1_begin()+1;
-//			if(beginning_of_helix_to_keep < beginning_of_helix_to_remove)
-//			{
-//				//remove second helix from pose
-//				return core::pose::Pose( pose, 1, helix_size);
-//			}
-//			return core::pose::Pose(pose, helix_size+1, pose.total_residue());
-//		}
-//	}
 }
 
 void

@@ -121,7 +121,7 @@ AlignChainMover::fresh_instance() const
 void
 AlignChainMover::parse_my_tag(
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap & data,
+	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )

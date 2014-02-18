@@ -46,9 +46,8 @@ MoverOP FixedTemperatureController::clone() const {
 	return new FixedTemperatureController(temperature(1));
 }
 
-core::Real FixedTemperatureController::temperature_move(
-		Pose & pose, MetropolisHastingsMover & mover, Real score) {
-	
+core::Real FixedTemperatureController::temperature_move(Pose &, MetropolisHastingsMover &, Real)
+{
 	return temperature(1);
 }
 

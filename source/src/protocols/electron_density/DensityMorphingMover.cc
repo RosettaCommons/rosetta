@@ -221,14 +221,12 @@ void DensityMorphingMover::apply(core::pose::Pose & pose) {
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 DensityMorphingMover::parse_my_tag(
-								   TagCOP const tag,
-								   basic::datacache::DataMap & datamap,
-								   Filters_map const & filters,
-								   moves::Movers_map const & movers,
-								   Pose const & pose
-								   )
+		TagCOP const tag,
+		basic::datacache::DataMap &,
+		Filters_map const &,
+		moves::Movers_map const &,
+		Pose const &)
 {
-
 	if ( tag->hasOption("frag_size") ) {
 		frag_size_ = tag->getOption<core::Real>("frag_size");
 	}

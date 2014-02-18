@@ -46,8 +46,7 @@ ScoreVsRmsd::ScoreVsRmsd(Pose const & native, Loop const & loop) {
 	loops_.add_loop(loop);
 }
 
-void ScoreVsRmsd::log_iteration_(Pose const & pose) {
-}
+void ScoreVsRmsd::log_iteration_(Pose const &) {}
 
 void ScoreVsRmsd::log_monte_carlo_(MonteCarlo const & monte_carlo) {
 	using protocols::loops::loop_rmsd;
@@ -61,7 +60,7 @@ void ScoreVsRmsd::log_monte_carlo_(MonteCarlo const & monte_carlo) {
 	}
 }
 
-void ScoreVsRmsd::log_ending_(Pose const & pose) {
+void ScoreVsRmsd::log_ending_(Pose const &) {
 	ofstream file("score_vs_rmsd.txt");
 
 	file << fixed;

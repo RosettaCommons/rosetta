@@ -86,16 +86,16 @@ PocketExemplarMultifunc::operator ()( core::optimization::Multivec const & vars 
 
 //This is not used in my project, is stubbd out because this can be used for other optimizations that use derivatives
 void
-PocketExemplarMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimization::Multivec & dE_dvars ) const
+PocketExemplarMultifunc::dfunc( core::optimization::Multivec const &, core::optimization::Multivec & ) const
 {
-  std::cerr << "PocketExemplarMultifunc cannot be used with derivative based optimization methods."<<std::endl;
-  exit(20);
+	std::cerr << "PocketExemplarMultifunc cannot be used with derivative based optimization methods."<<std::endl;
+	exit(20);
 }
 
 /// @details Useful debugging code that can be re-enabled by changing the boolean
 /// variables at the top of this file.
 void
-PocketExemplarMultifunc::dump( core::optimization::Multivec const & vars ) const {
+PocketExemplarMultifunc::dump( core::optimization::Multivec const & ) const {
   std::cout<< "In PocketExemplarMultifunc."<< std::endl;
 }
 

@@ -121,19 +121,27 @@ settings = {
     "gcc" : {
         "appends" : {
             "flags" : {
-                #The "isystem" items here are to tell gcc to not print warnings from these external headers 
+                #The "isystem" items here are to tell gcc to not print warnings from these external headers
                 "cc"        : [ "std=c99", "isystem external/boost_1_46_1/", "isystem external/include/"],
                 "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/", "isystem external/include/"],
                 "compile"   : [ "pipe", "ffor-scope" ],
-                "warn"      : [ "Wall", "Wextra", "pedantic", "Wno-long-long", "Werror=sign-compare" ],
                 # By default, warn about everything except the use of long long, which we need for certain
                 # database functionality.
                 # Certain warnings are treated as errors:
                 # * sign-compare
+                # * unused-parameter
                 # GCC's `pedantic` option triggers a compilation error in the c++ standard library
                 # when intrinsics are referenced (e.g. in certain portions of Boost). There are 2
                 # options-- 1) remove pedantic warnings; or 2) add the Boost directory to GCC's
                 # system include path. Warnings from code on the system include path are suppressed.
+                "warn"      : [
+                    "Wall",
+                    "Wextra",
+                    "pedantic",
+                    "Wno-long-long",
+                    "Werror=sign-compare",
+                    "Werror=unused-parameter"
+                ],
             },
         },
     },
@@ -216,6 +224,12 @@ settings = {
             },
             "defines"       : [ "NDEBUG" ],
         },
+        "removes" : {
+            "flags" : {
+                # See comment above for rational here.
+                "warn" : ["Werror=unused-parameter"],
+            }
+        },
     },
     "gcc, 4.4, release" : {
         "removes" : {
@@ -294,6 +308,12 @@ settings = {
                 "warn"      : [ "Wno-unused-variable" ],
             },
             #"defines"       : [ "NDEBUG" ], # Uncomment to turn asserts on if speed matters and assert failures not expected
+        },
+        "removes" : {
+            "flags" : {
+                # See comment above for rational here.
+                "warn" : ["Werror=unused-parameter"],
+            }
         },
     },
 
@@ -390,6 +410,9 @@ settings = {
                 "link"      : [ "$__RPATH" ],
                 "cxx"       : [ "std=c++98" ],
                 "shlink"    : [ "$LINKFLAGS" ],
+                # For some reason, despite using isystem for boost,
+                # Mac.gcc.debug mode is throwing an error from an unused param in boost!
+                "warn" : ["Werror=unused-parameter"],
             },
         },
     },
@@ -529,7 +552,7 @@ settings = {
     "gcc, test" : {
         "appends" : {
             "flags" : {
-                #The "isystem" items here are to tell gcc to not print warnings from this external header 
+                #The "isystem" items here are to tell gcc to not print warnings from this external header
                 "cc"        : [ "isystem external/cxxtest/"],
                 "cxx"       : [ "isystem external/cxxtest/"],
             },
@@ -1257,7 +1280,7 @@ settings = {
                 #                "Wno-padded",
                 #                "Wno-weak-vtables"
                 #              ],
-                "warn"      : [ "W", "pedantic", "Wno-long-long", "Werror=sign-compare" ],
+                "warn"      : [ "W", "pedantic", "Wno-long-long", "Werror=sign-compare", "Werror=unused-parameter" ],
             },
         },
     },
@@ -1272,7 +1295,7 @@ settings = {
             },
 		},
 	},
-				
+
     "clang, debug" : {
         "appends" : {
             "flags" : {
@@ -1362,6 +1385,12 @@ settings = {
             },
             "defines" : [ "NDEBUG" ],
         },
+        "removes" : {
+            "flags" : {
+                # See comment above for rational here.
+                "warn" : ["Werror=unused-parameter"],
+            }
+        },
     },
 
     "clang, release_debug" : {
@@ -1373,12 +1402,18 @@ settings = {
                 ],
             },
         },
+        "removes" : {
+            "flags" : {
+                # See comment above for rational here.
+                "warn" : ["Werror=unused-parameter"],
+            }
+        },
     },
-    
+
     "clang, test" : {
         "appends" : {
             "flags" : {
-                #The "isystem" items here are to tell Clang to not print warnings from this external headers 
+                #The "isystem" items here are to tell Clang to not print warnings from this external headers
                 "cc"        : [ "isystem external/cxxtest/"],
                 "cxx"       : [ "isystem external/cxxtest/"],
             },

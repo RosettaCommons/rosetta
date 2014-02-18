@@ -107,7 +107,9 @@ void XtalMLEnergy::finalize_total_energy(pose::Pose & pose, ScoreFunction const 
 }
 
 void
-XtalMLEnergy::setup_for_minimizing( pose::Pose & pose, ScoreFunction const & sf, kinematics::MinimizerMapBase const & ) const {
+XtalMLEnergy::setup_for_minimizing( pose::Pose & pose, ScoreFunction const &,
+		kinematics::MinimizerMapBase const & ) const
+{
 	using namespace core::chemical;
 	getPhenixInterface().getScore( pose );
 	getPhenixInterface().updateSolventMask();

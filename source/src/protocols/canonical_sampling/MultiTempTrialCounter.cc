@@ -145,7 +145,8 @@ vector1<string> const MultiTempTrialCounter::tags() const { // {{{1
 }
 
 void MultiTempTrialCounter::show( // {{{1
-		ostream& os, string line_header, bool with_end_line) const {
+		ostream& os, string, bool ) const
+{
 	write_to_stream(os, "");
 }
 

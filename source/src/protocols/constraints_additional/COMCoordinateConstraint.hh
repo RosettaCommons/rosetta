@@ -110,7 +110,7 @@ public:
 
 	virtual
 	scoring::constraints::ConstraintOP
-	remap_resid( id::SequenceMapping const &seqmap ) const { return NULL; }
+	remap_resid( id::SequenceMapping const & ) const { return NULL; }
 
 	///
 	AtomID const &

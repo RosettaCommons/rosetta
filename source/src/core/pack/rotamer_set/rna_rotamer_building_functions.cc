@@ -253,12 +253,12 @@ build_rna_chi_rotamers(
 // Should be its own method?
 void
 build_proton_chi_rotamers(
-											 Size const resid,
-											 pose::Pose const & pose,
-											 chemical::ResidueTypeCOP concrete_residue,
-											 pack::task::ResidueLevelTask const & residue_task,
-											 utility::vector1< conformation::ResidueOP > & rotamers ){
-
+		Size const,
+		pose::Pose const &,
+		chemical::ResidueTypeCOP concrete_residue,
+		pack::task::ResidueLevelTask const & residue_task,
+		utility::vector1< conformation::ResidueOP > & rotamers )
+{
 	Size const n_proton_chi = concrete_residue->n_proton_chi();
 	if ( n_proton_chi > 0 ) {
 		// This seems a little silly -- suck out the chi's, then put them back into rotamers.
@@ -267,8 +267,8 @@ build_proton_chi_rotamers(
 
 		for ( Size ii = 1; ii <= n_proton_chi; ++ii ) {
 			pack::dunbrack::expand_proton_chi( residue_task.extrachi_sample_level( true /*nneighb test*/,
-																																						 concrete_residue->proton_chi_2_chi( ii ), concrete_residue ),
-																				 concrete_residue, ii, proton_chi_chisets);
+					concrete_residue->proton_chi_2_chi( ii ), concrete_residue ),
+					concrete_residue, ii, proton_chi_chisets);
 		}
 
 		Size const number_of_starting_rotamers = rotamers.size();
@@ -283,10 +283,9 @@ build_proton_chi_rotamers(
 
 					Size const jj_protchi( concrete_residue->proton_chi_2_chi( jj ) );
 					rotamers[ new_rotamer_number ]->set_chi( jj_protchi,
-																											 proton_chi_chisets[ ii ]->chi[ jj_protchi ] );
+							proton_chi_chisets[ ii ]->chi[ jj_protchi ] );
 				}
 			}
-
 		}
 	}
 } //proton chi

@@ -30,9 +30,8 @@ namespace perturbers {
 WalkingBondAnglePerturber::WalkingBondAnglePerturber(Real magnitude)
 	: magnitude_ (magnitude) {}
 
-void WalkingBondAnglePerturber::perturb_subset(
-		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
-
+void WalkingBondAnglePerturber::perturb_subset(Pose const &, IndexList const & residues, ClosureProblemOP problem)
+{
 	using numeric::random::gaussian;
 	using numeric::conversions::DEGREES;
 

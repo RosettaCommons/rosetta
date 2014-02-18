@@ -111,11 +111,11 @@ RRProtocolRelax::get_cartesian() const {
 /// @details apply FastRelax and measure rotamer recovery for each residue
 void
 RRProtocolRelax::run(
-  RRComparerOP comparer,
-  RRReporterOP reporter,
-  Pose const & pose,
-	ScoreFunction const & score_function,
-  PackerTask const & packer_task
+		RRComparerOP comparer,
+		RRReporterOP reporter,
+		Pose const & pose,
+		ScoreFunction const &,
+		PackerTask const & packer_task
 ) {
 	// Assume score_function.setup_for_scoring(pose) has already been called.
 

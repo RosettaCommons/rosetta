@@ -348,10 +348,10 @@ residue_types_from_saccharide_sequence(std::string const & sequence,
 
 
 void make_pose_from_sequence(
-	pose::Pose & pose,
-	chemical::ResidueTypeCOPs requested_types,
-	bool const auto_termini /* true */
-) {
+		pose::Pose & pose,
+		chemical::ResidueTypeCOPs requested_types,
+		bool const /* auto_termini=true */)
+{
 	// clear the pose
 	pose.clear();
 

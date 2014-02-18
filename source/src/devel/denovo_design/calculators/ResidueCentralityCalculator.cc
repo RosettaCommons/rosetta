@@ -140,7 +140,7 @@ ExtractSmallest( std::list< NodeOP > & nodes )
 // Return all nodes adjacent to 'node' which are still
 // in the 'nodes' collection.
 std::list< NodeOP >
-AdjacentRemainingNodes( std::list< NodeOP > const & nodes, NodeOP node )
+AdjacentRemainingNodes( std::list< NodeOP > const &, NodeOP node )
 {
 	assert( ! node->in_list );
 	std::list< NodeOP > adjacentNodes;

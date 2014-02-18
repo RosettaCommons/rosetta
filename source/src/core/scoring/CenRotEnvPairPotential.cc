@@ -401,7 +401,7 @@ void
 CenRotEnvPairPotential::fill_smooth_cenlist(
 	SigmoidWeightedCenList<Real> & cenlist,
 	Size const res1,
-	Size const res2,
+	Size const,
 	Real const cendist
 ) const {
 	Real interp10 = 1 / (1+exp(SIGMOID_SLOPE*(cendist-10)));
@@ -413,7 +413,7 @@ void
 CenRotEnvPairPotential::fill_smooth_dcenlist(
 	SigmoidWeightedCenList< numeric::xyzVector<Real> > & dcenlist,
 	Size const res1,
-	Size const res2,
+	Size const,
 	numeric::xyzVector<Real> const cenvec  // vector between centroids
 ) const {
 	Real x = cenvec.length();

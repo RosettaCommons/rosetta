@@ -596,13 +596,13 @@ void PhenixInterface::stealBfactorsFromFile(
 #endif
 }
 
-///@brief update fcalc
+/// @brief update fcalc
 void PhenixInterface::updateFcalc () {
 	// old
 	return;
 }
 
-///@brief update mask
+/// @brief update mask
 void PhenixInterface::updateSolventMask () {
 #ifdef WITH_PYTHON
 	if (!target_evaluator_) return;
@@ -627,10 +627,13 @@ void PhenixInterface::updateSolventMask () {
 #endif
 }
 
-///@brief update mask
-void PhenixInterface::updateSolventMask (core::pose::Pose const & pose) {
+/// @brief update mask
+void PhenixInterface::updateSolventMask (
+
 #ifdef WITH_PYTHON
-	if (!target_evaluator_) {
+		core::pose::Pose const & pose)
+{
+		if (!target_evaluator_) {
 		initialize_target_evaluator( pose );
 	}
 
@@ -654,6 +657,8 @@ void PhenixInterface::updateSolventMask (core::pose::Pose const & pose) {
 	Py_DECREF(pMethod);
 
 #else
+		core::pose::Pose const &)
+{
 	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
 #endif
 }

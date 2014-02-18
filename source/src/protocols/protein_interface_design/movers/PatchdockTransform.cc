@@ -80,14 +80,17 @@ PatchdockTransform::get_name() const {
 }
 
 void
-PatchdockTransform::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+PatchdockTransform::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
-  pd_reader()->patchdock_fname( tag->getOption< std::string >( "fname", pd_reader()->patchdock_fname() ) );
+	pd_reader()->patchdock_fname( tag->getOption< std::string >( "fname", pd_reader()->patchdock_fname() ) );
 	pd_reader()->from_entry( tag->getOption< core::Size >( "from_entry", pd_reader()->from_entry() ) );
 	pd_reader()->to_entry( tag->getOption< core::Size >( "to_entry", pd_reader()->to_entry() ) );
 	pd_reader()->random_entry( tag->getOption< bool > ( "random_entry", pd_reader()->random_entry() ) );
 
-	TR<<"PatchdockTransform parsed with parameters: fname "<<pd_reader()->patchdock_fname()<<" random_entry: "<<pd_reader()->random_entry()<<" from_entry: "<<pd_reader()->from_entry()<<" to entry: "<<pd_reader()->to_entry()<<std::endl;
+	TR << "PatchdockTransform parsed with parameters: fname " << pd_reader()->patchdock_fname() << " random_entry: " <<
+			pd_reader()->random_entry() << " from_entry: " << pd_reader()->from_entry() << " to entry: " <<
+			pd_reader()->to_entry() << std::endl;
 	runtime_assert( pd_reader()->from_entry() <= pd_reader()->to_entry() );
 	runtime_assert( pd_reader()->from_entry() >= 1 );
 	runtime_assert( pd_reader()->patchdock_fname() != "" );

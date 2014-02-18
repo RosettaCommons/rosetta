@@ -59,10 +59,10 @@ FullModelInfo::FullModelInfo( std::string const full_sequence ):
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-FullModelInfo::FullModelInfo( pose::Pose & pose,
-															std::string const & full_sequence,
-															utility::vector1< Size > const & cutpoint_open_in_full_model,
-															utility::vector1< Size > const & res_numbers_in_pose ):
+FullModelInfo::FullModelInfo( pose::Pose &,
+		std::string const & full_sequence,
+		utility::vector1< Size > const & cutpoint_open_in_full_model,
+		utility::vector1< Size > const & res_numbers_in_pose ):
 	CacheableData(),
 	full_sequence_( full_sequence ),
 	cutpoint_open_in_full_model_( cutpoint_open_in_full_model ),

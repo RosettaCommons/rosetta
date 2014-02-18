@@ -42,11 +42,11 @@ void PdbLogger::log_beginning_(Pose const & pose) {
 	log_pose(pose, 0);
 }
 
-void PdbLogger::log_iteration_(Pose const & pose) {
+void PdbLogger::log_iteration_(Pose const &) {
 	counter_ = 0;
 }
 
-void PdbLogger::log_task_(Pose const & pose, string name, bool accepted) {
+void PdbLogger::log_task_(Pose const & pose, string name, bool) {
 	counter_ += 1;
 	log_pose(pose, name);
 }

@@ -115,7 +115,7 @@ GeometricSolEnergyEvaluator::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const & scfxn,
+	ScoreFunction const &,
 	EnergyMap & emap ) const
 {
 

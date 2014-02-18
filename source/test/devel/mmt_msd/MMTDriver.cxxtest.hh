@@ -221,7 +221,7 @@ public:
 		}
 	}
 
-	void initialize_retrieve_optimal_pdb_messages( std::string const & opt_pdb_seq )
+	void initialize_retrieve_optimal_pdb_messages( std::string const & )
 	{
 		utility::send_integer_to_node( 0, devel::mmt_msd::recovery_successful );
 		utility::send_string_to_node( 0, fc_->get_file_contents_ref( "ubq.pdb" ) );

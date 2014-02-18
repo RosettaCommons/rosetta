@@ -168,12 +168,11 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 ScaleMapIntensities::parse_my_tag(
-								   TagCOP const tag,
-								   basic::datacache::DataMap & datamap,
-								   Filters_map const & filters,
-								   moves::Movers_map const & movers,
-								   Pose const & pose
-							   )
+		TagCOP const tag,
+		basic::datacache::DataMap &,
+		Filters_map const &,
+		moves::Movers_map const &,
+		Pose const &)
 {
 	if ( tag->hasOption("res_low") ) {
 		res_low_ = tag->getOption<core::Real>("res_low");

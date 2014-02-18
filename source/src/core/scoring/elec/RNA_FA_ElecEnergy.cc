@@ -212,54 +212,44 @@ void
 RNA_FA_ElecEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	pose::Pose const & pose,
+	pose::Pose const &,
 	ScoreFunction const & scfxn,
 	EnergyMap & emap
 ) const
 {
-  
-  if(! rsd1.is_RNA() || ! rsd2.is_RNA()) { return; }
-  
-  
-  if(scfxn.has_nonzero_weight(fa_elec_rna_phos_phos)) {
-    
-    emap[ fa_elec_rna_phos_phos ] += rna_fa_elec_one_way(rsd1,rsd2,PHOSPHATE,PHOSPHATE);
-    
-  }
-  
-  if(scfxn.has_nonzero_weight(fa_elec_rna_sugr_sugr)) {
-    
-    emap[ fa_elec_rna_sugr_sugr ] += rna_fa_elec_one_way(rsd1,rsd2,SUGAR,SUGAR);
 
-  }
+	if(! rsd1.is_RNA() || ! rsd2.is_RNA()) { return; }
 
-  if(scfxn.has_nonzero_weight(fa_elec_rna_base_base)) {
-    
-    emap[ fa_elec_rna_base_base ] += rna_fa_elec_one_way(rsd1,rsd2,BASE,BASE);
-    
-  }
-  
-  if(scfxn.has_nonzero_weight(fa_elec_rna_phos_sugr)) {
-    
-    emap[ fa_elec_rna_phos_sugr ] += rna_fa_elec_one_way(rsd1,rsd2,PHOSPHATE,SUGAR) + 
-                                          rna_fa_elec_one_way(rsd1,rsd2,SUGAR,PHOSPHATE);
-  }
-  
-  if(scfxn.has_nonzero_weight(fa_elec_rna_phos_base)) {
-    
-    emap[ fa_elec_rna_phos_base ] += rna_fa_elec_one_way(rsd1,rsd2,PHOSPHATE,BASE) +
-                                          rna_fa_elec_one_way(rsd1,rsd2,BASE,PHOSPHATE);
-  }
-  
-  if(scfxn.has_nonzero_weight(fa_elec_rna_sugr_base)) {
-    
-    emap[ fa_elec_rna_sugr_base ] += rna_fa_elec_one_way(rsd1,rsd2,SUGAR,BASE) +
-                                          rna_fa_elec_one_way(rsd1,rsd2,BASE,SUGAR);
-  }
-  
+
+	if(scfxn.has_nonzero_weight(fa_elec_rna_phos_phos)) {
+		emap[ fa_elec_rna_phos_phos ] += rna_fa_elec_one_way(rsd1,rsd2,PHOSPHATE,PHOSPHATE);
+	}
+
+	if(scfxn.has_nonzero_weight(fa_elec_rna_sugr_sugr)) {
+		emap[ fa_elec_rna_sugr_sugr ] += rna_fa_elec_one_way(rsd1,rsd2,SUGAR,SUGAR);
+	}
+
+	if(scfxn.has_nonzero_weight(fa_elec_rna_base_base)) {
+		emap[ fa_elec_rna_base_base ] += rna_fa_elec_one_way(rsd1,rsd2,BASE,BASE);
+	}
+
+	if(scfxn.has_nonzero_weight(fa_elec_rna_phos_sugr)) {
+		emap[ fa_elec_rna_phos_sugr ] += rna_fa_elec_one_way(rsd1,rsd2,PHOSPHATE,SUGAR) +
+				rna_fa_elec_one_way(rsd1,rsd2,SUGAR,PHOSPHATE);
+	}
+
+	if(scfxn.has_nonzero_weight(fa_elec_rna_phos_base)) {
+		emap[ fa_elec_rna_phos_base ] += rna_fa_elec_one_way(rsd1,rsd2,PHOSPHATE,BASE) +
+				rna_fa_elec_one_way(rsd1,rsd2,BASE,PHOSPHATE);
+	}
+
+	if(scfxn.has_nonzero_weight(fa_elec_rna_sugr_base)) {
+		emap[ fa_elec_rna_sugr_base ] += rna_fa_elec_one_way(rsd1,rsd2,SUGAR,BASE) +
+				rna_fa_elec_one_way(rsd1,rsd2,BASE,SUGAR);
+	}
 }
-  
-  
+
+
 //////////////////////////////////////////////////////////////////////////////////
 // Sept 5th 2013, implemetnation of an optmized design function only phos-phos interactions are evaluated!
 //////////////////////////////////////////////////////////////////////////////////
@@ -285,19 +275,17 @@ RNA_FA_ElecEnergy::evaluate_rotamer_pair_energies(
   
 void
 RNA_FA_ElecEnergy::backbone_backbone_energy(
-  conformation::Residue const & rsd1,
-  conformation::Residue const & rsd2,
-  pose::Pose const & pose,
-  ScoreFunction const & sfxn,
-  EnergyMap & emap
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const &,
+		ScoreFunction const &,
+		EnergyMap & emap
 ) const
 {
-
-  emap[ fa_elec_rna_phos_phos ] +=  rna_fa_elec_one_way(rsd1,rsd2,PHOSPHATE,PHOSPHATE);
-
+	emap[ fa_elec_rna_phos_phos ] +=  rna_fa_elec_one_way(rsd1, rsd2, PHOSPHATE, PHOSPHATE);
 }
-  
-  
+
+
 Real
 RNA_FA_ElecEnergy::rna_fa_elec_one_way(
   conformation::Residue const & rsd1,

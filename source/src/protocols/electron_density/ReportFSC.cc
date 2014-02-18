@@ -135,12 +135,11 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 ReportFSC::parse_my_tag(
-								   TagCOP const tag,
-								   basic::datacache::DataMap & datamap,
-								   Filters_map const & filters,
-								   moves::Movers_map const & movers,
-								   Pose const & pose
-							   )
+		TagCOP const tag,
+		basic::datacache::DataMap &,
+		Filters_map const &,
+		moves::Movers_map const &,
+		Pose const &)
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

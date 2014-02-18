@@ -565,7 +565,7 @@ InterfaceFeatures::write_interface_side_schema_to_db(utility::sql_database::sess
 
 void
 InterfaceFeatures::report_interface_side_features(
-	core::pose::Pose const & pose,
+	core::pose::Pose const &,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	const std::string chains_side1,
@@ -573,7 +573,6 @@ InterfaceFeatures::report_interface_side_features(
 	protocols::analysis::InterfaceRegion const region,
 	std::string region_string) const
 {
-	
 	std::string stmt_string = "INSERT INTO interface_sides ("
 			"struct_id,"
 			"interface,"

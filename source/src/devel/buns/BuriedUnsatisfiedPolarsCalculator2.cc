@@ -542,7 +542,7 @@ BuriedUnsatisfiedPolarsCalculator2::sulphur_bond_check(
  */
 bool
 BuriedUnsatisfiedPolarsCalculator2::don_geom_check(
-	core::pose::Pose const & pose,
+	core::pose::Pose const &,
 	Residue const & bunsat_rsd,
 	Size const & bunsat_atom_num,
 	Vector const & bunsat_xyz,
@@ -583,7 +583,7 @@ BuriedUnsatisfiedPolarsCalculator2::don_geom_check(
  */
 bool
 BuriedUnsatisfiedPolarsCalculator2::acc_geom_check(
-	core::pose::Pose const & pose,
+	core::pose::Pose const &,
 	Vector const & bunsat_xyz,
 	Residue const & test_rsd,
 	Size const & test_atom_num,

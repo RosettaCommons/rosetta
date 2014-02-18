@@ -25,13 +25,12 @@ DeleteAllRotamerSetOperation::clone() const
 }
 
 void DeleteAllRotamerSetOperation::alter_rotamer_set(
-			core::pose::Pose const & pose,
-			core::scoring::ScoreFunction const & sfxn,
-			core::pack::task::PackerTask const & ptask,
-			core::graph::GraphCOP packer_neighbor_graph,
-			core::pack::rotamer_set::RotamerSet & rotamer_set
-	){
-
+			core::pose::Pose const &,
+			core::scoring::ScoreFunction const &,
+			core::pack::task::PackerTask const &,
+			core::graph::GraphCOP,
+			core::pack::rotamer_set::RotamerSet & rotamer_set)
+{
 	utility::vector1<bool> rotamer_vector(rotamer_set.num_rotamers(), true);
 	rotamer_set.drop_rotamers(rotamer_vector);
 }

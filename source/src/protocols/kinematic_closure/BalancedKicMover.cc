@@ -113,7 +113,7 @@ void BalancedKicMover::log_filters(LoggerOP logger) { // {{{1
 	logger_ = logger;
 }
 
-vector1<TorsionID_Range> BalancedKicMover::torsion_id_ranges(Pose & pose) { // {{{1
+vector1<TorsionID_Range> BalancedKicMover::torsion_id_ranges(Pose &) { // {{{1
 	using core::id::BB;
 
 	vector1<TorsionID_Range> results;

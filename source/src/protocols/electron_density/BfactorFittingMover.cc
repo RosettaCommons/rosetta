@@ -394,7 +394,7 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 }
 
 void
-BfactorMultifunc::dump( core::optimization::Multivec const & x1, core::optimization::Multivec const & x2 ) const {
+BfactorMultifunc::dump( core::optimization::Multivec const & x1, core::optimization::Multivec const & ) const {
 	// debug
 	if (deriv_check_) {
  		 core::optimization::Multivec varsCopy = x1;
@@ -546,13 +546,8 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
-BfactorFittingMover::parse_my_tag(
-								   TagCOP const tag,
-								   basic::datacache::DataMap & datamap,
-								   Filters_map const & filters,
-								   moves::Movers_map const & movers,
-								   Pose const & pose
-							   )
+BfactorFittingMover::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &, Filters_map const &,
+		moves::Movers_map const &, Pose const &)
 {
 	if ( tag->hasOption("wt_adp") ) {
 		wt_adp_ = tag->getOption<core::Real>("wt_adp");

@@ -24,7 +24,7 @@ namespace loggers {
 
 using namespace std;
 
-void AcceptanceRates::log_task_(Pose const & pose, string name, bool successful) {
+void AcceptanceRates::log_task_(Pose const &, string name, bool successful) {
 	vector<string>::const_iterator begin = task_names_.begin();
 	vector<string>::const_iterator end = task_names_.end();
 	uint index = find(begin, end, name) - begin;
@@ -48,7 +48,7 @@ void AcceptanceRates::log_monte_carlo_(MonteCarlo const & monte_carlo) {
 	}
 }
 
-void AcceptanceRates::log_ending_(Pose const & pose) {
+void AcceptanceRates::log_ending_(Pose const &) {
 	int name_chars = 0;
 	int most_calls = 0;
 	int most_successes = 0;

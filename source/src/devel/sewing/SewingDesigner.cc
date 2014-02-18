@@ -751,12 +751,12 @@ SewingDesigner::rearrange_pose(
 
 void
 SewingDesigner::parse_my_tag(
-	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	protocols::filters::Filters_map const &filters,
-	protocols::moves::Movers_map const &movers,
-	Pose const & pose
-){
+		TagCOP const tag,
+		basic::datacache::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const & movers,
+		Pose const &)
+{
 	if(tag->hasOption("loop_creation_mover"))
 	{
 		string const lcm_mover_name = tag->getOption< string >( "loop_creation_mover" );

@@ -313,21 +313,23 @@ void EnvClaimBroker::annotate_fold_tree( core::kinematics::FoldTreeOP ft,
 }
 
 void EnvClaimBroker::add_virtual_residues( Conformation& conf,
-                                           SizeToStringMap const& new_vrts,
-                                           SequenceAnnotationOP ann ){
-  //Add new virtual residues into conformation.
-  BOOST_FOREACH( SizeToStringMap::value_type pair, new_vrts ){
-    // Steal the residue type set of the first residue. Will obviously break if the conformation
-    // has no residues. Is this a case I need to worry about?
-    core::chemical::ResidueTypeSet const & rsd_set( conf.residue(1).residue_type_set() );
-    core::conformation::ResidueOP rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map( "VRT" ) ) );
+		SizeToStringMap const& new_vrts,
+		SequenceAnnotationOP ann )
+{
+	//Add new virtual residues into conformation.
+	BOOST_FOREACH( SizeToStringMap::value_type pair, new_vrts ) {
+		// Steal the residue type set of the first residue. Will obviously break if the conformation
+		// has no residues. Is this a case I need to worry about?
+		core::chemical::ResidueTypeSet const & rsd_set( conf.residue(1).residue_type_set() );
+		core::conformation::ResidueOP rsd(
+				core::conformation::ResidueFactory::create_residue( rsd_set.name_map( "VRT" ) ) );
 
-    //were the jump goes doesn't matter since the current fold tree is about to be replaced by 'ft'.
-    conf.append_residue_by_jump( *rsd, conf.size() );
+		//were the jump goes doesn't matter since the current fold tree is about to be replaced by 'ft'.
+		conf.append_residue_by_jump( *rsd, conf.size() );
 
-    // This residue label should resolve to the VRT just added.
-    assert( ann->resolve_seq( LocalPosition( pair.second, 1 ) ) == conf.size() );
-  }
+		// This residue label should resolve to the VRT just added.
+		assert( ann->resolve_seq( LocalPosition( pair.second, 1 ) ) == conf.size() );
+	}
 }
 
 void EnvClaimBroker::broker_dofs( ProtectedConformationOP conf ){

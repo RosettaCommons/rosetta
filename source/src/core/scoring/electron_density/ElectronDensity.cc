@@ -1409,10 +1409,9 @@ ElectronDensity::getIntensitiesMasked( poseCoords const &pose, core::Size nbucke
 
 /// @brief Compute intensities from model
 void
-ElectronDensity::getIntensities(
-	poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso,
-	utility::vector1< core::Real > &Imodel, bool S2_bin/*=false*/) {
-
+ElectronDensity::getIntensities(poseCoords const &, core::Size nbuckets, core::Real maxreso, core::Real minreso,
+		utility::vector1< core::Real > &Imodel, bool S2_bin/*=false*/)
+{
 	runtime_assert( Frho_calc.u1() != 0 );
 
 	// fft
@@ -2050,7 +2049,8 @@ ElectronDensity::getModelMapError(
 }
 
 core::Real
-ElectronDensity::getRSCC( poseCoords const &pose ) {
+ElectronDensity::getRSCC( poseCoords const & )
+{
 	runtime_assert( rho_calc.u1() != 0 );  // make sure calcRhoC was called first
 
 	core::Real sumC_i=0, sumO_i=0, sumCO_i=0, vol_i=0, CC_i=0;

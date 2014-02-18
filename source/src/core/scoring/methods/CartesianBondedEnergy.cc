@@ -1545,7 +1545,7 @@ CartesianBondedEnergy::clone() const {
 
 void
 CartesianBondedEnergy::setup_for_derivatives(
-	pose::Pose & pose,
+	pose::Pose &,
 	ScoreFunction const &
 ) const {
 	//idealize_proline_nvs(pose);

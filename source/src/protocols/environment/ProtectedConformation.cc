@@ -190,11 +190,12 @@ void ProtectedConformation::set_bond_length( AtomID const & atom1,
   }
 }
 
-void ProtectedConformation::insert_fragment( core::id::StubID const& instub_id,
-                                             FragRT const& outstub_transforms,
-                                             FragXYZ const& frag_xyz ) {
-  //TODO: implement
-  runtime_assert( false );
+void ProtectedConformation::insert_fragment( core::id::StubID const & /* instub_id */,
+		FragRT const & /* outstub_transforms */,
+		FragXYZ const & /* frag_xyz */ )
+{
+	// TODO: implement
+	runtime_assert( false );
 }
 
 
@@ -410,8 +411,9 @@ void ProtectedConformation::fix_disulfides( utility::vector1< std::pair<Size, Si
   fail_verification( "fix_disulfides" );
 }
 
-void ProtectedConformation::set_xyz( AtomID const & id, core::PointPosition const & ){
-  fail_verification( "set_xyz" );
+void ProtectedConformation::set_xyz( AtomID const &, core::PointPosition const & )
+{
+	fail_verification( "set_xyz" );
 }
 
 void ProtectedConformation::batch_set_xyz( utility::vector1<AtomID> const &,

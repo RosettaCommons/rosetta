@@ -84,7 +84,7 @@ void breadth_first_visit_prune
 template <class IncidenceGraph, class BFSVisitor,
           class ColorMap>
 void breadth_first_visit_prune
-  (const IncidenceGraph& g,
+  (const IncidenceGraph &,
    typename boost::graph_traits<IncidenceGraph>::vertex_descriptor s,
    BFSVisitor vis, ColorMap color)
 {

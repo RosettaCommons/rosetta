@@ -341,12 +341,7 @@ RDFBinaryOrbitalFunction::~RDFBinaryOrbitalFunction()
 	
 }
 	
-void RDFBinaryOrbitalFunction::parse_my_tag(
-	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data_map)
-{
-	
-}
+void RDFBinaryOrbitalFunction::parse_my_tag(utility::tag::TagCOP, basic::datacache::DataMap &) {}
 	
 RDFResultList RDFBinaryOrbitalFunction::operator()(AtomPairData const & atom_data )
 {

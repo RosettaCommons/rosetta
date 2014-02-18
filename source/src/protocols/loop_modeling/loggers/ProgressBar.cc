@@ -23,7 +23,7 @@ namespace loggers {
 using namespace std;
 using core::pose::Pose;
 
-void ProgressBar::log_iteration_(Pose const & pose) {
+void ProgressBar::log_iteration_(Pose const &) {
 	int iteration = get_iteration_as_int();
 	int max_iteration = get_max_iteration_as_int();
 
@@ -31,7 +31,7 @@ void ProgressBar::log_iteration_(Pose const & pose) {
 	//cout << "[" << iteration << "/" << max_iteration << "]" << endl;
 }
 
-void ProgressBar::log_ending_(Pose const & pose) {
+void ProgressBar::log_ending_(Pose const &) {
 	cerr << endl;
 }
 

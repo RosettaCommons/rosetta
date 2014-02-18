@@ -81,9 +81,9 @@ return get_epsilon_torsions( numeric::principal_angle_degrees( delta ) <= torsio
 /////////////////////////////////////////////////////////////////////////////
 utility::vector1< Real >
 get_epsilon_torsions( bool const north_pucker,
-											bool const extra_epsilon,
-											Real const bin_size /* = 20.0*/ ){
-
+		bool const extra_epsilon,
+		Real const /* bin_size=20.0 */ )
+{
 	using namespace chemical::rna;
 	static chemical::rna::RNA_FittedTorsionInfo const torsion_info;
 

@@ -94,7 +94,8 @@ ResidueBurialFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-ResidueBurialFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
+ResidueBurialFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap & data,
+		filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	residue( tag->getOption< std::string >( "pdb_num", "" ) );
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
@@ -103,7 +104,9 @@ ResidueBurialFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::dataca
 	if( tag->hasOption( "task_operations" ) )
 		task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 
-	residue_burial_filter_tracer<<"ResidueBurialFilter with distance threshold of "<<distance_threshold_<<" around residue "<<residue()<<" residue_fraction_buried "<<residue_fraction_buried()<<" with "<<neighbors_<<" neighbors."<<std::endl;
+	residue_burial_filter_tracer << "ResidueBurialFilter with distance threshold of " << distance_threshold_ <<
+			" around residue " << residue() << " residue_fraction_buried " << residue_fraction_buried() << " with " <<
+			neighbors_ << " neighbors." << std::endl;
 }
 
 void

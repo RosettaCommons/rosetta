@@ -62,16 +62,15 @@ SavePoseConstraintToFileFilter::report_sm( core::pose::Pose const & pose ) const
 	return( 1 );
 }
 
-void SavePoseConstraintToFileFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
+void SavePoseConstraintToFileFilter::report( std::ostream &, core::pose::Pose const & pose ) const
 {
-   std::ofstream outfile;
-	 outfile.open(filename_.c_str(),std::ios::out);
-	 if ( ! outfile.good() ) {
+	std::ofstream outfile;
+	outfile.open(filename_.c_str(),std::ios::out);
+	if ( ! outfile.good() ) {
 			utility_exit_with_message( "Unable to open file: " + filename_);
-		} 
-			
-   pose.constraint_set()->show_definition(outfile,pose);
+	}
 
+	pose.constraint_set()->show_definition(outfile,pose);
 }
 
 void SavePoseConstraintToFileFilter::parse_my_tag( utility::tag::TagCOP const tag,

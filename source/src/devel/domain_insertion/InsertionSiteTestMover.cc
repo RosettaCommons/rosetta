@@ -303,7 +303,7 @@ void
 InsertionSiteTestMover::relax_raw_insert_pose(
 	core::pose::Pose & pose,
 	core::pose::Pose const & raw_pose,
-	core::Size const insert_pos
+	core::Size const
 )
 {
 	Size repeats(2); //only very few repeats to iron out the worst transgressions

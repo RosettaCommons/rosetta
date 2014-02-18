@@ -1171,9 +1171,12 @@ void InterfaceAnalyzerMover::compute_interface_delta_hbond_unsat( core::pose::Po
 }
 
 void
-InterfaceAnalyzerMover::calc_interface_to_surface_fraction(core::pose::Pose const & separated_pose, const vector1<core::Real> complexed_sasa, const vector1<core::Real> separated_sasa) {
-	
-	//Cutoff sasa value taken from LayerDesign operations.  A percentage buried should be the more correct way to do this.  But what is the maximal for each residue?
+InterfaceAnalyzerMover::calc_interface_to_surface_fraction(core::pose::Pose const & separated_pose,
+		const vector1<core::Real>, const vector1<core::Real> separated_sasa)
+{
+	// Cutoff sasa value taken from LayerDesign operations.
+	// A percentage buried should be the more correct way to do this.
+	// But what is the maximal for each residue?
 	vector1<core::Size> surface_nres(3, 0);
 	
 	for (core::Size i = 1; i <= separated_sasa.size(); ++i){

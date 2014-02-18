@@ -166,11 +166,8 @@ ProQPotential::ProQPotential()
 
 
 void
-ProQPotential::setup_for_scoring( pose::Pose & pose ) const
-{
-	//dssp::Dssp ss(pose);
-	//ss.insert_ss_into_pose( pose );
-}
+ProQPotential::setup_for_scoring( pose::Pose & ) const
+{}
 
 void
 ProQPotential::score(pose::Pose & pose,
@@ -242,16 +239,6 @@ ProQPotential::num_features_proq2() const {
 	return num_features_proq2_;
 }
 
-//void
-//ProQPotential::finalize( pose::Pose & pose ) const
-//{
-//	CenListInfo & cenlist( nonconst_cenlist_from_pose( pose ));
-//	cenlist.calculated() = false;
-//	MembraneEmbed & membrane_embed( nonconst_MembraneEmbed_from_pose( pose ));
-//	membrane_embed.calculated() = false;
-//}
-
-////////////////////////////////////////////////////////////////////////////////////
 }
 }
 

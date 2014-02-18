@@ -303,15 +303,13 @@ ContextIndependentGeometricSolEnergy::use_extended_residue_pair_energy_interface
 ///////////////////////////
 void
 ContextIndependentGeometricSolEnergy::setup_for_minimizing_for_residue(
-	conformation::Residue const & rsd,
-	pose::Pose const & pose,
+	conformation::Residue const &,
+	pose::Pose const &,
 	ScoreFunction const &,
 	kinematics::MinimizerMapBase const &,
-	ResSingleMinimizationData & res_data_cache
+	ResSingleMinimizationData &
 ) const
-{
-
-}
+{}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -319,7 +317,7 @@ void
 ContextIndependentGeometricSolEnergy::setup_for_minimizing_for_residue_pair(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	pose::Pose const & pose,
+	pose::Pose const &,
 	ScoreFunction const &,
 	kinematics::MinimizerMapBase const &,
 	ResSingleMinimizationData const &,
@@ -533,7 +531,7 @@ ContextIndependentGeometricSolEnergy::residue_pair_energy(
 }
 
 bool
-ContextIndependentGeometricSolEnergy::minimize_in_whole_structure_context( pose::Pose const & pose ) const
+ContextIndependentGeometricSolEnergy::minimize_in_whole_structure_context( pose::Pose const & ) const
 {
 	//return pose.energies().use_nblist_auto_update();
 	return false;
@@ -709,11 +707,8 @@ ContextIndependentGeometricSolEnergy::eval_intrares_energy(
 
 ///@brief ContextIndependentGeometricSolEnergy is not context sensitive, of course.
 void
-ContextIndependentGeometricSolEnergy::indicate_required_context_graphs(
-	utility::vector1< bool > & context_graphs_required
-) const
-{
-}
+ContextIndependentGeometricSolEnergy::indicate_required_context_graphs(utility::vector1< bool > &) const
+{}
 
 
 core::Size

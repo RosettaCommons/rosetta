@@ -44,18 +44,16 @@ using numeric::conversions::DEGREES;
 VicinityPerturber::VicinityPerturber(Pose const & target)
 	: target_(target), spread_(10 /*degrees*/) {}
 
-void VicinityPerturber::perturb_subset(
-		Pose const &, IndexList const & residues, ClosureProblemOP problem) {
-
+void VicinityPerturber::perturb_subset(Pose const &, IndexList const &, ClosureProblemOP problem)
+{
 	foreach (Size i, problem->nonpivot_residues()) {
 		problem->perturb_phi(i, target_.phi(i) + spread_ * gaussian(), DEGREES);
 		problem->perturb_psi(i, target_.psi(i) + spread_ * gaussian(), DEGREES);
 	}
 }
 
-void VicinityPerturber::perturb_subset_with_balance(
-		Pose const &, IndexList const & residues, ClosureProblemOP problem) {
-
+void VicinityPerturber::perturb_subset_with_balance(Pose const &, IndexList const &, ClosureProblemOP problem)
+{
 	Real fwhm = 2 * sqrt(2 * log(2)) * spread_;
 
 	foreach (Size i, problem->nonpivot_residues()) {

@@ -454,46 +454,29 @@ SWM_RMSD_Energy::clone() const
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-SWM_RMSD_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn) const
+SWM_RMSD_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
 	add_coordinate_constraints( pose, native_pose_ );
 }
 
 
 void
-SWM_RMSD_Energy::finalize_total_energy(
-	pose::Pose & pose,
-	ScoreFunction const & test,
-	EnergyMap & totals
-) const {
-//	core::pose::Pose temp_pose = pose;
-//	core::pose::Pose temp_native = native_pose_;
-//	Real rms = superimpose_at_fixed_res_and_get_all_atom_rmsd( temp_pose, temp_native );
-//
-//	if ( rms < 1.0 ) {
-//		totals[ swm_rmsd ] = 0.0;
-//	} else {
-//		totals[ swm_rmsd ] = rms - 1.0;
-//	}
-//
-	//std::cout << std::endl << totals[coordinate_constraint] << std::endl << std::endl;
-	//std::cout << std::endl << test.get_weight(coordinate_constraint) << std::endl << std::endl;
-} // finalize_total_energy
+SWM_RMSD_Energy::finalize_total_energy(pose::Pose &, ScoreFunction const &, EnergyMap &) const
+{}
 
 
 ///////////////////////////////////////////////////////////////////////////////
 void
 SWM_RMSD_Energy::eval_atom_derivative(
-	id::AtomID const & id,
-	pose::Pose const & pose,
-	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const &,
-	Vector & F1,
-	Vector & F2
- 	) const
-{
-} // eval atom derivative
+		id::AtomID const &,
+		pose::Pose const &,
+		kinematics::DomainMap const &,
+		ScoreFunction const &,
+		EnergyMap const &,
+		Vector &,
+		Vector &
+		) const
+{} // eval atom derivative
 
 core::Size
 SWM_RMSD_Energy::version() const

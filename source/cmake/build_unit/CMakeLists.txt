@@ -51,15 +51,15 @@ SET(COMPILE_FLAGS "${COMPILE_FLAGS} -std=c++98 -pipe -ffor-scope -O0 -g -ggdb -f
 SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Wall -Wextra -pedantic -Wno-long-long")
 
 # Warnings as errors to match scons build
-SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror=sign-compare")
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror=sign-compare -Werror=unused-parameter")
 
 IF( ${COMPILER} STREQUAL "clang" )
     # Quiet warnings about non-clang compatable arguments (either gcc-specific ones, or newer-version ones.)
     SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Qunused-arguments")
     # Recent Macs can have issues with the default standard library - explicitly specify the GNU one.
-    SET(COMPILE_FLAGS "${COMPILE_FLAGS} -stdlib=libstdc++") 
+    SET(COMPILE_FLAGS "${COMPILE_FLAGS} -stdlib=libstdc++")
     ##Some clang builds may also need to set additional compile flags
-    #SET(COMPILE_FLAGS "${COMPILE_FLAGS} -DUNUSUAL_ALLOCATOR_DECLARATION") # Works around issues with vector1 optimization    
+    #SET(COMPILE_FLAGS "${COMPILE_FLAGS} -DUNUSUAL_ALLOCATOR_DECLARATION") # Works around issues with vector1 optimization
 ENDIF()
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMPILE_FLAGS}")

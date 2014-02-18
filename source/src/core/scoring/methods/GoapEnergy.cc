@@ -156,12 +156,12 @@ GoapEnergy::GoapEnergy( GoapEnergy const & src ):
   read_Goap_parameters();
 }
 
-GoapEnergy::GoapEnergy( EnergyMethodOptions const & options ):
-  parent( new GoapEnergyCreator ),
-	continuous_ ( false )
+GoapEnergy::GoapEnergy( EnergyMethodOptions const & ):
+		parent( new GoapEnergyCreator ),
+		continuous_ ( false )
 {
-  set_default();
-  read_Goap_parameters();
+	set_default();
+	read_Goap_parameters();
 }
 
 GoapEnergy::~GoapEnergy(){}

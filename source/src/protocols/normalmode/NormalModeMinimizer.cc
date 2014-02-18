@@ -176,8 +176,8 @@ NormalModeMinimizer::get_name() const {
 void NormalModeMinimizer::parse_my_tag(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	Filters_map const &, // filters,
-	protocols::moves::Movers_map const & movers,
+	Filters_map const &,
+	protocols::moves::Movers_map const &,
 	Pose const & pose )
 {
 	if ( ! movemap_ ) movemap_ = new MoveMap;

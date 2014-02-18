@@ -110,7 +110,7 @@ CavityVolumeFilter::fresh_instance() const
 
 void
 CavityVolumeFilter::parse_my_tag(
-	utility::tag::TagCOP const tag,
+	utility::tag::TagCOP const,
 	basic::datacache::DataMap &,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,

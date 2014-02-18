@@ -232,7 +232,7 @@ AtomCoordinateCstMover::parse_my_tag(
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const &,
 	protocols::moves::Movers_map const &,
-	core::pose::Pose const & pose
+	core::pose::Pose const &
 ) {
 
 	cst_sd( tag->getOption< core::Real >( "coord_dev", 0.5 ) );

@@ -76,27 +76,10 @@ FreeResidueBonusEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 	
 void
-FreeResidueBonusEnergy::residue_energy(
-				   conformation::Residue const & rsd,
-				   pose::Pose const & pose,
-				   EnergyMap & emap
-				   ) const
-{
-	//using core::scoring::EnergiesCacheableDataType::HBOND_SET;
-	//hbonds::HBondSet const & hbond_set ( static_cast< hbonds::HBondSet const & > ( pose.energies().data().get( HBOND_SET )));
-	//Size const num_hbonds = hbond_set.nhbonds(rsd.seqpos());
-	//pose::Pose temp_pose = pose;
-	//hbonds::HBondSet hbond_set ( temp_pose, false );
-	//hbond_set.show(pose);
-	//Size const num_hbonds = hbond_set.nhbonds();
-	//std::cout << num_hbonds;
-	
-	//if ( num_hbonds == 0 ) {
-	//	emap[bulge_bonus] -= 1;
-	//}
-}
-		
-	
+FreeResidueBonusEnergy::residue_energy(conformation::Residue const &, pose::Pose const &, EnergyMap &) const
+{}
+
+
 ///////////////////////////////////////////////////////////////////////////////
 core::Size
 FreeResidueBonusEnergy::version() const

@@ -1250,59 +1250,11 @@ void ProQ_Energy::sum_profile(Size j,ObjexxFCL::FArray1D< Real > & vec) const {
 		}
 }
 
-void ProQ_Energy::surf_feature(pose::Pose & pose, utility::vector1< Real > & rsd_sasa_rel,ObjexxFCL::FArray2D< Real > & vec,Size index, int windowsize) const{
-//	const int nres=(int)pose.total_residue();
+void ProQ_Energy::surf_feature(pose::Pose &, utility::vector1< Real > & rsd_sasa_rel, ObjexxFCL::FArray2D< Real > & vec,
+		Size index, int windowsize) const
+{
 	const int nres=(int)nres_;
 
-	//const int windowsize=21;
-//	const Real probe_radius(1.4); //default water probe
-	/*id::AtomID_Map< Real > atom_sasa;
-	//utility::vector1< Real > rsd_sasa_rel(nres,0.0);
-	utility::vector1< Real > rsd_sasa_all_rel(nres,0.0);
-	utility::vector1< Real > rsd_sasa(nres,0.0);
-	utility::vector1< Real > rsd_sasa_all(nres,0.0);
-
-	utility::vector1< Real > rsa_sasa_rel(nres,0.0);
-	utility::vector1< Real > rsa_sasa_all_rel(nres,0.0);
-	utility::vector1< Real > rsa_sasa(nres,0.0);
-	utility::vector1< Real > rsa_sasa_all(nres,0.0);
-	utility::io::izstream stream;
-	std::string line;
-	std::string buff_str;
-	stream.open("ProQM/idealized_test.orig/1e12A_0001.pdb.rsa");
-	if(stream.fail()) {
-		utility_exit_with_message( "ERROR: Unable to open: ProQM/idealized_test.orig/1e12A_0001.pdb.rsa");
-	}
-	getline(stream,line);
-	getline(stream,line);
-	getline(stream,line);
-	getline(stream,line);
-
-	for(int i=1;i<=nres;++i) {
-		getline(stream,line);
-		std::istringstream l(line);
-		l >> buff_str >> buff_str >> buff_str ;
-		l >> rsa_sasa_all[i] >> rsa_sasa_all_rel[i];
-		l >> rsa_sasa[i] >> rsa_sasa_rel[i];
-		//std::cout << line << std::endl << rsa_sasa_all[i] << " " << rsa_sasa_all[i] << " " << rsa_sasa[i] << std::endl;
-	}
-	*/
-	//Real total_sasa = calc_per_atom_sasa_sc( pose, rsd_sasa_rel, true /*normalize*/ );
-		/*for(int i=1;i<=nres;++i) {
-			rsd_sasa_rel_(i)=rsd_sasa_rel[i];
-		}*/
-	//total_sasa = calc_per_atom_sasa_sc( pose, rsd_sasa, false );
-	//total_sasa = calc_per_atom_sasa( pose, atom_sasa, rsd_sasa_all, probe_radius );
-	/*for(int i=1;i<=nres;++i) {
-		std::cout << "RSA:" << i << " " << pose.residue(i).name3() << " " 
-							<< rsd_sasa_rel[i] << " " << rsa_sasa_rel[i] << " " 
-							<< rsd_sasa[i] << " " << rsa_sasa[i] << " "
-							<< rsd_sasa_all[i] << " " << rsa_sasa_all[i] << std::endl;
-	}*/
-
-
-	//
-	//	rsd_sasa_rel=rsa_sasa_rel;
 	ObjexxFCL::FArray1D< Real > surface25_prof(6);
 	ObjexxFCL::FArray1D< Real > surface50_prof(6);
 	ObjexxFCL::FArray1D< Real > surface75_prof(6);
@@ -1356,11 +1308,11 @@ void ProQ_Energy::surf_feature(pose::Pose & pose, utility::vector1< Real > & rsd
 	}
 	//std::exit(1);
 }
-void ProQ_Energy::stride_feature(pose::Pose & pose, dssp::Dssp & ss,ObjexxFCL::FArray2D< Real > & vec,int pos,Size index,int windowsize) const{
-//	const int nres=(int)pose.total_residue();
+void ProQ_Energy::stride_feature(pose::Pose &, dssp::Dssp & ss, ObjexxFCL::FArray2D< Real > & vec, int pos, Size index,
+		int windowsize) const
+{
 	const int nres=(int)nres_;
 
-	//const int windowsize=11;
 	Real h(0);
 	Real e(0);
 	Real c(0);
@@ -1389,10 +1341,10 @@ void ProQ_Energy::stride_feature(pose::Pose & pose, dssp::Dssp & ss,ObjexxFCL::F
 	//std::cout << std::endl;
 	//std::exit(1);
 }
-void ProQ_Energy::ss_feature(pose::Pose & pose, dssp::Dssp & ss,ObjexxFCL::FArray2D< Real > & vec,int pos,Size index,int windowsize) const{
-//	const int nres=(int)pose.total_residue();
+void ProQ_Energy::ss_feature(pose::Pose &, dssp::Dssp & ss, ObjexxFCL::FArray2D< Real > & vec, int pos, Size index,
+		int windowsize) const
+{
 	const int nres=(int)nres_;
-//const int windowsize=1;
 	int ss_type(0);
 	Real ss_prob(0);
 	//std::cout << pos << ": ";
@@ -1413,8 +1365,8 @@ void ProQ_Energy::ss_feature(pose::Pose & pose, dssp::Dssp & ss,ObjexxFCL::FArra
 	}
 	//std::cout << std::endl;
 }
-void ProQ_Energy::gss_sc_feature(pose::Pose & pose, dssp::Dssp & ss,ObjexxFCL::FArray2D< Real > & vec,Size index) const {
-//	const int nres=(int)pose.total_residue();
+void ProQ_Energy::gss_sc_feature(pose::Pose &, dssp::Dssp & ss, ObjexxFCL::FArray2D< Real > & vec, Size index) const
+{
 	const int nres=(int)nres_;
 
 	int match(0);
@@ -1428,8 +1380,9 @@ void ProQ_Energy::gss_sc_feature(pose::Pose & pose, dssp::Dssp & ss,ObjexxFCL::F
 		vec(i,index)=Q3;
 }
 
-void ProQ_Energy::grsa_sc_feature(pose::Pose & pose, utility::vector1< Real> & rsd_sasa_rel,ObjexxFCL::FArray2D< Real > & vec,Size index) const {
-//	const int nres=(int)pose.total_residue();
+void ProQ_Energy::grsa_sc_feature(pose::Pose &, utility::vector1< Real> & rsd_sasa_rel,
+		ObjexxFCL::FArray2D< Real > & vec, Size index) const
+{
 	const int nres=(int)nres_;
 
 	int match(0);
@@ -1449,11 +1402,11 @@ void ProQ_Energy::grsa_sc_feature(pose::Pose & pose, utility::vector1< Real> & r
 		vec(i,index)=Q3;
 }
 
-void ProQ_Energy::ss_sc_feature(pose::Pose & pose, dssp::Dssp & ss,ObjexxFCL::FArray2D< Real > & vec,int const pos,Size index,int windowsize) const{
-//	const int nres=(int)pose.total_residue();
+void ProQ_Energy::ss_sc_feature(pose::Pose &, dssp::Dssp & ss, ObjexxFCL::FArray2D< Real > & vec, int const pos,
+		Size index, int windowsize) const
+{
 	const int nres=(int)nres_;
 
-	//const int windowsize=21;
 	int count(0);
 	int correct(0);
 	for(int j=pos-(windowsize-1)/2;j<=pos+(windowsize-1)/2;++j) {
@@ -1468,14 +1421,10 @@ void ProQ_Energy::ss_sc_feature(pose::Pose & pose, dssp::Dssp & ss,ObjexxFCL::FA
 	//std::cout << "Q3: " << pos << ":" << vec(pos,index) << std::endl;;
 
 }
-void ProQ_Energy::topology_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & vec,int const pos,Size index) const{
-
+void ProQ_Energy::topology_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & vec, int const pos, Size index) const
+{
 	const int win=11;
-//	const int nres=(int)pose.total_residue();
 	const int nres=(int)nres_;
-
-	//Size topology(0);
-	//if(topology.tmregpos-(win-1)/2ion(pos)) 
 
 	//	std::cout << "TOPOLOGY " << pos << " " << topology_.tmregion(pos) << " : " ;
 	for(int i=(int)pos-(win-1)/2;i<=(int)pos+(win-1)/2;++i,++index) {
@@ -1491,8 +1440,9 @@ void ProQ_Energy::topology_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real 
 	//std::cout << std::endl;
 
 }
-void ProQ_Energy::zpred_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & vec,int const pos,Size index) const{
-	//const int nres=(int)pose.total_residue();
+
+void ProQ_Energy::zpred_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & vec, int const pos, Size index) const
+{
 	const int nres=(int)nres_;
 	const int win=1;
 	for(int i=(int)pos-(win-1)/2;i<=(int)pos+(win-1)/2;++i,++index) {
@@ -1551,8 +1501,9 @@ void ProQ_Energy::calculateZ(pose::Pose & pose,ObjexxFCL::FArray1D< Real > & Z) 
 
 }
 
-void ProQ_Energy::z_feature(pose::Pose & pose, ObjexxFCL::FArray1D< Real > & Z, ObjexxFCL::FArray2D< Real > & vec,int const pos,Size index) const{
-//	const int nres=(int)pose.total_residue();
+void ProQ_Energy::z_feature(pose::Pose &, ObjexxFCL::FArray1D< Real > & Z, ObjexxFCL::FArray2D< Real > & vec,
+		int const pos, Size index) const
+{
 	const int nres=(int)nres_;
 
 	const int win=1;
@@ -1575,11 +1526,12 @@ void ProQ_Energy::z_feature(pose::Pose & pose, ObjexxFCL::FArray1D< Real > & Z, 
 		}
 
 }
-void ProQ_Energy::entropy_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & vec,int const pos,Size index,int windowsize) const{
-//	const int nres=(int)pose.total_residue();
+
+void ProQ_Energy::entropy_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & vec, int const pos, Size index,
+		int windowsize) const
+{
 	const int nres=(int)nres_;
 
-	//const int win=11;
 	for(int i=(int)pos-(windowsize-1)/2;i<=(int)pos+(windowsize-1)/2;++i,++index) {
 		vec(pos,index)=0;
 		if(i>=1 && i<=nres) {
@@ -1588,11 +1540,12 @@ void ProQ_Energy::entropy_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real >
 		//std::cout << "Entropy " << pos << "," << index << " " << i << " " << " : " << vec(pos,index) << std::endl;
 	}
 }
-void ProQ_Energy::profile_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & vec,int const pos,Size index,int windowsize) const{
-//	const int nres=(int)pose.total_residue();
+
+void ProQ_Energy::profile_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & vec, int const pos, Size index,
+		int windowsize) const
+{
 	const int nres=(int)nres_;
 
-	//const int win=3;
 	for(int i=(int)pos-(windowsize-1)/2;i<=(int)pos+(windowsize-1)/2;++i) {
 		if(i>=1 && i<=nres) {
 			for(int j=1;j<=20;++j,++index) {
@@ -1609,11 +1562,12 @@ void ProQ_Energy::profile_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real >
 	}
 
 }
-void ProQ_Energy::rsa_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & vec,utility::vector1< Real> & rsd_sasa_rel,int const pos,Size index,int windowsize) const{
-	//const int nres=(int)pose.total_residue();
+
+void ProQ_Energy::rsa_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & vec, utility::vector1< Real> & rsd_sasa_rel,
+		int const pos, Size index, int windowsize) const
+{
 	const int nres=(int)nres_;
 
-	//const int win=1;
 	for(int i=(int)pos-(windowsize-1)/2;i<=(int)pos+(windowsize-1)/2;++i,++index) {
 		vec(pos,index)=0;
 		if(i>=1 && i<=nres) {
@@ -1623,11 +1577,12 @@ void ProQ_Energy::rsa_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & v
 	}
 
 }
-void ProQ_Energy::prsa_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & vec,int const pos,Size index,int windowsize) const{
-//	const int nres=(int)pose.total_residue();
+
+void ProQ_Energy::prsa_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & vec, int const pos, Size index,
+		int windowsize) const
+{
 	const int nres=(int)nres_;
 
-	//	const int win=1;
 	for(int i=(int)pos-(windowsize-1)/2;i<=(int)pos+(windowsize-1)/2;++i,++index) {
 		vec(pos,index)=0;
 		if(i>=1 && i<=nres) {
@@ -1636,8 +1591,10 @@ void ProQ_Energy::prsa_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & 
 		//std::cout << "PRSA_FEAT " << pos << "," << index << " " << i << " : " << vec(pos,index) << std::endl;
 	}
 }
-void ProQ_Energy::rsa_sc_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & vec,utility::vector1< Real> & rsd_sasa_rel,int const pos,Size index,int windowsize) const{
-	//const int nres=(int)pose.total_residue();
+
+void ProQ_Energy::rsa_sc_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & vec,
+		utility::vector1< Real> & rsd_sasa_rel, int const pos, Size index, int windowsize) const
+{
 	const int nres=(int)nres_;
 
 	int count(0);
@@ -1646,25 +1603,23 @@ void ProQ_Energy::rsa_sc_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > 
 	for(int i=(int)pos-(windowsize-1)/2;i<=(int)pos+(windowsize-1)/2;++i) {
 		if(i>=1 && i<=nres) {
 			if((rsd_sasa_rel[i] < 25 && rsa_class_pred_(i) == 'b') ||
-			   (rsd_sasa_rel[i] > 25 && rsa_class_pred_(i) == 'e'))
+					(rsd_sasa_rel[i] > 25 && rsa_class_pred_(i) == 'e'))
 			{
-				agree++;
+				++agree;
 			}
-			count++;
-
+			++count;
 		}
-		//
 	}
 
 	vec(pos,index)=(Real)agree/count;
 	//std::cout << "RSA_SC " << pos << "," << index << " " << " : " << vec(pos,index) << " " << agree << " " << count << std::endl;
 }
 
-void ProQ_Energy::termini_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & vec,int const pos,Size index,int windowsize) const{
-//	const int nres=(int)pose.total_residue();
+void ProQ_Energy::termini_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & vec, int const pos, Size index,
+		int windowsize) const
+{
 	const int nres=(int)nres_;
 
-	//const int win=23;
 	Real distN=(Real)(pos-1)/windowsize;
 	Real distC=(Real)(nres-pos)/windowsize;
 	if(distN>1)

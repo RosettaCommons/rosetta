@@ -211,7 +211,7 @@ CenRotPairEnergy::eval_residue_pair_derivatives(
 
 void
 CenRotPairEnergy::finalize_total_energy(
-	pose::Pose & pose,
+	pose::Pose &,
 	ScoreFunction const &,
 	EnergyMap &
 ) const {

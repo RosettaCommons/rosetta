@@ -184,13 +184,13 @@ FourHelixGraph::get_path_size(
 
 void
 FourHelixGraph::tree_finder(
-		EdgeList visited_edges,
-		utility::vector1<NodeOP> visited_nodes,
-		core::Size num_helices,
-		core::Size dup_counter,
-		bool finish_tree,
-		EdgeSet possible_inter_edges,
-		EdgeSet possible_intra_edges
+		EdgeList,
+		utility::vector1<NodeOP>,
+		core::Size /* num_helices*/,
+		core::Size /*dup_counter*/,
+		bool /*finish_tree*/,
+		EdgeSet /*possible_inter_edges*/,
+		EdgeSet /*possible_intra_edges*/
 ){
 	utility_exit_with_message("Four helix graph is currently broken. You should fix it!");
 //	if(num_helices % 2 != 0){

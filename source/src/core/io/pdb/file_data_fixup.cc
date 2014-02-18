@@ -197,8 +197,8 @@ missing_O2prime( utility::vector1< AtomInformation > const & atoms ){
 //////////////////////////////////////////////////////////////////////////////////////////
 // @brief  This is a pretty good framework and could allow for other crazy nucleic acid atom name schemes.
 void
-convert_nucleic_acid_atom_names_to_standard( ResidueInformation & rinfo, bool const force_RNA /*= false*/ ){
-
+convert_nucleic_acid_atom_names_to_standard( ResidueInformation & rinfo, bool const /* force_RNA=false */ )
+{
 	// following is to show warnings or cap number.
 	static Size nfix( 0 );
 	static Size const max_fix( 2 );

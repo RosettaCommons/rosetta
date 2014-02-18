@@ -242,8 +242,9 @@ StepWiseRNA_Modeler::do_minimizing( pose::Pose & pose, utility::vector1< PoseOP 
 // current fold_tree, cutpoint_variants, and any chain/residue-numbering information in
 // PDBInfo.
 StepWiseRNA_JobParametersOP
-StepWiseRNA_Modeler::setup_job_parameters_for_stepwise_with_full_model_info( utility::vector1< Size > moving_res,
-																																				core::pose::Pose & pose ){
+StepWiseRNA_Modeler::setup_job_parameters_for_stepwise_with_full_model_info( utility::vector1< Size >,
+		core::pose::Pose & pose )
+{
 	pose::full_model_info::make_sure_full_model_info_is_setup( pose );
 	return setup_job_parameters_for_swa( moving_res_list_, pose );
 }
