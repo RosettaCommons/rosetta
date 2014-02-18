@@ -48,6 +48,9 @@ SET(COMPILE_FLAGS "${COMPILE_FLAGS} -std=c++98 -pipe -ffor-scope -O3 -ffast-math
 ## Inhibit warning messages to keep ninja output clean.
 SET(COMPILE_FLAGS "${COMPILE_FLAGS} -w")
 
+## Warnings as errors to match scons build
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror=sign-compare")
+
 ## Other flags that sometimes occur with scons. Uncomment to add.
 ##
 ## More agressive inlining - this gets set for some platform, but causes compiler errors for others:

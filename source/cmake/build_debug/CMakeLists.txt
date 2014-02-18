@@ -51,6 +51,9 @@ SET(COMPILE_FLAGS "${COMPILE_FLAGS} -std=c++98 -pipe -ffor-scope -O0 -g -ggdb -f
 # More warnings - good for cleaning up code/debugging, though it makes ninja output more noisy:
 SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Wall -Wextra -pedantic -Wno-long-long")
 
+# Warnings as errors to match scons build
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror=sign-compare")
+
 IF( ${COMPILER} STREQUAL "clang" )
     # Quiet warnings about non-clang compatable arguments (either gcc-specific ones, or newer-version ones.)
     SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Qunused-arguments")
