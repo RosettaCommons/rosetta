@@ -62,7 +62,6 @@
 
 // Package Headers
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 
 #include <core/types.hh>
 

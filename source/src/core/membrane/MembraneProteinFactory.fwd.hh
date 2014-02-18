@@ -20,7 +20,7 @@
 #define INCLUDED_core_membrane_MembraneProteinFactory_cc
 
 // Utility Headers
-#include <core/membrane/MembraneProteinFactory.fwd.hh>
+#include <utility/pointer/owning_ptr.hh> 
 
 /// @brief      Membrane Protein Factory
 /// @details    Initializes a pose as a membrane protein
