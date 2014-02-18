@@ -9,7 +9,7 @@
 
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "hbond_geo_dim_2d_dARG_aCXL_by_salt_bridge_clsuters",
+id = "hbond_geo_dim_2d_dARG_aCXL_by_salt_bridge_clusters",
 author = "Matthew O'Meara",
 brief_description = "",
 feature_reporter_dependencies = c("HBondFeatures"),
@@ -64,8 +64,8 @@ f$is_bifurcated_a <- as.character(f$cluster) == "bifurcated_a"
 plot_parts <- list(
 	theme_bw(),
 	facet_wrap(~sample_source, nrow=2),
-	geom_point(aes(colour=is_bifurcated_a), size=.8),
-	stat_density2d(aes(colour=is_bifurcated_a), size=.1))
+	#geom_point(aes(colour=is_bifurcated_a), size=.8),
+	stat_density2d(aes(colour=is_bifurcated_a), size=.4))
 
 set_plot_title <- function(xdim, ydim){
 	ggtitle(

@@ -47,7 +47,7 @@ public:
 
 	/// @brief Test NotResidueSelector::parse_my_tag
 	void test_NeighborhoodResidueSelector_parse_my_tag_selector() {
-		std::string tag_string = "<Neighbor name=neighbor_rs selector=odd distance=5.2/>";
+		std::string tag_string = "<Neighborhood name=neighbor_rs selector=odd distance=5.2/>";
 		std::stringstream ss( tag_string );
 		utility::tag::TagPtr tag = new utility::tag::Tag;
 		tag->read( ss );
@@ -66,7 +66,7 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueSubset subset( trpcage.total_residue(), false );
 		neighbor_rs->apply( trpcage, subset );
-		
+
 		// check the result
 		// 1. generate fake focus
 		std::set< core::Size > testFocus;
@@ -79,7 +79,7 @@ public:
 
 	// make sure to fail if a tag specifies both a selector and resnums to parse
 	void test_NeighborhoodResidueSelector_fail_resnum_and_selector_set() {
-		std::string tag_string = "<Neighbor name=neighbor_rs selector=odd resnums=2,4,6 distance=5.2/>";
+		std::string tag_string = "<Neighborhood name=neighbor_rs selector=odd resnums=2,4,6 distance=5.2/>";
 		std::stringstream ss( tag_string );
 		utility::tag::TagPtr tag = new utility::tag::Tag;
 		tag->read( ss );
@@ -99,7 +99,7 @@ public:
 
 
 	void test_NeighborhoodResidueSelector_parse_my_tag_str() {
-		std::string tag_string = "<Neighbor name=neighbor_rs resnums=2,3,5 distance=5.2/>";
+		std::string tag_string = "<Neighborhood name=neighbor_rs resnums=2,3,5 distance=5.2/>";
 		std::stringstream ss( tag_string );
 		utility::tag::TagPtr tag = new utility::tag::Tag;
 		tag->read( ss );
@@ -116,19 +116,19 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueSubset subset( trpcage.total_residue(), false );
 		neighbor_rs->apply( trpcage, subset );
-		
+
 
 		std::set< core::Size > testFocus;
 		testFocus.insert(2);
 		testFocus.insert(3);
 		testFocus.insert(5);
-		TS_ASSERT( check_calculation( trpcage, subset, testFocus, 5.2 ) );		
-	
+		TS_ASSERT( check_calculation( trpcage, subset, testFocus, 5.2 ) );
+
 	}
 
 	// make sure we fail if neither selector nor focus string are provided
 	void test_NeighbohoodResidueSelector_fail_no_focus() {
-		std::string tag_string = "<Neighbor name=neighbor_rs distance=5.2/>";
+		std::string tag_string = "<Neighborhood name=neighbor_rs distance=5.2/>";
 		std::stringstream ss( tag_string );
 		utility::tag::TagPtr tag = new utility::tag::Tag;
 		tag->read( ss );
@@ -143,7 +143,7 @@ public:
 			TS_ASSERT( e.msg() == expected_err);
 		}
 	}
-	
+
 	// make sure we fail if focus residues are out of range
 	void test_NeighborhoodResidueSelector_fail_focus_out_of_range() {
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
@@ -152,7 +152,7 @@ public:
 		bad_focus.insert(trpcage.total_residue() + 1);
 
 		ResidueSelectorOP neighbor_rs = new NeighborhoodResidueSelector(bad_focus, 10.0);
-		
+
 		ResidueSubset subset( trpcage.total_residue(), false );
 		try {
 			neighbor_rs->apply( trpcage, subset );
@@ -166,7 +166,7 @@ public:
 	/// @brief Test than an exception is thrown if the AndResidueSelector is initialized
 	/// from parse_my_tag where the ResidueSelectors it requests are not in the datamap
 	void test_NeighborhoodResidueSelector_parse_my_tag_selector_not_in_datamap() {
-		std::string tag_string = "<Neighbor name=neighbor_rs selector=odd/>";
+		std::string tag_string = "<Neighborhood name=neighbor_rs selector=odd/>";
 		std::stringstream ss( tag_string );
 		utility::tag::TagPtr tag = new utility::tag::Tag;
 		tag->read( ss );
@@ -191,7 +191,7 @@ public:
 		focus_set.insert(3);
 		NeighborhoodResidueSelectorOP neighbor_rs = new NeighborhoodResidueSelector(focus_set, 5.0);
 		ResidueSelectorOP odd_rs = new OddResidueSelector;
-		
+
 		ResidueSubset subset( trpcage.total_residue(), false );
 
 		std::set< core::Size > testFocus_odd;
@@ -202,15 +202,15 @@ public:
 		try {
 			neighbor_rs->apply( trpcage, subset );
 			TS_ASSERT( check_calculation( trpcage, subset, focus_set, 5.0 ) );
-			
+
 			neighbor_rs->set_focus_selector( odd_rs );
 			neighbor_rs->apply( trpcage, subset );
 			TS_ASSERT( check_calculation( trpcage, subset, testFocus_odd, 5.0 ) );
-		
+
 			neighbor_rs->set_focus( focus_set );
 			neighbor_rs->apply( trpcage, subset );
 			TS_ASSERT( check_calculation( trpcage, subset, focus_set, 5.0 ) );
-				
+
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
 			std::cerr << "Exception! " << e.msg();
 			TS_ASSERT( false );
@@ -219,7 +219,7 @@ public:
 
 	//make sure to fail if ResidueSelector subtags are provided as well as the resnums option
 	void test_NeighborhoodSelector_fail_subtag_and_resnums() {
-		std::string tag_string = "<Neighbor name=neighbor_rs resnums=4-8>\n\t<Index resnums=2-3 />\n</Neighbor>";
+		std::string tag_string = "<Neighborhood name=neighbor_rs resnums=4-8>\n\t<Index resnums=2-3 />\n</Neighbor>";
 		std::stringstream ss( tag_string );
 		utility::tag::TagPtr tag = new utility::tag::Tag;
 		tag->read( ss );
@@ -237,7 +237,7 @@ public:
 
 	//make sure to fail if ResidueSelector subtags are provided as well as a selector option
 	void test_NeighborhoodSelector_fail_subtag_and_selector() {
-		std::string tag_string = "<Neighbor name=neighbor_rs selector=odd>\n\t<Index resnums=2-3 />\n</Neighbor>";
+		std::string tag_string = "<Neighborhood name=neighbor_rs selector=odd>\n\t<Index resnums=2-3 />\n</Neighbor>";
 		std::stringstream ss( tag_string );
 		utility::tag::TagPtr tag = new utility::tag::Tag;
 		tag->read( ss );
@@ -248,19 +248,19 @@ public:
 			neighbor_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			std::string expected = "NeighborhoodResidueSelector can only have one ResidueSelector loaded!\n"; 
+			std::string expected = "NeighborhoodResidueSelector can only have one ResidueSelector loaded!\n";
 			TS_ASSERT_EQUALS( e.msg(), expected );
 		}
 	}
 
 
-	
+
 	bool
 	check_calculation( core::pose::Pose const & pose,
 		ResidueSubset const & subset,
 		std::set< core::Size > const & focus,
 		core::Real distance) {
-	
+
 		ResidueSubset ctrl_subset(subset.size(), false);
 
 		core::Real const dst_squared = distance * distance;
@@ -274,15 +274,15 @@ public:
 			for( std::set< core::Size >::const_iterator it = focus.begin();
 				it != focus.end(); ++it )
 			{
-				if( *it == 0 || *it > pose.total_residue()) 
+				if( *it == 0 || *it > pose.total_residue())
 						  return false;
-			
+
 				core::conformation::Residue const & r2( pose.residue( *it ) );
 				core::Real const d_sq( r1.xyz( r1.nbr_atom() ).distance_squared( r2.xyz( r2.nbr_atom() ) ) );
 				if(d_sq <= dst_squared)
 					ctrl_subset[ ii ] = true;
 			} // focus set
-			if(ctrl_subset[ ii ] != subset[ ii ]) 
+			if(ctrl_subset[ ii ] != subset[ ii ])
 					  return false;
 		} // subset
 

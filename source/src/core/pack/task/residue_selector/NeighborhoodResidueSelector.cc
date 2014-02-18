@@ -153,8 +153,8 @@ NeighborhoodResidueSelector::parse_my_tag(
 void
 NeighborhoodResidueSelector::get_focus( core::pose::Pose const & pose, ResidueSubset & subset, std::set< Size > & focus ) const
 {
-	if(focusSelector_ && use_focus_selector_) {
-		focusSelector_->apply( pose, subset);
+	if(focus_selector_ && use_focus_selector_) {
+		focus_selector_->apply( pose, subset);
 
 		for( Size ii = 1; ii <= subset.size(); ++ii ) {
 			if( subset[ ii ] ) {
@@ -196,7 +196,7 @@ NeighborhoodResidueSelector::set_focus( std::string const &focus_str )
 
 void NeighborhoodResidueSelector::set_focus_selector( ResidueSelectorCOP rs )
 {
-	focusSelector_ = rs;
+	focus_selector_ = rs;
 	focus_set_ = true;
 	use_focus_selector_ = true;
 }
@@ -213,7 +213,7 @@ std::string NeighborhoodResidueSelector::get_name() const {
 }
 
 std::string NeighborhoodResidueSelector::class_name() {
-		  return "Neighbor";
+		  return "Neighborhood";
 }
 
 ResidueSelectorOP

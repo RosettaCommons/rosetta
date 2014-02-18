@@ -49,7 +49,7 @@ public:
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap
 	);
-	
+
 	virtual
 	std::string
 	get_name() const;
@@ -76,11 +76,11 @@ private: // data members
 	std::set< Size > focus_;
 	std::string focus_str_;
 	Real distance_;
-		
-	// focus residues may be selected directly be another ResidueSelector
-	ResidueSelectorCOP focusSelector_;
 
-	// has any focus been set	
+	// focus residues may be selected directly be another ResidueSelector
+	ResidueSelectorCOP focus_selector_;
+
+	// has any focus been set
 	bool focus_set_;
 
 	// is the focus selector the last source of focus that has been set
