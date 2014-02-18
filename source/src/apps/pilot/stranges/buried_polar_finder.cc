@@ -24,7 +24,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
@@ -359,7 +359,7 @@ void CalcsTestMover::register_calculators(){
 		if ( basic::options::option[ basic::options::OptionKeys::bpf::variable_sasa_radii ] ) {
 			CalculatorFactory::Instance().register_calculator( Sasa_, new devel::vardist_solaccess::VarSolDistSasaCalculator );
 		} else {
-			CalculatorFactory::Instance().register_calculator( Sasa_, new simple_calculators::SasaCalculator );
+			CalculatorFactory::Instance().register_calculator( Sasa_, new simple_calculators::SasaCalculatorLegacy );
 		}
 
 	}

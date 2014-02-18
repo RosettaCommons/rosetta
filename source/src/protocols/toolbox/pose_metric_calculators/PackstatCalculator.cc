@@ -19,7 +19,7 @@
 // AUTO-REMOVED #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <protocols/toolbox/PoseMetricCalculators/NumberHBondsCalculator.hh>
-// AUTO-REMOVED #include <protocols/toolbox/PoseMetricCalculators/SasaCalculator.hh>
+// AUTO-REMOVED #include <protocols/toolbox/PoseMetricCalculators/SasaCalculatorLegacy.hh>
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 

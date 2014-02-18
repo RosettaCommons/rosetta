@@ -210,8 +210,8 @@ namespace out { namespace file { BooleanOptionKey const renumber_pdb( "out:file:
 namespace out { namespace file { BooleanOptionKey const pdb_parents( "out:file:pdb_parents" );  } }
 namespace out { namespace file { BooleanOptionKey const per_chain_renumbering( "out:file:per_chain_renumbering" );  } }
 namespace out { namespace file { BooleanOptionKey const output_torsions( "out:file:output_torsions" );  } }
+namespace out { namespace file { BooleanOptionKey const use_occurrence_data( "out:file:use_occurrence_data" );  } }
 namespace out { namespace file { BooleanOptionKey const pdb_comments( "out:file:pdb_comments" );  } }
-namespace out { namespace file { BooleanOptionKey const occurrence_data( "out:file:use_occurrence_data" );  } }
 namespace out { namespace file { BooleanOptionKey const force_nonideal_structure( "out:file:force_nonideal_structure" );  } }
 namespace out { namespace file { BooleanOptionKey const write_pdb_link_records( "out:file:write_pdb_link_records" );  } }
 namespace out { namespace file { BooleanOptionKey const dont_rewrite_dunbrack_database( "out:file:dont_rewrite_dunbrack_database" );  } }
@@ -771,3 +771,5 @@ namespace jumps { BooleanOptionKey const overlap_chainbreak( "jumps:overlap_chai
 namespace jumps { RealOptionKey const sep_switch_accelerate( "jumps:sep_switch_accelerate" );  }
 namespace jumps { BooleanOptionKey const dump_frags( "jumps:dump_frags" );  }
 namespace jumps { IntegerOptionKey const njumps( "jumps:njumps" );  }
+namespace jumps { IntegerOptionKey const max_strand_gap_allowed( "jumps:max_strand_gap_allowed" );  }
+namespace jumps { RealOptionKey const contact_score( "jumps:contact_score" );  }

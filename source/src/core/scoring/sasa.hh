@@ -32,6 +32,12 @@
 namespace core {
 namespace scoring {
 
+	
+// DO not use these functions/this file.  They are deprecated and will be removed soon. 
+// Please use scoring/sasa/util for functions; and scoring/sasa/SasaCalc class for sasa calculation.
+// JAB 2/18/14
+	
+
 void input_sasa_dats();
 
 void get_overlap( Real const radius_a, Real const radius_b, Real const distance_ijxyz, int & degree_of_overlap );

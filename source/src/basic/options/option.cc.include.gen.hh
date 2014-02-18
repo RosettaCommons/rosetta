@@ -122,4 +122,5 @@
 #include <basic/options/keys/phil.OptionKeys.gen.hh>
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
+#include <basic/options/keys/sasa.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>

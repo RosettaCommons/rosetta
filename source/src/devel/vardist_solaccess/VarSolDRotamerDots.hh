@@ -138,7 +138,7 @@ public:
 	any_exposed_dots( core::Size atom ) const;
 
 	// @brief The area of the molecular surface accessible to solvent.  Computes an "AND" for each
-	// dot on atoms with a variable solvent radius.  MSAS radii taken from the "SASA_RADIUS" extra
+	// dot on atoms with a variable solvent radius.  MSAS radii taken from the "SASA_RADIUS_LEGACY" extra
 	// property taken from the database.
 	core::Real
 	msas_for_atom( core::Size atom_index ) const;

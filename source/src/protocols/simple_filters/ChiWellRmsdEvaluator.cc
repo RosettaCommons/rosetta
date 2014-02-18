@@ -30,7 +30,7 @@
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <basic/MetricValue.hh>
 // ObjexxFCL Headers
 
@@ -85,7 +85,7 @@ ChiWellRmsdEvaluator::apply( core::pose::Pose& pose ) const {
   core::Size correct( 0 );
 	core::Size  total( 0 );
 
-	core::pose::metrics::simple_calculators::SasaCalculator sasa_calc;
+	core::pose::metrics::simple_calculators::SasaCalculatorLegacy sasa_calc;
 	basic::MetricValue<utility::vector1< Real > > residue_sasa;
 
 	sasa_calc.get( "residue_sasa", residue_sasa, pose );

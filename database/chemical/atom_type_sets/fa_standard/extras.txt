@@ -1,6 +1,6 @@
-extras/sasa_radii.txt
 extras/soft_rep_params.txt
 extras/gen_born_params.txt
+extras/sasa_radii_legacy.txt
 extras/NACCESS_sasa_radii.txt
 extras/memb_fa_params.txt
 extras/std_charges.txt

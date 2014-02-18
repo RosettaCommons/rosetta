@@ -121,7 +121,7 @@ using namespace core::scoring::packstat;
 // 	utility::vector1< Real > radii;
 // 	{
 // 		chemical::AtomTypeSet const & atom_set( pose.residue(1).atom_type_set() );
-// 		Size const SASA_RADIUS_INDEX( atom_set.extra_parameter_index( "SASA_RADIUS" ) );
+// 		Size const SASA_RADIUS_INDEX( atom_set.extra_parameter_index( "SASA_RADIUS_LEGACY" ) );
 // 		radii.resize( atom_set.n_atomtypes() );
 // 		for ( Size i=1; i<= radii.size(); ++i ) {
 // 			chemical::AtomType const & at( atom_set[i] );

@@ -8,12 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file apps/pilot/smlewis/sasa_qd.cc
-/// @brief Q&D protocol to run SasaCalculator as protocol (why is this not already there?)
+/// @brief Q&D protocol to run SasaCalculatorLegacy as protocol (why is this not already there?)
 /// @author Steven Lewis
 
 // Unit Headers
 #include <protocols/moves/Mover.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -41,12 +41,12 @@ public:
 	sasa_qdMover() : Sasa_("sasaqd") {
 
 		using core::pose::metrics::CalculatorFactory;
-		//create the SasaCalculator in the constructor (to ensure it will always exist)
+		//create the SasaCalculatorLegacy in the constructor (to ensure it will always exist)
 		if( CalculatorFactory::Instance().check_calculator_exists( Sasa_ ) ){
 			Warning() << "In sasa_qd, calculator " << Sasa_
 			<< " already exists, this is hopefully correct for your purposes" << std::endl;
 		} else {
-			CalculatorFactory::Instance().register_calculator( Sasa_, new core::pose::metrics::simple_calculators::SasaCalculator);
+			CalculatorFactory::Instance().register_calculator( Sasa_, new core::pose::metrics::simple_calculators::SasaCalculatorLegacy);
 		}
 
 	}

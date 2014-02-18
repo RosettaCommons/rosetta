@@ -1,3 +1,9 @@
+namespace casp { StringOptionKey const rots( "casp:rots" );  }
+namespace casp { RealOptionKey const opt_radius( "casp:opt_radius" );  }
+namespace casp { BooleanOptionKey const repack( "casp:repack" );  }
+namespace casp { BooleanOptionKey const sc_min( "casp:sc_min" );  }
+namespace casp { BooleanOptionKey const sequential( "casp:sequential" );  }
+namespace casp { RealOptionKey const num_iterations( "casp:num_iterations" );  }
 namespace casp { StringOptionKey const weight_file( "casp:weight_file" );  }
 namespace casp { StringOptionKey const refine_res( "casp:refine_res" );  }
 namespace pose_metrics { BooleanOptionKey const pose_metrics( "pose_metrics" );  }
@@ -763,6 +769,3 @@ namespace hotspot { BooleanOptionKey const cluster( "hotspot:cluster" );  }
 namespace hotspot { BooleanOptionKey const colonyE( "hotspot:colonyE" );  }
 namespace hotspot { IntegerOptionKey const length( "hotspot:length" );  }
 namespace hotspot { BooleanOptionKey const envhb( "hotspot:envhb" );  }
-namespace hotspot { RealOptionKey const angle( "hotspot:angle" );  }
-namespace hotspot { IntegerOptionKey const angle_res( "hotspot:angle_res" );  }
-namespace parser { BooleanOptionKey const parser( "parser" );  }

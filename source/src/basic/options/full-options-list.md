@@ -1,7 +1,7 @@
 # List of Rosetta command line options.
 
 _(This is an automatically generated file, do not edit!)_
-Generated: 2014-02-13
+Generated: 2014-02-18
 
 _Note that some application specific options may not be present in this list._
 
@@ -459,6 +459,8 @@ _Note that some application specific options may not be present in this list._
 <dd>When used in conjunction with renumber_pdb, restarts residue numbering at each chain.<br/>Default: false<br/></dd>
 <dt><b>-output_torsions</b> \<Boolean\></dt>
 <dd>Output phi, psi, and omega torsions in the PDB output if the pose is ideal.<br/>Default: false<br/></dd>
+<dt><b>-use_occurrence_data</b> \<Boolean\></dt>
+<dd>if option is true reads probabilty matrix from pssm file.<br/>Default: false<br/></dd>
 <dt><b>-pdb_comments</b> \<Boolean\></dt>
 <dd>If the pose contains any comment print it as a COMMENT in the pdb file.<br/>Default: false<br/></dd>
 <dt><b>-force_nonideal_structure</b> \<Boolean\></dt>
@@ -2882,6 +2884,31 @@ _Note that some application specific options may not be present in this list._
 <dd>If option -final_repack_without_ligand is active, this option will cause the repacked structure to be separately dumped.<br/>Default: false<br/></dd>
 <dt><b>-parser_read_cloud_pdb</b> \<Boolean\></dt>
 <dd>read cloud format PDB for enzdes in rosetta scripts<br/>Default: false<br/></dd>
+</dl>
++ <h2>-sasa</h2>
+<dl>
+<dt><b>-sasa</b> \<Boolean\></dt>
+<dd>sasa option group<br/></dd>
+<dt><b>-method</b> \<String\></dt>
+<dd>The method used to calculate sasa.  More will hopefully be added in the future.<br/>Default: "LeGrand"<br/></dd>
+<dt><b>-include_hydrogens_explicitly</b> \<Boolean\></dt>
+<dd>Include hydrogens explicitly in the calculation.  Explicit vs implicit calculations use different radii sets.  These default sets can be controlled via cmd line.  Historically, calculations included hydrogens implicitly.  But its 2014 and we have hydrogens on our molecules.  Some protocols may overwrite this setting to their needs.<br/>Default: true<br/></dd>
+<dt><b>-probe_radius</b> \<Real\></dt>
+<dd>Probe radius used by SasaCalc.  Default is radius of water<br/>Default: 1.4<br/></dd>
+<dt><b>-include_probe_radius_in_atom_radii</b> \<Boolean\></dt>
+<dd>This is typically done in calculation of SASA, and in fact is one of the defining features of SASA.  Turn this off to calculate the SurfaceArea instead.<br/>Default: true<br/></dd>
+<dt><b>-include_only_C_S_in_hsasa</b> \<Boolean\></dt>
+<dd>Include only carbon or sulfer in hsasa calculation.  This is typical.  Only revert to false if excluding polar atoms by charge or everything will be counted as hydrophobic. Note hydrogens are dealt with automatically.<br/>Default: true<br/></dd>
+<dt><b>-exclude_polar_atoms_by_charge_in_hsasa</b> \<Boolean\></dt>
+<dd>Polar carbons and other atoms should not be included in hydrophobic hSASA - though historically they were.  Set this to false to get historic hsasa<br/>Default: false<br/></dd>
+<dt><b>-polar_charge_cutoff</b> \<Real\></dt>
+<dd>Charge cutoff (abs value) to use on heavy atoms if excluding hydrophobic atoms from hSASA calculation by charge. The default is optimized for protein atom types (which excludes only carbonyl and carboxyl carbons.  By default only carbon and sulfer are excluded.<br/>Default: .4<br/></dd>
+<dt><b>-implicit_hydrogen_radii_set</b> \<String\></dt>
+<dd>The radii set to use when including hydrogens implicitly instead of explicitly. chothia=naccess<br/>Default: "chothia"<br/></dd>
+<dt><b>-explicit_hydrogen_radii_set</b> \<String\></dt>
+<dd>The radii set to use when including hydrogens explicitly.<br/>Default: "LJ"<br/></dd>
+<dt><b>-use_legacy_behavior</b> \<Boolean\></dt>
+<dd>Use Legacy radii with all atom SASA calculation.  This is a bit wrong as were double counting any hydrogens with radii that were optimized for a scorefunction that is no longer used.<br/>Default: false<br/></dd>
 </dl>
 + <h2>-packing</h2>
 <dl>

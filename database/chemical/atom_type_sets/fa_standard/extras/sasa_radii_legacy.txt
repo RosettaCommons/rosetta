@@ -1,4 +1,4 @@
-NAME SASA_RADIUS
+NAME SASA_RADIUS_LEGACY
 CNH2      1.8900
 COO       1.8900
 CH1       2.1285
@@ -60,4 +60,4 @@ MPtk      0.0000
 
 #
 # SASA_RADIUS copied from Rosetta++ fullatom_extra_props.cc (?)
-#
+# Radius was optimized for a no-longer-in-use scoreterm.  Would not recommend for general use (JAB)

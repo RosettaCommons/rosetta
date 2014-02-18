@@ -215,8 +215,8 @@ option.add( basic::options::OptionKeys::out::file::renumber_pdb, "Use Rosetta re
 option.add( basic::options::OptionKeys::out::file::pdb_parents, "If the pose contains a comment named template, print this as a REMARK in the pdb file" ).def(false);
 option.add( basic::options::OptionKeys::out::file::per_chain_renumbering, "When used in conjunction with renumber_pdb, restarts residue numbering at each chain." ).def(false);
 option.add( basic::options::OptionKeys::out::file::output_torsions, "Output phi, psi, and omega torsions in the PDB output if the pose is ideal." ).def(false);
+option.add( basic::options::OptionKeys::out::file::use_occurrence_data, "if option is true reads probabilty matrix from pssm file." ).def(false);
 option.add( basic::options::OptionKeys::out::file::pdb_comments, "If the pose contains any comment print it as a COMMENT in the pdb file." ).def(false);
-option.add( basic::options::OptionKeys::out::file::occurrence_data, "Use the occurrence data from the pssm file in addition to the pssm data  " ).def(false);
 option.add( basic::options::OptionKeys::out::file::force_nonideal_structure, "Force ResidueConformationFeatures to treat the structure as nonideal.  If you know all your structures are non-ideal this decreases pose output time" ).def(true);
 option.add( basic::options::OptionKeys::out::file::write_pdb_link_records, "Sets whether or not the LINK records in PDB files are written.  The default value is false." ).shortd( "Write LINK records?" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::out::file::dont_rewrite_dunbrack_database, "Disables the default behavior of rewriting the Dunrack library in binary format if a binary version is not found" );
@@ -776,11 +776,11 @@ option.add( basic::options::OptionKeys::jumps::overlap_chainbreak, "use the over
 option.add( basic::options::OptionKeys::jumps::sep_switch_accelerate, "constraints and chainbreak depend on in-chain-separation. Accelerate their enforcement 1+num_cuts()*<this_factor>" ).def(0.4);
 option.add( basic::options::OptionKeys::jumps::dump_frags, "dump jump_fragments " ).def(false);
 option.add( basic::options::OptionKeys::jumps::njumps, "number_of_jumps to select from library for each trajectory (membrane mode)" ).def(1);
+option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
+option.add( basic::options::OptionKeys::jumps::contact_score, "the strand-weight will have a weight * contact_order component" ).def(0.0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
-option.add( basic::options::OptionKeys::jumps::contact_score, "the strand-weight will have a weight * contact_order component" ).def(0.0);
-option.add( basic::options::OptionKeys::jumps::filter_templates, "filter hybridization protocol templates" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::filter_templates, "filter hybridization protocol templates" ).def(false);
 option.add( basic::options::OptionKeys::templates::templates, "templates option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::templates::config, "read a list of templates and alignments" ).def("templates.dat");
 option.add( basic::options::OptionKeys::templates::fix_aligned_residues, "pick only from template fragments and then keep these residues fixed" ).def(false);
@@ -1335,6 +1335,17 @@ option.add( basic::options::OptionKeys::enzdes::compare_native, "triggers compar
 option.add( basic::options::OptionKeys::enzdes::final_repack_without_ligand, "if a scorefile is requested, this option triggers every structure to be repacked without the ligand. the resulting structure will be output in a multimodel pdb, and differences in energy and rmsd are added to the scorefile." ).def(false);
 option.add( basic::options::OptionKeys::enzdes::dump_final_repack_without_ligand_pdb, "If option -final_repack_without_ligand is active, this option will cause the repacked structure to be separately dumped." ).def(false);
 option.add( basic::options::OptionKeys::enzdes::parser_read_cloud_pdb, "read cloud format PDB for enzdes in rosetta scripts" ).def(false);
+option.add( basic::options::OptionKeys::sasa::sasa, "sasa option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::sasa::method, "The method used to calculate sasa.  More will hopefully be added in the future." ).legal("LeGrand").def("LeGrand");
+option.add( basic::options::OptionKeys::sasa::include_hydrogens_explicitly, "Include hydrogens explicitly in the calculation.  Explicit vs implicit calculations use different radii sets.  These default sets can be controlled via cmd line.  Historically, calculations included hydrogens implicitly.  But its 2014 and we have hydrogens on our molecules.  Some protocols may overwrite this setting to their needs." ).def(true);
+option.add( basic::options::OptionKeys::sasa::probe_radius, "Probe radius used by SasaCalc.  Default is radius of water" ).def(1.4);
+option.add( basic::options::OptionKeys::sasa::include_probe_radius_in_atom_radii, "This is typically done in calculation of SASA, and in fact is one of the defining features of SASA.  Turn this off to calculate the SurfaceArea instead." ).def(true);
+option.add( basic::options::OptionKeys::sasa::include_only_C_S_in_hsasa, "Include only carbon or sulfer in hsasa calculation.  This is typical.  Only revert to false if excluding polar atoms by charge or everything will be counted as hydrophobic. Note hydrogens are dealt with automatically." ).def(true);
+option.add( basic::options::OptionKeys::sasa::exclude_polar_atoms_by_charge_in_hsasa, "Polar carbons and other atoms should not be included in hydrophobic hSASA - though historically they were.  Set this to false to get historic hsasa" ).def(false);
+option.add( basic::options::OptionKeys::sasa::polar_charge_cutoff, "Charge cutoff (abs value) to use on heavy atoms if excluding hydrophobic atoms from hSASA calculation by charge. The default is optimized for protein atom types (which excludes only carbonyl and carboxyl carbons.  By default only carbon and sulfer are excluded." ).def(.4);
+option.add( basic::options::OptionKeys::sasa::implicit_hydrogen_radii_set, "The radii set to use when including hydrogens implicitly instead of explicitly. chothia=naccess" ).legal("chothia").legal("naccess").legal("legacy").legal("reduce").def("chothia");
+option.add( basic::options::OptionKeys::sasa::explicit_hydrogen_radii_set, "The radii set to use when including hydrogens explicitly." ).legal("LJ").def("LJ");
+option.add( basic::options::OptionKeys::sasa::use_legacy_behavior, "Use Legacy radii with all atom SASA calculation.  This is a bit wrong as were double counting any hydrogens with radii that were optimized for a scorefunction that is no longer used." ).def(false);
 option.add( basic::options::OptionKeys::packing::packing, "Packing option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::packing::repack_only, "Disable design at all positions" ).def(false);
 option.add( basic::options::OptionKeys::packing::prevent_repacking, "Disable repacking (or design) at all positions" ).def(false);
@@ -1544,15 +1555,15 @@ option.add( basic::options::OptionKeys::membrane::thickness, "one leaflet hydroc
 option.add( basic::options::OptionKeys::casp::casp, "casp option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::casp::decoy, "No description" );
 option.add( basic::options::OptionKeys::casp::wt, "No description" );
-option.add( basic::options::OptionKeys::casp::rots, "No description" );
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::casp::rots, "No description" );
 option.add( basic::options::OptionKeys::casp::opt_radius, "optimization radius for repacking and minimization" );
 option.add( basic::options::OptionKeys::casp::repack, "should we repack the structure?" );
 option.add( basic::options::OptionKeys::casp::sc_min, "should we sidechain minimize the structure?" );
 option.add( basic::options::OptionKeys::casp::sequential, "should mutations be considered in sequence or all together?" );
 option.add( basic::options::OptionKeys::casp::num_iterations, "number of iterations to perform" );
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::casp::weight_file, "what weight-file to use?" );
+option.add( basic::options::OptionKeys::casp::weight_file, "what weight-file to use?" );
 option.add( basic::options::OptionKeys::casp::refine_res, "specifies file that contains which residues to refine" );
 option.add( basic::options::OptionKeys::pose_metrics::pose_metrics, "pose_metrics option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff, " maximum SASA that is allowed for an atom to count as buried for the BuriedUnsatisfiedPolarsCalculator" ).def(0.3);
@@ -2317,12 +2328,12 @@ option.add( basic::options::OptionKeys::hotspot::cluster, "Cluster stubset. Will
 option.add( basic::options::OptionKeys::hotspot::colonyE, "Rescore hotspots from -hashfile based on colony energy." ).def(false);
 option.add( basic::options::OptionKeys::hotspot::length, "Length of hotspot peptide to use for hashing. Sidechain-containing group will be in the center." ).def(1);
 option.add( basic::options::OptionKeys::hotspot::envhb, "Use environment dependent Hbonds when scoring hotspots." ).def(false);
-option.add( basic::options::OptionKeys::hotspot::angle, "Maximum allowed angle between stubCA, target CoM, and stubCB. Used to determine if stub is pointing towards target. Negative numbers deactivates this check (default)" ).def(-1);
-option.add( basic::options::OptionKeys::hotspot::angle_res, "Residue to use for angle calculation from stubCA, <this option>, and stubCB. Used to determine if stub is pointing towards target. 0 uses the default, which is the targets center of mass" ).def(0);
-option.add( basic::options::OptionKeys::parser::parser, "parser option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::parser::protocol, "File name for the xml parser protocol" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::hotspot::angle, "Maximum allowed angle between stubCA, target CoM, and stubCB. Used to determine if stub is pointing towards target. Negative numbers deactivates this check (default)" ).def(-1);
+option.add( basic::options::OptionKeys::hotspot::angle_res, "Residue to use for angle calculation from stubCA, <this option>, and stubCB. Used to determine if stub is pointing towards target. 0 uses the default, which is the targets center of mass" ).def(0);
+option.add( basic::options::OptionKeys::parser::parser, "parser option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::parser::protocol, "File name for the xml parser protocol" );
 option.add( basic::options::OptionKeys::parser::script_vars, "Variable substitutions for xml parser, in the form of name=value" );
 option.add( basic::options::OptionKeys::parser::view, "Use the viewer?" );
 option.add( basic::options::OptionKeys::parser::patchdock, "Patchdock output file name." );

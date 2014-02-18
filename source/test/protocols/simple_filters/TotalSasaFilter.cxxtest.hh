@@ -21,7 +21,7 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
@@ -55,7 +55,7 @@ class TotalSasaFilterTests : public CxxTest::TestSuite {
 
 		using namespace core::pose::metrics;
 		if( !CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ){
-			PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator();
+			PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy();
 			CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 		}
 

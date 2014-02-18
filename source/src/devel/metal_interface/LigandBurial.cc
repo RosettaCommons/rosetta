@@ -15,7 +15,7 @@
 
 #include <devel/metal_interface/LigandBurial.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -113,7 +113,7 @@ LigandBurial::register_calculators() {
 
 	TR << "Registering SASA Calculator" << std::endl;
 	if( !CalculatorFactory::Instance().check_calculator_exists( "sasa_calc" ) ){
-		CalculatorFactory::Instance().register_calculator( "sasa_calc", new SasaCalculator() );
+		CalculatorFactory::Instance().register_calculator( "sasa_calc", new SasaCalculatorLegacy() );
 	}
 
 	return;

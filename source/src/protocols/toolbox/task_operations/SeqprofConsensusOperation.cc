@@ -134,7 +134,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 				 core::Size const seqpos( seqprof_cst->seqpos() );
 				 SequenceProfileCOP seqprof_pos( seqprof_cst->sequence_profile() );
 				 seqprof->prof_row( seqprof_pos->profile()[ seqpos ], seqpos );
-				 if (basic::options::option[ basic::options::OptionKeys::out::file::occurrence_data ].value()){
+				 if (basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value()){
 				 seqprof->probabilty_row( seqprof_pos->occurrence_data()[ seqpos ], seqpos );
 				 }
 		     cst_num++;
@@ -221,7 +221,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 
 	} //loop over all residues for which profile information exists
 
-	if (basic::options::option[ basic::options::OptionKeys::out::file::occurrence_data ].value()){
+	if (basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value()){
 		for( core::Size i = resi_begin; i <= resi_end; ++i){
 			//for all non interface reisdues we allow only reidues that acctualy appear in native proteins.
 			if( protein_interface_design()() != NULL && std::find( designable_interface.begin(), designable_interface.end(), i ) != designable_interface.end() ){

@@ -26,7 +26,7 @@
 #include <basic/Tracer.hh>
 
 // Core
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
@@ -222,7 +222,7 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 	if ( CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ) {
 		CalculatorFactory::Instance().remove_calculator( "sasa" );
 	}
-	CalculatorFactory::Instance().register_calculator( "sasa", new simple_calculators::SasaCalculator);
+	CalculatorFactory::Instance().register_calculator( "sasa", new simple_calculators::SasaCalculatorLegacy);
 
 	///////////////////////define//////////////////////////////////////////////////////////////////////////
 	core::Real probe_radius = basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius];

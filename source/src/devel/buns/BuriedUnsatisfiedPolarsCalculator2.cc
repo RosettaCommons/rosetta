@@ -18,7 +18,7 @@
 #include <devel/buns/BuriedUnsatisfiedPolarsCalculator2.hh>
 
 //Project Headers
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
@@ -30,7 +30,7 @@
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/vector1.hh>
 #include <basic/options/option.hh>
@@ -129,7 +129,7 @@ BuriedUnsatisfiedPolarsCalculator2::assert_calculators() {
 			else {
 				TR << "Registering SASA Calculator" << std::endl;
 				CalculatorFactory::Instance().register_calculator(sasa_calc_name,
-						new pose::metrics::simple_calculators::SasaCalculator());
+						new pose::metrics::simple_calculators::SasaCalculatorLegacy());
 			}
 		}
 		std::string num_hbonds_calc_name("num_hbonds_calc_name");

@@ -1,5 +1,3 @@
-namespace jumps { IntegerOptionKey const max_strand_gap_allowed( "jumps:max_strand_gap_allowed" );  }
-namespace jumps { RealOptionKey const contact_score( "jumps:contact_score" );  }
 namespace jumps { BooleanOptionKey const filter_templates( "jumps:filter_templates" );  }
 namespace templates { BooleanOptionKey const templates( "templates" );  }
 namespace templates { FileOptionKey const config( "templates:config" );  }
@@ -555,6 +553,17 @@ namespace enzdes { StringOptionKey const compare_native( "enzdes:compare_native"
 namespace enzdes { BooleanOptionKey const final_repack_without_ligand( "enzdes:final_repack_without_ligand" );  }
 namespace enzdes { BooleanOptionKey const dump_final_repack_without_ligand_pdb( "enzdes:dump_final_repack_without_ligand_pdb" );  }
 namespace enzdes { BooleanOptionKey const parser_read_cloud_pdb( "enzdes:parser_read_cloud_pdb" );  }
+namespace sasa { BooleanOptionKey const sasa( "sasa" );  }
+namespace sasa { StringOptionKey const method( "sasa:method" );  }
+namespace sasa { BooleanOptionKey const include_hydrogens_explicitly( "sasa:include_hydrogens_explicitly" );  }
+namespace sasa { RealOptionKey const probe_radius( "sasa:probe_radius" );  }
+namespace sasa { BooleanOptionKey const include_probe_radius_in_atom_radii( "sasa:include_probe_radius_in_atom_radii" );  }
+namespace sasa { BooleanOptionKey const include_only_C_S_in_hsasa( "sasa:include_only_C_S_in_hsasa" );  }
+namespace sasa { BooleanOptionKey const exclude_polar_atoms_by_charge_in_hsasa( "sasa:exclude_polar_atoms_by_charge_in_hsasa" );  }
+namespace sasa { RealOptionKey const polar_charge_cutoff( "sasa:polar_charge_cutoff" );  }
+namespace sasa { StringOptionKey const implicit_hydrogen_radii_set( "sasa:implicit_hydrogen_radii_set" );  }
+namespace sasa { StringOptionKey const explicit_hydrogen_radii_set( "sasa:explicit_hydrogen_radii_set" );  }
+namespace sasa { BooleanOptionKey const use_legacy_behavior( "sasa:use_legacy_behavior" );  }
 namespace packing { BooleanOptionKey const packing( "packing" );  }
 namespace packing { BooleanOptionKey const repack_only( "packing:repack_only" );  }
 namespace packing { BooleanOptionKey const prevent_repacking( "packing:prevent_repacking" );  }
@@ -764,9 +773,3 @@ namespace membrane { RealOptionKey const thickness( "membrane:thickness" );  }
 namespace casp { BooleanOptionKey const casp( "casp" );  }
 namespace casp { StringOptionKey const decoy( "casp:decoy" );  }
 namespace casp { StringOptionKey const wt( "casp:wt" );  }
-namespace casp { StringOptionKey const rots( "casp:rots" );  }
-namespace casp { RealOptionKey const opt_radius( "casp:opt_radius" );  }
-namespace casp { BooleanOptionKey const repack( "casp:repack" );  }
-namespace casp { BooleanOptionKey const sc_min( "casp:sc_min" );  }
-namespace casp { BooleanOptionKey const sequential( "casp:sequential" );  }
-namespace casp { RealOptionKey const num_iterations( "casp:num_iterations" );  }

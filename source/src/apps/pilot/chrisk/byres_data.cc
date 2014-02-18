@@ -105,7 +105,7 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.hh>
 #include <basic/MetricValue.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 //#include <protocols/toolbox/pose_metric_calculators/NumberWaterHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/SemiExplicitWaterUnsatisfiedPolarsCalculator.hh>
@@ -2094,7 +2094,7 @@ register_calcs()
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
 //	core::pose::metrics::PoseMetricCalculatorOP num_water_hbonds_calculator = new protocols::toolbox::pose_metric_calculators::NumberWaterHBondsCalculator();
 //	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "num_water_hbonds", num_water_hbonds_calculator );
-	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator();
+	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy();
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 
 	core::pose::metrics::PoseMetricCalculatorOP bur_unsat_calculator = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator( "sasa", "num_hbonds" );

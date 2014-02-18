@@ -35,7 +35,7 @@
 
 #include <protocols/moves/ScoreMover.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/toolbox/pose_metric_calculators/SasaCalculator.hh>
+#include <protocols/toolbox/pose_metric_calculators/SasaCalculatorLegacy.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>

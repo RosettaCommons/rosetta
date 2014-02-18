@@ -561,7 +561,7 @@ PDBOutput::output_buried_unsatisfied_hbonds( ozstream & pdbout )
 		}
 	}
 
-	// instantiation of BuriedUnsatisfiedPolarsCalculator looks up (or creates) instantiations of NumberHBondsCalculator and SasaCalculator -- output of info from these too while we're at it
+	// instantiation of BuriedUnsatisfiedPolarsCalculator looks up (or creates) instantiations of NumberHBondsCalculator and SasaCalculatorLegacy -- output of info from these too while we're at it
 	// somehow pose has become aware of these calculators and will not recompute them(?)
 
 //  basic::MetricValue< id::AtomID_Map< Size > > atom_hbonds;

@@ -16,7 +16,7 @@
 #include <devel/metal_interface/ZincSecondShell.hh>
 #include <devel/metal_interface/MetalSiteResidue.hh>
 
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -113,7 +113,7 @@ ZincSecondShell::register_calculators() {
 
 	TR << "Registering sasa Calculator" << std::endl;
 	if( !CalculatorFactory::Instance().check_calculator_exists( "sasa_calc" ) ){
-		CalculatorFactory::Instance().register_calculator( "sasa_calc", new pose::metrics::simple_calculators::SasaCalculator() );
+		CalculatorFactory::Instance().register_calculator( "sasa_calc", new pose::metrics::simple_calculators::SasaCalculatorLegacy() );
 	}
 
 	TR << "Registering hbond Calculator" << std::endl;

@@ -26,7 +26,8 @@
 #include <core/pose/util.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 
-#include <core/scoring/sasa.hh>
+//#include <core/scoring/sasa.hh>
+#include <core/scoring/sasa/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/pack/interaction_graph/RotamerDots.hh>
@@ -428,13 +429,13 @@ void VarSolDRotamerDots::initialize_sasa_arrays() {
 	if ( sasa_arrays_initialized_ ) return;
 	sasa_arrays_initialized_ = true;
 
-	lg_angles_ = ( & core::scoring::get_angles() );
-	lg_masks_  = ( & core::scoring::get_masks()  );
+	lg_angles_ = ( & core::scoring::sasa::get_legrand_sasa_angles() );
+	lg_masks_  = ( & core::scoring::sasa::get_legrand_sasa_masks()  );
 
 	using namespace core::chemical;
 
 	AtomTypeSetCAP atset = ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
-	core::Size const SASA_RADIUS_INDEX = atset->extra_parameter_index( "SASA_RADIUS" );
+	core::Size const SASA_RADIUS_INDEX = atset->extra_parameter_index( "SASA_RADIUS_LEGACY" );
 
 	radii_.resize( atset->n_atomtypes() );
 	msas_radii_.resize( atset->n_atomtypes() );
@@ -799,8 +800,8 @@ VarSolDRotamerDots::msas_for_atom( Size atom_index ) const
 //	Real const distance = std::sqrt( dist_sq );
 //
 //	//ronj this block represents the amount of surface area covered up on atom1 by atom2
-//	core::scoring::get_overlap( at1_radius, at2_radius, distance, degree_of_overlap );
-//	core::scoring::get_2way_orientation( at1_xyz, at2_xyz, aphi_1_2, theta_1_2, aphi_2_1, theta_2_1, distance );
+//	core::scoring::sasa::get_legrand_atomic_overlap( at1_radius, at2_radius, distance, degree_of_overlap );
+//	core::scoring::sasa::get_legrand_2way_orientation( at1_xyz, at2_xyz, aphi_1_2, theta_1_2, aphi_2_1, theta_2_1, distance );
 //
 //	Size closest_dot1 = (*lg_angles_)( aphi_1_2, theta_1_2 );
 //	masknum = ( closest_dot1 * 100 ) + degree_of_overlap;
@@ -809,7 +810,7 @@ VarSolDRotamerDots::msas_for_atom( Size atom_index ) const
 //	}
 //
 //	//ronj the amount of surface area covered up on atom2 by atom1
-//	core::scoring::get_overlap( at2_radius, at1_radius, distance, degree_of_overlap );
+//	core::scoring::sasa::get_legrand_atomic_overlap( at2_radius, at1_radius, distance, degree_of_overlap );
 //
 //	Size closest_dot2 = (*lg_angles_)( aphi_2_1, theta_2_1 );
 //	masknum = ( closest_dot2 * 100 ) + degree_of_overlap;
@@ -843,8 +844,8 @@ VarSolDRotamerDots::get_atom_overlap_masks(
 	distance = std::sqrt( dist_sq );
 
 	//ronj this block represents the amount of surface area covered up on atom1 by atom2
-	//core::scoring::get_overlap( at1_radius, at2_radius, distance, degree_of_overlap );
-	core::scoring::get_2way_orientation( at1_xyz, at2_xyz, aphi_1_2, theta_1_2, aphi_2_1, theta_2_1, distance );
+	//core::scoring::sasa::get_legrand_atomic_overlap( at1_radius, at2_radius, distance, degree_of_overlap );
+	core::scoring::sasa::get_legrand_2way_orientation( at1_xyz, at2_xyz, aphi_1_2, theta_1_2, aphi_2_1, theta_2_1, distance );
 	closest_dot1 = (*lg_angles_)( aphi_1_2, theta_1_2 );
 	closest_dot2 = (*lg_angles_)( aphi_2_1, theta_2_1 );
 	return true;
@@ -872,7 +873,7 @@ VarSolDRotamerDots::overlap_atoms(
 			if ( distance > radii_[ attype1 ][ ii ] + radii_[ attype2 ][ jj ] ) continue;
 			if ( ii == 1 ) {
 				int degree_of_overlap;
-				core::scoring::get_overlap( radii_[ attype2 ][ jj ], radii_[ attype1 ][ ii ], distance, degree_of_overlap );
+				core::scoring::sasa::get_legrand_atomic_overlap( radii_[ attype2 ][ jj ], radii_[ attype1 ][ ii ], distance, degree_of_overlap );
 				Size masknum = ( closest_dot2 * 100 ) + degree_of_overlap;
 				for ( Size bb = 1, bbli = (*lg_masks_).index( bb, masknum ); bb <= num_bytes_; ++bb, ++bbli ) {
 					at_other_coverage[ jj ][ bb ] |= (*lg_masks_)[ bbli ];
@@ -880,7 +881,7 @@ VarSolDRotamerDots::overlap_atoms(
 			}
 			if ( jj == 1 ) {
 				int degree_of_overlap;
-				core::scoring::get_overlap( radii_[ attype1 ][ ii ], radii_[ attype2 ][ jj ], distance, degree_of_overlap );
+				core::scoring::sasa::get_legrand_atomic_overlap( radii_[ attype1 ][ ii ], radii_[ attype2 ][ jj ], distance, degree_of_overlap );
 				Size masknum = ( closest_dot1 * 100 ) + degree_of_overlap;
 				for ( Size bb = 1, bbli = (*lg_masks_).index( bb, masknum ); bb <= num_bytes_; ++bb, ++bbli ) {
 					at_this_coverage[ ii ][ bb ] |= (*lg_masks_)[ bbli ];
@@ -1290,7 +1291,7 @@ VarSolDistSasaCalculator::clone() const{
 void
 VarSolDistSasaCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const
 {
-	// STOLEN from SasaCalculator.cc
+	// STOLEN from SasaCalculatorLegacy.cc
 	TR << "VarSolDistSasaCalculator::lookup" << std::endl;
 
 	if ( key == "total_sasa" ) {
@@ -1315,7 +1316,7 @@ VarSolDistSasaCalculator::lookup( std::string const & key, basic::MetricValueBas
 std::string
 VarSolDistSasaCalculator::print( std::string const & key ) const
 {
-	// STOLEN from SasaCalculator.cc
+	// STOLEN from SasaCalculatorLegacy.cc
 
 	if ( key == "total_sasa" ) {
 		return utility::to_string( total_sasa_ );
@@ -1400,7 +1401,7 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 //		AtomTypeSet const & atom_type_set = * ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
 //		ROSETTA_SASA_radii_.resize( atom_type_set.n_atomtypes(), 0.0 );
 //
-//		core::Size SASA_RADIUS_INDEX = atom_type_set.extra_parameter_index( "SASA_RADIUS" );
+//		core::Size SASA_RADIUS_INDEX = atom_type_set.extra_parameter_index( "SASA_RADIUS_LEGACY" );
 //
 //		TR_RDRD << "ROSETTA_SASA_radii_: [ ";
 //		for ( core::Size ii=1; ii <= atom_type_set.n_atomtypes(); ++ii ) {
@@ -1756,8 +1757,8 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 //	int theta_1_2, theta_2_1;
 //
 //	//ronj this block represents the amount of surface area covered up on atom1 by atom2
-//	core::scoring::get_overlap( rad1, rad2, distance, degree_of_overlap1 );
-//	core::scoring::get_2way_orientation( at1.xyz(), at2.xyz(), aphi_1_2, theta_1_2, aphi_2_1, theta_2_1, distance );
+//	core::scoring::sasa::get_legrand_atomic_overlap( rad1, rad2, distance, degree_of_overlap1 );
+//	core::scoring::sasa::get_legrand_2way_orientation( at1.xyz(), at2.xyz(), aphi_1_2, theta_1_2, aphi_2_1, theta_2_1, distance );
 //
 //	utility::vector1< ObjexxFCL::ubyte > ring1( 21, ObjexxFCL::ubyte(0) );
 //	utility::vector1< ObjexxFCL::ubyte > ring2( 21, ObjexxFCL::ubyte(0) );
@@ -1798,7 +1799,7 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 //	print_dot_bit_string( hit_ring1 );
 //
 //	//ronj the amount of surface area covered up on atom2 by atom1
-//	core::scoring::get_overlap( rad2, rad1, distance, degree_of_overlap2 );
+//	core::scoring::sasa::get_legrand_atomic_overlap( rad2, rad1, distance, degree_of_overlap2 );
 //
 //	Size closest_dot2 = (*RotamerDots::lg_angles_)( aphi_2_1, theta_2_1 );
 //	if ( degree_of_overlap2 + nsteps2 > 100 ) {
@@ -1873,8 +1874,8 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 //	int theta_1_2, theta_2_1;
 //
 //	//ronj this block represents the amount of surface area covered up on atom1 by atom2
-//	core::scoring::get_overlap( rad1, rad2, distance, degree_of_overlap1 );
-//	core::scoring::get_2way_orientation( at1.xyz(), at2.xyz(), aphi_1_2, theta_1_2, aphi_2_1, theta_2_1, distance );
+//	core::scoring::sasa::get_legrand_atomic_overlap( rad1, rad2, distance, degree_of_overlap1 );
+//	core::scoring::sasa::get_legrand_2way_orientation( at1.xyz(), at2.xyz(), aphi_1_2, theta_1_2, aphi_2_1, theta_2_1, distance );
 //
 //	bool at1_intersection_exposed = false;
 //	Size closest_dot1 = (*RotamerDots::lg_angles_)( aphi_1_2, theta_1_2 );
@@ -1898,7 +1899,7 @@ VarSolDistSasaCalculator::recompute( core::pose::Pose const & this_pose )
 //	if ( ! at1_intersection_exposed ) return false;
 //
 //	//ronj the amount of surface area covered up on atom2 by atom1
-//	core::scoring::get_overlap( rad2, rad1, distance, degree_of_overlap2 );
+//	core::scoring::sasa::get_legrand_atomic_overlap( rad2, rad1, distance, degree_of_overlap2 );
 //
 //	bool at2_intersection_exposed = false;
 //

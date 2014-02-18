@@ -17,7 +17,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -73,7 +73,7 @@ public:
 
 		TR << "Registering SASA Calculator" << std::endl;
 		if( !CalculatorFactory::Instance().check_calculator_exists( "sasa_calc_name" ) ){
-			CalculatorFactory::Instance().register_calculator( "sasa_calc_name", new pose::metrics::simple_calculators::SasaCalculator() );
+			CalculatorFactory::Instance().register_calculator( "sasa_calc_name", new pose::metrics::simple_calculators::SasaCalculatorLegacy() );
 		}
 		TR << "Registering num_Hbond Calculator" << std::endl;
 		if( !CalculatorFactory::Instance().check_calculator_exists( "num_hbonds_calc_name" ) ){

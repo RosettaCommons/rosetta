@@ -1,7 +1,6 @@
 # These are the sasa radii used by the Reduce program. They are not
 # used actively used by Rosetta, but are here to assist validating
-# Rosetta's chemical definitions. To make them available inside
-# Rosetta, include this file in  ../extras.txt
+# Rosetta's chemical definitions. 
 NAME REDUCE_SASA_RADIUS
 CNH2      1.75
 COO       1.75

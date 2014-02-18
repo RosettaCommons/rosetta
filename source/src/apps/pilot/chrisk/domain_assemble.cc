@@ -99,7 +99,7 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.hh>
 #include <basic/MetricValue.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 
 
 //utilities

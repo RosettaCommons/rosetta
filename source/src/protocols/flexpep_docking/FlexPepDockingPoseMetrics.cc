@@ -33,7 +33,7 @@
 #include <core/types.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 // AUTO-REMOVED #include <protocols/viewer/viewers.hh>
@@ -298,7 +298,7 @@ FlexPepDockingPoseMetrics::calc_interface_metrics( core::pose::Pose & pose, Size
 		// sasa
 		if( !CalculatorFactory::Instance().check_calculator_exists( sasa_calc_name ) ){
 			PoseMetricCalculatorOP sasa_calculator =
-				new core::pose::metrics::simple_calculators::SasaCalculator;
+				new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
 			CalculatorFactory::Instance().register_calculator
 				( sasa_calc_name, sasa_calculator );
 		}

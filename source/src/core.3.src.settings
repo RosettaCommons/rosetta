@@ -135,7 +135,8 @@ sources = {
 		"InterfaceDeltaEnergeticsCalculator",
 		"InterfaceNeighborDefinitionCalculator",
 		"InterfaceSasaDefinitionCalculator",
-		"SasaCalculator",
+		"SasaCalculator2",
+		"SasaCalculatorLegacy",
 	],
 	"core/pose/ncbb": [
 		"util",
@@ -609,6 +610,14 @@ sources = {
 		"RNA_CS_MagneticAnisotropy",
 		"RNA_ChemicalShiftPotential",
 		"RNA_ChemicalShiftEnergy",
+	],
+
+	"core/scoring/sasa": [
+		"LeGrandSasa",
+		"SasaCalc",
+		"SasaMethod",
+		"SasaMethodFactory",
+		"util",
 	],
 
 	"core/scoring/saxs": [

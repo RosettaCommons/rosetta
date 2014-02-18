@@ -171,7 +171,7 @@ TotalSasaFilter::compute( core::pose::Pose const & pose ) const {
 	using namespace protocols::moves;
 
 	if( !core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ) {
-		utility_exit_with_message("Must define core::pose::metrics::simple_calculators::SasaCalculator with name 'sasa' in order to use TotalSasaFilter.");
+		utility_exit_with_message("Must define core::pose::metrics::simple_calculators::SasaCalculatorLegacy with name 'sasa' in order to use TotalSasaFilter.");
 	}
 
 	runtime_assert( ! (hydrophobic_ && polar_) );

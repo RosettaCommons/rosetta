@@ -53,7 +53,7 @@
 // stupid fucking calculatorfactory
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 // end stupid fucking calculatorfactory
@@ -440,7 +440,7 @@ void BaseRole::register_calculators() {
 	}
 
 	if( !CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ){
-		PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator();
+		PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy();
 		CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 	}
 	if( !CalculatorFactory::Instance().check_calculator_exists( "ligneigh" ) ){

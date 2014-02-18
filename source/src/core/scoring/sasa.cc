@@ -637,7 +637,7 @@ calc_per_atom_sasa(
 	if ( use_naccess_sasa_radii ) {
 		SASA_RADIUS_INDEX = atom_type_set.extra_parameter_index( "NACCESS_SASA_RADIUS" );
 	} else {
-		SASA_RADIUS_INDEX = atom_type_set.extra_parameter_index( "SASA_RADIUS" );
+		SASA_RADIUS_INDEX = atom_type_set.extra_parameter_index( "SASA_RADIUS_LEGACY" );
 	}
 	
 	utility::vector1< Real > radii( atom_type_set.n_atomtypes() );

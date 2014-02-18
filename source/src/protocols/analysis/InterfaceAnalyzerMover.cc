@@ -49,7 +49,8 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+//#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculator2.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
@@ -249,6 +250,7 @@ InterfaceAnalyzerMover::init_per_residue_data(core::pose::Pose const & pose) {
 	per_residue_data_.complexed_energy.resize(pose.total_residue(), 0.0);
 	per_residue_data_.dG.resize(pose.total_residue(), 0.0);
 	per_residue_data_.dSASA.resize(pose.total_residue(), 0.0);
+	per_residue_data_.dhSASA.resize(pose.total_residue(), 0.0);
 	per_residue_data_.dSASA_fraction.resize(pose.total_residue(), 0.0);
 	per_residue_data_.separated_energy.resize(pose.total_residue(), 0.0);
 	per_residue_data_.separated_sasa.resize(pose.total_residue(), 0.0);
@@ -723,7 +725,7 @@ void InterfaceAnalyzerMover::register_calculators()
 		Warning() << "In InterfaceAnalyzerMover, calculator " << Sasa_
 		<< " already exists, this is hopefully correct for your purposes" << std::endl;
 	} else {
-		CalculatorFactory::Instance().register_calculator( Sasa_, new core::pose::metrics::simple_calculators::SasaCalculator);
+		CalculatorFactory::Instance().register_calculator( Sasa_, new core::pose::metrics::simple_calculators::SasaCalculator2);
 	}
 
 	InterfaceNeighborDefinition_ = "InterfaceNeighborDefinition_" + ijump;
@@ -858,46 +860,61 @@ void InterfaceAnalyzerMover::score_separated_chains( core::pose::Pose & complexe
 void InterfaceAnalyzerMover::compute_separated_sasa(core::pose::Pose & complexed_pose,
 	core::pose::Pose & separated_pose){
 	using namespace core;
+	
+	//Complex Pose values.
 	basic::MetricValue< core::Real > mv_complex_sasa;
-	basic::MetricValue< core::Real > mv_separated_sasa;
-
+	basic::MetricValue< core::Real > mv_complex_hsasa;
+	basic::MetricValue< vector1< core::Real > > mv_complex_res_sasa;
+	basic::MetricValue< vector1< core::Real > > mv_complex_res_hsasa;
+	basic::MetricValue< vector1< core::Real > > mv_complex_res_rel_hsasa;
+	
 	complexed_pose.metric(Sasa_, "total_sasa", mv_complex_sasa);
-	separated_pose.metric(Sasa_, "total_sasa", mv_separated_sasa);
+	complexed_pose.metric(Sasa_, "total_hsasa", mv_complex_hsasa);
+	complexed_pose.metric(Sasa_, "residue_sasa", mv_complex_res_sasa);
+	complexed_pose.metric(Sasa_, "residue_hsasa", mv_complex_res_hsasa);
+	complexed_pose.metric(Sasa_, "residue_rel_hsasa", mv_complex_res_rel_hsasa);
+	
+	
+	//Separated Pose values.
+	basic::MetricValue< core::Real > mv_sep_sasa;
+	basic::MetricValue< core::Real > mv_sep_hsasa;
+	basic::MetricValue< vector1< core::Real > > mv_sep_res_sasa;
+	basic::MetricValue< vector1< core::Real > > mv_sep_res_hsasa;
+	basic::MetricValue< vector1< core::Real > > mv_sep_res_rel_hsasa;
+	
+	separated_pose.metric(Sasa_, "total_sasa", mv_sep_sasa);
+	separated_pose.metric(Sasa_, "total_hsasa", mv_sep_hsasa);
+	separated_pose.metric(Sasa_, "residue_sasa", mv_sep_res_sasa);
+	separated_pose.metric(Sasa_, "residue_hsasa", mv_sep_res_hsasa);
+	separated_pose.metric(Sasa_, "residue_rel_hsasa", mv_sep_res_rel_hsasa);
+	
+	
 	data_.complexed_SASA =  mv_complex_sasa.value();
-	data_.separated_SASA =  mv_separated_sasa.value() ;
+	data_.separated_SASA =  mv_sep_sasa.value();
 	data_.dSASA[total] = data_.separated_SASA - data_.complexed_SASA ;
 
-	//need to get the hydrophobic sasa at the interface, only need to subtract them
-	utility::vector1< core::Real > complexed_residue_sasa( complexed_pose.total_residue(), 0.0 );
-	utility::vector1< core::Real > separated_residue_sasa( separated_pose.total_residue(), 0.0 );
-	utility::vector1< core::Real > complexed_residue_hsasa( complexed_pose.total_residue(), 0.0 ); // hydrophobic SASA only
-	utility::vector1< core::Real > separated_residue_hsasa( separated_pose.total_residue(), 0.0 ); // hydrophobic SASA only
-	core::Real probe_radius = basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius];
-	
-	core::Real complexed_hSASA = core::scoring::calc_per_res_hydrophobic_sasa( complexed_pose, complexed_residue_sasa,
-		complexed_residue_hsasa, probe_radius,
-		false /*no n_acccess_radii*/ );
-	
-	core::Real separated_hSASA = core::scoring::calc_per_res_hydrophobic_sasa( separated_pose, separated_residue_sasa,
-		separated_residue_hsasa, probe_radius,
-		false /*no n_acccess_radii*/);
 
-	calc_interface_to_surface_fraction(separated_pose, complexed_residue_sasa, separated_residue_sasa);
+	calc_interface_to_surface_fraction(separated_pose, mv_sep_res_sasa.value());
 	
 	//Now assume anything that isn't hydrophobic is polar
-	data_.dhSASA = separated_hSASA - complexed_hSASA;
+	data_.dhSASA = mv_sep_hsasa.value() - mv_complex_hsasa.value();
 	data_.polar_dSASA = data_.dSASA[total] - data_.dhSASA;
 	
 	//Get per residue data
-	per_residue_data_.separated_sasa = separated_residue_sasa;
-	per_residue_data_.complexed_sasa = complexed_residue_sasa;
-	per_residue_data_.dSASA = calc_per_residue_dSASA(complexed_pose, separated_residue_sasa, complexed_residue_sasa);
+	per_residue_data_.separated_sasa = mv_sep_res_sasa.value();
+	per_residue_data_.complexed_sasa = mv_complex_res_sasa.value();
 	
+	per_residue_data_.dSASA = calc_per_residue_dSASA(complexed_pose, mv_sep_res_sasa.value(), mv_complex_res_sasa.value());
+	//per_residue_data_.dhSASA = calc_per_residue_dSASA(complexed_pose, mv_sep_res_hsasa.value(), mv_complex_res_hsasa.value());
+	for (core::Size i = 1; i <= complexed_pose.total_residue(); ++i){
+		per_residue_data_.dhSASA[i] = mv_sep_res_hsasa.value()[i] - mv_complex_res_hsasa.value()[i];
+	
+	}
 	return;
 }
 
 vector1< core::Real >
-InterfaceAnalyzerMover::calc_per_residue_dSASA(core::pose::Pose & complexed_pose, const vector1<core::Real> separated_sasa,  const vector1<core::Real> complexed_sasa){
+InterfaceAnalyzerMover::calc_per_residue_dSASA(core::pose::Pose & complexed_pose, const vector1<core::Real> & separated_sasa,  const vector1<core::Real> & complexed_sasa){
 	
 
 	vector1< core::Real > dSASA;
@@ -937,7 +954,7 @@ InterfaceAnalyzerMover::calc_per_residue_dSASA(core::pose::Pose & complexed_pose
 }
 
 vector1< core::Real >
-InterfaceAnalyzerMover::calc_per_residue_dG(core::pose::Pose & complexed_pose, const vector1<core::Real> separated_energy, const vector1<core::Real> complexed_energy){
+InterfaceAnalyzerMover::calc_per_residue_dG(core::pose::Pose & complexed_pose, const vector1<core::Real> & separated_energy, const vector1<core::Real> & complexed_energy){
 	vector1< core::Real > dG;
 	if (separated_energy.size() != complexed_energy.size()){
 		utility_exit_with_message("Separated energy and complexed sasa must be the same size to calculate res dSASA");
@@ -1171,12 +1188,12 @@ void InterfaceAnalyzerMover::compute_interface_delta_hbond_unsat( core::pose::Po
 }
 
 void
-InterfaceAnalyzerMover::calc_interface_to_surface_fraction(core::pose::Pose const & separated_pose,
-		const vector1<core::Real>, const vector1<core::Real> separated_sasa)
-{
+InterfaceAnalyzerMover::calc_interface_to_surface_fraction(core::pose::Pose const & separated_pose, const vector1<core::Real> & separated_sasa){
+
 	// Cutoff sasa value taken from LayerDesign operations.
 	// A percentage buried should be the more correct way to do this.
 	// But what is the maximal for each residue?
+
 	vector1<core::Size> surface_nres(3, 0);
 	
 	for (core::Size i = 1; i <= separated_sasa.size(); ++i){
@@ -1246,7 +1263,7 @@ void InterfaceAnalyzerMover::calc_hbond_sasaE( core::pose::Pose & pose ){
 	//Real const four_pi = 4.0f * Real( numeric::constants::d::pi );
 	//AtomTypeSet const & atom_type_set = * ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
 	//utility::vector1< Real > radii( atom_type_set.n_atomtypes(), 0.0 );
-	//core::Size SASA_RADIUS_INDEX = atom_type_set.extra_parameter_index( "SASA_RADIUS" );
+	//core::Size SASA_RADIUS_INDEX = atom_type_set.extra_parameter_index( "SASA_RADIUS_LEGACY" );
 
 	// TR << "radii: [ ";
 	// for ( core::Size ii=1; ii <= atom_type_set.n_atomtypes(); ++ii ) {
@@ -1790,7 +1807,7 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_hbond_unsat( core::pose::P
 
 ///@details This function doesn't do the printing itself.  The app InterfaceAnalyzer gets the multi-line string to write a file or print the selection
 ///@details From best packing to worse packing, colors go as Blue, Purple, Pink, Red
-void InterfaceAnalyzerMover::print_pymol_selection_of_packing( core::pose::Pose const & pose,	utility::vector1< core::Real > interface_pack_scores) {
+void InterfaceAnalyzerMover::print_pymol_selection_of_packing( core::pose::Pose const & pose,	utility::vector1< core::Real >&  interface_pack_scores) {
 	std::ostringstream pymol_packing;
 	pymol_packing << std::endl;
 

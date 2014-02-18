@@ -2839,6 +2839,44 @@ Options = Option_Group( '',
 
 	), # enzdez
 
+	# Sasa options --------------------------------------------------------------
+	Option_Group( 'sasa',
+		Option('method', 'String',
+			desc=   'The method used to calculate sasa.  More will hopefully be added in the future.',
+			default='LeGrand',
+			legal =['LeGrand']),
+		Option('include_hydrogens_explicitly', 'Boolean',
+			desc=     'Include hydrogens explicitly in the calculation.  Explicit vs implicit calculations use different radii sets.  These default sets can be controlled via cmd line.  Historically, calculations included hydrogens implicitly.  But its 2014 and we have hydrogens on our molecules.  Some protocols may overwrite this setting to their needs.',
+			default = 'true'),
+		Option('probe_radius', 'Real',
+			desc=   'Probe radius used by SasaCalc.  Default is radius of water',
+			default='1.4'),
+		Option('include_probe_radius_in_atom_radii', 'Boolean',
+			desc=   'This is typically done in calculation of SASA, and in fact is one of the defining features of SASA.  Turn this off to calculate the SurfaceArea instead.',
+			default='true'
+			),
+		Option('include_only_C_S_in_hsasa', 'Boolean', 
+			desc=   'Include only carbon or sulfer in hsasa calculation.  This is typical.  Only revert to false if excluding polar atoms by charge or everything will be counted as hydrophobic. Note hydrogens are dealt with automatically.',
+			default='true'),
+		Option('exclude_polar_atoms_by_charge_in_hsasa', 'Boolean', 
+			desc=   'Polar carbons and other atoms should not be included in hydrophobic hSASA - though historically they were.  Set this to false to get historic hsasa',
+			default='false'),
+		Option('polar_charge_cutoff', 'Real', 
+			desc=    'Charge cutoff (abs value) to use on heavy atoms if excluding hydrophobic atoms from hSASA calculation by charge. The default is optimized for protein atom types (which excludes only carbonyl and carboxyl carbons.  By default only carbon and sulfer are excluded.',
+			default='.4'
+			),
+		Option('implicit_hydrogen_radii_set', 'String', 
+			desc=   'The radii set to use when including hydrogens implicitly instead of explicitly. chothia=naccess',
+			default='chothia',
+			legal= ['chothia', 'naccess','legacy','reduce']),
+		Option('explicit_hydrogen_radii_set', 'String',
+			desc=   'The radii set to use when including hydrogens explicitly.',
+			default='LJ',
+			legal=['LJ']),
+		Option( 'use_legacy_behavior', 'Boolean',
+			desc =  'Use Legacy radii with all atom SASA calculation.  This is a bit wrong as were double counting any hydrogens with radii that were optimized for a scorefunction that is no longer used.',
+			default='false'),
+	), #Sasa
 
 	# packing options -----------------------------------------------------------
 	Option_Group( 'packing',

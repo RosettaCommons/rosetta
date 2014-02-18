@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.cc
-/// @brief  SasaCalculator class
+/// @brief  SasaCalculatorLegacy class
 /// @author John Karanicolas
 
 // Unit headers

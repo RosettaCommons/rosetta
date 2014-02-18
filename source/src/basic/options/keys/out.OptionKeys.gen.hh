@@ -1,3 +1,4 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
@@ -79,8 +80,8 @@ namespace out { namespace file { extern BooleanOptionKey const renumber_pdb; } }
 namespace out { namespace file { extern BooleanOptionKey const pdb_parents; } }
 namespace out { namespace file { extern BooleanOptionKey const per_chain_renumbering; } }
 namespace out { namespace file { extern BooleanOptionKey const output_torsions; } }
+namespace out { namespace file { extern BooleanOptionKey const use_occurrence_data; } }
 namespace out { namespace file { extern BooleanOptionKey const pdb_comments; } }
-namespace out { namespace file { extern BooleanOptionKey const occurrence_data; } }
 namespace out { namespace file { extern BooleanOptionKey const force_nonideal_structure; } }
 namespace out { namespace file { extern BooleanOptionKey const write_pdb_link_records; } }
 namespace out { namespace file { extern BooleanOptionKey const dont_rewrite_dunbrack_database; } }

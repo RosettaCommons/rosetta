@@ -26,7 +26,7 @@
 #include <protocols/toolbox/pose_metric_calculators/NonlocalContactsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 
 //Core Headers
 #include <core/conformation/Residue.hh>
@@ -186,7 +186,7 @@ main(int argc, char* argv[]){
 	core::id::AtomID_Map<Size> atom_hbonds = hb_metric.value();
 
 	//set up a calculator for calculating the SASA for each trp residue
-	core::pose::metrics::PoseMetricCalculatorOP sasa_calc = new core::pose::metrics::simple_calculators::SasaCalculator();
+	core::pose::metrics::PoseMetricCalculatorOP sasa_calc = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy();
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator("sasa", sasa_calc);
 
 	//find the sasa value for each residue

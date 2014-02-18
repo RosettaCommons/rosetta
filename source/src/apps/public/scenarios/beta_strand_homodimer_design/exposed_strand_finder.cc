@@ -60,7 +60,7 @@
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/StructureRestrictor.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 
 //protocols JD2
 #include <protocols/jd2/JobDistributor.hh>
@@ -445,7 +445,7 @@ void ExposedStrandMover::apply (core::pose::Pose & pose ) {
   //core::scoring::TenANeighborGraph tang (pose.energies().tenA_neighbor_graph());
 
   //set up sasa calculator
-  core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator;
+  core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy;
   if( core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa_calc" ) ){
 		//TR << "sasa calculator already exists...continuing" << std::endl;
   } else {

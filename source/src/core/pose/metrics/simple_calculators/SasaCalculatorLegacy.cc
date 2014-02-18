@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pose/metrics/SasaCalculator.cc
-/// @brief  SasaCalculator class
+/// @file   core/pose/metrics/SasaCalculatorLegacy.cc
+/// @brief  SasaCalculatorLegacy class
 /// @author John Karanicolas
 
 // Unit headers
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility headers
@@ -37,7 +37,7 @@ namespace pose {
 namespace metrics {
 namespace simple_calculators {
 
-void SasaCalculator::lookup( std::string const & key, basic::MetricValueBase * valptr ) const {
+void SasaCalculatorLegacy::lookup( std::string const & key, basic::MetricValueBase * valptr ) const {
 
 	if ( key == "total_sasa" ) {
 		basic::check_cast( valptr, &total_sasa_, "total_sasa expects to return a Real" );
@@ -59,7 +59,7 @@ void SasaCalculator::lookup( std::string const & key, basic::MetricValueBase * v
 }
 
 
-std::string SasaCalculator::print( std::string const & key ) const {
+std::string SasaCalculatorLegacy::print( std::string const & key ) const {
 
 	if ( key == "total_sasa" ) {
 		return utility::to_string( total_sasa_ );
@@ -77,7 +77,7 @@ std::string SasaCalculator::print( std::string const & key ) const {
 }
 
 
-void SasaCalculator::recompute( Pose const & this_pose ) {
+void SasaCalculatorLegacy::recompute( Pose const & this_pose ) {
 		total_sasa_ = core::scoring::calc_per_atom_sasa( this_pose, atom_sasa_, residue_sasa_, probe_radius_);
 }
 

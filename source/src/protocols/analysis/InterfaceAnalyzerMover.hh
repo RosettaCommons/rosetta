@@ -57,6 +57,7 @@ namespace analysis {
 		vector1< core::Real > separated_sasa;
 		vector1< core::Real > complexed_sasa;
 		vector1< core::Real > dSASA;
+		vector1< core::Real > dhSASA;
 		vector1< core::Real > dSASA_fraction; //fraction of SASA separated to SASA buried.  If all of it is buried, fraction is 1.0 (dSASA[i]/separated_sasa[i])
 
 
@@ -488,10 +489,10 @@ private:
 
 	///@brief calculates dSASA for each residue
 	vector1< core::Real >
-	calc_per_residue_dSASA(core::pose::Pose & complexed_pose, const vector1< core::Real > separated_sasa, const vector1< core::Real > complexed_sasa);
+	calc_per_residue_dSASA(core::pose::Pose & complexed_pose, const vector1< core::Real >  & separated_sasa, const vector1< core::Real >&  complexed_sasa);
 
 	vector1< core::Real >
-	calc_per_residue_dG(core::pose::Pose & complexed_pose, const vector1< core::Real > separated_energy, const vector1< core::Real > complexed_energy);
+	calc_per_residue_dG(core::pose::Pose & complexed_pose, const vector1< core::Real > & separated_energy, const vector1< core::Real > & complexed_energy);
 
 	void
 	calc_hbond_sasaE( core::pose::Pose & pose );
@@ -503,11 +504,11 @@ private:
 	///@brief Calculate the number of residues in the interface vs the surface based on SASA cutoff (40A^2 as per LayerDesign and selection operations).
 	///@details Correct way to calculate this though is through % maximal SASA buried, but calculations will need to be done later to find these values.
 	void
-	calc_interface_to_surface_fraction(core::pose::Pose const & separated_pose, const vector1<core::Real> complexed_sasa, const vector1<core::Real> separated_sasa);
+	calc_interface_to_surface_fraction(core::pose::Pose const & separated_pose, const vector1<core::Real> & separated_sasa);
 
 	void print_pymol_selection_of_interface_residues( core::pose::Pose const & pose, std::set< core::Size > const interface_set );
 	void print_pymol_selection_of_hbond_unsat( core::pose::Pose & pose, utility::vector1< core::id::AtomID > delta_unsat_hbond_atid_vector );
-	void print_pymol_selection_of_packing( core::pose::Pose const & pose,	utility::vector1< core::Real > interface_pack_scores );
+	void print_pymol_selection_of_packing( core::pose::Pose const & pose,	utility::vector1< core::Real > & interface_pack_scores );
 
 
 	///@brief mutate all residue in the interface to Gly and recalc the energy - not used right now

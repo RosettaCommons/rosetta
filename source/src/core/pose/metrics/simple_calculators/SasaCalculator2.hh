@@ -7,15 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
-/// @author John Karanicolas
+/// @file core/pose/metrics/simple_calculators/SasaCalculator2
+/// @brief Calculator for SASA.
+/// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com).  Based on SasaCalculatorLegacy
 
 
-#ifndef INCLUDED_core_pose_metrics_simple_calculators_SasaCalculator_HH
-#define INCLUDED_core_pose_metrics_simple_calculators_SasaCalculator_HH
+#ifndef INCLUDED_core_pose_metrics_simple_calculators_SasaCalculator2_HH
+#define INCLUDED_core_pose_metrics_simple_calculators_SasaCalculator2_HH
 
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
+#include <core/scoring/sasa/SasaCalc.hh>
+
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <basic/MetricValue.fwd.hh>
@@ -28,21 +30,22 @@
 
 // option key includes
 
-#include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
+#include <basic/options/keys/sasa.OptionKeys.gen.hh>
 
 
 namespace core{
 namespace pose {
 namespace metrics {
 namespace simple_calculators {
-
-class SasaCalculator : public core::pose::metrics::StructureDependentCalculator {
+	using utility::vector1;
+	
+class SasaCalculator2 : public core::pose::metrics::StructureDependentCalculator {
 
 public:
 
-	SasaCalculator( core::Real probe_r = basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius] ) : probe_radius_(probe_r) {}
+	SasaCalculator2( core::Real probe_r = basic::options::option[basic::options::OptionKeys::sasa::probe_radius]() );
 
-	core::pose::metrics::PoseMetricCalculatorOP clone() const { return new core::pose::metrics::simple_calculators::SasaCalculator(); };
+	core::pose::metrics::PoseMetricCalculatorOP clone() const { return new core::pose::metrics::simple_calculators::SasaCalculator2(); };
 
 protected:
 	virtual void lookup( std::string const & key, basic::MetricValueBase * valptr ) const;
@@ -50,12 +53,18 @@ protected:
 	virtual void recompute( core::pose::Pose const & this_pose );
 
 private:
-
+	
+	core::scoring::sasa::SasaCalcOP sasa_calc_;
+	
+	//These need to be specified and returned from sasacalc or else clang gives error: taking the address of a temporary object of type...
+	
 	core::Real total_sasa_;
-	core::id::AtomID_Map< core::Real > atom_sasa_;
-	utility::vector1< core::Real > residue_sasa_;
-	core::Real probe_radius_;
-
+	core::Real total_hsasa_;
+	core::id::AtomID_Map<core::Real > atom_sasa_;
+	vector1< core::Real > residue_sasa_;
+	vector1< core::Real > residue_hsasa_;
+	vector1< core::Real > residue_rel_hsasa_;
+	
 };
 
 
@@ -64,4 +73,6 @@ private:
 } // namespace pose
 } // namespace core
 
-#endif //INCLUDED_core_pose_metrics_simple_calculators_SasaCalculator_HH
+#endif //INCLUDED_core_pose_metrics_simple_calculators_SasaCalculator2_HH
+
+

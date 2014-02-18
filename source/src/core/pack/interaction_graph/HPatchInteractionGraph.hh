@@ -9,6 +9,7 @@
 
 /// @file   core/pack/interaction_graph/HPatchInteractionGraph.hh
 /// @brief  Interaction graph which implements a non-PD score that optimizes against surface hydrophobic patches.
+/// @reference Computational Protein Design with Explicit Consideration of Surface Hydrophobic Patches. R. Jacak, A. Leaver-Fay, and B. Kuhlman. Proteins. 2012 Mar;80(3):825-38.
 /// @author Ron Jacak (ron.jacak@gmail.com)
 /// @author Andrew Leaver-Fay
 
@@ -39,7 +40,8 @@
 
 #include <core/pose/Pose.hh>
 
-#include <core/scoring/sasa.hh>
+//#include <core/scoring/sasa.hh>
+#include <core/scoring/sasa/util.hh>
 #include <core/pack/interaction_graph/SurfacePotential.hh>
 
 #include <basic/Tracer.hh>
@@ -1109,7 +1111,7 @@ void HPatchNode< V, E, G >::initialize_atom_atom_overlap_cache() {
 
 					Real const distance_ijxyz = std::sqrt( distance_squared );
 					int degree_of_overlap;
-					core::scoring::get_overlap( iia_atom_radius, jja_atom_radius, distance_ijxyz, degree_of_overlap );
+					core::scoring::sasa::get_legrand_atomic_overlap( iia_atom_radius, jja_atom_radius, distance_ijxyz, degree_of_overlap );
 					if ( degree_of_overlap >= 15 ) {
 
 						self_atom_atom_overlaps_[ state ][ iia ][ jja ] = true;
@@ -1982,7 +1984,7 @@ void HPatchBackgroundNode< V, E, G >::initialize_atom_atom_overlaps() {
 
 				Real const distance_ijxyz = std::sqrt( distance_squared );
 				int degree_of_overlap;
-				core::scoring::get_overlap( iia_atom_radius, jja_atom_radius, distance_ijxyz, degree_of_overlap );
+				core::scoring::sasa::get_legrand_atomic_overlap( iia_atom_radius, jja_atom_radius, distance_ijxyz, degree_of_overlap );
 				if ( degree_of_overlap >= 15 ) {
 #ifdef FILE_DEBUG
 					//TR_BGNODE << "initialize_self_overlap(): overlapping intra-residue atom pair: "
@@ -3511,7 +3513,7 @@ void HPatchInteractionGraph< V, E, G >::initialize_bg_bg_atom_atom_overlaps() {
 
 						Real const distance_ijxyz = std::sqrt( distance_squared );
 						int degree_of_overlap;
-						core::scoring::get_overlap( iia_atom_radius, jja_atom_radius, distance_ijxyz, degree_of_overlap );
+						core::scoring::sasa::get_legrand_atomic_overlap( iia_atom_radius, jja_atom_radius, distance_ijxyz, degree_of_overlap );
 						if ( degree_of_overlap >= 15 ) {
 #ifdef FILE_DEBUG
 							/*TR_HIG << "initialize_bg_bg_atom_atom_overlaps(): overlapping bg-bg atom-atom pair: "

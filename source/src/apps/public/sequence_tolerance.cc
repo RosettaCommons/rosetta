@@ -17,7 +17,7 @@
 #include <protocols/multistate_design/MultiStateEntity.hh>
 #include <protocols/toolbox/pose_metric_calculators/DecomposeAndReweightEnergiesCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/ResidueDecompositionByChainCalculator.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/SurfaceCalculator.hh>
@@ -244,7 +244,7 @@ sequence_tolerance_main( void * )
 
 	if ( option[ seq_tol::unsat_polars ] ) {
 		// tell the FitnessFunction to add buried unsatisfied polars to MultiStateEntity objects
-		calculator_factory.register_calculator("sasa", new core::pose::metrics::simple_calculators::SasaCalculator());
+		calculator_factory.register_calculator("sasa", new core::pose::metrics::simple_calculators::SasaCalculatorLegacy());
 		calculator_factory.register_calculator("num_hbonds", new NumberHBondsCalculator());
 		calculator_factory.register_calculator("unsat_polars", new BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds"));
 		func->add_metric_value_getter(

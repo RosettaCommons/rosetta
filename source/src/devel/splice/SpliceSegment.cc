@@ -151,7 +151,7 @@ concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles, util
 			//TR<<"The sequence profile row for this residue is: "<<prof->prof_row(pos)<<std::endl;
 		
 			concatenated_profile->prof_row( prof->prof_row( pos ), current_profile_size );
-			if (basic::options::option[ basic::options::OptionKeys::out::file::occurrence_data ].value()){
+			if (basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value()){
 				//this option is by default false
 				concatenated_profile->probabilty_row( prof->probability_row( pos ), current_profile_size );
 			}

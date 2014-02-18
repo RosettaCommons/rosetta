@@ -54,7 +54,7 @@
 //scoring grids
 //Pose Metric Calculators for filters
 #include <core/pose/metrics/simple_calculators/InterfaceSasaDefinitionCalculator.hh>
-#include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
+#include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceDeltaEnergeticsCalculator.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 
@@ -401,36 +401,36 @@ RosettaScriptsParser::substitute_variables_in_stream( std::istream & in, utility
 void
 RosettaScriptsParser::register_factory_prototypes()
 {
-  // note: TaskOperations are now registered with a singleton factory at load time using apl's creator/registrator scheme
+	// note: TaskOperations are now registered with a singleton factory at load time using apl's creator/registrator scheme
 
-  // also register some constraint types with the ConstraintFactory (global singleton class)
-  // this allows derived non-core constraints to be constructed from string definitions in constraints files
-  //using namespace core::scoring::constraints;
-  //ConstraintFactory & cstf( ConstraintIO::get_cst_factory() );
-  //cstf.add_type( new core::scoring::constraints::SequenceProfileConstraint(
-  //  Size(), utility::vector1< id::AtomID >(), NULL ) );
+	// also register some constraint types with the ConstraintFactory (global singleton class)
+	// this allows derived non-core constraints to be constructed from string definitions in constraints files
+	//using namespace core::scoring::constraints;
+	//ConstraintFactory & cstf( ConstraintIO::get_cst_factory() );
+	//cstf.add_type( new core::scoring::constraints::SequenceProfileConstraint(
+	//	Size(), utility::vector1< id::AtomID >(), NULL ) );
 
-  // register calculators
-  core::Size const chain1( 1 ), chain2( 2 );
-  using namespace core::pose::metrics;
+	// register calculators
+	core::Size const chain1( 1 ), chain2( 2 );
+	using namespace core::pose::metrics;
 
-  if( !CalculatorFactory::Instance().check_calculator_exists( "sasa_interface" ) ){
-    PoseMetricCalculatorOP int_sasa_calculator = new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator( chain1, chain2 );
-    CalculatorFactory::Instance().register_calculator( "sasa_interface", int_sasa_calculator );
-  }
+	if( !CalculatorFactory::Instance().check_calculator_exists( "sasa_interface" ) ){
+		PoseMetricCalculatorOP int_sasa_calculator = new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator( chain1, chain2 );
+		CalculatorFactory::Instance().register_calculator( "sasa_interface", int_sasa_calculator );
+	}
 
-  if( !CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ){
-    PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator();
-    CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
-  }
-  if( !CalculatorFactory::Instance().check_calculator_exists( "ligneigh" ) ){
-    PoseMetricCalculatorOP lig_neighbor_calc = new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( chain1, chain2 );
-    CalculatorFactory::Instance().register_calculator( "ligneigh", lig_neighbor_calc );
-  }
-  if( !CalculatorFactory::Instance().check_calculator_exists( "liginterfE" ) ){
-    PoseMetricCalculatorOP lig_interf_E_calc = new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( "ligneigh" );
-    CalculatorFactory::Instance().register_calculator( "liginterfE", lig_interf_E_calc );
-  }
+	if( !CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ){
+		PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculatorLegacy();
+		CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
+	}
+	if( !CalculatorFactory::Instance().check_calculator_exists( "ligneigh" ) ){
+		PoseMetricCalculatorOP lig_neighbor_calc = new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( chain1, chain2 );
+  	CalculatorFactory::Instance().register_calculator( "ligneigh", lig_neighbor_calc );
+	}
+	if( !CalculatorFactory::Instance().check_calculator_exists( "liginterfE" ) ){
+  	PoseMetricCalculatorOP lig_interf_E_calc = new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( "ligneigh" );
+  	CalculatorFactory::Instance().register_calculator( "liginterfE", lig_interf_E_calc );
+	}
 }
 
 }//jd2
