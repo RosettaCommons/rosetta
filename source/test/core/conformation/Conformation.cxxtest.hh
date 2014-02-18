@@ -82,18 +82,29 @@ struct Obs {
 	typedef core::conformation::signals::LengthEvent LengthEvent;
 	typedef core::conformation::signals::XYZEvent XYZEvent;
 
-	Obs() : count( 0 ), g_count( 0 ) {}
+	Obs() {
+		reset();
+	}
 
-	void on_connection_change( ConnectionEvent const & ) { ++count; }
+	void on_connection_change( ConnectionEvent const & ) { c_last = ++count; }
 	void on_general_change( GeneralEvent const & ) { ++g_count; }
-	void on_identity_change( IdentityEvent const & e ) { i_event = e; ++count; }
-	void on_length_change( LengthEvent const & e ) { l_event = e; ++count; }
-	void on_xyz_change( XYZEvent const & ) { ++count; }
-
+	void on_identity_change( IdentityEvent const & e ) { i_event = e; i_last = ++count; }
+	void on_length_change( LengthEvent const & e ) { l_event = e; l_last = ++count; }
+	void on_xyz_change( XYZEvent const & ) { x_last = ++count; }
+	void reset() {
+		count = 0;
+		g_count = 0;
+		c_last = 0;
+		i_last = 0;
+		l_last = 0;
+		 x_last = 0;
+	}
 	int count;
 	int g_count;
 	IdentityEvent i_event;
 	LengthEvent l_event;
+	// The count at the last respective event.
+	int c_last, i_last, l_last, x_last;
 };
 
 } // test_conf
@@ -210,7 +221,7 @@ void test_Conformation_observer() {
 		TS_ASSERT( c2.attach_connection_obs( &Obs::on_connection_change, &obs ).valid() );
 	} // end scope
 	TS_ASSERT_EQUALS( obs.count, 1 ); // ConnectionEvent::DISCONNECT sent on ~Conformation()
-	obs.count = 0;
+	obs.reset();
 
 	// identity observers
 	TS_ASSERT( conf.attach_identity_obs( &Obs::on_identity_change, &obs ).valid() );
@@ -220,7 +231,7 @@ void test_Conformation_observer() {
 	TS_ASSERT( obs.i_event.tag == signals::IdentityEvent::RESIDUE );
 
 	TS_ASSERT( conf.detach_identity_obs( &Obs::on_identity_change, &obs ) );
-	obs.count = 0;
+	obs.reset();
 
 	// length observers
 	TS_ASSERT( conf.attach_length_obs( &Obs::on_length_change, &obs ).valid() );
@@ -238,7 +249,27 @@ void test_Conformation_observer() {
 	TS_ASSERT( obs.l_event.tag == signals::LengthEvent::RESIDUE_DELETE );
 
 	TS_ASSERT( conf.detach_length_obs( &Obs::on_length_change, &obs ) );
-	obs.count = 0;
+	obs.reset();
+
+	// Test event ordering
+	TS_ASSERT( conf.attach_length_obs( &Obs::on_length_change, &obs ).valid() );
+	TS_ASSERT( conf.attach_xyz_obs( &Obs::on_xyz_change, &obs ).valid() );
+	TS_ASSERT( conf.attach_general_obs( &Obs::on_general_change, &obs ).valid() );
+
+	conf.delete_residue_slow( 4 );
+	TS_ASSERT_EQUALS( obs.count, 2 ); // One length and one xyz from setup_atom_tree
+	TS_ASSERT_LESS_THAN( obs.l_last, obs.x_last ); // Length event should fire before xyz event.
+	obs.reset();
+
+	conf.delete_residue_range_slow( 3, 5 );
+	TS_ASSERT_EQUALS( obs.count, 2 ); // One length and one xyz from setup_atom_tree
+	TS_ASSERT_LESS_THAN( obs.l_last, obs.x_last ); // Length event should fire before xyz event.
+
+	// This is in a different order than adding on purpose.
+	TS_ASSERT( conf.detach_xyz_obs( &Obs::on_xyz_change, &obs ) );
+	TS_ASSERT( conf.detach_general_obs( &Obs::on_general_change, &obs ) );
+	TS_ASSERT( conf.detach_length_obs( &Obs::on_length_change, &obs ) );
+	obs.reset();
 
 	// xyz and general observers
 	TS_ASSERT( conf.attach_xyz_obs( &Obs::on_xyz_change, &obs ).valid() );
@@ -249,6 +280,7 @@ void test_Conformation_observer() {
 	conf = Conformation();
 	TS_ASSERT_EQUALS( obs.count, 1 );
 	TS_ASSERT_EQUALS( obs.g_count, 1 );
+	obs.reset();
 
 	TS_ASSERT( conf.detach_xyz_obs( &Obs::on_xyz_change, &obs ) );
 	TS_ASSERT( conf.detach_general_obs( &Obs::on_general_change, &obs ) );

@@ -909,13 +909,15 @@ Conformation::delete_residue_slow( Size const seqpos )
 
 	residues_delete( seqpos );
 
+	// setup_atom_tree() can fire an XYZEvent - make sure the LengthEvent fires first
+	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_DELETE, seqpos, -1, NULL ), false );
+
 	setup_atom_tree();
 
 	residue_torsions_need_updating_ = true;
 
 	assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
-	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_DELETE, seqpos, -1, NULL ), false );
 }
 
 /// @details  Like above but only one call to setup_atom_tree
@@ -931,13 +933,15 @@ Conformation::delete_residue_range_slow( Size const range_begin, Size const rang
 		residues_delete( range_begin );
 	}
 
+	// setup_atom_tree() can fire an XYZEvent - make sure the LengthEvent fires first
+	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_DELETE, range_begin, -range_size,  NULL ), false );
+
 	setup_atom_tree();
 
 	residue_torsions_need_updating_ = true;
 
 	assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
-	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_DELETE, range_begin, -range_size,  NULL ), false );
 }
 
 
