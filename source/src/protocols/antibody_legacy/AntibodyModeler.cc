@@ -514,6 +514,7 @@ AntibodyModeler::relax_cdrs() {
 	                      include_neighbors, is_flexible );
 	allcdr_map->set_bb( is_flexible );
 	include_neighbors = true;
+	antibody_in_.Fv.update_residue_neighbors(); // Need to have updated neighbors
 	select_loop_residues( antibody_in_.Fv, antibody_in_.all_cdr_loops,
 	                      include_neighbors, is_flexible );
 	allcdr_map->set_chi( is_flexible );
@@ -701,6 +702,7 @@ AntibodyModeler::repulsive_ramp(
 	select_loop_residues( pose_in, loops_in, include_neighbors, is_flexible);
 	cdr_dock_map->set_bb( is_flexible );
 	include_neighbors = true;
+	antibody_in_.Fv.update_residue_neighbors(); // Need to have updated neighbors
 	select_loop_residues( pose_in, loops_in, include_neighbors, is_flexible);
 	cdr_dock_map->set_chi( is_flexible );
 	cdr_dock_map->set_jump( 1, true );
@@ -862,6 +864,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 	select_loop_residues( pose_in, loops_in, include_neighbors, is_flexible);
 	cdr_dock_map->set_bb( is_flexible );
 	include_neighbors = true;
+	antibody_in_.Fv.update_residue_neighbors(); // Need to have updated neighbors
 	select_loop_residues( pose_in, loops_in, include_neighbors, is_flexible);
 	cdr_dock_map->set_chi( is_flexible );
 	cdr_dock_map->set_jump( 1, true );
