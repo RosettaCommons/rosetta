@@ -25,6 +25,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/methods/NMerPSSMEnergy.hh>
+#include <basic/database/open.hh>
+#include <utility/file/file_sys_util.hh>
 
 // C++ Headers
 #include <string>
@@ -168,7 +170,10 @@ NMerSVMEnergy::read_nmer_svms_from_options() {
 
 //load svms from a list file
 void
-NMerSVMEnergy::read_nmer_svm_list( std::string const svm_list_fname ) {
+NMerSVMEnergy::read_nmer_svm_list( std::string svm_list_fname ) {
+  if ( !utility::file::file_exists( svm_list_fname ) ) {
+    svm_list_fname = basic::database::full_name( svm_list_fname, false );
+  }
 	TR << "reading NMerSVMEnergy list from " << svm_list_fname << std::endl;
 	utility::io::izstream in_stream( svm_list_fname );
 	if (!in_stream.good()) {
@@ -185,8 +190,11 @@ NMerSVMEnergy::read_nmer_svm_list( std::string const svm_list_fname ) {
 }
 
 void
-NMerSVMEnergy::read_nmer_svm( std::string const svm_fname ) {
+NMerSVMEnergy::read_nmer_svm( std::string svm_fname ) {
 
+  if ( !utility::file::file_exists( svm_fname ) ) {
+    svm_fname = basic::database::full_name( svm_fname, false );
+  }
 	TR << "reading NMerSVMEnergy scores from " << svm_fname << std::endl;
 	const char* svm_fname_ch( svm_fname.c_str() );
 	Svm_rosettaOP nmer_svm( new Svm_rosetta( svm_fname_ch ) );

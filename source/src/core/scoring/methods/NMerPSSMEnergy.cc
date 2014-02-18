@@ -24,6 +24,8 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
+#include <basic/database/open.hh>
+#include <utility/file/file_sys_util.hh>
 
 // C++ Headers
 #include <string>
@@ -134,7 +136,10 @@ void NMerPSSMEnergy::read_nmer_pssms_from_options() {
 }
 
 //read energy table list
-void NMerPSSMEnergy::read_nmer_pssm_list( std::string const pssm_list_fname ) {
+void NMerPSSMEnergy::read_nmer_pssm_list( std::string pssm_list_fname ) {
+  if ( !utility::file::file_exists( pssm_list_fname ) ) {
+    pssm_list_fname = basic::database::full_name( pssm_list_fname, false );
+  }
 	TR << "reading NMerPSSMEnergy list from " << pssm_list_fname << std::endl;
 	utility::io::izstream in_stream( pssm_list_fname );
 	if (!in_stream.good()) {
@@ -152,8 +157,11 @@ void NMerPSSMEnergy::read_nmer_pssm_list( std::string const pssm_list_fname ) {
 
 //load PSSM with AA x seqpos scores
 // PSSM format is 1 AA per line w/ nmer_length_ score vals
-void NMerPSSMEnergy::read_nmer_pssm( std::string const pssm_fname ) {
+void NMerPSSMEnergy::read_nmer_pssm( std::string pssm_fname ) {
 
+  if ( !utility::file::file_exists( pssm_fname ) ) {
+    pssm_fname = basic::database::full_name( pssm_fname, false );
+  }
 	TR << "reading NMerPSSMEnergy scores from " << pssm_fname << std::endl;
 	utility::io::izstream in_stream( pssm_fname );
 	if (!in_stream.good()) {

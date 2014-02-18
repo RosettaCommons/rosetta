@@ -1,0 +1,11 @@
+downloaded from IEDB.org Feb. 2012
+mhc class II
+method: tcr response
+organism: human + mouse
+result: positive
+
+eliminated all seqs < 9 res
+source data has variable-length sequences. how do we identify 9mers?
+	9mer cores were identified as core of highest-scoring frame using Rosetta MHC SVMs
+
+
