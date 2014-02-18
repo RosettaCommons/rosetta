@@ -98,6 +98,8 @@ enum AA {
 	aa_h2o,
 	// virtual
 	aa_vrt,
+    // membrane
+    aa_mpr,
 	// unknown polymer
 	aa_unp,
 	// unknown

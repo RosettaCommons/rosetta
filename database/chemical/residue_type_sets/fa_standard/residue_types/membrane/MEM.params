@@ -1,0 +1,24 @@
+# rosetta residue topology file
+# Type: MEM
+# Desc: defines a membrane coordinate system
+# Author: Rebecca Alford (rfalford12@gmail.com)
+# Last Modified: 1/19/13
+# version 0.1
+NAME MEM
+IO_STRING XXX X
+TYPE LIGAND #residue type
+AA MPR
+ATOM ORIG MPnm H    0.0 # normal
+ATOM  X   MPct H    0.0 # center
+ATOM  Y   MPtk H    0.0 # thickness
+BOND ORIG X
+BOND ORIG Y
+
+# Sets default values for membrane normal, center and thicnkess definitions
+ICOOR_INTERNAL ORIG 0.0  0.0 0.0 ORIG X Y # simulated normal coordinates
+ICOOR_INTERNAL  X   0.0  0.0 1.0 ORIG X Y # simulated center coordinates
+ICOOR_INTERNAL  Y   0.0 30.0 1.0 ORIG X Y # simulated thickness parameter
+
+NBR_ATOM ORIG
+NBR_RADIUS -100000.0 ## dont interact with anyone
+FIRST_SIDECHAIN_ATOM ALL

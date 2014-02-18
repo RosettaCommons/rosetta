@@ -165,6 +165,11 @@ sources = {
 		"InvrotTree",
 	],
 
+	"membrane" : [
+        "MembraneProteinFactory",
+        #"MembraneProteinLoader",
+    ],
+
 	"motif_grafting" : [
 		"MotifGraftMover"
 	],
@@ -412,6 +417,15 @@ testinputfiles = [
 	"moves/smallmoves_out.pdb",
 	"moves/test_in.pdb",
 	"moves/test_in_short.pdb",
+       "membrane/membrane_full.xml",
+    "membrane/membrane.xml",
+    "membrane/chains.txt",
+    "membrane/1afo_A.pdb",
+    "membrane/1afo_A.span",
+    "membrane/1afo_A.embed",
+    "membrane/1afo_B.pdb",
+    "membrane/1afo_B.span",
+    "membrane/1afo_B.embed",
 	"nonlocal/2GB3.pdb",
 	"nonlocal/alignment.filt",
 	"optimize_weights/1UAD.wt_complex.pdb",

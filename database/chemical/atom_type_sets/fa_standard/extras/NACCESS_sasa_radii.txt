@@ -53,6 +53,10 @@ REPL      0.0000
 REPLS     0.0000
 HREPS     0.0000
 VIRT      0.0000
+MPct      0.0000
+MPnm      0.0000
+MPdp      0.0000
+MPtk      0.0000
 #
 # NACCESS_SASA_RADIUS, default vdw radii used in the SASA program NACCESS. These are taken from Chothia (1976) J.Mol.Biol.105,1-14.
 # Not sure what to set 'Oaro' to so leaving it at 1.4

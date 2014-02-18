@@ -1,0 +1,26 @@
+<JD2ResourceManagerJobInputter>
+       <ResourceLocators>
+               <FileSystemResourceLocator tag="startstruct_locator" base_path="core/membrane/io"/>
+               <FileSystemResourceLocator tag="embed_locator" base_path="core/membrane/io"/>
+       </ResourceLocators>
+       <Resources>
+           <PoseFromPDB tag="1afo" locator_tag="startstruct_locator" file="core/membrane/io/1afo_test.pdb"/>
+           <EmbedDef tag="topology_embed" locator_tag="embed_locator" file="core/membrane/geometry/default.embed"/>
+	   <EmbedDef tag="pdb_embed" locator_tag="embed_locator" file="core/membrane/geometry/pdb.embed"/>
+	   <EmbedDef tag="topology_embed" locator_tag="embed_locator" file="core/membrane/geometry/topology.embed"/>
+           <EmbedDef tag="mix1_embed" locator_tag="embed_locator" file="core/membrane/geometry/mix1.embed"/>
+           <EmbedDef tag="mix2_embed" locator_tag="embed_locator" file="core/membrane/geometry/mix2.embed"/>
+           <EmbedDef tag="mix3_embed" locator_tag="embed_locator" file="core/membrane/geometry/mix3.embed"/>
+       </Resources>
+       <Jobs> 
+           <Job name="unit_test">
+                  <Data desc="startstruct" resource_tag="1afo"/>
+                  <Data desc="default" resource_tag="topology_embed"/>
+		  <Data desc="pdb" resource_tag="pdb_embed"/>
+		  <Data desc="topology" resource_tag="topology_embed"/>
+                  <Data desc="mix1" resource_tag="mix1_embed"/>
+                  <Data desc="mix2" resource_tag="mix2_embed"/>
+                  <Data desc="mix3" resource_tag="mix3_embed"/>
+            </Job>
+       </Jobs>
+</JD2ResourceManagerJobInputter>

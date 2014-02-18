@@ -270,7 +270,18 @@ using basic::Warning;
 #include <core/chemical/ResidueLoaderCreator.hh>
 #include <core/chemical/ResidueLoaderOptionsCreator.hh>
 
+// ResourceManager Inlcudes for Membranes
+#include <core/membrane/io/SpanFileLoaderCreator.hh>
+#include <core/membrane/io/LipoFileLoaderCreator.hh>
+#include <core/membrane/io/EmbedSearchParamsLoaderCreator.hh>
+#include <core/membrane/io/EmbedDefLoaderCreator.hh>
+#include <core/membrane/MembraneProteinLoaderCreator.hh>
 
+#include <core/membrane/io/SpanFileOptionsCreator.hh>
+#include <core/membrane/io/LipoFileOptionsCreator.hh>
+#include <core/membrane/io/EmbedSearchParamsOptionsCreator.hh>
+#include <core/membrane/io/EmbedDefOptionsCreator.hh>
+#include <core/membrane/MembraneProteinOptionsCreator.hh>
 
 
 //option key includes for deprecated pdbs
@@ -562,6 +573,10 @@ static ResourceLoaderRegistrator< core::io::silent::SilentFileLoaderCreator > Si
 static ResourceLoaderRegistrator< core::import_pose::PoseFromPDBLoaderCreator > PoseFromPDBLoaderCreator_registrator;
 static ResourceLoaderRegistrator< core::scoring::electron_density::ElectronDensityLoaderCreator > ElectronDensityLoaderCreator_registrator;
 static ResourceLoaderRegistrator< core::chemical::ResidueLoaderCreator > ResidueLoaderCreator_registrator;
+static ResourceLoaderRegistrator< core::membrane::io::EmbedSearchParamsLoaderCreator > EmbedSearchParamsLoaderCreator_registrator;
+static ResourceLoaderRegistrator< core::membrane::io::SpanFileLoaderCreator > SpanFileLoaderCreator_registrator;
+static ResourceLoaderRegistrator< core::membrane::io::LipoFileLoaderCreator > LipOFileLoaderCreator_registrator;
+static ResourceLoaderRegistrator< core::membrane::io::EmbedDefLoaderCreator > EmbedDefLoaderCreator_registrator;
 
 using basic::resource_manager::ResourceOptionsRegistrator;
 static ResourceOptionsRegistrator< core::conformation::symmetry::SymmDataOptionsCreator > SymmDataOptionsCreator_registrator;
@@ -569,6 +584,10 @@ static ResourceOptionsRegistrator< core::import_pose::ImportPoseOptionsCreator >
 static ResourceOptionsRegistrator< core::io::silent::SilentFileOptionsCreator > SilentFileOptionsCreator_registrator;
 static ResourceOptionsRegistrator< core::scoring::electron_density::ElectronDensityOptionsCreator > ElectronDensityOptionsCreator_registrator;
 static ResourceOptionsRegistrator< core::chemical::ResidueLoaderOptionsCreator > ResiudeLoaderOptionsCreator_registrator;
+static ResourceOptionsRegistrator< core::membrane::io::EmbedSearchParamsOptionsCreator > EmbedSearchParamsOptionsCreator_registrator;
+static ResourceOptionsRegistrator< core::membrane::io::SpanFileOptionsCreator > SpanFileOptionsCreator_registrator;
+static ResourceOptionsRegistrator< core::membrane::io::LipoFileOptionsCreator > LipoFileLoaderCreator_registrator;
+static ResourceOptionsRegistrator< core::membrane::io::EmbedDefOptionsCreator > EmbedDefOptionsCreator_registrator;
 
 #endif
 

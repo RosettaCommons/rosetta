@@ -22,10 +22,13 @@ namespace options {
 namespace OptionKeys {
 
 namespace membrane { extern BooleanOptionKey const membrane; }
+namespace membrane { extern FileVectorOptionKey const lipid_acc_files; }
+namespace membrane { extern FileVectorOptionKey const span_files; }
+namespace membrane { extern FileVectorOptionKey const embed_files; }
+namespace membrane { extern BooleanOptionKey const include_lips; }
 namespace membrane { extern IntegerOptionKey const normal_cycles; }
 namespace membrane { extern RealOptionKey const normal_mag; }
 namespace membrane { extern RealOptionKey const center_mag; }
-namespace membrane { extern RealOptionKey const thickness; }
 namespace membrane { extern RealOptionKey const smooth_move_frac; }
 namespace membrane { extern BooleanOptionKey const no_interpolate_Mpair; }
 namespace membrane { extern BooleanOptionKey const Menv_penalties; }
@@ -43,6 +46,7 @@ namespace membrane { extern RealVectorOptionKey const membrane_center; }
 namespace membrane { extern RealVectorOptionKey const membrane_normal; }
 namespace membrane { extern BooleanOptionKey const view; }
 namespace membrane { extern BooleanOptionKey const Mhbond_depth; }
+namespace membrane { extern RealOptionKey const thickness; }
 
 } // namespace OptionKeys
 } // namespace options

@@ -58,7 +58,7 @@ residue_types/metal_ions/NA.params
 residue_types/metal_ions/ZN.params
 
 ## Spin label types
-residue_types/spin_labels/R1A.params
+## residue_types/spin_labels/R1A.params # kills my unit tests???
 
 ## Mineral Surface
 #residue_types/mineral_surface/PHA.params
@@ -428,3 +428,6 @@ residue_types/carbohydrates/to5-beta-D-Psip.params
 ### Ketononoses
 #### Ketoaldonic Acids (e.g., Sialic Acids)
 residue_types/carbohydrates/to8-alpha-Neup.params
+### Membrane Types 
+residue_types/membrane/MEM.params
+residue_types/membrane/EMB.params

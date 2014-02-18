@@ -55,6 +55,10 @@ SUCK      0.0000
 REPLS 	  0.0000	
 HREPS     0.0000 
 VIRT      0.0000
+MPct	  0.0000
+MPnm	  0.0000
+MPdp	  0.0000
+MPtk      0.0000
 #
 # SASA_RADIUS copied from Rosetta++ fullatom_extra_props.cc (?)
 #

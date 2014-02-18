@@ -14,6 +14,7 @@ option.add( basic::options::OptionKeys::in::show_all_fixes, "Show all residue & 
 option.add( basic::options::OptionKeys::in::include_sugars, "Sets whether or not carbohydrate residues will beloaded into Rosetta.  The default value is false." ).shortd( "Load carbohydrate residues into memory?" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::in::include_surfaces, "Sets whether or not mineral surface residues will beloaded into Rosetta.  The default value is false." ).shortd( "Load mineral surface residues into memory?" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::in::enable_branching, "Sets whether or not polymer branching is allowed.  The default value is false." ).shortd( "Allow polymer branching?" ).legal(true).legal(false).def(false);
+option.add( basic::options::OptionKeys::in::membrane, "Initialize pose as a membrane protein using specified membrane parameters. Default is false" ).shortd( "initialize membrane" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::in::remember_unrecognized_res, "Ignore unrecognized residues, but remember them in PDBInfo." ).def(false);
 option.add( basic::options::OptionKeys::in::remember_unrecognized_water, "Remember waters along with other unrecognized residues." ).def(false);
 option.add( basic::options::OptionKeys::in::preserve_crystinfo, "Preserve information important for crystal refinement (B factors +CRYST1 line)" ).def(false);
@@ -123,6 +124,9 @@ option.add( basic::options::OptionKeys::in::file::vall, "Fragment database file,
 option.add( basic::options::OptionKeys::in::file::rescore, "Governs whether input poses are rescored or not in not_universal_main, defaults to false." ).def(false);
 option.add( basic::options::OptionKeys::in::file::spanfile, "Membrane spanning file" );
 option.add( basic::options::OptionKeys::in::file::lipofile, "Membrane exposure file" );
+option.add( basic::options::OptionKeys::in::file::embedfile, "Membrane embedding definition file" );
+option.add( basic::options::OptionKeys::in::file::embedparams, "Membrane embedding search parameters" );
+option.add( basic::options::OptionKeys::in::file::membrane_chains, "Membrane chains to initialize full pose" );
 option.add( basic::options::OptionKeys::in::file::HDX, "HDX (Hydrogen exchange data file" );
 option.add( basic::options::OptionKeys::in::file::d2h_sa_reweight, "d2h_sa reweight" ).def(1.00);
 option.add( basic::options::OptionKeys::in::file::sucker_params, "Parameter file containing SplineEnergy parameters" ).def("scoring/spline_energy_functions/sucker.params");
@@ -1512,10 +1516,13 @@ option.add( basic::options::OptionKeys::james::awesome_mode, "activates or deact
 option.add( basic::options::OptionKeys::james::n_clusters, "number of clusters for k-means clustering." ).def(10);
 option.add( basic::options::OptionKeys::james::thread_unaligned, "basic_threading without performing an alignment" ).def(false);
 option.add( basic::options::OptionKeys::membrane::membrane, "membrane option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::membrane::lipid_acc_files, "Lipid accessibility data for membrane protein chains" );
+option.add( basic::options::OptionKeys::membrane::span_files, "Membrane spanning topology data for membrane protein chains" );
+option.add( basic::options::OptionKeys::membrane::embed_files, "Membrane embedding data for membrane protein chains" );
+option.add( basic::options::OptionKeys::membrane::include_lips, "Include lipid accessibility data for membrane protiens" ).def(false);
 option.add( basic::options::OptionKeys::membrane::normal_cycles, "number of membrane normal cycles" ).def(100);
 option.add( basic::options::OptionKeys::membrane::normal_mag, "magnitude of membrane normal angle search (degrees)" ).def(5);
 option.add( basic::options::OptionKeys::membrane::center_mag, "magnitude of membrane normal center search (Angstroms)" ).def(1);
-option.add( basic::options::OptionKeys::membrane::thickness, "one leaflet hydrocarbon thickness for solvation calculations (Angstroms)" ).def(15);
 option.add( basic::options::OptionKeys::membrane::smooth_move_frac, "No description" ).def(0.5);
 option.add( basic::options::OptionKeys::membrane::no_interpolate_Mpair, "No description" ).def(false);
 option.add( basic::options::OptionKeys::membrane::Menv_penalties, "No description" ).def(false);
@@ -1533,6 +1540,7 @@ option.add( basic::options::OptionKeys::membrane::membrane_center, "membrane cen
 option.add( basic::options::OptionKeys::membrane::membrane_normal, "membrane normal x,y,z" );
 option.add( basic::options::OptionKeys::membrane::view, "viewing pose during protocol" ).def(false);
 option.add( basic::options::OptionKeys::membrane::Mhbond_depth, "membrane depth dependent correction to the hbond potential" ).def(false);
+option.add( basic::options::OptionKeys::membrane::thickness, "one leaflet hydrocarbon thickness for solvation calculations (Angstroms)" ).def(15);
 option.add( basic::options::OptionKeys::casp::casp, "casp option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::casp::decoy, "No description" );
 option.add( basic::options::OptionKeys::casp::wt, "No description" );

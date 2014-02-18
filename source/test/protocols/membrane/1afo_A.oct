@@ -1,0 +1,14 @@
+##############################################################################
+OCTOPUS result file
+Generated from http://octopus.cbr.su.se/ at 2014-01-04 03:59:40
+Total request time: 2.52 seconds.
+##############################################################################
+
+
+Sequence name: 1AFO:A|PDBID|CHAIN|SEQUENCE
+Sequence length: 40 aa.
+Sequence:
+VQLAHHFSEPEITLIIFGVMAGVIGTILLISYGIRRLIKK
+
+OCTOPUS predicted topology:
+ooooooooooMMMMMMMMMMMMMMMMMMMMMiiiiiiiii

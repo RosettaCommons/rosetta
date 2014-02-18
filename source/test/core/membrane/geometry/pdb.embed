@@ -1,0 +1,4 @@
+POSE 1afo
+normal	0 0 1 override_pdb
+center	0 0 0 override_pdb
+depth   0

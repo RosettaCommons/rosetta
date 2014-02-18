@@ -420,7 +420,6 @@ read_topology_file(
 			lines.push_back(no_comment_line);
 		}
 	}
-	tr.Debug << "Read " << lines.size() << " lines from file: " << filename << std::endl;
 	data.close();
 
 
@@ -907,7 +906,8 @@ read_topology_file(
 		rsd->set_RotamerLibrary( pdb_rotamers );*/
 	}
 
-	return rsd;
+    return rsd;
+    
 }
 
 

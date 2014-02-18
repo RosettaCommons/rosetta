@@ -9,6 +9,7 @@ namespace in { BooleanOptionKey const show_all_fixes( "in:show_all_fixes" );  }
 namespace in { BooleanOptionKey const include_sugars( "in:include_sugars" );  }
 namespace in { BooleanOptionKey const include_surfaces( "in:include_surfaces" );  }
 namespace in { BooleanOptionKey const enable_branching( "in:enable_branching" );  }
+namespace in { BooleanOptionKey const membrane( "in:membrane" );  }
 namespace in { BooleanOptionKey const remember_unrecognized_res( "in:remember_unrecognized_res" );  }
 namespace in { BooleanOptionKey const remember_unrecognized_water( "in:remember_unrecognized_water" );  }
 namespace in { BooleanOptionKey const preserve_crystinfo( "in:preserve_crystinfo" );  }
@@ -118,6 +119,9 @@ namespace in { namespace file { FileVectorOptionKey const vall( "in:file:vall" )
 namespace in { namespace file { BooleanOptionKey const rescore( "in:file:rescore" );  } }
 namespace in { namespace file { StringOptionKey const spanfile( "in:file:spanfile" );  } }
 namespace in { namespace file { StringOptionKey const lipofile( "in:file:lipofile" );  } }
+namespace in { namespace file { StringOptionKey const embedfile( "in:file:embedfile" );  } }
+namespace in { namespace file { StringOptionKey const embedparams( "in:file:embedparams" );  } }
+namespace in { namespace file { StringOptionKey const membrane_chains( "in:file:membrane_chains" );  } }
 namespace in { namespace file { StringOptionKey const HDX( "in:file:HDX" );  } }
 namespace in { namespace file { RealOptionKey const d2h_sa_reweight( "in:file:d2h_sa_reweight" );  } }
 namespace in { namespace file { FileOptionKey const sucker_params( "in:file:sucker_params" );  } }

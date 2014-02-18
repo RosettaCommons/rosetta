@@ -36,3 +36,5 @@ residue_types/GUA.params
 residue_types/CYT.params
 residue_types/ADE.params
 residue_types/THY.params
+residue_types/EMB.params
+residue_types/MEM.params

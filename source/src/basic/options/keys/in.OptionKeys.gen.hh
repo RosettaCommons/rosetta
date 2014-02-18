@@ -32,6 +32,7 @@ namespace in { extern BooleanOptionKey const show_all_fixes; }
 namespace in { extern BooleanOptionKey const include_sugars; }
 namespace in { extern BooleanOptionKey const include_surfaces; }
 namespace in { extern BooleanOptionKey const enable_branching; }
+namespace in { extern BooleanOptionKey const membrane; }
 namespace in { extern BooleanOptionKey const remember_unrecognized_res; }
 namespace in { extern BooleanOptionKey const remember_unrecognized_water; }
 namespace in { extern BooleanOptionKey const preserve_crystinfo; }
@@ -141,6 +142,9 @@ namespace in { namespace file { extern FileVectorOptionKey const vall; } }
 namespace in { namespace file { extern BooleanOptionKey const rescore; } }
 namespace in { namespace file { extern StringOptionKey const spanfile; } }
 namespace in { namespace file { extern StringOptionKey const lipofile; } }
+namespace in { namespace file { extern StringOptionKey const embedfile; } }
+namespace in { namespace file { extern StringOptionKey const embedparams; } }
+namespace in { namespace file { extern StringOptionKey const membrane_chains; } }
 namespace in { namespace file { extern StringOptionKey const HDX; } }
 namespace in { namespace file { extern RealOptionKey const d2h_sa_reweight; } }
 namespace in { namespace file { extern FileOptionKey const sucker_params; } }

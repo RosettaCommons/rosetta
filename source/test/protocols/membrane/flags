@@ -1,0 +1,3 @@
+-in:membrane
+-in:file:membrane_chains chains.txt
+-in:file:fullatom

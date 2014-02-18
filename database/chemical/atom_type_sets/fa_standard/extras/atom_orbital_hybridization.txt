@@ -54,6 +54,10 @@ REPL    0                         0              0
 REPLS   0                         0              0
 VIRT    0                         0              0 
 SUCK    0                         0              0
+MPct    0                         0              0 
+MPnm    0                         0              0 
+MPdp    0                         0              0 
+MPtk    0                         0              0 
 #
 #ORBITAL_HYBRIDIZATION : 1 sp, 2 sp2, 3 sp3
 #ORBITAL_TYPES 1 represents only pi orbital; 2 only p orbital; 3 only sp3 hybridized p orbital; 4 represetns an atom containing both pi and p orbitals

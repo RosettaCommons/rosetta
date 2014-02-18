@@ -53,6 +53,10 @@ REPL     0.0000          0.0000         0.0000    0.0000
 REPLS    0.0000          0.0000         0.0000    0.0000
 HREPS    0.0000          0.0000         0.0000    0.0000
 VIRT	-5.0000 	-5.0000	       -5.0000   -5.0000
+MPct	-5.0000 	-5.0000	       -5.0000   -5.0000
+MPnm	-5.0000 	-5.0000	       -5.0000   -5.0000
+MPdp	-5.0000 	-5.0000	       -5.0000   -5.0000
+MPtk	-5.0000 	-5.0000	       -5.0000   -5.0000
 # NAME copied from Rosetta++ aaproperties_pack.cc atom_type_name
 # LK_DGREFCE copied from Rosetta++ etable.cc fa_lk_dgrefce_initializer
 # MEMB_LK_DGREFCE copied from Rosetta++ etable.cc memb_fa_lk_dgrefce_initializer

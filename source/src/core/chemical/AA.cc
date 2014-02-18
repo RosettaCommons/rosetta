@@ -40,6 +40,7 @@ std::map< std::string, AA > setup_name2aa() {
 
 	std::map< std::string, AA > n2aa;
 
+    // amino acid types
 	n2aa[ "ALA" ] = aa_ala;
 	n2aa[ "CYS" ] = aa_cys;
 	n2aa[ "ASP" ] = aa_asp;
@@ -61,6 +62,7 @@ std::map< std::string, AA > setup_name2aa() {
 	n2aa[ "TRP" ] = aa_trp;
 	n2aa[ "TYR" ] = aa_tyr;
 
+    // D amino acids
 	n2aa[ "DAL" ] = aa_dal;
 	n2aa[ "DCS" ] = aa_dcs;
 	n2aa[ "DAS" ] = aa_das;
@@ -93,8 +95,12 @@ std::map< std::string, AA > setup_name2aa() {
 
 	n2aa[ "H2O" ] = aa_h2o;
 
+    // Virtual residues
 	n2aa[ "VRT" ] = aa_vrt;
 
+    // Membrane Protein AA
+    n2aa[ "MPR" ] = aa_mpr;
+         
 	n2aa[ "UNP" ] = aa_unp;
 	n2aa[ "UNK" ] = aa_unk;
 
@@ -141,6 +147,9 @@ std::map< char, AA > setup_oneletter2aa() {
 	l2aa[ 'z' ] = aa_unp;
 	l2aa[ 'Z' ] = aa_unk;
 	l2aa[ 'X' ] = aa_vrt;
+    
+    // Add 1 letter code for membrane proteins
+    l2aa[ 'm' ] = aa_mpr;
 
 	//vmullig -- The conflict for the D-amino acids is also a problem:
 	/*l2aa[ "A" ] = aa_dal;

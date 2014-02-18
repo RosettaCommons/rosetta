@@ -1,0 +1,36 @@
+<JD2ResourceManagerJobInputter>
+    <ResourceLocators>
+        <FileSystemResourceLocator tag="spanning_locator" base_path="test/core/membrane/io"/>
+        <FileSystemResourceLocator tag="embedding_locator" base_path="test/core/membrane/io"/>
+        <FileSystemResourceLocator tag="startstruct_locator" base_path="test/core/membrane/io"/>
+        <NullResourceLocator tag="null_locator"/>
+    </ResourceLocators>
+    <ResourceOptions>
+        <PoseFromPDBOptions
+        tag="pdb1"
+        ignore_unrecognized_res=1
+        />
+    </ResourceOptions>
+    <Resources>
+        <PoseFromPDB tag="1afoA" locator="startstruct_locator" locatorID="protocols/membrane/1afo_A.pdb" resource_options="pdb1"/>
+        <EmbedDef tag="1afoA_embed" locator="embedding_locator" locatorID="protocols/membrane/1afo_A.embed"/>
+        <SpanFile tag="1afoA_span" locator="spanning_locator" locatorID="protocols/membrane/1afo_A.span"/>
+        <PoseFromPDB tag="1afoB" locator="startstruct_locator" locatorID="protocols/membrane/1afo_B.pdb" resource_options="pdb1"/>
+        <EmbedDef tag="1afoB_embed" locator="embedding_locator" locatorID="protocols/membrane/1afo_B.embed"/>
+        <SpanFile tag="1afoB_span" locator="spanning_locator" locatorID="protocols/membrane/1afo_B.span"/>
+    </Resources>
+    <Resources>
+        <MembraneProtein tag="1afo" locator="null_locator" locatorID="NULL"/>
+    </Resources>
+    <Jobs>
+        <Data desc="startstruct1" resource_tag="1afoA"/>
+        <Data desc="startstruct1_embed" resource_tag="1afoA_embed"/>
+        <Data desc="startstruct1_span"  resource_tag="1afoA_span"/>
+        <Data desc="startstruct2" resource_tag="1afoB"/>
+        <Data desc="startstruct2_embed" resource_tag="1afoB_embed"/>
+        <Data desc="startstruct2_span"  resource_tag="1afoB_span"/>
+        <Job name="membrane">
+            <Data desc="startstruct" resource_tag="1afo"/>
+        </Job>
+    </Jobs>
+</JD2ResourceManagerJobInputter>

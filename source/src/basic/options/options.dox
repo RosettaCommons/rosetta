@@ -58,6 +58,11 @@
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-membrane</b> \<Boolean\><dt>
+<dd>Initialize pose as a membrane protein using specified membrane parameters. Default is false</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-remember_unrecognized_res</b> \<Boolean\><dt>
 <dd>Ignore unrecognized residues, but remember them in PDBInfo.</dd><br>
 <dd>Default: false</dd><br>
@@ -543,6 +548,18 @@
 <dl>
 <dt><b>-lipofile</b> \<String\><dt>
 <dd>Membrane exposure file</dd><br>
+</dl>
+<dl>
+<dt><b>-embedfile</b> \<String\><dt>
+<dd>Membrane embedding definition file</dd><br>
+</dl>
+<dl>
+<dt><b>-embedparams</b> \<String\><dt>
+<dd>Membrane embedding search parameters</dd><br>
+</dl>
+<dl>
+<dt><b>-membrane_chains</b> \<String\><dt>
+<dd>Membrane chains to initialize full pose</dd><br>
 </dl>
 <dl>
 <dt><b>-HDX</b> \<String\><dt>
@@ -7336,6 +7353,23 @@
 <dd>membrane option group</dd><br>
 </dl>
 <dl>
+<dt><b>-lipid_acc_files</b> \<FileVector\><dt>
+<dd>Lipid accessibility data for membrane protein chains</dd><br>
+</dl>
+<dl>
+<dt><b>-span_files</b> \<FileVector\><dt>
+<dd>Membrane spanning topology data for membrane protein chains</dd><br>
+</dl>
+<dl>
+<dt><b>-embed_files</b> \<FileVector\><dt>
+<dd>Membrane embedding data for membrane protein chains</dd><br>
+</dl>
+<dl>
+<dt><b>-include_lips</b> \<Boolean\><dt>
+<dd>Include lipid accessibility data for membrane protiens</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-normal_cycles</b> \<Integer\><dt>
 <dd>number of membrane normal cycles</dd><br>
 <dd>Default: 100</dd><br>
@@ -7349,11 +7383,6 @@
 <dt><b>-center_mag</b> \<Real\><dt>
 <dd>magnitude of membrane normal center search (Angstroms)</dd><br>
 <dd>Default: 1</dd><br>
-</dl>
-<dl>
-<dt><b>-thickness</b> \<Real\><dt>
-<dd>one leaflet hydrocarbon thickness for solvation calculations (Angstroms)</dd><br>
-<dd>Default: 15</dd><br>
 </dl>
 <dl>
 <dt><b>-smooth_move_frac</b> \<Real\><dt>
@@ -7437,6 +7466,11 @@
 <dt><b>-Mhbond_depth</b> \<Boolean\><dt>
 <dd>membrane depth dependent correction to the hbond potential</dd><br>
 <dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-thickness</b> \<Real\><dt>
+<dd>one leaflet hydrocarbon thickness for solvation calculations (Angstroms)</dd><br>
+<dd>Default: 15</dd><br>
 </dl>
  </li>
 <li><h2>casp</h2>

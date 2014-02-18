@@ -53,6 +53,10 @@ REPL           1.3000
 REPLS          1.6585
 HREPS          1.2840
 VIRT           0.0000
+MPct	  0.0000
+MPnm	  0.0000
+MPdp	  0.0000
+MPtk      0.0000
 
 #
 # LJ_RADIUS copied from Rosetta++ etable.cc fa_lj_soft_initializer

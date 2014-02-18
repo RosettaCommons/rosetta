@@ -53,6 +53,10 @@ REPL    RP    1.5000    0.0000    0.0000    3.5000    0.0000 # occupies space so
 REPLS    Z    1.5500    0.1500    0.0000    0.0000    0.0000 # calculates only repulsive energy of atoms in disordered residues. 
 HREPS    Z    1.0000    0.0500    0.0000    0.0000    0.0000 # calculates only repulsive energy of hydrogen atoms in disordered residues. 
 VIRT     X    0.0000    0.0000    0.0000    3.5000    0.0000 VIRTUAL
+MPct     X    0.0000    0.0000    0.0000    3.5000    0.0000 # membrane protein center param
+MPnm     X    0.0000    0.0000    0.0000    3.5000    0.0000 # membrane protein normal param
+MPdp     X    0.0000    0.0000    0.0000    3.5000    0.0000 # membrane protein depth param
+MPtk     X    0.0000    0.0000    0.0000    3.5000    0.0000 # membrane protein thickness param
 #
 # NAME copied from Rosetta++ aaproperties_pack.cc atom_type_name
 # LJ_RADIUS copied from Rosetta++ etable.cc fa_lj_radius_initializer

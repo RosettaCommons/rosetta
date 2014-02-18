@@ -361,19 +361,20 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 	std::vector<core::chemical::ResidueTypeOP> extra_residues;
 
 	if(tag == FA_STANDARD) {
-
-		//this whole thing is desperately in need of some method extraction -- holy cow it does!
+        
+        //this whole thing is desperately in need of some method extraction -- holy cow it does!
 		utility::options::FileVectorOption & fvec
 		= basic::options::option[ basic::options::OptionKeys::in::file::extra_res_fa ];
 		for(Size i = 1, e = fvec.size(); i <= e; ++i) {
-			utility::file::FileName fname = fvec[i];
+            utility::file::FileName fname = fvec[i];
 			extra_params_files.push_back(fname.name());
 		}
-
-		utility::options::PathVectorOption & pvec
+        
+        utility::options::PathVectorOption & pvec
 		= basic::options::option[basic::options::OptionKeys::in::file::extra_res_path];
 		// convert Pathname->string->char*, glob it, convert char*->string
 		for(Size i=1, e= pvec.size(); i<=e; i++){
+
 			utility::vector1<std::string> files;
 			std::string directory=pvec[i].name();
 
@@ -381,7 +382,7 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 			TR.Debug<< std::endl;
 			for(size_t j=1; j<= files.size(); j++){
 				if (files[j].find("param")!=std::string::npos){
-					TR.Debug << files[j]<< ", ";
+                    TR << files[j]<< ", ";
 					std::string path= directory+'/'+files[j];
 					extra_params_files.push_back(path);
 				}
@@ -413,10 +414,10 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 			}
 
 		}
-
+        
 		utility::options::FileVectorOption & mdlvec
 		= basic::options::option[basic::options::OptionKeys::in::file::extra_res_mol];
-
+        
 		// this function itself does not (directly) modify any member data of class ChemicalManager,
 		// but it is allowed to (indirectly) modify the singleton instance (which, to be fair,
 		// is this instance) through singleton accessor functions.  In particular,
@@ -428,8 +429,9 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 
 		for(Size i=1, e = mdlvec.size(); i <= e;++i)
 		{
+
 			utility::file::FileName filename = mdlvec[i];
-			core::chemical::sdf::MolFileParser parser(filename.name());
+            core::chemical::sdf::MolFileParser parser(filename.name());
 			parser.parse_mol_file(atom_types, elements, mm_atom_types, orbital_types);
 			extra_residues.push_back(parser.GetResidueTypeOP());
 		}
@@ -456,7 +458,7 @@ ChemicalManager::create_residue_type_set( std::string const & tag ) const {
 				while(residue_name_file >> residue_name)
 				{
 					//residue_name_file >> residue_name;
-					//TR <<residue_name <<std::endl;
+					TR <<residue_name <<std::endl;
 					ResidueTypeOP new_residue(
 							residue_database_interface.read_residuetype_from_database(
 									atom_types,

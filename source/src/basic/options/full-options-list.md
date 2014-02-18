@@ -30,6 +30,8 @@ _Note that some application specific options may not be present in this list._
 <dd>Sets whether or not mineral surface residues will beloaded into Rosetta.  The default value is false.<br/>Default: false<br/></dd>
 <dt><b>-enable_branching</b> \<Boolean\></dt>
 <dd>Sets whether or not polymer branching is allowed.  The default value is false.<br/>Default: false<br/></dd>
+<dt><b>-membrane</b> \<Boolean\></dt>
+<dd>Initialize pose as a membrane protein using specified membrane parameters. Default is false<br/>Default: false<br/></dd>
 <dt><b>-remember_unrecognized_res</b> \<Boolean\></dt>
 <dd>Ignore unrecognized residues, but remember them in PDBInfo.<br/>Default: false<br/></dd>
 <dt><b>-remember_unrecognized_water</b> \<Boolean\></dt>
@@ -260,6 +262,12 @@ _Note that some application specific options may not be present in this list._
 <dd>Membrane spanning file<br/></dd>
 <dt><b>-lipofile</b> \<String\></dt>
 <dd>Membrane exposure file<br/></dd>
+<dt><b>-embedfile</b> \<String\></dt>
+<dd>Membrane embedding definition file<br/></dd>
+<dt><b>-embedparams</b> \<String\></dt>
+<dd>Membrane embedding search parameters<br/></dd>
+<dt><b>-membrane_chains</b> \<String\></dt>
+<dd>Membrane chains to initialize full pose<br/></dd>
 <dt><b>-HDX</b> \<String\></dt>
 <dd>HDX (Hydrogen exchange data file<br/></dd>
 <dt><b>-d2h_sa_reweight</b> \<Real\></dt>
@@ -3323,14 +3331,20 @@ _Note that some application specific options may not be present in this list._
 <dl>
 <dt><b>-membrane</b> \<Boolean\></dt>
 <dd>membrane option group<br/></dd>
+<dt><b>-lipid_acc_files</b> \<FileVector\></dt>
+<dd>Lipid accessibility data for membrane protein chains<br/></dd>
+<dt><b>-span_files</b> \<FileVector\></dt>
+<dd>Membrane spanning topology data for membrane protein chains<br/></dd>
+<dt><b>-embed_files</b> \<FileVector\></dt>
+<dd>Membrane embedding data for membrane protein chains<br/></dd>
+<dt><b>-include_lips</b> \<Boolean\></dt>
+<dd>Include lipid accessibility data for membrane protiens<br/>Default: false<br/></dd>
 <dt><b>-normal_cycles</b> \<Integer\></dt>
 <dd>number of membrane normal cycles<br/>Default: 100<br/></dd>
 <dt><b>-normal_mag</b> \<Real\></dt>
 <dd>magnitude of membrane normal angle search (degrees)<br/>Default: 5<br/></dd>
 <dt><b>-center_mag</b> \<Real\></dt>
 <dd>magnitude of membrane normal center search (Angstroms)<br/>Default: 1<br/></dd>
-<dt><b>-thickness</b> \<Real\></dt>
-<dd>one leaflet hydrocarbon thickness for solvation calculations (Angstroms)<br/>Default: 15<br/></dd>
 <dt><b>-smooth_move_frac</b> \<Real\></dt>
 <dd>No description<br/>Default: 0.5<br/></dd>
 <dt><b>-no_interpolate_Mpair</b> \<Boolean\></dt>
@@ -3365,6 +3379,8 @@ _Note that some application specific options may not be present in this list._
 <dd>viewing pose during protocol<br/>Default: false<br/></dd>
 <dt><b>-Mhbond_depth</b> \<Boolean\></dt>
 <dd>membrane depth dependent correction to the hbond potential<br/>Default: false<br/></dd>
+<dt><b>-thickness</b> \<Real\></dt>
+<dd>one leaflet hydrocarbon thickness for solvation calculations (Angstroms)<br/>Default: 15<br/></dd>
 </dl>
 + <h2>-casp</h2>
 <dl>

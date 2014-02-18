@@ -134,6 +134,16 @@ Options = Option_Group( '',
 				legal=["true", "false"],
 				default="false"),
 
+    ## Membrane JD2 Option
+    ## Last Modified: 1/12/14
+    ## Author: Rebecca Alford
+    Option("membrane", "Boolean",
+					 desc="Initialize pose as a membrane protein using specified membrane parameters. Default is false",
+           short="initialize membrane",
+           legal=["true", "false"],
+           default="false"),
+
+
 		# PDB data-preservation options ---------------------------------------
 		Option( 'remember_unrecognized_res'  , 'Boolean',
 				desc="Ignore unrecognized residues, but remember them in PDBInfo.",
@@ -354,8 +364,16 @@ Options = Option_Group( '',
 			Option( 'rescore', 'Boolean',
 					desc='Governs whether input poses are rescored or not in not_universal_main, defaults to false.',
 					default='false' ),
-			Option('spanfile', 'String', desc='Membrane spanning file'),
-			Option('lipofile', 'String', desc='Membrane exposure file'),
+
+            ## Input Membrane Options
+            ## Last Modified: 1/12/14 - Old Option System
+            ## Author: Rebecca Alford
+            Option('spanfile', 'String', desc='Membrane spanning file'),
+            Option('lipofile', 'String', desc='Membrane exposure file'),
+            Option('embedfile', 'String', desc='Membrane embedding definition file' ),
+            Option('embedparams', 'String', desc='Membrane embedding search parameters'),
+            # Option for new membrane input system (Added by Rebecca: 1/12/14)
+            Option('membrane_chains', 'String', desc='Membrane chains to initialize full pose'),
 			Option('HDX', 'String', desc='HDX (Hydrogen exchange data file'),
 			Option('d2h_sa_reweight', 'Real', desc='d2h_sa reweight', default ='1.00'),
 			Option( 'sucker_params', 'File',
@@ -3431,34 +3449,39 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'thread_unaligned', 'Boolean', default = 'false', desc = 'basic_threading without performing an alignment' ),
 
 	),
-
-	Option_Group( 'membrane',
-#		Option( 'silent_file', 'StringVector', desc='list of silent_files to process' ),
-#		Option( 'pdbfile', 'StringVector', desc='list of pdb files to process'),
-#		Option( 'min_type', 'String', default='dfpmin_armijo_nonmonotone' ),
-		Option( 'normal_cycles', 'Integer', default='100', desc='number of membrane normal cycles'),
-		Option( 'normal_mag', 'Real', default='5', desc='magnitude of membrane normal angle search (degrees)'),
-		Option( 'center_mag', 'Real', default='1', desc='magnitude of membrane normal center search (Angstroms)' ),
-		Option( 'thickness', 'Real', default='15', desc='one leaflet hydrocarbon thickness for solvation calculations (Angstroms)' ),
-		Option( 'smooth_move_frac', 'Real', default='0.5'),
-		Option( 'no_interpolate_Mpair', 'Boolean', default='false'),
-		Option( 'Menv_penalties','Boolean',default='false'),
-        Option( 'Membed_init','Boolean',default='false'),
-        Option( 'Fa_Membed_update','Boolean',default='false'),
-		Option( 'center_search', 'Boolean', default='false', desc='perform membrane center search'),
-		Option( 'normal_search', 'Boolean', default='false', desc='perform membrane normal search'),
-		Option( 'center_max_delta', 'Integer', default='5', desc='magnitude of maximum membrane width deviation during membrane center search (Angstroms)' ),
-		Option( 'normal_start_angle', 'Integer', default='10', desc='magnitude of starting angle during membrane normal search (degrees)' ),
-		Option( 'normal_delta_angle', 'Integer', default='10', desc='magnitude of angle deviation during membrane normal search (degrees)' ),
-        Option( 'normal_max_angle', 'Integer', default='40', desc='magnitude of maximum angle deviation during membrane normal search (degrees)' ),
-		Option( 'debug', 'Boolean', default='false'),
-        Option( 'fixed_membrane', 'Boolean', default='false', desc='fix membrane position, by default the center is at [0,0,0] and membrane normal is the z-axis'),
-        Option( 'membrane_center', 'RealVector', desc="membrane center x,y,z" ),
-        Option( 'membrane_normal', 'RealVector', desc="membrane normal x,y,z" ),
-		Option( 'view', 'Boolean', default='false', desc='viewing pose during protocol'),
-                Option( 'Mhbond_depth','Boolean',default='false', desc='membrane depth dependent correction to the hbond potential'),
-#		Option( 'use_termini_variants', 'Boolean', default = 'false'),
-	), # membrane
+    
+    # Membrane Protein Option Group
+    # Last Modified: 1/12/14
+    # @author Rebecca Alford
+    Option_Group( 'membrane',
+        # New Membrane Input Option Group
+        Option( 'lipid_acc_files', 'FileVector', desc='Lipid accessibility data for membrane protein chains'),
+        Option( 'span_files', 'FileVector', desc='Membrane spanning topology data for membrane protein chains'),
+        Option( 'embed_files', 'FileVector', desc='Membrane embedding data for membrane protein chains'),
+        Option( 'include_lips', 'Boolean', default='false', desc='Include lipid accessibility data for membrane protiens'),
+        # Scoring Options
+        Option( 'normal_cycles', 'Integer', default='100', desc='number of membrane normal cycles'),
+        Option( 'normal_mag', 'Real', default='5', desc='magnitude of membrane normal angle search (degrees)'),
+        Option( 'center_mag', 'Real', default='1', desc='magnitude of membrane normal center search (Angstroms)' ),
+        Option( 'smooth_move_frac', 'Real', default='0.5'),
+        Option( 'no_interpolate_Mpair', 'Boolean', default='false'),
+        Option( 'Menv_penalties','Boolean',default='false'),
+	    Option( 'Membed_init','Boolean',default='false'),
+	    Option( 'Fa_Membed_update','Boolean',default='false'),
+	            Option( 'center_search', 'Boolean', default='false', desc='perform membrane center search'),
+	            Option( 'normal_search', 'Boolean', default='false', desc='perform membrane normal search'),
+	            Option( 'center_max_delta', 'Integer', default='5', desc='magnitude of maximum membrane width deviation during membrane center search (Angstroms)' ),
+	            Option( 'normal_start_angle', 'Integer', default='10', desc='magnitude of starting angle during membrane normal search (degrees)' ),
+	            Option( 'normal_delta_angle', 'Integer', default='10', desc='magnitude of angle deviation during membrane normal search (degrees)' ),
+	    Option( 'normal_max_angle', 'Integer', default='40', desc='magnitude of maximum angle deviation during membrane normal search (degrees)' ),
+	            Option( 'debug', 'Boolean', default='false'),
+	    Option( 'fixed_membrane', 'Boolean', default='false', desc='fix membrane position, by default the center is at [0,0,0] and membrane normal is the z-axis'),
+	    Option( 'membrane_center', 'RealVector', desc="membrane center x,y,z" ),
+	    Option( 'membrane_normal', 'RealVector', desc="membrane normal x,y,z" ),
+	            Option( 'view', 'Boolean', default='false', desc='viewing pose during protocol'),
+	            Option( 'Mhbond_depth','Boolean',default='false', desc='membrane depth dependent correction to the hbond potential'),
+							Option( 'thickness', 'Real', default='15', desc='one leaflet hydrocarbon thickness for solvation calculations (Angstroms)' ),
+    ), # membrane
 
 	##relevent casp options for refinement protocols
 	Option_Group( 'casp',

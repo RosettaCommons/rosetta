@@ -1,0 +1,39 @@
+<JD2ResourceManagerJobInputter>
+       <ResourceLocators>
+               <FileSystemResourceLocator tag="spanning_locator" base_path="core/membrane/io"/>
+               <FileSystemResourceLocator tag="embedding_locator" base_path="core/membrane/io"/>
+               <FileSystemResourceLocator tag="startstruct_locator" base_path="core/membrane/io"/>
+               <FileSystemResourceLocator tag="lipsexp_locator" base_path="core/membrane/io"/>
+       </ResourceLocators>
+       <ResourceOptions>
+              <PoseFromPDBOptions
+                  tag="pdb1"
+                  ignore_unrecognized_res=1
+               />
+
+              <EmbedSearchParamsOptions tag="embed_options"
+                  normal_search="true"
+                  normal_start_angle="40"
+                  normal_max_angle="15"
+                  normal_delta_angle="10"
+                  center_search="true"
+                  center_max_delta="10"
+               />
+       </ResourceOptions>
+       <Resources>
+
+           <PoseFromPDB tag="1afo" locator_tag="startstruct_locator" locator_id="1afo_test.pdb" resource_options="pdb1"/>
+           <EmbedConfig tag="1afo_embed" locator_tag="embedding_locator" locator_id="1afo_test.embed"/>
+           <SpanFile tag="1afo_span" locator_tag="spanning_locator" locator_id="1afo_test.span"/>
+           <LipoFile tag="1afo_lips" locator_tag="lipsexp_locator"  locator_id="1afo_test.lips"/>
+      
+       </Resources>
+       <Jobs> 
+           <Job name="unit_test">
+                  <Data desc="PoseFromPDB" resource_tag="1afo"/>
+                  <Data desc="EmbedDef" resource_tag="1afo_embed"/>
+                  <Data desc="SpanFile"  resource_tag="1af0_span"/>
+                  <Data desc="LipoFile"  resource_tag="1afo_lips"/>
+            </Job>
+       </Jobs>
+</JD2ResourceManagerJobInputter>

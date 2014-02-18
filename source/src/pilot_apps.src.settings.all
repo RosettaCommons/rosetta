@@ -640,6 +640,13 @@ sources = {
 	],
     "pilot/ralford" : [
         "membrane_foldtree",
+        #"membrane_pose_test",
+        #"membrane_integration",
+        #"virtual_residue_trees",
+        #"membrane_foldtree",
+        "mpframework_integration",
+        "mpframework_time_bchmk",
+        #"mp_database_check",
     ],
 	"pilot/rayyrw" : [
 		#"replonly",

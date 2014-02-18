@@ -736,10 +736,13 @@ namespace james { BooleanOptionKey const awesome_mode( "james:awesome_mode" );  
 namespace james { IntegerOptionKey const n_clusters( "james:n_clusters" );  }
 namespace james { BooleanOptionKey const thread_unaligned( "james:thread_unaligned" );  }
 namespace membrane { BooleanOptionKey const membrane( "membrane" );  }
+namespace membrane { FileVectorOptionKey const lipid_acc_files( "membrane:lipid_acc_files" );  }
+namespace membrane { FileVectorOptionKey const span_files( "membrane:span_files" );  }
+namespace membrane { FileVectorOptionKey const embed_files( "membrane:embed_files" );  }
+namespace membrane { BooleanOptionKey const include_lips( "membrane:include_lips" );  }
 namespace membrane { IntegerOptionKey const normal_cycles( "membrane:normal_cycles" );  }
 namespace membrane { RealOptionKey const normal_mag( "membrane:normal_mag" );  }
 namespace membrane { RealOptionKey const center_mag( "membrane:center_mag" );  }
-namespace membrane { RealOptionKey const thickness( "membrane:thickness" );  }
 namespace membrane { RealOptionKey const smooth_move_frac( "membrane:smooth_move_frac" );  }
 namespace membrane { BooleanOptionKey const no_interpolate_Mpair( "membrane:no_interpolate_Mpair" );  }
 namespace membrane { BooleanOptionKey const Menv_penalties( "membrane:Menv_penalties" );  }
@@ -757,6 +760,7 @@ namespace membrane { RealVectorOptionKey const membrane_center( "membrane:membra
 namespace membrane { RealVectorOptionKey const membrane_normal( "membrane:membrane_normal" );  }
 namespace membrane { BooleanOptionKey const view( "membrane:view" );  }
 namespace membrane { BooleanOptionKey const Mhbond_depth( "membrane:Mhbond_depth" );  }
+namespace membrane { RealOptionKey const thickness( "membrane:thickness" );  }
 namespace casp { BooleanOptionKey const casp( "casp" );  }
 namespace casp { StringOptionKey const decoy( "casp:decoy" );  }
 namespace casp { StringOptionKey const wt( "casp:wt" );  }
