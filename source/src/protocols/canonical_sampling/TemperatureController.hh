@@ -159,7 +159,7 @@ public:
 	/// @brief Return the number of temperature levels used by this controller.
 	/// @details This parameter must be set from the command line using the 
 	/// <tt>-tempering:temp:levels</tt> flag.  The default value is 10.  In some 
-	/// cases (e.g. when using ParallelTempering), this parameter must also match 
+	/// cases (e.g. when using MpiParallelTempering), this parameter must also match 
 	/// the number of processes allocated to your app by @c mpirun.  For example:
 	/// @code{.sh}
 	/// mpirun -np 32 my_parallel_tempering_app -tempering:temp:levels 32

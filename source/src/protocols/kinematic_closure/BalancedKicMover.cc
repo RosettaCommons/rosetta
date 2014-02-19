@@ -209,7 +209,7 @@ bool BalancedKicMover::is_solution_trivial(
 		}
 	}
 
-	runtime_assert(closest_solution != NULL);
+	runtime_assert(closest_solution.get() != NULL);
 	return picked_solution.get() == closest_solution.get();
 }
 // }}}1

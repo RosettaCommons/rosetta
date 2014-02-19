@@ -177,7 +177,7 @@ if arguments.algorithm.startswith('loopmodel'):
     refine = 'refine_kic'
 
     if arguments.algorithm == 'loopmodel-refactor':
-        refine = 'refine_kic_v2'
+        refine = 'refine_kic_refactor'
 
     # This hack is not very robust, but it makes it possible to invoke the 
     # `loopmodel' executable from the master branch.  Assuming your directory 

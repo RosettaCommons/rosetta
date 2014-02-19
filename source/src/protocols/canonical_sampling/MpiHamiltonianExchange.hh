@@ -11,15 +11,15 @@
 /// @brief Implement replica exchange in the MetropolisHastingsMover Framework.
 /// @author Oliver Lange ( oliver.lange@tum.de )
 
-#ifndef INCLUDED_protocols_canonical_sampling_HamiltonianExchange_hh
-#define INCLUDED_protocols_canonical_sampling_HamiltonianExchange_hh
+#ifndef INCLUDED_protocols_canonical_sampling_MpiHamiltonianExchange_hh
+#define INCLUDED_protocols_canonical_sampling_MpiHamiltonianExchange_hh
 
 #ifdef USEMPI
 #include <mpi.h> //keep first
 #endif
 
 // Unit Headers
-#include <protocols/canonical_sampling/HamiltonianExchange.fwd.hh>
+#include <protocols/canonical_sampling/MpiHamiltonianExchange.fwd.hh>
 #include <protocols/canonical_sampling/TemperatureController.hh>
 
 // Project Headers
@@ -34,21 +34,21 @@
 namespace protocols {
 namespace canonical_sampling {
 
-class HamiltonianExchange : public TemperatureController {
+class MpiHamiltonianExchange : public TemperatureController {
 	typedef TemperatureController Parent;
 	typedef utility::vector1< core::Size > GridCoord;
 	typedef utility::vector1< GridCoord > Grid;
 
 public:
 
-	HamiltonianExchange();
+	MpiHamiltonianExchange();
 
 	//important d'tor to delete some C-style arrays
-	~HamiltonianExchange();
+	~MpiHamiltonianExchange();
 
-	HamiltonianExchange( HamiltonianExchange const& );
+	MpiHamiltonianExchange( MpiHamiltonianExchange const& );
 
-	HamiltonianExchange& operator=( HamiltonianExchange const& );
+	MpiHamiltonianExchange& operator=( MpiHamiltonianExchange const& );
 
 	virtual
 	void apply( core::pose::Pose& ) {};
@@ -165,12 +165,12 @@ private:
 	Grid exchange_grid_;
 	core::Size exchange_grid_dimension_;
 	bool successfully_initialized_;
-}; //end HamiltonianExchange
+}; //end MpiHamiltonianExchange
 
 /// @brief Test IO operator for debug and Python bindings
-std::ostream& operator << ( std::ostream & os, HamiltonianExchange const& );
+std::ostream& operator << ( std::ostream & os, MpiHamiltonianExchange const& );
 
 } //namespace canonical_sampling
 } //namespace protocols
 
-#endif //INCLUDED_protocols_canonical_sampling_HamiltonianExchange_HH
+#endif //INCLUDED_protocols_canonical_sampling_MpiHamiltonianExchange_HH

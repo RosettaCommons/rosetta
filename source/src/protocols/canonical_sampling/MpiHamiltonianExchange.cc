@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/canonical_sampling/HamiltonianExchangeMover.cc
-/// @brief HamiltonianExchange methods implemented
+/// @file protocols/canonical_sampling/MpiHamiltonianExchangeMover.cc
+/// @brief MpiHamiltonianExchange methods implemented
 /// @author
 
 
 // Unit Headers
-#include <protocols/canonical_sampling/HamiltonianExchange.hh>
-#include <protocols/canonical_sampling/HamiltonianExchangeCreator.hh>
+#include <protocols/canonical_sampling/MpiHamiltonianExchange.hh>
+#include <protocols/canonical_sampling/MpiHamiltonianExchangeCreator.hh>
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 
@@ -69,7 +69,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer tr( "protocols.canonical_sampling.HamiltonianExchange" );
+static basic::Tracer tr( "protocols.canonical_sampling.MpiHamiltonianExchange" );
 static numeric::random::RandomGenerator RG(2592747);
 
 
@@ -77,10 +77,10 @@ namespace protocols {
 namespace canonical_sampling {
 using namespace core;
 
-bool HamiltonianExchange::options_registered_( false );
+bool MpiHamiltonianExchange::options_registered_( false );
 
 //Mike: when you want to remove these Macros... leave them at least here as comment - since they provide documentation
-void HamiltonianExchange::register_options() {
+void MpiHamiltonianExchange::register_options() {
 	if ( !options_registered_ ) {
 		options_registered_ = true;
 		Parent::register_options();
@@ -88,25 +88,25 @@ void HamiltonianExchange::register_options() {
 }
 
 std::string
-HamiltonianExchangeCreator::keyname() const {
-	return HamiltonianExchangeCreator::mover_name();
+MpiHamiltonianExchangeCreator::keyname() const {
+	return MpiHamiltonianExchangeCreator::mover_name();
 }
 
 protocols::moves::MoverOP
-HamiltonianExchangeCreator::create_mover() const {
-	return new HamiltonianExchange;
+MpiHamiltonianExchangeCreator::create_mover() const {
+	return new MpiHamiltonianExchange;
 }
 
 std::string
-HamiltonianExchangeCreator::mover_name() {
-	return "HamiltonianExchange";
+MpiHamiltonianExchangeCreator::mover_name() {
+	return "MpiHamiltonianExchange";
 }
 
-HamiltonianExchange::HamiltonianExchange() :
+MpiHamiltonianExchange::MpiHamiltonianExchange() :
 	rank_( -1 )
 {
 #ifndef USEMPI
-	utility_exit_with_message( "HamiltonianExchange requires MPI build" );
+	utility_exit_with_message( "MpiHamiltonianExchange requires MPI build" );
 #endif
 #ifdef USEMPI
 	mpi_comm_ = MPI_COMM_NULL;
@@ -114,7 +114,7 @@ HamiltonianExchange::HamiltonianExchange() :
 	set_defaults();
 }
 
-HamiltonianExchange::HamiltonianExchange(	HamiltonianExchange const & other ) :
+MpiHamiltonianExchange::MpiHamiltonianExchange(	MpiHamiltonianExchange const & other ) :
 	Parent( other ),
 	rank_( other.rank_ ),
 	hamiltonians_( other.hamiltonians_ ),
@@ -125,14 +125,14 @@ HamiltonianExchange::HamiltonianExchange(	HamiltonianExchange const & other ) :
 	successfully_initialized_( false )
 {
 #ifndef USEMPI
-	utility_exit_with_message( "HamiltonianExchange requires MPI build" );
+	utility_exit_with_message( "MpiHamiltonianExchange requires MPI build" );
 #endif
 #ifdef USEMPI
 	set_mpi_comm( other.mpi_comm() );
 #endif
 }
 
-HamiltonianExchange& HamiltonianExchange::operator=( HamiltonianExchange const& other ) {
+MpiHamiltonianExchange& MpiHamiltonianExchange::operator=( MpiHamiltonianExchange const& other ) {
 	if ( &other == this ) return *this;
 	Parent::operator=( other );
 	rank_ = other.rank_;
@@ -150,30 +150,30 @@ HamiltonianExchange& HamiltonianExchange::operator=( HamiltonianExchange const& 
 	return *this;
 }
 
-HamiltonianExchange::~HamiltonianExchange() {
+MpiHamiltonianExchange::~MpiHamiltonianExchange() {
 }
 
 
 std::string
-HamiltonianExchange::get_name() const
+MpiHamiltonianExchange::get_name() const
 {
-	return "HamiltonianExchange";
+	return "MpiHamiltonianExchange";
 }
 
 protocols::moves::MoverOP
-HamiltonianExchange::clone() const
+MpiHamiltonianExchange::clone() const
 {
-	return new HamiltonianExchange(*this);
+	return new MpiHamiltonianExchange(*this);
 }
 
 protocols::moves::MoverOP
-HamiltonianExchange::fresh_instance() const
+MpiHamiltonianExchange::fresh_instance() const
 {
-	return new HamiltonianExchange;
+	return new MpiHamiltonianExchange;
 }
 
 void
-HamiltonianExchange::parse_my_tag(
+MpiHamiltonianExchange::parse_my_tag(
 	utility::tag::TagCOP const tag,
 	basic::datacache::DataMap & data,
 	protocols::filters::Filters_map const & filters,
@@ -182,17 +182,17 @@ HamiltonianExchange::parse_my_tag(
 ) {
 	Parent::parse_my_tag( tag, data, filters, movers, pose );
 	if ( !successfully_initialized_ ) {
-		throw utility::excn::EXCN_RosettaScriptsOption( "Initialization of HamiltonianExchange Module failed! " );
+		throw utility::excn::EXCN_RosettaScriptsOption( "Initialization of MpiHamiltonianExchange Module failed! " );
 	}
 }
 
 
 /// handling of options including command-line
-void HamiltonianExchange::set_defaults() {
+void MpiHamiltonianExchange::set_defaults() {
 }
 
 /// @brief Assigns user specified values to primitive members using command line options
-void HamiltonianExchange::init_from_options() {
+void MpiHamiltonianExchange::init_from_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core;
@@ -204,7 +204,7 @@ void HamiltonianExchange::init_from_options() {
 
 
 void
-HamiltonianExchange::initialize_simulation(
+MpiHamiltonianExchange::initialize_simulation(
 	 core::pose::Pose& pose,
 		MetropolisHastingsMover const& metropolis_hastings_mover,
 	 core::Size cycle
@@ -221,7 +221,7 @@ HamiltonianExchange::initialize_simulation(
 }
 
 void
-HamiltonianExchange::finalize_simulation(
+MpiHamiltonianExchange::finalize_simulation(
 	pose::Pose& pose,
 	MetropolisHastingsMover const & mhm
 ) {
@@ -229,7 +229,7 @@ HamiltonianExchange::finalize_simulation(
 }
 
 Size
-HamiltonianExchange::coord2key( GridCoord const& coord, GridCoord const& max_coord, Size exclude_dim ) {
+MpiHamiltonianExchange::coord2key( GridCoord const& coord, GridCoord const& max_coord, Size exclude_dim ) {
 	Size const n_dim( coord.size() );
 	Size key( 0 );
 	Size stride( 1 );
@@ -241,7 +241,7 @@ HamiltonianExchange::coord2key( GridCoord const& coord, GridCoord const& max_coo
 	return key;
 }
 
-void HamiltonianExchange::setup_exchange_schedule() {
+void MpiHamiltonianExchange::setup_exchange_schedule() {
 	exchange_schedules_.clear();
 	ExchangeSchedule list;
 
@@ -292,7 +292,7 @@ void HamiltonianExchange::setup_exchange_schedule() {
 }
 
 void
-HamiltonianExchange::find_exchange_partner( int& partner, bool& is_master ) {
+MpiHamiltonianExchange::find_exchange_partner( int& partner, bool& is_master ) {
 #ifdef USEMPI
 	using namespace ObjexxFCL::format;
 
@@ -335,7 +335,7 @@ HamiltonianExchange::find_exchange_partner( int& partner, bool& is_master ) {
 }
 
 core::Real
-HamiltonianExchange::temperature_move(
+MpiHamiltonianExchange::temperature_move(
 		pose::Pose & MPI_ONLY(pose),
 		MetropolisHastingsMover & MPI_ONLY(mover),
 		core::Real MPI_ONLY(score) ) {
@@ -424,11 +424,11 @@ HamiltonianExchange::temperature_move(
 	return temperature();
 }
 
-void HamiltonianExchange::next_exchange_schedule() {
+void MpiHamiltonianExchange::next_exchange_schedule() {
 	current_exchange_schedule_ = ( current_exchange_schedule_ + 1 ) % exchange_schedules_.size();
 }
 
-void HamiltonianExchange::clear() {
+void MpiHamiltonianExchange::clear() {
 	exchange_schedules_.clear();
 	exchange_grid_.clear();
 	hamiltonians_.clear();
@@ -474,7 +474,7 @@ private:
 };
 
 
-bool HamiltonianExchange::init_from_file( std::string const& filename ) {
+bool MpiHamiltonianExchange::init_from_file( std::string const& filename ) {
 	typedef utility::vector1< PatchOperation > PatchOperationList;
 	PatchOperationList global_patch_operations;
 
@@ -611,7 +611,7 @@ bool HamiltonianExchange::init_from_file( std::string const& filename ) {
 
 
 #ifdef USEMPI
-void HamiltonianExchange::set_mpi_comm( MPI_Comm const& mpi_comm ) {
+void MpiHamiltonianExchange::set_mpi_comm( MPI_Comm const& mpi_comm ) {
 	if ( mpi_comm != MPI_COMM_NULL ) {
 		MPI_Comm_dup( mpi_comm, &mpi_comm_ );
 		MPI_Comm_rank( mpi_comm_, &rank_ );
@@ -619,7 +619,7 @@ void HamiltonianExchange::set_mpi_comm( MPI_Comm const& mpi_comm ) {
 		MPI_Comm_size( mpi_comm_, &communicator_size );
 		if ( communicator_size != n_temp_levels() ) {
 			std::ostringstream os;
-			os << "For HamiltonianExchange the number of exchange cells " << n_temp_levels()
+			os << "For MpiHamiltonianExchange the number of exchange cells " << n_temp_levels()
 				 << "\n has to be consistent with the option -run:n_replica "
 				 << communicator_size;
 			utility_exit_with_message( os.str() );
@@ -630,12 +630,12 @@ void HamiltonianExchange::set_mpi_comm( MPI_Comm const& mpi_comm ) {
 }
 #endif
 
-void HamiltonianExchange::show( std::ostream& os ) const {
+void MpiHamiltonianExchange::show( std::ostream& os ) const {
 	using namespace ObjexxFCL::format;
 	// All osput will be 80 characters - 80 is a nice number, don't you think?
 	std::string line_marker = "///";
 	os << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
-	os << line_marker << A( 47, "HamiltonianExchange Module" ) << space( 27 ) << line_marker << std::endl;
+	os << line_marker << A( 47, "MpiHamiltonianExchange Module" ) << space( 27 ) << line_marker << std::endl;
 	os << line_marker << space( 74 ) << line_marker << std::endl;
 	// Display the movable jumps that will be used in docking
 	os << line_marker << A( 20, "Hamiltonian Cells: " ) << I( 5, n_temp_levels() )
@@ -677,7 +677,7 @@ void HamiltonianExchange::show( std::ostream& os ) const {
 	os << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
 }
 
-std::ostream& operator << ( std::ostream & os, HamiltonianExchange const& obj ) {
+std::ostream& operator << ( std::ostream & os, MpiHamiltonianExchange const& obj ) {
 	obj.show( os );
 	return os;
 }

@@ -11,15 +11,15 @@
 /// @brief Implement replica exchange in the MetropolisHastingsMover Framework.
 /// @author Oliver Lange ( oliver.lange@tum.de )
 
-#ifndef INCLUDED_protocols_canonical_sampling_ParallelTempering_hh
-#define INCLUDED_protocols_canonical_sampling_ParallelTempering_hh
+#ifndef INCLUDED_protocols_canonical_sampling_MpiParallelTempering_hh
+#define INCLUDED_protocols_canonical_sampling_MpiParallelTempering_hh
 
 #ifdef USEMPI
 #include <mpi.h> // Keep first...don't know why...
 #endif
 
 // Unit Headers
-#include <protocols/canonical_sampling/ParallelTempering.fwd.hh>
+#include <protocols/canonical_sampling/MpiParallelTempering.fwd.hh>
 #include <protocols/canonical_sampling/TemperatureController.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -65,7 +65,7 @@ namespace canonical_sampling {
 /// example, the DbTrajectoryReporter will attempt to write to the database 
 /// from several threads at once, which is forbidden when using SQLite.
 /// 
-/// Note that he only way to set the temperature range used for simulated 
+/// Note that the only way to set the temperature range used for simulated 
 /// annealing is to use the command line.  This is something I'd be interested 
 /// in changed at some point, but for right now it's not a deal-breaker. The 
 /// relevant options are:
@@ -76,27 +76,23 @@ namespace canonical_sampling {
 /// -tempering::temp::levels <levels>
 /// @endcode
 
-class ParallelTempering : public TemperatureController {
+class MpiParallelTempering : public TemperatureController {
 	typedef TemperatureController Parent;
 
 public:
 
 	/// @brief Default constructor.
-	ParallelTempering();
+	MpiParallelTempering();
 
 	/// @brief Non-trivial destructor used to free some C-style arrays.
-	~ParallelTempering();
+	~MpiParallelTempering();
 
 	/// @brief Copy constructor.
-	ParallelTempering( ParallelTempering const& );
+	MpiParallelTempering( MpiParallelTempering const& );
 
 	/// @brief Assignment operator.
-	ParallelTempering& operator=( ParallelTempering const& );
+	MpiParallelTempering& operator=( MpiParallelTempering const& );
 
-	virtual
-	void apply( core::pose::Pose& ) {}
-
-	virtual
 	std::string
 	get_name() const;
 
@@ -107,16 +103,6 @@ public:
 	protocols::moves::MoverOP
 	fresh_instance() const;
 
-	virtual
-	void
-	parse_my_tag(
-		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose
-	);
-
 	virtual void
 	initialize_simulation(
 		core::pose::Pose & pose,
@@ -124,15 +110,15 @@ public:
 		core::Size cycle
 	);
 
-	/// @brief Execute a temperature move if neccesary
+	/// @brief Execute a temperature move if necessary
 	/// @details This method blocks until it is reached by every thread.  Then 
 	/// the last energies recorded in each replica are communicated to all the 
 	/// other replicas, and the root thread coordinates the temperature swap.  
 	/// Once all of this is done, the simulation continues.  Note that this can 
 	/// produce a significant amount of dead time if called too often.  At the 
-	/// end of the simulation, the amount of time spent waiting for MPI get 
-	/// reported to the tracer.  Use this information to decide how often these 
-	/// moves should be attempted.
+	/// end of the simulation, the amount of time spent waiting for MPI gets 
+	/// reported to the tracer.  Use this information to decide how often 
+	/// temperature swaps should be attempted.
 	/// @see shuffle_temperatures()
 	core::Real
 	temperature_move(
@@ -187,9 +173,9 @@ private:
 	/// like this.  Half of the time, swaps between levels 1->2, 3->4, and so on 
 	/// are considered.  The other half of the time, swaps between levels 2->3, 
 	/// 4->5, and so on are considered.  In this way, every swap is considered 
-	/// with the same frequency, and never no level will ever get swapped twice 
-	/// in one move.  This method setups up a data structure to implement this 
-	/// algorithm an populates it based on the number of replicas being used.
+	/// with the same frequency, and no level will ever get swapped twice in one 
+	/// move.  This method setups up a data structure to implement this algorithm 
+	/// an populates it based on the number of replicas being used.
 	/// @see shuffle_temperatures()
 	void setup_exchange_schedule( Size nlevels );
 
@@ -218,9 +204,9 @@ private:
 	clock_t start_time_;
 	clock_t total_mpi_wait_time_;
 
-}; //end ParallelTempering
+}; //end MpiParallelTempering
 
 } //namespace canonical_sampling
 } //namespace protocols
 
-#endif //INCLUDED_protocols_canonical_sampling_ParallelTempering_HH
+#endif //INCLUDED_protocols_canonical_sampling_MpiParallelTempering_HH

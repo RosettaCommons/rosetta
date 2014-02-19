@@ -246,6 +246,10 @@ fold_tree_from_loops(
 		Size jump_stop  = it->stop()+1;
 		Size const jump_cut   = it->cut();
 
+		if (jump_cut == 0) {
+			utility_exit_with_message("Can't build a fold tree from a loop with an unspecified cut point.");
+		}
+
 		Size const jump_next_start = ( it_next == it_end ) ? nres : it_next->start() - 1;
 
 		if (jump_stop <= nres && jump_stop < jump_next_start) f.add_edge(jump_stop, jump_next_start, Edge::PEPTIDE);

@@ -3,6 +3,7 @@
 from __future__ import division
 
 from sqlalchemy import *
+from sqlalchemy.orm import *
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -10,7 +11,7 @@ Base = declarative_base()
 class Job (Base):
     __tablename__ = 'jobs'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
     command = Column(Text)
     revision = Column(Text)
     algorithm = Column(Text)
@@ -22,6 +23,11 @@ class Job (Base):
     iterations = Column(Integer)
     frames = Column(Integer)
     description = Column(Text)
+
+    moves = relationship('Move', backref='job')
+    temperatures = relationship('Temperature', backref='job')
+    trajectories = relationship('Trajectory', backref='job')
+    numpy_caches = relationship('NumpyCache', backref='job')
 
     def __repr__(self):
         return '<job id=%d>' % self.id
@@ -85,24 +91,49 @@ class Job (Base):
 
 class Move (Base):
     __tablename__ = 'moves'
+    __table_args__ = (
+            ForeignKeyConstraint(
+                ['job_id', 'temp_level'],
+                ['temperatures.job_id', 'temperatures.level']),
+    )
 
-    job_id = Column(Integer, ForeignKey('jobs.id'), primary_key=True)
+    job_id = Column(BigInteger, ForeignKey('jobs.id'), primary_key=True)
     type = Column(String, primary_key=True)
+    temp_level = Column(Integer, primary_key=True)
     num_trials = Column(Integer)
     num_accepted = Column(Integer)
 
+    temperature = relationship("Temperature", uselist=False)
+
     def __repr__(self):
-        return '<move job=%d type=%s rate=%f>' % (
-                self.job_id, self.type, self.num_accepted / self.num_trials)
+        return '<move job=%d type=%s temp=%d rate=%f>' % (
+                self.job_id, self.type, self.temp_level, self.efficiency)
 
     @property
     def efficiency(self):
         return self.num_accepted / self.num_trials
 
+
+class Temperature (Base):
+    __tablename__ = 'temperatures'
+
+    job_id = Column(BigInteger, ForeignKey('jobs.id'), primary_key=True)
+    level = Column(Integer, primary_key=True)
+    temperature = Column(Float, nullable=False)
+
+    def __repr__(self):
+        return '<temperature job=%d level=%d temp=%f>' % (
+                self.job_id, self.level, self.temperature)
+
+    @property
+    def formatted(self):
+        return '%.2f' % self.temperature
+
+
 class Trajectory (Base):
     __tablename__ = 'trajectories'
 
-    job_id = Column(Integer, ForeignKey('jobs.id'), primary_key=True)
+    job_id = Column(BigInteger, ForeignKey('jobs.id'), primary_key=True)
     iteration = Column(Integer, primary_key=True)
     score = Column(Float)
     silent_pose = Column(LargeBinary)
@@ -113,10 +144,11 @@ class Trajectory (Base):
 
 class NumpyCache (Base):
     __tablename__ = 'numpy_cache'
+    __table_args__ = {'mysql_engine': 'InnoDB'}
 
-    job_id = Column(Integer, ForeignKey('jobs.id'), primary_key=True)
-    type = Column(String, primary_key=True)
-    data = Column(LargeBinary)
+    job_id = Column(BigInteger, ForeignKey('jobs.id'), primary_key=True)
+    type = Column(String(50), primary_key=True)
+    data = Column(LargeBinary(2**24))   # 16MB
 
     def __repr__(self):
         return '<numpy_cache job=%d type=%s>' % (self.job_id, self.type)

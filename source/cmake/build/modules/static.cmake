@@ -1,0 +1,6 @@
+IF (STATIC)
+    SET(LINK_RULES "static")
+    MESSAGE(FATAL_ERROR "Static builds not yet supported by this script.")
+ELSE ()
+    SET(LINK_RULES "shared")
+ENDIF ()

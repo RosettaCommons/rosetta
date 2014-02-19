@@ -7,8 +7,7 @@ import helpers, schema
 # line arguments, which are defined just below.  The second are the data 
 # arrays, which are defined in the build_arrays() method.
 
-parser = argparse.ArgumentParser()
-helpers.add_job_arguments(parser)
+parser = helpers.define_args()
 parser.add_argument('--force', '-f', action='store_true')
 arguments = parser.parse_args()
 
@@ -17,7 +16,7 @@ if __name__ == '__main__':
     url = arguments.database
 
     with helpers.connect_to_database(url):
-        query = schema.numpy_cache.query
+        query = helpers.SESSION.query(schema.NumpyCache)
 
         all_arrays_exist = (
                 query.filter_by(job_id=job, type='iterations').count() and

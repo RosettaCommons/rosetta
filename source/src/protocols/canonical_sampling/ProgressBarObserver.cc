@@ -20,6 +20,9 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
+// Protocol Headers
+#include <protocols/jd2/util.hh>
+
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
@@ -64,10 +67,13 @@ MoverOP ProgressBarObserver::clone() const { // {{{1
 void ProgressBarObserver::observe_after_metropolis( // {{{1
 		MetropolisHastingsMover const & mover) {
 
-	if (mover.tempering()->temperature_level() == 1) {
-		cout << "\r[" << ++progress_ << "/" << mover.ntrials() << "]" << flush;
-		if (progress_ == mover.ntrials()) cout << endl;
-	}
+#ifdef USEMPI
+	int rank; MPI_Comm_rank(protocols::jd2::current_mpi_comm(), &rank);
+	if (rank != 0) return;
+#endif
+
+	cout << "\r[" << ++progress_ << "/" << mover.ntrials() << "]" << flush;
+	if (progress_ == mover.ntrials()) cout << endl;
 }
 // }}}1
 

@@ -1929,7 +1929,7 @@ option.add( basic::options::OptionKeys::loops::fa_closure_protocol, "Abrelax use
 option.add( basic::options::OptionKeys::loops::combine_rate, "Combine successive loops at this rate" ).def(0.0);
 option.add( basic::options::OptionKeys::loops::remodel, "" ).legal("no").legal("perturb_ccd").legal("perturb_kic").legal("quick_ccd").legal("quick_ccd_moves").legal("old_loop_relax").legal("sdwindow").def("no");
 option.add( basic::options::OptionKeys::loops::intermedrelax, "" ).legal("no").legal("relax").legal("fastrelax").legal("seqrelax").def("no");
-option.add( basic::options::OptionKeys::loops::refine, "method for performing full-atom refinement on loops" ).legal("no").legal("refine_ccd").legal("refine_kic").legal("refine_kic_v2").def("no");
+option.add( basic::options::OptionKeys::loops::refine, "method for performing full-atom refinement on loops" ).legal("no").legal("refine_ccd").legal("refine_kic").legal("refine_kic_refactor").def("no");
 option.add( basic::options::OptionKeys::loops::relax, "" ).legal("no").legal("relax").legal("fastrelax").legal("seqrelax").legal("minirelax").def("no");
 option.add( basic::options::OptionKeys::loops::n_rebuild_tries, "number of times to retry loop-rebuilding" ).def(1);
 option.add( basic::options::OptionKeys::loops::final_clean_fastrelax, "Add a final fastrelax without constraints" ).legal(true).legal(false).def(false);

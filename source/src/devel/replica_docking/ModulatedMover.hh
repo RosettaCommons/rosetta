@@ -13,8 +13,8 @@
 #define INCLUDED_devel_replica_docking_ModulatedMover_hh
 
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
-#include <protocols/canonical_sampling/HamiltonianExchange.hh>
-#include <protocols/canonical_sampling/HamiltonianExchange.fwd.hh>
+#include <protocols/canonical_sampling/MpiHamiltonianExchange.hh>
+#include <protocols/canonical_sampling/MpiHamiltonianExchange.fwd.hh>
 
 #include <devel/replica_docking/TempInterpolator.hh>
 #include <devel/replica_docking/TempInterpolator.fwd.hh>
@@ -93,7 +93,7 @@ private:
 
   //  protocols::canonical_sampling::ThermodynamicMoverOP mover_;
   //  protocols::canonical_sampling::TemperatureControllerOP tempering_; // inteprete tempering as TemperatureController does not work for n_temp_levels, current_temp and so on, so here I directly interprete it as HamiltonianExchange
-  protocols::canonical_sampling::HamiltonianExchangeOP tempering_;
+  protocols::canonical_sampling::MpiHamiltonianExchangeOP tempering_;
   core::Size n_temp_levels_ ;
   MoverOPs movers_;
   Interpolators interpolators_; // OP or like this?

@@ -143,6 +143,7 @@ MetropolisHastingsMover::prepare_simulation( core::pose::Pose & pose ) {
 	// The restarting features is currently disabled.  The following line of code 
 	// is being used in its place, and should be removed if this feature is ever 
 	// enabled again.
+	TR << "Initializing " << tempering_->get_name() << std::endl;
 	tempering_->initialize_simulation(pose, *this, cycle_number);
 	/*
 	bool restart = false;

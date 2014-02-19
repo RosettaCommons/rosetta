@@ -65,12 +65,15 @@ bool RepackingRefiner::apply(
 
 	utility::vector1<bool> loop_residues = 
 		protocols::loops::select_loop_residues(pose, loop, true, 10.0);
+	//core::pose::symmetry::make_residue_mask_symmetric(pose, loop_residues);
 
 	packer_task->set_bump_check(true);
 	packer_task->restrict_to_repacking();
 	packer_task->restrict_to_residues(loop_residues);
 
 	pack_rotamers(pose, *score_function, packer_task);
+
+	// Should I do this before picking the loop residues?
 	pose.update_residue_neighbors();  // Update 10A neighbor graph.
 
 	return true;

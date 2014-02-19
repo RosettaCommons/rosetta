@@ -20,7 +20,7 @@
 #include <core/io/silent/SilentFileData.hh>
 
 // Protocol headers
-#include <protocols/trajectory/DbTrajectoryReader.hh>
+#include <protocols/canonical_sampling/DbTrajectoryReader.hh>
 #include <protocols/canonical_sampling/PDBTrajectoryRecorder.hh>
 
 // Utility headers
@@ -51,7 +51,7 @@ using namespace basic::options;
 using core::Size;
 using core::Real;
 using core::pose::Pose;
-using protocols::trajectory::DbTrajectoryReader;
+using protocols::canonical_sampling::DbTrajectoryReader;
 using protocols::canonical_sampling::PDBTrajectoryRecorder;
 using utility::vector1;
 using utility::tools::make_vector1;

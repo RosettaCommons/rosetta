@@ -27,13 +27,15 @@
 namespace protocols {
 namespace kinematic_closure {
 
-/// @brief
+/// @brief Setup the given pose with a fold tree that is ideally configured for 
+/// sampling the given loop with kinematic closure.
+
 void setup_fold_tree(
 		core::pose::Pose & pose,
 		protocols::loops::Loop const & loop);
 
-} // end namespace kinematic_closure
-} // end namespace protocols
+}
+}
 
 #endif
 

@@ -69,9 +69,6 @@ void KicMover::apply(Pose & pose) { // {{{1
 				"Before calling BalancedKicMover.apply(), you must provide a loop "
 				"via BalancedKicMover.set_loop().");
 	}
-	if (is_fold_tree_stale_) {
-		setup_fold_tree(pose, loop_);
-	}
 
 	bool problem_solved = false;
 	problem->frame(pose, loop_, pivot_picker_);
@@ -92,9 +89,11 @@ void KicMover::apply(Pose & pose) { // {{{1
 	type(problem_solved ? "kic" : "kic (no-op)");
 }
 
-void KicMover::set_loop(Loop const & loop) { // {{{1
-	loop_ = loop;
-	is_fold_tree_stale_ = true;
+void KicMover::setup(Pose & pose, Loop const & loop) { // {{{1
+	if (loop_ != loop) {
+		loop_ = loop;
+		setup_fold_tree(pose, loop_);
+	}
 }
 
 // {{{1

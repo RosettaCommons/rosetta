@@ -4096,7 +4096,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			legal=['no','relax','fastrelax','seqrelax'], desc = ''
 		),
 		Option( 'refine',  'String', default = 'no',
-			legal=['no','refine_ccd','refine_kic','refine_kic_v2'],
+			legal=['no','refine_ccd','refine_kic','refine_kic_refactor'],
 			desc = 'method for performing full-atom refinement on loops'
 		),
 		Option( 'relax',  'String',                        default = 'no',

@@ -43,6 +43,7 @@ public:
 	string get_name() const { return "KicSampler"; }
 
 public:
+	void setup(Pose & pose, Loop const & loop, ScoreFunctionOP score_function);
 	bool apply(Pose & pose, Loop const & loop, ScoreFunctionCOP score_function);
 
 public:

@@ -38,8 +38,8 @@ namespace kinematic_closure {
 /// loop and three pivot residues.  Any residues in the loop that are not 
 /// pivots are called non-pivots.  The non-pivot backbone torsions are used to 
 /// make new conformations, while the pivot torsions are used to ensure that 
-/// the backbone stays closed.  Use set_loop() to specify a loop to sample.  
-/// Use set_pivot_picker() to specify how the pivots should be chosen.  Use 
+/// the backbone stays closed.  Use setup() to specify a loop to sample.  Use 
+/// set_pivot_picker() to specify how the pivots should be chosen.  Use 
 /// add_perturber() to specify how the non-pivots should be sampled.  By 
 /// default, the algorithm will pick pivots randomly within the region being 
 /// sampled and will sample the non-pivot torsions from a rama distribution.
@@ -81,6 +81,9 @@ public:
 
 public:
 
+	/// @brief Prepare the pose for sampling the given loop.
+	void setup(Pose & pose, Loop const & loop);
+
 	/// @brief Sample a new backbone conformation for the given loop.
 	void apply(Pose & pose);
 
@@ -88,9 +91,6 @@ public:
 	string get_name() const { return "KicMover"; }
 
 public:
-
-	/// @brief Specify which loop should be sampled.
-	void set_loop(Loop const & loop);
 
 	/// @brief Specify how the non-pivot torsions should be sampled.
 	void add_perturber(perturbers::PerturberOP perturber);

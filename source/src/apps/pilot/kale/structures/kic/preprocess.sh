@@ -10,12 +10,13 @@ fi
 rosetta=$(git rev-parse --show-toplevel)
 rosetta_bin="$rosetta/source/bin"
 
+rm -rf scratch/$pdb
 mkdir -p scratch/$pdb
 cd scratch/$pdb
 
 # Download a clean copy of the structure from the PDB.
-#fetch-pdb $pdb
-#head $pdb.pdb
+fetch-pdb $pdb
+head $pdb.pdb
 
 # Relax the structure using the rosetta score function.
 $rosetta_bin/fixbb                      \

@@ -16,11 +16,13 @@
 /tools/build/site.options
 *.cmake
 CMakeFiles
-!CMakeLists.txt
 /cmake/build/*
+/cmake/build_*/*
+!CMakeLists.txt
 !/cmake/build/build.pre.cmake
 !/cmake/build/build.post.cmake
-/cmake/build_*/*
+!/cmake/build/finders
+!/cmake/build/modules
 /xcode/build
 /xcode/Rosetta.xcodeproj/project.xcworkspace/xcuserdata
 /xcode/Rosetta.xcodeproj/xcuserdata

@@ -124,6 +124,16 @@ private:
 		MetropolisHastingsMoverCAP mover=0
 	);
 
+	/// @brief Write the starting structure to the database.
+	/// @details This case is handled specially to guarantee that the frame 
+	/// labeled as "iteration 0" always represents the starting structure.  In 
+	/// the future, this method will make sure only the root node writes this 
+	/// frame.
+	void write_first_model(
+		core::pose::Pose const & pose,
+		MetropolisHastingsMoverCAP mover
+	);
+
 private:
 
 	core::Size job_id_;

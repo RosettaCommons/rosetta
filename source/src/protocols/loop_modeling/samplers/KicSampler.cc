@@ -34,10 +34,16 @@ KicSampler::KicSampler(loggers::LoggerOP logger) {
 	log_filters(logger);
 }
 
+void KicSampler::setup(
+		Pose & pose, Loop const & loop, ScoreFunctionOP) {
+
+	mover_.setup(pose, loop);
+}
+
 bool KicSampler::apply(
 		Pose & pose, Loop const & loop, ScoreFunctionCOP) {
 
-	mover_.set_loop(loop);
+	mover_.setup(pose, loop);
 	mover_.apply(pose);
 	return true;
 }

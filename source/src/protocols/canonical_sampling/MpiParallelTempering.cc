@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/canonical_sampling/ParallelTemperingMover.cc
-/// @brief ParallelTempering methods implemented
+/// @file protocols/canonical_sampling/MpiParallelTemperingMover.cc
+/// @brief MpiParallelTempering methods implemented
 /// @author
 
 // Unit headers
-#include <protocols/canonical_sampling/ParallelTempering.hh>
-#include <protocols/canonical_sampling/ParallelTemperingCreator.hh>
+#include <protocols/canonical_sampling/MpiParallelTempering.hh>
+#include <protocols/canonical_sampling/MpiParallelTemperingCreator.hh>
 #include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 
@@ -58,26 +58,26 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer tr( "protocols.canonical_sampling.ParallelTempering" );
+static basic::Tracer tr( "protocols.canonical_sampling.MpiParallelTempering" );
 static numeric::random::RandomGenerator RG(3227547);
 
 namespace protocols {
 namespace canonical_sampling {
 
-string ParallelTemperingCreator::keyname() const { // {{{1
-	return ParallelTemperingCreator::mover_name();
+string MpiParallelTemperingCreator::keyname() const { // {{{1
+	return MpiParallelTemperingCreator::mover_name();
 }
 
-MoverOP ParallelTemperingCreator::create_mover() const { // {{{1
-	return new ParallelTempering;
+MoverOP MpiParallelTemperingCreator::create_mover() const { // {{{1
+	return new MpiParallelTempering;
 }
 
-string ParallelTemperingCreator::mover_name() { // {{{1
-	return "ParallelTempering";
+string MpiParallelTemperingCreator::mover_name() { // {{{1
+	return "MpiParallelTempering";
 }
 // }}}1
 
-ParallelTempering::ParallelTempering() // {{{1
+MpiParallelTempering::MpiParallelTempering() // {{{1
 	: rank_( -1 ),
 	  last_energies_( NULL ),
 	  rank2tlevel_( NULL ),
@@ -86,7 +86,7 @@ ParallelTempering::ParallelTempering() // {{{1
 	  total_mpi_wait_time_(0) {
 
 #ifndef USEMPI
-	utility_exit_with_message( "ParallelTempering requires MPI build" );
+	utility_exit_with_message( "MpiParallelTempering requires MPI build" );
 #endif
 #ifdef USEMPI
 	mpi_comm_ = MPI_COMM_NULL;
@@ -95,7 +95,7 @@ ParallelTempering::ParallelTempering() // {{{1
 	type("parallel-tempering");
 }
 
-ParallelTempering::ParallelTempering(ParallelTempering const & other) // {{{1
+MpiParallelTempering::MpiParallelTempering(MpiParallelTempering const & other) // {{{1
 	: Parent( other ),
 	  exchange_schedules_( other.exchange_schedules_ ),
 	  last_exchange_schedule_( other.last_exchange_schedule_ ),
@@ -106,15 +106,15 @@ ParallelTempering::ParallelTempering(ParallelTempering const & other) // {{{1
 	  total_mpi_wait_time_( other.total_mpi_wait_time_ ) {
 
 #ifndef USEMPI
-	utility_exit_with_message( "ParallelTempering requires MPI build" );
+	utility_exit_with_message( "MpiParallelTempering requires MPI build" );
 #endif
 #ifdef USEMPI
 	set_mpi_comm( other.mpi_comm() );
 #endif
 }
 
-ParallelTempering& ParallelTempering::operator=( // {{{1
-		ParallelTempering const& other ) {
+MpiParallelTempering& MpiParallelTempering::operator=( // {{{1
+		MpiParallelTempering const& other ) {
 
 	if ( &other == this ) return *this;
 	deallocate_buffers();
@@ -128,22 +128,22 @@ ParallelTempering& ParallelTempering::operator=( // {{{1
 	return *this;
 }
 
-ParallelTempering::~ParallelTempering() { // {{{1
+MpiParallelTempering::~MpiParallelTempering() { // {{{1
 	deallocate_buffers();
 }
 
-void ParallelTempering::initialize_simulation( // {{{1
+void MpiParallelTempering::initialize_simulation( // {{{1
 		pose::Pose & pose,
 		MetropolisHastingsMover const & metropolis_hastings_mover,
 		core::Size cycle) {
 
-	tr.Trace << "ParallelTempering::initialize_simul1... " << std::endl;
+	tr.Trace << "MpiParallelTempering::initialize_simul1... " << std::endl;
 	Parent::initialize_simulation(pose, metropolis_hastings_mover,cycle);
-	tr.Trace << "ParallelTempering::initialize_simul2... " << std::endl;
+	tr.Trace << "MpiParallelTempering::initialize_simul2... " << std::endl;
 #ifdef USEMPI
 	set_mpi_comm( jd2::current_mpi_comm() );
 #endif
-	tr.Trace << "ParallelTempering::initialize_simul3... " << std::endl;
+	tr.Trace << "MpiParallelTempering::initialize_simul3... " << std::endl;
 	Size const nlevels( n_temp_levels() );
 	allocate_buffers( nlevels );
 	setup_exchange_schedule( nlevels );
@@ -152,10 +152,10 @@ void ParallelTempering::initialize_simulation( // {{{1
 	last_exchange_schedule_ = 0;
 	start_time_ = clock() / basic::SHRINK_FACTOR;
 	total_mpi_wait_time_ = 0;
-	tr.Trace << "Initialized ParallelTempering! " << std::endl;
+	tr.Trace << "Initialized MpiParallelTempering! " << std::endl;
 }
 
-Real ParallelTempering::temperature_move( // {{{1
+Real MpiParallelTempering::temperature_move( // {{{1
 		Pose & MPI_ONLY(pose),
 		MetropolisHastingsMover & MPI_ONLY(mover),
 		Real MPI_ONLY(score)) {
@@ -195,7 +195,7 @@ Real ParallelTempering::temperature_move( // {{{1
 	return temperature();
 }
 
-void ParallelTempering::finalize_simulation( // {{{1
+void MpiParallelTempering::finalize_simulation( // {{{1
 		pose::Pose& pose,
 		MetropolisHastingsMover const & mhm) {
 
@@ -233,8 +233,8 @@ void ParallelTempering::finalize_simulation( // {{{1
 	   << total_mpi_wait_time_*clock_factor << " seconds out of " << total_time*clock_factor << " total)" << std::endl;
 }
 
-void ParallelTempering::allocate_buffers( core::Size nlevels ) { // {{{1
-	tr.Trace << "ParallelTempering::allocate_buffers for " << nlevels << std::endl;
+void MpiParallelTempering::allocate_buffers( core::Size nlevels ) { // {{{1
+	tr.Trace << "MpiParallelTempering::allocate_buffers for " << nlevels << std::endl;
 	deallocate_buffers();
 	last_energies_ = new double[nlevels];
 	rank2tlevel_ = new int[nlevels];
@@ -245,7 +245,7 @@ void ParallelTempering::allocate_buffers( core::Size nlevels ) { // {{{1
 	}
 }
 
-void ParallelTempering::deallocate_buffers() { // {{{1
+void MpiParallelTempering::deallocate_buffers() { // {{{1
 	if ( last_energies_ ) {
 		delete [] last_energies_;
 		delete [] rank2tlevel_;
@@ -256,8 +256,8 @@ void ParallelTempering::deallocate_buffers() { // {{{1
 	tlevel2rank_ = NULL;
 }
 
-void ParallelTempering::setup_exchange_schedule( Size nlevels ) { // {{{1
-	tr.Trace << "ParallelTempering::setup_exchange_schedule for " << nlevels << std::endl;
+void MpiParallelTempering::setup_exchange_schedule( Size nlevels ) { // {{{1
+	tr.Trace << "MpiParallelTempering::setup_exchange_schedule for " << nlevels << std::endl;
 	exchange_schedules_.clear();
 	ExchangeSchedule list;
 
@@ -286,7 +286,7 @@ void ParallelTempering::setup_exchange_schedule( Size nlevels ) { // {{{1
 	exchange_schedules_.push_back(list);
 }
 
-void ParallelTempering::shuffle_temperatures( // {{{1
+void MpiParallelTempering::shuffle_temperatures( // {{{1
 		MetropolisHastingsMover & mover, double *energies ) {
 
 	last_exchange_schedule_ = ( last_exchange_schedule_ + 1 ) % 2;
@@ -323,40 +323,31 @@ void ParallelTempering::shuffle_temperatures( // {{{1
 	}
 }
 
-string ParallelTempering::get_name() const { // {{{1
-	return "ParallelTempering";
+string MpiParallelTempering::get_name() const { // {{{1
+	return "MpiParallelTempering";
 }
 
-MoverOP ParallelTempering::clone() const { // {{{1
-	return new ParallelTempering(*this);
+MoverOP MpiParallelTempering::clone() const { // {{{1
+	return new MpiParallelTempering(*this);
 }
 
-MoverOP ParallelTempering::fresh_instance() const { // {{{1
-	return new ParallelTempering;
+MoverOP MpiParallelTempering::fresh_instance() const { // {{{1
+	return new MpiParallelTempering;
 }
 
-void ParallelTempering::parse_my_tag( // {{{1
-		utility::tag::TagCOP const tag,
-		basic::datacache::DataMap & data,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		pose::Pose const & pose) {
-
-	Parent::parse_my_tag( tag, data, filters, movers, pose );
-}
 // }}}1
 
 #ifdef USEMPI
-void ParallelTempering::set_mpi_comm( MPI_Comm const& mpi_comm ) { // {{{1
+void MpiParallelTempering::set_mpi_comm( MPI_Comm const& mpi_comm ) { // {{{1
 	if ( mpi_comm != MPI_COMM_NULL ) {
-		tr.Trace << "ParallelTempering::Duplicate mpi-communicator" << std::endl;
+		tr.Trace << "MpiParallelTempering::Duplicate mpi-communicator" << std::endl;
 		MPI_Comm_dup( mpi_comm, &mpi_comm_ );
 		MPI_Comm_rank( mpi_comm_, &rank_ );
 		int size;
 		MPI_Comm_size( mpi_comm_, &size );
 		runtime_assert( size == n_temp_levels() );
 	} else {
-		tr.Trace << "ParallelTempering::Duplicate mpi-communicator" << std::endl;
+		tr.Trace << "MpiParallelTempering::Duplicate mpi-communicator" << std::endl;
 		mpi_comm_ = MPI_COMM_NULL;
 	}
 } // }}}1

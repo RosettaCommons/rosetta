@@ -44,6 +44,7 @@
 #include <utility/io/izstream.hh>
 
 // C++ Headers
+#include <iostream>
 #include <cmath>
 
 OPT_2GRP_KEY( File, tempering, temp, file )
@@ -218,6 +219,7 @@ void TemperatureController::set_monte_carlo(MonteCarloOP monte_carlo) { // {{{1
 void TemperatureController::set_defaults() { // {{{1
 	//are we the only object controlling temperature in the MC object ?!
 	trust_current_temp_ = true;
+	instance_initialized_ = false;
 	//how often will no temperature jump occur
 }
 

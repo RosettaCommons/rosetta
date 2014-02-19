@@ -17,12 +17,16 @@ add_definitions(-DCPPDB_EXPORTS)
 add_definitions(-DCPPDB_LIBRARY_PREFIX="${CMAKE_SHARED_LIBRARY_PREFIX}")
 add_definitions(-DCPPDB_LIBRARY_SUFFIX="${CMAKE_SHARED_LIBRARY_SUFFIX}")
 add_definitions(-DCPPDB_SOVERSION="${CPPDB_SOVERSION}")
-add_definitions(-DCPPDB_DISABLE_THREAD_SAFETY)
-add_definitions(-DCPPDB_DISABLE_SHARED_OBJECT_LOADING)
 add_definitions(-DCPPDB_MAJOR=0)
 add_definitions(-DCPPDB_MINOR=3)
 add_definitions(-DCPPDB_PATCH=0)
 add_definitions(-DCPPDB_VERSION="0.3.0")
+
+# I don't know why thread safety and shared object loading were disabled, but I 
+# had to reenable both options in order to use mysql from an MPI job.
+# kalekundert@ucsf.edu 2/10/14
+#add_definitions(-DCPPDB_DISABLE_THREAD_SAFETY)
+#add_definitions(-DCPPDB_DISABLE_SHARED_OBJECT_LOADING)
 
 # Backend configuration
 

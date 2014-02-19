@@ -4,8 +4,9 @@
 from __future__ import division
 
 import sys, os, re, glob, argparse, yaml
-from graphics import tango
 from pylab import *
+from mpldatacursor import datacursor
+from graphics import tango
 
 parser = argparse.ArgumentParser()
 parser.add_argument('old_benchmark')
@@ -112,7 +113,11 @@ def compare_benchmarks(old_benchmark, new_benchmarks, labels):
     xticks([0, 0.2, 0.4, 0.6, 0.8, 1.0], ['0', '0.2', '0.4', '0.6', '0.8', '1.0'])
     yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0], ['0', '0.2', '0.4', '0.6', '0.8', '1.0'])
 
+    #xlim(0, 0.305)
+    #ylim(0, 0.305)
+
     axes([0.19, 0.6, .25, .25])
+    datacursor(formatter='{label}'.format)
 
     x = y = linspace(0, 1)
     plot(x, y, '--', color=tango.grey[3])
@@ -132,35 +137,12 @@ def compare_benchmarks(old_benchmark, new_benchmarks, labels):
         show()
 
 def plot_benchmark(old_benchmark, new_benchmark, label, color):
-    comparisons = []
-    labels = {}
-
     old_loops = set(old_benchmark.keys())
     new_loops = set(new_benchmark.keys())
 
     for loop in old_loops & new_loops:
-        comparison = old_benchmark[loop], new_benchmark[loop]
-        comparisons.append(comparison)
-
-        if arguments.label and re.search(arguments.label, loop):
-            labels[loop] = comparison
-
-    x, y = zip(*comparisons)
-    plot(x, y, 'o', color=color, label=os.path.basename(label))
-
-    for label, coordinate in labels.iteritems():
-        distance = 7
-
-        if coordinate[0] > coordinate[1]:
-            offset = distance, 0
-            alignment = 'left', 'top'
-        else:
-            offset = -distance, 0
-            alignment = 'right', 'bottom'
-            
-        annotate(label, xy=coordinate, xytext=offset,
-                textcoords='offset points',
-                ha=alignment[0], va=alignment[1])
+        plot(old_benchmark[loop], new_benchmark[loop], 'o',
+             color=color, label='{}/{}'.format(os.path.basename(label), loop))
 
 
 if __name__ == '__main__':

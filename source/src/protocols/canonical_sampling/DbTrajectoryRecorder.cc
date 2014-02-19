@@ -120,7 +120,7 @@ void DbTrajectoryRecorder::initialize_simulation( // {{{1
 
 	TrajectoryRecorder::initialize_simulation(pose, mover, cycle);
 	write_schema_to_db();
-	write_model(pose, &mover);
+	write_first_model(pose, &mover);
 }
 
 void DbTrajectoryRecorder::finalize_simulation( // {{{1
@@ -214,18 +214,20 @@ void DbTrajectoryRecorder::write_model( // {{{1
 		core::pose::Pose const & pose,
 		MetropolisHastingsMoverCAP mover) {
 
+	Real temp_level = 0;
+
 	// The mover argument may not be provided.  If it is, use it to decide 
 	// whether or not the current trajectory should be recorded.
 	
 	if (mover) {
 		Real temp_level = mover->tempering()->temperature_level();
-		if (temp_level != 0 and temp_level != temp_level_) return;
+		if (temp_level_ != 0 and temp_level != temp_level_) return;
 	}
 
 	// Add the current frame to the cache and flush the cache if necessary.
 
 	Frame frame;
-	frame.temp_level = temp_level_;
+	frame.temp_level = temp_level;
 	frame.iteration = step_count();
 	frame.pose = pose;
 	frame_cache_.push_back(frame);
@@ -233,6 +235,23 @@ void DbTrajectoryRecorder::write_model( // {{{1
 	if (frame_cache_.size() >= cache_limit()) {
 		write_cache_to_db();
 	}
+}
+
+void DbTrajectoryRecorder::write_first_model( // {{{1
+		core::pose::Pose const & pose,
+		MetropolisHastingsMoverCAP mover) {
+
+	// Only the root node should write the first model.
+#ifdef USEMPI
+	int rank; MPI_Comm_rank(protocols::jd2::current_mpi_comm(), &rank);
+	if (rank != 0) return;
+#endif
+
+	Frame frame;
+	frame.temp_level = 0;
+	frame.iteration = 0;
+	frame.pose = pose;
+	frame_cache_.push_back(frame);
 }
 // }}}1
 

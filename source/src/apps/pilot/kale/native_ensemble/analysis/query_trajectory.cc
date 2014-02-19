@@ -21,7 +21,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/trajectory/DbTrajectoryReader.hh>
+#include <protocols/canonical_sampling/DbTrajectoryReader.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -48,7 +48,7 @@ using core::pose::Pose;
 using protocols::loops::Loop;
 using protocols::loops::Loops;
 using protocols::loops::loop_rmsd;
-using protocols::trajectory::DbTrajectoryReader;
+using protocols::canonical_sampling::DbTrajectoryReader;
 using utility::vector1;
 
 // Options {{{1
@@ -83,6 +83,7 @@ int main(int argc, char **argv) { // {{{1
 	cout << loop.stop() << endl;
 	
 	foreach (Size i, iterations) {
+		cout << "  " << i << endl;
 		Pose pose = reader.get_pose(i);
 		Real score = pose.energies().total_energy();
 		Real rmsd = loop_rmsd(pose, reference, loops);
@@ -97,7 +98,7 @@ int main(int argc, char **argv) { // {{{1
 
 		// Print out torsions for each sampled residue.
 
-		for (int j = loop.start(); j <= loop.stop(); j++) {
+		for (Size j = loop.start(); j <= loop.stop(); j++) {
 			cout << "residue " << j << " ";
 			cout << pose.phi(j) << " ";
 			cout << pose.psi(j) << " ";

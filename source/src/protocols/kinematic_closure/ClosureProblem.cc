@@ -79,6 +79,8 @@ void ClosureProblem::frame( // {{{1
 
 	frame_called_ = true;
 
+	// Extract the unperturbed DOFs from the given pose.
+
 	extract_cartesian_coordinates(pose,
 			unperturbed_xyzs_);
 
@@ -86,6 +88,9 @@ void ClosureProblem::frame( // {{{1
 			unperturbed_lengths_,
 			unperturbed_angles_,
 			unperturbed_torsions_);
+
+	// Copy the unperturbed DOFS into the matrices that will eventually be 
+	// modified by the perturbers.
 
 	perturbed_torsions_ = ParameterList(unperturbed_torsions_);
 	perturbed_angles_ = ParameterList(unperturbed_angles_);

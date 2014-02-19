@@ -243,7 +243,11 @@ class JobWindow (gtk.ScrolledWindow):
                 selection.select_iter(row)
 
     def get_title(self):
-        return gtk.Label(self.url)
+        title = self.url.drivername + "://"
+        if self.url.host is not None:
+            title += self.url.host
+        title += '/' + self.url.database
+        return gtk.Label(title)
 
     def get_selected_jobs(self):
         jobs = []
@@ -536,7 +540,7 @@ class MoveStatsWindow (gtk.Window):
         session = page.session_factory()
         jobs = page.get_selected_jobs()
 
-        model = gtk.ListStore(object, int, str, int, int, str)
+        model = gtk.ListStore(object, int, str, str, int, int, str)
         view = gtk.TreeView(model)
         view.get_selection().set_mode(gtk.SELECTION_NONE)
 
@@ -547,15 +551,17 @@ class MoveStatsWindow (gtk.Window):
         columns = [
                 gtk.TreeViewColumn('Job', left_align, text=1),
                 gtk.TreeViewColumn('Move', left_align, text=2),
-                gtk.TreeViewColumn('Accepted', right_align, text=3),
-                gtk.TreeViewColumn('Proposed', right_align, text=4),
-                gtk.TreeViewColumn('Efficiency', right_align, text=5),
+                gtk.TreeViewColumn('Temperature', right_align, text=3),
+                gtk.TreeViewColumn('Accepted', right_align, text=4),
+                gtk.TreeViewColumn('Proposed', right_align, text=5),
+                gtk.TreeViewColumn('Efficiency', right_align, text=6),
         ]
         for column in columns:
             view.append_column(column)
 
         columns[0].set_sort_column_id(1)
         columns[1].set_sort_column_id(2)
+        columns[2].set_sort_column_id(3)
 
         self.add(view)
         self.show_all()
@@ -568,9 +574,10 @@ class MoveStatsWindow (gtk.Window):
                 model.set(row, 0, move)
                 model.set(row, 1, job.id)
                 model.set(row, 2, move.type)
-                model.set(row, 3, move.num_accepted)
-                model.set(row, 4, move.num_trials)
-                model.set(row, 5, efficiency)
+                model.set(row, 3, move.temperature.formatted)
+                model.set(row, 4, move.num_accepted)
+                model.set(row, 5, move.num_trials)
+                model.set(row, 6, efficiency)
 
 
 
@@ -714,6 +721,7 @@ class SaveMovie (CommandLauncher):
 
 if __name__ == "__main__":
     import argparse
+    from sqlalchemy.engine.url import URL as Url
 
     parser = argparse.ArgumentParser()
     parser.add_argument('databases', nargs='*', default=['all'])
@@ -722,14 +730,34 @@ if __name__ == "__main__":
 
     # Pick which databases to show.
 
+    sqlite_url = Url('sqlite',
+            database='sandbox.db')
+
+    mysql_url = Url('mysql',
+            username='kale',
+            password='pJarth26xSRs2RrC',
+            host='guybrush.ucsf.edu',
+            port='3306',
+            database='kale')
+
+    local_mysql_url = Url('mysql',
+            username='kale',
+            password='pJarth26xSRs2RrC',
+            host='127.0.0.1',
+            port='3306',
+            database='kale')
+
     urls = set()
     for db in arguments.databases:
         if db == 'all':
-            urls.add('sqlite:///sandbox.db')
+            urls.add(mysql_url)
+            urls.add(sqlite_url)
         elif db == 'sqlite':
-            urls.add('sqlite:///sandbox.db')
+            urls.add(sqlite_url)
         elif db == 'mysql':
-            pass
+            urls.add(mysql_url)
+        elif db == 'local':
+            urls.add(local_mysql_url)
         else:
             urls.add(db)
 

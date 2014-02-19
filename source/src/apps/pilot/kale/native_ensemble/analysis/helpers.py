@@ -32,6 +32,24 @@ def db_to_rosetta(database):
     if database.startswith('sqlite'):
         return database[10:]
 
+def database_arguments(url):
+    if url.drivername == 'mysql':
+        return [
+                '-inout:dbms:mode', url.drivername,
+                '-inout:dbms:database_name', url.database,
+                '-inout:dbms:user', url.username,
+                '-inout:dbms:password', url.password,
+                '-inout:dbms:host', url.host,
+                '-inout:dbms:port', str(url.port),
+        ]
+    elif url.drivername == 'sqlite':
+        return [
+                '-inout:dbms:database_name', url.database,
+        ]
+    else:
+        message = "Unknown database driver '{0.database}'."
+        raise ValueError(message.format(url))
+
 
 # Database helpers
 
@@ -46,15 +64,16 @@ def connect_to_database(url):
         global URL, SESSION
         try:
             engine = sqlalchemy.create_engine(url)
-            URL, SESSION = url, sqlalchemy.orm.sessionmaker(bind=engine)()
+            URL = sqlalchemy.engine.url.make_url(url)
+            SESSION = sqlalchemy.orm.sessionmaker(bind=engine)()
             schema.Base.metadata.create_all(engine)
             yield
             SESSION.commit()
         except:
-            SESSION.rollback()
+            if SESSION: SESSION.rollback()
             raise
         finally:
-            SESSION.close()
+            if SESSION: SESSION.close()
             URL, SESSION = None, None
 
     return session_manager()
@@ -65,9 +84,9 @@ def cache_trajectory(job, force=False):
 
     assert URL is not None
 
-    command = 'query_trajectory -mute all -query:job {} -database_name {}'
-    command = command.format(job, db_to_rosetta(URL))
-    command = shlex.split(rosetta_command(command))
+    command = 'query_trajectory -mute all -query:job {} '
+    command = rosetta_command(command.format(job))
+    command = shlex.split(command) + database_arguments(URL)
     process = subprocess.Popen(command, stdout=subprocess.PIPE)
 
     num_frames = 0
@@ -109,9 +128,6 @@ def cache_trajectory(job, force=False):
 
                 for x, chi in enumerate(chis.split()):
                     torsions['chi%d/%s' % (x+1, index)][frame] = float(chi)
-    print
-
-    print torsions.keys()
 
     cache_array(job, 'iterations', iterations, force=force)
     cache_array(job, 'scores', scores, force=force)
@@ -133,10 +149,26 @@ def cache_array(job, type, array, force=False):
 
     if isinstance(array, numpy.ndarray):
         numpy.save(output, array)
+        bytes = array.nbytes
     elif isinstance(array, dict):
         numpy.savez(output, **array)
+        bytes = sum(x.nbytes for x in array.values())
     else:
         raise TypeError("array must be either numpy.ndarray or dict")
+
+    # This issue here is that the MySQL binary types have maximum sizes.  The 
+    # type used to cache numpy arrays is `MEDIUMBLOB', which has a maximum size 
+    # of 2**24 bytes (16MB).  If the array we're trying to cache is bigger than 
+    # this, this script will just fail gracefully.  The schema may need to be 
+    # adjusted to use a `LONGBLOB' to get around the problem.
+
+    blob_column = schema.NumpyCache.data.property.columns[0]
+    max_size = blob_column.type.length
+
+    if bytes > max_size:
+        error = "The '{}' cache cannot be saved because it is too big ({}MB)."
+        print error.format(type, bytes // 2**20)
+        return
 
     cache = schema.NumpyCache(job_id=job, type=type, data=output.getvalue())
     SESSION.add(cache)

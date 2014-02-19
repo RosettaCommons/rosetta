@@ -23,8 +23,8 @@
 
 #include <protocols/canonical_sampling/MetricRecorderCreator.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMoverCreator.hh>
-#include <protocols/canonical_sampling/ParallelTemperingCreator.hh>
-#include <protocols/canonical_sampling/HamiltonianExchangeCreator.hh>
+#include <protocols/canonical_sampling/MpiParallelTemperingCreator.hh>
+#include <protocols/canonical_sampling/MpiHamiltonianExchangeCreator.hh>
 #include <protocols/canonical_sampling/PDBTrajectoryRecorderCreator.hh>
 #include <protocols/canonical_sampling/SilentTrajectoryRecorderCreator.hh>
 #include <protocols/canonical_sampling/SimulatedTemperingCreator.hh>

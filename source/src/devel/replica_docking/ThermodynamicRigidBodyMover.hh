@@ -7,8 +7,8 @@
 
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
-#include <protocols/canonical_sampling/HamiltonianExchange.hh>
-#include <protocols/canonical_sampling/HamiltonianExchange.fwd.hh>
+#include <protocols/canonical_sampling/MpiHamiltonianExchange.hh>
+#include <protocols/canonical_sampling/MpiHamiltonianExchange.fwd.hh>
 
 #include <devel/replica_docking/TempInterpolator.hh>
 #include <devel/replica_docking/TempInterpolator.fwd.hh>

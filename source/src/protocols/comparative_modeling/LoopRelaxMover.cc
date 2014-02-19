@@ -1050,6 +1050,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				using protocols::loop_modeling::refiners::LocalMinimizationRefiner;
 				using protocols::loop_modeling::utilities::PeriodicTask;
 				using protocols::loop_modeling::loggers::LoggerOP;
+				using protocols::loop_modeling::loggers::PdbLogger;
 				using protocols::loop_modeling::loggers::ProgressBar;
 				using protocols::loop_modeling::loggers::ScoreVsRmsd;
 				using protocols::loop_modeling::loggers::AcceptanceRates;
@@ -1089,6 +1090,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				protocol->set_score_function(fa_scorefxn_);
 				protocol->set_iterations(outer_cycles, inner_cycles, 2);
 				protocol->add_logger(new ProgressBar);
+				//protocol->add_logger(new PdbLogger);
 				protocol->add_logger(new ScoreVsRmsd(native_pose, loop));
 				protocol->add_logger(acceptance_logger);
 

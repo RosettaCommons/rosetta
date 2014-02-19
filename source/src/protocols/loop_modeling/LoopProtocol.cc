@@ -67,6 +67,7 @@ void LoopProtocol::apply(Pose & pose) { // {{{1
 
 	for (Size i = 1; i <= iterations_[1]; i++) {
 		ramp_score_function(i);
+		monte_carlo_->recover_low(pose);
 
 		for (Size j = 1; j <= iterations_[2]; j++) {
 			ramp_temperature(j);
@@ -77,6 +78,7 @@ void LoopProtocol::apply(Pose & pose) { // {{{1
 		}
 	}
 
+	pose = monte_carlo_->lowest_score_pose();
 	finish_protocol(pose);
 }
 
@@ -91,8 +93,8 @@ void LoopProtocol::start_protocol(Pose & pose) { // {{{1
 		score_function_ = core::scoring::getScoreFunction();
 	}
 
-	Pose native = pose;
 	pose.update_residue_neighbors();
+	Pose native = pose;
 
 	// Rebuild the loop from scratch to avoid bias.
 	//LoopBuilder builder(loop_, score_function_);
@@ -101,7 +103,14 @@ void LoopProtocol::start_protocol(Pose & pose) { // {{{1
 	// Setup the loop mover.  This must be done before the Monte Carlo object is 
 	// initialized, because otherwise the "last accepted pose" in the Monte Carlo 
 	// object will not have been properly setup.  In particular, it will have the 
-	// wrong fold tree. 
+	// wrong fold tree.
+	//
+	// But this also has to be done after the Monte Carlo object is initialized, 
+	// otherwise the setup might blow up the structure and ruin the whole 
+	// simulation.  I think the solution is to handle the fold tree specially, 
+	// somehow.  I think the reason the pose is getting blown up is that the fold 
+	// tree isn't setup until KicMover.apply(), so the chainbreak score isn't 
+	// doing anything.
 	
 	mover_->set_loop(loop_);
 	mover_->set_score_function(score_function_);
