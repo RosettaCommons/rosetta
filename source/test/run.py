@@ -324,7 +324,7 @@ class Tester:
 
                     for test in data['ALL_TESTS']:
                         json_key = json_key_from_test(test)
-                        if json_key not in all_json['tests']: all_json['tests'][json_key] = dict(state=_finished_, log=suite_log)
+                        if json_key not in all_json['tests']: all_json['tests'][json_key] = dict(state=_finished_, log='')
 
                     for test in data['FAILED_TESTS']:
                         json_key = json_key_from_test(test)
