@@ -239,7 +239,7 @@ void DbTrajectoryRecorder::write_model( // {{{1
 
 void DbTrajectoryRecorder::write_first_model( // {{{1
 		core::pose::Pose const & pose,
-		MetropolisHastingsMoverCAP mover) {
+		MetropolisHastingsMoverCAP) {
 
 	// Only the root node should write the first model.
 #ifdef USEMPI

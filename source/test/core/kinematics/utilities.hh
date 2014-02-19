@@ -46,14 +46,14 @@ using namespace core;
 using core::kinematics::FoldTree;
 
 void TS_ASSERT_FOLD_TREE_HAS_EDGE( // {{{1
-		FoldTree const & tree, Size start, Size stop, bool jump=false) {
+		FoldTree const & tree, int start, int stop, bool jump=false) {
 
 	FoldTree::const_iterator it, it_end;
 
 	for (it = tree.begin(), it_end = tree.end(); it != it_end; ++it) {
-		bool start_matches = it->start() == start;
-		bool stop_matches = it->stop() == stop;
-		bool jump_matches = it->is_jump() == jump;
+		bool start_matches = (it->start() == start);
+		bool stop_matches = (it->stop() == stop);
+		bool jump_matches = (it->is_jump() == jump);
 
 		// If all these conditions are met, the edge was found and the test passes.
 		if (start_matches and stop_matches and jump_matches) return;
@@ -69,13 +69,12 @@ void TS_ASSERT_FOLD_TREE_HAS_EDGE( // {{{1
 	tree.show(cout);
 	TS_FAIL("No match found");
 }
-// }}}1
+
 void TS_ASSERT_FOLD_TREE_HAS_JUMP( // {{{1
-		FoldTree const & tree, Size start, Size stop) {
+		FoldTree const & tree, int start, int stop) {
 
 	TS_ASSERT_FOLD_TREE_HAS_EDGE(tree, start, stop, true);
 }
-
 // }}}1
 
 #endif

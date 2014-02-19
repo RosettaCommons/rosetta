@@ -385,6 +385,8 @@ testinputfiles = [
 	"jumping/gold_distance_jump2.dat",
 	"jumping/test_in.pdb",
 	"jumping/jumps.def",
+    "kinematic_closure/inputs/1exm.pdb",
+    "kinematic_closure/inputs/3cla.pdb",
 	"ligand_docking/7cpa.params",
 	"ligand_docking/7cpa_7cpa_native.pdb",
 	"ligand_docking/7cpa_confs.pdb",
