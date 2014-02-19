@@ -8,16 +8,14 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   test/core/scoring/sasa.cxxtest.hh
-/// @brief  test suite for core::scoring::sasa
+/// @brief  test suite for core::scoring::sasa.cc
 /// @author Ron Jacak
-/// @author Jared Adolf-Bryfogle
 
 // Test headers
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
 #include <core/scoring/sasa.hh>
-#include <core/scoring/sasa/util.hh>
 
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>
@@ -101,36 +99,36 @@ class SasaTests : public CxxTest::TestSuite {
 		// 1) distance between 'a' and 'b' less than an internal function variable epsilon
 		//    a) radius a < radius b, will return 100
 		//    b) radius b < radius a, 1
-		core::scoring::sasa::get_legrand_atomic_overlap( 1.40, 2.20, 0.005, degree_of_overlap );
+		core::scoring::get_overlap( 1.40, 2.20, 0.005, degree_of_overlap );
 		TS_ASSERT_DELTA( degree_of_overlap, 100, TOLERATED_ERROR );
 
-		core::scoring::sasa::get_legrand_atomic_overlap( 2.20, 1.40, 0.005, degree_of_overlap );
+		core::scoring::get_overlap( 2.20, 1.40, 0.005, degree_of_overlap );
 		TS_ASSERT_DELTA( degree_of_overlap, 1, TOLERATED_ERROR );
 
 
 		// 2) radius_b + distance_ijxyz <= radius_a, means b completely engulfed by a so return overlap on a of 1
-		core::scoring::sasa::get_legrand_atomic_overlap( 3.20, 2.20, 1.00, degree_of_overlap );
+		core::scoring::get_overlap( 3.20, 2.20, 1.00, degree_of_overlap );
 		TS_ASSERT_DELTA( degree_of_overlap, 1, TOLERATED_ERROR );
 
 
 		// 3) radius_a + distance_ijxyz <= radius_b, means a completely engulfed by b so return overlap on a of 100
-		core::scoring::sasa::get_legrand_atomic_overlap( 2.20, 3.20, 1.00, degree_of_overlap );
+		core::scoring::get_overlap( 2.20, 3.20, 1.00, degree_of_overlap );
 		TS_ASSERT_DELTA( degree_of_overlap, 100, TOLERATED_ERROR );
 
 
 		// 4) some cases not in the three above
 		//    a) make sure to have one where theta is very small < 1degree
 		//    b) theta very big (close to 180deg)
-		core::scoring::sasa::get_legrand_atomic_overlap( 2.20, 2.20, 0.15, degree_of_overlap );
+		core::scoring::get_overlap( 2.20, 2.20, 0.15, degree_of_overlap );
 		TS_ASSERT_DELTA( degree_of_overlap, 49, TOLERATED_ERROR );
 
-		core::scoring::sasa::get_legrand_atomic_overlap( 1.40, 2.20, 1.0, degree_of_overlap ); // cos theta = -0.671, 1.671*50=84
+		core::scoring::get_overlap( 1.40, 2.20, 1.0, degree_of_overlap ); // cos theta = -0.671, 1.671*50=84
 		TS_ASSERT_DELTA( degree_of_overlap, 84, TOLERATED_ERROR );
 
-		core::scoring::sasa::get_legrand_atomic_overlap( 1.40, 2.20, 2.0, degree_of_overlap ); // cos theta = 0.2, 41
+		core::scoring::get_overlap( 1.40, 2.20, 2.0, degree_of_overlap ); // cos theta = 0.2, 41
 		TS_ASSERT_DELTA( degree_of_overlap, 41, TOLERATED_ERROR );
 
-		core::scoring::sasa::get_legrand_atomic_overlap( 1.40, 2.20, 3.0, degree_of_overlap ); // my calcs give cos theta = 0.728, 14
+		core::scoring::get_overlap( 1.40, 2.20, 3.0, degree_of_overlap ); // my calcs give cos theta = 0.728, 14
 		TS_ASSERT_DELTA( degree_of_overlap, 14, TOLERATED_ERROR );
 
 	}
@@ -152,7 +150,7 @@ class SasaTests : public CxxTest::TestSuite {
 		Real dist = 1.0;
 		Vector a( 0.1274, 0.0569, 0.9902 );
 		Vector b( 0, 0, 0 );
-		core::scoring::sasa::get_legrand( a, b, phi_index, theta_index, dist );
+		core::scoring::get_orientation( a, b, phi_index, theta_index, dist );
 		TS_ASSERT_DELTA( phi_index, 5, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( theta_index, 2, TOLERATED_ERROR );
 
@@ -166,7 +164,7 @@ class SasaTests : public CxxTest::TestSuite {
 
 
 		Vector aa( 0.4038, 0.05690, 0.9131 ); // reverse theta and phi (1.0, theta: 0.42, phi: 0.14)
-		core::scoring::sasa::get_legrand_orientation( aa, b, phi_index, theta_index, dist );
+		core::scoring::get_orientation( aa, b, phi_index, theta_index, dist );
 		TS_ASSERT_DELTA( phi_index, 5, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( theta_index, 2, TOLERATED_ERROR );
 
@@ -186,12 +184,12 @@ class SasaTests : public CxxTest::TestSuite {
 		dist = 1.0;
 		Vector c( -0.04545, -0.01659, -0.99883 );
 		Vector d( 0, 0, 0 );
-		core::scoring::sasa::get_legrand_orientation( c, d, phi_index, theta_index, dist );
+		core::scoring::get_orientation( c, d, phi_index, theta_index, dist );
 		TS_ASSERT_DELTA( phi_index, 4, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( theta_index, 33, TOLERATED_ERROR );
 
 		Vector cc( -0.3425, -0.0166, 0.9394 ); // switch phi and theta
-		core::scoring::sasa::get_legrand_orientation( cc, d, phi_index, theta_index, dist );
+		core::scoring::get_orientation( cc, d, phi_index, theta_index, dist );
 		TS_ASSERT_DELTA( phi_index, 4, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( theta_index, 33, TOLERATED_ERROR );
 
@@ -207,7 +205,7 @@ class SasaTests : public CxxTest::TestSuite {
 		dist = 1.0;
 		Vector k( 0.4299, -0.0664, 0.90045);
 		Vector l( 0, 0, 0 );
-		core::scoring::sasa::get_legrand_orientation( k, l, phi_index, theta_index, dist );
+		core::scoring::get_orientation( k, l, phi_index, theta_index, dist );
 		TS_ASSERT_DELTA( phi_index, 5, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( theta_index, 63, TOLERATED_ERROR );
 
@@ -227,12 +225,12 @@ class SasaTests : public CxxTest::TestSuite {
 		dist = 1.00;
 		Vector g( 0.04947, -0.007132, 0.9988 );
 		Vector h( 0, 0, 0 );
-		core::scoring::sasa::get_legrand_orientation( g, h, phi_index, theta_index, dist );
+		core::scoring::get_orientation( g, h, phi_index, theta_index, dist );
 		TS_ASSERT_DELTA( phi_index, 63, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( theta_index, 1, TOLERATED_ERROR );
 
 		//Vector gg( -0.1425, -0.007132, 0.9898 );
-		//core::scoring::sasa::get_legrand_orientation( gg, h, phi_index, theta_index, dist ); // reverse phi/theta
+		//core::scoring::get_orientation( gg, h, phi_index, theta_index, dist ); // reverse phi/theta
 		//TS_ASSERT_DELTA( phi_index, 63, TOLERATED_ERROR );
 		//TS_ASSERT_DELTA( theta_index, 1, TOLERATED_ERROR );
 
@@ -248,12 +246,12 @@ class SasaTests : public CxxTest::TestSuite {
 		dist = 1.0;
 		Vector e( 0.4787, -0.2099, 0.8525 );
 		Vector f( 0, 0, 0 );
-		core::scoring::sasa::get_legrand( e, f, phi_index, theta_index, dist );
+		core::scoring::get_orientation( e, f, phi_index, theta_index, dist );
 		TS_ASSERT_DELTA( phi_index, 60, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( theta_index, 6, TOLERATED_ERROR );
 
 		//Vector ee( -0.3423, -0.2099, 0.9158 );
-		//core::scoring::sasa::get_legrand_orientation( ee, f, phi_index, theta_index, dist );
+		//core::scoring::get_orientation( ee, f, phi_index, theta_index, dist );
 		//TS_ASSERT_DELTA( phi_index, 60, TOLERATED_ERROR );
 		//TS_ASSERT_DELTA( theta_index, 6, TOLERATED_ERROR );
 
@@ -269,12 +267,12 @@ class SasaTests : public CxxTest::TestSuite {
 		dist = 1.0;
 		Vector m( -0.3168, 0.1389, 0.9383 );
 		Vector n( 0, 0, 0 );
-		core::scoring::sasa::get_legrand_orientation( m, n, phi_index, theta_index, dist );
+		core::scoring::get_orientation( m, n, phi_index, theta_index, dist );
 		TS_ASSERT_DELTA( phi_index, 60, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( theta_index, 61, TOLERATED_ERROR );
 
 		//Vector mm( -0.3767, 0.1389, 0.9158 );
-		//core::scoring::sasa::get_legrand_orientation( mm, n, phi_index, theta_index, dist );
+		//core::scoring::get_orientation( mm, n, phi_index, theta_index, dist );
 		//TS_ASSERT_DELTA( phi_index, 60, TOLERATED_ERROR );
 		//TS_ASSERT_DELTA( theta_index, 61, TOLERATED_ERROR );
 
