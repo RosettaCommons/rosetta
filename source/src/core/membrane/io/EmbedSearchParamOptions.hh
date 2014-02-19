@@ -40,74 +40,74 @@ namespace io {
 /// @brief Embedding Search Param Options
 /// @details Specify options for searching and scoring membrane protein embeddings
 class EmbedSearchParamsOptions : public basic::resource_manager::ResourceOptions {
-        
-    public:
-    
-        /// @brief Constructor
-        EmbedSearchParamsOptions();
-    
-        /// @brief Destructor
-        virtual ~EmbedSearchParamsOptions();
-    
-        /// @brief Parse .xml file for embedding opts
-        virtual
-        void
-        parse_my_tag(
-                     utility::tag::TagCOP tag
-                     );
-    
-        /// @brief Return Options Class Type - Embedding Search Parameters
-        virtual
-        std::string
-        type() const;
-    
-        /// @brief Setters and Getters for Options
-    
-        /// @brief Normal Search
-        /// @details Search for membrane protein embedding normal
-        bool normal_search();
-        void set_normal_search( bool setting );
-    
-        /// @brief Normal Start Angle
-        /// @details Search for membrane protein embedding start angle
-        core::Real normal_start_angle();
-        void set_normal_start_angle( core::Real setting );
-    
-        /// @brief Normal Max Angle
-        /// @details Set max normal search angle (upper bound)
-        core::Real normal_max_angle();
-        void set_normal_max_angle( core::Real setting );
-    
-        /// @brief Normal Delta Angle
-        /// @details Set allowed delta value for normal search (also bound on search)
-        core::Real normal_delta_angle();
-        void set_normal_delta_angle( core::Real setting );
-    
-        /// @brief Center Search
-        /// @details Search for Center
-        bool center_search();
-        void set_center_max_delta( bool setting );
 
-        /// @brief Center Max Delta
-        /// @details Center Max Delta for Search
-        core::Real center_max_delta();
-        void set_center_max_delta( core::Real setting );
-    
-        /// @brief Center Magnitude
-        core::Size center_mag();
-        void set_center_mag( core::Size setting );
+public:
 
-        /// @brief Normal Mag
-        core::Size normal_mag();
-        void set_normal_mag( core::Size setting );
+	/// @brief Constructor
+	EmbedSearchParamsOptions();
 
-        /// @brief Normal Cycles
-        /// @details Max Cycles allowed in normal search
-        core::Size normal_cycles();
-        void set_normal_cycles( core::Size setting );
-    
-    }; // class EmbedSearchParamsOptions
-    
+	/// @brief Destructor
+	virtual ~EmbedSearchParamsOptions();
+
+	/// @brief Parse .xml file for embedding opts
+	virtual
+	void
+	parse_my_tag(
+				 utility::tag::TagCOP tag
+				 );
+
+	/// @brief Return Options Class Type - Embedding Search Parameters
+	virtual
+	std::string
+	type() const;
+
+	/// @brief Setters and Getters for Options
+
+	/// @brief Normal Search
+	/// @details Search for membrane protein embedding normal
+	bool normal_search();
+	void set_normal_search( bool setting );
+
+	/// @brief Normal Start Angle
+	/// @details Search for membrane protein embedding start angle
+	core::Real normal_start_angle();
+	void set_normal_start_angle( core::Real setting );
+
+	/// @brief Normal Max Angle
+	/// @details Set max normal search angle (upper bound)
+	core::Real normal_max_angle();
+	void set_normal_max_angle( core::Real setting );
+
+	/// @brief Normal Delta Angle
+	/// @details Set allowed delta value for normal search (also bound on search)
+	core::Real normal_delta_angle();
+	void set_normal_delta_angle( core::Real setting );
+
+	/// @brief Center Search
+	/// @details Search for Center
+	bool center_search();
+	void set_center_max_delta( bool setting );
+
+	/// @brief Center Max Delta
+	/// @details Center Max Delta for Search
+	core::Real center_max_delta();
+	void set_center_max_delta( core::Real setting );
+
+	/// @brief Center Magnitude
+	core::Size center_mag();
+	void set_center_mag( core::Size setting );
+
+	/// @brief Normal Mag
+	core::Size normal_mag();
+	void set_normal_mag( core::Size setting );
+
+	/// @brief Normal Cycles
+	/// @details Max Cycles allowed in normal search
+	core::Size normal_cycles();
+	void set_normal_cycles( core::Size setting );
+
+}; // class EmbedSearchParamsOptions
+
 } // io
 } // membrane
 } // core

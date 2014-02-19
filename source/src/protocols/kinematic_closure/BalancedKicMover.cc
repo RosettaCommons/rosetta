@@ -194,8 +194,8 @@ bool BalancedKicMover::is_solution_trivial(
 		ClosureProblemCOP problem,
 		ClosureSolutionCOP picked_solution,
 		SolutionList const & unperturbed_solutions,
-		SolutionList const & perturbed_solutions) {
-
+		SolutionList const & perturbed_solutions)
+{
 	Real distance, closest_distance = numeric_limits<Real>::infinity();
 	ClosureSolutionCOP closest_solution = NULL;
 	ChainedSolutionList all_solutions(

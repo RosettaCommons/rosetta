@@ -56,23 +56,23 @@ using namespace core::optimization;
 NormalModeMultifunc::~NormalModeMultifunc() {}
 
 NormalModeMultifunc::NormalModeMultifunc(
-	pose::Pose & pose_in,
-	MinimizerMap & min_map_in,
-	scoring::ScoreFunction const & scorefxn_in,
-	protocols::normalmode::NormalMode const & normalmode_in,
-	bool const use_omega,
-	bool const deriv_check_in,
-	bool const deriv_check_verbose_in
+		pose::Pose & pose_in,
+		MinimizerMap & min_map_in,
+		scoring::ScoreFunction const & scorefxn_in,
+		protocols::normalmode::NormalMode const & normalmode_in,
+		bool const use_omega,
+		bool const deriv_check_in,
+		bool const deriv_check_verbose_in
 ) :
-	pose_( pose_in ),
-	pose0_( pose_in ),
-	min_map_( min_map_in ),
-	score_function_( scorefxn_in ),
-	NM_( normalmode_in ),
-	use_omega_( use_omega ),
-	deriv_check_( deriv_check_in ),
-	deriv_check_verbose_( deriv_check_verbose_in ),
-	deriv_check_result_( 0 )
+		pose_( pose_in ),
+		min_map_( min_map_in ),
+		score_function_( scorefxn_in ),
+		use_omega_( use_omega ),
+		pose0_( pose_in ),
+		NM_( normalmode_in ),
+		deriv_check_( deriv_check_in ),
+		deriv_check_verbose_( deriv_check_verbose_in ),
+		deriv_check_result_( 0 )
 {
 	// NormalMode should be TorsionalNormalMode
 	assert( NM_.torsion() );

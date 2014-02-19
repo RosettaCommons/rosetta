@@ -20,21 +20,19 @@ namespace protocols {
 namespace antibody {
 namespace clusters {
 	using namespace protocols::antibody;
-	
 
-CDRCluster::CDRCluster(core::pose::Pose const & pose, CDRNameEnum const cdr, core::Size const cdr_length, CDRClusterEnum const cluster, core::Size const start, core::Real const distance):
-	cdr_(cdr),
-	length_(cdr_length),
-	cluster_(cluster),
-	distance_(distance),
-	start_(start)
-		
-	
+
+CDRCluster::CDRCluster(core::pose::Pose const & pose, CDRNameEnum const cdr, core::Size const cdr_length,
+		CDRClusterEnum const cluster, core::Size const start, core::Real const distance):
+		cdr_(cdr),
+		cluster_(cluster),
+		distance_(distance),
+		start_(start),
+		length_(cdr_length)
 {
 	end_ = start+cdr_length-1;
 	normalized_distance_ = distance/(cdr_length*2);
 	set_pdb_numbering(pose, start, end_);
-	
 }
 
 CDRCluster::~CDRCluster(){}

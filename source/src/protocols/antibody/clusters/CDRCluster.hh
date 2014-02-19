@@ -80,9 +80,9 @@ private:
 	
 	void
 	set_pdb_numbering(core::pose::Pose const & pose, core::Size start, core::Size end);
-	
+
 private:
-	
+
 	CDRNameEnum cdr_;
 	CDRClusterEnum cluster_;
 	
@@ -99,11 +99,6 @@ private:
 	
 	core::Size length_;
 	char chain_;
-	
-
-
-
-	
 };
 	
 }

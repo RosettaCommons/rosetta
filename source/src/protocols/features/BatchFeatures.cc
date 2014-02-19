@@ -62,7 +62,7 @@ using cppdb::result;
 
 BatchFeatures::BatchFeatures(){}
 
-BatchFeatures::BatchFeatures( BatchFeatures const & ){}
+BatchFeatures::BatchFeatures( BatchFeatures const & ) : utility::pointer::ReferenceCount() {}
 
 BatchFeatures::~BatchFeatures(){}
 

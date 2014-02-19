@@ -140,7 +140,8 @@ settings = {
                     "pedantic",
                     "Wno-long-long",
                     "Werror=sign-compare",
-                    "Werror=unused-parameter"
+                    "Werror=unused-parameter",
+                    "Werror=reorder"
                 ],
             },
         },
@@ -1263,7 +1264,7 @@ settings = {
             "flags" : {
                 # We don't use any C -- but if we did would it really
                 # be C99?  Are there portability issues?
-                # (The "isystem" directives here are to tell clang not to print warnings found in these extenal headers.)
+                # (The "isystem" directives here are to tell clang not to print warnings found in these external headers.)
                 "cc"        : [ "std=c99", "isystem external/boost_1_46_1/", "isystem external/include/" ],
                 "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/", "isystem external/include/" ],
                 "compile"   : [ "pipe", "Qunused-arguments", 'DUNUSUAL_ALLOCATOR_DECLARATION', 'ftemplate-depth-256', "stdlib=libstdc++", ],
@@ -1280,7 +1281,13 @@ settings = {
                 #                "Wno-padded",
                 #                "Wno-weak-vtables"
                 #              ],
-                "warn"      : [ "W", "pedantic", "Wno-long-long", "Werror=sign-compare", "Werror=unused-parameter" ],
+                "warn" : [
+                    "W",
+                    "pedantic",
+                    "Wno-long-long",
+                    "Werror=sign-compare",
+                    "Werror=unused-parameter",
+                    "Werror=reorder"],
             },
         },
     },

@@ -235,7 +235,7 @@ D2H_SA_Energy::finalize_total_energy(
 		//}
 	}
 
-	//	TR.Debug << "max_res: " << max_res << " nres: " << nres << " chain_for_rsa: " << chain_for_rsa << std::endl;
+	TR.Debug << "max_res: " << max_res << " nres: " << nres << " chain_for_rsa: " << chain_for_rsa << std::endl;
 
 	id::AtomID_Map< Real > atom_sasa;
 	utility::vector1< Real > rsd_sasa(nres,0.0);
@@ -270,40 +270,17 @@ D2H_SA_Energy::finalize_total_energy(
 	}
 
 	TR.Debug << "Look for chain: " << chain_for_rsa << " found it between " << rsa_index << " and " << rsa_index_end << std::endl;
-	Real total_sasa(0);
 	Size counter(0);
 	Size counter2(0);
 
 	if(fullatom) {
 		//TR.Debug << "fullatom" << std::endl; 
-		total_sasa = calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius );
+		calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius );
 	} else {
 		//TR.Debug << "centroid" << std::endl;
-		//		utility::vector1< Size > cen6(nres,0);
 		utility::vector1< Size > cen8(nres,0);
 		utility::vector1< Size > cen8_2(nres,0);
-		//utility::vector1< Size > cen12(nres,0);
-		//		for ( Size i = rsa_index_start; i <= rsa_index_end; ++i ) {
-		//CenListInfoOP cenlist( *( static_cast< CenListInfo * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::CEN_LIST_INFO )() )));
-		//CenListInfoOP cenlist_from_pose(pose);
-		//for ( Size i = 1; i <= nres;++i ) {
-		//	Vector const v1( pose.residue(i).nbr_atom_xyz() );
-		//	for ( Size j = i+1; j <= nres; ++j ) {
-		//		Size aa_i=pose.residue(i).nbr_atom();
-		//		Size aa_j=pose.residue(j).nbr_atom();
-		//		if(!pose.residue(i).atom_type(aa_i).is_virtual() &&
-		//			 !pose.residue(j).atom_type(aa_j).is_virtual()) { //			 !(j>=rsa_index_start && j<=rsa_index_end && j>i)) {
-		//			counter++;
-		//			Vector const v2( pose.residue(j).nbr_atom_xyz() );
-		//			Real dist(v1.distance_squared( v2 ));
-		//			if ( dist < 64 ) {
-		//				cen8_2[i]++;
-		//				cen8_2[j]++;
-		//			}
-		//		}
-		//	}
-		//}
-		
+
 		for ( Size i = rsa_index_start; i <= rsa_index_end;++i ) {
 			Size pos=i-rsa_index_start+1;
 			Vector const v1( pose.residue(i).nbr_atom_xyz() );
@@ -320,7 +297,6 @@ D2H_SA_Energy::finalize_total_energy(
 
 						cen8[i]++;
 						cen8[j]++;
-						//						cen8_2[j]++;
 					}
 				}
 			}
@@ -330,43 +306,20 @@ D2H_SA_Energy::finalize_total_energy(
 			if(rsd_sasa[i] < 0 || rsd_sasa[i]>137) {
 				rsd_sasa[i]=0;
 			}
-			//if(i>=rsa_index_start && i<=rsa_index_end) {
-			//		std::cout << "CEN_SASA: " << i << " " << counter << " " << counter2 << " " <<rsd_sasa[i] << " " << cen8[i] << " " << cen8_2[i] << "\n";
-			//}
 		}
 	}
-	//pose.dump_pdb("output.pdb");
-	//std::cout << "COUNTER: " << counter << "\n";
-	//std::exit(1);
-	//debug.push_back(rsd_sasa[rsa_index]);
-	//	TR.Debug << "Pushing vector with " << rsd_sasa[rsa_index] << " position " << rsa_index << std::endl;
-	//	rsa_index=rsa_index+Nterm_offset;
-
 
 	rsd_sasa_raw[1]=rsd_sasa[rsa_index_start+position_[1]-1];
 	tmp.push_back(rsd_sasa[rsa_index_start+position_[1]-1]);
 	utility::vector1< Size > group_index(len,0);
 	for(Size i=2;i<=len;i++) {
 		group_index[i-1]=group_mean.size()+1;
-		//group_index[i]=group_mean.size()+1;
-		//	conformation::Residue const & rsd( pose.residue(rsa_index) );
-		//	std::cout << "Pick chain2: " << pdb_info->number(rsd.seqpos()) << " " << rsd.name3() << " " << rsd.chain() << " " << " " << rsd_sasa[rsa_index] << " " << i << " " << rsa_index << "\n";
 		if(group_[i-1]  != group_[i]) {
 			group_mean.push_back(numeric::statistics::mean(tmp.begin(),tmp.end(),0.0)); 
 			group_median.push_back(numeric::median(tmp));
 			Size values(tmp.size());
-			//TR.Debug << "Calculating mean for " << values << " values " << std::endl;
-			//for(Size j=1;j<=tmp.size();++j) {
-			//	TR.Debug << j << " " << tmp[j] << std::endl;
-			//}
-			//Real tmp_m=numeric::statistics::mean(tmp.begin(),tmp.end(),0.0);
-			//TR.Debug << "MEAN: " << tmp_m << std::endl;
-			//TR.Debug << "MEANCALC: " << rsa_index << " " << tmp_m << " " << group_mean.size() << std::endl;
 			tmp.clear();
 		}
-		//		std::cout << "GROUP: " << group_[i] <<  " " << rsd_sasa[rsa_index] << "\n";
-		//debug.push_back(rsd_sasa[rsa_index]);
-		//TR.Debug << "Pushing vector with " << rsd_sasa[rsa_index] << " position " << rsa_index << std::endl;
 		
 		tmp.push_back(rsd_sasa[rsa_index_start+position_[i]-1]);
 		rsd_sasa_raw[i]=rsd_sasa[rsa_index_start+position_[i]-1];
@@ -374,65 +327,19 @@ D2H_SA_Energy::finalize_total_energy(
 	group_index[len]=group_mean.size()+1;
 	group_mean.push_back(numeric::statistics::mean(tmp.begin(),tmp.end(),0.0));
 	group_median.push_back(numeric::median(tmp));
-	
 
 	for(Size i=1;i<=len;i++) {
 		rsd_sasa_grouped[i]=group_mean[group_index[i]];
 		rsd_sasa_grouped_median[i]=group_median[group_index[i]];
-		//rsd_sasa_raw[i]=rsa_sasa[i];
 		TR.Debug << "MEAN: " << i << " " << position_[i] << " " << rsa_index_start+position_[i]-1 << " " << rsd_sasa[rsa_index_start+position_[i]-1] << " " << rsd_sasa_raw[i] << " " << rsd_sasa_grouped[i] << " " << rsd_sasa_grouped_median[i] << " " << data_[i] << " " << group_[i] << " " << group_index[i] << " " << len << std::endl;
 	}
 
-	//Real m2 = numeric::statistics::mean(rsd_sasa.begin(),rsd_sasa.end(),0.0);
-	//Real sd2 = numeric::statistics::std_dev_with_provided_mean(rsd_sasa.begin(),rsd_sasa.end(),m2);
-
 	Real m = numeric::statistics::mean(rsd_sasa_grouped.begin(),rsd_sasa_grouped.end(),0.0);
 	Real sd = numeric::statistics::std_dev_with_provided_mean(rsd_sasa_grouped.begin(),rsd_sasa_grouped.end(),m);
-	//	Real corr=numeric::statistics::corrcoef(data_.begin(),data_.end(),rsd_sasa.begin(),rsd_sasa.end());
-	//utility::vector1< Real >::iterator b=data_.begin();
-	//utility::vector1< Real >::iterator e=data_.end();
-	//	Real corr=numeric::statistics::corrcoef(rsd_sasa.begin(),rsd_sasa.end(),rsd_sasa.begin(),rsd_sasa.end(),0.0);
-	//Real corr_median=numeric::statistics::corrcoef(data_,rsd_sasa_grouped_median);
 	Real corr=numeric::statistics::corrcoef_with_provided_mean_and_std_dev(data_,mean_,sd_,rsd_sasa_grouped,m,sd);
 
-	//Real cov2=numeric::statistics::cov(data_,rsd_sasa_grouped_median);
-	//	Real cov=numeric::statistics::cov_with_provided_mean(data_,mean_,rsd_sasa_grouped,m);
-
-	//Real m2 = numeric::statistics::mean(rsd_sasa_raw.begin(),rsd_sasa_raw.end(),0.0);
-	//Real sd2 = numeric::statistics::std_dev_with_provided_mean(rsd_sasa_raw.begin(),rsd_sasa_raw.end(),m2);
-	//Real cov=numeric::statistics::cov_with_provided_mean(data_,mean_,rsd_sasa_raw,m2);
-	//Real temp(cov/(sd2*sd_));
-	//Real temp2(cov/(sd*sd_));
 	Real z = -50 * log((1+corr)/(1-corr)); //Fisher transform, slightly better behavior for significant correlations times -100.
-	//Real corr2=numeric::statistics::corrcoef_with_provided_mean_and_std_dev(data_,mean_,sd_,rsd_sasa,m2,sd2);
-
-	//Real rms=0;
-	//Size size=0;
-	//for(Size i=1,j=rsa_index_start;i<=len;i++,j++) {
-	//	TR.Debug << "RES: " << data_[i] << " " << rsd_sasa[j] << " " << rsd_sasa_grouped[i] << " " << group_[i] << std::endl;
-		//rms+= (rsd_sasa[j]-data_[i]) * (rsd_sasa[j]-data_[i]);
-		//size++;
-	//}
-	//rms=sqrt(rms/size);
-	//	TR.Debug << "Corr: " << corr << " " << z << " " << rms << std::endl; 
-	//	TR.Debug << "Corr: " << corr << " cov/(sd1*sd2) (" <<temp << ")" << " corr for median:" << corr2 << " Cov: " << cov << " cov for median:" << cov2 << " cov3 " << cov3 << " z: " << z << " fullatom: " << fullatom << std::endl; 
-	//	TR.Debug << "MeanCorr: " << corr << " RawCorr: " << temp <<  " MedianCorr: " << corr_median << " ctrl: " << temp2 <<  " z: " << z << " fullatom: " << fullatom << std::endl; 
-	//pose::PDBInfoCOP pdb_info = pose.pdb_info();
-	//for(Size i=1;i<=nres;i++) {
-	//	//		conformation::Residue rsd
-	//	conformation::Residue const & rsd( pose.residue(i) );
-	//	//for ( Size j=1; j<= rsd.natoms(); ++j ) {
-	//	//	conformation::Atom const & atom( rsd.atom(j) );
-	//	//	std::cout << rsd.atom_name(j) << " " << rsd.name3() << " " << rsd.atom_type(j).is_virtual() << "\n";
-	//	//}
-	//
-	//	bool virt(pose.residue(i).atom_type(1).is_virtual());
-	//	std::cout << "RSA: " << i << " " << (i % len)+1  << " " << rsd.chain() << " " << pdb_info->number(rsd.seqpos()) << " " << virt << " " << rsd_sasa[i] << " " << rsd_sasa.size() << " " << nres << "\n";
-	//}
-	//std::cout << "Z: " << z << std::endl;
 	totals [ d2h_sa ] = reweight_*z; 
-//	totals[ sa ] = core::scoring::packing::get_surf_tot(pose, 1.4); //default water probe
-
 } // finalize_total_energy
 
 

@@ -178,7 +178,7 @@ CaIrmsdFilter::jump( core::Size const jump_id )
 core::Real
 CaIrmsdFilter::compute( core::pose::Pose const & pose ) const {
 	TR<<"compute Irms"<< std::endl;
-	core::Real irms=irms = protocols::docking::calc_CA_Irmsd( pose, *native_pose_, scorefxn_, movable_jumps_ );
+	core::Real irms = protocols::docking::calc_CA_Irmsd( pose, *native_pose_, scorefxn_, movable_jumps_ );
 	return( irms );
 }
 

@@ -94,8 +94,15 @@ BfactorMultifunc::BfactorMultifunc(
 		core::Real radius_exp,
 		core::Real scorescale,
 		bool exact, bool verbose, bool deriv_check ) :
-	pose_(pose_in), wt_adp_(wt_adp), wt_dens_(wt_dens), rmax_(rmax), radius_exp_(radius_exp), scorescale_( scorescale ),
-	exact_( exact ), verbose_(verbose), deriv_check_( deriv_check )
+		pose_(pose_in),
+		scorescale_( scorescale ),
+		wt_adp_(wt_adp),
+		wt_dens_(wt_dens),
+		rmax_(rmax),
+		radius_exp_(radius_exp),
+		exact_( exact ),
+		verbose_(verbose),
+		deriv_check_( deriv_check )
 {
 	B_EPS=0.0001;
 
@@ -175,7 +182,6 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 	}
 
 	core::Real dens_score = 0;
-	core::Size natom=0;
 	if (!exact_) {
 		for ( Size i = 1; i <= pose_copy.total_residue(); ++i ) {
 			if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
@@ -205,7 +211,6 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 		}
 		core::scoring::electron_density::getDensityMap().calcRhoC( litePose );
 		dens_score -= (moving_atoms_.size()/10.0) * core::scoring::electron_density::getDensityMap().getRSCC(litePose);
-		natom = litePose.size();
 	}
 
 

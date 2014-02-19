@@ -1008,18 +1008,20 @@ RigidBodyDofSeqRandomizeMover::get_name() const {
 
 
 // default constructor
-RigidBodyDofTransMover::RigidBodyDofTransMover() : parent(), jump_dir_(n2c), last_slide_good_(false)
+RigidBodyDofTransMover::RigidBodyDofTransMover() : parent(),
+		last_slide_good_(false),
+		jump_dir_(n2c)
 {
 	moves::Mover::type( "RigidBodyDofTrans" );
 }
 
 
-// @details Constructor for a rigid body translation mover
-// moves only along directions defined by a vector
-// of dofs (x,y or z). If more than two directions are
-// allowed the move along them as well. This probably
-// never makes sense. Perhaps more logical to select one
-// direction randomly then?
+/// @details Constructor for a rigid body translation mover
+/// moves only along directions defined by a vector
+/// of dofs (x,y or z). If more than two directions are
+/// allowed the move along them as well. This probably
+/// never makes sense. Perhaps more logical to select one
+/// direction randomly then?
 RigidBodyDofTransMover::RigidBodyDofTransMover(
 	core::conformation::symmetry::SymDof dof,
 	int const rb_jump_in,
@@ -1106,13 +1108,11 @@ RigidBodyDofTransMover::RigidBodyDofTransMover(
 	}
 }
 
-RigidBodyDofTransMover::RigidBodyDofTransMover( RigidBodyDofTransMover const & src ) :
-	//utility::pointer::ReferenceCount(),
-	parent( src ),
-	jump_dir_( src.jump_dir_ ),
-	step_size_( src.step_size_ ),
-	trans_axis_( src.trans_axis_ ),
-	last_slide_good_(false)
+RigidBodyDofTransMover::RigidBodyDofTransMover( RigidBodyDofTransMover const & src ) : parent( src ),
+		last_slide_good_(false),
+		jump_dir_( src.jump_dir_ ),
+		step_size_( src.step_size_ ),
+		trans_axis_( src.trans_axis_ )
 {}
 
 RigidBodyDofTransMover::~RigidBodyDofTransMover() {}

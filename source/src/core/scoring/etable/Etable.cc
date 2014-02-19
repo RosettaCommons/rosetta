@@ -87,12 +87,12 @@ using namespace basic::options::OptionKeys;
 ///  in favor of setting options from EtableOptions object. Would allow user to have multiple
 ///  etables around!
 
-///  constructor
+//  constructor
 Etable::Etable(
-	chemical::AtomTypeSetCAP atom_set_in, // like etable namespace
-	EtableOptions const & options,
-	std::string const alternate_parameter_set // = ""
-):
+		chemical::AtomTypeSetCAP atom_set_in, // like etable namespace
+		EtableOptions const & options,
+		std::string const alternate_parameter_set // = ""
+) :
 	// from atop_props_in:
 	atom_set_                 ( atom_set_in ),
 	n_atomtypes_              ( atom_set_in->n_atomtypes() ),
@@ -105,13 +105,13 @@ Etable::Etable(
 	max_dis2                  ( max_dis_*max_dis_ ),
 	etable_disbins            ( static_cast< int >( max_dis2 * bins_per_A2)+1),
 	lj_hbond_OH_donor_dis     ( options.lj_hbond_OH_donor_dis ),
-	lj_hbond_hdis             ( options.lj_hbond_hdis ),
+	lj_hbond_dis              ( 3.0 ),
 
 	// hard-coded for now
 	lj_use_lj_deriv_slope     ( true ),
 	lj_slope_intercept        ( 0.0 ),
 	lj_use_hbond_radii        ( true ),
-	lj_hbond_dis              ( 3.0 ),
+	lj_hbond_hdis             ( options.lj_hbond_hdis ),
 	lj_hbond_accOch_dis       ( 2.80 ), // unused
 	lj_hbond_accOch_hdis      ( 1.75 ), // unused
 	lj_use_water_radii        ( true ),
@@ -125,13 +125,12 @@ Etable::Etable(
 	epsilon                   ( 0.0001 ),
 	safe_max_dis2             ( max_dis2 - epsilon ),
 	hydrogen_interaction_cutoff2_( option[ score::fa_Hatr ] ?   // command-line option -- bad form; see note above.
-		std::pow( max_dis_ + 2*chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH, 2 ) :
-		std::pow(5.0,2) ),
+			std::pow( max_dis_ + 2*chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH, 2 ) :
+			std::pow(5.0,2) ),
 	max_non_hydrogen_lj_radius_( 0.0 ),
 	max_hydrogen_lj_radius_( 0.0 ),
 	slim_( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] ) // command-line option -- bad form; see note above.
 {
-
 	dimension_etable_arrays();
 	initialize_from_input_atomset( atom_set_in );
 	calculate_nblist_distance_thresholds( options );

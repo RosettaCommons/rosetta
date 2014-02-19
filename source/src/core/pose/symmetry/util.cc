@@ -414,10 +414,6 @@ make_symmetric_pdb_info(
 	// second pass, map (base chain,clone#) => new chain
 	for (uint clone_i = 1; clone_i <= nclones; ++clone_i) {
 		for ( Size res=1; res <= pdb_info_src->nres(); ++res ) {
-			Size res_master = res;
-			if (!symm_info->bb_is_independent(res))
-				res_master = symm_info->bb_follows(res);
-
 			char chn_id = pdb_info_src->chain( res );
 			Size chn_idx = basic::get_pymol_chain_index_1(chn_id);
 
@@ -1125,20 +1121,14 @@ get_full_intracomponent_and_neighbor_subs(Pose const &pose, std::string sym_dof_
 		utility_exit_with_message("core::pose::symmetry::get_full_intracomponent_and_neighbor_subs is only for use with multicomponent symmetries.");
 	}
 
-	Size monomer_lower_bound = 0;
-	Size monomer_upper_bound = 0;
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 	int	jump = sym_dof_jump_num( pose, sym_dof_name );
 	Real const contact_dist_sq = contact_dist * contact_dist;
 
 	ObjexxFCL::FArray1D_bool is_upstream ( pose.total_residue(), false );
 	pose.fold_tree().partition_by_jump( jump, is_upstream );
-	bool start = true;
 	for (Size i=1; i<=symm_info->num_independent_residues(); ++i) {
 		if ( is_upstream(i) ) continue;
-		if ( start ) monomer_lower_bound = i;
-		start = false;
-		monomer_upper_bound = i;
 	}
 	utility::vector1<std::string> subs = get_full_intracomponent_subs(pose,sym_dof_name);
 	for (Size i=1; i<=symm_info->num_total_residues_without_pseudo(); ++i) {

@@ -189,7 +189,9 @@ void Bond::SetSDFType( const core::Size SDF_ID) {
 	}
 }
 
-core::Size Bond::GetNumberOfElectrons() const {
+core::Size
+Bond::GetNumberOfElectrons() const
+{
 	switch( order_ ) {
 	case UnknownBondOrder:
 		// Technically, a triple bond could be in the mix, but in practice
@@ -210,6 +212,9 @@ core::Size Bond::GetNumberOfElectrons() const {
 	case OrbitalBondOrder:
 	case PseudoBondOrder:
 		TR.Warning << "Number of electrons for pseudobond requested." << std::endl;
+		return 0;
+	default:
+		TR.Warning << "Number of electrons for unspecified bond requested." << std::endl;
 		return 0;
 	}
 }
@@ -232,6 +237,9 @@ core::Size Bond::GetMinimumElectrons() const {
 	case OrbitalBondOrder:
 	case PseudoBondOrder:
 		TR.Warning << "Number of electrons for pseudobond requested." << std::endl;
+		return 0;
+	default:
+		TR.Warning << "Number of electrons for unspecified bond requested." << std::endl;
 		return 0;
 	}
 }
@@ -258,6 +266,9 @@ core::Size Bond::GetMaximumElectrons() const {
 	case PseudoBondOrder:
 		TR.Warning << "Number of electrons for pseudobond requested." << std::endl;
 		return 0;
+	default:
+		TR.Warning << "Number of electrons for unspecified bond requested." << std::endl;
+		return 0;
 	}
 }
 
@@ -281,6 +292,9 @@ core::Size Bond::GetSDFileID() const {
 		return 5; // TODO: Check if scombs actually used a literal 5 for orbitals.
 	case PseudoBondOrder:
 		TR.Warning << "SDF designation for a pseudo bond requested." << std::endl;
+		return 0;
+	default:
+		TR.Warning << "SDF designation for unspecified bond requested." << std::endl;
 		return 0;
 	}
 }

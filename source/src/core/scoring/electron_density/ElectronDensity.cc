@@ -1912,10 +1912,8 @@ ElectronDensity::getModelMapError(
 					Real delX = del_ampl * ratio_i - 1;
 
 					// centrics
-					Real scale=1.0;
 					if (H==0 || K==0 || L==0) {
 						delX = std::min( delX, -del_ampl * ratio_i - 1 );
-						scale=0.5;
 					}
 
 					Real delY = del_ampl * sqrt( 1-ratio_i*ratio_i );
@@ -4487,7 +4485,7 @@ void ElectronDensity::dCCdx_fastRes(
 
 	// make sure map is loaded
 	if (!isLoaded) {
-		TR << "[ ERROR ]  ElectronDensity::dCCdx_fastRes called but no map is loaded!\n";
+		TR.Error << "[ ERROR ]  ElectronDensity::dCCdx_fastRes called but no map is loaded!\n";
 		return;
 	}
 
@@ -4553,7 +4551,7 @@ void ElectronDensity::dCCdx_fastRes(
 	}
 }
 
-//  Compute the gradient (fast density score) w.r.t B factors
+// Compute the gradient (fast density score) w.r.t B factors
 Real
 ElectronDensity::dCCdB_fastRes(
 	int atmid, int resid,
@@ -4603,7 +4601,7 @@ ElectronDensity::dCCdB_fastRes(
 	return dCCdb;
 }
 
-//  Compute the gradient (fast density score) w.r.t B factors
+// Compute the gradient (fast density score) w.r.t B factors
 void
 ElectronDensity::dCCdBs(
 	core::pose::Pose const &pose,
@@ -4718,7 +4716,7 @@ ElectronDensity::dCCdBs(
 	if (varC_i > 0 && varO_i > 0)
 		CC_i = (sumCO_i - sumC_i*sumO_i/ vol_i) / sqrt( varC_i * varO_i );
 
-	//std::cerr << "score2 = " << CC_i << std::endl;
+	TR.Debug << "score2 = " << CC_i << std::endl;
 
 	// dCCdbs
 	for (core::uint i = 1; i <= natoms; ++i) {
@@ -5348,12 +5346,12 @@ ElectronDensity::readMRCandResize(
 	TR << "Effective B factor = " << effectiveB << std::endl;
 
 	// adjust mask widths based on resolution
-	OneGaussianScattering cscat = get_A( "C" );
-
 	// make sure mask extends >= 3 carbon STDEVS
 	core::Real mask_min = 3.0 * sqrt( effectiveB / (2*M_PI*M_PI) );
-	if ( basic::options::option[ basic::options::OptionKeys::edensity::atom_mask_min ].user() )
-		mask_min = basic::options::option[ basic::options::OptionKeys::edensity::atom_mask_min ];		//override mask_min - probably don't want to go below 2
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::atom_mask_min ].user() ) {
+		//override mask_min - probably don't want to go below 2
+		mask_min = basic::options::option[ basic::options::OptionKeys::edensity::atom_mask_min ];
+	}
 
 	if (ATOM_MASK < mask_min) {
 		TR << "Override ATOM_MASK (was " << ATOM_MASK << ", now " << mask_min << ")" << std::endl;

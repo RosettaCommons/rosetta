@@ -36,11 +36,12 @@ SidechainStateAssignment::SidechainStateAssignment( Size nmoltenres ) :
 {}
 
 SidechainStateAssignment::SidechainStateAssignment( SidechainStateAssignment const & src ) :
-	nmoltenres_( src.nmoltenres_ ),
-	state_assignments_( src.state_assignments_ ),
-	original_rotamer_id_( src.original_rotamer_id_ ),
-	energy_( src.energy_ ),
-	n_unassigned_( src.n_unassigned_ )
+		utility::pointer::ReferenceCount(src),
+		nmoltenres_( src.nmoltenres_ ),
+		state_assignments_( src.state_assignments_ ),
+		original_rotamer_id_( src.original_rotamer_id_ ),
+		energy_( src.energy_ ),
+		n_unassigned_( src.n_unassigned_ )
 {}
 
 SidechainStateAssignment const &

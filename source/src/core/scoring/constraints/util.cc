@@ -438,7 +438,7 @@ remove_constraints_of_type(core::pose::Pose & pose, std::string const type, core
 			utility::vector1< core::Size > residues = all_csts[i]->residues();
 
 			for (core::Size x = 1; x <= residues.size(); ++x){
-				if (start_res <= residues[x] >= end_res){
+				if ((start_res <= residues[x]) && (residues[x] <= end_res)) {
 					pose.remove_constraint(all_csts[i], true);
 					break;
 				}

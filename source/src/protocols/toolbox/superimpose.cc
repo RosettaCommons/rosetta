@@ -122,7 +122,7 @@ superposition_transform(
 	ObjexxFCL::FArray1D< numeric::Real > weights_fa(count, 1);
 	if (coord_weights.size() != 0)
 	{
-		runtime_assert(count = coord_weights.size());
+		runtime_assert(count == coord_weights.size());
 		for (core::Size i = 1; i <= count; i++)
 		{
 			weights_fa[i] =  coord_weights[i];

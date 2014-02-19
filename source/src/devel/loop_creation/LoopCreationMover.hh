@@ -128,7 +128,7 @@ private:
 	LoopCloserOP loop_closer_;
 	
 	//LoopCloser is a mover subclass responsible for refining the closed loop (design, minimization, etc)
-//	LoopRefinerOP loop_refiner_;
+	//	LoopRefinerOP loop_refiner_;
 
 	//Loop filter
 	protocols::filters::FilterOP loop_filter_;

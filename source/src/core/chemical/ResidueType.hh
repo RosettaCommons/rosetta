@@ -1770,20 +1770,22 @@ private:
 
 private:
 
-	/// AtomTypeSet Object
-	/**
+	// AtomTypeSet Object
+	/*
 			used to define the set of allowed atomtypes for this residue and
 			their properties
-	 */
+	*/
 	AtomTypeSetCAP atom_types_;
 	ElementSetCAP elements_;
-	/// MMAtomTypeSet
-	MMAtomTypeSetCAP mm_atom_types_;
-	/// GasteigerAtomTypeSet
-	gasteiger::GasteigerAtomTypeSetCOP gasteiger_atom_types_;
-	/// Orbital types
-	orbitals::OrbitalTypeSetCAP orbital_types_;
 
+	// MMAtomTypeSet
+	MMAtomTypeSetCAP mm_atom_types_;
+
+	// GasteigerAtomTypeSet
+	gasteiger::GasteigerAtomTypeSetCOP gasteiger_atom_types_;
+
+	// Orbital types
+	orbitals::OrbitalTypeSetCAP orbital_types_;
 
 	ResidueTypeSetCAP residue_type_set_;
 
@@ -1794,119 +1796,139 @@ private:
 	std::map<VD, VD> abase2_; //the base of the atom base
 
 
-	/// vector of atoms:
-	/**
-		 \note not pointers but Atom objects
-		 currently each Atom holds coords, atom_type, count_pair array index
+	// vector of atoms:
+	/*
+		note not pointers but Atom objects
+		currently each Atom holds coords, atom_type, count_pair array index
 
-		 Atom order rules:
-			 (1) heavyatoms before hydrogens
-			 (2) backbone heavyatoms before sidechain heavyatoms
-			 (3) hydrogens are grouped by the heavyatom they are attached to
+		Atom order rules:
+			(1) heavyatoms before hydrogens
+			(2) backbone heavyatoms before sidechain heavyatoms
+			(3) hydrogens are grouped by the heavyatom they are attached to
 					 and come in the order of those heavyatoms
-			 (4) as a consequence of (2)+(3) --> backbone hydrogens come before
+			(4) as a consequence of (2)+(3) --> backbone hydrogens come before
 					 sidechain hydrogens
-			 (5) atom order in the residue file is preserved subject to rules 1-4
-					 see finalize() for the logic to determine the atom order
+			(5) atom order in the residue file is preserved subject to rules 1-4
+					see finalize() for the logic to determine the atom order
 
-		 WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
-		 WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
-		 WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+		WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+		WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+		WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
 
-		 If you add new properties that are associated with atoms, You need
-		 to make sure that you iterate over the VDs! Then in the generate
-		 indices function, associate your VDs to atom ordering.
+		If you add new properties that are associated with atoms, You need
+		o make sure that you iterate over the VDs! Then in the generate
+		indices function, associate your VDs to atom ordering.
 
-		 There is no more old2new ordering!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		There is no more old2new ordering!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-		 WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
-		 WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
-		 WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+		WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+		WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+		WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
 
-	 **/
+	*/
 
 	utility::vector1< Orbital > orbitals_;
+
 	//////////////////////////////////////////////////////////////////
 	// ints -- see the WARNING above if these are atom indices
-	/// number of heavy atoms
+	// number of heavy atoms
 	Size nheavyatoms_;
-	/// number of hbond_acceptors
+
+	// number of hbond_acceptors
 	Size n_hbond_acceptors_;
-	/// number of hbond_donors
+
+	// number of hbond_donors
 	Size n_hbond_donors_;
-	/// number of orbitals
+
+	// number of orbitals
 	Size n_orbitals_;
-	/// number of backbone heavy atoms
+
+	// number of backbone heavy atoms
 	Size n_backbone_heavyatoms_;
-	/// the index of first sidechain hydrogen atom
+
+	// the index of first sidechain hydrogen atom
 	Size first_sidechain_hydrogen_;
-	/// number of dihedral angle atom sets
+
+	// number of dihedral angle atom sets
 	Size ndihe_;
-	/// number of bonds
+
+	// number of bonds
 	Size nbonds_;
 
 
 	//////////////////////////////////////////////////////////////////////
 	// per-atom properties
-	/// indices of the atoms psuedo bonded atoms. Used in orbital code
+	// indices of the atoms psuedo bonded atoms. Used in orbital code
 	utility::vector1< AtomIndices > bonded_neighbor_;
 	utility::vector1<utility::vector1<BondName> > bonded_neighbor_type_;
 	std::map<VD, utility::vector1<VD> > cut_bond_neighbor_;
-	/// indices of each heavyatom's first attached hydrogen
+
+	// indices of each heavyatom's first attached hydrogen
 	utility::vector1< Size        > attached_H_begin_;
-	/// indices of each heavyatom's last attached hydrogen
+
+	// indices of each heavyatom's last attached hydrogen
 	utility::vector1< Size        > attached_H_end_;
 	utility::vector1<VD> parents_;
 	std::map< VD, AtomICoor > icoor_;
 
-	//// Data for the mm potentials.  List all of the intra-residue dihedral angles and bond angles.
-	/// vector of sets of atoms that make up dihedral angles in the residue
+	// Data for the mm potentials.  List all of the intra-residue dihedral angles and bond angles.
+	// vector of sets of atoms that make up dihedral angles in the residue
 	utility::vector1< dihedral_atom_set > dihedral_atom_sets_;
-	/// all intra-residue dihedral angles that each atom "participates" in.
+
+	// all intra-residue dihedral angles that each atom "participates" in.
 	utility::vector1< utility::vector1< Size > > dihedrals_for_atom_;
-	/// vector of sets of atoms that make up bond angles in the residue
+
+	// vector of sets of atoms that make up bond angles in the residue
 	utility::vector1< bondangle_atom_set > bondangle_atom_sets_;
 	utility::vector1< utility::vector1< Size > > bondangles_for_atom_;
 
-	/// Data to describe virtual atoms that should shadow other atoms for the sake
-	/// of keeping inter-residue cycles closed when working with an atom tree, e.g.
-	/// NV shadows N on proline. For each atom, the following vector lists the index
-	/// of the atom it is shadowing.
+	// Data to describe virtual atoms that should shadow other atoms for the sake
+	// of keeping intra-residue cycles closed when working with an atom tree, e.g.
+	// NV shadows N on proline.  For each atom, the following vector lists the index
+	// of the atom it is shadowing.
 	std::map<VD, VD> atom_shadowed_;
-	//// Data for controlling chi.  Dependent data, computed in update_last_controlling_chi()
 
-	/// for each atom, the last controlling chi angle for that atom.  a chi of 0 represents
-	/// an atom whose location is not determined by any chi.
+	// Data for controlling chi.  Dependent data, computed in update_last_controlling_chi()
+	// for each atom, the last controlling chi angle for that atom.  a chi of 0 represents
+	// an atom whose location is not determined by any chi.
 	utility::vector1< Size > last_controlling_chi_;
 
-	/// for chi i, the list of atoms last controlled by i.  E.g. chi2 on LEU
-	/// list cd1, 1hd1, 1hd2, 1hd3, cd2, 2hd1, 2hd2, 2hd3, and hg1
+	// for chi i, the list of atoms last controlled by i.  E.g. chi2 on LEU
+	// list cd1, 1hd1, 1hd2, 1hd3, cd2, 2hd1, 2hd2, 2hd3, and hg1
 	utility::vector1< AtomIndices > atoms_last_controlled_by_chi_;
 
 	//////////////////////////////////////////////////////////////////////////
 	// vectors of indices
-	/// indices of Hbond acceptor positions
+	// indices of Hbond acceptor positions
 
 	//indices of atoms with orbitals
 	AtomIndices atoms_with_orb_index_;
+
 	//indices of haro hydrogens
 	AtomIndices Haro_index_;
+
 	//indices of hpolar hydrogens
 	AtomIndices Hpol_index_;
 	AtomIndices accpt_pos_;
-	/// indices of polar Hydrogens for Hbond donors
+
+	// indices of polar Hydrogens for Hbond donors
 	AtomIndices Hpos_polar_;
-	/// indices of apolar hydrogens
+
+	// indices of apolar hydrogens
 	AtomIndices Hpos_apolar_;
-	/// indices of Hbond acceptor positions that are part of the sidechain
-	/// must be a subset of the atoms listed in the accpt_pos_ array
+
+	// indices of Hbond acceptor positions that are part of the sidechain
+	// must be a subset of the atoms listed in the accpt_pos_ array
 	AtomIndices accpt_pos_sc_;
-	/// indices of polar Hydrogens for Hbond donors that are part of the sidechain
-	/// must be a subset of the atoms listed in the Hpos_polar_ array
+
+	// indices of polar Hydrogens for Hbond donors that are part of the sidechain
+	// must be a subset of the atoms listed in the Hpos_polar_ array
 	AtomIndices Hpos_polar_sc_;
-	/// Indices of all backbone atoms, hydrogens and heavyatoms
+
+	// Indices of all backbone atoms, hydrogens and heavyatoms
 	AtomIndices all_bb_atoms_;
-	/// Indices of all sidechain atoms, hydrogens and heavyatoms
+
+	// Indices of all sidechain atoms, hydrogens and heavyatoms
 	AtomIndices all_sc_atoms_;
 
 	/// @brief indices of all mainchain atoms
@@ -1933,35 +1955,38 @@ private:
 	// indices of four atoms to build each nu angle
 	utility::vector1<utility::vector1<VD> > nu_atoms_;
 
-	/// number of bonds separated between any pair of atoms in this residue
+	// number of bonds separated between any pair of atoms in this residue
 	utility::vector1< utility::vector1< int > > path_distance_;
 
-	/// atom index lookup by atom name string
-	std::map< std::string, VD > atom_name_to_vd_;//atom_graph_index_;
+	// atom index lookup by atom name string
+	std::map< std::string, VD > atom_name_to_vd_; //atom_graph_index_;
 
-	/// Legacy/backward compatibility device holds an ordered list of nodes' indices
+	// Legacy/backward compatibility device holds an ordered list of nodes' indices
 	VDs ordered_atoms_; // Position in the vector represents Atom in "ordered arrangement"
 
-	/// atom index lookup by atom name string
+	// atom index lookup by atom name string
 	std::map< std::string, int > orbitals_index_;
 
-	/// Additional non-Dunbrack rotamer bins
-	/**
+	// Additional non-Dunbrack rotamer bins
+	/*
 			pair<Real,Real>  ==>  mean,sdev
 			for each chi angle i and rotamer j: chi_rotamers_[i][j]
-	 **/
-	utility::vector1< utility::vector1< std::pair< Real, Real > > >chi_rotamers_;
+	 */
+	utility::vector1< utility::vector1< std::pair< Real, Real > > > chi_rotamers_;
 
 	std::string rotamer_library_name_;
 
-	/// NCAA rotlib stuff some of this is hardcoded elsewhere for the CAAs
-	/// whether or not we should use the NCAA rotlib if it exists
+	// NCAA rotlib stuff some of this is hardcoded elsewhere for the CAAs
+	// whether or not we should use the NCAA rotlib if it exists
 	bool use_ncaa_rotlib_;
-	/// path to the NCAA rotlib
+
+	// path to the NCAA rotlib
 	std::string ncaa_rotlib_path_;
-	/// the number of non-hydrogen chi angles in the NCAA rotlib
+
+	// the number of non-hydrogen chi angles in the NCAA rotlib
 	Size ncaa_rotlib_n_rots_;
-	/// the number of rotamer bins for each chi angle in the NCAA rotlib
+
+	// the number of rotamer bins for each chi angle in the NCAA rotlib
 	utility::vector1< Size > ncaa_rotlib_n_bins_per_rot_;
 
 
@@ -1995,45 +2020,46 @@ private:
 	bool is_methylated_cterminus_;
 	bool is_coarse_; //currently for coarse_RNA only
 	bool is_adduct_;
-	// etcetc
+	// etc., etc.
 
-	/// here we store the patch operations/variant types that describe this residue
+	// here we store the patch operations/variant types that describe this residue
 	utility::vector1< VariantType > variant_types_;
 
-	///Here we store arbitrary numeric properties with string names
+	// Here we store arbitrary numeric properties with string names
 	std::map<std::string,core::Real> numeric_properties_;
 
-	///Here we store arbitrary string properties with string names
+	// Here we store arbitrary string properties with string names
 	std::map<std::string,std::string> string_properties_;
 
 	//////////////////////////////////////////////////
 	// features
 
-	/// standard rosetta aa-type for knowledge-based potentials, may be aa_unk
-	AA aa_,rotamer_aa_;
+	// standard rosetta aa-type for knowledge-based potentials, may be aa_unk
+	AA aa_, rotamer_aa_;
 
-	/// unique residue id
+	// unique residue type id
 	std::string name_;
 
-	/// pdb-file id, need not be unique
+	// pdb-file id, need not be unique
 	std::string name3_;
 
-	/// interchangeability group lets a ResidueType claim to be functionally
-	/// interchangeable with any other ResidueType in the same group.  This
-	/// is used by the packer to decide which ResidueType from a desired group
-	/// has the right set of variants to be placed at a particular position.
-	/// E.g. if the interchangeability group is "ALA" and the packer is building
-	/// rotamers for residue 1, (the N-terminal residue) then, the packer will
-	/// select the "ALA:NTermProteinFull" ResidueType and build rotamers for it.
-	std::string interchangeability_group_;
-
-	/// one-letter code, also not necessarily unique
+	// one-letter code, also not necessarily unique
 	char name1_;
 
+	// interchangeability group lets a ResidueType claim to be functionally
+	// interchangeable with any other ResidueType in the same group.  This
+	// is used by the packer to decide which ResidueType from a desired group
+	// has the right set of variants to be placed at a particular position.
+	// E.g. if the interchangeability group is "ALA" and the packer is building
+	// rotamers for residue 1, (the N-terminal residue) then, the packer will
+	// select the "ALA:NTermProteinFull" ResidueType and build rotamers for it.
+	std::string interchangeability_group_;
+
 	// for rsd-rsd neighbor calculations
-	/// atom used for calculating residue-level neighbors
+	// atom used for calculating residue-level neighbors
 	VD nbr_atom_;
-	/// radius cutoff to define neighors
+
+	// radius cutoff to define neighors
 	Real nbr_radius_;
 
 	// Controls which atoms are selected by "select_orient_atoms",
@@ -2043,13 +2069,13 @@ private:
 	//Real mass_;
 	Real mass_;
 
-	/// number of actcoord atoms
-	/**
+	// number of actcoord atoms
+	/*
 			the geometric center of the atoms listed defined the residue's "action coordinate"
-	 **/
+	*/
 	Size n_actcoord_atoms_;
 
-	/// the unprocessed metadata
+	// the unprocessed metadata
 	sdf::MolData mol_data_;
 
 	/// @brief  Vector of inter-residue connections expected for this residuetype
@@ -2094,6 +2120,7 @@ private:
 	/// @note  ResidueConnection objects store the ideal internal coordinates for the connected atom
 	// ResidueConnection lower_connect_; // deprecated
 	Size lower_connect_id_; // which connection is the lower connection?
+
 	/// @brief  Polymer upper connections
 	/// @note  ResidueConnection objects store the ideal internal coordinates for the connected atom
 	// ResidueConnection upper_connect_; // deprecated
@@ -2115,7 +2142,6 @@ private:
 	// A container for residue properties unique to carbohydrates.
 	core::chemical::carbohydrates::CarbohydrateInfoOP carbohydrate_info_;
 
-
 	//ALL THE Indexed data
 	utility::vector1<Size> atom_base_indices_;
 	utility::vector1<Size> abase2_indices_;
@@ -2126,8 +2152,6 @@ private:
 	AtomIndices actcoord_atoms_indices_;
 	utility::vector1< AtomIndices > cut_bond_neighbor_indices_;
 	utility::vector1< Size > atom_shadowed_indices_;
-
-
 
 	////////////////
 	/// status
@@ -2150,7 +2174,7 @@ public:
 	void base_restype_name(std::string const & in) { base_restype_name_ = in;}
 	std::string base_restype_name() const {return base_restype_name_;}
 
-	// this is a total hack, im tired
+	// this is a total hack, I'm tired
 	mutable bool serialized_;
 private:
 	// end hack?

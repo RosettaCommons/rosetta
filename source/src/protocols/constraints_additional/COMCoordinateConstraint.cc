@@ -55,42 +55,40 @@ using namespace core;
 
 ///c-tor
 COMCoordinateConstraint::COMCoordinateConstraint(
-	utility::vector1< AtomID > const & atms,
-	Vector const & COM_target,
-	Real stdv,
-	Real interval,
-	scoring::ScoreType scoretype   /// ? TO DO -- give own scoretype
-):
-Constraint( scoretype ),
-atms_(atms),
-COM_target_(COM_target),
-stdv_(stdv),
-interval_(interval)
+		utility::vector1< AtomID > const & atms,
+		Vector const & COM_target,
+		Real stdv,
+		Real interval,
+		scoring::ScoreType scoretype  // TODO -- give own scoretype
+) :
+		Constraint( scoretype ),
+		COM_target_(COM_target),
+		atms_(atms),
+		stdv_(stdv),
+		interval_(interval)
 {}
 
 COMCoordinateConstraint::COMCoordinateConstraint(
-	utility::vector1< AtomID > const & atms,
-	Vector const & COM_target,
-	Real stdv,
-	scoring::ScoreType scoretype   /// ? TO DO -- give own scoretype
-):
-Constraint( scoretype ),
-atms_(atms),
-COM_target_(COM_target),
-stdv_(stdv),
-interval_(0.0)
+		utility::vector1< AtomID > const & atms,
+		Vector const & COM_target,
+		Real stdv,
+		scoring::ScoreType scoretype  // TODO -- give own scoretype
+) : Constraint( scoretype ),
+		COM_target_(COM_target),
+		atms_(atms),
+		stdv_(stdv),
+		interval_(0.0)
 {}
 
 COMCoordinateConstraint::COMCoordinateConstraint(
-	utility::vector1< AtomID > const & atms,
-	Vector const & COM_target,
-	scoring::ScoreType scoretype   /// ? TO DO -- give own scoretype
-):
-Constraint( scoretype ),
-atms_(atms),
-COM_target_(COM_target),
-stdv_(1.0),
-interval_(0.0)
+		utility::vector1< AtomID > const & atms,
+		Vector const & COM_target,
+		scoring::ScoreType scoretype  // TODO -- give own scoretype
+) : Constraint( scoretype ),
+		COM_target_(COM_target),
+		atms_(atms),
+		stdv_(1.0),
+		interval_(0.0)
 {}
 
 void

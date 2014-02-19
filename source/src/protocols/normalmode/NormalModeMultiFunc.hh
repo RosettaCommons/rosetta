@@ -109,10 +109,10 @@ protected: // accessors for subclasses
 
 private: // data
 
-	/// non-const since pose_ is modified by calls to operator()
+	// non-const since pose_ is modified by calls to operator()
 	pose::Pose & pose_;
 
-	/// non-const since min_map_ is modified by calls to dfunc()
+	// non-const since min_map_ is modified by calls to dfunc()
 	MinimizerMap & min_map_;
 
 	scoring::ScoreFunction const & score_function_;

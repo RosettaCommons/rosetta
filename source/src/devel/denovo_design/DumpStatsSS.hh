@@ -54,15 +54,16 @@ public:
 	core::Real compute_psipred_prob(core::pose::Pose & pose , std::string wanted_ss);
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn);
 	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+
 private:
 	std::string fname_;
-  utility::io::ozstream* output_;
+	utility::io::ozstream* output_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	std::string psipred_cmd_;
 	filters::PsiPredInterfaceOP psipred_interface_;
-  protocols::ss_prediction::SS_predictorOP ss_predictor_;
+	protocols::ss_prediction::SS_predictorOP ss_predictor_;
 	protocols::jd2::parser::BluePrintOP blueprint_;
-  core::Real start_time_;
+	core::Real start_time_;
 };
 
 }//devel 

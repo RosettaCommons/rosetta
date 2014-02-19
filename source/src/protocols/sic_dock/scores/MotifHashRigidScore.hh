@@ -55,8 +55,9 @@ class MotifHashRigidScore : public RigidScore {
 
 	core::Size nhashlookups() const { return nhashlookups_; }
 
- private:
- 	MotifHashRigidScore(){}
+private:
+	MotifHashRigidScore(){}
+
 	Pose pose1_,pose2_;
 	numeric::Xforms bbx1_,bbx2_;
 	mutable protocols::motif_hash::MotifHashCAP mh_;
@@ -69,9 +70,6 @@ class MotifHashRigidScore : public RigidScore {
 	std::string ss1_,ss2_;
 	mutable core::Size nhashlookups_;
 };
-
-
-
 
 } // namespace scores
 } // namespace sic_dock

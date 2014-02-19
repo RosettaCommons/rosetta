@@ -41,9 +41,10 @@ inline
 T
 radians( T const & angle, AngleUnit const unit )
 {
-	switch (unit) {
-		case RADIANS: return angle;
-		case DEGREES: return angle * NumericTraits< T >::degrees_to_radians();
+	if (unit == DEGREES) {
+		return angle * NumericTraits< T >::degrees_to_radians();
+	} else /* unit == RADIANS */ {
+		return angle;
 	}
 }
 
@@ -64,9 +65,10 @@ inline
 T &
 to_radians( T & angle, AngleUnit const unit )
 {
-	switch (unit) {
-		case RADIANS: return angle;
-		case DEGREES: return angle *= NumericTraits< T >::degrees_to_radians();
+	if (unit == DEGREES) {
+		return angle *= NumericTraits< T >::degrees_to_radians();
+	} else /* unit == RADIANS */ {
+		return angle;
 	}
 }
 
@@ -87,9 +89,10 @@ inline
 T
 degrees( T const & angle, AngleUnit const unit )
 {
-	switch (unit) {
-		case RADIANS: return angle * NumericTraits< T >::radians_to_degrees();
-		case DEGREES: return angle;
+	if (unit == RADIANS) {
+		return angle * NumericTraits< T >::radians_to_degrees();
+	} else /* unit == DEGREES */ {
+		return angle;
 	}
 }
 
@@ -110,9 +113,10 @@ inline
 T &
 to_degrees( T & angle, AngleUnit const unit )
 {
-	switch (unit) {
-		case RADIANS: return angle *= NumericTraits< T >::radians_to_degrees();
-		case DEGREES: return angle;
+	if (unit == RADIANS) {
+		return angle *= NumericTraits< T >::radians_to_degrees();
+	} else /* unit == DEGREES */ {
+		return angle;
 	}
 }
 
@@ -123,9 +127,10 @@ inline
 T
 from_radians( T const & angle, AngleUnit const unit )
 {
-	switch (unit) {
-		case RADIANS: return angle;
-		case DEGREES: return angle * NumericTraits< T >::radians_to_degrees();
+	if (unit == DEGREES) {
+		return angle * NumericTraits< T >::radians_to_degrees();
+	} else /* unit == RADIANS */ {
+		return angle;
 	}
 }
 
@@ -136,9 +141,10 @@ inline
 T
 from_degrees( T const & angle, AngleUnit const unit )
 {
-	switch (unit) {
-		case RADIANS: return angle * NumericTraits< T >::degrees_to_radians();
-		case DEGREES: return angle;
+	if (unit == RADIANS) {
+		return angle * NumericTraits< T >::degrees_to_radians();
+	} else /* unit == DEGREES */ {
+		return angle;
 	}
 }
 

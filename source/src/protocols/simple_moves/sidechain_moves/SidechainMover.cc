@@ -85,21 +85,21 @@ SidechainMoverCreator::mover_name() {
 }
 
 SidechainMover::SidechainMover():
-	rotamer_library_( core::pack::dunbrack::RotamerLibrary::get_instance() ),
-	pose_(0),
-	prob_uniform_(0.1),
-	prob_withinrot_(0.0),
-	preserve_detailed_balance_(false),
-	prob_random_pert_to_current_(0.0),
-	accept_according_to_dunbrack_(true),
-	sample_rotwells_unif_(false),
-	change_chi_without_replacing_residue_(false),
-	next_resnum_(0),
-	last_proposal_density_ratio_(1),
-	task_initialized_(false),
-	scratch_( new core::pack::dunbrack::RotamerLibraryScratchSpace ),
-	temperature0_(0.56),
-	sampling_temperature_(0.56)
+		rotamer_library_( core::pack::dunbrack::RotamerLibrary::get_instance() ),
+		pose_(0),
+		prob_uniform_(0.1),
+		prob_withinrot_(0.0),
+		prob_random_pert_to_current_(0.0),
+		preserve_detailed_balance_(false),
+		accept_according_to_dunbrack_(true),
+		sample_rotwells_unif_(false),
+		change_chi_without_replacing_residue_(false),
+		next_resnum_(0),
+		last_proposal_density_ratio_(1),
+		task_initialized_(false),
+		scratch_( new core::pack::dunbrack::RotamerLibraryScratchSpace ),
+		temperature0_(0.56),
+		sampling_temperature_(0.56)
 {}
 
 SidechainMover::SidechainMover(

@@ -503,8 +503,7 @@ Pose::append_pose_by_jump(
 			jump_anchor_atom,
 			jump_root_atom);
 
-	if(pdb_info() != NULL && src.pdb_info() != NULL)
-	{
+	if(pdb_info().get() != NULL && src.pdb_info().get() != NULL) {
 		pdb_info()->copy(
 				*src.pdb_info(),
 				1,

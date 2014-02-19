@@ -72,13 +72,12 @@ StepWiseRNA_Modeler::StepWiseRNA_Modeler( core::scoring::ScoreFunctionOP scorefx
 
 
 StepWiseRNA_Modeler::StepWiseRNA_Modeler( core::Size const sample_res,
-																	core::scoring::ScoreFunctionOP scorefxn ) :
-	moving_res_list_( make_vector1( sample_res ) ),
-	scorefxn_( scorefxn ),
-	options_( new StepWiseRNA_ModelerOptions ),
-	num_sampled_( 0 )
-{
-}
+		core::scoring::ScoreFunctionOP scorefxn ) :
+		scorefxn_( scorefxn ),
+		moving_res_list_( make_vector1( sample_res ) ),
+		options_( new StepWiseRNA_ModelerOptions ),
+		num_sampled_( 0 )
+{}
 
 //Destructor
 	StepWiseRNA_Modeler::~StepWiseRNA_Modeler()

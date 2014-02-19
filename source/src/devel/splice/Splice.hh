@@ -214,62 +214,134 @@ public:
 private:
 	void save_values(); // call at beginning of apply. Used to keep the from_res/to_res values, which might be changed by apply during a run
 	void retrieve_values(); // call at end of apply
-	utility::vector1< std::string > segment_names_ordered_;//This vector will hold the segment names by order so when the segments are concatented into a single profile it is done by user defined order
+
+	// This vector will hold the segment names by order so when the segments are concatenated into a single profile it
+	// is done by user defined order
+	utility::vector1< std::string > segment_names_ordered_;
+
 	std::string dofs_pdb_name; //This variable hold the name of the pdb in the torsion db
 	core::Size from_res_, to_res_, saved_from_res_, saved_to_res_;
 	std::string source_pdb_;
-	bool ccd_;//dflt true; do ccd?
-	core::Real dihedral_const_;//dflt 1; gideonla
-	core::Real coor_const_;//dflt 1; gideonla
-	core::Real design_shell_;//dflt 6.0 gideonla
-	core::Real repack_shell_;//dflt 8.0 gideonla
+	bool ccd_; //dflt true; do ccd?
+	core::Real dihedral_const_; //dflt 1; gideonla
+	core::Real coor_const_; //dflt 1; gideonla
+	core::Real design_shell_; //dflt 6.0 gideonla
+	core::Real repack_shell_; //dflt 8.0 gideonla
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt score12 with reweighted sheet weight
-	core::Real rms_cutoff_; //dflt 99999; after splicing, checks the average displacement of Ca atoms in the source and target segments. Failure leads to mover failure and no output
+
+	// dflt 99999; after splicing, checks the average displacement of Ca atoms in the source and target segments.
+	// Failure leads to mover failure and no output
+	core::Real rms_cutoff_;
+
 	core::Size res_move_; //dflt 4; how many residues to allow to move during ccd
-	bool randomize_cut_; //dflt false; true: place cut in a randomly chosen loop residue, if available. false: place cut at loop's end
+
+	// dflt false; true: place cut in a randomly chosen loop residue, if available. false: place cut at loop's end
+	bool randomize_cut_;
+
 	bool cut_secondarystruc_; //dflt false; true: allows placing the cut within secondary structures
-	core::pack::task::TaskFactoryOP task_factory_; // dflt NULL; Another access point to setting which residues to splice. This works at present only with one segment, so you set designable residues and Splice will then determine the first and last residues among these and splice that section out.
-	core::pack::task::TaskFactoryOP design_task_factory_; // dflt NULL; a task_factory used to restrict design during splicing. A 'good' idea for this is to define the aligned segments through RestrictToAlignedSegments and send those to this task_factory. During splicing, this task_factory will be used to restrict the design operations in addition to what DesignAroundOperation determines as the designable residues. So, by applying the user-defined RestrictToAlignedSegments as well as dao, you get design on the spliced segment + its vicinity in other aligned segments, and repack in a slightly larger shell.
+
+	// dflt NULL; Another access point to setting which residues to splice.
+	// This works at present only with one segment, so you set designable residues and Splice will then determine the
+	// first and last residues among these and splice that section out.
+	core::pack::task::TaskFactoryOP task_factory_;
+
+	// dflt NULL; a task_factory used to restrict design during splicing.
+	// A 'good' idea for this is to define the aligned segments through RestrictToAlignedSegments and send those to
+	// this task_factory.  During splicing, this task_factory will be used to restrict the design operations in
+	// addition to what DesignAroundOperation determines as the designable residues.  So, by applying the user-defined
+	// RestrictToAlignedSegments as well as dao, you get design on the spliced segment + its vicinity in other aligned
+	// segments, and repack in a slightly larger shell.
+	core::pack::task::TaskFactoryOP design_task_factory_;
+
 	std::string torsion_database_fname_; //dflt ""; set to true in order to read directly from a torsion database
 	core::Size database_entry_; //dflt 0; in which case tests a random entry in each apply
 	std::string database_pdb_entry_; // dflt ""; e.g., "1yihl" specify this only if you want just one loop to be spliced
 	utility::vector1< ResidueBBDofs > torsion_database_;
-	std::string template_file_; //dflt ""; which source file to use as the template to determine what from_res() and to_res() refer to. The input structure may change during a trajectory and so from_res() and to_res() might lose their sense. If this is "", the input file is taken to be template
-	bool poly_ala_; /// dflt true; thread ala residues in each position other than Gly/Pro or conserved in the source pdb. If false, keeps the input sequence (except Gly/Pro, which are replaced)
+
+	// dflt ""; which source file to use as the template to determine what from_res() and to_res() refer to.
+	// The input structure may change during a trajectory and so from_res() and to_res() might lose their sense.
+	// If this is "", the input file is taken to be template
+	std::string template_file_;
+
+	// dflt true; thread ala residues in each position other than Gly/Pro or conserved in the source pdb.
+	// If false, keeps the input sequence (except Gly/Pro, which are replaced)
+	bool poly_ala_;
+
 	bool equal_length_; // dflt false; restrict threading to loops equal in length to the original
-	core::pose::PoseOP template_pose_, start_pose_; // template - relative to what is the torsion dbase computed (1x9q); start - the starting pose for replacing the torsions at the start
+
+	// template - relative to what is the torsion dbase computed (1x9q)
+	// start - the starting pose for replacing the torsions at the start
+	core::pose::PoseOP template_pose_, start_pose_;
 	core::kinematics::FoldTreeOP saved_fold_tree_;
+
 	bool design_; //dflt false; design all non-pro/gly residues in template
 	utility::vector1< int > delta_lengths_; // dflt empty; change loop length by how much? 0 is always assumed
 	bool dbase_iterate_; //dflt false;
 	bool first_pass_; // dflt true;
-	utility::vector1< core::Size > dbase_subset_; // indices to the subset of the dbase library over which multiple calls iterate
-	utility::vector1< core::Size >::const_iterator current_dbase_entry_; // used if multiple calls to splice are made to iterate through the list
-	utility::pointer::owning_ptr< basic::datacache::DataMapObj< bool > > end_dbase_subset_; // dflt false; this is a weird construct to allow placing the variable on the basic::datacache::DataMap
-	utility::pointer::owning_ptr< basic::datacache::DataMapObj < utility::vector1< core::Size > > > locked_res_; // dflt NULL; a residue that serves as the root for a fold tree jump to the other chain. This residue is expected to be within the loop span, and allows the loop to be refined while keeping the rigid body jump between the two chains; it's a only ostensibly a vector, as it has to be compatible with placestub, but it only looks at the first element of that vector
+
+	// indices to the subset of the dbase library over which multiple calls iterate
+	utility::vector1< core::Size > dbase_subset_;
+
+	// used if multiple calls to splice are made to iterate through the list
+	utility::vector1< core::Size >::const_iterator current_dbase_entry_;
+
+	// dflt false; this is a weird construct to allow placing the variable on the basic::datacache::DataMap
+	utility::pointer::owning_ptr< basic::datacache::DataMapObj< bool > > end_dbase_subset_;
+
+	// dflt NULL; a residue that serves as the root for a fold tree jump to the other chain.
+	// This residue is expected to be within the loop span, and allows the loop to be refined while keeping the rigid
+	// body jump between the two chains; it's a only ostensibly a vector, as it has to be compatible with placestub,
+	// but it only looks at the first element of that vector
+	utility::pointer::owning_ptr< basic::datacache::DataMapObj < utility::vector1< core::Size > > > locked_res_;
+
 	char locked_res_id_; // dflt ''; the one-letter code for the locked residue
-	std::string checkpointing_file_; // dflt ""; a file that contains checkpointing information to recover from job termination when iterating over a loop database
+
+	// dflt ""; a file that contains checkpointing information to recover from job termination when iterating over a
+	// loop database
+	std::string checkpointing_file_;
+
 	std::string loop_dbase_file_name_; //dflt ""; a file name into which the loop database is dumped
-	std::string loop_pdb_source_; //dflt ""; what is the source pdb from which the loop came? This is used in writing the loop to the loop dbase, and helps keep track of where loops come from during design.
-	utility::pointer::owning_ptr< basic::datacache::DataMapObj< std::string > > mover_tag_; /// dflt NULL; to communicate the current Splice mover's loop origin to the GenericMC
+
+	// dflt ""; what is the source pdb from which the loop came?
+	// This is used in writing the loop to the loop dbase, and helps keep track of where loops come from during design.
+	std::string loop_pdb_source_;
+
+	// dflt NULL; to communicate the current Splice mover's loop origin to the GenericMC
+	utility::pointer::owning_ptr< basic::datacache::DataMapObj< std::string > > mover_tag_;
+
 	protocols::filters::FilterOP splice_filter_;
 	std::string Pdb4LetName_;
 	std::string protein_family_;
+
+	// A map form protein family name to the order of the segments (eg. <"antibodies",<L1_L2,L3,H1_H2,H3>>)
 	std::map< std::string, utility::vector1< std::string > > order_segments_;
 	core::Size chain_num_;
 
-	//A map form protein family name to the order of the segments (eg. <"antibodies",<L1_L2,L3,H1_H2,H3>>)
-
-///sequence profiles
+	//sequence profiles
 	bool use_sequence_profiles_; // dflt false; set internally only, by whether or not the Segments are defined
 	std::string segment_type_; //dflt ""; what segment is this? Used to decide which profiles to use. examples, L1,L2,L3
 	core::Size current_segment_pos; // save the position of the segment_type_ in the segment name ordered vector.
-	std::map< std::string, SpliceSegmentOP > splice_segments_; // stores sequence profiles for all possible segments (this doesn't change during a run), e.g., L1, ...; L2, ....
-	std::map< std::string/*which segment (L1,L2...)*/, std::string/*pdb name*/ > pdb_segments_; // which pdb file did each segment in the current pose come from (used to build the current profile). This uses the pose comment structure to retain the information through successive applies
-	core::Real profile_weight_away_from_interface_; //dflt 1.0; you can define a different weight outside an 8A shell around the partner protein. This should typically be set higher than 1.0, implying that the sequence profile carries a larger weight away from the functional site
+
+	// stores sequence profiles for all possible segments (this doesn't change during a run), e.g., L1, ...; L2, ....
+	std::map< std::string, SpliceSegmentOP > splice_segments_;
+
+	// which pdb file did each segment in the current pose come from (used to build the current profile).
+	// This uses the pose comment structure to retain the information through successive applies
+	std::map< std::string/*which segment (L1,L2...)*/, std::string/*pdb name*/ > pdb_segments_;
+
+	// dflt 1.0; you can define a different weight outside an 8A shell around the partner protein.
+	// This should typically be set higher than 1.0, implying that the sequence profile carries a larger weight away
+	// from the functional site
+	core::Real profile_weight_away_from_interface_;
+
 	bool restrict_to_repacking_chain2_; // dflt true; if false, does two-sided design during splice
-	bool add_sequence_constraints_only_; // dflt false; if true, only add constraints and return, don't do any splicing. (ask Assaf)
-	bool rb_sensitive_; //dflt false; should we impose the RB dof of the current pose on the template before finding aligned residues. (Ask Christoffer)
+
+	// dflt false; if true, only add constraints and return, don't do any splicing. (ask Assaf)
+	bool add_sequence_constraints_only_;
+
+	// dflt false; should we impose the RB dof of the current pose on the template before finding aligned residues.
+	// (Ask Christoffer)
+	bool rb_sensitive_;
 	std::map < std::string, std::string> protein_family_to_database_;
 };
 

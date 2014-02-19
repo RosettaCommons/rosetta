@@ -102,7 +102,6 @@ namespace sugar {
 			print_sugar_pucker_state( "|pucker_state = ", bulge_res_pucker_state, TR.Debug );
 
 			TR.Debug << " bulge_suite = " << bulge_suite << " five_prime_chain_break = " << five_prime_chain_break;
-
 	}
 
 } //sugar

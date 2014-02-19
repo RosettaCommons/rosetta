@@ -154,8 +154,8 @@ ResidueInformation::operator!=(
 
 ///////////////////////////////////////////////////////////////////////////////
 FileData::FileData() :
-	remarks(new pose::Remarks),
-	header(0)
+		header(0),
+		remarks(new pose::Remarks)
 {}
 
 FileData::~FileData()

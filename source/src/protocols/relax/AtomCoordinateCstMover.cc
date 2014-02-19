@@ -65,22 +65,22 @@ AtomCoordinateCstMoverCreator::mover_name()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 AtomCoordinateCstMover::AtomCoordinateCstMover() :
-	cst_sd_( 0.5 ),
-	bounded_( false ),
-	amb_hnq_( false ),
-	cst_width_( 0 ),
-	cst_sidechain_( false )
+		cst_sd_( 0.5 ),
+		bounded_( false ),
+		cst_width_( 0 ),
+		cst_sidechain_( false ),
+		amb_hnq_( false )
 {}
 
-AtomCoordinateCstMover::AtomCoordinateCstMover( AtomCoordinateCstMover const & other ) :
-	refpose_( other.refpose_ ),
-	cst_sd_( other.cst_sd_ ),
-	bounded_( other.bounded_ ),
-	amb_hnq_( other.amb_hnq_ ),
-	cst_width_( other.cst_width_ ),
-	cst_sidechain_( other.cst_sidechain_ ),
-	loop_segments_( other.loop_segments_ ),
-	task_segments_( other.task_segments_ )
+AtomCoordinateCstMover::AtomCoordinateCstMover( AtomCoordinateCstMover const & other ) : protocols::moves::Mover(other),
+		refpose_( other.refpose_ ),
+		cst_sd_( other.cst_sd_ ),
+		bounded_( other.bounded_ ),
+		cst_width_( other.cst_width_ ),
+		cst_sidechain_( other.cst_sidechain_ ),
+		amb_hnq_( other.amb_hnq_ ),
+		loop_segments_( other.loop_segments_ ),
+		task_segments_( other.task_segments_ )
 {}
 
 AtomCoordinateCstMover::~AtomCoordinateCstMover() {}
@@ -158,7 +158,7 @@ void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 
 	// Warn about not having a virtual root (but go ahead with constraints).
 	if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
-		TR.Warning << "WARNING: Adding coordinate constrants to a pose without a virtual root - results may not be as expected." << std::endl;
+		TR.Warning << "WARNING: Adding coordinate constraints to a pose without a virtual root - results may not be as expected." << std::endl;
 	}
 
 	for ( core::Size i = 1; i<= nres; ++i ) {
@@ -201,25 +201,43 @@ void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 				} else {
 					function = new core::scoring::func::HarmonicFunc( 0.0, cst_sd_ );
 				}
-				if( amb_hnq_ && cst_sidechain_ &&  // Rely on shortcutting evaluation to speed things up - get to else clause as soon as possible.
-						(pose_i_rsd.aa() == core::chemical::aa_asn && targ_j_rsd.aa() == core::chemical::aa_asn && ( pose_i_rsd.atom_name(ii) == " OD1" || pose_i_rsd.atom_name(ii) == " ND2" )) ||
-						(pose_i_rsd.aa() == core::chemical::aa_gln && targ_j_rsd.aa() == core::chemical::aa_gln && ( pose_i_rsd.atom_name(ii) == " OE1" || pose_i_rsd.atom_name(ii) == " NE2" )) ||
+
+				// Rely on shortcutting evaluation to speed things up - get to else clause as soon as possible.
+				if( amb_hnq_ && cst_sidechain_ &&
+						( (pose_i_rsd.aa() == core::chemical::aa_asn && targ_j_rsd.aa() == core::chemical::aa_asn &&
+								( pose_i_rsd.atom_name(ii) == " OD1" || pose_i_rsd.atom_name(ii) == " ND2" )) ||
+						(pose_i_rsd.aa() == core::chemical::aa_gln && targ_j_rsd.aa() == core::chemical::aa_gln &&
+								( pose_i_rsd.atom_name(ii) == " OE1" || pose_i_rsd.atom_name(ii) == " NE2" )) ||
 						(pose_i_rsd.aa() == core::chemical::aa_his && targ_j_rsd.aa() == core::chemical::aa_his &&
-								(pose_i_rsd.atom_name(ii) == " ND1" || pose_i_rsd.atom_name(ii) == " NE2" || pose_i_rsd.atom_name(ii) == " CD2" || pose_i_rsd.atom_name(ii) == " CE1")) ) {
+								(pose_i_rsd.atom_name(ii) == " ND1" || pose_i_rsd.atom_name(ii) == " NE2" ||
+										pose_i_rsd.atom_name(ii) == " CD2" || pose_i_rsd.atom_name(ii) == " CE1")) ) ) {
 					std::string atom1, atom2;
-					if ( pose_i_rsd.aa() == core::chemical::aa_asn ) { atom1 = " OD1"; atom2 = " ND2"; }
-					else if ( pose_i_rsd.aa() == core::chemical::aa_gln ) { atom1 = " OE1"; atom2 = " NE2"; }
-					else if ( pose_i_rsd.aa() == core::chemical::aa_his && (pose_i_rsd.atom_name(ii) == " ND1" || pose_i_rsd.atom_name(ii) == " CD2") ) { atom1 = " ND1"; atom2 = " CD2"; }
-					else if ( pose_i_rsd.aa() == core::chemical::aa_his && (pose_i_rsd.atom_name(ii) == " NE2" || pose_i_rsd.atom_name(ii) == " CE1") ) { atom1 = " NE2"; atom2 = " CE1"; }
-					else {
+					if ( pose_i_rsd.aa() == core::chemical::aa_asn ) {
+						atom1 = " OD1";
+						atom2 = " ND2";
+					} else if ( pose_i_rsd.aa() == core::chemical::aa_gln ) {
+						atom1 = " OE1";
+						atom2 = " NE2";
+					} else if ( pose_i_rsd.aa() == core::chemical::aa_his &&
+							(pose_i_rsd.atom_name(ii) == " ND1" || pose_i_rsd.atom_name(ii) == " CD2") ) {
+						atom1 = " ND1";
+						atom2 = " CD2";
+					} else if ( pose_i_rsd.aa() == core::chemical::aa_his &&
+							(pose_i_rsd.atom_name(ii) == " NE2" || pose_i_rsd.atom_name(ii) == " CE1") ) {
+						atom1 = " NE2";
+						atom2 = " CE1";
+					} else {
 						utility_exit_with_message("Logic error in AtomCoordinateConstraints");
 					}
 					core::scoring::constraints::AmbiguousConstraintOP amb_constr( new core::scoring::constraints::AmbiguousConstraint );
-					amb_constr->add_individual_constraint( new CoordinateConstraint(  core::id::AtomID(ii,i), core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom1 ), function ) );
-					amb_constr->add_individual_constraint( new CoordinateConstraint(  core::id::AtomID(ii,i), core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom2 ), function ) );
+					amb_constr->add_individual_constraint( new CoordinateConstraint(  core::id::AtomID(ii,i),
+							core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom1 ), function ) );
+					amb_constr->add_individual_constraint( new CoordinateConstraint(  core::id::AtomID(ii,i),
+							core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom2 ), function ) );
 					pose.add_constraint( amb_constr );
 				} else {
-					pose.add_constraint( new CoordinateConstraint(	core::id::AtomID(ii,i), core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( jj ), function ) );
+					pose.add_constraint( new CoordinateConstraint(	core::id::AtomID(ii,i),
+							core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( jj ), function ) );
 				}
 			} // for atom
 		} // if(loop)

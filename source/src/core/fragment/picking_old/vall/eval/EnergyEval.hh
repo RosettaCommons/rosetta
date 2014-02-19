@@ -170,7 +170,7 @@ public: // accessor
 
 	/// @brief the ScoreFunction used to evaluate the pose
 	inline
-	ScoreFunctionCOP const & score_function() const {
+	ScoreFunctionCOP score_function() const {
 		return score_function_;
 	}
 

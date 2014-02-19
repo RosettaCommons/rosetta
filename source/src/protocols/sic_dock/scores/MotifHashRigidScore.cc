@@ -57,24 +57,24 @@ using core::Size;
 
 
 MotifHashRigidScore::MotifHashRigidScore(
-	Pose const & _pose1,
-	Pose const & _pose2
+		Pose const & _pose1,
+		Pose const & _pose2
 ):
-	pose1_(_pose1),
-	pose2_(_pose2),
-	mh_(NULL),
-	xs_(NULL),
-	xsee_(NULL),
-	xseh_(NULL),
-	xshe_(NULL),
-	xshh_(NULL),
-	xspp_(NULL),
-	nss1_(0),
-	nss2_(0),
-	ssinfo1_(NULL),
-	ssinfo2_(NULL),
-	reshash_(NULL),
-	nhashlookups_(0)
+		pose1_(_pose1),
+		pose2_(_pose2),
+		mh_(NULL),
+		xs_(NULL),
+		xsee_(NULL),
+		xseh_(NULL),
+		xshe_(NULL),
+		xshh_(NULL),
+		xspp_(NULL),
+		ssinfo1_(NULL),
+		ssinfo2_(NULL),
+		nss1_(0),
+		nss2_(0),
+		reshash_(NULL),
+		nhashlookups_(0)
 {
 	core::scoring::dssp::Dssp(pose1_).insert_ss_into_pose_no_IG_helix(pose1_);
 	core::scoring::dssp::Dssp(pose2_).insert_ss_into_pose_no_IG_helix(pose2_);
@@ -109,21 +109,6 @@ MotifHashRigidScore::MotifHashRigidScore(
 		if     (listpose.residue(ir).has("CB")) reslist_.push_back(std::make_pair(listpose.residue(ir).xyz("CB"),ir));
 		else if(listpose.residue(ir).has("CA")) reslist_.push_back(std::make_pair(listpose.residue(ir).xyz("CA"),ir));
 	}
-	// cout << pose1_.secstruct() << endl;
-	// cout << pose2_.secstruct() << endl;
-	// ssinfo1_ = new protocols::fldsgn::topology::SS_Info2(pose1_,pose1_.secstruct());
-	// ssinfo2_ = new protocols::fldsgn::topology::SS_Info2(pose2_,pose2_.secstruct());
-	// nss1_=0;
-	// for(Size ir = 1; ir <= pose1_.n_residue(); ++ir){
-	// 	// cout << ir << " " << ssinfo1_->ss_element_id(ir) << endl;
-	// 	nss1_ = std::max(nss1_,ssinfo1_->ss_element_id(ir));
-	// }
-	// // utility_exit_with_message("foo");
-	// nss2_=0;
-	// for(Size ir = 1; ir <= pose2_.n_residue(); ++ir){
-	// 	// cout << ir << " " << ssinfo2_->ss_element_id(ir) << endl;
-	// 	nss2_ = std::max(nss2_,ssinfo2_->ss_element_id(ir));
-	// }
 }
 
 MotifHashRigidScore::~MotifHashRigidScore(){
@@ -352,8 +337,6 @@ MotifHashRigidScore::show(
 ) const {
 	show(out,x1,x2,NULL,width);
 }
-
-
 
 } // namespace scores
 } // namespace sic_dock

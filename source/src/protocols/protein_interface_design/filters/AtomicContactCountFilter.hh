@@ -35,49 +35,49 @@ namespace filters {
 
 class AtomicContactCountFilter : public protocols::filters::Filter
 {
-	public:
-		AtomicContactCountFilter();
-		AtomicContactCountFilter(core::Real distance_cutoff);
-    AtomicContactCountFilter( AtomicContactCountFilter const & copy );
+public:
+	AtomicContactCountFilter();
+	AtomicContactCountFilter(core::Real distance_cutoff);
+	AtomicContactCountFilter( AtomicContactCountFilter const & copy );
 
-    virtual protocols::filters::FilterOP clone() const;
-    virtual protocols::filters::FilterOP fresh_instance() const;
-    virtual ~AtomicContactCountFilter();
+	virtual protocols::filters::FilterOP clone() const;
+	virtual protocols::filters::FilterOP fresh_instance() const;
+	virtual ~AtomicContactCountFilter();
 
-    // @brief Filter name
-    virtual std::string name() const { return "AtomicContactCountFilter"; }
+	// @brief Filter name
+	virtual std::string name() const { return "AtomicContactCountFilter"; }
 
-		void initialize_all_atoms(core::pack::task::TaskFactoryOP task_factory = NULL);
+	void initialize_all_atoms(core::pack::task::TaskFactoryOP task_factory = NULL);
 
-		void initialize_cross_jump(core::Size jump, std::string sym_dof_name = "", core::pack::task::TaskFactoryOP task_factory = NULL, bool normalize_by_sasa = false);
+	void initialize_cross_jump(core::Size jump, std::string sym_dof_name = "", core::pack::task::TaskFactoryOP task_factory = NULL, bool normalize_by_sasa = false);
 
-		void initialize_cross_chain(core::pack::task::TaskFactoryOP task_factory = NULL, bool normalize_by_sasa = false, bool detect_chains_for_interface_by_task = false);
+	void initialize_cross_chain(core::pack::task::TaskFactoryOP task_factory = NULL, bool normalize_by_sasa = false, bool detect_chains_for_interface_by_task = false);
 
-    void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
-		/// @brief Returns true if the given pose passes the filter, false otherwise.
-		virtual bool apply( core::pose::Pose const & /*pose*/ ) const { return true; }
+	/// @brief Returns true if the given pose passes the filter, false otherwise.
+	virtual bool apply( core::pose::Pose const & /*pose*/ ) const { return true; }
 
-		/// @brief used to report filter internals through a score or silent file
-		// to determine that derived class has not overridden }
-		virtual core::Real report_sm( core::pose::Pose const & pose ) const { return compute(pose); }
+	/// @brief used to report filter internals through a score or silent file
+	// to determine that derived class has not overridden }
+	virtual core::Real report_sm( core::pose::Pose const & pose ) const { return compute(pose); }
 
-		core::Real compute( core::pose::Pose const &) const;
+	core::Real compute( core::pose::Pose const &) const;
 
-	private:
-		//TODO Alex Ford Add support for specified chain mode, need to add chain-id resolution to tag parsing.
-		//TODO Alex Ford Likely even better to abstract chain detection & jump code into an interface sasa calculator
-		// and compute the sasa value there.
-		enum Mode { ALL, CROSS_CHAIN_DETECTED, CROSS_CHAIN_ALL, CROSS_JUMP };
+private:
+	//TODO Alex Ford Add support for specified chain mode, need to add chain-id resolution to tag parsing.
+	//TODO Alex Ford Likely even better to abstract chain detection & jump code into an interface sasa calculator
+	// and compute the sasa value there.
+	enum Mode { ALL, CROSS_CHAIN_DETECTED, CROSS_CHAIN_ALL, CROSS_JUMP };
 
-		core::pack::task::TaskFactoryOP task_factory_;
-		core::Real distance_cutoff_;
+	core::pack::task::TaskFactoryOP task_factory_;
+	core::Real distance_cutoff_;
 
-		Mode filter_mode_;
-		bool normalize_by_sasa_, ss_only_;
+	Mode filter_mode_;
+	bool normalize_by_sasa_, ss_only_;
 
-		core::Size jump_;
-		std::string sym_dof_name_;
+	core::Size jump_;
+	std::string sym_dof_name_;
 };
 
 }

@@ -106,18 +106,18 @@ LoopCreationMoverCreator::mover_name()
 
 ///@brief default constructor
 LoopCreationMover::LoopCreationMover():
-	loop_inserter_(NULL),
-	loop_closer_(NULL),
-	loop_filter_(NULL),
-	attempts_per_anchor_(1),
-	refine_(true),
-	design_loops_(false),
-	include_neighbors_(false),
-	minimize_loops_(true),
-	filter_by_lam_(false),
-	lam_score_cutoff_(0),
-	dump_pdbs_(false),
-	asym_size_(0)
+		loop_inserter_(NULL),
+		loop_closer_(NULL),
+		loop_filter_(NULL),
+		attempts_per_anchor_(1),
+		refine_(true),
+		design_loops_(false),
+		include_neighbors_(false),
+		minimize_loops_(true),
+		filter_by_lam_(false),
+		lam_score_cutoff_(0),
+		asym_size_(0),
+		dump_pdbs_(false)
 {
 	init();
 }

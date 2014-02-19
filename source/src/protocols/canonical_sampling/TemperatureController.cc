@@ -113,8 +113,8 @@ TemperatureController::TemperatureController() { // {{{1
 }
 
 TemperatureController::TemperatureController( // {{{1
-		TemperatureController const & other ) {
-
+		TemperatureController const & other ) : protocols::moves::Mover(other)
+{
 	temperatures_ = other.temperatures_;
 	temperature_stride_ = other.temperature_stride_;
 	trust_current_temp_ = other.trust_current_temp_ ;

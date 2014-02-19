@@ -49,96 +49,96 @@ class EmbedSearchParamsOptions : public basic::resource_manager::ResourceOptions
 
 public:
 
-    /// @brief Constructor
-    EmbedSearchParamsOptions();
-    
-    /// @brief Destructor
-    virtual ~EmbedSearchParamsOptions();
+	/// @brief Constructor
+	EmbedSearchParamsOptions();
 
-    /// @brief Parse .xml file for embedding opts
-    virtual
-    void
-    parse_my_tag(
-                 utility::tag::TagCOP tag
-                 );
+	/// @brief Destructor
+	virtual ~EmbedSearchParamsOptions();
 
-    /// @brief Return Options Class Type - Embedding Search Parameters
-    virtual
-    std::string
-    type() const;
+	/// @brief Parse .xml file for embedding opts
+	virtual
+	void
+	parse_my_tag(
+				 utility::tag::TagCOP tag
+				 );
 
-    /// @brief Setters and Getters for Options
-    
-    /// @brief Normal Search
-    /// @details Search for membrane protein embedding normal
-    bool normal_search() const;
-    void set_normal_search( bool setting );
+	/// @brief Return Options Class Type - Embedding Search Parameters
+	virtual
+	std::string
+	type() const;
 
-    /// @brief Normal Start Angle
-    /// @details Search for membrane protein embedding start angle
-    core::Real normal_start_angle() const;
-    void set_normal_start_angle( core::Real setting );
+	/// @brief Setters and Getters for Options
 
-    /// @brief Normal Max Angle
-    /// @details Set max normal search angle (upper bound)
-    core::Real normal_max_angle() const;
-    void set_normal_max_angle( core::Real setting );
+	/// @brief Normal Search
+	/// @details Search for membrane protein embedding normal
+	bool normal_search() const;
+	void set_normal_search( bool setting );
 
-    /// @brief Normal Delta Angle
-    /// @details Set allowed delta value for normal search (also bound on search)
-    core::Real normal_delta_angle() const;
-    void set_normal_delta_angle( core::Real setting );
+	/// @brief Normal Start Angle
+	/// @details Search for membrane protein embedding start angle
+	core::Real normal_start_angle() const;
+	void set_normal_start_angle( core::Real setting );
 
-    /// @brief Center Search
-    /// @details Search for Center
-    bool center_search() const;
-    void set_center_search( bool setting );
+	/// @brief Normal Max Angle
+	/// @details Set max normal search angle (upper bound)
+	core::Real normal_max_angle() const;
+	void set_normal_max_angle( core::Real setting );
 
-    /// @brief Center Max Delta
-    /// @details Center Max Delta for Search
-    core::Real center_max_delta() const;
-    void set_center_max_delta( core::Real setting );
+	/// @brief Normal Delta Angle
+	/// @details Set allowed delta value for normal search (also bound on search)
+	core::Real normal_delta_angle() const;
+	void set_normal_delta_angle( core::Real setting );
 
-    /// @brief Center Magnitude
-    core::Size center_mag() const;
-    void set_center_mag( core::Size setting );
+	/// @brief Center Search
+	/// @details Search for Center
+	bool center_search() const;
+	void set_center_search( bool setting );
 
-    /// @brief Normal Mag
-    core::Size normal_mag() const;
-    void set_normal_mag( core::Size setting );
+	/// @brief Center Max Delta
+	/// @details Center Max Delta for Search
+	core::Real center_max_delta() const;
+	void set_center_max_delta( core::Real setting );
 
-    /// @brief Normal Cycles
-    /// @details Max Cycles allowed in normal search
-    core::Size normal_cycles() const;
-    void set_normal_cycles( core::Size setting );
-    
-    /// @brief Getter/Setter pair for penalties
-    /// @details Param tyupe: bool
-    bool penalties() const;
-    void set_penalties( bool setting );
+	/// @brief Center Magnitude
+	core::Size center_mag() const;
+	void set_center_mag( core::Size setting );
 
-    /// @brief Getter/Setter pair for interpolating mpair term
-    /// @details Param Type: bool
-    bool no_interpolate_mpair() const;
-    void set_no_interpolate_mpair( bool setting );
-    
-private: // data
+	/// @brief Normal Mag
+	core::Size normal_mag() const;
+	void set_normal_mag( core::Size setting );
 
-    // Data
-    bool normal_search_;
-    core::Real normal_delta_angle_;
-    core::Real normal_start_angle_;
-    core::Real normal_max_angle_;
+	/// @brief Normal Cycles
+	/// @details Max Cycles allowed in normal search
+	core::Size normal_cycles() const;
+	void set_normal_cycles( core::Size setting );
 
-    bool center_search_;
-    core::Real center_max_delta_;
+	/// @brief Getter/Setter pair for penalties
+	/// @details Param tyupe: bool
+	bool penalties() const;
+	void set_penalties( bool setting );
 
-    core::Size center_mag_;
-    core::Size normal_mag_;
-    core::Size normal_cycles_;
-    
-    bool penalties_;
-    bool no_interpolate_mpair_;
+	/// @brief Getter/Setter pair for interpolating mpair term
+	/// @details Param Type: bool
+	bool no_interpolate_mpair() const;
+	void set_no_interpolate_mpair( bool setting );
+
+	private: // data
+
+	// Data
+	bool normal_search_;
+	core::Real normal_delta_angle_;
+	core::Real normal_start_angle_;
+	core::Real normal_max_angle_;
+
+	bool center_search_;
+	core::Real center_max_delta_;
+
+	core::Size center_mag_;
+	core::Size normal_mag_;
+	core::Size normal_cycles_;
+
+	bool penalties_;
+	bool no_interpolate_mpair_;
 
 }; // class EmbedSearchParamsOptions
 

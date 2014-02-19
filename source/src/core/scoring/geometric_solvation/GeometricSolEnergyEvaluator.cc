@@ -91,13 +91,14 @@ GeometricSolEnergyEvaluator::GeometricSolEnergyEvaluator( methods::EnergyMethodO
 }
 
 /// copy ctor
-GeometricSolEnergyEvaluator::GeometricSolEnergyEvaluator( GeometricSolEnergyEvaluator const & src ):
-	options_( new methods::EnergyMethodOptions( * src.options_ )),
-	hb_database_( src.hb_database_ ),
-	dist_cut2_( src.dist_cut2_ ),   // 5.2*5.2
-	geometric_sol_scale_( src.geometric_sol_scale_ ),
-	correct_geom_sol_acceptor_base_( src.correct_geom_sol_acceptor_base_ ),
-	verbose_( src.verbose_ )
+GeometricSolEnergyEvaluator::GeometricSolEnergyEvaluator( GeometricSolEnergyEvaluator const & src ) :
+		utility::pointer::ReferenceCount(src),
+		options_( new methods::EnergyMethodOptions( * src.options_ )),
+		hb_database_( src.hb_database_ ),
+		dist_cut2_( src.dist_cut2_ ),   // 5.2*5.2
+		geometric_sol_scale_( src.geometric_sol_scale_ ),
+		correct_geom_sol_acceptor_base_( src.correct_geom_sol_acceptor_base_ ),
+		verbose_( src.verbose_ )
 {}
 
 //Destructor

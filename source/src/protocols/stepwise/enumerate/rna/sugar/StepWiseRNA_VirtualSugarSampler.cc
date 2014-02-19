@@ -95,24 +95,23 @@ namespace sugar {
 
 //Constructor
 StepWiseRNA_VirtualSugarSampler::StepWiseRNA_VirtualSugarSampler( StepWiseRNA_JobParametersCOP & job_parameters,
-																																	SugarModeling & sugar_modeling	):
-	job_parameters_( job_parameters ),
-	sugar_modeling_( sugar_modeling ), // holds both job parameters and pose list.
-	tag_( "" ),
-	use_phenix_geo_( false ),
-	integration_test_mode_( false ),
-	keep_base_fixed_( false ),
-	choose_random_( false ),
-	virtual_sugar_is_from_prior_step_( true ),
-	legacy_mode_( false ), //for comparison to original code -- may deprecate in 2014.
-	do_chain_closure_( true || legacy_mode_ ),
-	first_minimize_with_fixed_base_( false ),
-	max_tries_for_random_overall_( 12 ),
-	max_tries_for_random_sugar_setup_( 1 ),
-	sugar_setup_success_( false ),
-	moving_phosphate_virtualized_( false )
-{
-}
+		SugarModeling & sugar_modeling ) :
+		job_parameters_( job_parameters ),
+		sugar_modeling_( sugar_modeling ), // holds both job parameters and pose list.
+		tag_( "" ),
+		use_phenix_geo_( false ),
+		keep_base_fixed_( false ),
+		choose_random_( false ),
+		integration_test_mode_( false ),
+		virtual_sugar_is_from_prior_step_( true ),
+		legacy_mode_( false ), //for comparison to original code -- may deprecate in 2014.
+		do_chain_closure_( true || legacy_mode_ ),
+		first_minimize_with_fixed_base_( false ),
+		max_tries_for_random_overall_( 12 ),
+		max_tries_for_random_sugar_setup_( 1 ),
+		sugar_setup_success_( false ),
+		moving_phosphate_virtualized_( false )
+{}
 
 //Destructor
 StepWiseRNA_VirtualSugarSampler::~StepWiseRNA_VirtualSugarSampler()

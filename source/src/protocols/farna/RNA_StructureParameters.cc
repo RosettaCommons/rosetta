@@ -737,16 +737,10 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 	obligate_pairing_sets = obligate_pairing_sets_;
 	if ( bps_moves_ ){ // supplement obligate_pairing_sets with stems in freely moving regions.
 		for ( Size n = 1; n <= stem_pairing_sets_.size(); n++ ){
-			bool stem_is_involved_in_obligate_pair( false );
 			for ( Size m = 1; m <= stem_pairing_sets_[n].size(); m++ ){
 				RNA_Pairing const & rna_pairing = rna_pairing_list_[ stem_pairing_sets_[n][m] ];
-				if ( check_in_pairing_sets( obligate_pairing_sets_, rna_pairing ) ) {
-					stem_is_involved_in_obligate_pair = true;
-				} else {
-					obligate_pairing_sets.push_back( utility::tools::make_vector1( stem_pairing_sets_[n][m] ) );
-				}
+				obligate_pairing_sets.push_back( utility::tools::make_vector1( stem_pairing_sets_[n][m] ) );
 			}
-			//			if ( !stem_is_involved_in_obligate_pair ) stem_pairing_sets.push_back( stem_pairing_sets_[n] );
 		}
 	} else {
 		stem_pairing_sets = stem_pairing_sets_;

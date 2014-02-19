@@ -76,21 +76,27 @@ public:
 	void set_task_segments( core::pack::task::TaskFactoryCOP taskfactory);
 
 private:
-	///@brief If set, the pose to make the constraints to
+	/// @brief If set, the pose to make the constraints to
 	core::pose::PoseCOP refpose_;
-	///@brief The strenght (standard deviation) of the constraints
+
+	/// @brief The strenght (standard deviation) of the constraints
 	core::Real cst_sd_;
-	///@brief Use bounded constraints instead of harmonic
+
+	/// @brief Use bounded constraints instead of harmonic
 	bool bounded_;
-	///@brief The width for bounded constraints
+
+	/// @brief The width for bounded constraints
 	core::Real cst_width_;
-	///@brief Also constrain sidechains?
+
+	/// @brief Also constrain sidechains?
 	bool cst_sidechain_;
-	///@brief When making sidechain constraints, should we allow for flipping HNQ residue sidechains?
+
+	/// @brief When making sidechain constraints, should we allow for flipping HNQ residue sidechains?
 	bool amb_hnq_;
 
 	///@brief A loop definition of constrained segments
 	protocols::loops::LoopsCOP loop_segments_;
+
 	///@brief A task definition of constrained segments
 	core::pack::task::TaskFactoryCOP task_segments_;
 

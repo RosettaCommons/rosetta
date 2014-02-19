@@ -63,8 +63,8 @@ using core::pose::Pose;
 using std::string;
 
 AntibodyDesignMover::AntibodyDesignMover() : protocols::moves::Mover(),
-		seq_designer_(NULL),
 		graft_designer_(NULL),
+		seq_designer_(NULL),
 		modeler_(NULL),
 		scorefxn_(NULL)
 {
@@ -73,10 +73,9 @@ AntibodyDesignMover::AntibodyDesignMover() : protocols::moves::Mover(),
 	protocols::moves::Mover::type( "AntibodyDesign" );
 	read_options();
 	set_scorefxn(getScoreFunction());
-	
 }
 
-    
+
 AntibodyDesignMover::~AntibodyDesignMover(){}
     
 std::string

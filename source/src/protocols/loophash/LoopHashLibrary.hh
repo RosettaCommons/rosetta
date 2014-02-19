@@ -12,21 +12,15 @@
 /// @author Mike Tyka
 
 
-
 #ifndef INCLUDED_protocols_loophash_LoopHashLibrary_hh
 #define INCLUDED_protocols_loophash_LoopHashLibrary_hh
 
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
-// AUTO-REMOVED #include <protocols/loophash/LoopHashSampler.fwd.hh>
-// AUTO-REMOVED #include <protocols/loophash/LocalInserter.fwd.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/loops/Loop.hh>
 #include <protocols/loophash/LoopHashMap.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/VallChunk.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/VallProvider.hh>
 #include <utility/vector1.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -66,12 +60,12 @@ public:
 
 	void get_all(
 		core::pose::Pose& pose,
-    std::vector< core::io::silent::SilentStructOP > &lib_structs,
+		std::vector< core::io::silent::SilentStructOP > &lib_structs,
 
-    core::Size start_res = 1,
-    core::Size stop_res  = 0,
+		core::Size start_res = 1,
+		core::Size stop_res  = 0,
 
-    core::Real min_bbrms = 0.0,
+		core::Real min_bbrms = 0.0,
 		core::Real max_bbrms = 100000.0,
 		core::Real min_rms   = 0.0,
 		core::Real max_rms   = 100.0
@@ -79,7 +73,7 @@ public:
 
 	virtual void apply( core::pose::Pose& pose );
 
-  virtual protocols::moves::MoverOP clone() const {
+	virtual protocols::moves::MoverOP clone() const {
 		return new LoopHashLibrary( *this );
 	}
 
@@ -95,7 +89,7 @@ public:
 
 	void setup_hash_maps();
 
-  // simple accessors
+	// simple accessors
 	LoopHashMap & gethash( core::Size size );
 
 
@@ -138,16 +132,16 @@ public:
 
 	void create_db();
 	void set_create_db( bool setting = true ){ create_db_ = setting; }
-	void set_db_path( std::string setting ){ db_path_ =  setting; }
+	void set_db_path( std::string setting ){ db_path_ =	setting; }
 
-  void graft_loop(
-    const core::pose::Pose& src_pose,
-    core::pose::Pose& tgt_pose,
-    protocols::loops::Loop myloop
-  );
+	void graft_loop(
+		const core::pose::Pose& src_pose,
+		core::pose::Pose& tgt_pose,
+		protocols::loops::Loop myloop
+	);
 
-  // setup scorefunctions for
-  void set_default_score_functions();
+	// setup scorefunctions for
+	void set_default_score_functions();
 
 
 	void mem_foot_print();
@@ -156,38 +150,38 @@ public:
 
 private:
 
-  // The backbone library for this HashLibrary (the actual data)
+	// The backbone library for this HashLibrary (the actual data)
 	BackboneDB bbdb_;
 
-  // A map of Hashmaps, each for a different loop size
-	std::map    < core::Size, LoopHashMap > hash_;
+	// A map of Hashmaps, each for a different loop size
+	std::map< core::Size, LoopHashMap > hash_;
 
-  // Kindof a redundant store of sizes - remove this ?
+	// Kindof a redundant store of sizes - remove this ?
 	std::vector < core::Size > hash_sizes_;
 
-  // Path to db
-    std::string db_path_;
+	// Path to db
+	std::string db_path_;
 
-  // the number of partitions the database is split into
-    core::Size num_partitions_;
+	// the number of partitions the database is split into
+	core::Size num_partitions_;
 
-  // which partition slice is assigned to this Library
-    core::Size assigned_num_;
+	// which partition slice is assigned to this Library
+	core::Size assigned_num_;
 
-  // Need so we can set the db string once
-    std::string assigned_string_;
+	// Need so we can set the db string once
+	std::string assigned_string_;
 
-  // Whether this database holds extra data in the bbdb or not
-    bool extra_;
+	// Whether this database holds extra data in the bbdb or not
+	bool extra_;
 
 	// The proteins of the backbone db that are loaded (when loading a merged db, otherwise (0,0)
-		std::pair< core::Size, core::Size > loopdb_range_;
+	std::pair< core::Size, core::Size > loopdb_range_;
 
-  // Some basic flags
+	// Some basic flags
 	bool do_sanity_check_;
 	bool create_db_;
 
-  // Used for grafting - ultimately to move into a seperate Mover class.
+	// Used for grafting - ultimately to move into a separate Mover class.
 
 	core::scoring::ScoreFunctionOP scorefxn_rama_cst;
 	core::scoring::ScoreFunctionOP scorefxn_cen_cst;
@@ -196,65 +190,7 @@ private:
 	core::optimization::MinimizerOptions options2;
 };
 
-
-
-
-
-
-//class LoopHashSampler {
-//  public:
-//
-//  LoopHashSampler(
-//    LoopHashLibraryOP library,
-//    LocalInserterOP inserter
-//  ):
-//    library_(library),
-//    inserter_(inserter),
-//    start_res_ ( 1 ),
-//    stop_res_  ( 0 ),
-//    min_bbrms_ ( 0.0 ),
-//		max_bbrms_ ( 100000.0 ),
-//		min_rms_   ( 0.0 ),
-//		max_rms_   ( 100.0 )
-//  {
-//
-//  }
-//
-//  // @brief create a set of structures for a the given range of residues and other parameters
-//  void build_structures(
-//		core::pose::Pose& start_pose,
-//    std::vector< core::io::silent::SilentStructOP > &lib_structs
-//	);
-//
-//
-//
-//  private:
-//    // pointer to the library used for insertion
-//    LoopHashLibraryOP library_;
-//
-//    // pointer to the insertion functor which provides the peptide insertion facility
-//    LocalInserterOP inserter_;
-//
-//    // parameters for insertion positions
-//    core::Size start_res_;
-//    core::Size stop_res_ ;
-//    core::Real min_bbrms_;
-//		core::Real max_bbrms_;
-//		core::Real min_rms_  ;
-//		core::Real max_rms_  ;
-//
-//};
-
-
-
-
-
 } // namespace loops
 } // namespace protocols
 
-
-
 #endif
-
-
-

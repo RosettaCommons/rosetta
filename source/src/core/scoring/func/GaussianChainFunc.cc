@@ -130,8 +130,7 @@ GaussianChainFunc::initialize_func(){
 		func_ = new GaussianChainSingleFunc( gaussian_variance_total );
 	}
 
-	runtime_assert( func_ != NULL );
-
+	runtime_assert( func_.get() != NULL );
 }
 
 /////////////////////////////////////////////////////

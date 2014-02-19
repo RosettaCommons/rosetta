@@ -68,16 +68,15 @@ DumpStatsSS::DumpStatsSS():
 {}
 
 DumpStatsSS::DumpStatsSS(DumpStatsSS const &rval):
-	protocols::moves::Mover( DumpStatsSSCreator::mover_name() ),
-  scorefxn_(rval.scorefxn_->clone()),
-  fname_(rval.fname_),
-  output_(rval.output_),
-	psipred_cmd_(rval.psipred_cmd_),
-	psipred_interface_(rval.psipred_interface_),
-	ss_predictor_(rval.ss_predictor_),
-	blueprint_(rval.blueprint_),
-	start_time_(start_time_)	
-
+		protocols::moves::Mover( DumpStatsSSCreator::mover_name() ),
+		fname_(rval.fname_),
+		output_(rval.output_),
+		scorefxn_(rval.scorefxn_->clone()),
+		psipred_cmd_(rval.psipred_cmd_),
+		psipred_interface_(rval.psipred_interface_),
+		ss_predictor_(rval.ss_predictor_),
+		blueprint_(rval.blueprint_),
+		start_time_(start_time_)
 {}
 
 
@@ -118,10 +117,13 @@ core::Real DumpStatsSS::compute_svm_prob(std::string sequence, std::string wante
 	return compute_boltz_sum( probabilities );
 }
 		
-core::Real DumpStatsSS::compute_psipred_prob(core::pose::Pose & pose ,std::string wanted_ss){
-		runtime_assert( psipred_interface_ );
-		devel::denovo_design::filters::PsiPredResult const & psipred_result = psipred_interface_->run_psipred( pose, wanted_ss );
-		compute_boltz_sum( generate_prob( psipred_result, wanted_ss ) );
+core::Real
+DumpStatsSS::compute_psipred_prob(core::pose::Pose & pose, std::string wanted_ss)
+{
+	runtime_assert( psipred_interface_ );
+	devel::denovo_design::filters::PsiPredResult const & psipred_result =
+			psipred_interface_->run_psipred( pose, wanted_ss );
+	return compute_boltz_sum( generate_prob( psipred_result, wanted_ss ) );
 }
 
 /// @brief computes the weighted boltzmann sum of the passed vector

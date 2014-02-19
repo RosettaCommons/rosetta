@@ -133,17 +133,17 @@ private:
 	///@brief add cluster info to the pose.  Will go in antibody/util soon.
 	void add_cluster_comments_to_pose(core::pose::Pose & pose);
 	
-	AntibodyDatabaseManagerOP cdr_db_parser_;
-	
 	AntibodyGraftDesignerOP graft_designer_;
 	AntibodyCDRDesignerOP seq_designer_;
 	AntibodyDesignModelerOP modeler_;
 	
-	AntibodyInfoOP ab_info_;
-	
 	ScoreFunctionOP scorefxn_;
 	ScoreFunctionOP design_scorefxn_;
 	
+	AntibodyInfoOP ab_info_;
+
+	AntibodyDatabaseManagerOP cdr_db_parser_;
+
 	bool run_graft_designer_;
 	bool run_sequence_designer_;
 	bool run_post_graft_modeling_;

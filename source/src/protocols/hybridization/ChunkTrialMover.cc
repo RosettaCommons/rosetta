@@ -183,13 +183,13 @@ core::Size ChunkTrialMover::template_number()
     return template_number_;
 }
 
-void ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose) {
+void
+ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose)
+{
 	int ntrials=500;
-  
+
 	bool chosen_good_jump=false;
-	int interfaceres;
 	while (!chosen_good_jump) {
-		//for (core::Size i=1; i<=pose.num_jump()*100; ++i){
 		jump_number_ = RG.random_range(1, pose.num_jump());
 		std::list < core::Size > downstream_residues = downstream_residues_from_jump(pose, jump_number_);
 		for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
@@ -204,11 +204,9 @@ void ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose) {
 		for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
 			if (allowed_to_move_[*it]==true) {
 				chosen_good_jump=true;
-				interfaceres=*it;
 				break;
 			}
 		}
-		//}
 	}
 
 	core::Size jump_residue_pose = pose.fold_tree().downstream_jump_residue(jump_number_);

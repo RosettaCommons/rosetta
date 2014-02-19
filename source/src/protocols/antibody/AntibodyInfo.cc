@@ -87,9 +87,8 @@ using namespace basic::options::OptionKeys;
 AntibodyInfo::AntibodyInfo( pose::Pose const & pose,
 		AntibodyNumberingSchemeEnum const & numbering_scheme,
 		CDRDefinitionEnum const & cdr_definition,
-		bool const & cdr_pdb_numbered) :
-	framework_info_(NULL)
-
+		bool const & cdr_pdb_numbered) //:
+		//framework_info_(NULL)
 {
 	enum_manager_ = new AntibodyEnumManager();
 	set_default();

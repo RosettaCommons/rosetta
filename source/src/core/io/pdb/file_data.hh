@@ -185,6 +185,7 @@ public:  // An instance of FileData should not preserve any 'state', so its data
 	// PDB Title Section //////////////////////////////////////////////////////
 	// "header" is a misnomer, as it actually stores HEADER, TITLE, EXPDTA, KEYWDS, and COMPND records.
 	HeaderInformationOP header;
+
 	// Data for OBSLTE, SPLT, CAVEAT, NUMMDL, MDLTYP, AUTHOR, REVDAT, SPRSDE, and/or JRNL records should be declared
 	// here if ever implemented.
 	pose::RemarksOP remarks;
