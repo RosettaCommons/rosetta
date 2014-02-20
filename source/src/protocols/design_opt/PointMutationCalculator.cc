@@ -130,7 +130,7 @@ PointMutationCalculator::PointMutationCalculator(
 	bool parallel,
 	core::Real design_shell,
 	core::Real repack_shell
-	
+
 )
 {
 	vector1< protocols::filters::FilterOP > filters;
@@ -286,7 +286,7 @@ get_nstruct(){
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
 
-  if ( option[ run::shuffle ]() ) { 
+  if ( option[ run::shuffle ]() ) {
     return option[ out::shuffle_nstruct ]();
   } else {
     return option[ out::nstruct ]();
@@ -337,7 +337,7 @@ PointMutationCalculator::mutate_and_relax(
 	if( rtmin() ){
 		 // definition/allocation of RTmin mover must flag dependant, as some scoreterms are incompatable with RTmin initilization
 		if( core::pose::symmetry::is_symmetric( pose ) ) {
-			utility_exit_with_message("Cannot currently use PointMutationCalculator (GreedyOptMutation/ParetoOptMutation) with rtmin on a symmetric pose!");          
+			utility_exit_with_message("Cannot currently use PointMutationCalculator (GreedyOptMutation/ParetoOptMutation) with rtmin on a symmetric pose!");
 		}
 		rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue );
 		rtmin->apply( pose );
@@ -345,7 +345,7 @@ PointMutationCalculator::mutate_and_relax(
 	}
 	TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
 	//then run input relax mover
-	if( relax_mover() ) { 
+	if( relax_mover() ) {
 		relax_mover()->apply( pose );
 	}
 }
@@ -444,7 +444,7 @@ insert_point_mut_filter_vals(
 			new_pos = false;
 			bool replaced( false );
 			//we need to check if we already have vals for this seqpos,aa in our data
-			for( core::Size iaa = 1; iaa <= seqpos_aa_vals_vec[ iseq ].second.size(); ++iaa ){ 
+			for( core::Size iaa = 1; iaa <= seqpos_aa_vals_vec[ iseq ].second.size(); ++iaa ){
 				char this_aa_char( chemical::oneletter_code_from_aa( seqpos_aa_vals_vec[ iseq ].second[ iaa ].first ) );
 				if( this_aa_char == chemical::oneletter_code_from_aa( aa ) ){
 					seqpos_aa_vals_vec[ iseq ].second[ iaa ].second = vals;
@@ -567,7 +567,7 @@ PointMutationCalculator::calc_point_mut_filters(
 			TR << "Detected jd2::MPIWorkPoolJobDistributor... excluding proc 0 from calculations" << std::endl;
 			mpi_rank_low = 1;
 			//We must have one job( nstruct ) for each worker in pool or we'll freeze later because nodes w/ no job will get killed by jd2
-			if( get_nstruct() < mpi_nprocs - mpi_rank_low ) utility_exit_with_message(
+			if( (int) get_nstruct() < mpi_nprocs - mpi_rank_low ) utility_exit_with_message(
 					"You must specify nstruct >= " + utility::to_string( mpi_nprocs - mpi_rank_low ) +
 					" when using " + utility::to_string( mpi_nprocs ) + " processors for MPI PointMutationCalculator" +
 					" when called from rosetta_scripts or any other app using jd2::MPIWorkPoolJobDistributor!" );
@@ -578,7 +578,7 @@ PointMutationCalculator::calc_point_mut_filters(
 			mpi_rank_low = jd2->min_client_rank();
 			TR << "Detected jd2::MPIFileBufJobDistributor... excluding procs 0-" << ( mpi_rank_low - 1 ) << " from calculations" << std::endl;
 			//We must have one job( nstruct ) for each worker in pool or we'll freeze later because nodes w/ no job will get killed by jd2
-			if( get_nstruct() < mpi_nprocs - mpi_rank_low ) utility_exit_with_message(
+			if( (int) get_nstruct() < mpi_nprocs - mpi_rank_low ) utility_exit_with_message(
 					"You must specify nstruct >= " + utility::to_string( mpi_nprocs - mpi_rank_low ) +
 					" when using " + utility::to_string( mpi_nprocs ) + " processors for MPI PointMutationCalculator" +
 					" when called from rosetta_scripts or any other app using jd2::MPIFileBufJobDistributor!" );
@@ -610,7 +610,7 @@ PointMutationCalculator::calc_point_mut_filters(
 	}
 #endif
 
-	//make a single list of seqpos,aa pairs 
+	//make a single list of seqpos,aa pairs
 	vector1< pair< Size, AA > > all_muts;
 	for( Size iresi = 1; iresi <= being_designed.size(); ++iresi ){
 		Size const resi( being_designed[ iresi ] );
@@ -634,10 +634,10 @@ PointMutationCalculator::calc_point_mut_filters(
 		//split up my_muts into smaller sublists for diff procs
 		my_muts.clear();
 		//asign muts to each proc
-		for( Size imut = 1; imut <= all_muts.size(); ++imut ){
+		for( int imut = 1; imut <= (int) all_muts.size(); ++imut ){
 			//e.g. for 4 procs, hand out muts like 1,2,3,1,2,3,etc (nothing given to proc 0)
 			Size this_mpi_rank( ( imut - 1 ) % ( mpi_nprocs - mpi_rank_low ) + mpi_rank_low );
-			if( this_mpi_rank == mpi_rank ){
+			if( (int) this_mpi_rank == mpi_rank ){
 				my_muts.push_back( all_muts[ imut ] );
 			}
 		}
@@ -686,7 +686,7 @@ PointMutationCalculator::calc_point_mut_filters(
 				utility::send_integer_to_node( mpi_rank_low, seqpos_aa_vals_vec[ iseq ].first );	//send int
 				utility::vector1< std::pair< core::chemical::AA, vector1< core::Real > > > const & aa_pairs( seqpos_aa_vals_vec[ iseq ].second );
 				utility::send_integer_to_node( mpi_rank_low, aa_pairs.size() );	//send int
-				for( core::Size iaa = 1; iaa <= aa_pairs.size(); ++iaa ){ 
+				for( core::Size iaa = 1; iaa <= aa_pairs.size(); ++iaa ){
 					utility::send_char_to_node( mpi_rank_low, chemical::oneletter_code_from_aa( aa_pairs[ iaa ].first ) );	//send char
 					//TR << "Proc " << mpi_rank << " sending seqpos,aa: " << seqpos_aa_vals_vec[ iseq ].first << aa_pairs[ iaa ].first
 					//		<< ": " << aa_pairs[ iaa ].second[ 1 ] << " to Proc 0" << std::endl;
@@ -698,7 +698,7 @@ PointMutationCalculator::calc_point_mut_filters(
 		}
 		//pool leader receives ptmut data from workers and combines with its own
 		else if( mpi_rank == mpi_rank_low ){
-			for( Size iproc = mpi_rank_low + 1; iproc < mpi_nprocs; ++iproc ){
+			for( int iproc = mpi_rank_low + 1; iproc < mpi_nprocs; ++iproc ){
 				//get data for one mut (seqpos, AA, and filter vals )
 				//need to know how many seqpos
 				Size n_seqpos( utility::receive_integer_from_node( iproc ) ); //rec int
@@ -723,13 +723,13 @@ PointMutationCalculator::calc_point_mut_filters(
 		//MPI_Barrier( MPI_COMM_POOL );
 		//then pool leader sends combined ptmut data back to workers
 		if( mpi_rank == mpi_rank_low ){
-			for( Size iproc = mpi_rank_low + 1; iproc < mpi_nprocs; ++iproc ){
+			for( int iproc = mpi_rank_low + 1; iproc < mpi_nprocs; ++iproc ){
 				utility::send_integer_to_node( iproc, seqpos_aa_vals_vec.size() );	//send int
 				for( Size iseq = 1; iseq <= seqpos_aa_vals_vec.size(); ++iseq ){
 					utility::send_integer_to_node( iproc, seqpos_aa_vals_vec[ iseq ].first );	//send int
 					utility::vector1< std::pair< core::chemical::AA, vector1< core::Real > > > const & aa_pairs( seqpos_aa_vals_vec[ iseq ].second );
 					utility::send_integer_to_node( iproc, aa_pairs.size() );	//send int
-					for( core::Size iaa = 1; iaa <= aa_pairs.size(); ++iaa ){ 
+					for( core::Size iaa = 1; iaa <= aa_pairs.size(); ++iaa ){
 						utility::send_char_to_node( iproc, chemical::oneletter_code_from_aa( aa_pairs[ iaa ].first ) );	//send char
 						//TR << "Proc " << mpi_rank << " sending seqpos,aa: " << seqpos_aa_vals_vec[ iseq ].first << aa_pairs[ iaa ].first << std::endl;
 						for( Size ival = 1; ival <= ( filters() ).size(); ++ival ){

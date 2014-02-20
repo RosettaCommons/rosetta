@@ -199,8 +199,8 @@ void MPIPool_RMSD::farray_to_string(
 ){
   PROF_START( basic::FARRAY_MANIPULATION );
   std::ostringstream double_to_string;
-  for( unsigned i = 1; i <= xyz.u1(); i++ ){
-    for( unsigned j = 1; j <= xyz.u2(); j++ ){
+  for( int i = 1; i <= xyz.u1(); i++ ){
+    for( int j = 1; j <= xyz.u2(); j++ ){
       double_to_string << xyz( i, j ) << " ";
     }
   }
@@ -259,8 +259,8 @@ void MPIPool_RMSD::string_to_farray( FArray2D<double>& xyz, std::string& string,
   string_to_double.str(string);
   PROF_START( basic::FARRAY_MANIPULATION );
   double element;
-  for(core::Size i = 1; i <= xyz_u1; i++ ){
-    for(core::Size j = 1; j <= xyz_u2; j++ ){
+  for( int i = 1; i <= xyz_u1; i++ ){
+    for( int j = 1; j <= xyz_u2; j++ ){
       string_to_double >> element;
       xyz( i, j ) = element;
     }

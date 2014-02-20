@@ -122,7 +122,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_go( protocols::mo
 			MPI_Recv( &slave_data_vector, LENGTH_TLC, MPI_CHAR, status.MPI_SOURCE, UNFOLDED_ENERGY_DATA_TAG, MPI_COMM_WORLD, &status);
 
 			// convert to string
-			for( Size i(0); i < LENGTH_TLC; ++i ) {
+			for( int i(0); i < LENGTH_TLC; ++i ) {
 				slave_tlc_string += slave_tlc_vector[i];
 			}
 
@@ -197,7 +197,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::master_go( protocols::mo
 			MPI_Recv( &slave_data_vector, LENGTH_TLC, MPI_CHAR, status.MPI_SOURCE, UNFOLDED_ENERGY_DATA_TAG, MPI_COMM_WORLD, &status);
 
 			// convert to string
-			for( Size i(0); i < LENGTH_TLC; ++i ) {
+			for( int i(0); i < LENGTH_TLC; ++i ) {
 				slave_tlc_string += slave_tlc_vector[i];
 			}
 
@@ -284,7 +284,7 @@ UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor::slave_add_unfolded_energ
 	TR << "Slave Node " << rank_ << ": Sending unfolded energy data to master" <<std::endl;
 
 	// convert string to vector of chars
-	for ( Size i(0); i < LENGTH_TLC; ++i ) {
+	for ( int i(0); i < LENGTH_TLC; ++i ) {
 		tlc_vector[i] = tlc[i];
 	}
 

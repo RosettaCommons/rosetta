@@ -1073,18 +1073,19 @@ get_deviation(
 	Real const bond_angle1( pose.residue( cutpoint ).upper_connect().icoor().theta() );// CA-C=N bond angle
 	Real const bond_angle2( pose.residue( cutpoint+1 ).lower_connect().icoor().theta() ); // C=N-CA bond angle
 	Real const bond_length( pose.residue( cutpoint+1 ).lower_connect().icoor().d() ); // C=N distance
-	
+
 	int const n2c = { 1 }; // must be 1 and -1 (below) for proper incrementing in loops
 	int const c2n = { -1 };
-	
+
 	Size const nbb( pose.residue( cutpoint ).mainchain_atoms().size() );
-	
+
 	vector1< vector1< Vector > > coords;
 	vector1< vector1< Real > > torsions;
 	load_coords_and_torsions( pose, coords, torsions );
-	
-	Matrix F,M;
-	
+
+	Matrix F(0);
+	Matrix M(0);
+
 	// forward_deviation:
 	int direction = n2c;
 	for ( int i = 1; i <= 3; ++i ) {
@@ -1114,7 +1115,7 @@ get_deviation(
 		}
 	}
 	backward_deviation = sqrt( backward_deviation / 3 );
-	
+
 	return std::make_pair(forward_deviation, backward_deviation);
 }
 

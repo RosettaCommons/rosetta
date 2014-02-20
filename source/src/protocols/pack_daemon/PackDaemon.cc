@@ -928,7 +928,7 @@ void DaemonSet::process_add_daemon_message()
 		secondary_resfile_names[ ii ]   = utility::receive_string_from_node( 0 );
 		secondary_resfiles[ ii ]        = utility::receive_string_from_node( 0 );
 		int n_npd_properties_for_state  = utility::receive_integer_from_node( 0 );
-		for ( Size jj = 1; jj <= n_npd_properties_for_state; ++jj ) {
+		for ( int jj = 1; jj <= n_npd_properties_for_state; ++jj ) {
 			Size npd_property_id         = utility::receive_integer_from_node( 0 );
 			std::string property         = utility::receive_string_from_node( 0 );
 			npd_properties[ ii ].push_back( std::make_pair( npd_property_id, property ) );

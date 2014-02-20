@@ -70,8 +70,8 @@ main( int argc, char * argv [] )
 #endif
 
 #ifdef USEMPI
-	int num_partitions = option[lh::num_partitions]();  
-	int assigned_num = 1;  
+	int num_partitions = option[lh::num_partitions]();
+	int assigned_num = 1;
 
 	int mpi_rank_, mpi_npes_;
 	MPI_Comm_rank( MPI_COMM_WORLD, ( int* )( &mpi_rank_ ) );
@@ -119,8 +119,8 @@ main( int argc, char * argv [] )
 				core::Size divisor = 1;
 				while( (float)num_partitions / divisor > 1 ) {
 					divisor = divisor * 2;
-					if(mpi_rank_ == 0)TR << "Divisor = " << divisor << std::endl;
-					if( mpi_rank_ % divisor != 0 || mpi_rank_ + divisor/2 >= num_partitions) {
+					if ( mpi_rank_ == 0) TR << "Divisor = " << divisor << std::endl;
+					if ( mpi_rank_ % divisor != 0 || mpi_rank_ + (int) divisor/2 >= (int) num_partitions ) {
 						MPI_Barrier( MPI_COMM_WORLD );
 					} else {
 						LoopHashLibraryOP second_loopdb = new LoopHashLibrary( loop_sizes, num_partitions, mpi_rank_ + divisor/2 );
@@ -130,7 +130,7 @@ main( int argc, char * argv [] )
 								TR << "Merging parts " << mpi_rank_ +1 << " with " << mpi_rank_ + 1+ divisor/2 << std::endl;
 								loop_hash_library->merge( second_loopdb, rms_cutoff );
 								//save new tmp db if it will be loaded as a second_loopdb next round
-								if( mpi_rank_ % (divisor * 2) != 0 || mpi_rank_ + divisor >= num_partitions ) {
+								if( mpi_rank_ % (divisor * 2) != 0 || mpi_rank_ + (int) divisor >= (int) num_partitions ) {
 									loop_hash_library->save_db();
 									TR << "Saving " << mpi_rank_ << std::endl;
 								}

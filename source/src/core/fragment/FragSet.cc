@@ -259,7 +259,9 @@ void FragSet::shift_by( int offset ) {
 	min_pos_ += offset;
 	max_pos_ += offset;
 	for ( FrameIterator it=nonconst_begin(), eit=nonconst_end(); it!=eit; ++it ) {
-		if ( *it != NULL ) {
+		//this should read ( *it != NULL ) but for some-reason gcc throws a warning that NULL needs to get converted to an unsigned int
+		//somehow the returned FrameOP cannot be compared with NULL. calling .get() on the owning_pointer interface retrieves the naked pointer
+		if ( (*it).get() != NULL ) {
 			it->shift_by( offset );
 		}
 	}
@@ -269,7 +271,9 @@ void FragSet::shift_by( int offset ) {
 void FragSet::shift_to( core::Size offset ) {
 	core::Size pos =  offset + 1; //offset = number of residues in front of desired position
 	for ( FrameIterator it=nonconst_begin(), eit=nonconst_end(); it!=eit; ++it ) {
-		if ( *it != NULL ) {
+		//this should read ( *it != NULL ) but for some-reason gcc throws a warning that NULL needs to get converted to an unsigned int
+		//somehow the returned FrameOP cannot be compared with NULL. calling .get() on the owning_pointer interface retrieves the naked pointer
+		if ( (*it).get() != NULL ) {
 			it->shift_to( pos );
 			pos++;
 		}

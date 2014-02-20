@@ -156,7 +156,7 @@ void MpiParallelTempering::initialize_simulation( // {{{1
 }
 
 Real MpiParallelTempering::temperature_move( // {{{1
-		Pose & MPI_ONLY(pose),
+		Pose&,
 		MetropolisHastingsMover & MPI_ONLY(mover),
 		Real MPI_ONLY(score)) {
 
@@ -166,12 +166,12 @@ Real MpiParallelTempering::temperature_move( // {{{1
 #ifdef USEMPI
 	double last_energy = score;
 	clock_t time_before_MPI = clock();
-	
-	// Whenever a node reaches MPI_Gather, it will immediately send its last 
-	// energy to the root node.  The root node will wait here until it has 
-	// received a message from every child node.  The child nodes will continue 
-	// on initially, but will wait once they reach MPI_Scatter.  Only after the 
-	// root has heard from all the children and sent out the new temperature 
+
+	// Whenever a node reaches MPI_Gather, it will immediately send its last
+	// energy to the root node.  The root node will wait here until it has
+	// received a message from every child node.  The child nodes will continue
+	// on initially, but will wait once they reach MPI_Scatter.  Only after the
+	// root has heard from all the children and sent out the new temperature
 	// assignments will the simulation proceed.
 
 	MPI_Gather(
@@ -345,7 +345,7 @@ void MpiParallelTempering::set_mpi_comm( MPI_Comm const& mpi_comm ) { // {{{1
 		MPI_Comm_rank( mpi_comm_, &rank_ );
 		int size;
 		MPI_Comm_size( mpi_comm_, &size );
-		runtime_assert( size == n_temp_levels() );
+		runtime_assert( size == (int) n_temp_levels() );
 	} else {
 		tr.Trace << "MpiParallelTempering::Duplicate mpi-communicator" << std::endl;
 		mpi_comm_ = MPI_COMM_NULL;

@@ -337,7 +337,7 @@ MpiHamiltonianExchange::find_exchange_partner( int& partner, bool& is_master ) {
 core::Real
 MpiHamiltonianExchange::temperature_move(
 		pose::Pose & MPI_ONLY(pose),
-		MetropolisHastingsMover & MPI_ONLY(mover),
+		MetropolisHastingsMover&,
 		core::Real MPI_ONLY(score) ) {
 
 	using namespace ObjexxFCL::format;
@@ -617,7 +617,7 @@ void MpiHamiltonianExchange::set_mpi_comm( MPI_Comm const& mpi_comm ) {
 		MPI_Comm_rank( mpi_comm_, &rank_ );
 		int communicator_size;
 		MPI_Comm_size( mpi_comm_, &communicator_size );
-		if ( communicator_size != n_temp_levels() ) {
+		if ( communicator_size != (int) n_temp_levels() ) {
 			std::ostringstream os;
 			os << "For MpiHamiltonianExchange the number of exchange cells " << n_temp_levels()
 				 << "\n has to be consistent with the option -run:n_replica "

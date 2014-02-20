@@ -38,8 +38,8 @@ namespace mc_convergence_checks {
 static basic::Tracer tr("MPIBPool_ConvergenceCheck");
 
   //
-  core::Size MPIBPool_RMSD::master_node_;
-  core::Size MPIBPool_RMSD::pool_master_node_;
+  int MPIBPool_RMSD::master_node_;
+  int MPIBPool_RMSD::pool_master_node_;
 
 using namespace ObjexxFCL;
 using namespace core;
@@ -224,7 +224,7 @@ void MPIBPool_RMSD::broadcast_newest_coords( int num_to_send ){
     core::Size current_size = new_structures_;
     if( tracer_visible_ ) {
       tr.Debug << "broadcasting " << num_to_send << " structures " << std::endl;
-      for( core::Size ii = 0; ii < num_to_send; ii++) {
+      for( int ii = 0; ii < num_to_send; ii++) {
 	tr.Debug << " sending coordinates starting at index " << transfer_buf_.int_buf1_[ ii ] << std::endl;
       }
     }
@@ -236,9 +236,9 @@ void MPIBPool_RMSD::broadcast_newest_coords( int num_to_send ){
     PROF_START( basic::COPY_COORDS );
     int shifted_index = 0;
     //int_buf1_ contains starting indices of structures you wish to send
-    for( core::Size ii = 0; ii < num_to_send; ii++ ) {
+    for( int ii = 0; ii < num_to_send; ii++ ) {
       // delete coordinates that are not being saved by shifting coordinates over to the left
-      for( core::Size jj = 0; jj < (3 * transfer_buf_.nresidues_ ); jj++ ) {
+      for( int jj = 0; jj < (3 * (int) transfer_buf_.nresidues_ ); jj++ ) {
 	transfer_buf_.farray_coord_ptr_[ shifted_index++ ] = transfer_buf_.farray_coord_ptr_[ jj + transfer_buf_.int_buf1_[ ii ] ];
       }
     }
@@ -323,7 +323,7 @@ MPIBPool_RMSD::master_gather_new_coords(){
   //core::Size num_added = 0;
   transfer_buf_.size_ = 0;
 
-  for ( core::Size ii = 0; ii < ( pool_npes_ ); ii++){
+  for ( int ii = 0; ii < ( pool_npes_ ); ii++){
     if ( tracer_visible_ ) {
       tr.Debug << "rank " << ii << " reports a size of " << transfer_buf_.size_per_coords_[ ii ] << std::endl;
       tr.Debug << "max_coord_size now has a value of " << max_coord_size << std::endl;
@@ -350,7 +350,7 @@ MPIBPool_RMSD::master_gather_new_coords(){
 
   if( tracer_visible_ ){
     tr.Debug << "checking the contents of nodes_finished: ";
-    for(core::Size ii = 0; ii < pool_npes_; ii++){
+    for( int ii = 0; ii < pool_npes_; ii++){
       tr.Debug << nodes_finished_[ (ii+1) ] << " ";
     }
     tr.Debug << std::endl;
@@ -506,7 +506,7 @@ void MPIBPool_RMSD::set_transition_threshold( core::Real threshold ){
 }
 
 bool MPIBPool_RMSD::workers_finished(){
-  if ( workers_finished_ < ( npes_ - master_node_ - 1 ) ){
+  if ( (int) workers_finished_ < ( npes_ - master_node_ - 1 ) ){
     if  ( tracer_visible_ ){
       tr.Debug << "num trajectories finished: " <<
 	workers_finished_ << " needed: " <<
@@ -610,7 +610,6 @@ void MPIBPool_RMSD::finalize(){
 
 //
   void MPIBPool_RMSD::create_comm( int ranks_to_include[], int new_size ){
-    int returnval;
     MPI_Group new_pool_group, old_pool_group;
     MPI_Comm dup_pool_comm;
     //tr.Debug << "creating a duplicate communicator from ranks: " << std::endl;
@@ -627,14 +626,14 @@ void MPIBPool_RMSD::finalize(){
     //tr.Debug << std::endl;
     PROF_START( basic::MPICOMMCREATION );
     MPI_Comm_dup( MPI_COMM_POOL, &dup_pool_comm );
-    returnval = MPI_Comm_group( dup_pool_comm, &old_pool_group );
-    assert(returnval == MPI_SUCCESS );
+    int returnval = MPI_Comm_group( dup_pool_comm, &old_pool_group );
+    runtime_assert( returnval == MPI_SUCCESS );
     //tr.Debug << "created comm-group based on old pool" << std::endl;
     returnval = MPI_Group_incl( old_pool_group, (new_size), ranks_to_include, &new_pool_group );
-    assert(returnval == MPI_SUCCESS );
+    runtime_assert( returnval == MPI_SUCCESS );
     //tr.Debug << " created new group based on trajs that are still active " << std::endl;
     returnval = MPI_Comm_create( dup_pool_comm, new_pool_group, &MPI_COMM_POOL );
-    assert(returnval == MPI_SUCCESS );
+    runtime_assert( returnval == MPI_SUCCESS );
     //tr.Debug << "created new comm based on this new group " << std::endl;
     if( is_active_node ){
       update_ranks( ranks_to_include, new_size );
@@ -685,7 +684,7 @@ void MPIBPool_RMSD::update_ranks( int const active_nodes[], int new_size ){
 	}
 	tr.Debug << std::endl;
       }
-      runtime_assert( transfer_buf_.size_ >= pool_npes_ );
+      runtime_assert( (int) transfer_buf_.size_ >= pool_npes_ );
       return;
     }
   }
@@ -855,8 +854,8 @@ void MPIBPool_RMSD::master_go(){
 
     //if some trajectories finished but not others, we need to re-create a comm with appropriate size
     PROF_START( basic::CHECK_COMM_SIZE );
-    unsigned int new_size = 0;
-    for ( unsigned int ii = 0; ii < pool_npes_; ii++ ){
+    int new_size = 0;
+    for ( int ii = 0; ii < pool_npes_; ii++ ){
       if ( !nodes_finished_[ (ii + 1) ] ) {
 	transfer_buf_.int_buf1_[ new_size ] = ii;
 	new_size++;
@@ -978,7 +977,7 @@ core::Size MPIBPool_RMSD::evaluate_and_add(
   PROF_STOP( basic::MPI_MASTER_BCAST_WINNING_RANKS );
   if( tracer_visible_ ){
     tr.Debug << "received "<< num_structures_to_add << " from the master node! " << std::endl;
-    for ( core::Size ii = 0; ii < num_structures_to_add; ii++ ) {
+    for ( int ii = 0; ii < num_structures_to_add; ii++ ) {
       tr.Debug << "winning rank: " << transfer_buf_.winning_ranks_[ ii ] << "\n";
     }
     tr.Debug << std::endl;
