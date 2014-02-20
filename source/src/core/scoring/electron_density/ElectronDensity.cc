@@ -4698,7 +4698,7 @@ ElectronDensity::dCCdBs(
 	}
 
 	// CCs
-	core::Real sumC_i=0, sumO_i=0, sumCO_i=0, vol_i=0, CC_i=0, sumO2_i=0.0, sumC2_i=0.0, varC_i=0, varO_i=0;
+	core::Real sumC_i=0, sumO_i=0, sumCO_i=0, vol_i=0, /*CC_i=0,*/ sumO2_i=0.0, sumC2_i=0.0, varC_i=0, varO_i=0;
 	for (int x=0; x<density.u1()*density.u2()*density.u3(); ++x) {
 		core::Real clc_x = rho_calc[x];
 		core::Real obs_x = density[x];
@@ -4713,10 +4713,10 @@ ElectronDensity::dCCdBs(
 	}
 	varC_i = (sumC2_i - sumC_i*sumC_i / vol_i );
 	varO_i = (sumO2_i - sumO_i*sumO_i / vol_i ) ;
-	if (varC_i > 0 && varO_i > 0)
-		CC_i = (sumCO_i - sumC_i*sumO_i/ vol_i) / sqrt( varC_i * varO_i );
+	//if (varC_i > 0 && varO_i > 0)
+	//	CC_i = (sumCO_i - sumC_i*sumO_i/ vol_i) / sqrt( varC_i * varO_i );  // unused
 
-	TR.Debug << "score2 = " << CC_i << std::endl;
+	// TR.Debug << "score2 = " << CC_i << std::endl;
 
 	// dCCdbs
 	for (core::uint i = 1; i <= natoms; ++i) {
@@ -4743,15 +4743,6 @@ ElectronDensity::dCCdBs(
 
 		dE_dvars[i] = (g*fprime - f*gprime) / (g*g);
 	}
-
-	// numeric
-	//for (int i=1;i<=4; ++i) {
-	//	litePose[i].B_ += 1;
-	//	core::scoring::electron_density::getDensityMap().calcRhoC( litePose );
-	//	Real CC_i_p = core::scoring::electron_density::getDensityMap().getRSCC(litePose);
-	//	std::cerr << "atom " << i << "  N: " << (CC_i_p-CC_i) / 1 << "  A:" << dE_dvars[i] << std::endl;
-	//	litePose[i].B_ -= 1;
-	//}
 }
 
 /////////////////////////////////////

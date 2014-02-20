@@ -26,7 +26,6 @@
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
-// AUTO-REMOVED #include <core/scoring/packing/surf_vol.hh>
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -184,12 +183,6 @@ D2H_SA_Energy::D2H_SA_Energy() :
 
 }
 
-	//void
-	//D2H_SA_Energy::set_rsa_range(Size s,Size e) {
-	//	rsa_index_start_=s;
-	//	rsa_index_end_=e;
-	//}
-
 /// clone
 EnergyMethodOP
 D2H_SA_Energy::clone() const
@@ -215,12 +208,10 @@ D2H_SA_Energy::finalize_total_energy(
 	}
 	bool fullatom=pose.is_fullatom();
 
-	
-	
 
 	Size len(data_.size());
 	Size nres( pose.total_residue() );
-	Size max_res( pose.total_residue() );
+	//Size max_res( pose.total_residue() );  // unused
 	const Real probe_radius(1.4); //default water probe
 	//std::cout << "Length " << len << "\n";
 	Size chain_for_rsa(1);
@@ -228,14 +219,14 @@ D2H_SA_Energy::finalize_total_energy(
 		using namespace core::conformation::symmetry;
 		SymmetricConformation const & symm_conf(dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
 		SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
-		max_res = symm_info->num_independent_residues();
+		//max_res = symm_info->num_independent_residues();  // unused
 		chain_for_rsa=pose.residue(symm_info->bb_follows(1)).chain();
 		//for(Size i=1;i<=nres;i++) {
 		//	TR.Debug  << "BB_FOLLOWS " << i << " " << symm_info->bb_follows(i) << std::endl;
 		//}
 	}
 
-	TR.Debug << "max_res: " << max_res << " nres: " << nres << " chain_for_rsa: " << chain_for_rsa << std::endl;
+	//TR.Debug << "max_res: " << max_res << " nres: " << nres << " chain_for_rsa: " << chain_for_rsa << std::endl;
 
 	id::AtomID_Map< Real > atom_sasa;
 	utility::vector1< Real > rsd_sasa(nres,0.0);
