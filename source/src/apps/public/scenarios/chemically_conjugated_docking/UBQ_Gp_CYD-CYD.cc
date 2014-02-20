@@ -736,10 +736,10 @@ try {
 	devel::init(argc, argv);
 	basic::prof_reset();
 
-	if(basic::options::option[ basic::options::OptionKeys::in::file::s ].active()
-		|| basic::options::option[ basic::options::OptionKeys::in::file::l ].active()
-		|| basic::options::option[ basic::options::OptionKeys::in::file::silent ].active())
-		utility_exit_with_message("do not use an input PDB with this protocol (program uses internally); use -UBQpdb and -GTPase_pdb instead");
+	if(basic::options::option[ basic::options::OptionKeys::in::file::s ].user()
+		|| basic::options::option[ basic::options::OptionKeys::in::file::l ].user()
+		|| basic::options::option[ basic::options::OptionKeys::in::file::silent ].user())
+		utility_exit_with_message("do not use an input PDB with this protocol (program uses internally); use -UBQpdb and -GTPasepdb instead");
 
 	protocols::jd2::JobDistributor::get_instance()->go(new UBQ_GTPase_disulfide_Mover);
 
