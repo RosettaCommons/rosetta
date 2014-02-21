@@ -18,6 +18,7 @@
 
 #include <protocols/hybridization/InsertChunkMover.hh>
 #include <protocols/hybridization/CartesianHybridize.fwd.hh>
+#include <protocols/hybridization/HybridizeSetup.fwd.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -67,6 +68,8 @@ public:
 	// initialize options to defaults
 	void init();
 
+	void setup_for_parser();
+	
 	// run the protocol
 	void apply(core::pose::Pose & pose);
 
@@ -86,6 +89,10 @@ public:
 	//
 	std::string	get_name() const { return "CartesianHybridize"; }
 
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
+	virtual void parse_my_tag( utility::tag::TagCOP const, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, Pose const & );
+
 protected:
 	// apply a homologue fragment
 	void apply_frag( core::pose::Pose &pose, core::pose::Pose &templ, protocols::loops::Loop &frag, bool superpose=true);
@@ -94,6 +101,10 @@ protected:
 	void apply_frame( core::pose::Pose & pose, core::fragment::Frame &frame );
 
 private:
+	// parser
+	HybridizeSetupOP hybridize_setup_;
+	bool align_templates_to_pose_;
+	
 	// parameters
 	core::Real increase_cycles_;
 	core::Size ncycles_, cartfrag_overlap_;

@@ -91,7 +91,20 @@ get_num_residues_nonvirt( core::pose::Pose const & pose ) {
 		symm_info = SymmConf.Symmetry_Info();
 		nres_tgt = symm_info->num_independent_residues();
 	}
-	if (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
+	while (pose.residue(nres_tgt).aa() == core::chemical::aa_vrt) nres_tgt--;
+	return nres_tgt;
+}
+
+core::Size
+get_num_residues_prot( core::pose::Pose const & pose ) {
+	core::Size nres_tgt = pose.total_residue();
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation const & SymmConf (
+																			  dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
+		symm_info = SymmConf.Symmetry_Info();
+		nres_tgt = symm_info->num_independent_residues();
+	}
 	while (!pose.residue(nres_tgt).is_protein()) nres_tgt--;
 	return nres_tgt;
 }

@@ -17,6 +17,7 @@
 
 #include <protocols/hybridization/InsertChunkMover.hh>
 #include <protocols/hybridization/FoldTreeHybridize.fwd.hh>
+#include <protocols/hybridization/HybridizeSetup.fwd.hh>
 #include <protocols/hybridization/HybridizeFoldtreeDynamic.hh>
 #include <protocols/hybridization/WeightedFragmentTrialMover.hh>
 #include <protocols/hybridization/WeightedFragmentSmoothTrialMover.hh>
@@ -56,6 +57,7 @@
 
 #include <set>
 
+#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 namespace protocols {
@@ -81,6 +83,7 @@ public:
 
 	// initialize options to defaults
 	void init();
+	void setup_for_parser();
 
 	void revert_loops_to_original(core::pose::Pose & pose, Loops loops);
 
@@ -169,8 +172,14 @@ private:
 	core::Size map_pdb_info_number( const core::pose::Pose & pose, core::Size pdb_res );
 	protocols::simple_moves::ClassicFragmentMoverOP get_pairings_jump_mover();
 
+	virtual protocols::moves::MoverOP clone() const;
+	virtual protocols::moves::MoverOP fresh_instance() const;
+	virtual void parse_my_tag( utility::tag::TagCOP const, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, Pose const & );
+
 
 private:
+	HybridizeSetupOP hybridize_setup_;
+	
 	core::Real increase_cycles_;
 	core::Size stage1_1_cycles_;
 	core::Size stage1_2_cycles_;
@@ -194,7 +203,9 @@ private:
 	bool auto_frag_insertion_weight_; // automatically set the fragment insertion weight
 	core::Size max_registry_shift_;
 	std::string cst_file_;
-
+	
+	bool initialize_pose_by_templates_;
+	bool realign_domains_;
 	core::Size initial_template_index_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	utility::vector1 < core::Real > template_wts_;
@@ -229,6 +240,7 @@ private:
 
 	core::pose::PoseOP native_;
 
+	// task operations
 	utility::vector1<bool> allowed_to_move_;
 	core::pack::task::TaskFactoryOP task_factory_;
 	utility::vector1 < core::Size > user_csts_;

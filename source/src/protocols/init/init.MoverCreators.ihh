@@ -31,6 +31,9 @@
 
 #include <protocols/comparative_modeling/LoopRelaxMoverCreator.hh>
 #include <protocols/hybridization/HybridizeProtocolCreator.hh>
+#include <protocols/hybridization/HybridizeSetupMoverCreator.hh>
+#include <protocols/hybridization/FoldTreeHybridizeCreator.hh>
+#include <protocols/hybridization/CartesianHybridizeCreator.hh>
 
 #include <protocols/contact_map/ContactMapCreator.hh>
 

@@ -44,6 +44,9 @@ static MoverRegistrator< cryst::SetRefinementOptionsMoverCreator > reg_SetRefine
 static MoverRegistrator< comparative_modeling::LoopRelaxMoverCreator > reg_LoopRelaxMoverCreator;
 static MoverRegistrator< hybridization::HybridizeProtocolCreator > reg_HybridizeProtocolCreator;
 static MoverRegistrator< hybridization::CartesianSamplerCreator > reg_CartesianSamplerCreator;
+static MoverRegistrator< hybridization::CartesianHybridizeCreator > reg_CartesianHybridizeCreator;
+static MoverRegistrator< hybridization::HybridizeSetupMoverCreator > reg_HybridizeSetupMoverCreator;
+static MoverRegistrator< hybridization::FoldTreeHybridizeCreator > reg_FoldTreeHybridizeCreator;
 
 static MoverRegistrator< contact_map::ContactMapCreator> reg_ContactMapCreator;
 

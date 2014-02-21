@@ -13,10 +13,13 @@
 /// @author Yifan Song, David Kim
 
 #include <protocols/hybridization/FoldTreeHybridize.hh>
+#include <protocols/hybridization/FoldTreeHybridizeCreator.hh>
 #include <protocols/hybridization/ChunkTrialMover.hh>
 #include <protocols/hybridization/HybridizeFoldtreeDynamic.hh>
 #include <protocols/hybridization/util.hh>
 #include <protocols/hybridization/AllResiduesChanged.hh>
+#include <protocols/hybridization/HybridizeSetup.hh>
+#include <protocols/hybridization/DomainAssembly.hh>
 
 #include <core/import_pose/import_pose.hh>
 
@@ -50,6 +53,7 @@
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/util.hh>
+#include <core/fragment/ConstantLengthFragSet.hh>
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
@@ -102,6 +106,11 @@
 #include <numeric/random/DistributionSampler.hh>
 #include <numeric/util.hh>
 
+// parser
+#include <protocols/rosetta_scripts/util.hh>
+//#include <protocols/moves/DataMap.hh>
+#include <utility/tag/Tag.hh>
+
 // strand pairings
 #include <core/kinematics/MoveMap.hh>
 #include <core/fragment/SecondaryStructure.hh>
@@ -135,7 +144,8 @@ using namespace basic::options::OptionKeys;
 
 
 FoldTreeHybridize::FoldTreeHybridize() :
-foldtree_mover_()
+		hybridize_setup_(NULL),
+		foldtree_mover_()
 {
 	init();
 }
@@ -170,6 +180,38 @@ FoldTreeHybridize::FoldTreeHybridize (
 	chop_fragments( *frag_libs_small_[1], *frag_libs_1mer_[1] );
 }
 
+/// Extract information from a setup mover
+void FoldTreeHybridize::setup_for_parser()
+{
+	initial_template_index_ = hybridize_setup_->initial_template_index();
+	
+	if (realign_domains_) {
+		hybridize_setup_->realign_templates(hybridize_setup_->template_poses()[initial_template_index_]);
+	}
+	
+	
+	for (core::Size ipose=1; ipose<=hybridize_setup_->template_poses().size(); ++ipose) {
+		template_poses_.push_back( new core::pose::Pose( *(hybridize_setup_->template_poses()[ipose]) ) );
+	}
+	template_wts_ = hybridize_setup_->template_wts();
+	template_chunks_ = hybridize_setup_->template_chunks();
+	template_contigs_ = hybridize_setup_->template_contigs();
+	
+	// normalize weights
+	normalize_template_wts();
+	
+	// abinitio frags
+	frag_libs_small_ = hybridize_setup_->fragments_small();
+	frag_libs_big_ = hybridize_setup_->fragments_big();
+	frag_libs_1mer_.push_back( new core::fragment::ConstantLengthFragSet( 1 ) );
+	chop_fragments( *frag_libs_small_[1], *frag_libs_1mer_[1] );
+
+	std::string cst_fn = hybridize_setup_->template_cst_fn()[initial_template_index_];
+	set_constraint_file( cst_fn );
+	set_domain_assembly( hybridize_setup_->domain_assembly() );
+	set_add_hetatm( hybridize_setup_->add_hetatm(), hybridize_setup_->hetatm_self_cst_weight(), hybridize_setup_->hetatm_prot_cst_weight() );
+}
+
 void
 FoldTreeHybridize::init() {
 	using namespace basic::options;
@@ -185,6 +227,9 @@ FoldTreeHybridize::init() {
 	auto_frag_insertion_weight_ = option[cm::hybridize::auto_frag_insertion_weight]();
 	max_registry_shift_ = option[cm::hybridize::max_registry_shift]();
 
+	initialize_pose_by_templates_ = true;
+	realign_domains_ = true;
+	
 	frag_1mer_insertion_weight_ = 0.0;
 	small_frag_insertion_weight_ = 0.0;
 	big_frag_insertion_weight_ = 0.50;
@@ -1179,7 +1224,10 @@ bool hConvergenceCheck::operator() ( const core::pose::Pose & pose ) {
 
 void
 FoldTreeHybridize::apply(core::pose::Pose & pose) {
-
+	if (hybridize_setup_) {
+		setup_for_parser();
+	}
+	
 	// save target sequence
 	target_sequence_ = pose.sequence();
 
@@ -1206,20 +1254,22 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 
 	// Initialize the structure
 	bool use_random_template = false;
-	ChunkTrialMover initialize_chunk_mover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, all_chunks);
-	initialize_chunk_mover.set_template(initial_template_index_);
-	initialize_chunk_mover.set_movable_region(allowed_to_move_);
-	initialize_chunk_mover.apply(pose);
-	// strand pairings
-	if (has_strand_pairings) {
-		// apply strand pairing jumps to place floating pairs
-		protocols::simple_moves::ClassicFragmentMoverOP jump_mover = get_pairings_jump_mover();
-		jump_mover->apply_at_all_positions( pose );
-		// insert strand pairing template chunks (to place template pairs)
-		for (std::set<core::Size>::iterator pairings_iter = strand_pairings_template_indices_.begin(); pairings_iter != strand_pairings_template_indices_.end(); ++pairings_iter) {
-			if (floating_pairs_.count(*pairings_iter)) continue;
-			initialize_chunk_mover.set_template(*pairings_iter);
-			initialize_chunk_mover.apply(pose);
+	if (initialize_pose_by_templates_) {
+		ChunkTrialMover initialize_chunk_mover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, all_chunks);
+		initialize_chunk_mover.set_template(initial_template_index_);
+		initialize_chunk_mover.set_movable_region(allowed_to_move_);
+		initialize_chunk_mover.apply(pose);
+		// strand pairings
+		if (has_strand_pairings) {
+			// apply strand pairing jumps to place floating pairs
+			protocols::simple_moves::ClassicFragmentMoverOP jump_mover = get_pairings_jump_mover();
+			jump_mover->apply_at_all_positions( pose );
+			// insert strand pairing template chunks (to place template pairs)
+			for (std::set<core::Size>::iterator pairings_iter = strand_pairings_template_indices_.begin(); pairings_iter != strand_pairings_template_indices_.end(); ++pairings_iter) {
+				if (floating_pairs_.count(*pairings_iter)) continue;
+				initialize_chunk_mover.set_template(*pairings_iter);
+				initialize_chunk_mover.apply(pose);
+			}
 		}
 	}
 
@@ -1702,6 +1752,120 @@ void FoldTreeHybridize::auto_frag_insertion_weight(
 
 std::string FoldTreeHybridize::get_name() const
 {
+	return "FoldTreeHybridize";
+}
+
+protocols::moves::MoverOP FoldTreeHybridize::clone() const { return new FoldTreeHybridize( *this ); }
+protocols::moves::MoverOP FoldTreeHybridize::fresh_instance() const { return new FoldTreeHybridize; }
+
+void
+FoldTreeHybridize::parse_my_tag(
+								utility::tag::TagCOP const tag,
+								basic::datacache::DataMap & data,
+								filters::Filters_map const &,
+								moves::Movers_map const &,
+								core::pose::Pose const & pose )
+{
+	if( tag->hasOption( "initialize_pose_by_templates" ) )
+		initialize_pose_by_templates_ = tag->getOption< bool >( "initialize_pose_by_templates" );
+	
+	if (tag->hasOption( "realign_domains" )){
+		realign_domains_ = tag->getOption< bool >( "realign_domains" );
+	}
+	
+	if( tag->hasOption( "add_non_init_chunks" ) )
+		add_non_init_chunks_ = tag->getOption< bool >( "add_non_init_chunks" );
+
+	if( tag->hasOption( "increase_cycles" ) )
+		set_increase_cycles( tag->getOption< core::Real >( "increase_cycles" ) );
+
+	if( tag->hasOption( "stage1_cycles" ) )
+		stage1_1_cycles_ = tag->getOption< core::Size >( "stage1_cycles" );
+	if( tag->hasOption( "stage2_cycles" ) )
+		stage1_2_cycles_ = tag->getOption< core::Size >( "stage2_cycles" );
+	if( tag->hasOption( "stage3_cycles" ) )
+		stage1_3_cycles_ = tag->getOption< core::Size >( "stage3_cycles" );
+	if( tag->hasOption( "stage4_cycles" ) )
+		stage1_4_cycles_ = tag->getOption< core::Size >( "stage4_cycles" );
+
+	if( tag->hasOption( "auto_frag_insertion_weight" ) )
+		auto_frag_insertion_weight_ = tag->getOption< bool >( "auto_frag_insertion_weight" );
+	if( tag->hasOption( "frag_weight_aligned" ) )
+		frag_weight_aligned_ = tag->getOption< core::Real >( "frag_weight_aligned" );
+	if( tag->hasOption( "frag_1mer_insertion_weight" ) )
+		frag_1mer_insertion_weight_ = tag->getOption< core::Real >( "frag_1mer_insertion_weight" );
+	if( tag->hasOption( "small_frag_insertion_weight" ) )
+		small_frag_insertion_weight_ = tag->getOption< core::Real >( "small_frag_insertion_weight" );
+	if( tag->hasOption( "big_frag_insertion_weight" ) )
+		big_frag_insertion_weight_ = tag->getOption< core::Real >( "big_frag_insertion_weight" );
+	if( tag->hasOption( "max_registry_shift" ) )
+		max_registry_shift_ = tag->getOption< core::Size >( "max_registry_shift" );
+
+	
+	if( tag->hasOption( "scorefxn" ) ) {
+		std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn" ) );
+		set_scorefunction ( (data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ))->clone() );
+	}
+
+	if( tag->hasOption( "hybridize_setup" ) ) {
+		std::string const setup_data_name( tag->getOption<std::string>( "hybridize_setup" ) );
+		hybridize_setup_ = (data.get< protocols::hybridization::HybridizeSetup * >( "HybridizeSetup", setup_data_name ))->clone();
+		TR << hybridize_setup_->nres_tgt_asu() << std::endl;
+	}
+	else {
+		utility_exit_with_message("Fatal error: hybridize_setup needs to be defined!");
+	}
+	
+    //task operations
+    allowed_to_move_.clear();
+	if( tag->hasOption( "task_operations" ) ){
+		allowed_to_move_.resize(pose.total_residue(), true);
+		core::pack::task::TaskFactoryOP task_factory = protocols::rosetta_scripts::parse_task_operations( tag, data );
+		core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
+		for( core::Size resi = 1; resi <= get_num_residues_prot(pose); ++resi ){
+			if( task->residue_task( resi ).being_designed() || task->residue_task( resi ).being_packed())
+				allowed_to_move_[resi]=true;
+    		else
+				allowed_to_move_[resi]=false;
+		}
+	}
+
+	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
+	utility::vector1< utility::tag::TagCOP >::const_iterator tag_it;
+	for (tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
+		// strand pairings
+		if ( (*tag_it)->getName() == "Pairings" ) {
+			pairings_file_ = (*tag_it)->getOption< std::string >( "file", "" );
+			if ( (*tag_it)->hasOption("sheets") ) {
+				core::Size sheets = (*tag_it)->getOption< core::Size >( "sheets" );
+				sheets_.clear();
+				random_sheets_.clear();
+				sheets_.push_back(sheets);
+			} else if ( (*tag_it)->hasOption("random_sheets") ) {
+				core::Size random_sheets = (*tag_it)->getOption< core::Size >( "random_sheets" );
+				sheets_.clear();
+				random_sheets_.clear();
+				random_sheets_.push_back(random_sheets);
+			}
+			filter_templates_ = (*tag_it)->getOption<bool>( "filter_templates" , 0 );
+		}
+	}
+}
+
+/////////////
+// creator
+std::string
+FoldTreeHybridizeCreator::keyname() const {
+	return FoldTreeHybridizeCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+FoldTreeHybridizeCreator::create_mover() const {
+	return new FoldTreeHybridize;
+}
+
+std::string
+FoldTreeHybridizeCreator::mover_name() {
 	return "FoldTreeHybridize";
 }
 

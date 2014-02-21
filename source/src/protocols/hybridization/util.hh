@@ -41,8 +41,8 @@ namespace protocols {
 //namespace comparative_modeling {
 namespace hybridization {
 
-core::Size
-get_num_residues_nonvirt( core::pose::Pose const & pose );
+core::Size get_num_residues_nonvirt( core::pose::Pose const & pose );
+core::Size get_num_residues_prot( core::pose::Pose const & pose );
 
 // constraint loading and generation
 void setup_centroid_constraints(

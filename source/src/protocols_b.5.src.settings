@@ -58,6 +58,7 @@ sources = {
 		"FoldTreeHybridize",
 		"HybridizeFoldtreeDynamic",
 		"HybridizeProtocol",
+        "HybridizeSetup",
 		"InsertChunkMover",
 		"MRMover",
 		"TemplateHistory",

@@ -13,6 +13,8 @@
 /// @author Frank DiMaio
 
 #include <protocols/hybridization/CartesianHybridize.hh>
+#include <protocols/hybridization/CartesianHybridizeCreator.hh>
+#include <protocols/hybridization/HybridizeSetup.hh>
 
 #include <protocols/hybridization/TemplateHistory.hh>
 #include <protocols/hybridization/util.hh>
@@ -114,6 +116,11 @@
 #include <basic/Tracer.hh>
 #include <boost/unordered/unordered_map.hpp>
 
+// parser
+#include <protocols/rosetta_scripts/util.hh>
+//#include <protocols/moves/DataMap.hh>
+#include <utility/tag/Tag.hh>
+
 namespace protocols {
 //namespace comparative_modeling {
 namespace hybridization {
@@ -122,7 +129,10 @@ const core::Size DEFAULT_NCYCLES=400;
 
 static basic::Tracer TR("protocols.hybridization.CartesianHybridize");
 
-CartesianHybridize::CartesianHybridize( ) : ncycles_(DEFAULT_NCYCLES) {
+CartesianHybridize::CartesianHybridize( ) :
+	hybridize_setup_(NULL),
+	ncycles_(DEFAULT_NCYCLES)
+{
 	init();
 }
 
@@ -191,6 +201,67 @@ CartesianHybridize::CartesianHybridize(
 	}
 }
 
+void CartesianHybridize::setup_for_parser()
+{
+	// RosettaScripts uses default constructor. Need to set up everything using datamap at the beginning of apply()
+	templates_ = hybridize_setup_->template_poses();
+	template_wts_ = hybridize_setup_->template_wts();
+	template_contigs_ = hybridize_setup_->template_contigs();
+	fragments9_ = hybridize_setup_->fragments_big()[numeric::random::random_range(1,hybridize_setup_->fragments_big().size())];
+	
+	// make sure all data is there
+	runtime_assert( templates_.size() == template_wts_.size() );
+	runtime_assert( templates_.size() == template_contigs_.size() );
+	
+	// normalize weights
+	core::Real weight_sum = 0.0;
+	for (int i=1; i<=(int)templates_.size(); ++i) weight_sum += template_wts_[i];
+	for (int i=1; i<=(int)templates_.size(); ++i) template_wts_[i] /= weight_sum;
+	
+	// map resids to frames
+	for (core::fragment::ConstFrameIterator i = fragments9_->begin(); i != fragments9_->end(); ++i) {
+		core::Size position = (*i)->start();
+		library_[position] = **i;
+	}
+	
+	// use chunks to subdivide contigs
+	core::Size ntempls = templates_.size();
+	utility::vector1 < protocols::loops::Loops > template_chunks_in (hybridize_setup_->template_chunks());
+	for( core::Size tmpl = 1; tmpl <= ntempls; ++tmpl) {
+		core::Size ncontigs = template_contigs_[tmpl].size();  // contigs to start
+		for (int i=1; i<=(int)ncontigs; ++i) {
+			core::Size cstart = template_contigs_[tmpl][i].start(), cstop = template_contigs_[tmpl][i].stop();
+			bool spilt_chunk=false;
+			
+			// assumes sorted
+			for (int j=2; j<=(int)template_chunks_in[tmpl].size(); ++j) {
+				core::Size j0start = template_chunks_in[tmpl][j-1].start(), j0stop = template_chunks_in[tmpl][j-1].stop();
+				core::Size j1start = template_chunks_in[tmpl][j].start(), j1stop = template_chunks_in[tmpl][j].stop();
+				
+				bool j0incontig = ((j0start>=cstart) && (j0stop<=cstop));
+				bool j1incontig = ((j1start>=cstart) && (j1stop<=cstop));
+				
+				if (j0incontig && j1incontig) {
+					spilt_chunk=true;
+					core::Size cutpoint = (j0stop+j1start)/2;
+					template_contigs_[tmpl].add_loop( cstart, cutpoint-1 );
+					TR.Debug << "Make subfrag " << cstart << " , " << cutpoint-1 << std::endl;
+					cstart=cutpoint;
+				} else if(spilt_chunk && j0incontig && !j1incontig) {
+					spilt_chunk=false;
+					template_contigs_[tmpl].add_loop( cstart, cstop );
+					TR.Debug << "Make subfrag " << cstart << " , " << cstop << std::endl;
+				}
+			}
+		}
+		template_contigs_[tmpl].sequential_order();
+	}
+	TR.Debug << "template_contigs:" << std::endl;
+	for (int i=1; i<= (int)template_contigs_.size(); ++i) {
+		TR.Debug << "templ. " << i << std::endl << template_contigs_[i] << std::endl;
+	}
+}
+	
 void
 CartesianHybridize::init() {
 	using namespace basic::options;
@@ -202,6 +273,8 @@ CartesianHybridize::init() {
 
 	// only adjustable via methods (for now)
 	cartfrag_overlap_ = 2;
+	align_templates_to_pose_ = false;
+	
 	seqfrags_only_ = false;
 	nofragbias_ = false;
 	skip_long_min_ = false;
@@ -423,6 +496,16 @@ CartesianHybridize::apply( Pose & pose ) {
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose::datacache;
 
+	if (hybridize_setup_) {
+		if (align_templates_to_pose_) {
+			TR << "Realigning template domains to the current pose." << std::endl;
+			core::pose::PoseOP pose_copy = new core::pose::Pose( pose );
+			hybridize_setup_->realign_templates(pose_copy);
+		}
+		
+		setup_for_parser();
+	}
+	
 	//protocols::viewer::add_conformation_viewer(  pose.conformation(), "hybridize" );
 	
 	///////////////////////////////
@@ -750,6 +833,76 @@ sampler:
 	lowres_scorefxn_->set_weight( core::scoring::atom_pair_constraint, max_cst );
 	lowres_scorefxn_->set_weight( core::scoring::vdw, max_vdw );
 	(*lowres_scorefxn_)(pose);
+}
+
+protocols::moves::MoverOP CartesianHybridize::clone() const { return new CartesianHybridize( *this ); }
+protocols::moves::MoverOP CartesianHybridize::fresh_instance() const { return new CartesianHybridize; }
+
+void
+CartesianHybridize::parse_my_tag(
+								utility::tag::TagCOP const tag,
+								basic::datacache::DataMap & data,
+								filters::Filters_map const &,
+								moves::Movers_map const &,
+								core::pose::Pose const & pose)
+{
+	if( tag->hasOption( "hybridize_setup" ) ) {
+		std::string const setup_data_name( tag->getOption<std::string>( "hybridize_setup" ) );
+		hybridize_setup_ = (data.get< protocols::hybridization::HybridizeSetup * >( "HybridizeSetup", setup_data_name ))->clone();
+	}
+	else {
+		utility_exit_with_message("Fatal error: hybridize_setup needs to be defined!");
+	}
+
+	if( tag->hasOption( "increase_cycles" ) ) {
+		set_increase_cycles( tag->getOption< core::Real >( "increase_cycles" ) );
+	}
+	
+	if( tag->hasOption( "scorefxn" ) ) {
+		std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn" ) );
+		set_scorefunction( (data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ))->clone() );
+	}
+
+	//task operations
+    allowed_to_move_.clear();
+	allowed_to_move_.resize(pose.total_residue(),true);
+	if( tag->hasOption( "task_operations" ) ){
+		core::pack::task::TaskFactoryOP task_factory = protocols::rosetta_scripts::parse_task_operations( tag, data );
+		core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
+		for( core::Size resi = 1; resi <= get_num_residues_prot(pose); ++resi ){
+			if( task->residue_task( resi ).being_designed() || task->residue_task( resi ).being_packed())
+				allowed_to_move_[resi]=true;
+    		else
+				allowed_to_move_[resi]=false;
+		}
+	}
+	
+	if( tag->hasOption( "no_global_frame" ) )
+		set_no_global_frame( tag->getOption< bool >( "no_global_frame" ) );
+	if( tag->hasOption( "linmin_only" ) )
+		set_linmin_only( tag->getOption< bool >( "linmin_only" ) );
+	if( tag->hasOption( "cartfrag_overlap" ) )
+		set_cartfrag_overlap( tag->getOption< core::Size >( "cartfrag_overlap" ) );
+	if( tag->hasOption( "align_templates_to_pose" ) ) {
+		align_templates_to_pose_ = tag->getOption< bool >( "align_templates_to_pose" );
+	}
+}
+	
+/////////////
+// creator
+std::string
+CartesianHybridizeCreator::keyname() const {
+	return CartesianHybridizeCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+CartesianHybridizeCreator::create_mover() const {
+	return new CartesianHybridize;
+}
+
+std::string
+CartesianHybridizeCreator::mover_name() {
+	return "CartesianHybridize";
 }
 
 }
