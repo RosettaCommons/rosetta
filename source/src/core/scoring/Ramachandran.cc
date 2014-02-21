@@ -809,11 +809,9 @@ Ramachandran::is_normally_connected (
 }
 
 void
-Ramachandran::read_rama(
-	std::string const & rama_map_filename,
-	bool use_bicubic_interpolation
+Ramachandran::read_rama_map_file (
+	utility::io::izstream * iunit
 ) {
-
 	int aa_num,phi_bin,psi_bin,ss_type;
 	Real check,min_prob,max_prob;
 	double entropy;
@@ -821,22 +819,6 @@ Ramachandran::read_rama(
 	int scan_count;
 	float pval, eval; // vars for sscanf float I/O
 
-	utility::io::izstream  iunit;
-
-  // search in the local directory first
-  iunit.open( rama_map_filename );
-
-  if ( !iunit.good() ) {
-    iunit.close();
-    if(!basic::database::open( iunit, rama_map_filename )){
-			std::stringstream err_msg;
-			err_msg << "Unable to open Ramachandran map '" << rama_map_filename << "'.";
-			utility_exit_with_message(err_msg.str());
-		}
-  }
-
-//cj      std::cout << "index" << "aa" << "ramachandran entropy" << std::endl;
-//KMa add_phospho_ser 2006-01
 	for ( int i = 1; i <= n_aa_ ; ++i ) {
 		for ( int ii = 1; ii <= 3; ++ii ) {
 			entropy = 0.0;
@@ -845,11 +827,11 @@ Ramachandran::read_rama(
 			max_prob = -min_prob;
 			for ( int j = 1; j <= 36; ++j ) {
 				for ( int k = 1; k <= 36; ++k ) {
-					iunit.getline( line, 60 );
-					if ( iunit.eof() ) {
-						goto L100; //May cause Velociraptor attacks.
-					} else if ( iunit.fail() ) { // Clear and continue: NO ERROR DETECTION
-						iunit.clear();
+					iunit->getline( line, 60 );
+					if ( iunit->eof() ) {
+						return;
+					} else if ( iunit->fail() ) { // Clear and continue: NO ERROR DETECTION
+						iunit->clear();
 					}
 					std::sscanf( line, "%5d", &aa_num );
 					std::sscanf( line+6, "%5d", &ss_type );
@@ -895,7 +877,33 @@ Ramachandran::read_rama(
 //cj		std::cout << SS( check ) << SS( std::log(min_prob) ) <<
 //cj		 SS( std::log(max_prob) ) << SS( entropy ) << std::endl;
 	}
-L100:
+
+}
+
+void
+Ramachandran::read_rama(
+	std::string const & rama_map_filename,
+	bool use_bicubic_interpolation
+) {
+
+	utility::io::izstream  iunit;
+
+  // search in the local directory first
+  iunit.open( rama_map_filename );
+
+  if ( !iunit.good() ) {
+    iunit.close();
+    if(!basic::database::open( iunit, rama_map_filename )){
+			std::stringstream err_msg;
+			err_msg << "Unable to open Ramachandran map '" << rama_map_filename << "'.";
+			utility_exit_with_message(err_msg.str());
+		}
+  }
+
+//cj      std::cout << "index" << "aa" << "ramachandran entropy" << std::endl;
+//KMa add_phospho_ser 2006-01
+	read_rama_map_file (&iunit);
+
 	iunit.close();
 	iunit.clear();
 

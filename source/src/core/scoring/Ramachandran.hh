@@ -27,6 +27,7 @@
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 
 // Numeric headers
@@ -213,6 +214,7 @@ private:
 		std::string const & rama_map_filename,
 		bool use_bicubic_interpolation);
 
+	void read_rama_map_file ( utility::io::izstream * iunit );
 	void init_rama_sampling_table( char const torsion_bin ) const;
 
 	void init_uniform_sampling_table() const;
