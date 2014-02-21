@@ -35,6 +35,7 @@
 #include <core/id/AtomID.hh>
 // Utility Headers
 #include <numeric/xyz.functions.hh>
+#include <numeric/NumericTraits.hh>
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
 #include <core/types.hh>
@@ -65,15 +66,17 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
 {
 	using namespace core::id;
 	using namespace core::scoring;
+	using namespace core::scoring::func;
 	using namespace core::scoring::constraints;
 
-	//awatkins: add constraints to ensure that the hbs macrocycle atoms remain reasonable, particularly over the cut bond
-	core::scoring::func::HarmonicFuncOP harm_func  (new core::scoring::func::HarmonicFunc( distance, std ) );
-	core::scoring::func::HarmonicFuncOP harm_func_0  (new core::scoring::func::HarmonicFunc( 0, std ) );
-	core::scoring::func::CircularHarmonicFuncOP ang_func  (new core::scoring::func::CircularHarmonicFunc( 3.14159*2/3, 0.02 ) );
-	core::scoring::func::CircularHarmonicFuncOP dih_func  (new core::scoring::func::CircularHarmonicFunc( 3.14159, 0.02 ) );
-	core::scoring::func::CircularHarmonicFuncOP dih_func_2  (new core::scoring::func::CircularHarmonicFunc( 0, 0.02 ) );
-
+	//kdrew: add constraint
+	HarmonicFuncOP harm_func  (new HarmonicFunc( distance, std ) );
+	HarmonicFuncOP harm_func_0  (new HarmonicFunc( 0, std ) );
+	CircularHarmonicFuncOP ang_func  (new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_2_over_3(), 0.02 ) );
+	CircularHarmonicFuncOP ang_func2 (new CircularHarmonicFunc( numeric::NumericTraits<float>::pi_over_3(), 0.02 ) );
+	CircularHarmonicFuncOP dih_func  (new CircularHarmonicFunc( numeric::NumericTraits<float>::pi(), 0.02 ) );
+	CircularHarmonicFuncOP dih_func_2  (new CircularHarmonicFunc( 0, 0.02 ) );
+																			 
 	AtomID aidCYH( pose.residue( hbs_pre_position ).atom_index("CYH"), hbs_pre_position );
 	AtomID aidHYH( pose.residue( hbs_pre_position ).atom_index("HYH"), hbs_pre_position );
 	AtomID aidCZH( pose.residue( hbs_pre_position+2 ).atom_index("CZH"), hbs_pre_position+2 );
@@ -86,7 +89,9 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
 	ConstraintCOP atompair = new AtomPairConstraint( aidCYH, aidCZH, harm_func );
 	ConstraintCOP atompair2 = new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 );
 	ConstraintCOP atompair3 = new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 );
+	//ConstraintCOP angle = new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func2 );
 	ConstraintCOP angle = new AngleConstraint( aidCZH, aidCYH, aidCY2, ang_func );
+	//ConstraintCOP angle2 = new AngleConstraint( aidN, aidCZH, aidCYH, ang_func2 );
 	ConstraintCOP dihedral = new DihedralConstraint( aidCZH, aidCYH, aidCY2, aidCY1, dih_func );
 	ConstraintCOP dihedral2 = new DihedralConstraint( aidN, aidCZH, aidCYH, aidHYH, dih_func_2 );
 
@@ -94,6 +99,7 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
 	pose.add_constraint( atompair2 );
 	pose.add_constraint( atompair3 );
 	pose.add_constraint( angle );
+	//pose.add_constraint( angle2 );
 	pose.add_constraint( dihedral );
 	pose.add_constraint( dihedral2 );
 

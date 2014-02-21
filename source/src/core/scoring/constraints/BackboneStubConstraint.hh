@@ -47,9 +47,33 @@ public:
 		pose::Pose const & pose,
 		Size const seqpos,
 		AtomID const & fixed_atom_id,
+		pose::Pose const & target_pose,
+		Size const target_seqpos,
+		core::Real const & superposition_bonus,
+		core::Real const & force_constant
+	);
+
+
+	BackboneStubConstraint(
+		pose::Pose const & pose,
+		Size const seqpos,
+		AtomID const & fixed_atom_id,
 		conformation::Residue const & target_rsd,
 		core::Real const & superposition_bonus,
-		core::Real const & CB_force_constant
+		core::Real const & force_constant,
+		std::string const & sidechain_atom_name,
+		std::string const & primary_backbone_atom_name,
+		std::string const & backbone_atom1_name,
+		std::string const & backbone_atom2_name
+	);
+
+	BackboneStubConstraint(
+		pose::Pose const & pose,
+		Size const seqpos,
+		AtomID const & fixed_atom_id,
+		conformation::Residue const & target_rsd,
+		core::Real const & superposition_bonus,
+		core::Real const & force_constant
 	);
 
 	virtual ~BackboneStubConstraint() {};
@@ -102,13 +126,13 @@ public:
 private:
 
 	core::Real superposition_bonus_;
-	core::Real CB_force_constant_;
+	core::Real force_constant_;
 
 	Size seqpos_;
-	AtomID CB_atom_id_, CA_atom_id_, C_atom_id_, N_atom_id_;
+	AtomID sidechain_atom_id_, primary_atom_id_, backbone_atom2_id_, backbone_atom1_id_;
 	utility::vector1< AtomID > atom_ids_;
 
-	core::Vector CB_target_, CA_target_, C_target_, N_target_, CB_CA_target_, C_N_target_;
+	core::Vector sidechain_target_, primary_backbone_target_, backbone2_target_, backbone1_target_, primary_sidechain_target_, backbone1_2_target_;
 
 	AtomID fixed_atom_id_;
 	core::Vector fixed_reference_point_;

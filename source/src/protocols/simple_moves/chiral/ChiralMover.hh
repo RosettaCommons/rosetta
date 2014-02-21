@@ -39,6 +39,7 @@ enum Chirality {
 
 bool is_d_chiral( core::chemical::ResidueType restype );
 bool is_l_chiral( core::chemical::ResidueType restype );
+core::chemical::ResidueType const & get_chiral_residue_type( core::chemical::ResidueType const & , Chirality );
 
 ///@details
 class ChiralMover : public protocols::moves::Mover {
@@ -48,6 +49,8 @@ public:
 	///@brief
 	ChiralMover( core::Size chiral_seq_position );
 	ChiralMover( core::Size chiral_seq_position, Chirality chirality );
+	ChiralMover( core::Size chiral_seq_position, bool orient_functional_group );
+	ChiralMover( core::Size chiral_seq_position, Chirality chirality, bool orient_functional_group );
 
 	virtual ~ChiralMover();
 
@@ -58,6 +61,7 @@ private:
 
 	core::Size const chiral_seq_pos_;
 	Chirality const chirality_;
+	bool orient_functional_group_;
 
 };//end ChiralMover
 
@@ -67,3 +71,4 @@ private:
 }//namespace protocols
 
 #endif // INCLUDED_protocols_simple_moves_chiral_ChiralMover_hh
+

@@ -72,6 +72,12 @@ sources = {
 		"SingleStateFitnessFunction",
 		"util",
 	],
+	"protocols/ncbb/oop": [
+		"OopDockDesignProtocol",
+	],
+	"protocols/ncbb": [
+		"NcbbDockDesignProtocol",
+	],
 	"protocols/pack_daemon": [
 		"DynamicAggregateFunction",
 		"EntityCorrespondence",

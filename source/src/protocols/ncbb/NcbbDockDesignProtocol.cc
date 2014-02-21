@@ -7,11 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-
-//awatkins: based heavily on code from kdrew/oop_dock_design.cc 
-
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/pose/ncbb/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 
@@ -36,6 +34,7 @@
 #include <protocols/jd2/Job.hh>
 
 // Mover headers
+#include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -47,10 +46,15 @@
 #include <protocols/simple_moves/TaskAwareMinMover.hh>
 #include <protocols/simple_moves/BackboneMover.fwd.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/simple_moves/oop/OopRandomPuckMover.hh>
+#include <protocols/simple_moves/oop/OopRandomSmallMover.hh>
+#include <protocols/simple_moves/oop/OopPatcher.hh>
+#include <protocols/simple_moves/hbs/HbsMover.hh>
 #include <protocols/simple_moves/hbs/HbsRandomSmallMover.hh>
 #include <protocols/simple_moves/hbs/HbsPatcher.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
+#include <protocols/ncbb/NcbbDockDesignProtocol.hh>
 
 // Filter headers
 #include <basic/MetricValue.hh>
@@ -70,6 +74,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <string>
@@ -85,6 +90,7 @@ using namespace pose;
 using namespace protocols;
 using namespace protocols::moves;
 using namespace protocols::simple_moves;
+using namespace protocols::simple_moves::oop;
 using namespace protocols::simple_moves::hbs;
 using namespace protocols::rigid;
 using namespace protocols::toolbox;
@@ -98,291 +104,221 @@ using basic::Error;
 using basic::Warning;
 using utility::file::FileName;
 
-// Here is a sketch of the basic flow of the program...
-//
-// Pertubation Phase
-//   +-Monte Carlo Mover---------------------------------------+
-//   | +-Random Mover-( 1 / 2 / 1 / 1 )--------------------+ | |
-//   | | +-Docking Mover-----------------------------------+ | |
-//   | | | small rigid body movements between the peptide	 | | |
-//   | | | and protein for conformational diversity        | | |
-//   | | +-------------------------------------------------+ | |
-//   | | +-Peptide Modeling--------------------------------+ | |
-//   | | | move peptide with small/shear moves to generate | | |
-//   | | | conformational diversity                        | | |
-//   | | +-------------------------------------------------+ | |
-//   | +-----------------------------------------------------+ |
-//   | +-Rotamer Trials Mover--------------------------------+ |
-//   | | quick sidechain packing to find optimal rotamers    | |
-//   | | before the next cycle                               | |
-//   | +-----------------------------------------------------+ |
-//   +---------------------------------------------------------+
-//
-// Design Minimization Phase
-//   | +-Pack Rotamers Mover---------------------------------+ |
-//   | | repack and design rotamers to explore sequence 	   | |
-//   | | space  	                                           | |
-//   | +-----------------------------------------------------+ |
-//   | +-Minimization Mover----------------------------------+ |
-//   | | energy minimize the current conformation            | |
-//   | +-----------------------------------------------------+ |
-
-//
 
 // tracer - used to replace cout
-static basic::Tracer TR("HDDM");
+static basic::Tracer TR("NDDP");
 
-// application specific options
-namespace hddm {
-	// pert options
-	RealOptionKey const mc_temp( "hddm::mc_temp" );
-	RealOptionKey const pert_mc_temp( "hddm::pert_mc_temp" );
-	RealOptionKey const pert_dock_rot_mag( "hddm::pert_dock_rot_mag" );
-	RealOptionKey const pert_dock_trans_mag( "hddm::pert_dock_trans_mag" );
-	RealOptionKey const pert_pep_small_temp( "hddm::pert_pep_small_temp" );
-	RealOptionKey const pert_pep_small_H( "hddm::pert_pep_small_H" );
-	RealOptionKey const pert_pep_small_L( "hddm::pert_pep_small_L" );
-	RealOptionKey const pert_pep_small_E( "hddm::pert_pep_small_E" );
-	RealOptionKey const pert_pep_shear_temp( "hddm::pert_pep_shear_temp" );
-	RealOptionKey const pert_pep_shear_H( "hddm::pert_pep_shear_H" );
-	RealOptionKey const pert_pep_shear_L( "hddm::pert_pep_shear_L" );
-	RealOptionKey const pert_pep_shear_E( "hddm::pert_pep_shear_E" );
+namespace protocols {
+namespace ncbb {
 
-	IntegerOptionKey const pert_pep_num_rep( "hddm::pert_pep_num_rep" );
-	IntegerOptionKey const pert_num( "hddm::pert_num" );
-	IntegerOptionKey const dock_design_loop_num( "hddm::dock_design_loop_num" );
+NcbbDockDesignProtocol::NcbbDockDesignProtocol():
+		mc_temp_ ( 1.0),
+		pert_mc_temp_ (0.8),
+		pert_dock_rot_mag_ (1.0),
+		pert_dock_trans_mag_ (0.5),
+		pert_pep_small_temp_ (0.8),
+		pert_pep_small_H_ (2.0),
+		pert_pep_small_L_ (2.0),
+		pert_pep_small_E_ (2.0),
+		pert_pep_shear_temp_ (0.8),
+		pert_pep_shear_H_ (2.0),
+		pert_pep_shear_L_ (2.0),
+		pert_pep_shear_E_ (2.0),
 
-	BooleanOptionKey const final_design_min( "hddm::final_design_min" );
-	BooleanOptionKey const use_soft_rep( "hddm::use_soft_rep" );
-	BooleanOptionKey const mc_initial_pose( "hddm::mc_initial_pose" );
-	BooleanOptionKey const hbs_design_first( "hddm::hbs_design_first" );
+		pert_pep_num_rep_ (100),
+		pert_num_ (10),
+		dock_design_loop_num_ (10),
 
-	BooleanOptionKey const pymol( "hddm::pymol" );
-	BooleanOptionKey const keep_history( "hddm::keep_history" );
+		no_design_(false),
+		final_design_min_ (true),
+		use_soft_rep_ (false),
+		mc_initial_pose_ (false),
+		ncbb_design_first_ (false),
 
-	// design options
-	RealOptionKey const desn_mc_temp( "hddm::desn_mc_temp" );
-
-
+		pymol_ (false),
+		keep_history_ (false)
+{ 
+		Mover::type("NcbbDockDesignProtocol");
+	
+		score_fxn_ = getScoreFunction(); 
+		scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn_);
 }
 
-class HbsDockDesignMinimizeMover : public Mover {
+NcbbDockDesignProtocol::NcbbDockDesignProtocol(
+	scoring::ScoreFunctionOP score_function,
+	core::Real const mc_temp,
+	core::Real const pert_mc_temp,
+	core::Real const pert_dock_rot_mag,
+	core::Real const pert_dock_trans_mag,
+	core::Real const pert_pep_small_temp,
+	core::Real const pert_pep_small_H,
+	core::Real const pert_pep_small_L,
+	core::Real const pert_pep_small_E,
+	core::Real const pert_pep_shear_temp,
+	core::Real const pert_pep_shear_H,
+	core::Real const pert_pep_shear_L,
+	core::Real const pert_pep_shear_E,
 
-	public:
+	core::Size const pert_pep_num_rep,
+	core::Size const pert_num,
+	core::Size const dock_design_loop_num,
 
-		//default ctor
-		HbsDockDesignMinimizeMover(): Mover("HbsDockDesignMinimizeMover"){}
+	bool const no_design,
+	bool const final_design_min,
+	bool const use_soft_rep,
+	bool const mc_initial_pose,
+	bool const ncbb_design_first,
 
-		//default dtor
-		virtual ~HbsDockDesignMinimizeMover(){}
+	bool const pymol,
+	bool const keep_history
 
-		//methods
-		void setup_pert_foldtree( core::pose::Pose & pose);
-		void setup_filter_stats();
-		virtual void apply( core::pose::Pose & pose );
-		virtual std::string get_name() const { return "HbsDockDesignMinimizeMover"; }
+): Mover("NcbbDockDesignProtocol"),
+	score_fxn_(score_function),
+	mc_temp_ (mc_temp),
+	pert_mc_temp_(pert_mc_temp),
+	pert_dock_rot_mag_(pert_dock_rot_mag),
+	pert_dock_trans_mag_(pert_dock_trans_mag),
+	pert_pep_small_temp_(pert_pep_small_temp),
+	pert_pep_small_H_(pert_pep_small_H),
+	pert_pep_small_L_(pert_pep_small_L),
+	pert_pep_small_E_(pert_pep_small_E),
+	pert_pep_shear_temp_(pert_pep_shear_temp),
+	pert_pep_shear_H_(pert_pep_shear_H),
+	pert_pep_shear_L_(pert_pep_shear_L),
+	pert_pep_shear_E_(pert_pep_shear_E),
+	pert_pep_num_rep_(pert_pep_num_rep),
+	pert_num_(pert_num),
+	dock_design_loop_num_(dock_design_loop_num),
+	no_design_(no_design),
+	final_design_min_(final_design_min),
+	use_soft_rep_(use_soft_rep),
+	mc_initial_pose_(mc_initial_pose),
+	ncbb_design_first_(ncbb_design_first),
+	pymol_(pymol),
+	keep_history_(keep_history) 
+{	
+}
 
-};
+NcbbDockDesignProtocol::NcbbDockDesignProtocol(
+	scoring::ScoreFunctionOP score_function, 
+	core::Real const mc_temp,
+	core::Real const pert_dock_rot_mag,
+	core::Real const pert_dock_trans_mag,
+	core::Size const dock_design_loop_num,
+	bool const no_design,
+	bool const final_design_min,
+	bool const pymol,
+	bool const keep_history
+): Mover("NcbbDockDesignProtocol"),
+	score_fxn_(score_function),
+	mc_temp_ (mc_temp),
+	pert_mc_temp_ (0.8),
+	pert_dock_rot_mag_ (pert_dock_rot_mag),
+	pert_dock_trans_mag_ (pert_dock_trans_mag),
+	pert_pep_small_temp_ (0.8),
+	pert_pep_small_H_ (2.0),
+	pert_pep_small_L_ (2.0),
+	pert_pep_small_E_ (2.0),
+	pert_pep_shear_temp_ (0.8),
+	pert_pep_shear_H_ (2.0),
+	pert_pep_shear_L_ (2.0),
+	pert_pep_shear_E_ (2.0),
 
-typedef utility::pointer::owning_ptr< HbsDockDesignMinimizeMover > HbsDockDesignMinimizeMoverOP;
-typedef utility::pointer::owning_ptr< HbsDockDesignMinimizeMover const > HbsDockDesignMinimizeMoverCOP;
+	pert_pep_num_rep_ (100),
+	pert_num_ (10),
+	dock_design_loop_num_(dock_design_loop_num),
 
+	no_design_(no_design),
+	final_design_min_(final_design_min),
+	use_soft_rep_ (false),
+	mc_initial_pose_ (false),
+	ncbb_design_first_ (false),
 
-int
-main( int argc, char* argv[] )
-{
-	try {
-	/*********************************************************************************************************************
-	Common Setup
-	**********************************************************************************************************************/
-
-	// add application specific options to options system
-	// There are far more options here than you will realistically need for a program of this complexity - but this gives you an idea of how to fine-grain option-control everything
-	option.add( hddm::mc_temp, "The temperature to use for the outer loop of the HDDM protocol. Defaults to 1.0." ).def( 1.0 );
-	option.add( hddm::pert_mc_temp, "The temperature to use for the pertubation phase of the HDDM protocol. Defaults to 0.8." ).def( 0.8 );
-	option.add( hddm::pert_dock_rot_mag, "The rotation magnitude for the ridged body pertubation in the pertubation phase of the HDDM protocol. Defaults to 1.0." ).def( 1 );
-	option.add( hddm::pert_dock_trans_mag, "The translation magnitude for the ridged body pertubation in the pertubation phase of the HDDM protocol. Defaults to 0.5." ).def( 0.5 );
-	option.add( hddm::pert_pep_small_temp, "" ).def( 0.8 );
-	option.add( hddm::pert_pep_shear_temp, "" ).def( 0.8 );
-
-	option.add( hddm::pert_pep_small_H, "" ).def( 2.0 );
-	option.add( hddm::pert_pep_small_L, "" ).def( 2.0 );
-	option.add( hddm::pert_pep_small_E, "" ).def( 2.0 );
-	option.add( hddm::pert_pep_shear_H, "" ).def( 2.0 );
-	option.add( hddm::pert_pep_shear_L, "" ).def( 2.0 );
-	option.add( hddm::pert_pep_shear_E, "" ).def( 2.0 );
-
-	option.add( hddm::pert_pep_num_rep, "Number of small and shear iterations for the peptide" ).def( 100 );
-	option.add( hddm::pert_num, "Number of iterations of perturbation loop per design" ).def(10);
-	option.add( hddm::dock_design_loop_num, "Number of iterations of pertubation and design" ).def(10);
-
-	option.add( hddm::final_design_min, "Do a final repack/design and minimization. Default true" ).def(true);
-	option.add( hddm::use_soft_rep, "Use soft repulsion for pertubation and initial design. Default false" ).def(false);
-	option.add( hddm::mc_initial_pose, "Allow initial pose to be considered as lowest energy pose. Default false" ).def(false);
-	option.add( hddm::hbs_design_first, "Design before pertubation (want when initial struct is aligned to hotspot)  Default false" ).def(false);
-
-	option.add( hddm::pymol, "Set up pymol mover. Default false" ).def(false);
-	option.add( hddm::keep_history, "Keep history in pymol. Requires hddm::pymol set to true. Default false" ).def(false);
-
-	option.add( hddm::desn_mc_temp, "The temperature to use for the design/minimization phase of the HDDM protocol. Defaults to 0.8." ).def( 0.8 );
-
-	//utility::vector1< core::Size > empty_vector(0);
-
-	// init command line options
-	//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
-	devel::init(argc, argv);
-
-	//create mover instance
-	HbsDockDesignMinimizeMoverOP HDDM_mover( new HbsDockDesignMinimizeMover() );
-
-	HDDM_mover->setup_filter_stats();
-
-	//call job distributor
-	protocols::jd2::JobDistributor::get_instance()->go( HDDM_mover );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-    }
-	return 0;
-}//main
+	pymol_(pymol),
+	keep_history_(keep_history)
+{}
 
 void
-HbsDockDesignMinimizeMover::apply(
+NcbbDockDesignProtocol::apply(
 	core::pose::Pose & pose
 )
 {
-	// create score function
-	//kdrew: old standard scoring function, using MM scoring function now because of NCAAs
-	//scoring::ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH ) );
-	//scoring::ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( scoring::MM_STD_WTS) );
-	scoring::ScoreFunctionOP score_fxn = getScoreFunction();
-	scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
-	//kdrew: soft_rep score function
-	//scoring::ScoreFunctionOP soft_score_fxn( ScoreFunctionFactory::create_score_function( scoring::MM_STD_WTS) );
 	scoring::ScoreFunctionOP soft_score_fxn  = getScoreFunction();
 	scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*soft_score_fxn);
 	soft_score_fxn->set_etable( FA_STANDARD_SOFT );
 
 	scoring::ScoreFunctionOP pert_score_fxn;
-	if( option[ hddm::use_soft_rep ].value() )
-	{
-    	pert_score_fxn = soft_score_fxn;
-	}
+	if( use_soft_rep_ )
+		pert_score_fxn = soft_score_fxn;
 	else
-	{
-    	pert_score_fxn = score_fxn;
-	}
+		pert_score_fxn = score_fxn_;
 
 	scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose);
 
 	// get a fold tree suitable for docking (local helper function)
 	setup_pert_foldtree( pose );
 
-
-	//pose.conformation().show_residue_connections();
-
 	// create a monte carlo object for the full cycle
-	moves::MonteCarloOP mc( new moves::MonteCarlo( pose, *score_fxn, option[ hddm::mc_temp ].value() ) );
-	TR << "mc cycle object created" << std::endl;
+	moves::MonteCarloOP mc( new moves::MonteCarlo( pose, *score_fxn_, mc_temp_ ) );
+
 	/*********************************************************************************************************************
 	Pertubation Phase
 	**********************************************************************************************************************/
+	moves::MonteCarloOP pert_mc( new moves::MonteCarlo( pose, *pert_score_fxn, pert_mc_temp_ ) );
 
-	// create a monte carlo object for the pertubation phase
-	moves::MonteCarloOP pert_mc( new moves::MonteCarlo( pose, *pert_score_fxn, option[ hddm::pert_mc_temp ].value() ) );
-	
-	TR << "pert_mc object created" << std::endl;
 	/*********************************************************
 	Docking Setup
 	**********************************************************/
+	rigid::RigidBodyPerturbMoverOP pert_dock_rbpm( new rigid::RigidBodyPerturbMover(1, pert_dock_rot_mag_,  pert_dock_trans_mag_) );
 
-	// create a rigid body mover to move the peptide around in the pocket
-	rigid::RigidBodyPerturbMoverOP pert_dock_rbpm( new rigid::RigidBodyPerturbMover(1, option[ hddm::pert_dock_rot_mag].value(),  option[ hddm::pert_dock_trans_mag].value()) );
-	TR << "pert_dock_rbpm object created" << std::endl;
-	
 	/*********************************************************
 	Peptide Setup
 	**********************************************************/
-
-	// get peptide start and end positions
 	Size pep_start( pose.conformation().chain_begin( 2 ) ); Size pep_end( pose.total_residue() );
 	TR << "pep_start: " << pep_start << " pep_end: " << pep_end << std::endl;
 
 	// create movemap for peptide
 	kinematics::MoveMapOP pert_pep_mm( new kinematics::MoveMap() );
-	pert_pep_mm->set_bb_true_range(pep_start+3, pep_end);
-	/*
-	kinematics::MoveMapOP pert_pep_mm_near( new kinematics::MoveMap() );
-	pert_pep_mm_near->set_bb_true_range(pep_start+3, pep_start+5);
-	kinematics::MoveMapOP pert_pep_mm_mid( new kinematics::MoveMap() );
-	if (pep_end > pep_start+10) {
-		pert_pep_mm_mid->set_bb_true_range(pep_start+6, pep_start+10);
-	}
-	else {
-		pert_pep_mm_mid->set_bb_true_range(pep_start+6, pep_end);
-	}
-	kinematics::MoveMapOP pert_pep_mm_far( new kinematics::MoveMap() );
-	if (pep_end > pep_start+10) {
-		pert_pep_mm_far->set_bb_true_range(pep_start+11, pep_end);
-	}
-	*/
+	pert_pep_mm->set_bb_true_range(pep_start, pep_end);
 
-	//awatkins automatically find hbs position
-	//awatkins: in principle, for hbs this should be pretty easy because the whole loop
-	//is n-terminal and involves 3 residues.
-	//but for now we will just push back the one position in question
-	//maybe there should be more; maybe there should be a treatment in terms
-	//of distance from the singular hbs_seq_position
-	//and blanket constrain the three other positions.
-	//TODO that...
-	//utility::vector1< core::Size > hbs_seq_positions;
-	core::Size hbs_seq_position = 0;
-	core::Size hbs_length = 0;
-	for ( core::Size i = 1; i <= pose.total_residue(); ++i )
+  ////kdrew: automatically find ncbb positions
+	utility::vector1< core::Size > ncbb_seq_positions = core::pose::ncbb::initialize_ncbbs(pose);
+
+	////awatkins: initialize specific vectors for each supported patch type, too
+	utility::vector1< core::Size > oop_seq_positions = core::pose::ncbb::initialize_oops(pose);
+	utility::vector1< core::Size > hbs_seq_positions = core::pose::ncbb::initialize_hbs(pose);
+	
+	for( Size i = 1; i <= ncbb_seq_positions.size(); ++i  )
 	{
-		if( pose.residue(i).has_variant_type(chemical::HBS_PRE) == 1)
-		{
-			//hbs_seq_positions.push_back( i );
-			//hbs_seq_positions.push_back( i+1 );
-			//hbs_seq_positions.push_back( i+2 );
-			//hbs_seq_positions.push_back( i+3 );
-			hbs_seq_position = i;
-			TR << "hbs_seq_position is " << i;
-			
-			//awatkins: set up constraints
-			add_hbs_constraint( pose, i );
-			
-			//awatkins: do not use small/shear mover on hbs positions, use hbs mover instead
-			//pert_pep_mm->set_bb( i, false );
-			//pert_pep_mm->set_bb( i+1, false );
-			//pert_pep_mm->set_bb( i+2, false );
-			// this guy is just the F in XQEGF, but I am not convinced he should be a normal mover
-			//pert_pep_mm->set_bb( i+3, false );
-		}
-		//pert_pep_mm->set_bb( i, false );
-    if (hbs_seq_position>0 && hbs_seq_position <= i) {
-      hbs_length++;
-    }
+		pert_pep_mm->set_bb( ncbb_seq_positions[i], false );
+		if( score_fxn_->has_zero_weight( core::scoring::atom_pair_constraint ) )
+			score_fxn_->set_weight( core::scoring::atom_pair_constraint, 1.0 );
 	}
-	assert(hbs_seq_position != 0);
+	
 
 	// create small and shear movers
-	simple_moves::SmallMoverOP pert_pep_small( new simple_moves::SmallMover( pert_pep_mm, option[ hddm::pert_pep_small_temp ].value(), 1 ) );
-	pert_pep_small->angle_max( 'H', option[ hddm::pert_pep_small_H ].value() );
-	pert_pep_small->angle_max( 'L', option[ hddm::pert_pep_small_L ].value() );
-	pert_pep_small->angle_max( 'E', option[ hddm::pert_pep_small_E ].value() );
+	simple_moves::SmallMoverOP pert_pep_small( new simple_moves::SmallMover( pert_pep_mm, pert_pep_small_temp_, 1 ) );
+	pert_pep_small->angle_max( 'H', pert_pep_small_H_ );
+	pert_pep_small->angle_max( 'L', pert_pep_small_L_ );
+	pert_pep_small->angle_max( 'E', pert_pep_small_E_ );
 
-	simple_moves::ShearMoverOP pert_pep_shear( new simple_moves::ShearMover( pert_pep_mm, option[ hddm::pert_pep_shear_temp ].value(), 1 ) );
-	pert_pep_shear->angle_max( 'H', option[ hddm::pert_pep_shear_H ].value() );
-	pert_pep_shear->angle_max( 'L', option[ hddm::pert_pep_shear_L ].value() );
-	pert_pep_shear->angle_max( 'E', option[ hddm::pert_pep_shear_E ].value() );
+	simple_moves::ShearMoverOP pert_pep_shear( new simple_moves::ShearMover( pert_pep_mm, pert_pep_shear_temp_ , 1 ) );
+	pert_pep_shear->angle_max( 'H', pert_pep_shear_H_ );
+	pert_pep_shear->angle_max( 'L', pert_pep_shear_L_ );
+	pert_pep_shear->angle_max( 'E', pert_pep_shear_E_ );
 
 	// create random mover
 	moves::RandomMoverOP pert_pep_random( new moves::RandomMover() );
 	pert_pep_random->add_mover( pert_pep_small, 1 );
-	pert_pep_random->add_mover( pert_pep_shear, 1 );
-	moves::RepeatMoverOP pert_pep_repeat( new moves::RepeatMover( pert_pep_random, option[ hddm::pert_pep_num_rep ].value() ) );
-	//hbs::HbsRandomSmallMoverOP hpm_small( new hbs::HbsRandomSmallMover( hbs_seq_position, hbs_length, 2.0 ) );
-	
+	//pert_pep_random->add_mover( pert_pep_shear, 1 );
+
+	// create repeat mover
+	moves::RepeatMoverOP pert_pep_repeat( new moves::RepeatMover( pert_pep_random, pert_pep_num_rep_ ) );
+
+	//simple_moves::hbs::HbsRandomSmallMoverOP hpm_small( new simple_moves::hbs::HbsRandomSmallMover( hbs_seq_positions, 2.0 ) );
+	simple_moves::oop::OopRandomSmallMoverOP opm_small( new simple_moves::oop::OopRandomSmallMover( oop_seq_positions, 2.0 ) );
+	simple_moves::oop::OopRandomPuckMoverOP opm_puck( new simple_moves::oop::OopRandomPuckMover( oop_seq_positions ) );
+
 	/******************************************************************************
 	Rotamer Trials Setup
 	*******************************************************************************/
@@ -398,9 +334,6 @@ HbsDockDesignMinimizeMover::apply(
 	operation::RestrictToRepackingOP pert_rtrp( new operation::RestrictToRepacking() );
 	pert_tf->push_back( pert_rtrp );
 
-    //operation::RestrictToInterfaceOP pert_rtio( new operation::RestrictToInterface(1, 2) ); //magic numbers: assume chains 1 and 2
-	//pert_tf->push_back( pert_rtio );
-
 	// create a rotamer trials mover
 	simple_moves::RotamerTrialsMoverOP pert_rt(new simple_moves::EnergyCutRotamerTrialsMover( pert_score_fxn, pert_tf, pert_mc, 0.1 /*energycut*/ ) );
 
@@ -413,6 +346,8 @@ HbsDockDesignMinimizeMover::apply(
 	pert_random->add_mover( pert_dock_rbpm, 1 );
 	pert_random->add_mover( pert_pep_repeat, 0.5 );
 	//pert_random->add_mover( hpm_small, 0.5 );
+	pert_random->add_mover( opm_small, 0.5 );
+	pert_random->add_mover( opm_puck, 0.1 );
 
 	// create a sequence move to hold random and rotamer trials movers
 	moves::SequenceMoverOP pert_sequence( new moves::SequenceMover() );
@@ -422,13 +357,9 @@ HbsDockDesignMinimizeMover::apply(
 	// create a TrialMover for the pertubation
 	moves::TrialMoverOP pert_trial( new moves::TrialMover( pert_sequence, pert_mc ) );
 
-	/*********************************************************************************************************************
-	Design Min Phase
-	**********************************************************************************************************************/
 	/*********************************************************
 	Design Setup
 	**********************************************************/
-
 	// create a task factory and task operations
 	TaskFactoryOP desn_tf( new TaskFactory() );
 	desn_tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
@@ -437,33 +368,32 @@ HbsDockDesignMinimizeMover::apply(
 	desn_rrop->default_filename();
 	desn_tf->push_back( desn_rrop );
 
-	/*
-	desn_tf->push_back( pert_rtio ); //not bothering to construct it a second time
-	*/
-
+	if( no_design_ )
+	{
+		core::pack::task::operation::RestrictToRepackingOP rtrp( new core::pack::task::operation::RestrictToRepacking() );
+		desn_tf->push_back( rtrp );
+	}
 
 	// create a pack rotamers mover
-	simple_moves::PackRotamersMoverOP desn_pr( new simple_moves::PackRotamersMover() );
-	desn_pr->task_factory( desn_tf );
-	desn_pr->score_function( pert_score_fxn );
+	simple_moves::PackRotamersMoverOP desn_pack_rotamers( new simple_moves::PackRotamersMover() );
+	desn_pack_rotamers->task_factory( desn_tf );
+	desn_pack_rotamers->score_function( pert_score_fxn );
 
 	/*********************************************************
 	Minimize Setup
 	**********************************************************/
-
 	// create move map for minimization
 	kinematics::MoveMapOP desn_mm( new kinematics::MoveMap() );
-	//kdrew: set backbone of target false and backbone of hbs true, decide whether to do this or not
+	//kdrew: set backbone of target false and backbone of ncbb true, decide whether to do this or not
 	desn_mm->set_bb( false );
 	desn_mm->set_bb_true_range( pep_start, pep_end );
-	//desn_mm->set_bb( true );
 	desn_mm->set_chi( true );
 	desn_mm->set_jump( 1, true );
-
+	
 	// create minimization mover
-	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+	simple_moves::MinMoverOP desn_min( new simple_moves::MinMover( desn_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
 
-	//definitely want sidechain minimization here
+	// definitely want sidechain minimization here
 	using protocols::simple_moves::TaskAwareMinMoverOP;
 	using protocols::simple_moves::TaskAwareMinMover;
 	TaskAwareMinMoverOP desn_ta_min = new TaskAwareMinMover( desn_min, desn_tf );
@@ -471,39 +401,31 @@ HbsDockDesignMinimizeMover::apply(
 	/*********************************************************
 	Common Setup
 	**********************************************************/
-
-	// create a sequence mover to hold pack rotamers and minimization movers
 	moves::SequenceMoverOP desn_sequence( new moves::SequenceMover() );
-	desn_sequence->add_mover( desn_pr );
+	desn_sequence->add_mover( desn_pack_rotamers );
 	desn_sequence->add_mover( desn_ta_min );
 
+	/*********************************************************************************************************************
+	Main Loop
+	**********************************************************************************************************************/
 	TR << "Main loop..." << std::endl;
-	
+
 	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
-//kdrew: only turn on pymol observer in debug mode
-//#ifndef NDEBUG
-if( option[ hddm::pymol ].value() )
-{
-	protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(pose, option[ hddm::keep_history ].value() );
-}
-//#endif
+	if( pymol_ )
+		protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(pose, keep_history_ );
 
 	//pose.dump_pdb("pre_main_loop.pdb");
-	for ( Size k = 1; k <= Size( option[ hddm::dock_design_loop_num ].value() ); ++k ) {
-
-
+	for ( Size k = 1; k <= Size( dock_design_loop_num_ ); ++k ) {
 		pert_mc->reset(pose);
 
-		//kdrew: a quick design/repack prior to pertubation, often the initial structure given is aligned to hotspot Ca Cb vector 
+		//kdrew: a quick design/repack prior to pertubation, often the initial structure given is aligned to hotspot Ca Cb vector
 		//kdrew: and do not want to perturb away until designed in hotspot residue
-		if( k == 1 && option[ hddm::hbs_design_first ].value() )
-		{
+		if( k == 1 && ncbb_design_first_ )
 			desn_sequence->apply( pose );
-		}
 
-		// pert loop
-		for( Size j = 1; j <= Size( option[ hddm::pert_num ].value() ); ++j ) {
+		// Perturbation phase - loop
+		for( Size j = 1; j <= Size( pert_num_ ); ++j ) {
 			TR << "PERTURB: " << k << " / "  << j << std::endl;
 			pert_trial->apply( pose );
 			curr_job->add_string_real_pair( "ENERGY_PERT (pert score)", (*pert_score_fxn)(pose) );
@@ -511,37 +433,34 @@ if( option[ hddm::pymol ].value() )
 		pert_mc->recover_low( pose );
 		curr_job->add_string_real_pair( "ENERGY_PERT (pert score) recovered low", (*pert_score_fxn)(pose) );
 
-		// design
+		// Design phase
 		TR << "DESIGN: " << k << std::endl;
 		desn_sequence->apply( pose );
-		curr_job->add_string_real_pair( "ENERGY_DESN (hard score)", (*score_fxn)(pose) );
+		curr_job->add_string_real_pair( "ENERGY_DESN (hard score)", (*score_fxn_)(pose) );
 
 		//kdrew: reset mc after first cycle if not considering initial pose
-		if( !option[ hddm::mc_initial_pose ].value() && k == 1 )
+		if( !mc_initial_pose_  && k == 1 )
 		{
 			mc->reset(pose);
-			TR<< "after mc->reset" << std::endl;
+			TR << "after mc->reset" << std::endl;
 			mc->show_state();
 		}
 
-		TR<< "pre mc->boltzmann" << std::endl;
+		TR << "pre mc->boltzmann" << std::endl;
 		mc->show_state();
 		mc->boltzmann( pose );
-		TR<< "post mc->boltzmann" << std::endl;
+		TR << "post mc->boltzmann" << std::endl;
 		mc->show_state();
-		
 	}//dock_design for loop
 
 	mc->recover_low( pose );
-
 	curr_job->add_string_real_pair( "ENERGY_FINAL (pert score) ", (*pert_score_fxn)(pose) );
-	curr_job->add_string_real_pair( "ENERGY_FINAL (hard score) ", (*score_fxn)(pose) );
+	curr_job->add_string_real_pair( "ENERGY_FINAL (hard score) ", (*score_fxn_)(pose) );
 
 	TR << "Ending main loop..." << std::endl;
-
 	TR << "Checking pose energy..." << std::endl;
 
-		// create  MetricValues
+	// create  MetricValues
 	basic::MetricValue< core::Real > mv_sasa_complex;
 	basic::MetricValue< core::Real > mv_sasa_seperated;
 	basic::MetricValue< utility::vector1< core::Size > > mv_unsat_res_complex;
@@ -561,39 +480,36 @@ if( option[ hddm::pymol ].value() )
 	core::Real hbond_ener_sum_seperated;
 
 	// calc energy
-	energy_complex = (*score_fxn)(pose);
+	energy_complex = (*score_fxn_)(pose);
 
 	TR << "Energy less than cutoff, doing final design and running filters..." << std::endl;
 
-	if ( option[ hddm::final_design_min].value() )
+	if ( final_design_min_ )
 	{
 		// get packer task from task factory
-		PackerTaskOP final_desn_pt( *(desn_tf->create_task_and_apply_taskoperations( pose )) );
+		PackerTaskOP final_desn_packer_task( *(desn_tf->create_task_and_apply_taskoperations( pose )) );
 
 		// add extra chi and extra chi cut off to pt
 		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
-			final_desn_pt->nonconst_residue_task( i ).or_ex1( true );
-			final_desn_pt->nonconst_residue_task( i ).or_ex2( true );
-			final_desn_pt->nonconst_residue_task( i ).and_extrachi_cutoff( 0 );
+			final_desn_packer_task->nonconst_residue_task( i ).or_ex1( true );
+			final_desn_packer_task->nonconst_residue_task( i ).or_ex2( true );
+			final_desn_packer_task->nonconst_residue_task( i ).and_extrachi_cutoff( 0 );
 		}
 
 		// create a pack rotamers mover for the final design
-		simple_moves::PackRotamersMoverOP final_desn_pr( new simple_moves::PackRotamersMover(score_fxn, final_desn_pt, 10 ) );
-		//final_desn_pr->packer_task( final_desn_pt );
-		//final_desn_pr->score_function( score_fxn );
-		//final_desn_pr->nloop( 10 );
+		simple_moves::PackRotamersMoverOP final_desn_pack_rotamers( new simple_moves::PackRotamersMover(score_fxn_, final_desn_packer_task, 10 ) );
 
 		// design with final pr mover
-		final_desn_pr->apply( pose );
+		final_desn_pack_rotamers->apply( pose );
 
 		// create move map for minimization
 		kinematics::MoveMapOP final_min_mm( new kinematics::MoveMap() );
-		final_min_mm->set_bb( false );
+		final_min_mm->set_bb( true );
 		final_min_mm->set_chi( true );
 		final_min_mm->set_jump( 1, true );
 
 		// create minimization mover
-		simple_moves::MinMoverOP final_min( new simple_moves::MinMover( final_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+		simple_moves::MinMoverOP final_min( new simple_moves::MinMover( final_min_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
 		// final min (okay to use ta min here)
 		final_min->apply( pose );
 	}
@@ -602,7 +518,7 @@ if( option[ hddm::pymol ].value() )
 	Pose stats_pose( pose );
 
 	// complex stats
-	energy_complex = (*score_fxn)(stats_pose);
+	energy_complex = (*score_fxn_)(stats_pose);
 	stats_pose.metric("sasa","total_sasa",mv_sasa_complex);
 	stats_pose.metric("unsat", "residue_bur_unsat_polars", mv_unsat_res_complex);
 	utility::vector1< core::Size > const unsat_res_complex(mv_unsat_res_complex.value());
@@ -610,14 +526,14 @@ if( option[ hddm::pymol ].value() )
 	scoring::EnergyMap complex_emap( stats_pose.energies().total_energies() );
 	hbond_ener_sum_complex = complex_emap[ hbond_sr_bb ] + complex_emap[ hbond_lr_bb ] + complex_emap[ hbond_bb_sc ] + complex_emap[ hbond_sc ];
 
-	// separate designed chain from other chains
+	// seperate designed chain from other chains
 	protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( pose, 1 ) ); // HARDCODED JUMP NUMBER
 	translate->step_size( 1000.0 );
 	translate->apply( stats_pose );
 	//stats_pose.dump_pdb("stats_trans1000.pdb");
 
 	Pose repack_stats_pose( stats_pose );
-	
+
 	//kdrew: probably should repack and minimize here after separation
 	TaskFactoryOP tf(new TaskFactory());
 	tf->push_back( new core::pack::task::operation::InitializeFromCommandline );
@@ -626,7 +542,7 @@ if( option[ hddm::pymol ].value() )
 	tf->push_back( rtrp );
 	simple_moves::PackRotamersMoverOP packer( new protocols::simple_moves::PackRotamersMover() );
 	packer->task_factory( tf );
-	packer->score_function( score_fxn );
+	packer->score_function( score_fxn_ );
 	packer->apply( repack_stats_pose );
 
 	// create move map for minimization
@@ -636,13 +552,13 @@ if( option[ hddm::pymol ].value() )
 	separate_min_mm->set_jump( 1, true );
 
 	// create minimization mover
-	simple_moves::MinMoverOP separate_min( new simple_moves::MinMover( separate_min_mm, score_fxn, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
+	simple_moves::MinMoverOP separate_min( new simple_moves::MinMover( separate_min_mm, score_fxn_, option[ OptionKeys::run::min_type ].value(), 0.01,	true ) );
 	// final min (okay to use ta min here)
 	separate_min->apply( repack_stats_pose );
 
 	// seperate stats
-	energy_seperated = (*score_fxn)(stats_pose);
-	repack_energy_seperated = (*score_fxn)(repack_stats_pose);
+	energy_seperated = (*score_fxn_)(stats_pose);
+	repack_energy_seperated = (*score_fxn_)(repack_stats_pose);
 	stats_pose.metric("sasa","total_sasa",mv_sasa_seperated);
 	repack_stats_pose.metric("sasa","total_sasa",mv_repack_sasa_seperated);
 	stats_pose.metric("unsat", "residue_bur_unsat_polars", mv_unsat_res_seperated);
@@ -681,11 +597,12 @@ if( option[ hddm::pymol ].value() )
 	curr_job->add_string_real_pair( "REPACK_PACK_DIFF:\t\t", mv_pack_complex.value() - mv_repack_pack_seperated.value() );
 
 }
+
 // this only works for two chains and assumes the protein is first and the peptide is second
 // inspired by protocols/docking/DockingProtocol.cc
 void
-HbsDockDesignMinimizeMover::setup_pert_foldtree( 
-	core::pose::Pose & pose 
+NcbbDockDesignProtocol::setup_pert_foldtree(
+	core::pose::Pose & pose
 )
 {
 	using namespace kinematics;
@@ -708,7 +625,7 @@ HbsDockDesignMinimizeMover::setup_pert_foldtree(
 	Size jump_index( f.num_jump() + 1 );
 	f.add_edge( pro_start, dock_jump_pos_pro, Edge::PEPTIDE );
 	f.add_edge( dock_jump_pos_pro, pro_end, Edge::PEPTIDE );
-	f.add_edge( pep_start, dock_jump_pos_pep, Edge::PEPTIDE);
+	f.add_edge( pep_start, dock_jump_pos_pep, Edge::PEPTIDE );
 	f.add_edge( dock_jump_pos_pep, pep_end, Edge::PEPTIDE );
 	f.add_edge( dock_jump_pos_pro, dock_jump_pos_pep, jump_index );
 
@@ -723,28 +640,29 @@ HbsDockDesignMinimizeMover::setup_pert_foldtree(
 }
 
 void
-HbsDockDesignMinimizeMover::setup_filter_stats()
+NcbbDockDesignProtocol::setup_filter_stats()
 {
-	/*********************************************************************************************************************
-	Filter / Stats Setup
-	*********************************************************************************************************************/
-
 	// create and register sasa calculator
 	pose::metrics::PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy() );
-	pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
+	if (!pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ))
+		pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 
 	// create and register hb calculator
 	pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator( new pose_metric_calculators::NumberHBondsCalculator() );
-	pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
+	if (!pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "num_hbonds" ))
+		pose::metrics::CalculatorFactory::Instance().register_calculator( "num_hbonds", num_hbonds_calculator );
 
 	// create and register unsat calculator
 	pose::metrics::PoseMetricCalculatorOP unsat_calculator( new pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator("sasa", "num_hbonds") ) ;
-	pose::metrics::CalculatorFactory::Instance().register_calculator( "unsat", unsat_calculator );
+	if (!pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "unsat" ))
+		pose::metrics::CalculatorFactory::Instance().register_calculator( "unsat", unsat_calculator );
 
 	// create and register packstat calculator
 	pose::metrics::PoseMetricCalculatorOP pack_calcculator( new pose_metric_calculators::PackstatCalculator() );
-	pose::metrics::CalculatorFactory::Instance().register_calculator( "pack", pack_calcculator );
-
+	if (!pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "pack" ))
+		pose::metrics::CalculatorFactory::Instance().register_calculator( "pack", pack_calcculator );
 }
 
+}
+}
 

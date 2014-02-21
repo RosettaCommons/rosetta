@@ -95,18 +95,22 @@ star_fold_tree( core::pose::Pose & pose )
 std::string
 optimal_connection_point( std::string const residue_type ){
 	std::string connect_to( "CB" ); // to which atom to hook up the atom tree
-	if( residue_type == "GLN" || residue_type == "GLU" )
+	if( residue_type == "GLN" || residue_type == "DGN"  || residue_type == "GLU"  || residue_type == "DGU" )
 		connect_to = "CD";
-	if( residue_type == "ARG" )
+	if( residue_type == "ARG" || residue_type == "DAR" )
 		connect_to = "CZ";
-	if( residue_type == "MET" )
+	if( residue_type == "MET" || residue_type == "DME")
 		connect_to = "SD";
-	if( residue_type == "LEU" || residue_type == "PHE" || residue_type == "TRP" || residue_type == "TYR" || residue_type == "ASN" || residue_type == "ASP" )
+	if( residue_type == "LEU" || residue_type == "PHE" || residue_type == "DPH" || residue_type == "TRP" || residue_type == "DTR" || residue_type == "TYR" || residue_type == "DTY" || residue_type == "ASN" || residue_type == "DAS" || residue_type == "ASP"|| residue_type == "DAS" )
 		connect_to = "CG";
-	if( residue_type == "LYS" )
+	if( residue_type == "DLE" )
+		connect_to = "CD2";
+	if( residue_type == "LYS" || residue_type == "DLY"  )
 		connect_to = "NZ";
 	if( residue_type == "GLY" )
 		connect_to = "CA";
+
+	TR.Debug << "residue_type: " << residue_type << " connect_to: " << connect_to << std::endl;
 
 	return( connect_to );
 }

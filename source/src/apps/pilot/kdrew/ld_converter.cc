@@ -13,6 +13,8 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/PDBPoseMap.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -59,7 +61,10 @@
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 //#include <basic/options/keys/OptionKeys.hh>
+#include <utility/options/keys/StringVectorOptionKey.fwd.hh>
+#include <utility/options/keys/StringVectorOptionKey.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
@@ -71,6 +76,7 @@
 
 // C++ headers
 #include <string>
+#include <iostream>
 #include <sstream>
 
 //The original author used a lot of using declarations here.  This is a stylistic choice.
@@ -104,8 +110,11 @@ namespace ld_converter{
 	// pert options
 	IntegerVectorOptionKey const convert_L_positions( "ld_converter::convert_L_positions" );
 	IntegerVectorOptionKey const convert_D_positions( "ld_converter::convert_D_positions" );
+	StringVectorOptionKey const convert_L_pdb_positions( "ld_converter::convert_L_pdb_positions" );
+	StringVectorOptionKey const convert_D_pdb_positions( "ld_converter::convert_D_pdb_positions" );
 	BooleanOptionKey const final_repack( "ld_converter::final_repack" );
 	BooleanOptionKey const final_minimize( "ld_converter::final_minimize" );
+	BooleanOptionKey const fix_functional_group( "ld_converter::fix_functional_group" );
 
 }
 
@@ -133,10 +142,16 @@ main( int argc, char* argv[] )
 {
     try {
 	utility::vector1< core::Size > empty_vector(0);
+	utility::vector1< std::string > empty_vector_string(0);
 	option.add( ld_converter::convert_L_positions, "The residue positions to convert to L configuration" ).def( empty_vector );
 	option.add( ld_converter::convert_D_positions, "The residue positions to convert to D configuration" ).def( empty_vector );
+
+	option.add( ld_converter::convert_D_pdb_positions, "The residue positions to convert to D configuration in pdb numbering (chain resnum)" ).def( empty_vector_string );
+	option.add( ld_converter::convert_L_pdb_positions, "The residue positions to convert to L configuration in pdb numbering (chain resnum)" ).def( empty_vector_string );
+
 	option.add( ld_converter::final_repack, "Do a final repack. Default false" ).def( false );
 	option.add( ld_converter::final_minimize, "Do a final minimization. Default false" ).def( false );
+	option.add( ld_converter::fix_functional_group, "Keep the side chain fixed rather than the backbone. Default false" ).def( false );
 
 	// init command line options
 	//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
@@ -168,11 +183,21 @@ LDConverterMover::apply(
 
 	scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose);
 
-	utility::vector1< core::Size > const l_positions = option[ ld_converter::convert_L_positions ].value();
+	utility::vector1< core::Size > l_positions = option[ ld_converter::convert_L_positions ].value();
+	//kdrew: parse pdb numbering in convert_pdb_position options
+	utility::vector1< std::string > const l_pdb_positions = option[ ld_converter::convert_L_pdb_positions].value();
+	core::pose::PDBPoseMap const & pose_map(pose.pdb_info()->pdb2pose());
+	//kdrew: chain and res numbers are a pair so increment by 2
+	for( Size i = 1; i <= l_pdb_positions.size(); i=i+2 )
+	{
+		core::Size respos = pose_map.find( *l_pdb_positions[i].c_str(), atoi(l_pdb_positions[i+1].c_str()) );
+        l_positions.push_back(respos);
+	}
+	
 	for(Size i = 1; i <= l_positions.size(); ++i )
 	{
 		TR << "residue id: " << l_positions[i] << std::endl;
-		protocols::simple_moves::chiral::ChiralMoverOP cm( new protocols::simple_moves::chiral::ChiralMover( l_positions[i], chiral::L_CHIRALITY ) );
+		protocols::simple_moves::chiral::ChiralMoverOP cm( new protocols::simple_moves::chiral::ChiralMover( l_positions[i], chiral::L_CHIRALITY, option[ ld_converter::fix_functional_group].value() ) );
 		cm->apply( pose );
 
 		//kdrew: if an oop residue, update hydrogens
@@ -183,11 +208,20 @@ LDConverterMover::apply(
 		}
 	}
 
-	utility::vector1< core::Size > const d_positions = option[ ld_converter::convert_D_positions ].value();
+	utility::vector1< core::Size > d_positions = option[ ld_converter::convert_D_positions ].value();
+	utility::vector1< std::string > const d_pdb_positions = option[ ld_converter::convert_D_pdb_positions].value();
+	//kdrew: parse pdb numbering in convert_pdb_position options
+	//kdrew: chain and res numbers are a pair so increment by 2
+	for( Size i = 1; i <= d_pdb_positions.size(); i=i+2 )
+	{
+		core::Size respos = pose_map.find( *d_pdb_positions[i].c_str(), std::atoi(d_pdb_positions[i+1].c_str()) );
+        d_positions.push_back(respos);
+
+	}
 	for(Size i = 1; i <= d_positions.size(); ++i )
 	{
 		TR << "residue id: " << d_positions[i] << std::endl;
-		protocols::simple_moves::chiral::ChiralMoverOP cm( new protocols::simple_moves::chiral::ChiralMover( d_positions[i], chiral::D_CHIRALITY ) );
+		protocols::simple_moves::chiral::ChiralMoverOP cm( new protocols::simple_moves::chiral::ChiralMover( d_positions[i], chiral::D_CHIRALITY , option[ ld_converter::fix_functional_group].value()) );
 		cm->apply( pose );
 
 		//kdrew: if an oop residue, update hydrogens
@@ -202,10 +236,11 @@ LDConverterMover::apply(
 	//kdrew: if no positions were passed in, make all positions L configuration
 	if ( l_positions.size() == 0 && d_positions.size() == 0 )
 	{
+		TR << "making all positions L configuration" << std::endl;
 		for( Size i = 1; i <= pose.conformation().chain_end( 1 ); ++i )
 		{
 			TR << "residue id: " << i << std::endl;
-			protocols::simple_moves::chiral::ChiralMoverOP cm( new protocols::simple_moves::chiral::ChiralMover( i ) );
+			protocols::simple_moves::chiral::ChiralMoverOP cm( new protocols::simple_moves::chiral::ChiralMover( i, option[ ld_converter::fix_functional_group].value() ) );
 			cm->apply( pose );
 
 			//kdrew: if an oop residue, update hydrogens

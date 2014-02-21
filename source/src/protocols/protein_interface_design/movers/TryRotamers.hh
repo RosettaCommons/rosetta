@@ -46,6 +46,7 @@ public:
 		core::Size explosion = 0, // rotamer explosion
 		core::Size jump_num = 1,
 		bool clash_check = false,
+		bool solo_res = false,
 		bool include_current = true
 	);
 
@@ -56,6 +57,7 @@ public:
 		core::Size explosion = 0, // rotamer explosion
 		core::Size jump_num = 1,
 		bool clash_check = false,
+		bool solo_res = false,
 		bool include_current = true
 	);
 
@@ -96,6 +98,7 @@ private:
 	core::Size resnum_;
 	core::Size jump_num_;
 	bool clash_check_;
+	bool solo_res_;
 	bool include_current_;
 	bool automatic_connection_; // should TryRotamers decide on the foldtree on its own? default true
 	core::Size explosion_; // rotamer explosion

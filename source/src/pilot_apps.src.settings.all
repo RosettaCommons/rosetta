@@ -463,6 +463,7 @@ sources = {
 		#"oop_puck_energy_calc_mc",
 		#"oop_dimer_rama_calc",
 		"ld_converter",
+		"scaffold_matcher",
 	],
 	"pilot/kenjung" : [
 		"loophash_createfiltereddb",

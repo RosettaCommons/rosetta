@@ -82,6 +82,7 @@ TryRotamers::TryRotamers( Size resnum,
 	Size explosion, // rotamer explosion
 	Size jump_num,
 	bool clash_check,
+	bool solo_res,
 	bool include_current
 ) :
 	protocols::moves::Mover( TryRotamersCreator::mover_name() ),
@@ -89,6 +90,7 @@ TryRotamers::TryRotamers( Size resnum,
 	resnum_(resnum),
 	jump_num_(jump_num),
 	clash_check_(clash_check),
+	solo_res_(solo_res),
 	include_current_(include_current),
 	explosion_(explosion),
 	final_filter_(final_filter.clone())
@@ -99,6 +101,7 @@ TryRotamers::TryRotamers( core::Size resnum,
 	core::scoring::ScoreFunction const& scorefxn,
 	Size explosion, // rotamer explosion
 	Size jump_num,
+	bool solo_res,
 	bool clash_check,
 	bool include_current
 	) :
@@ -107,6 +110,7 @@ TryRotamers::TryRotamers( core::Size resnum,
 	resnum_(resnum),
 	jump_num_(jump_num),
 	clash_check_(clash_check),
+	solo_res_(solo_res),
 	include_current_(include_current),
 	explosion_(explosion),
 	final_filter_(new protocols::filters::TrueFilter)
@@ -159,6 +163,7 @@ TryRotamers::apply ( pose::Pose & pose )
 	core::kinematics::FoldTree const saved_ft( pose.fold_tree() );
 
 	TR << "current fold-tree:\n" << pose.fold_tree() << std::endl;
+
 	if( automatic_connection_ ){
 		core::kinematics::FoldTree const new_ft( make_hotspot_foldtree( pose ) );
 		TR<<"New foldtree:\n"<<new_ft<<std::endl;
@@ -167,6 +172,11 @@ TryRotamers::apply ( pose::Pose & pose )
 
 	foreach( core::Size const resid, shove_residues_ )
 		core::pose::add_variant_type_to_pose_residue( pose, "SHOVE_BB", resid );
+
+	if (solo_res_) {
+		core::pose::add_lower_terminus_type_to_pose_residue( pose, pose.total_residue() ); //prolly critical so that the dunbrack library uses neutral phi
+		core::pose::add_upper_terminus_type_to_pose_residue( pose, pose.total_residue() );
+	}
 
 	pose.update_residue_neighbors();
 
@@ -224,6 +234,7 @@ TryRotamers::parse_my_tag( TagCOP const tag,
 	automatic_connection_ = tag->getOption< bool >( "automatic_connection", 1 );
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	jump_num_ = tag->getOption<core::Size>( "jump_num", 1);
+	solo_res_ = tag->getOption<core::Size>( "solo_res", 0);
 	std::string const final_filter_name( tag->getOption<std::string>( "final_filter", "true_filter" ) );
 	protocols::filters::Filters_map::const_iterator find_filter( filters.find( final_filter_name ));
 
@@ -257,6 +268,7 @@ TryRotamers::parse_my_tag( TagCOP const tag,
 	TR
 		<< "TryRotamers was instantiated using scorefxn=" << rosetta_scripts::get_score_function_name(tag)
 		<< ", jump_number=" << jump_num_
+		<< ", solo_res=" << solo_res_
 		<< ", clash_check=" << clash_check_
 		<< ", include_current=" << include_current_
 		<< ", and explosion=" << explosion_ << std::endl;
