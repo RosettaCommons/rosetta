@@ -235,7 +235,6 @@ NormalModeMinimizer::deriv_check_local( pose::Pose const &pose,
 	Multivec analytical_deriv( f.nvar(), 0.0 );
 
 	// First calculate function and derivative for starting pose
-	Real const f0( f( vars0 ) );
 	f.dfunc( vars0, analytical_deriv );
 
 	// Then enumerate over degree of freedom

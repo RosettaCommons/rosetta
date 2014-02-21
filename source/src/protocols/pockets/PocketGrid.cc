@@ -1499,11 +1499,9 @@ outPDB_stream<<"ATOM			8	C	 C						"<<std::setw(8)<<std::fixed<<std::setprecisio
 
 		utility::io::ozstream outPDB_stream;
 		outPDB_stream.open(output_filename, std::ios::out);
-		int counter=1;
 		int counter2=1;
 
 		int clustNo=1;
-		bool smallPocket;
 		int count=0;
 		for (std::list<CCluster>::iterator cit=c_clusters_.clusters_.begin(); cit != c_clusters_.clusters_.end(); ++cit){
 			count++;
@@ -1579,11 +1577,9 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, bo
 
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(output_filename, std::ios::out);
-	int counter=1;
 	int counter2=1;
 
 	int clustNo=1;
-	bool smallPocket;
 	for (std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit){
 		if (cit->points_.size()*pow(stepSize_,3)<minPockSize_) continue;
 		 if (!cit->isTarget(numTargets_)) continue;
@@ -1750,17 +1746,11 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename, nu
 		}
 	}
 
-	core::Real new_xcorn=(core::Real)std::floor(xmin + 0.5);
-	core::Real new_ycorn=(core::Real)std::floor(ymin + 0.5);
-	core::Real new_zcorn=(core::Real)std::floor(zmin + 0.5);
-
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(output_filename, std::ios::out);
-	int counter=1;
 	int counter2=1;
 
 	int clustNo=1;
-	bool smallPocket;
 	for (std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit){
 		if (cit->points_.size()*pow(stepSize_,3)<minPockSize_) continue;
 		 if (!cit->isTarget(numTargets_)) continue;
@@ -2484,7 +2474,6 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 		//core::Real const opt_distance( 2.75 );
 		//core::Real const distance( 3.0 );
 		core::Real const opt_distance( 2.75 );
-		core::Real const distance( 3.5 );
 		using namespace core::chemical;
 		using namespace core::kinematics;
 
@@ -2519,8 +2508,6 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 		// Go through residues near the the pocket and look for hydrogen donors and acceptors
 		for ( Size j = 1, resnum = total_residues; j <= resnum; ++j ) {
 			core::conformation::Residue const & rsd( inPose.conformation().residue(j) );
-
-			int target = 0;
 
 			// fill in points that are ideal for a hydrogen acceptor with an O
 			for ( core::chemical::AtomIndices::const_iterator hnum = rsd.Hpos_polar().begin(),
@@ -2832,7 +2819,6 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 			}
 		}
 
-		int test=1;
 		for (std::list<CCluster>::iterator cit=c_clusters_.clusters_.begin(); cit != c_clusters_.clusters_.end(); ++cit){
 			for (std::list<CCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit){
 				for (int x = -1* (int) (5/stepSize_)-1; x <= (int) (5/stepSize_)+1; x++){
@@ -3220,7 +3206,6 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 
 
 				findPockets(0, maxLen_);
-			core::Size xx,yy,zz;
 
 		if (markpsp_){
 					findPSP(0,maxLen_);
@@ -3623,11 +3608,9 @@ void TargetPocketGrid::dumpTargetPocketsToPDB( std::string const & output_filena
 
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(output_filename, std::ios::out);
-	int counter=1;
 	int counter2=1;
 
 	int clustNo=1;
-	bool smallPocket;
 	for (std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit){
 		if (cit->points_.size()*pow(stepSize_,3)<minPockSize_) continue;
 		if (!cit->isTarget(numTargets_)) continue;
@@ -3880,7 +3863,6 @@ EggshellGrid::EggshellGrid( const PocketGrid& grd, core::pose::Pose const & liga
 
 	// use Grid to fill in Eggshell grid
 	numeric::xyzVector<core::Real> grd_coord;
-	core::Size searchxmin, searchxmax, searchymin, searchymax, searchzmin, searchzmax, xx, yy, zz;
 
 	for (core::Size x = 0; x < grd.xdim_; ++x) {
 		for (core::Size y = 0; y < grd.ydim_; ++y) {

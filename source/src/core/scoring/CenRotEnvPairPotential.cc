@@ -469,7 +469,7 @@ void
 CenRotEnvPairPotential::compute_dcentroid_environment(
 	pose::Pose & pose
 ) const {
-	SigmoidWeightedCenList<Real> & cenlist( nonconst_cenlist_from_pose( pose ));
+	nonconst_cenlist_from_pose( pose );
 	SigmoidWeightedCenList< numeric::xyzVector< Real > > & dcenlist( nonconst_dcenlist_from_pose( pose ));
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
@@ -521,7 +521,7 @@ CenRotEnvPairPotential::cenlist_from_pose( pose::Pose const & pose ) const {
 }
 
 /// @details Either returns a non-const reference to the cenlist object already stored
-/// in the pose, or creates a new cenist object, places it in the pose, and returns
+/// in the pose, or creates a new cenlist object, places it in the pose, and returns
 /// a non-const reference to it.
 SigmoidWeightedCenList< Real > &
 CenRotEnvPairPotential::nonconst_cenlist_from_pose( pose::Pose & pose ) const {

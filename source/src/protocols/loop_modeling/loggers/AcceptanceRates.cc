@@ -69,8 +69,6 @@ void AcceptanceRates::log_ending_(Pose const &) {
 
 	for (uint i = 0; i < task_names_.size(); ++i) {
 		string name = task_names_[i];
-		int calls = task_calls_[i];
-		int successes = task_successes_[i];
 
 		cout << setw(name_chars + 2) << task_names_[i] + ": ";
 		cout << setw(success_digits) << task_successes_[i] << "/";

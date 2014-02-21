@@ -315,7 +315,7 @@ SmoothEnvPairPotential::compute_dcentroid_environment(
 ) const {
 	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
-	SigmoidWeightedCenList<Real> & cenlist( nonconst_cenlist_from_pose( pose ));
+	nonconst_cenlist_from_pose( pose );
 	SigmoidWeightedCenList< numeric::xyzVector< Real > > & dcenlist( nonconst_dcenlist_from_pose( pose ));
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );

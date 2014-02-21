@@ -66,7 +66,6 @@ GaussianChainDoubleFunc::func( Real const z ) const
 	Real const & D1 = z;
 	Real const & D2 = D2_;
 
-	Real loop_prob( 0.0 );
 	Real const term1 = exp( -( D1 - D2) * (D1 - D2)/ (2 * gaussian_variance_ ) );
 	Real const term2 = exp( -( D1 + D2) * (D1 + D2)/ (2 * gaussian_variance_ ) );
 	Real const loop_energy = -kB_T_ * log( ( term1 - term2 ) / (D1 * D2 ));

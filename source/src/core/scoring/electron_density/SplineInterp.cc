@@ -324,7 +324,7 @@ int compute_coefficients3(double *data, int dims[3]) {
 
 int grad3(double grad[3], double *Bcoeff, int dims[3], double X[3]) {
 	double wt[3][4];
-	double w, w2, w4, t, t0, t1;
+	double w;
 	double sum_k, sum_jk;
 	int idx[3][4];
 	int i,j,k, pt, dim, gradDim;
@@ -383,7 +383,7 @@ int grad3(double grad[3], double *Bcoeff, int dims[3], double X[3]) {
 double interp3(double *Bcoeff, int dims[3], double X[3]) {
 	double wt[3][4];
 	double value;
-	double w, w2, w4, t, t0, t1;
+	double w;
 	double sum_k, sum_jk;
 	int idx[3][4];
 	int i,j,k, pt, dim;
@@ -497,7 +497,7 @@ int compute_coefficients4(double *data, int dims[4]) {
 
 int grad4(double grad[4], double *Bcoeff, int dims[4], double X[4]) {
 	double wt[4][4];
-	double w, w2, w4, t, t0, t1;
+	double w;
 	double sum_l, sum_kl, sum_jkl;
 	int idx[4][4];
 	int i,j,k,l, pt, dim, gradDim;
@@ -573,7 +573,7 @@ int grad4(double grad[4], double *Bcoeff, int dims[4], double X[4]) {
 double interp4(double *Bcoeff, int dims[4], double X[4]) {
 	double wt[4][4];
 	double value;
-	double w, w2, w4, t, t0, t1;
+	double w;
 	double sum_l, sum_kl, sum_jkl;
 	int idx[4][4];
 	int i,j,k,l, pt, dim;

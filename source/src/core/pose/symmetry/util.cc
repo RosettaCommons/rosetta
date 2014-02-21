@@ -1173,7 +1173,6 @@ get_full_intracomponent_neighbor_subs(Pose const &pose, std::string sym_dof_name
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
 
-	int	sym_aware_jump_id = sym_dof_jump_num( pose, sym_dof_name );
 	utility::vector1<std::string> subs = get_full_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist);
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 
@@ -1304,7 +1303,6 @@ get_intracomponent_subs(Pose const &pose, std::string sym_dof_name, Real contact
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
 
-	int	sym_aware_jump_id = sym_dof_jump_num( pose, sym_dof_name );
 	utility::vector1<std::string> subs = get_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist);
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 
@@ -1336,7 +1334,6 @@ get_neighbor_subs(Pose const &pose, std::string sym_dof_name, Real contact_dist)
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
 
-	int	sym_aware_jump_id = sym_dof_jump_num( pose, sym_dof_name );
 	utility::vector1<std::string> subs = get_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist);
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 
@@ -1367,7 +1364,6 @@ get_intracomponent_and_intraneighbor_subs(Pose const &pose, std::string sym_dof_
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
 
-	int	sym_aware_jump_id = sym_dof_jump_num( pose, sym_dof_name );
 	utility::vector1<std::string> subs = get_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist);
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 
@@ -1398,7 +1394,6 @@ get_intracomponent_and_interneighbor_subs(Pose const &pose, std::string sym_dof_
 	using namespace core::conformation::symmetry;
 	using namespace core::pose::symmetry;
 
-	int	sym_aware_jump_id = sym_dof_jump_num( pose, sym_dof_name );
 	utility::vector1<std::string> subs = get_intracomponent_and_neighbor_subs(pose, sym_dof_name, contact_dist);
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 

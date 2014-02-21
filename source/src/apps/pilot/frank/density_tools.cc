@@ -203,7 +203,6 @@ densityTools()
 	bool mask = option[ denstools::mask ]();
 	bool mask_modelmap = option[ denstools::mask_modelmap ]();
 	bool rescale_map = option[ denstools::rescale_map ]();
-	bool superverbose = option[ denstools::super_verbose ]();
 
 	if (mask) mask_modelmap = false;
 
@@ -299,7 +298,7 @@ densityTools()
 		//	pose, nresobins, lowres, hires, mapmapError, MLE, errorSum_S2, mask_modelmap, bin_squared, mask_radius );
 
 		// sum FSC over reso bins
-		core::Real ncount=0,ncountWt=0;
+		core::Real ncount=0;
 		for (Size i=1; i<=resobins.size(); ++i) {
 			if (!mask && usermap && mapmapFSC[i] < 0.2) break;
 			if (mask && usermap && mapmapFSC[i] < 0.5) break;

@@ -24,16 +24,7 @@
 #include <test/util/deriv_funcs.hh>
 #include <test/core/init_util.hh>
 
-// AUTO-REMOVED #include <core/id/DOF_ID.hh>
-// AUTO-REMOVED #include <core/id/TorsionID.hh>
 #include <core/kinematics/DomainMap.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
-
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
@@ -74,7 +65,6 @@ class ProClosureEnergyTests : public CxxTest::TestSuite {
 	{
 		Pose trpcage( create_trpcage_ideal_pose() );
 
-		Size before_precision = std::cout.precision();
 		std::cout.precision( 16 );
 
 		ProClosureEnergy proclose_energy;

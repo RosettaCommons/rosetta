@@ -979,11 +979,6 @@ RotamericSingleResidueDunbrackLibrary< T >::interpolate_rotamers(
 		phibin_next, psibin_next,phi_alpha, psi_alpha,
 		interpolated_rotamer );
 
-	Size const &i0 = phibin;
-	Size const &j0 = psibin;
-	Size const &i1 = phibin_next;
-	Size const &j1 = psibin_next;
-
 	/*
 	std::cout << "AA/phi/psi/S00/S01/S10/S11/Sinter: " << aa();
 	printf(" %8.1f %8.1f %8.4f %8.4f %8.4f %8.4f %8.4f\n",
@@ -991,29 +986,6 @@ RotamericSingleResidueDunbrackLibrary< T >::interpolate_rotamers(
 				 ShanonEntropy_(i0,j0), ShanonEntropy_(i0,j1), ShanonEntropy_(i1,j0), ShanonEntropy_(i1,j1),
 				 scratch.entropy());
 	*/
-
-	/// TEMP!
-	/*Real delta = 1e-12;
-	RotamerLibraryScratchSpace tmpscratch;
-	PackedDunbrackRotamer< T, Real > tmprot;
-	get_phipsi_bins( phi-delta/10, psi, phibin, psibin, phibin_next, psibin_next,phi_alpha, psi_alpha );
-	interpolate_rotamers( tmpscratch, packed_rotno, phibin,psibin,phibin_next, psibin_next, phi_alpha-delta/10, psi_alpha, tmprot );
-	Real Edphim = tmpscratch.negln_rotprob();
-	get_phipsi_bins( phi+delta/10, psi, phibin, psibin, phibin_next, psibin_next,phi_alpha, psi_alpha );
-	interpolate_rotamers( tmpscratch, packed_rotno, phibin,psibin,phibin_next, psibin_next, phi_alpha+delta/10, psi_alpha, tmprot );
-	Real Edphip = tmpscratch.negln_rotprob();
-	get_phipsi_bins( phi, psi-delta/10, phibin, psibin, phibin_next, psibin_next,phi_alpha, psi_alpha );
-	interpolate_rotamers( tmpscratch, packed_rotno, phibin,psibin,phibin_next, psibin_next, phi_alpha, psi_alpha-delta/10, tmprot );
-	Real Edpsim = tmpscratch.negln_rotprob();
-	get_phipsi_bins( phi, psi+delta/10, phibin, psibin, phibin_next, psibin_next,phi_alpha, psi_alpha );
-	interpolate_rotamers( tmpscratch, packed_rotno, phibin,psibin,phibin_next, psibin_next, phi_alpha, psi_alpha+delta/10, tmprot );
-	Real Edpsip = tmpscratch.negln_rotprob();
-
-	int start_precision = std::cout.precision();
-	std::cout.precision(16);
-	std::cout << "interpolate rotamers: " << aa() << " dE/dphi analytic " << scratch.dneglnrotprob_dbb()[1] << " vs numeric " << (Edphip-Edphim)/(2*delta) <<
-		" dE/dphi analytic " << scratch.dneglnrotprob_dbb()[2] << " vs numeric " << (Edpsip-Edpsim)/(2*delta) << std::endl;
-	std::cout.precision(start_precision);*/
 }
 
 template < Size T >
@@ -1832,9 +1804,6 @@ template < Size T >
 void
 RotamericSingleResidueDunbrackLibrary< T >::setup_entropy_correction()
 {
-
-	Size ntotalbin( N_PHIPSI_BINS*N_PHIPSI_BINS );
-
 	// Iter again in order to reference ShanonEntropy
 	ShanonEntropy_.dimension( N_PHIPSI_BINS, N_PHIPSI_BINS );
 	S_dsecophi_.dimension(  N_PHIPSI_BINS, N_PHIPSI_BINS );

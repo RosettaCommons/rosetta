@@ -141,7 +141,8 @@ settings = {
                     "Wno-long-long",
                     "Werror=sign-compare",
                     "Werror=unused-parameter",
-                    "Werror=reorder"
+                    "Werror=reorder",
+                    "Werror=unused-variable"
                 ],
             },
         },
@@ -228,7 +229,7 @@ settings = {
         "removes" : {
             "flags" : {
                 # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter"],
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
             }
         },
     },
@@ -255,6 +256,12 @@ settings = {
                 "warn"      : [ "Wno-unused-variable" ],
             },
             "defines"       : [ "NDEBUG", "PYROSETTA" ],
+        "removes" : {
+            "flags" : {
+                # See comment above for rational here.
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
+            }
+        },
         },
     },
     "gcc, 4.4, pyrosetta" : {
@@ -313,7 +320,7 @@ settings = {
         "removes" : {
             "flags" : {
                 # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter"],
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
             }
         },
     },
@@ -1287,7 +1294,9 @@ settings = {
                     "Wno-long-long",
                     "Werror=sign-compare",
                     "Werror=unused-parameter",
-                    "Werror=reorder"],
+                    "Werror=reorder",
+                    "Werror=unused-variable"
+                ],
             },
         },
     },
@@ -1395,7 +1404,7 @@ settings = {
         "removes" : {
             "flags" : {
                 # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter"],
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
             }
         },
     },
@@ -1412,7 +1421,7 @@ settings = {
         "removes" : {
             "flags" : {
                 # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter"],
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
             }
         },
     },

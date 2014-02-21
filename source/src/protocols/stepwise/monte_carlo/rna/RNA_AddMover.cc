@@ -175,7 +175,6 @@ namespace rna {
 										res_list[ res_to_build_off ] < res_list[ res_to_build_off + 1 ] - 1 );
 		runtime_assert( res_list[ res_to_build_off ] < full_sequence.size() );
 
-		Size const res_to_add = res_to_build_off + 1;
 		Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( res_to_add_in_full_model_numbering_ );
 
 		if ( other_pose_idx ){ // addition of a domain (a whole sister pose)

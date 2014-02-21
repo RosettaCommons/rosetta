@@ -338,7 +338,6 @@ CartesianSampler::apply_transform( core::pose::Pose &frag, core::Vector const &p
 bool
 CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &frame ) {
 	core::Size start = frame.start(),len = frame.length();
-	core::Size end = start + len - 1;
 	runtime_assert( overlap_>=1 && overlap_<=len/2);
 
 	// set the frame's insert point to 1
@@ -534,7 +533,6 @@ CartesianSampler::apply_constraints( core::pose::Pose &pose )
 
 	core::Size MINSEQSEP = 8;
 	core::Real MAXDIST = 12.0;
-	core::Size GAPBUFFER = 3;
 	core::Real COORDDEV = 0.39894;
 
 	bool user_rebuild = (fragment_bias_strategy_ == "user");
@@ -876,13 +874,13 @@ CartesianSampler::apply( Pose & pose ) {
 		}
 
 		// min + MC
-		core::Real scoreinit = (*scorefxn_)(pose);
+		(*scorefxn_)(pose);
 		if (TR.Debug.visible()) {
 			scorefxn_->show_line(TR,pose);
 			TR << std::endl;
 		}
 		minimizer.run( pose, mm_local, *scorefxn_, options_minilbfgs );
-		core::Real scorefinal = (*scorefxn_)(pose);
+		(*scorefxn_)(pose);
 		if (TR.Debug.visible()) {
 			scorefxn_->show_line(TR,pose);
 			TR << std::endl;
@@ -901,11 +899,6 @@ CartesianSampler::apply( Pose & pose ) {
 	mc->show_scores();
 	mc->show_counters();
 	if (recover_low_) mc->recover_low(pose);
-
-	// final minimization (make optional?)
-	//(*scorefxn_)(pose);
-	//minimizer.run( pose, mm, *scorefxn_, options_lbfgs );
-	//(*scorefxn_)(pose);
 
 	if (fullatom_input && !fullatom_) {
 		protocols::moves::MoverOP tofa = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD );

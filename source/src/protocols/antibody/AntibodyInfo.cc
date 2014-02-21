@@ -756,8 +756,7 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
 	// extract single letter aa codes for the chopped loop residues
 	vector1< char > cdr_h3_sequence;
 	std::string seq = "";
-	core::Size start = get_CDR_loop(h3, pose, Aroop).start() - 2;
-	core::Size end = get_CDR_loop(h3, pose, Aroop).stop() + 1;
+	//core::Size start = get_CDR_loop(h3, pose, Aroop).start() - 2;
 	
 	//TR << "Start: "<<start<<"End:"<<end<<std::endl;
 	for( Size ii = get_CDR_loop(h3, pose, Aroop).start() - 2; ii <= get_CDR_loop(h3, pose, Aroop).stop() + 1; ++ii ){
@@ -779,7 +778,6 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
 	// This can be refactored as new landmarks and added to CDRLandmarkEnum and the antibody numbering scheme files in the database if desired.
 
 	// This is only for rule 1b
-	core::Size cdr_length = cdr_h3_sequence.size();
 	bool is_basic( false ); // Special basic residue exception flag
 	if( !is_basic ) {
 		Size L49_pose_number = get_landmark_resnum(pose, Chothia_Scheme, 'L', 49);

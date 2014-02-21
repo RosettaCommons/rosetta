@@ -479,8 +479,6 @@ ProteinAssemblyGraph::print_tree(
 			}
 			core::scoring::superimpose_pose(poses_[edge_end], poses_[edge_start]/*const*/, atom_map);
 			
-			core::Size pose_size_before_addition = master_pose.total_residue();
-		
 			//don't print the same node more than once
 			if(printed_nodes.find(edge_start) == printed_nodes.end())
 			{

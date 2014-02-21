@@ -67,182 +67,156 @@ ncst(){ return cst_.size(); }
 
 inline
 void 
-run_rattle1( Real const &dt, 
-	     Multivec &xyz, 
-	     Multivec &vel,
-	     Multivec const &mass ) {
+run_rattle1( Real const &dt,
+		Multivec &xyz,
+		Multivec &vel,
+		Multivec const &mass )
+{
+	//std::cout << "run_rattle1" << std::endl;
+	Real eps ( 1.0e-6 );
+	Multivec const xyz_old( xyz );
+	Multivec const vel0( vel );
 
-  //std::cout << "run_rattle1" << std::endl;
-  Real eps ( 1.0e-6 );
-  Multivec const xyz_old( xyz );
-  Multivec const vel0( vel );
-  
-  //std::cout << "1" << std::endl;
-  // initialize the lists of atoms previously corrected
+	//std::cout << "1" << std::endl;
+	// initialize the lists of atoms previously corrected
+	
+	for( Size i = 1; i <= use_.size(); ++i ) {
+		if( use_[i] ) {
+			moved_[i] = true;
+		} else {
+			moved_[i] = false;
+		}
+		update_[i] = false;
+	}
+	
+	// apply rattle to distances and half-step velocity values
+	Size niter = 0;
+	bool done = false;
+	utility::vector1< Real > dxyz1( 3, 0.0 );
+	utility::vector1< Real > dxyz2( 3, 0.0 );
+	
+	while ( ! done && niter <= maxiter_ ) {
+		niter ++;
+		done = true;
+		//std::cout << "2, iter: " << niter << std::endl;
+	
+		for( Size i = 1; i<=cst_.size(); ++i ){
+			Constraint const &cst = cst_[i];
+			Size const &ia (cst.a);
+			Size const &ib (cst.b);
+	
+			if ( !(moved_[ia] || moved_[ib] ) ) continue;
 
-  for( Size i = 1; i <= use_.size(); ++i ){
-    if( use_[i] ) {
-      moved_[i] = true;
-    } else {
-      moved_[i] = false;
-    }
-    update_[i] = false;
-  }
-  
-  // apply rattle to distances and half-step velocity values
-  Size niter = 0;
-  bool done = false;
-  utility::vector1< Real > dxyz1( 3, 0.0 );
-  utility::vector1< Real > dxyz2( 3, 0.0 );
-  
-  while ( ! done && niter <= maxiter_ ){
-    niter ++;
-    done = true;
-    //std::cout << "2, iter: " << niter << std::endl;
-    
-    for( Size i = 1; i<=cst_.size(); ++i ){
-      Constraint const &cst = cst_[i];
-      Size const &ia (cst.a);
-      Size const &ib (cst.b);
-      
-      if ( !(moved_[ia] || moved_[ib] ) ) continue;
-	
-      dxyz1[1] = xyz[3*ib-2]-xyz[3*ia-2];
-      dxyz1[2] = xyz[3*ib-1]-xyz[3*ia-1];
-      dxyz1[3] = xyz[3*ib  ]-xyz[3*ia  ];
-      
-      Real dist2 = dxyz1[1]*dxyz1[1] + dxyz1[2]*dxyz1[2] + dxyz1[3]*dxyz1[3];
-      
-      Real delta = (cst.k)*(cst.k) - dist2;
+			dxyz1[1] = xyz[3*ib-2]-xyz[3*ia-2];
+			dxyz1[2] = xyz[3*ib-1]-xyz[3*ia-1];
+			dxyz1[3] = xyz[3*ib  ]-xyz[3*ia  ];
 
-      /*
-      std::cout << "rattle1, cst i/a/b: " << std::setw(4) << i;
-      std::cout << " " << std::setw(4) << ia << " " << std::setw(4) << ib;
-      std::cout << " " << std::setw(8) << std::sqrt(dist2);
-      std::cout << " " << std::setw(8) << cst.k;
-      std::cout << " " << std::setw(8) << delta << std::endl;
-      */
-      
-      if ( std::abs(delta) >= eps ){
-	done = false;
-	update_[ia] = true;
-	update_[ib] = true;
+			Real dist2 = dxyz1[1]*dxyz1[1] + dxyz1[2]*dxyz1[2] + dxyz1[3]*dxyz1[3];
+
+			Real delta = (cst.k)*(cst.k) - dist2;
+
+			/*
+			std::cout << "rattle1, cst i/a/b: " << std::setw(4) << i;
+			std::cout << " " << std::setw(4) << ia << " " << std::setw(4) << ib;
+			std::cout << " " << std::setw(8) << std::sqrt(dist2);
+			std::cout << " " << std::setw(8) << cst.k;
+			std::cout << " " << std::setw(8) << delta << std::endl;
+			*/
+
+			if ( std::abs(delta) >= eps ) {
+				done = false;
+				update_[ia] = true;
+				update_[ib] = true;
+
+				dxyz2[1] = xyz_old[3*ib-2]-xyz[3*ia-2];
+				dxyz2[2] = xyz_old[3*ib-1]-xyz[3*ia-1];
+				dxyz2[3] = xyz_old[3*ib  ]-xyz[3*ia  ];
+
+				Real const dot = dxyz1[1]*dxyz2[1] + dxyz1[2]*dxyz2[2] + dxyz1[3]*dxyz2[3];
+
+				Real const rma = 1.0 / mass[ia];
+				Real const rmb = 1.0 / mass[ib];
+				Real const term = sor_ * delta / (2.0 * (rma+rmb) * dot);
+
+				for ( Size k = 1; k <= 3; ++k ) {
+					Size const dof_a = 3*ia-3+k;
+					Size const dof_b = 3*ib-3+k;
 	
-	dxyz2[1] = xyz_old[3*ib-2]-xyz[3*ia-2];
-	dxyz2[2] = xyz_old[3*ib-1]-xyz[3*ia-1];
-	dxyz2[3] = xyz_old[3*ib  ]-xyz[3*ia  ];
+					xyz[dof_a] -= dxyz2[k]*term*rma;
+					xyz[dof_b] += dxyz2[k]*term*rmb;
 	
-	Real const dot = dxyz1[1]*dxyz2[1] + dxyz1[2]*dxyz2[2] + dxyz1[3]*dxyz2[3];
-	
-	Real const rma = 1.0 / mass[ia];
-	Real const rmb = 1.0 / mass[ib];
-	Real const term = sor_ * delta / (2.0 * (rma+rmb) * dot);
-	
-	for ( Size k = 1; k <= 3; ++k ){
-	  Size const dof_a = 3*ia-3+k;
-	  Size const dof_b = 3*ib-3+k;
-	  
-	  xyz[dof_a] -= dxyz2[k]*term*rma;
-	  xyz[dof_b] += dxyz2[k]*term*rmb;
-	  
-	  vel[dof_a] -= term*rma/dt;
-	  vel[dof_b] += term*rmb/dt;
+					vel[dof_a] -= term*rma/dt;
+					vel[dof_b] += term*rmb/dt;
+				}
+			} // iter over Rattle ID
+		} // iter
+
+		for( Size i = 1; i <= use_.size(); ++i ){
+			moved_[i] = update_[i];
+			update_[i] = false;
+		}
 	}
 
-      } // iter over Rattle ID
-    } // iter
-    
-    for( Size i = 1; i <= use_.size(); ++i ){
-      moved_[i] = update_[i];
-      update_[i] = false;
-    }
-  }
+	//std::cout << " Rattle1 finished after " << niter << std::endl;
 
-  //std::cout << " Rattle1 finished after " << niter << std::endl;
-  /*
-  // apply group position and velocity constraints via exact reset
-  for( Size i = 1; i <= nratx_; ++i ) {
-    Size ia ( iratx_[i] );
+	/* for( Size i = 1; i <= cst_.size(); i++ ){
+		Constraint &cst = cst_[i];
 
-    for( Size j = grp_[ia].start; j <= grp_[ia].end; ++j ){
-	
-      Size atmno ( grp_[ia].atmno[j] );
-      Real weigh ( mass[atmno] / grp_[ia].mass );
-      
-      for( Size k = 1; k <= 3; ++k ){
-	Size const i_dof ( 3*atmno-3+k );
-	
-	xyz[i_dof] -= xyz[i_dof]*weigh;
-	vel[i_dof] -= vel[i_dof]*weigh;
-      }
-    }
-  }
-  */
+		std::cout << "Rattle1a " << i << " " << ia;
+		std::cout << " " << std::setprecision(4) << std::setw(8) << xyz[3*ia-2];
+		std::cout << " " << std::setprecision(4) << std::setw(8) << xyz[3*ia-1];
+		std::cout << " " << std::setprecision(4) << std::setw(8) << xyz[3*ia];
+		std::cout << " " << std::setprecision(4) << std::setw(8) << xyz_old[3*ia-2];
+		std::cout << " " << std::setprecision(4) << std::setw(8) << xyz_old[3*ia-1];
+		std::cout << " " << std::setprecision(4) << std::setw(8) << xyz_old[3*ia];
+		std::cout << std::endl;
 
-  for( Size i = 1; i <= cst_.size(); i++ ){
-    Constraint &cst = cst_[i];
-    Size const ia (cst.a);
-    Size const ib (cst.b);
+		std::cout << "Rattle1b " << i << " " << ib;
+		std::cout << " " << std::setprecision(4) << std::setw(8) << xyz[3*ib-2];
+		std::cout << " " << std::setprecision(4) << std::setw(8) << xyz[3*ib-1];
+		std::cout << " " << std::setprecision(4) << std::setw(8) << xyz[3*ib];
+		std::cout << " " << std::setprecision(4) << std::setw(8) << xyz_old[3*ib-2];
+		std::cout << " " << std::setprecision(4) << std::setw(8) << xyz_old[3*ib-1];
+		std::cout << " " << std::setprecision(4) << std::setw(8) << xyz_old[3*ib];
+		std::cout << std::endl;
 
-    /*
-    std::cout << "Rattle1a " << i << " " << ia;
-    std::cout << " " << std::setprecision(4) << std::setw(8) << xyz[3*ia-2];
-    std::cout << " " << std::setprecision(4) << std::setw(8) << xyz[3*ia-1];
-    std::cout << " " << std::setprecision(4) << std::setw(8) << xyz[3*ia];
-    std::cout << " " << std::setprecision(4) << std::setw(8) << xyz_old[3*ia-2];
-    std::cout << " " << std::setprecision(4) << std::setw(8) << xyz_old[3*ia-1];
-    std::cout << " " << std::setprecision(4) << std::setw(8) << xyz_old[3*ia];
-    std::cout << std::endl;
+		std::cout << " " << std::setw(10) << vel[3*ia-2];
+		std::cout << " " << std::setw(10) << vel[3*ia-1];
+		std::cout << " " << std::setw(10) << vel[3*ia];
+		std::cout << " " << std::setw(10) << vel0[3*ib-2];
+		std::cout << " " << std::setw(10) << vel0[3*ib-1];
+		std::cout << " " << std::setw(10) << vel0[3*ib];
+	} */
 
-    std::cout << "Rattle1b " << i << " " << ib;
-    std::cout << " " << std::setprecision(4) << std::setw(8) << xyz[3*ib-2];
-    std::cout << " " << std::setprecision(4) << std::setw(8) << xyz[3*ib-1];
-    std::cout << " " << std::setprecision(4) << std::setw(8) << xyz[3*ib];
-    std::cout << " " << std::setprecision(4) << std::setw(8) << xyz_old[3*ib-2];
-    std::cout << " " << std::setprecision(4) << std::setw(8) << xyz_old[3*ib-1];
-    std::cout << " " << std::setprecision(4) << std::setw(8) << xyz_old[3*ib];
-    std::cout << std::endl;
-
-    std::cout << " " << std::setw(10) << vel[3*ia-2];
-    std::cout << " " << std::setw(10) << vel[3*ia-1];
-    std::cout << " " << std::setw(10) << vel[3*ia];
-    std::cout << " " << std::setw(10) << vel0[3*ib-2];
-    std::cout << " " << std::setw(10) << vel0[3*ib-1];
-    std::cout << " " << std::setw(10) << vel0[3*ib];
-    */
-  }
-
-  return;
+	return;
 } // run_rattle1
 
 inline
 void 
-run_rattle2( Real const &dt, 
-	     Multivec &xyz,
-	     Multivec &vel,
-	     Multivec const &mass ) {
+run_rattle2( Real const &dt,
+		Multivec &xyz,
+		Multivec &vel,
+		Multivec const &mass ) {
 
-  //std::cout << "run_rattle2" << std::endl;
-  Real eps ( 1.0e-6 / dt );
-  Real vterm ( 2.0 / (dt * MDForceFactor));
-  Multivec vel0( vel );
-  
-  for( Size i = 1; i <= use_.size(); i++ ){
-    if ( use_[i] ){
-      moved_[i] = true;
-    } else {
-      moved_[i] = false;
-    }
-    update_[i] = false;
-  }
+	//std::cout << "run_rattle2" << std::endl;
+	Real eps ( 1.0e-6 / dt );
+	Multivec vel0( vel );
 
-  //     set the iteration counter, termination and tolerance
-  Size niter ( 0 );
-  bool done ( false );
-  
-  Real vxx, vyx, vzx, vyy, vzy, vzz;
-  utility::vector1< Real > dxyz( 3, 0.0 );
-  utility::vector1< Real > dvel( 3, 0.0 );
+	for( Size i = 1; i <= use_.size(); i++ ){
+		if ( use_[i] ){
+			moved_[i] = true;
+		} else {
+			moved_[i] = false;
+		}
+		update_[i] = false;
+	}
+
+	// set the iteration counter, termination and tolerance
+	Size niter ( 0 );
+	bool done ( false );
+
+	utility::vector1< Real > dxyz( 3, 0.0 );
+	utility::vector1< Real > dvel( 3, 0.0 );
 
   // apply the rattle algorithm to correct the velocities
   while ( !done && niter<=maxiter_ ){
@@ -292,37 +266,6 @@ run_rattle2( Real const &dt,
   }
 
 
-  /*
-  std::cout << " Rattle2 finished after " << niter << std::endl;
-
-  for( Size i = 1; i <= cst_.size(); i++ ){
-    Constraint &cst = cst_[i];
-    Size const ia (cst.a);
-    Size const ib (cst.b);
-    std::cout << "Rattle2 " << i;
-    std::cout << " " << vel[3*ia-2] << " " << vel[3*ia-1] << " " << vel[3*ia];
-    std::cout << " " << vel[3*ib-2] << " " << vel[3*ib-1] << " " << vel[3*ib];
-    std::cout << std::endl;
-  }
-  */
-  
-  /*
-  // apply any atom group velocity constraints via exact reset
-  for( Size i = 1; i <= grp_.size(); ++i ){
-    Size ia( grp_[i].a );
-    utility::vector1< Real > xv( 3, 0.0 );
-
-    for( Size j = grp[grpno].start; j <=grp[grpno].stop; ++j ){
-      Size atmno = grp[j].k;
-      Real weigh = mass[atmno] / grp_[grpno].mass;
-
-      for( Size k = 1; k <= 3; ++k ){
-	xv[k] += vel[i_dof]*weigh;
-	vel[i_dof] -= xv[k];
-      }
-    }
-  }
-  */
   
   return;
 } // run_rattle2

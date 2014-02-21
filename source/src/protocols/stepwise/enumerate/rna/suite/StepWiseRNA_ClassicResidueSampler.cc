@@ -345,11 +345,8 @@ StepWiseRNA_ClassicResidueSampler::initialize_poses_and_screeners( pose::Pose & 
 
 /////////////////////////////////////////////////////////////////////////////////
 Size
-StepWiseRNA_ClassicResidueSampler::get_num_pose_kept(){
-
-	Size const num_nucleotides_(  job_parameters_->working_moving_res_list().size() );
-	bool const is_dinucleotide_ = ( num_nucleotides_ == 2 );
-
+StepWiseRNA_ClassicResidueSampler::get_num_pose_kept()
+{
 	Size num_pose_kept = options_->sampler_num_pose_kept();
 
 	if ( build_pose_from_scratch_ ){

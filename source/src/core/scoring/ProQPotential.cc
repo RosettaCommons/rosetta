@@ -177,8 +177,6 @@ ProQPotential::score(pose::Pose & pose,
 {
 
 	Size nres=pose.total_residue();
-	int dim1=feature_vector.u1();
-	int dim2=feature_vector.u2();
 	Size n=1; //if position in sequence.
 	if(!ProQ2) {
 		for(Size l=1;l<=nres;++l) {

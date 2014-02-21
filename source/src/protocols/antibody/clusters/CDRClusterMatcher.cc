@@ -147,7 +147,6 @@ CDRClusterMatcher::get_cdr_cluster(core::pose::Pose const & pose, CDRNameEnum co
 
 CDRClusterOP
 CDRClusterMatcher::get_closest_cluster(core::pose::Pose const & pose, core::Size const start, core::Size const end) const {
-	Real PI = numeric::NumericTraits<Real>::pi();
 	std::string cis_trans_conf= get_pose_cis_trans_conformation(pose, start, end);
 	
 	std::map< std::string, vector1< Real > > pose_angles = get_pose_angles(pose, start, end);

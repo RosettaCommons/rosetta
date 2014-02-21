@@ -2084,7 +2084,7 @@ ElectronDensity::getRSCC( ObjexxFCL::FArray3D< float > const &density2 ) {
 
 	core::Real sumC_i=0, sumO_i=0, sumCO_i=0, vol_i=0, CC_i=0;
  	core::Real sumO2_i=0.0, sumC2_i=0.0, varC_i=0, varO_i=0;
-	core::Real clc_x, obs_x, eps_x;
+	core::Real clc_x, obs_x;
 	for (int x=0; x<density.u1()*density.u2()*density.u3(); ++x) {
 		clc_x = density2[x];
 		obs_x = density[x];
@@ -2459,11 +2459,9 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 			k = std::min ( k, 4*M_PI*M_PI/minimumB );
 
 			core::Real ATOM_MASK_SQ = (18/k);  // very generous mask (rho<6e-6)
-			core::Real FIXED_MASK_SQ = (3*3);
 			core::Real C = pow(k, 1.5);
 			core::Real VV = voxel_volume();
 
-			core::Real rho_sum = 0.0, rho2_sum = 0.0;
 			for (int z=1; z<=(int)fastgrid[2]; ++z) {
 				if (z < (int)fastgrid[2]/2)
 					del_ij[2] = ((core::Real)z - 1.0) / fastgrid[2];
@@ -2586,7 +2584,6 @@ void ElectronDensity::rescale_fastscoring_temp_bins(core::pose::Pose const &pose
 
 		core::Size natoms = rsd_i.nheavyatoms();
 		for (uint j = 1; j <= natoms; ++j) {
-			core::conformation::Atom const &atom_j( rsd_i.atom(j) );
 			core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 
 			poseCoord coord_j;
@@ -4631,7 +4628,6 @@ ElectronDensity::dCCdBs(
 		core::Size natoms = rsd_i.nheavyatoms();
 		for (uint j = 1; j <= natoms; ++j) {
 			if ( rsd_i.atom_type(j).is_virtual() ) continue;
-			core::conformation::Atom const &atom_j( rsd_i.atom(j) );
 			core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 
 			core::scoring::electron_density::poseCoord coord_j;

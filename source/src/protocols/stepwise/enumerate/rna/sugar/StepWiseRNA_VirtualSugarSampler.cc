@@ -305,7 +305,6 @@ StepWiseRNA_VirtualSugarSampler::minimize_sugar( pose::Pose & pose_with_sugar ){
 	for ( Size jump_ID = 1; jump_ID <= pose_with_sugar.fold_tree().num_jump(); jump_ID++ ){
 		Size const jump_pos1( pose_with_sugar.fold_tree().upstream_jump_residue( jump_ID ) );
 		Size const jump_pos2( pose_with_sugar.fold_tree().downstream_jump_residue( jump_ID ) );
-		Size const cutpoint = pose_with_sugar.fold_tree().cutpoint( jump_ID );
 		if ( ( jump_pos1 == sugar_modeling_.moving_res ) || ( jump_pos2 == sugar_modeling_.moving_res ) ){
 			found_desired_jump_ID = true;
 			mm.set_jump( jump_ID, true );

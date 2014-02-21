@@ -203,7 +203,6 @@ SpliceSegment::all_pdb_profile( string const Protein_family_path, string const s
 
 
 	DIR *dir;
-	struct dirent *ent;
 	const char * c =target_path.c_str();
 	if ((dir = opendir (c))!= NULL) {
 			string fileName(target_path+"pdb_profile_match."+segment);

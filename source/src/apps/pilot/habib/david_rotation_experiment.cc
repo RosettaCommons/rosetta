@@ -209,9 +209,6 @@ main( int argc, char * argv [] )
     exit(1);
   }
 
-  core::Real constraint_pocket_score = 0;
-  core::Real largest_pocket_score = 0;
-
   for (int i=0; i<angles; ++i){
     core::Real x,y,z;
     if (i>0){

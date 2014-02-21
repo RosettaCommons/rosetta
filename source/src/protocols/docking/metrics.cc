@@ -283,8 +283,6 @@ calc_Fnat( const core::pose::Pose & pose, std::string const& list_file, DockJump
 	Real cutoff = 5.0;
 
 	for( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
-		core::Size const rb_jump = *it;
-
 		if (!pose.is_fullatom() ){
 			TR << "Fnat calc called with non-fullatom pose!!!"<<std::endl;
 			return 0.0;
@@ -338,7 +336,6 @@ calc_Fnonnat(  const core::pose::Pose & pose, const core::pose::Pose & native_po
 	using namespace scoring;
 	using namespace conformation;
 	Real Fnonnat(0);
-	Real cutoff = 5.0;
 
 	for( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
 		core::Size const rb_jump = *it;

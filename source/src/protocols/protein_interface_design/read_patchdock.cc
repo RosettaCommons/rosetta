@@ -214,7 +214,6 @@ void
 PatchdockReader::read_patchdock( std::string & input_tag, std::string & native_tag )
 {
 	patchdock_entry_num_ = 0;
-	bool const patchdock( option[ parser::patchdock ].user() );
 	if( patchdock_fname_ == "" ) { // use default patchdock fname ( 1jjj_2xxx.pdb.gz -> 1jjj_2xxx.patchdock )
 		core::Size const filename_end( input_tag.find_first_of( "." ) );
 

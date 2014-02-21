@@ -220,7 +220,6 @@ core::Real  DecoySetEvaluation::rmsd( FArray1_double const& weights, FArray2_dou
 	//	FArray2P_double xx_ref( coords_( 1, 1, n ), 3, n_atoms_ ); //proxy array provides view to coords_
 	fit_centered_coords( n_atoms_, weights, xx_ref, xx, R );
 	Real rmsd( 0.0 );
-	Real invn( 1.0/n_atoms() );
 	Real tot_weight( 0.0 );
 	for ( Size n = 1; n <= n_atoms(); n++) {
 		tot_weight += weights_( n );

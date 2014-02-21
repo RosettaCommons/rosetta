@@ -331,7 +331,6 @@ ProQ_Energy::read_ss2(std::string ss2file) {
 	//Real buff_float;
 
 	std::string buff_str;
-	char buff_char;
 	std::cout << "Reading ss2 from " << ss2file << std::endl;
 	ss_pred_.dimension(nres_,3);
 	ss1_.dimension(nres_);

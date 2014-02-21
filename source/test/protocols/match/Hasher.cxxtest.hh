@@ -1365,7 +1365,7 @@ class HasherTests : public CxxTest::TestSuite {
 		//pD[ 1 ] = 13.6; pD[ 2 ] = 19.4; pD[ 3 ] = 5.3; // pD will span the pB-pC gap
 		//pD[ 4 ] = 55;   pD[ 5 ] = 127;  pD[ 6 ] = 171;
 
-		Hit hA, hB, hC, hD; hA.second() = pA; hB.second() = pB;// hC.second() = pC; hD.second() = pD;
+		Hit hA, hB/*, hC, hD*/; hA.second() = pA; hB.second() = pB;// hC.second() = pC; hD.second() = pD;
 		std::list< Hit > hitlist_a, hitlist_b;
 		hitlist_a.push_back( hA ); hitlist_b.push_back( hB );// hitlist.push_back( hC ); hitlist.push_back( hD );
 		counter.add_hits( 1, hitlist_a );
@@ -1405,7 +1405,7 @@ class HasherTests : public CxxTest::TestSuite {
 		//pD[ 1 ] = 13.6; pD[ 2 ] = 19.4; pD[ 3 ] = 5.3; // pD will span the pB-pC gap
 		//pD[ 4 ] = 55;   pD[ 5 ] = 127;  pD[ 6 ] = 171;
 
-		Hit hA, hB, hC, hD; hA.second() = pA; hB.second() = pB; hC.second() = pC;// hD.second() = pD;
+		Hit hA, hB, hC/*, hD*/; hA.second() = pA; hB.second() = pB; hC.second() = pC;// hD.second() = pD;
 		std::list< Hit > hitlist_a, hitlist_b, hitlist_c;
 		hitlist_a.push_back( hA ); hitlist_b.push_back( hB ); hitlist_c.push_back( hC );// hitlist.push_back( hD );
 		counter.add_hits( 1, hitlist_a );
@@ -1446,7 +1446,7 @@ class HasherTests : public CxxTest::TestSuite {
 		//pD[ 1 ] = 13.6; pD[ 2 ] = 19.4; pD[ 3 ] = 5.3; // pD will span the pB-pC gap
 		//pD[ 4 ] = 55;   pD[ 5 ] = 127;  pD[ 6 ] = 171;
 
-		Hit hA, hB, hC, hD; hA.second() = pA; hB.second() = pB; hC.second() = pC;// hD.second() = pD;
+		Hit hA, hB, hC/*, hD*/; hA.second() = pA; hB.second() = pB; hC.second() = pC;// hD.second() = pD;
 		std::list< Hit > hitlist_a, hitlist_b, hitlist_c;
 		hitlist_a.push_back( hA ); hitlist_b.push_back( hB ); hitlist_c.push_back( hC );// hitlist.push_back( hD );
 		counter.add_hits( 1, hitlist_a );

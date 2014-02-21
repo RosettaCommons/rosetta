@@ -102,7 +102,6 @@ namespace cppdb {
 				if(do_is_null(col))
 					return false;
 				char const *txt = (char const *)sqlite3_column_text(st_,col);
-				int size = sqlite3_column_bytes(st_,col);
 				memcpy(&v,txt,16);
 				return true;
 			}

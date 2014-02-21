@@ -459,7 +459,6 @@ void OrbitalsScore::get_orb_orb_E(
 	EnergyMap & emap
 )const
 {
-	core::Real orb_orb_E(0.0);
 	core::conformation::Residue const & res1(pose.conformation().residue(atom1.rsd()));
 	core::conformation::Residue const & res2(pose.conformation().residue(atom2.rsd()));
 	if(
@@ -584,7 +583,6 @@ void OrbitalsScore::get_orb_orb_E(
 	core::conformation::Residue const & res2,
 	EnergyMap & emap
 )const{
-	core::Real orb_orb_E(0.0);
 	for (
 			chemical::AtomIndices::const_iterator
 			Aindex = res1.atoms_with_orb_index().begin(),

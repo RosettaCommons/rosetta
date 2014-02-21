@@ -19,12 +19,6 @@
 #include <test/util/pose_funcs.hh>
 #include <test/util/deriv_funcs.hh>
 
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/func/FourPointsFunc.hh>
 #include <core/scoring/func/Func.hh>
@@ -193,7 +187,6 @@ public:
 		weights[ angle_constraint ] = 1.0;
 		core::scoring::func::ConformationXYZ cfunc( ubqstump->conformation() );
 		ang_cst.score( cfunc, weights, emap );
-		Size before_precision = std::cout.precision();
 		std::cout.precision( 16 );
 		//std::cout << "Dihedral constraint func: " << emap[ angle_constraint ] << std::endl;
 		TS_ASSERT_DELTA( emap[ angle_constraint ],   0.03488216167816781, 1e-14 );
@@ -201,8 +194,8 @@ public:
 		ScoreFunction sfxn;
 		sfxn.set_weight( angle_constraint, 1.0 );
 		kinematics::MoveMap movemap;
-    movemap.set_bb( true );
-    movemap.set_chi( true );
+		movemap.set_bb( true );
+		movemap.set_chi( true );
 
 		for ( Size ii = 1; ii <= ubqstump->total_residue(); ++ii ) {
 			core::chemical::ResidueType const & rsd_type( ubqstump->residue_type( ii ));
@@ -218,8 +211,8 @@ public:
 				ubqstump->remove_constraints();
 				ubqstump->add_constraint( ang_cst2 );
 				AtomDerivValidator adv( *ubqstump, sfxn, movemap );
-				/// This call runs a numeric deriv check on all the free dofs in the system and makes sure
-				/// that the analytic norm matches the numeric norm to 1e-3.
+				// This call runs a numeric deriv check on all the free dofs in the system and makes sure
+				// that the analytic norm matches the numeric norm to 1e-3.
 				adv.simple_deriv_check( true, 1e-6 );
 			}
 		}

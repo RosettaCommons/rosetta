@@ -199,7 +199,6 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 			core::Size natoms = rsd_i.nheavyatoms();
 			for (uint j = 1; j <= natoms; ++j) {
 				if ( rsd_i.atom_type(j).is_virtual() ) continue;
-				core::conformation::Atom const &atom_j( rsd_i.atom(j) );
 				core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 
 				core::scoring::electron_density::poseCoord coord_j;
@@ -219,7 +218,6 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 	core::Size nedge=0;
 	if (wt_adp_ != 0) {
 		core::scoring::EnergyGraph const & energy_graph( pose_copy.energies().energy_graph() );
-		Size const nres( energy_graph.num_nodes() );
 
 		for ( Size i = 1; i <= pose_copy.total_residue(); ++i ) {
 			if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
@@ -317,7 +315,6 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 		}
 
 		core::scoring::EnergyGraph const & energy_graph( pose_copy.energies().energy_graph() );
-		core::Size const nres( energy_graph.num_nodes() );
 
 		for ( core::Size i = 1; i <= pose_copy.total_residue(); ++i ) {
 			if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
@@ -498,7 +495,6 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 			if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 			core::Size natoms = rsd_i.nheavyatoms();
 			for (uint j = 1; j <= natoms; ++j) {
-				core::conformation::Atom const &atom_j( rsd_i.atom(j) );
 				core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 				poseCoord coord_j;
 				coord_j.x_ = rsd_i.xyz( j );

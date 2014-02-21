@@ -261,42 +261,40 @@ TMscore::extend( core::Real const &d,
 								 ) const
 {
 
-  /// iterative parameters;
-  core::Size const n_it( 20 );
-  // dummy
+	// iterative parameters;
+	core::Size const n_it( 20 );
+	// dummy
 
-  // Iterate until 
-  // 1) all the residues are matched
-  // 2) or iteration exceed
+	// Iterate until
+	// 1) all the residues are matched
+	// 2) or iteration exceed
 	core::Size it;
-  for( it=1; it<=n_it; ++it ){
-    core::Size const naln_prv( i_ali.size() ); 
+	for( it=1; it<=n_it; ++it ){
+		// Pick residue matches that are within distance cut
+		utility::vector0< core::Size > k_ali( i_ali );
+		utility::vector0< Vector > vt = get_transrot_ref( k_ali, u, t );
 
-    // Pick residue matches that are within distance cut
-    utility::vector0< core::Size > k_ali( i_ali );
-    utility::vector0< Vector > vt = get_transrot_ref( k_ali, u, t );
-
-    // get TMscore for given d & ref_crd(=vt)
-    // update i_ali: The size will be changed!
-    i_ali = score_fun( d, vt, score );
+		// get TMscore for given d & ref_crd(=vt)
+		// update i_ali: The size will be changed!
+		i_ali = score_fun( d, vt, score );
 
 		//printf("iter/i_ali/k_ali: %4d %4d %4d\n", it, i_ali.size(), k_ali.size());
 
-    // update current best: alignment first, followed by score
-    if( score.TM_max < score.TM ) k_ali0 = k_ali;
-    score.update();
+		// update current best: alignment first, followed by score
+		if( score.TM_max < score.TM ) k_ali0 = k_ali;
+		score.update();
 
-    // 1. If iteration exceed
-    if(it == n_it) return;
+		// 1. If iteration exceed
+		if(it == n_it) return;
 
-    // 2. When the condition i_ali == k_ali be satisfied? 
-    // i_ali: segment alignment, k_ali: window thread
-    // so if d<dis_cut becomes threaded alignment, it will be terminated
-    if( i_ali == k_ali ) return;
-  }
+		// 2. When the condition i_ali == k_ali be satisfied?
+		// i_ali: segment alignment, k_ali: window thread
+		// so if d<dis_cut becomes threaded alignment, it will be terminated
+		if( i_ali == k_ali ) return;
+	}
 
 	TR.Debug << "extension done after " << it << " with condition" << (it == n_it) << std::endl;
-  return;
+	return;
 }
 
 utility::vector0< core::Vector > 

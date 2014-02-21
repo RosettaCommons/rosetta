@@ -63,17 +63,18 @@ SpanFileLoader::create_resource(
 {
 
 	using namespace core::membrane::io;
-    using namespace core::membrane::properties;
+	using namespace core::membrane::properties;
 
 	// Load a topology object from spanfile
 	SpanFileIO sfio;
 	SpanningTopologyOP topology = sfio.get_topology_from_spanfile( locator_id );
-    
-    // Adding opts casting
-    if ( ! dynamic_cast< SpanFileOptions const * > ( &options ) ) {
-        throw utility::excn::EXCN_Msg_Exception("SpanFileLoader excpected to be given a SpanFileOptions but was given a non-SpanFileOptions object of type " + options.type() + "' which has the name '" + options.name() + "'.");
-    }
-    SpanFileOptions const & opts = static_cast< SpanFileOptions const & > ( options );
+
+	// Adding opts casting
+	if ( ! dynamic_cast< SpanFileOptions const * > ( &options ) ) {
+		throw utility::excn::EXCN_Msg_Exception("SpanFileLoader excpected to be given a SpanFileOptions but was given "
+				"a non-SpanFileOptions object of type " + options.type() + "' which has the name '"
+				+ options.name() + "'.");
+	}
 
 	// Return a newly initialized topology object
 	return topology;

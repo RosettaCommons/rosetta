@@ -976,7 +976,6 @@ StepWiseRNA_PoseSetup::setup_pdb_info_with_working_residue_numbers( pose::Pose &
 	std::string full_sequence = job_parameters_->full_sequence();
 
 	utility::vector1< Size > working_res;
-	Size chain_number( 1 );
 	for ( Size i = 1; i <= full_sequence.size(); i++ ){
 		if ( is_working_res[ i ] ){
 			working_res.push_back( i );
@@ -991,10 +990,6 @@ StepWiseRNA_PoseSetup::setup_pdb_info_with_working_residue_numbers( pose::Pose &
 	FullModelInfoOP full_model_info = new FullModelInfo( pose, full_sequence,  cutpoint_open_list, working_res );
 	set_full_model_info( pose, full_model_info );
 	update_pdb_info_from_full_model_info( pose );
-
-	//	PDBInfoOP pdb_info = new PDBInfo( pose );
-	//	pdb_info->set_numbering( working_res );
-	//	pose.pdb_info( pdb_info );
 }
 
 

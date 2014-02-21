@@ -1139,7 +1139,6 @@ void RemodelMover::apply( Pose & pose ) {
 
 		// seriously refine the poses
 		Size filecount = 1;
-		core::Real current_score = 100000;
 
 		TR << "clustered poses count: " << results.size() << std::endl;
 

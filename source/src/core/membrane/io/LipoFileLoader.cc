@@ -60,16 +60,17 @@ LipoFileLoader::create_resource(
 {
 	using namespace core::membrane::properties;
 	using namespace core::membrane::io;
-    
+
 	// Create and initialize a lipid object
 	core::membrane::io::LipoFileIO lfio;
 	LipidAccInfoOP lips_exp = lfio.get_lips_exp_from_lipofile( locator_id );
-    
-    // Cast generic options to lipofile opts
-    if ( ! dynamic_cast< LipoFileOptions const * > ( &options ) ) {
-        throw utility::excn::EXCN_Msg_Exception("LipoFileLoader excpected to be given a LipoFileOptions but was given a non-LipoFileOptions object of type " + options.type() + "' which has the name '" + options.name() + "'.");
-    }
-    LipoFileOptions const & opts = static_cast< LipoFileOptions const & > ( options );
+
+	// Cast generic options to lipofile opts
+	if ( ! dynamic_cast< LipoFileOptions const * > ( &options ) ) {
+		throw utility::excn::EXCN_Msg_Exception("LipoFileLoader excpected to be given a LipoFileOptions but was given "
+				"a non-LipoFileOptions object of type " + options.type() + "' which has the name '"
+				+ options.name() + "'.");
+	}
 
 	return lips_exp;
 }

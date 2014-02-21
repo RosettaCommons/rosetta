@@ -266,7 +266,6 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_bb_dof_deriv(
 	Real3 & dE_dbb(scratch.dE_dbb());
 
 	for (Size nr=1; nr<=max_rot_num; nr++) {
-		CentroidRotamerSampleData const &sample(rotamer_sample_data[nr]);
 		Real delta[3];
 		rotamer_sample_data[nr].cal_delta_internal_coordinates(rsd, delta[0], delta[1], delta[2]);
 

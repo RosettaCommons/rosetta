@@ -50,7 +50,7 @@ SecondaryStructureCountFilter::SecondaryStructureCountFilter( ): Filter( "Second
 // In this case, the test is whether the give pose is the topology we want.
 bool SecondaryStructureCountFilter::apply( core::pose::Pose const & pose ) const
 {
-	core::Size temp(compute( pose ));
+	compute( pose );
 
 	bool helix_filter=false;
 	bool sheet_filter=false;
@@ -144,9 +144,9 @@ core::Size SecondaryStructureCountFilter::compute( core::pose::Pose const & pose
 	std::string dssp_ss=dssp.get_dssp_secstruct();
 	tr << dssp_ss << std::endl;
 
-  num_helix_pose_=0;
-  num_sheet_pose_=0;
-  num_loop_pose_=0;
+	num_helix_pose_=0;
+	num_sheet_pose_=0;
+	num_loop_pose_=0;
 
 	core::Size tmp_count=0;
 	std::string::const_iterator iter=dssp_ss.begin();

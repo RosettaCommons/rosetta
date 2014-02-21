@@ -380,10 +380,9 @@ PlacementAuctionMover::parse_my_tag( TagCOP const tag,
 	using namespace core::scoring;
 
 	host_chain_ = tag->getOption<core::Size>( "chain_to_design", 2 );
-	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 	max_cb_cb_dist_ = tag->getOption< core::Real >( "max_cb_dist", 3.0 );
 	cb_force_ = tag->getOption< core::Real >( "cb_force", 0.5 );
-  stub_energy_fxn_ = tag->getOption<std::string>( "stubscorefxn", "backbone_stub_constraint" ) ;
+	stub_energy_fxn_ = tag->getOption<std::string>( "stubscorefxn", "backbone_stub_constraint" ) ;
 	stub_sets_ = parse_stub_sets( tag, pose, host_chain_, data );
 	runtime_assert( stub_sets_.size() );
 	TR<<"max cb cb distance set to "<<max_cb_cb_dist_<<" and cb_force to "<<cb_force_<< " stub energy function" << stub_energy_fxn_ << '\n';

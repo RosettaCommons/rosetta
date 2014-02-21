@@ -66,7 +66,7 @@ public:
 		char message(receive_char_from_node(2));
 		TS_ASSERT(message == orig_message);
 		try {
-			char m2 = receive_char_from_node(2);
+			/*char m2 =*/ receive_char_from_node(2);
 			TS_ASSERT( false );
 		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			TS_ASSERT_EQUALS( e.msg(), "Could not retrieve a smpi_char message to 0 from 2; message queue is empty" );
@@ -86,7 +86,7 @@ public:
 		TS_ASSERT(message == orig_message);
 
 		try {
-			int m2 = receive_integer_from_node(2);
+			/*int m2 =*/ receive_integer_from_node(2);
 			TS_ASSERT( false );
 		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			TS_ASSERT_EQUALS( e.msg(), "Could not retrieve a smpi_integer message to 0 from 2; message queue is empty" );
@@ -127,7 +127,7 @@ public:
 		double message(receive_double_from_node(2));
 		TS_ASSERT(message == orig_message);
 		try {
-			double m2 = receive_double_from_node(2);
+			/*double m2 =*/ receive_double_from_node(2);
 			TS_ASSERT( false );
 		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
 			TS_ASSERT_EQUALS( e.msg(), "Could not retrieve a smpi_double message to 0 from 2; message queue is empty" );

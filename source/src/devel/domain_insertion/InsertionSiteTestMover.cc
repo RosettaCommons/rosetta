@@ -444,7 +444,6 @@ InsertionSiteTestMover::evaluate_insert_pose(
 	utility::vector1< core::Real > full_pose_residue_sasa;
 	core::scoring::calc_per_atom_sasa( relax_pose, atom_sasa_dummy, full_pose_residue_sasa, probe_radius);
 	core::Real insert_sasa(0.0);
-	core::Size flex_length =  enz_flexbb_prot_->enz_flexible_region(1)->stop() - enz_flexbb_prot_->enz_flexible_region(1)->start() + 1;
 	for( Size i = enz_flexbb_prot_->enz_flexible_region(1)->start(); i <= enz_flexbb_prot_->enz_flexible_region(1)->stop() ; ++i){
 		insert_sasa += full_pose_residue_sasa[i];
 	}

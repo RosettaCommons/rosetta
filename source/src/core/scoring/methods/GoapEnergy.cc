@@ -259,62 +259,61 @@ GoapEnergy::read_Goap_parameters()
 }
 
 void
-GoapEnergy::read_angle_definitions( std::string const connection_file ){
+GoapEnergy::read_angle_definitions( std::string const connection_file )
+{
+	Size i1;
 
-  Size i1, i2;
-  
-  chemical::ResidueTypeSetCAP rsdtypeset = 
-    chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	chemical::ResidueTypeSetCAP rsdtypeset =
+	chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
-  utility::io::izstream instream;
-  std::string line;
+	utility::io::izstream instream;
+	std::string line;
 
 	TR << "Reading angle definition." << std::endl;
-
-  basic::database::open( instream, connection_file );
-
-  Size read_type( 0 );
 	
+	basic::database::open( instream, connection_file );
+
+	Size read_type( 0 );
+
 	Size i_id( 0 );
 
-  while( instream ){
-    getline( instream, line );
-		std::string s1("");
-    std::istringstream linestream( line );
-    linestream >> s1;
+	while( instream ){
+		getline( instream, line );
+			std::string s1("");
+		std::istringstream linestream( line );
+		linestream >> s1;
 
-    if( s1.compare( "#ATOM" ) == 0 ){
-      read_type = 1;
-      continue;
-    } else if( s1.compare( "#BOND" ) == 0 ){
-      read_type = 2;
-      continue;
-    } else if( s1.compare( "#ANGLE" ) == 0 ){
-      read_type = 3;
-      continue;
-		} else if( s1.compare( "#END" ) == 0 ){
-			break;
-    }
-
-    chemical::ResidueType const &rsdtype = rsdtypeset->name_map( s1 );
-
-		GoapRsdTypeMap::const_iterator it = rsdtypemap_.find( s1 );
-
-		if( it == rsdtypemap_.end() ){
-			GoapRsdTypeOP rsdtypeinfo = new GoapRsdType;
-			//std::cout << "Adding new residue info for " << rsdtype.name() << std::endl;
-			rsdtypeinfo->setup_rsdtype( &rsdtype );
-			rsdtypemap_[ s1 ] = rsdtypeinfo;
-			it = rsdtypemap_.find( s1 );
+		if( s1.compare( "#ATOM" ) == 0 ){
+			read_type = 1;
+			continue;
+		} else if( s1.compare( "#BOND" ) == 0 ){
+			read_type = 2;
+			continue;
+		} else if( s1.compare( "#ANGLE" ) == 0 ){
+			read_type = 3;
+			continue;
+			} else if( s1.compare( "#END" ) == 0 ){
+				break;
 		}
 
-		GoapRsdTypeOP rsdtypeinfo = it->second;
+		chemical::ResidueType const &rsdtype = rsdtypeset->name_map( s1 );
 
-		// i1: Natoms
-    linestream >> i1;
-    for( Size iatm = 1; iatm <= i1; ++iatm ){
-      if( read_type == 1 ){ // Atom order definition
+			GoapRsdTypeMap::const_iterator it = rsdtypemap_.find( s1 );
 
+			if( it == rsdtypemap_.end() ){
+				GoapRsdTypeOP rsdtypeinfo = new GoapRsdType;
+				//std::cout << "Adding new residue info for " << rsdtype.name() << std::endl;
+				rsdtypeinfo->setup_rsdtype( &rsdtype );
+				rsdtypemap_[ s1 ] = rsdtypeinfo;
+				it = rsdtypemap_.find( s1 );
+			}
+
+			GoapRsdTypeOP rsdtypeinfo = it->second;
+
+			// i1: Natoms
+		linestream >> i1;
+		for( Size iatm = 1; iatm <= i1; ++iatm ){
+			if( read_type == 1 ) { // Atom order definition
 				std::string s2("");
 				linestream >> s2;
 				assert( rsdtype.has( s2 ) );
@@ -328,9 +327,7 @@ GoapEnergy::read_angle_definitions( std::string const connection_file ){
 				// match rsdtype atmno with full Goap index (1~167)
 				rsdtypeinfo->set_atmid( atmno, i_id );
 				//std::cout << "idmap: " << i_id << " " << s1 << " " << s2 << std::endl;
-
-      } else if( read_type == 2 ){ // Bond definition
-
+			} else if( read_type == 2 ){ // Bond definition
 				Size i2;
 				linestream >> i2;
 
@@ -344,9 +341,7 @@ GoapEnergy::read_angle_definitions( std::string const connection_file ){
 				// Note that root_atom_[1:4] are assigned as 0
 				rsdtypeinfo->set_root_atom( atmno, rootno );
 				rsdtypeinfo->set_branch_atom( rootno, atmno );
-
-      } else if( read_type == 3 ){ // Angle definition
-
+			} else if( read_type == 3 ){ // Angle definition
 				Size i2;
 				linestream >> i2;
 
@@ -358,21 +353,19 @@ GoapEnergy::read_angle_definitions( std::string const connection_file ){
 				Size const angleno( rsdtype.atom_index( anglename ) );
 
 				rsdtypeinfo->set_angle_atom( atmno, angleno );
+			}
+		}
+	} //while instream
 
-      }
-    }
+	// Setup connectivity as angles definitions are read
+	GoapRsdTypeMap::const_iterator it;
 
-  } //while instream
+	for( it = rsdtypemap_.begin(); it != rsdtypemap_.end(); ++it ){
+		GoapRsdTypeOP rsdtypeinfo = it->second;
+		chemical::ResidueType const &rsdtype = rsdtypeset->name_map( it->first );
 
-  // Setup connectivity as angles definitions are read
-  GoapRsdTypeMap::const_iterator it;
-
-  for( it = rsdtypemap_.begin(); it != rsdtypemap_.end(); ++it ){
-    GoapRsdTypeOP rsdtypeinfo = it->second;
-    chemical::ResidueType const &rsdtype = rsdtypeset->name_map( it->first );
-
-    rsdtypeinfo->setup_connectivity( rsdtype );
-  }
+		rsdtypeinfo->setup_connectivity( rsdtype );
+	}
 }
 
 void

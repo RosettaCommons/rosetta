@@ -160,7 +160,7 @@ Real CenRotDunEnergy::eval_residue_dof_derivative(
 
 		if ( residue_cenrot_library && rsd.is_protein() && tor_id.type() == id::BB ) {
 			RotamerLibraryScratchSpace scratch;
-			Real dun_score = residue_cenrot_library->eval_rotameric_energy_bb_dof_deriv(rsd, scratch);
+			residue_cenrot_library->eval_rotameric_energy_bb_dof_deriv(rsd, scratch);
 
 			if ( tor_id.torsion() <= DUNBRACK_MAX_BBTOR ) {
 				//for backbone torsion angles: phi, psi, omega?
@@ -202,7 +202,7 @@ Real CenRotDunEnergy::eval_dof_derivative(
 
 		if (residue_cenrot_library && pose.residue_type( tor_id.rsd() ).is_protein() && tor_id.type() == id::BB) {
 			RotamerLibraryScratchSpace scratch;
-			Real dun_score = residue_cenrot_library->eval_rotameric_energy_bb_dof_deriv(pose.residue( tor_id.rsd() ), scratch);
+			residue_cenrot_library->eval_rotameric_energy_bb_dof_deriv(pose.residue( tor_id.rsd() ), scratch);
 			
 			if ( tor_id.torsion() <= DUNBRACK_MAX_BBTOR ) {
 				//for backbone torsion angles: phi, psi, omega?

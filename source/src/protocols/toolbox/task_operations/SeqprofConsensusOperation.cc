@@ -235,7 +235,6 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 
 			if( !pose.residue_type( i ).is_protein() ) continue;
 			runtime_assert( pose.residue_type( i ).aa() <= (int) pos_probability.size() );
-			core::Real current_prob( pos_probability[ pose.residue_type( i ).aa() ] );
 			bool has_probabilty=false;
 			for( core::Size aa = core::chemical::aa_ala; aa <= core::chemical::num_canonical_aas; ++aa){
 				if( pos_probability[ aa ] >0)

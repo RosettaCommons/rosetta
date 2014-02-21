@@ -111,11 +111,7 @@ ConservativeDesignOperation::load_data_from_db() {
 		vector1<char> conserved_char(conserved_aminos.begin(), conserved_aminos.end());
 		vector1<bool> allowed_aminos(20, false);
 		
-		for (core::Size i = 1; i <= conserved_char.size(); ++i){
-			core::chemical::AA amino = core::chemical::aa_from_oneletter_code(conserved_char[i]);
-		}
 		conserved_mutations_[aa_index] = allowed_aminos;
-		
 	}
 }
 

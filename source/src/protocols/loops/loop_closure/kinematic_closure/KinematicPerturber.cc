@@ -209,13 +209,11 @@ namespace protocols {
 
 					//Get the number of backbone atoms stored for the padding residues:
 					core::Size start_minus_one_bb_atom_count = pose.residue(startres).is_lower_terminus() ? kinmover_->count_bb_atoms_in_residue(pose, startres) : kinmover_->count_bb_atoms_in_residue(pose, startres - 1); //Number of backbone atoms for the first residue in the segment (start_res_ - 1 or the prepended start_res_ if start_res_ is a terminus)
-					core::Size end_plus_one_bb_atom_count = pose.residue(endres).is_upper_terminus() ? kinmover_->count_bb_atoms_in_residue(pose, endres) : kinmover_->count_bb_atoms_in_residue(pose, endres); //Number of backbone atoms for the last residue in the segment (end_res_ + 1 or the appended end_res_ if end_res_ is a terminus)
 
 					
 					if( vary_ca_bond_angles_ ){ //For now, ONLY CA bond angles of alpha-amino acids will be varied.
 					
 						core::Size pvatom1 = start_minus_one_bb_atom_count + 2; // Second backbone atom of start_res_ (CA if alpha or beta-amino acid).
-						core::Size pvatom3 = bond_ang.size() - end_plus_one_bb_atom_count - kinmover_->count_bb_atoms_in_residue(pose, endres) + 2; // Second backbone atom of end_res_ (CA if alpha or beta-amino acid).
 						
 						core::Real bangle_min( kinmover_->BANGLE_MIN() );
 						core::Real bangle_sd( kinmover_->BANGLE_SD() );

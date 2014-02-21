@@ -149,7 +149,6 @@ FACTSPotential::set_default()
 void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) const
 {
 	Size res1;
-	Size res2;
 
 	PROF_START( basic::FACTS_GET_ALL_BORN_RADII );
 	Size const nres( pose.total_residue() );
@@ -193,7 +192,6 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 	// 1. First get Born radius, Solvation energy, SASA for all atoms
 	for ( res1 = 1; res1 <= nres; ++res1 ) {
 		Residue const & rsd1( pose.residue( res1 ) );
-		Size natoms1 = rsd1.natoms();
 		FACTSResidueInfo & facts1( facts_info->residue_info( res1 ) );
 
 		// Iter res1 over enumeration_shell only
@@ -567,7 +565,6 @@ void FACTSPotential::atompair_scale( FACTSRsdTypeInfoCOP factstype1,
 				// option1. Use path_dist b/w sidechain to its C-alpha
 				if( intrascale_by_level_ ){
 					if( is_atm1_CO && rsd2.has( "CA" ) ){ // Sidechain for rsd2
-						Size const i_CA2( rsd2.atom_index( "CA" ) );
 						cpfxn14->count( atm1, atm2, cpweight4, path_dist );
 
 					} else if( is_atm2_NH && rsd1.has( "CA" ) ){ // Sidechain for rsd1
@@ -645,9 +642,6 @@ void FACTSPotential::calculate_GBpair_exact(
 			// Get scaling factor for atm1&atm2
 			Real scale_solv( 1.0 ), scale_elec( 1.0 );
 			bool self_pair( false );
-			Size path_dist( 0 );
-			Real cpweight4( 0.0 );
-			bool is_cp = cpfxn14->count( atm1, atm2, cpweight4, path_dist );
 
 			if( same_res || adjacent ||
 					rsd2.seqpos() - rsd1.seqpos() == 2 ){
@@ -1233,8 +1227,6 @@ void FACTSPotential::setup_for_derivatives( pose::Pose & pose ) const
 		} // atm1
 	} // res1
 
-	FACTSResidueInfo & facts1( facts_info->residue_info( 1 ) );
-
 	// Save status before storing
 	facts_info->context_derivative_empty_ = false;
 
@@ -1569,7 +1561,6 @@ void FACTSPotential::get_single_rotamer_born_radii(Residue const & rsd1,
 							 FACTSPoseInfo const & facts_info,
 							 FACTSResidueInfo	& facts1) 	const
 {
-	Size natoms1, natoms2;
 	FACTSRsdTypeInfoCOP factstype1 = facts1.restypeinfo();
 
 	assert( rsd1.natoms()<1 || std::fabs(facts1.Ai(1)) < 1e-3 );
@@ -1600,8 +1591,6 @@ void FACTSPotential::evaluate_polar_otf_energy(Residue const & rsd1,
 	Real cut_off_square = GBpair_cut_ * GBpair_cut_;
 	bool const same_res = ( rsd1.seqpos() == rsd2.seqpos() );
 	bool adjacent = ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) );
-
-	Real BRi, BRj;
 
 	using namespace core::scoring::etable::count_pair;
 

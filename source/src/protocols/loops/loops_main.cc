@@ -241,7 +241,6 @@ fold_tree_from_loops(
 		bool is_lower_term = pose.residue( it->start() ).is_lower_terminus();
 		bool is_upper_term = pose.residue( it->stop() ).is_upper_terminus();
 
-		Size local_jump_start(1);
 		Size jump_start =	it->start()-1;
 		Size jump_stop  = it->stop()+1;
 		Size const jump_cut   = it->cut();

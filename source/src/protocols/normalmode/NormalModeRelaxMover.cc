@@ -592,7 +592,7 @@ TorsionNormalModeMover::extrapolate_mode( pose::Pose const &pose )
 		expose.set_torsion( torIDs[i_tor], tor );
 	}
 
-	Real rmsd_est = core::scoring::CA_rmsd( pose, expose );
+	core::scoring::CA_rmsd( pose, expose );
 
 	TR << "TNM, Dynamic scale for set as " << scale_dynamic_ << ", given moving distance " << moving_distance_ << std::endl;
 	return expose;

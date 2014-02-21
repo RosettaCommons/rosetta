@@ -240,7 +240,6 @@ D2H_SA_Energy::finalize_total_energy(
 	Size rsa_index=0;
 	Size rsa_index_start=0;
 	Size rsa_index_end=0;
-	Size chain_stop=0;
 
 	pose::PDBInfoCOP pdb_info = pose.pdb_info();
 	if(rsa_index_start_ == 0) { 
@@ -261,7 +260,6 @@ D2H_SA_Energy::finalize_total_energy(
 	}
 
 	TR.Debug << "Look for chain: " << chain_for_rsa << " found it between " << rsa_index << " and " << rsa_index_end << std::endl;
-	Size counter(0);
 	Size counter2(0);
 
 	if(fullatom) {
@@ -273,7 +271,6 @@ D2H_SA_Energy::finalize_total_energy(
 		utility::vector1< Size > cen8_2(nres,0);
 
 		for ( Size i = rsa_index_start; i <= rsa_index_end;++i ) {
-			Size pos=i-rsa_index_start+1;
 			Vector const v1( pose.residue(i).nbr_atom_xyz() );
 			for ( Size j = 1; j <= nres; ++j ) {
 				Size aa_i=pose.residue(i).nbr_atom();
@@ -308,7 +305,6 @@ D2H_SA_Energy::finalize_total_energy(
 		if(group_[i-1]  != group_[i]) {
 			group_mean.push_back(numeric::statistics::mean(tmp.begin(),tmp.end(),0.0)); 
 			group_median.push_back(numeric::median(tmp));
-			Size values(tmp.size());
 			tmp.clear();
 		}
 		

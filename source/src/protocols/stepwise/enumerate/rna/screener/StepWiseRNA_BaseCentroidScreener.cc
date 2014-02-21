@@ -100,7 +100,6 @@ namespace screener {
 
 		ObjexxFCL::FArray1D < bool > const & partition_definition = job_parameters_->partition_definition();
 
-		Size const working_moving_res = job_parameters_->working_moving_res();
 		utility::vector1 < core::Size > const & working_moving_partition_pos = job_parameters_->working_moving_partition_pos();
 		runtime_assert( working_moving_partition_pos.size() > 0 );
 

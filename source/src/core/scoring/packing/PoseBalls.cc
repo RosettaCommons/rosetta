@@ -263,7 +263,7 @@ PoseBalls::PoseBalls(
 	core::scoring::packstat::AtomRadiusMap arm;
 	std::map<core::Size,core::Size> atomcount;
 	std::map<core::Size,core::Size> resnum;
-	core::Size rescount = 0, skippedlig = 0, skippedligH = 0;
+	core::Size rescount = 0, skippedlig = 0;
 	for( core::Size i = 1; i <= num_unrec; ++i ) {
 		core::pose::UnrecognizedAtomRecord const & a( pose.pdb_info()->get_unrecognized_atoms()[i] );
 		core::Real radius = arm.get_radius(a.atom_name(),a.res_name());

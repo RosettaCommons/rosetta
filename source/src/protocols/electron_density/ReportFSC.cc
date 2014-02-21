@@ -84,7 +84,6 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 
 		core::Size natoms = rsd_i.nheavyatoms();
 		for (uint j = 1; j <= natoms; ++j) {
-			core::conformation::Atom const &atom_j( rsd_i.atom(j) );
 			core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 
 			poseCoord coord_j;

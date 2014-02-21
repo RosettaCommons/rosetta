@@ -577,10 +577,9 @@ BuriedUnsatisfiedPolarsCalculator2::don_geom_check(
 	return false;
 }
 	
-/*
- return true if bunsat_atom_num in bunsat_rsd as an hbond acceptor to a donor
- at test_xyz has acceptable hbond geometry, otherwise return false
- */
+
+/// @brief return true if bunsat_atom_num in bunsat_rsd as an hbond acceptor to a donor
+/// at test_xyz has acceptable hbond geometry, otherwise return false
 bool
 BuriedUnsatisfiedPolarsCalculator2::acc_geom_check(
 	core::pose::Pose const &,
@@ -625,14 +624,6 @@ BuriedUnsatisfiedPolarsCalculator2::show() {
 		<< AHD_cutoff_ << ", dist_cutoff_ = "
 		<< dist_cutoff_ << ".";
 	TR << sstream.str() << std::endl;
-	bool layered_sasa_;
-	bool generous_hbonds_;
-	core::Real sasa_burial_cutoff_;
-	core::Real AHD_cutoff_;
-	core::Real dist_cutoff_;
-	core::Real hxl_dist_cutoff_;
-	core::Real sulph_dist_cutoff_;
-	core::Real metal_dist_cutoff_;
 }
 
 } // namespace buns

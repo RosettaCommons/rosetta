@@ -738,7 +738,6 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 	if ( bps_moves_ ){ // supplement obligate_pairing_sets with stems in freely moving regions.
 		for ( Size n = 1; n <= stem_pairing_sets_.size(); n++ ){
 			for ( Size m = 1; m <= stem_pairing_sets_[n].size(); m++ ){
-				RNA_Pairing const & rna_pairing = rna_pairing_list_[ stem_pairing_sets_[n][m] ];
 				obligate_pairing_sets.push_back( utility::tools::make_vector1( stem_pairing_sets_[n][m] ) );
 			}
 		}

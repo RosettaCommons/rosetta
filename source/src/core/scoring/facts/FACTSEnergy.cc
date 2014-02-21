@@ -180,9 +180,6 @@ void FACTSEnergy::evaluate_rotamer_intrares_energies(
 	FACTSRotamerSetInfo const & facts_info
 		( set.data().get< FACTSRotamerSetInfo >( FACTS_ROTAMER_SET_INFO ) );
 
-	FACTSPoseInfo const & facts_pose_info
-		( static_cast< FACTSPoseInfo const & >( pose.data().get( pose::datacache::CacheableDataType::FACTS_POSE_INFO ) ) );
-
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
 
 		Real E_elec, E_solv_pair, E_solv_self;
