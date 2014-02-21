@@ -94,13 +94,13 @@ void Resonance::_write_to_stream( std::ostream& os ) const {
 
 void Resonance::write_to_stream( std::ostream& os ) const {
 	_write_to_stream( os );
-	os << " "<< intensity();
+	//	os << " "<< intensity();
 }
 
 void Resonance::write_to_stream( std::ostream& os, core::chemical::AA aa ) const {
 	_write_to_stream( os );
 	os << " " << name_from_aa( aa ) << " " << oneletter_code_from_aa( aa );
-	os << " "<< intensity();
+	//	os << " "<< intensity();
 }
 
 void Resonance::combine( std::deque< ResonanceOP >& last_resonances, bool drain=false  ) {

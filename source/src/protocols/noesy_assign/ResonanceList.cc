@@ -51,7 +51,6 @@
 #include <deque>
 #include <sstream>
 #include <utility/vector1.hh>
-#include <boost/tokenizer.hpp>
 
 
 static basic::Tracer tr("protocols.noesy_assign.resonances");
@@ -145,6 +144,8 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
   std::string line;
   std::deque< ResonanceOP > last_resonances;
+	bool has_ambiguity_column( false );
+	std::string sequence_from_header( "" );
   while( getline( is, line ) ) {
     core::Size label;
     core::Real freq;
@@ -152,8 +153,28 @@ void ResonanceList::read_from_stream( std::istream& is ) {
     std::string name;
     core::Size resn;
     AA aa;
+		if ( line.find( "##" ) < 10 ) {
+			std::istringstream line_stream( line.substr( line.find("##")+2 ) );
+			std::string comment_type;
+			line_stream >> comment_type;
+			if ( comment_type == "VARS" ) {
+				has_ambiguity_column = line.find( "AMBIGUITY" );
+				tr.Debug << "found ambiguity column" << std::endl;
+			}
+			if ( comment_type == "DATA" ) {
+				std::string data_type;
+				line_stream >> data_type;
+				if ( data_type == "SEQUENCE" ) {
+					while( line_stream.good() ) {
+						std::string sequence_bit;
+						line_stream >> sequence_bit;
+						sequence_from_header+=sequence_bit;
+					}
+				}
+			}
+			continue;
+		}
     std::istringstream line_stream( line );
-
 		//read from stream...
 		tr.Trace << "read line: " << line << std::endl;
     line_stream >> label >> freq >> error >> name;
@@ -161,13 +182,21 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 
 		//check for stream-error
 		if ( !line_stream.good() ) {
-			tr.Info << "ignore line : " << line << std::endl;
+			if ( line.size() ) {
+				tr.Info << "ignore line : " << line << std::endl;
+			}
 			continue; //ignore weird lines
 		}
 
 		if ( name=="" ) break;//got an empty line at end of file ?
 
 		//read optional fields
+		if ( has_ambiguity_column ) {
+			core::Size ambiguity_code;
+			line_stream >> ambiguity_code;
+			//we ignore this code, but should be able to deal if it is present.
+			//what counts for us are the float-groups...
+		}
 		line_stream >> resn;
     std::string aa_name;
     line_stream >> aa_name;
@@ -239,7 +268,6 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 			}
 		}
 
-
 		// replace some names...
 		if ( name == "HN" ) name ="H";
 		if ( aa == aa_leu && name == "HD1" ) name = "QD1";
@@ -292,11 +320,23 @@ void ResonanceList::read_from_stream( std::istream& is ) {
 		}
 	}
 
-	//fix floating assignments...
-	for ( ResonanceIDs::const_iterator it = map_.begin(); it != map_.end(); ++it ) {
-
+	if ( sequence_from_header.size() ) {
+		tr.Debug << "sequence information obtained from file-header\n";
+		tr.Debug << sequence_from_header << std::endl;
+		if ( sequence_.size() ) {
+			if ( sequence_from_header.size() >= sequence_.size() ) {
+				for ( core::Size i=0; i < sequence_.size(); i++ ) {
+					if ( sequence_[ i ] == 'X' ) {
+						sequence_[ i ] = sequence_from_header[ i ];
+					} else if ( sequence_[ i ] != sequence_from_header[ i ] ) {
+						throw utility::excn::EXCN_BadInput( std::string("sequence information in header is not consistent with sequence letter ")+
+							"in resonance lines at residue "+ObjexxFCL::string_of( i+1 ) );
+					}
+				}
+			}
+		}
+		tr.Debug << "";
 	}
-
 }
 
 ///@brief write ResonanceList to stream

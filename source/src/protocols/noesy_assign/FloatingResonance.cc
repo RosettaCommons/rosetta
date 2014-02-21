@@ -72,7 +72,7 @@ void FloatingResonance::write_to_stream( std::ostream& os ) const {
 
 void FloatingResonance::_write_partner_ids( std::ostream& os ) const {
 	if ( partner_ids_.size() > 1 ) {
-		os << "[";
+		os << " [";
 		long pos( os.tellp() );
 		for ( FloatList::const_iterator it = partner_ids_.begin(); it != partner_ids_.end(); ++it ) {
 			os << *it;
