@@ -23,6 +23,7 @@
 #include <core/io/silent/BinaryRNASilentStruct.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
+#include <core/io/silent/ScoreJumpFileSilentStruct.hh>
 
 //Auto Headers
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
@@ -88,6 +89,17 @@ SilentStructOP ScoreFileSilentStructCreator::create_silent_struct() const {
 
 std::string ScoreFileSilentStructCreator::keyname() const {
 	return "score";
+}
+
+// class def for ScoreJumpFileSilentStruct
+ScoreJumpFileSilentStructCreator::ScoreJumpFileSilentStructCreator() {}
+ScoreJumpFileSilentStructCreator::~ScoreJumpFileSilentStructCreator() {}
+SilentStructOP ScoreJumpFileSilentStructCreator::create_silent_struct() const {
+  return new ScoreJumpFileSilentStruct;
+}
+
+std::string ScoreJumpFileSilentStructCreator::keyname() const {
+  return "score_jump";
 }
 
 // class def for BinaryRNASilentStruct

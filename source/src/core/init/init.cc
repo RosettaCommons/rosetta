@@ -492,6 +492,7 @@ static SilentStructRegistrator< core::io::silent::RNA_SilentStructCreator > RNA_
 static SilentStructRegistrator< core::import_pose::PDBSilentStructCreator > PDBSilentStructCreator_registrator;
 static SilentStructRegistrator< core::io::silent::BinaryProteinSilentStructCreator > BinaryProteinSilentStructCreator_registrator;
 static SilentStructRegistrator< core::io::silent::ScoreFileSilentStructCreator > ScoreFileSilentStructCreator_registrator;
+static SilentStructRegistrator< core::io::silent::ScoreJumpFileSilentStructCreator > ScoreJumpFileSilentStructCreator_registrator;
 static SilentStructRegistrator< core::io::silent::BinaryRNASilentStructCreator > BinaryRNASilentStructCreator_registrator;
 
 // Sequence registrators

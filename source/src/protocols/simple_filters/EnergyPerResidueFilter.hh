@@ -31,10 +31,7 @@ class EnergyPerResidueFilter : public filters::Filter
 public:
 	EnergyPerResidueFilter() : filters::Filter( "EnergyPerResidue" ) {}
 
-	EnergyPerResidueFilter( core::Size const resnum, core::scoring::ScoreFunctionCOP scorefxn,
-			core::scoring::ScoreType const score_type, core::Real const threshold,
-			bool const whole_interface = false, bool const whole_protein = false, bool const select_resnums = false, std::string const string_resnums="1", core::Size const rb_jump = 1,
-			core::Real const interface_distance_cutoff =  8.0 , bool const bb_bb = false );
+	EnergyPerResidueFilter( core::Size const resnum, core::scoring::ScoreFunctionCOP scorefxn, core::scoring::ScoreType const score_type, core::Real const threshold, bool const whole_interface = false, bool const whole_protein = false, bool const select_resnums = false, bool const select_around_resnums = false, core::Real aournd_shell=8.0, std::string string_resnums="", std::string string_around_resnums="", core::Size const rb_jump = 1, core::Real const interface_distance_cutoff =  8.0 , bool const bb_bb = false );
 
 	EnergyPerResidueFilter( EnergyPerResidueFilter const &init );
 	bool apply( core::pose::Pose const & pose ) const;
@@ -63,13 +60,16 @@ public:
 	void bb_bb( bool const b_b );
 private:
 	core::Size resnum_;
-	std::string string_resnums_;
 	core::scoring::ScoreFunctionOP scorefxn_; //?
 	core::scoring::ScoreType score_type_;
 	core::Real threshold_;
 	bool whole_interface_;
 	bool whole_protein_;
 	bool select_resnums_;
+	bool select_around_resnums_;
+	std::string string_resnums_;
+	std::string string_around_resnums_;
+	core::Real around_shell_;
 	core::Size rb_jump_;
 	core::Real interface_distance_cutoff_;
 	bool bb_bb_;

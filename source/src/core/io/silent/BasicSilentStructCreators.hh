@@ -89,6 +89,17 @@ public:
 };
 
 
+/// @brief creator for the ScoreJumpFileSilentStruct class
+class ScoreJumpFileSilentStructCreator : public SilentStructCreator
+{
+public:
+  ScoreJumpFileSilentStructCreator();
+  virtual ~ScoreJumpFileSilentStructCreator();
+
+  virtual SilentStructOP create_silent_struct() const;
+  virtual std::string keyname() const;
+};
+
 /// @brief creator for the BinaryRNASilentStruct class
 class BinaryRNASilentStructCreator : public SilentStructCreator
 {

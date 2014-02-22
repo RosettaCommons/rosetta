@@ -723,7 +723,11 @@ SilentFileData::read_silent_struct_type_from_remark(
 			}
 			changed = true;
 		}
-	}
+	} else if (( line.find ("SOCREJUMP SILENTFILE" ) != std::string::npos )) {
+		silent_struct_type_ = "score_jump";
+		changed = true;
+ }
+
 	if ( changed ) tr.Trace << "found new silent_struct_type_ " << silent_struct_type_ << " from line " << line << std::endl;
 
 	return changed;

@@ -46,6 +46,7 @@ sources = {
 		"BinaryRNASilentStruct",
 		"RNA_SilentStruct",
 		"ScoreFileSilentStruct",
+		"ScoreJumpFileSilentStruct",
 		"SilentFileLoader",
 		"SilentFileOptions",
 		"SilentFileData",

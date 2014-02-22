@@ -19,6 +19,7 @@
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/id/AtomID.hh> // needed for Windows build
 #include <core/import_pose/import_pose.hh>
+#include <core/pose/selection.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/SequenceProfile.hh>
@@ -39,10 +40,8 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
-
-// #include <boost/foreach.hpp>
-// #define foreach BOOST_FOREACH
-
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace simple_moves {
@@ -75,7 +74,8 @@ FavorSequenceProfile::FavorSequenceProfile( ) :
 	use_current_(false),
 	matrix_("BLOSUM62"),
 	scaling_("prob"),
-	chain_(0)
+	chain_(0),
+	string_exclude_resnums_("")
 {}
 
 void
@@ -142,9 +142,21 @@ FavorSequenceProfile::apply( core::pose::Pose & pose )
 		start_seq = pose.conformation().chain_begin( chain_ );
     stop_seq  =   pose.conformation().chain_end( chain_ );		
 	}
+	
+	 utility::vector1<bool> use_all_residues;
+   use_all_residues.resize(pose.total_residue(),true);
+
+	if (string_exclude_resnums_.length()!=0)	{
+			set< core::Size > const res_vec( core::pose::get_resnum_list( string_exclude_resnums_, pose ) );
+			foreach( core::Size const res, res_vec){
+				  TR<<"Turning off res_type_constraint weight for "<<res<<std::endl;
+					use_all_residues[res]=false;
+			}	
+	}
 
 	for( core::Size seqpos( start_seq ), end( stop_seq ); seqpos <= end; ++seqpos ) {
-		pose.add_constraint( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) );
+		if (use_all_residues[seqpos])
+				pose.add_constraint( new core::scoring::constraints::SequenceProfileConstraint( pose, seqpos, profile ) );
 	}
 }
 
@@ -217,10 +229,15 @@ FavorSequenceProfile::parse_my_tag( utility::tag::TagCOP const tag, basic::datac
 		core::sequence::Sequence seq(ref_pose.sequence(), tag->getOption<std::string>( "pdbname" ) );
 		set_sequence( seq, matrix_ );
 	}
+
 	if( tag->hasOption("pssm") ) {
 		ref_profile_ = new core::sequence::SequenceProfile;
 		ref_profile_->read_from_file( tag->getOption< std::string >( "pssm" ) );
 	}
+
+  if (tag->hasOption("exclude_resnums")) {
+		string_exclude_resnums_ = tag->getOption<std::string>( "exclude_resnums" );
+  }
 }
 
 void FavorSequenceProfile::parse_def( utility::lua::LuaObject const & def,
@@ -251,6 +268,10 @@ void FavorSequenceProfile::parse_def( utility::lua::LuaObject const & def,
 	}
 	if( def["chain"] )
 		chain_ = def["chain"].to<core::Size>();
+
+  if (def["exclude_resnums"]) {
+		string_exclude_resnums_ = def["exclude_resnums"].to< std::string >();
+  }
 
 	set_scaling( def["set_scaling"] ? def[ "set_scaling" ].to<std::string>() : "prob" );
 

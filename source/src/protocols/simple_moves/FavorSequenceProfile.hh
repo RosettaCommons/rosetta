@@ -60,6 +60,7 @@ private:
 	std::string matrix_;
 	std::string scaling_;
 	core::Size chain_;
+  std::string string_exclude_resnums_;
 	core::sequence::SequenceProfileOP ref_profile_;
 };
 

@@ -180,12 +180,14 @@ SilentStructOP SilentStructFactory::get_silent_struct_out() {
 	using namespace basic::options::OptionKeys;
 	return get_silent_struct( option[ out::file::silent_struct_type ]() );
 }
+
 SilentStructOP SilentStructFactory::get_silent_struct_out( core::pose::Pose const& pose ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
 	bool already_binary( option[ out::file::silent_struct_type ]().find( "binary" ) != std::string::npos );
-	bool const score_only( option[ out::file::silent_struct_type ]() == "score" );
+	bool const score_only (option[ out::file::silent_struct_type ]() == "score");
+	bool const score_jump(option[ out::file::silent_struct_type ]() == "score_jump");
 
 	// if the user has explicitly set the output type, honor the request
 	if ( option[ out::file::silent_struct_type ].user() ){
@@ -193,7 +195,7 @@ SilentStructOP SilentStructFactory::get_silent_struct_out( core::pose::Pose cons
 	}
 
 	// if not, decide for the user or use the default
-	if ( !score_only && !already_binary && !core::pose::is_ideal_pose(pose) ) {
+	if ( !score_only && !score_jump && !already_binary && !core::pose::is_ideal_pose(pose) ) {
 		std::string binary_string( "binary" );
 		if ( option[ out::file::silent_struct_type ]() == "rna" ) {
 			binary_string = "binary_rna";
