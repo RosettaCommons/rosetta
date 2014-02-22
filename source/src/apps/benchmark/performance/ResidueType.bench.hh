@@ -38,7 +38,6 @@ bool is_deletable(chemical::ResidueType const& rsd, Size atom_id){
 
 	for(Size i=1; i<= rsd.natoms(); ++i){
 		if( rsd.atom_base(i) == atom_id) return false;
-		chemical::Atom const& a= rsd.atom(i);
 		for ( Size j=1; j<= 3; ++j ) {
 			chemical::ICoorAtomID const & stub_atom( rsd.icoor(i).stub_atom( j ) );
 			Size const atomno = stub_atom.atomno();

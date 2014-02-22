@@ -1499,8 +1499,6 @@ struct TCDock {
 			dori = contact;
 			if(rscore==-12345.0) return rscore;
 
-			Real old = 9e9;
-			int count = 0;
 			for(Real slidedis = contact; slidedis > contact - 3.0; slidedis -= 0.2){
 				xa.t = -slidedis*sicaxis; // move into slid position
 				Real score = rigid_sfxn_->score(xa,xb);

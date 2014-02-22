@@ -96,8 +96,6 @@ int main( int argc, char * argv [] ) {
 	MetaPoseInputStream input = streams_from_cmd_line();
     ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
     Real PORE_RADIUS = 2.0;
-    Real BOUNDARY_SASA_THRESH = 20.0;
-    Real SURFACE_SASA_THRESH = 40.0;
     while(input.has_another_pose()){
 		core::pose::PoseOP input_poseOP;
 		input_poseOP = new core::pose::Pose();

@@ -120,9 +120,6 @@ try {
 	std::string const input_pdb_name( basic::options::start_file() );
 	core::import_pose::pose_from_pdb( ps, input_pdb_name );
 
-	// aliases
-	Size const NRES = ps.total_residue();
-
 	// load set of residues whose energy is to be computed. rset[i] contains the
 	// ith residue in the input file (i=1,...,N, where N is the number of
 	// residues in the file)

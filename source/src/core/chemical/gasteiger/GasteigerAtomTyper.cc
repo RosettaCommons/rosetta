@@ -519,8 +519,6 @@ void PossibleAtomTypesForAtom::RemoveHybridization( const GasteigerAtomTypeData:
 		return;
 	}
 
-	std::list< GasteigerAtomTypeDataCOP >::iterator itr( m_AtomTypesByDecreasingStability.begin());
-
 	for
 	(
 			std::list< GasteigerAtomTypeDataCOP >::iterator

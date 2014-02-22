@@ -126,13 +126,12 @@ int main( int argc, char * argv [] ) {
 	using namespace core::scoring;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-    devel::init(argc, argv);
-    Size repeatLength =option[OptionKeys::remodel::repeat_structure];
+	devel::init(argc, argv);
 	std::string out_nametag = option[ out::file::o ];
 	std::string out_file_name_str( out_nametag + ".scores");
 	utility::io::ozstream output(out_file_name_str);
 	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
-    std::cout << "rsd_name: " << rsd_set->name() << std::endl;
+	std::cout << "rsd_name: " << rsd_set->name() << std::endl;
 	//create vector of input poses.
 	MetaPoseInputStream input = streams_from_cmd_line();
 	vector1<core::pose::PoseOP> poses;
