@@ -210,7 +210,7 @@ AlaScan::report( std::ostream & out, core::pose::Pose const & const_pose ) const
 
 			core::pose::PDBInfoCOP pose_info( const_pose.pdb_info() );
 			char const chain( pose_info->chain( resi ) );
-			core::Size const number( pose_info->number( resi ) );
+			int const number( pose_info->number( resi ) );
 			std::string const res_type( const_pose.residue( resi ).name3() );
 			out<<" "<<res_type<<" "<<number<<" "<<chain<<" : "<< ObjexxFCL::format::F (9,4,diff_ddg)<<'\n';
 		}

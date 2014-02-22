@@ -152,6 +152,8 @@
 #include <protocols/moves/RampingMoverCreator.hh>
 #include <protocols/nonlocal/SingleFragmentMoverCreator.hh>
 
+#include <protocols/ncbb/NcbbDockDesignProtocolCreator.hh>
+
 #include <protocols/normalmode/NormalModeMinimizerCreator.hh>
 
 #include <protocols/pb_potential/SetupPoissonBoltzmannPotentialCreator.hh>
