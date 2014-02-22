@@ -423,7 +423,7 @@ testinputfiles = [
 	"moves/smallmoves_out.pdb",
 	"moves/test_in.pdb",
 	"moves/test_in_short.pdb",
-       "membrane/membrane_full.xml",
+    "membrane/membrane_full.xml",
     "membrane/membrane.xml",
     "membrane/chains.txt",
     "membrane/1afo_A.pdb",
