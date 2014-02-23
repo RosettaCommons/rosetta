@@ -20,7 +20,7 @@
 #include <test/protocols/init_util.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/membrane/MembraneMover.hh>
+#include <protocols/membrane/MembraneUnitTestMover.hh>
 
 // Project Headers
 #include <core/membrane/MembraneProteinLoader.hh>
@@ -49,7 +49,6 @@ class MembraneProteinLoaderTest : public CxxTest::TestSuite {
     
 public:
     
-    
     /// @brief Setup
     void setUp()
     {
@@ -72,7 +71,7 @@ public:
             using namespace core::import_pose;
             
             // Initialize Membrane Mover
-            MembraneMoverOP mp = new MembraneMover();
+            MembraneUnitTestMoverOP mp = new MembraneUnitTestMover();
             mp->set_full(false);
             JobDistributor::get_instance()->go(mp);
             

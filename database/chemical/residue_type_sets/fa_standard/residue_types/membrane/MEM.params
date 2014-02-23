@@ -5,7 +5,7 @@
 # Last Modified: 1/19/13
 # version 0.1
 NAME MEM
-IO_STRING XXX X
+IO_STRING MEM X
 TYPE LIGAND #residue type
 AA MPR
 ATOM ORIG MPnm H    0.0 # normal

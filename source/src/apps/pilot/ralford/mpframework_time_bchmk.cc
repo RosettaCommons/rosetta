@@ -20,7 +20,7 @@
 #include <devel/init.hh>
 
 // Project Headers
-#include <protocols/membrane/MembraneMover.hh>
+#include <protocols/membrane/MembraneUnitTestMover.hh>
 #include <core/membrane/MembraneProteinFactory.hh>
 
 #include <core/membrane/util/Exceptions.hh>
@@ -75,7 +75,7 @@ int main( int argc, char* argv[] )
         
         TR << "Setting up Membrane Protein from Initial Resources..." << std::endl;
         // Initialize Membrane Mover
-        MembraneMoverOP mp = new MembraneMover();
+        MembraneUnitTestMoverOP mp = new MembraneUnitTestMover();
         mp->register_options();
         mp->init_from_cmd();
         

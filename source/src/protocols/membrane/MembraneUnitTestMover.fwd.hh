@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file       protocols/mover/MembraneMover.fwd.hh
+/// @file       protocols/mover/MembraneUnitTestMover.fwd.hh
 ///
 /// @brief      Top-Level Unit Test for the Membrane Protein Factory (Mover Class)
 /// @details    The purpose of this application is to test the membrane protein factory
@@ -16,10 +16,10 @@
 ///             test for memrane protein initialization.
 ///
 /// @author     Rebecca Alford (rfalford12@gmail.com)
-/// @note       Last Modified (1/3/14)
+/// @note       Last Modified (2/22/14)
 
-#ifndef INCLUDED_protocols_membrane_MembraneMover_fwd_hh
-#define INCLUDED_protocols_membrane_MembraneMover_fwd_hh
+#ifndef INCLUDED_protocols_membrane_MembraneUnitTestMover_fwd_hh
+#define INCLUDED_protocols_membrane_MembraneUnitTestMover_fwd_hh
 
 // Utility Headers
 #include <utility/pointer/owning_ptr.hh>
@@ -27,14 +27,14 @@
 namespace protocols {
 namespace membrane {
     
-    /// @brief Class: Membrane Mover
+    /// @brief Class: Membrane Unit Testing Mover
     /// @details Helping Test Mover for initializing a membrane protein
-    class MembraneMover;
-    typedef utility::pointer::owning_ptr< MembraneMover > MembraneMoverOP;
-    typedef utility::pointer::owning_ptr< MembraneMover const > MembraneMoverCOP;
-
+    class MembraneUnitTestMover;
+    typedef utility::pointer::owning_ptr< MembraneUnitTestMover > MembraneUnitTestMoverOP;
+    typedef utility::pointer::owning_ptr< MembraneUnitTestMover const > MembraneUnitTestMoverCOP;
+    
 } // membrane
 } // protocols
 
-#endif // INCLUDED_protocols_membrane_MembraneMover_fwd_hh
+#endif // INCLUDED_protocols_membrane_MembraneUnitTestMover_fwd_hh
 

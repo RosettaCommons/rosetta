@@ -1,6 +1,6 @@
 Rosetta Membrane Refactor
 -----
-Version 1.0 - Added on 2/18/2014
+Version 1.1 - Added on 2/22/2014
 
 Author: Rebecca Alford (rfalford12@gmail.com)
 

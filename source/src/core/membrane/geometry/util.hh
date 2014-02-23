@@ -86,66 +86,6 @@ namespace geometry {
                    SpanningTopologyOP topology
                    );
     
-    ///// Embedding Calculation Utility Mehtods //////////
-    
-    /// @brief    Sum 2 Numeric XYZ Reals
-    /// @details  Calculate the vector sum of 2 nymeric xyz vectors
-    ///           utility function for the two methods below - maintains precision for core::Real
-    numeric::xyzVector< core::Real >
-    xyz_sum( numeric::xyzVector< core::Real > & a, numeric::xyzVector< core::Real > & b );
-    
-    /// @brief    Difference from 2 Numeric XYZ Reals
-    /// @details  Calculate the vector difference of 2 nymeric xyz vectors
-    ///           utility function for the two methods below - maintains precision for core::Real
-    numeric::xyzVector< core::Real >
-    xyz_diff( numeric::xyzVector< core::Real > & a, numeric::xyzVector< core::Real > & b);
-    
-    /// @brief   Retrieve CA Coordiantes for a set of residues
-    /// @details Given a set of residue numebrs, grab the CA xys coordinates at
-    ///          that given residue position in the pose
-    ///
-    /// @return  Map for residue position to xyz coordinates
-    std::map< core::Size, numeric::xyzVector< core::Real > >
-    get_rsd_CAs( core::pose::Pose & pose, utility::vector1< core::Size > residues );
-    
-    
-    /// @brief   Retrieve CB Coordinates for a set of residues
-    /// @details Given a set of residue numebrs, grab the CB xyz coordinates
-    ///          at that given residue position
-    ///
-    /// @return  Map for residue position to xyz coords
-    std::map< core::Size, numeric::xyzVector< core::Real > >
-    get_rsd_CBs( core::pose::Pose & pose, utility::vector1< core::Size > residues );
-    
-    /// @brief    Calculate net residue CA->COM vectors
-    /// @details  Calculate the Normal vector as from the net residueCA-chain-COM vectors
-    ///
-    /// @param    pose
-    ///             chainof interest
-    /// @param    residueCOM
-    ///             coordinates for CA of residue center of mass (for which CA coordinates will be grabbed)
-    /// @param    residues
-    ///             list of relevant residue positions
-    numeric::xyzVector< core::Real >
-    calc_net_CA_COM(
-                    core::pose::Pose & pose,
-                    numeric::xyzVector< core::Real > residueCOM,
-                    utility::vector1< core::Size > residues
-                    );
-    
-    /// @brief    Calculate net residue CA->CB Vectors
-    /// @details  Calculate the Normal vector as net of CA->CB vectors
-    ///
-    /// @param    pose
-    ///             pose of interest
-    /// @param    residues
-    ///             list of relevant residue positions
-    numeric::xyzVector< core::Real >
-    calc_net_CA_CB(
-                   core::pose::Pose & pose,
-                   utility::vector1< core::Size > residues
-                   );
-    
     //////////////// Utility Functions from Docking Protocol - Geometry Util for Center of Mass ////////////////
     
     /// @brief      Center of Mass

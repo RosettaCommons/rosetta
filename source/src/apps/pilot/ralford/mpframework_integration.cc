@@ -24,7 +24,7 @@
 // App Headers
 #include <devel/init.hh>
 
-#include <protocols/membrane/MembraneMover.hh>
+#include <protocols/membrane/MembraneUnitTestMover.hh>
 
 // Project Headers
 #include <core/membrane/properties/SpanningTopology.hh>
@@ -380,7 +380,7 @@ int main( int argc, char* argv[] )
         
         TR << "Setting up Membrane Protein from Initial Resources..." << std::endl;
         // Initialize Membrane Mover
-        MembraneMoverOP mp = new MembraneMover();
+        MembraneUnitTestMoverOP mp = new MembraneUnitTestMover();
         mp->register_options();
         mp->init_from_cmd();
         

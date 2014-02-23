@@ -87,7 +87,8 @@ sources = {
 		"LoopBuildMover",
 	],
     "protocols/membrane": [
-        "MembraneMover",
+        "CreateMembranePoseMover",
+        "MembraneUnitTestMover",
     ],
 	"protocols/noesy_assign": [
                 "CovalentCompliance",
