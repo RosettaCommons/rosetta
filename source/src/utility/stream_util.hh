@@ -18,6 +18,7 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <map>
+#include <list>
 #include <ostream>
 
 //Auto Headers
@@ -80,4 +81,19 @@ std::ostream & operator <<(std::ostream & os, std::map<T1, T2> const & m) {
 }
 
 
+/// @brief Output function for std::list object.
+template <typename T>
+std::ostream & operator <<(std::ostream & os, std::list<T> const & l) {
+	typedef typename std::list<T>::const_iterator ConstIterator;
+	ConstIterator p;
+
+	os << "[[";
+
+	for(p=l.begin(); p!=l.end(); p++ ) {
+		os << *p << ", ";
+	}
+
+	os << "]]";
+	return os;
+}
 #endif // INCLUDED_utility_stream_util_hh

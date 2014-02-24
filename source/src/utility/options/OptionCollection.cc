@@ -30,7 +30,6 @@
 #include <utility/io/izstream.hh>
 #include <utility/excn/Exceptions.hh>
 
-
 // C++ headers
 #include <algorithm>
 #include <cassert>
@@ -40,8 +39,6 @@
 #include <iostream>
 #include <utility>
 //#include <list>
-
-
 
 namespace utility {
 namespace options {
@@ -215,11 +212,15 @@ namespace options {
 				} else if ( arg_first == '@' ) { // @ prefix: Treat as an option file
 					// Parse argument to get file specification string
 					size_type const fb( arg_string.find_first_not_of( "@\"" ) );
+					string file_string;
 					if ( fb == string::npos ) { // -...-
-						throw( excn::EXCN_Msg_Exception( "ERROR: Unsupported option file specification: " + arg_string ));
+						// This should be the "@ ../filename" 'tab-completion' case
+						file_string = arg_strings.front();
+						arg_strings.pop_front(); // remove next argument
+					} else {
+						size_type const fe( arg_string.find_last_not_of( '"' ) );
+						file_string = ( fb <= fe ? arg_string.substr( fb, fe - fb + 1 ) : string() );
 					}
-					size_type const fe( arg_string.find_last_not_of( '"' ) );
-					string file_string( fb <= fe ? arg_string.substr( fb, fe - fb + 1 ) : string() );
 
 					load_options_from_file(ObjexxFCL::trim(file_string), cid);
 
@@ -442,7 +443,7 @@ void OptionCollection::load_options_from_file_exception(std::string const & file
 
 	utility::io::izstream stream( file_string.c_str() );
 	if ( ! stream ) {
-		throw( excn::EXCN_Msg_Exception( "Option file open failed for: "+file_string ) );
+		throw( excn::EXCN_Msg_Exception( "Option file open failed for: '"+file_string+"'" ) );
 	}
 	load_options_from_stream( stream, file_string, cid );
 }
