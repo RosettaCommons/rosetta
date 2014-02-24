@@ -474,6 +474,12 @@ void HybridizeSetupMover::apply( core::pose::Pose & pose )
 		}
 	}
 	
+    // initialize template history
+    // >> keep this after symmetry
+    TemplateHistoryOP history = new TemplateHistory(pose);
+    history->setall( hybridize_setup_->initial_template_index() );
+    pose.data().set( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY, history );
+
 	// set pose for density scoring if a map was input
 	// keep this after symmetry
 	if ( option[ OptionKeys::edensity::mapfile ].user() ) {

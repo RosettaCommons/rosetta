@@ -200,6 +200,7 @@ ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose)
 		}
 		if (! chosen_good_jump ) continue;
 		
+        if (allowed_to_move_.size() != 0) {
 		chosen_good_jump = false;
 		for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
 			if (allowed_to_move_[*it]==true) {
@@ -207,6 +208,7 @@ ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose)
 				break;
 			}
 		}
+        }
 	}
 
 	core::Size jump_residue_pose = pose.fold_tree().downstream_jump_residue(jump_number_);
@@ -252,7 +254,11 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
 	} else {
 		// loop over all jumps (we're initializing)
 		for (core::Size jump_number=1; jump_number<=pose.num_jump(); ++jump_number) {
-				bool is_jump_affect_moveable_residue=false;
+			bool is_jump_affect_moveable_residue=false;
+			if (allowed_to_move_.size() == 0) {
+				is_jump_affect_moveable_residue=true;
+			}
+			else {
     		std::list < core::Size > downstream_residues = downstream_residues_from_jump(pose, jump_number);
     		for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
 						if (allowed_to_move_[*it]==true) {
@@ -260,7 +266,7 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
 							break;
 							}
         	}
-
+			}
 			if (is_jump_affect_moveable_residue) {
 						align_chunk_.set_aligned_chunk(pose, jump_number, true);
 						// apply alignment

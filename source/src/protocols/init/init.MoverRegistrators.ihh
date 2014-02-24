@@ -284,6 +284,7 @@ static MoverRegistrator< simple_moves::SwitchResidueTypeSetMoverCreator > reg_Sw
 static MoverRegistrator< simple_moves::SwitchChainOrderMoverCreator > reg_SwitchChainOrderMoverCreator;
 static MoverRegistrator< simple_moves::TaskAwareMinMoverCreator > reg_TaskAwareMinMoverCreator;
 static MoverRegistrator< simple_moves::VirtualRootMoverCreator > reg_VirtualRootMoverCreator;
+static MoverRegistrator< simple_moves::TumbleCreator > reg_TumbleCreator;
 
 static MoverRegistrator< simple_moves::sidechain_moves::SidechainMCMoverCreator > reg_SidechainMCMoverCreator;
 static MoverRegistrator< simple_moves::sidechain_moves::SidechainMoverCreator > reg_SidechainMoverCreator;

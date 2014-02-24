@@ -542,6 +542,7 @@ sources = {
 		"TailsScoreMover",
 		"TaskAwareMinMover",
 		"TorsionDOFMover",
+        "Tumble",
 		"VirtualRootMover",
 		"WobbleMover",
 	],
