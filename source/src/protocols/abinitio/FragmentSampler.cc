@@ -124,31 +124,38 @@ void FragmentSampler::checkpointed_cycle_block(
 	tr.Info <<  "   " << id2string( stage_id ) << "                                                        \n";
 	tr.Info <<  "--------------------------------------------------------------------\n";
 	tr.Info << "FragmentSampler: " << id2string( stage_id ) << std::endl;
+
 	PROF_START( id2proftag( stage_id ) );
 	clock_t starttime = clock();
+	try {
+		if ( !get_checkpoints().recover_checkpoint( pose, get_current_tag(), id2string( stage_id ), false /* fullatom*/, true /*fold tree */ )) {
+			scoring::constraints::ConstraintSetOP orig_constraints( pose.constraint_set()->clone() );
 
-	if ( !get_checkpoints().recover_checkpoint( pose, get_current_tag(), id2string( stage_id ), false /* fullatom*/, true /*fold tree */ )) {
-		scoring::constraints::ConstraintSetOP orig_constraints( pose.constraint_set()->clone() );
+			//run the fragment cycles
+			(this->*cycles)( pose ); //calls do_stageX_cycles()
 
-		//run the fragment cycles
-		(this->*cycles)( pose ); //calls do_stageX_cycles()
+			recover_low( pose, stage_id );
+			if ( tr.Info.visible() ) current_scorefxn().show( tr.Info, pose );
+			tr.Info << std::endl;
+			mc().show_counters();
+			total_trials_+=mc().total_trials();
+			mc().reset_counters();
 
-		recover_low( pose, stage_id );
-		if ( tr.Info.visible() ) current_scorefxn().show( tr.Info, pose );
-		tr.Info << std::endl;
-		mc().show_counters();
-		total_trials_+=mc().total_trials();
-		mc().reset_counters();
+			pose.constraint_set( orig_constraints ); // restore constraints - this is critical for checkpointing to work
+			get_checkpoints().checkpoint( pose, get_current_tag(), id2string( stage_id ), true /*fold tree */ );
+		} //recover checkpoint
+		get_checkpoints().debug( get_current_tag(), id2string( stage_id ), current_scorefxn()( pose ) );
 
-		pose.constraint_set( orig_constraints ); // restore constraints - this is critical for checkpointing to work
-		get_checkpoints().checkpoint( pose, get_current_tag(), id2string( stage_id ), true /*fold tree */ );
-	} //recover checkpoint
-	get_checkpoints().debug( get_current_tag(), id2string( stage_id ), current_scorefxn()( pose ) );
+		PROF_STOP( id2proftag( stage_id ) );
+		if ( option[ basic::options::OptionKeys::run::profile ] ) prof_show();
 
+	} catch ( moves::EXCN_Converged& excn ) {
+		//		Size last_stage( STAGE_4 );
+		//		while( contains_stageid( skip_stages_, last_stage ) ) --last_stage;
+		mc().recover_low( pose );
+		get_checkpoints().flush_checkpoints();
+	};
 	clock_t endtime = clock();
-	PROF_STOP( id2proftag( stage_id ) );
-	if ( option[ basic::options::OptionKeys::run::profile ] ) prof_show();
-
 	if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
 		tr.Info << "Timeperstep: " << (double(endtime) - starttime )/(CLOCKS_PER_SEC ) << std::endl;
 	  jd2::output_intermediate_pose( pose, id2string( stage_id ) );
@@ -170,44 +177,37 @@ void FragmentSampler::apply( pose::Pose & pose ) {
 		replace_scorefxn( pose, STAGE_4, 1.0 );
 		return;
 	}
-    
+
 	total_trials_ = 0;
 	current_scorefxn()(pose);
   if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
 	jd2::output_intermediate_pose( pose, "stage0" );
 	}
-    
-	try {
-		if ( !contains_stageid( skip_stages_, STAGE_1 ) ) {
-			prepare_stage1( pose );
-			checkpointed_cycle_block( pose, STAGE_1, &FragmentSampler::do_stage1_cycles );
-		} //skipStage1
 
-		if ( !contains_stageid( skip_stages_, STAGE_2 ) ) {
-			prepare_stage2( pose );
-			checkpointed_cycle_block( pose, STAGE_2, &FragmentSampler::do_stage2_cycles );
-		}
+	if ( !contains_stageid( skip_stages_, STAGE_1 ) ) {
+		prepare_stage1( pose );
+		checkpointed_cycle_block( pose, STAGE_1, &FragmentSampler::do_stage1_cycles );
+	} //skipStage1
 
-		if ( !contains_stageid( skip_stages_, STAGE_3 ) ) {
-			prepare_stage3( pose );
-			checkpointed_cycle_block( pose, STAGE_3b, &FragmentSampler::do_stage3_cycles );
-		}
+	if ( !contains_stageid( skip_stages_, STAGE_2 ) ) {
+		prepare_stage2( pose );
+		checkpointed_cycle_block( pose, STAGE_2, &FragmentSampler::do_stage2_cycles );
+	}
 
-		if ( !contains_stageid( skip_stages_, STAGE_4 ) ) {
-			prepare_stage4( pose );
-			checkpointed_cycle_block( pose, STAGE_4, &FragmentSampler::do_stage4_cycles );
-		}
+	if ( !contains_stageid( skip_stages_, STAGE_3 ) ) {
+		prepare_stage3( pose );
+		checkpointed_cycle_block( pose, STAGE_3b, &FragmentSampler::do_stage3_cycles );
+	}
 
-		tr.Info <<  "\n===================================================================\n";
-		tr.Info <<  "   Finished Abinitio                                                 \n";
-		tr.Info <<  std::endl;
-		topology_broker().apply_filter( pose, END_ABINITIO, 1 );
-	} catch ( moves::EXCN_Converged& excn ) {
-		//		Size last_stage( STAGE_4 );
-		//		while( contains_stageid( skip_stages_, last_stage ) ) --last_stage;
-		mc().recover_low( pose );
-		get_checkpoints().flush_checkpoints();
-	};
+	if ( !contains_stageid( skip_stages_, STAGE_4 ) ) {
+		prepare_stage4( pose );
+		checkpointed_cycle_block( pose, STAGE_4, &FragmentSampler::do_stage4_cycles );
+	}
+
+	tr.Info <<  "\n===================================================================\n";
+	tr.Info <<  "   Finished Abinitio                                                 \n";
+	tr.Info <<  std::endl;
+	topology_broker().apply_filter( pose, END_ABINITIO, 1 );
 
 	replace_scorefxn( pose, STAGE_4, 1.0 ); ///here so we activate all chainbreaks and constraints
 	return;
