@@ -1,0 +1,6 @@
+bin/*
+build/*
+contrib/*
+include/*
+lib/*
+src/apbscfg.h

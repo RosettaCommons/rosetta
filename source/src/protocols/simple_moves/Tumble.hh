@@ -19,29 +19,16 @@
 //#include <protocols/docking/Tumble.fwd.hh>
 
 // Package Headers
-#include <protocols/docking/types.hh>
-#include <protocols/docking/DockingEnsemble.fwd.hh>
-#include <protocols/docking/DockingLowResEnsemble.fwd.hh>
-#include <protocols/docking/DockFilters.fwd.hh>
-#include <protocols/docking/DockingLowRes.fwd.hh>
-#include <protocols/docking/DockingHighRes.fwd.hh>
-#include <protocols/docking/DockingInitialPerturbation.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <protocols/toolbox/task_operations/InterfaceTaskOperation.fwd.hh>
+
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>  // Needs to be the full header so the scorefxn can default to NULL
-#include <core/kinematics/FoldTree.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/simple_moves/ConstraintSetMover.fwd.hh>
-#include <protocols/simple_moves/ReturnSidechainMover.fwd.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.fwd.hh>
-#include <protocols/moves/MoverContainer.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
 

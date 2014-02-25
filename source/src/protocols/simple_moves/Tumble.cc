@@ -25,18 +25,6 @@
 
 #include <core/kinematics/FoldTree.hh>
 
-#include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/BoundConstraint.hh>
-#include <core/scoring/func/HarmonicFunc.hh>
-#include <core/scoring/func/SOGFunc.hh>
-#include <core/scoring/func/ScalarWeightedFunc.hh>
-
 // task operation
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
@@ -47,26 +35,13 @@
 
 // utility
 #include <utility/tag/Tag.hh>
-#include <utility/fixedsizearray1.hh>
 #include <basic/Tracer.hh>
-
-// option
-#include <basic/options/option.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
 
 static basic::Tracer TR( "protocols.simple_moves.Tumble" );
 static numeric::random::RandomGenerator RG(45653932);
 
 namespace protocols {
 namespace simple_moves {
-
-using namespace core;
-using namespace basic::options;
-using namespace pack;
-using namespace task;
-using namespace operation;
-using namespace scoring;
-using namespace constraints;
 
 Tumble::Tumble() {
 }
@@ -83,7 +58,7 @@ Tumble::center_of_mass(core::pose::Pose const & pose) {
         if (pose.residue_type(ires).aa() == core::chemical::aa_vrt) continue;
         
 		for ( core::Size iatom = 1; iatom <= pose.residue_type(ires).nheavyatoms(); ++iatom ) {
-            conformation::Atom const & atom( pose.residue(ires).atom(iatom) );
+            core::conformation::Atom const & atom( pose.residue(ires).atom(iatom) );
             massSum += atom.xyz();
             nAtms++;
         }
