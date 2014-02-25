@@ -59,7 +59,12 @@
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 
 // Devel headers
+//This comment brackets a snippet of code that is automatically stripped from the release, usually for semi-forbidden interactions with the unreleased devel library
+//If you want non-devel code stripped from the release, see the release machinery in tools/release and contact the release manager (Steven Lewis smlewi@gmail.com at this time)
+///DONOTRELEASE_TOP
 #include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
+///DONOTRELEASE_BOTTOM
+//end automatic stripping comment
 
 // Utility headers
 #include <utility/mpi_util.hh>
@@ -307,10 +312,16 @@ public:
 		sfxn_ = core::scoring::getScoreFunction();
 
 		//register calculators
+
+		//This comment brackets a snippet of code that is automatically stripped from the release, usually for semi-forbidden interactions with the unreleased devel library
+		//If you want non-devel code stripped from the release, see the release machinery in tools/release and contact the release manager (Steven Lewis smlewi@gmail.com at this time)
+		///DONOTRELEASE_TOP
 		if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ) {
 			core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new devel::vardist_solaccess::VarSolDistSasaCalculator;
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 		}
+		///DONOTRELEASE_BOTTOM
+		//end automatic stripping comment
 
 		if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( "num_hbonds" ) ) {
 			core::pose::metrics::PoseMetricCalculatorOP num_hbonds_calculator = new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator();
