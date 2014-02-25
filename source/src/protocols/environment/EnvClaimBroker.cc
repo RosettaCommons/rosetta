@@ -307,29 +307,32 @@ void EnvClaimBroker::annotate_fold_tree( core::kinematics::FoldTreeOP ft,
       if( ann ){ // Physical fold tree doesn't use the annotations.
         ann->add_jump_label( label, jump_id );
       }
-      ft->set_jump_atoms( (int) jump_id, jump_atoms.at( label ).first, jump_atoms.at( label ).second, true );
+      ft->set_jump_atoms( (int) jump_id,
+                          jump_atoms.find( label )->second.first,
+                          jump_atoms.find( label )->second.second,
+                          true );
     }
   }
 }
 
 void EnvClaimBroker::add_virtual_residues( Conformation& conf,
-		SizeToStringMap const& new_vrts,
-		SequenceAnnotationOP ann )
+    SizeToStringMap const& new_vrts,
+    SequenceAnnotationOP ann )
 {
-	//Add new virtual residues into conformation.
-	BOOST_FOREACH( SizeToStringMap::value_type pair, new_vrts ) {
-		// Steal the residue type set of the first residue. Will obviously break if the conformation
-		// has no residues. Is this a case I need to worry about?
-		core::chemical::ResidueTypeSet const & rsd_set( conf.residue(1).residue_type_set() );
-		core::conformation::ResidueOP rsd(
-				core::conformation::ResidueFactory::create_residue( rsd_set.name_map( "VRT" ) ) );
+  //Add new virtual residues into conformation.
+  BOOST_FOREACH( SizeToStringMap::value_type pair, new_vrts ) {
+    // Steal the residue type set of the first residue. Will obviously break if the conformation
+    // has no residues. Is this a case I need to worry about?
+    core::chemical::ResidueTypeSet const & rsd_set( conf.residue(1).residue_type_set() );
+    core::conformation::ResidueOP rsd(
+        core::conformation::ResidueFactory::create_residue( rsd_set.name_map( "VRT" ) ) );
 
-		//were the jump goes doesn't matter since the current fold tree is about to be replaced by 'ft'.
-		conf.append_residue_by_jump( *rsd, conf.size() );
+    //were the jump goes doesn't matter since the current fold tree is about to be replaced by 'ft'.
+    conf.append_residue_by_jump( *rsd, conf.size() );
 
-		// This residue label should resolve to the VRT just added.
-		assert( ann->resolve_seq( LocalPosition( pair.second, 1 ) ) == conf.size() );
-	}
+    // This residue label should resolve to the VRT just added.
+    assert( ann->resolve_seq( LocalPosition( pair.second, 1 ) ) == conf.size() );
+  }
 }
 
 void EnvClaimBroker::broker_dofs( ProtectedConformationOP conf ){
@@ -359,7 +362,7 @@ void EnvClaimBroker::broker_dofs( ProtectedConformationOP conf ){
   BOOST_FOREACH( ClaimingMoverOP mover, initializers ){
     mover->passport_updated();
     mover->initialize( p );
-    movers_and_passes_.at( mover )->revoke_all_access();
+    movers_and_passes_.find( mover )->second->revoke_all_access();
   }
 
   //Copy the changes from the initialized conformation into conf
@@ -460,8 +463,7 @@ void EnvClaimBroker::grant_access( TorsionElement const& e, ProtectedConformatio
 
   using namespace core::id;
 
-  //std::map::at() is required because, in this context, movers_and_passes_ is a const member.
-  core::environment::DofPassportOP pass = movers_and_passes_.at( e.owner );
+  core::environment::DofPassportOP pass = movers_and_passes_.find( e.owner )->second;
 
   Size seqpos = resolve( e );
   TorsionID phi  ( seqpos, BB, phi_torsion );
@@ -493,8 +495,7 @@ void EnvClaimBroker::grant_access( TorsionElement const& e, ProtectedConformatio
 void EnvClaimBroker::grant_access( RTElement const& e, ProtectedConformationOP conf ) const {
   using namespace core::id;
 
-  //std::map::at() is required because, in this context, movers_and_passes_ is a const member.
-  core::environment::DofPassportOP pass = movers_and_passes_.at( e.owner );
+  core::environment::DofPassportOP pass = movers_and_passes_.find( e.owner )->second;
 
   int jump_nr = (int) resolve( e );
   AtomID aid = conf->jump_atom_id( jump_nr );
