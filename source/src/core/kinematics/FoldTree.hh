@@ -559,6 +559,9 @@ public:
 	/// permitting efficient comparison between a pair of FoldTrees
 	size_t hash_value() const;
 
+	/// @brief easy output of string
+	std::string to_string() const;
+
 	/// @brief Returns the number of residues in the FoldTree
 	///
 	/// example(s):

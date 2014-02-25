@@ -39,9 +39,6 @@ public:
 	/// @brief Move to next rotamer
 	virtual void operator++();
 
-	/// @brief Check if reach the end of rotamer list
-	virtual bool not_end() const;
-
 	/// @brief Apply the current rotamer to pose
 	virtual void apply( core::pose::Pose & pose );
 
@@ -68,12 +65,23 @@ public:
 		set_init( false );
 	}
 
+	using RotamerSized::fast_forward; // fast forward to very end.
+
 	/// @brief Move sampler to end.
 	void fast_forward( Size const sampler_number );
 
-
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "RotamerSizedComb"; }
+
+	/// @brief Type of class (see enum in RotamerTypes.hh)
+	virtual RotamerType type() const { return SIZED_COMB; }
+
+	/// @brief Set the random sampling state
+	virtual void set_random( bool const setting );
+
+private:
+
+	void update_rotamer_ids();
 
 protected:
 
@@ -91,7 +99,7 @@ private:
 	utility::vector1<core::Size> size_list_;
 
 protected: // can be read out by derived classes.
-	core::Size id_;
+
 	utility::vector1<core::Size> id_list_;
 	utility::vector1<RotamerSizedOP> rotamer_list_;
 

@@ -63,6 +63,9 @@ public:
 	/// @brief Name of the class
 	std::string get_name() const { return "RNA_McMultiSuite"; }
 
+	/// @brief Type of class (see enum in RotamerTypes.hh)
+	virtual RotamerType type() const { return RNA_MC_MULTI_SUITE; }
+
 private:
 	using McComb::add_rotamer;
 	utility::vector1<RNA_McSuiteOP> suite_samplers_;

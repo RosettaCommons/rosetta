@@ -24,7 +24,7 @@
 #include <protocols/viewer/viewers.hh>
 
 #include <protocols/moves/SimulatedTempering.hh>
-#include <protocols/stepwise/enumerate/rna/helix/RNA_HelixAssembler.hh>
+#include <protocols/stepwise/sampling/rna/helix/RNA_HelixAssembler.hh>
 #include <protocols/rotamer_sampler/rna/RNA_McSuite.hh>
 #include <protocols/rotamer_sampler/rna/RNA_McMultiSuite.hh>
 
@@ -133,7 +133,7 @@ PoseOP pose_setup(
 	std::string const & seq2,
 	Size const len1
 ) {
-	protocols::stepwise::enumerate::rna::helix::RNA_HelixAssembler assembler;
+	protocols::stepwise::sampling::rna::helix::RNA_HelixAssembler assembler;
 	assembler.use_phenix_geo( true );
 	PoseOP pose( assembler.build_init_pose( seq1, seq2 ) );
 	add_variant_type_to_pose_residue( *pose, "VIRTUAL_PHOSPHATE", 1 );

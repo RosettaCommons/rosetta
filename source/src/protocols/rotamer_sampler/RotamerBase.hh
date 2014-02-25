@@ -17,6 +17,7 @@
 
 // Unit headers
 #include <protocols/rotamer_sampler/RotamerBase.fwd.hh>
+#include <protocols/rotamer_sampler/RotamerType.hh>
 
 // Project headers
 #include <protocols/moves/Mover.hh>
@@ -64,7 +65,10 @@ public:
 	virtual void apply( core::pose::Pose & ) = 0;
 
 	/// @brief Name of the class
-	virtual std::string get_name() const { return "RotamerBase"; }
+	virtual std::string get_name() const = 0;
+
+	/// @brief Type of class (see enum in RotamerTypes.hh)
+	virtual RotamerType type() const = 0;
 
 protected:
 	/// @brief Check if the sampler has been initialized

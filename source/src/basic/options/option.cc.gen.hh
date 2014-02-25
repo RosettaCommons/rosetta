@@ -777,10 +777,10 @@ option.add( basic::options::OptionKeys::jumps::sep_switch_accelerate, "constrain
 option.add( basic::options::OptionKeys::jumps::dump_frags, "dump jump_fragments " ).def(false);
 option.add( basic::options::OptionKeys::jumps::njumps, "number_of_jumps to select from library for each trajectory (membrane mode)" ).def(1);
 option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
-option.add( basic::options::OptionKeys::jumps::contact_score, "the strand-weight will have a weight * contact_order component" ).def(0.0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::filter_templates, "filter hybridization protocol templates" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::contact_score, "the strand-weight will have a weight * contact_order component" ).def(0.0);
+option.add( basic::options::OptionKeys::jumps::filter_templates, "filter hybridization protocol templates" ).def(false);
 option.add( basic::options::OptionKeys::templates::templates, "templates option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::templates::config, "read a list of templates and alignments" ).def("templates.dat");
 option.add( basic::options::OptionKeys::templates::fix_aligned_residues, "pick only from template fragments and then keep these residues fixed" ).def(false);
@@ -1553,11 +1553,11 @@ option.add( basic::options::OptionKeys::membrane::view, "viewing pose during pro
 option.add( basic::options::OptionKeys::membrane::Mhbond_depth, "membrane depth dependent correction to the hbond potential" ).def(false);
 option.add( basic::options::OptionKeys::membrane::thickness, "one leaflet hydrocarbon thickness for solvation calculations (Angstroms)" ).def(15);
 option.add( basic::options::OptionKeys::casp::casp, "casp option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::casp::decoy, "No description" );
-option.add( basic::options::OptionKeys::casp::wt, "No description" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::casp::rots, "No description" );
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::casp::decoy, "No description" );
+option.add( basic::options::OptionKeys::casp::wt, "No description" );
+option.add( basic::options::OptionKeys::casp::rots, "No description" );
 option.add( basic::options::OptionKeys::casp::opt_radius, "optimization radius for repacking and minimization" );
 option.add( basic::options::OptionKeys::casp::repack, "should we repack the structure?" );
 option.add( basic::options::OptionKeys::casp::sc_min, "should we sidechain minimize the structure?" );
@@ -2328,10 +2328,10 @@ option.add( basic::options::OptionKeys::hotspot::cluster, "Cluster stubset. Will
 option.add( basic::options::OptionKeys::hotspot::colonyE, "Rescore hotspots from -hashfile based on colony energy." ).def(false);
 option.add( basic::options::OptionKeys::hotspot::length, "Length of hotspot peptide to use for hashing. Sidechain-containing group will be in the center." ).def(1);
 option.add( basic::options::OptionKeys::hotspot::envhb, "Use environment dependent Hbonds when scoring hotspots." ).def(false);
+option.add( basic::options::OptionKeys::hotspot::angle, "Maximum allowed angle between stubCA, target CoM, and stubCB. Used to determine if stub is pointing towards target. Negative numbers deactivates this check (default)" ).def(-1);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::hotspot::angle, "Maximum allowed angle between stubCA, target CoM, and stubCB. Used to determine if stub is pointing towards target. Negative numbers deactivates this check (default)" ).def(-1);
-option.add( basic::options::OptionKeys::hotspot::angle_res, "Residue to use for angle calculation from stubCA, <this option>, and stubCB. Used to determine if stub is pointing towards target. 0 uses the default, which is the targets center of mass" ).def(0);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::hotspot::angle_res, "Residue to use for angle calculation from stubCA, <this option>, and stubCB. Used to determine if stub is pointing towards target. 0 uses the default, which is the targets center of mass" ).def(0);
 option.add( basic::options::OptionKeys::parser::parser, "parser option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::parser::protocol, "File name for the xml parser protocol" );
 option.add( basic::options::OptionKeys::parser::script_vars, "Variable substitutions for xml parser, in the form of name=value" );
@@ -2844,9 +2844,12 @@ option.add( basic::options::OptionKeys::stepwise::rna::bulge_res, "optional: res
 option.add( basic::options::OptionKeys::stepwise::rna::rebuild_bulge_mode, "rebuild_bulge_mode" ).def(false);
 option.add( basic::options::OptionKeys::stepwise::rna::choose_random, "ask swa residue sampler for a random solution" ).def(false);
 option.add( basic::options::OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed, "When instantiating virtual sugar, keep base fixed -- do not spend a lot of time to minimize!" ).def(true);
+option.add( basic::options::OptionKeys::stepwise::rna::sampler_max_centroid_distance, "max centroid distance of moving base to reference in floating base sampler" ).def(0.0);
 option.add( basic::options::OptionKeys::stepwise::rna::num_random_samples, "In choose_random/monte-carlo mode, number of samples from swa residue sampler before minimizing best" ).def(20);
 option.add( basic::options::OptionKeys::stepwise::rna::filter_user_alignment_res, " filter_user_alignment_res " ).def(true);
 option.add( basic::options::OptionKeys::stepwise::rna::output_pdb, "output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process." ).def(false);
+option.add( basic::options::OptionKeys::stepwise::rna::new_framework, "testing sample-and-screen framework" ).def(false);
+option.add( basic::options::OptionKeys::stepwise::rna::unified_framework, "testing unified sample-and-screen framework" ).def(false);
 option.add( basic::options::OptionKeys::full_model::full_model, "full_model option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::full_model::cutpoint_open, "open cutpoints in full model" ).def();
 option.add( basic::options::OptionKeys::full_model::cutpoint_closed, "closed cutpoints in full model" ).def();

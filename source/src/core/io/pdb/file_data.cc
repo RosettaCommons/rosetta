@@ -42,6 +42,7 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
+#include <core/chemical/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -105,9 +106,7 @@ static basic::Tracer TR("core.io.pdb.file_data");
 // random number generator for randomizing missing density coordinates
 static numeric::random::RandomGenerator RG(231411);  // <- Magic number, do not change it!
 
-// TODO: move this to core/chemical/types.hh
-// TODO: Confirm that not allowing ' ' as a chain id is intended--as this is inconsistent with the PDB spec
-static string const chr_chains( "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz" );
+using core::chemical::chr_chains;
 
 ResidueInformation::ResidueInformation() :
 	resid( "" ),

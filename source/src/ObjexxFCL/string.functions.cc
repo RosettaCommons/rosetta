@@ -842,7 +842,8 @@ ints_of( std::string const & s, bool & string_is_ok ){
   string_is_ok = false;
 
   size_t found_dash = s.find( "-" );
-  if ( found_dash == string::npos || found_dash == 0 ){
+  if ( found_dash == 0 ) found_dash = s.substr(1).find("-") + 1;
+  if ( found_dash == std::string::npos || found_dash == 0 ){
 
     string_is_ok = is_int( s );
     if ( string_is_ok ) vals.push_back( int_of( s ) );
@@ -860,7 +861,6 @@ ints_of( std::string const & s, bool & string_is_ok ){
 
   return vals;
 }
-
 
 
 } // namespace ObjexxFCL

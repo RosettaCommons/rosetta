@@ -252,11 +252,31 @@ is_false_string( std::string const & value_str )
 		( value_str == "NO" ) );
 }
 
+/// @brief Compactifies vectors of ints:  1 2 3 9 10 11 to "1-3 9-11"
 std::string
 make_tag_with_dashes( utility::vector1< int > res_vector );
 
+// Compactifies vectors of ints and chars (resnum and chain):  1A 2A 3A 9B 10B 11B to "A:1-3 B:9-11"
+std::string
+make_tag_with_dashes( utility::vector1< int > res_vector,
+											utility::vector1< char > chain_vector );
+
 std::string
 make_tag( utility::vector1< int > res_vector );
+
+/// @brief  converts string like "1-3 20-22" or "A:1-5 B:20-22" to vectors containing resnums and chains.
+std::pair< std::vector< int >, std::vector< char > >
+get_resnum_and_chain( std::string const & s, bool & string_is_ok );
+
+/// @brief helper function for get_resnum_and_chain
+bool
+get_resnum_and_chain_from_one_tag( std::string const & tag,
+																	 std::vector< int > & resnum,
+																	 std::vector< char > & chains );
+
+
+platform::Size
+get_num_digits( platform::Size value);
 
 }  // namespace utility
 

@@ -33,8 +33,8 @@ for path in arguments.functions + arguments.scores:     # (fold)
     num_psi = len(psis)
 
     function = zeros((num_phi, num_psi))
-    for i, phi in enumerate(phis):
-        for j, psi in enumerate(psis):
+    for i, phi in sampling(phis):
+        for j, psi in sampling(psis):
             function[i,j] = data[phi][psi]
 
     # Normalize and plot the function.

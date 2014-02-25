@@ -52,23 +52,16 @@ public:
 	/// @brief Class name
 	std::string get_name() const { return "RNA_KinematicCloser"; }
 
+	/// @brief Type of class (see enum in RotamerTypes.hh)
+	virtual RotamerType type() const { return RNA_KINEMATIC_CLOSER; }
+
 	/// @brief Initialization
 	void init();
 
-	/// @brief Reset to the first (or random if random()) rotamer
-	void reset();
-
-	/// @brief Move to next rotamer
-	void operator++();
-
-	/// @brief Check if there are more rotamers available
-	bool not_end() const;
-
-	/// @brief Apply the current rotamer to the pose.
-	void apply( core::pose::Pose & pose ) { apply( pose, id_ ); }
+	using RotamerSized::apply;
 
 	/// @brief Apply the i-th rotamer to pose
-	void apply( core::pose::Pose & pose, core::Size const id );
+	virtual void apply( core::pose::Pose & pose, core::Size const id );
 
 	/// @brief Get the total number of rotamers in sampler
 	core::Size size() const { return nsol_; }
@@ -77,6 +70,7 @@ public:
 	void set_verbose( bool const setting ) { verbose_ = setting; }
 
 private:
+
 	void figure_out_dof_ids_and_offsets();
 
 	void figure_out_offset( core::id::DOF_ID const & dof_id,
@@ -93,7 +87,7 @@ private:
 	core::pose::PoseOP ref_pose_;
 	core::Size const moving_suite_, chainbreak_suite_;
 	bool verbose_;
-	core::Size nsol_, id_;
+	core::Size nsol_;
 
 	utility::vector1< core::id::NamedAtomID > atom_ids_;
 	utility::vector1< core::Real > offset_save_;

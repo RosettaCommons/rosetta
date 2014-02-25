@@ -33,8 +33,8 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-
 #include <utility/vector0.hh>
+#include <ObjexxFCL/string.functions.hh>
 
 
 static basic::Tracer TR( "core.pose.selection" );
@@ -259,6 +259,8 @@ get_resnum_list_ordered(
 	}//foreach
 	return resid;
 }
+
+
 
 } //pose
 } //core

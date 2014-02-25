@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/monte_carlo/rna/RNA_FromScratchMover.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Modeler.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -105,7 +105,7 @@ namespace rna {
 
 	///////////////////////////////////////////////////////////////////
 	void
-	RNA_FromScratchMover::set_stepwise_rna_modeler( protocols::stepwise::enumerate::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler ){
+	RNA_FromScratchMover::set_stepwise_rna_modeler( protocols::stepwise::sampling::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler ){
 		stepwise_rna_modeler_ = stepwise_rna_modeler;
 	}
 

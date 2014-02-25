@@ -14,13 +14,18 @@
 
 
 #include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamer.hh>
-#include <protocols/rotamer_sampler/rigid_body/RigidBodyUtil.hh>
+#include <protocols/rotamer_sampler/rigid_body/FloatingBaseUtil.hh>
 #include <protocols/rotamer_sampler/rigid_body/EulerAngles.hh>
 #include <protocols/rotamer_sampler/RotamerOneValue.hh>
+#include <protocols/stepwise/StepWiseUtil.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
-#include <numeric/NumericTraits.hh>
+#include <core/kinematics/Stub.hh>
+#include <core/kinematics/Jump.hh>
+#include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/tree/Atom.hh>
 #include <basic/Tracer.hh>
+#include <numeric/NumericTraits.hh>
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -30,8 +35,11 @@
 //  for convenient 'fast forward' past gamma or to next translation.
 //
 // This Rotamer also gives out a Stub of the moving residues, which can be useful for screening.
-// The class requires a 'template' residue that is centered at the origin,
+//
+// Originally, the class requires a 'template' residue that is centered at the origin,
 //  and a reference stub, at which rotations & translations are centered.
+// More recently, can just supply a pose and the moving_residue.
+//
 // Developed for protocols/swa/rna/StepWiseRNA_FloatingBaseSampler.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,13 +54,28 @@ namespace protocols {
 namespace rotamer_sampler {
 namespace rigid_body {
 
+
 	//Constructor
+	// example pose must have fold tree defined, with a jump connecting a reference res to the moving res.
+	RigidBodyRotamer::RigidBodyRotamer( pose::Pose const & pose,
+																			Size const moving_res ):
+		moving_res_( moving_res ),
+	 	reference_res_( figure_out_reference_res_for_jump( pose, moving_res ) )
+	{
+		moving_partition_res_ = figure_out_moving_partition_res( pose, moving_res, reference_res_ );
+	 	pose_at_origin_ = transform_moving_partition_to_origin( pose, moving_res_, moving_partition_res_ );
+		moving_residue_at_origin_ = pose_at_origin_->residue( moving_res_ ).clone();
+		reference_stub_ = initialize_stub( pose_at_origin_->residue( reference_res_ ) );
+	}
+
+	//Constructor -- old-style.
 	RigidBodyRotamer::RigidBodyRotamer( Size const moving_res,
 																			core::conformation::Residue const & template_moving_residue,
 																			core::kinematics::Stub const & reference_stub ):
 		moving_res_( moving_res ),
-		template_moving_residue_( template_moving_residue ),
-		reference_stub_( reference_stub )
+		moving_residue_at_origin_( template_moving_residue ),
+		reference_stub_( reference_stub ),
+		reference_res_( 0 ) // unknown with this old style of initialization
 	{}
 
 	//Destructor
@@ -62,14 +85,15 @@ namespace rigid_body {
 	////////////////////////////////////////////////////////////
 	void RigidBodyRotamer::init() {
 
+		value_range_.init();
 		clear_rotamer();
 
-		RotamerOneValueOP x_rotamer = new RotamerOneValue( x_values_   );
-		RotamerOneValueOP y_rotamer = new RotamerOneValue( y_values_   );
-		RotamerOneValueOP z_rotamer = new RotamerOneValue( z_values_   );
-		RotamerOneValueOP euler_alpha_rotamer = new RotamerOneValue( euler_alpha_values_   );
-		RotamerOneValueOP euler_z_rotamer     = new RotamerOneValue( euler_z_values_ );
-		RotamerOneValueOP euler_gamma_rotamer = new RotamerOneValue( euler_gamma_values_   );
+		RotamerOneValueOP x_rotamer = new RotamerOneValue( value_range_.x_values()   );
+		RotamerOneValueOP y_rotamer = new RotamerOneValue( value_range_.y_values()   );
+		RotamerOneValueOP z_rotamer = new RotamerOneValue( value_range_.z_values()   );
+		RotamerOneValueOP euler_alpha_rotamer = new RotamerOneValue( value_range_.euler_alpha_values()   );
+		RotamerOneValueOP euler_z_rotamer     = new RotamerOneValue( value_range_.euler_z_values() );
+		RotamerOneValueOP euler_gamma_rotamer = new RotamerOneValue( value_range_.euler_gamma_values()   );
 
 		// first rotamer is the inner-most loop.
 		add_rotamer( euler_gamma_rotamer );
@@ -85,19 +109,21 @@ namespace rigid_body {
 
 	///////////////////////////////////////////////////////////////////////////
 	void RigidBodyRotamer::apply( core::pose::Pose & pose ){
-		apply( pose, template_moving_residue_, id_ );
-	}
-
-	///////////////////////////////////////////////////////////////////////////
-	void RigidBodyRotamer::apply( core::pose::Pose & pose,
-																core::conformation::Residue const & template_moving_residue ){
-		apply( pose, template_moving_residue, id_ );
+		apply( pose, id_ );
 	}
 
 	///////////////////////////////////////////////////////////////////////////
 	void RigidBodyRotamer::apply( core::pose::Pose & pose,
 																Size const id ) {
-		apply( pose, template_moving_residue_, id );
+		runtime_assert( is_init() );
+		apply_by_jump( pose, moving_res_, get_stub( id ) );
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	void RigidBodyRotamer::apply( core::pose::Pose & pose,
+																core::conformation::Residue const & template_moving_residue ){
+		// note that this may be deprecated soon.
+		apply( pose, template_moving_residue, id_ );
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -105,7 +131,37 @@ namespace rigid_body {
 																core::conformation::Residue const & template_moving_residue,
 																Size const id ) {
 		runtime_assert( is_init() );
-		set_coordinate_frame( pose, moving_res_, template_moving_residue, get_stub( id ) );
+		// note that this may be deprecated soon.
+		transform_single_residue( pose, moving_res_,
+															template_moving_residue, get_stub( id ) );
+	}
+
+
+	///////////////////////////////////////////////////////////////////////////
+	void
+	RigidBodyRotamer::apply( core::conformation::Residue & residue_initially_at_origin ){
+		Size const seqpos = residue_initially_at_origin.seqpos();
+
+		// this function only works when RigidBodyRotamer is initialized with a pose. Don't call this otherwise.
+		runtime_assert( moving_partition_res_.size() > 0 );
+
+		if ( moving_partition_res_.has_value( seqpos  ) ){
+			utility::vector1< std::pair < id::AtomID, numeric::xyzVector< core::Real > > > xyz_list;
+			get_atom_coordinates( xyz_list, residue_initially_at_origin.seqpos(),
+														residue_initially_at_origin, get_stub() );
+			for ( Size n = 1; n <= xyz_list.size(); n++ )	residue_initially_at_origin.set_xyz( xyz_list[n].first.atomno(), xyz_list[n].second );
+		}
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	void
+	RigidBodyRotamer::apply( Vector & xyz_initially_at_origin, Size const seqpos ){
+
+		// this function only works when RigidBodyRotamer is initialized with a pose. Don't call this otherwise.
+		runtime_assert( moving_partition_res_.size() > 0 );
+		if ( moving_partition_res_.has_value( seqpos  ) ){
+			get_specific_atom_coordinate( xyz_initially_at_origin, get_stub() );
+		}
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -155,20 +211,79 @@ namespace rigid_body {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	RigidBodyRotamer::set_coordinate_frame( pose::Pose & pose, Size const & seq_num, core::conformation::Residue const & rsd_at_origin, core::kinematics::Stub const & moving_res_stub ){
-
+	RigidBodyRotamer::transform_single_residue( pose::Pose & pose, Size const & seq_num,
+																							core::conformation::Residue const & rsd_at_origin,
+																							core::kinematics::Stub const & moving_res_stub ){
+		// [OLD] option 1 -- old school, just works for single residue -- note that it replaces
+		//  that residue with the input residue.
 		utility::vector1< std::pair < id::AtomID, numeric::xyzVector< core::Real > > > xyz_list;
 		get_atom_coordinates( xyz_list, seq_num, rsd_at_origin, moving_res_stub );
+		for ( Size n = 1; n <= xyz_list.size(); n++ )	pose.set_xyz( xyz_list[n].first, xyz_list[n].second );
+	}
 
-		for ( Size n = 1; n <= xyz_list.size(); n++ ){
-			pose.set_xyz( xyz_list[n].first, xyz_list[n].second );
-		}
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	void
+	RigidBodyRotamer::apply_by_jump( pose::Pose & pose, Size const & seq_num,
+																	 core::kinematics::Stub const & moving_res_stub ){
+		// [NEW] option 2 -- new, generalizable to full moving partition, but using Jump setter.
+		//  requires that any changes to conformation of Residue occur /*outside*/.
+		calculate_jump( pose, seq_num, moving_res_stub_ );
+		pose.set_jump( jump_atom_id_, jump_ );
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	void
+	RigidBodyRotamer::calculate_jump( pose::Pose & pose, Size const seq_num, kinematics::Stub const & moving_res_stub ){
+
+		using namespace core::kinematics;
+		using namespace core::id;
+		using namespace core::pose;
+
+		Size const jump_no = stepwise::look_for_unique_jump_to_moving_res( pose.fold_tree(), seq_num );
+		std::string downstream_atom_name = pose.fold_tree().downstream_atom( jump_no );
+		Size const i = seq_num;
+		Size const j = pose.residue_type( i ).atom_index( downstream_atom_name );
+		kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom_dont_do_update( AtomID(j,i) ) );
+		runtime_assert( current_atom->is_jump() );
+
+		core::kinematics::tree::AtomCOP input_stub_atom1( current_atom->input_stub_atom1() );
+		core::kinematics::tree::AtomCOP input_stub_atom2( current_atom->input_stub_atom2() );
+		core::kinematics::tree::AtomCOP input_stub_atom3( current_atom->input_stub_atom3() );
+
+		Stub input_stub( pose.xyz( input_stub_atom1->id() ),
+										 pose.xyz( input_stub_atom2->id() ),
+										 pose.xyz( input_stub_atom3->id() ) );
+
+		core::kinematics::tree::AtomCOP stub_atom1( current_atom->stub_atom1() );
+		core::kinematics::tree::AtomCOP stub_atom2( current_atom->stub_atom2() );
+		core::kinematics::tree::AtomCOP stub_atom3( current_atom->stub_atom3() );
+
+		Vector stub_atom1_xyz, stub_atom2_xyz, stub_atom3_xyz;
+		core::conformation::Residue const & template_rsd = moving_residue_at_origin();
+		get_specific_atom_coordinate( pose.residue_type(i).atom_name( stub_atom1->id().atomno() ), stub_atom1_xyz,
+																	template_rsd, moving_res_stub );
+		get_specific_atom_coordinate( pose.residue_type(i).atom_name( stub_atom2->id().atomno() ), stub_atom2_xyz,
+																	template_rsd, moving_res_stub );
+		get_specific_atom_coordinate( pose.residue_type(i).atom_name( stub_atom3->id().atomno() ), stub_atom3_xyz,
+																	template_rsd, moving_res_stub );
+
+		Stub const stub( stub_atom1_xyz, stub_atom2_xyz, stub_atom3_xyz );
+
+		jump_ = Jump( input_stub, stub );
+		jump_atom_id_ = AtomID( j, i );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	RigidBodyRotamer::fast_forward_to_end(){
+		fast_forward( 6 );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	RigidBodyRotamer::fast_forward_to_next_translation(){
-		fast_forward( 3 ); // go to end of translations.
+		fast_forward( 3 ); // go to end of euler angles, so that next increment will update translation.
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -176,50 +291,42 @@ namespace rigid_body {
 	RigidBodyRotamer::fast_forward_to_next_euler_gamma(){
 		fast_forward( 1 ); // go to end of gamma
 	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	void
-	RigidBodyRotamer::set_sampler_values( Real const & val_min, Real const & val_max, Real const & val_bin, utility::vector1< Real > & values ){
-		values.clear();
-		runtime_assert( val_min < val_max );
-		for ( Real val = val_min; val <= val_max + 1.0e-6 /*floating point error*/; val += val_bin ) values.push_back( val );
-	}
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	RigidBodyRotamer::set_x_values( Real const centroid_x_min, Real const centroid_x_max, Real const centroid_x_bin ){
-		set_sampler_values( centroid_x_min, centroid_x_max, centroid_x_bin, x_values_ );
+		value_range_.set_x_values( centroid_x_min, centroid_x_max, centroid_x_bin );
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	RigidBodyRotamer::set_y_values( Real const centroid_y_min, Real const centroid_y_max, Real const centroid_y_bin ){
-		set_sampler_values( centroid_y_min, centroid_y_max, centroid_y_bin, y_values_ );
+		value_range_.set_y_values( centroid_y_min, centroid_y_max, centroid_y_bin );
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	RigidBodyRotamer::set_z_values( Real const centroid_z_min, Real const centroid_z_max, Real const centroid_z_bin ){
-		set_sampler_values( centroid_z_min, centroid_z_max, centroid_z_bin, z_values_ );
+		value_range_.set_z_values( centroid_z_min, centroid_z_max, centroid_z_bin );
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	RigidBodyRotamer::set_euler_alpha_values( Real const centroid_euler_alpha_min, Real const centroid_euler_alpha_max, Real const centroid_euler_alpha_bin ){
-		set_sampler_values( RADS_PER_DEG * centroid_euler_alpha_min, RADS_PER_DEG * centroid_euler_alpha_max, RADS_PER_DEG * centroid_euler_alpha_bin, euler_alpha_values_ );
+		value_range_.set_euler_alpha_values( centroid_euler_alpha_min, centroid_euler_alpha_max, centroid_euler_alpha_bin );
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	RigidBodyRotamer::set_euler_z_values( Real const centroid_euler_z_min, Real const centroid_euler_z_max, Real const centroid_euler_z_bin ){
-		set_sampler_values( centroid_euler_z_min, centroid_euler_z_max, centroid_euler_z_bin, euler_z_values_ );
-		// need to really get these in bounds...
-		for ( Size n = 1; n <= euler_z_values_.size(); n++ ){
-			euler_z_values_[n] = std::max( euler_z_values_[n], -1.0 );
-			euler_z_values_[n] = std::min( euler_z_values_[n], +1.0 );
-		}
+		value_range_.set_euler_z_values( centroid_euler_z_min, centroid_euler_z_max, centroid_euler_z_bin );
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	RigidBodyRotamer::set_euler_gamma_values( Real const centroid_euler_gamma_min, Real const centroid_euler_gamma_max, Real const centroid_euler_gamma_bin ){
-		set_sampler_values( RADS_PER_DEG * centroid_euler_gamma_min, RADS_PER_DEG * centroid_euler_gamma_max, RADS_PER_DEG * centroid_euler_gamma_bin, euler_gamma_values_ );
+		value_range_.set_euler_gamma_values( centroid_euler_gamma_min, centroid_euler_gamma_max, centroid_euler_gamma_bin );
 	}
+
+	core::pose::PoseCOP
+	RigidBodyRotamer::pose_at_origin(){ return pose_at_origin_; }
+
+	core::conformation::Residue const &
+	RigidBodyRotamer::get_residue_at_origin( Size const seqpos ){ return pose_at_origin_->residue( seqpos ) ; }
 
 
 } //rigid_body

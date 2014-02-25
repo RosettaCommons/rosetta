@@ -89,6 +89,9 @@ public:
 	/// @brief Name of the class
 	std::string get_name() const { return "RNA_SuiteRotamer"; }
 
+	/// @brief Type of class (see enum in RotamerTypes.hh)
+	virtual RotamerType type() const { return RNA_SUITE; }
+
 private:
 	TorsionList torsions_from_info(
 				utility::vector1<core::chemical::rna::GaussianParameter>

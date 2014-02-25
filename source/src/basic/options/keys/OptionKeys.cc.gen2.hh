@@ -1,3 +1,5 @@
+namespace casp { StringOptionKey const decoy( "casp:decoy" );  }
+namespace casp { StringOptionKey const wt( "casp:wt" );  }
 namespace casp { StringOptionKey const rots( "casp:rots" );  }
 namespace casp { RealOptionKey const opt_radius( "casp:opt_radius" );  }
 namespace casp { BooleanOptionKey const repack( "casp:repack" );  }
@@ -769,3 +771,4 @@ namespace hotspot { BooleanOptionKey const cluster( "hotspot:cluster" );  }
 namespace hotspot { BooleanOptionKey const colonyE( "hotspot:colonyE" );  }
 namespace hotspot { IntegerOptionKey const length( "hotspot:length" );  }
 namespace hotspot { BooleanOptionKey const envhb( "hotspot:envhb" );  }
+namespace hotspot { RealOptionKey const angle( "hotspot:angle" );  }

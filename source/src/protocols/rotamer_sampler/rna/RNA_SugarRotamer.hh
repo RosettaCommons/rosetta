@@ -35,18 +35,6 @@ public:
 	/// @brief Initialization
 	void init();
 
-	/// @brief Reset to the first (or random if random()) rotamer.
-	void reset();
-
-	/// @brief Move to next rotamer
-	void operator++();
-
-	/// @brief Check if reach the end of rotamer list
-	bool not_end() const;
-
-	/// @brief Apply the current rotamer to pose
-	void apply( core::pose::Pose & pose ) { apply( pose, id_ ); }
-
 	/// @brief Apply the i-th rotamer to pose
 	void apply( core::pose::Pose & pose, core::Size const i );
 
@@ -62,7 +50,7 @@ public:
 	/// @brief Get the current pucker state.
 	core::Size pucker() const {
 		runtime_assert( is_init() );
-		return pucker_states_[id_];
+		return pucker_states_[id()];
 	}
 
 	/// @brief Set the pucker_state (WHATEVER / NORTH / SOUTH)
@@ -84,10 +72,11 @@ public:
 	/// @brief Name of the class
 	std::string get_name() const { return "RNA_SugarRotamer"; }
 
+	/// @brief Type of class (see enum in RotamerTypes.hh)
+	virtual RotamerType type() const { return RNA_SUGAR; }
+
 private:
 	utility::vector1<core::Size> pucker_states_;
-
-	core::Size id_;
 
 	core::Size rsd_id_, pucker_state_;
 

@@ -18,9 +18,9 @@
 #include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/rna/TransientCutpointHandler.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloOptions.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Modeler.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_ModelerOptions.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -50,7 +50,7 @@ namespace monte_carlo {
 namespace rna {
 
 	//Constructor
-	RNA_ResampleMover::RNA_ResampleMover(	protocols::stepwise::enumerate::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler ):
+	RNA_ResampleMover::RNA_ResampleMover(	protocols::stepwise::sampling::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler ):
 		stepwise_rna_modeler_( stepwise_rna_modeler ),
 		swa_move_selector_( new SWA_MoveSelector ),
 		options_( new StepWiseRNA_MonteCarloOptions ),
@@ -110,7 +110,7 @@ namespace rna {
 														std::string & move_type ){
 
 		using namespace protocols::stepwise;
-		using namespace protocols::stepwise::enumerate::rna;
+		using namespace protocols::stepwise::sampling::rna;
 		using namespace protocols::stepwise::monte_carlo;
 		using namespace core::pose::full_model_info;
 

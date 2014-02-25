@@ -133,9 +133,12 @@ namespace stepwise { namespace rna { extern IntegerVectorOptionKey const bulge_r
 namespace stepwise { namespace rna { extern BooleanOptionKey const rebuild_bulge_mode; } }
 namespace stepwise { namespace rna { extern BooleanOptionKey const choose_random; } }
 namespace stepwise { namespace rna { extern BooleanOptionKey const virtual_sugar_keep_base_fixed; } }
+namespace stepwise { namespace rna { extern RealOptionKey const sampler_max_centroid_distance; } }
 namespace stepwise { namespace rna { extern IntegerOptionKey const num_random_samples; } }
 namespace stepwise { namespace rna { extern BooleanOptionKey const filter_user_alignment_res; } }
 namespace stepwise { namespace rna { extern BooleanOptionKey const output_pdb; } }
+namespace stepwise { namespace rna { extern BooleanOptionKey const new_framework; } }
+namespace stepwise { namespace rna { extern BooleanOptionKey const unified_framework; } }
 
 } // namespace OptionKeys
 } // namespace options

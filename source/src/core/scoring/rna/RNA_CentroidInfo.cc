@@ -61,7 +61,15 @@ RNA_CentroidInfo::get_base_centroid( conformation::Residue const & rsd ) const
 	return get_rna_base_centroid( rsd, verbose );
 }
 
+//////////////////////////////////////////////////////////////////////////////////////
+kinematics::Stub
+RNA_CentroidInfo::get_base_coordinate_system( conformation::Residue const & rsd ) const
+{
+	Vector const centroid = get_base_centroid( rsd );
+  return kinematics::Stub( get_rna_base_coordinate_system( rsd, centroid ), centroid );
+}
 
+//////////////////////////////////////////////////////////////////////////////////////
 kinematics::Stub
 RNA_CentroidInfo::get_base_coordinate_system( conformation::Residue const & rsd, Vector const & centroid ) const
 {

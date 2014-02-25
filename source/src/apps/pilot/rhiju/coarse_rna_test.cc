@@ -75,7 +75,7 @@
 #include <protocols/farna/RNA_ProtocolUtil.hh>
 #include <protocols/farna/RNA_SecStructInfo.hh>
 #include <protocols/farna/RNA_StructureParameters.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
 #include <protocols/coarse_rna/CoarseRNA_DeNovoProtocol.hh>
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.hh>
@@ -152,7 +152,7 @@ OPT_KEY( Boolean, check_pairing_dists )
 OPT_KEY( Boolean, skip_base_pair_constraints )
 OPT_KEY( Boolean, dump )
 OPT_KEY( Boolean, rb_test )
-OPT_KEY( Boolean, enumerate )
+OPT_KEY( Boolean, sampling )
 OPT_KEY( Boolean, sample_angles )
 OPT_KEY( Boolean, output_vdw_pose )
 OPT_KEY( Boolean, little_motif )
@@ -233,14 +233,14 @@ coarse_frag_test(){
 
 /////////////////////////////////////////////////
 void
-pdb_stats( pose::Pose const & pose, utility::vector1< protocols::stepwise::enumerate::rna::PuckerState > const & pucker_states ) {
+pdb_stats( pose::Pose const & pose, utility::vector1< protocols::stepwise::sampling::rna::PuckerState > const & pucker_states ) {
 
 	using namespace core::id;
 	using namespace core::chemical::rna;
 	using namespace core::kinematics;
 	using numeric::angle_radians;
 	using numeric::conversions::degrees;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 
 	utility::io::ozstream out1( "dists_angles_torsions.txt" );
 	utility::io::ozstream out2( "cen_xyz_diff_frames.txt" );
@@ -481,7 +481,7 @@ pdbstats_test(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -1250,7 +1250,7 @@ mismatch_test(){
 
 //////////////////////////////////////////////////////////////////////////////////////
 void
-enumerate_map_test(){
+sampling_map_test(){
 
 	using namespace core::chemical;
 	using namespace core::id;
@@ -1617,8 +1617,8 @@ my_main( void* )
 		coarse_close_loop_test();
 	} else if ( option[ rb_test ]() ) {
 		coarse_rb_test();
-	} else if ( option[ enumerate ]() ) {
-		enumerate_map_test();
+	} else if ( option[ sampling ]() ) {
+		sampling_map_test();
 	} else if ( option[ little_motif ]() ) {
 		pdb_little_motif_test();
 	} else if ( option[ tar_motif ]() ) {
@@ -1666,7 +1666,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( skip_base_pair_constraints, "blah",false);
 	NEW_OPT( dump, "blah",false);
 	NEW_OPT( rb_test, "blah",false);
-	NEW_OPT( enumerate, "blah",false);
+	NEW_OPT( sampling, "blah",false);
 	NEW_OPT( sample_angles, "blah",false);
 	NEW_OPT( output_vdw_pose, "blah",false);
 	NEW_OPT( little_motif, "blah",false);

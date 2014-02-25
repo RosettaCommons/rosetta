@@ -1,7 +1,7 @@
 # List of Rosetta command line options.
 
 _(This is an automatically generated file, do not edit!)_
-Generated: 2014-02-18
+Generated: 2014-02-23
 
 _Note that some application specific options may not be present in this list._
 
@@ -6227,12 +6227,18 @@ _Note that some application specific options may not be present in this list._
 <dd>ask swa residue sampler for a random solution<br/>Default: false<br/></dd>
 <dt><b>-virtual_sugar_keep_base_fixed</b> \<Boolean\></dt>
 <dd>When instantiating virtual sugar, keep base fixed -- do not spend a lot of time to minimize!<br/>Default: true<br/></dd>
+<dt><b>-sampler_max_centroid_distance</b> \<Real\></dt>
+<dd>max centroid distance of moving base to reference in floating base sampler<br/>Default: 0.0<br/></dd>
 <dt><b>-num_random_samples</b> \<Integer\></dt>
 <dd>In choose_random/monte-carlo mode, number of samples from swa residue sampler before minimizing best<br/>Default: 20<br/></dd>
 <dt><b>-filter_user_alignment_res</b> \<Boolean\></dt>
 <dd> filter_user_alignment_res <br/>Default: true<br/></dd>
 <dt><b>-output_pdb</b> \<Boolean\></dt>
 <dd>output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.<br/>Default: false<br/></dd>
+<dt><b>-new_framework</b> \<Boolean\></dt>
+<dd>testing sample-and-screen framework<br/>Default: false<br/></dd>
+<dt><b>-unified_framework</b> \<Boolean\></dt>
+<dd>testing unified sample-and-screen framework<br/>Default: false<br/></dd>
 </dl>
 + <h2>-full_model</h2>
 <dl>

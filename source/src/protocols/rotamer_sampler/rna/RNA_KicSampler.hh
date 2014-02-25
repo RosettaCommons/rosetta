@@ -46,16 +46,16 @@ public:
 	~RNA_KicSampler();
 
 	/// @brief Initialization
-	void init();
+	virtual void init();
 
 	/// @brief Reset to the first (or random if is_random()) rotamer.
-	void reset();
+	virtual void reset();
 
 	/// @brief Move to next rotamer
-	void operator++();
+	virtual void operator++();
 
 	/// @brief Check if reach the end of rotamer list
-	bool not_end() const;
+	virtual bool not_end() const;
 
 	/// @brief Apply the current rotamer to pose
 	void apply( core::pose::Pose & pose );
@@ -71,6 +71,9 @@ public:
 
 	/// @brief Name of the class
 	std::string get_name() const { return "RNA_KicSampler"; }
+
+	/// @brief Type of class (see enum in RotamerTypes.hh)
+	virtual RotamerType type() const { return RNA_KIC; }
 
 	// Set functions
 	void set_verbose( bool const setting ) {
@@ -105,6 +108,8 @@ public:
 		set_and_reinit( base_state_, setting );
 	}
 
+	void set_sample_nucleoside( core::Size const setting ) { sample_nucleoside_ = setting; }
+
 	void set_bin_size( core::Real const setting ) {
 		set_and_reinit( bin_size_, setting );
 	}
@@ -132,6 +137,7 @@ private:
 	core::pose::PoseOP const ref_pose_;
 	core::Size const moving_suite_, chainbreak_suite_;
 	core::Size pucker_state_, base_state_;
+	core::Size sample_nucleoside_;
 	core::Real bin_size_;
 	core::Size max_tries_;
 	bool verbose_, extra_epsilon_, extra_chi_, skip_same_pucker_,

@@ -80,6 +80,10 @@ public:
 
 	/// @brief Name of the class
 	std::string get_name() const { return "RNA_ChiRotamer"; }
+
+	/// @brief Type of class (see enum in RotamerTypes.hh)
+	virtual RotamerType type() const { return RNA_CHI; }
+
 private:
 	core::Size rsd_id_, base_state_, pucker_state_;
 	core::Real bin_size_, max_range_;

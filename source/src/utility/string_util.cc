@@ -27,7 +27,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-
+#include <cmath>
 #include <boost/uuid/sha1.hpp>
 
 namespace utility {
@@ -408,45 +408,64 @@ std::string string_to_sha1(std::string const & input_string)
 }
 
 ////////////////////////////////////////////////////////////////////////////
-// Compactifies vectors of strings:  1 2 3 9 10 11 to "1-3 9-11"
+// Compactifies vectors of ints:  1 2 3 9 10 11 to "1-3 9-11"
 // The function to go the other way (from string to vector) is available in
 // ObjexxFCL::get_ints(), I think.
 //
 std::string
 make_tag_with_dashes( utility::vector1< int > res_vector ){
-
-	using namespace ObjexxFCL;
-	std::string tag = "";
-
-	if ( res_vector.size() == 0 ) return tag;
-
-	utility::vector1< std::pair<int,int> > res_vector_segments;
-	if ( res_vector.size() == 0 ) return tag;
-
-	int start_segment = res_vector[1];
-	int last_res = res_vector[1];
-
-	for (uint n = 2; n <= res_vector.size(); ++n ){
-		if ( res_vector[n] != last_res + 1 ){
-			res_vector_segments.push_back( std::make_pair( start_segment, last_res ) );
-			start_segment = res_vector[n];
-		}
-		last_res = res_vector[n];
-	}
-	res_vector_segments.push_back( std::make_pair( start_segment, last_res ) );
-
-	for (uint n = 1; n <= res_vector_segments.size(); ++n ){
-		if ( n > 1 ) tag += " ";
-		std::pair< int, int > const & segment = res_vector_segments[n];
-		if ( segment.first == segment.second ){
-			tag += string_of( segment.first );
-		} else{
-			tag += string_of( segment.first )+"-"+string_of(segment.second);
-		}
-	}
-
-	return tag;
+	utility::vector1< char > chains;
+	for ( platform::Size n = 0; n < res_vector.size(); n++ ) chains.push_back( ' ' );
+	return make_tag_with_dashes( res_vector, chains );
 }
+
+////////////////////////////////////////////////////////////////////////////
+// Compactifies vectors of ints and chars (resnum and chain):  1A 2A 3A 9B 10B 11B to "A:1-3 B:9-11"
+// The function to go the other way (from string to two vectors) is available below in get_resnum_and_chain()
+//
+std::string
+make_tag_with_dashes( utility::vector1< int > res_vector,
+											utility::vector1< char > chain_vector ){
+
+  using namespace ObjexxFCL;
+  std::string tag = "";
+
+  if ( res_vector.size() == 0 ) return tag;
+  runtime_assert( res_vector.size() == chain_vector.size() );
+
+  int start_segment = res_vector[1];
+  int last_res = res_vector[1];
+  int last_chain = chain_vector[1];
+  utility::vector1< std::pair<int,int> > res_vector_segments;
+  utility::vector1< char > chains_for_segments;
+  for (platform::Size n = 2; n<= res_vector.size(); n++ ){
+    if ( res_vector[n] != last_res+1  || chain_vector[n] != last_chain ){
+      res_vector_segments.push_back( std::make_pair( start_segment, last_res ) );
+      chains_for_segments.push_back( last_chain );
+      start_segment = res_vector[n];
+    }
+    last_res = res_vector[n];
+    last_chain = chain_vector[n];
+  }
+  res_vector_segments.push_back( std::make_pair( start_segment, last_res ) );
+  chains_for_segments.push_back( last_chain );
+
+  for (platform::Size n = 1; n <= res_vector_segments.size(); n++ ){
+    if ( n > 1 ) tag += " ";
+    std::pair< int, int > const & segment = res_vector_segments[n];
+    if ( chains_for_segments[n] != '\0' &&
+	 chains_for_segments[n] != ' '  &&
+	 chains_for_segments[n] != '_' ) tag += std::string(1,chains_for_segments[n]) + ":";
+    if ( segment.first == segment.second ){
+      tag += string_of( segment.first );
+    } else{
+      tag += string_of( segment.first )+"-"+string_of(segment.second);
+    }
+  }
+
+  return tag;
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////
 std::string
@@ -455,12 +474,66 @@ make_tag( utility::vector1< int > res_vector ){
 	using namespace ObjexxFCL;
 	std::string tag = "";
 
-	for (uint n = 1; n <= res_vector.size(); ++n ){
+	for (platform::Size n = 1; n <= res_vector.size(); ++n ){
 		if ( n > 1 ) tag += " ";
 		tag += string_of( res_vector[n] );
 	}
 
 	return tag;
+}
+
+/// @brief  converts string like "1-3 20-22" or "A:1-5 B:20-22" to vectors containing resnums and chains.
+/// @author rhiju
+//
+//    note that this format is slightly different from frank's functions above -- this does not take commas (but
+//    could easily be expanded to do that), and looks for chains as prefixeds separated by a colon. (This allow chain IDs
+//    to be integers).
+//
+std::pair< std::vector< int >, std::vector< char > >
+get_resnum_and_chain( std::string const & s, bool & string_is_ok ){
+
+  string_is_ok = true;
+  std::vector< int  > resnum;
+  std::vector< char > chain;
+
+  utility::vector1< std::string > const tags = utility::string_split( s );
+  for ( platform::Size n = 1; n <= tags.size(); n++ ){
+    string_is_ok = get_resnum_and_chain_from_one_tag( tags[n], resnum, chain );
+    if ( !string_is_ok ) break;
+  }
+  return std::make_pair( resnum,chain );
+}
+
+/// @brief helper function for get_resnum_and_chain
+bool
+get_resnum_and_chain_from_one_tag( std::string const & tag,
+				   std::vector< int > & resnum,
+				   std::vector< char > & chains ){
+  bool string_is_ok( false );
+  std::vector< int > resnum_from_tag;
+  std::vector< char > chains_from_tag;
+  char chain( ' ' );
+
+  size_t found_colon = tag.find( ":" );
+  if ( found_colon == std::string::npos ){
+    resnum_from_tag = ObjexxFCL::ints_of( tag, string_is_ok );
+  } else {
+    runtime_assert( found_colon == 1 );
+    chain = tag[0];
+    resnum_from_tag = ObjexxFCL::ints_of( tag.substr(2), string_is_ok );
+  }
+
+  for (platform::Size n = 0; n < resnum_from_tag.size(); n++ ) {
+    resnum.push_back( resnum_from_tag[ n ] );
+    chains.push_back( chain );
+  }
+
+  return string_is_ok;
+}
+
+platform::Size
+get_num_digits( platform::Size value){
+	return ceil( std::log10(value + 1) );
 }
 
 

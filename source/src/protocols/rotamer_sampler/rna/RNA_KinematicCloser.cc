@@ -71,8 +71,7 @@ RNA_KinematicCloser::RNA_KinematicCloser(
 	moving_suite_( moving_suite ),
 	chainbreak_suite_( chainbreak_suite ),
 	verbose_( false ),
-	nsol_( 0 ),
-	id_( 0 )
+	nsol_( 0 )
 {}
 
 RNA_KinematicCloser::~RNA_KinematicCloser() {}
@@ -335,33 +334,7 @@ RNA_KinematicCloser::apply( Pose & pose, Size const id ) {
 				t_ang_[id][3 * i + 2] ) + offset_save_[count] ) );
 	}
 }
-////////////////////////////////////////////////////////////////
-void
-RNA_KinematicCloser::operator++() {
-	runtime_assert( not_end() );
-	if ( random() ) {
-		id_ = RG.random_range( 1, size() );
-	} else {
-		++id_;
-	}
-}
-////////////////////////////////////////////////////////////////
-bool
-RNA_KinematicCloser::not_end() const {
-	runtime_assert( is_init() );
-	return ( size() > 0 && id_ <= size() );
-}
-////////////////////////////////////////////////////////////////
-void
-RNA_KinematicCloser::reset() {
-	runtime_assert( is_init() );
-	if ( random() && not_end() ) {
-		++( *this );
-	} else {
-		id_ = 1;
-	}
-}
-////////////////////////////////////////////////////////////////
+
 }
 }
 }

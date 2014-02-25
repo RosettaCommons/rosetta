@@ -1,3 +1,4 @@
+namespace jumps { RealOptionKey const contact_score( "jumps:contact_score" );  }
 namespace jumps { BooleanOptionKey const filter_templates( "jumps:filter_templates" );  }
 namespace templates { BooleanOptionKey const templates( "templates" );  }
 namespace templates { FileOptionKey const config( "templates:config" );  }
@@ -771,5 +772,3 @@ namespace membrane { BooleanOptionKey const view( "membrane:view" );  }
 namespace membrane { BooleanOptionKey const Mhbond_depth( "membrane:Mhbond_depth" );  }
 namespace membrane { RealOptionKey const thickness( "membrane:thickness" );  }
 namespace casp { BooleanOptionKey const casp( "casp" );  }
-namespace casp { StringOptionKey const decoy( "casp:decoy" );  }
-namespace casp { StringOptionKey const wt( "casp:wt" );  }

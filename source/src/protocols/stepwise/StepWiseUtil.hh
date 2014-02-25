@@ -67,7 +67,7 @@ namespace stepwise {
 	bool
 	is_close_chain_break(pose::Pose const & pose);
 
-	// Undefined, commenting out to fix PyRosetta build  bool Contain_seq_num(Size const & seq_num, utility::vector1< Size > const & residue_list);
+	// Undefined, commenting out to fix PyRosetta build  bool Contain_seq_num(Size const & seq_num, utility::vector1< Size > const & copy_dofs);
 
 	//following copies code that is in rna/StepWiseRNA_Util? Remove the latter?
 	void
@@ -329,6 +329,21 @@ namespace stepwise {
 
 	bool
 	definite_terminal_root( pose::Pose const & pose, Size const i );
+
+	void
+	figure_out_moving_chain_breaks( pose::Pose const & pose, utility::vector1< Size > moving_partition_pos,
+																	utility::vector1< Size > & cutpoints_closed,
+																	utility::vector1< Size > & five_prime_chain_breaks,
+																	utility::vector1< Size > & three_prime_chain_breaks,
+																	utility::vector1< Size > & chain_break_gap_sizes );
+
+	Size
+	figure_out_reference_res_for_suite( pose::Pose const & pose, Size const moving_res );
+
+	utility::vector1< Size >
+	figure_out_moving_partition_res_for_suite( pose::Pose const & pose,
+																						 Size const moving_res,
+																						 Size const reference_res );
 
 } //stepwise
 } //protocols

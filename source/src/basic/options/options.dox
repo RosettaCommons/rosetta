@@ -1,6 +1,6 @@
 /*!
 @page full_options_list Rosetta command line option descriptions.
-<i>(This is an automatically generated file, do not edit!)</i> Generated: 2014-02-18
+<i>(This is an automatically generated file, do not edit!)</i> Generated: 2014-02-23
 <ul>
 <li><h2>in</h2>
 <dl>
@@ -13843,6 +13843,11 @@
 <dd>Default: true</dd><br>
 </dl>
 <dl>
+<dt><b>-sampler_max_centroid_distance</b> \<Real\><dt>
+<dd>max centroid distance of moving base to reference in floating base sampler</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
 <dt><b>-num_random_samples</b> \<Integer\><dt>
 <dd>In choose_random/monte-carlo mode, number of samples from swa residue sampler before minimizing best</dd><br>
 <dd>Default: 20</dd><br>
@@ -13855,6 +13860,16 @@
 <dl>
 <dt><b>-output_pdb</b> \<Boolean\><dt>
 <dd>output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-new_framework</b> \<Boolean\><dt>
+<dd>testing sample-and-screen framework</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-unified_framework</b> \<Boolean\><dt>
+<dd>testing unified sample-and-screen framework</dd><br>
 <dd>Default: false</dd><br>
 </dl>
  </li>

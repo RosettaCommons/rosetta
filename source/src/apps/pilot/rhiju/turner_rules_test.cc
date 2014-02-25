@@ -64,14 +64,14 @@
 #include <protocols/stepwise/sample_generators/StepWisePoseCombineSampleGenerator.hh>
 #include <protocols/stepwise/RigidBodySampler.hh>
 #include <protocols/stepwise/InputStreamWithResidueInfo.hh>
-//#include <protocols/stepwise/enumerate/rna/rigid_body_settings.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_BaseSugarRotamer.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Classes.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
-#include <protocols/stepwise/enumerate/rna/RNA_AnalyticLoopCloser.hh>
-#include <protocols/stepwise/enumerate/rna/RNA_LoopCloseSampler.hh>
+//#include <protocols/stepwise/sampling/rna/rigid_body_settings.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_BaseSugarRotamer.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Classes.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
+#include <protocols/stepwise/sampling/rna/RNA_AnalyticLoopCloser.hh>
+#include <protocols/stepwise/sampling/rna/RNA_LoopCloseSampler.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
@@ -243,7 +243,7 @@ apply_ideal_A_form_torsions( pose::Pose & pose ){
 	using namespace chemical::rna;
 	using namespace id;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 
 	// For now assume delta, chi are at ideal values.
 	static RNA_FittedTorsionInfo rna_fitted_torsion_info;
@@ -360,7 +360,7 @@ initialize_base_pair( pose::Pose & pose,
 	using namespace pose;
 	using namespace id;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace chemical::rna;
 
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
@@ -579,7 +579,7 @@ adjust_pose_chi( core::pose::Pose & pose,
 								 Real const delstd ){
 
 	using namespace core::chemical::rna;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace core::id;
 
 	static RNA_FittedTorsionInfo rna_fitted_torsion_info;
@@ -1329,7 +1329,7 @@ setup_two_base_pair_pose( pose::Pose & pose ){
 	using namespace io::silent;
 	using namespace id;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace chemical::rna;
 
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
@@ -1506,7 +1506,7 @@ sample_new_base_in_two_base_pair_pose( pose::Pose & pose,
 	using namespace pose;
 	using namespace scoring;
 	using namespace chemical::rna;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 
 	///////////////////////////////////////////////////////////////////////////////////
 	// Sample conformation [epsilon,zeta,alpha,beta,gamma] of suite in second strand
@@ -1689,7 +1689,7 @@ do_the_match(
 	using namespace protocols::swa;
 	using namespace utility::io;
 	using namespace chemical::rna;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace options;
 	using namespace options::OptionKeys;
 
@@ -1894,7 +1894,7 @@ grid_matcher( 	utility::vector1< utility::vector1< utility::vector1< Real > > > 
 	using namespace protocols::swa;
 	using namespace utility::io;
 	using namespace chemical::rna;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 
 	Vector v1; 	Matrix M1;
 	get_base_centroid_and_rotation_matrix( pose, 2, v1, M1);
@@ -2093,7 +2093,7 @@ two_base_pairs_test(){
 	using namespace protocols::swa;
 	using namespace utility::io;
 	using namespace chemical::rna;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 
 	/////////////////////////////////////////////
 	/////////////////////////////////////////////
@@ -2241,7 +2241,7 @@ setup_two_base_pair_pose_with_chainbreak( pose::Pose & pose,
 	using namespace protocols::swa;
 	using namespace utility::io;
 	using namespace chemical::rna;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 
 	/////////////////////////////////////////////////////////////////
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
@@ -2463,7 +2463,7 @@ base_pair_to_base_pair_test(){
 	using namespace pose;
 	using namespace io::silent;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace utility::io;
 
 	/////////////////////////////////////////////
@@ -2584,7 +2584,7 @@ rna_close_loop_test(){
 
 	using namespace pose;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace options;
 	using namespace options::OptionKeys;
 
@@ -2629,7 +2629,7 @@ sample_state_to_state(
 	using namespace id;
 	using namespace chemical::rna;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 
 	RNA_LoopCloseSampler rna_loop_close_sampler( moving_suite, chainbreak_suite );
 
@@ -2683,7 +2683,7 @@ two_base_pairs_via_loop_closure_test(
 	using namespace options::OptionKeys;
 	using namespace pose;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace utility::io;
 
 	// set up two-base pair pose.
@@ -2905,7 +2905,7 @@ setup_dinucleotide_pose( pose::Pose & pose ){
 	using namespace io::silent;
 	using namespace id;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace chemical::rna;
 
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
@@ -2993,7 +2993,7 @@ dinucleotide_test(){
 	using namespace protocols::swa;
 	using namespace utility::io;
 	using namespace chemical::rna;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 
 	std::string const outfile_prefix = option[ out::file::o ]();
 
@@ -3116,7 +3116,7 @@ delta_chi_correction_test(){
 	using namespace protocols::swa;
 	using namespace utility::io;
 	using namespace chemical::rna;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 

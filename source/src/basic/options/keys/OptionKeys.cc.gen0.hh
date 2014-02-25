@@ -772,4 +772,3 @@ namespace jumps { RealOptionKey const sep_switch_accelerate( "jumps:sep_switch_a
 namespace jumps { BooleanOptionKey const dump_frags( "jumps:dump_frags" );  }
 namespace jumps { IntegerOptionKey const njumps( "jumps:njumps" );  }
 namespace jumps { IntegerOptionKey const max_strand_gap_allowed( "jumps:max_strand_gap_allowed" );  }
-namespace jumps { RealOptionKey const contact_score( "jumps:contact_score" );  }

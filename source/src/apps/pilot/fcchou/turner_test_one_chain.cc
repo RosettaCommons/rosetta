@@ -62,7 +62,7 @@
 #include <protocols/stepwise/StepWiseUtil.hh>
 #include <protocols/farna/RNA_SuiteAssign.hh>
 #include <protocols/stepwise/StepWiseClusterer.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 #include <core/init/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
@@ -254,7 +254,7 @@ setup_one_chain_pose ( pose::Pose & pose, bool is_virtualize = true ) {
 	using namespace io::silent;
 	using namespace id;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace chemical::rna;
 
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );

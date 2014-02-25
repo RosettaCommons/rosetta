@@ -16,7 +16,7 @@
 #include <protocols/farna/RNA_Minimizer.hh>
 #include <protocols/toolbox/AllowInsert.hh>
 
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh> //Parin Sripakdeevong
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh> //Parin Sripakdeevong
 #include <protocols/stepwise/StepWiseUtil.hh> // for figuring out moving chainbreaks
 #include <protocols/farna/RNA_ProtocolUtil.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>

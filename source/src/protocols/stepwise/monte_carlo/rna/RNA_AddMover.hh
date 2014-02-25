@@ -25,7 +25,7 @@
 #include <protocols/stepwise/monte_carlo/SWA_Move.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_TorsionMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddMover.fwd.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Modeler.fwd.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.fwd.hh>
 
 
 namespace protocols {
@@ -70,7 +70,7 @@ public:
 
 	void set_minimize_single_res( Size const setting ){ minimize_single_res_ = setting; }
 
-	void set_stepwise_rna_modeler( protocols::stepwise::enumerate::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler );
+	void set_stepwise_rna_modeler( protocols::stepwise::sampling::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler );
 
 	core::Real const & constraint_x0() const { return constraint_x0_; }
 	void set_constraint_x0(  core::Real const & setting ){ constraint_x0_ = setting; }
@@ -121,7 +121,7 @@ private:
 	core::Real constraint_x0_;
 	core::Real constraint_tol_;
 
-	protocols::stepwise::enumerate::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
+	protocols::stepwise::sampling::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
 
 	Size suite_num_, nucleoside_num_;
 	Size res_to_add_in_full_model_numbering_, res_to_build_off_in_full_model_numbering_;

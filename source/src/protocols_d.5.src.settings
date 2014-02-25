@@ -42,8 +42,24 @@ sources = {
         "RotamerOneTorsion",
         "RotamerOneValue",
         "RotamerOneValueComb",
+        "RotamerSized",
         "RotamerSizedAny",
         "RotamerSizedComb",
+    ],
+    "protocols/rotamer_sampler/copy_dofs": [
+	"CopyDofRotamer",
+	"ResidueAlternativeSet",
+	"ResidueAlternativeRotamer",
+	"ResidueAlternativeRotamerComb",
+	"ResidueListRotamer",
+    ],
+    "protocols/rotamer_sampler/rigid_body": [
+	"EulerAngles",
+	"FloatingBaseUtil",
+	"RigidBodyRotamer",
+	"RigidBodyRotamerValueRange",
+	"RigidBodyRotamerWithResidueList",
+	"RigidBodyRotamerWithResidueAlternatives",
     ],
     "protocols/rotamer_sampler/rna": [
         "RNA_ChiRotamer",
@@ -55,22 +71,51 @@ sources = {
         "RNA_NucleosideRotamer",
         "RNA_SugarRotamer",
         "RNA_SuiteRotamer",
-    ],
-    "protocols/rotamer_sampler/rigid_body": [
-	"RigidBodyRotamer",
-	"RigidBodyUtil",
-	"EulerAngles",
+        "RNA_RotamerSamplerUtil",
     ],
     "protocols/rotamer_sampler/screener": [
         "RNA_TorsionScreener",
     ],
     "protocols/stepwise": [
+	"StepWiseSampleAndScreen",
 	"StepWiseUtil",
     ],
-    "protocols/stepwise/enumerate/general": [
+    "protocols/stepwise/sampling/legacy/": [
+	"RigidBodySampler",
+    ],
+    "protocols/stepwise/screener": [
+	"AtrRepScreener",
+	"AnchorSugarScreener",
+	"BaseBinMapUpdater",
+	"BaseCentroidScreener",
+	"BulgeApplier",
+	"CentroidDistanceScreener",
+	"ChainClosableGeometryScreener",
+	"ChainClosableGeometryResidueBasedScreener",
+	"ChainClosableGeometryStubBasedScreener",
+	"ChainClosureScreener",
+	"FastForwardToNextRigidBody",
+	"FastForwardToNextResidueAlternative",
+	"IntegrationTestBreaker",
+	"NativeRMSD_Screener",
+	"O2PrimeScreener",
+	"PhosphateScreener",
+	"PoseSelectionScreener",
+	"ResidueContactScreener",
+	"SampleApplier",
+	"StepWiseScreener",
+	"StepWiseScreenerUtil",
+	"StepWiseResiduePairScreener",
+	"StubApplier",
+	"StubDistanceScreener",
+	"SugarInstantiator",
+	"TagDefinition",
+	"VDW_BinScreener",
+    ],
+    "protocols/stepwise/sampling/general": [
 	"StepWiseClusterer",
     ],
-    "protocols/stepwise/enumerate/protein": [
+    "protocols/stepwise/sampling/protein": [
 	"MainChainTorsionSet",
 	"StepWiseBetaAntiParallelJumpSampleGenerator",
 	"StepWiseBetaAntiParallelUtil",
@@ -91,13 +136,13 @@ sources = {
 	"StepWiseJobParameters",
 	"StepWisePoseSetup",
     ],
-    "protocols/stepwise/enumerate/protein/sample_generators": [
+    "protocols/stepwise/sampling/protein/sample_generators": [
 	"StepWiseCombineSampleGenerator",
 	"StepWiseDoNothingSampleGenerator",
 	"StepWiseIdentitySampleGenerator",
 	"StepWisePoseCombineSampleGenerator",
     ],
-    "protocols/stepwise/enumerate/rna": [
+    "protocols/stepwise/sampling/rna": [
 	"StepWiseRNA_Clusterer",
 	"StepWiseRNA_CombineLongLoopFilterer",
 	"StepWiseRNA_JobParametersSetup",
@@ -113,42 +158,54 @@ sources = {
 	"StepWiseRNA_ResidueSampler",
 	"StepWiseRNA_Util",
     ],
-    "protocols/stepwise/enumerate/rna/helix": [
+    "protocols/stepwise/sampling/rna/connection/": [
+	"StepWiseRNA_ConnectionSampler",
+    ],
+    "protocols/stepwise/sampling/rna/bulge/": [
+	"BulgeApplyMover",
+	"BulgeUnApplyMover",
+    ],
+    "protocols/stepwise/sampling/rna/helix": [
 	"RNA_HelixAssembler",
     ],
-    "protocols/stepwise/enumerate/rna/rigid_body/": [
-	"StepWiseRNA_FloatingBaseSampler",
+    "protocols/stepwise/sampling/rna/rigid_body/": [
 	"StepWiseRNA_FloatingBaseSamplerUtil",
     ],
-    "protocols/stepwise/enumerate/rna/o2prime/": [
+    "protocols/stepwise/sampling/rna/o2prime/": [
 	"O2PrimePacker",
     ],
-    "protocols/stepwise/enumerate/rna/phosphate/": [
+    "protocols/stepwise/sampling/rna/phosphate/": [
 	"MultiPhosphateSampler",
 	"PhosphateMove",
 	"PhosphateMover",
 	"PhosphateUtil",
     ],
-    "protocols/stepwise/enumerate/rna/screener": [
-	"ChainClosableScreener",
-	"ChainBreakScreener",
-	"AtrRepScreener",
-	"StepWiseRNA_BaseCentroidScreener",
-	"StepWiseRNA_VDW_BinScreener",
+    "protocols/stepwise/sampling/rna/checker": [
+	"AtrRepChecker",
+	"ChainClosableGeometryChecker",
+	"ChainClosureChecker",
+	"RNA_BaseCentroidChecker",
+	"RNA_VDW_BinChecker",
     ],
-    "protocols/stepwise/enumerate/rna/sugar/": [
-	"SugarModeling",
+    "protocols/stepwise/sampling/rna/sugar/": [
 	"StepWiseRNA_VirtualSugarSampler",
 	"StepWiseRNA_VirtualSugarSamplerFromStringList",
 	"StepWiseRNA_VirtualSugarJustInTimeInstantiator",
 	"StepWiseRNA_VirtualSugarUtil",
+	"SugarModeling",
+	"SugarInstantiateMover",
+	"SugarVirtualizeMover",
     ],
-    "protocols/stepwise/enumerate/rna/suite/": [
+    "protocols/stepwise/sampling/rna/legacy/suite/": [
 	"StepWiseRNA_ClassicResidueSampler",
+	"StepWiseRNA_SuiteConnectionSampler",
     ],
-    "protocols/stepwise/enumerate/legacy/": [
-	"RigidBodySampler",
+    "protocols/stepwise/sampling/rna/legacy/": [
 	"RNA_AnalyticLoopCloser",
+    ],
+    "protocols/stepwise/sampling/rna/legacy/rigid_body": [
+	"StepWiseRNA_FloatingBaseSampler",
+	"StepWiseRNA_RigidBodyConnectionSampler",
     ],
     "protocols/stepwise/monte_carlo": [
 	"SWA_Move",

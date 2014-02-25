@@ -31,8 +31,7 @@ namespace rotamer_sampler {
 ///////////////////////////////////////////////////////////////////////////
 RotamerSizedComb::RotamerSizedComb():
 	RotamerSized(),
-	size_( 0 ),
-	id_( 0 )
+	size_( 0 )
 {}
 
 RotamerSizedComb::~RotamerSizedComb(){}
@@ -68,6 +67,7 @@ void RotamerSizedComb::reset() {
 		}
 		id_ = 1;
 	}
+	update_rotamer_ids();
 }
 ///////////////////////////////////////////////////////////////////////////
 void RotamerSizedComb::operator++() {
@@ -86,16 +86,17 @@ void RotamerSizedComb::operator++() {
 			}
 		}
 	}
+	update_rotamer_ids();
 }
 ///////////////////////////////////////////////////////////////////////////
-bool RotamerSizedComb::not_end() const {
-	runtime_assert( is_init() );
-	return id_ <= size();
+void RotamerSizedComb::update_rotamer_ids() {
+	for ( Size i = 1; i <= id_list_.size(); ++i ) {
+		rotamer_list_[i]->set_id( id_list_[i] );
+	}
 }
 ///////////////////////////////////////////////////////////////////////////
 void RotamerSizedComb::apply( Pose & pose ) {
 	runtime_assert( is_init() );
-
 	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
 		rotamer_list_[i]->apply( pose, id_list_[i] );
 	}
@@ -147,14 +148,6 @@ RotamerSizedComb::list2id( utility::vector1<core::Size> const & id_list ) const 
 		block_size_ *= size_list_[ i ];
 	}
 
-	// check!
-	//	utility::vector1< Size > const id_list_new = id2list( id );
-	//	std::cout << "Conversion to: " << id << std::endl;
-	//	for ( Size n = 1; n <= id_list.size(); ++n ){
-	//		std::cout << "At position: " << n << "  new: " << id_list_new[n] << "  old: " << id_list[ n ] << " at index with size " <<  size_list_[ n ] << std::endl;
-	//	}
-	//	for ( Size n = 1; n <= id_list.size(); ++n ) runtime_assert( id_list_new[n] == id_list[n] );
-
 	return id;
 }
 
@@ -166,6 +159,13 @@ RotamerSizedComb::fast_forward( Size const sampler_number ){
 		id_list_[ n ] = rotamer_list_[ n ]->size();
 	}
 	id_ = list2id( id_list_ );
+}
+
+/// @brief Set the random sampling state
+void
+RotamerSizedComb::set_random( bool const setting ){
+	RotamerBase::set_random( setting );
+	for ( Size n = 1; n <= rotamer_list_.size(); n++ )		rotamer_list_[ n ]->set_random( setting );
 }
 
 }

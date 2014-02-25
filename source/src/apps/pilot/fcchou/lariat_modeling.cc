@@ -40,7 +40,7 @@
 #include <basic/options/option.hh>
 #include <protocols/farna/RNA_IdealCoord.hh>
 #include <protocols/farna/RNA_ProtocolUtil.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 #include <numeric/random/random.hh>

@@ -22,8 +22,8 @@
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddOrDeleteMover.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_ResampleMover.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloOptions.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Modeler.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_ModelerOptions.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -155,7 +155,7 @@ StepWiseRNA_MonteCarlo::initialize_scorefunction(){
 void
 StepWiseRNA_MonteCarlo::initialize_movers(){
 
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 
 	// used in all movers.
 	StepWiseRNA_ModelerOP stepwise_rna_modeler = new StepWiseRNA_Modeler( scorefxn_ );

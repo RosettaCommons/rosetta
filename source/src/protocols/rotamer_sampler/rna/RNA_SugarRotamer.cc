@@ -45,7 +45,6 @@ RNA_SugarRotamer::RNA_SugarRotamer(
 	Size const pucker_state
 ):
 	RotamerSized(),
-	id_( 0 ),
 	rsd_id_( rsd_id ),
 	pucker_state_( pucker_state ),
 	skip_same_pucker_( true ),
@@ -65,29 +64,6 @@ void RNA_SugarRotamer::init() {
 	}
 	set_init( true );
 	reset();
-}
-//////////////////////////////////////////////////////////////////////////
-void RNA_SugarRotamer::reset() {
-	runtime_assert( is_init() );
-	if ( random() ) {
-		++( *this );
-	} else {
-		id_ = 1;
-	}
-}
-//////////////////////////////////////////////////////////////////////////
-void RNA_SugarRotamer::operator++() {
-	runtime_assert( not_end() );
-	if ( random() ) {
-		id_ = RG.random_range( 1, size() );
-	} else {
-		++id_;
-	}
-}
-///////////////////////////////////////////////////////////////////////////
-bool RNA_SugarRotamer::not_end() const {
-	runtime_assert( is_init() );
-	return ( id_ <= size() );
 }
 //////////////////////////////////////////////////////////////////
 void RNA_SugarRotamer::apply( pose::Pose & pose, core::Size const i ) {

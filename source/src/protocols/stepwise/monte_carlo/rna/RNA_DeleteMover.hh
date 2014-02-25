@@ -23,7 +23,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/stepwise/monte_carlo/SWA_Move.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_DeleteMover.fwd.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Modeler.fwd.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.fwd.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloOptions.fwd.hh>
 
 namespace protocols {
@@ -69,14 +69,14 @@ public:
 	void minimize_after_delete( core::pose::Pose & pose ) const;
 	void set_minimize_after_delete( bool const setting ){ minimize_after_delete_ = setting; }
 
-	void set_stepwise_rna_modeler( protocols::stepwise::enumerate::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler );
+	void set_stepwise_rna_modeler( protocols::stepwise::sampling::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler );
 
 	void
 	set_options( StepWiseRNA_MonteCarloOptionsCOP options );
 
 private:
 
-	protocols::stepwise::enumerate::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
+	protocols::stepwise::sampling::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
 	StepWiseRNA_MonteCarloOptionsCOP options_;
 	bool minimize_after_delete_;
 

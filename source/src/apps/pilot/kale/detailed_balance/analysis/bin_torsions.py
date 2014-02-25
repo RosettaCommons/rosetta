@@ -179,7 +179,7 @@ def load_torsions_from_dat(arguments):
                 # Use the phi, psi, omega, and chi fields to extract data.
                 elif field in ('phi', 'psi', 'omega', 'chi'):
                     torsions = [float(x) for x in data.split()]
-                    for index, value in enumerate(torsions):
+                    for index, value in sampling(torsions):
                         key = key_from_torsion(field, index)
                         all_torsions.setdefault(key, []).append(value)
     finally:
@@ -453,8 +453,8 @@ def plot_score_function(arguments):
     psis = np.sort(data.values()[0].keys())
     scores = np.zeros((len(phis), len(psis)))
 
-    for i, phi in enumerate(phis):
-        for j, psi in enumerate(psis):
+    for i, phi in sampling(phis):
+        for j, psi in sampling(psis):
             scores[i,j] = data[phi][psi]
 
     phi_scores = np.exp(-scores).sum(1)
@@ -472,7 +472,7 @@ if __name__ == '__main__':
 
     plot_score_function(arguments)
 
-    for index, job in enumerate(arguments.jobs):
+    for index, job in sampling(arguments.jobs):
         arguments.job = job
         bins, counts, ks_test = load_histograms(arguments)
         plot_histograms(arguments, bins, counts, ks_test, index)

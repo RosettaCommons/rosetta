@@ -61,7 +61,7 @@
 #include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -417,7 +417,7 @@ setup_double_helix_pose ( pose::Pose & pose){
 	using namespace io::silent;
 	using namespace id;
 	using namespace protocols::swa;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace scoring;
 	using namespace chemical::rna;
 	using namespace optimization;

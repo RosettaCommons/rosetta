@@ -50,6 +50,7 @@ RNA_KicSampler::RNA_KicSampler(
 	ref_pose_( ref_pose ),
 	moving_suite_( moving_suite ),
 	chainbreak_suite_( chainbreak_suite ),
+	sample_nucleoside_( moving_suite + 1 ), // default, may be replaced.
 	pucker_state_( WHATEVER ), // WHATEVER, NORTH, SOUTH, NONE
 	base_state_( WHATEVER ), // WHATEVER, ANTI, SYN, NONE
 	bin_size_( 20 ),
@@ -119,7 +120,7 @@ void RNA_KicSampler::init() {
 	/////Pucker rotamers/////
 	if ( pucker_state_ != NONE ) {
 		RNA_SugarRotamerOP pucker_rotamer = new RNA_SugarRotamer(
-				moving_suite_ + 1, pucker_state_ );
+				sample_nucleoside_, pucker_state_ );
 		pucker_rotamer->set_skip_same_pucker( skip_same_pucker_ );
 		pucker_rotamer->set_idealize_coord( idealize_coord_ );
 		bb_rotamer_->add_rotamer( pucker_rotamer );
@@ -134,7 +135,7 @@ void RNA_KicSampler::init() {
 	////////// Chi Rotamer //////////
 	if ( base_state_ != NONE ){
 		chi_rotamer_ = new RNA_ChiRotamer(
-											 moving_suite_ + 1, NORTH/*arbitary*/, base_state_	);
+													sample_nucleoside_, NORTH/*arbitary*/, base_state_	);
 		chi_rotamer_->set_extra_chi( extra_chi_ );
 		chi_rotamer_->set_bin_size( bin_size_ );
 		chi_rotamer_->init();
@@ -174,6 +175,7 @@ void RNA_KicSampler::operator++() {
 					 !screener_->screen( *ref_pose_, moving_suite_ ) )
 						continue;
 			}
+
 			if ( base_state_ != NONE ) ++( *chi_rotamer_ );
 			random_chain_closed_ = true;
 			return;

@@ -16,7 +16,7 @@
 #include <protocols/stepwise/monte_carlo/SWA_MoveSelector.hh>
 #include <protocols/stepwise/monte_carlo/SWA_Move.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh> // probably do not need RNA in here.
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh> // probably do not need RNA in here.
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
@@ -196,7 +196,7 @@ namespace monte_carlo {
 																						 utility::vector1< SWA_Move > & swa_moves,
 																						 MoveType const move_type ) {
 
-		using namespace protocols::stepwise::enumerate::rna;
+		using namespace protocols::stepwise::sampling::rna;
 
 		make_sure_full_model_info_is_setup( pose );
 

@@ -15,20 +15,18 @@
 
 //////////////////////////////////
 #include <protocols/stepwise/StepWiseUtil.hh>
-#include <protocols/stepwise/enumerate/protein/StepWiseProteinUtil.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
-
+#include <protocols/stepwise/sampling/protein/StepWiseProteinUtil.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 #include <protocols/farna/RNA_ProtocolUtil.hh>
 
 //////////////////////////////////
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>
-#include <basic/Tracer.hh>
-#include <numeric/random/random.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -37,6 +35,9 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
+#include <core/id/SequenceMapping.hh>
+#include <core/kinematics/Edge.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -45,9 +46,10 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
-#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/id/SequenceMapping.hh>
+#include <core/scoring/func/FlatHarmonicFunc.hh>
+#include <core/scoring/Energies.hh>
+
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -56,19 +58,17 @@
 #include <numeric/xyzMatrix.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/io/izstream.hh>
-#include <core/scoring/func/FlatHarmonicFunc.hh>
-#include <core/scoring/Energies.hh>
+#include <utility/vector1.hh>
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <basic/Tracer.hh>
+#include <numeric/random/random.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 
-//Auto Headers
-#include <core/kinematics/MoveMap.hh>
-#include <utility/vector1.hh>
 using namespace core;
 using numeric::conversions::degrees;
 using numeric::conversions::radians;
@@ -406,8 +406,8 @@ namespace stepwise {
 													std::map< core::Size, core::Size > res_map ){
 
  		using namespace chemical;
- 		using namespace protocols::stepwise::enumerate::protein;
- 		using namespace protocols::stepwise::enumerate::rna;
+ 		using namespace protocols::stepwise::sampling::protein;
+ 		using namespace protocols::stepwise::sampling::rna;
  		using namespace core::id;
 
  		AtomID_Map< AtomID > atom_ID_map;
@@ -1602,7 +1602,7 @@ rotate( pose::Pose & pose, Matrix const M,
 		if ( pose.residue_type( res_to_add ).is_RNA() ){
 			// could also keep track of alpha, beta, etc.
 			runtime_assert( pose.residue_type( res_to_add + 1 ).is_RNA() );
-			protocols::stepwise::enumerate::rna::correctly_position_cutpoint_phosphate_torsions( pose, res_to_add, false /*verbose*/ );
+			protocols::stepwise::sampling::rna::correctly_position_cutpoint_phosphate_torsions( pose, res_to_add, false /*verbose*/ );
 		}
 		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res_to_add   );
 		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res_to_add + 1 );
@@ -2198,6 +2198,87 @@ rotate( pose::Pose & pose, Matrix const M,
 		} else {
 			remove_variant_type_from_pose_residue( pose, variant_type, n );
 		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////
+	void
+	figure_out_moving_chain_breaks( pose::Pose const & pose, utility::vector1< Size > moving_partition_pos,
+																	utility::vector1< Size > & cutpoints_closed,
+																	utility::vector1< Size > & five_prime_chain_breaks,
+																	utility::vector1< Size > & three_prime_chain_breaks,
+																	utility::vector1< Size > & chain_break_gap_sizes ){
+
+		utility::vector1< Size > const chains =	figure_out_chains_from_full_model_info_const( pose );
+		utility::vector1< Size > const & res_list =	get_res_list_from_full_model_info_const( pose );
+		Size five_prime_chain_break( 0 ), three_prime_chain_break( 0 );
+
+		for ( Size n = 1; n < pose.total_residue(); n++ ){
+
+			if ( !pose.fold_tree().is_cutpoint( n ) ) continue;
+
+			// must be in different partitions to qualify as 'moving'
+			if ( moving_partition_pos.has_value( n ) == moving_partition_pos.has_value( n+1 ) ) continue;
+
+			// must be in same chain to qualify as a chain break
+			if ( chains[ n ] != chains[ n+1 ] ) continue;
+
+			// rewind to non-virtual residue closest to chainbreak
+			for ( five_prime_chain_break = n; five_prime_chain_break >= 1; five_prime_chain_break-- ){
+				if ( !pose.residue_type( five_prime_chain_break ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ) break;
+			}
+
+			// fast-forward to non-virtual residue closest to chainbreak
+			for ( three_prime_chain_break = n+1; three_prime_chain_break <= pose.total_residue(); three_prime_chain_break++ ){
+				if ( !pose.residue_type( three_prime_chain_break ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ) break;
+			}
+
+			five_prime_chain_breaks.push_back( five_prime_chain_break );
+			three_prime_chain_breaks.push_back( three_prime_chain_break );
+			runtime_assert( res_list[ three_prime_chain_break ] > res_list[ five_prime_chain_break ] );
+			Size const gap_size = res_list[ three_prime_chain_break ] - res_list[ five_prime_chain_break ] - 1;
+			chain_break_gap_sizes.push_back( gap_size );
+
+			if ( gap_size == 0 ){
+				runtime_assert( five_prime_chain_break == n ); // no rewind past bulges
+				runtime_assert( three_prime_chain_break == n + 1 ); // no fast forward past bulges
+				runtime_assert( pose.residue_type( five_prime_chain_break ).has_variant_type( "CUTPOINT_LOWER" ) );
+				runtime_assert( pose.residue_type( three_prime_chain_break ).has_variant_type( "CUTPOINT_UPPER" ) );
+				cutpoints_closed.push_back( n );
+			}
+
+		}
+
+	}
+
+
+	///////////////////////////////////////////////////////////////////////////
+	Size
+	figure_out_reference_res_for_suite( pose::Pose const & pose, Size const moving_res ){
+		kinematics::Edge const & edge = pose.fold_tree().get_residue_edge( moving_res );
+		runtime_assert( !edge.is_jump() );
+		Size reference_res( 0 );
+		if ( edge.start() < moving_res ){
+			runtime_assert( edge.start() < edge.stop() );
+			reference_res = moving_res - 1;
+		} else {
+			runtime_assert( edge.start() > edge.stop() );
+			reference_res = moving_res + 1;
+		}
+		return reference_res;
+	}
+
+	///////////////////////////////////////////////////////////////////
+	utility::vector1< Size >
+	figure_out_moving_partition_res_for_suite( pose::Pose const & pose,
+																						 Size const moving_res,
+																						 Size const reference_res ){
+		Size const moving_suite = ( moving_res < reference_res ) ? moving_res : reference_res;
+		utility::vector1< bool > partition_definition = sampling::rna::get_partition_definition( pose, moving_suite );
+		utility::vector1< Size > moving_partition_res;
+		for ( Size n = 1; n <= pose.total_residue(); n++ ){
+			if ( partition_definition[ n ] == partition_definition[ moving_res ] ) moving_partition_res.push_back( n );
+		}
+		return moving_partition_res;
 	}
 
 } //stepwise

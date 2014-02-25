@@ -15,7 +15,7 @@
 
 #include <protocols/farna/RNA_ProtocolUtil.hh>
 #include <core/pose/rna/RNA_IdealCoord.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -649,7 +649,7 @@ pdb_minimizer() {
 	using namespace core::scoring::constraints;
 	using namespace core::optimization;
 	using namespace core::id;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->
 	          									residue_type_set ( RNA );
@@ -726,7 +726,7 @@ pdb_minimizer() {
 	//Output the sequence
 	std::string working_sequence = pose.sequence();
 	std::cout << "Pose sequence = " << working_sequence << std::endl;
-	protocols::stepwise::enumerate::rna::output_fold_tree_info ( pose.fold_tree(), "rna_pdb_minimizing" );
+	protocols::stepwise::sampling::rna::output_fold_tree_info ( pose.fold_tree(), "rna_pdb_minimizing" );
 
 	//Try flipping the pyrimidines
 	if ( attempt_pyrimidine_flip_ ) {

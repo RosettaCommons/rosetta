@@ -33,7 +33,7 @@
 #include <protocols/farna/RNA_ChunkLibrary.fwd.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/stepwise/StepWiseUtil.hh> //move this to toolbox/
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 #include <protocols/farna/RNA_ProtocolUtil.hh>
 
 // Project headers
@@ -390,7 +390,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 			if ( use_chem_shift_data_ ) curr_scorefxn = chem_shift_scorefxn_;
 			//Identify and virtual the bulge residues.
 			/*Size const num_res_virtualized =*/
-			protocols::stepwise::enumerate::rna::virtualize_bulges(
+			protocols::stepwise::sampling::rna::virtualize_bulges(
 				pose, allowed_bulge_res_, curr_scorefxn, out_file_tag,
 				true /*allow_pre_virtualize*/, allow_consecutive_bulges_,
 				true /*verbose*/

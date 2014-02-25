@@ -378,13 +378,6 @@ copy_dofs(
 					std::map < id::AtomID , id::AtomID > const & atom_id_map,
 					std::map< id::AtomID, Size > const & atom_id_domain_map  );
 
-
-///////////////////////////////////////////////////////////////////
-bool
-get_scratch_atom_id( id::AtomID & other_scratch_atom_id,
-										 std::map< core::id::AtomID, core::id::AtomID> const & atom_id_map,
-										 core::kinematics::tree::AtomCOP other_atom );
-
 ///////////////////////////////////////////////////////////////////
 void
 setup_atom_id_map(

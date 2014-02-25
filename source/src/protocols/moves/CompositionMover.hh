@@ -32,6 +32,7 @@ namespace protocols {
 namespace moves {
 
 class CompositionMover : public Mover {
+
 public:
 	CompositionMover();
 
@@ -42,6 +43,12 @@ public:
 	virtual std::string get_name() const;
 
 	utility::vector1< MoverOP > get_movers();
+
+	void apply( core::pose::Pose & pose, Size const i, Size const j);
+
+private:
+
+	void apply_mover_if_defined( core::pose::Pose & pose, Size const n );
 
 private:
 	utility::vector1< MoverOP > movers_;

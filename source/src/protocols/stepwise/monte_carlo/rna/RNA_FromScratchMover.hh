@@ -20,7 +20,7 @@
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_FromScratchMover.fwd.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Modeler.fwd.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.fwd.hh>
 
 using namespace core;
 
@@ -49,7 +49,7 @@ namespace rna {
 		virtual void apply( core::pose::Pose & pose_to_visualize );
 		virtual std::string get_name() const;
 
-		void set_stepwise_rna_modeler( protocols::stepwise::enumerate::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler );
+		void set_stepwise_rna_modeler( protocols::stepwise::sampling::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler );
 
 	private:
 
@@ -61,7 +61,7 @@ namespace rna {
 
 	private:
 
-		protocols::stepwise::enumerate::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
+		protocols::stepwise::sampling::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
 
 	};
 

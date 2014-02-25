@@ -66,6 +66,9 @@ public:
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "RotamerOneTorsion"; }
 
+	/// @brief Type of class (see enum in RotamerTypes.hh)
+	virtual RotamerType type() const { return ONE_TORSION; }
+
 private:
 
 	core::id::TorsionID torsion_id_;

@@ -14,7 +14,7 @@
 
 
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloOptions.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_ModelerOptions.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
@@ -24,7 +24,7 @@
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-using namespace protocols::stepwise::enumerate::rna;
+using namespace protocols::stepwise::sampling::rna;
 
 static basic::Tracer TR( "protocols.stepwise.monte_carlo.rna.StepWiseRNA_MonteCarloOptions" );
 

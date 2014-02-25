@@ -144,7 +144,7 @@ mkdir -p {fa,cen}/{conf1,confs,kins,withxtal}
     if progs['omega'] is not None:
         outfile.write('omega="%s -includeInput -commentEnergy"\n' % progs['omega'])
     if options.num_procs > 1: outfile.write("%s -j%i <<HEREDOC\n" % (progs['parallel'], options.num_procs))
-    for i, ligand in enumerate(ligands):
+    for i, ligand in sampling(ligands):
         ligcode = "X%02X" % i # X01, X02, ..., XFF
         ligbase = ligand.base
         ligpath = ligand.path
@@ -179,7 +179,7 @@ mkdir -p {fa,cen}/{conf1,confs,kins,withxtal}
 
 ''')
     if options.num_procs > 1: outfile.write("%s -j%i <<HEREDOC\n" % (progs['parallel'], options.num_procs))
-    for i, ligand in enumerate(cofactors):
+    for i, ligand in sampling(cofactors):
         ligcode = "Q%02X" % i # Q01, Q02, ..., QFF
         ligbase = ligand.base
         ligpath = ligand.path

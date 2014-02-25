@@ -85,17 +85,19 @@ bool operator!=(const FoldTree& a, const FoldTree& b) {
 /// whether the naive object should be reinstantiated. This method is most
 /// useful in situations where there are many edges in the FoldTree.
 size_t FoldTree::hash_value() const {
-  using std::string;
-  using std::stringstream;
+  // compute hash(repr)
+  return hasher( to_string() );
+}
 
+/// @details easy output of string
+std::string
+FoldTree::to_string() const{
   // obtain a string representation of the FoldTree
-  string repr;
-  stringstream ss;
+	std::string repr;
+	std::stringstream ss;
   ss << *this;
   repr = ss.str();
-
-  // compute hash(repr)
-  return hasher(repr);
+	return repr;
 }
 
 /// @details  Delete self-edges in the foldtree, allowing the edge 1->1 for a single residue tree

@@ -5372,7 +5372,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 				default='true'),
 			Option('extend_native_cdrs', 'Boolean',
 				desc = 'extend native CDRs as part of the graft design step.  Used for benchmarking',
-				default='false'), 
+				default='false'),
 		), #design
 	), # antibody
 
@@ -5704,9 +5704,12 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 	    Option( 'rebuild_bulge_mode', 'Boolean', desc="rebuild_bulge_mode", default="false" ),
 	    Option( 'choose_random', 'Boolean', desc="ask swa residue sampler for a random solution", default="false" ),
 	    Option( 'virtual_sugar_keep_base_fixed', 'Boolean', desc="When instantiating virtual sugar, keep base fixed -- do not spend a lot of time to minimize!", default="true" ),
+	    Option( 'sampler_max_centroid_distance', 'Real', desc="max centroid distance of moving base to reference in floating base sampler", default='0.0' ), #Nov 12, 2010
 	    Option( 'num_random_samples', 'Integer', desc="In choose_random/monte-carlo mode, number of samples from swa residue sampler before minimizing best", default="20" ),
 	    Option( 'filter_user_alignment_res', 'Boolean', desc=" filter_user_alignment_res ", default="true" ),
 	    Option( 'output_pdb', 'Boolean', desc="output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.", default="false" ),
+		  Option( 'new_framework', 'Boolean', desc="testing sample-and-screen framework", default="false" ),
+		  Option( 'unified_framework', 'Boolean', desc="testing unified sample-and-screen framework", default="false" ),
 		),
 
 	),

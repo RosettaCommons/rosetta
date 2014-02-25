@@ -31,11 +31,11 @@ namespace rotamer_sampler {
 ///////////////////////////////////////////////////////////////////////////
 RotamerSizedAny::RotamerSizedAny():
 	RotamerSized(),
-	size_( 0 ),
-	id_( 0 )
+	size_( 0 )
 {}
 
 RotamerSizedAny::~RotamerSizedAny(){}
+
 ///////////////////////////////////////////////////////////////////////////
 void RotamerSizedAny::init() {
 	runtime_assert( !rotamer_list_.empty() );
@@ -71,7 +71,7 @@ void RotamerSizedAny::operator++() {
 	runtime_assert( not_end() );
 	if ( random() ) {
 		id_ = RG.random_range( 1, size() );
-		curr_state_ = id2state( id_ );
+		curr_state_ = id2state( id() );
 	} else {
 		++id_;
 		++curr_state_.second;
@@ -80,11 +80,6 @@ void RotamerSizedAny::operator++() {
 			++curr_state_.first;
 		}
 	}
-}
-///////////////////////////////////////////////////////////////////////////
-bool RotamerSizedAny::not_end() const {
-	runtime_assert( is_init() );
-	return id_ <= size();
 }
 ///////////////////////////////////////////////////////////////////////////
 void RotamerSizedAny::apply( Pose & pose ) {

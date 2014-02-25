@@ -28,10 +28,7 @@ CompositionMover::CompositionMover()
 
 void
 CompositionMover::apply( core::pose::Pose & pose ) {
-	typedef utility::vector1< MoverOP >::iterator iter;
-	for ( iter it = movers_.begin(), end = movers_.end(); it != end; ++it ) {
-		(*it)->apply( pose );
-	}
+	for ( Size n = 1; n <= movers_.size(); n++ ) apply_mover_if_defined( pose, n );
 }
 
 std::string
@@ -49,6 +46,24 @@ void CompositionMover::add_mover( MoverOP m ) {
 
 utility::vector1< MoverOP > CompositionMover::get_movers() {
 	return movers_;
+}
+
+void
+CompositionMover::apply_mover_if_defined( core::pose::Pose & pose, Size const n ){
+	if ( movers_[n]) movers_[n]->apply( pose );
+}
+
+void
+CompositionMover::apply( core::pose::Pose & pose, Size const i, Size const j ){
+	runtime_assert( i > 0 );
+	runtime_assert( j > 0 );
+	runtime_assert( i <= movers_.size() );
+	runtime_assert( j <= movers_.size() );
+	if ( i <= j ){
+		for ( Size n = i; n <= j; n++ ) apply_mover_if_defined( pose, n );
+	} else {
+		for ( Size n = i; n >= j; n-- ) apply_mover_if_defined( pose, n );
+	}
 }
 
 } // moves

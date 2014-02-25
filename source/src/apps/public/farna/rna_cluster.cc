@@ -22,7 +22,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff -- move this?
-#include <protocols/stepwise/enumerate/general/StepWiseClusterer.hh>
+#include <protocols/stepwise/sampling/general/StepWiseClusterer.hh>
 
 // C++ headers
 #include <iostream>
@@ -61,7 +61,7 @@ cluster_test(){
 	if ( ! option[ in::file::silent ].user() ) utility_exit_with_message( "The rna_cluster executable requires silent input [with -in:file:silent], and models need to be scored. The clustering algorithm starts with the lowest scoring models and works its way up." );
 
 	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
-	protocols::stepwise::enumerate::general::StepWiseClusterer stepwise_clusterer( silent_files_in );
+	protocols::stepwise::sampling::general::StepWiseClusterer stepwise_clusterer( silent_files_in );
 
 	Size max_decoys( 400 );
 	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];

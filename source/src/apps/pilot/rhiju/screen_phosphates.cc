@@ -35,9 +35,9 @@
 #include <protocols/farna/RNA_ProtocolUtil.hh>
 #include <protocols/farna/RNA_Minimizer.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
-#include <protocols/stepwise/enumerate/rna/phosphate/PhosphateMover.hh>
-#include <protocols/stepwise/enumerate/rna/phosphate/MultiPhosphateSampler.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/phosphate/PhosphateMover.hh>
+#include <protocols/stepwise/sampling/rna/phosphate/MultiPhosphateSampler.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloOptions.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloUtil.hh>
@@ -96,7 +96,7 @@ screen_phosphates()
   using namespace protocols::stepwise;
   using namespace protocols::stepwise::monte_carlo;
   using namespace protocols::stepwise::monte_carlo::rna;
-  using namespace protocols::stepwise::enumerate::rna::phosphate;
+  using namespace protocols::stepwise::sampling::rna::phosphate;
   using namespace utility::file;
 
 	// Following could be generalized to fa_standard, after recent unification, but

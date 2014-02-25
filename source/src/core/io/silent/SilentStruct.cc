@@ -45,9 +45,6 @@
 
 #include <basic/options/option.hh>
 
-// AUTO-REMOVED #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
-
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
@@ -61,10 +58,6 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreTypeManager.hh>
 
-
-//#ifdef BOINC
-//#include <protocols/boinc/boinc.hh>
-//#endif
 
 // option key includes
 
@@ -115,6 +108,7 @@ SilentStruct& SilentStruct::operator= ( SilentStruct const& src ) {
 	precision_ = src.precision_;
 	scoreline_prefix_ = src.scoreline_prefix_;
 	residue_numbers_ = src.residue_numbers_;
+	chains_ = src.chains_;
 	return *this;
 }
 
@@ -1004,7 +998,6 @@ SilentStruct::get_parent_remark_from_line( std::string const line ){
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// would be straightforward to expand this to chains as well...
 void
 SilentStruct::fill_struct_with_residue_numbers( pose::Pose const & pose ){
 
@@ -1013,15 +1006,22 @@ SilentStruct::fill_struct_with_residue_numbers( pose::Pose const & pose ){
 	if ( !pdb_info ) return;
 
 	utility::vector1< Size > residue_numbers;
+	utility::vector1< char > chains;
 	bool residue_numbering_is_interesting( false );
 	for ( core::uint i = 1; i <= pose.total_residue(); ++i ) {
 		residue_numbers.push_back( pdb_info->number( i ) );
-		if ( pdb_info->number( i ) != static_cast<int>(i) ) residue_numbering_is_interesting = true;
+		chains.push_back( pdb_info->chain( i ) );
+		if ( pdb_info->number( i ) != static_cast<int>(i) ||
+				 ( pdb_info->chain( i ) != ' ' &&
+					 pdb_info->chain( i ) != 'A' ) ){
+			residue_numbering_is_interesting = true;
+		}
 	}
 
 	if ( !residue_numbering_is_interesting ) return; // leave residue_numbers_ blank.
 
 	set_residue_numbers( residue_numbers );
+	set_chains( chains );
 
 }
 
@@ -1041,6 +1041,8 @@ SilentStruct::residue_numbers_into_pose( pose::Pose & pose ) const{
 	pose::PDBInfoOP pdb_info = pose.pdb_info();
 	pdb_info->set_numbering( residue_numbers_ );
 
+	runtime_assert( residue_numbers_.size() == chains_.size() );
+	pdb_info->set_chains( chains_ );
 }
 
 
@@ -1064,27 +1066,31 @@ SilentStruct::print_residue_numbers( std::ostream & out ) const {
 		//		utility_exit_with_message( "Problem with residue_numbers in silent_struct!" );
 	}
 
-	out << "RES_NUM " << make_tag_with_dashes( residue_numbers_ ) <<  " " << decoy_tag() << std::endl;
+	out << "RES_NUM " << make_tag_with_dashes( residue_numbers_, chains_ ) <<  " " << decoy_tag() << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 void
 SilentStruct::figure_out_residue_numbers_from_line( std::istream & line_stream ) {
 	utility::vector1< Size > residue_numbers;
+	utility::vector1< char > chains;
 	std::string resnum_string;
 	line_stream >> resnum_string; // the tag (RES_NUM)
 	line_stream >> resnum_string;
 	while( !line_stream.fail() ){
 		bool string_ok( false );
-		std::vector< int > resnums = ObjexxFCL::ints_of( resnum_string, string_ok );
+		std::pair< std::vector< int >, std::vector< char > > resnum_and_chain = utility::get_resnum_and_chain( resnum_string, string_ok );
+		std::vector< int >  const & resnums      = resnum_and_chain.first;
+		std::vector< char > const & chainchars  = resnum_and_chain.second;
 		if ( string_ok ) {
 			for ( Size i = 0; i < resnums.size(); i++ ) residue_numbers.push_back( resnums[i] );
+			for ( Size i = 0; i < chainchars.size(); i++ ) chains.push_back( chainchars[i] );
 		} else break;
 		line_stream >> resnum_string;
 	}
 
 	set_residue_numbers( residue_numbers );
-
+	set_chains( chains );
 }
 
 } // namespace silent

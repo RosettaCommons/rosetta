@@ -67,7 +67,7 @@ void RotamerComb::operator++() {
 			if ( rotamer_list_[i]->not_end() ) {
 				break;
 			} else {
-				rotamer_list_[i]->reset();
+				if ( i < rotamer_list_.size() ) rotamer_list_[i]->reset();
 			}
 		}
 	}

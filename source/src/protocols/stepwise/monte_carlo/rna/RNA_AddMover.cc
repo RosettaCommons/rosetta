@@ -15,8 +15,8 @@
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddMover.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_TorsionMover.hh>
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Modeler.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
@@ -238,7 +238,7 @@ namespace rna {
 
 		using namespace core::chemical;
 		using namespace core::chemical::rna;
-		using namespace protocols::stepwise::enumerate::rna;
+		using namespace protocols::stepwise::sampling::rna;
 
 		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 		std::string const & full_sequence  = full_model_info.full_sequence();
@@ -285,7 +285,7 @@ namespace rna {
 
 		using namespace core::chemical;
 		using namespace core::chemical::rna;
-		using namespace protocols::stepwise::enumerate::rna;
+		using namespace protocols::stepwise::sampling::rna;
 
 		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 		std::string const & full_sequence  = full_model_info.full_sequence();
@@ -371,7 +371,7 @@ namespace rna {
 
 	///////////////////////////////////////////////////////////////////
 	void
-	RNA_AddMover::set_stepwise_rna_modeler( protocols::stepwise::enumerate::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler ){
+	RNA_AddMover::set_stepwise_rna_modeler( protocols::stepwise::sampling::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler ){
 		stepwise_rna_modeler_ = stepwise_rna_modeler;
 	}
 

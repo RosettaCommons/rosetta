@@ -10,7 +10,7 @@
 # does, I also need to devise an algorithm that gets rid of it.  Some thoughts:
 #
 # There are a finite number of possible start and end points.  I could 
-# enumerate each one and pick one using a random number.  This would definitely 
+# sampling each one and pick one using a random number.  This would definitely 
 # be free of bias, but it could be hard to map random numbers to end points.
 # 
 # Actually, this is not completely unbiased.  The constraint that adjacent 

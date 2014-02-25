@@ -64,31 +64,31 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 //StepWiseProtein!
-#include <protocols/stepwise/enumerate/general/StepWiseClusterer.hh>
-#include <protocols/stepwise/enumerate/protein/StepWisePoseSetup.hh>
-#include <protocols/stepwise/enumerate/protein/StepWiseJobParameters.hh>
+#include <protocols/stepwise/sampling/general/StepWiseClusterer.hh>
+#include <protocols/stepwise/sampling/protein/StepWisePoseSetup.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseJobParameters.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
-#include <protocols/stepwise/enumerate/protein/sample_generators/StepWiseDoNothingSampleGenerator.hh>
-#include <protocols/stepwise/enumerate/protein/sample_generators/StepWiseCombineSampleGenerator.hh>
-#include <protocols/stepwise/enumerate/protein/sample_generators/StepWiseIdentitySampleGenerator.hh>
-#include <protocols/stepwise/enumerate/protein/sample_generators/StepWisePoseCombineSampleGenerator.hh>
-#include <protocols/stepwise/enumerate/protein/PoseFilter.hh>
-#include <protocols/stepwise/enumerate/protein/PoseFilter_RMSD_Screen.hh>
-#include <protocols/stepwise/enumerate/protein/StepWiseBetaAntiParallelJumpSampleGenerator.hh>
-#include <protocols/stepwise/enumerate/protein/StepWiseBetaAntiParallelUtil.hh>
-#include <protocols/stepwise/enumerate/protein/StepWiseProteinFilterer.hh>
-#include <protocols/stepwise/enumerate/protein/StepWiseProteinLoopBridger.hh>
-#include <protocols/stepwise/enumerate/protein/StepWiseProteinPoseMinimizer.hh>
-#include <protocols/stepwise/enumerate/protein/StepWiseProteinScreener.hh>
-#include <protocols/stepwise/enumerate/protein/StepWiseProteinCCD_Closer.hh>
-#include <protocols/stepwise/enumerate/protein/StepWiseProteinUtil.hh>
-#include <protocols/stepwise/enumerate/protein/StepWiseProteinPacker.hh>
-#include <protocols/stepwise/enumerate/protein/StepWiseProteinFragmentSampleGenerator.hh>
-#include <protocols/stepwise/enumerate/protein/StepWiseProteinJumpSampleGenerator.hh>
-#include <protocols/stepwise/enumerate/protein/StepWiseProteinMainChainSampleGenerator.hh>
-#include <protocols/stepwise/enumerate/protein/StepWiseProteinPacker.hh>
-#include <protocols/stepwise/enumerate/protein/MainChainTorsionSet.hh>
-#include <protocols/stepwise/enumerate/protein/InputStreamWithResidueInfo.hh>
+#include <protocols/stepwise/sampling/protein/sample_generators/StepWiseDoNothingSampleGenerator.hh>
+#include <protocols/stepwise/sampling/protein/sample_generators/StepWiseCombineSampleGenerator.hh>
+#include <protocols/stepwise/sampling/protein/sample_generators/StepWiseIdentitySampleGenerator.hh>
+#include <protocols/stepwise/sampling/protein/sample_generators/StepWisePoseCombineSampleGenerator.hh>
+#include <protocols/stepwise/sampling/protein/PoseFilter.hh>
+#include <protocols/stepwise/sampling/protein/PoseFilter_RMSD_Screen.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseBetaAntiParallelJumpSampleGenerator.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseBetaAntiParallelUtil.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinFilterer.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinLoopBridger.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinPoseMinimizer.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinScreener.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinCCD_Closer.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinUtil.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinPacker.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinFragmentSampleGenerator.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinJumpSampleGenerator.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinMainChainSampleGenerator.hh>
+#include <protocols/stepwise/sampling/protein/StepWiseProteinPacker.hh>
+#include <protocols/stepwise/sampling/protein/MainChainTorsionSet.hh>
+#include <protocols/stepwise/sampling/protein/InputStreamWithResidueInfo.hh>
 
 //clustering
 #include <protocols/cluster/cluster.hh>
@@ -260,16 +260,16 @@ initialize_native_pose( core::pose::PoseOP & native_pose, core::chemical::Residu
 
 void
 generate_samples_and_cluster( core::pose::Pose & pose,
-															protocols::stepwise::enumerate::protein::StepWiseJobParametersOP & job_parameters,
-															protocols::stepwise::enumerate::protein::StepWisePoseSetupOP & stepwise_pose_setup,
-															utility::vector1< protocols::stepwise::enumerate::protein::InputStreamWithResidueInfoOP > & input_streams,
+															protocols::stepwise::sampling::protein::StepWiseJobParametersOP & job_parameters,
+															protocols::stepwise::sampling::protein::StepWisePoseSetupOP & stepwise_pose_setup,
+															utility::vector1< protocols::stepwise::sampling::protein::InputStreamWithResidueInfoOP > & input_streams,
 															utility::vector1 < Size > & moving_residues,
-															protocols::stepwise::enumerate::general::StepWiseClustererOP & stepwise_clusterer,
+															protocols::stepwise::sampling::general::StepWiseClustererOP & stepwise_clusterer,
 															std::string const & silent_file );
 
 void
-enable_sampling_of_loop_takeoff( protocols::stepwise::enumerate::protein::sample_generators::StepWisePoseSampleGeneratorOP & sample_generator,
-																 protocols::stepwise::enumerate::protein::StepWiseJobParametersOP job_parameters,
+enable_sampling_of_loop_takeoff( protocols::stepwise::sampling::protein::sample_generators::StepWisePoseSampleGeneratorOP & sample_generator,
+																 protocols::stepwise::sampling::protein::StepWiseJobParametersOP job_parameters,
 																 pose::Pose & pose );
 
 
@@ -288,8 +288,8 @@ rebuild_test(){
 	using namespace core::pose;
 	using namespace core::pack;
 	using namespace protocols::stepwise;
-	using namespace protocols::stepwise::enumerate::general;
-	using namespace protocols::stepwise::enumerate::protein;
+	using namespace protocols::stepwise::sampling::general;
+	using namespace protocols::stepwise::sampling::protein;
 
 	// A lot of the following might be better handled by a JobDistributor!?
 
@@ -318,7 +318,7 @@ rebuild_test(){
 
 	////////////////////////////////////////////////////////////////////
 	utility::vector1< InputStreamWithResidueInfoOP > input_streams;
-	protocols::stepwise::enumerate::protein::initialize_input_streams( input_streams );
+	protocols::stepwise::sampling::protein::initialize_input_streams( input_streams );
 
   utility::vector1< core::Size > const moving_res_list = option[ sample_res ]();
 
@@ -439,11 +439,11 @@ initialize_native_pose( core::pose::PoseOP & native_pose, core::chemical::Residu
 ////////////////////////////////////////////////////////////////////////////////////////////
 void
 generate_samples_and_cluster( core::pose::Pose & pose,
-															protocols::stepwise::enumerate::protein::StepWiseJobParametersOP & job_parameters,
-															protocols::stepwise::enumerate::protein::StepWisePoseSetupOP & stepwise_pose_setup,
-															utility::vector1< protocols::stepwise::enumerate::protein::InputStreamWithResidueInfoOP > & input_streams,
+															protocols::stepwise::sampling::protein::StepWiseJobParametersOP & job_parameters,
+															protocols::stepwise::sampling::protein::StepWisePoseSetupOP & stepwise_pose_setup,
+															utility::vector1< protocols::stepwise::sampling::protein::InputStreamWithResidueInfoOP > & input_streams,
 															utility::vector1 < Size > & moving_residues,
-															protocols::stepwise::enumerate::general::StepWiseClustererOP & stepwise_clusterer,
+															protocols::stepwise::sampling::general::StepWiseClustererOP & stepwise_clusterer,
 															std::string const & silent_file ){
 
 	using namespace basic::options;
@@ -457,8 +457,8 @@ generate_samples_and_cluster( core::pose::Pose & pose,
 	using namespace core::pose;
 	using namespace core::pack;
 	using namespace protocols::stepwise;
-	using namespace protocols::stepwise::enumerate::protein;
-	using namespace protocols::stepwise::enumerate::protein::sample_generators;
+	using namespace protocols::stepwise::sampling::protein;
+	using namespace protocols::stepwise::sampling::protein::sample_generators;
 
 	/////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
@@ -634,7 +634,7 @@ generate_samples_and_cluster( core::pose::Pose & pose,
 	/////////////////////////////
 	// Have an option to read structure back in from disk?  may be useful for checkpointing.
 	// For now just take in silent structs prepared by the stepwise_residue_sampler.
-	stepwise_clusterer = new protocols::stepwise::enumerate::general::StepWiseClusterer (  stepwise_packer.silent_file_data() );
+	stepwise_clusterer = new protocols::stepwise::sampling::general::StepWiseClusterer (  stepwise_packer.silent_file_data() );
 	Size max_decoys( 400 );
 	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
 	stepwise_clusterer->set_max_decoys( max_decoys );
@@ -662,8 +662,8 @@ cluster_outfile_test(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::stepwise;
-	using namespace protocols::stepwise::enumerate::general;
-	using namespace protocols::stepwise::enumerate::protein;
+	using namespace protocols::stepwise::sampling::general;
+	using namespace protocols::stepwise::sampling::protein;
 
 	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
 	StepWiseClusterer stepwise_clusterer( silent_files_in );
@@ -708,7 +708,7 @@ calc_rms_test(){
 	using namespace core::import_pose::pose_stream;
 	using namespace core::pose;
 	using namespace protocols::stepwise;
-	using namespace protocols::stepwise::enumerate::protein;
+	using namespace protocols::stepwise::sampling::protein;
 	using namespace core::chemical;
 
 	PoseOP pose_op,native_pose;
@@ -748,14 +748,14 @@ calc_rms_test(){
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-enable_sampling_of_loop_takeoff( protocols::stepwise::enumerate::protein::sample_generators::StepWisePoseSampleGeneratorOP & sample_generator,
-																 protocols::stepwise::enumerate::protein::StepWiseJobParametersOP job_parameters,
+enable_sampling_of_loop_takeoff( protocols::stepwise::sampling::protein::sample_generators::StepWisePoseSampleGeneratorOP & sample_generator,
+																 protocols::stepwise::sampling::protein::StepWiseJobParametersOP job_parameters,
 																 pose::Pose & pose ) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::stepwise;
-	using namespace protocols::stepwise::enumerate::protein;
+	using namespace protocols::stepwise::sampling::protein;
 
 	StepWiseProteinScreener stepwise_screener( job_parameters );
 	stepwise_screener.set_n_sample( option[ n_sample ] );
@@ -796,7 +796,7 @@ combine_loops_test(){
 	using namespace core::id;
 	using namespace core::pose;
 	using namespace protocols::stepwise;
-	using namespace protocols::stepwise::enumerate::protein;
+	using namespace protocols::stepwise::sampling::protein;
 
 	// Read in main pose.
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
@@ -986,7 +986,7 @@ big_bins_test(){
 	using namespace core::io::pdb;
 	using namespace core::id;
 	using namespace core::pose;
-	using namespace protocols::stepwise::enumerate::protein;
+	using namespace protocols::stepwise::sampling::protein;
 	using namespace protocols::stepwise;
 
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
@@ -1028,7 +1028,7 @@ my_main( void* )
 	if ( option[ cluster_test ] ){
 		cluster_outfile_test();
 	} else if ( option[ generate_beta_database ] ){
-		protocols::stepwise::enumerate::protein::generate_beta_database_test(); // in StepWiseBetaAntiParallelUtil.cc
+		protocols::stepwise::sampling::protein::generate_beta_database_test(); // in StepWiseBetaAntiParallelUtil.cc
 	} else if ( option[ combine_loops ] ){
 		combine_loops_test();
 	} else if ( option[ big_bins ] ){

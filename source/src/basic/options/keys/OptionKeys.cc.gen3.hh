@@ -1,4 +1,3 @@
-namespace hotspot { RealOptionKey const angle( "hotspot:angle" );  }
 namespace hotspot { IntegerOptionKey const angle_res( "hotspot:angle_res" );  }
 namespace parser { BooleanOptionKey const parser( "parser" );  }
 namespace parser { StringOptionKey const protocol( "parser:protocol" );  }
@@ -512,9 +511,12 @@ namespace stepwise { namespace rna { IntegerVectorOptionKey const bulge_res( "st
 namespace stepwise { namespace rna { BooleanOptionKey const rebuild_bulge_mode( "stepwise:rna:rebuild_bulge_mode" );  } }
 namespace stepwise { namespace rna { BooleanOptionKey const choose_random( "stepwise:rna:choose_random" );  } }
 namespace stepwise { namespace rna { BooleanOptionKey const virtual_sugar_keep_base_fixed( "stepwise:rna:virtual_sugar_keep_base_fixed" );  } }
+namespace stepwise { namespace rna { RealOptionKey const sampler_max_centroid_distance( "stepwise:rna:sampler_max_centroid_distance" );  } }
 namespace stepwise { namespace rna { IntegerOptionKey const num_random_samples( "stepwise:rna:num_random_samples" );  } }
 namespace stepwise { namespace rna { BooleanOptionKey const filter_user_alignment_res( "stepwise:rna:filter_user_alignment_res" );  } }
 namespace stepwise { namespace rna { BooleanOptionKey const output_pdb( "stepwise:rna:output_pdb" );  } }
+namespace stepwise { namespace rna { BooleanOptionKey const new_framework( "stepwise:rna:new_framework" );  } }
+namespace stepwise { namespace rna { BooleanOptionKey const unified_framework( "stepwise:rna:unified_framework" );  } }
 namespace full_model { BooleanOptionKey const full_model( "full_model" );  }
 namespace full_model { IntegerVectorOptionKey const cutpoint_open( "full_model:cutpoint_open" );  }
 namespace full_model { IntegerVectorOptionKey const cutpoint_closed( "full_model:cutpoint_closed" );  }

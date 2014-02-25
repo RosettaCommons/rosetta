@@ -18,7 +18,7 @@
 
 #include <basic/resource_manager/ResourceOptions.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloOptions.fwd.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_ModelerOptions.fwd.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
@@ -65,7 +65,7 @@ namespace rna {
 		void
 		initialize_from_command_line();
 
-		protocols::stepwise::enumerate::rna::StepWiseRNA_ModelerOptionsOP setup_modeler_options() const;
+		protocols::stepwise::sampling::rna::StepWiseRNA_ModelerOptionsOP setup_modeler_options() const;
 
 		bool const & verbose_scores() const { return verbose_scores_; }
 		void set_verbose_scores( bool const & setting ){ verbose_scores_ = setting; };

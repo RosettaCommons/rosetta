@@ -30,7 +30,7 @@ length_key = lambda x: x[1] - x[0]
 combos.sort(key=length_key)
 lengths = map(length_key, combos)
 
-for key, pivots in enumerate(combos):
+for key, pivots in sampling(combos):
     pivots_to_keys[pivots] = key
     keys_to_pivots[key] = pivots
 

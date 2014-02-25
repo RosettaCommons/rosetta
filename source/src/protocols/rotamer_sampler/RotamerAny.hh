@@ -79,6 +79,9 @@ public:
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "RotamerAny"; }
 
+	/// @brief Type of class (see enum in RotamerTypes.hh)
+	virtual RotamerType type() const { return ANY; }
+
 private:
 	core::Size curr_rotamer_;
 	bool is_weighted_, is_empty_, has_empty_;

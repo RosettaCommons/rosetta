@@ -32,8 +32,8 @@
 #include <protocols/rotamer_sampler/rna/RNA_SugarRotamer.hh>
 #include <protocols/rotamer_sampler/rna/RNA_NucleosideRotamer.hh>
 #include <protocols/rotamer_sampler/rna/RNA_SuiteRotamer.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Classes.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Classes.hh>
 
 //////////////////////////////////////////////////////////
 
@@ -44,7 +44,7 @@
 using namespace core;
 using namespace core::chemical::rna;
 using namespace protocols::rotamer_sampler::rna;
-using namespace protocols::stepwise::enumerate::rna;
+using namespace protocols::stepwise::sampling::rna;
 
 void test() {
 	using namespace core::pose;

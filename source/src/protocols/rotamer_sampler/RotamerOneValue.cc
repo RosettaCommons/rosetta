@@ -29,43 +29,17 @@ namespace protocols {
 namespace rotamer_sampler {
 ///////////////////////////////////////////////////////////////////////////
 RotamerOneValue::RotamerOneValue():
-	RotamerSized(),
-	id_( 0 )
+	RotamerSized()
 {}
 
 RotamerOneValue::RotamerOneValue(
 		ValueList const & allowed_values
 ):
 	RotamerSized(),
-	id_( 0 ),
 	values_( allowed_values )
 {}
 
 RotamerOneValue::~RotamerOneValue(){}
-
-///////////////////////////////////////////////////////////////////////////
-void RotamerOneValue::reset() {
-	runtime_assert( is_init() );
-	if ( random() ) {
-		++( *this );
-	} else {
-		id_ = 1;
-	}
-}
-///////////////////////////////////////////////////////////////////////////
-void RotamerOneValue::operator++() {
-	runtime_assert( not_end() );
-	if ( random() ) {
-		id_ = RG.random_range( 1, size() );
-	} else {
-		++id_;
-	}
-}
-///////////////////////////////////////////////////////////////////////////
-bool RotamerOneValue::not_end() const {
-	runtime_assert( is_init() );
-	return ( id_ <= size() );
-}
 
 }
 }

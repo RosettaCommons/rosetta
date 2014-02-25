@@ -13,6 +13,8 @@
 // Protocol headers
 #include <protocols/moves/MonteCarlo.hh>
 
+#include <utility/string_util.hh>
+
 // C++ headers
 #include <sstream>
 #include <iomanip>
@@ -65,7 +67,7 @@ void Logger::log_ending(Pose const & pose)  {
 	log_ending_(pose);
 }
 
-/// @details All of the index variables (i, j, k) count from 1.  This function 
+/// @details All of the index variables (i, j, k) count from 1.  This function
 /// also counts from 1, in the sense that it will return 1 when i = j = k = 1.
 Size Logger::get_iteration_as_int() const {
 	return (i_ - 1) * J_ * K_ + (j_ - 1) * K_ + (k_ - 1) + 1;
@@ -92,7 +94,7 @@ string Logger::get_max_iteration_as_string() const {
 }
 
 Size Logger::get_num_digits(Size value) const {
-	return ceil(log10(value + 1));
+	return utility::get_num_digits( value );
 }
 
 bool Logger::all_tasks_succeeded() const {

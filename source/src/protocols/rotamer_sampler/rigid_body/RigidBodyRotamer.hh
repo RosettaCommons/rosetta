@@ -18,7 +18,10 @@
 
 #include <protocols/rotamer_sampler/RotamerOneValueComb.hh>
 #include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamer.fwd.hh>
+#include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerValueRange.hh>
+#include <core/id/AtomID.hh>
 #include <core/kinematics/Stub.hh>
+#include <core/kinematics/Jump.hh>
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
 
@@ -33,9 +36,13 @@ namespace rigid_body {
 	public:
 
 		//constructor
+		RigidBodyRotamer( pose::Pose const & pose,
+											Size const moving_res );
+
+		//constructor
 		RigidBodyRotamer( Size const moving_res,
-																				core::conformation::Residue const & template_moving_residue,
-																				core::kinematics::Stub const & reference_stub );
+											core::conformation::Residue const & moving_residue_at_origin,
+											core::kinematics::Stub const & reference_stub );
 
 		//destructor
 		~RigidBodyRotamer();
@@ -50,11 +57,17 @@ namespace rigid_body {
 												Size const id );
 
 		void apply( core::pose::Pose & pose,
-								core::conformation::Residue const & template_moving_residue );
+								core::conformation::Residue const & moving_residue_at_origin );
 
 		void apply( core::pose::Pose & pose,
-								core::conformation::Residue const & template_moving_residue,
+								core::conformation::Residue const & moving_residue_at_origin,
 								Size const id );
+
+
+		void apply( core::conformation::Residue & residue_initially_at_origin );
+
+		void
+		apply( Vector & xyz_initially_at_origin, Size const seqpos );
 
 		core::kinematics::Stub const &
 		get_stub();
@@ -65,13 +78,33 @@ namespace rigid_body {
 		core::kinematics::Stub const &
 		get_stub( Size const id );
 
+		core::conformation::Residue const &
+		get_residue_at_origin( Size const seqpos );
+
+		core::pose::PoseCOP pose_at_origin();
+		void
+		fast_forward_to_end();
+
 		void
 		fast_forward_to_next_translation();
 
 		void
 		fast_forward_to_next_euler_gamma();
 
-		// @brief set & get functions
+		ValueList const & get_values();
+
+		Size const & moving_res() const { return moving_res_; }
+
+		core::conformation::Residue const & moving_residue_at_origin() const { return *moving_residue_at_origin_; }
+
+		/// @brief Type of class (see enum in RotamerTypes.hh)
+		virtual RotamerType type() const { return RIGID_BODY; }
+
+		Size const & reference_res() const { return reference_res_; }
+		utility::vector1< Size > const & moving_partition_res() const { return moving_partition_res_;}
+
+		RigidBodyRotamerValueRange & value_range(){ return value_range_; }
+
 		void set_x_values( Real const centroid_x_min, Real const centroid_x_max, Real const centroid_x_bin );
 		void set_y_values( Real const centroid_y_min, Real const centroid_y_max, Real const centroid_y_bin );
 		void set_z_values( Real const centroid_z_min, Real const centroid_z_max, Real const centroid_z_bin );
@@ -79,34 +112,36 @@ namespace rigid_body {
 		void set_euler_z_values( Real const centroid_euler_z_min, Real const centroid_euler_z_max, Real const centroid_euler_z_bin );
 		void set_euler_gamma_values( Real const centroid_euler_gamma_min, Real const centroid_euler_gamma_max, Real const centroid_euler_gamma_bin );
 
-		ValueList const & get_values();
-
 	private:
 
 		void
-		set_sampler_values( Real const & val_min, Real const & val_max, Real const & val_bin, ValueList & values );
+		calculate_jump( pose::Pose & pose, Size const seq_num, kinematics::Stub const & moving_res_stub );
 
 		void
-		set_coordinate_frame( pose::Pose & pose, Size const & seq_num, core::conformation::Residue const & rsd_at_origin, core::kinematics::Stub const & moving_res_stub );
+		transform_single_residue( pose::Pose & pose, Size const & seq_num,
+															core::conformation::Residue const & rsd_at_origin, core::kinematics::Stub const & moving_res_stub );
+
+		void
+		apply_by_jump( pose::Pose & pose, Size const & seq_num,
+									 core::kinematics::Stub const & moving_res_stub );
 
 	private:
 
 		Size const moving_res_;
-		conformation::Residue const & template_moving_residue_;
-		kinematics::Stub const & reference_stub_;
+		conformation::ResidueCOP moving_residue_at_origin_;
+		kinematics::Stub reference_stub_;
 		kinematics::Stub moving_res_stub_;
-		int centroid_bin_min_;
-		int centroid_bin_max_;
-		Real centroid_bin_size_;
-		int euler_angle_bin_min_;
-		int euler_angle_bin_max_;
-		Real euler_angle_bin_size_;
-		int euler_z_bin_min_;
-		int euler_z_bin_max_;
-		Real euler_z_bin_size_;
 
-		ValueList x_values_, y_values_, z_values_;
-		ValueList euler_alpha_values_, euler_z_values_, euler_gamma_values_;
+		RigidBodyRotamerValueRange value_range_;
+
+		kinematics::Jump jump_;
+		id::AtomID jump_atom_id_;
+
+		// following is only set when RigidBodyRotamer is initialized with a pose.
+		Size const reference_res_;
+		utility::vector1< Size > moving_partition_res_;
+		pose::PoseCOP pose_at_origin_;
+
 	};
 
 } //rigid_body

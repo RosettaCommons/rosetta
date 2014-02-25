@@ -84,6 +84,9 @@ public:
 	/// @brief Name of the class
 	std::string get_name() const { return "McOneTorsion"; }
 
+	/// @brief Type of class (see enum in RotamerTypes.hh)
+	virtual RotamerType type() const { return MC_ONE_TORSION; }
+
 private:
 	bool check_angle_in_range( core::Real angle ) const;
 	void regularize_angle( core::Real & angle );

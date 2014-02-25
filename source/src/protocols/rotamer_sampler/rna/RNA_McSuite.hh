@@ -93,6 +93,9 @@ public:
 	/// @brief Name of the class
 	std::string get_name() const { return "RNA_McSuite"; }
 
+	/// @brief Type of class (see enum in RotamerTypes.hh)
+	virtual RotamerType type() const { return RNA_MC_SUITE; }
+
 private:
 	core::Size const rsd_id_;
 	bool skip_same_pucker_, idealize_coord_, sample_near_a_form_, sample_bb_,

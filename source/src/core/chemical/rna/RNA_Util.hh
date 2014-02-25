@@ -95,7 +95,7 @@ get_watson_crick_base_pair_atoms(
 
 //Copied from Parin SRC on Dec 23, 2011.
 numeric::xyzVector<core::Real>
-get_rna_base_centroid( core::conformation::Residue const & rsd , bool verbose);
+get_rna_base_centroid( core::conformation::Residue const & rsd , bool verbose = false );
 
 numeric::xyzMatrix< core::Real >
 get_rna_base_coordinate_system( core::conformation::Residue const & rsd, numeric::xyzVector<core::Real> const & centroid );

@@ -11,8 +11,8 @@
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu), Rhiju Das (rhiju@stanford.edu)
 
 // libRosetta headers
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_PoseSetupFromCommandLine.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Modeler.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetupFromCommandLine.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -92,19 +92,19 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/farna/RNA_ProtocolUtil.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_OutputData.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh>
-#include <protocols/stepwise/enumerate/rna/sugar/StepWiseRNA_VirtualSugarSamplerFromStringList.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Minimizer.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_ResidueSampler.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_PoseSetup.fwd.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_PoseSetup.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_JobParametersSetup.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_JobParameters.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Clusterer.hh>
-#include <protocols/stepwise/enumerate/rna/screener/StepWiseRNA_VDW_BinScreener.hh>
-#include <protocols/stepwise/enumerate/rna/screener/StepWiseRNA_BaseCentroidScreener.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_OutputData.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_CombineLongLoopFilterer.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_CombineLongLoopFilterer.fwd.hh>
+#include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarSamplerFromStringList.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Minimizer.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_ResidueSampler.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetup.fwd.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetup.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParametersSetup.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Clusterer.hh>
+#include <protocols/stepwise/sampling/rna/checker/RNA_VDW_BinChecker.hh>
+#include <protocols/stepwise/sampling/rna/checker/RNA_BaseCentroidChecker.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/FArray1D.hh>
@@ -190,7 +190,7 @@ swa_rna_sample()
   using namespace core::chemical;
   using namespace core::kinematics;
   using namespace core::scoring;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 
 	output_title_text( "Enter swa_rna_sample()", TR );
 
@@ -266,7 +266,7 @@ swa_rna_sample()
 void
 swa_rna_cluster(){
 
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 
 	StepWiseRNA_JobParametersOP job_parameters;
 
@@ -284,11 +284,11 @@ swa_rna_cluster(){
 
 	StepWiseRNA_JobParametersCOP job_parameters_COP = job_parameters;
 	//////////////////////////////////////////////////////////////
-	screener::StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener = new screener::StepWiseRNA_VDW_BinScreener();
-	if ( option[ VDW_rep_screen_info].user() ){ //This is used for post_processing only. Main VDW_rep_screener should be in the sampler.
-		user_input_VDW_bin_screener->set_VDW_rep_alignment_RMSD_CUTOFF( option[ basic::options::OptionKeys::stepwise::rna::VDW_rep_alignment_RMSD_CUTOFF]() );
-		user_input_VDW_bin_screener->set_VDW_rep_delete_matching_res( option[ basic::options::OptionKeys::stepwise::rna::VDW_rep_delete_matching_res ]() );
-		user_input_VDW_bin_screener->set_physical_pose_clash_dist_cutoff( option[ basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_physical_pose_clash_dist_cutoff ]() );
+	checker::RNA_VDW_BinCheckerOP user_input_VDW_bin_checker = new checker::RNA_VDW_BinChecker();
+	if ( option[ VDW_rep_screen_info].user() ){ //This is used for post_processing only. Main VDW_rep_checker should be in the sampler.
+		user_input_VDW_bin_checker->set_VDW_rep_alignment_RMSD_CUTOFF( option[ basic::options::OptionKeys::stepwise::rna::VDW_rep_alignment_RMSD_CUTOFF]() );
+		user_input_VDW_bin_checker->set_VDW_rep_delete_matching_res( option[ basic::options::OptionKeys::stepwise::rna::VDW_rep_delete_matching_res ]() );
+		user_input_VDW_bin_checker->set_physical_pose_clash_dist_cutoff( option[ basic::options::OptionKeys::stepwise::rna::VDW_rep_screen_physical_pose_clash_dist_cutoff ]() );
 	}
 
 	//////////////////////////////////////////////////////////////
@@ -343,7 +343,7 @@ swa_rna_cluster(){
 
 
 	//////////////////////////////////////////////////
-	protocols::stepwise::enumerate::rna::StepWiseRNA_Clusterer stepwise_rna_clusterer( non_empty_silent_files_in );
+	protocols::stepwise::sampling::rna::StepWiseRNA_Clusterer stepwise_rna_clusterer( non_empty_silent_files_in );
 
 	stepwise_rna_clusterer.set_max_decoys( option[ clusterer_num_pose_kept ]() );
 	stepwise_rna_clusterer.set_score_diff_cut( option[ score_diff_cut ]() );
@@ -370,7 +370,7 @@ swa_rna_cluster(){
 	stepwise_rna_clusterer.set_perform_filters( option[ clusterer_perform_filters ]() );
 	stepwise_rna_clusterer.set_min_num_south_sugar_filter( option[ clusterer_min_num_south_sugar_filter ]() );
 	stepwise_rna_clusterer.set_VDW_rep_screen_info( option[ VDW_rep_screen_info]() );
-	stepwise_rna_clusterer.set_user_input_VDW_bin_screener( user_input_VDW_bin_screener );
+	stepwise_rna_clusterer.set_user_input_VDW_bin_checker( user_input_VDW_bin_checker );
 	stepwise_rna_clusterer.set_ignore_FARFAR_no_auto_bulge_tag( option[ clusterer_ignore_FARFAR_no_auto_bulge_tag ]() );
 	stepwise_rna_clusterer.set_ignore_FARFAR_no_auto_bulge_parent_tag( option[ clusterer_ignore_FARFAR_no_auto_bulge_parent_tag ]() );
 	stepwise_rna_clusterer.set_ignore_unmatched_virtual_res( option[ clusterer_ignore_unmatched_virtual_res ]() );
@@ -418,7 +418,7 @@ rna_sample_virtual_sugar(){ //July 19th, 2011...rebuild the bulge nucleotides af
   using namespace core::chemical;
   using namespace core::kinematics;
   using namespace core::scoring;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 
 	output_title_text( "Enter rna_sample_virtual_sugar()", TR );
 
@@ -472,7 +472,7 @@ filter_combine_long_loop()
   using namespace core::chemical;
   using namespace core::kinematics;
   using namespace core::scoring;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -543,7 +543,7 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
   using namespace core::chemical;
   using namespace core::kinematics;
   using namespace core::scoring;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace core::io::silent;
 	using namespace core::conformation;
 	using namespace ObjexxFCL;
@@ -759,7 +759,7 @@ void*
 my_main( void* )
 {
 
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
   using namespace basic::options;
 
 	clock_t const my_main_time_start( clock() );
@@ -871,7 +871,7 @@ main( int argc, char * argv [] )
 		NEW_OPT( loop_cluster_radius, " loop_cluster_radius ", 999.99 ); 													//IMPORTANT, DO NOT CHANGE DEFAULT VALUE!
 		NEW_OPT( clusterer_full_length_loop_rmsd_clustering, "use the full_length_rmsd function to calculate loop_rmsd", false ); //April 06, 2011: Should switch to true for all length_full clustering steps.
 
-		//////////VDW_bin_screener//////////
+		//////////VDW_bin_checker//////////
 		NEW_OPT( VDW_rep_screen_info, "VDW_rep_screen_info to create VDW_rep_screen_bin ( useful when building loop from large poses )", blank_string_vector ); //Jun 9, 2010
 
 		//////////////CombineLongLoopFilterer/////////////

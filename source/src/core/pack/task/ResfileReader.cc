@@ -22,6 +22,7 @@
 #include <core/pose/PDBInfo.hh>
 
 // Project Headers
+#include <core/chemical/types.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
@@ -398,7 +399,8 @@ ResfileContents::parse_resid(
 	}
 	chain = token[0];
 	if (chain == '_') chain = ' ';
-	if(core::pose::chr_chains.find(chain) == std::string::npos){
+	if(core::chemical::chr_chains.find(chain) == std::string::npos
+		 && chain != ' ' ){
 		stringstream err_msg;
 		err_msg
 			<< "On line " << lineno << ", "

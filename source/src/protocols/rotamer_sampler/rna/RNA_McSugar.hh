@@ -64,6 +64,9 @@ public:
 	/// @brief Name of the class
 	std::string get_name() const { return "RNA_McSugar"; }
 
+	/// @brief Type of class (see enum in RotamerTypes.hh)
+	virtual RotamerType type() const { return RNA_MC_SUGAR; }
+
 private:
 	core::Size stored_pucker_state_, active_pucker_state_;
 	core::Real flip_rate_;

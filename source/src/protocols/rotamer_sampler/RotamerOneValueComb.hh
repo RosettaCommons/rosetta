@@ -47,6 +47,9 @@ public:
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "RotamerOneValueComb"; }
 
+	/// @brief Type of class (see enum in RotamerTypes.hh)
+	virtual RotamerType type() const { return ONE_VALUE_COMB; }
+
 private:
 
 	/// @brief Add one more rotamer sampler to this sampler -- note that this is now made 'private', so that users can only add RotamerOneValueOPs

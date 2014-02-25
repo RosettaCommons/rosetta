@@ -21,7 +21,7 @@
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloOptions.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloUtil.hh>

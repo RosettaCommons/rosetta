@@ -96,16 +96,16 @@
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/viewer/viewers.hh>
 
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh> 
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh> 
 #include <protocols/farna/RNA_ProtocolUtil.hh> 
 #include <protocols/farna/RNA_BasePairClassifier.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_ResidueInfo.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_JobParameters.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_ResidueInfo.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/stepwise/StepWiseClusterer.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_BaseSugarRotamer.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_BaseSugarRotamer.fwd.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_BaseSugarRotamer.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_BaseSugarRotamer.fwd.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>
 #include <protocols/farna/RNA_LoopCloser.fwd.hh>
 
@@ -143,7 +143,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
 using io::pdb::dump_pdb;
-using namespace protocols::stepwise::enumerate::rna;
+using namespace protocols::stepwise::sampling::rna;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -251,7 +251,7 @@ multiple_variant_type_test(){
 	  using namespace core::chemical;
 	  using namespace core::kinematics;
 	  using namespace core::scoring;
-		using namespace protocols::stepwise::enumerate::rna;
+		using namespace protocols::stepwise::sampling::rna;
 
 		ResidueTypeSetCAP rsd_set;
 		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
@@ -325,7 +325,7 @@ align_pdbs_function(pose::Pose const static_pose,
 	using namespace core::conformation;
 	using namespace core::pose;
 	using namespace protocols::farna;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
@@ -472,7 +472,7 @@ convert_silent_file_to_pose_data_list(std::string const silent_file){
 
 		std::string const & tag( silent_struct->decoy_tag() );
 
-		if(protocols::stepwise::enumerate::rna::check_for_messed_up_structure((*pose_op), tag ) ) {
+		if(protocols::stepwise::sampling::rna::check_for_messed_up_structure((*pose_op), tag ) ) {
 			utility_exit_with_message("tag= " + tag  + " is messed up!");
 		}
 
@@ -592,7 +592,7 @@ hermann_phase_two_minimize(){
 	using namespace core::scoring;
   using namespace core::kinematics;
   using namespace core::scoring;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace core::optimization;
 	//using namespace protocols::farna;
 	using namespace core::id;
@@ -1182,16 +1182,16 @@ hermann_phase_two_minimize(){
 				BinaryRNASilentStruct s( full_pose, full_pose_tag_MOD );
 
 				if(verbose){
-						protocols::stepwise::enumerate::rna::output_seq_num_list("native_virtual_res_list=", native_virtual_res_list, TR );
-						protocols::stepwise::enumerate::rna::output_seq_num_list("native_alignment_res_list=",native_alignment_res_list, TR );
-						protocols::stepwise::enumerate::rna::output_seq_num_list("rmsd_res_list=",rmsd_res_list, TR );
+						protocols::stepwise::sampling::rna::output_seq_num_list("native_virtual_res_list=", native_virtual_res_list, TR );
+						protocols::stepwise::sampling::rna::output_seq_num_list("native_alignment_res_list=",native_alignment_res_list, TR );
+						protocols::stepwise::sampling::rna::output_seq_num_list("rmsd_res_list=",rmsd_res_list, TR );
 				}
 
 
 				pose::Pose native_pose=native_pose_ACT; //HARD COPY
 
 				for(Size n=1; n<=native_virtual_res_list.size(); n++){
-					protocols::stepwise::enumerate::rna::apply_virtual_rna_residue_variant_type(native_pose, native_virtual_res_list[n], true /*apply_check*/);
+					protocols::stepwise::sampling::rna::apply_virtual_rna_residue_variant_type(native_pose, native_virtual_res_list[n], true /*apply_check*/);
 				}
 
 				//std::map< core::Size, core::Size > full_to_sub;
@@ -1207,7 +1207,7 @@ hermann_phase_two_minimize(){
 				//	full_to_sub[n]=n;
 				//}
 
-				protocols::stepwise::enumerate::rna::align_poses(native_pose, "native", full_pose, full_pose_tag_MOD, native_alignment_res_list);
+				protocols::stepwise::sampling::rna::align_poses(native_pose, "native", full_pose, full_pose_tag_MOD, native_alignment_res_list);
 
 				s.add_energy( "Full_L_rmsd", full_length_rmsd_over_residue_list(full_pose, native_pose, rmsd_res_list, native_pose.sequence(), verbose, false) );
 				s.add_energy( "Full_V_L_rms", full_length_rmsd_over_residue_list(full_pose, native_pose, rmsd_res_list, native_pose.sequence(), verbose, true) );
@@ -1750,7 +1750,7 @@ extract_clash_list(){
 	using namespace core::kinematics;
 	using namespace core::optimization;
 	using namespace core::io::silent;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace protocols::farna;
 	using namespace scoring::rna;
 	using namespace core::conformation;
@@ -1878,7 +1878,7 @@ extract_hydrogen_bonds_statistic(){
 	using namespace core::kinematics;
 	using namespace core::optimization;
 	using namespace core::io::silent;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace protocols::farna;
 	using namespace scoring::rna;
 	using namespace core::conformation;
@@ -2133,7 +2133,7 @@ test_function(){
 	using namespace core::kinematics;
 	using namespace core::optimization;
 	using namespace core::io::silent;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace core::conformation;
 	using namespace ObjexxFCL;
 	using namespace core::io::silent;
@@ -2231,7 +2231,7 @@ get_pose_energy_breakdown(){
 	using namespace core::kinematics;
 	using namespace core::optimization;
 	using namespace core::io::silent;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace core::conformation;
 	using namespace ObjexxFCL;
 	using namespace core::io::silent;
@@ -2280,7 +2280,7 @@ minimize_pdb(){
   using namespace core::chemical;
   using namespace core::kinematics;
   using namespace core::scoring;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace ObjexxFCL;
 	using namespace core::optimization;
 

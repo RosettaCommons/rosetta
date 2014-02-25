@@ -21,7 +21,7 @@
 #include <protocols/stepwise/monte_carlo/SWA_Move.fwd.hh>
 #include <protocols/stepwise/monte_carlo/SWA_MoveSelector.fwd.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloOptions.fwd.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Modeler.fwd.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -36,7 +36,7 @@ namespace rna {
 	public:
 
 		//constructor
-		RNA_ResampleMover( protocols::stepwise::enumerate::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler );
+		RNA_ResampleMover( protocols::stepwise::sampling::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler );
 
 		//destructor
 		~RNA_ResampleMover();
@@ -68,7 +68,7 @@ namespace rna {
 
 	private:
 
-		protocols::stepwise::enumerate::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
+		protocols::stepwise::sampling::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
 		SWA_MoveSelectorOP swa_move_selector_;
 		StepWiseRNA_MonteCarloOptionsCOP options_;
 

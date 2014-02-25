@@ -59,7 +59,7 @@ models = arange(count)
 error = zeros(count)
 reference = None
 
-for index, subpath in enumerate(paths):
+for index, subpath in sampling(paths):
     if not arguments.quiet:
         sys.stdout.write('\r[%d/%d]' % (index, count - 1))
         sys.stdout.flush()

@@ -15,7 +15,7 @@
 #ifndef INCLUDED_core_chemical_types_hh
 #define INCLUDED_core_chemical_types_hh
 
-// AUTO-REMOVED #include <core/types.hh>
+#include <string>
 
 // Numeric headers
 
@@ -27,6 +27,8 @@
 namespace core {
 namespace chemical {
 
+// this used to be in PDBInfo.hh and had a space as the first character -- rhiju.
+static std::string const chr_chains( "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz" );
 
 enum Hybridization {
 	SP2_HYBRID = 1,

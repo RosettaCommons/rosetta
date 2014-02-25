@@ -15,6 +15,7 @@
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -196,8 +197,7 @@ update_pdb_info_from_full_model_info( pose::Pose & pose ){
 	// fill chains...
 	utility::vector1< Size > chain_numbers = figure_out_chains_from_full_model_info( pose );
 	utility::vector1< char > chains;
-	std::string const chain_char = "ABCDEFGHIJKLMNOPQRSTUVWZYX"; // hope this works.
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( chain_char[ chain_numbers[n]-1 ] );
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( core::chemical::chr_chains[ chain_numbers[n]-1 ] );
 	pdb_info->set_chains( chains );
 
 	pose.pdb_info( pdb_info );

@@ -39,9 +39,6 @@ public:
 	/// @brief Move to next rotamer
 	virtual void operator++();
 
-	/// @brief Check if reach the end of rotamer list
-	virtual bool not_end() const;
-
 	/// @brief Apply the current rotamer to pose
 	virtual void apply( core::pose::Pose & pose );
 
@@ -69,11 +66,15 @@ public:
 
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "RotamerSizedAny"; }
+
+	/// @brief Type of class (see enum in RotamerTypes.hh)
+	virtual RotamerType type() const { return SIZED_ANY; }
+
 private:
 	/// @brief Convert an id number to the sampler state pair.
 	std::pair<core::Size, core::Size> id2state( core::Size const id ) const;
 
-	core::Size size_, id_;
+	core::Size size_;
 
 	std::pair<core::Size, core::Size> curr_state_;
 

@@ -116,6 +116,9 @@ sources = {
 	"core/pose/carbohydrates": [
 		"util",
 	],
+	"core/pose/copydofs": [
+	        "CopyDofs",
+	],
 	"core/pose/datacache": [
 		"cacheable_observers",
 		"CacheableDataType",

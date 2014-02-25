@@ -16,11 +16,11 @@
 #include <core/pose/PDBInfo.hh>
 
 // Project headers
+#include <core/chemical/types.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/signals/IdentityEvent.hh>
 #include <core/conformation/signals/LengthEvent.hh>
-// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBPoseMap.hh>
 
@@ -44,6 +44,7 @@
 //using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
+using core::chemical::chr_chains;
 
 namespace core {
 namespace pose {
@@ -103,8 +104,9 @@ PDBInfo::PDBInfo(
 		// do this manually to save on method calls
 		for ( Size i = 1, ie = pose.total_residue(); i <= ie; ++i ) {
 			ResidueRecord & rr = residue_rec_[ i ];
-			//assert( pose.residue( i ).chain() < chr_chains.size() );
-			rr.chainID = chr_chains[ pose.residue( i ).chain() % chr_chains.size() ];  //fpd wrap around if > 62 chains
+			// fpd: wrap around if > 62 chains.
+			// rhiju: note -- got rid of _ as first char of chr_chains.
+			rr.chainID = chr_chains[ (pose.residue( i ).chain() - 1)  % chr_chains.size() ];
 			rr.resSeq = static_cast< int >( i );
 		}
 		rebuild_pdb2pose();

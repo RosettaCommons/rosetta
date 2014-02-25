@@ -43,15 +43,6 @@ public:
 		reset();
 	}
 
-	/// @brief Reset to the first (or random if random()) rotamer
-	virtual void reset();
-
-	/// @brief Move to next rotamer
-	virtual void operator++();
-
-	/// @brief Check if reach the end of rotamer list
-	virtual bool not_end() const;
-
 	/// @brief Apply the current rotamer to pose
 	virtual void apply( core::pose::Pose & ){}
 
@@ -84,8 +75,10 @@ public:
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "RotamerOneValue"; }
 
+	/// @brief Type of class (see enum in RotamerTypes.hh)
+	virtual RotamerType type() const { return ONE_VALUE; }
+
 protected: // will be available to derived classes.
-	core::Size id_;
 	ValueList values_;
 };
 

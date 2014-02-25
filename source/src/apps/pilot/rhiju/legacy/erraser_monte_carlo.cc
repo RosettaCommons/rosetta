@@ -42,9 +42,9 @@
 
 
 //////////////////////////////////////////////////////////
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Modeler.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_ModelerOptions.hh>
-#include <protocols/stepwise/enumerate/rna/StepWiseRNA_Util.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 #include <protocols/stepwise/monte_carlo/rna/TransientCutpointHandler.hh>
 #include <protocols/farna/RNA_ProtocolUtil.hh>
 #include <protocols/viewer/viewers.hh>
@@ -133,7 +133,7 @@ erraser_monte_carlo()
   using namespace core::optimization;
   using namespace core::import_pose;
 	using namespace protocols::stepwise;
-	using namespace protocols::stepwise::enumerate::rna;
+	using namespace protocols::stepwise::sampling::rna;
 	using namespace protocols::stepwise::monte_carlo::rna;
 	using namespace protocols::moves;
 
