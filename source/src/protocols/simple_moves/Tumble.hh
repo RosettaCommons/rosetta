@@ -28,6 +28,8 @@
 
 #include <core/pose/Pose.fwd.hh>
 
+#include <core/scoring/ScoreFunction.fwd.hh>
+
 #include <protocols/moves/Mover.hh>
 
 #include <utility/tag/Tag.fwd.hh>
