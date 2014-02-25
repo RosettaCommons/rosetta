@@ -35,9 +35,9 @@ namespace screener {
 		vdw_bin_checker_( vdw_bin_checker),
 		screening_pose_( screening_pose ),
 		moving_res_( moving_res ),
+		using_stub_( false ),
 		screening_moving_rsd_at_origin_( 0 ),
-		moving_res_base_stub_( core::kinematics::default_stub ),
-		using_stub_( false )
+		moving_res_base_stub_( core::kinematics::default_stub )
 	{}
 
 	VDW_BinScreener::VDW_BinScreener( sampling::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,
@@ -48,9 +48,9 @@ namespace screener {
 		vdw_bin_checker_( vdw_bin_checker),
 		screening_pose_( screening_pose ),
 		moving_res_( moving_res ),
+		using_stub_( true ),
 		screening_moving_rsd_at_origin_( screening_moving_rsd_at_origin ),
-		moving_res_base_stub_( moving_res_base_stub ),
-		using_stub_( true )
+		moving_res_base_stub_( moving_res_base_stub )
 	{}
 
 	//Destructor

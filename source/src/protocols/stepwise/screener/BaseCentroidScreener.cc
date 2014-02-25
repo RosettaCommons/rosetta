@@ -36,8 +36,8 @@ namespace screener {
 		base_centroid_checker_( base_centroid_checker ),
 		screening_pose_( screening_pose ),
 		force_centroid_interaction_( force_centroid_interaction ),
-		moving_res_base_stub_( core::kinematics::default_stub ),
-		using_stub_( false )
+		using_stub_( false ),
+		moving_res_base_stub_( core::kinematics::default_stub )
 	{
 	}
 
@@ -47,8 +47,8 @@ namespace screener {
 		base_centroid_checker_( base_centroid_checker ),
 		screening_pose_( 0 ),
 		force_centroid_interaction_( true ),
-		moving_res_base_stub_( moving_res_base_stub ),
-		using_stub_( true )
+		using_stub_( true ),
+		moving_res_base_stub_( moving_res_base_stub )
 	{
 	}
 

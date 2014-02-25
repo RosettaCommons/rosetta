@@ -129,21 +129,21 @@ namespace connection {
 
 //Constructor
 StepWiseRNA_ConnectionSampler::StepWiseRNA_ConnectionSampler( StepWiseRNA_JobParametersCOP & job_parameters ):
+	job_parameters_( job_parameters ), // hope to deprecate later today
 	moving_res_( job_parameters_->working_moving_res() ),
 	reference_res_( 0 ), // updated below.
 	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "rna_hires.wts" ) ), // can be replaced from the outside
 	silent_file_( "silent_file.txt" ),
-	max_distance_squared_( 0.0 ), // updated below
-	extra_tag_( "" ),
-	o2prime_instantiation_distance_cutoff_( 6.0 ),
-	rigid_body_sampling_( false ), // will be updated below.
-	try_sugar_instantiation_( false ),
-	virt_sugar_atr_rep_screen_( true ),
-	job_parameters_( job_parameters ), // hope to deprecate later today
 	build_pose_from_scratch_( job_parameters->working_sequence().length() == ( job_parameters->working_moving_res_list().size() + 1 ) ), // somewhat hacky, used for rna puzzle
+	max_distance_squared_( 0.0 ), // updated below
 	last_append_res_(  job_parameters->is_prepend() ? moving_res_ - 1: moving_res_ ), // still supported?
 	last_prepend_res_( job_parameters->is_prepend() ? moving_res_: moving_res_ + 1 ), // still supported?
-	atom_atom_overlap_dist_cutoff_( -1.0 ) // still supported?
+	atom_atom_overlap_dist_cutoff_( -1.0 ), // still supported?
+	rigid_body_sampling_( false ), // will be updated below.
+	try_sugar_instantiation_( false ),
+	o2prime_instantiation_distance_cutoff_( 6.0 ),
+	extra_tag_( "" ),
+	virt_sugar_atr_rep_screen_( true )
 {
 	set_native_pose( job_parameters_->working_native_pose() );
 }
@@ -694,12 +694,10 @@ StepWiseRNA_ConnectionSampler::check_job_parameters( pose::Pose const & pose ){
 
 	bool const is_prepend_ = job_parameters_->is_prepend();
 	Size const five_prime_chain_break_res_( job_parameters_->five_prime_chain_break_res() );
-	Size const chain_break_reference_res_( ( is_prepend_ ) ? five_prime_chain_break_res_ : five_prime_chain_break_res_ + 1 );
 	if ( five_prime_chain_break_res_ ) runtime_assert( five_prime_chain_breaks_.has_value( five_prime_chain_break_res_ ) );
 
 	if ( rigid_body_sampling_ ){
 		Size const floating_base_five_prime_chain_break_ ( ( is_prepend_ ) ? moving_res_   : reference_res_ );
-		Size const floating_base_three_prime_chain_break_( ( is_prepend_ ) ? reference_res_: moving_res_ );
 		runtime_assert( five_prime_chain_breaks_.has_value( floating_base_five_prime_chain_break_ ) );
 	}
 
@@ -707,8 +705,6 @@ StepWiseRNA_ConnectionSampler::check_job_parameters( pose::Pose const & pose ){
 	Size const gap_size_to_anchor_ = job_parameters_->gap_size_to_anchor();
 	if ( rigid_body_sampling_ && gap_size_to_anchor_ == 0 )	runtime_assert( pose.fold_tree().is_cutpoint( moving_res_ - 1 ) );
 
-	bool const close_chain_to_distal_( gap_size_ == 0 );
-	bool const close_chain_to_anchor_( gap_size_to_anchor_ == 0 );
 	bool const 	is_dinucleotide_( gap_size_to_anchor_ == 1 );
 	runtime_assert ( !is_dinucleotide_ || !job_parameters_->is_internal() );
 

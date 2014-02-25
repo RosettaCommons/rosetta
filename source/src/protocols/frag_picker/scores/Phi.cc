@@ -25,7 +25,7 @@ namespace protocols {
 namespace frag_picker {
 namespace scores {
 
-static const core::Real PHI_MIN_CONF = 0.5;
+//static const core::Real PHI_MIN_CONF = 0.5;
 
 void Phi::do_caching(VallChunkOP current_chunk) {
   std::string ctmp = current_chunk()->chunk_key();

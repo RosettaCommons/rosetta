@@ -65,8 +65,8 @@ namespace rna {
   //////////////////////////////////////////////////////////////////////////
   //constructor!
 	RNA_DeleteMover::RNA_DeleteMover( ):
-		minimize_after_delete_( true ),
-		options_( new StepWiseRNA_MonteCarloOptions )
+		options_( new StepWiseRNA_MonteCarloOptions ),
+		minimize_after_delete_( true )
 	{}
 
   //////////////////////////////////////////////////////////////////////////

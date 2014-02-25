@@ -44,12 +44,6 @@ namespace rigid_body {
 	////////////////////////////////////////////////////////////////////////////////////////
 	void
 	RigidBodyRotamerValueRange::init(){
-
- 		int const euler_angle_bin_min =  - 180/euler_angle_bin_size_    ; //Should be -180/euler_angle_bin_size
-		int const euler_angle_bin_max =    180/euler_angle_bin_size_ - 1;  //Should be 180/euler_angle_bin_size-1
-		int const euler_z_bin_min = int(  - 1/euler_z_bin_size_ );
-		int const euler_z_bin_max = int(    1/euler_z_bin_size_ );
-
 		Real const max_angle_rounded = int( 180 / euler_angle_bin_size_ ) * euler_angle_bin_size_;
 		TR << -max_angle_rounded + 0.5 * Real ( euler_angle_bin_size_ ) << " " <<
 			+max_angle_rounded - 0.5 * Real ( euler_angle_bin_size_ ) << " " <<

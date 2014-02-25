@@ -9,7 +9,7 @@
 
 /// @file protocols/rotamer_sampler/rigid_body/FloatingBaseUtil.cc
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
@@ -86,7 +86,7 @@ namespace rigid_body {
 																		 Size const moving_res ){
 		kinematics::FoldTree const & fold_tree = pose.fold_tree();
 		for ( Size n = 1; n <= fold_tree.num_jump(); n++ ) {
-			if ( fold_tree.downstream_jump_residue( n ) == moving_res  ) {
+			if ( fold_tree.downstream_jump_residue( n ) == static_cast< int >( moving_res ) ) {
 				Size const reference_res = fold_tree.upstream_jump_residue( n );
 				return reference_res;
 			}
@@ -102,8 +102,8 @@ namespace rigid_body {
 		Size jump_number( 0 );
 		kinematics::FoldTree const & fold_tree = pose.fold_tree();
 		for ( Size n = 1; n <= fold_tree.num_jump(); n++ ) {
-			if ( fold_tree.downstream_jump_residue( n ) == moving_res &&
-					 fold_tree.upstream_jump_residue( n ) == reference_res ) {
+			if ( fold_tree.downstream_jump_residue( n ) == static_cast< int >( moving_res ) &&
+					fold_tree.upstream_jump_residue( n ) == static_cast< int >( reference_res ) ) {
 				jump_number = n;
 				break;
 			}

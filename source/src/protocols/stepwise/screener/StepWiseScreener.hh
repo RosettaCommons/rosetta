@@ -42,7 +42,7 @@ namespace screener {
 
 		virtual
 		void
-		get_update( rotamer_sampler::RotamerBaseOP sampler ){}
+		get_update( rotamer_sampler::RotamerBaseOP ){}
 
 		virtual
 		void

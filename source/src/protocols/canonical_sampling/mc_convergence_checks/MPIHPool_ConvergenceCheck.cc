@@ -53,13 +53,13 @@ namespace protocols{
 namespace canonical_sampling{
 namespace mc_convergence_checks{
 
-  int const FINISHED = 1;
-  int const IN_PROGRESS = 0;
-  int const MPI_OUTPUT_RANK = 0;
-  int const OUTPUT_TAG = 1000;
 
 #ifdef USEMPI
-  MPI_Comm   protocols::canonical_sampling::mc_convergence_checks::MPIHPool_RMSD::MPI_COMM_POOL;
+	int const FINISHED = 1;
+	int const IN_PROGRESS = 0;
+	int const MPI_OUTPUT_RANK = 0;
+	int const OUTPUT_TAG = 1000;
+	MPI_Comm   protocols::canonical_sampling::mc_convergence_checks::MPIHPool_RMSD::MPI_COMM_POOL;
   using namespace basic;
   //
 

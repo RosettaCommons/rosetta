@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/sampling/rna/legacy/rigid_body/StepWiseRNA_RigidBodyConnectionSampler.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

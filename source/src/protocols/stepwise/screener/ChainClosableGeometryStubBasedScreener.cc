@@ -45,9 +45,9 @@ namespace screener {
 																 chain_closable_geometry_checker->three_prime_chain_break_res() ),
 		chain_closable_geometry_checker_( chain_closable_geometry_checker ),
 		screening_pose_list_( screening_pose_list ),
+		moving_rsd_at_origin_list_( moving_rsd_at_origin_list ),
 		moving_res_base_stub_( moving_res_base_stub ),
 		reference_res_( reference_res ),
-		moving_rsd_at_origin_list_( moving_rsd_at_origin_list ),
 		using_predefined_moving_rsd_list_( using_predefined_moving_rsd_list )
 	{}
 

@@ -226,7 +226,7 @@ namespace checker {
 	bool
 	RNA_BaseCentroidChecker::check_base_stack( core::kinematics::Stub const & moving_residue_base_stub,
 																						 core::kinematics::Stub const & other_base_stub,
-																						 bool const verbose  /* = false */ ) const{
+																						 bool const /* verbose = false */ ) const{
 		return check_base_stack( moving_residue_base_stub, other_base_stub, base_stack_axis_cutoff_, base_stack_planarity_cutoff_ );
 	}
 

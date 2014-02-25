@@ -106,10 +106,10 @@ StepWiseRNA_Minimizer::StepWiseRNA_Minimizer(
 	pose_list_( pose_list ),
 	job_parameters_( job_parameters ),
 	silent_file_( "silent_file.txt" ),
+	perform_electron_density_screen_( false ), // updated below
 	base_centroid_checker_( 0 ), //Owning-pointer.
 	vary_bond_geometry_frequency_( 0.0 ),
-	allow_variable_bond_geometry_( false ),
-	perform_electron_density_screen_( false ) // updated below
+	allow_variable_bond_geometry_( false )
 {
 	set_native_pose( job_parameters_->working_native_pose() );
 }

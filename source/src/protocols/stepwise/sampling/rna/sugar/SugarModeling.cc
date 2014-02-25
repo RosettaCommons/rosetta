@@ -56,15 +56,15 @@ namespace sugar {
 	SugarModeling::SugarModeling():
 		sample_sugar( false ),
 		moving_res( 0 ),
+		reference_res( 0 ),
+		is_prepend( false ),
 		bulge_res( 0 ),
 		bulge_suite( 0 ),
 		five_prime_chain_break( 0 ),
-		reference_res( 0 ),
 		moving_res_pucker_state( WHATEVER ),
 		bulge_res_pucker_state( WHATEVER ),
 		moving_res_base_state( WHATEVER ),
-		bulge_res_base_state( WHATEVER ),
-		is_prepend( false )
+		bulge_res_base_state( WHATEVER )
 	{
 		pose_list.clear(); //pose_data_list
 	}

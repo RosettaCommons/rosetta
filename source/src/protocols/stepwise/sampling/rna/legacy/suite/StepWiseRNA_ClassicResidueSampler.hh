@@ -9,7 +9,7 @@
 
 /// @file protocols/stepwise/sampling/rna/legacy/suite/StepWiseRNA_ClassicResidueSampler.hh
 /// @brief
-/// @detailed
+/// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
 

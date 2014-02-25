@@ -105,13 +105,13 @@ namespace suite {
 		is_dinucleotide_( num_nucleotides_ == 2 ),
 		close_chain_to_distal_( gap_size_ == 0 ),
 		five_prime_chain_break_res_( job_parameters_->five_prime_chain_break_res() ),
-		build_pose_from_scratch_( job_parameters_->working_sequence().length() == ( num_nucleotides_ + 1 ) ), // somewhat hacky, used for rna puzzle
-		kic_sampling_( false ), // will be updated below.
-		rebuild_bulge_mode_( job_parameters_->rebuild_bulge_mode() ),
 		last_append_res_( ( is_prepend_ ) ? moving_res_ - 1: moving_res_ ),
 		last_prepend_res_( ( is_prepend_ ) ? moving_res_: moving_res_ + 1 ),
 		atom_atom_overlap_dist_cutoff_(-1.0 ),
 		extra_tag_( "" ),
+		build_pose_from_scratch_( job_parameters_->working_sequence().length() == ( num_nucleotides_ + 1 ) ), // somewhat hacky, used for rna puzzle
+		kic_sampling_( false ), // will be updated below.
+		rebuild_bulge_mode_( job_parameters_->rebuild_bulge_mode() ),
 		scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "rna_hires.wts" ) ), // can be replaced from the outside
 		silent_file_( "silent_file.txt" ),
 		native_rmsd_screen_( false ), // will be updated below
@@ -306,9 +306,6 @@ namespace suite {
 	/////////////////////////////////////////////////////////////////////////////////
 	Size
 	StepWiseRNA_SuiteConnectionSampler::get_num_pose_kept(){
-
-		Size const num_nucleotides_(  job_parameters_->working_moving_res_list().size() );
-		bool const is_dinucleotide_ = ( num_nucleotides_ == 2 );
 
 		Size num_pose_kept = options_->sampler_num_pose_kept();
 

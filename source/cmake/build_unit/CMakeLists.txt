@@ -51,7 +51,7 @@ SET(COMPILE_FLAGS "${COMPILE_FLAGS} -std=c++98 -pipe -ffor-scope -O0 -g -ggdb -f
 SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Wall -Wextra -pedantic -Wno-long-long")
 
 # Warnings as errors to match scons build
-SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror=sign-compare -Werror=unused-parameter")
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror=sign-compare -Werror=unused-parameter -Werror=reorder -Werror=unused-variable")
 
 IF( ${COMPILER} STREQUAL "clang" )
     # Quiet warnings about non-clang compatable arguments (either gcc-specific ones, or newer-version ones.)

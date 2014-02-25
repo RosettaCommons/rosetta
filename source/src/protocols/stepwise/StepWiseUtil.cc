@@ -2257,7 +2257,7 @@ rotate( pose::Pose & pose, Matrix const M,
 		kinematics::Edge const & edge = pose.fold_tree().get_residue_edge( moving_res );
 		runtime_assert( !edge.is_jump() );
 		Size reference_res( 0 );
-		if ( edge.start() < moving_res ){
+		if ( edge.start() < static_cast< int >( moving_res ) ){
 			runtime_assert( edge.start() < edge.stop() );
 			reference_res = moving_res - 1;
 		} else {

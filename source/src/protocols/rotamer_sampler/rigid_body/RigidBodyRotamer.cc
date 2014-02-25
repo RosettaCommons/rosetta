@@ -225,7 +225,7 @@ namespace rigid_body {
 	///////////////////////////////////////////////////////////////////////////////////////
 	void
 	RigidBodyRotamer::apply_by_jump( pose::Pose & pose, Size const & seq_num,
-																	 core::kinematics::Stub const & moving_res_stub ){
+																	 core::kinematics::Stub const & ){
 		// [NEW] option 2 -- new, generalizable to full moving partition, but using Jump setter.
 		//  requires that any changes to conformation of Residue occur /*outside*/.
 		calculate_jump( pose, seq_num, moving_res_stub_ );

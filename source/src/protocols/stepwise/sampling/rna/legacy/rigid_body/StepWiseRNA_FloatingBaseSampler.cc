@@ -511,7 +511,7 @@ StepWiseRNA_FloatingBaseSampler::initialize_xyz_grid_parameters(){
 
 //////////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_FloatingBaseSampler::initialize_rigid_body_sampler( pose::Pose const & pose ){
+StepWiseRNA_FloatingBaseSampler::initialize_rigid_body_sampler( pose::Pose const & ){
 
 	sampler_ = new rotamer_sampler::rigid_body::RigidBodyRotamer( moving_res_, *moving_rsd_at_origin_list_[1], reference_stub_ );
 

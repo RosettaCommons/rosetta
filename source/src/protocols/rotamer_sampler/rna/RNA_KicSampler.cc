@@ -50,9 +50,9 @@ RNA_KicSampler::RNA_KicSampler(
 	ref_pose_( ref_pose ),
 	moving_suite_( moving_suite ),
 	chainbreak_suite_( chainbreak_suite ),
-	sample_nucleoside_( moving_suite + 1 ), // default, may be replaced.
 	pucker_state_( WHATEVER ), // WHATEVER, NORTH, SOUTH, NONE
 	base_state_( WHATEVER ), // WHATEVER, ANTI, SYN, NONE
+	sample_nucleoside_( moving_suite + 1 ), // default, may be replaced.
 	bin_size_( 20 ),
 	max_tries_( 100 ),
 	verbose_( false ),
