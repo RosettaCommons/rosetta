@@ -59,6 +59,8 @@
 #include <basic/Tracer.fwd.hh>
 #include <boost/algorithm/string/erase.hpp>
 
+#include <ObjexxFCL/string.functions.hh>
+
 #ifndef WIN32
 #include <unistd.h>
 #else
@@ -335,7 +337,6 @@ bool Tracer::in(utility::vector1<std::string> const & v, std::string const ch, b
 }
 
 /// Same as before but return integer value for matched channel or closest match (we asume that 'v' in levels format, ie like: <channel name>:level )
-/// -1 if no match
 bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std::string const ch, bool strict, int &res)
 {
 	unsigned int len = 0;
@@ -360,13 +361,22 @@ bool Tracer::calculate_tracer_level(utility::vector1<std::string> const & v, std
 			math = true;
 			len = spl[1].size();
 			res = utility::string2int(spl[2]);
-			if( spl[2] == "fatal" )   res = t_fatal;
-			if( spl[2] == "error" )   res = t_error;
-			if( spl[2] == "warning" ) res = t_warning;
-			if( spl[2] == "info" )    res = t_info;
-			if( spl[2] == "debug" )   res = t_debug;
-			if( spl[2] == "trace" )   res = t_trace;
-
+			std::string const spl2_lower = ObjexxFCL::lowercased( spl[2] );
+			if( spl2_lower == "fatal" )   res = t_fatal;
+			if( spl2_lower == "error"   || spl2_lower == "errors" )   res = t_error;
+			if( spl2_lower == "warning" || spl2_lower == "warnings" ) res = t_warning;
+			if( spl2_lower == "info" )    res = t_info;
+			if( spl2_lower == "debug" )   res = t_debug;
+			if( spl2_lower == "trace" )   res = t_trace;
+			if( res == -1 ) {
+				std::string message( "WARNING:: The setting '" + spl[2] + "' is not recognized as a valid tracer level." );
+				if( ios_hook_ ) {
+					*ios_hook_ << message << std::endl;
+				} else if ( final_channel ) {
+					*final_channel << message << std::endl;
+				}
+				res = t_info; // Set such that you get standard amount of output instead of none.
+			}
 			//std::cout << "Match:" << spl << " ch:" << ch << " res:"<< res << std::endl;
 		}
 		else {
