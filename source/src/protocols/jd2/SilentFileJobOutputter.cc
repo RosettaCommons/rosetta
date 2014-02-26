@@ -119,9 +119,11 @@ void SilentFileJobOutputter::set_defaults() {
 	int mpi_rank;
 	MPI_Comm_rank (MPI_COMM_WORLD, &mpi_rank);/* get current process id */
 	std::string name = silent_file_;
+
+	//Unused variables, commented out to silence warnings
 	// attach mpi rank to out files
-	size_t lastslash = name.find_last_of("/\\");
-	size_t lastdot   = name.find_last_of('.');
+	//size_t lastslash = name.find_last_of("/\\");
+	//size_t lastdot   = name.find_last_of('.');
 	silent_file_ = name;
 #endif
 

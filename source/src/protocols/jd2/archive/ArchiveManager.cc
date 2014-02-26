@@ -301,7 +301,7 @@ ArchiveManager::go( ArchiveBaseOP archive )
 	sleep( 5 ); //give JobDistributor time to start up...
 #ifdef USEMPI
 	MPI_Status status;
-	MPI_Request request;
+	//MPI_Request request;
 #endif
 	bool stop( false );
 	bool print_status( true );

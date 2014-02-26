@@ -673,11 +673,20 @@ int universal_main(
 /// rather than modifying it in place!
 /// The goal is to keep this one as a simple-as-possible EXAMPLE for others,
 /// although it will suffice for many protocols as-is.
+#ifndef USEMPI
 int main_plain_mover(
 	protocols::moves::Mover & mover,
 	bool random_permutation
 )
 {
+#else
+int main_plain_mover(
+	protocols::moves::Mover & mover,
+	bool /*random_permutation*/
+)
+{
+#endif
+
 	//using core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG;
 	using basic::datacache::CacheableString;
 
@@ -691,7 +700,6 @@ int main_plain_mover(
 		numeric::random::random_permutation( input_jobs, numeric::random::RG );
 	}
 #endif
-
 	BasicJobOP curr_job, prev_job;
 	int curr_nstruct, num_structures_processed = 0;
 	core::pose::PoseOP input_pose; // starts NULL, coords *never* modified!

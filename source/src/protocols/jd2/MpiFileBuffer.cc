@@ -326,11 +326,11 @@ void MpiFileBuffer::open_channel( Size slave, std::string const& filename, bool 
 			int buf[ 4 ];
 			MPI_Status stat;
 			MPI_Recv( buf, 4, MPI_INT, slave, MPI_STREAM_TAG, MPI_COMM_WORLD, &stat );
-			Size const msg_type( buf[ 2 ] );
-			Size const size( buf[ 1 ] );
 			Size const slave_id( buf[ 0 ] );
+			Size const size( buf[ 1 ] );
+			Size const msg_type( buf[ 2 ] );
 			Size const channel_id( buf[ 3 ] );
-			tr.Debug << "header? : received: " << buf[ 0 ] << " " << buf[ 1 ] << " " << buf[ 2 ] << " " << buf[ 3 ] << std::endl;
+			tr.Debug << "header? : received: " << slave_id << " " << size << " " << msg_type << " " << channel_id << std::endl;
 			runtime_assert( msg_type == MPI_STREAM_SEND && slave_id == slave );
 			std::string header;
 			receive_str( slave, size, header );

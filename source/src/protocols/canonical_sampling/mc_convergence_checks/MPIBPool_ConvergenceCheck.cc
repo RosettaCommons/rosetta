@@ -221,7 +221,8 @@ void MPIBPool_RMSD::broadcast_newest_coords( int num_to_send ){
   if ( rank_ == master_node_ ) {
 
     assert( (int)(new_structures_) >= num_to_send );
-    core::Size current_size = new_structures_;
+	//Unused variable commented out to silence warnings
+    //core::Size current_size = new_structures_;
     if( tracer_visible_ ) {
       tr.Debug << "broadcasting " << num_to_send << " structures " << std::endl;
       for( int ii = 0; ii < num_to_send; ii++) {
@@ -651,7 +652,8 @@ void MPIBPool_RMSD::finalize(){
 
 ///@detail update the rank of the pool to the MPI_COMM_POOL relative rank
 void MPIBPool_RMSD::update_ranks( int const active_nodes[], int new_size ){
-  bool is_active = false;
+  //Unused variable commented out to silence warnings
+  //bool is_active = false;
 
   //debug output
   if( tracer_visible_ ){

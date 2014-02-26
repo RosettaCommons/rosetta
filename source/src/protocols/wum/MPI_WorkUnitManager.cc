@@ -242,7 +242,8 @@ void MPI_WorkUnitManager::send_MPI_workunit( const WorkUnitBaseOP& MPI_ONLY(wu),
 	double  end_send = get_time();
 	send_wu_time_ += end_send - start_send;
 	send_wu_time_n_++;
-	double last_spent = start_timer( TIMING_CPU );
+	//Unused parameter commented out to silence warning
+	//double last_spent = start_timer( TIMING_CPU );
 	TRDEBUG << "MPI_SEND: " << dest_rank << "  " << F(7,1,(start_send - start_wait)*1000.0)  << "ms  " << F(7,1,(end_send - start_send)*1000.0)
 	<< "ms  " << F(5,1,(size_of_raw_data/1024.0)) << "kB" << std::endl;
 	if( (end_send - start_wait) >  warning_threshold){

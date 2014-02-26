@@ -506,7 +506,7 @@ safely_write_to_database(
 		}	catch(cppdb::cppdb_error & except)
 		{
 #ifdef USEMPI
-			if( except.what() == "database is locked"){
+			if( std::string(except.what()) == "database is locked"){
 				stringstream err_msg;
 				err_msg
 					<< "database is locked" << std::endl

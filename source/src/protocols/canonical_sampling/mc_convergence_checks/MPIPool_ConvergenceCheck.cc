@@ -238,7 +238,8 @@ void MPIPool_RMSD::receive_xyz(
   received_string_size = buf[ 2 ];
   tag_size = buf[ 3 ];
   PROF_STOP( basic::MPI_SLAVE_REPORT_SIZES );
-  core::Size index = 0;
+  //Unused variable commented out to silence warnings
+  //core::Size index = 0;
   xyz.dimension( xyz_u1, xyz_u2, 0.0 );
   std::string data;
   PROF_START( basic::MPI_SLAVE_REPORT_NEW_COORDS );

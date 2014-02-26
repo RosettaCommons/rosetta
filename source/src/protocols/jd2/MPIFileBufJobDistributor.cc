@@ -251,8 +251,6 @@ MPIFileBufJobDistributor::eat_signal( Size msg_tag_in, int MPI_ONLY( source ) ) 
 	Size const mpi_size( 4 );
 	int mpi_buf[ mpi_size ];
 	while( true )  {
-		Size const mpi_size( 4 );
-		int mpi_buf[ mpi_size ];
 		MPI_Status status;
 		MPI_Recv( &mpi_buf, mpi_size, MPI_INT, source, MPI_JOB_DIST_TAG, MPI_COMM_WORLD, &status);
 		Size slave_rank( status.MPI_SOURCE );
@@ -308,7 +306,9 @@ MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 		tr.Debug << "Master Node: Waiting for job requests..." << std::endl;
 		MPI_Irecv( &mpi_buf, mpi_size, MPI_INT, MPI_ANY_SOURCE, MPI_JOB_DIST_TAG, MPI_COMM_WORLD, &request);
 		int flag=0;
-		bool only_some_nodes_unfinished = ( 1.0 * n_nodes_left_to_spin_down_ / n_worker() ) < 0.2;
+
+		//unused variable removed to silence warnings
+		//bool only_some_nodes_unfinished = ( 1.0 * n_nodes_left_to_spin_down_ / n_worker() ) < 0.2;
 
 
 		double timeout=MPI_Wtime();
