@@ -1812,9 +1812,9 @@ void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename ){
 		if (cit->points_.size()*pow(stepSize_,3)<minPockSize_) continue;
 		if (!cit->isTarget(numTargets_)) continue;
 		for (std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit){
-			if ( ( grid_[pit->x][pit->y][pit->z]==TP_POCKET ) )
+			if ( grid_[pit->x][pit->y][pit->z]==TP_POCKET )
 					outstream << pit->x << " " << pit->y << " " << pit->z << " TP_POCKET" << std::endl;
-				if ( ( grid_[pit->x][pit->y][pit->z]==TP_BURIED ) )
+				if ( grid_[pit->x][pit->y][pit->z]==TP_BURIED )
 					outstream << pit->x << " " << pit->y << " " << pit->z << " TP_BURIED" << std::endl;
 
 		}
@@ -1888,10 +1888,10 @@ void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename, n
 			newCoord(2) = (core::Size)std::floor((coord(2) - new_ycorn)/stepSize_ + .5);
 			newCoord(3) = (core::Size)std::floor((coord(3) - new_zcorn)/stepSize_ + .5);
 
-			if ( ( grid_[pit->x][pit->y][pit->z]==TP_POCKET ) ) {
+			if ( grid_[pit->x][pit->y][pit->z]==TP_POCKET ) {
 				outstream << newCoord(1) << " " << newCoord(2) << " " << newCoord(3) << " TP_POCKET" << std::endl;
 			}
-			if ( ( grid_[pit->x][pit->y][pit->z]==TP_BURIED ) ) {
+			if ( grid_[pit->x][pit->y][pit->z]==TP_BURIED ) {
 				outstream << newCoord(1) << " " << newCoord(2) << " " << newCoord(3) << " TP_BURIED" << std::endl;
 			}
 

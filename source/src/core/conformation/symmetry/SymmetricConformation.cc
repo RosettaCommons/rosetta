@@ -212,7 +212,8 @@ SymmetricConformation::set_torsion_angle(
 	AtomID const & atom2,
 	AtomID const & atom3,
 	AtomID const & atom4,
-	Real const setting
+	Real const setting,
+	bool const quiet
 )
 {
 	AtomID parent_atom1, parent_atom2, parent_atom3, parent_atom4;
@@ -234,7 +235,7 @@ SymmetricConformation::set_torsion_angle(
 	}
 
 	// set this DOF using base-class method
-	Conformation::set_torsion_angle( parent_atom1, parent_atom2, parent_atom3, parent_atom4, setting );
+	Conformation::set_torsion_angle( parent_atom1, parent_atom2, parent_atom3, parent_atom4, setting, quiet );
 
 	{
 		core::Size nclones = symm_info_->num_bb_clones( );
@@ -248,7 +249,7 @@ SymmetricConformation::set_torsion_angle(
 			dep_atom2 = id::AtomID( atom2.atomno(), clones2[i] );
 			dep_atom3 = id::AtomID( atom3.atomno(), clones3[i] );
 			dep_atom4 = id::AtomID( atom4.atomno(), clones4[i] );
-			Conformation::set_torsion_angle( dep_atom1, dep_atom2, dep_atom3, dep_atom4, setting );
+			Conformation::set_torsion_angle( dep_atom1, dep_atom2, dep_atom3, dep_atom4, setting, quiet );
 		}
 	}
 }

@@ -450,7 +450,8 @@ AtomTree::torsion_angle_dof_id(
 		AtomID const & atom2_in_id,
 		AtomID const & atom3_in_id,
 		AtomID const & atom4_in_id,
-		Real & offset
+		Real & offset,
+		bool const quiet
 ) const
 {
 	using numeric::conversions::degrees;
@@ -497,7 +498,7 @@ AtomTree::torsion_angle_dof_id(
 		atom3 = atom2_in;
 		atom4 = atom1_in;
 	} else {
-		TR.Error << "No proper DoF can be found for these four atoms!" << std::endl;
+		if ( !quiet ) TR.Error << "No proper DoF can be found for these four atoms!" << std::endl;
 		return id::BOGUS_DOF_ID;
 	}
 
@@ -805,14 +806,15 @@ AtomTree::set_torsion_angle(
 		AtomID const & atom2,
 		AtomID const & atom3,
 		AtomID const & atom4,
-		Real const setting
+		Real const setting,
+		bool const quiet
 )
 {
 	Real offset;
-	DOF_ID const & id( torsion_angle_dof_id( atom1, atom2, atom3, atom4, offset ) );
+	DOF_ID const & id( torsion_angle_dof_id( atom1, atom2, atom3, atom4, offset, quiet ) );
 
 	if ( !id.valid() ) {
-		TR.Warning << "DOF for this torsion angle could not be found in AtomTree." << std::endl;
+		if ( !quiet ) TR.Warning << "DOF for this torsion angle could not be found in AtomTree." << std::endl;
 		return id;
 	}
 

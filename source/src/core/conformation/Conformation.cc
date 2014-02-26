@@ -2006,14 +2006,15 @@ Conformation::set_torsion_angle(
 	AtomID const & atom2,
 	AtomID const & atom3,
 	AtomID const & atom4,
-	Real const setting
+	Real const setting,
+	bool const quiet
 )
 {
 	residue_torsions_need_updating_ = true;
-	DOF_ID const dof_id( atom_tree_->set_torsion_angle( atom1, atom2, atom3, atom4, setting ) );
+	DOF_ID const dof_id( atom_tree_->set_torsion_angle( atom1, atom2, atom3, atom4, setting, quiet ) );
 	if ( dof_id.valid() ) {
 		set_dof_moved( dof_id );
-	} else {
+	} else if ( !quiet ) {
 		TR << "set_torsion_angle failed, unable to find dof_id: " << atom1 << ' ' << atom2 << ' ' << atom3 << ' ' <<
 			atom4 << std::endl;
 	}

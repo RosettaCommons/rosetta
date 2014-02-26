@@ -129,7 +129,8 @@ public:
 		AtomID const & atom2,
 		AtomID const & atom3,
 		AtomID const & atom4,
-		Real const setting
+		Real const setting,
+		bool const quiet=false
 	);
 
 	virtual utility::vector1<bool>

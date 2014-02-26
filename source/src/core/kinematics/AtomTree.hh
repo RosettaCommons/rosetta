@@ -249,7 +249,8 @@ public: // Methods
 		AtomID const & atom2,
 		AtomID const & atom3,
 		AtomID const & atom4,
-		Real const setting
+		Real const setting,
+		bool const quiet=false
 	);
 
 	DOF_ID
@@ -356,11 +357,12 @@ public: // Properties
 		AtomID const & atom1,
 		AtomID const & atom2,
 		AtomID const & atom3,
-		AtomID const & atom4
+		AtomID const & atom4,
+		bool const quiet=false
 	) const
 	{
 		Real offset;
-		return torsion_angle_dof_id( atom1, atom2, atom3, atom4, offset );
+		return torsion_angle_dof_id( atom1, atom2, atom3, atom4, offset, quiet );
 	}
 
 	/// @brief get the DOF_ID of a torsion angle given those four atoms which define this torsion
@@ -370,7 +372,8 @@ public: // Properties
 		AtomID const & atom2_in_id,
 		AtomID const & atom3_in_id,
 		AtomID const & atom4_in_id,
-		Real & offset
+		Real & offset,
+		bool const quiet=false
 	) const;
 
 
