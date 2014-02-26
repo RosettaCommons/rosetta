@@ -13,6 +13,7 @@
 
 #include <protocols/simple_moves/Tumble.hh>
 #include <protocols/simple_moves/TumbleCreator.hh>
+#include <protocols/moves/Mover.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>

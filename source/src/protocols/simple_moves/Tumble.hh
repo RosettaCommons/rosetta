@@ -54,11 +54,6 @@ public:
 	/// 	empty constructor fills values with the expected defaults
 	Tumble();
 
-	Tumble(
-		Size const rb_jump_in,
-		core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionOP(NULL)
-	);
-
 	//destructor
 	~Tumble();
 
