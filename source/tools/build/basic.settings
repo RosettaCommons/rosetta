@@ -122,8 +122,8 @@ settings = {
         "appends" : {
             "flags" : {
                 #The "isystem" items here are to tell gcc to not print warnings from these external headers
-                "cc"        : [ "std=c99", "isystem external/boost_1_46_1/", "isystem external/include/"],
-                "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/", "isystem external/include/"],
+                "cc"        : [ "std=c99", "isystem external/boost_1_46_1/", "isystem external/include/", "isystem external/dbio/"],
+                "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/", "isystem external/include/", "isystem external/dbio/"],
                 "compile"   : [ "pipe", "ffor-scope" ],
                 # By default, warn about everything except the use of long long, which we need for certain
                 # database functionality.
@@ -149,7 +149,6 @@ settings = {
                     "Werror=enum-compare",
                     "Werror=nonnull",
                     "Werror=type-limits",
-                    "Werror=unused-but-set-variable",
                     "Werror=parentheses",
                     "Werror=ignored-qualifiers",
                 ],
@@ -238,7 +237,7 @@ settings = {
         "removes" : {
             "flags" : {
                 # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter", "Werror=unused-variable", "Werror=unused-but-set-variable"],
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
             }
         },
     },
@@ -268,7 +267,7 @@ settings = {
         "removes" : {
             "flags" : {
                 # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter", "Werror=unused-variable", "Werror=unused-but-set-variable"],
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
             }
         },
         },
@@ -305,7 +304,7 @@ settings = {
         "removes" : {
             "flags" : {
                 # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter", "Werror=unused-variable", "Werror=unused-but-set-variable"],
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
             }
         },
     },
@@ -335,7 +334,7 @@ settings = {
         "removes" : {
             "flags" : {
                 # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter", "Werror=unused-variable", "Werror=unused-but-set-variable"],
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
             }
         },
     },
@@ -442,7 +441,6 @@ settings = {
                     # These don't exist in the Mac version of GCC used by the test server:
                     "Werror=enum-compare",
                     "Werror=type-limits",
-                    "Werror=unused-but-set-variable",
                     "Werror=ignored-qualifiers",
                 ],
             },
@@ -1296,8 +1294,8 @@ settings = {
                 # We don't use any C -- but if we did would it really
                 # be C99?  Are there portability issues?
                 # (The "isystem" directives here are to tell clang not to print warnings found in these external headers.)
-                "cc"        : [ "std=c99", "isystem external/boost_1_46_1/", "isystem external/include/" ],
-                "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/", "isystem external/include/" ],
+                "cc"        : [ "std=c99", "isystem external/boost_1_46_1/", "isystem external/include/", "isystem external/dbio/" ],
+                "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/", "isystem external/include/", "isystem external/dbio/" ],
                 "compile"   : [ "pipe", "Qunused-arguments", 'DUNUSUAL_ALLOCATOR_DECLARATION', 'ftemplate-depth-256', "stdlib=libstdc++", ],
 			        # flags for Clang C++ lib:
 		                #'D__ROSETTA_CLANG__', 'DBOOST_NO_0X_HDR_INITIALIZER_LIST -DBOOST_DETAIL_NO_CONTAINER_FWD -DBOOST_NO_0X_HDR_TUPLE ',],  # 'std=c++98',  "stdlib=libstdc++" ],  # Sergey: adding BOOST_NO_0X_HDR_INITIALIZER_LIST because our boost version could not figure it out on it own
@@ -1326,7 +1324,6 @@ settings = {
                     "Werror=enum-compare",
                     "Werror=nonnull",
                     "Werror=type-limits",
-                    "Werror=unused-but-set-variable",
                     "Werror=parentheses",
                     "Werror=ignored-qualifiers",
                 ],
@@ -1439,7 +1436,7 @@ settings = {
         "removes" : {
             "flags" : {
                 # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter", "Werror=unused-variable", "Werror=unused-but-set-variable"],
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
             }
         },
     },
@@ -1456,7 +1453,7 @@ settings = {
         "removes" : {
             "flags" : {
                 # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter", "Werror=unused-variable", "Werror=unused-but-set-variable"],
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
             }
         },
     },
