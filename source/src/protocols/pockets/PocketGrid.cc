@@ -1812,9 +1812,9 @@ void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename ){
 		if (cit->points_.size()*pow(stepSize_,3)<minPockSize_) continue;
 		if (!cit->isTarget(numTargets_)) continue;
 		for (std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit){
-			if ( grid_[pit->x][pit->y][pit->z]==TP_POCKET )
+			if ( grid_[pit->x][pit->y][pit->z] == TP_POCKET )
 					outstream << pit->x << " " << pit->y << " " << pit->z << " TP_POCKET" << std::endl;
-				if ( grid_[pit->x][pit->y][pit->z]==TP_BURIED )
+				if ( grid_[pit->x][pit->y][pit->z] == TP_BURIED )
 					outstream << pit->x << " " << pit->y << " " << pit->z << " TP_BURIED" << std::endl;
 
 		}

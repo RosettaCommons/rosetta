@@ -7,31 +7,33 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
-/// @author
+/// @file   src/basic/pymol_chains.cc
+/// @brief  method definitions for a couple PyMOL helper functions
+/// @author Labonte
+/// @note   I am simply moving the definitions out of the header file where they used to reside.
 
-#ifndef INCLUDED_basic_pymol_chains_hh
-#define INCLUDED_basic_pymol_chains_hh
+// Unit header
+#include <basic/pymol_chains.hh>
 
-#include <string>
+// Numeric header
 #include <numeric/types.hh>
+
+// C++ header
+#include <string>
 
 namespace basic {
 
-static std::string const pymol_chains(
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz!@#$&.<>?]{}|-_\\~=%" );
-
-
-numeric::Size get_pymol_num_unique_ids();
-
-char
-get_pymol_chain( numeric::Size i ) {
-	return pymol_chains[ ( i - 1 ) % pymol_chains.size() ];
+numeric::Size
+get_pymol_num_unique_ids() {
+	return pymol_chains.length();
 }
 
-numeric::Size get_pymol_chain_index_1( char c );
 
+numeric::Size
+get_pymol_chain_index_1( char c ) {
+	numeric::Size i = pymol_chains.find( c );
+	if ( i == pymol_chains.size() ) return 0;
+	return i + 1;
 }
 
-#endif  // INCLUDED_basic_pymol_chains_hh
+}  // namespace basic

@@ -970,7 +970,10 @@ ensure_directory_for_out_silent_file_exists(){
 			char * outdir =  dirname( outfile_char );
 			std::stringstream mkdir_command;
 			mkdir_command << "mkdir -p " << outdir;
-			system( mkdir_command.str().c_str() );
+			int return_code = system( mkdir_command.str().c_str() );
+			if ( return_code != 0 ) {
+				TR.Error << "Could not make directory! Error code: " << return_code << std::endl;
+			}
 		} else {
 			outstream.close();
 			std::remove( outfile.c_str() ); // note that this removes the prior outfile if it exists...

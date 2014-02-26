@@ -19,6 +19,7 @@ sources = {
 		"MemTracer",
 		"MetricValueIO",
 		"prof",
+		"pymol_chains",
 		"Tracer",
 		"TracerToFile",
 	],
