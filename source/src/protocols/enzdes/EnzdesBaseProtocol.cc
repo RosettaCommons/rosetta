@@ -93,7 +93,7 @@ EnzdesBaseProtocol::EnzdesBaseProtocol():
   loop_bb_min_allowed_dev_(0.5),
 	lig_superposition_file_read_(false),
 	rb_min_(true),
-	exclude_protein_protein_fa_elec_(true)
+  exclude_protein_protein_fa_elec_(false) //sboyken 01/22/14; changed true to false; with Talaris2013 don't want this on by default; only with old_estat
 {
 		rb_min_jumps_.clear();
 		Mover::type( "EnzdesFixBBProtocol" );
