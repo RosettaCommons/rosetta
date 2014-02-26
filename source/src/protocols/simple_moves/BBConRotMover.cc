@@ -84,7 +84,7 @@ BBConRotMover::BBConRotMover()
 dphi(utility::vector1<Real>(n_dof_angle_)),
 oldphi(utility::vector1<Real>(n_dof_angle_))
 {
-    using numeric::constants::d::pi;
+	//using numeric::constants::d::pi;
 
     protocols::moves::Mover::type("BBConRotMover");
 
@@ -113,7 +113,7 @@ void BBConRotMover::apply(Pose &pose)
 		{
 			if(iter++ > 100)break;
 		}
-		TR.Debug << "apply: iter=" << iter << std::endl; 
+		TR.Debug << "apply: iter=" << iter << std::endl;
 }
 
 bool BBConRotMover::make_move(Pose &pose)
@@ -121,7 +121,7 @@ bool BBConRotMover::make_move(Pose &pose)
     using basic::periodic_range;
     using basic::unsigned_periodic_range;
 		using numeric::constants::d::pi;
-		using numeric::constants::d::pi_2;
+		//using numeric::constants::d::pi_2;
 
     setup_list(pose);
     int ndx=static_cast< int >( RG.uniform()*available_seg_list_.size()+1 );

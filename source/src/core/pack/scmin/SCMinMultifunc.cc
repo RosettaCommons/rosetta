@@ -139,7 +139,7 @@ SCMinMultifunc::operator ()( Multivec const & chi ) const
 void
 SCMinMultifunc::dfunc( Multivec const & chi, Multivec & dE_dchi ) const
 {
-	using numeric::constants::d::pi;
+	//using numeric::constants::d::pi;
 	using namespace scoring;
 	scminmap_.assign_dofs_to_mobile_residues( chi );
 	scminmap_.zero_atom_derivative_vectors();
