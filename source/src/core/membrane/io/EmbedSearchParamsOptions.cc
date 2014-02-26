@@ -175,14 +175,7 @@ void EmbedSearchParamsOptions::set_normal_mag( core::Size setting ) {
 /// @details Param Type: abs(int)
 /// Precodnition setting >=0
 core::Size EmbedSearchParamsOptions::normal_cycles() const { return normal_cycles_; }
-void EmbedSearchParamsOptions::set_normal_cycles( core::Size setting ) {
-
-	if ( setting < 0 ) {
-		throw core::membrane::util::EXCN_Illegal_Arguments("Invlaid argument for center max delta. Parameter must be >= 0");
-	}
-
-	normal_cycles_ = setting;
-}
+void EmbedSearchParamsOptions::set_normal_cycles( core::Size setting ) { normal_cycles_ = setting; }
 
 /// @brief Getter/Setter pair for penalties
 /// @details Param tyupe: bool

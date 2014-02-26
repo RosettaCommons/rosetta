@@ -392,7 +392,7 @@ public:
 		core::Real lx=0.0, ly=0.0, lz=0.0;
 		T occupied(0);
 		int nx=0, ny=0, nz=0;
-		int ix=0, iy=0, iz=0;
+		int ix=0, iy=0;
 
 		while(file) {
 			getline(file, line);
@@ -401,7 +401,6 @@ public:
 			if (ObjexxFCL::is_blank(line)) {
 				ix++;
 				iy=0;
-				iz=0;
 				continue;
 			}
 
@@ -425,7 +424,6 @@ public:
 				this->setupZones();
 			} else {
 				line_stream.seekg( std::ios::beg );
-				iz = 0;
 				for (int iz=0; iz < nz; iz++) {
 					line_stream >> occupied;
 					this->setValue(ix,iy,iz,occupied);

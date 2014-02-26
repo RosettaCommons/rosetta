@@ -3902,9 +3902,9 @@ copy_rotamerized_torsions( pose::Pose & pose,
 	Real torsion_value( source_pose.torsion( torsion_id ) );
 
 	// If there are multiple harmonic tethers available choose the "closest" one.
- 	assert( gaussian_parameter_set.size() > 0 );
+	assert( gaussian_parameter_set.size() > 0 );
 
-	Real best_center( 0.0 ), best_width( 0.0 ), best_weight( 0.0 ), best_sigma2( 10000000.0 ), best_deviation( 10000000.0 );
+	Real best_center( 0.0 ), best_sigma2( 10000000.0 );
 
 	utility::vector1< Real > torsion_samples;
 	torsion_samples.push_back( 0 );
@@ -3926,19 +3926,14 @@ copy_rotamerized_torsions( pose::Pose & pose,
 
 				if (sigma2 < best_sigma2 ){
 					best_center = center;
-					best_weight = weight;
-					best_deviation = deviation;
 					best_sigma2 = sigma2;
-					best_width = width;
 				}
-
 		}
 	}
 
-
-	std::cout << "Residue " << i << "  torsion_num " << rna_torsion_number << "  " << F(8,3,torsion_value) << " " << F(8,3,best_center) << "  ==> " << F(8,3,torsion_value-best_center) << std::endl;
+	std::cout << "Residue " << i << "  torsion_num " << rna_torsion_number << "  " << F(8,3,torsion_value) << " " <<
+			F(8,3,best_center) << "  ==> " << F(8,3,torsion_value-best_center) << std::endl;
 	pose.set_torsion( torsion_id, best_center );
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////

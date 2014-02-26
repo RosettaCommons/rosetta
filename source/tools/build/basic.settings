@@ -142,7 +142,16 @@ settings = {
                     "Werror=sign-compare",
                     "Werror=unused-parameter",
                     "Werror=reorder",
-                    "Werror=unused-variable"
+                    "Werror=unused-variable",
+                    "Werror=address",
+                    "Werror=char-subscripts",
+                    "Werror=comment",
+                    "Werror=enum-compare",
+                    "Werror=nonnull",
+                    "Werror=type-limits",
+                    "Werror=unused-but-set-variable",
+                    "Werror=parentheses",
+                    "Werror=ignored-qualifiers",
                 ],
             },
         },
@@ -229,7 +238,7 @@ settings = {
         "removes" : {
             "flags" : {
                 # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable", "Werror=unused-but-set-variable"],
             }
         },
     },
@@ -253,13 +262,13 @@ settings = {
                 "finline-functions", "finline-limit=20000", "s" ],
                 # Asserts can leave variables unused, making warnings spurious.
                 # We count on debug builds to catch actual unused variables.
-                "warn"      : [ "Wno-unused-variable" ],
+                "warn"      : [ "Wno-unused-variable", "Wno-unused-parameter" ],
             },
             "defines"       : [ "NDEBUG", "PYROSETTA" ],
         "removes" : {
             "flags" : {
                 # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable", "Werror=unused-but-set-variable"],
             }
         },
         },
@@ -289,9 +298,15 @@ settings = {
 
                 # Asserts can leave variables unused, making warnings spurious.
                 # We count on debug builds to catch actual unused variables.
-                "warn"      : [ "Wno-unused-variable" ],
+                "warn"      : [ "Wno-unused-variable", "Wno-unused-parameter" ],
             },
             "defines"       : [ "PYROSETTA" ],
+        },
+        "removes" : {
+            "flags" : {
+                # See comment above for rational here.
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable", "Werror=unused-but-set-variable"],
+            }
         },
     },
 
@@ -320,7 +335,7 @@ settings = {
         "removes" : {
             "flags" : {
                 # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable", "Werror=unused-but-set-variable"],
             }
         },
     },
@@ -1297,7 +1312,16 @@ settings = {
                     "Werror=sign-compare",
                     "Werror=unused-parameter",
                     "Werror=reorder",
-                    "Werror=unused-variable"
+                    "Werror=unused-variable",
+                    "Werror=address",
+                    "Werror=char-subscripts",
+                    "Werror=comment",
+                    "Werror=enum-compare",
+                    "Werror=nonnull",
+                    "Werror=type-limits",
+                    "Werror=unused-but-set-variable",
+                    "Werror=parentheses",
+                    "Werror=ignored-qualifiers",
                 ],
             },
         },
@@ -1408,7 +1432,7 @@ settings = {
         "removes" : {
             "flags" : {
                 # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable", "Werror=unused-but-set-variable"],
             }
         },
     },
@@ -1425,7 +1449,7 @@ settings = {
         "removes" : {
             "flags" : {
                 # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
+                "warn" : ["Werror=unused-parameter", "Werror=unused-variable", "Werror=unused-but-set-variable"],
             }
         },
     },

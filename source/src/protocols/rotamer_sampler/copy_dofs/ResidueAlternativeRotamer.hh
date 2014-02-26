@@ -68,7 +68,7 @@ namespace copy_dofs {
 		/// @brief Type of class (see enum in RotamerTypes.hh)
 		virtual RotamerType type() const { return RESIDUE_ALTERNATIVE; }
 
-		Size const representative_seqpos() const { return representative_seqpos_; }
+		Size representative_seqpos() const { return representative_seqpos_; }
 
 	private:
 

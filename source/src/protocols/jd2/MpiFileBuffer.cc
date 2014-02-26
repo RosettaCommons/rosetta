@@ -8,7 +8,7 @@
 
 /// @file   protocols/jd2/MpiFileBuffer.hh
 /// @brief  header file for MPISilentFileJobOutputter class, part of August 2008 job distributor as planned at RosettaCon08
-/// @detail this outputter will send silentstructs via MPI to dedicated node that will collect all structures
+/// @details this outputter will send silentstructs via MPI to dedicated node that will collect all structures
 /// @author Oliver Lange olange@u.washington.edu
 
 #include <protocols/jd2/MpiFileBuffer.hh>
@@ -21,8 +21,7 @@
 
 #include <basic/Tracer.hh>
 #include <basic/MemTracer.hh>
-// AUTO-REMOVED #include <iterator>
- #include <ctime>
+#include <ctime>
 
 #include <protocols/jd2/SingleFileBuffer.hh>
 #include <utility/vector1.hh>
@@ -54,9 +53,11 @@ MpiFileBuffer::MpiFileBuffer( Size file_buf_rank )
 
 }
 
+#ifdef USEMPI
 Size const MPI_WIND_DOWN( 1001 );
 Size const MPI_BLOCK_FILE( 1002 );
 Size const MPI_RELEASE_FILE( 1003 );
+#endif
 Size const MPI_CLOSE_FILE( 1004 );
 
 #ifdef USEMPI

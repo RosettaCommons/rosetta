@@ -448,14 +448,12 @@ int main( int argc, char * argv [] ) {
 
 		// calculate and store total metrics for bound and unbound poses
 		core::Real bound_energy = 0.0, unbound_energy = 0.0, Interface_Energy = 0.0;
-		core::Real bound_sasa = 0.0, unbound_sasa = 0.0, Total_BSA = 0.0;
+		core::Real bound_sasa = 0.0, unbound_sasa = 0.0;
 		core::Size  bound_hb = 0,   unbound_hb = 0, Interface_HB = 0;
 		core::Real bound_packstat = 0.0, unbound_packstat = 0.0, Total_packstats = 0.0;
 		core::Size  bound_unsat = 0, unbound_unsat = 0, Interface_unsat = 0;
 
 		//calculate interface Energy
-		bound_energy = bound_pose.energies().total_energy();
-		unbound_energy = unbound_pose.energies().total_energy();
 		Interface_Energy = bound_energy - unbound_energy;
 
 		//delta sasa calculation
@@ -463,7 +461,6 @@ int main( int argc, char * argv [] ) {
 		bound_sasa = tot_sasa_mval.value();
 		unbound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
 		unbound_sasa = tot_sasa_mval.value();
-		Total_BSA = unbound_sasa - bound_sasa;
 
 		//interface hb calculation
 		bound_pose.metric(hbond_calc_name,"all_Hbonds", tot_hb_mval);

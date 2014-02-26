@@ -739,7 +739,10 @@ bool passes_quality_check(
 		cb_i = p.residue(i).xyz(" CB ");
 	// iterate over all residues in this protein
 	for (core::Size pos = 1; pos <= p.total_residue(); pos++) {
-		if ( pos != i && p.residue(pos).is_protein() || p.residue(pos).is_DNA() || p.residue(pos).is_RNA() ) { // non-protein "residues" don't necessarily have a CB, which would cause the program to die -- for DNA, use CA
+		// non-protein "residues" don't necessarily have a CB, which would cause the program to die -- for DNA, use CA
+		if ( ( pos != i && p.residue(pos).is_protein() ) ||
+				p.residue(pos).is_DNA() ||
+				p.residue(pos).is_RNA() ) {
 			
 			// test for any closeby residue with 0 occupancy or 0 b-factor (which indicates Rosetta rebuilding)
 			for (core::Size ii=1; ii <= res_i.natoms(); ii++) {

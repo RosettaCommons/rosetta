@@ -778,21 +778,21 @@ class HasherTests : public CxxTest::TestSuite {
 		//for ( Size ii = 1; ii <= 3; ++ii ) std::cout << " " << eulerCb( ii ); std::cout << std::endl;
 
 		pAa[ 4 ] = eulerAa(1);   pAa[ 5 ] = eulerAa(2);  pAa[ 6 ] = eulerAa(3);
-		numeric::geometry::hashing::Bin6D binAa = binner.bin6( pAa );
+		//numeric::geometry::hashing::Bin6D binAa = binner.bin6( pAa );
 		//std::cout << "binAa: ";
 		//for ( Size ii = 1; ii <= 6; ++ii ) std::cout << binAa[ ii ] << " "; std::cout << std::endl;
 		boost::uint64_t indexAa = binner.bin_index( pAa );
 		//std::cout << "indexAa: " << indexAa << std::endl;
 
 		pBa[ 4 ] = eulerBa(1);   pBa[ 5 ] = eulerBa(2);  pBa[ 6 ] = eulerBa(3);
-		numeric::geometry::hashing::Bin6D binBa = binner.bin6( pBa );
+		//numeric::geometry::hashing::Bin6D binBa = binner.bin6( pBa );
 		//std::cout << "binBa: ";
 		//for ( Size ii = 1; ii <= 6; ++ii ) std::cout << binBa[ ii ] << " "; std::cout << std::endl;
 		boost::uint64_t indexBa = binner.bin_index( pBa );
 		//std::cout << "indexBa: " << indexBa << std::endl;
 
 		pCa[ 4 ] = eulerCa(1);   pCa[ 5 ] = eulerCa(2);  pCa[ 6 ] = eulerCa(3);
-		numeric::geometry::hashing::Bin6D binCa = binner.bin6( pCa );
+		//numeric::geometry::hashing::Bin6D binCa = binner.bin6( pCa );
 		//std::cout << "binCa: ";
 		//for ( Size ii = 1; ii <= 6; ++ii ) std::cout << binCa[ ii ] << " ";
 		//std::cout << std::endl;
@@ -800,7 +800,7 @@ class HasherTests : public CxxTest::TestSuite {
 		//std::cout << "indexCa: " << indexCa << std::endl;
 
 		pAb[ 4 ] = eulerAb(1);   pAb[ 5 ] = eulerAb(2);  pAb[ 6 ] = eulerAb(3);
-		numeric::geometry::hashing::Bin6D binAb = binner.bin6( pAb );
+		//numeric::geometry::hashing::Bin6D binAb = binner.bin6( pAb );
 		//std::cout << "binAb: ";
 		//for ( Size ii = 1; ii <= 6; ++ii ) std::cout << binAb[ ii ] << " ";
 		//std::cout << std::endl;
@@ -808,7 +808,7 @@ class HasherTests : public CxxTest::TestSuite {
 		//std::cout << "indexAb: " << indexAb << std::endl;
 
 		pBb[ 4 ] = eulerBb(1);   pBb[ 5 ] = eulerBb(2);  pBb[ 6 ] = eulerBb(3);
-		numeric::geometry::hashing::Bin6D binBb = binner.bin6( pBb );
+		//numeric::geometry::hashing::Bin6D binBb = binner.bin6( pBb );
 		//std::cout << "binBb: ";
 		//for ( Size ii = 1; ii <= 6; ++ii ) std::cout << binBb[ ii ] << " ";
 		//std::cout << std::endl;
@@ -816,7 +816,7 @@ class HasherTests : public CxxTest::TestSuite {
 		//std::cout << "indexBb: " << indexBb << std::endl;
 
 		pCb[ 4 ] = eulerCb(1);   pCb[ 5 ] = eulerCb(2);  pCb[ 6 ] = eulerCb(3);
-		numeric::geometry::hashing::Bin6D binCb = binner.bin6( pCb );
+		//numeric::geometry::hashing::Bin6D binCb = binner.bin6( pCb );
 		//std::cout << "binCb: ";
 		//for ( Size ii = 1; ii <= 6; ++ii ) std::cout << binCb[ ii ] << " ";
 		//std::cout << std::endl;

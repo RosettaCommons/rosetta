@@ -153,12 +153,6 @@ namespace geometry {
         // Grab Method Indicator Tags froM Embed Config file
         std::string normal_tag = embed_info_->normal_tag;
         std::string center_tag = embed_info_->center_tag;
-        
-        // Initialize depth and spanning parameters
-        core::Real depth = accept->depth;
-        bool spanning( false );
-        if ( depth == 0 ) { spanning = true; }
-        
 
         // Compute new normal and center based on indicator tags
         if ( normal_tag.compare("override_pdb") == 0 || center_tag.compare("override_pdb") == 0 ) {

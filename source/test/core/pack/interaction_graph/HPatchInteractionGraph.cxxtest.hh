@@ -255,7 +255,6 @@ public:
 		utility::vector1< Real > bgnode_sasas ( (Size)pdhig->get_num_background_nodes(), 0.0 );
 		pdhig->get_all_sasas( node_sasas, bgnode_sasas );
 
-		Real total_sasa = 0.0;
 		id::AtomID_Map< Real > atom_sasa;
 		utility::vector1< Real > rsd_sasa;
 		Real probe_radius = 1.4;
@@ -284,7 +283,7 @@ public:
 			atom_subset[ 11 ][ jj ] = false;
 		}
 
-		total_sasa = core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false /* no big polar H */,
+		core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false /* no big polar H */,
 			atom_subset, true /* use_naccess_sasa_radii */, true /* expand polar radii */ );
 
 		// all the Nodes should have 0.0 for their SASA because they should all be in the unassigned state after initialization
@@ -811,7 +810,6 @@ public:
 			pose.replace_residue( iiresid, *newresidue, false );
 		}
 
-		Real total_sasa = 0.0;
 		id::AtomID_Map< Real > atom_sasa;
 		utility::vector1< Real > rsd_sasa;
 		Real probe_radius = 1.4;
@@ -827,7 +825,7 @@ public:
 			}
 		}
 
-		total_sasa = core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false /* no big polar H */,
+		core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false /* no big polar H */,
 			atom_subset, true /* use_naccess_sasa_radii */, true /* expand polar radii */ );
 
 		// put all the Nodes/BGNodes into the final best state, not the state that simA ended at
@@ -913,7 +911,6 @@ public:
 			pose.replace_residue( iiresid, *newresidue, false );
 		}
 
-		Real total_sasa = 0.0;
 		id::AtomID_Map< Real > atom_sasa;
 		utility::vector1< Real > rsd_sasa;
 		Real probe_radius = 1.4;
@@ -929,7 +926,7 @@ public:
 			}
 		}
 
-		total_sasa = core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false /* no big polar H */,
+		core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false /* no big polar H */,
 			atom_subset, true /* use_naccess_sasa_radii */, true /* expand polar radii */ );
 
 		// put all the Nodes/BGNodes into the final best state, not the state that simA ended at

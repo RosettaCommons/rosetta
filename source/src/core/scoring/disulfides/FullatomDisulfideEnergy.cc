@@ -355,7 +355,7 @@ FullatomDisulfideEnergy::old_eval_atom_derivative(
 	id::AtomID const & atomid,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &,
-	ScoreFunction const &sfxn,
+	ScoreFunction const & sfxn,
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2

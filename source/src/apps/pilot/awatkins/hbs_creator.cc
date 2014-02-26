@@ -285,7 +285,7 @@ HbsCreatorMover::apply(
 		pert_pep_small->angle_max( 'L', 2.0 );
 		pert_pep_small->angle_max( 'E', 2.0 );
 
-		core::Size hbs_position = 1;
+		// core::Size hbs_position = 1;
 
 		//kdrew: load all hbs-affected positions into vector and make all other positions movable by small mover
 		for( Size i = 1; i <= pose.total_residue(); ++i )
@@ -301,8 +301,8 @@ HbsCreatorMover::apply(
 					//pert_pep_mm->set_bb( i );
 				}
 			}
-			else
-			{ hbs_position = i; }
+			//else
+			//{ hbs_position = i; }
 		}
 
 		pert_sequence->add_mover( pert_pep_small );

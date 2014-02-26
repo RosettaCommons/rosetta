@@ -67,4 +67,4 @@ LipoFileOptionsCreator::create_options() const { return new LipoFileOptions; }
 } // membrane
 } // core
 
-#endif INCLUDED_core_membrane_io_LipoFileOpitons_cc
+#endif // INCLUDED_core_membrane_io_LipoFileOpitons_cc

@@ -49,7 +49,7 @@ SET(COMPILE_FLAGS "${COMPILE_FLAGS} -std=c++98 -pipe -ffor-scope -O3 -ffast-math
 SET(COMPILE_FLAGS "${COMPILE_FLAGS} -w")
 
 ## Warnings as errors to match scons build
-SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror=sign-compare -Werror=reorder")
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror=sign-compare -Werror=reorder -Werror=address -Werror=char-subscripts -Werror=comment -Werror=enum-compare -Werror=nonnull -Werror=type-limits -Werror=parentheses -Werror=ignored-qualifiers")
 
 ## Other flags that sometimes occur with scons. Uncomment to add.
 ##
