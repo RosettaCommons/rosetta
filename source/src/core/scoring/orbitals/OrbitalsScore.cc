@@ -837,12 +837,12 @@ void OrbitalsScore::get_orb_H_distance_and_energy(
 				lookup_table_.OrbHdist_cosDHO_energy(htype, orbital_type, dist, cosDHO, sc_energy, d_deriv, a_deriv, false);
 				scfxn_rules_for_energy(true, bb_h_flag, orbital_type, htype, 0, sc_energy, emap);
 				sc_energy=0;
-				//a little confusing without context. This checks to see if the residue is an aromatic residue. If it is an aromatic residue
-				//then we need to check if the orbital we are looking at is the action center orbital. If it is, then we use a separate
-				//energy than if it were not. This is done because the action center orbital has a different angle associated with the acceptor
-				//orbital hydrogen angle. why? because there is no index for action centers, thefore the Acceptor is the first action center atom
-				bool const working_with_action_center_orbital = false;(
-					(( res1.aa() == chemical::aa_tyr || res1.aa() == chemical::aa_phe || res1.aa() == chemical::aa_trp ) && *orbital_index <= 2 ));
+				// a little confusing without context. This checks to see if the residue is an aromatic residue. If it is an aromatic residue
+				// then we need to check if the orbital we are looking at is the action center orbital. If it is, then we use a separate
+				// energy than if it were not. This is done because the action center orbital has a different angle associated with the acceptor
+				// orbital hydrogen angle. why? because there is no index for action centers, thefore the Acceptor is the first action center atom
+				bool const working_with_action_center_orbital = false;
+				// ((( res1.aa() == chemical::aa_tyr || res1.aa() == chemical::aa_phe || res1.aa() == chemical::aa_trp ) && *orbital_index <= 2 ));
 				lookup_table_.OrbHdist_cosAOH_energy(htype, orbital_type, dist, cosAOH, sc_energy, d_deriv, a_deriv, false, working_with_action_center_orbital );
 				scfxn_rules_for_energy(true, bb_h_flag, orbital_type, htype, 0, sc_energy, emap);
 				sc_energy=0;

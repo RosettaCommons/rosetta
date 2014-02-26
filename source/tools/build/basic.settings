@@ -433,11 +433,18 @@ settings = {
                 "link"      : [ "$__RPATH" ],
                 "cxx"       : [ "std=c++98" ],
                 "shlink"    : [ "$LINKFLAGS" ],
-                # For some reason, despite using isystem for boost,
-                # Mac.gcc.debug mode is throwing an error from an unused param in boost!
-                "warn" : ["Werror=unused-parameter"],
-                # There is at least one variable only used on Macs.
-                "warn" : ["Werror=unused-variable"],
+                "warn" : [
+                    # For some reason, despite using isystem for boost,
+                    # Mac.gcc.debug mode is throwing an error from an unused param in boost!
+                    "Werror=unused-parameter",
+                    # There is at least one variable only used on Macs.
+                    "Werror=unused-variable",
+                    # These don't exist in the Mac version of GCC used by the test server:
+                    "Werror=enum-compare",
+                    "Werror=type-limits",
+                    "Werror=unused-but-set-variable",
+                    "Werror=ignored-qualifiers",
+                ],
             },
         },
     },

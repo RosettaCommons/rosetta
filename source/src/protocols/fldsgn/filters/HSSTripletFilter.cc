@@ -197,15 +197,15 @@ HSSTripletFilter::apply( Pose const & pose ) const
 		current_id ++;
 		HSSTripletOP const & hssop( *it );
 
-		if( ! helices.size() >= hssop->helix() || helices[ hssop->helix() ]->length() < 5 ) {
+		if( !( helices.size() >= hssop->helix() ) || helices[ hssop->helix() ]->length() < 5 ) {
 			TR << "Helix " << hssop->helix() << " dones not exist, or is too short. " << std::endl;
 			return false;
 		}
-		if( ! strands.size() >= hssop->strand1() || strands[ hssop->strand1() ]->length() < 2 ) {
+		if( !( strands.size() >= hssop->strand1() ) || strands[ hssop->strand1() ]->length() < 2 ) {
 			TR << "Strand1 " << hssop->strand1() << " dones not exist, or is too short. " << std::endl;
 			return false;
 		}
-		if( ! strands.size() >= hssop->strand2() || strands[ hssop->strand2() ]->length() < 2 ) {
+		if( !( strands.size() >= hssop->strand2() ) || strands[ hssop->strand2() ]->length() < 2 ) {
 			TR << "Strand2 " << hssop->strand2() << " dones not exist, or is too short. " << std::endl;
 			return false;
 		}

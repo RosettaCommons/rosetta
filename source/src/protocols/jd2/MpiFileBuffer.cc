@@ -408,7 +408,7 @@ void MpiFileBuffer::close_file( Size channel_id ) {
 		open_files_.erase( file_iter );
 		open_buffers_.erase( iter );
 	} else {
-		utility_exit_with_message( "illegal attempt to delete file with non-existant channel_id " + channel_id );
+		utility_exit_with_message( "illegal attempt to delete file with non-existent channel_id " );
 	}
 }
 

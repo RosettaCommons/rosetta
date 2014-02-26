@@ -115,15 +115,12 @@ void MetalloClaimer::generate_claims( claims::DofClaims& new_claims ) {
 	core::Size jump_start;
 	core::Size jump_end;
 
-	switch ( resolved_anchor_residue_ < my_claim_pos ){
-	case 1 :
+	if ( resolved_anchor_residue_ < my_claim_pos ) {
 		jump_start = resolved_anchor_residue_;
 		jump_end = my_claim_pos;
-		break;
-	case 0 :
+	} else {
 		jump_start = my_claim_pos;
 		jump_end = resolved_anchor_residue_;
-		break;
 	}
 
 	jump_setup_->add_jump(

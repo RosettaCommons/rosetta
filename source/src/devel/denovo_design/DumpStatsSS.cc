@@ -76,7 +76,7 @@ DumpStatsSS::DumpStatsSS(DumpStatsSS const &rval):
 		psipred_interface_(rval.psipred_interface_),
 		ss_predictor_(rval.ss_predictor_),
 		blueprint_(rval.blueprint_),
-		start_time_(start_time_)
+		start_time_(rval.start_time_)
 {}
 
 

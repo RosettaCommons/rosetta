@@ -614,7 +614,9 @@ void NonPlaidFingerprint::trim_based_on_known_ligand(core::pose::Pose const & kn
 
 	protocols::pockets::PlaidFingerprint known_pf( known_ligand_pose, *this );
 	std::list< spherical_coor_triplet > triplet_trim_data;
-	for (std::list<spherical_coor_triplet>::const_iterator pro = triplet_fingerprint_data_.begin(), lig = known_pf.triplet_fingerprint_data().begin(); pro != triplet_fingerprint_data_.end(), lig != known_pf.triplet_fingerprint_data().end(); ++pro, ++lig) {
+	for (std::list<spherical_coor_triplet>::const_iterator pro = triplet_fingerprint_data_.begin(), lig = known_pf.triplet_fingerprint_data().begin();
+			( pro != triplet_fingerprint_data_.end() ) && ( lig != known_pf.triplet_fingerprint_data().end() );
+			++pro, ++lig) {
 
 		//jk note: these are no longer necessarily true, since we alter the Plaid one by shifting up/down by 2*pi
 		//these are useful asserts though, it's worth thinking about how to make them valid again...
@@ -1137,7 +1139,9 @@ core::Real PlaidFingerprint::fp_compare( FingerprintBase & fp, core::Real const 
 	using namespace basic::options;
 	bool square	= option[ OptionKeys::fingerprint::square_score ]();
 
-	for (std::list<spherical_coor_triplet>::const_iterator pi = fp.triplet_fingerprint_data().begin(), li = triplet_fingerprint_data_.begin(); pi != fp.triplet_fingerprint_data().end(), li != triplet_fingerprint_data_.end(); ++pi, ++li) {
+	for (std::list<spherical_coor_triplet>::const_iterator pi = fp.triplet_fingerprint_data().begin(), li = triplet_fingerprint_data_.begin();
+			( pi != fp.triplet_fingerprint_data().end() ) && ( li != triplet_fingerprint_data_.end() );
+			++pi, ++li) {
 
 		// jk note: these are no longer necessarily true, since we alter the Plaid one by shifting up/down by 2*pi
 		// these are useful asserts though, it's worth thinking about how to make them valid again...
@@ -1181,7 +1185,9 @@ void PlaidFingerprint::fp_compare_deriv( FingerprintBase & fp, core::Real const 
 	core::Real Differentiable_score = 0;
 	core::Size num_rays = 0;
 	std::list<ray_distance_derivs>::const_iterator di = derivs_of_ray_distances_.begin();
-	for (std::list<spherical_coor_triplet>::const_iterator pi = fp.triplet_fingerprint_data().begin(), li = triplet_fingerprint_data_.begin(); pi != fp.triplet_fingerprint_data().end(), li != triplet_fingerprint_data_.end(), di != derivs_of_ray_distances_.end(); ++pi, ++li, ++di) {
+	for (std::list<spherical_coor_triplet>::const_iterator pi = fp.triplet_fingerprint_data().begin(), li = triplet_fingerprint_data_.begin();
+			( pi != fp.triplet_fingerprint_data().end() ) && ( li != triplet_fingerprint_data_.end() ) && ( di != derivs_of_ray_distances_.end() );
+			++pi, ++li, ++di) {
 		assert( std::abs( pi->phi - li->phi ) < 0.001 );
 		assert( std::abs( pi->psi - li->psi ) < 0.001 );
 
