@@ -975,8 +975,8 @@ AntibodyInfo::kink_anion_atoms(const core::pose::Pose & pose) const {
 		atoms.push_back(res.xyz("OD2"));
 		break;
 	case 'E' :
-		atoms.push_back(res.xyz("OD1"));
-		atoms.push_back(res.xyz("OD2"));
+		atoms.push_back(res.xyz("OE1"));
+		atoms.push_back(res.xyz("OE2"));
 		break;
 	}
 	return atoms;
