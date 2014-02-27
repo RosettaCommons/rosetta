@@ -508,7 +508,7 @@ SequenceShiftMover::get_residues_to_rebuild() {
 	}
 
 	bool inloop=false;
-	int loopstart,loopstop;
+	int loopstart = 0,loopstop;
 
 	//A: extend loops by 1 residue if they do not cross a cut
 	utility::vector1<bool> ext_residues_to_rebuild = residues_to_rebuild;

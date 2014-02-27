@@ -145,7 +145,7 @@ ConservativeDesignOperation::apply(core::pose::Pose const & pose, core::pack::ta
 		
 		//Add the residues to the allowed list in task, or replace it.
 		if (add_to_allowed_aas_){
-			for (core::Size aa_num; aa_num <= 20; ++aa_num){
+			for (core::Size aa_num = 1; aa_num <= 20; ++aa_num){
 				core::chemical::AA amino = static_cast<core::chemical::AA>(aa_num);
 				if (allowed_aminos[aa_num]){
 					task.nonconst_residue_task(i).allow_aa(amino);
@@ -158,7 +158,6 @@ ConservativeDesignOperation::apply(core::pose::Pose const & pose, core::pack::ta
 		//task.show_residue_task(std::cout, i);
 	}
 }
-
 
 
 } //design

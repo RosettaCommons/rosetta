@@ -441,7 +441,7 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 		if (!fullatom_) to_fa.apply( frag );
 
 		core::Size nattempts = 0;
-		core::Real best_dens_score = 1e30, best_rms;
+		core::Real best_dens_score = 1e30, best_rms = 1e30;
 		for (core::uint i = 1; i <= frame.nr_frags(); ++i) {
 			core::pose::Pose working_frag = frag;
 			frame.apply( i, working_frag );

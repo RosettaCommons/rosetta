@@ -459,7 +459,7 @@ InsertionSiteTestMover::evaluate_insert_pose(
 	//subpose.dump_pdb("fresh_subpose.pdb");
 	utility::vector1< core::Real > subpose_residue_sasa;
 	core::scoring::calc_per_atom_sasa( subpose, atom_sasa_dummy, subpose_residue_sasa, probe_radius);
-	core::Real insert_subpose_sasa;
+	core::Real insert_subpose_sasa = 0.0;
 	for( Size i = 1; i <= subpose.total_residue(); ++i) insert_subpose_sasa += subpose_residue_sasa[i];
 	core::Real buried_degree( 1 - (insert_sasa / insert_subpose_sasa) );
 

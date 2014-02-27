@@ -184,7 +184,7 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
 			rsd.aa() == core::chemical::aa_his ) );
     
     is_chargedH_[i] = is_chargedH;
-    Real vdw_radius;
+    Real vdw_radius = 0.0;
     
     //Corrections for atomic parameters
     // 1. HIS aromatic carbons to be consistent with CHARMM definition

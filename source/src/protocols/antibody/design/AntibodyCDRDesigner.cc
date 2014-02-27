@@ -373,7 +373,7 @@ AntibodyCDRDesigner::setup_constraints(core::pose::Pose & pose){
 	//We only add dihedral or coordinate constraints if they are not present for the pose at hand in each CDR.
 	for (core::SSize i = 1; i<= CDRNameEnum_total; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
-		bool constraint_result;
+		bool constraint_result = false;
 		if (! cdr_has_constraints(pose, cdr, "DihedralConstraint")){
 			constraint_result = protocols::antibody::add_harmonic_cluster_constraint(ab_info_, pose, ab_info_->get_CDR_cluster(cdr)->cluster());
 		}

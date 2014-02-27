@@ -247,7 +247,7 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 		}
 		
 		if (keep_task_allowed_aa_){
-			for (core::Size aa_num; aa_num <= 20; ++aa_num){
+			for (core::Size aa_num = 1; aa_num <= 20; ++aa_num){
 				core::chemical::AA amino = static_cast<core::chemical::AA>(aa_num);
 				if (allowed_aminos[aa_num]){
 					task.nonconst_residue_task(i).allow_aa(amino);
@@ -259,8 +259,6 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 		}
 	}
 }
-
-
 
 
 } //task_operations

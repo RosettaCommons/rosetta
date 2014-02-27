@@ -247,7 +247,7 @@ densityTools()
 	}
 
 	// [3] model-map stats (intensity + model v map FSC + RSCC + per-res corrleations)
-	Real modelMapFSCsum=0, errPhase=0, errCplx=0, probCplx=0, RSCC;
+	Real modelMapFSCsum=0, errPhase=0, errCplx=0, probCplx=0, RSCC=0;
 	markedBins.resize( nresobins, 0 );
 
 	if (userpose) {

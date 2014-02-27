@@ -2416,7 +2416,7 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 
 	fastdens_score.dimension( density.u1(), density.u2(), density.u3(), nkbins_);
 
-	core::Real max_val, min_val;
+	core::Real max_val = 0.0, min_val = 0.0;
 
 	// compute k limits (corresponding to B=0 and B=1000)
 	OneGaussianScattering S_C = get_A( "C" );

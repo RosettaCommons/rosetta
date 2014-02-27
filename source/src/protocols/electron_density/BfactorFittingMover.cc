@@ -485,7 +485,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 
 	// optionally grid search for best starting value
 	core::Size nvalues = weights_to_scan_.size();
-	core::Real bestVal, bestScore;
+	core::Real bestVal = 0, bestScore = 0;
 
 	if (opt_to_fsc_) {
 		// pose->poseCoords
@@ -515,7 +515,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 
 			TR << "B=" << weights_to_scan_[j] << ": FSC=" << thisScore << std::endl;
 
-			if (thisScore>bestScore || j==1) {
+			if (thisScore > bestScore || j==1) {
 				bestScore = thisScore;
 				bestVal = weights_to_scan_[j];
 			}

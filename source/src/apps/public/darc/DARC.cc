@@ -175,7 +175,7 @@ int main( int argc, char * argv [] ) {
 			ligand_pdb++;
 		}
 	}
-  else if( !(option[ ligand ].user()) && !(option[ ligand_pdb_list ].user()) ){
+	else if( !(option[ ligand ].user()) && !(option[ ligand_pdb_list ].user()) ){
 		std::cout<<"ERROR! : no input ligand for DARC docking"<<std::endl;
 		exit(1);
 	}
@@ -184,7 +184,7 @@ int main( int argc, char * argv [] ) {
 	std::string outfname;
 	if (!option[ OptionKeys::out::output_tag ]().empty()){
 		outfname = "darc_score." + option[ OptionKeys::out::output_tag ]() + ".sc";
-  }else{
+	}else{
     outfname = "darc_score.sc";
   }
 
@@ -249,7 +249,7 @@ int main( int argc, char * argv [] ) {
 
 		protocols::pockets::PlaidFingerprint pf(small_mol_pose, npf);
 		core::pose::Pose oriented_pose;
-		core::Size best_conformer; // note: indexed from zero
+		core::Size best_conformer = 0; // note: indexed from zero
 
 		//setup GPU
 #ifdef USEOPENCL
@@ -266,7 +266,7 @@ int main( int argc, char * argv [] ) {
 			best_DARC_score = -(parti.fitness_pbest());
 			best_vars = parti.pbest();
 			// note: conformer is indexed starting at 0
-			best_conformer=((core::Size)(floor(best_vars[7])) % nconformers);
+			best_conformer = ( core::Size( floor(best_vars[7] ) ) % nconformers );
 			numeric::xyzVector<core::Real> optimized_origin(best_vars[1], best_vars[2], best_vars[3]);
 			oriented_pose = pf.get_oriented_pose(npf, best_vars[4], best_vars[5], best_vars[6], optimized_origin, best_conformer );
 		} else {
@@ -291,7 +291,7 @@ int main( int argc, char * argv [] ) {
 					pf = conf_pf;
 					numeric::xyzVector<core::Real> optimized_origin(best_vars[1], best_vars[2], best_vars[3]);
 					oriented_pose = pf.get_oriented_pose(npf, best_vars[4], best_vars[5], best_vars[6], optimized_origin, 0 );
-					best_conformer=ii-1; // note: index starts at 0
+					best_conformer = ii-1; // note: index starts at 0
 				}
 			}
 		}
@@ -490,5 +490,4 @@ int main( int argc, char * argv [] ) {
                 std::cout << "caught exception " << e.msg() << std::endl;
         }
 	return 0;
-
 }

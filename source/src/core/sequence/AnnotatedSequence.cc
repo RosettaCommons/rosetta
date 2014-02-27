@@ -77,7 +77,7 @@ std::string AnnotatedSequence::patch_str( core::Size seqpos ) const {
   std::string const& annotated_seq = *this;
   std::string patch_txt;
   if ( apos < annotated_seq.length()-2 ) {
-    if ( !annotated_seq[ apos+1 ]=='[' ) return "";
+    if ( annotated_seq[ apos+1 ] != '[' ) return "";
     for ( Size i = apos+2; i < annotated_seq.length() && annotated_seq[ i ]!= ']'; ++i ) {
       patch_txt = patch_txt + annotated_seq[ i ];
     }

@@ -380,7 +380,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 				Size prev_chain_n = 0;
 				Size prev_resnum_m = 0;
 				Size prev_resnum_n = 0;
-				numeric::xyzVector< Real> prev_ca_xyz_m, prev_ca_xyz_n;
+				numeric::xyzVector< Real> prev_ca_xyz_m(0.0), prev_ca_xyz_n(0.0);
 				for ( Size m=0; m<frag_len; ++m) {
 					conformation::Residue const & rsd_m = pose.residue(j+m);
 					if (!rsd_m.has("CA") || !rsd_m.is_protein()) { continue_k = true; break; }

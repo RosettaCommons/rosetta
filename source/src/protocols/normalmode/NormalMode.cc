@@ -195,7 +195,7 @@ NormalMode::prepare_coord( pose::Pose const & pose ){
 			torsions_using_.push_back( ires );
 	}
 	
-	Vector xyzCA, xyzN, xyzC;
+	Vector xyzCA, xyzN, xyzC(0.0);
 	Size n( 0 );
 
 	//std::cout << "prepare_coord, nmode " << torsions_using_.size() << std::endl;
@@ -835,7 +835,7 @@ matrix of singular values W is output as a vector w[1..n].  The matrix V (not
 the transpose VT) is output as v[1..n][1..n].
 *******************************************************************************/
 {
-  Size flag,i,its,j,jj,k,l,nm;
+  Size flag, i, its, j, jj, k, l = 0, nm;
   Real anorm,c,f,g,h,s,scale,x,y,z;
   
   //rv1 = dvector(1,n);

@@ -54,7 +54,7 @@ NativeResidueReader::generateResiduesFromFile(utility::file::FileName file){
 	std::map<core::Size, utility::vector1<core::conformation::ResidueOP> > res_map;
 
 	//Read all residue lines here
-	int res_num;
+	int res_num = 0;
 	std::string res_name;
 	core::conformation::ResidueOP new_rsd;
 	while ( input_stream.good() ){

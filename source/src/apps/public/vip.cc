@@ -56,8 +56,8 @@ main( int argc, char * argv [] )
 
 	devel::init(argc, argv);
 
-	core::Real initial_E;
-	core::Real old_energy;
+	core::Real initial_E = 0.0;
+	core::Real old_energy = 0.0;
 
 	core::pose::Pose in_pose;
 	core::import_pose::pose_from_pdb(
@@ -67,7 +67,7 @@ main( int argc, char * argv [] )
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score12_full" );
 	protocols::simple_moves::ScoreMover scoreme = protocols::simple_moves::ScoreMover( scorefxn );
 
-//	bool iterate = true;
+	//	bool iterate = true;
 	core::Size it = 1;
 	core::Size const ncycles = option[ cp::ncycles ];
 	core::Size const max_failures = option[ cp::max_failures ];
