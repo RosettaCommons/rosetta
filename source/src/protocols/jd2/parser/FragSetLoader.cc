@@ -94,7 +94,7 @@ void FragSetLoader::load_data(
 				runtime_assert( false );
 			}
 		}
-		runtime_assert( ! fragset->nr_frames() == 0 );
+		runtime_assert( fragset->nr_frames() != 0 );
 		data.add( "fragsets", name,  fragset );
 		// output flagments to fyile
 		if( !output.empty() ){
