@@ -107,7 +107,7 @@ bool SheetTopologyFilter::apply( Pose const & pose ) const
 		ssinfo_->initialize( pose, dssp.get_dssp_secstruct() );
 	}
 
-	if( ! ssinfo_->strands().size() > 0 ){
+	if( !( ssinfo_->strands().size() > 0 ) ){
 		tr << "Structure does not include strands." << std::endl;
 		return false;
 	}
