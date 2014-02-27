@@ -17,7 +17,7 @@
 -MM:ignore_missing_bondangle_params
 -mute protocols.BumpGrid protocols.forge.components.VarLengthBuild protocols.moves.MonteCarlo protocols.packstat.SimplePDB protocols.match.Matcher protocols.toolbox.RotamerSetOperations.RigidBodyMoveRotSetOps core.scoring.NeighborList core.pack.dunbrack.SingleLigandRotamerLibrary protocols.match.downstream.LigandConformerBuilder core.mm.MMBondAngleLibrary protocols.idealize core.fragment.picking_old
 -match:bump_tolerance 0.4
--score:weights enzdes.wts
+-score:weights talaris2013_cst.wts
 -run:preserve_header
 -enzdes:parser_read_cloud_pdb
 -jd2:enzdes_out

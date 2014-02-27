@@ -152,7 +152,7 @@ EnzdesBaseProtocol::EnzdesBaseProtocol():
 			scorefxn_ = core::scoring::getScoreFunction(); // This call handles the database vs working directory resolution -- DONT SUBVERT OR DUPLICATE IT
 		}
 		else {
-			scorefxn_ = ScoreFunctionFactory::create_score_function( "enzdes", option[ OptionKeys::score::patch ]() );
+			scorefxn_ = ScoreFunctionFactory::create_score_function( "talaris2013_cst", option[ OptionKeys::score::patch ]() ); //02/25/14 sboyken; changed default to talaris2013_cst
 			/*			if( score_patch == "" ) scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("enzdes");
 			else scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("enzdes", score_patch);
 			*/
