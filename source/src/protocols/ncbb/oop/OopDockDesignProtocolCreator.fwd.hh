@@ -7,27 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/ncbb/NcbbDockDesignProtocol.fwd.hh
+/// @file   protocols/ncbb/oop/OopDockDesignProtocol.fwd.hh
 ///
 /// @brief
 /// @author Andrew Watkins
 
 
-#ifndef INCLUDED_protocols_ncbb_NcbbDockDesignProtocolCreator_fwd_hh
-#define INCLUDED_protocols_ncbb_NcbbDockDesignProtocolCreator_fwd_hh
+#ifndef INCLUDED_protocols_ncbb_oop_OopDockDesignProtocolCreator_fwd_hh
+#define INCLUDED_protocols_ncbb_oop_OopDockDesignProtocolCreator_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace ncbb {
+namespace oop {
 
+class OopDockDesignProtocolCreator; // fwd declaration
+typedef utility::pointer::owning_ptr< OopDockDesignProtocolCreator > OopDockDesignProtocolCreatorOP;
+typedef utility::pointer::owning_ptr< OopDockDesignProtocolCreator const > OopDockDesignProtocolCreatorCOP;
 
-class NcbbDockDesignProtocolCreator; // fwd declaration
-typedef utility::pointer::owning_ptr< NcbbDockDesignProtocolCreator > NcbbDockDesignProtocolCreatorOP;
-typedef utility::pointer::owning_ptr< NcbbDockDesignProtocolCreator const > NcbbDockDesignProtocolCreatorCOP;
-
-
+} // namespace oop
 } // namespace ncbb
 } // namespace protocols
 
-#endif // INCLUDED_protocols_ncbb_ncbb_NcbbDockDesignProtocol_FWD_HH
+#endif // INCLUDED_protocols_ncbb_oop_OopDockDesignProtocol_FWD_HH

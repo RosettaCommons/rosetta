@@ -667,8 +667,7 @@ NcbbDockDesignProtocol::setup_filter_stats()
 }
 
 
-protocols::moves::MoverOP 
-//NcbbDockDesignProtocolOP
+protocols::moves::MoverOP
 NcbbDockDesignProtocol::clone() const
 {
 	return new NcbbDockDesignProtocol (

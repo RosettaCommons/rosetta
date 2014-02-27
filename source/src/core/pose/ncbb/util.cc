@@ -10,6 +10,7 @@
 /// @file    core/pose/ncbb/util.cc
 /// @brief   Utility function definitions for poses with noncanonical backbones
 /// @author  kdrew
+/// @author  Andy Watkins
 
 // Unit headers
 #include <core/pose/ncbb/util.hh>

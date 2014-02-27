@@ -7,28 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file
-///@brief
-///@author Andrew Watkins
+/// @file   protocols/ncbb/oop/OopCreatorMover.fwd.hh
+///
+/// @brief
+/// @author Andy Watkins
 
-#ifndef INCLUDED_protocols_ncbb_NcbbDockDesignProtocolCreator_hh
-#define INCLUDED_protocols_ncbb_NcbbDockDesignProtocolCreator_hh
 
-#include <protocols/moves/MoverCreator.hh>
-#include <protocols/ncbb/NcbbDockDesignProtocolCreator.fwd.hh>//#include <protocols/moves/Mover.hh>
+#ifndef INCLUDED_protocols_ncbb_oop_OopCreatorMover_fwd_hh
+#define INCLUDED_protocols_ncbb_oop_OopCreatorMover_fwd_hh
+
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace ncbb {
+namespace oop {
 
-class NcbbDockDesignProtocolCreator : public protocols::moves::MoverCreator {
-public:
-	virtual moves::MoverOP create_mover() const;
-	virtual std::string keyname() const;
-	static std::string mover_name();
-};
 
-}
-}
+class OopCreatorMover; // fwd declaration
+typedef utility::pointer::owning_ptr< OopCreatorMover > OopCreatorMoverOP;
+typedef utility::pointer::owning_ptr< OopCreatorMover const > OopCreatorMoverCOP;
 
-#endif
 
+} // namespace oop
+} // namespace ncbb
+} // namespace protocols
+
+#endif // INCLUDED_protocols_ncbb_oop_OopCreatorMover_FWD_HH

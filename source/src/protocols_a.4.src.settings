@@ -74,6 +74,7 @@ sources = {
 	],
 	"protocols/ncbb/oop": [
 		"OopDockDesignProtocol",
+		"OopCreatorMover",
 	],
 	"protocols/ncbb": [
 		"NcbbDockDesignProtocol",

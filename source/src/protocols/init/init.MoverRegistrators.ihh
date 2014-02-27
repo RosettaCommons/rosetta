@@ -63,7 +63,10 @@ static MoverRegistrator< docking::ConformerSwitchMoverCreator > reg_ConformerSwi
 static MoverRegistrator< docking::DockingProtocolCreator > DockingProtocolCreator;
 static MoverRegistrator< docking::DockSetupMoverCreator > reg_DockSetupMoverCreator;
 static MoverRegistrator< docking::DockingInitialPerturbationCreator > reg_DockingInitialPerturbationCreator;
+
 static MoverRegistrator< ncbb::NcbbDockDesignProtocolCreator > reg_NcbbDockDesignProtocolCreator;
+static MoverRegistrator< ncbb::oop::OopDockDesignProtocolCreator > reg_OopDockDesignProtocolCreator;
+static MoverRegistrator< ncbb::oop::OopCreatorMoverCreator > reg_OopCreatorMoverCreator;
 
 static MoverRegistrator< symmetric_docking::SymDockProtocolCreator > SymDockProtocolCreator;
 

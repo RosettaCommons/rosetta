@@ -83,10 +83,8 @@ class NcbbDockDesignProtocol : public moves::Mover
 		virtual void apply( core::pose::Pose & pose );
 		virtual std::string get_name() const { return "NcbbDockDesignProtocol"; }
 		void setup_filter_stats();
-//		NcbbDockDesignProtocolOP 
-protocols::moves::MoverOP fresh_instance() const { return NcbbDockDesignProtocolOP( new NcbbDockDesignProtocol ); }
-//		NcbbDockDesignProtocolOP 
-protocols::moves::MoverOP clone() const;
+        protocols::moves::MoverOP fresh_instance() const { return NcbbDockDesignProtocolOP( new NcbbDockDesignProtocol ); }
+        protocols::moves::MoverOP clone() const;
 		void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
 	private:

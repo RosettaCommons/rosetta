@@ -49,9 +49,11 @@
 #include <protocols/simple_moves/oop/OopRandomPuckMover.hh>
 #include <protocols/simple_moves/oop/OopRandomSmallMover.hh>
 #include <protocols/simple_moves/oop/OopPatcher.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/ncbb/oop/OopDockDesignProtocol.hh>
+#include <protocols/ncbb/oop/OopDockDesignProtocolCreator.hh>
 
 // Filter headers
 #include <basic/MetricValue.hh>
@@ -722,6 +724,170 @@ OopDockDesignProtocol::setup_pert_foldtree(
 	pose.fold_tree( f );
 }
 
+protocols::moves::MoverOP
+OopDockDesignProtocol::clone() const
+{
+    return new OopDockDesignProtocol (
+                                           score_fxn_,
+                                           mc_temp_,
+                                           pert_mc_temp_,
+                                           pert_dock_rot_mag_,
+                                           pert_dock_trans_mag_,
+                                           pert_pep_small_temp_,
+                                           pert_pep_small_H_,
+                                           pert_pep_small_L_,
+                                           pert_pep_small_E_,
+                                           pert_pep_shear_temp_,
+                                           pert_pep_shear_H_,
+                                           pert_pep_shear_L_,
+                                           pert_pep_shear_E_,
+                                           pert_pep_num_rep_,
+                                           pert_num_,
+                                           dock_design_loop_num_,
+                                           no_design_,
+                                           final_design_min_,
+                                           use_soft_rep_,
+                                           mc_initial_pose_,
+                                           oop_design_first_,
+                                           pymol_,
+                                           keep_history_
+                                           );
+    }
+    
+void
+OopDockDesignProtocol::parse_my_tag
+(
+     utility::tag::TagCOP tag,
+     basic::datacache::DataMap &data,
+     protocols::filters::Filters_map const &,
+     protocols::moves::Movers_map const &,
+     core::pose::Pose const &
+) {
+        
+    //score_fxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
+        
+    if(tag->hasOption( "scorefxn"))
+    {
+        std::string const scorefxn_key( tag->getOption<std::string>("scorefxn" ) );
+        if ( ! data.has( "scorefxn", scorefxn_key ) )
+            throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
+        score_fxn_ = data.get< core::scoring::ScoreFunction* >( "scorefxns", scorefxn_key );
+    }
+        
+    if(tag->hasOption( "mc_temp"))
+        this->mc_temp_ = tag->getOption<core::Real>("mc_temp", mc_temp_);
+    else
+        mc_temp_ = 1.0;
+        
+    if(tag->hasOption( "pert_mc_temp"))
+        pert_mc_temp_ = tag->getOption<core::Real>("pert_mc_temp", pert_mc_temp_);
+    else
+        pert_mc_temp_ = 0.8;
+        
+    if(tag->hasOption( "pert_dock_rot_mag"))
+        pert_dock_rot_mag_ = tag->getOption<core::Real>("pert_dock_rot_mag", pert_dock_rot_mag_);
+    else
+        pert_dock_rot_mag_ = 1.0;
+        
+    if(tag->hasOption( "pert_dock_trans_mag"))
+        pert_dock_trans_mag_ = tag->getOption<core::Real>("pert_dock_trans_mag", pert_dock_trans_mag_);
+    else
+        pert_dock_trans_mag_ = 0.5;
+
+    if(tag->hasOption( "pert_pep_small_temp"))
+        pert_pep_small_temp_ = tag->getOption<core::Real>("pert_pep_small_temp", pert_pep_small_temp_);
+    else
+        pert_pep_small_temp_ = 0.8;
+        
+    if(tag->hasOption( "pert_pep_small_H"))
+        pert_pep_small_H_ = tag->getOption<core::Real>("pert_pep_small_H", pert_pep_small_H_);
+    else
+        pert_pep_small_H_ = 2.0;
+        
+    if(tag->hasOption( "pert_pep_small_L"))
+        pert_pep_small_L_ = tag->getOption<core::Real>("pert_pep_small_L", pert_pep_small_L_);
+    else
+        pert_pep_small_L_ = 2.0;
+        
+    if(tag->hasOption( "pert_pep_small_E"))
+        pert_pep_small_E_ = tag->getOption<core::Real>("pert_pep_small_E", pert_pep_small_E_);
+    else
+        pert_pep_small_E_ = 2.0;
+        
+    if(tag->hasOption( "pert_pep_shear_temp"))
+        pert_pep_shear_temp_ = tag->getOption<core::Real>("pert_pep_shear_temp", pert_pep_shear_temp_);
+    else
+        pert_pep_shear_temp_ = 0.8;
+        
+    if(tag->hasOption( "pert_pep_shear_H"))
+        pert_pep_shear_H_ = tag->getOption<core::Real>("pert_pep_shear_H", pert_pep_shear_H_);
+    else
+        pert_pep_shear_H_ = 2.0;
+        
+    if(tag->hasOption( "pert_pep_shear_L"))
+        pert_pep_shear_L_ = tag->getOption<core::Real>("pert_pep_shear_L", pert_pep_shear_L_);
+    else
+        pert_pep_shear_L_ = 2.0;
+        
+    if(tag->hasOption( "pert_pep_shear_E"))
+        pert_pep_shear_E_ = tag->getOption<core::Real>("pert_pep_shear_E", pert_pep_shear_E_);
+    else
+        pert_pep_shear_E_ = 2.0;
+        
+    if(tag->hasOption( "pert_pep_num_rep"))
+        pert_pep_num_rep_ = tag->getOption<core::Size>("pert_pep_num_rep", pert_pep_num_rep_);
+    else
+        pert_pep_num_rep_ = 100;
+        
+    if(tag->hasOption( "pert_num"))
+        pert_num_ = tag->getOption<core::Size>("pert_num", pert_num_);
+    else
+        pert_num_ = 10;
+        
+    if(tag->hasOption( "dock_design_loop_num"))
+        dock_design_loop_num_ = tag->getOption<core::Size>("dock_design_loop_num", dock_design_loop_num_);
+    else
+        dock_design_loop_num_ = 10;
+        
+    if(tag->hasOption( "no_design"))
+        no_design_ = tag->getOption<bool>("no_design", no_design_);
+    else
+        no_design_ = false;
+        
+    if(tag->hasOption( "final_design_min"))
+        final_design_min_ = tag->getOption<bool>("final_design_min", final_design_min_);
+    else
+        final_design_min_ = true;
+        
+    if(tag->hasOption( "use_soft_rep"))
+        use_soft_rep_ = tag->getOption<bool>("use_soft_rep", use_soft_rep_);
+    else
+        use_soft_rep_ = false;
+        
+    if(tag->hasOption( "mc_initial_pose"))
+        mc_initial_pose_ = tag->getOption<bool>("mc_initial_pose", mc_initial_pose_);
+    else
+        mc_initial_pose_ = false;
+        
+    if(tag->hasOption( "oop_design_first"))
+        oop_design_first_ = tag->getOption<bool>("oop_design_first", oop_design_first_);
+    else
+        oop_design_first_ = false;
+        
+    if(tag->hasOption( "pymol"))
+        pymol_ = tag->getOption<bool>("pymol", pymol_);
+    else
+        pymol_ = false;
+        
+    if(tag->hasOption( "keep_history"))
+        keep_history_ = tag->getOption<bool>("keep_history", keep_history_);
+    else
+        keep_history_ = false;
+        
+}
+ 
+    
+    
 void
 OopDockDesignProtocol::setup_filter_stats()
 {
@@ -757,6 +923,19 @@ OopDockDesignProtocol::setup_filter_stats()
 		pose::metrics::CalculatorFactory::Instance().register_calculator( "pack", pack_calcculator );
 	}
 
+}
+    
+// MoverCreator
+moves::MoverOP OopDockDesignProtocolCreator::create_mover() const {
+    return new OopDockDesignProtocol();
+}
+    
+std::string OopDockDesignProtocolCreator::keyname() const {
+    return OopDockDesignProtocolCreator::mover_name();
+}
+    
+std::string OopDockDesignProtocolCreator::mover_name(){
+    return "OopDockDesign";
 }
 
 }

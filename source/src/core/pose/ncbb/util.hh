@@ -10,6 +10,7 @@
 /// @file    core/pose/ncbb/util.hh
 /// @brief   Utility function declarations for poses with noncanonical backbone. 
 /// @author  kdrew
+/// @author  Andy Watkins
 
 #ifndef INCLUDED_core_pose_ncbb_util_HH
 #define INCLUDED_core_pose_ncbb_util_HH

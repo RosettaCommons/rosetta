@@ -11,22 +11,24 @@
 ///@brief
 ///@author Andrew Watkins
 
-#ifndef INCLUDED_protocols_ncbb_NcbbDockDesignProtocolCreator_hh
-#define INCLUDED_protocols_ncbb_NcbbDockDesignProtocolCreator_hh
+#ifndef INCLUDED_protocols_ncbb_oop_OopDockDesignProtocolCreator_hh
+#define INCLUDED_protocols_ncbb_oop_OopDockDesignProtocolCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
-#include <protocols/ncbb/NcbbDockDesignProtocolCreator.fwd.hh>//#include <protocols/moves/Mover.hh>
+#include <protocols/ncbb/oop/OopDockDesignProtocolCreator.fwd.hh>//#include <protocols/moves/Mover.hh>
 
 namespace protocols {
 namespace ncbb {
+namespace oop {
 
-class NcbbDockDesignProtocolCreator : public protocols::moves::MoverCreator {
+class OopDockDesignProtocolCreator : public protocols::moves::MoverCreator {
 public:
 	virtual moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static std::string mover_name();
 };
 
+}
 }
 }
 
