@@ -62,6 +62,7 @@ enum AA {
 	aa_trp,
 	aa_tyr,
 	num_canonical_aas = aa_tyr,
+
 	// dna 21-24
 	na_ade,
 	first_DNA_aa = na_ade,
@@ -69,13 +70,16 @@ enum AA {
 	na_gua,
 	na_thy,
 	last_DNA_aa = na_thy,
+
 	// rna 25-28
 	na_rgu,
 	na_rad,
 	na_rcy,
 	na_ura,
+
 	//D-amino acids 29-47.  Keep these together as a group, and ensure that aa_dal is first and aa_dty is last.
 	aa_dal,
+	first_D_aa = aa_dal,
 	aa_dcs,
 	aa_das,
 	aa_dgu,
@@ -94,16 +98,50 @@ enum AA {
 	aa_dva,
 	aa_dtr,
 	aa_dty,
+	last_D_aa = aa_dty,
+
+	//Beta-3-amino acids 48-71.  Keep these together as a group, and ensure that last_beta3_aa is set to whatever is last.
+	aa_b3a,
+	first_beta3_aa = aa_b3a,
+	aa_b3c,
+	aa_b3d,
+	aa_b3e,
+	aa_b3f,
+	aa_b3g,
+	aa_b3h,
+	aa_b3i,
+	aa_b3k,
+	aa_b3l,
+	aa_b3m,
+	aa_b3n,
+	aa_b3p,
+	aa_b3q,
+	aa_b3r,
+	aa_b3s,
+	aa_b3t,
+	aa_b3v,
+	aa_b3w,
+	aa_b3y,
+	aa_b3cisACPrC,
+	aa_b3cisACPC,
+	aa_b3cisACHC,
+	last_beta3_aa = aa_b3cisACHC,
+
 	// h2o
 	aa_h2o,
+
 	// virtual
 	aa_vrt,
-    // membrane
-    aa_mpr,
+
+  // membrane
+  aa_mpr,
+
 	// unknown polymer
 	aa_unp,
+
 	// unknown
 	aa_unk,
+
 	num_aa_types = aa_unk //keep this guy last
 };
 

@@ -111,34 +111,37 @@ get_hb_don_chem_type(
 		}
 	} else {
 		switch(don_rsd.aa()){
-		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: return hbdon_CXA; break;
-		case aa_his: case aa_dhi:
+		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: case aa_b3n: case aa_b3q: return hbdon_CXA; break;
+		case aa_his: case aa_dhi: case aa_b3h:
 			if (aname == " ND1"){
 				return hbdon_IMD;
 			} else {
 				assert( aname == " NE2");
 				return hbdon_IME;
 			} break;
-		case aa_trp: case aa_dtr:
+		case aa_trp: case aa_dtr: case aa_b3w:
 			return hbdon_IND; break;
-		case aa_lys: case aa_dly:
+		case aa_lys: case aa_dly: case aa_b3k:
 			return hbdon_AMO; break;
-		case aa_arg: case aa_dar:
+		case aa_arg: case aa_dar: case aa_b3r:
 			if (aname == " NE "){
 				return hbdon_GDE;
 			} else {
 				assert(aname == " NH1" || aname == " NH2");
 				return hbdon_GDH;
 			} break;
-		case aa_tyr: case aa_dty:
+		case aa_tyr: case aa_dty: case aa_b3y:
 			return hbdon_AHX; break;
-		case aa_ser: case aa_dse:
-		case aa_thr: case aa_dth:
+		case aa_ser: case aa_dse: case aa_b3s:
+		case aa_thr: case aa_dth: case aa_b3t:
 			return hbdon_HXL; break;
 		case aa_ala: case aa_cys: case aa_asp: case aa_glu: case aa_phe:
 		case aa_gly: case aa_ile: case aa_leu: case aa_met: case aa_pro: case aa_val:
 		case aa_dal: case aa_dcs: case aa_das: case aa_dgu: case aa_dph:
 		case aa_dil: case aa_dle: case aa_dme: case aa_dpr: case aa_dva:
+		case aa_b3a: case aa_b3c: case aa_b3d: case aa_b3e: case aa_b3f:
+		case aa_b3g: case aa_b3i: case aa_b3l: case aa_b3m: case aa_b3p: case aa_b3v:
+		case aa_b3cisACPC: case aa_b3cisACHC: case aa_b3cisACPrC: //Common cyclic beta-3 amino acids
 			return hbdon_NONE; break;
 		case na_ade:
 			if (aname == " N6 ") {
@@ -303,9 +306,9 @@ get_hb_acc_chem_type(
 		}
 	} else {
 		switch(acc_rsd.aa()){
-		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: return hbacc_CXA; break;
-		case aa_asp: case aa_glu: case aa_das: case aa_dgu: return hbacc_CXL; break;
-		case aa_his: case aa_dhi:
+		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: case aa_b3n: case aa_b3q: return hbacc_CXA; break;
+		case aa_asp: case aa_glu: case aa_das: case aa_dgu: case aa_b3d: case aa_b3e: return hbacc_CXL; break;
+		case aa_his: case aa_dhi: case aa_b3h:
 			if (aname == " ND1"){
 				return hbacc_IMD;
 			} else {
@@ -315,9 +318,12 @@ get_hb_acc_chem_type(
 		case aa_met: case aa_pro: case aa_val: case aa_tyr:
 		case aa_dal: case aa_dcs: case aa_dph: case aa_dil: case aa_dle:
 		case aa_dme: case aa_dpr: case aa_dva: case aa_dty:
+		case aa_b3a: case aa_b3c: case aa_b3f: case aa_b3g: case aa_b3i: case aa_b3l:
+		case aa_b3m: case aa_b3p: case aa_b3v: case aa_b3y:
 			return hbacc_AHX; break;
-		case aa_ser: case aa_thr: case aa_dse: case aa_dth: return hbacc_HXL; break;
-		case aa_lys: case aa_arg: case aa_trp: case aa_dly: case aa_dar: case aa_dtr:
+		case aa_ser: case aa_thr: case aa_dse: case aa_dth: case aa_b3s: case aa_b3t: return hbacc_HXL; break;
+		case aa_lys: case aa_arg: case aa_trp: case aa_dly: case aa_dar: case aa_dtr: case aa_b3k: case aa_b3r: case aa_b3w:
+		case aa_b3cisACPC: case aa_b3cisACHC: case aa_b3cisACPrC: //Common cyclic beta-3 amino acids
 			return hbacc_NONE;
 		case na_ade:
 			if (aname == " N1 " || aname == " N3 " || aname == " N7 "){

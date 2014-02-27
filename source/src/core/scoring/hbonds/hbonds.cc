@@ -54,6 +54,9 @@
 #include <boost/unordered_map.hpp>
 #define foreach BOOST_FOREACH
 
+//Standard I/O
+//#include <stdio.h>
+
 
 //#include <core/scoring/Energies.hh>
 
@@ -393,7 +396,6 @@ identify_hbonds_1way(
 			int const base ( acc_rsd.atom_base( aatm ) );
 			int const base2( acc_rsd.abase2( aatm ) );
 			assert( base2 > 0 && base != base2 );
-
 
 			hb_energy_deriv( database, hbond_set.hbond_options(),
 				hbe_type, datm_xyz, hatm_xyz,

@@ -40,7 +40,7 @@ std::map< std::string, AA > setup_name2aa() {
 
 	std::map< std::string, AA > n2aa;
 
-    // amino acid types
+    // L-amino acid types
 	n2aa[ "ALA" ] = aa_ala;
 	n2aa[ "CYS" ] = aa_cys;
 	n2aa[ "ASP" ] = aa_asp;
@@ -62,7 +62,7 @@ std::map< std::string, AA > setup_name2aa() {
 	n2aa[ "TRP" ] = aa_trp;
 	n2aa[ "TYR" ] = aa_tyr;
 
-    // D amino acids
+    // D-amino acids
 	n2aa[ "DAL" ] = aa_dal;
 	n2aa[ "DCS" ] = aa_dcs;
 	n2aa[ "DAS" ] = aa_das;
@@ -83,6 +83,33 @@ std::map< std::string, AA > setup_name2aa() {
 	n2aa[ "DTR" ] = aa_dtr;
 	n2aa[ "DTY" ] = aa_dty;
 
+    // beta-3-L amino acids
+	n2aa[ "B3A" ] = aa_b3a;
+	n2aa[ "B3C" ] = aa_b3c;
+	n2aa[ "B3D" ] = aa_b3d;
+	n2aa[ "B3E" ] = aa_b3e;
+	n2aa[ "B3F" ] = aa_b3f;
+	n2aa[ "B3G" ] = aa_b3g;
+	n2aa[ "B3H" ] = aa_b3h;
+	n2aa[ "B3I" ] = aa_b3i;
+	n2aa[ "B3K" ] = aa_b3k;
+	n2aa[ "B3L" ] = aa_b3l;
+	n2aa[ "B3M" ] = aa_b3m;
+	n2aa[ "B3N" ] = aa_b3n;
+	n2aa[ "B3P" ] = aa_b3p;
+	n2aa[ "B3Q" ] = aa_b3q;
+	n2aa[ "B3R" ] = aa_b3r;
+	n2aa[ "B3S" ] = aa_b3s;
+	n2aa[ "B3T" ] = aa_b3t;
+	n2aa[ "B3V" ] = aa_b3v;
+	n2aa[ "B3W" ] = aa_b3w;
+	n2aa[ "B3Y" ] = aa_b3y;
+		// 3 common cyclic beta-3 amino acids
+	n2aa[ "cPr" ] = aa_b3cisACPrC;
+	n2aa[ "cAC" ] = aa_b3cisACPC;
+	n2aa[ "cAH" ] = aa_b3cisACHC;
+
+		// Nucleic acids
 	n2aa[ "ADE" ] = na_ade;
 	n2aa[ "CYT" ] = na_cyt;
 	n2aa[ "GUA" ] = na_gua;
@@ -98,8 +125,8 @@ std::map< std::string, AA > setup_name2aa() {
     // Virtual residues
 	n2aa[ "VRT" ] = aa_vrt;
 
-    // Membrane Protein AA
-    n2aa[ "MPR" ] = aa_mpr;
+  	// Membrane Protein AA
+  n2aa[ "MPR" ] = aa_mpr;
          
 	n2aa[ "UNP" ] = aa_unp;
 	n2aa[ "UNK" ] = aa_unk;
@@ -151,7 +178,7 @@ std::map< char, AA > setup_oneletter2aa() {
     // Add 1 letter code for membrane proteins
     l2aa[ 'm' ] = aa_mpr;
 
-	//vmullig -- The conflict for the D-amino acids is also a problem:
+	//vmullig -- The conflict for the D-amino acids and the beta-amino acids is also a problem:
 	/*l2aa[ "A" ] = aa_dal;
 	l2aa[ "C" ] = aa_dcs;
 	l2aa[ "D" ] = aa_das;
@@ -255,8 +282,8 @@ aa_from_name( std::string const & name )
 bool
 is_D_aa( AA aa )
 {
-	if(aa>=aa_dal && aa<=aa_dty) return true;
-	else return false;
+	if(aa>=first_D_aa && aa<=last_D_aa) return true;
+  return false;
 }
 
 AA
