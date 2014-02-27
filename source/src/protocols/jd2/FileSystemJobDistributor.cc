@@ -172,7 +172,7 @@ FileSystemJobDistributor::remove_bad_inputs_from_job_list()
 {
 	//we should only fail on a job which was the first of its type - if it fails on nstruct=2 with BAD_INPUT then why did it not fail on nstruct=1?
 	//runtime_assert( current_job()->nstruct_index() == 1 );
-	if( !current_job()->nstruct_index() == 1 ){
+	if( current_job()->nstruct_index() != 1 ){
 		Warning() << "A job reported bad input, but was not the first input of its type!  You should figure out why the first one passed if later ones failed!" << std::endl;
 	}
 

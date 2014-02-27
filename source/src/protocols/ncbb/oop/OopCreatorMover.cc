@@ -326,11 +326,13 @@ OopCreatorMover::apply(
 		for ( Size i = 1; i <= pose.total_residue(); ++i )
 		{
 			TR << "resid: " << i << " is OOP_PRE: " << pose.residue(i).has_variant_type(chemical::OOP_PRE) << std::endl;
-			if ( pose.residue(i).has_variant_type(chemical::OOP_PRE) != 1 )
-				if ( is_l_chiral( pose.residue_type( i ) ) )
-          TR << "setting small movable resid: "<< i<<std::endl;
-        else
-          oop_pre_positions.push_back(i);
+			if ( pose.residue(i).has_variant_type(chemical::OOP_PRE) != 1 ) {
+				if ( is_l_chiral( pose.residue_type( i ) ) ) {
+					TR << "setting small movable resid: "<< i<<std::endl;
+				} else {
+					oop_pre_positions.push_back(i);
+				}
+			}
 		}
         
 		pert_sequence->add_mover( pert_pep_small );
