@@ -25,10 +25,7 @@ static std::string const pymol_chains(
 
 numeric::Size get_pymol_num_unique_ids();
 
-char
-get_pymol_chain( numeric::Size i ) {
-	return pymol_chains[ ( i - 1 ) % pymol_chains.size() ];
-}
+char get_pymol_chain( numeric::Size i );
 
 numeric::Size get_pymol_chain_index_1( char c );
 

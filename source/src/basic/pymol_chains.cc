@@ -24,13 +24,20 @@
 namespace basic {
 
 numeric::Size
-get_pymol_num_unique_ids() {
+get_pymol_num_unique_ids()
+{
 	return pymol_chains.length();
 }
 
+char
+get_pymol_chain( numeric::Size i )
+{
+	return pymol_chains[ ( i - 1 ) % pymol_chains.size() ];
+}
 
 numeric::Size
-get_pymol_chain_index_1( char c ) {
+get_pymol_chain_index_1( char c )
+{
 	numeric::Size i = pymol_chains.find( c );
 	if ( i == pymol_chains.size() ) return 0;
 	return i + 1;
