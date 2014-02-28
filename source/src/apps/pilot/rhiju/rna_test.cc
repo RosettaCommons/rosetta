@@ -211,7 +211,7 @@ OPT_KEY( Boolean, chain_closure_test )
 OPT_KEY( Boolean, backbone_rebuild_test )
 OPT_KEY( Boolean, crazy_minimize )
 OPT_KEY( Boolean, crazy_fold_tree )
-OPT_KEY( Boolean, sasa )
+OPT_KEY( Boolean, sasatest )
 OPT_KEY( Boolean, close_loops )
 OPT_KEY( Boolean, output_lores_silent_file )
 OPT_KEY( Boolean, heat )
@@ -5115,7 +5115,7 @@ my_main( void* )
 	  crazy_minimize_test();
 	} else if ( option[ env_test ] ){
 	  env_sugar_test();
-	} else if ( option[ sasa ] ){
+	} else if ( option[ sasatest ] ){
 	  sasa_test();
 	} else if ( option[ print_hbonds ] ){
 	  print_hbonds_test();
@@ -5201,7 +5201,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( backbone_rebuild_test, "RNA backbone rebuild test",false );
 	NEW_OPT( crazy_minimize, "RNA crazy minimize test",false );
 	NEW_OPT( crazy_fold_tree, "RNA star fold tree",false );
-	NEW_OPT( sasa, "SASA calculator",false );
+	NEW_OPT( sasatest, "SASA calculator",false );
 	NEW_OPT( fa_stack_weight, "RNA full atom stacking potential weight", 1.0 );
 	NEW_OPT( cycles, "Default number of Monte Carlo cycles", 10000 );
 	NEW_OPT( vall_torsions, "Torsions file?", "sampling/rna/1jj2.torsions" );

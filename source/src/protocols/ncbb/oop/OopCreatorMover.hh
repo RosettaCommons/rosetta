@@ -48,8 +48,6 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 
-
-#include <protocols/init/init.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 //#include <basic/options/keys/OptionKeys.hh>
@@ -91,7 +89,7 @@ class OopCreatorMover : public moves::Mover
                                  bool final_mc,
                                  bool final_correct_oop_post
                                  );
-	
+
 		//default dtor
 		virtual ~OopCreatorMover(){}
 
