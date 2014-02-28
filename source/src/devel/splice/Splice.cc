@@ -1553,7 +1553,7 @@ Splice::add_sequence_constraints( core::pose::Pose & pose){
 		pose.dump_pdb(out); //Testi*/
 		runtime_assert( seqprof->size()-1 == pose.conformation().chain_end( chain_num_ ) - pose.conformation().chain_begin( chain_num_ ) + 1 ); //Please note that the minus 1 after seqprof size is because seqprof size is always +1 to the actual size. Do not chnage this!!
 		cst_num = 0;
-		TR<<"Upweighting sequence constraint for residues: "<<std::endl;
+		TR<<"Upweighting sequence constraints for residues: "<<std::endl;
 		if (pose.conformation().num_chains() == 1){//If pose has only one chain (no ligand) than all residues are weighted the same
 			for( core::Size seqpos = pose.conformation().chain_begin( 1 ); seqpos <= pose.conformation().chain_end( 1 ); ++seqpos ) {
 				//TR<<"Now adding constraint to aa: "<<seqpos<<pose.aa(seqpos)<<std::endl;
@@ -1570,15 +1570,17 @@ Splice::add_sequence_constraints( core::pose::Pose & pose){
 			if (chain_num_>1){
 				for( core::Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
 					if (seqpos>pose.conformation().chain_end( 1 )){
-						smap->push_back( seqpos-pose.conformation().chain_end( 1 ) ); //if position is in chain 2 then it should have a seqeunce profile, the mapping should like this: 0|0|0|1|2|3|
+						smap->push_back( seqpos-pose.conformation().chain_end( 1 ) ); //if position is in chain 2 then it should have a seqeunce profile, the mapping should look like this: 0|0|0|1|2|3|
+																						// So the first positions ('0') do not have a seqeuence constraint
 					}
 					else{
 						smap->push_back( 0 );
 					}
 				}
-				smap->show();
+				smap->show();//uncomment to see mapping in tracer
 			}
 			else{
+			//	TR<<"Binder is chain 1, setting smap to null"<<std::endl;
 				smap=NULL;
 			}
 

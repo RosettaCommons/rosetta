@@ -8,7 +8,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file PSSM2BfactorMover.hh
-/// @brief switch the chain order
 
 #ifndef INCLUDED_protocols_simple_moves_PSSM2BfactorMover_hh
 #define INCLUDED_protocols_simple_moves_PSSM2BfactorMover_hh
@@ -48,8 +47,13 @@ public:
 	core::Real max_value() const { return max_value_; }
 	void max_value( core::Real const s ){ max_value_ = s; }
 
+	core::Real chain_num() const { return chain_num_; }
+	void chain_num( core::Size const s ){ chain_num_ = s; }
+
 private:
 	core::Real min_value_,max_value_; // dflt -1, 5
+	core::Size chain_num_; // dflt 1, important if coloring a chain that is not the first chain. that will cause an err.
+
 };
 
 
