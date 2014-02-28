@@ -116,7 +116,6 @@ class IZStreamTests : public CxxTest::TestSuite {
 		std::getline( stdistream, line );
 		std::cout << "line: '" << line << "' is good? " << is.good() << std::endl;
 		TS_ASSERT( line == "this is a file" );
-		std::streampos mid( stdistream.tellg() );
 		stdistream.seekg( beginning );
 		std::getline( stdistream, line );
 		std::cout << "line, rewound: '" << line << "' is good? " << is.good() << std::endl;

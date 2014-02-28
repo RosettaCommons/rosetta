@@ -70,9 +70,9 @@ namespace electron_density_atomwise {
 using namespace core;
 using namespace basic::options;
 
-#ifndef WIN32
-const core::Real FLT_MAX = 1e37;
-#endif
+//#ifndef WIN32
+//const core::Real FLT_MAX = 1e37;
+//#endif
 
 
 static basic::Tracer TR ( "core.scoring.electron_density_atomwise.ElectronDensityAtomwise" );

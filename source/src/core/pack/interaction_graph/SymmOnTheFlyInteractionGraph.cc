@@ -39,7 +39,6 @@ namespace core {
 namespace pack {
 namespace interaction_graph {
 
-bool const debug = { false };
 static basic::Tracer T("core.pack.interaction_graph.otf_ig", basic::t_error );
 
 /// @brief main constructor, no default or copy constructors

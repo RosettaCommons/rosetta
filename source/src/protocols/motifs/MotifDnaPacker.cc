@@ -99,8 +99,6 @@ namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; 
 namespace protocols {
 namespace motifs {
 
-int const PRECISION(3); // number of decimal places for floating point numbers
-
 using utility::vector1;
 using utility::string_split;
 using namespace core;

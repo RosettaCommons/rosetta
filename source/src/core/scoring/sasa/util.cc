@@ -135,13 +135,11 @@ get_sasa_radii_set_from_string(std::string radii_set){
 	
 	
 // These are needed currently by get_legrand_sasa_masks and get_legrand_sasa_angles:
-
 int const num_bytes = 21;
 int const num_phi = 64;
 int const num_theta = 64;
 int const num_overlaps = 100;
 int const num_orientations = 162;
-int const maskbits = 162;
 
 // This database file is used to find the number of the closest point to the point of intersection between two spheres.
 // The surface of each atom is covered by 162 points. Very rarely is it the case that two spheres will intersect exactly

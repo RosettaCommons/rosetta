@@ -40,9 +40,6 @@ namespace interaction_graph {
 
 static basic::Tracer T("core.pack.interaction_graph.symm_symmin_ig", basic::t_error );
 
-/// @brief For testing the symminIG, you'll want to set this to true
-bool const debug = { false };
-
 
 /// @brief main constructor, no default or copy constructors
 SymmMinimalistNode::SymmMinimalistNode(

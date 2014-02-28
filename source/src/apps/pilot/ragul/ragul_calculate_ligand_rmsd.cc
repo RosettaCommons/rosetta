@@ -117,7 +117,7 @@ int main( int argc, char * argv [] ) {
 	//CALCULATE RMSD
 	//IMPORTANT:this rmsd calculation does not consider symmetry
 	//assert input & reference ligand should have same num of atoms
-	if(!pose2_rsd.nheavyatoms() == pose1_rsd.nheavyatoms()){
+	if ( !( pose2_rsd.nheavyatoms() == pose1_rsd.nheavyatoms() ) ) {
 		std::cout<<"Error, input & reference ligand should have same no. of atoms in the same order" << std::endl;
     exit(1);
   }

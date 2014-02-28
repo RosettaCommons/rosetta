@@ -78,14 +78,10 @@ using namespace core;
 
 // constants / parameters that probably won't change much:
 //core::Size min_num_neighbors = 9; 
-const core::Size buried_threshold = 14; // >14 neighbors <=> buried cluster
-const core::Size neighbor_dist = 8; 
 //const core::Size b_factor_threshold = 30; 
 //core::Real heavy_atom_dist = 4.5; 
 // const core::Size chi_deviation_threshold = 40; // for now we're only reporting really bad repacking, deviations of 40+ in chi1 or chi2 -- might be interesting to control this via a flag though
 const core::Size rot_trials_iterations = 10;
-const core::Size env_quality_check_dist = 6; // no zero-occupancy or Rosetta-rebuilt atoms within this distance of any cluster atom
-const core::Size backrub_iterations = 10;
 
 basic::Tracer TR("apps.pilot.amelie.design_tight_clusters");
 static numeric::random::RandomGenerator RG(45367418); 
