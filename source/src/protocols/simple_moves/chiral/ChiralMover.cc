@@ -480,7 +480,7 @@ void ChiralMover::apply( core::pose::Pose & pose )
 		if( !rtype.atom_type(rtype.first_sidechain_atom()).is_hydrogen() && !chiral_rtype.atom_type(chiral_rtype.first_sidechain_atom()).is_hydrogen()  )
 		{
 			TR << rtype.name() << " " << rtype.atom_name(rtype.first_sidechain_atom()) << std::endl;
-			atom_pairs.push_back( std::make_pair< std::string, std::string >( rtype.atom_name(rtype.first_sidechain_atom()), chiral_rtype.atom_name(chiral_rtype.first_sidechain_atom() ) ));
+			atom_pairs.push_back( std::make_pair( rtype.atom_name(rtype.first_sidechain_atom()), chiral_rtype.atom_name(chiral_rtype.first_sidechain_atom() ) ));
 		}
 		else
 		{
@@ -497,7 +497,7 @@ void ChiralMover::apply( core::pose::Pose & pose )
 				//TR << chiral_rtype.name() << " " << chiral_rtype.atom_name(chiral_neighbor_ids[j]) << std::endl;
 				
 				//kdrew: assumes atom names are the same in both L and D residue types
-				atom_pairs.push_back( std::make_pair< std::string, std::string >( rtype.atom_name( neighbor_ids[j] ), rtype.atom_name( neighbor_ids[j] )));
+				atom_pairs.push_back( std::make_pair( rtype.atom_name( neighbor_ids[j] ), rtype.atom_name( neighbor_ids[j] )));
 			}
 		}
 			//if( !chiral_rtype.atom_type(chiral_neighbor_ids[j]).is_hydrogen() )
