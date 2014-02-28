@@ -142,6 +142,9 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     parser.add_option("--compareonly", action="store_true", dest="compareonly", default=False,
       help="Do not run test themself, just compare results in new and ref. (off by default)"
     )
+    parser.add_option("--skip-comparison", action="store_true", dest="skip_comparison", default=False,
+      help="Just run test themself but do not compare results (off by default)"
+    )
     parser.add_option("--yaml",
       default=None,
       help="Save results to specified file in YAML format. (default: None)",
@@ -383,100 +386,104 @@ rm -r ref/; ./integration.py    # create reference results using only default se
         write_runtimes(runtimes, 'ref')
 
     else:
-        diffs = 0
-        results = {}
-        full_log = ''
-        for test in tests:
-            dir_before = path.join("ref", test)
-            dir_after = path.join(outdir, test)
-            # diff returns 0 on no differences, 1 if there are differences
+        if options.skip_comparison:
+            print 'Skipping comparison phase because command line option "--skip-comparison" was specified...'
 
-            flags = ["-rq"]
-            if options.fulldiff: flags = ["-r"]
-            flags += ["--exclude=command.sh"]
+        else:
+            diffs = 0
+            results = {}
+            full_log = ''
+            for test in tests:
+                dir_before = path.join("ref", test)
+                dir_after = path.join(outdir, test)
+                # diff returns 0 on no differences, 1 if there are differences
 
-            proc = subprocess.Popen(["diff"] + flags + [dir_before, dir_after], stdout=subprocess.PIPE)
+                flags = ["-rq"]
+                if options.fulldiff: flags = ["-r"]
+                flags += ["--exclude=command.sh"]
 
-            full_log_msg = "FAIL %s\n" % test
+                proc = subprocess.Popen(["diff"] + flags + [dir_before, dir_after], stdout=subprocess.PIPE)
+
+                full_log_msg = "FAIL %s\n" % test
+
+                if options.daemon:
+                    msg = "FAIL %s #####" % test
+
+                    if options.fulldiff:
+                        for diff in proc.stdout.readlines():
+                            msg += "~ %s\n" % diff.strip()
+                            full_log_msg += "     %s\n" % diff.strip()
+                    else :
+                        lines = proc.stdout.readlines()
+                        for line in lines :
+                            cols = line.split()
+                            if len(cols) < 4 :
+                                msg += "~ %s\n" % line.strip()
+                                full_log_msg += "     %s\n" % line.strip()
+                            else:
+                                msg += "~ nonempty diff %s %s\n" % ( cols[1], cols[3].strip() )
+                                full_log_msg += "     nonempty diff %s %s\n" %  ( cols[1], cols[3].strip() )
+                    msg += "#####"
+
+                else:
+                    msg = "FAIL %s\n" % test
+                    #for diff in proc.stdout.readlines():
+                    #    msg += "     %s\n" % diff.strip()
+                    #    full_log_msg += "     %s\n" % diff.strip()
+
+                    if options.fulldiff:
+                        for diff in proc.stdout.readlines():
+                            msg += "~ %s\n" % diff.strip()
+                            full_log_msg += "     %s\n" % diff.strip()
+                    else :
+                        lines = proc.stdout.readlines()
+                        for line in lines :
+                            cols = line.split()
+                            if len(cols) < 4 or not( cols[2] == "and" ) :
+                                msg += "    %s\n" %  line.strip()
+                                full_log_msg += "     %s\n" % line.strip()
+                            else:
+                                msg += "    nonempty diff %s %s\n" % ( cols[1], cols[3].strip() )
+                                full_log_msg += "     nonempty diff %s %s\n" %  ( cols[1], cols[3].strip() )
+                full_log_msg += '\n'
+
+                result = proc.wait()
+                results[test] = result
+
+                if result == 0:
+                    print "ok   %s" % test
+                    full_log += "ok   %s\n" % test
+                else:
+                    #runtimes[test] = float('nan')
+                    print msg
+                    full_log += full_log_msg
+
+                    diffs += 1
 
             if options.daemon:
-                msg = "FAIL %s #####" % test
-
-                if options.fulldiff:
-                    for diff in proc.stdout.readlines():
-                        msg += "~ %s\n" % diff.strip()
-                        full_log_msg += "     %s\n" % diff.strip()
-                else :
-                    lines = proc.stdout.readlines()
-                    for line in lines :
-                        cols = line.split()
-                        if len(cols) < 4 :
-                            msg += "~ %s\n" % line.strip()
-                            full_log_msg += "     %s\n" % line.strip()
-                        else:
-                            msg += "~ nonempty diff %s %s\n" % ( cols[1], cols[3].strip() )
-                            full_log_msg += "     nonempty diff %s %s\n" %  ( cols[1], cols[3].strip() )
-                msg += "#####"
-
+                print "SUMMARY: TOTAL:%i PASSED:%i FAILED:%i." % (len(tests), len(tests)-diffs, diffs)
             else:
-                msg = "FAIL %s\n" % test
-                #for diff in proc.stdout.readlines():
-                #    msg += "     %s\n" % diff.strip()
-                #    full_log_msg += "     %s\n" % diff.strip()
+                if diffs:
+                    print "%i test(s) failed.  Use 'diff' to compare results." % diffs
+                else:
+                    print "All tests passed."
 
-                if options.fulldiff:
-                    for diff in proc.stdout.readlines():
-                        msg += "~ %s\n" % diff.strip()
-                        full_log_msg += "     %s\n" % diff.strip()
-                else :
-                    lines = proc.stdout.readlines()
-                    for line in lines :
-                        cols = line.split()
-                        if len(cols) < 4 or not( cols[2] == "and" ) :
-                            msg += "    %s\n" %  line.strip()
-                            full_log_msg += "     %s\n" % line.strip()
-                        else:
-                            msg += "    nonempty diff %s %s\n" % ( cols[1], cols[3].strip() )
-                            full_log_msg += "     nonempty diff %s %s\n" %  ( cols[1], cols[3].strip() )
-            full_log_msg += '\n'
-
-            result = proc.wait()
-            results[test] = result
-
-            if result == 0:
-                print "ok   %s" % test
-                full_log += "ok   %s\n" % test
-            else:
-                #runtimes[test] = float('nan')
-                print msg
-                full_log += full_log_msg
-
-                diffs += 1
-
-        if options.daemon:
-            print "SUMMARY: TOTAL:%i PASSED:%i FAILED:%i." % (len(tests), len(tests)-diffs, diffs)
-        else:
-            if diffs:
-                print "%i test(s) failed.  Use 'diff' to compare results." % diffs
-            else:
-                print "All tests passed."
-
-        if options.yaml:
-            try:
-              data = dict(total=len(tests), failed=diffs, details=results, brief=makeBriefResults(full_log).decode('utf8', 'replace'))
-              f = file(options.yaml, 'w')
-              json.dump(data, f, sort_keys=True, indent=2)
-              f.close()
-              '''
-              f = file(options.yaml, 'w')
-              brief = makeBriefResults(full_log)
-              brief = brief.replace('"', '\\"')
-              brief = '"' + brief.replace('\n', '\\n') + '"'
-              f.write("{total : %s, failed : %s, details : %s, brief : %s}" % (len(tests), diffs, results, brief) )
-              f.close()
-              '''
-            except:
-              pass
+            if options.yaml:
+                try:
+                  data = dict(total=len(tests), failed=diffs, details=results, brief=makeBriefResults(full_log).decode('utf8', 'replace'))
+                  f = file(options.yaml, 'w')
+                  json.dump(data, f, sort_keys=True, indent=2)
+                  f.close()
+                  '''
+                  f = file(options.yaml, 'w')
+                  brief = makeBriefResults(full_log)
+                  brief = brief.replace('"', '\\"')
+                  brief = '"' + brief.replace('\n', '\\n') + '"'
+                  f.write("{total : %s, failed : %s, details : %s, brief : %s}" % (len(tests), diffs, results, brief) )
+                  f.close()
+                  '''
+                except:
+                  pass
 
         if not options.compareonly: write_runtimes(runtimes, 'new')
         from compare_times import compare_times
