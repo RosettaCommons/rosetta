@@ -134,22 +134,7 @@ get_sasa_radii_set_from_string(std::string radii_set){
 ////
 	
 	
-///These are needed currently by get_legrand_sasa_masks and get_legrand_sasa_angles:
-// this lookup table is used in sasa computation (also in void.cc)
-// the first 8 ints represent the number of 1 bits you would find in the binary equivalents of the decimal numbers 0-7.
-// e.g. 1 in binary is 0000 0001, so 1 '1'-bit
-//      7 in binary is 0000 0111, so 3 '1'-bits
-short const bit_count[] = { // lookup table for number of 1 bits in a ubyte
-	0,1,1,2,1,2,2,3, 1,2,2,3,2,3,3,4,   1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5,  // 0x 1x
-	1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5,   2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,  // 2x 3x
-	1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5,   2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,  // 4x 5x
-	2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,   3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7,  // 6x 7x
-	1,2,2,3,2,3,3,4, 2,3,3,4,3,4,4,5,   2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,  // 8x 9x
-	2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,   3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7,  // Ax Bx
-	2,3,3,4,3,4,4,5, 3,4,4,5,4,5,5,6,   3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7,  // Cx Dx
-	3,4,4,5,4,5,5,6, 4,5,5,6,5,6,6,7,   4,5,5,6,5,6,6,7, 5,6,6,7,6,7,7,8,  // Ex Fx
-};
-
+// These are needed currently by get_legrand_sasa_masks and get_legrand_sasa_angles:
 
 int const num_bytes = 21;
 int const num_phi = 64;
