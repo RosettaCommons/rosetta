@@ -97,7 +97,10 @@ void SequenceAnnotation::add_jump_label( std::string const& label, core::Size i 
 }
 
 void SequenceAnnotation::rm_seq_label( std::string const& label ){
-  vector1_size& pose_numbers = label_to_pose_numbers_.at( label );
+  if( label_to_pose_numbers_.find( label ) == label_to_pose_numbers_.end() ){
+    throw utility::excn::EXCN_KeyError("The sequence key '"+label+"' does not exists in the SequenceAnnotation object" );
+  }
+  vector1_size& pose_numbers = label_to_pose_numbers_.find( label )->second;
 
   for( Size pose_num = 1; pose_num <= pose_numbers.size(); ++pose_num ){
     assert( pose_num <= length_ );
@@ -109,7 +112,7 @@ void SequenceAnnotation::rm_seq_label( std::string const& label ){
 
 void SequenceAnnotation::append_seq( std::string const& label ) {
   if( label_to_pose_numbers_.find( label ) != label_to_pose_numbers_.end() ){
-    throw utility::excn::EXCN_KeyError("The sequence key '"+label+"' alredy exists in the SequenceAnnotation object" );
+    throw utility::excn::EXCN_KeyError("The sequence key '"+label+"' already exists in the SequenceAnnotation object" );
   }
 
   length_ += 1;
