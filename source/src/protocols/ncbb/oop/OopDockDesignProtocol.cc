@@ -242,34 +242,21 @@ OopDockDesignProtocol::apply(
 )
 {
 	// create score function
-	//kdrew: old standard scoring function, using MM scoring function now because of NCAAs
-	//scoring::ScoreFunctionOP score_fxn( getScoreFunction() );
-	//scoring::ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( scoring::MM_STD_WTS) );
-	//scoring::ScoreFunctionOP score_fxn = getScoreFunction();
-	//scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
-	//kdrew: soft_rep score function
-	//scoring::ScoreFunctionOP soft_score_fxn( ScoreFunctionFactory::create_score_function( scoring::MM_STD_WTS) );
+	
 	scoring::ScoreFunctionOP soft_score_fxn  = getScoreFunction();
 	scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*soft_score_fxn);
 	soft_score_fxn->set_etable( FA_STANDARD_SOFT );
 
 	scoring::ScoreFunctionOP pert_score_fxn;
-	if( use_soft_rep_  )
-	{
-    	pert_score_fxn = soft_score_fxn;
-	}
+	if ( use_soft_rep_  )
+    		pert_score_fxn = soft_score_fxn;
 	else
-	{
-    	pert_score_fxn = score_fxn_;
-	}
+    		pert_score_fxn = score_fxn_;
 
 	scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose);
 
 	// get a fold tree suitable for docking (local helper function)
 	setup_pert_foldtree( pose );
-
-
-	//pose.conformation().show_residue_connections();
 
 	// create a monte carlo object for the full cycle
 	moves::MonteCarloOP mc( new moves::MonteCarlo( pose, *score_fxn_, mc_temp_ ) );
@@ -303,14 +290,12 @@ OopDockDesignProtocol::apply(
    	////kdrew: automatically find oop positions
 	utility::vector1< core::Size > oop_seq_positions = core::pose::ncbb::initialize_oops(pose);
 
-	for( Size i = 1; i <= oop_seq_positions.size(); i++  )
+	for ( Size i = 1; i <= oop_seq_positions.size(); i++  )
 	{
 		pert_pep_mm->set_bb( oop_seq_positions[i], false );
 
 		if( score_fxn_->has_zero_weight( core::scoring::atom_pair_constraint ) )
-		{
 			score_fxn_->set_weight( core::scoring::atom_pair_constraint, 1.0 );
-		}
 	}
 	
 
@@ -357,7 +342,7 @@ OopDockDesignProtocol::apply(
 	operation::RestrictToRepackingOP pert_rtrp( new operation::RestrictToRepacking() );
 	pert_tf->push_back( pert_rtrp );
 
-    //operation::RestrictToInterfaceOP pert_rtio( new operation::RestrictToInterface(1, 2) ); //magic numbers: assume chains 1 and 2
+	//operation::RestrictToInterfaceOP pert_rtio( new operation::RestrictToInterface(1, 2) ); //magic numbers: assume chains 1 and 2
 	//pert_tf->push_back( pert_rtio );
 
 	// create a rotamer trials mover
@@ -467,42 +452,23 @@ OopDockDesignProtocol::apply(
 	Main Loop
 	**********************************************************************************************************************/
 
-	/*
-	//Note you probably do not want a main loop like this in your protocol - it would be better to have most of the code preceding this as a mover's apply() function, so here you would have the mover/monte carlo statements but not the outer for loop and pose IO
-	core::pose::Pose const copy_pose(pose);
-	for ( Size i = 1; i <= Size( option[ OptionKeys::out::nstruct ].value() ) ; ++i ) {
-		pose = copy_pose;
-		pert_mc->reset(pose);
-		std::stringstream filename_pdb;
-		filename_pdb << "design_" << i << ".pdb";
-
-
-	}
-	*/
 	TR << "Main loop..." << std::endl;
 
 	protocols::jd2::JobOP curr_job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 
-//kdrew: only turn on pymol observer in debug mode
-//#ifndef NDEBUG
-if( pymol_ )
-{
-	protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(pose, keep_history_ );
-}
-//#endif
+	if ( pymol_ )
+	{
+		protocols::moves::PyMolObserverOP pymover = protocols::moves::AddPyMolObserver(pose, keep_history_ );
+	}
 
 	//pose.dump_pdb("pre_main_loop.pdb");
 	for ( Size k = 1; k <= Size( dock_design_loop_num_ ); ++k ) {
 
-
 		pert_mc->reset(pose);
-
 		//kdrew: a quick design/repack prior to pertubation, often the initial structure given is aligned to hotspot Ca Cb vector
 		//kdrew: and do not want to perturb away until designed in hotspot residue
 		if( k == 1 && oop_design_first_ )
-		{
 			desn_sequence->apply( pose );
-		}
 
 		// pert loop
 		for( Size j = 1; j <= Size( pert_num_ ); ++j ) {
@@ -540,10 +506,9 @@ if( pymol_ )
 	curr_job->add_string_real_pair( "ENERGY_FINAL (hard score) ", (*score_fxn_)(pose) );
 
 	TR << "Ending main loop..." << std::endl;
-
 	TR << "Checking pose energy..." << std::endl;
 
-		// create  MetricValues
+	// create  MetricValues
 	basic::MetricValue< core::Real > mv_sasa_complex;
 	basic::MetricValue< core::Real > mv_sasa_seperated;
 	basic::MetricValue< utility::vector1< core::Size > > mv_unsat_res_complex;
