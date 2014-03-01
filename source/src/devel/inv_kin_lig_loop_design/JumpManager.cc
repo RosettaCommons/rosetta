@@ -150,8 +150,6 @@ namespace devel {
 				int abase1 = r.atom_base(atom);
 				int abase2 = r.atom_base(abase1);
 
-				typedef core::kinematics::Stub::Vector vector_type;
-
 				if( abase1 == 0 ) {
 					cout << "WARNING abase1 == 0, resetting to atom-1" << endl;
 					abase1 = atom-1;

@@ -372,7 +372,7 @@ namespace serialization {
 
 				pose.clear();
 
-				typedef utility::vector1< std::pair< Size, conformation::ResidueOP > > ResidueVector;
+				//typedef utility::vector1< std::pair< Size, conformation::ResidueOP > > ResidueVector;
 				typedef utility::vector1< std::pair< id::AtomID, Vector > > AtomVector;
 // total residue
 				unsigned int total_residue = 0;

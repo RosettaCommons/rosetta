@@ -61,8 +61,6 @@ calc_strand_pairing_set(
 						core::Size minimum_pair_length )
 {
 	using core::Size;
-	typedef protocols::fldsgn::topology::StrandPairing StrandParing;
-	typedef protocols::fldsgn::topology::StrandPairingOP StrandParingOP;
 
 	core::scoring::dssp::Dssp dssp( pose );
 

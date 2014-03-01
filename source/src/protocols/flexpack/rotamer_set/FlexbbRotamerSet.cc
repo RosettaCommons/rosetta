@@ -109,8 +109,6 @@ FlexbbRotamerSet::bump_check(
 
 		core::Size bbconfs_this_neighbor( owner_->nbbconfs_for_res( neighbor_id ) );
 
-		typedef Residue const & resconstref;
-
 		utility::vector1< Residue const * > check_residues;
 
 		if( bbconfs_this_neighbor == 1 ) check_residues.push_back( & pose.residue( neighbor_id ) );

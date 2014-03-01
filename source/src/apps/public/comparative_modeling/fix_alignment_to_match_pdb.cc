@@ -222,12 +222,11 @@ main( int argc, char * argv [] ) {
 
 				new_aln.scores( it->scores() );
 				std::map< std::string, core::Real > scores( new_aln.scores() );
-				typedef std::map< std::string, core::Real >::const_iterator iter;
 				new_aln.printGrishinFormat(output);
 			} // if found a template pdb
 		} // for alns
 	} // for aln_fn
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
+	 } catch ( utility::excn::EXCN_Base const & e ) {
 		 std::cout << "caught exception " << e.msg() << std::endl;
 	}
 } // main

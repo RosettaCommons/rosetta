@@ -161,24 +161,24 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 	ScoreFunctionOP only_stub_scorefxn = new ScoreFunction;
 	only_stub_scorefxn->reset();
 
-  protocols::filters::FilterOP stf; 
+  protocols::filters::FilterOP stf;
 	if ( stub_energy_fxn_ == "backbone_stub_constraint" ) {
 		only_stub_scorefxn->set_weight( backbone_stub_constraint, 1.0 );
 		stf= new protocols::simple_filters::ScoreTypeFilter(only_stub_scorefxn, backbone_stub_constraint, 1.0 );
-	
+
 	} else if ( stub_energy_fxn_ == "backbone_stub_linear_constraint" ) {
 		only_stub_scorefxn->set_weight( backbone_stub_linear_constraint, 1.0 );
 		stf= new protocols::simple_filters::ScoreTypeFilter(only_stub_scorefxn, backbone_stub_linear_constraint, 1.0 );
 	} else {
 		utility_exit_with_message( "ERROR: unrecognized stub_energy_fxn_. Only support backbone_stub_constraint or backbone_stub_linear_constraint");
-	} 
+	}
 
 	core::Size fixed_res(1);
 	if( host_chain_ == 1 ) fixed_res = pose.total_residue();
 	core::id::AtomID const fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );
 /// ResidueAuction is keyed by energy => we select the residue,stub,stubset combination with the best energy for each stubset,stub combination
 	typedef std::pair< HotspotStubSetOP, HotspotStubOP > StubsetStubPair;
-	typedef std::pair< core::Real, std::pair< core::Size, StubsetStubPair > > ResidueAuctionItem;
+	//typedef std::pair< core::Real, std::pair< core::Size, StubsetStubPair > > ResidueAuctionItem;
 	typedef std::multimap< core::Real, std::pair< core::Size, StubsetStubPair > > ResidueAuction;
 /// Preventing positions that have already been prevented throught task factory or through the prevent_repacking method
 	using namespace core::pack::task;
@@ -285,7 +285,7 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 						core::Size const position( lowest_energy->second.first );
 						HotspotStubSetCOP stubset( lowest_energy->second.second.first );
 						HotspotStubOP stub( lowest_energy->second.second.second );
-        
+
 						foreach( StubSetStubPos & hs_set, stub_sets() ){
 					// This is where the pairing takes place
 							if( hs_set.first == stubset ){
@@ -294,12 +294,12 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 								break;
 							}
 						}
-        
+
 						for( ResidueAuction::iterator energy_set_pair = begin(); energy_set_pair != end(); /*incrementing done within the loop*/ ){
 							ResidueAuction::iterator next_it = energy_set_pair;
 							core::Size const erased_pos( energy_set_pair->second.first );
 							HotspotStubSetCOP erased_stubset( energy_set_pair->second.second.first );
-        
+
 							if( position == erased_pos || stubset == erased_stubset ){
 								++next_it;
 								erase( energy_set_pair );
@@ -308,7 +308,7 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 							else ++energy_set_pair;
 						}//for energy_set_pair
 					}//while size()
-	} //end of backbone_stub_constraint 
+	} //end of backbone_stub_constraint
 
 	//check if all stub positions have been paired
 	foreach( StubSetStubPos const stubset_pos_pair, stub_sets() ){

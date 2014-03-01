@@ -516,7 +516,7 @@ fold_tree_from_pose(
 	using core::kinematics::Edge;
 	using core::kinematics::FoldTree;
 
-	typedef utility::vector1< Edge > Edges;
+	//typedef utility::vector1< Edge > Edges;
 	typedef utility::vector1< Size > Nodes;
 	typedef std::map< Size, Nodes > Root2Nodes;
 
@@ -883,7 +883,7 @@ replace(
 	using core::kinematics::FoldTree;
 	using core::kinematics::MoveMap;
 
-	typedef utility::vector1< Edge > EdgeList;
+	//typedef utility::vector1< Edge > EdgeList;
 	typedef utility::vector1< Size > NodeList;
 	typedef std::map< Size, NodeList > Root2Nodes;
 

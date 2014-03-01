@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/protein_interface_design/filters/HbondsToAtomFilter.cc 
+/// @file protocols/protein_interface_design/filters/HbondsToAtomFilter.cc
 /// @brief
 /// @author Lei Shi (shileiustc @gmail.com)
 #include <protocols/protein_interface_design/filters/HbondsToAtomFilter.hh>
@@ -141,16 +141,15 @@ HbondsToAtomFilter::report_sm( core::pose::Pose const & pose ) const {
 
 core::Size
 HbondsToAtomFilter::compute( Pose const & pose ) const {
-	typedef core::Size Size;
-	typedef core::Real Real;
+	using core::Size;
 
 	core::pose::Pose temp_pose( pose );
 	core::scoring::ScoreFunctionOP scorefxn(getScoreFunction() );
 	(*scorefxn)(temp_pose);
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( temp_pose );
 
-	core::Size const chain2begin( temp_pose.conformation().chain_begin( 2 ) );
-	core::Size partner_begin, partner_end;
+	Size const chain2begin( temp_pose.conformation().chain_begin( 2 ) );
+	Size partner_begin, partner_end;
 	if( resnum_ >= chain2begin ) {
 		partner_begin = 1; partner_end = chain2begin-1;
 	}

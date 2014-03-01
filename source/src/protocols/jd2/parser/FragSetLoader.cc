@@ -54,7 +54,6 @@ void FragSetLoader::load_data(
 ) const
 {
 	using namespace utility::tag;
-	typedef utility::vector0< TagCOP > TagCOPs;
 
 	using protocols::jd2::parser::FragmentReader;
 	using protocols::jd2::parser::FragmentReaderOP;

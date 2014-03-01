@@ -76,7 +76,6 @@ dihedral_deriv_second(
 )
 {
 	typedef P Real;
-	typedef xyzVector< P > Vector;
 
 	// to avoid problems with dtheta/dx around 0 and 180 degrees
 	// truncate x a bit in the calculation of the derivative
@@ -189,7 +188,6 @@ dihedral_p1_cosine_deriv(
 )
 {
 	typedef P Real;
-	typedef xyzVector< P > Vector;
 
 	Real x( 0.0 );
 	dihedral_p1_cosine_deriv_first( p1, p2, p3, p4, x, f1, f2 );
@@ -222,7 +220,6 @@ dihedral_p2_cosine_deriv_first(
 	F1 = Real(0.0);
 	F2 = Real(0.0);
 
-	typedef Vector Vec;
 	Vector v1( p1-p2 );
 	Vector v2( p2-p3 );
 	Vector v3( p3-p4 );
@@ -311,7 +308,6 @@ dihedral_p2_cosine_deriv(
 )
 {
 	typedef P Real;
-	typedef xyzVector< P > Vector;
 
 	Real x( 0.0 );
 	dihedral_p2_cosine_deriv_first( p1, p2, p3, p4, x, f1, f2 );

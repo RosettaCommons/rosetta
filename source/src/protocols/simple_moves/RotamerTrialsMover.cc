@@ -180,7 +180,6 @@ RotamerTrialsMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	Pose const & )
 {
-	typedef std::string String;
 	using core::scoring::ScoreFunction;
 	using core::pack::task::operation::TaskOperation;
 	using core::pack::task::TaskFactoryOP;

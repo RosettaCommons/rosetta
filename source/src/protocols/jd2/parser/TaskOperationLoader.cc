@@ -48,7 +48,6 @@ void TaskOperationLoader::load_data(
 ) const
 {
 	using namespace core::pack::task::operation;
-	typedef utility::vector0< utility::tag::TagCOP > TagCOPs;
 
 	foreach(utility::tag::TagCOP tag, tag->getTags()){
 		std::string const type( tag->getName() );

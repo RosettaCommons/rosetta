@@ -51,8 +51,6 @@ void StructuralSimilarityEvaluator::apply(
 	using core::pose::Pose;
 	using utility::vector1;
 
-	typedef vector1< Pose >::const_iterator iter;
-
 	vector1< Real > gdtmms( poses_.size(), 0.0 );;
 	for ( Size ii = 1; ii <= poses_.size(); ++ii ) {
 		gdtmms[ii] = core::scoring::CA_gdtmm( pose, poses_[ii] );

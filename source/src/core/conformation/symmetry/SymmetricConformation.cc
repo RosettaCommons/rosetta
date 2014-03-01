@@ -341,7 +341,7 @@ SymmetricConformation::set_bond_length(
 void
 SymmetricConformation::set_jump( int const jump_number, kinematics::Jump const & new_jump )
 {
-	typedef SymmetryInfo::AtomIDs AtomIDs;
+	//typedef SymmetryInfo::AtomIDs AtomIDs;
 	typedef SymmetryInfo::Clones Clones;
 
 	TR.Trace << "SymmetricConformation: set_jump jump_number: " << jump_number << std::endl;
@@ -368,7 +368,7 @@ SymmetricConformation::set_jump( int const jump_number, kinematics::Jump const &
 void
 SymmetricConformation::set_jump( id::AtomID const & id, kinematics::Jump const & new_jump )
 {
-	typedef SymmetryInfo::AtomIDs AtomIDs;
+	//typedef SymmetryInfo::AtomIDs AtomIDs;
 	typedef SymmetryInfo::Clones Clones;
 
 	TR.Trace << "SymmetricConformation: set_jump id:" << id << std::endl;

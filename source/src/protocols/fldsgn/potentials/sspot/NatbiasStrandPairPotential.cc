@@ -246,7 +246,6 @@ NatbiasStrandPairPotential::score(	Pose const & pose, SS_Info2 const & ss_info, 
 	using protocols::fldsgn::topology::Strands;
 	using protocols::fldsgn::topology::Strand;
 	using protocols::fldsgn::topology::StrandOP;
-	typedef utility::vector1< Size > VecSize;
 
 	ss_score = 0.0;
 	Real rsigma_score = 0.0;
@@ -281,7 +280,7 @@ NatbiasStrandPairPotential::score(	Pose const & pose, SS_Info2 const & ss_info, 
 
 				StrandPairingOP const & spair = native_spairset_->strand_pairing( istrand, jstrand );
 				if( spair->s1() == 0 || spair->s2() == 0 ) continue;
-				
+
 				ss_score += -0.2;
 
 				Vector const & pt1( bb_pos.N( ss1   ) );
@@ -309,17 +308,17 @@ NatbiasStrandPairPotential::score(	Pose const & pose, SS_Info2 const & ss_info, 
 				ss_score += -0.8;
 
 				if( dist_dimers < strand_dist_cutoff_ ) {
-					
+
 					if( ! spair->is_member( ss1 ) || ! spair->is_member( ss2 ) ) continue;
 					Size pairres = spair->residue_pair( ss1 );
-					
+
 					if( spair->rgstr_shift() != 99 ) {
-						if ( spair->orient() == 'P' ) {	
+						if ( spair->orient() == 'P' ) {
 							if( ss2 != pairres && ss2 != pairres+1 && ss2 != pairres-1 ) continue;
 						} else if ( spair->orient() == 'A' ) {
 							if( ss2 != pairres && ss2 != pairres-2 && ss2 != pairres-1 ) continue;
 						} else {
-							TR << "invalid strand pair orientaion " << spair->orient() << std::endl; 
+							TR << "invalid strand pair orientaion " << spair->orient() << std::endl;
 						}
 
 					}
@@ -332,7 +331,7 @@ NatbiasStrandPairPotential::score(	Pose const & pose, SS_Info2 const & ss_info, 
 						if( (sign1 == 1 && sign2 == 2) || (sign1 == 2 && sign2 == 1) ) {
 							if( (spair->orient() == 'P' && ss2 != pairres) || (spair->orient() == 'A' && ss2 != pairres-1) ) continue;
 						}
-						
+
 						// pairing w/ register shift +/-1
 						if( (sign1 == 1 && sign2 == 1) || (sign1 == 2 && sign2 == 2) ) {
 							if( spair->orient() == 'P' && ss2 != pairres+1 &&
@@ -341,13 +340,13 @@ NatbiasStrandPairPotential::score(	Pose const & pose, SS_Info2 const & ss_info, 
 							    spair->orient() == 'A' && ss2 != pairres-2 ) continue;
 						}
 					}
-					
+
 					Real phithetascore = calc_phithetascore( phi, theta );
 
 					if ( phithetascore < 0.0 ) {
 
 						ss_score += phithetascore;
-						
+
 						// calc dot product and dist score
 						Real dotscore( 0.0 );
 						dotscore = calc_dotscore( dpall );

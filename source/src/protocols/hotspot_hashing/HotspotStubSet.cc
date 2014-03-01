@@ -535,8 +535,6 @@ HotspotStubSet::get_stub( std::string const residue_name3, core::Real const scor
 ///@details removes the first occurence of stub in the stubset
 bool
 HotspotStubSet::remove_stub( HotspotStubCOP stub ){
-	//typedef std::multimap< core::Real, HotspotStubOP > HsMultimap;
-	typedef std::pair< std::string, Hotspots > & HsMultimapDatum;
 	for( Hs_map::iterator datum( stub_set_.begin() ); datum!=stub_set_.end(); ++datum ){
 		Hotspots::iterator it( datum->second.begin() );
 		for( ; it!= datum->second.end(); ++it )

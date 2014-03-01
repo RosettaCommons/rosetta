@@ -964,11 +964,11 @@ build_pose_as_is1(
 )
 {
 	typedef std::map< std::string, double > ResidueTemps;
-	typedef std::map< std::string, ResidueTemps > Temps;
+	//typedef std::map< std::string, ResidueTemps > Temps;
 	typedef std::map< std::string, Vector > ResidueCoords;
-	typedef std::map< std::string, ResidueCoords > Coords;
+	//typedef std::map< std::string, ResidueCoords > Coords;
 	typedef utility::vector1< std::string > Strings;
-	typedef numeric::xyzVector< double > Vector;
+	//typedef numeric::xyzVector< double > Vector;
 
 	using namespace chemical;
 	using namespace conformation;

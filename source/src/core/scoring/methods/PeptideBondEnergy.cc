@@ -113,7 +113,6 @@ PeptideBondEnergy::residue_pair_energy(
 	if ( !rsd1.is_bonded(rsd2) || ( rsd1.seqpos() > rsd2.seqpos() ) )
 		return;
 
-	typedef core::conformation::ResidueOPs ResidueOPs;
 	total_dev += gfunc.func(
 		rsd1.xyz( bbC_ ).distance( rsd2.xyz( bbN_ ) )
 	);

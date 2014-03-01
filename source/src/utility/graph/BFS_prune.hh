@@ -44,7 +44,7 @@ void breadth_first_visit_prune
   boost::function_requires< boost::IncidenceGraphConcept<IncidenceGraph> >();
   typedef boost::graph_traits<IncidenceGraph> GTraits;
   typedef typename GTraits::vertex_descriptor Vertex;
-  typedef typename GTraits::edge_descriptor Edge;
+  //typedef typename GTraits::edge_descriptor Edge;
   boost::function_requires< boost::BFSVisitorConcept<BFSVisitor, IncidenceGraph> >();
   boost::function_requires< boost::ReadWritePropertyMapConcept<ColorMap, Vertex> >();
   typedef typename boost::property_traits<ColorMap>::value_type ColorValue;
@@ -133,7 +133,7 @@ void breadth_first_search_prune
 	  breadth_first_visit_prune(g, s, vis, color, Q);
 	} catch ( EXCN_Stop_BFS e ) {
 		; // Do nothing. Exception already halted.
-	} 
+	}
 }
 
 template <class VertexListGraph, class BFSVisitor, class ColorMap>

@@ -140,7 +140,6 @@ DihedralConstraint::p2_cosine_deriv(
 	F1 = 0.0;
 	F2 = 0.0;
 
-	typedef Vector Vec;
 	Vector v1( p1-p2 );
 	Vector v2( p2-p3 );
 	Vector v3( p3-p4 );

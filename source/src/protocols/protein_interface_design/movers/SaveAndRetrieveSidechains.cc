@@ -99,7 +99,6 @@ SaveAndRetrieveSidechains::~SaveAndRetrieveSidechains() {}
 void
 SaveAndRetrieveSidechains::apply( Pose & pose )
 {
-	typedef conformation::Residue Residue;
 	if( two_step() && first_apply_->obj ){
 		TR<<"Saving sidechains."<<std::endl;
 		*init_pose_ = pose;

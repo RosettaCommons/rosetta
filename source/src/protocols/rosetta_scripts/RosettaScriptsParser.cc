@@ -200,8 +200,7 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
 
   typedef std::pair< std::string const, MoverOP > StringMover_pair;
   typedef std::pair< std::string const, protocols::filters::FilterOP > StringFilter_pair;
-  typedef std::pair< std::string const, ScoreFunctionOP > StringScorefxn_pair;
-  typedef std::pair< std::string const, StringScorefxn_pair > ScorefxnObjects_pair;
+  //typedef std::pair< std::string const, ScoreFunctionOP > StringScorefxn_pair;
 //setting up some defaults
   protocols::filters::FilterOP true_filter = new protocols::filters::TrueFilter;
   protocols::filters::FilterOP false_filter = new protocols::filters::FalseFilter;

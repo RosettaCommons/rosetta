@@ -124,7 +124,6 @@ void DisulfJumpClaimer::generate_jump_frags(
 	core::fragment::FrameList& all_frames
 ) const
 {
-	typedef utility::vector1< Size > JumpList;
 	all_frames.reserve( all_frames.size() + local_disulf_data_.size() );
 
 	//TODO False assert. Fragments have to be dealt with properly here and idk how to do it atm.

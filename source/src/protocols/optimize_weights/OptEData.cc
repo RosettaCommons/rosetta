@@ -610,7 +610,7 @@ void
 PNatAAOptEPositionData::read_from_binary_file( std::ifstream & infile )
 {
 	typedef utility::vector1< Real > Energies;
-	typedef Energies::const_iterator Energies_CItr;
+	//typedef Energies::const_iterator Energies_CItr;
 
 	//Size position(0), neighbor_count(0);
 	//chemical::AA nataa( chemical::aa_unk );

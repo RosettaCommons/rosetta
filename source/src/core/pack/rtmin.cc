@@ -143,7 +143,6 @@ RTMin::rtmin(
 	using namespace optimization;
 	using namespace graph;
 	using namespace basic::options;
-	typedef utility::vector1< core::conformation::ResidueCOP > ResidueCOPs;
 
 	/// 1st verify that all energy methods are compatible with rtmin.
 	/// No energy method that requires whole-structure context to calculate derivatives

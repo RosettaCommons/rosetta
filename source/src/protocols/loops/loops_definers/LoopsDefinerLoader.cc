@@ -59,8 +59,6 @@ void LoopsDefinerLoader::load_data(
 	basic::datacache::DataMap & data
 ) const
 {
-	typedef vector0< TagCOP > TagCOPs;
-
 	foreach(TagCOP tag, tag->getTags()){
 		string const type( tag->getName() );
 		if ( ! tag->hasOption("name") ) {

@@ -545,7 +545,6 @@ void OptionCollection::load_option_from_file(
 	OptionCollection::show_help( std::ostream & stream )
 	{
 		using std::string;
-		typedef  std::string::size_type  size_type;
 
 		stream << "\nOptions:   [Specify on command line or in @file]\n";
 		string group; // Previous option group name
@@ -572,7 +571,6 @@ void OptionCollection::load_option_from_file(
 	void OptionCollection::show_option_help_heir(OptionKey const &key, std::string &group, std::ostream & stream )
 	{
 		using std::string;
-		typedef  std::string::size_type  size_type;
 
 		if ( has( key ) ) { // Active option
 			Option const & opt( option( key ) );
@@ -638,7 +636,6 @@ void OptionCollection::load_option_from_file(
 	OptionCollection::show_help_hier( std::ostream & stream )
 	{
 		using std::string;
-		typedef  std::string::size_type  size_type;
 		using namespace ObjexxFCL::format;
 		stream << "\nOptions:   [Specify on command line or in @file]\n";
 		string group; // Previous option group name
@@ -797,7 +794,6 @@ void OptionCollection::load_option_from_file(
 	OptionCollection::show_table_Wiki( std::ostream & stream ) const
 	{
 		using std::string;
-		typedef  std::string::size_type  size_type;
 
 		string group; // Previous option group name
 		for ( OptionKey::Lookup::ConstIterator i = OptionKeys::begin(), e = OptionKeys::end(); i != e; ++i ) {

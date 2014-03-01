@@ -50,7 +50,6 @@ void InterfaceBuilderLoader::load_data(
 ) const
 {
 	using namespace utility::tag;
-	typedef utility::vector0< TagCOP > TagCOPs;
 
 	foreach(TagCOP interface_builder_tag, tag->getTags()){
 		std::string const name( interface_builder_tag->getName() );
@@ -84,7 +83,6 @@ void MoveMapBuilderLoader::load_data(
 ) const
 {
 	using namespace utility::tag;
-	typedef utility::vector0< TagCOP > TagCOPs;
 
 	foreach(TagCOP movemap_builder_tag, tag->getTags()){
 		std::string const name( movemap_builder_tag->getName() );
@@ -118,7 +116,6 @@ void LigandAreaLoader::load_data(
 ) const
 {
 	using namespace utility::tag;
-	typedef utility::vector0< TagCOP > TagCOPs;
 
 	foreach(TagCOP ligand_area_tag, tag->getTags()){
 		std::string const name( ligand_area_tag->getName() );

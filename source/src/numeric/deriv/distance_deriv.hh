@@ -37,7 +37,6 @@ distance_f1_f2_deriv(
 )
 {
 	typedef P Real;
-	typedef xyzVector< P > Vector;
 
 	f2 = p1 - p2;
 	distance = f2.length();

@@ -418,7 +418,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		protocols::forge::methods::make_star_foldtree(pose, chain_def_loops);
 		}
 */
-	typedef utility::vector1< Edge > Edges;
+	//typedef utility::vector1< Edge > Edges;
 
 	//for nojump operation, need to keep track of the new cuts introduced
 	Size new_cut = 0 ;
@@ -529,7 +529,7 @@ void SegmentRebuild::modify_impl( Pose & pose ) {
 		// only grow right; termini will not be recovered here due to prior
 		// residue deletions and is corrected for below
 #ifndef NDEBUG
-		Size const right_endpoint = grow_right_rtype( pose, interval_.left, r_types.begin(), r_types.end() ); 
+		Size const right_endpoint = grow_right_rtype( pose, interval_.left, r_types.begin(), r_types.end() );
 #else
 		grow_right_rtype( pose, interval_.left, r_types.begin(), r_types.end() );
 #endif

@@ -234,7 +234,6 @@ listed here simply for context.
 void JD2ResourceManager::read_resource_options_tags( TagCOP tags )
 {
 	using utility::tag::Tag;
-	typedef utility::excn::EXCN_Msg_Exception MsgException;
 
 	for ( Tag::tags_t::const_iterator
 			tag_iter = tags->getTags().begin(),

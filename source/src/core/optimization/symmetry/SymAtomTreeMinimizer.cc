@@ -63,7 +63,7 @@ SymAtomTreeMinimizer::run(
 {
 	using namespace core::conformation::symmetry;
 
-	typedef SymmetryInfo::DOF_IDs DOF_IDs;
+	//typedef SymmetryInfo::DOF_IDs DOF_IDs;
 
 	bool const use_nblist( options.use_nblist() );
 
@@ -163,7 +163,7 @@ SymAtomTreeMinimizer::make_semisymmetric_movemap(
 )
 {
 	using namespace core::conformation::symmetry;
-	typedef SymmetryInfo::DOF_IDs DOF_IDs;
+	//typedef SymmetryInfo::DOF_IDs DOF_IDs;
 
 	SymmetricConformation const & SymmConf (
 		dynamic_cast<SymmetricConformation const &> ( pose.conformation()) );

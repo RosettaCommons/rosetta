@@ -52,7 +52,7 @@ static basic::Tracer TR("protocols.grafting.GraftMoverBase");
 
 namespace protocols {
 namespace grafting {
-    
+
 using namespace core;
 using namespace core::pose;
 using namespace protocols::moves;
@@ -144,7 +144,7 @@ GraftMoverBase::set_overhang(Size Nter_overhang, Size Cter_overhang){
 	Cter_overhang_=Cter_overhang;
 }
 
-void 
+void
 GraftMoverBase::superimpose_overhangs_heavy(Pose const & pose, bool ca_only, bool silence_rms){
 	AtomID_Map < AtomID > atoms_to_superimpose;
 	initialize_atomid_map( atoms_to_superimpose, piece_, core::id::BOGUS_ATOM_ID );
@@ -202,12 +202,12 @@ GraftMoverBase::combine_movemaps(MoveMap const & scaffold_mm, MoveMap const & in
 	MoveMapOP mm = new MoveMap();
     TR<<"Combining movemaps"<<std::endl;
 	//First time with typedefs  They are pretty narley!
-	typedef core::id::TorsionID TorsionID;
+	//typedef core::id::TorsionID TorsionID;
 	typedef std::pair< Size, core::id::TorsionType > MoveMapTorsionID;
 	typedef std::map< MoveMapTorsionID, bool > MoveMapTorsionID_Map;
-	
+
 	//Assert that a piece is set.
-	
+
 	//Copy Nterminal MoveMapTorsionIDs
 	for (MoveMapTorsionID_Map::const_iterator it=scaffold_mm.movemap_torsion_id_begin(), it_end=scaffold_mm.movemap_torsion_id_end(); it !=it_end; ++it){
 	    //Scaffold to new MM
@@ -216,7 +216,7 @@ GraftMoverBase::combine_movemaps(MoveMap const & scaffold_mm, MoveMap const & in
 		mm->set(new_id, it->second);
 	    }
 	}
-    
+
 	//Set insert residues
 	for (MoveMapTorsionID_Map::const_iterator it=insert_mm.movemap_torsion_id_begin(), it_end=insert_mm.movemap_torsion_id_end(); it !=it_end; ++it){
 	    //Add from start_
@@ -224,7 +224,7 @@ GraftMoverBase::combine_movemaps(MoveMap const & scaffold_mm, MoveMap const & in
 	    MoveMapTorsionID new_id = MoveMapTorsionID(new_resnum, it->first.second);
 	    mm->set(new_id, it->second);
 	}
-	
+
 	//Set Cterminal residues after insert. We may have a deletion then an insertion that we need to change the numbers for.
 	Size deleted_residues = original_end_-start_-1;
 	for (MoveMapTorsionID_Map::const_iterator it=scaffold_mm.movemap_torsion_id_begin(), it_end=scaffold_mm.movemap_torsion_id_end(); it !=it_end; ++it){
@@ -291,7 +291,7 @@ GraftMoverBase::setup_movemap_and_regions(Pose & pose){
     if (!use_default_movemap_){
         movemap_ = combine_movemaps(*scaffold_movemap_, *insert_movemap_);
         set_regions_from_movemap(pose);
-	
+
     }
     else{
     	set_regions_from_flexibility();
@@ -319,7 +319,7 @@ void
 GraftMoverBase::set_regions_from_flexibility(){
 	Nter_loop_start_ = start_-Nter_scaffold_flexibility_+1;//(loop_start/insert_loop_start)First Flexible loop residue
     Nter_loop_end_ = start_+Nter_insert_flexibility_;
-	
+
     Cter_loop_start_=start_+insertion_length_+1-Cter_insert_flexibility_;
     Cter_loop_end_ = start_+insertion_length_+Cter_scaffold_flexibility_;//(loop_end) Last Flexible loop residue
 
@@ -339,7 +339,7 @@ GraftMoverBase::set_regions_from_movemap(Pose & pose){
             break;
         }
     }
-    
+
     //C terminal end
     for (Size i=pose.total_residue(); i>=Nter_loop_start_; --i){
         if (movemap_->get_bb(i)){
@@ -348,7 +348,7 @@ GraftMoverBase::set_regions_from_movemap(Pose & pose){
             break;
         }
     }
-    
+
     //Insertion default flexiblity.  Will not effect single_loop foldtrees.
     Nter_insert_flexibility_=0;
     for (Size i = start_+1; i<=start_+insertion_length_; ++i){
@@ -361,7 +361,7 @@ GraftMoverBase::set_regions_from_movemap(Pose & pose){
             break;
         }
     }
-    
+
     Cter_insert_flexibility_=0;
     for (Size i = start_+insertion_length_; i>=1; --i){
         if (movemap_->get_bb(i)){

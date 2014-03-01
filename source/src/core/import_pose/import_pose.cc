@@ -619,11 +619,6 @@ void build_pose_as_is2(
 {
 	using namespace chemical;
 	using namespace conformation;
-	typedef std::map< std::string, double > ResidueTemps;
-	typedef std::map< std::string, ResidueTemps > Temps;
-	typedef std::map< std::string, Vector > ResidueCoords;
-	typedef std::map< std::string, ResidueCoords > Coords;
-	typedef utility::vector1< std::string > Strings;
 
 	core::pose::PDBInfoOP pdb_info( new core::pose::PDBInfo(*pose.pdb_info()) );
 

@@ -387,14 +387,14 @@ utility::vector1< utility::vector1< std::pair<Size,Size> > > recursive_multiple_
 				Size const & max_disulfides) {
 
 	utility::vector1< utility::vector1< std::pair<Size,Size> > > final_configurations;
-	
+
 	if (disulfides_formed.size() < max_disulfides) {
 
 		//select one primary new disulfide to be added
-		for (utility::vector1< std::pair< Size, Size > >::iterator new_disulfide = disulfides_possible.begin(); 
+		for (utility::vector1< std::pair< Size, Size > >::iterator new_disulfide = disulfides_possible.begin();
 																   new_disulfide != disulfides_possible.end();
 																   ++new_disulfide) {
-			
+
 			//add the configuration with the new disulfide
 			utility::vector1< std::pair<Size,Size> > new_disulfides_formed = disulfides_formed;
 			new_disulfides_formed.push_back(*new_disulfide);
@@ -405,7 +405,7 @@ utility::vector1< utility::vector1< std::pair<Size,Size> > > recursive_multiple_
 
 			//identify new secondary disulfides which do not clash with the primary
 			utility::vector1< std::pair< Size, Size > >::iterator potential_further_disulfide = new_disulfide;
-			for (potential_further_disulfide++; potential_further_disulfide != disulfides_possible.end(); 
+			for (potential_further_disulfide++; potential_further_disulfide != disulfides_possible.end();
 				 ++potential_further_disulfide) {
 
 				if ((*potential_further_disulfide).first != (*new_disulfide).first &&
@@ -428,9 +428,9 @@ utility::vector1< utility::vector1< std::pair<Size,Size> > > recursive_multiple_
 																				 			++new_configuration) {
 					final_configurations.push_back(*new_configuration);
 
-				} 
+				}
 			} //end adding new disulfides recursively AFTER the first selected new one
-		} //end addition of primary disulfide + all secondary possibilities 
+		} //end addition of primary disulfide + all secondary possibilities
 	}	else {
 		//final_configurations.push_back(disulfides_formed); //store the current configuration if we have reached max length
 	}
@@ -527,7 +527,7 @@ void RemodelMover::apply( Pose & pose ) {
 		//        if not given at command line or rosetta scripts, make ad hoc blueprint.
 		TR << "apply(): reading blueprint file " << std::endl;
 		if (option[OptionKeys::remodel::blueprint].user()) {
-			blueprint_ =option[OptionKeys::remodel::blueprint]();			
+			blueprint_ =option[OptionKeys::remodel::blueprint]();
 			remodel_data.getLoopsToBuildFromFile(blueprint_);
 		}	else {
 			if (blueprint_ != "") {
@@ -551,7 +551,7 @@ void RemodelMover::apply( Pose & pose ) {
 		}
 
 		remodel_data.updateWithDsspAssignment( dsspSS );
-		//dssp.insert_ss_into_pose( pose ); This put the assigned sec structure into the pose, as opposed to the actual SS of the pose. Thus eliminated 
+		//dssp.insert_ss_into_pose( pose ); This put the assigned sec structure into the pose, as opposed to the actual SS of the pose. Thus eliminated
 		// process domain insertion option
 		if (option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb].user() ) {
 			TR << "apply(): INSERT SEGMENT FROM PDB" << std::endl;
@@ -618,10 +618,10 @@ void RemodelMover::apply( Pose & pose ) {
 				}else{
 				working_model.manager.dummy_modify(pose.total_residue());
 
-			}	
+			}
 
 			scoring::dssp::Dssp dssp( pose );
-			dssp.insert_ss_into_pose( pose ); 
+			dssp.insert_ss_into_pose( pose );
 			//	protocols::forge::methods::restore_residues(working_model.manager.original2modified(), testArc, pose);
 			//	pose.dump_pdb("testArcRestore.pdb");
 			//testArc=pose;
@@ -1228,13 +1228,13 @@ void RemodelMover::apply( Pose & pose ) {
 			//save structure, unless doing fast_disulfide.
 			//with fast disulfide, structures are being passed along in rosetta scripts, so no need to output a second PDB.
 			if (!rosetta_scripts_fast_disulfide_) {
-				(*(*it)).dump_scored_pdb(SS.str(), *scorefxn);				
+				(*(*it)).dump_scored_pdb(SS.str(), *scorefxn);
 			}
 
 
 
 			Real score = 0.0;
-			
+
 			//rank poses by score, unless we are doing fast_disulfide, in which case we want to rank by path length.
 			if (rosetta_scripts_fast_disulfide_) {
 				simple_filters::DisulfideEntropyFilterOP DisulfideEntropy=new simple_filters::DisulfideEntropyFilter();
@@ -1253,7 +1253,7 @@ void RemodelMover::apply( Pose & pose ) {
 	}
 	//set the pose to the best pose in the accumulator and remove that pose.
 	if (accumulator_.size() > 0) {
-		pose = accumulator_.pop();		
+		pose = accumulator_.pop();
 	}
 
 
@@ -1674,7 +1674,7 @@ bool RemodelMover::design_refine_cart_relax(
 	using protocols::forge::methods::linear_chainbreak;
 	using protocols::loops::remove_cutpoint_variants;
 
-	typedef protocols::forge::build::BuildManager::Positions Positions;
+	//typedef protocols::forge::build::BuildManager::Positions Positions;
 
 	// collect new regions/positions
 	std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
@@ -2290,7 +2290,7 @@ RemodelMover::parse_my_tag(
 {
 	//note that we are being invoked from rosetta scripts
 	rosetta_scripts_ = true;
-	
+
 	if( tag->hasOption("blueprint") ) {
 		blueprint_ = tag->getOption<std::string>( "blueprint" );
 	}	else {
@@ -2301,7 +2301,7 @@ RemodelMover::parse_my_tag(
 	if( tag->hasOption("build_disulf") ) {
 		rosetta_scripts_build_disulfide_ = tag->getOption< bool >( "build_disulf", false );
 		if (rosetta_scripts_build_disulfide_) {
-			TR << "Setting build_disulfide to true" << std::endl;	
+			TR << "Setting build_disulfide to true" << std::endl;
 		}
 	}	else {
 		rosetta_scripts_build_disulfide_ = false;
@@ -2310,7 +2310,7 @@ RemodelMover::parse_my_tag(
 	if ( tag->hasOption("fast_disulf") ) {
 		rosetta_scripts_fast_disulfide_ = tag->getOption< bool >( "fast_disulf", false );
 		if (rosetta_scripts_fast_disulfide_) {
-			TR << "Setting fast_disulfide to true" << std::endl;	
+			TR << "Setting fast_disulfide to true" << std::endl;
 		}
 	}	else {
 		rosetta_scripts_fast_disulfide_ = false;
@@ -2326,37 +2326,37 @@ RemodelMover::parse_my_tag(
 	}
 
 	if( tag->hasOption("bypass_fragments") ) {
-		rosetta_scripts_bypass_fragments_ = tag->getOption< bool >( "bypass_fragments", false ); 
+		rosetta_scripts_bypass_fragments_ = tag->getOption< bool >( "bypass_fragments", false );
 		if (rosetta_scripts_bypass_fragments_) {
-			TR << "Setting bypass_fragments to true" << std::endl;	
+			TR << "Setting bypass_fragments to true" << std::endl;
 		}
 	}	else {
 		rosetta_scripts_bypass_fragments_ = false;
 	}
 
 	if( tag->hasOption("match_rt_limit") ) {
-		rosetta_scripts_match_rt_limit_ = tag->getOption< core::Real >( "match_rt_limit", 1.0 ); 
+		rosetta_scripts_match_rt_limit_ = tag->getOption< core::Real >( "match_rt_limit", 1.0 );
 	}	else {
 		rosetta_scripts_match_rt_limit_ = 1.0;
 	}
 	TR << "Setting match_rt_limit " << rosetta_scripts_match_rt_limit_ << std::endl;
 
 	if( tag->hasOption("min_disulfides") ) {
-		rosetta_scripts_min_disulfides_ = tag->getOption< core::Real >( "min_disulfides", 1 ); 
+		rosetta_scripts_min_disulfides_ = tag->getOption< core::Real >( "min_disulfides", 1 );
 	}	else {
 		rosetta_scripts_min_disulfides_ = 1;
 	}
 	TR << "Setting min_disulfides " << rosetta_scripts_min_disulfides_ << std::endl;
 
 	if( tag->hasOption("max_disulfides") ) {
-		rosetta_scripts_max_disulfides_ = tag->getOption< core::Real >( "max_disulfides", 1 ); 
+		rosetta_scripts_max_disulfides_ = tag->getOption< core::Real >( "max_disulfides", 1 );
 	}	else {
 		rosetta_scripts_max_disulfides_ = 1;
 	}
 	TR << "Setting max_disulfides " << rosetta_scripts_max_disulfides_ << std::endl;
 
 	if( tag->hasOption("min_loop") ) {
-		rosetta_scripts_min_loop_ = tag->getOption< core::Real >( "min_loop", 1 ); 
+		rosetta_scripts_min_loop_ = tag->getOption< core::Real >( "min_loop", 1 );
 	}	else {
 		rosetta_scripts_min_loop_ = 1;
 	}
