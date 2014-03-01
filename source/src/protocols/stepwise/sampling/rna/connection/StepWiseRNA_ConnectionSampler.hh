@@ -52,6 +52,10 @@ namespace connection {
 
 	class StepWiseRNA_ConnectionSampler: public protocols::moves::MoverForPoseList {
 
+	private:
+
+		StepWiseRNA_ConnectionSampler(); // Can't use a default constructor
+
 	public:
 
 		//constructor

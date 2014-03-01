@@ -44,6 +44,17 @@ namespace copy_dofs {
 	//Destructor
 	ResidueAlternativeSet::~ResidueAlternativeSet(){}
 
+	utility::vector1< core::pose::PoseOP >
+	ResidueAlternativeSet::pose_list() const
+	{
+		return pose_list_;
+	}
+
+	core::pose::PoseOP
+	ResidueAlternativeSet::pose( Size const n ) const
+	{
+		return pose_list_[ n ];
+	}
 
 } //copy_dofs
 } //rotamer_sampler

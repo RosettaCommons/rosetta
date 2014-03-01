@@ -21,6 +21,8 @@
 #include <numeric/xyzMatrix.hh>
 #include <utility>
 
+#include <map>
+
 typedef  numeric::xyzMatrix< core::Real > Matrix;
 
 namespace protocols {

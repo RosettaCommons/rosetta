@@ -29,6 +29,10 @@ namespace copy_dofs {
 
 	class ResidueAlternativeSet: public utility::pointer::ReferenceCount {
 
+	private:
+		// Can't use a default constructor
+		ResidueAlternativeSet();
+
 	public:
 
 		//constructor
@@ -46,8 +50,8 @@ namespace copy_dofs {
 	public:
 
 		std::map < Size, Size > res_map() const{ return res_map_; }
-		utility::vector1< core::pose::PoseOP > pose_list() const{ return pose_list_; }
-		core::pose::PoseOP pose( Size const n ) const{ return pose_list_[ n ]; }
+		utility::vector1< core::pose::PoseOP > pose_list() const;
+		core::pose::PoseOP pose( Size const n ) const;
 		core::Size representative_seqpos() const{ return representative_seqpos_; }
 
 	private:

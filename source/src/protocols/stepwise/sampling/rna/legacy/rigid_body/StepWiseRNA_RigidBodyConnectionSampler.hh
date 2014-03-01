@@ -53,6 +53,9 @@ namespace rigid_body {
 
 	class StepWiseRNA_RigidBodyConnectionSampler: public protocols::moves::MoverForPoseList {
 
+	private:
+		StepWiseRNA_RigidBodyConnectionSampler(); // Can't use a default constructor
+
 	public:
 
 		//constructor
