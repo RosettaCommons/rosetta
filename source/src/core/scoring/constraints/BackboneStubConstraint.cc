@@ -51,7 +51,7 @@ static basic::Tracer tr("core.scoring.constraints.BackboneStubConstraint");
 utility::pointer::owning_ptr< AngleConstraint > BackboneStubConstraint::ang_cst_(0);
 
 
-std::map< std::string, core::id::AtomID > 
+std::map< std::string, core::id::AtomID >
 auto_detect_atoms(pose::Pose const & pose, Size const seqpos)
 {
 	//kdrew: stores four atoms ids
@@ -63,7 +63,7 @@ auto_detect_atoms(pose::Pose const & pose, Size const seqpos)
 	//sidechain_atom_id_ = AtomID( rsd.atom_index(sidechain_atom_name), seqpos_ );
 	//atom_ids_.push_back(sidechain_atom_id_);
 
-	for ( Size j=1; j<= rsd.natoms(); ++j ) 
+	for ( Size j=1; j<= rsd.natoms(); ++j )
 	{
 			if( !rsd.atom_is_backbone(j) && !rsd.atom_is_hydrogen(j) )
 			{
@@ -80,17 +80,21 @@ auto_detect_atoms(pose::Pose const & pose, Size const seqpos)
 						//kdrew: store primary backbone atom (CA for peptides)
 						atom_ids["primary_backbone_atom_id"] = core::id::AtomID( sidechain_atom_bonded_neighbors[k], seqpos );
 
-						if( rsd.lower_connect_atom() == atom_ids["primary_backbone_atom_id"].atomno() )
+						if( rsd.has_lower_connect() && rsd.lower_connect_atom() == atom_ids["primary_backbone_atom_id"].atomno() )
 						{
-                        	//kdrew: primary_backbone_atom is lower connect, add upper connect of seqpos - 1 as backbone1
+							//kdrew: primary_backbone_atom is lower connect, add upper connect of seqpos - 1 as backbone1
 							conformation::Residue const & rsd_lower( pose.residue(seqpos-1));
-							atom_ids["backbone_atom1_id"] = core::id::AtomID( rsd_lower.upper_connect_atom(), seqpos-1);
+							if( rsd_lower.has_upper_connect() ) {
+								atom_ids["backbone_atom1_id"] = core::id::AtomID( rsd_lower.upper_connect_atom(), seqpos-1);
+							}
 						}
-						if( rsd.upper_connect_atom() == atom_ids["primary_backbone_atom_id"].atomno() )
+						if( rsd.has_upper_connect() && rsd.upper_connect_atom() == atom_ids["primary_backbone_atom_id"].atomno() )
 						{
-                        	//kdrew: primary_backbone_atom is upper connect, add lower connect of seqpos + 1 as backbone2
+							//kdrew: primary_backbone_atom is upper connect, add lower connect of seqpos + 1 as backbone2
 							conformation::Residue const & rsd_upper( pose.residue(seqpos+1));
-							atom_ids["backbone_atom2_id"] = core::id::AtomID( rsd_upper.lower_connect_atom(), seqpos+1);
+							if( rsd_upper.has_lower_connect() ) {
+								atom_ids["backbone_atom2_id"] = core::id::AtomID( rsd_upper.lower_connect_atom(), seqpos+1);
+							}
 						}
 
 						core::chemical::AtomIndices primary_backbone_atom_bonded_neighbors = rsd.bonded_neighbor(sidechain_atom_bonded_neighbors[k]);
@@ -143,7 +147,7 @@ auto_detect_atoms(pose::Pose const & pose, Size const seqpos)
 	return atom_ids;
 }
 
-//kdrew: this is the non-peptidic implementation (peptoids, beta-peptides, etc), 
+//kdrew: this is the non-peptidic implementation (peptoids, beta-peptides, etc),
 //kdrew: takes in a two residue target pose, auto detects atoms
 BackboneStubConstraint::BackboneStubConstraint(
 	pose::Pose const & pose,
@@ -222,7 +226,7 @@ BackboneStubConstraint::BackboneStubConstraint(
 	}
 }
 
-//kdrew: this is the non-peptidic implementation (peptoids, beta-peptides, etc), 
+//kdrew: this is the non-peptidic implementation (peptoids, beta-peptides, etc),
 //kdrew: specifies atom names
 BackboneStubConstraint::BackboneStubConstraint(
 	pose::Pose const & pose,
@@ -231,9 +235,9 @@ BackboneStubConstraint::BackboneStubConstraint(
 	conformation::Residue const & target_rsd,
 	core::Real const & superposition_bonus,
 	core::Real const & force_constant,
-	std::string const & sidechain_atom_name, // CB 
-	std::string const & primary_backbone_atom_name, //CA 
-	std::string const & backbone_atom1_name, //N 
+	std::string const & sidechain_atom_name, // CB
+	std::string const & primary_backbone_atom_name, //CA
+	std::string const & backbone_atom1_name, //N
 	std::string const & backbone_atom2_name //C
 ):
 	Constraint( core::scoring::backbone_stub_constraint ),

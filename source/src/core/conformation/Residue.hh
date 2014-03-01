@@ -685,6 +685,15 @@ public:
 		return rsd_type_.attached_H_end();
 	}
 
+	/// @brief Returns true if residue has a valid lower connection.
+	///
+	/// example(s):
+	///     residue.has_lower_connect()
+	Size
+	has_lower_connect() const
+	{
+		return rsd_type_.is_polymer() && (rsd_type_.lower_connect_id() != 0);
+	}
 
 	/// @brief Returns the index number of this residue's atom which connects to
 	/// the residue before it in sequence
@@ -702,6 +711,16 @@ public:
 	lower_connect_atom() const
 	{
 		return rsd_type_.lower_connect_atom();
+	}
+
+	/// @brief Returns true if residue has a valid upper connection.
+	///
+	/// example(s):
+	///     residue.has_upper_connect()
+	Size
+	has_upper_connect() const
+	{
+		return rsd_type_.is_polymer() && (rsd_type_.upper_connect_id() != 0);
 	}
 
 	/// @brief Returns the index number of this residue's atom which connects to
@@ -1862,7 +1881,7 @@ public:
 	orient_onto_residue( Residue const & src );
 
 	/// @brief Orient our coords onto those of  <src>, using the three atom pairs specified in the input
-	/// @param atom_pairs 
+	/// @param atom_pairs
 	//		Atom pairs used for alignment of the form:
 	//		{ src_center : center, src_nbr1 : nbr1, src_nbr2 : nbr1 }
 	void
