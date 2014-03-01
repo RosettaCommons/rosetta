@@ -45,11 +45,13 @@ ADD_DEFINITIONS(-DNDEBUG)
 
 SET(COMPILE_FLAGS "${COMPILE_FLAGS} -std=c++98 -pipe -ffor-scope -O3 -ffast-math -funroll-loops -finline-functions -s")
 
-## Inhibit warning messages to keep ninja output clean.
-SET(COMPILE_FLAGS "${COMPILE_FLAGS} -w")
-
 ## Warnings as errors to match scons build
-SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror=sign-compare -Werror=reorder -Werror=address -Werror=char-subscripts -Werror=comment -Werror=enum-compare -Werror=nonnull -Werror=type-limits -Werror=parentheses -Werror=ignored-qualifiers")
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror=sign-compare -Werror=reorder -Werror=address -Werror=char-subscripts -Werror=comment -Werror=nonnull -Werror=type-limits -Werror=parentheses -Werror=ignored-qualifiers") # -Werror=enum-compare")
+
+## Inhibit non-error warning messages to keep ninja output clean.
+## This is now turned off as it also inhibits the warnings as errors settings,
+## which would mean a nasty surprise for people pushing a "clean" cmake build.
+#SET(COMPILE_FLAGS "${COMPILE_FLAGS} -w")
 
 ## Other flags that sometimes occur with scons. Uncomment to add.
 ##
