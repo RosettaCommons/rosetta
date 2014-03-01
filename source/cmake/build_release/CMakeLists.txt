@@ -45,9 +45,6 @@ ADD_DEFINITIONS(-DNDEBUG)
 
 SET(COMPILE_FLAGS "${COMPILE_FLAGS} -std=c++98 -pipe -ffor-scope -O3 -ffast-math -funroll-loops -finline-functions -s")
 
-## Warnings as errors to match scons build
-SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror=sign-compare -Werror=reorder -Werror=address -Werror=char-subscripts -Werror=comment -Werror=nonnull -Werror=type-limits -Werror=parentheses -Werror=ignored-qualifiers") # -Werror=enum-compare")
-
 ## Inhibit non-error warning messages to keep ninja output clean.
 ## This is now turned off as it also inhibits the warnings as errors settings,
 ## which would mean a nasty surprise for people pushing a "clean" cmake build.
@@ -62,8 +59,11 @@ SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror=sign-compare -Werror=reorder -Werror
 ## More warnings - good for cleaning up code, but makes ninja output more noisy.
 ## (Remember to also comment out the -w above if uncommenting.)
 ## (no-unused-variable is here because asserts can leave variables unused.)
-#
-#SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Wall -Wextra -pedantic -Wno-long-long -Wno-unused-variable")
+
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Wall -Wextra -pedantic -Wno-long-long -Wno-unused-variable")
+
+## Warnings as errors to match scons build
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror=sign-compare -Werror=reorder -Werror=address -Werror=char-subscripts -Werror=comment -Werror=nonnull -Werror=type-limits -Werror=parentheses -Werror=ignored-qualifiers") # -Werror=enum-compare")
 
 IF( ${COMPILER} STREQUAL "clang" )
     # Quiet warnings about non-clang compatable arguments (either gcc-specific ones, or newer-version ones.)

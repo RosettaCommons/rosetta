@@ -59,13 +59,7 @@ namespace pcs2{
 
 basic::Tracer TR_TensorsOptimizerFix("protocols.scoring.methods.pcs.TensorsOptimizerFix");
 
-TensorsOptimizerFix::TensorsOptimizerFix():
-	pcs_d_c_(PcsDataCenter())//, xM_(0), yM_(0), zM_(0)
-{
-  utility_exit_with_message("You shouldn't call the empty constructor for class TensorsOptimizerFix");
-}
-
-	TensorsOptimizerFix::TensorsOptimizerFix(PcsDataCenter const & pcs_d_c/*, core::Real xM, core::Real yM, core::Real zM*/):
+TensorsOptimizerFix::TensorsOptimizerFix(PcsDataCenter const & pcs_d_c/*, core::Real xM, core::Real yM, core::Real zM*/):
 		pcs_d_c_(pcs_d_c)//, xM_(xM), yM_(yM), zM_(zM)
 {
 	/*

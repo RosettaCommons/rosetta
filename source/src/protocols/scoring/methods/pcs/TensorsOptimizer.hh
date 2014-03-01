@@ -61,8 +61,12 @@ class TensorsOptimizer : public core::optimization::Multifunc {
 public:
 	PCS_data const & pcs_d_;
 
+private:
+	/// @brief No default constructor: You must provide a PCS_data object when constructing.
+	// The unimplemented private constructor turns off automatic generation
   TensorsOptimizer();
 
+public:
   TensorsOptimizer(PCS_data const & pcs_d);
 
   virtual

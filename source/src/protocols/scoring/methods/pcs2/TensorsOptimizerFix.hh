@@ -70,7 +70,13 @@ public:
 	utility::vector1< core::Real > Xyz_coef_vect_;
 	*/
 
+private:
+
+	/// @brief No default constructor: You must provide a PcsDataCenter object when initializing.
+	// The unimplemented private default constructor inhibits autogeneration of a default constructor.
   TensorsOptimizerFix();
+
+public:
 
   TensorsOptimizerFix(PcsDataCenter const & pcs_d_c/*,
 											core::Real xM,

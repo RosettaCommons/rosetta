@@ -96,7 +96,7 @@ PSSM2BfactorMover::apply( Pose & pose )
 			TR<<"sepos="<<seqpos<<std::endl;
 			//If the seqprof and the seqpos are not aligned we need to use the seqprofcons mapping
 			core::id::SequenceMappingCOP SM = seqprof_cst->profile_mapping();
-			if (SM!=NULL){
+			if ( SM ){
 				core::id::SequenceMapping tempSM = *SM;
 				TR<<"seqpos_mapping:"<<tempSM[seqpos]<<std::endl;
 				SequenceProfileCOP seqprof_pos( seqprof_cst->sequence_profile() );

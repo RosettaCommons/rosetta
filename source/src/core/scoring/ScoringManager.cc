@@ -767,7 +767,7 @@ ScoringManager::etable( methods::EnergyMethodOptions const &options_in ) const
 	// Search through iterator
 	utility::vector1< std::pair< methods::EnergyMethodOptions, etable::EtableOP > >::const_iterator it;
 
-	// Iterating 
+	// Iterating
 	for( it = etables_by_method_.begin(); it != etables_by_method_.end(); ++it ){
 		methods::EnergyMethodOptions Eopt1 = it->first;
 		if ( Eopt1 == options_in ) return (it->second)();
@@ -811,12 +811,14 @@ ScoringManager::etable( methods::EnergyMethodOptions const &options_in ) const
 	}
 
 	// What if still not found?
-	if( it == etables_by_method_.end() ) utility_exit_with_message( "Etable not found!" );
+	// If we reach here, it == etables_by_method_.end()
+	utility_exit_with_message( "Etable not found!" );
+	return 0; // Silence compiler warning.
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Support for previous version; 
-// This function may not be called through usual score function calls, 
+// Support for previous version;
+// This function may not be called through usual score function calls,
 // but still necessary for whom direct call is necessary
 etable::EtableCAP
 ScoringManager::etable( std::string const & table_id ) const
