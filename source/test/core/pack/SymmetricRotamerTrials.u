@@ -1,231 +1,231 @@
 set_abs_tolerance(0.01)score_orig = -212.744
 score_rt = -224.088
-residue = 1 chi = 303.363833433967
-residue = 2 chi = 296.520706751175
-residue = 2 chi = 1.53028727389473e-14
-residue = 3 chi = 178.387155519493
-residue = 3 chi = 66.6602669283302
-residue = 3 chi = 181.682049461088
-residue = 3 chi = 272.199996948242
-residue = 4 chi = 205.785543066343
-residue = 4 chi = 45.6636805040676
-residue = 5 chi = 290.010776628905
-residue = 5 chi = 176.56266913925
-residue = 5 chi = 296.063381585537
-residue = 6 chi = 180.963542062365
-residue = 6 chi = 66.8513194602873
-residue = 6 chi = 47.5701492844389
-residue = 7 chi = 283.826457820862
-residue = 7 chi = 341.845746398768
-residue = 8 chi = 171.792266489991
-residue = 9 chi = 71.9335269771461
-residue = 9 chi = 196.574084737265
-residue = 9 chi = 188.420043172396
-residue = 9 chi = 182.805072095045
-residue = 10 chi = 185.361602118441
-residue = 10 chi = 28.9235549738158
-residue = 11 chi = 290.593074205782
-residue = 11 chi = 172.651033777081
-residue = 12 chi = 185.50422153528
-residue = 12 chi = 294.782482718618
-residue = 14 chi = 292.7060038983
-residue = 14 chi = 168.287520074831
-residue = 15 chi = 298.453211538506
-residue = 16 chi = 281.553424632365
-residue = 16 chi = 195.092542211143
-residue = 16 chi = 48.7332546374844
-residue = 17 chi = 297.221112969238
-residue = 17 chi = 281.933390252661
-residue = 17 chi = 84.567532250277
-residue = 17 chi = 173.081520922778
-residue = 18 chi = 270.905651810646
-residue = 18 chi = 57.8033882547606
-residue = 19 chi = 290.133470462655
-residue = 19 chi = 176.447655096613
-residue = 19 chi = 277.099998474121
-residue = 20 chi = 182.552606218422
-residue = 20 chi = 177.224908370365
-residue = 20 chi = 88.2364721062053
-residue = 21 chi = 284.333523901835
-residue = 21 chi = 168.9692916081
-residue = 21 chi = 61.5615877365997
-residue = 21 chi = 191.821348517375
-residue = 22 chi = 267.836099701007
-residue = 22 chi = 162.691488166233
-residue = 23 chi = 286.4097442192
-residue = 23 chi = 339.845206384865
-residue = 24 chi = 289.601877509557
-residue = 24 chi = 177.658633250391
-residue = 24 chi = 180.026269100611
-residue = 24 chi = 173.06594724817
-residue = 25 chi = 189.929922667923
-residue = 25 chi = 59.6721508976781
-residue = 26 chi = 289.764067308079
-residue = 26 chi = 176.496419029707
-residue = 26 chi = 325.900001525879
-residue = 27 chi = 290.583779391599
-residue = 27 chi = 177.069806010015
-residue = 27 chi = 52.0061827056032
-residue = 28 chi = 293.427227115726
-residue = 28 chi = 3.39999999636738e-05
-residue = 29 chi = 170.622245258676
-residue = 30 chi = 284.974136417372
-residue = 30 chi = 165.136016796347
-residue = 30 chi = 353.827537417849
-residue = 32 chi = 266.569243308574
-residue = 32 chi = 286.095563221186
-residue = 32 chi = 192.917501269973
-residue = 32 chi = 300.881685225451
-residue = 33 chi = 303.363833433967
-residue = 34 chi = 296.520706751175
-residue = 34 chi = 1.49377492973297e-14
-residue = 35 chi = 178.387155519493
-residue = 35 chi = 66.6602669283302
-residue = 35 chi = 181.682049461088
-residue = 35 chi = 272.199996948242
-residue = 36 chi = 205.785543066343
-residue = 36 chi = 45.6636805040676
-residue = 37 chi = 290.010776628905
-residue = 37 chi = 176.56266913925
-residue = 37 chi = 296.063381585537
-residue = 38 chi = 180.963542062365
-residue = 38 chi = 66.8513194602873
-residue = 38 chi = 47.5701492844389
-residue = 39 chi = 283.826457820862
-residue = 39 chi = 341.845746398768
-residue = 40 chi = 171.792266489991
-residue = 41 chi = 71.933526977146
-residue = 41 chi = 196.574084737265
-residue = 41 chi = 188.420043172396
-residue = 41 chi = 182.805072095045
-residue = 42 chi = 185.361602118441
-residue = 42 chi = 28.9235549738158
-residue = 43 chi = 290.593074205782
-residue = 43 chi = 172.651033777081
-residue = 44 chi = 185.50422153528
-residue = 44 chi = 294.782482718618
-residue = 46 chi = 292.7060038983
-residue = 46 chi = 168.287520074831
-residue = 47 chi = 298.453211538506
-residue = 48 chi = 281.553424632365
-residue = 48 chi = 195.092542211143
-residue = 48 chi = 48.7332546374844
-residue = 49 chi = 297.221112969238
-residue = 49 chi = 281.933390252661
-residue = 49 chi = 84.567532250277
-residue = 49 chi = 173.081520922778
-residue = 50 chi = 270.905651810646
-residue = 50 chi = 57.8033882547606
-residue = 51 chi = 290.133470462655
-residue = 51 chi = 176.447655096613
-residue = 51 chi = 277.099998474121
-residue = 52 chi = 182.552606218422
-residue = 52 chi = 177.224908370365
-residue = 52 chi = 88.2364721062053
-residue = 53 chi = 284.333523901835
-residue = 53 chi = 168.9692916081
-residue = 53 chi = 61.5615877365997
-residue = 53 chi = 191.821348517375
-residue = 54 chi = 267.836099701007
-residue = 54 chi = 162.691488166233
-residue = 55 chi = 286.4097442192
-residue = 55 chi = 339.845206384865
-residue = 56 chi = 289.601877509557
-residue = 56 chi = 177.658633250391
-residue = 56 chi = 180.026269100611
-residue = 56 chi = 173.06594724817
-residue = 57 chi = 189.929922667923
-residue = 57 chi = 59.6721508976781
-residue = 58 chi = 289.764067308079
-residue = 58 chi = 176.496419029707
-residue = 58 chi = 325.900001525879
-residue = 59 chi = 290.583779391599
-residue = 59 chi = 177.069806010015
-residue = 59 chi = 52.0061827056031
-residue = 60 chi = 293.427227115726
-residue = 60 chi = 3.40000000205858e-05
-residue = 61 chi = 170.622245258676
-residue = 62 chi = 284.974136417372
-residue = 62 chi = 165.136016796347
-residue = 62 chi = 353.827537417849
-residue = 64 chi = 266.569243308574
-residue = 64 chi = 286.095563221186
-residue = 64 chi = 192.917501269973
-residue = 64 chi = 300.881685225451
-residue = 65 chi = 303.363833433967
-residue = 66 chi = 296.520706751175
-residue = 66 chi = 360
-residue = 67 chi = 178.387155519493
-residue = 67 chi = 66.6602669283304
-residue = 67 chi = 181.682049461088
-residue = 67 chi = 272.199996948242
-residue = 68 chi = 205.785543066343
-residue = 68 chi = 45.6636805040676
-residue = 69 chi = 290.010776628905
-residue = 69 chi = 176.56266913925
-residue = 69 chi = 296.063381585537
-residue = 70 chi = 180.963542062365
-residue = 70 chi = 66.8513194602876
-residue = 70 chi = 47.5701492844389
-residue = 71 chi = 283.826457820862
-residue = 71 chi = 341.845746398768
-residue = 72 chi = 171.792266489991
-residue = 73 chi = 71.933526977146
-residue = 73 chi = 196.574084737265
-residue = 73 chi = 188.420043172396
-residue = 73 chi = 182.805072095045
-residue = 74 chi = 185.361602118441
-residue = 74 chi = 28.9235549738159
-residue = 75 chi = 290.593074205782
-residue = 75 chi = 172.651033777081
-residue = 76 chi = 185.50422153528
-residue = 76 chi = 294.782482718618
-residue = 78 chi = 292.7060038983
-residue = 78 chi = 168.287520074831
-residue = 79 chi = 298.453211538506
-residue = 80 chi = 281.553424632365
-residue = 80 chi = 195.092542211143
-residue = 80 chi = 48.7332546374844
-residue = 81 chi = 297.221112969238
-residue = 81 chi = 281.933390252661
-residue = 81 chi = 84.567532250277
-residue = 81 chi = 173.081520922778
-residue = 82 chi = 270.905651810646
-residue = 82 chi = 57.8033882547606
-residue = 83 chi = 290.133470462655
-residue = 83 chi = 176.447655096613
-residue = 83 chi = 277.099998474121
-residue = 84 chi = 182.552606218422
-residue = 84 chi = 177.224908370365
-residue = 84 chi = 88.2364721062054
-residue = 85 chi = 284.333523901835
-residue = 85 chi = 168.9692916081
-residue = 85 chi = 61.5615877365997
-residue = 85 chi = 191.821348517375
-residue = 86 chi = 267.836099701007
-residue = 86 chi = 162.691488166233
-residue = 87 chi = 286.4097442192
-residue = 87 chi = 339.845206384865
-residue = 88 chi = 289.601877509557
-residue = 88 chi = 177.658633250391
-residue = 88 chi = 180.026269100611
-residue = 88 chi = 173.06594724817
-residue = 89 chi = 189.929922667923
-residue = 89 chi = 59.6721508976782
-residue = 90 chi = 289.764067308079
-residue = 90 chi = 176.496419029707
-residue = 90 chi = 325.900001525879
-residue = 91 chi = 290.583779391599
-residue = 91 chi = 177.069806010015
-residue = 91 chi = 52.0061827056033
-residue = 92 chi = 293.427227115726
-residue = 92 chi = 3.39999999244677e-05
-residue = 93 chi = 170.622245258676
-residue = 94 chi = 284.974136417372
-residue = 94 chi = 165.136016796347
-residue = 94 chi = 353.827537417849
-residue = 96 chi = 266.569243308574
-residue = 96 chi = 286.095563221186
-residue = 96 chi = 192.917501269973
-residue = 96 chi = 300.881685225451
+residue = 1 sin (chi) = -0.0873872 cos(chi) = 0.996174
+residue = 2 sin (chi) = 0.935968 cos(chi) = 0.352086
+residue = 2 sin (chi) = -2.48155e-15 cos(chi) = 1
+residue = 3 sin (chi) = 0.631608 cos(chi) = -0.775288
+residue = 3 sin (chi) = -0.634082 cos(chi) = -0.773266
+residue = 3 sin (chi) = -0.683707 cos(chi) = -0.729756
+residue = 3 sin (chi) = 0.163849 cos(chi) = 0.986485
+residue = 4 sin (chi) = -0.999937 cos(chi) = 0.011224
+residue = 4 sin (chi) = 0.993891 cos(chi) = -0.110362
+residue = 5 sin (chi) = 0.832859 cos(chi) = 0.553486
+residue = 5 sin (chi) = 0.591954 cos(chi) = 0.805972
+residue = 5 sin (chi) = -0.893359 cos(chi) = 0.449344
+residue = 6 sin (chi) = -0.948616 cos(chi) = 0.316431
+residue = 6 sin (chi) = -0.769382 cos(chi) = -0.638788
+residue = 6 sin (chi) = -0.431594 cos(chi) = -0.902068
+residue = 7 sin (chi) = 0.883424 cos(chi) = 0.468575
+residue = 7 sin (chi) = 0.640618 cos(chi) = 0.76786
+residue = 8 sin (chi) = 0.838938 cos(chi) = -0.544227
+residue = 9 sin (chi) = 0.317512 cos(chi) = -0.948254
+residue = 9 sin (chi) = -0.0630554 cos(chi) = 0.99801
+residue = 9 sin (chi) = -0.93478 cos(chi) = -0.355227
+residue = 9 sin (chi) = -0.95383 cos(chi) = 0.300348
+residue = 10 sin (chi) = -0.00763548 cos(chi) = -0.999971
+residue = 10 sin (chi) = -0.604566 cos(chi) = -0.796555
+residue = 11 sin (chi) = 0.999991 cos(chi) = 0.00424624
+residue = 11 sin (chi) = 0.136138 cos(chi) = -0.99069
+residue = 12 sin (chi) = -0.14969 cos(chi) = -0.988733
+residue = 12 sin (chi) = -0.685965 cos(chi) = -0.727635
+residue = 14 sin (chi) = -0.512323 cos(chi) = -0.858793
+residue = 14 sin (chi) = -0.977546 cos(chi) = 0.210722
+residue = 15 sin (chi) = -0.00190945 cos(chi) = -0.999998
+residue = 16 sin (chi) = -0.928337 cos(chi) = 0.37174
+residue = 16 sin (chi) = -0.999658 cos(chi) = 0.0261535
+residue = 16 sin (chi) = -0.999256 cos(chi) = 0.0385589
+residue = 17 sin (chi) = 0.942552 cos(chi) = -0.334059
+residue = 17 sin (chi) = -0.455743 cos(chi) = -0.890111
+residue = 17 sin (chi) = 0.2527 cos(chi) = -0.967545
+residue = 17 sin (chi) = -0.289711 cos(chi) = -0.957114
+residue = 18 sin (chi) = -0.904307 cos(chi) = 0.426882
+residue = 18 sin (chi) = 0.950463 cos(chi) = 0.310839
+residue = 19 sin (chi) = -0.682729 cos(chi) = 0.730672
+residue = 19 sin (chi) = 0.495549 cos(chi) = 0.86858
+residue = 19 sin (chi) = -0.938615 cos(chi) = 0.344967
+residue = 20 sin (chi) = -0.998617 cos(chi) = 0.0525669
+residue = 20 sin (chi) = 0.962404 cos(chi) = 0.271621
+residue = 20 sin (chi) = 0.268541 cos(chi) = 0.963268
+residue = 21 sin (chi) = -0.265047 cos(chi) = 0.964236
+residue = 21 sin (chi) = -0.626233 cos(chi) = 0.779636
+residue = 21 sin (chi) = -0.955179 cos(chi) = 0.296027
+residue = 21 sin (chi) = 0.994654 cos(chi) = 0.10326
+residue = 22 sin (chi) = 0.871235 cos(chi) = -0.490866
+residue = 22 sin (chi) = -0.622028 cos(chi) = 0.782995
+residue = 23 sin (chi) = 0.972006 cos(chi) = -0.234954
+residue = 23 sin (chi) = -0.964946 cos(chi) = 0.262448
+residue = 24 sin (chi) = -0.958896 cos(chi) = 0.283759
+residue = 24 sin (chi) = 0.987442 cos(chi) = -0.157984
+residue = 24 sin (chi) = 0.785157 cos(chi) = -0.619297
+residue = 24 sin (chi) = -0.274771 cos(chi) = -0.96151
+residue = 25 sin (chi) = -0.411477 cos(chi) = 0.91142
+residue = 25 sin (chi) = 0.0181085 cos(chi) = -0.999836
+residue = 26 sin (chi) = -0.90049 cos(chi) = 0.434877
+residue = 26 sin (chi) = 0.537298 cos(chi) = 0.843392
+residue = 26 sin (chi) = -0.441725 cos(chi) = -0.89715
+residue = 27 sin (chi) = -0.296649 cos(chi) = 0.954986
+residue = 27 sin (chi) = 0.908891 cos(chi) = 0.417033
+residue = 27 sin (chi) = 0.985601 cos(chi) = -0.169088
+residue = 28 sin (chi) = 0.564087 cos(chi) = -0.825715
+residue = 28 sin (chi) = 3.4e-05 cos(chi) = 1
+residue = 29 sin (chi) = 0.828398 cos(chi) = 0.56014
+residue = 30 sin (chi) = 0.363815 cos(chi) = 0.931471
+residue = 30 sin (chi) = 0.979586 cos(chi) = -0.201023
+residue = 30 sin (chi) = 0.110497 cos(chi) = 0.993876
+residue = 32 sin (chi) = 0.729112 cos(chi) = 0.684395
+residue = 32 sin (chi) = 0.997036 cos(chi) = 0.0769333
+residue = 32 sin (chi) = 0.546424 cos(chi) = -0.837509
+residue = 32 sin (chi) = -0.541269 cos(chi) = -0.840849
+residue = 33 sin (chi) = -0.0873872 cos(chi) = 0.996174
+residue = 34 sin (chi) = 0.935968 cos(chi) = 0.352086
+residue = 34 sin (chi) = -7.31152e-14 cos(chi) = 1
+residue = 35 sin (chi) = 0.631608 cos(chi) = -0.775288
+residue = 35 sin (chi) = -0.634082 cos(chi) = -0.773266
+residue = 35 sin (chi) = -0.683707 cos(chi) = -0.729756
+residue = 35 sin (chi) = 0.163849 cos(chi) = 0.986485
+residue = 36 sin (chi) = -0.999937 cos(chi) = 0.011224
+residue = 36 sin (chi) = 0.993891 cos(chi) = -0.110362
+residue = 37 sin (chi) = 0.832859 cos(chi) = 0.553486
+residue = 37 sin (chi) = 0.591954 cos(chi) = 0.805972
+residue = 37 sin (chi) = -0.893359 cos(chi) = 0.449344
+residue = 38 sin (chi) = -0.948616 cos(chi) = 0.316431
+residue = 38 sin (chi) = -0.769382 cos(chi) = -0.638788
+residue = 38 sin (chi) = -0.431594 cos(chi) = -0.902068
+residue = 39 sin (chi) = 0.883424 cos(chi) = 0.468575
+residue = 39 sin (chi) = 0.640618 cos(chi) = 0.76786
+residue = 40 sin (chi) = 0.838938 cos(chi) = -0.544227
+residue = 41 sin (chi) = 0.317512 cos(chi) = -0.948254
+residue = 41 sin (chi) = -0.0630554 cos(chi) = 0.99801
+residue = 41 sin (chi) = -0.93478 cos(chi) = -0.355227
+residue = 41 sin (chi) = -0.95383 cos(chi) = 0.300348
+residue = 42 sin (chi) = -0.00763548 cos(chi) = -0.999971
+residue = 42 sin (chi) = -0.604566 cos(chi) = -0.796555
+residue = 43 sin (chi) = 0.999991 cos(chi) = 0.00424624
+residue = 43 sin (chi) = 0.136138 cos(chi) = -0.99069
+residue = 44 sin (chi) = -0.14969 cos(chi) = -0.988733
+residue = 44 sin (chi) = -0.685965 cos(chi) = -0.727635
+residue = 46 sin (chi) = -0.512323 cos(chi) = -0.858793
+residue = 46 sin (chi) = -0.977546 cos(chi) = 0.210722
+residue = 47 sin (chi) = -0.00190945 cos(chi) = -0.999998
+residue = 48 sin (chi) = -0.928337 cos(chi) = 0.37174
+residue = 48 sin (chi) = -0.999658 cos(chi) = 0.0261535
+residue = 48 sin (chi) = -0.999256 cos(chi) = 0.0385589
+residue = 49 sin (chi) = 0.942552 cos(chi) = -0.334059
+residue = 49 sin (chi) = -0.455743 cos(chi) = -0.890111
+residue = 49 sin (chi) = 0.2527 cos(chi) = -0.967545
+residue = 49 sin (chi) = -0.289711 cos(chi) = -0.957114
+residue = 50 sin (chi) = -0.904307 cos(chi) = 0.426882
+residue = 50 sin (chi) = 0.950463 cos(chi) = 0.310839
+residue = 51 sin (chi) = -0.682729 cos(chi) = 0.730672
+residue = 51 sin (chi) = 0.495549 cos(chi) = 0.86858
+residue = 51 sin (chi) = -0.938615 cos(chi) = 0.344967
+residue = 52 sin (chi) = -0.998617 cos(chi) = 0.0525669
+residue = 52 sin (chi) = 0.962404 cos(chi) = 0.271621
+residue = 52 sin (chi) = 0.268541 cos(chi) = 0.963268
+residue = 53 sin (chi) = -0.265047 cos(chi) = 0.964236
+residue = 53 sin (chi) = -0.626233 cos(chi) = 0.779636
+residue = 53 sin (chi) = -0.955179 cos(chi) = 0.296027
+residue = 53 sin (chi) = 0.994654 cos(chi) = 0.10326
+residue = 54 sin (chi) = 0.871235 cos(chi) = -0.490866
+residue = 54 sin (chi) = -0.622028 cos(chi) = 0.782995
+residue = 55 sin (chi) = 0.972006 cos(chi) = -0.234954
+residue = 55 sin (chi) = -0.964946 cos(chi) = 0.262448
+residue = 56 sin (chi) = -0.958896 cos(chi) = 0.283759
+residue = 56 sin (chi) = 0.987442 cos(chi) = -0.157984
+residue = 56 sin (chi) = 0.785157 cos(chi) = -0.619297
+residue = 56 sin (chi) = -0.274771 cos(chi) = -0.96151
+residue = 57 sin (chi) = -0.411477 cos(chi) = 0.91142
+residue = 57 sin (chi) = 0.0181085 cos(chi) = -0.999836
+residue = 58 sin (chi) = -0.90049 cos(chi) = 0.434877
+residue = 58 sin (chi) = 0.537298 cos(chi) = 0.843392
+residue = 58 sin (chi) = -0.441725 cos(chi) = -0.89715
+residue = 59 sin (chi) = -0.296649 cos(chi) = 0.954986
+residue = 59 sin (chi) = 0.908891 cos(chi) = 0.417033
+residue = 59 sin (chi) = 0.985601 cos(chi) = -0.169088
+residue = 60 sin (chi) = 0.564087 cos(chi) = -0.825715
+residue = 60 sin (chi) = 3.4e-05 cos(chi) = 1
+residue = 61 sin (chi) = 0.828398 cos(chi) = 0.56014
+residue = 62 sin (chi) = 0.363815 cos(chi) = 0.931471
+residue = 62 sin (chi) = 0.979586 cos(chi) = -0.201023
+residue = 62 sin (chi) = 0.110497 cos(chi) = 0.993876
+residue = 64 sin (chi) = 0.729112 cos(chi) = 0.684395
+residue = 64 sin (chi) = 0.997036 cos(chi) = 0.0769333
+residue = 64 sin (chi) = 0.546424 cos(chi) = -0.837509
+residue = 64 sin (chi) = -0.541269 cos(chi) = -0.840849
+residue = 65 sin (chi) = -0.0873872 cos(chi) = 0.996174
+residue = 66 sin (chi) = 0.935968 cos(chi) = 0.352086
+residue = 66 sin (chi) = -1.50547e-13 cos(chi) = 1
+residue = 67 sin (chi) = 0.631608 cos(chi) = -0.775288
+residue = 67 sin (chi) = -0.634082 cos(chi) = -0.773266
+residue = 67 sin (chi) = -0.683707 cos(chi) = -0.729756
+residue = 67 sin (chi) = 0.163849 cos(chi) = 0.986485
+residue = 68 sin (chi) = -0.999937 cos(chi) = 0.011224
+residue = 68 sin (chi) = 0.993891 cos(chi) = -0.110362
+residue = 69 sin (chi) = 0.832859 cos(chi) = 0.553486
+residue = 69 sin (chi) = 0.591954 cos(chi) = 0.805972
+residue = 69 sin (chi) = -0.893359 cos(chi) = 0.449344
+residue = 70 sin (chi) = -0.948616 cos(chi) = 0.316431
+residue = 70 sin (chi) = -0.769382 cos(chi) = -0.638788
+residue = 70 sin (chi) = -0.431594 cos(chi) = -0.902068
+residue = 71 sin (chi) = 0.883424 cos(chi) = 0.468575
+residue = 71 sin (chi) = 0.640618 cos(chi) = 0.76786
+residue = 72 sin (chi) = 0.838938 cos(chi) = -0.544227
+residue = 73 sin (chi) = 0.317512 cos(chi) = -0.948254
+residue = 73 sin (chi) = -0.0630554 cos(chi) = 0.99801
+residue = 73 sin (chi) = -0.93478 cos(chi) = -0.355227
+residue = 73 sin (chi) = -0.95383 cos(chi) = 0.300348
+residue = 74 sin (chi) = -0.00763548 cos(chi) = -0.999971
+residue = 74 sin (chi) = -0.604566 cos(chi) = -0.796555
+residue = 75 sin (chi) = 0.999991 cos(chi) = 0.00424624
+residue = 75 sin (chi) = 0.136138 cos(chi) = -0.99069
+residue = 76 sin (chi) = -0.14969 cos(chi) = -0.988733
+residue = 76 sin (chi) = -0.685965 cos(chi) = -0.727635
+residue = 78 sin (chi) = -0.512323 cos(chi) = -0.858793
+residue = 78 sin (chi) = -0.977546 cos(chi) = 0.210722
+residue = 79 sin (chi) = -0.00190945 cos(chi) = -0.999998
+residue = 80 sin (chi) = -0.928337 cos(chi) = 0.37174
+residue = 80 sin (chi) = -0.999658 cos(chi) = 0.0261535
+residue = 80 sin (chi) = -0.999256 cos(chi) = 0.0385589
+residue = 81 sin (chi) = 0.942552 cos(chi) = -0.334059
+residue = 81 sin (chi) = -0.455743 cos(chi) = -0.890111
+residue = 81 sin (chi) = 0.2527 cos(chi) = -0.967545
+residue = 81 sin (chi) = -0.289711 cos(chi) = -0.957114
+residue = 82 sin (chi) = -0.904307 cos(chi) = 0.426882
+residue = 82 sin (chi) = 0.950463 cos(chi) = 0.310839
+residue = 83 sin (chi) = -0.682729 cos(chi) = 0.730672
+residue = 83 sin (chi) = 0.495549 cos(chi) = 0.86858
+residue = 83 sin (chi) = -0.938615 cos(chi) = 0.344967
+residue = 84 sin (chi) = -0.998617 cos(chi) = 0.0525669
+residue = 84 sin (chi) = 0.962404 cos(chi) = 0.271621
+residue = 84 sin (chi) = 0.268541 cos(chi) = 0.963268
+residue = 85 sin (chi) = -0.265047 cos(chi) = 0.964236
+residue = 85 sin (chi) = -0.626233 cos(chi) = 0.779636
+residue = 85 sin (chi) = -0.955179 cos(chi) = 0.296027
+residue = 85 sin (chi) = 0.994654 cos(chi) = 0.10326
+residue = 86 sin (chi) = 0.871235 cos(chi) = -0.490866
+residue = 86 sin (chi) = -0.622028 cos(chi) = 0.782995
+residue = 87 sin (chi) = 0.972006 cos(chi) = -0.234954
+residue = 87 sin (chi) = -0.964946 cos(chi) = 0.262448
+residue = 88 sin (chi) = -0.958896 cos(chi) = 0.283759
+residue = 88 sin (chi) = 0.987442 cos(chi) = -0.157984
+residue = 88 sin (chi) = 0.785157 cos(chi) = -0.619297
+residue = 88 sin (chi) = -0.274771 cos(chi) = -0.96151
+residue = 89 sin (chi) = -0.411477 cos(chi) = 0.91142
+residue = 89 sin (chi) = 0.0181085 cos(chi) = -0.999836
+residue = 90 sin (chi) = -0.90049 cos(chi) = 0.434877
+residue = 90 sin (chi) = 0.537298 cos(chi) = 0.843392
+residue = 90 sin (chi) = -0.441725 cos(chi) = -0.89715
+residue = 91 sin (chi) = -0.296649 cos(chi) = 0.954986
+residue = 91 sin (chi) = 0.908891 cos(chi) = 0.417033
+residue = 91 sin (chi) = 0.985601 cos(chi) = -0.169088
+residue = 92 sin (chi) = 0.564087 cos(chi) = -0.825715
+residue = 92 sin (chi) = 3.4e-05 cos(chi) = 1
+residue = 93 sin (chi) = 0.828398 cos(chi) = 0.56014
+residue = 94 sin (chi) = 0.363815 cos(chi) = 0.931471
+residue = 94 sin (chi) = 0.979586 cos(chi) = -0.201023
+residue = 94 sin (chi) = 0.110497 cos(chi) = 0.993876
+residue = 96 sin (chi) = 0.729112 cos(chi) = 0.684395
+residue = 96 sin (chi) = 0.997036 cos(chi) = 0.0769333
+residue = 96 sin (chi) = 0.546424 cos(chi) = -0.837509
+residue = 96 sin (chi) = -0.541269 cos(chi) = -0.840849
 

@@ -164,13 +164,15 @@ void do_rotamer_trials(bool with_minimization, test::UTracer & UT)
 			// compares values to those in the list
 			for ( Size j = 1; j <= res_chi.size(); ++j )
 				{
-					Real chi = numeric::nonnegative_principal_angle_degrees( res_chi[ j ] );
+					//Real chi = numeric::nonnegative_principal_angle_degrees( res_chi[ j ] );
 					//TR << std::setprecision(3) << std::fixed << std::setw(7) << chi << ", ";
 					// std::cerr << "FOOCHI " << chi << std::endl;
 
 					UT << std::setprecision(15);
 					//TS_ASSERT_DELTA( precomputed_chi_angles[precompute_counter], chi, delta );
-					UT << "residue = " << i << " chi = " << chi << std::endl;
+
+					// fpd
+					UT << "residue = " << i << " sin (chi) = " << sin( res_chi[ j ] ) << " cos(chi) = " << cos( res_chi[ j ] ) << std::endl;
 				}
 		}
 };
