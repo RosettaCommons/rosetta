@@ -81,7 +81,7 @@ def run_itegration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_d
         #if os.path.isdir(files_location): TR('Removing old ref dir %s...' % files_location);  shutil.rmtree(files_location)  # remove old dir if any
 
         #output_json = working_dir + '/output.json'  , output_json=output_json   --yaml={output_json}
-        timeout = 60*8 if mode == 'release' else 60*60  # setting timeout to 8min on release and one hour on debug
+        timeout = 60*8 if mode == 'release' else 60*17  # setting timeout to 8min on release and one hour on debug
 
         command_line = 'cd {}/tests/integration && ./integration.py --skip-comparison --mode={mode} --compiler={compiler} --extras={extras} --timeout={timeout} -j{jobs}'.format(rosetta_dir, jobs=jobs, mode=mode, compiler=compiler, extras=extras, timeout=timeout)
         TR( 'Running integration script: {}'.format(command_line) )
