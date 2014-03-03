@@ -56,8 +56,9 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     compiler = platform['compiler']
     extras   = ','.join(platform['extras'])
 
+    build_command_line = 'cd {}/source && ./scons.py cxx={compiler} extras={extras} -j{jobs} && ./scons.py cxx={compiler} extras={extras} cat=test -j{jobs}'.format(rosetta_dir, jobs=jobs, compiler=compiler, extras=extras)
     if debug: res, output = 0, 'unit.py: debug is enabled, skippig build phase...\n'
-    else: res, output = execute('Compiling...', 'cd {}/source && ./scons.py cxx={compiler} extras={extras} -j{jobs} && ./scons.py cxx={compiler} extras={extras} cat=test -j{jobs}'.format(rosetta_dir, jobs=jobs, compiler=compiler, extras=extras), return_='tuple')
+    else: res, output = execute('Compiling...', build_command_line, return_='tuple')
 
     full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
 
@@ -79,7 +80,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
         if res:
             results[_StateKey_] = _S_script_failed_
-            results[_LogKey_]   = output  # ommiting compilation log and only including integration.py output
+            results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including run.py output
             return results
 
     json_results = json.load( file(json_results_file) )
