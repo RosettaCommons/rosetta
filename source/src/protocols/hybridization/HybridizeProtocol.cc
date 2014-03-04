@@ -970,7 +970,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				ft_hybridize->set_filter_templates( filter_templates_ );
 
 				// other cst stuff
-				ft_hybridize->set_movable_region( allowed_to_move_ );
+				//ft_hybridize->set_movable_region( allowed_to_move_ );
 				ft_hybridize->set_task_factory( task_factory_ );
 				ft_hybridize->set_user_csts( user_csts_ );
 
@@ -1074,7 +1074,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			cart_hybridize->set_nofragbias( nofragbias_ );
 			cart_hybridize->set_seqfrags_only( seqfrags_only_ );
 			cart_hybridize->set_cartfrag_overlap( cartfrag_overlap_ );
-			cart_hybridize->set_movable_region( allowed_to_move_ );
+			//cart_hybridize->set_movable_region( allowed_to_move_ );
 			cart_hybridize->set_skip_long_min( skip_long_min_ );
 
 			// finally run stage 2

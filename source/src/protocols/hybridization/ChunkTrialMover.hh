@@ -64,6 +64,15 @@ public:
 		bool random_template = true,
 		AlignOption align_option = all_chunks,
 		Size max_registry_shift = 0);
+    
+    ChunkTrialMover(
+        utility::vector1 < core::pose::PoseCOP > const & template_poses,
+        utility::vector1 < protocols::loops::Loops > const & template_chunks,
+        Loops ss_chunks_pose,
+        bool random_template,
+        AlignOption align_option,
+        utility::vector1<bool> residue_sample_template,
+        utility::vector1<Size> residue_max_registry_shift );
 
 	void
 	get_alignment_from_template(
@@ -89,27 +98,25 @@ public:
 	) {
 		ignore_template_indices_ = template_indices_in;
 	}
-  void set_movable_region( utility::vector1< bool > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
+    //void set_movable_region( utility::vector1< bool > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
 
 private:
-
 	utility::vector1 < core::pose::PoseCOP > template_poses_;
 	utility::vector1 < Loops > template_chunks_;
 	bool random_template_;
 	AlignOption align_option_;
 	InsertChunkMover align_chunk_;
-	Size max_registry_shift_input_;
 	utility::vector1 < std::map <core::Size, core::Size> > sequence_alignments_;
-	utility::vector1 < Size > max_registry_shift_;
+    utility::vector1 < core::Size > residue_covered_by_template_;
 
 	Size template_number_; // the jump to be realigned
 	Size jump_number_; // the jump to be realigned
 	Size highest_tmpl_resnum_; // the highest residue number from all templates
 	
 	std::set< core::Size > ignore_template_indices_;
-
-  utility::vector1<bool> allowed_to_move_;
-
+    utility::vector1<bool> sampling_chunk_;
+	Size max_registry_shift_global_;
+	utility::vector1 < Size > residue_max_registry_shift_;
 }; //class ChunkTrialMover
 
 } // hybridization

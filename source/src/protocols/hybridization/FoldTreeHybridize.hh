@@ -132,7 +132,7 @@ public:
 
 	inline void set_scorefunction(core::scoring::ScoreFunctionOP const scorefxn) { scorefxn_ = scorefxn; }
 
-	void set_movable_region( utility::vector1< bool > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
+	//void set_movable_region( utility::vector1< bool > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
 	void set_task_factory( core::pack::task::TaskFactoryOP task_factory_in );
 	void set_user_csts(  utility::vector1< core::Size > user_csts_in ) { user_csts_=user_csts_in; }
 
@@ -240,8 +240,16 @@ private:
 
 	core::pose::PoseOP native_;
 
+    // per-residue controls
+    utility::vector1<bool> residue_sample_template_; // using template fragments
+    utility::vector1<bool> residue_sample_abinitio_; // using torsion-based ab initio fragments
+    utility::vector1<core::Size> residue_max_registry_shift_; // restraints between chains
+    //utility::vector1<bool> residue_cst_in_domain_; // restraints within the domain
+    //utility::vector1<bool> residue_cst_cross_domain_; // restraints between domains, within a chain
+    //utility::vector1<bool> residue_cst_cross_chain_; // restraints between chains
+    
 	// task operations
-	utility::vector1<bool> allowed_to_move_;
+	//utility::vector1<bool> allowed_to_move_;
 	core::pack::task::TaskFactoryOP task_factory_;
 	utility::vector1 < core::Size > user_csts_;
 }; //class FoldTreeHybridize

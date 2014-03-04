@@ -81,7 +81,7 @@ public:
 	void set_no_global_frame(bool no_global_frame_in) { no_global_frame_=no_global_frame_in; }
 	void set_linmin_only(bool linmin_only_in) { linmin_only_=linmin_only_in; }
 	void set_cartfrag_overlap(core::Size cartfrag_overlap_in) { cartfrag_overlap_=cartfrag_overlap_in; }
-  void set_movable_region( utility::vector1< bool > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
+    //void set_movable_region( utility::vector1< bool > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
 	void set_seqfrags_only(bool seqfrags_only_in) { seqfrags_only_=seqfrags_only_in; }
 	void set_nofragbias(bool nofragbias_in) { nofragbias_=nofragbias_in; }
 	void set_skip_long_min(bool skip_long_min_in) { skip_long_min_=skip_long_min_in; }
@@ -119,11 +119,15 @@ private:
 	core::fragment::FragSetOP fragments9_;
 	boost::unordered_map<core::Size, core::fragment::Frame> library_;
 
+    // per-residue controls
+    utility::vector1<bool> residue_sample_template_; // using template fragments
+    utility::vector1<bool> residue_sample_abinitio_; // using torsion-based ab initio fragments
+
 	// scorefunctions
 	core::scoring::ScoreFunctionOP lowres_scorefxn_, min_scorefxn_, bonds_scorefxn_, nocst_scorefxn_;
 
 	// allowed to move regions
-	utility::vector1<bool> allowed_to_move_;
+	//utility::vector1<bool> allowed_to_move_;
 }; //class CartesianHybridize
 
 } // hybridize

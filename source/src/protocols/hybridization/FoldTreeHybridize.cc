@@ -569,7 +569,11 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_big_fr
 	utility::vector1< core::Real > residue_weights(num_residues_nonvirt, 0.0);
 	TR.Debug << "Fragment insertion positions and weights:" << std::endl;
 	for ( Size ires=1; ires<= num_residues_nonvirt; ++ires ) {
-        //if ( allowed_to_move_[ires]==true ) {
+        if (!residue_sample_abinitio_[ires]) {
+            residue_weights[ires] = 0.0;
+            continue;
+        }
+        
 		if (domain_assembly_) {
 			bool residue_in_template = false;
 			for (Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
@@ -592,15 +596,16 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_big_fr
 			= renumber_with_pdb_info(
 										 template_contigs_[initial_template_index_], template_poses_[initial_template_index_]);
 
+            if (residue_sample_abinitio_[ires]) {
 			if (! renumbered_template_chunks.has(ires) ) {
-				residue_weights[ires] = 1.0;
+                    residue_weights[ires] = 1.0;
 			}
 			else {
 				residue_weights[ires] = frag_weight_aligned_;
 			}
+            }
 		}
 		TR.Debug << " " << ires << ": " << F(7,5,residue_weights[ires]) << std::endl;
-	//} //only residues from the allowed_to_move_ has non-zero weights
  }
 
 	// reset linker fragment insertion weights
@@ -669,8 +674,10 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_1mers(
     core::Size anchor_gap = jump_anchors[i]-last_anchor-1;
     if (anchor_gap && (anchor_gap < min_small_frag_len)) {
       for (core::Size ipos = last_anchor+1;ipos<jump_anchors[i];++ipos) {
+          if (residue_sample_abinitio_[ipos]) {
         residue_weights_new[ipos] = residue_weights[ipos];
         TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
+          }
       }
     }
     last_anchor = jump_anchors[i];
@@ -678,8 +685,10 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_1mers(
   core::Size anchor_gap = num_residues_nonvirt-last_anchor;
   if (anchor_gap && (anchor_gap < min_small_frag_len)) {
     for (core::Size ipos = last_anchor+1;ipos<=num_residues_nonvirt;++ipos) {
+        if (residue_sample_abinitio_[ipos]) {
       residue_weights_new[ipos] = residue_weights[ipos];
       TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
+        }
     }
   }
   return residue_weights_new;
@@ -693,17 +702,20 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_small_
 	utility::vector1< core::Size > jump_anchors = get_jump_anchors();
 	core::Size min_big_frag_len = 999999;
 	TR.Debug << "Small fragment insertion positions and weights:" << std::endl;
-	for (core::Size i = 1; i<=frag_libs_big_.size(); ++i)
-		if (frag_libs_big_[i]->max_frag_length() < min_big_frag_len)
+	for (core::Size i = 1; i<=frag_libs_big_.size(); ++i) {
+		if (frag_libs_big_[i]->max_frag_length() < min_big_frag_len) {
 			min_big_frag_len = frag_libs_big_[i]->max_frag_length();
-
+        }
+    }
 	core::Size last_anchor = 0;
 	for (core::Size i = 1; i<=jump_anchors.size(); ++i) {
 		core::Size anchor_gap = jump_anchors[i]-last_anchor-1;
 		if (anchor_gap && anchor_gap < min_big_frag_len) {
 			for (core::Size ipos = last_anchor+1;ipos<jump_anchors[i];++ipos) {
+                if (residue_sample_abinitio_[ipos]) {
 				residue_weights_new[ipos] = residue_weights[ipos];
 				TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
+                }
 			}
 		}
 		last_anchor = jump_anchors[i];
@@ -711,8 +723,10 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_small_
 	core::Size anchor_gap = num_residues_nonvirt-last_anchor;
 	if (anchor_gap && anchor_gap < min_big_frag_len) {
 		for (core::Size ipos = last_anchor+1;ipos<=num_residues_nonvirt;++ipos) {
+            if (residue_sample_abinitio_[ipos]) {
 			residue_weights_new[ipos] = residue_weights[ipos];
 			TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
+            }
 		}
 	}
 	return residue_weights_new;
@@ -1246,19 +1260,24 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	//  note: ignore pairings residues (strand pairings templates) for auto generated constraints
 	if ( scorefxn_->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
 		setup_centroid_constraints( pose, template_poses_, template_wts_, cst_file_, get_pairings_residues() );
-		if (add_hetatm_)
+		if (add_hetatm_) {
 			add_non_protein_cst(pose, hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
-		if ( task_factory_ )
-      setup_interface_atompair_constraints(pose,allowed_to_move_);
+        }
+        ///TODO: set this up for the new controls
+        /*
+		if ( task_factory_ ) {
+            setup_interface_atompair_constraints(pose,allowed_to_move_);
+        }
+         */
 	}
 
 	// Initialize the structure
 	bool use_random_template = false;
 	if (initialize_pose_by_templates_) {
-		ChunkTrialMover initialize_chunk_mover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, all_chunks);
+		ChunkTrialMover initialize_chunk_mover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, all_chunks, max_registry_shift_);
 		initialize_chunk_mover.set_template(initial_template_index_);
-		initialize_chunk_mover.set_movable_region(allowed_to_move_);
 		initialize_chunk_mover.apply(pose);
+        
 		// strand pairings
 		if (has_strand_pairings) {
 			// apply strand pairing jumps to place floating pairs
@@ -1276,10 +1295,10 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	// ab initio ramping up of weights
 	// set up scorefunctions
 	core::scoring::ScoreFunctionOP score0=scorefxn_->clone(),
-																 score1=scorefxn_->clone(),
-																 score2=scorefxn_->clone(),
-																 score5=scorefxn_->clone(),
-																 score3=scorefxn_->clone();
+                                     score1=scorefxn_->clone(),
+                                     score2=scorefxn_->clone(),
+                                     score5=scorefxn_->clone(),
+                                     score3=scorefxn_->clone();
 	setup_scorefunctions( score0, score1, score2, score5, score3 );
 
 	if ( !core::pose::symmetry::is_symmetric(pose) )
@@ -1287,17 +1306,22 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 
 	// coord csts _must_ be after the CoM gets moved
 	if ( scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0) {
-		if ( user_csts_.size() > 0 )
+		if ( user_csts_.size() > 0 ) {
 			setup_user_coordinate_constraints(pose,user_csts_);
-		if ( task_factory_ )
+        }
+        ///TODO: interface coordinate_constraints
+        /*
+		if ( task_factory_ ) {
 			setup_interface_coordinate_constraints(pose,allowed_to_move_);
+        }
+         */
 	}
 
 	use_random_template = true;
-	Size max_registry_shift = max_registry_shift_;
+	//Size max_registry_shift = max_registry_shift_;
 	ChunkTrialMoverOP random_sample_chunk_mover(
-		new ChunkTrialMover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, random_chunk, max_registry_shift) );
-	random_sample_chunk_mover->set_movable_region(allowed_to_move_);
+		new ChunkTrialMover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, random_chunk, residue_sample_template_,  residue_max_registry_shift_) );
+	//random_sample_chunk_mover->set_movable_region(allowed_to_move_);
 
 	// ignore strand pair templates, they will be sampled by a jump mover
 	random_sample_chunk_mover->set_templates_to_ignore(strand_pairings_template_indices_);
@@ -1816,23 +1840,77 @@ FoldTreeHybridize::parse_my_tag(
 		utility_exit_with_message("Fatal error: hybridize_setup needs to be defined!");
 	}
 	
-    //task operations
-    allowed_to_move_.clear();
-	if( tag->hasOption( "task_operations" ) ){
-		allowed_to_move_.resize(pose.total_residue(), true);
-		core::pack::task::TaskFactoryOP task_factory = protocols::rosetta_scripts::parse_task_operations( tag, data );
-		core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
-		for( core::Size resi = 1; resi <= get_num_residues_prot(pose); ++resi ){
-			if( task->residue_task( resi ).being_designed() || task->residue_task( resi ).being_packed())
-				allowed_to_move_[resi]=true;
-    		else
-				allowed_to_move_[resi]=false;
-		}
-	}
+    residue_sample_template_.resize(hybridize_setup_->nres_tgt_asu(), true);
+    residue_sample_abinitio_.resize(hybridize_setup_->nres_tgt_asu(), true);
+    residue_max_registry_shift_.resize(hybridize_setup_->nres_tgt_asu(), 0);
+    //residue_cst_in_domain_.resize(hybridize_setup_->nres_tgt_asu(), true); // restraints within the domain
+    //residue_cst_cross_domain_.resize(hybridize_setup_->nres_tgt_asu(), true); // restraints between domains, within a chain
+    //residue_cst_cross_chain_.resize(hybridize_setup_->nres_tgt_asu(), false); // restraints between chains
 
-	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
+    utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
 	utility::vector1< utility::tag::TagCOP >::const_iterator tag_it;
 	for (tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
+        // per-residue control
+        if ( (*tag_it)->getName() == "DetailedControls" ) {
+            if( (*tag_it)->hasOption( "task_operations" ) ){
+                core::pack::task::TaskFactoryOP task_factory = protocols::rosetta_scripts::parse_task_operations( *tag_it, data );
+                core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
+
+                for( core::Size ires = 1; ires <= hybridize_setup_->nres_tgt_asu(); ++ires ){
+                    
+                    if( task->residue_task( ires ).being_designed() && task->residue_task( ires ).being_packed() ) {
+                        // residue_cst_cross_chain_[ires] = true;
+                    }
+                    else {
+                        residue_sample_template_[ires] = false;
+                        residue_sample_abinitio_[ires] = false;
+                    }
+                }
+            }
+            else {
+                core::Size start_res = (*tag_it)->getOption<core::Size>( "start_res", 1 );
+                core::Size stop_res = (*tag_it)->getOption<core::Size>( "stop_res", hybridize_setup_->nres_tgt_asu() );
+                if( (*tag_it)->hasOption( "sample_template" ) ){
+                    bool sample_template = (*tag_it)->getOption<bool>( "sample_template", true );
+                    for (core::Size ires=start_res; ires<=stop_res; ++ires) {
+                        residue_sample_template_[ires] = sample_template;
+                    }
+                }
+                if( (*tag_it)->hasOption( "sample_abinitio" ) ){
+                    bool sample_abinitio = (*tag_it)->getOption<bool>( "sample_abinitio", true );
+                    for (core::Size ires=start_res; ires<=stop_res; ++ires) {
+                        residue_sample_abinitio_[ires] = sample_abinitio;
+                    }
+                }
+                if( (*tag_it)->hasOption( "max_registry_shift" ) ){
+                    core::Size max_registry_shift = (*tag_it)->getOption<core::Size>( "max_registry_shift", 0 );
+                    for (core::Size ires=start_res; ires<=stop_res; ++ires) {
+                        residue_max_registry_shift_[ires] = max_registry_shift; // restraints within the domain
+                    }
+                }
+                /*
+                if( (*tag_it)->hasOption( "cst_in_domain" ) ){
+                    bool cst_in_domain = (*tag_it)->getOption<bool>( "cst_in_domain", true );
+                    for (core::Size ires=start_res; ires<=stop_res; ++ires) {
+                        residue_cst_in_domain_[ires] = cst_in_domain; // restraints within the domain
+                    }
+                }
+                if( (*tag_it)->hasOption( "cst_cross_domain" ) ){
+                    bool cst_cross_domain = (*tag_it)->getOption<bool>( "cst_cross_domain", true );
+                    for (core::Size ires=start_res; ires<=stop_res; ++ires) {
+                        residue_cst_cross_domain_[ires] = cst_cross_domain; // restraints between domains, within a chain
+                    }
+                }
+                if( (*tag_it)->hasOption( "cst_cross_chain" ) ){
+                    bool cst_cross_chain = (*tag_it)->getOption<bool>( "cst_cross_chain", false );
+                    for (core::Size ires=start_res; ires<=stop_res; ++ires) {
+                        residue_cst_cross_chain_[ires] = cst_cross_chain; // restraints between chains
+                    }
+                }
+                 */
+            }
+        }
+        
 		// strand pairings
 		if ( (*tag_it)->getName() == "Pairings" ) {
 			pairings_file_ = (*tag_it)->getOption< std::string >( "file", "" );

@@ -667,50 +667,50 @@ sampler:
 				core::Size max_templates_trial=templates_.size()*5;
 				bool movable_loop=false;
 				protocols::loops::LoopOP frag;
-
+                
 				core::Size templ_id=1;
 				for (core::Size i=1; i<=max_templates_trial; ++i) {
-						templ_id = numeric::random::random_range( 1, templates_.size() );
-						core::Size nfrags = template_contigs_[templ_id].num_loop();
-						// remove non-protein frags
-						while (templates_[templ_id]->pdb_info()->number(template_contigs_[templ_id][nfrags].start()) >
-								(int)n_prot_res) {
-							--nfrags;
-						}
-
-						core::Size frag_id;
-						core::Size max_frag_trial=nfrags*3;
-						for (core::Size ii=1; ii<=max_frag_trial; ++ii) {
-									frag_id = numeric::random::random_range( 1, nfrags );
-									frag =  new protocols::loops::Loop ( template_contigs_[templ_id][frag_id] );
-									for (core::Size iii=frag->start(); iii<=frag->stop(); ++iii) {
-										 if ( allowed_to_move_[templates_[templ_id]->pdb_info()->number(iii)]==true ) {
-													movable_loop=true;
-													break;
-											}
-									}
-									if ( movable_loop==true)
-											break;
-						} //trial different frags in a tempalte
+                    templ_id = numeric::random::random_range( 1, templates_.size() );
+                    core::Size nfrags = template_contigs_[templ_id].num_loop();
+                    // remove non-protein frags
+                    while (templates_[templ_id]->pdb_info()->number(template_contigs_[templ_id][nfrags].start()) >
+                           (int)n_prot_res) {
+                        --nfrags;
+                    }
+                    
+                    core::Size frag_id;
+                    core::Size max_frag_trial=nfrags*3;
+                    for (core::Size ii=1; ii<=max_frag_trial; ++ii) {
+                        frag_id = numeric::random::random_range( 1, nfrags );
+                        frag =  new protocols::loops::Loop ( template_contigs_[templ_id][frag_id] );
+                        for (core::Size iii=frag->start(); iii<=frag->stop(); ++iii) {
+                            if ( residue_sample_template_[templates_[templ_id]->pdb_info()->number(iii)]==true ) {
+                                movable_loop=true;
+                                break;
+                            }
+                        }
+                        if ( movable_loop==true)
+                            break;
+                    } //trial different frags in a tempalte
 				    if ( movable_loop==true)
-							break;
-			} //end of trial different templates
-
+                        break;
+                } //end of trial different templates
+                
 				if (frag->size() > 14)
 					action_string = action_string+"_15+";
 				else if (frag->size() <= 4)
 					action_string = action_string+"_0-4";
 				else
 					action_string = action_string+"_5-14";
-
+                
 				if ( frag->size() > 0 )
 					apply_frag( pose, *templates_[templ_id], *frag, (action==2) );
-
+                
 				if (action == 1) {
 					//fpd assume this was initialized elsewhere
 					runtime_assert( pose.data().has( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
 					TemplateHistory &history =
-						*( static_cast< TemplateHistory* >( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY )() ));
+                    *( static_cast< TemplateHistory* >( pose.data().get_ptr( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY )() ));
 					history.set( frag->start(), frag->stop(), templ_id );
 				}
 			}
@@ -726,7 +726,7 @@ sampler:
 							residuals[i] = -1;
 						} else if (pose.fold_tree().is_cutpoint(i+1)) {
 							residuals[i] = -1;
-						} else if ( allowed_to_move_[i]==false ) {
+						} else if ( residue_sample_abinitio_[i]==false ) {
 							residuals[i] = -1;
 						} else {
 							numeric::xyzVector< core::Real > c0 , n1;
@@ -751,10 +751,15 @@ sampler:
 				}
 
 				// 25% chance of random position
-				int random_residue_move=numeric::random::random_range(1,allowed_to_move_.size());
-				while (!allowed_to_move_[random_residue_move]) {
-						random_residue_move=numeric::random::random_range(1,allowed_to_move_.size());
+				int random_residue_move=numeric::random::random_range(1, residue_sample_abinitio_.size());
+                int ntrials=500;
+				while (!residue_sample_abinitio_[random_residue_move] && --ntrials>0) {
+                    random_residue_move=numeric::random::random_range(1, residue_sample_abinitio_.size());
 				}
+                if (ntrials<=0) {
+                    TR << "Warning! Fail to find a free residue for sampling." << std::endl;
+                    continue;
+                }
 				max_poses[ 4 ] = random_residue_move;
 				int select_position = numeric::random::random_range(1,4);
 
@@ -864,6 +869,7 @@ CartesianHybridize::parse_my_tag(
 	}
 
 	//task operations
+    /*
     allowed_to_move_.clear();
 	allowed_to_move_.resize(pose.total_residue(),true);
 	if( tag->hasOption( "task_operations" ) ){
@@ -876,7 +882,8 @@ CartesianHybridize::parse_my_tag(
 				allowed_to_move_[resi]=false;
 		}
 	}
-	
+	*/
+    
 	if( tag->hasOption( "no_global_frame" ) )
 		set_no_global_frame( tag->getOption< bool >( "no_global_frame" ) );
 	if( tag->hasOption( "linmin_only" ) )
@@ -886,6 +893,49 @@ CartesianHybridize::parse_my_tag(
 	if( tag->hasOption( "align_templates_to_pose" ) ) {
 		align_templates_to_pose_ = tag->getOption< bool >( "align_templates_to_pose" );
 	}
+    
+    residue_sample_template_.resize(hybridize_setup_->nres_tgt_asu(), true);
+    residue_sample_abinitio_.resize(hybridize_setup_->nres_tgt_asu(), true);
+    
+    utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
+	utility::vector1< utility::tag::TagCOP >::const_iterator tag_it;
+	for (tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it) {
+        // per-residue control
+        if ( (*tag_it)->getName() == "DetailedControls" ) {
+            if( (*tag_it)->hasOption( "task_operations" ) ){
+                core::pack::task::TaskFactoryOP task_factory = protocols::rosetta_scripts::parse_task_operations( *tag_it, data );
+                core::pack::task::PackerTaskOP task = task_factory->create_task_and_apply_taskoperations( pose );
+                
+                for( core::Size ires = 1; ires <= hybridize_setup_->nres_tgt_asu(); ++ires ){
+                    
+                    if( task->residue_task( ires ).being_designed() && task->residue_task( ires ).being_packed() ) {
+                        // residue_cst_cross_chain_[ires] = true;
+                    }
+                    else {
+                        residue_sample_template_[ires] = false;
+                        residue_sample_abinitio_[ires] = false;
+                    }
+                }
+            }
+            else {
+                core::Size start_res = (*tag_it)->getOption<core::Size>( "start_res", 1 );
+                core::Size stop_res = (*tag_it)->getOption<core::Size>( "stop_res", hybridize_setup_->nres_tgt_asu() );
+                if( (*tag_it)->hasOption( "sample_template" ) ){
+                    bool sample_template = (*tag_it)->getOption<bool>( "sample_template", true );
+                    for (core::Size ires=start_res; ires<=stop_res; ++ires) {
+                        residue_sample_template_[ires] = sample_template;
+                    }
+                }
+                if( (*tag_it)->hasOption( "sample_abinitio" ) ){
+                    bool sample_abinitio = (*tag_it)->getOption<bool>( "sample_abinitio", true );
+                    for (core::Size ires=start_res; ires<=stop_res; ++ires) {
+                        residue_sample_abinitio_[ires] = sample_abinitio;
+                    }
+                }
+            }
+        }
+        
+    }
 }
 	
 /////////////
