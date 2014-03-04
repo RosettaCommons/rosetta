@@ -379,6 +379,10 @@ EllipsoidalRandomizationMover::get_partner_residue_start_stop( core::pose::Pose 
 	return start_stop;
 }
 	
+//fpd  4 March 2013
+//fpd  this block of code causes problems when compiled with phenix due to boost incompatibilities
+//fpd  temporarily ifdef out UNTIL boost is updated
+#ifndef PYTHON
 Real
 EllipsoidalRandomizationMover::single_beta_sample( double alpha_param, double beta_param )
 {
@@ -392,9 +396,16 @@ EllipsoidalRandomizationMover::single_beta_sample( double alpha_param, double be
 	Real beta_sample = sampler.sample();
 	
 	return beta_sample;
-	
 }
-	
+#else
+Real
+EllipsoidalRandomizationMover::single_beta_sample( double , double )
+{
+	return 0.0;
+}
+#endif
+
+
 Vector
 EllipsoidalRandomizationMover::point_on_ellipsoid( numeric::xyzMatrix< core::Real > axes )
 {
