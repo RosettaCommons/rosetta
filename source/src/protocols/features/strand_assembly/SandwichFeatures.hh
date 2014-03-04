@@ -397,7 +397,7 @@ public:
 
 
 	std::string
-	get_residue_location(
+	see_edge_or_core(
 		StructureID struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::Size residue_num);

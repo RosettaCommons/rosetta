@@ -6543,7 +6543,7 @@ SandwichFeatures::get_vector_AA_distribution_w_direction (
 
 
 string
-SandwichFeatures::get_residue_location (
+SandwichFeatures::see_edge_or_core (
 	StructureID struct_id,
 	sessionOP db_session,
 	Size	residue_num
@@ -6570,20 +6570,20 @@ SandwichFeatures::get_residue_location (
 		res >> strand_edge;
 	}
 
-	string	residue_location;
+	string	edge_or_core;
 	if	(strand_edge == "edge")
 	{
-		residue_location = "edge";
+		edge_or_core = "edge";
 	}
 	else if	(strand_edge == "core")
 	{
-		residue_location = "core";
+		edge_or_core = "core";
 	}
 	else
 	{
-		residue_location = "loop_or_short_edge";
+		edge_or_core = "loop_or_short_edge";
 	}
-	return residue_location;
+	return edge_or_core;
 }
 
 
@@ -7215,8 +7215,9 @@ SandwichFeatures::parse_my_tag(
 		//"N-O bridges follow only one, that is, they have at least a pair of side-chain functional-group nitrogen and oxygen atoms within 4A distance, but the side-chain functional-group centroids are > 4A apart."
 		// source: 2002_Close-Range Electrostatic Interactions in Proteins
 
-	CB_b_factor_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("CB_b_factor_cutoff_for_electrostatic_interactions", 60);
-		//"Values of 60 or greater may imply disorder (for example, free movement of a side chain or alternative side-chain conformations). Values of 20 and 5 correspond to uncertainties of 0.5 and 0.25 angstroms, respectively."
+	CB_b_factor_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("CB_b_factor_cutoff_for_electrostatic_interactions", 10000);
+	//	CB_b_factor_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("CB_b_factor_cutoff_for_electrostatic_interactions", 60);
+			//"Values of 60 or greater may imply disorder (for example, free movement of a side chain or alternative side-chain conformations). Values of 20 and 5 correspond to uncertainties of 0.5 and 0.25 angstroms, respectively."
 		// source: http://spdbv.vital-it.ch/TheMolecularLevel/SPVTut/text/STut09aTN.html
 
 	primary_seq_distance_cutoff_for_electrostatic_interactions_ = tag->getOption<Size>("primary_seq_distance_cutoff_for_electrostatic_interactions", 4);
@@ -8723,8 +8724,7 @@ SandwichFeatures::report_features(
 	//// <end> report number_of_inward_pointing_charged_AAs/aro_AAs_in_a_pair_of_edge_strands
 
 
-	///////////// development
-	// <begin> write resfile automatically
+	// <begin> write resfile automatically ("NOTAA	CFHWY" for loop residues and surface heading strand residues)
 	if (write_resfile_ && canonical_sw_extracted_from_this_pdb_file)
 	{
 		Size tag_len = tag.length();
@@ -8738,14 +8738,35 @@ SandwichFeatures::report_features(
 		resfile_stream << "USE_INPUT_SC" << endl;
 		resfile_stream << "start" << endl;
 
+		resfile_stream << "# NOTAA	CFHWY for surface heading strand residues" << endl;
+		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++) // per each beta-strand
+		{
+			Size residue_begin	=	bs_of_sw_can_by_sh[ii].get_start();
+			Size residue_end	=	bs_of_sw_can_by_sh[ii].get_end();
+			for (Size	residue_num	=	residue_begin;	residue_num	<=	residue_end; residue_num++)
+			{
+				{
+					string	heading	=	determine_heading_direction_by_vector	(struct_id,	db_session,	pose,	bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),	bs_of_sw_can_by_sh[ii].get_sheet_id(),	residue_begin,	residue_end,	residue_num);
+					if (heading == "surface")
+					{
+						resfile_stream << residue_num << "	A	EX	1	NOTAA	CFHWY" << endl;
+					}
+				}
+			}
+		}
+
+		resfile_stream << "# NOTAA	CFHWY for loop residues" << endl;
 		for (Size i =1; i<=(pose.total_residue()); i++)
 		{
-			string residue_location = get_residue_location (struct_id,	db_session,	i);
-//			resfile_stream << vector_of_hairpin_AA[i] << "	" << vector_of_inter_sheet_loop_AA[i] << endl;
+			string edge_or_core = see_edge_or_core (struct_id,	db_session,	i);
+			if (edge_or_core == "loop_or_short_edge")
+			{
+				resfile_stream << i << "	A	EX	1	NOTAA	CFHWY" << endl;
+			}
 		}
 		resfile_stream.close();
-	} 
-	// <end> write resfile automatically
+	}
+	// <end> write resfile automatically ("NOTAA	CFHWY" for loop residues and surface heading strand residues)
 	///////////// development
 
 
