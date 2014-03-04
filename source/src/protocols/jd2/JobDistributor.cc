@@ -270,7 +270,7 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 	core::Size tried_jobs(0); //did we try any jobs?
 
 	protocols::moves::MoverOP mover_copy(mover);
-	std::string last_inner_job_tag;
+	std::string last_inner_job_tag, last_output_tag;
 	core::Size last_batch_id = 0; //this will trigger a mover->fresh_instance if we run with batches
 	core::Size retries_this_job(0);
 	bool first_job(true);
@@ -367,7 +367,6 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 					<< ", last was: " << last_inner_job_tag << std::endl;
 			last_inner_job_tag = current_job_->input_tag();
 			new_input = true;
-			retries_this_job = 0;
 
 			//do we need to reinitialize because of the new input? - yes if mover says, or cmdline says
 			if (mover
@@ -378,6 +377,12 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 			} //if we need to reinitialize
 
 		} //if the input pose is about to change
+
+		// Are we on a new output structure? (Or are we repeating a failed job?)
+		if( job_outputter_->output_name(current_job_) != last_output_tag ) {
+			last_output_tag = job_outputter_->output_name(current_job_);
+			retries_this_job = 0;
+		}
 
 		if (option[OptionKeys::jd2::delete_old_poses].user())
 		{
