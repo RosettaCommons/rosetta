@@ -9,6 +9,6 @@
 -out:file:fullatom # output in fullatom scorefile
 -mute core.io.database
 -run:test_cycles # reduce the number of high resolution snugdock cycles
--loops:max_inner_cycles 3 # make the ccd loop refinement go faster
+-loops:max_inner_cycles 1 # make the ccd loop refinement go faster
 -docking:docking_centroid_outer_cycles 1 # make the low resolution docking phase of the test fast
--docking:docking_centroid_inner_cycles 3 # make the low resolution docking phase of the test fast
+-docking:docking_centroid_inner_cycles 1 # make the low resolution docking phase of the test fast
