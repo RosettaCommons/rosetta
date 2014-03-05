@@ -11,11 +11,12 @@
 #include <protocols/loop_modeling/refiners/RepackingRefiner.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // Protocols headers
@@ -48,15 +49,7 @@ RepackingRefiner::RepackingRefiner() {
 	// Should read resfile if present.
 }
 
-void RepackingRefiner::setup(
-		Pose & pose, Loop const & loop, ScoreFunctionOP score_function) {
-
-	apply(pose, loop, score_function);
-}
-
-bool RepackingRefiner::apply(
-		Pose & pose, Loop const & loop, ScoreFunctionCOP score_function) {
-
+bool RepackingRefiner::do_apply(Pose & pose) {
 	using core::pack::pack_rotamers;
 	using core::pack::task::PackerTaskOP;
 
@@ -64,17 +57,16 @@ bool RepackingRefiner::apply(
 		task_factory_->create_task_and_apply_taskoperations(pose);
 
 	utility::vector1<bool> loop_residues = 
-		protocols::loops::select_loop_residues(pose, loop, true, 10.0);
-	//core::pose::symmetry::make_residue_mask_symmetric(pose, loop_residues);
+		protocols::loops::select_loop_residues(pose, get_loops(), true, 10.0);
+
+	core::pose::symmetry::make_residue_mask_symmetric(pose, loop_residues);
 
 	packer_task->set_bump_check(true);
 	packer_task->restrict_to_repacking();
 	packer_task->restrict_to_residues(loop_residues);
 
-	pack_rotamers(pose, *score_function, packer_task);
-
-	// Should I do this before picking the loop residues?
-	pose.update_residue_neighbors();  // Update 10A neighbor graph.
+	pack_rotamers(pose, *get_score_function(), packer_task);
+	pose.update_residue_neighbors();
 
 	return true;
 }

@@ -1927,7 +1927,7 @@ option.add( basic::options::OptionKeys::loops::random_order, "build in random or
 option.add( basic::options::OptionKeys::loops::build_all_loops, "build all loops(no skip)  " ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::loops::fa_closure_protocol, "Abrelax uses FASlidingWindowLoopClosure... " ).def(false);
 option.add( basic::options::OptionKeys::loops::combine_rate, "Combine successive loops at this rate" ).def(0.0);
-option.add( basic::options::OptionKeys::loops::remodel, "" ).legal("no").legal("perturb_ccd").legal("perturb_kic").legal("quick_ccd").legal("quick_ccd_moves").legal("old_loop_relax").legal("sdwindow").def("no");
+option.add( basic::options::OptionKeys::loops::remodel, "" ).legal("no").legal("perturb_ccd").legal("perturb_kic").legal("perturb_kic_refactor").legal("quick_ccd").legal("quick_ccd_moves").legal("old_loop_relax").legal("sdwindow").def("no");
 option.add( basic::options::OptionKeys::loops::intermedrelax, "" ).legal("no").legal("relax").legal("fastrelax").legal("seqrelax").def("no");
 option.add( basic::options::OptionKeys::loops::refine, "method for performing full-atom refinement on loops" ).legal("no").legal("refine_ccd").legal("refine_kic").legal("refine_kic_refactor").def("no");
 option.add( basic::options::OptionKeys::loops::relax, "" ).legal("no").legal("relax").legal("fastrelax").legal("seqrelax").legal("minirelax").def("no");

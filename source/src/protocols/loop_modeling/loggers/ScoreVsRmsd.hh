@@ -11,6 +11,7 @@
 #define INCLUDED_protocols_loop_modeling_loggers_ScoreVsRmsd_HH
 
 // Unit headers
+#include <protocols/loop_modeling/types.hh>
 #include <protocols/loop_modeling/loggers/Logger.hh>
 #include <protocols/loop_modeling/loggers/ScoreVsRmsd.fwd.hh>
 
@@ -32,29 +33,32 @@ namespace protocols {
 namespace loop_modeling {
 namespace loggers {
 
-using namespace std;
-using core::Real;
-using core::pose::Pose;
-using protocols::moves::MonteCarlo;
-using protocols::loops::Loops;
-using protocols::loops::Loop;
-typedef map<Real, Real> ScoreToRmsdMap;
+typedef std::map<Real, Real> ScoreToRmsdMap;
 
+/// @brief Report scores and RMSDs for every conformation that gets sampled.
 class ScoreVsRmsd : public Logger {
 
 public:
+
+	/// @brief Constructor with native state and loop arguments.
+	/// @details Note that while LoopProtocol can simultaneously sample any 
+	/// number of loops, this logger can only focus on one loop.  So you may have 
+	/// to use several of these loggers to cover every loop in the simulation.
 	ScoreVsRmsd(Pose const & native, Loop const & loop);
 
 public:
-	void log_iteration_(Pose const & pose);
-	void log_monte_carlo_(MonteCarlo const & monte_carlo);
+
+	/// @brief Record a score and RMSD for the given pose.
+	void log_monte_carlo_(protocols::moves::MonteCarlo const & monte_carlo);
+
+	/// @brief Write all the recorded data to a space-separated value file.
 	void log_ending_(Pose const & pose);
 
 private:
 	Pose native_;
 	Loops loops_;
 	ScoreToRmsdMap map_;
-	ofstream file_;
+	std::ofstream file_;
 
 };
 
@@ -63,4 +67,3 @@ private:
 }
 
 #endif
-

@@ -8,105 +8,169 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 // Unit headers
-#include <protocols/loop_modeling/types.hh>
 #include <protocols/loop_modeling/LoopMover.hh>
-#include <protocols/loop_modeling/LoopMoverTask.hh>
-#include <protocols/loop_modeling/utilities/FilterTask.hh>
-#include <protocols/loop_modeling/loggers/Logger.hh>
 
 // Core headers
+#include <core/types.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // Protocol headers
-#include <protocols/loops/Loop.hh>
-#include <protocols/filters/Filter.hh>
+#include <protocols/loops/loops_main.hh>
 
 // Utility headers
+#include <utility/exit.hh>
 #include <boost/foreach.hpp>
+
+#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace loop_modeling {
 
-#define foreach BOOST_FOREACH
 using namespace std;
+using core::scoring::ScoreFunctionOP;
+using core::scoring::ScoreFunctionCOP;
+using core::kinematics::FoldTree;
 
-LoopMover::LoopMover() {
-	score_function_ = NULL;
-	setup_needed_ = true;
-}
+LoopMover::LoopMover()  // {{{1
+	: trust_fold_tree_(false),
+		was_successful_(false),
+		score_function_(NULL)
+	{}
 
-LoopMover::LoopMover(Loop const & loop, ScoreFunctionOP score_function) {
-	set_loop(loop);
-	set_score_function(score_function);
-}
+LoopMover::~LoopMover() {}  // {{{1
+// }}}1
 
-void LoopMover::apply(Pose & pose) {
-	if (setup_needed_) setup(pose);
+void LoopMover::apply(Pose & pose) { // {{{1
 
-	last_move_successful_ = true;
+	// Make sure a loop was specified.
 
-	foreach (LoopMoverTaskOP task, tasks_) {
-		last_move_successful_ = task->apply(pose, loop_, score_function_);
+	if (loops_.empty()) {
+		utility_exit_with_message("No loops specified.");
+	}
 
-		foreach (loggers::LoggerOP logger, loggers_) {
-			logger->log_task(pose, task->get_name(), last_move_successful_);
-		}
+	// Create a score function if necessary.
 
-		if (not last_move_successful_) break;
+	if (score_function_.get() == NULL) {
+		set_score_function(core::scoring::getScoreFunction());
+	}
+
+	// Sample the loops.  If the existing fold tree isn't trusted, replace it 
+	// with a custom-built one first.
+
+	if (trust_fold_tree_) {
+		was_successful_ = do_apply(pose);
+	}
+	else {
+		FoldTree original_tree = pose.fold_tree();
+		FoldTreeRequest request = request_fold_tree();
+		setup_fold_tree(pose, loops_, request);
+		protocols::loops::add_cutpoint_variants(pose);
+
+		was_successful_ = do_apply(pose);
+
+		protocols::loops::remove_cutpoint_variants(pose);
+		pose.fold_tree(original_tree);
 	}
 }
 
-void LoopMover::setup(Pose & pose) {
-	if (loop_.length() == 0) {
-		utility_exit_with_message("No loop region specified");
+bool LoopMover::do_apply(Pose & pose) { // {{{1
+	Loops::const_iterator loop;
+	for (loop = loops_.begin(); loop != loops_.end(); loop++) {
+		bool was_successful = do_apply(pose, *loop);
+		if (not was_successful) return false;
 	}
-	if (not score_function_) {
-		score_function_ = core::scoring::getScoreFunction();
-	}
-
-	foreach (LoopMoverTaskOP task, tasks_) {
-		task->setup(pose, loop_, score_function_);
-	}
-
-	setup_needed_ = false;
+	return true;
 }
 
-void LoopMover::set_score_function(ScoreFunctionOP score_function) {
-	score_function_ = score_function;
-	setup_needed_ = true;
+bool LoopMover::do_apply(Pose &, Loop const &) { // {{{1
+	utility_exit_with_message("LoopMover::do_apply was not reimplemented.");
+}
+// }}}1
+
+bool LoopMover::was_successful() const { // {{{1
+	return was_successful_;
 }
 
-void LoopMover::set_loop(Loop const & loop) {
-	loop_ = loop;
-	setup_needed_ = true;
+Loops LoopMover::get_loops() const { // {{{1
+	return loops_;
 }
 
-void LoopMover::add_task(LoopMoverTaskOP task) {
-	tasks_.push_back(task);
-}
-
-void LoopMover::add_filter(protocols::filters::FilterOP filter) {
-	tasks_.push_back(new utilities::FilterTask(filter));
-}
-
-void LoopMover::add_logger(loggers::LoggerOP logger) {
-	loggers_.push_back(logger);
-}
-
-Loop LoopMover::get_loop() const {
-	return loop_;
-}
-
-ScoreFunctionOP LoopMover::get_score_function() const {
+ScoreFunctionCOP LoopMover::get_score_function() const { // {{{1
 	return score_function_;
 }
 
-bool LoopMover::was_successful() const {
-	return last_move_successful_;
+ScoreFunctionOP LoopMover::get_score_function() { // {{{1
+	return score_function_;
 }
+
+void LoopMover::set_loops(Loops const & loops) { // {{{1
+	loops_ = loops;
+	foreach (LoopMoverOP mover, nested_movers_) {
+		mover->set_loops(loops);
+	}
+}
+
+void LoopMover::set_loop(Loop const & loop) { // {{{1
+	Loops wrapper;
+	wrapper.add_loop(loop);
+	set_loops(wrapper);
+}
+
+void LoopMover::set_score_function(ScoreFunctionOP function) { // {{{1
+	score_function_ = function;
+	foreach (LoopMoverOP mover, nested_movers_) {
+		mover->set_score_function(function);
+	}
+}
+
+FoldTreeRequest LoopMover::request_fold_tree() const { // {{{1
+	FoldTreeRequest request = FTR_DONT_CARE;
+	foreach (LoopMoverCOP mover, nested_movers_) {
+		request = request & mover->request_fold_tree();
+	}
+	return request;
+}
+
+void LoopMover::trust_fold_tree() { // {{{1
+	trust_fold_tree_ = true;
+}
+
+void LoopMover::setup_fold_tree( // {{{1
+		Pose & pose, Loops const & loops, FoldTreeRequest request) {
+
+	if (request == FTR_DONT_CARE) {
+		return;
+	}
+
+	else if (request & FTR_LOOPS_WITH_CUTS) {
+		core::kinematics::FoldTree tree;
+		protocols::loops::fold_tree_from_loops(pose, loops, tree, true);
+		pose.fold_tree(tree);
+	}
+
+	else if (request & FTR_SIMPLE_TREE) {
+		core::kinematics::FoldTree tree(pose.total_residue());
+		pose.fold_tree(tree);
+	}
+
+	else {
+		utility_exit_with_message("Could not setup the requested fold tree.");
+	}
+
+	protocols::loops::add_cutpoint_variants(pose);
+}
+
+void LoopMover::register_nested_loop_mover(LoopMoverOP mover) { // {{{1
+	mover->trust_fold_tree();
+	mover->set_loops(loops_);
+	mover->set_score_function(score_function_);
+
+	nested_movers_.push_back(mover);
+}
+// }}}1
 
 }
 }
-

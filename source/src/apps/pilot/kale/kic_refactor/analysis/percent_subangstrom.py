@@ -102,7 +102,7 @@ def compare_benchmarks(old_benchmark, new_benchmarks, labels):
     colors = [ tango.blue[1], tango.red[1], tango.green[2],
             tango.brown[1], tango.purple[1] ]
 
-    for index, new_benchmark in sampling(new_benchmarks):
+    for index, new_benchmark in enumerate(new_benchmarks):
         plot_benchmark(
                 old_benchmark, new_benchmark, labels[index], colors[index])
 
@@ -122,7 +122,7 @@ def compare_benchmarks(old_benchmark, new_benchmarks, labels):
     x = y = linspace(0, 1)
     plot(x, y, '--', color=tango.grey[3])
 
-    for index, new_benchmark in sampling(new_benchmarks):
+    for index, new_benchmark in enumerate(new_benchmarks):
         plot_benchmark(
                 old_benchmark, new_benchmark, labels[index], colors[index])
 

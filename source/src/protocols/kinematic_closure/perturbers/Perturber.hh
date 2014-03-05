@@ -24,12 +24,46 @@ namespace kinematic_closure {
 namespace perturbers {
 
 /// @brief Base class for all of the perturber algorithms.
-/// @details Subclasses of Perturber are meant to be created by the programmer 
-/// but called internally by samplers::KicMover.  If you want to implement a 
-/// new perturber, all you have to do is reimplement perturb_subset().  The 
-/// perturb() method simply calls perturb_subset() with a complete list of 
-/// residues.  If you're algorithm has an implementation which obeys detailed 
-/// balance, you can also reimplement perturb_subset_with_balance().
+/// @details Solving a kinematic closure problem has two steps.  The first step 
+/// is to pick a new torsion angles, bond angles, and/or bond lengths in the 
+/// region being sampled.  The second step is to analytically set six torsions 
+/// such that the backbone stays closed.  Perturber subclasses are responsible 
+/// for managing the first step.
+///
+/// Every perturber subclass must reimplement perturb_subset().  The arguments 
+/// to the method are a Pose, a list of residues, and a ClosureProblem.  The 
+/// pose is const and should just be used to look up residue types and other 
+/// relevant contextual information.  The residue list specifies the residues 
+/// that should be perturbed.  In other words, residues not in this list should 
+/// not be changed.  This allows composite perturbers to specify different 
+/// perturber algorithms for different parts on the loop.  For example, for 
+/// antibody modeling you might use a custom perturber for loop regions with 
+/// well-known motifs and the standard RamaPerturber everywhere else.  Finally, 
+/// the problem is used to actually set the backbone DOFS via methods like 
+/// perturb_phi() and perturb_psi().
+///
+/// If your perturber algorithm can be made to obey detailed balance, you 
+/// should also reimplement perturb_subset_with_balance().  This method is 
+/// called by BalancedKicMover and it works just like perturb_subset().  If 
+/// your algorithm doesn't obey detailed balance, or if you don't know what 
+/// detailed balance is, then don't worry about it.
+///
+/// @note Currently perturb_phi() and perturb_psi() live in ClosureProblem.  
+/// This makes sense, because the problem owns the matrices that these methods 
+/// are perturbing.  So you can think of these methods as part of an interface 
+/// that allows the closure problem to be defined.  However, this approach will 
+/// not work well with non-canonical backbones.  An alternative is to expose a 
+/// much more general interface to the problem (i.e. get_torsion_angles() and 
+/// set_torsion_angles()).  Then subclasses of Perturber that are only meant to 
+/// work with one sort of backbone can be created, and these subclasses can 
+/// define methods like perturb_phi() and perturb_psi() which use the more 
+/// general ClosureProblem interface.  In any case, you should be aware that 
+/// the perturber interface may change in the near future.
+///
+/// It would have been nice if any regular mover could be used to perturb the 
+/// backbone, instead of being limited to single-purpose Perturber subclasses.  
+/// I spent a lot of time trying to get this to work, but it was very slow.  My 
+/// belief is that too many AtomTree coordinates were being updated too often.
 
 class Perturber
 	: public utility::pointer::ReferenceCount, protected boost::noncopyable {

@@ -1,0 +1,995 @@
+void LoopRelaxMover::apply( core::pose::Pose & pose ) {
+	// Setup {{{1
+	int corelength = 0;
+	std::string const curr_job_tag( get_current_tag() );
+
+	// store the initial (possibly fullatom) pose
+	//   used for computing RMS later
+	//   we may steal sidechains from this pose as well
+	core::pose::Pose start_pose = pose;
+
+	using namespace core;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	using protocols::loop_modeling::LoopProtocol;
+	using protocols::loop_modeling::LoopProtocolOP;
+	using protocols::loop_modeling::LoopMover;
+	using protocols::loop_modeling::LoopMoverOP;
+	using protocols::loop_modeling::samplers::KicSampler;
+	using protocols::loop_modeling::refiners::RepackingRefiner;
+	using protocols::loop_modeling::refiners::RotamerTrialsRefiner;
+	using protocols::loop_modeling::refiners::LocalMinimizationRefiner;
+	using protocols::loop_modeling::utilities::PeriodicTask;
+	using protocols::loop_modeling::loggers::LoggerOP;
+	using protocols::loop_modeling::loggers::ProgressBar;
+	using protocols::loop_modeling::loggers::ScoreVsRmsd;
+	using protocols::loop_modeling::loggers::AcceptanceRates;
+
+	// this typedef belongs in its own .fwd.hh file.
+	//typedef utility::pointer::owning_ptr< loops::IndependentLoopMover > loops::IndependentLoopMoverOP;
+
+	basic::Tracer TR("protocols.looprelax");
+
+	TR << "==== Loop protocol: ================================================="
+		<< std::endl;
+	TR << " remodel        " << remodel()        << std::endl;
+	TR << " intermedrelax  " << intermedrelax()  << std::endl;
+	TR << " refine         " << refine()         << std::endl;
+	TR << " relax          " << relax()          << std::endl;
+
+	// load native pose (if provided)
+	core::pose::Pose native_pose;
+	if ( option[ in::file::native ].user() ) {
+		core::import_pose::pose_from_pdb( native_pose, option[ in::file::native ]() );
+		core::pose::set_ss_from_phipsi( native_pose );
+	} else	{
+		native_pose = start_pose;
+	}
+
+	if ( start_pose.total_residue() != native_pose.total_residue() ) {
+		// strip VRTs from the end, then compare lengths
+		int nnonvrt_start = start_pose.total_residue();
+		while ( nnonvrt_start>0 && start_pose.residue( nnonvrt_start ).aa() == core::chemical::aa_vrt ) nnonvrt_start--;
+
+		int nnonvrt_native = native_pose.total_residue();
+		while (  nnonvrt_native>0 && native_pose.residue( nnonvrt_native ).aa() == core::chemical::aa_vrt ) nnonvrt_native--;
+		if ( nnonvrt_native != nnonvrt_start )
+			utility_exit_with_message(
+				"Start pose and native pose don't match in length"
+			);
+	}
+
+	evaluation::MetaPoseEvaluatorOP evaluator = new evaluation::MetaPoseEvaluator;
+	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
+	evaluator->add_evaluation(
+		new simple_filters::SelectRmsdEvaluator( native_pose, "_native" )
+	);
+
+#ifdef BOINC_GRAPHICS
+	// set native for graphics
+	boinc::Boinc::set_graphics_native_pose( native_pose );
+#endif
+
+	// pick loops if necessary
+	guarded_loops_->resolve_loop_indices( pose );
+	protocols::loops::LoopsOP loops = get_loops();
+	// try to load loops from command line
+	if ( loops->size() == 0 ) {
+		TR.Debug << "picking loops by chainbreak score." << std::endl;
+		protocols::loops::LoopsOP loops_picked = protocols::comparative_modeling::pick_loops_chainbreak(
+			start_pose, option[ cm::min_loop_size ]() );
+		*loops = *loops_picked; // copy the loops we just read in into the guarded_loops_ object
+
+		if ( loops->size() == 0 ) {
+			TR.Debug << "no loops found." << std::endl;
+			remodel( "no" );
+		}
+	} // loops.size() == 0
+
+	loops->verify_against( start_pose );
+	TR.Debug << loops << std::endl;
+
+	if ( option[ OptionKeys::loops::extended ]() ) loops->set_extended( true );
+	bool const debug( option[ OptionKeys::loops::debug ]() );
+
+	// superimpose native over core ?
+	core::pose::Pose native_pose_super = native_pose;
+	id::AtomID_Map< id::AtomID > atom_map;
+	if(  option[ OptionKeys::loops::superimpose_native ]()  ){
+		core::pose::initialize_atomid_map( atom_map, native_pose_super, core::id::BOGUS_ATOM_ID );
+		for ( core::Size ir=1; ir <= native_pose.total_residue(); ++ir ) {
+			if( !loops->is_loop_residue( ir ) ){
+				id::AtomID const id1( native_pose_super.residue(ir).atom_index("CA"), ir );
+				id::AtomID const id2( pose.residue(ir).atom_index("CA"), ir );
+				atom_map.set(id1, id2);
+			}
+		}
+		/*core::Real rms =*/ core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+		if ( debug ) pose.dump_pdb(curr_job_tag + "_after_super_pose.pdb");
+		if ( debug ) native_pose_super.dump_pdb(curr_job_tag + "_after_super_native.pdb");
+	}
+
+	bool const fullatom_input( pose.is_fullatom() );
+	bool const fullatom_output(
+		option[ out::file::fullatom ]() || refine() != "no" || relax() != "no"
+	);
+
+	if (fullatom_input) {
+		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
+	}
+
+
+	checkpoint::CheckPointer checkpoints_("Loopbuild");
+	// need to make sure that the bailout structure is set!
+	checkpoints_.checkpoint( pose, curr_job_tag, "initial", true );
+
+#ifdef BOINC_GRAPHICS
+	// attach boinc graphics pose observer
+	boinc::Boinc::attach_graphics_current_pose_observer( pose );
+#endif
+
+#ifdef GL_GRAPHICS
+	protocols::viewer::add_conformation_viewer(
+		pose.conformation(), "loops_pose"
+	);
+#endif
+
+	// Loop Rebuilding {{{1
+	////////////////////////////
+
+	// loop rebuilding
+	loops->auto_choose_cutpoints( pose );
+
+	// if remove_extended_loops is specified, treat extended loops as missing density, by randomly placing the atoms
+	// this is not great behavior, BUT the code is already tolerant of missing density treated in this fashion
+	bool remove_extended_loops = option[ OptionKeys::loops::remove_extended_loops ]();
+	if (remove_extended_loops) {
+		for ( loops::Loops::const_iterator it = loops->begin(), it_end = loops->end();
+					it != it_end; ++it
+		) {
+			if ( it->is_extended() && it->skip_rate() == 0.0 ) {
+				TR << "Removing loop: " << *it << std::endl;
+				int lstart = it->start(); if (lstart != 1) lstart++;
+
+				for (core::Size r = lstart; r<= it->stop(); ++r) {
+					for (core::Size k = 1; k<= pose.residue(r).natoms(); ++k) {
+						numeric::xyzVector< core::Real > rnd_atm(
+							900.000 + numeric::random::uniform()*100.000,
+							900.000 + numeric::random::uniform()*100.000,
+							900.000 + numeric::random::uniform()*100.000
+						);
+						pose.set_xyz( core::id::AtomID( k,r ) , rnd_atm );
+					}
+				}
+			}
+		}
+	} // remove_extended_loops
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	////
+	////  	Remove Missing density
+	////
+	//// if this is an initial loop building exercise, build conservatively first, i.e. dont extend loop
+	//// regions etc. Then repeat with a more aggressive approach to make sure the loops are closed etc.
+	//// This makes sure all the missing density is gone before doing proper loop building.
+	////
+	if ( option[ OptionKeys::loops::build_initial ].user() ) {
+		TR << "====================================================================================" << std::endl;
+		TR << "===" << std::endl;
+		TR << "===   Initial Building     " << std::endl;
+		TR << "===" << std::endl;
+
+		if ( !checkpoints_.recover_checkpoint( pose, curr_job_tag, "initial_build", false, true) ) {
+			if ( debug ) pose.dump_pdb(curr_job_tag + "_before_initial_build.pdb");
+
+			runtime_assert( frag_libs().size() > 0 );
+			loops::loop_mover::perturb::LoopMover_Perturb_QuickCCD quick_ccd( loops );
+			for ( Size i = 1; i <= frag_libs().size(); ++i ) {
+				quick_ccd.add_fragments( frag_libs()[i] );
+			}
+
+			quick_ccd.get_checkpoints()->set_type("InitialBuild");
+			quick_ccd.set_current_tag( curr_job_tag );
+			quick_ccd.set_native_pose( new core::pose::Pose ( native_pose ) );
+			quick_ccd.set_scorefxn( cen_scorefxn_ );
+			quick_ccd.set_build_attempts_( 1 );
+			quick_ccd.set_grow_attempts_( 0 );
+			quick_ccd.set_accept_aborted_loops_( true );
+			quick_ccd.set_strict_loops( true );
+			quick_ccd.set_random_order_( false );
+			quick_ccd.set_build_all_loops_( true );
+			quick_ccd.set_loop_combine_rate_( 0.0 );
+
+			/// RUN quick_ccd
+			quick_ccd.apply( pose );
+
+			loops::remove_cutpoint_variants( pose );
+
+			//fpd if we care at all about the global coordinate frame
+			//fpd (and thus have a root VRT) then don't recenter the pose
+			if ( pose.residue_type( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt )
+				pose.center();
+			(*cen_scorefxn_)(pose);
+			if ( debug ) pose.dump_pdb(curr_job_tag + "_after_initial_build.pdb");
+
+			checkpoints_.checkpoint( pose, curr_job_tag, "initial_build", true);
+		}
+		checkpoints_.debug( curr_job_tag, "initial_build", (*cen_scorefxn_)( pose ) );
+	} // build_initial
+
+	// Make sure loops can be grown in any protocol, not just QuickCCD
+	if ( basic::options::option[ basic::options::OptionKeys::loops::random_grow_loops_by ].user() ) {
+		loops->grow_all_loops( pose ,  basic::options::option[ basic::options::OptionKeys::loops::random_grow_loops_by ]() );
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	////
+	//// 	add constraints if specified by user.
+	////
+	////
+	if ( cmd_line_csts() ) {
+		core::scoring::constraints::add_constraints_from_cmdline(
+			pose, *cen_scorefxn_
+		);
+	} else {
+		core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn(
+			*cen_scorefxn_
+		);
+	}
+
+	// mjo TODO: check if pose.conformation().detect_disulfides needs to be called.  If it does consider replacing this with core/pose/initialize_disulfide_bonds().
+
+	// read in disulfides if specified by user
+	if ( option[ in::fix_disulf ].user() ) {
+		using std::pair;
+		using utility::vector1;
+		vector1< pair<Size, Size> > disulfides;
+
+		core::io::raw_data::DisulfideFile ds_file( option[ in::fix_disulf ]() );
+		ds_file.disulfides( disulfides, pose );
+		pose.conformation().fix_disulfides( disulfides );
+	}
+
+
+
+	// Centroid Loop Modeling {{{1
+	///////////////////////////////////////////////////////////////////////////////////////
+	////
+	//// 	Loop remodelling (centroid loop modelling)
+	////
+	////
+
+
+	long starttime = time(NULL);
+	bool all_loops_closed = true;
+	bool tmp_all_loops_closed = false;
+	if ( remodel() != "no" ) {
+		TR << "====================================================================================" << std::endl;
+		TR << "===" << std::endl;
+		TR << "===   Remodel    " << std::endl;
+		TR << "===" << std::endl;
+		all_loops_closed = false;
+		if ( !checkpoints_.recover_checkpoint( pose, curr_job_tag, "remodel", false, true) ) {
+
+			if ( debug ) pose.dump_pdb(curr_job_tag + "_before_rebuild.pdb");
+
+			using core::Size;
+			using core::Real;
+			using core::pose::Pose;
+			for ( Size ii = 1; ii <= n_rebuild_tries(); ++ii ) {
+				core::Real current_sc( rebuild_filter() + 1 );
+				TR.Debug << "Remodeling attempt " << ii << "." << std::endl;
+				if ( remodel() == "old_loop_relax") {
+					LoopRebuild loop_rebuild( cen_scorefxn_, *loops );
+					loop_rebuild.apply( pose );
+				} else {
+
+/* // DJM: does this cause a crash if the only loop is terminal
+          if ( remodel() == "perturb_kic" ) {
+            // remove the terminal loops - perturb_kic doesnt seem to support these, sadly.
+            protocols::loops::Loops newloops;
+            for( core::Size i=1; i <= loops.size() ; i ++ ){
+              if( loops[i].start() <= 1 ) continue;
+              if( loops[i].stop() >= pose.total_residue() ) continue;
+              newloops.add_loop( loops[i] );
+            }
+            loops = newloops;
+          }
+ */
+          // DJM: need to cast this as IndependentLoopMover to set strict loops to true.
+					loops::loop_mover::IndependentLoopMoverOP remodel_mover( static_cast< loops::loop_mover::IndependentLoopMover * >
+						( loops::LoopMoverFactory::get_instance()->create_loop_mover( remodel(), loops ).get() ) );
+					core::kinematics::FoldTree f_orig=pose.fold_tree();
+					if ( !remodel_mover ) {
+						utility_exit_with_message( "Error: no remodel mover defined!" );
+					}
+					if ( ! ( remodel() == "perturb_kic" ) ) {
+						runtime_assert( frag_libs().size() > 0 );
+					}
+
+					for ( Size i = 1; i <= frag_libs().size(); ++i ) {
+						remodel_mover->add_fragments( frag_libs()[i] );
+					}
+
+					remodel_mover->set_scorefxn( cen_scorefxn_ );  // set cst score
+
+					if ( remodel() == "perturb_kic" ) {
+						core::kinematics::FoldTree f_new;
+						protocols::loops::fold_tree_from_loops( pose, *loops,  f_new, true );
+						pose.fold_tree( f_new );
+					}
+					remodel_mover->get_checkpoints()->set_type("Remodel");
+					remodel_mover->set_current_tag( curr_job_tag );
+					remodel_mover->set_native_pose( new Pose( native_pose ) );
+					remodel_mover->apply( pose );
+
+					if ( remodel() == "perturb_kic" ) { //DJM: skip this struct if initial closure fails
+						if ( remodel_mover->get_last_move_status() != protocols::moves::MS_SUCCESS) {
+							set_last_move_status(protocols::moves::FAIL_RETRY);
+							TR << "Structure " << " failed initial kinematic closure. Skipping..." << std::endl;
+								//bool fail = true; // make this
+							pose.fold_tree( f_orig );
+							return;
+						}
+						pose.fold_tree( f_orig );
+					}//if ( remodel() == "perturb_kic" )
+					tmp_all_loops_closed = remodel_mover->get_all_loops_closed();
+				}
+				current_sc = (*cen_scorefxn_)( pose );
+
+				if(option[ OptionKeys::cm::loop_rebuild_filter ].user() || (remodel() == "old_loop_relax")){
+					TR << "classic check for loop closure" << std::endl;
+					current_sc = (*cen_scorefxn_)( pose );
+					if ( current_sc <= rebuild_filter() ){
+						all_loops_closed = true;
+						break;  //fpd changed >= to <=
+						// ... don't we want to stop when our score is _less_ than the cutoff
+					}
+				}
+				else{
+					if(tmp_all_loops_closed){
+						all_loops_closed = true;
+						break;
+					}
+				}
+			} // for ( in n_rebuild_tries )
+
+			if ( debug ) pose.dump_pdb(curr_job_tag + "_after_rebuild.pdb");
+			checkpoints_.checkpoint( pose, curr_job_tag, "remodel", true);
+		} // recover checkpoint
+		checkpoints_.debug( curr_job_tag, "remodel", (*cen_scorefxn_)( pose ) );
+	} // if ( remodel != no )
+    else { all_loops_closed = true; } // AS 03/16/2012: hack to allow refinement without a preceding perturb stage
+
+	long endtime = time(NULL);
+
+	TR << "Buildtime: " << endtime - starttime << std::endl;
+
+
+	TR << pose.fold_tree() << std::endl;
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	////
+	////  Halfway stats
+	////
+	////
+	if( compute_rmsd() ){
+		setPoseExtraScores( pose, "cen_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+		if ( option[ in::file::native ].user() ) {
+			setPoseExtraScores( pose, "cen_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+			setPoseExtraScores( pose, "cen_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+			setPoseExtraScores( pose, "cen_loopcarms",  loops::loop_rmsd(native_pose_super, pose, *loops, true ) );
+		}
+	}
+
+
+	// Full Atom Loop Modeling {{{1
+	///////////////////////////////////////////////////////////////////////////////////////
+	////
+	////  Full atom part
+	////
+	////
+	if ( fullatom_output ) {
+		// make sure there aren't any cut point variants flying about
+
+		loops::remove_cutpoint_variants( pose, true );
+
+		// if no centroid modelling was done at all, then grab the original
+		// fullatom pose.
+		if ( remodel() == "no" &&
+				!option[ OptionKeys::loops::build_initial ].user() &&
+		     fullatom_input
+		) {
+			pose = start_pose;
+		}
+
+		TR << "===================================================================================="
+			<< std::endl;
+		TR << "===" << std::endl;
+		TR << "===   Fullatom " << std::endl;
+		TR << "===" << std::endl;
+
+		if ( debug ) pose.dump_pdb(curr_job_tag + "_before_fullatom.pdb");
+		TR << "Annotated sequence before fa switch: " << pose.annotated_sequence(true) << std::endl;
+
+		//puts full-atom sidechains on loop regions
+		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
+		pose.conformation().detect_bonds(); //apl fix this !
+
+		utility::vector1< bool > needToRepack( pose.total_residue() , !fullatom_input );
+		bool needToRepackAtAll = !fullatom_input;
+
+		if ( debug ) pose.dump_pdb(curr_job_tag + "_after_fullatom.pdb");
+		// copy sidechain torsions from input pose
+		if ( fullatom_input && copy_sidechains() )  {
+
+			for ( core::Size i = 1; i <= pose.total_residue(); ++i ) {
+				// if remodelling was done, repack the loops - otherwise leave it.
+				if ( remodel() != "no" ) {
+					for( loops::Loops::const_iterator it=loops()->begin(), it_end=loops()->end(); it != it_end; ++it ) {
+						if (    i >= core::Size( it->start() ) - 3
+								&& i <= core::Size( it->stop() ) + 3 ) {
+							// allow 3-residue leeway on either side for 'random_loops'
+							// this kind of sucks.
+							TR.Debug << "Repacking because in loop: " << i << std::endl;
+							needToRepack[i] = true;
+							break;
+						}
+					}
+				}
+
+				// if there is missing density in the sidechain, then we need to
+				// repack check this my making sure that no SC atom is more than
+				// 20A (?) away from CA
+				if ( start_pose.residue_type(i).is_protein() && start_pose.residue_type(i).has("CA") ) {
+					numeric::xyzVector< core::Real> ca_pos = start_pose.residue(i).atom("CA").xyz();
+					for (int j=1; j<=(int)start_pose.residue(i).natoms(); ++j) {
+						if ( (ca_pos - start_pose.residue(i).atom(j).xyz()).length() > 20 ) {
+							TR.Debug << "Missing dens: " << i << std::endl;
+							needToRepack[i] = true;
+							break;
+						}
+					}
+				} // missing density?
+
+				//copy sidechains only for non-loop regions
+				if ( !needToRepack[i] ) {
+					if ( pose.residue_type(i).is_protein() )
+						pose.replace_residue( i, start_pose.residue(i), true );
+					TR.Debug << "Copying sidechain from template: " << i << std::endl;
+				} else {
+					needToRepackAtAll = true;
+				}
+			} // for ( i in pose.total_residue() )
+		} // fa_input
+
+		// create score function and add constraints for fullatom part
+		if ( cmd_line_csts() ) {
+			core::scoring::constraints::add_fa_constraints_from_cmdline(
+				pose, *fa_scorefxn_
+			);
+		} else {
+			core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(
+				*fa_scorefxn_
+			);
+		}
+
+
+
+		// Add coordinate constraints to non-loop regions if desired
+		core::Real constrain_rigid_segments_weight = option[ OptionKeys::loops::constrain_rigid_segments ]();
+		if( constrain_rigid_segments_weight > 0.0 ){
+			protocols::loops::Loops coordconstraint_segments;
+			//core::pose::Pose coordconstrainted_pose = pose;
+			core::pose::Pose constraint_target_pose = pose;
+
+
+			coordconstraint_segments = loops->invert( pose.total_residue() );  // Invert the loops selection - i.e. the rigid areas are now defined
+			std::cout << "Restraining the following segments: " << std::endl << coordconstraint_segments << std::endl;
+
+			// ResidueTypeSet
+			using namespace core;
+			using namespace conformation;
+			using namespace core::scoring;
+			using namespace core::scoring::constraints;
+			using namespace id;
+
+			if ( pose.residue( pose.total_residue() ).aa() != core::chemical::aa_vrt ) {
+				pose.append_residue_by_jump(
+					*ResidueFactory::create_residue( pose.residue(1).residue_type_set().name_map( "VRT" ) ), pose.total_residue()/2 );
+			}
+
+			//fpd  nmonomerres is #residues in a single subunit (excluding virtuals)
+			core::Size rootres = pose.fold_tree().root();
+			core::Size nmonomerres = pose.total_residue()-1;
+			core::conformation::symmetry::SymmetryInfoCOP symm_info;
+			if ( core::pose::symmetry::is_symmetric(pose) ) {
+				core::conformation::symmetry::SymmetricConformation & SymmConf (
+					dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+				symm_info = SymmConf.Symmetry_Info();
+				nmonomerres = symm_info->num_independent_residues();
+			}
+
+			if (!option[ OptionKeys::relax::coord_cst_width ].user() ) {
+				Real const coord_sdev( option[ OptionKeys::relax::coord_cst_stdev ] );
+					// default is 0.5 (from idealize) -- maybe too small
+				for ( Size i = 1; i<=nmonomerres; ++i ) {
+					if ( !pose.residue(i).is_polymer() ) continue;
+					if ( coordconstraint_segments.is_loop_residue( i ) ) {
+						Residue const & nat_i_rsd( constraint_target_pose.residue(i) );
+						for ( Size ii = 1; ii<=nat_i_rsd.last_backbone_atom(); ++ii ) {
+							pose.add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ),
+							                     new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) ) );
+						}
+					}
+				}
+			} else {
+				Real const cst_width( option[ OptionKeys::relax::coord_cst_width ]() );
+				Real const coord_sdev( option[ OptionKeys::relax::coord_cst_stdev ]() );
+				for ( Size i = 1; i<=nmonomerres; ++i ) {
+					if ( !pose.residue(i).is_polymer() ) continue;
+					if( coordconstraint_segments.is_loop_residue( i ) ) {
+						Residue const & nat_i_rsd( constraint_target_pose.residue(i) );
+						for ( Size ii = 1; ii<= nat_i_rsd.last_backbone_atom(); ++ii ) {
+							pose.add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,rootres), nat_i_rsd.xyz( ii ),
+							                     new BoundFunc( 0, cst_width, coord_sdev, "xyz" )) );
+						}
+					}
+				}
+			}
+
+			fa_scorefxn_->set_weight( coordinate_constraint, constrain_rigid_segments_weight );
+		}
+
+
+
+
+		// ----------------------------------------------------------
+
+
+
+
+		// do the same (again) for fit-to-density
+		if ( option[ edensity::mapfile ].user() ) {
+			core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *fa_scorefxn_ );
+		}
+
+		if ( debug ) pose.dump_pdb(curr_job_tag + "_before_repack.pdb");
+		if ( needToRepackAtAll ) { // kic refine does its own initial repacking
+			TR << "Repacking required" << std::endl;
+			TR << "Detecting disulfides" << std::endl;
+			TR << "Annotated sequence before repack: " << pose.annotated_sequence(true) << std::endl;
+			// repack loop + missing-density residues
+			pose.conformation().detect_disulfides();
+			using namespace core::pack::task;
+			using namespace core::pack::task::operation;
+			TaskFactoryOP tf = new TaskFactory;
+			tf->push_back( new NoRepackDisulfides );
+			tf->push_back( new InitializeFromCommandline );
+			tf->push_back( new IncludeCurrent );
+			tf->push_back( new RestrictToRepacking );
+			PackerTaskOP taskstd = tf->create_task_and_apply_taskoperations( pose );
+			core::pose::symmetry::make_residue_mask_symmetric( pose, needToRepack );
+			             // does nothing if pose is not symm
+			taskstd->restrict_to_residues(needToRepack);
+
+			fa_scorefxn_->show_line( TR, pose );
+			core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );  //fpd symmetrize this
+			mm->set_bb( false );
+			mm->set_chi( true );
+			for( core::Size i = 1; i <= pose.total_residue(); ++i ){
+				if( pose.residue( i ).has_variant_type( core::chemical::DISULFIDE ) ){
+					TR<<"disabling minimization on disulfide residue "<<i<<std::endl;
+					mm->set_chi( i, false );
+				}
+			}
+
+			//fpd symmetrize this
+			if ( core::pose::symmetry::is_symmetric( pose ) ) {
+				simple_moves::symmetry::SymPackRotamersMover pack1( fa_scorefxn_, taskstd );
+				pack1.apply( pose );
+
+				core::optimization::symmetry::SymAtomTreeMinimizer mzr;
+				core::optimization::MinimizerOptions options("dfpmin_armijo_nonmonotone", 1e-5, true, false);
+				core::pose::symmetry::make_symmetric_movemap( pose, *mm );
+
+				mzr.run( pose, *mm, *fa_scorefxn_, options );
+			} else {
+				protocols::simple_moves::PackRotamersMover pack1( fa_scorefxn_, taskstd );
+				pack1.apply( pose );
+
+				// quick SC minimization
+				core::optimization::AtomTreeMinimizer mzr;
+				core::optimization::MinimizerOptions options("dfpmin_armijo_nonmonotone", 1e-5, true, false);
+				mzr.run( pose, *mm, *fa_scorefxn_, options );
+			}
+
+			fa_scorefxn_->show_line( TR, pose );
+		} else {
+			//fpd
+			(*fa_scorefxn_)(pose);
+			TR << "No repacking required" << std::endl;
+            (*fa_scorefxn_)(pose);
+		}
+
+		if ( debug ) pose.dump_pdb(curr_job_tag + "_after_repack.pdb");
+	} // fullatom_output
+
+	// Intermediate Relax {{{1
+	//////////////////////////////////////////////////////////////////////////////////////
+	////
+	////  intermediate relax the structure
+	////
+	////
+	if ( intermedrelax() != "no" && (all_loops_closed)) {
+		TR << "====================================================================================" << std::endl;
+		TR << "===" << std::endl;
+		TR << "===   Intermediate Relax  " << std::endl;
+		TR << "===" << std::endl;
+
+		core::kinematics::FoldTree f_new, f_orig=pose.fold_tree();
+		if ( option[ OptionKeys::loops::relax_with_foldtree ].user() ){
+			loops::fold_tree_from_loops( pose, *loops, f_new );
+			pose.fold_tree( f_new );
+			loops::add_cutpoint_variants( pose );
+			fa_scorefxn_->set_weight( core::scoring::chainbreak,        option[ OptionKeys::relax::chainbreak_weight ]() );
+			fa_scorefxn_->set_weight( core::scoring::linear_chainbreak, option[ OptionKeys::relax::linear_chainbreak_weight ]() );
+			fa_scorefxn_->set_weight( core::scoring::overlap_chainbreak, option[ OptionKeys::relax::overlap_chainbreak_weight ]() );
+		}
+
+
+		TR << pose.fold_tree() << std::endl;
+		if( compute_rmsd() ){
+			setPoseExtraScores( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			if ( option[ in::file::native ].user() ) {
+				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
+					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+				}
+				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+				setPoseExtraScores( pose, "brlx_loopcarms",  loops::loop_rmsd(native_pose_super, pose, *loops,true ) );
+			}
+		}
+
+		if ( !checkpoints_.recover_checkpoint( pose, curr_job_tag, "relax", true , true) ) {
+			if ( debug ) pose.dump_pdb(curr_job_tag + "_before_relax.pdb");
+			if ( intermedrelax() == "relax" ) {
+				relax::RelaxProtocolBaseOP relax_prot = relax::generate_relax_from_cmd();
+				relax_prot->set_current_tag( curr_job_tag );
+				relax_prot->apply( pose );
+			} else if (( intermedrelax() == "fastrelax" ) ||
+			           ( intermedrelax() == "seqrelax" )){
+				relax::FastRelax seqrelax( fa_scorefxn_, option[ OptionKeys::relax::sequence_file ]() );
+				seqrelax.set_current_tag( curr_job_tag );
+				seqrelax.apply( pose );
+			}
+			checkpoints_.checkpoint( pose, curr_job_tag, "relax", true);
+		}
+		checkpoints_.debug( curr_job_tag, "relax", (*fa_scorefxn_)( pose ) );
+	} // intermediate relax the structure
+
+	if ( intermedrelax() != "no" && (!all_loops_closed)) {
+		//The following keeps the score lines equivalent in the silent file.
+		if( compute_rmsd() ){
+			setPoseExtraScores( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			if ( option[ in::file::native ].user() ) {
+				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
+					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+				}
+				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+				setPoseExtraScores( pose, "brlx_loopcarms",  loops::loop_rmsd(native_pose_super, pose, *loops,true ) );
+			}
+		}
+	}
+	// }}}1
+
+	///////////////////////////////////////////////////////////////////////////////////////
+	////
+	////  Loop refine (fullatom type loop modelling )
+	////
+	////
+
+	if ( refine() != "no" && (all_loops_closed)) {
+		// Output some information {{{1
+		TR << "====================================================================================" << std::endl;
+		TR << "===" << std::endl;
+		TR << "===   Refine " << std::endl;
+		TR << "===" << std::endl;
+
+		long starttime = time(NULL);
+
+		if( compute_rmsd() ){
+			setPoseExtraScores( pose, "bref_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			if ( option[ in::file::native ].user() ) {
+				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
+					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+				}
+				setPoseExtraScores( pose, "bref_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScores( pose, "bref_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScores( pose, "bref_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+			}
+		}
+
+		// Set the fold tree for loop modeling {{{1
+		core::kinematics::FoldTree f_new, f_orig=pose.fold_tree();
+		if ( refine() == "refine_kic" ) {
+			loops::fold_tree_from_loops( pose, *loops, f_new, true /* include terminal cutpoints */);
+		}
+		else {
+			loops::fold_tree_from_loops( pose, *loops, f_new);
+		}
+		pose.fold_tree( f_new );
+		TR << "fold_tree_before_refine " << pose.fold_tree() << std::endl;
+		// }}}1
+
+		if ( !checkpoints_.recover_checkpoint( pose, curr_job_tag, "refine", true , true) ) {
+			// Refine using CCD {{{1
+			if ( refine() == "refine_ccd" ) {
+				loops::loop_mover::refine::LoopMover_Refine_CCD refine_ccd( loops, fa_scorefxn_ );
+				refine_ccd.set_native_pose( new core::pose::Pose ( native_pose ) );
+				refine_ccd.apply( pose );
+			} else
+			// Refine using KIC {{{1
+			if ( refine() == "refine_kic" ) {
+				//loops.remove_terminal_loops( pose );
+				loops::loop_mover::refine::LoopMover_Refine_KIC refine_kic( loops, fa_scorefxn_ );
+				refine_kic.set_native_pose( new core::pose::Pose ( native_pose ) );
+				refine_kic.apply( pose );
+			} else
+			// Refine using refactored KIC {{{1
+			if ( refine() == "refine_kic_refactor" ) {
+				LoopProtocolOP protocol = new LoopProtocol;
+				LoopMoverOP mover = new LoopMover;
+				LoggerOP acceptance_logger = new AcceptanceRates;
+				loops::Loop loop = (*loops)[1];
+
+				Size repack_period = 20;
+				if (option[OptionKeys::loops::repack_period].user()) {
+					repack_period = option[OptionKeys::loops::repack_period]();
+				}
+
+				mover->add_task(new KicSampler(acceptance_logger));
+				mover->add_task(new PeriodicTask(new RepackingRefiner, repack_period));
+				mover->add_task(new RotamerTrialsRefiner);
+				mover->add_task(new LocalMinimizationRefiner);
+
+				Size outer_cycles = 3;
+				Size inner_cycles = 10 * loop.size();
+
+				if (option[OptionKeys::loops::outer_cycles].user()) {
+					outer_cycles = option[ OptionKeys::loops::outer_cycles ]();
+				}
+				if (option[OptionKeys::loops::max_inner_cycles].user()) {
+					Size max_cycles = option[OptionKeys::loops::max_inner_cycles]();
+					inner_cycles = std::max(inner_cycles, max_cycles);
+				}
+				if (option[OptionKeys::loops::fast]) {
+					outer_cycles = 3;
+					inner_cycles = 12;
+				}
+
+				protocol->set_mover(mover);
+				protocol->set_loop(loop);
+				protocol->set_score_function(fa_scorefxn_);
+				protocol->set_iterations(outer_cycles, inner_cycles, 2);
+				protocol->add_logger(new ProgressBar);
+				protocol->add_logger(new ScoreVsRmsd(native_pose, loop));
+				protocol->add_logger(acceptance_logger);
+
+				protocol->apply(pose);
+			}
+			// }}}1
+
+			// Make a checkpoint {{{1
+			if ( debug ) pose.dump_pdb(curr_job_tag + "_after_refine.pdb");
+			checkpoints_.checkpoint( pose, curr_job_tag, "refine", true);
+
+			// need to get the chainbreak score before the cutpoint variants are removed
+
+			// Calculate a chainbreak score {{{1
+			if ( option[ OptionKeys::loops::kic_use_linear_chainbreak ]() ){
+				setPoseExtraScores(
+					pose, "final_chainbreak",
+					pose.energies().total_energies()[ core::scoring::linear_chainbreak ]
+					);
+			} else {
+				setPoseExtraScores(
+					pose, "final_chainbreak",
+					pose.energies().total_energies()[ core::scoring::chainbreak ]
+					);
+			}
+			// }}}1
+		}
+
+		// Clean up the fold tree {{{1
+		checkpoints_.debug( curr_job_tag, "refine", (*fa_scorefxn_)( pose ) );
+
+		loops::remove_cutpoint_variants( pose );
+		// restore simple fold tree
+		pose.fold_tree( f_orig );
+
+		endtime = time(NULL);
+
+		TR << "Refinetime: " << endtime - starttime << std::endl;
+		// }}}1
+	}
+
+	// Keep the output consistent even if no refinement was done. {{{1
+	if ( refine() != "no" && (!all_loops_closed)) {
+		//The following keeps the score lines equivalent in the silent file.
+		if( compute_rmsd() ){
+			setPoseExtraScores( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			if ( option[ in::file::native ].user() ) {
+				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
+					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+				}
+				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+			}
+		}
+	}
+
+	// if ( refine != "no" )
+
+	// Idealize before relaxing the structure {{{1
+	//////////////////////////////////////////////////////////////////////////////////////
+	////
+	////  Maybe idealize the structure before relax ?
+	////
+	////
+	if ( option[ OptionKeys::loops::idealize_after_loop_close ].user() && (all_loops_closed)) {
+
+		if ( debug ){
+			pose.dump_pdb(curr_job_tag + "_before_idealize.pdb");
+		}
+		protocols::idealize::IdealizeMover idealizer;
+		idealizer.fast( false );
+		idealizer.apply( pose );
+		if ( debug ){
+			pose.dump_pdb(curr_job_tag + "_after_idealize.pdb");
+		}
+	}
+
+
+	// Relax the structure {{{1
+	//////////////////////////////////////////////////////////////////////////////////////
+	////
+	////  Relax the structure
+	////
+	////
+
+	if ( relax() != "no" && (all_loops_closed)) {
+		TR << "====================================================================================" << std::endl;
+		TR << "===" << std::endl;
+		TR << "===   Relax  " << std::endl;
+		TR << "===" << std::endl;
+
+		core::kinematics::FoldTree f_new, f_orig=pose.fold_tree();
+		if ( option[ OptionKeys::loops::relax_with_foldtree ].user() ){
+			loops::fold_tree_from_loops( pose, *loops, f_new );
+			pose.fold_tree( f_new );
+			loops::add_cutpoint_variants( pose );
+			fa_scorefxn_->set_weight( core::scoring::chainbreak,        option[ OptionKeys::relax::chainbreak_weight ]() );
+			fa_scorefxn_->set_weight( core::scoring::linear_chainbreak, option[ OptionKeys::relax::linear_chainbreak_weight ]() );
+			fa_scorefxn_->set_weight( core::scoring::overlap_chainbreak, option[ OptionKeys::relax::overlap_chainbreak_weight ]() );
+		}
+
+
+		TR << pose.fold_tree() << std::endl;
+		if( compute_rmsd() ){
+			setPoseExtraScores( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			if ( option[ in::file::native ].user() ) {
+				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
+					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+				}
+				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+			}
+		}
+
+		if ( !checkpoints_.recover_checkpoint( pose, curr_job_tag, "relax", true , true) ) {
+			if ( debug ) pose.dump_pdb(curr_job_tag + "_before_relax.pdb");
+			if ( relax() == "relax" ) {
+				relax::RelaxProtocolBaseOP relax_prot = relax::generate_relax_from_cmd();
+				relax_prot->set_current_tag( curr_job_tag );
+				relax_prot->apply( pose );
+			} else if (( relax() == "fastrelax" ) ||
+			           ( relax() == "seqrelax" )) {
+				relax::FastRelax seqrelax( fa_scorefxn_, option[ OptionKeys::relax::sequence_file ]() );
+				seqrelax.set_current_tag( curr_job_tag );
+				seqrelax.apply( pose );
+			} else if ( relax() == "minirelax" ) {
+				protocols::relax::MiniRelax mini_relax( fa_scorefxn_ );
+				mini_relax.set_current_tag( curr_job_tag );
+				mini_relax.apply( pose );
+			}
+			checkpoints_.checkpoint( pose, curr_job_tag, "relax", true);
+		}
+		checkpoints_.debug( curr_job_tag, "relax", (*fa_scorefxn_)( pose ) );
+
+		// restore simple fold tree
+		loops::remove_cutpoint_variants( pose );
+		pose.fold_tree( f_orig );
+
+		fa_scorefxn_->set_weight( core::scoring::chainbreak, 0.0 );
+		fa_scorefxn_->set_weight( core::scoring::linear_chainbreak, 0.0 );
+		fa_scorefxn_->set_weight( core::scoring::overlap_chainbreak, 0.0 );
+
+		if ( debug ) pose.dump_pdb(curr_job_tag + "_after_relax.pdb");
+
+		if ( option[ OptionKeys::loops::final_clean_fastrelax ]() ) {
+			fa_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.0 );
+			fa_scorefxn_->set_weight( core::scoring::constant_constraint, 0.0 );
+			fa_scorefxn_->set_weight( core::scoring::coordinate_constraint, 0.0 );
+			fa_scorefxn_->set_weight( core::scoring::angle_constraint, 0.0 );
+			fa_scorefxn_->set_weight( core::scoring::dihedral_constraint, 0.0 );
+			fa_scorefxn_->set_weight( core::scoring::big_bin_constraint, 0.0 );
+			if ( !checkpoints_.recover_checkpoint( pose, curr_job_tag, "ffrelax", true , true ) ) {
+				relax::FastRelax fast_relax( fa_scorefxn_ );
+				fast_relax.set_current_tag( curr_job_tag );
+				fast_relax.apply( pose );
+				checkpoints_.checkpoint( pose, curr_job_tag, "ffrelax", true);
+			}
+			checkpoints_.debug( curr_job_tag, "ffrelax", (*fa_scorefxn_)( pose ) );
+		}
+	} // relax the structure
+	if ( relax() != "no" && (!all_loops_closed)) {
+		//The following keeps the score lines equivalent in the silent file.
+		if( compute_rmsd() ){
+			setPoseExtraScores( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			if ( option[ in::file::native ].user() ) {
+				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
+					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+				}
+				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, *loops, corelength ) );
+				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops ) );
+			}
+		}
+	}
+
+	// Output Statistics {{{1
+
+	TR << "====================================================================================" << std::endl;
+	TR << "===" << std::endl;
+	TR << "===  Getting Statistics " << std::endl;
+	TR << "===" << std::endl;
+	TR << "===" << std::endl;
+
+	if( compute_rmsd() ){
+		setPoseExtraScores(
+			pose, "irms",  core::scoring::CA_rmsd( start_pose, pose )
+		);
+		if ( option[ in::file::native ].user() ) {
+			if(  option[ OptionKeys::loops::superimpose_native ]()  ){
+				core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+			}
+			setPoseExtraScores(	pose, "rms",     core::scoring::native_CA_rmsd( native_pose, pose ));
+			setPoseExtraScores(	pose, "looprms", loops::loop_rmsd( native_pose_super, pose, *loops, false /*CA_only*/, true /*bb_only*/ ));
+			setPoseExtraScores(	pose, "loop_heavy_rms", loops::loop_rmsd( native_pose_super, pose, *loops, false /*CA_only*/, false /*bb_only*/ ));
+			setPoseExtraScores(	pose, "loopcarms", loops::loop_rmsd( native_pose_super, pose, *loops, true ));
+			setPoseExtraScores(	pose, "corerms", native_loop_core_CA_rmsd( native_pose, pose, *loops, corelength )	);
+			setPoseExtraScores( pose, "corelen", corelength );
+		}
+	}
+
+	core::Real final_score;
+
+	if ( debug ) pose.dump_pdb(curr_job_tag + "_before_final_rescore.pdb");
+
+	if (fullatom_output) final_score = (*fa_scorefxn_)(pose);  // may include constraint score
+	else                 final_score = (*cen_scorefxn_)(pose); // may include constraint score
+
+
+	core::pose::setPoseExtraScores(
+		pose, std::string("final_looprelax_score"), final_score
+	);
+	// }}}1
+}
+

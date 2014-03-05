@@ -163,6 +163,13 @@ void LoopBuildMover::apply(core::pose::Pose & pose){
 			if ( loop_relax_mover_.compute_rmsd() ) {
 				if ( remodel != "no" ) {
 
+					if ( remodel == "perturb_kic_refactor" ) {
+						core::Real rebuild_looprms=0.0;
+						getPoseExtraScores( pose, "rebuild_looprms", rebuild_looprms );
+						job->add_string_real_pair("loop_rebuildrms ",rebuild_looprms );
+						TR << "loop_rebuildrms: " << rebuild_looprms << std::endl;
+					}
+
 					core::Real cen_looprms=0.0;
 					getPoseExtraScores( pose, "cen_looprms", cen_looprms );
 					job->add_string_real_pair("loop_cenrms ",cen_looprms );

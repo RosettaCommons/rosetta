@@ -13,6 +13,9 @@
 // Core includes
 #include <core/pose/Pose.hh>
 
+// Utility includes
+#include <basic/Tracer.hh>
+
 // C++ includes
 #include <iostream>
 
@@ -23,16 +26,15 @@ namespace loggers {
 using namespace std;
 using core::pose::Pose;
 
+static basic::Tracer TR("protocols.loop_modeling.loggers.ProgressBar");
+
+ProgressBar::ProgressBar(string label) : label_(label) {}
+
 void ProgressBar::log_iteration_(Pose const &) {
 	int iteration = get_iteration_as_int();
 	int max_iteration = get_max_iteration_as_int();
 
-	cerr << "\r[" << iteration << "/" << max_iteration << "]";
-	//cout << "[" << iteration << "/" << max_iteration << "]" << endl;
-}
-
-void ProgressBar::log_ending_(Pose const &) {
-	cerr << endl;
+	TR << label_ << "[" << iteration << "/" << max_iteration << "]" << endl;
 }
 
 }

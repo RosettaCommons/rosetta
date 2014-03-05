@@ -11,48 +11,40 @@
 #define INCLUDED_protocols_loop_modeling_loggers_PdbLogger_HH
 
 // Unit headers
-#include <protocols/loop_modeling/loggers/PdbLogger.fwd.hh>
+#include <protocols/loop_modeling/types.hh>
 #include <protocols/loop_modeling/loggers/Logger.hh>
-
-// Protocol headers
-#include <protocols/moves/MonteCarlo.fwd.hh>
+#include <protocols/loop_modeling/loggers/PdbLogger.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
+
+// Protocol headers
+#include <protocols/moves/MonteCarlo.fwd.hh>
 
 namespace protocols {
 namespace loop_modeling {
 namespace loggers {
 
-using core::Size;
-using core::pose::Pose;
-
+/// @brief Record snapshots of the simulation in the PDB format.
 class PdbLogger : public Logger {
-
-public:
-
-	PdbLogger();
-	PdbLogger(bool log_tasks);
 
 protected:
 
+	/// @brief Record the input pose.
 	void log_beginning_(Pose const & pose);
-	void log_iteration_(Pose const & pose);
-	void log_task_(Pose const & pose, string name, bool successful);
-	void log_monte_carlo_(MonteCarlo const & monte_carlo);
+
+	/// @brief Record the pose after each Monte Carlo step.
+	void log_monte_carlo_(protocols::moves::MonteCarlo const & monte_carlo);
 
 private:
 
+	/// @brief Write the given pose to disk. The file name will incorporate the 
+	/// current iteration.
 	void log_pose(Pose const & pose) const;
-	void log_pose(Pose const & pose, string task) const;
+
+	/// @brief Write the given pose to disk. The file name will incorporate the 
+	/// given iteration.
 	void log_pose(Pose const & pose, Size iteration) const;
-	void log_pose(Pose const & pose, Size iteration, string task) const;
-
-private:
-
-	Size counter_;
-	bool log_tasks_;
 
 };
 
@@ -61,4 +53,3 @@ private:
 }
 
 #endif
-

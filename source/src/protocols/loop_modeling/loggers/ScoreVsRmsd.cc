@@ -34,19 +34,13 @@ namespace loop_modeling {
 namespace loggers {
 
 using namespace std;
-using core::Real;
-using core::pose::Pose;
 using protocols::moves::MonteCarlo;
-using protocols::loops::Loops;
-using protocols::loops::Loop;
 
 ScoreVsRmsd::ScoreVsRmsd(Pose const & native, Loop const & loop) {
 	native_ = native;
 	loops_ = Loops();
 	loops_.add_loop(loop);
 }
-
-void ScoreVsRmsd::log_iteration_(Pose const &) {}
 
 void ScoreVsRmsd::log_monte_carlo_(MonteCarlo const & monte_carlo) {
 	using protocols::loops::loop_rmsd;
@@ -76,4 +70,3 @@ void ScoreVsRmsd::log_ending_(Pose const &) {
 }
 }
 }
-

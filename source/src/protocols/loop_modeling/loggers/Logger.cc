@@ -41,18 +41,7 @@ void Logger::log_beginning(Pose const & pose, vector1<Size> iterations) {
 
 void Logger::log_iteration(Pose const & pose, Size i, Size j, Size k) {
 	i_ = i; j_ = j; k_ = k;
-	all_tasks_succeeded_ = true;
 	log_iteration_(pose);
-}
-
-void Logger::log_task(
-		Pose const & pose, string name, bool successful, bool required) {
-
-	log_task_(pose, name, successful);
-
-	if (successful == false && required == true) {
-		all_tasks_succeeded_ = false;
-	}
 }
 
 void Logger::log_monte_carlo(MonteCarlo const & monte_carlo) {
@@ -95,10 +84,6 @@ string Logger::get_max_iteration_as_string() const {
 
 Size Logger::get_num_digits(Size value) const {
 	return utility::get_num_digits( value );
-}
-
-bool Logger::all_tasks_succeeded() const {
-	return all_tasks_succeeded_;
 }
 
 }

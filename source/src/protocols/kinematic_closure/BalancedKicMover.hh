@@ -26,7 +26,6 @@
 // Protocol headers
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
 #include <protocols/loops/Loop.hh>
-#include <protocols/loop_modeling/loggers/Logger.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -87,9 +86,6 @@ public:
 	/// @copydoc KicMover::set_pivot_picker
 	void set_pivot_picker(pivot_pickers::PivotPickerOP picker);
 
-	/// @copydoc KicMover::log_filters
-	void log_filters(protocols::loop_modeling::loggers::LoggerOP logger);
-
 public:
 
 	/// @brief Return true, because this mover always obeys detailed balance.
@@ -127,7 +123,6 @@ private:
 	protocols::loops::Loop loop_;
 	perturbers::PerturberSetOP perturbers_;
 	pivot_pickers::PivotPickerOP pivot_picker_;
-	protocols::loop_modeling::loggers::LoggerOP logger_;
 
 };
 

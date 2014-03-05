@@ -26,29 +26,10 @@ namespace loop_modeling {
 namespace loggers {
 
 using namespace std;
-using core::pose::Pose;
-
-PdbLogger::PdbLogger() {
-	counter_ = 0;
-	log_tasks_ = false;
-}
-
-PdbLogger::PdbLogger(bool log_tasks) {
-	counter_ = 0;
-	log_tasks_ = log_tasks;
-}
+using protocols::moves::MonteCarlo;
 
 void PdbLogger::log_beginning_(Pose const & pose) {
 	log_pose(pose, 0);
-}
-
-void PdbLogger::log_iteration_(Pose const &) {
-	counter_ = 0;
-}
-
-void PdbLogger::log_task_(Pose const & pose, string name, bool) {
-	counter_ += 1;
-	log_pose(pose, name);
 }
 
 void PdbLogger::log_monte_carlo_(MonteCarlo const & monte_carlo) {
@@ -56,27 +37,16 @@ void PdbLogger::log_monte_carlo_(MonteCarlo const & monte_carlo) {
 }
 
 void PdbLogger::log_pose(Pose const & pose) const {
-	log_pose(pose, "");
-}
-
-void PdbLogger::log_pose(Pose const & pose, string task) const {
 	int iteration = get_iteration_as_int();
-	log_pose(pose, iteration, task);
+	log_pose(pose, iteration);
 }
 
 void PdbLogger::log_pose(Pose const & pose, Size iteration) const {
-	log_pose(pose, iteration, "");
-}
-
-void PdbLogger::log_pose(
-		Pose const & pose, Size iteration, string task) const {
-
 	int max_iteration = get_max_iteration_as_int();
 	int max_digits = get_num_digits(max_iteration);
 
 	stringstream stream;
 	stream << "trajectory/" << setw(max_digits) << setfill('0') << iteration;
-	if (task.size() > 0) stream << "." << counter_ << "." << task;
 	stream << ".pdb";
 
 	pose.dump_pdb(stream.str());
@@ -85,4 +55,3 @@ void PdbLogger::log_pose(
 }
 }
 }
-

@@ -7,10 +7,6 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief  Test the algorithms that drive the KinematicMover.
-/// @author Kale Kundert
-
 #ifndef INCLUDED_protocols_kinematic_closure_KinematicClosure_CXXTEST_HH
 #define INCLUDED_protocols_kinematic_closure_KinematicClosure_CXXTEST_HH
 
@@ -21,15 +17,17 @@
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 #include <test/protocols/kinematic_closure/TestHelpers.hh>
-#include <test/protocols/kinematic_closure/ClosureTests.hh>
 
 // Unit headers
 #include <protocols/kinematic_closure/ClosureProblem.hh>
 #include <protocols/kinematic_closure/ClosureSolution.hh>
-#include <protocols/kinematic_closure/utilities.hh>
+#include <protocols/kinematic_closure/KicMover.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
+
+// Protocol headers
+#include <protocols/loops/loops_main.hh>
 
 // Utility headers
 #include <boost/foreach.hpp>
@@ -44,61 +42,76 @@ using namespace core;
 using protocols::kinematic_closure::ClosureProblem;
 using protocols::kinematic_closure::ClosureProblemOP;
 using protocols::kinematic_closure::ClosureSolutionCOP;
+using protocols::kinematic_closure::KicMover;
+using protocols::kinematic_closure::KicMoverOP;
 using protocols::kinematic_closure::SolutionList;
+using numeric::kinematic_closure::operator <<;
 
-// These test have a couple of shortcomings.  Since I'm not going to fix these 
-// things right now, I will at least mention them so they won't cause any 
-// surprises later:
-//
-// 1. There are no tests for cases that can't be closed.  This is because the 
-//    closure tests are defined by the atomic coordinates of closed loops.  But 
-//    a good way to fix this would be to allow optional internal coordinates to 
-//    be specified in the closure problem.  If not given, these coordinates 
-//    would simply be taken from the given atomic coordinates.  The mover would 
-//    then use these internal coordinates instead of the atomic ones used now.
-//
-// 2. There are no fold tree tests.
-
-class KinematicClosureTests : public CxxTest::TestSuite {
+class KicClosureTests : public CxxTest::TestSuite {
 
 public:
 
-	void setUp() { core_init(); }
+	void setUp() {
+		core_init();
 
-	void test_kinematic_closure() {
-		vector<TestHelperOP> test_helpers;
+		test_helpers.push_back(new DebuggingHelper);
+		test_helpers.push_back(new BigLoopTest);
+		test_helpers.push_back(new NoSolutionsTest);
+		test_helpers.push_back(new PoseWithLigandTest);
+	}
 
-		test_helpers.push_back(new FiveResidueTest);
-		test_helpers.push_back(new SixResidueTest);
-		test_helpers.push_back(new SevenResidueTest);
-		test_helpers.push_back(new FoldTreeTest);
-		test_helpers.push_back(new NumericalStabilityTest);
-
-		foreach(TestHelperOP helper, test_helpers) {
-			TestMoverOP mover = new TestMover(helper);
-			ClosureProblemOP problem = new ClosureProblem();
+	void test_with_simple_fold_tree() {
+		foreach(ClosureTestOP helper, test_helpers) {
+			ClosureProblemOP problem = new ClosureProblem;
 			SolutionList solutions;
 
-			helper->setup();
+			problem->frame(helper->pose, helper->loop, helper->pivot_picker);
+			helper->perturb(helper->pose, problem);
+			solutions = problem->solve();
 
-			//write_pdb(helper->pose, "closed.pdb");
+			//write_pdb(helper->pose, "input.pdb");
+			//write_pdbs(helper->pose, solutions, "output");
 
-			problem->perturb(helper->pose, helper->loop, mover);
-			problem->solve(solutions);
-
-			helper->test_mover(helper->pose);
 			helper->test_closure(solutions);
+			helper->test_restore(problem, solutions);
 			helper->test_jacobian(solutions);
-			helper->test_pickers(problem, solutions);
-
-			//write_pdb(helper->pose, "open.pdb");
-			//write_pdbs(helper->idealized_pose, solutions, "solution");
-
-			problem->restore(helper->pose);
-			helper->test_restore(helper->pose);
-
 		}
 	}
+
+	void test_with_cut_fold_tree() {
+		using protocols::loops::set_single_loop_fold_tree;
+
+		foreach(ClosureTestOP helper, test_helpers) {
+			ClosureProblemOP problem = new ClosureProblem;
+			SolutionList solutions;
+
+			set_single_loop_fold_tree(helper->pose, helper->loop);
+
+			problem->frame(helper->pose, helper->loop, helper->pivot_picker);
+			helper->perturb(helper->pose, problem);
+			solutions = problem->solve();
+
+			helper->test_closure(solutions);
+			helper->test_restore(problem, solutions);
+			helper->test_jacobian(solutions);
+		}
+	}
+
+	void test_kic_mover() {
+		foreach(ClosureTestOP helper, test_helpers) {
+			KicMoverOP mover = new KicMover;
+
+			mover->add_perturber(helper);
+			mover->set_pivot_picker(helper->pivot_picker);
+			mover->set_loop(helper->loop);
+			mover->apply(helper->pose);
+
+			helper->test_closure(helper->pose);
+		}
+	}
+
+public:
+	vector<ClosureTestOP> test_helpers;
 };
 
 #endif

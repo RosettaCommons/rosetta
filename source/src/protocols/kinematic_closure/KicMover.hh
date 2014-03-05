@@ -24,7 +24,7 @@
 // Protocol headers
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loop.hh>
-#include <protocols/loop_modeling/loggers/Logger.fwd.hh>
+#include <protocols/loop_modeling/LoopMover.hh>
 
 // Utility headers
 #include <boost/noncopyable.hpp>
@@ -38,8 +38,8 @@ namespace kinematic_closure {
 /// loop and three pivot residues.  Any residues in the loop that are not 
 /// pivots are called non-pivots.  The non-pivot backbone torsions are used to 
 /// make new conformations, while the pivot torsions are used to ensure that 
-/// the backbone stays closed.  Use setup() to specify a loop to sample.  Use 
-/// set_pivot_picker() to specify how the pivots should be chosen.  Use 
+/// the backbone stays closed.  Use set_loops() to specify loops to sample.  
+/// Use set_pivot_picker() to specify how the pivots should be chosen.  Use 
 /// add_perturber() to specify how the non-pivots should be sampled.  By 
 /// default, the algorithm will pick pivots randomly within the region being 
 /// sampled and will sample the non-pivot torsions from a rama distribution.
@@ -68,8 +68,7 @@ namespace kinematic_closure {
 /// Once the algorithm has been setup using the helper methods described above, 
 /// apply() can be called to actually sample a new backbone conformation.
 
-class KicMover
-	: public protocols::moves::Mover, private boost::noncopyable {
+class KicMover : public protocols::loop_modeling::LoopMover {
 
 public:
 
@@ -79,18 +78,16 @@ public:
 	/// @brief Default destructor.
 	~KicMover();
 
-public:
-
-	/// @brief Prepare the pose for sampling the given loop.
-	void setup(Pose & pose, Loop const & loop);
-
-	/// @brief Sample a new backbone conformation for the given loop.
-	void apply(Pose & pose);
-
 	/// @brief Return the name of this mover.
 	string get_name() const { return "KicMover"; }
 
 public:
+
+	/// @brief Return the PivotPicker being used by this mover.
+	pivot_pickers::PivotPickerOP get_pivot_picker();
+
+	/// @brief Return the SolutionPicker being used by this mover.
+	solution_pickers::SolutionPickerOP get_solution_picker();
 
 	/// @brief Specify how the non-pivot torsions should be sampled.
 	void add_perturber(perturbers::PerturberOP perturber);
@@ -101,17 +98,18 @@ public:
 	/// @brief Specify how a solution should be chosen.
 	void set_solution_picker(solution_pickers::SolutionPickerOP picker);
 
-	/// @brief Instrument the algorithm with some debugging output.  This method 
-	/// will go away soon.
-	void log_filters(protocols::loop_modeling::loggers::LoggerOP logger);
+	/// @copydoc LoopMover::request_fold_tree
+	protocols::loop_modeling::FoldTreeRequest request_fold_tree() const;
+
+protected:
+
+	/// @brief Sample a new backbone conformation for the given loop.
+	bool do_apply(Pose & pose, Loop const & loop);
 
 private:
-	bool is_fold_tree_stale_;
-	protocols::loops::Loop loop_;
 	perturbers::PerturberSetOP perturbers_;
 	pivot_pickers::PivotPickerOP pivot_picker_;
 	solution_pickers::SolutionPickerOP solution_picker_;
-	protocols::loop_modeling::loggers::LoggerOP logger_;
 
 };
 

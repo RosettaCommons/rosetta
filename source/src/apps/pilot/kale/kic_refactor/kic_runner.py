@@ -173,11 +173,15 @@ if arguments.algorithm.startswith('loopmodel'):
     command = rosetta_subpath('source/bin/loopmodel')
     database = rosetta_subpath('database')
     loop_file = os.path.splitext(arguments.structure)[0] + '.loop'
-    remodel = 'perturb_kic' if not arguments.skip_centroid else 'no'
+    remodel = 'perturb_kic'
     refine = 'refine_kic'
 
     if arguments.algorithm == 'loopmodel-refactor':
+        remodel = 'perturb_kic_refactor'
         refine = 'refine_kic_refactor'
+
+    if arguments.skip_centroid:
+        remodel = 'no'
 
     # This hack is not very robust, but it makes it possible to invoke the 
     # `loopmodel' executable from the master branch.  Assuming your directory 
@@ -227,7 +231,9 @@ else:
         job.add_argument('-kale:out:progress_bar false')
 
 if not arguments.verbose:
-    job.add_arguments('-mute all', '-unmute apps.pilot.kale')
+    job.add_argument('-mute all')
+    job.add_argument('-unmute apps.pilot.kale')
+    job.add_argument('-unmute protocols.loop_build.LoopBuildMover')
 
 if not arguments.fewer_rotamers:
     job.add_argument('-ex1 -ex2 -extrachi_cutoff 0')

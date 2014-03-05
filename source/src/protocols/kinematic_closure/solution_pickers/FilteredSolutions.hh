@@ -42,7 +42,10 @@ class FilteredSolutions : public SolutionPicker {
 public:
 	/// @brief Constructor which can enable or disable any of the filters used by 
 	/// this algorithm.
-	FilteredSolutions(bool check_rama=true, bool check_overlap=true);
+	FilteredSolutions(
+			bool check_rama=true,
+			bool check_overlap=true,
+			bool be_lenient=false);
 
 public:
 	/// @copydoc SolutionPicker::pick_and_apply
@@ -55,14 +58,20 @@ public:
 	/// @brief Enable the bump check.
 	void check_overlap() { check_overlap_ = true; }
 
+	/// @brief Make the bump check more lenient.
+	void be_lenient() { be_lenient_ = true; }
+
 	/// @brief Disable the rama check.
 	void dont_check_rama() { check_rama_ = false; }
 
 	/// @brief Disable the bump check.
 	void dont_check_overlap() { check_overlap_ = false; }
 
+	/// @brief Make the bump check more lenient.
+	void dont_be_lenient() { be_lenient_ = false; }
+
 private:
-	bool check_rama_, check_overlap_;
+	bool check_rama_, check_overlap_, be_lenient_;
 
 };
 

@@ -572,6 +572,12 @@ void KinematicMover::apply( core::pose::Pose & pose )
 	// VKM, 26 Aug 2013: the rosenbluth_factor bit above was commented out when I got here.  I'm not going to bother to check whether this is compatible with nonstandard backbones, but if
 	// someone uncomments it in the future, be sure to check compatibility with nonstandard backbones.
 
+	using namespace std;
+
+	Size num_closure_fails = 0;
+	Size num_rama_filter_fails = 0;
+	Size num_bump_filter_fails = 0;
+
 	for (Size nits=1; nits <= perturber_->max_sample_iterations(); ++nits ) { // try these pivots until a solution passes all filters or nits > perturber_->max_sample_iterations()
 
 		//make sure the perturber can still generate solutions
@@ -593,6 +599,8 @@ void KinematicMover::apply( core::pose::Pose & pose )
 		//}
 		//else continue;
 		//}
+
+		if (nsol == 0) num_closure_fails += 1;
 
 		utility::vector1<Size> pos(nsol);
 		for (int i=1; i<=nsol; i++) {
@@ -621,6 +629,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 			//if (!perform_rama_check(pose, t_ang[i], pivots, start_res, seg_len)) { // checks all loop residues
 			if (!perform_rama_check(pose, t_ang[pos[i]], pivots, start_res_, middle_res_, end_res_)) { // checks only pivot residues
 				//TR << "Rama continue" << std::endl; // DJM: debug
+				num_rama_filter_fails += 1;
 				continue;
 			}
 
@@ -633,6 +642,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 			
 			//now check if the pose passes all the filters
 			if( do_hardsphere_bump_check_ && !perform_bump_check(pose, start_res_, end_res_) ){
+				num_bump_filter_fails += 1;
 				continue;
 			}
 			
@@ -672,9 +682,20 @@ void KinematicMover::apply( core::pose::Pose & pose )
 			
 			last_move_succeeded_ = true;
 			//std::cerr << "kinmover success after " << nits << "...   ";
+
+			cout << "Closure fails: " << num_closure_fails << ", ";
+			cout << "Rama fails: " << num_rama_filter_fails << ", ";
+			cout << "Bump fails: " << num_bump_filter_fails << ", ";
+			cout << "Solution found: yes" << endl;
+
 			return;
 		}
 	} //for (Size nits=1; nits <= MAX_SAMPLE_ITS_; ++nits )
+
+	cout << "Closure fails: " << num_closure_fails << ", ";
+	cout << "Rama fails: " << num_rama_filter_fails << ", ";
+	cout << "Bump fails: " << num_bump_filter_fails << ", ";
+	cout << "Solution found: no" << endl;
 
 	// prepare to exit here if no solutions
 	last_move_succeeded_ = false;

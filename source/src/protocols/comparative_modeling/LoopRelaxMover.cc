@@ -86,22 +86,19 @@
 
 // Refactored Kic headers
 #include <protocols/loop_modeling/types.hh>
+#include <protocols/loop_modeling/LoopBuilder.hh>
 #include <protocols/loop_modeling/LoopProtocol.hh>
-#include <protocols/loop_modeling/LoopMover.hh>
-#include <protocols/loop_modeling/LoopMoverTask.hh>
-#include <protocols/loop_modeling/samplers/KicSampler.hh>
-#include <protocols/loop_modeling/samplers/BalancedKicSampler.hh>
 #include <protocols/loop_modeling/samplers/LegacyKicSampler.hh>
 #include <protocols/loop_modeling/refiners/LocalMinimizationRefiner.hh>
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.hh>
 #include <protocols/loop_modeling/refiners/RepackingRefiner.hh>
-#include <protocols/loop_modeling/utilities/RepeatedTask.hh>
-#include <protocols/loop_modeling/utilities/PeriodicTask.hh>
+#include <protocols/loop_modeling/utilities/RepeatedMover.hh>
+#include <protocols/loop_modeling/utilities/PeriodicMover.hh>
 #include <protocols/loop_modeling/loggers/Logger.hh>
 #include <protocols/loop_modeling/loggers/ProgressBar.hh>
-#include <protocols/loop_modeling/loggers/AcceptanceRates.hh>
 #include <protocols/loop_modeling/loggers/PdbLogger.hh>
 #include <protocols/loop_modeling/loggers/ScoreVsRmsd.hh>
+#include <protocols/kinematic_closure/KicMover.hh>
 
 #ifdef GL_GRAPHICS
 #include <protocols/viewer/viewers.hh>  // this was auto-removed but is needed for graphics builds!
@@ -128,6 +125,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
@@ -564,7 +562,76 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				if ( remodel() == "old_loop_relax") {
 					LoopRebuild loop_rebuild( cen_scorefxn_, *loops );
 					loop_rebuild.apply( pose );
-				} else {
+				}
+				else if ( remodel() == "perturb_kic_refactor" ) {
+					using namespace std;
+					using protocols::loop_modeling::LoopBuilder;
+					using protocols::loop_modeling::LoopBuilderOP;
+					using protocols::loop_modeling::LoopProtocol;
+					using protocols::loop_modeling::LoopProtocolOP;
+					using protocols::loop_modeling::loggers::ProgressBar;
+					using protocols::loop_modeling::refiners::LocalMinimizationRefiner;
+					using protocols::kinematic_closure::KicMover;
+
+					bool const build_only =
+						option[ OptionKeys::loops::kic_leave_centroid_after_initial_closure ]();
+
+					Size outer_cycles = 3;
+					Size inner_cycles = min<Size>(20 * loops->loop_size(), 1000);
+
+					if ( option[ OptionKeys::loops::outer_cycles ].user() ) {
+						outer_cycles = option[ OptionKeys::loops::outer_cycles ]();
+					}
+					if ( option[ OptionKeys::loops::fast ].user() ) {;
+						inner_cycles = min<Size>(5 * loops->loop_size(), 250);
+					}
+					if ( option[ OptionKeys::loops::max_inner_cycles ].user() ) {
+						inner_cycles = option[ OptionKeys::loops::max_inner_cycles ]();
+					}
+					if ( option[ OptionKeys::run::test_cycles ]() ) {
+						outer_cycles = 3;
+						inner_cycles = 3;
+					}
+
+					LoopBuilderOP builder = new LoopBuilder;
+					LoopProtocolOP protocol = new LoopProtocol;
+
+					TR << "Beginning centroid-mode loop rebuilding..." << endl;
+					builder->set_loops(*loops);
+					builder->set_score_function(cen_scorefxn_);
+					builder->apply(pose);
+
+					if ( !builder->was_successful() ) {
+							TR << "Structure failed initial kinematic closure.  Skipping..." << endl;
+							set_last_move_status(protocols::moves::FAIL_RETRY);
+							return;
+					}
+					else if ( option[ in::file::native ].user() ) {
+						setPoseExtraScores(pose, "rebuild_rms",   core::scoring::native_CA_rmsd(native_pose, pose));
+						setPoseExtraScores(pose, "rebuild_looprms",  loops::loop_rmsd(native_pose_super, pose, *loops));
+						setPoseExtraScores(pose, "rebuild_loopcarms",  loops::loop_rmsd(native_pose_super, pose, *loops, true));
+					}
+
+					if ( !build_only ) {
+						TR << "Beginning centroid-mode KIC sampling..." << endl;
+						protocol->set_loops(*loops);
+						protocol->set_score_function(cen_scorefxn_);
+						protocol->set_iterations(outer_cycles, inner_cycles, 1);
+						protocol->add_mover(new KicMover);
+						protocol->add_mover(new LocalMinimizationRefiner);
+						protocol->add_logger(new ProgressBar("Perturb: "));
+						protocol->apply(pose);
+					}
+
+					// We are in a loop that will keep going until a good solution is 
+					// found or a maximum number of iterations is reached.  If the code 
+					// gets this far, then a good solution has been found and we should 
+					// break out of the loop.
+
+					all_loops_closed = true;
+					break;
+				}
+				else {
 
 /* // DJM: does this cause a crash if the only loop is terminal
           if ( remodel() == "perturb_kic" ) {
@@ -1040,38 +1107,31 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 				refine_kic.apply( pose );
 			} else
 			if ( refine() == "refine_kic_refactor" ) {
+				using namespace std;
 				using protocols::loop_modeling::LoopProtocol;
 				using protocols::loop_modeling::LoopProtocolOP;
-				using protocols::loop_modeling::LoopMover;
-				using protocols::loop_modeling::LoopMoverOP;
-				using protocols::loop_modeling::samplers::KicSampler;
 				using protocols::loop_modeling::refiners::RepackingRefiner;
 				using protocols::loop_modeling::refiners::RotamerTrialsRefiner;
 				using protocols::loop_modeling::refiners::LocalMinimizationRefiner;
-				using protocols::loop_modeling::utilities::PeriodicTask;
+				using protocols::loop_modeling::utilities::PeriodicMover;
 				using protocols::loop_modeling::loggers::LoggerOP;
-				using protocols::loop_modeling::loggers::PdbLogger;
 				using protocols::loop_modeling::loggers::ProgressBar;
-				using protocols::loop_modeling::loggers::ScoreVsRmsd;
-				using protocols::loop_modeling::loggers::AcceptanceRates;
+				using protocols::kinematic_closure::KicMover;
 
 				LoopProtocolOP protocol = new LoopProtocol;
-				LoopMoverOP mover = new LoopMover;
-				LoggerOP acceptance_logger = new AcceptanceRates;
-				loops::Loop loop = (*loops)[1];
 
 				Size repack_period = 20;
 				if (option[OptionKeys::loops::repack_period].user()) {
 					repack_period = option[OptionKeys::loops::repack_period]();
 				}
 
-				mover->add_task(new KicSampler(acceptance_logger));
-				mover->add_task(new PeriodicTask(new RepackingRefiner, repack_period));
-				mover->add_task(new RotamerTrialsRefiner);
-				mover->add_task(new LocalMinimizationRefiner);
+				protocol->add_mover(new KicMover);
+				protocol->add_mover(new PeriodicMover(new RepackingRefiner, repack_period));
+				protocol->add_mover(new RotamerTrialsRefiner);
+				protocol->add_mover(new LocalMinimizationRefiner);
 
 				Size outer_cycles = 3;
-				Size inner_cycles = 10 * loop.size();
+				Size inner_cycles = 10 * loops->loop_size();
 
 				if (option[OptionKeys::loops::outer_cycles].user()) {
 					outer_cycles = option[ OptionKeys::loops::outer_cycles ]();
@@ -1085,15 +1145,11 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 					inner_cycles = 12;
 				}
 
-				protocol->set_mover(mover);
-				protocol->set_loop(loop);
+				TR << "Beginning full-atom KIC sampling..." << endl;
+				protocol->set_loops(*loops);
 				protocol->set_score_function(fa_scorefxn_);
 				protocol->set_iterations(outer_cycles, inner_cycles, 2);
-				protocol->add_logger(new ProgressBar);
-				//protocol->add_logger(new PdbLogger);
-				protocol->add_logger(new ScoreVsRmsd(native_pose, loop));
-				protocol->add_logger(acceptance_logger);
-
+				protocol->add_logger(new ProgressBar("Refine:  "));
 				protocol->apply(pose);
 			}
 

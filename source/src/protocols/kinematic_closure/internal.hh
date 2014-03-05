@@ -51,6 +51,12 @@ struct IdealParameters {
 
 };
 
+/// @brief Two global parameters that are sometimes useful for debugging.  They 
+/// may be removed at any time.
+
+extern Size num_rama_filter_fails;
+extern Size num_bump_filter_fails;
+
 /// @brief Iterate sequentially through two solution lists.
 /// @details This functionality is very important to the balanced solution 
 /// picker.  While it could be done without this class (basically by doubling 

@@ -18,6 +18,7 @@
 // Protocols headers
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/loops/Loop.fwd.hh>
+#include <protocols/loops/Loops.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -29,9 +30,8 @@ using std::string;
 using core::Size;
 using core::Real;
 using core::pose::Pose;
-using core::scoring::ScoreFunctionOP;
-using core::scoring::ScoreFunctionCOP;
 using protocols::loops::Loop;
+using protocols::loops::Loops;
 using utility::vector1;
 
 typedef vector1<Size> IndexList;

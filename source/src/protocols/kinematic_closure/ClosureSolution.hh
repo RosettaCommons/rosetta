@@ -66,7 +66,10 @@ class ClosureSolution : public ReferenceCount, private noncopyable {
 		/// @brief If this solution passes rama and bump checks, apply it to the 
 		/// given pose.  Return whether or not the filters were passed.
 		bool apply_if_reasonable(
-				Pose & pose, bool rama_on=true, bool bump_on=true) const;
+				Pose & pose,
+				bool rama_on=true,
+				bool bump_on=true,
+				bool be_lenient=false) const;
 
 		/// @brief Return a unique number identifying this solution.
 		Size get_index() const;
@@ -82,10 +85,10 @@ class ClosureSolution : public ReferenceCount, private noncopyable {
 	private:
 
 		/// @brief Check for unlikely pivot torsions in this solution.
-		bool check_rama(Pose const & pose) const;
+		bool check_rama(Pose const & pose, Real const temperature) const;
 
 		/// @brief Check for overlapping backbone atoms in this solution.
-		bool check_overlap(Pose const & pose) const;
+		bool check_overlap(Pose const & pose, Real const scale_factor) const;
 
 	// Data Members {{{1
 	private:

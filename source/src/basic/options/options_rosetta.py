@@ -4091,7 +4091,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		## Options affecting growing/combining of loops
 		## subprotocol components
 		Option( 'remodel', 'String', default = 'no',
-		legal=['no','perturb_ccd','perturb_kic','quick_ccd','quick_ccd_moves','old_loop_relax','sdwindow'], desc = ''),
+		legal=['no','perturb_ccd','perturb_kic','perturb_kic_refactor','quick_ccd','quick_ccd_moves','old_loop_relax','sdwindow'], desc = ''),
 		Option( 'intermedrelax', 'String',                 default = 'no',
 			legal=['no','relax','fastrelax','seqrelax'], desc = ''
 		),

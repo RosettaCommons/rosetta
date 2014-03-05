@@ -95,7 +95,8 @@ public:
                                   AtomID const & atom2,
                                   AtomID const & atom3,
                                   AtomID const & atom4,
-                                  core::Real const setting );
+                                  core::Real const setting,
+																	bool quiet=false);
 
 	virtual void set_bond_angle( AtomID const & atom1, AtomID const & atom2, AtomID const & atom3,
                                core::Real const setting );

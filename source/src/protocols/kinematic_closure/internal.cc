@@ -28,6 +28,9 @@ const Real IdealParameters::std_n_ca_c_angle = 2.48;
 const Real IdealParameters::min_n_ca_c_angle = 105.90;
 const Real IdealParameters::max_n_ca_c_angle = 118.94;
 
+Size num_rama_filter_fails = 0;
+Size num_bump_filter_fails = 0;
+
 } // end namespace kinematic_closure
 } // end namespace protocols
 

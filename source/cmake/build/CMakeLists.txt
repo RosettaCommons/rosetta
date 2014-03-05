@@ -9,7 +9,10 @@ SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/../build/finders)
 # Specify the default compile flags.  Different options may add new flags to 
 # this list.
 
-SET(COMPILE_FLAGS "-pipe -w -O3 -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s")
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -pipe -w -O3 -s")
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -ffast-math -funroll-loops")
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -finline-functions -finline-limit=20000")
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror=sign-compare")
 
 # Specify which compiler to use.  This option must be set before PROJECT() is 
 # called, which happens on the first INCLUDE().  Note that it's considered bad 

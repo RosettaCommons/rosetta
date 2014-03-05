@@ -24,7 +24,7 @@ sources = {
         'native_ensemble/native_ensemble',
         'native_ensemble/analysis/trajectory_movie',
         'native_ensemble/analysis/query_trajectory',
-        #'kic_refactor/KicSandbox',
+        'kic_refactor/KicSandbox',
         ]
 }
 

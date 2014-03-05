@@ -1,7 +1,6 @@
 // Headers {{{1
 #include <protocols/kinematic_closure/types.hh>
 #include <protocols/kinematic_closure/internal.hh>
-#include <protocols/kinematic_closure/utilities.hh>
 #include <protocols/kinematic_closure/BalancedKicMover.hh>
 #include <protocols/kinematic_closure/ClosureProblem.hh>
 #include <protocols/kinematic_closure/ClosureSolution.hh>
@@ -15,13 +14,13 @@
 #include <core/id/types.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/TorsionID_Range.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // Protocol headers
 #include <protocols/loops/Loop.hh>
-#include <protocols/loop_modeling/loggers/Logger.hh>
-#include <protocols/loop_modeling/loggers/NullLogger.hh>
+#include <protocols/loops/loops_main.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -42,7 +41,6 @@ using namespace std;
 using core::id::TorsionID;
 using core::id::TorsionID_Range;
 using protocols::kinematic_closure::pivot_pickers::PivotPickerOP;
-using protocols::loop_modeling::loggers::LoggerOP;
 using utility::vector1;
 // }}}1
 
@@ -58,14 +56,13 @@ BalancedKicMover::BalancedKicMover() { // {{{1
 
 	loop_ = Loop(0, 0);
 	pivot_picker_ = new pivot_pickers::StandardPivots;
-	logger_ = new protocols::loop_modeling::loggers::NullLogger;
 	is_fold_tree_stale_ = true;
 }
 
 BalancedKicMover::~BalancedKicMover() {} // {{{1
 
 void BalancedKicMover::apply(Pose & pose) { // {{{1
-	ClosureProblemOP problem = new ClosureProblem(logger_);
+	ClosureProblemOP problem = new ClosureProblem();
 	ClosureSolutionCOP solution;
 	SolutionList unperturbed_solutions, perturbed_solutions;
 
@@ -75,16 +72,16 @@ void BalancedKicMover::apply(Pose & pose) { // {{{1
 				"via BalancedKicMover.set_loop().");
 	}
 	if (is_fold_tree_stale_) {
-		setup_fold_tree(pose, loop_);
+		protocols::loops::set_single_loop_fold_tree(pose, loop_);
 	}
 
 	// Solve the unperturbed problem.
 	problem->frame(pose, loop_, pivot_picker_);
-	problem->solve(unperturbed_solutions);
+	unperturbed_solutions = problem->solve();
 
 	// Solve the perturbed problem.
 	perturbers_->perturb_with_balance(pose, problem);
-	problem->solve(perturbed_solutions);
+	perturbed_solutions = problem->solve();
 
 	// Pick a solution to apply.
 	solution = pick_solution(unperturbed_solutions, perturbed_solutions);
@@ -93,7 +90,7 @@ void BalancedKicMover::apply(Pose & pose) { // {{{1
 	// Decide if a real move was made.
 	bool is_trivial = is_solution_trivial(
 			problem, solution, unperturbed_solutions, perturbed_solutions);
-	type(is_trivial ? "balanced-kic (no-op)" : "balanced-kic");
+	type(is_trivial ? "balanced-kic-no-op" : "balanced-kic");
 }
 
 void BalancedKicMover::set_loop(Loop const & loop) { // {{{1
@@ -107,10 +104,6 @@ void BalancedKicMover::add_perturber(perturbers::PerturberOP perturber) { // {{{
 
 void BalancedKicMover::set_pivot_picker(PivotPickerOP picker) { // {{{1
 	pivot_picker_ = picker;
-}
-
-void BalancedKicMover::log_filters(LoggerOP logger) { // {{{1
-	logger_ = logger;
 }
 
 vector1<TorsionID_Range> BalancedKicMover::torsion_id_ranges(Pose &) { // {{{1

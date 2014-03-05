@@ -11,47 +11,39 @@
 #define INCLUDED_protocols_loop_modeling_refiners_LocalMinimizationRefiner_HH
 
 // Unit headers
-#include <protocols/loop_modeling/LoopMoverTask.hh>
+#include <protocols/loop_modeling/types.hh>
+#include <protocols/loop_modeling/LoopMover.hh>
 #include <protocols/loop_modeling/refiners/LocalMinimizationRefiner.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Protocols headers
-#include <protocols/loops/Loop.fwd.hh>
 #include <protocols/simple_moves/MinMover.fwd.hh>
 
 namespace protocols {
 namespace loop_modeling {
 namespace refiners {
 
-using core::pose::Pose;
-using core::scoring::ScoreFunctionOP;
-using core::scoring::ScoreFunctionCOP;
-using protocols::loops::Loop;
-using protocols::simple_moves::MinMoverOP;
-
-class LocalMinimizationRefiner : public LoopMoverTask {
+/// @brief Refine sampled loops using Cartesian minimization.
+class LocalMinimizationRefiner : public LoopMover {
 
 public:
 
-	LocalMinimizationRefiner();
+	/// @copydoc LoopMover::get_name
 	string get_name() const { return "LocalMinimizationRefiner"; }
 
-	void setup(Pose & pose, Loop const & loop, ScoreFunctionOP score_function);
-	bool apply(Pose & pose, Loop const & loop, ScoreFunctionCOP score_function);
+protected:
 
-private:
-
-	MinMoverOP minimizer_;
+	/// @brief Perform Cartesian minimization within 10A of the loops being 
+	/// sampled.
+	bool do_apply(Pose & pose);
 
 };
 
 }
 }
 }
-
 
 #endif
 

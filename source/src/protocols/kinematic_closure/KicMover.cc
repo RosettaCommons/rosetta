@@ -9,7 +9,7 @@
 
 // Unit headers
 #include <protocols/kinematic_closure/types.hh>
-#include <protocols/kinematic_closure/utilities.hh>
+#include <protocols/kinematic_closure/internal.hh>
 #include <protocols/kinematic_closure/KicMover.hh>
 #include <protocols/kinematic_closure/ClosureProblem.hh>
 #include <protocols/kinematic_closure/ClosureSolution.hh>
@@ -28,8 +28,6 @@
 
 // Protocol headers
 #include <protocols/loops/Loop.hh>
-#include <protocols/loop_modeling/loggers/Logger.hh>
-#include <protocols/loop_modeling/loggers/NullLogger.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -44,7 +42,8 @@ namespace kinematic_closure {
 using namespace std;
 using protocols::kinematic_closure::pivot_pickers::PivotPickerOP;
 using protocols::kinematic_closure::solution_pickers::SolutionPickerOP;
-using protocols::loop_modeling::loggers::LoggerOP;
+using protocols::loop_modeling::FoldTreeRequest;
+using protocols::loop_modeling::FTR_LOOPS_WITH_CUTS;
 
 KicMover::KicMover() { // {{{1
 	perturbers_ = new perturbers::PerturberSet;
@@ -54,46 +53,37 @@ KicMover::KicMover() { // {{{1
 
 	pivot_picker_ = new pivot_pickers::StandardPivots;
 	solution_picker_ = new solution_pickers::FilteredSolutions;
-	logger_ = new protocols::loop_modeling::loggers::NullLogger;
-	is_fold_tree_stale_ = true;
 }
 
 KicMover::~KicMover() {} // {{{1
 
-void KicMover::apply(Pose & pose) { // {{{1
-	ClosureProblemOP problem = new ClosureProblem(logger_);
-	SolutionList solutions;
-
-	if (loop_.length() == 0) {
-		utility_exit_with_message(
-				"Before calling BalancedKicMover.apply(), you must provide a loop "
-				"via BalancedKicMover.set_loop().");
-	}
+bool KicMover::do_apply(Pose & pose, Loop const & loop) { // {{{1
+	ClosureProblemOP problem = new ClosureProblem();
+	problem->frame(pose, loop, pivot_picker_);
 
 	bool problem_solved = false;
-	problem->frame(pose, loop_, pivot_picker_);
 
 	// Make 2000 attempts to find a closure solution which passes which passes 
 	// both rama and bump checks.  If no solution is found by then, give up.
 
-	for (Size i = 1; i <= 2000 and not problem_solved; i++) {
+	for (Size i = 1; i <= 500 and not problem_solved; i++) {
 		perturbers_->perturb(pose, problem);
-		problem->solve(solutions);
-
-		logger_->log_task(pose, "BridgeObjects", solutions.size() > 0, false);
+		SolutionList solutions = problem->solve();
 		problem_solved = solution_picker_->pick_and_apply(pose, solutions);
 	}
 
 	// Set the move type based on whether or not the move succeeded.
 	
-	type(problem_solved ? "kic" : "kic (no-op)");
+	type(problem_solved ? "kic" : "kic-no-op");
+	return problem_solved;
 }
 
-void KicMover::setup(Pose & pose, Loop const & loop) { // {{{1
-	if (loop_ != loop) {
-		loop_ = loop;
-		setup_fold_tree(pose, loop_);
-	}
+pivot_pickers::PivotPickerOP KicMover::get_pivot_picker() { // {{{1
+	return pivot_picker_;
+}
+
+solution_pickers::SolutionPickerOP KicMover::get_solution_picker() { // {{{1
+	return solution_picker_;
 }
 
 // {{{1
@@ -114,8 +104,8 @@ void KicMover::set_solution_picker(SolutionPickerOP picker) { // {{{1
 	solution_picker_ = picker;
 }
 
-void KicMover::log_filters(LoggerOP logger) { // {{{1
-	logger_ = logger;
+FoldTreeRequest KicMover::request_fold_tree() const { // {{{1
+	return FTR_LOOPS_WITH_CUTS;
 }
 // }}}1
 

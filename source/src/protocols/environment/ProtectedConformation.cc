@@ -157,10 +157,11 @@ void ProtectedConformation::set_torsion_angle( AtomID const & atom1,
                                                AtomID const & atom2,
                                                AtomID const & atom3,
                                                AtomID const & atom4,
-                                               core::Real const setting ){
-  DOF_ID id = atom_tree().torsion_angle_dof_id( atom1, atom2, atom3, atom4 );
+                                               core::Real const setting,
+																							 bool quiet){
+  DOF_ID id = atom_tree().torsion_angle_dof_id( atom1, atom2, atom3, atom4, quiet );
   if( verify( id ) ){
-    return Parent::set_torsion_angle(atom1, atom2, atom3, atom4, setting);
+    return Parent::set_torsion_angle(atom1, atom2, atom3, atom4, setting, quiet);
   } else {
     fail_verification( utility::to_string(id)+" (via set_torsion_angle)" );
   }

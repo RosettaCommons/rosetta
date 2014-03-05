@@ -32,17 +32,19 @@
 
 // Protocols headers
 #include <protocols/loops/Loop.hh>
-#include <protocols/loop_modeling/loggers/Logger.hh>
-#include <protocols/loop_modeling/loggers/NullLogger.hh>
 
 // Numeric headers
+#include <numeric/conversions.hh>
 #include <numeric/kinematic_closure/closure.hh>
 #include <numeric/kinematic_closure/vector.hh>
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
-#include <numeric/conversions.hh>
+#include <numeric/xyz.functions.hh>
+#include <numeric/xyzVector.hh>
 
 // Utility headers
 #include <utility/exit.hh>
+#include <utility/vector1.hh>
+#include <utility/tools/make_vector1.hh>
 #include <boost/foreach.hpp>
 #include <iostream>
 
@@ -56,18 +58,12 @@ using core::id::AtomID;
 using numeric::kinematic_closure::operator <<;
 using numeric::conversions::radians;
 using numeric::conversions::from_radians;
-using protocols::loop_modeling::loggers::LoggerOP;
-using protocols::loop_modeling::loggers::NullLogger;
 
 ClosureProblem::ClosureProblem() { // {{{1
-	logger_ = new NullLogger();
 	frame_called_ = false;
 }
 
-ClosureProblem::ClosureProblem(LoggerOP logger) { // {{{1
-	logger_ = logger;
-	frame_called_ = false;
-}
+ClosureProblem::~ClosureProblem() {} // {{{1
 // }}}1
 
 void ClosureProblem::frame( // {{{1
@@ -84,7 +80,8 @@ void ClosureProblem::frame( // {{{1
 	extract_cartesian_coordinates(pose,
 			unperturbed_xyzs_);
 
-	extract_internal_coordinates(pose,
+	extract_internal_coordinates(
+			unperturbed_xyzs_,
 			unperturbed_lengths_,
 			unperturbed_angles_,
 			unperturbed_torsions_);
@@ -97,20 +94,18 @@ void ClosureProblem::frame( // {{{1
 	perturbed_lengths_ = ParameterList(unperturbed_lengths_);
 }
 
-void ClosureProblem::solve(SolutionList & solutions) const { // {{{1
+SolutionList ClosureProblem::solve() const { // {{{1
+	int num_solutions = 0;
+	IndexList order = utility::tools::make_vector1(1, 2, 3);
+
 	ParameterMatrix solution_torsions;
 	ParameterMatrix solution_angles;
 	ParameterMatrix solution_lengths;
-	int num_solutions = 0;
-
-	IndexList order(3);
-	order[1] = 1;
-	order[2] = 2;
-	order[3] = 3;
 
 	runtime_assert(frame_called_);
 
 	// Solve closure problem.
+
 	numeric::kinematic_closure::radians::bridge_objects(
 			unperturbed_xyzs_,
 			perturbed_torsions_,
@@ -123,8 +118,8 @@ void ClosureProblem::solve(SolutionList & solutions) const { // {{{1
 			num_solutions);
 
 	// Cast the results into an easy-to-use format.
-	solutions.clear();
-	solutions.resize(num_solutions);
+
+	SolutionList solutions(num_solutions);
 
 	for (Size index = 1; index <= (Size) num_solutions; index++) {
 		solutions[index] = new ClosureSolution(
@@ -133,6 +128,8 @@ void ClosureProblem::solve(SolutionList & solutions) const { // {{{1
 				solution_angles[index],
 				solution_lengths[index]);
 	}
+
+	return solutions;
 }
 
 // {{{1
@@ -226,7 +223,7 @@ Size ClosureProblem::first_residue() const { // {{{1
 	return pivots_.start();
 }
 
-Size ClosureProblem::middle_residue() const { // {{{1
+Size ClosureProblem::cut_residue() const { // {{{1
 	runtime_assert(frame_called_);
 	return pivots_.cut();
 }
@@ -292,7 +289,7 @@ Real ClosureProblem::c_n(Size residue) const { // {{{1
 
 bool ClosureProblem::is_pivot_residue(Size residue) const { // {{{1
 	return residue == first_residue() or
-	       residue == middle_residue() or
+	       residue == cut_residue() or
 	       residue == last_residue();
 }
 
@@ -318,7 +315,7 @@ IndexList ClosureProblem::pivot_residues() const { // {{{1
 	IndexList pivot_residues(3);
 
 	pivot_residues[1] = first_residue();
-	pivot_residues[2] = middle_residue();
+	pivot_residues[2] = cut_residue();
 	pivot_residues[3] = last_residue();
 
 	return pivot_residues;
@@ -328,7 +325,7 @@ IndexList ClosureProblem::nonpivot_residues() const { // {{{1
 	IndexList nonpivot_residues;
 
 	for (Size i = first_residue() + 1; i < last_residue(); i++) {
-		if (i == middle_residue()) continue;
+		if (i == cut_residue()) continue;
 		nonpivot_residues.push_back(i);
 	}
 
@@ -338,11 +335,11 @@ IndexList ClosureProblem::nonpivot_residues() const { // {{{1
 IndexList ClosureProblem::pivot_atoms() const { // {{{1
 	IndexList pivot_atoms(3);
 
-	Size middle_offset = middle_residue() - first_residue();
+	Size cut_offset = cut_residue() - first_residue();
 	Size end_offset = last_residue() - first_residue();
 
 	pivot_atoms[1] = 5;
-	pivot_atoms[2] = 5 + (3 * middle_offset);
+	pivot_atoms[2] = 5 + (3 * cut_offset);
 	pivot_atoms[3] = 5 + (3 * end_offset);
 
 	return pivot_atoms;
@@ -391,39 +388,55 @@ void ClosureProblem::extract_cartesian_coordinates (
 }
 
 void ClosureProblem::extract_internal_coordinates( // {{{1
-		Pose const & pose,
+		CoordinateList const & atom_xyzs,
 		ParameterList & bond_lengths,
 		ParameterList & bond_angles,
 		ParameterList & torsion_angles) const {
 
-	using core::conformation::Conformation;
-	using core::id::AtomID;
+	using numeric::xyzVector;
+	using numeric::angle_radians;
+	using numeric::dihedral_radians;
 
-	Conformation const & conformation = pose.conformation();
-	AtomID ids[4];
+	bond_lengths = ParameterList(num_atoms(), 0);
+	bond_angles = ParameterList(num_atoms(), 0);
+	torsion_angles = ParameterList(num_atoms(), 0);
 
 	Size num_bond_lengths = num_atoms() - 1;
 	Size num_bond_angles = num_atoms() - 2;
 	Size num_torsion_angles = num_atoms() - 3;
 
-	bond_lengths.resize(num_atoms());
-	bond_angles.resize(num_atoms());
-	torsion_angles.resize(num_atoms());
+	xyzVector<Real> vecs[4];
 
-	for (Size index = 1; index <= num_atoms(); index++) {
-		ids[0] = id_from_index(index + 0);
-		ids[1] = id_from_index(index + 1);
-		ids[2] = id_from_index(index + 2);
-		ids[3] = id_from_index(index + 3);
+	// Bond Lengths
 
-		bond_lengths[index] = (index > num_bond_lengths) ?
-			0 : conformation.bond_length(ids[0], ids[1]);
+	for (Size index = 1; index <= num_bond_lengths; index++) {
+		vecs[0] << atom_xyzs[index + 0];
+		vecs[1] << atom_xyzs[index + 1];
 
-		bond_angles[(index % num_atoms()) + 1] = (index > num_bond_angles) ?
-			0 : conformation.bond_angle(ids[0], ids[1], ids[2]);
+		bond_lengths[index] = vecs[0].distance(vecs[1]);
+	}
 
-		torsion_angles[(index % num_atoms()) + 1] = (index > num_torsion_angles) ?
-			0 : conformation.torsion_angle(ids[0], ids[1], ids[2], ids[3]);
+	// Bond Angles
+
+	for (Size index = 1; index <= num_bond_angles; index++) {
+		vecs[0] << atom_xyzs[index + 0];
+		vecs[1] << atom_xyzs[index + 1];
+		vecs[2] << atom_xyzs[index + 2];
+
+		bond_angles[(index % num_atoms()) + 1] =
+			angle_radians(vecs[0], vecs[1], vecs[2]);
+	}
+
+	// Torsion Angles
+
+	for (Size index = 1; index <= num_torsion_angles; index++) {
+		vecs[0] << atom_xyzs[index + 0];
+		vecs[1] << atom_xyzs[index + 1];
+		vecs[2] << atom_xyzs[index + 2];
+		vecs[3] << atom_xyzs[index + 3];
+
+		torsion_angles[(index % num_atoms()) + 1] = 
+			dihedral_radians(vecs[0], vecs[1], vecs[2], vecs[3]);
 	}
 }
 
@@ -444,6 +457,7 @@ void ClosureProblem::apply_internal_coordinates( // {{{1
 	Size num_torsion_angles = num_atoms() - 3;
 
 	// Set the bond lengths in the solution pose.
+
 	for (Size index = 1; index <= num_bond_lengths; index++) {
 		ids[0] = id_from_index(index + 0);
 		ids[1] = id_from_index(index + 1);
@@ -454,6 +468,7 @@ void ClosureProblem::apply_internal_coordinates( // {{{1
 
 	// Set the bond angles in the solution pose.  Note that in bond_angles, index 
 	// x refers to the angle between atoms x-1 and x+1.
+
 	for (Size index = 1; index <= num_bond_angles; index++) {
 		ids[0] = id_from_index(index + 0);
 		ids[1] = id_from_index(index + 1);
@@ -465,14 +480,15 @@ void ClosureProblem::apply_internal_coordinates( // {{{1
 
 	// Set the torsion angles in the solution pose.  Note that in torsion_angles,
 	// index x refers to the angle between atoms x-1 and x+2.
+
 	for (Size index = 1; index <= num_torsion_angles; index++) {
 		ids[0] = id_from_index(index + 0);
 		ids[1] = id_from_index(index + 1);
 		ids[2] = id_from_index(index + 2);
 		ids[3] = id_from_index(index + 3);
-
-		conformation.set_torsion_angle(
-					ids[0], ids[1], ids[2], ids[3], torsion_angles[index + 1]);
+		
+		conformation.set_torsion_angle(                                //quiet
+					ids[0], ids[1], ids[2], ids[3], torsion_angles[index + 1], true);
 	}
 }
 
@@ -604,6 +620,10 @@ void ClosureProblem::frame_upper_pivot( // {{{1
 		atom_xyzs[i + offset][2] = frame_residue->xyz(i).y();
 		atom_xyzs[i + offset][3] = frame_residue->xyz(i).z();
 	}
+}
+
+bool ClosureProblem::ids_span_cut(AtomID left, AtomID right) const { // {{{1
+	return (left.rsd() == cut_residue()) && (right.rsd() == cut_residue() + 1);
 }
 
 // {{{1

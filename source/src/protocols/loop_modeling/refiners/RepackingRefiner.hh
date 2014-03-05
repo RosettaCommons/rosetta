@@ -11,7 +11,8 @@
 #define INCLUDED_protocols_loop_modeling_refiners_RepackingRefiner_HH
 
 // Unit headers
-#include <protocols/loop_modeling/LoopMoverTask.hh>
+#include <protocols/loop_modeling/types.hh>
+#include <protocols/loop_modeling/LoopMover.hh>
 #include <protocols/loop_modeling/refiners/RepackingRefiner.fwd.hh>
 
 // Core headers
@@ -32,18 +33,23 @@ using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunctionCOP;
 using protocols::loops::Loop;
 
-class RepackingRefiner : public LoopMoverTask {
+/// @brief Refine sampled loops using sidechain repacking.
+class RepackingRefiner : public LoopMover {
 
 public:
 
+	/// @brief Default constructor.
 	RepackingRefiner();
+
+	/// @copydoc LoopMover::get_name
 	string get_name() const { return "RepackingRefiner"; }
 
-	void setup(Pose & pose, Loop const & loop, ScoreFunctionOP score_function);
-	bool apply(Pose & pose, Loop const & loop, ScoreFunctionCOP score_function);
+protected:
+
+	/// @brief Repack the pose within 10A of the loops being sampled.
+	bool do_apply(Pose & pose);
 
 private:
-
 	TaskFactoryOP task_factory_;
 
 };
@@ -52,6 +58,4 @@ private:
 }
 }
 
-
 #endif
-

@@ -11,12 +11,12 @@
 #define INCLUDED_protocols_loop_modeling_samplers_LegacyKicSampler_HH
 
 // Unit headers
-#include <protocols/loop_modeling/LoopMoverTask.hh>
+#include <protocols/loop_modeling/types.hh>
+#include <protocols/loop_modeling/LoopMover.hh>
 #include <protocols/loop_modeling/samplers/LegacyKicSampler.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 
 // Protocol headers
 #include <protocols/loops/Loop.hh>
@@ -26,22 +26,31 @@ namespace protocols {
 namespace loop_modeling {
 namespace samplers {
 
-using core::pose::Pose;
-using core::scoring::ScoreFunctionCOP;
-using protocols::loops::Loop;
-using protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP;
+/// @brief Apply the legacy KinematicMover.
+///
+/// @details The old KinematicMover works just as well as the new KicMover, but 
+/// it is not written as well and is therefore much harder to understand and 
+/// maintain.  Largely for this reason, development will shift towards the new 
+/// implementation and the old one will grow more and more out of date.  This 
+/// sampler was written to compare the two algorithms and is only meant to be a 
+/// debugging tool.  However, it may be useful in the short term while features 
+/// like next-gen KIC are still being ported to the new implementation.
 
-class LegacyKicSampler : public LoopMoverTask {
+class LegacyKicSampler : public LoopMover {
 
 public:
+	/// @brief Default constructor.
 	LegacyKicSampler();
+
+	/// @copydoc LoopMover::get_name
 	string get_name() const { return "LegacyKicSampler"; }
 
-public:
-	bool apply(Pose & pose, Loop const & loop, ScoreFunctionCOP score_function);
+protected:
+	/// @brief Apply the legacy KinematicMover algorithm.
+	bool do_apply(Pose & pose, Loop const & loop);
 
 private:
-	KinematicMoverOP mover_;
+	protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP mover_;
 
 };
 

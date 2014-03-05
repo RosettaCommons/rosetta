@@ -11,13 +11,13 @@
 #include <protocols/loop_modeling/refiners/LocalMinimizationRefiner.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // Protocols headers
@@ -41,46 +41,29 @@ using core::pose::Pose;
 using core::scoring::ScoreFunctionCOP;
 using protocols::loops::Loop;
 
-LocalMinimizationRefiner::LocalMinimizationRefiner() {
-	minimizer_ = NULL;
-}
-
-void LocalMinimizationRefiner::setup(
-		Pose & pose, Loop const & loop, ScoreFunctionOP score_function) {
-
-	using core::pose::symmetry::is_symmetric;
-	using protocols::simple_moves::MinMover;
-	using protocols::simple_moves::symmetry::SymMinMover;
-	using protocols::loops::loop_mover::loops_set_chainbreak_weight;
-
-	// The original code checks to see if a certain (non-differentiable) term is 
-	// present, and explicitly ignores it if it is.  I took this out because it 
-	// required copying the score function, which would make ramping the score 
-	// function weights more of a challenge.
-
-	minimizer_ = is_symmetric(pose) ? new SymMinMover() : new MinMover();
-	minimizer_->min_type("dfpmin");
-	minimizer_->tolerance(1e-3);
-	minimizer_->nb_list(true);
-	minimizer_->deriv_check(false);
-	minimizer_->cartesian(false);
-
-	loops_set_chainbreak_weight(score_function, 1);
-	
-	apply(pose, loop, score_function);
-}
-
-bool LocalMinimizationRefiner::apply(
-		Pose & pose, Loop const & loop, ScoreFunctionCOP score_function) {
-
+bool LocalMinimizationRefiner::do_apply(Pose & pose) {
 	using core::kinematics::MoveMapOP;
+	using core::pose::symmetry::is_symmetric;
 	using protocols::loops::move_map_from_loops;
+	using protocols::simple_moves::MinMover;
+	using protocols::simple_moves::MinMoverOP;
+	using protocols::simple_moves::symmetry::SymMinMover;
 
-	MoveMapOP move_map = move_map_from_loop(pose, loop, false, 10.0, false);
+	pose.update_residue_neighbors();
 
-	minimizer_->score_function(score_function);
-	minimizer_->movemap(move_map);
-	minimizer_->apply(pose);
+	Loops const & loops = get_loops();
+	ScoreFunctionCOP score_function = get_score_function();
+	MoveMapOP move_map = move_map_from_loops(pose, loops, false, 10.0, false);
+	MinMoverOP minimizer = is_symmetric(pose) ? new SymMinMover : new MinMover;
+
+	minimizer->min_type("dfpmin");
+	minimizer->tolerance(1e-3);
+	minimizer->nb_list(true);
+	minimizer->deriv_check(false);
+	minimizer->cartesian(false);
+	minimizer->score_function(score_function);
+	minimizer->movemap(move_map);
+	minimizer->apply(pose);
 
 	return true;
 }

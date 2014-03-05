@@ -23,7 +23,6 @@
 
 // Protocols headers
 #include <protocols/loops/Loop.hh>
-#include <protocols/loop_modeling/loggers/Logger.fwd.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
@@ -59,8 +58,8 @@ class ClosureProblem
 		/// @brief Default constructor.
 		ClosureProblem();
 
-		/// @brief Debugging constructor.
-		ClosureProblem(protocols::loop_modeling::loggers::LoggerOP);
+		/// @brief Default destructor.
+		~ClosureProblem();
 
 	// Methods to solve the problem {{{1
 	public:
@@ -71,7 +70,7 @@ class ClosureProblem
 				pivot_pickers::PivotPickerOP pivot_picker);
 
 		/// @brief Return every possible solution to this problem.
-		void solve(SolutionList & solutions) const;
+		SolutionList solve() const;
 
 		/// @brief Undo any changes made to the pose during the last move.
 		void restore(Pose & pose) const;
@@ -130,7 +129,7 @@ class ClosureProblem
 		Size first_residue() const;
 
 		/// @brief Return the index of the second pivot residue.
-		Size middle_residue() const;
+		Size cut_residue() const;
 
 		/// @brief Return the index of the third pivot residue.
 		Size last_residue() const;
@@ -202,6 +201,12 @@ class ClosureProblem
 		/// @brief Extract torsion angles, bond angles, and bond lengths for those 
 		/// backbone atoms which are relevant to the closure algorithm.
 		void extract_internal_coordinates(
+				CoordinateList const & atom_xyzs,
+				ParameterList & bond_lengths,
+				ParameterList & bond_angles,
+				ParameterList & torsion_angles) const;
+
+		void extract_internal_coordinates(
 				Pose const & pose,
 				ParameterList & bond_lengths,
 				ParameterList & bond_angles,
@@ -226,6 +231,10 @@ class ClosureProblem
 				Pose const & pose,
 				CoordinateList &atom_xyzs) const;
 
+		/// @brief Return true if the two given atoms are on opposite sides of the 
+		/// cutpoint specified by the loop that was used to create this problem.
+		bool ids_span_cut(core::id::AtomID left, core::id::AtomID right) const;
+
 		/// @brief Return an AtomID referring to the atom at the given index 
 		/// relative to the start of the loop.
 		core::id::AtomID id_from_index(Size index) const;
@@ -244,8 +253,6 @@ class ClosureProblem
 		ParameterList unperturbed_angles_;
 		ParameterList unperturbed_torsions_;
 		CoordinateList unperturbed_xyzs_;
-
-		protocols::loop_modeling::loggers::LoggerOP logger_;
 
 	// }}}1
 

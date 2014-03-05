@@ -11,6 +11,7 @@
 #define INCLUDED_protocols_loop_modeling_loggers_ProgressBar_HH
 
 // Unit headers
+#include <protocols/loop_modeling/types.hh>
 #include <protocols/loop_modeling/loggers/ProgressBar.fwd.hh>
 #include <protocols/loop_modeling/loggers/Logger.hh>
 
@@ -22,15 +23,19 @@ namespace protocols {
 namespace loop_modeling {
 namespace loggers {
 
-using core::Size;
-using core::pose::Pose;
-
+/// @brief Display a progress bar that updates after each iteration.
 class ProgressBar : public Logger {
 
 public:
 
+	/// @brief Constructor with optional label argument.
+	ProgressBar(string label="");
+
+	/// @brief Update the progress bar.
 	void log_iteration_(Pose const & pose);
-	void log_ending_(Pose const & pose);
+
+private:
+	string label_;
 
 };
 
@@ -39,4 +44,3 @@ public:
 }
 
 #endif
-

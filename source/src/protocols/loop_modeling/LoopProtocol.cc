@@ -9,14 +9,16 @@
 
 // Unit headers
 #include <protocols/loop_modeling/LoopProtocol.hh>
-#include <protocols/loop_modeling/LoopBuilder.hh>
 #include <protocols/loop_modeling/LoopMover.hh>
+#include <protocols/loop_modeling/utilities/LoopMoverGroup.hh>
+#include <protocols/loop_modeling/utilities/AcceptanceCheck.hh>
 
 // Protocols headers
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
+#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loop_modeling/loggers/Logger.hh>
 
 // Core headers
@@ -42,13 +44,16 @@ using core::Real;
 using core::Size;
 using core::pose::Pose;
 using core::scoring::ScoreFunctionOP;
+using core::scoring::ScoreFunctionCOP;
 using protocols::loops::Loop;
 using protocols::loops::Loops;
+using protocols::moves::MonteCarloOP;
 
 LoopProtocol::LoopProtocol() { // {{{1
-	mover_ = NULL;
+	movers_ = new utilities::LoopMoverGroup;
+	register_nested_loop_mover(movers_);
+
 	monte_carlo_ = NULL;
-	score_function_ = NULL;
 
 	iterations_ = IndexList(3, 1);
 	ramp_score_function_ = false;
@@ -62,7 +67,7 @@ LoopProtocol::~LoopProtocol() {} // {{{1
 
 // }}}1
 
-void LoopProtocol::apply(Pose & pose) { // {{{1
+bool LoopProtocol::do_apply(Pose & pose) { // {{{1
 	start_protocol(pose);
 
 	for (Size i = 1; i <= iterations_[1]; i++) {
@@ -80,64 +85,33 @@ void LoopProtocol::apply(Pose & pose) { // {{{1
 
 	pose = monte_carlo_->lowest_score_pose();
 	finish_protocol(pose);
+
+	return true;
 }
 
 void LoopProtocol::start_protocol(Pose & pose) { // {{{1
-	if (! loop_.start() || ! loop_.stop()) {
-		utility_exit_with_message("No loop region specified.");
-	}
-	if (! mover_) {
-		utility_exit_with_message("No LoopMover specified.");
-	}
-	if (! score_function_) {
-		score_function_ = core::scoring::getScoreFunction();
+	if (movers_->empty()) {
+		utility_exit_with_message("No movers specified.");
 	}
 
-	pose.update_residue_neighbors();
-	Pose native = pose;
+	// Setup the Monte Carlo simulation.
 
-	// Rebuild the loop from scratch to avoid bias.
-	//LoopBuilder builder(loop_, score_function_);
-	//builder.apply(pose);
+	protocols::loops::add_cutpoint_variants(pose);
+	protocols::loops::loop_mover::loops_set_chainbreak_weight(
+			get_score_function(), 1);
 
-	// Setup the loop mover.  This must be done before the Monte Carlo object is 
-	// initialized, because otherwise the "last accepted pose" in the Monte Carlo 
-	// object will not have been properly setup.  In particular, it will have the 
-	// wrong fold tree.
-	//
-	// But this also has to be done after the Monte Carlo object is initialized, 
-	// otherwise the setup might blow up the structure and ruin the whole 
-	// simulation.  I think the solution is to handle the fold tree specially, 
-	// somehow.  I think the reason the pose is getting blown up is that the fold 
-	// tree isn't setup until KicMover.apply(), so the chainbreak score isn't 
-	// doing anything.
-	
-	mover_->set_loop(loop_);
-	mover_->set_score_function(score_function_);
-	mover_->setup(pose);
-
-	// Setup the loggers.
-	foreach (loggers::LoggerOP logger, loggers_) {
-		logger->log_beginning(pose, iterations_);
-		mover_->add_logger(logger);
-	}
-
-	// Setup the acceptance criterion and the temperature.
 	monte_carlo_ = new protocols::moves::MonteCarlo(
-			pose, *score_function_, initial_temperature_);
+			pose, *get_score_function(), initial_temperature_);
 
 	temperature_scale_factor_ = std::pow(
 			final_temperature_ / initial_temperature_,
 			1.0 / (iterations_[1] * iterations_[2]));
 
-	// Report the initial score and RMSD.
-	//using protocols::loops::loop_rmsd;
-	//Loops loop_wrapper;
-	//loop_wrapper.add_loop(loop_);
+	// Setup the loggers.
 
-	//cout << "Initial RMSD:  " << loop_rmsd(native, pose, loop_wrapper) << endl;
-	//cout << "Initial Score: " << score_function_->score(pose) << endl;
-	//cout << endl;
+	foreach (loggers::LoggerOP logger, loggers_) {
+		logger->log_beginning(pose, iterations_);
+	}
 }
 
 void LoopProtocol::ramp_score_function(Size iteration) { // {{{1
@@ -147,11 +121,11 @@ void LoopProtocol::ramp_score_function(Size iteration) { // {{{1
 	if (ramp_score_function_) {
 		Real ramp_factor = 1 / (iteration - iterations_[1] + 1);
 
-		Real repulsive_weight = score_function_->get_weight(fa_rep) * ramp_factor;
-		Real rama_weight = score_function_->get_weight(rama) * ramp_factor;
+		Real repulsive_weight = get_score_function()->get_weight(fa_rep) * ramp_factor;
+		Real rama_weight = get_score_function()->get_weight(rama) * ramp_factor;
 
-		score_function_->set_weight(fa_rep, repulsive_weight);
-		score_function_->set_weight(rama, rama_weight);
+		get_score_function()->set_weight(fa_rep, repulsive_weight);
+		get_score_function()->set_weight(rama, rama_weight);
 	}
 }
 
@@ -169,32 +143,46 @@ void LoopProtocol::attempt_loop_move( // {{{1
 		 logger->log_iteration(pose, i, j, k);
 	}
 
-	mover_->apply(pose);
-	monte_carlo_->boltzmann(pose);
+	movers_->apply(pose);
+
+	if (movers_->was_successful()) {
+		monte_carlo_->boltzmann(pose);
+	} else {
+		monte_carlo_->reset_last_accepted(pose);
+	}
 
 	foreach (loggers::LoggerOP logger, loggers_) {
 		 logger->log_monte_carlo(monte_carlo_);
 	}
 }
 
-void LoopProtocol::finish_protocol(Pose const & pose) { // {{{1
+void LoopProtocol::finish_protocol(Pose & pose) { // {{{1
+
+	// Clean up the loggers.
+
 	foreach (loggers::LoggerOP logger, loggers_) {
 		 logger->log_ending(pose);
 	}
 }
 // }}}1
 
-void LoopProtocol::set_mover(LoopMoverOP mover) { // {{{1
-	mover_ = mover;
+void LoopProtocol::add_mover(LoopMoverOP mover) { // {{{1
+	movers_->add_mover(mover);
 }
 
-void LoopProtocol::set_loop(Loop const & loop) { // {{{1
-	loop_ = loop;
+void LoopProtocol::add_filter(protocols::filters::FilterOP filter) { // {{{1
+	movers_->add_filter(filter);
 }
 
-void LoopProtocol::set_score_function(ScoreFunctionOP function) { // {{{1
-	score_function_ = function;
+void LoopProtocol::add_acceptance_check(string name) { // {{{1
+	movers_->add_mover(new utilities::AcceptanceCheck(monte_carlo_, name));
 }
+
+
+void LoopProtocol::add_logger(loggers::LoggerOP logger) { // {{{1
+	loggers_.push_back(logger);
+}
+// }}}1
 
 void LoopProtocol::set_iterations(IndexList iterations) { // {{{1
 	iterations_ = iterations;
@@ -222,10 +210,6 @@ void LoopProtocol::set_temperature_ramping(bool value) { // {{{1
 
 void LoopProtocol::set_score_function_ramping(bool value) { // {{{1
 	ramp_score_function_ = value;
-}
-
-void LoopProtocol::add_logger(loggers::LoggerOP logger) { // {{{1
-	loggers_.push_back(logger);
 }
 // }}}1
 

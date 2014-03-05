@@ -25,9 +25,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
 
-// Protocol headers
-#include <protocols/loop_modeling/loggers/Logger.hh>
-
 // Numeric headers
 #include <numeric/xyzVector.hh>
 #include <numeric/constants.hh>
@@ -83,7 +80,7 @@ void ClosureSolution::apply(Pose & pose) const { // {{{1
 }
 
 bool ClosureSolution::apply_if_reasonable( // {{{1
-		Pose & pose, bool rama_on, bool bump_on) const {
+		Pose & pose, bool rama_on, bool bump_on, bool be_lenient) const {
 
 	// It's very important to perform the rama check before updating the pose.  
 	// If the pose is updated before the rama check, the rama check will cause 
@@ -92,8 +89,10 @@ bool ClosureSolution::apply_if_reasonable( // {{{1
 	// update the pose afterwards.  Note that this means the pose passed into the 
 	// rama check is expected to have out-of-date coordinates!
 
-	if (rama_on and not check_rama(pose)) {
-		problem_->logger_->log_task(pose, "Rama Check", false, false);
+	Real const temperature = be_lenient ? 2.0 : 1.0;
+
+	if (rama_on and not check_rama(pose, temperature)) {
+		num_rama_filter_fails += 1;
 		return false;
 	}
 
@@ -106,19 +105,20 @@ bool ClosureSolution::apply_if_reasonable( // {{{1
 
 	apply(pose);
 
-	if (bump_on and not check_overlap(pose)) {
-		problem_->logger_->log_task(pose, "Rama Check", true, false);
-		problem_->logger_->log_task(pose, "Bump Check", false, false);
+	Real const scale_factor = be_lenient ? 0.40 : 0.49;
+
+	if (bump_on and not check_overlap(pose, scale_factor)) {
 		problem_->restore(pose);
+		num_bump_filter_fails += 1;
 		return false;
 	}
 
-	problem_->logger_->log_task(pose, "Rama Check", true, false);
-	problem_->logger_->log_task(pose, "Bump Check", true, false);
 	return true;
 }
 
-bool ClosureSolution::check_rama(Pose const & pose) const { // {{{1
+bool ClosureSolution::check_rama( // {{{1
+		Pose const & pose, Real const temperature) const {
+
 	using core::chemical::AA;
 	using core::scoring::Ramachandran;
 	using core::scoring::ScoringManager;
@@ -137,7 +137,7 @@ bool ClosureSolution::check_rama(Pose const & pose) const { // {{{1
 		Real new_score = rama.eval_rama_score_residue(type, new_phi, new_psi);
 
 		// If we get the maximum possible rama score, bail out immediately.
-		if (new_score == 20.0) return false;
+		if (new_score >= 20.0) return false;
 
 		Real old_phi = degrees(problem_->unperturbed_torsions_[ca - 1]);
 		Real old_psi = degrees(problem_->unperturbed_torsions_[ca]);
@@ -145,11 +145,11 @@ bool ClosureSolution::check_rama(Pose const & pose) const { // {{{1
 
 		// Apply the Metropolis criterion to decide whether or not the new rama 
 		// score should be accepted.  This seems like a pretty arbitrary way to 
-		// make a decision, in my opinion.
+		// make a decision, but performance is much worse with a fixed cutoff.
 
 		if (new_score > old_score) {
 			Real const difference = old_score - new_score;
-			Real const probability = exp(difference);
+			Real const probability = exp(difference / temperature);
 			if (uniform() >= probability) return false;
 		}
 	}
@@ -159,8 +159,9 @@ bool ClosureSolution::check_rama(Pose const & pose) const { // {{{1
 
 // {{{1
 /// @details Apply the solution to the pose before calling this filter.
+bool ClosureSolution::check_overlap(
+		Pose const & pose, Real const scale_factor) const {
 
-bool ClosureSolution::check_overlap(Pose const & pose) const {
 	using core::Vector;
 	using core::conformation::Residue;
 
@@ -208,7 +209,7 @@ bool ClosureSolution::check_overlap(Pose const & pose) const {
 
 					// Compare the squared sum of Lennard-Jones radii.
 					Real const bump_cutoff = radius_i + radius_j;
-					Real const bump_cutoff_sq = 0.49 * bump_cutoff * bump_cutoff;
+					Real const bump_cutoff_sq = scale_factor * bump_cutoff * bump_cutoff;
 					Real const bump_distance_sq = (atom_i - atom_j).length_squared();
 
 					if (bump_distance_sq < bump_cutoff_sq) return false;

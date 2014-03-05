@@ -11,7 +11,8 @@
 #define INCLUDED_protocols_loop_modeling_refiners_RotamerTrialsRefiner_HH
 
 // Unit headers
-#include <protocols/loop_modeling/LoopMoverTask.hh>
+#include <protocols/loop_modeling/types.hh>
+#include <protocols/loop_modeling/LoopMover.hh>
 #include <protocols/loop_modeling/refiners/RotamerTrialsRefiner.fwd.hh>
 
 // Core headers
@@ -31,17 +32,24 @@ using core::pack::task::TaskFactoryOP;
 using core::scoring::ScoreFunctionCOP;
 using protocols::loops::Loop;
 
-class RotamerTrialsRefiner : public LoopMoverTask {
+/// @brief Refine sampled loops using rotamer trials.
+class RotamerTrialsRefiner : public LoopMover {
 
 public:
-
+	
+	/// @brief Default constructor.
 	RotamerTrialsRefiner();
+
+	/// @copydoc LoopMover::get_name
 	string get_name() const { return "RotamerTrialsRefiner"; }
 
-	bool apply(Pose & pose, Loop const & loop, ScoreFunctionCOP score_function);
+protected:
+
+	/// @brief Use rotamer trials to refine the pose within 10A of the loops 
+	/// being sampled.
+	bool do_apply(Pose & pose);
 
 private:
-
 	TaskFactoryOP task_factory_;
 
 };
