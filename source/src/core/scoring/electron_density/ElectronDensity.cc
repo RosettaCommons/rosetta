@@ -1980,7 +1980,7 @@ ElectronDensity::getModelMapError(
 	while (CYC<=30 && delf>1e-4) {
 		Real fprev=f;
 		f = fprime = fprimeprime = 0;
-		Real nfprime = 0, nfprimeprime = 0, fp1, fm1, f0;
+		Real f0;
 		for (int z=1; z<=(int)density.u3(); ++z) {
 			H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
 			for (int y=1; y<=(int)density.u2(); ++y) {
