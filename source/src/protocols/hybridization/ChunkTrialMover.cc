@@ -278,6 +278,7 @@ ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose)
 		
 		chosen_good_jump = false;
 		for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
+            if ( *it > sampling_chunk_.size() ) continue;
 			if (sampling_chunk_[*it]==true) {
 				chosen_good_jump=true;
 				break;

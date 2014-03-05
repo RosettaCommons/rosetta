@@ -505,7 +505,12 @@ CartesianHybridize::apply( Pose & pose ) {
 		
 		setup_for_parser();
 	}
-	
+    else {
+        core::Size nres_nonvirt = get_num_residues_nonvirt(pose);
+        residue_sample_template_.resize(nres_nonvirt, true);
+        residue_sample_abinitio_.resize(nres_nonvirt, true);
+    }
+
 	//protocols::viewer::add_conformation_viewer(  pose.conformation(), "hybridize" );
 	
 	///////////////////////////////
@@ -726,7 +731,9 @@ sampler:
 							residuals[i] = -1;
 						} else if (pose.fold_tree().is_cutpoint(i+1)) {
 							residuals[i] = -1;
-						} else if ( residue_sample_abinitio_[i]==false ) {
+						} else if ( i > static_cast <int> (residue_sample_abinitio_.size()) ) {
+							residuals[i] = -1;
+                        } else if ( residue_sample_abinitio_[i]==false ) {
 							residuals[i] = -1;
 						} else {
 							numeric::xyzVector< core::Real > c0 , n1;

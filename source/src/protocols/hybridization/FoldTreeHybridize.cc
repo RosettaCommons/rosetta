@@ -1241,6 +1241,12 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	if (hybridize_setup_) {
 		setup_for_parser();
 	}
+    else {
+        core::Size nres_nonvirt = get_num_residues_nonvirt(pose);
+        residue_sample_template_.resize(nres_nonvirt, true);
+        residue_sample_abinitio_.resize(nres_nonvirt, true);
+        residue_max_registry_shift_.resize(nres_nonvirt, 0);
+    }
 	
 	// save target sequence
 	target_sequence_ = pose.sequence();
