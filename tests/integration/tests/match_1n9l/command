@@ -29,16 +29,6 @@
 cd %(workdir)s
 
 [ -x %(bin)s/match.%(binext)s ] || exit 1
-%(bin)s/match.%(binext)s %(additional_flags)s @inputs/1c2t/recover_w_xtal.flags -database %(database)s -nodelay  2>&1 \
-    | egrep -vf ../../ignore_list \
-    | egrep -v 'Matcher ran' \
-    > 1c2t.log
-
-test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
-
-mv output_matches.kin 1c2t_output_matches.kin
-
-
 
 %(bin)s/match.%(binext)s %(additional_flags)s @inputs/1n9l_CHbN/1n9l_CHbN.flags -database %(database)s -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
@@ -46,19 +36,6 @@ mv output_matches.kin 1c2t_output_matches.kin
     > 1n9l.log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
-
-
-
-%(bin)s/match.%(binext)s %(additional_flags)s @inputs/6cpa/recover_w_xtal.flags -database %(database)s -nodelay  2>&1 \
-    | egrep -vf ../../ignore_list \
-    | egrep -v 'Matcher ran' \
-    > 6cpa.log
-
-test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
-
-mv output_matches.kin 6cpa_output_matches.kin
-
-
 
 #
 # After that, do whatever you want.
