@@ -76,7 +76,7 @@ public:
 			IndexList const & residues,
 			ClosureProblemOP problem);
 
-	virtual void perturb_for_test(ClosureProblemOP problem) {}
+	virtual void perturb_for_test(ClosureProblemOP) {}
 
 public:
 	void test_closure(SolutionList) const;
@@ -114,8 +114,8 @@ ClosureTest::ClosureTest( // {{{1
 }
 
 void ClosureTest::perturb_subset( // {{{1
-			Pose const & pose,
-			IndexList const & residues,
+			Pose const &,
+			IndexList const &,
 			ClosureProblemOP problem) {
 
 	perturb_for_test(problem);

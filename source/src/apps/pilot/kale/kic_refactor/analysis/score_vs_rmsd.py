@@ -35,6 +35,7 @@ def plot_job(job, color):
 
     size = 4 if len(rmsds) < 1000 else 1
 
+    print len(rmsds), len(scores)
     scatter(rmsds, scores,
             s=size, color=color, edgecolors='none', zorder=2, label=job)
 
@@ -60,6 +61,8 @@ def parse_old_source(subjob, rmsds, scores):
     rmsd_header = 'protocols.loop_build.LoopBuildMover: loop_rms'
     score_header = 'protocols.loop_build.LoopBuildMover: total_energy'
 
+    fields = {'score': None, 'rmsd': None}
+
     try:
         with open(path) as file:
             file.seek(0, 2)             # Go to the end of the file.
@@ -71,11 +74,13 @@ def parse_old_source(subjob, rmsds, scores):
 
         for line in lines:
             if line.startswith(rmsd_header):
-                fields = line.split()
-                rmsds.append(float(fields[-1]))
+                fields['rmsd'] = float(line.split()[-1])
             if line.startswith(score_header):
-                fields = line.split()
-                scores.append(float(fields[-1]))
+                fields['score'] = float(line.split()[-1])
+
+        if None not in fields:
+            rmsds.append(fields['rmsd'])
+            scores.append(fields['score'])
 
     except IOError:
         print 'No data for:', path
