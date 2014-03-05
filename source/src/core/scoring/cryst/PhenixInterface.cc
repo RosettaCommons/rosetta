@@ -139,21 +139,22 @@ core::Real PhenixInterface::getScore (
 
 	PyObject *pCoords = pose_to_pycoords( pose );
 	PyObject *pMethod = PyString_FromString("update_sites_1d");
-	PyObject_CallMethodObjArgs(target_evaluator_, pMethod, pCoords, NULL);
+	PyObject *pValue = PyObject_CallMethodObjArgs(target_evaluator_, pMethod, pCoords, NULL);
 	HANDLE_PYTHON_ERROR("PhenixInterface::getScore() : error updating sites");
 
-	Py_DECREF(pCoords);
-	Py_DECREF(pMethod);
+	Py_XDECREF(pCoords);
+	Py_XDECREF(pMethod);
+	Py_XDECREF(pValue);
 
 	pMethod = PyString_FromString("compute_target");
 	PyObject *result_tuple = PyObject_CallMethodObjArgs(target_evaluator_, pMethod, Py_False, Py_False, NULL);
   HANDLE_PYTHON_ERROR("error computing X-ray target");
 
-	Py_DECREF(pMethod);
+	Py_XDECREF(pMethod);
 
 	// get score, r_work, and r_free
 	core::Real score = PyFloat_AsDouble( PyTuple_GetItem(result_tuple, 0) );
-	Py_DECREF(result_tuple);
+	Py_XDECREF(result_tuple);
 
 	core::Real rwork = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_work", NULL) );
 	core::Real rfree = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_free", NULL) );
@@ -183,10 +184,11 @@ core::Real PhenixInterface::getScoreAndDerivs (
 
 	PyObject *pCoords = pose_to_pycoords( pose );
 	PyObject *pMethod = PyString_FromString("update_sites_1d");
-	PyObject_CallMethodObjArgs(target_evaluator_, pMethod, pCoords, NULL);
+	PyObject *pValue = PyObject_CallMethodObjArgs(target_evaluator_, pMethod, pCoords, NULL);
 	HANDLE_PYTHON_ERROR("PhenixInterface::getScoreAndDerivs() : error updating sites");
-	Py_DECREF(pCoords);
-	Py_DECREF(pMethod);
+	Py_XDECREF(pCoords);
+	Py_XDECREF(pMethod);
+	Py_XDECREF(pValue);
 
 	pMethod = PyString_FromString("compute_functional_and_gradients_rosetta");
 	PyObject *result_tuple = PyObject_CallMethodObjArgs(target_evaluator_, pMethod, NULL);
@@ -203,8 +205,8 @@ core::Real PhenixInterface::getScoreAndDerivs (
 	HANDLE_PYTHON_ERROR("error converting gradients list");
 
 	// finally we can free the results
-	Py_DECREF(result_tuple);
-	Py_DECREF(pMethod);
+	Py_XDECREF(result_tuple);
+	Py_XDECREF(pMethod);
 
 	core::Real rwork = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_work", NULL) );
 	core::Real rfree = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_free", NULL) );
@@ -247,8 +249,7 @@ void PhenixInterface::fitBfactors (
 	pose_asu.dump_pdb( pdbout , "1" );
 
 	// load module
-	std::string arg0 = "phenix.refinement.command_line";
-	PyObject *pModule = PyImport_Import( PyString_FromString(arg0.c_str()) );
+	PyObject *pModule = PyImport_ImportModule( "phenix.refinement.command_line" );
 	HANDLE_PYTHON_ERROR("importing phenix.refine failed");
 
 	// prepare arguments
@@ -344,10 +345,10 @@ void PhenixInterface::fitBfactors (
 		}
 
 		// cleanup
-		Py_DECREF(inlist);
-		Py_DECREF(pValue);
-		Py_DECREF(cmd);
-		Py_DECREF(exe);
+		Py_XDECREF(inlist);
+		Py_XDECREF(pValue);
+		Py_XDECREF(cmd);
+		Py_XDECREF(exe);
 	}
 
 	// cleanup
@@ -360,7 +361,7 @@ void PhenixInterface::fitBfactors (
 	// after B factor refinement the python fmodel is out of date
 	// nuke the target evaluator
 	if (target_evaluator_) {
-		Py_DECREF(target_evaluator_);
+		Py_XDECREF(target_evaluator_);
 		target_evaluator_ = NULL;
 	}
 
@@ -462,12 +463,15 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 	// convert to python obj
 	PyObject *pCoords = PyList_New(coords.size()*3);
 	for (int i=1; i<=(int)coords.size(); ++i) {
-		PyList_SET_ITEM( pCoords, 3*(i-1)+0, PyFloat_FromDouble( (float)coords[i][0]) );
-		PyList_SET_ITEM( pCoords, 3*(i-1)+1, PyFloat_FromDouble( (float)coords[i][1]) );
-		PyList_SET_ITEM( pCoords, 3*(i-1)+2, PyFloat_FromDouble( (float)coords[i][2]) );
+		//PyList_SET_ITEM( pCoords, 3*(i-1)+0, PyFloat_FromDouble( (float)coords[i][0]) );
+		//PyList_SET_ITEM( pCoords, 3*(i-1)+1, PyFloat_FromDouble( (float)coords[i][1]) );
+		//PyList_SET_ITEM( pCoords, 3*(i-1)+2, PyFloat_FromDouble( (float)coords[i][2]) );
+		PyList_SetItem( pCoords, 3*(i-1)+0, PyFloat_FromDouble( (float)coords[i][0]) );
+		PyList_SetItem( pCoords, 3*(i-1)+1, PyFloat_FromDouble( (float)coords[i][1]) );
+		PyList_SetItem( pCoords, 3*(i-1)+2, PyFloat_FromDouble( (float)coords[i][2]) );
 	}
 
-	return pCoords;  // calling function must dereference this
+	return pCoords;  // calling function must dereference this!
 	return NULL;
 }
 #endif
@@ -521,7 +525,7 @@ void PhenixInterface::pylist_to_grads(
 					TR << "PyList_GetItem() failure at " << i << "," << j << "(" << listCounter << ")" << std::endl;
 					utility_exit_with_message("PhenixInterface::pylist_to_grads failed");
 				}
-				assert(! ((gx == NULL) && (gy == NULL) && (gz == NULL)));
+				assert(! ((gx == NULL) || (gy == NULL) || (gz == NULL)));
 				grads[i][j][0] = PyFloat_AsDouble( gx );
 				grads[i][j][1] = PyFloat_AsDouble( gy );
 				grads[i][j][2] = PyFloat_AsDouble( gz );
@@ -618,8 +622,8 @@ void PhenixInterface::updateSolventMask () {
 		TR << "After optimizeSolventMask r/rfree = " << rwork << "/" << rfree << std::endl;
 
 		// free memory
-		Py_DECREF(r_work_py);
-		Py_DECREF(r_free_py);
+		Py_XDECREF(r_work_py);
+		Py_XDECREF(r_free_py);
 	}
 
 #else
@@ -639,7 +643,7 @@ void PhenixInterface::updateSolventMask (
 
 	PyObject *pCoords = pose_to_pycoords( pose );
 	PyObject *pMethod = PyString_FromString("update_sites_1d");
-	PyObject_CallMethodObjArgs(target_evaluator_, pMethod, pCoords, NULL);
+	PyObject *pValue = PyObject_CallMethodObjArgs(target_evaluator_, pMethod, pCoords, NULL);
 	HANDLE_PYTHON_ERROR("PhenixInterface::getScore() : error updating sites");
 	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, "r_work", NULL);
 	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, "r_free", NULL);
@@ -648,13 +652,14 @@ void PhenixInterface::updateSolventMask (
 		core::Real rwork = PyFloat_AsDouble(r_work_py);
 		core::Real rfree = PyFloat_AsDouble(r_free_py);
 		TR << "After optimizeSolventMask r/rfree = " << rwork << "/" << rfree << std::endl;
-		Py_DECREF(r_work_py);
-		Py_DECREF(r_free_py);
 	}
 
 	// free memory
-	Py_DECREF(pCoords);
-	Py_DECREF(pMethod);
+	Py_XDECREF(r_work_py);
+	Py_XDECREF(r_free_py);
+	Py_XDECREF(pCoords);
+	Py_XDECREF(pMethod);
+	Py_XDECREF(pValue);
 
 #else
 		core::pose::Pose const &)
@@ -668,7 +673,7 @@ void PhenixInterface::optimizeSolventMask () {
 #ifdef WITH_PYTHON
 	if (!target_evaluator_) return;
 
-	PyObject_CallMethod(target_evaluator_, "optimize_mask", NULL);
+	PyObject *pValue = PyObject_CallMethod(target_evaluator_, "optimize_mask", NULL);
   HANDLE_PYTHON_ERROR("optimize_mask failed");
 	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, "r_work", NULL);
 	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, "r_free", NULL);
@@ -680,8 +685,9 @@ void PhenixInterface::optimizeSolventMask () {
 	}
 
 	// free memory
-	Py_DECREF(r_work_py);
-	Py_DECREF(r_free_py);
+	Py_XDECREF(r_work_py);
+	Py_XDECREF(r_free_py);
+	Py_XDECREF(pValue);
 
 #else
 	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
@@ -694,7 +700,7 @@ void PhenixInterface::optimizeSolvParams () {
 #ifdef WITH_PYTHON
 	if (!target_evaluator_) return;
 
-	PyObject_CallMethod(target_evaluator_, "update_solvent_and_scale", NULL);
+	PyObject *pValue = PyObject_CallMethod(target_evaluator_, "update_solvent_and_scale", NULL);
   HANDLE_PYTHON_ERROR("update_solvent_and_scale failed");
 	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, "r_work", NULL);
 	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, "r_free", NULL);
@@ -706,8 +712,9 @@ void PhenixInterface::optimizeSolvParams () {
 	}
 
 	// free memory
-	Py_DECREF(r_work_py);
-	Py_DECREF(r_free_py);
+	Py_XDECREF(r_work_py);
+	Py_XDECREF(r_free_py);
+	Py_XDECREF(pValue);
 
 #else
 	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
@@ -747,7 +754,7 @@ void PhenixInterface::setResLimits(
 
 	// nuke the target evaluator
 	if (target_evaluator_) {
-		Py_DECREF(target_evaluator_);
+		Py_XDECREF(target_evaluator_);
 		target_evaluator_ = NULL;
 	}
 #else
@@ -768,7 +775,7 @@ PhenixInterface::setTwinLaw(
 
 	// nuke the target evaluator
 	if (target_evaluator_) {
-		Py_DECREF(target_evaluator_);
+		Py_XDECREF(target_evaluator_);
 		target_evaluator_ = NULL;
 	}
 #else
@@ -789,7 +796,7 @@ PhenixInterface::setAlgorithm(
 
 	// nuke the target evaluator
 	if (target_evaluator_) {
-		Py_DECREF(target_evaluator_);
+		Py_XDECREF(target_evaluator_);
 		target_evaluator_ = NULL;
 	}
 #else
@@ -810,7 +817,7 @@ PhenixInterface::set_dm (
 
 	// nuke the target evaluator
 	if (target_evaluator_) {
-		Py_DECREF(target_evaluator_);
+		Py_XDECREF(target_evaluator_);
 		target_evaluator_ = NULL;
 	}
 #else
@@ -832,7 +839,7 @@ PhenixInterface::set_prime_and_switch(
 
 	// nuke the target evaluator
 	if (target_evaluator_) {
-		Py_DECREF(target_evaluator_);
+		Py_XDECREF(target_evaluator_);
 		target_evaluator_ = NULL;
 	}
 #else
@@ -863,7 +870,7 @@ core::Real PhenixInterface::getR() {
 	core::Real rwork = 0;
 	if (r_work_py != NULL) {
 		rwork = PyFloat_AsDouble(r_work_py);
-		Py_DECREF(r_work_py);
+		Py_XDECREF(r_work_py);
 	}
 	return rwork;
 #else
@@ -879,7 +886,7 @@ core::Real PhenixInterface::getRfree() {
 	core::Real rfree = 0;
 	if (r_free_py != NULL) {
 		rfree = PyFloat_AsDouble(r_free_py);
-		Py_DECREF(r_free_py);
+		Py_XDECREF(r_free_py);
 	}
 	return rfree;
 #else
@@ -901,7 +908,7 @@ void PhenixInterface::initialize_target_evaluator(
 #ifdef WITH_PYTHON
 	// nuke the target evaluator if one exists
 	if (target_evaluator_) {
-		Py_DECREF(target_evaluator_);
+		Py_XDECREF(target_evaluator_);
 		target_evaluator_ = NULL;
 	}
 
@@ -941,8 +948,7 @@ void PhenixInterface::initialize_target_evaluator(
 	pose_asu.dump_pdb( buffer , "1" );
 
 	// load the module
-	std::string arg0 = "phenix.rosetta.xray_target";
-	PyObject *pModule = PyImport_Import( PyString_FromString(arg0.c_str()) );
+	PyObject *pModule = PyImport_ImportModule( "phenix.rosetta.xray_target" );
 	HANDLE_PYTHON_ERROR("In PhenixInterface::initialize_target_evaluator: error importing phenix.rosetta.xray_target");
 
 	// prepare arguments
@@ -1052,9 +1058,6 @@ void PhenixInterface::initialize_target_evaluator(
 		}
 	}
 
-	//
-	Py_DECREF(pModule);
-
 	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, "r_work", NULL);
 	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, "r_free", NULL);
 	HANDLE_PYTHON_ERROR("can't extract R-frees");
@@ -1064,9 +1067,12 @@ void PhenixInterface::initialize_target_evaluator(
 		TR << "Initialized target evaluator [rwork/rfree = " << rwork << "/" << rfree << "]" << std::endl;
 
 		// free memory
-		Py_DECREF(r_work_py);
-		Py_DECREF(r_free_py);
+		Py_XDECREF(r_work_py);
+		Py_XDECREF(r_free_py);
 	}
+
+	//
+	Py_XDECREF(pModule);
 
 	chdir("..");
 #else

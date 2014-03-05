@@ -177,7 +177,7 @@ if ($modestring eq "CRYST" || $modestring eq "cryst" || $modestring eq "Cryst") 
 	print STDERR "Unrecognized mode string '$modestring'\n";
 	exit -1;
 }
-print STDERR "Running in mode $modestring.\n";
+if ($quietMode!= 1) { print STDERR "Running in mode $modestring.\n"; }
 
 
 ## substitute'_' -> ' '
@@ -423,11 +423,13 @@ if ($ncs_mode == 1) {
 
 		# get superposition
 		my ($R,$rmsd, $COM_i, $COM_ij) = rms_align( $chains{ $primary_chain } , $chains{ $sec_chain_ids[0] } );
-		print STDERR "Aligning $primary_chain and $sec_chain wth RMS=$rmsd.\n";
-		print STDERR "Transformation:\n";
-		print STDERR "   ".$R->[0][0]." ".$R->[0][1]." ".$R->[0][2]."\n";
-		print STDERR "   ".$R->[1][0]." ".$R->[1][1]." ".$R->[1][2]."\n";
-		print STDERR "   ".$R->[2][0]." ".$R->[2][1]." ".$R->[2][2]."\n";
+		if ($quietMode != 1) {
+			print STDERR "Aligning $primary_chain and $sec_chain wth RMS=$rmsd.\n";
+			print STDERR "Transformation:\n";
+			print STDERR "   ".$R->[0][0]." ".$R->[0][1]." ".$R->[0][2]."\n";
+			print STDERR "   ".$R->[1][0]." ".$R->[1][1]." ".$R->[1][2]."\n";
+			print STDERR "   ".$R->[2][0]." ".$R->[2][1]." ".$R->[2][2]."\n";
+		}
 
 		if ( is_identity( $R ) ) {
 			print STDERR "Chains $primary_chain and $sec_chain related by transformation only! Aborting.\n";
@@ -455,9 +457,9 @@ if ($ncs_mode == 1) {
 		}
 
 		push @sym_orders, $sym_order;
-		print STDERR "Found ".$sym_order."-fold (".(PI/$omega).") symmetric complex at chain ".$sec_chain_ids[0]."\n";
+		print STDERR "Found ".$sym_order."-fold (".(PI/$omega).") axis to ".$sec_chain_ids[0]." ";
 		my $rotaxis = [$X,$Y,$Z]; normalize( $rotaxis );
-		print STDERR "rotation axis    ".$rotaxis->[0]." ".$rotaxis->[1]." ".$rotaxis->[2]."\n";
+		print STDERR ": ".$rotaxis->[0]." ".$rotaxis->[1]." ".$rotaxis->[2]."\n";
 
 		# now make perfectly symmetrical version of superposition
 		my $newW = -$Wmult *cos( PI/$sym_order );
@@ -532,7 +534,7 @@ if ($ncs_mode == 1) {
 			my $del_COM_inplane    = vsub( $newDelCOM , vscale(dot($newDelCOM,$axis_proj_i),$axis_proj_i) );
 			$err_pos = vscale( $sym_orders[ $i ] , $del_COM_inplane );
 		}
-		print STDERR "[$i] translation error = ".vnorm( $err_pos )."\n";
+		print STDERR "translation error = ".vnorm( $err_pos )."\n";
 
 		# special case for icosehedral symmetry
 		# see above for restrictions
@@ -546,8 +548,10 @@ if ($ncs_mode == 1) {
 	print STDERR "system center  ".$NCS_ops->{T}->[0]." ".$NCS_ops->{T}->[1]." ".$NCS_ops->{T}->[2]."\n";
 
 	my ($nnodes,$nleaves) = tree_size( $NCS_ops );
-	print STDERR "Found a total of $nleaves monomers in the symmetric complex.\n";
-	print STDERR "Placing $nnodes virtual residues.\n";
+	if ($quietMode != 1) {
+		print STDERR "Found a total of $nleaves monomers in the symmetric complex.\n";
+		print STDERR "Placing $nnodes virtual residues.\n";
+	}
 
 	#exit -1;
 
@@ -783,7 +787,7 @@ if ($ncs_mode == 1) {
 		open (OUTKIN, ">$outkin");
 
 		my $chnidx = 0;
-		my $chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+		my $chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-=_+;:,.<>";
 		foreach my $symop (@{ $symops }) {
 			foreach my $line (@filebuf) {
 				my $linecopy = $line;
@@ -1194,7 +1198,7 @@ if ($cryst_mode == 1) {
 	my $mdlidx = 1;
 	my $chnidx = 0;
 	print OUTMDL "MODEL $mdlidx\n";
-	my $chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+	my $chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-=_+;:,.<>";
 	foreach my $symmkey (@syminterfaces_all) {
 		my ($j_symm,$shiftX,$shiftY,$shiftZ) = split '_',$symmkey;
 		foreach my $line (@filebuf) {
@@ -1215,7 +1219,7 @@ if ($cryst_mode == 1) {
 		}
 		print OUTPDB "TER   \n";
 		$chnidx++;
-		if ($chnidx == 62) {
+		if ($chnidx >= length($chains)) {
 			$chnidx=0;
 			$mdlidx++;
 			print OUTPDB "ENDMDL\n";
@@ -2081,8 +2085,7 @@ if ($helix_mode == 1) {
 	open (OUTMDL, ">$outmdl");
 
 	my $chnidx = 0;
-	my $chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
-
+	my $chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-=_+;:,.<>";
 
 	foreach my $sec_shift ( -$nperp_repeats..$nperp_repeats ) {
 		foreach my $subunit (0 .. $nsubunits_to_gen) {
@@ -2310,7 +2313,7 @@ if ($pseudo_mode == 1) {
 	open (OUTPDB, ">$outpdb");
 	open (OUTMON, ">$outmon");
 	my $chnidx = 0;
-	my $chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+	my $chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-=_+;:,.<>";
 	foreach my $i (0..($#Rs)) {
 		foreach my $line (@filebuf) {
 			my $linecopy = $line;

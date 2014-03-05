@@ -29,7 +29,7 @@
 
 		<RecomputeDensityMap name=recompute_dens/>
 
-		<FitBfactors name=fit_bs adp_strategy=individual/>
+		<FitBfactors name=fit_bs adp_strategy="%%bfactstrat%%"/>
 
 		<TagPoseWithRefinementStats name=tag_i tag=input/>
 		<TagPoseWithRefinementStats name=tag_c tag=cycle/>

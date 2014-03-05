@@ -1688,30 +1688,28 @@ ElectronDensity::getMapMapError(
 				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
 					// reflections, normalized in each shell
 					std::complex< Real > E1 = sqrt(counter[bucket_i]/denom1[bucket_i]) * Fdensity(x,y,z);
-
-					if (std::abs( E1 ) <= 1e-2) continue;
-
 					std::complex< Real > E2 = sqrt(counter[bucket_i]/denom2[bucket_i]) * Fdensity2(x,y,z);
 
 					// find distance in cplx plane
-					Real ratio_i = std::real( E1 * std::conj(E2) ) / (std::abs(E1) * std::abs(E2));
-					Real del_ampl = std::abs( E2 ) / std::abs( E1 );
+					//Real ratio_i = std::real( E1 * std::conj(E2) ) / (std::abs(E1) * std::abs(E2));
+					//Real del_ampl = std::abs( E2 ) / std::abs( E1 );
 
-					ratio_i = std::max( -1.0, ratio_i );
-					ratio_i = std::min( 1.0, ratio_i );
-					Real delX = del_ampl * ratio_i - 1;
+					//ratio_i = std::max( -1.0, ratio_i );
+					//ratio_i = std::min( 1.0, ratio_i );
+					//Real delX2 = (del_ampl * ratio_i - 1)*(del_ampl * ratio_i - 1);
 
 					// centrics
-					Real scale=1.0;
+					Real err = std::abs( E1 - E2 );
+					Real scale = 1.0;
 					if (H==0 || K==0 || L==0) {
-						delX = std::min( delX, 1 + del_ampl * ratio_i );
+						err = std::min( err, std::abs( E1 + E2 ) );
 						scale=0.5;
 					}
 
-					Real delY = del_ampl * sqrt( 1-ratio_i*ratio_i );
-					Real err = ( delX*delX + delY*delY );
+					//Real delY2 = del_ampl * del_ampl * ( 1 - ratio_i*ratio_i );
+					//Real err = ( delX2 + delY2 );
 
-					complexPlaneError[bucket_i] += scale*err;
+					complexPlaneError[bucket_i] += scale*err*err;
 				}
 			}
 		}
@@ -1903,21 +1901,23 @@ ElectronDensity::getModelMapError(
 				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
 					// reflections, normalized in each shell
 					std::complex< Real > E1 = sqrt(counter[bucket_i] / denom1[bucket_i]) * Fdensity(x,y,z);
-					if (std::abs( E1 ) <= 1e-2) continue;
 					std::complex< Real > E2 = sqrt(counter[bucket_i] / denom2[bucket_i]) * Frho_calc(x,y,z);
 
 					// find distance in cplx plane
-					Real ratio_i = std::real( E1 * std::conj(E2) ) / (std::abs(E1) * std::abs(E2));
-					Real del_ampl = std::abs( E2 ) / std::abs( E1 );
-					Real delX = del_ampl * ratio_i - 1;
+					//Real ratio_i = std::real( E1 * std::conj(E2) ) / (std::abs(E1) * std::abs(E2));
+					//Real del_ampl = std::abs( E2 ) / std::abs( E1 );
+					//Real delX2 = (del_ampl * ratio_i - 1)*(del_ampl * ratio_i - 1);
 
 					// centrics
+					Real err = std::abs( E1 - E2 );
+					Real scale = 1.0;
 					if (H==0 || K==0 || L==0) {
-						delX = std::min( delX, -del_ampl * ratio_i - 1 );
+						err = std::min( err, std::abs( E1 + E2 ) );
+						scale=0.5;
 					}
 
-					Real delY = del_ampl * sqrt( 1-ratio_i*ratio_i );
-					dists(x,y,z) = std::sqrt( delX*delX + delY*delY );
+					//Real delY2 = del_ampl * del_ampl * ( 1 - ratio_i*ratio_i );
+					dists(x,y,z) = err;
 				}
 			}
 		}
@@ -1953,11 +1953,14 @@ ElectronDensity::getModelMapError(
 					int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
 					if (S2_bin) s_i=sqrt(s_i);
 
+
+					Real scale = (H==0 || K==0 || L==0) ? 0.5 : 1.0;
+
 					if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
 						Real d_i = dists(x,y,z), sig_i = mapmapComplexPlaneError[ bucket_i ];
-						Real fpart = (complexPlaneErrorK*complexPlaneErrorK*s_i*s_i+sig_i*sig_i);
-						f -= d_i*d_i/(2*fpart);
-						f -= log (2*M_PI*fpart);
+						Real fpart = (complexPlaneErrorK*complexPlaneErrorK*s_i*s_i*s_i*s_i+sig_i*sig_i);
+						f -= scale*d_i*d_i/(2*fpart);
+						f -= scale*log (2*M_PI*fpart);
 					}
 				}
 			}
@@ -1991,31 +1994,37 @@ ElectronDensity::getModelMapError(
 
 					if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
 						Real d_i = dists(x,y,z), sig_i = mapmapComplexPlaneError[ bucket_i ];
+						Real s_i2 = s_i*s_i;
+						Real s_i4 = s_i2*s_i2;
+						Real s_i8 = s_i4*s_i4;
 
-						Real fpart = (complexPlaneErrorK*complexPlaneErrorK*s_i*s_i+sig_i*sig_i);
-						Real fpart_P1 = ((complexPlaneErrorK+0.001)*(complexPlaneErrorK+0.001)*s_i*s_i+sig_i*sig_i);
-						Real fpart_M1 = ((complexPlaneErrorK-0.001)*(complexPlaneErrorK-0.001)*s_i*s_i+sig_i*sig_i);
+
+						Real scale = (H==0 || K==0 || L==0) ? 0.5 : 1.0;
+
+						Real fpart = (complexPlaneErrorK*complexPlaneErrorK*s_i4+sig_i*sig_i);
+						//Real fpart_P1 = ((complexPlaneErrorK+0.001)*(complexPlaneErrorK+0.001)*s_i*s_i+sig_i*sig_i);
+						//Real fpart_M1 = ((complexPlaneErrorK-0.001)*(complexPlaneErrorK-0.001)*s_i*s_i+sig_i*sig_i);
 
 						f0 = -d_i*d_i/(2*fpart) - log (2*M_PI*fpart);
-						f += f0;
+						f += scale*f0;
 
 						// [DEBUG] numeric
-						fp1 = -d_i*d_i/(2*fpart_P1) - log (2*M_PI*fpart_P1);
-						fm1 = - d_i*d_i/(2*fpart_M1) - log (2*M_PI*fpart_M1);
-						nfprime += (fp1-fm1)/0.002;
-						nfprimeprime += (fp1-2*f0+fm1)/(0.001*0.001);
+						//fp1 = -d_i*d_i/(2*fpart_P1) - log (2*M_PI*fpart_P1);
+						//fm1 = - d_i*d_i/(2*fpart_M1) - log (2*M_PI*fpart_M1);
+						//nfprime += (fp1-fm1)/0.002;
+						//nfprimeprime += (fp1-2*f0+fm1)/(0.001*0.001);
 
 						// analytic
-						Real fprime0 =  d_i*d_i*complexPlaneErrorK*s_i*s_i / (fpart*fpart) - 2*complexPlaneErrorK*s_i*s_i / (fpart);
-						fprime += fprime0;
+						Real fprime0 =  d_i*d_i*complexPlaneErrorK*s_i4 / (fpart*fpart) - 2*complexPlaneErrorK*s_i4 / (fpart);
+						fprime += scale*fprime0;
 
 						Real fprimeprime0 =
-							- 4*d_i*d_i*complexPlaneErrorK*complexPlaneErrorK*s_i*s_i*s_i*s_i / (fpart*fpart*fpart)
-							+ d_i*d_i*s_i*s_i / (fpart*fpart)
-							+ 4*complexPlaneErrorK*complexPlaneErrorK*s_i*s_i*s_i*s_i / (fpart*fpart)
-							- 2*s_i*s_i / (fpart);
+							- 4*d_i*d_i*complexPlaneErrorK*complexPlaneErrorK*s_i8 / (fpart*fpart*fpart)
+							+ d_i*d_i*s_i4 / (fpart*fpart)
+							+ 4*complexPlaneErrorK*complexPlaneErrorK*s_i8 / (fpart*fpart)
+							- 2*s_i4 / (fpart);
 
-						fprimeprime += fprimeprime0;
+						fprimeprime += scale*fprimeprime0;
 					}
 				}
 			}
@@ -2030,8 +2039,6 @@ ElectronDensity::getModelMapError(
 
 		// info
 		TR << " ITER " << CYC << ": f(" << complexPlaneErrorKprev << ")=" << f << "  delF=" << delf << "   X_new=" << complexPlaneErrorK << std::endl;
-		TR << "      " << fprime << " v " << nfprime << std::endl;
-		TR << "      " << fprimeprime << " v " << nfprimeprime << std::endl;
 		CYC++;
 	}
 
