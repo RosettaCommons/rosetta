@@ -9,7 +9,7 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/features/InterfaceFeatures.cc
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
@@ -45,20 +45,20 @@ static basic::Tracer TR("protocols.InterfaceFeatures");
 
 namespace protocols {
 namespace features {
-	
+
 	using utility::vector1;
 	using cppdb::statement;
 	using cppdb::result;
 	using std::string;
-	
+
 InterfaceFeatures::InterfaceFeatures() :
 	FeaturesReporter()
 {
-	interface_analyzer_ = NULL;	
+	interface_analyzer_ = NULL;
 	scorefxn_ = core::scoring::getScoreFunction();
 	set_defaults();
 }
-	
+
 InterfaceFeatures::InterfaceFeatures(core::scoring::ScoreFunctionCOP scorefxn) :
 	FeaturesReporter()
 {
@@ -109,7 +109,7 @@ InterfaceFeatures::type_name() const {
 
 void
 InterfaceFeatures::parse_my_tag(
-		utility::tag::TagCOP tag, 
+		utility::tag::TagCOP tag,
 		basic::datacache::DataMap& data,
 		protocols::filters::Filters_map const & /*data*/,
 		protocols::moves::Movers_map const & /*movers*/,
@@ -119,28 +119,28 @@ InterfaceFeatures::parse_my_tag(
 	pack_together_ = tag->getOption<bool>("pack_together", false);
 	dSASA_cutoff_ = tag->getOption<core::Real>("dSASA_cutoff", 100);
 	compute_packstat_ = tag->getOption<bool>("compute_packstat", true);
-	
+
 	if(tag->hasOption("scorefxn")){
 		string const scorefxn_name(tag->getOption<std::string>("scorefxn"));
 		scorefxn_ = data.get<core::scoring::ScoreFunction*>("scorefxns", scorefxn_name);
 	}
-	
+
 	if (tag->hasOption("interfaces") && tag->hasOption("interface")){
 		utility_exit_with_message("Cannot specify both interface and interfaces option for InterfaceFeatures Reporter");
 	}
-	
+
 	if (tag->hasOption("interface")){
 		std::string interface = tag->getOption<std::string>("interface");
 		if (interface.find(",") != std::string::npos){utility_exit_with_message("Only one interface should be specified using the interface option");}
 		interfaces_.push_back(interface);
 	}
-	
+
 	if (tag->hasOption("interfaces")){
 		std::string interfaces = tag->getOption<std::string>("interfaces");
 		interfaces_ = utility::string_split_multi_delim(interfaces, ":,'`~+*&|;.");//Why not?
 	}
 
-	
+
 }
 
 void
@@ -161,13 +161,13 @@ InterfaceFeatures::features_reporter_dependencies() const{
 
 core::Size
 InterfaceFeatures::report_features(core::pose::Pose const & pose, const utility::vector1<bool>& relevant_residues, StructureID struct_id, utility::sql_database::sessionOP db_session) {
-	
+
 	if (interfaces_.empty()){
 		make_interface_combos(pose, interfaces_);
 	}
-	
+
 	for (core::Size i = 1; i <= interfaces_.size(); ++i){
-		
+
 		std::string interface = interfaces_[i];
 		TR << "reporting features for: "<< interface << std::endl;
 		//Check to make sure interface/chain definition is solid.
@@ -179,21 +179,21 @@ InterfaceFeatures::report_features(core::pose::Pose const & pose, const utility:
 			TR <<"All chains do not exist in the given pose: "<<interfaces_[i]<< " skipping..." << std::endl;
 			continue;
 		}
-		
+
 		vector1<std::string> interface_sides = utility::string_split(interface, '_');
 		std::string interface_side1 = interface_sides[1];
 		std::string interface_side2 = interface_sides[2];
 		interface_analyzer_ = new protocols::analysis::InterfaceAnalyzerMover(interface, true, scorefxn_, compute_packstat_, pack_together_, pack_separated_);
 		interface_analyzer_->set_use_centroid_dG(true); //Uses score3 by default without rg - used in zinc homodimer design .  Used for clash detection
 		interface_analyzer_->apply_const(pose);
-		
+
 		if (interface_analyzer_->get_interface_delta_sasa() < dSASA_cutoff_){
 			TR << "Interface dSASA lower than set cutoff value of "<< dSASA_cutoff_ << " : not including data in database..." << std::endl;
 			continue;
 		}
 		report_interface_features(pose, struct_id, db_session, interface_side1, interface_side2);
 		report_interface_residue_features(pose, relevant_residues, struct_id, db_session, interface_side1, interface_side2);
-		
+
 		report_interface_side_features(pose, struct_id, db_session, interface_side1, interface_side2, total, "total");
 		report_interface_side_features(pose, struct_id, db_session, interface_side1, interface_side2, side1, "side1");
 		report_interface_side_features(pose, struct_id, db_session, interface_side1, interface_side2, side2,  "side2");
@@ -202,23 +202,23 @@ InterfaceFeatures::report_features(core::pose::Pose const & pose, const utility:
 }
 void
 InterfaceFeatures::make_interface_combos(const core::pose::Pose& pose, vector1< std::string > & interfaces) {
-	
-	
+
+
 	TR << "making interface combos"<<std::endl;
 	vector1< std::string > chain_combos;
 	vector1< std::string > size_combos;
-	
+
 	std::string chains = get_all_pose_chains(pose);
 	get_length_combos(chains, size_combos);
-	
+
 	for (core::Size i = 1; i <= size_combos.size(); ++i){
 		get_all_string_combos(size_combos[i], "", chain_combos);
 	}
-	
+
 	//Remove duplicates
 	std::sort(chain_combos.begin(), chain_combos.end());
 	chain_combos.erase(std::unique(chain_combos.begin(), chain_combos.end()), chain_combos.end());
-	
+
 	TR << std::endl;
 	for (core::Size i = 1; i<= chain_combos.size(); ++i){
 		for (core::Size s = 1; s <= chain_combos[i].length()-1; ++s){
@@ -232,7 +232,7 @@ InterfaceFeatures::make_interface_combos(const core::pose::Pose& pose, vector1< 
 	for (core::Size i = 1; i<= interfaces.size(); ++i){
 		TR << "added interface:  " + interfaces[i] << std::endl;
 	}
-	
+
 }
 
 void
@@ -243,7 +243,7 @@ InterfaceFeatures::get_length_combos(std::string current, vector1<std::string> &
 			return;
 		}
 	}
-	
+
 	for (std::size_t k = 1; k <= current.length(); ++k){
 		std::string new_string(current);
 		//char chain = current.at(k-1);
@@ -255,19 +255,19 @@ InterfaceFeatures::get_length_combos(std::string current, vector1<std::string> &
 
 void
 InterfaceFeatures::get_all_string_combos(std::string& interface, std::string current, vector1<std::string>& chains) const {
-	
+
 	if (interface.length() == current.length()){
 		chains.push_back(current);
 		//TR << "Chain added: "<<current << std::endl;
 		return;
 	}
 	for (core::Size i = 1; i<=interface.length(); ++i){
-		
+
 		std::string letter = interface.substr(i-1, 1);
 		if (current.find(letter) != std::string::npos){
 			continue;
 		}
-		
+
 		std::string new_current = current + letter;
 		get_all_string_combos(interface, new_current, chains);
 	}
@@ -277,7 +277,7 @@ bool
 InterfaceFeatures::chains_exist_in_pose(core::pose::Pose const & pose, std::string const interface) const {
 	utility::vector1<std::string> interfaceSP = utility::string_split(interface, '_');
 	std::string chains = interfaceSP[1]+interfaceSP[2];
-	
+
 	bool has_all_chains = true;
 	for (core::Size i = 1; i<=chains.length(); ++i){
 		char chain = chains.at(i-1);
@@ -291,7 +291,7 @@ InterfaceFeatures::chains_exist_in_pose(core::pose::Pose const & pose, std::stri
 
 std::string
 InterfaceFeatures::get_all_pose_chains(core::pose::Pose const & pose){
-	
+
 	std::string chains = "";
 	for (core::Size i = 1; i <= pose.conformation().num_chains(); ++i){
 		char chain_c = core::pose::get_chain_from_chain_id(i, pose);
@@ -306,17 +306,17 @@ InterfaceFeatures::get_all_pose_chains(core::pose::Pose const & pose){
 bool
 InterfaceFeatures::interface_exists(vector1<std::string> & interfaces, std::string & dock_chains) const {
 	utility::vector1<std::string> newSP = utility::string_split(dock_chains, '_');
-	
+
 	//Sort so order of chains doesn't matter (LH_AB = HL_BA)
 	std::sort(newSP[1].begin(), newSP[1].end());
 	std::sort(newSP[2].begin(), newSP[2].end());
-	
+
 	for (core::Size i = 1; i <= interfaces.size(); ++i){
 		utility::vector1<std::string> oldSP = utility::string_split(interfaces[i], '_');
 		std::sort(oldSP[1].begin(), oldSP[1].end());
 		std::sort(oldSP[2].begin(), oldSP[2].end());
-		
-		
+
+
 		if (oldSP[1] == newSP[2] && oldSP[2] == newSP[1] ){
 			return true; //LH_AB == AB_LH
 		}
@@ -326,7 +326,7 @@ InterfaceFeatures::interface_exists(vector1<std::string> & interfaces, std::stri
 		else {
 			continue;
 		}
-		
+
 	}
 	return false;
 }
@@ -344,7 +344,7 @@ InterfaceFeatures::report_interface_residue_features(
 	regions[side1] = "side1";
 	regions[side2] = "side2";
 	regions[total] = "total";
-	
+
 	protocols::analysis::PerResidueInterfaceData interface_data = interface_analyzer_->get_all_per_residue_data();
 	protocols::analysis::InterfaceData all_data = interface_analyzer_->get_all_data();
 	for (core::Size i = 1; i <= pose.total_residue(); ++i){
@@ -365,16 +365,16 @@ InterfaceFeatures::report_interface_residue_features(
 void
 InterfaceFeatures::write_interface_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
-	
+
 	Column struct_id("struct_id", new DbBigInt());
-	Column interface("interface", new DbText());
-	Column chains_side1("chains_side1", new DbText());
-	Column chains_side2("chains_side2", new DbText());
-	
+	Column interface("interface", new DbText(255));
+	Column chains_side1("chains_side1", new DbText(255));
+	Column chains_side2("chains_side2", new DbText(255));
+
 	Columns primary_keys;
 	primary_keys.push_back(struct_id);
 	primary_keys.push_back(interface);
-	
+
 	Column nchains_side1("nchains_side1", new DbInteger());
 	Column nchains_side2("nchains_side2", new DbInteger());
 	Column dG_cross("dG_cross", new DbReal());
@@ -397,10 +397,10 @@ InterfaceFeatures::write_interface_schema_to_db(utility::sql_database::sessionOP
 	//Column side2_nres("side2_nres", new DbReal());
 	Column complex_normalized("complex_normalized", new DbReal());
 	//Column side2_score("side2_complexed_interface_score", new DbReal());
-	
+
 	ForeignKey foreign_key(struct_id, "structures", "struct_id", true);
 	PrimaryKey primary_key(primary_keys);
-	
+
 	Schema table("interfaces", primary_key);
 	table.add_foreign_key(foreign_key);
 	table.add_column(chains_side1);
@@ -433,7 +433,7 @@ InterfaceFeatures::report_interface_features(
 	std::string const chains_side2) const
 {
 	using namespace protocols::analysis;
-	
+
 	std::string stmt_string = "INSERT INTO interfaces ("
 			"struct_id,"
 			"interface,"
@@ -458,10 +458,10 @@ InterfaceFeatures::report_interface_features(
 			" VALUES "+get_question_mark_string(20);
 
 	statement stmt(basic::database::safely_prepare_statement(stmt_string, db_session));
-	
+
 	protocols::analysis::InterfaceData data = interface_analyzer_->get_all_data();
 	protocols::analysis::PerResidueInterfaceData res_data = interface_analyzer_->get_all_per_residue_data();
-	
+
 	core::Size i = 0;
 	stmt.bind(i+=1, struct_id);
 	stmt.bind(i+=1, chains_side1+"_"+chains_side2);
@@ -490,54 +490,44 @@ void
 InterfaceFeatures::write_interface_side_schema_to_db(utility::sql_database::sessionOP db_session) const {
 	using namespace basic::database::schema_generator;
 	Column struct_id("struct_id", new DbBigInt());
-	Column interface("interface", new DbText());
-	Column chains_side1("chains_side1", new DbText());
-	Column chains_side2("chains_side2", new DbText());
-	Column side("side", new DbText());
+	Column interface("interface", new DbText(255));
+	Column chains_side1("chains_side1", new DbText(255));
+	Column chains_side2("chains_side2", new DbText(255));
+	Column side("side", new DbText(255));
 	Columns primary_keys;
 	primary_keys.push_back(struct_id);
 	primary_keys.push_back(interface);
 	primary_keys.push_back(side);
-	
+
 	PrimaryKey primary_key(primary_keys);
-	
+
 	ForeignKey foreign_key(struct_id, "structures", "struct_id", true);
-	
-	Columns match_keys;
-	match_keys.push_back(chains_side1);
-	match_keys.push_back(chains_side2);
-	
-	vector1< std::string > match_to;
-	match_to.push_back("chains_side1");
-	match_to.push_back("chains_side2");
-	
-	ForeignKey foreign_key2(match_keys, "interfaces", match_to, true);
+
 	Column complexed_interface_score("energy_int", new DbReal());
 	Column separated_interface_score("energy_sep", new DbReal());
 	Column dSASA("dSASA", new DbReal());
 	Column dG("dG", new DbReal());
 	Column interface_nres("interface_nres", new DbInteger());
-	
+
 	Column aromatic_fraction("aromatic_fraction", new DbReal());
 	Column aromatic_dSASA_fraction("aromatic_dSASA_fraction", new DbReal());
 	Column aromatic_energy_fraction("aromatic_dG_fraction", new DbReal());
-	
+
 	Column interface_to_surface_fraction("interface_to_surface_fraction", new DbReal());
-	
+
 	Column ss_sheet_fraction("ss_sheet_fraction", new DbReal());
 	Column ss_helix_fraction("ss_helix_fraction", new DbReal());
 	Column ss_loop_fraction("ss_loop_fraction", new DbReal());
-	
+
 	Column avg_per_res_energy_int("avg_per_residue_energy_int", new DbReal());
 	Column avg_per_res_energy_sep("avg_per_residue_energy_sep", new DbReal());
 	Column avg_per_res_energy_dG("avg_per_residue_energy_dG", new DbReal());
 	Column avg_per_res_SASA_int("avg_per_residue_SASA_int", new DbReal());
 	Column avg_per_res_SASA_sep("avg_per_residue_SASA_sep", new DbReal());
 	Column avg_per_res_dSASA("avg_per_residue_dSASA", new DbReal());
-	
+
 	Schema table("interface_sides", primary_keys);
 	table.add_foreign_key(foreign_key);
-	table.add_foreign_key(foreign_key2);
 	table.add_column(chains_side1);
 	table.add_column(chains_side2);
 	table.add_column(interface_nres);
@@ -558,9 +548,9 @@ InterfaceFeatures::write_interface_side_schema_to_db(utility::sql_database::sess
 	table.add_column(ss_sheet_fraction);
 	table.add_column(ss_helix_fraction);
 	table.add_column(ss_loop_fraction);
-	
+
 	table.write(db_session);
-	
+
 }
 
 void
@@ -573,6 +563,7 @@ InterfaceFeatures::report_interface_side_features(
 	protocols::analysis::InterfaceRegion const region,
 	std::string region_string) const
 {
+
 	std::string stmt_string = "INSERT INTO interface_sides ("
 			"struct_id,"
 			"interface,"
@@ -597,9 +588,9 @@ InterfaceFeatures::report_interface_side_features(
 			"ss_sheet_fraction,"
 			"ss_helix_fraction,"
 			"ss_loop_fraction) VALUES "+get_question_mark_string(23);
-	
+
 	statement stmt(basic::database::safely_prepare_statement(stmt_string, db_session));
-	
+
 	protocols::analysis::InterfaceData data = interface_analyzer_->get_all_data();
 	protocols::analysis::PerResidueInterfaceData res_data = interface_analyzer_->get_all_per_residue_data();
 
@@ -626,33 +617,33 @@ InterfaceFeatures::report_interface_side_features(
 	else{
 		stmt.bind(i+=1, 0.0);
 	}
-	
+
 	stmt.bind(i+=1, data.aromatic_dSASA_fraction[region]);
 	stmt.bind(i+=1, data.aromatic_dG_fraction[region]);
 	stmt.bind(i+=1, data.interface_to_surface_fraction[region]);
 	stmt.bind(i+=1, data.ss_sheet_nres[region]/(core::Real)data.interface_nres[region]);
 	stmt.bind(i+=1, data.ss_helix_nres[region]/(core::Real)data.interface_nres[region]);
 	stmt.bind(i+=1, data.ss_loop_nres[region]/(core::Real)data.interface_nres[region]);
-	
+
 	basic::database::safely_write_to_database(stmt);
 }
 
 void
 InterfaceFeatures::write_interface_residues_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
-	
+
 	Column struct_id("struct_id", new DbBigInt());
-	Column interface("interface", new DbText());
-	Column chains_side1("chains_side1", new DbText());
-	Column chains_side2("chains_side2", new DbText());
+	Column interface("interface", new DbText(255));
+	Column chains_side1("chains_side1", new DbText(255));
+	Column chains_side2("chains_side2", new DbText(255));
 	Column resnum("resNum", new DbInteger());
-	
+
 	Columns primary_keys;
 	primary_keys.push_back(struct_id);
 	primary_keys.push_back(interface);
 	primary_keys.push_back(resnum);
 	PrimaryKey primary_key(primary_keys);
-	
+
 	Columns foreign_keys;
 	foreign_keys.push_back(struct_id);
 	foreign_keys.push_back(resnum);
@@ -661,7 +652,7 @@ InterfaceFeatures::write_interface_residues_schema_to_db(utility::sql_database::
 	reference_columns.push_back("resNum");
 	ForeignKey foreign_key(foreign_keys, "residues", reference_columns, true);
 
-	Column side("side", new DbText());
+	Column side("side", new DbText(255));
 	Column SASA_sep("SASA_sep", new DbReal());
 	Column SASA_int("SASA_int", new DbReal());
 	Column dSASA("dSASA", new DbReal());
@@ -669,7 +660,7 @@ InterfaceFeatures::write_interface_residues_schema_to_db(utility::sql_database::
 	Column energy_sep("energy_sep", new DbReal());
 	Column energy_int("energy_int", new DbReal());
 	Column dG("dG", new DbReal());
-	
+
 	Schema table("interface_residues", primary_keys);
 	table.add_foreign_key(foreign_key);
 	table.add_column(chains_side1);
@@ -696,7 +687,7 @@ InterfaceFeatures::write_interface_residue_data_row_to_db(
 	protocols::analysis::PerResidueInterfaceData const & interface_data) const
 {
 
-	
+
 	std::string stmnt_string = "INSERT INTO interface_residues ("
 			"struct_id,"
 			"interface,"
@@ -711,9 +702,9 @@ InterfaceFeatures::write_interface_residue_data_row_to_db(
 			"dG,"
 			"energy_int,"
 			"energy_sep) VALUES "+get_question_mark_string(13);
-	
+
 	statement stmnt(basic::database::safely_prepare_statement(stmnt_string, db_session));
-	
+
 	core::Size i = 0;
 	stmnt.bind(i+=1, struct_id);
 	stmnt.bind(i+=1, chains_side1+"_"+chains_side2);
@@ -734,7 +725,7 @@ InterfaceFeatures::write_interface_residue_data_row_to_db(
 	stmnt.bind(i+=1,interface_data.complexed_energy[resnum]);
 	stmnt.bind(i+=1, interface_data.separated_energy[resnum]);
 	basic::database::safely_write_to_database(stmnt);
-	
+
 }
 
 } //features
