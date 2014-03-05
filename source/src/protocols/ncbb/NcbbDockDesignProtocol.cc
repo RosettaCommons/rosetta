@@ -712,7 +712,7 @@ NcbbDockDesignProtocol::parse_my_tag
 	if(tag->hasOption( "scorefxn"))
 	{
 		std::string const scorefxn_key( tag->getOption<std::string>("scorefxn" ) );
-		if ( ! data.has( "scorefxn", scorefxn_key ) )
+		if ( ! data.has( "scorefxns", scorefxn_key ) )
 			throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in basic::datacache::DataMap.");
 		score_fxn_ = data.get< core::scoring::ScoreFunction* >( "scorefxns", scorefxn_key );
 	}
