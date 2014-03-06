@@ -22,4 +22,3 @@
 #include <core/membrane/io/SpanFileLoaderCreator.hh>
 #include <core/membrane/io/EmbedSearchParamsLoaderCreator.hh>
 #include <core/membrane/io/EmbedDefLoaderCreator.hh>
-#include <core/membrane/MembraneProteinLoaderCreator.hh>

@@ -21,5 +21,5 @@ static ResourceOptionsRegistrator< basic::database::DatabaseSessionOptionsCreato
 static ResourceOptionsRegistrator< protocols::loophash::LoopHashLibraryOptionsCreator > LoopHashLibraryOptionsCreator_registrator;
 static ResourceOptionsRegistrator< protocols::loops::LoopsFileOptionsCreator > LoopsFileOptionsCreator_registrator;
 static ResourceOptionsRegistrator< protocols::surface_docking::SurfaceVectorOptionsCreator > SurfaceVectorOptionsCreator_registrator;
-static ResourceOptionsRegistrator< core::membrane::MembraneProteinOptionsCreator > MembraneProteinOptionsCreator_registrator;
+
 } //namespace protocols

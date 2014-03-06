@@ -18,4 +18,3 @@
 #include <protocols/loophash/LoopHashLibraryOptionsCreator.hh>
 #include <protocols/loops/LoopsFileOptionsCreator.hh>
 #include <protocols/surface_docking/SurfaceVectorOptionsCreator.hh>
-#include <core/membrane/MembraneProteinOptionsCreator.hh>

@@ -275,14 +275,11 @@ using basic::Warning;
 #include <core/membrane/io/LipoFileLoaderCreator.hh>
 #include <core/membrane/io/EmbedSearchParamsLoaderCreator.hh>
 #include <core/membrane/io/EmbedDefLoaderCreator.hh>
-#include <core/membrane/MembraneProteinLoaderCreator.hh>
 
 #include <core/membrane/io/SpanFileOptionsCreator.hh>
 #include <core/membrane/io/LipoFileOptionsCreator.hh>
 #include <core/membrane/io/EmbedSearchParamsOptionsCreator.hh>
 #include <core/membrane/io/EmbedDefOptionsCreator.hh>
-#include <core/membrane/MembraneProteinOptionsCreator.hh>
-
 
 //option key includes for deprecated pdbs
 #include <basic/options/keys/LoopModel.OptionKeys.gen.hh>

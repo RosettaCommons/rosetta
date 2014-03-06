@@ -21,6 +21,5 @@ static ResourceLoaderRegistrator< basic::database::DatabaseSessionLoaderCreator 
 static ResourceLoaderRegistrator< protocols::loophash::LoopHashLibraryLoaderCreator > LoopsHashLibraryLoaderCreator_registrator;
 static ResourceLoaderRegistrator< protocols::loops::LoopsFileLoaderCreator > LoopsFileLoaderCreator_registrator;
 static ResourceLoaderRegistrator< protocols::surface_docking::SurfaceVectorLoaderCreator > SurfaceVectorLoaderCreator_registrator;
-static ResourceLoaderRegistrator< core::membrane::MembraneProteinLoaderCreator > MembraneProteinLoaderCreator_registrator;
 
 } //namespace protocols

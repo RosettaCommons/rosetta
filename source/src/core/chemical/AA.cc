@@ -124,9 +124,6 @@ std::map< std::string, AA > setup_name2aa() {
 
     // Virtual residues
 	n2aa[ "VRT" ] = aa_vrt;
-
-  	// Membrane Protein AA
-  n2aa[ "MPR" ] = aa_mpr;
          
 	n2aa[ "UNP" ] = aa_unp;
 	n2aa[ "UNK" ] = aa_unk;
@@ -175,9 +172,6 @@ std::map< char, AA > setup_oneletter2aa() {
 	l2aa[ 'Z' ] = aa_unk;
 	l2aa[ 'X' ] = aa_vrt;
     
-    // Add 1 letter code for membrane proteins
-    l2aa[ 'm' ] = aa_mpr;
-
 	//vmullig -- The conflict for the D-amino acids and the beta-amino acids is also a problem:
 	/*l2aa[ "A" ] = aa_dal;
 	l2aa[ "C" ] = aa_dcs;

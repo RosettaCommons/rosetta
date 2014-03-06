@@ -97,7 +97,7 @@ sources = {
 		"EmbedSearchParamsIO",
 		"EmbedSearchParamsLoader",
 		"EmbedDefIO",
-		"EmbedDefLoader",
+		"EmbedDefLoader", 
         "LoadAllResources",
 	],
     "membrane/geometry" : [
@@ -105,13 +105,9 @@ sources = {
         "MembraneResidueFactory",
         "EmbeddingFactory",
     ],
-    "membrane/scoring" : [
-        #"MembranePenalties",
-    ],
     "membrane" : [
         "MPDatabaseIO",
         "MembraneConformation",
-        "MembraneProteinOptions",
     ],
 	"kinematics" : [
 		"FoldTree",

@@ -7,7 +7,7 @@
 NAME MEM
 IO_STRING MEM X
 TYPE LIGAND #residue type
-AA MPR
+AA UNK
 ATOM ORIG MPnm H    0.0 # normal
 ATOM  X   MPct H    0.0 # center
 ATOM  Y   MPtk H    0.0 # thickness

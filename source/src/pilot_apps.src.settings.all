@@ -648,6 +648,7 @@ sources = {
         "mpframework_integration",
         "mpframework_time_bchmk",
         #"mp_database_check",
+        #"mp_rigidbody_movers",
     ],
 	"pilot/rayyrw" : [
 		#"replonly",

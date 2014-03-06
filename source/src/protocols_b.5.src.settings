@@ -86,10 +86,6 @@ sources = {
 		"LoopMover_SlidingWindowCreator",
 		"LoopBuildMover",
 	],
-    "protocols/membrane": [
-        "CreateMembranePoseMover",
-        "MembraneUnitTestMover",
-    ],
 	"protocols/noesy_assign": [
                 "CovalentCompliance",
 		"CrossPeak",

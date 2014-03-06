@@ -284,7 +284,21 @@ MembraneConformation::insert_residue_by_jump(
 	using namespace core::membrane::util;
 	throw new EXCN_NonMembrane("Cannot insert a residue into a membrane topology - throws membrane spanning topology out of sync!");
 }
-
+	
+/// @brief Return the total number of polymer residues in the pose (excluding mp residues)
+core::Size
+MembraneConformation::total_polymer_residue() {
+	core::Size nres = num_chains();
+	return size()-nres;
+}
+	
+	
+/// @brief Return the total number of polymer chains in the pose (excluding mp residues)
+core::Size
+MembraneConformation::num_polymer_chains() {
+	return num_chains()-1;
+}
+	
 } // membrane
 } // core
 

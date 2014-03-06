@@ -86,14 +86,14 @@ public: // test functions
         
         // String type checking for membrane residues
         TS_ASSERT_EQUALS( mem->name().compare("MEM"), 0);
-        TS_ASSERT_EQUALS( name_from_aa( mem_aa ).compare("MPR"), 0);
+        TS_ASSERT_EQUALS( name_from_aa( mem_aa ).compare("UNK"), 0);
         TS_ASSERT_EQUALS( mem->type().atom_type( 1 ).atom_type_name().compare("MPnm"), 0 );
         TS_ASSERT_EQUALS( mem->type().atom_type( 2 ).atom_type_name().compare("MPct"), 0 );
         TS_ASSERT_EQUALS( mem->type().atom_type( 3 ).atom_type_name().compare("MPtk"), 0 );
         
         // String type checking for embedding residues
         TS_ASSERT_EQUALS( emb->name().compare("EMB"), 0);
-        TS_ASSERT_EQUALS( name_from_aa( emb_aa ).compare("MPR"), 0);
+        TS_ASSERT_EQUALS( name_from_aa( emb_aa ).compare("UNK"), 0);
         TS_ASSERT_EQUALS( emb->type().atom_type( 1 ).atom_type_name().compare("MPnm"), 0 );
         TS_ASSERT_EQUALS( emb->type().atom_type( 2 ).atom_type_name().compare("MPct"), 0 );
         TS_ASSERT_EQUALS( emb->type().atom_type( 3 ).atom_type_name().compare("MPdp"), 0 );
@@ -129,14 +129,14 @@ public: // test functions
         
         // String type checking for membrane residues
         TS_ASSERT_EQUALS( mem->name().compare("MEM"), 0);
-        TS_ASSERT_EQUALS( name_from_aa( mem_aa ).compare("MPR"), 0);
+        TS_ASSERT_EQUALS( name_from_aa( mem_aa ).compare("UNK"), 0);
         TS_ASSERT_EQUALS( mem->type().atom_type( 1 ).atom_type_name().compare("MPnm"), 0 );
         TS_ASSERT_EQUALS( mem->type().atom_type( 2 ).atom_type_name().compare("MPct"), 0 );
         TS_ASSERT_EQUALS( mem->type().atom_type( 3 ).atom_type_name().compare("MPtk"), 0 );
         
         // String type checking for embedding residues
         TS_ASSERT_EQUALS( emb->name().compare("EMB"), 0);
-        TS_ASSERT_EQUALS( name_from_aa( emb_aa ).compare("MPR"), 0);
+        TS_ASSERT_EQUALS( name_from_aa( emb_aa ).compare("UNK"), 0);
         TS_ASSERT_EQUALS( emb->type().atom_type( 1 ).atom_type_name().compare("MPnm"), 0 );
         TS_ASSERT_EQUALS( emb->type().atom_type( 2 ).atom_type_name().compare("MPct"), 0 );
         TS_ASSERT_EQUALS( emb->type().atom_type( 3 ).atom_type_name().compare("MPdp"), 0 );

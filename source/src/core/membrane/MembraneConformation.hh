@@ -105,6 +105,12 @@ public: // membrane info
 
 	/// @brief Get Chain Embedding Depth Parameter
 	core::Real embedding_depth( core::Size chain );
+	
+	/// @brief Return the total number of polymer reisdues in the pose (no mp residues)
+	core::Size total_polymer_residue();
+	
+	/// @brief Return the total number of polymer chains in the pose (no mp chain)
+	core::Size num_polymer_chains();
 
 	///// Overrided Methods ///////////
 	void insert_residue_by_jump(
