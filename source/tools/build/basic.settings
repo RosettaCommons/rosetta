@@ -211,6 +211,14 @@ settings = {
         },
     },
 
+    "gcc, 4.7" : {
+        "appends" : {
+            "flags" : {
+                "warn" : [ "Wno-error=unknown-warning", ],
+            },
+        },
+    },
+
     "gcc, debug" : {
         "appends" : {
             "flags" : {
