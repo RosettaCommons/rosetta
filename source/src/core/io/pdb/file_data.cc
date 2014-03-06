@@ -74,6 +74,7 @@
 
 // External headers
 #include <ObjexxFCL/format.hh>
+#include <boost/lexical_cast.hpp>
 
 // C++ headers
 #include <fstream>
@@ -1088,28 +1089,28 @@ build_pose_as_is1(
 					rsd_type.has_variant_type( UPPERTERM_TRUNC );
 			if ( is_polymer && (
 				(is_lower_terminus != lower_term_type ) || (is_upper_terminus != upper_term_type ) ) ) {
-				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				//TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				//TR.Debug << "because of the terminus state" << std::endl;
 				continue;
 			}
 			if (is_polymer && (is_branch_point != rsd_type.has_variant_type(BRANCH_POINT))) {
-				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				//TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				//TR.Debug << "because of the branch state" << std::endl;
 				continue;
 			}
 			if (is_polymer && (is_branch_lower_terminus != rsd_type.has_variant_type(BRANCH_LOWER_TERMINUS))) {
-				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				//TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				//TR.Debug << "because of the branch lower terminus state" << std::endl;
 				continue;
 			}
 			if ( rsd_type.aa() == aa_cys && rsd_type.has_variant_type( DISULFIDE ) && pdb_name != "CYD" ) {
-				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				//TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				//TR.Debug << "because of the disulfide state" << std::endl;
 				continue;
 			}
 			if ( !options.keep_input_protonation_state() &&
 				( rsd_type.has_variant_type( PROTONATED ) || rsd_type.has_variant_type( DEPROTONATED ) )){
-				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				//TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				//TR.Debug << "because of the protonation state" << std::endl;
 				continue;
 			}
@@ -1117,7 +1118,7 @@ build_pose_as_is1(
 			// special checks to ensure selecting the proper carbohydrate ResidueType
 			if (rsd_type.is_carbohydrate() && residue_type_base_name(rsd_type) !=
 					fd.carbohydrate_residue_type_base_names[resid]) {
-				TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+				//TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 				//TR.Debug << "because the residue is not a carbohydrate" << std::endl;
 				continue;
 			}
@@ -1131,7 +1132,7 @@ build_pose_as_is1(
 				for (Size k = 1, n_branch_points = branch_points_on_this_residue.size();
 						k <= n_branch_points; ++k) {
 					branch_point = branch_points_on_this_residue[k][2];  // 3rd column (index 2) is the atom number.
-					TR.Debug << "Checking '" << rsd_type.name() << "' for branch at position " << branch_point << std::endl;
+					//TR.Debug << "Checking '" << rsd_type.name() << "' for branch at position " << branch_point << std::endl;
 					if (residue_type_all_patches_name(rsd_type).find(string(1, branch_point) + ")-branch") ==
 							string::npos) {
 						branch_point_is_missing = true;
@@ -1139,7 +1140,7 @@ build_pose_as_is1(
 					}
 				}
 				if (branch_point_is_missing) {
-					TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
+					//TR.Debug << "Discarding '" << rsd_type.name() << "' ResidueType" << std::endl;
 					//TR.Debug << "because of a missing branch point" << std::endl;
 					continue;
 				}
@@ -1169,15 +1170,29 @@ build_pose_as_is1(
 		} // j=1,rsd_type_list.size()
 
 		if(!best_index){
-			utility_exit_with_message( "Unrecognized residue: " + pdb_name );
+			std::string variant;
+			if ( is_lower_terminus ) {
+				variant += " lower-terminal";
+			} else if ( is_branch_lower_terminus ) {
+				variant += " branch-lower-terminal";
+			}
+			if ( is_upper_terminus ) {
+				variant += " upper-terminal";
+			}
+			if ( is_branch_point ) {
+				variant += " branch-point";
+			}
+			utility_exit_with_message( "No match found for unrecognized residue at position " +
+					boost::lexical_cast<string>(i) +
+					"\nLooking for" + variant + " residue with 3-letter code: " + pdb_name);
 		}
 
 		ResidueType const & rsd_type( *(rsd_type_list[ best_index ]) );
 		TR.Debug << "Match: '" << rsd_type.name() << "'; missing " << best_xyz_missing << " coordinates" << std::endl;
 
 		if ( best_rsd_missing ) {
-			TR << "[ WARNING ] discarding " << best_rsd_missing << " atoms at position " << i <<
-				" in file " << fd.filename << ". Best match rsd_type:  " << rsd_type.name() << std::endl;
+			TR.Warning << "[ WARNING ] discarding " << best_rsd_missing << " atoms at position " << i <<
+					" in file " << fd.filename << ". Best match rsd_type:  " << rsd_type.name() << std::endl;
 		}
 
 		// check for missing mainchain atoms:
@@ -1195,8 +1210,8 @@ build_pose_as_is1(
 					}
 				}
 				if ( !mainchain_core_present ) {
-					TR << "[ WARNING ] skipping pdb residue b/c its missing too many mainchain atoms: " << resid <<
-						' ' << pdb_name << ' ' << rsd_type.name() << std::endl;
+					TR.Warning << "[ WARNING ] skipping pdb residue b/c it's missing too many mainchain atoms: " <<
+							resid << ' ' << pdb_name << ' ' << rsd_type.name() << std::endl;
 					for ( Size k=1; k<= nbb; ++k ) {
 						if ( !xyz.count( rsd_type.atom_name(mainchain[k] ) ) ) {
 							TR << "missing: " << rsd_type.atom_name( mainchain[k] ) << std::endl;
