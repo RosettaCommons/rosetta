@@ -22,7 +22,7 @@ BOND  N    H
 BOND  CA   C  
 BOND  CA  VCB 
 BOND  CA   HA 
-BOND  C    O  
+BOND_TYPE  C    O  2
 BOND  VCB  VSG 
 BOND  VSG  VHG 
 CHI 1  N    CA   VCB   VSG 

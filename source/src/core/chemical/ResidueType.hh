@@ -506,6 +506,10 @@ public:
 	VD
 	vd_from_index(Size const & atomno) const;
 
+	/// @brief Constant access to the underlying graph.
+	ResidueGraph const &
+	graph() const { return graph_; }
+
 	void
 	show_all_atom_names( std::ostream & out ) const;
 

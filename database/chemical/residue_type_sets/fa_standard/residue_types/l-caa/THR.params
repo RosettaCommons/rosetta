@@ -25,7 +25,7 @@ BOND  N    H
 BOND  CA   C  
 BOND  CA   CB 
 BOND  CA   HA 
-BOND  C    O  
+BOND_TYPE  C    O  2
 BOND  CB   OG1
 BOND  CB   CG2
 BOND  CB   HB 

@@ -92,6 +92,28 @@ typedef std::pair<NameVDMap::iterator, bool> NameVDInserted;
 ////////////////////////////////////////////////////////////
 
 
+/// @default A filtered graph that doesn't contain fake/virtual atoms and fake/virtual bonds.
+
+class RealFilter{
+public:
+  RealFilter(){};
+  RealFilter(ResidueGraph const & graph):graph_(&graph) {};
+  bool operator()(VD const vd) const;
+  bool operator()(ED const ed) const;
+private:
+  ResidueGraph const * graph_; // Cannot use a reference because 0-arg constructor needed by boost::iterators
+};
+typedef boost::filtered_graph<ResidueGraph, RealFilter, RealFilter> RealResidueGraph;
+typedef RealResidueGraph::vertex_descriptor RealResidueVD;
+typedef RealResidueGraph::edge_descriptor RealResidueED;
+typedef boost::graph_traits<RealResidueGraph>::vertex_iterator RealResidueVIter;
+typedef boost::graph_traits<RealResidueGraph>::edge_iterator RealResidueEIter;
+typedef boost::graph_traits<RealResidueGraph>::out_edge_iterator RealResidueOutEdgeIter;
+typedef std::pair<RealResidueOutEdgeIter, RealResidueOutEdgeIter> RealResidueOutEdgeIterPair;
+typedef std::pair<RealResidueVIter, RealResidueVIter> RealResidueVIterPair;
+typedef boost::graph_traits<RealResidueGraph>::adjacency_iterator RealResidueAdjacentIter;
+typedef std::pair<RealResidueAdjacentIter, RealResidueAdjacentIter> RealResidueAdjacentIterPair;
+
 /// @brief The filter responsible for obtaining all heavy atoms.
 class HeavyAtomFilter{
 public:

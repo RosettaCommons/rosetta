@@ -13,6 +13,7 @@ BOND ZN    V1
 BOND ZN    V2
 BOND ZN    V3
 BOND ZN    V4
+CHARGE ZN FORMAL +2
 NBR_ATOM ZN
 NBR_RADIUS 0.01
 # tetrahedral geometry with 2.2 distance from center to vertex
