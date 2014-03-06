@@ -151,6 +151,7 @@ namespace inout { namespace dbms { BooleanOptionKey const readonly( "inout:dbms:
 namespace inout { namespace dbms { BooleanOptionKey const separate_db_per_mpi_process( "inout:dbms:separate_db_per_mpi_process" );  } }
 namespace inout { namespace dbms { IntegerOptionKey const database_partition( "inout:dbms:database_partition" );  } }
 namespace inout { namespace dbms { BooleanOptionKey const use_compact_residue_schema( "inout:dbms:use_compact_residue_schema" );  } }
+namespace inout { namespace dbms { BooleanOptionKey const retry_failed_reads( "inout:dbms:retry_failed_reads" );  } }
 namespace out { BooleanOptionKey const out( "out" );  }
 namespace out { BooleanOptionKey const overwrite( "out:overwrite" );  }
 namespace out { IntegerOptionKey const nstruct( "out:nstruct" );  }
@@ -771,4 +772,3 @@ namespace jumps { BooleanOptionKey const overlap_chainbreak( "jumps:overlap_chai
 namespace jumps { RealOptionKey const sep_switch_accelerate( "jumps:sep_switch_accelerate" );  }
 namespace jumps { BooleanOptionKey const dump_frags( "jumps:dump_frags" );  }
 namespace jumps { IntegerOptionKey const njumps( "jumps:njumps" );  }
-namespace jumps { IntegerOptionKey const max_strand_gap_allowed( "jumps:max_strand_gap_allowed" );  }

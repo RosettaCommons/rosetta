@@ -19,6 +19,7 @@ namespace protocols {
 using namespace protocols::ligand_docking::rdf ;
 static RDFFunctionRegistrator< RDFEtableCreator > RDFEtableCreator_registrator;
 static RDFFunctionRegistrator< RDFElecCreator > RDFElecCreator_registrator;
+static RDFFunctionRegistrator< RDFChargeCreator > RDFChargeCreator_registrator;
 static RDFFunctionRegistrator< RDFHbondCreator > RDFHbondCreator_registrator;
 static RDFFunctionRegistrator< RDFBinaryHbondCreator > RDFBinaryHbondCreator_registrator;
 static RDFFunctionRegistrator< RDFOrbitalFunctionCreator > RDFOrbitalFunctionCreator_registrator;

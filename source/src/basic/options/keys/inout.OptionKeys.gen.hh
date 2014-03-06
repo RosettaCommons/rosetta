@@ -36,6 +36,7 @@ namespace inout { namespace dbms { extern BooleanOptionKey const readonly; } }
 namespace inout { namespace dbms { extern BooleanOptionKey const separate_db_per_mpi_process; } }
 namespace inout { namespace dbms { extern IntegerOptionKey const database_partition; } }
 namespace inout { namespace dbms { extern BooleanOptionKey const use_compact_residue_schema; } }
+namespace inout { namespace dbms { extern BooleanOptionKey const retry_failed_reads; } }
 
 } // namespace OptionKeys
 } // namespace options

@@ -156,6 +156,7 @@ option.add( basic::options::OptionKeys::inout::dbms::readonly, "open sqlite3 dat
 option.add( basic::options::OptionKeys::inout::dbms::separate_db_per_mpi_process, "In MPI mode, open a separate sqlite3 database for each process with extension _<mpi_rank> and write partitioned schema to that database." ).def(false);
 option.add( basic::options::OptionKeys::inout::dbms::database_partition, "Open a sepearte sqlite3 database with the extension _<partition> and write a partitioned schema to that database." ).def(-1);
 option.add( basic::options::OptionKeys::inout::dbms::use_compact_residue_schema, "Store all the atoms for a residue in a binary silent file style blob.  Sacrifices analyzability for scalability.  If you don't know if you want this you probably don't." ).def(false);
+option.add( basic::options::OptionKeys::inout::dbms::retry_failed_reads, "If a database read fails for an unknown reason, try again several times before giving up" ).def(false);
 option.add( basic::options::OptionKeys::out::out, "Ouput option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::out::overwrite, "Ignore 'CHECKPOINT' file and the overwrite the PDB file(s)" );
 option.add( basic::options::OptionKeys::out::nstruct, "Number of times to process each input PDB" ).def(1);
@@ -776,10 +777,10 @@ option.add( basic::options::OptionKeys::jumps::overlap_chainbreak, "use the over
 option.add( basic::options::OptionKeys::jumps::sep_switch_accelerate, "constraints and chainbreak depend on in-chain-separation. Accelerate their enforcement 1+num_cuts()*<this_factor>" ).def(0.4);
 option.add( basic::options::OptionKeys::jumps::dump_frags, "dump jump_fragments " ).def(false);
 option.add( basic::options::OptionKeys::jumps::njumps, "number_of_jumps to select from library for each trajectory (membrane mode)" ).def(1);
-option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::contact_score, "the strand-weight will have a weight * contact_order component" ).def(0.0);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
+option.add( basic::options::OptionKeys::jumps::contact_score, "the strand-weight will have a weight * contact_order component" ).def(0.0);
 option.add( basic::options::OptionKeys::jumps::filter_templates, "filter hybridization protocol templates" ).def(false);
 option.add( basic::options::OptionKeys::templates::templates, "templates option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::templates::config, "read a list of templates and alignments" ).def("templates.dat");
@@ -1552,10 +1553,10 @@ option.add( basic::options::OptionKeys::membrane::membrane_normal, "membrane nor
 option.add( basic::options::OptionKeys::membrane::view, "viewing pose during protocol" ).def(false);
 option.add( basic::options::OptionKeys::membrane::Mhbond_depth, "membrane depth dependent correction to the hbond potential" ).def(false);
 option.add( basic::options::OptionKeys::membrane::thickness, "one leaflet hydrocarbon thickness for solvation calculations (Angstroms)" ).def(15);
-option.add( basic::options::OptionKeys::casp::casp, "casp option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::casp::decoy, "No description" );
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::casp::casp, "casp option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::casp::decoy, "No description" );
 option.add( basic::options::OptionKeys::casp::wt, "No description" );
 option.add( basic::options::OptionKeys::casp::rots, "No description" );
 option.add( basic::options::OptionKeys::casp::opt_radius, "optimization radius for repacking and minimization" );
@@ -2328,10 +2329,10 @@ option.add( basic::options::OptionKeys::hotspot::cluster, "Cluster stubset. Will
 option.add( basic::options::OptionKeys::hotspot::colonyE, "Rescore hotspots from -hashfile based on colony energy." ).def(false);
 option.add( basic::options::OptionKeys::hotspot::length, "Length of hotspot peptide to use for hashing. Sidechain-containing group will be in the center." ).def(1);
 option.add( basic::options::OptionKeys::hotspot::envhb, "Use environment dependent Hbonds when scoring hotspots." ).def(false);
-option.add( basic::options::OptionKeys::hotspot::angle, "Maximum allowed angle between stubCA, target CoM, and stubCB. Used to determine if stub is pointing towards target. Negative numbers deactivates this check (default)" ).def(-1);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::hotspot::angle_res, "Residue to use for angle calculation from stubCA, <this option>, and stubCB. Used to determine if stub is pointing towards target. 0 uses the default, which is the targets center of mass" ).def(0);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::hotspot::angle, "Maximum allowed angle between stubCA, target CoM, and stubCB. Used to determine if stub is pointing towards target. Negative numbers deactivates this check (default)" ).def(-1);
+option.add( basic::options::OptionKeys::hotspot::angle_res, "Residue to use for angle calculation from stubCA, <this option>, and stubCB. Used to determine if stub is pointing towards target. 0 uses the default, which is the targets center of mass" ).def(0);
 option.add( basic::options::OptionKeys::parser::parser, "parser option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::parser::protocol, "File name for the xml parser protocol" );
 option.add( basic::options::OptionKeys::parser::script_vars, "Variable substitutions for xml parser, in the form of name=value" );

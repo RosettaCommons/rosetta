@@ -149,6 +149,80 @@ RDFResultList RDFElecFunction::operator()(AtomPairData const & atom_data )
 	return results;
 }
 	
+RDFBaseOP RDFChargeCreator::create_rdf_function() const
+{
+	return new RDFChargeFunction;
+}
+	
+std::string RDFChargeCreator::type_name() const
+{
+	return "RDFChargeFunction";
+}
+	
+RDFChargeFunction::RDFChargeFunction() : RDFBase("RDFChargeFunction")
+{
+	
+}
+	
+RDFChargeFunction::~RDFChargeFunction()
+{
+	
+}
+void RDFChargeFunction::parse_my_tag(
+								   utility::tag::TagCOP tag,
+								   basic::datacache::DataMap &)
+{
+	//Sign mode can be "ligand_plus" or "ligand_minus" or "same_sign
+	std::string sign_mode = tag->getOption<std::string>("sign_mode","same_sign");
+	if(sign_mode == "ligand_plus")
+	{
+		function_sign_ = LigandPlusProteinMinus;
+		function_name_ = "charge_plus";
+		
+	}else if(sign_mode == "ligand_minus")
+	{
+		function_sign_ = LigandMinusProteinPlus;
+		function_name_ = "charge_minus";
+	}else if(sign_mode == "same_sign")
+	{
+		function_sign_ = SameSign;
+		function_name_ = "charge_unsigned";
+	}else
+	{
+		utility::excn::EXCN_RosettaScriptsOption("RDFHbondFunction sign_mode can only be ligand_acceptor or ligand_donor");
+	}
+	this->add_function_name(function_name_);
+}
+	
+RDFResultList RDFChargeFunction::operator()(AtomPairData const & atom_data )
+{
+	RDFResultList results;
+	
+	core::Real charge_product = atom_data.protein_atom_charge*atom_data.ligand_atom_charge;
+	if(function_sign_ == LigandMinusProteinPlus &&
+		atom_data.ligand_atom_charge < 0 &&
+		atom_data.protein_atom_charge >= 0
+	   )
+	{
+		results.push_back(std::make_pair(function_name_, charge_product));
+	}else if(function_sign_ == LigandPlusProteinMinus &&
+		atom_data.ligand_atom_charge >= 0 &&
+		atom_data.protein_atom_charge < 0
+			 )
+	{
+		results.push_back(std::make_pair(function_name_, charge_product));
+	}else if(function_sign_ == SameSign &&
+			 ((atom_data.ligand_atom_charge < 0 &&
+			 atom_data.protein_atom_charge < 0) ||
+			 (atom_data.ligand_atom_charge >= 0 &&
+			 atom_data.protein_atom_charge >= 0)) )
+	{
+		results.push_back(std::make_pair(function_name_, charge_product));
+	}
+	
+	return results;
+}
+	
 RDFBaseOP RDFHbondCreator::create_rdf_function() const
 {
 	return new RDFHbondFunction;
@@ -161,7 +235,7 @@ std::string RDFHbondCreator::type_name() const
 	
 RDFHbondFunction::RDFHbondFunction() : RDFBase("RDFHbondFunction"),hbond_set_(NULL)
 {
-	this->add_function_name("hbond");
+	
 }
 
 RDFHbondFunction::~RDFHbondFunction()
@@ -170,11 +244,29 @@ RDFHbondFunction::~RDFHbondFunction()
 }
 
 void RDFHbondFunction::parse_my_tag(
-	utility::tag::TagCOP ,
+	utility::tag::TagCOP tag ,
 	basic::datacache::DataMap & )
 {
-
-	
+	//Sign mode can be "ligand_acceptor" or "ligand_donor"
+	std::string sign_mode = tag->getOption<std::string>("sign_mode","unsigned");
+	if(sign_mode == "ligand_acceptor")
+	{
+		function_sign_ = LigandPlusProteinMinus;
+		function_name_ = "hbond_acceptor";
+		
+	}else if(sign_mode == "ligand_donor")
+	{
+		function_sign_ = LigandMinusProteinPlus;
+		function_name_ = "hbond_donor";
+	}else if(sign_mode == "unsigned")
+	{
+		function_sign_ = SameSign;
+		function_name_ = "hbond_unsigned";
+	}else
+	{
+		utility::excn::EXCN_RosettaScriptsOption("RDFHbondFunction sign_mode can only be ligand_acceptor or ligand_donor");
+	}
+	this->add_function_name(function_name_);
 }
 
 void RDFHbondFunction::preamble(core::pose::Pose & pose)
@@ -194,15 +286,29 @@ RDFResultList RDFHbondFunction::operator()(AtomPairData const & atom_data )
 		core::scoring::hbonds::HBondCOP current_bond(hbond_list[hbond_index]);
 		core::id::AtomID acc_id(current_bond->acc_atm(),current_bond->acc_res());
 		core::id::AtomID don_id(current_bond->don_hatm(),current_bond->don_res());
-		if((acc_id == atom_data.ligand_atom_id) || (don_id == atom_data.ligand_atom_id))
+
+		if((function_sign_ == SameSign) && ((acc_id == atom_data.ligand_atom_id) || (don_id == atom_data.ligand_atom_id)))
 		{
+			//Unsigned function
 			core::Real hbond = current_bond->energy();
-			results.push_back(std::make_pair("hbond", hbond));
+			results.push_back(std::make_pair(function_name_, hbond));
+			return results;
+		}else if( (function_sign_ == LigandPlusProteinMinus) && (acc_id == atom_data.ligand_atom_id) )
+		{
+			//ligand_acceptor function
+			core::Real hbond = current_bond->energy();
+			results.push_back(std::make_pair(function_name_, hbond));
+			return results;
+		}else if( (function_sign_ == LigandMinusProteinPlus) && (don_id == atom_data.ligand_atom_id) )
+		{
+			//ligand_donor function
+			core::Real hbond = current_bond->energy();
+			results.push_back(std::make_pair(function_name_, hbond));
 			return results;
 		}
 	}
 	
-	results.push_back(std::make_pair("hbond", 0.0));
+	results.push_back(std::make_pair(function_name_, 0.0));
 	return results;
 	
 }
@@ -219,7 +325,7 @@ std::string RDFBinaryHbondCreator::type_name() const
 
 RDFBinaryHbondFunction::RDFBinaryHbondFunction() : RDFBase("RDFBinaryHbindFunction")
 {
-	this->add_function_name("hbond_binary");
+	
 }
 
 RDFBinaryHbondFunction::~RDFBinaryHbondFunction()
@@ -227,9 +333,28 @@ RDFBinaryHbondFunction::~RDFBinaryHbondFunction()
 	
 }
 
-void RDFBinaryHbondFunction::parse_my_tag(utility::tag::TagCOP,basic::datacache::DataMap &)
+void RDFBinaryHbondFunction::parse_my_tag(utility::tag::TagCOP tag,basic::datacache::DataMap &)
 {
-	
+	//Sign mode can be "ligand_acceptor" or "ligand_donor", or matching pair
+	std::string sign_mode = tag->getOption<std::string>("sign_mode","matching_pair");
+	if(sign_mode == "ligand_acceptor")
+	{
+		function_sign_ = LigandPlusProteinMinus;
+		function_name_ = "hbond_binary_acceptor";
+	}else if(sign_mode == "ligand_donor")
+	{
+		function_sign_ = LigandMinusProteinPlus;
+		function_name_ = "hbond_binary_donor";
+		
+	}else if(sign_mode == "matching_pair")
+	{
+		function_sign_ = SameSign;
+		function_name_ = "hbond_matching_pair";
+	}else
+	{
+		utility::excn::EXCN_RosettaScriptsOption("RDFHbondFunction sign_mode can only be ligand_acceptor or ligand_donor or matching pair");
+	}
+	this->add_function_name(function_name_);
 }
 
 RDFResultList RDFBinaryHbondFunction::operator()(AtomPairData const & atom_data)
@@ -237,18 +362,27 @@ RDFResultList RDFBinaryHbondFunction::operator()(AtomPairData const & atom_data)
 	RDFResultList results;
 	//is the current pair of atoms a donor and acceptor?
 	core::Real hbond_binary = 0.0;
-	if(atom_data.protein_atom_type.is_donor() && atom_data.ligand_atom_type.is_acceptor())
+	if((function_sign_ == LigandPlusProteinMinus) &&
+		( atom_data.protein_atom_type.is_donor() && atom_data.ligand_atom_type.is_acceptor()) )
 	{
 		
 		hbond_binary = 1.0;
-	}else if(atom_data.protein_atom_type.is_acceptor() && atom_data.ligand_atom_type.is_donor())
+	}else if((function_sign_ == LigandMinusProteinPlus) &&
+		(atom_data.protein_atom_type.is_acceptor() && atom_data.ligand_atom_type.is_donor()))
 	{
 		hbond_binary = 1.0;
-	}else{
+	}else if( (function_sign_ == SameSign) &&
+		( (atom_data.protein_atom_type.is_donor() && atom_data.ligand_atom_type.is_donor() ) ||
+		  (atom_data.protein_atom_type.is_acceptor() && atom_data.ligand_atom_type.is_acceptor()))
+		)
+	{
+		hbond_binary = 1.0;
+	}
+	else{
 		hbond_binary = 0.0;
 	}
 	
-	results.push_back(std::make_pair("hbond_binary", hbond_binary));
+	results.push_back(std::make_pair(function_name_, hbond_binary));
 	return results;
 }
 

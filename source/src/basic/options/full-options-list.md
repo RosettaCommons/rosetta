@@ -1,7 +1,7 @@
 # List of Rosetta command line options.
 
 _(This is an automatically generated file, do not edit!)_
-Generated: 2014-02-28
+Generated: 2014-03-06
 
 _Note that some application specific options may not be present in this list._
 
@@ -335,6 +335,8 @@ _Note that some application specific options may not be present in this list._
 <dd>Open a sepearte sqlite3 database with the extension _<partition> and write a partitioned schema to that database.<br/>Default: -1<br/></dd>
 <dt><b>-use_compact_residue_schema</b> \<Boolean\></dt>
 <dd>Store all the atoms for a residue in a binary silent file style blob.  Sacrifices analyzability for scalability.  If you don't know if you want this you probably don't.<br/>Default: false<br/></dd>
+<dt><b>-retry_failed_reads</b> \<Boolean\></dt>
+<dd>If a database read fails for an unknown reason, try again several times before giving up<br/>Default: false<br/></dd>
 </dl>
 + <h2>-out</h2>
 <dl>

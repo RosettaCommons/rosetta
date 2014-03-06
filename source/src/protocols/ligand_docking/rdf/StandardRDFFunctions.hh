@@ -95,6 +95,41 @@ public:
 private:
 	core::scoring::etable::coulomb::CoulombOP coloumb_;
 };
+	
+	
+/// @brief Creator to geneate a new RDFChargeFunction
+class RDFChargeCreator : public RDFFunctionCreator
+{
+public:
+	
+	/// @brief return a pointer to a newly created RDFElecFunction
+	virtual RDFBaseOP create_rdf_function() const;
+	/// @brief return the name of the RDFEtableFunction
+	virtual std::string type_name() const;
+};
+
+/// @brief RDFChargeFunction computes fa_elec for a pair of atoms
+class RDFChargeFunction : public RDFBase
+{
+public:
+	RDFChargeFunction();
+	
+	virtual ~RDFChargeFunction();
+	
+	/// @brief parse tags for RDFElecFunction tag
+	virtual void parse_my_tag(
+							  utility::tag::TagCOP tag,
+							  basic::datacache::DataMap & );
+	
+	/// @brief compute fa_elec for atom pair
+	virtual RDFResultList operator()(AtomPairData const & atom_data );
+	
+	
+private:
+	FunctionSign function_sign_;
+	std::string function_name_;
+
+};
 
 /// @brief Creator to geneate a new RDFHbondFunction
 class RDFHbondCreator : public RDFFunctionCreator
@@ -128,6 +163,9 @@ public:
 	
 private:
 	core::scoring::hbonds::HBondSetOP hbond_set_;
+	FunctionSign function_sign_;
+	std::string function_name_;
+	
 };
 	
 /// @brief Creator to geneate a new RDFBinaryHbondFunction
@@ -159,6 +197,8 @@ public:
 	
 	
 private:
+	FunctionSign function_sign_;
+	std::string function_name_;
 };
 
 /// @brief Creator to geneate a new RDFOrbitalFunction

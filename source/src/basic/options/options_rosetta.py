@@ -202,8 +202,8 @@ Options = Option_Group( '',
 			Option( 'pdb', 'PathVector', desc="PDB file input search paths" ),
 			Option( 'database', 'PathVector',
 					desc="Database file input search paths.  If the database is not found the ROSETTA3_DB environment "
-							"variable is tried.")
-		),
+							"variable is tried."),
+					),
 
 		# File options --------------------------------------------------------
 		Option_Group( 'file',
@@ -456,6 +456,8 @@ Options = Option_Group( '',
 					desc="Store all the atoms for a residue in a binary silent file style blob.  Sacrifices "
 							"analyzability for scalability.  If you don't know if you want this you probably don't.",
 					default='false'),
+			Option( 'retry_failed_reads','Boolean',desc="If a database read fails for an unknown reason, try again several times before giving up",default='false')
+			
 		),  # dbms
 	),  # inout
 

@@ -1,6 +1,6 @@
 /*!
 @page full_options_list Rosetta command line option descriptions.
-<i>(This is an automatically generated file, do not edit!)</i> Generated: 2014-02-28
+<i>(This is an automatically generated file, do not edit!)</i> Generated: 2014-03-06
 <ul>
 <li><h2>in</h2>
 <dl>
@@ -697,6 +697,11 @@
 <dl>
 <dt><b>-use_compact_residue_schema</b> \<Boolean\><dt>
 <dd>Store all the atoms for a residue in a binary silent file style blob.  Sacrifices analyzability for scalability.  If you don't know if you want this you probably don't.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-retry_failed_reads</b> \<Boolean\><dt>
+<dd>If a database read fails for an unknown reason, try again several times before giving up</dd><br>
 <dd>Default: false</dd><br>
 </dl>
  </li>

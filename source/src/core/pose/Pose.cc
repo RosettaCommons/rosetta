@@ -976,9 +976,9 @@ Pose::set_chi(
 {
 	PyAssert( (seqpos<=total_residue()), "Pose::set_chi( int const chino , Size const seqpos ): "
 			"variable seqpos is out of range!" );
-	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() ),
+	PyAssert( (residue_type(seqpos).is_protein() || residue_type(seqpos).is_carbohydrate() || residue_type(seqpos).is_ligand()),
 			"Pose::set_chi( int const chino , Size const seqpos , Real const setting ): "
-			"residue seqpos is not part of a protein or carbohydrate!" );
+			"residue seqpos is not part of a protein,ligand or carbohydrate!" );
 	PyAssert( (chino>0) && (chino<=static_cast<int>(residue(seqpos).nchi())),
 			"Pose::set_chi( int const chino , Size const seqpos ): "
 			"variable chino innappropriate for this residue!" );

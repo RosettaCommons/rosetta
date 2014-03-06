@@ -42,7 +42,6 @@ typedef utility::vector1<std::pair<std::string,core::Real> > RDFResultList;
 /// @brief a simple struct for storing information needed to compute an RDF interaction
 struct AtomPairData
 {
-	
 	AtomPairData(core::chemical::AtomType const & protein_atom,core::chemical::AtomType const & ligand_atom	) :
 	protein_atom_id(),
 	ligand_atom_id(),
@@ -81,6 +80,13 @@ class RDFBase : public utility::pointer::ReferenceCount
 {
 public:
 	
+	/// @brief an enum of the possible states that a signed RDF can have
+	enum FunctionSign
+	{
+		LigandPlusProteinMinus, //Ligand side positve, protein side negative
+		LigandMinusProteinPlus, //Ligand side negative, protein side positive
+		SameSign //both sides have same sign
+	};
 	
 	RDFBase(std::string const & name) : name_(name)
 	{
@@ -110,8 +116,12 @@ public:
 	{
 		return function_names_;
 	}
+
 	
 private:
+	
+
+	
 	std::string name_;
 	utility::vector1<std::string> function_names_;
 };

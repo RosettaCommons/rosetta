@@ -1,3 +1,4 @@
+namespace hotspot { RealOptionKey const angle( "hotspot:angle" );  }
 namespace hotspot { IntegerOptionKey const angle_res( "hotspot:angle_res" );  }
 namespace parser { BooleanOptionKey const parser( "parser" );  }
 namespace parser { StringOptionKey const protocol( "parser:protocol" );  }

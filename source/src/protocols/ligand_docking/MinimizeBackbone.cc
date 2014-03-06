@@ -353,6 +353,11 @@ void MinimizeBackbone::restrain_protein_Calpha(
 		core::id::AtomID const & fixed_pt
 ) {
 	core::conformation::Residue const & residue = pose.residue(residue_id);
+	if(!residue.is_protein())
+	{
+		//Skip non-protein residues even if they are part of an interface
+		return;
+	}
 	char const & ligand_chain= interface[residue_id].chain;
 	std::map<char, LigandAreaOP> const & ligand_areas= interface_builder_->get_ligand_areas();
 	std::map<char, LigandAreaOP>::const_iterator found= ligand_areas.find(ligand_chain);
@@ -432,8 +437,16 @@ core::Size find_attach_pt(
 	//for(core::Size i = 1; i <= pose.n_residue(); ++i) { // only look at upstream residues, else multi-residue ligand will attach to itself
 	for (core::Size i = 1; i < residue_id; ++i) {
 		if (!pose.residue(i).is_protein() && interface[i].type != ligand_options::InterfaceInfo::non_interface) {
+			core::Vector res_coords;
+			if(pose.residue(i).has("CA"))
+			{
+				res_coords = pose.residue(i).xyz("CA");
+			}else
+			{
+				res_coords = pose.residue(i).nbr_atom_xyz();
+			}
 			core::Real const new_dist2 = lig_nbr_vector.distance_squared(
-					pose.residue(i).xyz("CA"));
+					res_coords);
 			if (new_dist2 < shortest_dist2) {
 				shortest_dist2 = new_dist2;
 				attach_pt = i;

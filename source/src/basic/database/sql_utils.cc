@@ -537,7 +537,10 @@ result
 safely_read_from_database(
 	statement & statement
 ) {
-	platform::Size cycle = 0;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	platform::Size retry_limit = 10;
+	platform::Size cycle = 1;
 	while(true)
 	{
 		try
@@ -567,7 +570,20 @@ safely_read_from_database(
 			utility_exit_with_message(except.what());
 		}catch(cppdb::cppdb_error & except)
 		{
-			utility_exit_with_message(except.what());
+			if(option[inout::dbms::retry_failed_reads] && cycle <= retry_limit)
+			{
+				TR << "Caught an exception on db read: "  << except.what() << "\n" <<
+				"pausing before another attempted read. This is attempt " << cycle << " of " << retry_limit <<std::endl;
+#ifdef WIN32
+				Sleep(1000);
+#else
+				//Sleep some amount between 100-2000 ms
+				usleep(100+1900*RG.uniform());
+#endif
+			}else
+			{
+				utility_exit_with_message(except.what());
+			}
 		}
 		cycle++;
 	}
