@@ -8,9 +8,9 @@ set(CPPDB_SOVERSION 0)
 
 # General settings
 
-include_directories(../../external/dbio/sqlite3)
-include_directories(../../external/dbio)
-include_directories(../../external)
+include_directories(SYSTEM ../../external/dbio/sqlite3)
+include_directories(SYSTEM ../../external/dbio)
+include_directories(SYSTEM ../../external)
 
 option(DISABLE_SQLITE	"Link sqlite3 backend into the libcppdb" OFF)
 
@@ -48,7 +48,7 @@ if(NOT DISABLE_SQLITE)
 	find_library(SQLITE3_LIB sqlite3)
 	find_path(SQLITE3_PATH sqlite3.h)
 	if(SQLITE3_LIB AND SQLITE3_PATH)
-		include_directories(${SQLITE3_PATH})
+		include_directories(SYSTEM ${SQLITE3_PATH})
 		add_definitions(-DCPPDB_WITH_SQLITE3)
 		set(INTERNAL_SOURCES ${INTERNAL_SOURCES} ../../external/dbio/cppdb/sqlite3_backend.cpp)
 		set(INTERNAL_LIBRARIES ${INTERNAL_LIBRARIES} ${SQLITE3_LIB})
