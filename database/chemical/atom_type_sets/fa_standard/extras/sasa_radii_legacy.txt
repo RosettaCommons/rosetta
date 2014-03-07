@@ -48,16 +48,16 @@ Oice      1.5200  # O in ice #@Robin
 Hice      0.7600  # H in ice #@Robin 
 Na1p      1.3638  # ion radius CHARMM27
 K1p       1.7638  # ion radius CHARMM27
-SUCK	    0.0000
+SUCK      0.0000
 REPL      0.0000
 REPLS     0.0000
 HREPS     0.0000
 VIRT      0.0000
-MPct	  0.0000
-MPnm	  0.0000
-MPdp	  0.0000
+MPct      0.0000
+MPnm      0.0000
+MPdp      0.0000
 MPtk      0.0000
-
 #
 # SASA_RADIUS copied from Rosetta++ fullatom_extra_props.cc (?)
-# Radius was optimized for a no-longer-in-use scoreterm.  Would not recommend for general use (JAB)
+# 2/23/1014 - JAB - Radius was optimized for a no-longer-in-use scoreterm by Jerry Tsai, 2003: "An Improved Protein Decoy Set for Testing Energy Functions for Protein Structure Prediction".  Would not recommend for general use (JAB)
+#

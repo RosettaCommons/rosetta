@@ -32,7 +32,7 @@ namespace sasa {
 	///       Legacy:  Refers to radii optimized for a no longer in use term, but some protocols have been optimized to use it.
 	///       naccess:  Refers to radii used in the program naccess.  Originally derived from Chothia.  Do not use for all-atom SASA as hydrogens are implicitly included.
 	///                           'The Nature of the Accessible and Buried Surfaces in Proteins' J. Mol. Biol. (1976) 105, 1-14 
-	///       reduce:   Radii used by the program reduce.  I believe hydrogens are also implicitly included in the radii.
+	///       reduce:   Radii used by the program reduce.  Hydrogens are explicitly included in the radii.
 	///
 	enum SasaRadii {
 		LJ = 1,

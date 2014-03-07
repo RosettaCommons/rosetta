@@ -43,7 +43,8 @@ class SasaCalculator2 : public core::pose::metrics::StructureDependentCalculator
 
 public:
 
-	SasaCalculator2( core::Real probe_r = basic::options::option[basic::options::OptionKeys::sasa::probe_radius]() );
+	SasaCalculator2();
+	SasaCalculator2( core::Real probe_r);
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const { return new core::pose::metrics::simple_calculators::SasaCalculator2(); };
 
@@ -60,10 +61,19 @@ private:
 	
 	core::Real total_sasa_;
 	core::Real total_hsasa_;
+	core::Real total_rel_hsasa_;
+	
 	core::id::AtomID_Map<core::Real > atom_sasa_;
 	vector1< core::Real > residue_sasa_;
 	vector1< core::Real > residue_hsasa_;
 	vector1< core::Real > residue_rel_hsasa_;
+	
+	//Sc/BB calculated during sasacalc, so why not have it accessible here
+	core::Real total_sasa_sc_;
+	core::Real total_hsasa_sc_; //pretty much small, but here for completeness
+	
+	vector1< core::Real > residue_sasa_sc_;
+	vector1< core::Real > residue_hsasa_sc_;
 	
 };
 

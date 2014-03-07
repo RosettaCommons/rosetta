@@ -2894,11 +2894,11 @@ _Note that some application specific options may not be present in this list._
 <dt><b>-method</b> \<String\></dt>
 <dd>The method used to calculate sasa.  More will hopefully be added in the future.<br/>Default: "LeGrand"<br/></dd>
 <dt><b>-include_hydrogens_explicitly</b> \<Boolean\></dt>
-<dd>Include hydrogens explicitly in the calculation.  Explicit vs implicit calculations use different radii sets.  These default sets can be controlled via cmd line.  Historically, calculations included hydrogens implicitly.  But its 2014 and we have hydrogens on our molecules.  Some protocols may overwrite this setting to their needs.<br/>Default: true<br/></dd>
+<dd>Include hydrogens explicitly in the calculation.  Explicit vs implicit calculations use different radii sets.  These default sets can be controlled via cmd line.  Historically, calculations included hydrogens implicitly.  Some protocols may overwrite this setting to their needs.<br/>Default: true<br/></dd>
 <dt><b>-probe_radius</b> \<Real\></dt>
-<dd>Probe radius used by SasaCalc.  Default is radius of water<br/>Default: 1.4<br/></dd>
+<dd>Probe radius used by SasaCalc.  Default is radius of water.  1.2 is also commonly used.<br/>Default: 1.4<br/></dd>
 <dt><b>-include_probe_radius_in_atom_radii</b> \<Boolean\></dt>
-<dd>This is typically done in calculation of SASA, and in fact is one of the defining features of SASA.  Turn this off to calculate the SurfaceArea instead.<br/>Default: true<br/></dd>
+<dd>This is typically done in calculation of SASA, and in fact is one of the defining features of SASA.  Turn this off to calculate the Surface Area instead.<br/>Default: true<br/></dd>
 <dt><b>-include_only_C_S_in_hsasa</b> \<Boolean\></dt>
 <dd>Include only carbon or sulfer in hsasa calculation.  This is typical.  Only revert to false if excluding polar atoms by charge or everything will be counted as hydrophobic. Note hydrogens are dealt with automatically.<br/>Default: true<br/></dd>
 <dt><b>-exclude_polar_atoms_by_charge_in_hsasa</b> \<Boolean\></dt>
@@ -2906,11 +2906,9 @@ _Note that some application specific options may not be present in this list._
 <dt><b>-polar_charge_cutoff</b> \<Real\></dt>
 <dd>Charge cutoff (abs value) to use on heavy atoms if excluding hydrophobic atoms from hSASA calculation by charge. The default is optimized for protein atom types (which excludes only carbonyl and carboxyl carbons.  By default only carbon and sulfer are excluded.<br/>Default: .4<br/></dd>
 <dt><b>-implicit_hydrogen_radii_set</b> \<String\></dt>
-<dd>The radii set to use when including hydrogens implicitly instead of explicitly. chothia=naccess<br/>Default: "chothia"<br/></dd>
+<dd>The radii set to use when including hydrogens implicitly instead of explicitly. Chothia 1976 radii are used by the program Naccess.  chothia=naccess<br/>Default: "chothia"<br/></dd>
 <dt><b>-explicit_hydrogen_radii_set</b> \<String\></dt>
-<dd>The radii set to use when including hydrogens explicitly.<br/>Default: "LJ"<br/></dd>
-<dt><b>-use_legacy_behavior</b> \<Boolean\></dt>
-<dd>Use Legacy radii with all atom SASA calculation.  This is a bit wrong as were double counting any hydrogens with radii that were optimized for a scorefunction that is no longer used.<br/>Default: false<br/></dd>
+<dd>The radii set to use when including hydrogens explicitly. Default is reduce, which was generally agreed upon at Minicon 2014 and come from original data from Bondi (1964) and Gavezzotti (1983) .  LJ are the Rosetta leonard-jones radii, which are not quite exactly from Charmm.  Legacy radii were optimized for a no-longer-in-Rosetta scoreterm (Jerry Tsai et al 2003)<br/>Default: "reduce"<br/></dd>
 </dl>
 + <h2>-packing</h2>
 <dl>

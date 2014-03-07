@@ -25,7 +25,7 @@ namespace sasa {
 	using utility::vector1;
 	using namespace core;
 	
-///@brief Main 
+///@brief Main interface to sasa calculations outside of pose metrics.
 class SasaCalc : public utility::pointer::ReferenceCount {
 	
 public:
@@ -42,19 +42,24 @@ public:
 	calculate(const pose::Pose & pose);
 	
 	
-	/////Legacy-style interface //////////
-	//Real
-	//calculate(const pose::Pose & pose,  id::AtomID_Map<Real>& atom_sasa);
+	///// Legacy-style interfaces //////////
+	Real
+	calculate(const pose::Pose & pose,  id::AtomID_Map<Real>& atom_sasa);
 	
-	//Real
-	//calculate(const pose::Pose & pose, vector1< Real>&  rsd_sasa, vector1< Real > & rsd_hsasa);
+	Real
+	calculate(const pose::Pose & pose, vector1< Real>&  rsd_sasa, vector1< Real > & rsd_hsasa);
 	
-	//Real
-	//calculate(const pose::Pose & pose, id::AtomID_Map<Real>& atom_sasa, vector1< Real> & rsd_sasa, vector1<Real> & rsd_hsasa);
+	Real
+	calculate(const pose::Pose & pose, id::AtomID_Map<Real>& atom_sasa, vector1< Real> & rsd_sasa, vector1<Real> & rsd_hsasa);
 
+	Real
+	calculate(const pose::Pose & pose, id::AtomID_Map<Real> & atom_sasa, vector1< Real > & rsd_sasa, vector1<Real> & rsd_hsasa, vector1< Real > & rsd_rel_hsasa);
 
 	
-//////Data Access //////////////////
+////////////////////////////////////////////////////////////////////////////////
+/// Data Access
+///
+///
 public:
 
 	///////Per Atom
@@ -63,6 +68,15 @@ public:
 		return atom_sasa_;
 	};
 	
+	///@brief Convenience function to fill most commonly used data. 
+	void
+	fill_data(
+		Real & total_hsasa,
+		Real & total_rel_hsasa,
+		id::AtomID_Map< Real > & atom_sasa,
+		vector1< Real > & rsd_sasa,
+		vector1< Real > & rsd_hsasa,
+		vector1< Real > & rel_hsasa);
 	
 	
 	////////Per Residue
@@ -72,23 +86,33 @@ public:
 	};
 	
 	vector1< Real >
+	get_residue_sasa_bb() const;
+	
+	vector1< Real >
+	get_residue_sasa_sc() const {
+		return rsd_sasa_sc_;
+	}
+	
+	
+	vector1< Real >
 	get_residue_hsasa() const {
 		return rsd_hsasa_;
 	};
+	
+	vector1< Real >
+	get_residue_hsasa_bb() const;
+	
+	vector1< Real >
+	get_residue_hsasa_sc() const {
+		return rsd_hsasa_sc_;
+	}
+	
 	
 	vector1<Real >
 	get_rel_hphobic_sasa_by_charge() const {
 		return rel_hydrophobic_sasa_by_charge_;
 	};
 	
-	///@brief Convenience function to fill all data. 
-	void
-	fill_all_data(
-		Real & total_hsasa,
-		id::AtomID_Map< Real > & atom_sasa,
-		vector1< Real > & rsd_sasa,
-		vector1< Real > & rsd_hsasa,
-		vector1< Real > & rel_hsasa);
 	
 	/////////Totals
 	Real
@@ -97,8 +121,29 @@ public:
 	}
 	
 	Real
+	get_total_sasa_sc() const {
+		return total_sasa_sc_;
+	}
+	
+	Real
+	get_total_sasa_bb() const {
+		return total_sasa_ - total_sasa_sc_;
+	}
+	
+	
+	Real
 	get_total_hsasa() const {
 		return total_hsasa_;
+	}
+	
+	Real
+	get_total_hsasa_sc() const {
+		return total_hsasa_sc_;
+	}
+	
+	Real
+	get_total_hsasa_bb() const {
+		return total_hsasa_ - total_hsasa_sc_;
 	}
 	
 	Real
@@ -109,9 +154,14 @@ public:
 	
 	
 	
-/////Options /////////////
+////////////////////////////////////////////////////////////////////////////////
+/// Options
+///
+///
 public:
 	
+	
+	/////////// Common Options ///////////
 	void
 	set_defaults();
 	
@@ -122,15 +172,16 @@ public:
 	void
 	set_include_hydrogens_explicitly(bool include_hydrogens);
 	
+	///@brief Probe radius of 1.4 (water) is typically used
 	void
 	set_probe_radius(Real probe_radius);
 	
-	
+	///@brief This is typically done.  Disabling it is more akin to obtaining the Surface Area than the SASA
 	void
 	set_include_probe_radius_in_atom_radii(bool include_probe_radius); 
 	
 	
-	///Hydrophobic Calc - Definition of 'polar' is by charge.  Better would be to use orbitals/chem if possible.
+	/////////// Hydrophobic Calculation ///////////
 	
 	
 	
@@ -141,26 +192,30 @@ public:
 	///@brief Polar carbons and other atoms should not be included in hydrophobic hSASA - though historically they were.  
 	/// .4 is a relative number.  This makes sure that carbonyl and carboxyl carbons are marked as polar, while others (protein-based) are non-polar
 	void
-	set_exclude_polar_atoms_by_charge(bool exclude_polar_all, Real charge_cutoff = .4);
+	set_exclude_polar_atoms_by_charge(bool exclude_polar_all);
 	
 	
 	void
 	set_polar_charge_cutoff(Real cutoff);
 	
 	
+	/////////// Radii Sets ///////////
 	
-
-	
-	
-	///@brief Radii set to use when not including hydrogens (naccess/chothia, reduce, legacy)
-	/// Do not use legacy unless you know what you are doing and why. Overrides default of naccess.
+	///@brief Radii set to use when not including hydrogens (naccess/chothia, legacy)
+	/// Do not use legacy unless you know what you are doing and why.
 	void
 	set_implicit_hydrogen_included_radii_set(SasaRadii radii_set);
 	
+	///@brief Radii set to use when including hydrogens (LJ/reduce)
+	void
+	set_explicit_hydrogen_included_radii_set(SasaRadii radii_set);
 	
 	
 	
-///////////Legacy Options ///////////
+////////////////////////////////////////////////////////////////////////////////
+/// Legacy Options
+///
+///
 public:
 	
 	
@@ -170,13 +225,6 @@ public:
 	void
 	set_use_big_polar_hydrogen(bool big_polar_h);
 	
-	///@brief Sets options to reproduce legacy default radii behavior.  Note this is wrong, and should only be used where needed.
-	///@details
-	///  Calculates all atom Sasa using Rosetta legacy radii - which were optimized for a no-longer used score-term and scorefunction.
-	///  Note that the radii implicitly include hydrogens while the SASA will be calculated for all atoms including hydrogens.
-	/// 
-	void
-	set_use_legacy_default_radii_with_all_atom_calc( bool legacy_defaults);
 	
 private:
 	
@@ -189,7 +237,7 @@ private:
 	
 	
 	void
-	calc_per_res_hphobic_sasa(const pose::Pose & pose);
+	calc_per_res_sasas(const pose::Pose & pose);
 	
 	
 	
@@ -216,17 +264,24 @@ private:
 	
 	id::AtomID_Map< bool > atom_subset_;
 	id::AtomID_Map< Real > atom_sasa_;
+	
 	vector1< Real > rsd_sasa_;
+	vector1< Real> rsd_sasa_sc_;
+	
 	vector1< Real > rsd_hsasa_;
+	vector1< Real > rsd_hsasa_sc_;
+	
 	vector1< Real > rel_hydrophobic_sasa_by_charge_;
 	
 	//Totals
 	Real total_sasa_;
+	Real total_sasa_sc_;
+	
 	Real total_hsasa_;
+	Real total_hsasa_sc_;
+	
 	Real total_rel_hsasa_;
-	
-	bool legacy_defaults_;
-	
+		
 };
 
 

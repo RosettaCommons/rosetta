@@ -32,6 +32,21 @@ namespace sasa {
 	using namespace core;
 	
 ///////////////////////////////////////////////////////////////////////////////////////////////
+///  Convenience Functions
+///	
+///
+///
+
+///@brief Calculate the sidechain and backbone sasa from atom sasa
+std::pair<Real, Real>
+get_sc_bb_sasa(const pose::Pose & pose, const id::AtomID_Map<Real> & atom_sasa);
+
+
+std::pair<utility::vector1<Real>, utility::vector1<Real> >
+get_sc_bb_sasa_per_res(const pose::Pose & pose, const id::AtomID_Map<Real> & atom_sasa);
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
 ///  Enum Management.  Can go in separate file if it gets large.
 ///	
 ///

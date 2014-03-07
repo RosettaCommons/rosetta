@@ -565,7 +565,6 @@ namespace sasa { BooleanOptionKey const exclude_polar_atoms_by_charge_in_hsasa( 
 namespace sasa { RealOptionKey const polar_charge_cutoff( "sasa:polar_charge_cutoff" );  }
 namespace sasa { StringOptionKey const implicit_hydrogen_radii_set( "sasa:implicit_hydrogen_radii_set" );  }
 namespace sasa { StringOptionKey const explicit_hydrogen_radii_set( "sasa:explicit_hydrogen_radii_set" );  }
-namespace sasa { BooleanOptionKey const use_legacy_behavior( "sasa:use_legacy_behavior" );  }
 namespace packing { BooleanOptionKey const packing( "packing" );  }
 namespace packing { BooleanOptionKey const repack_only( "packing:repack_only" );  }
 namespace packing { BooleanOptionKey const prevent_repacking( "packing:prevent_repacking" );  }
@@ -772,3 +771,4 @@ namespace membrane { RealVectorOptionKey const membrane_normal( "membrane:membra
 namespace membrane { BooleanOptionKey const view( "membrane:view" );  }
 namespace membrane { BooleanOptionKey const Mhbond_depth( "membrane:Mhbond_depth" );  }
 namespace membrane { RealOptionKey const thickness( "membrane:thickness" );  }
+namespace casp { BooleanOptionKey const casp( "casp" );  }

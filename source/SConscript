@@ -6,6 +6,8 @@
 # Bring in the shared build state
 Import("build")
 
+Decider('MD5-timestamp')
+SetOption('implicit_cache', 1)
 
 # Generate .cc file with svn revision number/range.
 # Provide empty dictionaries so local environment is not modified.

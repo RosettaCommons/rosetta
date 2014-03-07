@@ -67,6 +67,72 @@ namespace sasa {
 	using namespace core;
 	using namespace ObjexxFCL::format;
 
+///////////////////////////////////////////////////////////////////////////////////////////////
+///  Convenience Functions
+///	
+///
+///
+
+///@brief Calculate the sidechain and backbone sasa from atom sasa
+std::pair<Real, Real>
+get_sc_bb_sasa(const pose::Pose & pose, const id::AtomID_Map<Real> & atom_sasa) {
+	
+	Real sc_sasa = 0.0;
+	Real bb_sasa = 0.0;
+	
+	for (Size i = 1; i <= atom_sasa.n_residue(); ++i ){
+		utility::vector1< Size> bb_atoms = pose.residue_type(i).all_bb_atoms();
+		utility::vector1< Size> sc_atoms = pose.residue_type(i).all_sc_atoms();
+		
+		//BB Calculation
+		for (Size x = 1; x <= bb_atoms.size(); ++x){
+			core::id::AtomID atomid(bb_atoms[x], i);
+			if (atom_sasa[atomid] < 0) continue; //Non-computed sasa
+			bb_sasa += atom_sasa[atomid];
+		}
+		
+		//SC Calculation
+		for (Size x = 1; x <= sc_atoms.size(); ++x){
+			core::id::AtomID atomid(sc_atoms[x], i);
+			if (atom_sasa[atomid] < 0) continue; // Non-computed sasa
+			sc_sasa += atom_sasa[atomid];
+			
+		}
+	}
+	
+	std::pair<Real, Real> split_sasa = std::make_pair(sc_sasa, bb_sasa);
+	return split_sasa;
+}
+
+std::pair<utility::vector1<Real>, utility::vector1<Real> >
+get_sc_bb_sasa_per_res(const pose::Pose & pose, const id::AtomID_Map<Real> & atom_sasa) {
+	
+	utility::vector1< Real > sc_sasa(pose.total_residue(), 0.0);
+	utility::vector1< Real > bb_sasa(pose.total_residue(), 0.0);
+	
+	for (Size i = 1; i <= atom_sasa.n_residue(); ++i ){
+		utility::vector1< Size> bb_atoms = pose.residue_type(i).all_bb_atoms();
+		utility::vector1< Size> sc_atoms = pose.residue_type(i).all_sc_atoms();
+		
+		//BB Calculation
+		for (Size x = 1; x <= bb_atoms.size(); ++x){
+			core::id::AtomID atomid(bb_atoms[x], i);
+			if (atom_sasa[atomid] < 0) continue; //Non-computed sasa
+			bb_sasa[i] += atom_sasa[atomid];
+		}
+		
+		//SC Calculation
+		for (Size x = 1; x <= sc_atoms.size(); ++x){
+			core::id::AtomID atomid(sc_atoms[x], i);
+			if (atom_sasa[atomid] < 0) continue; // Non-computed sasa
+			sc_sasa[i] += atom_sasa[atomid];
+			
+		}
+	}
+	
+	std::pair<utility::vector1<Real>, utility::vector1<Real> > split_sasa = std::make_pair(sc_sasa, bb_sasa);
+	return split_sasa;
+}
 
 
 

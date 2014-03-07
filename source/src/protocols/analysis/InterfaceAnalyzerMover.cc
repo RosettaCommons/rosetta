@@ -148,10 +148,9 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 	pack_input_(pack_input),
 	pack_separated_(pack_separated),
 	use_jobname_(use_jobname),
-	included_nres_(0),
+	included_nres_(0)
 	//hbond_exposure_ratio_(0),
 	//total_hb_sasa_(0),
-	task_(0)//,
 {
 	protocols::moves::Mover::type( "InterfaceAnalyzer" );
 	if (sf){sf_ = sf->clone();}
@@ -178,10 +177,10 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 	pack_input_(pack_input),
 	pack_separated_(pack_separated),
 	use_jobname_(use_jobname),
-	included_nres_(0),
+	included_nres_(0)
 	//hbond_exposure_ratio_(0),
 	//total_hb_sasa_(0),
-	task_(0)
+
 
 {
 	protocols::moves::Mover::type( "InterfaceAnalyzer" );
@@ -205,10 +204,9 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 	explicit_constructor_(true),
 	pack_input_(pack_input),
 	pack_separated_(pack_separated),
-	use_jobname_(use_jobname),
+	use_jobname_(use_jobname)
 	//hbond_exposure_ratio_(0),
 	//total_hb_sasa_(0),
-	task_(0)
 
 {
 	protocols::moves::Mover::type( "InterfaceAnalyzer" );
@@ -250,7 +248,12 @@ InterfaceAnalyzerMover::init_per_residue_data(core::pose::Pose const & pose) {
 	per_residue_data_.complexed_energy.resize(pose.total_residue(), 0.0);
 	per_residue_data_.dG.resize(pose.total_residue(), 0.0);
 	per_residue_data_.dSASA.resize(pose.total_residue(), 0.0);
+	per_residue_data_.dSASA_sc.resize(pose.total_residue(), 0.0);
 	per_residue_data_.dhSASA.resize(pose.total_residue(), 0.0);
+	per_residue_data_.dhSASA_sc.resize(pose.total_residue(), 0.0);
+	per_residue_data_.dhSASA_rel_by_charge.resize(pose.total_residue(), 0.0);
+	
+	per_residue_data_.SASA.resize(pose.total_residue(), 0.0);
 	per_residue_data_.dSASA_fraction.resize(pose.total_residue(), 0.0);
 	per_residue_data_.separated_energy.resize(pose.total_residue(), 0.0);
 	per_residue_data_.separated_sasa.resize(pose.total_residue(), 0.0);
@@ -263,8 +266,13 @@ InterfaceAnalyzerMover::init_data(core::pose::Pose const & pose) {
 	data_.sc_value = 0;
 	
 	data_.dSASA.resize(3, 0);
-	data_.dhSASA = 0;
-	data_.polar_dSASA = 0;
+	data_.dSASA_sc.resize(3, 0);
+	
+	data_.dhSASA.resize(3, 0);
+	data_.dhSASA_sc.resize(3, 0);
+	
+	data_.dhSASA_rel_by_charge.resize(3, 0);
+	
 	data_.complexed_SASA = 0;
 	data_.separated_SASA = 0;
 	
@@ -400,7 +408,6 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 		
 	setup_scorefxn();
 	
-	setup_task(complexed_pose);
 	//init compexed and separated pose objects
 	
 	core::pose::Pose separated_pose( make_separated_pose( complexed_pose, interface_jump_) );
@@ -794,22 +801,23 @@ void InterfaceAnalyzerMover::score_separated_chains( core::pose::Pose & complexe
 	using namespace basic::options::OptionKeys;
 	using namespace protocols::moves;
 
-	//core::pose::Pose copy(pose);
-	//PackerTaskOP const task( get_packer_task() );
-	//we know there is a score function from above
-
 
 	// TR<< "Initial complex_score: " << complex_score << "  sep_score: "
 	// 		<< separated_score << std::endl;
 
 	//setup mover to pack interface
 	//core::Size ndruns = option[packing::ndruns];
-	protocols::simple_moves::PackRotamersMoverOP repacker = new protocols::simple_moves::PackRotamersMover(sf_, task_ );
+	protocols::simple_moves::PackRotamersMoverOP repacker = new protocols::simple_moves::PackRotamersMover(sf_ );
 
 	if ( pack_input_ ){
+		core::pack::task::PackerTaskOP task = setup_task(complexed_pose);
+		repacker->task(task);
 		repacker->apply(complexed_pose);
 	}
 	if (pack_separated_){
+		//This is to correctly deal with out-of-date disulfides repacking in the separated pose.  Cannot generate task and apply to both together and separated pose for this reason
+		core::pack::task::PackerTaskOP task = setup_task(separated_pose);
+		repacker->task(task);
 		repacker->apply( separated_pose );
 	}
 	
@@ -861,60 +869,108 @@ void InterfaceAnalyzerMover::compute_separated_sasa(core::pose::Pose & complexed
 	core::pose::Pose & separated_pose){
 	using namespace core;
 	
+	TR << "Calculating dSASA" << std::endl;
+	
+	//Speedup here can come from using SasaCalc directly instead of calculator to limit accessing all the vectors.
+	
 	//Complex Pose values.
-	basic::MetricValue< core::Real > mv_complex_sasa;
-	basic::MetricValue< core::Real > mv_complex_hsasa;
+	basic::MetricValue< Real > mv_complex_sasa;
+	
 	basic::MetricValue< vector1< core::Real > > mv_complex_res_sasa;
+	basic::MetricValue< vector1< core::Real > > mv_complex_res_sasa_sc;
 	basic::MetricValue< vector1< core::Real > > mv_complex_res_hsasa;
+	basic::MetricValue< vector1< core::Real > > mv_complex_res_hsasa_sc;
 	basic::MetricValue< vector1< core::Real > > mv_complex_res_rel_hsasa;
 	
 	complexed_pose.metric(Sasa_, "total_sasa", mv_complex_sasa);
-	complexed_pose.metric(Sasa_, "total_hsasa", mv_complex_hsasa);
 	complexed_pose.metric(Sasa_, "residue_sasa", mv_complex_res_sasa);
+	complexed_pose.metric(Sasa_, "residue_sasa_sc", mv_complex_res_sasa_sc);
 	complexed_pose.metric(Sasa_, "residue_hsasa", mv_complex_res_hsasa);
+	complexed_pose.metric(Sasa_, "residue_hsasa_sc", mv_complex_res_hsasa_sc);
 	complexed_pose.metric(Sasa_, "residue_rel_hsasa", mv_complex_res_rel_hsasa);
 	
 	
 	//Separated Pose values.
 	basic::MetricValue< core::Real > mv_sep_sasa;
-	basic::MetricValue< core::Real > mv_sep_hsasa;
+	
 	basic::MetricValue< vector1< core::Real > > mv_sep_res_sasa;
+	basic::MetricValue< vector1< core::Real > > mv_sep_res_sasa_sc;
 	basic::MetricValue< vector1< core::Real > > mv_sep_res_hsasa;
+	basic::MetricValue< vector1< core::Real > > mv_sep_res_hsasa_sc;
 	basic::MetricValue< vector1< core::Real > > mv_sep_res_rel_hsasa;
 	
 	separated_pose.metric(Sasa_, "total_sasa", mv_sep_sasa);
-	separated_pose.metric(Sasa_, "total_hsasa", mv_sep_hsasa);
 	separated_pose.metric(Sasa_, "residue_sasa", mv_sep_res_sasa);
+	separated_pose.metric(Sasa_, "residue_sasa_sc", mv_sep_res_sasa_sc);
 	separated_pose.metric(Sasa_, "residue_hsasa", mv_sep_res_hsasa);
+	separated_pose.metric(Sasa_, "residue_hsasa_sc", mv_sep_res_hsasa_sc);
 	separated_pose.metric(Sasa_, "residue_rel_hsasa", mv_sep_res_rel_hsasa);
-	
 	
 	data_.complexed_SASA =  mv_complex_sasa.value();
 	data_.separated_SASA =  mv_sep_sasa.value();
-	data_.dSASA[total] = data_.separated_SASA - data_.complexed_SASA ;
-
-
-	calc_interface_to_surface_fraction(separated_pose, mv_sep_res_sasa.value());
 	
-	//Now assume anything that isn't hydrophobic is polar
-	data_.dhSASA = mv_sep_hsasa.value() - mv_complex_hsasa.value();
-	data_.polar_dSASA = data_.dSASA[total] - data_.dhSASA;
 	
 	//Get per residue data
+	TR << "Calculating per-res data"<<std::endl;
 	per_residue_data_.separated_sasa = mv_sep_res_sasa.value();
 	per_residue_data_.complexed_sasa = mv_complex_res_sasa.value();
 	
 	per_residue_data_.dSASA = calc_per_residue_dSASA(complexed_pose, mv_sep_res_sasa.value(), mv_complex_res_sasa.value());
-	//per_residue_data_.dhSASA = calc_per_residue_dSASA(complexed_pose, mv_sep_res_hsasa.value(), mv_complex_res_hsasa.value());
-	for (core::Size i = 1; i <= complexed_pose.total_residue(); ++i){
-		per_residue_data_.dhSASA[i] = mv_sep_res_hsasa.value()[i] - mv_complex_res_hsasa.value()[i];
 	
+	
+	//Avoiding more cycles through total residue
+	for (core::Size i = 1; i <= complexed_pose.total_residue(); ++i){
+		
+		
+		per_residue_data_.dSASA_sc[i] = calc_per_residue_dSASA_general(i, complexed_pose, 
+				mv_sep_res_sasa_sc.value()[i],
+				mv_complex_res_sasa_sc.value()[i], 
+				data_.dSASA_sc);
+		
+		per_residue_data_.dhSASA[i] = calc_per_residue_dSASA_general(i, complexed_pose, 
+				mv_sep_res_hsasa.value()[i], 
+				mv_complex_res_hsasa.value()[i], 
+				data_.dhSASA);
+		
+		
+		per_residue_data_.dhSASA_sc[i] = calc_per_residue_dSASA_general(i, complexed_pose, 
+				mv_sep_res_hsasa_sc.value()[i], 
+				mv_complex_res_hsasa_sc.value()[i], 
+				data_.dhSASA_sc);
+	
+		per_residue_data_.dhSASA_rel_by_charge[i] = calc_per_residue_dSASA_general(i, complexed_pose, 
+				mv_sep_res_rel_hsasa.value()[i], 
+				mv_complex_res_rel_hsasa.value()[i], 
+				data_.dhSASA_rel_by_charge);
 	}
+	
+	calc_interface_to_surface_fraction(separated_pose, mv_sep_res_sasa.value());
 	return;
 }
 
+Real
+InterfaceAnalyzerMover::calc_per_residue_dSASA_general(const core::Size i, const core::pose::Pose & complexed_pose, const Real separated_sasa, const Real complexed_sasa, vector1<Real>& regional) {
+
+	Real dSASA = 0.0;
+	dSASA  = separated_sasa - complexed_sasa;
+	regional[total]+=dSASA;
+		
+	if (per_residue_data_.interface_residues[i]){
+		InterfaceRegion region;
+			
+		if (upstream_chains_.count(complexed_pose.chain(i))){
+			region = side1;
+		}
+		else{
+			region = side2;
+		}
+		regional[region] += dSASA;
+	}
+	return dSASA;
+}
+
 vector1< core::Real >
-InterfaceAnalyzerMover::calc_per_residue_dSASA(core::pose::Pose & complexed_pose, const vector1<core::Real> & separated_sasa,  const vector1<core::Real> & complexed_sasa){
+InterfaceAnalyzerMover::calc_per_residue_dSASA(const core::pose::Pose & complexed_pose, const vector1<core::Real> & separated_sasa,  const vector1<core::Real> & complexed_sasa){
 	
 
 	vector1< core::Real > dSASA;
@@ -925,6 +981,8 @@ InterfaceAnalyzerMover::calc_per_residue_dSASA(core::pose::Pose & complexed_pose
 	for (core::Size i = 1; i<= separated_sasa.size(); ++i){
 		
 		dSASA.push_back(separated_sasa[i] - complexed_sasa[i]);
+		data_.dSASA[total] += dSASA[i];
+				
 		per_residue_data_.dSASA_fraction[i] = dSASA[i]/separated_sasa[i];
 		if (per_residue_data_.interface_residues[i]){
 			InterfaceRegion region;
@@ -998,7 +1056,7 @@ void InterfaceAnalyzerMover::compute_interface_energy( core::pose::Pose & comple
 	
 
 	
-	calc_per_residue_data( complexed_pose, separated_pose);
+	calc_per_residue_and_regional_data( complexed_pose, separated_pose);
 	
 
 	
@@ -1015,8 +1073,8 @@ void InterfaceAnalyzerMover::compute_interface_energy( core::pose::Pose & comple
 	return;
 }
 
-///@details calculate the average energy per residue in the interface
-void InterfaceAnalyzerMover::calc_per_residue_data( core::pose::Pose & complexed_pose, core::pose::Pose & separated_pose){
+///@details calculate the average energy per residue in the interface as well as other data
+void InterfaceAnalyzerMover::calc_per_residue_and_regional_data( core::pose::Pose & complexed_pose, core::pose::Pose & separated_pose){
 	using namespace core::scoring;
 	using namespace core;
 	//using namespace core::scoring::Energies;
@@ -1059,6 +1117,9 @@ void InterfaceAnalyzerMover::calc_per_residue_data( core::pose::Pose & complexed
 		data_.separated_interface_score[total] += separated_residue_score;
 		
 		data_.dSASA[region] += per_residue_data_.dSASA[*it];
+		data_.dhSASA[region] += per_residue_data_.dhSASA[*it];
+		data_.dhSASA_rel_by_charge[region] += per_residue_data_.dhSASA_rel_by_charge[*it];
+		
 		if (complexed_pose.residue(*it).is_aromatic()){
 			data_.aromatic_nres[region] += 1;
 			core::Real dG = complexed_residue_score- separated_residue_score;
@@ -1121,6 +1182,13 @@ void InterfaceAnalyzerMover::compute_interface_packstat( core::pose::Pose & pose
 	core::Size interface_num_res (0);
 	interface_pack_scores =  core::scoring::packstat::compute_residue_packing_scores( pose, basic::options::option[ basic::options::OptionKeys::packstat::oversample ]() );
 
+	//JAB - Still bugs in packstat  - so segfault prevention!:
+	if (interface_pack_scores.size() != pose.total_residue()){
+		data_.packstat = 0;
+		return;
+	}
+	
+	
 	for( std::set< Size >::const_iterator it( interface_set_.begin() ), end( interface_set_.end());
 			 it != end; ++it){
 		interface_pack_score_sum += interface_pack_scores[*it];
@@ -1499,7 +1567,8 @@ void InterfaceAnalyzerMover::calc_centroid_dG ( core::pose::Pose const & complex
 
 
 ///@details  sets up the packer task for the interface
-void InterfaceAnalyzerMover::setup_task(core::pose::Pose & pose){
+core::pack::task::PackerTaskOP
+InterfaceAnalyzerMover::setup_task(core::pose::Pose & pose){
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	using namespace protocols::toolbox::task_operations;
@@ -1510,20 +1579,14 @@ void InterfaceAnalyzerMover::setup_task(core::pose::Pose & pose){
 	//force include current to prevent wonky results
 	tf->push_back( new IncludeCurrent() );
 	tf->push_back( new RestrictToRepacking() );
+
 	if( use_resfile_ ) tf->push_back( new ReadResfile() );
-	//use the same logic for calculators to restrict to the interface
-	utility::vector1< std::pair< std::string, std::string> > calculators_used;
-	if(explicit_constructor_){  //different calculator for different constructor
-		std::pair< std::string, std::string> multichain_strings ( InterGroupNeighborsCalculator_, "neighbors" );
-		calculators_used.push_back( multichain_strings );
-	}
-	else{ //if not multichain constructor
-		std::pair< std::string, std::string> chain_strings ( InterfaceNeighborDefinition_, "interface_residues" );
-		calculators_used.push_back( chain_strings );
-	}
-	tf->push_back( new RestrictByCalculatorsOperation( calculators_used ) );
-	core::pack::task::PackerTaskOP task( tf->create_task_and_apply_taskoperations( pose ) );
-	task_ = task ;
+
+	
+	core::pack::task::PackerTaskOP task = tf->create_task_and_apply_taskoperations(pose);
+	
+	task->restrict_to_residues(data_.interface_residues[total]); //Does not turn on packing.
+	return task;
 }
 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
@@ -1544,7 +1607,7 @@ InterfaceAnalyzerMover::parse_my_tag(
 	sf_ = protocols::rosetta_scripts::parse_score_function( tag, datamap )->clone();
 
 	set_pack_separated(tag->getOption<bool>("pack_separated", false));
-	//set_use_resfile(tag->getOption<bool>("resfile", false ) );
+	set_use_resfile(tag->getOption<bool>("resfile", false ) );
 	set_compute_packstat(tag->getOption<bool> ("packstat", false));
 	set_compute_interface_sc(tag->getOption<bool> ("interface_sc", false));
 	set_pack_input(tag->getOption<bool> ("pack_input", false));
@@ -1621,8 +1684,8 @@ void InterfaceAnalyzerMover::report_data(){
 		T(posename_base_) << "NUMBER OF RESIDUES: " << data_.interface_nres[total] << std::endl;
 		T(posename_base_) << "AVG RESIDUE ENERGY: " << per_residue_data_.regional_avg_per_residue_energy_int[total] << std::endl;
 		T(posename_base_) << "INTERFACE DELTA SASA: " << data_.dSASA[total] << std::endl;
-		T(posename_base_) << "INTERFACE HYDROPHOBIC SASA: " << data_.dhSASA << std::endl;
-		T(posename_base_) << "INTERFACE POLAR SASA: " << data_.polar_dSASA << std::endl;
+		T(posename_base_) << "INTERFACE HYDROPHOBIC SASA: " << data_.dhSASA[total] << std::endl;
+		T(posename_base_) << "INTERFACE POLAR SASA: " << data_.dSASA[total] - data_.dhSASA[total] << std::endl;
 		T(posename_base_) << "CROSS-INTERFACE ENERGY SUMS: " << data_.crossterm_interface_energy << std::endl;
 		T(posename_base_) << "SEPARATED INTERFACE ENERGY DIFFERENCE: " << data_.dG[total] << std::endl;
 		T(posename_base_) << "CROSS-INTERFACE ENERGY/INTERFACE DELTA SASA: " << data_.crossterm_interface_energy_dSASA_ratio << std::endl;
@@ -1648,8 +1711,8 @@ void InterfaceAnalyzerMover::report_data(){
 	//or report to job
 	else{
 		current_job->add_string_real_pair("dSASA_int", data_.dSASA[total]);
-		current_job->add_string_real_pair("dSASA_polar", data_.polar_dSASA);
-		current_job->add_string_real_pair("dSASA_hphobic", data_.dhSASA);
+		current_job->add_string_real_pair("dSASA_polar", data_.dSASA[total] - data_.dhSASA[total]);
+		current_job->add_string_real_pair("dSASA_hphobic", data_.dhSASA[total]);
 		current_job->add_string_real_pair("dG_separated", data_.dG[total]);
 		current_job->add_string_real_pair("dG_separated/dSASAx100", data_.dG_dSASA_ratio*100.0 );//purpose of 1000 is to move decimal point to make more significant digits appear in fixed-precision scorefile (0.022 is only 2 digits, 2.234 is more useful)
 		current_job->add_string_real_pair("delta_unsatHbonds", data_.delta_unsat_hbonds );
@@ -1815,7 +1878,14 @@ void InterfaceAnalyzerMover::print_pymol_selection_of_packing( core::pose::Pose 
 	pymol_packing << "cmd.create(\"" << pymol_object_fullpose_pack << "\", \"" << posename_base_ << "\")" << std::endl;
 
 	///////////////////////////////////////////// WHOLE POSE COLOR BY PACKING /////////////////////
-	TR << "Total: "<< pose.total_residue() <<" PackScoresTotal: "<<interface_pack_scores.size() << std::endl; //JAB  - This can sometimes not match - Temp fix.  I've emailed Will to help fix this bug in packstat.
+	TR << "Total: "<< pose.total_residue() <<" PackScoresTotal: "<<interface_pack_scores.size() << std::endl; 
+	
+	//JAB  - This can sometimes not match - Temp fix.  I've emailed Will to help fix this bug in packstat.
+	if (pose.total_residue() !=  interface_pack_scores.size()){
+		TR <<"Packscores and residues do not match. Skipping pymol selection of packing" << std::endl;
+		return;
+	}
+	
 	for( core::Size i(1); i <= interface_pack_scores.size();++i) {
 		if (! include_residue_[i]){continue;}
 		
@@ -1873,18 +1943,16 @@ std::set<int> InterfaceAnalyzerMover::get_fixed_chains() {return fixed_chains_; 
 std::set<core::Size> InterfaceAnalyzerMover::get_interface_set() {return interface_set_;}
 InterfaceAnalyzerMover::group_set InterfaceAnalyzerMover::get_chain_groups () { return chain_groups_; }
 bool InterfaceAnalyzerMover::get_pack_input(){return pack_input_; }
-core::pack::task::PackerTaskOP InterfaceAnalyzerMover::get_packer_task(){return task_ ;}
 core::Real InterfaceAnalyzerMover::get_gly_interface_energy(){ return data_.gly_dG ; }
 core::Real InterfaceAnalyzerMover::get_centroid_dG(){ return data_.centroid_dG ; }
 //core::Real InterfaceAnalyzerMover::get_interface_Hbond_sasa() {return total_hb_sasa_; }
 //core::Real InterfaceAnalyzerMover::get_Hbond_exposure_ratio() {return hbond_exposure_ratio_; }
 core::Real InterfaceAnalyzerMover::get_total_Hbond_E(){return data_.total_hb_E;}
 
-//bool InterfaceAnalyzerMover::get_use_resfile() const {return use_resfile_;}
 bool InterfaceAnalyzerMover::get_use_centroid_dG() const {return use_centroid_;}
 
 ///@details setters
-//void InterfaceAnalyzerMover::set_use_resfile(bool const use_resfile) {use_resfile_ = use_resfile;}
+void InterfaceAnalyzerMover::set_use_resfile(bool const use_resfile) {use_resfile_ = use_resfile;}
 void InterfaceAnalyzerMover::set_use_centroid_dG(bool const use_centroid) {use_centroid_ = use_centroid;}
 void InterfaceAnalyzerMover::set_compute_packstat(bool const compute_packstat) {compute_packstat_ = compute_packstat;}
 void InterfaceAnalyzerMover::set_pack_input(bool const pack_input) {pack_input_ = pack_input;}

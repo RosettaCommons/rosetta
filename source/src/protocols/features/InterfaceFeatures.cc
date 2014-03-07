@@ -470,8 +470,8 @@ InterfaceFeatures::report_interface_features(
 	stmt.bind(i+=1, chains_side1.length());
 	stmt.bind(i+=1, chains_side2.length());
 	stmt.bind(i+=1, data.dSASA[total]);
-	stmt.bind(i+=1, data.dhSASA);
-	stmt.bind(i+=1, data.polar_dSASA);
+	stmt.bind(i+=1, data.dhSASA[total]);
+	stmt.bind(i+=1, data.dSASA[total] - data.dhSASA[total]);
 	stmt.bind(i+=1, data.dG[total]);
 	stmt.bind(i+=1, data.crossterm_interface_energy);
 	stmt.bind(i+=1, data.dG_dSASA_ratio*100);

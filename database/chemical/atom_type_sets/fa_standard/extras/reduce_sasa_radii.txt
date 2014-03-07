@@ -1,6 +1,24 @@
-# These are the sasa radii used by the Reduce program. They are not
-# used actively used by Rosetta, but are here to assist validating
-# Rosetta's chemical definitions. 
+# These are the explicit vdw radii used by the Reduce program.  Specifically in the 
+#  reduce application file ElementInfo.cpp
+########################################################################################
+#########                                                                     ##########
+#########                                                                     ##########
+###################################### History #########################################
+# 2/23/2014 - JAB - Checked reduce radii to current program - all match except Hpol, Hapol and HNbb.
+#   This is being changed to fully match reduce explicit hydrogen radii set.  F, Cl, Br, and I
+#   are also being changed to match reduce radii.  All others are left as-is. 
+#   Note that this radii now becomes default for the new sasa machinery as decided at MiniRosettaCon2014
+###
+#// (From ElementInfo.cpp) Reduce radii derived from:
+#// For non-metals, explicit VDW radii from
+#// Gavezzotti, J. Am. Chem. Soc. (1983) 105, 5220-5225.
+#// or, if unavailable,
+#// Bondi, J. Phys. Chem. (1964), V68, N3, 441-451.
+#// Covalent and ionic radii from
+#// Advanced Inorganic Chemistry, Cotton & Wilkinson, 1962, p93.
+#
+########################################################################################
+########################################################################################
 NAME REDUCE_SASA_RADIUS
 CNH2      1.75
 COO       1.75
@@ -24,15 +42,16 @@ CAbb      1.75
 CObb      1.65
 OCbb      1.4
 Phos      1.8
-Hpol      0.6
-Hapo      1.1
+Pbb       1.8 #Copied from Phos (JAB 2/20/14)
+Hpol      1.0
+Hapo      1.17
 Haro      1.0
-HNbb      0.6
+HNbb      1.0
 HOH       1.4000
-F         1.7100  # taken from MM3 forcefield
-Cl        2.0700  # taken from MM3 forcefield
-Br        2.2200  # taken from MM3 forcefield
-I         2.3600  # taken from MM3 forcefield
+F         1.3
+Cl        1.77
+Br        1.95
+I         2.10
 Zn2p      1.0900  # ion radius CHARMM27
 Fe2p      0.7800  # ion radius CHARMM27
 Fe3p      0.6500  # ion radius CHARMM27
@@ -51,6 +70,7 @@ OSi       0.155400 # OH J. Phys. Chem. B 2004, 108, 1255-1266 @Robin
 Oice      0.159100 # O in ice @Robin
 Hice      0.049800 # H in ice @Robin  
 SUCK      0.0000
+REPL      0.0000
 REPLS 	  0.0000	
 HREPS     0.0000 
 VIRT      0.0000
@@ -58,6 +78,3 @@ MPct	  0.0000
 MPnm	  0.0000
 MPdp	  0.0000
 MPtk      0.0000
-#
-# SASA_RADIUS copied from Rosetta++ fullatom_extra_props.cc (?)
-#

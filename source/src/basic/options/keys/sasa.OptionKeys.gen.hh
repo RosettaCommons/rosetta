@@ -31,7 +31,6 @@ namespace sasa { extern BooleanOptionKey const exclude_polar_atoms_by_charge_in_
 namespace sasa { extern RealOptionKey const polar_charge_cutoff; }
 namespace sasa { extern StringOptionKey const implicit_hydrogen_radii_set; }
 namespace sasa { extern StringOptionKey const explicit_hydrogen_radii_set; }
-namespace sasa { extern BooleanOptionKey const use_legacy_behavior; }
 
 } // namespace OptionKeys
 } // namespace options

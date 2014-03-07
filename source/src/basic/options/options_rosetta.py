@@ -2841,20 +2841,20 @@ Options = Option_Group( '',
 
 	), # enzdez
 
-	# Sasa options --------------------------------------------------------------
+	# Sasa options --------------------------------------------------------------Does not work with SasaCalculatorLegacy/sasa functions in use pre-2014
 	Option_Group( 'sasa',
 		Option('method', 'String',
 			desc=   'The method used to calculate sasa.  More will hopefully be added in the future.',
 			default='LeGrand',
 			legal =['LeGrand']),
 		Option('include_hydrogens_explicitly', 'Boolean',
-			desc=     'Include hydrogens explicitly in the calculation.  Explicit vs implicit calculations use different radii sets.  These default sets can be controlled via cmd line.  Historically, calculations included hydrogens implicitly.  But its 2014 and we have hydrogens on our molecules.  Some protocols may overwrite this setting to their needs.',
+			desc=     'Include hydrogens explicitly in the calculation.  Explicit vs implicit calculations use different radii sets.  These default sets can be controlled via cmd line.  Historically, calculations included hydrogens implicitly.  Some protocols may overwrite this setting to their needs.',
 			default = 'true'),
 		Option('probe_radius', 'Real',
-			desc=   'Probe radius used by SasaCalc.  Default is radius of water',
+			desc=   'Probe radius used by SasaCalc.  Default is radius of water.  1.2 is also commonly used.',
 			default='1.4'),
 		Option('include_probe_radius_in_atom_radii', 'Boolean',
-			desc=   'This is typically done in calculation of SASA, and in fact is one of the defining features of SASA.  Turn this off to calculate the SurfaceArea instead.',
+			desc=   'This is typically done in calculation of SASA, and in fact is one of the defining features of SASA.  Turn this off to calculate the Surface Area instead.',
 			default='true'
 			),
 		Option('include_only_C_S_in_hsasa', 'Boolean', 
@@ -2868,16 +2868,13 @@ Options = Option_Group( '',
 			default='.4'
 			),
 		Option('implicit_hydrogen_radii_set', 'String', 
-			desc=   'The radii set to use when including hydrogens implicitly instead of explicitly. chothia=naccess',
+			desc=   'The radii set to use when including hydrogens implicitly instead of explicitly. Chothia 1976 radii are used by the program Naccess.  chothia=naccess',
 			default='chothia',
-			legal= ['chothia', 'naccess','legacy','reduce']),
+			legal= ['chothia', 'naccess']),
 		Option('explicit_hydrogen_radii_set', 'String',
-			desc=   'The radii set to use when including hydrogens explicitly.',
-			default='LJ',
-			legal=['LJ']),
-		Option( 'use_legacy_behavior', 'Boolean',
-			desc =  'Use Legacy radii with all atom SASA calculation.  This is a bit wrong as were double counting any hydrogens with radii that were optimized for a scorefunction that is no longer used.',
-			default='false'),
+			desc=   'The radii set to use when including hydrogens explicitly. Default is reduce, which was generally agreed upon at Minicon 2014 and come from original data from Bondi (1964) and Gavezzotti (1983) .  LJ are the Rosetta leonard-jones radii, which are not quite exactly from Charmm.  Legacy radii were optimized for a no-longer-in-Rosetta scoreterm (Jerry Tsai et al 2003)',
+			default='reduce',
+			legal=['reduce', 'LJ', 'legacy']),
 	), #Sasa
 
 	# packing options -----------------------------------------------------------

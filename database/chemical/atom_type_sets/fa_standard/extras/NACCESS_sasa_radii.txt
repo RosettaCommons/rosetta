@@ -1,3 +1,11 @@
+#
+# Default vdw radii used in the SASA program NACCESS. These are taken from Chothia (1976) J.Mol.Biol.105,1-14.
+#  Not sure what to set 'Oaro' to so leaving it at 1.4
+# 'Phos', and all other elements (F, Cl, Br, etc)  left at Rosetta radius
+#  Setting the hydrogen radii to 1.0 for all H's. 
+#
+# JAB - 2/23/2014 - Note that these radii implicitly include hydrogens!!  Hydrogen Radii should therefore be changed to 0.
+#
 NAME NACCESS_SASA_RADIUS
 CNH2      1.7600
 COO       1.7600
@@ -57,9 +65,3 @@ MPct      0.0000
 MPnm      0.0000
 MPdp      0.0000
 MPtk      0.0000
-#
-# NACCESS_SASA_RADIUS, default vdw radii used in the SASA program NACCESS. These are taken from Chothia (1976) J.Mol.Biol.105,1-14.
-# Not sure what to set 'Oaro' to so leaving it at 1.4
-# 'Phos', and all other elements (F, Cl, Br, etc)  left at Rosetta radius
-# Setting the hydrogen radii to 1.0 for all H's. 
-#

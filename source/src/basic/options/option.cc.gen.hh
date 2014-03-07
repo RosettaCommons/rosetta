@@ -1338,15 +1338,14 @@ option.add( basic::options::OptionKeys::enzdes::dump_final_repack_without_ligand
 option.add( basic::options::OptionKeys::enzdes::parser_read_cloud_pdb, "read cloud format PDB for enzdes in rosetta scripts" ).def(false);
 option.add( basic::options::OptionKeys::sasa::sasa, "sasa option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::sasa::method, "The method used to calculate sasa.  More will hopefully be added in the future." ).legal("LeGrand").def("LeGrand");
-option.add( basic::options::OptionKeys::sasa::include_hydrogens_explicitly, "Include hydrogens explicitly in the calculation.  Explicit vs implicit calculations use different radii sets.  These default sets can be controlled via cmd line.  Historically, calculations included hydrogens implicitly.  But its 2014 and we have hydrogens on our molecules.  Some protocols may overwrite this setting to their needs." ).def(true);
-option.add( basic::options::OptionKeys::sasa::probe_radius, "Probe radius used by SasaCalc.  Default is radius of water" ).def(1.4);
-option.add( basic::options::OptionKeys::sasa::include_probe_radius_in_atom_radii, "This is typically done in calculation of SASA, and in fact is one of the defining features of SASA.  Turn this off to calculate the SurfaceArea instead." ).def(true);
+option.add( basic::options::OptionKeys::sasa::include_hydrogens_explicitly, "Include hydrogens explicitly in the calculation.  Explicit vs implicit calculations use different radii sets.  These default sets can be controlled via cmd line.  Historically, calculations included hydrogens implicitly.  Some protocols may overwrite this setting to their needs." ).def(true);
+option.add( basic::options::OptionKeys::sasa::probe_radius, "Probe radius used by SasaCalc.  Default is radius of water.  1.2 is also commonly used." ).def(1.4);
+option.add( basic::options::OptionKeys::sasa::include_probe_radius_in_atom_radii, "This is typically done in calculation of SASA, and in fact is one of the defining features of SASA.  Turn this off to calculate the Surface Area instead." ).def(true);
 option.add( basic::options::OptionKeys::sasa::include_only_C_S_in_hsasa, "Include only carbon or sulfer in hsasa calculation.  This is typical.  Only revert to false if excluding polar atoms by charge or everything will be counted as hydrophobic. Note hydrogens are dealt with automatically." ).def(true);
 option.add( basic::options::OptionKeys::sasa::exclude_polar_atoms_by_charge_in_hsasa, "Polar carbons and other atoms should not be included in hydrophobic hSASA - though historically they were.  Set this to false to get historic hsasa" ).def(false);
 option.add( basic::options::OptionKeys::sasa::polar_charge_cutoff, "Charge cutoff (abs value) to use on heavy atoms if excluding hydrophobic atoms from hSASA calculation by charge. The default is optimized for protein atom types (which excludes only carbonyl and carboxyl carbons.  By default only carbon and sulfer are excluded." ).def(.4);
-option.add( basic::options::OptionKeys::sasa::implicit_hydrogen_radii_set, "The radii set to use when including hydrogens implicitly instead of explicitly. chothia=naccess" ).legal("chothia").legal("naccess").legal("legacy").legal("reduce").def("chothia");
-option.add( basic::options::OptionKeys::sasa::explicit_hydrogen_radii_set, "The radii set to use when including hydrogens explicitly." ).legal("LJ").def("LJ");
-option.add( basic::options::OptionKeys::sasa::use_legacy_behavior, "Use Legacy radii with all atom SASA calculation.  This is a bit wrong as were double counting any hydrogens with radii that were optimized for a scorefunction that is no longer used." ).def(false);
+option.add( basic::options::OptionKeys::sasa::implicit_hydrogen_radii_set, "The radii set to use when including hydrogens implicitly instead of explicitly. Chothia 1976 radii are used by the program Naccess.  chothia=naccess" ).legal("chothia").legal("naccess").def("chothia");
+option.add( basic::options::OptionKeys::sasa::explicit_hydrogen_radii_set, "The radii set to use when including hydrogens explicitly. Default is reduce, which was generally agreed upon at Minicon 2014 and come from original data from Bondi (1964) and Gavezzotti (1983) .  LJ are the Rosetta leonard-jones radii, which are not quite exactly from Charmm.  Legacy radii were optimized for a no-longer-in-Rosetta scoreterm (Jerry Tsai et al 2003)" ).legal("reduce").legal("LJ").legal("legacy").def("reduce");
 option.add( basic::options::OptionKeys::packing::packing, "Packing option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::packing::repack_only, "Disable design at all positions" ).def(false);
 option.add( basic::options::OptionKeys::packing::prevent_repacking, "Disable repacking (or design) at all positions" ).def(false);
@@ -1553,10 +1552,10 @@ option.add( basic::options::OptionKeys::membrane::membrane_normal, "membrane nor
 option.add( basic::options::OptionKeys::membrane::view, "viewing pose during protocol" ).def(false);
 option.add( basic::options::OptionKeys::membrane::Mhbond_depth, "membrane depth dependent correction to the hbond potential" ).def(false);
 option.add( basic::options::OptionKeys::membrane::thickness, "one leaflet hydrocarbon thickness for solvation calculations (Angstroms)" ).def(15);
+option.add( basic::options::OptionKeys::casp::casp, "casp option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::casp::casp, "casp option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::casp::decoy, "No description" );
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::casp::decoy, "No description" );
 option.add( basic::options::OptionKeys::casp::wt, "No description" );
 option.add( basic::options::OptionKeys::casp::rots, "No description" );
 option.add( basic::options::OptionKeys::casp::opt_radius, "optimization radius for repacking and minimization" );
@@ -2329,10 +2328,10 @@ option.add( basic::options::OptionKeys::hotspot::cluster, "Cluster stubset. Will
 option.add( basic::options::OptionKeys::hotspot::colonyE, "Rescore hotspots from -hashfile based on colony energy." ).def(false);
 option.add( basic::options::OptionKeys::hotspot::length, "Length of hotspot peptide to use for hashing. Sidechain-containing group will be in the center." ).def(1);
 option.add( basic::options::OptionKeys::hotspot::envhb, "Use environment dependent Hbonds when scoring hotspots." ).def(false);
+option.add( basic::options::OptionKeys::hotspot::angle, "Maximum allowed angle between stubCA, target CoM, and stubCB. Used to determine if stub is pointing towards target. Negative numbers deactivates this check (default)" ).def(-1);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::hotspot::angle, "Maximum allowed angle between stubCA, target CoM, and stubCB. Used to determine if stub is pointing towards target. Negative numbers deactivates this check (default)" ).def(-1);
-option.add( basic::options::OptionKeys::hotspot::angle_res, "Residue to use for angle calculation from stubCA, <this option>, and stubCB. Used to determine if stub is pointing towards target. 0 uses the default, which is the targets center of mass" ).def(0);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::hotspot::angle_res, "Residue to use for angle calculation from stubCA, <this option>, and stubCB. Used to determine if stub is pointing towards target. 0 uses the default, which is the targets center of mass" ).def(0);
 option.add( basic::options::OptionKeys::parser::parser, "parser option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::parser::protocol, "File name for the xml parser protocol" );
 option.add( basic::options::OptionKeys::parser::script_vars, "Variable substitutions for xml parser, in the form of name=value" );
