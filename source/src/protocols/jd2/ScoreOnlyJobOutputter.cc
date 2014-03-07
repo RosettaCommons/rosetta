@@ -24,7 +24,6 @@
 #include <utility/vector1.hh>
 
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace jd2 {
@@ -85,7 +84,7 @@ void ScoreOnlyJobOutputter::read_done_jobs() {
 	if ( utility::file::file_exists( scorefile_name() ) ) {
 		core::io::silent::SilentFileData sfd;
 		score_file_tags_ = sfd.read_tags_fast( scorefile_name() );
-		foreach( std::string & tag, score_file_tags_ ) {
+		BOOST_FOREACH( std::string & tag, score_file_tags_ ) {
 		/// eliminate the FAILURE_ prefix so that jobs know to start from
 		/// the 'next' nstruct on restart. This is important to avoid duplicate
 		/// entries

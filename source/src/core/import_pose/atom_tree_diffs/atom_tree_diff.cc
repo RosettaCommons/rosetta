@@ -43,8 +43,6 @@
 #include <set>
 #include <sstream>
 
-#define foreach BOOST_FOREACH
-
 namespace core {
 namespace import_pose {
 namespace atom_tree_diffs {
@@ -216,7 +214,7 @@ void dump_score_line(
 	// Repeating the pose tag in the score line is a great convenience
 	// for grepping out score data and later correlating it with a model.
 	out << "SCORES " << pose_tag;
-	foreach(ScorePair pair, scores){
+	BOOST_FOREACH(ScorePair pair, scores){
 		// Scores that are very near zero have artificially high precision
 		// when rendered in scientific notation, leading to numerical instability in benchmarks.
 		// Stupid C++ doesn't seem to have a fixed-point output mode
@@ -613,7 +611,7 @@ void map_of_weighted_scores(
 	}
 
 	scores_out.clear();
-	foreach(ScoreType score_type, score_types){
+	BOOST_FOREACH(ScoreType score_type, score_types){
 		scores_out[ name_from_score_type(score_type) ] = ( sfxn.get_weight(score_type) * pose.energies().total_energies()[ score_type ] );
 	}
 	scores_out[ name_from_score_type(core::scoring::total_score) ] = tot_score;

@@ -22,7 +22,6 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // Utility Headers
 #include <core/types.hh>
@@ -98,7 +97,7 @@ PreventResiduesFromRepackingOperation::set_residues( utility::vector1  < core::S
 {
         runtime_assert( residues_vec.size() != 0 );
         residues_.clear();
-        foreach( core::Size const item, residues_vec )
+        BOOST_FOREACH( core::Size const item, residues_vec )
           residues_.push_back( item );
 }
 
@@ -113,7 +112,7 @@ PreventResiduesFromRepackingOperation::parse_tag( TagCOP tag , DataMap & )
           utility::vector1< core::Size > residues_vector;
           residues_.clear();
 
-          foreach( std::string const key, res_keys ){
+          BOOST_FOREACH( std::string const key, res_keys ){
             Size const res( utility::string2int( key ) );
             TR.Debug<<"not designing residue: "<< key  <<std::endl;
             residues_.push_back( res );

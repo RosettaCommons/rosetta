@@ -59,7 +59,6 @@
 #include <ctime>
 #include <string>
 
-#define foreach BOOST_FOREACH
 
 // Global Names {{{1
 
@@ -511,7 +510,7 @@ void NativeEnsemble::write_stats_to_db( // {{{1
 
 		TrialCounter const & temp_counter = counter->temp_level(temp_level);
 
-		foreach (string tag, temp_counter.tags()) {
+		BOOST_FOREACH(string tag, temp_counter.tags()) {
 			Size num_trials = temp_counter.trial(tag);
 			Size num_accepted = temp_counter.accepted(tag);
 

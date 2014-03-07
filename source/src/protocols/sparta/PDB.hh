@@ -33,8 +33,8 @@ namespace sparta {
 
 typedef float Vec3[3];
 typedef float Mat3[3][3];
-typedef boost::unordered_map<int, boost::unordered_map<int, double> > DoubleD2;
-typedef boost::unordered_map<int, double>  DoubleD1;
+//typedef boost::unordered_map<int, boost::unordered_map<int, double> > DoubleD2;
+//typedef boost::unordered_map<int, double>  DoubleD1;
 
 typedef struct CORdata {
   int atomNum, resNum;
@@ -43,6 +43,7 @@ typedef struct CORdata {
   Vec3 Coord;
 } PDB_Entry;
 
+extern std::ostream& operator<<( std::ostream&, PDB_Entry const& );
 
 typedef struct {
   int resID, atomNo;
@@ -90,18 +91,25 @@ public:
   //molecules
   Mols Conformers;
   //atom list indexed by conformer ID + atom number
-  boost::unordered_map<int, boost::unordered_map<int, boost::unordered_map< std::string, PDB_Entry> > > ATOMS;
+	typedef boost::unordered_map< std::string, PDB_Entry> AtomEntries;
+	typedef boost::unordered_map<int, AtomEntries > EntryMap;
+  typedef boost::unordered_map<int, EntryMap > AtomsMap;
+	AtomsMap ATOMS;
   //atom list indexed by conformer ID + residue number + atom name
 
   std::map<int, std::string> residList, residListOne; //resdiue lists with three-letter-aa and one-letter-aa name
   int r1, rN;
 
-  boost::unordered_map<int, int> acceptorList; // Acceptor List for H-bond indexed by atom index
-  boost::unordered_map<int, int> donorList; // Donor List for H-bond indexed by atom indeice of itself and its connected heavy atom
-  boost::unordered_map<int, boost::unordered_map< std::string, float> > HBDistList; // HBond distance indexed by residue number and atom name
-  boost::unordered_map<int, boost::unordered_map< std::string, float> > HBEnergyList; // HBond energy list indexed by residue number and atom name
-  boost::unordered_map<int, boost::unordered_map< std::string, float> > HB_DHO_AngleList; // HBond angle (Donator-H-O) indexed by residue number and atom name
-  boost::unordered_map<int, boost::unordered_map< std::string, float> > HB_HOA_AngleList; // HBond angle (H-O-Acceptor_base) indexed by residue number and atom name
+	typedef std::map< int, int > PairList;
+  PairList acceptorList; // Acceptor List for H-bond indexed by atom index
+  PairList donorList; // Donor List for H-bond indexed by atom indeice of itself and its connected heavy atom
+
+	typedef std::map< std::string, float > InnerHBondMap;
+	typedef std::map<int, InnerHBondMap > HBondMap;
+	HBondMap HBDistList; // HBond distance indexed by residue number and atom name
+	HBondMap HBEnergyList; // HBond energy list indexed by residue number and atom name
+	HBondMap HB_DHO_AngleList; // HBond angle (Donator-H-O) indexed by residue number and atom name
+  HBondMap HB_HOA_AngleList; // HBond angle (H-O-Acceptor_base) indexed by residue number and atom name
 
 
   int SpherePointNo;

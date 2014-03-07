@@ -36,7 +36,6 @@ static basic::Tracer TR("devel.splice.RBInMover");
 #include <utility/io/izstream.hh>
 #include <protocols/protein_interface_design/movers/SetAtomTree.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 namespace devel {
 namespace splice {
@@ -91,7 +90,7 @@ RBInMover::checkpoint() const{
 	if( !data.good() )
 		utility_exit_with_message( "Unable to open checkpointing file for writing: " + checkpointing_file() + "\n" );
 	data<<current_entry_<<'\n';
-	foreach( core::kinematics::Jump const jump, jump_library() )
+	BOOST_FOREACH( core::kinematics::Jump const jump, jump_library() )
 		data<<jump<<'\n';
 	data.flush();
 	TR<<"Finished writing checkpointing information to "<<checkpointing_file()<<std::endl;

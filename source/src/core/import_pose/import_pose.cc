@@ -57,9 +57,6 @@
 #include <boost/foreach.hpp>
 
 
-#define foreach BOOST_FOREACH
-
-
 namespace core {
 namespace import_pose {
 
@@ -210,7 +207,7 @@ pose_from_pdb(
 
 	std::string res;
 
-	foreach(std::string filename, filenames){
+	BOOST_FOREACH(std::string filename, filenames){
 		utility::io::izstream file( filename );
 		if (!file) {
 			TR.Error << "PDB File:" << filename << " not found!" << std::endl;

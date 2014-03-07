@@ -30,7 +30,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <utility/string_util.hh>
 #include <protocols/simple_moves/DumpPdb.hh>
 #include <core/pose/symmetry/util.hh>
@@ -166,7 +165,7 @@ RelativePoseFilter::thread_seq( core::pose::Pose const & p ) const{
 		TR<<std::endl;
 		if( baseline() )
 			TR<<"baseline: "<<baseline_val()<<std::endl;
-		foreach( core::Size const d, diffs )
+		BOOST_FOREACH( core::Size const d, diffs )
 			dao->include_residue( d );
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
@@ -297,7 +296,7 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagCOP const tag,
 	dump_pose_fname( tag->getOption< std::string >( "dump_pose", "" ) );
 	if( tag->hasOption( "alignment" ) ){
 		utility::vector1< std::string > const residue_pairs( utility::string_split( tag->getOption< std::string >( "alignment", "" ), ',' ) );
-		foreach( std::string const residue_pair, residue_pairs ){
+		BOOST_FOREACH( std::string const residue_pair, residue_pairs ){
 			utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
 			runtime_assert( residues.size() == 2 );
 			char const residues1_cstr( residues[ 1 ].c_str()[ 0 ] ), residues2_cstr( residues[ 2 ].c_str()[ 0 ] ); // these may hold the chain designators

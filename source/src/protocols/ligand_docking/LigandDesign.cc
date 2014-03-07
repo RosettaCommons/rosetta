@@ -49,8 +49,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 
-#define foreach BOOST_FOREACH
-
 static numeric::random::RandomGenerator RG(42224);
 
 namespace protocols {
@@ -98,7 +96,7 @@ LigandDesign::set_fragments(){
 	core::chemical::ResidueTypeCOPs fragment_types= rs.select( *rsd_set );
 	ligand_design_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 
-	foreach(core::chemical::ResidueTypeCOP fragment_type, fragment_types){
+	BOOST_FOREACH(core::chemical::ResidueTypeCOP fragment_type, fragment_types){
 		core::conformation::ResidueOP temp = new core::conformation::Residue( *fragment_type, true);
 		fragments_.push_back(temp);
 		ligand_design_tracer<< "frag_name: "<< temp->name()<< std::endl;
@@ -232,7 +230,7 @@ LigandDesign::apply( core::pose::Pose & pose )
 }
 
 void LigandDesign::fragments_to_string() const{
-	foreach(core::conformation::ResidueCOP fragment, fragments_){
+	BOOST_FOREACH(core::conformation::ResidueCOP fragment, fragments_){
 		core::conformation::Residue const & res= *fragment;
 		std::string name= res.name();
 		core::Size total= res.n_residue_connections();

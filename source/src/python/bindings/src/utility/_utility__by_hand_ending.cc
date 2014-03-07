@@ -9,13 +9,16 @@ void __utility_by_hand_ending__()
     expose_basic_type<string>("string");
 
     expose_basic_type<int>("int");
-    expose_basic_type<long>("long");
-    expose_basic_type<unsigned long>("ulong");
+    // conflict with SSize expose_basic_type<long>("long");
+    // conflict with Size expose_basic_type<unsigned long>("ulong");
     expose_basic_type<unsigned int>("uint");
     expose_basic_type<char>("char");
     expose_basic_type<float>("float");
-    expose_basic_type<double>("double");
-    expose_basic_type<unsigned>("unsigned");
+    // conflict with Real expose_basic_type<double>("double");
+    //expose_basic_type<unsigned>("unsigned");
+    expose_basic_type<core::Size>("Size");
+    expose_basic_type<core::SSize>("SSize");
+    expose_basic_type<core::Real>("Real");
 
     //Need overload of bool_get so no:
     // expose_basic_type<bool>("bool");
@@ -27,18 +30,15 @@ void __utility_by_hand_ending__()
     ;
     wrap_vector1< vector1<bool>, CP_REF, CP_REF >("vec1_vec1_bool");
 
-    expose_basic_type<core::Size>("Size");
-    expose_basic_type<core::SSize>("SSize");
-    expose_basic_type<core::Real>("Real");
 
     expose_number_type<int>("int");
-    expose_number_type<long>("long");
-    expose_number_type<unsigned long>("ulong");
+    // conflict with SSize expose_number_type<long>("long");
+    // conflict with Size expose_number_type<unsigned long>("ulong");
     expose_number_type<unsigned int>("uint");
     expose_number_type<char>("char");
     expose_number_type<float>("float");
-    expose_number_type<double>("double");
-    expose_number_type<unsigned>("unsigned");
+    // conflict with Real expose_number_type<double>("double");
+    //expose_number_type<unsigned>("unsigned");
     expose_number_type<bool>("bool");
 
     expose_number_type<core::Size>("Size");
@@ -58,7 +58,7 @@ void __utility_by_hand_ending__()
 
     expose_pair_types<core::Real, std::string>("Real", "string");
     expose_pair_types<std::string, core::Real>("string", "Real");
-	
+
     wrap_vector1<core::scoring::ScoreType,  CP_CNCR, CP_CCR>("vector1_ScoreType");
     wrap_vector1<core::id::AtomID, CP_REF,CP_REF>("vector1_AtomID");
 

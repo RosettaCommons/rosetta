@@ -42,8 +42,6 @@
 #include <core/kinematics/Jump.hh>
 
 
-#define foreach BOOST_FOREACH
-
 namespace protocols {
 namespace protein_interface_design {
 namespace movers {
@@ -119,7 +117,7 @@ RandomMutation::apply( core::pose::Pose & pose )
   ResidueTypeCOPList const & allowed( task->residue_task( random_entry ).allowed_residue_types() );
   utility::vector1< AA > allow_temp;
   allow_temp.clear();
-  foreach( ResidueTypeCOP const t, allowed ){
+  BOOST_FOREACH( ResidueTypeCOP const t, allowed ){
 		if( t->aa() != pose.residue( random_entry ).aa() )
     	allow_temp.push_back( t->aa() );
 	}

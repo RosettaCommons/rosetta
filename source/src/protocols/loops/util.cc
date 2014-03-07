@@ -69,7 +69,6 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
-#define foreach BOOST_FOREACH
 
 //Auto Headers
 #include <core/id/AtomID_Map.hh>
@@ -394,7 +393,7 @@ loops_from_string( std::string const loop_str, core::pose::Pose const & pose ){
 // if cut is not set then it's taken to be 0. Residue numbering can follow the
 // pdb numbering
   LoopsOP loops_from_tag = new Loops();
- 	foreach( std::string const residue_pair, loops_vec ){
+ 	BOOST_FOREACH( std::string const residue_pair, loops_vec ){
     utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
 		if(residues.size() != 2 && residues.size() != 3){
 			utility_exit_with_message(

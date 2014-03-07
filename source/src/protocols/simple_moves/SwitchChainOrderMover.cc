@@ -28,7 +28,6 @@ static basic::Tracer TR("protocols.simple_moves.SwitchChainOrderMover");
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -83,7 +82,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 	new_residue_numbers.clear();
 	utility::vector1< core::Size > positions_in_new_pose;
 	positions_in_new_pose.clear();
-	foreach( char const chaini, chain_order() ){
+	BOOST_FOREACH( char const chaini, chain_order() ){
 		core::Size const chain( chaini - '0' );
 		TR<<"Now at chain: "<<chain<<std::endl;
 		runtime_assert( chain > 0 && chain <= conf.num_chains() );
@@ -95,7 +94,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 			positions_in_new_pose.push_back( i );
 		core::Size const new_chain_end( positions_in_new_pose.size() );
 		if( residue_numbers_() != NULL ){
-			foreach( core::Size const residue_number, residue_numbers_->obj ){
+			BOOST_FOREACH( core::Size const residue_number, residue_numbers_->obj ){
 				if( residue_number >= chain_begin && residue_number <= chain_end )
 					new_residue_numbers.push_back( residue_number - ( chain_begin - new_chain_begin ) );
 			}
@@ -126,7 +125,7 @@ SwitchChainOrderMover::apply( Pose & pose )
 	if( residue_numbers_() != NULL ){
 		residue_numbers_->obj = new_residue_numbers;
 		TR<<"new residue numbers: ";
-		foreach( core::Size const res, residue_numbers_->obj )
+		BOOST_FOREACH( core::Size const res, residue_numbers_->obj )
 			TR<<res<<", ";
 		TR<<std::endl;
 	}

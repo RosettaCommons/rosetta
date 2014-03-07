@@ -38,6 +38,10 @@ using namespace core;
 
 using namespace std;
 
+std::ostream& operator<<( std::ostream& os, PDB_Entry const& pe ) {
+	os << "PDBEntry: " << pe.atomNum << " " << pe.resNum << " " << pe.atomName << " " << pe.resName;
+}
+
 PDB::PDB()
 {
   r1 = 9999; rN = -9999;
@@ -679,16 +683,11 @@ void PDB::initHBond(float /*DIST*/, float /*ANGLE*/)
 	}
 
 
-  boost::unordered_map<int, int>::iterator itA, itD;
-  for(itA = acceptorList.begin(); itA != acceptorList.end(); itA++ ) {//loop over acceptor list
-
+  for( PairList::const_iterator itA = acceptorList.begin(); itA != acceptorList.end(); itA++ ) {//loop over acceptor list
 		PDB_Entry A = conf[ itA->first ], A_Heavy = conf[ itA->second ];;
-
 		//search for donors
-		for( itD = donorList.begin(); itD != donorList.end(); itD++ ) {
-
+		for( PairList::const_iterator itD = donorList.begin(); itD != donorList.end(); itD++ ) {
 			PDB_Entry D = conf[ itD->first ], D_Heavy = conf[ itD->second ];
-
 			if( abs( A.resNum - D.resNum) < 2) continue; //minimal 2 residues apart
 
 			float D_ON = getDist(A,D_Heavy);
@@ -702,9 +701,10 @@ void PDB::initHBond(float /*DIST*/, float /*ANGLE*/)
 			HBond_E *= ( 1.0/D_ON+1.0/D_CH-1.0/D_OH-1.0/D_CN );
 			//Kabsch, W. and Sander, C. (1983) Biopolymer, 22, 2577-2637.
 
-			if( HBond_E < -0.5) //is a HB bond
-				{
-					if( HBDistList[A.resNum][A.atomName] == 0 || HBDistList[A.resNum][A.atomName] > D_OH || HBEnergyList[A.resNum][A.atomName] > HBond_E) {
+			if ( HBond_E < -0.5) {//is a HB bond
+					if ( HBDistList[A.resNum][A.atomName] == 0
+						|| HBDistList[A.resNum][A.atomName] > D_OH
+						|| HBEnergyList[A.resNum][A.atomName] > HBond_E) {
 						HBDistList[A.resNum][A.atomName] = D_OH;
 						HB_DHO_AngleList[A.resNum][A.atomName] = getBondAngle(D_Heavy,D,A);
 						HB_HOA_AngleList[A.resNum][A.atomName] = getBondAngle(D,A,A_Heavy);
@@ -712,12 +712,13 @@ void PDB::initHBond(float /*DIST*/, float /*ANGLE*/)
 					}
 					// keep the strongest Hbond
 
-					if( HBDistList[D.resNum][D.atomName] == 0 || HBDistList[D.resNum][D.atomName] > D_OH || HBEnergyList[D.resNum][D.atomName] > HBond_E) {
+					if ( HBDistList[D.resNum][D.atomName] == 0
+						|| HBDistList[D.resNum][D.atomName] > D_OH
+						|| HBEnergyList[D.resNum][D.atomName] > HBond_E) {
 						HBDistList[D.resNum][D.atomName] = D_OH;
 						HB_DHO_AngleList[D.resNum][D.atomName] = getBondAngle(D_Heavy,D,A);
 						HB_HOA_AngleList[D.resNum][D.atomName] = getBondAngle(D,A,A_Heavy);
 						HBEnergyList[D.resNum][D.atomName] = HBond_E;
-
 					}
 					// keep the strongest Hbond
 				}

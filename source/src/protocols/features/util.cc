@@ -76,7 +76,6 @@ using cppdb::result;
 
 /// Macros are not properly caught and passed along by my #inclusion
 /// cleanup script
-#define foreach BOOST_FOREACH
 
 
 // Static data for the serial case
@@ -256,7 +255,7 @@ write_features_reporters_table(
 	string insert_string = "INSERT INTO features_reporters (report_name) VALUES (?);";
 	statement insert_stmt(safely_prepare_statement(insert_string, db_session));
 
-	foreach(FeaturesReporterOP const & reporter, features_reporters){
+	BOOST_FOREACH(FeaturesReporterOP const & reporter, features_reporters){
 		string const report_name(reporter->type_name());
 		select_stmt.bind(1,report_name);
 
@@ -306,7 +305,7 @@ write_batch_reports_table(
 	string insert_string = "INSERT INTO batch_reports (batch_id, report_name) VALUES (?,?);";
 	statement insert_stmt(safely_prepare_statement(insert_string, db_session));
 
-	foreach(FeaturesReporterOP const & reporter, features_reporters){
+	BOOST_FOREACH(FeaturesReporterOP const & reporter, features_reporters){
 		string const report_name(reporter->type_name());
 		select_stmt.bind(1,batch_id);
 		select_stmt.bind(2,report_name);

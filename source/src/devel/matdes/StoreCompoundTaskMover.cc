@@ -41,8 +41,6 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 
-#define foreach BOOST_FOREACH
-
 static basic::Tracer TR("devel.matdes.StoreCompoundTaskMover");
 
 namespace devel {
@@ -303,7 +301,7 @@ StoreCompoundTaskMover::parse_my_tag(
 	/// vector of (TaskFactoryOP, boolean_operation) pairs.
 	/// Note: Do not apply tasks to pose until runtime
 	/////////////////////////////////////////////////////////////////////////////////////////////////
-	foreach(TagCOP cmp_tag_ptr, tag->getTags() ){
+	BOOST_FOREACH(TagCOP cmp_tag_ptr, tag->getTags() ){
 		std::string const operation( cmp_tag_ptr->getName() );
 		std::pair< core::pack::task::TaskFactoryOP, boolean_operations > factory_pair;
 		if( operation == "AND" ) factory_pair.second = AND;

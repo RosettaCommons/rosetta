@@ -30,7 +30,6 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 ///C++ headers
 #include <string>
@@ -121,7 +120,7 @@ void protocols::jd2::AtomTreeDiffJobInputter::fill_jobs( Jobs & jobs ){
 
 	if ( option[ in::file::tags ].user() ) {
 		core::import_pose::atom_tree_diffs::TagScoreMap const & atd_tsm= atom_tree_diff_.get_tag_score_map();
-		foreach(string tag, option[ in::file::tags ]()){
+		BOOST_FOREACH(string tag, option[ in::file::tags ]()){
 			if ( ! atom_tree_diff_.has_tag(tag) ) {
 				utility_exit_with_message("Input AtomTreeDiff file does not have tag "+tag);
  			}
@@ -138,7 +137,7 @@ void protocols::jd2::AtomTreeDiffJobInputter::fill_jobs( Jobs & jobs ){
 	}
 
 	core::import_pose::atom_tree_diffs::ScoresPairList const & all_scores( atom_tree_diff_.scores() );
-	foreach(core::import_pose::atom_tree_diffs::TagScorePair tag_score, tags){
+	BOOST_FOREACH(core::import_pose::atom_tree_diffs::TagScorePair tag_score, tags){
 		InnerJobOP ijob( new InnerJob( tag_score.first, nstruct ) );
 
 		//second entry in tag_score is index to entry in ScoresPairList
@@ -148,7 +147,7 @@ void protocols::jd2::AtomTreeDiffJobInputter::fill_jobs( Jobs & jobs ){
 		for(core::Size j=1; j<=nstruct; ++j){
 			JobOP job = new Job( ijob, j);
 			if( basic::options::option[ basic::options::OptionKeys::in::file::keep_input_scores ] ) {
-				foreach(core::import_pose::atom_tree_diffs::ScorePair score, scores){
+				BOOST_FOREACH(core::import_pose::atom_tree_diffs::ScorePair score, scores){
 					job->add_string_real_pair(score.first, score.second);
 				}
 			}

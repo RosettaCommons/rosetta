@@ -52,7 +52,6 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
-#define foreach BOOST_FOREACH
 
 //Standard I/O
 //#include <stdio.h>
@@ -662,12 +661,12 @@ identify_hbonds_1way_AHdist(
 	HBondSet & hbond_set
 )
 {
-	foreach(Size const hatm, don_rsd.Hpos_polar()){
+	BOOST_FOREACH(Size const hatm, don_rsd.Hpos_polar()){
 		Size const datm(don_rsd.atom_base(hatm));
 		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
 		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
 
-		foreach(Size const aatm, acc_rsd.accpt_pos()){
+		BOOST_FOREACH(Size const aatm, acc_rsd.accpt_pos()){
 			if(hatm_xyz.distance( acc_rsd.xyz( aatm )) > AHdist_threshold) continue;
 
 			HBEvalTuple hbe_type(datm, don_rsd, aatm, acc_rsd);

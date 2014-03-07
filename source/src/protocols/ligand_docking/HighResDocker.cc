@@ -62,7 +62,6 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 //STL headers
 #include <string>
@@ -232,7 +231,7 @@ HighResDocker::remove_ligand_tethers(core::pose::Pose pose, TetherLigandOPs liga
 	// TetherLigandOPs::const_iterator begin= ligand_tethers.begin(); // Unused variable causes warning.
 	// TetherLigandOPs::const_iterator const end= ligand_tethers.end(); // Unused variable causes warning.
 
-	foreach(TetherLigandOP ligand_tether, ligand_tethers){
+	BOOST_FOREACH(TetherLigandOP ligand_tether, ligand_tethers){
 		ligand_tether->release(pose);
 	}
 }
@@ -399,10 +398,10 @@ HighResDocker::create_rigid_body_movers(core::pose::Pose const & pose) const{
 	LigandAreas const ligand_areas =
 			movemap_builder_->get_sc_interface_builder()->get_ligand_areas();
 
-	foreach(LigandAreas::value_type ligand_area_pair, ligand_areas){
+	BOOST_FOREACH(LigandAreas::value_type ligand_area_pair, ligand_areas){
 		char const & chain= ligand_area_pair.first;
 		utility::vector1<core::Size> jump_ids= core::pose::get_jump_ids_from_chain(chain, pose);
-		foreach(core::Size jump_id, jump_ids){
+		BOOST_FOREACH(core::Size jump_id, jump_ids){
 			LigandAreaOP const ligand_area = ligand_area_pair.second;
 			core::Real const & angstroms= ligand_area->high_res_angstroms_;
 			core::Real const & degrees= ligand_area->high_res_degrees_;
@@ -419,7 +418,7 @@ void HighResDocker::apply_rigid_body_moves(
 		utility::vector1<protocols::moves::MoverOP> & rigid_body_movers
 ){
 	// utility::vector1<protocols::moves::MoverOP>::iterator rigid_body_mover= rigid_body_movers.begin(); // Unused variable causes warning.
-	foreach(protocols::moves::MoverOP rigid_body_mover, rigid_body_movers){
+	BOOST_FOREACH(protocols::moves::MoverOP rigid_body_mover, rigid_body_movers){
 		rigid_body_mover->apply(pose);
 	}
 }

@@ -21,7 +21,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 //Auto Headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

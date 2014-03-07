@@ -46,7 +46,6 @@
 #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
 
-#define foreach BOOST_FOREACH
 
 using namespace ObjexxFCL::format;
 using namespace core;
@@ -199,7 +198,7 @@ void NormalModeMinimizer::parse_my_tag(
 		} else if( tag->getOption< core::Size > ( "jump" ) == 0 ) {
 			movemap_->set_jump( false );
 		} else {
-			foreach(std::string jump, jumps){
+			BOOST_FOREACH(std::string jump, jumps){
 				Size const value = std::atoi( jump.c_str() );
 				movemap_->set_jump( value, true );
 			}

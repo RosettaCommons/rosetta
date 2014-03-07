@@ -27,7 +27,6 @@ static basic::Tracer TR("protocols.simple_moves.PSSM2BfactorMover");
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/PDBInfo.hh>
@@ -88,7 +87,7 @@ PSSM2BfactorMover::apply( Pose & pose )
 
 	core::pose::add_comment(pose,"PSSMSTYLE residueNo", " A C D E F G H I K L M N P Q R S T V W Y");
 
-	foreach( ConstraintCOP const c, constraints ){
+	BOOST_FOREACH( ConstraintCOP const c, constraints ){
 		if( c->type() == "SequenceProfile" ){
 			SequenceProfileConstraintCOP seqprof_cst( dynamic_cast< SequenceProfileConstraint const * >( c() ) );
 			runtime_assert( seqprof_cst );

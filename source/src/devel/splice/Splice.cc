@@ -46,7 +46,6 @@
 #include <boost/foreach.hpp>
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 #include <protocols/rigid/RB_geometry.hh>
-#define foreach BOOST_FOREACH
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -268,7 +267,7 @@ Splice::load_from_checkpoint()
 		}
 	}
 	TR<<"dbase subset order loaded from checkpoint is: ";
-	foreach( core::Size const i, dbase_subset_ ){
+	BOOST_FOREACH( core::Size const i, dbase_subset_ ){
 		TR<<i<<' ';
 	}
 
@@ -292,7 +291,7 @@ Splice::save_to_checkpoint() const{
 	data.open( checkpointing_file_.c_str(), std::ios::out );
 	if( !data.good() )
 		utility_exit_with_message( "Unable to open splice checkpointing file for writing: " + checkpointing_file_ + "\n" );
-	foreach( core::Size const dbase_entry, dbase_subset_ ){
+	BOOST_FOREACH( core::Size const dbase_entry, dbase_subset_ ){
 		TR<<' '<<dbase_entry;
 		data << ' ' << dbase_entry;
 	}
@@ -490,7 +489,7 @@ Splice::apply( core::pose::Pose & pose )
 		TR<<"Taking loop from source pdb "<<source_pdb_name<<std::endl;
 		if( mover_tag_() != NULL )
 			mover_tag_->obj = "segment_" + source_pdb_name;
-		foreach( BBDofs & resdofs, dofs ){/// transform 3-letter code to 1-letter code
+		BOOST_FOREACH( BBDofs & resdofs, dofs ){/// transform 3-letter code to 1-letter code
 			using namespace core::chemical;
 			if( resdofs.resn() == "CYD" ){// at one point it would be a good idea to use disfulfides rather than bail out on them...; I think disulfided cysteins wouldn't be written as CYD. This requires something more clever...
 				TR<<"Residue "<<resdofs.resid()<<" is a disulfide. Failing"<<std::endl;
@@ -923,7 +922,7 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 
 		segment_type_ = tag->getOption< std::string >("segment");
 		protein_family(tag->getOption< std::string >( "protein_family" ));///Declare which protein family to use in-order to invoke the correct PSSM files
-		foreach( std::string const segment_type, order_segments_[protein_family_] ){
+		BOOST_FOREACH( std::string const segment_type, order_segments_[protein_family_] ){
 
 			SpliceSegmentOP splice_segment( new SpliceSegment );
 			splice_segment->all_pdb_profile( protein_family_to_database_.find(protein_family_)->second, segment_type );
@@ -953,7 +952,7 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 	//that the sequence profile is built according to the user (eg. vl, L3, vh, H3)
 	if (!sub_tags.empty()){//currently subtags is used to assign to each segment in the pose the correct pssm. In the future this will be hard coded (gideonla,NOV13)
 		segment_names_ordered_.clear(); //This string vector holds all the segment names inserted by the user to ensure
-		foreach( TagCOP const sub_tag, sub_tags ){
+		BOOST_FOREACH( TagCOP const sub_tag, sub_tags ){
 
 			if( sub_tag->getName() == "Segments" ){
 				check_segment = false;//This is set to false unless current segment appears in the segment list
@@ -965,7 +964,7 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 
 
 				utility::vector1< TagCOP > const segment_tags( sub_tag->getTags() );
-				foreach( TagCOP const segment_tag, segment_tags ){
+				BOOST_FOREACH( TagCOP const segment_tag, segment_tags ){
 					SpliceSegmentOP splice_segment( new SpliceSegment );
 					std::string const segment_name( segment_tag->getName() );//get name of segment from xml
 					std::string const pdb_profile_match( segment_tag->getOption< std::string >( "pdb_profile_match" ) ); // get name of pdb profile match, this file contains all the matching between pdb name and sub segment name, i.e L1.1,L1.2 etc
@@ -973,7 +972,7 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 					StringVec const profile_name_pairs( utility::string_split( profiles_str, ',' ) );
 
 					//	TR<<"Now working on segment:"<<segment_name<<std::endl;
-					foreach( std::string const s, profile_name_pairs ){
+					BOOST_FOREACH( std::string const s, profile_name_pairs ){
 						StringVec const profile_name_file_name( utility::string_split( s, ':' ) );
 						//	TR<<"pssm file:"<<profile_name_file_name[ 2 ]<<",segment name:"<<profile_name_file_name[ 1 ]<<std::endl;
 
@@ -1071,7 +1070,7 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 	if( tag->hasOption( "delta_lengths" ) ){
 		delta = tag->getOption< std::string >( "delta_lengths" );
 		StringVec const lengths_keys( utility::string_split( delta, ',' ) );
-		foreach( std::string const delta, lengths_keys ){
+		BOOST_FOREACH( std::string const delta, lengths_keys ){
 			if( delta == "" ) continue;
 			int const delta_i( 1 * atoi( delta.c_str() ) );
 			delta_lengths_.push_back( delta_i );
@@ -1082,7 +1081,7 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 	std::sort( delta_lengths_.begin(), delta_lengths_.end() );
 	std::unique( delta_lengths_.begin(), delta_lengths_.end() );
 	//TR<<"Deltas from xml: ";
-	//foreach( int const d, delta_lengths_ )
+	//BOOST_FOREACH( int const d, delta_lengths_ )
 	//    TR<<d<<',';
 	//TR<<std::endl;
 
@@ -1414,7 +1413,7 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 
 		profile_vector.clear(); //this vector holds all the pdb segment profiless
 
-		foreach( std::string const segment_type, segment_names_ordered_ ){ //<- Start of PDB segment iterator
+		BOOST_FOREACH( std::string const segment_type, segment_names_ordered_ ){ //<- Start of PDB segment iterator
 			TR<<"segment_type: "<<segment_type<<std::endl;
 			if (splice_segments_[ segment_type ]->pdb_profile(pdb_segments_[segment_type])==0){
 				utility_exit_with_message(" could not find the source pdb name:: "+ pdb_segments_[segment_type]+ ", in pdb_profile_match file."+segment_type+"\n");
@@ -1536,7 +1535,7 @@ Splice::add_sequence_constraints( core::pose::Pose & pose){
 		ConstraintCOPs constraints( pose.constraint_set()->get_all_constraints() );
 		TR<<"Total number of constraints at start: "<<constraints.size()<<std::endl;
 		core::Size cst_num( 0 );
-		foreach( ConstraintCOP const c, constraints ){
+		BOOST_FOREACH( ConstraintCOP const c, constraints ){
 			if( c->type() == "SequenceProfile" ){//only remove profile sequence constraints
 				pose.remove_constraint( c );
 				cst_num++;

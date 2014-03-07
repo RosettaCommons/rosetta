@@ -46,7 +46,6 @@
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
 #include <core/conformation/Conformation.hh>
-#define foreach BOOST_FOREACH
 
 static numeric::random::RandomGenerator RG(12341288);
 
@@ -104,7 +103,7 @@ GrowLigand::set_fragments(){
 	core::chemical::ResidueTypeCOPs fragment_types= rs.select( *rsd_set );
 	grow_ligand_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
 
-	foreach(core::chemical::ResidueTypeCOP fragment_type, fragment_types){
+	BOOST_FOREACH(core::chemical::ResidueTypeCOP fragment_type, fragment_types){
 		fragments_.push_back( new core::conformation::Residue(*fragment_type, true) );
 		grow_ligand_tracer<< "frag_name: "<< fragment_type->name()<< std::endl;
 	}

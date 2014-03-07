@@ -45,7 +45,7 @@ public:
   core::Real score_pose( core::pose::Pose const & pose );
   void check_pose( core::pose::Pose const & pose );
   utility::vector1< float > score_pose_per_residue( core::pose::Pose const & pose );
-private:
+public:
   class SpartaLib;
   SpartaLib& lib() { return *lib_instance_; } //no it is not a constant reference since we do the calculation in SPARTA_LIB. assumption here: no threads
   core::Real run_A_ANN_Prediction(); // Run ANN prediction for a single protein
@@ -56,7 +56,7 @@ private:
 
   static bool options_registered_;
 
-private: ///{ most of the original SPARTA class goes into SpartaLib -- to be reused between different evaluators...
+public: ///{ most of the original SPARTA class goes into SpartaLib -- to be reused between different evaluators...
   class SpartaLib { //private sub-class so the elements are public such that they can be accessed from main class without too much text changes..
   public:
     SpartaLib();
@@ -130,27 +130,34 @@ private: ///{ most of the original SPARTA class goes into SpartaLib -- to be reu
 
     float tVal; // Max similarity score threshold, not used in the program
 
-    std::map< int, std::string > residList; // one-letter amino acid residue list from input PDB coordinates file
+    typedef std::map< int, std::string > ResidList;
+    ResidList residList; // one-letter amino acid residue list from input PDB coordinates file
     std::string sequence; // one-letter amino acid residue list from input PDB coordinates file in the format of one std::string
 
-    boost::unordered_map< int, std::string > aN/*, aN_ALL*/; // Backbone atom list used by program "N HA C CA CB H"
+    typedef boost::unordered_map< int, std::string > AtomNameList;
+    AtomNameList aN/*, aN_ALL*/; // Backbone atom list used by program "N HA C CA CB H"
 
     int matchCount; //Max Match Count per query triplet
 
     std::string pdbListName; //table file name for names of candidate proteins
 
-    boost::unordered_map<std::string, boost::unordered_map<std::string, float> > Fitting;
+    //boost::unordered_map<std::string, boost::unordered_map<std::string, float> > Fitting;
 
     std::string AAlist; // amino acid list (with a sequence allowed by ANN)
-    boost::unordered_map< std::string, utility::vector0< float > > BLOSUM_62;	// BLOSUM 62 matrix
-    boost::unordered_map< int, utility::vector0< float > > ANN_IN_MTX;	// input matrix for neural netwrok calculation
-    boost::unordered_map< std::string, boost::unordered_map< int, utility::vector0< float > > > ANN_CS_OUTPUT_FULL; // input matrix from neural netwrok calculation, indexed by atom name, resID and prediction
-    boost::unordered_map< int, float > CHI2_ANGLES, OMEGA_ANGLES;
 
-    boost::unordered_map< int, boost::unordered_map< std::string,float > > SURFACE_EXPOSURE; //indexed by resID, atomName
+    typedef std::map< std::string, utility::vector0< float > > BlosumMatrix;
+    BlosumMatrix BLOSUM_62;	// BLOSUM 62 matrix
 
-    boost::unordered_map< int, std::string >::iterator itN;
-    boost::unordered_map< int, boost::unordered_map< std::string, std::string > >::iterator it;
+    ANN::ANN_Matrix ANN_IN_MTX;	// input matrix for neural netwrok calculation
+
+    typedef std::map< std::string, ANN::ANN_Matrix > Atom2ANN_MatrixMap;
+    Atom2ANN_MatrixMap ANN_CS_OUTPUT_FULL; // input matrix from neural netwrok calculation, indexed by atom name, resID and prediction
+
+    typedef std::map< int, float > AngleMap;
+    AngleMap CHI2_ANGLES, OMEGA_ANGLES;
+
+    typedef std::map< int, std::map< std::string,float > > SurfaceExposureMap;
+    SurfaceExposureMap SURFACE_EXPOSURE; //indexed by resID, atomName
 
     boost::unordered_map< std::string, ANN> SPARTA_ANN;
     boost::unordered_map< std::string, boost::unordered_map< std::string, PHIPSI_ERR_SURF> > SPARTA_ERR_SURF; //indexed by AA, atomName, phi, psi

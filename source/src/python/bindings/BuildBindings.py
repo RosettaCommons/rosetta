@@ -513,12 +513,12 @@ def getCompilerOptions():
         else:
             add_option += ' -fPIC'
     elif Options.compiler == 'clang':
-        add_option = '-pipe -O3 -ffast-math -funroll-loops -finline-functions -fPIC'
+        add_option = '-pipe -ffast-math -funroll-loops -finline-functions -fPIC'
     else:
-        add_option = '-pipe -ffor-scope -O3 -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s -fPIC'
+        add_option = '-pipe -ffor-scope -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s -fPIC'
     #if Platform == 'cygwin' : add_option =''
     add_option += ' -DBOOST_PYTHON_MAX_ARITY=32 -DPYROSETTA'
-    add_option += (' -DDEBUG' if Options.debug else ' -DNDEBUG')
+    add_option += (' -DDEBUG -O0 -g -ggdb' if Options.debug else ' -O3 -DNDEBUG')
 
     if not Options.numpy_support:
         add_option += ' -DPYROSETTA_NO_NUMPY'
@@ -539,7 +539,10 @@ def getLinkerOptions():
         #if PlatformBits == '32' and Platform != 'cygwin': add_loption += ' -malign-double'
         if PlatformBits == '32' : add_loption += ' -malign-double'
     else:
-        add_loption = '-dynamiclib -Xlinker -headerpad_max_install_names'
+        #add_loption = '-dynamiclib -Xlinker -headerpad_max_install_names'  # <-- old one
+        #add_loption = '-dynamiclib -m64'  # <-- used on Mac
+        add_loption = '-dynamiclib'
+
         #if platform.release()[:2] == '13': add_loption += ' -stdlib=libstdc++'
 
     return add_loption
@@ -818,7 +821,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
                     /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\" \
                     /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY \
                     /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_MAJOR=0 /DCPPDB_MINOR=3 /DCPPDB_PATCH=0 /DCPPDB_VERSION=\\"0.3.0\\"  \
-                    /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /c %s /I. /I../external/include /I../external/boost_1_46_1 \
+                    /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /c %s /I. /I../external/include /I../external/boost_1_55_0 \
                     /I../external/dbio /I../external/dbio/sqlite3 /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj),)
 
         '''DNDEBUG -DCPPDB_EXPORTS -DCPPDB_LIBRARY_SUFFIX=\".dylib\" -DCPPDB_LIBRARY_PREFIX=\"lib\" -DCPPDB_DISABLE_SHARED_OBJECT_LOADING
@@ -833,7 +836,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
         obj = os.path.join(build_dir,s) + '.obj'
 
         if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
-            execute('Compiling %s' % s, 'cl %s /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s' % (get_CL_Options(), s, obj),
+            execute('Compiling %s' % s, 'cl %s /c %s /I. /I../external/include /I../external/boost_1_55_0 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s' % (get_CL_Options(), s, obj),
                     )  # return_=True)
 
         latest = max(latest, os.path.getmtime(obj) )
@@ -871,8 +874,8 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
     pdb_test_exe = os.path.join(build_dir, 'PDBTest.exe')
     pdb_test_obj = os.path.join(build_dir, 'PDBTest.obj')
     if (not os.path.isfile(pdb_test_exe))   or  os.path.getmtime(pdb_test_exe) < os.path.getmtime(pdb_test)  or  os.path.getmtime(pdb_test_exe) < latest:
-        #execute('Compiling test executable %s' % pdb_test, 'cl /c %s %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta %s /Fe%s /Fo%s' % (get_CL_Options(), pdb_test, rosetta_lib, pdb_test_exe, pdb_test_obj) )
-        execute('Compiling test executable %s' % pdb_test, 'cl /c %s %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fe%s /Fo%s' % (get_CL_Options(), pdb_test, pdb_test_exe, pdb_test_obj) )
+        #execute('Compiling test executable %s' % pdb_test, 'cl /c %s %s /I. /I../external/include /I../external/boost_1_55_0 /I../external/dbio /Iplatform/windows/PyRosetta %s /Fe%s /Fo%s' % (get_CL_Options(), pdb_test, rosetta_lib, pdb_test_exe, pdb_test_obj) )
+        execute('Compiling test executable %s' % pdb_test, 'cl /c %s %s /I. /I../external/include /I../external/boost_1_55_0 /I../external/dbio /Iplatform/windows/PyRosetta /Fe%s /Fo%s' % (get_CL_Options(), pdb_test, pdb_test_exe, pdb_test_obj) )
         execute('Linking test executable %s' % pdb_test, 'link %s %s /out:%s' % (pdb_test_obj, rosetta_lib, pdb_test_exe) )
 
     '''
@@ -952,7 +955,7 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, al
                    + ' /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2 /DBOOST_PYTHON_MAX_ARITY=25'
                    + ' /Fo%s ' % obj ) )
                 #  /Iplatform/windows/32/msvc
-                #  /I../external/boost_1_46_1
+                #  /I../external/boost_1_55_0
                 #  /IBOOST_MSVC    /link rosetta_lib
 
                 # c:\\mingw\\bin\\
@@ -1083,7 +1086,7 @@ class ModuleBuilder:
         self.libpaths = ' -L'.join( ['', dest] + libpaths )
         self.runtime_libpaths = ' -Xlinker -rpath '.join( [''] + runtime_libpaths + ['rosetta'] )
 
-        self.cpp_defines = '-DPYROSETTA -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK -DBOOST_NO_MT'
+        self.cpp_defines = '-DPYROSETTA -DBOOST_NO_MT -DBOOST_THREAD_DONT_USE_CHRONO -DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_SYSTEM_NO_DEPRECATED -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK'  # -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK  -DBOOST_LCAST_NO_COMPILE_TIME_PRECISION
         if Options.cross_compile: self.cpp_defines += ' -I../src/platform/windows/PyRosetta'
         elif Platform == "macos": self.cpp_defines += ' -I../src/platform/macos'
         else: self.cpp_defines += ' -I../src/platform/linux'
@@ -1181,7 +1184,7 @@ class ModuleBuilder:
             if os.path.isfile(self.all_at_once_lib): os.remove(self.all_at_once_lib)
 
             def generate():
-                if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_46_1  -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (self.gccxml_options, self.all_at_once_source_cpp, self.all_at_once_xml, self.cpp_defines), Options.continue_ ): return
+                if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_55_0  -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (self.gccxml_options, self.all_at_once_source_cpp, self.all_at_once_xml, self.cpp_defines), Options.continue_ ): return
 
                 namespaces_to_wrap = ['::'+self.path.replace('/', '::')+'::']
                 # Temporary injecting Mover in to protocols level
@@ -1246,22 +1249,24 @@ class ModuleBuilder:
                 comiler_cmd = "%(compiler)s %(fname)s -o %(obj_name)s -c %(add_option)s %(cpp_defines)s -I../external/include  -I../external/dbio %(include_paths)s "
                 comiler_dict = dict(add_option=self.add_option, fname=all_at_once_N_cpp, obj_name=all_at_once_N_obj, include_paths=self.include_paths, compiler=Options.compiler, cpp_defines=self.cpp_defines)
 
-                failed = False
+                #failed = False
 
                 if not Options.cross_compile:
-                    def compile_():
+                    def compile_():  # return True if failed
                         if execute("Compiling...", comiler_cmd % comiler_dict, return_=True):
-                            if Options.compiler != 'clang': failed = True
-                            elif execute("Compiling...", comiler_cmd % dict(comiler_dict, compiler='gcc'), return_=True): failed = True
+                            if Options.compiler != 'clang': return True
+                            elif execute("Compiling...", comiler_cmd % dict(comiler_dict, compiler='gcc'), return_=True): return True
+
+                        return False
+
 
                     if Options.jobs > 1:
                         pid = mFork(tag=self.path)
                         if not pid:  # we are child process
-                            compile_()
-                            sys.exit(0)
+                            sys.exit( compile_() )
 
                     else:
-                        compile_()
+                        if compile_(): sys.exit(1)
                         SleepPrecise( (time.time() - start_time) * Options.sleep, 'Sleeping %(time)s seconds so CPU could cool-off...\r')
 
 
@@ -1391,7 +1396,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
     runtime_libpaths = ' -Xlinker -rpath '.join( [''] + runtime_libpaths + ['rosetta'] )
     #if Platform == 'cygwin': runtime_libpaths = ' '
 
-    cpp_defines = '-DPYROSETTA -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK -DBOOST_NO_MT'
+    cpp_defines = '-DPYROSETTA -DBOOST_NO_MT -DBOOST_THREAD_DONT_USE_CHRONO -DBOOST_ERROR_CODE_HEADER_ONLY -DBOOST_SYSTEM_NO_DEPRECATED -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK'  # -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK  -DBOOST_LCAST_NO_COMPILE_TIME_PRECISION
     if Options.cross_compile: cpp_defines += ' -I../src/platform/windows/PyRosetta'
     elif Platform == "macos": cpp_defines += ' -I../src/platform/macos'
     else: cpp_defines += ' -I../src/platform/linux'
@@ -1495,12 +1500,12 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
         #execute('Generating XML representation...', 'clang++ -cc1 -ast-print-xml %s  ' % (cc_original,) )
 
         # Clang++ version
-        #execute('Generating XML representation...', 'clang++ -cc1 -ast-print-xml %s -o %s -I. -I../src/platform/linux  -I../external/include -I../external/boost_1_46_1 ' % (source_cc, xml_name) )
+        #execute('Generating XML representation...', 'clang++ -cc1 -ast-print-xml %s -o %s -I. -I../src/platform/linux  -I../external/include -I../external/boost_1_55_0 ' % (source_cc, xml_name) )
 
         # we need  -DBOOST_NO_INITIALIZER_LISTS or gccxml choke on protocols/genetic_algorithm/GeneticAlgorithm.hh
         # GCCXML version
         # -DPYROSETTA
-        if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_46_1 -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (gccxml_options, source_hh, xml_name, cpp_defines), Options.continue_): continue
+        if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_55_0 -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (gccxml_options, source_hh, xml_name, cpp_defines), Options.continue_): continue
 
         namespaces_to_wrap = ['::'+path.replace('/', '::')+'::']
         # Temporary injecting Mover in to protocols level
@@ -1575,7 +1580,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
         if xml_recompile or (not Options.update):
             if os.path.isfile(all_at_once_lib): os.remove(all_at_once_lib)
 
-            if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_46_1  -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (gccxml_options, all_at_once_source_cpp, all_at_once_xml, cpp_defines), Options.continue_ ):
+            if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_55_0  -I../external/dbio -DBOOST_NO_INITIALIZER_LISTS ' % (gccxml_options, all_at_once_source_cpp, all_at_once_xml, cpp_defines), Options.continue_ ):
                 return new_headers
 
             namespaces_to_wrap = ['::'+path.replace('/', '::')+'::']
@@ -1782,7 +1787,7 @@ def buildModule_One(path, dest, include_paths, libpaths, runtime_libpaths, gccxm
 
 
         mb = module_builder.module_builder_t(files= [fl]
-                                         , include_paths = ['../src/platform/linux', '../external/include', '../external/boost_1_46_1'],
+                                         , include_paths = ['../src/platform/linux', '../external/include', '../external/boost_1_55_0'],
                                          #, ignore_gccxml_output = True
                                          #, indexing_suite_version = 1
                                          gccxml_path=gccxml_path,
@@ -2031,7 +2036,7 @@ def buildModule_All(path, dest, include_paths, libpaths, runtime_libpaths, gccxm
         h.close()
 
         mb = module_builder.module_builder_t(files=files #[inc_name]  #files=files
-                                         , include_paths = ['../src/platform/linux', '../external/include', '../external/boost_1_46_1'],
+                                         , include_paths = ['../src/platform/linux', '../external/include', '../external/boost_1_55_0'],
                                          #, ignore_gccxml_output = True
                                          #, indexing_suite_version = 1
                                          gccxml_path=gccxml_path,

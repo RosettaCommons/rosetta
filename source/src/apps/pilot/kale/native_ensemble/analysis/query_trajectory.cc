@@ -37,7 +37,6 @@
 #include <algorithm>
 
 // Global Names {{{1
-#define foreach BOOST_FOREACH
 
 using namespace std;
 using namespace basic::options;
@@ -82,7 +81,7 @@ int main(int argc, char **argv) { // {{{1
 	cout << loop.start() << " ";
 	cout << loop.stop() << endl;
 	
-	foreach (Size i, iterations) {
+	BOOST_FOREACH(Size i, iterations) {
 		cout << "  " << i << endl;
 		Pose pose = reader.get_pose(i);
 		Real score = pose.energies().total_energy();

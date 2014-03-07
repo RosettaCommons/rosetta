@@ -384,7 +384,6 @@
 #include <boost/unordered/unordered_map.hpp>
 
 //Auto Headers
-#define foreach BOOST_FOREACH
 
 namespace core {
 namespace scoring {
@@ -405,7 +404,7 @@ rmsd_with_super(
 	std::vector< core::Vector > p1_coords;
 	std::vector< core::Vector > p2_coords;
 
-	foreach(Size i, subset_residues){
+	BOOST_FOREACH(Size i, subset_residues){
 	    Size num_atoms ( pose1.residue(i).natoms() );
 	    if ( predicate == is_ligand_heavyatom ||
 		 predicate == is_polymer_heavyatom ||

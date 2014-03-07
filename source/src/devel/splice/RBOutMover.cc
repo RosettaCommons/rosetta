@@ -26,7 +26,6 @@ static basic::Tracer TR("protocols.simple_moves.RBOutMover");
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/PDBInfo.hh>

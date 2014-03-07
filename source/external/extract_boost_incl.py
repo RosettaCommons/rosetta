@@ -107,32 +107,52 @@ class BoostLib:
 ## the indicated header file(s) and directories should be copied then
 ## then set recursive=False when initializing the BoostLib object.
 ##
-## Current as of boost 1.38.
+## Current as of boost 1.55 integration (feb 2014)
 BOOST = [
-	BoostLib( "array", [ "array.hpp" ] ),
-	BoostLib( "bimap", [ "bimap", "bimap.hpp" ] ),
-	BoostLib( "bind", [ "bind", "bind.hpp" ] ),
-	BoostLib( "call_traits", [ "call_traits.hpp" ] ),
-	BoostLib( "concept_check", [ "concept_check", "concept_check.hpp" ] ),
-	BoostLib( "config", [ "config", "config.hpp" ] ),
-	BoostLib( "format", [ "format", "format.hpp" ] ),
-	BoostLib( "function", [ "function", "function.hpp" ] ),
-	BoostLib( "functional", [ "functional", "functional.hpp" ] ),
-	BoostLib( "functional/hash", [ "functional/hash", "functional/hash.hpp" ] ),
-	BoostLib( "iterator", [ "iterator", "iterator.hpp", "iterator_adaptors.hpp" ] ),
-	BoostLib( "mpl", [ "mpl" ] ),
-	BoostLib( "multi_array", [ "multi_array", "multi_array.hpp" ] ),
-	BoostLib( "multi_index", [ "multi_index", "multi_index_container.hpp" ] ),
-	BoostLib( "optional", [ "optional", "optional.hpp" ] ),
-	BoostLib( "pool", [ "pool" ] ),
-	BoostLib( "preprocessor", [ "preprocessor", "preprocessor.hpp" ] ),
-	BoostLib( "spirit", [ "spirit" ] ),
-	BoostLib( "string", [ "algorithm/string.hpp" ] ), # sans regex
-	BoostLib( "tokenizer", [ "tokenizer.hpp" ] ),
-	BoostLib( "tuple", [ "tuple" ] ),
-	BoostLib( "type_traits", [ "type_traits", "type_traits.hpp" ] ),
-	BoostLib( "unordered", [ "unordered", "unordered_map.hpp", "unordered_set.hpp" ] ),
-	BoostLib( "misc_incl", [ "compressed_pair.hpp", "limits.hpp", "version.hpp" ] ),
+        BoostLib( "accumulators", [ "accumulators/", "accumulators/statistics/" ] ),
+        BoostLib( "algorithm", [ "algorithm/string.hpp", "algorithm/string" ] ),
+        BoostLib( "archive", ["archive/"] ),
+        BoostLib( "array", ["array.hpp"] ),
+        BoostLib( "assign", [ "assign/", "assign/std/", "assign.hpp" ] ),
+        BoostLib( "bind", [ "bind.hpp" ] ),
+        BoostLib( "config", [ "config.hpp", "config/", "config/compiler/","config/stdlib/","config/platform/"  ] ),
+        BoostLib( "cstdint", [ "cstdint.hpp" ] ),
+        BoostLib( "date_time", [ "date_time/posix_time/posix_time_types.hpp" ] ),
+        BoostLib( "detail", [ "detail/atomic_count.hpp" ] ),
+        BoostLib( "dynamic_bitset", [ "dynamic_bitset/dynamic_bitset.hpp" ] ),
+        BoostLib( "foreach", [ "foreach.hpp" ] ),
+        BoostLib( "format", [ "format.hpp" ] ),
+        BoostLib( "function", [ "function.hpp" ] ),
+        BoostLib( "functional", [ "functional/factory.hpp", "functional/hash.hpp" ] ),
+        BoostLib( "graph", [ "graph/" ] ),
+        BoostLib( "io", [ "io/" ] ),
+        BoostLib( "lexical_cast", [ "lexical_cast.hpp" ] ),
+        BoostLib( "math", [ "math/constants", "math/distributions", "math/distributions.hpp", "math/special_functions" ] ),
+        BoostLib( "mpi", [ "mpi.hpp", "mpi/" ] ),
+        BoostLib( "mpl", [ "mpl/" ] ),
+        BoostLib( "noncopyable", [ "noncopyable.hpp" ] ),
+        BoostLib( "numeric", [ "numeric/ublas" ] ),
+        BoostLib( "optional", [ "optional.hpp" ] ),
+        BoostLib( "pool", [ "pool/", "pool/detail/" ] ), 
+        BoostLib( "preprocessor", [ "preprocessor/preprocessor.hpp" ] ),
+        BoostLib( "progress", [ "progress.hpp" ] ),
+        BoostLib( "python", [ "python.hpp", "python/" ] ),
+        BoostLib( "scoped_ptr", [ "scoped_ptr.hpp" ] ),
+        BoostLib( "serialization", [ "serialization/", "serialization/detail/" ] ),
+        BoostLib( "smart_ptr", [ "smart_ptr/", "smart_ptr.hpp" ] ),
+        BoostLib( "spirit", [ "spirit/", "spirit/include/", "spirit/home/phoenix/bind/bind_function.hpp" ] ),
+        BoostLib( "thread", [ "thread.hpp", "thread" ] ),
+        BoostLib( "timer", [ "timer.hpp" ] ),
+        BoostLib( "tokenizer", [ "tokenizer.hpp" ] ),
+        BoostLib( "tuple", [ "tuple" ] ),
+        BoostLib( "type_traits", [ "type_traits/", "type_traits.hpp" ] ),
+        BoostLib( "unordered", [ "unordered/", "unordered_map.hpp", "unordered_set.hpp" ] ),
+        BoostLib( "utility", [ "utility/", "utility.hpp" ] ),
+        BoostLib( "uuid", [ "uuid" ] ),
+        BoostLib( "variant", [ "variant.hpp" ] ),
+        BoostLib( "version", [ "version.hpp" ] ),
+        BoostLib( "weak_ptr", [ "weak_ptr.hpp" ] ),
+        BoostLib( "xpressive", [ "xpressive" ] ),
 ]
 
 
@@ -196,4 +216,3 @@ if __name__ == '__main__':
 		sys.exit( 1 )
 	else:
 		main( options, args )
-

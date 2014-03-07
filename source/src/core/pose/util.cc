@@ -81,9 +81,6 @@
 #include <boost/foreach.hpp>
 
 
-#define foreach BOOST_FOREACH
-
-
 namespace core {
 namespace pose {
 
@@ -2012,7 +2009,7 @@ utility::vector1<core::Size>
 get_jump_ids_from_chain(char const & chain, core::pose::Pose const & pose){
 	utility::vector1<core::Size> jump_ids;
 	utility::vector1<core::Size> chain_ids = get_chain_ids_from_chain(chain, pose);
-	foreach(core::Size chain_id, chain_ids){
+	BOOST_FOREACH(core::Size chain_id, chain_ids){
 		jump_ids.push_back( get_jump_id_from_chain_id(chain_id, pose));
 	}
 	return jump_ids;

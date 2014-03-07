@@ -38,8 +38,6 @@
 
 #include <utility/vector1.hh>
 
-#define foreach BOOST_FOREACH
-
 namespace core {
 namespace import_pose {
 namespace pose_stream {
@@ -127,7 +125,7 @@ void PDBPoseInputStream::add_list_filenames(
 	using utility::vector1;
 	bool init_current_position( filenames_.size() == 0 );
 
-	foreach(utility::file::FileName filename_obj, list_fns){
+	BOOST_FOREACH(utility::file::FileName filename_obj, list_fns){
 		std::string filename( filename_obj.name() );
 		utility::io::izstream data( filename.c_str() );
 		if ( !data.good() )

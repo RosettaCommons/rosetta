@@ -43,7 +43,6 @@
 
 // Boost headers
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 #include <utility/excn/Exceptions.hh>
 #include <fstream>
@@ -122,7 +121,7 @@ StartFrom::parse_my_tag(
 
 	chain_ = tag->getOption<std::string>("chain");
 	
-	foreach(utility::tag::TagCOP child_tag, tag->getTags()){
+	BOOST_FOREACH(utility::tag::TagCOP child_tag, tag->getTags()){
 		std::string name= child_tag->getName();
 		if( name == "features"){
 			std::cout << "found features tag with type '" << child_tag->getOption<std::string>("type") << "'" << std::endl;
@@ -250,7 +249,7 @@ void StartFrom::apply(core::pose::Pose & pose){
 		{
 			std::string job_tag(jd2::JobDistributor::get_instance()->current_job()->input_tag());
 			utility::vector1<std::string> input_filenames(utility::split(job_tag));
-			foreach(std::string filename, input_filenames)
+			BOOST_FOREACH(std::string filename, input_filenames)
 			{
 				utility::file::FileName file_data(filename);
 				std::string base_name(file_data.base());

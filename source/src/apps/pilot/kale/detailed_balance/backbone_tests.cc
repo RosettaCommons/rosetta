@@ -53,8 +53,6 @@
 #include <numeric/random/random.hh>
 #include <boost/foreach.hpp>
 
-#define foreach BOOST_FOREACH
-
 // C++ headers
 #include <iostream>
 #include <iomanip>

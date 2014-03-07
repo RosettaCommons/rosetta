@@ -39,7 +39,6 @@
 // C++ Headers
 #include <sstream>
 
-#define foreach BOOST_FOREACH
 // }}}1
 
 namespace protocols {
@@ -141,7 +140,7 @@ void DbTrajectoryWriter::write_cache_to_db() const { // {{{1
 
 	RowDataBaseOP job = new RowData<Size>("job_id", job_id_);
 
-	foreach (Frame frame, frame_cache_) {
+	BOOST_FOREACH(Frame frame, frame_cache_) {
 		stringstream string_stream;
 		SilentFileData silent_file;
 		SilentStructOP silent_data =

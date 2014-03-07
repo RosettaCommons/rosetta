@@ -72,7 +72,6 @@ using namespace core;
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
-#define foreach BOOST_FOREACH
 
 
 using namespace core::scoring;

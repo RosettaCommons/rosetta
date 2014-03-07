@@ -39,7 +39,6 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 namespace core {
 namespace chemical {
@@ -806,7 +805,7 @@ ResidueDatabaseIO::report_residue_type_cut_bond(
 	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 	for(Size i=1; i <= res_type.natoms(); ++i){
-		foreach(core::Size const j, res_type.cut_bond_neighbor(i)){
+		BOOST_FOREACH(core::Size const j, res_type.cut_bond_neighbor(i)){
 			if(i>=j) continue;
 
 
@@ -920,7 +919,7 @@ ResidueDatabaseIO::report_residue_type_chi_rotamer(
 	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for(Size chi=1; chi <= res_type.nchi(); ++chi){
 		std::pair<Real, Real> mean_sdev;
-		foreach(mean_sdev, res_type.chi_rotamers(chi)){
+		BOOST_FOREACH(mean_sdev, res_type.chi_rotamers(chi)){
 
 			stmt.bind(1,residue_type_set_name);
 			stmt.bind(2,res_type.name());
@@ -971,7 +970,7 @@ ResidueDatabaseIO::report_residue_type_proton_chi(
 	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for(Size proton_chi=1; proton_chi <= res_type.n_proton_chi(); ++proton_chi){
 		Size const chi(res_type.proton_chi_2_chi(proton_chi));
-		foreach(Real const sample, res_type.proton_chi_samples(proton_chi)){
+		BOOST_FOREACH(Real const sample, res_type.proton_chi_samples(proton_chi)){
 
 			stmt.bind(1,residue_type_set_name);
 			stmt.bind(2,res_type.name());
@@ -980,7 +979,7 @@ ResidueDatabaseIO::report_residue_type_proton_chi(
 			stmt.bind(5,false);
 			basic::database::safely_write_to_database(stmt);
 
-			foreach(Real const extra_sample, res_type.proton_chi_extra_samples(proton_chi)){
+			BOOST_FOREACH(Real const extra_sample, res_type.proton_chi_extra_samples(proton_chi)){
 
 				stmt.bind(1,residue_type_set_name);
 				stmt.bind(2,res_type.name());
@@ -1062,7 +1061,7 @@ ResidueDatabaseIO::report_residue_type_properties(
 	ResidueType const & res_type,
 	utility::sql_database::sessionOP db_session
 )  {
-	foreach(std::string const & property, res_type.properties()){
+	BOOST_FOREACH(std::string const & property, res_type.properties()){
 
 		cppdb::statement stmt = (*db_session)
 					<< "INSERT INTO residue_type_property (residue_type_set_name, residue_type_name, property) VALUES (?,?,?);"
@@ -1106,7 +1105,7 @@ ResidueDatabaseIO::report_residue_type_variant(
 	ResidueType const & res_type,
 	utility::sql_database::sessionOP db_session
 )  {
-	foreach(std::string const & variant_type, res_type.variant_types()){
+	BOOST_FOREACH(std::string const & variant_type, res_type.variant_types()){
 
 		cppdb::statement stmt = (*db_session)
 			<< "INSERT INTO residue_type_variant_type (residue_type_set_name, residue_type_name, variant_type) VALUES (?,?,?);"

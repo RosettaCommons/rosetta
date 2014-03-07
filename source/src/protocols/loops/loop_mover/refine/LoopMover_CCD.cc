@@ -27,7 +27,6 @@
 #include <protocols/loops/loops_definers/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // Rosetta Headers
 
@@ -247,7 +246,7 @@ LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagCOP const tag, basic::datac
 	set_fold_tree_from_loops( tag->getOption< bool >( "set_fold_tree_from_loops", true ) );
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );
 	bool specified_movemap( false );
-	foreach( utility::tag::TagCOP const tag, branch_tags ){
+	BOOST_FOREACH( utility::tag::TagCOP const tag, branch_tags ){
 		if( tag->getName() == "MoveMap" ) specified_movemap = true;
 		break;
 	}

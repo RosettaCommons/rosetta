@@ -23,7 +23,6 @@
 #include <iostream>
 #include <sstream>
 
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace kinematic_closure {

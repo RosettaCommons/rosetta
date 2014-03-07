@@ -62,7 +62,6 @@
 #include <utility/string_util.hh>
 // AUTO-REMOVED #include <set>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
@@ -663,7 +662,7 @@ get_resnum_from_cstid_list( std::string const& cstidlist, core::pose::Pose const
 {
 			 resnums.clear();
        utility::vector1< std::string > const cstids ( utility::string_split( cstidlist , ',' ) );
-        foreach( std::string const cstid, cstids ){
+        BOOST_FOREACH( std::string const cstid, cstids ){
                 if(cstid=="") continue;
 								core::Size const resnum (get_resnum_from_cstid( cstid, pose) );
                 runtime_assert( resnum>0 && resnum <=pose.total_residue() );

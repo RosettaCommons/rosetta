@@ -46,7 +46,6 @@
 #include <boost/foreach.hpp>
 #include "boost/assign.hpp"
 
-#define foreach BOOST_FOREACH
 
 static basic::Tracer TR("protocols.fldsgn.MatchResidues");
 
@@ -97,7 +96,7 @@ core::Real
 MatchResidues::compute( core::pose::Pose const & pose, VecSize & best_fit ) const
 {
 	Real smallest_rms = 99999;
-	foreach(VecSize const & comb, mod_segment_prod_){
+	BOOST_FOREACH(VecSize const & comb, mod_segment_prod_){
 		Real rms = compute_comb(pose, comb);
 		if( rms < smallest_rms ) {
 			smallest_rms = rms;
@@ -145,7 +144,7 @@ MatchResidues::cart_product( VecVecSize const & input) const {
   VecSize outputTemp;
 	cart_product(tmp, outputTemp, input.begin(), input.end());
 	//remove duplicates in combination
-	foreach(VecSize const & vec, tmp) {
+	BOOST_FOREACH(VecSize const & vec, tmp) {
 		std::set<Size> comb(vec.begin(), vec.end());
 		if(comb.size() == vec.size())
 			output.push_back(vec);
@@ -179,7 +178,7 @@ MatchResidues::parse_my_tag(
 		ss_seg = map_ss_segments( ss );
   }
 
-	foreach( utility::tag::TagCOP pairs_tag, tag->getTags() ) {
+	BOOST_FOREACH( utility::tag::TagCOP pairs_tag, tag->getTags() ) {
 		if( pairs_tag->getName() == "match" ) {
 			const Size ref_pos = pairs_tag->getOption< Size >("ref_pos");
 			Size mod_pos_start= 0;

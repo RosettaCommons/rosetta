@@ -10,7 +10,6 @@
 /// @author Sarel Fleishman (sarelf@uw.edu)
 #include <protocols/protein_interface_design/filters/StubScoreLoopsFilter.hh>
 #include <protocols/protein_interface_design/filters/StubScoreLoopsFilterCreator.hh>
-#define foreach BOOST_FOREACH
 #include <core/pose/Pose.hh>
 #include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>

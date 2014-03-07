@@ -61,11 +61,11 @@ using namespace std;
 
 void
 calc_per_residue_scores(
-	boost::unordered_map< int, std::string > & atom_names,
-	GDB & Pred_Sum,
-	GDB & REF_CS_Tab,
-	GDB & COMP_Tab,
-	utility::vector1< float > & per_residue_scores
+	Sparta::SpartaLib::AtomNameList& atom_names,
+	GDB& Pred_Sum,
+	GDB& REF_CS_Tab,
+	GDB& COMP_Tab,
+	utility::vector1< float >& per_residue_scores
 ) {
 	using boost::unordered_map;
 
@@ -77,19 +77,19 @@ calc_per_residue_scores(
 	COMP_Tab.VARS_str_parser("  RESID RESNAME ATOMNAME CS_OBS SHIFT RC_SHIFT CS_DIFF SIGMA W");
 	COMP_Tab.FORMAT_str_parser("  %4d %4s %4s %9.3f %9.3f %9.3f %9.3f %9.3f %.2f");
 
-	boost::unordered_map< int, string >::iterator itN;
-	boost::unordered_map< int, boost::unordered_map< string, string > >::iterator it;
+	//boost::unordered_map< int, string >::iterator itN;
+	//	boost::unordered_map< int, boost::unordered_map< string, string > >::iterator it;
 
 	//std::cout << "begin_scoring: scores.size() = " << per_residue_scores.size() << std::endl;
 
 	utility::vector0< float > OBS_V, PRED_V, DIFF_V, OBS_V_CORRECTED;
-	for ( itN = atom_names.begin(); itN != atom_names.end(); itN++ ) {
+	for ( Sparta::SpartaLib::AtomNameList::iterator itN = atom_names.begin(); itN != atom_names.end(); itN++ ) {
 		string aName = itN->second;
 		if ( aName == "H" ) aName="HN";
 		bool floating_sign( REF_CS_Tab.isVarFloat("SHIFT2") );
 		if ( floating_sign ) tr.Info << " use floating sign1 " << std::endl;
 		else tr.Info << " no floating sign " << std::endl;
-		for ( it = REF_CS_Tab.Entries.begin(); it != REF_CS_Tab.Entries.end(); it++ )	{
+		for ( GDB::EntryList::iterator it = REF_CS_Tab.Entries.begin(); it != REF_CS_Tab.Entries.end(); it++ )	{
 			float obs_shift, pred_shift, obs_shift2( 0.0 );
 			string aName_ref = it->second["ATOMNAME"];
 			if ( aName_ref == "H" ) aName_ref = "HN";
@@ -98,7 +98,7 @@ calc_per_residue_scores(
 				if ( aName_ref.find("HA") != 0 ) continue;
 			}	else if ( aName_ref != aName ) continue;
 
-			GDB_Entry temp = Pred_Sum.getEntry("RESID",it->second["RESID"],"ATOMNAME",aName,1);
+			GDB::GDB_Entry temp = Pred_Sum.getEntry("RESID",it->second["RESID"],"ATOMNAME",aName,1);
 
 			if (temp["SHIFT"].length() <= 0) continue;
 
@@ -111,7 +111,7 @@ calc_per_residue_scores(
 				if ( aName_ref == "HA2" ) { // assign HA2 to the one with smaller shift
 					float shift_HA3 = 9999.000;
 					float shift_HA3_2 = 9999;
-					GDB_Entry HA3 = REF_CS_Tab.getEntry("RESID",it->second["RESID"],"ATOMNAME","HA3",1);
+					GDB::GDB_Entry HA3 = REF_CS_Tab.getEntry("RESID",it->second["RESID"],"ATOMNAME","HA3",1);
 					if ( HA3["ATOMNAME"] == "HA3") shift_HA3 = atof( (HA3["SHIFT"]).c_str() );
 					if ( floating_sign && HA3["ATOMNAME"] == "HA3") shift_HA3_2 = atof( (HA3["SHIFT2"]).c_str() );
 
@@ -127,7 +127,7 @@ calc_per_residue_scores(
 
 					float shift_HA2 = -9999.000;
 					float shift_HA2_2 = -9999;
-					GDB_Entry HA2 = REF_CS_Tab.getEntry("RESID",it->second["RESID"],"ATOMNAME","HA2",1);
+					GDB::GDB_Entry HA2 = REF_CS_Tab.getEntry("RESID",it->second["RESID"],"ATOMNAME","HA2",1);
 					if ( HA2["ATOMNAME"] == "HA2") shift_HA2 = atof( (HA2["SHIFT"]).c_str() );
 					if ( floating_sign && HA2["ATOMNAME"] == "HA2") shift_HA2_2 = atof( (HA2["SHIFT2"]).c_str() );
 
@@ -195,7 +195,7 @@ calc_per_residue_scores(
 }
 
 Real compareRef_fxn(
-	boost::unordered_map< int, std::string > & names,
+  Sparta::SpartaLib::AtomNameList& names,
 	GDB & Pred_Sum,
 	GDB & REF_CS_Tab,
 	GDB & COMP_Tab
@@ -302,7 +302,7 @@ char * ftoa( float n, char *buff, char f, int prec )
 
 int MKDIR(const char *dirName)
 {
-#ifndef  __native_client__ 
+#ifndef  __native_client__
 #ifdef WIN32
 	return mkdir(dirName);
 #else

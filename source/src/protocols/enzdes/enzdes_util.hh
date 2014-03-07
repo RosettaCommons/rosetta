@@ -32,7 +32,6 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 //for parse_task_operations
 // AUTO-REMOVED #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 // AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 // AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>

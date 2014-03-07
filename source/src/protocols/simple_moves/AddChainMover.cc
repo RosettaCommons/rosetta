@@ -32,7 +32,6 @@ static basic::Tracer TR("protocols.simple_moves.AddChainMover");
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <core/import_pose/import_pose.hh>
 #include <numeric/xyzVector.hh>
 #include <protocols/toolbox/superimpose.hh>
@@ -74,7 +73,7 @@ Ca_coords( core::pose::Pose const & pose, utility::vector1< core::Size > const p
     utility::vector1< numeric::xyzVector< core::Real > > coords;
     
     coords.clear();
-    foreach( core::Size const pos, positions ){
+    BOOST_FOREACH( core::Size const pos, positions ){
         coords.push_back( pose.residue( pos ).xyz( "CA" ) );
     }
     return coords;

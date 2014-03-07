@@ -53,7 +53,6 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 namespace protocols{
 namespace features{
@@ -329,7 +328,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_atoms_rows(
 
 	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id", struct_id);
 
-	foreach( UnrecognizedAtomRecord ua, pdb_info->get_unrecognized_atoms()){
+	BOOST_FOREACH( UnrecognizedAtomRecord ua, pdb_info->get_unrecognized_atoms()){
 
 		insert_generator.add_row(
 			make_vector(
@@ -374,7 +373,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_neighbors_rows(
 
 		Size closest_ua_resNum(0);
 		Distance closest_ua_distance(10000000);
-		foreach( UnrecognizedAtomRecord ua, pdb_info->get_unrecognized_atoms()){
+		BOOST_FOREACH( UnrecognizedAtomRecord ua, pdb_info->get_unrecognized_atoms()){
 			Distance const ua_distance(res.actcoord().distance(ua.coords()));
 			if(
 				ua_distance < neighbor_distance_cutoff_ &&

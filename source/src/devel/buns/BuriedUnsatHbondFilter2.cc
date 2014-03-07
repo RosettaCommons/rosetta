@@ -30,7 +30,6 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <utility/string_util.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 namespace devel {
 namespace buns {
@@ -176,7 +175,7 @@ BuriedUnsatHbondFilter2::compute( core::pose::Pose const & pose ) const {
 			unsat_hbonds = 0;
 		}
 		else {
-			foreach( core::Size const sr, selected_residues ){
+			BOOST_FOREACH( core::Size const sr, selected_residues ){
 				unsat_hbonds += std::max( (res_buns_bound.value()[ sr ]) - (res_buns_unbound.value()[ sr ]), Size(0) );
 			//TR << "running value for total_in_selected_residues = " << total_in_selected_residues << std::endl;
 			}

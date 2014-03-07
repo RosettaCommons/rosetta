@@ -6,6 +6,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#include <string>
 #include <map>
 
 namespace protocols {
@@ -15,8 +16,8 @@ bool
 read_biounit(
 	std::string const & fname,
 	core::pose::Pose & pose,
-	int  const & max_res = 9999999,
-	bool const & DEBUG = false
+	int  max_res = 9999999,
+	bool debug = false
 );
 
 bool
@@ -25,8 +26,8 @@ read_biounit(
 	core::pose::Pose & pose,
 	utility::vector1<core::Real> & bfactors,
 	utility::vector1<core::Real> & occupancy,
-	int  const & max_res = 9999999,
-	bool const & DEBUG = false
+	int  max_res = 9999999,
+	bool debug = false
 );
 
 bool
@@ -38,8 +39,8 @@ read_biounit(
 	utility::vector1<int>  & pdbres,
 	std::map<int,char> & pdbchain,
 	int        & nresmodel1,
-	int  const & max_res = 9999999,
-	bool const & DEBUG = false
+	int          max_res = 9999999,
+	bool         debug = false
 );
 
 }

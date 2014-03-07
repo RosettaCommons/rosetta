@@ -36,7 +36,6 @@
 #include <numeric/xyzVector.io.hh>
 
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
@@ -143,9 +142,9 @@ Translate::parse_my_tag(
 	if ( tag->hasOption("tag_along_chains") ){
 		std::string const tag_along_chains_str = tag->getOption<std::string>("tag_along_chains");
 		utility::vector1<std::string> tag_along_chain_strs= utility::string_split(tag_along_chains_str, ',');
-		foreach(std::string tag_along_chain_str, tag_along_chain_strs){
+		BOOST_FOREACH(std::string tag_along_chain_str, tag_along_chain_strs){
 			utility::vector1<core::Size> chain_ids= get_chain_ids_from_chain(tag_along_chain_str, pose);
-			foreach( core::Size chain_id, chain_ids){
+			BOOST_FOREACH( core::Size chain_id, chain_ids){
 				core::Size jump_id= core::pose::get_jump_id_from_chain_id(chain_id, pose);
 				chain_ids_to_exclude_.push_back(chain_id);
 				tag_along_jumps_.push_back(jump_id);
@@ -216,7 +215,7 @@ void Translate::uniform_translate_ligand(
 		if ( grid_value <= 0 ){
 			translate_tracer.Trace << "Accepting ligand position with nbr_atom at " << c << std::endl;
 			mover.freeze();
-			foreach(core::Size tag_along_jump, tag_along_jumps_){
+			BOOST_FOREACH(core::Size tag_along_jump, tag_along_jumps_){
 				translate_tracer.Trace << "moving jump " << tag_along_jump<< " the same amount"<< std::endl;
 				mover.rb_jump(tag_along_jump);
 				mover.apply(pose);
@@ -236,7 +235,7 @@ void Translate::uniform_translate_ligand(
 		translate_tracer.Trace << "Forcing neighbor atom to move (leading to a clash)" << std::endl;
 		pose= best_pose;
 		mover.freeze();
-		foreach(core::Size tag_along_jump, tag_along_jumps_){
+		BOOST_FOREACH(core::Size tag_along_jump, tag_along_jumps_){
 			mover.rb_jump(tag_along_jump);
 			mover.apply(pose);
 		}

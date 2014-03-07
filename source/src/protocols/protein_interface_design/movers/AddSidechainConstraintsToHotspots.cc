@@ -25,7 +25,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <basic/datacache/DataMap.hh>
 #include <core/scoring/constraints/Constraint.hh>
@@ -89,14 +88,14 @@ AddSidechainConstraintsToHotspots::apply( Pose & pose )
 		if( cutpoint <= end && cutpoint >= begin )
 			add_residue( i );
 	}
-	foreach( core::Size const residue, residues() )
+	BOOST_FOREACH( core::Size const residue, residues() )
 	{
 		using namespace core::scoring::constraints;
 
 		core::scoring::func::HarmonicFuncOP dummy_cst;
 		ConstraintCOPs constraint;
 		constraint = add_coordinate_constraints( pose, pose.conformation().residue( residue ), chain(), residue, coord_sdev(), dummy_cst );
-		foreach( ConstraintCOP cst, constraint ){
+		BOOST_FOREACH( ConstraintCOP cst, constraint ){
 			cst->show_def( TR_cst, pose );
 		}
 	}
@@ -118,7 +117,7 @@ AddSidechainConstraintsToHotspots::parse_my_tag( TagCOP const tag,
 	chain( tag->getOption< core::Size >( "chain", 2 ) );
 	coord_sdev( tag->getOption< core::Real >( "coord_sdev", 1.0 ) );
 	utility::vector1< core::Size > v1 = core::pose::get_resnum_list( tag, "resnums", pose );
-	foreach( core::Size const r, v1 ){ add_residue( r ); }
+	BOOST_FOREACH( core::Size const r, v1 ){ add_residue( r ); }
 }
 
 core::Size

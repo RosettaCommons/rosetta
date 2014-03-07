@@ -30,7 +30,6 @@
 
 // External headers
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 static basic::Tracer tr("protocols.canonical_sampling.MultiTempTrialCounter");
 
@@ -105,7 +104,7 @@ Size MultiTempTrialCounter::num_temp_levels() const { // {{{1
 
 Size MultiTempTrialCounter::total_trials() const { // {{{1
 	Size total_trials = 0;
-	foreach (TrialCounter const & counter, counters_) {
+	BOOST_FOREACH(TrialCounter const & counter, counters_) {
 		total_trials += counter.total_trials();
 	}
 	return total_trials;
@@ -113,7 +112,7 @@ Size MultiTempTrialCounter::total_trials() const { // {{{1
 
 Size MultiTempTrialCounter::trial(std::string const & tag) const { // {{{1
 	Size num_attempted = 0;
-	foreach (TrialCounter const & counter, counters_) {
+	BOOST_FOREACH(TrialCounter const & counter, counters_) {
 		num_attempted += counter.trial(tag);
 	}
 	return num_attempted;
@@ -121,7 +120,7 @@ Size MultiTempTrialCounter::trial(std::string const & tag) const { // {{{1
 
 Size MultiTempTrialCounter::accepted(std::string const & tag) const { // {{{1
 	Size num_accepted = 0;
-	foreach (TrialCounter const & counter, counters_) {
+	BOOST_FOREACH(TrialCounter const & counter, counters_) {
 		num_accepted += counter.accepted(tag);
 	}
 	return num_accepted;
@@ -129,7 +128,7 @@ Size MultiTempTrialCounter::accepted(std::string const & tag) const { // {{{1
 
 Real MultiTempTrialCounter::energy_drop(std::string const & tag) const { // {{{1
 	Size total_drop = 0;
-	foreach (TrialCounter const & counter, counters_) {
+	BOOST_FOREACH(TrialCounter const & counter, counters_) {
 		total_drop += counter.energy_drop(tag);
 	}
 	return total_drop;
@@ -137,7 +136,7 @@ Real MultiTempTrialCounter::energy_drop(std::string const & tag) const { // {{{1
 
 vector1<string> const MultiTempTrialCounter::tags() const { // {{{1
 	vector1<string> tags, subtags;
-	foreach (TrialCounter const & counter, counters_) {
+	BOOST_FOREACH(TrialCounter const & counter, counters_) {
 		subtags = counter.tags();
 		tags.insert(tags.end(), subtags.begin(), subtags.end());
 	}

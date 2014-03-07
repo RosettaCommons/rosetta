@@ -52,7 +52,6 @@
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // C++ Headers
 #include <set>
@@ -127,12 +126,12 @@ DesignInterfacesOperation::apply( core::pose::Pose const & pose, core::pack::tas
     dao.repack_shell(repack_shell());
     dao.design_shell(design_shell());
     TR<<"residues found in two_segment interface: ";
-    foreach( core::Size const res, two_segment_interface ){
+    BOOST_FOREACH( core::Size const res, two_segment_interface ){
         dao.include_residue( res );
         TR<<res<<'+';
     }
     TR<<std::endl<<"residues found in two_chain_interface: ";
-    foreach( core::Size const res, two_chain_interface ){
+    BOOST_FOREACH( core::Size const res, two_chain_interface ){
         dao.include_residue(res);
         TR<<res<<'+';
     }

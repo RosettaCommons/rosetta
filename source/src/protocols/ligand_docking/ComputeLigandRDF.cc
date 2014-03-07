@@ -172,7 +172,7 @@ void ComputeLigandRDF::parse_my_tag
 	
 	for(; begin != end; ++begin){
 		TagCOP function_tag= *begin;
-		//	foreach(TagCOP const & feature_tag, tag->getTags()){
+		//	BOOST_FOREACH(TagCOP const & feature_tag, tag->getTags()){
 		
 		if(function_tag->getName() != "RDF"){
 			compute_rdf_tracer.Error << "Please include only tags with name 'RDF' as subtags of ReportToDB" << std::endl;

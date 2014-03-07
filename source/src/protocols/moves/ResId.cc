@@ -23,7 +23,6 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace moves {

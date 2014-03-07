@@ -95,7 +95,6 @@
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // C++ headers
 #include <algorithm>
@@ -3417,7 +3416,7 @@ std::set<core::Size> RemodelLoopMover::generate_residues_to_sample(bool chooseSu
 				if(option[OptionKeys::remodel::staged_sampling::residues_to_sample].user()){ 
 						std::string const & allowedRes_str =option[OptionKeys::remodel::staged_sampling::residues_to_sample];
 				utility::vector1< std::string > const res_keys( utility::string_split( allowedRes_str , ',' ) );
-				foreach( std::string const key, res_keys ){
+				BOOST_FOREACH( std::string const key, res_keys ){
 						Size const res( utility::string2int( key ) );
 						allowedRes.insert(res);
 						}

@@ -73,7 +73,7 @@ namespace protocols {
 namespace noesy_assign {
 
 CrossPeakList::CrossPeakList() :
-	assignments_()
+		peaks_()
 {}
 
 CrossPeakList::~CrossPeakList() {}

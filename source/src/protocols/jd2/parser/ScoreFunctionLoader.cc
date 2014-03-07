@@ -40,8 +40,6 @@
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 
-#define foreach BOOST_FOREACH
-
 namespace protocols {
 namespace jd2 {
 namespace parser {
@@ -62,7 +60,7 @@ void ScoreFunctionLoader::load_data(
 
 	TagCOPs const & scorefxn_tags( tag->getTags() );
 
-	foreach(TagCOP scorefxn_tag, scorefxn_tags){
+	BOOST_FOREACH(TagCOP scorefxn_tag, scorefxn_tags){
 		using namespace core::scoring;
 		using namespace core::scoring::symmetry;
 
@@ -86,7 +84,7 @@ void ScoreFunctionLoader::load_data(
 			in_scorefxn->reset();
 			TR << "***WARNING***: No weights/patch defined. Defining " << scorefxn_name << " with all-zero weights.\n";
 		}
-		foreach(TagCOP mod_tag, scorefxn_tag->getTags()){
+		BOOST_FOREACH(TagCOP mod_tag, scorefxn_tag->getTags()){
 			if( mod_tag->getName() == "Reweight" ) {
 				std::string const scoretype_name( mod_tag->getOption<std::string>( "scoretype" ) );
 				core::Real const weight( mod_tag->getOption<core::Real>( "weight" ) );

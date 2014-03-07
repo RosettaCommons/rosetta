@@ -44,7 +44,6 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // C++ headers
 #include <cmath>
@@ -1296,7 +1295,7 @@ HBondDatabase::report_parameter_features(
 	pair<string, FadeIntervalCOP> fade_name_interval;
 	std::string hbond_interval_string = "INSERT INTO hbond_fade_interval (database_tag, name, junction_type, min0, fmin, fmax, max0) VALUES (?,?,?,?,?,?,?);";
 	statement hbond_interval_statement(basic::database::safely_prepare_statement(hbond_interval_string,db_session));
-	foreach(fade_name_interval, HBFadeInterval_lookup_by_name_){
+	BOOST_FOREACH(fade_name_interval, HBFadeInterval_lookup_by_name_){
 		hbond_interval_statement.bind(1,database_tag);
 		hbond_interval_statement.bind(2,fade_name_interval.first);
 		hbond_interval_statement.bind(3,(fade_name_interval.second->get_smooth() ? "smooth" : "piecewise_linear"));
@@ -1311,7 +1310,7 @@ HBondDatabase::report_parameter_features(
 	pair<string, Polynomial_1dCOP> poly_name_fn;
 	std::string hbond_polynomial_string = "INSERT INTO hbond_polynomial_1d (database_tag, name, dimension, xmin, xmax, min_val, max_val, root1, root2, degree, c_a, c_b, c_c, c_d, c_e, c_f, c_g, c_h, c_i, c_j, c_k) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement hbond_polynomial_statement(basic::database::safely_prepare_statement(hbond_polynomial_string,db_session));
-	foreach(poly_name_fn, HBPoly1D_lookup_by_name_){
+	BOOST_FOREACH(poly_name_fn, HBPoly1D_lookup_by_name_){
 		hbond_polynomial_statement.bind(1,database_tag);
 		hbond_polynomial_statement.bind(2,poly_name_fn.first);
 		hbond_polynomial_statement.bind(3,HBondTypeManager::name_from_geo_dim_type(poly_name_fn.second->geometric_dimension()));

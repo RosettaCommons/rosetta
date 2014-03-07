@@ -15,7 +15,6 @@
 #include <protocols/protein_interface_design/movers/TaskAwareCsts.hh>
 #include <protocols/protein_interface_design/movers/TaskAwareCstsCreator.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/util.hh>
@@ -81,7 +80,7 @@ TaskAwareCsts::apply( core::pose::Pose & pose )
 	AtomID const anchor_atom( AtomID( pose.residue( designable[ 1 ] ).atom_index( "CA" ), designable[ 1 ] ) ); // anchor to first designable CA
 	core::scoring::func::HarmonicFuncOP coord_cst_func( new core::scoring::func::HarmonicFunc( 0.0, 1.0/*sd*/ ) ); // hardwired for now
 	TR<<"Adding constraints to pose at positions: ";
-	foreach( core::Size const resid, designable ){
+	BOOST_FOREACH( core::Size const resid, designable ){
 		core::conformation::Residue const rsd_i( pose.residue( resid ) );
 		if( cst_type_ == "coordinate" ){
 			cst.push_back( new CoordinateConstraint( AtomID( rsd_i.atom_index( "CA" ), resid ), anchor_atom, rsd_i.xyz( "CA" ), coord_cst_func ) );

@@ -31,8 +31,6 @@
 #include <utility/io/ozstream.hh>
 #include <basic/Tracer.hh>
 
-#define foreach BOOST_FOREACH
-
 namespace core {
 namespace chemical {
 namespace sdf {
@@ -77,7 +75,7 @@ void MolWriter::output_residue(utility::io::ozstream & output_stream, core::conf
 	}
 
 
-	foreach(std::string line, prepared_lines){
+	BOOST_FOREACH(std::string line, prepared_lines){
 		output_stream << line;
 	}
 
@@ -311,7 +309,7 @@ std::list<std::string> MolWriter::compose_bonds(core::conformation::ResidueCOP r
 
 	core::Size bond_index = 1;
 	std::string bond_line;
-	foreach(BondData current_bond, bond_data_set){
+	BOOST_FOREACH(BondData current_bond, bond_data_set){
 		if(ctab_mode_ == V2000)
 		{
 			bond_line = str(boost::format("%|1|%|2|%|3|%|4|%|5|%|6|%|7|\n") %

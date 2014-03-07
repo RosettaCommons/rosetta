@@ -44,8 +44,6 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
-#define foreach BOOST_FOREACH
-
 //// C++ headers
 static basic::Tracer TR("protocols.filters.Filter");
 static numeric::random::RandomGenerator RG( 140789 ); // <- Magic number, do not change it!!!
@@ -270,7 +268,7 @@ CompoundFilter::parse_my_tag(
 	TR<<"CompoundStatement"<<std::endl;
 	invert_ = tag->getOption<bool>( "invert", false );
 
-	foreach(TagCOP cmp_tag_ptr, tag->getTags() ){
+	BOOST_FOREACH(TagCOP cmp_tag_ptr, tag->getTags() ){
 		std::string const operation( cmp_tag_ptr->getName() );
 		std::pair< FilterOP, boolean_operations > filter_pair;
 		if( operation == "AND" ) filter_pair.second = AND;
@@ -344,7 +342,7 @@ CombinedFilter::compute( core::pose::Pose const & pose ) const
 {
 	core::Real value( 0.0 );
 
-	foreach(FilterWeightPair fw_pair, filterlist_){
+	BOOST_FOREACH(FilterWeightPair fw_pair, filterlist_){
 		value += fw_pair.second * fw_pair.first->report_sm( pose );
 	}
 	return( value );
@@ -360,7 +358,7 @@ CombinedFilter::parse_my_tag(
 {
 	threshold_ = tag->getOption<core::Real>( "threshold", 0.0 );
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
-	foreach(TagCOP tag_ptr, sub_tags){
+	BOOST_FOREACH(TagCOP tag_ptr, sub_tags){
 		core::Real weight(1.0);
 		if (tag_ptr->hasOption("factor") ) {
 			weight = tag_ptr->getOption<core::Real>( "factor" );
@@ -575,7 +573,7 @@ IfThenFilter::parse_my_tag(
 		TR.Warning << "WARNING: Note that lower_threshold is a true/false flag, not a real-valued setting." << std::endl;
 	}
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
-	foreach(TagCOP tag_ptr, sub_tags){
+	BOOST_FOREACH(TagCOP tag_ptr, sub_tags){
 		std::string const tagname = tag_ptr->getName();
 		FilterOP valuefilter = 0; //default NULL
 		if( tag_ptr->hasOption("valuefilter") ) {

@@ -74,9 +74,6 @@
 #include <set>
 
 
-#define foreach BOOST_FOREACH
-
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -1483,7 +1480,7 @@ Conformation::set_polymeric_connection(
 void
 Conformation::fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bonds) {
 	typedef std::pair<Size,Size> SizePair;
-	foreach(SizePair disulfide_bond, disulf_bonds){
+	BOOST_FOREACH(SizePair disulfide_bond, disulf_bonds){
 		using utility::vector1;
 
 		Size l_index = (disulfide_bond).first; //Lower residue
@@ -2269,9 +2266,9 @@ Conformation::update_orbital_coords( Size resid )
 
 void
 Conformation::update_orbital_coords( Residue & rsd) const{
-	foreach(core::Size atom_with_orbitals, rsd.atoms_with_orb_index()){
+	BOOST_FOREACH(core::Size atom_with_orbitals, rsd.atoms_with_orb_index()){
 		utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(atom_with_orbitals));
-		foreach(core::Size orbital_index, orbital_indices){
+		BOOST_FOREACH(core::Size orbital_index, orbital_indices){
 			Vector orb_xyz(rsd.build_orbital_xyz(orbital_index));
 			rsd.set_orbital_xyz(orbital_index, orb_xyz );
 		}

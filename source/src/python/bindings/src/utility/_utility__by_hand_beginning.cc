@@ -1182,6 +1182,10 @@ void expose_pair_types(std::string name_1, std::string name_2)
 
 void __utility_by_hand_beginning__()
 {
+	// #ifdef DEBUG
+	// 	std::cerr << "__utility_by_hand_beginning__..." << std::endl;
+	// #endif
+
     // Testing functions
     bp::def("Q_Test_CI1B", Q_Test_CI1B);
     bp::def("Q_Test_EnergyMethodCreator", Q_Test_EnergyMethodCreator);
@@ -1238,12 +1242,12 @@ void __utility_by_hand_beginning__()
     // bp::class_< vector1<vector1<size_t> > >("utility___vec1_vec1_size")
     //   .def(bp::vector_indexing_suite< vector1<vector1<size_t> > >() );
 
-    bp::class_< access_ptr< core::chemical::AtomTypeSet const   > >("core___chemical___AtomTypeSetCAP");
-    bp::class_< access_ptr< core::chemical::ResidueType const   > >("core___chemical___ResidueTypeCAP");
-    bp::class_< access_ptr< core::chemical::ResidueTypeSet const> >("core___chemical___ResidueTypeSetCAP");
-    bp::class_< access_ptr< core::chemical::MMAtomTypeSet const > >("core___chemical___MMAtomTypeSetCAP");
-    bp::class_< access_ptr< core::coarse::Translator const      > >("core___coarse___TranslatorCAP");
-    bp::class_< access_ptr< core::coarse::CoarseEtable const    > >("core___coarse___CoarseEtableCAP");
+    // bp::class_< access_ptr< core::chemical::AtomTypeSet const   > >("core___chemical___AtomTypeSetCAP");
+    // bp::class_< access_ptr< core::chemical::ResidueType const   > >("core___chemical___ResidueTypeCAP");
+    // bp::class_< access_ptr< core::chemical::ResidueTypeSet const> >("core___chemical___ResidueTypeSetCAP");
+    // bp::class_< access_ptr< core::chemical::MMAtomTypeSet const > >("core___chemical___MMAtomTypeSetCAP");
+    // bp::class_< access_ptr< core::coarse::Translator const      > >("core___coarse___TranslatorCAP");
+    // bp::class_< access_ptr< core::coarse::CoarseEtable const    > >("core___coarse___CoarseEtableCAP");
 
     using namespace core::chemical;
     using namespace core::coarse;

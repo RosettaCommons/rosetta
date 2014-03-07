@@ -51,7 +51,6 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -186,7 +185,7 @@ ProteinSilentReport::apply(
 	std::pair<bool, utility::vector1<StructureID> > temp= (*database_filter_)(pose, db_session, protocol_id_);
 	bool write_this_pose = temp.first;
 	utility::vector1<StructureID> struct_ids_to_delete = temp.second;
-	foreach(StructureID struct_id, struct_ids_to_delete){
+	BOOST_FOREACH(StructureID struct_id, struct_ids_to_delete){
 		delete_pose(db_session,struct_id);
 	}
 	if(write_this_pose){

@@ -58,9 +58,6 @@
 #include <protocols/simple_moves/DesignRepackMover.hh>
 
 
-
-#define foreach BOOST_FOREACH
-
 using namespace protocols::protein_interface_design;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.PlacementAuctionMover" );
@@ -202,12 +199,12 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 		saved_auction = auction_results() ; /// auction_results_ will be depleted in the following. Then, if successful, I'll reinstate it.
 	}
 
-	foreach( StubSetStubPos const hs_set, stub_sets_ ){
+	BOOST_FOREACH( StubSetStubPos const hs_set, stub_sets_ ){
 		HotspotStubSetOP stub_set( hs_set.first );
     //TR << "Loop restart: " << std::endl; //loop through each library
-		foreach( HotspotStubSet::Hs_data const stub_pair, *stub_set ){
+		BOOST_FOREACH( HotspotStubSet::Hs_data const stub_pair, *stub_set ){
 			HotspotStubOP stub( stub_pair.second.second );
-			foreach( core::Size const host_residue, host_positions )
+			BOOST_FOREACH( core::Size const host_residue, host_positions )
 			{
 				core::Real const distance( pose.residue( host_residue ).xyz( "CB" ).distance( stub->residue()->xyz( "CB" ) ) );
 				if( distance >= max_cb_cb_dist_ ) continue;
@@ -254,7 +251,7 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
                  HotspotStubOP stub( lowest_energy->second.second.second );
 
                  //assign matched positions to stub_sets_
-                foreach( StubSetStubPos & hs_set, stub_sets() ){
+                BOOST_FOREACH( StubSetStubPos & hs_set, stub_sets() ){
                  if ( position == hs_set.second.second ) // it has already being used!
                    break;
                  if( hs_set.first == stubset ){
@@ -285,8 +282,7 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 						core::Size const position( lowest_energy->second.first );
 						HotspotStubSetCOP stubset( lowest_energy->second.second.first );
 						HotspotStubOP stub( lowest_energy->second.second.second );
-
-						foreach( StubSetStubPos & hs_set, stub_sets() ){
+						BOOST_FOREACH( StubSetStubPos & hs_set, stub_sets() ){
 					// This is where the pairing takes place
 							if( hs_set.first == stubset ){
 								hs_set.second.first = stub;
@@ -311,7 +307,7 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 	} //end of backbone_stub_constraint
 
 	//check if all stub positions have been paired
-	foreach( StubSetStubPos const stubset_pos_pair, stub_sets() ){
+	BOOST_FOREACH( StubSetStubPos const stubset_pos_pair, stub_sets() ){
 		core::Size const pos( stubset_pos_pair.second.second );
 		if( pos == 0 ){
 			TR<<"Pairing failed"<<std::endl;

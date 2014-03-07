@@ -180,7 +180,7 @@ void KinematicMover::apply(core::pose::Pose & pose) {
 		// Solve the closure problem {{{1
 		bridgeObjects(atoms, dt_ang, db_ang, db_len, pivots, order, t_ang, b_ang, b_len, nsol);
 
-		foreach (LoggerOP logger, loggers_) {
+		BOOST_FOREACH(LoggerOP logger, loggers_) {
 			logger->log_task(pose, "BridgeObjects", nsol != 0, false);
 		}
 
@@ -210,7 +210,7 @@ void KinematicMover::apply(core::pose::Pose & pose) {
 			// Ramachandran filter {{{1
 			bool rama_ok = perform_rama_check(pose, t_ang[pos[i]], pivots, start_res_, middle_res_, end_res_); // checks only pivot residues
 			
-			foreach (LoggerOP logger, loggers_) {
+			BOOST_FOREACH(LoggerOP logger, loggers_) {
 				logger->log_task(pose, "RamaCheck", rama_ok, false);
 			}
 
@@ -223,7 +223,7 @@ void KinematicMover::apply(core::pose::Pose & pose) {
 			
 			// Bump filter {{{1
 			bool bump_ok = do_hardsphere_bump_check_ && !perform_bump_check(pose, start_res_, end_res_);
-			foreach (LoggerOP logger, loggers_) {
+			BOOST_FOREACH(LoggerOP logger, loggers_) {
 				logger->log_task(pose, "BumpCheck", bump_ok, false);
 			}
 
@@ -236,13 +236,13 @@ void KinematicMover::apply(core::pose::Pose & pose) {
 
 			if( filters_.size() != 0 ){
 				bool all_filters_passed( true );
-				foreach(protocols::filters::FilterCOP filter, filters_){
+				BOOST_FOREACH(protocols::filters::FilterCOP filter, filters_){
 					if( ! filter->apply( pose ) ) {
 						all_filters_passed = false;
 						break;
 					}
 				}
-				foreach (LoggerOP logger, loggers_) {
+				BOOST_FOREACH(LoggerOP logger, loggers_) {
 					logger->log_task(pose, "CustomFilters", all_filters_passed, false);
 				}
 				if ( !all_filters_passed ){

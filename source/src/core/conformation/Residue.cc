@@ -48,9 +48,6 @@
 #include <boost/foreach.hpp>
 
 
-#define foreach BOOST_FOREACH
-
-
 namespace core {
 namespace conformation {
 
@@ -78,9 +75,9 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 	}
 
 	// Assign orbitals.
-	foreach(core::Size atom_with_orbitals, rsd_type_.atoms_with_orb_index()){
+	BOOST_FOREACH(core::Size atom_with_orbitals, rsd_type_.atoms_with_orb_index()){
 		utility::vector1<core::Size> const & orbital_indices(rsd_type_.bonded_orbitals(atom_with_orbitals));
-		foreach(core::Size orbital_index, orbital_indices){
+		BOOST_FOREACH(core::Size orbital_index, orbital_indices){
 			Vector orb_xyz(this->build_orbital_xyz(orbital_index));
 			core::Size type = rsd_type_.orbital(orbital_index).orbital_type_index();
 			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz, type));
@@ -170,9 +167,9 @@ Residue::Residue(
 	}
 
 	// Assign orbitals.
-	foreach(core::Size atom_with_orbitals, rsd_type_.atoms_with_orb_index()){
+	BOOST_FOREACH(core::Size atom_with_orbitals, rsd_type_.atoms_with_orb_index()){
 		utility::vector1<core::Size> const & orbital_indices(rsd_type_.bonded_orbitals(atom_with_orbitals));
-		foreach(core::Size orbital_index, orbital_indices){
+		BOOST_FOREACH(core::Size orbital_index, orbital_indices){
 			Vector orb_xyz(this->build_orbital_xyz(orbital_index));
 			core::Size type = rsd_type_.orbital(orbital_index).orbital_type_index();
 			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz, type));

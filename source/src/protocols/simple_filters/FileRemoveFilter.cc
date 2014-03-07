@@ -24,7 +24,6 @@
 #include <stdio.h>
 #include <fstream>
 
-#define foreach BOOST_FOREACH
 
 namespace protocols{
 namespace simple_filters {
@@ -62,7 +61,7 @@ FileRemoveFilter::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache
 bool
 FileRemoveFilter::apply( core::pose::Pose const & ) const {
 	using namespace std;
-	foreach( std::string const f, file_names_ ){
+	BOOST_FOREACH( std::string const f, file_names_ ){
 		if( remove( f.c_str() ) )
 			TR<<"Successfully removed "<<f<<std::endl;
 		else

@@ -43,8 +43,6 @@
 #include <boost/foreach.hpp>
 
 
-#define foreach BOOST_FOREACH
-
 using namespace ObjexxFCL::format; // AUTO USING NS
 
 // A temporary copy of the pose_from_pdb code from the demo directory.
@@ -102,7 +100,7 @@ dump_pdb(
 			if(basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
 					rsd.atom_type(j).atom_has_orbital()){
 				utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(j));
-				foreach(core::Size orbital_index, orbital_indices){
+				BOOST_FOREACH(core::Size orbital_index, orbital_indices){
 					++number;
 					Vector orbital_xyz(rsd.orbital_xyz(orbital_index));
 					out << "ATOM  " << I(5,number) << ' ' << rsd.orbital_name(orbital_index) << ' ' <<
@@ -154,7 +152,7 @@ dump_bfactor_pdb(
 			if(basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
 					rsd.atom_type(j).atom_has_orbital()){
 				utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(j));
-				foreach(core::Size orbital_index, orbital_indices){
+				BOOST_FOREACH(core::Size orbital_index, orbital_indices){
 					++number;
 					Vector orbital_xyz(rsd.orbital_xyz(orbital_index));
 					out << "ATOM  " << I(5,number) << ' ' << rsd.orbital_name(orbital_index) << ' ' <<
@@ -197,7 +195,7 @@ dump_pdb_residue(
 				rsd.atom_type(j).atom_has_orbital()){
 			utility::vector1<core::Size> const & orbital_indices(rsd.bonded_orbitals(j));
 
-			foreach(core::Size orbital_index, orbital_indices){
+			BOOST_FOREACH(core::Size orbital_index, orbital_indices){
 				Vector orbital_xyz(rsd.orbital_xyz(orbital_index));
 				out << "ATOM  " << I(5,atom_number) << ' ' << rsd.orbital_name(orbital_index) << ' ' <<
 					rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
@@ -340,19 +338,19 @@ void extract_scores(
 	out << "# All scores below are weighted scores, not raw scores.\n";
 	out << "#BEGIN_POSE_ENERGIES_TABLE " << filename << "\n";
 	out << "label";
-	foreach(core::scoring::ScoreType score_type, score_types){
+	BOOST_FOREACH(core::scoring::ScoreType score_type, score_types){
 		out << " " << name_from_score_type(score_type);
 	}
 	out << " total\n";
 	out << "weights";
-	foreach(core::scoring::ScoreType score_type, score_types){
+	BOOST_FOREACH(core::scoring::ScoreType score_type, score_types){
 		out << " " << weights[score_type];
 	}
 	out << " NA\n";
 	out << "pose";
 	core::Real pose_total = 0.0;
 	if ( pose.energies().energies_updated() ) {
-		foreach(core::scoring::ScoreType score_type, score_types){
+		BOOST_FOREACH(core::scoring::ScoreType score_type, score_types){
 			core::Real score = (weights[score_type] * pose.energies().total_energies()[ score_type ]);
 			out << " " << restrict_prec(score);
 			pose_total += score;
@@ -361,7 +359,7 @@ void extract_scores(
 		for(core::Size j = 1, end_j = pose.total_residue(); j <= end_j; ++j) {
 			core::Real rsd_total = 0.0;
 			out << pose.residue(j).name() << "_" << j;
-			foreach(core::scoring::ScoreType score_type, score_types){
+			BOOST_FOREACH(core::scoring::ScoreType score_type, score_types){
 				core::Real score = (weights[score_type] * pose.energies().residue_total_energies(j)[ score_type ]);
 				out << " " << restrict_prec(score);
 				rsd_total += score;

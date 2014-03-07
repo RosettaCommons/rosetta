@@ -25,7 +25,6 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 namespace core {
 namespace chemical {
@@ -76,7 +75,7 @@ void SDFParser::SplitSDF()
 	core::Size line_counter = 1;
 	bool data_block = false;
 
-	foreach(std::string current_line, file_vector_){
+	BOOST_FOREACH(std::string current_line, file_vector_){
 
 		if(line_counter == 1)
 		{

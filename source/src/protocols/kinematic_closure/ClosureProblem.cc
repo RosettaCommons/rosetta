@@ -48,7 +48,6 @@
 #include <boost/foreach.hpp>
 #include <iostream>
 
-#define foreach BOOST_FOREACH
 using namespace std;
 
 namespace protocols {

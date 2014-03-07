@@ -18,7 +18,6 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 
-#define foreach BOOST_FOREACH
 
 
 namespace protocols {
@@ -122,7 +121,7 @@ std::string Interface::get_python_string() const{
 	std::stringstream python_stream;
 
 	python_stream<<"interface residues: ";
-	foreach(core::Size res_id, get_interface_residues()){
+	BOOST_FOREACH(core::Size res_id, get_interface_residues()){
 		python_stream<< res_id << '+';
 	}
 	python_stream<< std::endl;

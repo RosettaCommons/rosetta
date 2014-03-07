@@ -30,7 +30,6 @@
 #include <core/pose/Pose.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <utility/string_util.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <limits>
@@ -62,7 +61,7 @@ Operator::~Operator() {}
 
 void
 Operator::reset_baseline( core::pose::Pose const & pose, bool const attempt_read_from_checkpoint ){
-	foreach( protocols::filters::FilterOP filter, filters() ){
+	BOOST_FOREACH( protocols::filters::FilterOP filter, filters() ){
 		if( filter->get_type() == "Sigmoid" ){
 			SigmoidOP sigmoid_filter( dynamic_cast< Sigmoid * >( filter() ) );
 			runtime_assert( sigmoid_filter );
@@ -107,13 +106,13 @@ void
 Operator::modify_relative_filters_pdb_names(){
 	utility::vector1< FilterOP > erase_filters;
 	erase_filters.clear();
-	foreach( FilterOP filter, filters_ ){
+	BOOST_FOREACH( FilterOP filter, filters_ ){
 		if( filter->get_type() == "Sigmoid" ){
 			SigmoidOP sigmoid_filter( dynamic_cast< Sigmoid * >( filter() ) );
 			runtime_assert( sigmoid_filter );
 			if( sigmoid_filter->filter()->get_type() == "RelativePose" ){
 				TR<<"Replicating and changing RelativePose's filter pdb fname. File names: ";
-				foreach( std::string const fname, relative_pose_names_ ){
+				BOOST_FOREACH( std::string const fname, relative_pose_names_ ){
 					SigmoidOP new_sigmoid( *sigmoid_filter );
 					RelativePoseFilterOP relative_pose( dynamic_cast< RelativePoseFilter * >( new_sigmoid->filter()() ) );
 					runtime_assert( relative_pose );
@@ -126,7 +125,7 @@ Operator::modify_relative_filters_pdb_names(){
 			}
 		}
 	}
-	foreach( FilterOP erase_f, erase_filters ){
+	BOOST_FOREACH( FilterOP erase_f, erase_filters ){
 		filters_.erase( std::find( filters_.begin(), filters_.end(), erase_f ) );
 	}
 }
@@ -168,7 +167,7 @@ Operator::parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMa
 		TR<<"filters parameter not set. I expect another mover/filter to set the filters, o/w you'll crash and burn in apply! See Shira"<<std::endl;
 	else
   	filter_names = utility::string_split( tag->getOption< std::string >( "filters" ), ',' );
-	foreach( std::string const fname, filter_names ){
+	BOOST_FOREACH( std::string const fname, filter_names ){
 		add_filter( protocols::rosetta_scripts::parse_filter( fname, filters ) );
 		TR<<"Adding filter "<<fname<<std::endl;
 	}
@@ -212,7 +211,7 @@ Operator::report_sm( core::pose::Pose const & pose ) const {
 		using protocols::jd2::JobDistributor;
 		protocols::jd2::JobOP job_me( protocols::jd2::JobDistributor::get_instance()->current_job() );
 		TR<<"reporting operator subvalues for: ";
-		foreach( FilterOP filter, filters_ ){
+		BOOST_FOREACH( FilterOP filter, filters_ ){
 			core::Real const val_local( filter->report_sm( pose ) );
 			TR<<filter->get_user_defined_name()<<" with value "<<val_local<<std::endl;
 			job_me->add_string_real_pair(filter->get_user_defined_name(), val_local);
@@ -266,7 +265,7 @@ Operator::compute(
 		return xor_ret;
 	}
 
-	foreach( protocols::filters::FilterOP f, filters() ){
+	BOOST_FOREACH( protocols::filters::FilterOP f, filters() ){
 		core::Real const filter_val( f()->report_sm( pose ) );
 		TR<<"Filter "<<f()->get_type()<<" return "<<filter_val<<std::endl;
 		if( operation() == SUM || operation() == NORMALIZED_SUM )

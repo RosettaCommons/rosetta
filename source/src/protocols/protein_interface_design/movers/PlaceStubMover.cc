@@ -15,7 +15,6 @@
 #include <protocols/protein_interface_design/movers/PlaceStubMover.hh>
 #include <protocols/protein_interface_design/movers/PlaceStubMoverCreator.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // Project Headers
 #include <utility/tag/Tag.hh>
@@ -625,7 +624,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 	std::vector< core::Size > host_positions;
 	if( task_factory() ){
 		utility::vector1< core::Size > const designable( protocols::rosetta_scripts::residue_packer_states( pose, task_factory(), true/*designable*/, false/*packable*/ ) );
-		foreach( core::Size const d, designable )
+		BOOST_FOREACH( core::Size const d, designable )
 			host_positions.push_back( d );
 	}
 	else{

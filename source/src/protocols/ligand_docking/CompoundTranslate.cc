@@ -35,7 +35,6 @@
 #include <boost/foreach.hpp>
 
 //Auto Headers
-#define foreach BOOST_FOREACH
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -127,7 +126,7 @@ CompoundTranslate::parse_my_tag(
 		else throw utility::excn::EXCN_RosettaScriptsOption("'allow_overlap' option takes arguments 'true' or 'false'");
 	}
 
-	foreach(utility::tag::TagCOP tag, tag->getTags()){
+	BOOST_FOREACH(utility::tag::TagCOP tag, tag->getTags()){
 		std::string const name= tag->getName();
 		if( name == "Translate"){
 			TranslateOP translate = new Translate();
@@ -143,7 +142,7 @@ CompoundTranslate::parse_my_tag(
 			std::string const chain = tag->getOption<std::string>("chain");
 			utility::vector1<core::Size> chain_ids = core::pose::get_chain_ids_from_chain(chain, pose);
 
-			foreach(core::Size chain_id, chain_ids){
+			BOOST_FOREACH(core::Size chain_id, chain_ids){
 				Translate_info translate_info;
 				translate_info.chain_id= chain_id;
 				translate_info.jump_id = core::pose::get_jump_id_from_chain_id(chain_id, pose);
@@ -175,19 +174,19 @@ void CompoundTranslate::apply(core::pose::Pose & pose) {
 	// TranslateOPs::iterator begin= translates_.begin(); // Unused variable causes warning.
 	// TranslateOPs::iterator const end= translates_.end(); // Unused variable causes warning.
 
-	foreach(TranslateOP translate, translates_){
+	BOOST_FOREACH(TranslateOP translate, translates_){
 		core::Size chain_id= translate->get_chain_id(pose);
 		chains_to_translate.insert(chain_id);
 	}
 
 	if(allow_overlap_){
-		foreach(TranslateOP translate, translates_){
+		BOOST_FOREACH(TranslateOP translate, translates_){
 			translate->add_excluded_chains(chains_to_translate.begin(), chains_to_translate.end());
 			translate->apply(pose);
 		}
 	}
 	else{ // remove each chain from the exclusion list so that placed chains are in the grid
-		foreach(TranslateOP translate, translates_){
+		BOOST_FOREACH(TranslateOP translate, translates_){
 			translate->add_excluded_chains(chains_to_translate.begin(), chains_to_translate.end());
 			translate->apply(pose);
 			core::Size chain_id= translate->get_chain_id(pose);

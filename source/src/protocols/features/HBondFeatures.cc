@@ -67,7 +67,6 @@
 // Boost Headers
 #include <boost/assign/list_of.hpp>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // C++ Headers
 #include <cmath>
@@ -932,7 +931,7 @@ HBondFeatures::insert_hbond_row(
 	if (don_partners.size() > 1){
 		donRank++;
 	}
-	foreach(HBondCOP candidate_hbond, don_partners){
+	BOOST_FOREACH(HBondCOP candidate_hbond, don_partners){
 		if(hbond == *candidate_hbond){
 			ASSERT_ONLY( found_don_partner = true; )
 			break;
@@ -950,7 +949,7 @@ HBondFeatures::insert_hbond_row(
 		accRank++;
 	}
 
-	foreach(HBondCOP candidate_hbond, acc_partners){
+	BOOST_FOREACH(HBondCOP candidate_hbond, acc_partners){
 		if(hbond == *candidate_hbond){
 			ASSERT_ONLY( found_acc_partner = true; )
 			break;

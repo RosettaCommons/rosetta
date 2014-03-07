@@ -40,8 +40,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
+// #include <boost/foreach.hpp>
 
 namespace protocols {
 namespace simple_moves {

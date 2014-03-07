@@ -372,7 +372,6 @@ class CppFunction:
         #if self.pure_virtual or (not self.public): return False
         if (not self.public): return False
 
-
         #  check if return result is sane. Some types (like int *) mean that we actully have an iterator functions and this one should be taked care at class abstraction level
         for t in ['void *', 'void const *', 'char *', 'int *', 'int const *', 'double *', 'double const *', 'Real *', 'Real const *',
                   'kiss_fft_cpx *', 'kiss_fft_cfg', 'kiss_fftnd_cfg', 'kiss_fftr_cfg', ]:
@@ -738,7 +737,21 @@ class CppClass:
         # Some exceptions...
         if self.context+self.name == '::protocols::neighbor::Neighborhood': return False  # temporary disabling wrapping of protocols::neighbor::Neighborhood because we could not compile it on Linux GCC-4.1 due to function pointer in constructor
 
+
+        # some classes to avoid wrapping (we will do it by hand in utility, numeric)
+        skip_list = [
+            '::utility::vector1<int,std::allocator<int> >',
+            '::utility::vector1<long unsigned int,std::allocator<long unsigned int> >',
+            '::utility::vector1<double,std::allocator<double> >',
+            '::utility::vector1<std::basic_string<char, std::char_traits<char>, std::allocator<char> >,std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >',
+            '::numeric::xyzMatrix<double>',
+                     ]
+
+        for a in skip_list:
+            if (self.context+self.name) == a: return False
+
         return True
+
 
     def isPublicMembersWrappable(self):
         ''' Check if public data members are wrappable or not and return list of wrappable one...
@@ -1218,8 +1231,6 @@ def sortObjects(l):
                     if l[i].getChildrenContext()=='::core::chemical::Atom::' and l[j].getChildrenContext()=='::core::chemical::AtomICoor::': swap(i, j); f = True; break
 
 
-
-
 def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size, by_hand_beginning='', by_hand_ending=''):
     ''' Template for creating one module, and wrapping each elelemnts... (each elements must have .wrap)
     '''
@@ -1260,10 +1271,12 @@ def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size
 
             includes += i.getFileList()
 
+
         if len(s)+len(prefix_code)+len(includes) >= max_funcion_size:
             r += 'void %s_partial_%s(void);\n' % (name, len(code))
             code.append( module_addon+'%s\n\n%s\nvoid %s_partial_%s(void)\n{\n%s\n}\n\n' % (generateIncludes(includes), prefix_code, name, len(code), s)  )
             s, prefix_code, includes = '', '', []
+
 
     r += by_hand_beginning + by_hand_ending
     r += '%s\n\n%s\nBOOST_PYTHON_MODULE( %s ){\n' % (generateIncludes(includes), prefix_code, name)
@@ -1274,11 +1287,12 @@ def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size
 
     if by_hand_ending:
         print '\033[33m\033[1mAdding by_hand_ending code for %s::%s\033[0m' % (name_spaces, name)
-        s += s + '\n' + '__%s_by_hand_ending__();\n' % name_spaces[0].split('::')[-2]
+        s = s + '\n' + '__%s_by_hand_ending__();\n' % name_spaces[0].split('::')[-2]
 
     #r += '%s\n\n%s\n#ifndef __PYROSETTA_ONE_LIB__\n  BOOST_PYTHON_MODULE( %s ) {\n#else\n  void __wrap%s() {\n#endif\n' % (generateIncludes(includes), prefix_code, name, name_spaces[0].replace('::', '__'))
     for i in range( len(code) ): r += '\n  %s_partial_%s();\n' % (name, i)
     r += '\n' + s + '}\n'
+
     return code+[r]
 
 

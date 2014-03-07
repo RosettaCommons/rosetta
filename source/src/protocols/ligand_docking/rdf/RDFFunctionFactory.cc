@@ -26,7 +26,6 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // C++ Headers
 #include <sstream>
@@ -100,7 +99,7 @@ RDFFunctionFactory::get_rdf_function(std::string const & type_name)
 			<< "register a new RDF Function in the RDFFunctionFactory" << endl
 			<< "known RDF Function types are:" << endl;
 
-		foreach(const RDFFunctionCreatorMap::value_type& type, types_){
+		BOOST_FOREACH(const RDFFunctionCreatorMap::value_type& type, types_){
 			error_msg << "\t" << type.first << endl;
 		}
 		utility_exit_with_message(error_msg.str());

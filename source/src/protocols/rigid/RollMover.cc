@@ -24,7 +24,6 @@
 #include <numeric/xyz.functions.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 // AUTO-REMOVED #include <numeric/xyz.io.hh>
 // Random number generator
 #include <numeric/random/random.hh>
@@ -158,7 +157,7 @@ RollMover::parse_my_tag(
 		axis_option_parsed = true;
 	}
 
-	foreach( utility::tag::TagCOP const child_tag, tag->getTags() ){
+	BOOST_FOREACH( utility::tag::TagCOP const child_tag, tag->getTags() ){
 		std::string name= child_tag->getName();
 
 		if( name == "axis" ) {

@@ -62,8 +62,6 @@
 
 #include <utility/vector1.hh>
 
-#define foreach BOOST_FOREACH
-
 
 namespace core {
 namespace chemical {
@@ -149,7 +147,7 @@ ResidueTypeSet::ResidueTypeSet(
 			}
 		}
 
-		foreach(std::string filename, extra_res_param_files){
+		BOOST_FOREACH(std::string filename, extra_res_param_files){
 			ResidueTypeOP rsd_type( read_topology_file(
 					filename, atom_types_, elements_, mm_atom_types_, orbital_types_, this ) );
 
@@ -757,7 +755,7 @@ ResidueTypeSet:: create_adduct_combinations(
 //		std::cout << "Making an adduct" << std::endl;
 
 		utility::vector1< Adduct >::const_iterator add_iter = rsd.defined_adducts().begin() ;
-		foreach(bool make, add_mask){
+		BOOST_FOREACH(bool make, add_mask){
 			std::cout << "Adduct " << add_iter->adduct_name() << " make is " << make << std::endl;
 			++add_iter;
 		}

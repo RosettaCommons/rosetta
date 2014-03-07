@@ -24,7 +24,6 @@
 
 #include <utility/vector1.hh>
 
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace ligand_docking {
@@ -47,7 +46,7 @@ UnconstrainedTorsionsMover::UnconstrainedTorsionsMover(
 	Mover(),
 	child_mover_(child_mover)
 {
-	foreach(ResidueTorsionRestraintsOP restraint, restraints){
+	BOOST_FOREACH(ResidueTorsionRestraintsOP restraint, restraints){
 		restraints_.push_back(restraint);
 	}
 }
@@ -59,19 +58,19 @@ UnconstrainedTorsionsMover::UnconstrainedTorsionsMover(
 	Mover(),
 	child_mover_(child_mover)
 {
-	foreach(MinimizeLigandOP minimize_ligand, minimize_ligands){
+	BOOST_FOREACH(MinimizeLigandOP minimize_ligand, minimize_ligands){
 		restraints_.insert( restraints_.end(), minimize_ligand->begin(), minimize_ligand->end() );
 	}
 }
 
 void UnconstrainedTorsionsMover::apply( core::pose::Pose & pose )
 {
-	foreach(ResidueTorsionRestraintsOP restraint, restraints_){
+	BOOST_FOREACH(ResidueTorsionRestraintsOP restraint, restraints_){
 		restraint->disable( pose );
 	}
 	child_mover_->apply(pose);
 
-	foreach(ResidueTorsionRestraintsOP restraint, restraints_){
+	BOOST_FOREACH(ResidueTorsionRestraintsOP restraint, restraints_){
 		restraint->enable( pose );
 	}
 }

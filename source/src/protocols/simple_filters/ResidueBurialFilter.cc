@@ -23,7 +23,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -72,7 +71,7 @@ ResidueBurialFilter::apply( core::pose::Pose const & pose ) const {
 		core::Size const total_designable( target_residues.size() );
 		residue_burial_filter_tracer<<"total target residues: "<<total_designable<<". At least "<<(core::Real)total_designable * (core::Real)residue_fraction_buried()<<" should be buried to pass."<<std::endl;
 		core::Size count_buried( 0 );
-		foreach( core::Size const resi, target_residues ){
+		BOOST_FOREACH( core::Size const resi, target_residues ){
 			ResidueBurialFilter rbf;
 			rbf.residue( utility::to_string( resi ) );
 			rbf.neighbors( neighbors() );

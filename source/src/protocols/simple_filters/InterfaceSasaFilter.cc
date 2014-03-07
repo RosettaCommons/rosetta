@@ -14,7 +14,6 @@
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 #include <protocols/simple_filters/InterfaceSasaFilter.hh>
 #include <protocols/simple_filters/InterfaceSasaFilterCreator.hh>
@@ -290,7 +289,7 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 
 	runtime_assert( !sym_aware_jump_ids.empty() );
 
-	foreach (Size sym_aware_jump_id, sym_aware_jump_ids)
+	BOOST_FOREACH(Size sym_aware_jump_id, sym_aware_jump_ids)
 	{
 		TR.Debug << "Moving jump id: " << sym_aware_jump_id << std::endl;
 

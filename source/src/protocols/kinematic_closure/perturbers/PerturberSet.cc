@@ -20,7 +20,6 @@
 // Utility headers
 #include <boost/foreach.hpp>
 
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace kinematic_closure {
@@ -35,7 +34,7 @@ PerturberSet::~PerturberSet() {}
 void PerturberSet::perturb_subset(
 		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
 
-	foreach (PerturberOP perturber, perturbers_) {
+	BOOST_FOREACH(PerturberOP perturber, perturbers_) {
 		perturber->perturb_subset(pose, residues, problem);
 	}
 }
@@ -43,7 +42,7 @@ void PerturberSet::perturb_subset(
 void PerturberSet::perturb_subset_with_balance(
 		Pose const & pose, IndexList const & residues, ClosureProblemOP problem) {
 
-	foreach (PerturberOP perturber, perturbers_) {
+	BOOST_FOREACH(PerturberOP perturber, perturbers_) {
 		perturber->perturb_subset_with_balance(pose, residues, problem);
 	}
 }

@@ -20,11 +20,12 @@
 #include <boost/unordered_map.hpp>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <map>
 
 namespace protocols {
 namespace sparta {
 
-typedef boost::unordered_map< std::string, std::string > GDB_Entry;
+
 
 
 class GDB
@@ -40,17 +41,22 @@ public:
   std::string FORMAT_str, VARS_str;
   int VarsNumber;
   int firstResID;
-
+	typedef boost::unordered_map< std::string, std::string > GDB_Entry;
   GDB_Entry EMPTY;
 
-  boost::unordered_map<int, std::string> residList;
+	typedef std::map<int, std::string> ResidueList;
+	ResidueList residList;
 
-  utility::vector0< std::string > REMARKS;
-  utility::vector0< std::string > DATA;
-  boost::unordered_map<int, std::string> VARS;
-  boost::unordered_map<int, std::string> FORMAT;
+  typedef utility::vector0< std::string > StringList;
+	StringList REMARKS;
+  StringList DATA;
+	typedef std::map<int, std::string> VarList;
+	typedef std::map<int, std::string> FormatList;
+	VarList VARS;
+	FormatList FORMAT;
 
-  boost::unordered_map< int, GDB_Entry > Entries;
+	typedef std::map< int, GDB_Entry > EntryList;
+	EntryList Entries;
 
   GDB();
   GDB(const std::string& fileName);

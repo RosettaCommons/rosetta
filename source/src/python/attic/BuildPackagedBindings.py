@@ -827,7 +827,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
                     /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\" \
                     /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY \
                     /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_MAJOR=0 /DCPPDB_MINOR=3 /DCPPDB_PATCH=0 /DCPPDB_VERSION=\\"0.3.0\\"  \
-                    /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /c %s /I. /I../external/include /I../external/boost_1_46_1 \
+                    /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /c %s /I. /I../external/include /I../external/boost_1_55_0 \
                     /I../external/dbio /I../external/dbio/sqlite3 /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj),)
 
         '''DNDEBUG -DCPPDB_EXPORTS -DCPPDB_LIBRARY_SUFFIX=\".dylib\" -DCPPDB_LIBRARY_PREFIX=\"lib\" -DCPPDB_DISABLE_SHARED_OBJECT_LOADING
@@ -842,7 +842,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
         obj = os.path.join(build_dir,s) + '.obj'
 
         if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
-            execute('Compiling %s' % s, 'cl %s /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s' % (get_CL_Options(), s, obj),
+            execute('Compiling %s' % s, 'cl %s /c %s /I. /I../external/include /I../external/boost_1_55_0 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s' % (get_CL_Options(), s, obj),
                     )  # return_=True)
 
         latest = max(latest, os.path.getmtime(obj) )
@@ -880,8 +880,8 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
     pdb_test_exe = os.path.join(build_dir, 'PDBTest.exe')
     pdb_test_obj = os.path.join(build_dir, 'PDBTest.obj')
     if (not os.path.isfile(pdb_test_exe))   or  os.path.getmtime(pdb_test_exe) < os.path.getmtime(pdb_test)  or  os.path.getmtime(pdb_test_exe) < latest:
-        #execute('Compiling test executable %s' % pdb_test, 'cl /c %s %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta %s /Fe%s /Fo%s' % (get_CL_Options(), pdb_test, rosetta_lib, pdb_test_exe, pdb_test_obj) )
-        execute('Compiling test executable %s' % pdb_test, 'cl /c %s %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fe%s /Fo%s' % (get_CL_Options(), pdb_test, pdb_test_exe, pdb_test_obj) )
+        #execute('Compiling test executable %s' % pdb_test, 'cl /c %s %s /I. /I../external/include /I../external/boost_1_55_0 /I../external/dbio /Iplatform/windows/PyRosetta %s /Fe%s /Fo%s' % (get_CL_Options(), pdb_test, rosetta_lib, pdb_test_exe, pdb_test_obj) )
+        execute('Compiling test executable %s' % pdb_test, 'cl /c %s %s /I. /I../external/include /I../external/boost_1_55_0 /I../external/dbio /Iplatform/windows/PyRosetta /Fe%s /Fo%s' % (get_CL_Options(), pdb_test, pdb_test_exe, pdb_test_obj) )
         execute('Linking test executable %s' % pdb_test, 'link %s %s /out:%s' % (pdb_test_obj, rosetta_lib, pdb_test_exe) )
 
     '''
@@ -961,7 +961,7 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, al
                    + ' /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2 /DBOOST_PYTHON_MAX_ARITY=25'
                    + ' /Fo%s ' % obj ) )
                 #  /Iplatform/windows/32/msvc
-                #  /I../external/boost_1_46_1
+                #  /I../external/boost_1_55_0
                 #  /IBOOST_MSVC    /link rosetta_lib
 
                 # c:\\mingw\\bin\\
@@ -1183,7 +1183,7 @@ class ModuleBuilder:
             if os.path.isfile(self.all_at_once_lib): os.remove(self.all_at_once_lib)
 
             def generate():
-                if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_46_1  -I../external/dbio -I%s -DBOOST_NO_INITIALIZER_LISTS ' % (self.gccxml_options, self.all_at_once_source_cpp, self.all_at_once_xml, self.cpp_defines, self.platform_include_path), Options.continue_ ): return
+                if execute('Generating XML representation...', 'gccxml %s %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_55_0  -I../external/dbio -I%s -DBOOST_NO_INITIALIZER_LISTS ' % (self.gccxml_options, self.all_at_once_source_cpp, self.all_at_once_xml, self.cpp_defines, self.platform_include_path), Options.continue_ ): return
 
                 namespaces_to_wrap = ['::'+self.namespace_path.replace('/', '::')+'::']
                 # Temporary injecting Mover in to protocols level
@@ -1245,7 +1245,7 @@ class ModuleBuilder:
                 #all_at_once_N_obj = self.all_at_once_obj+'%s.o' % i
 
                 # -fPIC
-                comiler_cmd = "%(compiler)s %(fname)s -o %(obj_name)s -c %(add_option)s %(cpp_defines)s -I../external/include -I../external/boost_1_46_1 -I../external/dbio %(include_paths)s "
+                comiler_cmd = "%(compiler)s %(fname)s -o %(obj_name)s -c %(add_option)s %(cpp_defines)s -I../external/include -I../external/boost_1_55_0 -I../external/dbio %(include_paths)s "
                 comiler_dict = dict(
                         add_option=self.add_option,
                         fname=all_at_once_N_cpp,

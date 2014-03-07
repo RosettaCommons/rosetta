@@ -27,7 +27,6 @@
 #include <iomanip>
 #include <algorithm>
 
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace loop_modeling {
@@ -59,7 +58,7 @@ void ScoreVsRmsd::log_ending_(Pose const &) {
 
 	file << fixed;
 
-	foreach (ScoreToRmsdMap::value_type const & pair, map_) {
+	BOOST_FOREACH(ScoreToRmsdMap::value_type const & pair, map_) {
 		file << setw(8)  << setprecision(4) << pair.second << " ";	// RMSD
 		file << setw(10) << setprecision(3) << pair.first << endl;	// Score
 	}

@@ -60,12 +60,12 @@ public:
 
   void rm_seq_label( std::string const& );
 
-  void rm_jump_label( std::string const& );
+  // Undefined, commenting out to fix PyRosetta build  void rm_jump_label( std::string const& );
 
   /// @brief append a single residue with the given label to the end of the Annotation
   void append_seq( std::string const& label );
 
-  void shift_notify( core::Size const seqpos, core::Size const shift_size );
+  // Undefined, commenting out to fix PyRosetta build  void shift_notify( core::Size const seqpos, core::Size const shift_size );
 
   core::Size resolve_seq( std::string const&, core::Size const& ) const;
 

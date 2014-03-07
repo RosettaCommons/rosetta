@@ -28,7 +28,6 @@
 #include <numeric/xyzVector.hh>
 
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // C++ Headers
 
@@ -112,7 +111,7 @@ FindEndpointsOperation::apply( core::pose::Pose const & pose, core::pack::task::
     utility::vector1< core::Size > strand_ntermini;
     strand_ntermini.clear();
     core::Size prev_resnum( 99999 );
-    foreach( core::Size const resi, strand_positions ){
+    BOOST_FOREACH( core::Size const resi, strand_positions ){
         if( resi != prev_resnum + 1 )
             strand_ntermini.push_back( resi );
         prev_resnum = resi;
@@ -143,14 +142,14 @@ FindEndpointsOperation::apply( core::pose::Pose const & pose, core::pack::task::
 
     using namespace numeric;
     xyzVector< core::Real > radius(0.0,0.0,0.0);
-    foreach( core::Size const resi, ntermini_w_close_neighbors ){
+    BOOST_FOREACH( core::Size const resi, ntermini_w_close_neighbors ){
         radius+=pose.residue( resi ).xyz( "CA" );
     }
     radius/=ntermini_w_close_neighbors.size();
  //   TR<<"Center of circle at: "<<radius<<std::endl;
     utility::vector1< core::Size > residues_pointing_in;
     residues_pointing_in.clear();
-    foreach( core::Size const res, ntermini_w_close_neighbors ){
+    BOOST_FOREACH( core::Size const res, ntermini_w_close_neighbors ){
         core::Size resi = res;
         if( pose.residue( res ).name3() == "GLY" ){
             resi = res+1;
@@ -178,7 +177,7 @@ FindEndpointsOperation::apply( core::pose::Pose const & pose, core::pack::task::
     dao.design_shell( 0.01 );
     TR<<"found "<<residues_pointing_in.size()<<" nterminal residues with enough neighbors"<<std::endl;
 		bool curr_odd( true );
-    foreach( core::Size const res, residues_pointing_in ){
+    BOOST_FOREACH( core::Size const res, residues_pointing_in ){
 			if( ( curr_odd && odd() ) || ( !curr_odd && even() ) )
         dao.include_residue( res );
 			curr_odd = !curr_odd;

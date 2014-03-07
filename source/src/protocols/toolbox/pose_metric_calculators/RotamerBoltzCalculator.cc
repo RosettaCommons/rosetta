@@ -33,7 +33,6 @@
 
 //Auto Headers
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
-#define foreach BOOST_FOREACH
 namespace protocols{
 namespace toolbox {
 namespace pose_metric_calculators {
@@ -184,7 +183,7 @@ namespace pose_metric_calculators {
 
   core::Real RotamerBoltzCalculator::computeBoltzSum(core::Real init_score, utility::vector1<core::Real> scores){
     core::Real boltz_sum ( 0.0 );
-    foreach( core::Real const score, scores )
+    BOOST_FOREACH( core::Real const score, scores )
       boltz_sum += exp(( init_score - score )/temperature());
 
     return( 1/boltz_sum );

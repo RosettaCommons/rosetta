@@ -26,7 +26,6 @@
 #include <numeric/kinematic_closure/vector.hh>
 #include <boost/foreach.hpp>
 
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace kinematic_closure {
@@ -43,7 +42,7 @@ void RamaPerturber::perturb_subset(
 	Ramachandran const & rama =
 		ScoringManager::get_instance()->get_Ramachandran();
 
-	foreach (Size residue, residues) {
+	BOOST_FOREACH(Size residue, residues) {
 		rama.random_phipsi_from_rama(pose.aa(residue), phi, psi);
 		problem->perturb_phi(residue, phi, DEGREES);
 		problem->perturb_psi(residue, psi, DEGREES);
@@ -62,7 +61,7 @@ void RamaPerturber::perturb_subset_with_balance(
 	Ramachandran const & rama =
 		ScoringManager::get_instance()->get_Ramachandran();
 
-	foreach (Size residue, residues) {
+	BOOST_FOREACH(Size residue, residues) {
 		rama.uniform_phipsi_from_allowed_rama(pose.aa(residue), phi, psi);
 		problem->perturb_phi(residue, phi, DEGREES);
 		problem->perturb_psi(residue, psi, DEGREES);

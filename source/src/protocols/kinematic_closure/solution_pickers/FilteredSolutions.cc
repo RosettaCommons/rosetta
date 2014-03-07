@@ -23,7 +23,6 @@
 #include <iostream>
 #include <sstream>
 
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace kinematic_closure {
@@ -42,7 +41,7 @@ FilteredSolutions::FilteredSolutions(
 bool FilteredSolutions::pick_and_apply(
 		Pose & pose, SolutionList const & solutions) {
 
-	foreach (ClosureSolutionCOP solution, solutions) {
+	BOOST_FOREACH(ClosureSolutionCOP solution, solutions) {
 		bool reasonable_solution =
 			solution->apply_if_reasonable(
 					pose, check_rama_, check_overlap_, be_lenient_);

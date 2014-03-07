@@ -34,7 +34,6 @@
 #include <limits>
 
 // Global Names {{{1
-#define foreach BOOST_FOREACH
 static numeric::random::RandomGenerator RG(48291);
 
 using namespace std;
@@ -152,7 +151,7 @@ ClosureSolutionCOP BalancedKicMover::pick_solution(
 	// relates to the probability that a certain set of pivot torsions will lead 
 	// to a closed solution.
 
-	foreach (ClosureSolutionCOP solution, all_solutions) {
+	BOOST_FOREACH(ClosureSolutionCOP solution, all_solutions) {
 		total_jacobian += solution->get_jacobian();
 	}
 
@@ -160,7 +159,7 @@ ClosureSolutionCOP BalancedKicMover::pick_solution(
 	// made from both the perturbed and unperturbed pools of solutions, otherwise 
 	// the forward and reverse move probabilities won't be equivalent.
 
-	foreach (ClosureSolutionCOP solution, all_solutions) {
+	BOOST_FOREACH(ClosureSolutionCOP solution, all_solutions) {
 		selection_chance += solution->get_jacobian() / total_jacobian;
 		if (selection_chance >= random_threshold) return solution;
 	}
@@ -194,7 +193,7 @@ bool BalancedKicMover::is_solution_trivial(
 	ChainedSolutionList all_solutions(
 			unperturbed_solutions, perturbed_solutions);
 
-	foreach (ClosureSolutionCOP solution, all_solutions) {
+	BOOST_FOREACH(ClosureSolutionCOP solution, all_solutions) {
 		distance = solution->get_distance(problem);
 		if (distance < closest_distance) {
 			closest_distance = distance;

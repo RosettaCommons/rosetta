@@ -43,7 +43,6 @@
 #include <algorithm>
 
 // Global Names {{{1
-#define foreach BOOST_FOREACH
 
 using namespace std;
 using namespace basic::options;
@@ -97,7 +96,7 @@ int main(int argc, char **argv) {
 	Size const expected = iterations.size() / frequency;
 	Size visited = 0, recorded = 0;
 	
-	foreach (Size i, iterations) {
+	BOOST_FOREACH(Size i, iterations) {
 	cout << 3 << endl;
 		if (visited++ % frequency != 0) continue;
 		Pose pose = reader.get_pose(i); writer.apply(pose);

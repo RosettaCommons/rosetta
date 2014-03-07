@@ -22,7 +22,6 @@
 #include <core/pose/Pose.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <utility/string_util.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <limits>
@@ -84,14 +83,14 @@ void
 	utility::vector1< std::string > const pdb_names( utility::string_split( tag->getOption< std::string >( "file_names" ), ',' ) ); //split file names
 	operatorF_ = new protocols::simple_filters::Operator;
 	utility::vector1< utility::tag::TagCOP > const sub_tags( tag->getTags() ); //tags
-	foreach( utility::tag::TagCOP const sub_tag, sub_tags ){
+	BOOST_FOREACH( utility::tag::TagCOP const sub_tag, sub_tags ){
 		if( sub_tag->getName() == "Operator" )
 			operatorF_->parse_my_tag( sub_tag, data, filters, movers, pose ) ;
 	}
 
-		foreach( std::string const fname, pdb_names )
+		BOOST_FOREACH( std::string const fname, pdb_names )
 		{
-				foreach( utility::tag::TagCOP const sub_tag, sub_tags ){
+				BOOST_FOREACH( utility::tag::TagCOP const sub_tag, sub_tags ){
 				if( sub_tag->getName() == "RelativePose" )
 				{
 					r_pose_ = new RelativePoseFilter;

@@ -42,7 +42,6 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
 #include <boost/lexical_cast.hpp>
-#define foreach BOOST_FOREACH
 
 static basic::Tracer TR("protocols.fldsgn.MatchResiduesMover");
 

@@ -19,8 +19,6 @@
 // Utility headers
 #include <boost/foreach.hpp>
 
-#define foreach BOOST_FOREACH
-
 namespace protocols {
 namespace loop_modeling {
 namespace openers {
@@ -32,7 +30,7 @@ OpenerCollection::OpenerCollection() {
 OpenerCollection::~OpenerCollection() {}
 
 void OpenerCollection::apply(Pose & pose, Loop const & loop) {
-	foreach (LoopOpenerOP opener, openers_) {
+	BOOST_FOREACH(LoopOpenerOP opener, openers_) {
 		opener->apply(pose, loop);
 	}
 }

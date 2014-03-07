@@ -15,7 +15,6 @@
 #include <devel/splice/SpliceSegment.hh>
 #include <core/sequence/SequenceProfile.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 // Package headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
@@ -144,7 +143,7 @@ concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles, util
 	SequenceProfileOP concatenated_profile( new SequenceProfile );
 	core::Size current_profile_size( 0 );
 	core::Size current_segment_name( 1 );
-	foreach( SequenceProfileOP const prof, profiles ){
+	BOOST_FOREACH( SequenceProfileOP const prof, profiles ){
 		TR<<"now adding profile of segment "<< segment_names_ordered[ current_segment_name]<<std::endl;
 		for( core::Size pos = 1; pos <= prof->size(); ++pos ){
 			current_profile_size++;

@@ -83,7 +83,6 @@
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/simple_moves/DesignRepackMover.hh>
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace protein_interface_design {
@@ -190,7 +189,7 @@ BackrubDDMover::apply( Pose & pose )
 
 	kinematics::FoldTree const saved_ft( pose.fold_tree() );
 	bool make_new_ft( false );
-	foreach( kinematics::Edge const edge, saved_ft ){
+	BOOST_FOREACH( kinematics::Edge const edge, saved_ft ){
 		if( edge.start() > edge.stop() ){
 			make_new_ft = true;
 			break;

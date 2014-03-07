@@ -28,7 +28,6 @@
 #include <boost/foreach.hpp>
 #include <core/pose/selection.hh>
 #include <protocols/simple_filters/EnergyPerResidueFilter.hh>
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace simple_filters {
@@ -250,7 +249,7 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
 
   std::unique( resnums_.begin(), resnums_.end() );
   tr << "The following residues will be considered for interaction energy calculation:"<< std::endl;
-  foreach (core::Size const res, resnums_){
+  BOOST_FOREACH(core::Size const res, resnums_){
     tr << pose.residue_type( res ).name3() << res <<" + ";
     if (!(pose.residue_type( res ).name3() == restype_)) {
       tr << "Residue " << res << " in pose is of type "<< pose.residue_type( res ).name3() << ". Requested restype3 is "<< restype_<<". Skipping!"<<std::endl;
@@ -269,7 +268,7 @@ ResidueIEFilter::compute( core::pose::Pose const & pose ) const
     return (0.0);
   }
 
-  foreach (core::Size const res, resnums_)
+  BOOST_FOREACH(core::Size const res, resnums_)
   {
 
 

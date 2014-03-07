@@ -36,7 +36,6 @@
 #include <core/chemical/ResidueType.hh>
 #include <utility/tools/make_vector.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace features {
@@ -180,7 +179,7 @@ ScreeningFeatures::parse_my_tag(
 	chain_ = tag->getOption<std::string>("chain");
 
 	core::Size descriptor_count = 0;
-	foreach( utility::tag::TagCOP const sub_tag, tag->getTags() )
+	BOOST_FOREACH( utility::tag::TagCOP const sub_tag, tag->getTags() )
 	{
 		if(sub_tag->getName() != "descriptor")
 		{

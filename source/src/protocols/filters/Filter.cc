@@ -29,8 +29,6 @@
 #include <utility/vector1.hh>
 #include <core/pose/util.hh>
 
-#define foreach BOOST_FOREACH
-
 
 static basic::Tracer TR("protocols.filters.Filter");
 
@@ -61,7 +59,7 @@ FilterCollection::~FilterCollection() {}
 bool
 FilterCollection::apply( core::pose::Pose const & pose ) const
 {
-	foreach(protocols::filters::FilterCOP filter, filters_){
+	BOOST_FOREACH(protocols::filters::FilterCOP filter, filters_){
 		if( ! filter->apply( pose ) ){
 			return false;
 		}
@@ -73,7 +71,7 @@ FilterCollection::apply( core::pose::Pose const & pose ) const
 void
 FilterCollection::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
-	foreach(protocols::filters::FilterCOP filter, filters_){
+	BOOST_FOREACH(protocols::filters::FilterCOP filter, filters_){
 		filter->report( out, pose );
 	}
 }

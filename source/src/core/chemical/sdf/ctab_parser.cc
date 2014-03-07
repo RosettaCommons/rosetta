@@ -31,7 +31,6 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 namespace core {
 namespace chemical {
@@ -116,7 +115,7 @@ void ctabV2000Parser::ParseTable()
 		set_atom_type(atomno, atomname);
 	}
 
-	foreach(addedH added, added_H_){
+	BOOST_FOREACH(addedH added, added_H_){
 		index_to_names_map_.insert(
 				std::pair<core::Size,std::string>(added.atom_number,"H"+added.atom_number)
 		);
@@ -308,7 +307,7 @@ void ctabV3000Parser::set_atom_type(core::Size atomno, std::string atomname)
 
 core::Real ctabV3000Parser::FindExtraParameter(std::vector<std::string> extra_parameters,const std::string query )
 {
-	foreach(std::string extra_parameter, extra_parameters){
+	BOOST_FOREACH(std::string extra_parameter, extra_parameters){
 		if(extra_parameter.find(query) == std::string::npos)
 		{
 			continue;
@@ -333,7 +332,7 @@ void ctabV3000Parser::ParseTable()
 
 	std::map<core::Size,std::string> atom_type_data = this->ParseAtomTypeData();
 
-	foreach(std::string current_line, connector_table_lines_){
+	BOOST_FOREACH(std::string current_line, connector_table_lines_){
 
 		utility::vector1<std::string> line_vector(utility::split(current_line));
 		//if(line_vector[1] != "M" || line_vector[2] != "V30")
@@ -394,7 +393,7 @@ void ctabV3000Parser::ParseTable()
 		}
 	}
 
-	foreach(addedH added, added_H_){
+	BOOST_FOREACH(addedH added, added_H_){
 		index_to_names_map_.insert(std::pair<core::Size,std::string>(
 				added.atom_number,"H"+added.atom_number));
 	}

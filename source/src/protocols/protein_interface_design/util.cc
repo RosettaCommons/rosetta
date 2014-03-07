@@ -34,7 +34,6 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 // AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 // AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 // AUTO-REMOVED #include <basic/datacache/DataMap.hh>
@@ -138,7 +137,7 @@ make_hotspot_foldtree( core::pose::Pose const & pose )
 	std::sort( connection_points.begin(), connection_points.end() );
 	std::unique( connection_points.begin(), connection_points.end() );
 	core::Size upstream_position( 1 );
-	foreach( core::Size const con, connection_points ){
+	BOOST_FOREACH( core::Size const con, connection_points ){
 		ft.add_edge( upstream_position, con, Edge::PEPTIDE );
 		upstream_position = con;
 	}

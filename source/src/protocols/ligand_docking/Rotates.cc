@@ -32,7 +32,6 @@
 
 #include <utility/excn/Exceptions.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 using basic::T;
 using basic::Error;
@@ -116,9 +115,9 @@ Rotates::parse_my_tag(
 	core::Size const degrees = tag->getOption<core::Size>("degrees");
 	core::Size const cycles = tag->getOption<core::Size>("cycles");
 
-	foreach(std::string chain, chain_strs){
+	BOOST_FOREACH(std::string chain, chain_strs){
 		utility::vector1<core::Size> chain_ids = core::pose::get_chain_ids_from_chain(chain, pose);
-		foreach(core::Size chain_id, chain_ids){
+		BOOST_FOREACH(core::Size chain_id, chain_ids){
 			Rotate_info rotate_info;
 			rotate_info.chain_id = chain_id;
 			rotate_info.jump_id = core::pose::get_jump_id_from_chain_id(chain_id, pose);
@@ -131,7 +130,7 @@ Rotates::parse_my_tag(
 }
 
 void Rotates::apply(core::pose::Pose & pose){
-	foreach(RotateOP rotate, rotates_){
+	BOOST_FOREACH(RotateOP rotate, rotates_){
 		rotate->apply(pose);
 	}
 }

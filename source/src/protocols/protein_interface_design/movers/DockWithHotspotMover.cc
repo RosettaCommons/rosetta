@@ -53,7 +53,6 @@
 #include <iomanip>
 #include <ObjexxFCL/string.functions.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // Unit Headers
 
@@ -185,13 +184,13 @@ void DockWithHotspotMover::parse_my_tag( utility::tag::TagCOP const tag,
 			" from:" << std::endl;
 	// Set target to the residue specified by "target_pdb_num" or "target_res_num"
 	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
-	foreach( TagCOP const curr_tag, branch_tags ){
+	BOOST_FOREACH( TagCOP const curr_tag, branch_tags ){
 		if( curr_tag->getName() != "HotspotFiles" ) {
 			TR.Error << "Error: No 'HotspotFiles' specified." << std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("");
 		} else {
 			utility::vector1< TagCOP > const branch_tags2( curr_tag->getTags() );
-			foreach( TagCOP const curr_tag2, branch_tags2 ) {
+			BOOST_FOREACH( TagCOP const curr_tag2, branch_tags2 ) {
 				std::string const file_name( curr_tag2->getOption< std::string >( "file_name" ) );
 				hotspot_filenames_.push_back(file_name);
 				core::Real cb_force( curr_tag2->getOption< core::Real >( "cb_force", 1.0 ) );

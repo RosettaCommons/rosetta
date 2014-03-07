@@ -22,7 +22,7 @@
 #include <utility/exit.hh>
 // Utility headers
 #include <basic/Tracer.hh>
-#include <boost/unordered_map.hpp>
+//#include <boost/unordered_map.hpp>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -162,7 +162,7 @@ void GDB::showGDB( std::ostream & out ) {
 		}
 		out << endl;
 
-		boost::unordered_map<int, string>::iterator iterR;
+		VarList::iterator iterR;
 		out << "VARS   ";
 		for ( iterR = VARS.begin(); iterR != VARS.end(); iterR++ )
 			out << iterR->second.c_str() << " ";
@@ -175,8 +175,7 @@ void GDB::showGDB( std::ostream & out ) {
 	}
 
   // write the entries
-  boost::unordered_map< int, boost::unordered_map<string, string> >::iterator it;
-  for ( it = Entries.begin(); it != Entries.end(); it++ ) {
+  for ( EntryList::iterator it = Entries.begin(); it != Entries.end(); it++ ) {
 		GDB_Entry ent = it->second;
 
 		for(int i = 0; i < (int) VARS.size(); i++) {
@@ -198,19 +197,19 @@ void GDB::showGDB( std::ostream & out ) {
 
 
 
-GDB_Entry GDB::getEntry(int number)
+GDB::GDB_Entry GDB::getEntry(int number)
 {
   return Entries[number];
 }
 
 
 // get the index-th entry with VName=VVal, default return the first satisfied entry
-GDB_Entry GDB::getEntry(const string &VName, const string &VVal, int index)
+GDB::GDB_Entry GDB::getEntry(const string &VName, const string &VVal, int index)
 {
   GDB_Entry ent;
 
   int count = 0;
-  boost::unordered_map< int, boost::unordered_map<string, string> >::iterator it;
+	EntryList::iterator it;
   for ( it = Entries.begin(); it != Entries.end(); it++ )
     {
       ent = it->second;
@@ -226,23 +225,17 @@ GDB_Entry GDB::getEntry(const string &VName, const string &VVal, int index)
 
 
 // get the index-th entry with VName1=VVal1 and VName2=VVal2, default return the first satisfied entry
-GDB_Entry GDB::getEntry(const string &VName1, const string &VVal1, const string &VName2, const string &VVal2, int index)
+GDB::GDB_Entry GDB::getEntry(const string &VName1, const string &VVal1, const string &VName2, const string &VVal2, int index)
 {
   GDB_Entry ent;
-
   int count = 0;
-  boost::unordered_map< int, boost::unordered_map<string, string> >::iterator it;
-  for ( it = Entries.begin(); it != Entries.end(); it++ )
-    {
-      ent = it->second;
-
-      if ( ent[VName1] == VVal1 && ent[VName2] == VVal2 ) count++;
-
-      if ( count == index && index > 0 ) return ent;
-    }
-
+  EntryList::iterator it;
+  for ( it = Entries.begin(); it != Entries.end(); it++ ) {
+		ent = it->second;
+		if ( ent[VName1] == VVal1 && ent[VName2] == VVal2 ) count++;
+		if ( count == index && index > 0 ) return ent;
+	}
   ent.clear();
-
   return ent;
 }
 
@@ -268,14 +261,13 @@ void GDB::setEntry(
 	const string & VarName,
 	const string & VarVal
 ) {
-	boost::unordered_map<int, string>::iterator it_V;
-
-	for( it_V = VARS.begin(); it_V != VARS.end(); it_V++ )
+	VarList::const_iterator it_V;
+	for( it_V = VARS.begin(); it_V != VARS.end(); it_V++ ) {
 		if ( it_V->second == VarName ) break;
-
-		if ( it_V != VARS.end() ) {
-			(Entries[ index ])[VarName.c_str()] = VarVal.c_str();
-		} else {
+	}
+	if ( it_V != VARS.end() ) {
+		Entries[ index ][VarName.c_str()] = VarVal.c_str();
+	} else {
 		string const msg( "\tInvalid variable name '" + VarName + "'\n" );
 		//tr.Error << "\tInvalid varible name '" << VarName << "'" << endl;
 		tr.Error << msg;
@@ -286,16 +278,14 @@ void GDB::setEntry(
 
 
 //add a new entry to the end of entries list
-void GDB::addEntry(const string &VarName, const string &VarVal)
-{
+void GDB::addEntry(const string &VarName, const string &VarVal) {
   setEntry( Entries.size()+1, VarName, VarVal);
 }
 
 
 
 //add one VAR with given FORMAT to the end of VARS list
-void GDB::addVAR(const string &VAR_Name, const string &FORMAT_Name)
-{
+void GDB::addVAR(const string &VAR_Name, const string &FORMAT_Name) {
   int size = VARS.size();
 
   if ( !checkFormat(FORMAT_Name) )
@@ -326,10 +316,8 @@ void GDB::addVAR(const string &VAR_Name, const string &FORMAT_Name)
 
 //re-set one VAR with given FORMAT, 'index' number starts from 1 and can't larger than current size + 1
 //if 'index' equals to current VARS size + 1, add new VAR to the end of VARS list
-void GDB::setVAR(int index, const string &VAR_Name, const string &FORMAT_Name)
-{
+void GDB::setVAR(int index, const string &VAR_Name, const string &FORMAT_Name) {
   int size = VARS.size();
-
   if ( !checkFormat(FORMAT_Name) )
     tr.Error << "\tBad format syntax '" << FORMAT_Name <<  "'" << endl;
   else if (contains(VAR_Name, ' ') > 0)
@@ -348,95 +336,73 @@ void GDB::setVAR(int index, const string &VAR_Name, const string &FORMAT_Name)
 
 
 //add a new REMARK entry
-void GDB::addRemark(const string &str)
-{
+void GDB::addRemark(const string &str) {
   REMARKS.push_back(str);
 }
 
 
 
-void GDB::setData(const string &DataName, const string &DataVal)
-{
+void GDB::setData(const string &DataName, const string &DataVal) {
   DATA.push_back( DataName+" "+DataVal );
 }
 
 
 
-string GDB::getData(const string &DataName)
-{
+string GDB::getData(const string &DataName) {
   string data="";
-
-  for(int i = 0; i < (int) DATA.size(); i++)
-    {
-      int pos = DATA[i].find_first_of(' ');
-
-      if (DATA[i].substr(0,pos) == DataName )
-	data = data+ DATA[i].substr( pos+1,DATA[i].length()-pos-1 );
-    }
-
-  return data;
+  for(int i = 0; i < (int) DATA.size(); i++) {
+		int pos = DATA[i].find_first_of(' ');
+		if (DATA[i].substr(0,pos) == DataName )
+			data = data+ DATA[i].substr( pos+1,DATA[i].length()-pos-1 );
+	}
+	return data;
 }
 
 
 
-bool GDB::isVarFloat(int index)
-{
+bool GDB::isVarFloat(int index) {
   if (contains(FORMAT[index],'f') == 1) return true;
-
   return false;
 }
 
 
 
-bool GDB::isVarFloat(const string &VarName)
-{
-  boost::unordered_map<int, string>::iterator it_V;
-
-  for( it_V = VARS.begin(); it_V != VARS.end(); it_V++ )
-    {
-      if ( it_V->second == VarName ) return isVarFloat(it_V->first);
-    }
-
+bool GDB::isVarFloat(const string &VarName) {
+  VarList::const_iterator it_V;
+  for( it_V = VARS.begin(); it_V != VARS.end(); it_V++ ) {
+		if ( it_V->second == VarName ) return isVarFloat(it_V->first);
+	}
   return false;
 }
 
 
 
-bool GDB::isVarInt(int index)
-{
+bool GDB::isVarInt(int index) {
   if (contains(FORMAT[index],'d') == 1) return true;
-
   return false;
 }
 
 
 
-bool GDB::isVarInt(const string &VarName)
-{
-  boost::unordered_map<int, string>::iterator it_V;
-
-  for( it_V = VARS.begin(); it_V != VARS.end(); it_V++ )
-    {
-      if ( it_V->second == VarName ) return isVarInt(it_V->first);
-    }
-
+bool GDB::isVarInt(const string &VarName) {
+  VarList::const_iterator it_V;
+  for( it_V = VARS.begin(); it_V != VARS.end(); it_V++ )  {
+		if ( it_V->second == VarName ) return isVarInt(it_V->first);
+	}
   return false;
 }
 
 
 
-bool GDB::isVarString(int index)
-{
+bool GDB::isVarString(int index) {
   if (contains(FORMAT[index],'s') == 1) return true;
-
   return false;
 }
 
 
 
-bool GDB::isVarString(const string &VarName)
-{
-  boost::unordered_map<int, string>::iterator it_V;
+bool GDB::isVarString(const string &VarName) {
+  VarList::const_iterator it_V;
 
   for( it_V = VARS.begin(); it_V != VARS.end(); it_V++ )
     {

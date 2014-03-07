@@ -24,8 +24,6 @@
 #include <utility/exit.hh>
 #include <boost/foreach.hpp>
 
-#define foreach BOOST_FOREACH
-
 namespace protocols {
 namespace loop_modeling {
 
@@ -52,12 +50,11 @@ void LoopMover::apply(Pose & pose) { // {{{1
 	}
 
 	// Create a score function if necessary.
-
 	if (score_function_.get() == NULL) {
 		set_score_function(core::scoring::getScoreFunction());
 	}
 
-	// Sample the loops.  If the existing fold tree isn't trusted, replace it 
+	// Sample the loops.  If the existing fold tree isn't trusted, replace it
 	// with a custom-built one first.
 
 	if (trust_fold_tree_) {
@@ -108,7 +105,7 @@ ScoreFunctionOP LoopMover::get_score_function() { // {{{1
 
 void LoopMover::set_loops(Loops const & loops) { // {{{1
 	loops_ = loops;
-	foreach (LoopMoverOP mover, nested_movers_) {
+	BOOST_FOREACH (LoopMoverOP mover, nested_movers_) {
 		mover->set_loops(loops);
 	}
 }
@@ -121,14 +118,14 @@ void LoopMover::set_loop(Loop const & loop) { // {{{1
 
 void LoopMover::set_score_function(ScoreFunctionOP function) { // {{{1
 	score_function_ = function;
-	foreach (LoopMoverOP mover, nested_movers_) {
+	BOOST_FOREACH (LoopMoverOP mover, nested_movers_) {
 		mover->set_score_function(function);
 	}
 }
 
 FoldTreeRequest LoopMover::request_fold_tree() const { // {{{1
 	FoldTreeRequest request = FTR_DONT_CARE;
-	foreach (LoopMoverCOP mover, nested_movers_) {
+	BOOST_FOREACH (LoopMoverCOP mover, nested_movers_) {
 		request = request & mover->request_fold_tree();
 	}
 	return request;

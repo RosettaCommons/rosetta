@@ -29,7 +29,7 @@
 #include <protocols/enzdes/ModifyStoredLigandRBConfsMovers.hh>
 #include <protocols/ligand_docking/ligand_functions.hh> //for minimizing ligand torsions
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
+#define foreach_ BOOST_FOREACH
 
 //project headers
 #include <core/chemical/ChemicalManager.hh>
@@ -395,7 +395,7 @@ EnzdesBaseProtocol::create_enzdes_movemap(
 
  if( rb_min_jumps().size() > 0 ){
 	 tr<<"rb_min_jumps was set. setting the following rb dofs to true: ";
-	 foreach( core::Size const rb, rb_min_jumps() ){
+	 foreach_( core::Size const rb, rb_min_jumps() ){
 		 tr<<rb<<',';
 		 movemap->set_jump( rb, true );
 	 }

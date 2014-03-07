@@ -52,7 +52,6 @@
 #include <boost/foreach.hpp>
 #include <protocols/simple_filters/AlaScan.hh>
 
-#define foreach BOOST_FOREACH
 
 using namespace core::scoring;
 using namespace protocols::seeded_abinitio;
@@ -503,7 +502,7 @@ SeedFoldTree::set_foldtree(
 
 			///target first:
 			Size target_head = 1;
-			foreach( core::Size const res, res_on_target ){
+			BOOST_FOREACH( core::Size const res, res_on_target ){
 				/// connect chain1 with no breaks
 				fold_tree_->add_edge( target_head, res, Edge::PEPTIDE );
 				target_head = res;
@@ -518,7 +517,7 @@ SeedFoldTree::set_foldtree(
 			Size last_cut = 0;
 			//Size last_jump = 0;
 
-			foreach ( core::Size const jpos, res_on_design){
+			BOOST_FOREACH( core::Size const jpos, res_on_design){
 				TR<<"foldpose iterator: "<< jpos <<"and +1 "<< jpos+1 << std::endl;
 				if( last_cut != 0 )
 					fold_tree_->add_edge( last_cut+1 , jpos , Edge::PEPTIDE ); //this way the cut is after the specified cut position, should it be before?
@@ -735,7 +734,7 @@ SeedFoldTree::parse_my_tag( TagCOP const tag,
 	//parsing branch tags
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 
-	foreach( TagCOP const btag, branch_tags ){
+	BOOST_FOREACH( TagCOP const btag, branch_tags ){
 		/* this parsing option works, it is just not hooked in yet
 		//in case anybody ever wanted to set them manually
 		if( btag->getName() == "cut_points" ) {

@@ -39,24 +39,25 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
+#include <protocols/sparta/Sparta.hh>
 
 namespace protocols {
 namespace sparta {
 
 void
 calc_per_residue_scores(
-	boost::unordered_map< int, std::string > & atom_names,
-	GDB & Pred_Sum,
-	GDB & REF_CS_Tab,
-	GDB & COMP_Tab,
-	utility::vector1< float > & per_residue_scores
+   Sparta::SpartaLib::AtomNameList& atom_names,
+   GDB & Pred_Sum,
+   GDB & REF_CS_Tab,
+   GDB & COMP_Tab,
+   utility::vector1< float > & per_residue_scores
 );
 
 core::Real compareRef_fxn(
-	boost::unordered_map< int, std::string > & atom_names,
-	GDB & Pred_Sum,
-	GDB & REF_CS_Tab,
-	GDB & COMP_Tab // pass-by-reference, will be obliterated
+   Sparta::SpartaLib::AtomNameList&,
+   GDB & Pred_Sum,
+   GDB & REF_CS_Tab,
+   GDB & COMP_Tab // pass-by-reference, will be obliterated
 );
 
 float getDiff( float ang1, float ang2 ); // calculate the different between two angles

@@ -37,7 +37,6 @@
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // C++ Headers
 #include <set>
@@ -101,7 +100,7 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 	protocols::toolbox::task_operations::DesignAroundOperationOP dao = new protocols::toolbox::task_operations::DesignAroundOperation;
 	dao->design_shell( 0.1 );
 	dao->repack_shell( repack_shell() );
-	foreach( core::Size const d, designable ){
+	BOOST_FOREACH( core::Size const d, designable ){
 		dao->include_residue( d );
 	}
 	core::pack::task::TaskFactoryOP dao_tf = new core::pack::task::TaskFactory;
@@ -128,7 +127,7 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 		oocr_repackable.residue_indices( repackable );
 		oocr_repackable.apply( pose, task );
 		TR<<"allowing repacking in: ";
-		foreach( core::Size const r, repackable )
+		BOOST_FOREACH( core::Size const r, repackable )
 			TR<<r<<' ';
 		TR<<std::endl;
 	}
@@ -136,7 +135,7 @@ RestrictToAlignedSegmentsOperation::apply( core::pose::Pose const & pose, core::
 		oocr_immutable.residue_indices( immutable );
 		oocr_immutable.apply( pose, task );
 		TR<<"no repack in: ";
-		foreach( core::Size const i, immutable )
+		BOOST_FOREACH( core::Size const i, immutable )
 			TR<<i<<' ';
 		TR<<std::endl;
 	}
@@ -161,7 +160,7 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagCOP tag , DataMap & )
 	}
 
 	utility::vector0< TagCOP > const & btags( tag->getTags() );
-	foreach( TagCOP const btag, btags ){
+	BOOST_FOREACH( TagCOP const btag, btags ){
 		pdb_names.push_back( btag->getOption< std::string >( "source_pdb" ) );
 		start_res.push_back( btag->getOption< std::string >( "start_res" ) );
 		stop_res.push_back( btag->getOption< std::string >( "stop_res" ) );

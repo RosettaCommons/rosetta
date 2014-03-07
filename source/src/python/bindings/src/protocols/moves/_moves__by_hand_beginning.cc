@@ -73,8 +73,8 @@ void __moves_by_hand_beginning__()
 	bp::def("QQQ_SubclassTester", QQQ_SubclassTester);
 	bp::def("QQQ_SubclassTester2", QQQ_SubclassTester2);
 
-    bp::implicitly_convertible< utility::pointer::owning_ptr< ::protocols::moves::Mover >
-                              , utility::pointer::owning_ptr< ::protocols::moves::Mover const > >();
+    // bp::implicitly_convertible< utility::pointer::owning_ptr< ::protocols::moves::Mover >
+    //                           , utility::pointer::owning_ptr< ::protocols::moves::Mover const > >();
 
 	/*bp::implicitly_convertible< utility::pointer::owning_ptr<  PyMover >
                               , utility::pointer::owning_ptr< ::protocols::moves::Mover > >();

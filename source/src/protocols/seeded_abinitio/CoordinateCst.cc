@@ -39,8 +39,6 @@
 #include <iostream>
 #include <string>
 
-#define foreach BOOST_FOREACH
-
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 
@@ -140,7 +138,7 @@ adjust_residues(
 	utility::vector1< std::string > const design_keys( utility::string_split( design_residues, ',' ) );
 	utility::vector1< core::Size > design_res;
 
-	foreach( std::string const key, design_keys ){
+	BOOST_FOREACH( std::string const key, design_keys ){
 		core::Size const resnum( core::pose::parse_resnum( key, pose ));
 		//TR.Debug<<"design within seed, residue: "<< key <<", parsed: "<< resnum <<std::endl;
 		design_res.push_back( resnum);
@@ -160,7 +158,7 @@ void adjust_single_residues(
 
 	utility::vector1< std::string > const single_keys( utility::string_split( single_residues, ',' ) );
 
-	foreach( std::string const key, single_keys ){
+	BOOST_FOREACH( std::string const key, single_keys ){
 		core::Size const resnum( core::pose::parse_resnum( key, pose ));
 		resi_collection.insert( resnum );
 	}
@@ -207,7 +205,7 @@ void add_coordinate_constraints(
 	}
 	coord_cst_func->sd( coord_sdev );
 
-	foreach(core::Size res, constrain_residues) {
+	BOOST_FOREACH(core::Size res, constrain_residues) {
 		// safety check.
 		if ( ! pose.residue( res ).has( atom_name ) ) {
 			utility_exit_with_message( "Could not add coordinate constraint to " + atom_name + " on residue " + utility::to_string( res ) + " (" +
@@ -329,7 +327,7 @@ CoordinateCst::parse_my_tag(
 	//parsing branch tags
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 
-	foreach( TagCOP const btag, branch_tags ){
+	BOOST_FOREACH( TagCOP const btag, branch_tags ){
 
 		if( btag->getName() == "Span" || btag->getName() == "span" ||  btag->getName() == "Seeds") {
 			std::string const beginS( btag->getOption<std::string>( "begin" ) );

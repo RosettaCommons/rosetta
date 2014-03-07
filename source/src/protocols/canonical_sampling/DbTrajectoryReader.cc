@@ -34,7 +34,6 @@
 #include <sstream>
 #include <algorithm>
 
-#define foreach BOOST_FOREACH
 // }}}1
 
 namespace protocols {
@@ -168,7 +167,7 @@ vector1<Pose> DbTrajectoryReader::get_poses() const { // {{{1
 	vector1<Pose> poses;
 	vector1<Size> iterations = get_iterations();
 
-	foreach (Size i, iterations) {
+	BOOST_FOREACH(Size i, iterations) {
 		Pose pose = get_pose(i);
 		poses.push_back(pose);
 	}

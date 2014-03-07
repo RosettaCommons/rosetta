@@ -33,8 +33,6 @@
 #include <basic/Tracer.fwd.hh>
 #include <basic/Tracer.hh>
 
-#define foreach BOOST_FOREACH
-
 namespace basic {
 
 
@@ -102,7 +100,7 @@ std::string Emitter::escape_string(std::string const & s, bool & needs_quotes_ou
 
 	std::ostringstream o;
 
-	foreach(char ch, s){
+	BOOST_FOREACH(char ch, s){
 		if( ' ' <= ch && ch <= '~' ) o << ch; // the range of printable ASCII characters
 		else if( ch == '"'  ) o << "\\\"";
 		else if( ch == '\\' ) o << "\\\\";

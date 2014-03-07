@@ -32,7 +32,6 @@
 #include <cppdb/frontend.h>
 
 // Boost Headers
-#define foreach BOOST_FOREACH
 
 // C++ Headers
 #include <sstream>

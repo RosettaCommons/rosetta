@@ -20,7 +20,6 @@
 #include <boost/foreach.hpp>
 #include <core/scoring/dssp/Dssp.hh>
 
-#define foreach BOOST_FOREACH
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -588,7 +587,7 @@ SegmentHybridizer::parse_my_tag( TagCOP const tag,
 
 	/// read areas that are supposed to be remodeled
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
-	foreach( TagCOP const btag, branch_tags ){
+	BOOST_FOREACH( TagCOP const btag, branch_tags ){
 
 		if( btag->getName() == "Span" ) { //need an assertion for the presence of these or at least for the option file
 			std::string const beginS( btag->getOption<std::string>( "begin" ) );

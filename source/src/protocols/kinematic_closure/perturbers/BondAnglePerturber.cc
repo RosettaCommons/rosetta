@@ -21,8 +21,6 @@
 #include <numeric/kinematic_closure/vector.hh>
 #include <boost/foreach.hpp>
 
-#define foreach BOOST_FOREACH
-
 namespace protocols {
 namespace kinematic_closure {
 namespace perturbers {
@@ -36,7 +34,7 @@ void BondAnglePerturber::perturb_subset(
 	// Sorry for using magic numbers.  Both values were taken from a gaussian fit 
 	// of the bond angle distribution observed in the Top8000 database.
 
-	foreach(Size residue, residues) {
+	BOOST_FOREACH(Size residue, residues) {
 		Real angle = 111.24096 + 2.27632 * gaussian();
 		problem->perturb_n_ca_c(residue, angle, DEGREES);
 	}

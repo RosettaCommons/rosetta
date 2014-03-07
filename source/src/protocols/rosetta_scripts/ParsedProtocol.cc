@@ -67,7 +67,6 @@
 #include <boost/foreach.hpp>
 
 //Auto Headers
-#define foreach BOOST_FOREACH
 namespace protocols {
 namespace rosetta_scripts {
 
@@ -228,7 +227,7 @@ ParsedProtocol::final_score(core::pose::Pose & pose) const {
 void
 ParsedProtocol::report_all( Pose const & pose ) const {
   TR_report<<"=============Starting final report================"<<std::endl;
-  foreach(mover_filter_pair mover_pair, movers_){
+  BOOST_FOREACH(mover_filter_pair mover_pair, movers_){
     TR_report<<"============Begin report for "<<mover_pair.second->get_user_defined_name()<<"=================="<<std::endl;
     mover_pair.second->report( TR_report, pose );
     TR_report<<"============End report for "<<mover_pair.second->get_user_defined_name()<<"=================="<<std::endl;
@@ -336,7 +335,7 @@ ParsedProtocol::parse_subtag( TagCOP const& tag_ptr,
 
     TR.Info << "Added environment " << env_name << ". Parsing subtags." << std::endl;
 
-    foreach( TagCOP subtag, tag_ptr->getTags() ){
+    BOOST_FOREACH( TagCOP subtag, tag_ptr->getTags() ){
       moves::MoverOP sub_added = parse_subtag( subtag, protocol_tag, data, filters, movers);
       if( sub_added ){
         ClaimingMoverOP casted = dynamic_cast< ClaimingMover* >( sub_added.get() );
@@ -539,7 +538,7 @@ void ParsedProtocol::finish_protocol(Pose & pose) {
   std::string job_name (JobDistributor::get_instance()->job_outputter()->output_name( job2 ) );
   if( report_call_order() ){
     TR_call_order << job_name<<" ";
-    foreach( mover_filter_pair const p, movers_ )
+    BOOST_FOREACH( mover_filter_pair const p, movers_ )
       TR_call_order<<p.first.second<<" ";
     TR_call_order<<std::endl;
   }
@@ -582,7 +581,7 @@ void ParsedProtocol::random_order_protocol(Pose & pose){
 utility::vector1< core::Real >
 ParsedProtocol::apply_probability() const {
   core::Real sum( 0 );
-  foreach( core::Real const prob, apply_probability_ )
+  BOOST_FOREACH( core::Real const prob, apply_probability_ )
     sum += prob;
   runtime_assert( sum >= 0.999 && sum <= 1.001 );
   return apply_probability_;
@@ -614,7 +613,7 @@ ParsedProtocol::check_apply_probabilities(){
     core::Real sum( 0 );
 
     //there's totally an stl sum that could be used here rather than boost.
-    foreach( core::Real const prob, apply_probability_ )
+    BOOST_FOREACH( core::Real const prob, apply_probability_ )
       sum += prob;
     if( sum > 1.001 || sum < 0.999 ){
       TR.Error << "Apply probability sum must be 1.0; the apply probability sum "
@@ -629,7 +628,7 @@ void ParsedProtocol::random_single_protocol(Pose & pose){
   core::Real const random_num( RG.uniform() );
   core::Real sum( 0.0 );
   core::Size mover_index( 0 );
-  foreach( core::Real const probability, apply_probability() ){
+  BOOST_FOREACH( core::Real const probability, apply_probability() ){
     sum += probability; mover_index++;
     if( sum >= random_num )
       break;

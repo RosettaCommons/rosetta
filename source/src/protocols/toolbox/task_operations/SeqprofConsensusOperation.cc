@@ -50,7 +50,6 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <utility/vector0.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 
 static basic::Tracer tr("protocols.toolbox.task_operations.SeqprofConsensusOperation");
@@ -127,7 +126,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		 tr<<"total number of residues in chain:"<<chain->total_residue()<<std::endl;
 		 tr<<"Total number of constraints in pose: "<<constraints.size()<<std::endl;
 		 core::Size cst_num( 0 );
-		 foreach( ConstraintCOP const c, constraints ){
+		 BOOST_FOREACH( ConstraintCOP const c, constraints ){
 		   if( c->type() == "SequenceProfile" ){
 				 SequenceProfileConstraintCOP seqprof_cst( dynamic_cast< SequenceProfileConstraint const * >( c() ) );
 				 runtime_assert( seqprof_cst );
@@ -307,7 +306,7 @@ SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 	if( tag->hasOption("ignore_pose_profile_length_mismatch") ) ignore_pose_profile_length_mismatch_ = tag->getOption< bool >("ignore_pose_profile_length_mismatch");
 
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
-	foreach( TagCOP const sub_tag, sub_tags ){
+	BOOST_FOREACH( TagCOP const sub_tag, sub_tags ){
 		if( sub_tag->getName() == "RestrictToAlignedSegments" ){
 			restrict_to_aligned_segments_ = new RestrictToAlignedSegmentsOperation;
 			tr<<"Within SeqprofConsensus I'm now reading a RestrictToAlignedSegments operation..."<<std::endl;

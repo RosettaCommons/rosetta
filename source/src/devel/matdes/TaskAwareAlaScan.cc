@@ -61,7 +61,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 #include <devel/matdes/TaskAwareAlaScan.hh>
 #include <devel/matdes/TaskAwareAlaScanCreator.hh>
@@ -177,7 +176,7 @@ TaskAwareAlaScan::parse_my_tag(
   if( unparsed_exempt_identities != "" ) {
     utility::vector1< std::string > const ids( utility::string_split( unparsed_exempt_identities , ',' ) );
     exempt_identities_.clear();
-    foreach( std::string const id, ids ) {
+    BOOST_FOREACH( std::string const id, ids ) {
         exempt_identities_.insert( id );
     }
   }

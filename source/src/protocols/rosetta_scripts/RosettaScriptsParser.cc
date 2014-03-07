@@ -48,7 +48,6 @@
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/moves/NullMover.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 
 //scoring grids
@@ -251,13 +250,13 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
   if ( !tag->hasTag("PROTOCOLS") )
       utility_exit_with_message("parser::protocol file must specify PROTOCOLS section");
 
-  foreach( TagCOP const curr_tag, all_tags ){
+  BOOST_FOREACH( TagCOP const curr_tag, all_tags ){
     ///// APPLY TO POSE
     if ( curr_tag->getName() == "APPLY_TO_POSE" ) { // section is not mandatory
       /// apply to pose may affect all of the scorefxn definitions below, so it is called first.
       TagCOPs const apply_tags( curr_tag->getTags() );
 
-      foreach(TagCOP apply_tag_ptr, apply_tags){
+      BOOST_FOREACH(TagCOP apply_tag_ptr, apply_tags){
         std::string const mover_type( apply_tag_ptr->getName() );
         MoverOP new_mover( MoverFactory::get_instance()->newMover( apply_tag_ptr, data, filters, movers, pose ) );
         runtime_assert( new_mover );
@@ -279,7 +278,7 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
     ////// Filters
     if ( curr_tag->getName() == "FILTERS" ) {
 
-      foreach(TagCOP tag_ptr, curr_tag->getTags()){
+      BOOST_FOREACH(TagCOP tag_ptr, curr_tag->getTags()){
         std::string const type( tag_ptr->getName() );
         if ( ! tag_ptr->hasOption("name") )
           utility_exit_with_message("Can't define unnamed Filter of type " + type );
@@ -301,7 +300,7 @@ MoverOP RosettaScriptsParser::generate_mover_for_protocol(Pose & pose, bool & mo
 
     ////// MOVERS
     if( curr_tag->getName() == "MOVERS" ){
-      foreach(TagCOP tag_ptr, curr_tag->getTags()){
+      BOOST_FOREACH(TagCOP tag_ptr, curr_tag->getTags()){
         std::string const type( tag_ptr->getName() );
         if ( ! tag_ptr->hasOption("name") )
           utility_exit_with_message("Can't define unnamed Mover of type " + type );

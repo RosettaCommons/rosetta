@@ -29,7 +29,6 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 //C++ headers
 #include <sstream>
@@ -81,7 +80,7 @@ ResourceOptionsFactory::create_resource_options(
 			<< "register a new ResourceOptionsCreator with the ResourceOptionsFactory." << std::endl
 			<< "Known ResourceOptions types are:" << std::endl;
 
-		foreach(const ResourceOptionsCreatorMap::value_type& type, creator_map_){
+		BOOST_FOREACH(const ResourceOptionsCreatorMap::value_type& type, creator_map_){
 			error_msg << "\t" << type.first << std::endl;
 		}
 

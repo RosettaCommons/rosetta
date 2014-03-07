@@ -27,7 +27,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <basic/datacache/DataMap.hh>
@@ -269,7 +268,7 @@ foreach_movemap_tag(
 	using namespace core::kinematics;
 	using namespace utility::tag;
 
-	foreach( TagCOP const tag, in_tag->getTags() ){
+	BOOST_FOREACH( TagCOP const tag, in_tag->getTags() ){
 		std::string const name( tag->getName() );
 		runtime_assert( name == "Jump" || name == "Chain" || name == "Span" );
 		if( name == "Jump" ){

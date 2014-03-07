@@ -35,9 +35,6 @@
 
 /// Macros are not properly caught and passed along by my #inclusion
 /// cleanup script
-#define foreach BOOST_FOREACH
-
-
 
 using std::string;
 using std::endl;

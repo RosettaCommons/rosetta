@@ -36,8 +36,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-#define foreach BOOST_FOREACH
-
 static basic::Tracer TR( "protocols.jd2.parser.FragSetLoader" );
 
 namespace protocols {
@@ -61,7 +59,7 @@ void FragSetLoader::load_data(
 
 	FragmentReaderMap frag_readers_map;
 	if ( tag->hasTag( "FRAGMENTS" ) ) {
-		foreach(TagCOP tag, tag->getTag( "FRAGMENTS" )->getTags()){
+		BOOST_FOREACH(TagCOP tag, tag->getTag( "FRAGMENTS" )->getTags()){
 			std::string const name ( tag->getName() ); // this name is used when fragsets are defined later.
 			runtime_assert( !name.empty() );
 			FragmentReaderOP frop = new FragmentReader( tag );
@@ -72,7 +70,7 @@ void FragSetLoader::load_data(
 		runtime_assert( false );
 	}
 
-	foreach( TagCOP tag, tag->getTags() ){
+	BOOST_FOREACH( TagCOP tag, tag->getTags() ){
 		std::string const name ( tag->getName() );
 		if( name == "FRAGMENTS" ) continue;
 
@@ -82,7 +80,7 @@ void FragSetLoader::load_data(
 
 		core::fragment::FragSetOP fragset = new core::fragment::OrderedFragSet;
 		utility::vector1< std::string > fnames ( utility::string_split( frag_name, ',' ) );
-		foreach(std::string fname, fnames){
+		BOOST_FOREACH(std::string fname, fnames){
 			std::map< std::string, FragmentReaderOP >::const_iterator itr;
 			itr = frag_readers_map.find( fname );
 			if ( itr != frag_readers_map.end() ){

@@ -387,7 +387,7 @@ parse_residues( pose::Pose & pose,
 	utility::vector1< std::string > const design_keys( utility::string_split( resid, ',' ) );
 	utility::vector1< core::Size > res;
 
-	foreach( std::string const key, design_keys ){
+	BOOST_FOREACH( std::string const key, design_keys ){
 		core::Size const resnum( core::pose::parse_resnum( key, pose ));
 		res.push_back( resnum);
 		TR<<"parsed: "<<key<<std::endl;
@@ -510,7 +510,7 @@ PlaceFragments::parse_my_tag( 	TagCOP const tag,
     else{
 		/// read input seeds
     	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
-    	foreach( TagCOP const btag, branch_tags ){
+    	BOOST_FOREACH( TagCOP const btag, branch_tags ){
 
 	   		if( btag->getName() == "Seeds" ) { //need an assertion for the presence of these or at least for the option file
 

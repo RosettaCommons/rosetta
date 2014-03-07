@@ -26,7 +26,6 @@
 #include <boost/foreach.hpp>
 
 #include <sstream>
-#define foreach BOOST_FOREACH
 
 using namespace std;
 using namespace core::io::silent;

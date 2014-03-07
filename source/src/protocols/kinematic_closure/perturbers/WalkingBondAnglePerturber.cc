@@ -21,7 +21,6 @@
 #include <numeric/kinematic_closure/vector.hh>
 #include <boost/foreach.hpp>
 
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace kinematic_closure {
@@ -35,7 +34,7 @@ void WalkingBondAnglePerturber::perturb_subset(Pose const &, IndexList const & r
 	using numeric::random::gaussian;
 	using numeric::conversions::DEGREES;
 
-	foreach (Size residue, residues) {
+	BOOST_FOREACH(Size residue, residues) {
 		Real angle = problem->n_ca_c(residue, DEGREES) + magnitude_ * gaussian();
 		problem->perturb_n_ca_c(residue, angle, DEGREES);
 	}

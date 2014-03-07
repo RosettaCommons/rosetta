@@ -24,7 +24,6 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
@@ -388,10 +387,10 @@ SetupHotspotConstraintsLoopsMover::parse_my_tag( TagCOP const tag, basic::dataca
   	hotspot_stub_set_->read_data( hotspot_fname );
 	}
 	utility::vector1< TagCOP > const branch_tags( tag->getTags() );
-	foreach( TagCOP const curr_tag, branch_tags ){
+	BOOST_FOREACH( TagCOP const curr_tag, branch_tags ){
 		if( curr_tag->getName() == "HotspotFiles" ){
 			utility::vector1< TagCOP > const branch_tags2( curr_tag->getTags() );
-			foreach( TagCOP const curr_tag2, branch_tags2 ){
+			BOOST_FOREACH( TagCOP const curr_tag2, branch_tags2 ){
 				std::string const file_name( curr_tag2->getOption< std::string >( "file_name" ) );
 				std::string const nickname( curr_tag2->getOption< std::string >( "nickname" ) );
 				core::Size const stub_num( curr_tag2->getOption< core::Size >( "stub_num", 100000 ) );

@@ -29,7 +29,6 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace filters {
@@ -117,7 +116,7 @@ CalculatorFilter::parse_my_tag( utility::tag::TagCOP const tag_ptr,
   std::string equation = tag_ptr->getOption< std::string >( "equation" );
 	threshold_ = tag_ptr->getOption<core::Real>( "threshold", 0.0 );
 
-	foreach(utility::tag::TagCOP sub_tag_ptr, tag_ptr->getTags() ){
+	BOOST_FOREACH(utility::tag::TagCOP sub_tag_ptr, tag_ptr->getTags() ){
 		std::string varname( sub_tag_ptr->getOption<std::string>( "name" ) );
 
 		if( sub_tag_ptr->hasOption("filter") || sub_tag_ptr->hasOption("filter_name") ) {

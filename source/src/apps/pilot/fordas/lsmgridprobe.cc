@@ -58,7 +58,6 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <boost/lexical_cast.hpp>
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>

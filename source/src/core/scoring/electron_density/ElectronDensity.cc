@@ -3887,21 +3887,21 @@ numeric::xyzVector< double > ElectronDensity::match_fragment(
 		for (Size i=0;i<3;++i) box_grid[i] = (int) ceil(box_fracX[i]*grid[i]);
 	}
 
-	core::Real sum_mask = 0.;//�[epsilon_f]
+	core::Real sum_mask = 0.;//sum[epsilon_f]
 	for (Size x=0; x < mask.size(); ++x) {
 		sum_mask += mask[x];  // mask sum
 	}
 	//TR << "sum_mask " << F(8,3,sum_mask) << std::endl;
 
-	core::Real sum_mask_rhoc = 0.;//�[epsilon_f*rho_f]
+	core::Real sum_mask_rhoc = 0.;//sum[epsilon_f*rho_f]
 	for (Size x=0; x < mask.size(); ++x) {
 		sum_mask_rhoc += mask[x]*rho_calc[x];
 	}
 	//TR << "sum_mask_rho " << F(8,3,sum_mask_rhoc) << std::endl;
-	core::Real mean_rhoc = sum_mask_rhoc / sum_mask;//�[epsilon_f*rho_f] / �(epsilon)
+	core::Real mean_rhoc = sum_mask_rhoc / sum_mask;//sum[epsilon_f*rho_f] / sum(epsilon)
 	//TR << "mean_rhoc " << F(8,3,mean_rhoc) << std::endl;
 
-	core::Real sum_mask_rhoc_sq(0.0);//�[epsilon_f*rho_f*rho_f]
+	core::Real sum_mask_rhoc_sq(0.0);//sum[epsilon_f*rho_f*rho_f]
 	for (Size x=0; x < rho_obs.size(); ++x) {
 		sum_mask_rhoc_sq += mask[x]*rho_calc[x]*rho_calc[x];
 	}

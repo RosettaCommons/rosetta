@@ -70,11 +70,11 @@ bool
 read_biounit(
 	std::string const & fname,
 	core::pose::Pose & pose,
-	int  const & max_res,
-	bool const & DEBUG
+	int  const max_res,
+	bool const debug
 ){
 	vector1<core::Real> tmpvec1,tmpvec2;
-	return read_biounit(fname,pose,tmpvec1,tmpvec2,max_res,DEBUG);
+	return read_biounit(fname,pose,tmpvec1,tmpvec2,max_res, debug);
 }
 
 
@@ -84,13 +84,13 @@ read_biounit(
 	core::pose::Pose & pose,
 	utility::vector1<core::Real> & bfactors,
 	utility::vector1<core::Real> & occupancy,
-	int  const & max_res,
-	bool const & DEBUG
+	int  const max_res,
+	bool const debug
 ){
 	std::map<int,char> tmpmap;
 	vector1<int> tmpvec;
 	int tmpint;
-	return read_biounit(fname,pose,bfactors,occupancy,tmpvec,tmpmap,tmpint,max_res,DEBUG);
+	return read_biounit(fname,pose,bfactors,occupancy,tmpvec,tmpmap,tmpint,max_res, debug);
 }
 
 
@@ -103,10 +103,10 @@ read_biounit(
 	vector1<int>  & pdbres,
 	std::map<int,char> & pdbchain,
 	int        & nresmodel1,
-	int  const & max_res,
-	bool const & DEBUG
+	int  const max_res,
+	bool const debug
 ){
-	if(DEBUG) cerr<<"my_read_biounit: reading pdb "<<fname<<endl;
+	if(debug) cerr<<"my_read_biounit: reading pdb "<<fname<<endl;
 	pdbchain.clear();
 	pdbres.clear();
 	try {
@@ -144,7 +144,7 @@ read_biounit(
 			nresmodel1 = min((int)pose.n_residue(),nresmodel1);
 			if(only_one_model) break;
 		}
-		if(DEBUG) pose.dump_pdb(utility::file_basename(fname)+"_ha.pdb");
+		if(debug) pose.dump_pdb(utility::file_basename(fname)+"_ha.pdb");
 	} catch(...) {
 		return false;
 	}

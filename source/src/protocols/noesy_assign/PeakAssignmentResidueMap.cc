@@ -71,7 +71,7 @@ using namespace basic;
 namespace protocols {
 namespace noesy_assign {
 
-PeakAssignmentResidueMap::PeakAssignmentResidueMap() {}
+PeakAssignmentResidueMap::PeakAssignmentResidueMap() : residues_(), BOGUS_ASSIGNMENTS(), atoms_() {}
 PeakAssignmentResidueMap::~PeakAssignmentResidueMap() {}
 
 void PeakAssignmentResidueMap::add( PeakAssignmentOP const& assignment ) {
@@ -509,8 +509,9 @@ void PeakAssignmentResidueMap::network_analysis2() { // ResonanceList const& res
 						wik = covalent ? params.vmax_ : ( sequential ? params.vmin_ : 0 );
 						anchor_weights[ik] = wik;
 						anchor_weights[ResonancePair(k,i)] = wik;
+					} else {
+						wik=std::max( wik, nik->second );
 					}
-					wik=std::max( wik, nik->second );
 
 					wkj=0.0;
 					AnchorMap::const_iterator nkj( anchor_weights.find(kj) );
@@ -523,8 +524,9 @@ void PeakAssignmentResidueMap::network_analysis2() { // ResonanceList const& res
 						wkj = covalent ? params.vmax_ : ( sequential ? params.vmin_ : 0 );
 						anchor_weights[kj] = wkj;
 						anchor_weights[ResonancePair(j,k)] = wkj;
+					} else {
+						wkj = std::max( wkj, nkj->second );
 					}
-					wkj = std::max( wkj, nkj->second );
 
 					sumNK += sqrt( wik*wkj );
 

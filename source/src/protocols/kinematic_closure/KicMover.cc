@@ -34,8 +34,6 @@
 #include <numeric/random/random.hh>
 #include <boost/foreach.hpp>
 
-#define foreach BOOST_FOREACH
-
 namespace protocols {
 namespace kinematic_closure {
 

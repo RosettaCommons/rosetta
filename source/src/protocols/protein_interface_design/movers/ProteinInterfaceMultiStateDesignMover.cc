@@ -46,7 +46,6 @@
 // AUTO-REMOVED #include <utility/string_util.hh> // string_split
 #include <utility/tag/Tag.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -227,7 +226,7 @@ ProteinInterfaceMultiStateDesignMover::restrict_sequence_profile(
   bump_scorefxn->reset();
   bump_scorefxn->set_weight( fa_rep, 1.0 );
 
-	foreach( Size const pos, designable ){
+	BOOST_FOREACH( Size const pos, designable ){
 		EnergyPerResidueFilter const eprf( pos, bump_scorefxn, fa_rep, 0 );
 		core::Real const ref_bump_energy( eprf.compute( *ala_pose ) );
 		PackerTaskOP template_substitution_task( ptask->clone() ); //prevent repacking at all but positions but pos
@@ -239,7 +238,7 @@ ProteinInterfaceMultiStateDesignMover::restrict_sequence_profile(
 		list< ResidueTypeCOP > const & allowed( rtask.allowed_residue_types() );
 		Pose ala_pose_and_single_residue( *ala_pose );
 		vector1< bool > allowed_aas_in_pos( num_canonical_aas, false );
-		foreach( ResidueTypeCOP const t, allowed ){
+		BOOST_FOREACH( ResidueTypeCOP const t, allowed ){
 			AA const aa( t->aa() );
 			PackerTaskOP specific_substitution_task( template_substitution_task->clone() );
 			utility::vector1< bool > allow_aa( num_canonical_aas, false );
@@ -557,7 +556,7 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 	bool at_least_one_negative_state( unfolded_ || unbound_ );
 	compare_energy_to_ground_state_ = tag->getOption< bool >( "compare_to_ground_state", branch_tags.size() );
 	TR<<"Compare energy to ground state set to: "<<compare_energy_to_ground_state_<<std::endl;
-	foreach( TagCOP const btag, branch_tags ){
+	BOOST_FOREACH( TagCOP const btag, branch_tags ){
 		if( unfolded_ || unbound_ ){
 			TR<<"ERROR: If you specify additional pdb files as states, it is assumed that those would have different energies than the starting pdb. As such, comparison of energies across different states is automatically done by grounding each pdb file to its starting 'best-score design' and comparing energy differences from that state. The energies of unbound and unfolded states then become tricky to interpret. You can use anchor_offset to get much of the effect of these additional states. Or, ask Sarel."<<std::endl;
 			throw utility::excn::EXCN_RosettaScriptsOption("");

@@ -30,7 +30,6 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace qsar {
@@ -82,7 +81,7 @@ void ScoringGridLoader::load_data(
 		TR <<"WARNING WARNING grid manager will be empty" <<std::endl;
 	}
 
-	foreach(TagCOP tag, grid_tags){
+	BOOST_FOREACH(TagCOP tag, grid_tags){
 		grid_manager->make_new_grid(tag);
 	}
 

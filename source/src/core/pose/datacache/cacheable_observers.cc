@@ -34,7 +34,6 @@
 #include <boost/foreach.hpp>
 
 //Auto Headers
-#define foreach BOOST_FOREACH
 namespace core {
 namespace pose {
 namespace datacache {
@@ -99,7 +98,7 @@ LengthEventCollector::copy_length_events(
 	using namespace core::conformation::signals;
 	length_events_.clear();
 
-	foreach(LengthEvent event, events){
+	BOOST_FOREACH(LengthEvent event, events){
 		length_events_.push_back( LengthEvent( event ) );
 	}
 

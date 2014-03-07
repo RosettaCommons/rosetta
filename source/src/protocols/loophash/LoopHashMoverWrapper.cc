@@ -22,7 +22,6 @@
 #include <core/pose/selection.hh>
 #include <utility/tag/Tag.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/filters/Filter.hh>
@@ -168,7 +167,7 @@ LoopHashMoverWrapper::apply( Pose & pose )
 	numeric::random::random_permutation(lib_structs.begin(), lib_structs.end(), numeric::random::RG);
 
 	std::vector< std::pair< Real, SilentStructOP > > cen_scored_structs;
-	foreach( SilentStructOP structure, lib_structs ){
+	BOOST_FOREACH( SilentStructOP structure, lib_structs ){
 		Pose rpose;
 		structure->fill_pose( rpose );
 
@@ -237,7 +236,7 @@ LoopHashMoverWrapper::apply( Pose & pose )
 			fastrelax_->batch_apply( relax_structs );
 
 			// Now save the resulting decoys
-			foreach( SilentStructOP structure, relax_structs ){
+			BOOST_FOREACH( SilentStructOP structure, relax_structs ){
 				// inflate ...
 				Pose rpose;
 				structure->fill_pose( rpose );
@@ -331,7 +330,7 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 
 	string const loop_sizes_str( tag->getOption< string >( "loop_sizes" ) );
 	vector1< string > const loop_sizes_split( utility::string_split( loop_sizes_str, ',' ) );
-	foreach( string const loop_size, loop_sizes_split )
+	BOOST_FOREACH( string const loop_size, loop_sizes_split )
 		add_loop_size( (Size)std::atoi(loop_size.c_str()) ) ;
 
 	// path to DB -- if not specified then command-line flag is used

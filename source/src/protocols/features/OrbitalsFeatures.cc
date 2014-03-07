@@ -38,7 +38,6 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -383,13 +382,13 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 		for(Size res_num2 = 1; res_num2 <= pose.n_residue(); ++res_num2){
 			Residue res2 = pose.residue(res_num2);
 			if(resNum1 != res_num2){
-				foreach(Size const Aindex, res1.atoms_with_orb_index()){
-					foreach(Size const Dindex, res2.atoms_with_orb_index()){
+				BOOST_FOREACH(Size const Aindex, res1.atoms_with_orb_index()){
+					BOOST_FOREACH(Size const Dindex, res2.atoms_with_orb_index()){
 						if(res1.atom_is_backbone(Aindex) || res2.atom_is_backbone(Dindex)){
 							continue;//just say no to backbone backbone interactions!
 						}else{
-							foreach(Size const Orbindex1, res1.bonded_orbitals(Aindex)){
-								foreach(Size const Orbindex2, res2.bonded_orbitals(Dindex)){
+							BOOST_FOREACH(Size const Orbindex1, res1.bonded_orbitals(Aindex)){
+								BOOST_FOREACH(Size const Orbindex2, res2.bonded_orbitals(Dindex)){
 									xyzVector<Real> const res1_Orbxyz(res1.orbital_xyz(Orbindex1));
 									xyzVector<Real> const res2_Orbxyz(res2.orbital_xyz(Orbindex2));
 									Real const container(res1_Orbxyz.distance(res2_Orbxyz));
@@ -408,10 +407,10 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 						}
 					}
 				}
-				foreach(Size const Aindex, res1.atoms_with_orb_index()){
-					foreach(Size const Orbindex, res1.bonded_orbitals(Aindex)){
+				BOOST_FOREACH(Size const Aindex, res1.atoms_with_orb_index()){
+					BOOST_FOREACH(Size const Orbindex, res1.bonded_orbitals(Aindex)){
 						xyzVector<Real> const Orbxyz(res1.orbital_xyz(Orbindex));
-						foreach(Size const Hindex, res2.Haro_index()){
+						BOOST_FOREACH(Size const Hindex, res2.Haro_index()){
 							xyzVector<Real> Hxyz(res2.atom(Hindex).xyz());
 							Real const container(Orbxyz.distance(Hxyz));
 							if(container <= OrbHdist){
@@ -426,11 +425,11 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 					}
 
 				}
-				foreach(Size const Aindex, res1.atoms_with_orb_index()){
-					foreach(Size const Orbindex, res1.bonded_orbitals(Aindex)){
+				BOOST_FOREACH(Size const Aindex, res1.atoms_with_orb_index()){
+					BOOST_FOREACH(Size const Orbindex, res1.bonded_orbitals(Aindex)){
 						xyzVector<Real> const Orbxyz(res1.orbital_xyz(Orbindex));
 
-							foreach(Size const Hindex, res2.Hpol_index()){
+							BOOST_FOREACH(Size const Hindex, res2.Hpol_index()){
 								Size Dindex(res2.bonded_neighbor(Hindex)[1]);
 								if(res1.atom_is_backbone(Aindex) && res2.atom_is_backbone(Dindex)){
 									continue;//do nothing. Dont really want to calculate bb-bb interactions
@@ -564,12 +563,12 @@ OrbitalsFeatures::report_haro_orbital_interactions(
 		Real OrbHdist(10.1); // min distance used to derive statistics. Should be the shortest distance between an orbital and hydrogen
 		for(Size res_num2 = 1; res_num2 <= pose.n_residue(); ++res_num2){
 			Residue  res2 = pose.residue(res_num2);
-			foreach(Size const Aindex, res1.atoms_with_orb_index()){
-				foreach(Size const Orbindex, res1.bonded_orbitals(Aindex)){
+			BOOST_FOREACH(Size const Aindex, res1.atoms_with_orb_index()){
+				BOOST_FOREACH(Size const Orbindex, res1.bonded_orbitals(Aindex)){
 					xyzVector<Real> const Orbxyz(res1.orbital_xyz(Orbindex));
 
 					if(resNum1 != res_num2){
-						foreach(Size const Hindex, res2.Haro_index()){
+						BOOST_FOREACH(Size const Hindex, res2.Haro_index()){
 							xyzVector<Real> Hxyz(res2.atom(Hindex).xyz());
 							Real const container(Orbxyz.distance(Hxyz));
 							if(container <= OrbHdist){

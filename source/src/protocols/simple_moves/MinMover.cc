@@ -47,9 +47,6 @@
 #include <basic/Tracer.hh>
 
 
-#define foreach BOOST_FOREACH
-
-
 namespace protocols {
 namespace simple_moves {
 
@@ -368,7 +365,7 @@ void MinMover::parse_opts(
 		} else if( tag->getOption< core::Size > ( "jump" ) == 0 ) {
 			movemap_->set_jump( false );
 		} else {
-			foreach(std::string jump, jumps){
+			BOOST_FOREACH(std::string jump, jumps){
 				Size const value = std::atoi( jump.c_str() ); // convert to C string, then convert to integer, then set a Size (phew!)
 				TR << "Setting min on jump " << value << std::endl;
 				movemap_->set_jump( value, true );
@@ -430,7 +427,7 @@ MinMover::parse_dof_task_type(
 	string const t_o_val( tag->getOption<string>(tag_name) );
 	StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
 
-	foreach( string t_o_key, t_o_keys ){
+	BOOST_FOREACH( string t_o_key, t_o_keys ){
 		if ( data.has( "task_operations", t_o_key ) ) {
 			task_factory->push_back( data.get< TaskOperation * >( "task_operations", t_o_key ) );
 			TR << "\t " << tag_name << ": " << t_o_key << std::endl;

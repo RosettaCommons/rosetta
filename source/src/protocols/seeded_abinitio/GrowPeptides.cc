@@ -70,8 +70,6 @@
 #include <set>
 #include <boost/foreach.hpp>
 
-#define foreach BOOST_FOREACH
-
 using namespace core;
 using namespace protocols::seeded_abinitio;
 static basic::Tracer TR( "protocols.seeded_abinitio.GrowPeptides" );
@@ -207,7 +205,7 @@ GrowPeptides::grow_from_verteces(
 	TR<<"foldtree before growing: " << grow_foldtree << std::endl;
 
 	utility::vector1< core::Size > verteces;
-	foreach( const Size vertex, vertex_set )
+	BOOST_FOREACH( const Size vertex, vertex_set )
 		verteces.push_back( vertex );
 
 	TR<<"start new protein: " << verteces[1] <<" end: " << verteces[verteces.size()] <<" size sequence: " << sequence.size()<< std::endl;
@@ -295,7 +293,7 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 			cutpoints = seed_foldtree_->cutpoints();
 
 			//debugging stuff
-			foreach( core::Size const r, verteces_ ){
+			BOOST_FOREACH( core::Size const r, verteces_ ){
 				TR.Debug<< r <<"\t";
 			}
 		}
@@ -461,7 +459,7 @@ GrowPeptides::parse_my_tag(
 
 	//parsing branch tags
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
-	foreach( TagCOP const btag, branch_tags ){
+	BOOST_FOREACH( TagCOP const btag, branch_tags ){
 
 		//parse the pdb of interest, which is either the template or the input pdb depending on the users specificiation
 		if( template_presence )

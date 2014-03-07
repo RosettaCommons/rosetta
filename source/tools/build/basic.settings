@@ -72,7 +72,7 @@ settings = {
                 "/usr/local/bin",
             ],
             "include_path"  : [
-                "#external/boost_1_46_1",
+                "#external/boost_1_55_0",
                 "#external/dbio",
                 "/usr/include",
                 "/usr/local/include",
@@ -80,6 +80,10 @@ settings = {
             "library_path"  : [
                 "/usr/lib",
                 "/usr/local/lib",
+            ],
+            "defines"       : [
+				"BOOST_ERROR_CODE_HEADER_ONLY",
+				"BOOST_SYSTEM_NO_DEPRECATED",
             ],
         },
     },
@@ -122,8 +126,8 @@ settings = {
         "appends" : {
             "flags" : {
                 #The "isystem" items here are to tell gcc to not print warnings from these external headers
-                "cc"        : [ "std=c99", "isystem external/boost_1_46_1/", "isystem external/include/", "isystem external/dbio/"],
-                "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/", "isystem external/include/", "isystem external/dbio/"],
+                "cc"        : [ "std=c99", "isystem external/boost_1_55_0/", "isystem external/include/", "isystem external/dbio/"],
+                "cxx"       : [ "std=c++98", "isystem external/boost_1_55_0/", "isystem external/include/", "isystem external/dbio/"],
                 "compile"   : [ "pipe", "ffor-scope" ],
                 # By default, warn about everything except the use of long long, which we need for certain
                 # database functionality.
@@ -203,8 +207,8 @@ settings = {
 
         "overrides" : {
             "flags" : {
-                "cc"        : [ "std=c99" ],   # "-isystem external/boost_1_46_1/"],
-                "cxx"       : [ "std=c++98" ], # "-isystem external/boost_1_46_1/" ],
+                "cc"        : [ "std=c99" ],   # "-isystem external/boost_1_55_0/"],
+                "cxx"       : [ "std=c++98" ], # "-isystem external/boost_1_55_0/" ],
                 "compile"   : [ "pipe", "ffor-scope" ],
                 "warn"      : [], # "Wall", "Wextra", "pedantic", "Wno-long-long" ],
             },
@@ -271,7 +275,7 @@ settings = {
                 # We count on debug builds to catch actual unused variables.
                 "warn"      : [ "Wno-unused-variable", "Wno-unused-parameter" ],
             },
-            "defines"       : [ "NDEBUG", "PYROSETTA" ],
+            "defines"       : [ "NDEBUG", "PYROSETTA", 'BOOST_THREAD_DONT_USE_CHRONO' ],
         "removes" : {
             "flags" : {
                 # See comment above for rational here.
@@ -307,7 +311,7 @@ settings = {
                 # We count on debug builds to catch actual unused variables.
                 "warn"      : [ "Wno-unused-variable", "Wno-unused-parameter" ],
             },
-            "defines"       : [ "PYROSETTA" ],
+            "defines"       : [ "PYROSETTA", 'BOOST_THREAD_DONT_USE_CHRONO' ],
         },
         "removes" : {
             "flags" : {
@@ -1226,7 +1230,7 @@ settings = {
             "cxx"           : "mpCC",
             "version"       : [ ],
             "include_path"  : [
-                "#external/boost_1_46_1",
+                "#external/boost_1_55_0",
                 "#external/dbio",
             ],
         },
@@ -1251,7 +1255,7 @@ settings = {
             "cxx"           : "mpCC",
             "version"       : [ ],
             "include_path"  : [
-                "#external/boost_1_46_1",
+                "#external/boost_1_55_0",
                 "#external/dbio",
             ],
         },
@@ -1275,7 +1279,7 @@ settings = {
             "cxx"           : "/bgsys/drivers/ppcfloor/comm/bin/mpicxx",
             "version"       : [ ],
             "include_path"  : [
-                "#external/boost_1_46_1",
+                "#external/boost_1_55_0",
                 "#external/dbio",
             ],
         },
@@ -1302,8 +1306,8 @@ settings = {
                 # We don't use any C -- but if we did would it really
                 # be C99?  Are there portability issues?
                 # (The "isystem" directives here are to tell clang not to print warnings found in these external headers.)
-                "cc"        : [ "std=c99", "isystem external/boost_1_46_1/", "isystem external/include/", "isystem external/dbio/" ],
-                "cxx"       : [ "std=c++98", "isystem external/boost_1_46_1/", "isystem external/include/", "isystem external/dbio/" ],
+                "cc"        : [ "std=c99", "isystem external/boost_1_55_0/", "isystem external/include/", "isystem external/dbio/" ],
+                "cxx"       : [ "std=c++98", "isystem external/boost_1_55_0/", "isystem external/include/", "isystem external/dbio/" ],
                 "compile"   : [ "pipe", "Qunused-arguments", 'DUNUSUAL_ALLOCATOR_DECLARATION', 'ftemplate-depth-256', "stdlib=libstdc++", ],
 			        # flags for Clang C++ lib:
 		                #'D__ROSETTA_CLANG__', 'DBOOST_NO_0X_HDR_INITIALIZER_LIST -DBOOST_DETAIL_NO_CONTAINER_FWD -DBOOST_NO_0X_HDR_TUPLE ',],  # 'std=c++98',  "stdlib=libstdc++" ],  # Sergey: adding BOOST_NO_0X_HDR_INITIALIZER_LIST because our boost version could not figure it out on it own

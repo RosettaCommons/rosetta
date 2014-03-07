@@ -30,7 +30,7 @@
 
 static basic::Tracer tr("protocols.environment.movers.JumpSampleData", basic::t_info);
 
-static std::string const TYPE_NAME = "JumpSampleData";
+static std::string TYPE_NAME() { return "JumpSampleData"; }
 
 namespace protocols {
 namespace abinitio {
@@ -42,7 +42,7 @@ JumpSampleDataCreator::create_data( std::istream &in ) const {
 }
 
 std::string JumpSampleDataCreator::keyname() const{
-  return TYPE_NAME;
+	return TYPE_NAME();
 }
 
 JumpSampleData::JumpSampleData( std::istream &in ) :
@@ -73,7 +73,7 @@ JumpSampleData::JumpSampleData( std::string const& moverkey,
 
 void JumpSampleData::write( std::ostream &out ) const {
 
-  out << TYPE_NAME ;
+	out << TYPE_NAME() ;
   out << " MOVERKEY ";
   out << moverkey_ << " ";
 
@@ -93,7 +93,7 @@ JumpSampleData::clone() const {
 }
 
 std::string JumpSampleData::datatype() const {
-  return TYPE_NAME;
+	return TYPE_NAME();
 }
 
 

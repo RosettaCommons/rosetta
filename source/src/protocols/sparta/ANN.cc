@@ -163,8 +163,10 @@ void ANN::loadWeights() // load weighting and bias
 
 
 // load weighting (N_W_row*N_W_col) and bias (N_B) from a given file contains all three sets data
-void ANN::loadWeightBias3(const string& fName, boost::unordered_map<int, utility::vector0<float> > &W1, utility::vector0<float> &B1,
-  boost::unordered_map<int, utility::vector0<float> > &W2, utility::vector0<float> &B2, boost::unordered_map<int, utility::vector0<float> > &W3, utility::vector0<float> &B3,
+void ANN::loadWeightBias3( string const& fName,
+	ANN_Matrix &W1, ANN_Vector &B1,
+  ANN_Matrix &W2, ANN_Vector &B2,
+	ANN_Matrix &W3, ANN_Vector &B3,
   int N_W_row, int N_W_col, int /* N_B */)
 {
   string str;
@@ -174,26 +176,23 @@ void ANN::loadWeightBias3(const string& fName, boost::unordered_map<int, utility
 
   int index = 0;
   int row = N_W_row, col = N_W_col;
-  for ( it = W_Tab.Entries.begin(); it != W_Tab.Entries.end(); it++ )
-    {
-      int check = index/row; //cout << check << endl;
-      for( int  i = 0; i < col; i++ )
-	{
-	  str = itoa(i+1,buf);
-	  float w = atof((it->second[str]).c_str());
-	  if( check == 0)	W1[ index ].push_back( w ); // assign to weight matrix 1
-	  else if( check == 1) W2[ index-row ].push_back( w ); // assign to weight matrix 2
-	  else if( check == 2) W3[ index-row*2 ].push_back( w ); // assign to weight matrix 2
-	  else tr.Error << "Wrong size for matrix " << fName << " ... \n";
+  for ( GDB::EntryList::iterator it = W_Tab.Entries.begin(); it != W_Tab.Entries.end(); it++ ) {//iterate rows
+		int check = index/row; //cout << check << endl;
+		for( int  i = 0; i < col; i++ )	{
+			str = itoa(i+1,buf);
+			float w = atof((it->second[str]).c_str());
+			if( check == 0 )	W1[ index ].push_back( w ); // assign to weight matrix 1
+			else if( check == 1) W2[ index-row ].push_back( w ); // assign to weight matrix 2
+			else if( check == 2) W3[ index-row*2 ].push_back( w ); // assign to weight matrix 2
+			else tr.Error << "Wrong size for matrix " << fName << " ... \n";
+		}
+
+		if( check == 0) B1.push_back( atof((it->second["b"]).c_str()) );
+		else if( check == 1) B2.push_back( atof((it->second["b"]).c_str()) );
+		else if( check == 2) B3.push_back( atof((it->second["b"]).c_str()) );
+		index++;
 	}
-
-      if( check == 0) B1.push_back( atof((it->second["b"]).c_str()) );
-      else if( check == 1) B2.push_back( atof((it->second["b"]).c_str()) );
-      else if( check == 2) B3.push_back( atof((it->second["b"]).c_str()) );
-      index++;
-    }
   //	if( index > row ) tr.Error << "Wrong size for matrix " << fName << " ... \n";
-
 }
 
 
@@ -203,31 +202,31 @@ void ANN::loadWeightBias3(const string& fName, boost::unordered_map<int, utility
 // input ANN_IN_MTX_LEVEL1
 void ANN::calcLevel1()
 {
-  //boost::unordered_map<int, utility::vector0<float> > ANN_OUT_MTX;
-  boost::unordered_map<int, utility::vector0<float> >::iterator itV;
+  //ANN_Matrix ANN_OUT_MTX;
+  ANN_Matrix::iterator itV;
   for ( itV = ANN_IN_MTX_LEVEL1.begin(); itV != ANN_IN_MTX_LEVEL1.end(); itV++ ) //for each tripet input
     {
       //cout << itV->first << endl;
 
       //apply input layer transformation
-      utility::vector0<float> IL1, IL2, IL3;
+      ANN_Vector IL1, IL2, IL3;
       applyANNTransformation(itV->second, WI_1, BI_1, IL1, 1);
       applyANNTransformation(itV->second, WI_2, BI_2, IL2, 1);
       applyANNTransformation(itV->second, WI_3, BI_3, IL3, 1);
 
       //apply 1st hidden layer transformation
-      utility::vector0<float> HL1, HL2, HL3;
+      ANN_Vector HL1, HL2, HL3;
       applyANNTransformation(IL1, WL1_1, BL1_1, HL1, 1);
       applyANNTransformation(IL2, WL1_2, BL1_2, HL2, 1);
       applyANNTransformation(IL3, WL1_3, BL1_3, HL3, 1);
 
       //apply output layer transformation
-      utility::vector0<float> OL1, OL2, OL3;
+      ANN_Vector OL1, OL2, OL3;
       applyANNTransformation(HL1, WL2_1, BL2_1, OL1, 0);
       applyANNTransformation(HL2, WL2_2, BL2_2, OL2, 0);
       applyANNTransformation(HL3, WL2_3, BL2_3, OL3, 0);
 
-      utility::vector0<float> OUT1;
+      ANN_Vector OUT1;
       applyVecAverage(OL1,OL2,OL3,OUT1);
       //cout << OUT1[0] << "\t" << OUT1[1] << "\t" << OUT1[2] << "\t" << endl;
       ANN_OUT_MTX_LEVEL1[itV->first] = OUT1;
@@ -240,31 +239,31 @@ void ANN::calcLevel1()
 // input ANN_IN_MTX_LEVEL2
 void ANN::calcLevel2()
 {
-  //boost::unordered_map<int, utility::vector0<float> > ANN_OUT_MTX;
-  boost::unordered_map<int, utility::vector0<float> >::iterator itV;
+  //ANN_Matrix ANN_OUT_MTX;
+  ANN_Matrix::iterator itV;
   for ( itV = ANN_IN_MTX_LEVEL2.begin(); itV != ANN_IN_MTX_LEVEL2.end(); itV++ ) //for each tripet input
     {
       //cout << itV->first << endl;
 
       //apply input layer transformation
-      utility::vector0<float> IL1, IL2, IL3;
+      ANN_Vector IL1, IL2, IL3;
       applyANNTransformation(itV->second, W2I_1, B2I_1, IL1, 1);
       applyANNTransformation(itV->second, W2I_2, B2I_2, IL2, 1);
       applyANNTransformation(itV->second, W2I_3, B2I_3, IL3, 1);
 
       //apply 1st hidden layer transformation
-      utility::vector0<float> HL1, HL2, HL3;
+      ANN_Vector HL1, HL2, HL3;
       applyANNTransformation(IL1, W2L1_1, B2L1_1, HL1, 1);
       applyANNTransformation(IL2, W2L1_2, B2L1_2, HL2, 1);
       applyANNTransformation(IL3, W2L1_3, B2L1_3, HL3, 1);
 
       //apply output layer transformation
-      utility::vector0<float> OL1, OL2, OL3;
+      ANN_Vector OL1, OL2, OL3;
       applyANNTransformation(HL1, W2L2_1, B2L2_1, OL1, 0);
       applyANNTransformation(HL2, W2L2_2, B2L2_2, OL2, 0);
       applyANNTransformation(HL3, W2L2_3, B2L2_3, OL3, 0);
 
-      utility::vector0<float> OUT2;
+      ANN_Vector OUT2;
       applyVecAverage(OL1,OL2,OL3,OUT2);
       //cout << OUT2[0] << "\t" << OUT2[1] << "\t" << OUT2[2] << "\t" << endl;
       ANN_OUT_MTX_LEVEL2[itV->first] = OUT2;
@@ -274,7 +273,7 @@ void ANN::calcLevel2()
 
 
 
-void ANN::runSpartaANN(boost::unordered_map<int, utility::vector0<float> > &inMatrix)
+void ANN::runSpartaANN(ANN_Matrix &inMatrix)
 {
   ANN_IN_MTX_LEVEL1 = inMatrix;
   //loadWeights();
@@ -287,7 +286,7 @@ void ANN::runSpartaANN(boost::unordered_map<int, utility::vector0<float> > &inMa
 
 
 //apply an ANN transformation for input inp and with transformation weights w, bias b
-void ANN::applyANNTransformation( utility::vector0<float> &inp, boost::unordered_map<int, utility::vector0<float> > &w, utility::vector0<float> &b, utility::vector0<float> &out, int code)
+void ANN::applyANNTransformation( ANN_Vector &inp, ANN_Matrix &w, ANN_Vector &b, ANN_Vector &out, int code)
 {
   // needs to check for size mismatch among inp, w and b ??????
   if( inp.size() != w[0].size() || w.size() != b.size() ) {
@@ -308,7 +307,7 @@ void ANN::applyANNTransformation( utility::vector0<float> &inp, boost::unordered
 
 
 //calculate 'confidence-averaged' utility::vector0 of three utility::vector0s v1, v2, v3
-void ANN::applyVecAverage(utility::vector0<float> &v1, utility::vector0<float> &v2, utility::vector0<float> &v3, utility::vector0<float> &vout)
+void ANN::applyVecAverage(ANN_Vector &v1, ANN_Vector &v2, ANN_Vector &v3, ANN_Vector &vout)
 {
   if( v1.size() == v2.size() && v1.size() == v3.size() ) {
       //float conf1 = getConfidence(v1);
@@ -329,7 +328,7 @@ void ANN::applyVecAverage(utility::vector0<float> &v1, utility::vector0<float> &
 
 
 //apply normalization
-void ANN::applyVecNormalization(utility::vector0<float> &v)
+void ANN::applyVecNormalization(ANN_Vector &v)
 {
   float a=v[0], b=v[1], c=v[2];
   if(a>1) a=1.0; else if(a<0) a=0.0;
@@ -344,7 +343,7 @@ void ANN::applyVecNormalization(utility::vector0<float> &v)
 
 
 
-float ANN::getConfidence(utility::vector0<float> &v)
+float ANN::getConfidence(ANN_Vector &v)
 {
   //cout << v.size() << "\t" << v[0] << "\t" << v[1] << "\t" << v[2] << endl;
 
@@ -356,7 +355,7 @@ float ANN::getConfidence(utility::vector0<float> &v)
 
 
 //check the number of atom without CS for a given residue
-int ANN::getNumberMissCS(utility::vector0<float> &v)
+int ANN::getNumberMissCS(ANN_Vector &v)
 {
   int cnt = 0;
   cnt+=(v[1]==1); cnt+=(v[3]==1); cnt+=(v[5]==1); cnt+=(v[7]==1); cnt+=(v[9]==1); cnt+=(v[11]==1);

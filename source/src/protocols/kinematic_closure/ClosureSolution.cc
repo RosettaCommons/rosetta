@@ -45,7 +45,6 @@
 #include <algorithm>
 #include <cmath>
 
-#define foreach BOOST_FOREACH
 using namespace std;
 
 namespace protocols {

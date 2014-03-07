@@ -43,8 +43,6 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
-#define foreach BOOST_FOREACH
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -61,10 +59,10 @@ set_jumps(
 		core::pose::Pose const & pose, core::kinematics::MoveMapOP movemap,
 		LigandAreas ligand_areas
 ){
-	foreach(LigandAreas::value_type ligand_area_pair, ligand_areas){
+	BOOST_FOREACH(LigandAreas::value_type ligand_area_pair, ligand_areas){
 		char const & chain= ligand_area_pair.first;
 		utility::vector1<core::Size> jump_ids= core::pose::get_jump_ids_from_chain(chain, pose);
-		foreach(core::Size jump_id, jump_ids){
+		BOOST_FOREACH(core::Size jump_id, jump_ids){
 			movemap->set_jump(jump_id, true);
 		}
 	}

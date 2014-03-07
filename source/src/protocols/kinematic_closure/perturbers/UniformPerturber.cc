@@ -24,7 +24,6 @@
 #include <numeric/kinematic_closure/vector.hh>
 #include <boost/foreach.hpp>
 
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace kinematic_closure {
@@ -36,7 +35,7 @@ void UniformPerturber::perturb_subset(
 	using numeric::random::uniform;
 	using numeric::conversions::DEGREES;
 
-	foreach (Real residue, residues) {
+	BOOST_FOREACH(Real residue, residues) {
 		problem->perturb_phi(residue, 360 * uniform(), DEGREES);
 		problem->perturb_psi(residue, 360 * uniform(), DEGREES);
 		problem->perturb_omega(residue, 360 * uniform(), DEGREES);

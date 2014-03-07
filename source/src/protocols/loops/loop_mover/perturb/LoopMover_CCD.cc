@@ -22,7 +22,6 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // Rosetta Headers
 #include <core/chemical/VariantType.hh>

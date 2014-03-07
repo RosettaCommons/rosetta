@@ -56,7 +56,6 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -280,7 +279,7 @@ PoseConformationFeatures::report_features_implementation(
 	InsertGenerator chain_ending_insert("chain_endings");
 	chain_ending_insert.add_column("struct_id");
 	chain_ending_insert.add_column("end_pos");
-	foreach(Size end_pos, pose.conformation().chain_endings())
+	BOOST_FOREACH(Size end_pos, pose.conformation().chain_endings())
 	{
 		RowDataBaseOP end_pos_data = new RowData<Size>("end_pos",end_pos);
 

@@ -22,8 +22,6 @@
 
 #include <utility/vector1.hh>
 
-#define foreach BOOST_FOREACH
-
 namespace core {
 namespace chemical {
 namespace sdf {
@@ -145,7 +143,7 @@ void V3Parser::ParseBond(std::string const bond_line)
 
 core::Real V3Parser::FindExtraParameter(utility::vector1<std::string> const extra_parameters, std::string const query )
 {
-	foreach(std::string current_parameter, extra_parameters){
+	BOOST_FOREACH(std::string current_parameter, extra_parameters){
 		if(current_parameter.find(query) == std::string::npos)
 		{
 			continue;

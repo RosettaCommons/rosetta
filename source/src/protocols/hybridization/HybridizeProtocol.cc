@@ -152,8 +152,6 @@
 
 #include <string>
 
-#define foreach BOOST_FOREACH
-
 static basic::Tracer TR( "protocols.hybridization.HybridizeProtocol" );
 static numeric::random::RandomGenerator RG(541938);
 
@@ -1387,7 +1385,7 @@ HybridizeProtocol::parse_my_tag(
 	// force starting template
 	if( tag->hasOption( "starting_template" ) ) {
 		utility::vector1<std::string> buff = utility::string_split( tag->getOption<std::string>( "starting_template" ), ',' );
-		foreach(std::string field, buff){
+		BOOST_FOREACH(std::string field, buff){
 			Size const value = std::atoi( field.c_str() );
 			starting_templates_.push_back(value);
 		}

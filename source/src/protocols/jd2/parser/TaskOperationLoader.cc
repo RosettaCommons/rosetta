@@ -30,7 +30,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace jd2 {
@@ -49,7 +48,7 @@ void TaskOperationLoader::load_data(
 {
 	using namespace core::pack::task::operation;
 
-	foreach(utility::tag::TagCOP tag, tag->getTags()){
+	BOOST_FOREACH(utility::tag::TagCOP tag, tag->getTags()){
 		std::string const type( tag->getName() );
 		if ( ! tag->hasOption("name") ) {
 			utility_exit_with_message( "Can't create unnamed TaskOperation (type: " + type + ")" );

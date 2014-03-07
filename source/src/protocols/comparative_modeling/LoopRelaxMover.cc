@@ -27,7 +27,6 @@
 #include <protocols/boinc/boinc.hh>
 #endif // BOINC_GRAPHICS
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // Project Headers
 #include <core/pack/task/operation/TaskOperations.hh>

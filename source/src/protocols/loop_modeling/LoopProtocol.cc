@@ -34,7 +34,6 @@
 #include <iostream>
 #include <cmath>
 
-#define foreach BOOST_FOREACH
 using namespace std;
 
 namespace protocols {
@@ -95,7 +94,6 @@ void LoopProtocol::start_protocol(Pose & pose) { // {{{1
 	}
 
 	// Setup the Monte Carlo simulation.
-
 	protocols::loops::add_cutpoint_variants(pose);
 	protocols::loops::loop_mover::loops_set_chainbreak_weight(
 			get_score_function(), 1);
@@ -109,7 +107,7 @@ void LoopProtocol::start_protocol(Pose & pose) { // {{{1
 
 	// Setup the loggers.
 
-	foreach (loggers::LoggerOP logger, loggers_) {
+	BOOST_FOREACH (loggers::LoggerOP logger, loggers_) {
 		logger->log_beginning(pose, iterations_);
 	}
 }
@@ -139,7 +137,7 @@ void LoopProtocol::ramp_temperature(Size /*iteration*/) { // {{{1
 void LoopProtocol::attempt_loop_move( // {{{1
 		Pose & pose, Size i, Size j, Size k) {
 
-	foreach (loggers::LoggerOP logger, loggers_) {
+	BOOST_FOREACH(loggers::LoggerOP logger, loggers_) {
 		 logger->log_iteration(pose, i, j, k);
 	}
 
@@ -151,7 +149,7 @@ void LoopProtocol::attempt_loop_move( // {{{1
 		monte_carlo_->reset_last_accepted(pose);
 	}
 
-	foreach (loggers::LoggerOP logger, loggers_) {
+	BOOST_FOREACH(loggers::LoggerOP logger, loggers_) {
 		 logger->log_monte_carlo(monte_carlo_);
 	}
 }
@@ -159,8 +157,7 @@ void LoopProtocol::attempt_loop_move( // {{{1
 void LoopProtocol::finish_protocol(Pose & pose) { // {{{1
 
 	// Clean up the loggers.
-
-	foreach (loggers::LoggerOP logger, loggers_) {
+	BOOST_FOREACH (loggers::LoggerOP logger, loggers_) {
 		 logger->log_ending(pose);
 	}
 }
@@ -195,7 +192,7 @@ void LoopProtocol::set_iterations(Size i, Size j, Size k) { // {{{1
 	iterations_[3] = k;
 }
 
-// This is a comment 
+// This is a comment
 
 void LoopProtocol::set_temperature_schedule( // {{{1
 		Real initial, Real final) {

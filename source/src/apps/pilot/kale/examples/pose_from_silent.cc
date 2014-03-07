@@ -19,8 +19,6 @@
 #include <iostream>
 #include <string>
 
-#define foreach BOOST_FOREACH
-
 using namespace std;
 
 // This program is just supposed to read in a pdb and spit it back out again.
@@ -38,7 +36,7 @@ int main(int argc, char** argv) {
 
 	silent_file.read_file("silent_from_pose.sil");
 	
-	foreach (string tag, silent_file.tags()) {
+	BOOST_FOREACH(string tag, silent_file.tags()) {
 		cout << tag << endl;
 		silent_file[tag]->fill_pose(pose);
 	}

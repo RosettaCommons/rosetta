@@ -49,7 +49,6 @@
 #include <core/pack/pack_rotamers.hh>
 #include <protocols/loops/loops_main.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 
@@ -301,14 +300,14 @@ PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, pr
   StringVec const shorten_by_keys( utility::string_split( shorten_by, ',' ) );
   StringVec const lengthen_by_keys( utility::string_split( lengthen_by, ',' ) );
 	core::Size const loop_length( loop_end_ - loop_begin_ + 1 );
-	foreach( std::string const shorten, shorten_by_keys ){
+	BOOST_FOREACH( std::string const shorten, shorten_by_keys ){
 		if( shorten == "" ) continue;
 		int const shorten_i( -1 * atoi( shorten.c_str() ) );
 		runtime_assert( ( core::Size ) abs( shorten_i ) < loop_length );
 		delta_length_.push_back( shorten_i );
 	}
 
-	foreach( std::string const lengthen, lengthen_by_keys ){
+	BOOST_FOREACH( std::string const lengthen, lengthen_by_keys ){
 		if( lengthen == "" ) continue;
 		delta_length_.push_back( atoi( lengthen.c_str() ) );
 	}
@@ -318,7 +317,7 @@ PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, pr
 	unique( delta_length_.begin(), delta_length_.end() );
 	TR<<"PlaceOnLoop mover defined with kinematic mover ";
 	TR<<" will change the loop by these values: ";
-	foreach( int const i, delta_length_ ) TR<<i<<", ";
+	BOOST_FOREACH( int const i, delta_length_ ) TR<<i<<", ";
 	TR<<std::endl;
 }
 

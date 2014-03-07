@@ -36,7 +36,6 @@
 #include <devel/matdes/STMStoredTask.hh>
 
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // C++ Headers
 #include <utility/string_util.hh>

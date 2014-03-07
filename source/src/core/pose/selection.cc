@@ -26,7 +26,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -195,7 +194,7 @@ get_resnum_list(
 
 	resid.clear();
 	vector1< string> const str_residues( utility::string_split( str , ',' ) );
-	foreach( string const res, str_residues ){
+	BOOST_FOREACH( string const res, str_residues ){
 		if( res == "" ) continue;
 		if( res.find('-') != string::npos) {
 			// Handle residue range
@@ -234,7 +233,7 @@ get_resnum_list_ordered(
 
 	resid.clear();
 	vector1< string> const str_residues( utility::string_split( str , ',' ) );
-	foreach( string const res, str_residues ){
+	BOOST_FOREACH( string const res, str_residues ){
 		if( res == "" ) continue;
 		if( res.find('-') != string::npos) {
 			// Handle residue range

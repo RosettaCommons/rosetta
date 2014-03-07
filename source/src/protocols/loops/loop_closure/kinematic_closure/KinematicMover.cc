@@ -64,7 +64,6 @@
 #include <boost/foreach.hpp>
 
 //Auto Headers
-#define foreach BOOST_FOREACH
 static numeric::random::RandomGenerator RG(43135);
 static basic::Tracer TR("protocols.loops.loop_closure.kinematic_closure.KinematicMover");
 
@@ -642,7 +641,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 
 			if( filters_.size() != 0 ){
 				bool all_filters_passed( true );
-				foreach(protocols::filters::FilterCOP filter, filters_){
+				BOOST_FOREACH(protocols::filters::FilterCOP filter, filters_){
 					if( ! filter->apply( pose ) ) {
 						all_filters_passed = false;
 						break;

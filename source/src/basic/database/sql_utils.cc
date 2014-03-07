@@ -169,7 +169,6 @@
 #include <boost/foreach.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#define foreach BOOST_FOREACH
 
 #ifdef WIN32
 #include <windows.h>
@@ -762,7 +761,7 @@ void write_schema_to_database(
 {
 	boost::char_separator< char > sep(";");
 	boost::tokenizer< boost::char_separator< char > > tokens( schema_str, sep );
-	foreach( std::string const & stmt_str, tokens){
+	BOOST_FOREACH( std::string const & stmt_str, tokens){
 		string trimmed_stmt_str(utility::trim(stmt_str, " \n\t"));
 		if(trimmed_stmt_str.size()){
 			try{

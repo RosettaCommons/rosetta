@@ -33,7 +33,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-#define foreach BOOST_FOREACH
 
 using std::string;
 using std::endl;
@@ -59,7 +58,7 @@ void LoopsDefinerLoader::load_data(
 	basic::datacache::DataMap & data
 ) const
 {
-	foreach(TagCOP tag, tag->getTags()){
+	BOOST_FOREACH(TagCOP tag, tag->getTags()){
 		string const type( tag->getName() );
 		if ( ! tag->hasOption("name") ) {
 			utility_exit_with_message( "Can't create unnamed Loops definition (type: " + type + ")" );

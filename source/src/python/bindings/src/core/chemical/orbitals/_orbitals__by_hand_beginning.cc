@@ -29,11 +29,11 @@ T * getCAP( utility::pointer::access_ptr<T> rs ) {
 
 void __orbitals_by_hand_beginning__()
 {
-	boost::python::class_< utility::pointer::access_ptr< core::chemical::orbitals::OrbitalTypeSet const> >("core___chemical___orbitals__OrbitalTypeSetCAP");
+	// boost::python::class_< utility::pointer::access_ptr< core::chemical::orbitals::OrbitalTypeSet const> >("core___chemical___orbitals__OrbitalTypeSetCAP");
 
-	boost::python::def("orbitals___getCAP"
-		   , (  core::chemical::orbitals::OrbitalTypeSet const * (*)( utility::pointer::access_ptr< core::chemical::orbitals::OrbitalTypeSet const> )  )
-         			   ( & getCAP< core::chemical::orbitals::OrbitalTypeSet const> )
-         , boost::python::return_value_policy< boost::python::reference_existing_object >() );
+	// boost::python::def("orbitals___getCAP"
+	// 	   , (  core::chemical::orbitals::OrbitalTypeSet const * (*)( utility::pointer::access_ptr< core::chemical::orbitals::OrbitalTypeSet const> )  )
+    //      			   ( & getCAP< core::chemical::orbitals::OrbitalTypeSet const> )
+    //      , boost::python::return_value_policy< boost::python::reference_existing_object >() );
 
 }

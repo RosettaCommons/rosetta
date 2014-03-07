@@ -37,7 +37,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/util.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -287,7 +286,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 	unbind( pose );
 	core::pose::Pose const pose_orig( pose );// const to ensure that nothing silly happens along the way...
 	core::Real baseline( 0.0 );
-	foreach( core::Size const resi, being_designed ){
+	BOOST_FOREACH( core::Size const resi, being_designed ){
 		pose = pose_orig;
 		///compute baseline
 // SJF 29Aug13 in the following we try to extract a stable baseline value for the substitution. The repacking steps create large levels of noise where mutations to self appear show high ddG differences. To prevent that, we cheat Rosetta by asking it to replace the residue to self three times in a row and take the baseline after the third computation. If you use ddG, it is recommended to use many repeats (>=5) to lower noise levels further. I think that if mutations to self show noise levels <=0.5R.e.u. the protocol is acceptable.
@@ -295,7 +294,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		single_substitution( pose, resi, pose.residue( resi ).aa() );
 		single_substitution( pose, resi, pose.residue( resi ).aa() );
 //		pose.dump_scored_pdb( "at_baseline.pdb", *scorefxn() );
-		foreach( protocols::simple_filters::DeltaFilterOP const delta_filter, delta_filters_ ){
+		BOOST_FOREACH( protocols::simple_filters::DeltaFilterOP const delta_filter, delta_filters_ ){
 			std::string const fname( delta_filter->get_user_defined_name() );
 			core::Real const fbaseline( delta_filter->filter()->report_sm( pose ) );
 			delta_filter->baseline( fbaseline );
@@ -307,17 +306,17 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
     ResidueTypeCOPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
     utility::vector1< AA > allow_temp;
     allow_temp.clear();
-    foreach( ResidueTypeCOP const t, allowed ){
+    BOOST_FOREACH( ResidueTypeCOP const t, allowed ){
     	allow_temp.push_back( t->aa() );
     }
 		core::pose::Pose const pose_ref( pose );
-		foreach( AA const target_aa, allow_temp ){
+		BOOST_FOREACH( AA const target_aa, allow_temp ){
 			 pose = pose_ref; //29Aug13 previously was pose_orig; here
 			 single_substitution( pose, resi, target_aa );
 //				pose.dump_scored_pdb( "after_mut.pdb", *scorefxn() );
 			 bool triage_filter_pass( false );
 			 if( delta_filters_.size() > 0 ){
-				 foreach( protocols::simple_filters::DeltaFilterCOP const delta_filter, delta_filters_ ){
+				 BOOST_FOREACH( protocols::simple_filters::DeltaFilterCOP const delta_filter, delta_filters_ ){
 					 triage_filter_pass = delta_filter->apply( pose );
 					 if( !triage_filter_pass )
 						 break;
@@ -352,7 +351,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		resfile << resfile_general_property()<<"\nstart\n";
 		for( std::map< core::Size, utility::vector1< AA > >::const_iterator pair = residue_id_map.begin(); pair != residue_id_map.end(); ++pair ){
 			resfile << pose.pdb_info()->number( pair->first )<<'\t'<<pose.pdb_info()->chain( pair->first )<<"\tPIKAA\t";
-			foreach( AA const aa, pair->second )
+			BOOST_FOREACH( AA const aa, pair->second )
 				resfile<<oneletter_code_from_aa( aa );
 			resfile<<'\n';
 		}
@@ -465,7 +464,7 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP const tag,
 	if( tag->hasOption( "delta_filters" ) ){
 		delta_filter_names = utility::string_split( tag->getOption< std::string >( "delta_filters" ), ',' );
 		TR<<"Using delta filters: ";
-		foreach( std::string const fname, delta_filter_names ){
+		BOOST_FOREACH( std::string const fname, delta_filter_names ){
 			delta_filters_.push_back( dynamic_cast< protocols::simple_filters::DeltaFilter * >( protocols::rosetta_scripts::parse_filter( fname, filters )() ) );
 			TR<<fname<<",";
 		}

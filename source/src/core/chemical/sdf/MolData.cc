@@ -21,8 +21,6 @@
 
 #include <utility/vector1.hh>
 
-#define foreach BOOST_FOREACH
-
 namespace core {
 namespace chemical {
 namespace sdf {
@@ -55,7 +53,7 @@ void MolData::parse_mol_data(utility::vector1<std::string> const & file_lines)
 	std::string data_name = "";
 	std::string data = "";
 
-	foreach(std::string line, file_lines){
+	BOOST_FOREACH(std::string line, file_lines){
 		if(line[0] == '>') //we've found a data header
 		{
 			data_name = line.substr(3,line.size());

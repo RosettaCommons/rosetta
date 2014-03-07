@@ -33,7 +33,6 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 #include <boost/assign/list_of.hpp>
-#define foreach BOOST_FOREACH
 
 #include <vector>
 

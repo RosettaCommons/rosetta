@@ -33,7 +33,6 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // C++ Headers
 #include <set>
@@ -102,7 +101,7 @@ ResidueTypesFeatures::report_features(
 		res_types.insert(&pose.residue_type(i));
 	}
 
-	foreach( ResidueTypeCOP res_type, res_types){
+	BOOST_FOREACH( ResidueTypeCOP res_type, res_types){
 		string const & residue_type_set_name(res_type->residue_type_set().name());
 
 		// Is this residue type already in the database?

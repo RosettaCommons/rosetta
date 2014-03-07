@@ -32,7 +32,7 @@
 
 static basic::Tracer tr("protocols.environment.AutoCutData", basic::t_info);
 
-static std::string const TYPE_NAME = "AutoCutData";
+static std::string TYPE_NAME() { return "AutoCutData"; }
 
 namespace protocols {
 namespace environment {
@@ -43,7 +43,7 @@ AutoCutDataCreator::create_data( std::istream &in ) const {
 }
 
 std::string AutoCutDataCreator::keyname() const{
-  return TYPE_NAME;
+	return TYPE_NAME();
 }
 
 AutoCutData::AutoCutData( std::istream &in ) :
@@ -84,7 +84,7 @@ AutoCutData::AutoCutData( core::Size const& hash,
 
 void AutoCutData::write( std::ostream &out ) const {
 
-  out << TYPE_NAME ;
+	out << TYPE_NAME() ;
   out << " HASH ";
   out << hash() << " ";
 
@@ -100,7 +100,7 @@ AutoCutData::clone() const {
 }
 
 std::string AutoCutData::datatype() const {
-  return TYPE_NAME;
+	return TYPE_NAME();
 }
 
 

@@ -111,8 +111,6 @@
 #include <numeric/random/random_permutation.hh>
 
 
-#define foreach BOOST_FOREACH
-
 
 using basic::T;
 using basic::Error;
@@ -167,7 +165,7 @@ bool HotspotStubSet::sc_only() const { return sc_only_;	}
 void HotspotStubSet::sc_only( bool const sc_switch ) { sc_only_ = sc_switch; }
 
 void HotspotStubSet::add_stub_set( HotspotStubSet const & stubset ){
-	foreach( Hs_data const hs_data, stubset ) add_stub_( hs_data.second.second );
+	BOOST_FOREACH( Hs_data const hs_data, stubset ) add_stub_( hs_data.second.second );
 }
 
 void HotspotStubSet::score_threshold( core::Real const threshold ) { score_threshold_ = threshold; }
@@ -635,7 +633,7 @@ void HotspotStubSet::remove_random_stubs_from_set( int const num_to_remove ){
 	for( int i = 1; i <= num_to_remove; ++i )
 		stubs_to_remove.push_back( stub_set_vec_[ i ].second.second );
 
-	foreach( HotspotStubOP hs, stubs_to_remove )
+	BOOST_FOREACH( HotspotStubOP hs, stubs_to_remove )
 		remove_stub( hs );
 
 	TR<<"Removed stubs from set. Current number "<<size()<<std::endl;

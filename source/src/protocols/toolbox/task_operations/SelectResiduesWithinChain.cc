@@ -27,7 +27,6 @@
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <utility/string_util.hh>
 
 // C++ Headers
@@ -126,7 +125,7 @@ SelectResiduesWithinChainOperation::parse_tag( TagCOP tag , DataMap & )
 
 	resid_ = utility::string_split< core::Size >( res, ',', core::Size() );
 	TR<<"chain: "<<chain()<<" allow_design: "<<allow_design()<<" allow_repacking; "<<allow_repacking()<<" modify_unselected_residues: "<<modify_unselected_residues()<<" over residues: ";
-	foreach( core::Size const r, resid() ){
+	BOOST_FOREACH( core::Size const r, resid() ){
 		TR<<r<<", ";
 	}
 	TR<<std::endl;

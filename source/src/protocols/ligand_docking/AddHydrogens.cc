@@ -34,7 +34,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace ligand_docking {
@@ -109,11 +108,11 @@ AddHydrogens::apply( core::pose::Pose & pose )
 	core::Size const chain_end= pose.conformation().chain_end(chain_id);
 	utility::vector1<core::Size> unconnected_ids= find_unconnected_residues(pose, chain_begin, chain_end);
 
-	foreach(core::Size unconnected_id, unconnected_ids){
+	BOOST_FOREACH(core::Size unconnected_id, unconnected_ids){
 		core::conformation::Residue const & res_to_fix= pose.residue(unconnected_id);
 		utility::vector1<core::Size> connect_ids= get_incomplete_connections(&res_to_fix);
 
-		foreach(core::Size connect_id, connect_ids){
+		BOOST_FOREACH(core::Size connect_id, connect_ids){
 			AddHydrogen AH(unconnected_id, connect_id);
 			AH.apply(pose);
 		}

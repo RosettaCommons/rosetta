@@ -37,7 +37,6 @@
 #include <protocols/simple_moves/MinMover.hh>
 #include <utility/vector1.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/graph/Graph.hh>
@@ -298,7 +297,7 @@ RotamerBoltzmannWeight::compute( core::pose::Pose const & const_pose ) const{
 
 	protocols::toolbox::pose_metric_calculators::RotamerBoltzCalculator rotboltz_calc( this->scorefxn(), this->temperature(), this->repacking_radius() );
 
-	foreach( core::Size const hs_res, hotspot_res ){
+	BOOST_FOREACH( core::Size const hs_res, hotspot_res ){
 		core::Real const boltz_weight( fast_calc_ ? rotboltz_calc.computeBoltzWeight( unbound_pose, hs_res ) : compute_Boltzmann_weight( unbound_pose, hs_res ) );
 		TR<<const_pose.residue( hs_res ).name3()<<hs_res<<" "<<boltz_weight<<'\n';
 		rotamer_probabilities_[ hs_res ] = boltz_weight;
@@ -395,7 +394,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 		scores.push_back( score );
 	}
 	core::Real boltz_sum ( 0.0 );
-	foreach( core::Real const score, scores )
+	BOOST_FOREACH( core::Real const score, scores )
 		boltz_sum += exp(( init_score - score )/temperature());
 
 	return( 1/boltz_sum );
@@ -493,7 +492,7 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagCOP const tag,
 	compute_entropy_reduction( tag->getOption< bool >( "compute_entropy_reduction", 0 ) );
 	repack( tag->getOption< bool >( "repack", 1 ) );
 	utility::vector0< TagCOP > const & branch( tag->getTags() );
-	foreach( TagCOP const tag, branch ){
+	BOOST_FOREACH( TagCOP const tag, branch ){
 		using namespace core::chemical;
 
 		std::string const residue_type( tag->getName() );

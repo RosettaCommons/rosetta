@@ -94,9 +94,9 @@ class unordered_object_pool: protected pool<UserAllocator>
     // Include automatically-generated file for family of template construct()
     //  functions
 #ifndef BOOST_NO_TEMPLATE_CV_REF_OVERLOADS
-#   include <boost/pool/detail/pool_construct.inc>
+#   include <boost/pool/detail/pool_construct.ipp>
 #else
-#   include <boost/pool/detail/pool_construct_simple.inc>
+#   include <boost/pool/detail/pool_construct_simple.ipp>
 #endif
 
     void destroy(element_type * const chunk)

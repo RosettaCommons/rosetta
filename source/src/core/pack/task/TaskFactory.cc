@@ -13,7 +13,6 @@
 
 #include <utility/exit.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // Unit Headers
 #include <core/pack/task/TaskFactory.hh>
@@ -55,7 +54,7 @@ void
 TaskFactory::modify_task( core::pose::Pose const & pose, PackerTaskOP task ) const
 {
 	runtime_assert( task );
-	foreach( TaskOperationOP const taskop, *this )
+	BOOST_FOREACH( TaskOperationOP const taskop, *this )
 		taskop->apply( pose, *task );
 }
 

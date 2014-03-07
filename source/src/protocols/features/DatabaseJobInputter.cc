@@ -41,7 +41,6 @@
 // Boost Headers
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
-#define foreach BOOST_FOREACH
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -357,7 +356,7 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::Jobs &
 
 	tr.Debug << "fill job list with... " << endl;
 	for ( Size index = 1; index <= nstruct; ++index ) {
-		foreach(protocols::jd2::InnerJobOP ijob, inner_jobs){
+		BOOST_FOREACH(protocols::jd2::InnerJobOP ijob, inner_jobs){
 			jobs.push_back(new protocols::jd2::Job(ijob, index));
 			tr.Trace
 				<< "pushing " << ijob->input_tag() << " nstruct index " << index	<< std::endl;

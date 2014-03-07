@@ -50,7 +50,6 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // External Headers
 #include <cppdb/frontend.h>

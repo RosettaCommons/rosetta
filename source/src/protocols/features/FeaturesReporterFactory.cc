@@ -36,7 +36,6 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 
 
@@ -116,7 +115,7 @@ FeaturesReporterFactory::get_features_reporter(
 			<< "register a new FeaturesReporter in the FeaturesReporterFactory" << endl
 			<< "known FeaturesReporter types are:" << endl;
 
-		foreach(const FeaturesReporterCreatorMap::value_type& type, types_){
+		BOOST_FOREACH(const FeaturesReporterCreatorMap::value_type& type, types_){
 			error_msg << "\t" << type.first << endl;
 		}
 		utility_exit_with_message(error_msg.str());

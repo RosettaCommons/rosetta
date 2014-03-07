@@ -34,7 +34,6 @@
 #include <core/import_pose/import_pose.hh>
 #include <numeric/random/random.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <utility/vector0.hh>
 
 static numeric::random::RandomGenerator RG( 21051979 );
@@ -114,7 +113,7 @@ DatabaseThread::pick_sequence_from_database( core::pose::Pose const & pose ) con
     core::Size const segment_length(find_length( pose ));
     std::string line;
     utility::vector1< std::string > sized_database;
-    foreach( std::string const line, full_database_ ) {
+    BOOST_FOREACH( std::string const line, full_database_ ) {
         if (line.length()==segment_length){ // if length of line is the same as segment length, incorporate into vector of strings.
             sized_database.push_back( line );
         }
@@ -131,7 +130,7 @@ DatabaseThread::pick_sequence_from_database( core::pose::Pose const & pose ) con
 
 void //mark residue positions on the pose (not positions in the sequence!) as designlable
 DatabaseThread::mark_designable(std::string & sequence, core::pose::Pose const & pose ) const{
-    foreach(core::Size const i, designable_ ){
+    BOOST_FOREACH(core::Size const i, designable_ ){
         core::Size const near_to_i(rosetta_scripts::find_nearest_res(pose,*template_pose_,i,1/*chain*/));
         core::Size const position(near_to_i - start_res_ +1);
         sequence[position]='X';
@@ -141,7 +140,7 @@ DatabaseThread::mark_designable(std::string & sequence, core::pose::Pose const &
 
 void //mark residue positions on the pose (not positions in the sequence!) to leave as in template
     DatabaseThread::mark_leave_as_is(std::string &sequence, core::pose::Pose const & pose ) const{
-    foreach(core::Size const i,leave_as_is_){
+    BOOST_FOREACH(core::Size const i,leave_as_is_){
         core::Size const near_to_i(rosetta_scripts::find_nearest_res(pose,*template_pose_,i,1/*chain*/));
         core::Size const position(near_to_i - start_res_ +1);
         sequence[position]='_';

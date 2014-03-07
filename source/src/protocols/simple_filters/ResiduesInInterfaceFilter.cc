@@ -37,7 +37,6 @@
 #include <basic/MetricValue.hh>
 #include <numeric/random/random.hh>
 // AUTO-REMOVED #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <core/chemical/AtomType.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
