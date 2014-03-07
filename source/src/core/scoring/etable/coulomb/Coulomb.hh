@@ -12,8 +12,8 @@
 /// @author Phil Bradley, modifed by James Gleixner
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_core_scoring_coulomb_Coulomb_hh
-#define INCLUDED_core_scoring_coulomb_Coulomb_hh
+#ifndef INCLUDED_core_scoring_etable_coulomb_Coulomb_hh
+#define INCLUDED_core_scoring_etable_coulomb_Coulomb_hh
 
 // Project headers
 #include <core/scoring/etable/coulomb/Coulomb.fwd.hh>
@@ -97,18 +97,13 @@ private:
 	Real low_poly_start2_;
 	Real low_poly_end_;
 	Real low_poly_end2_;
-	etable::SplineParameters low_poly_;
-	Real low_poly_width_;
-	Real low_poly_invwidth_;
+	CubicPolynomial low_poly_;
 
 	Real hi_poly_start_;
 	Real hi_poly_start2_;
 	Real hi_poly_end_;
 	Real hi_poly_end2_;
-	etable::SplineParameters hi_poly_;
-	Real hi_poly_width_;
-	Real hi_poly_invwidth_;
-
+	CubicPolynomial hi_poly_;
 
 	Real die_;
 	bool no_dis_dep_die_;
@@ -160,13 +155,9 @@ Coulomb::eval_atom_atom_fa_elecE(
 	} else if ( d2 < low_poly_start2_ ) {
 		return i_charge * j_charge * min_dis_score_;
 	} else if ( d2 < low_poly_end2_ ) {
-		return i_charge * j_charge * etable::Etable::eval_spline(
-			std::sqrt( d2 ), low_poly_start_, low_poly_end_,
-			low_poly_width_, low_poly_invwidth_, low_poly_ );
+		return i_charge * j_charge * Etable::eval_cubic_polynomial( std::sqrt( d2 ), low_poly_ );
 	} else if ( d2 > hi_poly_start2_ ) {
-		return i_charge * j_charge * etable::Etable::eval_spline(
-			std::sqrt( d2 ), hi_poly_start_, hi_poly_end_,
-			hi_poly_width_, hi_poly_invwidth_, hi_poly_ );
+		return i_charge * j_charge * Etable::eval_cubic_polynomial( std::sqrt( d2 ), hi_poly_ );
 	} else if ( no_dis_dep_die_ ) {
 		return i_charge * j_charge * ( C1_ / std::sqrt(d2) - C2_ );
 	} else {
@@ -197,14 +188,10 @@ Coulomb::eval_dfa_elecE_dr_over_r(
 		}
 	} else if ( dis2 < low_poly_end2_ ) {
 		Real d = std::sqrt( dis2 );
-		return etable::Etable::spline_deriv(
-			d, low_poly_start_, low_poly_end_,
-			low_poly_width_, low_poly_invwidth_, low_poly_ ) * q1q2 / d;
+		return Etable::cubic_polynomial_deriv( d, low_poly_ ) * q1q2 / d;
 	} else {
 		Real d = std::sqrt( dis2 );
-		return etable::Etable::spline_deriv(
-			d, hi_poly_start_, hi_poly_end_,
-			hi_poly_width_, hi_poly_invwidth_, hi_poly_ ) * q1q2 / d;
+		return Etable::cubic_polynomial_deriv( d, hi_poly_ ) * q1q2 / d;
 	}
 }
 

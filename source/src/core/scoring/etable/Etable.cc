@@ -170,28 +170,6 @@ Etable::dimension_etable_arrays()
 	lk_coeff_.dimension( n_atomtypes_, n_atomtypes_ );
 	lk_min_dis2sigma_value_.dimension( n_atomtypes_ + 1, n_atomtypes_ + 1 );
 
-	//lj_minima.dimension( n_atomtypes_, n_atomtypes_ );
-	//lj_vals_at_minima.dimension( n_atomtypes_, n_atomtypes_ );
-
-	//ljatr_spline_xlo_xhi.dimension( n_atomtypes_, n_atomtypes_ );
-	//ljatr_spline_parameters.dimension( n_atomtypes_, n_atomtypes_ );
-
-	//ljrep_extra_repulsion.dimension( n_atomtypes_, n_atomtypes_ );
-	/// Set up the ExtraQuadraticRepulsion parameters for everything: by default, add in no extra repulsion
-	//ExtraQuadraticRepulsion exrep;
-	//exrep.xlo = 0; exrep.xhi = 0; exrep.slope = 0; exrep.extrapolated_slope = 0; exrep.ylo = 0;
-	//ljrep_extra_repulsion = exrep;
-
-	//fasol_spline_close_start_end.dimension( n_atomtypes_, n_atomtypes_ );
-	//fasol_spline_close.dimension( n_atomtypes_, n_atomtypes_ );
-	//fasol_spline_far.dimension( n_atomtypes_, n_atomtypes_ );
-
-	//ljrep_from_negcrossing.dimension( n_atomtypes_, n_atomtypes_ );
-	//ljrep_from_negcrossing = false;
-
-	//ljatr_final_weight.dimension( n_atomtypes_, n_atomtypes_); ljatr_final_weight = 1.0;
-	//fasol_final_weight.dimension( n_atomtypes_, n_atomtypes_); fasol_final_weight = 1.0;
-
 	Size n_unique_pair_types = n_atomtypes_ * n_atomtypes_ - ( n_atomtypes_ * (n_atomtypes_ - 1 ) / 2 );
 	analytic_parameters.resize( n_unique_pair_types );
 
@@ -314,6 +292,20 @@ Etable::initialize_carbontypes_to_linearize_fasol()
 	carbon_types.push_back( atom_set_->atom_type_index("CH3") );
 	carbon_types.push_back( atom_set_->atom_type_index("aroC") );
 }
+
+CubicPolynomial
+Etable::cubic_polynomial_from_spline( Real xlo, Real xhi, SplineParameters const & sp )
+{
+	Real a( xlo ), b( xhi ), c( sp.yhi ), d( sp.ylo ), e( sp.y2hi ), f( sp.y2lo );
+	CubicPolynomial cp;
+
+	cp.c0 = ( (b*b*b*f - a*a*a*e)/(b-a) + (a*e - b*f) * (b-a) )  / 6 + (  b*d - a*c ) / ( b-a );
+	cp.c1 = ( 3*a*a*e/(b-a) - e*(b-a) + f*(b-a) - 3*b*b*f / (b-a) ) / 6 + ( c - d ) / (b-a);
+	cp.c2 = ( 3*b*f - 3*a*e ) / ( 6 * (b-a) );
+	cp.c3 = ( e-f ) / ( 6 * (b-a) );
+	return cp;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @begin Etable::make_pairenergy_table
@@ -977,8 +969,8 @@ Etable::smooth_etables_one_pair(
 	//ljatr_spline_xlo_xhi(atype1,atype2) = std::make_pair( lbx, ubx );
 	{
 		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
-		p.ljatr_spline_xlo = lbx;
-		p.ljatr_spline_xhi = ubx;
+		p.ljatr_cubic_poly_xlo = lbx;
+		p.ljatr_cubic_poly_xhi = ubx;
 	}
 	//std::cout << (*atom_set_)[at1].name() << " " << (*atom_set_)[at2].name() << " lj_minima: " << lj_minima(at1,at2) << " lj_vals_at_minima " << lj_vals_at_minima(at1,at2);
 	//std::cout << " lbx " << lbx << " ubx " << ubx << std::endl;
@@ -1011,7 +1003,7 @@ Etable::smooth_etables_one_pair(
 		sparams.y2hi = sinterp->ddy()[ 2 ];
 		//ljatr_spline_parameters( atype1, atype2 ) = sparams;
 		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
-		p.ljatr_spline_parameters = sparams;
+		p.ljatr_cubic_poly_parameters = cubic_polynomial_from_spline( p.ljatr_cubic_poly_xlo, p.ljatr_cubic_poly_xhi, sparams );
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -1026,10 +1018,8 @@ Etable::smooth_etables_one_pair(
 	int const E2 = etable_disbins; // end os spline 2
 
 	// Save these values for the splines
-	fasol_spline_far_xlo = dis( S2 );
-	fasol_spline_far_xhi = dis( E2 );
-	fasol_spline_far_diff_xhi_xlo = fasol_spline_far_xhi - fasol_spline_far_xlo;
-	fasol_spline_far_diff_xhi_xlo_inv = 1 / fasol_spline_far_diff_xhi_xlo;
+	fasol_cubic_poly_far_xlo_ = dis( S2 );
+	fasol_cubic_poly_far_xhi_ = dis( E2 );
 
 	int SWTCH = 1;
 	for( SWTCH=1; SWTCH <= etable_disbins; ++SWTCH) {
@@ -1047,9 +1037,10 @@ Etable::smooth_etables_one_pair(
 		SplineParameters sp; sp.ylo=0; sp.yhi=0; sp.y2lo = 0; sp.y2hi = 0;
 		//fasol_spline_close( atype1, atype2 ) = sp;
 		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
-		p.fasol_spline_close = sp;
-		p.fasol_spline_close_start = fasol_spline_far_xhi;
-		p.fasol_spline_close_end   = fasol_spline_far_xhi+1.0;
+		p.fasol_cubic_poly_close_start = fasol_cubic_poly_far_xhi_;
+		p.fasol_cubic_poly_close_end   = fasol_cubic_poly_far_xhi_ + 1.0;
+		p.fasol_cubic_poly_close_flat  = 0;
+		p.fasol_cubic_poly_close = cubic_polynomial_from_spline( p.fasol_cubic_poly_close_start, p.fasol_cubic_poly_close_end, sp );
 		return;
 	}
 
@@ -1105,9 +1096,11 @@ Etable::smooth_etables_one_pair(
 		sparams.y2hi = sinterp_close->ddy()[ 2 ];
 
 		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
-		p.fasol_spline_close = sparams;
-		p.fasol_spline_close_start = dis(S1);
-		p.fasol_spline_close_end = dis(E1);
+		p.fasol_cubic_poly_close_start = dis(S1);
+		p.fasol_cubic_poly_close_end = dis(E1);
+		p.fasol_cubic_poly_close_flat  = sparams.ylo;
+		p.fasol_cubic_poly_close = cubic_polynomial_from_spline( p.fasol_cubic_poly_close_start, p.fasol_cubic_poly_close_end, sparams );
+
 		//std::cout << "etable fasol close spline: " << (*fa_ats)[atype1].atom_type_name() << " " << (*fa_ats)[atype2].atom_type_name();
 		//std::cout << " " << p.fasol_spline_close_start << " " << p.fasol_spline_close_end << std::endl;
 
@@ -1154,7 +1147,8 @@ Etable::smooth_etables_one_pair(
 			sparams.y2hi = sinterp_close->ddy()[ 2 ];
 
 			EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
-			p.fasol_spline1_close = sparams;
+			p.fasol_cubic_poly1_close_flat  = sparams.ylo;
+			p.fasol_cubic_poly1_close = cubic_polynomial_from_spline( p.fasol_cubic_poly_close_start, p.fasol_cubic_poly_close_end, sparams );
 		}
 
 		// Create a close spline for the desolvation of atom 2 by atom 1
@@ -1174,7 +1168,8 @@ Etable::smooth_etables_one_pair(
 			sparams.y2hi = sinterp_close->ddy()[ 2 ];
 
 			EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
-			p.fasol_spline2_close = sparams;
+			p.fasol_cubic_poly2_close_flat  = sparams.ylo;
+			p.fasol_cubic_poly2_close = cubic_polynomial_from_spline( p.fasol_cubic_poly_close_start, p.fasol_cubic_poly_close_end, sparams );
 		}
 	}
 
@@ -1194,7 +1189,7 @@ Etable::smooth_etables_one_pair(
 		sparams.y2lo = sinterp_far->ddy()[ 1 ];
 		sparams.y2hi = sinterp_far->ddy()[ 2 ];
 		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
-		p.fasol_spline_far = sparams;
+		p.fasol_cubic_poly_far = cubic_polynomial_from_spline( fasol_cubic_poly_far_xlo_, fasol_cubic_poly_far_xhi_,  sparams );
 	}
 
 	// Now compute the splines for the individual desolvation of atoms 1 and 2 between S2 and E2
@@ -1217,7 +1212,7 @@ Etable::smooth_etables_one_pair(
 			sparams.y2lo = sinterp_far->ddy()[ 1 ];
 			sparams.y2hi = sinterp_far->ddy()[ 2 ];
 			EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
-			p.fasol_spline1_far = sparams;
+			p.fasol_cubic_poly1_far = cubic_polynomial_from_spline( fasol_cubic_poly_far_xlo_, fasol_cubic_poly_far_xhi_, sparams );
 		}
 
 		// Create a spline for the desolvation of atom 2 by atom 1
@@ -1235,7 +1230,7 @@ Etable::smooth_etables_one_pair(
 			sparams.y2lo = sinterp_far->ddy()[ 1 ];
 			sparams.y2hi = sinterp_far->ddy()[ 2 ];
 			EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
-			p.fasol_spline2_far = sparams;
+			p.fasol_cubic_poly2_far = cubic_polynomial_from_spline( fasol_cubic_poly_far_xlo_, fasol_cubic_poly_far_xhi_, sparams );
 		}
 	}
 

@@ -86,6 +86,11 @@ struct SplineParameters
 	{}
 };
 
+struct CubicPolynomial {
+	Real c0, c1, c2, c3;
+	CubicPolynomial() : c0(0), c1(0), c2(0), c3(0) {}
+};
+
 /// @brief the ExtraQuadraticRepulsion class is used to
 /// add in extra repulsion for particular atom pairs, if needed,
 /// (e.g. for OCbb/OCbb) where the functional form is:
@@ -124,26 +129,30 @@ struct EtableParamsOnePair
 	Real lj_switch_slope;
 	Real lj_minimum;
 	Real lj_val_at_minimum;
-	Real ljatr_spline_xlo;
-	Real ljatr_spline_xhi;
-	SplineParameters ljatr_spline_parameters;
+	Real ljatr_cubic_poly_xlo;
+	Real ljatr_cubic_poly_xhi;
+	CubicPolynomial ljatr_cubic_poly_parameters;
 	ExtraQuadraticRepulsion ljrep_extra_repulsion;
 	bool ljrep_from_negcrossing;
 
 	Real lk_coeff1;
 	Real lk_coeff2;
 	Real lk_min_dis2sigma_value;
-	Real fasol_spline_close_start;
-	Real fasol_spline_close_end;
+	Real fasol_cubic_poly_close_start;
+	Real fasol_cubic_poly_close_end;
 
-	SplineParameters fasol_spline_close;  // mututal desolvation of atoms 1 and 2
-	SplineParameters fasol_spline_far;    // mututal desolvation of atoms 1 and 2
+	CubicPolynomial fasol_cubic_poly_close;  // mututal desolvation of atoms 1 and 2
+	Real fasol_cubic_poly_close_flat; // the fixed value used for distances beneath fasol_cubic_poly_close_start
 
-	SplineParameters fasol_spline1_close; // desolvation of atom 1 by atom 2
-	SplineParameters fasol_spline1_far;   // desolvation of atom 1 by atom 2
+	CubicPolynomial fasol_cubic_poly_far;    // mututal desolvation of atoms 1 and 2
 
-	SplineParameters fasol_spline2_close; // desolvation of atom 2 by atom 1
-	SplineParameters fasol_spline2_far;   // desolvation of atom 2 by atom 1
+	CubicPolynomial fasol_cubic_poly1_close; // desolvation of atom 1 by atom 2
+	Real fasol_cubic_poly1_close_flat;       // the fixed value used for distances beneath fasol_cubic_poly_close_start
+	CubicPolynomial fasol_cubic_poly1_far;   // desolvation of atom 1 by atom 2
+
+	CubicPolynomial fasol_cubic_poly2_close; // desolvation of atom 2 by atom 1
+	Real fasol_cubic_poly2_close_flat;       // the fixed value used for distances beneath fasol_cubic_poly_close_start
+	CubicPolynomial fasol_cubic_poly2_far;   // desolvation of atom 2 by atom 1
 	Real ljatr_final_weight;
 	Real fasol_final_weight;
 
@@ -157,14 +166,15 @@ struct EtableParamsOnePair
 		lj_switch_slope(0.0),
 		lj_minimum(0.0),
 		lj_val_at_minimum(0.0),
-		ljatr_spline_xlo(0.0),
-		ljatr_spline_xhi(0.0),
+		ljatr_cubic_poly_xlo(0.0),
+		ljatr_cubic_poly_xhi(0.0),
 		ljrep_from_negcrossing(false),
 		lk_coeff1(0.0),
 		lk_coeff2(0.0),
 		lk_min_dis2sigma_value(0.0),
-		fasol_spline_close_start(0.0),
-		fasol_spline_close_end(0.0),
+		fasol_cubic_poly_close_start(0.0),
+		fasol_cubic_poly_close_end(0.0),
+		fasol_cubic_poly_close_flat(0.0),
 		ljatr_final_weight(1.0),
 		fasol_final_weight(1.0)
 	{}
@@ -361,6 +371,14 @@ public:
 		return lk_lambda_[i];
 	}
 
+	Real
+	lk_inv_lambda2( int const i ) const {
+		return lk_inv_lambda2_[i];
+	}
+
+	inline Real fasol_cubic_poly_far_xlo() const { return fasol_cubic_poly_far_xlo_; }
+	inline Real fasol_cubic_poly_far_xhi() const { return fasol_cubic_poly_far_xhi_; }
+
 	/// @brief Use the analytic_etable_evaluation function to evaluate the energy
 	/// of two atoms, but  evaluate the function at the old grid points and then
 	/// interpolate between them the way the existing etable does (in square
@@ -472,14 +490,14 @@ private:
 
 	inline
 	Real
-	analytic_ljatr_spline_ramp_to_zero(
+	analytic_ljatr_cubic_poly_ramp_to_zero(
 		Real const dis,
 		EtableParamsOnePair const & p
 	) const;
 
 	inline
 	Real
-	analytic_ljatr_spline_ramp_to_zero_deriv(
+	analytic_ljatr_cubic_poly_ramp_to_zero_deriv(
 		Real const dis,
 		EtableParamsOnePair const & p
 	) const;
@@ -518,47 +536,23 @@ private:
 public:
 
 	static
+	CubicPolynomial
+	cubic_polynomial_from_spline( Real xlo, Real xhi, SplineParameters const & sp );
+
+	static
 	inline
 	Real
-	eval_spline(
+	eval_cubic_polynomial(
 		Real const x,
-		Real const xlo,
-		Real const xhi,
-		SplineParameters const & sp
+		CubicPolynomial const & sp
 	);
 
 	static
 	inline
 	Real
-	spline_deriv(
+	cubic_polynomial_deriv(
 		Real const x,
-		Real const xlo,
-		Real const xhi,
-		SplineParameters const & sp
-	);
-
-	static
-	inline
-	Real
-	eval_spline(
-		Real const x,
-		Real const xlo,
-		Real const xhi,
-		Real const width,
-		Real const invwidth,
-		SplineParameters const & sp
-	);
-
-	static
-	inline
-	Real
-	spline_deriv(
-		Real const x,
-		Real const xlo,
-		Real const xhi,
-		Real const width,
-		Real const invwidth,
-		SplineParameters const & sp
+		CubicPolynomial const & cp
 	);
 
 	inline
@@ -652,49 +646,15 @@ private:
 	ObjexxFCL::FArray2D< Real > lk_coeff_;
 	ObjexxFCL::FArray2D< Real > lk_min_dis2sigma_value_;
 
-	/// OK: these values reflect the grid point with the lowest energy,
-	/// which could be different from the sum of the lj radii or the lj well depths.
-	/// These vals define the switch point from attractive to repulsive.  Repulsive
-	/// interactions start counting at the lj_minima
-	//ObjexxFCL::FArray2D< Real > lj_minima;
-	//ObjexxFCL::FArray2D< Real > lj_vals_at_minima;
-
-	/// Data needed to describe the splines for the ljatr term
-	Real ljatr_spline_xlo;
-	Real ljatr_spline_xhi;
-	Real ljatr_spline_diff_xhi_xlo;
-	Real ljatr_spline_diff_xhi_xlo_inv;
-	//ObjexxFCL::FArray2D< std::pair< Real, Real > > ljatr_spline_xlo_xhi;
-	//ObjexxFCL::FArray2D< SplineParameters > ljatr_spline_parameters;
-
-	/// Add extra repulsion, if desired, for certain atom pair interactions
-	//ObjexxFCL::FArray2D< ExtraQuadraticRepulsion > ljrep_extra_repulsion;
-
 	/// Data needed to describe the splines for the fasol term:
-	/// There are two splines needed: one to smooth the transition to where the fasol term goes flat
-	/// as the distance becomes less than the sum of the van der Waals radii (the "close" spline),
+	/// There are two cubic_polys needed: one to smooth the transition to where the fasol term goes flat
+	/// as the distance becomes less than the sum of the van der Waals radii (the "close" cubic_poly),
 	/// and a second to smooth the transition where the distance goes to the
-	/// fa_max_dis and the energy goes to 0 (the far spline).  In between the close
+	/// fa_max_dis and the energy goes to 0 (the far cubic_poly).  In between the close
 	/// and far values, the exponential form of the energy function is used.
-	//ObjexxFCL::FArray2D< std::pair< Real, Real > > fasol_spline_close_start_end; // starting and ending points for the lower spline
-	//ObjexxFCL::FArray2D< SplineParameters > fasol_spline_close; // parameters for the lower spline
-	Real fasol_spline_far_xlo;
-	Real fasol_spline_far_xhi;
-	Real fasol_spline_far_diff_xhi_xlo;
-	Real fasol_spline_far_diff_xhi_xlo_inv;
-	//ObjexxFCL::FArray2D< SplineParameters > fasol_spline_far;
+	Real fasol_cubic_poly_far_xlo_;
+	Real fasol_cubic_poly_far_xhi_;
 
-	/// Should the repulsive component start at ljatr+ljrep = 0 (true) or
-	/// when ljatr reaches its minimum (false )
-	//ObjexxFCL::FArray2D< Size > ljrep_from_negcrossing;
-
-	/// Data to turn off portions of the interactions between certain atom pairs
-	/// e.g. Hydrogen atoms are repulsive, only, as are the REPLONLY atoms.
-	//ObjexxFCL::FArray2D< Real > ljatr_final_weight;
-	//ObjexxFCL::FArray2D< Real > fasol_final_weight;
-
-
-	//
 	utility::vector1< Real > lj_radius_;
 	utility::vector1< Real > lj_wdepth_;
 	utility::vector1< Real > lk_dgfree_;
@@ -896,13 +856,13 @@ Etable::analytic_etable_evaluation(
 	if ( dis2 < p.ljrep_linear_ramp_d2_cutoff ) { // dis * p.inv_lj_sigma < lj_switch_dis2sigma ) {
 		//  ctsa - use linear ramp instead of lj when the dis/sigma  ratio drops below theshold
 		ljE = analytic_ljrep_linearized( dis, p );
-	} else if ( dis < p.ljatr_spline_xlo ) {
+	} else if ( dis < p.ljatr_cubic_poly_xlo ) {
 		//  ctsa - calc regular lennard-jones
 		ljE = analytic_lj_generic_form( dis2, inv_dis2, p ); //  p.lj_r12_coeff * inv_dis12 + p.lj_r6_coeff * inv_dis6;
-	} else if ( dis < p.ljatr_spline_xhi ) {
-		ljE = analytic_ljatr_spline_ramp_to_zero( dis, p );
+	} else if ( dis < p.ljatr_cubic_poly_xhi ) {
+		ljE = analytic_ljatr_cubic_poly_ramp_to_zero( dis, p );
 	} else {
-		/// assuming ljatr_spline_xhi == LK distance cutoff, since this will skip lk evaluation
+		/// assuming ljatr_cubic_poly_xhi == LK distance cutoff, since this will skip lk evaluation
 		return;
 	}
 
@@ -1017,16 +977,16 @@ Etable::analytic_etable_derivatives(
 	if ( dis2 < p.ljrep_linear_ramp_d2_cutoff ) { // dis * p.inv_lj_sigma < lj_switch_dis2sigma ) {
 		//  ctsa - use linear ramp instead of lj when the dis/sigma  ratio drops below theshold
 		dljE = p.lj_switch_slope;
-	} else if ( dis < p.ljatr_spline_xlo ) {
+	} else if ( dis < p.ljatr_cubic_poly_xlo ) {
 		//  ctsa - calc regular lennard-jones
 		inv_dis6 = inv_dis2 * inv_dis2 * inv_dis2;
 		Real const inv_dis7 = inv_dis * inv_dis6;
 
 		dljE = inv_dis7 * ( -12.*p.lj_r12_coeff * inv_dis6 - 6.* p.lj_r6_coeff );
-	} else if ( dis < p.ljatr_spline_xhi ) {
-		dljE = analytic_ljatr_spline_ramp_to_zero_deriv( dis, p );
+	} else if ( dis < p.ljatr_cubic_poly_xhi ) {
+		dljE = analytic_ljatr_cubic_poly_ramp_to_zero_deriv( dis, p );
 	} else {
-		/// assuming ljatr_spline_xhi == LK distance cutoff, since this will skip lk evaluation
+		/// assuming ljatr_cubic_poly_xhi == LK distance cutoff, since this will skip lk evaluation
 		return;
 	}
 
@@ -1062,22 +1022,16 @@ Etable::analytic_etable_derivatives(
 	dljatrE_ddis *= p.ljatr_final_weight;
 
 	/// Now handle solvation.
-	/// a) At distances below p.fasol_spline_close_start, the value of fasol is held constant.
-	/// b) Then there's a spline to smooth between this constant region and the exponential region.
+	/// a) At distances below p.fasol_cubic_poly_close_start, the value of fasol is held constant.
+	/// b) Then there's a cubic_poly to smooth between this constant region and the exponential region.
 	/// c) Then the exponential region.
-	/// d) Then the spline to smooth between the exponential region and where the energy goes to zero.
-	if ( dis < p.fasol_spline_close_start ) {
+	/// d) Then the cubic_poly to smooth between the exponential region and where the energy goes to zero.
+	if ( dis < p.fasol_cubic_poly_close_start ) {
 		dfasolE_ddis = 0;
-	} else if ( dis < p.fasol_spline_close_end ) {
-		dfasolE_ddis = spline_deriv( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline_close );
+	} else if ( dis < p.fasol_cubic_poly_close_end ) {
+		dfasolE_ddis = cubic_polynomial_deriv( dis, p.fasol_cubic_poly_close );
 		dfasolE_ddis *= p.fasol_final_weight;
-		//Real const fasol_spline_knots_diff = p.fasol_spline_close_end - p.fasol_spline_close_start;
-		//Real const fasol_spline_knots_diff_inv = 1/fasol_spline_knots_diff;
-		//Real const a = ( p.fasol_spline_close_end - dis ) * fasol_spline_knots_diff_inv;
-		//Real const b = ( dis - p.fasol_spline_close_start ) * fasol_spline_knots_diff_inv;
-		//SplineParameters const & sp = p.fasol_spline_close;
-		//fa_solE = a*sp.ylo + b*sp.yhi + ((a*a*a-a)*sp.y2lo + (b*b*b-b)*sp.y2hi)*fasol_spline_knots_diff*fasol_spline_knots_diff / 6;
-	} else if ( dis < fasol_spline_far_xlo ) {
+	} else if ( dis < fasol_cubic_poly_far_xlo_ ) {
 		/// exponential evaluation
 		/// assert( atype1 <= atype2 ), which is accomplished at the top of this function.
 		Real const dis_rad1 = dis - lj_radius(atype1);
@@ -1090,12 +1044,8 @@ Etable::analytic_etable_derivatives(
 		dfasolE_ddis = -2 * ( ( dis_rad1 * lk_inv_lambda2_(atype1) + inv_dis ) * solvE1 + ( dis_rad2 * lk_inv_lambda2_(atype2) + inv_dis ) * solvE2 );
 		dfasolE_ddis *= p.fasol_final_weight;
 
-	} else if ( dis < fasol_spline_far_xhi ) {
-		dfasolE_ddis = spline_deriv( dis,
-			fasol_spline_far_xlo, fasol_spline_far_xhi,
-			fasol_spline_far_diff_xhi_xlo, fasol_spline_far_diff_xhi_xlo_inv,
-			p.fasol_spline_far ) *
-			p.fasol_final_weight;
+	} else if ( dis < fasol_cubic_poly_far_xhi_ ) {
+		dfasolE_ddis = cubic_polynomial_deriv( dis, p.fasol_cubic_poly_far ) * p.fasol_final_weight;
 	} else {
 		dfasolE_ddis = 0;
 	}
@@ -1133,15 +1083,13 @@ Etable::analytic_lk_derivatives(
 	Real const inv_dis = 1.0/dis; inv_d = inv_dis;
 	Real const inv_dis2 = inv_dis * inv_dis;
 
-	if ( dis < p.fasol_spline_close_start ) {
+	if ( dis < p.fasol_cubic_poly_close_start ) {
 		dfasol1 = 0;
 		dfasol2 = 0;
-	} else if ( dis < p.fasol_spline_close_end ) {
-		dfasol1 = spline_deriv( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline1_close );
-		dfasol1 *= p.fasol_final_weight;
-		dfasol2 = spline_deriv( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline2_close );
-		dfasol2 *= p.fasol_final_weight;
-	} else if ( dis < fasol_spline_far_xlo ) {
+	} else if ( dis < p.fasol_cubic_poly_close_end ) {
+		dfasol1 = cubic_polynomial_deriv( dis, p.fasol_cubic_poly1_close ) * p.fasol_final_weight;
+		dfasol2 = cubic_polynomial_deriv( dis, p.fasol_cubic_poly2_close ) * p.fasol_final_weight;
+	} else if ( dis < fasol_cubic_poly_far_xlo_ ) {
 		/// exponential evaluation
 		Real const dis_rad1 = dis - lj_radius(atype1);
 		Real const x1 = ( dis_rad1 * dis_rad1 ) * lk_inv_lambda2_(atype1);
@@ -1153,13 +1101,9 @@ Etable::analytic_lk_derivatives(
 		dfasol1 = -2 * p.fasol_final_weight * ( dis_rad1 * lk_inv_lambda2_(atype1) + inv_dis ) * solvE1;
 		dfasol2 = -2 * p.fasol_final_weight * ( dis_rad2 * lk_inv_lambda2_(atype2) + inv_dis ) * solvE2;
 
-	} else if ( dis < fasol_spline_far_xhi ) {
-		dfasol1 = spline_deriv( dis, fasol_spline_far_xlo, fasol_spline_far_xhi,
-			fasol_spline_far_diff_xhi_xlo, fasol_spline_far_diff_xhi_xlo_inv,
-			p.fasol_spline1_far ) * p.fasol_final_weight;
-		dfasol2 = spline_deriv( dis, fasol_spline_far_xlo, fasol_spline_far_xhi,
-			fasol_spline_far_diff_xhi_xlo, fasol_spline_far_diff_xhi_xlo_inv,
-			p.fasol_spline2_far ) * p.fasol_final_weight;
+	} else if ( dis < fasol_cubic_poly_far_xhi_ ) {
+		dfasol1 = cubic_polynomial_deriv( dis, p.fasol_cubic_poly1_far ) * p.fasol_final_weight;
+		dfasol2 = cubic_polynomial_deriv( dis, p.fasol_cubic_poly2_far ) * p.fasol_final_weight;
 	} else {
 		dfasol1 = 0;
 		dfasol2 = 0;
@@ -1204,7 +1148,7 @@ Etable::analytic_ljrep_linearized(
 
 /// @details: evaluate the standard Lennard-Jones 6-12 functional form.
 /// Only call this function if the square distance is in the range
-/// sqrt( p.ljrep_linear_ramp_d2_cutoff ) < dis < p.ljatr_spline_xhi
+/// sqrt( p.ljrep_linear_ramp_d2_cutoff ) < dis < p.ljatr_cubic_poly_xhi
 inline
 Real
 Etable::analytic_lj_generic_form(
@@ -1214,7 +1158,7 @@ Etable::analytic_lj_generic_form(
 ) const
 {
 	assert( dis2 >= p.ljrep_linear_ramp_d2_cutoff );
-	assert( dis2 <= p.ljatr_spline_xhi * p.ljatr_spline_xhi );
+	assert( dis2 <= p.ljatr_cubic_poly_xhi * p.ljatr_cubic_poly_xhi );
 	Real const inv_dis6  = inv_dis2 * inv_dis2 * inv_dis2;
 	//Real const inv_dis12 = inv_dis6 * inv_dis6;
 
@@ -1223,94 +1167,54 @@ Etable::analytic_lj_generic_form(
 
 inline
 Real
-Etable::eval_spline(
+Etable::eval_cubic_polynomial(
 	Real const x,
-	Real const xlo,
-	Real const xhi,
-	SplineParameters const & sp
+	CubicPolynomial const & cp
 )
 {
-	assert( x >= xlo && x <= xhi );
-	Real width = xhi - xlo;
-	return eval_spline( x, xlo, xhi, width, 1/width, sp );
+	return ((cp.c3*x+cp.c2)*x+cp.c1)*x + cp.c0;
 }
 
 inline
 Real
-Etable::spline_deriv(
+Etable::cubic_polynomial_deriv(
 	Real const x,
-	Real const xlo,
-	Real const xhi,
-	SplineParameters const & sp
+	CubicPolynomial const & cp
 )
 {
-	assert( x >= xlo && x <= xhi );
-	Real width = xhi - xlo;
-	return spline_deriv( x, xlo, xhi, width, 1/width, sp );
-}
-
-inline
-Real
-Etable::eval_spline(
-	Real const x,
-	Real const xlo,
-	Real const xhi,
-	Real const width,
-	Real const invwidth,
-	SplineParameters const & sp
-)
-{
-	Real a = ( xhi - x ) * invwidth;
-	Real b = ( x - xlo ) * invwidth;
-	return a*sp.ylo + b*sp.yhi + ((a*a*a-a)*sp.y2lo + (b*b*b-b)*sp.y2hi)*width*width / 6;
-}
-
-inline
-Real
-Etable::spline_deriv(
-	Real const x,
-	Real const xlo,
-	Real const xhi,
-	Real const width,
-	Real const invwidth,
-	SplineParameters const & sp
-)
-{
-	Real a = ( xhi - x ) * invwidth;
-	Real b = ( x - xlo ) * invwidth;
-	return -1*invwidth*sp.ylo + invwidth*sp.yhi + ((1 - 3*a*a )*sp.y2lo + (3*b*b - 1 )*sp.y2hi)*width / 6;
+	return (3*cp.c3*x + 2*cp.c2)*x + cp.c1;
 }
 
 /// @details: evaluate the attractive component of the LJ term as it
 /// ramps to zero.
 /// Only call this function if the square distance is in the range
-/// p.ljatr_spline_xlo < dis < p.ljatr_spline_xhi
+/// p.ljatr_cubic_poly_xlo < dis < p.ljatr_cubic_poly_xhi
 inline
 Real
-Etable::analytic_ljatr_spline_ramp_to_zero(
+Etable::analytic_ljatr_cubic_poly_ramp_to_zero(
 	Real const dis,
 	EtableParamsOnePair const & p
 ) const
 {
-	assert( dis >= p.ljatr_spline_xlo );
-	assert( dis <= p.ljatr_spline_xhi );
-	return eval_spline( dis, p.ljatr_spline_xlo, p.ljatr_spline_xhi, p.ljatr_spline_parameters );
+	assert( dis >= p.ljatr_cubic_poly_xlo );
+	assert( dis <= p.ljatr_cubic_poly_xhi );
+	return eval_cubic_polynomial( dis, p.ljatr_cubic_poly_parameters );
 }
 
 /// @details: evaluate the derivative for the attractive component
 /// of the LJ term as it ramps to zero.
 /// Only call this function if the square distance is in the range
-/// p.ljatr_spline_xlo < dis < p.ljatr_spline_xhi
+/// p.ljatr_cubic_poly_xlo < dis < p.ljatr_cubic_poly_xhi
 inline
 Real
-Etable::analytic_ljatr_spline_ramp_to_zero_deriv(
+Etable::analytic_ljatr_cubic_poly_ramp_to_zero_deriv(
 	Real const dis,
 	EtableParamsOnePair const & p
 ) const
 {
-	assert( dis >= p.ljatr_spline_xlo );
-	assert( dis <= p.ljatr_spline_xhi );
-	return spline_deriv( dis, p.ljatr_spline_xlo, p.ljatr_spline_xhi, p.ljatr_spline_parameters );
+	assert( dis >= p.ljatr_cubic_poly_xlo );
+	assert( dis <= p.ljatr_cubic_poly_xhi );
+	return cubic_polynomial_deriv( dis, p.ljatr_cubic_poly_parameters );
 }
 
 /// @details Note that atype1 must be less than or equal to atype2; the
@@ -1327,22 +1231,16 @@ Etable::analytic_lk_evaluation(
 {
 	assert( atype1 <= atype2 );
 
-	/// a) At distances below p.fasol_spline_close_start, the value of fasol is held constant.
-	/// b) Then there's a spline to smooth between this constant region and the exponential region.
+	/// a) At distances below p.fasol_cubic_poly_close_start, the value of fasol is held constant.
+	/// b) Then there's a cubic_poly to smooth between this constant region and the exponential region.
 	/// c) Then the exponential region.
-	/// d) Then the spline to smooth between the exponential region and where the energy goes to zero.
-	if ( dis < p.fasol_spline_close_start ) {
-		fa_solE = p.fasol_spline_close.ylo * p.fasol_final_weight;
-	} else if ( dis < p.fasol_spline_close_end ) {
-		fa_solE = eval_spline( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline_close );
+	/// d) Then the cubic_poly to smooth between the exponential region and where the energy goes to zero.
+	if ( dis < p.fasol_cubic_poly_close_start ) {
+		fa_solE = p.fasol_cubic_poly_close_flat * p.fasol_final_weight;
+	} else if ( dis < p.fasol_cubic_poly_close_end ) {
+		fa_solE = eval_cubic_polynomial( dis, p.fasol_cubic_poly_close );
 		fa_solE *= p.fasol_final_weight;
-		//Real const fasol_spline_knots_diff = p.fasol_spline_close_end - p.fasol_spline_close_start;
-		//Real const fasol_spline_knots_diff_inv = 1/fasol_spline_knots_diff;
-		//Real const a = ( p.fasol_spline_close_end - dis ) * fasol_spline_knots_diff_inv;
-		//Real const b = ( dis - p.fasol_spline_close_start ) * fasol_spline_knots_diff_inv;
-		//SplineParameters const & sp = p.fasol_spline_close;
-		//fa_solE = a*sp.ylo + b*sp.yhi + ((a*a*a-a)*sp.y2lo + (b*b*b-b)*sp.y2hi)*fasol_spline_knots_diff*fasol_spline_knots_diff / 6;
-	} else if ( dis < fasol_spline_far_xlo ) {
+	} else if ( dis < fasol_cubic_poly_far_xlo_ ) {
 		/// exponential evaluation
 		/// assert( atype1 <= atype2 ), which is accomplished at the top of this function.
 		Real const dis_rad1 = dis - lj_radius(atype1);
@@ -1353,16 +1251,8 @@ Etable::analytic_lk_evaluation(
 		fa_solE =  inv_dis2 * ( std::exp(-x1) * p.lk_coeff1 + std::exp(-x2) * p.lk_coeff2 );
 		fa_solE *= p.fasol_final_weight;
 
-	} else if ( dis < fasol_spline_far_xhi ) {
-		fa_solE = eval_spline( dis,
-			fasol_spline_far_xlo, fasol_spline_far_xhi,
-			fasol_spline_far_diff_xhi_xlo, fasol_spline_far_diff_xhi_xlo_inv,
-			p.fasol_spline_far );
-		//Real const a = ( fasol_spline_far_xhi - dis ) * fasol_spline_far_diff_xhi_xlo_inv;
-		//Real const b = ( dis - fasol_spline_far_xlo ) * fasol_spline_far_diff_xhi_xlo_inv;
-		//SplineParameters const & sp = p.fasol_spline_far;
-		//
-		//fa_solE = a*sp.ylo + b*sp.yhi + ((a*a*a-a)*sp.y2lo + (b*b*b-b)*sp.y2hi)*fasol_spline_far_diff_xhi_xlo*fasol_spline_far_diff_xhi_xlo / 6;
+	} else if ( dis < fasol_cubic_poly_far_xhi_ ) {
+		fa_solE = eval_cubic_polynomial( dis, p.fasol_cubic_poly_far );
 		fa_solE *= p.fasol_final_weight;
 	} else {
 		fa_solE = 0;
@@ -1386,17 +1276,17 @@ Etable::analytic_lk_evaluation_individual(
 {
 	assert( atype1 <= atype2 );
 
-	/// a) At distances below p.fasol_spline_close_start, the value of fasol is held constant.
-	/// b) Then there's a spline to smooth between this constant region and the exponential region.
+	/// a) At distances below p.fasol_cubic_poly_close_start, the value of fasol is held constant.
+	/// b) Then there's a cubic_poly to smooth between this constant region and the exponential region.
 	/// c) Then the exponential region.
-	/// d) Then the spline to smooth between the exponential region and where the energy goes to zero.
-	if ( dis < p.fasol_spline_close_start ) {
-		fa_solE1 = p.fasol_spline1_close.ylo * p.fasol_final_weight;
-		fa_solE2 = p.fasol_spline2_close.ylo * p.fasol_final_weight;
-	} else if ( dis < p.fasol_spline_close_end ) {
-		fa_solE1 = p.fasol_final_weight * eval_spline( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline1_close );
-		fa_solE2 = p.fasol_final_weight * eval_spline( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline2_close );
-	} else if ( dis < fasol_spline_far_xlo ) {
+	/// d) Then the cubic_poly to smooth between the exponential region and where the energy goes to zero.
+	if ( dis < p.fasol_cubic_poly_close_start ) {
+		fa_solE1 = p.fasol_cubic_poly1_close_flat * p.fasol_final_weight;
+		fa_solE2 = p.fasol_cubic_poly2_close_flat * p.fasol_final_weight;
+	} else if ( dis < p.fasol_cubic_poly_close_end ) {
+		fa_solE1 = p.fasol_final_weight * eval_cubic_polynomial( dis, p.fasol_cubic_poly1_close );
+		fa_solE2 = p.fasol_final_weight * eval_cubic_polynomial( dis, p.fasol_cubic_poly2_close );
+	} else if ( dis < fasol_cubic_poly_far_xlo_ ) {
 		/// exponential evaluation
 		Real const dis_rad1 = dis - lj_radius(atype1);
 		Real const x1 = ( dis_rad1 * dis_rad1 ) * lk_inv_lambda2_(atype1);
@@ -1406,17 +1296,9 @@ Etable::analytic_lk_evaluation_individual(
 		fa_solE1 = p.fasol_final_weight * inv_dis2 * std::exp(-x1) * p.lk_coeff1;
 		fa_solE2 = p.fasol_final_weight * inv_dis2 * std::exp(-x2) * p.lk_coeff2;
 
-	} else if ( dis < fasol_spline_far_xhi ) {
-		fa_solE1 = p.fasol_final_weight * eval_spline( dis,
-			fasol_spline_far_xlo, fasol_spline_far_xhi,
-			fasol_spline_far_diff_xhi_xlo, fasol_spline_far_diff_xhi_xlo_inv,
-			p.fasol_spline1_far );
-
-		fa_solE2 = p.fasol_final_weight * eval_spline( dis,
-			fasol_spline_far_xlo, fasol_spline_far_xhi,
-			fasol_spline_far_diff_xhi_xlo, fasol_spline_far_diff_xhi_xlo_inv,
-			p.fasol_spline2_far );
-
+	} else if ( dis < fasol_cubic_poly_far_xhi_ ) {
+		fa_solE1 = p.fasol_final_weight * eval_cubic_polynomial( dis, p.fasol_cubic_poly1_far );
+		fa_solE2 = p.fasol_final_weight * eval_cubic_polynomial( dis, p.fasol_cubic_poly2_far );
 	} else {
 		fa_solE1 = fa_solE2 = 0;
 	}
