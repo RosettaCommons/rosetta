@@ -303,22 +303,23 @@ string BetaTurnDetectionFeatures::determine_ramachandran_hash( Pose const & pose
 /// Note: In the case of a Cis peptide plane, the lowercase letter for the hash will be returned.
 ///
 /// Pictoral representation of Ramachandran hashing used for beta-turn classification:
-///
-///	      |----------------------|
-///	      |	         |           |
-///	      |    B     |     E     |
-///	      |	         |===========| 100
-///    50 |==========|			     |
-///	 p    |	         |     L     |
+/// <pre>
+///       |----------------------|
+///       |          |           |
+///       |    B     |     E     |
+///       |          |===========| 100
+///    50 |==========|           |
+///  p    |          |     L     |
 ///  s  0 |--- A ----------------|
-///	 i    |	         |           |
-///	      |	         |===========| -50
-///  -100 |==========|			     |
-///	      |	         |     E     |
-///	      |    B     |	         |
-///	      |----------------------|
-///	    -180         0          180
-///	                phi
+///  i    |          |           |
+///       |          |===========| -50
+///  -100 |==========|           |
+///       |          |     E     |
+///       |    B     |	         |
+///       |----------------------|
+///     -180         0          180
+///                 phi
+/// </pre>
 string BetaTurnDetectionFeatures::determine_ramachandran_hash_for_residue_with_dihedrals( Real phi, Real psi, Real omega ) const
 {	
 	string rama_hash;
