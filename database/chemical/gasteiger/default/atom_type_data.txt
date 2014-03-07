@@ -187,11 +187,4 @@ N_Te2Te2TeTe N 3 2 2 pi nb nan nan nan nan nan nan nan
 H_ H 0 0 0 pi nb 27.2 13.6 nan nan nan nan nan 
 Li_ Li 0 0 0 pi nb 10.78 5.39 nan nan nan nan nan 
 Na_ Na 0 0 0 pi nb 10.28 5.14 nan nan nan nan nan 
-K_ K 0 0 0 pi nb 8.682 4.341 nan nan nan nan nan
-# The following were added by Rocco Moretti to be able to successfully
-# type all fa_standard residue types
-FAKE X 0 0 0 pi nb nan nan nan nan nan nan nan
-Ca_ Ca 0 0 0 pi nb nan nan nan nan nan nan nan
-Fe_ Fe 0 0 0 pi nb nan nan nan nan nan nan nan
-Mg_ Mg 0 0 0 pi nb nan nan nan nan nan nan nan
-Zn_ Zn 0 0 0 pi nb nan nan nan nan nan nan nan
+K_ K 0 0 0 pi nb 8.682 4.341 nan nan nan nan nan 

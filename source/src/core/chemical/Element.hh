@@ -174,8 +174,6 @@ public:
 	Real weight() const { return properties_[Mass]; }
 
 
-	/// @brief Return true unless the element actually exists in the periodic table.
-	bool is_fake() const { return atomic_number_ == 0; }
 
 	//////////////////////
 	// input and output //

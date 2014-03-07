@@ -10,7 +10,11 @@
 /// @begin Bond
 ///
 /// @brief
-/// A class for holding bond information.
+/// A class for defining chemical Bonds, with properties specific to a ResidueType, not conformation info
+/// specific to a Residue. Conformation info goes in conformation::Bond. BondTypes are not ResidueType specific.
+///
+///
+///
 ///
 /// @author
 /// Gordon Lemmon, Rocco Moretti (rmorettiase@gmail.com)
@@ -28,8 +32,6 @@
 
 namespace core {
 namespace chemical {
-
-BondName convert_to_BondName( std::string const & id );
 
 /// @brief basic chemical Bond
 ///
@@ -117,12 +119,6 @@ public:
 
 	core::Size GetSDFileID() const;
 	core::Size GetSDAltFileID() const;
-
-	/// @brief Return true if this bond represents a non-physical bond
-	bool is_fake() const {
-		return order_ == OrbitalBondOrder || order_ == PseudoBondOrder;
-		// An UnknownBondOrder bond is treated as a real bond (of unknown order).
-	}
 
 private:
 

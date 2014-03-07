@@ -26,16 +26,15 @@ BOND  N    H
 BOND  CA   C  
 BOND  CA   CB 
 BOND  CA   HA 
-BOND_TYPE  C    O  2
+BOND  C    O  
 BOND  CB   CG 
 BOND  CB  1HB 
 BOND  CB  2HB 
 BOND  CG   CD 
 BOND  CG  1HG 
 BOND  CG  2HG 
-# 4 is a delocalized bond
-BOND_TYPE  CD   OE1  4
-BOND_TYPE  CD   OE2  4
+BOND  CD   OE1
+BOND  CD   OE2
 CHI 1  N    CA   CB   CG 
 CHI 2  CA   CB   CG   CD 
 CHI 3  CB   CG   CD   OE1

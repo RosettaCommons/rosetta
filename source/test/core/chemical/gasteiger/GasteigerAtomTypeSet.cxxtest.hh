@@ -42,6 +42,9 @@ class GasteigerAtomTypeSetTests : public CxxTest::TestSuite {
 	// --------------- Suite-level Fixture --------------- //
 
 	GasteigerAtomTypeSetTests() {
+		core_init();
+
+		atom_type_set_ = ChemicalManager::get_instance()->gasteiger_atom_type_set();
 	}
 
 	virtual ~GasteigerAtomTypeSetTests() {}
@@ -62,9 +65,6 @@ class GasteigerAtomTypeSetTests : public CxxTest::TestSuite {
 
 	// Shared initialization goes here.
 	void setUp() {
-		core_init();
-
-		atom_type_set_ = ChemicalManager::get_instance()->gasteiger_atom_type_set();
 		delta_percent = 0.0001;
 	}
 

@@ -132,12 +132,6 @@ GasteigerAtomTypeSet::element_set() const {
 	return element_set_;
 }
 
-/// @brief Return the type that's assigned for fake atoms. (Virtual atoms and the like.)
-GasteigerAtomTypeDataCOP
-GasteigerAtomTypeSet::type_for_fake_atoms() const {
-	return atom_types_[ atom_type_index( "FAKE" ) ];
-}
-
 
 } // gasteiger
 } // chemical

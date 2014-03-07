@@ -34,10 +34,6 @@
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
-#include <utility/graph/ring_detection.hh>
-
-#include <numeric/util.hh>
-
 #include <basic/Tracer.hh>
 
 #include <map>
@@ -445,13 +441,13 @@ void PossibleAtomTypesForAtom::SetToType( const GasteigerAtomTypeDataCOP &ATOM_T
 //! @brief set the final type based on the given atom and smallest ring size
 //! @param ATOM the atom of interest
 //! @param SMALLEST_RING_SIZE the size of the smallest ring this atom is part of
-void PossibleAtomTypesForAtom::Finalize(const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD)
+void PossibleAtomTypesForAtom::Finalize( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD)
 {
 	// check whether there is any need for finalization
 	if( m_FinalizeFunction )
 	{
 		// use the defined finalize function
-		( this->*m_FinalizeFunction)(graph, atomVD);
+		( this->*m_FinalizeFunction)( restype, atomVD);
 	}
 }
 
@@ -643,7 +639,7 @@ void PossibleAtomTypesForAtom::Finalize()
 	const core::Size n_e_in_bonds( GetMostStableType()->get_number_electrons_in_bonds());
 
 	// determine preferred hybridization
-	GasteigerAtomTypeData::HybridOrbitalType preferred_hybridization( GasteigerAtomTypeData::Unhybridized );
+	GasteigerAtomTypeData::HybridOrbitalType preferred_hybridization;
 
 	if( n_bonds == 1) // handle remaining cases with a single bond
 	{
@@ -881,11 +877,13 @@ void PossibleAtomTypesForAtom::FinalizeAromatic( const int &DESIRED_CHARGE)
 }
 
 //! @brief choose the final atom type for Nitrogen with two single bonds
-void PossibleAtomTypesForAtom::FinalizeNitrogenTwoSingle( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD ) {
+//! @param ATOM the atom of interest
+//! @param SMALLEST_RING_SIZE the size of the smallest ring this atom is part of
+void PossibleAtomTypesForAtom::FinalizeNitrogenTwoSingle( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD ) {
 	// in ring of size 3 - 5 -> Tetrahedral (51 cases)
 	// Bound to N or S -> Tetrahedral (90 cases)
 	// Else -> Trigonal (53 cases)
-	core::Size SMALLEST_RING_SIZE = utility::graph::smallest_ring_size(atomVD, graph, 5);
+	core::Size SMALLEST_RING_SIZE = restype.smallest_ring_size( atomVD, 5 );
 	if( SMALLEST_RING_SIZE >= 3 && SMALLEST_RING_SIZE <= 5)
 	{
 		SetToType( gasteiger_atom_type_set_->atom_type("N_Te2Te2TeTe") );
@@ -893,11 +891,10 @@ void PossibleAtomTypesForAtom::FinalizeNitrogenTwoSingle( const core::chemical::
 	else
 	{
 		// check for bonds to N or S
-		RealResidueAdjacentIter iter, iter_end;
-		for( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
-			const ElementCOP & element_data = graph[ *iter ].element_type();
-			core::Size atomic_num( element_data->get_atomic_number() ); // String compares are slow.
-			if( atomic_num == 16 /*"S"*/ || atomic_num == 7 /*"N"*/) {
+		AdjacentIter iter, iter_end;
+		for( boost::tie(iter,iter_end) = restype.bonded_neighbor_iterators(atomVD); iter != iter_end; ++iter ) {
+			std::string const & element = restype.atom_type(*iter).element();
+			if( element == "S" || element == "N") {
 				SetToType( gasteiger_atom_type_set_->atom_type("N_Te2Te2TeTe"));
 				return;
 			}
@@ -907,16 +904,18 @@ void PossibleAtomTypesForAtom::FinalizeNitrogenTwoSingle( const core::chemical::
 }
 
 //! @brief choose the final atom type for Nitrogen with three single bonds
-void PossibleAtomTypesForAtom::FinalizeNitrogenThreeSingle( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD ) {
+//! @param ATOM the atom of interest
+//! @param SMALLEST_RING_SIZE the size of the smallest ring this atom is part of
+void PossibleAtomTypesForAtom::FinalizeNitrogenThreeSingle( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD ) {
 	// Node 1 In a 3 membered ring Tetrahedral (Accuracy: 100%, 293 cases)
 	// Bond orbital overlap likely precludes trigonal
-	core::Size SMALLEST_RING_SIZE = utility::graph::smallest_ring_size(atomVD, graph, 5);
+	core::Size SMALLEST_RING_SIZE = restype.smallest_ring_size( atomVD, 6 );
 	if( SMALLEST_RING_SIZE == 3)
 	{
 		SetToType( gasteiger_atom_type_set_->atom_type("N_Te2TeTeTe"));
 		return;
 	}
-	const core::Size unsaturated_neighbor_count( CountUnsaturatedNeighbors( graph, atomVD ));
+	const core::Size unsaturated_neighbor_count( CountUnsaturatedNeighbors( restype, atomVD ));
 	if( unsaturated_neighbor_count == 2) // RM: Should this be >= ?
 	{
 		// Node 2 2+ unsaturated neighbors Trigonal (Accuracy: 99.5%, 11070 cases)
@@ -924,7 +923,7 @@ void PossibleAtomTypesForAtom::FinalizeNitrogenThreeSingle( const core::chemical
 		SetToType( gasteiger_atom_type_set_->atom_type("N_TrTrTrPi2"));
 		return;
 	}
-	else if( IsBondedToAHalogen( graph, atomVD ))
+	else if( IsBondedToAHalogen( restype, atomVD ))
 	{
 		// Node 3 Connected to any halogen Tetrahedral (Accuracy: 88.9%, 45 cases)
 		// Lone pair repulsion and strong electronegativity induces extra P character on N
@@ -941,11 +940,11 @@ void PossibleAtomTypesForAtom::FinalizeNitrogenThreeSingle( const core::chemical
 	}
 
 	bool all_C = true;
-	RealResidueAdjacentIter iter, iter_end;
-	for( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
-		const ElementCOP & element_data = graph[ *iter ].element_type();
-		core::Size atomic_num( element_data->get_atomic_number() ); // String compares are slow.
-		if (atomic_num != 6 /*"C"*/) {
+	AdjacentIter iter, iter_end;
+	for( boost::tie(iter,iter_end) = restype.bonded_neighbor_iterators(atomVD); iter != iter_end; ++iter ) {
+		std::string const & element_symbol = restype.atom_type(*iter).element();
+		const ElementCOP & element_data = gasteiger_atom_type_set_->element_set()->element( element_symbol );
+		if (element_symbol != "C") {
 			all_C = false;
 		}
 		// Node 5 Connected to any element period > 2 except those in group 6 Trigonal (Accuracy: 98.1%, 327 cases)
@@ -973,13 +972,12 @@ void PossibleAtomTypesForAtom::FinalizeNitrogenThreeSingle( const core::chemical
 	}
 	else if( SMALLEST_RING_SIZE == 6 )
 	{
-		RealResidueAdjacentIter iter, iter_end;
-		for( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
-			const ElementCOP & element_data = graph[ *iter ].element_type();
-			core::Size atomic_num( element_data->get_atomic_number() ); // String compares are slow.
+		AdjacentIter iter, iter_end;
+		for( boost::tie(iter,iter_end) = restype.bonded_neighbor_iterators(atomVD); iter != iter_end; ++iter ) {
+			std::string const & element_symbol = restype.atom_type(*iter).element();
 
 			// Node 7: In a 6 membered ring (Accuracy: 70.4%, 252 cases)
-			if( atomic_num == 8 /*"O"*/ )
+			if( element_symbol == "O" )
 			{
 				// Node 7a at least 1 O Trigonal (181 cases)
 				SetToType( gasteiger_atom_type_set_->atom_type("N_TrTrTrPi2"));
@@ -993,11 +991,10 @@ void PossibleAtomTypesForAtom::FinalizeNitrogenThreeSingle( const core::chemical
 	{
 		// Node 8 Everything else (Accuracy: 78.6%, 564 cases)
 		size_t heteroatom_count( 0);
-		RealResidueAdjacentIter iter, iter_end;
-		for( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
-			const ElementCOP & element_data = graph[ *iter ].element_type();
-			core::Size atomic_num( element_data->get_atomic_number() ); // String compares are slow.
-			if( atomic_num != 6 /*"C"*/ ) // TODO: Do we need a Hydrogen check here, too?
+		AdjacentIter iter, iter_end;
+		for( boost::tie(iter,iter_end) = restype.bonded_neighbor_iterators(atomVD); iter != iter_end; ++iter ) {
+			std::string const & element_symbol = restype.atom_type(*iter).element();
+			if( element_symbol != "C" ) // TODO: Do we need a Hydrogen check here, too?
 			{
 				++heteroatom_count;
 			}
@@ -1020,13 +1017,14 @@ void PossibleAtomTypesForAtom::FinalizeNitrogenThreeSingle( const core::chemical
 //! @brief choose the final atom type for a single and a double bond
 //! @param ATOM the atom of interest
 //! @param SMALLEST_RING_SIZE the size of the smallest ring this atom is part of
-void PossibleAtomTypesForAtom::FinalizeNitrogenSingleDouble( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD ) {
+void PossibleAtomTypesForAtom::FinalizeNitrogenSingleDouble( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD ) {
 	// use the digonal type only if bound to an atom w/ period 3+ and
 	// whose main group (5 for N, 6 for O) is <= the bonded atom, and is at least 4
 	// For example, Al should not induce digonality
-	RealResidueAdjacentIter iter, iter_end;
-	for( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
-		const ElementCOP & element_data = graph[ *iter ].element_type();
+	AdjacentIter iter, iter_end;
+	for( boost::tie(iter,iter_end) = restype.bonded_neighbor_iterators(atomVD); iter != iter_end; ++iter ) {
+		std::string const & element_symbol = restype.atom_type(*iter).element();
+		const ElementCOP & element_data = gasteiger_atom_type_set_->element_set()->element( element_symbol );
 		if( element_data->get_period() > 2 && ( element_data->get_main_group() == 4 || element_data->get_main_group() == 5))
 		{
 			SetToType( gasteiger_atom_type_set_->atom_type("N_DiDiPi2Pi"));
@@ -1039,30 +1037,30 @@ void PossibleAtomTypesForAtom::FinalizeNitrogenSingleDouble( const core::chemica
 //! @brief choose the final atom type for Oxygen with two single bonds
 //! @param ATOM the atom of interest
 //! @param SMALLEST_RING_SIZE the size of the smallest ring this atom is part of
-void PossibleAtomTypesForAtom::FinalizeOxygenTwoSingle( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD ) {
-	// any empty valences imply hydrogens; hydrogens imply tetrahedral
-	if( boost::out_degree( atomVD, graph ) < 2 )
+void PossibleAtomTypesForAtom::FinalizeOxygenTwoSingle( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD ) {
+	// any valences imply hydrogens; hydrogens imply tetrahedral
+	if( restype.nbonds( atomVD) < 2 )
 	{
 		SetToType( gasteiger_atom_type_set_->atom_type("O_Te2Te2TeTe"));
 		return;
 	}
 	// check for aromatic ring membership
 	// only the first bond needs to be checked
-	if( graph[ *(boost::out_edges( atomVD, graph).first) ].aromaticity() == IsAromaticBond )
+	if( restype.bond(*restype.bond_iterators( atomVD ).first).aromaticity() == IsAromaticBond )
 	{
 		SetToType( gasteiger_atom_type_set_->atom_type("O_Tr2TrTrPi2"));
 		return;
 	}
 	//RM: Because aromatic typing may not be complete, check for unsaturated neighbors.
 	// If we have two unsaturated neighbors, we're likely to be Trigonal.
-	if ( CountUnsaturatedNeighbors( graph, atomVD ) >= 2) {
+	if ( CountUnsaturatedNeighbors( restype, atomVD ) >= 2) {
 		SetToType( gasteiger_atom_type_set_->atom_type("O_Tr2TrTrPi2"));
 		return;
 	}
 	//
 	// Node 1 In a 3-5 membered ring Tetrahedral (Accuracy: 99.5%, 10210 cases)
 	// Bond orbital overlap likely precludes trigonal
-	core::Size SMALLEST_RING_SIZE = utility::graph::smallest_ring_size(atomVD, graph, 5);
+	core::Size SMALLEST_RING_SIZE = restype.smallest_ring_size( atomVD, 5 );
 	if( SMALLEST_RING_SIZE >= 3 && SMALLEST_RING_SIZE <= 5 )
 	{
 		SetToType( gasteiger_atom_type_set_->atom_type("O_Te2Te2TeTe"));
@@ -1072,30 +1070,30 @@ void PossibleAtomTypesForAtom::FinalizeOxygenTwoSingle( const core::chemical::Re
 		bool has_saturated_sulfur = false;
 		bool only_carbon = true;
 		bool only_silicon = true;
-		RealResidueAdjacentIter iter, iter_end;
-		for( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
-			const ElementCOP & element_data = graph[ *iter ].element_type();
-			core::Size atomic_num( element_data->get_atomic_number() ); // String compares are slow.
-			if( atomic_num == 1 /*"H"*/ || atomic_num == 7 /*"N"*/ ||
-					atomic_num == 8 /*"O"*/ || element_data->get_main_group() == 7 /*halogen */) {
+		AdjacentIter iter, iter_end;
+		for( boost::tie(iter,iter_end) = restype.bonded_neighbor_iterators(atomVD); iter != iter_end; ++iter ) {
+			std::string const & element_symbol = restype.atom_type(*iter).element();
+			const ElementCOP & element_data = gasteiger_atom_type_set_->element_set()->element( element_symbol );
+			if( element_symbol == "H" || element_symbol == "N" ||
+					element_symbol == "O" || element_data->get_main_group() == 7 /*halogen */) {
 				SetToType( gasteiger_atom_type_set_->atom_type("O_Te2Te2TeTe"));
 				return;
 			}
 			// special case for sulfur, which needs to be checked for saturation
-			if( atomic_num == 16 /*"S"*/ && !IsUnsaturated( graph, *iter ) ) {
+			if( element_symbol == "S" && !IsUnsaturated( restype, *iter ) ) {
 				has_saturated_sulfur = true;
 			}
-			if( atomic_num != 6 /*"C"*/ ) {
+			if( element_symbol != "C" ) {
 				only_carbon = false;
 			}
-			if( atomic_num != 14 /*"Si"*/) {
+			if( element_symbol != "Si") {
 				only_silicon = false;
 			}
 		}
 		if( has_saturated_sulfur ) {
 			// part of node 2
 			SetToType( gasteiger_atom_type_set_->atom_type("O_Te2Te2TeTe"));
-		} else if( only_carbon && ( CountUnsaturatedNeighbors( graph, atomVD ) == 0 ) ) {
+		} else if( only_carbon && ( CountUnsaturatedNeighbors( restype, atomVD ) == 0 ) ) {
 			// only bonded to carbon, have to count unsaturated neighbors
 			SetToType( gasteiger_atom_type_set_->atom_type("O_Te2Te2TeTe"));
 		} else if( only_silicon ) {
@@ -1112,13 +1110,14 @@ void PossibleAtomTypesForAtom::FinalizeOxygenTwoSingle( const core::chemical::Re
 //! @brief choose the final atom type for Oxygen with a single and a double bond
 //! @param ATOM the atom of interest
 //! @param SMALLEST_RING_SIZE the size of the smallest ring this atom is part of
-void PossibleAtomTypesForAtom::FinalizeOxygenSingleDouble( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD ) {
+void PossibleAtomTypesForAtom::FinalizeOxygenSingleDouble( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD ) {
 	// use the digonal type only if bound to an atom w/ period 3+ and
 	// whose main group (5 for N, 6 for O) is <= the bonded atom, and is at least 4
 	// For example, Al should not induce digonality
-	RealResidueAdjacentIter iter, iter_end;
-	for( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
-		const ElementCOP & element_data = graph[ *iter ].element_type();
+	AdjacentIter iter, iter_end;
+	for( boost::tie(iter,iter_end) = restype.bonded_neighbor_iterators(atomVD); iter != iter_end; ++iter ) {
+		std::string const & element_symbol = restype.atom_type(*iter).element();
+		const ElementCOP & element_data = gasteiger_atom_type_set_->element_set()->element( element_symbol );
 		if( element_data->get_period() > 2 && ( element_data->get_main_group() >= 4 && element_data->get_main_group() <= 6))
 		{
 			SetToType( gasteiger_atom_type_set_->atom_type("O_DiDiPi2Pi"));
@@ -1129,11 +1128,14 @@ void PossibleAtomTypesForAtom::FinalizeOxygenSingleDouble( const core::chemical:
 }
 
 //! @brief choose the final atom type for Oxygen with three single bonds
-void PossibleAtomTypesForAtom::FinalizeOxygenThreeSingle( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD ) {
+//! @param ATOM the atom of interest
+//! @param SMALLEST_RING_SIZE the size of the smallest ring this atom is part of
+void PossibleAtomTypesForAtom::FinalizeOxygenThreeSingle( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD ) {
 	// Trigonal if bound to anything group 1 - 3, else tetrahedral
-	RealResidueAdjacentIter iter, iter_end;
-	for( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
-		const ElementCOP & element_data = graph[ *iter ].element_type();
+	AdjacentIter iter, iter_end;
+	for( boost::tie(iter,iter_end) = restype.bonded_neighbor_iterators(atomVD); iter != iter_end; ++iter ) {
+		std::string const & element_symbol = restype.atom_type(*iter).element();
+		const ElementCOP & element_data = gasteiger_atom_type_set_->element_set()->element( element_symbol );
 		if( element_data->get_main_group() >= 1 && element_data->get_main_group() <= 3) {
 			SetToType( gasteiger_atom_type_set_->atom_type("O_TrTrTrPi2"));
 			return;
@@ -1165,21 +1167,22 @@ void PossibleAtomTypesForAtom::FinalizeOxygenThreeSingle( const core::chemical::
 //}
 
 //! @brief test whether a particular atom is unsaturated
+//! @param ATOM the atom of interest
 //! @return true if atom has no A. unsaturated bonds or B. is part of an aromatic ring or C. has empty orbitals
-//! @details Virtual atoms are treated like ordinary atoms.
-bool PossibleAtomTypesForAtom::IsUnsaturated( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD ) const
+bool PossibleAtomTypesForAtom::IsUnsaturated( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD ) const
 {
-	RealResidueOutEdgeIter iter, iter_end;
-	for( boost::tie(iter,iter_end) = boost::out_edges(atomVD, graph); iter != iter_end; ++iter ) {
-		BondOrder const & order = graph[ *iter ].order();
-		if( order == DoubleBondOrder || order == TripleBondOrder || graph[ *iter ].aromaticity() == IsAromaticBond ) {
+	OutEdgeIter iter, iter_end;
+	for( boost::tie(iter,iter_end) = restype.bond_iterators(atomVD); iter != iter_end; ++iter ) {
+		BondOrder const & order = restype.bond(*iter).order();
+		if( order == DoubleBondOrder || order == TripleBondOrder || restype.bond(*iter).aromaticity() == IsAromaticBond ) {
 			return true;
 		}
 	}
 	// no aromatic or unsaturated bonds; last resort, check for empty orbitals
-	const ElementCOP & element_data = graph[ atomVD ].element_type();
+	std::string const & element_symbol = restype.atom_type(atomVD).element();
+	const ElementCOP & element_data = gasteiger_atom_type_set_->element_set()->element( element_symbol );
 	// TODO: Need to normalize this with the formal charge resetting
-	if( element_data->get_main_group() - graph[ atomVD ].formal_charge() != 3 ) {
+	if( element_data->get_main_group() - restype.atom(atomVD).formal_charge() != 3 ) {
 		return false;
 	}
 	return true;
@@ -1188,13 +1191,12 @@ bool PossibleAtomTypesForAtom::IsUnsaturated( const core::chemical::RealResidueG
 //! @brief count unsaturated neighbors
 //! @param ATOM the atom of interest
 //! @return the number of unsaturated neighbors around ATOM
-//! @details Virtual atoms are treated like ordinary atoms.
-core::Size PossibleAtomTypesForAtom::CountUnsaturatedNeighbors( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD ) const
+core::Size PossibleAtomTypesForAtom::CountUnsaturatedNeighbors( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD ) const
 {
 	core::Size unsaturated_counts( 0);
-	RealResidueAdjacentIter iter, iter_end;
-	for( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
-		if( IsUnsaturated( graph, *iter ) )
+	AdjacentIter iter, iter_end;
+	for( boost::tie(iter,iter_end) = restype.bonded_neighbor_iterators(atomVD); iter != iter_end; ++iter ) {
+		if( IsUnsaturated( restype, *iter ) )
 		{
 			++unsaturated_counts;
 		}
@@ -1205,17 +1207,19 @@ core::Size PossibleAtomTypesForAtom::CountUnsaturatedNeighbors( const core::chem
 //! @brief test whether atom is bonded to any halogens
 //! @param ATOM the atom of interest
 //! @return true if the atom is bonded to any halogens
-bool PossibleAtomTypesForAtom::IsBondedToAHalogen( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD ) const
+bool PossibleAtomTypesForAtom::IsBondedToAHalogen( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD ) const
 {
-	RealResidueAdjacentIter iter, iter_end;
-	for( boost::tie(iter,iter_end) = boost::adjacent_vertices( atomVD, graph ); iter != iter_end; ++iter ) {
-		const ElementCOP & element_data = graph[ *iter ].element_type();
+	AdjacentIter iter, iter_end;
+	for( boost::tie(iter,iter_end) = restype.bonded_neighbor_iterators(atomVD); iter != iter_end; ++iter ) {
+		std::string const & element_symbol = restype.atom_type(*iter).element();
+		const ElementCOP & element_data = gasteiger_atom_type_set_->element_set()->element( element_symbol );
 		if( element_data->get_main_group() == 7 ) {
 			return true;
 		}
 	}
 	return false;
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1242,32 +1246,22 @@ bool PossibleAtomTypesForAtom::IsBondedToAHalogen( const core::chemical::RealRes
 
 void
 assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAtomTypeSetCOP const & gasteiger_atom_type_set, bool keep_existing) {
-	assert( gasteiger_atom_type_set );
 	// This functionality was taken from AtomsCompleteStandardizer
 
-	//# RemoveObviousIonicBonds( ATOMS )
+	//# RemoveObviousIonicBonds( ATOMS)
 	//# graph::EdgeCoverRingPerception( m_Graph)
 	//# AddRingInformationToBondTypes()
 
 	// Initialize();
 	std::map< VD, PossibleAtomTypesForAtom > PossibleAtomTypes;
 
-	// A subgraph of the residue type with all the fake bonds and edges removed.
-	// The Gasteiger typing assumes what you're typing is all real bonds and atoms.
-	RealFilter filter( restype.graph() );
-	RealResidueGraph real_graph( restype.graph(), filter );
-
 	VIter iter, iter_end;
 	for( boost::tie(iter,iter_end) = restype.atom_iterators(); iter != iter_end; ++iter ) {
 		if( keep_existing && restype.atom(*iter).gasteiger_atom_type() &&
 				restype.atom(*iter).gasteiger_atom_type()->is_gasteiger_atom_type() ) {
 			; // Ignore vertex
-		} else if ( restype.atom(*iter).is_fake() ) {
-			restype.atom(*iter).gasteiger_atom_type( gasteiger_atom_type_set->type_for_fake_atoms() );
 		} else {
-			core::Size connections( restype.n_residue_connections_for_atom( restype.atom_index(*iter) ) );
-			// This makes the (probably justifilable) assumption that VDs for the main graph can be converted simply to VDs of the filtered graph.
-			PossibleAtomTypes[ *iter ] = GetPossibleTypesForAtom( real_graph, *iter, gasteiger_atom_type_set, connections);
+			PossibleAtomTypes[ *iter ] = GetPossibleTypesForAtom( restype, *iter, gasteiger_atom_type_set);
 			if( ! PossibleAtomTypes[ *iter ].GetMostStableType() ) {
 				utility_exit_with_message("Cannot find appropriate gasteiger type for atom.");
 			}
@@ -1282,7 +1276,7 @@ assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAto
 		if( miter->second.GetMostStableType() )
 		{
 			// determine final atom type, taking into account neighboring atom types
-			miter->second.Finalize( real_graph, miter->first );
+			miter->second.Finalize( restype, miter->first );
 			restype.atom(miter->first).gasteiger_atom_type( miter->second.GetMostStableType() );
 			// TODO: reset the formal charge if there isn't one already.
 		}
@@ -1299,13 +1293,10 @@ assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAto
 //! @brief get all atom types matching a given atom considering its bonds
 //! @param ATOM atom of interest
 //! @return PossibleAtomTypesForAtom
-PossibleAtomTypesForAtom GetPossibleTypesForAtom(
-				const core::chemical::RealResidueGraph & graph,
-				VD const & atomVD,
-				GasteigerAtomTypeSetCOP const & gasteiger_atom_type_set,
-				core::Size connections )
+PossibleAtomTypesForAtom GetPossibleTypesForAtom( core::chemical::ResidueType const & restype, VD const & atomVD, GasteigerAtomTypeSetCOP const & gasteiger_atom_type_set )
 {
 	// determine number of sigma orbitals (assume one per bond)
+	// TODO: What about pseudo-bonds?
 	core::Size nr_bonds( 0 );
 
 	// count conjugated bonds, that is, that had a partial bond order
@@ -1317,14 +1308,14 @@ PossibleAtomTypesForAtom GetPossibleTypesForAtom(
 //	core::Size min_e_in_bonds( 0);
 //	core::Size max_e_in_bonds( 0);
 
-	RealResidueOutEdgeIter itr_bonds, iter_end;
-	for( boost::tie(itr_bonds,iter_end) = boost::out_edges(atomVD, graph); itr_bonds != iter_end; ++itr_bonds ) {
+	OutEdgeIter itr_bonds, iter_end;
+	for( boost::tie(itr_bonds,iter_end) = restype.bond_iterators(atomVD); itr_bonds != iter_end; ++itr_bonds ) {
 		++nr_bonds;
-		nr_e_in_bonds += graph[ *itr_bonds ].GetNumberOfElectrons();
-//		min_e_in_bonds += graph[ *itr_bonds ].GetMinimumElectrons();
-//		max_e_in_bonds += graph[ *itr_bonds ].GetMaximumElectrons();
-		number_bonds_unknown_order += ! graph[ *itr_bonds ].IsBondOrderKnown();
-		number_aromatic_bonds += (graph[ *itr_bonds ].aromaticity() == IsAromaticBond);
+		nr_e_in_bonds += restype.bond(*itr_bonds).GetNumberOfElectrons();
+//		min_e_in_bonds += restype.bond(*itr_bonds).GetMinimumElectrons();
+//		max_e_in_bonds += restype.bond(*itr_bonds).GetMaximumElectrons();
+		number_bonds_unknown_order += ! restype.bond(*itr_bonds).IsBondOrderKnown();
+		number_aromatic_bonds += (restype.bond(*itr_bonds).aromaticity() == IsAromaticBond);
 	}
 
 	if( number_bonds_unknown_order == 1)
@@ -1333,38 +1324,27 @@ PossibleAtomTypesForAtom GetPossibleTypesForAtom(
 		++nr_e_in_bonds;
 	}
 
-	// Handle connections - each is a (single) bond
-	nr_bonds += connections;
-	nr_e_in_bonds += 2*connections;
-
 	// divide by 2 to count electrons in orbitals
 	nr_e_in_bonds /= 2;
 //	min_e_in_bonds /= 2;
 //	max_e_in_bonds /= 2;
 
 	// handle implicit hydrogens and charge
-	const ElementCOP & element_data = graph[ atomVD ].element_type();
+	std::string element_symbol = restype.atom_type(atomVD).element();
+	const ElementCOP element_data = gasteiger_atom_type_set->element_set()->element( element_symbol );
 	const ElectronConfiguration &e_config( element_data->get_electron_configuration());
-	int formal_charge = graph[ atomVD ].formal_charge();
+	int formal_charge = restype.atom(atomVD).formal_charge();
+	const size_t valence_e( e_config.valence_electrons_sp() - formal_charge);
 
-	int implicit_hydrogens = 0 ;
-
-	//Things like transition metals have undefined sp valence electrons.
-	// We'll just assume that they don't have implict hydrogens.
-	// (For Rosetta any hydrogens should be explicit anyway.)
-	if( ! numeric::is_undefined( e_config.valence_electrons_sp() ) ) {
-		const size_t valence_e( e_config.valence_electrons_sp() - formal_charge);
-
-		// Find the total number of unpaired valence electrons of *itr_atom
-		const int unpaired_valence_e( std::min( valence_e, e_config.max_valence_electrons_sp() - valence_e));
-		implicit_hydrogens = unpaired_valence_e - nr_e_in_bonds;
-	}
+	// Find the total number of unpaired valence electrons of *itr_atom
+	const int unpaired_valence_e( std::min( valence_e, e_config.max_valence_electrons_sp() - valence_e));
+	const int implicit_hydrogens( unpaired_valence_e - nr_e_in_bonds);
 
 	// Note: Most implicit hydrogen issues I've seen have been due to misplaced/missing formal charges on atoms,
 	// Or atoms simply lacking substituents (e.g. a conjugated residue treated as a stand-alone residue).
 	if( implicit_hydrogens > 0 ) {
 		TR.Warning << "Gasteiger atom typing thinks you have implicit Hydrogens!" << std::endl;
-		TR.Warning << "   " << core::Size(implicit_hydrogens) << " missing hydrogens on atom " << graph[ atomVD ].name() << std::endl;
+		TR.Warning << "   " << implicit_hydrogens << " missing hydrogens on atom " << restype.atom( atomVD ).name() << std::endl;
 		nr_e_in_bonds += implicit_hydrogens;
 		nr_bonds += implicit_hydrogens;
 	}

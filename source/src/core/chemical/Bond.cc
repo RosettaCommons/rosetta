@@ -10,11 +10,23 @@
 /// @begin Bond
 ///
 /// @brief
-/// A class for holding bond information
+/// A class for defining Bond parameters, known as Bond_types
+///
+/// @details
+/// This class contains the "chemical" information for Bonds. This does not contain the actual
+/// xyz coordinates of the class (xyz found in core/conformation/Bond.hh. The Bond_type properties
+/// are assigned by the class BondSet which is initiated from the ChemicalManager. Bond type properties
+/// are currently are read in from the file located chemical/Bond_type_sets/fa_standard/Bond_properties.txt.
+/// These properties contain the the properties of LJ_RADIUS, LJ_WDEPTH, LK_DGRFREE, LK_LAMBDA, LK_VOLUME.
+/// These properties are used in the scoring function fa_atr, fa_rep, fa_sol, which is located in the Etable (core/scoring/etable/Etable.hh)
+/// Additional parameters are acceptor/donor, hybridzation, and orbital paramaters.
+///
+///
 ///
 /// @author
 /// Rocco Moretti (rmorettiase@gmail.com)
-/// Steven Combs
+/// Phil Bradley
+/// Steven Combs - comments
 ///
 /////////////////////////////////////////////////////////////////////////
 
@@ -23,30 +35,12 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
-
 #include <basic/Tracer.hh>
 
 namespace core {
 namespace chemical {
 
 static basic::Tracer TR("core.chemical.Bond");
-
-BondName convert_to_BondName( std::string const & id ) {
-	int id_int( utility::string2int( id ) );
-	// Will return -1 if it's not an integer
-	if( id_int >= 0 && id_int <= 4 ) {
-		return BondName( id_int );
-	}
-	if( id_int >= 5 && id_int <= 8 ) { // SDF "Any" and degenerate query bonds.
-		return UnknownBond;
-	}
-
-	// Should we have string conversions here?
-
-	utility_exit_with_message("Unable to convert '" + id + "' to a bond type description.");
-	return UnknownBond;
-}
 
 Bond::Bond():
 		distance_(0),

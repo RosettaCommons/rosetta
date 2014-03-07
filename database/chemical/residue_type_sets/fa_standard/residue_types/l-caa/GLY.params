@@ -18,7 +18,7 @@ BOND  N    H
 BOND  CA   C  
 BOND  CA  1HA 
 BOND  CA  2HA 
-BOND_TYPE  C    O  2
+BOND  C    O  
 PROPERTIES PROTEIN
 NBR_ATOM CA
 # APL CA to O distance -- not yet measured; default to max CB to O distance
