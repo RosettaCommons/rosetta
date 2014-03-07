@@ -18,7 +18,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/init/init.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
@@ -99,13 +99,15 @@ stepwise_monte_carlo()
 	// actual pose to be sampled...
 	pose::Pose & pose = *input_poses[ 1 ];
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 500, 500 );
-	try_reroot_at_fixed_domain( pose );
+	//	try_reroot_at_fixed_domain( pose ); // trying to deprecate
 
 	StepWiseRNA_MonteCarlo stepwise_rna_monte_carlo( scorefxn );
 	StepWiseRNA_MonteCarloOptionsOP options = new StepWiseRNA_MonteCarloOptions;
 	options->initialize_from_command_line();
 	stepwise_rna_monte_carlo.set_options( options );
 	stepwise_rna_monte_carlo.set_native_pose( native_pose );
+	stepwise_rna_monte_carlo.set_move( SWA_Move( option[ OptionKeys::stepwise::rna::move ]() ) );
+	stepwise_rna_monte_carlo.set_enumerate( option[ OptionKeys::stepwise::rna::enumerate ]());
 
 	std::string const silent_file = option[ out::file::silent ]();
 	stepwise_rna_monte_carlo.set_out_path( FileName( silent_file ).path() );
@@ -162,7 +164,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_internal_local_moves );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_skip_bulge );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::temperature );
-		option.add_relevant( OptionKeys::stepwise::monte_carlo::extra_min_res );
+		option.add_relevant( OptionKeys::full_model::extra_min_res );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_variable_bond_geometry );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::constraint_x0 );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::constraint_tol );
@@ -173,6 +175,8 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed );
 		option.add_relevant( OptionKeys::stepwise::rna::force_centroid_interaction );
 		option.add_relevant( OptionKeys::stepwise::rna::rebuild_bulge_mode );
+		option.add_relevant( OptionKeys::stepwise::rna::move );
+		option.add_relevant( OptionKeys::stepwise::rna::enumerate );
 		option.add_relevant( basic::options::OptionKeys::stepwise::rna::bulge_res );
 		option.add_relevant( basic::options::OptionKeys::stepwise::rna::terminal_res );
 		option.add_relevant( OptionKeys::rna::corrected_geo );

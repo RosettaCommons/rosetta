@@ -556,7 +556,7 @@ RNA_HelixAssembler::append_Aform_residue( pose::Pose & pose, Size const & n, cha
 		id_list.push_back( TorsionID( n+1, BB, 4) );
 		id_list.push_back( TorsionID( n+1, BB, 5) );
 		id_list.push_back( TorsionID( n+1, BB, 6) );
-		id_list.push_back( TorsionID( n+1, CHI, 1) );
+		id_list.push_back( TorsionID( n+1, id::CHI, 1) );
 		perturb_torsion(pose, id_list);
 	}
 }
@@ -590,7 +590,7 @@ RNA_HelixAssembler::prepend_Aform_residue( pose::Pose & pose, Size const & n, ch
 		id_list.push_back( TorsionID( n, BB, 4) );
 		id_list.push_back( TorsionID( n, BB, 5) );
 		id_list.push_back( TorsionID( n, BB, 6) );
-		id_list.push_back( TorsionID( n, CHI, 1) );
+		id_list.push_back( TorsionID( n, id::CHI, 1) );
 		id_list.push_back( TorsionID( n+1, BB, 1) );
 		id_list.push_back( TorsionID( n+1, BB, 2) );
 		id_list.push_back( TorsionID( n+1, BB, 3) );

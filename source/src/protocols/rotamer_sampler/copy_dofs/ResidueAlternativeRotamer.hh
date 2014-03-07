@@ -38,6 +38,9 @@ namespace copy_dofs {
 															 core::pose::Pose const & starting_pose );
 
 		//constructor
+		ResidueAlternativeRotamer( ResidueAlternativeSet const & residue_alternative_set );
+
+		//constructor
 		ResidueAlternativeRotamer( utility::vector1< core::pose::PoseOP > const & pose_list,
 															 std::map< Size, Size > const & res_map,
 															 Size const representative_seqpos,

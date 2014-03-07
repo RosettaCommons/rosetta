@@ -35,6 +35,7 @@
 
 #include <utility/tools/make_vector1.hh>
 #include <utility/string_util.hh>
+#include <utility/stream_util.hh>
 
 #include <basic/Tracer.hh>
 
@@ -96,6 +97,11 @@ namespace rna {
 	{
 		using namespace core::pose;
 
+		// in case the deletion is supposed to occur on a pose on which we are not focused.
+		Size const idx = const_full_model_info( pose ).get_idx_for_other_pose_with_residue( residues_to_delete_in_full_model_numbering[ 1 ] );
+		if ( idx > 0 ) switch_focus_to_other_pose( pose, idx );
+
+		// have at it!
 		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 		utility::vector1< Size > const residues_to_delete = full_model_info.full_to_sub( residues_to_delete_in_full_model_numbering );
 
@@ -127,7 +133,7 @@ namespace rna {
 	bool
   RNA_DeleteMover::decide_to_keep_pose( pose::Pose const & pose ) const {
 		return ( check_for_fixed_domain( pose ) ||
-						 ( ( options_->allow_from_scratch() || options_->allow_split_off() ) && pose.total_residue() > 1 ) );
+						 ( ( (options_->from_scratch_frequency() > 0.0) || options_->allow_split_off() ) && pose.total_residue() > 1 ) );
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,7 +159,7 @@ namespace rna {
 				Size const sliced_out_pose_idx = full_model_info.get_idx_for_other_pose( *sliced_out_pose_op );
 				switch_focus_to_other_pose( pose, sliced_out_pose_idx );
 			} else if ( full_model_info.other_pose_list().size() > 0 ){ // switch focus randomly.
-				switch_focus_among_poses_randomly( pose );
+				switch_focus_among_poses_randomly( pose, 0, true /*force_switch*/ );
 			} else {
 				pose_is_alone = true;
 			}
@@ -180,33 +186,13 @@ namespace rna {
 				FullModelInfo & new_full_model_info = nonconst_full_model_info( pose );
 				Size const remainder_pose_idx = new_full_model_info.get_idx_for_other_pose_with_residue( res_in_remainder_pose );
 				new_full_model_info.remove_other_pose_at_idx( remainder_pose_idx );
+				keep_remainder_pose = true; // will tell outside functions to clean up pose variants, etc.
 			}
 
 		}
 
 	}
 
-
-	//////////////////////////////////////////////////////////////////////
-	void
-	RNA_DeleteMover::wipe_out_moving_residues( pose::Pose & pose ) {
-
-		// don't do any minimizing -- just get rid of everything...
-		bool const minimize_after_delete_save( minimize_after_delete_ );
-		minimize_after_delete_ = false;
-
-		utility::vector1< SWA_Move > swa_moves;
-		SWA_MoveSelector swa_move_selector;
-		swa_move_selector.get_delete_move_elements( pose, swa_moves);
-
-		if ( swa_moves.size() > 0 ){ // recursively delete all residues.
-			apply( pose, swa_moves[1].move_element() );
-			wipe_out_moving_residues( pose );
-		}
-
-		minimize_after_delete_ = minimize_after_delete_save;
-
-	}
 
 	////////////////////////////////////////////////////////////////////
 	void
@@ -226,6 +212,28 @@ namespace rna {
 		stepwise_rna_modeler_->set_moving_res_and_reset( 0 );
 		stepwise_rna_modeler_->set_minimize_res( get_moving_res_from_full_model_info( pose ) );
 		stepwise_rna_modeler_->apply( pose );
+
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	// following is not really in use anymore -- perhaps should deprecate.
+	void
+	RNA_DeleteMover::wipe_out_moving_residues( pose::Pose & pose ) {
+
+		// don't do any minimizing -- just get rid of everything...
+		bool const minimize_after_delete_save( minimize_after_delete_ );
+		minimize_after_delete_ = false;
+
+		utility::vector1< SWA_Move > swa_moves;
+		SWA_MoveSelector swa_move_selector;
+		swa_move_selector.get_intramolecular_delete_move_elements( pose, swa_moves);
+
+		if ( swa_moves.size() > 0 ){ // recursively delete all residues.
+			apply( pose, swa_moves[1].move_element() );
+			wipe_out_moving_residues( pose );
+		}
+
+		minimize_after_delete_ = minimize_after_delete_save;
 
 	}
 

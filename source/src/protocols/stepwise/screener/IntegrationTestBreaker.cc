@@ -43,11 +43,11 @@ namespace screener {
 	//////////////////////////////////////////////////////////////////////////
 	bool
 	IntegrationTestBreaker::check_screen() {
-
 		if ( screener_whose_counts_to_check_->count() >= 100 ) return false;
-		if ( final_screener_->count() >= 10 ) native_rmsd_screener_->set_do_screen( true );
-		if ( native_rmsd_screener_->pass_count() >= 10 ) return false;
-
+		if ( native_rmsd_screener_ != 0 ){
+			if ( final_screener_->count() >= 10 ) native_rmsd_screener_->set_do_screen( true );
+			if ( native_rmsd_screener_->pass_count() >= 10 ) return false;
+		}
 		return true;
 	}
 

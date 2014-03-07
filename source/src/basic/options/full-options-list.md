@@ -1933,6 +1933,8 @@ _Note that some application specific options may not be present in this list._
 <dd>First,last res in rg_local. For example to calc rg_local from 1-20 would be 1,20<br/>Default: 0<br/></dd>
 <dt><b>-unmodifypot</b> \<Boolean\></dt>
 <dd>Do not call modify pot to add extra repulsive interactions between Obb/Obb atom types at distances beneath 3.6 Angstroms<br/></dd>
+<dt><b>-conc</b> \<Real\></dt>
+<dd>intermolecular concentration to use in intermol term (give in M)<br/>Default: 1.0<br/></dd>
 </dl>
 + <h3>-score:saxs</h3>
 <dl>
@@ -6040,8 +6042,8 @@ _Note that some application specific options may not be present in this list._
 <dd>Allow moves in which internal cutpoints are created to allow ERRASER rebuilds<br/>Default: false<br/></dd>
 <dt><b>-allow_skip_bulge</b> \<Boolean\></dt>
 <dd>Allow moves in which an intervening residue is skipped and the next one is modeled as floating base<br/>Default: false<br/></dd>
-<dt><b>-allow_from_scratch</b> \<Boolean\></dt>
-<dd>Allow modeling of 'free' dinucleotides that are not part of input poses<br/>Default: false<br/></dd>
+<dt><b>-from_scratch_frequency</b> \<Real\></dt>
+<dd>Allow modeling of 'free' dinucleotides that are not part of input poses<br/>Default: 0.1<br/></dd>
 <dt><b>-allow_split_off</b> \<Boolean\></dt>
 <dd>Allow chunks that do not contain fixed domains to split off after nucleating on fixed domains.<br/>Default: true<br/></dd>
 <dt><b>-cycles</b> \<Integer\></dt>
@@ -6050,6 +6052,8 @@ _Note that some application specific options may not be present in this list._
 <dd>Monte Carlo temperature<br/>Default: 1.0<br/></dd>
 <dt><b>-add_delete_frequency</b> \<Real\></dt>
 <dd>Frequency of add/delete vs. resampling<br/>Default: 0.5<br/></dd>
+<dt><b>-intermolecular_frequency</b> \<Real\></dt>
+<dd>Frequency of intermolecular (docking) vs. intramolecular folding moves<br/>Default: 0.2<br/></dd>
 <dt><b>-minimize_single_res_frequency</b> \<Real\></dt>
 <dd>Frequency with which to minimize the residue that just got rebuilt, instead of all<br/>Default: 0.0<br/></dd>
 <dt><b>-allow_variable_bond_geometry</b> \<Boolean\></dt>
@@ -6058,12 +6062,12 @@ _Note that some application specific options may not be present in this list._
 <dd>Frequency with which to switch the sub-pose that is being modeled<br/>Default: 0.5<br/></dd>
 <dt><b>-just_min_after_mutation_frequency</b> \<Real\></dt>
 <dd>After a mutation, how often to just minimize (without further sampling the mutated residue)<br/>Default: 0.5<br/></dd>
+<dt><b>-local_redock_only</b> \<Boolean\></dt>
+<dd>In ResampleMover, docking partners can change anywhere across connected chains. Force the new partners to be close to the old ones.<br/>Default: true<br/></dd>
 <dt><b>-constraint_x0</b> \<Real\></dt>
 <dd>Target RMSD value for constrained runs<br/>Default: 0.5<br/></dd>
 <dt><b>-constraint_tol</b> \<Real\></dt>
 <dd>Size of flat region for coordinate constraints<br/>Default: 0.5<br/></dd>
-<dt><b>-extra_min_res</b> \<IntegerVector\></dt>
-<dd>specify residues other than those being built that should be minimized<br/>Default: []<br/></dd>
 <dt><b>-make_movie</b> \<Boolean\></dt>
 <dd>create silent files in movie/ with all steps and accepted steps<br/>Default: false<br/></dd>
 </dl>
@@ -6227,6 +6231,8 @@ _Note that some application specific options may not be present in this list._
 <dd>ask swa residue sampler for a random solution<br/>Default: false<br/></dd>
 <dt><b>-virtual_sugar_keep_base_fixed</b> \<Boolean\></dt>
 <dd>When instantiating virtual sugar, keep base fixed -- do not spend a lot of time to minimize!<br/>Default: true<br/></dd>
+<dt><b>-virtual_sugar_do_minimize</b> \<Boolean\></dt>
+<dd>When instantiating virtual sugar, minimize (as in original SWA code) -- takes extra time!<br/>Default: true<br/></dd>
 <dt><b>-sampler_max_centroid_distance</b> \<Real\></dt>
 <dd>max centroid distance of moving base to reference in floating base sampler<br/>Default: 0.0<br/></dd>
 <dt><b>-num_random_samples</b> \<Integer\></dt>
@@ -6235,10 +6241,14 @@ _Note that some application specific options may not be present in this list._
 <dd> filter_user_alignment_res <br/>Default: true<br/></dd>
 <dt><b>-output_pdb</b> \<Boolean\></dt>
 <dd>output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.<br/>Default: false<br/></dd>
-<dt><b>-new_framework</b> \<Boolean\></dt>
-<dd>testing sample-and-screen framework<br/>Default: false<br/></dd>
+<dt><b>-tether_jump</b> \<Boolean\></dt>
+<dd>In rigid body moves, keep moving residue close to (jump-connected) reference residue  (8.0 A) and force centroid interaction between them<br/>Default: true<br/></dd>
+<dt><b>-move</b> \<StringVector\></dt>
+<dd>For SWM. Format: 'ADD 5 ATTACHED_TO_PREVIOUS 4'<br/>Default: []<br/></dd>
+<dt><b>-enumerate</b> \<Boolean\></dt>
+<dd>For SWM. Force enumeration (SWA-like) instead of random<br/>Default: false<br/></dd>
 <dt><b>-unified_framework</b> \<Boolean\></dt>
-<dd>testing unified sample-and-screen framework<br/>Default: false<br/></dd>
+<dd>testing unified sample-and-screen framework<br/>Default: true<br/></dd>
 </dl>
 + <h2>-full_model</h2>
 <dl>
@@ -6250,6 +6260,14 @@ _Note that some application specific options may not be present in this list._
 <dd>closed cutpoints in full model<br/>Default: []<br/></dd>
 <dt><b>-other_poses</b> \<StringVector\></dt>
 <dd>list of PDB files containing other poses<br/></dd>
+<dt><b>-extra_min_res</b> \<IntegerVector\></dt>
+<dd>specify residues other than those being built that should be minimized<br/>Default: []<br/></dd>
+<dt><b>-jump_res</b> \<IntegerVector\></dt>
+<dd>optional: residues for defining jumps -- please supply in pairs<br/>Default: []<br/></dd>
+<dt><b>-root_res</b> \<IntegerVector\></dt>
+<dd>optional: desired root res (used in SWM move testing)<br/>Default: []<br/></dd>
+<dt><b>-virtual_sugar_res</b> \<IntegerVector\></dt>
+<dd>optional: starting virtual sugars (used in SWM move testing)<br/>Default: []<br/></dd>
 </dl>
 + <h2>-ufv</h2>
 <dl>

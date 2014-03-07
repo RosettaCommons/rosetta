@@ -15,6 +15,7 @@
 
 #include <protocols/stepwise/monte_carlo/rna/RNA_FromScratchMover.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -59,11 +60,15 @@ namespace rna {
 		utility::vector1< Size > const & resnum = residues_to_instantiate_in_full_model_numbering;
 
 		// only do dinucleotides for now.
-		runtime_assert( residues_to_instantiate_in_full_model_numbering.size() == 2 );
+		runtime_assert( resnum.size() == 2 );
 
 		std::string new_sequence;
 		std::string const & full_sequence = const_full_model_info( pose ).full_sequence();
-		for ( Size n = 1; n <= resnum.size(); n++ ) new_sequence += full_sequence[ resnum[n]-1 ];
+		for ( Size n = 1; n <= resnum.size(); n++ ) {
+			char newrestype = full_sequence[ resnum[n]-1 ];
+			sampling::rna::choose_random_if_unspecified_nucleotide( newrestype );
+			new_sequence += newrestype;
+		}
 
 		ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 		Pose new_pose;
@@ -97,7 +102,7 @@ namespace rna {
 
 	//////////////////////////////////////////////////////////////////////////////
 	void
-	RNA_FromScratchMover::sample_by_swa( pose::Pose & pose, Size const sample_res ) const{
+	RNA_FromScratchMover::sample_by_swa( pose::Pose & pose, Size const sample_res ) const {
 		stepwise_rna_modeler_->set_moving_res_and_reset( sample_res );
 		stepwise_rna_modeler_->set_minimize_res( get_moving_res_from_full_model_info( pose ) );
 		stepwise_rna_modeler_->apply( pose );

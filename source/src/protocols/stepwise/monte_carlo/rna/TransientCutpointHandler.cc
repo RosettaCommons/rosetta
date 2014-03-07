@@ -21,6 +21,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/rna/RNA_Util.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
 
 #include <basic/Tracer.hh>
@@ -64,7 +65,7 @@ namespace rna {
 		// create reasonable fold tree
 		prepare_fold_tree_for_erraser( pose );
 
-		correctly_add_cutpoint_variants( pose, cutpoint_suite_ );
+		pose::rna::correctly_add_cutpoint_variants( pose, cutpoint_suite_ );
 
 		viewer_pose = pose;
 	}

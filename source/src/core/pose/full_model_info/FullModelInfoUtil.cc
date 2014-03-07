@@ -16,27 +16,20 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/chemical/types.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/sequence/Sequence.hh>
-#include <core/sequence/util.hh>
 #include <utility/stream_util.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/stream_util.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // C++
 #include <string>
 #include <map>
 
-using ObjexxFCL::string_of;
 static basic::Tracer TR("core.pose.full_model_info.FullModelInfoUtil");
 
 ///////////////////////////////////////////////////////
@@ -187,10 +180,6 @@ update_pdb_info_from_full_model_info( pose::Pose & pose ){
 
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 
-	//	for ( Size i = 1; i <= res_list.size(); i++ ) std::cout << "SUB_TO_FULL " << res_list[i] << std::endl;
-
-	//	PDBInfoOP pdb_info = pose.pdb_info();
-	//	if ( ! pdb_info ) pdb_info = new PDBInfo( pose );
 	PDBInfoOP pdb_info = new PDBInfo( pose );
 	pdb_info->set_numbering( res_list );
 
@@ -211,6 +200,29 @@ figure_out_chains_from_full_model_info( pose::Pose & pose ) {
 	return figure_out_chains_from_full_model_info_const( pose );
 }
 
+
+///////////////////////////////////////////////////////////////////////////////
+utility::vector1< Size >
+get_chains_full( pose::Pose const & pose ){
+
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	std::string const & sequence = full_model_info.full_sequence();
+	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+	utility::vector1< Size > cutpoint_open_in_full_model_including_terminus = cutpoint_open_in_full_model;
+	if ( sequence.size() > 0 ) cutpoint_open_in_full_model_including_terminus.push_back( sequence.size() );
+	runtime_assert( sequence.size() >= pose.total_residue() );
+
+	Size start_res( 1 );
+	utility::vector1< Size > chains_full;
+	for ( Size i = 1; i <= cutpoint_open_in_full_model_including_terminus.size(); i++ ){
+		Size const & end_res = cutpoint_open_in_full_model_including_terminus[ i ];
+		for ( Size n = start_res; n <= end_res; n++ ) chains_full.push_back( i );
+		start_res = end_res + 1;
+	}
+	return chains_full;
+
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // assign to different chains. [Note: we could actually use PDBInfo for this bookkeeping... perhaps that's a good idea]
 // label them 1, 2, 3, etc.
@@ -220,42 +232,19 @@ figure_out_chains_from_full_model_info_const( pose::Pose const & pose ) {
 	using namespace core::pose::full_model_info;
 
 	// first assign chains to full model
-	utility::vector1< Size > chains_full;
-
-	FullModelInfo const & full_model_info = const_full_model_info( pose );
-	std::string const & sequence = full_model_info.full_sequence();
-	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+	utility::vector1< Size > const chains_full = get_chains_full( pose );
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
-
-	utility::vector1< Size > cutpoint_open_in_full_model_including_terminus = cutpoint_open_in_full_model;
-	cutpoint_open_in_full_model_including_terminus.push_back( sequence.size() );
-	runtime_assert( sequence.size() >= pose.total_residue() );
-
-	Size start_res( 1 );
-
-	for ( Size i = 1; i <= cutpoint_open_in_full_model_including_terminus.size(); i++ ){
-
-		Size const & end_res = cutpoint_open_in_full_model_including_terminus[ i ];
-
-		//		TR << "chain " << i << ": " << start_res << " to " << end_res << std::endl;
-		for ( Size n = start_res; n <= end_res; n++ ) chains_full.push_back( i );
-
-		start_res = end_res + 1;
-	}
-
 
 	// now figure out chains in working model
 	utility::vector1< Size > chains( pose.total_residue(), 1 );
-
 	for ( Size n = 1; n <= pose.total_residue(); n++ ){
+		if ( n > res_list.size() ) continue;
 		runtime_assert( res_list[ n ] <= chains_full.size() );
 		chains[ n ]  = chains_full[ res_list[ n ] ];
-		TR.Debug << "Setting chain at " << n << " to " << chains[ n  ] << std::endl;
 	}
 
 	return chains;
 }
-
 
 ///////////////////////////////////////////////////////////////////
 bool
@@ -320,13 +309,18 @@ check_full_model_info_OK( pose::Pose const & pose ){
 		return full_model_info.res_list();
 	}
 
-
 	///////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< utility::vector1< Size > >
 	get_move_elements_from_full_model_info( pose::Pose & pose ){
+		pose::full_model_info::make_sure_full_model_info_is_setup( pose );
+		return get_move_elements_from_full_model_info_const( pose );
+	}
 
+	///////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< utility::vector1< Size > >
+	get_move_elements_from_full_model_info_const( pose::Pose const & pose ){
 
-		FullModelInfo full_model_info = nonconst_full_model_info( pose );
+		FullModelInfo full_model_info = const_full_model_info( pose );
 		utility::vector1< Size > const & fixed_domain_map =  full_model_info.fixed_domain_map();
 		utility::vector1< Size > const & res_list = full_model_info.res_list();
 
@@ -385,141 +379,17 @@ check_full_model_info_OK( pose::Pose const & pose ){
 
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////
-	void
-	fill_full_model_info_from_command_line( pose::Pose & pose ){
-		utility::vector1< PoseOP > other_pose_ops; // dummy
-		fill_full_model_info_from_command_line( pose, other_pose_ops );
-	}
-
-	///////////////////////////////////////////////////////////////////////////////////////
-	void
-	fill_full_model_info_from_command_line( utility::vector1< PoseOP > & pose_ops ){
-
-		runtime_assert( pose_ops.size() > 0 );
-
-		utility::vector1< PoseOP > other_pose_ops;
-		for ( Size n = 2; n <= pose_ops.size(); n++ ) other_pose_ops.push_back( pose_ops[n] );
-
-		fill_full_model_info_from_command_line( *(pose_ops[1]), other_pose_ops );
-	}
-
-
-	///////////////////////////////////////////////////////////////////////////////////////
-	// this is needed so that first pose holds pointers to other poses.
-	void
-	fill_full_model_info_from_command_line( pose::Pose & pose, utility::vector1< PoseOP > & other_pose_ops ){
-
-		utility::vector1< Pose * > pose_pointers;
-		pose_pointers.push_back( & pose );
-		for ( Size n = 1; n <= other_pose_ops.size(); n++ ) pose_pointers.push_back( & (*other_pose_ops[ n ]) );
-
-		fill_full_model_info_from_command_line( pose_pointers );
-
-		nonconst_full_model_info( pose ).set_other_pose_list( other_pose_ops );
-
-	}
-
-
-	///////////////////////////////////////////////////////////////////////////////////////
-	void
-	fill_full_model_info_from_command_line( utility::vector1< Pose * > & pose_pointers ){
-
-		using namespace basic::options;
-		using namespace basic::options::OptionKeys;
-
-		if ( !option[ in::file::fasta ].user() ){
-			for ( Size n = 1; n <= pose_pointers.size(); n++ ) nonconst_full_model_info( *pose_pointers[n] );
-			return;
-		}
-
-		std::string const fasta_file = option[ in::file::fasta ]()[1];
-		core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
-		std::string const desired_sequence = fasta_sequence->sequence();
-
-		FullModelInfoOP full_model_info =	new FullModelInfo( desired_sequence );
-
-		utility::vector1< Size > cutpoint_open_in_full_model;
-		if ( option[ full_model::cutpoint_open ].user()) cutpoint_open_in_full_model = option[ full_model::cutpoint_open ]();
-
-		utility::vector1< Size > input_res_list = option[ in::file::input_res ]();
-		bool const get_res_list_from_pdb = !option[ in::file::input_res ].user();
-		utility::vector1< utility::vector1< Size > > pose_res_lists;
-		utility::vector1< Size > domain_map( desired_sequence.size(), 0 );
-		Size input_res_count( 0 );
-
-		for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
-
-			Pose & pose = *pose_pointers[n];
-			utility::vector1< Size > input_res_for_pose;
-
-			if ( get_res_list_from_pdb ){
-				utility::vector1< Size >  const res_list = get_res_num_from_pdb_info( pose );
-				for ( Size n = 1; n <= res_list.size(); n++ ) input_res_list.push_back( res_list[n] );
-			}
-
-			for ( Size k = 1; k <= pose.total_residue(); k++ ){
-				input_res_count++;
-				runtime_assert( input_res_count <= input_res_list.size() );
-				Size const & number_in_full_model = input_res_list[ input_res_count ];
-				input_res_for_pose.push_back( number_in_full_model );
-				domain_map[ number_in_full_model ] = n;
-			}
-			pose_res_lists.push_back( input_res_for_pose );
-		}
-		if ( input_res_count != input_res_list.size() ) utility_exit_with_message( "input_res size does not match pose size" );
-		runtime_assert( input_res_count == input_res_list.size() );
-
-		// check for extra cutpoint open.
-		for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
-			Pose & pose = *pose_pointers[n];
-			utility::vector1< Size > const & res_list = pose_res_lists[ n ];
-			for ( Size i = 1; i < pose.total_residue(); i++ ){
-				if ( cutpoint_open_in_full_model.has_value( res_list[ i ]) ) continue;
-				if ( (res_list[ i+1 ] == res_list[ i ] + 1) &&
-						 pose.fold_tree().is_cutpoint( i ) ){
-					TR << "There appears to be a strand boundary at " << res_list[ i ] << " so adding to cutpoint_in_full_model." << std::endl;
-					cutpoint_open_in_full_model.push_back( res_list[ i ] );
-				}
-				if ( (res_list[ i+1 ] > res_list[ i ] + 1) && !pose.fold_tree().is_cutpoint(i) ){
-					TR << "Adding jump between non-contiguous residues [in full model numbering]: " << res_list[i] << " and " << res_list[ i+1 ] << std::endl;
-					// skipped a residue -- there should be a cutpoint here!
-					core::kinematics::FoldTree f = pose.fold_tree();
-					Size const new_jump = f.new_jump( i, i+1, i );
-					if ( pose.residue_type( i ).is_RNA() && pose.residue_type( i+1 ).is_RNA() ){
-						f.set_jump_atoms( new_jump,
-															chemical::rna::default_jump_atom( pose.residue( f.upstream_jump_residue( new_jump ) ) ),
-															chemical::rna::default_jump_atom( pose.residue( f.downstream_jump_residue( new_jump ) ) ) );
-					}
-					pose.fold_tree( f );
-				}
-			}
-		}
-
-		full_model_info->set_fixed_domain_map( domain_map );
-		full_model_info->set_cutpoint_open_in_full_model( cutpoint_open_in_full_model );
-
-		for ( Size n = 1; n <= pose_pointers.size(); n++ ) {
-			Pose & pose = *pose_pointers[n];
-			FullModelInfoOP full_model_info_for_pose = full_model_info->clone_info();
-			full_model_info_for_pose->set_res_list( pose_res_lists[ n ] );
-			pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info_for_pose );
-			update_pdb_info_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering.
-		}
-
-	}
-
 	/////////////////////////////////////////////////////////
 	core::Size
-	sub_to_full( core::Size const i, core::pose::Pose & pose ){
-		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
+	sub_to_full( core::Size const i, core::pose::Pose const & pose ){
+		FullModelInfo const & full_model_info = const_full_model_info( pose );
 		return full_model_info.res_list()[ i ];
 	}
 
 	/////////////////////////////////////////////////////////
 	core::Size
-	full_to_sub( core::Size const i, core::pose::Pose & pose ){
-		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
+	full_to_sub( core::Size const i, core::pose::Pose const & pose ){
+		FullModelInfo const & full_model_info = const_full_model_info( pose );
 		return full_model_info.res_list().index( i );
 	}
 
@@ -612,6 +482,18 @@ check_full_model_info_OK( pose::Pose const & pose ){
 		}
 
 		return resnum;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	get_chain_for_full_model_resnum( Size const & resnum, pose::Pose const & pose ){
+		return get_chains_full( pose )[ resnum ];
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	get_chain_for_resnum( Size const & resnum, pose::Pose const & pose ){
+		return figure_out_chains_from_full_model_info_const( pose )[ resnum ];
 	}
 
 }

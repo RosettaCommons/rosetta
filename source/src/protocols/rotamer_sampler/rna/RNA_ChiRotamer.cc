@@ -35,8 +35,8 @@ namespace rna {
 // Constructor
 RNA_ChiRotamer::RNA_ChiRotamer(
 	Size const rsd_id,
-	Size const pucker_state,
-	Size const base_state
+	PuckerState const pucker_state,
+	ChiState const base_state
 ):
 	RotamerOneTorsion(),
 	rsd_id_( rsd_id ),
@@ -53,20 +53,20 @@ void RNA_ChiRotamer::init() {
 	Real chi_center;
 	TorsionList allowed_torions;
 	if ( pucker_state_ == NORTH ) {
-		if ( base_state_ == ANTI || base_state_ == WHATEVER ) {
+		if ( base_state_ == ANTI || base_state_ == ANY_CHI ) {
 			chi_center = torsion_info_.chi_north_anti();
 			add_values_from_center( allowed_torions, chi_center, max_range_, bin_size_ );
 		}
-		if ( base_state_ == SYN || base_state_ == WHATEVER ) {
+		if ( base_state_ == SYN || base_state_ == ANY_CHI ) {
 			chi_center = torsion_info_.chi_north_syn();
 			add_values_from_center( allowed_torions, chi_center, max_range_, bin_size_ );
 		}
 	} else if ( pucker_state_ == SOUTH ) {
-		if ( base_state_ == ANTI || base_state_ == WHATEVER ) {
+		if ( base_state_ == ANTI || base_state_ == ANY_CHI ) {
 			chi_center = torsion_info_.chi_south_anti();
 			add_values_from_center( allowed_torions, chi_center, max_range_, bin_size_ );
 		}
-		if ( base_state_ == SYN || base_state_ == WHATEVER ) {
+		if ( base_state_ == SYN || base_state_ == ANY_CHI ) {
 			chi_center = torsion_info_.chi_south_syn();
 			add_values_from_center( allowed_torions, chi_center, max_range_, bin_size_ );
 		}

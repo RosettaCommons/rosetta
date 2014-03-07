@@ -19,10 +19,11 @@
 #include <protocols/rotamer_sampler/RotamerBase.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/pose/rna/RNA_Util.hh>
 #include <core/pose/Pose.hh>
-#include <core/types.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.rotamer_sampler.rna.RNA_RotamerSamplerUtil" );
@@ -61,8 +62,8 @@ setup_rotamer_sampler( pose::Pose const & pose,
 
 	/////Get the base and pucker state/////
 	utility::vector1<bool> sample_sugar( 2, false );
-	utility::vector1<Size> base_state( 2, WHATEVER );
-	utility::vector1<Size> pucker_state( 2, WHATEVER );
+	utility::vector1<ChiState> base_state( 2, ANY_CHI );
+	utility::vector1<PuckerState> pucker_state( 2, ANY_PUCKER );
 
 	if ( build_pose_from_scratch || job_parameters->sample_both_sugar_base_rotamer()) {
 		sample_sugar[1] = true;
@@ -77,6 +78,14 @@ setup_rotamer_sampler( pose::Pose const & pose,
 		runtime_assert( is_internal_ );
 	}
 
+	// new ... should be more robust
+	if ( sampling_sugar_at_five_prime(  pose, moving_suite_ ) ) sample_sugar[ 1 ] = true;
+	if ( sampling_sugar_at_three_prime( pose, moving_suite_ ) ) sample_sugar[ 2 ] = true;
+	if ( job_parameters->sample_both_sugar_base_rotamer() ){
+		runtime_assert( sample_sugar[1] );
+		runtime_assert( sample_sugar[2] );
+	}
+
 	for ( Size i = 1; i <= 2; ++i ) {
 		Size const curr_rsd( moving_suite_ + i - 1 );
 		if ( sample_sugar[i] ) {
@@ -86,15 +95,17 @@ setup_rotamer_sampler( pose::Pose const & pose,
 			runtime_assert( !is_north || !is_south );
 			if ( is_north ) pucker_state[i] = NORTH;
 			if ( is_south ) pucker_state[i] = SOUTH;
-			if ( !options->allow_syn_pyrimidine() && !is_purine( pose.residue( curr_rsd ) ) ) {
-				runtime_assert( !is_syn );
-				base_state[i] = ANTI;
-			} else if ( is_syn ) {
-				base_state[i] = SYN;
+			if (  is_purine( pose.residue( curr_rsd ) ) ) {
+				if ( is_syn ) base_state[i] = SYN;
+			} else { // pyrimidine
+				if ( !options->allow_syn_pyrimidine() ){
+					runtime_assert( !is_syn );
+					base_state[i] = ANTI;
+				}
 			}
 		} else {
 			pucker_state[i] = assign_pucker( pose, curr_rsd );
-			base_state[i] = NONE;
+			base_state[i] = NO_CHI;
 		}
 	}
 
@@ -114,8 +125,8 @@ setup_rotamer_sampler( pose::Pose const & pose,
 		Size const sample_nucleoside_res = ( moving_suite_ < chainbreak_suite ) ? (moving_suite_ + 1) : moving_suite_;
 		sampler->set_sample_nucleoside( sample_nucleoside_res );
 		if ( !sample_sugar[ which_nucleoside_to_sample ] ) {
-			sampler->set_base_state( NONE );
-			sampler->set_pucker_state( NONE );
+			sampler->set_base_state( NO_CHI );
+			sampler->set_pucker_state( NO_PUCKER );
 		} else {
 			sampler->set_base_state( base_state[ which_nucleoside_to_sample ] );
 			sampler->set_pucker_state( pucker_state[ which_nucleoside_to_sample ] );
@@ -148,6 +159,25 @@ setup_rotamer_sampler( pose::Pose const & pose,
 	sampler->init();
 
 	return sampler;
+}
+
+/////////////////////////////////////////////////////////////////////////
+bool
+sampling_sugar_at_five_prime( pose::Pose const & pose,
+															Size const moving_suite ) {
+	return ( moving_suite == 1 ||
+					 ( pose.fold_tree().is_cutpoint( moving_suite - 1 ) &&
+						 !pose.residue_type( moving_suite ).has_variant_type( chemical::CUTPOINT_UPPER ) ) );
+}
+
+/////////////////////////////////////////////////////////////////////////
+bool
+sampling_sugar_at_three_prime( pose::Pose const & pose,
+															Size const moving_suite ) {
+
+	return ( (moving_suite + 1) == pose.total_residue() ||
+					 ( pose.fold_tree().is_cutpoint( moving_suite + 1 ) &&
+						 !pose.residue_type( moving_suite + 1 ).has_variant_type( chemical::CUTPOINT_LOWER ) ) );
 }
 
 } //rna

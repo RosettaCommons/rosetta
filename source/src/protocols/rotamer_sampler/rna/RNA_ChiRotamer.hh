@@ -22,6 +22,9 @@
 
 // Project headers
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_Util.hh>
+
+using namespace core::chemical::rna;
 
 namespace protocols {
 namespace rotamer_sampler {
@@ -31,8 +34,8 @@ class RNA_ChiRotamer : public RotamerOneTorsion {
 public:
 	RNA_ChiRotamer(
 		core::Size const rsd_id,
-		core::Size const pucker_state,
-		core::Size const base_state
+		PuckerState const pucker_state,
+		ChiState const base_state
 	);
 
 	/// @brief Initialization
@@ -44,18 +47,18 @@ public:
 	}
 
 	/// @brief Get the pucker state (NORTH / SOUTH)
-	core::Size pucker_state() { return pucker_state_; }
+  PuckerState pucker_state() { return pucker_state_; }
 
 	/// @brief Set the pucker state (NORTH / SOUTH)
-	void set_pucker_state( core::Size const setting ) {
+	void set_pucker_state( PuckerState const setting ) {
 		set_and_reinit( pucker_state_, setting );
 	}
 
 	/// @brief Get the base state (WHATEVER / ANTI / SYN)
-	core::Size base_state() { return base_state_; }
+	ChiState base_state() { return base_state_; }
 
 	/// @brief Set the base state (WHATEVER / ANTI / SYN)
-	void set_base_state( core::Size const setting ) {
+	void set_base_state( ChiState const setting ) {
 		set_and_reinit( base_state_, setting );
 	}
 
@@ -85,7 +88,9 @@ public:
 	virtual RotamerType type() const { return RNA_CHI; }
 
 private:
-	core::Size rsd_id_, base_state_, pucker_state_;
+	core::Size rsd_id_;
+	ChiState base_state_;
+	PuckerState pucker_state_;
 	core::Real bin_size_, max_range_;
 	bool extra_chi_;
 

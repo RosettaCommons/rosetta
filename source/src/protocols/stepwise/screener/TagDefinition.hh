@@ -36,7 +36,7 @@ namespace screener {
 									 StepWiseScreenerOP first_sampler,
 									 bool const sampler_include_torsion_value_in_tag_ = false,
 									 Size const moving_res = 0,
-									 bool const is_prepend = false,
+									 Size const reference_res = 0,
 									 std::string const extra_tag = "" );
 
 		//destructor
@@ -63,8 +63,7 @@ namespace screener {
 		pose::Pose & pose_;
 		StepWiseScreenerOP first_sampler_;
 		bool const sampler_include_torsion_value_in_tag_;
-		Size const moving_res_;
-		bool const is_prepend_;
+		Size const moving_res_, reference_res_;
 		std::string const extra_tag_;
 		std::string tag_;
 

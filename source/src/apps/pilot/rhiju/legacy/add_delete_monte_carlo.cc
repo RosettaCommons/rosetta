@@ -87,13 +87,14 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/farna/RNA_ProtocolUtil.hh>
 #include <protocols/farna/RNA_LoopCloser.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetupFromCommandLine.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetupFromCommandLine.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ResidueSampler.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetup.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetup.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParametersSetup.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.fwd.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_JobParametersSetup.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
+#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParametersUtil.hh>
 
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddMover.hh>
@@ -287,6 +288,7 @@ swa_rna_sample()
   using namespace core::io::silent;
   using namespace core::pose::full_model_info;
 	using namespace protocols::stepwise::sampling::rna;
+	using namespace protocols::stepwise::sampling::rna::legacy;
 	using namespace protocols::stepwise::monte_carlo::rna;
 	using namespace protocols::moves;
 

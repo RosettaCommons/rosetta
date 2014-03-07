@@ -78,7 +78,7 @@ namespace copy_dofs {
 	ResidueAlternativeRotamerComb::fast_forward_to_next_residue_pair( Size const i, Size const j){
 		Size const which_rotamer_i = find_resnum( i );
 		Size const which_rotamer_j = find_resnum( j );
-		//		TR << "fast_forward_to_next_residue_pair " << i << "--" << j << ": " << which_rotamer_i << "--" << which_rotamer_j << ": " << which_rotamer << std::endl;
+		//		TR << "fast_forward_to_next_residue_pair " << i << "--" << j << ": " << which_rotamer_i << "--" << which_rotamer_j  << std::endl;
 		if ( which_rotamer_i == 0 && which_rotamer_j == 0 ){
 			fast_forward(); // fast forward to next rigid body.
 		} else if ( which_rotamer_i == 0 ){

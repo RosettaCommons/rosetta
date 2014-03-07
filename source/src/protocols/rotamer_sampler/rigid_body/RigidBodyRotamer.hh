@@ -75,8 +75,12 @@ namespace rigid_body {
 		core::kinematics::Stub const &
 		get_stub( utility::vector1< Size > const & id_list);
 
+
 		core::kinematics::Stub const &
 		get_stub( Size const id );
+
+		core::kinematics::Stub const &
+		reference_stub(){ return reference_stub_; }
 
 		core::conformation::Residue const &
 		get_residue_at_origin( Size const seqpos );

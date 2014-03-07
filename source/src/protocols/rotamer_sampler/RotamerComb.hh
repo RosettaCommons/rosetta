@@ -63,6 +63,9 @@ public:
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "RotamerComb"; }
 
+	/// @brief Type of class (see enum in RotamerTypes.hh)
+	virtual RotamerType type() const { return COMB; }
+
 private:
 	bool is_empty_;
 	utility::vector1<RotamerBaseOP> rotamer_list_;

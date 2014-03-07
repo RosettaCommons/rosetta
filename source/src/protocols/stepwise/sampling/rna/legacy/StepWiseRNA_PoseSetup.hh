@@ -18,7 +18,7 @@
 #ifndef INCLUDED_protocols_stepwise_rna_StepWiseRNA_PoseSetup_hh
 #define INCLUDED_protocols_stepwise_rna_StepWiseRNA_PoseSetup_hh
 
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetup.fwd.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.fwd.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
@@ -38,6 +38,7 @@ namespace protocols {
 namespace stepwise {
 namespace sampling {
 namespace rna {
+namespace legacy {
 
 //	typedef std::map< std::string, pose::PoseOP > PoseList;
 
@@ -187,6 +188,7 @@ private:
 
 };
 
+} //legacy
 } //rna
 } //sampling
 } //stepwise

@@ -21,6 +21,9 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.fwd.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/types.hh>
+
+using namespace core;
 
 namespace protocols {
 namespace rotamer_sampler {
@@ -33,6 +36,16 @@ namespace rna {
 												 bool const build_pose_from_scratch,
 												 bool const kic_sampling,
 												 bool const close_chain );
+
+	bool
+	sampling_sugar_at_five_prime( pose::Pose const & pose,
+																Size const moving_suite );
+
+
+	bool
+	sampling_sugar_at_three_prime( pose::Pose const & pose,
+																 Size const moving_suite );
+
 
 } //rna
 } //rotamer_sampler

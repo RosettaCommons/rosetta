@@ -85,7 +85,11 @@ public:
 
 	utility::vector1< Size > full_to_sub( utility::vector1< Size > const & res_in_full_model_numbering ) const;
 
+	Size full_to_sub( Size const res_in_full_model_numbering ) const;
+
 	utility::vector1< Size > sub_to_full( utility::vector1< Size > const & res ) const;
+
+	std::map< Size, Size > full_to_sub() const;
 
 	Size sub_to_full( Size const & res ) const;
 

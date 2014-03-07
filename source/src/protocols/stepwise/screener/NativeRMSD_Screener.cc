@@ -47,7 +47,6 @@ namespace screener {
 
 	bool
 	NativeRMSD_Screener::check_screen(){
-
 		if ( !do_screen_ ) return true;
 		if ( suite_rmsd( native_pose_, screening_pose_,
 										 job_parameters_->actually_moving_res(), job_parameters_->is_prepend(), true ) > native_screen_rmsd_cutoff_ ) return false;

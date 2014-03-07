@@ -26,6 +26,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
+using namespace core;
+
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
@@ -44,19 +46,19 @@ namespace rna {
 	public:
 
 		/// @brief Apply the minimizer to one pose
-		virtual void apply( core::pose::Pose & pose_to_visualize );
+		virtual void apply( pose::Pose & pose_to_visualize );
 		virtual std::string get_name() const;
 
 		bool
-		apply( core::pose::Pose & pose,
+		apply( pose::Pose & pose,
 					 std::string & move_type );
 
 		bool
-		apply( core::pose::Pose & pose,
-					 SWA_Move & swa_move );
+		apply( pose::Pose & pose,
+					 SWA_Move const & swa_move );
 
 		bool
-		apply( core::pose::Pose & pose,
+		apply( pose::Pose & pose,
 					 SWA_Move const & swa_move,
 					 std::string & move_type );
 
@@ -66,6 +68,12 @@ namespace rna {
 		void
 		set_options( StepWiseRNA_MonteCarloOptionsCOP options );
 
+		Size
+		get_remodel_res( SWA_Move const & swa_move, pose::Pose const & pose ) const;
+
+		void
+		slide_jump_randomly( pose::Pose & pose, Size & remodel_res ) const;
+
 	private:
 
 		protocols::stepwise::sampling::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
@@ -73,7 +81,7 @@ namespace rna {
 		StepWiseRNA_MonteCarloOptionsCOP options_;
 
 		bool minimize_single_res_;
-
+		bool slide_intermolecular_jumps_;
 	};
 
 } //rna

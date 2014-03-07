@@ -1,8 +1,3 @@
-namespace hotspot { IntegerOptionKey const angle_res( "hotspot:angle_res" );  }
-namespace parser { BooleanOptionKey const parser( "parser" );  }
-namespace parser { StringOptionKey const protocol( "parser:protocol" );  }
-namespace parser { StringVectorOptionKey const script_vars( "parser:script_vars" );  }
-namespace parser { BooleanOptionKey const view( "parser:view" );  }
 namespace parser { StringOptionKey const patchdock( "parser:patchdock" );  }
 namespace parser { IntegerVectorOptionKey const patchdock_random_entry( "parser:patchdock_random_entry" );  }
 namespace DomainAssembly { BooleanOptionKey const DomainAssembly( "DomainAssembly" );  }
@@ -419,18 +414,19 @@ namespace stepwise { namespace monte_carlo { BooleanOptionKey const erraser( "st
 namespace stepwise { namespace monte_carlo { BooleanOptionKey const allow_internal_hinge_moves( "stepwise:monte_carlo:allow_internal_hinge_moves" );  } }
 namespace stepwise { namespace monte_carlo { BooleanOptionKey const allow_internal_local_moves( "stepwise:monte_carlo:allow_internal_local_moves" );  } }
 namespace stepwise { namespace monte_carlo { BooleanOptionKey const allow_skip_bulge( "stepwise:monte_carlo:allow_skip_bulge" );  } }
-namespace stepwise { namespace monte_carlo { BooleanOptionKey const allow_from_scratch( "stepwise:monte_carlo:allow_from_scratch" );  } }
+namespace stepwise { namespace monte_carlo { RealOptionKey const from_scratch_frequency( "stepwise:monte_carlo:from_scratch_frequency" );  } }
 namespace stepwise { namespace monte_carlo { BooleanOptionKey const allow_split_off( "stepwise:monte_carlo:allow_split_off" );  } }
 namespace stepwise { namespace monte_carlo { IntegerOptionKey const cycles( "stepwise:monte_carlo:cycles" );  } }
 namespace stepwise { namespace monte_carlo { RealOptionKey const temperature( "stepwise:monte_carlo:temperature" );  } }
 namespace stepwise { namespace monte_carlo { RealOptionKey const add_delete_frequency( "stepwise:monte_carlo:add_delete_frequency" );  } }
+namespace stepwise { namespace monte_carlo { RealOptionKey const intermolecular_frequency( "stepwise:monte_carlo:intermolecular_frequency" );  } }
 namespace stepwise { namespace monte_carlo { RealOptionKey const minimize_single_res_frequency( "stepwise:monte_carlo:minimize_single_res_frequency" );  } }
 namespace stepwise { namespace monte_carlo { BooleanOptionKey const allow_variable_bond_geometry( "stepwise:monte_carlo:allow_variable_bond_geometry" );  } }
 namespace stepwise { namespace monte_carlo { RealOptionKey const switch_focus_frequency( "stepwise:monte_carlo:switch_focus_frequency" );  } }
 namespace stepwise { namespace monte_carlo { RealOptionKey const just_min_after_mutation_frequency( "stepwise:monte_carlo:just_min_after_mutation_frequency" );  } }
+namespace stepwise { namespace monte_carlo { BooleanOptionKey const local_redock_only( "stepwise:monte_carlo:local_redock_only" );  } }
 namespace stepwise { namespace monte_carlo { RealOptionKey const constraint_x0( "stepwise:monte_carlo:constraint_x0" );  } }
 namespace stepwise { namespace monte_carlo { RealOptionKey const constraint_tol( "stepwise:monte_carlo:constraint_tol" );  } }
-namespace stepwise { namespace monte_carlo { IntegerVectorOptionKey const extra_min_res( "stepwise:monte_carlo:extra_min_res" );  } }
 namespace stepwise { namespace monte_carlo { BooleanOptionKey const make_movie( "stepwise:monte_carlo:make_movie" );  } }
 namespace stepwise { namespace rna { BooleanOptionKey const rna( "stepwise:rna" );  } }
 namespace stepwise { namespace rna { IntegerOptionKey const sampler_num_pose_kept( "stepwise:rna:sampler_num_pose_kept" );  } }
@@ -511,16 +507,23 @@ namespace stepwise { namespace rna { IntegerVectorOptionKey const bulge_res( "st
 namespace stepwise { namespace rna { BooleanOptionKey const rebuild_bulge_mode( "stepwise:rna:rebuild_bulge_mode" );  } }
 namespace stepwise { namespace rna { BooleanOptionKey const choose_random( "stepwise:rna:choose_random" );  } }
 namespace stepwise { namespace rna { BooleanOptionKey const virtual_sugar_keep_base_fixed( "stepwise:rna:virtual_sugar_keep_base_fixed" );  } }
+namespace stepwise { namespace rna { BooleanOptionKey const virtual_sugar_do_minimize( "stepwise:rna:virtual_sugar_do_minimize" );  } }
 namespace stepwise { namespace rna { RealOptionKey const sampler_max_centroid_distance( "stepwise:rna:sampler_max_centroid_distance" );  } }
 namespace stepwise { namespace rna { IntegerOptionKey const num_random_samples( "stepwise:rna:num_random_samples" );  } }
 namespace stepwise { namespace rna { BooleanOptionKey const filter_user_alignment_res( "stepwise:rna:filter_user_alignment_res" );  } }
 namespace stepwise { namespace rna { BooleanOptionKey const output_pdb( "stepwise:rna:output_pdb" );  } }
-namespace stepwise { namespace rna { BooleanOptionKey const new_framework( "stepwise:rna:new_framework" );  } }
+namespace stepwise { namespace rna { BooleanOptionKey const tether_jump( "stepwise:rna:tether_jump" );  } }
+namespace stepwise { namespace rna { StringVectorOptionKey const move( "stepwise:rna:move" );  } }
+namespace stepwise { namespace rna { BooleanOptionKey const enumerate( "stepwise:rna:enumerate" );  } }
 namespace stepwise { namespace rna { BooleanOptionKey const unified_framework( "stepwise:rna:unified_framework" );  } }
 namespace full_model { BooleanOptionKey const full_model( "full_model" );  }
 namespace full_model { IntegerVectorOptionKey const cutpoint_open( "full_model:cutpoint_open" );  }
 namespace full_model { IntegerVectorOptionKey const cutpoint_closed( "full_model:cutpoint_closed" );  }
 namespace full_model { StringVectorOptionKey const other_poses( "full_model:other_poses" );  }
+namespace full_model { IntegerVectorOptionKey const extra_min_res( "full_model:extra_min_res" );  }
+namespace full_model { IntegerVectorOptionKey const jump_res( "full_model:jump_res" );  }
+namespace full_model { IntegerVectorOptionKey const root_res( "full_model:root_res" );  }
+namespace full_model { IntegerVectorOptionKey const virtual_sugar_res( "full_model:virtual_sugar_res" );  }
 namespace ufv { BooleanOptionKey const ufv( "ufv" );  }
 namespace ufv { IntegerOptionKey const left( "ufv:left" );  }
 namespace ufv { IntegerOptionKey const right( "ufv:right" );  }

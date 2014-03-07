@@ -48,8 +48,11 @@ public:
 	~RNA_AddOrDeleteMover();
 	using protocols::moves::Mover::apply;
 
+	void
+	apply( core::pose::Pose & pose, SWA_Move const & swa_move );
+
 	bool
-  apply( core::pose::Pose & pose, std::string & move_type );
+  apply( core::pose::Pose & pose, std::string & move_type /* will be updated by mover */ );
 
 	/// @brief Apply the minimizer to one pose
 	virtual void apply( core::pose::Pose & pose_to_visualize );

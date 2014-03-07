@@ -178,21 +178,9 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 		vary_bond_geometry = true;
 	}
 
-	if ( move_map_list_.size() == 0 ) {
-		move_map_list_ = get_default_movemap( dummy_pose );
-	}
-
-	if ( ! options_->minimize_and_score_sugar() ){
-		TR.Debug << "WARNING: options_->minimize_and_score_sugar() is FALSE, freezing all DELTA, NU_1 and NU_2 torsions." << std::endl;
-		for ( Size n = 1; n <= move_map_list_.size(); n++ ){
-			Freeze_sugar_torsions( move_map_list_[n], nres );
-		}
-	}
-
-	for ( Size n = 1; n <= move_map_list_.size(); n++ ){
-		TR.Debug << "OUTPUT move_map_list[" << n << "]:" << std::endl;
-		output_movemap( move_map_list_[n], dummy_pose, TR.Debug );
-	}
+	if ( !move_map_ ) move_map_ = get_default_movemap( dummy_pose );
+	if ( ! options_->minimize_and_score_sugar() )	Freeze_sugar_torsions( *move_map_, nres );
+	output_movemap( *move_map_, dummy_pose, TR.Debug );
 
 	minimized_pose_list_.clear();
 
@@ -222,7 +210,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 
 		if ( options_->verbose() && !options_->minimizer_output_before_o2prime_pack() ) output_pose_wrapper( tag, 'B', pose, silent_file_data, silent_file_ + "_before_minimize" );
 
-		utility::vector1< Size > moving_chainbreaks = figure_out_moving_chain_break_res( pose, move_map_list_[ 1 ] );
+		utility::vector1< Size > moving_chainbreaks = figure_out_moving_chain_break_res( pose, *move_map_ );
 
 		///////Minimization/////////////////////////////////////////////////////////////////////////////
 		if ( close_chainbreak ){
@@ -230,39 +218,30 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 			if ( options_->verbose() ) output_pose_wrapper( tag, 'C', pose, silent_file_data, silent_file_ + "_after_loop_closure_before_minimize" );
 		}
 
-		for ( Size round = 1; round <= move_map_list_.size(); round++ ){
-			core::kinematics::MoveMap mm = move_map_list_[round];
+		core::kinematics::MoveMap & mm = *move_map_;
+		moving_chainbreaks = figure_out_moving_chain_break_res( pose, mm );
 
-			moving_chainbreaks = figure_out_moving_chain_break_res( pose, mm );
+		if ( vary_bond_geometry ) {
+			TR << "Performing variable geometry minimization..." << std::endl;
+			scorefxn_->set_weight( rna_bond_geometry, 8.0 );
+			protocols::simple_moves::ConstrainToIdealMover CTIMover;
+			core::kinematics::MoveMapOP mmop(mm.clone());
+			CTIMover.set_movemap(mmop);
+			CTIMover.set_AllowInsert(allow_insert_->clone());
+			CTIMover.apply(pose);
+			core::kinematics::MoveMap new_mm = (*CTIMover.get_movemap());
+			//CartesianMinimizer cartesian_minimizer;
+			if ( options_->perform_minimize() ) minimizer.run( pose, new_mm, *(scorefxn_ ), options );
+			scorefxn_->set_weight( rna_bond_geometry, original_geometry_weight_ );
+		}
+		if ( options_->perform_minimize() ) minimizer.run( pose, mm, *( scorefxn_ ), options );
 
-			if ( vary_bond_geometry ) {
-				TR << "Performing variable geometry minimization..." << std::endl;
-				scorefxn_->set_weight( rna_bond_geometry, 8.0 );
-				protocols::simple_moves::ConstrainToIdealMover CTIMover;
-				core::kinematics::MoveMapOP mmop(mm.clone());
-				CTIMover.set_movemap(mmop);
-				CTIMover.set_AllowInsert(allow_insert_->clone());
-				CTIMover.apply(pose);
-				core::kinematics::MoveMap new_mm = (*CTIMover.get_movemap());
-				//CartesianMinimizer cartesian_minimizer;
-				if ( options_->perform_minimize() ) minimizer.run( pose, new_mm, *(scorefxn_ ), options );
-				scorefxn_->set_weight( rna_bond_geometry, original_geometry_weight_ );
-			}
-			if ( options_->perform_minimize() ) minimizer.run( pose, mm, *( scorefxn_ ), options );
-			// scoring::rna::RNA_TorsionPotential rna_torsion_potential;
-			// rna_torsion_potential.set_verbose( true );
-			// rna_torsion_potential.eval_intrares_energy( pose.residue( 1 ), pose );
-			// rna_torsion_potential.residue_pair_energy( pose.residue( 1 ), pose.residue( 2 ), pose );
-			// rna_torsion_potential.eval_intrares_energy( pose.residue( 2 ), pose );
+		if ( options_->minimizer_perform_o2prime_pack() ) o2prime_trials( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
 
+		if ( close_chainbreak ){
+			rna_loop_closer.apply( pose, moving_chainbreaks );
 			if ( options_->minimizer_perform_o2prime_pack() ) o2prime_trials( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
-
-			if ( close_chainbreak ){
-				rna_loop_closer.apply( pose, moving_chainbreaks );
-				if ( options_->minimizer_perform_o2prime_pack() ) o2prime_trials( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
-				if ( options_->perform_minimize() ) minimizer.run( pose, mm, *( scorefxn_ ), options );
-
-			}
+			if ( options_->perform_minimize() ) minimizer.run( pose, mm, *( scorefxn_ ), options );
 
 		}
 
@@ -335,7 +314,6 @@ StepWiseRNA_Minimizer::figure_out_actual_five_prime_chain_break_res( pose::Pose 
 
 				five_prime_chain_break_res = lower_seq_num;
 				num_cutpoint_lower_found++;
-
 			}
 		}
 
@@ -585,21 +563,11 @@ StepWiseRNA_Minimizer::get_working_moving_res( Size const & nres ) const {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1 < core::kinematics::MoveMap >
+core::kinematics::MoveMapOP
 StepWiseRNA_Minimizer::get_default_movemap( core::pose::Pose const & pose ) {
-
-	utility::vector1 < core::kinematics::MoveMap > move_map_list;
-
-	core::kinematics::MoveMap mm;
-	figure_out_moving_residues( mm, pose );
-
-	// Allow sugar torsions to move again (RD 01/31/2010), now
-	// that rotamers have been pre-optimized for sugar closure, and
-	// sugar_close is turned back on.
-	//		Freeze_sugar_torsions(mm, nres); //Freeze the sugar_torsions!
-
-	move_map_list.push_back( mm );
-	return move_map_list;
+	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+	figure_out_moving_residues( *mm, pose );
+	return mm;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -637,8 +605,8 @@ StepWiseRNA_Minimizer::output_minimized_pose_list(){
 
 ////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_Minimizer::set_move_map_list( utility::vector1 < core::kinematics::MoveMap > const & move_map_list ){
-	move_map_list_ = move_map_list;
+StepWiseRNA_Minimizer::set_move_map( core::kinematics::MoveMapOP move_map ) {
+	move_map_ = move_map;
 }
 
 

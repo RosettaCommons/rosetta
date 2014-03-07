@@ -183,9 +183,11 @@ sources = {
 	],
 	"public/stepwise/enumerate/rna": [
 	    "rna_helix",
+	    "erraser_minimizer",
+	],
+	"public/stepwise/enumerate/rna/legacy": [
 	    "swa_rna_main",
 	    "swa_rna_util",
-	    "erraser_minimizer",
 	],
 	"public/stepwise/monte_carlo/rna": [
 		"swm_rna",

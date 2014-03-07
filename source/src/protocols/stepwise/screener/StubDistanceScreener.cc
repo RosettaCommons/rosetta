@@ -36,7 +36,8 @@ namespace screener {
 		moving_res_base_stub_( moving_res_base_stub ),
 		reference_stub_( reference_stub ),
 		max_distance_squared_( max_distance_squared )
-	{}
+	{
+	}
 
 	//Destructor
 	StubDistanceScreener::~StubDistanceScreener()
@@ -46,6 +47,7 @@ namespace screener {
 	//////////////////////////////////////////
 	bool
 	StubDistanceScreener::check_screen() {
+		//	TR << ( moving_res_base_stub_.v - reference_stub_.v ).length() << " " <<  std::sqrt( max_distance_squared_ ) << std::endl;;
 		return ( ( moving_res_base_stub_.v - reference_stub_.v ).length_squared() <= max_distance_squared_ );
 	}
 

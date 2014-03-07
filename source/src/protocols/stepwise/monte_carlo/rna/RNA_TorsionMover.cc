@@ -90,11 +90,12 @@ namespace rna {
 																				 std::string & move_type,
 																				 Real const & sample_range ){
 
+		using namespace pose::full_model_info;
 		Size const random_idx = int( RG.uniform() * moving_res_list.size() ) + 1;
 		Size const i = moving_res_list[ random_idx ];
 
 		SWA_MoveSelector swa_move_selector;
-		Attachments attachments = swa_move_selector.get_attachments( pose, pose::full_model_info::sub_to_full( i, pose ) );
+		Attachments attachments = swa_move_selector.get_attachments( pose, sub_to_full( i, pose ) );
 
 		runtime_assert( attachments.size() > 0 );
 
@@ -107,7 +108,7 @@ namespace rna {
 			sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range);
 
 			Size suite_num( 0 );
-			if ( attachment.attachment_type() == ATTACHED_TO_PREVIOUS ) suite_num = i - 1;
+			if ( attachment.attachment_type() == BOND_TO_PREVIOUS ) suite_num = i - 1;
 			else suite_num = i;
 
 			if ( RG.uniform() < 0.5) {

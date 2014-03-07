@@ -254,7 +254,7 @@ public:
 
 	/// @brief Delete vertices that are no longer necessary any more
 	/// How is this determined?
-	void delete_extra_vertices();
+	void delete_extra_vertices( int const desired_root = 0 );
 
 	/// @brief Deletes a continuous segment from  <seq_begin>  to  <seq_end>
 	///
@@ -494,7 +494,6 @@ public:
 	int
 	get_polymer_residue_direction( int const seqpos ) const;
 
-
 	/// @brief Returns the edge that builds the residue  <seqpos>
 	/// Does not work for root atom (will fail)
 	Edge const &
@@ -507,6 +506,14 @@ public:
 	/// @brief  Get the number of the jump that builds (connects to) a given residue
 	int
 	get_jump_that_builds_residue( int const seqpos ) const;
+
+	/// @brief  Get the residue that is immediately upstream of this residue (and tell us whether connection is jump or bond).
+	int
+	get_parent_residue( int const seqpos, bool & connected_by_jump ) const;
+
+	/// @brief  Get the residue that is immediately upstream of this residue.
+	int
+	get_parent_residue( int const seqpos ) const;
 
 	/// @brief define the specific atoms that should be connected by this jump
 	/**

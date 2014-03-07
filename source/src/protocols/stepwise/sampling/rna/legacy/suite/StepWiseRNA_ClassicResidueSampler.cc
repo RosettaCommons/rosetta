@@ -319,7 +319,7 @@ namespace suite {
 		if ( close_chain_to_distal_ )	pose::add_variant_type_to_pose_residue( *screening_pose_,      "VIRTUAL_PHOSPHATE",    five_prime_chain_break_res_ + 1 );
 
 		atr_rep_checker_ = new checker::AtrRepChecker( *screening_pose_, job_parameters_ );
-		atr_rep_checker_->set_kic_sampling( kic_sampling_ );
+		atr_rep_checker_->set_loose_rep_cutoff( kic_sampling_ );
 
 		chain_closable_geometry_checker_ = new checker::ChainClosableGeometryChecker( five_prime_chain_break_res_, gap_size_ );
 

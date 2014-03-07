@@ -78,6 +78,7 @@ namespace checker {
 		Size const & three_prime_chain_break_res() const { return three_prime_chain_break_res_; }
 
 		Real const & dist_squared() const { return dist_squared_; }
+		Real const & max_dist_squared() const { return max_dist_squared_; }
 
 	private:
 

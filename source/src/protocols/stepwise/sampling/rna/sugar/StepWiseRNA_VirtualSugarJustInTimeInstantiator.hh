@@ -20,8 +20,10 @@
 #include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.fwd.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.fwd.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
-#include <protocols/stepwise/sampling/rna/sugar/SugarModeling.hh>
+#include <protocols/stepwise/sampling/rna/sugar/SugarModeling.fwd.hh>
+#include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 
 using namespace core;
@@ -58,14 +60,12 @@ namespace sugar {
 
 		void
 		prepare_from_prior_sampled_sugar_jobs( pose::Pose const & pose,
-																					 utility::vector1< pose::PoseOP > & starting_pose_data_list );
+																					 utility::vector1< pose::PoseOP > & starting_pose_data_list,
+																					 bool const pose_explosion_legacy /* = false */ ) const;
 
 		void
 		prepare_from_prior_sampled_sugar_jobs_for_chain_break( pose::Pose const & pose,
-																													utility::vector1< pose::PoseOP > & starting_pose_data_list );
-
-		SugarModeling const &
-		anchor_sugar_modeling();
+																													 utility::vector1< pose::PoseOP > & starting_pose_data_list ) const;
 
 		void
 		set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn );
@@ -78,13 +78,20 @@ namespace sugar {
 		void
 		set_options( StepWiseRNA_ModelerOptionsCOP options );
 
+		Size
+		num_sets() const { return sugar_modeling_sets_.size(); }
+
+		rotamer_sampler::copy_dofs::ResidueAlternativeSet const &
+		residue_alternative_set( Size const n );
+
+		//legacy:
+		SugarModeling const &
+		anchor_sugar_modeling();
+
 	private:
 
-		bool
-		initialize_parameters( pose::Pose const & pose );
-
-		bool
-		do_consistency_checks();
+		Size
+		sampled_sugar_index( Size const i );
 
 		bool
 		do_sugar_sampling( pose::Pose & viewer_pose, SugarModeling & sugar_modeling, std::string const name );
@@ -93,43 +100,36 @@ namespace sugar {
 		setup_sugar_modeling( pose::Pose const & pose, Size const moving_res, SugarModeling & sugar_modeling );
 
 		bool
-		is_anchor_sugar_virtual( pose::Pose const & pose ) ;
+		get_sugar_modeling_set( pose::Pose & viewer_pose, Size const i );
 
-		bool
-		is_current_sugar_virtual( pose::Pose const & pose ) ;
-
-		bool
-		is_five_prime_chain_break_sugar_virtual( pose::Pose const & pose ) ;
-
-		bool
-		is_three_prime_chain_break_sugar_virtual( pose::Pose const & pose ) ;
+		utility::vector1< SugarModelingOP >	get_sugar_modeling_sets_for_chainbreak() const;
 
 		void
-		instantiate_sugar( pose::Pose & pose, SugarModeling const & sugar_modeling, Size const sugar_ID );
+		instantiate_sugar( pose::Pose & pose, SugarModeling const & sugar_modeling, Size const sugar_ID ) const;
+
+		void
+		instantiate_sugars_recursively(  pose::Pose const & pose,
+																		 utility::vector1< pose::PoseOP > & pose_data_list,
+																		 utility::vector1< SugarModelingOP > const & sugar_modeling_sets,
+																		 utility::vector1< Size > const & sugar_modeling_set_indices ) const;
+
+		void
+		minimize_sugar_sets_legacy( pose::Pose const & pose,
+																utility::vector1< pose::PoseOP > & pose_data_list ) const;
+
 
 	private:
 
 		StepWiseRNA_JobParametersCOP job_parameters_;
-		bool const is_prepend_;
 		Size const moving_res_;
-		Size const five_prime_chain_break_res_;
-		Size const three_prime_chain_break_res_;
-		Size const num_nucleotides_;
-		Size const gap_size_;
 		bool const rebuild_bulge_mode_;
 
-		bool is_anchor_sugar_virt_;
-		bool is_current_sugar_virt_;
-		bool is_five_prime_chain_break_sugar_virt_;
-		bool is_three_prime_chain_break_sugar_virt_;
-		Size num_virtual_sugar_;
-
-		SugarModeling anchor_sugar_modeling_;
-		SugarModeling current_sugar_modeling_;
-		SugarModeling five_prime_chain_break_sugar_modeling_;
-		SugarModeling three_prime_chain_break_sugar_modeling_;
-
+		utility::vector1< SugarModelingOP > sugar_modeling_sets_;
+		utility::vector1< rotamer_sampler::copy_dofs::ResidueAlternativeSetOP> residue_alternative_sets_;
 		bool keep_base_fixed_;
+		bool const moving_res_legacy_;
+		bool const include_current_;
+
 		StepWiseRNA_ModelerOptionsCOP options_;
 		core::scoring::ScoreFunctionOP scorefxn_;
 

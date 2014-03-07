@@ -19,15 +19,19 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/scoring/EnergyMap.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 
 // C++
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR("core.scoring.methods.InterMolEnergy");
+static basic::Tracer TR("core.scoring.methods.IntermolEnergy");
 
 /////////////////////////////////////////////////////////////////////////////////////
 //
@@ -62,7 +66,9 @@ IntermolEnergyCreator::score_types_for_method() const {
 
 /// c-tor
 IntermolEnergy::IntermolEnergy() :
-	parent( new IntermolEnergyCreator )
+	parent( new IntermolEnergyCreator ),
+	penalty_at_1M_( 2.30 ), // calibrated outside.
+	log_conc_( std::log( basic::options::option[ basic::options::OptionKeys::score::conc ]() ) ) // in kT
 {}
 
 /// clone
@@ -86,12 +92,81 @@ IntermolEnergy::finalize_total_energy(
 ) const {
 
 	using namespace core::pose::full_model_info;
-	// following should be pre-calculated whenever full_model_info is setup.
-	Size const num_chains_frozen = nonconst_full_model_info( pose ).cutpoint_open_in_full_model().size();
-	totals[ intermol ] = num_chains_frozen;
-
+	make_sure_full_model_info_is_setup( pose );
+	Size const num_chains_frozen = get_num_chains_frozen( pose );
+	totals[ intermol ] = num_chains_frozen * ( penalty_at_1M_ - log_conc_ );
 } // finalize_total_energy
 
+
+///////////////////////////////////////////////////////////////////////////////
+// quick graph traversal lets us figure out number of connected components.
+// this may repeat work in LoopGraph and LoopClose Energy, in which case unify!
+Size
+IntermolEnergy::get_num_chains_frozen( pose::Pose const & pose ) const {
+	using namespace core::pose::full_model_info;
+	Size const num_chains = const_full_model_info( pose ).cutpoint_open_in_full_model().size() + 1;
+
+	utility::vector1< utility::vector1< Size > > chains_connected;
+	utility::vector1< Size > blank_vector;
+	for ( Size n = 1; n <= num_chains; n++ ) blank_vector.push_back( false );
+	for ( Size n = 1; n <= num_chains; n++ ) chains_connected.push_back( blank_vector );
+
+	get_chains_connected( pose, chains_connected );
+
+	// alternatively, there must be a graph/ sublibrary somewhere that does this.
+	Size const num_subgraphs = get_number_of_connected_subgraphs( chains_connected );
+	runtime_assert( num_subgraphs <= num_chains );
+	return ( num_chains - num_subgraphs );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+Size
+IntermolEnergy::get_number_of_connected_subgraphs( utility::vector1< utility::vector1< Size > > const & chains_connected ) const {
+	Size const num_chains = chains_connected.size();
+	utility::vector1< Size > colors( num_chains, 0 );
+	Size current_color = 0;
+	for ( Size n = 1; n <= num_chains; n++ ){
+		if ( colors[ n ] ) continue;
+		current_color++;
+		colors[ n ] =  current_color;
+		color_connected( colors, chains_connected, n, current_color );
+	}
+	return current_color;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void
+IntermolEnergy::color_connected( utility::vector1< Size > & colors,
+																 utility::vector1< utility::vector1< Size > > const & chains_connected,
+																 Size const n, Size const current_color ) const {
+	Size const num_chains = chains_connected.size();
+	for ( Size m = (n+1); m <= num_chains; m++ ){
+		if ( chains_connected[ n ][ m ] && !colors[ m ] ){
+			colors[ m ] = current_color;
+			color_connected( colors, chains_connected, m, current_color );
+		}
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void
+IntermolEnergy::get_chains_connected( pose::Pose const & pose, utility::vector1< utility::vector1< Size > > &  chains_connected ) const {
+	using namespace core::pose::full_model_info;
+	utility::vector1< Size > const chains = figure_out_chains_from_full_model_info_const( pose );
+	utility::vector1< Size > frozen_chains;
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		if ( !frozen_chains.has_value( chains[ n ] ) ) frozen_chains.push_back( chains[ n ] );
+	}
+	for ( Size i = 1; i <= frozen_chains.size(); i++ ){
+		for ( Size j = 1; j <= frozen_chains.size(); j++ ){
+			chains_connected[ i ][ j ] = true;
+			chains_connected[ j ][ i ] = true;
+		}
+	}
+	// recurse through any daughter poses.
+	utility::vector1< pose::PoseOP > const & other_pose_list = const_full_model_info( pose ).other_pose_list();
+	for ( Size k = 1; k <= other_pose_list.size(); k++ )	get_chains_connected( *other_pose_list[ k ], chains_connected );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void

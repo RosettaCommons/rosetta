@@ -22,6 +22,9 @@
 
 // Project headers
 #include <core/chemical/rna/RNA_FittedTorsionInfo.fwd.hh>
+#include <core/chemical/rna/RNA_Util.hh>
+
+using namespace core::chemical::rna;
 
 namespace protocols {
 namespace rotamer_sampler {
@@ -31,8 +34,8 @@ class RNA_NucleosideRotamer : public RotamerSizedAny {
 public:
 	RNA_NucleosideRotamer(
 		core::Size const rsd_id,
-		core::Size const pucker_state, //WHATEVER, NORTH, SOUTH
-		core::Size const base_state //WHATEVER, ANTI, SYN, NONE
+		PuckerState const pucker_state, //ANY_PUCKER, NORTH, SOUTH, NO_PUCKER
+		ChiState const base_state //ANY_CHI, ANTI, SYN, NO_CHI
 	);
 
 	/// @brief Initialization wrapper
@@ -67,13 +70,14 @@ public:
 	virtual RotamerType type() const { return RNA_NUCLEOSIDE; }
 
 private:
-	core::Size const rsd_id_,	base_state_;
+	core::Size const rsd_id_;
+	ChiState base_state_;
 
 	bool extra_chi_, skip_same_pucker_, idealize_coord_, fast_;
 
 	core::Real bin_size_;
 
-	utility::vector1<core::Size> pucker_states_;
+	utility::vector1<PuckerState> pucker_states_;
 };
 
 }

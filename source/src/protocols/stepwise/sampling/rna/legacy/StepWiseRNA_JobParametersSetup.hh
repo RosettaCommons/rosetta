@@ -35,6 +35,7 @@ namespace protocols {
 namespace stepwise {
 namespace sampling {
 namespace rna {
+namespace legacy {
 
 
 
@@ -242,6 +243,7 @@ namespace rna {
 		bool assert_jump_point_in_fixed_res_;
   };
 
+} //legacy
 } //rna
 } //sampling
 } //stepwise

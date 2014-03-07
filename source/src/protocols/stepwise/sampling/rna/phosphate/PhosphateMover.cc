@@ -106,9 +106,6 @@ namespace phosphate {
 	void
 	PhosphateMover::setup_variants_and_free_pose_for_terminal_phosphate( pose::Pose & pose  ){
 
-		//		TR << pose.annotated_sequence() << std::endl;
-		//		TR << phosphate_move_ << std::endl;
-
 		if ( phosphate_move_.terminus() == FIVE_PRIME_PHOSPHATE ){
 			setup_variants_and_free_pose_for_five_prime_phosphate( pose );
 		} else {

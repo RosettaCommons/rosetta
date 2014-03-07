@@ -15,8 +15,8 @@ lk_nonpolar     0.25
 geom_sol_fast   0.17
 fa_elec_rna_phos_phos 1.7
 stack_elec      0.76
-intermol        2.3
-loop_close      1.0
+intermol        1.0 # should be 1.0 to maintain kT scale
+loop_close      1.0 # should be 1.0 to maintain kT scale
 free_suite      2.0 # should be less than each ref
 ref             1.0
 linear_chainbreak 5.0

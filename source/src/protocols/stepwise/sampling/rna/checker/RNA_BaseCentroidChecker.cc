@@ -47,7 +47,9 @@ namespace checker {
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// Constructor
-	RNA_BaseCentroidChecker::RNA_BaseCentroidChecker( core::pose::Pose const & pose, StepWiseRNA_JobParametersCOP & job_parameters ):
+	RNA_BaseCentroidChecker::RNA_BaseCentroidChecker( core::pose::Pose const & pose,
+																										StepWiseRNA_JobParametersCOP & job_parameters,
+																										bool const tether_jump /* = false */ ):
 		job_parameters_( job_parameters ),
 		rna_centroid_info_( new core::scoring::rna::RNA_CentroidInfo ),
 		base_stack_dist_cutoff_( 6.364 ),
@@ -63,7 +65,9 @@ namespace checker {
 		base_pair_rho_min_( 5 ),
 		base_pair_rho_max_( 10 ),
 		allow_base_pair_only_screen_( false ),
-		found_centroid_interaction_( false )
+		floating_base_( false ),
+		found_centroid_interaction_( false ),
+		tether_jump_( tether_jump )
 	{
 		Initialize_is_virtual_base( pose,  true /*verbose*/ );
 		Initialize_base_stub_list( pose, true /*verbose*/ );
@@ -134,16 +138,19 @@ namespace checker {
 			if ( is_virtual_base_( seq_num ) ) continue;
 
 			if ( partition_definition( seq_num ) != moving_partition ) {
+				if ( tether_jump_ && seq_num != job_parameters_->working_reference_res() ) continue;
 				// This is a "fixed" residue -- on the same side of the moving suite as the root.
 				fixed_residues_.push_back( seq_num );
 				is_fixed_res_( seq_num ) = true;
 				//if ( verbose ) TR << "Fixed partition " << seq_num << std::endl;
 			} else {
+				if ( tether_jump_ && seq_num != job_parameters_->working_moving_res() ) continue;
 				moving_residues_.push_back( seq_num );
 				is_moving_res_( seq_num ) = true;
 				//				if ( verbose ) TR << "Moving partition " << seq_num << std::endl;
 			}
 		}
+
 	}
 
 
@@ -339,7 +346,6 @@ namespace checker {
 			Vector const centroid = rna_centroid_info_->get_base_centroid( residue_object );
 			core::kinematics::Stub base_stub = rna_centroid_info_->get_base_coordinate_system( residue_object, centroid );
 			base_stub_list_[ moving_res ] = base_stub;
-
 		}
 
 	}

@@ -52,11 +52,13 @@
 #include <numeric/random/random.hh>
 #include <numeric/model_quality/rms.hh>
 #include <numeric/model_quality/maxsub.hh>
-
+#include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
 
 static numeric::random::RandomGenerator RG(1183103);
 static basic::Tracer TR( "protocols.hybridization.InsertChunkMover" );
+
+using utility::operator <<;
 
 namespace protocols {
 namespace hybridization {

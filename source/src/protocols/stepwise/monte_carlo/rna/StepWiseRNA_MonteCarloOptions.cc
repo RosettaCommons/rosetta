@@ -19,6 +19,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/stepwise.OptionKeys.gen.hh>
+#include <basic/options/keys/full_model.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 
@@ -37,6 +38,7 @@ namespace rna {
 	StepWiseRNA_MonteCarloOptions::StepWiseRNA_MonteCarloOptions():
 		verbose_scores_( false ),
 		force_centroid_interaction_( true ),
+		sampler_max_centroid_distance_( 0.0 ),
 		use_phenix_geo_( true ),
 		skip_deletions_( false ),
 		erraser_( true ),
@@ -45,6 +47,7 @@ namespace rna {
 		num_random_samples_( 20 ),
 		cycles_( 500 ),
 		add_delete_frequency_( 0.5 ),
+		intermolecular_frequency_( 0.2 ),
 		minimize_single_res_frequency_( 0.0 ),
 		minimizer_allow_variable_bond_geometry_( true ),
 		minimizer_vary_bond_geometry_frequency_( 0.1 ),
@@ -52,14 +55,18 @@ namespace rna {
 		just_min_after_mutation_frequency_( 0.5 ),
 		temperature_( 1.0 ),
 		allow_skip_bulge_( false ),
-		allow_from_scratch_( false ),
+		from_scratch_frequency_( 0.0 ),
 		allow_split_off_( true ),
 		virtual_sugar_keep_base_fixed_( false ),
+		virtual_sugar_do_minimize_( true ),
 		constraint_x0_( 0.0 ),
 		constraint_tol_( 0.0 ),
 		make_movie_( false ),
 		sampler_perform_phosphate_pack_( true ),
-		rebuild_bulge_mode_( false )
+		rebuild_bulge_mode_( false ),
+		unified_framework_( true ),
+		tether_jump_( true ),
+		local_redock_only_( true )
 	{}
 
 	//Destructor
@@ -76,6 +83,7 @@ namespace rna {
 		set_erraser( option[ OptionKeys::stepwise::rna::erraser ]() );
 		set_cycles( option[ OptionKeys::stepwise::monte_carlo::cycles ]() );
 		set_add_delete_frequency( option[ OptionKeys::stepwise::monte_carlo::add_delete_frequency ]() );
+		set_intermolecular_frequency( option[ OptionKeys::stepwise::monte_carlo::intermolecular_frequency ]() );
 		set_minimize_single_res_frequency( option[ OptionKeys::stepwise::monte_carlo::minimize_single_res_frequency ]() );
 		set_switch_focus_frequency( option[ OptionKeys::stepwise::monte_carlo::switch_focus_frequency ]() );
 		set_sample_res( option[ OptionKeys::stepwise::rna::sample_res ]() );
@@ -83,16 +91,18 @@ namespace rna {
 		set_allow_internal_hinge_moves( option[ OptionKeys::stepwise::monte_carlo::allow_internal_hinge_moves ]() );
 		set_allow_internal_local_moves( option[ OptionKeys::stepwise::monte_carlo::allow_internal_local_moves ]() );
 		set_allow_skip_bulge( option[ OptionKeys::stepwise::monte_carlo::allow_skip_bulge ]() );
-		set_allow_from_scratch( option[ OptionKeys::stepwise::monte_carlo::allow_from_scratch ]() );
+		set_from_scratch_frequency( option[ OptionKeys::stepwise::monte_carlo::from_scratch_frequency ]() );
 		set_allow_split_off( option[ OptionKeys::stepwise::monte_carlo::allow_split_off ]() );
 		set_temperature( option[ OptionKeys::stepwise::monte_carlo::temperature ]() );
-		set_extra_minimize_res( option[ OptionKeys::stepwise::monte_carlo::extra_min_res ]() );
+		set_extra_minimize_res( option[ OptionKeys::full_model::extra_min_res ]() );
 		set_syn_chi_res_list( option[ OptionKeys::stepwise::rna::force_syn_chi_res_list]() );
 		set_terminal_res( option[ OptionKeys::stepwise::rna::terminal_res]() );
 		set_bulge_res( option[ basic::options::OptionKeys::stepwise::rna::bulge_res ]() );
 		set_virtual_sugar_keep_base_fixed( option[ OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed ]() );
+		set_virtual_sugar_do_minimize( option[ OptionKeys::stepwise::rna::virtual_sugar_do_minimize ]() );
 		force_centroid_interaction_ = true; // note default is different from stepwise enumeration
 		if ( option[ OptionKeys::stepwise::rna::force_centroid_interaction ].user() ) set_force_centroid_interaction( option[ OptionKeys::stepwise::rna::force_centroid_interaction ]() );
+		sampler_max_centroid_distance_ = option[ OptionKeys::stepwise::rna::sampler_max_centroid_distance ]();
 		set_minimizer_allow_variable_bond_geometry( option[ OptionKeys::stepwise::monte_carlo::allow_variable_bond_geometry ]() );
 		set_use_phenix_geo(  option[ OptionKeys::rna::corrected_geo ] );
 		set_constraint_x0(	option[ OptionKeys::stepwise::monte_carlo::constraint_x0 ]() );
@@ -100,6 +110,9 @@ namespace rna {
 		set_make_movie(	option[ OptionKeys::stepwise::monte_carlo::make_movie ]() );
 		sampler_perform_phosphate_pack_ = option[ OptionKeys::stepwise::rna::sampler_perform_phosphate_pack ]();
 		rebuild_bulge_mode_ = option[ OptionKeys::stepwise::rna::rebuild_bulge_mode ]();
+		unified_framework_ = option[ OptionKeys::stepwise::rna::unified_framework ]();
+		tether_jump_ = option[ OptionKeys::stepwise::rna::tether_jump ]();
+		local_redock_only_ = option[ OptionKeys::stepwise::monte_carlo::local_redock_only ]();
 	}
 
 
@@ -109,16 +122,19 @@ namespace rna {
 
 		StepWiseRNA_ModelerOptionsOP modeler_options = new StepWiseRNA_ModelerOptions;
 		modeler_options->set_choose_random( true );
+		modeler_options->set_num_pose_minimize( 1 );
 		modeler_options->set_force_centroid_interaction( force_centroid_interaction() );
+		modeler_options->set_sampler_max_centroid_distance( sampler_max_centroid_distance() );
 		modeler_options->set_use_phenix_geo( use_phenix_geo() );
 		modeler_options->set_kic_sampling_if_relevant( erraser() );
 		modeler_options->set_num_random_samples( num_random_samples() );
-		modeler_options->set_num_pose_minimize( 1 );
 		modeler_options->set_minimizer_allow_variable_bond_geometry( minimizer_allow_variable_bond_geometry() );
 		modeler_options->set_minimizer_vary_bond_geometry_frequency( minimizer_vary_bond_geometry_frequency() );
 		modeler_options->set_virtual_sugar_keep_base_fixed( virtual_sugar_keep_base_fixed() );
-		modeler_options->set_sampler_perform_phosphate_pack( sampler_perform_phosphate_pack() );
+		modeler_options->set_virtual_sugar_do_minimize( virtual_sugar_do_minimize() );
 		if ( rebuild_bulge_mode_ )	modeler_options->set_force_centroid_interaction( false );
+		modeler_options->set_unified_framework( unified_framework() );
+		modeler_options->set_tether_jump( tether_jump() );
 
 		return modeler_options;
 	}

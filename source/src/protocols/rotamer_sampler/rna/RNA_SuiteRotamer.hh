@@ -21,7 +21,10 @@
 #include <protocols/rotamer_sampler/RotamerSizedAny.hh>
 
 // Project headers
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.fwd.hh>
+
+using namespace core::chemical::rna;
 
 namespace protocols {
 namespace rotamer_sampler {
@@ -33,10 +36,10 @@ public:
 
 	RNA_SuiteRotamer(
 		core::Size const rsd_id,
-		core::Size const pucker_state_lower, //WHATEVER, NORTH, SOUTH
-		core::Size const pucker_state_upper,
-		core::Size const base_state_lower, //WHATEVER, ANTI, SYN, NONE
-		core::Size const base_state_upper
+		PuckerState const pucker_state_lower, //WHATEVER, NORTH, SOUTH
+		PuckerState const pucker_state_upper,
+		ChiState const base_state_lower, //WHATEVER, ANTI, SYN, NONE
+		ChiState const base_state_upper
 	);
 
 	/// @brief Initialization wrapper
@@ -93,11 +96,12 @@ public:
 	virtual RotamerType type() const { return RNA_SUITE; }
 
 private:
-	TorsionList torsions_from_info(
+	TorsionList fast_sample_torsions_from_info(
 				utility::vector1<core::chemical::rna::GaussianParameter>
 				const & params );
 
-	core::Size const rsd_id_,	base_state_lower_, base_state_upper_;
+	core::Size const rsd_id_;
+	ChiState base_state_lower_, base_state_upper_;
 
 	bool sample_nucleoside_lower_, sample_nucleoside_upper_,
 			extra_epsilon_, extra_beta_, extra_chi_,
@@ -105,7 +109,7 @@ private:
 
 	core::Real bin_size_;
 
-	utility::vector1<core::Size> pucker_states_lower_, pucker_states_upper_;
+	utility::vector1<PuckerState> pucker_states_lower_, pucker_states_upper_;
 };
 
 }

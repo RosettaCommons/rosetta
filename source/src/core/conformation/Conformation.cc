@@ -559,7 +559,7 @@ Conformation::insert_residue_by_jump(
 	pre_nresidue_change();
 	ASSERT_ONLY(Size const old_size( size() );) //, new_size( old_size+1 );
 	assert( old_size );
-	assert( fold_tree_->is_cutpoint( seqpos-1 ) );
+	runtime_assert( fold_tree_->is_cutpoint( seqpos-1 ) );
 
 	// this handles all renumbering internal to the Residues, *_moved arrays
 	residues_insert( seqpos, new_rsd_in, false, new_chain );
@@ -831,7 +831,6 @@ Conformation::replace_residue(
 	if ( orient_backbone ) {
 		residues_[seqpos]->place( old_rsd, *this );
 	}
-
 
 	replace_residue_in_atom_tree( new_rsd, *fold_tree_, const_residues(), *atom_tree_ );
 

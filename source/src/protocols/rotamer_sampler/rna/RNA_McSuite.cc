@@ -19,7 +19,6 @@
 #include <protocols/rotamer_sampler/McOneTorsion.hh>
 
 // Project headers
-#include <core/chemical/rna/RNA_Util.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/pose/rna/RNA_Util.hh>
 #include <core/pose/Pose.hh>

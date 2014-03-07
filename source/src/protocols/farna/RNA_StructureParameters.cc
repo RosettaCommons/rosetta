@@ -19,13 +19,13 @@
 #include <protocols/farna/RNA_ProtocolUtil.hh>
 #include <protocols/farna/RNA_SecStructInfo.hh>
 #include <protocols/toolbox/AllowInsert.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh> // for  correctly_position_cutpoint_phosphate_torsions
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_DataInfo.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/rna/RNA_Util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -990,13 +990,7 @@ RNA_StructureParameters::setup_chainbreak_variants( pose::Pose & pose )
 		// Don't assign a chainbreak penalty if user said this was an "open" cutpoint.
 		if ( std::find( cutpoints_open_.begin(), cutpoints_open_.end(), cutpos) != cutpoints_open_.end() ) continue;
 
-		//		if ( !pose.residue( cutpos ).is_coarse() ) {//its regular RNA
-
-		//		std::cout << "Adding chainbreak variants to " << cutpos << std::endl;
-
-		// important! Taken from SWA code.
-		protocols::stepwise::sampling::rna::correctly_position_cutpoint_phosphate_torsions( pose, cutpos, false /*verbose*/ );
-
+		core::pose::rna::correctly_position_cutpoint_phosphate_torsions( pose, cutpos, false /*verbose*/ );
 		pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpos   );
 		pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpos+1 );
 

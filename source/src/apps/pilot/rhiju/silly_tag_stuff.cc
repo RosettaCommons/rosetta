@@ -21,8 +21,10 @@
 #include <protocols/viewer/viewers.hh>
 #include <devel/init.hh>
 #include <ObjexxFCL/string.functions.hh>
+#include <utility/stream_util.hh>
 #include <iostream>
 
+using utility::operator <<;
 
 void*
 my_main( void* )

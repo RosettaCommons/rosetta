@@ -195,6 +195,16 @@ FullModelInfo::get_cutpoint_open_from_pdb_info( pose::Pose const & pose ) const 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
+std::map< Size, Size >
+FullModelInfo::full_to_sub() const{
+	std::map< Size, Size > full_to_sub;
+	for ( Size n = 1; n <= full_sequence_.size(); n++ ) {
+		if ( res_list_.has_value( n ) ) full_to_sub[ n ] = res_list_.index( n );
+	}
+	return full_to_sub;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
 FullModelInfo::full_to_sub( utility::vector1< Size > const & res_in_full_model_numbering ) const{
 	utility::vector1< Size > res;
@@ -202,6 +212,13 @@ FullModelInfo::full_to_sub( utility::vector1< Size > const & res_in_full_model_n
 		res.push_back( res_list_.index( res_in_full_model_numbering[ n ] ) );
 	}
 	return res;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+Size
+FullModelInfo::full_to_sub( Size const res_in_full_model_numbering ) const{
+	runtime_assert( res_list_.index( res_in_full_model_numbering ) );
+	return res_list_.index( res_in_full_model_numbering );
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////

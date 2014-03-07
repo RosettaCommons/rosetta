@@ -45,9 +45,6 @@ namespace rigid_body {
 	void
 	RigidBodyRotamerValueRange::init(){
 		Real const max_angle_rounded = int( 180 / euler_angle_bin_size_ ) * euler_angle_bin_size_;
-		TR << -max_angle_rounded + 0.5 * Real ( euler_angle_bin_size_ ) << " " <<
-			+max_angle_rounded - 0.5 * Real ( euler_angle_bin_size_ ) << " " <<
-			euler_angle_bin_size_ <<std::endl;
 		set_euler_alpha_values( -max_angle_rounded + 0.5 * Real ( euler_angle_bin_size_ ),
 														+max_angle_rounded - 0.5 * Real ( euler_angle_bin_size_ ),
 														euler_angle_bin_size_ );

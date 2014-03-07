@@ -19,6 +19,7 @@
 // Package headers
 #include <protocols/viewer/viewers.hh>
 
+#include <core/chemical/rna/RNA_Util.hh> // for silly centering of RNA.
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/signals/ConnectionEvent.hh>
@@ -241,8 +242,13 @@ ConformationViewer::on_xyz_change(
 		secstruct_[ i ] = event.conformation->secstruct( i );
 	}
 
-	if ( event.conformation->atom_tree().root() ) {
-		anchor_id_ = event.conformation->atom_tree().root()->id();
+	core::kinematics::tree::AtomCOP root_atom = event.conformation->atom_tree().root();
+	if ( root_atom ) {
+		anchor_id_ = root_atom->id();
+		core::conformation::ResidueCOP rsd_root = residues_[ anchor_id_.rsd() ];
+		if ( rsd_root->is_RNA() ) {
+			anchor_id_ = id::AtomID( rsd_root->atom_index( core::chemical::rna::default_jump_atom( *rsd_root ) ), anchor_id_.rsd() );
+		}
 	}
 
 	new_conformation_ = true;

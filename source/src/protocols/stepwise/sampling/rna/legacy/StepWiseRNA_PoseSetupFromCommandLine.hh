@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetupFromCommandLine.hh
+/// @file protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetupFromCommandLine.hh
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_stepwise_rna_StepWiseRNA_PoseSetupFromCommandLine_HH
 
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetup.fwd.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh> // might remove after we move apply_chi_cst out.
@@ -26,6 +26,7 @@ namespace protocols {
 namespace stepwise {
 namespace sampling {
 namespace rna {
+namespace legacy {
 
 	void apply_chi_cst( core::pose::Pose & pose, core::pose::Pose const & ref_pose );
 
@@ -61,6 +62,7 @@ namespace rna {
 	ensure_directory_for_out_silent_file_exists();
 
 
+} //legacy
 } //rna
 } //sampling
 } //stepwise

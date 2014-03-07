@@ -55,6 +55,7 @@
 #include <protocols/stepwise/StepWiseSampleAndScreen.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
 #include <protocols/rotamer_sampler/RotamerBase.hh>
+#include <protocols/rotamer_sampler/RotamerComb.hh>
 #include <protocols/rotamer_sampler/rna/RNA_RotamerSamplerUtil.hh>
 #include <protocols/rotamer_sampler/rigid_body/FloatingBaseUtil.hh>
 #include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamer.hh>
@@ -71,6 +72,7 @@
 #include <core/pose/rna/RNA_Util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/types.hh>
 
 #include <ObjexxFCL/format.hh>
@@ -129,21 +131,18 @@ namespace connection {
 
 //Constructor
 StepWiseRNA_ConnectionSampler::StepWiseRNA_ConnectionSampler( StepWiseRNA_JobParametersCOP & job_parameters ):
-	job_parameters_( job_parameters ), // hope to deprecate later today
 	moving_res_( job_parameters_->working_moving_res() ),
 	reference_res_( 0 ), // updated below.
 	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "rna_hires.wts" ) ), // can be replaced from the outside
 	silent_file_( "silent_file.txt" ),
-	build_pose_from_scratch_( job_parameters->working_sequence().length() == ( job_parameters->working_moving_res_list().size() + 1 ) ), // somewhat hacky, used for rna puzzle
 	max_distance_squared_( 0.0 ), // updated below
-	last_append_res_(  job_parameters->is_prepend() ? moving_res_ - 1: moving_res_ ), // still supported?
-	last_prepend_res_( job_parameters->is_prepend() ? moving_res_: moving_res_ + 1 ), // still supported?
-	atom_atom_overlap_dist_cutoff_( -1.0 ), // still supported?
 	rigid_body_sampling_( false ), // will be updated below.
 	try_sugar_instantiation_( false ),
 	o2prime_instantiation_distance_cutoff_( 6.0 ),
 	extra_tag_( "" ),
-	virt_sugar_atr_rep_screen_( true )
+	virt_sugar_atr_rep_screen_( false ),
+	build_pose_from_scratch_( job_parameters->working_sequence().length() == ( job_parameters->working_moving_res_list().size() + 1 ) ), // somewhat hacky, used for rna puzzle
+	job_parameters_( job_parameters ) // may deprecate
 {
 	set_native_pose( job_parameters_->working_native_pose() );
 }
@@ -179,12 +178,16 @@ StepWiseRNA_ConnectionSampler::apply( core::pose::Pose & pose ){
 	initialize_screeners( pose );
 	check_job_parameters( pose );
 
+	bool const verbose = ( !options_->choose_random() && !options_->integration_test_mode() );
+
 	StepWiseSampleAndScreen sample_and_screen( sampler_, screeners_ );
 	sample_and_screen.set_max_ntries( get_max_ntries() );
+	sample_and_screen.set_num_random_samples( options_->num_random_samples() );
 
-	TR << "Running Sample-and-Screen." << std::endl;
+	if ( verbose ) TR << "Running SampleAndScreen... " << std::endl;
 	sample_and_screen.run();
-	sample_and_screen.output_counts();
+
+	if ( verbose ) sample_and_screen.output_counts();
 	sample_and_screen.output_info_on_random_trials();
 
 	pose_selection_->finalize( !build_pose_from_scratch_ /*do_clustering*/ );
@@ -198,13 +201,13 @@ StepWiseRNA_ConnectionSampler::apply( core::pose::Pose & pose ){
 void
 StepWiseRNA_ConnectionSampler::figure_out_reference_res( pose::Pose const & pose ){
 
-	rigid_body_sampling_ = ( rotamer_sampler::rigid_body::figure_out_reference_res_for_jump( pose, moving_res_ ) > 0 );
-
+	Size moving_res = moving_res_;
+	rigid_body_sampling_ = ( rotamer_sampler::rigid_body::figure_out_reference_res_for_jump( pose, moving_res ) > 0 );
 	if ( rigid_body_sampling_ ){
 		figure_out_reference_res_with_rigid_body_rotamer( pose );
 	} else {
-		reference_res_ = figure_out_reference_res_for_suite( pose, moving_res_ );
-		moving_partition_res_ = figure_out_moving_partition_res_for_suite( pose, moving_res_, reference_res_ );
+		reference_res_ = figure_out_reference_res_for_suite( pose, moving_res );
+		moving_partition_res_ = figure_out_moving_partition_res_for_suite( pose, moving_res, reference_res_ );
 	}
 }
 
@@ -235,9 +238,11 @@ StepWiseRNA_ConnectionSampler::initialize_residue_level_screeners( pose::Pose & 
 	using namespace core::conformation;
 	using utility::tools::make_vector1;
 
+	runtime_assert( rigid_body_rotamer_ != 0 );
+
 	screeners_.push_back( new StubApplier( moving_res_base_stub_ ) ); // will pull stub out of the sampler
 
-	screeners_.push_back( new StubDistanceScreener( moving_res_base_stub_, reference_stub_,	max_distance_squared_ ) );
+	screeners_.push_back( new StubDistanceScreener( moving_res_base_stub_, rigid_body_rotamer_->reference_stub(),	max_distance_squared_ ) );
 
 	if ( base_centroid_checker_ ) screeners_.push_back( new BaseCentroidScreener( base_centroid_checker_,
 																																								moving_res_base_stub_ ) );
@@ -245,14 +250,17 @@ StepWiseRNA_ConnectionSampler::initialize_residue_level_screeners( pose::Pose & 
 	tag_definition_ = new TagDefinition( pose, screeners_[ screeners_.size() ] );
 	screeners_.push_back( tag_definition_ );
 
-	for ( Size n = 1; n <= five_prime_chain_breaks_.size(); n++ ) screeners_.push_back( new ChainClosableGeometryResidueBasedScreener( chain_closable_geometry_checkers_[ n ] ) );
+	for ( Size n = 1; n <= five_prime_chain_breaks_.size(); n++ ){
+		screeners_.push_back( new ChainClosableGeometryResidueBasedScreener( chain_closable_geometry_checkers_[ n ] ) );
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	// clash checks
 	ResidueCOP screening_moving_rsd_at_origin = rigid_body_rotamer_->get_residue_at_origin( moving_res_ ).clone();
-	screeners_.push_back( new VDW_BinScreener( VDW_bin_checker_, *virt_sugar_screening_pose_, moving_res_,
-																						 screening_moving_rsd_at_origin, moving_res_base_stub_ ) );
-
+	if ( VDW_bin_checker_ != 0 ){
+		screeners_.push_back( new VDW_BinScreener( VDW_bin_checker_, *virt_sugar_screening_pose_, moving_res_,
+																							 screening_moving_rsd_at_origin, moving_res_base_stub_ ) );
+	}
 	// User-input VDW: Does not work for chain_closure move and is_internal_ move yet, since the checker does not know that
 	// moving residue atoms can bond to previous or next residues.
 	if ( user_input_VDW_bin_checker_->user_inputted_VDW_screen_pose() ) {
@@ -277,19 +285,23 @@ StepWiseRNA_ConnectionSampler::initialize_pose_level_screeners( pose::Pose & pos
 	//  just apply rigid_body transformation.
 	screeners_.push_back( new SampleApplier( *screening_pose_, false /*apply_residue_alternative_sampler*/ ) );
 
-	NativeRMSD_ScreenerOP native_rmsd_screener = new NativeRMSD_Screener( *get_native_pose(), *screening_pose_,
-																																				job_parameters_, options_->sampler_native_screen_rmsd_cutoff(),
-																																				options_->sampler_native_rmsd_screen() /*do_screen*/ );
-	screeners_.push_back( native_rmsd_screener );
+	NativeRMSD_ScreenerOP native_rmsd_screener;
+	if ( get_native_pose() ){
+		native_rmsd_screener = new NativeRMSD_Screener( *get_native_pose(), *screening_pose_,
+																										job_parameters_, options_->sampler_native_screen_rmsd_cutoff(),
+																										options_->sampler_native_rmsd_screen() /*do_screen*/ );
+		screeners_.push_back( native_rmsd_screener );
+	}
 
 	// For KIC closure, immediate check that a closed loop solution was actually found.
 	if ( kic_sampling_ ) {
 		screeners_.push_back( new ChainClosureScreener( chain_closure_checkers_[ 1 ], *screening_pose_, true /*just do closure check*/ ) );
 	}
 
-	if ( options_->combine_long_loop_mode()  && ( cutpoints_closed_.size() == 0 ) ) {
-		screeners_.push_back( new ResidueContactScreener( *screening_pose_, last_append_res_,  last_prepend_res_, atom_atom_overlap_dist_cutoff_ ) );
-	}
+	// Following may still work, but has not been tested.
+	//	if ( options_->combine_long_loop_mode()  && ( cutpoints_closed_.size() == 0 ) ) {
+	//		screeners_.push_back( new ResidueContactScreener( *screening_pose_, last_append_res_,  last_prepend_res_, atom_atom_overlap_dist_cutoff_ ) );
+	//	}
 
 	if ( !rigid_body_sampling_ && base_centroid_checker_ ){
 		bool const force_centroid_interaction = ( rigid_body_sampling_ || options_->force_centroid_interaction()
@@ -297,7 +309,9 @@ StepWiseRNA_ConnectionSampler::initialize_pose_level_screeners( pose::Pose & pos
 		screeners_.push_back( new BaseCentroidScreener( base_centroid_checker_, screening_pose_, force_centroid_interaction ) );
 	}
 
-	screeners_.push_back( new VDW_BinScreener( VDW_bin_checker_, *screening_pose_, moving_res_ ) );
+	if ( VDW_bin_checker_ ){
+		screeners_.push_back( new VDW_BinScreener( VDW_bin_checker_, *screening_pose_, moving_res_ ) );
+	}
 	if ( user_input_VDW_bin_checker_->user_inputted_VDW_screen_pose() ){
 		screeners_.push_back( new VDW_BinScreener( user_input_VDW_bin_checker_, *screening_pose_, moving_res_ ) );
 	}
@@ -313,7 +327,7 @@ StepWiseRNA_ConnectionSampler::initialize_pose_level_screeners( pose::Pose & pos
 	for ( Size n = 1; n <= cutpoints_closed_.size(); n++ ) screeners_.push_back( new ChainClosableGeometryScreener( chain_closable_geometry_checkers_[ n ], screening_pose_ ) );
 
 	for ( Size n = 1; n <= five_prime_chain_breaks_.size(); n++ ) {
-		bool strict = rigid_body_sampling_ && cutpoints_closed_.has_value( five_prime_chain_breaks_[n] );
+		bool strict = rigid_body_sampling_ && cutpoints_closed_.has_value( five_prime_chain_breaks_[n] ) && (cutpoints_closed_.size() < 3);
 		screeners_.push_back( new ChainClosableGeometryScreener( chain_closable_geometry_checkers_[ n ], screening_pose_, strict  /*strict*/ ) );
 	}
 
@@ -338,13 +352,15 @@ StepWiseRNA_ConnectionSampler::initialize_pose_level_screeners( pose::Pose & pos
 
 	if ( !tag_definition_ ){ // may have been defined above in residue level sampling.
 		tag_definition_ = new TagDefinition( pose, screeners_[1], options_->sampler_include_torsion_value_in_tag(),
-																				 moving_res_, job_parameters_->is_prepend(), extra_tag_ );
+																				 moving_res_, reference_res_, extra_tag_ );
 		screeners_.push_back( tag_definition_ );
 	}
 
 	if ( !rigid_body_sampling_ && !rebuild_bulge_mode_ &&
 			 options_->allow_bulge_at_chainbreak() && moving_partition_res_.size() == 1 &&
-			 ( cutpoints_closed_.size() > 0 )  ) screeners_.push_back( new BulgeApplier( atr_rep_checker_, base_centroid_checker_, moving_res_ ) ); // apply bulge at the last minute.
+			 ( cutpoints_closed_.size() > 0 )  ) {
+		screeners_.push_back( new BulgeApplier( atr_rep_checker_, base_centroid_checker_, moving_res_ ) ); // apply bulge at the last minute.
+	}
 
 	screeners_.push_back( new PoseSelectionScreener( pose_selection_, pose /*const reference*/, tag_definition_,
 																									 options_->verbose(), silent_file_, get_native_pose(), job_parameters_ ) );
@@ -375,22 +391,8 @@ StepWiseRNA_ConnectionSampler::initialize_poses_and_checkers( pose::Pose & pose 
 	// initialization of variants for actual pose.
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	if ( options_->sampler_perform_phosphate_pack() ){
-		phosphate_sampler_ = new phosphate::MultiPhosphateSampler( pose );
-		runtime_assert( moving_partition_res_.size() == 1 ); //generalize later.
-		phosphate_sampler_->set_moving_partition_res( moving_partition_res_ );
-	}
-
-	// later replace this with phosphate_sampler_->prepack(), which will split and prepack phosphates.
-	if ( rigid_body_sampling_ ){
-		remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", moving_res_ );
-		remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", moving_res_ );
-		if ( !pose.residue( moving_res_ ).has_variant_type( "CUTPOINT_UPPER" ) ) {
-			add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", moving_res_ );
-		}
-		if ( !pose.residue( moving_res_ ).has_variant_type( "CUTPOINT_UPPER" ) &&
-				 !pose.residue( moving_res_ ).has_variant_type( "CUTPOINT_LOWER" ) ){
-			add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", moving_res_ );
-		}
+		phosphate_sampler_ = new phosphate::MultiPhosphateSampler( pose, moving_res_ );
+		runtime_assert(  moving_partition_res_ == phosphate_sampler_->moving_partition_res()/*determined inside*/ );
 	}
 
 	if ( options_->sampler_perform_o2prime_pack() ) {
@@ -416,33 +418,40 @@ StepWiseRNA_ConnectionSampler::initialize_poses_and_checkers( pose::Pose & pose 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// set up screening pose -- do not change pose itself.
+	// get rid of stuff that will be CCD-closed or packed (2'-OH, terminal phosphates) at last stages.
+	// The idea is that if the screening pose fails basic stereochemistry checks, then we don't
+	// have to carry out expensive CCD closure or packing.
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// sets up cutpoints_closed_, five_prime_chain_break_res_, three_prime_chain_break_res_ and chainbreak_gaps_
 	screening_pose_ = pose.clone();
 	add_virtual_O2Prime_hydrogen( *screening_pose_ );
-
-	// hydrogens will be reinstantiated later. perhaps this should be the screening_pose?
-	reference_stub_ = get_reference_stub( *screening_pose_ ); // may be deprecated soon.
 	phosphate::remove_terminal_phosphates( *screening_pose_ );
 	for ( Size n = 1; n <= cutpoints_closed_.size(); n++ ) {
 		add_variant_type_to_pose_residue( *screening_pose_, "VIRTUAL_PHOSPHATE", cutpoints_closed_[n] + 1 ); // PS May 31, 2010 -- updated to all cutpoints by rhiju, feb. 2014
 	}
-
-	VDW_bin_checker_ = new checker::RNA_VDW_BinChecker();
-	// // perhaps this should use the virt_sugar_screening_pose_, which has terminal phosphates virtualized too.
-	VDW_bin_checker_->setup_using_working_pose( *screening_pose_, job_parameters_ );
-	if ( user_input_VDW_bin_checker_ ) user_input_VDW_bin_checker_->reference_xyz_consistency_check( reference_stub_.v );
+	// VDW bin checker can take a while to set up... becomes rate-limiting in random.
+	if ( !options_->choose_random() ){
+		VDW_bin_checker_ = new checker::RNA_VDW_BinChecker();
+		VDW_bin_checker_->setup_using_working_pose( *screening_pose_, job_parameters_ );
+	}
 
 	virt_sugar_screening_pose_ = screening_pose_->clone(); //Hard copy. Used for trying out sugar at moving residue.
-	// ideally following would have all sampled_sugars instantiated, not just moving_res_.
+	// virtual sugars even at residues that have instantiated sugars -- we can quickly screen this pose,
+	// and it provides the appropriate baseline atr/rep for checking contacts and clashes.
+	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ){
+		pose::add_variant_type_to_pose_residue( *virt_sugar_screening_pose_, "VIRTUAL_RIBOSE",
+																							residue_alternative_sets_[ n ].representative_seqpos() );
+	}
+	// following is to check atr/rep even on sugars that will remain virtualized.
+	bool const use_loose_rep_cutoff = ( kic_sampling_ || moving_partition_res_.size() > 1 );
+	atr_rep_checker_ = new checker::AtrRepChecker( *screening_pose_, job_parameters_, use_loose_rep_cutoff );
+	virt_sugar_atr_rep_checker_ = new checker::AtrRepChecker( *virt_sugar_screening_pose_, job_parameters_, use_loose_rep_cutoff );
+
+	// we will be checking clashes of even virtual sugars compared to no-sugar baseline.
 	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ){
 		pose::remove_variant_type_from_pose_residue( *screening_pose_, "VIRTUAL_RIBOSE",
 																								 residue_alternative_sets_[ n ].representative_seqpos() );
 	}
-	atr_rep_checker_ = new checker::AtrRepChecker( *screening_pose_, job_parameters_ );
-	virt_sugar_atr_rep_checker_ = new checker::AtrRepChecker( *virt_sugar_screening_pose_, job_parameters_ );
-	atr_rep_checker_->set_kic_sampling( kic_sampling_ );
-	virt_sugar_atr_rep_checker_->set_kic_sampling( kic_sampling_ );
 
 	for ( Size n = 1; n <= five_prime_chain_breaks_.size(); n++ ) {
 		chain_closable_geometry_checkers_.push_back( new checker::ChainClosableGeometryChecker( five_prime_chain_breaks_[n], three_prime_chain_breaks_[n], chain_break_gap_sizes_[n] ) );
@@ -469,7 +478,7 @@ StepWiseRNA_ConnectionSampler::get_max_ntries() {
 	Size max_ntries( 0 );
 	if ( rigid_body_sampling_ ) {
 		max_ntries = std::max( 100000, 1000 * int( options_->num_random_samples() ) );
-		if ( chain_closure_checkers_.size() > 0 ) max_ntries *= 10;
+		//		if ( chain_closure_checkers_.size() > 0 ) max_ntries *= 10;
 		if ( options_->sampler_native_rmsd_screen() ) max_ntries *= 10;
 	} else {
 		max_ntries = std::max( 10000, 100 * int( options_->num_random_samples() ) );
@@ -505,9 +514,13 @@ StepWiseRNA_ConnectionSampler::which_residue_alternative_set_is_moving_residue()
 // a pose_list, res_map, and representative residue -- ResidueAlternativeSet [?]
 void
 StepWiseRNA_ConnectionSampler::initialize_moving_residue_pose_list( pose::Pose const & pose ){
-	if ( which_residue_alternative_set_is_moving_residue() > 0 ) return; // already initialized
-
-	utility::vector1< pose::PoseOP > pose_list = setup_pose_with_moving_residue_alternative_list( pose, moving_res_, options_->extra_chi(), options_->use_phenix_geo() );
+	if ( which_residue_alternative_set_is_moving_residue() > 0 ) return; // already initialized.
+	utility::vector1< pose::PoseOP > pose_list;
+	if ( rigid_body_sampling_ && moving_partition_res_.size() == 1 ){ // single floating base [classic]
+		pose_list = setup_pose_with_moving_residue_alternative_list( pose, moving_res_, options_->extra_chi(), options_->use_phenix_geo() );
+	} else {
+		pose_list = utility::tools::make_vector1( pose.clone() ); // no alternatives.
+	}
 	rotamer_sampler::copy_dofs::ResidueAlternativeSet residue_alternative_set( pose_list, moving_res_ );
 	residue_alternative_sets_.push_back( residue_alternative_set );
 }
@@ -516,9 +529,9 @@ StepWiseRNA_ConnectionSampler::initialize_moving_residue_pose_list( pose::Pose c
 void
 StepWiseRNA_ConnectionSampler::reinstantiate_backbone_and_add_constraint_at_moving_res(	pose::Pose & pose, Size const & five_prime_chain_break_res )
 { //harmonic angle and distance constraints are used ONLY by chainbreak_screening
-	if ( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_RIBOSE" ) ) pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", moving_res_ ); //May 31, 2010
-	if ( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_O2PRIME_HYDROGEN" ) ) pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", moving_res_ );
-	if ( moving_res_ == ( five_prime_chain_break_res + 1 ) && pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_PHOSPHATE" ) ) {
+	pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", moving_res_ ); //May 31, 2010
+	pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", moving_res_ );
+	if ( moving_res_ == ( five_prime_chain_break_res + 1 ) ){
 		pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", moving_res_ ); //this virtual_phosphate was added to pose at the beginning of this function.
 	}
 	add_harmonic_chain_break_constraint( pose, five_prime_chain_break_res );
@@ -546,6 +559,7 @@ StepWiseRNA_ConnectionSampler::initialize_euler_angle_grid_parameters(){
 void
 StepWiseRNA_ConnectionSampler::initialize_xyz_grid_parameters(){
 	Distance max_distance = options_->sampler_max_centroid_distance(); // if unspecified (0.0), will be replaced
+	if ( options_->tether_jump() && max_distance == 0.0 ) max_distance = 8.0;
 	int centroid_bin_min, centroid_bin_max;
 	initialize_xyz_parameters( max_distance, max_distance_squared_,
 														 centroid_bin_min, centroid_bin_max,
@@ -593,10 +607,26 @@ StepWiseRNA_ConnectionSampler::initialize_sampler(){
 		initialize_xyz_grid_parameters();
 		initialize_full_rigid_body_sampler();
 	} else {
-		sampler_ = rotamer_sampler::rna::setup_rotamer_sampler( *screening_pose_, options_,
-																														job_parameters_, build_pose_from_scratch_,
-																														kic_sampling_, (cutpoints_closed_.size() > 0) );
+		sampler_ = get_full_bond_sampler();
 	}
+}
+
+//////////////////////////////////////////////////////////////////////
+rotamer_sampler::RotamerBaseOP
+StepWiseRNA_ConnectionSampler::get_full_bond_sampler(){
+	using namespace rotamer_sampler;
+	RotamerBaseOP rotamer_sampler_ = rotamer_sampler::rna::setup_rotamer_sampler( *screening_pose_, options_,
+																																								job_parameters_, build_pose_from_scratch_,
+																																								kic_sampling_, (cutpoints_closed_.size() > 0) );
+	ResidueAlternativeRotamerCombOP rsd_alternatives_rotamer = get_rsd_alternatives_rotamer();
+	if ( rsd_alternatives_rotamer == 0 ) return rotamer_sampler_;
+
+	RotamerCombOP sampler = new RotamerComb;
+	sampler->add_rotamer( rsd_alternatives_rotamer );
+	sampler->add_rotamer( rotamer_sampler_ );
+	sampler->set_random( options_->choose_random() );
+	sampler->init();
+	return sampler;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -606,38 +636,31 @@ StepWiseRNA_ConnectionSampler::initialize_full_rigid_body_sampler(){
 	using namespace rotamer_sampler::rigid_body;
 	using namespace rotamer_sampler::copy_dofs;
 
-	ResidueAlternativeRotamerCombOP rsd_alternatives_rotamer = new ResidueAlternativeRotamerComb();
-	// note that following will include moving_res_ for sampler, as well as any other chunks that might move...
-	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ){
-		ResidueAlternativeSet const & residue_alternative_set = residue_alternative_sets_[n];
-		ResidueAlternativeRotamerOP rsd_alt_rotamer = new ResidueAlternativeRotamer( residue_alternative_set,
-																																								 *rigid_body_rotamer_->pose_at_origin() /*take representative residues from this pose after applying copy_dofs*/);
-		rsd_alternatives_rotamer->add_residue_alternative_rotamer( rsd_alt_rotamer );
-	}
-
+	ResidueAlternativeRotamerCombOP rsd_alternatives_rotamer = get_rsd_alternatives_rotamer();
 	sampler_ = new RigidBodyRotamerWithResidueAlternatives( rsd_alternatives_rotamer, rigid_body_rotamer_ );
 	sampler_->set_random( options_->choose_random() );
 	sampler_->init();
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-core::kinematics::Stub
-StepWiseRNA_ConnectionSampler::get_reference_stub( pose::Pose const & pose ) const{
-	std::string const reference_stub_type = "base"; //"sugar"
-	core::kinematics::Stub reference_stub;
+//////////////////////////////////////////////////////////////////////
+rotamer_sampler::copy_dofs::ResidueAlternativeRotamerCombOP
+StepWiseRNA_ConnectionSampler::get_rsd_alternatives_rotamer(){
 
-	TR.Debug << "-----------------------get reference stub-----------------------" << std::endl;
-	if ( reference_stub_type == "sugar" ){
-		reference_stub = get_sugar_stub( pose.residue( reference_res_ ), job_parameters_->is_prepend(), true );
-	} else{ //Use the base
-		reference_stub.v = core::chemical::rna::get_rna_base_centroid(  pose.residue( reference_res_ ), options_->verbose() );
-		reference_stub.M = core::chemical::rna::get_rna_base_coordinate_system( pose.residue( reference_res_ ), reference_stub.v );
+	if ( residue_alternative_sets_.size() == 0 ) return 0;
+	ResidueAlternativeRotamerCombOP rsd_alternatives_rotamer =	new ResidueAlternativeRotamerComb();
+	// note that following will include moving_res_ for sampler, as well as any other chunks that might move...
+	for ( Size n = 1; n <= residue_alternative_sets_.size(); n++ ){
+		ResidueAlternativeSet const & residue_alternative_set = residue_alternative_sets_[n];
+		ResidueAlternativeRotamerOP rsd_alt_rotamer;
+		if ( rigid_body_rotamer_ != 0 ){
+			rsd_alt_rotamer = new ResidueAlternativeRotamer( residue_alternative_set,
+																																									 *rigid_body_rotamer_->pose_at_origin() /*take representative residues from this pose after applying copy_dofs*/);
+		} else {
+			rsd_alt_rotamer = new ResidueAlternativeRotamer( residue_alternative_set );
+		}
+		rsd_alternatives_rotamer->add_residue_alternative_rotamer( rsd_alt_rotamer );
 	}
-
-	TR.Debug << " reference_stub.v: x = " << reference_stub.v[0] << " y = " << reference_stub.v[1] << " z = " << reference_stub.v[2] << std::endl;
-	TR.Debug << "---------------------------------------------------------------------" << std::endl;
-
-	return reference_stub;
+	return rsd_alternatives_rotamer;
 }
 
 //////////////////////////////////////////////////////////////////
@@ -686,10 +709,11 @@ StepWiseRNA_ConnectionSampler::set_options( StepWiseRNA_ModelerOptionsCOP option
 void
 StepWiseRNA_ConnectionSampler::check_job_parameters( pose::Pose const & pose ){
 
+	using namespace core::pose::full_model_info;
+
 	if ( !job_parameters_ ) return;
 
 	runtime_assert( moving_res_ ==  job_parameters_->working_moving_res() );
-	runtime_assert( reference_res_ == job_parameters_->working_reference_res() );
 	runtime_assert( moving_partition_res_ == job_parameters_->working_moving_partition_pos() );
 
 	bool const is_prepend_ = job_parameters_->is_prepend();
@@ -697,8 +721,17 @@ StepWiseRNA_ConnectionSampler::check_job_parameters( pose::Pose const & pose ){
 	if ( five_prime_chain_break_res_ ) runtime_assert( five_prime_chain_breaks_.has_value( five_prime_chain_break_res_ ) );
 
 	if ( rigid_body_sampling_ ){
-		Size const floating_base_five_prime_chain_break_ ( ( is_prepend_ ) ? moving_res_   : reference_res_ );
-		runtime_assert( five_prime_chain_breaks_.has_value( floating_base_five_prime_chain_break_ ) );
+		if ( job_parameters_->floating_base_anchor_res() > 0 ) runtime_assert( reference_res_ == job_parameters_->full_to_sub( job_parameters_->floating_base_anchor_res() ) );
+		if ( moving_partition_res_.size() == 1 ) {
+			runtime_assert( reference_res_ == job_parameters_->working_reference_res() );
+			bool const same_chain = ( get_chain_for_resnum( moving_res_, pose ) ==
+																get_chain_for_resnum( reference_res_, pose ) );
+			if ( same_chain ) {
+				Size const floating_base_five_prime_chain_break_ ( ( is_prepend_ ) ? moving_res_   : reference_res_ );
+				Size const floating_base_three_prime_chain_break_( ( is_prepend_ ) ? reference_res_: moving_res_ );
+				runtime_assert( five_prime_chain_breaks_.has_value( floating_base_five_prime_chain_break_ ) );
+			}
+		}
 	}
 
 	Size const gap_size_ = job_parameters_->gap_size(); /* If this is zero or one, need to screen or closable chain break */
@@ -709,8 +742,8 @@ StepWiseRNA_ConnectionSampler::check_job_parameters( pose::Pose const & pose ){
 	runtime_assert ( !is_dinucleotide_ || !job_parameters_->is_internal() );
 
 	// remove following soon.
-	TR << "GAP_SIZE_TO_ANCHOR " << gap_size_to_anchor_ << "  REFERENCE RES        " << reference_res_ << "  MOVING_RES " << moving_res_ << std::endl;
-	TR << "GAP_SIZE_TO_DISTAL " << gap_size_           << "  FIVE' CHAINBREAK RES " << five_prime_chain_break_res_ << "  MOVING_RES " << moving_res_ << std::endl;
+	//	TR << "GAP_SIZE_TO_ANCHOR " << gap_size_to_anchor_ << "  REFERENCE RES        " << reference_res_ << "  MOVING_RES " << moving_res_ << std::endl;
+	//	TR << "GAP_SIZE_TO_DISTAL " << gap_size_           << "  FIVE' CHAINBREAK RES " << five_prime_chain_break_res_ << "  MOVING_RES " << moving_res_ << std::endl;
 }
 
 

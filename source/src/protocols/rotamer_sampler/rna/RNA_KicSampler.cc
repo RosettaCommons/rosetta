@@ -24,7 +24,6 @@
 
 // Project headers
 #include <core/id/TorsionID.hh>
-#include <core/chemical/rna/RNA_Util.hh>
 #include <core/chemical/rna/RNA_SamplerUtil.hh>
 #include <core/pose/rna/RNA_Util.hh>
 #include <core/pose/rna/RNA_SuiteName.hh>
@@ -50,8 +49,8 @@ RNA_KicSampler::RNA_KicSampler(
 	ref_pose_( ref_pose ),
 	moving_suite_( moving_suite ),
 	chainbreak_suite_( chainbreak_suite ),
-	pucker_state_( WHATEVER ), // WHATEVER, NORTH, SOUTH, NONE
-	base_state_( WHATEVER ), // WHATEVER, ANTI, SYN, NONE
+	pucker_state_( ANY_PUCKER ), // ANY_PUCKER, NORTH, SOUTH, NO_PUCKER
+	base_state_( ANY_CHI ), // ANY_CHI, ANTI, SYN, NO_CHI
 	sample_nucleoside_( moving_suite + 1 ), // default, may be replaced.
 	bin_size_( 20 ),
 	max_tries_( 100 ),
@@ -72,8 +71,6 @@ RNA_KicSampler::~RNA_KicSampler() {}
 //////////////////////////////////////////////////////////////////////////
 void RNA_KicSampler::init() {
 	using namespace core::id;
-	runtime_assert( pucker_state_ <= 3 );
-	runtime_assert( base_state_ <= 3 );
 
 	////////// Backbone Rotamer //////////
 	bb_rotamer_ = new RotamerSizedComb;
@@ -118,7 +115,7 @@ void RNA_KicSampler::init() {
 			TorsionID( chainbreak_suite_ + 1, BB, ALPHA ), full_torsions );
 	bb_rotamer_->add_rotamer( alpha2_rotamer );
 	/////Pucker rotamers/////
-	if ( pucker_state_ != NONE ) {
+	if ( pucker_state_ != NO_PUCKER ) {
 		RNA_SugarRotamerOP pucker_rotamer = new RNA_SugarRotamer(
 				sample_nucleoside_, pucker_state_ );
 		pucker_rotamer->set_skip_same_pucker( skip_same_pucker_ );
@@ -133,7 +130,7 @@ void RNA_KicSampler::init() {
 	loop_closer_->set_verbose( verbose_ );
 
 	////////// Chi Rotamer //////////
-	if ( base_state_ != NONE ){
+	if ( base_state_ != NO_CHI ){
 		chi_rotamer_ = new RNA_ChiRotamer(
 													sample_nucleoside_, NORTH/*arbitary*/, base_state_	);
 		chi_rotamer_->set_extra_chi( extra_chi_ );
@@ -176,14 +173,14 @@ void RNA_KicSampler::operator++() {
 						continue;
 			}
 
-			if ( base_state_ != NONE ) ++( *chi_rotamer_ );
+			if ( base_state_ != NO_CHI ) ++( *chi_rotamer_ );
 			random_chain_closed_ = true;
 			return;
 		}
 		TR.Debug << "Chain not closable after " << max_tries_ << " tries!" << std::endl;
 
 	} else {
-		if ( base_state_ != NONE ) {
+		if ( base_state_ != NO_CHI ) {
 			++( *chi_rotamer_ );
 			if ( chi_rotamer_->not_end() ) return;
 		}
@@ -208,7 +205,7 @@ void RNA_KicSampler::apply( pose::Pose & pose ) {
 		TR.Debug << "Warning: Chain was not closable! Not doing anything to pose." << std::endl;
 		return;
 	}
-	if ( base_state_ != NONE ) chi_rotamer_->apply( pose );
+	if ( base_state_ != NO_CHI ) chi_rotamer_->apply( pose );
 	loop_closer_->apply( pose );
 	bb_rotamer_->apply( pose );
 }
@@ -218,7 +215,7 @@ void RNA_KicSampler::set_random( bool const setting ) {
 	if ( is_init() ) {
 		bb_rotamer_->set_random( setting );
 		loop_closer_->set_random( setting );
-		if ( base_state_ != NONE ) chi_rotamer_->set_random( setting );
+		if ( base_state_ != NO_CHI ) chi_rotamer_->set_random( setting );
 		reset();
 	}
 }
@@ -233,9 +230,8 @@ void RNA_KicSampler::get_next_valid_bb() {
 						continue;
 			}
 
-			if ( base_state_ != NONE ){
-				Size const pucker_state( assign_pucker(
-																							 *ref_pose_, moving_suite_ + 1 ) );
+			if ( base_state_ != NO_CHI ){
+				PuckerState const pucker_state( assign_pucker( *ref_pose_, moving_suite_ + 1 ) );
 				if ( chi_rotamer_->pucker_state() != pucker_state ) {
 					chi_rotamer_->set_pucker_state( pucker_state );
 					chi_rotamer_->init();

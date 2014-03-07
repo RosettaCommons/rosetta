@@ -194,10 +194,6 @@ namespace stepwise {
 	Real
 	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose, bool skip_bulges = false );
 
-	Real
-	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose, pose::full_model_info::FullModelInfoOP full_model_pointer, bool skip_bulges = false );
-
-
 	void
 	clear_constraints_recursively( pose::Pose & pose );
 
@@ -217,13 +213,24 @@ namespace stepwise {
 	is_at_terminus( pose::Pose const & pose, Size const i );
 
 	void
-	merge_in_other_pose( pose::Pose & pose, pose::Pose const & pose2, Size const & merge_res );
+	merge_in_other_pose_by_bond( pose::Pose & pose, pose::Pose const & pose2, Size const merge_res );
+
+	void
+	merge_in_other_pose_by_jump( pose::Pose & pose, pose::Pose const & pose2,
+															 Size const lower_merge_res, Size const upper_merge_res );
+
+	void
+	merge_in_other_pose( pose::Pose & pose, pose::Pose const & pose2,
+											 Size const lower_merge_res, Size const upper_merge_res,
+											 bool const connect_residues_by_bond );
 
 	utility::vector1< Size >
 	merge_two_poses_using_full_model_info( pose::Pose & pose,
 																				 pose::Pose const & pose1,
 																				 pose::Pose const & pose2,
-																				 Size const & merge_res );
+																				 Size const lower_merge_res,
+																				 Size const upper_merge_res,
+																				 bool const connect_residues_by_bond );
 
 	utility::vector1< Size >
 	merge_two_poses( pose::Pose & pose,
@@ -231,7 +238,9 @@ namespace stepwise {
 									 pose::Pose const & pose2,
 									 utility::vector1< Size > const & working_res1,
 									 utility::vector1< Size > const & working_res2,
-									 Size const & merge_res,
+									 Size const lower_merge_res,
+									 Size const upper_merge_res,
+									 bool const connect_residues_by_bond,
 									 bool const fix_first_pose = true );
 
 	bool
@@ -278,9 +287,6 @@ namespace stepwise {
 																						 utility::vector1< Size > const & chains_in_full_model );
 
 	void
-	correctly_add_cutpoint_variants( pose::Pose & pose, Size const res_to_add, 	bool const check_fold_tree = true );
-
-	void
 	fix_up_residue_type_variants_at_strand_beginning( pose::Pose & pose, Size const res );
 
 	void
@@ -293,7 +299,7 @@ namespace stepwise {
 	switch_focus_to_other_pose( pose::Pose & pose, Size const & focus_pose_idx );
 
 	bool
-	switch_focus_among_poses_randomly( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn = 0 );
+	switch_focus_among_poses_randomly( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn = 0, bool force_switch = false );
 
 	pose::PoseOP
 	get_pdb_and_cleanup( std::string const input_file,
@@ -309,6 +315,7 @@ namespace stepwise {
 
 	utility::vector1< Size >
 	figure_out_moving_chain_break_res( pose::Pose const & pose, kinematics::MoveMap const & mm );
+
 
 	bool
 	check_for_fixed_domain( pose::Pose const & pose,
@@ -330,6 +337,9 @@ namespace stepwise {
 	bool
 	definite_terminal_root( pose::Pose const & pose, Size const i );
 
+	utility::vector1< Size >
+	figure_out_moving_cutpoints_closed( pose::Pose const & pose, utility::vector1< Size > moving_partition_pos );
+
 	void
 	figure_out_moving_chain_breaks( pose::Pose const & pose, utility::vector1< Size > moving_partition_pos,
 																	utility::vector1< Size > & cutpoints_closed,
@@ -340,10 +350,36 @@ namespace stepwise {
 	Size
 	figure_out_reference_res_for_suite( pose::Pose const & pose, Size const moving_res );
 
+	utility::vector1< bool >
+	get_partition_definition( pose::Pose const & pose, Size const & moving_suite );
+
+	utility::vector1< bool >
+	get_partition_definition_by_jump( pose::Pose const & pose, Size const & jump_nr /*jump_number*/ );
+
+	void
+	reroot_based_on_full_model_info( pose::Pose & pose,
+																	 utility::vector1< Size > const & root_partition_res );
+
 	utility::vector1< Size >
 	figure_out_moving_partition_res_for_suite( pose::Pose const & pose,
 																						 Size const moving_res,
 																						 Size const reference_res );
+
+	utility::vector1< Size >
+	figure_out_moving_partition_res_for_jump( pose::Pose const & pose,
+																						Size const jump_nr );
+
+	void
+	figure_out_root_partition_res( pose::Pose const & pose, Size const moving_res,
+																 utility::vector1< Size > & root_partition_res,
+																 utility::vector1< Size > & moving_partition_res );
+
+	void
+	revise_root_and_moving_res( pose::Pose & pose, Size & moving_res /* note that this can change too*/ );
+
+	Size
+	split_pose( pose::Pose & pose, Size const moving_res, Size const reference_res );
+
 
 } //stepwise
 } //protocols

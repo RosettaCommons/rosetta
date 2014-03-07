@@ -21,7 +21,6 @@
 
 // Project headers
 #include <core/id/TorsionID.hh>
-#include <core/chemical/rna/RNA_Util.hh>
 #include <core/chemical/rna/RNA_SamplerUtil.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/pose/rna/RNA_Util.hh>
@@ -40,10 +39,10 @@ namespace rna {
 // Constructor
 RNA_SuiteRotamer::RNA_SuiteRotamer(
 	core::Size const rsd_id,
-	core::Size const pucker_state_lower, //WHATEVER, NORTH, SOUTH
-	core::Size const pucker_state_upper,
-	core::Size const base_state_lower, //WHATEVER, ANTI, SYN, NONE
-	core::Size const base_state_upper
+	PuckerState const pucker_state_lower, //ANY_PUCKER, NORTH, SOUTH, NO_PUCKER
+	PuckerState const pucker_state_upper,
+	ChiState const base_state_lower, //ANY_CHI, ANTI, SYN, NO_CHI
+	ChiState const base_state_upper
 ):
 	RotamerSizedAny(),
 	rsd_id_( rsd_id ),
@@ -64,14 +63,14 @@ RNA_SuiteRotamer::RNA_SuiteRotamer(
 	runtime_assert( base_state_lower <= 3 );
 	runtime_assert( base_state_upper <= 3 );
 
-	if ( pucker_state_lower == WHATEVER ) {
+	if ( pucker_state_lower == ANY_PUCKER ) {
 		pucker_states_lower_.push_back( NORTH );
 		pucker_states_lower_.push_back( SOUTH );
 	} else {
 		pucker_states_lower_.push_back( pucker_state_lower );
 	}
 
-	if ( pucker_state_upper == WHATEVER ) {
+	if ( pucker_state_upper == ANY_PUCKER ) {
 		pucker_states_upper_.push_back( NORTH );
 		pucker_states_upper_.push_back( SOUTH );
 	} else {
@@ -188,28 +187,28 @@ void RNA_SuiteRotamer::init_fast() {
 			RotamerSizedCombOP new_rotamer_agg = new RotamerSizedComb;
 
 			/////Gamma rotamers/////
-			torsions = torsions_from_info(
+			torsions = fast_sample_torsions_from_info(
 					torsion_info.gaussian_parameter_set_gamma() );
 			RotamerOneTorsionOP gamma_rotamer = new RotamerOneTorsion(
 					TorsionID( rsd_id_ + 1, BB, GAMMA ), torsions );
 			new_rotamer_agg->add_rotamer( gamma_rotamer );
 
 			/////Beta rotamers/////
-			torsions = torsions_from_info(
+			torsions = fast_sample_torsions_from_info(
 					torsion_info.gaussian_parameter_set_beta() );
 			RotamerOneTorsionOP beta_rotamer = new RotamerOneTorsion(
 					TorsionID( rsd_id_ + 1, BB, BETA ), torsions );
 			new_rotamer_agg->add_rotamer( beta_rotamer );
 
 			/////Alpha rotamers/////
-			torsions = torsions_from_info(
+			torsions = fast_sample_torsions_from_info(
 					torsion_info.gaussian_parameter_set_alpha() );
 			RotamerOneTorsionOP alpha_rotamer = new RotamerOneTorsion(
 					TorsionID( rsd_id_ + 1, BB, ALPHA ), torsions );
 			new_rotamer_agg->add_rotamer( alpha_rotamer );
 
 			/////Zeta rotamers/////
-			torsions = torsions_from_info(
+			torsions = fast_sample_torsions_from_info(
 					torsion_info.gaussian_parameter_set_zeta_alpha_sc_minus() );
 			RotamerOneTorsionOP zeta_rotamer = new RotamerOneTorsion(
 					TorsionID( rsd_id_, BB, ZETA ), torsions );
@@ -217,10 +216,10 @@ void RNA_SuiteRotamer::init_fast() {
 
 			/////Epsilon rotamers/////
 			if ( pucker_states_lower_[i] == NORTH ) {
-				torsions = torsions_from_info(
+				torsions = fast_sample_torsions_from_info(
 						torsion_info.gaussian_parameter_set_epsilon_north() );
 			} else {
-				torsions = torsions_from_info(
+				torsions = fast_sample_torsions_from_info(
 						torsion_info.gaussian_parameter_set_epsilon_south() );
 			}
 			RotamerOneTorsionOP epsilon_rotamer = new RotamerOneTorsion(
@@ -255,12 +254,14 @@ void RNA_SuiteRotamer::init_fast() {
 }
 //////////////////////////////////////////////////////////////////////////
 RNA_SuiteRotamer::TorsionList
-RNA_SuiteRotamer::torsions_from_info(
+RNA_SuiteRotamer::fast_sample_torsions_from_info(
 	utility::vector1<GaussianParameter> const & params
 ) {
 	TorsionList torsions;
 	for ( Size i = 1; i <= params.size(); ++i ) {
-		torsions.push_back( params[i].center );
+		for ( int k = -1; k <= 1; k++ ){
+			torsions.push_back( params[i].center + k * params[i].width );
+		}
 	}
 	return torsions;
 }

@@ -18,11 +18,11 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.hh>
 #include <protocols/stepwise/sampling/rna/connection/StepWiseRNA_ConnectionSampler.hh>
-#include <protocols/stepwise/sampling/rna/legacy/suite/StepWiseRNA_SuiteConnectionSampler.hh>
-#include <protocols/stepwise/sampling/rna/legacy/rigid_body/StepWiseRNA_RigidBodyConnectionSampler.hh>
 #include <protocols/stepwise/sampling/rna/legacy/rigid_body/StepWiseRNA_FloatingBaseSampler.hh>
+#include <protocols/stepwise/sampling/rna/legacy/rigid_body/StepWiseRNA_RigidBodySampler.hh>
 #include <protocols/stepwise/sampling/rna/legacy/suite/StepWiseRNA_ClassicResidueSampler.hh>
 #include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.hh>
+#include <protocols/stepwise/sampling/rna/sugar/legacy/StepWiseRNA_VirtualSugarJustInTimeInstantiatorOLD.hh>
 #include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarUtil.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_OutputData.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_BaseCentroidChecker.hh>
@@ -124,18 +124,19 @@ StepWiseRNA_ResidueSampler::unified_sampling( core::pose::Pose & pose ){
 
 	// following will be simplified soon, since unified ConnectionSampler can handle closure inside.
 	pose_list_.clear();
-	if ( job_parameters_->floating_base() &&
-			 virtual_sugar_just_in_time_instantiator_->sampling_sugar_at_chain_break() ){
-		virtual_sugar_just_in_time_instantiator_->prepare_from_prior_sampled_sugar_jobs_for_chain_break( pose, pose_list_ );
-	} else if ( !job_parameters_->floating_base() &&
-							virtual_sugar_just_in_time_instantiator_->sampling_sugar() ) {
-		virtual_sugar_just_in_time_instantiator_->prepare_from_prior_sampled_sugar_jobs( pose, pose_list_ );
-	} else {
-		pose_list_.push_back( pose.clone() );
-	}
+ 	// if ( job_parameters_->floating_base() &&
+	// 		 virtual_sugar_just_in_time_instantiator_->sampling_sugar_at_chain_break() ){
+	// 	virtual_sugar_just_in_time_instantiator_->prepare_from_prior_sampled_sugar_jobs_for_chain_break( pose, pose_list_ );
+	// } else if ( !job_parameters_->floating_base() &&
+	// 						virtual_sugar_just_in_time_instantiator_->sampling_sugar() ) {
+	// 	virtual_sugar_just_in_time_instantiator_->prepare_from_prior_sampled_sugar_jobs( pose, pose_list_ );
+	// } else {
+	//		pose_list_.push_back( pose.clone() );
+	//	}
+	virtual_sugar_just_in_time_instantiator_->prepare_from_prior_sampled_sugar_jobs( pose, pose_list_, false /*pose_explosion_legacy*/ );
 
 	connection::StepWiseRNA_ConnectionSampler connection_sampler( job_parameters_ );
-	connection_sampler.set_pose_list( pose_list_ ); // allows for accumulation of poses, if desired.
+	//	connection_sampler.set_pose_list( pose_list_ ); // allows for accumulation of poses, if desired.
 	connection_sampler.set_base_centroid_checker( base_centroid_checker_ );
 	connection_sampler.set_user_input_VDW_bin_checker ( user_input_VDW_bin_checker_ );
 	connection_sampler.set_scorefxn ( scorefxn_ );
@@ -145,9 +146,12 @@ StepWiseRNA_ResidueSampler::unified_sampling( core::pose::Pose & pose ){
 	runtime_assert( !options_->combine_long_loop_mode() );
 
 	// following will be generalized soon... ConnectionSampler can now sample sugars besides anchor.
-	if ( job_parameters_->floating_base() &&
-			 virtual_sugar_just_in_time_instantiator_->anchor_sugar_modeling().sample_sugar ){
-		connection_sampler.add_residue_alternative_set( *convert_sugar_modeling_to_residue_alternative_set( virtual_sugar_just_in_time_instantiator_->anchor_sugar_modeling() ) );
+	// if ( job_parameters_->floating_base() &&
+	// 		 virtual_sugar_just_in_time_instantiator_->anchor_sugar_modeling().sample_sugar ){
+	// 	connection_sampler.add_residue_alternative_set( *convert_sugar_modeling_to_residue_alternative_set( virtual_sugar_just_in_time_instantiator_->anchor_sugar_modeling() ) );
+	// }
+	for ( Size n = virtual_sugar_just_in_time_instantiator_->num_sets(); n >= 1; n-- ) {
+	 	connection_sampler.add_residue_alternative_set( virtual_sugar_just_in_time_instantiator_->residue_alternative_set( n ) );
 	}
 
 	connection_sampler.apply( pose_list_, pose /*viewer_pose*/ );
@@ -176,32 +180,21 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose ){
 
 	pose_list_.clear();
 	if ( virtual_sugar_just_in_time_instantiator_->sampling_sugar() ){
-		virtual_sugar_just_in_time_instantiator_->prepare_from_prior_sampled_sugar_jobs( pose, pose_list_ );
+		virtual_sugar_just_in_time_instantiator_->prepare_from_prior_sampled_sugar_jobs( pose, pose_list_, true );
 	} else {
 		pose_list_.push_back( pose.clone() );
 	}
 
-	if ( options_->new_framework() ){
-		legacy::suite::StepWiseRNA_SuiteConnectionSampler connection_sampler( job_parameters_ );
-		connection_sampler.set_pose_list( pose_list_ ); // allows for accumulation of poses, if desired.
-		connection_sampler.set_base_centroid_checker( base_centroid_checker_ );
-		connection_sampler.set_user_input_VDW_bin_checker ( user_input_VDW_bin_checker_ );
-		connection_sampler.set_scorefxn ( scorefxn_ );
-		connection_sampler.set_options( options_ );
-		connection_sampler.set_silent_file( sampling_silent_file_ );
-		connection_sampler.apply( pose_list_, pose /*viewer_pose*/ );
-		pose_list_ = connection_sampler.pose_list();
-	} else { // this will soon replace above.
-		legacy::suite::StepWiseRNA_ClassicResidueSampler classic_residue_sampler( job_parameters_ );
-		classic_residue_sampler.set_pose_list( pose_list_ ); // allows for accumulation of poses, if desired.
-		classic_residue_sampler.set_base_centroid_checker( base_centroid_checker_ );
-		classic_residue_sampler.set_user_input_VDW_bin_checker ( user_input_VDW_bin_checker_ );
-		classic_residue_sampler.set_scorefxn ( scorefxn_ );
-		classic_residue_sampler.set_options( options_ );
-		classic_residue_sampler.set_silent_file( sampling_silent_file_ );
-		classic_residue_sampler.apply( pose_list_, pose /*viewer_pose*/ );
-		pose_list_ = classic_residue_sampler.pose_list();
-	}
+	legacy::suite::StepWiseRNA_ClassicResidueSampler classic_residue_sampler( job_parameters_ );
+	classic_residue_sampler.set_pose_list( pose_list_ ); // allows for accumulation of poses, if desired.
+	classic_residue_sampler.set_base_centroid_checker( base_centroid_checker_ );
+	classic_residue_sampler.set_user_input_VDW_bin_checker ( user_input_VDW_bin_checker_ );
+	classic_residue_sampler.set_scorefxn ( scorefxn_ );
+	classic_residue_sampler.set_options( options_ );
+	classic_residue_sampler.set_silent_file( sampling_silent_file_ );
+	classic_residue_sampler.apply( pose_list_, pose /*viewer_pose*/ );
+	pose_list_ = classic_residue_sampler.pose_list();
+
 
 }
 
@@ -213,38 +206,24 @@ StepWiseRNA_ResidueSampler::floating_base_sampling( pose::Pose & pose ){
 	pose_list_.clear();
 	if ( virtual_sugar_just_in_time_instantiator_->sampling_sugar_at_chain_break() ){
 		// just instantiate sugars at (distal) chain_break. (anchor_sugar & current_sugar are handled specially inside sampler).
-		virtual_sugar_just_in_time_instantiator_->prepare_from_prior_sampled_sugar_jobs( pose, pose_list_ );
+		virtual_sugar_just_in_time_instantiator_->prepare_from_prior_sampled_sugar_jobs( pose, pose_list_, true /*pose_explosion_legacy*/ );
 	} else {
 		pose_list_.push_back( pose.clone() );
 	}
 
-	if ( options_->new_framework() ){
-		legacy::rigid_body::StepWiseRNA_RigidBodyConnectionSampler rigid_body_sampler( job_parameters_ );
-		rigid_body_sampler.set_base_centroid_checker( base_centroid_checker_ );
-		rigid_body_sampler.set_user_input_VDW_bin_checker ( user_input_VDW_bin_checker_ );
-		rigid_body_sampler.set_silent_file ( sampling_silent_file_ );
-		rigid_body_sampler.set_scorefxn ( scorefxn_ );
-		if ( virtual_sugar_just_in_time_instantiator_->anchor_sugar_modeling().sample_sugar ){
-			rigid_body_sampler.add_residue_alternative_set( *convert_sugar_modeling_to_residue_alternative_set( virtual_sugar_just_in_time_instantiator_->anchor_sugar_modeling() ) );
-		}
-		rigid_body_sampler.set_options( options_ );
-		runtime_assert( !options_->use_green_packer() );
-		runtime_assert( !options_->combine_long_loop_mode() );
-		rigid_body_sampler.apply( pose_list_, pose );
-		pose_list_ = rigid_body_sampler.get_pose_list();
-	} else {
-		legacy::rigid_body::StepWiseRNA_FloatingBaseSampler floating_base_sampler( job_parameters_ );
-		floating_base_sampler.set_base_centroid_checker( base_centroid_checker_ );
-		floating_base_sampler.set_user_input_VDW_bin_checker ( user_input_VDW_bin_checker_ );
-		floating_base_sampler.set_silent_file ( sampling_silent_file_ );
-		floating_base_sampler.set_scorefxn ( scorefxn_ );
-		floating_base_sampler.set_anchor_sugar_modeling( virtual_sugar_just_in_time_instantiator_->anchor_sugar_modeling() );
-		floating_base_sampler.set_options( options_ );
-		runtime_assert( !options_->use_green_packer() );
-		runtime_assert( !options_->combine_long_loop_mode() );
-		floating_base_sampler.apply( pose_list_, pose );
-		pose_list_ = floating_base_sampler.get_pose_list();
-	}
+	//RigidBodySampler is new version of FloatingBaseSampler.
+	legacy::rigid_body::StepWiseRNA_RigidBodySampler floating_base_sampler( job_parameters_ );
+	//	legacy::rigid_body::StepWiseRNA_FloatingBaseSampler floating_base_sampler( job_parameters_ );
+	floating_base_sampler.set_base_centroid_checker( base_centroid_checker_ );
+	floating_base_sampler.set_user_input_VDW_bin_checker ( user_input_VDW_bin_checker_ );
+	floating_base_sampler.set_silent_file ( sampling_silent_file_ );
+	floating_base_sampler.set_scorefxn ( scorefxn_ );
+	floating_base_sampler.set_anchor_sugar_modeling( virtual_sugar_just_in_time_instantiator_->anchor_sugar_modeling() );
+	floating_base_sampler.set_options( options_ );
+	runtime_assert( !options_->use_green_packer() );
+	runtime_assert( !options_->combine_long_loop_mode() );
+	floating_base_sampler.apply( pose_list_, pose );
+	pose_list_ = floating_base_sampler.get_pose_list();
 
 }
 
@@ -253,6 +232,7 @@ bool
 StepWiseRNA_ResidueSampler::instantiate_any_virtual_sugars( pose::Pose & pose ){
 	Pose pose_save = pose;
 	virtual_sugar_just_in_time_instantiator_ = new sugar::StepWiseRNA_VirtualSugarJustInTimeInstantiator( job_parameters_ );
+	//	virtual_sugar_just_in_time_instantiator_ = new sugar::legacy::StepWiseRNA_VirtualSugarJustInTimeInstantiatorOLD( job_parameters_ );
 	virtual_sugar_just_in_time_instantiator_->set_scorefxn( scorefxn_ );
 	virtual_sugar_just_in_time_instantiator_->set_options( options_ );
 	virtual_sugar_just_in_time_instantiator_->apply( pose );

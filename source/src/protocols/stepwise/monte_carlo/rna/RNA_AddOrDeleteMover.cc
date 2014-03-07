@@ -68,29 +68,9 @@ namespace rna {
 		apply( pose, move_type );
 	}
 
-  //////////////////////////////////////////////////////////////////////////
-	bool
-  RNA_AddOrDeleteMover::apply( core::pose::Pose & pose, std::string & move_type /* just used by monte carlo*/ )
-	{
-		utility::vector1< Size > const moving_res_list = core::pose::full_model_info::get_moving_res_from_full_model_info( pose );
-
-		//always have something in play!!?? Or permit removal??!! need to check this carefully.
-		bool disallow_delete  = disallow_deletion_of_last_residue_ && ( moving_res_list.size() <= 1 );
-		if ( options_->skip_deletions() || 	options_->rebuild_bulge_mode() ) disallow_delete = true;
-
-		SWA_Move swa_move;
-		swa_move_selector_->set_allow_delete( !disallow_delete );
-		swa_move_selector_->set_allow_skip_bulge( options_->allow_skip_bulge() );
-		swa_move_selector_->set_allow_from_scratch( options_->allow_from_scratch() );
-		swa_move_selector_->set_allow_resample_during_add_delete( false ); // old option.
-		utility::vector1< Size > const actual_sample_res = figure_out_actual_sample_res( pose );
-		swa_move_selector_->get_random_move_element_at_chain_terminus( pose, swa_move, actual_sample_res );
-
-		move_type = to_string( swa_move.move_type() );
-		std::transform(move_type.begin(), move_type.end(), move_type.begin(), ::tolower); // this is why we love c
-
-		if ( swa_move.move_type() == NO_MOVE ) return false;
-
+	///////////////////////////////////////////////////////////////////////////////
+	void
+	RNA_AddOrDeleteMover::apply( core::pose::Pose & pose, SWA_Move const & swa_move ){
 		TR << swa_move << std::endl;
 		TR.Debug << "Starting from: " << pose.annotated_sequence() << std::endl;
 		if ( swa_move.move_type() == DELETE ) {
@@ -99,10 +79,34 @@ namespace rna {
 			rna_from_scratch_mover_->apply( pose, swa_move.move_element() );
 		} else {
 			runtime_assert( swa_move.move_type() == ADD );
-			rna_add_mover_->apply( pose, swa_move.moving_res(), swa_move.attached_res() );
+			rna_add_mover_->apply( pose, swa_move );
 		}
 		TR.Debug << "Ended with: " << pose.annotated_sequence() << std::endl;
+	}
 
+  //////////////////////////////////////////////////////////////////////////
+	bool
+  RNA_AddOrDeleteMover::apply( core::pose::Pose & pose, std::string & move_type /* just used by monte carlo*/ )
+	{
+		utility::vector1< Size > const moving_res_list = core::pose::full_model_info::get_moving_res_from_full_model_info( pose );
+
+		bool disallow_delete  = disallow_deletion_of_last_residue_ && ( moving_res_list.size() <= 1 );
+		if ( options_->skip_deletions() || 	options_->rebuild_bulge_mode() ) disallow_delete = true;
+
+		SWA_Move swa_move;
+		swa_move_selector_->set_allow_delete( !disallow_delete );
+		swa_move_selector_->set_allow_skip_bulge( options_->allow_skip_bulge() );
+		swa_move_selector_->set_from_scratch_frequency( options_->from_scratch_frequency() );
+		swa_move_selector_->set_intermolecular_frequency( options_->intermolecular_frequency() );
+
+		utility::vector1< Size > const actual_sample_res = figure_out_actual_sample_res( pose );
+		swa_move_selector_->get_random_add_or_delete_element( pose, swa_move, actual_sample_res );
+
+		move_type = to_string( swa_move.move_type() );
+		std::transform(move_type.begin(), move_type.end(), move_type.begin(), ::tolower); // this is why we love C
+
+		if ( swa_move.move_type() == NO_MOVE ) return false;
+		apply( pose, swa_move );
 		return true;
 	}
 

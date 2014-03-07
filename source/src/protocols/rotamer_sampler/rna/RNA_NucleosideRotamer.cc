@@ -37,8 +37,8 @@ namespace rna {
 // Constructor
 RNA_NucleosideRotamer::RNA_NucleosideRotamer(
 	core::Size const rsd_id,
-	core::Size const pucker_state, //WHATEVER, NORTH, SOUTH
-	core::Size const base_state //WHATEVER, ANTI, SYN, NONE
+	PuckerState const pucker_state, //ANY_PUCKER, NORTH, SOUTH, NO_PUCKER
+	ChiState const base_state //ANY_CHI, ANTI, SYN, NO_CHI
 ):
 	RotamerSizedAny(),
 	rsd_id_( rsd_id ),
@@ -52,7 +52,7 @@ RNA_NucleosideRotamer::RNA_NucleosideRotamer(
 	runtime_assert( pucker_state <= 2 );
 	runtime_assert( base_state <= 3 );
 
-	if ( pucker_state == WHATEVER ) {
+	if ( pucker_state == ANY_PUCKER ) {
 		pucker_states_.push_back( NORTH );
 		pucker_states_.push_back( SOUTH );
 	} else {
@@ -68,7 +68,7 @@ void RNA_NucleosideRotamer::init() {
 		RotamerSizedCombOP new_rotamer_agg = new RotamerSizedComb;
 
 		/////Chi rotamers/////
-		if ( base_state_ != NONE ) {
+		if ( base_state_ != NO_CHI ) {
 			RNA_ChiRotamerOP chi_rotamer = new RNA_ChiRotamer(
 					rsd_id_, pucker_states_[i], base_state_ );
 			chi_rotamer->set_bin_size( bin_size_ );

@@ -42,6 +42,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/rna/RNA_Util.hh>
+#include <core/pose/full_model_info/FullModelInfoUtil.hh> // needed for chain/gap-size.
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -102,6 +103,7 @@ StepWiseRNA_VirtualSugarSampler::StepWiseRNA_VirtualSugarSampler( StepWiseRNA_Jo
 		use_phenix_geo_( false ),
 		keep_base_fixed_( false ),
 		choose_random_( false ),
+		do_minimize_( true ),
 		integration_test_mode_( false ),
 		virtual_sugar_is_from_prior_step_( true ),
 		legacy_mode_( false ), //for comparison to original code -- may deprecate in 2014.
@@ -131,9 +133,7 @@ StepWiseRNA_VirtualSugarSampler::apply( pose::Pose & viewer_pose ){
 
 	Size const max_tries = choose_random_ ? max_tries_for_random_sugar_setup_ : 1;
 	for ( Size ntries = 1; ntries <= max_tries; ntries++ ){
-		TR << TR.Green << "On sampling try: " << ntries << TR.Reset << std::endl;
 		TR << TR.Green << "Will sample residue " << sugar_modeling_.moving_res << " -- reference res: " << sugar_modeling_.reference_res <<  TR.Reset << std::endl;
-		TR << TR.Green << viewer_pose.fold_tree() << TR.Reset << std::endl;
 		apply( pose_list, viewer_pose );
 		if ( pose_list.size() > 0 || !sugar_setup_success_ ) break;
 	}
@@ -161,7 +161,7 @@ StepWiseRNA_VirtualSugarSampler::apply( utility::vector1< PoseOP > & pose_list,
 	if ( virtual_sugar_is_from_prior_step_ ) virtualize_distal_partition( viewer_pose );
 	else runtime_assert( job_parameters_->gap_size() > 0 );
 
-	setup_VDW_bin_checker( viewer_pose );
+	// if ( !choose_random_ ) setup_VDW_bin_checker( viewer_pose ); // this takes too long.
 
 	setup_sugar_conformations( pose_list, viewer_pose );
 
@@ -209,16 +209,26 @@ StepWiseRNA_VirtualSugarSampler::setup_sugar_conformations( utility::vector1< Po
 	sampler.set_random( choose_random_ );
 	sampler.init();
 
-	bool const do_minimize = !integration_test_mode_; // for speed.
 	Size const five_prime_gap_res  = sugar_modeling_.is_prepend ? sugar_modeling_.moving_res    : sugar_modeling_.reference_res;
 	Size const three_prime_gap_res = sugar_modeling_.is_prepend ? sugar_modeling_.reference_res : sugar_modeling_.moving_res;
 
 	// Deprecate soon:
-	// Size const moving_suite = sugar_modeling_.is_prepend ? sugar_modeling_.moving_res : ( sugar_modeling_.moving_res - 1);
-	//	TR << TR.Red << "MOVING " << sugar_modeling_.moving_res << "  BULGE " << sugar_modeling_.bulge_res << "  REFERENCE " << sugar_modeling_.reference_res << " IS_PREPEND " << sugar_modeling_.is_prepend << " MOVING_SUITE " << moving_suite << " sugar_modeling:FIVE_PRIME_CHAINBREAK " << sugar_modeling_.five_prime_chain_break << " FIVE_PRIME_GAP_RES " << five_prime_gap_res << " DO_MINIMIZE " << do_minimize << TR.Reset << std::endl;
+	//	 Size const moving_suite = sugar_modeling_.is_prepend ? sugar_modeling_.moving_res : ( sugar_modeling_.moving_res - 1);
+	//TR << TR.Red << "MOVING " << sugar_modeling_.moving_res << "  BULGE " << sugar_modeling_.bulge_res << "  REFERENCE " << sugar_modeling_.reference_res << " IS_PREPEND " << sugar_modeling_.is_prepend << " MOVING_SUITE " << moving_suite << " sugar_modeling:FIVE_PRIME_CHAINBREAK " << sugar_modeling_.five_prime_chain_break << " FIVE_PRIME_GAP_RES " << five_prime_gap_res << " DO_MINIMIZE " << do_minimize_ << TR.Reset << std::endl;
+	using namespace core::pose::full_model_info;
+	utility::vector1< Size > const chains = figure_out_chains_from_full_model_info( pose );
+	checker::ChainClosableGeometryCheckerOP chain_closable_geometry_checker;
+	if ( chains[ five_prime_gap_res ] == chains[ three_prime_gap_res ] ){
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
+		Size const gap_size = res_list[ three_prime_gap_res ] -  res_list[ five_prime_gap_res ];
+		checker::ChainClosableGeometryChecker chain_closable_geometry_checker( five_prime_gap_res, three_prime_gap_res, gap_size );
+	}
 
-	checker::ChainClosableGeometryChecker chain_closable_geometry_checker( five_prime_gap_res, three_prime_gap_res, 1 /*gap_size -- problem!?*/);
-	checker::AtrRepChecker atr_rep_checker( pose, sugar_modeling_.moving_res, sugar_modeling_.reference_res, 0 /*gap_size = 0 forces loose rep_cutoff (10.0 )*/ );
+	checker::AtrRepCheckerOP atr_rep_checker;
+	utility::vector1< Size > const & moving_partition_res = job_parameters_->working_moving_partition_pos();
+	if ( moving_partition_res.has_value( sugar_modeling_.moving_res ) == moving_partition_res.has_value( sugar_modeling_.reference_res ) ){
+		atr_rep_checker = new checker::AtrRepChecker( pose, sugar_modeling_.moving_res, sugar_modeling_.reference_res, 0 /*gap_size = 0 forces loose rep_cutoff (10.0 )*/ );
+	}
 
 	pose::Pose pose_init = pose;//Hard copy
 	pose::remove_variant_type_from_pose_residue( pose_init, "VIRTUAL_RIBOSE", sugar_modeling_.moving_res );
@@ -244,9 +254,9 @@ StepWiseRNA_VirtualSugarSampler::setup_sugar_conformations( utility::vector1< Po
 
 		sampler.apply( pose );
 
-		if ( do_minimize ) minimize_sugar( pose ); // remove clashes; show in graphics too.
-		if ( ! chain_closable_geometry_checker.check_screen( pose ) ) continue;
-		if ( ! atr_rep_checker.check_screen( pose ) ) continue;
+		if ( do_minimize_ ) minimize_sugar( pose ); // remove clashes; show in graphics too.
+		if ( chain_closable_geometry_checker && !chain_closable_geometry_checker->check_screen( pose ) ) continue;
+		if ( atr_rep_checker &&  !atr_rep_checker->check_screen( pose ) ) continue;
 
 		tag_into_pose( pose, tag_from_pose( pose_init ) + '_' + ObjexxFCL::string_of( count ) );
 		pose_list.push_back( pose.clone() );
@@ -457,6 +467,7 @@ StepWiseRNA_VirtualSugarSampler::bulge_chain_closure_complete( utility::vector1<
 		viewer_pose = *(pose_list[n]);
 		stepwise_rna_modeler->apply( viewer_pose );
 		if ( stepwise_rna_modeler->get_num_sampled() > 0 ) output_pose_list.push_back( viewer_pose.clone() );
+		if ( integration_test_mode_ && output_pose_list.size() > 0 ) break;
 	}
 	pose_list = output_pose_list;
 }
@@ -490,22 +501,22 @@ StepWiseRNA_VirtualSugarSampler::bulge_chain_closure_legacy( utility::vector1< P
 	Size const bulge_suite = sugar_modeling_.bulge_suite;
 	Size const bulge_rsd   = sugar_modeling_.bulge_res;
 	utility::vector1<bool> sample_sugar( 2, false );
-	utility::vector1<Size> base_state  ( 2, WHATEVER );
-	utility::vector1<Size> pucker_state( 2, WHATEVER );
+	utility::vector1<ChiState> base_state  ( 2, ANY_CHI );
+	utility::vector1<PuckerState> pucker_state( 2, ANY_PUCKER );
 
 	for ( Size i = 1; i <= 2; ++i ) {
 		Size const curr_rsd( bulge_suite + i - 1 );
 		if ( bulge_rsd == curr_rsd ) {
 			sample_sugar[i] = true;
-			pucker_state[i] = WHATEVER;
-			base_state[i] = WHATEVER;
+			pucker_state[i] = ANY_PUCKER;
+			base_state[i] = ANY_CHI;
 		} else {
 			sample_sugar[i] = false;
 			//FANG: Assuming all pose in the list have same pucker for the unmoved
 			//residue. Not sure if this is correct but it only affects
 			//epsilon sampling.
 			pucker_state[i] = assign_pucker( screening_pose, curr_rsd ); // NOT TRUE! FIX!
-			base_state[i]   = NONE;
+			base_state[i]   = NO_CHI;
 		}
 	}
 
@@ -544,7 +555,7 @@ StepWiseRNA_VirtualSugarSampler::bulge_chain_closure_legacy( utility::vector1< P
 		count_data.tot_rotamer_count++;
 		sampler.apply( screening_pose );
 
-		if ( !VDW_bin_checker_->VDW_rep_screen( screening_pose, sugar_modeling_.bulge_res ) ) continue;
+		if ( VDW_bin_checker_ && !VDW_bin_checker_->VDW_rep_screen( screening_pose, sugar_modeling_.bulge_res ) ) continue;
 		count_data.good_bin_rep_count++;
 
 		for ( Size n = 1; n <= pose_list.size(); n++ ){

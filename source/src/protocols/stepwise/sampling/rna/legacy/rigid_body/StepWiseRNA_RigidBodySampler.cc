@@ -12,7 +12,7 @@
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
-#include <protocols/stepwise/sampling/rna/rigid_body/StepWiseRNA_RigidBodySampler.hh>
+#include <protocols/stepwise/sampling/rna/legacy/rigid_body/StepWiseRNA_RigidBodySampler.hh>
 #include <protocols/stepwise/sampling/rna/rigid_body/StepWiseRNA_FloatingBaseSamplerUtil.hh>
 #include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarUtil.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
@@ -172,10 +172,10 @@ StepWiseRNA_RigidBodySampler::StepWiseRNA_RigidBodySampler( StepWiseRNA_JobParam
 	o2prime_instantiation_distance_cutoff_( 6.0 ),
 	extra_tag_( "" ),
 	rigid_body_sampling_( true ), // will not be true if we unify with suite sampling
-	residue_level_screening_( true ),
-	full_pose_level_screening_( true ), // will make unification with suite sampling simpler.
 	anchor_sugar_screener_legacy_( false ),
-	legacy_mode_( false )
+	legacy_mode_( false ),
+	residue_level_screening_( true ),
+	full_pose_level_screening_( true ) // will make unification with suite sampling simpler.
 {
 	set_native_pose( job_parameters_->working_native_pose() );
 	runtime_assert ( !is_dinucleotide_ || !is_internal_ );
@@ -401,6 +401,15 @@ StepWiseRNA_RigidBodySampler::initialize_poses_and_stubs_and_checkers( pose::Pos
 			 !pose.residue( moving_res_ ).has_variant_type( "CUTPOINT_LOWER" ) ){
 		add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", moving_res_ );
 	}
+	// new -- 2014 -- quick hack for comparison to new ConnectionSampler
+	if ( pose.residue( moving_res_ ).has_variant_type( "CUTPOINT_UPPER" ) ||
+			 pose.residue( moving_res_ ).has_variant_type( "CUTPOINT_LOWER" ) ){
+		remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", moving_res_ );
+	}
+	if ( pose.residue( reference_res_ ).has_variant_type( "CUTPOINT_UPPER" ) ||
+			 pose.residue( reference_res_ ).has_variant_type( "CUTPOINT_LOWER" ) ){
+		remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", reference_res_ );
+	}
 
 	//runtime_assert( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_PHOSPHATE" ) );
 	//	runtime_assert( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_RIBOSE" ) );
@@ -446,7 +455,7 @@ StepWiseRNA_RigidBodySampler::initialize_poses_and_stubs_and_checkers( pose::Pos
 			std::cerr << "MOVING_RES " << moving_res_ << std::endl;
 			std::cerr << "PARTITION_POS " << working_moving_partition_pos_ << std::endl;
 		}
-		runtime_assert( working_moving_partition_pos_.size() == 1 ); //generalize later.
+		//		runtime_assert( working_moving_partition_pos_.size() == 1 ); //generalize later.
 		phosphate_sampler_->set_moving_partition_res( working_moving_partition_pos_ );
 	}
 

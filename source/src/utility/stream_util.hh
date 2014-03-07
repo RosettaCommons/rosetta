@@ -28,14 +28,12 @@
 
 namespace utility {
 
-} // namespace basic
-
 
 
 /// -------------------------------------------------------------------
 /// Predefined functions for Tracer IO
-/// We move them out of name spaces so we can use them right away - without specifying it.
-
+/// We originally moved them out of name spaces so we can use them right away - without specifying it.
+/// Returned to utility namespace, as some compilers did not find the operator otherwise! -- rhiju
 
 /// @brief Output function for std::vector object.
 template <class T>
@@ -96,4 +94,7 @@ std::ostream & operator <<(std::ostream & os, std::list<T> const & l) {
 	os << "]]";
 	return os;
 }
+
+} // namespace utility
+
 #endif // INCLUDED_utility_stream_util_hh

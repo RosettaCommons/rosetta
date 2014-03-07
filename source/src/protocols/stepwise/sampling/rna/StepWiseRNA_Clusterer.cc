@@ -17,8 +17,8 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_OutputData.hh> //Sept 26, 2011
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetup.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetup.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.fwd.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.hh>
 //////////////////////////////////
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -1253,7 +1253,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseRNA_Clusterer::recalculate_rmsd_and_output_silent_file( std::string const & silent_file,
-				                                                     protocols::stepwise::sampling::rna::StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup,
+				                                                     protocols::stepwise::sampling::rna::legacy::StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup,
 																													bool const write_score_only ){
 
 		using namespace core::io::silent;

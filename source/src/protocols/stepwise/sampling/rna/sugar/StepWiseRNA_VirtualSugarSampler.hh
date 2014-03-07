@@ -68,6 +68,8 @@ namespace sugar {
 
 		void set_keep_base_fixed( bool const & setting ) { keep_base_fixed_ = setting;	}
 
+		void set_do_minimize( bool const & setting ) { do_minimize_ = setting;	}
+
 		void set_integration_test_mode( bool const & setting ){ integration_test_mode_ = setting; }
 
 		void set_virtual_sugar_is_from_prior_step( bool const & setting ) { virtual_sugar_is_from_prior_step_ = setting;	}
@@ -137,6 +139,7 @@ namespace sugar {
 		bool use_phenix_geo_;
 		bool keep_base_fixed_;
 		bool choose_random_;
+		bool do_minimize_;
 		bool integration_test_mode_;
 		bool virtual_sugar_is_from_prior_step_;
 		bool legacy_mode_;

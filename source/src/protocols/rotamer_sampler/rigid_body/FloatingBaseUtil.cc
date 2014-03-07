@@ -142,7 +142,7 @@ namespace rigid_body {
 			for ( Size at = 1; at <= pose.residue_type( i ).natoms(); at++ ){
 				id::AtomID const id( at, i );
 				pose.set_xyz( id, pose.xyz( id ) - centroid ); //I think the order here does matter. Translate centroid to origin.
-				pose.set_xyz( id, invert_coordinate_matrix * pose.xyz( id ) ); //I think the order here does matter. Rotate coordinate so that it equal to Roseeta internal reference frame
+				pose.set_xyz( id, invert_coordinate_matrix * pose.xyz( id ) ); //I think the order here does matter. Rotate coordinate so that it equal to Rosetta internal reference frame
 			}
 		}
 	}

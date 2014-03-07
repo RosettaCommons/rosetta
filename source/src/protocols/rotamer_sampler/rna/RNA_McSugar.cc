@@ -18,7 +18,6 @@
 #include <protocols/rotamer_sampler/rna/RNA_SugarRotamer.hh>
 
 // Project headers
-#include <core/chemical/rna/RNA_Util.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
@@ -39,13 +38,13 @@ namespace rna {
 RNA_McSugar::RNA_McSugar(
 	Size const rsd_id,
 	Real const flip_rate,
-	Size const init_pucker
+	PuckerState const init_pucker
 ):
 	McRotamer(),
 	stored_pucker_state_( init_pucker ),
 	active_pucker_state_( init_pucker ),
 	flip_rate_( flip_rate ),
-	sugar_rotamer_( new RNA_SugarRotamer( rsd_id, WHATEVER ) )
+	sugar_rotamer_( new RNA_SugarRotamer( rsd_id, ANY_PUCKER ) )
 {}
 ///////////////////////////////////////////////////////////////////////////
 void RNA_McSugar::init() {

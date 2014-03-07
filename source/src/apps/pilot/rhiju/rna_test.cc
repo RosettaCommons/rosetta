@@ -3335,8 +3335,6 @@ create_dihedral_constraint( core::scoring::constraints::ConstraintSetOP & cst_se
 
 
 ///////////////////////////////////////////////////////////////////////////////
-enum PuckerState{ ALL_PUCKER, NORTH_PUCKER, SOUTH_PUCKER };
-
 void
 get_backbone_rotamers( utility::vector1< utility::vector1 <Real > > & backbone_rotamers,
 											 PuckerState const & pucker1,
@@ -3549,7 +3547,7 @@ dinucleotide_test()
 	Size count( 1 );
 
 	utility::vector1< utility::vector1 <Real > > backbone_rotamers;
-	get_backbone_rotamers( backbone_rotamers, ALL_PUCKER, ALL_PUCKER );
+	get_backbone_rotamers( backbone_rotamers, ANY_PUCKER, ANY_PUCKER );
 
 	for ( Size n = 1;  n <= backbone_rotamers.size(); n++ )		{
 		apply_backbone_rotamer( pose, 1, backbone_rotamers[n] );
@@ -3782,9 +3780,9 @@ build_next_nucleotide_test()
 
 	utility::vector1< utility::vector1 <Real > > backbone_rotamers;
 	if (prepend_res) {
-		get_backbone_rotamers( backbone_rotamers, ALL_PUCKER, NORTH_PUCKER );
+		get_backbone_rotamers( backbone_rotamers, ANY_PUCKER, NORTH );
 	} else {
-		get_backbone_rotamers( backbone_rotamers, NORTH_PUCKER, ALL_PUCKER );
+		get_backbone_rotamers( backbone_rotamers, NORTH, ANY_PUCKER );
 	}
 
 	Size const suite_res = prepend_res ? 1: (nres-1);

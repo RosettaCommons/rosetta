@@ -24,7 +24,7 @@
 #include <protocols/stepwise/sampling/rna/checker/RNA_BaseCentroidChecker.fwd.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_VDW_BinChecker.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/toolbox/AllowInsert.hh>
+#include <protocols/toolbox/AllowInsert.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -92,11 +92,7 @@ namespace rna {
 		set_minimizer_extra_minimize_res( utility::vector1< core::Size > const & setting ){ minimizer_extra_minimize_res_ = setting; }
 
 		StepWiseRNA_JobParametersOP
-		setup_job_parameters_for_stepwise_with_full_model_info( utility::vector1< Size > moving_res,
-																											 core::pose::Pose & pose );
-
-		StepWiseRNA_JobParametersOP
-		setup_job_parameters_for_swa( utility::vector1< Size > moving_res, pose::Pose const & pose );
+		setup_job_parameters_for_stepwise_with_full_model_info( core::pose::Pose & pose );
 
 		void
 		output_pose(pose::Pose & pose, std::string const & out_tag, std::string const out_silent_file ) const;
@@ -125,11 +121,6 @@ namespace rna {
 		add_to_pose_list( utility::vector1< pose::PoseOP > & pose_list, pose::Pose const & pose, std::string const pose_tag ) const;
 
 		void
-		figure_out_root_partition_res( pose::Pose const & pose, StepWiseRNA_JobParametersCOP job_parameters,
-																	 utility::vector1< Size > & root_partition_res,
-																	 utility::vector1< Size > & moving_partition_res );
-
-		void
 		setup_root_based_on_full_model_info( pose::Pose & pose, StepWiseRNA_JobParametersCOP & job_parameters );
 
 	private:
@@ -141,7 +132,7 @@ namespace rna {
 		std::string silent_file_;
 
 		// maybe following should go into options?
-		utility::vector1< Size > moving_res_list_;
+		Size moving_res_;
 		utility::vector1< Size > fixed_res_;
 		utility::vector1< Size > minimize_res_;
 		utility::vector1< Size > rmsd_res_list_;

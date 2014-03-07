@@ -25,6 +25,10 @@ namespace full_model { extern BooleanOptionKey const full_model; }
 namespace full_model { extern IntegerVectorOptionKey const cutpoint_open; }
 namespace full_model { extern IntegerVectorOptionKey const cutpoint_closed; }
 namespace full_model { extern StringVectorOptionKey const other_poses; }
+namespace full_model { extern IntegerVectorOptionKey const extra_min_res; }
+namespace full_model { extern IntegerVectorOptionKey const jump_res; }
+namespace full_model { extern IntegerVectorOptionKey const root_res; }
+namespace full_model { extern IntegerVectorOptionKey const virtual_sugar_res; }
 
 } // namespace OptionKeys
 } // namespace options

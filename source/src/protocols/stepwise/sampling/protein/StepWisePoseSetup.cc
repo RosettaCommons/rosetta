@@ -43,6 +43,7 @@
 
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
+#include <core/pose/rna/RNA_Util.hh>
 #include <basic/Tracer.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -1059,7 +1060,7 @@ return "StepWisePoseSetup";
 
 				Size const cutpos = full_to_sub[ cutpoint ];
 
-				correctly_add_cutpoint_variants( pose, cutpos );
+				pose::rna::correctly_add_cutpoint_variants( pose, cutpos ); //perhaps should not be in rna namespace...
 				std::cout << "Applied cutpoint variants to " << cutpoint << std::endl;
 
 				for (Size i = cutpos; i <= cutpos + 1; i++ ){

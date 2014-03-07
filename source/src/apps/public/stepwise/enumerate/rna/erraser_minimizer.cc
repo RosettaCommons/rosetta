@@ -191,7 +191,7 @@ apply_ideal_coordinates ( pose::Pose const & pose, pose::Pose & pose_reference )
 	RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 	Real const DELTA_CUTOFF ( rna_fitted_torsion_info.delta_cutoff() );
 	bool const is_use_phenix_geo = option[ basic::options::OptionKeys::rna::corrected_geo ];
-	utility::vector1 <Size> pucker_conformation (pose_reference.total_residue(), 0);
+	utility::vector1 <PuckerState> pucker_conformation (pose_reference.total_residue(), NO_PUCKER);
 
 	RNA_IdealCoord ideal_coord;
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
@@ -201,9 +201,9 @@ apply_ideal_coordinates ( pose::Pose const & pose, pose::Pose & pose_reference )
 
 		if ( delta > DELTA_CUTOFF ) { //south
 			apply_ideal_c2endo_sugar_coords ( pose_reference, n );
-			pucker_conformation[n] = 2;
+			pucker_conformation[n] = SOUTH;
 		} else { //north
-			pucker_conformation[n] = 1;
+			pucker_conformation[n] = NORTH;
 		}
 	}
 	if (is_use_phenix_geo) {

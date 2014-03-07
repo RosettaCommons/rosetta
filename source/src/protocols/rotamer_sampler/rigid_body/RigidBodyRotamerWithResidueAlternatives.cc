@@ -94,7 +94,6 @@ namespace rigid_body {
 
 
 	// used by ChainClosableScreener.
-	// somehow leading to seg faults, as if ResidueOP is getting erased.
 	conformation::ResidueCOP
 	RigidBodyRotamerWithResidueAlternatives::get_residue( Size const seqpos ){
 		transformed_residues[ seqpos ] = get_residue_at_origin( seqpos ).clone();

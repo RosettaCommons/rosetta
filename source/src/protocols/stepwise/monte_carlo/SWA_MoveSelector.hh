@@ -41,45 +41,42 @@ namespace monte_carlo {
 	public:
 
 		void
-		get_random_move_element_at_chain_terminus( pose::Pose & pose,
-																							 SWA_Move & swa_move );
+		get_random_add_or_delete_element( pose::Pose const & pose,
+																			SWA_Move & swa_move );
 
 		void
-		get_random_move_element_at_chain_terminus( pose::Pose & pose,
-																							 SWA_Move & swa_move,
-																							 utility::vector1< Size > const & sample_res /*leave empty if no filter*/);
+		get_random_add_or_delete_element( pose::Pose const & pose,
+																			SWA_Move & swa_move,
+																			utility::vector1< Size > const & sample_res /*leave empty if no filter*/);
 
 		void
-		get_resample_move_elements( pose::Pose & pose,
+		get_resample_move_elements( pose::Pose const & pose,
 																utility::vector1< SWA_Move > & swa_moves );
 
 		void
-		get_resample_terminal_move_elements( pose::Pose & pose,
+		get_resample_terminal_move_elements( pose::Pose const & pose,
 																				 utility::vector1< SWA_Move > & swa_moves );
 
 		void
-		get_resample_internal_move_elements( pose::Pose & pose,
+		get_resample_internal_move_elements( pose::Pose const & pose,
 																				 utility::vector1< SWA_Move > & swa_moves );
 
 		void
-		get_resample_internal_local_move_elements( pose::Pose & pose,
+		get_resample_internal_local_move_elements( pose::Pose const & pose,
 																							 utility::vector1< SWA_Move > & swa_moves );
 
 		void
-		get_delete_move_elements( pose::Pose & pose,
-															utility::vector1< SWA_Move > & swa_moves );
+		get_intramolecular_delete_move_elements( pose::Pose const & pose,
+																						 utility::vector1< SWA_Move > & swa_moves );
 
 		Attachments
-		get_attachments( pose::Pose & pose, Size const & moving_res );
+		get_attachments( pose::Pose const & pose, Size const & moving_res );
 
 		Attachments
-		get_attachments( pose::Pose & pose, MoveElement const & move_element );
+		get_attachments( pose::Pose const & pose, MoveElement const & move_element );
 
 		void set_allow_delete( bool const & setting ){ allow_delete_ = setting; }
 		bool allow_delete() const{ return allow_delete_; }
-
-		void set_allow_resample_during_add_delete( bool const & setting ){ allow_resample_during_add_delete_ = setting; }
-		bool allow_resample_during_add_delete() const{ return allow_resample_during_add_delete_; }
 
 		void set_allow_skip_bulge( bool const & setting ){ allow_skip_bulge_ = setting; }
 		bool allow_skip_bulge() const{ return allow_skip_bulge_; }
@@ -90,43 +87,35 @@ namespace monte_carlo {
 		void set_allow_internal_local( bool const & setting ){ allow_internal_local_ = setting; }
 		bool allow_internal_local() const{ return allow_internal_local_; }
 
-		void set_allow_from_scratch( bool const & setting ){ allow_from_scratch_ = setting; }
-		bool allow_from_scratch() const{ return allow_from_scratch_; }
+		void set_from_scratch_frequency( Real const & setting ){ from_scratch_frequency_ = setting; }
+		Real from_scratch_frequency() const{ return from_scratch_frequency_; }
 
-		void set_delete_terminal_only( bool const & setting ){ delete_terminal_only_ = setting; }
-		bool delete_terminal_only() const{ return delete_terminal_only_; }
+		void set_intermolecular_frequency( Real const & setting ){ intermolecular_frequency_ = setting; }
+		Real intermolecular_frequency() const{ return intermolecular_frequency_; }
+
+		void set_allow_shared_chains_in_dock_poses( bool const & setting ){ allow_shared_chains_in_dock_poses_ = setting; }
+		bool allow_shared_chains_in_dock_poses() const{ return allow_shared_chains_in_dock_poses_; }
 
 	private:
 
-		utility::vector1< Size >
-		get_partition_res( utility::vector1< bool > const & partition_definition, bool const setting );
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		void
+		get_intramolecular_add_and_delete_elements( pose::Pose const & pose,
+																								utility::vector1< SWA_Move > & swa_moves,
+																								utility::vector1< Size > const & sample_res /*leave empty if no filter*/);
 
 		void
-		get_split_move_elements( pose::Pose & pose,
-														 utility::vector1< SWA_Move > & swa_moves,
-														 MoveType const move_type );
+		get_intramolecular_add_move_elements( pose::Pose const & pose,
+																					utility::vector1< SWA_Move > & swa_moves );
+
+		void
+		get_intramolecular_split_move_elements( pose::Pose const & pose,
+																						utility::vector1< SWA_Move > & swa_moves,
+																						MoveType const move_type );
 
 		void
 		remove_from_consideration_first_multi_residue_move_element( utility::vector1< SWA_Move > & swa_moves,
 																																bool remove_even_if_not_singlet );
-
-		void
-		get_terminal_move_elements( pose::Pose & pose,
-																utility::vector1< SWA_Move > & swa_moves,
-																MoveType const & move_type );
-
-		void
-		get_internal_move_elements( pose::Pose & pose,
-																utility::vector1< SWA_Move > & swa_moves,
-																MoveType const & move_type );
-
-		void
-		get_add_move_elements( pose::Pose & pose,
-													 utility::vector1< SWA_Move > & swa_moves );
-
-		void
-		get_from_scratch_move_elements( pose::Pose & pose,
-																		utility::vector1< SWA_Move > & swa_moves );
 
 		void
 		filter_by_sample_res( utility::vector1< SWA_Move > & swa_moves,
@@ -139,16 +128,84 @@ namespace monte_carlo {
 		bool
 		already_instantiated_in_pose( pose::Pose const & pose, Size const & resnum_in_full_model_numbering ) const;
 
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		void
+		get_intermolecular_add_and_delete_elements( pose::Pose const & pose,
+																								utility::vector1< SWA_Move > & swa_moves,
+																								utility::vector1< Size > const & sample_res /*leave empty if no filter*/);
+
+		void
+		get_intermolecular_add_move_elements( pose::Pose const & pose,
+																					utility::vector1< SWA_Move > & swa_moves );
+
+		void
+		get_intermolecular_delete_move_elements( pose::Pose const & pose,
+																						utility::vector1< SWA_Move > & swa_moves );
+
+		void
+		get_intermolecular_split_move_elements( pose::Pose const & pose,
+																						utility::vector1< SWA_Move > & swa_moves,
+																						MoveType const move_type );
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		void
+		get_from_scratch_add_and_delete_elements( pose::Pose const & pose,
+																									 utility::vector1< SWA_Move > & swa_moves,
+																									 utility::vector1< Size > const & sample_res /*leave empty if no filter*/);
+
+		void
+		get_from_scratch_add_move_elements( pose::Pose const & pose,
+																				utility::vector1< SWA_Move > & swa_moves );
+
+		void
+		figure_out_from_scratch_delete_move_elements( pose::Pose const & pose,
+																									utility::vector1< SWA_Move > & swa_moves ) const;
+
+		void
+		get_from_scratch_delete_move_elements( pose::Pose const & pose,
+																					 utility::vector1< SWA_Move > & swa_moves );
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// other moves [used in resampling]
+		void
+		get_terminal_move_elements( pose::Pose const & pose,
+																utility::vector1< SWA_Move > & swa_moves,
+																MoveType const & move_type );
+
+		void
+		get_internal_move_elements( pose::Pose const & pose,
+																utility::vector1< SWA_Move > & swa_moves,
+																MoveType const & move_type );
+
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// helper functions
+		bool
+		partition_splits_a_fixed_domain( utility::vector1< Size > const & partition_definition,
+																		 utility::vector1< Size > const & domain_map ) const;
+
+		utility::vector1< Size >
+		get_partition_res( utility::vector1< bool > const & partition_definition, bool const setting ) const;
+
+		utility::vector1< Size >
+		get_unique_chains( pose::Pose const & pose );
+
+		bool
+		share_chains( utility::vector1< Size > const & current_unique_chains,
+									pose::Pose const & pose,
+									Size const j_full );
+
+
 	private:
 
 		bool allow_delete_;
-		bool allow_resample_during_add_delete_;
 		bool allow_skip_bulge_;
 		bool allow_internal_hinge_;
 		bool allow_internal_local_;
-		bool allow_from_scratch_;
-		bool delete_terminal_only_;
-
+		Real from_scratch_frequency_;
+		Real intermolecular_frequency_;
+		bool only_dock_preexisting_chunks_;
+		bool allow_shared_chains_in_dock_poses_;
 	};
 
 } //monte_carlo

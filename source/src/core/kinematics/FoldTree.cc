@@ -231,7 +231,7 @@ FoldTree::slide_jump( Size const jump_number, Size const new_res1, Size const ne
 {
 	TR.Debug << "slide_jump: starting tree= " << *this;
 	Edge const old_jump_edge( jump_edge( jump_number ) );
-
+	int const root_( root() );
 	Size const pos1( std::min( new_res1, new_res2 ) );
 	Size const pos2( std::max( new_res1, new_res2 ) );
 	utility::vector1< Edge > new_edges, remove_edges;
@@ -262,7 +262,7 @@ FoldTree::slide_jump( Size const jump_number, Size const new_res1, Size const ne
 	Edge const new_jump_edge( pos1, pos2, jump_number );
 	delete_edge( old_jump_edge );
 	add_edge( new_jump_edge );
-	delete_extra_vertices();
+	delete_extra_vertices( root_ );
 	delete_self_edges();
 	TR.Debug << "slide_jump: final tree= " << *this;
 }
@@ -379,6 +379,42 @@ FoldTree::get_jump_that_builds_residue( int const seqpos ) const
   Edge const & edge( get_residue_edge( seqpos ) );
   if ( !edge.is_jump() ) utility_exit_with_message( "get_jump_that_builds_residue: not build by a jump!" );
   return edge.label();
+}
+
+/// @brief  Get the residue that is immediately upstream of this residue (and tell us whether connection is jump or bond).
+int
+FoldTree::get_parent_residue( int const seqpos, bool & connected_by_jump ) const {
+	// (1) Root
+	if ( seqpos == root() ){
+		connected_by_jump = true;
+		return 0;
+	}
+
+	// (2) Jump.
+	kinematics::Edge const & edge = get_residue_edge( seqpos );
+	if ( edge.is_jump() ){
+		connected_by_jump = true;
+		runtime_assert( edge.stop() == seqpos );
+		return edge.start();
+	}
+
+	// (3) Covalent connection
+	int parent_res( 0 );
+	if ( edge.start() < seqpos ){
+		runtime_assert( edge.start() < edge.stop() );
+		parent_res = seqpos - 1;
+	} else {
+		runtime_assert( edge.start() > edge.stop() );
+		parent_res = seqpos + 1;
+	}
+	return parent_res;
+}
+
+/// @brief  Get the residue that is immediately upstream of this residue.
+int
+FoldTree::get_parent_residue( int const seqpos ) const {
+	bool connected_by_jump( true );
+	return get_parent_residue( seqpos, connected_by_jump );
 }
 
 /// @details  Delete a sequence position from a foldtree. This will not work
@@ -930,7 +966,7 @@ FoldTree::edge_label(
 /// tree which are neither jumps nor cutpoints. So delete them!
 /// this will combine two adjacent short edges into a long one
 void
-FoldTree::delete_extra_vertices()
+FoldTree::delete_extra_vertices( int const desired_root /* = 0 */ )
 {
 	// first get rid of any self-edges, eg left over from the tree when it was a single-residue tree
 	delete_self_edges();
@@ -939,7 +975,7 @@ FoldTree::delete_extra_vertices()
 	// so ensure that this data is up-to-date
 	check_topology();
 
-	int const _root( root() ); //need to keep that locally, since after killing the first edge the root() might have changed
+	int const _root = (desired_root > 0) ? desired_root : root(); //need to keep that locally, since after killing the first edge the root() might have changed
 	//
 	while ( true ) {
 		int kill_vertex( 0 );

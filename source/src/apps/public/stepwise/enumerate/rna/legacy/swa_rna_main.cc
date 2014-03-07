@@ -11,7 +11,7 @@
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu), Rhiju Das (rhiju@stanford.edu)
 
 // libRosetta headers
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetupFromCommandLine.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetupFromCommandLine.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -98,9 +98,9 @@
 #include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarSamplerFromStringList.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Minimizer.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ResidueSampler.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetup.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetup.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParametersSetup.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.fwd.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_JobParametersSetup.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Clusterer.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_VDW_BinChecker.hh>
@@ -137,6 +137,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using utility::vector1;
 using io::pdb::dump_pdb;
+using namespace protocols::stepwise::sampling::rna::legacy;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 

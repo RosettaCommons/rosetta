@@ -46,9 +46,8 @@ namespace screener {
 	bool
 	ChainClosableGeometryScreener::check_screen() {
 		bool const ok = chain_closable_geometry_checker_->check_screen( *screening_pose_, finer_sampling_at_chain_closure_ );
-		//		TR << chain_closable_geometry_checker_->dist_squared() << " " << ok << std::endl;
+		//		TR << "RES " << chain_closable_geometry_checker_->dist_squared() << " " << ok << std::endl;
 		return ok;
-
 	}
 
 

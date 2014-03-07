@@ -121,7 +121,7 @@ namespace rigid_body {
 		get_reference_stub( pose::Pose const & pose ) const;
 
 		void
-		update_base_bin_map( BaseBin const & base_bin );
+		update_base_bin_map( rna::rigid_body::BaseBin const & base_bin );
 
 	private:
 
@@ -180,7 +180,7 @@ namespace rigid_body {
 		kinematics::Stub reference_stub_, moving_res_base_stub_;
 		core::conformation::ResidueOP moving_rsd_at_origin_;
 		utility::vector1 < core::conformation::ResidueOP > moving_rsd_at_origin_from_sampler_;
-		BaseBinMap base_bin_map_;
+		rna::rigid_body::BaseBinMap base_bin_map_;
 
 		Size max_ntries_; // for choose_random
 

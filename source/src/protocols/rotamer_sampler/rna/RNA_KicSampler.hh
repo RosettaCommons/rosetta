@@ -30,6 +30,9 @@
 #include <protocols/rotamer_sampler/rna/RNA_KinematicCloser.fwd.hh>
 #include <protocols/rotamer_sampler/rna/RNA_ChiRotamer.fwd.hh>
 #include <protocols/rotamer_sampler/screener/RNA_TorsionScreener.fwd.hh>
+#include <core/chemical/rna/RNA_Util.hh>
+
+using namespace core::chemical::rna;
 
 namespace protocols {
 namespace rotamer_sampler {
@@ -100,11 +103,11 @@ public:
 		set_and_reinit( torsion_screen_, setting );
 	}
 
-	void set_pucker_state( core::Size const setting ) {
+	void set_pucker_state( PuckerState const setting ) {
 		set_and_reinit( pucker_state_, setting );
 	}
 
-	void set_base_state( core::Size const setting ) {
+	void set_base_state( ChiState const setting ) {
 		set_and_reinit( base_state_, setting );
 	}
 
@@ -136,7 +139,8 @@ private:
 
 	core::pose::PoseOP const ref_pose_;
 	core::Size const moving_suite_, chainbreak_suite_;
-	core::Size pucker_state_, base_state_;
+	PuckerState pucker_state_;
+	ChiState base_state_;
 	core::Size sample_nucleoside_;
 	core::Real bin_size_;
 	core::Size max_tries_;

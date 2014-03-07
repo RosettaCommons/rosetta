@@ -49,17 +49,8 @@ namespace full_model_info {
 	utility::vector1< Size >
 	figure_out_chains_from_full_model_info_const( pose::Pose const & pose );
 
-	void
-	fill_full_model_info_from_command_line( pose::Pose & pose );
-
-	void
-	fill_full_model_info_from_command_line( utility::vector1< pose::PoseOP > & pose_ops );
-
-	void
-	fill_full_model_info_from_command_line( pose::Pose & pose, utility::vector1< PoseOP > & other_pose_ops );
-
-	void
-	fill_full_model_info_from_command_line( utility::vector1< pose::Pose * > & pose_pointers );
+	utility::vector1< Size >
+	get_chains_full( pose::Pose const & pose );
 
 	bool
 	check_full_model_info_OK( pose::Pose const & pose );
@@ -73,6 +64,9 @@ namespace full_model_info {
 	utility::vector1< utility::vector1< Size > >
 	get_move_elements_from_full_model_info( pose::Pose & pose );
 
+	utility::vector1< utility::vector1< Size > >
+	get_move_elements_from_full_model_info_const( pose::Pose const & pose );
+
 	utility::vector1< Size >
 	get_moving_res_from_full_model_info( pose::Pose & pose );
 
@@ -80,10 +74,10 @@ namespace full_model_info {
 	get_fixed_domain_from_full_model_info_const( pose::Pose const & pose );
 
 	core::Size
-	sub_to_full( core::Size const i, core::pose::Pose & pose );
+	sub_to_full( core::Size const i, core::pose::Pose const & pose );
 
 	core::Size
-	full_to_sub( core::Size const i, core::pose::Pose & pose );
+	full_to_sub( core::Size const i, core::pose::Pose const & pose );
 
 	Size
 	full_model_size( pose::Pose & pose );
@@ -101,6 +95,12 @@ namespace full_model_info {
 
 	utility::vector1< Size >
 	get_res_num_from_pdb_info( pose::Pose const & pose );
+
+	Size
+	get_chain_for_full_model_resnum( Size const & resnum, pose::Pose const & pose );
+
+	Size
+	get_chain_for_resnum( Size const & resnum, pose::Pose const & pose );
 
 
 }

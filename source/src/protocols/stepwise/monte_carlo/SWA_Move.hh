@@ -33,8 +33,11 @@ namespace monte_carlo {
 	typedef utility::vector1< Attachment> Attachments;
 
 	// If you add something here, update to_string( AttachmenType ) in SWA_Move.cc
-	enum AttachmentType{ NO_ATTACHMENT = 0, ATTACHED_TO_PREVIOUS, ATTACHED_TO_NEXT,
-											 JUMP_TO_PREV_IN_CHAIN, JUMP_TO_NEXT_IN_CHAIN, LAST_ATTACHMENT_TYPE };
+	enum AttachmentType{ NO_ATTACHMENT = 0,
+											 BOND_TO_PREVIOUS, BOND_TO_NEXT,
+											 JUMP_TO_PREV_IN_CHAIN, JUMP_TO_NEXT_IN_CHAIN,
+											 JUMP_INTERCHAIN,
+											 LAST_ATTACHMENT_TYPE };
 
 	// If you add something here, update to_string( MoveType ) in SWA_Move.cc
 	enum MoveType{ NO_MOVE = 0, ADD, DELETE, FROM_SCRATCH, RESAMPLE, RESAMPLE_INTERNAL_LOCAL, LAST_ADD_OR_DELETE_CHOICE };
@@ -42,6 +45,12 @@ namespace monte_carlo {
 	std::string to_string( AttachmentType const & attachment_type );
 
 	std::string to_string( MoveType const & move_type_name );
+
+	MoveType
+	move_type_from_string( std::string const name );
+
+	AttachmentType
+	attachment_type_from_string( std::string const name );
 
 	/////////////////////////////////////////////////////////////////////
 	class Attachment: public utility::pointer::ReferenceCount {
@@ -103,6 +112,8 @@ namespace monte_carlo {
 
 		SWA_Move( SWA_Move const & src );
 
+		SWA_Move( utility::vector1< std::string > swa_move_string_vector );
+
 		SWA_Move &
 		operator=( SWA_Move const & src );
 
@@ -118,11 +129,17 @@ namespace monte_carlo {
 
 		Size attached_res() const;
 
+		AttachmentType attachment_type() const;
+
 		void set_attachments( Attachments const & setting ){ attachments_ = setting; }
 		Attachments attachments() const{ return attachments_; }
 
 		void set_move_type( MoveType const & setting ){ move_type_ = setting; }
 		MoveType move_type() const{ return move_type_; }
+
+		bool is_jump() { return ( attachment_type() == JUMP_TO_NEXT_IN_CHAIN ||
+															attachment_type() == JUMP_TO_PREV_IN_CHAIN ||
+															attachment_type() == JUMP_INTERCHAIN ); }
 
 	private:
 

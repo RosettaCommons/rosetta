@@ -23,7 +23,10 @@
 #include <protocols/rotamer_sampler/rna/RNA_McSugar.fwd.hh>
 
 // Project headers
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/id/TorsionID.hh>
+
+using namespace core::chemical::rna;
 
 namespace protocols {
 namespace rotamer_sampler {
@@ -80,7 +83,7 @@ public:
 	/// @brief Set starting torsions and pucker states
 	void set_init_states(
 		utility::vector1<core::Real> const & init_torsions,
-		core::Size const init_pucker
+		PuckerState const init_pucker
 	) {
 		init_torsions_ = init_torsions;
 		init_pucker_ = init_pucker;
@@ -102,7 +105,7 @@ private:
 			 sample_lower_nucleoside_, sample_upper_nucleoside_;
 	core::Real pucker_flip_rate_, gaussian_stdev_;
 	core::Real const a_form_range_;
-	core::Size init_pucker_;
+	PuckerState init_pucker_;
 	utility::vector1<core::Real> a_form_torsions_, init_torsions_;
 	utility::vector1<core::id::TorsionID> torsion_ids_;
 	utility::vector1<McOneTorsionOP> bb_samplers_;

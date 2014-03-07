@@ -302,9 +302,6 @@ void
 print_backbone_torsions( pose::Pose const & pose, Size five_prime_chainbreak );
 
 void
-correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size const five_prime_chainbreak,  bool verbose = false );
-
-void
 copy_torsions_FROM_TO( id::TorsionID const start_torsion_ID, id::TorsionID const end_torsion_ID, pose::Pose const & template_pose, pose::Pose & pose );
 
 core::Size
@@ -326,14 +323,9 @@ remove_chain_break_variants( core::pose::Pose & pose,  Size const & cutpoint );
 Size
 setup_bulge_jump_point( pose::Pose & pose, Size const & moving_base, Size const & reference_base, bool verbose = false );
 
-utility::vector1< bool >
-get_partition_definition( pose::Pose const & pose, Size const & moving_suite );
 
 utility::vector1< bool >
 get_partition_definition_floating_base( pose::Pose const & pose, Size const & moving_res );
-
-utility::vector1< bool >
-get_partition_definition_by_jump( pose::Pose const & pose, Size const & jump_nr /*jump_number*/ );
 
 Size
 get_anchor_res( Size const rebuild_res, pose::Pose const & pose );
@@ -472,6 +464,9 @@ create_torsion_value_string( core::Real const & torsion_value );
 
 std::string //silly function used for appending the rotamer value to the tag
 create_rotamer_string( core::pose::Pose const & pose, Size const moving_res, bool const is_prepend );
+
+std::string //silly function used for appending the rotamer value to the tag
+create_rotamer_string( core::pose::Pose const & pose, Size const moving_res, Size const reference_res );
 
 void
 add_fade_chain_break_constraint_across_gap( pose::Pose & pose,

@@ -457,7 +457,7 @@ Options = Option_Group( '',
 							"analyzability for scalability.  If you don't know if you want this you probably don't.",
 					default='false'),
 			Option( 'retry_failed_reads','Boolean',desc="If a database read fails for an unknown reason, try again several times before giving up",default='false')
-			
+
 		),  # dbms
 	),  # inout
 
@@ -2179,6 +2179,7 @@ Options = Option_Group( '',
 		Option( 'pack_phosphate_penalty', 'Real', desc="Amount to penalize instantiation of a 5' or 3' phosphate", default='0.25'),
 		Option( 'rg_local_span', 'IntegerVector', desc="First,last res in rg_local. For example to calc rg_local from 1-20 would be 1,20",default ="0"),
 		Option( 'unmodifypot', 'Boolean', desc="Do not call modify pot to add extra repulsive interactions between Obb/Obb atom types at distances beneath 3.6 Angstroms"),
+		Option( 'conc', 'Real', desc="intermolecular concentration to use in intermol term (give in M)", default="1.0"),
 		Option_Group( 'saxs',
 			Option('min_score', 'Real', desc="minimum value of saxs score; the parameter is used to flatten the energy funnel around its minimum", default='-5' ),
 			Option( 'custom_ff', 'String',desc="Name of config file providing extra from factors",default=""),
@@ -2857,17 +2858,17 @@ Options = Option_Group( '',
 			desc=   'This is typically done in calculation of SASA, and in fact is one of the defining features of SASA.  Turn this off to calculate the Surface Area instead.',
 			default='true'
 			),
-		Option('include_only_C_S_in_hsasa', 'Boolean', 
+		Option('include_only_C_S_in_hsasa', 'Boolean',
 			desc=   'Include only carbon or sulfer in hsasa calculation.  This is typical.  Only revert to false if excluding polar atoms by charge or everything will be counted as hydrophobic. Note hydrogens are dealt with automatically.',
 			default='true'),
-		Option('exclude_polar_atoms_by_charge_in_hsasa', 'Boolean', 
+		Option('exclude_polar_atoms_by_charge_in_hsasa', 'Boolean',
 			desc=   'Polar carbons and other atoms should not be included in hydrophobic hSASA - though historically they were.  Set this to false to get historic hsasa',
 			default='false'),
-		Option('polar_charge_cutoff', 'Real', 
+		Option('polar_charge_cutoff', 'Real',
 			desc=    'Charge cutoff (abs value) to use on heavy atoms if excluding hydrophobic atoms from hSASA calculation by charge. The default is optimized for protein atom types (which excludes only carbonyl and carboxyl carbons.  By default only carbon and sulfer are excluded.',
 			default='.4'
 			),
-		Option('implicit_hydrogen_radii_set', 'String', 
+		Option('implicit_hydrogen_radii_set', 'String',
 			desc=   'The radii set to use when including hydrogens implicitly instead of explicitly. Chothia 1976 radii are used by the program Naccess.  chothia=naccess',
 			default='chothia',
 			legal= ['chothia', 'naccess']),
@@ -3486,7 +3487,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'thread_unaligned', 'Boolean', default = 'false', desc = 'basic_threading without performing an alignment' ),
 
 	),
-    
+
     # Membrane Protein Option Group
     # Last Modified: 1/12/14
     # @author Rebecca Alford
@@ -4484,7 +4485,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
                  Option('description_file', 'File', desc='work unit description file', default='rosetta_description.txt'),
                  Option('score_cut_pct','Real', desc='score cut done on the local nodes by percentage, required to return centroid models'),
                  Option('score_cut_fl', 'File', desc='temp file where output is stored in', default='score_cut_tmp.out'),
-                 Option('score_cut_smart_throttle', 'Boolean', desc='makes absolutely sure you are generating < 1 model per 60 seconds.(set to 65 sec to be safe)'), 
+                 Option('score_cut_smart_throttle', 'Boolean', desc='makes absolutely sure you are generating < 1 model per 60 seconds.(set to 65 sec to be safe)'),
    ),
   Option_Group( 'LoopModel',
                 Option( 'input_pdb','File', desc='input pdb file', default='LoopModel::input_pdb' ),
@@ -5610,18 +5611,19 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 	    Option( 'allow_internal_hinge_moves', 'Boolean', desc= "Allow moves in which internal suites are sampled (hinge-like motions)", default='true' ),
 	    Option( 'allow_internal_local_moves', 'Boolean', desc= "Allow moves in which internal cutpoints are created to allow ERRASER rebuilds", default='false' ),
 	    Option( 'allow_skip_bulge', 'Boolean', desc= "Allow moves in which an intervening residue is skipped and the next one is modeled as floating base", default='false' ),
-	    Option( 'allow_from_scratch', 'Boolean', desc= "Allow modeling of 'free' dinucleotides that are not part of input poses", default='false' ),
+	    Option( 'from_scratch_frequency', 'Real', desc= "Allow modeling of 'free' dinucleotides that are not part of input poses", default='0.1' ),
 	    Option( 'allow_split_off', 'Boolean', desc= "Allow chunks that do not contain fixed domains to split off after nucleating on fixed domains.", default='true' ),
 	    Option( 'cycles', 'Integer', desc= "Number of Monte Carlo cycles", default='50' ),
 	    Option( 'temperature', 'Real', desc= "Monte Carlo temperature", default='1.0' ),
 	    Option( 'add_delete_frequency', 'Real', desc= "Frequency of add/delete vs. resampling", default='0.5' ),
+	    Option( 'intermolecular_frequency', 'Real', desc= "Frequency of intermolecular (docking) vs. intramolecular folding moves", default='0.2' ),
 	    Option( 'minimize_single_res_frequency', 'Real', desc= "Frequency with which to minimize the residue that just got rebuilt, instead of all", default='0.0' ),
 	    Option( 'allow_variable_bond_geometry', 'Boolean', desc= "In 10% of moves, let bond angles & distance change", default='true' ),
 	    Option( 'switch_focus_frequency', 'Real', desc= "Frequency with which to switch the sub-pose that is being modeled", default='0.5' ),
       Option( 'just_min_after_mutation_frequency', 'Real', desc= "After a mutation, how often to just minimize (without further sampling the mutated residue)", default='0.5' ),
+		  Option( 'local_redock_only', 'Boolean', desc='In ResampleMover, docking partners can change anywhere across connected chains. Force the new partners to be close to the old ones.', default='true' ),
 	    Option( 'constraint_x0', 'Real', desc= "Target RMSD value for constrained runs", default='0.5' ),
 	    Option( 'constraint_tol', 'Real', desc= "Size of flat region for coordinate constraints", default='0.5' ),
-		  Option( 'extra_min_res', 'IntegerVector', desc= "specify residues other than those being built that should be minimized", default=[] ),
 		  Option( 'make_movie', 'Boolean', desc= "create silent files in movie/ with all steps and accepted steps", default='false' ),
  							),
     Option_Group( 'rna',
@@ -5703,12 +5705,15 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 	    Option( 'rebuild_bulge_mode', 'Boolean', desc="rebuild_bulge_mode", default="false" ),
 	    Option( 'choose_random', 'Boolean', desc="ask swa residue sampler for a random solution", default="false" ),
 	    Option( 'virtual_sugar_keep_base_fixed', 'Boolean', desc="When instantiating virtual sugar, keep base fixed -- do not spend a lot of time to minimize!", default="true" ),
+	    Option( 'virtual_sugar_do_minimize', 'Boolean', desc="When instantiating virtual sugar, minimize (as in original SWA code) -- takes extra time!", default="true" ),
 	    Option( 'sampler_max_centroid_distance', 'Real', desc="max centroid distance of moving base to reference in floating base sampler", default='0.0' ), #Nov 12, 2010
 	    Option( 'num_random_samples', 'Integer', desc="In choose_random/monte-carlo mode, number of samples from swa residue sampler before minimizing best", default="20" ),
 	    Option( 'filter_user_alignment_res', 'Boolean', desc=" filter_user_alignment_res ", default="true" ),
 	    Option( 'output_pdb', 'Boolean', desc="output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.", default="false" ),
-		  Option( 'new_framework', 'Boolean', desc="testing sample-and-screen framework", default="false" ),
-		  Option( 'unified_framework', 'Boolean', desc="testing unified sample-and-screen framework", default="false" ),
+		  Option( 'tether_jump', 'Boolean', desc="In rigid body moves, keep moving residue close to (jump-connected) reference residue  (8.0 A) and force centroid interaction between them", default="true" ),
+		  Option( 'move', 'StringVector', desc="For SWM. Format: 'ADD 5 ATTACHED_TO_PREVIOUS 4'", default=[] ),
+      Option( 'enumerate', 'Boolean', desc="For SWM. Force enumeration (SWA-like) instead of random", default="false" ),
+		  Option( 'unified_framework', 'Boolean', desc="testing unified sample-and-screen framework", default="true" ),
 		),
 
 	),
@@ -5719,6 +5724,10 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
     Option( 'cutpoint_open',   'IntegerVector',desc='open cutpoints in full model',default=[]),
 		Option( 'cutpoint_closed', 'IntegerVector',desc='closed cutpoints in full model',default=[]),
 		Option( 'other_poses', 'StringVector',desc='list of PDB files containing other poses'),
+		Option( 'extra_min_res', 'IntegerVector', desc= "specify residues other than those being built that should be minimized", default=[] ),
+		Option( 'jump_res', 'IntegerVector', desc= "optional: residues for defining jumps -- please supply in pairs", default=[] ),
+    Option( 'root_res', 'IntegerVector', desc= "optional: desired root res (used in SWM move testing)", default=[] ),
+    Option( 'virtual_sugar_res', 'IntegerVector', desc= "optional: starting virtual sugars (used in SWM move testing)", default=[] ),
 	),
 
 	###############################################################################

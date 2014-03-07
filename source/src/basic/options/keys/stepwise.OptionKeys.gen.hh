@@ -41,18 +41,19 @@ namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const erras
 namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const allow_internal_hinge_moves; } }
 namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const allow_internal_local_moves; } }
 namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const allow_skip_bulge; } }
-namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const allow_from_scratch; } }
+namespace stepwise { namespace monte_carlo { extern RealOptionKey const from_scratch_frequency; } }
 namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const allow_split_off; } }
 namespace stepwise { namespace monte_carlo { extern IntegerOptionKey const cycles; } }
 namespace stepwise { namespace monte_carlo { extern RealOptionKey const temperature; } }
 namespace stepwise { namespace monte_carlo { extern RealOptionKey const add_delete_frequency; } }
+namespace stepwise { namespace monte_carlo { extern RealOptionKey const intermolecular_frequency; } }
 namespace stepwise { namespace monte_carlo { extern RealOptionKey const minimize_single_res_frequency; } }
 namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const allow_variable_bond_geometry; } }
 namespace stepwise { namespace monte_carlo { extern RealOptionKey const switch_focus_frequency; } }
 namespace stepwise { namespace monte_carlo { extern RealOptionKey const just_min_after_mutation_frequency; } }
+namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const local_redock_only; } }
 namespace stepwise { namespace monte_carlo { extern RealOptionKey const constraint_x0; } }
 namespace stepwise { namespace monte_carlo { extern RealOptionKey const constraint_tol; } }
-namespace stepwise { namespace monte_carlo { extern IntegerVectorOptionKey const extra_min_res; } }
 namespace stepwise { namespace monte_carlo { extern BooleanOptionKey const make_movie; } }
 namespace stepwise { namespace rna { extern BooleanOptionKey const rna; } }
 namespace stepwise { namespace rna { extern IntegerOptionKey const sampler_num_pose_kept; } }
@@ -133,11 +134,14 @@ namespace stepwise { namespace rna { extern IntegerVectorOptionKey const bulge_r
 namespace stepwise { namespace rna { extern BooleanOptionKey const rebuild_bulge_mode; } }
 namespace stepwise { namespace rna { extern BooleanOptionKey const choose_random; } }
 namespace stepwise { namespace rna { extern BooleanOptionKey const virtual_sugar_keep_base_fixed; } }
+namespace stepwise { namespace rna { extern BooleanOptionKey const virtual_sugar_do_minimize; } }
 namespace stepwise { namespace rna { extern RealOptionKey const sampler_max_centroid_distance; } }
 namespace stepwise { namespace rna { extern IntegerOptionKey const num_random_samples; } }
 namespace stepwise { namespace rna { extern BooleanOptionKey const filter_user_alignment_res; } }
 namespace stepwise { namespace rna { extern BooleanOptionKey const output_pdb; } }
-namespace stepwise { namespace rna { extern BooleanOptionKey const new_framework; } }
+namespace stepwise { namespace rna { extern BooleanOptionKey const tether_jump; } }
+namespace stepwise { namespace rna { extern StringVectorOptionKey const move; } }
+namespace stepwise { namespace rna { extern BooleanOptionKey const enumerate; } }
 namespace stepwise { namespace rna { extern BooleanOptionKey const unified_framework; } }
 
 } // namespace OptionKeys

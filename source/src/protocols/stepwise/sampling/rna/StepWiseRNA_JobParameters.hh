@@ -72,7 +72,10 @@ namespace rna {
 		std::map< core::Size, core::Size > const & const_sub_to_full() const;
 		core::kinematics::FoldTree const & fold_tree() const;
 		std::map< core::Size, bool > const & is_prepend_map() const;
-
+		core::Size full_to_sub( Size const i ) const {
+			if ( full_to_sub_.find( i ) != full_to_sub_.end() ) return full_to_sub_.find( i )->second;
+			return 0;
+		}
 
 		utility::vector1< std::pair < core::Size, core::Size > > const & chain_boundaries() const;
 		//Size const & which_chain_has_moving_res() const;
@@ -119,8 +122,8 @@ namespace rna {
 		utility::vector1< core::Size > const & protonated_H1_adenosine_list() const;
 		utility::vector1< core::Size > const & working_protonated_H1_adenosine_list() const;
 
-		void set_output_extra_RMSDs( bool const & setting );
-		void set_is_simple_full_length_job_params( bool const & setting );
+		void set_output_extra_RMSDs( bool const setting );
+		void set_is_simple_full_length_job_params( bool const setting );
 
 		void set_full_sequence( std::string const & setting );
 		void set_moving_res( Size const & setting );
@@ -142,6 +145,7 @@ namespace rna {
 		void set_is_prepend( bool const & setting );
 		void set_is_internal( bool const & setting );
 		void set_partition_definition( ObjexxFCL::FArray1D < bool > const & setting );
+		void set_partition_definition( utility::vector1< Size > const & partition_definition_vector );
 
 		void set_working_native_pose( core::pose::PoseOP & pose );
 		void set_working_native_pose( core::pose::PoseCOP pose );
@@ -170,8 +174,6 @@ namespace rna {
 		void set_sample_both_sugar_base_rotamer( bool const setting ){ sample_both_sugar_base_rotamer_ = setting; }
 
 		core::pose::PoseCOP	working_native_pose() const;
-
-	private:
 
 		void update_working_moving_suite();
 		void update_working_sequence();
@@ -239,7 +241,6 @@ namespace rna {
 
 		utility::vector1< core::Size > force_south_sugar_list_;
 		utility::vector1< core::Size > working_force_south_sugar_list_;
-
 
 		utility::vector1< core::Size > protonated_H1_adenosine_list_;
 		utility::vector1< core::Size > working_protonated_H1_adenosine_list_;

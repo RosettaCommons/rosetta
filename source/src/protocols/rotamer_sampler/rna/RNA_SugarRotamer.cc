@@ -17,15 +17,15 @@
 
 // Package headers
 #include <core/id/TorsionID.hh>
-#include <core/chemical/rna/RNA_Util.hh>
 #include <core/pose/rna/RNA_Util.hh>
-#include <basic/Tracer.hh>
 #include <core/pose/rna/RNA_IdealCoord.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/pose/Pose.hh>
 
 // Numeric headers
 #include <numeric/random/random.hh>
+
+#include <basic/Tracer.hh>
 
 using namespace core;
 using namespace core::chemical::rna;
@@ -42,7 +42,7 @@ static basic::Tracer TR("protocols.rotamer_sampler.rna.RNA_SugarRotamer");
 // Constructor
 RNA_SugarRotamer::RNA_SugarRotamer(
 	Size const rsd_id,
-	Size const pucker_state
+	PuckerState const pucker_state
 ):
 	RotamerSized(),
 	rsd_id_( rsd_id ),
@@ -52,11 +52,11 @@ RNA_SugarRotamer::RNA_SugarRotamer(
 	north_pucker_dofs_have_not_been_initialized_( true ),
 	south_pucker_dofs_have_not_been_initialized_( true )
 {
-	runtime_assert( pucker_state_ == WHATEVER || pucker_state_ == NORTH || pucker_state_ == SOUTH );
+	runtime_assert( pucker_state_ == ANY_PUCKER || pucker_state_ == NORTH || pucker_state_ == SOUTH );
 }
 //////////////////////////////////////////////////////////////////////////
 void RNA_SugarRotamer::init() {
-	if ( pucker_state_ == WHATEVER ) {
+	if ( pucker_state_ == ANY_PUCKER ) {
 		pucker_states_.push_back( NORTH );
 		pucker_states_.push_back( SOUTH );
 	} else {
@@ -70,17 +70,17 @@ void RNA_SugarRotamer::apply( pose::Pose & pose, core::Size const i ) {
 	// Arvind - 10/06/2013
 	// The new version of this function takes a bunch of code that was previously distributed in a bunch of places like RNA_Util.cc and util.cc, and consolidates it here. This has the additional advantage that the runtime has been dramatically reduced through pre-caching of the DOFs for ideal puckers.
 	runtime_assert( is_init() );
-	Size pucker_state = pucker_states_[i];
+	PuckerState pucker_state = pucker_states_[i];
 	assert( pucker_state <= 2 );
 
 	static const RNA_IdealCoord ideal_coord;
 	static const RNA_FittedTorsionInfo torsion_info;
 	Real delta, nu1, nu2;
 
-	Size const curr_pucker = assign_pucker( pose, rsd_id_ );
+	PuckerState const curr_pucker = assign_pucker( pose, rsd_id_ );
 	if ( skip_same_pucker_ && pucker_state == curr_pucker ) return;
 
-	if ( pucker_state == WHATEVER ) pucker_state = curr_pucker;
+	if ( pucker_state == ANY_PUCKER ) pucker_state = curr_pucker;
 
 	if (idealize_coord_) {
 		if ( pucker_state == NORTH ) {

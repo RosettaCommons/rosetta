@@ -87,7 +87,8 @@
 	#include <protocols/viewer/viewers.hh>
 	#include <sstream>
 	#include <utility/io/izstream.hh>
-	#include <utility/io/ozstream.hh>
+        #include <utility/io/ozstream.hh>
+        #include <utility/stream_util.hh>
 	// 	#include <core/scoring/constraints/LocalCoordinateConstraint.hh>
 	// 	#include <devel/init.hh>
 	#include <apps/pilot/will/will_util.ihh>
@@ -107,6 +108,7 @@ using protocols::simple_moves::symmetry::SymMinMover;
 using protocols::moves::MoverOP;
 using core::scoring::constraints::ConstraintOP;
 using core::id::NamedAtomID;
+using utility::operator <<;
 typedef utility::vector1<core::Size> Sizes;
 typedef utility::vector1<std::string> Strings;
 

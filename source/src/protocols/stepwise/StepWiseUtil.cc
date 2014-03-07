@@ -31,8 +31,10 @@
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
+#include <core/pose/rna/RNA_Util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/SequenceMapping.hh>
@@ -126,6 +128,14 @@ namespace stepwise {
 	///////////////////////////////////////////////////////////////////////////////////////
 	Size
 	look_for_unique_jump_to_moving_res( kinematics::FoldTree const & fold_tree, Size const & i ){
+
+		for ( Size n = 1; n <= fold_tree.num_jump(); n++ ) {
+			if ( fold_tree.downstream_jump_residue( n ) == int( i )  ) {
+				return n;
+			}
+		}
+
+
 		Size num_jump( 0 ), jump_idx( 0 );
 		for ( Size n = 1; n <= fold_tree.num_jump(); n++ ) {
 			if ( fold_tree.upstream_jump_residue( n ) == int( i ) || fold_tree.downstream_jump_residue( n ) == int( i ) ) {
@@ -344,15 +354,6 @@ namespace stepwise {
 				new_pose.append_residue_by_bond(  *residue_to_add  ) ;
 			}
 		}
-
-		// //how about a new fold tree?
-		// core::kinematics::FoldTree f( new_pose.total_residue() );
-		// for ( Size i = 1; i < slice_res.size(); i++ ) {
-		// 	if ( slice_res[i+1] > (slice_res[i]+1) ){
-		// 		f.new_jump( i, i+1, i);
-		// 	}
-		// }
-		// new_pose.fold_tree( f );
 
 	}
 
@@ -693,16 +694,6 @@ namespace stepwise {
 		x_vec = M2.col_x();
 		if ( verbose ) std::cout << "This better have a zero in y and z position " << x_vec(1) << ' ' << x_vec(2) << ' ' << x_vec(3) << std::endl;
 
-		// Oh come on, testing basic matrix algebra here.
-
-		// std::cout << "M1:  " << std::endl;
-		// std::cout << M1(1,1) <<  ' ' << M1(1,2)  << ' ' << M1(1,3) << std::endl;
-		// std::cout << M1(2,1) <<  ' ' << M1(2,2)  << ' ' << M1(2,3) << std::endl;
-		// std::cout << M1(3,1) <<  ' ' << M1(3,2)  << ' ' << M1(3,3) << std::endl;
-		// std::cout << "x: " << xaxis1(1) << " " << xaxis1(2) << " " << xaxis1(3) << std::endl;
-		// std::cout << "y: " << yaxis1(1) << " " << yaxis1(2) << " " << yaxis1(3) << std::endl;
-		// std::cout << "z: " << zaxis1(1) << " " << zaxis1(2) << " " << zaxis1(3) << std::endl;
-
 		if ( verbose ){
 			Matrix M;
 
@@ -763,7 +754,6 @@ rotate( pose::Pose & pose, Matrix const M,
 
 		for ( Size m = 1; m <= pose.residue_type( i ).natoms(); m++ ) {
 			pose.set_xyz( AtomID(m,i),  M * ( ref_pose.xyz( AtomID(m,i) ) - centroid ) + centroid );
-			//			std::cout << "ROTATE " << m << " " << i << " " << pose.xyz( AtomID(m,i) )(1)  << " " << ref_pose.xyz( AtomID(m,i) )(1) << std::endl;
 		}
 	}
 
@@ -852,8 +842,36 @@ rotate( pose::Pose & pose, Matrix const M,
 		return false;
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Are there any fixed domains in the pose? If so, superimpose on the first on of those, and calculate rmsd over
+	// everything else.
+	// If no fixed domains, calculate rmsd over everything.
+	utility::vector1< Size >
+	get_rmsd_res_in_pose( pose::Pose const & pose ){
+		utility::vector1< Size > const domain_map = core::pose::full_model_info::get_fixed_domain_from_full_model_info_const( pose );
+		Size d_min( 0 );
+		for ( Size n = 1; n <= pose.total_residue(); n++ ){
+			Size const d = domain_map[ n ];
+			if ( d > 0 && ( d_min == 0 || d < d_min ) ) d_min = d;
+		}
+		utility::vector1< Size > rmsd_res_in_pose;
+		if ( d_min == 0 ){
+			for ( Size n = 1; n <= pose.total_residue(); n++ ) rmsd_res_in_pose.push_back( n );
+		} else {
+			for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+				if ( domain_map[ n ] != d_min ) rmsd_res_in_pose.push_back( n );
+			}
+		}
+		return rmsd_res_in_pose;
+	}
+
 	//////////////////
-	void superimpose_at_fixed_res( pose::Pose & pose, pose::Pose const & native_pose, Real & rmsd, Size & natoms_rmsd, core::pose::full_model_info::FullModelInfo const & full_model_info, bool skip_bulges = false ) {
+	void
+	superimpose_at_fixed_res( pose::Pose & pose, pose::Pose const & native_pose,
+														Real & rmsd, Size & natoms_rmsd,
+														Pose & native_pose_local ,
+														std::map< id::AtomID, id::AtomID > & calc_rms_atom_id_map,
+														bool const skip_bulges = false ) {
 
 		using namespace core::chemical;
 		using namespace core::id;
@@ -862,29 +880,28 @@ rotate( pose::Pose & pose, Matrix const M,
 		using namespace core::scoring;
 		using namespace protocols::farna;
 
-		Pose native_pose_local = native_pose; // local working copy, mutated in cases where nucleotides have been designed ('n')
+		native_pose_local = native_pose; // local working copy, mutated in cases where nucleotides have been designed ('n')
 
 		// first need to slice up native_pose to match residues in actual pose.
 		// define atoms over which to compute RMSD, using rmsd_res.
+		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 		utility::vector1< Size > const & res_list = full_model_info.res_list();
 		utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
 		std::string const full_sequence = full_model_info.full_sequence();
 
 		if ( res_list.size() == 0 ) return; // special case -- blank pose.
 
-		// following needs to be updated.
-		utility::vector1< Size > const rmsd_res = full_model_info.moving_res_in_full_model();
-
+		utility::vector1< Size > const rmsd_res_in_pose = get_rmsd_res_in_pose( pose );
 		utility::vector1< Size > calc_rms_res;
 		utility::vector1< Size > skipped_residues;
 
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
-			if ( rmsd_res.has_value( res_list[ n ] ) ) {
+			if ( rmsd_res_in_pose.has_value( n ) ) {
+				// I don't see the purpose of Arvind's skipped_residues -- need to check this.
 				if ( skip_bulges && residue_is_bulged( pose, n ) && residue_is_bulged( native_pose_local, res_list[ n ] ) ) {
 					skipped_residues.push_back( n );
 					continue;
 				}
-
 				calc_rms_res.push_back( n );
 
 				char const pose_nt = pose.sequence()[ n-1 ];
@@ -899,8 +916,6 @@ rotate( pose::Pose & pose, Matrix const M,
 
 		// super special case.
 		if ( calc_rms_res.size() == 0 && pose.total_residue() == 1 ) calc_rms_res.push_back( 1 );
-
-		std::map< AtomID, AtomID > calc_rms_atom_id_map;
 
 		for ( Size k = 1; k <= calc_rms_res.size(); k++ ){
 			Size const n = calc_rms_res[ k ];
@@ -944,14 +959,13 @@ rotate( pose::Pose & pose, Matrix const M,
 			}
 		}
 
-		//		for ( std::map < AtomID, AtomID >::const_iterator it = calc_rms_atom_id_map.begin();
-		//					it != calc_rms_atom_id_map.end(); it++ ){
-		//			TR << it->first << " mapped to " << it->second << std::endl;
-		//		}
+		// for ( std::map < AtomID, AtomID >::const_iterator it = calc_rms_atom_id_map.begin();
+		// 			it != calc_rms_atom_id_map.end(); it++ ){
+		// 	TR << it->first << " mapped to " << it->second << std::endl;
+		// }
 
 		// define superposition atoms. Should be over atoms in any fixed domains. This should be
 		// the 'inverse' of calc_rms atoms.
-
 		std::map< AtomID, AtomID > superimpose_atom_id_map;
 		for ( Size n = 1; n < pose.total_residue(); n++ ){
 			if ( skipped_residues.has_value( n ) ) continue;
@@ -982,34 +996,40 @@ rotate( pose::Pose & pose, Matrix const M,
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	superimpose_at_fixed_res( pose::Pose & pose, pose::Pose const & native_pose, Real & rmsd, Size & natoms_rmsd, core::pose::full_model_info::FullModelInfoOP full_model_pointer, bool skip_bulges = false ){
-
-		using namespace core::chemical;
-		using namespace core::id;
-		using namespace core::pose;
-		using namespace core::pose::full_model_info;
-		using namespace core::scoring;
-		using namespace protocols::farna;
-
-		if ( full_model_pointer ) {
-			superimpose_at_fixed_res( pose, native_pose, rmsd, natoms_rmsd, *full_model_pointer, skip_bulges );
-		} else {
-			FullModelInfo const & full_model_info = const_full_model_info( pose );
-			superimpose_at_fixed_res( pose, native_pose, rmsd, natoms_rmsd, full_model_info, skip_bulges );
-		}
-
+	superimpose_at_fixed_res( pose::Pose & pose, pose::Pose const & native_pose,
+														Real & rmsd, Size & natoms_rmsd,
+														bool skip_bulges = false ){
+		Pose native_pose_local;
+		std::map< id::AtomID, id::AtomID > calc_rms_atom_id_map;
+		superimpose_at_fixed_res( pose, native_pose,
+															rmsd, natoms_rmsd,
+															native_pose_local, calc_rms_atom_id_map,
+															skip_bulges );
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	superimpose_recursively( pose::Pose & pose, pose::Pose const & native_pose, Real & rmsd, Size & natoms, core::pose::full_model_info::FullModelInfoOP full_model_pointer, bool skip_bulges = false ){
+	superimpose_at_fixed_res( pose::Pose & pose, pose::Pose const & native_pose,
+														Pose & native_pose_local,
+														std::map< id::AtomID, id::AtomID > & calc_rms_atom_id_map ){
+		Real rmsd;
+		Size natoms_rmsd;
+		superimpose_at_fixed_res( pose, native_pose,
+															rmsd, natoms_rmsd,
+															native_pose_local, calc_rms_atom_id_map );
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	superimpose_recursively( pose::Pose & pose, pose::Pose const & native_pose, Real & rmsd, Size & natoms, bool skip_bulges = false ){
 
 		using namespace core::pose;
 		using namespace core::pose::full_model_info;
 
 		Real rmsd_pose;
 		Size natoms_pose;
-		superimpose_at_fixed_res( pose, native_pose, rmsd_pose, natoms_pose, full_model_pointer, skip_bulges );
+		superimpose_at_fixed_res( pose, native_pose, rmsd_pose, natoms_pose, skip_bulges );
 
 		Real const total_sd = ( rmsd * rmsd * natoms) + (rmsd_pose * rmsd_pose * natoms_pose );
 		natoms += natoms_pose;
@@ -1021,30 +1041,21 @@ rotate( pose::Pose & pose, Matrix const M,
 
 		utility::vector1< PoseOP > const & other_pose_list = nonconst_full_model_info( pose ).other_pose_list();
 		for ( Size n = 1; n <= other_pose_list.size(); n++ ){
-			superimpose_recursively( *( other_pose_list[ n ] ), native_pose, rmsd, natoms, full_model_pointer, skip_bulges );
+			superimpose_recursively( *( other_pose_list[ n ] ), native_pose, rmsd, natoms, skip_bulges );
 		}
 
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	Real
-	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose, core::pose::full_model_info::FullModelInfoOP full_model_pointer, bool skip_bulges ){
+	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose,  bool skip_bulges ){
 		Real rmsd( 0.0 );
 		Size natoms( 0 );
-		superimpose_recursively( pose, native_pose, rmsd, natoms, full_model_pointer, skip_bulges );
+		superimpose_recursively( pose, native_pose, rmsd, natoms, skip_bulges );
 		return rmsd;
 	}
 
-	Real
-	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose, bool skip_bulges ){
-		core::pose::full_model_info::FullModelInfoOP dummy_pointer;
-		return superimpose_at_fixed_res_and_get_all_atom_rmsd( pose, native_pose, dummy_pointer, skip_bulges );
-	}
-
-
 	////////////////////////
-	///////////////////////////////
 	void
 	clear_constraints_recursively( pose::Pose & pose ) {
 		using namespace core::pose;
@@ -1062,7 +1073,9 @@ rotate( pose::Pose & pose, Matrix const M,
 
 	/////////////////////
 	void
-	add_coordinate_constraints_from_map( pose::Pose & pose, pose::Pose const & native_pose, std::map< id::AtomID, id::AtomID > const & superimpose_atom_id_map, core::Real const & constraint_x0, core::Real const & constraint_tol ) {
+	add_coordinate_constraints_from_map( pose::Pose & pose, pose::Pose const & native_pose,
+																			 std::map< id::AtomID, id::AtomID > const & superimpose_atom_id_map,
+																			 core::Real const & constraint_x0, core::Real const & constraint_tol ) {
 
 		Size const my_anchor( pose.fold_tree().root() ); //Change to use the root of the current foldtree as done by Rocco in AtomCoordinateCstMover - JAB.
 
@@ -1080,91 +1093,14 @@ rotate( pose::Pose & pose, Matrix const M,
 	}
 
 	////////////////////////////////////
-	// Arvind, this is NOT GOOD FORM, should not be
-	// copying so much code. -- rhiju
 	void
-	superimpose_at_fixed_res_and_add_constraints( pose::Pose & pose, pose::Pose const & native_pose, core::Real const & constraint_x0, core::Real const & constraint_tol ) {
-
-		using namespace core::chemical;
-		using namespace core::id;
-		using namespace core::pose;
-		using namespace core::pose::full_model_info;
-		using namespace core::scoring;
-		using namespace protocols::farna;
-
-		Pose native_pose_local = native_pose; // local working copy, mutated in cases where nucleotides have been designed ('n')
-
-		// first need to slice up native_pose to match residues in actual pose.
-		// define atoms over which to compute RMSD, using rmsd_res.
-		FullModelInfo const & full_model_info = const_full_model_info( pose );
-		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
-		utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
-		std::string const full_sequence = full_model_info.full_sequence();
-
-		if ( res_list.size() == 0 ) return;
-
-		// following needs to be updated.
-		utility::vector1< Size > const rmsd_res = full_model_info.moving_res_in_full_model();
-
-		utility::vector1< Size > calc_rms_res;
-		for ( Size n = 1; n <= pose.total_residue(); n++ ){
-			if ( rmsd_res.has_value( res_list[ n ] ) ) {
-				calc_rms_res.push_back( n );
-				char const pose_nt = pose.sequence()[ n-1 ];
-				if ( full_sequence[ res_list[ n ] - 1 ] == 'n' ){
-					mutate_position( native_pose_local, res_list[ n ], pose_nt );
-				} else {
-					runtime_assert( full_sequence[ res_list[ n ] - 1 ] == pose_nt);
-				}
-				runtime_assert( native_pose_local.sequence()[ res_list[ n ] - 1] == pose_nt );
-			}
-		}
-
-		std::map< AtomID, AtomID > calc_rms_atom_id_map;
-
-		for ( Size k = 1; k <= calc_rms_res.size(); k++ ){
-			Size const n = calc_rms_res[ k ];
-			for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ){
-				add_to_atom_id_map_after_checks( calc_rms_atom_id_map,
-												pose.residue_type( n ).atom_name( q ),
-												n, res_list[ n ],
-												pose, native_pose_local );
-			}
-		}
-
-		utility::vector1< Size > calc_rms_suites;
-		// additional RNA suites over which to calculate RMSD
-		for ( Size n = 1; n < pose.total_residue(); n++ ){
-
-			if ( !pose.residue_type( n ).is_RNA() || !pose.residue_type( n + 1 ).is_RNA() ) continue;
-			if ( calc_rms_res.has_value( n+1 ) ) continue;
-
-			// Atoms at ends of rebuilt loops:
-			if ( calc_rms_res.has_value( n ) &&
-				( !pose.fold_tree().is_cutpoint( n ) || pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) ) ) {
-				calc_rms_suites.push_back( n ); continue;
-			}
-
-			// Domain boundaries:
-			if ( (res_list[ n+1 ] == res_list[ n ] + 1) &&
-				fixed_domain_map[ res_list[ n ] ] != 0 &&
-				fixed_domain_map[ res_list[ n+1 ] ] != 0 &&
-				fixed_domain_map[ res_list[ n ] ] != fixed_domain_map[ res_list[ n+1 ] ] ){
-				calc_rms_suites.push_back( n );
-			}
-		}
-
-		utility::vector1< std::string > const extra_suite_atoms = utility::tools::make_vector1( " P  ", " OP1", " OP2", " O5'" );
-		for ( Size k = 1; k <= calc_rms_suites.size(); k++ ){
-			Size const n = calc_rms_suites[ k ];
-			for ( Size q = 1; q <= extra_suite_atoms.size(); q++ ){
-				add_to_atom_id_map_after_checks( calc_rms_atom_id_map, extra_suite_atoms[ q ],
-												n+1, res_list[ n+1 ],
-												pose, native_pose_local );
-			}
-		}
-
-		add_coordinate_constraints_from_map( pose, native_pose_local, calc_rms_atom_id_map, constraint_x0, constraint_tol );
+	superimpose_at_fixed_res_and_add_constraints( pose::Pose & pose, pose::Pose const & native_pose,
+																								core::Real const & constraint_x0, core::Real const & constraint_tol ) {
+		Pose native_pose_local;
+		std::map< id::AtomID, id::AtomID > calc_rms_atom_id_map;
+		superimpose_at_fixed_res( pose, native_pose, native_pose_local, calc_rms_atom_id_map );
+		add_coordinate_constraints_from_map( pose, native_pose_local,
+																				 calc_rms_atom_id_map, constraint_x0, constraint_tol );
 	}
 
 	////////////////
@@ -1404,15 +1340,68 @@ rotate( pose::Pose & pose, Matrix const M,
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	merge_in_other_pose( pose::Pose & pose, pose::Pose const & pose2, Size const & merge_res ){
+	reroot_based_on_full_model_info( pose::Pose & pose,
+																	 utility::vector1< Size > const & root_partition_res ){
+		using namespace core::kinematics;
+		Size new_root( 0 ), possible_root( 0 );
+		for ( Size n = 1; n <= root_partition_res.size(); n++ ){
+			Size const i = root_partition_res[ n ];
+			if ( !pose.fold_tree().possible_root( i ) ) continue;
+			if ( definite_terminal_root( pose, i ) ) {
+				new_root = i; break;
+			}
+			if ( possible_root == 0 ) possible_root = i; // not as desirable, but sometimes necessary
+		}
+		if ( new_root == 0 ){
+			if ( possible_root == 0 ){
+				std::cerr << pose.fold_tree() << std::endl;
+			}
+			runtime_assert( possible_root > 0 );
+			new_root = possible_root;
+		}
+
+		FoldTree f = pose.fold_tree();
+		if ( static_cast<int>(new_root) == f.root() ) return;
+		f.reorder( new_root );
+		pose.fold_tree( f );
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	merge_in_other_pose_by_jump( pose::Pose & pose, pose::Pose const & pose2,
+															 Size const lower_merge_res, Size const upper_merge_res  ){
+		runtime_assert( lower_merge_res < upper_merge_res );
+		merge_in_other_pose( pose, pose2,
+												 lower_merge_res, upper_merge_res,
+												 false /*connect_residues_by_bond*/ );
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	merge_in_other_pose_by_bond( pose::Pose & pose, pose::Pose const & pose2, Size const merge_res ){
+		Size const lower_merge_res( merge_res ), upper_merge_res( merge_res + 1 );
+		merge_in_other_pose( pose, pose2,
+												 lower_merge_res, upper_merge_res,
+												 true /*connect_residues_by_bond*/ );
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	merge_in_other_pose( pose::Pose & pose, pose::Pose const & pose2,
+											 Size const lower_merge_res, Size const upper_merge_res,
+											 bool const connect_residues_by_bond ) {
 
 		using namespace core::pose::datacache;
 		using namespace core::pose::full_model_info;
 
+		if ( connect_residues_by_bond ) runtime_assert( upper_merge_res == lower_merge_res + 1 );
+
 		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 
 		core::pose::Pose pose_scratch;
-		utility::vector1< Size > const new_res_list = merge_two_poses_using_full_model_info( pose_scratch, pose, pose2, merge_res );
+		utility::vector1< Size > const new_res_list = merge_two_poses_using_full_model_info( pose_scratch, pose, pose2,
+																																												 lower_merge_res, upper_merge_res,
+																																												 connect_residues_by_bond );
 		pose.conformation() = pose_scratch.conformation();
 
 		full_model_info.set_res_list( new_res_list );
@@ -1426,7 +1415,9 @@ rotate( pose::Pose & pose, Matrix const M,
 	merge_two_poses_using_full_model_info( pose::Pose & pose,
 																				 pose::Pose const & pose1,
 																				 pose::Pose const & pose2,
-																				 Size const & merge_res ) {
+																				 Size const lower_merge_res,
+																				 Size const upper_merge_res,
+																				 bool const connect_residues_by_bond ) {
 
 		using namespace core::pose::full_model_info;
 		using namespace core::pose::datacache;
@@ -1436,7 +1427,10 @@ rotate( pose::Pose & pose, Matrix const M,
 		utility::vector1< Size > const & working_res1 = get_res_list_from_full_model_info_const( pose1 );
 		utility::vector1< Size > const & working_res2 = get_res_list_from_full_model_info_const( pose2 );
 
-		return merge_two_poses( pose, pose1, pose2, working_res1, working_res2, merge_res );
+		if ( connect_residues_by_bond ) runtime_assert( upper_merge_res == lower_merge_res + 1 );
+
+		return merge_two_poses( pose, pose1, pose2, working_res1, working_res2,
+														lower_merge_res, upper_merge_res, connect_residues_by_bond );
 
 	}
 
@@ -1455,21 +1449,28 @@ rotate( pose::Pose & pose, Matrix const M,
 									 pose::Pose const & pose2,
 									 utility::vector1< Size > const & working_res1,
 									 utility::vector1< Size > const & working_res2,
-									 Size const & merge_res,
+									 Size const lower_merge_res,
+									 Size const upper_merge_res,
+									 bool const connect_residues_by_bond,
 									 bool const fix_first_pose /* = true */) {
 
 		using namespace core::kinematics;
 		using namespace core::chemical;
 		using namespace core::conformation;
 
-		if ( working_res1.has_value( merge_res ) ){
-			runtime_assert( working_res2.has_value( merge_res+1 ) );
+		if ( connect_residues_by_bond ) runtime_assert( upper_merge_res == lower_merge_res + 1 );
+
+		if ( working_res1.has_value( lower_merge_res ) ){
+			runtime_assert( working_res2.has_value( upper_merge_res ) );
 		} else {
-			runtime_assert( working_res2.has_value( merge_res   ) );
-			runtime_assert( working_res1.has_value( merge_res+1 ) );
+			runtime_assert( working_res2.has_value( lower_merge_res   ) );
+			runtime_assert( working_res1.has_value( upper_merge_res ) );
 			TR.Debug << "merge_two_poses: order is switched.  " << std::endl;
-			// order is switched. No problem.
-			return merge_two_poses( pose, pose2, pose1, working_res2, working_res1, merge_res, ! fix_first_pose );
+			// order is switched. No problem. Well... this could probably be avoided if we instead
+			// specify merge_res1 and merge_res2, and allow them to be in arbitrary sequential order.
+			return merge_two_poses( pose, pose2, pose1, working_res2, working_res1,
+															lower_merge_res, upper_merge_res, connect_residues_by_bond,
+															! fix_first_pose );
 		}
 
 		// define full working res -- union of the working res of the individual poses.
@@ -1490,11 +1491,11 @@ rotate( pose::Pose & pose, Matrix const M,
 				rsd = pose2.residue( j ).clone();
 			}
 
-			if ( k == merge_res ) {
+			if ( connect_residues_by_bond && k == lower_merge_res ) {
 				remove_upper_terminus( rsd );
 				rsd = remove_variant_type_from_residue( *rsd, "THREE_PRIME_PHOSPHATE", pose ); // got to be safe.
 			}
-			if ( k == ( merge_res + 1)  ) {
+			if ( connect_residues_by_bond && k == upper_merge_res ) {
 				runtime_assert( after_cutpoint );
 				remove_lower_terminus( rsd );
 				rsd = remove_variant_type_from_residue( *rsd, "FIVE_PRIME_PHOSPHATE", pose ); // got to be safe.
@@ -1515,16 +1516,22 @@ rotate( pose::Pose & pose, Matrix const M,
 		utility::vector1< std::string > jump_atoms1, jump_atoms2;
 		get_jump_partners_from_pose( jump_partners1, jump_partners2, jump_atoms1, jump_atoms2, pose1, working_res1 );
 		get_jump_partners_from_pose( jump_partners1, jump_partners2, jump_atoms1, jump_atoms2, pose2, working_res2 );
+		if ( !connect_residues_by_bond ){
+			jump_partners1.push_back( lower_merge_res );
+			jump_partners2.push_back( upper_merge_res );
+			jump_atoms1.push_back( chemical::rna::default_jump_atom( pose1.residue( working_res1.index( lower_merge_res ) ) ) ); // rna specific?
+			jump_atoms2.push_back( chemical::rna::default_jump_atom( pose2.residue( working_res2.index( upper_merge_res ) ) ) ); // rna specific?
+		}
 		runtime_assert( jump_partners1.size() == jump_partners2.size() );
 
 		// figure out cuts
 		get_endpoints_from_pose( endpoints, pose1, working_res1 );
 		get_endpoints_from_pose( endpoints, pose2, working_res2 );
-		runtime_assert( endpoints.has_value( merge_res ) );
+		if ( connect_residues_by_bond ) runtime_assert( endpoints.has_value( lower_merge_res ) );
 		Size const last_res = working_res[ working_res.size() ];
 		runtime_assert( endpoints.has_value( last_res ) );
 		for ( Size n = 1; n <= endpoints.size(); n++ ){
-			if ( endpoints[ n ] != merge_res &&
+			if ( ( !connect_residues_by_bond || endpoints[ n ] != lower_merge_res ) &&
 					 endpoints[ n ] != last_res ) cuts.push_back( endpoints[ n ] );
 		}
 
@@ -1535,24 +1542,7 @@ rotate( pose::Pose & pose, Matrix const M,
 		jump_partners2 = map_to_local_numbering( jump_partners2, working_res );
 		cuts = map_to_local_numbering( cuts, working_res );
 
-		FoldTree f;
-		ObjexxFCL::FArray2D< int > jump_point_( 2, num_cuts, 0 );
-		ObjexxFCL::FArray1D< int > cuts_( num_cuts, 0 );
-		for ( Size i = 1; i <= num_cuts; i++ ) {
-			jump_point_( 1, i ) = std::min( jump_partners1[ i ], jump_partners2[ i ] );
-			jump_point_( 2, i ) = std::max( jump_partners1[ i ], jump_partners2[ i ] );
-			cuts_( i ) = cuts[ i ];
-		}
-		f.tree_from_jumps_and_cuts( pose.total_residue(), num_cuts, jump_point_, cuts_ );
-
-		// fix jump atoms.
-		bool const KeepStubInResidue( true );
-		for ( Size i = 1; i <= num_cuts; i++ ){
-			Size const n = f.jump_nr( jump_partners1[ i ], jump_partners2[ i ] );
-			f.set_jump_atoms( n,
-												jump_partners1[ i ], jump_atoms1[ i ],
-												jump_partners2[ i ], jump_atoms2[ i ], KeepStubInResidue );
-		}
+		FoldTree f = get_tree( pose.total_residue(), cuts, jump_partners1, jump_partners2, jump_atoms1, jump_atoms2 );
 
 		Size root( 0 );
 		if ( fix_first_pose ) {
@@ -1579,35 +1569,6 @@ rotate( pose::Pose & pose, Matrix const M,
 
 		return working_res;
 	}
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// try to unify all cutpoint addition into this function.
-	void
-	correctly_add_cutpoint_variants( core::pose::Pose & pose,
-																	 Size const res_to_add,
-																	 bool const check_fold_tree /* = true*/){
-
-		using namespace core::chemical;
-
-		runtime_assert( res_to_add < pose.total_residue() );
-		if ( check_fold_tree ) runtime_assert( pose.fold_tree().is_cutpoint( res_to_add ) );
-
-		remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS, res_to_add );
-		remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS, res_to_add + 1 );
-
-		remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", res_to_add );
-		remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, res_to_add + 1 );
-		remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", res_to_add + 1 );
-
-		if ( pose.residue_type( res_to_add ).is_RNA() ){
-			// could also keep track of alpha, beta, etc.
-			runtime_assert( pose.residue_type( res_to_add + 1 ).is_RNA() );
-			protocols::stepwise::sampling::rna::correctly_position_cutpoint_phosphate_torsions( pose, res_to_add, false /*verbose*/ );
-		}
-		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res_to_add   );
-		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res_to_add + 1 );
-	}
-
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< Size >
@@ -1874,7 +1835,7 @@ rotate( pose::Pose & pose, Matrix const M,
 				 ! cutpoint_open_in_full_model.has_value( res_list[ res ]) ){
 
 			// can happen after additions
-			correctly_add_cutpoint_variants( pose, res );
+			core::pose::rna::correctly_add_cutpoint_variants( pose, res );
 
 			// leave virtual riboses in this should actually get instantiated by the modeler
 			//	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", res );
@@ -1908,7 +1869,7 @@ rotate( pose::Pose & pose, Matrix const M,
 				 ! cutpoint_open_in_full_model.has_value( res_list[ res - 1 ])  ){
 
 			// can happen after additions
-			correctly_add_cutpoint_variants( pose, res - 1 );
+			core::pose::rna::correctly_add_cutpoint_variants( pose, res - 1 );
 
 			// This should actually be instantiated by the modeler.
 			//	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", res );
@@ -1973,8 +1934,8 @@ rotate( pose::Pose & pose, Matrix const M,
 			} else { // make sure there is nothing crazy here
 				remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, n );
 				remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", n );
-				// don't remove virtual sugars -- those will be instantiated inside the residue sampler
-				//				if ( pose.residue_type( n ).has_variant_type( "VIRTUAL_RIBOSE" ) )	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", n );
+				// don't remove virtual sugars -- those will be instantiated inside the residue sampler -- oh, ok do it.
+				if ( pose.residue_type( n ).has_variant_type( "VIRTUAL_RIBOSE" ) )	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", n );
 				runtime_assert( !pose.residue_type( n ).has_variant_type( CUTPOINT_UPPER ) );
 			}
 
@@ -1983,8 +1944,8 @@ rotate( pose::Pose & pose, Matrix const M,
 			if ( at_strand_end ) {
 				fix_up_residue_type_variants_at_strand_end( pose, n );
 			} else {
-				// don't remove virtual sugars -- those will be instantiated inside the residue sampler
-				//				if ( pose.residue_type( n ).has_variant_type( "VIRTUAL_RIBOSE" ) )	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", n );
+				// don't remove virtual sugars -- those will be instantiated inside the residue sampler -- oh, ok do it.
+				if ( pose.residue_type( n ).has_variant_type( "VIRTUAL_RIBOSE" ) )	remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", n );
 				remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", n );
 				runtime_assert( !pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) );
 			}
@@ -2041,14 +2002,17 @@ rotate( pose::Pose & pose, Matrix const M,
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	switch_focus_among_poses_randomly( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn ) {
+	switch_focus_among_poses_randomly( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn,
+																		 bool force_switch /* = false */ ) {
 
 		using namespace core::pose;
 		using namespace core::pose::full_model_info;
 		using namespace protocols::stepwise;
 
 		Size const num_other_poses = const_full_model_info( pose ).other_pose_list().size();
-		Size const focus_pose_idx = RG.random_range( 0, num_other_poses );
+		if ( force_switch ) runtime_assert( num_other_poses > 0 );
+
+		Size const focus_pose_idx = force_switch ? RG.random_range( 1, num_other_poses ) : RG.random_range( 0, num_other_poses );
 		if ( focus_pose_idx == 0 ) return false;
 
 		Real const score_before_switch_focus = ( scorefxn != 0 ) ? (*scorefxn)( pose ) : 0.0;
@@ -2081,7 +2045,8 @@ rotate( pose::Pose & pose, Matrix const M,
 		input_poses[2]->dump_pdb( "input_pose2.pdb" );
 
 		pose::Pose merged_pose;
-		merge_two_poses_using_full_model_info( merged_pose, *(input_poses[ 2 ]), *( input_poses[ 1 ] ), 12 /*merge_res*/ );
+		merge_two_poses_using_full_model_info( merged_pose, *(input_poses[ 2 ]), *( input_poses[ 1 ] ),
+																					 12 /*lower_merge_res*/, 13 /*upper_merge_res*/, true /*connect_by_bond*/ );
 		merged_pose.dump_pdb( "merged_pose.pdb" );
 		scorefxn->show( merged_pose );
 
@@ -2167,7 +2132,6 @@ rotate( pose::Pose & pose, Matrix const M,
 		return moving_chainbreak_res;
 	}
 
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
 	check_for_fixed_domain( pose::Pose const & pose,
@@ -2177,6 +2141,21 @@ rotate( pose::Pose & pose, Matrix const M,
 			if ( domain_map[ partition_res[ i ] ] > 0 ) return true;
 		}
 		return false;
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	primary_fixed_domain( pose::Pose const & pose,
+											utility::vector1< Size> const & partition_res ){
+		utility::vector1< Size > const domain_map = core::pose::full_model_info::get_fixed_domain_from_full_model_info_const( pose );
+		Size d_min( 0 );
+		for ( Size i = 1; i <= partition_res.size(); i++ ){
+			Size const d = domain_map[ partition_res[ i ] ];
+			if ( d > 0 && ( d_min == 0 || d < d_min ) ) d_min = d;
+		}
+		if ( d_min == 0 ) return 999; // big number, to signal no domain found.
+		return d_min;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2201,6 +2180,15 @@ rotate( pose::Pose & pose, Matrix const M,
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< Size >
+	figure_out_moving_cutpoints_closed( pose::Pose const & pose, utility::vector1< Size > moving_partition_pos ){
+
+		utility::vector1< Size > cutpoints_closed, five_prime_chain_breaks, three_prime_chain_breaks, chain_break_gap_sizes;
+		figure_out_moving_chain_breaks( pose, moving_partition_pos, cutpoints_closed, five_prime_chain_breaks, three_prime_chain_breaks, chain_break_gap_sizes );
+		return cutpoints_closed;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////
 	void
 	figure_out_moving_chain_breaks( pose::Pose const & pose, utility::vector1< Size > moving_partition_pos,
 																	utility::vector1< Size > & cutpoints_closed,
@@ -2211,7 +2199,6 @@ rotate( pose::Pose & pose, Matrix const M,
 		utility::vector1< Size > const chains =	figure_out_chains_from_full_model_info_const( pose );
 		utility::vector1< Size > const & res_list =	get_res_list_from_full_model_info_const( pose );
 		Size five_prime_chain_break( 0 ), three_prime_chain_break( 0 );
-
 		for ( Size n = 1; n < pose.total_residue(); n++ ){
 
 			if ( !pose.fold_tree().is_cutpoint( n ) ) continue;
@@ -2250,20 +2237,42 @@ rotate( pose::Pose & pose, Matrix const M,
 
 	}
 
+	///////////////////////////////////////////////////////////////////////
+	utility::vector1< bool >
+	get_partition_definition_by_jump( pose::Pose const & pose, Size const & jump_nr /*jump_number*/ ){
+		ObjexxFCL::FArray1D<bool> partition_definition( pose.total_residue(), false );
+
+		pose.fold_tree().partition_by_jump( jump_nr, partition_definition );
+
+		//silly conversion. There may be a faster way to do this actually.
+		utility::vector1< bool > partition_definition_vector1;
+		for ( Size n = 1; n <= pose.total_residue(); n++ )	partition_definition_vector1.push_back( partition_definition(n) );
+
+		return partition_definition_vector1;
+	}
+
+	///////////////////////////////////////////////////////////////////////
+	utility::vector1< bool >
+	get_partition_definition( pose::Pose const & pose, Size const & moving_suite ){
+
+		ObjexxFCL::FArray1D<bool> partition_definition( pose.total_residue(), false );
+		pose.fold_tree().partition_by_residue( moving_suite, partition_definition );
+
+		//silly conversion. There may be a faster way to do this actually.
+		utility::vector1< bool > partition_definition_vector1;
+		for ( Size n = 1; n <= pose.total_residue(); n++ )	partition_definition_vector1.push_back( partition_definition(n) );
+
+		return partition_definition_vector1;
+
+	}
+
 
 	///////////////////////////////////////////////////////////////////////////
 	Size
 	figure_out_reference_res_for_suite( pose::Pose const & pose, Size const moving_res ){
-		kinematics::Edge const & edge = pose.fold_tree().get_residue_edge( moving_res );
-		runtime_assert( !edge.is_jump() );
-		Size reference_res( 0 );
-		if ( edge.start() < static_cast< int >( moving_res ) ){
-			runtime_assert( edge.start() < edge.stop() );
-			reference_res = moving_res - 1;
-		} else {
-			runtime_assert( edge.start() > edge.stop() );
-			reference_res = moving_res + 1;
-		}
+		bool connected_by_jump( false );
+		Size reference_res =  pose.fold_tree().get_parent_residue( moving_res, connected_by_jump );
+		runtime_assert( !connected_by_jump );
 		return reference_res;
 	}
 
@@ -2273,12 +2282,88 @@ rotate( pose::Pose & pose, Matrix const M,
 																						 Size const moving_res,
 																						 Size const reference_res ){
 		Size const moving_suite = ( moving_res < reference_res ) ? moving_res : reference_res;
-		utility::vector1< bool > partition_definition = sampling::rna::get_partition_definition( pose, moving_suite );
+		utility::vector1< bool > partition_definition = get_partition_definition( pose, moving_suite );
 		utility::vector1< Size > moving_partition_res;
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
 			if ( partition_definition[ n ] == partition_definition[ moving_res ] ) moving_partition_res.push_back( n );
 		}
 		return moving_partition_res;
+	}
+
+	///////////////////////////////////////////////////////////////////
+	utility::vector1< Size >
+	figure_out_moving_partition_res_for_jump( pose::Pose const & pose,
+																						Size const jump_nr ){
+		utility::vector1< bool > partition_definition = get_partition_definition_by_jump( pose, jump_nr );
+		utility::vector1< Size > moving_partition_res;
+		Size const moving_res = pose.fold_tree().downstream_jump_residue( jump_nr );
+		for ( Size n = 1; n <= pose.total_residue(); n++ ){
+			if ( partition_definition[ n ] == partition_definition[ moving_res ] ) moving_partition_res.push_back( n );
+		}
+		return moving_partition_res;
+	}
+
+	/////////////////////////////////////////////////////////////////////////////
+	void
+	figure_out_root_partition_res( pose::Pose const & pose, Size const moving_res,
+																 utility::vector1< Size > & root_partition_res,
+																 utility::vector1< Size > & moving_partition_res ) {
+
+		FoldTree const & f = pose.fold_tree();
+		Size const reference_res = f.get_parent_residue( moving_res );
+		Size const jump_nr = f.jump_nr( moving_res, reference_res );
+		if ( !jump_nr ) runtime_assert( moving_res == reference_res + 1 || reference_res == moving_res + 1 );
+		utility::vector1< bool > partition_definition = jump_nr ? get_partition_definition_by_jump( pose, jump_nr ) : get_partition_definition( pose, std::min( moving_res, reference_res ) );
+		for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+			if ( partition_definition[ n ] == partition_definition[ moving_res ] ){
+				moving_partition_res.push_back( n );
+			} else {
+				root_partition_res.push_back( n );
+			}
+		}
+	}
+
+	///////////////////////////////////////////////////////////////////
+	void
+	revise_root_and_moving_res( pose::Pose & pose, Size & moving_res /* note that this can change too*/ ){
+		if ( moving_res == 0 ) return;
+
+		utility::vector1< Size > root_partition_res, moving_partition_res;
+		figure_out_root_partition_res( pose, moving_res, root_partition_res, moving_partition_res );
+
+		bool switch_moving_and_root_partitions = ( root_partition_res.size() < moving_partition_res.size() );
+		if ( root_partition_res.size() == moving_partition_res.size() ){
+			switch_moving_and_root_partitions = primary_fixed_domain( pose, moving_partition_res ) < primary_fixed_domain( pose, root_partition_res );
+		}
+		if ( switch_moving_and_root_partitions ){ // the way things should be:
+			Size const moving_res_original = moving_res; // to check switching went OK.
+			Size const reference_res = pose.fold_tree().get_parent_residue( moving_res );
+			moving_res = reference_res;
+			reroot_based_on_full_model_info( pose, moving_partition_res /* new root_parition_res*/  );
+			runtime_assert( pose.fold_tree().get_parent_residue( moving_res ) == static_cast<int>( moving_res_original ) );
+		} else {
+			reroot_based_on_full_model_info( pose, root_partition_res );
+		}
+
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////
+	Size
+	split_pose( pose::Pose & pose, Size const moving_res, Size const reference_res ){
+
+		Size jump_at_moving_suite = pose.fold_tree().jump_nr( moving_res, reference_res );
+		if ( !jump_at_moving_suite ){
+			runtime_assert( (moving_res == reference_res + 1) || (moving_res == reference_res - 1) );
+			Size const moving_suite = ( moving_res < reference_res ) ? moving_res : reference_res;
+			runtime_assert( !pose.fold_tree().is_cutpoint( moving_suite ) );
+			jump_at_moving_suite = make_cut_at_moving_suite( pose, moving_suite );
+			if ( pose.residue_type( moving_suite + 1 ).is_RNA() ) add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, moving_suite+1 );
+		}
+
+		kinematics::Jump j = pose.jump( jump_at_moving_suite );
+		j.set_translation( Vector( 1.0e4, 0.0, 0.0 ) );
+		pose.set_jump( jump_at_moving_suite, j );
+		return jump_at_moving_suite;
 	}
 
 } //stepwise

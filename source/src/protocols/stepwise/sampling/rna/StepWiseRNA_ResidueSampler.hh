@@ -21,6 +21,7 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.fwd.hh>
 #include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiator.fwd.hh>
+#include <protocols/stepwise/sampling/rna/sugar/legacy/StepWiseRNA_VirtualSugarJustInTimeInstantiatorOLD.fwd.hh>
 #include <protocols/stepwise/sampling/rna/sugar/SugarModeling.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_BaseCentroidChecker.fwd.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_VDW_BinChecker.fwd.hh>
@@ -106,6 +107,7 @@ private:
 	checker::RNA_BaseCentroidCheckerOP base_centroid_checker_;
 	checker::RNA_VDW_BinCheckerOP user_input_VDW_bin_checker_;
 	sugar::StepWiseRNA_VirtualSugarJustInTimeInstantiatorOP virtual_sugar_just_in_time_instantiator_;
+	//	sugar::legacy::StepWiseRNA_VirtualSugarJustInTimeInstantiatorOLDOP virtual_sugar_just_in_time_instantiator_;
 	std::string sampling_silent_file_;
 
 };

@@ -17,10 +17,16 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/rotamer_sampler/rna/RNA_RotamerSamplerUtil.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
+
+#include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/scoring/etable/Etable.hh>
+#include <core/scoring/etable/EtableEnergy.hh>
+#include <core/scoring/ScoringManager.hh>
 
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
@@ -36,14 +42,17 @@ namespace checker {
 
 	//Constructor
 	AtrRepChecker::AtrRepChecker( pose::Pose const & pose,
-																	StepWiseRNA_JobParametersCOP & job_parameters ):
-		working_moving_res_(     job_parameters->working_moving_res() ),
-		working_reference_res_(  job_parameters->working_reference_res() ),
+																StepWiseRNA_JobParametersCOP & job_parameters,
+																bool loose_rep_cutoff ):
+		moving_res_(     job_parameters->working_moving_res() ),
+		reference_res_(  job_parameters->working_reference_res() ),
 		gap_size_(    job_parameters->gap_size() ),
 		is_prepend_(  job_parameters->is_prepend() ),
 		is_internal_(  job_parameters->is_internal() ),
 		sample_both_sugar_base_rotamer_( job_parameters->sample_both_sugar_base_rotamer() ),
-		separate_moving_residue_to_estimate_baseline_( true )
+		separate_moving_residue_to_estimate_baseline_( true ),
+		loose_rep_cutoff_( loose_rep_cutoff ),
+		extra_loose_rep_cutoff_( false )
 	{
 		initialize_parameters();
 		initialize_scorefxn();
@@ -59,13 +68,15 @@ namespace checker {
 																	bool const separate_moving_residue_to_estimate_baseline, /* = true */
 																	bool const sample_both_sugar_base_rotamer /* = false */
 																	):
-		working_moving_res_( moving_res    ),
-		working_reference_res_( reference_res ),
+		moving_res_( moving_res    ),
+		reference_res_( reference_res ),
 		gap_size_( gap_size ),
-		is_prepend_(  working_reference_res_ > working_moving_res_ ),
+		is_prepend_(  reference_res_ > moving_res_ ),
 		is_internal_( is_internal ),
 		sample_both_sugar_base_rotamer_( sample_both_sugar_base_rotamer ),
-		separate_moving_residue_to_estimate_baseline_( separate_moving_residue_to_estimate_baseline  )
+		separate_moving_residue_to_estimate_baseline_( separate_moving_residue_to_estimate_baseline  ),
+		loose_rep_cutoff_( false ),
+		extra_loose_rep_cutoff_( false )
 	{
 		initialize_parameters();
 		initialize_scorefxn();
@@ -95,7 +106,6 @@ namespace checker {
 		delta_rep_score_ = 0.0;
 		verbose_ = false;
 		output_pdb_ = false;
-		kic_sampling_ = false;
 	}
 
 	///////////////////////////////////////////
@@ -110,52 +120,38 @@ namespace checker {
 		Size const nres = pose.total_residue();
 
 		///////////////////////////////Old_way////////////////////////////////////////////
-
 		pose::Pose base_pose_screen = pose; //hard copy
+		if ( output_pdb_ )		base_pose_screen.dump_pdb( "base_atr_rep_before.pdb" );
 
-		if ( output_pdb_ ) base_pose_screen.dump_pdb( "base_atr_rep_before.pdb" );
-
-		pose::remove_variant_type_from_pose_residue( base_pose_screen, "FIVE_PRIME_PHOSPHATE", working_moving_res_ );
-		pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_PHOSPHATE", working_moving_res_ ); //May 7...
-		if ( ( working_moving_res_ + 1 ) <= nres ){
-			pose::remove_variant_type_from_pose_residue( base_pose_screen, "FIVE_PRIME_PHOSPHATE", working_moving_res_ + 1 );
-			pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_PHOSPHATE", working_moving_res_ + 1 ); //May 7...
+		Size jump_at_moving_suite = base_pose_screen.fold_tree().jump_nr( moving_res_, reference_res_ );
+		Size moving_suite( 0 );
+		if ( jump_at_moving_suite == 0 ){
+			runtime_assert( ( moving_res_ == reference_res_ + 1 ) || ( moving_res_ == reference_res_ - 1 ) );
+			moving_suite = ( moving_res_ < reference_res_ ) ? moving_res_ : reference_res_;
 		}
 
-		if ( sample_both_sugar_base_rotamer_ ){ //Nov 15, 2010
-			Size const extra_sample_sugar_base_res = ( is_prepend_ ) ? ( working_moving_res_ + 1 ) : ( working_moving_res_ - 1 );
-			TR << "base_pose_screen extra_sample_sugar_base_res = " << extra_sample_sugar_base_res << std::endl;
-			pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_RIBOSE", extra_sample_sugar_base_res );
-			//pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_RNA_RESIDUE", extra_sample_sugar_base_res );
-			TR << base_pose_screen.annotated_sequence() << std::endl;
-			TR << base_pose_screen.fold_tree() << std::endl;
+		if ( moving_suite > 0 ){
+			// suite atoms will be sampled -- not in correct conformation yet.
+			pose::remove_variant_type_from_pose_residue( base_pose_screen, "FIVE_PRIME_PHOSPHATE", moving_suite + 1 );
+			pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_PHOSPHATE", moving_suite + 1 ); //May 7...
+			if ( rotamer_sampler::rna::sampling_sugar_at_five_prime( base_pose_screen, moving_suite ) ) {
+				add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_RIBOSE", moving_suite );
+			}
+			if ( rotamer_sampler::rna::sampling_sugar_at_three_prime( base_pose_screen, moving_suite ) ){
+				add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_RIBOSE", moving_suite+1 );
+			}
 		}
 
 		// I think this should work... push apart different parts of the structure so that whatever fa_atr, fa_rep is left is
 		// due to "intra-domain" interactions.
-		// Crap this doesn't work when building 2 or more nucleotides.
-		if ( separate_moving_residue_to_estimate_baseline_ ){
-			Size jump_at_moving_suite = base_pose_screen.fold_tree().jump_nr( working_moving_res_, working_reference_res_ );
-			if ( jump_at_moving_suite == 0 ){
-				//				runtime_assert( std::abs( int( working_moving_res_ ) - int( working_reference_res_ ) ) == 1 );
-				Size const working_moving_suite = ( working_moving_res_ > working_reference_res_ ) ? (working_moving_res_ - 1) : working_moving_res_;
-				jump_at_moving_suite = make_cut_at_moving_suite( base_pose_screen, working_moving_suite );
-				TR.Debug << "Made new cutpoint at suite " << working_moving_suite << " found Jump " << jump_at_moving_suite <<  std::endl;
-			}
-			kinematics::Jump j = base_pose_screen.jump( jump_at_moving_suite );
-			j.set_translation( Vector( 1.0e4, 0.0, 0.0 ) );
-			base_pose_screen.set_jump( jump_at_moving_suite, j );
-		}
+		if ( separate_moving_residue_to_estimate_baseline_ ) jump_at_moving_suite = split_pose( base_pose_screen, moving_res_, reference_res_ );
 
 		( *atr_rep_screening_scorefxn_ )( base_pose_screen );
-
 		EnergyMap const & energy_map = base_pose_screen.energies().total_energies();
 		base_atr_score_ = atr_rep_screening_scorefxn_->get_weight( fa_atr ) * energy_map[ scoring::fa_atr ]; //
 		base_rep_score_ = atr_rep_screening_scorefxn_->get_weight( fa_rep ) * energy_map[ scoring::fa_rep ];
-		//		TR << "base_rep = " << base_rep_score_ << " base_atr = " << base_atr_score_ << std::endl;
 
-		if ( output_pdb_ ) base_pose_screen.dump_pdb( "base_atr_rep_after.pdb" );
-
+		if ( output_pdb_ )		base_pose_screen.dump_pdb( "base_atr_rep_after.pdb" );
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -178,20 +174,23 @@ namespace checker {
 		delta_rep_score_ = rep_score - base_rep_score_;
 		delta_atr_score_ = atr_score - base_atr_score_;
 
+		static Size count( 0 );
 		if ( delta_rep_score_ < (  -0.1 ) ){
 			// changed from -0.01 after triggering in SWM runs -- rhiju, sep. 2013.
 			std::string const message = "delta_rep_score_ = " + string_of( delta_rep_score_ ) + " rep_score = " + string_of( rep_score ) + " base_rep_score = " + string_of( base_rep_score_ );
-			std::cerr << "WORKING MOVING RES " << working_moving_res_ << "  WORKING REFERENCE RES " << working_reference_res_ << "  GAP_SIZE " << gap_size_ << "  IS_PREPEND" << is_prepend_ << "  IS_INTERNAL" << is_internal_ << "  SEPARATE " << separate_moving_residue_to_estimate_baseline_ << std::endl;
+			std::cerr << "WORKING MOVING RES " << moving_res_ << "  WORKING REFERENCE RES " << reference_res_ << "  GAP_SIZE " << gap_size_ << "  IS_PREPEND" << is_prepend_ << "  IS_INTERNAL" << is_internal_ << "  SEPARATE " << separate_moving_residue_to_estimate_baseline_ << std::endl;
 			std::cerr << current_pose_screen.fold_tree() << std::endl;
 			std::cerr << current_pose_screen.annotated_sequence() << std::endl;
 			current_pose_screen.dump_pdb( "PROBLEM.pdb" );
+			//			output_rep( current_pose_screen, "CURRENT_POSE" );
+			//			get_base_atr_rep_score( current_pose_screen );
 			utility_exit_with_message( "delta_rep_score_ < (  -0.1 ), " + message );
 		}
 
 		if ( delta_atr_score_ > (  +0.1 ) ){
 			// changed from +0.01 after triggering in SWM runs -- rhiju, sep. 2013.
 			std::string const message = "delta_atr_score_ = " + string_of( delta_atr_score_ ) + " atr_score = " + string_of( atr_score ) + " base_atr_score = " + string_of( base_atr_score_ );
-			std::cerr << "WORKING MOVING RES " << working_moving_res_ << "  WORKING REFERENCE RES " << working_reference_res_ << "  GAP_SIZE " << gap_size_ << "  IS_PREPEND" << is_prepend_ << "  IS_INTERNAL" << is_internal_ << "  SEPARATE " << separate_moving_residue_to_estimate_baseline_ << std::endl;
+			std::cerr << "WORKING MOVING RES " << moving_res_ << "  WORKING REFERENCE RES " << reference_res_ << "  GAP_SIZE " << gap_size_ << "  IS_PREPEND" << is_prepend_ << "  IS_INTERNAL" << is_internal_ << "  SEPARATE " << separate_moving_residue_to_estimate_baseline_ << std::endl;
 			std::cerr << current_pose_screen.fold_tree() << std::endl;
 			std::cerr << current_pose_screen.annotated_sequence() << std::endl;
 			current_pose_screen.dump_pdb( "PROBLEM.pdb" );
@@ -199,17 +198,14 @@ namespace checker {
 		}
 
 		Real actual_rep_cutoff = rep_cutoff_; //default
-		if ( close_chain ) {
-			if ( kic_sampling_ ) {
-				actual_rep_cutoff = 200.0; // KIC needs a much higher cutoff -- atoms can get really close
-			} else {
-				actual_rep_cutoff = 10.0; //Parin's old parameter
-			}
+		if ( is_internal_ || loose_rep_cutoff_ ) {
+			actual_rep_cutoff = 200.0; // KIC needs a much higher cutoff -- atoms can get really close
+		} else if ( close_chain ){
+			actual_rep_cutoff = 10.0; //Parin's old parameter
 		}
-		if ( is_internal_ ) actual_rep_cutoff = 200; //Bigger moving_element..easier to crash (before May 4 used to be (close_chain && is_internal) actual_rep_cutoff=200
+		if ( extra_loose_rep_cutoff_ ) actual_rep_cutoff = 2000;
 
 		bool pass_rep_screen = false;
-
 		if ( delta_rep_score_ < actual_rep_cutoff ){
 			pass_rep_screen = true;
 			count_data_.good_rep_rotamer_count++;
@@ -221,11 +217,15 @@ namespace checker {
 
 		if ( close_chain ){
 			pass_atr_rep_screen = pass_rep_screen;
-		} else if ( is_internal_ ){
-			if ( delta_atr_score_ < (  - 1 ) && ( delta_rep_score_ + delta_atr_score_ ) < ( actual_rep_cutoff - rep_cutoff_ ) ) pass_atr_rep_screen = true;
+		} else if ( is_internal_ || loose_rep_cutoff_ ){
+			if ( delta_atr_score_ < (  - 1.0 ) &&
+					 ( delta_rep_score_ + delta_atr_score_ ) < ( actual_rep_cutoff - rep_cutoff_ ) ) pass_atr_rep_screen = true;
 		} else{
-			if ( delta_atr_score_ < (  - 1 ) && ( delta_rep_score_ + delta_atr_score_ ) < 0 ) pass_atr_rep_screen = true;
+			if ( delta_atr_score_ < (  - 1.0 ) &&
+					 ( delta_rep_score_ + delta_atr_score_ ) < 0 ) pass_atr_rep_screen = true;
 		}
+
+		//		TR << delta_rep_score_ << " " << actual_rep_cutoff << "   " << delta_atr_score_ << " " << pass_atr_rep_screen << std::endl;
 
 		if ( pass_atr_rep_screen ) {
 			//	if((delta_atr_score_<(-1)) && ((delta_rep_score_+delta_atr_score_) < 200) ) { //This causes about 5times more pose to pass the screen (50,000 poses vs 10,000 poses)
@@ -245,6 +245,31 @@ namespace checker {
 			return false;
 		}
 
+	}
+
+	///////////////////////////////////////////
+	void
+	AtrRepChecker::output_rep( pose::Pose const & pose, std::string const tag ){
+
+		core::scoring::methods::EnergyMethodOptions options(atr_rep_screening_scorefxn_->energy_method_options());
+		core::scoring::etable::EtableCAP etable(core::scoring::ScoringManager::get_instance()->etable( options.etable_type()));
+		core::scoring::etable::AnalyticEtableEvaluator eval(*etable);
+		for ( Size i = 1; i <= pose.total_residue(); i++ ){
+			for ( Size ii = 1; ii <= pose.residue( i ).natoms(); ii++ ){
+				for ( Size j = i+1; j <= pose.total_residue(); j++ ){
+					for ( Size jj = 1; jj <= pose.residue( j ).natoms(); jj++ ){
+						Real atrE, repE, solE, d2;
+						eval.atom_pair_energy_v( pose.residue( i ).atom( ii ),
+																		 pose.residue( j ).atom( jj ),
+																		 1.0, atrE, repE, solE, d2 );
+						if ( repE != 0.0 ) {
+							TR << tag << " " << i << " " << pose.residue( i ).atom_name( ii ) << " -- "
+								 << j << " " << pose.residue( j ).atom_name( jj ) << " " << repE << std::endl;
+						}
+					}
+				}
+			}
+		}
 	}
 
 } //checker

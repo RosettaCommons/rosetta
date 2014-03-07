@@ -18,7 +18,6 @@
 #include <core/pose/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/rna/RNA_Util.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
@@ -253,7 +252,7 @@ void RNA_IdealCoord::apply_coords(
 void RNA_IdealCoord::apply(
 		Pose & pose,
 		Size const seqpos,
-		Size pucker,
+		PuckerState pucker,
 		bool const keep_backbone_torsion
 ) const {
 	using namespace id;
@@ -265,7 +264,7 @@ void RNA_IdealCoord::apply(
 	Residue const & res = pose.residue( seqpos );
 	if ( !res.is_RNA() ) return;
 
-	if ( pucker == WHATEVER ) {
+	if ( pucker == ANY_PUCKER ) {
 		Real const delta  = pose.torsion( TorsionID(seqpos, id::BB, BETA) );
 		if ( delta > delta_cutoff_ ) {
 			pucker = SOUTH;
@@ -297,7 +296,7 @@ void RNA_IdealCoord::apply(
 void RNA_IdealCoord::apply_pucker(
 		Pose & pose,
 		Size const seqpos,
-		Size pucker,
+		PuckerState pucker,
 		bool const keep_backbone_torsion
 ) const {
 	using namespace id;
@@ -309,7 +308,7 @@ void RNA_IdealCoord::apply_pucker(
 	Residue const & res = pose.residue( seqpos );
 	if ( !res.is_RNA() ) return;
 
-	if ( pucker == WHATEVER ) {
+	if ( pucker == ANY_PUCKER ) {
 		Real const delta  = pose.torsion( TorsionID(seqpos, id::BB, BETA) );
 		if ( delta > delta_cutoff_ ) {
 			pucker = SOUTH;
@@ -329,7 +328,7 @@ void RNA_IdealCoord::apply_pucker(
 //pucker_conformations: 0 for maintaining current, 1 for North, 2 for South
 void RNA_IdealCoord::apply(
 	Pose & pose,
-	utility::vector1 < Size > const & puckers,
+	utility::vector1 < PuckerState > const & puckers,
 	bool const keep_backbone_torsion
 ) const {
 	assert ( pose.total_residue() == puckers.size() );
@@ -343,7 +342,7 @@ void RNA_IdealCoord::apply(
 	bool const keep_backbone_torsion
 ) const {
 	for ( Size i = 1; i <= pose.total_residue(); ++i )
-			apply( pose, i, WHATEVER, keep_backbone_torsion );
+			apply( pose, i, ANY_PUCKER, keep_backbone_torsion );
 }
 /////////////////////////////////////////////////
 

@@ -29,8 +29,9 @@
 #include <core/init/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <protocols/farna/RNA_ProtocolUtil.hh>
 #include <protocols/farna/RNA_Minimizer.hh>
@@ -195,6 +196,7 @@ main( int argc, char * argv [] )
 		option.add_relevant( out::file::silent );
 		option.add_relevant( out::nstruct );
 		option.add_relevant( score::weights );
+		option.add_relevant( OptionKeys::full_model::extra_min_res );
 		option.add_relevant( basic::options::OptionKeys::stepwise::monte_carlo::cycles );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::verbose_scores );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::skip_deletions );
@@ -206,7 +208,6 @@ main( int argc, char * argv [] )
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_internal_local_moves );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_skip_bulge );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::temperature );
-		option.add_relevant( OptionKeys::stepwise::monte_carlo::extra_min_res );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::allow_variable_bond_geometry );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::constraint_x0 );
 		option.add_relevant( OptionKeys::stepwise::monte_carlo::constraint_tol );

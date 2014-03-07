@@ -777,11 +777,11 @@ option.add( basic::options::OptionKeys::jumps::overlap_chainbreak, "use the over
 option.add( basic::options::OptionKeys::jumps::sep_switch_accelerate, "constraints and chainbreak depend on in-chain-separation. Accelerate their enforcement 1+num_cuts()*<this_factor>" ).def(0.4);
 option.add( basic::options::OptionKeys::jumps::dump_frags, "dump jump_fragments " ).def(false);
 option.add( basic::options::OptionKeys::jumps::njumps, "number_of_jumps to select from library for each trajectory (membrane mode)" ).def(1);
+option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
+option.add( basic::options::OptionKeys::jumps::contact_score, "the strand-weight will have a weight * contact_order component" ).def(0.0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
-option.add( basic::options::OptionKeys::jumps::contact_score, "the strand-weight will have a weight * contact_order component" ).def(0.0);
-option.add( basic::options::OptionKeys::jumps::filter_templates, "filter hybridization protocol templates" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::filter_templates, "filter hybridization protocol templates" ).def(false);
 option.add( basic::options::OptionKeys::templates::templates, "templates option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::templates::config, "read a list of templates and alignments" ).def("templates.dat");
 option.add( basic::options::OptionKeys::templates::fix_aligned_residues, "pick only from template fragments and then keep these residues fixed" ).def(false);
@@ -891,6 +891,7 @@ option.add( basic::options::OptionKeys::score::syn_G_potential_bonus, "Amount to
 option.add( basic::options::OptionKeys::score::pack_phosphate_penalty, "Amount to penalize instantiation of a 5' or 3' phosphate" ).def(0.25);
 option.add( basic::options::OptionKeys::score::rg_local_span, "First,last res in rg_local. For example to calc rg_local from 1-20 would be 1,20" ).def(0);
 option.add( basic::options::OptionKeys::score::unmodifypot, "Do not call modify pot to add extra repulsive interactions between Obb/Obb atom types at distances beneath 3.6 Angstroms" );
+option.add( basic::options::OptionKeys::score::conc, "intermolecular concentration to use in intermol term (give in M)" ).def(1.0);
 option.add( basic::options::OptionKeys::score::saxs::saxs, "saxs option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::score::saxs::min_score, "minimum value of saxs score; the parameter is used to flatten the energy funnel around its minimum" ).def(-5);
 option.add( basic::options::OptionKeys::score::saxs::custom_ff, "Name of config file providing extra from factors" ).def("");
@@ -1553,12 +1554,12 @@ option.add( basic::options::OptionKeys::membrane::view, "viewing pose during pro
 option.add( basic::options::OptionKeys::membrane::Mhbond_depth, "membrane depth dependent correction to the hbond potential" ).def(false);
 option.add( basic::options::OptionKeys::membrane::thickness, "one leaflet hydrocarbon thickness for solvation calculations (Angstroms)" ).def(15);
 option.add( basic::options::OptionKeys::casp::casp, "casp option group" ).legal(true).def(true);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::casp::decoy, "No description" );
+option.add( basic::options::OptionKeys::casp::decoy, "No description" );
 option.add( basic::options::OptionKeys::casp::wt, "No description" );
 option.add( basic::options::OptionKeys::casp::rots, "No description" );
-option.add( basic::options::OptionKeys::casp::opt_radius, "optimization radius for repacking and minimization" );
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::casp::opt_radius, "optimization radius for repacking and minimization" );
 option.add( basic::options::OptionKeys::casp::repack, "should we repack the structure?" );
 option.add( basic::options::OptionKeys::casp::sc_min, "should we sidechain minimize the structure?" );
 option.add( basic::options::OptionKeys::casp::sequential, "should mutations be considered in sequence or all together?" );
@@ -2329,14 +2330,14 @@ option.add( basic::options::OptionKeys::hotspot::colonyE, "Rescore hotspots from
 option.add( basic::options::OptionKeys::hotspot::length, "Length of hotspot peptide to use for hashing. Sidechain-containing group will be in the center." ).def(1);
 option.add( basic::options::OptionKeys::hotspot::envhb, "Use environment dependent Hbonds when scoring hotspots." ).def(false);
 option.add( basic::options::OptionKeys::hotspot::angle, "Maximum allowed angle between stubCA, target CoM, and stubCB. Used to determine if stub is pointing towards target. Negative numbers deactivates this check (default)" ).def(-1);
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::hotspot::angle_res, "Residue to use for angle calculation from stubCA, <this option>, and stubCB. Used to determine if stub is pointing towards target. 0 uses the default, which is the targets center of mass" ).def(0);
+option.add( basic::options::OptionKeys::hotspot::angle_res, "Residue to use for angle calculation from stubCA, <this option>, and stubCB. Used to determine if stub is pointing towards target. 0 uses the default, which is the targets center of mass" ).def(0);
 option.add( basic::options::OptionKeys::parser::parser, "parser option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::parser::protocol, "File name for the xml parser protocol" );
 option.add( basic::options::OptionKeys::parser::script_vars, "Variable substitutions for xml parser, in the form of name=value" );
 option.add( basic::options::OptionKeys::parser::view, "Use the viewer?" );
-option.add( basic::options::OptionKeys::parser::patchdock, "Patchdock output file name." );
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::parser::patchdock, "Patchdock output file name." );
 option.add( basic::options::OptionKeys::parser::patchdock_random_entry, "Pick a random patchdock entry between two entry numbers. inclusive" ).n(2);
 option.add( basic::options::OptionKeys::DomainAssembly::DomainAssembly, "DomainAssembly option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DomainAssembly::da_setup, "run DomainAssembly setup routine" ).legal(true).legal(false).def(false);
@@ -2752,18 +2753,19 @@ option.add( basic::options::OptionKeys::stepwise::monte_carlo::erraser, "Use KIC
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::allow_internal_hinge_moves, "Allow moves in which internal suites are sampled (hinge-like motions)" ).def(true);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::allow_internal_local_moves, "Allow moves in which internal cutpoints are created to allow ERRASER rebuilds" ).def(false);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::allow_skip_bulge, "Allow moves in which an intervening residue is skipped and the next one is modeled as floating base" ).def(false);
-option.add( basic::options::OptionKeys::stepwise::monte_carlo::allow_from_scratch, "Allow modeling of 'free' dinucleotides that are not part of input poses" ).def(false);
+option.add( basic::options::OptionKeys::stepwise::monte_carlo::from_scratch_frequency, "Allow modeling of 'free' dinucleotides that are not part of input poses" ).def(0.1);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::allow_split_off, "Allow chunks that do not contain fixed domains to split off after nucleating on fixed domains." ).def(true);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::cycles, "Number of Monte Carlo cycles" ).def(50);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::temperature, "Monte Carlo temperature" ).def(1.0);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::add_delete_frequency, "Frequency of add/delete vs. resampling" ).def(0.5);
+option.add( basic::options::OptionKeys::stepwise::monte_carlo::intermolecular_frequency, "Frequency of intermolecular (docking) vs. intramolecular folding moves" ).def(0.2);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::minimize_single_res_frequency, "Frequency with which to minimize the residue that just got rebuilt, instead of all" ).def(0.0);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::allow_variable_bond_geometry, "In 10% of moves, let bond angles & distance change" ).def(true);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::switch_focus_frequency, "Frequency with which to switch the sub-pose that is being modeled" ).def(0.5);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::just_min_after_mutation_frequency, "After a mutation, how often to just minimize (without further sampling the mutated residue)" ).def(0.5);
+option.add( basic::options::OptionKeys::stepwise::monte_carlo::local_redock_only, "In ResampleMover, docking partners can change anywhere across connected chains. Force the new partners to be close to the old ones." ).def(true);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::constraint_x0, "Target RMSD value for constrained runs" ).def(0.5);
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::constraint_tol, "Size of flat region for coordinate constraints" ).def(0.5);
-option.add( basic::options::OptionKeys::stepwise::monte_carlo::extra_min_res, "specify residues other than those being built that should be minimized" ).def();
 option.add( basic::options::OptionKeys::stepwise::monte_carlo::make_movie, "create silent files in movie/ with all steps and accepted steps" ).def(false);
 option.add( basic::options::OptionKeys::stepwise::rna::rna, "rna option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::stepwise::rna::sampler_num_pose_kept, "set_num_pose_kept by ResidueSampler )" ).def(108);
@@ -2844,16 +2846,23 @@ option.add( basic::options::OptionKeys::stepwise::rna::bulge_res, "optional: res
 option.add( basic::options::OptionKeys::stepwise::rna::rebuild_bulge_mode, "rebuild_bulge_mode" ).def(false);
 option.add( basic::options::OptionKeys::stepwise::rna::choose_random, "ask swa residue sampler for a random solution" ).def(false);
 option.add( basic::options::OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed, "When instantiating virtual sugar, keep base fixed -- do not spend a lot of time to minimize!" ).def(true);
+option.add( basic::options::OptionKeys::stepwise::rna::virtual_sugar_do_minimize, "When instantiating virtual sugar, minimize (as in original SWA code) -- takes extra time!" ).def(true);
 option.add( basic::options::OptionKeys::stepwise::rna::sampler_max_centroid_distance, "max centroid distance of moving base to reference in floating base sampler" ).def(0.0);
 option.add( basic::options::OptionKeys::stepwise::rna::num_random_samples, "In choose_random/monte-carlo mode, number of samples from swa residue sampler before minimizing best" ).def(20);
 option.add( basic::options::OptionKeys::stepwise::rna::filter_user_alignment_res, " filter_user_alignment_res " ).def(true);
 option.add( basic::options::OptionKeys::stepwise::rna::output_pdb, "output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process." ).def(false);
-option.add( basic::options::OptionKeys::stepwise::rna::new_framework, "testing sample-and-screen framework" ).def(false);
-option.add( basic::options::OptionKeys::stepwise::rna::unified_framework, "testing unified sample-and-screen framework" ).def(false);
+option.add( basic::options::OptionKeys::stepwise::rna::tether_jump, "In rigid body moves, keep moving residue close to (jump-connected) reference residue  (8.0 A) and force centroid interaction between them" ).def(true);
+option.add( basic::options::OptionKeys::stepwise::rna::move, "For SWM. Format: 'ADD 5 ATTACHED_TO_PREVIOUS 4'" ).def();
+option.add( basic::options::OptionKeys::stepwise::rna::enumerate, "For SWM. Force enumeration (SWA-like) instead of random" ).def(false);
+option.add( basic::options::OptionKeys::stepwise::rna::unified_framework, "testing unified sample-and-screen framework" ).def(true);
 option.add( basic::options::OptionKeys::full_model::full_model, "full_model option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::full_model::cutpoint_open, "open cutpoints in full model" ).def();
 option.add( basic::options::OptionKeys::full_model::cutpoint_closed, "closed cutpoints in full model" ).def();
 option.add( basic::options::OptionKeys::full_model::other_poses, "list of PDB files containing other poses" );
+option.add( basic::options::OptionKeys::full_model::extra_min_res, "specify residues other than those being built that should be minimized" ).def();
+option.add( basic::options::OptionKeys::full_model::jump_res, "optional: residues for defining jumps -- please supply in pairs" ).def();
+option.add( basic::options::OptionKeys::full_model::root_res, "optional: desired root res (used in SWM move testing)" ).def();
+option.add( basic::options::OptionKeys::full_model::virtual_sugar_res, "optional: starting virtual sugars (used in SWM move testing)" ).def();
 option.add( basic::options::OptionKeys::ufv::ufv, "ufv option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::ufv::left, "left endpoint" );
 option.add( basic::options::OptionKeys::ufv::right, "right endpoint" );

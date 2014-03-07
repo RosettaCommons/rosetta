@@ -152,6 +152,7 @@ namespace rna {
 
 		int separation = std::abs( int( reference_res ) - int( moving_res_ ) );
 		int gap_size_to_anchor = separation - 1;
+
 		runtime_assert( gap_size_to_anchor >= 0 );
 		return static_cast<Size>( gap_size_to_anchor );
 	}
@@ -338,11 +339,11 @@ namespace rna {
 		return working_protonated_H1_adenosine_list_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	void StepWiseRNA_JobParameters::set_output_extra_RMSDs( bool const & setting ){
+	void StepWiseRNA_JobParameters::set_output_extra_RMSDs( bool const setting ){
 		output_extra_RMSDs_ = setting;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	void StepWiseRNA_JobParameters::set_is_simple_full_length_job_params( bool const & setting ){ //Oct 31, 2011
+	void StepWiseRNA_JobParameters::set_is_simple_full_length_job_params( bool const setting ){ //Oct 31, 2011
 		is_simple_full_length_job_params_ = setting;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
@@ -429,6 +430,13 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void StepWiseRNA_JobParameters::set_partition_definition( ObjexxFCL::FArray1D < bool > const & setting ){
 		partition_definition_ = setting;
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////
+	void StepWiseRNA_JobParameters::set_partition_definition( utility::vector1< Size > const & partition_definition_vector ){
+		partition_definition_.dimension( partition_definition_vector.size() );
+		for ( Size n = 1; n <= partition_definition_vector.size(); n++ ){
+			partition_definition_( n ) = partition_definition_vector[ n ];
+		}
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	core::pose::PoseCOP
@@ -559,33 +567,20 @@ namespace rna {
 	void
 	StepWiseRNA_JobParameters::update_working_moving_suite(){
 
-		//TR.Debug << "update_working_moving_suite " << std::endl;
-		if ( ( working_moving_res_list_.size() == 0 ) && ( working_moving_res_ != 0 ) ){
-			utility_exit_with_message( "working_moving_res_list_.size() == 0 ) && ( working_moving_res_ != 0" );
-		}
-
-		if ( ( working_moving_res_list_.size() != 0 ) && ( working_moving_res_ == 0 ) ){
-			utility_exit_with_message( "working_moving_res_list_.size() != 0 ) && ( working_moving_res_ == 0" );
-		}
-
+		runtime_assert( working_moving_res_list_.size() > 0  || working_moving_res_ == 0 );
+		runtime_assert( working_moving_res_list_.size() == 0 || working_moving_res_ != 0 );
 		if ( working_moving_res_list_.size() == 0 ) return;
-
-		if ( working_moving_res_ == 0 ) utility_exit_with_message( "working_moving_res_list_.size() != 0 ) && ( working_moving_res_ == 0" );
-
-
+		runtime_assert( working_moving_res_ > 0 );
 
 		working_moving_suite_list_.clear();
-
 		if ( is_prepend_ ){
 			working_moving_suite_ = working_moving_res_;
 			working_moving_suite_list_ = working_moving_res_list_;
 		} else{
 			working_moving_suite_ = working_moving_res_ - 1;
-
 			for ( Size n = 1; n <= working_moving_res_list_.size(); n++ ){
 				working_moving_suite_list_.push_back( working_moving_res_list_[n] - 1 );
 			}
-
 		}
 
 		//check

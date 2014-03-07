@@ -98,8 +98,7 @@ namespace stepwise {
 					screener->add_mover( update_movers, restore_movers );
 					early_exit_check( n ); // for debugging.
 				} else {
-					screener->fast_forward( sampler_ );
-					break;
+					screener->fast_forward( sampler_ );	break;
 				}
 			} // check screens
 

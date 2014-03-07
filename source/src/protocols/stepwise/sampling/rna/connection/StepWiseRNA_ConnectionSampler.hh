@@ -31,6 +31,7 @@
 #include <protocols/stepwise/sampling/rna/phosphate/MultiPhosphateSampler.fwd.hh>
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/screener/TagDefinition.hh>
+#include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeRotamerComb.fwd.hh>
 #include <protocols/rotamer_sampler/copy_dofs/ResidueAlternativeSet.hh>
 #include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamer.fwd.hh>
 #include <protocols/rotamer_sampler/rigid_body/RigidBodyRotamerWithResidueList.fwd.hh>
@@ -124,6 +125,12 @@ namespace connection {
 		void
 		initialize_full_rigid_body_sampler();
 
+		rotamer_sampler::RotamerBaseOP
+		get_full_bond_sampler();
+
+		rotamer_sampler::copy_dofs::ResidueAlternativeRotamerCombOP
+		get_rsd_alternatives_rotamer();
+
 		void
 		initialize_rigid_body_rotamer();
 
@@ -135,10 +142,6 @@ namespace connection {
 
 		void
 		initialize_pose_level_screeners( pose::Pose & pose );
-
-
-		kinematics::Stub
-		get_reference_stub( pose::Pose const & pose ) const;
 
 		void
 		update_base_bin_map( rigid_body::BaseBin const & base_bin );
@@ -157,7 +160,6 @@ namespace connection {
 
 	private:
 
-		StepWiseRNA_JobParametersCOP job_parameters_; //need to use the full_to_sub map...should convert to const style.. Parin Feb 28, 2010
 		Size const moving_res_; // Might not corresponds to user input.
 		Size reference_res_; //the last stationary residue that this attach to the moving residues
 		utility::vector1< Size > moving_partition_res_;
@@ -173,7 +175,6 @@ namespace connection {
 
 		StepWiseRNA_CountStruct count_data_;
 		std::string silent_file_;
-		bool const build_pose_from_scratch_;
 		bool kic_sampling_;
 		bool rebuild_bulge_mode_;
 
@@ -202,21 +203,19 @@ namespace connection {
 		o2prime::O2PrimePackerOP o2prime_packer_;
 		phosphate::MultiPhosphateSamplerOP phosphate_sampler_;
 
-		kinematics::Stub reference_stub_, moving_res_base_stub_;
+		kinematics::Stub moving_res_base_stub_;
 		rigid_body::BaseBinMap base_bin_map_;
 
 		Real max_distance_squared_;
-
-		// for long-loop mode. Is this still supported?
-		Size const last_append_res_;
-		Size const last_prepend_res_;
-		Real const atom_atom_overlap_dist_cutoff_;
 
 		bool rigid_body_sampling_;
 		bool try_sugar_instantiation_;
 		Distance o2prime_instantiation_distance_cutoff_;
 		std::string const extra_tag_;
 		bool const virt_sugar_atr_rep_screen_;
+		bool const build_pose_from_scratch_;
+
+		StepWiseRNA_JobParametersCOP job_parameters_; //need to use the full_to_sub map...should convert to const style.. Parin Feb 28, 2010
 	};
 
 } //connection

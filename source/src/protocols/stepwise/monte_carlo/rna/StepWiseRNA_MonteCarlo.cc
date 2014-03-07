@@ -15,7 +15,6 @@
 
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/rna/StepWiseRNA_MonteCarloUtil.hh>
-#include <protocols/moves/MonteCarlo.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddMover.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_DeleteMover.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_FromScratchMover.hh>
@@ -25,6 +24,7 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
+#include <protocols/moves/MonteCarlo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
@@ -70,7 +70,8 @@ StepWiseRNA_MonteCarlo::StepWiseRNA_MonteCarlo( core::scoring::ScoreFunctionCOP 
 	model_tag_( "" ),
 	out_path_( "" ),
 	movie_file_trial_( "" ),
-	movie_file_accepted_( "" )
+	movie_file_accepted_( "" ),
+	enumerate_( false )
 {
 }
 
@@ -82,12 +83,19 @@ StepWiseRNA_MonteCarlo::~StepWiseRNA_MonteCarlo()
 void
 StepWiseRNA_MonteCarlo::apply( core::pose::Pose & pose ) {
 
-	using namespace protocols::moves;
-	using namespace core::scoring;
-
 	initialize_scorefunction();
 	initialize_movers();
 	initialize_pose_if_empty( pose );
+
+	if ( do_test_move( pose ) ) return;
+	do_main_loop( pose );
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_MonteCarlo::do_main_loop( pose::Pose & pose ){
+	using namespace protocols::moves;
+	using namespace core::scoring;
 
 	MonteCarloOP monte_carlo = new MonteCarlo( pose, *scorefxn_, options_->temperature() );
 	show_scores( pose, "Initial score:" );
@@ -118,6 +126,8 @@ StepWiseRNA_MonteCarlo::apply( core::pose::Pose & pose ) {
 
 		if ( !success ) continue;
 		k++;
+
+		TR << "After move, modeling: " << get_all_res_list( pose ) << std::endl;
 		after_move_score = show_scores( pose, "After-move score:" );
 		TR << "Score changed from: " << before_move_score << " to  " << after_move_score << std::endl;
 		output_movie( pose, k, "TRIAL", movie_file_trial_ );
@@ -159,10 +169,15 @@ StepWiseRNA_MonteCarlo::initialize_movers(){
 
 	// used in all movers.
 	StepWiseRNA_ModelerOP stepwise_rna_modeler = new StepWiseRNA_Modeler( scorefxn_ );
-	stepwise_rna_modeler->set_options( options_->setup_modeler_options() );
+	StepWiseRNA_ModelerOptionsOP modeler_options = options_->setup_modeler_options();
+	stepwise_rna_modeler->set_options( modeler_options );
 	stepwise_rna_modeler->set_minimizer_extra_minimize_res( options_->extra_minimize_res() );
 	stepwise_rna_modeler->set_syn_chi_res_list( options_->syn_chi_res_list() );
 	stepwise_rna_modeler->set_terminal_res( options_->terminal_res() );
+	if ( enumerate_ ) { // SWA-like.
+ 		modeler_options->set_choose_random( false );
+		modeler_options->set_num_pose_minimize( 108 );
+	}
 
 	// maybe RNA_AddMover could just hold a copy of RNA_ResampleMover...
 	rna_add_mover_ = new RNA_AddMover( scorefxn_ );
@@ -179,11 +194,9 @@ StepWiseRNA_MonteCarlo::initialize_movers(){
 	rna_delete_mover_->set_stepwise_rna_modeler( stepwise_rna_modeler->clone_modeler() );
 	rna_delete_mover_->set_options( options_ );
 
-	if ( options_->allow_from_scratch() ){
-		rna_from_scratch_mover_ = new RNA_FromScratchMover;
-		rna_from_scratch_mover_->set_native_pose( get_native_pose() );
-		rna_from_scratch_mover_->set_stepwise_rna_modeler( stepwise_rna_modeler->clone_modeler() );
-	}
+	rna_from_scratch_mover_ = new RNA_FromScratchMover;
+	rna_from_scratch_mover_->set_native_pose( get_native_pose() );
+	rna_from_scratch_mover_->set_stepwise_rna_modeler( stepwise_rna_modeler->clone_modeler() );
 
 	rna_add_or_delete_mover_ = new RNA_AddOrDeleteMover( rna_add_mover_, rna_delete_mover_, rna_from_scratch_mover_ );
 	rna_add_or_delete_mover_->set_options( options_ );
@@ -198,8 +211,7 @@ StepWiseRNA_MonteCarlo::initialize_movers(){
 void
 StepWiseRNA_MonteCarlo::initialize_pose_if_empty( pose::Pose & pose ){
 	if ( pose.total_residue() > 0 ) return;
-
-	runtime_assert( options_->allow_from_scratch() );
+	runtime_assert( options_->from_scratch_frequency() > 0.0 );
 	rna_add_or_delete_mover_->apply( pose );
 	runtime_assert( pose.total_residue() > 0 );
 }
@@ -247,9 +259,25 @@ StepWiseRNA_MonteCarlo::display_progress( pose::Pose & pose, Size const cycle_nu
 	using namespace core::pose::full_model_info;
 	TR << std::endl << TR.Blue << "Embarking on cycle " << cycle_num << " of " << options_->cycles() << TR.Reset << std::endl;
 	Real const before_move_score = show_scores( pose, "Before-move score:" );
-	TR << "Modeling: " << make_tag_with_dashes( get_res_list_from_full_model_info_const( pose ) ) << std::endl;
+	TR << "Modeling: " << get_all_res_list( pose ) << std::endl;
 	if ( missing_weight_ != 0.0 ) TR << "Weight of missing residue score term is " << missing_weight_ << std::endl;
 	return before_move_score;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+std::string
+StepWiseRNA_MonteCarlo::get_all_res_list( pose::Pose & pose ){
+	std::string out_string;
+	out_string = make_tag_with_dashes( get_res_list_from_full_model_info_const( pose ) );
+	utility::vector1< PoseOP > const & other_pose_list = const_full_model_info( pose ).other_pose_list();
+	if ( other_pose_list.size() == 0 ) return out_string;
+	out_string += " [";
+	for ( Size n = 1; n <= other_pose_list.size(); n++ ){
+		out_string += get_all_res_list( *other_pose_list[n] );
+		if ( n < other_pose_list.size() ) out_string += "; ";
+	}
+	out_string += "]";
+	return out_string;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -275,6 +303,19 @@ StepWiseRNA_MonteCarlo::set_minimize_single_res( bool const minimize_single_res 
 void
 StepWiseRNA_MonteCarlo::set_options( StepWiseRNA_MonteCarloOptionsCOP options ){
 	options_ = options;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+StepWiseRNA_MonteCarlo::do_test_move( pose::Pose & pose ){
+	if ( move_.move_type() == NO_MOVE ) return false;
+	if ( move_.move_type() == ADD || move_.move_type() == DELETE ){
+		rna_add_or_delete_mover_->apply( pose, move_ );
+		return true;
+	} else {
+		rna_resample_mover_->apply( pose, move_ );
+		return true;
+	}
 }
 
 

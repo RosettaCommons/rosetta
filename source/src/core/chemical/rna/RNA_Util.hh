@@ -28,10 +28,10 @@ namespace chemical {
 namespace rna{
 
 ///////////////////////////////////////////////////////////////////////////////
-enum __BaseEdge__ {X, WATSON_CRICK, HOOGSTEEN, SUGAR, O2PRIME, PHOSPHATE };
-enum __RNA_Torsion__ {WHATEVER, ALPHA, BETA, GAMMA, DELTA, EPSILON, ZETA, CHI, NU2, NU1, O2H};
-enum __ChiState__ {ANTI=1, SYN, NONE}; //ChiState and PuckerState shares the WHATEVER enum with Torsion
-enum __PuckerState__ {NORTH=1, SOUTH};
+enum BaseEdge    { ANY_BASE_EDGE, WATSON_CRICK, HOOGSTEEN, SUGAR, O2PRIME, PHOSPHATE };
+enum RNA_Torsion { ANY_TORSION, ALPHA, BETA, GAMMA, DELTA, EPSILON, ZETA, CHI, NU2, NU1, O2H};
+enum ChiState    { ANY_CHI, ANTI, SYN, NO_CHI};
+enum PuckerState { ANY_PUCKER, NORTH, SOUTH, NO_PUCKER};
 
 Size const NUM_EDGES( 3 );
 Size const NUM_RNA_TORSIONS( 10 );

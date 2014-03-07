@@ -14,7 +14,7 @@
 
 
 //////////////////////////////////
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParametersSetup.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_JobParametersSetup.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Classes.hh>
@@ -69,6 +69,7 @@ namespace protocols {
 namespace stepwise {
 namespace sampling {
 namespace rna {
+namespace legacy {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
@@ -1798,6 +1799,7 @@ namespace rna {
 	}
   //////////////////////////////////////////////////////////////////////////
 
+} //legacy
 } //rna
 } //sampling
 } //stepwise

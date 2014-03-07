@@ -20,8 +20,9 @@ namespace protocols {
 namespace rotamer_sampler {
 
 	enum RotamerType {
-		NONE,
+		NO_ROTAMER_TYPE,
 		ANY,
+		COMB,
 		COPY_DOF,
 		MC_ONE_TORSION,
 		ONE_TORSION,

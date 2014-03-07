@@ -36,7 +36,9 @@ namespace checker {
 	public:
 
 		//Constructor
-		AtrRepChecker( pose::Pose const & pose, StepWiseRNA_JobParametersCOP & job_parameters );
+		AtrRepChecker( pose::Pose const & pose,
+									 StepWiseRNA_JobParametersCOP & job_parameters,
+									 bool const loose_rep_cutoff = false );
 
 		AtrRepChecker( pose::Pose const & pose,
 										Size const moving_res,
@@ -60,7 +62,10 @@ namespace checker {
 		check_screen( pose::Pose & current_pose_screen );
 
 		void
-		set_kic_sampling( bool const & setting ) { kic_sampling_ = setting;	}
+		set_loose_rep_cutoff( bool const & setting ) { loose_rep_cutoff_ = setting;	}
+
+		void
+		set_extra_loose_rep_cutoff( bool const & setting ) { extra_loose_rep_cutoff_ = setting;	}
 
 		StepWiseRNA_CountStruct const &
 		count_data() const { return count_data_; }
@@ -76,10 +81,13 @@ namespace checker {
 		void
 		initialize_parameters();
 
+		void
+		output_rep( core::pose::Pose const & pose, std::string const tag );
+
 	private:
 
-		Size const working_moving_res_;
-		Size const working_reference_res_;
+		Size const moving_res_;
+		Size const reference_res_;
 		Size const gap_size_;
 		bool const is_prepend_;
 		bool const is_internal_;
@@ -93,7 +101,8 @@ namespace checker {
 		Real delta_rep_score_;
 		bool output_pdb_;
 		bool verbose_;
-		bool kic_sampling_;
+		bool loose_rep_cutoff_;
+		bool extra_loose_rep_cutoff_;
 
 		core::scoring::ScoreFunctionOP atr_rep_screening_scorefxn_;
 

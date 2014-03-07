@@ -17,11 +17,8 @@
 
 // Package headers
 #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/kinematics/util.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/TorsionID.hh>
-//#include <core/id/types.hh>
-// AUTO-REMOVED #include <core/kinematics/constants.hh>
 #include <core/kinematics/Stub.hh>
 
 // Project headers
@@ -34,13 +31,13 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/IdealBondLengthSet.hh>
+#include <core/chemical/rna/RNA_Util.hh> // for default root atom -- there is a choice encoded below for DNA vs. RNA vs. proteins
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/AtomTree.hh>
-// AUTO-REMOVED #include <core/kinematics/AtomPointer.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/constants.hh>
 #include <core/kinematics/util.hh>
@@ -871,7 +868,9 @@ get_root_atomno(
 	int const forward( 1 );
 	int const backward( -1 );
 
-
+	// if ( rsd.is_RNA() ){
+	// 	return rsd.atom_index( chemical::rna::default_jump_atom( rsd ) );
+	// }
 	if ( dir == forward ) {
 		// N for proteins, P for DNA
 		if ( rsd.is_polymer() ) {

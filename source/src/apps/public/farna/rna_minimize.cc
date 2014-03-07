@@ -27,7 +27,7 @@
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/FullModelInfoSetupFromCommandLine.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/init/init.hh>
 

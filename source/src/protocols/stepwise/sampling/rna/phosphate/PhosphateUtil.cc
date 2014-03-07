@@ -113,29 +113,33 @@ namespace phosphate {
 
 			utility::vector1< TorsionID > torsion_ids;
 			if ( terminus == FIVE_PRIME_PHOSPHATE ){
-				bool added_new_phosphate( false );
-				if ( pose.residue( n ).has_variant_type( "FIVE_PRIME_PHOSPHATE" ) ){
-					make_variants_match( pose, reference_pose, n, "FIVE_PRIME_PHOSPHATE" );
-					make_variants_match( pose, reference_pose, n, "VIRTUAL_PHOSPHATE" );
-					make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
-				} else { // order matters, since there's not variant with both virtual phosphate and five prime phosphate
-					make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
-					make_variants_match( pose, reference_pose, n, "VIRTUAL_PHOSPHATE" );
-					make_variants_match( pose, reference_pose, n, "FIVE_PRIME_PHOSPHATE" );
-					added_new_phosphate = pose.residue( n ).has_variant_type( "FIVE_PRIME_PHOSPHATE" );
+				if ( n == 1 || pose.fold_tree().is_cutpoint( n-1 ) ) { // may be copying to a pose that no longer has terminus
+					bool added_new_phosphate( false );
+					if ( pose.residue( n ).has_variant_type( "FIVE_PRIME_PHOSPHATE" ) ){
+						make_variants_match( pose, reference_pose, n, "FIVE_PRIME_PHOSPHATE" );
+						make_variants_match( pose, reference_pose, n, "VIRTUAL_PHOSPHATE" );
+						make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
+					} else { // order matters, since there's not variant with both virtual phosphate and five prime phosphate
+						make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
+						make_variants_match( pose, reference_pose, n, "VIRTUAL_PHOSPHATE" );
+						make_variants_match( pose, reference_pose, n, "FIVE_PRIME_PHOSPHATE" );
+						added_new_phosphate = pose.residue( n ).has_variant_type( "FIVE_PRIME_PHOSPHATE" );
+					}
+					if ( added_new_phosphate ){
+						correctly_position_five_prime_phosphate( pose, n);
+					}
+					torsion_ids.push_back( TorsionID( n, id::BB, ALPHA ) );
+					torsion_ids.push_back( TorsionID( n, id::BB, BETA ) );
+					torsion_ids.push_back( TorsionID( n, id::BB, GAMMA ) );
 				}
-				if ( added_new_phosphate ){
-					correctly_position_five_prime_phosphate( pose, n);
-				}
-				torsion_ids.push_back( TorsionID( n, id::BB, ALPHA ) );
-				torsion_ids.push_back( TorsionID( n, id::BB, BETA ) );
-				torsion_ids.push_back( TorsionID( n, id::BB, GAMMA ) );
 			} else {
 				runtime_assert( terminus == THREE_PRIME_PHOSPHATE );
-				make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
-				make_variants_match( pose, reference_pose, n, "THREE_PRIME_PHOSPHATE" );
-				torsion_ids.push_back( TorsionID( n, id::BB, EPSILON ) );
-				torsion_ids.push_back( TorsionID( n, id::BB, ZETA ) );
+				if ( n == pose.total_residue() || pose.fold_tree().is_cutpoint( n ) ) {
+					make_variants_match( pose, reference_pose, n, "VIRTUAL_RIBOSE" );
+					make_variants_match( pose, reference_pose, n, "THREE_PRIME_PHOSPHATE" );
+					torsion_ids.push_back( TorsionID( n, id::BB, EPSILON ) );
+					torsion_ids.push_back( TorsionID( n, id::BB, ZETA ) );
+				}
 			}
 
 			for ( Size m = 1; m <= torsion_ids.size(); m++ ) {

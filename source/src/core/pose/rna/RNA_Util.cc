@@ -11,17 +11,20 @@
 /// @author Rhiju Das
 
 // Unit headers
-#include <core/chemical/rna/RNA_Util.hh>
 #include <core/pose/rna/RNA_Util.hh>
+#include <core/pose/util.hh>
 #include <core/types.hh>
 
 // Package headers
 #include <core/conformation/Residue.hh>
+#include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/Stub.hh>
 #include <core/kinematics/AtomPointer.fwd.hh>
+#include <core/kinematics/tree/Atom.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Stub.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/pose/Pose.hh>
@@ -32,16 +35,16 @@
 
 // Project headers
 #include <numeric/constants.hh>
-
-#include <core/kinematics/tree/Atom.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
+#include <utility/vector1.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
 
 #include <ObjexxFCL/string.functions.hh>
+
+static basic::Tracer TR( "core.pose.rna.RNA_Util" );
 
 // Utility headers
 
@@ -393,13 +396,13 @@ apply_ideal_c2endo_sugar_coords(
 }
 
 ////////////////////////////////////////////////////////////////////
-Size
+PuckerState
 assign_pucker(
 	Pose const & pose,
 	Size const rsd_id
 ) {
 	Real const delta = pose.torsion( id::TorsionID( rsd_id, id::BB,  4 ) );
-	Size const pucker_state = ( delta < torsion_info.delta_cutoff() ) ? NORTH : SOUTH;
+	PuckerState const pucker_state = ( delta < torsion_info.delta_cutoff() ) ? NORTH : SOUTH;
 	return pucker_state;
 }
 ////////////////////////////////////////////////////////////////////
@@ -407,7 +410,7 @@ void
 apply_pucker(
 	Pose & pose,
 	Size const i,
-	Size pucker_state, //0 for using the current pucker
+	PuckerState pucker_state, //0 for using the current pucker
 	bool const skip_same_state,
 	bool const idealize_coord
 ) {
@@ -416,10 +419,10 @@ apply_pucker(
 	static const RNA_IdealCoord ideal_coord;
 	Real delta, nu1, nu2;
 
-	Size const curr_pucker = assign_pucker( pose, i );
+	PuckerState const curr_pucker = assign_pucker( pose, i );
 	if ( skip_same_state && pucker_state == curr_pucker ) return;
 
-	if ( pucker_state == WHATEVER ) pucker_state = curr_pucker;
+	if ( pucker_state == core::chemical::rna::ANY_PUCKER ) pucker_state = curr_pucker;
 
 	if ( idealize_coord ) {
 		ideal_coord.apply_pucker(pose, i, pucker_state);
@@ -441,6 +444,89 @@ apply_pucker(
 ////////////////////////////////////////////////////////////////////
 
 //
+	//When a CUTPOINT_UPPER is added to 3' chain_break residue, the EXISTENCE of the CUTPOINT_UPPER atoms means that the alpha torsion which previously DOES NOT exist due to the chain_break now exist. The alpha value is automatically defined to the A-form value by Rosetta. However Rosetta does not automatically adjust the OP2 and OP1 atom position to account for this fact. So it is important that the OP2 and OP1 atoms position are correctly set to be consistent with A-form alpha torsion before the CUTPOINT_UPPER IS ADDED Parin Jan 2, 2009
+	void
+	correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size const five_prime_chainbreak,  bool verbose /* = false*/ ){
+
+		using namespace core::chemical;
+		using namespace core::conformation;
+		using namespace core::id;
+		using namespace core::io::pdb;
+
+		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set(	core::chemical::RNA );
+
+		chemical::AA res_aa = aa_from_name( "RAD" );
+		ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set->aa_map( res_aa )[1] ) ) ;
+
+		Size three_prime_chainbreak = five_prime_chainbreak + 1;
+		current_pose.prepend_polymer_residue_before_seqpos( *new_rsd, three_prime_chainbreak, true );
+		chemical::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
+
+		//Actually just by prepending the residue causes the alpha torsion to automatically be set to -64.0274,
+		//so the manual setting below is actually not needed, May 24, 2010.. Parin S.
+		//These are the initial value of virtual upper and lower cutpoint atom.
+		//Actually only the alpha (id::BB, 1) is important here since it set the position of O3' (LOWER) atom which in turn determines  OP2 and OP1 atom
+		current_pose.set_torsion( TorsionID( three_prime_chainbreak + 1, id::BB, 1 ), -64.027359 );
+
+		/* BEFORE AUG 24, 2011
+		//Where the hell did I get these numbers from value...by appending with ideal geometry and look at the initalized value? Oct 13, 2009
+		current_pose.set_torsion( TorsionID( five_prime_chainbreak + 1, id::BB, 5 ), -151.943 ); //Not Important?
+		current_pose.set_torsion( TorsionID( five_prime_chainbreak + 1, id::BB, 6 ), -76.4185 ); //Not Important?
+		current_pose.set_torsion( TorsionID( three_prime_chainbreak + 1, id::BB, 1 ), -64.0274 );
+		*/
+
+		//RAD.params
+		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
+		//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
+		//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
+
+		//RCY.params
+		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
+		//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
+		//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
+
+		//RGU.params
+		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
+		//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
+		//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
+
+		//URA.parms
+		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
+		//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
+		//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
+
+		current_pose.delete_polymer_residue( five_prime_chainbreak + 1 );
+	}
+
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// try to unify all cutpoint addition into this function.
+	void
+	correctly_add_cutpoint_variants( core::pose::Pose & pose,
+																	 Size const res_to_add,
+																	 bool const check_fold_tree /* = true*/){
+
+		using namespace core::chemical;
+
+		runtime_assert( res_to_add < pose.total_residue() );
+		if ( check_fold_tree ) runtime_assert( pose.fold_tree().is_cutpoint( res_to_add ) );
+
+		remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS, res_to_add );
+		remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS, res_to_add + 1 );
+
+		remove_variant_type_from_pose_residue( pose, "THREE_PRIME_PHOSPHATE", res_to_add );
+		remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, res_to_add + 1 );
+		remove_variant_type_from_pose_residue( pose, "FIVE_PRIME_PHOSPHATE", res_to_add + 1 );
+
+		if ( pose.residue_type( res_to_add ).is_RNA() ){
+			// could also keep track of alpha, beta, etc.
+			runtime_assert( pose.residue_type( res_to_add + 1 ).is_RNA() );
+			correctly_position_cutpoint_phosphate_torsions( pose, res_to_add, false /*verbose*/ );
+		}
+		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res_to_add   );
+		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res_to_add + 1 );
+	}
+
 
 } //ns rna
 } //ns pose

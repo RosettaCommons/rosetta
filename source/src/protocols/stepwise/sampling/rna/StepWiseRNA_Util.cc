@@ -21,6 +21,7 @@
 #include <protocols/stepwise/StepWiseUtil.hh>
 #include <protocols/farna/RNA_BasePairClassifier.hh>
 #include <protocols/farna/RNA_ProtocolUtil.hh>
+#include <protocols/rotamer_sampler/rigid_body/FloatingBaseUtil.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/ScoreType.hh> //Parin Sept 20, 2011.
 //////////////////////////////////
@@ -38,6 +39,7 @@
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
+#include <core/pose/rna/RNA_Util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -922,7 +924,6 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	add_virtual_O2Prime_hydrogen( core::pose::Pose & pose ){
-
 	  for ( core::Size i = 1; i <= pose.total_residue(); i++ ){
 	    if ( pose.residue( i ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 			if ( !pose.residue( i ).is_RNA() ) continue;
@@ -1385,7 +1386,6 @@ namespace rna {
 			TR << " num_side_chain_atom = " <<  num_side_chain_atom << std::endl;
 			print_heavy_atoms( moving_res_1, moving_res_2, pose1, pose2 );
 		}
-
 		if ( verbose ) TR << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << "    PREPEND? " << prepend_res << std::endl;
 
 		Size const num_heavy_backbone_atoms = 11; //RNA contain 11 heavy backbone atoms.
@@ -1395,7 +1395,6 @@ namespace rna {
 			//atom 1-4 are " P  ", " OP2", " OP1" and " O5'"
 			Size const res_num_1 = ( prepend_res && atomno <= 4 ) ? moving_res_1 + 1: moving_res_1;
 			Size const res_num_2 = ( prepend_res && atomno <= 4 ) ? moving_res_2 + 1: moving_res_2;
-
 
 			conformation::Residue const & rsd_1 = pose1.residue( res_num_1 );
 			conformation::Residue const & rsd_2 = pose2.residue( res_num_2 );
@@ -1409,10 +1408,9 @@ namespace rna {
 			sum_sd = sum_sd + atom_square_deviation( rsd_1, rsd_2, atomno, atomno, verbose );
 		}
 
-  		//Need to use num_side_chain_atom from pose1 since a silly bug in Rosetta miscalculate num_heavy_atom by considering
-			//the virtaul O2prime hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
-  		for ( Size n = 1; n <= num_side_chain_atom; n++ ){ //INCLUDE the O2prime oxygen
-
+		//Need to use num_side_chain_atom from pose1 since a silly bug in Rosetta miscalculate num_heavy_atom by considering
+		//the virtaul O2prime hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
+		for ( Size n = 1; n <= num_side_chain_atom; n++ ){ //INCLUDE the O2prime oxygen
 
 			Size const atomno_1 = ( n - 1 ) + first_sidechain_atom1;
 			Size const atomno_2 = ( n - 1 ) + first_sidechain_atom2;
@@ -1425,7 +1423,7 @@ namespace rna {
 			}
 
 			if ( rsd_1.is_virtual( atomno_1 )   && rsd_2.is_virtual( atomno_2 )  ) { //Change this to "AND" on Apr 5
-	//					TR << "Both atoms are VIRTUAL! moving_res_1= " << moving_res_1 << " moving_res_2= " << moving_res_2 << " atomno_1= " << atomno_1 << " atomno_2= " << atomno_2 << std::endl;
+				//					TR << "Both atoms are VIRTUAL! moving_res_1= " << moving_res_1 << " moving_res_2= " << moving_res_2 << " atomno_1= " << atomno_1 << " atomno_2= " << atomno_2 << std::endl;
 				continue;
 			}
 
@@ -1433,8 +1431,7 @@ namespace rna {
 			sum_sd = sum_sd + atom_square_deviation( rsd_1, rsd_2, atomno_1, atomno_2, verbose );
 	 	}
 
-
-			// OP2<-->OP1 check on phosphate positions closest to fixed side
+		// OP2<-->OP1 check on phosphate positions closest to fixed side
 		if ( verbose && false ){
 			Size const res_num_1 = ( prepend_res ) ? moving_res_1 + 1: moving_res_1;
 			Size const res_num_2 = ( prepend_res ) ? moving_res_2 + 1: moving_res_2;
@@ -1821,90 +1818,6 @@ namespace rna {
 	/////////////////////////////////////////////////////////////////////////////////////
 
 
-	//When a CUTPOINT_UPPER is added to 3' chain_break residue, the EXISTENCE of the CUTPOINT_UPPER atoms means that the alpha torsion which previously DOES NOT exist due to the chain_break now exist. The alpha value is automatically defined to the A-form value by Rosetta. However Rosetta does not automatically adjust the OP2 and OP1 atom position to account for this fact. So it is important that the OP2 and OP1 atoms position are correctly set to be consistent with A-form alpha torsion before the CUTPOINT_UPPER IS ADDED Parin Jan 2, 2009
-	//Uncomment print_backbone_torsion on Dec 26, 2010
-	void
-	correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size const five_prime_chainbreak,  bool verbose /* = false*/ ){
-
-		using namespace core::chemical;
-		using namespace core::conformation;
-		using namespace core::id;
-		using namespace core::io::pdb;
-
-		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance() ->
-			residue_type_set(	core::chemical::RNA );
-
-		if ( verbose ) output_title_text( "ENTER correctly_position_cutpoint_phosphate_torsions function", TR );
-
-		chemical::AA res_aa = aa_from_name( "RAD" );
-		ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *( rsd_set->aa_map( res_aa )[1] ) ) ;
-		if ( verbose ) TR << "  res_aa: " << res_aa << std::endl;
-
-		Size three_prime_chainbreak = five_prime_chainbreak + 1;
-
-		if ( verbose ){
-			//dump_pdb(current_pose, "Before_prepending_dummy_nucleotide");
-			TR <<  std::setw( 50 ) << "Before_prepending_dummy_nucleotide";
-			print_backbone_torsions( current_pose, five_prime_chainbreak );
-		}
-
-		current_pose.prepend_polymer_residue_before_seqpos( *new_rsd, three_prime_chainbreak, true );
-		chemical::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
-
-		if ( verbose ){
-			//dump_pdb(current_pose, "Before_setting_torsion_to_A_form.pdb");
-			TR << std::setw( 50 ) << "Before_setting_torsion_to_A_form";
-			print_backbone_torsions( current_pose, five_prime_chainbreak + 1 );
-		}
-		//Actually just by prepending the residue causes the alpha torsion to automatically be set to -64.0274,
-		//so the manual setting below is actually not needed, May 24, 2010.. Parin S.
-		//These are the initial value of virtual upper and lower cutpoint atom.
-		//Actaully only the alpha (id::BB, 1) is important here since it set the position of O3' (LOWER) atom which in turn determines  OP2 and OP1 atom
-		current_pose.set_torsion( TorsionID( three_prime_chainbreak + 1, id::BB, 1 ), -64.027359 );
-
-		/* BEFORE AUG 24, 2011
-		//Where the hell did I get these numbers from value...by appending with ideal geometry and look at the initalized value? Oct 13, 2009
-		current_pose.set_torsion( TorsionID( five_prime_chainbreak + 1, id::BB, 5 ), -151.943 ); //Not Important?
-		current_pose.set_torsion( TorsionID( five_prime_chainbreak + 1, id::BB, 6 ), -76.4185 ); //Not Important?
-		current_pose.set_torsion( TorsionID( three_prime_chainbreak + 1, id::BB, 1 ), -64.0274 );
-		*/
-
-		//RAD.params
-		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
-		//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
-		//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
-
-		//RCY.params
-		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
-		//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
-		//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
-
-		//RGU.params
-		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
-		//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
-		//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
-
-		//URA.parms
-		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
-		//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
-		//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
-
-		if ( verbose ){
-			//dump_pdb(current_pose, "After_setting_torsion_to_A_form.pdb");
-			TR << std::setw( 50 ) << "After_setting_torsion_to_A_form"; print_backbone_torsions( current_pose, five_prime_chainbreak + 1 );
-		}
-
-		current_pose.delete_polymer_residue( five_prime_chainbreak + 1 );
-
-		if ( verbose ){
-			//dump_pdb(current_pose, "After_deleting_dummy_nucleotide");
-			TR << std::setw( 50 ) << "After_deleting_dummy_nucleotide"; print_backbone_torsions( current_pose, five_prime_chainbreak );
-		}
-
-		if ( verbose ) output_title_text( "EXIT correctly_position_cutpoint_phosphate_torsions function", TR );
-
-	}
-
 	void
 	copy_torsions_FROM_TO( core::id::TorsionID const start_torsion_ID, core::id::TorsionID const end_torsion_ID, core::pose::Pose const & template_pose, core::pose::Pose & pose ){
 
@@ -1978,7 +1891,7 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////
 	void
 	setup_chain_break_variants( core::pose::Pose & pose,  Size const cutpoint ){
-		correctly_position_cutpoint_phosphate_torsions( pose, cutpoint, false /*verbose*/ );
+		pose::rna::correctly_position_cutpoint_phosphate_torsions( pose, cutpoint, false /*verbose*/ );
 		pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpoint   );
 		pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpoint + 1 );
 	}
@@ -2044,42 +1957,11 @@ namespace rna {
 		return cutpoint;
 	}
 
-
-	///////////////////////////////////////////////////////////////////////
-	utility::vector1< bool >
-	get_partition_definition( pose::Pose const & pose, Size const & moving_suite ){
-
-		ObjexxFCL::FArray1D<bool> partition_definition( pose.total_residue(), false );
-		pose.fold_tree().partition_by_residue( moving_suite, partition_definition );
-
-		//silly conversion. There may be a faster way to do this actually.
-		utility::vector1< bool > partition_definition_vector1;
-		for ( Size n = 1; n <= pose.total_residue(); n++ )	partition_definition_vector1.push_back( partition_definition(n) );
-
-		return partition_definition_vector1;
-
-	}
-
 	///////////////////////////////////////////////////////////////////////
 	utility::vector1< bool >
 	get_partition_definition_floating_base( pose::Pose const & pose, Size const & moving_res ){
-
 		Size const jump_nr = look_for_unique_jump_to_moving_res( pose.fold_tree(), moving_res );
 		return get_partition_definition_by_jump( pose, jump_nr);
-	}
-
-	///////////////////////////////////////////////////////////////////////
-	utility::vector1< bool >
-	get_partition_definition_by_jump( pose::Pose const & pose, Size const & jump_nr /*jump_number*/ ){
-		ObjexxFCL::FArray1D<bool> partition_definition( pose.total_residue(), false );
-
-		pose.fold_tree().partition_by_jump( jump_nr, partition_definition );
-
-		//silly conversion. There may be a faster way to do this actually.
-		utility::vector1< bool > partition_definition_vector1;
-		for ( Size n = 1; n <= pose.total_residue(); n++ )	partition_definition_vector1.push_back( partition_definition(n) );
-
-		return partition_definition_vector1;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2663,6 +2545,7 @@ namespace rna {
 		output_boolean( " is_prepend = ",  JP->is_prepend(), outstream ) ;
 		output_boolean( " is_internal = ", JP->is_internal(), outstream );
 		output_boolean( " output_extra_RMSDs = ", JP->	output_extra_RMSDs(), outstream ); outstream << std::endl;
+		output_boolean( " floating_base = ", JP->floating_base(), outstream ); outstream << std::endl;
 
 
 		//std::map< core::Size, core::Size > full_to_sub_;
@@ -2733,6 +2616,7 @@ namespace rna {
 			output_bool_list( "partition_definition = ", 	vector1_partition_definition, outstream );
 
 			outstream << "root_res = " << JP->fold_tree().root() << std::endl;
+			outstream << "working_reference_res = " << JP->working_reference_res() << std::endl;
 			output_fold_tree_info( JP->fold_tree(), "fold_tree", outstream );
 		}
 
@@ -2795,14 +2679,14 @@ namespace rna {
 
 		std::string base_state_string = "";
 
-		if ( base_state == WHATEVER ){
-			base_state_string = "WHATEVER";
+		if ( base_state == NO_CHI ){
+			base_state_string = "NO_CHI";
 		} else if ( base_state == ANTI ){
 			base_state_string = "ANTI";
 		} else if ( base_state == SYN ){
 			base_state_string = "SYN" ;
-		} else if ( base_state == NONE ){
-			base_state_string = "NONE";
+		} else if ( base_state == ANY_CHI ){
+			base_state_string = "ANY_CHI";
 		} else{
 			outstream << "Invalid base state = " << base_state << std::endl;
 			utility_exit_with_message( "Invalid base state!" );
@@ -2822,8 +2706,10 @@ namespace rna {
 			pucker_state_string = "NORTH";
 		} else if ( pucker_state == SOUTH ){
 			pucker_state_string = "SOUTH";
-		} else if ( pucker_state == WHATEVER ){
-			pucker_state_string = "WHATEVER";
+		} else if ( pucker_state == ANY_PUCKER ){
+			pucker_state_string = "ANY_PUCKER";
+		} else if ( pucker_state == NO_PUCKER ){
+			pucker_state_string = "NO_PUCKER";
 		} else{
 			outstream << "Invalid pucker state = " << pucker_state << std::endl;
 			utility_exit_with_message( "Invalid pucker state!" );
@@ -3283,12 +3169,20 @@ update_allow_insert_with_extra_minimize_res( pose::Pose const & pose, toolbox::A
 	////////////////////////////////////////////////////////////////////////
 	std::string //silly function used for appending the rotamer value to the tag
 	create_rotamer_string( core::pose::Pose const & pose, Size const moving_res, bool const is_prepend ) {
+		Size const reference_res  = ( is_prepend ) ? ( moving_res + 1 ) : (moving_res - 1);
+		return create_rotamer_string( pose, moving_res, reference_res );
+	}
 
+	////////////////////////////////////////////////////////////////////////
+	std::string //silly function used for appending the rotamer value to the tag
+	create_rotamer_string( core::pose::Pose const & pose, Size const moving_res, Size const reference_res ) {
 		std::string rotamer_tag = "";
 
-		conformation::Residue const & five_prime_rsd = ( is_prepend ) ? pose.residue( moving_res ): pose.residue( moving_res - 1 );
-		conformation::Residue const & three_prime_rsd = ( is_prepend ) ?  pose.residue( moving_res + 1 ) : pose.residue( moving_res );
-
+		Size const five_prime_res  = ( moving_res < reference_res ) ? moving_res : reference_res;
+		Size const three_prime_res = ( moving_res < reference_res ) ? reference_res : moving_res;
+		runtime_assert( five_prime_res == three_prime_res - 1 );
+		conformation::Residue const & five_prime_rsd  = pose.residue( five_prime_res );
+		conformation::Residue const & three_prime_rsd = pose.residue( three_prime_res );
 
 		rotamer_tag.append( "_E" + create_torsion_value_string( five_prime_rsd.mainchain_torsion( 5  ) ) );
 		rotamer_tag.append( "_Z" + create_torsion_value_string( five_prime_rsd.mainchain_torsion( 6  ) ) );
@@ -3297,10 +3191,9 @@ update_allow_insert_with_extra_minimize_res( pose::Pose const & pose, toolbox::A
 		rotamer_tag.append( "_G" + create_torsion_value_string( three_prime_rsd.mainchain_torsion( 3 ) ) );
 
 
-		if ( is_prepend ){
+		if ( moving_res < reference_res ){
 			rotamer_tag.append( "_D" + create_torsion_value_string( five_prime_rsd.mainchain_torsion( 4 ) ) );
 			rotamer_tag.append( "_C" + create_torsion_value_string( five_prime_rsd.chi(  1 ) ) );
-
 		} else{
 			rotamer_tag.append( "_D" + create_torsion_value_string( three_prime_rsd.mainchain_torsion( 4 ) ) );
 			rotamer_tag.append( "_C" + create_torsion_value_string( three_prime_rsd.chi( 1 ) ) );
@@ -3422,7 +3315,6 @@ get_possible_O3prime_C5prime_distance_range( Size const gap_size_, Distance & mi
 		max_dist = O3I_C5I_MAX_DIST;
 	}
 }
-
 
 } //rna
 } //sampling

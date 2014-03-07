@@ -44,7 +44,8 @@ namespace checker {
 	public:
 
 	// Constructor
-		RNA_BaseCentroidChecker( core::pose::Pose const & pose, StepWiseRNA_JobParametersCOP & job_parameters );
+		RNA_BaseCentroidChecker( core::pose::Pose const & pose, StepWiseRNA_JobParametersCOP & job_parameters,
+														 bool const tether_jump = false );
 
 		virtual ~RNA_BaseCentroidChecker();
 
@@ -150,6 +151,7 @@ namespace checker {
 		bool allow_base_pair_only_screen_;
 		bool floating_base_;
 		bool found_centroid_interaction_;
+		bool tether_jump_;
 
 		utility::vector1 < core::Size > moving_residues_;
 		utility::vector1 < core::Size > fixed_residues_;

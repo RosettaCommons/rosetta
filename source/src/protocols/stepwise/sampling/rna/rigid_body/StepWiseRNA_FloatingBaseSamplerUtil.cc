@@ -413,12 +413,12 @@ setup_pose_with_moving_residue_alternative_list(
 	using namespace core::chemical::rna;
 
 	//FANG: Why this does not allow syn pyrimidine by option? Does it matter?
-	core::Size base_state =
-			( is_purine( pose.residue( moving_res ) ) ) ? WHATEVER: ANTI;
+	ChiState chi_state =
+		( is_purine( pose.residue( moving_res ) ) ) ? ANY_CHI: ANTI;
 
-	core::Size pucker_state = WHATEVER;
+	PuckerState pucker_state = ANY_PUCKER;
 
-	RNA_NucleosideRotamer sampler( moving_res, pucker_state, base_state );
+	RNA_NucleosideRotamer sampler( moving_res, pucker_state, chi_state );
 	sampler.set_extra_chi( extra_chi );
 	sampler.set_idealize_coord( use_phenix_geo );
 	sampler.set_skip_same_pucker( use_phenix_geo );

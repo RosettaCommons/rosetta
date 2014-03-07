@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetupFromCommandLine.cc
+/// @file protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetupFromCommandLine.cc
 /// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu, based on Parin Sripakdeevong's work
@@ -101,9 +101,9 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Minimizer.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ResidueSampler.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Modeler.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetup.fwd.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetup.hh>
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParametersSetup.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.fwd.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_JobParametersSetup.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Clusterer.hh>
 #include <protocols/stepwise/sampling/rna/checker/RNA_VDW_BinChecker.hh>
@@ -156,6 +156,7 @@ namespace protocols {
 namespace stepwise {
 namespace sampling {
 namespace rna {
+namespace legacy {
 
 //////////////////////////////////////////////////////////////////////////////////////
 //Apply chi angle constraint to the purines --
@@ -984,6 +985,7 @@ ensure_directory_for_out_silent_file_exists(){
 
 
 
+} //legacy
 } //rna
 } //sampling
 } //stepwise

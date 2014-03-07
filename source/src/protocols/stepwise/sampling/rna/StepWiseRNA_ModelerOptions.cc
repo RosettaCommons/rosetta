@@ -80,6 +80,7 @@ namespace rna {
 		use_phenix_geo_ = false;
 		virtual_sugar_legacy_mode_ = false;
 		virtual_sugar_keep_base_fixed_ = true;
+		virtual_sugar_do_minimize_ = true;
 		kic_sampling_if_relevant_ = false;
 		VDW_atr_rep_screen_ = true;
 		force_centroid_interaction_ = false;
@@ -91,7 +92,7 @@ namespace rna {
 		minimize_and_score_native_pose_ = false;
 		rm_virt_phosphate_ = false;
 		VDW_rep_alignment_RMSD_CUTOFF_ = 0.001;
-		sampler_max_centroid_distance_ = 0.001;
+		sampler_max_centroid_distance_ = 0.0;
 		output_pdb_ = false;
 		output_minimized_pose_list_ = false;
 		VDW_rep_screen_physical_pose_clash_dist_cutoff_ = false;
@@ -113,8 +114,8 @@ namespace rna {
 		minimizer_rename_tag_ = false;
 		minimizer_allow_variable_bond_geometry_ = false;
 		minimizer_vary_bond_geometry_frequency_ = 0.0;
-		new_framework_ = false;
-		unified_framework_ = false;
+		unified_framework_ = true;
+		tether_jump_ = true;
 	}
 
 	/// @brief clone the options
@@ -147,6 +148,7 @@ namespace rna {
 		use_phenix_geo_ = src.use_phenix_geo_;
 		virtual_sugar_legacy_mode_ = src.virtual_sugar_legacy_mode_;
 		virtual_sugar_keep_base_fixed_ = src.virtual_sugar_keep_base_fixed_;
+		virtual_sugar_do_minimize_ = src.virtual_sugar_do_minimize_;
 		kic_sampling_if_relevant_ = src.kic_sampling_if_relevant_;
 		VDW_atr_rep_screen_ = src.VDW_atr_rep_screen_;
 		force_centroid_interaction_ = src.force_centroid_interaction_;
@@ -180,8 +182,8 @@ namespace rna {
 		minimizer_rename_tag_ = src.minimizer_rename_tag_;
 		minimizer_vary_bond_geometry_frequency_ = src.minimizer_vary_bond_geometry_frequency_;
 		minimizer_allow_variable_bond_geometry_ = src.minimizer_allow_variable_bond_geometry_;
-		new_framework_ = src.new_framework_;
 		unified_framework_ = src.unified_framework_;
+		tether_jump_ = src.tether_jump_;
 
 		return *this;
 	}
@@ -212,6 +214,7 @@ namespace rna {
 		use_phenix_geo_ = option[ basic::options::OptionKeys::rna::corrected_geo ]();
 		virtual_sugar_legacy_mode_ = option[ OptionKeys::stepwise::rna::virtual_sugar_legacy_mode ];
 		virtual_sugar_keep_base_fixed_ = option[ OptionKeys::stepwise::rna::virtual_sugar_keep_base_fixed ]();
+		virtual_sugar_do_minimize_ = option[ OptionKeys::stepwise::rna::virtual_sugar_do_minimize ]();
 		kic_sampling_if_relevant_ = option[ OptionKeys::stepwise::rna::erraser ]();
 		VDW_atr_rep_screen_ = option[ OptionKeys::stepwise::rna::VDW_atr_rep_screen ]();
 		force_centroid_interaction_ = option[ OptionKeys::stepwise::rna::force_centroid_interaction ]();
@@ -243,10 +246,8 @@ namespace rna {
 		minimizer_perform_o2prime_pack_ = option[ OptionKeys::stepwise::rna::minimizer_perform_o2prime_pack ]();
 		minimizer_output_before_o2prime_pack_ = option[ OptionKeys::stepwise::rna::minimizer_output_before_o2prime_pack ]();
 		minimizer_rename_tag_ = option[ OptionKeys::stepwise::rna::minimizer_rename_tag ]();
-		//		minimizer_allow_variable_bond_geometry_ = option[ OptionKeys::stepwise::rna::minimizer_allow_variable_bond_geometry ]();
-		//		minimizer_vary_bond_geometry_frequency_ = option[ OptionKeys::stepwise::rna::minimizer_vary_bond_geometry_frequency ]();
-		new_framework_ = option[ OptionKeys::stepwise::rna::new_framework ]();
 		unified_framework_ = option[ OptionKeys::stepwise::rna::unified_framework ]();
+		tether_jump_ = option[ OptionKeys::stepwise::rna::tether_jump ]();
 
 		if ( integration_test_mode_ ) num_pose_minimize_ = 1;
 

@@ -127,6 +127,9 @@ namespace rna {
 		bool const & virtual_sugar_keep_base_fixed() const { return virtual_sugar_keep_base_fixed_; }
 		void set_virtual_sugar_keep_base_fixed( bool const & setting ){ virtual_sugar_keep_base_fixed_ = setting; }
 
+		bool const & virtual_sugar_do_minimize() const { return virtual_sugar_do_minimize_; }
+		void set_virtual_sugar_do_minimize( bool const & setting ){ virtual_sugar_do_minimize_ = setting; }
+
 		bool const & kic_sampling_if_relevant() const { return kic_sampling_if_relevant_; }
 		void set_kic_sampling_if_relevant( bool const & setting ){ kic_sampling_if_relevant_ = setting; }
 
@@ -226,11 +229,11 @@ namespace rna {
 		core::Real const & minimizer_vary_bond_geometry_frequency() const { return minimizer_vary_bond_geometry_frequency_; }
 		void set_minimizer_vary_bond_geometry_frequency( core::Real const & setting ){ minimizer_vary_bond_geometry_frequency_ = setting; }
 
-		bool const & new_framework() const { return new_framework_; }
-		void set_new_framework( bool const & setting ){ new_framework_ = setting; }
-
 		bool const & unified_framework() const { return unified_framework_; }
 		void set_unified_framework( bool const & setting ){ unified_framework_ = setting; }
+
+		bool const & tether_jump() const { return tether_jump_; }
+		void set_tether_jump( bool const & setting ){ tether_jump_ = setting; }
 
 	private:
 
@@ -258,6 +261,7 @@ namespace rna {
 		bool use_phenix_geo_;
 		bool virtual_sugar_legacy_mode_;
 		bool virtual_sugar_keep_base_fixed_;
+		bool virtual_sugar_do_minimize_;
 		bool kic_sampling_if_relevant_;
 		bool VDW_atr_rep_screen_;
 		bool force_centroid_interaction_;
@@ -292,8 +296,8 @@ namespace rna {
 		bool minimizer_rename_tag_;
 		bool minimizer_allow_variable_bond_geometry_;
 		core::Real minimizer_vary_bond_geometry_frequency_;
-		bool new_framework_;
 		bool unified_framework_;
+		bool tether_jump_;
 	};
 
 } //rna

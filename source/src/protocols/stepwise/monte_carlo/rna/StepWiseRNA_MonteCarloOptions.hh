@@ -73,6 +73,9 @@ namespace rna {
 		bool const & force_centroid_interaction() const { return force_centroid_interaction_; }
 		void set_force_centroid_interaction( bool const & setting ){ force_centroid_interaction_ = setting; }
 
+		core::Real const & sampler_max_centroid_distance() const { return sampler_max_centroid_distance_; }
+		void set_sampler_max_centroid_distance( core::Real const & setting ){ sampler_max_centroid_distance_ = setting; }
+
 		bool const & use_phenix_geo() const { return use_phenix_geo_; }
 		void set_use_phenix_geo( bool const & setting ){ use_phenix_geo_ = setting; }
 
@@ -96,6 +99,9 @@ namespace rna {
 
 		core::Real const & add_delete_frequency() const { return add_delete_frequency_; }
 		void set_add_delete_frequency( core::Real const & setting ){ add_delete_frequency_ = setting; }
+
+		core::Real const & intermolecular_frequency() const { return intermolecular_frequency_; }
+		void set_intermolecular_frequency( core::Real const & setting ){ intermolecular_frequency_ = setting; }
 
 		core::Real const & minimize_single_res_frequency() const { return minimize_single_res_frequency_; }
 		void set_minimize_single_res_frequency(  core::Real const & setting ){ minimize_single_res_frequency_ = setting; }
@@ -130,14 +136,17 @@ namespace rna {
 		bool const & allow_skip_bulge() const { return allow_skip_bulge_; }
 		void set_allow_skip_bulge( bool const & setting ){ allow_skip_bulge_ = setting; }
 
-		bool const & allow_from_scratch() const { return allow_from_scratch_; }
-		void set_allow_from_scratch( bool const & setting ){ allow_from_scratch_ = setting; }
+		Real const & from_scratch_frequency() const { return from_scratch_frequency_; }
+		void set_from_scratch_frequency( Real const & setting ){ from_scratch_frequency_ = setting; }
 
 		bool const & allow_split_off() const { return allow_split_off_; }
 		void set_allow_split_off( bool const & setting ){ allow_split_off_ = setting; }
 
 		bool const & virtual_sugar_keep_base_fixed() const { return virtual_sugar_keep_base_fixed_; }
 		void set_virtual_sugar_keep_base_fixed(  bool const & setting ){ virtual_sugar_keep_base_fixed_ = setting; }
+
+		bool const & virtual_sugar_do_minimize() const { return virtual_sugar_do_minimize_; }
+		void set_virtual_sugar_do_minimize(  bool const & setting ){ virtual_sugar_do_minimize_ = setting; }
 
 		core::Real const & constraint_x0() const { return constraint_x0_; }
 		void set_constraint_x0(  core::Real const & setting ){ constraint_x0_ = setting; }
@@ -163,10 +172,20 @@ namespace rna {
 		bool const & rebuild_bulge_mode() const { return rebuild_bulge_mode_; }
 		void set_rebuild_bulge_mode( bool const & setting ){ rebuild_bulge_mode_ = setting; }
 
+		bool const & unified_framework() const { return unified_framework_; }
+		void set_unified_framework( bool const & setting ){ unified_framework_ = setting; }
+
+		bool const & tether_jump() const { return tether_jump_; }
+		void set_tether_jump( bool const & setting ){ tether_jump_ = setting; }
+
+		bool const & local_redock_only() const { return local_redock_only_; }
+		void set_local_redock_only( bool const & setting ){ local_redock_only_ = setting; }
+
 	private:
 
 		bool verbose_scores_;
 		bool force_centroid_interaction_;
+		core::Real sampler_max_centroid_distance_;
 		bool use_phenix_geo_;
 		bool skip_deletions_;
 		bool erraser_;
@@ -175,6 +194,7 @@ namespace rna {
 		core::Size num_random_samples_;
 		core::Size cycles_;
 		core::Real add_delete_frequency_;
+		core::Real intermolecular_frequency_;
 		core::Real minimize_single_res_frequency_;
 		bool minimizer_allow_variable_bond_geometry_;
 		Real minimizer_vary_bond_geometry_frequency_;
@@ -186,14 +206,19 @@ namespace rna {
 		Real max_missing_weight_;
 		Real chainbreak_weight_;
 		bool allow_skip_bulge_;
-		bool allow_from_scratch_;
+		Real from_scratch_frequency_;
 		bool allow_split_off_;
 		bool virtual_sugar_keep_base_fixed_;
+		bool virtual_sugar_do_minimize_;
 		core::Real constraint_x0_;
 		core::Real constraint_tol_;
 		bool make_movie_;
 		bool sampler_perform_phosphate_pack_;
 		bool rebuild_bulge_mode_;
+		bool unified_framework_;
+		bool tether_jump_;
+		bool local_redock_only_;
+
 		utility::vector1< core::Size > extra_minimize_res_;
 		utility::vector1< core::Size > syn_chi_res_list_;
 		utility::vector1< core::Size > terminal_res_;

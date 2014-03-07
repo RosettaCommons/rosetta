@@ -28,14 +28,13 @@ namespace screener {
 	TagDefinition::TagDefinition( pose::Pose & pose,
 												StepWiseScreenerOP first_sampler,
 												bool const sampler_include_torsion_value_in_tag,
-												Size const moving_res,
-												bool const is_prepend,
+												Size const moving_res, Size const reference_res,
 												std::string const extra_tag /* = ""*/  ):
 		pose_( pose ),
 		first_sampler_( first_sampler ),
 		sampler_include_torsion_value_in_tag_( sampler_include_torsion_value_in_tag ),
 		moving_res_( moving_res ),
-		is_prepend_( is_prepend ),
+		reference_res_( reference_res ),
 		extra_tag_( extra_tag ),
 		tag_( tag_from_pose( pose ) )
 	{
@@ -51,7 +50,7 @@ namespace screener {
 	TagDefinition::check_screen(){
 		using namespace sampling::rna;
 		tag_ = create_tag( "U" + extra_tag_, first_sampler_->count() );
-		if ( sampler_include_torsion_value_in_tag_ ) tag_ += create_rotamer_string( pose_, moving_res_, is_prepend_ );
+		if ( sampler_include_torsion_value_in_tag_ ) tag_ += create_rotamer_string( pose_, moving_res_, reference_res_ );
 		return true;
 	}
 

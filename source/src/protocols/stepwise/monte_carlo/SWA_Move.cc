@@ -18,6 +18,7 @@
 #include <map>
 #include <iostream>
 #include <utility/string_util.hh>
+#include <ObjexxFCL/string.functions.hh>
 
 using utility::make_tag_with_dashes;
 
@@ -25,6 +26,8 @@ namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
 
+	std::map< MoveType, std::string> move_type_name;
+	std::map< AttachmentType, std::string> attachment_type_name;
 
 	//Constructor
 	SWA_Move::SWA_Move( MoveElement const & move_element,
@@ -76,6 +79,37 @@ namespace monte_carlo {
 	{
 	}
 
+	SWA_Move::SWA_Move( utility::vector1< std::string > swa_move_string_vector ):
+		utility::pointer::ReferenceCount(),
+		move_type_( NO_MOVE )
+	{
+		using namespace ObjexxFCL;
+		Size const num_strings = swa_move_string_vector.size();
+		if ( num_strings == 0 ) return; // blank.
+		runtime_assert( num_strings >= 4 );
+
+		Size n( 1 );
+		move_type_ = move_type_from_string( swa_move_string_vector[ n ] ); n++;
+
+		bool string_is_ok( false );
+		while ( n <= num_strings ) {
+			std::vector <int> ints = ints_of( swa_move_string_vector[ n ], string_is_ok );
+			if ( !string_is_ok ) break;
+			for ( Size i = 0; i < ints.size(); i++ ) move_element_.push_back( ints[i] );
+			n++;
+		}
+
+		runtime_assert( n != num_strings );
+		while ( n <= num_strings ){
+			AttachmentType attachment_type = attachment_type_from_string( swa_move_string_vector[ n ] );
+			n++;
+			Size attachment_res = int_of( swa_move_string_vector[ n ] );
+			n++;
+			attachments_.push_back( Attachment( attachment_res, attachment_type ) );
+		}
+	}
+
+
 
 	//Destructor
 	SWA_Move::~SWA_Move()
@@ -97,15 +131,21 @@ namespace monte_carlo {
 	}
 
 	Size
-	SWA_Move::moving_res() const{
+	SWA_Move::moving_res() const {
 			runtime_assert( move_element_.size() == 1 );
 			return move_element_[ 1 ];
 		}
 
 	Size
-	SWA_Move::attached_res() const{
+	SWA_Move::attached_res() const {
 		runtime_assert( attachments_.size() == 1 );
 		return attachments_[ 1 ].attached_res();
+	}
+
+	AttachmentType
+	SWA_Move::attachment_type() const {
+		runtime_assert( attachments_.size() == 1 );
+		return attachments_[ 1 ].attachment_type();
 	}
 
 
@@ -148,32 +188,9 @@ namespace monte_carlo {
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////
-	// following will be deprecated after we implement attachments
-	// std::string
-	// to_string( MovingResidueCase const & moving_residue_case ){
-
-	// 	static bool init( false );
-	// 	static std::map< MovingResidueCase, std::string> moving_residue_case_name;
-
-	// 	if ( !init ){
-	// 		moving_residue_case_name[ NO_CASE ] = "NO_CASE";
-	// 		moving_residue_case_name[ CHAIN_TERMINUS_5PRIME ] = "CHAIN_TERMINUS_5PRIME";
-	// 		moving_residue_case_name[ CHAIN_TERMINUS_3PRIME ] = "CHAIN_TERMINUS_3PRIME";
-	// 		moving_residue_case_name[ INTERNAL ] = "INTERNAL";
-	// 		moving_residue_case_name[ FLOATING_BASE ] = "FLOATING_BASE";
-	// 		init = true;
-	// 	}
-
-	// 	return moving_residue_case_name[ moving_residue_case ];
-	// }
-
-	///////////////////////////////////////////////////////////////////////////////////////////
-	std::string
-	to_string( MoveType const & move_type ){
-
+	void
+	initialize_move_type_name(){
 		static bool init( false );
-		static std::map< MoveType, std::string> move_type_name;
-
 		if ( !init ){
 			move_type_name[ NO_MOVE ] = "NO_MOVE";
 			move_type_name[ ADD ]    = "ADD";
@@ -183,26 +200,61 @@ namespace monte_carlo {
 			move_type_name[ RESAMPLE_INTERNAL_LOCAL ] = "RESAMPLE_INTERNAL_LOCAL";
 			init = true;
 		}
-
+	}
+	///////////////////////////////////////////////////////////////////////////////////////////
+	std::string
+	to_string( MoveType const & move_type ){
+		initialize_move_type_name();
 		return move_type_name[ move_type ];
+	}
+	///////////////////////////////////////////////////////////////////////////////////////////
+	MoveType
+	move_type_from_string( std::string const name ){
+		initialize_move_type_name();
+		MoveType move_type( NO_MOVE );
+		for ( std::map< MoveType, std::string>::const_iterator it = move_type_name.begin();
+					it != move_type_name.end(); it++ ){
+			if ( it->second == name ) {
+				move_type = it->first;
+			}
+		}
+		runtime_assert( move_type );
+		return move_type;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////
-	std::string
-	to_string( AttachmentType const & attachment_type ){
-
+	void
+	initialize_attachment_type_name(){
 		static bool init( false );
-		static std::map< AttachmentType, std::string> attachment_type_name;
-
 		if ( !init ){
 			attachment_type_name[ NO_ATTACHMENT ] = "NO_ATTACHMENT";
-			attachment_type_name[ ATTACHED_TO_PREVIOUS ] = "ATTACHED_TO_PREVIOUS";
-			attachment_type_name[ ATTACHED_TO_NEXT ] = "ATTACHED_TO_NEXT";
+			attachment_type_name[ BOND_TO_PREVIOUS ] = "BOND_TO_PREVIOUS";
+			attachment_type_name[ BOND_TO_NEXT ] = "BOND_TO_NEXT";
 			attachment_type_name[ JUMP_TO_PREV_IN_CHAIN ] = "JUMP_TO_PREV_IN_CHAIN";
 			attachment_type_name[ JUMP_TO_NEXT_IN_CHAIN ] = "JUMP_TO_NEXT_IN_CHAIN";
+			attachment_type_name[ JUMP_INTERCHAIN ] = "JUMP_INTERCHAIN";
 		}
-
+	}
+	///////////////////////////////////////////////////////////////////////////////////////////
+	std::string
+	to_string( AttachmentType const & attachment_type ){
+		initialize_attachment_type_name();
 		return attachment_type_name[ attachment_type ];
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////
+	AttachmentType
+	attachment_type_from_string( std::string const name ){
+		initialize_attachment_type_name();
+		AttachmentType attachment_type( NO_ATTACHMENT );
+		for ( std::map< AttachmentType, std::string>::const_iterator it = attachment_type_name.begin();
+					it != attachment_type_name.end(); it++ ){
+			if ( it->second == name ) {
+				attachment_type = it->first;
+			}
+		}
+		runtime_assert( attachment_type );
+		return attachment_type;
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////

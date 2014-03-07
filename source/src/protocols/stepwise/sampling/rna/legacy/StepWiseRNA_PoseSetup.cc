@@ -14,7 +14,7 @@
 
 
 //////////////////////////////////
-#include <protocols/stepwise/sampling/rna/StepWiseRNA_PoseSetup.hh>
+#include <protocols/stepwise/sampling/rna/legacy/StepWiseRNA_PoseSetup.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 #include <protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarUtil.hh>
@@ -76,6 +76,7 @@ namespace protocols {
 namespace stepwise {
 namespace sampling {
 namespace rna {
+namespace legacy {
 
 //////////////////////////////////////////////////////////////////////////
 //constructor!
@@ -593,7 +594,7 @@ StepWiseRNA_PoseSetup::apply_cutpoint_variants( pose::Pose & pose ){
 
 			TR.Debug << "Applying cutpoint variants to " << cutpoint_closed << std::endl;
 			Size const cutpos = full_to_sub[ cutpoint_closed];
-			correctly_add_cutpoint_variants( pose, cutpos, false /*check fold tree*/);
+			core::pose::rna::correctly_add_cutpoint_variants( pose, cutpos, false /*check fold tree*/);
 
 			TR.Debug << "pose ( before copy ): " << std::endl;
 			print_backbone_torsions( pose, cutpos );
@@ -993,6 +994,7 @@ StepWiseRNA_PoseSetup::setup_pdb_info_with_working_residue_numbers( pose::Pose &
 }
 
 
+} //legacy
 } //rna
 } //sampling
 } //stepwise

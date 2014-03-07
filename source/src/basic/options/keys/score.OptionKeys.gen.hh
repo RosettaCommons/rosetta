@@ -86,6 +86,7 @@ namespace score { extern RealOptionKey const syn_G_potential_bonus; }
 namespace score { extern RealOptionKey const pack_phosphate_penalty; }
 namespace score { extern IntegerVectorOptionKey const rg_local_span; }
 namespace score { extern BooleanOptionKey const unmodifypot; }
+namespace score { extern RealOptionKey const conc; }
 namespace score { namespace saxs { extern BooleanOptionKey const saxs; } }
 namespace score { namespace saxs { extern RealOptionKey const min_score; } }
 namespace score { namespace saxs { extern StringOptionKey const custom_ff; } }

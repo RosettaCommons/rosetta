@@ -24,11 +24,11 @@
 #include <protocols/stepwise/monte_carlo/rna/RNA_FromScratchMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_AddOrDeleteMover.fwd.hh>
 #include <protocols/stepwise/monte_carlo/rna/RNA_ResampleMover.fwd.hh>
+#include <protocols/stepwise/monte_carlo/SWA_Move.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
 
 using namespace core;
@@ -67,6 +67,10 @@ namespace rna {
 		void set_out_path( std::string const & setting ){ out_path_ = setting; }
 		std::string out_path() const{ return out_path_; }
 
+		void set_move( SWA_Move const setting ){ move_ = setting; }
+
+		void set_enumerate( bool const setting ){ enumerate_ = setting; }
+
 	private:
 
 		void initialize_scorefunction();
@@ -74,6 +78,8 @@ namespace rna {
 		void initialize_movers();
 
 		void initialize_for_movie( pose::Pose const & pose );
+
+		void do_main_loop( pose::Pose & pose );
 
 		void initialize_pose_if_empty( pose::Pose & pose );
 
@@ -83,6 +89,9 @@ namespace rna {
 		Real
 		display_progress( pose::Pose & pose, Size const cycle_num );
 
+		std::string
+		get_all_res_list( pose::Pose & pose );
+
 		Real show_scores( core::pose::Pose & pose, std::string const tag );
 
 		void
@@ -90,6 +99,9 @@ namespace rna {
 
 		void
 		anneal_missing( protocols::moves::MonteCarloOP monte_carlo );
+
+		bool
+		do_test_move( pose::Pose & pose );
 
 	private:
 
@@ -113,6 +125,11 @@ namespace rna {
 		std::string out_path_;
 		std::string movie_file_trial_;
 		std::string movie_file_accepted_;
+
+		// for testing individual moves
+		SWA_Move move_;
+		bool enumerate_;
+
 	};
 
 } //rna

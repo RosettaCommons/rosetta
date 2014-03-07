@@ -358,6 +358,17 @@ StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_checkers( pose::
 			 !pose.residue( moving_res_ ).has_variant_type( "CUTPOINT_LOWER" ) ){
 		add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", moving_res_ );
 	}
+	// new -- 2014 -- quick hack for comparison to new ConnectionSampler
+	if ( pose.residue( moving_res_ ).has_variant_type( "CUTPOINT_UPPER" ) ||
+			 pose.residue( moving_res_ ).has_variant_type( "CUTPOINT_LOWER" ) ){
+		remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", moving_res_ );
+	}
+	if ( pose.residue( reference_res_ ).has_variant_type( "CUTPOINT_UPPER" ) ||
+			 pose.residue( reference_res_ ).has_variant_type( "CUTPOINT_LOWER" ) ){
+		remove_variant_type_from_pose_residue( pose, "VIRTUAL_RIBOSE", reference_res_ );
+	}
+
+	TR << "HELLOO!!!!!!!!!! " << pose.annotated_sequence() << std::endl;
 
 	//runtime_assert( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_PHOSPHATE" ) );
 	//	runtime_assert( pose.residue( moving_res_ ).has_variant_type( "VIRTUAL_RIBOSE" ) );
@@ -410,7 +421,7 @@ StepWiseRNA_FloatingBaseSampler::initialize_poses_and_stubs_and_checkers( pose::
 			std::cerr << "MOVING_RES " << moving_res_ << std::endl;
 			std::cerr << "PARTITION_POS " << working_moving_partition_pos_ << std::endl;
 		}
-		runtime_assert( working_moving_partition_pos_.size() == 1 ); //generalize later.
+		//		runtime_assert( working_moving_partition_pos_.size() == 1 ); //generalize later.
 		phosphate_sampler_->set_moving_partition_res( working_moving_partition_pos_ );
 	}
 
@@ -712,12 +723,12 @@ StepWiseRNA_FloatingBaseSampler::update_base_bin_map( BaseBin const & base_bin )
 void
 StepWiseRNA_FloatingBaseSampler::update_base_bin_map( utility::vector1< Real > const & rigid_body_values ){
 	BaseBin base_bin;
-	base_bin.centroid_x  = rigid_body_values[6];
-	base_bin.centroid_y  = rigid_body_values[5];
-	base_bin.centroid_z  = rigid_body_values[4];
-	base_bin.euler_alpha = rigid_body_values[3];
-	base_bin.euler_z     = rigid_body_values[2];
-	base_bin.euler_gamma = rigid_body_values[1];
+	base_bin.centroid_x  = static_cast<int>( rigid_body_values[6] );
+	base_bin.centroid_y  = static_cast<int>( rigid_body_values[5] );
+	base_bin.centroid_z  = static_cast<int>( rigid_body_values[4] );
+	base_bin.euler_alpha = static_cast<int>( rigid_body_values[3] );
+	base_bin.euler_z     = static_cast<int>( rigid_body_values[2] );
+	base_bin.euler_gamma = static_cast<int>( rigid_body_values[1] );
 	update_base_bin_map( base_bin );
 }
 

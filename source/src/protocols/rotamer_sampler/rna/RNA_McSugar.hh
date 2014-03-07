@@ -18,8 +18,11 @@
 #include <protocols/rotamer_sampler/rna/RNA_McSugar.fwd.hh>
 
 // Package headers
+#include <core/chemical/rna/RNA_Util.hh>
 #include <protocols/rotamer_sampler/McRotamer.hh>
 #include <protocols/rotamer_sampler/rna/RNA_SugarRotamer.fwd.hh>
+
+using namespace core::chemical::rna;
 
 namespace protocols {
 namespace rotamer_sampler {
@@ -31,7 +34,7 @@ public:
 	RNA_McSugar(
 		core::Size const rsd_id,
 		core::Real const flip_rate = 0.1,
-		core::Size const init_pucker = 1
+		PuckerState const init_pucker = NORTH
 	);
 
 	/// @brief Initialization
@@ -68,7 +71,7 @@ public:
 	virtual RotamerType type() const { return RNA_MC_SUGAR; }
 
 private:
-	core::Size stored_pucker_state_, active_pucker_state_;
+	PuckerState stored_pucker_state_, active_pucker_state_;
 	core::Real flip_rate_;
 	RNA_SugarRotamerOP sugar_rotamer_;
 };

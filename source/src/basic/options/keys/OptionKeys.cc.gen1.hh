@@ -1,5 +1,3 @@
-namespace jumps { IntegerOptionKey const max_strand_gap_allowed( "jumps:max_strand_gap_allowed" );  }
-namespace jumps { RealOptionKey const contact_score( "jumps:contact_score" );  }
 namespace jumps { BooleanOptionKey const filter_templates( "jumps:filter_templates" );  }
 namespace templates { BooleanOptionKey const templates( "templates" );  }
 namespace templates { FileOptionKey const config( "templates:config" );  }
@@ -110,6 +108,7 @@ namespace score { RealOptionKey const syn_G_potential_bonus( "score:syn_G_potent
 namespace score { RealOptionKey const pack_phosphate_penalty( "score:pack_phosphate_penalty" );  }
 namespace score { IntegerVectorOptionKey const rg_local_span( "score:rg_local_span" );  }
 namespace score { BooleanOptionKey const unmodifypot( "score:unmodifypot" );  }
+namespace score { RealOptionKey const conc( "score:conc" );  }
 namespace score { namespace saxs { BooleanOptionKey const saxs( "score:saxs" );  } }
 namespace score { namespace saxs { RealOptionKey const min_score( "score:saxs:min_score" );  } }
 namespace score { namespace saxs { StringOptionKey const custom_ff( "score:saxs:custom_ff" );  } }
@@ -772,3 +771,6 @@ namespace membrane { BooleanOptionKey const view( "membrane:view" );  }
 namespace membrane { BooleanOptionKey const Mhbond_depth( "membrane:Mhbond_depth" );  }
 namespace membrane { RealOptionKey const thickness( "membrane:thickness" );  }
 namespace casp { BooleanOptionKey const casp( "casp" );  }
+namespace casp { StringOptionKey const decoy( "casp:decoy" );  }
+namespace casp { StringOptionKey const wt( "casp:wt" );  }
+namespace casp { StringOptionKey const rots( "casp:rots" );  }

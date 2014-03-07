@@ -15,12 +15,13 @@
 #define INCLUDED_core_pose_rna_RNA_Util_hh
 
 #include <core/types.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/id/types.hh>
 #include <utility/vector1.fwd.hh>
 
-
+using namespace core::chemical::rna;
 
 namespace core {
 namespace pose {
@@ -73,7 +74,7 @@ apply_ideal_c2endo_sugar_coords(
 		Pose & pose,
 		Size const i);
 
-core::Size
+core::chemical::rna::PuckerState
 assign_pucker(
 		Pose const & pose,
 		Size const rsd_id );
@@ -82,7 +83,7 @@ void
 apply_pucker(
 		Pose & pose,
 		Size const i,
-		Size const pucker_state = 0,
+		PuckerState const pucker_state = ANY_PUCKER,
 		bool const skip_same_state = false,
 		bool const idealize_coord = true );
 
@@ -91,6 +92,14 @@ void
 apply_ideal_c2endo_sugar_coords(
 																pose::Pose & pose,
 																Size const i );
+
+void
+correctly_add_cutpoint_variants( core::pose::Pose & pose,
+																 Size const res_to_add,
+																 bool const check_fold_tree = true );
+
+void
+correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size const five_prime_chainbreak,  bool verbose = false );
 
 } //ns rna
 } //ns pose

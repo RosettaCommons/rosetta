@@ -22,6 +22,7 @@
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_ModelerOptions.hh>
 #include <protocols/stepwise/sampling/rna/StepWiseRNA_Util.hh>
 #include <protocols/stepwise/StepWiseUtil.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
@@ -54,7 +55,8 @@ namespace rna {
 		stepwise_rna_modeler_( stepwise_rna_modeler ),
 		swa_move_selector_( new SWA_MoveSelector ),
 		options_( new StepWiseRNA_MonteCarloOptions ),
-		minimize_single_res_( false )
+		minimize_single_res_( false ),
+		slide_intermolecular_jumps_( true )
 	{}
 
 	//Destructor
@@ -83,6 +85,7 @@ namespace rna {
 		utility::vector1< SWA_Move > swa_moves;
 		swa_move_selector_->set_allow_internal_hinge( options_->allow_internal_hinge_moves() );
 		swa_move_selector_->set_allow_internal_local( options_->allow_internal_local_moves() );
+		swa_move_selector_->set_intermolecular_frequency( options_->intermolecular_frequency() );
 		swa_move_selector_->get_resample_move_elements( pose, swa_moves );
 
 		TR.Debug << "POSSIBLE RESAMPLE MOVES!";
@@ -98,7 +101,7 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
 	RNA_ResampleMover::apply( pose::Pose & pose,
-														SWA_Move & swa_move ){
+														SWA_Move const & swa_move ){
 		std::string dummy_move_type;
 		return apply( pose, swa_move, dummy_move_type );
 	}
@@ -115,6 +118,8 @@ namespace rna {
 		using namespace core::pose::full_model_info;
 
 		TR << "About to remodel move_element " << swa_move << std::endl;
+		move_type = to_string( swa_move.move_type() );
+		std::transform(move_type.begin(), move_type.end(), move_type.begin(), ::tolower); // this is why we love C
 
 		// What needs to be set in StepwiseRNA_Modeler:
 		Size remodel_res( 0 ), remodel_suite( 0 ), cutpoint_suite( 0 );
@@ -127,27 +132,12 @@ namespace rna {
 		if ( is_single_attachment ) {
 			Attachment const & attachment = swa_move.attachments()[ 1 ];
 			AttachmentType const & attachment_type = attachment.attachment_type();
-			//			TR << TR.Red << "Attachment " << attachment << TR.Reset << std::endl;
-			if ( move_element_size == 1) {
-				remodel_res = res_list.index( swa_move.moving_res() );
-				remodel_suite = ( attachment_type == ATTACHED_TO_PREVIOUS ) ? remodel_res - 1 : remodel_res;
-				// also possible that this is a 'floating base'
-				if ( attachment_type == JUMP_TO_PREV_IN_CHAIN || attachment_type == JUMP_TO_NEXT_IN_CHAIN ) remodel_suite = 0;
-			} else { // remodel res will be internal... need to supply *suite* number.
-				Size const & attachment_res = attachment.attached_res();
-				if ( attachment_type == ATTACHED_TO_PREVIOUS ){
-					remodel_res = res_list.index( attachment_res );
-				} else {
-					runtime_assert( attachment_type == ATTACHED_TO_NEXT ); // cannot yet handle jumps.
-					remodel_res = res_list.index( attachment_res ) - 1;
-					runtime_assert( static_cast<int>(remodel_res) == res_list.index( attachment_res - 1 ) );
-				}
-				remodel_suite = remodel_res;
-			}
+			remodel_res = get_remodel_res( swa_move, pose );
+			if ( slide_intermolecular_jumps_ && swa_move.attachment_type() == JUMP_INTERCHAIN ) slide_jump_randomly( pose, remodel_res );
 		} else { // an internal residue or move_element, with two attachments.
 			runtime_assert( num_attachments == 2 );
-			runtime_assert( swa_move.attachments()[1].attachment_type() == ATTACHED_TO_PREVIOUS );
-			runtime_assert( swa_move.attachments()[2].attachment_type() == ATTACHED_TO_NEXT );
+			runtime_assert( swa_move.attachments()[1].attachment_type() == BOND_TO_PREVIOUS );
+			runtime_assert( swa_move.attachments()[2].attachment_type() == BOND_TO_NEXT );
 			if ( move_element_size == 1) { // single residue
 				remodel_res   = res_list.index( swa_move.moving_res() );
 				remodel_suite = remodel_res - 1;
@@ -162,11 +152,6 @@ namespace rna {
 			}
 		}
 		runtime_assert( remodel_res > 0 );
-
-		// trying to catch last bugs.
-		TR << pose.fold_tree() << TR.Reset;
-		TR << pose.annotated_sequence() << std::endl;
-		//		TR << TR.Red << "Is at terminus: " << is_single_attachment << " num attachments " << num_attachments << TR.Reset << std::endl;
 
 		bool did_mutation( false );
 		// based on 'n' in full_model_info.full_sequence
@@ -187,14 +172,9 @@ namespace rna {
 		}
 
 		if ( is_single_attachment ){
-
-			move_type = "resample_terminus";
 			stepwise_rna_modeler_->apply( pose );
-
 		} else {
 			runtime_assert( options_->allow_internal_local_moves() );
-			move_type = "resample_internal_local";
-
 			TR << "Going to set up TRANSIENT_CUTPOINT_HANDLER with " << remodel_suite << " " << cutpoint_suite << std::endl;
 			TransientCutpointHandler cutpoint_handler( remodel_suite, cutpoint_suite );
 			if ( ! minimize_single_res_ ) cutpoint_handler.set_minimize_res( moving_res );
@@ -209,6 +189,98 @@ namespace rna {
 
 		return true;
 
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	RNA_ResampleMover::get_remodel_res( SWA_Move const & swa_move, pose::Pose const & pose ) const {
+		using namespace core::pose::full_model_info;
+		runtime_assert( swa_move.attachments().size() == 1 );
+
+		// remodel res will be the first residue in the moving element that is immediatly downstream of the attachment residue.
+		Size remodel_res( 0 );
+		MoveElement const & move_element = swa_move.move_element();
+		for ( Size n = 1; n <= move_element.size(); n++ ){
+			Size const & moving_res = full_to_sub( move_element[ n ], pose );
+			if ( sub_to_full( pose.fold_tree().get_parent_residue( moving_res ), pose ) == swa_move.attached_res() ){
+				remodel_res = moving_res; break;
+			}
+		}
+
+		// we may have to reroot pose -- the attachment point might be 'downstream' of the moving element.
+		// the rerooting will actually occur later in the Modeler.
+		if ( remodel_res == 0 ){
+			Size const & moving_res = full_to_sub( swa_move.attached_res(), pose );
+			if ( move_element.has_value( sub_to_full( pose.fold_tree().get_parent_residue( moving_res ), pose ) ) ){
+				remodel_res = moving_res;
+			}
+		}
+
+		runtime_assert( remodel_res > 0 );
+		return remodel_res;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	filter_for_proximity( pose::Pose const & pose,
+												utility::vector1< Size > & partition_res,
+												Size const center_res ) {
+		using namespace core::chemical::rna;
+		runtime_assert( partition_res.has_value( center_res ) );
+		static Distance const proximity_cutoff( 8.0 );
+		utility::vector1< Size > filtered_partition_res;
+		Vector const & center_xyz = pose.residue( center_res ).xyz( default_jump_atom( pose.residue( center_res ) ) );
+		for ( Size n = 1; n <= partition_res.size(); n++ ){
+			Size const new_res = partition_res[ n ];
+			Vector const & new_xyz =  pose.residue( new_res ).xyz( default_jump_atom( pose.residue( new_res ) ) );
+			if ( ( new_xyz - center_xyz ).length() < proximity_cutoff ) filtered_partition_res.push_back( new_res );
+		}
+		partition_res = filtered_partition_res;
+		runtime_assert( partition_res.has_value( center_res ) );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	RNA_ResampleMover::slide_jump_randomly( pose::Pose & pose, Size & remodel_res ) const {
+
+		using namespace core::kinematics;
+		using namespace core::chemical::rna;
+
+		FoldTree f = pose.fold_tree();
+		Size const jump_nr = f.get_jump_that_builds_residue( remodel_res );
+		Size const reference_res = f.upstream_jump_residue( jump_nr );
+
+		utility::vector1< Size > root_partition_res, moving_partition_res;
+		figure_out_root_partition_res( pose, remodel_res, root_partition_res, moving_partition_res );
+
+		if ( options_->local_redock_only() ){
+			filter_for_proximity( pose, root_partition_res, reference_res );
+			filter_for_proximity( pose, moving_partition_res, remodel_res );
+		}
+
+		// need to make sure JUMP_INTERMOL remain in different chains!
+		utility::vector1< Size > chains = 	figure_out_chains_from_full_model_info_const( pose );
+		utility::vector1< std::pair< Size, Size > > possible_jump_pairs;
+		for ( Size i = 1; i <= root_partition_res.size(); i++ ) {
+			Size const & root_res = root_partition_res[ i ];
+			for ( Size j = 1; j <= moving_partition_res.size(); j++ ) {
+				Size const & move_res = moving_partition_res[ j ];
+				if ( chains[ root_res ] != chains[ move_res ] ) possible_jump_pairs.push_back( std::make_pair( root_res, move_res ) );
+			}
+		}
+		std::pair< Size, Size > const new_jump_pair = RG.random_element( possible_jump_pairs );
+		Size const new_reference_res = new_jump_pair.first;
+		Size const new_remodel_res   = new_jump_pair.second;
+
+		f.slide_jump( jump_nr, new_reference_res, new_remodel_res );
+		f.set_jump_atoms( jump_nr, default_jump_atom( pose.residue( new_reference_res ) ),
+											default_jump_atom( pose.residue( new_remodel_res ) ) );
+
+		pose.fold_tree( f );
+		TR << "Slid jump from: " << remodel_res << "--" << reference_res <<
+			" to: " << new_remodel_res << " -- " << new_reference_res << std::endl;
+
+		remodel_res = new_remodel_res;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////

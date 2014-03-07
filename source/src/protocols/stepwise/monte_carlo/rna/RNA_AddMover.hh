@@ -50,6 +50,9 @@ public:
   void
 	apply( core::pose::Pose & pose, Size const res_to_add_in_full_model_numbering, Size const res_to_build_off_in_full_model_numbering );
 
+	void
+	apply( core::pose::Pose & pose, SWA_Move const & swa_move );
+
 	/// @brief Apply the minimizer to one pose
 	virtual void apply( core::pose::Pose & pose_to_visualize );
 	virtual std::string get_name() const;
@@ -104,6 +107,12 @@ private:
 	void
 	prepend_residue( pose::Pose & pose, Size const offset );
 
+	bool
+	check_same_chain( pose::Pose const & pose, Size const res_to_add_in_full_model_numbering, Size const res_to_build_off_in_full_model_numbering );
+
+	bool
+	check_same_chain( pose::Pose const & pose );
+
 private:
 
 	core::chemical::ResidueTypeSetCAP rsd_set_;
@@ -125,7 +134,7 @@ private:
 
 	Size suite_num_, nucleoside_num_;
 	Size res_to_add_in_full_model_numbering_, res_to_build_off_in_full_model_numbering_;
-
+	SWA_Move swa_move_;
 
 };
 

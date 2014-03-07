@@ -28,6 +28,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
+#include <utility/stream_util.hh>
 #include <utility/tools/make_vector1.hh>
 
 #include <core/pose/Pose.hh>
@@ -91,12 +92,13 @@
 using basic::T;
 using basic::Error;
 using basic::Warning;
-        
+
 using namespace ObjexxFCL;
 using namespace core;
 using namespace conformation;
 //using namespace scoring;
 //using namespace protocols;
+using utility::operator <<;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -157,7 +159,7 @@ public:
 	interface.calculate( *native_pose );
 	ObjexxFCL::FArray1D_bool is_interface ( (*native_pose).total_residue(), false );
     	for ( Size i=1; i<= (*native_pose).total_residue(); ++i ) {
-      		if (interface.is_interface(i)) 
+      		if (interface.is_interface(i))
 			is_interface(i) = true;
     	}
 

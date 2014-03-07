@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/stepwise/sampling/rna/suite/StepWiseRNA_ConnectionSampler.fwd.hh
-/// @brief
+/// @file protocols/stepwise/sampling/rna/sugar/StepWiseRNA_VirtualSugarJustInTimeInstantiatorOLD.fwd.hh
+/// @brief 
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_stepwise_rna_StepWiseRNA_ConnectionSampler_FWD_HH
-#define INCLUDED_protocols_stepwise_rna_StepWiseRNA_ConnectionSampler_FWD_HH
+#ifndef INCLUDED_protocols_stepwise_rna_StepWiseRNA_VirtualSugarJustInTimeInstantiatorOLD_FWD_HH
+#define INCLUDED_protocols_stepwise_rna_StepWiseRNA_VirtualSugarJustInTimeInstantiatorOLD_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -22,15 +22,15 @@ namespace protocols {
 namespace stepwise {
 namespace sampling {
 namespace rna {
+namespace sugar {
 namespace legacy {
-namespace suite {
-
-	class StepWiseRNA_ConnectionSampler;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_ConnectionSampler > StepWiseRNA_ConnectionSamplerOP;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_ConnectionSampler const > StepWiseRNA_ConnectionSamplerCOP;
-
-} //suite
+	
+	class StepWiseRNA_VirtualSugarJustInTimeInstantiatorOLD;
+	typedef utility::pointer::owning_ptr< StepWiseRNA_VirtualSugarJustInTimeInstantiatorOLD > StepWiseRNA_VirtualSugarJustInTimeInstantiatorOLDOP;
+	typedef utility::pointer::owning_ptr< StepWiseRNA_VirtualSugarJustInTimeInstantiatorOLD const > StepWiseRNA_VirtualSugarJustInTimeInstantiatorOLDCOP;
+	
 } //legacy
+} //sugar
 } //rna
 } //sampling
 } //stepwise

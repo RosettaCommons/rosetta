@@ -235,9 +235,10 @@ get_res_map( SugarModeling const & sugar_modeling ){
 
 	std::map< core::Size, core::Size > 	res_map;
 	res_map[ sugar_modeling.moving_res    ] = sugar_modeling.moving_res;
-	if ( sugar_modeling.bulge_res > 0 ) res_map[ sugar_modeling.bulge_res     ] = sugar_modeling.bulge_res;
-	if ( sugar_modeling.reference_res > 0 ) res_map[ sugar_modeling.reference_res ] = sugar_modeling.reference_res;
-
+	if ( sugar_modeling.bulge_res > 0 ) {
+		res_map[ sugar_modeling.bulge_res     ] = sugar_modeling.bulge_res;
+		res_map[ sugar_modeling.reference_res ] = sugar_modeling.reference_res;
+	}
 	return res_map;
 }
 

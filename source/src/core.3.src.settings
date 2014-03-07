@@ -121,6 +121,7 @@ sources = {
 	"core/pose/full_model_info": [
 		"FullModelInfo",
 		"FullModelInfoUtil",
+		"FullModelInfoSetupFromCommandLine",
 	],
 	"core/pose/metrics": [
 		"CalculatorFactory",

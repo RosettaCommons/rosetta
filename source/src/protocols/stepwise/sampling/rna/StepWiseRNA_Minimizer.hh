@@ -64,7 +64,7 @@ namespace rna {
 		set_silent_file( std::string const & silent_file );
 
 		void
-		set_move_map_list( utility::vector1 < core::kinematics::MoveMap > const & move_map_list );
+		set_move_map( core::kinematics::MoveMapOP move_map_ );
 
 		void
 		set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn );
@@ -102,7 +102,7 @@ namespace rna {
 		utility::vector1 < core::Size >
 		get_working_moving_res( Size const & nres ) const;
 
-		utility::vector1 < core::kinematics::MoveMap >
+		core::kinematics::MoveMapOP
 		get_default_movemap( core::pose::Pose const & pose );
 
 		void
@@ -139,11 +139,10 @@ namespace rna {
 		StepWiseRNA_JobParametersCOP job_parameters_;
 
 		core::io::silent::SilentFileDataOP sfd_;
-		utility::vector1 < core::kinematics::MoveMap > move_map_list_;
+		kinematics::MoveMapOP move_map_;
 		core::scoring::ScoreFunctionOP scorefxn_;
 		std::string silent_file_;
 		bool perform_electron_density_screen_;
-
 
 		StepWiseRNA_ModelerOptionsOP options_;
 
