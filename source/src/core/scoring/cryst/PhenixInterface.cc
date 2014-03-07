@@ -59,7 +59,6 @@
   }
 #endif
 
-
 // C++ headers
 #include <iostream>
 #include <fstream>
@@ -104,15 +103,20 @@ PhenixInterface::PhenixInterface() {
 	std::string PHENIX_BIN ( getenv("ROSETTA_PHENIX_BIN") );
 	std::string PHENIX_PYTHON_PATHS ( getenv("ROSETTA_PHENIX_MODULES") );
 
-	Py_SetProgramName( const_cast<char *>(PHENIX_BIN.c_str()) );
+
+	std::vector< char > PHENIX_BIN_char(PHENIX_BIN.c_str(), PHENIX_BIN.c_str()+PHENIX_BIN.length()+1);
+	Py_SetProgramName( &PHENIX_BIN_char[0] );
+
 	Py_Initialize();  // initialize the python interpreter
 
 	// set default phenix paths
-	PyObject *sys_path = PySys_GetObject("path");
+	char path[] = "path";
+	PyObject *sys_path = PySys_GetObject(path);
   std::stringstream path_strings(PHENIX_PYTHON_PATHS);
 	std::string item;
   while (std::getline(path_strings, item, ':')) {
-		PyObject *search_path = PyUnicode_FromString(item.c_str());
+		std::vector< char > item_char(item.c_str(), item.c_str()+item.length()+1);
+		PyObject *search_path = PyUnicode_FromString(&item_char[0]);
 		PyList_Append(sys_path, search_path);
   }
   HANDLE_PYTHON_ERROR("failed setting up Phenix interface");
@@ -156,8 +160,8 @@ core::Real PhenixInterface::getScore (
 	core::Real score = PyFloat_AsDouble( PyTuple_GetItem(result_tuple, 0) );
 	Py_XDECREF(result_tuple);
 
-	core::Real rwork = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_work", NULL) );
-	core::Real rfree = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_free", NULL) );
+	//core::Real rwork = getR();
+	//core::Real rfree = getRfree();
 
 	return score;
 #else
@@ -208,8 +212,8 @@ core::Real PhenixInterface::getScoreAndDerivs (
 	Py_XDECREF(result_tuple);
 	Py_XDECREF(pMethod);
 
-	core::Real rwork = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_work", NULL) );
-	core::Real rfree = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_free", NULL) );
+	//core::Real rwork = getR();
+	//core::Real rfree = getRfree();
 
 	return score;
 #else
@@ -310,24 +314,40 @@ void PhenixInterface::fitBfactors (
 
 		PyObject* inlist = PyList_New(nargs);
 		PyList_SetItem(inlist, 0, PyString_FromString(pdbout));
-		PyList_SetItem(inlist, 1, PyString_FromString(mtzout.c_str()));
-		PyList_SetItem(inlist, 2, PyString_FromString(adp_strategy.c_str()));
-		PyList_SetItem(inlist, 3, PyString_FromString(adp_groupstrat.c_str()));
-		PyList_SetItem(inlist, 4, PyString_FromString(hires_str.c_str()));
-		PyList_SetItem(inlist, 5, PyString_FromString(lowres_str.c_str()));
-		PyList_SetItem(inlist, 6, PyString_FromString("main.number_of_macro_cycles=1"));
-		PyList_SetItem(inlist, 7, PyString_FromString("write_eff_file=false"));
-		PyList_SetItem(inlist, 8, PyString_FromString("write_geo_file=false"));
-		PyList_SetItem(inlist, 9, PyString_FromString("write_def_file=false"));
-		PyList_SetItem(inlist, 10, PyString_FromString("write_maps=false"));
-		PyList_SetItem(inlist, 11, PyString_FromString("write_map_coefficients=false"));
-		PyList_SetItem(inlist, 12, PyString_FromString("--overwrite"));
-		if (has_twin_law) PyList_SetItem(inlist, 13, PyString_FromString(twinlawstr.c_str()));
+		std::vector< char > mtzout_char(mtzout.c_str(), mtzout.c_str()+mtzout.length()+1);
+		PyList_SetItem(inlist, 1, PyString_FromString(&mtzout_char[0]));
+		std::vector< char > adp_strategy_char(adp_strategy.c_str(), adp_strategy.c_str()+adp_strategy.length()+1);
+		PyList_SetItem(inlist, 2, PyString_FromString(&adp_strategy_char[0]));
+		std::vector< char > adp_groupstrat_char(adp_groupstrat.c_str(), adp_groupstrat.c_str()+adp_groupstrat.length()+1);
+		PyList_SetItem(inlist, 3, PyString_FromString(&adp_groupstrat_char[0]));
+		std::vector< char > hires_str_char(hires_str.c_str(), hires_str.c_str()+hires_str.length()+1);
+		PyList_SetItem(inlist, 4, PyString_FromString(&hires_str_char[0]));
+		std::vector< char > lowres_str_char(lowres_str.c_str(), lowres_str.c_str()+lowres_str.length()+1);
+		PyList_SetItem(inlist, 5, PyString_FromString(&lowres_str_char[0]));
+		char arg6_str[] = "main.number_of_macro_cycles=1";
+		PyList_SetItem(inlist, 6, PyString_FromString(arg6_str));
+		char arg7_str[] = "write_eff_file=false";
+		PyList_SetItem(inlist, 7, PyString_FromString(arg7_str));
+		char arg8_str[] = "write_geo_file=false";
+		PyList_SetItem(inlist, 8, PyString_FromString(arg8_str));
+		char arg9_str[] = "write_def_file=false";
+		PyList_SetItem(inlist, 9, PyString_FromString(arg9_str));
+		char arg10_str[] = "write_maps=false";
+		PyList_SetItem(inlist, 10, PyString_FromString(arg10_str));
+		char arg11_str[] = "write_map_coefficients=false";
+		PyList_SetItem(inlist, 11, PyString_FromString(arg11_str));
+		char arg12_str[] = "--overwrite";
+		PyList_SetItem(inlist, 12, PyString_FromString(arg12_str));
+		if (has_twin_law) {
+			std::vector< char > twinlawstr_char(twinlawstr.c_str(), twinlawstr.c_str()+twinlawstr.length()+1);
+			PyList_SetItem(inlist, 13, PyString_FromString(&twinlawstr_char[0]));
+		}
 
-		for (int i=1; i<= cif_files_.size(); ++i) {
+		for (int i=1; i<= (int)cif_files_.size(); ++i) {
 			std::string cif_file_i = cif_files_[i];
 			if (cif_file_i[0] != '/') cif_file_i = "../"+cif_file_i;   // if path is relative, update
-			PyList_SetItem(inlist, nargs_no_cif+i-1, PyString_FromString(cif_file_i.c_str()));
+			std::vector< char > cif_file_i_char(cif_file_i.c_str(), cif_file_i.c_str()+cif_file_i.length()+1);
+			PyList_SetItem(inlist, nargs_no_cif+i-1, PyString_FromString(&cif_file_i_char[0]));
 		}
 
 		PyObject *cmd = PyString_FromString("run");
@@ -611,20 +631,13 @@ void PhenixInterface::updateSolventMask () {
 #ifdef WITH_PYTHON
 	if (!target_evaluator_) return;
 
-	PyObject_CallMethod(target_evaluator_, "update_fmask", NULL);
+	char update_fmask_str[] = "update_fmask";
+	PyObject_CallMethod(target_evaluator_, update_fmask_str, NULL);
   HANDLE_PYTHON_ERROR("update_fmask failed");
-	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, "r_work", NULL);
-	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, "r_free", NULL);
-	HANDLE_PYTHON_ERROR("can't extract R-frees");
-	if (r_work_py != NULL) {
-		core::Real rwork = PyFloat_AsDouble(r_work_py);
-		core::Real rfree = PyFloat_AsDouble(r_free_py);
-		TR << "After optimizeSolventMask r/rfree = " << rwork << "/" << rfree << std::endl;
 
-		// free memory
-		Py_XDECREF(r_work_py);
-		Py_XDECREF(r_free_py);
-	}
+	core::Real rwork = getR();
+	core::Real rfree = getRfree();
+	TR << "After optimizeSolventMask r/rfree = " << rwork << "/" << rfree << std::endl;
 
 #else
 	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
@@ -645,18 +658,12 @@ void PhenixInterface::updateSolventMask (
 	PyObject *pMethod = PyString_FromString("update_sites_1d");
 	PyObject *pValue = PyObject_CallMethodObjArgs(target_evaluator_, pMethod, pCoords, NULL);
 	HANDLE_PYTHON_ERROR("PhenixInterface::getScore() : error updating sites");
-	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, "r_work", NULL);
-	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, "r_free", NULL);
-	HANDLE_PYTHON_ERROR("can't extract R-frees");
-	if (r_work_py != NULL) {
-		core::Real rwork = PyFloat_AsDouble(r_work_py);
-		core::Real rfree = PyFloat_AsDouble(r_free_py);
-		TR << "After optimizeSolventMask r/rfree = " << rwork << "/" << rfree << std::endl;
-	}
+
+	core::Real rwork = getR();
+	core::Real rfree = getRfree();
+	TR << "After optimizeSolventMask r/rfree = " << rwork << "/" << rfree << std::endl;
 
 	// free memory
-	Py_XDECREF(r_work_py);
-	Py_XDECREF(r_free_py);
 	Py_XDECREF(pCoords);
 	Py_XDECREF(pMethod);
 	Py_XDECREF(pValue);
@@ -673,20 +680,15 @@ void PhenixInterface::optimizeSolventMask () {
 #ifdef WITH_PYTHON
 	if (!target_evaluator_) return;
 
-	PyObject *pValue = PyObject_CallMethod(target_evaluator_, "optimize_mask", NULL);
+	char optimize_mask_str[] = "optimize_mask";
+	PyObject *pValue = PyObject_CallMethod(target_evaluator_, optimize_mask_str, NULL);
   HANDLE_PYTHON_ERROR("optimize_mask failed");
-	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, "r_work", NULL);
-	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, "r_free", NULL);
-	HANDLE_PYTHON_ERROR("can't extract R-frees");
-	if (r_work_py != NULL) {
-		core::Real rwork = PyFloat_AsDouble(r_work_py);
-		core::Real rfree = PyFloat_AsDouble(r_free_py);
-		TR << "After optimizeSolventMask r/rfree = " << rwork << "/" << rfree << std::endl;
-	}
+
+	core::Real rwork = getR();
+	core::Real rfree = getRfree();
+	TR << "After optimizeSolventMask r/rfree = " << rwork << "/" << rfree << std::endl;
 
 	// free memory
-	Py_XDECREF(r_work_py);
-	Py_XDECREF(r_free_py);
 	Py_XDECREF(pValue);
 
 #else
@@ -700,20 +702,14 @@ void PhenixInterface::optimizeSolvParams () {
 #ifdef WITH_PYTHON
 	if (!target_evaluator_) return;
 
-	PyObject *pValue = PyObject_CallMethod(target_evaluator_, "update_solvent_and_scale", NULL);
+	char update_solvent_and_scale_str[] = "update_solvent_and_scale";
+	PyObject *pValue = PyObject_CallMethod(target_evaluator_, update_solvent_and_scale_str, NULL);
   HANDLE_PYTHON_ERROR("update_solvent_and_scale failed");
-	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, "r_work", NULL);
-	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, "r_free", NULL);
-	HANDLE_PYTHON_ERROR("can't extract R-frees");
-	if (r_work_py != NULL) {
-		core::Real rwork = PyFloat_AsDouble(r_work_py);
-		core::Real rfree = PyFloat_AsDouble(r_free_py);
-		TR << "After optimizeSolvParams r/rfree = " << rwork << "/" << rfree << std::endl;
-	}
+	core::Real rwork = getR();
+	core::Real rfree = getRfree();
+	TR << "After optimizeSolvParams r/rfree = " << rwork << "/" << rfree << std::endl;
 
 	// free memory
-	Py_XDECREF(r_work_py);
-	Py_XDECREF(r_free_py);
 	Py_XDECREF(pValue);
 
 #else
@@ -726,11 +722,16 @@ void PhenixInterface::optimizeSolvParamsAndMask () {
 #ifdef WITH_PYTHON
 	if (!target_evaluator_) return;
 
-	PyObject_CallMethod(target_evaluator_, "optimize_mask_and_update_solvent_and_scale", NULL);
-	core::Real rwork = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_work", NULL) );
-	core::Real rfree = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_free", NULL) );
+	char optimize_mask_and_update_solvent_and_scale_str[] = "optimize_mask_and_update_solvent_and_scale";
+	PyObject *pValue = PyObject_CallMethod(target_evaluator_, optimize_mask_and_update_solvent_and_scale_str, NULL);
 	HANDLE_PYTHON_ERROR("optimizeSolvParamsAndMask failed");
+
+	core::Real rwork = getR();
+	core::Real rfree = getRfree();
 	TR << "After optimize_mask_and_update_solvent_and_scale r/rfree = " << rwork << "/" << rfree << std::endl;
+
+	// free memory
+	Py_XDECREF(pValue);
 #else
 	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
 #endif
@@ -852,8 +853,8 @@ std::string PhenixInterface::getInfoLine() {
 #ifdef WITH_PYTHON
 	if (!target_evaluator_) return "0.00/0.00";
 
-	core::Real rwork = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_work", NULL) );
-	core::Real rfree = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_free", NULL) );
+	core::Real rwork = getR();
+	core::Real rfree = getRfree();
 
 	std::ostringstream oss;
 	oss << rwork << "/" << rfree;
@@ -866,7 +867,8 @@ std::string PhenixInterface::getInfoLine() {
 
 core::Real PhenixInterface::getR() {
 #ifdef WITH_PYTHON
-	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, "r_work", NULL);
+	char r_work_str[] = "r_work";
+	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, r_work_str, NULL);
 	core::Real rwork = 0;
 	if (r_work_py != NULL) {
 		rwork = PyFloat_AsDouble(r_work_py);
@@ -882,7 +884,8 @@ core::Real PhenixInterface::getR() {
 
 core::Real PhenixInterface::getRfree() {
 #ifdef WITH_PYTHON
-	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, "r_free", NULL);
+	char r_free_str[] = "r_free";
+	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, r_free_str, NULL);
 	core::Real rfree = 0;
 	if (r_free_py != NULL) {
 		rfree = PyFloat_AsDouble(r_free_py);
@@ -1038,16 +1041,21 @@ void PhenixInterface::initialize_target_evaluator(
 		arg_opt = std::vector< char >(eff_file.c_str(), eff_file.c_str()+eff_file.length()+1);
 	}
 
+
 	{ // grab stdout from the python script
 		const int MAXLEN=16000;
 		char buffer[MAXLEN+1] = {0};
 		int out_pipe[2], saved_stdout;
 
+		char run_str[] = "run";
+		char s9_str[] = "([sssssssss])";
+		char s10_str[] = "([ssssssssss])";
+
  		if (eff_file.length() == 0)
- 			target_evaluator_ = PyObject_CallMethod(pModule, "run", "([sssssssss])",
+ 			target_evaluator_ = PyObject_CallMethod(pModule, run_str, s9_str,
  			     &arg1_char[0], &arg2_char[0], &arg3_char[0], &arg4_char[0], &arg5_char[0], &arg6_char[0], &arg7_char[0], &arg8_char[0], &arg9_char[0]);
  		else
- 			target_evaluator_ = PyObject_CallMethod(pModule, "run", "([ssssssssss])",
+ 			target_evaluator_ = PyObject_CallMethod(pModule, run_str, s10_str,
  			     &arg1_char[0], &arg2_char[0], &arg_opt[0], &arg3_char[0], &arg4_char[0], &arg5_char[0], &arg6_char[0], &arg7_char[0], &arg8_char[0], &arg9_char[0]);
 
 		HANDLE_PYTHON_ERROR("initialization of target evaluator failed");
@@ -1058,18 +1066,8 @@ void PhenixInterface::initialize_target_evaluator(
 		}
 	}
 
-	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, "r_work", NULL);
-	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, "r_free", NULL);
-	HANDLE_PYTHON_ERROR("can't extract R-frees");
-	if (r_work_py != NULL) {
-		core::Real rwork = PyFloat_AsDouble(r_work_py);
-		core::Real rfree = PyFloat_AsDouble(r_free_py);
-		TR << "Initialized target evaluator [rwork/rfree = " << rwork << "/" << rfree << "]" << std::endl;
-
-		// free memory
-		Py_XDECREF(r_work_py);
-		Py_XDECREF(r_free_py);
-	}
+	core::Real rwork = getR();
+	core::Real rfree = getRfree();
 
 	//
 	Py_XDECREF(pModule);
@@ -1083,7 +1081,7 @@ void PhenixInterface::initialize_target_evaluator(
 std::string PhenixInterface::calculateDensityMap (
 #ifdef WITH_PYTHON
 		core::pose::Pose & pose,
-		bool no_sidechain /*=false*/)
+		bool /*no_sidechain =false*/)
 #else
 		core::pose::Pose & /*pose*/,
 		bool /*no_sidechain=false*/)
@@ -1096,7 +1094,11 @@ std::string PhenixInterface::calculateDensityMap (
 
 	chdir(tempdir_.c_str());
 
-	PyObject_CallMethod(target_evaluator_, "write_map", "(s)", "outtmp.map");
+	char write_map_str[] = "write_map";
+	char s1_str[] = "(s)";
+	char outtmp_str[] = "outtmp.map";
+	PyObject_CallMethod(target_evaluator_, write_map_str, s1_str, outtmp_str);
+
 	HANDLE_PYTHON_ERROR("PhenixInterface::calculateDensityMap() : error writing map");
 
 	chdir("..");
