@@ -696,8 +696,9 @@ sources = {
 		#"report_cavities_for_plugin",
 	],
 	"pilot/rpache" : [
-                #"generate_matcher_constraints",
-		#"calibrate_pdb_via_sidechain_optimization",
+                "generate_matcher_constraints",
+		"calibrate_pdb_via_sidechain_optimization",
+		"score_protein_ligand_interactions",
 	],
 	"pilot/rvernon" : [
 		#"calc_pair_stats", # /* Rob Vernon,Documentation Location,Demo Location */
