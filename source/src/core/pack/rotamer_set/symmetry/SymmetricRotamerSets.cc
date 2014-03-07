@@ -139,17 +139,23 @@ SymmetricRotamerSets::precompute_two_body_energies(
 		uint ii_resid = moltenres_2_resid( ii );
 		// observe that we will loop over only one subunit here
 		for ( graph::Graph::EdgeListConstIter
-			uli  = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_begin(),
-			ulie = packer_neighbor_graph->get_node( ii_resid )->const_upper_edge_list_end();
+			uli  = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_begin(),
+			ulie = packer_neighbor_graph->get_node( ii_resid )->const_edge_list_end();
 			uli != ulie; ++uli )
 		{
-			uint jj_resid = (*uli)->get_second_node_ind();
+			uint jj_resid = (*uli)->get_other_ind( ii_resid );
 			uint jj = resid_2_moltenres( jj_resid ); //pretend we're iterating over jj >= ii
 			// if jj_resid is not repackable and jj_resid is not in a different subunit continue
-			if ( jj == 0 && symm_info->chi_follows( jj_resid ) == 0  ) continue;
-			// if jj_resid is in a different subunit we need to know its master
-			uint jj_resid_master = jj_resid;
-			if ( symm_info->chi_follows( jj_resid ) != 0 ) jj_resid_master = symm_info->chi_follows( jj_resid );
+			uint jj_resid_master(0);
+			if ( symm_info->chi_follows( jj_resid ) == 0  ) {
+				// jj_resid is independent like ii_resid
+				if ( jj == 0 ) continue;
+				if ( jj_resid <= ii_resid ) continue; // we will hit this in the other order
+				jj_resid_master = jj_resid;
+			} else {
+				// if jj_resid is in a different subunit we need to know its master
+				jj_resid_master = symm_info->chi_follows( jj_resid );
+			}
 			// find out the moltenres id for the master
 			uint jj_master = resid_2_moltenres( jj_resid_master );
 			// if the master is not repackable continue
@@ -158,6 +164,7 @@ SymmetricRotamerSets::precompute_two_body_energies(
 			// interaction is already being calculated
 //			if ( packer_neighbor_graph->get_edge_exists(ii_resid,jj_resid_master ) && jj == 0 ) continue;
 
+			if ( fabs( symm_info->score_multiply(ii_resid,jj_resid) )<1e-3 ) continue;
 			uint ii_master = ii;
 			uint ii_resid_master = ii_resid;
 
@@ -189,6 +196,7 @@ SymmetricRotamerSets::precompute_two_body_energies(
 			// we have a intersubunit interaction then calculate the interaction
 			// here instead of the intrasubunit interaction. If jj == 0 then we will calculate
 			// intrasubunit interaction. If we swapped the order we have to orient ii instead of jj
+			//if ( symm_info->chi_follows( jj_resid ) != 0 ) { runtime_assert( jj == 0 ); } // otherwise clone pos packable
 			if ( symm_info->chi_follows( jj_resid ) != 0 && jj == 0 ) {
 				if ( swap ) {
 					RotamerSetOP rotated_ii_rotset(
@@ -206,17 +214,19 @@ SymmetricRotamerSets::precompute_two_body_energies(
 				*ii_rotset, *jj_rotset, pose, pair_energy_table );
 
 			// Apply the multiplication factors
-			pair_energy_table *= symm_info->score_multiply(ii_resid,jj_resid);
+ 			pair_energy_table *= symm_info->score_multiply(ii_resid,jj_resid);
+
 			if ( !pig->get_edge_exists( ii_master, jj_master ) ) {
 				pig->add_edge( ii_master, jj_master );
 			}
 			pig->add_to_two_body_energies_for_edge( ii_master, jj_master, pair_energy_table );
 
 			// finalize the edge
-			if ( finalize_edges && ! scfxn.any_lr_residue_pair_energy(pose, ii_master, jj_master )
-						&& final_visit_to_edge( pose, packer_neighbor_graph, ii_resid, jj_resid ) ){
-				pig->declare_edge_energies_final( ii_master, jj_master );
-			}
+			// if ( finalize_edges && ! scfxn.any_lr_residue_pair_energy(pose, ii_master, jj_master )
+			// 			&& final_visit_to_edge( pose, packer_neighbor_graph, ii_resid, jj_resid ) ){
+			// 	pig->declare_edge_energies_final( ii_master, jj_master );
+			// 	std::cout << "finalize pair " << ii_master << ' '<< jj_master << std::endl;
+			// }
 		}
 	}
 
@@ -235,18 +245,24 @@ SymmetricRotamerSets::precompute_two_body_energies(
 			uint const ii_resid = moltenres_2_resid( ii );
 
 			for ( ResidueNeighborConstIteratorOP
-						rni = lrec->const_upper_neighbor_iterator_begin( ii_resid ),
-						rniend = lrec->const_upper_neighbor_iterator_end( ii_resid );
+						rni = lrec->const_neighbor_iterator_begin( ii_resid ),
+						rniend = lrec->const_neighbor_iterator_end( ii_resid );
 						(*rni) != (*rniend); ++(*rni) ) {
-				Size jj_resid = rni->upper_neighbor_id();
+				Size jj_resid = ( rni->upper_neighbor_id() == ii_resid ? rni->lower_neighbor_id() : rni->upper_neighbor_id() );
 
 				uint jj = resid_2_moltenres( jj_resid ); //pretend we're iterating over jj >= ii
 //				if ( jj == 0 ) continue; // Andrew, remove this magic number! (it's the signal that jj_resid is not "molten")
 			// if jj_resid is not repackable and jj_resid is not in a different subunit continue
-			if ( jj == 0 && symm_info->chi_follows( jj_resid ) == 0  ) continue;
-			// if jj_resid is in a different subunit we need to know its master
-			uint jj_resid_master = jj_resid;
-			if ( symm_info->chi_follows( jj_resid ) != 0 ) jj_resid_master = symm_info->chi_follows( jj_resid );
+			uint jj_resid_master(0);
+			if ( symm_info->chi_follows( jj_resid ) == 0  ) {
+				// jj_resid is independent like ii_resid
+				if ( jj == 0 ) continue;
+				if ( jj_resid <= ii_resid ) continue; // we will hit this in the other order
+				jj_resid_master = jj_resid;
+			} else {
+				// if jj_resid is in a different subunit we need to know its master
+				jj_resid_master = symm_info->chi_follows( jj_resid );
+			}
 			// find out the moltenres id for the master
 			uint jj_master = resid_2_moltenres( jj_resid_master );
 			// if the master is not repackable continue
@@ -254,6 +270,8 @@ SymmetricRotamerSets::precompute_two_body_energies(
 			// if we the ii_resid and jj_resid_master have an edge this intersubunit
 			// interaction is already being calculated
 //			if ( packer_neighbor_graph->get_edge_exists(ii_resid,jj_resid_master ) && jj == 0 ) continue;
+
+			if ( fabs( symm_info->score_multiply(ii_resid,jj_resid)) <1e-3 ) continue;
 
 			uint ii_master = ii;
 			uint ii_resid_master = ii_resid;
@@ -302,15 +320,31 @@ SymmetricRotamerSets::precompute_two_body_energies(
 				(*lr_iter)->evaluate_rotamer_pair_energies(
 					*ii_rotset, *jj_rotset, pose, scfxn, scfxn.weights(), pair_energy_table );
 
-			pair_energy_table *= symm_info->score_multiply(ii_resid,jj_resid);
+				pair_energy_table *= symm_info->score_multiply(ii_resid,jj_resid);
 
 				if ( ! pig->get_edge_exists( ii_master, jj_master ) ) { pig->add_edge( ii_master, jj_master ); }
 				pig->add_to_two_body_energies_for_edge( ii_master, jj_master, pair_energy_table );
-				if ( finalize_edges && final_visit_to_edge( pose, packer_neighbor_graph, ii_resid, jj_resid ) )
-					pig->declare_edge_energies_final( ii_master, jj_master );
+				// if ( finalize_edges && final_visit_to_edge( pose, packer_neighbor_graph, ii_resid, jj_resid ) ) {
+				// 	pig->declare_edge_energies_final( ii_master, jj_master );
+				// 	std::cout << "finalize pair " << ii_master << ' '<< jj_master << std::endl;
+				// }
 			}
 		}
 	}
+
+
+	/// yes, this is O(N^2) but the logic for doing it correctly in the loops above is really hairy
+	/// for the time being, this works.
+	if ( finalize_edges ) {
+		for ( Size ii=1; ii<= nmoltenres(); ++ii ) {
+			for ( Size jj=ii+1; jj<= nmoltenres(); ++jj ) {
+				if ( pig->get_edge_exists( ii, jj ) ) {
+					pig->declare_edge_energies_final( ii, jj );
+				}
+			}
+		}
+	}
+
 }
 
 /// @details Add edges between all adjacent nodes in the
