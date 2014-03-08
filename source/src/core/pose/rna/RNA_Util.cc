@@ -446,7 +446,7 @@ apply_pucker(
 //
 	//When a CUTPOINT_UPPER is added to 3' chain_break residue, the EXISTENCE of the CUTPOINT_UPPER atoms means that the alpha torsion which previously DOES NOT exist due to the chain_break now exist. The alpha value is automatically defined to the A-form value by Rosetta. However Rosetta does not automatically adjust the OP2 and OP1 atom position to account for this fact. So it is important that the OP2 and OP1 atoms position are correctly set to be consistent with A-form alpha torsion before the CUTPOINT_UPPER IS ADDED Parin Jan 2, 2009
 	void
-	correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size const five_prime_chainbreak,  bool verbose /* = false*/ ){
+	correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size const five_prime_chainbreak ){
 
 		using namespace core::chemical;
 		using namespace core::conformation;
@@ -521,7 +521,7 @@ apply_pucker(
 		if ( pose.residue_type( res_to_add ).is_RNA() ){
 			// could also keep track of alpha, beta, etc.
 			runtime_assert( pose.residue_type( res_to_add + 1 ).is_RNA() );
-			correctly_position_cutpoint_phosphate_torsions( pose, res_to_add, false /*verbose*/ );
+			correctly_position_cutpoint_phosphate_torsions( pose, res_to_add );
 		}
 		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res_to_add   );
 		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res_to_add + 1 );

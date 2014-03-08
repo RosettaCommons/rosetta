@@ -728,13 +728,13 @@ StepWiseRNA_ConnectionSampler::check_job_parameters( pose::Pose const & pose ){
 																get_chain_for_resnum( reference_res_, pose ) );
 			if ( same_chain ) {
 				Size const floating_base_five_prime_chain_break_ ( ( is_prepend_ ) ? moving_res_   : reference_res_ );
-				Size const floating_base_three_prime_chain_break_( ( is_prepend_ ) ? reference_res_: moving_res_ );
+				//				Size const floating_base_three_prime_chain_break_( ( is_prepend_ ) ? reference_res_: moving_res_ );
 				runtime_assert( five_prime_chain_breaks_.has_value( floating_base_five_prime_chain_break_ ) );
 			}
 		}
 	}
 
-	Size const gap_size_ = job_parameters_->gap_size(); /* If this is zero or one, need to screen or closable chain break */
+	//	Size const gap_size_ = job_parameters_->gap_size(); /* If this is zero or one, need to screen or closable chain break */
 	Size const gap_size_to_anchor_ = job_parameters_->gap_size_to_anchor();
 	if ( rigid_body_sampling_ && gap_size_to_anchor_ == 0 )	runtime_assert( pose.fold_tree().is_cutpoint( moving_res_ - 1 ) );
 

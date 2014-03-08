@@ -565,7 +565,6 @@ figure_out_rebuild_bulge_mode( pose::Pose const & pose, Size const rebuild_res )
 /////////////////////////////////////////////////////////////////////////
 bool
 figure_out_sample_both_sugar_base_rotamer( pose::Pose const & pose, bool const floating_base, Size const rebuild_suite ){
-	kinematics::FoldTree const & f = pose.fold_tree();
 	if ( !floating_base &&
 			 rotamer_sampler::rna::sampling_sugar_at_five_prime(  pose, rebuild_suite ) &&
 			 rotamer_sampler::rna::sampling_sugar_at_three_prime( pose, rebuild_suite ) &&

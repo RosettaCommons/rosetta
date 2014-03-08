@@ -117,8 +117,6 @@ namespace checker {
 		using namespace core::pose;
 		using namespace ObjexxFCL;
 
-		Size const nres = pose.total_residue();
-
 		///////////////////////////////Old_way////////////////////////////////////////////
 		pose::Pose base_pose_screen = pose; //hard copy
 		if ( output_pdb_ )		base_pose_screen.dump_pdb( "base_atr_rep_before.pdb" );
@@ -174,7 +172,6 @@ namespace checker {
 		delta_rep_score_ = rep_score - base_rep_score_;
 		delta_atr_score_ = atr_score - base_atr_score_;
 
-		static Size count( 0 );
 		if ( delta_rep_score_ < (  -0.1 ) ){
 			// changed from -0.01 after triggering in SWM runs -- rhiju, sep. 2013.
 			std::string const message = "delta_rep_score_ = " + string_of( delta_rep_score_ ) + " rep_score = " + string_of( rep_score ) + " base_rep_score = " + string_of( base_rep_score_ );

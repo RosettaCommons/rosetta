@@ -990,7 +990,7 @@ RNA_StructureParameters::setup_chainbreak_variants( pose::Pose & pose )
 		// Don't assign a chainbreak penalty if user said this was an "open" cutpoint.
 		if ( std::find( cutpoints_open_.begin(), cutpoints_open_.end(), cutpos) != cutpoints_open_.end() ) continue;
 
-		core::pose::rna::correctly_position_cutpoint_phosphate_torsions( pose, cutpos, false /*verbose*/ );
+		core::pose::rna::correctly_position_cutpoint_phosphate_torsions( pose, cutpos );
 		pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpos   );
 		pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpos+1 );
 

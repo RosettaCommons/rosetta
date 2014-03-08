@@ -491,15 +491,12 @@ namespace monte_carlo {
 		using namespace core::pose::full_model_info;
 
 		Size const & nres( pose.total_residue() );
-		kinematics::FoldTree const & fold_tree( pose.fold_tree() );
 		FullModelInfo const & full_model_info = const_full_model_info( pose );
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
-		utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
 		utility::vector1< PoseOP > const & other_pose_list = const_full_model_info( pose ).other_pose_list();
 		utility::vector1< Size > const chains_current = figure_out_chains_from_full_model_info_const( pose );
 		utility::vector1< Size > const chains_full = get_chains_full( pose );
 		utility::vector1< Size > const current_unique_chains = get_unique_chains( pose );
-		Size nres_full = full_model_info.full_sequence().size();
 
 		if ( res_list.size() == 0 ) return;
 

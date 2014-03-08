@@ -1891,7 +1891,7 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////
 	void
 	setup_chain_break_variants( core::pose::Pose & pose,  Size const cutpoint ){
-		pose::rna::correctly_position_cutpoint_phosphate_torsions( pose, cutpoint, false /*verbose*/ );
+		pose::rna::correctly_position_cutpoint_phosphate_torsions( pose, cutpoint );
 		pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpoint   );
 		pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpoint + 1 );
 	}

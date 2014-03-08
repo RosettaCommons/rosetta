@@ -130,8 +130,6 @@ namespace rna {
 		Size const move_element_size = swa_move.move_element().size();
 
 		if ( is_single_attachment ) {
-			Attachment const & attachment = swa_move.attachments()[ 1 ];
-			AttachmentType const & attachment_type = attachment.attachment_type();
 			remodel_res = get_remodel_res( swa_move, pose );
 			if ( slide_intermolecular_jumps_ && swa_move.attachment_type() == JUMP_INTERCHAIN ) slide_jump_randomly( pose, remodel_res );
 		} else { // an internal residue or move_element, with two attachments.

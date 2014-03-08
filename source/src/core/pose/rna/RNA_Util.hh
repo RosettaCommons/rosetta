@@ -99,7 +99,7 @@ correctly_add_cutpoint_variants( core::pose::Pose & pose,
 																 bool const check_fold_tree = true );
 
 void
-correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size const five_prime_chainbreak,  bool verbose = false );
+correctly_position_cutpoint_phosphate_torsions( pose::Pose & current_pose, Size const five_prime_chainbreak );
 
 } //ns rna
 } //ns pose
