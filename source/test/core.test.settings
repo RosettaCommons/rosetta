@@ -222,7 +222,7 @@ sources = {
 		"EtableEnergy",
 		"EtableUnModifyPot",
 		"TableVsAnalyticEtable",
-		"VectorizedEtable",
+		#"VectorizedEtable",
 	],
 	"scoring/geometric_solvation" : [
 		"GeometricSolEnergy",
