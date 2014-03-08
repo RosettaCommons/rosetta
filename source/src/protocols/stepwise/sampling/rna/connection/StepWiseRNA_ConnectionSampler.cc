@@ -131,7 +131,7 @@ namespace connection {
 
 //Constructor
 StepWiseRNA_ConnectionSampler::StepWiseRNA_ConnectionSampler( StepWiseRNA_JobParametersCOP & job_parameters ):
-	moving_res_( job_parameters_->working_moving_res() ),
+	moving_res_( job_parameters->working_moving_res() ),
 	reference_res_( 0 ), // updated below.
 	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "rna_hires.wts" ) ), // can be replaced from the outside
 	silent_file_( "silent_file.txt" ),
@@ -144,7 +144,7 @@ StepWiseRNA_ConnectionSampler::StepWiseRNA_ConnectionSampler( StepWiseRNA_JobPar
 	build_pose_from_scratch_( job_parameters->working_sequence().length() == ( job_parameters->working_moving_res_list().size() + 1 ) ), // somewhat hacky, used for rna puzzle
 	job_parameters_( job_parameters ) // may deprecate
 {
-	set_native_pose( job_parameters_->working_native_pose() );
+	set_native_pose( job_parameters->working_native_pose() );
 }
 
 //Destructor
