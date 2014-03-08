@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file score_ligand_interactions.cc
+/// @file score_protein_ligand_interactions.cc
 /// @brief score interactions with a given ligand
 /// @author Noah Ollikainen
 /// @author Roland A. Pache, PhD
@@ -57,9 +57,11 @@ bool min_energy(const std::pair<core::Real, std::string>& x, const std::pair<cor
 }
 
 //main
-int
-main( int argc, char * argv [] )
+int main( int argc, char * argv [] )
 {
+
+	try {
+
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -136,4 +138,9 @@ main( int argc, char * argv [] )
 	}
 
 	return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
