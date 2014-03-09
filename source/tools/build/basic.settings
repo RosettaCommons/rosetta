@@ -872,6 +872,14 @@ settings = {
     },
 
     # include python interpreter
+    "clang, python" : {
+        "appends" : {
+            "include_path" : [ "#external/include/python2.7" ],
+            "defines"      : [ "WITH_PYTHON=1" ],
+            "libraries" : [ "python2.7","dl","pthread","util" ],
+        },
+    },
+
     "gcc, python" : {
         "appends" : {
             "include_path" : [ "#external/include/python2.7" ],
