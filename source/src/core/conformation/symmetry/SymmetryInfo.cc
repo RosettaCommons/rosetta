@@ -25,6 +25,7 @@
 
 // Utility headers
 #include <utility/exit.hh>
+#include <utility/vector1.functions.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
@@ -54,11 +55,13 @@ namespace core {
 namespace conformation {
 namespace symmetry {
 
-SymmetryInfo::SymmetryInfo() { 
+SymmetryInfo::SymmetryInfo() {
 	use_symmetry_ = false;
 	score_multiply_factor_ = 1;
 	last_indep_residue_ = 0;
 	reweight_symm_interactions_ = basic::options::option[ basic::options::OptionKeys::symmetry::reweight_symm_interactions ]();
+	contiguous_monomers_ = true;
+	torsion_changes_move_other_monomers_ = false;
 }
 SymmetryInfo::~SymmetryInfo() {}
 
@@ -78,6 +81,8 @@ bool SymmetryInfo::operator!=( SymmetryInfo const & s )
 
 SymmetryInfo::SymmetryInfo( SymmData const & symm_data, Size const nres_subunit, Size const njump_subunit )
 {
+	contiguous_monomers_ = true;
+	torsion_changes_move_other_monomers_ = false;
 	reweight_symm_interactions_ = basic::options::option[ basic::options::OptionKeys::symmetry::reweight_symm_interactions ]();
 	last_indep_residue_ = 0;
 
@@ -118,6 +123,8 @@ SymmetryInfo::SymmetryInfo(
 	std::string const & type
 )
 {
+	contiguous_monomers_ = true;
+	torsion_changes_move_other_monomers_ = false;
 	initialize( nres_monomer, njump_monomer, N, N, dofs, score_subunit,
 		score_multiply_subunit, slide_info, num_interfaces, type );
 }
@@ -144,6 +151,8 @@ SymmetryInfo::initialize(
 	std::string const & type
 )
 {
+	contiguous_monomers_ = true;
+	torsion_changes_move_other_monomers_ = false;
 	reweight_symm_interactions_ = basic::options::option[ basic::options::OptionKeys::symmetry::reweight_symm_interactions ]();
 
 	nres_monomer_ = nres_monomer;
@@ -313,6 +322,8 @@ SymmetryInfo::initialize(
 	std::string const & type
 )
 {
+	contiguous_monomers_ = true;
+	torsion_changes_move_other_monomers_ = false;
 	nres_monomer_ = nres_monomer;
 
 	// set number of interfaces
@@ -635,6 +646,8 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 	Size num_dof, num_score_multiply;
 
 	symminfo.set_use_symmetry(true);
+	symminfo.contiguous_monomers_ = true;
+	symminfo.torsion_changes_move_other_monomers_ = false;
 
 	s >> tag ;
 	if ( tag != "SYMMETRY_INFO" || s.fail() ) {
@@ -978,6 +991,12 @@ SymmetryInfo::num_virtuals() const
 		return npseudo_;
 }
 
+void
+SymmetryInfo::num_virtuals( Size const setting )
+{
+	npseudo_ = setting;
+}
+
 SymmetryInfo::Clones const &
 SymmetryInfo::bb_clones( Size const seqpos ) const
 {
@@ -1101,6 +1120,26 @@ SymmetryInfo::update_nmonomer_jumps( Size njump_monomer ) {
 	set_dofs( dofs_new );
 }
 
+/// this actually only tests to see if the independent residues are contiguous...
+///
+void
+SymmetryInfo::update_contiguous_monomers()
+{
+	utility::vector1< Size > independent_positions;
+	for ( std::map< Size, Size >::const_iterator it= bb_follows_.begin(); it != bb_follows_.end(); ++it ) {
+		if ( it->second == 0 ) independent_positions.push_back( it->first );
+	}
+
+	Size first_indep( utility::min( independent_positions ) ), last_indep( utility::max( independent_positions )),
+		n_indep( independent_positions.size() );
+
+	contiguous_monomers_ = ( last_indep - first_indep + 1 == n_indep );
+
+	// TR.Trace << "SymmetryInfo::update_contiguous_monomers: " << first_indep << ' ' << last_indep << ' '<< n_indep << ' ' <<
+	// 	contiguous_monomers_ << std::endl;
+
+}
+
 void
 SymmetryInfo::add_bb_clone( Size const base_pos, Size const clone_pos )
 {
@@ -1119,6 +1158,7 @@ SymmetryInfo::add_bb_clone( Size const base_pos, Size const clone_pos )
 
 	bb_follows_[ clone_pos ] = base_pos;
 	bb_clones_[ base_pos ].push_back( clone_pos );
+	update_contiguous_monomers();
 }
 
 void
@@ -1238,6 +1278,12 @@ SymmetryInfo::set_score_multiply( Size const res, Size const factor )
 	score_multiply_[ res ] = factor;
 }
 
+void
+SymmetryInfo::set_flat_score_multiply( Size const nres, Size const factor )
+{
+	score_multiply_.clear();
+	score_multiply_.resize( nres, factor );
+}
 
 Size
 SymmetryInfo::get_nres_subunit() const
@@ -1407,7 +1453,23 @@ SymmetryInfo::get_asymmetric_seqpos( Size const res ) const
 
 Size
 SymmetryInfo::subunit_index( Size const seqpos ) const {
-	return ( (seqpos-1) / num_independent_residues() + 1 );
+	if ( contiguous_monomers_ ) {
+		// the old logic
+		return ( (seqpos-1) / num_independent_residues() + 1 );
+	} else {
+		// the new way: this depends critically on the clones all having been added in the same order...
+		// slower, obviously
+		Size const basepos( bb_follows_.find( seqpos )->second );
+		Size index(0);
+		if ( basepos ) {
+			Clones const & clones( bb_clones_.find( basepos )->second );
+			index = std::find( clones.begin(), clones.end(), seqpos ) - clones.begin() + 2;
+		} else {
+			index = 1; // the independent monomer is numbered 1
+		}
+		//TR.Trace << "SymmetryInfo::subunit_index: " << seqpos << ' ' << index << std::endl;
+		return index;
+	}
 }
 
 std::string
@@ -1449,30 +1511,30 @@ SymmetryInfo::get_components() const {
 }
 
 std::map<char,std::pair<Size,Size> > const &
-SymmetryInfo::get_component_bounds() const { 
+SymmetryInfo::get_component_bounds() const {
 	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	return component_bounds_;
 }
 
 std::map<std::string,char> const &
-SymmetryInfo::get_subunit_name_to_component() const { 
+SymmetryInfo::get_subunit_name_to_component() const {
 	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	return name2component_;
 }
 
 std::map<std::string,utility::vector1<char> > const &
-SymmetryInfo::get_jump_name_to_components() const { 
+SymmetryInfo::get_jump_name_to_components() const {
 	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	return jname2components_;
 }
 
-std::map<std::string,utility::vector1<Size> > const & 
+std::map<std::string,utility::vector1<Size> > const &
 SymmetryInfo::get_jump_name_to_subunits() const {
 	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	return jname2subunits_;
 }
 
-std::pair<Size,Size> const & 
+std::pair<Size,Size> const &
 SymmetryInfo::get_component_bounds(char c) const {
 	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	if( component_bounds_.find(c) == component_bounds_.end() ){
@@ -1521,7 +1583,7 @@ SymmetryInfo::get_subunit_name_to_component(std::string const & vname) const {
 	}
 	return name2component_.find(vname)->second;
 }
-utility::vector1<char> const & 
+utility::vector1<char> const &
 SymmetryInfo::get_jump_name_to_components(std::string const & jname) const {
 	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	if( jname2components_.find(jname) == jname2components_.end() ){
@@ -1529,7 +1591,7 @@ SymmetryInfo::get_jump_name_to_components(std::string const & jname) const {
 	}
 	return jname2components_.find(jname)->second;
 }
-utility::vector1<Size> const & 
+utility::vector1<Size> const &
 SymmetryInfo::get_jump_name_to_subunits(std::string const & jname) const {
 	if(components_.size()==0) utility_exit_with_message("function not for use in single component symmetry");
 	if( jname2subunits_.find(jname) == jname2subunits_.end() ){
@@ -1538,7 +1600,7 @@ SymmetryInfo::get_jump_name_to_subunits(std::string const & jname) const {
 	return jname2subunits_.find(jname)->second;
 }
 
-void 
+void
 SymmetryInfo::set_multicomponent_info(
 	Size const & num_components,
 	utility::vector1<char> const & components,

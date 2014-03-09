@@ -100,6 +100,10 @@ SymMinimizerMap::SymMinimizerMap(
 	id::DOF_ID_Mask dof_mask( false );
 	pose::setup_dof_mask_from_move_map( asymm_movemap, pose, dof_mask );
 
+	/// figure out the mapping between dof_id's and torsion_id's, this is needed to correctly tell if a dof is
+	/// independent or dependent
+	pose::setup_dof_to_torsion_map( pose, dof_id2torsion_id_ );
+
 	// this fills the torsion and atom lists
 	DOF_ID temp( id::BOGUS_DOF_ID );
 	pose.atom_tree().root()->setup_min_map( temp, dof_mask, *this );
@@ -110,7 +114,7 @@ SymMinimizerMap::SymMinimizerMap(
 
 	// identify phi/psi/omega...
 	//
-	this->assign_rosetta_torsions( pose );
+	this->assign_rosetta_torsions(); // uses dof_id2torsion_id_ mapping that was set up above
 
 
 	/// STOLEN directly from MinimizerMap.cc
@@ -137,9 +141,20 @@ SymMinimizerMap::add_torsion(
 	DOF_ID const & parent
 )
 {
-	//std::cout << "add torsion: " << new_torsion.atomno() << " " << new_torsion.rsd() << " " << new_torsion.type();// << std::endl;
-	//std::cout << "add torsion parent: " << parent.atomno() << " " << parent.rsd() << " " << parent.type() << std::endl;
-	if ( symm_info_->dof_is_independent( new_torsion, pose_.conformation() ) ) {
+	// std::cout << "add torsion: " << new_torsion.atomno() << " " << new_torsion.rsd() << " " << new_torsion.type();// << std::endl;
+	// std::cout << "add torsion parent: " << parent.atomno() << " " << parent.rsd() << " " << parent.type() << std::endl;
+
+	/// which kind of torsion is this guy
+	id::TorsionID const & tor_id( dof_id2torsion_id_[ new_torsion ] );
+
+	bool const independent( tor_id.valid() ? symm_info_->torsion_is_independent( tor_id ) :
+													symm_info_->dof_is_independent( new_torsion, pose_.conformation() ) );
+
+	// std::cout << "add torsion: " << new_torsion.atomno() << " " << new_torsion.rsd() << " " << new_torsion.type() <<
+	// 	' ' << tor_id <<
+	// 	" ind: " << independent << " parent: " << parent.atomno() << " " << parent.rsd() << " " << parent.type() << std::endl;
+
+	if ( independent ) {
 		//std::cout << " ind"  << std::endl;
 		add_new_dof_node( new_torsion, parent, false );
 		//last_cloned_jump_ = DOF_ID( id::BOGUS_DOF_ID ); // set invalid
@@ -331,11 +346,22 @@ SymMinimizerMap::add_new_dof_node(
 	bool dependent
 )
 {
-	//std::cout << "add new dof node: " << new_torsion.atomno() << " " << new_torsion.rsd() << " " << new_torsion.type() << std::endl;
-	//std::cout << "add new dof node parent: " << parent.atomno() << " " << parent.rsd() << " " << parent.type() << std::endl;
+	id::TorsionID const & parent_tor_id( parent.valid() ? dof_id2torsion_id_[ parent ] : id::BOGUS_TORSION_ID );
+	// std::cout << "add new dof node: " << new_torsion.atomno() << " " << new_torsion.rsd() << " " << new_torsion.type() <<
+	// 	' ' << new_tor_id << ' ' <<new_tor_id.valid() << ' ' << symm_info_->bb_follows( new_torsion.rsd() ) << ' ' <<
+	// 	(  new_tor_id.valid() && symm_info_->torsion_is_independent( new_tor_id ) ) << ' ' <<
+	// 	( !new_tor_id.valid() && symm_info_->bb_follows( new_torsion.rsd() ) == 0 ) << std::endl;
 
-	assert( ! parent.valid() || symm_info_->bb_follows( parent.rsd() ) == 0 );
-	assert( symm_info_->bb_follows( new_torsion.rsd() ) == 0 );
+	// std::cout << "add new dof node parent: " << parent.atomno() << " " << parent.rsd() << " " << parent.type() << ' ' <<
+	// 	parent_tor_id << std::endl;
+
+	runtime_assert( ! parent.valid() ||
+									(  parent_tor_id.valid() && symm_info_->torsion_is_independent( parent_tor_id ) ) ||
+									( !parent_tor_id.valid() && symm_info_->bb_follows( parent.rsd() ) == 0 ) );
+
+	// runtime_assert( (  new_tor_id.valid() && symm_info_->torsion_is_independent( new_tor_id ) ) ||
+	// 								( !new_tor_id.valid() && symm_info_->bb_follows( new_torsion.rsd() ) == 0 ) );
+
 	DOF_NodeOP dof_node = new DOF_Node( new_torsion, DOF_NodeOP( 0 ) );
 
 	if ( parent.valid() ) {
@@ -375,13 +401,13 @@ SymMinimizerMap::asymmetric_dof( DOF_ID const & cloned_dof ) const
 }
 
 void
-SymMinimizerMap::assign_rosetta_torsions( pose::Pose const & pose )
+SymMinimizerMap::assign_rosetta_torsions()
 {
 	// mapping from AtomTree DOF ID's to bb/chi torsion angle ids
-	id::DOF_ID_Map< id::TorsionID > dof_map
-		( id::BOGUS_TORSION_ID);
-
-	pose::setup_dof_to_torsion_map( pose, dof_map );
+	//id::DOF_ID_Map< id::TorsionID > dof_map
+	//	( id::BOGUS_TORSION_ID);
+	//pose::setup_dof_to_torsion_map( pose, dof_map ); // we already did this
+	id::DOF_ID_Map< id::TorsionID > const & dof_map( dof_id2torsion_id_ );
 
 	for ( const_iterator it = dof_nodes_.begin(), it_end = dof_nodes_.end();
 				it != it_end; ++it ) {

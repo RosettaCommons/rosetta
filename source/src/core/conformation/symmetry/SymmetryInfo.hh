@@ -136,6 +136,12 @@ public:
 
 	Size subunits() const;
 
+	bool contiguous_monomers() const { return contiguous_monomers_; }
+
+	// we rely on the user to set this properly, for the time being...
+	bool torsion_changes_move_other_monomers() const { return torsion_changes_move_other_monomers_; }
+	void torsion_changes_move_other_monomers( bool const setting ) { torsion_changes_move_other_monomers_ = setting;}
+
 	Size subunit_index( Size const seqpos ) const;
 
 	Size score_multiply_factor() const;
@@ -154,6 +160,8 @@ public:
 	Size num_interfaces() const;
 	Size num_virtuals() const;
 	Size last_independent_residue() const;
+
+	void num_virtuals( Size const setting );
 
 	Size get_nres_subunit() const;  //fpd same as num_independent_residues?
 	Size get_njumps_subunit() const;
@@ -196,6 +204,7 @@ public:
 	Real deriv_multiply( Size const res1, Size const res2 ) const;
 	void set_score_multiply_from_subunit_factors( utility::vector1< Size > const & score_multiply_vector_subunit, Size const nres_subunit, Size const n_subunits );
 	void set_score_multiply( Size const res, Size const factor );
+	void set_flat_score_multiply( Size const nres, Size const factor );
 	bool get_use_symmetry() const;
 
 	void set_use_symmetry( bool setting );  //fpd  used in silent file reading(?)
@@ -246,6 +255,8 @@ public:
 	utility::vector1<Size> const & get_jump_name_to_subunits  (std::string const & jname) const;
 
 private:
+	void
+	update_contiguous_monomers();
 
 #ifdef USEBOOSTSERIALIZE
 	friend class boost::serialization::access;
@@ -321,6 +332,9 @@ private:
 
 	std::map<Size,std::string> jnum2dofname_;
 	std::map<std::string,Size> dofname2jnum_;
+
+	bool contiguous_monomers_; // are the residues in each monomer sequence-contiguous
+	bool torsion_changes_move_other_monomers_; // if we change a backbone torsion in one monomer, do other monomers move?
 
 	Size num_components_;
 	utility::vector1<char> components_;

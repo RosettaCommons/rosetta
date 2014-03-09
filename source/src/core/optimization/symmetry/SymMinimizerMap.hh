@@ -21,6 +21,7 @@
 #include <core/optimization/DOF_Node.fwd.hh>
 
 // Project headers
+#include <core/id/TorsionID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/DOF_ID_Map.hh>
 #include <core/kinematics/MinimizerMapBase.hh>
@@ -191,7 +192,7 @@ private:
 	/// @brief Convert a cloned dof into its equivalent in the asymmetric unit
 	id::DOF_ID asymmetric_dof( DOF_ID const & cloned_dof ) const;
 
-	void assign_rosetta_torsions( pose::Pose const & pose );
+	void assign_rosetta_torsions();
 
 
 private:
@@ -210,6 +211,9 @@ private:
 	kinematics::DomainMap domain_map_;
 
 	utility::vector1< utility::vector1< scoring::DerivVectorPair > > atom_derivatives_;
+
+	/// adding this guy so we can tell more accurately which dof's are dependent/independent
+	id::DOF_ID_Map< id::TorsionID > dof_id2torsion_id_;
 
 };
 

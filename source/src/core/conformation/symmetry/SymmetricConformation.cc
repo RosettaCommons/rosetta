@@ -29,6 +29,7 @@
 
 #include <core/conformation/PointGraph.fwd.hh>
 #include <core/conformation/PointGraphData.hh>
+#include <core/conformation/ResidueFactory.hh>
 #include <core/graph/UpperEdgeGraph.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
@@ -120,6 +121,7 @@ SymmetricConformation::set_dof( DOF_ID const & id, Real const setting )
 	typedef SymmetryInfo::DOF_IDs DOF_IDs;
 
 	core::Size parent_rsd;
+	if ( symm_info_->torsion_changes_move_other_monomers() ) Tsymm_.clear();
 
 	if ( !symm_info_->dof_is_independent( id, *this ) ) {
 		TR.Debug << "SymmetricConformation:: directly setting a dependent DOF!, try to set its parent" << std::endl;
@@ -183,6 +185,7 @@ SymmetricConformation::set_torsion( id::TorsionID const & id, Real const setting
 	typedef SymmetryInfo::TorsionIDs TorsionIDs;
 
 	TR.Trace << "SymmetricConformation: set_torsion: " << id << ' ' << setting << std::endl;
+	if ( symm_info_->torsion_changes_move_other_monomers() ) Tsymm_.clear();
 
 	core::Size parent_rsd;
 
@@ -219,6 +222,7 @@ SymmetricConformation::set_torsion_angle(
 	AtomID parent_atom1, parent_atom2, parent_atom3, parent_atom4;
 
 	TR.Trace << "SymmetricConformation: set_torsion_angle: " << atom1 << "+ to " << setting << std::endl;
+	if ( symm_info_->torsion_changes_move_other_monomers() ) Tsymm_.clear();
 
 	// assume if 1st atom is dependent, all are
 	if ( !symm_info_->bb_is_independent( atom1.rsd() ) ) {
@@ -267,6 +271,7 @@ SymmetricConformation::set_bond_angle(
 	AtomID parent_atom1, parent_atom2, parent_atom3;
 
 	TR.Trace << "SymmetricConformation: set_bond_angle: " << atom1 << "+ to " << setting << std::endl;
+	if ( symm_info_->torsion_changes_move_other_monomers() ) Tsymm_.clear();
 
 	// assume if 1st atom is dependent, all are
 	if ( !symm_info_->bb_is_independent( atom1.rsd() ) ) {
@@ -309,6 +314,7 @@ SymmetricConformation::set_bond_length(
 	AtomID parent_atom1, parent_atom2;
 
 	TR.Trace << "SymmetricConformation: set_bond_length: " << atom1 << "+ to " << setting << std::endl;
+	if ( symm_info_->torsion_changes_move_other_monomers() ) Tsymm_.clear();
 
 	// assume if 1st atom is dependent, all are
 	if ( !symm_info_->bb_is_independent( atom1.rsd() ) ) {
@@ -627,12 +633,119 @@ SymmetricConformation::recalculate_transforms( ) {
 
 	// rebuild based on virtuals
 	core::Size nsubunits = symm_info_->subunits();
-	core::Size nresMonomer = symm_info_->num_independent_residues();
+	//core::Size nresMonomer = symm_info_->num_independent_residues();
 
-	for (int i=1; i<=(int)nsubunits; ++i) {
+	FoldTree const & f( fold_tree() );
+
+	ResidueOP vrt_res_op( 0 ); // maybe unused
+
+	// check to see if all subunits have an upstream jump to vrt res
+	// do this because in some setups only one subunit has an upstream jump from a vrt res, would be
+	// bad to use for that guy and not others
+	bool each_subunit_has_vrt_control( true );
+	{ // scope
+		for ( Size isub=1; isub <= nsubunits; ++isub ) {
+			Size vrt_ctrl(0);
+			for ( Size j=1; j<= f.num_jump(); ++j ) {
+				if ( this->residue( f.upstream_jump_residue(j) ).aa() == chemical::aa_vrt &&
+						 symm_info_->subunit_index( f.downstream_jump_residue(j) ) == isub ) {
+					vrt_ctrl = f.upstream_jump_residue(j);
+					//TR.Trace << "Found control virtual: subunit= " << isub << " vrt_ctrl= " << vrt_ctrl << std::endl;
+					break;
+				}
+			}
+			if ( !vrt_ctrl ) {
+				each_subunit_has_vrt_control = false;
+				break;
+			}
+		}
+	}
+
+
+	for ( Size isub=1; isub <= nsubunits; ++isub ) {
+
+		// find upstream virtual... make this a separate function?
+		Size vrt_ctrl(0);
+		if ( each_subunit_has_vrt_control ) {
+			for ( Size j=1; j<= f.num_jump(); ++j ) {
+				if ( this->residue( f.upstream_jump_residue(j) ).aa() == chemical::aa_vrt &&
+						 symm_info_->subunit_index( f.downstream_jump_residue(j) ) == isub ) {
+					vrt_ctrl = f.upstream_jump_residue(j);
+					//TR.Trace << "Found control virtual: subunit= " << isub << " vrt_ctrl= " << vrt_ctrl << std::endl;
+					break;
+				}
+			}
+		}
+
+		ResidueCAP vrt_res_cap(0);
+		if ( vrt_ctrl ) {
+			vrt_res_cap = &( residue( vrt_ctrl ) ); /// the standard logic, if virtual rsds are present
+
+		} else {
+			//runtime_assert( symm_info_->num_virtuals() == 0 ); // not necessarily
+
+			/// construct a pseudo virtual using the "first residue in each monomer"
+			Size first_independent_res( 0 );
+			for ( Size i=1; i<= this->size(); ++i ) {
+				if ( symm_info_->chi_is_independent( i ) ) {
+					first_independent_res = i;
+					break;
+				}
+			}
+			runtime_assert( first_independent_res );
+
+			Size coordframe_pos( 0 );
+			if ( symm_info_->subunit_index( first_independent_res ) == isub ) {
+				// we are the independent monomer; note that indep monomer not necessarily numbered 1...
+				coordframe_pos = first_independent_res;
+			} else {
+				for ( Size i=1; i<= this->size(); ++i ) {
+					if ( symm_info_->chi_follows(i) == first_independent_res &&
+							 symm_info_->subunit_index(i) == isub ) {
+						coordframe_pos = i;
+						break;
+					}
+				}
+			}
+			if ( !coordframe_pos ) {
+				std::cout << "unable to get coordframe_pos: " << isub << ' ' << first_independent_res << std::endl;
+				for ( Size i=1; i<= this->size(); ++i ) {
+					std::cout << "details: " << i << ' ' << symm_info_->chi_follows(i) << ' ' <<
+						symm_info_->subunit_index(i) << std::endl;
+				}
+			}
+			runtime_assert( coordframe_pos );
+			runtime_assert( symm_info_->subunit_index( coordframe_pos ) == isub );
+
+			Residue const & coordframe_rsd( residue( coordframe_pos ) );
+
+			if ( !vrt_res_op ) {
+				/// slow, create residueop
+				vrt_res_op = conformation::ResidueFactory::create_residue( coordframe_rsd.residue_type_set().name_map("VRT"));
+			}
+
+			/// create some reasonable coords based on coordframe_rsd
+			if ( coordframe_rsd.is_protein() ) {
+				Vector const orig( coordframe_rsd.xyz("CA") );
+				Vector const ihat( ( coordframe_rsd.xyz("N") - orig ).normalized() );
+				Vector jhat( coordframe_rsd.xyz("C") - orig );
+				jhat -= ihat.dot( jhat )*ihat;
+				jhat.normalize();
+				runtime_assert( std::abs( ihat.dot( jhat ) ) < 1e-6 ); // should make this an assert
+				vrt_res_op->set_xyz("ORIG", orig );
+				vrt_res_op->set_xyz("X", orig + ihat );
+				vrt_res_op->set_xyz("Y", orig + jhat );
+			} else {
+				/// could pretty easily add dna,rna,etc here
+				utility_exit_with_message("not setup for non-protein residues as anchor-rsds for virtual-rsd-less symm poses");
+			}
+			vrt_res_cap = vrt_res_op();
+		}
+		runtime_assert( vrt_res_cap ); // ensure success
+
 		// find the VRT that builds this res
-		core::Size vrt_ctrl = get_upstream_vrt( nresMonomer*(i-1) + 1 );
-		Residue const &parent_vrt_res = residue( vrt_ctrl );
+		//core::Size vrt_ctrl = get_upstream_vrt( nresMonomer*(i-1) + 1 );
+		Residue const &parent_vrt_res = *vrt_res_cap;
 
 		xyzVector< core::Real > const &orig = parent_vrt_res.atom("ORIG").xyz();
 		xyzVector< core::Real > X = parent_vrt_res.atom("X").xyz() - orig;
