@@ -140,11 +140,12 @@ public:
 
 	/// @brief    Return the anomeric carbon number.
 	/// @details  For linear monosaccharides, this number corresponds to the carbon that is oxidized to the aldehyde
-	/// or ketone.
+	/// or ketone.\n
 	/// See also:\n
-	///  CarbohydrateInfo.anomeric_carbon_name()
-	///  CarbohydrateInfo.is_aldose()
-	///  CarbohydrateInfo.is_ketose()
+	///  CarbohydrateInfo.anomeric_carbon_name()\n
+	///  CarbohydrateInfo.anomeric_carbon_index()\n
+	///  CarbohydrateInfo.is_aldose()\n
+	///  CarbohydrateInfo.is_ketose()\n
 	///  CarbohydrateInfo.is_ulose()
 	core::uint
 	anomeric_carbon() const
@@ -154,9 +155,10 @@ public:
 
 	/// @brief    Return the atom name of the anomeric carbon.
 	/// @details  See also:\n
-	///  CarbohydrateInfo.anomeric_carbon()
-	///  CarbohydrateInfo.is_aldose()
-	///  CarbohydrateInfo.is_ketose()
+	///  CarbohydrateInfo.anomeric_carbon()\n
+	///  CarbohydrateInfo.anomeric_carbon_index()\n
+	///  CarbohydrateInfo.is_aldose()\n
+	///  CarbohydrateInfo.is_ketose()\n
 	///  CarbohydrateInfo.is_ulose()
 	std::string
 	anomeric_carbon_name() const
@@ -165,11 +167,26 @@ public:
 	}
 
 
+	/// @brief    Return the atom index of the anomeric carbon in this ResidueType.
+	/// @details  See also:\n
+	///  CarbohydrateInfo.anomeric_carbon()\n
+	///  CarbohydrateInfo.anomeric_carbon_name()\n
+	///  CarbohydrateInfo.is_aldose()\n
+	///  CarbohydrateInfo.is_ketose()\n
+	///  CarbohydrateInfo.is_ulose()
+	core::uint
+	anomeric_carbon_index() const
+	{
+		return anomeric_carbon_index_;
+	}
+
+
 	/// @brief    Return the cyclic oxygen number or 0, if linear.
 	/// @details  This atom is used as a reference atom for certain torsion angles.\n
 	/// See also:\n
-	///  CarbohydrateInfo.anomeric_carbon()
-	///  CarbohydrateInfo.cyclic_oxygen_name()
+	///  CarbohydrateInfo.anomeric_carbon()\n
+	///  CarbohydrateInfo.cyclic_oxygen_name()\n
+	///  CarbohydrateInfo.cyclic_oxygen_index()
 	core::uint
 	cyclic_oxygen() const
 	{
@@ -179,12 +196,38 @@ public:
 	/// @brief    Return the atom name of the cyclic oxygen.
 	/// @details  This atom is used as a reference atom for certain torsion angles.\n
 	/// See also:\n
-	///  CarbohydrateInfo.cyclic_oxygen()
-	///  CarbohydrateInfo.anomeric_carbon_name()
+	///  CarbohydrateInfo.cyclic_oxygen()\n
+	///  CarbohydrateInfo.anomeric_carbon_name()\n
+	///  CarbohydrateInfo.cyclic_oxygen_index()
 	std::string
 	cyclic_oxygen_name() const
 	{
 		return cyclic_oxygen_name_;
+	}
+
+
+	/// @brief    Return the atom index of the cyclic oxygen in this ResidueType or 0, if linear.
+	/// @details  This atom is used as a reference atom for certain torsion angles.\n
+	/// See also:\n
+	///  CarbohydrateInfo.cyclic_oxygen()\n
+	///  CarbohydrateInfo.cyclic_oxygen_name()\n
+	///  CarbohydrateInfo.anomeric_carbon_index()
+	core::uint
+	cyclic_oxygen_index() const
+	{
+		return cyclic_oxygen_index_;
+	}
+
+
+	/// @brief    Return the atom index of the virtual atom that superimposes with the cyclic oxygen in this
+	/// ResidueType or 0, if linear.
+	/// @details  This atom is used as a reference atom for certain torsion angles.\n
+	/// See also:\n
+	///  CarbohydrateInfo.cyclic_oxygen_index()\n
+	core::uint
+	virtual_cyclic_oxygen_index() const
+	{
+		return virtual_cyclic_oxygen_index_;
 	}
 
 
@@ -435,11 +478,6 @@ public:
 		return modifications_.contains("uronic acid");
 	}
 
-
-	// Torsion angle mappings
-	/// @brief  Return the BB or CHI identifier for the requested glycosidic linkage torsion angle.
-	std::pair<core::id::TorsionType, core::uint> glycosidic_linkage_id(core::uint torsion_index) const;
-
 private:
 	// Private methods /////////////////////////////////////////////////////////
 	// Empty constructor
@@ -478,8 +516,11 @@ private:
 	std::string short_name_;
 	core::uint anomeric_carbon_;  // also indicative of location of aldehyde/ketone oxidation
 	std::string anomeric_carbon_name_;  // string for quick reference
+	core::uint anomeric_carbon_index_;  // atom index of anomeric carbon within ResidueType
 	core::uint cyclic_oxygen_;  // 0 if linear
 	std::string cyclic_oxygen_name_;  // string for quick reference
+	core::uint cyclic_oxygen_index_;  // atom index of anomeric carbon within ResidueType; 0 if linear
+	core::uint virtual_cyclic_oxygen_index_;
 	core::Size n_carbons_;
 	char stereochem_;  // L or D
 	core::Size ring_size_;  // 0 indicates linear
@@ -491,13 +532,6 @@ private:
 	core::uint mainchain_glycosidic_bond_acceptor_;  // 0 if N/A, i.e., if residue type is an upper terminus
 	utility::vector1<core::uint> branch_points_;
 	bool has_exocyclic_linkage_;
-
-	// Torsion angle mappings
-	// Definitions of phi, psi, omega, and nu angles in terms of Rosetta 3 BB and CHI angles for this particular
-	// sugar.  chi angles directly correspond to CHI torsions.  (Other torsion angles further up the side chains can
-	// be accessed and set with CHI torsions but do not have an official designation, so they are not mapped.)
-	utility::vector1<std::pair<core::id::TorsionType, core::uint> > glycosidic_linkage_id_;
-
 
 	RingConformerSetOP conformer_set_;  // set of all possible ring conformers
 

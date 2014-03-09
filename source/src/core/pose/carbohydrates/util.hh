@@ -19,8 +19,12 @@
 
 // Project headers
 #include <core/types.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
+
+// Utility headers
+#include <utility/vector1.hh>
 
 // C++ headers
 #include <string>
@@ -30,12 +34,34 @@ namespace core {
 namespace pose {
 namespace carbohydrates {
 
+// Helper Functions
 /// @brief  Scan through a saccharide residue's connections to find the residue from which it follows or branches.
 core::uint find_seqpos_of_parent_residue(conformation::Residue const & residue);
 
-/// @brief  Scan through the list of atoms connected to a given "connect_atom" and return the first heavy atom found.
-std::string atom_next_to_connect_atom(conformation::Residue const & residue, std::string const connect_atom_name);
+/// @brief  Return pointers to the two residues of the glycosidic bond.
+std::pair<conformation::ResidueCAP, conformation::ResidueCAP> get_glycosidic_bond_residues(Pose const & pose,
+		uint const sequence_position);
 
+/// @brief  Scan through the list of atoms connected to a given "connect_atom" and return the first heavy atom found.
+core::uint atom_next_to_connect_atom(conformation::Residue const & residue, core::uint const connect_atom_index);
+
+
+/// @brief  Return the AtomIDs of the four phi torsion reference atoms.
+utility::vector1<id::AtomID> get_reference_atoms_for_phi(Pose const & pose, uint const sequence_position);
+
+/// @brief  Return the AtomIDs of the four psi torsion reference atoms.
+utility::vector1<id::AtomID> get_reference_atoms_for_psi(Pose const & pose, uint const sequence_position);
+
+/// @brief  Return the AtomIDs of the four omega torsion reference atoms.
+utility::vector1<id::AtomID> get_reference_atoms_for_1st_omega(Pose const & pose, uint const sequence_position);
+
+/// @brief  Return the AtomIDs of the four reference atoms for the requested torsion.
+utility::vector1<id::AtomID> get_reference_atoms(uint const torsion_id,
+		Pose const & pose,
+		uint const sequence_position);
+
+
+// Virtual Atom Alignment
 /// @brief  Set coordinates of virtual atoms (used as angle reference points) within a saccharide residue of the given
 /// conformation.
 void align_virtual_atoms_in_carbohydrate_residue(conformation::Conformation & conf, uint const sequence_position);
@@ -44,12 +70,19 @@ void align_virtual_atoms_in_carbohydrate_residue(conformation::Conformation & co
 /// pose.
 void align_virtual_atoms_in_carbohydrate_residue(Pose & pose, uint const sequence_position);
 
-/// @brief  Calculate and return the phi angle between a saccharide residue of the given pose and the previous residue.
-core::Angle calculate_carbohydrate_phi(Pose const & pose, uint const sequence_position);
 
-/// @brief  Return the number of degrees by which the phi angle between a saccharide residue of the given pose and the
-/// previous residue differs from the BB torsion used by Rosetta.
-core::Angle carbohydrate_phi_offset_from_BB(Pose const & pose, uint const sequence_position);
+// Torsion Access
+// Getters
+/// @brief  Return the requested torsion angle between a saccharide residue of the given pose and the previous residue.
+core::Angle get_glycosidic_torsion(uint const torsion_id, Pose const & pose, uint const sequence_position);
+
+
+// Setters
+/// @brief  Set the requested torsion angle between a saccharide residue of the given pose and the previous residue.
+void set_glycosidic_torsion(uint const torsion_id,
+		Pose & pose,
+		uint const sequence_position,
+		core::Angle const setting);
 
 }  // namespace carbohydrates
 }  // namespace pose

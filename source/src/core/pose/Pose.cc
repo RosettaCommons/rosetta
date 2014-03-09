@@ -695,7 +695,7 @@ Pose::phi( Size const seqpos ) const
 	if (residue_type(seqpos).is_protein()) {
 		return residue(seqpos).mainchain_torsion(phi_torsion);
 	} else /*is carbohydrate*/ {
-		return carbohydrates::calculate_carbohydrate_phi(*this, seqpos);
+		return carbohydrates::get_glycosidic_torsion(phi_torsion, *this, seqpos);
 	}
 }
 
@@ -719,18 +719,13 @@ Pose::set_phi( Size const seqpos, Real const setting )
 	if (residue_type(seqpos).is_protein()) {
 		conformation_->set_torsion( TorsionID( seqpos, BB, phi_torsion ), setting );
 	} else /*is carbohydrate*/ {
-		// The torsion angle BB X+1 (from the previous residue) is the correct bond but has the incorrect reference atoms,
-		// so get the angle offset.
-		uint x = residue_type(seqpos - 1).carbohydrate_info()->mainchain_glycosidic_bond_acceptor();
-		Angle offset = carbohydrates::carbohydrate_phi_offset_from_BB(*this, seqpos);
-		conformation_->set_torsion(TorsionID(seqpos - 1, BB, x + 1), setting - offset);
-		//carbohydrates::align_virtual_atoms_in_carbohydrate_residue(*this, seqpos);
+		carbohydrates::set_glycosidic_torsion(phi_torsion, *this, seqpos, setting);
 	}
 }
 
 /// @details  For proteins, psi is defined as N(n)-CA(n)-C(n)-N(n+1).\n
-/// For aldoses, psi is defined as C1(n)-OX(n-1)-CX(n-1)-CX-1(n-1), where X is the position of the glycosidic linkage.
-/// For 2-ketoses (uloses), replace C1 with C2, etc.
+/// For saccharides, psi is defined as: C(anomeric)(n)-OX(n-1)-CX(n-1)-CX-1(n-1),\n
+/// where X is the position of the glycosidic linkage.
 Real
 Pose::psi( Size const seqpos ) const
 {
@@ -744,19 +739,13 @@ Pose::psi( Size const seqpos ) const
 	if (residue_type(seqpos).is_protein()) {
 		return residue(seqpos).mainchain_torsion(psi_torsion);
 	} else /*is carbohydrate*/ {
-		// To match IUPAC definitions, the value from the previous residue is returned here.
-		// See CarbohydrateInfo::determine_polymer_connections() and glycosidic_linkage_id() for more info.
-		PyAssert((seqpos != 1),
-				"Pose::psi( Size const seqpos ): variable seqpos is out of range for carbohydrates!");
-		TorsionType id_type = residue_type(seqpos - 1).carbohydrate_info()->glycosidic_linkage_id(psi_torsion).first;
-		Size id_num = residue_type(seqpos - 1).carbohydrate_info()->glycosidic_linkage_id(psi_torsion).second;
-		return torsion(TorsionID(seqpos - 1, id_type, id_num));
+		return carbohydrates::get_glycosidic_torsion(psi_torsion, *this, seqpos);
 	}
 }
 
 /// @details  For proteins, psi is defined as N(n)-CA(n)-C(n)-N(n+1).\n
-/// For aldoses, psi is defined as C1(n)-OX(n-1)-CX(n-1)-CX-1(n-1), where X is the position of the glycosidic linkage.
-/// For 2-ketoses (uloses), replace C1 with C2, etc.
+/// For saccharides, psi is defined as: C(anomeric)(n)-OX(n-1)-CX(n-1)-CX-1(n-1),\n
+/// where X is the position of the glycosidic linkage.
 void
 Pose::set_psi( Size const seqpos, Real const setting )
 {
@@ -770,20 +759,13 @@ Pose::set_psi( Size const seqpos, Real const setting )
 	if (residue_type(seqpos).is_protein()) {
 		conformation_->set_torsion( TorsionID( seqpos, BB, psi_torsion ), setting);
 	} else /*is carbohydrate*/ {
-		// To match IUPAC definitions, the value from the previous residue is set here.
-		// See CarbohydrateInfo::determine_polymer_connections() and glycosidic_linkage_id() for more info.
-		PyAssert((seqpos != 1),
-				"Pose::set_psi( Size const seqpos, Real const setting ): variable seqpos is out of range for carbohydrates!");
-		TorsionType id_type = residue_type(seqpos - 1).carbohydrate_info()->glycosidic_linkage_id(psi_torsion).first;
-		Size id_num = residue_type(seqpos - 1).carbohydrate_info()->glycosidic_linkage_id(psi_torsion).second;
-		conformation_->set_torsion(TorsionID(seqpos - 1, id_type, id_num), setting);
-		//carbohydrates::align_virtual_atoms_in_carbohydrate_residue(*this, seqpos);
+		carbohydrates::set_glycosidic_torsion(psi_torsion, *this, seqpos, setting);
 	}
 }
 
 /// @details  For proteins, omega is defined as CA(n)-C(n)-N(n+1)-CA(n+1).
 /// For carbohydrates glycosylated at an exocyclic position,
-/// omega of residue n is defined as OX(n-1)-CX(n-1)-CX-1(n-1)-OX-1(n-1),
+/// omega of residue n is defined as OX(n-1)-CX(n-1)-CX-1(n-1)-CX-2(n-1),
 /// where X is the position of the glycosidic linkage.  (Note that every atom
 /// defining this torsion comes from the previous residue!)
 Real Pose::omega( Size const seqpos ) const
@@ -798,15 +780,7 @@ Real Pose::omega( Size const seqpos ) const
 	if (residue_type(seqpos).is_protein()) {
 		return residue(seqpos).mainchain_torsion(omega_torsion);
 	} else /*is carbohydrate*/ {
-		// To match IUPAC definitions, the value from the previous residue is returned here.
-		// See CarbohydrateInfo::determine_polymer_connections() and glycosidic_linkage_id() for more info.
-		PyAssert((seqpos != 1),
-				"Pose::omega( Size const seqpos ): variable seqpos is out of range for carbohydrates!");
-		PyAssert((residue_type(seqpos - 1).carbohydrate_info()->has_exocyclic_linkage()),
-				"Pose::omega( Size const seqpos ): residue seqpos - 1 does not have an exocyclic glycosidic linkage!");
-		TorsionType id_type = residue_type(seqpos - 1).carbohydrate_info()->glycosidic_linkage_id(omega_torsion).first;
-		Size id_num = residue_type(seqpos - 1).carbohydrate_info()->glycosidic_linkage_id(omega_torsion).second;
-		return torsion(TorsionID(seqpos - 1, id_type, id_num));
+		return carbohydrates::get_glycosidic_torsion(omega_torsion, *this, seqpos);
 	}
 }
 
@@ -827,20 +801,9 @@ Pose::set_omega( Size const seqpos, Real const setting )
 			"Pose::set_omega( Size const seqpos , Real const setting ): "
 			"residue seqpos is not part of a protein or carbohydrate!" );
 	if (residue_type(seqpos).is_protein()) {
-		conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion ),  setting);
+		conformation_->set_torsion( TorsionID( seqpos, BB, omega_torsion ), setting);
 	} else /*is carbohydrate*/ {
-		// To match IUPAC definitions, the value from the previous residue is returned here.
-		// See CarbohydrateInfo::determine_polymer_connections() and glycosidic_linkage_id() for more info.
-		PyAssert((seqpos != 1),
-				"Pose::set_omega( Size const seqpos, Real const setting ): "
-				"variable seqpos is out of range for carbohydrates!");
-		PyAssert((residue_type(seqpos - 1).carbohydrate_info()->has_exocyclic_linkage()),
-				"Pose::set_omega( Size const seqpos, Real const setting ): "
-				"residue seqpos - 1 does not have an exocyclic glycosidic linkage!");
-		TorsionType id_type = residue_type(seqpos - 1).carbohydrate_info()->glycosidic_linkage_id(omega_torsion).first;
-		Size id_num = residue_type(seqpos - 1).carbohydrate_info()->glycosidic_linkage_id(omega_torsion).second;
-		conformation_->set_torsion(TorsionID(seqpos - 1, id_type, id_num), setting);
-		//carbohydrates::align_virtual_atoms_in_carbohydrate_residue(*this, seqpos);
+		carbohydrates::set_glycosidic_torsion(omega_torsion, *this, seqpos, setting);
 	}
 }
 

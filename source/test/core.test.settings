@@ -96,7 +96,7 @@ sources = {
 		"EmbedSearchParamsIO",
 		"EmbedSearchParamsLoader",
 		"EmbedDefIO",
-		"EmbedDefLoader", 
+		"EmbedDefLoader",
         "LoadAllResources",
 	],
     "membrane/geometry" : [
@@ -339,6 +339,7 @@ testinputfiles = [
 	"chemical/carbohydrates/GlcN.pdb",
 	"chemical/carbohydrates/Neu.pdb",
 	"chemical/carbohydrates/beta-psicose.pdb",
+	"chemical/carbohydrates/Lex.pdb",
 	"chemical/carbohydrates/sugar_properties.list",
 	"chemical/carbohydrates/codes_to_roots.map",
 	"chemical/carbohydrates/dummy_conformers.data",

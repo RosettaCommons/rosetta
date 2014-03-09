@@ -107,7 +107,7 @@ main(int argc, char *argv[])
 		test_sugar(lactose);
 
 
-		cout << "---------------------------------------------------------------------------------------------" << endl;
+		/*cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Creating maltotriose from sequence:" << endl;
 
 		ResidueTypeSetCAP residue_set(ChemicalManager::get_instance()->residue_type_set("fa_standard"));
@@ -119,7 +119,7 @@ main(int argc, char *argv[])
 
 		cout << "Sequences:" << endl;
 		cout << " Chain 1: ";
-		cout << maltotriose.chain_sequence(1) << endl;
+		cout << maltotriose.chain_sequence(1) << endl;*/
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
