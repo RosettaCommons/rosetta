@@ -81,8 +81,8 @@ void SequenceAnnotation::_add_seq_label( std::string const& label, vector1_size 
   }
 
   for( Size i = 1; i <= members.size(); ++i ){
-    Size pose_number = members.find(i)->second;
-    pose_to_local_numbers_[pose_number].insert( std::make_pair( label, i ) );
+    Size pose_number = members.at(i);
+    pose_to_local_numbers_.at(pose_number).insert( std::make_pair( label, i ) );
   }
 }
 
@@ -133,7 +133,7 @@ core::Size SequenceAnnotation::resolve_seq( LocalPosition const& local ) const{
     throw utility::excn::EXCN_RangeError( msg.str() );
   }
 
-  return it->second.find( local.position() )->second;
+  return it->second.at( local.position() );
 }
 
 core::Size SequenceAnnotation::resolve_jump( std::string const& label ) const {
