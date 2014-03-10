@@ -1,0 +1,45 @@
+## full-atom 2-amino-2-deoxy sugar patch
+
+NAME 2-NH3+
+TYPES C2_MODIFIED_SUGAR
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+PROPERTY ALDOSE
+NOT VARIANT_TYPE C2_MODIFIED_SUGAR
+END_SELECTOR
+
+BEGIN_CASE
+
+# First, make into a deoxy sugar.
+SET_ATOM_TYPE HO2 VIRT
+SET_MM_ATOM_TYPE HO2 VIRT
+SET_ATOMIC_CHARGE HO2 0.00
+
+SET_ATOM_TYPE O2 VIRT
+SET_MM_ATOM_TYPE O2 VIRT
+SET_ATOMIC_CHARGE O2 0.00
+
+#Next, add the new atoms
+ADD_ATOM  N2  Nlys X    -0.35  ## Is there simply an NH3 anywhere?
+ADD_ATOM 1HN2 Hpol X    0.16   ## Get correct values here and below.
+ADD_ATOM 2HN2 Hpol X    0.16
+ADD_ATOM 3HN2 Hpol X    0.16
+
+ADD_BOND  C2   N2
+ADD_BOND  N2  1HN2
+ADD_BOND  N2  2HN2
+ADD_BOND  N2  3HN2
+
+REDEFINE_CHI 2  C1   C2   N2  1HN2
+
+# Using H2 to define 0 degree torsion angle, to place N2 at same position as (now virtual) O2 allows us to have a single patch file for either (S) or (R) stereochemistry.
+SET_ICOOR  N2     0.00    69.235  1.334  C2    H2    O2
+SET_ICOOR 1HN2  152.671   58.88   0.99   N2    C2    H2
+SET_ICOOR 2HN2   32.671   58.88   0.99   N2    C2    H2
+SET_ICOOR 3HN2  -87.329   58.88   0.99   N2    C2    H2
+
+ADD_PROPERTY 2-AMINO_SUGAR
+ADD_PROPERTY CHARGED
+
+END_CASE

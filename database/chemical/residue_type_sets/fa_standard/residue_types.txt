@@ -70,13 +70,10 @@ residue_types/mineral_surface/HYD.params
 residue_types/mineral_surface/CAL.params
 residue_types/mineral_surface/CO3.params
 #residue_types/mineral_surface/OC3.params
-## residue_types/mineral_surface/Hice.params ##Fails the core/devel/protocol/app unit test do no why?
+## residue_types/mineral_surface/Hice.params ##Fails the core/devel/protocol/app unit test do know why?
 #residue_types/mineral_surface/Oice.params
 #residue_types/mineral_surface/OSi.params
 #residue_types/mineral_surface/Si.params
-
-
-
 
 ## Protonation State Types
 residue_types/protonation_states/ASP_P1.params
@@ -431,6 +428,7 @@ residue_types/carbohydrates/to5-beta-D-Psip.params
 ### Ketononoses
 #### Ketoaldonic Acids (e.g., Sialic Acids)
 residue_types/carbohydrates/to8-alpha-Neup.params
-### Membrane Types 
+
+## Membrane Types
 residue_types/membrane/MEM.params
 residue_types/membrane/EMB.params

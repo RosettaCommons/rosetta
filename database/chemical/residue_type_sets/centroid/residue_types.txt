@@ -3,38 +3,72 @@ ATOM_TYPE_SET centroid
 ELEMENT_SET default
 MM_ATOM_TYPE_SET fa_standard
 ##
-residue_types/ALA.params
-residue_types/ARG.params
-residue_types/ASN.params
-residue_types/ASP.params
-residue_types/CYS.params
-residue_types/CYD.params
-residue_types/CYZ.params
-residue_types/GLN.params
-residue_types/GLU.params
-residue_types/GLY.params
-residue_types/HIS.params
-residue_types/HIS_D.params
-residue_types/ILE.params
-residue_types/LEU.params
-residue_types/LYS.params
-residue_types/MET.params
-residue_types/PHE.params
-residue_types/PRO.params
-residue_types/SER.params
-residue_types/THR.params
-residue_types/TRP.params
-residue_types/TYR.params
-residue_types/VAL.params
-residue_types/VRT.params
+
+## L-CAA Types
+residue_types/l-caa/ALA.params
+residue_types/l-caa/ARG.params
+residue_types/l-caa/ASN.params
+residue_types/l-caa/ASP.params
+residue_types/l-caa/CYS.params
+residue_types/l-caa/CYD.params
+residue_types/l-caa/CYZ.params
+residue_types/l-caa/GLN.params
+residue_types/l-caa/GLU.params
+residue_types/l-caa/GLY.params
+residue_types/l-caa/HIS.params
+residue_types/l-caa/HIS_D.params
+residue_types/l-caa/ILE.params
+residue_types/l-caa/LEU.params
+residue_types/l-caa/LYS.params
+residue_types/l-caa/MET.params
+residue_types/l-caa/PHE.params
+residue_types/l-caa/PRO.params
+residue_types/l-caa/SER.params
+residue_types/l-caa/THR.params
+residue_types/l-caa/TRP.params
+residue_types/l-caa/TYR.params
+residue_types/l-caa/VAL.params
+
+## Nucleic Acid Types
+residue_types/nucleic/dna/ADE.params
+residue_types/nucleic/dna/THY.params
+residue_types/nucleic/dna/CYT.params
+residue_types/nucleic/dna/GUA.params
+
+## Metal Ion Types
 residue_types/metal_ions/ZN.params
 residue_types/metal_ions/MG.params
 residue_types/metal_ions/CA.params
-residue_types/08A.params
-residue_types/08B.params
-residue_types/GUA.params
-residue_types/CYT.params
-residue_types/ADE.params
-residue_types/THY.params
-residue_types/EMB.params
-residue_types/MEM.params
+
+## Rosetta Specific Types
+residue_types/rosetta_specific/VRT.params
+
+## Staple Types
+residue_types/staple/08A.params
+residue_types/staple/08B.params
+
+## Polysaccharide Types (require -include_sugars flag to be loaded in)
+## **These are currently exact copies of the fa .params.**
+### Aldohexoses
+#### Glucoses
+residue_types/carbohydrates/to3-alpha-D-Glcp.params
+residue_types/carbohydrates/to4-alpha-D-Glcp.params
+residue_types/carbohydrates/to4-beta-D-Glcp.params
+residue_types/carbohydrates/to6-alpha-D-Glcp.params
+#### Galactoses
+residue_types/carbohydrates/to4-beta-D-Galp.params
+residue_types/carbohydrates/to4-alpha-L-Fucp.params
+#### Mannoses
+residue_types/carbohydrates/to3-beta-D-Manp.params
+residue_types/carbohydrates/to2-alpha-D-Manp.params
+residue_types/carbohydrates/to3-alpha-D-Manp.params
+### Ketohexoses
+#### Psicoses
+residue_types/carbohydrates/to5-beta-D-Psip.params
+### Ketononoses
+#### Ketoaldonic Acids (e.g., Sialic Acids)
+residue_types/carbohydrates/to8-alpha-Neup.params
+
+## Membrane Types
+residue_types/membrane/EMB.params
+residue_types/membrane/MEM.params

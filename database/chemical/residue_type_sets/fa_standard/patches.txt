@@ -20,17 +20,17 @@ patches/CtermConnect.txt
 ##added by steven combs November 11 2010
 #patches/sc_orbitals.txt
 
-# Added by David P. Nannemann 29 Nov 2012
+## Added by David P. Nannemann 29 Nov 2012
 patches/PtermProteinFull.txt
 
-# dna
+## DNA
 patches/nucleic/dna/LowerDNA.txt
 patches/nucleic/dna/UpperDNA.txt
 patches/nucleic/dna/dna_cutpoint_upper.txt
 patches/nucleic/dna/dna_cutpoint_lower.txt
 patches/nucleic/dna/VirtualDNAPhosphate.txt
 
-# rna
+## RNA
 patches/nucleic/rna/LowerRNA.txt
 patches/nucleic/rna/UpperRNA.txt
 patches/nucleic/rna/rna_cutpoint_lower.txt

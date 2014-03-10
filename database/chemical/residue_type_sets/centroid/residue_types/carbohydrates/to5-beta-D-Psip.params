@@ -1,0 +1,128 @@
+NAME ->5)-beta-D-Psip      # ->5)-beta-D-psicopyranosyl
+IO_STRING Psi Z            # Note lower case!
+TYPE POLYMER
+AA UNK
+ATOM  C2  CH1   X   0.43   # anomeric carbon
+ATOM  C3  CH1   X   0.20
+ATOM  C4  CH1   X   0.20
+ATOM  C5  CH1   X   0.13
+ATOM  O5  OH    X   -0.36
+ATOM  HO5 VIRT VIRT 0.00   # to next residue; allows for consistent chi angles
+ATOM  C6  CH2   X   0.08
+ATOM  O6  OOC   X   -0.36
+ATOM  VO6 VIRT VIRT 0.0
+ATOM  C1  CH2   X   0.15
+ATOM  O1  OH    X   -0.65
+ATOM  O2  VIRT VIRT 0.0    # for internal res, virtual to previous residue; allows for consistent chi angles; replaced with real atoms by patch for lower terminus
+ATOM  O3  OH    X   -0.65
+ATOM  O4  OH    X   -0.65
+ATOM 1H1  Hapo  X   0.05
+ATOM 2H1  Hapo  X   0.05
+ATOM  HO1 Hpol  X   0.40
+ATOM  HO2 VIRT VIRT 0.0    # for internal res, virtual; allows for consistent chi angles; replaced with real atoms by patch for lower terminus
+ATOM  H3  Hapo  X   0.05
+ATOM  HO3 Hpol  X   0.40
+ATOM  H4  Hapo  X   0.05
+ATOM  HO4 Hpol  X   0.40
+ATOM  H5  Hapo  X   0.05
+ATOM 1H6  Hapo  X   0.05
+ATOM 2H6  Hapo  X   0.05
+UPPER_CONNECT O5
+LOWER_CONNECT C2
+BOND  C2   VO6             # cyclic bond
+BOND  C2   C3
+BOND  C3   C4
+BOND  C4   C5
+BOND  C5   O5
+BOND  O5   HO5
+BOND  C2   C1
+BOND  C2   O2
+BOND  C3   O3
+BOND  C4   O4
+BOND  C5   C6
+BOND  C6   O6
+BOND  O6   C2              # cyclic bond
+CUT_BOND  O6   C2          # cyclic bond
+BOND  C1   O1
+BOND  C1  1H1
+BOND  C1  2H1
+BOND  O1   HO1
+BOND  O2   HO2
+BOND  C3   H3
+BOND  O3   HO3
+BOND  C4   H4
+BOND  O4   HO4
+BOND  C5   H5
+BOND  C6  1H6
+BOND  C6  2H6
+CHI 1  C2   C1   O1   HO1
+CHI_ROTAMERS 1   0 0
+CHI_ROTAMERS 1  60 0
+CHI_ROTAMERS 1 120 0
+CHI_ROTAMERS 1 180 0
+CHI_ROTAMERS 1 240 0
+CHI_ROTAMERS 1 300 0
+CHI 2  VO6  C2   O2   HO2  # cannot use O6 to define torsion, since atom tree doesn't treat it as connected; chi(O6-C2-O2-H) -- chi(2) is ambiguous
+CHI_ROTAMERS 2   0 0
+CHI_ROTAMERS 2  60 0
+CHI_ROTAMERS 2 120 0
+CHI_ROTAMERS 2 180 0
+CHI_ROTAMERS 2 240 0
+CHI_ROTAMERS 2 300 0
+CHI 3  C2   C3   O3   HO3
+CHI_ROTAMERS 3   0 0
+CHI_ROTAMERS 3  60 0
+CHI_ROTAMERS 3 120 0
+CHI_ROTAMERS 3 180 0
+CHI_ROTAMERS 3 240 0
+CHI_ROTAMERS 3 300 0
+CHI 4  C3   C4   O4   HO4
+CHI_ROTAMERS 4   0 0
+CHI_ROTAMERS 4  60 0
+CHI_ROTAMERS 4 120 0
+CHI_ROTAMERS 4 180 0
+CHI_ROTAMERS 4 240 0
+CHI_ROTAMERS 4 300 0
+CHI 5  C4   C5   O5   HO5  # duplicates BB 4
+CHI 6  VO6  C2   C1   O1   # chi(O6-C2-C1-O1) -- chi(2) is ambiguous
+CHI_ROTAMERS 6   0 0
+CHI_ROTAMERS 6  60 0
+CHI_ROTAMERS 6 120 0
+CHI_ROTAMERS 6 180 0
+CHI_ROTAMERS 6 240 0
+CHI_ROTAMERS 6 300 0
+NU 1  VO6  C2   C3   C4    # duplicates BB 1, but defined differently
+NU 2  C2   C3   C4   C5    # duplicates BB 2
+NU 3  C3   C4   C5   C6    # duplicates BB 3, but defined differently
+NU 4  C4   C5   C6   O6
+PROPERTIES  POLAR CARBOHYDRATE KETOSE D_SUGAR PYRANOSE BETA_SUGAR
+NBR_ATOM  C3
+NBR_RADIUS 6.091377
+# must build main chain 1st!
+ICOOR_INTERNAL    C2     0.000000    0.000000    0.000000   C2    C3    C4
+ICOOR_INTERNAL    C3     0.000000  180.000000    1.574406   C2    C3    C4
+ICOOR_INTERNAL    C4     0.000000   66.888433    1.470072   C3    C2    C4
+ICOOR_INTERNAL    C5    59.417030   69.265518    1.552162   C4    C3    C2
+ICOOR_INTERNAL    O5    62.033603   68.682981    1.512935   C5    C4    C3
+ICOOR_INTERNAL  UPPER   77.908216   66.144493    1.490711   O5    C5    C4
+ICOOR_INTERNAL    HO5   77.908216   66.144493    1.0        O5    C5    C4
+ICOOR_INTERNAL    C6   -58.633512   75.278652    1.576050   C5    C4    C3
+ICOOR_INTERNAL    O6    59.276113   69.354076    1.493092   C6    C5    C4
+ICOOR_INTERNAL    C1  -179.873347   66.003162    1.545188   C2    C3    C4
+ICOOR_INTERNAL  LOWER -113.553634   64.612569    1.431041   C2    C3    C1
+ICOOR_INTERNAL    O2  -113.553634   64.612569    1.431041   C2    C3    C1
+ICOOR_INTERNAL    O1  -164.557952   85.086488    1.410937   C1    C2    C3
+ICOOR_INTERNAL    O3   111.402413   65.837036    1.386857   C3    C2    C4
+ICOOR_INTERNAL    O4   113.565300   82.066041    1.324664   C4    C3    C5
+ICOOR_INTERNAL    VO6  -55.8657     72.77        1.447      C2    C3    C4  # must build as branch from main chain, unlike O5
+ICOOR_INTERNAL   1H1  -117.477507   67.010862    1.089839   C1    C2    O1
+ICOOR_INTERNAL   2H1  -125.046354   67.052499    1.090000   C1    C2   1H1
+ICOOR_INTERNAL    HO1    8.947610   85.006850    1.054012   O1    C1    C2
+ICOOR_INTERNAL    HO2  -56.556809   65.290133    0.988180   O2    C2    C3
+ICOOR_INTERNAL    H3   124.340584   70.281385    1.103487   C3    C2    O3
+ICOOR_INTERNAL    HO3  -61.798137   73.216133    1.110962   O3    C3    C2
+ICOOR_INTERNAL    H4   122.974132   68.353915    1.099838   C4    C3    O4
+ICOOR_INTERNAL    HO4  -39.896218   85.773159    1.079932   O4    C4    C3
+ICOOR_INTERNAL    H5  -120.534525   68.823624    1.114069   C5    C4    C6
+ICOOR_INTERNAL   1H6   120.161246   70.824998    1.089775   C6    C5    O6
+ICOOR_INTERNAL   2H6   119.665046   70.817090    1.090104   C6    C5   1H6
