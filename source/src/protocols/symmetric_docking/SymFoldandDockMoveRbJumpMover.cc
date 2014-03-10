@@ -17,7 +17,7 @@
 // Package headers
 #include <core/pose/symmetry/util.hh>
 
-#include <protocols/symmetric_docking/SymFoldAndDockCreators.hh>
+#include <protocols/symmetric_docking/SymFoldandDockCreators.hh>
 
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>

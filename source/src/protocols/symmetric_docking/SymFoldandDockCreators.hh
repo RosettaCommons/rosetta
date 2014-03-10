@@ -10,8 +10,8 @@
 /// @file   protocols/symmetric_docking/SymDockProtocolCreator.hh
 /// @brief  Declaration of the MoverCreator class for the SymDockProtocol
 
-#ifndef INCLUDED_protocols_symmetric_docking_SymFoldAndDockCreators_hh
-#define INCLUDED_protocols_symmetric_docking_SymFoldAndDockCreators_hh
+#ifndef INCLUDED_protocols_symmetric_docking_SymFoldandDockCreators_hh
+#define INCLUDED_protocols_symmetric_docking_SymFoldandDockCreators_hh
 
 // Project headers
 #include <protocols/moves/MoverCreator.hh>

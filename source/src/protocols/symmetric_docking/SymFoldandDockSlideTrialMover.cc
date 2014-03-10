@@ -21,7 +21,7 @@
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
 
-#include <protocols/symmetric_docking/SymFoldAndDockCreators.hh>
+#include <protocols/symmetric_docking/SymFoldandDockCreators.hh>
 
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>

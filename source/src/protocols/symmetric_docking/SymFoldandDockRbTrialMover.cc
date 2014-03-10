@@ -24,7 +24,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 
-#include <protocols/symmetric_docking/SymFoldAndDockCreators.hh>
+#include <protocols/symmetric_docking/SymFoldandDockCreators.hh>
 
 // options
 #include <basic/options/option.hh>
