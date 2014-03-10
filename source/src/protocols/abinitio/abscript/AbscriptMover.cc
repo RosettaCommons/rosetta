@@ -423,9 +423,10 @@ StageIDs AbscriptMover::parse_stage_id( std::string const& id_str ) const {
        range != comma_delin.end(); ++range ){
     Strings hyphen_delin = utility::string_split( *range, '-' );
     if( hyphen_delin.size() == 1 ){
-      ids.push_back( id_map_.at( hyphen_delin[0] ) );
+      ids.push_back( id_map_.find( hyphen_delin[0] )->second );
     } else if( hyphen_delin.size() == 2 ){
-      for( StageID id = id_map_.at(hyphen_delin[0]); id <= id_map_.at( hyphen_delin[1] ); increment_stageid(id) ){
+      for( StageID id = id_map_.find( hyphen_delin[0] )->second;
+					 id <= id_map_.find( hyphen_delin[1] )->second; increment_stageid(id) ){
         ids.push_back( id );
       }
     } else {
@@ -448,7 +449,7 @@ void AbscriptMover::register_submover( protocols::moves::MoverOP mover_in,
   }
 
   for( StageIDs::const_iterator id = ids.begin(); id != ids.end(); ++id ){
-    stage_movers_.at( *id )->add_submover( mover, weight );
+    stage_movers_[ *id ]->add_submover( mover, weight );
   }
 }
 
@@ -494,7 +495,7 @@ void AbscriptMover::register_preparer( protocols::moves::MoverOP mover, StageIDs
   }
 
   for( StageIDs::const_iterator id = ids.begin(); id != ids.end(); ++id ){
-    stage_movers_.at( *id )->add_preparer( preparer );
+    stage_movers_[ *id ]->add_preparer( preparer );
   }
 
 }
