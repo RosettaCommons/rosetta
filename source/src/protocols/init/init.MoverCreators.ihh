@@ -54,7 +54,7 @@
 #include <protocols/docking/DockingInitialPerturbationCreator.hh>
 
 #include <protocols/symmetric_docking/SymDockProtocolCreator.hh>
-#include <protocols/symmetric_docking/SymFoldAndDockCreators.hh>
+#include <protocols/symmetric_docking/SymFoldandDockCreators.hh>
 
 #include <protocols/electron_density/SetupForDensityScoringMoverCreator.hh>
 #include <protocols/electron_density/DensityMorphingMoverCreator.hh>
