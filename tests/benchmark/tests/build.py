@@ -68,7 +68,7 @@ def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
     res_code = _S_failed_ if res else _S_finished_
 
-    if not res: output = output.split('\n')[-1]  # truncating log for passed builds.
+    if not res: output = '\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
 
     output = 'Running: {}\n'.format(command_line) + output  # Making sure that exact command line used is stored
 
