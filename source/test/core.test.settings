@@ -87,7 +87,7 @@ sources = {
 		#"silent_file_loader",
 	],
 	"membrane/io" : [
-		#"SpanFileIO",
+		"SpanFileIO",
         #fails on testing server but not on my machine
                 #"SpanFileLoader",
 		"LipsFileIO",
