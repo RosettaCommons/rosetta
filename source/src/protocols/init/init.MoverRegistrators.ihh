@@ -69,6 +69,9 @@ static MoverRegistrator< ncbb::oop::OopDockDesignProtocolCreator > reg_OopDockDe
 static MoverRegistrator< ncbb::oop::OopCreatorMoverCreator > reg_OopCreatorMoverCreator;
 
 static MoverRegistrator< symmetric_docking::SymDockProtocolCreator > SymDockProtocolCreator;
+static MoverRegistrator< symmetric_docking::SymFoldandDockMoveRbJumpMoverCreator > SymFoldandDockMoveRbJumpMoverCreator;
+static MoverRegistrator< symmetric_docking::SymFoldandDockSlideTrialMoverCreator > SymFoldandDockSlideTrialMoverCreator;
+static MoverRegistrator< symmetric_docking::SymFoldandDockRbTrialMoverCreator > SymFoldandDockRbTrialMoverCreator;
 
 static MoverRegistrator< electron_density::SetupForDensityScoringMoverCreator > reg_SetupForDensityScoringMoverCreator;
 static MoverRegistrator< electron_density::BfactorFittingMoverCreator > reg_BfactorFittingMoverCreator;

@@ -24,13 +24,14 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 
 // Utility Headers
 
 namespace protocols {
 namespace symmetric_docking {
-///////////////////////////////////////////////////////////////////////////////
+
 class SymFoldandDockRbTrialMover : public moves::Mover
 {
 public:
@@ -54,18 +55,28 @@ public:
 		core::Real trans_mag
 	);
 
+	// init to defaults
+	void init();
+
 	~SymFoldandDockRbTrialMover(){}
 
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
+	void parse_my_tag(
+			utility::tag::TagCOP tag,
+			basic::datacache::DataMap &,
+			protocols::filters::Filters_map const &,
+			protocols::moves::Movers_map const &,
+			core::pose::Pose const & );
+
 private:
 	core::scoring::ScoreFunctionCOP scorefxn_;
 	bool smooth_move_;
-	core::Real rot_mag_;
-	core::Real trans_mag_;
+	core::Real rot_mag_, trans_mag_;
+	core::Real rot_mag_smooth_, trans_mag_smooth_;
 	core::Size rigid_body_cycles_;
-	bool mc_filter_;
+	bool mc_filter_, rotate_anchor_to_x_;
 };
 
 } // symmetric_docking

@@ -13,27 +13,18 @@
 // Unit headers
 #include <protocols/symmetric_docking/SymFoldandDockMoveRbJumpMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-// AUTO-REMOVED #include <protocols/moves/RigidBodyMover.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 
 // Package headers
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
+#include <protocols/symmetric_docking/SymFoldAndDockCreators.hh>
 
-// options
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
-
-// ObjexxFCL Headers
-
-// C++ Headers
+#include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
-
 #include <utility/vector1.hh>
 
 
@@ -59,6 +50,33 @@ SymFoldandDockMoveRbJumpMover::apply( core::pose::Pose & pose )
 std::string
 SymFoldandDockMoveRbJumpMover::get_name() const {
 	return "SymFoldandDockMoveRbJumpMover";
+}
+
+void
+SymFoldandDockMoveRbJumpMover::parse_my_tag( 
+		utility::tag::TagCOP const,
+		basic::datacache::DataMap & ,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & )
+{
+}
+
+///
+
+std::string
+SymFoldandDockMoveRbJumpMoverCreator::keyname() const {
+    return SymFoldandDockMoveRbJumpMoverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+SymFoldandDockMoveRbJumpMoverCreator::create_mover() const {
+    return new SymFoldandDockMoveRbJumpMover();
+}
+
+std::string
+SymFoldandDockMoveRbJumpMoverCreator::mover_name() {
+    return "SymFoldandDockMoveRbJumpMover";
 }
 
 } // symmetric_docking

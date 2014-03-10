@@ -10,7 +10,6 @@
 /// @brief
 /// @author Ingemar Andre
 
-
 #ifndef INCLUDED_protocols_symmetric_docking_SymFoldAndDockSlideTrialMover_hh
 #define INCLUDED_protocols_symmetric_docking_SymFoldAndDockSlideTrialMover_hh
 
@@ -22,6 +21,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 
 // Utility Headers
@@ -41,13 +41,20 @@ public:
 	// default constructor
 	SymFoldandDockSlideTrialMover();
 
-	//SymFoldandDockSlideTrialMover( std::string const & );
-
 	~SymFoldandDockSlideTrialMover();
 
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
+	void parse_my_tag(
+			utility::tag::TagCOP tag,
+			basic::datacache::DataMap &,
+			protocols::filters::Filters_map const &,
+			protocols::moves::Movers_map const &,
+			core::pose::Pose const & );
+
+private:
+	bool rotate_anchor_to_x_;
 };
 
 } // symmetric_docking

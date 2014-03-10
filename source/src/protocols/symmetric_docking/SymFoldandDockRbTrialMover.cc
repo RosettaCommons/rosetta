@@ -23,16 +23,16 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
+#include <protocols/symmetric_docking/SymFoldAndDockCreators.hh>
 
 // options
 #include <basic/options/option.hh>
 #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
 
-// ObjexxFCL Headers
-
-// C++ Headers
+#include <utility/tag/Tag.hh>
+#include <basic/datacache/DataMap.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -46,36 +46,57 @@ namespace symmetric_docking {
 static basic::Tracer TR("protocols.moves.symmetry.SymFoldandDockRbTrialMover");
 
 SymFoldandDockRbTrialMover::SymFoldandDockRbTrialMover() :
-	Mover( "SymFoldandDockRbTrialMover" ),
-	smooth_move_(false), rot_mag_(8.0), trans_mag_(3.0), rigid_body_cycles_(50), mc_filter_(true)
-{
+	Mover( "SymFoldandDockRbTrialMover" ) {
+	init();
 	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" );
 }
 
 SymFoldandDockRbTrialMover::SymFoldandDockRbTrialMover(
 	core::scoring::ScoreFunctionCOP scorefxn
-) :
-	Mover( "SymFoldandDockRbTrialMover" ),
-	scorefxn_(scorefxn), smooth_move_(false), rot_mag_(8.0), trans_mag_(3.0), rigid_body_cycles_(50), mc_filter_(true)
-{}
+) :	Mover( "SymFoldandDockRbTrialMover" ) {
+	init();
+	scorefxn_ = scorefxn;
+}
 
 SymFoldandDockRbTrialMover::SymFoldandDockRbTrialMover(
 	core::scoring::ScoreFunctionCOP scorefxn,
 	bool smooth_move
-) :
-	Mover( "SymFoldandDockRbTrialMover" ),
-	scorefxn_(scorefxn), smooth_move_(smooth_move), rot_mag_(8.0), trans_mag_(3.0), rigid_body_cycles_(50), mc_filter_(true)
-{}
+) :	Mover( "SymFoldandDockRbTrialMover" )
+{
+	init();
+	scorefxn_ = scorefxn;
+	smooth_move_ = smooth_move;
+}
 
 SymFoldandDockRbTrialMover::SymFoldandDockRbTrialMover(
 	core::scoring::ScoreFunctionCOP scorefxn,
 	bool smooth_move,
 	core::Real rot_mag,
 	core::Real trans_mag
-) :
-	Mover( "SymFoldandDockRbTrialMover" ),
-	scorefxn_( scorefxn), smooth_move_(smooth_move), rot_mag_(rot_mag), trans_mag_(trans_mag)
-{}
+) :	Mover( "SymFoldandDockRbTrialMover" )
+{
+	init();
+	scorefxn_ = scorefxn;
+	smooth_move_ = smooth_move;
+	rot_mag_ = rot_mag;
+	trans_mag_= trans_mag;
+}
+
+void
+SymFoldandDockRbTrialMover::init() {
+	using namespace basic::options;
+
+	// fpd: the decision on whether to use smooth or nonsmooth is deferred to runtime
+	//      for simplicity only expose nonsmooth parameters to RS
+	smooth_move_ = false; // don't expose to RS
+	rot_mag_ = option[ OptionKeys::fold_and_dock::rb_rot_magnitude ]();
+	trans_mag_ = option[ OptionKeys::fold_and_dock::rb_trans_magnitude ]();
+	rot_mag_smooth_ = option[ OptionKeys::fold_and_dock::rot_mag_smooth ]();  // don't expose to RS
+	trans_mag_smooth_ = option[ OptionKeys::fold_and_dock::trans_mag_smooth ]();  // don't expose to RS
+	rigid_body_cycles_ = option[ OptionKeys::fold_and_dock::rigid_body_cycles ]();
+	mc_filter_ = !option[ OptionKeys::fold_and_dock::rigid_body_disable_mc ]();
+	rotate_anchor_to_x_ = option[ OptionKeys::fold_and_dock::rotate_anchor_to_x ]();
+}
 
 void
 SymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
@@ -93,44 +114,9 @@ SymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 
 	TR.Debug << "Rb move applied..." << std::endl;
 
-	core::Real trans_mag_smooth = 0.1;
-	core::Real rot_mag_smooth = 1.0;
-
 	// Docking options
-	if ( smooth_move_ ) {
-		if ( option[ OptionKeys::fold_and_dock::trans_mag_smooth ].user() ) {
-			trans_mag_smooth = option[ OptionKeys::fold_and_dock::trans_mag_smooth ];
-		}
-		if ( option[ OptionKeys::fold_and_dock::rot_mag_smooth ].user() ) {
-			rot_mag_smooth = option[ OptionKeys::fold_and_dock::rot_mag_smooth ];
-		}
-	}
-
-	// overrriding constructor or default values
-	if ( option[ OptionKeys::fold_and_dock::rb_rot_magnitude ].user() )
-	{
-		rot_mag_ = ( option[ OptionKeys::fold_and_dock::rb_rot_magnitude ] );
-	}
-
-	// overrriding constructor or default values
-	if ( option[ OptionKeys::fold_and_dock::rb_trans_magnitude ].user() )
-	{
-		trans_mag_ = ( option[ OptionKeys::fold_and_dock::rb_trans_magnitude ] );
-	}
-
-	core::Real rot_mag_trial = smooth_move_ ? rot_mag_smooth : rot_mag_;
-	core::Real trans_mag_trial = smooth_move_ ? trans_mag_smooth : trans_mag_;
-
-	// overrriding constructor or default values
-	if ( option[ OptionKeys::fold_and_dock::rigid_body_cycles ].user() )
-	{
-		rigid_body_cycles_ = ( option[ OptionKeys::fold_and_dock::rigid_body_cycles ] );
-	}
-
-	if ( option[ OptionKeys::fold_and_dock::rigid_body_disable_mc ].user() )
-	{
-		mc_filter_ = false;
-	}
+	core::Real rot_mag_trial = smooth_move_ ? rot_mag_smooth_ : rot_mag_;
+	core::Real trans_mag_trial = smooth_move_ ? trans_mag_smooth_ : trans_mag_;
 
 	// Setup Monte Carlo object
 	protocols::moves::MonteCarloOP monteCarlo_ = new protocols::moves::MonteCarlo(pose, *scorefxn_, 2.0 );
@@ -139,20 +125,63 @@ SymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 	protocols::rigid::RigidBodyDofSeqPerturbMover rb_perturb =
 		protocols::rigid::RigidBodyDofSeqPerturbMover( dofs , rot_mag_trial, trans_mag_trial );
 
-	if ( option[ OptionKeys::fold_and_dock::rotate_anchor_to_x ].user() ) {
+	if ( rotate_anchor_to_x_ )
 		core::pose::symmetry::rotate_anchor_to_x_axis( pose );
-	}
 
 	for ( Size i = 1; i <= rigid_body_cycles_; ++i ) {
 		rb_perturb.apply( pose );
 		if ( mc_filter_ ) monteCarlo_->boltzmann( pose );
 	}
-	//monteCarlo_->recover_low(pose);
+}
+
+void
+SymFoldandDockRbTrialMover::parse_my_tag( 
+		utility::tag::TagCOP const tag,
+		basic::datacache::DataMap & ,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const & )
+{
+	using namespace core::scoring;
+
+	if( tag->hasOption( "rot_mag" ) ){
+		rot_mag_ = tag->getOption<core::Real>( "rot_mag" );
+	}
+	if( tag->hasOption( "trans_mag" ) ){
+		trans_mag_ = tag->getOption<core::Real>( "trans_mag" );
+	}
+	if( tag->hasOption( "cycles" ) ){
+		rigid_body_cycles_ = tag->getOption<int>( "cycles" );
+	}
+	if( tag->hasOption( "use_mc" ) ){
+		mc_filter_ = !tag->getOption<bool>( "use_mc" );
+	}
+	if( tag->hasOption( "rotate_anchor_to_x" ) ){
+		rotate_anchor_to_x_ = tag->getOption<bool>( "rotate_anchor_to_x" );
+	}
 }
 
 std::string
 SymFoldandDockRbTrialMover::get_name() const {
 	return "SymFoldandDockRbTrialMover";
+}
+
+///
+///
+
+std::string
+SymFoldandDockRbTrialMoverCreator::keyname() const {
+    return SymFoldandDockRbTrialMoverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+SymFoldandDockRbTrialMoverCreator::create_mover() const {
+    return new SymFoldandDockRbTrialMover();
+}
+
+std::string
+SymFoldandDockRbTrialMoverCreator::mover_name() {
+    return "SymFoldandDockRbTrialMover";
 }
 
 

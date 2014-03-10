@@ -17,11 +17,10 @@
 // Unit headers
 #include <protocols/symmetric_docking/SymFoldandDockMoveRbJumpMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 
 // Utility Headers
@@ -42,6 +41,12 @@ public:
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
+	void parse_my_tag(
+			utility::tag::TagCOP tag,
+			basic::datacache::DataMap &,
+			protocols::filters::Filters_map const &,
+			protocols::moves::Movers_map const &,
+			core::pose::Pose const & );
 };
 
 } // symmetric_docking
