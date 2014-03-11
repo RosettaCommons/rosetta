@@ -417,7 +417,7 @@ get_elec_score(
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-int
+void
 process_for_motifs(
 	Pose & pose,
 	std::string & pdb_name,
@@ -425,7 +425,6 @@ process_for_motifs(
 	protocols::motifs::MotifLibrary & motif_lib
 )
 {
-	int retval( 0 );
 	int nres( pose.total_residue() );
 
 	Real dist_threshold( option[ motifs::duplicate_dist_cutoff ]  );
@@ -561,7 +560,7 @@ process_for_motifs(
 
 	} // End loop over residues
 
-	return retval;
+	return;
 }
 
 
@@ -607,7 +606,7 @@ main( int argc, char * argv [] )
 		Pose pose;
 		pose_from_pdb( pose, pdb_file );
 
-		int num_motifs( process_for_motifs( pose, pdb_code, target_aa, motif_lib ) );
+		process_for_motifs( pose, pdb_code, target_aa, motif_lib );
 
 		file_data >> pdb_code;
 	}
