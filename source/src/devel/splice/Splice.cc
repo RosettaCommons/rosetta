@@ -166,7 +166,7 @@ Splice::Splice() :
         allow_all_aa_( false ),
         allow_threading_( true ),
         rtmin_( true ),
-		first_pass_( true ),
+        first_pass_( true ),
 		locked_res_( NULL ),
 		locked_res_id_( ' ' ),
 		checkpointing_file_ ( "" ),
@@ -1116,8 +1116,8 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 	design( tag->getOption< bool >( "design", false ) );
     allow_threading(tag->getOption< bool >("allow_threading", true) );// to stop Splice from threading the Gly and Pro residues from the source - Assaf Alon
     rtmin(tag->getOption< bool >( "rtmin", true ) ); // to prevent splice from doing rtmin when not needed - Assaf Alon
-	allow_all_aa( tag->getOption< bool >( "allow_all_aa", false ) ); // to allow all amino acids in design - Assaf Alon
-	dbase_iterate( tag->getOption< bool >( "dbase_iterate", false ) );
+    allow_all_aa( tag->getOption< bool >( "allow_all_aa", false ) ); // to allow all amino acids in design - Assaf Alon
+    dbase_iterate( tag->getOption< bool >( "dbase_iterate", false ) );
 	if( dbase_iterate() ){ /// put the end_dbase_subset_ variable on the datamap for LoopOver & MC to be sensitive to it
 		std::string const curr_mover_name( tag->getOption< std::string >( "name" ) );
 		data.add( "stopping_condition", curr_mover_name, end_dbase_subset_ );

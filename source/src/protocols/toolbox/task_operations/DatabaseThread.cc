@@ -59,7 +59,6 @@ DatabaseThread::DatabaseThread() : parent(),
     allow_design_around_(true )
 {
     design_.clear(); revert_to_template_.clear(); full_database_.clear(); designable_.clear(); leave_as_is_.clear();
-
 }
 
 DatabaseThread::~DatabaseThread() {}
@@ -82,10 +81,10 @@ DatabaseThread::apply( core::pose::Pose const & pose, core::pack::task::PackerTa
     protocols::toolbox::task_operations::ThreadSequenceOperation thread;
     std::string sequence(pick_sequence_from_database(pose));
     core::Size const nearest_to_start_on_pose( rosetta_scripts::find_nearest_res( pose, *template_pose_, start_res(), 1/*chain*/));
-		if (!designable_.empty()) //if user entered positions to mark for design, label those with 'X'
-		    mark_designable(sequence,pose);
-        if (!leave_as_is_.empty()) //if user entered positions to avoid threading mark those with '_'
-        	mark_leave_as_is(sequence, pose);
+    if (!designable_.empty()) //if user entered positions to mark for design, label those with 'X'
+        mark_designable(sequence,pose);
+    if (!leave_as_is_.empty()) //if user entered positions to avoid threading mark those with '_'
+        mark_leave_as_is(sequence, pose);
     thread.start_res(nearest_to_start_on_pose);
     thread.allow_design_around(allow_design_around_);
     TR<<"Threading the following sequence:"<<std::endl;
@@ -127,8 +126,8 @@ DatabaseThread::pick_sequence_from_database( core::pose::Pose const & pose ) con
             }
     TR<<"Finished reading database "<<database_fname_<<" with "<<sized_database.size()<<" entries of length "<<segment_length<<std::endl;
     core::Size const entry=RG.uniform() * sized_database.size() + 1;
-		TR<<"Picked the sequence:"<<std::endl;
-		TR<<sized_database[entry]<<std::endl;
+    TR<<"Picked the sequence:"<<std::endl;
+    TR<<sized_database[entry]<<std::endl;
     return sized_database[entry];
 }
 
@@ -163,15 +162,14 @@ DatabaseThread::parse_tag(TagCOP tag, DataMap &)
         utility_exit_with_message("cannot open database " + database_fname_ +"\n");
     std::string line;
     while( getline( database, line ) ) { // if length of line is the same as segment length, incorporate into vector of strings.
-            full_database_.push_back( line );
+        full_database_.push_back( line );
     }
-	start_res( tag->getOption< core::Size >( "start_res" ) );
+    start_res( tag->getOption< core::Size >( "start_res" ) );
 	end_res( tag->getOption< core::Size >( "end_res" ) );
 	allow_design_around( tag->getOption< bool >( "allow_design_around", true ) );
     designable(utility::string_split(tag->getOption<std::string>("design_residues",""),',',core::Size()));
     leave_as_is(utility::string_split(tag->getOption<std::string>("keep_original_identity",""),',',core::Size()));
 }
-
 } //namespace protocols
 } //namespace toolbox
 } //namespace task_operations
