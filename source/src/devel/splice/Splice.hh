@@ -169,6 +169,13 @@ public:
 	char locked_res_id() const;
 	std::string checkpointing_file() const;
 	void checkpointing_file( std::string const cf );
+    bool rtmin() const { return rtmin_; }
+	void rtmin( bool const d ){ rtmin_ = d; }
+	bool allow_all_aa() const { return allow_all_aa_; }
+	void allow_all_aa( bool const d ){ allow_all_aa_ = d; }
+	bool allow_threading() const { return allow_threading_; }
+	void allow_threading( bool const s ){ allow_threading_ = s; }
+
 
 	void load_from_checkpoint(); // load relevant internal data during a checkpoint recovery
 	void save_to_checkpoint() const; // save relevant data for future checkpoint recovery
@@ -277,6 +284,10 @@ private:
 	bool design_; //dflt false; design all non-pro/gly residues in template
 	utility::vector1< int > delta_lengths_; // dflt empty; change loop length by how much? 0 is always assumed
 	bool dbase_iterate_; //dflt false;
+    bool allow_all_aa_;//to allow all amino acids (Ask assaf alon)
+    bool allow_threading_;//to allow threading of PRO and GLY residues from the original structure (Ask assaf alon)
+    bool rtmin_;//whether or not to let splice do rtmin following design (Ask assaf alon)
+    
 	bool first_pass_; // dflt true;
 
 	// indices to the subset of the dbase library over which multiple calls iterate

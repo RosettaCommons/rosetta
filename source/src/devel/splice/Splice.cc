@@ -163,6 +163,9 @@ Splice::Splice() :
 		saved_fold_tree_( NULL ),
 		design_( false ),
 		dbase_iterate_( false ),
+        allow_all_aa_( false ),
+        allow_threading_( true ),
+        rtmin_( true ),
 		first_pass_( true ),
 		locked_res_( NULL ),
 		locked_res_id_( ' ' ),
@@ -174,7 +177,7 @@ Splice::Splice() :
 		Pdb4LetName_(""),
 		use_sequence_profiles_( false ),
 		segment_type_( "" )
-{
+ {
 	profile_weight_away_from_interface_ = 1.0;
 	restrict_to_repacking_chain2_ = true;
 	design_shell_ = 6.0;
@@ -632,10 +635,12 @@ Splice::apply( core::pose::Pose & pose )
 	using namespace protocols::toolbox::task_operations;
 	using namespace core::pack::task;
 	ThreadSequenceOperationOP tso = new ThreadSequenceOperation;
-	tso->target_sequence( threaded_seq );
-	tso->start_res( from_res() );
-	tso->allow_design_around( true ); // 21Sep12: from now on the design shell is determined downstream //false );
-	TR<<"Threading sequence: "<<threaded_seq<<" starting from "<<from_res()<<std::endl;
+    if (allow_threading()){
+        tso->target_sequence( threaded_seq );
+        tso->start_res( from_res() );
+        tso->allow_design_around( true ); // 21Sep12: from now on the design shell is determined downstream //false );
+        TR<<"Threading sequence: "<<threaded_seq<<" starting from "<<from_res()<<std::endl;
+    }
 	TaskFactoryOP tf;
 	if( design_task_factory()() == NULL )
 		tf = new TaskFactory;
@@ -651,7 +656,11 @@ Splice::apply( core::pose::Pose & pose )
 
 	tf->push_back( new operation::InitializeFromCommandline );
 	tf->push_back( new operation::NoRepackDisulfides );
-	tf->push_back( tso );
+    if (allow_threading()) {
+        TR<<"THREADING ALLOWED"<<std::endl;
+        tf->push_back( tso );
+    }
+    else TR<<"THREADING NOT ALLOWED"<<std::endl;
 	DesignAroundOperationOP dao = new DesignAroundOperation;
 	dao->design_shell( (design_task_factory()() == NULL ? 0.0 : design_shell()) ); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
 	dao->repack_shell( repack_shell() );
@@ -664,7 +673,10 @@ Splice::apply( core::pose::Pose & pose )
 	for(core::Size res_num=1; res_num <= pose.total_residue(); res_num++ ){
 		if( std::find( pro_gly_res.begin(), pro_gly_res.end(), res_num ) == pro_gly_res.end() ){
 			operation::RestrictAbsentCanonicalAASOP racaas = new operation::RestrictAbsentCanonicalAAS;
-			racaas->keep_aas( "ADEFGHIKLMNPQRSTVWY" ); /// disallow pro/gly/cys/his /// 29Mar13 now allowing all residues other than Cys. Expecting sequence profiles to take care of gly/pro/his
+            if (allow_all_aa())
+                racaas->keep_aas( "ACDEFGHIKLMNPQRSTVWY" ); //allow all amino acids - for the humanization project - Assaf Alon
+            else
+                racaas->keep_aas( "ADEFGHIKLMNPQRSTVWY" ); /// disallow pro/gly/cys/his /// 29Mar13 now allowing all residues other than Cys. Expecting sequence profiles to take care of gly/pro/his
 			racaas->include_residue( res_num );
 			tf->push_back( racaas);
 		}
@@ -873,13 +885,14 @@ Splice::apply( core::pose::Pose & pose )
 		prm.apply( pose );
 		//pose.dump_pdb("before_rtmin.pdb");
 		//After Re-packing we add RotamerTrialMover to resolve any left over clashes, gideonla Aug13
-		TaskFactoryOP tf_rtmin  = new TaskFactory(*tf);//this taskfactory (tf_rttmin) is only used here. I don't want to affect other places in splice, gideonla aug13
-		tf_rtmin->push_back( new operation::RestrictToRepacking()); //W don't rtmin to do design
-		ptask = tf_rtmin()->create_task_and_apply_taskoperations( pose );
-		protocols::simple_moves::RotamerTrialsMinMover rtmin( scorefxn(), *ptask );
-		rtmin.apply(pose);
-		//pose.dump_pdb("after_rtmin.pdb");
-
+        if ( rtmin()){//To prevent rtmin when not needed - Assaf Alon
+            TaskFactoryOP tf_rtmin  = new TaskFactory(*tf);//this taskfactory (tf_rttmin) is only used here. I don't want to affect other places in splice, gideonla aug13
+            tf_rtmin->push_back( new operation::RestrictToRepacking()); //W don't rtmin to do design
+            ptask = tf_rtmin()->create_task_and_apply_taskoperations( pose );
+            protocols::simple_moves::RotamerTrialsMinMover rtmin( scorefxn(), *ptask );
+            rtmin.apply(pose);
+            //pose.dump_pdb("after_rtmin.pdb");
+        }
 	}
 	saved_fold_tree_ = new core::kinematics::FoldTree( pose.fold_tree() );
 	retrieve_values();
@@ -1101,6 +1114,9 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 		template_pose_ = new core::pose::Pose( pose );
 
 	design( tag->getOption< bool >( "design", false ) );
+    allow_threading(tag->getOption< bool >("allow_threading", true) );// to stop Splice from threading the Gly and Pro residues from the source - Assaf Alon
+    rtmin(tag->getOption< bool >( "rtmin", true ) ); // to prevent splice from doing rtmin when not needed - Assaf Alon
+	allow_all_aa( tag->getOption< bool >( "allow_all_aa", false ) ); // to allow all amino acids in design - Assaf Alon
 	dbase_iterate( tag->getOption< bool >( "dbase_iterate", false ) );
 	if( dbase_iterate() ){ /// put the end_dbase_subset_ variable on the datamap for LoopOver & MC to be sensitive to it
 		std::string const curr_mover_name( tag->getOption< std::string >( "name" ) );

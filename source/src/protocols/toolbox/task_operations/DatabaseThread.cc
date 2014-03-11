@@ -81,11 +81,12 @@ DatabaseThread::apply( core::pose::Pose const & pose, core::pack::task::PackerTa
 {
     protocols::toolbox::task_operations::ThreadSequenceOperation thread;
     std::string sequence(pick_sequence_from_database(pose));
+    core::Size const nearest_to_start_on_pose( rosetta_scripts::find_nearest_res( pose, *template_pose_, start_res(), 1/*chain*/));
 		if (!designable_.empty()) //if user entered positions to mark for design, label those with 'X'
 		    mark_designable(sequence,pose);
         if (!leave_as_is_.empty()) //if user entered positions to avoid threading mark those with '_'
         	mark_leave_as_is(sequence, pose);
-    thread.start_res(start_res_);
+    thread.start_res(nearest_to_start_on_pose);
     thread.allow_design_around(allow_design_around_);
     TR<<"Threading the following sequence:"<<std::endl;
     TR<<sequence<<std::endl;
@@ -103,8 +104,11 @@ DatabaseThread::find_length(const core::pose::Pose &pose) const // find the leng
     int const start_end_delta( nearest_to_end_on_pose - nearest_to_start_on_pose + 1);
     if(start_end_delta<0)
         utility_exit_with_message("Difference between start and end residues is negative - Aborting!!!");
-    else
+    else{
+        TR<<"The position on the pose to start is "<<nearest_to_start_on_pose<<std::endl;
+        TR<<"The position on the pose to end is "<<nearest_to_end_on_pose<<std::endl;
         return start_end_delta;
+    }
 }
     
  
@@ -121,7 +125,7 @@ DatabaseThread::pick_sequence_from_database( core::pose::Pose const & pose ) con
     if (sized_database.size()==0){
         utility_exit_with_message("no entries with correct length were found in the database" + database_fname_ );
             }
-    TR<<"Finished reading database with "<<sized_database.size()<<" entries of length "<<segment_length<<std::endl;
+    TR<<"Finished reading database "<<database_fname_<<" with "<<sized_database.size()<<" entries of length "<<segment_length<<std::endl;
     core::Size const entry=RG.uniform() * sized_database.size() + 1;
 		TR<<"Picked the sequence:"<<std::endl;
 		TR<<sized_database[entry]<<std::endl;

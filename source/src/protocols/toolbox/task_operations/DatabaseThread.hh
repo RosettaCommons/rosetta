@@ -37,19 +37,15 @@ namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
-///@details this class is a TaskOperation to prevent repacking of residues not near an interface.
+///@details this class is a TaskOperation to thread sequences from a database.
 class DatabaseThread : public RestrictOperationsBase
 {
 public:
 	typedef RestrictOperationsBase parent;
 
 	DatabaseThread();
-	// Undefined, commenting out to fix PyRosetta build  DatabaseThread( std::string const seq );
-
 	virtual ~DatabaseThread();
-
 	virtual TaskOperationOP clone() const;
-
 	virtual	void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
     virtual void parse_tag( TagCOP, DataMap & );
 
@@ -58,8 +54,6 @@ public:
     std::string pick_sequence_from_database( core::pose::Pose const & pose ) const;
     void mark_designable(std::string & sequence, core::pose::Pose const &) const;
     void mark_leave_as_is(std::string & sequence, core::pose::Pose const &) const;
-    // Undefined, commenting out to fix PyRosetta build  std::string pick_sequence_from_database();
-
 
     //setters and getters for functions in parse my tag:
 
