@@ -1,7 +1,7 @@
 # List of Rosetta command line options.
 
 _(This is an automatically generated file, do not edit!)_
-Generated: 2014-03-06
+Generated: 2014-03-10
 
 _Note that some application specific options may not be present in this list._
 
@@ -3589,6 +3589,22 @@ _Note that some application specific options may not be present in this list._
 <dd>used in dna_motif_collector - hbond_sc energy threshold for a two-residue interaction to determine if it is a motif<br/>Default: -0.3<br/></dd>
 <dt><b>-water_score_cutoff</b> \<Real\></dt>
 <dd>used in dna_motif_collector - h2o_hbond energy threshold for a two-residue interaction to determine if it is a motif<br/>Default: -0.3<br/></dd>
+<dt><b>-pack_min_threshold</b> \<Real\></dt>
+<dd>Used for motif extraction - packing scores below this value will cause a motif to be discarded<br/>Default: -9999.0<br/></dd>
+<dt><b>-pack_max_threshold</b> \<Real\></dt>
+<dd>Used for motif extraction - packing scores above this value will cause a motif to be discarded<br/>Default: 9999.0<br/></dd>
+<dt><b>-hbond_min_threshold</b> \<Real\></dt>
+<dd>Used for motif extraction - hbond scores below this value will cause a motif to be discarded<br/>Default: -9999.0<br/></dd>
+<dt><b>-hbond_max_threshold</b> \<Real\></dt>
+<dd>Used for motif extraction - hbond scores above this value will cause a motif to be discarded<br/>Default: 9999.0<br/></dd>
+<dt><b>-elec_min_threshold</b> \<Real\></dt>
+<dd>Used for motif extraction - fa_elec scores below this value will cause a motif to be discarded<br/>Default: -9999.0<br/></dd>
+<dt><b>-elec_max_threshold</b> \<Real\></dt>
+<dd>Used for motif extraction - fa_elec scores above this value will cause a motif to be discarded<br/>Default: 9999.0<br/></dd>
+<dt><b>-duplicate_dist_cutoff</b> \<Real\></dt>
+<dd>Value for determining whether a motif is different from others already in a library<br/>Default: 1.0<br/></dd>
+<dt><b>-duplicate_angle_cutoff</b> \<Real\></dt>
+<dd>Value for determining whether a motif is different from others already in a library<br/>Default: 0.4<br/></dd>
 <dt><b>-motif_output_directory</b> \<String\></dt>
 <dd>used in dna_motif_collector - path for the directory where all the collected motifs are dumped as 2-residue pdbs<br/></dd>
 <dt><b>-eliminate_weak_motifs</b> \<Boolean\></dt>
@@ -3651,6 +3667,8 @@ _Note that some application specific options may not be present in this list._
 <dd>name of output file for all the best motifs and rotamers or for the dna_motif_collector it is the file where all the motifs are dumped<br/></dd>
 <dt><b>-data_file</b> \<String\></dt>
 <dd>name of output file for any data about how many rotamers and motifs pass what tests, etc<br/></dd>
+<dt><b>-target_aa</b> \<String\></dt>
+<dd>three letter code for the target amino acid for finding motifs<br/>Default: "LEU"<br/></dd>
 <dt><b>-constraint_max</b> \<Real\></dt>
 <dd>highest value for constraint score (before and after minimization) that results in the rotamer being dropped<br/>Range: 0-<br/>Default: 20.0<br/></dd>
 <dt><b>-flex_sugar</b> \<Boolean\></dt>
@@ -5931,7 +5949,7 @@ _Note that some application specific options may not be present in this list._
 <dt><b>-relax_sfxn</b> \<String\></dt>
 <dd>score function for final relaxation step<br/>Default: "score12_full"<br/></dd>
 <dt><b>-pack_sfxn</b> \<String\></dt>
-<dd>score function for mutational trials<br/>Default: "soft_rep_design"<br/></dd>
+<dd>score function for mutational trials<br/>Default: "gauss"<br/></dd>
 <dt><b>-minimizer_tol</b> \<Real\></dt>
 <dd>tolerance for minimization<br/>Default: .0001<br/></dd>
 <dt><b>-minimizer_score_fxn</b> \<String\></dt>

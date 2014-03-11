@@ -1,9 +1,3 @@
-namespace casp { RealOptionKey const opt_radius( "casp:opt_radius" );  }
-namespace casp { BooleanOptionKey const repack( "casp:repack" );  }
-namespace casp { BooleanOptionKey const sc_min( "casp:sc_min" );  }
-namespace casp { BooleanOptionKey const sequential( "casp:sequential" );  }
-namespace casp { RealOptionKey const num_iterations( "casp:num_iterations" );  }
-namespace casp { StringOptionKey const weight_file( "casp:weight_file" );  }
 namespace casp { StringOptionKey const refine_res( "casp:refine_res" );  }
 namespace pose_metrics { BooleanOptionKey const pose_metrics( "pose_metrics" );  }
 namespace pose_metrics { RealOptionKey const atomic_burial_cutoff( "pose_metrics:atomic_burial_cutoff" );  }
@@ -76,6 +70,14 @@ namespace motifs { BooleanOptionKey const keep_motif_xtal_location( "motifs:keep
 namespace motifs { RealOptionKey const pack_score_cutoff( "motifs:pack_score_cutoff" );  }
 namespace motifs { RealOptionKey const hb_score_cutoff( "motifs:hb_score_cutoff" );  }
 namespace motifs { RealOptionKey const water_score_cutoff( "motifs:water_score_cutoff" );  }
+namespace motifs { RealOptionKey const pack_min_threshold( "motifs:pack_min_threshold" );  }
+namespace motifs { RealOptionKey const pack_max_threshold( "motifs:pack_max_threshold" );  }
+namespace motifs { RealOptionKey const hbond_min_threshold( "motifs:hbond_min_threshold" );  }
+namespace motifs { RealOptionKey const hbond_max_threshold( "motifs:hbond_max_threshold" );  }
+namespace motifs { RealOptionKey const elec_min_threshold( "motifs:elec_min_threshold" );  }
+namespace motifs { RealOptionKey const elec_max_threshold( "motifs:elec_max_threshold" );  }
+namespace motifs { RealOptionKey const duplicate_dist_cutoff( "motifs:duplicate_dist_cutoff" );  }
+namespace motifs { RealOptionKey const duplicate_angle_cutoff( "motifs:duplicate_angle_cutoff" );  }
 namespace motifs { StringOptionKey const motif_output_directory( "motifs:motif_output_directory" );  }
 namespace motifs { BooleanOptionKey const eliminate_weak_motifs( "motifs:eliminate_weak_motifs" );  }
 namespace motifs { RealOptionKey const duplicate_motif_cutoff( "motifs:duplicate_motif_cutoff" );  }
@@ -107,6 +109,7 @@ namespace motifs { BooleanOptionKey const quick_and_dirty( "motifs:quick_and_dir
 namespace motifs { RealOptionKey const special_rotweight( "motifs:special_rotweight" );  }
 namespace motifs { StringOptionKey const output_file( "motifs:output_file" );  }
 namespace motifs { StringOptionKey const data_file( "motifs:data_file" );  }
+namespace motifs { StringOptionKey const target_aa( "motifs:target_aa" );  }
 namespace motifs { RealOptionKey const constraint_max( "motifs:constraint_max" );  }
 namespace motifs { BooleanOptionKey const flex_sugar( "motifs:flex_sugar" );  }
 namespace motifs { BooleanOptionKey const clear_bprots( "motifs:clear_bprots" );  }

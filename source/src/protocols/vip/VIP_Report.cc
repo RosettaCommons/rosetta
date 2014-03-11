@@ -40,15 +40,15 @@ VIP_Report::get_GOE_repack_report(
 	bool use_stored,
 	core::Real stored_e
 ){
-        using namespace basic::options;
-        using namespace basic::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	std::ofstream output;
 	std::string fname = option[cp::vipReportFile];
-        output.open( fname.c_str(), std::ios::out | std::ios::app );
+	output.open( fname.c_str(), std::ios::out | std::ios::app );
 
 	output << "Iteration " << it << " :  Found candidate mutations:" << std::endl;
 
-        core::scoring::ScoreFunctionOP sf2 = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::pack_sfxn] );
+	core::scoring::ScoreFunctionOP sf2 = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::pack_sfxn] );
 	protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(sf2);
 	score_em->apply( goe_native );
 
@@ -59,7 +59,7 @@ VIP_Report::get_GOE_repack_report(
 	    if( goe_repack_e[i] < check_E ){
 		    if( goe_repack_res[i]->name() != goe_native.residue(goe_repack_pos[i]).name() ){
 					num_accepted++;
-			output << "Position: " << goe_repack_pos[i] << " Native AA: " << goe_native.residue(goe_repack_pos[i]).name() << "  Mutant AA: " << goe_repack_res[i]->name() << "  ddEgoe: " << goe_native.energies().total_energy() - goe_repack_e[i] << std::endl;}}}
+			output << "Position: " << goe_repack_pos[i] << " Native AA: " << goe_native.residue(goe_repack_pos[i]).name() << "  Mutant AA: " << goe_repack_res[i]->name() << "  ddEgoe: " << goe_repack_e[i] - check_E << std::endl;}}}
 
 	if( num_accepted == 0 ) {
 		output << "Iteration  :  No candidate mutations found!" << std::endl;
@@ -95,13 +95,14 @@ VIP_Report::get_GOE_relaxed_report(
 
 	core::Size num_accepted( 0 );
 	core::Size best_index( 0 );
-	core::Real best_score( -9999.0 );
+	core::Real best_score( 9999.0 );
 	for( core::Size i = 1; i <= goe_relax_e.size(); i++ ){
+//				output << "Check All Score Position: " << goe_native.pdb_info()->number( goe_relax_pos[i] ) << " chain:  " << goe_native.pdb_info()->chain( goe_relax_pos[i] )  << " Native AA: " << goe_native.residue(goe_relax_pos[i]).name() << "  Mutant AA: " << goe_relax_res[i]->name() << "  relax score " << goe_relax_e[i] << " compare with stored " << check_E << std::endl;
 	   if( goe_relax_e[i] < check_E ){
 		    if( goe_relax_res[i]->name() != goe_native.residue(goe_relax_pos[i]).name() ){
 					num_accepted++;
-					core::Real Ediff( goe_native.energies().total_energy() - goe_relax_e[i] );
-					if( Ediff > best_score ) {
+					core::Real Ediff( goe_relax_e[i] - check_E );
+					if( Ediff < best_score ) {
 						best_index = i;
 						best_score = Ediff;
 					}

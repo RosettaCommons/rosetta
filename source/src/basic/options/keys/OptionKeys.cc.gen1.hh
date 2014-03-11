@@ -1,6 +1,3 @@
-namespace jumps { BooleanOptionKey const filter_templates( "jumps:filter_templates" );  }
-namespace templates { BooleanOptionKey const templates( "templates" );  }
-namespace templates { FileOptionKey const config( "templates:config" );  }
 namespace templates { BooleanOptionKey const fix_aligned_residues( "templates:fix_aligned_residues" );  }
 namespace templates { FileOptionKey const fix_frag_file( "templates:fix_frag_file" );  }
 namespace templates { IntegerOptionKey const fix_margin( "templates:fix_margin" );  }
@@ -774,3 +771,9 @@ namespace casp { BooleanOptionKey const casp( "casp" );  }
 namespace casp { StringOptionKey const decoy( "casp:decoy" );  }
 namespace casp { StringOptionKey const wt( "casp:wt" );  }
 namespace casp { StringOptionKey const rots( "casp:rots" );  }
+namespace casp { RealOptionKey const opt_radius( "casp:opt_radius" );  }
+namespace casp { BooleanOptionKey const repack( "casp:repack" );  }
+namespace casp { BooleanOptionKey const sc_min( "casp:sc_min" );  }
+namespace casp { BooleanOptionKey const sequential( "casp:sequential" );  }
+namespace casp { RealOptionKey const num_iterations( "casp:num_iterations" );  }
+namespace casp { StringOptionKey const weight_file( "casp:weight_file" );  }

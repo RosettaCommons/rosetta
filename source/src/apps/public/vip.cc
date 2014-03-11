@@ -64,7 +64,7 @@ main( int argc, char * argv [] )
 		in_pose,
 		option[ OptionKeys::in::file::s ]().vector().front());
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score12_full" );
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::relax_sfxn] );
 	protocols::simple_moves::ScoreMover scoreme = protocols::simple_moves::ScoreMover( scorefxn );
 
 	//	bool iterate = true;

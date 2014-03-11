@@ -156,6 +156,9 @@ sources = {
 	"public/membrane_abinitio": [
 		"membrane_abinitio2",
 	],
+	"public/motif_tools": [
+		"extract_motifs",
+	],
 	"public/ncaa_utilities": [
 		"make_rot_lib",
 		"UnfoldedStateEnergyCalculator",

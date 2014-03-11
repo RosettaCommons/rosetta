@@ -28,6 +28,14 @@ namespace motifs { extern BooleanOptionKey const keep_motif_xtal_location; }
 namespace motifs { extern RealOptionKey const pack_score_cutoff; }
 namespace motifs { extern RealOptionKey const hb_score_cutoff; }
 namespace motifs { extern RealOptionKey const water_score_cutoff; }
+namespace motifs { extern RealOptionKey const pack_min_threshold; }
+namespace motifs { extern RealOptionKey const pack_max_threshold; }
+namespace motifs { extern RealOptionKey const hbond_min_threshold; }
+namespace motifs { extern RealOptionKey const hbond_max_threshold; }
+namespace motifs { extern RealOptionKey const elec_min_threshold; }
+namespace motifs { extern RealOptionKey const elec_max_threshold; }
+namespace motifs { extern RealOptionKey const duplicate_dist_cutoff; }
+namespace motifs { extern RealOptionKey const duplicate_angle_cutoff; }
 namespace motifs { extern StringOptionKey const motif_output_directory; }
 namespace motifs { extern BooleanOptionKey const eliminate_weak_motifs; }
 namespace motifs { extern RealOptionKey const duplicate_motif_cutoff; }
@@ -59,6 +67,7 @@ namespace motifs { extern BooleanOptionKey const quick_and_dirty; }
 namespace motifs { extern RealOptionKey const special_rotweight; }
 namespace motifs { extern StringOptionKey const output_file; }
 namespace motifs { extern StringOptionKey const data_file; }
+namespace motifs { extern StringOptionKey const target_aa; }
 namespace motifs { extern RealOptionKey const constraint_max; }
 namespace motifs { extern BooleanOptionKey const flex_sugar; }
 namespace motifs { extern BooleanOptionKey const clear_bprots; }

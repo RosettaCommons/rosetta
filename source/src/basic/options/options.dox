@@ -1,6 +1,6 @@
 /*!
 @page full_options_list Rosetta command line option descriptions.
-<i>(This is an automatically generated file, do not edit!)</i> Generated: 2014-03-06
+<i>(This is an automatically generated file, do not edit!)</i> Generated: 2014-03-10
 <ul>
 <li><h2>in</h2>
 <dl>
@@ -7922,6 +7922,46 @@
 <dd>Default: -0.3</dd><br>
 </dl>
 <dl>
+<dt><b>-pack_min_threshold</b> \<Real\><dt>
+<dd>Used for motif extraction - packing scores below this value will cause a motif to be discarded</dd><br>
+<dd>Default: -9999.0</dd><br>
+</dl>
+<dl>
+<dt><b>-pack_max_threshold</b> \<Real\><dt>
+<dd>Used for motif extraction - packing scores above this value will cause a motif to be discarded</dd><br>
+<dd>Default: 9999.0</dd><br>
+</dl>
+<dl>
+<dt><b>-hbond_min_threshold</b> \<Real\><dt>
+<dd>Used for motif extraction - hbond scores below this value will cause a motif to be discarded</dd><br>
+<dd>Default: -9999.0</dd><br>
+</dl>
+<dl>
+<dt><b>-hbond_max_threshold</b> \<Real\><dt>
+<dd>Used for motif extraction - hbond scores above this value will cause a motif to be discarded</dd><br>
+<dd>Default: 9999.0</dd><br>
+</dl>
+<dl>
+<dt><b>-elec_min_threshold</b> \<Real\><dt>
+<dd>Used for motif extraction - fa_elec scores below this value will cause a motif to be discarded</dd><br>
+<dd>Default: -9999.0</dd><br>
+</dl>
+<dl>
+<dt><b>-elec_max_threshold</b> \<Real\><dt>
+<dd>Used for motif extraction - fa_elec scores above this value will cause a motif to be discarded</dd><br>
+<dd>Default: 9999.0</dd><br>
+</dl>
+<dl>
+<dt><b>-duplicate_dist_cutoff</b> \<Real\><dt>
+<dd>Value for determining whether a motif is different from others already in a library</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-duplicate_angle_cutoff</b> \<Real\><dt>
+<dd>Value for determining whether a motif is different from others already in a library</dd><br>
+<dd>Default: 0.4</dd><br>
+</dl>
+<dl>
 <dt><b>-motif_output_directory</b> \<String\><dt>
 <dd>used in dna_motif_collector - path for the directory where all the collected motifs are dumped as 2-residue pdbs</dd><br>
 </dl>
@@ -8074,6 +8114,11 @@
 <dl>
 <dt><b>-data_file</b> \<String\><dt>
 <dd>name of output file for any data about how many rotamers and motifs pass what tests, etc</dd><br>
+</dl>
+<dl>
+<dt><b>-target_aa</b> \<String\><dt>
+<dd>three letter code for the target amino acid for finding motifs</dd><br>
+<dd>Default: "LEU"</dd><br>
 </dl>
 <dl>
 <dt><b>-constraint_max</b> \<Real\><dt>
@@ -13143,7 +13188,7 @@
 <dl>
 <dt><b>-pack_sfxn</b> \<String\><dt>
 <dd>score function for mutational trials</dd><br>
-<dd>Default: "soft_rep_design"</dd><br>
+<dd>Default: "gauss"</dd><br>
 </dl>
 <dl>
 <dt><b>-minimizer_tol</b> \<Real\><dt>

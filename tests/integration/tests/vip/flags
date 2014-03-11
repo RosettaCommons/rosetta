@@ -5,3 +5,4 @@
 -cp:print_reports
 -sasa_calculator_probe_radius 1.0
 -run:silent
+-ignore_unrecognized_res

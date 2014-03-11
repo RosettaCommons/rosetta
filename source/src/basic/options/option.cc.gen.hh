@@ -779,12 +779,12 @@ option.add( basic::options::OptionKeys::jumps::dump_frags, "dump jump_fragments 
 option.add( basic::options::OptionKeys::jumps::njumps, "number_of_jumps to select from library for each trajectory (membrane mode)" ).def(1);
 option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
 option.add( basic::options::OptionKeys::jumps::contact_score, "the strand-weight will have a weight * contact_order component" ).def(0.0);
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::filter_templates, "filter hybridization protocol templates" ).def(false);
+option.add( basic::options::OptionKeys::jumps::filter_templates, "filter hybridization protocol templates" ).def(false);
 option.add( basic::options::OptionKeys::templates::templates, "templates option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::templates::config, "read a list of templates and alignments" ).def("templates.dat");
-option.add( basic::options::OptionKeys::templates::fix_aligned_residues, "pick only from template fragments and then keep these residues fixed" ).def(false);
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::templates::fix_aligned_residues, "pick only from template fragments and then keep these residues fixed" ).def(false);
 option.add( basic::options::OptionKeys::templates::fix_frag_file, " fragments from this file are picked once in beginning and then kept fixed" ).def("");
 option.add( basic::options::OptionKeys::templates::fix_margin, "keep n residues at edges of fixed fragments moveable" ).def(1);
 option.add( basic::options::OptionKeys::templates::min_nr_large_frags, "how many large fragments should be present" ).def(100000);
@@ -1557,15 +1557,15 @@ option.add( basic::options::OptionKeys::casp::casp, "casp option group" ).legal(
 option.add( basic::options::OptionKeys::casp::decoy, "No description" );
 option.add( basic::options::OptionKeys::casp::wt, "No description" );
 option.add( basic::options::OptionKeys::casp::rots, "No description" );
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::casp::opt_radius, "optimization radius for repacking and minimization" );
+option.add( basic::options::OptionKeys::casp::opt_radius, "optimization radius for repacking and minimization" );
 option.add( basic::options::OptionKeys::casp::repack, "should we repack the structure?" );
 option.add( basic::options::OptionKeys::casp::sc_min, "should we sidechain minimize the structure?" );
 option.add( basic::options::OptionKeys::casp::sequential, "should mutations be considered in sequence or all together?" );
 option.add( basic::options::OptionKeys::casp::num_iterations, "number of iterations to perform" );
 option.add( basic::options::OptionKeys::casp::weight_file, "what weight-file to use?" );
-option.add( basic::options::OptionKeys::casp::refine_res, "specifies file that contains which residues to refine" );
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::casp::refine_res, "specifies file that contains which residues to refine" );
 option.add( basic::options::OptionKeys::pose_metrics::pose_metrics, "pose_metrics option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff, " maximum SASA that is allowed for an atom to count as buried for the BuriedUnsatisfiedPolarsCalculator" ).def(0.3);
 option.add( basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius, " the probe radius used in the SASA calculator (and thus implicitly in the BuriedUnsatisfiedPolarsCalculator" ).def(1.4);
@@ -1637,6 +1637,14 @@ option.add( basic::options::OptionKeys::motifs::keep_motif_xtal_location, "used 
 option.add( basic::options::OptionKeys::motifs::pack_score_cutoff, "used in dna_motif_collector - fa_atr + fa_rep energy threshold for a two-residue interaction to determine if it is a motif" ).def(-0.5);
 option.add( basic::options::OptionKeys::motifs::hb_score_cutoff, "used in dna_motif_collector - hbond_sc energy threshold for a two-residue interaction to determine if it is a motif" ).def(-0.3);
 option.add( basic::options::OptionKeys::motifs::water_score_cutoff, "used in dna_motif_collector - h2o_hbond energy threshold for a two-residue interaction to determine if it is a motif" ).def(-0.3);
+option.add( basic::options::OptionKeys::motifs::pack_min_threshold, "Used for motif extraction - packing scores below this value will cause a motif to be discarded" ).def(-9999.0);
+option.add( basic::options::OptionKeys::motifs::pack_max_threshold, "Used for motif extraction - packing scores above this value will cause a motif to be discarded" ).def(9999.0);
+option.add( basic::options::OptionKeys::motifs::hbond_min_threshold, "Used for motif extraction - hbond scores below this value will cause a motif to be discarded" ).def(-9999.0);
+option.add( basic::options::OptionKeys::motifs::hbond_max_threshold, "Used for motif extraction - hbond scores above this value will cause a motif to be discarded" ).def(9999.0);
+option.add( basic::options::OptionKeys::motifs::elec_min_threshold, "Used for motif extraction - fa_elec scores below this value will cause a motif to be discarded" ).def(-9999.0);
+option.add( basic::options::OptionKeys::motifs::elec_max_threshold, "Used for motif extraction - fa_elec scores above this value will cause a motif to be discarded" ).def(9999.0);
+option.add( basic::options::OptionKeys::motifs::duplicate_dist_cutoff, "Value for determining whether a motif is different from others already in a library" ).def(1.0);
+option.add( basic::options::OptionKeys::motifs::duplicate_angle_cutoff, "Value for determining whether a motif is different from others already in a library" ).def(0.4);
 option.add( basic::options::OptionKeys::motifs::motif_output_directory, "used in dna_motif_collector - path for the directory where all the collected motifs are dumped as 2-residue pdbs" );
 option.add( basic::options::OptionKeys::motifs::eliminate_weak_motifs, "used to dna_motif_collector - controls whether only the top 1-2 motifs are counted for every protein position in a protein-DNA interface" ).def(true);
 option.add( basic::options::OptionKeys::motifs::duplicate_motif_cutoff, "used in dna_motif_collector - RMSD cutoff for an identical base placed via a motif to see if that motif already exists in a motif library" ).def(0.2);
@@ -1668,6 +1676,7 @@ option.add( basic::options::OptionKeys::motifs::quick_and_dirty, "quick motif ru
 option.add( basic::options::OptionKeys::motifs::special_rotweight, "starting weight for the weight on motif rotamers" ).def(-40.0);
 option.add( basic::options::OptionKeys::motifs::output_file, "name of output file for all the best motifs and rotamers or for the dna_motif_collector it is the file where all the motifs are dumped" );
 option.add( basic::options::OptionKeys::motifs::data_file, "name of output file for any data about how many rotamers and motifs pass what tests, etc" );
+option.add( basic::options::OptionKeys::motifs::target_aa, "three letter code for the target amino acid for finding motifs" ).def("LEU");
 option.add( basic::options::OptionKeys::motifs::constraint_max, "highest value for constraint score (before and after minimization) that results in the rotamer being dropped" ).lower(0).def(20.0);
 option.add( basic::options::OptionKeys::motifs::flex_sugar, "whether or not to add the flexible sugar, not using PB way of adding options" ).def(true);
 option.add( basic::options::OptionKeys::motifs::clear_bprots, "whether or not to clear the rotamers that were read in from a previous run and restart with only the motifs that were read in and the specified rotlevel" ).def(true);
@@ -2703,7 +2712,7 @@ option.add( basic::options::OptionKeys::cp::cp, "cp option group" ).legal(true).
 option.add( basic::options::OptionKeys::cp::cutoff, "designable neighbor cutoff" ).def(16);
 option.add( basic::options::OptionKeys::cp::minimizer, "minimizer to use for initial minimization" ).def("score12_full");
 option.add( basic::options::OptionKeys::cp::relax_sfxn, "score function for final relaxation step" ).def("score12_full");
-option.add( basic::options::OptionKeys::cp::pack_sfxn, "score function for mutational trials" ).def("soft_rep_design");
+option.add( basic::options::OptionKeys::cp::pack_sfxn, "score function for mutational trials" ).def("gauss");
 option.add( basic::options::OptionKeys::cp::minimizer_tol, "tolerance for minimization" ).def(.0001);
 option.add( basic::options::OptionKeys::cp::minimizer_score_fxn, "score function for initial minimization" ).def("score12_full");
 option.add( basic::options::OptionKeys::cp::output, "file where we want to dump the final pose" ).def("final_mutant.pdb");

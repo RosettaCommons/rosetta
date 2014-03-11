@@ -774,3 +774,6 @@ namespace jumps { BooleanOptionKey const dump_frags( "jumps:dump_frags" );  }
 namespace jumps { IntegerOptionKey const njumps( "jumps:njumps" );  }
 namespace jumps { IntegerOptionKey const max_strand_gap_allowed( "jumps:max_strand_gap_allowed" );  }
 namespace jumps { RealOptionKey const contact_score( "jumps:contact_score" );  }
+namespace jumps { BooleanOptionKey const filter_templates( "jumps:filter_templates" );  }
+namespace templates { BooleanOptionKey const templates( "templates" );  }
+namespace templates { FileOptionKey const config( "templates:config" );  }

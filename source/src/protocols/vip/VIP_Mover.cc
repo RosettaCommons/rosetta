@@ -272,7 +272,7 @@ namespace vip {
 		VIP_Report();
 		VIP_Report vip_report;
 
-		vip_report.get_GOE_repack_report( initial_pose, favorable_energies, favorable_residues, favorable_positions, iteration_, use_stored_best_energy, energy_to_beat );
+		vip_report.get_GOE_repack_report( initial_pose, favorable_energies, favorable_residues, favorable_positions, iteration_,  false, energy_to_beat );
 	}
 
 
