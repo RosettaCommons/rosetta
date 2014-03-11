@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#ifndef INCLUDED_protocols_frags_TorsionFragment_fwd_hh
-#define INCLUDED_protocols_frags_TorsionFragment_fwd_hh
+#ifndef INCLUDED_src_devel_blab_classic_frags_TorsionFragment_FWD_HH
+#define INCLUDED_src_devel_blab_classic_frags_TorsionFragment_FWD_HH
 
 
 // Rosetta Headers
@@ -24,15 +24,23 @@ namespace protocols {
 namespace frags {
 
 class TorsionFragment;
+typedef utility::pointer::owning_ptr< TorsionFragment > TorsionFragmentOP;
 
 class SingleResidueTorsionFragmentLibrary;
+typedef utility::pointer::owning_ptr< SingleResidueTorsionFragmentLibrary > SingleResidueTorsionFragmentLibraryOP;
 
 class	TorsionFragmentLibrary;
 typedef utility::pointer::owning_ptr< TorsionFragmentLibrary > TorsionFragmentLibraryOP;
 typedef utility::pointer::owning_ptr< TorsionFragmentLibrary const > TorsionFragmentLibraryCOP;
 
+class FragLib;
+typedef utility::pointer::owning_ptr< FragLib > FragLibOP;
+typedef utility::pointer::owning_ptr< FragLib const > FragLibCOP;
+
+class TorsionFragmentMover;
+typedef utility::pointer::owning_ptr< TorsionFragmentMover > TorsionFragmentMoverOP;
+
 
 } // ns frags
 } // ns protocols
-
 #endif

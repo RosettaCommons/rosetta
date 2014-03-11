@@ -791,7 +791,8 @@ simple_loop_modeling_test()
 	lib.resize( nres - frag_size + 1 );
 	for ( Size i=1; i<= nres-frag_size+1; ++i ) {
 		std::string const frag_seq( target_seq.substr(i-1,3) );
-		vall.get_frags( 200, frag_seq, "---", 1.0, 0.0, false, false, true, lib[i] );
+		utility::vector1< Size > homs_to_exclude;
+		vall.get_frags( 200, frag_seq, "---", 1.0, 0.0, false, false, true, homs_to_exclude, lib[i] );
 	}
 
 
@@ -1267,8 +1268,8 @@ simple_frag_test()
 
 	{
 		SingleResidueTorsionFragmentLibrary lib;
-
-		vall.get_frags( 200, "LLL", "HHH", 1.0, 1.0, true, true, true, lib );
+		utility::vector1< Size > homs_to_exclude;
+		vall.get_frags( 200, "LLL", "HHH", 1.0, 1.0, true, true, true, homs_to_exclude, lib );
 	}
 
 
@@ -1287,7 +1288,8 @@ simple_frag_test()
 	lib.resize( nres - frag_size + 1 );
 	for ( Size i=1; i<= nres-frag_size+1; ++i ) {
 		std::string const frag_seq( sequence.substr(i-1,3) );
-		vall.get_frags( 200, frag_seq, "---", 1.0, 0.0, false, false, true, lib[i] );
+		utility::vector1< Size > homs_to_exclude;
+		vall.get_frags( 200, frag_seq, "---", 1.0, 0.0, false, false, true, homs_to_exclude, lib[i] );
 	}
 
 
