@@ -169,15 +169,14 @@ public:
 	char locked_res_id() const;
 	std::string checkpointing_file() const;
 	void checkpointing_file( std::string const cf );
-    bool rtmin() const { return rtmin_; }
-    void rtmin( bool const d ){ rtmin_ = d; }
-    bool allow_all_aa() const { return allow_all_aa_; }
-    void allow_all_aa( bool const d ){ allow_all_aa_ = d; }
-    bool allow_threading() const { return allow_threading_; }
-    void allow_threading( bool const s ){ allow_threading_ = s; }
-    void load_from_checkpoint(); // load relevant internal data during a checkpoint recovery
-    void save_to_checkpoint() const; // save relevant data for future checkpoint recovery
-
+	bool rtmin() const { return rtmin_; }
+	void rtmin( bool const d ){ rtmin_ = d; }
+	bool allow_all_aa() const { return allow_all_aa_; }
+	void allow_all_aa( bool const d ){ allow_all_aa_ = d; }
+	bool allow_threading() const { return allow_threading_; }
+	void allow_threading( bool const s ){ allow_threading_ = s; }
+	void load_from_checkpoint(); // load relevant internal data during a checkpoint recovery
+	void save_to_checkpoint() const; // save relevant data for future checkpoint recovery
 	std::string loop_dbase_file_name() const;
 	void loop_dbase_file_name( std::string const f );
 	void loop_pdb_source( std::string const l );
@@ -205,8 +204,8 @@ public:
 	void restrict_to_repacking_chain2( bool const r ){ restrict_to_repacking_chain2_ = r; }
 	core::Size get_current_seg() { return current_segment_pos; } ; // getter for the current segemnt number that is being designed
 	bool check_aa(std::string s, utility::vector1<core::Real > profRow);
-    bool add_sequence_constraints_only() const{ return add_sequence_constraints_only_; }
-    void add_sequence_constraints_only( bool const a ){ add_sequence_constraints_only_ = a; }
+	bool add_sequence_constraints_only() const{ return add_sequence_constraints_only_; }
+	void add_sequence_constraints_only( bool const a ){ add_sequence_constraints_only_ = a; }
 
 	bool rb_sensitive() const{ return rb_sensitive_; }
 	void rb_sensitive( bool const r ){ rb_sensitive_ = r;}
@@ -282,9 +281,9 @@ private:
 	bool design_; //dflt false; design all non-pro/gly residues in template
 	utility::vector1< int > delta_lengths_; // dflt empty; change loop length by how much? 0 is always assumed
 	bool dbase_iterate_; //dflt false;
-    bool allow_all_aa_;//to allow all amino acids (Ask assaf alon)
-    bool allow_threading_;//to allow threading of PRO and GLY residues from the original structure (Ask assaf alon)
-    bool rtmin_;//whether or not to let splice do rtmin following design (Ask assaf alon)    
+	bool allow_all_aa_;//to allow all amino acids (Ask assaf alon)
+	bool allow_threading_;//to allow threading of PRO and GLY residues from the original structure (Ask assaf alon)
+	bool rtmin_;//whether or not to let splice do rtmin following design (Ask assaf alon)    
 	bool first_pass_; // dflt true;
 
 	// indices to the subset of the dbase library over which multiple calls iterate
