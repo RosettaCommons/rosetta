@@ -272,6 +272,15 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "co" ] = co;
 	name2score_type_[ "peptide_bond" ] = peptide_bond;
 	name2score_type_[ "pcs" ] = pcs;
+	name2score_type_["pcsTs1"]=pcsTs1;
+	name2score_type_["pcsTs2"]=pcsTs2;
+	name2score_type_["pcsTs3"]=pcsTs3;
+	name2score_type_["pcsTs4"]=pcsTs4;
+	name2score_type_["pcsTs5"]=pcsTs5;
+	name2score_type_["pcsTs6"]=pcsTs6;
+	name2score_type_["pcsTs7"]=pcsTs7;
+	name2score_type_["pcsTs8"]=pcsTs8;
+	name2score_type_["pcsTs9"]=pcsTs9;
 	name2score_type_[ "pcs2" ] = pcs2;
 	name2score_type_[ "dock_ens_conf" ] = dock_ens_conf;
 

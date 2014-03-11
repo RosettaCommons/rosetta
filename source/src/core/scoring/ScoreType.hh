@@ -77,6 +77,15 @@ enum ScoreType {
 	dna_bs,
 	peptide_bond,
 	pcs, //Pseudocontact Shift Energy
+	pcsTs1,
+	pcsTs2,
+	pcsTs3,
+	pcsTs4,
+	pcsTs5,
+	pcsTs6,
+	pcsTs7,
+	pcsTs8,
+	pcsTs9,
 	pcs2, //Pseudocontact Shift Energy version 2. Will replace pcs end of 2010
 
 	fastsaxs,   // fastsaxs agreement using formulation of Stovgaard et al (BMC Bioinf. 2010)

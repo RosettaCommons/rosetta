@@ -33,6 +33,15 @@
 #include <protocols/topology_broker/FoldandDockClaimer.hh>
 #include <protocols/topology_broker/AsymFoldandDockClaimer.hh>
 #include <protocols/topology_broker/PseudocontactShiftEnergyController.hh>
+#include <protocols/topology_broker/PseudocontactShiftEnergyController_Ts1.hh>
+#include <protocols/topology_broker/PseudocontactShiftEnergyController_Ts2.hh>
+#include <protocols/topology_broker/PseudocontactShiftEnergyController_Ts3.hh>
+#include <protocols/topology_broker/PseudocontactShiftEnergyController_Ts4.hh>
+#include <protocols/topology_broker/PseudocontactShiftEnergyController_Ts5.hh>
+#include <protocols/topology_broker/PseudocontactShiftEnergyController_Ts6.hh>
+#include <protocols/topology_broker/PseudocontactShiftEnergyController_Ts7.hh>
+#include <protocols/topology_broker/PseudocontactShiftEnergyController_Ts8.hh>
+#include <protocols/topology_broker/PseudocontactShiftEnergyController_Ts9.hh>
 #include <protocols/topology_broker/PcsEnergyController.hh>
 #include <protocols/topology_broker/FibrilModelingClaimer.hh>
 #include <protocols/topology_broker/BasicJumpClaimer.hh>
@@ -98,6 +107,15 @@ TopologyClaimerFactory::TopologyClaimerFactory() {
 	add_type(new CutBiasClaimer());
 	add_type(new DensityScoringClaimer());
 	add_type(new PseudocontactShiftEnergyController());
+	add_type(new PseudocontactShiftEnergyController_Ts1());
+	add_type(new PseudocontactShiftEnergyController_Ts2());
+	add_type(new PseudocontactShiftEnergyController_Ts3());
+	add_type(new PseudocontactShiftEnergyController_Ts4());
+	add_type(new PseudocontactShiftEnergyController_Ts5());
+	add_type(new PseudocontactShiftEnergyController_Ts6());
+	add_type(new PseudocontactShiftEnergyController_Ts7());
+	add_type(new PseudocontactShiftEnergyController_Ts8());
+	add_type(new PseudocontactShiftEnergyController_Ts9());
 	add_type(new PcsEnergyController());
 	add_type(new FoldandDockClaimer());
 	add_type(new FibrilModelingClaimer());

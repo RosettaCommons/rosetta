@@ -24,7 +24,33 @@ namespace OptionKeys {
 namespace PCS { extern BooleanOptionKey const PCS; }
 namespace PCS { extern FileOptionKey const write_extra; }
 namespace PCS { extern IntegerOptionKey const normalization_id; }
-
+namespace PCSTS1 { extern BooleanOptionKey const PCSTS1; }
+namespace PCSTS1 { extern FileOptionKey const write_extra; }
+namespace PCSTS1 { extern IntegerOptionKey const normalization_id; }
+namespace PCSTS2 { extern BooleanOptionKey const PCSTS2; }
+namespace PCSTS2 { extern FileOptionKey const write_extra; }
+namespace PCSTS2 { extern IntegerOptionKey const normalization_id; }
+namespace PCSTS3 { extern BooleanOptionKey const PCSTS3; }
+namespace PCSTS3 { extern FileOptionKey const write_extra; }
+namespace PCSTS3 { extern IntegerOptionKey const normalization_id; }
+namespace PCSTS4 { extern BooleanOptionKey const PCSTS4; }
+namespace PCSTS4 { extern FileOptionKey const write_extra; }
+namespace PCSTS4 { extern IntegerOptionKey const normalization_id; }
+namespace PCSTS5 { extern BooleanOptionKey const PCSTS5; }
+namespace PCSTS5 { extern FileOptionKey const write_extra; }
+namespace PCSTS5 { extern IntegerOptionKey const normalization_id; }
+namespace PCSTS6 { extern BooleanOptionKey const PCSTS6; }
+namespace PCSTS6 { extern FileOptionKey const write_extra; }
+namespace PCSTS6 { extern IntegerOptionKey const normalization_id; }
+namespace PCSTS7 { extern BooleanOptionKey const PCSTS7; }
+namespace PCSTS7 { extern FileOptionKey const write_extra; }
+namespace PCSTS7 { extern IntegerOptionKey const normalization_id; }
+namespace PCSTS8 { extern BooleanOptionKey const PCSTS8; }
+namespace PCSTS8 { extern FileOptionKey const write_extra; }
+namespace PCSTS8 { extern IntegerOptionKey const normalization_id; }
+namespace PCSTS9 { extern BooleanOptionKey const PCSTS9; }
+namespace PCSTS9 { extern FileOptionKey const write_extra; }
+namespace PCSTS9 { extern IntegerOptionKey const normalization_id; }
 } // namespace OptionKeys
 } // namespace options
 } // namespace basic
