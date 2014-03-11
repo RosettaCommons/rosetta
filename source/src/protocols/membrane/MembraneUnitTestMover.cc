@@ -193,7 +193,7 @@ namespace membrane {
         for ( core::Size i = 1; i <= nchains; i++ ) {
             
             // Prefix Based Resource Tags
-            std::string base_desc = chain_descriptions.at(i);
+            std::string base_desc = chain_descriptions.find( i )->second;
             
             // Get pose from resource manager
             if ( ! ResourceManager::get_instance()->has_resource_with_description( base_desc ) )
