@@ -93,7 +93,6 @@ class ResidueBBDofs : public utility::pointer::ReferenceCount
 };
 
 
-/// @brief designs alanine residues in place of the residue identities at the interface. Retains interface glycines and prolines.
 class Splice : public protocols::moves::Mover
 {
 public:
