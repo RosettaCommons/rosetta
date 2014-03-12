@@ -16,8 +16,6 @@
 
 #include <core/types.hh>
 
-#include <devel/init.hh>
-
 //#include <core/chemical/AtomTypeSet.hh>
 //#include <core/chemical/MMAtomTypeSet.hh>
 
@@ -116,6 +114,12 @@
 //#include <algorithm>
 
 //silly using/typedef
+
+
+//utilities
+#include <protocols/jd2/JobDistributor.hh>
+#include <devel/init.hh>
+#include <utility/excn/Exceptions.hh>
 
 //using namespace basic;
 using namespace core;
@@ -571,6 +575,7 @@ process_for_motifs(
 int
 main( int argc, char * argv [] )
 {
+	try {
 	using namespace pose;
 	using namespace conformation;
 	using namespace chemical;
@@ -615,7 +620,9 @@ main( int argc, char * argv [] )
 	motif_ostream.close();
 
 	return 0;
-
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception" << e.msg() << std::endl;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
