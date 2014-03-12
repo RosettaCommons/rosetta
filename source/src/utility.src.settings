@@ -38,6 +38,9 @@ sources = {
 		"gzip_util",
 		"PathName",
 	],
+	"utility/graph": [
+		"RingDetection",
+	],
 	"utility/io": [
 		"icstream",
 		"izstream",

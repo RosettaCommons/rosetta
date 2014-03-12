@@ -37,6 +37,7 @@
 #include <boost/graph/undirected_graph.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <core/chemical/AtomTypeSet.fwd.hh>
+#include <boost/graph/adjacency_list.hpp>
 
 // Package headers
 
@@ -85,6 +86,26 @@ typedef std::pair<AdjacentIter, AdjacentIter> AdjacentIterPair;
 typedef std::map< std::string, VD > NameVDMap;
 typedef std::pair<std::string, VD> NameVDPair;
 typedef std::pair<NameVDMap::iterator, bool> NameVDInserted;
+
+
+
+
+///Light weight graph typedefs
+///The light weight graph is a graph that holds a pointer to the edge descriptor
+///and vertex descriptor or the ResidueGraph. We generate the light weight graph
+///so that we can do rapid things like look for rings ina small molecule. Also
+//the properties are vectors, so there is fast random lookup
+typedef boost::adjacency_list< boost::vecS, boost::vecS, boost::undirectedS,
+		boost::property<boost::vertex_name_t, core::chemical::VD>,
+		boost::property<boost::edge_name_t, core::chemical::ED> > LightWeightResidueGraph;
+typedef boost::graph_traits<LightWeightResidueGraph>::vertex_descriptor lwrg_VD;
+typedef boost::graph_traits<LightWeightResidueGraph>::edge_descriptor lwrg_ED;
+typedef boost::graph_traits<LightWeightResidueGraph>::vertex_iterator lwrg_vd_iter;
+typedef std::pair<lwrg_vd_iter, lwrg_vd_iter> lwrg_vd_pair_iter;
+typedef boost::graph_traits<LightWeightResidueGraph>::edge_iterator lwrg_edge_iter;
+typedef boost::graph_traits<LightWeightResidueGraph>::out_edge_iterator lwrg_out_edge_iter;
+typedef std::pair<lwrg_out_edge_iter, lwrg_out_edge_iter> lwrg_out_edge_iter_pair;
+
 
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////

@@ -42,6 +42,8 @@ namespace core {
         ////////// PREDICATES for FILTERED GRAPHS ///////////////////
         ////////////////////////////////////////////////////////////
         
+
+
         bool HeavyAtomFilter::operator()(VD const vd) const{
             return (*atom_types_)[ (*graph_)[vd].atom_type_index() ].is_heavyatom();
         }

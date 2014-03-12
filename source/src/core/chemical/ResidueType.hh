@@ -601,6 +601,16 @@ public:
 	{
 		return ordered_atoms_[atomno];
 	}
+    
+    ResidueGraph const & graph()
+    {
+        return graph_;
+    }
+
+    ResidueGraph const & graph()
+    const {
+        return graph_;
+    }
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -1707,6 +1717,12 @@ public:
 	core::Size
 	smallest_ring_size( VD const & atom, core::Size const & max_size = 999999) const;
 
+	std::list<utility::vector1<ED> > const & rings(){
+		return rings_and_their_edges_;
+	}
+
+
+
 
 public:
 	////////////////////////////////////////////////////////////////////////////
@@ -2141,6 +2157,10 @@ private:
 
 	// A container for residue properties unique to carbohydrates.
 	core::chemical::carbohydrates::CarbohydrateInfoOP carbohydrate_info_;
+
+
+	//All the rings and the edges. Defaulted to null until defined
+	std::list<utility::vector1< ED > > rings_and_their_edges_;
 
 	//ALL THE Indexed data
 	utility::vector1<Size> atom_base_indices_;

@@ -20,6 +20,9 @@
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
+#include <utility/vector1.hh>
+#include <platform/types.hh>
+
 namespace utility {
 namespace graph {
 
@@ -28,6 +31,9 @@ namespace graph {
 class EXCN_Stop_BFS : public utility::excn::EXCN_Msg_Exception {
 	EXCN_Stop_BFS(): EXCN_Msg_Exception("Uncaught BFS Stop exception") {}
 };
+
+
+
 
 /// @brief breadth_first_visit_prune is a slightly
 /// modified version of the Boost function breadth_first_visit,
@@ -184,6 +190,40 @@ public:
 
 	template <class Vertex, class Graph>
 	bool finish_vertex(Vertex , Graph& ) { return false; }
+
+};
+
+
+
+template< class Graph>
+class HideVertexVisitor: public utility::graph::null_bfs_prune_visitor {
+	typedef typename boost::graph_traits<Graph>::edge_descriptor Edge;
+	typedef typename boost::graph_traits<Graph>::vertex_descriptor VD;
+
+private:
+	// References to avoid copying when the visitor is passed by value.
+	VD hidden_vertex_;
+	platform::Size & number_valid_vertices_;
+	utility::vector1<VD> & connected_vertices_;
+public:
+	HideVertexVisitor(VD const & hidden, platform::Size & size, utility::vector1<VD> & connected_vertices):
+		hidden_vertex_( hidden ),
+		number_valid_vertices_( size ),
+		connected_vertices_( connected_vertices )
+	{}
+
+	platform::Size size(){return number_valid_vertices_;}
+	utility::vector1<VD> vertices(){return connected_vertices_;}
+
+	bool discover_vertex(VD vertex, Graph const & /*graph*/) {
+		if(vertex == hidden_vertex_){
+			return true;
+		} else {
+			++number_valid_vertices_;
+			connected_vertices_.push_back(vertex);
+			return false;
+		}
+	}
 
 };
 

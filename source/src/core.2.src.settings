@@ -21,6 +21,7 @@ sources = {
 		"AtomTypeSet",
 		"automorphism",
 		"Bond",
+		"bond_support",
 		"ChemicalManager",
 		"Element",
 		"ElementSet",

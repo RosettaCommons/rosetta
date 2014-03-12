@@ -26,16 +26,24 @@
 #include <core/chemical/MMAtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/residue_io.hh>
+#include <utility/graph/RingDetection.hh>
+#include <core/chemical/ResidueGraphTypes.hh>
+#include <core/chemical/bond_support.hh>
+#include <utility/graph/BFS_prune.hh>
+
 
 // Platform Headers
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 
+
+
 // C++ Headers
 #include <string>
 #include <ostream>
-
+#include <boost/graph/adjacency_list.hpp>
+//#include <boost/tuple.hpp>
 
 using std::endl;
 using std::string;
@@ -89,19 +97,12 @@ void add_atom(
 	rsd.add_atom( name, type, mm_type, charge);
 
 	TS_ASSERT_EQUALS(rsd.natoms(), natoms);
-	//TS_ASSERT_EQUALS(rsd.nheavyatoms(), nheavyatoms); // Only updated with finalize
 	TS_ASSERT_EQUALS(rsd.n_hbond_acceptors(), nhbond_acceptors);
 	TS_ASSERT_EQUALS(rsd.n_hbond_donors(), nhbond_donors);
-	//TS_ASSERT_EQUALS(rsd.Haro_index().size(), Haro_size); // Only updated with finalize
-	//TS_ASSERT_EQUALS(rsd.Hpol_index().size(), Hpol_size); // Only updated with finalize
-	//TS_ASSERT_EQUALS(rsd.Hpos_polar().size(), Hpos_polar); // Only updated with finalize
-	//TS_ASSERT_EQUALS(rsd.Hpos_apolar().size(), Hpos_apolar); // Only updated with finalize
-	//TS_ASSERT_EQUALS(rsd.accpt_pos().size(), accpt_pos); // Only updated with finalize
 }
 
 void add_bond(ResidueType & rsd, std::string const& a1, std::string const& a2){
 	rsd.add_bond(a1,a2);
-	//TS_ASSERT_EQUALS( rsd.path_distance(rsd.atom_index(a1), rsd.atom_index(a2)), 1); // Only updated with finalize
 }
 
 void do_retyping(ResidueType const & ref, bool build_emap = true) {
@@ -131,13 +132,9 @@ public:
 	void test_residue_type_initialization() {
 		ChemicalManager * cm(ChemicalManager::get_instance());
 		string const tag(FA_STANDARD);
-		// minirosett_database/chemical/atom_type_sets/<tag>
 		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
-		// minirosetta_database/chemical/element_sets/<tag>
 		ElementSetCAP element_types = cm->element_set("default");
-		// minirosetta_database/chemical/mm_atom_type_sets/<tag>
 		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
-		// minirosetta_database/chemical/orbital_type_sets/<tag>
 		OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
 
 		ResidueType rsd( atom_types, element_types, mm_atom_types, orbital_types);
@@ -156,12 +153,12 @@ public:
 		TS_ASSERT_EQUALS(rsd.get_numeric_property("foo"),1.5);
 
 		// Build an "Alanine"
-		add_atom( rsd, atom_types," N  ", "Nbb", "NH1", -0.47);
+		add_atom( rsd, atom_types," N ", "Nbb", "NH1", -0.47);
 		add_atom( rsd, atom_types," CA ", "CAbb", "CT1", 0.07);
-		add_atom( rsd, atom_types," C  ", "CObb", "C", 0.51);
-		add_atom( rsd, atom_types," O  ", "OCbb", "O", -0.51);
+		add_atom( rsd, atom_types," C ", "CObb", "C", 0.51);
+		add_atom( rsd, atom_types," O ", "OCbb", "O", -0.51);
 		add_atom( rsd, atom_types," CB ", "CH3", "CT3", -0.27);
-		add_atom( rsd, atom_types," H  ", "HNbb", "H", 0.31);
+		add_atom( rsd, atom_types," H ", "HNbb", "H", 0.31);
 		add_atom( rsd, atom_types," HA ", "Hapo", "HB", 0.09);
 		add_atom( rsd, atom_types,"1HB ", "Hapo", "HA", 0.09);
 		add_atom( rsd, atom_types,"2HB ", "Hapo", "HA", 0.09);
@@ -183,19 +180,19 @@ public:
 		add_bond( rsd, "CB", "2HB");
 		add_bond( rsd, "CB", "3HB");
 
-		
-		rsd.set_icoor("N", 0.000000, 0.000000, 0.000000, "N",  "CA", "C");
-		rsd.set_icoor("CA", 0.000000, 180.000000, 1.458001, "N",  "CA", "C");
-		rsd.set_icoor("C", 0.000000, 68.800003, 1.523258, "CA",  "N", "C");
-		rsd.set_icoor("UPPER",  149.999985,  63.800007, 1.328685, "C",  "CA", "N");
-		rsd.set_icoor("O", -180.000000, 59.200005, 1.231015, "C",  "CA", "UPPER");
-		rsd.set_icoor("CB", -123.028732, 69.625412, 1.521736, "CA",  "N", "C");
-		rsd.set_icoor("1HB",-179.994110, 70.562309, 1.090040, "CB",  "CA", "N");
-		rsd.set_icoor("2HB", 119.960403, 70.475021, 1.090069, "CB",  "CA", "1HB");
-		rsd.set_icoor("3HB", 120.089012, 70.493805, 1.088803, "CB",  "CA", "2HB");
-		rsd.set_icoor("HA", -119.013138, 71.295197, 1.090078, "CA",  "N", "CB");
-		rsd.set_icoor("LOWER", -150.000000,  58.300003, 1.328685, "N",  "CA", "C");
-		rsd.set_icoor("H", -180.000000,  60.849998,   1.010000, "N",  "CA", "LOWER");
+
+		rsd.set_icoor("N", 0.000000, 0.000000, 0.000000, "N", "CA", "C");
+		rsd.set_icoor("CA", 0.000000, 180.000000, 1.458001, "N", "CA", "C");
+		rsd.set_icoor("C", 0.000000, 68.800003, 1.523258, "CA", "N", "C");
+		rsd.set_icoor("UPPER", 149.999985, 63.800007, 1.328685, "C", "CA", "N");
+		rsd.set_icoor("O", -180.000000, 59.200005, 1.231015, "C", "CA", "UPPER");
+		rsd.set_icoor("CB", -123.028732, 69.625412, 1.521736, "CA", "N", "C");
+		rsd.set_icoor("1HB",-179.994110, 70.562309, 1.090040, "CB", "CA", "N");
+		rsd.set_icoor("2HB", 119.960403, 70.475021, 1.090069, "CB", "CA", "1HB");
+		rsd.set_icoor("3HB", 120.089012, 70.493805, 1.088803, "CB", "CA", "2HB");
+		rsd.set_icoor("HA", -119.013138, 71.295197, 1.090078, "CA", "N", "CB");
+		rsd.set_icoor("LOWER", -150.000000, 58.300003, 1.328685, "N", "CA", "C");
+		rsd.set_icoor("H", -180.000000, 60.849998, 1.010000, "N", "CA", "LOWER");
 
 		rsd.nbr_atom("CB");
 		rsd.nbr_radius(3.4473);
@@ -210,20 +207,20 @@ public:
 		TS_ASSERT_EQUALS(rsd.actcoord_atoms().size(), (core::Size) 1);
 
 		//TS_ASSERT_EQUALS( rsd.chi_atoms( rsd.atom_index("CA")).size(), (core::Size) 3); // we have to "add_chi" first and ALA has no chi listed
-		
+
 		// For the purposes of a unit test, we'll just add_chi (and add_nu, too) anyway, even though both are meaning-
 		// less for alanine. ~Labonte
 		rsd.add_chi(1, "N", "CA", "CB", "1HB");
-		rsd.add_chi("N", "CA", "CB", "2HB");  // alternate designations, just for kicks
+		rsd.add_chi("N", "CA", "CB", "2HB"); // alternate designations, just for kicks
 		rsd.add_chi("N", "CA", "CB", "3HB");
-		rsd.add_nu(1, "C", "CA", "CB", "1HB");  // not really a nu angle, but it doesn't matter for testing purposes
+		rsd.add_nu(1, "C", "CA", "CB", "1HB"); // not really a nu angle, but it doesn't matter for testing purposes
 
 		rsd.finalize();
 
-		TS_ASSERT_EQUALS(rsd.chi_atoms().size(), 3);  // We specified three chi angles above.
-		TS_ASSERT_EQUALS(rsd.chi_atoms(3).size(), 4);  // There should be four atom indices for any torsion angle.
-		TS_ASSERT_EQUALS(rsd.nu_atoms().size(), 1);  // We specified one nu angle above.
-		TS_ASSERT_EQUALS(rsd.nu_atoms(1).at(1), rsd.atom_index("C"));  // 1st atom index in the list should be that of C.
+		TS_ASSERT_EQUALS(rsd.chi_atoms().size(), 3); // We specified three chi angles above.
+		TS_ASSERT_EQUALS(rsd.chi_atoms(3).size(), 4); // There should be four atom indices for any torsion angle.
+		TS_ASSERT_EQUALS(rsd.nu_atoms().size(), 1); // We specified one nu angle above.
+		TS_ASSERT_EQUALS(rsd.nu_atoms(1).at(1), rsd.atom_index("C")); // 1st atom index in the list should be that of C.
 
 		TS_ASSERT_EQUALS( rsd.path_distance(rsd.atom_index("N"), rsd.atom_index("C")), 2);
 		TS_ASSERT_EQUALS( rsd.path_distance(rsd.atom_index("N"), rsd.atom_index("O")), 3);
@@ -236,12 +233,12 @@ public:
 		TS_ASSERT_EQUALS( rsd.number_bonded_hydrogens( rsd.atom_index("CB")), (core::Size) 3);
 		TS_ASSERT_EQUALS( rsd.attached_H_end().size(), (core::Size) 5);
 		TS_ASSERT_EQUALS( rsd.attached_H_begin().size(), (core::Size) 5);
-        utility::vector1<core::Size> H_begin(rsd.attached_H_begin());
-        TS_ASSERT_EQUALS(rsd.atom_name(H_begin[1]), " H  ");
-        TS_ASSERT_EQUALS(rsd.atom_name(H_begin[4]), "1HB ");
-        utility::vector1<core::Size> H_end(rsd.attached_H_end());
-        TS_ASSERT_EQUALS(rsd.atom_name(H_end[1]), " H  ");
-        TS_ASSERT_EQUALS(rsd.atom_name(H_end[2]), " HA ");
+		utility::vector1<core::Size> H_begin(rsd.attached_H_begin());
+		TS_ASSERT_EQUALS(rsd.atom_name(H_begin[1]), " H ");
+		TS_ASSERT_EQUALS(rsd.atom_name(H_begin[4]), "1HB ");
+		utility::vector1<core::Size> H_end(rsd.attached_H_end());
+		TS_ASSERT_EQUALS(rsd.atom_name(H_end[1]), " H ");
+		TS_ASSERT_EQUALS(rsd.atom_name(H_end[2]), " HA ");
 		TS_ASSERT_EQUALS( rsd.bonded_neighbor( rsd.atom_index("N")).size(), (core::Size) 2);
 		TS_ASSERT_EQUALS( rsd.bonded_neighbor( rsd.atom_index("CA")).size(), (core::Size) 4);
 		TS_ASSERT_EQUALS( rsd.bonded_neighbor( rsd.atom_index("O")).size(), (core::Size) 1);
@@ -275,24 +272,24 @@ public:
 		TS_ASSERT_EQUALS(rsd.atom_base(rsd.atom_index("N")), (core::Size) 2);
 		TS_ASSERT_EQUALS(rsd.atom_base(rsd.atom_index("CA")), (core::Size) 1);
 
-    	core::Size center=0;
-    	core::Size nbr1=0;
-    	core::Size nbr=0;
-    	rsd.select_orient_atoms(center, nbr1, nbr);
+		core::Size center=0;
+		core::Size nbr1=0;
+		core::Size nbr=0;
+		rsd.select_orient_atoms(center, nbr1, nbr);
 
-    	TS_ASSERT_EQUALS(center, (core::Size) 5);
-    	TS_ASSERT_EQUALS(nbr1, (core::Size) 2);
-    	TS_ASSERT_EQUALS(nbr, (core::Size) 10);
-        rsd.add_cut_bond(rsd.atom_name(1), rsd.atom_name(2));
-        rsd.add_cut_bond(rsd.atom_name(2), rsd.atom_name(3));
-        rsd.add_cut_bond(rsd.atom_name(2), rsd.atom_name(4));
-        rsd.finalize();
+		TS_ASSERT_EQUALS(center, (core::Size) 5);
+		TS_ASSERT_EQUALS(nbr1, (core::Size) 2);
+		TS_ASSERT_EQUALS(nbr, (core::Size) 10);
+		rsd.add_cut_bond(rsd.atom_name(1), rsd.atom_name(2));
+		rsd.add_cut_bond(rsd.atom_name(2), rsd.atom_name(3));
+		rsd.add_cut_bond(rsd.atom_name(2), rsd.atom_name(4));
+		rsd.finalize();
 
 
-        utility::vector1<core::Size> neigh(rsd.cut_bond_neighbor(2));
-        TS_ASSERT_EQUALS(rsd.atom_name(neigh[1]), " N  ");
-        TS_ASSERT_EQUALS(rsd.atom_name(neigh[2]), " C  ");
-        TS_ASSERT_EQUALS(rsd.atom_name(neigh[3]), " O  ");
+		utility::vector1<core::Size> neigh(rsd.cut_bond_neighbor(2));
+		TS_ASSERT_EQUALS(rsd.atom_name(neigh[1]), " N ");
+		TS_ASSERT_EQUALS(rsd.atom_name(neigh[2]), " C ");
+		TS_ASSERT_EQUALS(rsd.atom_name(neigh[3]), " O ");
 
 		rsd.delete_atom("3HB");
 		rsd.delete_atom("2HB");
@@ -303,7 +300,7 @@ public:
 
 		TS_ASSERT_EQUALS(rsd.natoms(), 4);
 
-		//rsd.finalize();  // can't remove the above atoms if they are part of a CHI definition and then finalize
+		//rsd.finalize(); // can't remove the above atoms if they are part of a CHI definition and then finalize
 
 		rsd.delete_atom("O"); // can't delete these
 		rsd.delete_atom("C");
@@ -344,4 +341,67 @@ public:
 
 		// TODO: Test partial reassignment.
 	}
+
+	//test functions in bond support and ring detection. If this fails, those functions were altered
+	void test_odd_proline_ring_detection(){
+		ChemicalManager * cm(ChemicalManager::get_instance());
+		string const tag(FA_STANDARD);
+		AtomTypeSetCAP atom_types = cm->atom_type_set(tag);
+		ElementSetCAP element_types = cm->element_set("default");
+		MMAtomTypeSetCAP mm_atom_types = cm->mm_atom_type_set(tag);
+		OrbitalTypeSetCAP orbital_types = cm->orbital_type_set(tag);
+
+		ResidueType rsd( atom_types, element_types, mm_atom_types, orbital_types);
+
+		// Build a  weird "Proline" no hydrogens
+		add_atom( rsd, atom_types," N  ", "Npro", "NH1", -0.47);
+		add_atom( rsd, atom_types," CA ", "CAbb", "CT1", 0.07);
+		add_atom( rsd, atom_types," C  ", "CObb", "C", 0.51);
+		add_atom( rsd, atom_types," O  ", "OCbb", "O", -0.51);
+		add_atom( rsd, atom_types," CB ", "CH2", "CP2", -0.27);
+		add_atom( rsd, atom_types," CG ", "CH2", "CP2", -0.27);
+		add_atom( rsd, atom_types," CD ", "CH2", "CP3", -0.27);
+		add_atom(rsd, atom_types, " CN ", "CH2", "CP3", -0.27);
+
+		add_bond( rsd, "N", "CA");
+		add_bond( rsd, "N", "CD");
+		add_bond( rsd, "N", "CN");
+		add_bond( rsd, "CN", "CD");
+		add_bond( rsd, "CA", "C");
+		add_bond( rsd, "CA", "CB");
+		add_bond( rsd, "C", "O");
+		add_bond( rsd, "CB", "CG");
+		add_bond( rsd, "CG", "CD");
+
+
+		//Do we need icoors? Not for this test!
+		rsd.finalize(); //gotta finalize to work on it
+		core::chemical::find_bonds_in_rings(rsd);
+		core::chemical::ResidueGraph const full_residue_graph = rsd.graph();
+
+
+		core::chemical::VD  source = rsd.get_vertex( rsd.atom_index(" CA ") );
+		core::chemical::VD  target = rsd.get_vertex( rsd.atom_index("C") );
+
+		core::chemical::ED edge_ca_c = core::chemical::get_bond(rsd, source, target);
+		core::chemical::VD target_cb = rsd.get_vertex( rsd.atom_index(" CB ") );
+
+		core::chemical::ED edge_ca_cb = core::chemical::get_bond(rsd, source, target_cb);
+
+		core::chemical::Bond const & bond_ca_c = rsd.bond(edge_ca_c);
+		core::chemical::Bond const & bond_ca_cb = rsd.bond(edge_ca_cb);
+
+
+		TS_ASSERT_EQUALS(bond_ca_c.ringness(), core::chemical::BondNotInRing);
+		TS_ASSERT_EQUALS(bond_ca_cb.ringness(), core::chemical::BondInRing);
+
+
+		utility::vector1<core::chemical::VD> check_that_get_bond_and_get_connecting_atoms_works = core::chemical::get_connecting_atoms(rsd, edge_ca_c);
+
+		TS_ASSERT_EQUALS(check_that_get_bond_and_get_connecting_atoms_works[1], source);
+		TS_ASSERT_EQUALS(check_that_get_bond_and_get_connecting_atoms_works[2], target);
+
+
+	}
+
 };

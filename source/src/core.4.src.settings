@@ -44,6 +44,9 @@ sources = {
 		"rotamer_trials",
 		"rtmin",
 	],
+	#"core/pack/fragment_rotamers": [
+#		"MutateFragment",
+#	],
 	"core/pack/annealer": [
 		"AnnealerFactory",
 		"DebuggingAnnealer",

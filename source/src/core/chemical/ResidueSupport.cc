@@ -12,19 +12,17 @@
 /// should not be included as part of the class.
 /// @author Phil Bradley
 
-
-//#ifndef INCLUDED_core_chemical_ResidueSupport_HH
-//#define INCLUDED_core_chemical_ResidueSupport_HH
-
 // Package Headers
 #include <core/chemical/ResidueType.hh>
-
+#include <core/chemical/ResidueGraphTypes.hh>
 // Project Headers
 #include <core/graph/Graph.hh>
 
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.hh>
-
+#include <core/chemical/Atom.hh>
+#include <core/chemical/Bond.hh>
+#include <utility/graph/RingDetection.hh>
 
 // ObjexxFCL Headers
 // Commented by inclean daemon #include <ObjexxFCL/FArray2D.hh>
@@ -35,11 +33,7 @@ namespace chemical {
 ObjexxFCL::FArray2D_int
 get_residue_path_distances( ResidueType const & res )
 {
-
-
 	//return res.get_residue_path_distances();
-
-
 	using namespace graph;
 	Graph g;
 
@@ -55,47 +49,58 @@ get_residue_path_distances( ResidueType const & res )
 	}
 	return g.all_pairs_shortest_paths();
 
-
-/*	std::map<VD, std::map<VD, Size> > distance_matrix; //setup the matrix where Size is the distance between two vertex
-	std::map<ED, Size> weight_map; //setup property (weight) map for the shortest distance
-
-
-	for(EIterPair ep = boost::edges(graph_); ep.first != ep.second; ++ep.first){
-		weight_map[*ep.first] = 1; //because the weight is 1. There is no distance asspciated with residues
-	}
-
-	//boost::weight_map(weight_map)
-	boost::associative_property_map<std::map<ED, Size> > weight_property_map(weight_map);
-	boost::floyd_warshall_all_pairs_shortest_paths(graph_, distance_matrix, boost::weight_map(weight_property_map) );
-
-	Size const inf( 12345678 ); //assumption: fewer than 12 million nodes in the graph.
-	//assert( num_nodes_ < inf );
-	ObjexxFCL::FArray2D_int distance_table( natoms(), natoms(), inf);
-
-	for(std::map<VD, std::map<VD, Size> >::const_iterator it = distance_matrix.begin(); it != distance_matrix.end(); ++it){
-		VD vertex1 = it->first;
-		std::map<VD, Size> value(it->second);
-		for(std::map<VD, Size>::const_iterator second_it = value.begin(); second_it != value.end(); ++second_it){
-			VD vertex2 = second_it->first;
-			Size distance = second_it->second;
-			distance_table(vd_to_index_.find(vertex1)->second , vd_to_index_.find(vertex2)->second ) = distance;
-			distance_table(vd_to_index_.find(vertex2)->second, vd_to_index_.find(vertex1)->second) = distance;
-		}
-	}
-
-    	std::cout << "Path Distances funciton call!" << std::endl;
-
-	for(core::Size i = 1; i <= natoms(); ++i){
-		for(core::Size ii =1; ii <= natoms(); ++ii){
-			//std::cout << distance_table[i][ii];
-			std::cout << name3() << " " << atom_name(i) << " " << atom_name(ii) << " " << distance_table(i, ii) << std::endl;
-		}
-	}
-
-	return distance_table;*/
-
-
 }
+
+
+LightWeightResidueGraph convert_residuetype_to_light_graph(ResidueType const & res){
+	//this is a const reference because vertices change when  you copy the graph
+	const  core::chemical::ResidueGraph & full_residue_graph = res.graph(); //get the boost graph structure from residuetype
+
+	LightWeightResidueGraph lwrg;
+
+	//set up the mapping between VD and ED from ResidueGraph for LightWeightResidueGraph
+	boost::property_map<LightWeightResidueGraph, boost::vertex_name_t>::type lwrg_vd_to_VD = boost::get(boost::vertex_name, lwrg);
+	boost::property_map<LightWeightResidueGraph, boost::edge_name_t>::type lwrg_ed_to_ED = boost::get(boost::edge_name, lwrg);
+
+	//map between the LightWeightResidueGraph vertex and the ResidueGraph vertex. Used when adding edges
+	std::map<core::chemical::VD, lwrg_VD> map_of_vertex;
+	//first, add all the vertex to light weight residue graph, and map the property maps to point at the ResidueGraph
+	for(core::chemical::VIterPair vp = boost::vertices(full_residue_graph); vp.first != vp.second; ++vp.first){
+		VD const & full_residue_graph_vd = *vp.first;
+		lwrg_VD lwrg_vd = boost::add_vertex(lwrg);
+		lwrg_vd_to_VD[lwrg_vd] = full_residue_graph_vd; //set property maps
+		map_of_vertex[full_residue_graph_vd] = lwrg_vd; //set mapping for the edges
+	}
+
+	//now we add the edges between the vertex
+	for(EIterPair ep = boost::edges(full_residue_graph); ep.first != ep.second; ++ep.first){
+		VD source = boost::source(*ep.first, full_residue_graph);
+		VD target = boost::target(*ep.first, full_residue_graph);
+		lwrg_VD source_lwrg_VD = map_of_vertex[source];
+		lwrg_VD target_lwrg_VD = map_of_vertex[target];
+		lwrg_ED e_added;
+		bool added;
+		boost::tie(e_added, added) = boost::add_edge(source_lwrg_VD, target_lwrg_VD,lwrg );
+		if(added){ //only add bonds once!
+			lwrg_ed_to_ED[e_added] = *ep.first;
+		}
+	}
+	assert(boost::num_vertices(lwrg) == full_residue_graph.num_vertices()); //fail if the number of vertex are not the same
+	assert(boost::num_edges(lwrg) == full_residue_graph.num_edges()); //fail if the number of edges are not the same
+
+
+	//boost::property_map<LightWeightResidueGraph, boost::vertex_name_t>::type lwrg_vd_to_VD = boost::get(boost::vertex_name, lwrg);
+	//boost::property_map<LightWeightResidueGraph, boost::edge_name_t>::type lwrg_ed_to_ED = boost::get(boost::edge_name, lwrg);
+
+
+	utility::graph::RingDetection ring_detect(lwrg); //initialize the ring detector. Automatically assigns rings
+	utility::vector1<utility::vector1<lwrg_VD> > rings = ring_detect.GetRings(); //these are the path of the rings
+
+
+	//our light weight graph has been made. Now return it!
+	return lwrg;
+}
+
 
 }
 }

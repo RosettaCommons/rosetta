@@ -8,42 +8,27 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file src/core/chemical/ResidueSupport.hh
-/// @brief support functions for class residue; functions that
+/// @brief support functions for class Bond; functions that
 /// should not be included as part of the class.
-/// @author Phil Bradley
+/// @author Steven Combs
 
 
-#ifndef INCLUDED_core_chemical_ResidueSupport_hh
-#define INCLUDED_core_chemical_ResidueSupport_hh
-
-// Package Headers
-// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
-
-// ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
+#ifndef INCLUDED_core_chemical_bond_support_hh
+#define INCLUDED_core_chemical_bond_support_hh
 
 #include <core/chemical/ResidueType.fwd.hh>
-#include <ObjexxFCL/FArray2D.fwd.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
-
 namespace core {
 namespace chemical {
 
-
-
-// Find a better place to declare this function
-/// @brief relies on class Graph to find all pairs shortest path information
-ObjexxFCL::FArray2D_int
-get_residue_path_distances( ResidueType const & res );
-
-
-//used to create a light weight residue for searching rings
-LightWeightResidueGraph convert_residuetype_to_light_graph(ResidueType const & res);
-
-
-
+	void find_bonds_in_rings(ResidueType & res);
+	utility::vector1<VD> get_connecting_atoms(ResidueType const & res, ED const & edge);
+	utility::vector1<VD> get_connecting_atoms(ResidueGraph const & res, ED const & edge);
+	ED get_bond(ResidueType const & res, VD const & source, VD const & target);
 
 }
 }
+
 
 #endif
+
