@@ -36,7 +36,7 @@ void find_bonds_in_rings(ResidueType & res){
 	LightWeightResidueGraph lwrg = convert_residuetype_to_light_graph(res);
 	//now get the property maps
 	boost::property_map<LightWeightResidueGraph, boost::vertex_name_t>::type lwrg_vd_to_VD = boost::get(boost::vertex_name, lwrg);
-	boost::property_map<LightWeightResidueGraph, boost::edge_name_t>::type lwrg_ed_to_ED = boost::get(boost::edge_name, lwrg);
+	//boost::property_map<LightWeightResidueGraph, boost::edge_name_t>::type lwrg_ed_to_ED = boost::get(boost::edge_name, lwrg);
 
 
 	utility::graph::RingDetection ring_detect(lwrg); //initialize the ring detector. Automatically assigns rings
