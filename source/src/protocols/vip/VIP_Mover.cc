@@ -359,7 +359,7 @@ namespace vip {
 			relax_pose.replace_residue( favorable_positions[i], *(favorable_residues[i]), true );
 
 			if( rmover == "relax" ){
-					protocols::relax::RelaxProtocolBaseOP relaxmover = new protocols::relax::FastRelax( relax_score_fxn );
+					protocols::relax::RelaxProtocolBaseOP relaxmover = new protocols::relax::FastRelax( relax_score_fxn, 15 );
 				if( option[ cp::local_relax ] ) {
 					core::kinematics::MoveMapOP mmap_ptr = new core::kinematics::MoveMap;
 					if( option[ cp::local_relax ] ) {

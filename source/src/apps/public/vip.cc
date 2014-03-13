@@ -32,6 +32,10 @@
 #include <utility/options/keys/OptionKey.hh>
 #include <utility/string_util.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
+#include <protocols/relax/FastRelax.hh>
+#include <protocols/relax/ClassicRelax.hh>
+#include <protocols/relax/MiniRelax.hh>
+
 
 #include <basic/Tracer.hh>
 static basic::Tracer TR("VIP");
@@ -66,6 +70,25 @@ main( int argc, char * argv [] )
 
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::relax_sfxn] );
 	protocols::simple_moves::ScoreMover scoreme = protocols::simple_moves::ScoreMover( scorefxn );
+
+	// Perform a pre-relaxation of the starting point
+
+	{
+		std::string rmover = option[ cp::relax_mover ];
+		if( rmover == "relax" ){
+			protocols::relax::RelaxProtocolBaseOP relaxmover = new protocols::relax::FastRelax( scorefxn , 15 );
+			relaxmover->apply(in_pose);
+		} else if( rmover == "classic_relax" ){
+			protocols::relax::RelaxProtocolBaseOP relaxmover = new protocols::relax::ClassicRelax( scorefxn );
+			relaxmover->apply(in_pose);
+		} else if( rmover == "cst_relax" ){
+			protocols::relax::RelaxProtocolBaseOP cstrelaxmover = new protocols::relax::MiniRelax( scorefxn );
+			cstrelaxmover->apply(in_pose);
+		}
+
+
+
+	}
 
 	//	bool iterate = true;
 	core::Size it = 1;
