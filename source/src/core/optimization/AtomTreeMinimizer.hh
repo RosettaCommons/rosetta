@@ -68,6 +68,13 @@ public:
 	NumericalDerivCheckResultOP
 	deriv_check_result() const;
 
+	/// @brief Do consistency checks for minimizer setup.
+	void
+	check_setup(pose::Pose const & pose,
+		kinematics::MoveMap const & move_map,
+		scoring::ScoreFunction const & scorefxn,
+		MinimizerOptions const & options) const;
+
 private:
 
 	NumericalDerivCheckResultOP deriv_check_result_;

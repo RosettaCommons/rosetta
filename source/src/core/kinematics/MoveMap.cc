@@ -519,9 +519,15 @@ MoveMap::show( std::ostream & out, Size n_residues_to_show ) const
 void
 MoveMap::show( std::ostream & out ) const
 {
-	out << "-------------------------------\n";	
+	out << "\n";
+	out << "-------------------------------\n";
 	out << A(8, "resnum") << ' ' << A(8, "Type") << ' ' << A(12, "TRUE/FALSE ") << "\n";
 	out << "-------------------------------\n";
+	// The general settings:
+	out << A(8,"DEFAULT") <<' '<< A(7, id::to_string(id::BB) ) << "  " << A(8,( get(id::BB) ? "TRUE":"FALSE")) << "\n";
+	out << A(8,"DEFAULT") <<' '<< A(7, id::to_string(id::CHI)) << "  " << A(8,( get(id::BB) ? "TRUE":"FALSE")) << "\n";
+	out << A(8,"DEFAULT") <<' '<< A(7, id::to_string(id::NU) ) << "  " << A(8,( get(id::BB) ? "TRUE":"FALSE")) << "\n";
+	// The overrides:
 	Size prev_resnum = 0;
 	utility::vector1< bool > jumpbool;
 	utility::vector1< Size > jumpnum;
@@ -531,32 +537,60 @@ MoveMap::show( std::ostream & out ) const
 		bool boolean = it->second;
 		Size res = mmtorsionID.first;
 		TorsionType torsiontype = mmtorsionID.second;
+		std::string type( id::to_string( torsiontype ) );
 
-		// convert enum to string output
-		std::string type;
-		if (torsiontype == id::BB) {type = "BB ";}
-		else if (torsiontype == id::CHI) {type = "SC ";}
-		else if (torsiontype == id::NU) {type = "NU ";}
-		else if (torsiontype == id::JUMP) {
-			type = "JUMP"; jumpbool.push_back(boolean); jumpnum.push_back(res);}
-
-		// Only show each residue/jump number once (and only if torsion type is BB, SC, or NU)
-		if ((prev_resnum == mmtorsionID.first) && (type != "JUMP")) {
-			out << A(8,' ') << ' ' << A(8,type) << ' ' << A(8, (boolean ? "TRUE":"FALSE")) << "\n";
+		// Jumps are handled under a separate heading.
+		if (torsiontype == id::JUMP) {
+			jumpbool.push_back(boolean);
+			jumpnum.push_back(res);
+			continue;
 		}
-		else if ((prev_resnum != mmtorsionID.first) && (type != "JUMP")) {
-			out << I(8,3,res) <<' '<< A(8,type) << ' ' << A(8,(boolean ? "TRUE":"FALSE")) << "\n";
+
+		// Only show each residue once (and only if torsion type is BB, SC, or NU)
+		if ( prev_resnum != mmtorsionID.first ) {
+			out << I(8,3,res) <<' '<< A(7,type) << "  " << A(8, (boolean ? "TRUE":"FALSE")) << "\n";
+		} else {
+			out << A(8,' ') << ' ' << A(7,type) << "  " << A(8, (boolean ? "TRUE":"FALSE")) << "\n";
 		}
 
 		// Remember the previous residue/jump number
 		prev_resnum = res;
 	}
-	out << "-------------------------------\n";	
-	out << A(8, "jumpnum") << ' ' << A(8, "Type") << ' ' << A(12, "TRUE/FALSE ") << std::endl;
 	out << "-------------------------------\n";
+	out << A(8, "jumpnum") << ' ' << A(8, "Type") << ' ' << A(12, "TRUE/FALSE ") << "\n";
+	out << "-------------------------------\n";
+	// The general setting
+	out << A(8,"DEFAULT")<<' '<< A(8,"JUMP") <<' '<< A(8,( get(id::JUMP) ? "TRUE":"FALSE"))<< "\n";
+	// Jump overrides
 	for (Size i = 1; i <= jumpnum.size(); ++i) {
 		out << I(8,3,jumpnum[i])<<' '<< A(8,"JUMP") <<' '<< A(8,(jumpbool[i] ? "TRUE":"FALSE"))<< "\n";
 	}
+
+	out << "-------------------------------\n";
+	out << A(8, "resnum") << ' ' << A(8, "atomnum") << ' ' << A(8, "Type") << ' ' << A(12, "TRUE/FALSE ") << "\n";
+	out << "-------------------------------\n";
+	// The defaults
+	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::PHI)) <<' '<< A(8,( get(id::PHI) ? "TRUE":"FALSE"))<< "\n";
+	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::THETA)) <<' '<< A(8,( get(id::THETA) ? "TRUE":"FALSE"))<< "\n";
+	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::D)) <<' '<< A(8,( get(id::D) ? "TRUE":"FALSE"))<< "\n";
+	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::RB1)) <<' '<< A(8,( get(id::RB1) ? "TRUE":"FALSE"))<< "\n";
+	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::RB2)) <<' '<< A(8,( get(id::RB2) ? "TRUE":"FALSE"))<< "\n";
+	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::RB3)) <<' '<< A(8,( get(id::RB3) ? "TRUE":"FALSE"))<< "\n";
+	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::RB4)) <<' '<< A(8,( get(id::RB4) ? "TRUE":"FALSE"))<< "\n";
+	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::RB5)) <<' '<< A(8,( get(id::RB5) ? "TRUE":"FALSE"))<< "\n";
+	out << A(8,"DEFAULT") << ' ' << A(8, ' ') << ' ' << A(8,id::to_string(id::RB6)) <<' '<< A(8,( get(id::RB6) ? "TRUE":"FALSE"))<< "\n";
+	prev_resnum = 0;
+	for (DOF_ID_Map::const_iterator it = dof_id_begin(), it_end = dof_id_end();
+			it != it_end; ++it) {
+		DOF_ID const & dofID = it->first;
+		bool boolean = it->second;
+		Size res = dofID.rsd();
+		Size atomno = dofID.atomno();
+		DOF_Type doftype = dofID.type();
+		std::string type( id::to_string( doftype ) );
+		out << I(8,3,res) << ' ' << I(8,3,atomno) << ' ' << A(8,type) <<' '<< A(8,( boolean ? "TRUE":"FALSE"))<< "\n";
+	}
+	out << std::endl;
 }
 
 /// @brief import settings from another MoveMap

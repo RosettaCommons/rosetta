@@ -19,6 +19,7 @@
 // Package headers
 #include <core/types.hh>
 
+#include <string>
 
 namespace core {
 namespace id {
@@ -44,6 +45,32 @@ enum DOF_Type {
 };
 static Size const n_DOF_Type( 9 ); // Update this if DOF_Type changes
 
+inline std::string
+to_string( DOF_Type const & type ) {
+	switch ( type ) {
+	case PHI:
+		return "PHI";
+	case THETA:
+		return "THETA";
+	case D:
+		return "D";
+	case RB1:
+		return "RB1";
+	case RB2:
+		return "RB2";
+	case RB3:
+		return "RB3";
+	case RB4:
+		return "RB4";
+	case RB5:
+		return "RB5";
+	case RB6:
+		return "RB6";
+	default:
+		return "UNKNOWN";
+	}
+}
+
 /// @brief Torsion type -- used in the TorsionID class
 /// - BB: backbone torsion
 /// - CHI: sidechain torsion
@@ -55,6 +82,22 @@ enum TorsionType {
 	NU,
 	JUMP
 };
+
+inline std::string
+to_string( TorsionType const & type ) {
+	switch ( type ) {
+	case BB:
+		return "BB";
+	case CHI:
+		return "SC";
+	case NU:
+		return "NU";
+	case JUMP:
+		return "JUMP";
+	default:
+		return "UNKNOWN";
+	}
+}
 
 static Size const   phi_torsion( 1 );
 static Size const   psi_torsion( 2 );

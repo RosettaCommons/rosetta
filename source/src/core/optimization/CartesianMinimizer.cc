@@ -61,6 +61,10 @@ CartesianMinimizer::run(
 	MinimizerOptions const & options
 ) /*const*/
 {
+	if( ! scorefxn.ready_for_nonideal_scoring() ) {
+		utility_exit_with_message( "Scorefunction not set up for nonideal/Cartesian scoring" );
+	}
+
 	if ( options.deriv_check() ) {
 		deriv_check_result_ = new NumericalDerivCheckResult;
 		deriv_check_result_->send_to_stdout( options.deriv_check_to_stdout() );

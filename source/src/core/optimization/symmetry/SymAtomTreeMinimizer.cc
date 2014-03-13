@@ -61,6 +61,8 @@ SymAtomTreeMinimizer::run(
 	MinimizerOptions const & options
 )
 {
+	check_setup( pose, move_map, scorefxn, options );
+
 	using namespace core::conformation::symmetry;
 
 	//typedef SymmetryInfo::DOF_IDs DOF_IDs;

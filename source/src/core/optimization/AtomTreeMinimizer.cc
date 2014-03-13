@@ -24,7 +24,7 @@
 #include <core/optimization/AtomTreeMultifunc.hh>
 
 // Project headers
-#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
@@ -46,6 +46,8 @@ using namespace ObjexxFCL::format;
 namespace core {
 namespace optimization {
 
+static basic::Tracer TR("core.optimization.AtomTreeMinimizer");
+
 AtomTreeMinimizer::AtomTreeMinimizer()
 {}
 
@@ -60,6 +62,8 @@ AtomTreeMinimizer::run(
 	MinimizerOptions const & options
 ) /*const*/
 {
+	check_setup( pose, move_map, scorefxn, options);
+
 	if ( options.deriv_check() ) {
 		deriv_check_result_ = new NumericalDerivCheckResult;
 		deriv_check_result_->send_to_stdout( options.deriv_check_to_stdout() );
@@ -140,6 +144,40 @@ AtomTreeMinimizer::run(
 
 
 	return end_score;
+}
+
+/// @brief Do consistency checks for minimizer setup.
+void
+AtomTreeMinimizer::check_setup(pose::Pose const &,
+		kinematics::MoveMap const & move_map,
+		scoring::ScoreFunction const & scorefxn,
+		MinimizerOptions const &) const {
+
+	// Do we have any nonideal bond length/bond angle settings in the movemap?
+	bool nonideal( move_map.get( core::id::D ) || move_map.get( core::id::THETA ) );
+	if( ! nonideal ) {
+		for( kinematics::MoveMap::DOF_ID_Map::const_iterator iter( move_map.dof_id_begin() ); iter != move_map.dof_id_end(); ++iter ) {
+			if( iter->second && ( iter->first.type() == core::id::D || iter->first.type() == core::id::THETA ) ) {
+				nonideal = true;
+				break;
+			}
+		}
+	}
+
+	if( nonideal && ! scorefxn.ready_for_nonideal_scoring() ) {
+		// It would be good to have this be a hard error, but several protocols are currently
+		// almost-but-not-quite ready_for_nonideal_scoring().
+		//TR.Error << "** Non-ideal Movemap used in minimization:" << std::endl;
+		//move_map.show( TR.Error );
+		//TR.Error << "** Scorefunction not ready for nonideal scoring:" << std::endl;
+		//scorefxn.show( TR.Error );
+		//TR.Error << std::endl;
+		//utility_exit_with_message( "Scorefunction not set up for nonideal scoring" );
+		TR.Warning << "***************************************************************" << std::endl;
+		TR.Warning << "** WARNING: Non-ideal minimization used with a ScoreFunction **" << std::endl;
+		TR.Warning << "**    which isn't set up for non-ideal minimization          **" << std::endl;
+		TR.Warning << "***************************************************************" << std::endl;
+	}
 }
 
 NumericalDerivCheckResultOP
