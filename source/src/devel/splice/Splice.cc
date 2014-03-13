@@ -1450,7 +1450,7 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 			for(core::Size seg=1; seg <=profile_vector.size() ; seg++ ){//go over all the PSSM sements provided by the user
 				for( core::Size pos /*go over profile ids*/ = 1; pos <= profile_vector[seg]->size(); ++pos ){
 					++aapos;//go over pose residue
-					//TR<<pose.residue(aapos).name1()<<aapos<<" CYS score is: "<<profile_vector[seg]->prof_row(pos)[2]<<std::endl;
+					TR<<pose.residue(aapos).name1()<<aapos<<","<<profile_vector[seg]->prof_row(pos)<<std::endl;
 					if ((profile_vector[seg]->prof_row(pos)[2])>8){//If the profile vector holds a disulfide Cys it will have a pssm score over 8
 						std::stringstream ss; std::string s;
 						ss << pose.residue(aapos).name1();
@@ -1460,8 +1460,8 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 							std::string seqpos;
 							std::ostringstream convert;
 							convert << aapos;      // insert the textual representation of 'Number' in the characters in the stream
-							seqpos = convert.str(); // set 'Result' to the contents of the stream
-							//pose.dump_pdb("align_prob.pdb");
+							seqpos = convert.str();
+							pose.dump_pdb("align_prob.pdb");
 							utility_exit_with_message(" PSSM and pose might be misaligned, position "+ s+seqpos+ " should be a CYS\n");
 							//utility_exit_with_message(" could not find the source pdb name:: "+ pdb_segments_[segment_type]+ ", in pdb_profile_match file."+segment_type+"\n");
 						} //fi

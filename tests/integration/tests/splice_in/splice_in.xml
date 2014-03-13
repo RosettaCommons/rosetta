@@ -1,35 +1,37 @@
 <dock_design>
-	<TASKOPERATIONS>
-    <OperateOnCertainResidues name=nocharges_in_core>
-      <RestrictAbsentCanonicalAASRLT aas="AFGILMNPQSTVWY"/>
-      <ProteinCore/>
-    </OperateOnCertainResidues>
-    <RestrictToAlignedSegments name=restrict chain=1>
-      <a source_pdb="%%source%%" start_res=24 stop_res=41/>
-      <b source_pdb="%%source%%" start_res=52 stop_res=59/>
-      <c source_pdb="%%source%%" start_res=93 stop_res=106/>
-      <d source_pdb="%%source%%" start_res=134 stop_res=143/>
-      <e source_pdb="%%source%%" start_res=159 stop_res=172/>
-      <f source_pdb="%%source%%" start_res=209 stop_res=221/>
-      <d_support1 source_pdb="%%source%%" start_res=184 stop_res=184/>
-      <d_support2 source_pdb="%%source%%" start_res=186 stop_res=186/>
-    </RestrictToAlignedSegments>
-	</TASKOPERATIONS>
-	<SCOREFXNS>
-  	<sc12_w_correction weights=score12_w_corrections/>
-  	<score12_chainbreak weights=score12_w_corrections>
-	    <Reweight scoretype=chainbreak weight=1/>
-		</score12_chainbreak>
-	</SCOREFXNS>
-	<FILTERS>
-	  <ScoreType name=chainbreak_val scorefxn=score12_chainbreak score_type=chainbreak threshold=15/>
-	</FILTERS>
+         <TASKOPERATIONS>
+    		<InitializeFromCommandline name=init/>
+		<SeqprofConsensus name=seqprofcons min_aa_probability=2 conservation_cutoff_protein_interface_design=0 conservation_cutoff_aligned_segments=1 probability_larger_than_current=0 ignore_pose_profile_length_mismatch=1> 
+				<ProteinInterfaceDesign design_chain1=1 design_chain2=0/> 
+				<RestrictToAlignedSegments chain=1>
+					<L1 source_pdb="%%source_pdb%%" start_res=24 stop_res=41/>
+					<L2 source_pdb="%%source_pdb%%" start_res=51 stop_res=60/>
+					<L3 source_pdb="%%source_pdb%%" start_res=94 stop_res=105/>
+					<H1 source_pdb="%%source_pdb%%" start_res=135 stop_res=147/>
+					<H2 source_pdb="%%source_pdb%%" start_res=155 stop_res=171/>
+					<H3 source_pdb="%%source_pdb%%" start_res=209 stop_res=220/>
+				</RestrictToAlignedSegments>
+			</SeqprofConsensus>
+  	</TASKOPERATIONS>
+        <SCOREFXNS>
+		<TalarisCal_res_type_cst weights=talaris2013_calibrated>
+			<Reweight scoretype="res_type_constraint" weight=0.5/>
+		</talaris_cal>
+
+        </SCOREFXNS>
+
+        <FILTERS>
+	        <DesignableResidues name=designable task_operations=seqprofcons/>
+        </FILTERS>
+
 	<MOVERS>
-    <Splice name=splice1 scorefxn=sc12_w_correction torsion_database="torsion.db" dbase_iterate=1 ccd=0 res_move=5 randomize_cut=0 delta_lengths=-1,-2,-3,-4,0,1,2,3,4 equal_length=0 design=1 template_file="%%source%%" design_task_operations=restrict,nocharges_in_core/>
-    <Splice name=splice2 scorefxn=sc12_w_correction torsion_database="torsion.db" dbase_iterate=1 ccd=0 res_move=5 randomize_cut=0 delta_lengths=-1,-2,-3,-4,0,1,2,3,4 equal_length=0 design=1 template_file="%%source%%" design_task_operations=restrict,nocharges_in_core/>
+		<Splice name=L3 profile_weight_away_from_interface=1.5 scorefxn=TalarisCal_res_type_cst torsion_database="L3.db" database_pdb_entry="1AHW" ccd=0 res_move=100 randomize_cut=0 delta_lengths=-1,-2,0,1,2 equal_length=1 design=1 template_file="%%source_pdb%%" checkpointing_file="%%prefix%%.L3.checkpoint" design_task_operations=seqprofcons,init segment=L3 protein_family=antibodies/>
+		
+		<Splice name=L1_L2 profile_weight_away_from_interface=1.5 scorefxn=TalarisCal_res_type_cst torsion_database="L1_L2.db" database_pdb_entry="1AHW" ccd=0 res_move=100 randomize_cut=0 delta_lengths=-1,-2,0,1,2 equal_length=1 design=1 template_file="%%source_pdb%%" checkpointing_file="%%prefix%%.Vl.checkpoint" design_task_operations=seqprofcons,init segment=L1_L2 protein_family=antibodies/>
 	</MOVERS>
 	<PROTOCOLS>
-		<Add mover=splice1/>
-		<Add mover=splice2/>
+		<Add mover=L3/>
+		<Add mover=L1_L2/>
+		<Add filter=designable/>
 	</PROTOCOLS>
 </dock_design>
