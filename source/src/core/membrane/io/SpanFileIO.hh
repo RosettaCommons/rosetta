@@ -62,12 +62,12 @@ public:
 
 	/// @brief Constructor
 	SpanFileIO();
-    
+
     /// @brief Destructor
 	~SpanFileIO();
 
 	/// @brief Copy constructor
-	SpanFileIO( SpanFileIO const & src );
+	// Undefined, commenting out to fix PyRosetta build  SpanFileIO( SpanFileIO const & src );
 
 	/// @brief Get Topology from Spanfile
 	/// @param spanfile
@@ -98,6 +98,3 @@ private: // functions
 } // core
 
 #endif // INCLUDED_core_membrane_io_SpanFileIO_hh
-
-
-

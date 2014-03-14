@@ -69,7 +69,7 @@ public:
 	void init();
 
 	void setup_for_parser();
-	
+
 	// run the protocol
 	void apply(core::pose::Pose & pose);
 
@@ -91,7 +91,7 @@ public:
 
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
-	virtual void parse_my_tag( utility::tag::TagCOP const, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, Pose const & );
+	virtual void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, Filters_map const &, Movers_map const &, Pose const & );
 
 protected:
 	// apply a homologue fragment
@@ -104,7 +104,7 @@ private:
 	// parser
 	HybridizeSetupOP hybridize_setup_;
 	bool align_templates_to_pose_;
-	
+
 	// parameters
 	core::Real increase_cycles_;
 	core::Size ncycles_, cartfrag_overlap_;

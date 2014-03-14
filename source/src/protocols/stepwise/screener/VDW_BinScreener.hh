@@ -34,7 +34,7 @@ namespace screener {
 	public:
 
 		//constructor
-		VDW_BinScreener();
+		// Undefined, commenting out to fix PyRosetta build  VDW_BinScreener();
 
 		//constructor
 		VDW_BinScreener( sampling::rna::checker::RNA_VDW_BinCheckerOP vdw_bin_checker,

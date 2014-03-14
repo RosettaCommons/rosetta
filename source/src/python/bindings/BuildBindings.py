@@ -687,6 +687,8 @@ def prepareMiniLibs(mini_path, bindings_path):
             elif platform.release()[:2] == '13': lib_path = 'build/src/'+mode+'/macos/10.9/64/x86/clang/';  version_add_on = '5.0/default/'
             else: print 'Unknown MacOS version:', platform.release()[:2];  sys.exit(1)  #lib_path = 'build/src/'+mode+'/macos/10.8/64/x86/gcc/'
 
+    # to add: branch on 'xcodebuild -version' output
+
     # now lets add version to lib_path...
     lib_path += version_add_on
 

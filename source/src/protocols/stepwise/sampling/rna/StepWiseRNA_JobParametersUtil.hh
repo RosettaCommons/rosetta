@@ -76,8 +76,8 @@ figure_out_rebuild_bulge_mode( pose::Pose const & pose, Size const rebuild_res )
 bool
 figure_out_sample_both_sugar_base_rotamer( pose::Pose const & pose, bool const floating_base, Size const rebuild_suite );
 
-bool
-figure_out_is_residue_prepend( Size const seq_num, StepWiseRNA_JobParametersOP job_parameters );
+// Undefined, commenting out to fix PyRosetta build  bool
+// Undefined, commenting out to fix PyRosetta build  figure_out_is_residue_prepend( Size const seq_num, StepWiseRNA_JobParametersOP job_parameters );
 
 } //rna
 } //sampling

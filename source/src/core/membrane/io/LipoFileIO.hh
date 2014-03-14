@@ -60,13 +60,13 @@ public:
 
     /// @brief Constructor
 	LipoFileIO();
-    
+
     /// @brief Destructor
 	~LipoFileIO();
 
 	/// @brief Copy Constructor
 	/// @param Lipid Builder Object
-	LipoFileIO( LipoFileIO const & src );
+	// Undefined, commenting out to fix PyRosetta build  LipoFileIO( LipoFileIO const & src );
 
 	/// @brief Main lipid object construction function
 	/// @param [ lipofile ]
@@ -80,7 +80,7 @@ private: // functions
 		LipidAccInfoOP lipid_exp,
 		std::string lipsfile
 		);
-    
+
 }; // class LipoFileIO
 
 } // io
@@ -88,6 +88,3 @@ private: // functions
 } // core
 
 #endif // INCLUDED_core_membrane_io_LipoFileIO_hh
-
-
-

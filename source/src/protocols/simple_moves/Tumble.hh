@@ -63,7 +63,7 @@ public:
 
     void
     parse_my_tag(
-                 TagCOP const tag,
+                 TagCOP tag,
                  basic::datacache::DataMap & datamap,
                  Filters_map const & filters,
                  moves::Movers_map const & movers,
@@ -84,4 +84,3 @@ private:
 } // protocols
 
 #endif
-

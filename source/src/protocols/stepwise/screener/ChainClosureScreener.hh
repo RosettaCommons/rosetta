@@ -30,7 +30,7 @@ namespace screener {
 	public:
 
 		//constructor
-		ChainClosureScreener();
+		// Undefined, commenting out to fix PyRosetta build  ChainClosureScreener();
 
 		//constructor
 		ChainClosureScreener( sampling::rna::checker::ChainClosureCheckerOP chain_closure_checker,

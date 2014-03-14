@@ -32,7 +32,7 @@ namespace screener {
 	public:
 
 		//constructor
-		ResidueContactScreener();
+		// Undefined, commenting out to fix PyRosetta build  ResidueContactScreener();
 
 		//constructor
 		ResidueContactScreener(  pose::Pose & screening_pose,
