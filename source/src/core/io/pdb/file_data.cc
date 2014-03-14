@@ -804,7 +804,7 @@ write_additional_pdb_data(
 
 	// added by rhiju --> "CONECT" lines. Useful for coarse-grained/centroid poses, so that
 	//  rasmol/pymol draws bonds between atoms 'bonded' in Rosetta that are far apart.
-	//  perhaps turn on with a flag?
+	//  Can also be turned on with -inout:dump_conect_info flag.
 	// CONECT reading and writing should really be handled by FileData. ~Labonte
 	if ( (pose.total_residue() >= 1 && pose.residue(1).is_coarse()) ||
 			option[ OptionKeys::inout::dump_connect_info]() ) {
@@ -1263,9 +1263,48 @@ build_pose_as_is1(
 						!new_rsd->is_polymer() ||
 						!pose.residue_type(old_nres).is_polymer() ||
 						!last_residue_was_recognized ) {
-			//
-			//TR.Debug << rsd_type.name() << " " << i << " is added by jump" << std::endl;
-			pose.append_residue_by_jump( *new_rsd, 1 /*pose.total_residue()*/ );
+
+			core::Size rootindex=1;
+
+			// Ensure that metal ions are connected by a jump to the closest metal-binding residue that is lower in sequence.
+			if(new_rsd->is_metal() && basic::options::option[basic::options::OptionKeys::in::auto_setup_metals].user()) {
+				// If this is a metal ion and we're automatically setting up metals, search for the closest metal-binding residue
+				// and make that the jump parent.  Otherwise, let the jump parent be the closest residue.
+				numeric::xyzVector < core::Real > const metal_xyz = new_rsd->xyz(1); //Atom 1 is always the metal of a residue representing a metal ion.  (There's a check for this in residue_io.cc).
+
+				core::Size closest_metalbinding_residue=0;
+				core::Size metalbinding_dist_sq = 0.0;
+				core::Size closest_residue=0;
+				core::Size closest_dist_sq = 0.0;
+
+				for(core::Size jr=1, nres=pose.n_residue(); jr<=nres; ++jr) { //Loop through all residues already added, looking for possible residues to root the metal onto.
+					if(!pose.residue(jr).is_protein()) continue; //I'm not interested in tethering metals to non-protein residues.
+					if(!pose.residue(jr).has("CA")) continue; //I'll be basing this on metal-alpha carbon distance, so anything without an alpha carbon won't get to be the root.
+
+					numeric::xyzVector < core::Real > const residue_xyz = pose.residue(jr).xyz("CA");
+
+					core::Real const current_dist_sq = residue_xyz.distance_squared(metal_xyz);
+
+					if(closest_residue==0 || current_dist_sq < closest_dist_sq) {
+						closest_residue = jr;
+						closest_dist_sq = current_dist_sq;
+					}
+					if(	pose.residue(jr).is_metalbinding() &&
+								(closest_metalbinding_residue==0 || current_dist_sq < metalbinding_dist_sq)
+						) {
+							closest_metalbinding_residue = jr;
+							metalbinding_dist_sq = current_dist_sq;
+					}
+				} //Inner loop through all residues
+
+				if(closest_metalbinding_residue!=0) rootindex=closest_metalbinding_residue; //If we found a metal-binding residue, it's the root; otherwise, the closest residue is.
+				else if(closest_residue!=0) rootindex=closest_residue;
+
+			}	//If this is a metal
+
+			if(rootindex>1) {TR << rsd_type.name() << " " << i << " was added by a jump, with base residue " << rootindex << std::endl;}
+
+			pose.append_residue_by_jump( *new_rsd, rootindex /*pose.total_residue()*/ );
 		}
 		//Append residue to current chain dependent on bond length
 		else {

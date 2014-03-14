@@ -16,6 +16,8 @@
 #ifndef INCLUDED_core_import_pose_import_pose_options_HH
 #define INCLUDED_core_import_pose_import_pose_options_HH
 
+//Core headers
+#include <core/types.hh>
 
 // Unit headers
 #include <core/import_pose/import_pose_options.fwd.hh>
@@ -53,6 +55,11 @@ public:
 	bool rna() const;
 	bool skip_set_reasonable_fold_tree() const;
 	std::string const & residue_type_set() const;
+	bool set_up_metal_bonds() const;
+	bool set_up_metal_constraints() const;
+	core::Real metal_bond_LJ_multiplier() const;
+	core::Real metal_bond_dist_constraint_multiplier() const;
+	core::Real metal_bond_angle_constraint_multiplier() const;
 
 	// mutators
 	void set_centroid( bool centroid );
@@ -63,6 +70,10 @@ public:
 	void set_rna( bool rna );
 	void set_skip_set_reasonable_fold_tree( bool skip_set_reasonable_fold_tree );
 	void set_residue_type_set( std::string const & residue_type_set );
+	void set_set_up_metal_bonds( bool invalue );
+	void set_metal_bond_LJ_multiplier(core::Real invalue );
+	void set_metal_bond_dist_constraint_multiplier(core::Real invalue );
+	void set_metal_bond_angle_constraint_multiplier(core::Real invalue );
 
 private:
 	/// @brief Assigns user specified values to primitive members using command line options
@@ -76,6 +87,10 @@ private:
 	bool read_fold_tree_;
 	bool rna_;
 	bool skip_set_reasonable_fold_tree_;
+	bool set_up_metal_bonds_;
+	core::Real metal_bond_LJ_multiplier_;
+	core::Real metal_bond_dist_constraint_multiplier_;
+	core::Real metal_bond_angle_constraint_multiplier_;
 
 	std::string residue_type_set_;
 

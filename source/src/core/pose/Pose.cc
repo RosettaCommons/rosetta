@@ -17,6 +17,7 @@
 
 // Package headers
 #include <core/pose/util.hh>
+//#include <core/pose/metalloproteins/util.hh>
 #include <core/pose/signals/ConformationEvent.hh>
 #include <core/pose/signals/DestructionEvent.hh>
 #include <core/pose/signals/EnergyEvent.hh>

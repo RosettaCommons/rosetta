@@ -16,6 +16,10 @@ namespace in { BooleanOptionKey const preserve_crystinfo( "in:preserve_crystinfo
 namespace in { BooleanOptionKey const detect_oops( "in:detect_oops" );  }
 namespace in { BooleanOptionKey const detect_disulf( "in:detect_disulf" );  }
 namespace in { RealOptionKey const detect_disulf_tolerance( "in:detect_disulf_tolerance" );  }
+namespace in { BooleanOptionKey const auto_setup_metals( "in:auto_setup_metals" );  }
+namespace in { RealOptionKey const metals_detection_LJ_multiplier( "in:metals_detection_LJ_multiplier" );  }
+namespace in { RealOptionKey const metals_distance_constraint_multiplier( "in:metals_distance_constraint_multiplier" );  }
+namespace in { RealOptionKey const metals_angle_constraint_multiplier( "in:metals_angle_constraint_multiplier" );  }
 namespace in { FileOptionKey const fix_disulf( "in:fix_disulf" );  }
 namespace in { BooleanOptionKey const missing_density_to_jump( "in:missing_density_to_jump" );  }
 namespace in { IntegerVectorOptionKey const target_residues( "in:target_residues" );  }
@@ -139,6 +143,7 @@ namespace in { namespace rdf { BooleanOptionKey const sep_bb_ss( "in:rdf:sep_bb_
 namespace inout { BooleanOptionKey const inout( "inout" );  }
 namespace inout { BooleanOptionKey const fold_tree_io( "inout:fold_tree_io" );  }
 namespace inout { BooleanOptionKey const dump_connect_info( "inout:dump_connect_info" );  }
+namespace inout { RealOptionKey const connect_info_cutoff( "inout:connect_info_cutoff" ); }
 namespace inout { namespace dbms { BooleanOptionKey const dbms( "inout:dbms" );  } }
 namespace inout { namespace dbms { StringOptionKey const mode( "inout:dbms:mode" );  } }
 namespace inout { namespace dbms { StringOptionKey const database_name( "inout:dbms:database_name" );  } }

@@ -385,6 +385,26 @@ public:
 		return rsd_type_.accpt_pos_sc();
 	}
 
+	/// @brief Gets the AtomIndices of the atoms in this residue that can bind to metals
+	/// @note: AtomIndices == vector1< Size >
+	/// @author: Vikram K. Mulligan (vmullig@uw.edu)
+	void
+	get_metal_binding_atoms( AtomIndices &metal_binding_indices ) const
+	{
+		rsd_type_.get_metal_binding_atoms(metal_binding_indices);
+		return;
+	}
+
+	/// @brief Returns the number of virtual atoms in this residue.
+	/// @details This calls the function with the same name in ResidueType, which counts virts on the fly (memory-efficient, performance-poor).
+	/// This being the case, don't call this function repeatedly!  Call it once, and store the return value!
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	core::Size
+	n_virtual_atoms() const
+	{
+		return rsd_type_.n_virtual_atoms();
+	}
+
 	/// @brief Is a particular atom a heavy atom with chemically bound polar hydrogens? (i.e. a donor heavy atom)
 	bool
 	heavyatom_has_polar_hydrogens( Size ind ) const {
@@ -1645,6 +1665,21 @@ public:
 		return rsd_type_.is_ligand();
 	}
 
+	/// @brief Returns true if this residue is a metal ion, false otherwise.  The METAL property is specified in the params file under PROPERTIES.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	bool
+	is_metal() const
+	{
+		return rsd_type_.is_metal();
+	}
+
+	/// @brief Returns true if this residue is a type capable of binding to a metal ion (e.g. His, Cys, etc.), false otherwise.  The METALBINDING property is specified in the params file under PROPERTIES.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	bool
+	is_metalbinding() const
+	{
+		return rsd_type_.is_metalbinding();
+	}
 
 	/// @brief Returns true if this residue is a surface residue
 	bool

@@ -52,7 +52,7 @@ libraries    = [
 	"sqlite3"]
 subprojects  = []
 testinputfiles = [
-    "public/ligand_docking/ZN1.params",
+    "public/ligand_docking/ZNx.params",
     "public/ligand_docking/1aq1.params",
     "public/ligand_docking/7cpa.params",
     "public/ligand_docking/7cpa_confs.pdb",

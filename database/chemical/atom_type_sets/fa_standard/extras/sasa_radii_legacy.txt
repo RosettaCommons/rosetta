@@ -32,6 +32,8 @@ Cl        2.0700  # taken from MM3 forcefield
 Br        2.2200  # taken from MM3 forcefield
 I         2.3600  # taken from MM3 forcefield
 Zn2p      1.0900  # ion radius CHARMM27
+Co2p      1.5680  # modified from zinc based on ratio of van der Waals radii
+Cu2p      1.0978  # modified from zinc based on ratio of van der Waals radii
 Fe2p      0.7800  # ion radius CHARMM27
 Fe3p      0.6500  # ion radius CHARMM27
 Mg2p      1.1850  # ion radius CHARMM27

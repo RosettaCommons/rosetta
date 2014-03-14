@@ -1,0 +1,7 @@
+I need to:
+--create something in import_pose to auto-detect metals
+--identify liganding residues
+--set up fold tree well with metals
+--create special liganding residue types with connections for metal
+--align metal virts to liganding residue atoms
+--set up constraints (distance and angle) based on PDB geometry

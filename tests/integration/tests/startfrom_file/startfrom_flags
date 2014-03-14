@@ -4,7 +4,7 @@
 -in
  -file
   -s inputs/7cpa_7cpa_input.pdb
-  -extra_res_fa inputs/7cpa.params inputs/ZN1.params
+  -extra_res_fa inputs/7cpa.params inputs/ZNx.params
 
 -ligand_chain X
 -start_position_file startfrom.json

@@ -169,6 +169,23 @@ Options = Option_Group( '',
 				legal=['true','false'], ),
 		Option( 'detect_disulf_tolerance', 'Real', desc='disulf tolerance', default="0.5" ),
 
+		# Auto-detection options for metalloproteins --------------------------
+		Option( "auto_setup_metals", "Boolean", desc="Automatically adds covalent linkages to bound metal ions, as well as atom pair "
+					"constraints and angle constraints to hold ions in place, on PDB import.  Also, sets the atom_pair_constraint and "
+					"angle_constraint weights in the default score function to 1.0.  False by default.",
+					legal=["true","false"], default="false"),
+		Option( "metals_detection_LJ_multiplier", "Real", desc="When -auto_setup_metals is used, overlap between metal atoms and "
+					"metal-binding atoms is used as the criterion by which covalent bonds are detected.  The Lennard-Jones radii of the "
+					"atoms can be multiplied by a constant factor in order to detect longer bonds to metal ions.  Default 1.0.",
+					legal=["0.0", "100000.0"], default="1.0" ),
+		Option( "metals_distance_constraint_multiplier", "Real", desc="Distances between metals and metal-binding atoms are constrained "
+					"using harmonic potentials, scaled by this multiplier.  Default 1.0.  Set to 0.0 to skip adding distance constraints.",
+					legal=["0.0", "1000000.0"], default="1.0" ),
+		Option( "metals_angle_constraint_multiplier", "Real", desc="Angles between metals, metal-binding atoms, and metal-binding atom parents "
+					"are constrained using circular harmonic potentials, scaled by this multiplier.  Default 1.0.  Set to 0.0 to skip adding angle "
+					"constraints.",
+					legal=["0.0", "1000000.0"], default="1.0" ),
+
 		# Other input options -------------------------------------------------
 		Option( 'fix_disulf', 'File',
 				desc="Specify disulfide connectivity via a file.  Disulfides are specified as two whitespace-seperated "
@@ -419,9 +436,13 @@ Options = Option_Group( '',
 		Option( 'inout', 'Boolean', desc="Ouput option group", legal='true', default='true' ),
 		Option( 'fold_tree_io', 'Boolean', desc="Ignore 'CHECKPOINT' file and the overwrite the PDB file(s)" ),
 		Option( 'dump_connect_info', 'Boolean',
-				desc="Output CONECT info between bonded atoms that are beyond 3.0 A apart; "
-						"useful for coarse-grained representations.",
+				desc="Output CONECT info between bonded atoms that are beyond a threshhold specified with the "
+						"-inout:connect_info_cutoff flag (3.0 A by default); useful for coarse-grained representations.",
 				default="false" ),
+		Option( 'connect_info_cutoff', 'Real',
+				desc="The atom separation cutoff above which bonded atoms have explicit CONECT records written so "
+						"that programs like PyMOL know the atomic connectivity.  Default 3.0 Angstroms.",
+				default="3.0" ),
 
 		# Relational database options -----------------------------------------
 		Option_Group('dbms',

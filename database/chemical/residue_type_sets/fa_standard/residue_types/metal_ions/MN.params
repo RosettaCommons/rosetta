@@ -3,6 +3,7 @@
 NAME MN
 IO_STRING  MN Z
 TYPE LIGAND
+PROPERTIES METAL
 AA UNK
 # We don't have a Mn type right now, but Mg should be close enough.
 ATOM MN   Mg2p  MG   2.00

@@ -171,6 +171,8 @@ ResidueType::ResidueType(
 		is_NA_( false ),
 		is_carbohydrate_( false ),
 		is_ligand_( false ),
+		is_metal_( false ), //Is this residue type a metal ion?
+		is_metalbinding_( false ), //Is this residue type a type that has the potential to bind to metal ions?
 		is_surface_( false ),
 		is_terminus_( false ),
 		is_lower_terminus_( false ),
@@ -255,6 +257,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		Hpos_polar_sc_(residue_type.Hpos_polar_sc_),
 		all_bb_atoms_(residue_type.all_bb_atoms_),
 		all_sc_atoms_(residue_type.all_sc_atoms_),
+		metal_binding_atoms_(residue_type.metal_binding_atoms_),
 		mainchain_atoms_(residue_type.mainchain_atoms_),
 		actcoord_atoms_(residue_type.actcoord_atoms_),
 		chi_atoms_(residue_type.chi_atoms_),
@@ -287,6 +290,8 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		is_NA_( residue_type.is_NA_ ),
 		is_carbohydrate_( residue_type.is_carbohydrate_ ),
 		is_ligand_( residue_type.is_ligand_ ),
+		is_metal_( residue_type.is_metal_ ), //Is this residue type a metal ion?
+		is_metalbinding_( residue_type.is_metalbinding_ ), //Is this residue type a type capable of binding to a metal ion?
 		is_surface_( residue_type.is_surface_ ),
 		is_terminus_( residue_type.is_terminus_ ),
 		is_lower_terminus_( residue_type.is_lower_terminus_ ),
@@ -758,6 +763,21 @@ ResidueType::abase2( Size const atomno ) const
 	return abase2_indices_[atomno];
 }
 
+///@brief Counts the number of virtual atoms and returns the count.
+///@details The virtual count is not stored in the resiude type.  This count is performed on the fly, and
+///can hurt performance if reapeatedly carried out.  Not intended for use in large loops -- instead, call
+///once and store the value.
+///@author Vikram K. Mulligan (vmullig@uw.edu)
+Size
+ResidueType::n_virtual_atoms () const
+{
+	core::Size virtcount = 0;
+	for(core::Size ia=1, iamax=natoms(); ia<=iamax; ++ia) {
+		if(is_virtual(ia)) ++virtcount;
+	}
+	return virtcount;
+}
+
 Size
 ResidueType::number_bonded_heavyatoms( Size const atomno ) const
 {
@@ -1059,6 +1079,22 @@ ResidueType::add_orbital(
 
 	orbitals_index_[ orbital_name ] = n_orbitals_;
 	orbitals_index_[ strip_whitespace( orbital_name ) ] = n_orbitals_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+/// @brief Add an atom to the list of atoms that can potentially form a bond to a metal ion.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+ResidueType::add_metalbinding_atom (
+	std::string const atom_name
+) {
+	if(!has(atom_name)) {
+		std::string message = "Error in adding metal-binding atom to residue type " + name3() + ". Atom " + atom_name + " was not found.";
+		utility_exit_with_message(message);
+	}
+	metal_binding_atoms_.push_back( atom_name ); //Store names rather than indices, since indices might change.
+	return;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1419,6 +1455,10 @@ ResidueType::add_property( std::string const & property )
 		is_carbohydrate_ = true;
 	} else if ( property == "LIGAND" ) {
 		is_ligand_ = true;
+	} else if ( property == "METAL" ) { //Is this a metal ion?
+		is_metal_ = true;
+	} else if ( property == "METALBINDING" ) { //Can this amino acid residue bind metals?
+		is_metalbinding_ = true;
 	} else if ( property == "SURFACE" ) {
 		is_surface_ = true;
 	} else if ( property == "LOWER_TERMINUS" ) {
@@ -1512,6 +1552,10 @@ ResidueType::delete_property( std::string const & property )
 		is_carbohydrate_ = false;
 	} else if ( property == "LIGAND" ) {
 		is_ligand_ = false;
+	} else if ( property == "METAL" ) {
+		is_metal_ = false;
+	} else if ( property == "METALBINDING" ) {
+		is_metalbinding_ = false;
 	} else if ( property == "SURFACE" ) {
 		is_surface_ = false;
 	} else if ( property == "LOWER_TERMINUS" ) {
@@ -1624,8 +1668,6 @@ ResidueType::add_actcoord_atom( std::string const & atom )
 void
 ResidueType::setup_atom_ordering()
 {
-
-
 
 	utility::vector1<VD> bb_atoms, sidechain_atoms, hydrogens;
 	utility::vector1<Size> h_begin;
@@ -2143,6 +2185,41 @@ ResidueType::update_derived_data()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+	/// @brief Final check of ResidueType data, called by finalize().
+	/// @details These checks are meant to be quick and low-expense, and are only
+	/// called on finalize(), so they shouldn't generally add much to Rosetta
+	/// processing time.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+///////////////////////////////////////////////////////////////////////////////
+void
+ResidueType::perform_checks()
+{
+	bool checkspass = true;
+	std::stringstream msg;
+	msg << "One or more internal errors have occurred in residue type setup:" << std::endl;
+
+	if(is_metal() && (1 > nheavyatoms_ || is_virtual(1) )) {
+		msg << "A metal residue type has a non-metal atom as atom 1." << std::endl;
+		checkspass=false;
+	}
+
+	if(is_metalbinding() && metal_binding_atoms_.size()==0) {
+		msg << "A metal-binding residue has no metal binding atoms listed in its params file (PROPERTIES METALBINDING without METAL_BINDING_ATOMS list)." << std::endl;
+		checkspass=false;
+	} else if (!is_metalbinding() && metal_binding_atoms_.size()>0) {
+		msg << "A residue that has not been declared as a metal-binding residue has metal binding atoms listed in its params file (METAL_BINDING_ATOMS list without PROPERTIES METALBINDING)." << std::endl;
+		checkspass=false;
+	}
+
+	if(!checkspass) {
+		utility_exit_with_message(msg.str());
+	}
+
+	return;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 
 /*
          data that we have prior to calling this routine:
@@ -2184,6 +2261,8 @@ ResidueType::finalize()
 	generate_atom_indices();
 
 	update_derived_data();
+
+	perform_checks();
 
 	// signal that derived data is up to date now
 	finalized_ = true;

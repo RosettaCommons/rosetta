@@ -24,6 +24,7 @@ namespace OptionKeys {
 namespace inout { extern BooleanOptionKey const inout; }
 namespace inout { extern BooleanOptionKey const fold_tree_io; }
 namespace inout { extern BooleanOptionKey const dump_connect_info; }
+namespace inout { extern RealOptionKey const connect_info_cutoff; }
 namespace inout { namespace dbms { extern BooleanOptionKey const dbms; } }
 namespace inout { namespace dbms { extern StringOptionKey const mode; } }
 namespace inout { namespace dbms { extern StringOptionKey const database_name; } }

@@ -308,6 +308,14 @@ public:
 		return attached_H_end_;
 	}
 
+	///@brief Counts the number of virtual atoms and returns the count.
+	///@details The virtual count is not stored in the resiude type.  This count is performed on the fly, and
+	///can hurt performance if reapeatedly carried out.  Not intended for use in large loops -- instead, call
+	///once and store the value.
+	///@author Vikram K. Mulligan (vmullig@uw.edu)
+	Size
+	n_virtual_atoms () const;
+
 	///@brief indicates how many proton bonded neighbors an atom has
 	Size
 	number_bonded_hydrogens( Size const atomno ) const
@@ -374,6 +382,20 @@ public:
 		return nu_atoms_indices_;
 	}
 
+	/// @brief Gets indices of all atoms that can form bonds to metals
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	void
+	get_metal_binding_atoms( AtomIndices &metal_binding_indices ) const {
+		metal_binding_indices.clear();
+
+		for(core::Size i=1, imax=metal_binding_atoms_.size(); i<=imax; ++i) {
+			if( has(metal_binding_atoms_[i]) ) {
+				metal_binding_indices.push_back( atom_index( metal_binding_atoms_[i] )  );
+			}
+		}
+
+		return;
+	}
 
 	///@brief Indices of all backbone atoms, hydrogens and heavyatoms
 	AtomIndices const &
@@ -549,7 +571,7 @@ public:
 		return boost::out_edges(atom, graph_);
 	}
 
-	/// @brief is a backbone atom (heavy or hydorgen)?
+	/// @brief is a backbone atom (heavy or hydrogen)?
 	bool
 	atom_is_backbone( Size const atomno ) const
 	{
@@ -925,6 +947,12 @@ public:
 		std::string const & gasteiger_atom_type_name
 	);
 
+	/// @brief Add an atom to the list of atoms that can potentially form a bond to a metal ion.
+	/// Note that the atom must exist in the residue type (the function checks for this at runtime).
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void
+	add_metalbinding_atom ( std::string const atom_name );
+
 	/// @brief add a bond between atom1 and atom2, if bond type is not specified, default to SingleBond
 	void
 	add_bond(
@@ -1277,6 +1305,14 @@ public:
 	bool is_carbohydrate() const { return is_carbohydrate_; }
 
 	bool is_ligand() const { return is_ligand_; }
+
+	/// @brief Returns true if this residue type is a metal ion, false otherwise.  The METAL property is specified in the params file under PROPERTIES.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	bool is_metal() const { return is_metal_; }
+
+	/// @brief Returns true if this residue type is a type that can bind to a metal ion (e.g. His, Asp, Cys, etc.), false otherwise.  The METALBINDING property is specified in the params file under PROPERTIES.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	bool is_metalbinding() const { return is_metalbinding_; }
 
 	/// @brief is surface? (e.g. enamel)
 	bool is_surface() const { return is_surface_; }
@@ -1780,6 +1816,11 @@ private:
 	void
 	update_derived_data();
 
+	/// @brief Final check of ResidueType data, called by finalize().
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void
+	perform_checks();
+
 	void
 	update_residue_connection_mapping();
 
@@ -1967,6 +2008,11 @@ private:
 	// Indices of all sidechain atoms, hydrogens and heavyatoms
 	AtomIndices all_sc_atoms_;
 
+	/// @brief Names of all of the atoms that are able to make a bond to a metal, for metal-binding residue types
+	/// @author Vikram K. Mulligan (vmullig@uw.edu).
+	utility::vector1 < std::string > metal_binding_atoms_;
+
+
 	/// @brief indices of all mainchain atoms
 	/// @details mainchain_atoms are those atoms on a path from polymer lower_connect
 	/// to upper_connect. For protein, this will be N, CA and C.
@@ -2025,7 +2071,6 @@ private:
 	// the number of rotamer bins for each chi angle in the NCAA rotlib
 	utility::vector1< Size > ncaa_rotlib_n_bins_per_rot_;
 
-
 	/////////////////////////////////////
 	// properties -- some of these may be deducible from AA?
 	//
@@ -2046,6 +2091,8 @@ private:
 	bool is_NA_;
 	bool is_carbohydrate_;
 	bool is_ligand_;
+	bool is_metal_; //Is this residue type a metal ion?
+	bool is_metalbinding_; //Is this residue type a type capable of binding to a metal ion?
 	bool is_surface_;
 	bool is_terminus_; // last or first residue in a chain; set to TRUE during terminus patching
 	bool is_lower_terminus_; // first residue in a chain; set to TRUE during terminus patching

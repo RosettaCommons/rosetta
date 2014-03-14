@@ -39,6 +39,10 @@ namespace in { extern BooleanOptionKey const preserve_crystinfo; }
 namespace in { extern BooleanOptionKey const detect_oops; }
 namespace in { extern BooleanOptionKey const detect_disulf; }
 namespace in { extern RealOptionKey const detect_disulf_tolerance; }
+namespace in { extern BooleanOptionKey const auto_setup_metals; }
+namespace in { extern RealOptionKey const metals_detection_LJ_multiplier; }
+namespace in { extern RealOptionKey const metals_distance_constraint_multiplier; }
+namespace in { extern RealOptionKey const metals_angle_constraint_multiplier; }
 namespace in { extern FileOptionKey const fix_disulf; }
 namespace in { extern BooleanOptionKey const missing_density_to_jump; }
 namespace in { extern IntegerVectorOptionKey const target_residues; }

@@ -79,11 +79,37 @@ namespace pdb {
 std::string
 convert_res_name( std::string const & name )
 {
-	if ( name == "MSE" ) {
+	std::string name2 = name; //Copy of the input string for output.
+
+	//Remove whitespace to make it easier to import metalloproteins:
+	for(signed int i=0; i<(signed int)name2.length(); ++i) { //Needs to be signed!  Can't use core::Size!
+		if(name2[i]==' ' || name2[i]=='\n') {
+			name2.erase(i,1);
+			--i;
+		}
+	}
+
+	if ( name2 == "MSE" ) {
 		TR << "Reading MSE as MET!" << std::endl;
 		return "MET";
 	}
-	return name;
+
+	//If this is one of these metal ions and there is a 1 or 2 appended to the name (e.g. "CU2"), return just the first two characters as the name.
+	//if(name2!="ZNx" && name2!="ZNX") { //Special zinc variants used in unit tests.  Grr.
+	std::string const firsttwo = name2.substr(0,2);
+	if (name2.length()>2 && (firsttwo == "CU" || firsttwo == "ZN" || firsttwo == "CA" || firsttwo == "CO" || firsttwo == "MG" || firsttwo == "MN" || firsttwo == "NA") ) {
+		if(name2[2]=='1' || name2[2]=='2') {
+			TR << "Reading " << name2 << " as " << firsttwo << "!" << std::endl;
+			name2 = firsttwo;
+		}
+	}
+	//}
+
+	while(name2.size()<3) {
+		name2 = std::string(" ") + name2; //Irritating -- name is expected to be exactly 3 characters.
+	}
+
+	return name2;
 }
 
 /// for nucleic acids, slightly better mechanism is below (convert_nucleic_acid_residue_info_to_standard)

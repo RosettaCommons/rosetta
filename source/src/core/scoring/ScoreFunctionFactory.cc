@@ -33,6 +33,7 @@
 // option key includes
 
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
@@ -279,6 +280,24 @@ core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* defau
 	// add in constraint weights if specified by the user.
 	// mtyka: No No No we dont want this here. Add constraints and weights ouside this function.
 	//  just setting the weights alone isnt gonna get oyu far anyway.
+	// VKM: There are special cases in which constraint weights need to be turned on, I think (e.g.
+	// for metalloproteins), and this is the best place to ensure that it happens consistently.
+
+	//Turn on constraints if the user has used the auto_setup_metals flag.  Constraints are added automatically on PDB import.
+	if( option[in::auto_setup_metals].user() ) {
+		if( (option[in::metals_distance_constraint_multiplier]() > 1.0e-10) && (scorefxn->get_weight(atom_pair_constraint) < 1.0e-10) ) {
+			T("core.scoring.ScoreFunctionFactory") << "The -auto_setup_metals flag was used with no atom_pair_constraint weight set in the weights file.  Setting to 1.0." << std::endl ;
+			scorefxn->set_weight(atom_pair_constraint, 1.0); // Turn on the atom_pair_constraint weight if and only if it isn't already turned on.
+			// If it is already turned on, then the automatic constraint adder will adjust constraint strenghts appropriately, which means that we
+			// don't need to set this to 1.0 -- any nonzero value is fine.
+		}
+		if( (option[in::metals_angle_constraint_multiplier]() > 1.0e-10) && (scorefxn->get_weight(angle_constraint) < 1.0e-10) ) {
+			T("core.scoring.ScoreFunctionFactory") << "The -auto_setup_metals flag was used with no angle_constraint weight set in the weights file.  Setting to 1.0." << std::endl ;
+			scorefxn->set_weight(angle_constraint, 1.0); // Turn on the angle_constraint weight if and only if it isn't already turned on.
+			// If it is already turned on, then the automatic constraint adder will adjust constraint strenghts appropriately, which means that we
+			// don't need to set this to 1.0 -- any nonzero value is fine.
+		}
+	}
 
 	return scorefxn;
 }

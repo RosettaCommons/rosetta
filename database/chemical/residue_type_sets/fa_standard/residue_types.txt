@@ -47,7 +47,8 @@ residue_types/nucleic/rna/URA.params
 ## Metal Ion Types
 residue_types/metal_ions/CA.params
 #residue_types/metal_ions/CD.params
-#residue_types/metal_ions/CO.params
+residue_types/metal_ions/CO.params
+residue_types/metal_ions/CU.params
 residue_types/metal_ions/FE.params
 residue_types/metal_ions/FE2.params
 residue_types/metal_ions/K.params
@@ -375,6 +376,9 @@ residue_types/l-ncaa/cyclohexyl-glycine_chair.params
 #residue_types/l-ncaa/trifluoro-alanine.params
 #residue_types/l-ncaa/trifluoro-leucine_ent2.params
 #residue_types/l-ncaa/trifluoro-leucine.params
+
+## Metal-binding NCAA types
+#residue_types/metal_binding_ncaa/BPY.params
 
 ## Peptoid Types
 #residue_types/peptoids/00C.params

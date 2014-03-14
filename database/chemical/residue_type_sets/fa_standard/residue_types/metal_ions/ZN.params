@@ -3,6 +3,7 @@
 NAME ZN
 IO_STRING  ZN Z
 TYPE LIGAND
+PROPERTIES METAL
 AA UNK
 ATOM ZN   Zn2p  ZN   2.00
 ATOM  V1  VIRT  VIRT 0.00
@@ -14,7 +15,7 @@ BOND ZN    V2
 BOND ZN    V3
 BOND ZN    V4
 NBR_ATOM ZN
-NBR_RADIUS 0.01
+NBR_RADIUS 5.0
 # tetrahedral geometry with 2.2 distance from center to vertex
 # chirality is defined so that viewing from V1 to ZN, V2-V3-V4 are in clockwise direction.
 ICOOR_INTERNAL   ZN      0.000000    0.000000    0.000000  ZN     V1    V2

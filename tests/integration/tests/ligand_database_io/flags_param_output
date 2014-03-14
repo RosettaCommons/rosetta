@@ -4,7 +4,7 @@
 
 -in
  -file
-  -extra_res_fa inputs/7cpa.params inputs/ZN1.params
+  -extra_res_fa inputs/7cpa.params inputs/ZNx.params
 
 -ligand_import:params_database_name ligand_parameters.db3
 

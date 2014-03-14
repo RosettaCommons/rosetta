@@ -1,7 +1,7 @@
 # I think right now that Mini has to have at least three atoms per residue,
 # hence the virtual atoms.
-NAME ZN1
-IO_STRING ZN1 Z
+NAME ZNx
+IO_STRING ZNx Z
 TYPE LIGAND
 AA UNK
 ATOM ZN1  Zn2p  X    2.00

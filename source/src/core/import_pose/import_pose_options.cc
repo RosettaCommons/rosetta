@@ -13,6 +13,9 @@
 /// @brief
 /// @author Brian D. Weitzner brian.weitzner@gmail.com
 
+//Core headers
+#include <core/types.hh>
+
 // Unit headers
 #include <core/import_pose/import_pose_options.hh>
 #include <core/import_pose/import_pose_options_creator.hh>
@@ -74,6 +77,10 @@ void ImportPoseOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_rna( tag->getOption< bool >( "rna", 0 ));
 	set_skip_set_reasonable_fold_tree( tag->getOption< bool >( "skip_set_reasonable_fold_tree", 0 ));
 	set_residue_type_set( tag->getOption< std::string >( "residue_type_set", "fa_standard" ));
+	set_set_up_metal_bonds( tag->getOption<bool>("auto_setup_metals", false) );
+	set_metal_bond_LJ_multiplier( tag->getOption<core::Real>("metals_detection_LJ_multiplier", 1.0) );
+	set_metal_bond_dist_constraint_multiplier( tag->getOption<core::Real>("metals_distance_constraint_multiplier", 1.0) );
+	set_metal_bond_angle_constraint_multiplier( tag->getOption<core::Real>("metals_angle_constraint_multiplier", 1.0) );
 }
 
 // accessors
@@ -84,6 +91,11 @@ bool ImportPoseOptions::pack_missing_sidechains() const { return pack_missing_si
 bool ImportPoseOptions::read_fold_tree() const { return read_fold_tree_; }
 bool ImportPoseOptions::rna() const { return rna_; }
 bool ImportPoseOptions::skip_set_reasonable_fold_tree() const { return skip_set_reasonable_fold_tree_; }
+bool ImportPoseOptions::set_up_metal_bonds() const { return set_up_metal_bonds_;}
+bool ImportPoseOptions::set_up_metal_constraints() const { return (set_up_metal_bonds_ && (metal_bond_dist_constraint_multiplier_ > 1.0e-10  || metal_bond_angle_constraint_multiplier_ > 1.0e-10 ) );}
+core::Real ImportPoseOptions::metal_bond_LJ_multiplier() const { return metal_bond_LJ_multiplier_; }
+core::Real ImportPoseOptions::metal_bond_dist_constraint_multiplier() const { return metal_bond_dist_constraint_multiplier_; }
+core::Real ImportPoseOptions::metal_bond_angle_constraint_multiplier() const { return metal_bond_angle_constraint_multiplier_;  }
 
 std::string const & ImportPoseOptions::residue_type_set() const { return residue_type_set_; }
 
@@ -95,6 +107,10 @@ void ImportPoseOptions::set_pack_missing_sidechains( bool pack_missing_sidechain
 void ImportPoseOptions::set_read_fold_tree( bool read_fold_tree ) { read_fold_tree_ = read_fold_tree; }
 void ImportPoseOptions::set_rna( bool rna ) { rna_ = rna; }
 void ImportPoseOptions::set_skip_set_reasonable_fold_tree( bool skip_set_reasonable_fold_tree ) { skip_set_reasonable_fold_tree_ = skip_set_reasonable_fold_tree; }
+void ImportPoseOptions::set_set_up_metal_bonds( bool invalue ) {set_up_metal_bonds_ = invalue; return;}
+void ImportPoseOptions::set_metal_bond_LJ_multiplier(core::Real invalue ) { metal_bond_LJ_multiplier_ = invalue; return;}
+void ImportPoseOptions::set_metal_bond_dist_constraint_multiplier(core::Real invalue ) { metal_bond_dist_constraint_multiplier_ = invalue; return;}
+void ImportPoseOptions::set_metal_bond_angle_constraint_multiplier(core::Real invalue ) { metal_bond_angle_constraint_multiplier_ = invalue; return;}
 
 void ImportPoseOptions::set_residue_type_set( std::string const & residue_type_set ) { residue_type_set_ = residue_type_set; }
 
@@ -122,6 +138,11 @@ void ImportPoseOptions::init_from_options()
 	set_read_fold_tree( false ); // no option for this parameter - it can only be set to true if you call pose_from_pdd.
 	set_rna(option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set]()  == "rna");
 	set_skip_set_reasonable_fold_tree( option[ run::skip_set_reasonable_fold_tree ].value());
+
+	set_set_up_metal_bonds( option[in::auto_setup_metals].user() );
+	set_metal_bond_LJ_multiplier( option[in::metals_detection_LJ_multiplier]() );
+	set_metal_bond_dist_constraint_multiplier( option[in::metals_distance_constraint_multiplier]() );
+	set_metal_bond_angle_constraint_multiplier( option[in::metals_angle_constraint_multiplier]() );
 
 	set_residue_type_set( option[ in::file::residue_type_set ]());
 }

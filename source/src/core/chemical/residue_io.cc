@@ -264,6 +264,11 @@ read_topology_file(
 /// connection (chemical bond), i.e., the bond to residue i-1.  E.g.,
 /// "LOWER_CONNECT N" from SER.params.
 ///
+/// METAL_BINDING_ATOMS:
+/// For polymer residue types that can bind metals (METALBINDING property), this is a list of the atoms
+/// that can form a direct bond to the metal.  For example, in ASP.params, it would read:
+/// "METAL_BINDING_ATOMS OD1 OD2"
+///
 /// NAME:
 /// Gives the name for this ResidueType.  The name for each ResidueType
 /// must be unique within a ResidueTypeSet.  It is not limited to three latters.
@@ -518,6 +523,12 @@ read_topology_file(
 				rsd->add_property( tag );
 			} else if ( tag == "LIGAND" ) {
 				rsd->add_property( tag );
+			}
+		} else if ( tag == "METAL_BINDING_ATOMS" ) {
+			l >> atom1;
+			while ( !l.fail() ) {
+				rsd->add_metalbinding_atom( atom1 );
+				l >> atom1;
 			}
 		} else if ( tag == "BOND" ) {
 			l >> atom1 >> atom2;
@@ -1002,6 +1013,7 @@ write_topology_file(
 	// now all the properties
 	out << "PROPERTIES";
 	if (rsd.is_protein() ) { out << " PROTEIN"; }
+	if (rsd.is_metalbinding()) { out << " METALBINDING"; }
 	if (rsd.is_DNA() ) { out << " DNA"; }
 	if (rsd.is_RNA() ) { out << " RNA"; }
 	if (rsd.is_polar() ) { out << " POLAR"; }

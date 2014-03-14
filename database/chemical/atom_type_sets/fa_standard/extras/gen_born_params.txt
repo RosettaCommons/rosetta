@@ -32,6 +32,8 @@ Cl        1.7350          0.8000
 Br        1.9000          0.8000
 I         2.3600          0.8000
 Zn2p      1.0900          0.8000
+Co2p      1.5680          0.8000  # modified from zinc based on ratio of van der Waals radii
+Cu2p      1.0978          0.8000  # modified from zinc based on ratio of van der Waals radii
 Fe2p      0.7800          0.8000
 Fe3p      0.6500          0.8000
 Mg2p      1.7000          0.8000

@@ -392,7 +392,7 @@ testinputfiles = [
 	"ligand_docking/7cpa.params",
 	"ligand_docking/7cpa_7cpa_native.pdb",
 	"ligand_docking/7cpa_confs.pdb",
-	"ligand_docking/ZN1.params",
+	"ligand_docking/ZNx.params",
 	"loops/2GB3.pdb",
 	"loops/4DZM.pdb",
 	"match/carbaryl_LG1.params",

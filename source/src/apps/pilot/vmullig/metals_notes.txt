@@ -1,0 +1,29 @@
+TODO:
+XX Add check that first atom of a metal residue type is the metal.
+XX Add check that metalbinding residues define metalbinding atoms.
+XX Add check that params files with metalbinding atoms are metalbinding residues.
+XX Add distance constraints.
+XX Add angle constraints.
+XX Add Cu and Co.
+XX Add support for more than 4 VIRTs, and add a virt counting function to residue / residuetype.
+XX Move metal detection to pose utilities.
+XX Move constraint adding to pose utilities.
+XX In convert_res_name in core/io/pdb/file_data_fixup.cc, add logic for handling "ZN ", " ZN", "ZN1", "ZN2", etc.
+XX Automatically set parent of metal to nearest metal-binding residue on pdb import.
+XX Add flags for constraints and metal detection (as well as for constraint strength, inclusion of angle constraints, and detection radius cutoff).
+XX Add tracer to core/pose/metalloproteins/util.cc.
+XX Automatically turn on constraint weights.
+XX Add automatic constraint adding and metal detection to import_pose
+XX Remove debugging output from util.cc.
+XX Remove stdio.hh from util.cc.
+XX Add BPY to the NCAAs.
+-- Test cart_bonded and figure out what to do about protein-metal bonds...
+
+To add to documentation:
+-- Changes to -inout:*** flag group (for CONECT records)
+-- A section on how to deal with metalloproteins in Rosetta
+-- A section on how to deal with noncanonicals in Rosetta
+
+Tests:
+-- Add unit tests
+-- Add integration tests

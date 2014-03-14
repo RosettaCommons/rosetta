@@ -3,7 +3,7 @@
 -in
  -use_database
  -file
-  -extra_res_fa ZN1.params 7cpa.params
+  -extra_res_fa ZNx.params 7cpa.params
  -dbms 
   -struct_ids 1
 -inout

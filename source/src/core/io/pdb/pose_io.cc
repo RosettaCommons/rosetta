@@ -32,6 +32,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/inout.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -380,19 +381,21 @@ dump_connect_info(
 
 	// It might be better to put this in file_data.cc, and to make use of the file_data to get the
 	// numbering exactly right.
-	Real const CUTOFF( 3.0 );
-	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+	Real const CUTOFF( basic::options::option[ basic::options::OptionKeys::inout::connect_info_cutoff ]() ); //3.0 by default, but can be set by user
+	Real const CUTOFFSQ ( CUTOFF*CUTOFF );
+
+	for ( Size i=1, imax=pose.total_residue(); i<=imax; ++i ) {
 
 		conformation::Residue const & rsd( pose.residue(i) );
 
-		for ( Size j=1; j<= rsd.natoms(); ++j ) {
+		for ( Size j=1, jmax=rsd.natoms(); j<=jmax; ++j ) {
 
 			id::AtomID const atom_id( j, i );
 
 			if ( !atom_id_output[ atom_id ] ) continue;
 
 			utility::vector1<core::id::AtomID>	const & nbr_ids(  pose.conformation().bonded_neighbor_all_res( atom_id, true /*virt*/) );
-			for ( Size n = 1; n <= nbr_ids.size(); n++ ) {
+			for ( Size n = 1, nmax=nbr_ids.size(); n <=nmax; n++ ) {
 
 				id::AtomID const & nbr_id = nbr_ids[ n ];
 
@@ -401,13 +404,15 @@ dump_connect_info(
 				if ( atom_id.rsd() > nbr_id.rsd()   ) continue;
 				if ( atom_id.rsd() == nbr_id.rsd()  && atom_id.atomno() > nbr_id.atomno()  ) continue;
 
-				if ( ( pose.xyz( atom_id ) - pose.xyz( nbr_id ) ).length() < CUTOFF ) continue;
+				if ( ( pose.xyz( atom_id ) - pose.xyz( nbr_id ) ).length_squared() < CUTOFFSQ ) continue;
 
 				// Final check: actually look for a connection in the atom tree.
-				core::kinematics::tree::AtomCOP atom( & pose.atom_tree().atom_dont_do_update( atom_id ) );
-				core::kinematics::tree::AtomCOP  nbr( & pose.atom_tree().atom_dont_do_update( nbr_id ) );
-
-				if( ( nbr->parent() != atom ) && ( atom->parent() != nbr ) ) continue;
+				// V. Mulligan, 2 March 2014: This is a silly check!  It guarantees that the only connections we write out are between atoms and their parents,
+				// which means that we NEVER write inter-residue connections between side-chains, or even connections that close rings.  This means that most
+				// of the business above, checking residue numbers and whatnot, is for naught.  Commented out for now.
+				//core::kinematics::tree::AtomCOP atom( & pose.atom_tree().atom_dont_do_update( atom_id ) );
+				//core::kinematics::tree::AtomCOP  nbr( & pose.atom_tree().atom_dont_do_update( nbr_id ) );
+				//if( ( nbr->parent() != atom ) && ( atom->parent() != nbr ) ) continue;
 
 				out << "CONECT" << I(5,atom_id_output[ atom_id ]) << I(5,atom_id_output[  nbr_id  ]) << std::endl;
 

@@ -33,6 +33,8 @@ Cl      0                         0              0
 Br      0                         0              0
 I       0                         0              0
 Zn2p    0                         0              0
+Co2p    0                         0              0  #Copied from zinc
+Cu2p    0                         0              0  #Copied from zinc
 Fe2p    0                         0              0
 Fe3p    0                         0              0
 Mg2p    0                         0              0  

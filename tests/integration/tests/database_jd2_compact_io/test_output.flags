@@ -4,7 +4,7 @@
 -in
  -file
   -s 7cpa_7cpa_input.pdb.gz
-  -extra_res_fa ZN1.params 7cpa.params
+  -extra_res_fa ZNx.params 7cpa.params
 -inout
  -dbms:database_name structures.db3
  -dbms:use_compact_residue_schema

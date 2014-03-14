@@ -111,6 +111,8 @@ CL	-0.240000	2.070000	-0.240000	2.070000 # radius/wdepth: taken from MM3 forcefi
 BR	-0.320000	2.220000	-0.320000	2.220000 # radius/wdepth: taken from MM3 forcefield
 I	-0.424000	2.360000	-0.424000	2.360000 # radius/wdepth: taken from MM3 forcefield
 ZN	-0.250000	1.090000	-0.250000	1.090000 # zinc
+CO	-0.250000	1.568000	-0.250000	1.568000 # cobalt, modified from zinc
+CU	-0.250000	1.097800	-0.250000	1.097800 # copper, modified from zinc
 FE	-0.000000	0.650000	-0.000000	0.650000 # iron
 SOD	-0.046900	1.363750	-0.046900	1.363750 # sodium
 POT	-0.087000	1.763750	-0.087000	1.763750 # potassium
