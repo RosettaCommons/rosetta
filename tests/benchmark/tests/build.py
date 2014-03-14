@@ -18,11 +18,14 @@ import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
 tests = dict(
-    debug   = NT(command='./scons.py bin cxx={compiler} extras={extras} -j{jobs}', incremental=True),
-    release = NT(command='./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}', incremental=True),
-    static  = NT(command='./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}', incremental=True),
-    header  = NT(command='cd src && python ./../../../tools/python_cc_reader/test_all_headers_compile_w_fork.py -n {jobs}', incremental=False),
-    levels  = NT(command='cd src && python ./../../../tools/python_cc_reader/library_levels.py', incremental=False),
+    debug     = NT(command='./scons.py bin cxx={compiler} extras={extras} -j{jobs}', incremental=True),
+    release   = NT(command='./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}', incremental=True),
+    static    = NT(command='./scons.py bin cxx={compiler} extras={extras} mode=release -j{jobs}', incremental=True),
+
+    PyRosetta = NT(command='BuildPyRosetta.sh -u -j{jobs}', incremental=True),
+
+    header    = NT(command='cd src && python ./../../../tools/python_cc_reader/test_all_headers_compile_w_fork.py -n {jobs}', incremental=False),
+    levels    = NT(command='cd src && python ./../../../tools/python_cc_reader/library_levels.py', incremental=False),
 )
 
 _TestSuite_ = False  # Set to True for TestSuite-like tests (Unit, Integration, Sfxn_fingerprint) and False other wise
@@ -68,7 +71,7 @@ def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
     res_code = _S_failed_ if res else _S_finished_
 
-    if not res: output = '\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
+    if not res: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
 
     output = 'Running: {}\n'.format(command_line) + output  # Making sure that exact command line used is stored
 
