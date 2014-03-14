@@ -739,7 +739,7 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 					frame_weights[seqpos_start] = 0.0;
 
 			for(int i_pos = (int)seqpos_start; i_pos<=(int)seqpos_end-1; ++i_pos)
-				TR << "Prob_dens( " << i_frame << " " << seqpos_start << " ) = " << frame_weights[seqpos_start] << std::endl;
+				TR.Debug << "Prob_dens( " << i_frame << " " << seqpos_start << " ) = " << frame_weights[seqpos_start] << std::endl;
 		}
 		frag_bias_[i_frag_set].weights(frame_weights);
 	}
