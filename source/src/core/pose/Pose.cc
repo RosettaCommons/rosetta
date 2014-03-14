@@ -54,8 +54,11 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-// Utility headers
+// Numeric headers
+#include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
+
+// Utility headers
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
 
@@ -973,6 +976,7 @@ Pose::set_ring_conformation(uint const seqpos, core::chemical::RingConformer con
 {
 	using namespace std;
 	using namespace id;
+	using namespace numeric;
 
 	Residue const & res = residue(seqpos);
 
@@ -998,7 +1002,7 @@ Pose::set_ring_conformation(uint const seqpos, core::chemical::RingConformer con
 		AtomID ref1(res.type().nu_atoms(i)[1], seqpos);
 		AtomID ref2(res.type().nu_atoms(i)[2], seqpos);
 		AtomID ref3(res.type().nu_atoms(i)[3], seqpos);
-		conformation_->set_bond_angle(ref1, ref2, ref3, conformer.tau_angles[i]);
+		conformation_->set_bond_angle(ref1, ref2, ref3, conversions::radians(conformer.tau_angles[i]));
 	}
 
 	// Since one fewer nus are stored than taus, we need the LAST 3 reference atoms from the last nu, instead of the
@@ -1006,7 +1010,7 @@ Pose::set_ring_conformation(uint const seqpos, core::chemical::RingConformer con
 	AtomID ref1(res.type().nu_atoms(n_nus)[2], seqpos);
 	AtomID ref2(res.type().nu_atoms(n_nus)[3], seqpos);
 	AtomID ref3(res.type().nu_atoms(n_nus)[4], seqpos);
-	conformation_->set_bond_angle(ref1, ref2, ref3, conformer.tau_angles[n_taus]);
+	conformation_->set_bond_angle(ref1, ref2, ref3, conversions::radians(conformer.tau_angles[n_taus]));
 
 	// Finally, fix the virtual alignment in the special case of saccharide residues.
 	if (res.is_carbohydrate()) {
