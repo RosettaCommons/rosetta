@@ -7,12 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/chemical/carbohydrates/database_io.hh
-/// @brief   Database input/output function declarations for carbohydrate-specific data.
+/// @file    core/chemical/ring_conformer_io.hh
+/// @brief   Database input/output function declarations for ring-conformer-specific data.
 /// @author  Labonte
 
-#ifndef INCLUDED_core_chemical_carbohydrates_database_io_HH
-#define INCLUDED_core_chemical_carbohydrates_database_io_HH
+#ifndef INCLUDED_core_chemical_ring_conformer_io_HH
+#define INCLUDED_core_chemical_ring_conformer_io_HH
+
+// Unit header
+#include <core/chemical/RingConformerSet.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -28,22 +31,16 @@
 
 namespace core {
 namespace chemical {
-namespace carbohydrates {
 
 /// @brief  Local method that opens a file and returns its data as a list of lines after checking for errors.
 utility::vector1<std::string> get_lines_from_file_data(std::string const & filename);
 
 
-/// @brief  Return a list of strings, which are saccharide-specific properties and modifications, read from a database
-/// file.
-utility::vector1<std::string> read_properties_from_database_file(std::string const & filename);
+/// @brief  Return a list of ring conformers, read from a database file.
+utility::vector1<RingConformer> read_conformers_from_database_file_for_ring_size(std::string const & filename,
+		core::Size ring_size);
 
-/// @brief  Return a map of strings to strings, which are saccharide-specific 3-letter codes mapped to IUPAC roots, read
-/// from a database file.
-std::map<std::string, std::string> read_codes_and_roots_from_database_file(std::string const & filename);
-
-}  // namespace carbohydrates
 }  // namespace chemical
 }  // namespace core
 
-#endif  // INCLUDED_core_chemical_carbohydrates_database_io_HH
+#endif  // INCLUDED_core_chemical_ring_conformer_io_HH

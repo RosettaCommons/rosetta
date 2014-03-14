@@ -16,7 +16,7 @@
 #include <test/core/init_util.hh>
 
 // Unit header
-#include <core/chemical/carbohydrates/RingConformerSet.hh>
+#include <core/chemical/RingConformerSet.hh>
 
 // Utility header
 #include <utility/vector1.hh>
@@ -28,9 +28,9 @@ public:
 	// Initialization
 	void setUp()
 	{
-		using namespace core::chemical::carbohydrates;
+		using namespace core::chemical;
 
-		core_init_with_additional_options("-out:levels core.chemical.carbohydrates.RingConformerSet:400");
+		core_init_with_additional_options("-out:levels core.chemical.RingConformerSet:400");
 
 		set5_ = new RingConformerSet(5);
 		set6_ = new RingConformerSet(6);
@@ -54,7 +54,7 @@ public:
 	void test_get_ideal_conformer_by_descriptor_methods()
 	{
 		using namespace core;
-		using namespace core::chemical::carbohydrates;
+		using namespace core::chemical;
 		using namespace utility;
 
 		TS_TRACE("Testing get_ideal_conformer_by_name() and get_ideal_conformer_by_CP_parameters() methods of"
@@ -109,7 +109,7 @@ public:
 
 private:
 	// Private data ////////////////////////////////////////////////////////////
-	core::chemical::carbohydrates::RingConformerSetOP set5_;
-	core::chemical::carbohydrates::RingConformerSetOP set6_;
+	core::chemical::RingConformerSetOP set5_;
+	core::chemical::RingConformerSetOP set6_;
 
 };  // class RingConformerSetTests

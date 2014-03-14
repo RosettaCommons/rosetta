@@ -30,7 +30,7 @@
 // Project headers
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/carbohydrates/RingConformerSet.hh>
+#include <core/chemical/RingConformerSet.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
@@ -968,29 +968,49 @@ Pose::set_chi( Size const seqpos, Real const setting )
 }
 
 // Set the given residue's ring conformation, if appropriate.
-/// @note  Eventually, I will be moving RingConformer from chemical::carbohydrates to chemical. For now, this relies on
-/// code within CarbohydrateInfo, but it should be made more general for any ring system.
 void
-Pose::set_ring_conformation(uint const seqpos, core::chemical::carbohydrates::RingConformer const & conformer)
+Pose::set_ring_conformation(uint const seqpos, core::chemical::RingConformer const & conformer)
 {
 	using namespace std;
 	using namespace id;
-	using namespace core::pose::carbohydrates;
 
 	Residue const & res = residue(seqpos);
 
-	assert(res.is_carbohydrate());
+	assert(res.type().is_cyclic());
 	PyAssert((seqpos<=total_residue()),
-			"Pose::set_ring_conformation(uint const seqpos, core::chemical::carbohydrates::RingConformer const &"
+			"Pose::set_ring_conformation(uint const seqpos, core::chemical::RingConformer const &"
 			"conformer): variable seqpos is out of range!");
-	PyAssert((res.is_carbohydrate()),
-			"Pose::set_ring_conformation(uint const seqpos, core::chemical::carbohydrates::RingConformer const &"
-			"conformer): residue seqpos is not part of a carbohydrate!" );
+	PyAssert((res.type().is_cyclic()),
+			"Pose::set_ring_conformation(uint const seqpos, core::chemical::RingConformer const &"
+			"conformer): residue seqpos is not a cyclic residue!" );
 
-	Size ring_size = res.carbohydrate_info()->ring_size();
-	for (uint i = 1; i <= ring_size - 2; ++i) {
+	// First, set the nus, which DEFINE the ideal ring conformer.
+	Size n_nus = res.type().nu_atoms().size();
+	for (uint i = 1; i <= n_nus; ++i) {
 		set_torsion(TorsionID(seqpos, NU, i), conformer.nu_angles[i]);
-		align_virtual_atoms_in_carbohydrate_residue(*this, seqpos);  // TODO: Where does this really belong?
+	}
+
+	// Then, set the taus, which result from ring strain.
+	Size n_taus = n_nus + 1;  // There will always be one more tau stored in the conformer than nus.
+	for (uint i = 1; i < n_taus; ++i) {
+		// The reference atoms for the bond angle can be extracted from those used for the corresponding nu angle.
+		// For example, nu2 is defined as C1-C2-C3-C4, and tau 1 is defined as C1-C2-C3.
+		AtomID ref1(res.type().nu_atoms(i)[1], seqpos);
+		AtomID ref2(res.type().nu_atoms(i)[2], seqpos);
+		AtomID ref3(res.type().nu_atoms(i)[3], seqpos);
+		conformation_->set_bond_angle(ref1, ref2, ref3, conformer.tau_angles[i]);
+	}
+
+	// Since one fewer nus are stored than taus, we need the LAST 3 reference atoms from the last nu, instead of the
+	// 1st 3 atoms as we used above.
+	AtomID ref1(res.type().nu_atoms(n_nus)[2], seqpos);
+	AtomID ref2(res.type().nu_atoms(n_nus)[3], seqpos);
+	AtomID ref3(res.type().nu_atoms(n_nus)[4], seqpos);
+	conformation_->set_bond_angle(ref1, ref2, ref3, conformer.tau_angles[n_taus]);
+
+	// Finally, fix the virtual alignment in the special case of saccharide residues.
+	if (res.is_carbohydrate()) {
+		carbohydrates::align_virtual_atoms_in_carbohydrate_residue(*this, seqpos);  // TODO: Where does this belong?
 	}
 }
 

@@ -16,7 +16,7 @@
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
-#include <core/chemical/carbohydrates/RingConformerSet.hh>
+#include <core/chemical/RingConformerSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
@@ -152,7 +152,7 @@ main(int argc, char *argv[])
 
 		test_sugar(glucosamine);
 
-		cout << *glucosamine.residue(1).carbohydrate_info()->ring_conformer_set();
+		cout << *glucosamine.residue(1).type().ring_conformer_set();
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
@@ -170,7 +170,7 @@ main(int argc, char *argv[])
 
 		test_sugar(psicose);
 
-		cout << *psicose.residue(1).carbohydrate_info()->ring_conformer_set();
+		cout << *psicose.residue(1).type().ring_conformer_set();
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;

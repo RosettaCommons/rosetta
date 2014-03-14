@@ -21,6 +21,8 @@ sources = {
 		"ResidueTypeTests",
 		"ResidueTypeSetTests",
 		"ResidueGraphTypesTests",
+		"ring_conformer_io",
+		"RingConformerSet",
 	],
 	"chemical/gasteiger" :[
 		"GasteigerAtomTypeSet",
@@ -28,7 +30,6 @@ sources = {
 	"chemical/carbohydrates" : [
 		"CarbohydrateInfo",
 		"database_io",
-		"RingConformerSet",
 	],
 	"chemical/orbitals" :[
 		"OrbitalTypeSet",
@@ -331,6 +332,7 @@ testinputfiles = [
 	"chemical/1pqc.params",
 	"chemical/1pqc_test.patch",
 	"chemical/atom_properties.txt",
+	"chemical/dummy_conformers.data",
 	"chemical/carbohydrates/maltotriose.pdb",
 	"chemical/carbohydrates/isomaltose.pdb",
 	"chemical/carbohydrates/amylopectin_fragment.pdb",
@@ -342,7 +344,6 @@ testinputfiles = [
 	"chemical/carbohydrates/Lex.pdb",
 	"chemical/carbohydrates/sugar_properties.list",
 	"chemical/carbohydrates/codes_to_roots.map",
-	"chemical/carbohydrates/dummy_conformers.data",
 	"chemical/params/1aq1.mol2.params",
 	"chemical/params/1dwc.mol2.params",
 	"chemical/params/1dwd.mol2.params",

@@ -353,7 +353,8 @@ residue_types/l-ncaa/NVL.params
 #residue_types/l-ncaa/beta-hydroxy-norvaline.params
 #residue_types/l-ncaa/beta-iodo-alanine.params
 #residue_types/l-ncaa/cyclohexyl-glycine_boat.params
-#residue_types/l-ncaa/cyclohexyl-glycine_chair.params
+## This test is on for integration test purposes:
+residue_types/l-ncaa/cyclohexyl-glycine_chair.params
 #residue_types/l-ncaa/diphenylglycine.params
 #residue_types/l-ncaa/dipropyl-glycine.params
 #residue_types/l-ncaa/ethionine.params

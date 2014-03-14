@@ -1,0 +1,142 @@
+# A list of ring conformation definitions for six-membered rings.
+
+# Conformer nomenclature is explained in French & Dowd (1994) J. Comp. Chem.,
+# 15(5), 561-70 and Cremer & Pople (1974) JACS, 97(6), 1354-8.
+
+# In general, numbers (or the letter O) represent ring position.  Four atoms
+# are found for the conformer in question that form a plane, and the atoms are
+# arranged in a clockwise fashion from oxygen (O).  Numbers (or O) given before
+# the symbol, (which are also superscripted if the font allows,) indicate atoms
+# that are above the plane.  Subscripted numbers (or O) to the right of the
+# symbol indicate atoms below the plane.
+
+#        O
+#  nu6 /   \ nu0
+#     /     \
+#    C5      C1
+#    |       |
+# nu4|       |nu1
+#    |       |
+#    C4      C2
+#     \     /
+#  nu3 \   / nu2
+#        C3
+
+# For example, if a plane can be formed with atoms O, C2, C3, and C5 in the ex-
+# ample above and if C1 and C4 are above that plane, it is the 1,4B conformer.
+
+# It should be noted that the specific names here are for aldoses.  Ketoses
+# will have different labels.  For example, the two chair conformers for a 2-
+# ketose would be 2C5 and 5C2, since C1 is exocyclic.
+
+# For non-carbohydrates, the designation of which atom is labeled "1" will
+# necessarily be different.  Check the topology file.  Within Rosetta, if there
+# is a CUT_BOND, it will be between position 0 and position 1.
+
+# We only need 4 torsion angles to define a 6-membered conformer, so only the
+# 1st 4 nu values will be stored in Rosetta.  However, all 6 angles are listed
+# here for completeness.
+
+# nu1 is defined using only internal ring atoms, so in the above example, nu1 is
+# the O-C1-C2-C3 angle.
+
+# Since these are internal ring torsions, the sum must be 0 degrees.
+
+# It is impossible to form the more strained ring conformers without also ex-
+# periencing bond angle distortion.  Thus, the table below also includes ideal
+# tau (internal bond angle) designations for each conformer.
+
+# tau1 is defined as the internal ring bond angle about C1, so in the above ex-
+# ample, tau1 is the O-C1-C2 angle.
+
+# We only need 5 bond angles for each 6-membered conformer, so only the 1st 5
+# tau values will be stored in Rosetta.  However, all 6 angles are listed here
+# for completeness.
+
+# Ideal tau angles were determined from a combination of tools: the 6ring pro-
+# gram from [whom?], the Cremer-Pople parameter calculator found at
+# http://www.ric.hi-ho.ne.jp/asfushi/,
+# and molecular visualization software.
+
+# Technically, a strained ring should experience exocyclic bond angle distor-
+# tions as well; however, the 6ring algorithm treats the conversion from C-P
+# parameters as a purely geometric problem with 6 equidistant points instead of
+# atoms with orbitals and atom radii.  Quick tests seem to show that more
+# strained conformers with a heterogeneous ring, such as a carbohydrate, lead to
+# bond lengths at the CUT_BOND that are off by about 0.1 Angstroms, which may
+# not be worth worrying about, since these are ideal, and not realistic, confor-
+# mers anyhow.  It is strongly recommended that minimizations of both bond
+# angles and bond lengths are performed after any ring conformation move.
+
+# Note that phi and theta OR at least 3 nu angles give all the information one
+# needs to assign the specific ideal ring conformer.  q OR the inclusion of
+# bond angles and bond lengths are required to give the exact, actual conformer.
+# As such, q here is essentially meaningless.  Realistic q values tend to range
+# from 0.5 to 0.9.  The number 0.55 is used throughout this table, but it should
+# be understood that it is essentially a placeholder.
+
+# Degeneracy is the number of copies to load into a degenerate conformer set.
+
+# q is in Angstroms; phi and theta are in degrees.
+
+# There are 38 possible ring conformers for a 6-membered ring.
+
+#                                          Ideal
+# Specific   General                    Cremer-Pople
+# Conformer  Conformer                   Parameters                                     Ideal Angles (degrees)
+# Name       Name        Degeneracy     q    phi  theta    nu1    nu2    nu3    nu4    nu5    nu0    tau1   tau2   tau3   tau4   tau5   tau0
+
+# 2 Chair Conformations (Local Minima)
+# (1C4, 3CO, & 5C2 are equivalent.)
+  1C4        chair                3  0.55  180.0  180.0  -60.0   60.0  -60.0   60.0  -60.0   60.0   109.5  109.5  109.5  109.5  109.5  109.5
+  4C1        chair                3  0.55  180.0    0.0   60.0  -60.0   60.0  -60.0   60.0  -60.0   109.5  109.5  109.5  109.5  109.5  109.5
+
+# 6 Twist-Boat (Skew) Conformations (Local Minima)
+# (1S5 & 4S2 are equivalent.)
+  1S5        twist-boat           2  0.55  270.0   90.0  -60.0   30.0   30.0  -60.0   30.0   30.0   112.4  112.4  112.4  112.4  112.4  112.4
+  2SO        twist-boat           2  0.55  150.0   90.0   30.0  -60.0   30.0   30.0  -60.0   30.0   112.4  112.4  112.4  112.4  112.4  112.4
+  3S1        twist-boat           2  0.55   30.0   90.0   30.0   30.0  -60.0   30.0   30.0  -60.0   112.4  112.4  112.4  112.4  112.4  112.4
+
+  5S1        twist-boat           2  0.55   90.0   90.0   60.0  -30.0  -30.0   60.0  -30.0  -30.0   112.4  112.4  112.4  112.4  112.4  112.4
+  OS2        twist-boat           2  0.55  330.0   90.0  -30.0   60.0  -30.0  -30.0   60.0  -30.0   112.4  112.4  112.4  112.4  112.4  112.4
+  1S3        twist-boat           2  0.55  210.0   90.0  -30.0  -30.0   60.0  -30.0  -30.0   60.0   112.4  112.4  112.4  112.4  112.4  112.4
+
+# 6 Boat Conformations
+# (O,3B & 3,OB are equivalent.)
+  O,3B       boat                 2  0.55    0.0   90.0    0.0   60.0  -60.0    0.0   60.0  -60.0   109.5  109.5  109.5  109.5  109.5  109.5
+  1,4B       boat                 2  0.55  240.0   90.0  -60.0    0.0   60.0  -60.0    0.0   60.0   109.5  109.5  109.5  109.5  109.5  109.5
+  2,5B       boat                 2  0.55  120.0   90.0   60.0  -60.0    0.0   60.0  -60.0    0.0   109.5  109.5  109.5  109.5  109.5  109.5
+
+  BO,3       boat                 2  0.55  180.0   90.0    0.0  -60.0   60.0    0.0  -60.0   60.0   109.5  109.5  109.5  109.5  109.5  109.5
+  B1,4       boat                 2  0.55   60.0   90.0   60.0    0.0  -60.0   60.0    0.0  -60.0   109.5  109.5  109.5  109.5  109.5  109.5
+  B2,5       boat                 2  0.55  300.0   90.0  -60.0   60.0    0.0  -60.0   60.0    0.0   109.5  109.5  109.5  109.5  109.5  109.5
+
+# 12 Envelope (Sofa, Half-Boat) Conformations (Local Maxima)
+  OE         envelope             1  0.55    0.0   45.0   30.0    0.0    0.0  -30.0   60.0  -60.0   112.4  117.4  119.9  117.4  112.4  109.9
+  1E         envelope             1  0.55  240.0  135.0  -60.0   30.0    0.0    0.0  -30.0   60.0   109.9  112.4  117.4  119.9  117.4  112.4
+  2E         envelope             1  0.55  120.0   45.0   60.0  -60.0   30.0    0.0    0.0  -30.0   112.4  109.9  112.4  117.4  119.9  117.4
+  3E         envelope             1  0.55    0.0  135.0  -30.0   60.0  -60.0   30.0    0.0    0.0   117.4  112.4  109.9  112.4  117.4  119.9
+  4E         envelope             1  0.55  240.0   45.0    0.0  -30.0   60.0  -60.0   30.0    0.0   119.9  117.4  112.4  109.9  112.4  117.4
+  5E         envelope             1  0.55  120.0  135.0    0.0    0.0  -30.0   60.0  -60.0   30.0   117.4  119.9  117.4  112.4  109.9  112.4
+
+  EO         envelope             1  0.55  180.0  135.0  -30.0    0.0    0.0   30.0  -60.0   60.0   112.4  117.4  119.9  117.4  112.4  109.9
+  E1         envelope             1  0.55   60.0   45.0   60.0  -30.0    0.0    0.0   30.0  -60.0   109.9  112.4  117.4  119.9  117.4  112.4
+  E2         envelope             1  0.55  300.0  135.0  -60.0   60.0  -30.0    0.0    0.0   30.0   112.4  109.9  112.4  117.4  119.9  117.4
+  E3         envelope             1  0.55  180.0   45.0   30.0  -60.0   60.0  -30.0    0.0    0.0   117.4  112.4  109.9  112.4  117.4  119.9
+  E4         envelope             1  0.55   60.0  135.0    0.0   30.0  -60.0   60.0  -30.0    0.0   119.9  117.4  112.4  109.9  112.4  117.4
+  E5         envelope             1  0.55  300.0   45.0    0.0    0.0   30.0  -60.0   60.0  -30.0   117.4  119.9  117.4  112.4  109.9  112.4
+
+# 12 Half-Chair (Twist-Chair) Conformations (Local Maxima)
+  OH1        half-chair           1  0.55   30.0   45.0   60.0  -30.0    0.0  -30.0   60.0  -60.0   111.8  115.8  119.3  119.3  115.8  111.8
+  1H2        half-chair           1  0.55  270.0  135.0  -60.0   60.0  -30.0    0.0  -30.0   60.0   111.8  111.8  115.8  119.3  119.3  115.8
+  2H3        half-chair           1  0.55  150.0   45.0   60.0  -60.0   60.0  -30.0    0.0  -30.0   115.8  111.8  111.8  115.8  119.3  119.3
+  3H4        half-chair           1  0.55   30.0  135.0  -30.0   60.0  -60.0   60.0  -30.0    0.0   119.3  115.8  111.8  111.8  115.8  119.3
+  4H5        half-chair           1  0.55  270.0   45.0    0.0  -30.0   60.0  -60.0   60.0  -30.0   119.3  119.3  115.8  111.8  111.8  115.8
+  5HO        half-chair           1  0.55  150.0  135.0  -30.0    0.0  -30.0   60.0  -60.0   60.0   115.8  119.3  119.3  115.8  111.8  111.8
+
+  1HO        half-chair           1  0.55  210.0  135.0  -60.0   30.0    0.0   30.0  -60.0   60.0   111.8  115.8  119.3  119.3  115.8  111.8
+  2H1        half-chair           1  0.55   90.0   45.0   60.0  -60.0   30.0    0.0   30.0  -60.0   111.8  111.8  115.8  119.3  119.3  115.8
+  3H2        half-chair           1  0.55  330.0  135.0  -60.0   60.0  -60.0   30.0    0.0   30.0   115.8  111.8  111.8  115.8  119.3  119.3
+  4H3        half-chair           1  0.55  210.0   45.0   30.0  -60.0   60.0  -60.0   30.0    0.0   119.3  115.8  111.8  111.8  115.8  119.3
+  5H4        half-chair           1  0.55   90.0  135.0    0.0   30.0  -60.0   60.0  -60.0   30.0   119.3  119.3  115.8  111.8  111.8  115.8
+  OH5        half-chair           1  0.55  330.0   45.0   30.0    0.0   30.0  -60.0   60.0  -60.0   115.8  119.3  119.3  115.8  111.8  111.8

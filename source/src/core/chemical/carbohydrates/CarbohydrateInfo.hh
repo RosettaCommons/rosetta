@@ -18,7 +18,6 @@
 #include <core/chemical/carbohydrates/CarbohydrateInfo.fwd.hh>
 
 // Package headers
-#include <core/chemical/carbohydrates/RingConformerSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 
 // Project headers
@@ -362,10 +361,6 @@ public:
 	}
 
 
-	/// @brief    Return a pointer to the object containing the set of ring conformers possible for this saccharide.
-	core::chemical::carbohydrates::RingConformerSetCOP ring_conformer_set() const;
-
-
 	// Anomeric form
 	/// @brief    Get the anomeric form for the monosaccharide.
 	/// @return   "alpha", "beta", or ""
@@ -533,8 +528,6 @@ private:
 	utility::vector1<core::uint> branch_points_;
 	bool has_exocyclic_linkage_;
 
-	RingConformerSetOP conformer_set_;  // set of all possible ring conformers
-
 	// Constants.
 	static core::Size const MAX_C_SIZE_LIMIT;  // maximum size of a carbohydrate carbon chain in Rosetta
 	static core::Size const MIN_C_SIZE_LIMIT;
@@ -542,7 +535,6 @@ private:
 
 // Insertion operator (overloaded so that CarbohydrateInfo can be "printed" in PyRosetta).
 std::ostream & operator<<(std::ostream & output, CarbohydrateInfo const & object_to_output);
-
 
 }  // namespace carbohydrates
 }  // namespace chemical

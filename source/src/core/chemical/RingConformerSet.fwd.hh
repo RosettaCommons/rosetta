@@ -7,31 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/chemical/carbohydrates/RingConformerSet.fwd.hh
+/// @file    core/chemical/RingConformerSet.fwd.hh
 /// @brief   Forward declarations for RingConformerSet.
 /// @author  Labonte
 
-#ifndef INCLUDED_core_chemical_carbohydrates_RingConformerSet_FWD_HH
-#define INCLUDED_core_chemical_carbohydrates_RingConformerSet_FWD_HH
+#ifndef INCLUDED_core_chemical_RingConformerSet_FWD_HH
+#define INCLUDED_core_chemical_RingConformerSet_FWD_HH
 
 // Utility header
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace chemical {
-namespace carbohydrates {
 
 /// @brief  A structure for storing information for specific, idealized ring conformers.
 struct RingConformer;
 
-/// @brief  A class containing data and methods for the set of possible ring conformations for a carbohydrate residue.
+/// @brief  A class containing data and methods for the set of possible ring conformations for a cyclic residue.
 class RingConformerSet;
 
 typedef utility::pointer::owning_ptr<RingConformerSet> RingConformerSetOP;
 typedef utility::pointer::owning_ptr<RingConformerSet const> RingConformerSetCOP;
 
-}  // namespace carbohydrates
 }  // namespace chemical
 }  // namespace core
 
-#endif  // INCLUDED_core_chemical_carbohydrates_RingConformerSet_FWD_HH
+#endif  // INCLUDED_core_chemical_RingConformerSet_FWD_HH

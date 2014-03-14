@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/chemical/carbohydrates/RingConformerSet.hh
+/// @file    core/chemical/RingConformerSet.hh
 /// @brief   Declarations and simple accessor/mutator definitions for RingConformerSet.
 /// @author  Labonte
 
-#ifndef INCLUDED_core_chemical_carbohydrates_RingConformerSet_HH
-#define INCLUDED_core_chemical_carbohydrates_RingConformerSet_HH
+#ifndef INCLUDED_core_chemical_RingConformerSet_HH
+#define INCLUDED_core_chemical_RingConformerSet_HH
 
 // Unit header
-#include <core/chemical/carbohydrates/RingConformerSet.fwd.hh>
+#include <core/chemical/RingConformerSet.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -31,8 +31,6 @@
 
 namespace core {
 namespace chemical {
-namespace carbohydrates {
-
 
 /// @brief  Enumerators for the three Cremer-Pople "ring-puckering" parameters used to describe 4-, 5-, and 6-membered
 /// ring conformers
@@ -51,10 +49,14 @@ struct RingConformer {
 
 	// a list of 1 (for 4-membered rings), 2 (for 5-membered rings), or 3 (for 6-membered rings) Cremer-Pople "ring
 	// puckering" parameters
+	// TODO: This could be expanded to include parameters for 7-membered rings and larger.
 	utility::vector1<core::Real> CP_parameters;  // phi and theta are angles in degrees; q is a distance in Angstroms
 
-	// a list of the torsion angles for the 1st n-2 nu angles, where n is the ring size.
+	// a list of the 1st n-2 nu angles, where n is the ring size.  Nu angles are internal ring torsions.
 	utility::vector1<core::Angle> nu_angles;
+
+	// a list of the 1st n-1 tau angles, where n is the ring size.  Tau angles are internal ring bond angles.
+	utility::vector1<core::Angle> tau_angles;
 };  // struct RingConformer
 
 
@@ -155,9 +157,7 @@ std::ostream & operator<<(std::ostream & output, RingConformer const & object_to
 
 std::ostream & operator<<(std::ostream & output, RingConformerSet const & object_to_output);
 
-
-}  // namespace carbohydrates
 }  // namespace chemical
 }  // namespace core
 
-#endif  // INCLUDED_core_chemical_carbohydrates_RingConformerSet_HH
+#endif  // INCLUDED_core_chemical_RingConformerSet_HH

@@ -10,9 +10,6 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-    "core/io/ddg": [
-		"PositionDdGInfo",
-	],
 	"core/io/pdb": [
 		"Field",
 		"file_data",
@@ -22,6 +19,9 @@ sources = {
 		"pdb_dynamic_reader",
 		"pdb_dynamic_reader_options",
 		"pose_io",
+	],
+	"core/io/ddg": [
+		"PositionDdGInfo",
 	],
 	"core/io/raw_data": [
 		"DecoyFileData",
@@ -36,8 +36,8 @@ sources = {
 		"DesignContrast",
 	],
 	"core/io/serialization": [
-    "Pipe",
-    "PipeMap",
+		"Pipe",
+		"PipeMap",
 		"serialize_pose",
 	],
 	"core/io/silent": [
@@ -54,13 +54,6 @@ sources = {
 		"SilentStructCreator",
 		"SilentStructFactory",
 		"util",
-	],
-        "core/scoring/loop_graph": [
-		"Loop",
-		"LoopCycle",
-		"LoopCloseEnergy",
-	        "LoopGraph",
-		"LoopScoreInfo",
 	],
 	"core/membrane/util": [
 		"definitions_util",
@@ -424,6 +417,13 @@ sources = {
 		"DDPlookup",
 		"DDPscore",
 	],
+	"core/scoring/loop_graph": [
+		"Loop",
+		"LoopCycle",
+		"LoopCloseEnergy",
+		"LoopGraph",
+		"LoopScoreInfo",
+	],
 	"core/scoring/memb_etable": [
 		"MembEtable",
 	],
@@ -442,7 +442,7 @@ sources = {
 		"ContextIndependentOneBodyEnergy",
 		"ContextIndependentTwoBodyEnergy",
 		"CustomAtomPairEnergy",
-                "D2H_SA_Energy",
+		"D2H_SA_Energy",
 		"DirectReadoutEnergy",
 		"DistanceChainbreakEnergy",
 		"DNA_BaseEnergy",

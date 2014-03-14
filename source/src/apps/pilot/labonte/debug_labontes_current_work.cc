@@ -23,8 +23,8 @@
 #include <basic/Tracer.hh>
 
 #include <core/types.hh>
-#include <core/chemical/carbohydrates/RingConformerSet.hh>
-#include <core/chemical/carbohydrates/database_io.hh>
+//#include <core/chemical/RingConformerSet.hh>
+//#include <core/chemical/carbohydrates/database_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 //#include <core/pose/PDBInfo.hh>

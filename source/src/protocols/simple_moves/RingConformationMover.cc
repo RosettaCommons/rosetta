@@ -7,25 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    protocols/simple_moves/carbohydrates/RingConformationMover.cc
+/// @file    protocols/simple_moves/RingConformationMover.cc
 /// @brief   Method definitions for RingConformationMover.
 /// @author  Labonte
 
 // Unit headers
-#include <protocols/simple_moves/carbohydrates/RingConformationMover.hh>
+#include <protocols/simple_moves/RingConformationMover.hh>
 #include <protocols/moves/Mover.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/carbohydrates/RingConformerSet.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
+#include <core/chemical/RingConformerSet.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/carbohydrates/util.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Residue.hh>
 
 // Utility headers
-#include <utility/excn/Exceptions.hh>
+//#include <utility/excn/Exceptions.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -39,16 +37,14 @@
 
 
 // Construct tracers.
-static basic::Tracer TR("protocols.simple_moves.carbohydrates.RingConformationMover");
-using basic::Warning;
+static basic::Tracer TR("protocols.simple_moves.RingConformationMover");
 
 // Construct random-number generator.
 static numeric::random::RandomGenerator RG(17);  // the 7th prime
 
-// TODO: Move to simple_moves.
+
 namespace protocols {
 namespace simple_moves {
-namespace carbohydrates {
 
 using namespace core;
 
@@ -76,7 +72,7 @@ RingConformationMover::RingConformationMover(RingConformationMover const & objec
 
 // Constructor with MoveMap input option
 /// @param    <input_movemap>: a MoveMap with desired nu torsions set to true
-/// @remarks  Movable carbohydrate residues will generally be a subset of residues in the MoveMap whose nu
+/// @remarks  Movable cyclic residues will generally be a subset of residues in the MoveMap whose nu
 /// torsions are set to true.
 RingConformationMover::RingConformationMover(core::kinematics::MoveMapOP input_movemap)
 {
@@ -151,7 +147,7 @@ RingConformationMover::apply(Pose & input_pose)
 	using namespace std;
 	using namespace utility;
 	using namespace conformation;
-	using namespace chemical::carbohydrates;
+	using namespace chemical;
 
 	show(TR);
 
@@ -160,7 +156,7 @@ RingConformationMover::apply(Pose & input_pose)
 	setup_residue_list(input_pose);
 
 	if (residue_list_.empty()) {
-		Warning() << "There are no movable carbohydrate residues available in the given pose." << endl;
+		TR.Warning << "There are no movable cyclic residues available in the given pose." << endl;
 		return;
 	}
 
@@ -173,7 +169,7 @@ RingConformationMover::apply(Pose & input_pose)
 	TR << "Selected residue " << res_num << ": " << res.name() << endl;
 
 	// TODO: Provide a method for specifying subsets of conformers instead of picking one entirely at random.
-	RingConformer const & conformer = res.carbohydrate_info()->ring_conformer_set()->get_random_conformer();
+	RingConformer const & conformer = res.type().ring_conformer_set()->get_random_conformer();
 
 	TR << "Selected the " << conformer.specific_name << " conformation to apply." << endl;
 
@@ -223,7 +219,7 @@ RingConformationMover::copy_data(
 	object_to_copy_to.residue_list_ = object_to_copy_from.residue_list_;
 }
 
-// Setup list of movable carbohydrate residues from MoveMap.
+// Setup list of movable cyclic residues from MoveMap.
 void
 RingConformationMover::setup_residue_list(core::pose::Pose & pose)
 {
@@ -233,8 +229,8 @@ RingConformationMover::setup_residue_list(core::pose::Pose & pose)
 
 	for (core::uint res_num = 1, last_res_num = pose.total_residue(); res_num <= last_res_num; ++res_num) {
 		Residue const & residue = pose.residue(res_num);
-		if (residue.is_carbohydrate()) {
-			if (residue.carbohydrate_info()->is_cyclic() && movemap_->get_nu(res_num) == true) {
+		if (residue.type().is_cyclic()) {
+			if (movemap_->get_nu(res_num) == true) {
 				residue_list_.push_back(res_num);
 			}
 		}
@@ -251,6 +247,5 @@ operator<<(std::ostream & output, RingConformationMover const & object_to_output
 	return output;
 }
 
-}  // namespace carbohydrates
 }  // namespace simple_moves
 }  // namespace protocols

@@ -7,19 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    RingConformationMover.fwd.hh
+/// @file    protocols/simple_moves/RingConformationMover.fwd.hh
 /// @brief   Forward declarations for RingConformationMover.
 /// @author  labonte
 
-#ifndef INCLUDED_protocols_simple_moves_carbohydrates_RingConformationMover_FWD_HH
-#define INCLUDED_protocols_simple_moves_carbohydrates_RingConformationMover_FWD_HH
+#ifndef INCLUDED_protocols_simple_moves_RingConformationMover_FWD_HH
+#define INCLUDED_protocols_simple_moves_RingConformationMover_FWD_HH
 
 // Utility header
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace simple_moves {
-namespace carbohydrates {
 
 /// @brief  A Mover class for switching among various ring conformations.
 class RingConformationMover;
@@ -27,8 +26,7 @@ class RingConformationMover;
 typedef utility::pointer::owning_ptr<RingConformationMover> RingConformationMoverOP;
 typedef utility::pointer::owning_ptr<RingConformationMover const> RingConformationMoverCOP;
 
-}  // namespace carbohydrates
 }  // namespace simple_moves
 }  // namespace protocols
 
-#endif  // INCLUDED_protocols_simple_moves_carbohydrates_RingConformationMover_FWD_HH
+#endif  // INCLUDED_protocols_simple_moves_RingConformationMover_FWD_HH

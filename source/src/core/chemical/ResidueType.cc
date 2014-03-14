@@ -67,7 +67,6 @@
 // Unit headers
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueConnection.hh>
-#include <boost/graph/graph_utility.hpp>
 
 // Package Headers
 #include <core/conformation/Residue.hh>
@@ -83,6 +82,7 @@
 #include <core/chemical/MMAtomType.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
+#include <core/chemical/RingConformerSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeSet.hh>
 #include <core/chemical/gasteiger/GasteigerAtomTypeData.hh>
@@ -92,10 +92,6 @@
 // Numeric headers
 #include <numeric/xyz.functions.hh>
 #include <numeric/NumericTraits.hh>
-
-// ObjexxFCL headers
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/string.functions.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -107,6 +103,11 @@
 #include <utility/PyAssert.hh>
 #include <utility/vector1.hh>
 #include <utility/graph/ring_detection.hh>
+
+// External headers
+#include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/string.functions.hh>
+#include <boost/graph/graph_utility.hpp>
 
 // C++ headers
 #include <algorithm>
@@ -139,65 +140,68 @@ ResidueType::ResidueType(
 		MMAtomTypeSetCAP mm_atom_types,
 		orbitals::OrbitalTypeSetCAP orbital_types//, CSDAtomTypeSetCAP csd_atom_types kwk commenting out csd atom types until they are fully functional
 ) : utility::pointer::ReferenceCount(),
-atom_types_( atom_types ),
-elements_( elements ),
-mm_atom_types_( mm_atom_types ),
-orbital_types_( orbital_types),
-residue_type_set_( 0 ),
-graph_(),
-orbitals_(),
-nheavyatoms_(0),
-n_hbond_acceptors_(0),
-n_hbond_donors_(0),
-n_orbitals_(0),
-n_backbone_heavyatoms_(0),
-first_sidechain_hydrogen_( 0 ),
-ndihe_( 0 ),
-nbonds_(0),
-rotamer_library_name_( "" ),
-use_ncaa_rotlib_( false ),
-ncaa_rotlib_n_rots_( 0 ),
-is_polymer_( false ),
-is_protein_( false ),
-is_charged_( false ),
-is_polar_( false ),
-has_sc_orbitals_(false),
-is_aromatic_( false ),
-is_DNA_( false ),
-is_RNA_( false ),
-is_NA_( false ),
-is_carbohydrate_( false ),
-is_ligand_( false ),
-is_surface_( false ),
-is_terminus_( false ),
-is_lower_terminus_( false ),
-is_upper_terminus_( false ),
-is_branch_lower_terminus_( false ),
-is_phosphonate_( false ),
-is_phosphonate_upper_( false ),
-is_acetylated_nterminus_( false ),
-is_methylated_cterminus_( false ),
-is_coarse_( false ), //currently for coarse_RNA only
-is_adduct_( false ),
-aa_( aa_unk ),
-rotamer_aa_( aa_unk ),
-name_(),
-name3_(),
-name1_(),
-interchangeability_group_(),
-nbr_radius_( 0 ),
-force_nbr_atom_orient_(false),
-mass_(0),
-n_actcoord_atoms_( 0 ),
-lower_connect_id_( 0 ),
-upper_connect_id_( 0 ),
-n_non_polymeric_residue_connections_( 0 ),
-n_polymeric_residue_connections_( 0 ),
-carbohydrate_info_(NULL),
-finalized_(false),
-nondefault_(false),
-base_restype_name_(""),
-serialized_(false)
+		atom_types_( atom_types ),
+		elements_( elements ),
+		mm_atom_types_( mm_atom_types ),
+		orbital_types_( orbital_types),
+		conformer_set_(NULL),
+		residue_type_set_( 0 ),
+		graph_(),
+		orbitals_(),
+		nheavyatoms_(0),
+		n_hbond_acceptors_(0),
+		n_hbond_donors_(0),
+		n_orbitals_(0),
+		n_backbone_heavyatoms_(0),
+		first_sidechain_hydrogen_( 0 ),
+		ndihe_( 0 ),
+		nbonds_(0),
+		rotamer_library_name_( "" ),
+		use_ncaa_rotlib_( false ),
+		ncaa_rotlib_n_rots_( 0 ),
+		is_polymer_( false ),
+		is_protein_( false ),
+		is_charged_( false ),
+		is_polar_( false ),
+		has_sc_orbitals_(false),
+		is_aromatic_( false ),
+		is_cyclic_( false ),
+		is_DNA_( false ),
+		is_RNA_( false ),
+		is_NA_( false ),
+		is_carbohydrate_( false ),
+		is_ligand_( false ),
+		is_surface_( false ),
+		is_terminus_( false ),
+		is_lower_terminus_( false ),
+		is_upper_terminus_( false ),
+		is_branch_lower_terminus_( false ),
+		is_phosphonate_( false ),
+		is_phosphonate_upper_( false ),
+		is_acetylated_nterminus_( false ),
+		is_methylated_cterminus_( false ),
+		is_coarse_( false ), //currently for coarse_RNA only
+		is_adduct_( false ),
+		aa_( aa_unk ),
+		rotamer_aa_( aa_unk ),
+		name_(),
+		name3_(),
+		name1_(),
+		interchangeability_group_(),
+		nbr_radius_( 0 ),
+		force_nbr_atom_orient_(false),
+		mass_(0),
+		n_actcoord_atoms_( 0 ),
+		lower_connect_id_( 0 ),
+		upper_connect_id_( 0 ),
+		n_non_polymeric_residue_connections_( 0 ),
+		n_polymeric_residue_connections_( 0 ),
+		carbohydrate_info_(NULL),
+		finalized_(false),
+		nondefault_(false),
+		base_restype_name_(""),
+		serialized_(false)
+
 {}
 
 ResidueType::~ResidueType()
@@ -206,133 +210,134 @@ ResidueType::~ResidueType()
 }
 
 ResidueType::ResidueType(ResidueType const & residue_type):
-					utility::pointer::ReferenceCount(),
-					atom_types_( residue_type.atom_types_ ),
-					elements_( residue_type.elements_ ),
-					mm_atom_types_( residue_type.mm_atom_types_ ),
-					orbital_types_( residue_type.orbital_types_ ),
-					residue_type_set_( residue_type.residue_type_set_ ),
-					graph_(residue_type.graph_),
-					vd_to_index_(),
-					atom_base_(residue_type.atom_base_),
-					abase2_(residue_type.abase2_),
-					orbitals_(residue_type.orbitals_),
-					nheavyatoms_(residue_type.nheavyatoms_),
-					n_hbond_acceptors_(residue_type.n_hbond_acceptors_),
-					n_hbond_donors_(residue_type.n_hbond_donors_),
-					n_orbitals_(residue_type.n_orbitals_),
-					n_backbone_heavyatoms_(residue_type.n_backbone_heavyatoms_),
-					first_sidechain_hydrogen_( residue_type.first_sidechain_hydrogen_ ),
-					ndihe_( residue_type.ndihe_ ),
-					nbonds_(residue_type.nbonds_),
-					//orbital_bonded_neighbor_(residue_type.orbital_bonded_neighbor_),
-					bonded_neighbor_(residue_type.bonded_neighbor_),
-					bonded_neighbor_type_(residue_type.bonded_neighbor_type_),
-					cut_bond_neighbor_(residue_type.cut_bond_neighbor_),
-					attached_H_begin_(residue_type.attached_H_begin_),
-					attached_H_end_(residue_type.attached_H_end_),
-					parents_(residue_type.parents_),
-					icoor_(residue_type.icoor_),
-					dihedral_atom_sets_(residue_type.dihedral_atom_sets_),
-					dihedrals_for_atom_(residue_type.dihedrals_for_atom_),
-					bondangle_atom_sets_(residue_type.bondangle_atom_sets_),
-					bondangles_for_atom_(residue_type.bondangles_for_atom_),
-					atom_shadowed_(residue_type.atom_shadowed_),
-					last_controlling_chi_(residue_type.last_controlling_chi_),
-					atoms_last_controlled_by_chi_(residue_type.atoms_last_controlled_by_chi_),
-					atoms_with_orb_index_(residue_type.atoms_with_orb_index_),
-					Haro_index_(residue_type.Haro_index_),
-					Hpol_index_(residue_type.Hpol_index_),
-					accpt_pos_(residue_type.accpt_pos_),
-					Hpos_polar_(residue_type.Hpos_polar_),
-					Hpos_apolar_(residue_type.Hpos_apolar_),
-					accpt_pos_sc_(residue_type.accpt_pos_sc_),
-					Hpos_polar_sc_(residue_type.Hpos_polar_sc_),
-					all_bb_atoms_(residue_type.all_bb_atoms_),
-					all_sc_atoms_(residue_type.all_sc_atoms_),
-					mainchain_atoms_(residue_type.mainchain_atoms_),
-					actcoord_atoms_(residue_type.actcoord_atoms_),
-					chi_atoms_(residue_type.chi_atoms_),
-					is_proton_chi_(residue_type.is_proton_chi_),
-					proton_chis_(residue_type.proton_chis_),
-					chi_2_proton_chi_(residue_type.chi_2_proton_chi_),
-					proton_chi_samples_(residue_type.proton_chi_samples_),
-					proton_chi_extra_samples_(residue_type.proton_chi_extra_samples_),
-					nu_atoms_(residue_type.nu_atoms_),
-					path_distance_(residue_type.path_distance_),
-					atom_name_to_vd_(), /// This must be regenerated below to hold the new new vertex_descriptors
-					ordered_atoms_(), // This must be regenerated to hold the new vertex_descriptors
-					orbitals_index_(residue_type.orbitals_index_),
-					chi_rotamers_(residue_type.chi_rotamers_),
-					rotamer_library_name_( residue_type.rotamer_library_name_ ),
-					use_ncaa_rotlib_( residue_type.use_ncaa_rotlib_ ),
-					ncaa_rotlib_path_( residue_type.ncaa_rotlib_path_),
-					ncaa_rotlib_n_rots_( residue_type.ncaa_rotlib_n_rots_ ),
-					ncaa_rotlib_n_bins_per_rot_(residue_type.ncaa_rotlib_n_bins_per_rot_),
-					properties_(residue_type.properties_),
-					is_polymer_( residue_type.is_polymer_ ),
-					is_protein_( residue_type.is_protein_ ),
-					is_charged_( residue_type.is_charged_ ),
-					is_polar_( residue_type.is_polar_ ),
-					has_sc_orbitals_(residue_type.has_sc_orbitals_),
-					is_aromatic_( residue_type.is_aromatic_ ),
-					is_DNA_( residue_type.is_DNA_ ),
-					is_RNA_( residue_type.is_RNA_ ),
-					is_NA_( residue_type.is_NA_ ),
-					is_carbohydrate_( residue_type.is_carbohydrate_ ),
-					is_ligand_( residue_type.is_ligand_ ),
-					is_surface_( residue_type.is_surface_ ),
-					is_terminus_( residue_type.is_terminus_ ),
-					is_lower_terminus_( residue_type.is_lower_terminus_ ),
-					is_upper_terminus_( residue_type.is_upper_terminus_ ),
-					is_branch_lower_terminus_( residue_type.is_branch_lower_terminus_ ),
-					is_acetylated_nterminus_( residue_type.is_acetylated_nterminus_ ),
-					is_methylated_cterminus_( residue_type.is_methylated_cterminus_ ),
-					is_coarse_( residue_type.is_coarse_ ), //currently for coarse_RNA only
-					is_adduct_( residue_type.is_adduct_ ),
-					variant_types_( residue_type.variant_types_ ),
-					numeric_properties_(residue_type.numeric_properties_),
-					string_properties_(residue_type.string_properties_),
-					aa_( residue_type.aa_ ),
-					rotamer_aa_( residue_type.rotamer_aa_ ),
-					name_( residue_type.name_),
-					name3_( residue_type.name3_),
-					name1_(residue_type.name1_),
-					interchangeability_group_( residue_type.interchangeability_group_ ),
-					nbr_atom_(residue_type.nbr_atom_),
-					nbr_radius_( residue_type.nbr_radius_ ),
-					force_nbr_atom_orient_(residue_type.force_nbr_atom_orient_),
-					mass_(residue_type.mass_),
-					n_actcoord_atoms_( residue_type.n_actcoord_atoms_ ),
-					mol_data_(residue_type.mol_data_),
-					residue_connections_(residue_type.residue_connections_),
-					atom_2_residue_connection_map_(residue_type.atom_2_residue_connection_map_),
-					atoms_within_one_bond_of_a_residue_connection_(residue_type.atoms_within_one_bond_of_a_residue_connection_),
-					within1bonds_sets_for_atom_(residue_type.within1bonds_sets_for_atom_),
-					atoms_within_two_bonds_of_a_residue_connection_(residue_type.atoms_within_two_bonds_of_a_residue_connection_),
-					within2bonds_sets_for_atom_(residue_type.within2bonds_sets_for_atom_),
-					lower_connect_id_( residue_type.lower_connect_id_ ),
-					upper_connect_id_( residue_type.upper_connect_id_ ),
-					n_non_polymeric_residue_connections_( residue_type.n_non_polymeric_residue_connections_ ),
-					n_polymeric_residue_connections_( residue_type.n_polymeric_residue_connections_ ),
-					force_bb_(residue_type.force_bb_),
-					rna_residue_type_(residue_type.rna_residue_type_),
-					carbohydrate_info_(residue_type.carbohydrate_info_),
-					rings_and_their_edges_(residue_type.rings_and_their_edges_),
-					atom_base_indices_(residue_type.atom_base_indices_),
-					abase2_indices_(residue_type.abase2_indices_),
-					chi_atoms_indices_(residue_type.chi_atoms_indices_),
-					nu_atoms_indices_(residue_type.nu_atoms_indices_),
-					mainchain_atoms_indices_(residue_type.mainchain_atoms_indices_),
-					nbr_atom_indices_(residue_type.nbr_atom_indices_),
-					actcoord_atoms_indices_(residue_type.actcoord_atoms_indices_),
-					cut_bond_neighbor_indices_(residue_type.cut_bond_neighbor_indices_),
-					atom_shadowed_indices_(residue_type.atom_shadowed_indices_),
-					finalized_(residue_type.finalized_),
-					defined_adducts_(residue_type.defined_adducts_),
-					nondefault_(residue_type.nondefault_),
-					base_restype_name_(residue_type.base_restype_name_),
-					serialized_(residue_type.serialized_)
+		utility::pointer::ReferenceCount(),
+		atom_types_( residue_type.atom_types_ ),
+		elements_( residue_type.elements_ ),
+		mm_atom_types_( residue_type.mm_atom_types_ ),
+		orbital_types_( residue_type.orbital_types_ ),
+		conformer_set_(residue_type.conformer_set_),
+		residue_type_set_( residue_type.residue_type_set_ ),
+		graph_(residue_type.graph_),
+		vd_to_index_(),
+		atom_base_(residue_type.atom_base_),
+		abase2_(residue_type.abase2_),
+		orbitals_(residue_type.orbitals_),
+		nheavyatoms_(residue_type.nheavyatoms_),
+		n_hbond_acceptors_(residue_type.n_hbond_acceptors_),
+		n_hbond_donors_(residue_type.n_hbond_donors_),
+		n_orbitals_(residue_type.n_orbitals_),
+		n_backbone_heavyatoms_(residue_type.n_backbone_heavyatoms_),
+		first_sidechain_hydrogen_( residue_type.first_sidechain_hydrogen_ ),
+		ndihe_( residue_type.ndihe_ ),
+		nbonds_(residue_type.nbonds_),
+		//orbital_bonded_neighbor_(residue_type.orbital_bonded_neighbor_),
+		bonded_neighbor_(residue_type.bonded_neighbor_),
+		bonded_neighbor_type_(residue_type.bonded_neighbor_type_),
+		cut_bond_neighbor_(residue_type.cut_bond_neighbor_),
+		attached_H_begin_(residue_type.attached_H_begin_),
+		attached_H_end_(residue_type.attached_H_end_),
+		parents_(residue_type.parents_),
+		icoor_(residue_type.icoor_),
+		dihedral_atom_sets_(residue_type.dihedral_atom_sets_),
+		dihedrals_for_atom_(residue_type.dihedrals_for_atom_),
+		bondangle_atom_sets_(residue_type.bondangle_atom_sets_),
+		bondangles_for_atom_(residue_type.bondangles_for_atom_),
+		atom_shadowed_(residue_type.atom_shadowed_),
+		last_controlling_chi_(residue_type.last_controlling_chi_),
+		atoms_last_controlled_by_chi_(residue_type.atoms_last_controlled_by_chi_),
+		atoms_with_orb_index_(residue_type.atoms_with_orb_index_),
+		Haro_index_(residue_type.Haro_index_),
+		Hpol_index_(residue_type.Hpol_index_),
+		accpt_pos_(residue_type.accpt_pos_),
+		Hpos_polar_(residue_type.Hpos_polar_),
+		Hpos_apolar_(residue_type.Hpos_apolar_),
+		accpt_pos_sc_(residue_type.accpt_pos_sc_),
+		Hpos_polar_sc_(residue_type.Hpos_polar_sc_),
+		all_bb_atoms_(residue_type.all_bb_atoms_),
+		all_sc_atoms_(residue_type.all_sc_atoms_),
+		mainchain_atoms_(residue_type.mainchain_atoms_),
+		actcoord_atoms_(residue_type.actcoord_atoms_),
+		chi_atoms_(residue_type.chi_atoms_),
+		is_proton_chi_(residue_type.is_proton_chi_),
+		proton_chis_(residue_type.proton_chis_),
+		chi_2_proton_chi_(residue_type.chi_2_proton_chi_),
+		proton_chi_samples_(residue_type.proton_chi_samples_),
+		proton_chi_extra_samples_(residue_type.proton_chi_extra_samples_),
+		nu_atoms_(residue_type.nu_atoms_),
+		path_distance_(residue_type.path_distance_),
+		atom_name_to_vd_(), /// This must be regenerated below to hold the new new vertex_descriptors
+		ordered_atoms_(), // This must be regenerated to hold the new vertex_descriptors
+		orbitals_index_(residue_type.orbitals_index_),
+		chi_rotamers_(residue_type.chi_rotamers_),
+		rotamer_library_name_( residue_type.rotamer_library_name_ ),
+		use_ncaa_rotlib_( residue_type.use_ncaa_rotlib_ ),
+		ncaa_rotlib_path_( residue_type.ncaa_rotlib_path_),
+		ncaa_rotlib_n_rots_( residue_type.ncaa_rotlib_n_rots_ ),
+		ncaa_rotlib_n_bins_per_rot_(residue_type.ncaa_rotlib_n_bins_per_rot_),
+		properties_(residue_type.properties_),
+		is_polymer_( residue_type.is_polymer_ ),
+		is_protein_( residue_type.is_protein_ ),
+		is_charged_( residue_type.is_charged_ ),
+		is_polar_( residue_type.is_polar_ ),
+		has_sc_orbitals_(residue_type.has_sc_orbitals_),
+		is_aromatic_( residue_type.is_aromatic_ ),
+		is_cyclic_( residue_type.is_cyclic_ ),
+		is_DNA_( residue_type.is_DNA_ ),
+		is_RNA_( residue_type.is_RNA_ ),
+		is_NA_( residue_type.is_NA_ ),
+		is_carbohydrate_( residue_type.is_carbohydrate_ ),
+		is_ligand_( residue_type.is_ligand_ ),
+		is_surface_( residue_type.is_surface_ ),
+		is_terminus_( residue_type.is_terminus_ ),
+		is_lower_terminus_( residue_type.is_lower_terminus_ ),
+		is_upper_terminus_( residue_type.is_upper_terminus_ ),
+		is_branch_lower_terminus_( residue_type.is_branch_lower_terminus_ ),
+		is_acetylated_nterminus_( residue_type.is_acetylated_nterminus_ ),
+		is_methylated_cterminus_( residue_type.is_methylated_cterminus_ ),
+		is_coarse_( residue_type.is_coarse_ ), //currently for coarse_RNA only
+		is_adduct_( residue_type.is_adduct_ ),
+		variant_types_( residue_type.variant_types_ ),
+		numeric_properties_(residue_type.numeric_properties_),
+		string_properties_(residue_type.string_properties_),
+		aa_( residue_type.aa_ ),
+		rotamer_aa_( residue_type.rotamer_aa_ ),
+		name_( residue_type.name_),
+		name3_( residue_type.name3_),
+		name1_(residue_type.name1_),
+		interchangeability_group_( residue_type.interchangeability_group_ ),
+		nbr_atom_(residue_type.nbr_atom_),
+		nbr_radius_( residue_type.nbr_radius_ ),
+		force_nbr_atom_orient_(residue_type.force_nbr_atom_orient_),
+		mass_(residue_type.mass_),
+		n_actcoord_atoms_( residue_type.n_actcoord_atoms_ ),
+		mol_data_(residue_type.mol_data_),
+		residue_connections_(residue_type.residue_connections_),
+		atom_2_residue_connection_map_(residue_type.atom_2_residue_connection_map_),
+		atoms_within_one_bond_of_a_residue_connection_(residue_type.atoms_within_one_bond_of_a_residue_connection_),
+		within1bonds_sets_for_atom_(residue_type.within1bonds_sets_for_atom_),
+		atoms_within_two_bonds_of_a_residue_connection_(residue_type.atoms_within_two_bonds_of_a_residue_connection_),
+		within2bonds_sets_for_atom_(residue_type.within2bonds_sets_for_atom_),
+		lower_connect_id_( residue_type.lower_connect_id_ ),
+		upper_connect_id_( residue_type.upper_connect_id_ ),
+		n_non_polymeric_residue_connections_( residue_type.n_non_polymeric_residue_connections_ ),
+		n_polymeric_residue_connections_( residue_type.n_polymeric_residue_connections_ ),
+		force_bb_(residue_type.force_bb_),
+		rna_residue_type_(residue_type.rna_residue_type_),
+		carbohydrate_info_(residue_type.carbohydrate_info_),
+		atom_base_indices_(residue_type.atom_base_indices_),
+		abase2_indices_(residue_type.abase2_indices_),
+		chi_atoms_indices_(residue_type.chi_atoms_indices_),
+		nu_atoms_indices_(residue_type.nu_atoms_indices_),
+		mainchain_atoms_indices_(residue_type.mainchain_atoms_indices_),
+		nbr_atom_indices_(residue_type.nbr_atom_indices_),
+		actcoord_atoms_indices_(residue_type.actcoord_atoms_indices_),
+		cut_bond_neighbor_indices_(residue_type.cut_bond_neighbor_indices_),
+		atom_shadowed_indices_(residue_type.atom_shadowed_indices_),
+		finalized_(residue_type.finalized_),
+		defined_adducts_(residue_type.defined_adducts_),
+		nondefault_(residue_type.nondefault_),
+		base_restype_name_(residue_type.base_restype_name_),
+		serialized_(residue_type.serialized_)
 {
 	//when you copy vertex descriptors from cached data, the vertex descriptors are pointing to the old copied graph. New vertexs are assigned.
 	//you have to map the old vertex to the new vertex.
@@ -1023,6 +1028,13 @@ ResidueType::orbital_type(int const orbital_index)const
 	return ( *orbital_types_ )[ orbitals_[ orbital_index ].orbital_type_index() ];
 }
 
+// Return a pointer to the object containing the set of ring conformers possible for this saccharide.
+core::chemical::RingConformerSetCOP
+ResidueType::ring_conformer_set() const
+{
+	return conformer_set_;
+}
+
 /// @note this does not set xyz coordiates for the added orbital but sets the index of the orbital and maps
 /// it to the type of orbital.
 void
@@ -1391,6 +1403,8 @@ ResidueType::add_property( std::string const & property )
 		is_charged_ = true;
 	} else if ( property == "AROMATIC" ) {
 		is_aromatic_ = true;
+	} else if ( property == "CYCLIC" ) {
+		is_cyclic_ = true;
 	} else if ( property == "COARSE" ) {
 		is_coarse_ = true; //currently only for RNA
 	} else if ( property == "DNA" ) {
@@ -1486,6 +1500,8 @@ ResidueType::delete_property( std::string const & property )
 		is_charged_ = false;
 	} else if ( property == "AROMATIC" ) {
 		is_aromatic_ = false;
+	} else if ( property == "CYCLIC" ) {
+		is_cyclic_ = false;
 	} else if ( property == "COARSE" ) {
 		is_coarse_ = false;
 	} else if ( property == "DNA" ) {
@@ -1839,14 +1855,11 @@ ResidueType::generate_atom_indices()
 ///////////////////////////////////////////////////////////////////////////////
 
 /// @details update derived data in ResidueType, called by finalize()
-/**
-         after primary data have been reordered, update derived data acoordingly,
-         including\n, Hbond donor and acceptors, path_distance etc.
- **/
+/// after primary data have been reordered, update derived data accordingly,
+/// including\n, Hbond donor and acceptors, path_distance etc.
 void
 ResidueType::update_derived_data()
 {
-
 	first_sidechain_hydrogen_ = natoms() + 1;
 	for ( Size i= n_backbone_heavyatoms_ + 1; i<= nheavyatoms_; ++i ) {
 		if ( attached_H_begin_[i] <= attached_H_end_[i] ) {
@@ -1966,7 +1979,6 @@ ResidueType::update_derived_data()
 	}
 
 
-
 	// bond path distances
 	FArray2D_int path_distances( get_residue_path_distances( *this ));
 	path_distance_.resize( natoms() );
@@ -1982,12 +1994,12 @@ ResidueType::update_derived_data()
 	dihedrals_for_atom_.resize( natoms() );
 	for ( Size ii = 1; ii <= natoms(); ++ii ) dihedrals_for_atom_[ ii ].clear();
 
-	// get for all pairs of atoms seperated by 1 bond
+	// get for all pairs of atoms separated by 1 bond
 	for ( Size central_atom1 = 1; central_atom1 < natoms(); ++central_atom1 ) {
 		for ( Size central_atom2 = central_atom1+1; central_atom2 <= natoms(); ++central_atom2 ) {
 			if ( path_distance_[ central_atom1 ][ central_atom2 ] == 1 ) {
 
-				// get all atoms seperated from central_atom1/2 by one bond that are not central_atom2/1
+				// get all atoms separated from central_atom1/2 by one bond that are not central_atom2/1
 				utility::vector1< Size > ca1d1;
 				utility::vector1< Size > ca2d1;
 
@@ -2103,6 +2115,16 @@ ResidueType::update_derived_data()
 		}
 	}
 
+	// Assign a set of possible ring conformations.
+	// Ring size is determined by the number of NU angles listed in the .params file, which should always be 2 less
+	// than the size of the ring.
+	if ( is_cyclic_ ) {
+		// ring_size could be made a private datum, but it only really makes sense for monocyclics.  Since its only use
+		// for the time being is to set the proper RingConformerSet, I'll just leave it as a local variable here.
+		// ~Labonte
+		Size ring_size = nu_atoms_indices_.size() + 2;
+		conformer_set_ = new RingConformerSet(ring_size);
+	}
 
 	if(is_RNA_){ //reinitialize and RNA derived data.
 		//Reinitialize rna_residue_type_ object! This also make sure rna_residue_type_ didn't inherit anything from the previous update!
@@ -2680,640 +2702,643 @@ ResidueType::set_ideal_xyz(
 ////////// Utility functions for retype_atoms
 
 /// @brief Should the element be considered to be a virtual atom?
-		bool retype_is_virtual( std::string const & element ) {
+bool
+retype_is_virtual( std::string const & element ) {
 	return (element == "*" || element == "X" || element == "V"); // TODO: Permit Vandium to be an actual element
-		}
+}
 
-		std::string retype_get_element(VD const & vd, Atom const & a, ElementMap const & emap, AtomTypeSet const & atom_type_set ) {
-			ElementMap::const_iterator emiter( emap.find(vd) );
-			//std::string element( emap[ vd ]  );
-			if( emiter == emap.end() ) {
-				if( a.atom_type_index() != 0 ) {
-					// Assume we're keeping the same element.
-					return atom_type_set[ a.atom_type_index() ].element();
-				} else {
-					utility_exit_with_message("Cannot retype atoms - element unknown.");
-				}
-			} else {
-				return emiter->second;
+std::string
+retype_get_element(VD const & vd, Atom const & a, ElementMap const & emap, AtomTypeSet const & atom_type_set ) {
+	ElementMap::const_iterator emiter( emap.find(vd) );
+	//std::string element( emap[ vd ]  );
+	if( emiter == emap.end() ) {
+		if( a.atom_type_index() != 0 ) {
+			// Assume we're keeping the same element.
+			return atom_type_set[ a.atom_type_index() ].element();
+		} else {
+			utility_exit_with_message("Cannot retype atoms - element unknown.");
+		}
+	} else {
+		return emiter->second;
+	}
+}
+
+/// @brief An atom is aromatic if it has any aromatic bonds to a non-virtual atom.
+/// TODO: We need better aromatic ring detection.
+bool
+retype_is_aromatic(VD const & atom, ResidueGraph const & graph, ElementMap const & emap, AtomTypeSet const & atom_type_set ) {
+	OutEdgeIter bonds, bonds_end;
+	for( boost::tie(bonds, bonds_end) = boost::out_edges(atom,graph); bonds != bonds_end; ++bonds ) {
+		if( graph[ *bonds ].bond_name() == AromaticBond ) {
+			VD const & tvd( boost::target( *bonds, graph) );
+			Atom const & t( graph[tvd] );
+			std::string t_element( retype_get_element(tvd,t,emap,atom_type_set) );
+			if( ! retype_is_virtual( t_element ) ) {
+				return true;
 			}
 		}
+	}
+	return false;
+}
 
-		/// @brief An atom is aromatic if it has any aromatic bonds to a non-virtual atom.
-		/// TODO: We need better aromatic ring detection.
-		bool retype_is_aromatic(VD const & atom, ResidueGraph const & graph, ElementMap const & emap, AtomTypeSet const & atom_type_set ) {
+/// @brief Reassign Rosetta atom types based on the current heuristics.
+/// emap is a map of VD->element strings. If an atom is not present in the element map,
+/// attempt to get the element string from the current type (it's an error if it doesn't have one.)
+/// If preserve is true, only retype those atoms which have an atom_type_index of zero.
+/// @details The logic here comes from molfile_to_params.py
+/// Which is itself based on Rosetta++ ligand_ns.cc set_rosetta_atom_types(),
+/// and has been validated against the Meiler and Baker 2006 cross docking test set
+/// assignments
+///
+/// I'm not saying the logic is good, but it's the logic we're using.
+///
+/// This function assumes that:
+///   * All bonds and atoms exist.
+///   * Bond types (bond_name) are correctly set
+///   * The element symbols are either provided in emap, or are available through the currently set types.
+void
+ResidueType::retype_atoms(ElementMap const & emap, bool preserve) {
+	// For each atom, analyze bonding pattern to determine type
+	VDs aroCs; // Atoms assigned as aroC - need to change all attached hydrogens to Haro.
+	VIter itr, itr_end;
+	for( boost::tie(itr, itr_end) = vertices(graph_); itr != itr_end; ++itr) {
+		Atom & a( graph_[*itr] );
+		if( preserve && a.atom_type_index() != 0 ) {
+			continue;
+		}
+		std::string element( retype_get_element(*itr,a,emap,*atom_types_)  );
+		// H, C, O, N have complicated rules.
+		// Everything else maps to a single atom type.
+		if ( retype_is_virtual( element ) ) {
+			a.atom_type_index( atom_types_->atom_type_index("VIRT") );
+		} else if( element == "H" ) {
 			OutEdgeIter bonds, bonds_end;
-			for( boost::tie(bonds, bonds_end) = boost::out_edges(atom,graph); bonds != bonds_end; ++bonds ) {
-				if( graph[ *bonds ].bond_name() == AromaticBond ) {
-					VD const & tvd( boost::target( *bonds, graph) );
-					Atom const & t( graph[tvd] );
-					std::string t_element( retype_get_element(tvd,t,emap,atom_type_set) );
-					if( ! retype_is_virtual( t_element ) ) {
-						return true;
-					}
+			core::Size num_aro_C(0), num_NOS(0);
+			for( boost::tie(bonds, bonds_end) = boost::out_edges(*itr,graph_); bonds != bonds_end; ++bonds ) {
+				VD const & tvd( boost::target( *bonds, graph_) );
+				Atom const & t( graph_[tvd] );
+				std::string t_element( retype_get_element(tvd,t,emap,*atom_types_) );
+
+				if( t_element == "N" || t_element == "O" || t_element == "S" ) { ++num_NOS; }
+				// Instead of also counting number of aroC's here (which may depend on atom iteration ordering,
+				// we annotate the ones we've assigned, and then adjust them afterwards.
+				// We still include the following test here, though, as it may catch hydrogens on carbons which
+				// don't get the aroC label.
+				if( t_element == "C" && retype_is_aromatic(tvd,graph_,emap,*atom_types_) ) {
+					++num_aro_C;
 				}
 			}
-			return false;
-		}
-
-		/// @brief Reassign Rosetta atom types based on the current heuristics.
-		/// emap is a map of VD->element strings. If an atom is not present in the element map,
-		/// attempt to get the element string from the current type (it's an error if it doesn't have one.)
-		/// If preserve is true, only retype those atoms which have an atom_type_index of zero.
-		/// @details The logic here comes from molfile_to_params.py
-		/// Which is itself based on Rosetta++ ligand_ns.cc set_rosetta_atom_types(),
-		/// and has been validated against the Meiler and Baker 2006 cross docking test set
-		/// assignments
-		///
-		/// I'm not saying the logic is good, but it's the logic we're using.
-		///
-		/// This function assumes that:
-		///   * All bonds and atoms exist.
-		///   * Bond types (bond_name) are correctly set
-		///   * The element symbols are either provided in emap, or are available through the currently set types.
-		void
-		ResidueType::retype_atoms(ElementMap const & emap, bool preserve) {
-			// For each atom, analyze bonding pattern to determine type
-			VDs aroCs; // Atoms assigned as aroC - need to change all attached hydrogens to Haro.
-			VIter itr, itr_end;
-			for( boost::tie(itr, itr_end) = vertices(graph_); itr != itr_end; ++itr) {
-				Atom & a( graph_[*itr] );
-				if( preserve && a.atom_type_index() != 0 ) {
-					continue;
-				}
-				std::string element( retype_get_element(*itr,a,emap,*atom_types_)  );
-				// H, C, O, N have complicated rules.
-				// Everything else maps to a single atom type.
-				if ( retype_is_virtual( element ) ) {
-					a.atom_type_index( atom_types_->atom_type_index("VIRT") );
-				} else if( element == "H" ) {
-					OutEdgeIter bonds, bonds_end;
-					core::Size num_aro_C(0), num_NOS(0);
-					for( boost::tie(bonds, bonds_end) = boost::out_edges(*itr,graph_); bonds != bonds_end; ++bonds ) {
-						VD const & tvd( boost::target( *bonds, graph_) );
-						Atom const & t( graph_[tvd] );
-						std::string t_element( retype_get_element(tvd,t,emap,*atom_types_) );
-
-						if( t_element == "N" || t_element == "O" || t_element == "S" ) { ++num_NOS; }
-						// Instead of also counting number of aroC's here (which may depend on atom iteration ordering,
-						// we annotate the ones we've assigned, and then adjust them afterwards.
-						// We still include the following test here, though, as it may catch hydrogens on carbons which
-						// don't get the aroC label.
-						if( t_element == "C" && retype_is_aromatic(tvd,graph_,emap,*atom_types_) ) {
-							++num_aro_C;
-						}
-					}
-					if( num_NOS >=1 ) {
-						a.atom_type_index( atom_types_->atom_type_index("Hpol") );
-					} else if ( num_aro_C >= 1 ) {
-						a.atom_type_index( atom_types_->atom_type_index("Haro") );
-					} else {
-						a.atom_type_index( atom_types_->atom_type_index("Hapo") );
-					}
-				} else if( element == "C") {
-					OutEdgeIter bonds, bonds_end;
-					bool saturated(true);
-					core::Size num_H(0), num_dbl_nonO(0), num_aro_nonO(0), num_aro_N(0);
-					for( boost::tie(bonds, bonds_end) = boost::out_edges(*itr,graph_); bonds != bonds_end; ++bonds ) {
-						VD const & tvd( boost::target( *bonds, graph_) );
-						Atom const & t( graph_[tvd] );
-						std::string t_element( retype_get_element(tvd,t,emap,*atom_types_) );
-
-						if( retype_is_virtual(t_element) ) { continue; }
-						switch( graph_[*bonds].bond_name() ) {
-							case SingleBond:
-								if( t_element == "H" ) { ++num_H; }
-								break;
-							case DoubleBond:
-								saturated = false;
-								if ( t_element != "O" ) { ++num_dbl_nonO; }
-								break;
-							case TripleBond:
-								saturated = false;
-								break;
-							case AromaticBond:
-								saturated = false;
-								if ( t_element != "O" ) { ++num_aro_nonO; }
-								if ( t_element == "N" ) { ++num_aro_N; } // really if, not else if
-								break;
-							default:
-								break;
-						}
-					}
-					if( saturated ) {
-						if( num_H >= 3 ) {
-							a.atom_type_index( atom_types_->atom_type_index("CH3 ") );
-						} else if( num_H == 2 ) {
-							a.atom_type_index( atom_types_->atom_type_index("CH2 ") );
-						} else {
-							a.atom_type_index( atom_types_->atom_type_index("CH1 ") );
-						}
-					} else { // unsaturated
-						if( num_aro_nonO >= 2 ) {
-							a.atom_type_index( atom_types_->atom_type_index("aroC") );
-							aroCs.push_back( *itr ); // for later attached H annotation
-						} else if( num_dbl_nonO >= 1 ) {
-							a.atom_type_index( atom_types_->atom_type_index("aroC") );
-							aroCs.push_back( *itr ); // for later attached H annotation
-						} else if( num_aro_N >= 1 ) {
-							a.atom_type_index( atom_types_->atom_type_index("CNH2") );
-						} else {
-							a.atom_type_index( atom_types_->atom_type_index("COO ") );
-						}
-					}
-				} else if( element == "N" ) {
-					OutEdgeIter bonds, bonds_end;
-					bool saturated(true);
-					core::Size num_H(0), heavy_nbrs(0);
-					for( boost::tie(bonds, bonds_end) = boost::out_edges(*itr,graph_); bonds != bonds_end; ++bonds ) {
-						VD const & tvd( boost::target( *bonds, graph_) );
-						Atom const & t( graph_[tvd] );
-						std::string t_element( retype_get_element(tvd,t,emap,*atom_types_) );
-
-						if( retype_is_virtual(t_element) ) { continue; }
-						if( t_element == "H" ) { ++num_H; }
-						else { ++heavy_nbrs; } // We've already ignored all the virtual atoms.
-						if( graph_[*bonds].bond_name() != SingleBond ) { saturated = false; }
-					}
-
-					if( num_H >= 3 ) {
-						a.atom_type_index( atom_types_->atom_type_index("Nlys") ); // carries a VERY high desolvation penalty
-					} else if( num_H == 2 ) {
-						// Not totally sure about this one, may want Ntrp instead if more than one heavy neighbor:
-						a.atom_type_index( atom_types_->atom_type_index("NH2O") ); // Narg would also be a possibility, but they're fairly similar
-					} else if( num_H == 1 ) {
-						if( heavy_nbrs <= 2 ) {
-							a.atom_type_index( atom_types_->atom_type_index("Ntrp") ); // should always be 2 neighbors, not less
-						} else {
-							a.atom_type_index( atom_types_->atom_type_index("Ntrp") ); // Npro? protonated tertiary amine
-						} // I know they're the same -- I'm just copying molfile_to_params, which splits the case.
-					} else {
-						if( heavy_nbrs <= 2 ) {
-							a.atom_type_index( atom_types_->atom_type_index("Nhis") );
-						} else if ( heavy_nbrs == 3 ) {
-							if( saturated ) {
-								a.atom_type_index( atom_types_->atom_type_index("Nhis") ); // deprotonated tertiary amine; need an sp3 hybrid H-bond acceptor type...
-							} else { // This also catches nitro groups -- is that what we want here?
-								a.atom_type_index( atom_types_->atom_type_index("Npro") ); // X=[N+](X)X, including nitro groups
-							}
-						} else {
-							a.atom_type_index( atom_types_->atom_type_index("Npro") ); // quaternary amine
-						}
-					}
-				} else if( element == "O" ) {
-					OutEdgeIter bonds, bonds_end;
-					bool saturated(true);
-					core::Size num_H(0), num_bonds(0), bonded_to_N(0), bonded_to_C_to_N(0), unsat_nbrs(0);
-					for( boost::tie(bonds, bonds_end) = boost::out_edges(*itr,graph_); bonds != bonds_end; ++bonds ) {
-						VD const & tvd( boost::target( *bonds, graph_) );
-						Atom const & t( graph_[tvd] );
-						std::string t_element( retype_get_element(tvd,t,emap,*atom_types_) );
-
-						if( retype_is_virtual(t_element) ) { continue; }
-						++num_bonds; // Bonds to non-virtual atoms.
-						if( graph_[*bonds].bond_name() != SingleBond ) { saturated = false; }
-						if( t_element == "H" ) { ++num_H; }
-						else if( t_element == "N" ) { ++bonded_to_N; }
-						OutEdgeIter bonds2, bonds_end2; // second degree bonds.
-						bool sat_neighbor = true;
-						for( boost::tie(bonds2, bonds_end2) = boost::out_edges(tvd,graph_); bonds2 != bonds_end2; ++bonds2 ) {
-							// Ignore the bond back to the atom we're typing.
-							//if( boost::target( *bonds2, graph_) == *itr ) { continue; }
-							VD const & tvd2( boost::target( *bonds2, graph_) );
-							Atom const & t2( graph_[tvd2] );
-							std::string t2_element( retype_get_element(tvd2,t2,emap,*atom_types_) );
-
-							if( retype_is_virtual(t2_element) ) { continue; }
-							if( t_element == "C" && t2_element == "N") { ++bonded_to_C_to_N; }
-							if( graph_[*bonds2].bond_name() != SingleBond ) { sat_neighbor = false; }
-						}
-						if( ! sat_neighbor ) { ++unsat_nbrs; }
-					}
-					if( saturated ) {
-						if( num_bonds < 2 ) {
-							a.atom_type_index( atom_types_->atom_type_index("OOC ") ); // catches C(=O)[O-] (Kekule form) -- new rule by IWD
-						} else {
-							core::Size ring_size( smallest_ring_size( *itr ) );
-							if( num_H > 0 ) {
-								a.atom_type_index( atom_types_->atom_type_index("OH  ") ); // catches C(=O)OH (Kekule form)
-							} else if ( ring_size < 5 ) {
-								a.atom_type_index( atom_types_->atom_type_index("OH  ") ); // small, strained rings leave the O more exposed? (IWD, see 1p8d)
-							} else if ( ring_size < 999999 && unsat_nbrs > 0 ) {
-								a.atom_type_index( atom_types_->atom_type_index("Oaro") ); // catches aromatic O in furan-like rings, though I rarely see these H-bond (IWD)
-							} else {
-								a.atom_type_index( atom_types_->atom_type_index("OH  ") ); // catches ethers, ROR (IWD, see comment)
-								// The lone pairs on ethers are capable of H-bonding in the same way that alcohols are.
-								// While alkyl ethers are quite non-polar, many others seem to make Hbonds,
-								// such as those attached to phosphates (R-O-PO3), methyls (R-O-CH3), and aromatic rings (R-O-Ph).
-								// It is unclear from the literature how strong these are, and is probably very situation dependent.
-							}
-						}
-					} else if ( num_H > 0 ) {
-						a.atom_type_index( atom_types_->atom_type_index("OH  ") ); // catches c(o)oH (aromatic bonds to both O)
-					} else if ( bonded_to_N ) {
-						a.atom_type_index( atom_types_->atom_type_index("ONH2") );
-					} else if ( bonded_to_C_to_N ) { // This is a non-standard rule introduced by IWD, agreed to by KWK:
-						a.atom_type_index( atom_types_->atom_type_index("ONH2") );
-					} else {
-						a.atom_type_index( atom_types_->atom_type_index("OOC ") );
-					}
-				} else if( "S"  == element ) {
-					a.atom_type_index( atom_types_->atom_type_index("S   ") );
-				} else if( "P"  == element ) {
-					a.atom_type_index( atom_types_->atom_type_index("Phos") );
-				} else if( "F"  == element ) {
-					a.atom_type_index( atom_types_->atom_type_index("F   ") );
-				} else if( "CL" == element ) {
-					a.atom_type_index( atom_types_->atom_type_index("Cl  ") );
-				} else if( "BR" == element ) {
-					a.atom_type_index( atom_types_->atom_type_index("Br  ") );
-				} else if( "I"  == element ) {
-					a.atom_type_index( atom_types_->atom_type_index("I   ") );
-				} else if( "NA" == element ) {
-					a.atom_type_index( atom_types_->atom_type_index("Na1p") );
-				} else if( "K"  == element ) {
-					a.atom_type_index( atom_types_->atom_type_index("K1p ") );
-				} else if( "MG" == element ) {
-					a.atom_type_index( atom_types_->atom_type_index("Mg2p") );
-				} else if( "FE" == element ) {
-					a.atom_type_index( atom_types_->atom_type_index("Fe3p") );
-				} else if( "CA" == element ) {
-					a.atom_type_index( atom_types_->atom_type_index("Ca2p") );
-				} else if( "ZN" == element ) {
-					a.atom_type_index( atom_types_->atom_type_index("Zn2p") );
-				} else {
-					utility_exit_with_message("Cannot type atom with element '"+element+"'");
-				}
-			} // For vertices in graph
-
-			// Hydrogens attached to aroCs == Haro.
-			// Technically doesn't match molfile_to_params, as a hydrogen simultaneously bonded to an aroC and an N/O/S
-			// would be typed Hpol there, but is typed Haro here. Though if you're silly enough to make two bonds to a hydrogen,
-			// you really can't complain when things come out mucked up.
-			for( VDs::const_iterator aroit(aroCs.begin()), aroend(aroCs.end()); aroit != aroend; ++aroit ) {
-				OutEdgeIter bonds, bonds_end;
-				for( boost::tie(bonds, bonds_end) = boost::out_edges(*aroit,graph_); bonds != bonds_end; ++bonds ) {
-					VD const & tvd( boost::target( *bonds, graph_) );
-					Atom & t( graph_[tvd] );
-					std::string t_element( retype_get_element(tvd,t,emap,*atom_types_) );
-					if( t_element == "H" && graph_[ *bonds ].bond_name() != UnknownBond  ) {
-						if( preserve && t.atom_type_index() != 0 ) { continue; }
-						t.atom_type_index( atom_types_->atom_type_index("Haro") );
-					}
-				}
-			}
-		}
-
-		// Return the CarbohydrateInfo object containing sugar-specific properties for this residue.
-		core::chemical::carbohydrates::CarbohydrateInfoCOP
-		ResidueType::carbohydrate_info() const
-		{
-			return carbohydrate_info_;
-		}
-
-		void
-		ResidueType::print_dihedrals() const
-		{
-			tr.Debug << "START DIHEDRAL ANGLES ATOM NAMES" << std::endl;
-			tr.Debug << "Number of dihe: " << ndihe_ << " " << dihedral_atom_sets_.size() << std::endl;
-			for ( Size i = 1; i <= ndihe_; ++i )
-			{
-
-				AtomType at1 = atom_type( dihedral_atom_sets_[ i ].key1() );
-				AtomType at2 = atom_type( dihedral_atom_sets_[ i ].key2() );
-				AtomType at3 = atom_type( dihedral_atom_sets_[ i ].key3() );
-				AtomType at4 = atom_type( dihedral_atom_sets_[ i ].key4() );
-				MMAtomType at5 = mm_atom_type( dihedral_atom_sets_[ i ].key1() );
-				MMAtomType at6 = mm_atom_type( dihedral_atom_sets_[ i ].key2() );
-				MMAtomType at7 = mm_atom_type( dihedral_atom_sets_[ i ].key3() );
-				MMAtomType at8 = mm_atom_type( dihedral_atom_sets_[ i ].key4() );
-
-				tr.Debug << "PDB:" << "\t"
-						<< graph_[ordered_atoms_[ dihedral_atom_sets_[ i ].key1() ]].name() << "\t"
-						<< graph_[ordered_atoms_[ dihedral_atom_sets_[ i ].key2() ]].name() << "\t"
-						<< graph_[ordered_atoms_[ dihedral_atom_sets_[ i ].key3() ]].name() << "\t"
-						<< graph_[ordered_atoms_[ dihedral_atom_sets_[ i ].key4() ]].name() << "\t"
-						<< "MM:" << "\t"
-						<< graph_[ordered_atoms_[ dihedral_atom_sets_[ i ].key1() ]].mm_name() << "\t"
-						<< graph_[ordered_atoms_[ dihedral_atom_sets_[ i ].key2() ]].mm_name() << "\t"
-						<< graph_[ordered_atoms_[ dihedral_atom_sets_[ i ].key3() ]].mm_name() << "\t"
-						<< graph_[ordered_atoms_[ dihedral_atom_sets_[ i ].key4() ]].mm_name() << "\t"
-						<< "MM2:" << "\t"
-						<< at5.name() << "\t"
-						<< at6.name() << "\t"
-						<< at7.name() << "\t"
-						<< at8.name() << "\t"
-						<< "ROS:" << "\t"
-						<< at1.name() << "\t"
-						<< at2.name() << "\t"
-						<< at3.name() << "\t"
-						<< at4.name() << "\t"
-						<< std::endl;
-			}
-			tr.Debug << "END DIHEDRAL ANGLES ATOM NAMES" << std::endl;
-		}
-
-		void
-		ResidueType::print_bondangles() const
-		{
-			tr.Debug << "START BOND ANGLES ATOM NAMES" << std::endl;
-			tr.Debug << "Number of bond angles: " << bondangle_atom_sets_.size() << std::endl;
-			for ( Size i = 1; i <= bondangle_atom_sets_.size(); ++i )
-			{
-
-				AtomType at1 = atom_type( bondangle_atom_sets_[ i ].key1() );
-				AtomType at2 = atom_type( bondangle_atom_sets_[ i ].key2() );
-				AtomType at3 = atom_type( bondangle_atom_sets_[ i ].key3() );
-				MMAtomType at5 = mm_atom_type( bondangle_atom_sets_[ i ].key1() );
-				MMAtomType at6 = mm_atom_type( bondangle_atom_sets_[ i ].key2() );
-				MMAtomType at7 = mm_atom_type( bondangle_atom_sets_[ i ].key3() );
-
-				tr.Debug << "PDB:" << "\t"
-						<< graph_[ordered_atoms_[ bondangle_atom_sets_[ i ].key1() ]].name() << "\t"
-						<< graph_[ordered_atoms_[ bondangle_atom_sets_[ i ].key2() ]].name() << "\t"
-						<< graph_[ordered_atoms_[ bondangle_atom_sets_[ i ].key3() ]].name() << "\t"
-						<< "MM:" << "\t"
-						<< graph_[ordered_atoms_[ bondangle_atom_sets_[ i ].key1() ]].mm_name() << "\t"
-						<< graph_[ordered_atoms_[ bondangle_atom_sets_[ i ].key2() ]].mm_name() << "\t"
-						<< graph_[ordered_atoms_[ bondangle_atom_sets_[ i ].key3() ]].mm_name() << "\t"
-						<< "MM2:" << "\t"
-						<< at5.name() << "\t"
-						<< at6.name() << "\t"
-						<< at7.name() << "\t"
-						<< "ROS:" << "\t"
-						<< at1.name() << "\t"
-						<< at2.name() << "\t"
-						<< at3.name() << "\t"
-						<< std::endl;
-			}
-			tr.Debug << "END BOND ANGLES ATOM NAMES" << std::endl;
-		}
-
-		void
-		ResidueType::print_pretty_path_distances() const
-		{
-			tr.Debug << "START PATH DISTANCES" << std::endl;
-			// print header line
-			for ( Size i = 1; i <= natoms(); ++i )
-			{
-				tr.Debug << "\t" << graph_[ordered_atoms_[i]].name();
-			}
-			tr.Debug << std::endl;
-
-			for ( Size j = 1; j <= natoms(); ++j )
-			{
-				tr.Debug << graph_[ordered_atoms_[j]].name() << "\t";
-				for ( Size k = 1; k <= natoms(); ++k )
-				{
-					tr.Debug << path_distance_[j][k] << "\t";
-				}
-				tr.Debug << std::endl;
-			}
-			tr.Debug << "END PATH DISTANCES" << std::endl;
-		}
-
-		void
-		ResidueType::update_residue_connection_mapping()
-		{
-			//std::fill( atom_2_residue_connection_map_.begin(), atom_2_residue_connection_map_.end(), 0 );
-			for ( Size ii = 1; ii <= natoms(); ++ii ) { atom_2_residue_connection_map_[ ii ].clear(); }
-
-			for ( Size ii = 1; ii <= residue_connections_.size(); ++ii ) {
-				atom_2_residue_connection_map_[ vd_to_index_.find(residue_connections_[ ii ].vertex())->second ].push_back( ii );
-				residue_connections_[ ii ].index( ii );
-			}
-		}
-
-		void
-		ResidueType::update_last_controlling_chi() {
-			last_controlling_chi_.resize( natoms() );
-			std::fill( last_controlling_chi_.begin(), last_controlling_chi_.end(), 0 );
-
-			/// 1. First we have to mark all the atoms who are direct descendants of the 3rd
-			/// atom in each chi; this prevents the note_chi_controls_atom recursion from overwriting
-			/// the last-controlling chi for atoms descending from a particular chi.
-			for ( Size ii = 1; ii <= nchi(); ++ii ) {
-				AtomIndices atoms(chi_atoms(ii));
-				Size const iiat3 = atoms[3];//chi_atoms_[ ii ][ 3 ];
-				// This may be unnecessary; I believe two atoms pair as each other's bases only at the mainchain.
-				Size const iiat3base = atom_base(iiat3);
-				AtomIndices const & ii_nbrs(bonded_neighbor(iiat3));
-				for ( Size jj = 1; jj <= ii_nbrs.size(); ++jj ) {
-					Size const jj_atom = ii_nbrs[ jj ];
-					if ( atom_base(jj_atom) == iiat3 && iiat3base != jj_atom ) {
-						last_controlling_chi_[ jj_atom ] = ii;
-					}
-				}
-			}
-
-			/// 2. Now, lets recurse through all the atoms that are not direct descendants
-			/// of the 3rd atom in a chi.  E.g. chi2 in PHE controls several more atoms than
-			/// just CD1 and CD2.
-			for ( Size ii = nchi(); ii >= 1; --ii ) {
-				/// Note children of atom 3 of chi_ii as being controlled by chi ii.
-				AtomIndices atoms(chi_atoms(ii));
-				Size const iiat3 = atoms[3];//chi_atoms_[ ii ][ 3 ];
-				// This may be unnecessary; I believe two atoms pair as each other's bases only at the mainchain.
-				Size const iiat3base = atom_base(iiat3);
-				AtomIndices const & ii_nbrs(bonded_neighbor(iiat3)  );
-				for ( Size jj = 1; jj <= ii_nbrs.size(); ++jj ) {
-					Size const jj_atom = ii_nbrs[ jj ];
-					if (atom_base(jj_atom) == iiat3 && iiat3base != jj_atom ) {
-						note_chi_controls_atom( ii, jj_atom );
-					}
-				}
-			}
-
-			/// Now compute the atoms_last_controlled_by_chi_ arrays.
-
-			/// get ready to allocate space in the atoms_last_controlled_by_chi_ arrays
-			utility::vector1< Size > natoms_for_chi( nchi(), 0 );
-			for ( Size ii = 1; ii <= natoms(); ++ii ) {
-				if ( last_controlling_chi_[ ii ] != 0 ) {
-					++natoms_for_chi[ last_controlling_chi_[ ii ] ];
-				}
-			}
-
-			/// allocate space
-			atoms_last_controlled_by_chi_.resize( nchi() );
-			for ( Size ii = 1; ii <= nchi(); ++ii ) {
-				atoms_last_controlled_by_chi_[ ii ].clear();
-				atoms_last_controlled_by_chi_[ ii ].reserve( natoms_for_chi[ ii ] );
-			}
-
-			/// fill the arrays
-			for ( Size ii = 1; ii <= natoms(); ++ii ) {
-				if ( last_controlling_chi_[ ii ] != 0 ) {
-					atoms_last_controlled_by_chi_[ last_controlling_chi_[ ii ]].push_back( ii );
-				}
-			}
-
-		}
-
-		/// @details O(N) recursive algorithm for determining the last chi for each atom.
-		/// Each atom is visited at most twice.
-		void
-		ResidueType::note_chi_controls_atom( Size chi, Size atomno )
-		{
-			/// This should never be called on the "root" atom or it will enter an infinite loop
-			assert(  atom_base(atomno) != atomno );
-
-			/// End the recursion: this atom already has had it's last chi identified, and it's not
-			/// the chi we're currently labeling atoms with.
-			if ( last_controlling_chi_[ atomno ] != 0 && last_controlling_chi_[ atomno ] != chi ) return;
-
-			last_controlling_chi_[ atomno ] = chi;
-
-			AtomIndices const & nbrs(bonded_neighbor(atomno) );
-			for ( Size ii = 1; ii <= nbrs.size(); ++ii ) {
-				/// descend into atoms who list atomno as their parent;
-				/// atom_base_ defines a tree except at the root, where
-				/// atom_base_[ atom_base_[ ii ]] == ii
-				if (atom_base(nbrs[ii]) == atomno ) {
-					note_chi_controls_atom( chi, nbrs[ ii ] );
-				}
-			}
-		}
-
-		void
-		ResidueType::select_orient_atoms(
-				Size & center,
-				Size & nbr1,
-				Size & nbr2
-		) const
-		{
-			center = 0;
-			nbr1 = 0;
-			nbr2 = 0;
-
-			// No backbone atoms, all backbone atoms, or orient mode explicitly set to nbr_atom
-			if ( first_sidechain_atom() == 1 || first_sidechain_atom() > natoms() || force_nbr_atom_orient() ) {
-				// If no backbone atoms (or all bb atoms), assume nbr_atom will be close to center-of-mass.
-				center = nbr_atom();
-				// If is hydrogen or too few neighbors, try trekking up the atom tree
-				while( center > nheavyatoms() || bonded_neighbor(center).size() < 2 ) {
-					center = atom_base(center);
-				}
-				AtomIndices const & nbrs( bonded_neighbor(center) );
-				// First try to find two neighbors that are heavyatoms
-				for( Size j=1; j<= nbrs.size(); ++j ) {
-					Size const nbr( nbrs[j] );
-					if( nbr <= nheavyatoms() ) {
-						if ( nbr1 ) nbr2 = nbr;
-						else nbr1 = nbr;
-					}
-				}
-				// Failing that, just try for two neighbors!
-				if( !( center && nbr1 && nbr2 ) ) {
-					for( Size j=1; j<= nbrs.size(); ++j ) {
-						Size const nbr( nbrs[j] );
-						if ( nbr1 ) nbr2 = nbr;
-						else nbr1 = nbr;
-					}
-				}
-				if( !( center && nbr1 && nbr2 ) ) {
-					// assert() isn't enough for these cases b/c they're typically ligands
-					// and thus depend on user input -- need to be caught even in release mode.
-					utility_exit_with_message("Cannot superimpose residues of type "+name());
-				}
-				//std::cout << "Superimposing on " << atom_name(center) << " " << atom_name(nbr1) << " " << atom_name(nbr2) << "\n";
-
+			if( num_NOS >=1 ) {
+				a.atom_type_index( atom_types_->atom_type_index("Hpol") );
+			} else if ( num_aro_C >= 1 ) {
+				a.atom_type_index( atom_types_->atom_type_index("Haro") );
 			} else {
-				// look for a backbone atom, one of whose neighbors is a sidechain atom
-				// center will be this atom
-				// nbr1 and nbr2 will be the backbone heavyatom nbrs of this atom
-				// eg center = CA, nbr1 = N. nbr2 = C in the protein case
-				for ( Size atom_index(1); atom_index <= natoms(); ++atom_index ) {
-					if ( atom_is_backbone( atom_index ) ) {
-						AtomIndices const & nbrs( bonded_neighbor( atom_index ) );
-						center = 0; nbr1 = 0; nbr2 = 0;
-						for ( Size nbr_index(1); nbr_index <= nbrs.size(); ++nbr_index ) {
-							Size const nbr( nbrs[ nbr_index ] );
-							if ( !atom_is_backbone( nbr ) && atom_base( nbr ) == atom_index ) {
-								// nbr is a sidechain atom that branches from the atom at atom_index
-								center = atom_index;
-							} else if ( atom_is_backbone( nbr ) && nbr <= nheavyatoms() ) {
-								// nbr is a backbone heavy atom neighbor of the atom at atom_index
-								if ( nbr1 ) nbr2 = nbr;
-								else nbr1 = nbr;
-							}
-						}
-					} // atom_index is backbone
-					if ( center && nbr1 && nbr2 ) break;
-				} // atom_index
+				a.atom_type_index( atom_types_->atom_type_index("Hapo") );
+			}
+		} else if( element == "C") {
+			OutEdgeIter bonds, bonds_end;
+			bool saturated(true);
+			core::Size num_H(0), num_dbl_nonO(0), num_aro_nonO(0), num_aro_N(0);
+			for( boost::tie(bonds, bonds_end) = boost::out_edges(*itr,graph_); bonds != bonds_end; ++bonds ) {
+				VD const & tvd( boost::target( *bonds, graph_) );
+				Atom const & t( graph_[tvd] );
+				std::string t_element( retype_get_element(tvd,t,emap,*atom_types_) );
+
+				if( retype_is_virtual(t_element) ) { continue; }
+				switch( graph_[*bonds].bond_name() ) {
+					case SingleBond:
+						if( t_element == "H" ) { ++num_H; }
+						break;
+					case DoubleBond:
+						saturated = false;
+						if ( t_element != "O" ) { ++num_dbl_nonO; }
+						break;
+					case TripleBond:
+						saturated = false;
+						break;
+					case AromaticBond:
+						saturated = false;
+						if ( t_element != "O" ) { ++num_aro_nonO; }
+						if ( t_element == "N" ) { ++num_aro_N; } // really if, not else if
+						break;
+					default:
+						break;
+				}
+			}
+			if( saturated ) {
+				if( num_H >= 3 ) {
+					a.atom_type_index( atom_types_->atom_type_index("CH3 ") );
+				} else if( num_H == 2 ) {
+					a.atom_type_index( atom_types_->atom_type_index("CH2 ") );
+				} else {
+					a.atom_type_index( atom_types_->atom_type_index("CH1 ") );
+				}
+			} else { // unsaturated
+				if( num_aro_nonO >= 2 ) {
+					a.atom_type_index( atom_types_->atom_type_index("aroC") );
+					aroCs.push_back( *itr ); // for later attached H annotation
+				} else if( num_dbl_nonO >= 1 ) {
+					a.atom_type_index( atom_types_->atom_type_index("aroC") );
+					aroCs.push_back( *itr ); // for later attached H annotation
+				} else if( num_aro_N >= 1 ) {
+					a.atom_type_index( atom_types_->atom_type_index("CNH2") );
+				} else {
+					a.atom_type_index( atom_types_->atom_type_index("COO ") );
+				}
+			}
+		} else if( element == "N" ) {
+			OutEdgeIter bonds, bonds_end;
+			bool saturated(true);
+			core::Size num_H(0), heavy_nbrs(0);
+			for( boost::tie(bonds, bonds_end) = boost::out_edges(*itr,graph_); bonds != bonds_end; ++bonds ) {
+				VD const & tvd( boost::target( *bonds, graph_) );
+				Atom const & t( graph_[tvd] );
+				std::string t_element( retype_get_element(tvd,t,emap,*atom_types_) );
+
+				if( retype_is_virtual(t_element) ) { continue; }
+				if( t_element == "H" ) { ++num_H; }
+				else { ++heavy_nbrs; } // We've already ignored all the virtual atoms.
+				if( graph_[*bonds].bond_name() != SingleBond ) { saturated = false; }
+			}
+
+			if( num_H >= 3 ) {
+				a.atom_type_index( atom_types_->atom_type_index("Nlys") ); // carries a VERY high desolvation penalty
+			} else if( num_H == 2 ) {
+				// Not totally sure about this one, may want Ntrp instead if more than one heavy neighbor:
+				a.atom_type_index( atom_types_->atom_type_index("NH2O") ); // Narg would also be a possibility, but they're fairly similar
+			} else if( num_H == 1 ) {
+				if( heavy_nbrs <= 2 ) {
+					a.atom_type_index( atom_types_->atom_type_index("Ntrp") ); // should always be 2 neighbors, not less
+				} else {
+					a.atom_type_index( atom_types_->atom_type_index("Ntrp") ); // Npro? protonated tertiary amine
+				} // I know they're the same -- I'm just copying molfile_to_params, which splits the case.
+			} else {
+				if( heavy_nbrs <= 2 ) {
+					a.atom_type_index( atom_types_->atom_type_index("Nhis") );
+				} else if ( heavy_nbrs == 3 ) {
+					if( saturated ) {
+						a.atom_type_index( atom_types_->atom_type_index("Nhis") ); // deprotonated tertiary amine; need an sp3 hybrid H-bond acceptor type...
+					} else { // This also catches nitro groups -- is that what we want here?
+						a.atom_type_index( atom_types_->atom_type_index("Npro") ); // X=[N+](X)X, including nitro groups
+					}
+				} else {
+					a.atom_type_index( atom_types_->atom_type_index("Npro") ); // quaternary amine
+				}
+			}
+		} else if( element == "O" ) {
+			OutEdgeIter bonds, bonds_end;
+			bool saturated(true);
+			core::Size num_H(0), num_bonds(0), bonded_to_N(0), bonded_to_C_to_N(0), unsat_nbrs(0);
+			for( boost::tie(bonds, bonds_end) = boost::out_edges(*itr,graph_); bonds != bonds_end; ++bonds ) {
+				VD const & tvd( boost::target( *bonds, graph_) );
+				Atom const & t( graph_[tvd] );
+				std::string t_element( retype_get_element(tvd,t,emap,*atom_types_) );
+
+				if( retype_is_virtual(t_element) ) { continue; }
+				++num_bonds; // Bonds to non-virtual atoms.
+				if( graph_[*bonds].bond_name() != SingleBond ) { saturated = false; }
+				if( t_element == "H" ) { ++num_H; }
+				else if( t_element == "N" ) { ++bonded_to_N; }
+				OutEdgeIter bonds2, bonds_end2; // second degree bonds.
+				bool sat_neighbor = true;
+				for( boost::tie(bonds2, bonds_end2) = boost::out_edges(tvd,graph_); bonds2 != bonds_end2; ++bonds2 ) {
+					// Ignore the bond back to the atom we're typing.
+					//if( boost::target( *bonds2, graph_) == *itr ) { continue; }
+					VD const & tvd2( boost::target( *bonds2, graph_) );
+					Atom const & t2( graph_[tvd2] );
+					std::string t2_element( retype_get_element(tvd2,t2,emap,*atom_types_) );
+
+					if( retype_is_virtual(t2_element) ) { continue; }
+					if( t_element == "C" && t2_element == "N") { ++bonded_to_C_to_N; }
+					if( graph_[*bonds2].bond_name() != SingleBond ) { sat_neighbor = false; }
+				}
+				if( ! sat_neighbor ) { ++unsat_nbrs; }
+			}
+			if( saturated ) {
+				if( num_bonds < 2 ) {
+					a.atom_type_index( atom_types_->atom_type_index("OOC ") ); // catches C(=O)[O-] (Kekule form) -- new rule by IWD
+				} else {
+					core::Size ring_size( smallest_ring_size( *itr ) );
+					if( num_H > 0 ) {
+						a.atom_type_index( atom_types_->atom_type_index("OH  ") ); // catches C(=O)OH (Kekule form)
+					} else if ( ring_size < 5 ) {
+						a.atom_type_index( atom_types_->atom_type_index("OH  ") ); // small, strained rings leave the O more exposed? (IWD, see 1p8d)
+					} else if ( ring_size < 999999 && unsat_nbrs > 0 ) {
+						a.atom_type_index( atom_types_->atom_type_index("Oaro") ); // catches aromatic O in furan-like rings, though I rarely see these H-bond (IWD)
+					} else {
+						a.atom_type_index( atom_types_->atom_type_index("OH  ") ); // catches ethers, ROR (IWD, see comment)
+						// The lone pairs on ethers are capable of H-bonding in the same way that alcohols are.
+						// While alkyl ethers are quite non-polar, many others seem to make Hbonds,
+						// such as those attached to phosphates (R-O-PO3), methyls (R-O-CH3), and aromatic rings (R-O-Ph).
+						// It is unclear from the literature how strong these are, and is probably very situation dependent.
+					}
+				}
+			} else if ( num_H > 0 ) {
+				a.atom_type_index( atom_types_->atom_type_index("OH  ") ); // catches c(o)oH (aromatic bonds to both O)
+			} else if ( bonded_to_N ) {
+				a.atom_type_index( atom_types_->atom_type_index("ONH2") );
+			} else if ( bonded_to_C_to_N ) { // This is a non-standard rule introduced by IWD, agreed to by KWK:
+				a.atom_type_index( atom_types_->atom_type_index("ONH2") );
+			} else {
+				a.atom_type_index( atom_types_->atom_type_index("OOC ") );
+			}
+		} else if( "S"  == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("S   ") );
+		} else if( "P"  == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("Phos") );
+		} else if( "F"  == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("F   ") );
+		} else if( "CL" == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("Cl  ") );
+		} else if( "BR" == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("Br  ") );
+		} else if( "I"  == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("I   ") );
+		} else if( "NA" == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("Na1p") );
+		} else if( "K"  == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("K1p ") );
+		} else if( "MG" == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("Mg2p") );
+		} else if( "FE" == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("Fe3p") );
+		} else if( "CA" == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("Ca2p") );
+		} else if( "ZN" == element ) {
+			a.atom_type_index( atom_types_->atom_type_index("Zn2p") );
+		} else {
+			utility_exit_with_message("Cannot type atom with element '"+element+"'");
+		}
+	} // For vertices in graph
+
+	// Hydrogens attached to aroCs == Haro.
+	// Technically doesn't match molfile_to_params, as a hydrogen simultaneously bonded to an aroC and an N/O/S
+	// would be typed Hpol there, but is typed Haro here. Though if you're silly enough to make two bonds to a hydrogen,
+	// you really can't complain when things come out mucked up.
+	for( VDs::const_iterator aroit(aroCs.begin()), aroend(aroCs.end()); aroit != aroend; ++aroit ) {
+		OutEdgeIter bonds, bonds_end;
+		for( boost::tie(bonds, bonds_end) = boost::out_edges(*aroit,graph_); bonds != bonds_end; ++bonds ) {
+			VD const & tvd( boost::target( *bonds, graph_) );
+			Atom & t( graph_[tvd] );
+			std::string t_element( retype_get_element(tvd,t,emap,*atom_types_) );
+			if( t_element == "H" && graph_[ *bonds ].bond_name() != UnknownBond  ) {
+				if( preserve && t.atom_type_index() != 0 ) { continue; }
+				t.atom_type_index( atom_types_->atom_type_index("Haro") );
 			}
 		}
+	}
+}
 
-		/// @brief A graph-based function to determine the size of the smallest ring that involves a given atom.
+// Return the CarbohydrateInfo object containing sugar-specific properties for this residue.
+core::chemical::carbohydrates::CarbohydrateInfoCOP
+ResidueType::carbohydrate_info() const
+{
+	return carbohydrate_info_;
+}
 
-		core::Size
-		ResidueType::smallest_ring_size( VD const & atom, core::Size const & max_size /*= 999999*/ ) const
+void
+ResidueType::print_dihedrals() const
+{
+	tr.Debug << "START DIHEDRAL ANGLES ATOM NAMES" << std::endl;
+	tr.Debug << "Number of dihe: " << ndihe_ << " " << dihedral_atom_sets_.size() << std::endl;
+	for ( Size i = 1; i <= ndihe_; ++i )
+	{
+
+		AtomType at1 = atom_type( dihedral_atom_sets_[ i ].key1() );
+		AtomType at2 = atom_type( dihedral_atom_sets_[ i ].key2() );
+		AtomType at3 = atom_type( dihedral_atom_sets_[ i ].key3() );
+		AtomType at4 = atom_type( dihedral_atom_sets_[ i ].key4() );
+		MMAtomType at5 = mm_atom_type( dihedral_atom_sets_[ i ].key1() );
+		MMAtomType at6 = mm_atom_type( dihedral_atom_sets_[ i ].key2() );
+		MMAtomType at7 = mm_atom_type( dihedral_atom_sets_[ i ].key3() );
+		MMAtomType at8 = mm_atom_type( dihedral_atom_sets_[ i ].key4() );
+
+		tr.Debug << "PDB:" << "\t"
+				<< graph_[ordered_atoms_[ dihedral_atom_sets_[ i ].key1() ]].name() << "\t"
+				<< graph_[ordered_atoms_[ dihedral_atom_sets_[ i ].key2() ]].name() << "\t"
+				<< graph_[ordered_atoms_[ dihedral_atom_sets_[ i ].key3() ]].name() << "\t"
+				<< graph_[ordered_atoms_[ dihedral_atom_sets_[ i ].key4() ]].name() << "\t"
+				<< "MM:" << "\t"
+				<< graph_[ordered_atoms_[ dihedral_atom_sets_[ i ].key1() ]].mm_name() << "\t"
+				<< graph_[ordered_atoms_[ dihedral_atom_sets_[ i ].key2() ]].mm_name() << "\t"
+				<< graph_[ordered_atoms_[ dihedral_atom_sets_[ i ].key3() ]].mm_name() << "\t"
+				<< graph_[ordered_atoms_[ dihedral_atom_sets_[ i ].key4() ]].mm_name() << "\t"
+				<< "MM2:" << "\t"
+				<< at5.name() << "\t"
+				<< at6.name() << "\t"
+				<< at7.name() << "\t"
+				<< at8.name() << "\t"
+				<< "ROS:" << "\t"
+				<< at1.name() << "\t"
+				<< at2.name() << "\t"
+				<< at3.name() << "\t"
+				<< at4.name() << "\t"
+				<< std::endl;
+	}
+	tr.Debug << "END DIHEDRAL ANGLES ATOM NAMES" << std::endl;
+}
+
+void
+ResidueType::print_bondangles() const
+{
+	tr.Debug << "START BOND ANGLES ATOM NAMES" << std::endl;
+	tr.Debug << "Number of bond angles: " << bondangle_atom_sets_.size() << std::endl;
+	for ( Size i = 1; i <= bondangle_atom_sets_.size(); ++i )
+	{
+
+		AtomType at1 = atom_type( bondangle_atom_sets_[ i ].key1() );
+		AtomType at2 = atom_type( bondangle_atom_sets_[ i ].key2() );
+		AtomType at3 = atom_type( bondangle_atom_sets_[ i ].key3() );
+		MMAtomType at5 = mm_atom_type( bondangle_atom_sets_[ i ].key1() );
+		MMAtomType at6 = mm_atom_type( bondangle_atom_sets_[ i ].key2() );
+		MMAtomType at7 = mm_atom_type( bondangle_atom_sets_[ i ].key3() );
+
+		tr.Debug << "PDB:" << "\t"
+				<< graph_[ordered_atoms_[ bondangle_atom_sets_[ i ].key1() ]].name() << "\t"
+				<< graph_[ordered_atoms_[ bondangle_atom_sets_[ i ].key2() ]].name() << "\t"
+				<< graph_[ordered_atoms_[ bondangle_atom_sets_[ i ].key3() ]].name() << "\t"
+				<< "MM:" << "\t"
+				<< graph_[ordered_atoms_[ bondangle_atom_sets_[ i ].key1() ]].mm_name() << "\t"
+				<< graph_[ordered_atoms_[ bondangle_atom_sets_[ i ].key2() ]].mm_name() << "\t"
+				<< graph_[ordered_atoms_[ bondangle_atom_sets_[ i ].key3() ]].mm_name() << "\t"
+				<< "MM2:" << "\t"
+				<< at5.name() << "\t"
+				<< at6.name() << "\t"
+				<< at7.name() << "\t"
+				<< "ROS:" << "\t"
+				<< at1.name() << "\t"
+				<< at2.name() << "\t"
+				<< at3.name() << "\t"
+				<< std::endl;
+	}
+	tr.Debug << "END BOND ANGLES ATOM NAMES" << std::endl;
+}
+
+void
+ResidueType::print_pretty_path_distances() const
+{
+	tr.Debug << "START PATH DISTANCES" << std::endl;
+	// print header line
+	for ( Size i = 1; i <= natoms(); ++i )
+	{
+		tr.Debug << "\t" << graph_[ordered_atoms_[i]].name();
+	}
+	tr.Debug << std::endl;
+
+	for ( Size j = 1; j <= natoms(); ++j )
+	{
+		tr.Debug << graph_[ordered_atoms_[j]].name() << "\t";
+		for ( Size k = 1; k <= natoms(); ++k )
 		{
-			return utility::graph::smallest_ring_size(atom, graph_, max_size);
+			tr.Debug << path_distance_[j][k] << "\t";
 		}
+		tr.Debug << std::endl;
+	}
+	tr.Debug << "END PATH DISTANCES" << std::endl;
+}
 
-		void
-		ResidueType::report_adducts()
-		{
-			if( defined_adducts_.size() == 0 ) return;
+void
+ResidueType::update_residue_connection_mapping()
+{
+	//std::fill( atom_2_residue_connection_map_.begin(), atom_2_residue_connection_map_.end(), 0 );
+	for ( Size ii = 1; ii <= natoms(); ++ii ) { atom_2_residue_connection_map_[ ii ].clear(); }
 
-			for( Size ii = 1 ; ii <= defined_adducts_.size() ; ++ii) {
-				Adduct & add( defined_adducts_[ii] );
-				tr.Debug << "Residue: " << name3() << " Adduct: " << add.adduct_name() <<
-						" Atom name: " << add.atom_name() << std::endl;
+	for ( Size ii = 1; ii <= residue_connections_.size(); ++ii ) {
+		atom_2_residue_connection_map_[ vd_to_index_.find(residue_connections_[ ii ].vertex())->second ].push_back( ii );
+		residue_connections_[ ii ].index( ii );
+	}
+}
+
+void
+ResidueType::update_last_controlling_chi() {
+	last_controlling_chi_.resize( natoms() );
+	std::fill( last_controlling_chi_.begin(), last_controlling_chi_.end(), 0 );
+
+	/// 1. First we have to mark all the atoms who are direct descendants of the 3rd
+	/// atom in each chi; this prevents the note_chi_controls_atom recursion from overwriting
+	/// the last-controlling chi for atoms descending from a particular chi.
+	for ( Size ii = 1; ii <= nchi(); ++ii ) {
+		AtomIndices atoms(chi_atoms(ii));
+		Size const iiat3 = atoms[3];//chi_atoms_[ ii ][ 3 ];
+		// This may be unnecessary; I believe two atoms pair as each other's bases only at the mainchain.
+		Size const iiat3base = atom_base(iiat3);
+		AtomIndices const & ii_nbrs(bonded_neighbor(iiat3));
+		for ( Size jj = 1; jj <= ii_nbrs.size(); ++jj ) {
+			Size const jj_atom = ii_nbrs[ jj ];
+			if ( atom_base(jj_atom) == iiat3 && iiat3base != jj_atom ) {
+				last_controlling_chi_[ jj_atom ] = ii;
 			}
 		}
+	}
 
-		void
-		ResidueType::debug_dump_icoor()
-		{
-
-			tr.Debug << "ICoor for " << name3() << std::endl;
-			for( Size ii = 1 ; ii <= natoms() ; ++ii) {
-				tr.Debug << " Atom name: " << atom_name( ii ) << " ideal xyz " << atom(ii).ideal_xyz()[0] << "  " << atom(ii).ideal_xyz()[1] << "  " << atom(ii).ideal_xyz()[2] << std::endl;
-			}
-
-		}
-
-
-		void
-		ResidueType::show_all_atom_names( std::ostream & out ) const {
-
-			for( VIterPair vp = boost::vertices(graph_); vp.first != vp.second; ++vp.first){
-				VIter v_iter= vp.first;
-				VD vd = *v_iter;
-				Atom a = graph_[vd];
-				out << a.name() << " " << &graph_[vd] << std::endl;
-			}
-
-		}
-
-		void
-		ResidueType::set_ncaa_rotlib_n_bin_per_rot( utility::vector1<Size> n_bins_per_rot )
-		{
-			assert( ncaa_rotlib_n_rots_ == n_bins_per_rot.size() );
-			ncaa_rotlib_n_bins_per_rot_.resize( ncaa_rotlib_n_rots_ );
-			for( Size i = 1; i <= ncaa_rotlib_n_rots_; ++i ) {
-				ncaa_rotlib_n_bins_per_rot_[i] = n_bins_per_rot[i];
+	/// 2. Now, lets recurse through all the atoms that are not direct descendants
+	/// of the 3rd atom in a chi.  E.g. chi2 in PHE controls several more atoms than
+	/// just CD1 and CD2.
+	for ( Size ii = nchi(); ii >= 1; --ii ) {
+		/// Note children of atom 3 of chi_ii as being controlled by chi ii.
+		AtomIndices atoms(chi_atoms(ii));
+		Size const iiat3 = atoms[3];//chi_atoms_[ ii ][ 3 ];
+		// This may be unnecessary; I believe two atoms pair as each other's bases only at the mainchain.
+		Size const iiat3base = atom_base(iiat3);
+		AtomIndices const & ii_nbrs(bonded_neighbor(iiat3)  );
+		for ( Size jj = 1; jj <= ii_nbrs.size(); ++jj ) {
+			Size const jj_atom = ii_nbrs[ jj ];
+			if (atom_base(jj_atom) == iiat3 && iiat3base != jj_atom ) {
+				note_chi_controls_atom( ii, jj_atom );
 			}
 		}
+	}
 
-		/// @brief  Check if atom is virtual.
-		bool
-		ResidueType::is_virtual( Size const & atomno ) const
-		{
-			return ( atom_type( atomno ).is_virtual() );
+	/// Now compute the atoms_last_controlled_by_chi_ arrays.
+
+	/// get ready to allocate space in the atoms_last_controlled_by_chi_ arrays
+	utility::vector1< Size > natoms_for_chi( nchi(), 0 );
+	for ( Size ii = 1; ii <= natoms(); ++ii ) {
+		if ( last_controlling_chi_[ ii ] != 0 ) {
+			++natoms_for_chi[ last_controlling_chi_[ ii ] ];
 		}
+	}
 
-		/// @brief  Check if residue is 'VIRTUAL_RESIDUE'
-		bool
-		ResidueType::is_virtual_residue() const{
-			return ( has_variant_type( "VIRTUAL_RESIDUE" ) );
+	/// allocate space
+	atoms_last_controlled_by_chi_.resize( nchi() );
+	for ( Size ii = 1; ii <= nchi(); ++ii ) {
+		atoms_last_controlled_by_chi_[ ii ].clear();
+		atoms_last_controlled_by_chi_[ ii ].reserve( natoms_for_chi[ ii ] );
+	}
+
+	/// fill the arrays
+	for ( Size ii = 1; ii <= natoms(); ++ii ) {
+		if ( last_controlling_chi_[ ii ] != 0 ) {
+			atoms_last_controlled_by_chi_[ last_controlling_chi_[ ii ]].push_back( ii );
 		}
+	}
 
-		///////////////////////////////////////////////////////////////
-		core::chemical::rna::RNA_ResidueType const &
-		ResidueType::RNA_type() const{
+}
+
+/// @details O(N) recursive algorithm for determining the last chi for each atom.
+/// Each atom is visited at most twice.
+void
+ResidueType::note_chi_controls_atom( Size chi, Size atomno )
+{
+	/// This should never be called on the "root" atom or it will enter an infinite loop
+	assert(  atom_base(atomno) != atomno );
+
+	/// End the recursion: this atom already has had it's last chi identified, and it's not
+	/// the chi we're currently labeling atoms with.
+	if ( last_controlling_chi_[ atomno ] != 0 && last_controlling_chi_[ atomno ] != chi ) return;
+
+	last_controlling_chi_[ atomno ] = chi;
+
+	AtomIndices const & nbrs(bonded_neighbor(atomno) );
+	for ( Size ii = 1; ii <= nbrs.size(); ++ii ) {
+		/// descend into atoms who list atomno as their parent;
+		/// atom_base_ defines a tree except at the root, where
+		/// atom_base_[ atom_base_[ ii ]] == ii
+		if (atom_base(nbrs[ii]) == atomno ) {
+			note_chi_controls_atom( chi, nbrs[ ii ] );
+		}
+	}
+}
+
+void
+ResidueType::select_orient_atoms(
+		Size & center,
+		Size & nbr1,
+		Size & nbr2
+) const
+{
+	center = 0;
+	nbr1 = 0;
+	nbr2 = 0;
+
+	// No backbone atoms, all backbone atoms, or orient mode explicitly set to nbr_atom
+	if ( first_sidechain_atom() == 1 || first_sidechain_atom() > natoms() || force_nbr_atom_orient() ) {
+		// If no backbone atoms (or all bb atoms), assume nbr_atom will be close to center-of-mass.
+		center = nbr_atom();
+		// If is hydrogen or too few neighbors, try trekking up the atom tree
+		while( center > nheavyatoms() || bonded_neighbor(center).size() < 2 ) {
+			center = atom_base(center);
+		}
+		AtomIndices const & nbrs( bonded_neighbor(center) );
+		// First try to find two neighbors that are heavyatoms
+		for( Size j=1; j<= nbrs.size(); ++j ) {
+			Size const nbr( nbrs[j] );
+			if( nbr <= nheavyatoms() ) {
+				if ( nbr1 ) nbr2 = nbr;
+				else nbr1 = nbr;
+			}
+		}
+		// Failing that, just try for two neighbors!
+		if( !( center && nbr1 && nbr2 ) ) {
+			for( Size j=1; j<= nbrs.size(); ++j ) {
+				Size const nbr( nbrs[j] );
+				if ( nbr1 ) nbr2 = nbr;
+				else nbr1 = nbr;
+			}
+		}
+		if( !( center && nbr1 && nbr2 ) ) {
+			// assert() isn't enough for these cases b/c they're typically ligands
+			// and thus depend on user input -- need to be caught even in release mode.
+			utility_exit_with_message("Cannot superimpose residues of type "+name());
+		}
+		//std::cout << "Superimposing on " << atom_name(center) << " " << atom_name(nbr1) << " " << atom_name(nbr2) << "\n";
+
+	} else {
+		// look for a backbone atom, one of whose neighbors is a sidechain atom
+		// center will be this atom
+		// nbr1 and nbr2 will be the backbone heavyatom nbrs of this atom
+		// eg center = CA, nbr1 = N. nbr2 = C in the protein case
+		for ( Size atom_index(1); atom_index <= natoms(); ++atom_index ) {
+			if ( atom_is_backbone( atom_index ) ) {
+				AtomIndices const & nbrs( bonded_neighbor( atom_index ) );
+				center = 0; nbr1 = 0; nbr2 = 0;
+				for ( Size nbr_index(1); nbr_index <= nbrs.size(); ++nbr_index ) {
+					Size const nbr( nbrs[ nbr_index ] );
+					if ( !atom_is_backbone( nbr ) && atom_base( nbr ) == atom_index ) {
+						// nbr is a sidechain atom that branches from the atom at atom_index
+						center = atom_index;
+					} else if ( atom_is_backbone( nbr ) && nbr <= nheavyatoms() ) {
+						// nbr is a backbone heavy atom neighbor of the atom at atom_index
+						if ( nbr1 ) nbr2 = nbr;
+						else nbr1 = nbr;
+					}
+				}
+			} // atom_index is backbone
+			if ( center && nbr1 && nbr2 ) break;
+		} // atom_index
+	}
+}
+
+/// @brief A graph-based function to determine the size of the smallest ring that involves a given atom.
+
+core::Size
+ResidueType::smallest_ring_size( VD const & atom, core::Size const & max_size /*= 999999*/ ) const
+{
+	return utility::graph::smallest_ring_size(atom, graph_, max_size);
+}
+
+void
+ResidueType::report_adducts()
+{
+	if( defined_adducts_.size() == 0 ) return;
+
+	for( Size ii = 1 ; ii <= defined_adducts_.size() ; ++ii) {
+		Adduct & add( defined_adducts_[ii] );
+		tr.Debug << "Residue: " << name3() << " Adduct: " << add.adduct_name() <<
+				" Atom name: " << add.atom_name() << std::endl;
+	}
+}
+
+void
+ResidueType::debug_dump_icoor()
+{
+
+	tr.Debug << "ICoor for " << name3() << std::endl;
+	for( Size ii = 1 ; ii <= natoms() ; ++ii) {
+		tr.Debug << " Atom name: " << atom_name( ii ) << " ideal xyz " << atom(ii).ideal_xyz()[0] << "  " << atom(ii).ideal_xyz()[1] << "  " << atom(ii).ideal_xyz()[2] << std::endl;
+	}
+
+}
+
+
+void
+ResidueType::show_all_atom_names( std::ostream & out ) const {
+
+	for( VIterPair vp = boost::vertices(graph_); vp.first != vp.second; ++vp.first){
+		VIter v_iter= vp.first;
+		VD vd = *v_iter;
+		Atom a = graph_[vd];
+		out << a.name() << " " << &graph_[vd] << std::endl;
+	}
+
+}
+
+void
+ResidueType::set_ncaa_rotlib_n_bin_per_rot( utility::vector1<Size> n_bins_per_rot )
+{
+	assert( ncaa_rotlib_n_rots_ == n_bins_per_rot.size() );
+	ncaa_rotlib_n_bins_per_rot_.resize( ncaa_rotlib_n_rots_ );
+	for( Size i = 1; i <= ncaa_rotlib_n_rots_; ++i ) {
+		ncaa_rotlib_n_bins_per_rot_[i] = n_bins_per_rot[i];
+	}
+}
+
+/// @brief  Check if atom is virtual.
+bool
+ResidueType::is_virtual( Size const & atomno ) const
+{
+	return ( atom_type( atomno ).is_virtual() );
+}
+
+/// @brief  Check if residue is 'VIRTUAL_RESIDUE'
+bool
+ResidueType::is_virtual_residue() const{
+	return ( has_variant_type( "VIRTUAL_RESIDUE" ) );
+}
+
+///////////////////////////////////////////////////////////////
+core::chemical::rna::RNA_ResidueType const &
+ResidueType::RNA_type() const{
 			return ( *rna_residue_type_ );
 		}
 

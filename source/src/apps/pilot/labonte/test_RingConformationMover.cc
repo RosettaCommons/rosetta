@@ -12,7 +12,7 @@
 /// @author  labonte
 
 // Unit headers
-#include <protocols/simple_moves/carbohydrates/RingConformationMover.hh>
+#include <protocols/simple_moves/RingConformationMover.hh>
 
 // Project headers
 #include <devel/init.hh>
@@ -25,7 +25,7 @@
 int main(int argc, char *argv[])
 {
 	using namespace std;
-	using namespace protocols::simple_moves::carbohydrates;
+	using namespace protocols::simple_moves;
 	using namespace protocols::jd2;
 
 	try {

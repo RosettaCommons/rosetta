@@ -95,7 +95,7 @@ NU 1  VO5  C1   C2   C3    # duplicates BB 1, but defined differently
 NU 2  C1   C2   C3   C4    # duplicates BB 2
 NU 3  C2   C3   C4   C5    # duplicates BB 3
 NU 4  C3   C4   C5   O5
-PROPERTIES  POLAR CARBOHYDRATE ALDOSE D_SUGAR PYRANOSE BETA_SUGAR
+PROPERTIES  POLAR CYCLIC CARBOHYDRATE ALDOSE D_SUGAR PYRANOSE BETA_SUGAR
 NBR_ATOM  C4
 NBR_RADIUS 10.621406
 # must build main chain 1st!

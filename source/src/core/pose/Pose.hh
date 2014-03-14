@@ -41,7 +41,7 @@
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/carbohydrates/RingConformerSet.fwd.hh>
+#include <core/chemical/RingConformerSet.fwd.hh>
 #include <core/chemical/AA.hh>
 
 #include <core/conformation/Residue.fwd.hh>
@@ -1118,7 +1118,7 @@ public:
 
 	/// @brief Set the given residue's ring conformation, if appropriate.
 	void
-	set_ring_conformation(uint const seqpos, core::chemical::carbohydrates::RingConformer const & conformer);
+	set_ring_conformation(uint const seqpos, core::chemical::RingConformer const & conformer);
 
 
 	/////////////////////////////////////////////////////////////////////////////

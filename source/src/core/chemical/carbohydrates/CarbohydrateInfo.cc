@@ -16,7 +16,6 @@
 #include <core/chemical/carbohydrates/database_io.hh>
 
 // Package headers
-#include <core/chemical/carbohydrates/RingConformerSet.hh>
 #include <core/chemical/ResidueType.hh>
 
 // Utility headers
@@ -255,12 +254,6 @@ CarbohydrateInfo::base_name() const
 	}
 }
 
-// Return a pointer to the object containing the set of ring conformers possible for this saccharide.
-core::chemical::carbohydrates::RingConformerSetCOP
-CarbohydrateInfo::ring_conformer_set() const
-{
-	return conformer_set_;
-}
 
 // Return the attachment point of the downstream saccharide residue attached to ith branch off of this residue.
 /// @param    <i>: the branch point index
@@ -322,8 +315,6 @@ CarbohydrateInfo::init(core::chemical::ResidueTypeCAP residue_type)
 	determine_polymer_connections();
 
 	determine_IUPAC_names();
-
-	conformer_set_ = new RingConformerSet(ring_size_);
 }
 
 // Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
@@ -351,7 +342,6 @@ CarbohydrateInfo::copy_data(
 	object_to_copy_to.mainchain_glycosidic_bond_acceptor_ = object_to_copy_from.mainchain_glycosidic_bond_acceptor_;
 	object_to_copy_to.branch_points_ = object_to_copy_from.branch_points_;
 	object_to_copy_to.has_exocyclic_linkage_ = object_to_copy_from.has_exocyclic_linkage_;
-	object_to_copy_to.conformer_set_ = object_to_copy_from.conformer_set_;
 }
 
 // Return the number of carbon atoms (not counting R groups) in the ResidueType.

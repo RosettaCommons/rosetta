@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    protocols/simple_moves/carbohydrates/RingConformationMover.hh
+/// @file    protocols/simple_moves/RingConformationMover.hh
 /// @brief   Declarations and simple accessor/mutator definitions for RingConformationMover.
 /// @author  Labonte
 
-#ifndef INCLUDED_protocols_simple_moves_carbohydrates_RingConformationMover_HH
-#define INCLUDED_protocols_simple_moves_carbohydrates_RingConformationMover_HH
+#ifndef INCLUDED_protocols_simple_moves_RingConformationMover_HH
+#define INCLUDED_protocols_simple_moves_RingConformationMover_HH
 
 // Unit headers
-#include <protocols/simple_moves/carbohydrates/RingConformationMover.fwd.hh>
+#include <protocols/simple_moves/RingConformationMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Project headers
@@ -34,9 +34,8 @@
 // TODO: Move to simple_moves.
 namespace protocols {
 namespace simple_moves {
-namespace carbohydrates {
 
-/// @details  Based on a given MoveMap, this mover selects movable carbohydrate residues and flips their rings to an
+/// @details  Based on a given MoveMap, this mover selects movable cyclic residues and flips their rings to an
 /// idealized ring conformer.
 /// @remarks  This class is a work in progress....
 class RingConformationMover: public moves::Mover {
@@ -94,21 +93,20 @@ private:
 	// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
 	void copy_data(RingConformationMover object_to_copy_to, RingConformationMover object_to_copy_from);
 
-	// Setup list of movable carbohydrate residues from MoveMap.
+	// Setup list of movable cyclic residues from MoveMap.
 	void setup_residue_list(core::pose::Pose & pose);
 
 
 	// Private data ////////////////////////////////////////////////////////////
 	core::kinematics::MoveMapOP movemap_;
-	utility::vector1<core::Size> residue_list_;  // list of movable carbohydrate residues by residue number
+	utility::vector1<core::Size> residue_list_;  // list of movable cyclic residues by residue number
 
 };  // class RingConformationMover
 
 // Insertion operator (overloaded so that RingConformationMover can be "printed" in PyRosetta).
 std::ostream & operator<<(std::ostream & output, RingConformationMover const & object_to_output);
 
-}  // namespace carbohydrates
 }  // namespace simple_moves
 }  // namespace protocols
 
-#endif  // INCLUDED_simple_moves_protocols_carbohydrates_RingConformationMover_HH
+#endif  // INCLUDED_simple_moves_protocols_RingConformationMover_HH

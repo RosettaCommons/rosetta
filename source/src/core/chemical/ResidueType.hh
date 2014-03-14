@@ -68,9 +68,6 @@
 #ifndef INCLUDED_core_chemical_ResidueType_hh
 #define INCLUDED_core_chemical_ResidueType_hh
 
-//#include <boost/graph/undirected_graph.hpp>
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/copy.hpp>
 // Unit headers
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueGraphTypes.hh>
@@ -96,11 +93,11 @@
 #include <core/chemical/sdf/MolData.hh>
 #include <core/chemical/rna/RNA_ResidueType.fwd.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
-
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
-#include <boost/graph/floyd_warshall_shortest.hpp>
+#include <core/chemical/RingConformerSet.fwd.hh>
+
 #include <core/types.hh>
 
 // Numeric headers
@@ -118,6 +115,13 @@
 #include <functional>
 #include <core/chemical/VariantType.fwd.hh>
 #include <utility/vector1.hh>
+
+// External headers
+//#include <boost/graph/undirected_graph.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/copy.hpp>
+#include <boost/graph/floyd_warshall_shortest.hpp>
+
 
 namespace core {
 namespace chemical {
@@ -682,6 +686,17 @@ public:
 	/// @brief get orbital index by name
 	core::Size
 	orbital_index( std::string const & name ) const;
+
+
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	////////////////  Ring Conformer Set Functions  //////////////////////
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+
+	/// @brief    Return a pointer to the object containing the set of ring
+	/// conformers possible for this cyclic residue.
+	core::chemical::RingConformerSetCOP ring_conformer_set() const;
 
 
 	//////////////////////////////////////////////////////////////////////
@@ -1278,6 +1293,9 @@ public:
 	/// @brief is aromatic?
 	bool is_aromatic() const { return is_aromatic_; }
 
+	/// @brief is cyclic?
+	bool is_cyclic() const { return is_cyclic_; }
+
 	/// @brief is terminus?
 	bool is_terminus() const { return is_terminus_; }
 
@@ -1803,6 +1821,8 @@ private:
 	// Orbital types
 	orbitals::OrbitalTypeSetCAP orbital_types_;
 
+	RingConformerSetOP conformer_set_;  // set of all possible ring conformers
+
 	ResidueTypeSetCAP residue_type_set_;
 
 	// Graph structures for residuetype
@@ -2020,6 +2040,7 @@ private:
 	bool is_polar_;
 	bool has_sc_orbitals_;
 	bool is_aromatic_;
+	bool is_cyclic_;
 	bool is_DNA_;
 	bool is_RNA_;
 	bool is_NA_;

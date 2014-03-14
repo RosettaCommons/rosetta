@@ -7,15 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    core/chemical/carbohydrates/RingConformerSet.cc
+/// @file    core/chemical/RingConformerSet.cc
 /// @brief   Method definitions for RingConformerSet.
 /// @author  Labonte
 
 // Unit header
-#include <core/chemical/carbohydrates/RingConformerSet.hh>
-
-// Package header
-#include <core/chemical/carbohydrates/database_io.hh>
+#include <core/chemical/RingConformerSet.hh>
+#include <core/chemical/ring_conformer_io.hh>
 
 // Basic headers
 #include <basic/options/option.hh>
@@ -37,7 +35,7 @@
 
 
 // Construct tracer.
-static basic::Tracer TR("core.chemical.carbohydrates.RingConformerSet");
+static basic::Tracer TR("core.chemical.RingConformerSet");
 
 // Construct random-number generator.
 static numeric::random::RandomGenerator RG(28);  // the 2nd perfect number
@@ -45,8 +43,6 @@ static numeric::random::RandomGenerator RG(28);  // the 2nd perfect number
 
 namespace core {
 namespace chemical {
-namespace carbohydrates {
-
 
 using namespace core;
 
@@ -167,17 +163,20 @@ RingConformerSet::get_ideal_conformer_by_CP_parameters(utility::vector1<core::Re
 		utility_exit_with_message("A 3-membered ring can only be planar; exiting.");
 	}
 	if (ring_size_ > 6) {
-		utility_exit_with_message("Rosetta does not currently handle C-P parameters for rings larger than size 6; exiting.");
+		utility_exit_with_message("Rosetta does not currently handle C-P parameters for rings larger than size 6; "
+				"exiting.");
 	}
 
 	Size n_parameters = parameters.size();
 
 	// Check for reasonable values.
 	if (n_parameters != ring_size_ - 3) {
-		utility_exit_with_message("An N-membered ring is described by exactly N-3 Cremer-Pople parameters, yet a different number was provided; exiting.");
+		utility_exit_with_message("An N-membered ring is described by exactly N-3 Cremer-Pople parameters, "
+				"yet a different number was provided; exiting.");
 	}
 	if (parameters[q] == 0.0) {
-		utility_exit_with_message("Planar ring conformations are not handled by Rosetta; please specify a non-zero q value; exiting.");
+		utility_exit_with_message("Planar ring conformations are not handled by Rosetta; "
+				"please specify a non-zero q value; exiting.");
 	}
 
 	Size n_conformers = nondegenerate_conformers_.size();
@@ -302,8 +301,8 @@ RingConformerSet::init(core::uint const ring_size)
 
 		// Other subsets
 		// TODO:
-		// if (CarbohydrateInfo->vector_of_names_from_params_file.contains(conformer->specific_name))...
-		// will need CAP back to owning CarbohydrateInfo or eventually ResidueType
+		// if (ResidueType->vector_of_conformer_names_from_params_file.contains(conformer->specific_name))...
+		// will need CAP back to owning ResidueType
 		//energy_minima_conformers_ = vector1<RingConformer>();  // TEMP
 		//energy_maxima_conformers_ = vector1<RingConformer>();  // TEMP
 	}
@@ -341,7 +340,7 @@ RingConformerSet::conformers_for_ring_size(core::Size ring_size)
 	// Only create sets one time, as needed, for each ring size.
 	if (!CONFORMERS->count(ring_size)) {
 		stringstream filename(stringstream::out);
-		filename << "chemical/carbohydrates/" << ring_size << "-membered_ring_conformers.data";
+		filename << "chemical/ring_conformer_sets/" << ring_size << "-membered_ring_conformers.data";
 		vector1<RingConformer> conformers = read_conformers_from_database_file_for_ring_size(
 				basic::options::option[basic::options::OptionKeys::in::path::database](1).name() +
 				filename.str(), ring_size);
@@ -388,6 +387,5 @@ operator<<(std::ostream & output, RingConformerSet const & object_to_output)
 	return output;
 }
 
-}  // namespace carbohydrates
 }  // namespace chemical
 }  // namespace core

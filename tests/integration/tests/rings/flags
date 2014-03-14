@@ -1,8 +1,8 @@
--s input/maltotriose.pdb
+-s input/maltotriose.pdb input/cyclohexylglycine.pdb
 -include_sugars
 -mute all
--unmute core.chemical.carbohydrates
--unmute protocols.simple_moves.carbohydrates
+-unmute core.chemical
+-unmute protocols.simple_moves
 -overwrite
 -nstruct 1
 -out:pdb

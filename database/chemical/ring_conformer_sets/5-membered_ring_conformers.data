@@ -1,0 +1,97 @@
+# A list of ring conformation definitions for five-membered rings.
+
+# Conformer nomenclature is explained in French & Dowd (1994) J. Comp. Chem.,
+# 15(5), 561-70 and Cremer & Pople (1974) JACS, 97(6), 1354-8.
+
+# In general, numbers (or the letter O) represent ring position.  Three atoms
+# are found for the conformer in question that form a plane, and the atoms are
+# arranged in a clockwise fashion from oxygen (O).  Numbers (or O) given before
+# the symbol, (which are also superscripted if the font allows,) indicate atoms
+# that are above the plane.  Subscripted numbers (or O) to the right of the
+# symbol indicate atoms below the plane.
+
+#         O
+#   nu4 /   \ nu0
+#     /       \
+#   C4          C1
+#    \         /
+# nu3 \       / nu1
+#      C3----C2
+#        nu2
+
+# For example, if a plane can be formed with atoms O, C3, and C4, in the ex-
+# ample above and if C1 and C2 are above and below that plane, respectively, it
+# is the 1T2 conformer.
+
+# It should be noted that the specific names here are for aldoses.  Ketoses
+# will have different labels, since C1 is exocyclic.
+
+# We only need 3 torsion angles to define a 5-membered conformer, so only the
+# 1st 3 nu values will be stored in Rosetta.  However, all 5 angles are listed
+# here for completeness.
+
+# nu1 is defined using only internal ring atoms, so in the above example, nu1 is
+# the O-C1-C2-C3 angle.
+
+# Since these are internal ring torsions, the sum must be 0 degrees.
+
+# It is impossible to form the more strained ring conformers without also ex-
+# periencing bond angle distortion.  Thus, the table below SHOULD include ideal
+# tau (internal bond angle) designations for each conformer.  HOWEVER, IT DOES
+# NOT, because they have not been calculated yet!
+
+# tau1 is defined as the internal ring bond angle about C1, so in the above ex-
+# ample, tau1 is the O-C1-C2 angle.
+
+# We only need 4 bond angles for each 5-membered conformer, so only the 1st 4
+# tau values will be stored in Rosetta.  However, all 5 angles are listed here
+# for completeness.
+
+# Technically, a strained ring should experience exocyclic bond angle distor-
+# tions as well.  It is strongly recommended that minimizations of both bond
+# angles and bond lengths are performed after any ring conformation move.
+
+# Degeneracy is the number of copies to load into a degenerate conformer set.
+# It only applies for larger ring sizes.
+
+# Note that phi OR at least 2 nu angles give all the information one
+# needs to assign the specific ideal ring conformer.  q OR the inclusion of
+# bond angles and bond lengths are required to give the exact, actual conformer.
+# As such, q here is essentially meaningless.  Realistic q values tend to range
+# from 0.3 to ???.  The number 0.4 is used throughout this table, but it should
+# be understood that it is essentially a placeholder.
+
+# q is in Angstroms; phi is in degrees.
+
+# There are 20 possible ring conformers.
+
+#                                      Ideal
+# Specific   General                Cremer-Pople
+# Conformer  Conformer               Parameters                           Ideal Angles (degrees)
+# Name       Name       Degeneracy     q    phi     nu1    nu2    nu3    nu4    nu0    tau1   tau2   tau3   tau4   tau5
+
+# 10 Envelope Conformations
+  OE         envelope            1   0.4    0.0    30.0    0.0  -30.0   60.0  -60.0   109.5  109.5  109.5  109.5  109.5
+  1E         envelope            1   0.4  216.0   -60.0   30.0    0.0  -30.0   60.0   109.5  109.5  109.5  109.5  109.5
+  2E         envelope            1   0.4   72.0    60.0  -60.0   30.0    0.0  -30.0   109.5  109.5  109.5  109.5  109.5
+  3E         envelope            1   0.4  288.0   -30.0   60.0  -60.0   30.0    0.0   109.5  109.5  109.5  109.5  109.5
+  4E         envelope            1   0.4  144.0     0.0  -30.0   60.0  -60.0   30.0   109.5  109.5  109.5  109.5  109.5
+
+  EO         envelope            1   0.4  180.0   -30.0    0.0   30.0  -60.0   60.0   109.5  109.5  109.5  109.5  109.5
+  E1         envelope            1   0.4   36.0    60.0  -30.0    0.0   30.0  -60.0   109.5  109.5  109.5  109.5  109.5
+  E2         envelope            1   0.4  252.0   -60.0   60.0  -30.0    0.0   30.0   109.5  109.5  109.5  109.5  109.5
+  E3         envelope            1   0.4  108.0    30.0  -60.0   60.0  -30.0    0.0   109.5  109.5  109.5  109.5  109.5
+  E4         envelope            1   0.4  324.0     0.0   30.0  -60.0   60.0  -30.0   109.5  109.5  109.5  109.5  109.5
+
+# 10 Twist Conformations
+  OT1        twist               1   0.4   18.0    60.0  -30.0  -30.0   60.0  -60.0   109.5  109.5  109.5  109.5  109.5
+  1T2        twist               1   0.4  234.0   -60.0   60.0  -30.0  -30.0   60.0   109.5  109.5  109.5  109.5  109.5
+  2T3        twist               1   0.4   90.0    60.0  -60.0   60.0  -30.0  -30.0   109.5  109.5  109.5  109.5  109.5
+  3T4        twist               1   0.4  306.0   -30.0   60.0  -60.0   60.0  -30.0   109.5  109.5  109.5  109.5  109.5
+  4TO        twist               1   0.4  162.0   -30.0  -30.0   60.0  -60.0   60.0   109.5  109.5  109.5  109.5  109.5
+
+  1TO        twist               1   0.4  198.0   -60.0   30.0   30.0  -60.0   60.0   109.5  109.5  109.5  109.5  109.5
+  2T1        twist               1   0.4   54.0    60.0  -60.0   30.0   30.0  -60.0   109.5  109.5  109.5  109.5  109.5
+  3T2        twist               1   0.4  270.0   -60.0   60.0  -60.0   30.0   30.0   109.5  109.5  109.5  109.5  109.5
+  4T3        twist               1   0.4  126.0    30.0  -60.0   60.0  -60.0   30.0   109.5  109.5  109.5  109.5  109.5
+  OT4        twist               1   0.4  342.0    30.0   30.0  -60.0   60.0  -60.0   109.5  109.5  109.5  109.5  109.5

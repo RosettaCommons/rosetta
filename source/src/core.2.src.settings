@@ -43,6 +43,8 @@ sources = {
 		"ResidueType",
 		"ResidueTypeKinWriter",
 		"ResidueTypeSet",
+		"ring_conformer_io",
+		"RingConformerSet",
 		"util",
 		"VariantType",
 	],
@@ -65,7 +67,6 @@ sources = {
 
 	"core/chemical/carbohydrates": [
 		"CarbohydrateInfo",
-		"RingConformerSet",
 		"database_io",
 	],
 
