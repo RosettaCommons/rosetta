@@ -39,7 +39,7 @@ void find_bonds_in_rings(ResidueType & res){
 	//boost::property_map<LightWeightResidueGraph, boost::edge_name_t>::type lwrg_ed_to_ED = boost::get(boost::edge_name, lwrg);
 
 
-	utility::graph::RingDetection ring_detect(lwrg); //initialize the ring detector. Automatically assigns rings
+	utility::graph::RingDetection<LightWeightResidueGraph> ring_detect(lwrg); //initialize the ring detector. Automatically assigns rings
 	utility::vector1<utility::vector1<lwrg_VD> > rings = ring_detect.GetRings(); //these are the path of the rings
 
 	//iterate through the rings, then assign the bonds for ringness
