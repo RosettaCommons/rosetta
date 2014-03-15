@@ -74,12 +74,20 @@ def build_cppdb(current_project):
     #actual.libraries.append('stdc++')
 
     actual.include_path.append("dbio/sqlite3")
+
     if "postgres" in build.options.extras:
         actual.include_path.append("dbio/postgreSQL")
         actual.libraries.append("pq")
+
     if "mysql" in build.options.extras:
         actual.include_path.append("dbio/mysql")
         actual.libraries.append("mysqlclient")
+
+	#env.Append(LIBPATH='#external/lib')
+
+	#actual.library_path.append('#/usr/lib/mysql')
+	#actual.library_path.append('#/usr/local/lib/mysql')
+
     actual.library_path.append("#build/external/" + build.platform)
     env.Prepend(**actual.symbols())
 

@@ -734,6 +734,7 @@ settings = {
     "gcc, mysql" : {
         "appends" : {
             "defines"       : [ "USEMYSQL" ],
+            "library_path"  : [ "/usr/lib64/mysql" ],
         },
     },
 
@@ -1389,6 +1390,7 @@ settings = {
     "clang, mysql" : {
         "appends" : {
             "defines"       : [ "USEMYSQL" ],
+            "library_path"  : [ "/usr/lib64/mysql" ],
         },
     },
     "clang, mpi" : {
