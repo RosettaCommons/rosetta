@@ -15,11 +15,15 @@
 #include <core/scoring/mm/MMBondAngleLibrary.hh>
 
 // Project headers
+#include <core/chemical/MMAtomType.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
-#include <basic/options/option.hh>
-#include <basic/Tracer.hh>
 #include <core/types.hh>
+
+// Basic headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/MM.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -32,6 +36,9 @@
 // Numeric headers
 #include <numeric/conversions.hh>
 
+// External headers
+#include <boost/lexical_cast.hpp>
+
 // C++ headers
 #include <string>
 #include <map>
@@ -39,10 +46,6 @@
 #include <sstream>
 #include <fstream>
 #include <cassert>
-
-#include <basic/options/keys/MM.OptionKeys.gen.hh>
-
-#include <core/chemical/MMAtomType.hh>
 
 
 namespace core {
@@ -140,14 +143,11 @@ MMBondAngleLibrary::MMBondAngleLibrary(
 }
 
 mm_bondangle_library_citer_pair
-MMBondAngleLibrary::lookup
-(
- int atom1,
- int atom2,
- int atom3
-) const
+MMBondAngleLibrary::lookup (
+		int atom1,
+		int atom2,
+		int atom3) const
 {
-
 	static std::string const x_string = "X";
 	static std::string const virt_string = "VIRT";
 
@@ -165,7 +165,7 @@ MMBondAngleLibrary::lookup
 
 	int const virt_atom_type = mm_atom_set_->atom_type_index( virt_string );
 
-	/// Virtual atoms get no mm-parameters.  Return the no-op torsion object
+	// Virtual atoms get no mm-parameters.  Return the no-op torsion object
 	if ( atom1 == virt_atom_type ||
 			atom2 == virt_atom_type ||
 			atom3 == virt_atom_type ) {
@@ -188,9 +188,12 @@ MMBondAngleLibrary::lookup
 	//return fully_assigned_mm_bondangle_library_.equal_range(
 	//  mm_bondangle_atom_tri( virt_atom_type, virt_atom_type, virt_atom_type ));
 	if ( ! basic::options::option[ basic::options::OptionKeys::MM::ignore_missing_bondangle_params ]() )
-		utility_exit_with_message("COULD NOT FIND BOND ANGLE PARAMS FOR " + atom1 + ' ' + atom2 + ' ' + atom3 );
+		utility_exit_with_message("COULD NOT FIND BOND ANGLE PARAMS FOR " +
+				boost::lexical_cast<std::string>(atom1) + " " +
+				boost::lexical_cast<std::string>(atom2) + " " +
+				boost::lexical_cast<std::string>(atom3) );
 
-	return mm_bondangle_library_citer_pair(); ///< meaningless, just for removing gcc warning.
+	return mm_bondangle_library_citer_pair();  //< meaningless, just for removing gcc warning.
 }
 
 mm_bondangle_library_citer_pair

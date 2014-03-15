@@ -17,11 +17,14 @@
 
 #include <basic/message_listening/MessageListener.fwd.hh>
 #include <basic/message_listening/util.hh>
+#include <basic/Tracer.hh>
+
 #include <utility/mpi_util.hh>
 #include <utility/assert.hh>
 #include <utility/exit.hh>
 
-#include <basic/Tracer.hh>
+#include <boost/lexical_cast.hpp>
+
 #include <string>
 
 namespace basic {
@@ -85,13 +88,14 @@ send_data_to_head_node(
 }
 
 std::string
-listener_tag_to_name(listener_tags tag){
-  switch(tag){
-  case DATABASE_PROTOCOL_AND_BATCH_ID_TAG:
-    return "DATABAASE_PROTOCOL_AND_BATCH_ID_TAG";
-  default:
-    return "Unrecognized listener_tag: " + tag;
-  }
+listener_tag_to_name(listener_tags tag)
+{
+	switch(tag){
+		case DATABASE_PROTOCOL_AND_BATCH_ID_TAG:
+			return "DATABAASE_PROTOCOL_AND_BATCH_ID_TAG";
+		default:
+			return "Unrecognized listener_tag: " + boost::lexical_cast<std::string>(tag);
+	}
 }
 
 

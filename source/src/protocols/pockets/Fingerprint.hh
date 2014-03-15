@@ -238,14 +238,16 @@ namespace pockets {
 
   };
 
-  //void correct_phi_psi( core::Real & phi, core::Real & psi );
-
-  inline void convert_cartesian_to_spherical_coor_triplet( numeric::xyzVector<core::Real> const & coord, spherical_coor_triplet & triplet ){
-    core::Real const triplet_rho = sqrt((coord.x()*coord.x())+(coord.y()*coord.y())+(coord.z()*coord.z()));
-    triplet.rho = triplet_rho;
-    triplet.phi = acos(coord.z()/triplet_rho);
-    triplet.psi = atan2((coord.y()),(coord.x()));
-  }
+//void correct_phi_psi( core::Real & phi, core::Real & psi );
+inline void
+convert_cartesian_to_spherical_coor_triplet( numeric::xyzVector<core::Real> const & coord,
+		spherical_coor_triplet & triplet )
+{
+	core::Real const triplet_rho = sqrt((coord.x()*coord.x()) + (coord.y()*coord.y()) + (coord.z()*coord.z()));
+	triplet.rho = triplet_rho;
+	triplet.phi = acos(coord.z()/triplet_rho);
+	triplet.psi = atan2((coord.y()),(coord.x()));
+}
 
   inline void convert_spherical_coor_triplet_to_cartesian( spherical_coor_triplet const & triplet, numeric::xyzVector<core::Real> & coord ) {
     core::Real const triplet_phi = triplet.phi;

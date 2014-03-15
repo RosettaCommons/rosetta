@@ -238,25 +238,33 @@ void NonPlaidFingerprint::set_origin( core::pose::Pose const & protein_pose, std
 
 }
 
-core::Real NonPlaidFingerprint::get_Rvalue( core::pose::Pose const & protein_pose, std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, Size const & set_origin_option ) {
-
+core::Real
+NonPlaidFingerprint::get_Rvalue( core::pose::Pose const & protein_pose,
+		std::list< numeric::xyzVector<core::Real> > const & egg_and_extra_shell, Size const & set_origin_option )
+{
 	set_origin_from_option_( protein_pose, egg_and_extra_shell, set_origin_option );
 
 	core::Real min_rho_difference(0.);
 	core::Size num_points(0);
-	for (std::list< numeric::xyzVector<core::Real> >::const_iterator pt1 = egg_and_extra_shell.begin(); pt1 != egg_and_extra_shell.end(); ++pt1) {
+	for (std::list< numeric::xyzVector<core::Real> >::const_iterator pt1 = egg_and_extra_shell.begin();
+			pt1 != egg_and_extra_shell.end(); ++pt1) {
 		numeric::xyzVector< core::Real > eggshell_point1 = *pt1 - origin_;
 		spherical_coor_triplet triplet1;
 		convert_cartesian_to_spherical_coor_triplet( eggshell_point1, triplet1 );
+
 		core::Real min_angle(999.);
-		spherical_coor_triplet triplet2;
-		for (std::list< numeric::xyzVector<core::Real> >::const_iterator pt2 = egg_and_extra_shell.begin(); pt2 != egg_and_extra_shell.end(); ++pt2) {
+		spherical_coor_triplet triplet2 = triplet1;
+		// Set triplet1 to avoid uninitialized warning.
+		// Otherwise, if the following loop is traversed and no pt2 is found,
+		// triplet2 will never be initialized. ~Labonte
+		for (std::list< numeric::xyzVector<core::Real> >::const_iterator pt2 = egg_and_extra_shell.begin();
+				pt2 != egg_and_extra_shell.end(); ++pt2) {
 			if ( pt1 == pt2 ) continue;
 			core::Real const curr_angle = std::abs(cos_of( *pt1, *pt2 ));
-			if(curr_angle < min_angle){
-	min_angle = curr_angle;
-	numeric::xyzVector< core::Real > eggshell_point2 = *pt2 - origin_;
-	convert_cartesian_to_spherical_coor_triplet( eggshell_point2, triplet2 );
+			if (curr_angle < min_angle) {
+				min_angle = curr_angle;
+				numeric::xyzVector< core::Real > eggshell_point2 = *pt2 - origin_;
+				convert_cartesian_to_spherical_coor_triplet( eggshell_point2, triplet2 );
 			}
 		}
 		min_rho_difference += std::abs( triplet1.rho - triplet2.rho );

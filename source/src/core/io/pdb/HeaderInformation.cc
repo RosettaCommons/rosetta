@@ -215,7 +215,8 @@ HeaderInformation::deposition_date() const {
 	std::stringstream dep_date;
 
 	if(dep_day_ > 31 || dep_day_ < 1){
-		utility_exit_with_message("deposition day is outside of range [1,31]: " + dep_day_);
+		utility_exit_with_message("deposition day is outside of range [1,31]: " +
+				boost::lexical_cast<std::string>(dep_day_));
 	}
 	dep_date << dep_day_ << "-";
 	switch(dep_month_){
@@ -232,10 +233,12 @@ HeaderInformation::deposition_date() const {
 	case 11: dep_date << "NOV"; break;
 	case 12: dep_date << "DEC"; break;
 	default:
-		utility_exit_with_message("Unrecognized deposition month index " + dep_month_);
+		utility_exit_with_message("Unrecognized deposition month index " +
+				boost::lexical_cast<std::string>(dep_month_));
 	}
 	if( dep_year_ > 99 || dep_year_ < 1){
-		utility_exit_with_message("Deposition year is out side of range [01,99]: " + dep_year_);
+		utility_exit_with_message("Deposition year is out side of range [01,99]: " +
+				boost::lexical_cast<std::string>(dep_year_));
 	}
 	dep_date << "-" << (dep_year_ < 10 ? "0" : "") << dep_year_;
 	return dep_date.str();

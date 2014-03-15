@@ -1910,10 +1910,8 @@ ElectronDensity::getModelMapError(
 
 					// centrics
 					Real err = std::abs( E1 - E2 );
-					Real scale = 1.0;
 					if (H==0 || K==0 || L==0) {
 						err = std::min( err, std::abs( E1 + E2 ) );
-						scale=0.5;
 					}
 
 					//Real delY2 = del_ampl * del_ampl * ( 1 - ratio_i*ratio_i );

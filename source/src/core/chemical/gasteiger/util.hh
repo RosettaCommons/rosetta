@@ -98,7 +98,7 @@ std::set< T > parse_enum_set( std::string in ) {
 		} else if ( c >= 'A' && c <= 'Z' ) {
 			val = c - 'A' + 10;
 		} else {
-			utility_exit_with_message( "Unknown compact enum value: "+c );
+			utility_exit_with_message( "Unknown compact enum value: " + std::string(1, c) );
 		}
 		out.insert( T( val ) );
 	}

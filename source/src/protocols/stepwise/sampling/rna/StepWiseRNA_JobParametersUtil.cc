@@ -426,7 +426,7 @@ setup_job_parameters_legacy( Size const rebuild_res,
 	}
 
 	utility::vector1< Size > const chains = figure_out_chains_from_full_model_info_const( pose );
-	bool found_moving_cutpoint( false );
+	//bool found_moving_cutpoint( false );
 	input_res1.clear();
 	input_res2.clear();
 	for ( Size n = 1; n <= pose.total_residue(); n++ ){
@@ -441,7 +441,7 @@ setup_job_parameters_legacy( Size const rebuild_res,
 			if ( n == rebuild_res && n+1 == floating_base_anchor_res ) continue;
 			if ( n == floating_base_anchor_res && ( n + 1 == rebuild_res) ) continue;
 			//				if ( !floating_base ) runtime_assert( !found_moving_cutpoint );
-			found_moving_cutpoint = true;
+			//found_moving_cutpoint = true;
 			if ( pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) ){
 				runtime_assert( pose.residue_type( n + 1 ).has_variant_type( CUTPOINT_UPPER  ) );
 				cutpoint_closed.push_back( n );

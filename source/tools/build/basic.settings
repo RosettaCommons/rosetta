@@ -1,216 +1,244 @@
 # -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
-#
-# The settings below are combined together to create the final set of settings
-# for the entire build.  They are combined in the order listed below, with
-# each new settings potentially changing the current combination.
-#
-# This system does not claim to be perfect for all situations but trying to
-# determine a precise order for each possible combination is combinatorially
-# intractable.  Thus the order here may need to be customized and note that
-# the system does not currently warn you if any of the current combinations
-# doesn't occur, to prevent lots of mostly spurious messages.
-#
-#   - os
-#   - os, os_version
-#   - compiler
-#   - compiler, compiler_version
-#   - compiler, kind
-#   - compiler, os
-#   - compiler, compiler_version, os
-#   - compiler, os, os_version
-#   - compiler, compiler_version, os, os_version
-#   - compiler, arch
-#   - compiler, compiler_version, arch
-#   - compiler, arch, arch_size
-#   - compiler, compiler_version, arch, arch_size
-#   - compiler, os, arch, arch_size
-#   - compiler, mode
-#   - compiler, compiler_version, mode
-#   - compiler, os, mode
-#   - compiler, compiler_version, os, mode
-#   - compiler, arch, mode
-#   - compiler, compiler_version, arch, mode
-#   - compiler, os, arch
-#   - compiler, os, arch, mode
-#   - compiler, extra
-#   - compiler, os, extra
-#   - compiler, os, os_version, extra
-#
-# There are four ways to combine settings:
-#   - "prepends" add the contents of the settings in front of any existing
-#     settings.
-#   - "appends" add the contents of the settings at the end of any existing
-#     settings.
-#   - "overrides" replace the existing settings with the given settings.
-#   - "removes" remove a particular setting from the contents (but only that
-#     settings, so they are more precise than an override to an empty set.)
-#
-# The settings use Python syntax, and all of them are currently either
-# strings or lists of strings.
 # (c) Copyright Rosetta Commons Member Institutions.
-# (c) This file is part of the Rosetta software suite and is made available under license.
-# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
-# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+# (c) This file is part of the Rosetta software suite and is made available
+# (c) under license.
+# (c) The Rosetta software is developed by the contributing members of the
+# (c) Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org.
+# (c) Questions about this can be addressed to University of Washington UW
+# (c) TechTransfer, email: license@u.washington.edu.
+
+"""The settings below are combined together to create the final set of settings
+for the entire build.  They are combined in the order listed below, with each
+new setting potentially changing the current combination.
+
+This system does not claim to be perfect for all situations but trying to
+determine a precise order for each possible combination is combinatorially
+intractable.  Thus the order here may need to be customized and note that the
+system does not currently warn you if any of the current combinations doesn't
+occur, to prevent lots of mostly spurious messages.
+
+   - os
+   - os, os_version
+   - compiler
+   - compiler, compiler_version
+   - compiler, kind
+   - compiler, os
+   - compiler, compiler_version, os
+   - compiler, os, os_version
+   - compiler, compiler_version, os, os_version
+   - compiler, arch
+   - compiler, compiler_version, arch
+   - compiler, arch, arch_size
+   - compiler, compiler_version, arch, arch_size
+   - compiler, os, arch, arch_size
+   - compiler, mode
+   - compiler, compiler_version, mode
+   - compiler, os, mode
+   - compiler, compiler_version, os, mode
+   - compiler, arch, mode
+   - compiler, compiler_version, arch, mode
+   - compiler, os, arch
+   - compiler, os, arch, mode
+   - compiler, extra
+   - compiler, os, extra
+   - compiler, os, os_version, extra
+
+There are four ways to combine settings:
+   - "prepends" add the contents of the settings in front of any existing
+     settings.
+   - "appends" add the contents of the settings at the end of any existing
+     settings.
+   - "overrides" replace the existing settings with the given settings.
+   - "removes" remove a particular setting from the contents (but only that
+     settings, so they are more precise than an override to an empty set.)
+
+The settings use Python syntax, and all of them are currently either strings or
+lists of strings.
+
+"""
 
 import os
+
 settings = {
     "base" : {
         "overrides" : {
-            # SCons starts CXXFLAGS with a reference to CCFLAGS
+            # SCons starts CXXFLAGS with a reference to CCFLAGS.
             # We want the two to be separate.
-            "CCFLAGS"       : "",
-            "CXXFLAGS"      : "",
+            "CCFLAGS" : "",
+            "CXXFLAGS" : "",
             # SCons starts with a (short) default PATH.
             # We want only what is explicitly specified here.
-            #"ENV"           : {
-            #    "PATH"      : [ ]
-            #},
-            "program_path"  : [
+            "program_path" : [
                 "/bin",
                 "/usr/bin",
                 "/usr/local/bin",
             ],
-            "include_path"  : [
+            # Leading '#' means relative to the base directory, (i.e.,
+            # main/external/boinc/api, etc.)
+            "include_path" : [
                 "#external/boost_1_55_0",
                 "#external/dbio",
                 "/usr/include",
                 "/usr/local/include",
             ],
-            "library_path"  : [
+            "library_path" : [
                 "/usr/lib",
                 "/usr/local/lib",
             ],
-            "defines"       : [
-				"BOOST_ERROR_CODE_HEADER_ONLY",
-				"BOOST_SYSTEM_NO_DEPRECATED",
+            "defines" : [
+                "BOOST_ERROR_CODE_HEADER_ONLY",
+                "BOOST_SYSTEM_NO_DEPRECATED",
             ],
         },
     },
 
+
     # Set a baseline environment for supported operating systems.
 
-    # XXX: Is this correct for Cygwin?
-    "cygwin" : {
+    "linux" : {},
+
+    # Note: Setting the above paths for Windows is only useful in site.settings
+    # as there is no standard location for installed libraries and headers.
+    "windows" : {},
+
+    "macos" : {
+        "overrides" : {
+            "library_path" : [ "/usr/lib", ],
+        },
+    },
+
+    "cygwin" : {  # Is this correct for Cygwin?
         "prepends" : {
-            "library_path"  : [ "lib/cygwin/", ],
+            "library_path" : [ "lib/cygwin/", ],
         },
         "overrides" : {
             #"libraries" : [ "z --enable-auto-import" ],
             "flags" : {
-                "link" : [ "lz -Xlinker --enable-auto-import -Xlinker --export-all-symbols", ],
-                #"ld"  : [ "-enable-auto-import", ],
+                "link" : [
+                    "lz -Xlinker --enable-auto-import -Xlinker --export-all-symbols",
+                ],
+                #"ld" : [ "-enable-auto-import", ],
             }
         },
     },
 
-    "linux" : {},
 
-    "macos" : {
-        "overrides" : {
-            "library_path" : [
-                "/usr/lib",
-            ],
-        },
-    },
+    # Setup the environment for compilers and compilers run with other build
+    # options.
 
-    # Note: Setting the above paths for Windows is only useful in the site.settings
-    # as there is no standard location for installed libraries and headers.
-    "windows" : {},
-
-
-    # Setup the environment for compilers and compilers run with
-    # other build options.
+    ###########################################################################
+    # GCC #####################################################################
+    ###########################################################################
 
     "gcc" : {
         "appends" : {
             "flags" : {
-                #The "isystem" items here are to tell gcc to not print warnings from these external headers
-                "cc"        : [ "std=c99", "isystem external/boost_1_55_0/", "isystem external/include/", "isystem external/dbio/"],
-                "cxx"       : [ "std=c++98", "isystem external/boost_1_55_0/", "isystem external/include/", "isystem external/dbio/"],
-                "compile"   : [ "pipe", "ffor-scope" ],
-                # By default, warn about everything except the use of long long, which we need for certain
-                # database functionality.
-                # Certain warnings are treated as errors:
-                # * sign-compare
-                # * unused-parameter
-                # GCC's `pedantic` option triggers a compilation error in the c++ standard library
-                # when intrinsics are referenced (e.g. in certain portions of Boost). There are 2
-                # options-- 1) remove pedantic warnings; or 2) add the Boost directory to GCC's
-                # system include path. Warnings from code on the system include path are suppressed.
-                "warn"      : [
+                # The "isystem" items here are to tell GCC not to print warn-
+                # ings from these external headers.
+                "cc" : [
+                    "std=c99",
+                    "isystem external/boost_1_55_0/",
+                    "isystem external/include/",
+                    "isystem external/dbio/"
+                ],
+                "cxx" : [
+                    "std=c++98",
+                    "isystem external/boost_1_55_0/",
+                    "isystem external/include/",
+                    "isystem external/dbio/"
+                ],
+                "compile" : [
+                    "pipe",
+                    "ffor-scope"
+                ],
+                # By default, warn about everything except the use of
+                # long long, which we need for certain database functionality.
+                "warn" : [
                     "Wall",
                     "Wextra",
                     "pedantic",
+                    "Werror",
                     "Wno-long-long",
-                    "Werror=sign-compare",
-                    "Werror=unused-parameter",
-                    "Werror=reorder",
-                    "Werror=unused-variable",
-                    "Werror=address",
-                    "Werror=char-subscripts",
-                    "Werror=comment",
+                    "Wno-strict-aliasing",
+                    #"Werror=sign-compare",
+                    #"Werror=unused-parameter",
+                    #"Werror=reorder",
+                    #"Werror=unused-variable",
+                    #"Werror=address",
+                    #"Werror=char-subscripts",
+                    #"Werror=comment",
                     #"Werror=enum-compare",
-                    "Werror=nonnull",
-                    "Werror=type-limits",
-                    "Werror=parentheses",
-                    "Werror=ignored-qualifiers",
+                    #"Werror=nonnull",
+                    #"Werror=type-limits",
+                    #"Werror=parentheses",
+                    #"Werror=ignored-qualifiers",
                 ],
             },
         },
     },
 
-    ### GCC, default version for installation
-    "gcc, *" : {
+    "gcc, *" : {  # default version for installation
         "appends" : {
-            "version"       : [ ],
+            "version" : [ ],
         },
     },
 
     "gcc, 3.3" : {
         "appends" : {
-            "version"       : [ "3", "3" ],
+            "version" : [ "3", "3" ],
         },
     },
 
     "gcc, 3.4" : {
         "appends" : {
-            "version"       : [ "3", "4" ],
+            "version" : [ "3", "4" ],
             "flags" : {
-                ## These flags likely cause memory exhaustion on whatever platform they're active
-                #"compile"   : [ "-param inline-unit-growth=1000",
-                #"-param large-function-growth=50000" ],
+                # These flags likely cause memory exhaustion on whatever plat-
+                # form they're active.
+                #"compile" : [
+                #    "-param inline-unit-growth=1000",
+                #    "-param large-function-growth=50000"
+                #],
             },
         },
     },
 
     "gcc, 4.0" : {
         "appends" : {
-            "version"       : [ "4", "0" ],
+            "version" : [ "4", "0" ],
             "flags" : {
-                ## These flags causes memory exhaustion during compiling on MacOS 10.5
-                #"compile"   : [ "-param inline-unit-growth=1000",
-                #"-param large-function-growth=50000" ],
+                # These flags causes memory exhaustion during compiling on
+                # MacOS 10.5.
+                #"compile" : [
+                #    "-param inline-unit-growth=1000",
+                #    "-param large-function-growth=50000"
+                #],
             },
         },
     },
 
     "gcc, 4.1" : {
         "appends" : {
-            "version"       : [ "4", "1" ],
+            "version" : [ "4", "1" ],
             "flags" : {
-               ## These flags causes memory exhaustion during compiling on the test server
-               # "compile"   : [ "-param inline-unit-growth=1000",
-               # "-param large-function-growth=50000" ],
+                # These flags causes memory exhaustion during compiling on the
+                # test server.
+                #"compile" : [
+                #    "-param inline-unit-growth=1000",
+                #    "-param large-function-growth=50000"
+                #],
             },
         },
-
         "overrides" : {
             "flags" : {
-                "cc"        : [ "std=c99" ],   # "-isystem external/boost_1_55_0/"],
-                "cxx"       : [ "std=c++98" ], # "-isystem external/boost_1_55_0/" ],
-                "compile"   : [ "pipe", "ffor-scope" ],
-                "warn"      : [], # "Wall", "Wextra", "pedantic", "Wno-long-long" ],
+                "cc" : [ "std=c99" ],
+                "cxx" : [ "std=c++98" ],
+                "compile" : [
+                    "pipe",
+                    "ffor-scope"
+                ],
+                "warn" : [],
             },
         },
     },
@@ -223,205 +251,56 @@ settings = {
         },
     },
 
-    "gcc, debug" : {
-        "appends" : {
-            "flags" : {
-                "compile"   : [ "O0" ],
-                "mode"      : [
-                    "g", "ggdb", "ffloat-store"
-                    # "fstack-check"
-                ],
-            },
-        },
-    },
 
-    "gcc, release" : {
-        "appends" : {
-            "flags" : {
-                "compile"   : [ "O3", "ffast-math", "funroll-loops",
-                "finline-functions", "finline-limit=20000", "s" ],
-                # Asserts can leave variables unused, making warnings spurious.
-                # We count on debug builds to catch actual unused variables.
-                "warn"      : [ "Wno-unused-variable" ],
-            },
-            "defines"       : [ "NDEBUG" ],
-        },
-        "removes" : {
-            "flags" : {
-                # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
-            }
-        },
-    },
-    "gcc, 4.4, release" : {
-        "removes" : {
-            "flags" : {
-                "compile"   : [ "finline-limit=20000" ],
-            },
-        },
-        "appends" : {
-            "flags" : {
-                "compile"   : [ "finline-limit=487" ], # Bug in gcc4.4 which has not yet been fixed requries that this inline limit is removed
-            },
-        },
-    },
-
-    "gcc, pyrosetta" : {
-        "appends" : {
-            "flags" : {
-                "compile"   : [ "O3", "ffast-math", "funroll-loops",
-                "finline-functions", "finline-limit=20000", "s" ],
-                # Asserts can leave variables unused, making warnings spurious.
-                # We count on debug builds to catch actual unused variables.
-                "warn"      : [ "Wno-unused-variable", "Wno-unused-parameter" ],
-            },
-            "defines"       : [ "NDEBUG", "PYROSETTA", 'BOOST_THREAD_DONT_USE_CHRONO' ],
-        "removes" : {
-            "flags" : {
-                # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
-            }
-        },
-        },
-    },
-    "gcc, 4.4, pyrosetta" : {
-        "removes" : {
-            "flags" : {
-                "compile"   : [ "finline-limit=20000" ],
-            },
-        },
-        "appends" : {
-            "flags" : {
-                "compile"   : [ "finline-limit=487" ], # Bug in gcc4.4 which has not yet been fixed requries that this inline limit is removed
-            },
-        },
-    },
-
-    "gcc, pyrosetta_debug" : {
-        "appends" : {
-            "flags" : {
-                #"compile"   : [ "O3", "ffast-math", "funroll-loops", "finline-functions", "finline-limit=20000", "s" ],
-
-                "compile"   : [ "O0" ],  # <-- real debug... do we need it?
-                "mode"      : [
-                    "g", "ggdb", "ffloat-store"
-                ],
-
-                # Asserts can leave variables unused, making warnings spurious.
-                # We count on debug builds to catch actual unused variables.
-                "warn"      : [ "Wno-unused-variable", "Wno-unused-parameter" ],
-            },
-            "defines"       : [ "PYROSETTA", 'BOOST_THREAD_DONT_USE_CHRONO' ],
-        },
-        "removes" : {
-            "flags" : {
-                # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
-            }
-        },
-    },
-
-    "gcc, warnings_as_errors" : {
-        "appends" : {
-            "flags" : {
-                "compile"   : [ "Werror", ],
-                "warn"      : [ 'Wno-unknown-pragmas', ],
-            },
-        },
-    },
-
-
-
-    "gcc, release_debug" : {
-        "appends" : {
-            "flags" : {
-                "compile"   : [ "O3", "ffast-math", "funroll-loops",
-                "finline-functions", "finline-limit=20000", "g", "ggdb" ],
-                # Asserts can leave variables unused, making warnings spurious.
-                # We count on debug builds to catch actual unused variables.
-                "warn"      : [ "Wno-unused-variable" ],
-            },
-            #"defines"       : [ "NDEBUG" ], # Uncomment to turn asserts on if speed matters and assert failures not expected
-        },
-        "removes" : {
-            "flags" : {
-                # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
-            }
-        },
-    },
-
-    "gcc, profile" : {
-        "appends" : {
-            "flags" : {
-                "compile"   : [ "O3", "ffast-math", "funroll-loops",
-                "finline-functions", "finline-limit=20000" ],
-                # These flags enable the actual profiling.
-                # -g allows line by line profiling.
-                "mode"      : [ "g", "ggdb", "pg" ],
-                "link"      : [ "g", "ggdb", "pg" ],
-                "warn"      : [ "Wno-unused-variable" ],
-            },
-            "defines"       : [ "NDEBUG" ],
-        },
-    },
+    # OSs & architecures ######################################################
 
     "gcc, linux" : {
         "appends" : {
-            "flags" : {
-            },
+            "flags" : { },
         },
     },
 
-    "gcc, cygwin" : {
-        "removes" : {
-            "flags" : {
-                "cxx"       : [ "std=c++98" ],
-            },
-        },
-    },
-
-    # XXX: These names are actually Fedora specific.
-    # XXX: Need to determine names on SuSE, Debian, etc.
+    # These names are actually Fedora specific.
+    # We need to determine names on SuSE, Debian, etc.
     "gcc, 3.3, linux" : {
         "overrides" : {
-            "cc"            : "gcc33",
-            "cxx"           : "g++33",
+            "cc" : "gcc33",
+            "cxx" : "g++33",
         },
     },
 
     "gcc, 3.4, linux" : {
         "overrides" : {
-            "cc"            : "gcc34",
-            "cxx"           : "g++34",
+            "cc" : "gcc34",
+            "cxx" : "g++34",
         },
     },
 
     "gcc, 4.0, linux" : {
         "overrides" : {
-            "cc"            : "gcc40",
-            "cxx"           : "g++40",
+            "cc" : "gcc40",
+            "cxx" : "g++40",
         },
     },
 
     "gcc, 4.1, linux" : {
         "overrides" : {
-            "cc"            : "gcc",
-            "cxx"           : "g++",
+            "cc" : "gcc",
+            "cxx" : "g++",
         },
     },
 
     "gcc, 4.3, linux" : {
         "overrides" : {
-            "cc"            : "gcc-4.3",
-            "cxx"           : "g++-4.3",
+            "cc" : "gcc-4.3",
+            "cxx" : "g++-4.3",
         },
     },
 
     "gcc, 4.5, linux" : {
         "overrides" : {
-            "cc"            : "gcc-4.5",
-            "cxx"           : "g++-4.5",
+            "cc" : "gcc-4.5",
+            "cxx" : "g++-4.5",
         },
     },
     "gcc, 4.6, linux" : {
@@ -430,27 +309,32 @@ settings = {
             "cxx": "g++-4.6",
         },
     },
+
+
     "gcc, macos" : {
         "appends" : {
             "flags" : {
-                "warn"      : [ ],
-                "link"      : [ "Wl,-stack_size,4000000,-stack_addr,0xc0000000" ],
-                # change 'abspath' to 'file' to use DYLD_LIBRARY_PATH environment variable
-                "shlink"    : [ "install_name ${TARGET.abspath}" ],
+                "warn"  : [ ],
+                "link" : [ "Wl,-stack_size,4000000,-stack_addr,0xc0000000" ],
+                # Change 'abspath' to 'file' to use DYLD_LIBRARY_PATH
+                # environment variable
+                "shlink" : [ "install_name ${TARGET.abspath}" ],
             },
         },
         "removes" : {
             "flags" : {
-                "link"      : [ "$__RPATH" ],
-                "cxx"       : [ "std=c++98" ],
-                "shlink"    : [ "$LINKFLAGS" ],
+                "link" : [ "$__RPATH" ],
+                "cxx" : [ "std=c++98" ],
+                "shlink" : [ "$LINKFLAGS" ],
                 "warn" : [
                     # For some reason, despite using isystem for boost,
-                    # Mac.gcc.debug mode is throwing an error from an unused param in boost!
+                    # Mac.gcc.debug mode is throwing an error from an unused
+                    # param in boost!
                     "Werror=unused-parameter",
-                    # There is at least one variable only used on Macs.
+                    # There is at least one variable only used on non-Macs.
                     "Werror=unused-variable",
-                    # These don't exist in the Mac version of GCC used by the test server:
+                    # These don't exist in the Mac version of GCC used by the
+                    # test server:
                     "Werror=enum-compare",
                     "Werror=type-limits",
                     "Werror=ignored-qualifiers",
@@ -461,22 +345,22 @@ settings = {
 
     "gcc, 3.3, macos" : {
         "overrides" : {
-            "cc"            : "gcc-3.3",
-            "cxx"           : "g++-3.3",
+            "cc" : "gcc-3.3",
+            "cxx" : "g++-3.3",
         },
     },
 
     "gcc, 3.4, macos" : {
         "overrides" : {
-            "cc"            : "gcc-3.4",
-            "cxx"           : "g++-3.4",
+            "cc" : "gcc-3.4",
+            "cxx" : "g++-3.4",
         },
     },
 
     "gcc, 4.0, macos" : {
         "overrides" : {
-            "cc"            : "gcc-4.0",
-            "cxx"           : "g++-4.0",
+            "cc" : "gcc-4.0",
+            "cxx" : "g++-4.0",
         },
         "removes" : {
             "flags" :  {
@@ -487,71 +371,49 @@ settings = {
 
     "gcc, 4.1, macos" : {
         "overrides" : {
-            "cc"            : "gcc-4.1",
-            "cxx"           : "g++-4.1",
+            "cc" : "gcc-4.1",
+            "cxx" : "g++-4.1",
         },
     },
 
     "gcc, 4.2, macos" : {
         "overrides" : {
-            "cc"            : "gcc-4.2",
-            "cxx"           : "g++-4.2",
+            "cc" : "gcc-4.2",
+            "cxx" : "g++-4.2",
         },
     },
 
     "gcc, 4.2, macos, 10.7" : {
         "overrides" : {
-            "cc"            : "llvm-gcc-4.2",
-            "cxx"           : "llvm-g++-4.2",
+            "cc" : "llvm-gcc-4.2",
+            "cxx" : "llvm-g++-4.2",
         },
     },
 
     "gcc, 4.2, macos, 10.8" : {
         "overrides" : {
-            "cc"            : "llvm-gcc-4.2",
-            "cxx"           : "llvm-g++-4.2",
+            "cc" : "llvm-gcc-4.2",
+            "cxx" : "llvm-g++-4.2",
         },
     },
+
+
+    "gcc, cygwin" : {
+        "removes" : {
+            "flags" : {
+                "cxx" : [ "std=c++98" ],
+            },
+        },
+    },
+
 
     "gcc, x86, 32" : {
         "appends" : {
             "flags" : {
-                "compile"   : [ "malign-double", "march=pentium4" ],
-            },
-        },
-    },
-
-    "gcc, macos, x86" : {
-        "removes" : {
-            "flags" : {
-                "compile"   : [ "malign-double", "march=pentium4" ],
-            },
-        },
-    },
-
-    # Mac Intel 32-bit
-    "gcc, macos, x86, 32" : {
-        "appends" : {
-            "flags" : {
-                "compile"   : [ "m32", "march=prescott", "mtune=generic" ],
-                "shlink"    : [ "m32" ],
-                "link"      : [ "m32" ],
-            },
-        },
-    },
-
-    # Mac Intel 64-bit
-    "gcc, macos, x86, 64" : {
-        "appends" : {
-            "flags" : {
-                "compile"   : [ "m64", "march=nocona", "mtune=generic" ],
-                "shlink"    : [ "m64" ],
-                "link"      : [ "m64", "Wl,-stack_size,4000000" ],
-            },
-        },
-        "removes" : {
-            "flags" : {
-                "link"      : [ "Wl,-stack_size,4000000,-stack_addr,0xc0000000" ],
+                "compile" : [
+                    "malign-double",
+                    "march=pentium4"
+                ],
             },
         },
     },
@@ -561,32 +423,272 @@ settings = {
             "flags" : {
                 # XXX: march=k8 is (?) the default.  There may be a speedup
                 # XXX: with =nocona on Intel EM64T or =opteron on Opteron.
-                # "compile"   : [ "march=k8" ],
+                # "compile" : [ "march=k8" ],
             },
         },
     },
 
-    "gcc, amd" : {
-        "appends" : {
+
+    "gcc, macos, x86" : {
+        "removes" : {
             "flags" : {
-                "compile"   : [ "malign-double", "march=athlon" ],
+                "compile"   : [ "malign-double", "march=pentium4" ],
             },
         },
     },
+
+    "gcc, macos, x86, 32" : {  # Mac Intel 32-bit
+        "appends" : {
+            "flags" : {
+                "compile" : [
+                    "m32",
+                    "march=prescott",
+                    "mtune=generic"
+                ],
+                "shlink" : [ "m32" ],
+                "link" : [ "m32" ],
+            },
+        },
+    },
+
+    "gcc, macos, x86, 64" : {  # Mac Intel 64-bit
+        "appends" : {
+            "flags" : {
+                "compile" : [
+                    "m64",
+                    "march=nocona",
+                    "mtune=generic"
+                ],
+                "shlink" : [ "m64" ],
+                "link" : [
+                    "m64",
+                    "Wl,-stack_size,4000000"
+                ],
+            },
+        },
+        "removes" : {
+            "flags" : {
+                "link"  : [ "Wl,-stack_size,4000000,-stack_addr,0xc0000000" ],
+            },
+        },
+    },
+
 
     "gcc, ia64" : {
         "appends" : {
             "flags" : {
-                "compile"   : [ "fprefetch-loop-arrays", "mtune=itanium2" ],
+                "compile"  : [
+                    "fprefetch-loop-arrays",
+                    "mtune=itanium2"
+                ],
             },
         },
     },
+
+
+    "gcc, amd" : {
+        "appends" : {
+            "flags" : {
+                "compile" : [
+                    "malign-double",
+                    "march=athlon"
+                ],
+            },
+        },
+    },
+
+
+    # modes ###################################################################
+
+    "gcc, debug" : {
+        "appends" : {
+            "flags" : {
+                "compile" : [ "O0" ],
+                "mode" : [
+                    "g",
+                    "ggdb",
+                    "ffloat-store"
+                    # "fstack-check"
+                ],
+            },
+        },
+    },
+
+    "gcc, release" : {
+        "appends" : {
+            "flags" : {
+                "compile" : [
+                    "O3",
+                    "ffast-math",
+                    "funroll-loops",
+                    "finline-functions",
+                    "finline-limit=20000",
+                    "s"
+                ],
+                # Asserts can leave variables unused, making warnings spurious.
+                # We count on debug builds to catch actual unused variables.
+                "warn" : [
+                    "Wno-unused-variable",
+                    "Wno-unused-parameter",
+                ],
+            },
+            "defines" : [ "NDEBUG" ],
+        },
+    },
+
+    "gcc, 4.4, release" : {
+        "removes" : {
+            "flags" : {
+                "compile" : [ "finline-limit=20000" ],
+            },
+        },
+        "appends" : {
+            "flags" : {
+                 # A bug in gcc4.4 that has not yet been fixed requires that
+                 # this inline limit be removed.
+                "compile" : [ "finline-limit=487" ],
+            },
+        },
+    },
+
+    "gcc, release_debug" : {
+        "appends" : {
+            "flags" : {
+                "compile"  : [
+                    "O3",
+                    "ffast-math",
+                    "funroll-loops",
+                    "finline-functions",
+                    "finline-limit=20000",
+                    "g",
+                    "ggdb"
+                ],
+                # Asserts can leave variables unused, making warnings spurious.
+                # We count on debug builds to catch actual unused variables.
+                "warn" : [
+                    "Wno-unused-variable",
+                    "Wno-unused-parameter",
+                ],
+            },
+            # Uncomment to turn asserts on if speed matters and assert failures
+            # are not expected.
+            #"defines" : [ "NDEBUG" ],
+        },
+    },
+
+    "gcc, profile" : {
+        "appends" : {
+            "flags" : {
+                "compile"  : [
+                    "O3",
+                    "ffast-math",
+                    "funroll-loops",
+                    "finline-functions",
+                    "finline-limit=20000"
+                ],
+                # These flags enable the actual profiling.
+                # -g allows line by line profiling.
+                "mode" : [
+                    "g",
+                    "ggdb",
+                    "pg"
+                ],
+                "link" : [
+                    "g",
+                    "ggdb",
+                    "pg"
+                ],
+                # Asserts can leave variables unused, making warnings spurious.
+                # We count on debug builds to catch actual unused variables.
+                "warn" : [
+                    "Wno-unused-variable",
+                    "Wno-unused-parameter",
+                ],
+            },
+            "defines" : [ "NDEBUG" ],
+        },
+    },
+
+    "gcc, pyrosetta" : {
+        "appends" : {
+            "flags" : {
+                "compile" : [
+                    "O3",
+                    "ffast-math",
+                    "funroll-loops",
+                    "finline-functions",
+                    "finline-limit=20000",
+                    "s"
+                ],
+                # Asserts can leave variables unused, making warnings spurious.
+                # We count on debug builds to catch actual unused variables.
+                "warn" : [
+                    "Wno-unused-variable",
+                    "Wno-unused-parameter"
+                ],
+            },
+            "defines" : [
+                "NDEBUG",
+                "PYROSETTA",
+                'BOOST_THREAD_DONT_USE_CHRONO'
+            ],
+        },
+    },
+
+    "gcc, 4.4, pyrosetta" : {
+        "removes" : {
+            "flags" : {
+                "compile" : [ "finline-limit=20000" ],
+            },
+        },
+        "appends" : {
+            "flags" : {
+                # A bug in gcc4.4 that has not yet been fixed requires that
+                # this inline limit be removed.
+                "compile" : [ "finline-limit=487" ],
+            },
+        },
+    },
+
+    "gcc, pyrosetta_debug" : {
+        "appends" : {
+            "flags" : {
+                #"compile" : [
+                #    "O3",
+                #    "ffast-math",
+                #    "funroll-loops",
+                #    "finline-functions",
+                #    "finline-limit=20000",
+                #    "s"
+                #],
+                "compile" : [ "O0" ],  # <-- real debug... do we need it?
+                "mode" : [
+                    "g",
+                    "ggdb",
+                    "ffloat-store"
+                ],
+                # Asserts can leave variables unused, making warnings spurious.
+                # We count on debug builds to catch actual unused variables.
+                "warn"  : [
+                    "Wno-unused-variable",
+                    "Wno-unused-parameter"
+                ],
+            },
+            "defines" : [
+                "PYROSETTA",
+                'BOOST_THREAD_DONT_USE_CHRONO'
+            ],
+        },
+    },
+
+
+    # cats ####################################################################
 
     "gcc, src" : {
         "appends" : {
             "flags" : {
                 # We can't have exceptions for efficiency reasons.
-                #"compile"   : [ "fno-exceptions" ],
+                #"compile" : [ "fno-exceptions" ],
             },
         },
     },
@@ -594,254 +696,229 @@ settings = {
     "gcc, test" : {
         "appends" : {
             "flags" : {
-                #The "isystem" items here are to tell gcc to not print warnings from this external header
-                "cc"        : [ "isystem external/cxxtest/"],
-                "cxx"       : [ "isystem external/cxxtest/"],
+                # The "isystem" items here are to tell gcc to not print warn-
+                # ings from this external header.
+                "cc" : [ "isystem external/cxxtest/"],
+                "cxx" : [ "isystem external/cxxtest/"],
             },
         },
         "removes" : {
             "flags" : {
-                #"compile"   : [ "fno-exceptions" ],
+                #"compile" : [ "fno-exceptions" ],
             },
         },
     },
 
     "gcc, doc" : {
-        # Default Doxygen settings go here, if they differ from the
-        # defaults created by the Doxygen builder.
+        # Default Doxygen settings go here, if they differ from the defaults
+        # created by the Doxygen builder.
     },
+
+
+    # extras ##################################################################
 
     "gcc, boinc" : {
         "appends" : {
-            # Leading '#' means relative to the base directory (i.e. mini/external/boinc/api, etc)
-            "include_path"  : [ "#external/boinc/api", "#external/boinc", "#external/boinc/lib", "#external/boinc/zip", ],
-            # This file was only needed when building BOINC from source (instead of using libs)
-            #"includes"      : [ "external/boinc/config.h" ],
-            # library_path must be defined depending on platform -- e.g. see gcc,macos,boinc (below)
-            "libraries"     : [ "boinc_api", "boinc", "boinc_zip" ],
-            "defines"       : [ "BOINC" ],
-            "flags"         : {
-                "compile"   : [ "pthread" ],
+            # Leading '#' means relative to the base directory, (i.e.,
+            # main/external/boinc/api, etc.)
+            "include_path"  : [
+                "#external/boinc/api",
+                "#external/boinc",
+                "#external/boinc/lib",
+                "#external/boinc/zip",
+            ],
+            # This file was only needed when building BOINC from source
+            # (instead of using libs).
+            #"includes" : [ "external/boinc/config.h" ],
+            # The library_path must be defined depending on platform -- e.g.,
+            # see gcc, macos, boinc (below).
+            "libraries" : [
+                "boinc_api",
+                "boinc",
+                "boinc_zip"
+            ],
+            "defines" : [ "BOINC" ],
+            "flags" : {
+                "compile" : [ "pthread" ],
             },
         },
         "removes" : {
             "flags" : {
-                # BOINC headers won't work with -pedantic
-                "warn"      : [ "pedantic" ],
-                "compile"   : [ "march=pentium4", "march=athlon", "mtune=itanium2" ],
-            },
-        },
-    },
-
-    "gcc, macos, boinc" : {
-        "appends" : {
-            "libraries"     : [ "boinc_graphics2" ],
-            "library_path"  : [ "#external/boinc/mac_build/build/Deployment-no64", "#external/boinc/zip", "/usr/X11R6/lib" ],
-            "include_path"  : [ "#external", "#external/dbio" ],
-            "defines"       : [ "MAC", "BOINC_GRAPHICS", "GL_GRAPHICS" ],
-            "flags" : {
-                "link"      : [ "framework GLUT", "framework OpenGL", "framework Cocoa" ],
-                "shlink"      : [ "framework GLUT", "framework OpenGL", "framework Cocoa" ],
-            },
-        },
-        "removes" : {
-            "flags" : {
-                "compile"   : [ "pthread" ],
+                # BOINC headers won't work with -pedantic.
+                "warn" : [ "pedantic" ],
+                "compile" : [
+                    "march=pentium4",
+                    "march=athlon",
+                    "mtune=itanium2"
+                ],
             },
         },
     },
 
     "gcc, linux, boinc" : {
         "appends" : {
-            "include_path"  : [ "#external", "#external/dbio", "/usr/include/GL" ],
-            "libraries"     : [ "GL", "GLU", "X11", "Xext","Xxf86vm", "dl"],
-            "library_path"  : [ "#external/boinc/api", "#external/boinc/lib", "#external/boinc/zip", "/usr/X11R6/lib" ],
-            "defines"       : [ "BOINC_GRAPHICS" ],
+            "include_path"  : [
+                "#external",
+                "#external/dbio",
+                "/usr/include/GL"
+            ],
+            "libraries" : [
+                "GL",
+                "GLU",
+                "X11",
+                "Xext",
+                "Xxf86vm",
+                "dl"\
+            ],
+            "library_path" : [
+                "#external/boinc/api",
+                "#external/boinc/lib",
+                "#external/boinc/zip",
+                "/usr/X11R6/lib"
+            ],
+            "defines"  : [ "BOINC_GRAPHICS" ],
             "flags" : {
-              "link" : [ "Wl,--whole-archive -lpthread -Wl,--no-whole-archive" ],
+                "link" : [
+                    "Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
+                ],
             },
         },
     },
 
-    "gcc, rosetta_float" : {
+    "gcc, macos, boinc" : {
         "appends" : {
-            "defines" : [ "ROSETTA_FLOAT" ],
+            "libraries" : [ "boinc_graphics2" ],
+            "library_path" : [
+                "#external/boinc/mac_build/build/Deployment-no64",
+                "#external/boinc/zip",
+                "/usr/X11R6/lib"
+            ],
+            "include_path" : [
+                "#external",
+                "#external/dbio"
+            ],
+            "defines" : [
+                "MAC",
+                "BOINC_GRAPHICS",
+                "GL_GRAPHICS"
+            ],
+            "flags" : {
+                "link" : [
+                    "framework GLUT",
+                    "framework OpenGL",
+                    "framework Cocoa"
+                ],
+                "shlink" : [
+                    "framework GLUT",
+                    "framework OpenGL",
+                    "framework Cocoa"
+                ],
+            },
+        },
+        "removes" : {
+            "flags" : {
+                "compile" : [ "pthread" ],
+            },
         },
     },
 
-    "gcc, rosetta_float" : {
+
+    # This target is somewhat sketchy in its implementation.
+    # It ought to be done as a separate executable.
+    # Deprecated.  If it isn't used within a certain time frame it will go away.
+    # Does this need to be linux only?
+    "gcc, linux, graphics" : {
         "appends" : {
-            "defines" : [ "ROSETTA_FLOAT" ],
+            "libraries" : [
+                "pthread",
+                "GL",
+                "GLU",
+                "glut"
+            ],
+            "defines" : [ "GL_GRAPHICS" ],
         },
     },
 
-    # settings for gcov, code coverage tool for GCC
-    "gcc, gcov" : {
+    "gcc, macos, graphics" : {
+        "appends" : {
+            "include_path" : [ "/usr/X11R6/include" ],
+            "library_path" : [ "/usr/X11R6/lib" ],
+            "defines" : [
+                "GL_GRAPHICS",
+                "MAC"
+            ],
+            "flags" : {
+                "link" : [
+                    "framework GLUT",
+                    "framework OpenGL",
+                    "dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
+                ],
+                "shlink" : [
+                    "framework GLUT",
+                    "framework OpenGL",
+                    "dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
+                ],
+            },
+        },
+    },
+
+    # Below is a fix for compiling with extras=graphics on OSX 10.5.  For more
+    # information, see Apple's page here:
+    # http://developer.apple.com/qa/qa2007/qa1567.html
+    # tex - 8/8/2008
+    #"gcc, macos, 9.4, graphics" : {
+    #    "appends" : {
+    #        "flags" : {
+    #            "compile" : [
+    #                 "-dylib_file /system/library/frameworks/opengl.framework/versions/a/libraries/libgl.dylib:/system/library/frameworks/opengl.framework/versions/a/libraries/libgl.dylib"
+    #            ],
+    #        },
+    #    },
+    #},
+
+
+    "gcc, mpi" : {
+        "appends" : {
+            "defines" : [ "USEMPI" ],
+        },
+        "overrides" : {
+            "cc" : "mpicc",
+            "cxx" : "mpiCC",
+        },
+    },
+
+    "gcc, 4.3, mpi" : {
+        "appends" : {
+            "defines" : [ "USEMPI" ],
+        },
+        "appends" : {
+            "cc" : " -V 4.3",
+            "cxx" : " -V 4.3",
+        },
+    },
+
+    "gcc, ia64, mpi" : {
         "appends" : {
             "flags" : {
-                "compile" : [ "fprofile-arcs", "ftest-coverage" ],
-                "link"    : [ "-coverage" ],
+                "compile" : [
+                   "O3",
+                   "ip",
+                   "Qoption,c,-ip_ninl_max_stats=50000"
+                ],
             },
         },
     },
 
     "gcc, macos, mpi" : {
         "appends" : {
-            "defines"       : [ "USEMPI" ],
+            "defines" : [ "USEMPI" ],
         },
         "overrides" : {
-            "cc"            : "mpicc",
-            "cxx"           : "mpicxx",
-        },
-    },
-    # This target is somewhat sketchy in its implementation.
-    # It ought to be done as a separate executable.
-    # XXX: Deprecated.  If it isn't used within a certain time frame
-    # XXX: it will go away.
-    # XXX: Does this need to be linux only?
-    "gcc, linux, graphics" : {
-        "appends" : {
-            #"include_path"  : [ "/home/pbradley/download/freeglut/freeglut-2.4.0/include/" ],
-            "libraries"     : [ "pthread", "GL", "GLU", "glut" ],
-            "defines"       : [ "GL_GRAPHICS" ],
+            "cc" : "mpicc",
+            "cxx" : "mpicxx",
         },
     },
 
-    "gcc, mpi" : {
-        "appends" : {
-            "defines"       : [ "USEMPI" ],
-        },
-        "overrides" : {
-            "cc"            : "mpicc",
-            "cxx"           : "mpiCC",
-        },
-    },
-
-    "gcc, cxx11thread" : {
-        "appends" : {
-            "flags" : {
-                "cxx"        : [ "std=c++0x" ],
-            },
-            "defines"       : [ "MULTI_THREADED", "CXX11" ],
-            "libraries"     : [ "pthread" ]
-        },
-        "removes" : {
-            "flags" : {
-                "cxx"        : [ "std=c++98" ],
-            },
-        },
-    },
-    "gcc, mysql" : {
-        "appends" : {
-            "defines"       : [ "USEMYSQL" ],
-            "library_path"  : [ "/usr/lib64/mysql" ],
-        },
-    },
-
-    "gcc, postgres" : {
-        "appends" : {
-            "defines"       : [ "USEPOSTGRES" ],
-        },
-    },
-
-    "gcc, boost_mpi" : {
-        "appends" : {
-            "libraries"     : [ "libboost_serialization", "libboost_mpi" ],
-            "library_path"  : [ "/usr/local/lib" ],
-            "defines"       : [ "USEBOOSTMPI" ],
-        },
-        "overrides" : {
-            "cc"            : "mpicc",
-            "cxx"           : "mpiCC",
-        },
-    },
-
-    "gcc, boost_thread" : {
-        "appends" : {
-            "defines" : [ "USE_BOOST_THREAD", "MULTI_THREADED" ],
-            "libraries"     : [ "pthread", "boost_thread" ],
-            "library_path"  : [ "/usr/local/lib", "/opt/boost/lib" ],
-            "flags"         : {
-                "compile"   : [ "pthread" ],
-            },
-        },
-    },
-
-    "gcc, apbs" : {
-
-        "appends" : {
-            "defines" : [ "LINK_APBS_LIB" ],
-            "libraries" : [ "iapbs", "apbs_routines", "apbs_generic", "apbs_mg", "apbs_pmgc", "maloc" ],
-            "library_path" : [ "#external/apbs/apbs-1.4-rosetta/lib" ],
-            "include_path" : [ "#external/apbs/apbs-1.4-rosetta/include" ,
-                               "#external/apbs/apbs-1.4-rosetta/include/iapbs",
-                               "#external/apbs/apbs-1.4-rosetta/include/maloc",
-                               "#external/apbs/apbs-1.4-rosetta/src",
-                             ],
-        },
-    },
-
-    "gcc, 4.3, mpi" : {
-        "appends" : {
-            "defines"       : [ "USEMPI" ],
-        },
-        "appends" : {
-            "cc"            : " -V 4.3",
-            "cxx"           : " -V 4.3",
-        },
-    },
-
-    "gcc, opencl" : {
-        "appends" : {
-            "include_path"  : [ "/opt/AMDAPP/include", "/opt/AMDAPP/include/CL", "/opt/AMDAPP/lib/x86", "/opt/AMDAPP/lib/x86_64", ],
-            "libraries"     : [ "OpenCL" ],
-            "library_path"  : [ "/opt/AMDAPP/lib/x86_64", ],
-            "defines"       : [ "USEOPENCL" ],
-        },
-    },
-
-    "gcc, macos, opencl" : {
-        "appends" : {
-            "include_path"  : [ "/Developer/GPU\ Computing/OpenCL/common/inc", "/Developer/GPU\ Computing/OpenCL/common/inc/CL", "/Developer/GPU\ Computing/shared/inc", "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc", "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc/CL", "/Developer-3.2.6/GPU\ Computing/shared/inc" ],
-#            "include_path"  : [ "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc", "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc/CL", "/Developer-3.2.6/GPU\ Computing/shared/inc" ],
-#            "include_path"  : [ "/Developer/GPU\ Computing/OpenCL/common/inc", "/Developer/GPU\ Computing/OpenCL/common/inc/CL", "/Developer/GPU\ Computing/shared/inc" ],
-#            "libraries"     : [ "OpenCL" ],
-#            "library_path"  : [ "/Developer/CUDA/lib" ],
-            "defines"       : [ "USEOPENCL", "MACOPENCL" ],
-            "flags" : {
-                "link":       [ "framework OpenCL" ],
-                "shlink":     [ "framework OpenCL" ],
-            }
-        },
-        "removes" : {
-            "include_path"  : [ "/usr/local/cuda/include", ],
-            "libraries"     : [ "OpenCL" ],
-            "library_path"  : [ "/usr/local/cuda/lib64", "/usr/local/cuda/lib", ],
-        }
-    },
-
-    "gcc, omp" : {
-        #"overrides" : {
-        #   "cc" : "gcc4",
-        #   "cxx" : "g++4",
-        #},
-        "appends" : {
-            "defines" : [ "USE_OPENMP", "MULTI_THREADED" ],
-            "flags" : {
-                "compile" : [ "fopenmp" ],
-            },
-            "libraries" : [ "gomp" ],
-        },
-    },
-
-    "gcc, lto" : {
-        "appends" : {
-            "flags" : {
-                "compile" : ["flto", "fwhole-program"],
-                "link" : ["flto", "fwhole-program"],
-            },
-        },
-    },
 
     "gcc, linux, static" : {
         "appends" : {
@@ -851,140 +928,359 @@ settings = {
         },
     },
 
+
     "gcc, gprof" : {
         "appends" : {
             "flags" : {
-                "link" :    [ "pg" ],
+                "link" : [ "pg" ],
                 "compile" : [ "pg" ],
             },
         },
     },
 
-    "gcc, macos, graphics" : {
+
+    "gcc, gcov" : {  # settings for gcov, code coverage tool for GCC
         "appends" : {
-            "include_path" : [ "/usr/X11R6/include" ],
-            "library_path" : [ "/usr/X11R6/lib" ],
-            "defines"      : [ "GL_GRAPHICS", "MAC" ],
             "flags" : {
-                "link"      : [ "framework GLUT", "framework OpenGL", "dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" ],
-                "shlink"      : [ "framework GLUT", "framework OpenGL", "dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" ],
+                "compile" : [
+                    "fprofile-arcs",
+                    "ftest-coverage"
+                ],
+                "link" : [ "-coverage" ],
             },
         },
     },
 
-    # include python interpreter
-    "clang, python" : {
+
+    "gcc, rosetta_float" : {
         "appends" : {
-            "include_path" : [ "#external/include/python2.7" ],
-            "defines"      : [ "WITH_PYTHON=1" ],
-            "libraries" : [ "python2.7","dl","pthread","util" ],
+            "defines" : [ "ROSETTA_FLOAT" ],
         },
     },
+
+
+    "gcc, omp" : {
+        #"overrides" : {
+        #    "cc" : "gcc4",
+        #    "cxx" : "g++4",
+        #},
+        "appends" : {
+            "defines" : [
+                "USE_OPENMP",
+                "MULTI_THREADED"
+            ],
+            "flags" : {
+                "compile" : [ "fopenmp" ],
+            },
+            "libraries" : [ "gomp" ],
+        },
+    },
+
 
     "gcc, python" : {
         "appends" : {
             "include_path" : [ "#external/include/python2.7" ],
-            "defines"      : [ "WITH_PYTHON=1" ],
-            "libraries" : [ "python2.7","dl","pthread","util" ],
+            "defines" : [ "WITH_PYTHON=1" ],
+            "libraries" : [
+                "python2.7",
+                "dl",
+                "pthread",
+                "util"
+            ],
         },
     },
 
-    # below is a fix for compiling with extras=graphics on OSX 10.5. For more information, see Apple's page here:
-    # http://developer.apple.com/qa/qa2007/qa1567.html
-    # tex - 8/8/2008
 
-    #"gcc, macos, 9.4, graphics" : {
-    #    "appends" : {
-    #        "flags" : {
-    #            "compile" : [ "-dylib_file /system/library/frameworks/opengl.framework/versions/a/libraries/libgl.dylib:/system/library/frameworks/opengl.framework/versions/a/libraries/libgl.dylib" ],
-    #        },
-    #    },
-    #},
+    "gcc, mysql" : {
+        "appends" : {
+            "defines" : [ "USEMYSQL" ],
+            "library_path" : [ "/usr/lib64/mysql" ],
+        },
+    },
 
-    "gcc, ia64, mpi" : {
+
+    "gcc, postgres" : {
+        "appends" : {
+            "defines" : [ "USEPOSTGRES" ],
+        },
+    },
+
+
+    "gcc, opencl" : {
+        "appends" : {
+            "include_path" : [
+                "/opt/AMDAPP/include",
+                "/opt/AMDAPP/include/CL",
+                "/opt/AMDAPP/lib/x86",
+                "/opt/AMDAPP/lib/x86_64",
+            ],
+            "libraries" : [ "OpenCL" ],
+            "library_path" : [ "/opt/AMDAPP/lib/x86_64", ],
+            "defines" : [ "USEOPENCL" ],
+        },
+    },
+
+    "gcc, macos, opencl" : {
+        "appends" : {
+            "include_path" : [
+                "/Developer/GPU\ Computing/OpenCL/common/inc",
+                "/Developer/GPU\ Computing/OpenCL/common/inc/CL",
+                "/Developer/GPU\ Computing/shared/inc",
+                "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc",
+                "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc/CL",
+                "/Developer-3.2.6/GPU\ Computing/shared/inc"
+            ],
+            #"include_path" : [\
+            #    "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc",
+            #    "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc/CL",
+            #    "/Developer-3.2.6/GPU\ Computing/shared/inc"
+            #],
+            #"include_path" : [
+            #    "/Developer/GPU\ Computing/OpenCL/common/inc",
+            #    "/Developer/GPU\ Computing/OpenCL/common/inc/CL",
+            #    "/Developer/GPU\ Computing/shared/inc"
+            #],
+            #"libraries" : [ "OpenCL" ],
+            #"library_path" : [ "/Developer/CUDA/lib" ],
+            "defines"  : [
+                "USEOPENCL",
+                "MACOPENCL"
+            ],
+            "flags" : {
+                "link" : [ "framework OpenCL" ],
+                "shlink" : [ "framework OpenCL" ],
+            }
+        },
+        "removes" : {
+            "include_path" : [ "/usr/local/cuda/include", ],
+            "libraries" : [ "OpenCL" ],
+            "library_path" : [
+                "/usr/local/cuda/lib64",
+                "/usr/local/cuda/lib",
+            ],
+        }
+    },
+
+
+    "gcc, boost_mpi" : {
+        "appends" : {
+            "libraries"  : [
+                "libboost_serialization",
+                "libboost_mpi"
+            ],
+            "library_path" : [ "/usr/local/lib" ],
+            "defines" : [ "USEBOOSTMPI" ],
+        },
+        "overrides" : {
+            "cc" : "mpicc",
+            "cxx" : "mpiCC",
+        },
+    },
+
+
+    "gcc, lto" : {
         "appends" : {
             "flags" : {
-                "compile"   : [ "O3", "ip", "Qoption,c,-ip_ninl_max_stats=50000" ],
+                "compile" : [
+                    "flto",
+                    "fwhole-program"
+                ],
+                "link" : [
+                    "flto",
+                    "fwhole-program"
+                ],
             },
         },
     },
 
+
+    "gcc, boost_thread" : {
+        "appends" : {
+            "defines" : [
+                "USE_BOOST_THREAD",
+                "MULTI_THREADED"
+            ],
+            "libraries" : [
+                "pthread",
+                "boost_thread"
+            ],
+            "library_path" : [
+                "/usr/local/lib",
+                "/opt/boost/lib"
+            ],
+            "flags"         : {
+                "compile" : [ "pthread" ],
+            },
+        },
+    },
+
+
+    "gcc, cxx11thread" : {
+        "appends" : {
+            "flags" : {
+                "cxx" : [ "std=c++0x" ],
+            },
+            "defines" : [
+                "MULTI_THREADED",
+                "CXX11"
+            ],
+            "libraries" : [ "pthread" ]
+        },
+        "removes" : {
+            "flags" : {
+                "cxx" : [ "std=c++98" ],
+            },
+        },
+    },
+
+
+    "gcc, apbs" : {
+        "appends" : {
+            "defines" : [ "LINK_APBS_LIB" ],
+            "libraries" : [
+                "iapbs",
+                "apbs_routines",
+                "apbs_generic",
+                "apbs_mg",
+                "apbs_pmgc",
+                "maloc"
+            ],
+            "library_path" : [ "#external/apbs/apbs-1.4-rosetta/lib" ],
+            "include_path" : [
+                "#external/apbs/apbs-1.4-rosetta/include",
+                "#external/apbs/apbs-1.4-rosetta/include/iapbs",
+                "#external/apbs/apbs-1.4-rosetta/include/maloc",
+                "#external/apbs/apbs-1.4-rosetta/src",
+            ],
+        },
+    },
+
+
+    ###########################################################################
+    # ICC #####################################################################
+    ###########################################################################
+
+    # OSs & architecures ######################################################
     "icc, linux" : {
         "appends" : {
             "flags" : {
-                "cc"        : [ "std=c99" ],
-                "warn"      : [ "Wp64", "wd279,2259,1682" ],
-                # "warn"      : [ "wd383,869,981,1505,1572" ]
-                "link"      : [ "lsvml" ],
+                "cc" : [ "std=c99" ],
+                "warn" : [
+                    "Wp64",
+                    "wd279,2259,1682"
+                ],
+                # "warn" : [ "wd383,869,981,1505,1572" ]
+                "link" : [ "lsvml" ],
             },
         },
         "overrides" : {
-            "cc"            : "icc",
-            "cxx"           : "icpc",
+            "cc" : "icc",
+            "cxx" : "icpc",
         },
     },
 
-    "icc, omp" : {
-        "appends" : {
-            "defines" : [ "USE_OPENMP", "MULTI_THREADED" ],
-            "flags" : {
-                "compile" : [ "openmp" ],
-                "link" : ["openmp"],
-            },
-        },
-    },
     "icc, *, linux" : {
         "overrides" : {
-            "version"       : [ ],
+            "version" : [ ],
         },
     },
 
     "icc, 8.0, linux" : {
         "overrides" : {
-            "cc"            : "icc",
-            "cxx"           : "icc",
-            "version"       : [ "8", "0" ],
+            "cc" : "icc",
+            "cxx" : "icc",
+            "version" : [ "8", "0" ],
         },
     },
 
     "icc, 8.1, linux" : {
         "overrides" : {
-            "version"       : [ "8", "1" ],
+            "version" : [ "8", "1" ],
         },
     },
 
     "icc, 9.0, linux" : {
         "overrides" : {
-            "version"       : [ "9", "0" ],
+            "version" : [ "9", "0" ],
         },
     },
 
     "icc, 9.1, linux" : {
         "overrides" : {
-            "version"       : [ "9", "1" ],
+            "version" : [ "9", "1" ],
         },
     },
 
     "icc, 10.1, linux" : {
         "overrides" : {
-            "version"       : [ "10", "1" ],
+            "version" : [ "10", "1" ],
         },
     },
 
     "icc, 11.1, linux" : {
         "overrides" : {
-            "version"       : [ "11", "1" ],
+            "version" : [ "11", "1" ],
         },
     },
+
     "icc, 12.0, linux" : {
-        "override" : {
-           "version" : [ "12","0" ],
+        "overrides" : {
+           "version" : [ "12", "0" ],
         },
     },
+
+
+    #"icc, windows" : {
+    #    "overrides" : {
+    #        "cc" : "icl",
+    #        "cxx" : "icl",
+    #    },
+    #},
+
+    #"icc, *, windows" : {
+    #    "appends" : {
+    #        "defines" : [
+    #            "VC_EXTRALEAN",
+    #            "WIN32_LEAN_AND_MEAN",
+    #            "NOMINMAX",
+    #            "ZLIB_WINAPI"
+    #        ],
+    #        "flags" : {
+    #            "compile" : [
+    #                "nologo",
+    #                "Zc:forScope",
+    #                "GR",
+    #                "Wp64",
+    #                "Qwd279",
+    #                "Qwd1478",
+    #                "Qwd1572",
+    #            ],
+    #            "link" : [  # LINKFLAGS
+    #                 "nologo",
+    #                 "Zc:forScope",
+    #                 "GR",
+    #                 "Wp64",
+    #                 "Qwd279",
+    #                 "Qwd1478",
+    #                 "Qwd1572",
+    #                 "F2097162",
+    #                  # LINKOPTS
+    #                  "link",
+    #                  "NODEFAULTLIB:libcd",
+    #            ],
+    #            "warn" : [ "Wp64" ],
+    #            #"warn" : [ "wd279,383,869,981,1505,1572" ]
+    #        },
+    #    },
+    #},
+
+
+    # modes ###################################################################
+
     "icc, linux, debug" : {
         "appends" : {
             "flags" : {
-                "mode"      : [ "O0", "g" ],
+                "mode" : [ "O0", "g" ],
             },
         },
     },
@@ -992,123 +1288,120 @@ settings = {
     "icc, linux, release" : {
         "appends" : {
             "flags" : {
-                "compile"   : [ "ip" ],
-                "mode"      : [ "O3" ],
+                "compile" : [ "ip" ],
+                "mode" : [ "O3" ],
             },
-            "defines"       : [ "NDEBUG" ],
-        },
-    },
-
-    "icc, mpi" : {
-        "appends" : {
-            "defines"       : [ "USEMPI" ],
-        },
-        "overrides" : {
-            "cc"            : "mpicc",
-            "cxx"           : "mpiCC",
-        },
-     },
-    "icc, mysql" : {
-        "appends" : {
-            "defines"       : [ "USEMYSQL" ],
-        },
-    },
-
-    "icc, postgres" : {
-        "appends" : {
-            "defines"       : [ "USEPOSTGRES" ],
+            "defines" : [ "NDEBUG" ],
         },
     },
 
     "icc, linux, release_debug" : {
         "appends" : {
             "flags" : {
-                "compile"   : [ "ip" ],
-                "mode"      : [ "O3", "g" ],
+                "compile" : [ "ip" ],
+                "mode" : [
+                    "O3",
+                    "g"
+                ],
             },
-        #"defines"       : [ "NDEBUG" ], # Uncomment to turn asserts on if speed matters and assert failures not expected
+        # Uncomment below to turn asserts on if speed matters and assert
+        # failures not expected.
+        #"defines" : [ "NDEBUG" ],
         },
     },
 
-#    "icc, windows" : {
-#        "overrides" : {
-#            "cc"            : "icl",
-#            "cxx"           : "icl",
-#        },
-#    },
 
-#    "icc, *, windows" : {
-#        "appends" : {
-#            "defines"       : [ "VC_EXTRALEAN", "WIN32_LEAN_AND_MEAN",
-#                                "NOMINMAX", "ZLIB_WINAPI" ],
-#            "flags" : {
-#                "compile"   : [ "nologo", "Zc:forScope", "GR", "Wp64",
-#                                "Qwd279", "Qwd1478", "Qwd1572",
-#                              ],
-#                "link"      : [ # LINKFLAGS
-#                                "nologo", "Zc:forScope", "GR", "Wp64",
-#                                "Qwd279", "Qwd1478", "Qwd1572",
-#                                "F2097162",
-#                                # LINKOPTS
-#                                "link", "NODEFAULTLIB:libcd",
-#                              ],
-#                "warn"      : [ "Wp64" ],
-#                # "warn"      : [ "wd279,383,869,981,1505,1572" ]
-#            },
-#        },
-#    },
 
-#    "icc, windows, debug" : {
-#        "appends" : {
-#            "flags" : {
-#                "mode"      : [ "Zi", "Od", "traceback", "Qtrapuv", ],
-#            },
-#        },
-#    },
+    #"icc, windows, debug" : {
+    #    "appends" : {
+    #        "flags" : {
+    #            "mode" : [
+    #                "Zi",
+    #                "Od",
+    #                "traceback",
+    #                "Qtrapuv",
+    #            ],
+    #        },
+    #    },
+    #},
 
-#    "icc, windows, release" : {
-#        "appends" : {
-#            "defines"       : [ "NDEBUG" ],
-#            "flags" : {
-#                "mode"      : [ "O3", "fp:fast", "Qprec-div-", "Qip", ],
-#            },
-#        },
-#    },
+    #"icc, windows, release" : {
+    #    "appends" : {
+    #        "defines" : [ "NDEBUG" ],
+    #        "flags" : {
+    #            "mode" : [
+    #                "O3",
+    #                "fp:fast",
+    #                "Qprec-div-",
+    #                "Qip",
+    #            ],
+    #        },
+    #    },
+    #},
 
-#    "icc, windows, profile" : {
-#        "appends" : {
-#            "defines"       : [ "NDEBUG" ],
-#            "flags" : {
-#                "mode"      : [ "Zi", "Oy", "O3", "fp:fast", "Qprec-div-", "Qip", ],
-#            },
-#        },
-#    },
+    #"icc, windows, profile" : {
+    #    "appends" : {
+    #        "defines" : [ "NDEBUG" ],
+    #        "flags" : {
+    #            "mode" : [
+    #                "Zi",
+    #                "Oy",
+    #                "O3",
+    #                "fp:fast",
+    #                "Qprec-div-",
+    #                "Qip",
+    #            ],
+    #        },
+    #    },
+    #},
+
 
     "icc, x86, release" : {
         "appends" : {
             "flags" : {
-                "compile"   : [ "Qoption,c,-ip_ninl_max_stats=500",
+                "compile" : [
+                    "Qoption,c,-ip_ninl_max_stats=500",
                     "Qoption,c,-ip_ninl_max_total_stats=5000",
-                    ],
+                ],
             },
         },
     },
+
 
     "icc, ia64, release" : {
         "appends" : {
             "flags" : {
-                "compile"   : [ "Qoption,c,-ip_ninl_max_stats=50000" ],
+                "compile" : [ "Qoption,c,-ip_ninl_max_stats=50000" ],
             },
         },
     },
 
-    "icc, static" : {
+
+    # extras ##################################################################
+
+    "icc, mpi" : {
         "appends" : {
-            "flags" : {
-                "link"      : [ "static" ],
-            },
+            "defines" : [ "USEMPI" ],
+        },
+        "overrides" : {
+            "cc" : "mpicc",
+            "cxx" : "mpiCC",
         },
     },
+
+
+    #"icc, windows, runtimecheck" : {
+    #    "appends" : {
+    #        "flags" : {
+    #            "mode" : [
+    #                "Gs0",
+    #                "Qfpstkchk",
+    #                "RTCsu"
+    #            ],
+    #        },
+    #    },
+    #},
+
 
     "icc, linux, valgrind" : {
         # Deliberately empty
@@ -1116,56 +1409,123 @@ settings = {
     },
 
 
-#    "icc, windows, runtimecheck" : {
-#        "appends" : {
-#            "flags" : {
-#                "mode"      : [ "Gs0", "Qfpstkchk", "RTCsu" ],
-#            },
-#        },
-#    },
+    "icc, static" : {
+        "appends" : {
+            "flags" : {
+                "link" : [ "static" ],
+            },
+        },
+    },
 
+
+    "icc, omp" : {
+        "appends" : {
+            "defines" : [
+                "USE_OPENMP",
+                "MULTI_THREADED"
+            ],
+            "flags" : {
+                "compile" : [ "openmp" ],
+                "link" : ["openmp"],
+            },
+        },
+    },
+
+
+    "icc, mysql" : {
+        "appends" : {
+            "defines" : [ "USEMYSQL" ],
+        },
+    },
+
+
+    "icc, postgres" : {
+        "appends" : {
+            "defines" : [ "USEPOSTGRES" ],
+        },
+    },
+
+
+    ###########################################################################
+    # MS Visual C #############################################################
+    ###########################################################################
 
     "msvc, windows" : {
         "overrides" : {
-            "cxx"           : "cl",
+            "cxx" : "cl",
         },
     },
 
     "msvc, *, windows" : {
         "appends" : {
-            "defines"       : [ "VC_EXTRALEAN", "WIN32_LEAN_AND_MEAN",
-            "NOMINMAX", "_CRT_SECURE_NO_DEPRECATE",
-            "_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES",
-            "ZLIB_WINAPI", "_WIN32", "WIN32",
+            "defines" : [
+                "VC_EXTRALEAN",
+                "WIN32_LEAN_AND_MEAN",
+                "NOMINMAX",
+                "_CRT_SECURE_NO_DEPRECATE",
+                "_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES",
+                "ZLIB_WINAPI",
+                "_WIN32",
+                "WIN32",
             ],
             "flags" : {
-                "compile"   : [
-                    "nologo", "Zc:forScope", "EHsc", "GR",
-                    "wd4258", "wd4355", "wd4996", "TP", "GX",
+                "compile" : [
+                    "nologo",
+                    "Zc:forScope",
+                    "EHsc",
+                    "GR",
+                    "wd4258",
+                    "wd4355",
+                    "wd4996",
+                    "TP",
+                    "GX",
                 ],
-                "link"      : [
+                "link" : [
                     # LINKFLAGS
-                    #"nologo", "Zc:forScope", "EHsc", "GR",
-                    #"wd4258", "wd4355", "wd4996", "F2097152",
+                    #"nologo",
+                    #"Zc:forScope",
+                    #"EHsc",
+                    #"GR",
+                    #"wd4258",
+                    #"wd4355",
+                    #"wd4996",
+                    #"F2097152",
                     # LINKOPTS
                     #"link",
                     #"NODEFAULTLIB:libcmt",
                     #'EXPORT',
                     #'NODEFAULTLIB:libcd',
                     "INCREMENTAL:NO",
-                    #"MAP","MAPINFO:EXPORTS"
+                    #"MAP",
+                    #"MAPINFO:EXPORTS"
                 ],
             },
         },
     },
 
+
+    # modes ###################################################################
+
     "msvc, windows, debug" : {
         "appends" : {
             "flags" : {
-                "compile"   : [ "Zi","Od", "Ob0", "RTCcsu", "W1", "MDd", "LD", #"MTd"
-                    ],
-                "link"      : [
-                    "DEBUG", #"DLL", #"Zi", "Od", "Ob0", "RTCcsu",
+                "compile" : [
+                    "Zi",
+                    "Od",
+                    "Ob0",
+                    "RTCcsu",
+                    "W1",
+                    "MDd",
+                    "LD",
+                    #"MTd"
+                ],
+                "link" : [
+                    "DEBUG",
+                    #"DLL",
+                    #"Zi",
+                    #"Od",
+                    #"Ob0",
+                    #"RTCcsu",
                     #'NODEFAULTLIB:msvcrtd',
                 ],
             },
@@ -1174,137 +1534,189 @@ settings = {
 
     "msvc, windows, release" : {
         "appends" : {
-            "defines"      : [ "NDEBUG"],
+            "defines" : [ "NDEBUG"],
             "flags" : {
-                "compile"   : [ "fp:fast", "O2", "Ob2", "MT",
+                "compile" : [
+                    "fp:fast",
+                    "O2",
+                    "Ob2",
+                    "MT",
                 ],
                 "link"      : [
-                    #"fp:fast", "O2",
+                    #"fp:fast",
+                    #"O2",
                     #"LTCG",
                     #'NODEFAULTLIB:msvcrt',
                 ],
             },
         },
     },
+
+
+    "msvc, windows, profile" : {
+        "appends" : {
+            "defines" : [ "NDEBUG"],
+            "flags" : {
+                "compile" : [
+                    "Zi",
+                    "fp:fast",
+                    "O2",
+                ],
+                "link"      : [
+                    "Zi",
+                    "fp:fast",
+                    "O2",
+                    "fixed:no",
+                ],
+            },
+        },
+    },
+
+
+    # extras ##################################################################
+
     "msvc, windows, static" : {
         "removes" : {
             "flags" : {
-                "compile"   : [
-                    "MDd", "LD",
+                "compile" : [
+                    "MDd",
+                    "LD",
                 ],
-                "link"     : [
-                    "DLL", "MAP",
+                "link" : [
+                    "DLL",
+                    "MAP",
                 ],
             },
         },
         "appends" : {
             "flags" : {
-                "compile"   : [
+                "compile" : [
                     "MTd",
                 ],
-                "link"     : [
+                "link" : [
                     'NODEFAULTLIB:libcd',
                 ],
             },
         },
     },
-    "msvc, windows, profile" : {
-        "appends" : {
-            "defines"      : [ "NDEBUG"],
-            "flags" : {
-                "compile"   : [
-                    "Zi", "fp:fast", "O2",
-                ],
-                "link"      : [
-                    "Zi", "fp:fast", "O2", "fixed:no",
-                ],
-            },
-        },
-    },
 
 
-    # Datastar (XLC++ 7.0 Power4)
-    "xlc, 7.0, power4" : {
+    ###########################################################################
+    # XLC #####################################################################
+    ###########################################################################
+
+    "xlc, 7.0, power4" : {  # Datastar (XLC++ 7.0 Power4)
         "appends" : {
-            "defines"       : [ "NDEBUG", "USEMPI", "MPICH_IGNORE_CXX_SEEK" ],
-            "flags" : {
-                "cxx"       : [ "qlanglvl=cpp__func__" ],
-                "compile"   : [ "O3", "qarch=pwr4", "qtune=pwr4",
-                                "qmaxmem=64000",
-                              ],
-            },
-        },
-        "overrides" : {
-            "cc"            : "mpcc",
-            "cxx"           : "mpCC",
-            "version"       : [ ],
-            "include_path"  : [
-                "#external/boost_1_55_0",
-                "#external/dbio",
+            "defines" : [
+                "NDEBUG",
+                "USEMPI",
+                "MPICH_IGNORE_CXX_SEEK"
             ],
-        },
-    },
-    # Blue Gene (XLC++ 8.0 PowerPC)
-    # XXX: Does this need some other extra (e.g. "bluegene")?
-    "xlc, 8.0, ppc" : {
-        "appends" : {
-            "defines"       : [ "NDEBUG", "USEMPI", "MPICH_IGNORE_CXX_SEEK" ],
             "flags" : {
-                "cxx"       : [ "qlanglvl=cpp__func__" ],
-                "compile"   : [ "O3", "qhot=nosimd",
-                                "qarch=440", "qtune=440", "qmaxmem=-1",
-                              ],
+                "cxx" : [ "qlanglvl=cpp__func__" ],
+                "compile" : [
+                    "O3",
+                    "qarch=pwr4",
+                    "qtune=pwr4",
+                    "qmaxmem=64000",
+                ],
             },
-            "library_path"  : [ "/bgl/BlueLight/V1R2M1_020_2006-060110/ppc/bglsys/lib" ],
-            "libraries"     : [ "cxxmpich.rts", "mpich.rts", "msglayer.rts", "rts.rts",
-                                "devices.rts" ],
         },
         "overrides" : {
-            "cc"            : "mpcc",
-            "cxx"           : "mpCC",
-            "version"       : [ ],
-            "include_path"  : [
+            "cc" : "mpcc",
+            "cxx" : "mpCC",
+            "version" : [ ],
+            "include_path" : [
                 "#external/boost_1_55_0",
                 "#external/dbio",
             ],
         },
     },
 
-    # Blue Gene (XLC++ PowerPC)
+
     # Does this need some other extra (e.g. "bluegene")?
-    "xlc, *, ppc64" : {
+    "xlc, 8.0, ppc" : {  # Blue Gene (XLC++ 8.0 PowerPC)
         "appends" : {
-            "defines"       : [ "NDEBUG", "USEMPI", "MPICH_IGNORE_CXX_SEEK" ],
-            "library_path"  : [ "/bgsys/drivers/ppcfloor/arch/include" ],
+            "defines" : [
+                "NDEBUG",
+                "USEMPI",
+                "MPICH_IGNORE_CXX_SEEK"
+            ],
             "flags" : {
-                "compile"   : [ "O3" ],
-                "link"      : [ "static" ],
-                # jk note: dynamic linking via xlc requires .a files (though dyanmic linking shouldn't need them)
-                # jk note: the solution is to use static linking (this is expected to have static linking, and will)
+                "cxx" : [ "qlanglvl=cpp__func__" ],
+                "compile" : [
+                    "O3",
+                    "qhot=nosimd",
+                    "qarch=440",
+                    "qtune=440",
+                    "qmaxmem=-1",
+                ],
+            },
+            "library_path" : [ "/bgl/BlueLight/V1R2M1_020_2006-060110/ppc/bglsys/lib" ],
+            "libraries" : [
+                "cxxmpich.rts",
+                "mpich.rts",
+                "msglayer.rts",
+                "rts.rts",
+                "devices.rts"
+            ],
+        },
+        "overrides" : {
+            "cc" : "mpcc",
+            "cxx" : "mpCC",
+            "version" : [ ],
+            "include_path" : [
+                "#external/boost_1_55_0",
+                "#external/dbio",
+            ],
+        },
+    },
+
+
+    # Does this need some other extra (e.g. "bluegene")?
+    "xlc, *, ppc64" : {  # Blue Gene (XLC++ PowerPC)
+        "appends" : {
+            "defines" : [
+                "NDEBUG",
+                "USEMPI",
+                "MPICH_IGNORE_CXX_SEEK"
+            ],
+            "library_path" : [ "/bgsys/drivers/ppcfloor/arch/include" ],
+            "flags" : {
+                "compile" : [ "O3" ],
+                "link" : [ "static" ],
+                # jk note: Dynamic linking via XLC requires .a files (though
+                # dynamic linking shouldn't need them).  The solution is to use
+                # static linking.  (This is expected to have static linking,
+                # and will.)
             },
         },
         "overrides" : {
-            "cc"            : "/bgsys/drivers/ppcfloor/comm/bin/mpicc",
-            "cxx"           : "/bgsys/drivers/ppcfloor/comm/bin/mpicxx",
-            "version"       : [ ],
-            "include_path"  : [
+            "cc" : "/bgsys/drivers/ppcfloor/comm/bin/mpicc",
+            "cxx" : "/bgsys/drivers/ppcfloor/comm/bin/mpicxx",
+            "version" : [ ],
+            "include_path" : [
                 "#external/boost_1_55_0",
                 "#external/dbio",
             ],
         },
         "removes" : {
-            "include_path"  : [
+            "include_path" : [
                 "/usr/local/include",
                 "/usr/include",
             ],
-            "library_path"  : [
+            "library_path" : [
                 "/usr/local/lib",
                 "/usr/lib",
             ],
         }
     },
 
-    # Clang
+
+    ###########################################################################
+    # Clang ###################################################################
+    ###########################################################################
+
     "clang" : {
         "overrides" : {
             "cc" : "clang",
@@ -1312,119 +1724,52 @@ settings = {
         },
         "appends" : {
             "flags" : {
-                # We don't use any C -- but if we did would it really
-                # be C99?  Are there portability issues?
-                # (The "isystem" directives here are to tell clang not to print warnings found in these external headers.)
-                "cc"        : [ "std=c99", "isystem external/boost_1_55_0/", "isystem external/include/", "isystem external/dbio/" ],
-                "cxx"       : [ "std=c++98", "isystem external/boost_1_55_0/", "isystem external/include/", "isystem external/dbio/" ],
-                "compile"   : [ "pipe", "Qunused-arguments", 'DUNUSUAL_ALLOCATOR_DECLARATION', 'ftemplate-depth-256', "stdlib=libstdc++", ],
-			        # flags for Clang C++ lib:
-		                #'D__ROSETTA_CLANG__', 'DBOOST_NO_0X_HDR_INITIALIZER_LIST -DBOOST_DETAIL_NO_CONTAINER_FWD -DBOOST_NO_0X_HDR_TUPLE ',],  # 'std=c++98',  "stdlib=libstdc++" ],  # Sergey: adding BOOST_NO_0X_HDR_INITIALIZER_LIST because our boost version could not figure it out on it own
-				#  -DBOOST_MATH_TUPLE_HPP_INCLUDED
-		'shlink'      : [ "stdlib=libstdc++"],
-		'link'        : [ "stdlib=libstdc++"],
-
-                # By default, warn as much as possible.
-                #"warn"      : [ "W", "Weverything",
-                #                "Wno-documentation",
-                #                "Wno-long-long",
-                #                "Wno-padded",
-                #                "Wno-weak-vtables"
-                #              ],
+                # We don't use any C -- but if we did would it really be C99?
+                # Are there portability issues?
+                # (The "isystem" directives here are to tell clang not to print
+                # warnings found in these external headers.)
+                "cc" : [
+                    "std=c99",
+                    "isystem external/boost_1_55_0/",
+                    "isystem external/include/",
+                    "isystem external/dbio/"
+                ],
+                "cxx" : [
+                    "std=c++98",
+                    "isystem external/boost_1_55_0/",
+                    "isystem external/include/",
+                    "isystem external/dbio/"
+                ],
+                "compile" : [
+                    "pipe",
+                    "Qunused-arguments",
+                    'DUNUSUAL_ALLOCATOR_DECLARATION',
+                    'ftemplate-depth-256',
+                    "stdlib=libstdc++",
+                ],
+                'shlink' : [ "stdlib=libstdc++"],
+                'link' : [ "stdlib=libstdc++"],
                 "warn" : [
                     "W",
                     "pedantic",
+                    #"Weverything",
+                    "Werror",
                     "Wno-long-long",
-                    "Werror=sign-compare",
-                    "Werror=unused-parameter",
-                    "Werror=reorder",
-                    "Werror=unused-variable",
-                    "Werror=address",
-                    "Werror=char-subscripts",
-                    "Werror=comment",
-                    "Werror=enum-compare",
-                    "Werror=nonnull",
-                    "Werror=type-limits",
-                    "Werror=parentheses",
-                    "Werror=ignored-qualifiers",
-                ],
-            },
-        },
-    },
-    "clang, graphics" : {
-	    "appends" : {
-            "include_path" : [ "/usr/X11R6/include" ],
-            "library_path" : [ "/usr/X11R6/lib" ],
-            "defines"      : [ "GL_GRAPHICS", "MAC" ],
-            "flags" : {
-                "link"      : [ "framework GLUT", "framework OpenGL", "dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" ],
-                "shlink"      : [ "framework GLUT", "framework OpenGL", "dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib" ],
-            },
-		},
-	},
-
-    "clang, debug" : {
-        "appends" : {
-            "flags" : {
-                "compile"   : [ "O0" ],
-                "mode"      : [
-                    "g"
+                    #"Wno-documentation",
+                    #"Wno-padded",
+                    #"Wno-weak-vtables"
                 ],
             },
         },
     },
 
-    "clang, warnings_as_errors" : {
-        "appends" : {
-            "flags" : {
-                "compile"   : [ "Werror", ],
-            },
-        },
-    },
 
-    "clang, postgres" : {
-        "appends" : {
-            "defines"       : [ "USEPOSTGRES" ],
-        },
-    },
-    "clang, mysql" : {
-        "appends" : {
-            "defines"       : [ "USEMYSQL" ],
-            "library_path"  : [ "/usr/lib64/mysql" ],
-        },
-    },
-    "clang, mpi" : {
-        "appends" : {
-            "defines"       : [ "USEMPI" ],
-        },
-        "overrides" : {
-            "cc"            : "mpicc",
-            "cxx"           : "mpicxx",
-        },
-    },
-    "clang, boost_mpi" : {
-        "appends" : {
-            "libraries"     : [ "libboost_mpi" ],
-            "libraries"     : [ "libboost_serialization" ],
-            "library_path"  : [ "/usr/local/lib" ],
-            "defines"       : [ "USEBOOSTMPI" ],
-        },
-        "overrides" : {
-            "cc"            : "mpicc",
-            "cxx"           : "mpiCC",
-        },
-    },
-    "clang, opencl" : {
-        "appends" : {
-            "include_path"  : [ "/usr/local/cuda/include", ],
-            "libraries"     : [ "OpenCL" ],
-            "library_path"  : [ "/usr/local/cuda/lib64", "/usr/local/cuda/lib", ],
-            "defines"       : [ "USEOPENCL" ],
-        },
-    },
+    # OSs #####################################################################
+
     "clang, linux" : {
         "prepends" : {
-            # This makes clang use libstdc++ 4.4.0 on CentOS (requires gcc44-c++ and libstdc++44-devel)
+            # This makes clang use libstdc++ 4.4.0 on CentOS.
+            # (requires gcc44-c++ and libstdc++44-devel)
             "library_path" : [ "/usr/lib/gcc/x86_64-redhat-linux6E/4.4.0" ],
         },
     },
@@ -1432,18 +1777,31 @@ settings = {
     "clang, macos" : {
         "appends" : {
             "flags" : {
-                # change 'abspath' to 'file' to use DYLD_LIBRARY_PATH environment variable
-                "compile"   : [ "march=native" ],
-                "shlink"    : [ "install_name ${TARGET.abspath}" ],
+                # Change 'abspath' to 'file' to use DYLD_LIBRARY_PATH environ-
+                # ment variable.
+                "compile" : [ "march=native" ],
+                "shlink" : [ "install_name ${TARGET.abspath}" ],
+                # There is at least one variable only used on non-Macs.
+                "warn" : ["Wno-unused-variable"],
             },
         },
         "removes" : {
             "flags" : {
-                "link"      : [ "$__RPATH" ],
-                "cxx"       : [ "std=c++98" ],
-                "shlink"    : [ "$LINKFLAGS" ],
-                # There is at least one variable only used on Macs.
-                "warn" : ["Werror=unused-variable"],
+                "link" : [ "$__RPATH" ],
+                "cxx" : [ "std=c++98" ],
+                "shlink" : [ "$LINKFLAGS" ],
+            },
+        },
+    },
+
+
+    # modes ###################################################################
+
+    "clang, debug" : {
+        "appends" : {
+            "flags" : {
+                "compile" : [ "O0" ],
+                "mode" : [ "g" ],
             },
         },
     },
@@ -1452,14 +1810,14 @@ settings = {
         "appends" : {
             "flags" : {
                 "compile" : [ "O3" ],
+                # Asserts can leave variables unused, making warnings spurious.
+                # We count on debug builds to catch actual unused variables.
+                "warn" : [
+                    "Wno-unused-variable",
+                    "Wno-unused-parameter",
+                ],
             },
             "defines" : [ "NDEBUG" ],
-        },
-        "removes" : {
-            "flags" : {
-                # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
-            }
         },
     },
 
@@ -1467,27 +1825,116 @@ settings = {
         "appends" : {
             "flags" : {
                 "compile" : [ "O3" ],
-                "mode"      : [
-                    "g"
+                "mode" : [ "g" ],
+                # Asserts can leave variables unused, making warnings spurious.
+                # We count on debug builds to catch actual unused variables.
+                "warn" : [
+                    "Wno-unused-variable",
+                    "Wno-unused-parameter",
                 ],
             },
         },
-        "removes" : {
-            "flags" : {
-                # See comment above for rational here.
-                "warn" : ["Werror=unused-parameter", "Werror=unused-variable"],
-            }
-        },
     },
+
+
+    # cats ####################################################################
 
     "clang, test" : {
         "appends" : {
             "flags" : {
-                #The "isystem" items here are to tell Clang to not print warnings from this external headers
-                "cc"        : [ "isystem external/cxxtest/"],
-                "cxx"       : [ "isystem external/cxxtest/"],
+                # The "isystem" items here are to tell Clang to not print warn-
+                # ings from these external headers
+                "cc" : [ "isystem external/cxxtest/"],
+                "cxx" : [ "isystem external/cxxtest/"],
             },
         },
     },
 
-}
+
+    # extras ##################################################################
+
+    "clang, graphics" : {
+        "appends" : {
+            "include_path" : [ "/usr/X11R6/include" ],
+            "library_path" : [ "/usr/X11R6/lib" ],
+            "defines" : [
+                "GL_GRAPHICS",
+                "MAC"
+            ],
+            "flags" : {
+                "link" : [
+                    "framework GLUT",
+                    "framework OpenGL",
+                    "dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
+                ],
+                "shlink" : [
+                    "framework GLUT",
+                    "framework OpenGL",
+                    "dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
+                ],
+            },
+        },
+    },
+
+    "clang, mpi" : {
+        "appends" : {
+            "defines" : [ "USEMPI" ],
+        },
+        "overrides" : {
+            "cc" : "mpicc",
+            "cxx" : "mpicxx",
+        },
+    },
+
+    "clang, python" : {  # Include python interpreter.
+        "appends" : {
+            "include_path" : [ "#external/include/python2.7" ],
+            "defines" : [ "WITH_PYTHON=1" ],
+            "libraries" : [
+                "python2.7",
+                "dl",
+                "pthread",
+                "util"
+            ],
+        },
+    },
+
+    "clang, mysql" : {
+        "appends" : {
+            "defines" : [ "USEMYSQL" ],
+            "library_path" : [ "/usr/lib64/mysql" ],
+        },
+    },
+
+    "clang, postgres" : {
+        "appends" : {
+            "defines" : [ "USEPOSTGRES" ],
+        },
+    },
+
+    "clang, opencl" : {
+        "appends" : {
+            "include_path"  : [ "/usr/local/cuda/include", ],
+            "libraries" : [ "OpenCL" ],
+            "library_path" : [
+                "/usr/local/cuda/lib64",
+                "/usr/local/cuda/lib",
+            ],
+            "defines" : [ "USEOPENCL" ],
+        },
+    },
+
+    "clang, boost_mpi" : {
+        "overrides" : {
+            "cc" : "mpicc",
+            "cxx" : "mpiCC",
+        },
+        "appends" : {
+            "libraries" : [ "libboost_mpi" ],
+            "libraries" : [ "libboost_serialization" ],
+            "library_path" : [ "/usr/local/lib" ],
+            "defines" : [ "USEBOOSTMPI" ],
+        },
+    },
+
+}  # end settings

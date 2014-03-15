@@ -215,7 +215,8 @@ core::Real get_prob( char wanted_ss, utility::vector1< core::Real > const & ss_p
 	} else if ( wanted_ss == 'E' ) {
 		return ss_pred_pos[3];
 	} else {
-		utility_exit_with_message( "Error: secondary structure is something other than 'H', 'L', or 'E': " + wanted_ss );
+		utility_exit_with_message( "Error: secondary structure is something other than 'H', 'L', or 'E': " +
+				std::string(1, wanted_ss) );
 		return 99;
 	}
 }

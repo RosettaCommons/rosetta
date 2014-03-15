@@ -45,7 +45,6 @@ options = {
         "coverage",
         "pyrosetta",
         "pyrosetta_debug",
-        'warnings_as_errors',
     ],
 
     "cat" : [

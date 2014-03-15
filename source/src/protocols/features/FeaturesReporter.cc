@@ -36,6 +36,7 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+#include <boost/lexical_cast.hpp>
 
 // C++ Headers
 #include <string>
@@ -186,12 +187,13 @@ FeaturesReporter::check_relevant_residues(
 	Size res1
 ) const {
 	switch(relevant_residues_mode_){
-	case RelevantResiduesMode::Exclusive:
-		return relevant_residues[res1];
-	case RelevantResiduesMode::Inclusive:
-		return relevant_residues[res1];
-	default:
-		utility_exit_with_message("Unrecognized relevant_residues_mode: " + relevant_residues_mode_);
+		case RelevantResiduesMode::Exclusive:
+			return relevant_residues[res1];
+		case RelevantResiduesMode::Inclusive:
+			return relevant_residues[res1];
+		default:
+			utility_exit_with_message("Unrecognized relevant_residues_mode: " +
+					boost::lexical_cast<std::string>(relevant_residues_mode_));
 	}
 }
 
@@ -202,12 +204,13 @@ FeaturesReporter::check_relevant_residues(
 	Size res2
 ) const {
 	switch(relevant_residues_mode_){
-	case RelevantResiduesMode::Exclusive:
-		return relevant_residues[res1] && relevant_residues[res2];
-	case RelevantResiduesMode::Inclusive:
-		return relevant_residues[res1] || relevant_residues[res2];
-	default:
-		utility_exit_with_message("Unrecognized relevant_residues_mode: " + relevant_residues_mode_);
+		case RelevantResiduesMode::Exclusive:
+			return relevant_residues[res1] && relevant_residues[res2];
+		case RelevantResiduesMode::Inclusive:
+			return relevant_residues[res1] || relevant_residues[res2];
+		default:
+			utility_exit_with_message("Unrecognized relevant_residues_mode: " +
+					boost::lexical_cast<std::string>(relevant_residues_mode_));
 	}
 }
 
@@ -218,24 +221,25 @@ FeaturesReporter::check_relevant_residues_range(
 	Size end
 ) const {
 	switch(relevant_residues_mode_){
-	case RelevantResiduesMode::Exclusive: {
-		for(Size ii=begin; ii != end; ++ii){
-			if (!relevant_residues[ii]) {
-				return false;
+		case RelevantResiduesMode::Exclusive: {
+			for(Size ii=begin; ii != end; ++ii){
+				if (!relevant_residues[ii]) {
+					return false;
+				}
 			}
+			return true;
 		}
-		return true;
-	}
-	case RelevantResiduesMode::Inclusive: {
-		for(Size ii=begin; ii != end; ++ii){
-			if (relevant_residues[ii]) {
-				return true;
+		case RelevantResiduesMode::Inclusive: {
+			for(Size ii=begin; ii != end; ++ii){
+				if (relevant_residues[ii]) {
+					return true;
+				}
 			}
+			return false;
 		}
-		return false;
-	}
-	default:
-		utility_exit_with_message("Unrecognized relevant_residues_mode: " + relevant_residues_mode_);
+		default:
+			utility_exit_with_message("Unrecognized relevant_residues_mode: " +
+					boost::lexical_cast<std::string>(relevant_residues_mode_));
 	}
 }
 
@@ -246,27 +250,27 @@ FeaturesReporter::check_relevant_residues(
 	vector1< Size > const & residues
 ) const {
 	switch(relevant_residues_mode_){
-	case RelevantResiduesMode::Exclusive: {
-		for( vector1< Size >::const_iterator ii = residues.begin(), ii_end = residues.end(); ii != ii_end; ++ii){
-			if (!relevant_residues[*ii]) {
-				return false;
+		case RelevantResiduesMode::Exclusive: {
+			for( vector1< Size >::const_iterator ii = residues.begin(), ii_end = residues.end(); ii != ii_end; ++ii){
+				if (!relevant_residues[*ii]) {
+					return false;
+				}
 			}
+			return true;
 		}
-		return true;
-	}
-	case RelevantResiduesMode::Inclusive: {
-		for( vector1< Size >::const_iterator ii = residues.begin(), ii_end = residues.end(); ii != ii_end; ++ii){
-			if (relevant_residues[*ii]) {
-				return true;
+		case RelevantResiduesMode::Inclusive: {
+			for( vector1< Size >::const_iterator ii = residues.begin(), ii_end = residues.end(); ii != ii_end; ++ii){
+				if (relevant_residues[*ii]) {
+					return true;
+				}
 			}
+			return false;
 		}
-		return false;
-	}
-	default:
-		utility_exit_with_message("Unrecognized relevant_residues_mode: " + relevant_residues_mode_);
+		default:
+			utility_exit_with_message("Unrecognized relevant_residues_mode: " +
+					boost::lexical_cast<std::string>(relevant_residues_mode_));
 	}
 }
-
 
 } // namespace
 } // namespace

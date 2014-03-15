@@ -14,12 +14,6 @@
 #include <core/scoring/electron_density/xray_scattering.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-
-// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
-
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 #include <iostream>
@@ -62,24 +56,28 @@ OneGaussianScattering get_A( std::string elt ) {
 
 	// fit to parameters from Doyle and Turner, Acta Cryst A, 1968
 	//   --> single gaussiansfit in reciprocal space
-	//   --> TO DO .. move to database, make parameters selectable
+	//   --> TODO .. move to database, make parameters selectable
 	if (elt_db.size() == 0) {
 		if (basic::options::option[ basic::options::OptionKeys::edensity::cryoem_scatterers ]()) {
 			// [1] electron scattering
-			elt_db["C"]  = OneGaussianScattering( 6.00000, 7.10668);  // 20-2A
-			elt_db["N"]  = OneGaussianScattering( 5.28737, 6.03448);
-			elt_db["O"]  = OneGaussianScattering( 4.74213, 5.17616);
-			elt_db["S"]  = OneGaussianScattering( 12.34197, 7.05366);
+			elt_db["C"] = OneGaussianScattering( 6, 7.10668);  // 20-2A
+			elt_db["N"] = OneGaussianScattering( 5, 6.03448);
+			elt_db["O"] = OneGaussianScattering( 4, 5.17616);
+			elt_db["S"] = OneGaussianScattering( 12, 7.05366);
 			elt_db["X"] = OneGaussianScattering(
-				(int)(6*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()) , 4.88284);  // centroid
+					static_cast<int>(
+							6*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()),
+					4.88284);  // centroid
 		} else {
 			// [2] xray scattering
-			elt_db["C"]  = OneGaussianScattering( 6, 4.88398);  // 20-2A
-			elt_db["N"]  = OneGaussianScattering( 7, 5.08400);
-			elt_db["O"]  = OneGaussianScattering( 8, 4.92866);
-			elt_db["S"]  = OneGaussianScattering(16, 2.92593);
+			elt_db["C"] = OneGaussianScattering( 6, 4.88398);  // 20-2A
+			elt_db["N"] = OneGaussianScattering( 7, 5.08400);
+			elt_db["O"] = OneGaussianScattering( 8, 4.92866);
+			elt_db["S"] = OneGaussianScattering(16, 2.92593);
 			elt_db["X"] = OneGaussianScattering(
-				(int)(6*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()) , 4.88284);  // centroid
+					static_cast<int>(
+							6*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()),
+					4.88284);  // centroid
 		}
 	}
 

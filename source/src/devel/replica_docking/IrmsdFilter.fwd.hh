@@ -12,7 +12,7 @@
 /// @author Zhe Zhang
 
 #ifndef INCLUDED_devel_replica_docking_IrmsdFilter_fwd_hh
-#define INCLUDED_devel_replica_docking_filters_IrmsdFilter_fwd_hh
+#define INCLUDED_devel_replica_docking_IrmsdFilter_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -27,4 +27,4 @@ typedef utility::pointer::owning_ptr< IrmsdFilter const > IrmsdFilterCOP;
 }
 }
 
-#endif
+#endif  // INCLUDED_devel_replica_docking_IrmsdFilter_fwd_hh

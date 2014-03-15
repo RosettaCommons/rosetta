@@ -15,13 +15,15 @@
 #include <core/scoring/mm/MMTorsionLibrary.hh>
 
 // Project headers
+#include <core/chemical/MMAtomType.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
-#include <basic/Tracer.hh>
 #include <core/types.hh>
 
+// Basic headers
+#include <basic/Tracer.hh>
+
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/keys/Key4Tuple.hh>
 #include <utility/keys/Key3Tuple.hh>
 #include <utility/pointer/access_ptr.hh>
@@ -31,16 +33,15 @@
 // Numeric headers
 #include <numeric/conversions.hh>
 
+// External headers
+#include <boost/lexical_cast.hpp>
+
 // C++ headers
 #include <string>
 #include <map>
-// AUTO-REMOVED #include <iostream>
 #include <sstream>
 #include <fstream>
 #include <cassert>
-
-#include <core/chemical/MMAtomType.hh>
-
 
 
 namespace core {
@@ -129,13 +130,11 @@ MMTorsionLibrary::MMTorsionLibrary(
 /// @details The lookup function returns a pair of iterators to the first and last element in the multimap library that
 /// corespond to the set(s) of mm params that corespond to the 4 mm atom type indices. If non are found it exits.
 mm_torsion_library_citer_pair
-MMTorsionLibrary::lookup
-(
- int atom1,
- int atom2,
- int atom3,
- int atom4
-) const
+MMTorsionLibrary::lookup(
+		int atom1,
+		int atom2,
+		int atom3,
+		int atom4) const
 {
 	static std::string const x_string = "X";
 	static std::string const virt_string = "VIRT";
@@ -154,7 +153,7 @@ MMTorsionLibrary::lookup
 
 	int const virt_atom_type = mm_atom_set_->atom_type_index( virt_string );
 
-	/// Virtual atoms get no mm-parameters.  Return the no-op torsion object
+	// Virtual atoms get no mm-parameters.  Return the no-op torsion object
 	if ( atom1 == virt_atom_type ||
 			atom2 == virt_atom_type ||
 			atom3 == virt_atom_type ||
@@ -185,8 +184,12 @@ MMTorsionLibrary::lookup
 		<< (*mm_atom_set_)[atom4].name() << std::endl;
 
 	/// Arriving here, we've failed to find essential parameters
-	utility_exit_with_message("COULD NOT FIND TORSION PARAMS FOR " + atom1 + ' ' + atom2 + ' ' + atom3 + ' ' + atom4 );
-	return mm_torsion_library_citer_pair(); ///< meaningless, just for removing gcc warning.
+	utility_exit_with_message("COULD NOT FIND TORSION PARAMS FOR " +
+			boost::lexical_cast<std::string>(atom1) + " " +
+			boost::lexical_cast<std::string>(atom2) + " " +
+			boost::lexical_cast<std::string>(atom3) + " " +
+			boost::lexical_cast<std::string>(atom4) );
+	return mm_torsion_library_citer_pair();  //< meaningless, just for removing gcc warning.
 }
 
 /// @details

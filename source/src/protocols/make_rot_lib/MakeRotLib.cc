@@ -16,7 +16,6 @@
 
 // core headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
@@ -34,6 +33,7 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.functions.hh>
+#include <utility/vector1.hh>
 
 // numeric headers
 #include <numeric/angle.functions.hh>
@@ -41,16 +41,16 @@
 // protocol headers
 #include <protocols/simple_moves/MinMover.hh>
 
+// external headers
+#include <boost/lexical_cast.hpp>
+
 // C++ headers
 #include <iostream>
-// AUTO-REMOVED #include <istream>
 #include <sstream>
 #include <fstream>
 #include <string>
 #include <iomanip>
 #include <cmath>
-
-#include <utility/vector1.hh>
 
 
 namespace protocols {
@@ -269,7 +269,6 @@ init_rotamers_centroids
 	Real epsilon_start_val
 )
 {
-
 	//init stuff to hold lines
 	utility::vector1< std::string > lines;
 	std::string line;
@@ -388,7 +387,8 @@ init_rotamers_centroids
 	Size nrotamers(1);
 	for( Size i = 1; i <= nchi; ++i ) {
 		if ( (chi_upper[i] - chi_lower[i])%chi_increment[i] != 0 ) {
-			utility_exit_with_message("Number of chi bins not integer for chi: "+i);
+			utility_exit_with_message("Number of chi bins not integer for chi: " +
+					boost::lexical_cast<std::string>(i));
 		}
 		total_chi_num_bins[i] = ((chi_upper[i] - chi_lower[i])/chi_increment[i])+1;
 		nrotamers *= total_chi_num_bins[i];

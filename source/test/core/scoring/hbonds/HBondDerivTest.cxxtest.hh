@@ -632,7 +632,7 @@ public:
 
 		Real const AHdis = sqrt(AHdis2);
 		Real const inv_AHdis = 1.0f / AHdis;
-		Vector AHunit(AHunit = AH * inv_AHdis);
+		Vector AHunit(AH * inv_AHdis);
 
 		Real const xD =            // cos(180-theta) = cos(thetaD)
 			dot( AHunit, HDunit );

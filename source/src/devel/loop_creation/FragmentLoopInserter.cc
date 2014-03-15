@@ -60,6 +60,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 
+
 namespace devel {
 namespace loop_creation {
 
@@ -274,7 +275,7 @@ FragmentLoopInserter::build_fragment_loop(
 		chemical::AA aa = chemical::aa_from_oneletter_code(aa_char);
 		chemical::ResidueTypeCOPs const & rsd_type_list( restype_set->aa_map( aa ) );
 		if(rsd_type_list.empty()){
-			utility_exit_with_message("Could not find residue type for AA: " + aa_char);
+			utility_exit_with_message("Could not find residue type for AA: " + std::string(1, aa_char));
 		}
 		chemical::ResidueType const & rsd_type( *(rsd_type_list[ 1 ]) );
 		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( rsd_type ) );
@@ -295,7 +296,7 @@ FragmentLoopInserter::build_fragment_loop(
 		chemical::AA aa = chemical::aa_from_oneletter_code(aa_char);
 		chemical::ResidueTypeCOPs const & rsd_type_list( restype_set->aa_map( aa ) );
 		if(rsd_type_list.empty()){
-			utility_exit_with_message("Could not find residue type for AA: " + aa_char);
+			utility_exit_with_message("Could not find residue type for AA: " + std::string(1, aa_char));
 		}
 		chemical::ResidueType const & rsd_type( *(rsd_type_list[ 1 ]) );
 		conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( rsd_type ) );

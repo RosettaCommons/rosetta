@@ -104,7 +104,7 @@ DNA_BasePotential::get_array_indices( InteractionType const & t, std::string con
 		} else if ( b1 == 'T' ) {
 			i2 = 12;
 		} else {
-			utility_exit_with_message( "Unknown first DNA base label: "+b1 );
+			utility_exit_with_message( "Unknown first DNA base label: " + std::string(1, b1) );
 		}
 
 		if ( b2 == 'A' ) {
@@ -116,7 +116,7 @@ DNA_BasePotential::get_array_indices( InteractionType const & t, std::string con
 		} else if ( b2 == 'T' ) {
 			i2 += 4;
 		} else {
-			utility_exit_with_message( "Unknown first DNA base label: "+b2 );
+			utility_exit_with_message( "Unknown first DNA base label: " + std::string(1, b2) );
 		}
 	}
 }

@@ -30,7 +30,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-// AUTO-REMOVED #include <stdlib.h>
 
 #include <utility/vector1.hh>
 
@@ -145,7 +144,6 @@ protocols::flexpep_docking::FlexPepDockingFlags::FlexPepDockingFlags
 			params_file = option[ OptionKeys::flexPepDocking::params_file ]();
 			updateChainsAndAnchors_fromParamsFile(params_file);
 		}
-	valid_peptide_chain_ = valid_peptide_chain_;
 	runtime_assert_msg(! (pep_fold_only && (min_receptor_bb || valid_receptor_chain_) ),
 										 "The flag -pep_fold_only is incompatible with receptor flags like -min_receptor_bb and -receptor chain");
 	int mut_ex_opts = 0;

@@ -35,7 +35,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
-// C++ Headers
 
 static basic::Tracer TR("devel.matdes.BuildingBlockInterfaceOperation" );
 
@@ -70,7 +69,6 @@ core::pack::task::operation::TaskOperationOP BuildingBlockInterfaceOperation::cl
 void
 BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
 {
-
 	using namespace core;
 	using namespace basic;
 	using namespace pose;
@@ -119,10 +117,12 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 				Sizes const & isubs( get_component_of_residue(pose,ir)=='A'?intra_subs1:intra_subs2);
 				if (find(comp_chains.begin(),comp_chains.end(),pose.chain(jr))==comp_chains.end()) {
 					if (get_component_of_residue(pose,jr)=='A') {
-						select_comp1_chains.append('"' + pose.pdb_info()->chain( jr ) + '"' + "+"); // TODO: Jacob
+						select_comp1_chains.append("\"" + std::string(1, pose.pdb_info()->chain( jr )) +
+								"\"+"); // TODO: Jacob
 						comp_chains.push_back(pose.chain(jr));
 					} else if (get_component_of_residue(pose,jr)!='A') {
-						select_comp2_chains.append('"' + pose.pdb_info()->chain( jr ) + '"' + "+"); // TODO: Jacob
+						select_comp2_chains.append("\"" + std::string(1, pose.pdb_info()->chain( jr )) +
+								"\"+"); // TODO: Jacob
 						comp_chains.push_back(pose.chain(jr));
 					}
 				}	

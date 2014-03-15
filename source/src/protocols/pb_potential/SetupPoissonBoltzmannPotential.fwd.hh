@@ -12,7 +12,7 @@
 /// @author Sachko Honda (honda@apl.washington.edu)
 
 #ifndef INCLUDED_protocols_pb_potential_SetupPoissonBoltzmannPotential_FWD_HH
-#define INCLUDED_protocols_pb_potential_setupPoissonBoltzmannPotential_FWD_HH
+#define INCLUDED_protocols_pb_potential_SetupPoissonBoltzmannPotential_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
@@ -27,4 +27,4 @@ typedef utility::pointer::access_ptr< SetupPoissonBoltzmannPotential const > Set
 
 }
 }
-#endif
+#endif  // INCLUDED_protocols_pb_potential_SetupPoissonBoltzmannPotential_FWD_HH

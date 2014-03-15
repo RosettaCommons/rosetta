@@ -110,7 +110,9 @@ TorsionBinSimilarity::torsion2big_bin_(
    return 'X';
 }
 
-core::Size TorsionBinSimilarity::bin_index_( char const bin_name ) const {
+core::Size
+TorsionBinSimilarity::bin_index_( char const bin_name ) const
+{
 	switch( bin_name ) {
 		case 'A': return 1; break;
 		case 'B': return 2; break;
@@ -118,7 +120,7 @@ core::Size TorsionBinSimilarity::bin_index_( char const bin_name ) const {
 		case 'G': return 4; break;
 		case 'O': return 5; break;
 		default:
-			std::string const msg( "Error: don't recognize bin" + bin_name );
+			std::string const msg( "Error: don't recognize bin" + std::string(1, bin_name) );
 			utility_exit_with_message(msg);
 			break;
 	}

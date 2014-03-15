@@ -38,8 +38,11 @@ using namespace core;
 
 using namespace std;
 
-std::ostream& operator<<( std::ostream& os, PDB_Entry const& pe ) {
+std::ostream &
+operator<<( std::ostream & os, PDB_Entry const& pe )
+{
 	os << "PDBEntry: " << pe.atomNum << " " << pe.resNum << " " << pe.atomName << " " << pe.resName;
+	return os;
 }
 
 PDB::PDB()

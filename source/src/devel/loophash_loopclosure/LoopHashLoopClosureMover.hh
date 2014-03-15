@@ -12,7 +12,7 @@
 /// @author Sachko Honda (honda@apl.washington.edu)
 
 #ifndef INCLUDED_devel_loophash_loopclosure_LoopHashLoopClosureMover_HH
-#define INCLUDED_devel_loophash_LoopHashLoopClosureMover_HH
+#define INCLUDED_devel_loophash_loopclosure_LoopHashLoopClosureMover_HH
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreType.hh>
@@ -45,27 +45,27 @@ namespace loophash_loopclosure {
 class MyLoop{
 public:
 	unsigned int r1_, r2_;
-  	char c1_, c2_;
+	char c1_, c2_;
 	unsigned int minn_, maxn_; // potential length range
 	MyLoop(){}
-  MyLoop(unsigned int r1, char c1, unsigned int minn, unsigned int maxn, unsigned int r2, char c2) 
+	MyLoop(unsigned int r1, char c1, unsigned int minn, unsigned int maxn, unsigned int r2, char c2)
 		: r1_(r1), r2_(r2), c1_(c1), c2_(c2), minn_(minn), maxn_(maxn) {}
 };
 
 class LoopHashLoopClosureMover : public protocols::moves::Mover {
 public:
 
-  LoopHashLoopClosureMover();
-  virtual ~LoopHashLoopClosureMover();
-  virtual void apply( core::pose::Pose & pose );
-  virtual std::string get_name() const;
-  virtual void parse_my_tag( utility::tag::TagCOP const,
-			     basic::datacache::DataMap &,
-			     protocols::filters::Filters_map const &,
-			     protocols::moves::Movers_map const &,
-			     core::pose::Pose const &);
-  virtual protocols::moves::MoverOP fresh_instance() const;
-  protocols::moves::MoverOP clone() const;
+	LoopHashLoopClosureMover();
+	virtual ~LoopHashLoopClosureMover();
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const;
+	virtual void parse_my_tag( utility::tag::TagCOP const,
+				 basic::datacache::DataMap &,
+				 protocols::filters::Filters_map const &,
+				 protocols::moves::Movers_map const &,
+				 core::pose::Pose const &);
+	virtual protocols::moves::MoverOP fresh_instance() const;
+	protocols::moves::MoverOP clone() const;
 
 private:
 	protocols::forge::remodel::RemodelMover_OP remodel_;
@@ -76,10 +76,11 @@ private:
 											 const std::vector<MyLoop> & loops,
 											 const std::string & bpname ) const;
 	const std::vector<std::string> tokenize( const std::string& in_str, 
-       					const std::string& delimiters ) const;
+			const std::string& delimiters ) const;
 	const std::vector<MyLoop> make_loops(const std::string & loop_insert_instruction) const;
-
 };
+
 } // loophash_loopclosure
 } // devel
-#endif
+
+#endif  // INCLUDED_devel_loophash_loopclosure_LoopHashLoopClosureMover_HH

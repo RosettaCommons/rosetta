@@ -16,7 +16,7 @@
 /// @author		Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_membrane_geometry_EmbeddingFactory_fwd_hh
-#define INLCUDED_core_membrane_geometry_EmbeddingFactory_fwd_hh
+#define INCLUDED_core_membrane_geometry_EmbeddingFactory_fwd_hh
 
 // Utility Headers
 #include <utility/pointer/owning_ptr.hh>

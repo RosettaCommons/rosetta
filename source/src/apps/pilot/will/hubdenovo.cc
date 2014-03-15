@@ -1,103 +1,111 @@
-/////////////// includes
-	#include <basic/database/open.hh>
-	#include <basic/options/keys/in.OptionKeys.gen.hh>
-	#include <basic/options/keys/out.OptionKeys.gen.hh>
-	#include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
-	#include <basic/options/option.hh>
-	#include <basic/options/option_macros.hh>
-	#include <basic/options/util.hh>
-	#include <basic/Tracer.hh>
-	#include <core/chemical/AtomType.hh>
-	#include <core/chemical/ChemicalManager.hh>
-	#include <core/chemical/ResidueTypeSet.hh>
-	#include <core/chemical/util.hh>
-	#include <core/chemical/VariantType.hh>
-	#include <core/conformation/Residue.hh>
-	#include <core/conformation/ResidueFactory.hh>
-	#include <core/conformation/symmetry/SymDof.hh>
-	#include <core/conformation/symmetry/SymmData.hh>
-	#include <core/conformation/symmetry/SymmetricConformation.hh>
-	#include <core/conformation/symmetry/SymmetryInfo.hh>
-	#include <core/conformation/symmetry/util.hh>
-	#include <core/conformation/symmetry/VirtualCoordinate.hh>
-	#include <devel/init.hh>
-	#include <core/import_pose/import_pose.hh>
-	#include <core/id/NamedAtomID.hh>
-	#include <core/io/pdb/pose_io.hh>
-	#include <core/io/silent/ScoreFileSilentStruct.hh>
-	#include <core/io/silent/SilentFileData.hh>
-	#include <core/kinematics/FoldTree.hh>
-	#include <core/kinematics/MoveMap.hh>
-	#include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
-	#include <core/pack/dunbrack/RotamerLibrary.hh>
-	#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-	#include <core/pack/optimizeH.hh>
-	#include <core/pack/task/PackerTask.hh>
-	#include <core/pack/task/TaskFactory.hh>
-	#include <core/pack/make_symmetric_task.hh>
-	#include <core/pose/annotated_sequence.hh>
-	#include <core/pose/Pose.hh>
-	#include <core/pose/util.hh>
-	#include <core/pose/symmetry/util.hh>
-	#include <core/scoring/constraints/AmbiguousConstraint.hh>
-	#include <core/scoring/constraints/AngleConstraint.hh>
-	#include <core/scoring/constraints/AtomPairConstraint.hh>
-	#include <core/scoring/constraints/ConstraintSet.hh>
-	#include <core/scoring/constraints/DihedralConstraint.hh>
-	#include <core/scoring/func/HarmonicFunc.hh>
-	#include <core/scoring/func/CircularHarmonicFunc.hh>
-	#include <core/scoring/constraints/MultiConstraint.hh>
-	#include <core/scoring/constraints/util.hh>
-	#include <core/scoring/func/XYZ_Func.hh>
-	#include <core/scoring/dssp/Dssp.hh>
-	#include <core/scoring/electron_density/util.hh>
-	#include <core/scoring/Energies.hh>
-	#include <core/scoring/packing/compute_holes_score.hh>
-	#include <core/scoring/packstat/compute_sasa.hh>
-	#include <core/scoring/rms_util.hh>
-	#include <core/scoring/sasa.hh>
-	#include <core/scoring/ScoreFunction.hh>
-	#include <core/scoring/ScoreFunctionFactory.hh>
-	#include <core/scoring/ScoringManager.hh>
-	#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-	#include <core/util/SwitchResidueTypeSet.hh>
-	#include <numeric/model_quality/rms.hh>
-	#include <numeric/random/random.hh>
-	#include <numeric/xyz.functions.hh>
-	#include <numeric/xyz.io.hh>
-	#include <ObjexxFCL/FArray2D.hh>
-	#include <ObjexxFCL/format.hh>
-	#include <ObjexxFCL/string.functions.hh>
-	#include <protocols/simple_moves/FragmentMover.hh>
-	#include <protocols/electron_density/util.hh>
-	#include <protocols/flxbb/FlxbbDesign.hh>
-	#include <protocols/relax/FastRelax.hh>
-	#include <protocols/jobdist/standard_mains.hh>
-	#include <protocols/moves/MonteCarlo.hh>
-	#include <protocols/moves/Mover.hh>
-	#include <protocols/moves/MoverContainer.hh>
-	#include <protocols/moves/RepeatMover.hh>
-	#include <protocols/rigid/RigidBodyMover.hh>
-	#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
-	#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-	#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-	#include <protocols/moves/TrialMover.hh>
-	#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
-	#include <protocols/symmetric_docking/SymDockingLowRes.hh>
-	#include <protocols/viewer/viewers.hh>
-	#include <sstream>
-	#include <utility/io/izstream.hh>
-        #include <utility/io/ozstream.hh>
-        #include <utility/stream_util.hh>
-	// 	#include <core/scoring/constraints/LocalCoordinateConstraint.hh>
-	// 	#include <devel/init.hh>
-	#include <apps/pilot/will/will_util.ihh>
-	#include <apps/pilot/will/mynamespaces.ihh>
-	#include <apps/pilot/will/frag_util.hh>
-	#include <core/pack/task/operation/TaskOperations.hh>
-	#include <core/pack/task/operation/NoRepackDisulfides.hh>
-	#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-	#include <core/pack/pack_rotamers.hh>
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+// :noTabs=false:tabSize=4:indentSize=4:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+// includes
+#include <basic/database/open.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+#include <basic/options/option_macros.hh>
+#include <basic/options/util.hh>
+#include <basic/Tracer.hh>
+#include <core/chemical/AtomType.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/util.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/symmetry/SymDof.hh>
+#include <core/conformation/symmetry/SymmData.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/util.hh>
+#include <core/conformation/symmetry/VirtualCoordinate.hh>
+#include <devel/init.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/id/NamedAtomID.hh>
+#include <core/io/pdb/pose_io.hh>
+#include <core/io/silent/ScoreFileSilentStruct.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
+#include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+#include <core/pack/optimizeH.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/make_symmetric_task.hh>
+#include <core/pose/annotated_sequence.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/scoring/constraints/AmbiguousConstraint.hh>
+#include <core/scoring/constraints/AngleConstraint.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/DihedralConstraint.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
+#include <core/scoring/func/CircularHarmonicFunc.hh>
+#include <core/scoring/constraints/MultiConstraint.hh>
+#include <core/scoring/constraints/util.hh>
+#include <core/scoring/func/XYZ_Func.hh>
+#include <core/scoring/dssp/Dssp.hh>
+#include <core/scoring/electron_density/util.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/packing/compute_holes_score.hh>
+#include <core/scoring/packstat/compute_sasa.hh>
+#include <core/scoring/rms_util.hh>
+#include <core/scoring/sasa.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoringManager.hh>
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
+#include <numeric/model_quality/rms.hh>
+#include <numeric/random/random.hh>
+#include <numeric/xyz.functions.hh>
+#include <numeric/xyz.io.hh>
+#include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/string.functions.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/electron_density/util.hh>
+#include <protocols/flxbb/FlxbbDesign.hh>
+#include <protocols/relax/FastRelax.hh>
+#include <protocols/jobdist/standard_mains.hh>
+#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/moves/MoverContainer.hh>
+#include <protocols/moves/RepeatMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/moves/TrialMover.hh>
+#include <protocols/simple_moves/symmetry/SymDockingInitialPerturbation.hh>
+#include <protocols/symmetric_docking/SymDockingLowRes.hh>
+#include <protocols/viewer/viewers.hh>
+#include <sstream>
+#include <utility/io/izstream.hh>
+#include <utility/io/ozstream.hh>
+#include <utility/stream_util.hh>
+#include <apps/pilot/will/will_util.ihh>
+#include <apps/pilot/will/mynamespaces.ihh>
+#include <apps/pilot/will/frag_util.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/operation/NoRepackDisulfides.hh>
+#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <core/pack/pack_rotamers.hh>
 
 using core::conformation::symmetry::SymmData;
 using core::conformation::symmetry::SymmDataOP;
@@ -813,7 +821,7 @@ struct ConstraintConfig {
 					else if(ss[i]=='H') choices.push_back("L");
 					else if(ss[i]=='E') choices.push_back("V");
 					else if(ss[i]=='L') choices.push_back("G");
-					else utility_exit_with_message("bad ss "+ss[i]);
+					else utility_exit_with_message("bad ss "+ std::string(1, ss[i]));
 			 	} else {
 					choices.push_back("A");
 					choices.push_back("C");

@@ -26,80 +26,61 @@
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.tmpl.hh>
 #include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
 #include <core/pack/dunbrack/cenrot/SingleResidueCenrotLibrary.hh>
-// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/graph/Graph.hh>
-
-#include <basic/database/open.hh>
-#include <basic/options/option.hh>
-
-#include <basic/basic.hh>
-#include <basic/interpolate.hh>
-//XRW_B_T1
-//#include <core/coarse/Translator.hh>
-//#include <core/coarse/TranslatorSet.hh>
-//XRW_E_T1
 #include <core/pose/Pose.hh>
 #include <core/pack/task/PackerTask.hh>
-//#include <core/scoring/TenANeighborGraph.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
+
+// Basic headers
+#include <basic/database/open.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/basic.hh>
+#include <basic/interpolate.hh>
+#include <basic/Tracer.hh>
 
 // Numeric headers
 #include <numeric/xyz.functions.hh>
-// AUTO-REMOVED #include <numeric/constants.hh>
-// AUTO-REMOVED #include <numeric/angle.functions.hh>
 
+// Utility headers
 #include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/thread/threadsafe_creation.hh>
+#include <utility/vector1.hh>
 
-// ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+// External headers
+#include <boost/lexical_cast.hpp>
 
 // C++ Headers
 #include <string>
 #include <iostream>
 #include <fstream>
 #if defined(WIN32) || defined(__CYGWIN__)
-// AUTO-REMOVED #include <ctime>
 #include <io.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #endif
+#include <sys/stat.h>
 
 // Boost Headers
 #include <boost/cstdint.hpp>
 
-// C Headers
-// AUTO-REMOVED #include <sys/stat.h>
-// AUTO-REMOVED #include <stdio.h>
-// AUTO-REMOVED #include <stdlib.h>
 
-#include <basic/Tracer.hh>
 using basic::T;
 
-// option key includes
-
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <utility/vector1.hh>
-
-#include <sys/stat.h>
 
 using basic::Error;
 using basic::Warning;
 
 static basic::Tracer TR("core.pack.dunbrack");
 
-/**
+/*
 	 rearrange the dunbrack arrays:
 
 	 mapping from aa to single-residue-rotamer-library
@@ -113,8 +94,7 @@ static basic::Tracer TR("core.pack.dunbrack");
 	 quick conversion from rotno-tuple to index?
 
 	 rotamer_data: probability, chi-mean, chi-sd
-
-**/
+*/
 namespace core {
 namespace pack {
 namespace dunbrack {
@@ -1521,7 +1501,7 @@ RotamerLibrary::create_rotameric_dunlib(
 ) const
 {
 	SingleResidueDunbrackLibraryOP rotlib;
-	/// scope the case statements
+	// scope the case statements
 	switch ( n_chi ) {
 		case 1: {
 			RotamericSingleResidueDunbrackLibrary< ONE > * r1 =
@@ -1552,7 +1532,8 @@ RotamerLibrary::create_rotameric_dunlib(
 			break;
 		}
 		default:
-			utility_exit_with_message( "ERROR: too many chi angles desired for dunbrack library: " + n_chi );
+			utility_exit_with_message( "ERROR: too many chi angles desired for Dunbrack library: " +
+					boost::lexical_cast<std::string>(n_chi) );
 		break;
 	}
 	return rotlib;
@@ -1581,7 +1562,8 @@ RotamerLibrary::create_rotameric_dunlib(
 			rotlib = new RotamericSingleResidueDunbrackLibrary< FOUR >( aa, dun02 );
 			break;
 		default:
-			utility_exit_with_message( "ERROR: too many chi angles desired for dunbrack library: " + n_chi );
+			utility_exit_with_message( "ERROR: too many chi angles desired for Dunbrack library: " +
+					boost::lexical_cast<std::string>(n_chi) );
 		break;
 	}
 	return rotlib;
@@ -1604,7 +1586,7 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 ) const
 {
 	SingleResidueDunbrackLibraryOP rotlib;
-	/// scope the case statements
+	// scope the case statements
 	switch ( nchi ) {
 		case 1: {
 			SemiRotamericSingleResidueDunbrackLibrary< ONE > * r1 =
@@ -1624,7 +1606,8 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 		}
 
 		default:
-			utility_exit_with_message( "ERROR: too many chi angles desired for semi-rotameric dunbrack library: " + nchi );
+			utility_exit_with_message( "ERROR: too many chi angles desired for semi-rotameric Dunbrack library: " +
+					boost::lexical_cast<std::string>(nchi) );
 		break;
 	}
 	return rotlib;
@@ -1660,7 +1643,8 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 		}
 
 		default:
-			utility_exit_with_message( "ERROR: too many chi angles desired for semi-rotameric dunbrack library: " + nchi );
+			utility_exit_with_message( "ERROR: too many chi angles desired for semi-rotameric Dunbrack library: " +
+					boost::lexical_cast<std::string>(nchi) );
 		break;
 	}
 	return rotlib;
@@ -2011,7 +1995,8 @@ RotamerLibrary::get_NCAARotamerLibrary( chemical::ResidueType const & rsd_type )
 			r4->read_from_file( rotlib_in, false );
 			ncaa_rotlib = r4; break;
 		default:
-			utility_exit_with_message( "ERROR: too many chi angles desired for ncaa library: " + n_rotlib_chi );
+			utility_exit_with_message( "ERROR: too many chi angles desired for NCAA library: " +
+					boost::lexical_cast<std::string>(n_rotlib_chi) );
 			break;
 		}
 

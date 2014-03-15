@@ -172,7 +172,8 @@ Symmetrizer::apply(Pose & pose) {
 					break;
 
 				default:
-					utility_exit_with_message(symmetry_axis_ + " is not a valid axis (x,y or z). Use lower case");
+					utility_exit_with_message(std::string(1, symmetry_axis_) +
+							" is not a valid axis (x,y or z). Use lower case");
 	}
 	j.set_translation( translation );
 	j.set_rotation( rotation );

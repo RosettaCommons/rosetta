@@ -57,7 +57,7 @@ struct pre_talaris_2013_behavior_settings {
 	bool hbond_measure_sp3acc_BAH_from_hvy;
 	Real lj_hbond_hdis;
 	Real lj_hbond_OH_donor_dis;
-	bool hb_sp2_outer_width;
+	Real hb_sp2_outer_width;
 	Real expand_st_chi2sampling;
 	std::string score_weights;
 	std::string score_patch;
