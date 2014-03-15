@@ -60,10 +60,10 @@ SET(COMPILE_FLAGS "${COMPILE_FLAGS} -std=c++98 -pipe -ffor-scope -O3 -ffast-math
 ## (Remember to also comment out the -w above if uncommenting.)
 ## (no-unused-variable is here because asserts can leave variables unused.)
 
-SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Wall -Wextra -pedantic -Wno-long-long -Wno-unused-variable")
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Wall -Wextra -pedantic -Wno-long-long -Wno-strict-aliasing -Wno-unused-variable -Wno-unused-parameter")
 
 ## Warnings as errors to match scons build
-SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror=sign-compare -Werror=reorder -Werror=address -Werror=char-subscripts -Werror=comment -Werror=nonnull -Werror=type-limits -Werror=parentheses -Werror=ignored-qualifiers") # -Werror=enum-compare")
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror")
 
 IF( ${COMPILER} STREQUAL "clang" )
     # Quiet warnings about non-clang compatable arguments (either gcc-specific ones, or newer-version ones.)
