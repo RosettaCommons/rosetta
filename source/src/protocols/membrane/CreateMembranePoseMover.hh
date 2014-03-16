@@ -25,6 +25,7 @@
 
 // Unit Headers
 #include <protocols/membrane/CreateMembranePoseMover.fwd.hh>
+#include <protocols/membrane/CreateMembranePoseMoverCreator.hh>
 
 // Project Headers
 #include <core/membrane/MembraneProteinFactory.hh>
@@ -39,15 +40,21 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
+#include <protocols/filters/Filter.hh>
+
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
+
+#include <protocols/rosetta_scripts/util.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
 // Utility Headers
+#include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
+#include <utility/tag/Tag.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -97,7 +104,14 @@ namespace membrane {
         
         /// @brief Apply the corresponding move to the pose
         virtual void apply( core::pose::Pose & pose );
-        
+			
+				/// @brief RosettaScripts hook for XML scripting
+				void parse_my_tag( utility::tag::TagCOP tag,
+													 basic::datacache::DataMap &,
+													 protocols::filters::Filters_map const &,
+													 protocols::moves::Movers_map const &,
+													 core::pose::Pose const & );
+		
     private: // data
         
         core::pose::PoseOP membrane_pose_;

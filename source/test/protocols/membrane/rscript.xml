@@ -1,0 +1,15 @@
+<ROSETTASCRIPTS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<SCOREFXNS>
+		<fullatom weights=talaris2013/>
+	</SCOREFXNS>
+	<MOVERS>
+		<CreateMembranePoseMover name=mp chains="chains.txt" fullatom=1/>
+		<DumpPdb name=dump fname="1afo_mpose_out.pdb" scorefxn="fullatom" tag_time=0/>
+	</MOVERS>
+	<PROTOCOLS>
+	    <Add mover=mp/>
+	    <Add mover=dump/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

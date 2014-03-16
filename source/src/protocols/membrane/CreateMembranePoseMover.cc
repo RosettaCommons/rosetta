@@ -18,13 +18,15 @@
 ///             framework.
 ///
 /// @author     Rebecca Alford (rfalford12@gmail.com)
-/// @note       Last Modified (2/22/14)
+/// @author			 Julia Koehler Leman (julia.koehler1982@gmail.com)
+/// @note       Last Modified (3/15/14)
 
 #ifndef INCLUDED_protocols_membrane_CreateMembranePoseMover_cc
 #define INCLUDED_protocols_membrane_CreateMembranePoseMover_cc
 
 // Unit Headers
 #include <protocols/membrane/CreateMembranePoseMover.hh>
+#include <protocols/membrane/CreateMembranePoseMoverCreator.hh>
 
 // Project Headers
 #include <core/membrane/MembraneProteinFactory.hh>
@@ -40,6 +42,8 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
+#include <protocols/filters/Filter.hh>
+
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
@@ -50,10 +54,15 @@
 #include <basic/resource_manager/ResourceManager.hh>
 #include <basic/resource_manager/util.hh>
 
+#include <protocols/rosetta_scripts/util.hh>
+
 // Utility Headers
-#include <utility/vector1.hh>
+#include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
+
 #include <utility/io/izstream.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/vector1.hh>
 
 // C++ Headers
 #include <cstdlib>
@@ -84,7 +93,9 @@ namespace membrane {
         fullatom_(true),
         chains_("")
     {
-        membrane_pose_ = src.membrane_pose_;
+				membrane_pose_ = src.membrane_pose_;
+				chains_ = src.chains_;
+				fullatom_ = src.fullatom_;
     }
     
     /// @brief Standard Destructor
@@ -135,18 +146,53 @@ namespace membrane {
     /// Mover Apply
     
     /// @brief Apply the corresponding move to the pose
-    void CreateMembranePoseMover::apply( core::pose::Pose & )
+    void CreateMembranePoseMover::apply( core::pose::Pose & pose )
     {
         using namespace core::membrane;
         using namespace basic::resource_manager;
         using namespace core::membrane::util;
-        
+      
         TR << "Loading in a membrane pose" << std::endl;
         MembraneProteinFactoryOP mpf = new MembraneProteinFactory( false, chains_, fullatom_ );
         membrane_pose_ = mpf->create_membrane_pose();
+			
+			    // Setting the pose ref
+				  pose = (*membrane_pose_);
 
     }
-        
+	
+		/// @brief RosettaScripts hook for XML scripting
+		void CreateMembranePoseMover::parse_my_tag( utility::tag::TagCOP tag,
+										basic::datacache::DataMap &,
+										protocols::filters::Filters_map const &,
+										protocols::moves::Movers_map const &,
+										core::pose::Pose const & )
+		{
+			chains_ = tag->getOption< std::string >( "chains" );
+			fullatom_ = tag->getOption< bool >( "fullatom" );
+		}
+
+		/// @brief Creates Movers for RosettaScripts
+		protocols::moves::MoverOP
+   	CreateMembranePoseMoverCreator::create_mover() const
+		{
+			return new CreateMembranePoseMover;
+		}
+		
+		/// @brief Name of mover in RosettaScripts file
+		std::string
+	  CreateMembranePoseMoverCreator::keyname() const
+		{
+			return CreateMembranePoseMoverCreator::mover_name();
+		}
+		
+		/// @brief Mover name for RosettaScripts
+		std::string
+	  CreateMembranePoseMoverCreator::mover_name()
+		{
+			return "CreateMembranePoseMover";
+		}
+  
 } // membrane
 } // protocols
 
