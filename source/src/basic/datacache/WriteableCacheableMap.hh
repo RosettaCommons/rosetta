@@ -53,7 +53,7 @@ class WriteableCacheableMap : public CacheableData
 public:
   WriteableCacheableMap() : CacheableData() {}
 
-  WriteableCacheableMap( WriteableCacheableMap const& other ):
+  WriteableCacheableMap( WriteableCacheableMap const& other ): CacheableData(other),
     map_( other.map_ )
   {}
 
