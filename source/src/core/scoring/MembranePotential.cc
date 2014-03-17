@@ -608,7 +608,8 @@ const
 			TR << "Reading spanfile " << spanfile << std::endl;
 			topology.initialize(spanfile);
 		} else {
-			std::cerr << "spanfile missing ... " << std::endl;
+			TR.Error << "ERROR: Spanfile required for computation of membrane embedding - no file found." << std::endl;
+			utility_exit_with_message("spanfile missing from commandline.");
 		}
 	}
 
@@ -852,6 +853,16 @@ MembranePotential::init_membrane_center_normal(pose::Pose const & pose,
 	Vector outside(0);
 	for(Size i=1;i<=topology.tmhelix();++i)
 	{
+		if( topology.span_begin(i) > pose.total_residue() ) {
+			TR.Error << "ERROR: Membrane topology: Can't find transmembrane span start residue " << topology.span_begin(i)
+					<< " - pose only has " << pose.total_residue() << " residues. " << std::endl;
+			utility_exit_with_message("Bad residue in membrane span.");
+		}
+		if( topology.span_end(i) > pose.total_residue() ) {
+			TR.Error << "ERROR: Membrane Topology: Can't find transmembrane span ending residue " << topology.span_end(i)
+					<< " - pose only has " << pose.total_residue() << " residues. " << std::endl;
+			utility_exit_with_message("Bad residue in membrane span.");
+		}
 		if(!topology.allow_tmh_scoring(i)) continue;
 		Vector const & start( pose.residue( topology.span_begin(i) ).atom( 2 ).xyz());
 		Vector const & end( pose.residue( topology.span_end(i) ).atom( 2 ).xyz());
