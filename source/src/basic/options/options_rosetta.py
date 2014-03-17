@@ -177,14 +177,14 @@ Options = Option_Group( '',
 		Option( "metals_detection_LJ_multiplier", "Real", desc="When -auto_setup_metals is used, overlap between metal atoms and "
 					"metal-binding atoms is used as the criterion by which covalent bonds are detected.  The Lennard-Jones radii of the "
 					"atoms can be multiplied by a constant factor in order to detect longer bonds to metal ions.  Default 1.0.",
-					legal=["0.0", "100000.0"], default="1.0" ),
+					default="1.0" ),
 		Option( "metals_distance_constraint_multiplier", "Real", desc="Distances between metals and metal-binding atoms are constrained "
 					"using harmonic potentials, scaled by this multiplier.  Default 1.0.  Set to 0.0 to skip adding distance constraints.",
-					legal=["0.0", "1000000.0"], default="1.0" ),
+					default="1.0" ),
 		Option( "metals_angle_constraint_multiplier", "Real", desc="Angles between metals, metal-binding atoms, and metal-binding atom parents "
 					"are constrained using circular harmonic potentials, scaled by this multiplier.  Default 1.0.  Set to 0.0 to skip adding angle "
 					"constraints.",
-					legal=["0.0", "1000000.0"], default="1.0" ),
+					default="1.0" ),
 
 		# Other input options -------------------------------------------------
 		Option( 'fix_disulf', 'File',

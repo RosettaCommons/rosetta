@@ -21,7 +21,7 @@ option.add( basic::options::OptionKeys::in::preserve_crystinfo, "Preserve inform
 option.add( basic::options::OptionKeys::in::detect_oops, "Detect oligooxopiperazines (oops) and add required constraints" ).def(false);
 option.add( basic::options::OptionKeys::in::detect_disulf, "Forcably enable or disable disulfide detection. When unspecified, rosetta conservatively detects disulfides in full atom input based on SG distance, but will not form centroid disulfides.  Setting '-detect_disulf true' will force aggressive disulfide detection in centroid poses based on CB distance.  Setting '-detect_disulf false' disables all detection, even in full atom poses.  Note that disabling disulfides causes severe clashes for native disulfides." ).legal(true).legal(false);
 option.add( basic::options::OptionKeys::in::detect_disulf_tolerance, "disulf tolerance" ).def(0.5);
-option.add( basic::options::OptionKeys::in::auto_setup_metals, "Automatically adds covalent linkages to bound metal ions, as well as atom pair constraints and angle constraints to hold ions in place, on PDB import.  Also, sets the atom_pair_constraint and angle_constraint weights in the default score function to 1.0.  False by default." ).def(false);
+option.add( basic::options::OptionKeys::in::auto_setup_metals, "Automatically adds covalent linkages to bound metal ions, as well as atom pair constraints and angle constraints to hold ions in place, on PDB import.  Also, sets the atom_pair_constraint and angle_constraint weights in the default score function to 1.0.  False by default." ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::in::metals_detection_LJ_multiplier, "When -auto_setup_metals is used, overlap between metal atoms and metal-binding atoms is used as the criterion by which covalent bonds are detected.  The Lennard-Jones radii of the atoms can be multiplied by a constant factor in order to detect longer bonds to metal ions.  Default 1.0." ).def(1.0);
 option.add( basic::options::OptionKeys::in::metals_distance_constraint_multiplier, "Distances between metals and metal-binding atoms are constrained using harmonic potentials, scaled by this multiplier.  Default 1.0.  Set to 0.0 to skip adding distance constraints." ).def(1.0);
 option.add( basic::options::OptionKeys::in::metals_angle_constraint_multiplier, "Angles between metals, metal-binding atoms, and metal-binding atom parents are constrained using circular harmonic potentials, scaled by this multiplier.  Default 1.0.  Set to 0.0 to skip adding angle constraints." ).def(1.0);
@@ -147,7 +147,7 @@ option.add( basic::options::OptionKeys::in::rdf::rdf, "rdf option group" ).legal
 option.add( basic::options::OptionKeys::in::rdf::sep_bb_ss, "separate RDFs by SS for backbone atypes " ).def(true);
 option.add( basic::options::OptionKeys::inout::inout, "Ouput option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::inout::fold_tree_io, "Ignore 'CHECKPOINT' file and the overwrite the PDB file(s)" );
-option.add( basic::options::OptionKeys::inout::dump_connect_info, "Output CONECT info between bonded atoms that are beyond 3.0 A apart; useful for coarse-grained representations." ).def(false);
+option.add( basic::options::OptionKeys::inout::dump_connect_info, "Output CONECT info between bonded atoms that are beyond a threshhold specified with the -inout:connect_info_cutoff flag (3.0 A by default); useful for coarse-grained representations." ).def(false);
 option.add( basic::options::OptionKeys::inout::connect_info_cutoff, "The atom separation cutoff above which bonded atoms have explicit CONECT records written so that programs like PyMOL know the atomic connectivity.  Default 3.0 Angstroms." ).def(3.0);
 option.add( basic::options::OptionKeys::inout::dbms::dbms, "database option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::inout::dbms::mode, "Which backend to use by default for database access.  Note, usage of 'mysql' requires building with 'extras=mysql' and usage of 'postgres' requires building with 'extras=postgres'" ).legal("sqlite3").legal("mysql").legal("postgres").def("sqlite3");
@@ -783,13 +783,13 @@ option.add( basic::options::OptionKeys::jumps::sep_switch_accelerate, "constrain
 option.add( basic::options::OptionKeys::jumps::dump_frags, "dump jump_fragments " ).def(false);
 option.add( basic::options::OptionKeys::jumps::njumps, "number_of_jumps to select from library for each trajectory (membrane mode)" ).def(1);
 option.add( basic::options::OptionKeys::jumps::max_strand_gap_allowed, "merge strands if they less than X residues but same register" ).def(2);
-option.add( basic::options::OptionKeys::jumps::contact_score, "the strand-weight will have a weight * contact_order component" ).def(0.0);
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::contact_score, "the strand-weight will have a weight * contact_order component" ).def(0.0);
 option.add( basic::options::OptionKeys::jumps::filter_templates, "filter hybridization protocol templates" ).def(false);
 option.add( basic::options::OptionKeys::templates::templates, "templates option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::templates::config, "read a list of templates and alignments" ).def("templates.dat");
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::templates::fix_aligned_residues, "pick only from template fragments and then keep these residues fixed" ).def(false);
+option.add( basic::options::OptionKeys::templates::fix_aligned_residues, "pick only from template fragments and then keep these residues fixed" ).def(false);
 option.add( basic::options::OptionKeys::templates::fix_frag_file, " fragments from this file are picked once in beginning and then kept fixed" ).def("");
 option.add( basic::options::OptionKeys::templates::fix_margin, "keep n residues at edges of fixed fragments moveable" ).def(1);
 option.add( basic::options::OptionKeys::templates::min_nr_large_frags, "how many large fragments should be present" ).def(100000);
@@ -1565,12 +1565,12 @@ option.add( basic::options::OptionKeys::casp::rots, "No description" );
 option.add( basic::options::OptionKeys::casp::opt_radius, "optimization radius for repacking and minimization" );
 option.add( basic::options::OptionKeys::casp::repack, "should we repack the structure?" );
 option.add( basic::options::OptionKeys::casp::sc_min, "should we sidechain minimize the structure?" );
-option.add( basic::options::OptionKeys::casp::sequential, "should mutations be considered in sequence or all together?" );
-option.add( basic::options::OptionKeys::casp::num_iterations, "number of iterations to perform" );
-option.add( basic::options::OptionKeys::casp::weight_file, "what weight-file to use?" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::casp::refine_res, "specifies file that contains which residues to refine" );
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::casp::sequential, "should mutations be considered in sequence or all together?" );
+option.add( basic::options::OptionKeys::casp::num_iterations, "number of iterations to perform" );
+option.add( basic::options::OptionKeys::casp::weight_file, "what weight-file to use?" );
+option.add( basic::options::OptionKeys::casp::refine_res, "specifies file that contains which residues to refine" );
 option.add( basic::options::OptionKeys::pose_metrics::pose_metrics, "pose_metrics option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff, " maximum SASA that is allowed for an atom to count as buried for the BuriedUnsatisfiedPolarsCalculator" ).def(0.3);
 option.add( basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius, " the probe radius used in the SASA calculator (and thus implicitly in the BuriedUnsatisfiedPolarsCalculator" ).def(1.4);
@@ -2347,11 +2347,11 @@ option.add( basic::options::OptionKeys::hotspot::angle, "Maximum allowed angle b
 option.add( basic::options::OptionKeys::hotspot::angle_res, "Residue to use for angle calculation from stubCA, <this option>, and stubCB. Used to determine if stub is pointing towards target. 0 uses the default, which is the targets center of mass" ).def(0);
 option.add( basic::options::OptionKeys::parser::parser, "parser option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::parser::protocol, "File name for the xml parser protocol" );
-option.add( basic::options::OptionKeys::parser::script_vars, "Variable substitutions for xml parser, in the form of name=value" );
-option.add( basic::options::OptionKeys::parser::view, "Use the viewer?" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::parser::patchdock, "Patchdock output file name." );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::parser::script_vars, "Variable substitutions for xml parser, in the form of name=value" );
+option.add( basic::options::OptionKeys::parser::view, "Use the viewer?" );
+option.add( basic::options::OptionKeys::parser::patchdock, "Patchdock output file name." );
 option.add( basic::options::OptionKeys::parser::patchdock_random_entry, "Pick a random patchdock entry between two entry numbers. inclusive" ).n(2);
 option.add( basic::options::OptionKeys::DomainAssembly::DomainAssembly, "DomainAssembly option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DomainAssembly::da_setup, "run DomainAssembly setup routine" ).legal(true).legal(false).def(false);

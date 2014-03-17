@@ -143,7 +143,7 @@ namespace in { namespace rdf { BooleanOptionKey const sep_bb_ss( "in:rdf:sep_bb_
 namespace inout { BooleanOptionKey const inout( "inout" );  }
 namespace inout { BooleanOptionKey const fold_tree_io( "inout:fold_tree_io" );  }
 namespace inout { BooleanOptionKey const dump_connect_info( "inout:dump_connect_info" );  }
-namespace inout { RealOptionKey const connect_info_cutoff( "inout:connect_info_cutoff" ); }
+namespace inout { RealOptionKey const connect_info_cutoff( "inout:connect_info_cutoff" );  }
 namespace inout { namespace dbms { BooleanOptionKey const dbms( "inout:dbms" );  } }
 namespace inout { namespace dbms { StringOptionKey const mode( "inout:dbms:mode" );  } }
 namespace inout { namespace dbms { StringOptionKey const database_name( "inout:dbms:database_name" );  } }
@@ -778,7 +778,3 @@ namespace jumps { RealOptionKey const sep_switch_accelerate( "jumps:sep_switch_a
 namespace jumps { BooleanOptionKey const dump_frags( "jumps:dump_frags" );  }
 namespace jumps { IntegerOptionKey const njumps( "jumps:njumps" );  }
 namespace jumps { IntegerOptionKey const max_strand_gap_allowed( "jumps:max_strand_gap_allowed" );  }
-namespace jumps { RealOptionKey const contact_score( "jumps:contact_score" );  }
-namespace jumps { BooleanOptionKey const filter_templates( "jumps:filter_templates" );  }
-namespace templates { BooleanOptionKey const templates( "templates" );  }
-namespace templates { FileOptionKey const config( "templates:config" );  }

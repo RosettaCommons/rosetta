@@ -24,8 +24,9 @@ CMakeFiles
 !/cmake/build/finders
 !/cmake/build/modules
 /xcode/build
-/xcode/Rosetta.xcodeproj/project.xcworkspace/xcuserdata
+/xcode/Rosetta.xcodeproj/project.xcworkspace/
 /xcode/Rosetta.xcodeproj/xcuserdata
+/xcode/Rosetta.xcodeproj/project.pbxproj
 /ide/build
 /internal.dat
 /.unit_test_results.yaml
@@ -38,7 +39,6 @@ GTAGS
 GPATH
 GSYMS
 GRTAGS
-/xcode/Rosetta.xcodeproj/*
 BuildPyRosetta.sh
 get_commit_id.sh
 /diffs*

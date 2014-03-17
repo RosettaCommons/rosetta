@@ -1,7 +1,7 @@
 # List of Rosetta command line options.
 
 _(This is an automatically generated file, do not edit!)_
-Generated: 2014-03-14
+Generated: 2014-03-17
 
 _Note that some application specific options may not be present in this list._
 
@@ -44,6 +44,14 @@ _Note that some application specific options may not be present in this list._
 <dd>Forcably enable or disable disulfide detection. When unspecified, rosetta conservatively detects disulfides in full atom input based on SG distance, but will not form centroid disulfides.  Setting '-detect_disulf true' will force aggressive disulfide detection in centroid poses based on CB distance.  Setting '-detect_disulf false' disables all detection, even in full atom poses.  Note that disabling disulfides causes severe clashes for native disulfides.<br/></dd>
 <dt><b>-detect_disulf_tolerance</b> \<Real\></dt>
 <dd>disulf tolerance<br/>Default: 0.5<br/></dd>
+<dt><b>-auto_setup_metals</b> \<Boolean\></dt>
+<dd>Automatically adds covalent linkages to bound metal ions, as well as atom pair constraints and angle constraints to hold ions in place, on PDB import.  Also, sets the atom_pair_constraint and angle_constraint weights in the default score function to 1.0.  False by default.<br/>Default: false<br/></dd>
+<dt><b>-metals_detection_LJ_multiplier</b> \<Real\></dt>
+<dd>When -auto_setup_metals is used, overlap between metal atoms and metal-binding atoms is used as the criterion by which covalent bonds are detected.  The Lennard-Jones radii of the atoms can be multiplied by a constant factor in order to detect longer bonds to metal ions.  Default 1.0.<br/>Default: 1.0<br/></dd>
+<dt><b>-metals_distance_constraint_multiplier</b> \<Real\></dt>
+<dd>Distances between metals and metal-binding atoms are constrained using harmonic potentials, scaled by this multiplier.  Default 1.0.  Set to 0.0 to skip adding distance constraints.<br/>Default: 1.0<br/></dd>
+<dt><b>-metals_angle_constraint_multiplier</b> \<Real\></dt>
+<dd>Angles between metals, metal-binding atoms, and metal-binding atom parents are constrained using circular harmonic potentials, scaled by this multiplier.  Default 1.0.  Set to 0.0 to skip adding angle constraints.<br/>Default: 1.0<br/></dd>
 <dt><b>-fix_disulf</b> \<File\></dt>
 <dd>Specify disulfide connectivity via a file.  Disulfides are specified as two whitespace-seperated residue indices per line.  This option replaces the old '-run:fix_disulf' option.<br/></dd>
 <dt><b>-missing_density_to_jump</b> \<Boolean\></dt>
@@ -307,7 +315,9 @@ _Note that some application specific options may not be present in this list._
 <dt><b>-fold_tree_io</b> \<Boolean\></dt>
 <dd>Ignore 'CHECKPOINT' file and the overwrite the PDB file(s)<br/></dd>
 <dt><b>-dump_connect_info</b> \<Boolean\></dt>
-<dd>Output CONECT info between bonded atoms that are beyond 3.0 A apart; useful for coarse-grained representations.<br/>Default: false<br/></dd>
+<dd>Output CONECT info between bonded atoms that are beyond a threshhold specified with the -inout:connect_info_cutoff flag (3.0 A by default); useful for coarse-grained representations.<br/>Default: false<br/></dd>
+<dt><b>-connect_info_cutoff</b> \<Real\></dt>
+<dd>The atom separation cutoff above which bonded atoms have explicit CONECT records written so that programs like PyMOL know the atomic connectivity.  Default 3.0 Angstroms.<br/>Default: 3.0<br/></dd>
 </dl>
 + <h3>-inout:dbms</h3>
 <dl>

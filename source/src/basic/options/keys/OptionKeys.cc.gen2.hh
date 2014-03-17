@@ -1,3 +1,6 @@
+namespace casp { BooleanOptionKey const sequential( "casp:sequential" );  }
+namespace casp { RealOptionKey const num_iterations( "casp:num_iterations" );  }
+namespace casp { StringOptionKey const weight_file( "casp:weight_file" );  }
 namespace casp { StringOptionKey const refine_res( "casp:refine_res" );  }
 namespace pose_metrics { BooleanOptionKey const pose_metrics( "pose_metrics" );  }
 namespace pose_metrics { RealOptionKey const atomic_burial_cutoff( "pose_metrics:atomic_burial_cutoff" );  }
@@ -775,5 +778,3 @@ namespace hotspot { RealOptionKey const angle( "hotspot:angle" );  }
 namespace hotspot { IntegerOptionKey const angle_res( "hotspot:angle_res" );  }
 namespace parser { BooleanOptionKey const parser( "parser" );  }
 namespace parser { StringOptionKey const protocol( "parser:protocol" );  }
-namespace parser { StringVectorOptionKey const script_vars( "parser:script_vars" );  }
-namespace parser { BooleanOptionKey const view( "parser:view" );  }

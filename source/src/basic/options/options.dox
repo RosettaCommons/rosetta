@@ -1,6 +1,6 @@
 /*!
 @page full_options_list Rosetta command line option descriptions.
-<i>(This is an automatically generated file, do not edit!)</i> Generated: 2014-03-14
+<i>(This is an automatically generated file, do not edit!)</i> Generated: 2014-03-17
 <ul>
 <li><h2>in</h2>
 <dl>
@@ -90,6 +90,26 @@
 <dt><b>-detect_disulf_tolerance</b> \<Real\><dt>
 <dd>disulf tolerance</dd><br>
 <dd>Default: 0.5</dd><br>
+</dl>
+<dl>
+<dt><b>-auto_setup_metals</b> \<Boolean\><dt>
+<dd>Automatically adds covalent linkages to bound metal ions, as well as atom pair constraints and angle constraints to hold ions in place, on PDB import.  Also, sets the atom_pair_constraint and angle_constraint weights in the default score function to 1.0.  False by default.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-metals_detection_LJ_multiplier</b> \<Real\><dt>
+<dd>When -auto_setup_metals is used, overlap between metal atoms and metal-binding atoms is used as the criterion by which covalent bonds are detected.  The Lennard-Jones radii of the atoms can be multiplied by a constant factor in order to detect longer bonds to metal ions.  Default 1.0.</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-metals_distance_constraint_multiplier</b> \<Real\><dt>
+<dd>Distances between metals and metal-binding atoms are constrained using harmonic potentials, scaled by this multiplier.  Default 1.0.  Set to 0.0 to skip adding distance constraints.</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-metals_angle_constraint_multiplier</b> \<Real\><dt>
+<dd>Angles between metals, metal-binding atoms, and metal-binding atom parents are constrained using circular harmonic potentials, scaled by this multiplier.  Default 1.0.  Set to 0.0 to skip adding angle constraints.</dd><br>
+<dd>Default: 1.0</dd><br>
 </dl>
 <dl>
 <dt><b>-fix_disulf</b> \<File\><dt>
@@ -640,8 +660,13 @@
 </dl>
 <dl>
 <dt><b>-dump_connect_info</b> \<Boolean\><dt>
-<dd>Output CONECT info between bonded atoms that are beyond 3.0 A apart; useful for coarse-grained representations.</dd><br>
+<dd>Output CONECT info between bonded atoms that are beyond a threshhold specified with the -inout:connect_info_cutoff flag (3.0 A by default); useful for coarse-grained representations.</dd><br>
 <dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-connect_info_cutoff</b> \<Real\><dt>
+<dd>The atom separation cutoff above which bonded atoms have explicit CONECT records written so that programs like PyMOL know the atomic connectivity.  Default 3.0 Angstroms.</dd><br>
+<dd>Default: 3.0</dd><br>
 </dl>
  </li>
 <li><h2>inout:dbms</h2>
