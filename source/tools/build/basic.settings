@@ -231,10 +231,10 @@ settings = {
         },
     },
 
-    "gcc, 4.7" : {
+    "gcc, 4.4" : {
         "appends" : {
             "flags" : {
-                "warn" : [ "Wno-error=unknown-warning", ],
+                "warn" : [ "Wno-uninitialized", ],
             },
         },
     },
