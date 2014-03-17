@@ -60,7 +60,7 @@ ElectronDensityLoader::ElectronDensityLoader() {}
 ElectronDensityLoader::~ElectronDensityLoader() {}
 
 ElectronDensityLoader::ElectronDensityLoader(
-	ElectronDensityLoader const &) {}
+	ElectronDensityLoader const &) : basic::resource_manager::ResourceLoader() {}
 
 ResourceOP
 ElectronDensityLoader::create_resource(
