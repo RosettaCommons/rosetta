@@ -97,27 +97,29 @@ AlignEndsMover::reference_positions( core::pose::Pose const & pose ) const{
 	core::Size const resi_end( chain() == 0 ? pose.total_residue() : pose.conformation().chain_end( chain() ) );
 	core::Size const resi_start( chain() == 0 ? 1 : pose.conformation().chain_begin( chain() ) );
 	TR<<"Chain start: "<<resi_start<<" resi_end: "<<resi_end<<std::endl;
-/// note the fast-forwarding of resi in the inner-loop below! should be fine, but if there are bugs, this is a good place to dig
-	for( core::Size resi = resi_start; resi <= resi_end - strand_length() + 1; ++resi ){ /// at least n-strand positions in a row
-		if( dssp.get_dssp_secstruct( resi ) == 'E' ){
+	// note the fast-forwarding of resi in the inner-loop below! should be fine, but if there are bugs, this is a good place to dig
+	for ( core::Size resi = resi_start; resi <= resi_end - strand_length() + 1; ++resi ) {  // at least n-strand positions in a row
+		if ( dssp.get_dssp_secstruct( resi ) == 'E' ) {
 			core::Size strand_count = 1;
-			for( ; strand_count < strand_length() && dssp.get_dssp_secstruct( resi + strand_count ) == 'E'; ++strand_count ); //find end of beta strand
-			if( strand_count == strand_length() ){ // we have n-length beta strand
-				if( !parallel() && !odd_strand ){
-					for( ;resi <= resi_end && dssp.get_dssp_secstruct( resi + strand_length() ) == 'E'; ++resi ); // move to the end of the strand (even strands will be represented by the C-termini)
-				}//fi !parallel() && !odd()
-				core::Size position_count = 0; /// how many strand positions were added to the strand_positions array
-				for( ; resi <= resi_end && dssp.get_dssp_secstruct( resi ) == 'E'; ++resi ){ // this causes 'fast-forwarding' of resi, but it's okay, since we don't want to double count the strands
-					/// we'll add only strand_length() positions to the array, but will forward the resi index to the end of the strand.
-					if( position_count < strand_length() ){
-          	strand_positions.push_back( resi );
+			//find end of beta strand
+			for ( ; strand_count < strand_length() && dssp.get_dssp_secstruct( resi + strand_count ) == 'E'; ++strand_count ) {}
+			if ( strand_count == strand_length() ) { // we have n-length beta strand
+				if ( !parallel() && !odd_strand ) {
+					// move to the end of the strand (even strands will be represented by the C-termini)
+					for ( ; resi <= resi_end && dssp.get_dssp_secstruct( resi + strand_length() ) == 'E'; ++resi ) {}
+				}  // fi !parallel() && !odd()
+				core::Size position_count = 0; // how many strand positions were added to the strand_positions array
+				for ( ; resi <= resi_end && dssp.get_dssp_secstruct( resi ) == 'E'; ++resi ) { // this causes 'fast-forwarding' of resi, but it's okay, since we don't want to double count the strands
+					// we'll add only strand_length() positions to the array, but will forward the resi index to the end of the strand.
+					if ( position_count < strand_length() ) {
+						strand_positions.push_back( resi );
 						++position_count;
 					}
-				}// for resi inner loop
-				odd_strand = !odd_strand; /// flip odd->even->odd...
-			}//fi strand_count
-  	}// fi dssp.get_dssp_secstruct(resi)
-	}// for resi outer loop
+				}  // for resi inner loop
+				odd_strand = !odd_strand;  // flip odd->even->odd...
+			}  // fi strand_count
+		}  // fi dssp.get_dssp_secstruct(resi)
+	}  // for resi outer loop
 	TR<<"DEBUG: strand positions: ";
 	BOOST_FOREACH( core::Size const sp, strand_positions )
 	  TR<<sp<<'+';
