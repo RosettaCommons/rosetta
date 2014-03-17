@@ -31,11 +31,16 @@ namespace protocols {
 namespace stepwise {
 namespace screener {
 
-	pose::Pose blank_pose;
+	static pose::Pose * blank_pose() {
+		static pose::Pose * blank_pose_ = 0;
+		if (!blank_pose_) blank_pose_ = new pose::Pose();
+		return blank_pose_;
+	}
 
 	//constructor
 	SampleApplier::SampleApplier():
-		pose_( blank_pose )
+		//pose_( blank_pose )
+		pose_( *blank_pose() )
 	{
 	}
 
