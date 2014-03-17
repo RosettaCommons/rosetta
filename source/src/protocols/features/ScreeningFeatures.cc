@@ -49,7 +49,9 @@ ScreeningFeatures::ScreeningFeatures()
 
 }
 
-ScreeningFeatures::ScreeningFeatures(ScreeningFeatures const & src) : chain_(src.chain_),descriptors_(src.descriptors_)
+ScreeningFeatures::ScreeningFeatures(ScreeningFeatures const & src) : protocols::features::FeaturesReporter(src),
+		chain_(src.chain_),
+		descriptors_(src.descriptors_)
 {
 }
 
