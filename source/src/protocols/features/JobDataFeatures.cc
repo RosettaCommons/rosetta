@@ -53,7 +53,7 @@ using basic::database::insert_statement_generator::RowData;
 
 JobDataFeatures::JobDataFeatures() {}
 
-JobDataFeatures::JobDataFeatures(JobDataFeatures const & ) {}
+JobDataFeatures::JobDataFeatures(JobDataFeatures const & ) : protocols::features::FeaturesReporter() {}
 
 JobDataFeatures::~JobDataFeatures() {}
 
