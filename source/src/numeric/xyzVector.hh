@@ -40,6 +40,8 @@
 	#include <numeric/xyz.functions.hh>
 #endif
 
+#include <ObjexxFCL/FArrayTraits.hh>
+
 // Boost Headers
 #include <boost/functional/hash.hpp>
 
@@ -2380,5 +2382,26 @@ not_equal_length( xyzVector< T > const & a, xyzVector< T > const & b );
 
 
 } // namespace numeric
+
+namespace ObjexxFCL {
+
+/// @brief Specialization for FArrayTraits, to allow reasonable default constructor in FArray context
+template< typename T >
+struct FArrayTraits < numeric::xyzVector< T > >
+{
+	typedef numeric::xyzVector< T >  traits_type;
+
+	/// @brief Initial Value
+	inline
+	static
+	traits_type
+	initial_value()
+	{
+	        return numeric::xyzVector< T >(0,0,0); // Use all zeros
+	}
+}; // FArrayTraits
+
+}
+
 
 #endif // INCLUDED_numeric_xyzVector_HH

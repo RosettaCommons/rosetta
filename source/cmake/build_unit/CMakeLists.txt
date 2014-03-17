@@ -48,10 +48,10 @@ ADD_DEFINITIONS(-D_DEBUG)
 SET(COMPILE_FLAGS "${COMPILE_FLAGS} -std=c++98 -pipe -ffor-scope -O0 -g -ggdb -ffloat-store")
 
 # More warnings - good for cleaning up code/debugging, though it makes ninja output more noisy:
-SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Wall -Wextra -pedantic -Wno-long-long")
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Wall -Wextra -pedantic -Wno-long-long -Wno-strict-aliasing")
 
 # Warnings as errors to match scons build
-SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror=sign-compare -Werror=unused-parameter -Werror=reorder -Werror=unused-variable -Werror=address -Werror=char-subscripts -Werror=comment -Werror=nonnull -Werror=type-limits -Werror=parentheses -Werror=ignored-qualifiers") # -Werror=enum-compare
+SET(COMPILE_FLAGS "${COMPILE_FLAGS} -Werror")
 
 IF( ${COMPILER} STREQUAL "clang" )
     # Quiet warnings about non-clang compatable arguments (either gcc-specific ones, or newer-version ones.)

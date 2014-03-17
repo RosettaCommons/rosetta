@@ -639,7 +639,7 @@ void PossibleAtomTypesForAtom::Finalize()
 	const core::Size n_e_in_bonds( GetMostStableType()->get_number_electrons_in_bonds());
 
 	// determine preferred hybridization
-	GasteigerAtomTypeData::HybridOrbitalType preferred_hybridization;
+	GasteigerAtomTypeData::HybridOrbitalType preferred_hybridization = GasteigerAtomTypeData::Unhybridized;
 
 	if( n_bonds == 1) // handle remaining cases with a single bond
 	{

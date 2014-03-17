@@ -161,8 +161,6 @@ settings = {
                     "Werror",
                     "Wno-long-long",
                     "Wno-strict-aliasing",
-                    # TEMP: GasteigerAtomTyper needs to be fixed.
-                    "Wno-uninitialized",
                 ],
             },
         },
