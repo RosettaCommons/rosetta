@@ -133,7 +133,7 @@ LayerDesignOperation::LayerDesignOperation( bool dsgn_core, bool dsgn_boundary, 
 	set_default_layer_residues();
 }
 
-LayerDesignOperation::LayerDesignOperation( LayerDesignOperation const & rval ):
+LayerDesignOperation::LayerDesignOperation( LayerDesignOperation const & rval ): core::pack::task::operation::TaskOperation(rval),
 	 add_helix_capping_( rval.add_helix_capping_ ),
 	 use_original_( rval.use_original_ ),
 	 repack_non_designed_residues_( rval.repack_non_designed_residues_ ),
