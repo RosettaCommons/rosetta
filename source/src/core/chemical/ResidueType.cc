@@ -62,6 +62,7 @@
 /// @author
 /// Phil Bradley
 /// Steven Combs - these comments
+/// Vikram K. Mulligan - properties for D-, beta- and other noncanonicals
 ////////////////////////////////////////////////////////////////////////
 
 // Unit headers
@@ -161,6 +162,10 @@ ResidueType::ResidueType(
 		ncaa_rotlib_n_rots_( 0 ),
 		is_polymer_( false ),
 		is_protein_( false ),
+		is_alpha_aa_(false),
+		is_beta_aa_(false),
+		is_l_aa_(false),
+		is_d_aa_(false),
 		is_charged_( false ),
 		is_polar_( false ),
 		has_sc_orbitals_(false),
@@ -186,6 +191,7 @@ ResidueType::ResidueType(
 		is_adduct_( false ),
 		aa_( aa_unk ),
 		rotamer_aa_( aa_unk ),
+		backbone_aa_( aa_unk ),
 		name_(),
 		name3_(),
 		name1_(),
@@ -280,6 +286,10 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		properties_(residue_type.properties_),
 		is_polymer_( residue_type.is_polymer_ ),
 		is_protein_( residue_type.is_protein_ ),
+		is_alpha_aa_( residue_type.is_alpha_aa_),
+		is_beta_aa_( residue_type.is_beta_aa_),
+		is_l_aa_( residue_type.is_l_aa_),
+		is_d_aa_( residue_type.is_d_aa_),
 		is_charged_( residue_type.is_charged_ ),
 		is_polar_( residue_type.is_polar_ ),
 		has_sc_orbitals_(residue_type.has_sc_orbitals_),
@@ -306,6 +316,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		string_properties_(residue_type.string_properties_),
 		aa_( residue_type.aa_ ),
 		rotamer_aa_( residue_type.rotamer_aa_ ),
+		backbone_aa_( residue_type.backbone_aa_ ),
 		name_( residue_type.name_),
 		name3_( residue_type.name3_),
 		name1_(residue_type.name1_),
@@ -1431,6 +1442,24 @@ ResidueType::add_property( std::string const & property )
 	} else if ( property == "PROTEIN" ) {
 		is_protein_ = true;
 		is_polymer_ = true;
+	} else if ( property == "ALPHA_AA" ) {
+		is_protein_ = true;
+		is_polymer_ = true;
+		is_alpha_aa_ = true;
+	} else if ( property == "BETA_AA" ) {
+		is_protein_ = true;
+		is_polymer_ = true;
+		is_beta_aa_ = true;
+	} else if ( property == "L_AA" ) {
+		is_protein_ = true;
+		is_polymer_ = true;
+		is_alpha_aa_ = true;
+		is_l_aa_ = true;
+	} else if ( property == "D_AA" ) {
+		is_protein_ = true;
+		is_polymer_ = true;
+		is_alpha_aa_ = true;
+		is_d_aa_ = true;
 	} else if ( property == "POLAR" ) {
 		is_polar_ = true;
 	} else if( property == "SC_ORBITALS"){
@@ -1532,6 +1561,14 @@ ResidueType::delete_property( std::string const & property )
 		is_polymer_ = false;
 	} else if ( property == "PROTEIN" ) {
 		is_protein_ = false;
+	} else if ( property == "ALPHA_AA" ) {
+		is_alpha_aa_ = false;
+	} else if ( property == "BETA_AA" ) {
+		is_beta_aa_ = false;
+	} else if ( property == "L_AA" ) {
+		is_l_aa_ = false;
+	} else if ( property == "D_AA" ) {
+		is_d_aa_ = false;
 	} else if ( property == "POLAR" ) {
 		is_polar_ = false;
 	}else if(property == "SC_ORBITALS"){
@@ -2208,6 +2245,19 @@ ResidueType::perform_checks()
 		checkspass=false;
 	} else if (!is_metalbinding() && metal_binding_atoms_.size()>0) {
 		msg << "A residue that has not been declared as a metal-binding residue has metal binding atoms listed in its params file (METAL_BINDING_ATOMS list without PROPERTIES METALBINDING)." << std::endl;
+		checkspass=false;
+	}
+
+	if(is_alpha_aa_ && is_beta_aa_) {
+		msg << "Error!  A residue type specifies that it is both an alpha and a beta amino acid in its params file." << std::endl;
+		checkspass=false;
+	}
+	if(is_l_aa_ && is_d_aa_) {
+		msg << "Error!  A residue type specifies that it is both an L-amino acid and a D-amino acid in its params file." << std::endl;
+		checkspass=false;
+	}
+	if( (backbone_aa_ != core::chemical::aa_unk) && !is_alpha_aa_) {
+		msg << "Error!  A residue type specifies a standard alpha amino acid to use as a template for backbone scoring (rama and p_aa_pp scoring functions) without specifying that it is itself an alpha amino acid (PROPERTIES ALPHA_AA)." << std::endl;
 		checkspass=false;
 	}
 

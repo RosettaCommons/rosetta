@@ -182,7 +182,7 @@ CartesianBondedEnergyCreator::score_types_for_method() const {
 std::string get_restag( core::chemical::ResidueType const & restype ) {
 	using namespace core::chemical;
 
-	if(core::chemical::is_D_aa(restype.aa())) {
+	if(core::chemical::is_canonical_D_aa(restype.aa())) {
 		std::string rsdname = restype.name();
 		if(rsdname.substr(0, rsdname.find("_p:")) == "DHIS_D") rsdname="HIS_D"; //If this is a DHIS_D, return HIS_D.
 		else rsdname=core::chemical::name_from_aa( core::chemical::get_L_equivalent( restype.aa() ) ); //Otherwise, for D-amino acids, return the L-equivalent.
@@ -1196,7 +1196,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 	ResidueCartBondedParametersOP restype_params = new ResidueCartBondedParameters;
 
 	std::string rsdname = rsd_type.name();
- 	if (core::chemical::is_D_aa( rsd_type.aa() ) ) { 	//Get the L-equivalent name if this is a D-amnio acid:
+ 	if (core::chemical::is_canonical_D_aa( rsd_type.aa() ) ) { 	//Get the L-equivalent name if this is a D-amnio acid:
 		if(rsdname.substr(0, rsdname.find("_p:")) == "DHIS_D") rsdname="HIS_D"; //If this is a DHIS_D, return HIS_D.
 		else rsdname = core::chemical::name_from_aa( core::chemical::get_L_equivalent(rsd_type.aa()) );
 	}
@@ -1358,8 +1358,8 @@ IdealParametersDatabase::create_parameters_for_restype(
 	//fpd protein only
 	if (rsd_type.is_protein()) {
 		/// backbone dependent bond lengths
-		bool is_nterm = ( (rsd_type.aa() <= chemical::num_canonical_aas || core::chemical::is_D_aa(rsd_type.aa())) && rsd_type.is_lower_terminus()); //Modified by VKM to check for D-amino acids
-		bool is_cterm = ( (rsd_type.aa() <= chemical::num_canonical_aas || core::chemical::is_D_aa(rsd_type.aa())) && rsd_type.is_upper_terminus()); //Modified by VKM to check for D-amnio acids
+		bool is_nterm = ( (rsd_type.aa() <= chemical::num_canonical_aas || core::chemical::is_canonical_D_aa(rsd_type.aa())) && rsd_type.is_lower_terminus()); //Modified by VKM to check for D-amino acids
+		bool is_cterm = ( (rsd_type.aa() <= chemical::num_canonical_aas || core::chemical::is_canonical_D_aa(rsd_type.aa())) && rsd_type.is_upper_terminus()); //Modified by VKM to check for D-amnio acids
 		for (int i=1; i<=5; ++i) {
 			if (i==1 && is_nterm) continue;
 			if (i==3 && rsd_type.aa() == core::chemical::aa_gly) continue;
@@ -1676,8 +1676,8 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 	if ( rsd1.aa() == core::chemical::aa_vrt) return;
 
 	//Multipliers for D-amino acids:
-	const core::Real d_multiplier1 = core::chemical::is_D_aa(rsd1.aa()) ? -1.0 : 1.0 ;
-	const core::Real d_multiplier2 = core::chemical::is_D_aa(rsd2.aa()) ? -1.0 : 1.0 ;
+	const core::Real d_multiplier1 = core::chemical::is_canonical_D_aa(rsd1.aa()) ? -1.0 : 1.0 ;
+	const core::Real d_multiplier2 = core::chemical::is_canonical_D_aa(rsd2.aa()) ? -1.0 : 1.0 ;
 
 	ResidueCartBondedParameters const & res1params = db_->parameters_for_restype( rsd1.type(), preproline );
 	ResidueCartBondedParameters const & res2params = db_->parameters_for_restype( rsd2.type(), false );
@@ -2031,8 +2031,8 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 	if ( rsd1.aa() == core::chemical::aa_vrt) return;
 
 	//Multipliers for D-amino acids:
-	const core::Real d_multiplier1 = core::chemical::is_D_aa(rsd1.aa()) ? -1.0 : 1.0 ;
-	const core::Real d_multiplier2 = core::chemical::is_D_aa(rsd2.aa()) ? -1.0 : 1.0 ;
+	const core::Real d_multiplier1 = core::chemical::is_canonical_D_aa(rsd1.aa()) ? -1.0 : 1.0 ;
+	const core::Real d_multiplier2 = core::chemical::is_canonical_D_aa(rsd2.aa()) ? -1.0 : 1.0 ;
 
 	ResidueCartBondedParameters const & rsd1params = db_->parameters_for_restype( rsd1.type(), preproline );
 	ResidueCartBondedParameters const & rsd2params = db_->parameters_for_restype( rsd2.type(), false );
@@ -2103,7 +2103,7 @@ CartesianBondedEnergy::eval_singleres_improper_torsion_energies(
 	using namespace core::chemical;
 	using numeric::constants::d::pi;
 
-	const core::Real d_multiplier = core::chemical::is_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
+	const core::Real d_multiplier = core::chemical::is_canonical_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
 
 	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & itps(
 		resparams.improper_torsion_parameters() );
@@ -2152,7 +2152,7 @@ CartesianBondedEnergy::eval_singleres_torsion_energies(
 	using namespace core::chemical;
 	using numeric::constants::d::pi;
 
-	const core::Real d_multiplier = core::chemical::is_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
+	const core::Real d_multiplier = core::chemical::is_canonical_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
 
 	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & tps( resparams.torsion_parameters() );
 
@@ -2305,7 +2305,7 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 ) const
 {
 	using namespace core::chemical;
-	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd2.aa())) && //Modified by VKM to check for D-amino acids
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa())) && //Modified by VKM to check for D-amino acids
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
@@ -2420,7 +2420,7 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 ) const
 {
 	using namespace core::chemical;
-	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd2.aa())) && //Modified by VKM -- check for D-amino acids
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa())) && //Modified by VKM -- check for D-amino acids
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
@@ -2539,7 +2539,7 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 ) const
 {
 	using namespace core::chemical;
-	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd2.aa())) && //Modified by VKM to check for D-amino acids
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa())) && //Modified by VKM to check for D-amino acids
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
@@ -2650,7 +2650,7 @@ CartesianBondedEnergy::eval_improper_torsions(
 
 	if ( !rsd1.is_protein() || !rsd2.is_protein()) return;
 
-	const core::Real d_multiplier2 = core::chemical::is_D_aa(rsd2.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
+	const core::Real d_multiplier2 = core::chemical::is_canonical_D_aa(rsd2.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
 
 	// backbone CA-Cprev-N-H
 	if ( (rsd2.aa() != aa_pro && rsd2.aa() != aa_dpr /*Not D- or L-proline*/) && rsd2params.bb_H_index() != 0 ) {
@@ -2796,7 +2796,7 @@ CartesianBondedEnergy::eval_singleres_torsion_derivatives(
 	using namespace core::chemical;
 	using numeric::constants::d::pi;
 
-	const core::Real d_multiplier = core::chemical::is_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
+	const core::Real d_multiplier = core::chemical::is_canonical_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
 
 	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & tps( resparams.torsion_parameters() );
 
@@ -2944,7 +2944,7 @@ CartesianBondedEnergy::eval_singleres_improper_torsions_derivatives(
 	using namespace core::chemical;
 	using numeric::constants::d::pi;
 
-	const core::Real d_multiplier = core::chemical::is_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
+	const core::Real d_multiplier = core::chemical::is_canonical_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
 
 	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & itps(
 		resparams.improper_torsion_parameters() );
@@ -3011,7 +3011,7 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 ) const
 {
 	using namespace core::chemical;
-	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd2.aa())) && //Modified by VKM to check for D-amino acids
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa())) && //Modified by VKM to check for D-amino acids
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
@@ -3131,7 +3131,7 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 ) const
 {
 	using namespace core::chemical;
-	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd2.aa())) && //Modified by VKM -- check for D-amino acids
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa())) && //Modified by VKM -- check for D-amino acids
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
@@ -3246,7 +3246,7 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 ) const
 {
 	using namespace core::chemical;
-	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd2.aa())) && //Modified to check for D-amino acids (VKM)
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa())) && //Modified to check for D-amino acids (VKM)
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
@@ -3343,8 +3343,8 @@ CartesianBondedEnergy::eval_improper_torsion_derivatives(
 	assert ( res1.seqpos() < res2.seqpos() );
 
 	//Multipliers for D-amino acids:
-	//const core::Real d_multiplier1 = core::chemical::is_D_aa(res1.aa()) ? -1.0 : 1.0 ;
-	const core::Real d_multiplier2 = core::chemical::is_D_aa(res2.aa()) ? -1.0 : 1.0 ;
+	//const core::Real d_multiplier1 = core::chemical::is_canonical_D_aa(res1.aa()) ? -1.0 : 1.0 ;
+	const core::Real d_multiplier2 = core::chemical::is_canonical_D_aa(res2.aa()) ? -1.0 : 1.0 ;
 
 	// backbone C-N-CA-H
 	if (!res1.is_protein() || !res2.is_protein()) return;

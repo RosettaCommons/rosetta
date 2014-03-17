@@ -51,8 +51,6 @@
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>

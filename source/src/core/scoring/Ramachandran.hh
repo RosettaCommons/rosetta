@@ -67,7 +67,7 @@ public:
 	virtual ~Ramachandran() ; // auto-removing definition from header{}
 
 	bool
-	is_d_aminoacid(
+	is_canonical_d_aminoacid(
 		AA const res_aa
 	) const;
 

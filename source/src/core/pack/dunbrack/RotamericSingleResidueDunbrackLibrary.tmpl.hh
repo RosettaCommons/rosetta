@@ -451,7 +451,7 @@ RotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv(
 	Real score = eval_rotameric_energy_deriv( rsd, scratch, true );
 
 	//Multiplier for D-amino acids:
-	const core::Real d_multiplier = (core::chemical::is_D_aa(rsd.aa()) ) ? -1.0 : 1.0;
+	const core::Real d_multiplier = (core::chemical::is_canonical_D_aa(rsd.aa()) ) ? -1.0 : 1.0;
 
 	if ( score != score ) { // NaN check
 		score = 0;
@@ -517,13 +517,13 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 {
 
 	//There's probably a better way to check this.
-	assert( rsd.aa() == aa() || ( core::chemical::is_D_aa(rsd.aa()) && core::chemical::get_L_equivalent( rsd.aa() ) == aa() ) );
+	assert( rsd.aa() == aa() || ( core::chemical::is_canonical_D_aa(rsd.aa()) && core::chemical::get_L_equivalent( rsd.aa() ) == aa() ) );
 
 	// Grab data from rsd
 	//Size const nbb ( rsd.mainchain_torsions().size() );
 	//Size const nchi( rsd.nchi() );
 	ChiVector chi ( rsd.chi() );
-	if(core::chemical::is_D_aa(rsd.aa())) {
+	if(core::chemical::is_canonical_D_aa(rsd.aa())) {
 		for(core::Size i=1; i<=chi.size(); i++) chi[i]*=-1.0; //Invert if we're dealing with a D-amino acid.
 	}
 	//Real phi( get_phi_from_rsd( rsd ) );
@@ -966,7 +966,7 @@ RotamericSingleResidueDunbrackLibrary< T >::interpolate_rotamers(
 	Real psi( get_psi_from_rsd( rsd ) );
 
 	//For D-amino acids, invert phi and psi:
-	if(core::chemical::is_D_aa(rsd.aa())) {
+	if(core::chemical::is_canonical_D_aa(rsd.aa())) {
 		phi*=-1.0;
 		psi*=-1.0;
 	}
@@ -1106,7 +1106,7 @@ RotamericSingleResidueDunbrackLibrary< T >::get_phi_from_rsd(
 	assert( rsd.is_protein() );
 	static Size const RSD_PHI_INDEX = 1; // this shouldn't be here
 	if ( rsd.is_lower_terminus() ) {
-		if(core::chemical::is_D_aa(rsd.aa())) return -1.0*parent::NEUTRAL_PHI;
+		if(core::chemical::is_canonical_D_aa(rsd.aa())) return -1.0*parent::NEUTRAL_PHI;
 		else return parent::NEUTRAL_PHI;
 	}
 	else return rsd.mainchain_torsion( RSD_PHI_INDEX );
@@ -1122,7 +1122,7 @@ RotamericSingleResidueDunbrackLibrary< T >::get_psi_from_rsd(
 	assert( rsd.is_protein() );
 	static Size const RSD_PSI_INDEX = 2; // this shouldn't be here
 	if ( rsd.is_upper_terminus() ) {
-		if(core::chemical::is_D_aa(rsd.aa())) return -1.0*parent::NEUTRAL_PSI;
+		if(core::chemical::is_canonical_D_aa(rsd.aa())) return -1.0*parent::NEUTRAL_PSI;
 		else return parent::NEUTRAL_PSI;
 	}
 	else return rsd.mainchain_torsion( RSD_PSI_INDEX );
@@ -1146,7 +1146,7 @@ RotamericSingleResidueDunbrackLibrary< T >::fill_rotamer_vector(
 
 	///Determine whether this is a D-amino acid:
 	core::Real d_multiplier = 1.0;
-	if(core::chemical::is_D_aa( existing_residue.aa() ) ) d_multiplier = -1.0;
+	if(core::chemical::is_canonical_D_aa( existing_residue.aa() ) ) d_multiplier = -1.0;
 
 	/// Save backbone interpolation data for reuse
 	Real phi( d_multiplier * get_phi_from_rsd( existing_residue ) ); //Inverted iff this is a D-amino acid.
@@ -2150,7 +2150,7 @@ RotamericSingleResidueDunbrackLibrary< T >::get_rotamer_from_chi_static(
 ) const
 {
 	core::chemical::AA aa2=aa();
-	if(core::chemical::is_D_aa(aa2)) aa2=core::chemical::get_L_equivalent(aa2);
+	if(core::chemical::is_canonical_D_aa(aa2)) aa2=core::chemical::get_L_equivalent(aa2);
 
 	if ( dun02() ) { rotamer_from_chi_02( chi, aa2, T, rot ); return; }
 

@@ -314,7 +314,7 @@ RotamerSet_::build_rotamers_for_concrete(
 		dunbrack::SingleResidueRotamerLibraryCAP rotlib = dunbrack::RotamerLibrary::get_instance().get_rsd_library( *concrete_residue ); //For D-amino acids, returns the rotamer library for the corresponding L-amino acid
 		if (rotlib) {
 			rotlib->fill_rotamer_vector( pose, scorefxn, task, packer_neighbor_graph, concrete_residue, existing_residue, extra_chi_steps, buried, suggested_rotamers);
-			if(core::chemical::is_D_aa( existing_residue.aa() ) && suggested_rotamers.size() > 0 ) { //If this is a D-amino acid, flip all the chi values in the suggested_rotamers vector
+			if(core::chemical::is_canonical_D_aa( existing_residue.aa() ) && suggested_rotamers.size() > 0 ) { //If this is a D-amino acid, flip all the chi values in the suggested_rotamers vector
 				for(core::Size i=1; i<=suggested_rotamers.size(); i++) {
 					if(suggested_rotamers[i]->nchi() > 0) {
 						for(core::Size j=1; j<=suggested_rotamers[i]->nchi(); j++) {

@@ -42,7 +42,7 @@ BOND  CD  1HD
 BOND  CD  2HD 
 CHI 1  N    CA   CB   CG 
 CHI 2  CA   CB   CG   CD
-PROPERTIES PROTEIN
+PROPERTIES PROTEIN BETA_AA
 NBR_ATOM CB
 # APL O to CB distance; max observed in ubiquitin
 NBR_RADIUS 3.4473

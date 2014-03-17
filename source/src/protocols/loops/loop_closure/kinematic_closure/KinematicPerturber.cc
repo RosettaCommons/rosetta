@@ -261,7 +261,7 @@ namespace protocols {
 								i++; //phi
 								if(kinmover_->is_beta_aminoacid(pose.residue(cur_res))) i++; //theta
 								i++; //psi
-								torsions[i++] = ( static_cast<int>( RG.uniform()*2 ) ? (core::chemical::is_D_aa(pose.residue(cur_res).aa()) ? -1.0 : 1.0 ) * OMEGA_MEAN : 0.0 );  // flip a coin -- either 179.8 (trans) or 0.0 (cis).  If it's a D-amino acid, it's multiplied by -1.0 if it's a D-Pro.
+								torsions[i++] = ( static_cast<int>( RG.uniform()*2 ) ? (core::chemical::is_canonical_D_aa(pose.residue(cur_res).aa()) ? -1.0 : 1.0 ) * OMEGA_MEAN : 0.0 );  // flip a coin -- either 179.8 (trans) or 0.0 (cis).  If it's a D-amino acid, it's multiplied by -1.0 if it's a D-Pro.
 								
 							} else {
 								i += kinmover_->count_bb_atoms_in_residue(pose, cur_res); //Increment i by the number of torsion angles in this residue.
@@ -287,7 +287,7 @@ namespace protocols {
 							if ( trans_prob < cis_prob_threshold ) {
 								torsions[i++] = 0; // there's very little variation -- currently not captured here at all
 							} else { // trans
-								torsions[i++] = (core::chemical::is_D_aa(pose.residue(cur_res).aa()) ? -1.0 : 1.0 ) * (OMEGA_MEAN + RG.gaussian() * OMEGA_STDDEV); //Multiply by -1 if the current residue is D
+								torsions[i++] = (core::chemical::is_canonical_D_aa(pose.residue(cur_res).aa()) ? -1.0 : 1.0 ) * (OMEGA_MEAN + RG.gaussian() * OMEGA_STDDEV); //Multiply by -1 if the current residue is D
 							}
 						}
 					}

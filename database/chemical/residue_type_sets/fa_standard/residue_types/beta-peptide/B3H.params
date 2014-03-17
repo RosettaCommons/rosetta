@@ -48,7 +48,7 @@ BOND  CE1  HE1
 BOND  NE2  HE2
 CHI 1  N    CA   CB   CG 
 CHI 2  CA   CB   CG   ND1
-PROPERTIES PROTEIN POLAR
+PROPERTIES PROTEIN BETA_AA POLAR
 NBR_ATOM CB
 # APL CB to sidechain heavy atom disance -- max observed on residue 74 of ubiquitin
 NBR_RADIUS 3.6718

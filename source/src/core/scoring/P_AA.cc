@@ -78,12 +78,10 @@ P_AA::~P_AA() {}
 /// @brief Returns true if passed a core::chemical::AA corresponding to a
 /// D-amino acid, and false otherwise.
 bool
-P_AA::is_d_aminoacid(
+P_AA::is_canonical_d_aminoacid(
 	core::chemical::AA const res_aa
 ) const {
-	using namespace core::chemical;
-	if(res_aa >= aa_dal && res_aa <= aa_dty) return true;
-	return false;
+	return core::chemical::is_canonical_D_aa(res_aa);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -94,28 +92,7 @@ core::chemical::AA
 P_AA::get_l_equivalent(
 	core::chemical::AA const d_aa
 ) const {
-	using namespace core::chemical;
-	if(d_aa==aa_dal) return aa_ala;
-	else if(d_aa==aa_dcs) return aa_cys;
-	else if(d_aa==aa_das) return aa_asp;
-	else if(d_aa==aa_dgu) return aa_glu;
-	else if(d_aa==aa_dph) return aa_phe;
-	else if(d_aa==aa_dhi) return aa_his;
-	else if(d_aa==aa_dil) return aa_ile;
-	else if(d_aa==aa_dly) return aa_lys;
-	else if(d_aa==aa_dle) return aa_leu;
-	else if(d_aa==aa_dme) return aa_met;
-	else if(d_aa==aa_dan) return aa_asn;
-	else if(d_aa==aa_dpr) return aa_pro;
-	else if(d_aa==aa_dgn) return aa_gln;
-	else if(d_aa==aa_dar) return aa_arg;
-	else if(d_aa==aa_dse) return aa_ser;
-	else if(d_aa==aa_dth) return aa_thr;
-	else if(d_aa==aa_dva) return aa_val;
-	else if(d_aa==aa_dtr) return aa_trp;
-	else if(d_aa==aa_dty) return aa_tyr;
-
-	return aa_unk;
+		return core::chemical::get_L_equivalent(d_aa);
 }
 
 /// @brief Read the amino acid probability file into P_AA
@@ -316,17 +293,17 @@ P_AA::read_P_AA_pp()
 
 
 /// @brief Probability energies from P(aa|phi,psi)
-/// This function handles L- and D- canonical amino acids.
+/// This function handles L- and D- canonical amino acids, as well as noncanonical alpha amino acids templated on canonical alpha amino acids.
 Energy
 P_AA::P_AA_pp_energy( conformation::Residue const & res ) const
 {
 	using namespace core::chemical;
 	using numeric::conversions::degrees;
 
-	AA const aa( is_d_aminoacid(res.aa()) ? get_l_equivalent(res.aa()) : res.aa() ); //This handles D- canonical amino acids, but need to decide if/how/where to exclude NCAAs
-	if ( aa > chemical::num_canonical_aas ) return 0.0;
+	AA const aa( is_canonical_d_aminoacid(res.aa()) ? get_l_equivalent(res.aa()) : (res.backbone_aa()==aa_unk ? res.aa() : res.backbone_aa()) ); //This handles D-canonical amino acids, as well as noncanonicals templated on an L-canonical.
+	if ( aa > chemical::num_canonical_aas ) return 0.0; //Excludes noncanonicals that aren't templated on a canonical.
 
-	const core::Real d_multiplier = is_d_aminoacid(res.aa()) ? -1.0 : 1.0 ; //A multiplier that's -1 for D-amino acids and 1 for L-amino acids, used to invert phi and psi for D.
+	const core::Real d_multiplier = is_canonical_d_aminoacid(res.aa()) ? -1.0 : 1.0 ; //A multiplier that's -1 for D-amino acids and 1 for L-amino acids, used to invert phi and psi for D.
 
 	if ( ! res.is_terminus()  && ! res.is_virtual_residue()  )//ToDo Also exclude chainbreaks
 	{ // Probabilities for this amino acid are present in files and it is not a terminus
@@ -355,7 +332,7 @@ P_AA::P_AA_pp_energy( chemical::AA const aa, Angle const phi, Angle const psi ) 
 {
 	using numeric::interpolation::periodic_range::half::bilinearly_interpolated;
 
-	const chemical::AA aa2 = (is_d_aminoacid(aa) ? get_l_equivalent(aa) : aa );
+	const chemical::AA aa2 = (is_canonical_d_aminoacid(aa) ? get_l_equivalent(aa) : aa );
 
 	if ( aa2 <= chemical::num_canonical_aas ) {
 		// Probabilities for this amino acid are present in files
@@ -386,11 +363,10 @@ P_AA::get_Paa_pp_deriv(
 	using numeric::conversions::degrees;
 	using numeric::interpolation::periodic_range::half::bilinearly_interpolated;
 
-	AA const aa( is_d_aminoacid(res.aa()) ? get_l_equivalent(res.aa()) : res.aa() ); //This handles D- canonical amino acids, but need to decide if/how/where to exclude NCAAs
-	if ( aa > chemical::num_canonical_aas )
-		return 0.0;
+	AA const aa( is_canonical_d_aminoacid(res.aa()) ? get_l_equivalent(res.aa()) : (res.backbone_aa()==aa_unk ? res.aa() : res.backbone_aa()) ); //This handles D-canonical amino acids, as well as noncanonicals templated on an L-canonical.
+	if ( aa > chemical::num_canonical_aas ) return 0.0; //Excludes non-templated noncanonicals.
 
-	const core::Real d_multiplier = is_d_aminoacid(res.aa()) ? -1.0 : 1.0 ; //A multiplier that's -1 for D-amino acids and 1 for L-amino acids, used to inverte phi and psi for D.
+	const core::Real d_multiplier = is_canonical_d_aminoacid(res.aa()) ? -1.0 : 1.0 ; //A multiplier that's -1 for D-amino acids and 1 for L-amino acids, used to inverte phi and psi for D.
 
 	/// APL ARGH!!! MAGIC NUMBERS!!!
 	Size const phi_id = 1;
@@ -412,7 +388,7 @@ P_AA::get_Paa_pp_deriv(
 			default :
 				return EnergyDerivative( 0.0 );
 			}
-		}else {
+		} else {
 			if ( basic::options::option[ basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift ] ) { // the format of p_aa_pp changed from using i*10+5 to i*10 as grid
 				Probability const interp_p = numeric::interpolation::periodic_range::full::bilinearly_interpolated( phi, psi, Angle( 10.0 ), 36, P_AA_pp_[ aa ], dp_dphi, dp_dpsi );
 				//Energy Paa_ppE = -std::log( interp_p / P_AA_[ aa ] );
@@ -450,7 +426,7 @@ P_AA::P_AA_energy( conformation::Residue const & res ) const {
 
 	using namespace core::chemical;
 
-	AA const aa( is_d_aminoacid(res.aa()) ? get_l_equivalent(res.aa()) : res.aa() ); //This handles D- canonical amino acids, but need to decide if/how/where to exclude NCAAs
+	AA const aa( is_canonical_d_aminoacid(res.aa()) ? get_l_equivalent(res.aa()) : (res.backbone_aa()==aa_unk ? res.aa() : res.backbone_aa()) ); //This handles D-canonical amino acids, as well as noncanonicals templated on an L-canonical.
 	if ( aa > chemical::num_canonical_aas )
 		return 0.0;
 

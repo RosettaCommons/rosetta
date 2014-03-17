@@ -1289,6 +1289,18 @@ public:
 	/// @brief is protein?
 	bool is_protein() const { return is_protein_; }
 
+	/// @brief is this an alpha amino acid?
+	bool is_alpha_aa() const { return is_alpha_aa_; }
+
+	/// @brief is this a beta amino acid?
+	bool is_beta_aa() const { return is_beta_aa_; }
+
+	/// @brief is this a d-amino acid?
+	bool is_d_aa() const { return is_d_aa_; }
+
+  /// @brief is this an l-amino acid?
+	bool is_l_aa() const { return is_l_aa_; }
+
 	/// @brief is DNA?
 	bool is_DNA() const{ return is_DNA_; }
 
@@ -1446,6 +1458,13 @@ public:
 		rotamer_aa_ = aa_from_name( type );
 	}
 
+	/// @brief AA to use for backbone scoring
+	void
+	backbone_aa( std::string const & type )
+	{
+		backbone_aa_ = aa_from_name( type );
+	}
+
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -1538,12 +1557,13 @@ public:
 
 
 	/// @brief our traditional residue type, if any
-	/**
-		 Used for knowledge-based scores, dunbrack, etc.
-		 could be "aa_unk"
-
-		 Not clear what AA is -- maybe an int, maybe an enum, maybe a "key"
-	 **/
+	///
+	/// @details Used for knowledge-based scores, dunbrack, etc.
+	/// could be "aa_unk".
+  ///
+	/// AA is an enum.  There are values for the 20 standard amino acids, the
+	/// 19 canonical D-amino acids, common beta-amino acids and nucleic acids,
+	/// and aa_unk as a general catch-all.
 	AA const &
 	aa() const
 	{
@@ -1556,6 +1576,15 @@ public:
 		if(rotamer_aa_==aa_unk) return aa_;
 		return rotamer_aa_;
 	}
+
+	/// @brief Returns the amino acid type to be used for backbone scoring (rama and p_aa_pp).
+	AA const &
+	backbone_aa() const
+	{
+		if(backbone_aa_==aa_unk) return aa_;
+		return backbone_aa_;
+	}
+
 
 	void set_RotamerLibraryName( std::string const & filename );
 
@@ -2081,6 +2110,10 @@ private:
 	utility::vector1< std::string > properties_;
 	bool is_polymer_;
 	bool is_protein_;
+	bool is_alpha_aa_;
+	bool is_beta_aa_;
+	bool is_l_aa_;
+	bool is_d_aa_;
 	bool is_charged_;
 	bool is_polar_;
 	bool has_sc_orbitals_;
@@ -2119,7 +2152,8 @@ private:
 	// features
 
 	// standard rosetta aa-type for knowledge-based potentials, may be aa_unk
-	AA aa_, rotamer_aa_;
+	// aa_ = THIS residue's aa-type; rotamer_aa_ = the aa-type on which rotamers will be based; backbone_aa_ = the aa-type on which the backbone scoring (rama, p_aa_pp) will be based.
+	AA aa_, rotamer_aa_, backbone_aa_;
 
 	// unique residue type id
 	std::string name_;

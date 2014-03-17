@@ -538,7 +538,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 				if( db_len.size() >= (i+1) ) db_len[i+1]=idl_beta_CA_CM_;
 				if( db_len.size() >= (i+2) ) db_len[i+2]=idl_beta_CM_C_;
 				if( db_len.size() >= (i+3) ) db_len[i+3]=idl_beta_C_N_;
-				if( dt_ang.size() >= (i+3) ) dt_ang[i+3]=( core::chemical::is_D_aa(pose.residue(res).aa()) ? -1.0 : 1.0 ) * OMEGA_MEAN_;				
+				if( dt_ang.size() >= (i+3) ) dt_ang[i+3]=( core::chemical::is_canonical_D_aa(pose.residue(res).aa()) ? -1.0 : 1.0 ) * OMEGA_MEAN_;				
 			} else { //Default case: alpha-amino acid residue
 				if( db_ang.size() >= (i) )   db_ang[i]=idl_C_N_CA_;
 				if( db_ang.size() >= (i+1) ) db_ang[i+1]=idl_N_CA_C_;
@@ -559,7 +559,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 		for ( Size i= start_res_; i<= end_res_; ++i ) {
 			conformation::idealize_position( i, pose.conformation() ); // this is coupled to above values!
 			if( is_beta_aminoacid(pose.residue(i))) pose.conformation().set_torsion( id::TorsionID( i, id::BB, 4 ), OMEGA_MEAN_ ); //set_omega doesn't work properly for beta-amino acids (it sets the third torsion rather than the fourth).
-			else if (core::chemical::is_D_aa(pose.residue(i).aa())) pose.set_omega(i, -1.0*OMEGA_MEAN_);
+			else if (core::chemical::is_canonical_D_aa(pose.residue(i).aa())) pose.set_omega(i, -1.0*OMEGA_MEAN_);
 			else pose.set_omega(i, OMEGA_MEAN_); //Default case for alpha-amino acids -- set the torsion angle with set_omega.
 		}
 

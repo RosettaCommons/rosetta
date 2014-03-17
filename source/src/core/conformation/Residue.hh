@@ -1849,6 +1849,14 @@ public:
 		return rsd_type_.aa();
 	}
 
+	/// @brief Returns this residue's backbone_aa type, if any.
+  /// @details  This is used for noncanonical alpha-amino acids that are templated on canonicals.
+  /// For example, 4,5-dihydroxyisoleucine uses the ramachandran and p_aa_pp scoring of isoleucine.
+	chemical::AA const &
+	backbone_aa() const
+	{
+		return rsd_type_.backbone_aa();
+	}
 
 	/// @brief Returns the internal coordinates of this residue's atom with index number  <atm>
 	chemical::AtomICoor const &

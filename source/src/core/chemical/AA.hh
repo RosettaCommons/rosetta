@@ -150,10 +150,12 @@ aa_from_name( std::string const & name );
 
 //////////////////////////////////////////////////////////
 /// @brief Give an enum type, return true if and only if
-/// it is a D-amino acid.
+/// it is a D-amino acid that is the mirror image of a
+/// canonical alpha-L-amino acid.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 //////////////////////////////////////////////////////////
 bool
-is_D_aa( AA aa );
+is_canonical_D_aa( AA aa );
 
 //////////////////////////////////////////////////////////
 /// @brief Given an enum type for a D-amino acid with a

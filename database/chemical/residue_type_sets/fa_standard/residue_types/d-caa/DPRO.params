@@ -40,14 +40,14 @@ CUT_BOND CD N
 CHI 1  N    CA   CB   CG 
 CHI 2  CA   CB   CG   CD
 CHI 3  CB   CG   CD   NV
-PROPERTIES PROTEIN
+PROPERTIES PROTEIN ALPHA_AA D_AA
 NBR_ATOM CB
+# APL Declare that the NV atom should shadow the N atom to the cart-bonded term.
+VIRTUAL_SHADOW NV N
 # APL O to CB distance; max observed in ubiquitin
 NBR_RADIUS 3.4473
 FIRST_SIDECHAIN_ATOM CB
 ACT_COORD_ATOMS CB CG CD END
-#NCAA_ROTLIB_PATH dpro.rotlib
-#NCAA_ROTLIB_NUM_ROTAMER_BINS 3 2 1 1
 ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  
 ICOOR_INTERNAL    CA     0.000000  180.000000    1.458002   N     CA    C  
 ICOOR_INTERNAL    C      0.000000   68.799965    1.523259   CA    N     C  

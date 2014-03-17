@@ -68,8 +68,9 @@ public:
 	virtual ~P_AA();
 private:
 
+	/// @brief Gets whether this amino acid enum type is a canonical D-amino acid.
 	bool
-	is_d_aminoacid(
+	is_canonical_d_aminoacid(
 		core::chemical::AA const res_aa
 	) const;
 

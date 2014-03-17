@@ -288,6 +288,7 @@ residue_types/l-ncaa/NVL.params
 #residue_types/l-ncaa/3-methyl-phenylalanine.params
 #residue_types/l-ncaa/4.5-dehydro-leucine.params
 #residue_types/l-ncaa/4.5-dehydro-lysine.params
+#residue_types/l-ncaa/4.5-dihydroxy-isoleucine.params
 #residue_types/l-ncaa/4-aminomethyl-phenylalanine.params
 #residue_types/l-ncaa/4-amino-piperidine-4-carboxylic-acid_boat1.params
 #residue_types/l-ncaa/4-amino-piperidine-4-carboxylic-acid_boat2.params

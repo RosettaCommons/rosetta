@@ -273,8 +273,12 @@ aa_from_name( std::string const & name )
 	return iter->second;
 }
 
+/// @brief Give an enum type, return true if and only if
+/// it is a D-amino acid that is the mirror image of a
+/// canonical alpha-L-amino acid.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 bool
-is_D_aa( AA aa )
+is_canonical_D_aa( AA aa )
 {
 	if(aa>=first_D_aa && aa<=last_D_aa) return true;
   return false;

@@ -354,6 +354,13 @@ read_topology_file(
 /// sake of building rotamers.  E.g., "ROTAMER_AA SER" No examples
 /// currently found in the database (10/13).
 ///
+/// BACKBONE_AA:
+/// Sets the "backbone_aa" for a particular residue, which can be used
+/// to template the backbone scoring (rama and p_aa_pp terms).  For example,
+/// "ROTAMER_AA ILE" in the non-canonical 4,5-dihydroxyisoleucine params file
+/// tells Rosetta to use isoleucine's ramachandran map and p_aa_pp scoring for
+/// this noncanonical.
+///
 /// STRING_PROPERTY:
 /// Stores an arbitrary string value with a given string key.
 /// No example can be currently found in the database (10/13).
@@ -666,6 +673,10 @@ read_topology_file(
 		} else if ( tag == "ROTAMER_AA" ) {
 			l >> tag;
 			rsd->rotamer_aa( tag );
+
+		} else if ( tag == "BACKBONE_AA" ) {
+			l >> tag;
+			rsd->backbone_aa( tag );
 
 		} else if ( tag == "NAME" ) {
 			l >> tag;
@@ -1013,7 +1024,12 @@ write_topology_file(
 	// now all the properties
 	out << "PROPERTIES";
 	if (rsd.is_protein() ) { out << " PROTEIN"; }
+	if (rsd.is_alpha_aa() ) {out << " ALPHA_AA"; }
+	if (rsd.is_beta_aa() ) {out << " BETA_AA"; }
+	if (rsd.is_l_aa() ) {out << " L_AA"; }
+	if (rsd.is_d_aa() ) {out << " D_AA"; }
 	if (rsd.is_metalbinding()) { out << " METALBINDING"; }
+	if (rsd.is_metal()) { out << " METAL"; }
 	if (rsd.is_DNA() ) { out << " DNA"; }
 	if (rsd.is_RNA() ) { out << " RNA"; }
 	if (rsd.is_polar() ) { out << " POLAR"; }

@@ -10,6 +10,7 @@
 /// @file   core/scoring/Ramachandran.cc
 /// @brief  Ramachandran potential class implementation
 /// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
+/// @author Modified by Vikram K. Mulligan (vmullig@uw.edu) for D-amino acids, noncanonical alpha-amino acids, etc.
 
 // Unit Headers
 #include <core/scoring/Ramachandran.hh>
@@ -21,6 +22,7 @@
 // Project Headers
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueConnection.hh>
+#include <core/chemical/AA.hh>
 #include <core/pose/Pose.hh>
 #include <basic/database/open.hh>
 #include <basic/options/option.hh>
@@ -97,45 +99,24 @@ Ramachandran::Ramachandran(
 
 /// @brief Returns true if passed a core::chemical::AA corresponding to a
 /// D-amino acid, and false otherwise.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 bool
-Ramachandran::is_d_aminoacid(
+Ramachandran::is_canonical_d_aminoacid(
 	AA const res_aa
 ) const {
-	using namespace core::chemical;
-	if(res_aa >= aa_dal && res_aa <= aa_dty) return true;
-	return false;
+	return core::chemical::is_canonical_D_aa(res_aa);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
 /// @brief When passed a d-amino acid, returns the l-equivalent.  Returns
 /// aa_unk otherwise.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
 core::chemical::AA
 Ramachandran::get_l_equivalent(
 	AA const d_aa
 ) const {
-	using namespace core::chemical;
-	if(d_aa==aa_dal) return aa_ala;
-	else if(d_aa==aa_dcs) return aa_cys;
-	else if(d_aa==aa_das) return aa_asp;
-	else if(d_aa==aa_dgu) return aa_glu;
-	else if(d_aa==aa_dph) return aa_phe;
-	else if(d_aa==aa_dhi) return aa_his;
-	else if(d_aa==aa_dil) return aa_ile;
-	else if(d_aa==aa_dly) return aa_lys;
-	else if(d_aa==aa_dle) return aa_leu;
-	else if(d_aa==aa_dme) return aa_met;
-	else if(d_aa==aa_dan) return aa_asn;
-	else if(d_aa==aa_dpr) return aa_pro;
-	else if(d_aa==aa_dgn) return aa_gln;
-	else if(d_aa==aa_dar) return aa_arg;
-	else if(d_aa==aa_dse) return aa_ser;
-	else if(d_aa==aa_dth) return aa_thr;
-	else if(d_aa==aa_dva) return aa_val;
-	else if(d_aa==aa_dtr) return aa_trp;
-	else if(d_aa==aa_dty) return aa_tyr;
-
-	return aa_unk;
+	return core::chemical::get_L_equivalent(d_aa);
 }
 
 
@@ -369,7 +350,7 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 
 		// Use the equivalent L-amino acid if this is a D-amino acid.
 		AA res_aa2 = res_aa;
-		if (is_d_aminoacid(res_aa)) res_aa2=get_l_equivalent(res_aa);
+		if (is_canonical_d_aminoacid(res_aa)) res_aa2=get_l_equivalent(res_aa);
 
 		Size n_torsions = rama_sampling_table_[res_aa2].size();
 		Size index = numeric::random::random_range(1, n_torsions);
@@ -387,7 +368,7 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 		psi = rama_sampling_table_[res_aa2][index][2] + numeric::random::uniform() * binw_;
 
 		// Invert phi and psi if this is a D-amino acid.
-		if (is_d_aminoacid(res_aa)) {
+		if (is_canonical_d_aminoacid(res_aa)) {
 			phi=360.0-phi;
 			psi=360.0-psi;
 		}
@@ -590,7 +571,10 @@ Ramachandran::eval_rama_score_residue_nonstandard_connection(
 
 	//printf("rsd %lu phi=%.3f psi=%.3f\n", res.seqpos(), phi, psi); fflush(stdout); //DELETE ME
 
-	eval_rama_score_residue( res.aa(), phi, psi, rama, drama_dphi, drama_dpsi );
+	core::chemical::AA ref_aa = res.aa();
+	if(res.backbone_aa() != core::chemical::aa_unk) ref_aa = res.backbone_aa(); //If this is a noncanonical that specifies a canonical to use as a Rama template, use the template.
+
+	eval_rama_score_residue( ref_aa, phi, psi, rama, drama_dphi, drama_dpsi );
 
 	return;
 }
@@ -637,7 +621,10 @@ Ramachandran::eval_rama_score_residue(
 	if(is_normally_connected(rsd)) { //If this residue is conventionally connected
 		phi = nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1));
 		psi = nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2));
-		eval_rama_score_residue( rsd.aa(), phi, psi, rama, drama_dphi, drama_dpsi );
+		core::chemical::AA ref_aa = rsd.aa();
+		if(rsd.backbone_aa() != core::chemical::aa_unk) ref_aa = rsd.backbone_aa(); //If this is a noncanonical that specifies a canonical to use as a Rama template, use the template.
+
+		eval_rama_score_residue( ref_aa, phi, psi, rama, drama_dphi, drama_dpsi );
 	} else { //If this residue is unconventionally connected (should be handled elsewhere)
 		//printf("Residue %lu: THIS SHOULD NEVER OCCUR!\n", rsd.seqpos()); fflush(stdout); //DELETE ME -- FOR TESTING ONLY
 		rama = 0.0;
@@ -729,7 +716,7 @@ Ramachandran::eval_rama_score_residue(
 	core::Real psi2 = psi;
 	core::Real d_multiplier=1.0; //A multiplier for derivatives: 1.0 for L-amino acids, -1.0 for D-amino acids.
 
-	if(is_d_aminoacid(res_aa)) { //If this is a D-amino acid, invert phi and psi and use the corresponding L-amino acid for the calculation
+	if(is_canonical_d_aminoacid(res_aa)) { //If this is a D-amino acid, invert phi and psi and use the corresponding L-amino acid for the calculation
 		res_aa2 = get_l_equivalent(res_aa);
 		phi2 = -phi;
 		psi2 = -psi;
@@ -742,7 +729,7 @@ Ramachandran::eval_rama_score_residue(
 		drama_dphi = d_multiplier*rama_energy_splines_[ res_aa2 ].dFdx(phi2,psi2);
 		drama_dpsi = d_multiplier*rama_energy_splines_[ res_aa2 ].dFdy(phi2,psi2);
 		//printf("drama_dphi=%.8f\tdrama_dpsi=%.8f\n", drama_dphi, drama_dpsi); //DELETE ME!
-		//if(is_d_aminoacid(res_aa)) { printf("rama = %.4f\n", rama); fflush(stdout); } //DELETE ME!
+		//if(is_canonical_d_aminoacid(res_aa)) { printf("rama = %.4f\n", rama); fflush(stdout); } //DELETE ME!
 		return; // temp -- just stop right here
 	} else {
 
