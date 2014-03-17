@@ -518,42 +518,6 @@ remove_upper_terminus_type_from_pose_residue(
 	Size const seqpos
 	);
 
-/// @brief: Adds an arbitrary covalent linkage between two atoms (resA_At and resB_At) in two residues (at positions resA_pos and resB_pos).
-/// @details:  This is useful for adding covalent linkages between metal-binding side-chains and metal atoms.  This code was shamelessly
-/// stolen from Florian's EnzConstraintParameters.cc in protocols/toolbox/match_enzdes_utils, and was modified to permit deletion of
-/// unnecessary protons.  NOTE: THIS CODE MODIFIES THE RESIDUE TYPE LIST, AND IS CURRENTLY NOT THREADSAFE.
-/// @author:  Vikram K. Mulligan (vmullig@uw.edu), Florian Richter (flosopher@gmail.com)
-void
-add_covalent_linkage(
-	core::pose::Pose & pose,
-	Size const resA_pos,
-	Size const resB_pos,
-	Size const resA_At,
-	Size const resB_At,
-	bool const remove_hydrogens //Should extraneous hydrogens on the bonding atoms be removed? 
-);
-
-/// @brief: This is a helper function for the add_covalent_linkage function.  You probably don't want to call it directly, unless you
-/// really know what you're doing.
-/// @details:  This is useful for adding covalent linkages between metal-binding side-chains and metal atoms.  This code was shamelessly
-/// stolen from Florian's EnzConstraintParameters.cc (colourful comments and all) in protocols/toolbox/match_enzdes_utils, and was
-/// modified to permit deletion of unnecessary protons and to remove EnzDes-specific stuff.  NOTE: THIS CODE MODIFIES THE RESIDUE TYPE
-/// LIST, AND IS CURRENTLY NOT THREADSAFE.
-/// @author:  Vikram K. Mulligan (vmullig@uw.edu), Florian Richter (flosopher@gmail.com)
-void
-add_covalent_linkage_helper(
-	core::pose::Pose & pose,
-	//EnzCstTemplateResOP template_res,
-	core::Size const res_pos,
-	core::Size const Atpos,
-	numeric::xyzVector < core::Real > const partner_xyz, //Coordinates of the atom to which this will be bonded
-	//core::Real itorsion,
-	//core::Real iangle,
-	//core::Real idis,
- 	std::string & res_varname,
-	bool const remove_hydrogens
- );
-
 /// @brief set up a map to look up TORSION_ID by DOF_ID (Map[DOF_ID] = TORISION_ID)
 void
 setup_dof_to_torsion_map(

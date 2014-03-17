@@ -8,12 +8,12 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/pose/metalloproteins/util.cc
-/// @brief  Pose class utilities for working with metalloproteins.
+/// @brief  Utilities for working with metalloproteins.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 
 // Unit header
-#include <core/pose/metalloproteins/util.hh>
+#include <core/util/metalloproteins_util.hh>
 
 // Package headers
 #include <core/pose/copydofs/CopyDofs.hh>
@@ -95,10 +95,317 @@
 
 
 namespace core {
-namespace pose {
-namespace metalloproteins {
+namespace util {
 
-	static basic::Tracer TR("core.pose.util.metalloproteins");
+	static basic::Tracer TR("core.util.metalloproteins_util");
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief: Adds an arbitrary covalent linkage between two atoms (resA_At and resB_At) in two residues (at positions resA_pos and resB_pos).
+/// @details:  This is useful for adding covalent linkages between metal-binding side-chains and metal atoms.  This code was shamelessly
+/// stolen from Florian's EnzConstraintParameters.cc in protocols/toolbox/match_enzdes_utils, and was modified to permit deletion of
+/// unnecessary protons.  NOTE: THIS CODE MODIFIES THE RESIDUE TYPE LIST, AND IS CURRENTLY NOT THREADSAFE.
+/// @author:  Vikram K. Mulligan (vmullig@uw.edu), Florian Richter (flosopher@gmail.com)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+add_covalent_linkage(
+	core::pose::Pose & pose,
+	Size const resA_pos,
+	Size const resB_pos,
+	Size const resA_At,
+	Size const resB_At,
+	bool const remove_hydrogens //Should extraneous hydrogens on the bonding atoms be removed? 
+)
+{
+	using namespace core::chemical;
+
+	TR << "Adding covalent linkage between residue " << resA_pos << "'s " << pose.residue(resA_pos).atom_name(resA_At).c_str() <<
+			" atom and residue " << resB_pos << "'s " << pose.residue(resB_pos).atom_name(resB_At).c_str() << " atom." << std::endl;
+
+	//if(basic::options::option[basic::options::OptionKeys::enzdes::enz_debug] ){
+	//	pose.dump_pdb("bef_resmod.pdb");
+	//}
+	std::string resA_base = residue_type_base_name( pose.residue_type(resA_pos) );
+	std::string resB_base = residue_type_base_name( pose.residue_type(resB_pos) );
+	std::string resA_var, resB_var;
+
+	//std::string resA_type_set = pose.residue(resA_pos).residue_type_set().name();
+	//std::string resB_type_set = pose.residue(resB_pos).residue_type_set().name();
+
+	add_covalent_linkage_helper( pose, /*resA_,*/ resA_pos, resA_At, pose.residue(resB_pos).xyz(resB_At), /*core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( resA_type_set ), ntorsionA_, nangleA_, disAB_,*/ resA_var, remove_hydrogens);
+	add_covalent_linkage_helper( pose, /*resB_,*/ resB_pos, resB_At, pose.residue(resA_pos).xyz(resA_At), /*core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( resB_type_set ), ntorsionB_, nangleB_, disAB_,*/ resB_var, remove_hydrogens);
+
+	//if(basic::options::option[basic::options::OptionKeys::enzdes::enz_debug] ){
+	//	pose.dump_pdb("after_resmod.pdb");
+	//}
+
+	std::string resA_atomname = pose.residue( resA_pos ).atom_name( resA_At /*(resA_->get_template_atoms_at_pos(pose, resA_pos))->atom1_[resA_At].atomno() */);
+	std::string resB_atomname = pose.residue( resB_pos ).atom_name( resB_At /*(resB_->get_template_atoms_at_pos(pose, resB_pos))->atom1_[resB_At].atomno() */);
+
+	//TR.Debug << "Adding chemical bond between " << pose.residue( resA_pos ).name() << " " << (resA_->get_template_atoms_at_pos(pose, resA_pos))->atom1_[resA_At].atomno() <<  " "<< resA_pos << " " << resA_atomname << " and "
+	//				 << pose.residue( resB_pos ).name() << " " << resB_pos << " " << (resB_->get_template_atoms_at_pos(pose, resB_pos))->atom1_[resB_At].atomno() << " " << resB_atomname << std::endl;
+
+	pose.conformation().declare_chemical_bond(
+		resA_pos, resA_atomname,
+		resB_pos, resB_atomname
+	);
+
+	//EnzdesCstParamCacheOP param_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block_ ) );
+	//param_cache->covalent_connections_.push_back( new CovalentConnectionReplaceInfo(resA_base, resB_base, resA_var, resB_var, resA_pos, resB_pos, restype_set_ ) ); //new
+
+} //add_covalent_linkage
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief: This is a helper function for the add_covalent_linkage function.  You probably don't want to call it directly, unless you
+/// really know what you're doing.
+/// @details:  This is useful for adding covalent linkages between metal-binding side-chains and metal atoms.  This code was shamelessly
+/// stolen from Florian's EnzConstraintParameters.cc (colourful comments and all) in protocols/toolbox/match_enzdes_utils, and was
+/// modified to permit deletion of unnecessary protons and to remove EnzDes-specific stuff.  NOTE: THIS CODE MODIFIES THE RESIDUE TYPE
+/// LIST, AND IS CURRENTLY NOT THREADSAFE.
+/// @author:  Vikram K. Mulligan (vmullig@uw.edu), Florian Richter (flosopher@gmail.com)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+add_covalent_linkage_helper(
+	core::pose::Pose & pose,
+	//EnzCstTemplateResOP template_res,
+	core::Size const res_pos,
+	core::Size const Atpos,
+	numeric::xyzVector < core::Real > const partner_xyz, //Coordinates of the atom to which this will be bonded
+	//core::Real itorsion,
+	//core::Real iangle,
+	//core::Real idis,
+ 	std::string & res_varname,
+	bool const remove_hydrogens
+ )
+{
+	//std::cout << "APL DEBUG EnzConstraintParameters.cc::make_constraint_covalent_helper begin" << std::endl;
+
+	using namespace core::chemical;
+	using namespace core::pack::dunbrack;
+
+	std::string res_atom = pose.residue(res_pos).atom_name( Atpos /*(template_res->get_template_atoms_at_pos(pose, res_pos) )->atom1_[Atpos].atomno()*/ );
+	core::Size res_atom_parent_index = pose.residue(res_pos).atom_base(Atpos);
+	core::Size res_atom_parent_parent_index = pose.residue(res_pos).atom_base(res_atom_parent_index);
+	std::string res_atom_parent1 = pose.residue(res_pos).atom_name( res_atom_parent_index );
+	std::string res_atom_parent2 = pose.residue(res_pos).atom_name( res_atom_parent_parent_index );
+
+
+	//Calculate icoor information for the bond.  The connection point should be placed where the other atom goes.
+	numeric::xyzVector < core::Real > Atxyz = pose.residue(res_pos).xyz(Atpos);
+	numeric::xyzVector < core::Real > Atpxyz = pose.residue(res_pos).xyz(res_atom_parent_index);
+	numeric::xyzVector < core::Real > Atppxyz = pose.residue(res_pos).xyz(res_atom_parent_parent_index);
+
+	core::Real idis (Atxyz.distance(partner_xyz)); //The distance to the bonding partner.
+	core::Real iangle ( numeric::angle_radians ( partner_xyz, Atxyz, Atpxyz) ); //The bond angle between the bonding atom, this atom, and its parent atom.
+	core::Real itorsion ( numeric::dihedral_radians ( partner_xyz, Atxyz, Atpxyz, Atppxyz) ); //The torsion angle between the bonding atom, this atom, this atom's parent, and this atom's grandparent.
+
+	//need to remove whitespace, why the f is this so clumsy in c++?!?
+	int whitespace_pos = res_atom.find(" ");
+	while( whitespace_pos != -1 ) {
+		res_atom.erase(whitespace_pos, 1 );
+		whitespace_pos = res_atom.find(" ");
+	}
+
+	std::string current_pose_type_basename( residue_type_base_name( pose.residue_type(res_pos) ) );
+	std::string current_pose_type_patches_name( residue_type_all_patches_name( pose.residue_type(res_pos) ) );
+
+	res_varname = "_connect" + res_atom;
+	{// scope
+		// Find a name for the new residue type / variant name that will be added to the existing
+		// residue so that, if the existing residue already has this variant type, then the
+		// new residue type will get one with a new name.
+		core::chemical::ResidueType const & currres( pose.residue_type( res_pos ));
+		Size count=0;
+		while ( true ) {
+			if ( count > 1000 ) {
+				utility_exit_with_message( "Encountered infinite loop trying to find a new variant name for residue type " + currres.name() + " in EnzConstraintParameters.  Talk to Andrew.");
+			}
+			++count;
+			if ( count == 1 ) {
+				if ( ! currres.has_variant_type( res_varname )) break;
+			} else {
+				res_varname = "_"+utility::to_string(count)+"connect"+res_atom;
+				if ( ! currres.has_variant_type( res_varname )) break;
+			}
+		}
+	}
+	std::string res_type_mod_name( current_pose_type_basename + res_varname + current_pose_type_patches_name );
+
+	//check whether the modified residues have already been created earlier
+	if( !pose.residue(res_pos).residue_type_set().has_name(res_type_mod_name) ){
+
+		//holy jesus, we have to change the residue type set.
+		//we not only need to clone, modify and add  the residue type
+		//currently in the pose, but all similar ones (same basename )
+		//in the ResidueTypeSet. We also need to create a copy of the
+		// SingleLigandRotamerLibrary in case it exists.
+		//reminds me of open heart surgery...
+
+		//the following line is necessary to ensure that a ligand rotamer library exists
+		//if this function is called before any scoring happened
+		RotamerLibrary::get_instance().get_rsd_library( pose.residue_type( res_pos ));
+
+		SingleLigandRotamerLibraryOP new_lrots = NULL;
+		if( pose.residue_type(res_pos).is_ligand() &&
+				RotamerLibrary::get_instance().rsd_library_already_loaded( pose.residue_type(res_pos) ) ) {
+			new_lrots = new SingleLigandRotamerLibrary();
+		}
+
+		utility::pointer::access_ptr< ResidueTypeSet > mod_restype_set = & ChemicalManager::get_instance()->nonconst_residue_type_set( pose.residue(res_pos).residue_type_set().name() );
+
+		//first get all residue types that correspond to the type in question
+		ResidueTypeCOPs res_to_modify = mod_restype_set->name3_map( pose.residue_type(res_pos).name3() );
+
+		for ( utility::vector1< ResidueTypeCOP >::iterator res_it = res_to_modify.begin(); res_it != res_to_modify.end(); ++res_it) {
+			std::string const base_name( residue_type_base_name( *(*res_it) ) );
+			//std::cerr << "contemplating modification of residuetype " << (*res_it)->name() << " with basename " << base_name << std::endl;
+
+			if( current_pose_type_basename == base_name ){
+
+				ResidueTypeOP mod_res;
+				core::Size con_res(0);
+				//std::cerr << " MODIFYING" << std::endl;
+				std::string patches_name( residue_type_all_patches_name( *(*res_it) ) );
+				std::string new_name( base_name + res_varname + patches_name );
+
+				mod_res = (*res_it)->clone();
+				con_res = mod_res->add_residue_connection( res_atom );
+
+				mod_res->name( new_name );
+				assert( ! mod_res->has_variant_type( res_varname ) );
+				mod_res->add_variant_type( res_varname ); //necessary to restrict the packer to only use this residue variant in packing
+
+				mod_res->set_icoor( "CONN"+ObjexxFCL::string_of( con_res ), itorsion, iangle, idis, res_atom, res_atom_parent1, res_atom_parent2, true );
+
+				if(mod_res->is_metal()) {  //If this is a metal and I have fewer virts attached to the metal than there are connections, add virts.  Tethering the metal requires one virt per connection.
+					core::Size virtcount = mod_res->n_virtual_atoms();
+					while(true) {
+						if(virtcount >= con_res) break;
+						virtcount++;
+
+						//Add a virt atom.  First, find a unique name for it:
+						std::string virtname = "";
+						core::Size virtnum = 1;
+						while(true) {
+							std::stringstream virtcandidate;
+							virtcandidate << "V" << virtnum;
+							if( !mod_res->has(virtcandidate.str()) ) {
+								virtname = virtcandidate.str();
+								break;
+							}
+							++virtnum;
+						} //Finding unique name 
+
+						//Create a new virt atom, using the unique name found above:
+						core::chemical::AddAtom addvirt(virtname, "VIRT", "VIRT", 0.0);
+						addvirt.apply( (*mod_res) );
+						mod_res->add_bond(virtname, res_atom);
+						mod_res->set_atom_base(virtname, res_atom);
+						mod_res->set_icoor( virtname,  itorsion, iangle, idis, res_atom, res_atom_parent1, res_atom_parent2, true ); //Place the virt atop the bonding partner.
+						mod_res->finalize();
+					}
+				}
+
+				if(remove_hydrogens) { //If we're stripping off hydrogens, loop through all the hydrogens and remove ONLY the first bonded hydrogen that we encounter.  Adjust charges accordingly.
+					utility::vector1 < core::Size > bonded_indices = mod_res->bonded_neighbor( Atpos );
+
+					for(core::Size ia=1, iamax=bonded_indices.size(); ia<=iamax; ++ia) {
+						//printf("This atom is bonded to index %lu.\n", bonded_indices[ia]); fflush(stdout); //DELETE ME
+						if(mod_res->atom_is_hydrogen(bonded_indices[ia])) {
+							std::string hname = mod_res->atom_name( bonded_indices[ia] );
+							core::chemical::SetAtomicCharge setatchg( res_atom, (mod_res->atom(res_atom)).charge() - 1.0 + (mod_res->atom(bonded_indices[ia])).charge() ); //Adjust the charge
+							setatchg.apply( (*mod_res) );
+							core::chemical::SetAtomicCharge setatchg2 ( hname, 0.0); //Nullify the charge on the proton
+							setatchg2.apply( (*mod_res) );
+							core::chemical::SetAtomType set_virt1 ( hname, "VIRT");  //Make the proton to delete into a VIRT (probably less likely to break things than outright deleting an atom).
+							core::chemical::SetMMAtomType set_virt2 ( hname, "VIRT");
+							set_virt1.apply( (*mod_res) );
+							set_virt2.apply( (*mod_res) );
+							//mod_res->delete_atom( hname ); //Delete the hydrogen
+							mod_res->finalize();
+							//printf("Deleted a proton.\n"); fflush(stdout); //DELETE ME
+							break; //Just delete one hydrogen!
+						}
+					}
+				}
+
+				//new_lrots is empty at the moment, but will be filled a couple of lines down
+				if( pose.residue_type( res_pos ).is_ligand() ) {
+					RotamerLibrary::get_instance().add_residue_library( *mod_res, new_lrots );
+				}
+
+				//finalize again just to make sure
+				mod_res->nondefault(true);
+				mod_res->base_restype_name( base_name );
+				mod_res->finalize();
+
+				mod_restype_set->add_residue_type( mod_res );
+			}
+		}
+
+		//and last but not least we have to regenerate the rotamer library for the ligand
+		if( pose.residue_type( res_pos ).is_ligand() ) {
+
+			SingleLigandRotamerLibraryCAP old_lrots(
+				static_cast< SingleLigandRotamerLibrary const * >
+				( RotamerLibrary::get_instance().get_rsd_library( pose.residue_type( res_pos ))() ));
+
+			if( old_lrots != 0 ){
+
+				using namespace core::conformation;
+				utility::vector1< ResidueOP > new_rotamers;
+				new_rotamers.clear();
+				utility::vector1< ResidueOP > const old_rotamers = old_lrots->get_rotamers();
+
+				//std::cerr << "old rotamer library has " << old_rotamers.size() << "members";
+				for( utility::vector1< ResidueOP>::const_iterator oldrot_it = old_rotamers.begin(); oldrot_it != old_rotamers.end(); ++oldrot_it){
+					ResidueOP new_rot_res = new Residue( pose.residue(res_pos).residue_type_set().name_map(res_type_mod_name), true);
+					//set the coordinates
+					//1. we go over the atoms of the NEW residue on purpose, to make sure that no atom gets skipped
+					for( core::Size at_ct = 1; at_ct <= new_rot_res->natoms(); at_ct++){
+						if( !(*oldrot_it)->has( new_rot_res->atom_name( at_ct ) ) ){
+							std::cerr << "Unexpected ERROR: when regenerating ligand rotamer library (for covalent constraints), one atom wasn't found in a template rotamer." << std::endl;
+							utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
+						}
+						else{
+							new_rot_res->set_xyz( at_ct, (*oldrot_it)->xyz( new_rot_res->atom_name( at_ct ) ) );
+						}
+					}
+					//2. we also set the chis, to make sure everything is properly in place
+					new_rot_res->chi( (*oldrot_it)->chi() );
+
+					new_rotamers.push_back( new_rot_res );
+				}
+				new_lrots->set_reference_energy( old_lrots->get_reference_energy() );
+				new_lrots->set_rotamers( new_rotamers );
+				//std::cerr << "new rotlibrary has " << new_lrots->get_rotamers().size() << " members." << std::endl;
+			}
+		}
+	}
+
+	core::conformation::Residue new_res( pose.residue(res_pos).residue_type_set().name_map(res_type_mod_name), true);
+
+	//Temporarily make a copy of the old residue:
+	core::conformation::Residue old_res = (*pose.residue(res_pos).clone());
+
+	//replacing the residue
+	if(pose.residue(res_pos).is_metal()) {
+		utility::vector1< std::pair< std::string, std::string > > atom_pairs;
+		for(core::Size ia=1; ia<=3; ia++) atom_pairs.push_back(std::pair<std::string, std::string>(pose.residue(res_pos).atom_name(ia),new_res.atom_name(ia)) );
+		pose.replace_residue( res_pos, new_res, atom_pairs); //If this is a metal, replace using only the first three atoms for alignment.
+	} else {
+		pose.replace_residue( res_pos, new_res, true);
+	}
+
+	//and resetting the xyz positions
+	for( core::Size at_ct = 1, at_ctmax=pose.residue(res_pos).natoms(); at_ct <= at_ctmax; at_ct++) {
+		if(old_res.has( pose.residue(res_pos).atom_name(at_ct) ) ) {
+			pose.set_xyz( id::AtomID(at_ct, res_pos), old_res.xyz( pose.residue(res_pos).atom_name(at_ct) ) );
+		}
+	}
+
+} //add_covalent_linkage_helper
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Function that generates a list of metal-binding atoms that coordinate a metal in a protein.
@@ -180,7 +487,7 @@ add_covalent_linkages_to_metal (
 	}
 
 	for(core::Size ir=1; ir<=liganding_atomids.size(); ++ir) {
-			core::pose::add_covalent_linkage( pose, liganding_atomids[ir].rsd(), metal_position, liganding_atomids[ir].atomno(), 1, remove_hydrogens);
+			add_covalent_linkage( pose, liganding_atomids[ir].rsd(), metal_position, liganding_atomids[ir].atomno(), 1, remove_hydrogens);
 	}
 
 	return;
@@ -356,6 +663,5 @@ auto_setup_all_metal_constraints (
 	return;
 }
 	
-} //metalloproteins
-} // pose
+} // util
 } // core

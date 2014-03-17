@@ -26,7 +26,7 @@
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/metalloproteins/util.hh>
+//#include <core/pose/metalloproteins/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>

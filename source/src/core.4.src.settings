@@ -177,6 +177,7 @@ sources = {
 		"cryst_util",
 		"disulfide_util",
 		"kinematics_util",
+		"metalloproteins_util",
 		"SwitchResidueTypeSet",
 	],
 }

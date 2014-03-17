@@ -131,9 +131,6 @@ sources = {
 	"core/pose/ncbb": [
 		"util",
 	],
-	"core/pose/metalloproteins": [
-		"util",
-	],
     "core/pose/rna": [
         "RNA_Util",
         "RNA_IdealCoord",

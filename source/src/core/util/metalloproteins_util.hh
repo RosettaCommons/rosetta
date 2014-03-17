@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/pose/metalloproteins/util.hh
-/// @brief  Pose utilities for working with metalloproteins
+/// @file   core/util/metalloproteins_util.hh
+/// @brief  Utilities for working with metalloproteins
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
-#ifndef INCLUDED_core_pose_metalloproteins_util_hh
-#define INCLUDED_core_pose_metalloproteins_util_hh
+#ifndef INCLUDED_core_util_metalloproteins_util_hh
+#define INCLUDED_core_util_metalloproteins_util_hh
 
 // C/C++ headers
 #include <map>
@@ -53,10 +53,49 @@
 #include <core/pose/Pose.fwd.hh>
 
 namespace core {
-namespace pose {
-namespace metalloproteins {
+namespace util {
 
 #define DEFAULT_DIST_CUTOFF_MULTIPLIER 1.05 //By default, the distance cutoff multiplier gives a cutoff radius just slightly larger than the sum of the atoms' Lennard-Jones radii
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief: Adds an arbitrary covalent linkage between two atoms (resA_At and resB_At) in two residues (at positions resA_pos and resB_pos).
+/// @details:  This is useful for adding covalent linkages between metal-binding side-chains and metal atoms.  This code was shamelessly
+/// stolen from Florian's EnzConstraintParameters.cc in protocols/toolbox/match_enzdes_utils, and was modified to permit deletion of
+/// unnecessary protons.  NOTE: THIS CODE MODIFIES THE RESIDUE TYPE LIST, AND IS CURRENTLY NOT THREADSAFE.
+/// @author:  Vikram K. Mulligan (vmullig@uw.edu), Florian Richter (flosopher@gmail.com)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+add_covalent_linkage(
+	core::pose::Pose & pose,
+	Size const resA_pos,
+	Size const resB_pos,
+	Size const resA_At,
+	Size const resB_At,
+	bool const remove_hydrogens //Should extraneous hydrogens on the bonding atoms be removed? 
+);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief: This is a helper function for the add_covalent_linkage function.  You probably don't want to call it directly, unless you
+/// really know what you're doing.
+/// @details:  This is useful for adding covalent linkages between metal-binding side-chains and metal atoms.  This code was shamelessly
+/// stolen from Florian's EnzConstraintParameters.cc (colourful comments and all) in protocols/toolbox/match_enzdes_utils, and was
+/// modified to permit deletion of unnecessary protons and to remove EnzDes-specific stuff.  NOTE: THIS CODE MODIFIES THE RESIDUE TYPE
+/// LIST, AND IS CURRENTLY NOT THREADSAFE.
+/// @author:  Vikram K. Mulligan (vmullig@uw.edu), Florian Richter (flosopher@gmail.com)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+add_covalent_linkage_helper(
+	core::pose::Pose & pose,
+	//EnzCstTemplateResOP template_res,
+	core::Size const res_pos,
+	core::Size const Atpos,
+	numeric::xyzVector < core::Real > const partner_xyz, //Coordinates of the atom to which this will be bonded
+	//core::Real itorsion,
+	//core::Real iangle,
+	//core::Real idis,
+ 	std::string & res_varname,
+	bool const remove_hydrogens
+ );
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Function that generates a list of metal-binding atoms that coordinate a metal in a protein.
@@ -165,8 +204,7 @@ auto_setup_all_metal_constraints (
 	core::Real const angle_constraint_multiplie
 );
 
-} //metalloproteins
-} // pose
+} // util
 } // core
 
-#endif // INCLUDED_core_pose_metalloproteins_util_hh
+#endif // INCLUDED_core_util_metalloproteins_util_hh
