@@ -229,7 +229,7 @@ scan_magnesium( pose::Pose & pose,
 	utility::vector1< utility::vector1< Size > > const
 			atom_numbers_for_mg_calculation( rna_scoring_info.atom_numbers_for_mg_calculation() );
 
-	Real xmin,xmax,ymin,ymax,zmin,zmax; // initialized below
+	Real xmin = 0.0, xmax = 0.0, ymin = 0.0, ymax = 0.0, zmin = 0.0, zmax = 0.0;  // initialized below
 	figure_out_box_bounds( pose, xmin, xmax, ymin, ymax, zmin,zmax );
 
 	// there's probably a nice object somewhere in Rosetta (e.g., map) for doing this.
@@ -362,7 +362,7 @@ scan_magnesium_SLOW( pose::Pose & pose,
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	Real xmin,xmax,ymin,ymax,zmin,zmax; // initialized below
+	Real xmin = 0.0, xmax = 0.0, ymin = 0.0, ymax = 0.0, zmin = 0.0, zmax = 0.0;  // initialized below
 	figure_out_box_bounds( pose, xmin, xmax, ymin, ymax, zmin,zmax );
 
 	std::cout << "Carrying out scan in following box: " << std::endl;
