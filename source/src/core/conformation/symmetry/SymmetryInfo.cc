@@ -687,12 +687,13 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 				score_multiply_set=false,
 				num_components_set=false,
 				jnum2dofname_set=false,
-				dofname2jnum_set=false,
-				components_set=false,
-				component_bounds_set=false,
-				name2component_set=false,
-				jname2components_set=false,
-				jname2subunits_set=false;
+				dofname2jnum_set=false;
+			// unused:
+			//bool components_set=false,
+				//component_bounds_set=false,
+				//name2component_set=false,
+				//jname2components_set=false,
+				//jname2subunits_set=false;
 
 		//fpd  skip first two fields
 		s >> tag >> tag;
@@ -780,19 +781,19 @@ std::istream& operator>> ( std::istream & s, SymmetryInfo & symminfo )
 				dofname2jnum_set = true;
 			} else if (tag == "COMPONENTS") {
 				comma_strings_to_vector( s, symminfo.num_components_,  symminfo.components_, "" );
-				components_set = true;
+				//components_set = true;
 			} else if (tag == "COMPONENT_BOUNDS") {
 				comma_strings_to_pair_map( s, symminfo.num_components_,  symminfo.component_bounds_, "" );
-				component_bounds_set = true;
+				//component_bounds_set = true;
 			} else if (tag == "NAME2COMPONENT") {
 				comma_strings_to_map( s, symminfo.num_components_,  symminfo.name2component_, "" );
-				name2component_set = true;
+				//name2component_set = true;
 			} else if (tag == "JNAME2COMPS") {
 				comma_strings_to_vector_map( s, nnamed_jumps,  symminfo.jname2components_, "" );
-				jname2components_set = true;
+				//jname2components_set = true;
 			} else if (tag == "JNAME2SUBS") {
 				comma_strings_to_vector_map( s, nnamed_jumps,  symminfo.jname2subunits_, "" );
-				jname2subunits_set = true;
+				//jname2subunits_set = true;
 			} else {
 				TR.Debug << "Unknown tag {" << tag << "}" << std::endl;
 			}
