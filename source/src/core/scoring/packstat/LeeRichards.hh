@@ -392,6 +392,8 @@ private:
 
 	struct Array2D {
 
+		Array2D() : Nx_(0), Ny_(0), array_(0) {} // Needed for uninitialized variable errors
+
 		void init( core::Size Nx, core::Size Ny ) {
 			Nx_ = Nx;
 			Ny_ = Ny;
@@ -404,6 +406,7 @@ private:
 		operator() ( core::Size i, core::Size j ) {
 			assert( i < Nx_ );
 			assert( j < Ny_ );
+			assert( array_ );
 			// std::cerr << Ny_*i+j << " " << Nx_*Ny_ << std::endl;
 			return array_[Ny_*i+j];
 		}
