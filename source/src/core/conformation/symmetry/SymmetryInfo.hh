@@ -64,7 +64,6 @@ public:
 public:
 	SymmetryInfo();
 	virtual ~SymmetryInfo();
-	//SymmetryInfo(SymmetryInfo const &);
 	SymmetryInfo( SymmData const & symmdata, Size const nres_subunit, Size const njump_subunit );
 
 	SymmetryInfo(
@@ -78,6 +77,8 @@ public:
 		Size const num_interfaces = 1,
 		std::string const & type = "simple"
 	);
+
+	void init_defaults();
 
 	SymmetryInfoOP clone() const;
 
@@ -110,9 +111,8 @@ public:
 		std::string const & type = "simple"
 	);
 
-	bool operator== ( SymmetryInfo const & s );
-
-	bool operator!= ( SymmetryInfo const & s );
+	//bool operator== ( SymmetryInfo const & s );
+	//bool operator!= ( SymmetryInfo const & s );
 
 	//fpd  bb_* and chi_* stuff should get merged at some point since they are always equivalent
 	Size bb_follows( Size const seqpos ) const;
@@ -152,7 +152,6 @@ public:
 	Size num_bb_clones() const;
 	Size num_chi_clones() const;
 	Size num_jump_clones() const;
-
 	Size num_independent_residues() const;
 	Size num_total_residues() const;
 	Size num_total_residues_with_pseudo() const;
@@ -162,7 +161,6 @@ public:
 	Size last_independent_residue() const;
 
 	void num_virtuals( Size const setting );
-
 	Size get_nres_subunit() const;  //fpd same as num_independent_residues?
 	Size get_njumps_subunit() const;
 
@@ -202,7 +200,10 @@ public:
 	// score multiply factors
 	Real score_multiply( Size const res1, Size const res2 ) const;
 	Real deriv_multiply( Size const res1, Size const res2 ) const;
-	void set_score_multiply_from_subunit_factors( utility::vector1< Size > const & score_multiply_vector_subunit, Size const nres_subunit, Size const n_subunits );
+	void set_score_multiply_from_subunit_factors(
+		utility::vector1< Size > const & score_multiply_vector_subunit,
+		Size const nres_subunit,
+		Size const n_subunits );
 	void set_score_multiply( Size const res, Size const factor );
 	void set_flat_score_multiply( Size const nres, Size const factor );
 	bool get_use_symmetry() const;
@@ -345,7 +346,6 @@ private:
 
 	utility::vector1<char> components_moved_by_jump(std::string const & jname) const;
 	utility::vector1<Size> subunits_moved_by_jump(std::string const & jname) const;
-
 }; // SymmetryInfo
 
 

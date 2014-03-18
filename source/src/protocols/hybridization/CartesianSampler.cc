@@ -360,9 +360,8 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 
 	core::Vector preT, postT;
 	numeric::xyzMatrix< core::Real > R;
-	core::Size maxtries;
-	core::Size frag_toget = 0;
-	core::Real rms = rms_cutoff_;
+	core::Size maxtries,frag_toget=0;
+	core::Real rms=rms_cutoff_;
 
 	// set up minimizer
 	core::optimization::AtomTreeMinimizer rbminimizer;
