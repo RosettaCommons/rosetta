@@ -15,6 +15,7 @@
 #include <protocols/outputter/SilentFileOutputter.hh>
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
+#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 
 // tracer
 #include <basic/Tracer.hh>
