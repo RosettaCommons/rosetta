@@ -192,11 +192,11 @@ void processMouseActiveMotion(int x, int y) {
 
 	//	std::cout << "clicked_button " << clicked_button << "    specialKey " << specialKey << std::endl;
 
-	if ( (specialKey == GLUT_ACTIVE_SHIFT & clicked_button == 0) || clicked_button == 1 ) { // Zoom in/out
+	if ( ((specialKey == GLUT_ACTIVE_SHIFT) & (clicked_button == 0)) || clicked_button == 1 ) { // Zoom in/out
 		double s = exp( -1.0* (double) delta_y*0.01);
 		glScalef(s,s,s);
 	}
-	else if (specialKey == GLUT_ACTIVE_CTRL & clicked_button == 0) { // Recontour
+	else if ((specialKey == GLUT_ACTIVE_CTRL) & (clicked_button == 0)) { // Recontour
 		GraphicsState* current_gs = gs_map_[ glutGetWindow() ];
 		if (!current_gs) {
 			std::cerr << "ignoring processKeyPress for window id " << glutGetWindow() << std::endl;
@@ -205,7 +205,7 @@ void processMouseActiveMotion(int x, int y) {
 		current_gs->density_sigma += delta_y*0.02;
 		current_gs->density_redraw = true;
 	}
-	else if (specialKey == GLUT_ACTIVE_SHIFT & clicked_button > 0){ //Rotate around z-axis
+	else if ((specialKey == GLUT_ACTIVE_SHIFT) & (clicked_button > 0)){ //Rotate around z-axis
 		// See below for explanation of premultiplication.
 		GLfloat currentrotation[16];
 		glGetFloatv(GL_MODELVIEW_MATRIX, currentrotation);
@@ -541,8 +541,8 @@ viewer_main( VoidFunc worker_main )
 
 	// start glut
 	int argc(1);
-	char * argv[] = {"test"};
-	glutInit( &argc, argv );
+//  char * argv[] = NULL; //{"test"};
+	glutInit( &argc, NULL );
 
 	glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH );
 
