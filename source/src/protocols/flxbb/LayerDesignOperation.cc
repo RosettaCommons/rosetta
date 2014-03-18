@@ -639,6 +639,9 @@ LayerDesignOperation::parse_tag( TagCOP tag , DataMap & datamap )
 			utility::vector1< TaskOperationOP > task_ops;
 			BOOST_FOREACH( utility::tag::TagCOP const task_tag, layer_tag->getTags() ) {
 				std::string task_op_type = task_tag->getName();
+				if( task_tag == "all" || task_tag == "Helix" || task_tag == "Strand" || task_tag == "Loop" ) {
+					continue;
+				}
 				TaskOperationOP task = TaskOperationFactory::get_instance()->newTaskOperation(task_op_type, datamap, task_tag);
 				task_ops.push_back( task );
 			}
