@@ -31,6 +31,7 @@ _S_queued_for_comparison_ = 'queued for comparison'
 
 _S_Values_ = [_S_draft_, _S_queued_, _S_running_, _S_finished_, _S_failed_, _S_build_failed_, _S_script_failed_, _S_queued_for_comparison_]
 
+_IgnoreKey_   = 'ignore'
 _StateKey_    = 'state'
 _ResultsKey_  = 'results'
 _LogKey_      = 'log'

@@ -17,6 +17,7 @@ import os, shutil, commands
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
+ignore_files = 'command.sh observers'.split()
 
 #tests = ['i']
 
@@ -96,17 +97,24 @@ def run_itegration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_d
             results[_LogKey_]   = 'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including integration.py output
             return results
 
+    ignore = []
     for d in os.listdir(files_location):
         if os.path.isdir(files_location + '/' + d):
             #print 'linking: %s <-- %s' % (root + d, working_dir + d)
             #os.symlink( os.path.abspath(files_location + '/' + d), working_dir + '/' + d)
             shutil.copytree(os.path.abspath(files_location + '/' + d), working_dir + '/' + d)
 
-            command_sh = working_dir + '/' + d + '/command.sh '
-            if os.path.isfile(command_sh): os.remove(command_sh)  # deleting non-tempalte command.sh files to avoid stroing absolute paths in database
+            #command_sh = working_dir + '/' + d + '/command.sh'
+            #if os.path.isfile(command_sh): os.remove(command_sh)  # deleting non-tempalte command.sh files to avoid stroing absolute paths in database
 
-    results[_StateKey_] = _S_queued_for_comparison_
-    results[_LogKey_]   =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including integration.py output
+            for f in ignore_files:
+                fl = working_dir + '/' + d + '/' + f
+                if os.path.isfile(fl): ignore.append(d + '/' + f)  #os.remove(command_sh)  # deleting non-tempalte command.sh files to avoid stroing absolute paths in database
+
+
+    results[_StateKey_]  = _S_queued_for_comparison_
+    results[_LogKey_]    =  'Compiling: {}\nRunning: {}\n'.format(build_command_line, command_line) + output  # ommiting compilation log and only including integration.py output
+    results[_IgnoreKey_] = ignore
     return results
 
 
