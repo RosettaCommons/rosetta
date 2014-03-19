@@ -225,6 +225,8 @@
 
 #include <protocols/rosetta_scripts/ParsedProtocolCreator.hh>
 #include <protocols/rosetta_scripts/SavePoseMoverCreator.hh>
+#include <protocols/rosetta_scripts/MultiplePoseMoverCreator.hh>
+#include <protocols/rosetta_scripts/MultipleOutputWrapperCreator.hh>
 
 #include <protocols/rotamer_recovery/RotamerRecoveryMoverCreator.hh>
 

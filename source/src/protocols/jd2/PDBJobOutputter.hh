@@ -76,7 +76,8 @@ protected:
 	///@brief this private function provides the extended name, not just the output name.  e.g output_name returns 1UBQ_0001, this returns 1UBQ_0001.pdb.  In this case the extension is .pdb
 	virtual
 	std::string extended_name( JobCOP job );
-
+	std::string extended_name( JobCOP job, std::string const & suffix );
+	
 	////////////////////////////////////////score-related functions///////////////////////////////////
 
 	///@brief this function extracts the pose's scores for printing

@@ -75,6 +75,12 @@
 #include <protocols/init/init.MoverCreators.ihh>
 #include <protocols/init/init.MoverRegistrators.ihh>
 
+#include <protocols/init/init.PosePropertyReporterCreators.ihh>
+#include <protocols/init/init.PosePropertyReporterRegistrators.ihh>
+
+#include <protocols/init/init.PoseSelectorCreators.ihh>
+#include <protocols/init/init.PoseSelectorRegistrators.ihh>
+
 #include <protocols/init/init.WriteableCacheableDataCreators.ihh>
 #include <protocols/init/init.WriteableCacheableDataRegistrators.ihh>
 
@@ -82,6 +88,7 @@
 #include <protocols/init/init.InputterFactory.ihh>
 #include <protocols/init/init.OutputterFactory.ihh>
 #include <protocols/init/init.BoostExport.ihh>
+
 
 namespace protocols {
 namespace init {

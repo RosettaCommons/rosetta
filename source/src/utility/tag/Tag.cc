@@ -110,6 +110,7 @@ void Tag::clear() {
 	mOptions_.clear();
 	vTags_.clear();
 	mvTags_.clear();
+	parentTag_ = NULL;
 }
 
 Tag::options_t const&
@@ -159,7 +160,8 @@ Tag::hasOption( string const& key ) const {
 	return i != mOptions_.end() && i->second.size() != 0 ;
 }
 
-void Tag::addTag( TagCOP const & tag ) {
+void Tag::addTag( TagOP tag ) {
+	tag->parentTag_ = this;
 	vTags_.push_back(tag);
 	mvTags_[ tag->getName() ].push_back( tag );
 }
@@ -311,7 +313,7 @@ void set_name_and_options( TagOP & tag, name_and_options_value_type const & v )
 	}
 } // set_name_and_options
 
-void add_tag( TagOP tag, TagCOP other ) {
+void add_tag( TagOP tag, TagOP other ) {
 	tag->addTag( other );
 } // set_name_and_options
 

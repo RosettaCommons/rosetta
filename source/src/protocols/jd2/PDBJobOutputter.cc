@@ -109,7 +109,7 @@ void protocols::jd2::PDBJobOutputter::other_pose(
 	runtime_assert( !tag.empty() ); //else you'll overwrite your pdb when the job finishes
 
 	call_output_observers( pose, job );
-	std::string const file(path_ + tag + extended_name(job));
+	std::string const file(path_ + extended_name(job, tag));
 	utility::io::ozstream out( file );
 	if ( !out.good() ) utility_exit_with_message( "Unable to open file: " + path_ + file + "\n" );
 	dump_pose(job, pose, out);
@@ -146,6 +146,10 @@ std::string protocols::jd2::PDBJobOutputter::output_name( JobCOP job ){
 
 std::string protocols::jd2::PDBJobOutputter::extended_name( JobCOP job ){
 	return output_name(job) + extension_;
+}
+
+std::string protocols::jd2::PDBJobOutputter::extended_name( JobCOP job, std::string const & suffix ){
+	return output_name(job) + "_" + suffix + extension_;
 }
 
 ////////////////////////////////////////score-related functions///////////////////////////////////

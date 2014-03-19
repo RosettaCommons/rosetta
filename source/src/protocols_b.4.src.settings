@@ -85,6 +85,13 @@ sources = {
     "DarcElectrostatics",
     "DarcParticleSwarmMinimizer",
 	],
+	"protocols/pose_reporters": [
+		"BasicPosePropertyReporters",
+	],
+	"protocols/pose_selectors": [
+		"BasicPoseSelectors",
+		"ClusterPoseSelector",
+	],
 }
 include_path = [
 ]

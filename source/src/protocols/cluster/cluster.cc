@@ -989,14 +989,33 @@ get_distance_measure(
 }
 
 
+//////////////////////////////////////////////////////////////////////////////
+// Hook so ClusterPhilStyle can be used with PoseSelectors
 
+std::string
+ClusterPhilStyle_PoseReporter::get_name() const {
+	return "ClusterPhilStyle_PoseReporter";
+}
 
+Real
+ClusterPhilStyle_PoseReporter::
+get_distance_measure(
+		const Pose & pose1,
+		const Pose & pose2
+) const
+{
+	// NOTE: reporter_ takes non-const poses because one of the implemented reporters is the
+	// EnergyReporter, which scores the pose. The score function alters the Energies object on the
+	// pose so it takes non-const poses.
+	// It's kind of rediculous that a pose copy is required here -- or making get_distance_measure
+	// thing (and get_native_pose()) non-cost. For now, it's a copy unless it proves to be too slow.
+	Pose pose1_copy(pose1);
+	Pose pose2_copy(pose2);
+	
+	return reporter_->report_property(pose1_copy, pose2_copy);
+}
 
-
-
-
-
-
+//////////////////////////////////////////////////////////////////////////////
 
 
 

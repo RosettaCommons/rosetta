@@ -244,6 +244,8 @@ static MoverRegistrator< rigid::RollMoverCreator > reg_RollMoverCreator;
 
 static MoverRegistrator< rosetta_scripts::ParsedProtocolCreator > reg_ParsedProtocolCreator;
 static MoverRegistrator< rosetta_scripts::SavePoseMoverCreator > SavePoseMoverCreator;
+static MoverRegistrator< rosetta_scripts::MultiplePoseMoverCreator > MultiplePoseMoverCreator;
+static MoverRegistrator< rosetta_scripts::MultipleOutputWrapperCreator > MultipleOutputWrapperCreator;
 
 static MoverRegistrator< rotamer_recovery::RotamerRecoveryMoverCreator > reg_RotamerRecoveryMoverCreator;
 

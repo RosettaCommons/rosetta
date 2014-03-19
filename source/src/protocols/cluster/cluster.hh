@@ -16,6 +16,8 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/rosetta_scripts/PosePropertyReporter.fwd.hh>
+#include <protocols/rosetta_scripts/PosePropertyReporter.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>
@@ -282,6 +284,28 @@ public:
 
 private:
 	protocols::loops::Loops loop_def_;
+};
+
+class ClusterPhilStyle_PoseReporter : public ClusterPhilStyle {
+public:
+	ClusterPhilStyle_PoseReporter( protocols::rosetta_scripts::PosePropertyReporterOP reporter )
+		: reporter_(reporter)
+	{}
+
+	virtual ~ClusterPhilStyle_PoseReporter() {}
+	virtual std::string get_name() const;
+	protocols::moves::MoverOP clone() const {
+		return new ClusterPhilStyle_PoseReporter( *this );
+	}
+
+	virtual core::Real
+	get_distance_measure(
+		const core::pose::Pose & pose1,
+		const core::pose::Pose & pose2
+	) const;
+
+private:
+	protocols::rosetta_scripts::PosePropertyReporterOP reporter_;
 };
 
 class AssignToClustersMover;

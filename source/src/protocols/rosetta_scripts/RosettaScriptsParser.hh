@@ -15,25 +15,25 @@
 #ifndef INCLUDED_protocols_rosetta_scripts_RosettaScriptsParser_hh
 #define INCLUDED_protocols_rosetta_scripts_RosettaScriptsParser_hh
 
-//unit headers
-#include <protocols/moves/Mover.fwd.hh>
+// Unit Headers
+#include <protocols/filters/Filter.hh>
 #include <protocols/jd2/Job.fwd.hh>
 #include <protocols/jd2/Parser.hh>
-
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverFactory.fwd.hh>
-#include <protocols/environment/Environment.fwd.hh>
 
-//project headers
+// Project Headers
 #include <core/pose/Pose.fwd.hh>
 
-//utility headers
-// AUTO-REMOVED #include <basic/options/option.hh>
-
-#include <utility/vector1.hh>
+// Utility headers
+#include <basic/datacache/DataMap.fwd.hh>
 #include <utility/options/StringVectorOption.fwd.hh>
+#include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <iostream>
 
+// C++ headers
+#include <iostream>
+#include <set>
 
 namespace protocols {
 namespace rosetta_scripts {
@@ -44,8 +44,7 @@ class RosettaScriptsParser : public protocols::jd2::Parser
 public:
 	typedef protocols::moves::MoverFactory MoverFactory;
 	typedef protocols::moves::MoverFactoryOP MoverFactoryOP;
-	//typedef protocols::protein_interface_design::DockDesignFilterFactory DockDesignFilterFactory;
-	//typedef protocols::protein_interface_design::DockDesignFilterFactoryOP DockDesignFilterFactoryOP;
+	typedef std::pair<std::string, std::string> ImportTagName;
 
 public:
 	RosettaScriptsParser();
@@ -64,13 +63,16 @@ public:
 	MoverOP parse_protocol_tag(utility::tag::TagCOP protocol_tag);
 
 	void register_factory_prototypes();
+	
+	void instantiate_filter  (utility::tag::TagCOP const & tag_ptr, basic::datacache::DataMap & data, protocols::filters::Filters_map & filters, protocols::moves::Movers_map & movers, core::pose::Pose & pose);
+	void instantiate_mover   (utility::tag::TagCOP const & tag_ptr, basic::datacache::DataMap & data, protocols::filters::Filters_map & filters, protocols::moves::Movers_map & movers, core::pose::Pose & pose);
 
+	utility::tag::TagCOP find_rosettascript_tag(utility::tag::TagCOP rootTag, const std::string & section_name, const std::string & option_name, const std::string & option_value);
+	
+	void import_tags(std::set< ImportTagName > & import_tag_names, utility::tag::TagCOP & my_tag, basic::datacache::DataMap & data, protocols::filters::Filters_map & filters, protocols::moves::Movers_map & movers, core::pose::Pose & pose);
+	
 private:
-  /// @brief Recursively parse out environment hierarchy from xml tags.
-  void parse_environment( utility::tag::TagCOP tag,
-                          moves::Movers_map& movers,
-                          std::map< std::string, environment::EnvironmentOP >& environments );
-  
+
 	static
 	void
 	substitute_variables_in_stream( std::istream & in, utility::options::StringVectorOption const& script_vars, std::stringstream & out);

@@ -54,7 +54,9 @@ public:
 	void setName(std::string const& name);
 	std::string const& getName() const { return name_; }
 
-	void addTag( TagCOP const & tag );
+	TagCOP const & getParent() const { return parentTag_; }
+
+	void addTag( TagOP tag );
 	utility::vector0< TagCOP > const & getTags() const;
 	utility::vector0< TagCOP > const & getTags( std::string const& name ) const;
 	TagCOP const & getTag( std::string const& name ) const;
@@ -151,6 +153,7 @@ private:
 	tags_t vTags_;
 	std::map<std::string,tags_t> mvTags_;
 	static utility::vector0<TagCOP> const vEmpty_; // need to return this from getTags
+	TagCOP parentTag_;
 
 }; // class Tag
 

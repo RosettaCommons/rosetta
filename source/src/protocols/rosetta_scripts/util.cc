@@ -319,7 +319,7 @@ foreach_movemap_tag(
 				}
 			}
 		}
-	}//foreach tag
+	}//BOOST_FOREACH tag
 }
 
 /// @brief variant of parse_movemap that takes in a datamap and searches it for already existing movemaps

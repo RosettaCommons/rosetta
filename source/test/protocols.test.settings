@@ -231,6 +231,10 @@ sources = {
 		"RigidBodyMover",
 		"RotateJumpAxisMover",
 	],
+	
+	"rosetta_scripts" : [
+		"MultiplePoseMover",
+	],
 
 	"rotamer_recovery" : [
 		"RotamerRecovery",

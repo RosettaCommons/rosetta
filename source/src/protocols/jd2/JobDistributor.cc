@@ -534,7 +534,16 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 		{
 			last_completed_job_ = current_job_id_;
 			job_succeeded(pose, jobtime);
-			//			tr.Info << job_outputter_->output_name( current_job_ ) << " reported success in " << jobtime << " seconds" << std::endl;
+			// tr.Info << job_outputter_->output_name( current_job_ ) << " reported success in " << jobtime << " seconds" << std::endl;
+			// Collect additional poses from mover
+			core::pose::PoseOP additional_pose(NULL);
+			core::Size i_additional_pose = 1;
+			while( (additional_pose = mover_copy->get_additional_output()) ) {
+				std::ostringstream s;
+				s << i_additional_pose;
+				job_succeeded_additional_output(*additional_pose, s.str());
+				++i_additional_pose;
+			}
 		}
 		else if (status == protocols::moves::FAIL_RETRY)
 		{
@@ -660,6 +669,11 @@ void JobDistributor::job_succeeded(core::pose::Pose & pose, core::Real run_time)
 	//current_job_->set_completed();
 	mark_job_as_completed(current_job_id_, run_time);
 	return;
+}
+
+void JobDistributor::job_succeeded_additional_output(core::pose::Pose & pose, std::string const & tag)
+{
+	job_outputter_->other_pose(current_job_, pose, tag);
 }
 
 /// @details no-op implementation in the base class
