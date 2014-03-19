@@ -247,8 +247,7 @@ def main(args):
     # assuming that we in rosetta/rosetta_source/src/python/bindings directory at that point
     mini_path = os.path.abspath('./../../../')
 
-    bindings_path = os.path.abspath('rosetta')
-    #bindings_path += '.debug' if Options.debug else '.release'
+    bindings_path = os.path.abspath('debug/rosetta') if Options.debug else os.path.abspath('rosetta')
 
     if Options.cross_compile:
         bindings_path = os.path.abspath('rosetta.window')
@@ -725,7 +724,7 @@ def prepareMiniLibs(mini_path, bindings_path):
     if Platform == 'cygwin' : suffix = 'dll'
     if Platform == 'macos' : suffix = 'dylib'
 
-    mini = mini_path + '/src/python/bindings/rosetta/libmini.' + suffix
+    mini = mini_path + '/src/python/bindings/{}rosetta/libmini.'.format('debug/' if Options.debug else '') + suffix
 
     add_loption = getLinkerOptions()
 
@@ -747,7 +746,15 @@ def prepareMiniLibs(mini_path, bindings_path):
             for k in libs:
                 execute('Adjustin lib path in %s' % l, 'install_name_tool -change %s rosetta/%s %s' % (os.path.abspath(mini_path+'/'+lib_path+k), k, bindings_path+'/'+l) )
 
-    shutil.copyfile(bindings_path+'/../src/__init__.py' , bindings_path+'/__init__.py')
+
+    binding_source_path = os.path.abspath( bindings_path+'/../..' if Options.debug else bindings_path+'/..' )
+    shutil.copyfile(binding_source_path+'/src/__init__.py' , bindings_path+'/__init__.py')
+
+    if Options.debug:  # creating some symlinks for debug version
+        for l in 'TestBindings.py test demos'.split() + ['libboost_python.'+suffix]:
+            if os.path.islink('./debug/'+l): os.remove('./debug/'+l)
+            os.symlink('./../'+l, './debug/'+l)
+
 
 
 def getAllRosettaSourceFiles():
@@ -1105,8 +1112,8 @@ class ModuleBuilder:
         self.add_option  = getCompilerOptions()
         self.add_loption = getLinkerOptions()
 
-        self.by_hand_beginning_file = dest+ '/../src/' + path + '/_%s__by_hand_beginning.cc' % path.split('/')[-1]
-        self.by_hand_ending_file = dest+ '/../src/' + path + '/_%s__by_hand_ending.cc' % path.split('/')[-1]
+        self.by_hand_beginning_file = dest+ ('/..'if Options.debug else '') + '/../src/' + path + '/_%s__by_hand_beginning.cc' % path.split('/')[-1]
+        self.by_hand_ending_file = dest+ ('/..'if Options.debug else '') + '/../src/' + path + '/_%s__by_hand_ending.cc' % path.split('/')[-1]
 
         self.by_hand_beginning = file(self.by_hand_beginning_file).read() if os.path.isfile(self.by_hand_beginning_file) else ''
         self.by_hand_ending = file(self.by_hand_ending_file).read() if os.path.isfile(self.by_hand_ending_file) else ''
@@ -1175,7 +1182,7 @@ class ModuleBuilder:
 
         #print 'Finalizing Creating __init__.py file...'
         namespace = os.path.basename(self.path)
-        py_init_file = self.dest + '/../src/' + self.path + '/__init__.py'
+        py_init_file = self.dest + ('/..' if Options.debug else '')+'/../src/' + self.path + '/__init__.py'
         if os.path.isfile(py_init_file): t = file(py_init_file).read()
         else: t = ''
         f = file( self.dest + '/' + self.path + '/__init__.py', 'w');  f.write(t+'from %s import *\n' % self.all_at_once_base);  f.close()
@@ -1411,8 +1418,8 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
     add_loption = getLinkerOptions()
 
     #by_hand_code = dest+ '/../src/' + path + '/_%s__by_hand.cc' % path.split('/')[-1]
-    by_hand_beginning_file = dest+ '/../src/' + path + '/_%s__by_hand_beginning.cc' % path.split('/')[-1]
-    by_hand_ending_file = dest+ '/../src/' + path + '/_%s__by_hand_ending.cc' % path.split('/')[-1]
+    by_hand_beginning_file = dest + ('/..'if Options.debug else '') + '/../src/' + path + '/_%s__by_hand_beginning.cc' % path.split('/')[-1]
+    by_hand_ending_file = dest + ('/..'if Options.debug else '') + '/../src/' + path + '/_%s__by_hand_ending.cc' % path.split('/')[-1]
 
     by_hand_beginning = file(by_hand_beginning_file).read() if os.path.isfile(by_hand_beginning_file) else ''
     by_hand_ending = file(by_hand_ending_file).read() if os.path.isfile(by_hand_ending_file) else ''
