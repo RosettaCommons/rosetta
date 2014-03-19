@@ -56,7 +56,10 @@ def main(args):
     for t in args[1:] or tests:
         #print '\nRunning %s...' % t
         #__import__( t[:-3] )
+
+        started = datetime.datetime.today()
         execute('\n\nExecuting %s...' % t, 'export PYTHONPATH=`pwd`:$PYTHONPATH && %s %s' % (sys.executable, t) )
+        print 'Finished {} in {}'.format(t, datetime.datetime.today() - started)
 
         #__import__( 'test.' + t[:-3] )
         #execute('Executing %s...' % t, 'export PYTHONPATH=`pwd`:$PYTHONPATH && python %s' % t)
@@ -69,4 +72,3 @@ def main(args):
 if __name__ == "__main__":
     print '%s::__main__, started at %s...' % (sys.argv[0], datetime.datetime.now())
     main(sys.argv)
-
