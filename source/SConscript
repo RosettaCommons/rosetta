@@ -3,6 +3,8 @@
 # Main build script for all librosetta projects.
 # Schedules all the directories which contain build targets of their own.
 
+import os
+
 # Bring in the shared build state
 Import("build")
 
@@ -20,9 +22,11 @@ if GetOption("help"):
     pass
 elif GetOption("nover"):
     print "Skipping versioning script. (Hopefully src/core/svn_version.cc is already up-to-date.)"
+    os.system("./update_options.sh")
 else:
     import version
     version.main()
+    os.system("./update_options.sh")
 
 
 for kind in build.options.cat:

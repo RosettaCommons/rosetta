@@ -13,6 +13,11 @@ def update_version():
 	cmd = 'cd ..; python version.py'
 	os.system(cmd)
 
+def update_options():
+	cmd = 'cd ..; ./update_options.sh'
+	os.system(cmd)
+
+
 def project_callback(project, project_path, project_files):
 	print 'making project files for project ' + project + ' ...',
 
@@ -101,6 +106,7 @@ rosetta_cmake_directory = os.path.dirname( sys.argv[0] ) # where this script is 
 os.chdir( rosetta_cmake_directory or "./" )
 
 update_version()
+update_options()
 
 build_util.project_main(PATH_TO_ROOT + MINI_DIR + "/", sys.argv, project_callback)
 

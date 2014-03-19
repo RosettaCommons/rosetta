@@ -152,17 +152,17 @@ def main(args):
             options_class.writeToFile(Options, 'keys/OptionKeys.cc.gen.hh', options_class.Option.getOptionKeysCC)
 
         # Generating Doxygen docs
-        print "Generating Doxygen docs...",
+        #print "Generating Doxygen docs...",
         f = KeepSameFile("./options.dox", 'wb')
         f.write( options_class.getDoxygenPage(Options) )
         num_changed_files += f.close()
-        print " Done!"
-        print "Generating Markdown docs...",
+        #print " Done!"
+        #print "Generating Markdown docs...",
         f = KeepSameFile("./full-options-list.md", 'wb')
         f.write( options_class.getMarkdownPage(Options) )
         num_changed_files += f.close()
-        print " Done!"
-        print "number of files updated:",num_changed_files
+        #print " Done!"
+        print "Number of option files updated:",num_changed_files
         print "Total %s options." % len(Options)
 
     elif args[1] == '-Wiki':

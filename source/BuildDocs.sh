@@ -2,6 +2,8 @@
 
 echo 'Building documentation for each src/doxygen.*'
 
+./update_options.sh
+
 mkdir html
 cp src/index.html html/
 

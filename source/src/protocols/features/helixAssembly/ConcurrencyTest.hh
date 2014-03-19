@@ -44,7 +44,7 @@
 //Basic
 #include <basic/Tracer.hh>
 #include <basic/options/util.hh>
-#include <basic/options/keys/helixAssembly.OptionKeys.gen.hh>
+//#include <basic/options/keys/sewing.OptionKeys.gen.hh>
 
 namespace protocols {
 namespace features {
@@ -62,11 +62,11 @@ public:
 	type_name() const  {
 		return "HelixBundleFeatures";
 	}
-	
+
 	///@brief generate the table schemas and write them to the database
 	virtual void
 	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
-	
+
 	///@brief collect all the feature data for the pose
 	virtual
 	core::Size

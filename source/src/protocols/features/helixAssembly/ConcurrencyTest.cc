@@ -42,7 +42,7 @@
 //Basic
 #include <basic/Tracer.hh>
 #include <basic/options/util.hh>
-#include <basic/options/keys/helixAssembly.OptionKeys.gen.hh>
+//#include <basic/options/keys/sewing.OptionKeys.gen.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
@@ -56,7 +56,7 @@ namespace helixAssembly {
 	ConcurrencyTest::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 
 		using namespace basic::database::schema_generator;
-		
+
 		PrimaryKey id(Column("id", new DbBigInt(), false));
 		Column random_number(Column("description", new DbInteger()));
 
