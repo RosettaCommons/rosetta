@@ -156,8 +156,11 @@ void FilterReporter::parse_my_tag(
 	if(filter_tag)
 		filter_  = protocols::filters::FilterFactory::get_instance()->newFilter( filter_tag, data, filters, movers, pose );
 
-	if(!filter_)
-		throw utility::excn::EXCN_RosettaScriptsOption("Cannot create filter from script tag: " + tag);
+	if(!filter_) {
+		std::ostringstream s;
+		s << "Cannot create filter from script tag: " << tag;
+		throw utility::excn::EXCN_RosettaScriptsOption(s.str());
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
