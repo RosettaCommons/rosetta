@@ -147,7 +147,8 @@ RBOutMover::get_disulf_jump( Pose & pose, core::pose::Pose const & template_pose
 
     return pose_disulf_jump;
 }
-    
+
+/* 
 core::kinematics::Jump
 RBOutMover::get_disulf_jump( Pose & pose )
 {
@@ -179,7 +180,7 @@ RBOutMover::get_disulf_jump( Pose & pose )
     return pose_disulf_jump;
 }
 
-
+*/
 void
 RBOutMover::apply( Pose & pose )
 {
