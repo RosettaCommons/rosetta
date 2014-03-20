@@ -37,6 +37,7 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
+using namespace core;
 using namespace core::pose;
 using namespace core::kinematics;
 using namespace core::id;

@@ -7,34 +7,34 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 	 core/membrane/MembraneConformation.fwd.hh
+/// @file 	 core/membrane/MembraneInfo.fwd.hh
 ///
-/// @brief 	 Membrane Conformation
-/// @details The Membrane Conformation is responsible for:
+/// @brief 	 Membrane Conformation Info
+/// @details The Membrane Conformation Info object is responsible for:
 ///             - maintaining a correct membrane foldtree
 ///             - maintaining references to the membrane and embedding residues
 ///             - providing access to membrane related data
 ///
-/// @note    Last Modified 1/9/14
+/// @note    Last Modified 3/12/14
 /// @author  Rebecca Alford (rfalford12@gmail.com)
 
-#ifndef INCLUDED_core_membrane_MembraneConformation_fwd_hh
-#define INCLUDED_core_membrane_MembraneConformation_fwd_hh
+#ifndef INCLUDED_core_membrane_MembraneInfo_fwd_hh
+#define INCLUDED_core_membrane_MembraneInfo_fwd_hh
 
 // Utility Headers
-#include <utility/pointer/owning_ptr.hh> 
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace membrane {
-    
-    /// @brief Class: Membrane Conformation
-    /// @details Handles memrbane conformation, foldtree, and maintains memrbane info
-    class MembraneConformation;
-    typedef utility::pointer::owning_ptr< MembraneConformation > MembraneConformationOP;
-    typedef utility::pointer::owning_ptr< MembraneConformation const > MembraneConformationCOP;
-    
+		
+	/// @brief Class: Membrane Conformation Info
+	/// @details Handles memrbane conformation, foldtree, and maintains memrbane info
+	class MembraneInfo;
+	typedef utility::pointer::owning_ptr< MembraneInfo > MembraneInfoOP;
+	typedef utility::pointer::owning_ptr< MembraneInfo const > MembraneInfoCOP;
+		
 } // membrane
 } // core
 
-#endif // INCLUDED_core_membrane_MembraneConformation_fwd_hh
+#endif // INCLUDED_core_membrane_MembraneInfo_fwd_hh
 

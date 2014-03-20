@@ -272,7 +272,7 @@ namespace geometry {
 	void
     EmbeddingFactory::embed_from_search_and_score( core::membrane::util::EmbedConfigInfoOP )
 	{
-		TR << "Embed from Search and Score: Calculating..." << std::endl;
+		TR << "Embed from Search and Score: Computing..." << std::endl;
         
         using namespace core::membrane::util;
         
@@ -298,61 +298,100 @@ namespace geometry {
         return;
 	}
     
-    /// @brief   Non Membrane Embedding Method
-    /// @details The embedding config info object will contain the data required to initialize this
-    ///          information:
-    ///             center = center of mass of the non membrane chain
-    ///             normal = vector sum of residue-com
-    ///             detph = 30A + some user specified factory
-    void
-    EmbeddingFactory::embed_for_non_membrane( core::membrane::util::EmbedConfigInfoOP )
-    {
-        
-        TR << "Embed for membrane associated chian: Calculating..." << std::endl;
-        
-        using namespace core::membrane::util;
-        using namespace core::membrane::geometry;
-        
-        /**
-        // Calculate center vector (and construct core::Vector)
-        numeric::xyzVector< core::Real > com = center_of_mass( *pose_, 1, pose_->total_residue() );
-        core::Vector center( com.x(), com.y(), com.z() ); // safe casting
-        
-        
-        // Method of Normal Calculation
-        if ( embedding->method )
-        // Taking uninitialized data here for now to think about what i need
-        utility::vector1< core::Size > residues; // residues to include for com calculation (get from embed config info)
-        numeric::xyzVector< core::Real > net_norm = calc_
-        core::Vector normal( net_norm.x(), net_norm.y(), net_norm.z() ); // safe casting
-        
-        // Calculate Depth
-        core::Real depth = 30;
-        
-        // Preset membrane associated factor
-        if ( embedding->depth_tag.compare("memrbane_associated") == 0 ) {
-            depth = depth;
-        }
-        
-        // Preset tag here
-        if ( embedding->depth_tag.compare("tag here") == 0 ) {
-            // do something to depth
-        }
-        
-        // Associate rsd with enum type
-        
-        
-        // Calculate Residue Center of mass at CA for the selected CA
-        embedding->norma = nnormal;
-        embedding->center = center;
-        embedding->depth = depth;
-    
-         **/
-        TR << "Embed for membrane associated chain: Complete!" << std::endl;
-        
-        // Done!
-        return;
-    }
+	/// @brief		Compute Fullatom Projections for Fa Embedding
+	///	@details	Computes Projections, depth, and stores coordinates. Computes fullatom
+	///				center and corresponding normal from these computations
+	void embed_for_FA( core::membrane::util::EmbedConfigInfoOP ) {
+		
+	}
+	
+	///////// Helper Methods for Computing Embeddings /////////////////////////////
+	/**
+	/// @brief Score Pose from Normal and Center
+	void score_normal_center( core::Vector & normal, core::Vector & center, core::Real & score ) {
+
+		// Compute Pose Total residue and get topology from pose
+
+		
+		
+	}
+	
+
+		Size const nres=pose.total_residue();
+		MembraneTopology const & topology( MembraneTopology_from_pose(pose) );
+		score=0;
+		Real residue_score(0);
+		Real tm_projection(0);
+		Real non_helix_pen(0);
+		Real termini_pen(0);
+		for ( Size i = 1; i <= nres; ++i ) {
+			Size rsdSeq(i);
+			if ( core::pose::symmetry::is_symmetric( pose ) ) {
+				using namespace core::conformation::symmetry;
+				SymmetricConformation const & symm_conf (
+														 dynamic_cast< SymmetricConformation const & > ( pose.conformation() ) );
+				SymmetryInfoCOP symm_info( symm_conf.Symmetry_Info() );
+				if (!symm_info->bb_is_independent(pose.residue(i).seqpos())) {
+					rsdSeq = symm_info->bb_follows(pose.residue(i).seqpos());
+				}
+				if (symm_info->is_virtual(i)) {
+					rsdSeq = 0;
+				}
+			}
+			if (rsdSeq ==0 ) continue;
+			
+			//CA coords
+			if ( pose.residue(rsdSeq).aa() == core::chemical::aa_vrt ) continue;
+			if(!topology.allow_scoring(rsdSeq)) continue;
+			
+			Vector const & xyz( pose.residue( i ).atom( 2 ).xyz());
+			core::Real depth=dot(xyz-center,normal)+30;
+			evaluate_env(pose,pose.residue(i),depth,residue_score);
+			score+=residue_score;
+		}
+		if(Menv_penalties_) {
+			tm_projection_penalty(pose,normal,center,tm_projection);
+			non_helix_in_membrane_penalty(pose,normal,center,non_helix_pen);
+			termini_penalty(pose,normal,center,termini_pen);
+			score+=tm_projection+non_helix_pen+termini_pen; // bw skipping term_penalty+50.0*term_penalty; //bw 0.5*c++ version.
+		}
+	}
+	
+	void
+	MembranePotential::search_memb_normal(Vector & n,
+										  Real const & alpha,
+										  Real const & theta) const
+	{
+		Real r_alpha = numeric::conversions::radians(alpha);
+		Real r_theta = numeric::conversions::radians(theta);
+		Vector u(std::sin(r_alpha) * std::cos(r_theta), std::sin(r_alpha) * std::sin(r_theta), std::cos(r_alpha));
+		n=rotation_matrix_degrees(u,alpha)*n;
+	}
+	
+	void
+	MembranePotential::search_memb_center(Vector & c,
+										  Vector & n,
+										  Real const & delta) const
+	{
+		c=c+delta*n;
+	}
+	
+	void
+	MembranePotential::rot_perturb_vector(Vector & v,
+										  Real const & std_dev) const
+	{
+		Vector u(numeric::random::gaussian(),numeric::random::gaussian(),numeric::random::gaussian()); //bw rotation_matrix will normalize.
+		Real alpha(numeric::random::gaussian()*std_dev);
+		v=rotation_matrix(u,alpha)*v;
+	}
+	
+	void
+	MembranePotential::rigid_perturb_vector(Vector & v,
+											Real const & std_dev) const
+	{
+		Vector u(numeric::random::gaussian(),numeric::random::gaussian(),numeric::random::gaussian());
+		u.normalize();
+	**/
     
 } // core
 } // membrane

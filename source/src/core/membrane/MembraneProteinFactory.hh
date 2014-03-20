@@ -57,7 +57,7 @@
 #include <core/membrane/geometry/EmbeddingFactory.hh>
 #include <core/membrane/geometry/util.hh>
 
-#include <core/membrane/MembraneConformation.hh> 
+#include <core/membrane/MembraneInfo.hh>
 #include <core/conformation/Conformation.hh>
 
 // Package Headers
@@ -201,11 +201,11 @@ namespace membrane {
         
         /// @brief Initialize Spanning Topology
         /// @details Initialize spanning topology in the final pose
-        void initialize_topology( MembraneConformationOP mp_conf );
+       void initialize_topology( core::pose::PoseOP pose );
         
         /// @brief Initialize Lipds Exposure Data
         /// @details Initialize lipid exposure data in the final pose
-        void initialize_lips_exp( MembraneConformationOP mp_conf );
+       void initialize_lips_exp( core::pose::PoseOP pose );
         
         /// @brief Show Membrane Pose Info
         /// @details Show all ifnormation relevant to the new membrane pose

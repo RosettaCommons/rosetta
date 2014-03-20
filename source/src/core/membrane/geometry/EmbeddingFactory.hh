@@ -117,6 +117,11 @@ public: // methods
     ///             loader (RM).
 	void embed_from_search_and_score( core::membrane::util::EmbedConfigInfoOP embedding );
     
+	/// @brief		Compute Fullatom Projections for Fa Embedding
+	///	@details	Computes Projections, depth, and stores coordinates. Computes fullatom
+	///				center and corresponding normal from these computations
+	void embed_for_FA( core::membrane::util::EmbedConfigInfoOP embedding );
+	
     /// @brief   Non Membrane Embedding Method
     /// @details The embedding config info object will contain the data required to initialize this
     ///          information:
@@ -125,6 +130,7 @@ public: // methods
     ///             detph = 30A + some user specified factory
     void
     embed_for_non_membrane( core::membrane::util::EmbedConfigInfoOP embedding );
+	
 
 private: // data
     

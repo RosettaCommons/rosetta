@@ -63,7 +63,7 @@
 #include <basic/datacache/BasicDataCache.hh>
 
 #include <core/conformation/Conformation.hh>
-#include <core/membrane/MembraneConformation.hh>
+#include <core/membrane/MembraneInfo.hh> 
 
 #include <core/types.hh>
 
@@ -346,17 +346,16 @@ namespace membrane {
             embres_map[ i ] = std::pair< int, int >( jump, pose->total_residue() );
         }
 
-        // Construct and set a new conformation
-        MembraneConformationOP mp_conf( new MembraneConformation( pose->conformation(), embres_map, root ) );
+        // Construct and set a new membrane info object
+	pose->conformation().setup_membrane( embres_map, root );
+
+	// Add Spanning topology and Lips to membrane info
 
         // Initialize Spanning Topology
-        initialize_topology( mp_conf );
+        initialize_topology( pose );
 
         // Should initialize multi chain lipds here
-        initialize_lips_exp( mp_conf );
-
-        // Set final conf
-        pose->set_new_conformation( mp_conf );
+        initialize_lips_exp( pose );
 
         // Done!
         return;
@@ -365,7 +364,7 @@ namespace membrane {
     /// @brief Initialize Spanning Topology
     /// @details Initialize spanning topology in the final pose
     void
-    MembraneProteinFactory::initialize_topology( MembraneConformationOP mp_conf  )
+    MembraneProteinFactory::initialize_topology( core::pose::PoseOP pose  )
     {
         using namespace core::membrane::properties;
 
@@ -373,14 +372,14 @@ namespace membrane {
         {
             // Make a new const ref and add to conf
             SpanningTopology const & topology( *topologies_[i] );
-            mp_conf->add_topology_by_chain( topology, i );
+            pose->conformation().membrane()->add_topology_by_chain( topology, i );
         }
     }
 
     /// @brief Initialize Lipds Exposure Data
     /// @details Initialize lipid exposure data in the final pose
     void
-    MembraneProteinFactory::initialize_lips_exp( MembraneConformationOP mp_conf ) {
+    MembraneProteinFactory::initialize_lips_exp( core::pose::PoseOP pose ) {
 
         using namespace core::membrane::properties;
 
@@ -389,7 +388,7 @@ namespace membrane {
             for ( core::Size i = 1; i <= lipid_acc_.size(); i++ )
             {
                 LipidAccInfo const & lipids( *lipid_acc_[i] );
-                mp_conf->add_lips_by_chain(lipids, i );
+                pose->conformation().membrane()->add_lips_by_chain(lipids, i );
             }
         }
     }

@@ -135,6 +135,7 @@ Membrane_FAPotential::compute_fa_projection(pose::Pose & pose) const
   Real const steepness(Membrane_FAEmbed_from_pose( pose ).steepness());
 
   fa_projection(pose,normal,center,thickness,steepness,penalty);
+
 }
 
 void

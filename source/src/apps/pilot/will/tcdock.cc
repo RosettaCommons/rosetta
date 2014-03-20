@@ -1381,7 +1381,7 @@ struct TCDock {
 
 		// symm.dump_pdb("test_"+string(dumpsym?"presym":"nosym")+".pdb");
 		if(dumpsym) {
-			option[symmetry::symmetry_definition]("input/"+arch().name()+"_tcdock.sym");
+				option[ basic::options::OptionKeys::symmetry::symmetry_definition]("input/"+arch().name()+"_tcdock.sym");
 			core::pose::symmetry::make_symmetric_pose(symm);
 			// symm.dump_pdb("test_sym.pdb");
 

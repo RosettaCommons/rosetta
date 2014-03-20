@@ -632,7 +632,7 @@ const
 			accepted_score=best_score;
 			bool spanning(check_spanning(pose,trial_normal,trial_center));
 			bool best_spanning(spanning);
-			bool debug=option[ membrane::debug ]();
+			bool debug=option[ OptionKeys::membrane::debug ]();
 			Real normal_mag=membrane_normal_magnitude_; //bw tmp
 			Real center_mag=membrane_center_magnitude_; //bw tmp
 			int max_delta_center=membrane_center_max_delta_; //vmyy default 5 A
@@ -655,12 +655,6 @@ const
 				membrane_embed.calculated()=true;
 				return;
 			}
-
-
-			//if ( core::pose::symmetry::is_symmetric( pose ) ) {
-			//	trial_normal = core::pose::symmetry::get_symm_axis( pose );
-			//	orig_trial_normal = trial_normal;
-			//}
 
 			if ( memb_center_search_ || core::pose::symmetry::is_symmetric( pose ) ) {
 				for ( int delta_center = -max_delta_center; delta_center <= max_delta_center; ++delta_center ) {

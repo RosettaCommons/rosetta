@@ -32,7 +32,7 @@
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/membrane/MembraneConformation.hh>
+#include <core/membrane/MembraneInfo.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>
@@ -125,8 +125,7 @@ public:
         TS_TRACE("Testing membrane protein constains an accessible membrane conformation object");
         
         // Cast conformation to membrane conformaiton
-        MembraneConformation & mp_conf = dynamic_cast< MembraneConformation & >( membrane_protein_->conformation() );
-        TS_ASSERT( mp_conf.is_membrane() ); // check dst invariants
+	TS_ASSERT( membrane_protein_->conformation().membrane()->is_membrane() ); // check dst invariants
         
         TS_TRACE("Test base case of membrane fold tree construction");
         FoldTree ft( membrane_protein_->fold_tree() );
@@ -134,7 +133,7 @@ public:
         TS_ASSERT( ft.is_root( 81 ) );
         
         TS_TRACE("Test number of chains in membrane spanning topology");
-        utility::vector1< SpanningTopology > topology = mp_conf.spanning_topology();
+        utility::vector1< SpanningTopology > topology = membrane_protein_->conformation().membrane()->spanning_topology();
         TS_ASSERT_EQUALS( topology.size(), 2 );
         TS_ASSERT_EQUALS( topology[ 1 ].total_residue_in_span_file(), 40 );
         TS_ASSERT_EQUALS( topology[ 2 ].total_residue_in_span_file(), 40 );

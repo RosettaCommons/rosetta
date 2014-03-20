@@ -911,7 +911,7 @@ struct HubDenovo {
 		}
 		using namespace core::scoring;
 		ScoreFunctionOP s4smooth( ScoreFunctionFactory::create_score_function("score4_smooth") );
-		sf3 = symmetry::symmetrize_scorefunction( *s4smooth );
+		sf3 = core::scoring::symmetry::symmetrize_scorefunction( *s4smooth );
 		Real cstwt = 2.0*Real(cfg.nres)/Real(cfg.cst_bb.size());
 		if(cfg.cst_bb.size()==0) cstwt = 0.0;
 		sf3->set_weight(atom_pair_constraint,cstwt);

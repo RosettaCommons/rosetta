@@ -191,13 +191,13 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 		}
 	} else {
 		core::scoring::electron_density::poseCoords litePose;
-		for (uint i = 1; i <= pose_copy.total_residue(); ++i) {
+		for (core::Size i = 1; i <= pose_copy.total_residue(); ++i) {
 			if (symm_info && !symm_info->bb_is_independent( i ) ) continue;
 			core::conformation::Residue const & rsd_i ( pose_copy.residue(i) );
 			if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 
 			core::Size natoms = rsd_i.nheavyatoms();
-			for (uint j = 1; j <= natoms; ++j) {
+			for (core::Size j = 1; j <= natoms; ++j) {
 				if ( rsd_i.atom_type(j).is_virtual() ) continue;
 				core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 
@@ -225,11 +225,11 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 			if ( rsd1.aa() == core::chemical::aa_vrt ) continue;
 
 			core::Size natoms = rsd1.nheavyatoms();
-			for (uint k = 1; k <= natoms; ++k) {
+			for (core::Size k = 1; k <= natoms; ++k) {
 				core::Real B_k = pose_copy.pdb_info()->temperature( i, k );
 				if (atom_indices_[core::id::AtomID(k,i)] == 0) continue;
 
-				for (uint l = k + 1; l <= natoms; ++l) {
+				for (core::Size l = k + 1; l <= natoms; ++l) {
 					core::Real B_l = pose_copy.pdb_info()->temperature( i, l );
 					if (atom_indices_[core::id::AtomID(l,i)] == 0) continue;
 
@@ -254,10 +254,10 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 				core::Size natoms2 = rsd2.nheavyatoms();
 
 				// inter-atom
-				for (uint k = 1; k <= natoms; ++k) {
+				for (core::Size k = 1; k <= natoms; ++k) {
 					core::Real B_k = pose_copy.pdb_info()->temperature( i, k );
 					if (atom_indices_[core::id::AtomID(k,i)] == 0) continue;
-					for (uint l = 1; l <= natoms2; ++l) {
+					for (core::Size l = 1; l <= natoms2; ++l) {
 						core::Real B_l = pose_copy.pdb_info()->temperature( j, l );
 						if (atom_indices_[core::id::AtomID(l,j)] == 0) continue;
 
@@ -323,10 +323,10 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 
 			// intra-res
 			core::Size natoms = rsd1.nheavyatoms();
-			for (uint k = 1; k <= natoms; ++k) {
+			for (core::Size k = 1; k <= natoms; ++k) {
 				core::Real B_k = pose_copy.pdb_info()->temperature( i, k );
 				if (atom_indices_[core::id::AtomID(k,i)] == 0) continue;
-				for (uint l = k + 1; l <= natoms; ++l) {
+				for (core::Size l = k + 1; l <= natoms; ++l) {
 					core::Real B_l = pose_copy.pdb_info()->temperature( i, l );
 					if (atom_indices_[core::id::AtomID(l,i)] == 0) continue;
 
@@ -359,11 +359,11 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 				core::Size natoms2 = rsd2.nheavyatoms();
 
 				// inter-res
-				for (uint k = 1; k <= natoms; ++k) {
+				for (core::Size k = 1; k <= natoms; ++k) {
 					core::Real B_k = pose_copy.pdb_info()->temperature( i, k );
 					if (atom_indices_[core::id::AtomID(k,i)] == 0) continue;
 
-					for (uint l = 1; l <= natoms2; ++l) {
+					for (core::Size l = 1; l <= natoms2; ++l) {
 						core::Real B_l = pose_copy.pdb_info()->temperature( j, l );
 						if (atom_indices_[core::id::AtomID(l,j)] == 0) continue;
 
@@ -405,7 +405,7 @@ BfactorMultifunc::dump( core::optimization::Multivec const & x1, core::optimizat
 
  		 core::Real score = (*this)(x1);
  		 std::cerr << "[deriv] score = " << score << std::endl;
- 		 for (uint i = 1; i <= x1.size(); ++i) {
+ 		 for (core::Size i = 1; i <= x1.size(); ++i) {
  		 	varsCopy[i]+=0.0001;
  		 	core::Real scorep = (*this)(varsCopy);
  		 	varsCopy[i]-=0.0002;
@@ -479,7 +479,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 	f_b.poseBfacts2multivec( pose, y );
 
 	// if b=0 set b to some small value
-	for (uint i = 1; i <= y.size(); ++i) if (y[i] < 1e-6) y[i] = 5;
+	for (core::Size i = 1; i <= y.size(); ++i) if (y[i] < 1e-6) y[i] = 5;
 
 	core::scoring::electron_density::getDensityMap().rescale_fastscoring_temp_bins( pose, init_ );
 
@@ -490,11 +490,11 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 	if (opt_to_fsc_) {
 		// pose->poseCoords
 		poseCoords litePose;
-		for (uint i = 1; i <= pose.total_residue(); ++i) {
+		for (core::Size i = 1; i <= pose.total_residue(); ++i) {
 			core::conformation::Residue const & rsd_i ( pose.residue(i) );
 			if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
 			core::Size natoms = rsd_i.nheavyatoms();
-			for (uint j = 1; j <= natoms; ++j) {
+			for (core::Size j = 1; j <= natoms; ++j) {
 				core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 				poseCoord coord_j;
 				coord_j.x_ = rsd_i.xyz( j );
@@ -504,7 +504,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 		}
 
 		for (core::Size j=1; j<=nvalues; ++j) {
-			for (uint i = 1; i <= litePose.size(); ++i) litePose[i].B_ = weights_to_scan_[j];
+			for (core::Size i = 1; i <= litePose.size(); ++i) litePose[i].B_ = weights_to_scan_[j];
 
 			utility::vector1< core::Real > modelmapFSC(nresbins_,1.0), modelmapError(nresbins_,1.0);
 			core::scoring::electron_density::getDensityMap().getFSC(
@@ -521,10 +521,10 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 			}
 		}
 
-		for (uint i = 1; i <= y.size(); ++i) y[i] = bestVal;
+		for (core::Size i = 1; i <= y.size(); ++i) y[i] = bestVal;
 	} else if (init_) {
 		for (core::Size j=1; j<=nvalues; ++j) {
-			for (uint i = 1; i <= y.size(); ++i)
+			for (core::Size i = 1; i <= y.size(); ++i)
 				y[i] = log( weights_to_scan_[j] );
 			core::Real thisScore = f_b(y);
 			TR << "B=" << weights_to_scan_[j] << ": score=" << thisScore << std::endl;
@@ -533,7 +533,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 				bestVal = weights_to_scan_[j];
 			}
 		}
-		for (uint i = 1; i <= y.size(); ++i) y[i] = log(bestVal);
+		for (core::Size i = 1; i <= y.size(); ++i) y[i] = log(bestVal);
 	}
 
 	if (!opt_to_fsc_) {
@@ -603,7 +603,7 @@ BfactorFittingMover::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &,
 		std::string weight_string = tag->getOption<std::string>("weights_to_scan");
 		utility::vector1< std::string > tokens ( utility::string_split( weight_string, ',' ) );
 		weights_to_scan_.clear();
-		for (uint j = 1; j <= tokens.size(); ++j)
+		for (core::Size j = 1; j <= tokens.size(); ++j)
 			weights_to_scan_.push_back( atof(tokens[j].c_str()) );
 	}
 }

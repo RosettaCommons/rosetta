@@ -43,6 +43,9 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 
+#include <core/membrane/MembraneInfo.fwd.hh>
+#include <core/membrane/MembraneInfo.hh>
+
 // Numeric headers
 #include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
@@ -482,6 +485,23 @@ Conformation::chains_from_termini()
 	rederive_chain_ids();
 }
 
+// Membranes /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/// @brief Given Embedding and Membrane Positions, Setup a Membrane Info Object
+void
+Conformation::setup_membrane( utility::vector1< std::pair< int, int > > embres_map, int membrane ) {
+
+	using namespace core::membrane;
+
+	// Create new membrane info object
+	membrane_info_ = new MembraneInfo( this, embres_map, membrane );
+}
+
+/// @brief Returns a Membrane Info Object in the conformation
+membrane::MembraneInfoOP
+Conformation::membrane() {
+	return membrane_info_;
+}
 
 // Trees /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

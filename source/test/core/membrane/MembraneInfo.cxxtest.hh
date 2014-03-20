@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 	 core/membrane/MembraneConformation.cxxtest.hh
+/// @file 	 core/membrane/MembraneInfo.cxxtest.hh
 ///
-/// @brief 	 Membrane Conformation Unit Test
+/// @brief 	 Membrane Conformation Info Object - Unit Test
 /// @details The Membrane Conformation is responsible for:
 ///             - maintaining a correct membrane foldtree
 ///             - maintaining references to the membrane and embedding residues
 ///             - providing access to membrane related data
 ///
-/// @note    Last Modified 1/10/14
+/// @note    Last Modified 3/12/14
 /// @author  Rebecca Alford (rfalford12@gmail.com)
 
 // Test Headers
@@ -23,15 +23,15 @@
 #include <test/core/init_util.hh>
 
 // Unit Headers
-#include <core/membrane/MembraneConformation.hh> 
+#include <core/membrane/MembraneInfo.hh>
 
 // Package Headers
-#include <core/kinematics/FoldTree.hh> 
+#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/util.hh>
 
 #include <core/conformation/Conformation.hh>
 
-#include <core/pose/Pose.hh> 
+#include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
 
@@ -47,17 +47,16 @@
 #include <utility/vector1.hh>
 
 // C++ Headers
-#include <cstdlib> 
-#include <string> 
-#include <cmath> 
-
+#include <cstdlib>
+#include <string>
+#include <cmath>
 
 using namespace core::kinematics;
 using namespace core::conformation;
 using namespace core::membrane;
 
-class MembraneConformationTest : public CxxTest::TestSuite {
-
+class MembraneInfoTest : public CxxTest::TestSuite {
+	
 public: // test functions
     
     /// Test Setup Functions ////////
@@ -67,7 +66,7 @@ public: // test functions
         
         using namespace core::import_pose;
         using namespace core::pose;
-    
+		
         // Initialize
         core_init();
         
@@ -85,15 +84,18 @@ public: // test functions
         
         // Setup the membrane root
         membrane_ = 81;
-        
-        // Set the conformation
-        mp_conf_ = new MembraneConformation( pose_->conformation(), embres_map_, membrane_ );
+		
+				// Construct a Membrane Info object within the conformation
+				pose_->conformation().setup_membrane( embres_map_, membrane_ );
+
+				// Extract conformation from the pose
+				mp_conf_ = pose_->conformation();
         
     }
     
     /// @brief Standard Tear Down
     void tearDown() {}
-    
+	    
     ///// Test Methods /////////////
     
     /// @brief Test Membrane Fold Tree
@@ -119,7 +121,7 @@ public: // test functions
     void test_membrane_invariants() {
         
         TS_TRACE("Testing membrane conformation invariants");
-        TS_ASSERT( mp_conf_->is_membrane() );
+        TS_ASSERT( mp_conf_->membrane()->is_membrane() );
     }
     
     /// @brief Testing membrane info access methods
@@ -128,9 +130,9 @@ public: // test functions
         TS_TRACE("Testing membrane info access methods");
         
         // Grabbing info from membrane positions
-        core::Vector mp_center = mp_conf_->membrane_center();
-        core::Vector mp_normal = mp_conf_->membrane_normal();
-        core::Real mp_thickness = mp_conf_->membrane_thickness();
+        core::Vector mp_center = mp_conf_->membrane()->membrane_center();
+        core::Vector mp_normal = mp_conf_->membrane()->membrane_normal();
+        core::Real mp_thickness = mp_conf_->membrane()->membrane_thickness();
         
         // Check center
         TS_ASSERT_EQUALS( mp_center.x(), 0 );
@@ -153,9 +155,9 @@ public: // test functions
         TS_TRACE("Testing embedding info access emthodds");
         
         // Grabbing embedding info for chain 1
-        core::Vector emb_center_1 = mp_conf_->embedding_center(1);
-        core::Vector emb_normal_1 = mp_conf_->embedding_normal(1);
-        core::Real emb_depth_1 = mp_conf_->embedding_depth(1);
+        core::Vector emb_center_1 = mp_conf_->membrane()->embedding_center(1);
+        core::Vector emb_normal_1 = mp_conf_->membrane()->embedding_normal(1);
+        core::Real emb_depth_1 = mp_conf_->membrane()->embedding_depth(1);
         
         // Check center
         TS_ASSERT_EQUALS( emb_center_1.x(), 1 );
@@ -171,9 +173,9 @@ public: // test functions
         TS_ASSERT_EQUALS( emb_depth_1, 40.0 );
         
         // Grammbing embedding info for chain 2
-        core::Vector emb_center_2 = mp_conf_->embedding_center(2);
-        core::Vector emb_normal_2 = mp_conf_->embedding_normal(2);
-        core::Real emb_depth_2 = mp_conf_->embedding_depth(2);
+        core::Vector emb_center_2 = mp_conf_->membrane()->embedding_center(2);
+        core::Vector emb_normal_2 = mp_conf_->membrane()->embedding_normal(2);
+        core::Real emb_depth_2 = mp_conf_->membrane()->embedding_depth(2);
         
         // Check center
         TS_ASSERT_EQUALS( emb_center_2.x(), 10 );
@@ -196,13 +198,13 @@ public: // test functions
         TS_TRACE("Testing membrane conformation access methods");
         
         // Check membrane info
-        TS_ASSERT_EQUALS( mp_conf_->membrane(), 81 );
+        TS_ASSERT_EQUALS( mp_conf_->membrane()->membrane(), 81 );
         
         // Check embedding residue data
-        TS_ASSERT_EQUALS( mp_conf_->embres_map().at(1).first, 1 );
-        TS_ASSERT_EQUALS( mp_conf_->embres_map().at(2).first, 41 );
-        TS_ASSERT_EQUALS( mp_conf_->embres_map().at(1).second, 82 );
-        TS_ASSERT_EQUALS( mp_conf_->embres_map().at(2).second, 83 );
+        TS_ASSERT_EQUALS( mp_conf_->membrane()->embres_map().at(1).first, 1 );
+        TS_ASSERT_EQUALS( mp_conf_->membrane()->embres_map().at(2).first, 41 );
+        TS_ASSERT_EQUALS( mp_conf_->membrane()->embres_map().at(1).second, 82 );
+        TS_ASSERT_EQUALS( mp_conf_->membrane()->embres_map().at(2).second, 83 );
         
     }
     
@@ -221,7 +223,7 @@ public: // test functions
         core::chemical::ResidueType const & virtuals( *rsd_type_list1[1] );
         core::conformation::ResidueOP vrt1( core::conformation::ResidueFactory::create_residue(virtuals) );
         
-        TS_ASSERT_THROWS_ANYTHING( mp_conf_->insert_residue_by_jump( *vrt1, 40, 2, "", "", true) );
+       // TS_ASSERT_THROWS_ANYTHING( mp_conf_->insert_residue_by_jump( *vrt1, 40, 2, "", "", true) );
     }
     
 private: // setup functions
@@ -286,9 +288,9 @@ private: // test data
     
     // Maintain corresponding root
     int membrane_;
-    
-    // Final Conformaiton
-    MembraneConformationOP mp_conf_;
+	
+	// Pose Conformation
+	ConformationOP mp_conf_;
 };
 
 

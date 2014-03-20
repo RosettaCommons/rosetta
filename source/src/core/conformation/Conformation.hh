@@ -48,7 +48,8 @@
 #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/kinematics/DomainMap.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-
+#include <core/membrane/MembraneInfo.fwd.hh>
+#include <core/membrane/MembraneInfo.hh>
 
 // Utility headers
 #include <utility/pointer/access_ptr.hh>
@@ -174,6 +175,12 @@ public:  // General Properties
 
 	///@brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
 	bool is_centroid() const;
+	
+	/// @brief convenience test for if the conformation contains information for a membrane protein
+	bool is_membrane() const {
+		if ( membrane_info_ == 0 ) return false; 
+		return true; 
+	}
 
 	/// @brief Return true if this conformation contains any carbohydrate residues.
 	bool
@@ -263,6 +270,20 @@ public:  // Secondary Structure
 		secstruct_[seqpos] = setting;
 	}
 
+public: // membrane
+	
+	/// @brief Setup a Membrane Info Object inside the conformation
+	/// @details MembraneInfo contains information regarding membrane residues,
+	/// foldtree modifications, fullatom vs. centroid embedding parameters for
+	/// scoring and the spanning topology/lipids accessibility data
+	void
+	setup_membrane( utility::vector1< std::pair< int, int > > embres_map, int membrane );
+ 
+	/// @brief Returns a Membrane Info Object in the conformation
+	/// @details Membrane Info contains information regarding membrane residues,
+	/// foldtree modifications, fullatom vs. centroid embedding parameters for
+	/// scoring and the spanning topology/lipids accessibility data
+	core::membrane::MembraneInfoOP membrane();
 
 public:  // Trees
 
@@ -1229,6 +1250,9 @@ private:
 		 ID's and the chain_endings_ vector stay in sync.
 	**/
 	utility::vector1< Size > chain_endings_;
+
+	/// @brief Membrane Info object
+	membrane::MembraneInfoOP membrane_info_;
 
 	/// @brief fold tree for the kinematics
 	FoldTreeOP fold_tree_;

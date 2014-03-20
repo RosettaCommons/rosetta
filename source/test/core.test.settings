@@ -98,7 +98,7 @@ sources = {
 		"EmbedSearchParamsLoader",
 		"EmbedDefIO",
 		"EmbedDefLoader",
-        "LoadAllResources",
+                "LoadAllResources",
 	],
     "membrane/geometry" : [
         "geometryUtil",
@@ -107,7 +107,7 @@ sources = {
     ],
     "membrane" : [
         "MPDatabaseIO",
-        "MembraneConformation",
+        "MembraneInfo",
     ],
 	"kinematics" : [
 		"FoldTree",
@@ -418,7 +418,8 @@ testinputfiles = [
 	"io/bin_silentfile_test.pdb",
 	"io/test_in.pdb",
 	"io/test_in_idealized.pdb",
-        "membrane/1afo_test.xml",
+	"membrane/1afo_test.xml",
+	"membrane/io/1afo_test.pdb",
     "membrane/io/single_tmh.span",
     "membrane/io/multiple_tmh.span",
     "membrane/io/edge_tmh.span",
@@ -426,7 +427,6 @@ testinputfiles = [
     "membrane/io/negative_tmh.span",
     "membrane/io/negative_total.span",
     "membrane/io/out_of_bounds.span",
-    "membrane/io/1afo_test.pdb",
     "membrane/io/1afo_A.pdb",
     "membrane/io/1afo_test.lips",
     "membrane/io/1afo_test.embed",

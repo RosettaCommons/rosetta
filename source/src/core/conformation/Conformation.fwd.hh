@@ -22,6 +22,7 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 // C++ headers
 
@@ -31,7 +32,7 @@ namespace conformation {
 class Conformation;
 typedef utility::pointer::owning_ptr< Conformation       > ConformationOP;
 typedef utility::pointer::owning_ptr< Conformation const > ConformationCOP;
-
+	
 } // conformation
 } // core
 
