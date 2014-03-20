@@ -25,9 +25,6 @@
 // Package Headers
 #include <core/types.hh>
 
-#include <core/pose/Pose.hh>
-#include <basic/datacache/CacheableData.hh>
-
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>

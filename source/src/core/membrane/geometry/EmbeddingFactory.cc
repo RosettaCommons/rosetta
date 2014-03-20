@@ -301,7 +301,7 @@ namespace geometry {
 	/// @brief		Compute Fullatom Projections for Fa Embedding
 	///	@details	Computes Projections, depth, and stores coordinates. Computes fullatom
 	///				center and corresponding normal from these computations
-	void embed_for_FA( core::membrane::util::EmbedConfigInfoOP ) {
+	void EmbeddingFactory::embed_for_FA( core::membrane::util::EmbedConfigInfoOP ) {
 		
 	}
 	

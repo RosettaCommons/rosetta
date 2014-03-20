@@ -22,6 +22,8 @@
 #include <core/membrane/geometry/EmbeddingFactory.fwd.hh>
 
 // Project Headers
+#include <core/pose/Pose.hh> 
+
 #include <core/membrane/properties/SpanningTopology.hh>
 #include <core/membrane/util/definitions.hh>
 #include <core/membrane/util/Exceptions.hh>
@@ -29,8 +31,6 @@
 #include <core/membrane/geometry/util.hh>
 
 // Package Headers
-#include <core/pose/Pose.hh>
-
 #include <core/conformation/Residue.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
@@ -121,16 +121,7 @@ public: // methods
 	///	@details	Computes Projections, depth, and stores coordinates. Computes fullatom
 	///				center and corresponding normal from these computations
 	void embed_for_FA( core::membrane::util::EmbedConfigInfoOP embedding );
-	
-    /// @brief   Non Membrane Embedding Method
-    /// @details The embedding config info object will contain the data required to initialize this
-    ///          information:
-    ///             center = center of mass of the non membrane chain
-    ///             normal = vector sum of residue-com
-    ///             detph = 30A + some user specified factory
-    void
-    embed_for_non_membrane( core::membrane::util::EmbedConfigInfoOP embedding );
-	
+
 
 private: // data
     

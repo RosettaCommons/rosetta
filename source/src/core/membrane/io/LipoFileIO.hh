@@ -31,7 +31,6 @@
 #include <basic/resource_manager/util.hh>
 
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>

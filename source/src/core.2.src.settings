@@ -151,7 +151,6 @@ sources = {
 		"BondedAtom",
 		"JumpAtom",
 	],
-	
 	"core/membrane/util": [
 		"definitions_util",
 	],
@@ -159,27 +158,9 @@ sources = {
 	       "SpanningTopology",
                "LipidAccInfo",
 	],
-	"core/membrane/io": [
-		"SpanFileIO",
-		"SpanFileOptions",
-		"SpanFileFallbackConfiguration",
-		"SpanFileLoader",
-		"LipoFileIO",
-		"LipoFileOptions",
-		"LipoFileFallbackConfiguration",
-		"LipoFileLoader",
-		"EmbedDefIO",
-		"EmbedDefOptions",
-		"EmbedDefFallbackConfiguration",
-		"EmbedDefLoader",
-		"EmbedSearchParamsOptions",
-		"EmbedSearchParamsIO",
-		"EmbedSearchParamsFallbackConfiguration",
-		"EmbedSearchParamsLoader",
-	],
-    "core/membrane": [
+	"core/membrane": [
 	"MembraneInfo",
-    ],
+	],
 }
 include_path = [
 ]

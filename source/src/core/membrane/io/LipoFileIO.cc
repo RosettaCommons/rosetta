@@ -29,7 +29,6 @@
 
 // Package Headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
 
