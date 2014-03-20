@@ -39,8 +39,7 @@
 // C++ headers
 #include <iostream>
 
-//static basic::Tracer TR("devel.denovo_design.GenericSimulatedAnnealer.cxxtest");
-#define TR std::cout
+static basic::Tracer TR("devel.denovo_design.GenericSimulatedAnnealer.cxxtest");
 
 // --------------- Test Class --------------- //
 class GenericSimulatedAnnealerTests : public CxxTest::TestSuite {

@@ -22,8 +22,12 @@
 //#include <numeric/interpolation/spline/Cubic_spline.fwd.hh>
 //#include <numeric/MathVector_operations.hh>
 
+#include <basic/Tracer.hh>
+
 #include <cassert>
 
+
+static basic::Tracer TR( "numeric.interpolation.spline.bicubic_interpolation_function_cxxtest_hh" );
 
 // --------------- Test Class --------------- //
 
@@ -144,7 +148,7 @@ void bicubic_interpolation(
 		+dx3m *( -( 3 * dym * dym - 1) * d4dx2y200 + ( 3 * dyp * dyp - 1) * d4dx2y201 ) * binwy_over6
 		+dx3p *( -( 3 * dym * dym - 1) * d4dx2y210 + ( 3 * dyp * dyp - 1) * d4dx2y211 ) * binwy_over6;
 
-	std::cout << "bicubic interpolation " << val << " " << dvaldx << " " << dvaldy << std::endl;
+	TR << "bicubic interpolation " << val << " " << dvaldx << " " << dvaldy << std::endl;
 }
 
 
@@ -191,7 +195,7 @@ void bicubic_interpolation(
        valxp, dvaldxxp, dvaldyxp
     );
 
-    std::cout << "dvaldx analytic " << dvaldx << " and numeric " << (valxp-valxm)/(2*delta) << std::endl;
+    TR << "dvaldx analytic " << dvaldx << " and numeric " << (valxp-valxm)/(2*delta) << std::endl;
     TS_ASSERT_DELTA( dvaldx, (valxp-valxm)/(2*delta), 1e-6 );
 
 
@@ -215,7 +219,7 @@ void bicubic_interpolation(
        valyp, dvaldxyp, dvaldyyp
     );
 
-    std::cout << "dvaldy analytic " << dvaldy << " and numeric " << (valyp-valym)/(2*delta) << std::endl;
+    TR << "dvaldy analytic " << dvaldy << " and numeric " << (valyp-valym)/(2*delta) << std::endl;
     TS_ASSERT_DELTA( dvaldy, (valyp-valym)/(2*delta), 1e-6 );
 
 

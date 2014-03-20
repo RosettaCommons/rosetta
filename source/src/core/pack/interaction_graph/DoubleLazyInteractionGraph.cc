@@ -1309,6 +1309,7 @@ DoubleLazyInteractionGraph::DoubleLazyInteractionGraph(
 ////////////////////////////////////////////////////////////////////////////////
 DoubleLazyInteractionGraph::~DoubleLazyInteractionGraph()
 {
+#ifdef APL_FULL_DEBUG
 	unsigned int edge_potential_usage( 0 );
 	unsigned int edge_actual_usage( 0 );
 	for( std::list< EdgeBase* >::const_iterator eiter = get_edge_list_begin(),
@@ -1318,6 +1319,7 @@ DoubleLazyInteractionGraph::~DoubleLazyInteractionGraph()
 		edge_actual_usage += dledge->actual_twobody_memory_use();
 	}
 	std::cout << "~DoubleLazyIG: used " << edge_actual_usage << " bytes instead of " << edge_potential_usage << std::endl;
+#endif
 }
 
 void

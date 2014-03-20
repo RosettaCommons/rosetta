@@ -1307,8 +1307,8 @@ off_rotamer_pack_optimize(
 #endif
 			}
 		}
-		std::cout << "Finished temperature " << ii_temperature << " with energy " << curr_state.energy() << " and best energy " << best_state.energy()
-			<< " accept rate: " << ((double) naccepts )/ jj_end << " avg deltaE: " << accum_deltaE / ( naccepts == 0 ? 1 : naccepts ) << std::endl;
+		//std::cout << "Finished temperature " << ii_temperature << " with energy " << curr_state.energy() << " and best energy " << best_state.energy()
+		//	<< " accept rate: " << ((double) naccepts )/ jj_end << " avg deltaE: " << accum_deltaE / ( naccepts == 0 ? 1 : naccepts ) << std::endl;
 
 	}
 }

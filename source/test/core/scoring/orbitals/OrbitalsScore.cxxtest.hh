@@ -49,7 +49,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/database/open.hh>
+#include <basic/Tracer.hh>
 
+static basic::Tracer TR( "core.scoring.orbitals.OrbitalsScore_cxxtest_hh" );
 
 // --------------- Test Class --------------- //
 
@@ -133,7 +135,7 @@ public:
 		sfxn.set_weight( orbitals_hpol_bb, 1);
 		sfxn.set_weight( pci_salt_bridge, 1);
 		sfxn.set_weight( pci_hbond, 1);
-		std::cout << "test_orbital_deriv_check_w_total_flexibility_all: " << sfxn(pose) << std::endl;
+		TR << "test_orbital_deriv_check_w_total_flexibility_all: " << sfxn(pose) << std::endl;
 		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
 		AtomDerivValidator adv( pose, sfxn, movemap );
 		adv.simple_deriv_check( false, 1e-3 );
@@ -144,7 +146,7 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( pci_cation_pi, 1 );
-		std::cout << "test_orbital_deriv_check_w_total_flexibility_pci_cation_pi: " << sfxn(pose) << std::endl;
+		TR << "test_orbital_deriv_check_w_total_flexibility_pci_cation_pi: " << sfxn(pose) << std::endl;
 		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
 		AtomDerivValidator adv( pose, sfxn, movemap );
 		adv.simple_deriv_check( false, 1e-3 );
@@ -155,7 +157,7 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( pci_pi_pi, 1 );
-		std::cout << "test_orbital_deriv_check_w_total_flexibility_pci_pi_pi: " << sfxn(pose) << std::endl;
+		TR << "test_orbital_deriv_check_w_total_flexibility_pci_pi_pi: " << sfxn(pose) << std::endl;
 		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
 		AtomDerivValidator adv( pose, sfxn, movemap );
 		adv.simple_deriv_check( false, 1e-3 );
@@ -166,7 +168,7 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( orbitals_hpol_bb, 1);
-		std::cout << "test_orbital_deriv_check_w_total_flexibility_orbitals_hpol_bb: " << sfxn(pose) << std::endl;
+		TR << "test_orbital_deriv_check_w_total_flexibility_orbitals_hpol_bb: " << sfxn(pose) << std::endl;
 		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
 		AtomDerivValidator adv( pose, sfxn, movemap );
 		adv.simple_deriv_check( false, 1e-3 );
@@ -177,7 +179,7 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( pci_salt_bridge, 1);
-		std::cout << "test_orbital_deriv_check_w_total_flexibility_pci_salt_bridge: " << sfxn(pose) << std::endl;
+		TR << "test_orbital_deriv_check_w_total_flexibility_pci_salt_bridge: " << sfxn(pose) << std::endl;
 		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
 		AtomDerivValidator adv( pose, sfxn, movemap );
 		adv.simple_deriv_check( false, 1e-3 );
@@ -188,7 +190,7 @@ public:
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( pci_hbond, 1);
-		std::cout << "test_orbital_deriv_check_w_total_flexibility_pci_hbond: " << sfxn(pose) << std::endl;
+		TR << "test_orbital_deriv_check_w_total_flexibility_pci_hbond: " << sfxn(pose) << std::endl;
 		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
 		AtomDerivValidator adv( pose, sfxn, movemap );
 		adv.simple_deriv_check( false, 1e-3 );

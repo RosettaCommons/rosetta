@@ -59,15 +59,6 @@ namespace pcsTs1{
 
 basic::Tracer TR_PCS_d_i_Ts1("protocols.scoring.methods.pcsTs1.PCS_data_input_Ts1");
 
-PCS_line_data_Ts1::PCS_line_data_Ts1() :
-	residue_num_(0),
-	atom_name_(""),
-	PCS_experimental_(0),
-	PCS_tolerance_(0)
-{
-	utility_exit_with_message( "You shouldn't call the empty constructor for PCS_line_data_Ts1 class" );
-}
-
 PCS_line_data_Ts1::PCS_line_data_Ts1(PCS_line_data_Ts1 const & other):
 	residue_num_(other.residue_num_),
 	atom_name_(other.atom_name_),
@@ -86,12 +77,6 @@ PCS_line_data_Ts1::operator=( PCS_line_data_Ts1 const & other )
 }
 
 PCS_line_data_Ts1::~PCS_line_data_Ts1(){
-}
-
-PCS_file_data_Ts1::PCS_file_data_Ts1():
-	filename_(filename_), weight_(0)
-{
-	utility_exit_with_message( "You shouldn't call the empty constructor for PCS_file_data_Ts1 class" );
 }
 
 PCS_file_data_Ts1::~PCS_file_data_Ts1(){

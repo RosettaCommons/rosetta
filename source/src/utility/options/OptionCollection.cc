@@ -1126,7 +1126,7 @@ void OptionCollection::load_option_from_file(
 			bool done( false );
 			while ( ! done ) {
 				string const tid( merged( pid, key_string ) );
-				std::cout << __LINE__ << " tid: " << tid << std::endl;
+				//std::cout << __LINE__ << " tid: " << tid << std::endl;
 				if ( OptionKeys::has( tid ) ) { // Valid option identifier
 					if ( ! kid.empty() ) { // Already found a match
 						if ( tid != kid ) { // Different id match

@@ -33,7 +33,7 @@
 // Unit headers
 #include <protocols/scoring/methods/pcsTs3/TensorsOptimizer.hh>
 #include <protocols/scoring/methods/pcsTs3/PseudocontactShiftData.hh>
-#include <protocols/scoring/methods/pcsTs3/PseudocontactShiftInput.hh> // REQUIRED FOR WINDOWS 
+#include <protocols/scoring/methods/pcsTs3/PseudocontactShiftInput.hh> // REQUIRED FOR WINDOWS
 // Package headers
 
 // Project headers
@@ -57,13 +57,6 @@ namespace methods{
 namespace pcsTs3{
 
 basic::Tracer TR_tsr_opt_Ts3("protocols.scoring.methods.pcsTs3.TensorsOptimizer_Ts3");
-
-TensorsOptimizer_Ts3::TensorsOptimizer_Ts3():
-		pcs_d_(PCS_data_Ts3())
-{
-  utility_exit_with_message("You shouldn't call the empty constructor for class TensorsOptimizer_Ts3");
-}
-
 
 TensorsOptimizer_Ts3::TensorsOptimizer_Ts3(PCS_data_Ts3 const & pcs_d):
 	pcs_d_(pcs_d)

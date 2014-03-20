@@ -62,9 +62,11 @@ namespace pcsTs4{
 /// One PCS_line_data_Ts4 per line in the input file
 class PCS_line_data_Ts4 {
 
-public:
+private:
+	/// @brief Cannot use default constructor!
 	PCS_line_data_Ts4();
 
+public:
 	~PCS_line_data_Ts4();
 
 	PCS_line_data_Ts4(PCS_line_data_Ts4 const & other);

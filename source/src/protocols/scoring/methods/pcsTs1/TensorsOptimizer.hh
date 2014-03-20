@@ -58,8 +58,11 @@ class TensorsOptimizer_Ts1 : public core::optimization::Multifunc {
 public:
 	PCS_data_Ts1 const & pcs_d_;
 
+private:
+	/// @brief Must pass a PCS_data_Ts1 object!
   TensorsOptimizer_Ts1();
 
+public:
   TensorsOptimizer_Ts1(PCS_data_Ts1 const & pcs_d);
 
   virtual

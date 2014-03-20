@@ -77,7 +77,7 @@ public:
 		using namespace core::pose;
 		using namespace core::scoring;
 		using namespace core::scoring::methods;
-		
+
 		Pose pose = create_trpcage_ideal_pose();
 		protocols::simple_moves::SwitchResidueTypeSetMover to_cenrot("centroid_rot");
 		to_cenrot.apply(pose);
@@ -97,7 +97,7 @@ public:
 		using namespace core::pose;
 		using namespace core::scoring;
 		using namespace core::scoring::methods;
-		
+
 		Pose pose = create_trpcage_ideal_pose();
 		protocols::simple_moves::SwitchResidueTypeSetMover to_cenrot("centroid_rot");
 		to_cenrot.apply(pose);
@@ -118,15 +118,15 @@ public:
 		using namespace core::pose;
 		using namespace core::scoring;
 		using namespace core::scoring::methods;
-		
+
 		Pose pose = create_trpcage_ideal_pose();
 		protocols::simple_moves::SwitchResidueTypeSetMover to_cenrot("centroid_rot");
 		to_cenrot.apply(pose);
 		ScoreFunction sfxn;
 		sfxn.set_weight( cen_rot_dun, 1.0 );
 		Real start_score = sfxn(pose);
-		std::cout.precision(15);
-		std::cout << start_score << std::endl;
+		//std::cout.precision(15);
+		//std::cout << start_score << std::endl;
 		TS_ASSERT_DELTA(start_score, 38.630002145584, 1e-12);
 	}
 

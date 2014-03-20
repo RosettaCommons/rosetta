@@ -219,7 +219,7 @@ public:
 
 	//make sure to fail if ResidueSelector subtags are provided as well as the resnums option
 	void test_NeighborhoodSelector_fail_subtag_and_resnums() {
-		std::string tag_string = "<Neighborhood name=neighbor_rs resnums=4-8>\n\t<Index resnums=2-3 />\n</Neighbor>";
+		std::string tag_string = "<Neighborhood name=neighbor_rs resnums=4-8>\n\t<Index resnums=2-3 />\n</Neighborhood>";
 		std::stringstream ss( tag_string );
 		utility::tag::TagPtr tag = new utility::tag::Tag;
 		tag->read( ss );
@@ -237,7 +237,7 @@ public:
 
 	//make sure to fail if ResidueSelector subtags are provided as well as a selector option
 	void test_NeighborhoodSelector_fail_subtag_and_selector() {
-		std::string tag_string = "<Neighborhood name=neighbor_rs selector=odd>\n\t<Index resnums=2-3 />\n</Neighbor>";
+		std::string tag_string = "<Neighborhood name=neighbor_rs selector=odd>\n\t<Index resnums=2-3 />\n</Neighborhood>";
 		std::stringstream ss( tag_string );
 		utility::tag::TagPtr tag = new utility::tag::Tag;
 		tag->read( ss );

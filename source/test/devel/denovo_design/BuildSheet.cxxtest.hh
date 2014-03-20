@@ -43,8 +43,7 @@
 #include <boost/lexical_cast.hpp>
 #include <iostream>
 
-//static basic::Tracer TR("devel.denovo_design.BuildSheet.cxxtest");
-#define TR std::cout
+static basic::Tracer TR("devel.denovo_design.BuildSheet.cxxtest");
 
 // --------------- Test Class --------------- //
 class BuildSheetTests : public CxxTest::TestSuite {

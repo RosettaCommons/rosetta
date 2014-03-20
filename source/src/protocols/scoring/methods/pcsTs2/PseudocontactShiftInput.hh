@@ -62,9 +62,11 @@ namespace pcsTs2{
 /// One PCS_line_data_Ts2 per line in the input file
 class PCS_line_data_Ts2 {
 
-public:
+private:
+	/// @brief Cannot use default constructor!
 	PCS_line_data_Ts2();
 
+public:
 	~PCS_line_data_Ts2();
 
 	PCS_line_data_Ts2(PCS_line_data_Ts2 const & other);

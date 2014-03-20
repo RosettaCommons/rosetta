@@ -63,7 +63,7 @@ public:
 		TR << endl;
 
 		TR << "Print interprable hbond set information:" << endl;
-		hbond_set.show(pose, TR);
+		hbond_set.show(pose, true, TR);
 		TR << endl;
 
 		TR << "Print all the hbonds involving a few specific residues: (3,4,5,6)" << endl;

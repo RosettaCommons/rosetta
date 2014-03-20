@@ -62,9 +62,11 @@ namespace pcsTs3{
 /// One PCS_line_data_Ts3 per line in the input file
 class PCS_line_data_Ts3 {
 
-public:
+private:
+	/// @brief Must pass a PCS_line_data_Ts3 object
 	PCS_line_data_Ts3();
 
+public:
 	~PCS_line_data_Ts3();
 
 	PCS_line_data_Ts3(PCS_line_data_Ts3 const & other);

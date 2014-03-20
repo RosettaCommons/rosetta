@@ -43,42 +43,46 @@
 #include <basic/options/util.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 
+#include <basic/Tracer.hh>
+
 // C++ Headers
 #include <cstdlib>
 #include <string>
 #include <algorithm>
 
+static basic::Tracer TR( "core.membrane.io.LoadAllResources_cxxtest_hh" );
+
 /// @brief Test Class Load All Membrane Resources
 /// @details Load all membrane resources - example code for unit tests
 class LoadAllResourcesTest :  public CxxTest::TestSuite {
 public:
-    
+
     /// @brief Set Up
     void setUp() {
         protocols_init();
     }
-    
+
     /// @brief Tear down
     void tearDown()
     {}
 
     /// @brief Test Loading Membrane Resources
     void test_load_membrane_resources() {
-        
+
         TS_TRACE("Testing loading membrane resources");
-        
+
         using namespace protocols::jd2;
         using namespace core::membrane::util;
 
         // Create resource Manager Instances - Lazy Loading by Job for unit testing
         basic::resource_manager::ResourceManager * resource_manager( basic::resource_manager::ResourceManager::get_instance() );
 		basic::resource_manager::LazyResourceManager * lazy_resource_manager( dynamic_cast< basic::resource_manager::LazyResourceManager * > ( resource_manager ));
-        
+
         // Create a Job Stream from my membrane inputs
 		std::istringstream a_jobstream(membrane_input());
 		JD2ResourceManagerJobInputter a_inputter;
 		Jobs a_jobvector;
-        
+
         // Try to fil the job
 		try {
 			a_inputter.fill_jobs_from_stream( a_jobstream, a_jobvector );
@@ -87,14 +91,14 @@ public:
 			std::cerr << "XML a:" << std::endl << membrane_input() << std::endl;
 			std::cerr << "Raised exception:" << std::endl << e.msg() << std::endl;
 			lazy_resource_manager->show(std::cerr);
-            
+
 			TS_ASSERT( false );
 		}
-        
+
         TS_TRACE("Showing the current resources in my JD2 resource manager: ");
-        lazy_resource_manager->show(std::cout);
-        
-        
+        lazy_resource_manager->show(TR);
+
+
         // Load Pose
         TS_TRACE("Loading a pose from the resource manager");
         if (! lazy_resource_manager->has_resource_tag_by_job_tag("startstruct", "membrane"))
@@ -104,7 +108,7 @@ public:
         }
         basic::resource_manager::ResourceOP pose = lazy_resource_manager->get_resource_by_job_tag( "startstruct", "membrane" );
         TS_ASSERT( pose );
-        
+
         // Load Membrane topology
         TS_TRACE("Loading a membrane topology obj from the resource manager");
         if (! lazy_resource_manager->has_resource_tag_by_job_tag("topology", "membrane"))
@@ -114,7 +118,7 @@ public:
         }
         basic::resource_manager::ResourceOP topology = lazy_resource_manager->get_resource_by_job_tag( "topology", "membrane" );
         TS_ASSERT( topology );
-        
+
         // Load Mmebrane Embedding
         TS_TRACE("Loading per chain membrane embedding data");
         if (! lazy_resource_manager->has_resource_tag_by_job_tag("embedding", "membrane"))
@@ -124,7 +128,7 @@ public:
         }
         basic::resource_manager::ResourceOP embedding = lazy_resource_manager->get_resource_by_job_tag( "embedding", "membrane" );
         TS_ASSERT( embedding );
-        
+
         // Loading Membrane Embedding Options
         TS_TRACE("loading membrane embedding parameters");
         if (! lazy_resource_manager->has_resource_tag_by_job_tag("params", "membrane"))
@@ -134,7 +138,7 @@ public:
         }
         basic::resource_manager::ResourceOP params = lazy_resource_manager->get_resource_by_job_tag( "params", "membrane" );
         TS_ASSERT( params );
-        
+
         // Load Membrane Lips File
         TS_TRACE("Loading a membrane lipids obj from the resource manager");
         if (! lazy_resource_manager->has_resource_tag_by_job_tag("lipids", "membrane"))
@@ -144,11 +148,11 @@ public:
         }
         basic::resource_manager::ResourceOP lipids = lazy_resource_manager->get_resource_by_job_tag( "lipids", "membrane" );
         TS_ASSERT( lipids );
-        
-        
+
+
         TS_TRACE("Test successful!");
     }
-    
+
     /// @brief Job String
     std::string membrane_input(){
 		return
