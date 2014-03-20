@@ -394,10 +394,7 @@ EllipsoidalRandomizationMover::single_beta_sample( double alpha_param, double be
 	Real beta_sample = sampler.sample();
 	
 	return beta_sample;
-<<<<<<< HEAD
 	#endif
-=======
->>>>>>> origin
 }
 
 
