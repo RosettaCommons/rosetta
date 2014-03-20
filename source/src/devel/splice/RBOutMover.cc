@@ -147,6 +147,37 @@ RBOutMover::get_disulf_jump( Pose & pose, core::pose::Pose const & template_pose
 
     return pose_disulf_jump;
 }
+    
+core::kinematics::Jump
+RBOutMover::get_disulf_jump( Pose & pose )
+{
+    TR << "Getting disulfide jump without using template!! If using for AbDesign make sure that the domain order is light->heavy and scFv is on chain 1" << std::endl;
+    utility::vector1< std::pair< core::Size, core::Size > > const disulfs_in_pose = find_disulfs_in_range( pose, 1, pose.total_residue() );
+    runtime_assert( disulfs_in_pose.size() >= 2 );
+    
+    core::kinematics::FoldTree ft;
+    ft.clear();
+    
+    /// We don't know what order the chains will come in. Is the first disulfide in the template also first on the pose? Not always the case...
+    core::Size const first_disulf( std::min( disulfs_in_pose[ 1 ].second, disulfs_in_pose[ 2 ].second ));
+    core::Size const second_disulf( std::max( disulfs_in_pose[ 1 ].second, disulfs_in_pose[ 2 ].second ));
+    
+    /// Following is an ugly foldtree just used to define the jump between the 2nd and 1st disulfides in the order they're observed in template pose
+    using namespace core::kinematics;
+    ft.add_edge( 1, first_disulf, Edge::PEPTIDE );
+    ft.add_edge( second_disulf, pose.total_residue(), Edge::PEPTIDE );
+    ft.add_edge( disulfs_in_pose[ 1 ].second, disulfs_in_pose[ 2 ].second, 1 );
+    if( disulfs_in_pose[ 1 ].second > disulfs_in_pose[ 2 ].second )
+        ft.add_edge( disulfs_in_pose[ 1 ].second, disulfs_in_pose[ 2 ].second - 1, Edge::PEPTIDE );
+    else
+        ft.add_edge( disulfs_in_pose[ 2 ].second, disulfs_in_pose[ 1 ].second + 1, Edge::PEPTIDE );
+    ft.reorder(1);
+    TR<<"New foldtree:" << ft <<std::endl;
+    pose.fold_tree( ft );
+    core::kinematics::Jump const pose_disulf_jump( pose.jump( 1 ) );
+    
+    return pose_disulf_jump;
+}
 
 
 void

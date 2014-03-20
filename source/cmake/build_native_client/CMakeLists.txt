@@ -1,16 +1,14 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-
-#/Users/mtyka/src/nacl_sdk/pepper_23/toolchain/mac_x86_newlib/bin/i686-nacl-g++
-SET( NACL_SDK_ROOT /Users/mtyka/src/nacl_sdk/pepper_23/ ) #../../external/native_client_sdk_0_2_803_0 )
+#/Users/christoffernorn/nacl_sdk/pepper_33/toolchain/mac_x86_newlib/bin/x86_64-nacl-g++
+SET( NACL_SDK_ROOT /Users/christoffernorn/nacl_sdk/pepper_33/ ) 
 SET( NACL_TOOLCHAIN_DIR toolchain/mac_x86_newlib  )
-#SET( CMAKE_CC_COMPILER   ${NACL_SDK_ROOT}/${NACL_TOOLCHAIN_DIR}/bin/i686-nacl-gcc )
-#SET( CMAKE_CXX_COMPILER  ${NACL_SDK_ROOT}/${NACL_TOOLCHAIN_DIR}/bin/i686-nacl-g++ )
-SET( CMAKE_LINKER        ${NACL_SDK_ROOT}/${NACL_TOOLCHAIN_DIR}/bin/i686-nacl-g++ )
-SET( CMAKE_AR            ${NACL_SDK_ROOT}/${NACL_TOOLCHAIN_DIR}/bin/i686-nacl-ar ) 
-SET( CMAKE_RANLIB        ${NACL_SDK_ROOT}/${NACL_TOOLCHAIN_DIR}/bin/i686-nacl-ranlib )
-SET( CMAKE_STRIP         ${NACL_SDK_ROOT}/${NACL_TOOLCHAIN_DIR}/bin/i686-nacl-strip )
-
+#SET( CMAKE_CC_COMPILER   ${NACL_SDK_ROOT}/${NACL_TOOLCHAIN_DIR}/bin/x86_64-nacl-gcc )
+#SET( CMAKE_CXX_COMPILER  ${NACL_SDK_ROOT}/${NACL_TOOLCHAIN_DIR}/bin/x86_64-nacl-g++ )
+SET( CMAKE_LINKER        ${NACL_SDK_ROOT}/${NACL_TOOLCHAIN_DIR}/bin/x86_64-nacl-g++ )
+SET( CMAKE_AR            ${NACL_SDK_ROOT}/${NACL_TOOLCHAIN_DIR}/bin/x86_64-nacl-ar ) 
+SET( CMAKE_RANLIB        ${NACL_SDK_ROOT}/${NACL_TOOLCHAIN_DIR}/bin/x86_64-nacl-ranlib )
+SET( CMAKE_STRIP         ${NACL_SDK_ROOT}/${NACL_TOOLCHAIN_DIR}/bin/x86_64-nacl-strip )
 SET( DISABLE_SQLITE )
 
 INCLUDE(../build/build.pre.cmake)
@@ -19,13 +17,11 @@ INCLUDE_DIRECTORIES( ${NACL_SDK_ROOT}/include/ )
 
 ADD_DEFINITIONS(-DNDEBUG)
 ADD_DEFINITIONS(-D__native_client__)
-ADD_DEFINITIONS(-DUSE_FILE_PROVIDER)
 ADD_DEFINITIONS(-DEXIT_THROWS_EXCEPTION)
 ADD_DEFINITIONS(-O2)
 ADD_DEFINITIONS(-s)
-ADD_DEFINITIONS(-m32)
+ADD_DEFINITIONS(-m64)
 ADD_DEFINITIONS(-MMD)
-ADD_DEFINITIONS(-pthread)
 ADD_DEFINITIONS(-Wno-long-long)
 ADD_DEFINITIONS(-Wall)
 ADD_DEFINITIONS(-Wswitch-enum)
@@ -69,7 +65,7 @@ SET( LIBRARIES
   protocols_f.5
   protocols.6
   protocols.7
-#  devel
+  devel
   )
 
 FOREACH(LIBRARY ${LIBRARIES})
@@ -86,7 +82,7 @@ ENDFOREACH( LIBRARY )
 ### THIS ORDER IS VERY IMPORTANT -> NEEDS TO BE REVERSE ORDER OF DEPENDENCY GRAPH
 
 SET(LINK_STATIC_LIBS 
-#    ${CMAKE_CURRENT_SOURCE_DIR}/libdevel.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libdevel.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.7.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols.6.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libprotocols_f.5.a
@@ -118,7 +114,8 @@ SET(LINK_STATIC_LIBS
     ${CMAKE_CURRENT_SOURCE_DIR}/libObjexxFCL.a 
     ${CMAKE_CURRENT_SOURCE_DIR}/libcppdb-static.a  
     ${CMAKE_CURRENT_SOURCE_DIR}/libz-static.a  
-    --start-group -lnosys -lppapi -lppapi_cpp -lplatform -lgio -lpthread -lc -lcrt_common   --end-group ) 
+	-L/Users/christoffernorn/nacl_sdk/pepper_33/lib/newlib_x86_64/Release
+	--start-group -lnosys -lppapi -lppapi_cpp -lpthread -lc -lcrt_common   --end-group ) 
 
 # trailing static needed so mpicc actually uses static ompi libs
 #SET(TRAILING_STATIC "-Wl,-Bstatic")
@@ -130,20 +127,24 @@ SET(LINK_ALL_LIBS ${LINK_STATIC_LIBS} ) # ${LINK_DYNAMIC_LIBS} ${TRAILING_STATIC
 ### Change dynamic linker from default /lib/ld64.so.1 to /lib64/ld-2.5.so,
 ### since that file doesn't exist and path is hardcoded
 
-SET(CMAKE_C_LINK_FLAGS "-Wl,-as-needed  -Wl,--gc-sections -m32 -pthread " )
-SET(CMAKE_CXX_LINK_FLAGS "-Wl,-as-needed -Wl,--gc-sections -m32 -pthread " )
+SET(CMAKE_C_LINK_FLAGS "-Wl,-as-needed  -Wl,--gc-sections -m64 -pthread " )
+SET(CMAKE_CXX_LINK_FLAGS "-Wl,-as-needed -Wl,--gc-sections -m64 -pthread " )
 
 
 ##### Top level binaries
 # just loophash stuff for now
 ### loophash_createfiltereddb 
-ADD_EXECUTABLE(rosetta_native_client.nexe ../../src/apps/pilot/mike/rosetta_native_client.cc ../../src/apps/pilot/mike/geturl_handler.cc )
-TARGET_LINK_LIBRARIES(rosetta_native_client.nexe ${LINK_ALL_LIBS})
-SET_TARGET_PROPERTIES(rosetta_native_client.nexe PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
-#SET_TARGET_PROPERTIES(rosetta_native_client.nexe PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
+ADD_EXECUTABLE(rosetta_scripts.nexe ../../src/apps/public/rosetta_scripts/rosetta_scripts.cc )
+TARGET_LINK_LIBRARIES(rosetta_scripts.nexe ${LINK_ALL_LIBS})
+SET_TARGET_PROPERTIES(rosetta_scripts.nexe PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
+#SET_TARGET_PROPERTIES(rosetta_scripts.nexe PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
 # Dependencies are set so that binaries are created after rosetta libraries
 # are built
-ADD_DEPENDENCIES(rosetta_native_client.nexe zlib ${LIBRARIES} ) 
+ADD_DEPENDENCIES(rosetta_scripts.nexe zlib ${LIBRARIES} )
+
+
+# Dependencies are set so that binaries are created after rosetta libraries
+# are built
 #ADD_CUSTOM_COMMAND(
 #    OUTPUT CMakeFiles/EXE.dir/link.txt
 #		    COMMAND ${CMAKE_COMMAND} -E touch CMakeFiles/EXE.dir/link.txt

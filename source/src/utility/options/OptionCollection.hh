@@ -1429,6 +1429,11 @@ public: // Indexers
 		case ANY_VECTOR_OPTION:
 			option = any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
 			break;
+		case UNKNOWN_OPTION:
+			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
+			runtime_assert( false ); // Shouldn't get here
+			return *booleans_.begin(); // Keep compiler happy
+			break;
 		default :
 			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
 			runtime_assert( false ); // Shouldn't get here
@@ -1491,6 +1496,11 @@ public: // Indexers
 			break;
 		case ANY_VECTOR_OPTION:
 			option = any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
+			break;
+		case UNKNOWN_OPTION:
+			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
+			runtime_assert( false ); // Shouldn't get here
+			return *booleans_.begin(); // Keep compiler happy
 			break;
 		default :
 			runtime_assert( false ); // Shouldn't get here
@@ -1932,6 +1942,11 @@ public: // Indexers
 		case ANY_VECTOR_OPTION:
 			option = any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
 			break;
+		case UNKNOWN_OPTION:
+			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
+			runtime_assert( false ); // Shouldn't get here
+			return *booleans_.begin(); // Keep compiler happy
+			break;
 		default :
 			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
 			runtime_assert( false ); // Shouldn't get here
@@ -1994,6 +2009,11 @@ public: // Indexers
 			break;
 		case ANY_VECTOR_OPTION:
 			option = any_vectors_[ down_cast< AnyVectorOptionKey const & >( key ) ];
+			break;
+		case UNKNOWN_OPTION:
+			std::cerr << "Offending key is: " << all_[ key ] << "  " << (int)all_[ key ] << std::endl;
+			runtime_assert( false ); // Shouldn't get here
+			return *booleans_.begin(); // Keep compiler happy
 			break;
 		default :
 			runtime_assert( false ); // Shouldn't get here

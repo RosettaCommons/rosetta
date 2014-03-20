@@ -382,7 +382,9 @@ EllipsoidalRandomizationMover::get_partner_residue_start_stop( core::pose::Pose 
 Real
 EllipsoidalRandomizationMover::single_beta_sample( double alpha_param, double beta_param )
 {
+	#ifndef  __native_client__ 
 	typedef boost::math::beta_distribution< double > Mybeta;
+	
 	using core::Real;
 	using numeric::random::DistributionSampler;
 	
@@ -392,6 +394,10 @@ EllipsoidalRandomizationMover::single_beta_sample( double alpha_param, double be
 	Real beta_sample = sampler.sample();
 	
 	return beta_sample;
+<<<<<<< HEAD
+	#endif
+=======
+>>>>>>> origin
 }
 
 
