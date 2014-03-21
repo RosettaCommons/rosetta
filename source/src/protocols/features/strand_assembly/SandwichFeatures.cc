@@ -4639,7 +4639,7 @@ SandwichFeatures::report_hydrophobic_ratio_net_charge	(
 	select_statement.bind(2,sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size number_of_hydrophobic_res,	number_of_hydrophilic_res,	number_of_CGP,	number_of_RK_in_sw,	number_of_DE_in_sw;
+	int number_of_hydrophobic_res,	number_of_hydrophilic_res,	number_of_CGP,	number_of_RK_in_sw,	number_of_DE_in_sw;
 	while(res.next())
 	{
 		res >> number_of_hydrophobic_res >> number_of_hydrophilic_res >> number_of_CGP >> number_of_RK_in_sw >> number_of_DE_in_sw;
@@ -4670,7 +4670,7 @@ SandwichFeatures::report_hydrophobic_ratio_net_charge	(
 	insert_stmt.bind(4,	ratio_hydrophobic_philic_of_sw_in_percent);
 	insert_stmt.bind(5,	number_of_RK_in_sw);
 	insert_stmt.bind(6,	number_of_DE_in_sw);
-	int net_charge_int = number_of_RK_in_sw - number_of_DE_in_sw; // for unknown reason, Size net_charge may return like '18446744073709551612', so I don't use Size here
+	int net_charge_int = number_of_RK_in_sw - number_of_DE_in_sw; // Size net_charge may return like '18446744073709551612', so I don't use Size here
 	//	TR << "net_charge_int: " << net_charge_int << endl;
 	insert_stmt.bind(7,	net_charge_int); // Net charge of His at pH 7.4 is just '+0.11' according to http://www.bmolchem.wisc.edu/courses/spring503/503-sec1/503-1a.htm
 	insert_stmt.bind(8,	sw_can_by_sh_id);
@@ -6972,16 +6972,16 @@ SandwichFeatures::report_turn_AA(
 			pose.residue_type(i).name3() == "ASN"	||
 			pose.residue_type(i).name3() == "GLN"	||	pose.residue_type(i).name3() == "ASP"	||	pose.residue_type(i).name3() == "ARG")
 		{
-				TR << "pose.residue_type(i+1).name3(): " << pose.residue_type(i+1).name3() << endl;
+			//	TR << "pose.residue_type(i+1).name3(): " << pose.residue_type(i+1).name3() << endl;
 			if (pose.residue_type(i+1).name3() == "GLY")
 			{
-						TR << "pose.residue_type(i+2).name3(): " << pose.residue_type(i+2).name3() << endl;
+				//	TR << "pose.residue_type(i+2).name3(): " << pose.residue_type(i+2).name3() << endl;
 				if (pose.residue_type(i+2).name3() == "LEU"	||	pose.residue_type(i+2).name3() == "ALA"	||	pose.residue_type(i+2).name3() == "GLY"	||
 					pose.residue_type(i+2).name3() == "PRO"	||
 					pose.residue_type(i+2).name3() == "SER"	||	pose.residue_type(i+2).name3() == "GLU"	||
 					pose.residue_type(i+2).name3() == "ASN"	||	pose.residue_type(i+2).name3() == "ASP"	|| pose.residue_type(i+2).name3() == "LYS")
 				{
-							TR << "pose.residue_type(i+3).name3(): " << pose.residue_type(i+3).name3() << endl;
+					//	TR << "pose.residue_type(i+3).name3(): " << pose.residue_type(i+3).name3() << endl;
 					if (pose.residue_type(i+3).name3() == "PHE"	||	pose.residue_type(i+3).name3() == "VAL"	||	pose.residue_type(i+3).name3() == "LEU"	||
 						pose.residue_type(i+3).name3() == "ALA"	||
 						pose.residue_type(i+3).name3() == "GLY" ||	pose.residue_type(i+3).name3() == "TYR"	||	pose.residue_type(i+3).name3() == "THR"	||
@@ -7911,7 +7911,8 @@ SandwichFeatures::report_features(
 		
 	for(Size ii=1; ii<=vec_sw_can_by_sh_id.size(); ii++)
 	{ // I think that mostly vec_sw_can_by_sh_id.size() = just 1
-			TR << "Can sw_candidate_by_sheets_id " << vec_sw_can_by_sh_id[ii] << " be a canonical sw?" << endl;
+			TR << "See whether sw_candidate_by_sheets_id " << vec_sw_can_by_sh_id[ii] << " be a canonical sw or not" << endl;
+
 		bool chance_of_being_canonical_sw	=	true; // not yet decided fate whether this could be canonical sandwich or not, but assumed to be true for now
 		Size size_sw_by_components_PK_id =
 		get_size_sw_by_components_PK_id(
@@ -8115,7 +8116,7 @@ SandwichFeatures::report_features(
 					bool sheets_are_connected_by_same_direction_strand = check_whether_same_direction_strands_connect_two_sheets_or_a_loop(struct_id,	db_session,	pose,	start_res,	next_start_res);
 					if (sheets_are_connected_by_same_direction_strand)
 					{
-							TR.Info << "sheets_are_connected_by_same_direction_strand, so delete " << vec_sw_can_by_sh_id[ii] << "sw_can_by_sh_id" << endl;
+							TR.Info << "sheets_are_connected_by_same_direction_strand, so delete " << vec_sw_can_by_sh_id[ii] << " sw_can_by_sh_id" << endl;
 						delete_this_sw_can_by_sh_id_from_sw_by_comp(
 							struct_id,
 							db_session,
@@ -8724,7 +8725,7 @@ SandwichFeatures::report_features(
 	//// <end> report number_of_inward_pointing_charged_AAs/aro_AAs_in_a_pair_of_edge_strands
 
 
-	// <begin> write resfile automatically ("NOTAA	CFHWY" for loop residues and surface heading strand residues)
+	// <begin> write resfile automatically
 	if (write_resfile_ && canonical_sw_extracted_from_this_pdb_file)
 	{
 		Size tag_len = tag.length();
@@ -8738,7 +8739,12 @@ SandwichFeatures::report_features(
 		resfile_stream << "USE_INPUT_SC" << endl;
 		resfile_stream << "start" << endl;
 
-		resfile_stream << "# NOTAA	CFHWY for surface heading strand residues" << endl;
+		resfile_stream << "# NOTAA	CFHMPWY for surface_heading residues at core strands" << endl;
+		resfile_stream << "# NOTAA	CFHMWY for surface_heading residuess at edge strands" << endl;
+
+		resfile_stream << "# NOTAA	CDEFGHKNPQRST for core_heading residues at core strands" << endl;
+		resfile_stream << "# NOTAA	CDHMNPQW for core_heading residues at edge strands" << endl;
+
 		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ii++) // per each beta-strand
 		{
 			Size residue_begin	=	bs_of_sw_can_by_sh[ii].get_start();
@@ -8749,24 +8755,47 @@ SandwichFeatures::report_features(
 					string	heading	=	determine_heading_direction_by_vector	(struct_id,	db_session,	pose,	bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),	bs_of_sw_can_by_sh[ii].get_sheet_id(),	residue_begin,	residue_end,	residue_num);
 					if (heading == "surface")
 					{
-						resfile_stream << residue_num << "	A	EX	1	NOTAA	CFHWY" << endl;
+						string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
+						if (edge_or_core == "core")
+						{
+							resfile_stream << residue_num << "	A	EX	1	NOTAA	CFHMPWY" << endl;
+						}
+						else	if (edge_or_core == "edge")
+						{
+							resfile_stream << residue_num << "	A	EX	1	NOTAA	CFMPWY" << endl;
+						}
+					}
+					else if (heading == "core")
+					{
+						string edge_or_core = see_edge_or_core (struct_id,	db_session,	residue_num);
+						if (edge_or_core == "core")
+						{
+							resfile_stream << residue_num << "	A	EX	1	NOTAA	CDEFGHKNPQRST" << endl;
+						}
+						else	if (edge_or_core == "edge")
+						{
+							resfile_stream << residue_num << "	A	EX	1	NOTAA	CDHMNPQW" << endl;
+						}
 					}
 				}
 			}
 		}
 
-		resfile_stream << "# NOTAA	CFHWY for loop residues" << endl;
+		resfile_stream << "# NOTAA	CFMWY for loop residues" << endl;
 		for (Size i =1; i<=(pose.total_residue()); i++)
 		{
 			string edge_or_core = see_edge_or_core (struct_id,	db_session,	i);
 			if (edge_or_core == "loop_or_short_edge")
 			{
-				resfile_stream << i << "	A	EX	1	NOTAA	CFHWY" << endl;
+				resfile_stream << i << "	A	EX	1	NOTAA	CFMWY" << endl; // I think that both hairpin-loop and inter-sheet-loop can be treated with 'NOTAA CFMWY'
+
 			}
 		}
+
+
 		resfile_stream.close();
 	}
-	// <end> write resfile automatically ("NOTAA	CFHWY" for loop residues and surface heading strand residues)
+	// <end> write resfile automatically
 	///////////// development
 
 
