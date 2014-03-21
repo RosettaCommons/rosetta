@@ -128,9 +128,9 @@ sources = {
 		"JumpSetup",
 	],
 
-    "kinematic_closure" : [
-        "ClosureTests",
-    ],
+    #"kinematic_closure" : [
+    #    "ClosureTests",
+    #],
 
 	"ligand_docking": [
 		"ResidueTorsionRestraints",
