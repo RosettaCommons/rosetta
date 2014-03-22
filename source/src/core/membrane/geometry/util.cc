@@ -21,8 +21,8 @@
 #include <core/membrane/geometry/util.hh>
 
 // Project Headers
-#include <core/membrane/properties/SpanningTopology.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 // Package Headers
 #include <core/conformation/Residue.hh>
@@ -58,7 +58,7 @@ static basic::Tracer TR("core.membrane.geometry.util");
 using basic::Error;
 using basic::Warning;
 
-using namespace core::membrane::properties;
+using namespace core::conformation::membrane;
 
 namespace core {
 namespace membrane {

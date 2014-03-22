@@ -43,8 +43,8 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <core/membrane/MembraneInfo.fwd.hh>
-#include <core/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/MembraneInfo.fwd.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
 
 // Numeric headers
 #include <numeric/constants.hh>
@@ -490,8 +490,6 @@ Conformation::chains_from_termini()
 /// @brief Given Embedding and Membrane Positions, Setup a Membrane Info Object
 void
 Conformation::setup_membrane( utility::vector1< std::pair< int, int > > embres_map, int membrane ) {
-
-	using namespace core::membrane;
 
 	// Create new membrane info object
 	membrane_info_ = new MembraneInfo( this, embres_map, membrane );

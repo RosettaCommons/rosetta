@@ -24,9 +24,9 @@
 #include <core/membrane/io/EmbedSearchParamsOptions.fwd.hh>
 
 // Project Headers
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/definitions_util.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/definitions_util.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 #include <core/types.hh>
 

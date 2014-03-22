@@ -22,8 +22,8 @@
 // Tested Classes
 #include <core/membrane/io/EmbedSearchParamsLoader.hh>
 
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 #include <protocols/loops/LoopsFileOptions.hh>
 #include <core/membrane/io/EmbedSearchParamsOptions.hh>
@@ -42,7 +42,7 @@
 #include <string>
 #include <algorithm>
 
-using namespace core::membrane::util;
+using namespace core::conformation::membrane;
 using namespace core::membrane::io;
 
 /// @brief Test Class: Span File loader
@@ -99,7 +99,6 @@ public: // public testing methods
 	{
 
         using namespace core::membrane::io;
-        using namespace core::membrane::util;
         using namespace basic::resource_manager;
         using namespace protocols::jd2;
         

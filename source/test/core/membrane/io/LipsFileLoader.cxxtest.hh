@@ -21,8 +21,8 @@
 // Tested Classes
 #include <core/membrane/io/LipoFileLoader.hh>
 
-#include <core/membrane/properties/LipidAccInfo.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/LipidAccInfo.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 #include <core/membrane/io/LipoFileOptions.hh>
 #include <protocols/loops/LoopsFileOptions.hh>
@@ -80,8 +80,7 @@ public: // test methods
     void test_returnType()
     {
         
-        using namespace core::membrane::util;
-        using namespace core::membrane::properties;
+        using namespace core::conformation::membrane;
         
         // Empty Lstream
         std::istringstream lstream("unit_test");
@@ -93,7 +92,7 @@ public: // test methods
         TS_ASSERT( lips_exp );
         
         // Cast to type
-        core::membrane::properties::LipidAccInfoOP lpptr1 = dynamic_cast< core::membrane::properties::LipidAccInfo * > ( lips_exp () );
+        LipidAccInfoOP lpptr1 = dynamic_cast< LipidAccInfo * > ( lips_exp () );
         
         // Check non null (typechecking)
         TS_ASSERT( lpptr1 );
@@ -104,8 +103,7 @@ public: // test methods
     {
         
         using namespace core::membrane::io;
-        using namespace core::membrane::util;
-        using namespace core::membrane::properties;
+        using namespace core::conformation::membrane;
         using namespace basic::resource_manager;
         using namespace protocols::jd2;
         
@@ -141,7 +139,7 @@ public: // test methods
         TS_ASSERT( lipids );
         
         // Cast to type
-        core::membrane::properties::LipidAccInfoOP lpptr1 = dynamic_cast< LipidAccInfo * > ( lipids () );
+        LipidAccInfoOP lpptr1 = dynamic_cast< LipidAccInfo * > ( lipids () );
         
         // Check non null (typechecking)
         TS_ASSERT( lpptr1 );

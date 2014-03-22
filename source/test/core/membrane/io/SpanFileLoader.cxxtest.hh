@@ -21,8 +21,8 @@
 // Tested Classes
 #include <core/membrane/io/SpanFileLoader.hh>
 
-#include <core/membrane/properties/SpanningTopology.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 #include <core/membrane/io/SpanFileOptions.hh>
 #include <protocols/loops/LoopsFileOptions.hh>
@@ -86,7 +86,7 @@ public: // test methods
     void test_returnType()
     {
         
-        using namespace core::membrane::properties;
+        using namespace core::conformation::membrane;
         
         // Empty Lstream
         std::istringstream lstream;
@@ -124,7 +124,7 @@ public: // test methods
     {
             
         using namespace core::membrane::io;
-        using namespace core::membrane::properties;
+        using namespace core::conformation::membrane;
         using namespace basic::resource_manager;
         using namespace protocols::jd2;
         

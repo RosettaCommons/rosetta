@@ -7,39 +7,38 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/EnvPairPotential.fwd.hh
-/// @brief   Membrane Potential
-/// @author Bjorn Wallner
-
+/// @file		core/scoring/MembranePotential.fwd.hh
+///
+/// @brief		Membrane Potential - Base Scoring Methods for LowRes Energy Function
+/// @details	Compute Low Res membrane energy terms: Menv, MPair, MCBeta and Membrane
+///				penalties. Also contains pass-through methods for accessing and updating
+///				mp framework supported data in a membrane conformation.
+///				Last Modified: 3/11/14
+///
+///	@author		Rebecca Faye Alford (rfalford12@gmail.com)
+/// @author		Julia Koehler Leman (julia.koehler1982@gmail.com)
+/// @author		Bjorn Wallner (Original)
 
 #ifndef INCLUDED_core_scoring_MembranePotential_fwd_hh
 #define INCLUDED_core_scoring_MembranePotential_fwd_hh
 
-
 // Unit headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
-
-// Package headers
-
-// Project headers
-
-// Utility headers
-
-// C++
-
 
 namespace core {
-namespace scoring {
+	namespace scoring {
+		
+		class MembraneEmbed;
+		typedef utility::pointer::owning_ptr< MembraneEmbed > MembraneEmbedOP;
+		typedef utility::pointer::owning_ptr< MembraneEmbed const > MembraneEmbedCOP;
+		
+		
+		class MembranePotential;
+		typedef utility::pointer::owning_ptr< MembranePotential > MembranePotentialOP;
+		typedef utility::pointer::owning_ptr< MembranePotential const > MembranePotentialCOP;
+		
+	} // scoring
+} // core
 
-class MembraneEmbed;
-typedef utility::pointer::owning_ptr< MembraneEmbed > MembraneEmbedOP;
-//typedef utility::pointer::access_ptr< MembraneEmbed > MembraneEmbedAP;
+#endif // INCLUDED_core_scoring_MembranePotential_fwd_hh
 
-class MembranePotential;
-typedef utility::pointer::owning_ptr< MembranePotential > MembranePotentialOP;
-
-} // ns scoring
-} // ns core
-
-#endif

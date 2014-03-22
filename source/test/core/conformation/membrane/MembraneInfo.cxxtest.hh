@@ -23,7 +23,7 @@
 #include <test/core/init_util.hh>
 
 // Unit Headers
-#include <core/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
 
 // Package Headers
 #include <core/kinematics/FoldTree.hh>
@@ -53,7 +53,7 @@
 
 using namespace core::kinematics;
 using namespace core::conformation;
-using namespace core::membrane;
+using namespace core::conformation::membrane;
 
 class MembraneInfoTest : public CxxTest::TestSuite {
 	

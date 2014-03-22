@@ -24,8 +24,8 @@
 #include <core/membrane/io/SpanFileIO.hh>
 
 // Project Headers
-#include <core/membrane/properties/SpanningTopology.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 // Package Headers
 #include <core/types.hh>
@@ -52,7 +52,7 @@ using basic::Error;
 using basic::Warning;
 
 using namespace core;
-using namespace core::membrane::properties;
+using namespace core::conformation::membrane;
 
 static basic::Tracer TR( "core.membrane.io.SpanFileIO" );
 
@@ -255,8 +255,6 @@ namespace io {
     /// @brief Get Topology from SpanFile
     SpanningTopologyOP SpanFileIO::get_topology_from_spanfile( std::string spanfile )
     {
-
-        using namespace core::membrane::util;
 
         TR << "Building topology object from spanfile" << std::endl;
 

@@ -22,8 +22,8 @@
 #include <core/membrane/geometry/MembraneResidueFactory.fwd.hh>
 
 // Project Headers
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 // Package Headers
 #include <core/conformation/Residue.hh>

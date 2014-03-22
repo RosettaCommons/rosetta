@@ -31,6 +31,9 @@ sources = {
 		"CarbohydrateInfo",
 		"database_io",
 	],
+	"conformation/membrane" : [
+		"MembraneInfo",
+	],
 	"chemical/orbitals" :[
 		"OrbitalTypeSet",
 	],
@@ -107,7 +110,6 @@ sources = {
     ],
     "membrane" : [
         "MPDatabaseIO",
-        "MembraneInfo",
     ],
 	"kinematics" : [
 		"FoldTree",

@@ -25,8 +25,8 @@
 #include <core/membrane/io/LipoFileLoaderCreator.hh>
 
 // Project Headers
-#include <core/membrane/properties/LipidAccInfo.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/LipidAccInfo.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 #include <core/membrane/io/LipoFileIO.hh>
 #include <core/membrane/io/LipoFileOptions.hh>
@@ -58,7 +58,7 @@ LipoFileLoader::create_resource(
 	std::istream &
 	) const
 {
-	using namespace core::membrane::properties;
+	using namespace core::conformation::membrane;
 	using namespace core::membrane::io;
 
 	// Create and initialize a lipid object

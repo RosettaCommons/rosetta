@@ -21,8 +21,8 @@
 // Tested Classes
 #include <core/membrane/io/SpanFileIO.hh>
 
-#include <core/membrane/properties/SpanningTopology.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 // Package Headers
 #include <core/types.hh>
@@ -32,7 +32,7 @@
 #include <string>
 #include <algorithm>
 
-using namespace core::membrane::properties;
+using namespace core::conformation::membrane;
 
 /**
  * The format of these tests is to initialize a data structure from
@@ -186,8 +186,6 @@ private: // helper testing methods
 
 	/// @brief Initialize some structures with expected inputs to compare to
 	void initialize_expected() {
-
-		using namespace core::membrane::util;
 
 		// Single Spanning TMH
 		sp_single_tmh_ = new SpanningTopology();

@@ -25,13 +25,15 @@
 #include <core/membrane/io/EmbedSearchParamsOptionsCreator.hh>
 
 // Project Headers
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
 
 // C++ Headers
 #include <cstdlib>
+
+using namespace core::conformation::membrane;
 
 namespace core {
 namespace membrane {
@@ -107,7 +109,7 @@ core::Real EmbedSearchParamsOptions::normal_start_angle() const { return normal_
 void EmbedSearchParamsOptions::set_normal_start_angle( core::Real setting )
 {
 	if ( setting < 0 || setting > 360 ) {
-		throw core::membrane::util::EXCN_Illegal_Arguments("Invlaid argument for normal start angle. Parameter must be >= 0");
+		throw EXCN_Illegal_Arguments("Invlaid argument for normal start angle. Parameter must be >= 0");
 	}
 	normal_start_angle_ = setting;
 }
@@ -119,7 +121,7 @@ core::Real EmbedSearchParamsOptions::normal_max_angle() const { return normal_ma
 void EmbedSearchParamsOptions::set_normal_max_angle( core::Real setting ) {
 
 	if ( setting < 0 || setting > 360 ) {
-		throw core::membrane::util::EXCN_Illegal_Arguments("Invlaid argument for normal max angle. Parameter must be >= 0");
+		throw EXCN_Illegal_Arguments("Invlaid argument for normal max angle. Parameter must be >= 0");
 	}
 	normal_max_angle_ = setting;
 }
@@ -131,7 +133,7 @@ core::Real EmbedSearchParamsOptions::normal_delta_angle() const { return normal_
 void EmbedSearchParamsOptions::set_normal_delta_angle( core::Real setting ) {
 
 	if ( setting < 0 || setting > 360 ) {
-		throw core::membrane::util::EXCN_Illegal_Arguments("Invlaid argument for normal delta angle. Parameter must be >= 0");
+		throw EXCN_Illegal_Arguments("Invlaid argument for normal delta angle. Parameter must be >= 0");
 	}
 
 	normal_delta_angle_ = setting;
@@ -149,7 +151,7 @@ core::Real EmbedSearchParamsOptions::center_max_delta() const { return center_ma
 void EmbedSearchParamsOptions::set_center_max_delta( core::Real setting ) {
 
 	if ( setting < 0 ) {
-		throw core::membrane::util::EXCN_Illegal_Arguments("Invlaid argument for center max delta. Parameter must be >= 0");
+		throw EXCN_Illegal_Arguments("Invlaid argument for center max delta. Parameter must be >= 0");
 	}
 
 	center_max_delta_ = setting;

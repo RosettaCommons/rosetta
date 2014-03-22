@@ -21,8 +21,8 @@
 // Tested Classes
 #include <core/membrane/io/EmbedDefIO.hh>
 
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 #include <protocols/loops/LoopsFileOptions.hh> //this is crazy - lol inspired by Milke :)
 
@@ -86,6 +86,6 @@ private: // data
 	core::membrane::io::EmbedDefIOOP edio_;
 
 	// EmbedConfigInfo Obejct to Load
-	core::membrane::util::EmbedConfigInfoOP config_;
+	EmbedConfigInfoOP config_;
 
 };

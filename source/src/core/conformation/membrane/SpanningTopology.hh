@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 		core/membrane/properties/SpanningTopology.hh
+/// @file 		core/conformation/membrane/SpanningTopology.hh
 ///
 /// @brief      Membrane Spanning Topology Data
 /// @details    Stores information describing the membrane spanning
@@ -17,11 +17,11 @@
 /// @note       Last Modified: 1/1/14
 /// @author		Rebecca Alford (rfalford12@gmail.com)
 
-#ifndef INCLUDED_core_membrane_properties_SpanningTopology_hh
-#define INCLUDED_core_membrane_properties_SpanningTopology_hh
+#ifndef INCLUDED_core_conformation_membrane_SpanningTopology_hh
+#define INCLUDED_core_conformation_membrane_SpanningTopology_hh
 
 // Unit headers
-#include <core/membrane/properties/SpanningTopology.fwd.hh>
+#include <core/conformation/membrane/SpanningTopology.fwd.hh>
 
 // Package Headers
 #include <core/types.hh>
@@ -50,8 +50,8 @@
 using namespace core;
 
 namespace core {
+namespace conformation {
 namespace membrane {
-namespace properties {
     
     /// @brief      Class: Membrane Spanning Topology
     /// @details    Stores information describing the membrane spanning
@@ -151,11 +151,11 @@ namespace properties {
 
     }; // class SpanningTopology
     
-} // properties
 } // membrane
+} // conformation
 } // core
 
-#endif // INCLUDED_core_membrane_properties_SpanningTopology_hh
+#endif // INCLUDED_core_conformation_membrane_SpanningTopology_hh
 
 
 

@@ -28,8 +28,8 @@
 #include <basic/resource_manager/ResourceOptions.hh>
 #include <basic/resource_manager/types.hh>
 
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/definitions_util.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/definitions_util.hh>
 
 #include <core/membrane/io/EmbedSearchParamsOptions.hh>
 #include <core/membrane/io/EmbedSearchParamsIO.hh>

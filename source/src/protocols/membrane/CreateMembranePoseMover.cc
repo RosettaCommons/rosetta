@@ -30,8 +30,8 @@
 
 // Project Headers
 #include <core/membrane/MembraneProteinFactory.hh>
-#include <core/membrane/util/Exceptions.hh>
-#include <core/membrane/util/definitions.hh>
+#include <core/conformation/membrane/Exceptions.hh>
+#include <core/conformation/membrane/definitions.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>
@@ -150,7 +150,6 @@ namespace membrane {
     {
         using namespace core::membrane;
         using namespace basic::resource_manager;
-        using namespace core::membrane::util;
       
         TR << "Loading in a membrane pose" << std::endl;
         MembraneProteinFactoryOP mpf = new MembraneProteinFactory( false, chains_, fullatom_ );

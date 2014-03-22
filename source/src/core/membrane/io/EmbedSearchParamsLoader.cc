@@ -25,8 +25,8 @@
 #include <core/membrane/io/EmbedSearchParamsLoaderCreator.hh>
 
 // Project Headers
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/definitions_util.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/definitions_util.hh>
 
 #include <core/membrane/io/EmbedSearchParamsOptions.hh>
 #include <core/membrane/io/EmbedSearchParamsIO.hh>
@@ -58,7 +58,6 @@ namespace io {
                                     std::istream &
                                     ) const
     {
-        using namespace core::membrane::util;
         using namespace core::membrane::io;
         
         // Embedding Search Options

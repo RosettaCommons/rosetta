@@ -21,8 +21,8 @@
 // Tested Classes
 #include <core/membrane/geometry/EmbeddingFactory.hh>
 
-#include <core/membrane/properties/SpanningTopology.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>
@@ -153,7 +153,7 @@ private: // init functions
     void init_factories() {
         
         using namespace core::membrane::geometry;
-        using namespace core::membrane::util;
+        using namespace core::conformation::membrane;
         using namespace core::membrane::io;
         
         // Embedding Definition IO Class
@@ -163,7 +163,7 @@ private: // init functions
         // Get pose and topology
         pose_ = new pose::Pose();
         core::import_pose::pose_from_pdb(*pose_, "core/membrane/io/1afo_test.pdb");
-        core::membrane::properties::SpanningTopologyOP topology = sfio.get_topology_from_spanfile("core/membrane/io/1afo_test.span");
+        SpanningTopologyOP topology = sfio.get_topology_from_spanfile("core/membrane/io/1afo_test.span");
         
         // Grabbing Embedding Data Direct from IO Classes
         EmbedConfigInfoOP def = edio.get_embedding_from_file("core/membrane/geometry/default.embed");

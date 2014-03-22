@@ -25,8 +25,8 @@
 #include <core/membrane/io/EmbedDefLoader.hh>
 #include <core/membrane/io/EmbedDefOptions.hh>
 
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 #include <protocols/loops/LoopsFileOptions.hh> //this is crazy - lol inspired by Milke :)
 
@@ -56,7 +56,7 @@
 #include <string>
 #include <algorithm>
 
-using namespace core::membrane::util;
+using namespace core::conformation::membrane;
 using namespace core::membrane::io;
 using namespace basic::resource_manager;
 using namespace protocols::jd2;
@@ -83,7 +83,7 @@ public: // public testing methods
 
         
         using namespace core::membrane::io;
-        using namespace core::membrane::util;
+        using namespace core::conformation::membrane;
         
         TS_TRACE("Testing create resource loader for embedding data");
         
@@ -100,7 +100,7 @@ public: // public testing methods
         TS_ASSERT( resource );
         
         // Cast to an embed resource
-        core::membrane::util::EmbedConfigInfoOP embed = dynamic_cast< EmbedConfigInfo * > ( resource () );
+        EmbedConfigInfoOP embed = dynamic_cast< EmbedConfigInfo * > ( resource () );
         TS_ASSERT( embed );
 
 	}
@@ -109,7 +109,7 @@ public: // public testing methods
 	void test_resource_definition() {
         
         using namespace core::membrane::io;
-        using namespace core::membrane::util;
+        using namespace core::conformation::membrane;
         using namespace basic::resource_manager;
         using namespace protocols::jd2;
         
@@ -145,7 +145,7 @@ public: // public testing methods
         TS_ASSERT( embedding );
 
         // Checking that I returned the correct type
-        core::membrane::util::EmbedConfigInfoOP embed = dynamic_cast< EmbedConfigInfo * > ( embedding () );
+        EmbedConfigInfoOP embed = dynamic_cast< EmbedConfigInfo * > ( embedding () );
         TS_ASSERT( embed );
 	}
 

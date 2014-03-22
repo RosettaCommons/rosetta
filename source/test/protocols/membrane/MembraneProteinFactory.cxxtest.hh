@@ -25,14 +25,14 @@
 #include <protocols/membrane/MembraneUnitTestMover.hh>
 
 // Project Headers
-#include <core/membrane/properties/SpanningTopology.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
 
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>
@@ -105,7 +105,7 @@ public:
     /// @brief Testing pose appending
     void test_membrane_protein() {
         
-        using namespace core::membrane::properties;
+        using namespace core::conformation::membrane;
         using namespace core::kinematics;
         using namespace core::membrane;
         
@@ -125,7 +125,7 @@ public:
         TS_TRACE("Testing membrane protein constains an accessible membrane conformation object");
         
         // Cast conformation to membrane conformaiton
-	TS_ASSERT( membrane_protein_->conformation().membrane()->is_membrane() ); // check dst invariants
+		TS_ASSERT( membrane_protein_->conformation().membrane()->is_membrane() ); // check dst invariants
         
         TS_TRACE("Test base case of membrane fold tree construction");
         FoldTree ft( membrane_protein_->fold_tree() );

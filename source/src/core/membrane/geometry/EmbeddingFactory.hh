@@ -24,9 +24,9 @@
 // Project Headers
 #include <core/pose/Pose.hh> 
 
-#include <core/membrane/properties/SpanningTopology.hh>
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 #include <core/membrane/geometry/util.hh>
 
@@ -56,7 +56,7 @@
 #include <cstdlib>
 #include <string>
 
-using namespace core::membrane::util;
+using namespace core::conformation::membrane;
 
 namespace core {
 namespace membrane {
@@ -73,7 +73,7 @@ public: // methods
     EmbeddingFactory(
                      core::pose::PoseOP pose,
                      EmbedConfigInfoOP config,
-                     core::membrane::properties::SpanningTopologyOP topology
+                     SpanningTopologyOP topology
                      );
     
     /// @brief      Default Destructor
@@ -104,32 +104,32 @@ public: // methods
     /// @brief      Embed from Defaults
 	/// @details    Define the membrane embedding from a pre-determined set of parameters
 	///             Normal (0, 0, 1), Center (0, 0, 0)
-	void embed_from_pdb( core::membrane::util::EmbedConfigInfoOP embedding );
+	void embed_from_pdb( EmbedConfigInfoOP embedding );
     
 	/// @brief     Embed from membrane spanning topology
 	/// @details   Determines embedding by finding the average point between Ca inner and Ca outer (distance
 	///            between the intracellualr and extracellular region).
-	void embed_from_topology( core::membrane::util::EmbedConfigInfoOP embedding );
+	void embed_from_topology( EmbedConfigInfoOP embedding );
     
 	/// @brief      Embedding Search and Score Method
 	/// @details    Starting from embedding defined from topology (see method above), score each conformation, perturb,
 	///             score, and aver n trials and MC accept lowest. Takes the embed params resource loaded via resource
     ///             loader (RM).
-	void embed_from_search_and_score( core::membrane::util::EmbedConfigInfoOP embedding );
+	void embed_from_search_and_score( EmbedConfigInfoOP embedding );
     
 	/// @brief		Compute Fullatom Projections for Fa Embedding
 	///	@details	Computes Projections, depth, and stores coordinates. Computes fullatom
 	///				center and corresponding normal from these computations
-	void embed_for_FA( core::membrane::util::EmbedConfigInfoOP embedding );
+	void embed_for_FA( EmbedConfigInfoOP embedding );
 
 
 private: // data
     
     // embedding config info
-    core::membrane::util::EmbedConfigInfoOP embed_info_;
+    EmbedConfigInfoOP embed_info_;
     
     // topology info
-    core::membrane::properties::SpanningTopologyOP topology_;
+    SpanningTopologyOP topology_;
     
     // pose
     core::pose::PoseOP pose_;

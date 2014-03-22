@@ -18,7 +18,7 @@
 #define INCLUDED_core_membrane_geometry_util_hh
 
 // Project Headers
-#include <core/membrane/properties/SpanningTopology.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
 
 // Package Headers
 #include <core/conformation/Residue.hh>
@@ -48,7 +48,7 @@
 #include <cstdlib>
 #include <cmath>
 
-using namespace core::membrane::properties;
+using namespace core::conformation::membrane;
 
 namespace core {
 namespace membrane {

@@ -24,8 +24,8 @@
 #include <core/membrane/io/SpanFileIO.fwd.hh>
 
 // Project Headers
-#include <core/membrane/properties/SpanningTopology.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 // Package Headers
 #include <core/types.hh>
@@ -47,7 +47,7 @@
 #include <string>
 #include <algorithm>
 
-using namespace core::membrane::properties;
+using namespace core::conformation::membrane;
 
 namespace core {
 namespace membrane {

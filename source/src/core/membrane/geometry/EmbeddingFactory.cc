@@ -22,10 +22,10 @@
 #include <core/membrane/geometry/EmbeddingFactory.hh>
 
 // Project Headers
-#include <core/membrane/properties/SpanningTopology.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/membrane/geometry/util.hh>
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 #include <core/membrane/geometry/MembraneResidueFactory.hh>
 #include <core/membrane/geometry/util.hh>
@@ -61,7 +61,7 @@
 #include <string> 
 
 using namespace core;
-using namespace core::membrane::properties;
+using namespace core::conformation::membrane;
 
 using basic::Error;
 using basic::Warning;
@@ -90,7 +90,7 @@ namespace geometry {
     EmbeddingFactory::EmbeddingFactory(
                                        core::pose::PoseOP pose,
                                        EmbedConfigInfoOP config,
-                                       core::membrane::properties::SpanningTopologyOP topology
+                                       SpanningTopologyOP topology
                                        ) :
         utility::pointer::ReferenceCount(),
         embed_info_(NULL),
@@ -137,7 +137,6 @@ namespace geometry {
     EmbeddingFactory::create_and_add_embedding( bool fullatom, core::Size jump ) {
         
         using namespace core::membrane::geometry;
-        using namespace core::membrane::util;
         
         // throw exception for unreasonable tag???
         
@@ -145,7 +144,7 @@ namespace geometry {
         MembraneResidueFactory mrf;
         
         // Declare accept parameters
-        EmbedConfigInfoOP accept = new core::membrane::util::EmbedConfigInfo;
+        EmbedConfigInfoOP accept = new EmbedConfigInfo;
         accept->center = embed_info_->center;
         accept->normal = embed_info_->normal;
         accept->depth = embed_info_->depth;
@@ -210,7 +209,7 @@ namespace geometry {
 	/// @param      EmbedConfigInfoOP
     ///                 ref to an embed config info obj passed by the embedding factory
 	void
-    EmbeddingFactory::embed_from_pdb( core::membrane::util::EmbedConfigInfoOP embedding ) {
+    EmbeddingFactory::embed_from_pdb( EmbedConfigInfoOP embedding ) {
         
 		TR << "Embed from PDB: Calculating embedding from pdb" << std::endl;
         
@@ -231,7 +230,7 @@ namespace geometry {
 	/// @param     EmbedConfigInfoOP
     ///             embedding config info to modify
 	void
-    EmbeddingFactory::embed_from_topology( core::membrane::util::EmbedConfigInfoOP embedding  ) {
+    EmbeddingFactory::embed_from_topology( EmbedConfigInfoOP embedding  ) {
         
 		TR << "Embed from Topology: Calculating embedding from topology" << std::endl;
         
@@ -270,11 +269,9 @@ namespace geometry {
 	///             score, and aver n trials and MC accept lowest. Takes the embed params resource loaded via resource
     ///             loader (RM).
 	void
-    EmbeddingFactory::embed_from_search_and_score( core::membrane::util::EmbedConfigInfoOP )
+    EmbeddingFactory::embed_from_search_and_score( EmbedConfigInfoOP )
 	{
 		TR << "Embed from Search and Score: Computing..." << std::endl;
-        
-        using namespace core::membrane::util;
         
         // DO NOT USE THIS CODE UNTIL THE OTHER SCORING CLASSES ARE TESTED!!!!!
         /**
@@ -301,7 +298,7 @@ namespace geometry {
 	/// @brief		Compute Fullatom Projections for Fa Embedding
 	///	@details	Computes Projections, depth, and stores coordinates. Computes fullatom
 	///				center and corresponding normal from these computations
-	void EmbeddingFactory::embed_for_FA( core::membrane::util::EmbedConfigInfoOP ) {
+	void EmbeddingFactory::embed_for_FA( EmbedConfigInfoOP ) {
 		
 	}
 	

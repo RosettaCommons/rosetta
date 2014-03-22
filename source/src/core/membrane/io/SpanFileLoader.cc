@@ -28,8 +28,8 @@
 #include <core/membrane/io/SpanFileIO.hh>
 #include <core/membrane/io/SpanFileOptions.hh>
 
-#include <core/membrane/properties/SpanningTopology.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 // Utility Headers
 #include <utility/excn/Exceptions.hh>
@@ -63,7 +63,7 @@ SpanFileLoader::create_resource(
 {
 
 	using namespace core::membrane::io;
-	using namespace core::membrane::properties;
+	using namespace core::conformation::membrane;
 
 	// Load a topology object from spanfile
 	SpanFileIO sfio;

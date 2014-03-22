@@ -48,16 +48,16 @@
 #include <core/membrane/MembraneProteinFactory.fwd.hh>
 
 // Project Headers
-#include <core/membrane/properties/SpanningTopology.hh>
-#include <core/membrane/properties/LipidAccInfo.hh>
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/LipidAccInfo.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 #include <core/membrane/geometry/MembraneResidueFactory.hh>
 #include <core/membrane/geometry/EmbeddingFactory.hh>
 #include <core/membrane/geometry/util.hh>
 
-#include <core/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/Conformation.hh>
 
 // Package Headers
@@ -78,7 +78,7 @@
 #include <cmath>
 #include <algorithm>
 
-using namespace core::membrane::properties;
+using namespace core::conformation::membrane;
 using namespace core::membrane;
 using namespace core::pose;
 
@@ -136,7 +136,7 @@ namespace membrane {
         MembraneProteinFactory(
                                utility::vector1< PoseOP > chains,
                                utility::vector1< SpanningTopologyOP > topologies,
-                               utility::vector1< core::membrane::util::EmbedConfigInfoOP > embeddings,
+                               utility::vector1< EmbedConfigInfoOP > embeddings,
                                utility::vector1< LipidAccInfoOP > lipid_acc
                                );
         
@@ -163,7 +163,7 @@ namespace membrane {
                                bool fullatom,
                                utility::vector1< PoseOP > chains,
                                utility::vector1< SpanningTopologyOP > topologies,
-                               utility::vector1< core::membrane::util::EmbedConfigInfoOP > embeddings,
+                               utility::vector1< EmbedConfigInfoOP > embeddings,
                                utility::vector1< LipidAccInfoOP > lipid_acc
                                );
         
@@ -232,9 +232,9 @@ namespace membrane {
         
         // List of 'by chain' resources
         utility::vector1< core::pose::PoseOP > chains_;
-        utility::vector1< core::membrane::properties::SpanningTopologyOP > topologies_;
-        utility::vector1< core::membrane::util::EmbedConfigInfoOP > embeddings_;
-        utility::vector1< core::membrane::properties::LipidAccInfoOP > lipid_acc_;
+        utility::vector1< SpanningTopologyOP > topologies_;
+        utility::vector1< EmbedConfigInfoOP > embeddings_;
+        utility::vector1< LipidAccInfoOP > lipid_acc_;
         
         // Factory instances
         core::membrane::geometry::MembraneResidueFactory mrf_;

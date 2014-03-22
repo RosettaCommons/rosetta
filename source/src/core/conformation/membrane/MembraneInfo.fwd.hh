@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 	 core/membrane/MembraneInfo.fwd.hh
+/// @file 	 core/conformation/membrane/MembraneInfo.fwd.hh
 ///
 /// @brief 	 Membrane Conformation Info
 /// @details The Membrane Conformation Info object is responsible for:
@@ -18,13 +18,14 @@
 /// @note    Last Modified 3/12/14
 /// @author  Rebecca Alford (rfalford12@gmail.com)
 
-#ifndef INCLUDED_core_membrane_MembraneInfo_fwd_hh
-#define INCLUDED_core_membrane_MembraneInfo_fwd_hh
+#ifndef INCLUDED_core_conformation_membrane_MembraneInfo_fwd_hh
+#define INCLUDED_core_conformation_membrane_MembraneInfo_fwd_hh
 
 // Utility Headers
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
+namespace conformation {
 namespace membrane {
 		
 	/// @brief Class: Membrane Conformation Info
@@ -34,7 +35,8 @@ namespace membrane {
 	typedef utility::pointer::owning_ptr< MembraneInfo const > MembraneInfoCOP;
 		
 } // membrane
+} // conformation
 } // core
 
-#endif // INCLUDED_core_membrane_MembraneInfo_fwd_hh
+#endif // INCLUDED_core_conformation_membrane_MembraneInfo_fwd_hh
 

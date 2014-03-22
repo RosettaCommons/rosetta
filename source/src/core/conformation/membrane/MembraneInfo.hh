@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 	 core/membrane/MembraneInfo.hh
+/// @file 	 core/conformation/membrane/MembraneInfo.hh
 ///
 /// @brief 	 Membrane Conformation Info Obejct
 /// @details The Membrane Conformation Info Object is responsible for:
@@ -18,16 +18,16 @@
 /// @note    Last Modified 3/12/14
 /// @author  Rebecca Alford (rfalford12@gmail.com)
 
-#ifndef INCLUDED_core_membrane_MembraneInfo_hh
-#define INCLUDED_core_membrane_MembraneInfo_hh
+#ifndef INCLUDED_core_conformation_membrane_MembraneInfo_hh
+#define INCLUDED_core_conformation_membrane_MembraneInfo_hh
 
 // Unit headers
-#include <core/membrane/MembraneInfo.fwd.hh>
+#include <core/conformation/membrane/MembraneInfo.fwd.hh>
 #include <core/conformation/Conformation.hh>
 
 // Project Headers
-#include <core/membrane/properties/SpanningTopology.hh>
-#include <core/membrane/properties/LipidAccInfo.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/LipidAccInfo.hh>
 
 // Package Headers
 #include <core/kinematics/FoldTree.hh>
@@ -43,14 +43,16 @@
 #include <cmath>
 
 using namespace core::conformation;
+using namespace core::conformation::membrane;
 
 /// The goal of the membrane info object is to coordinate information related to
 /// the conformaiton of a memrbane protein - as it relates to both kinematics and scoring
-/// of a pose. The object lives inside of Cnformaiton, but maintains an access pointer
+/// of a pose. The object lives inside of Conformaiton, but maintains an access pointer
 /// to the conformation in order to access its data members and check for updates.
 /// This class does not inherit from an observer, but implements the observer pattern
 
 namespace core {
+namespace conformation {
 namespace membrane {
 		
 /// @brief A Membrane conformation: Additional data for maintaining a mebrane
@@ -164,12 +166,12 @@ class MembraneInfo : public utility::pointer::ReferenceCount {
 		core::Size num_polymer_chains() const;
 		
 		/// @brief Add Spanning Topology
-		void add_topology_by_chain( properties::SpanningTopology sp, core::Size chain );
-		utility::vector1< properties::SpanningTopology > spanning_topology() const;
+		void add_topology_by_chain( SpanningTopology sp, core::Size chain );
+		utility::vector1< SpanningTopology > spanning_topology() const;
 		
 		/// @brief Add Lipid Accessibility Info
-		void add_lips_by_chain( properties::LipidAccInfo const & sp, core::Size chain );
-		utility::vector1< properties::LipidAccInfo > lipid_acc_data() const;
+		void add_lips_by_chain( LipidAccInfo const & sp, core::Size chain );
+		utility::vector1< LipidAccInfo > lipid_acc_data() const;
 		
 	private: // methods
 	
@@ -221,12 +223,13 @@ class MembraneInfo : public utility::pointer::ReferenceCount {
 		/// Membrane Conformation Info ///////////////
 		
 		// Lipid accessibility data
-		utility::vector1< properties::LipidAccInfo > lipid_acc_data_;
-		utility::vector1< properties::SpanningTopology > spanning_topology_;
+		utility::vector1< LipidAccInfo > lipid_acc_data_;
+		utility::vector1< SpanningTopology > spanning_topology_;
 		
 	}; // MembraneInfo
 		
 } // membrane
+} // conformation
 } // core
 
 #endif // INCLUDED_core_membrane_MembraneInfo_hh

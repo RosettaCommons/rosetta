@@ -26,7 +26,7 @@
 
 // Platform Headers
 #include <core/types.hh>
-#include <core/membrane/util/definitions.hh>
+#include <core/conformation/membrane/definitions.hh>
 
 // Basic Headers
 #include <basic/resource_manager/ResourceOptions.hh>

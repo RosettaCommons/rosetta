@@ -48,8 +48,8 @@
 #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/kinematics/DomainMap.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <core/membrane/MembraneInfo.fwd.hh>
-#include <core/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/MembraneInfo.fwd.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
 
 // Utility headers
 #include <utility/pointer/access_ptr.hh>
@@ -283,7 +283,7 @@ public: // membrane
 	/// @details Membrane Info contains information regarding membrane residues,
 	/// foldtree modifications, fullatom vs. centroid embedding parameters for
 	/// scoring and the spanning topology/lipids accessibility data
-	core::membrane::MembraneInfoOP membrane();
+	membrane::MembraneInfoOP membrane();
 
 public:  // Trees
 

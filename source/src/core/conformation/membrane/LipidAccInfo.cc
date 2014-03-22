@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 		core/membrane/properties/LipidAccInfo.hh
+/// @file 		core/conformation/membrane/LipidAccInfo.hh
 ///
 /// @brief      Membrane Lipid Accessibility Data
 /// @details    Stores lipid accessibility data derived from OCTOPUS spanning file
@@ -16,11 +16,11 @@
 /// @note       Last Modified: 1/1/14
 /// @author		Rebecca Alford (rfalford12@gmail.com)
 
-#ifndef INCLUDED_core_membrane_properties_LipidAccInfo_cc
-#define INCLUDED_core_membrane_properties_LipidAccInfo_cc
+#ifndef INCLUDED_core_conformation_membrane_LipidAccInfo_cc
+#define INCLUDED_core_conformation_membrane_LipidAccInfo_cc
 
 // Unit headers
-#include <core/membrane/properties/LipidAccInfo.hh>
+#include <core/conformation/membrane/LipidAccInfo.hh>
 
 // Package Headers
 #include <core/types.hh>
@@ -51,8 +51,8 @@
 ///             and psiblast search using run_lips.pl script
 
 namespace core {
+namespace conformation {
 namespace membrane {
-namespace properties {
     
     /// @brief Constructor
     LipidAccInfo::LipidAccInfo() :
@@ -88,11 +88,11 @@ namespace properties {
     }
     
     
-} // properties
 } // membrane
+} // conformation
 } // core
 
-#endif // INCLUDED_core_membrane_properties_LipidAccInfo_cc
+#endif // INCLUDED_core_conformation_membrane_LipidAccInfo_cc
 
 
 

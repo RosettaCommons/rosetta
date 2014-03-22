@@ -47,10 +47,10 @@
 #include <core/membrane/MembraneProteinFactory.hh>
 
 // Project Headers
-#include <core/membrane/properties/SpanningTopology.hh>
-#include <core/membrane/properties/LipidAccInfo.hh>
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/LipidAccInfo.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 #include <core/membrane/geometry/MembraneResidueFactory.hh>
 #include <core/membrane/geometry/EmbeddingFactory.hh>
@@ -63,7 +63,7 @@
 #include <basic/datacache/BasicDataCache.hh>
 
 #include <core/conformation/Conformation.hh>
-#include <core/membrane/MembraneInfo.hh> 
+#include <core/conformation/membrane/MembraneInfo.hh> 
 
 #include <core/types.hh>
 
@@ -86,7 +86,7 @@
 #include <stdexcept>
 
 using namespace core::membrane;
-using namespace core::membrane::properties;
+using namespace core::conformation::membrane;
 using namespace core::pose;
 
 using basic::Error;
@@ -171,7 +171,7 @@ namespace membrane {
     MembraneProteinFactory::MembraneProteinFactory(
                                                    utility::vector1< PoseOP > chains,
                                                    utility::vector1< SpanningTopologyOP > topologies,
-                                                   utility::vector1< core::membrane::util::EmbedConfigInfoOP > embeddings,
+                                                   utility::vector1< EmbedConfigInfoOP > embeddings,
                                                    utility::vector1< LipidAccInfoOP > lipid_acc
                                                    ) :
     utility::pointer::ReferenceCount(),
@@ -208,7 +208,7 @@ namespace membrane {
                                                    bool fullatom,
                                                    utility::vector1< PoseOP > chains,
                                                    utility::vector1< SpanningTopologyOP > topologies,
-                                                   utility::vector1< core::membrane::util::EmbedConfigInfoOP > embeddings,
+                                                   utility::vector1< EmbedConfigInfoOP > embeddings,
                                                    utility::vector1< LipidAccInfoOP > lipid_acc
                                                    ) :
         utility::pointer::ReferenceCount(),
@@ -256,7 +256,6 @@ namespace membrane {
     MembraneProteinFactory::initialize_chains() {
 
         using namespace basic::options;
-        using namespace core::membrane::util;
 
         // Ensure Prefix file is specified
         if ( prefix_file_.compare("") == 0 ) {
@@ -337,8 +336,8 @@ namespace membrane {
             core::Size jump = residue_center_of_mass( *pose, pose->conformation().chain_begin(i), pose->conformation().chain_end(i));
 
             // Grab Resources for the given chain
-            core::membrane::properties::SpanningTopologyOP topology = topologies_[i];
-            core::membrane::util::EmbedConfigInfoOP def = embeddings_[i];
+            SpanningTopologyOP topology = topologies_[i];
+            EmbedConfigInfoOP def = embeddings_[i];
 
             // Create a factory and apply residue
             EmbeddingFactoryOP factory = new EmbeddingFactory(pose, def, topology);
@@ -347,9 +346,9 @@ namespace membrane {
         }
 
         // Construct and set a new membrane info object
-	pose->conformation().setup_membrane( embres_map, root );
+		pose->conformation().setup_membrane( embres_map, root );
 
-	// Add Spanning topology and Lips to membrane info
+		// Add Spanning topology and Lips to membrane info
 
         // Initialize Spanning Topology
         initialize_topology( pose );
@@ -366,7 +365,6 @@ namespace membrane {
     void
     MembraneProteinFactory::initialize_topology( core::pose::PoseOP pose  )
     {
-        using namespace core::membrane::properties;
 
         for ( core::Size i = 1; i <= topologies_.size(); i++ )
         {
@@ -380,8 +378,6 @@ namespace membrane {
     /// @details Initialize lipid exposure data in the final pose
     void
     MembraneProteinFactory::initialize_lips_exp( core::pose::PoseOP pose ) {
-
-        using namespace core::membrane::properties;
 
         if ( include_lips_ ) {
 
@@ -402,7 +398,6 @@ namespace membrane {
     MembraneProteinFactory::initialize_resources() {
 
         using namespace basic::resource_manager;
-        using namespace core::membrane::util;
 
         // Resize maps based on chains_map size
         chains_.resize(chains_map_.size());
@@ -434,14 +429,14 @@ namespace membrane {
             {
                 throw EXCN_Resource_Definition( "Cannot load topology with description " + topo_desc );
             }
-            topologies_[i] = basic::resource_manager::get_resource< core::membrane::properties::SpanningTopology >( topo_desc );
+            topologies_[i] = basic::resource_manager::get_resource< SpanningTopology >( topo_desc );
 
             // Get embedding from resource manager
             if ( ! ResourceManager::get_instance()->has_resource_with_description( embed_desc) )
             {
                 throw EXCN_Resource_Definition( "Cannot load membrane embedding with description " + embed_desc );
             }
-            embeddings_[i] = basic::resource_manager::get_resource< core::membrane::util::EmbedConfigInfo >( embed_desc );
+            embeddings_[i] = basic::resource_manager::get_resource< EmbedConfigInfo >( embed_desc );
 
             // If user specified to include lips, load lipid acc data
             if ( include_lips_ ) {
@@ -451,7 +446,7 @@ namespace membrane {
                 {
                     throw EXCN_Resource_Definition( "Cannot load lipid accessibility data with description " + lipid_desc );
                 }
-                lipid_acc_[i] = basic::resource_manager::get_resource< core::membrane::properties::LipidAccInfo >( lipid_desc );
+                lipid_acc_[i] = basic::resource_manager::get_resource< LipidAccInfo >( lipid_desc );
             }
         }
         return;

@@ -24,9 +24,9 @@
 #include <core/membrane/io/EmbedDefIO.hh>
 
 // Project Headers
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/definitions_util.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/definitions_util.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 // Package Headers
 #include <basic/resource_manager/ResourceManager.hh>
@@ -52,11 +52,14 @@
 
 using basic::Error;
 using basic::Warning;
+
 using std::stringstream;
 using std::string;
 
 static basic::Tracer TR( "core.membrane.io.EmbedDefIO" );
+
 using namespace core::membrane;
+using namespace core::conformation::membrane;
 
 namespace core {
 namespace membrane {
@@ -74,13 +77,12 @@ namespace io {
     /// @brief Read and store data from embedding definition file
     /// @param embedding definition object, embedfile
     void EmbedDefIO::read_embed_data(
-                                    core::membrane::util::EmbedConfigInfoOP embedding,
+                                    EmbedConfigInfoOP embedding,
                                     std::string embedfile
                                     )
     {
 
         using namespace core;
-        using namespace core::membrane::util;
 
         TR << "Initializing embedding definition info using " << embedfile << std::endl;
 
@@ -139,19 +141,18 @@ namespace io {
     }
 
     /// @brief Get Embedding Definition from user specified file
-    core::membrane::util::EmbedConfigInfoOP
+    EmbedConfigInfoOP
     EmbedDefIO::get_embedding_from_file( std::string embedfile )
     {
 
-        using namespace core::membrane::util;
         using namespace core::membrane::io;
 
         if ( embedfile.compare("") == 0 ) {
-            throw new core::membrane::util::EXCN_Illegal_Arguments("Illegal embedding definition file locator");
+            throw new EXCN_Illegal_Arguments("Illegal embedding definition file locator");
         }
 
         /// Create new object
-        EmbedConfigInfoOP embedding = core::membrane::util::init_embedConfigInfo();
+        EmbedConfigInfoOP embedding = init_embedConfigInfo();
 
         // read in Lips data
         read_embed_data( embedding, embedfile );

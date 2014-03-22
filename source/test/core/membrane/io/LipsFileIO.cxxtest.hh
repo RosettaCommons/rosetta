@@ -25,8 +25,8 @@
 // Tested Classes
 #include <core/membrane/io/LipoFileIO.hh>
 
-#include <core/membrane/properties/LipidAccInfo.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/LipidAccInfo.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 // Package Headers
 #include <core/types.hh>
@@ -48,7 +48,7 @@ public: // tests
 	void setUp()
 	{
 
-		using namespace core::membrane::util;
+		using namespace core::conformation::membrane;
 		using namespace core::membrane::io;
         using namespace core::import_pose;
 

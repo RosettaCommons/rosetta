@@ -25,9 +25,9 @@
 #include <core/membrane/io/EmbedSearchParamsIO.hh>
 
 // Project Headers
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/definitions_util.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/definitions_util.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 #include <core/membrane/io/EmbedSearchParamsOptions.hh>
 
@@ -55,11 +55,14 @@
 
 using basic::Error;
 using basic::Warning;
+
 using std::stringstream;
 using std::string;
 
 static basic::Tracer TR( "core.membrane.io.EmbedSearchParamsIO" );
+
 using namespace core::membrane;
+using namespace core::conformation::membrane;
 
 namespace core {
 namespace membrane {
@@ -75,18 +78,17 @@ namespace io {
             {}
 
             /// @brief Main IO Function for Reading in Search Parameters from an Options Obj
-            core::membrane::util::EmbedSearchParamsOP
+            EmbedSearchParamsOP
             EmbedSearchParamsIO::get_embed_params_from_file(
                                                          core::membrane::io::EmbedSearchParamsOptions const & opts )
             {
 
                 using namespace core::membrane::io;
-                using namespace core::membrane::util;
 
                 TR << "Initializing embedding parameters info using Embed Param options" << std::endl;
 
                 // Create a New object
-                EmbedSearchParamsOP params = core::membrane::util::init_EmbedSearchParams();
+                EmbedSearchParamsOP params = init_EmbedSearchParams();
 
                 // Initializing Normal Params
                 params->normal_search = opts.normal_search();

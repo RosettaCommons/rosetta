@@ -25,8 +25,8 @@
 #include <core/membrane/io/LipoFileFallbackConfiguration.hh>
 
 // Platform headers
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/definitions_util.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/definitions_util.hh>
 
 // Basic Headers
 #include <basic/resource_manager/ResourceOptions.hh>

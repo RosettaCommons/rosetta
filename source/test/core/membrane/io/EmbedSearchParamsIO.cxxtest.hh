@@ -26,8 +26,8 @@
 // Tested Classes
 #include <core/membrane/io/EmbedSearchParamsOptions.hh>
 #include <core/membrane/io/EmbedSearchParamsIO.hh>
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/definitions_util.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/definitions_util.hh>
 
 // Package Headers
 #include <core/types.hh>
@@ -54,6 +54,8 @@ public: // tests
 	/// @brief test correct initialization
 	void test_correctInit()
 	{
+		using namespace core::conformation::membrane;
+		
 		TS_TRACE("Testing correct initialization of embedding search parameters");
 
         esp_io_ = new core::membrane::io::EmbedSearchParamsIO();
@@ -76,7 +78,7 @@ public: // tests
         core::membrane::io::EmbedSearchParamsOptions const & opts ( *esp_opts_ );
         
         // Get params from file
-        core::membrane::util::EmbedSearchParamsOP params = esp_io_->get_embed_params_from_file(opts);
+        EmbedSearchParamsOP params = esp_io_->get_embed_params_from_file(opts);
 
 		// Checking Initialization
 		TS_ASSERT_EQUALS( params->normal_search, true );

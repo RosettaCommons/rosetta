@@ -7,22 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file       core/membrane/util/Exceptions.hh
+/// @file       core/conformation/membrane/Exceptions.hh
 ///
 /// @brief      Membrane Code Exceptions
 /// @details    Extends from Exception utility - custom exceptions to throw when things go wrong
 ///
 /// @author     Rebecca Alford (rfalford12@gmail.com)
 
-#ifndef INCLUDED_core_membrane_util_Exceptions_hh
-#define INCLUDED_core_membrane_util_Exceptions_hh
+#ifndef INCLUDED_core_conformation_membrane_Exceptions_hh
+#define INCLUDED_core_conformation_membrane_Exceptions_hh
 
 // Utility Headers
 #include <utility/excn/Exceptions.hh>
 
 namespace core {
+namespace conformation {
 namespace membrane {
-namespace util {
 
     /// @brief Parent Exception - Exception Membrane
     class EXCN_Membrane : public virtual utility::excn::EXCN_Msg_Exception {
@@ -138,9 +138,9 @@ namespace util {
         }
     }; // class EXCN_MembraneFoldTree
 
-} // util
 } // membrane
+} // conformation
 } // core
 
-#endif // INCLUDED_core_membrane_util_Exceptions_hh
+#endif // INCLUDED_core_conformation_membrane_Exceptions_hh
 

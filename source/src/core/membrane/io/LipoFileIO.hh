@@ -24,7 +24,7 @@
 #include <core/membrane/io/LipoFileIO.fwd.hh>
 
 // Project Headers
-#include <core/membrane/properties/LipidAccInfo.hh>
+#include <core/conformation/membrane/LipidAccInfo.hh>
 
 // Package Headers
 #include <basic/resource_manager/ResourceManager.hh>
@@ -45,7 +45,7 @@
 #include <cstdlib>
 #include <cmath>
 
-using namespace core::membrane::properties;
+using namespace core::conformation::membrane;
 
 namespace core {
 namespace membrane {

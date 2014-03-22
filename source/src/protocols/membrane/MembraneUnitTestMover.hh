@@ -26,8 +26,8 @@
 
 // Project Headers
 #include <core/membrane/MembraneProteinFactory.hh>
-#include <core/membrane/util/Exceptions.hh>
-#include <core/membrane/util/definitions.hh>
+#include <core/conformation/membrane/Exceptions.hh>
+#include <core/conformation/membrane/definitions.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>

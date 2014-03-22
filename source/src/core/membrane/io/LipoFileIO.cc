@@ -24,8 +24,8 @@
 #include <core/membrane/io/LipoFileIO.hh>
 
 // Project Headers
-#include <core/membrane/properties/LipidAccInfo.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/LipidAccInfo.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 // Package Headers
 #include <core/types.hh>
@@ -56,7 +56,7 @@ using std::string;
 static basic::Tracer TR( "core.membrane.io.LipoFileIO" );
 
 using namespace core::membrane;
-using namespace core::membrane::properties;
+using namespace core::conformation::membrane;
 
 namespace core {
 namespace membrane {
@@ -80,7 +80,6 @@ namespace io {
     {
 
         using namespace core;
-        using namespace core::membrane::util;
         
         TR << "Initializing lips exposure info using " << lipsfile << std::endl;
         
@@ -144,7 +143,7 @@ namespace io {
             TR << num_of_csts << " exposure constraints read!" << std::endl;
 
         } else {
-            throw new core::membrane::util::EXCN_Illegal_Arguments("Lips data file not found!");
+            throw new EXCN_Illegal_Arguments("Lips data file not found!");
         }
 
         // Done!
@@ -153,15 +152,15 @@ namespace io {
 
     /// @brief Main IO Funciton - Reads Lipid Acc data from file
     /// @param [ lipofile ]
-    LipidAccInfoOP LipoFileIO::get_lips_exp_from_lipofile( std::string lipofile )
+    LipidAccInfoOP
+	LipoFileIO::get_lips_exp_from_lipofile( std::string lipofile )
     {
 
-        using namespace core::membrane::properties;
         using namespace core::membrane::io;
 
         // CHecking for invalid input
         if ( lipofile.compare("") == 0 ) {
-            throw new core::membrane::util::EXCN_Resource_Definition("Must specify a lips file to read!");
+            throw new EXCN_Resource_Definition("Must specify a lips file to read!");
         }
         
         // Create new object

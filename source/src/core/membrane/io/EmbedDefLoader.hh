@@ -24,9 +24,9 @@
 #include <core/membrane/io/EmbedDefLoader.hh>
 
 // Project Headers
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/definitions_util.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/definitions_util.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 // Package Headers
 #include <basic/resource_manager/ResourceLoader.hh>

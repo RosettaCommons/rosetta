@@ -20,8 +20,8 @@
 
 // Tested Classes
 #include <core/membrane/io/EmbedSearchParamsOptions.hh>
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/definitions_util.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/definitions_util.hh>
 
 // Package Headers
 #include <core/types.hh>

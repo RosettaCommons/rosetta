@@ -25,9 +25,9 @@
 #include <core/membrane/io/EmbedSearchParamsIO.fwd.hh>
 
 // Project Headers
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/definitions_util.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/definitions_util.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 #include <core/membrane/io/EmbedSearchParamsOptions.hh>
 
@@ -50,6 +50,8 @@
 #include <cstdlib>
 #include <cmath>
 
+using namespace core::conformation::membrane;
+
 namespace core {
 namespace membrane {
 namespace io {
@@ -69,7 +71,7 @@ namespace io {
         
         
         /// @brief Main IO Function - reads data straight from options class
-        core::membrane::util::EmbedSearchParamsOP
+        EmbedSearchParamsOP
         get_embed_params_from_file( core::membrane::io::EmbedSearchParamsOptions const & opts );
         
     };

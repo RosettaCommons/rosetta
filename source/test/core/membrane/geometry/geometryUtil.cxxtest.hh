@@ -21,8 +21,8 @@
 // Tested Classes
 #include <core/membrane/geometry/util.hh>
 
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 // Package Headers
 #include <core/conformation/Residue.hh>

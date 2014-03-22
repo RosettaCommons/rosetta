@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 	 core/membrane/MembraneInfo.cc
+/// @file 	 core/conformation/membrane/MembraneInfo.cc
 ///
 /// @brief 	 Membrane Conformation Info Object
 /// @details The Membrane Conformation Info Object is responsible for:
@@ -18,21 +18,21 @@
 /// @note    Last Modified 3/12/14
 /// @author  Rebecca Alford (rfalford12@gmail.com)
 
-#ifndef INCLUDED_core_membrane_MembraneInfo_cc
-#define INCLUDED_core_membrane_MembraneInfo_cc
+#ifndef INCLUDED_core_conformation_membrane_MembraneInfo_cc
+#define INCLUDED_core_conformation_membrane_MembraneInfo_cc
 
 // Unit Headers
-#include <core/membrane/MembraneInfo.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
 
 // Project Headers
-#include <core/membrane/properties/SpanningTopology.hh>
-#include <core/membrane/properties/LipidAccInfo.hh>
+#include <core/conformation/membrane/SpanningTopology.hh>
+#include <core/conformation/membrane/LipidAccInfo.hh>
 
 // Package Headers
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
 
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 #include <core/conformation/util.hh>
 #include <core/types.hh>
@@ -52,8 +52,10 @@ using basic::Warning;
 static basic::Tracer TR("core.membrane.MembraneInfo");
 
 using namespace core::conformation;
+using namespace core::conformation::membrane;
 
 namespace core {
+namespace conformation {
 namespace membrane {
 
 	//// Constructors //////////////////////////
@@ -201,8 +203,6 @@ namespace membrane {
 	/// @brief Watch for Membrane Relevant changes in the conformation every time
 	///		   membrane info is updated.
 	bool MembraneInfo::conformation_changed() {
-		
-		using namespace core::membrane::util;
 		
 		// Keep track of changes
 		bool changed = false;
@@ -363,22 +363,22 @@ namespace membrane {
 	
 	/// @brief Add Spanning Topology
 	void
-	MembraneInfo::add_topology_by_chain( core::membrane::properties::SpanningTopology sp, core::Size ) {
+	MembraneInfo::add_topology_by_chain( SpanningTopology sp, core::Size ) {
 		spanning_topology_.push_back( sp );
 	}
 	
-	utility::vector1< properties::SpanningTopology >
+	utility::vector1< SpanningTopology >
 	MembraneInfo::spanning_topology() const {
 		return spanning_topology_;
 	}
 	
 	/// @brief Add Lipid Accessibility Info
 	void
-	MembraneInfo::add_lips_by_chain( properties::LipidAccInfo const & sp, core::Size ) {
+	MembraneInfo::add_lips_by_chain( LipidAccInfo const & sp, core::Size ) {
 		lipid_acc_data_.push_back( sp );
 	}
 	
-	utility::vector1< properties::LipidAccInfo >
+	utility::vector1< LipidAccInfo >
 	MembraneInfo::lipid_acc_data() const {
 		return lipid_acc_data_;
 	}
@@ -429,6 +429,7 @@ namespace membrane {
 	}
 	
 } // membrane
+} // conformation
 } // core
 
-#endif // INCLUDED_core_membrane_MembraneInfo_cc
+#endif // INCLUDED_core_conformation_membrane_MembraneInfo_cc

@@ -26,8 +26,8 @@
 
 // Project Headers
 #include <core/membrane/MembraneProteinFactory.hh>
-#include <core/membrane/util/Exceptions.hh>
-#include <core/membrane/util/definitions.hh>
+#include <core/conformation/membrane/Exceptions.hh>
+#include <core/conformation/membrane/definitions.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>
@@ -223,7 +223,7 @@ namespace membrane {
     {
         using namespace core::membrane;
         using namespace basic::resource_manager;
-        using namespace core::membrane::util;
+        using namespace core::conformation::membrane;
         
         TR << "Loading in a membrane pose" << std::endl;
         // Create an instance of the Membrane Protein Factory

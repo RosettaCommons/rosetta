@@ -21,8 +21,8 @@
 #include <test/protocols/init_util.hh>
 
 // Project Headers
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 #include <core/pose/Pose.hh>
 
 // Package Headers
@@ -72,7 +72,7 @@ public:
         TS_TRACE("Testing loading membrane resources");
 
         using namespace protocols::jd2;
-        using namespace core::membrane::util;
+        using namespace core::conformation::membrane;
 
         // Create resource Manager Instances - Lazy Loading by Job for unit testing
         basic::resource_manager::ResourceManager * resource_manager( basic::resource_manager::ResourceManager::get_instance() );

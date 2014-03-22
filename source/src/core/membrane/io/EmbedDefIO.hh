@@ -24,9 +24,9 @@
 #include <core/membrane/io/EmbedDefIO.fwd.hh>
 
 // Project Headers
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/definitions_util.hh>
-#include <core/membrane/util/Exceptions.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/definitions_util.hh>
+#include <core/conformation/membrane/Exceptions.hh>
 
 // Package Headers
 #include <basic/resource_manager/ResourceManager.hh>
@@ -47,6 +47,8 @@
 #include <cstdlib>
 #include <cmath>
 
+using namespace core::conformation::membrane;
+
 namespace core {
 namespace membrane {
 namespace io {
@@ -66,7 +68,7 @@ public:
     
  
     /// @brief Read Embedding Definition from specified file
-    core::membrane::util::EmbedConfigInfoOP
+    EmbedConfigInfoOP
     get_embedding_from_file( std::string embedfile );
     
 private:
@@ -75,7 +77,7 @@ private:
     /// @param Lipid Info object, lipid info file, and pose
     void
     read_embed_data(
-                                     core::membrane::util::EmbedConfigInfoOP embedding,
+                                     EmbedConfigInfoOP embedding,
                                      std::string embedfile
                                      );
 

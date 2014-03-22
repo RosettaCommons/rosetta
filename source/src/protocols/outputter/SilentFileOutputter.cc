@@ -55,7 +55,7 @@ void SilentFileOutputter::write( Pose & p ) {
 	core::io::silent::SilentStructOP tmp;
 	// who knew ternary requires 2nd and 3rd to be the same type
 	if( binary_ ) {
-		tmp = new core::io::silent::BinaryProteinSilentStruct();
+		tmp = new core::io::silent::BinaryProteinSilentStruct(); // changing from silent struct factory to binary silent struct - broke build on gcc 4.4 @ralford changed 3/21/14
 	} else { 
 		tmp = new core::io::silent::ProteinSilentStruct();
 	}

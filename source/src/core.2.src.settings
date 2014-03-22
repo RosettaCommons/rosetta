@@ -101,6 +101,12 @@ sources = {
 		"util",
 		"UltraLightResidue"
 	],
+	"core/conformation/membrane": [
+	       "definitions_util",
+	       "SpanningTopology",
+	       "LipidAccInfo",
+	       "MembraneInfo",
+	],
 	"core/conformation/orbitals": [
 		"OrbitalXYZCoords",
 	],
@@ -150,16 +156,6 @@ sources = {
 		"Atom_",
 		"BondedAtom",
 		"JumpAtom",
-	],
-	"core/membrane/util": [
-		"definitions_util",
-	],
-	"core/membrane/properties": [
-	       "SpanningTopology",
-               "LipidAccInfo",
-	],
-	"core/membrane": [
-	"MembraneInfo",
 	],
 }
 include_path = [

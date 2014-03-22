@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file 		core/membrane/properties/LipidAccInfo.fwd.hh
+/// @file 		core/conformation/membrane/LipidAccInfo.fwd.hh
 ///
 /// @brief      Membrane Lipid Accessibility Data
 /// @details    Stores lipid accessibility data derived from OCTOPUS spanning file
@@ -16,15 +16,15 @@
 /// @note       Last Modified: 1/1/14
 /// @author		Rebecca Alford (rfalford12@gmail.com)
 
-#ifndef INCLUDED_core_membrane_properties_LipidAccInfo_fwd_hh
-#define INCLUDED_core_membrane_properties_LipidAccInfo_fwd_hh
+#ifndef INCLUDED_core_conformation_membrane_LipidAccInfo_fwd_hh
+#define INCLUDED_core_conformation_membrane_LipidAccInfo_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
+namespace conformation {
 namespace membrane {
-namespace properties {
             
     /// @brief      Class: Membrane Lipid Accessibility Data
     /// @details    Stores lipid accessibility data derived from OCTOPUS spanning file
@@ -33,9 +33,9 @@ namespace properties {
     typedef utility::pointer::owning_ptr< LipidAccInfo > LipidAccInfoOP;
     typedef utility::pointer::owning_ptr< LipidAccInfo const > LipidAccInfoCOP;
     
-} // properties
 } // membrane
+} // conformation
 } // core
 
-#endif // INCLUDED_core_membrane_properties_LipidAccInfo_fwd_hh
+#endif // INCLUDED_core_conformation_membrane_LipidAccInfo_fwd_hh
 

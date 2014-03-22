@@ -25,8 +25,8 @@
 #include <core/membrane/io/EmbedDefLoaderCreator.hh>
 
 // Project Headers
-#include <core/membrane/util/definitions.hh>
-#include <core/membrane/util/definitions_util.hh>
+#include <core/conformation/membrane/definitions.hh>
+#include <core/conformation/membrane/definitions_util.hh>
 
 #include <core/membrane/io/EmbedDefOptions.hh>
 #include <core/membrane/io/EmbedDefIO.hh>
@@ -39,6 +39,8 @@
 
 // C++ Headers
 #include <cstdlib>
+
+using namespace core::conformation::membrane;
 
 namespace core {
 namespace membrane {
@@ -58,7 +60,6 @@ namespace io {
         std::istream &
         ) const
     {
-        using namespace core::membrane::util;
         using namespace core::membrane::io;
 
         // Load an embed search object from file
