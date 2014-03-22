@@ -41,3 +41,4 @@ namespace core {
 } // core
 
 #endif // INCLUDED_core_scoring_Membrane_FAPotential_fwd_hh
+
