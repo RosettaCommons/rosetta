@@ -223,7 +223,7 @@ public:
 		Real start_score = sfxn(pose);
 		//std::cout.precision(15);
 		//std::cout << start_score << std::endl;
-		TS_ASSERT_DELTA(start_score, 36.2995836070685, 1e-12);
+		TS_ASSERT_DELTA(start_score, 36.29958, 1e-5);
 	}
 
 	void test_cen_rot_cart_min()
@@ -266,7 +266,7 @@ public:
 		Real start_score = sfxn(pose);
 		//std::cout.precision(15);
 		//std::cout << start_score << std::endl;
-		TS_ASSERT_DELTA(start_score, 24.9099706949073, 1e-12);
+		TS_ASSERT_DELTA(start_score, 24.90997, 1e-5);
 	}
 
 };
