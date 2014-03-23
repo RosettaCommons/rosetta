@@ -769,11 +769,12 @@ sources = {
 
 	# W ######################################################################
 	"pilot/wendao" : [
-		#"test_bbmc",
+		"test_bbmc",
 		#"test_cen_rot",
 		#"fa_to_cenrot_score",
-        #"cenrot_jd2",
+        "cenrot_jd2",
  		#"general_pair_counting",
+        #"pairwise_fa_energy",
 		#"params_opt",
 		#"cenrot_bbsc_demo",
 	],

@@ -78,19 +78,25 @@ public:
 
 	///env
 	void
-	evaluate_cen_rot_env_score(
+	evaluate_cen_rot_env_and_cbeta_score(
 		pose::Pose const & pose,
 		conformation::Residue const & rsd,
-		Real & env_contribution
+		Real & env_contribution,
+		Real & cbeta6_contribution,
+		Real & cbeta12_contribution
 	) const ;
 
 	void
-	evaluate_cen_rot_env_deriv(
-			pose::Pose const & pose,
-			conformation::Residue const & rsd,
-			numeric::xyzVector<Real> & f2_cen,
-			numeric::xyzVector<Real> & f2_cb
-		) const ;
+	evaluate_cen_rot_env_and_cbeta_deriv(
+		pose::Pose const & pose,
+		conformation::Residue const & rsd,
+		numeric::xyzVector<Real> & f2_cen_env,
+		numeric::xyzVector<Real> & f2_cen_cb6,
+		numeric::xyzVector<Real> & f2_cen_cb12,
+		numeric::xyzVector<Real> & f2_cb_env,
+		numeric::xyzVector<Real> & f2_cb_cb6,
+		numeric::xyzVector<Real> & f2_cb_cb12
+	) const ;
 
 	//copy from smoothenvpairpotential
 	void
@@ -137,12 +143,18 @@ private:
 		numeric::interpolation::spline::CubicSpline > > pairsplines_;
 	
 	utility::vector1<numeric::interpolation::spline::CubicSpline> envsplines_;
+	//numeric::interpolation::spline::CubicSpline cbeta6splines_;
+	//numeric::interpolation::spline::CubicSpline cbeta12splines_;
+	SmoothScoreTermCoeffs cbeta6_;
+	SmoothScoreTermCoeffs cbeta12_;
+	SmoothScoreTermCoeffs cenpack_;
 
 	utility::vector1< utility::vector1<
 		numeric::interpolation::spline::BicubicSpline > > angsplines_;
 
-	utility::vector1< utility::vector1<
-		numeric::interpolation::spline::BicubicSpline > > dihsplines_;
+	//currently not implemented
+	//utility::vector1< utility::vector1<
+	//	numeric::interpolation::spline::BicubicSpline > > dihsplines_;
 };
 
 } // ns scoring

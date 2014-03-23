@@ -20,7 +20,7 @@ BOND  CA   C
 BOND  C    O  
 PROPERTIES PROTEIN
 NBR_ATOM CA
-NBR_RADIUS 2.636
+NBR_RADIUS 3.025 #fpd true neighbor radius is 2.636; keep this at prev. value so 12A neighbor graph is correct
 FIRST_SIDECHAIN_ATOM CEN
 ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  
 ICOOR_INTERNAL    CA     0.000000  180.000000    1.458001   N     CA    C  
@@ -36,4 +36,5 @@ ICOOR_INTERNAL    H    180.000000   60.850040    1.010000   N     CA  LOWER
 ##centroid-specific
 ATOM  CEN CEN_GLY H 0.0
 BOND CA CEN
-ICOOR_INTERNAL CEN 0.0 0.0 0.0 CA N C
+#ICOOR_INTERNAL CEN 0.0 0.0 0.0 CA N C  #keep the small value in centroid/cart_bond
+ICOOR_INTERNAL    CEN   0   0    0.00050    CA     N     C

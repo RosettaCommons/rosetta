@@ -27,6 +27,7 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -57,16 +58,21 @@ static basic::Tracer TR("core.pack.dunbrack.cenrot");
 
 Size const SingleResidueCenrotLibrary::N_PHIPSI_BINS = 36;
 Real const SingleResidueCenrotLibrary::PHIPSI_BINRANGE = 10.0;
-Real const SingleResidueCenrotLibrary::NEUTRAL_PHI = -60;
-Real const SingleResidueCenrotLibrary::NEUTRAL_PSI = 60;
+Real const SingleResidueCenrotLibrary::NEUTRAL_PHI = -90; //dun -60 //-60
+Real const SingleResidueCenrotLibrary::NEUTRAL_PSI = 130; //dun 60? //-60
 Size const SingleResidueCenrotLibrary::RSD_PHI_INDEX = 1;
 Size const SingleResidueCenrotLibrary::RSD_PSI_INDEX = 2;
 Real const SingleResidueCenrotLibrary::MAX_ROT_ENERGY = 16;
-Real const SingleResidueCenrotLibrary::MIN_ROT_PROB = 1e-7;
+Real const SingleResidueCenrotLibrary::MIN_ROT_PROB = 1e-6;
+
+using namespace basic::options;
 
 SingleResidueCenrotLibrary::SingleResidueCenrotLibrary(AA const aa)
 :aa_(aa),max_rot_num(0),ref_energy_(0.0){
 	all_rots_bb_.dimension(N_PHIPSI_BINS, N_PHIPSI_BINS);
+	if( option[ OptionKeys::corrections::score::dun_entropy_correction ] ) {
+		entropy_.dimension(N_PHIPSI_BINS, N_PHIPSI_BINS);
+	}
 }
 
 SingleResidueCenrotLibrary::~SingleResidueCenrotLibrary(){}
@@ -147,8 +153,32 @@ std::string SingleResidueCenrotLibrary::read_from_file(
 
 	//reference energy:
 	ref_energy_ = log(float(max_rot_num));
+
+	if( option[ OptionKeys::corrections::score::dun_entropy_correction ] ) {
+		setup_entropy_correction();
+	}
+
 	TR.Debug << "Cenrotlib for AA " << my_name << " has been loaded!" << std::endl;
 	return next_name;
+}
+
+void SingleResidueCenrotLibrary::setup_entropy_correction()
+{
+	//calculate the entropy for each bb bin
+	for (Size nphi=1; nphi<=N_PHIPSI_BINS; nphi++) {
+		for (Size npsi=1; npsi<=N_PHIPSI_BINS; npsi++) {
+			//for each bin
+			Real sum_plogp = 0.0;
+			Real sum_p = 0.0;
+			for (Size nrot=1; nrot<=max_rot_num; nrot++) {
+				sum_p += all_rots_bb_(nphi, npsi)[nrot].prob();
+				//energy = -logP
+				sum_plogp -= all_rots_bb_(nphi, npsi)[nrot].prob()*all_rots_bb_(nphi, npsi)[nrot].energy();
+			}
+			entropy_(nphi, npsi) = sum_plogp / sum_p; //in case P is not normalized
+			//std::cout << entropy_(nphi, npsi) << std::endl;
+		}
+	}
 }
 
 Real SingleResidueCenrotLibrary::rotamer_energy_deriv(
@@ -177,6 +207,37 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_deriv(
 	Real p(0.0);
 	Real factori[10]; //for each rot (max=9)
 	const utility::vector1< CentroidRotamerSampleData > rotamer_sample_data( get_rotamer_samples( rsd ) );
+
+	////////////////////////////////////////////////////////
+	//entropy correction
+	////////////////////////////////////////////////////////
+	Real entropy(0.0);
+	Real dS_dphi(0.0);
+	Real dS_dpsi(0.0);
+	if( option[ OptionKeys::corrections::score::dun_entropy_correction ] ) {
+		Size phibin, psibin;
+		Size phibin_next, psibin_next;
+		Real phi_alpha, psi_alpha;
+
+		Real phi(get_phi_from_rsd(rsd));
+		Real psi(get_psi_from_rsd(rsd));
+
+		get_phipsi_bins( phi, psi, phibin, psibin, phibin_next, psibin_next, phi_alpha, psi_alpha );
+
+		//calculate entropy for phi, psi
+		Real s00(entropy_(phibin, psibin));
+		Real s01(entropy_(phibin, psibin_next));
+		Real s10(entropy_(phibin_next, psibin));
+		Real s11(entropy_(phibin_next, psibin_next));
+
+		basic::interpolate_bilinear_by_value(
+			s00, s10, s01, s11,
+			phi_alpha, psi_alpha, PHIPSI_BINRANGE, true,
+			entropy, dS_dphi, dS_dpsi
+		);
+	}
+	////////////////////////////////////////////////////////
+
 	for (Size nr=1; nr<=max_rot_num; nr++) {
 		Real d_sq(0.0), a_sq(0.0), w_sq(0.0);
 		rotamer_sample_data[nr].cal_delta_internal_coordinates_squared(rsd, d_sq, a_sq, w_sq);
@@ -209,7 +270,14 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_deriv(
 		return MAX_ROT_ENERGY;
 	}
 
-	if (!eval_deriv) return (e - ref_energy_) ;
+	if( option[ OptionKeys::corrections::score::dun_entropy_correction ] ) {
+		e += entropy;
+	}
+	else {
+		e -= ref_energy_;
+	}
+
+	if (!eval_deriv) return e ;
 
 	//cal devriv
 	Real dE_ddis(0.0), dE_dang(0.0), dE_ddih(0.0);
@@ -223,13 +291,13 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_deriv(
 		dE_ddih += factori[nr] * delta_dih / sample.sd_dih();
 	}
 
-	//hack save derivs in scratch
+	//hack save derivs (dis, ang, dih) in scratch.dE_dchi
 	Real4 & dE_dchi(scratch.dE_dchi());
 	dE_dchi[1] = dE_ddis / p;
 	dE_dchi[2] = dE_dang / p;
 	dE_dchi[3] = dE_ddih / p;
 
-	return (e - ref_energy_) ;
+	return e ;
 }
 
 Real SingleResidueCenrotLibrary::eval_rotameric_energy_bb_dof_deriv(
@@ -239,6 +307,37 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_bb_dof_deriv(
 	Real p(0.0);
 	Real factori[10]; //for each rot (max=9)
 	const utility::vector1< CentroidRotamerSampleData > rotamer_sample_data( get_rotamer_samples( rsd ) );
+
+	////////////////////////////////////////////////////////
+	//entropy correction
+	////////////////////////////////////////////////////////
+	Real entropy(0.0);
+	Real dS_dphi(0.0);
+	Real dS_dpsi(0.0);
+	if( option[ OptionKeys::corrections::score::dun_entropy_correction ] ) {
+		Size phibin, psibin;
+		Size phibin_next, psibin_next;
+		Real phi_alpha, psi_alpha;
+
+		Real phi(get_phi_from_rsd(rsd));
+		Real psi(get_psi_from_rsd(rsd));
+
+		get_phipsi_bins( phi, psi, phibin, psibin, phibin_next, psibin_next, phi_alpha, psi_alpha );
+
+		//calculate entropy for phi, psi
+		Real s00(entropy_(phibin, psibin));
+		Real s01(entropy_(phibin, psibin_next));
+		Real s10(entropy_(phibin_next, psibin));
+		Real s11(entropy_(phibin_next, psibin_next));
+
+		basic::interpolate_bilinear_by_value(
+			s00, s10, s01, s11,
+			phi_alpha, psi_alpha, PHIPSI_BINRANGE, true,
+			entropy, dS_dphi, dS_dpsi
+		);
+	}
+	////////////////////////////////////////////////////////
+
 	for (Size nr=1; nr<=max_rot_num; nr++) {
 		Real d_sq(0.0), a_sq(0.0), w_sq(0.0);
 		rotamer_sample_data[nr].cal_delta_internal_coordinates_squared(rsd, d_sq, a_sq, w_sq);
@@ -266,32 +365,42 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_bb_dof_deriv(
 	Real3 & dE_dbb(scratch.dE_dbb());
 
 	for (Size nr=1; nr<=max_rot_num; nr++) {
+		CentroidRotamerSampleData const &sample(rotamer_sample_data[nr]);
 		Real delta[3];
-		rotamer_sample_data[nr].cal_delta_internal_coordinates(rsd, delta[0], delta[1], delta[2]);
+		sample.cal_delta_internal_coordinates(rsd, delta[0], delta[1], delta[2]);
 
 		Real tmp_phi(0.0), tmp_psi(0.0);
 		Size dat_shift = 1;
 		Size dev_shift = 4;
 		for (Size i=0; i<3; i++) {
 			Real f = delta[i]*delta[i];
-			Real df_dphi = -2.0*delta[i]*rotamer_sample_data[nr].deriv_phi_[i+dat_shift];
-			Real df_dpsi = -2.0*delta[i]*rotamer_sample_data[nr].deriv_psi_[i+dat_shift];
-			Real g = rotamer_sample_data[nr].data_[i+dev_shift];
-			Real dg_dphi = rotamer_sample_data[nr].deriv_phi_[i+dev_shift];
-			Real dg_dpsi = rotamer_sample_data[nr].deriv_psi_[i+dev_shift];
+			Real df_dphi = -2.0*delta[i]*sample.deriv_phi_[i+dat_shift];
+			Real df_dpsi = -2.0*delta[i]*sample.deriv_psi_[i+dat_shift];
+			Real g = sample.data_[i+dev_shift];
+			Real dg_dphi = sample.deriv_phi_[i+dev_shift];
+			Real dg_dpsi = sample.deriv_psi_[i+dev_shift];
 
 			tmp_phi += (df_dphi*g - dg_dphi*f)/(g*g)/2.0;
 			tmp_psi += (df_dpsi*g - dg_dpsi*f)/(g*g)/2.0;
 		}
 
-		dE_dbb[RSD_PHI_INDEX] += factori[nr]*(tmp_phi*rotamer_sample_data[nr].prob()-rotamer_sample_data[nr].deriv_phi_[0]);
-		dE_dbb[RSD_PSI_INDEX] += factori[nr]*(tmp_psi*rotamer_sample_data[nr].prob()-rotamer_sample_data[nr].deriv_psi_[0]);
+		dE_dbb[RSD_PHI_INDEX] += factori[nr]*(tmp_phi*sample.prob()-sample.deriv_phi_[0]);
+		dE_dbb[RSD_PSI_INDEX] += factori[nr]*(tmp_psi*sample.prob()-sample.deriv_psi_[0]);
 	}
 
 	dE_dbb[RSD_PHI_INDEX] /= p;
 	dE_dbb[RSD_PSI_INDEX] /= p;
 
-	return (e - ref_energy_) ;
+	if( option[ OptionKeys::corrections::score::dun_entropy_correction ] ) {
+		e += entropy;
+		dE_dbb[RSD_PHI_INDEX] += dS_dphi;
+		dE_dbb[RSD_PSI_INDEX] += dS_dpsi;
+	}
+	else {
+		e -= ref_energy_;
+	}
+
+	return e ;
 }
 
 CentroidRotamerSampleData const & SingleResidueCenrotLibrary::get_closest_rotamer(
@@ -368,7 +477,7 @@ void SingleResidueCenrotLibrary::fill_rotamer_vector(
 	// ** new logic: since we use interperlate value, should call get_rotamer_samples here
 	const utility::vector1< CentroidRotamerSampleData > samples( get_rotamer_samples( existing_residue ) );
 
-	while (accumulated_probability<requisit_probability-1e-6) {
+	while (accumulated_probability<requisit_probability-MIN_ROT_PROB) {
 		++count_rotamers_built;
 
 		//build it
@@ -411,7 +520,7 @@ void SingleResidueCenrotLibrary::fill_rotamer_vector(
 
 		// ** discard low prob rot
 		// ** 0.16 optimized by sc recovery benchmark
-		Real rot_cut = 	basic::options::option[ basic::options::OptionKeys::packing::cenrot_cutoff ]();
+		Real rot_cut = 	option[ OptionKeys::packing::cenrot_cutoff ]();
 
 		if (samples[count_rotamers_built].prob()> rot_cut/max_rots_that_can_be_built ) {
 			rotamers.push_back( rotamer );

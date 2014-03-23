@@ -2024,7 +2024,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 						process_decoy( fold_pose,  *centroid_scorefxn, new_output_tag, *pss );
 				}
 				else {
-						core::scoring::ScoreFunctionOP cenrot_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("score_cenrot");
+						core::scoring::ScoreFunctionOP cenrot_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("score4_cenrot_relax");
 						process_decoy( fold_pose, *cenrot_scorefxn, new_output_tag, *pss );
 				}
 

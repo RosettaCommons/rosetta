@@ -1,0 +1,7 @@
+CBETA6:  SHIFT   -0.337372
+CBETA6:  SIGMOID  1  0.43606 3.19595 -0.411424
+CBETA12: SHIFT   -0.169391
+CBETA12: SIGMOID  1  0.339681 2.93718 -0.414312
+# E = -log(P(native)/P(decoys))
+# E6  f(x) = A+B/(1+exp(-C*x-D))
+# E12 f(x) = A1+B1/(1+exp(-C1*x-D1)) + B2/(1+exp(-C2*x-D2))

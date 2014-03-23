@@ -39,14 +39,16 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <devel/init.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
-#include <basic/options/option.hh>
 #include <core/types.hh>
-#include <basic/Tracer.hh>
 
+#include <basic/Tracer.hh>
+#include <basic/basic.hh>
+#include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <core/scoring/rms_util.hh>
 
@@ -54,8 +56,11 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
 #include <core/scoring/constraints/util.hh>
+#include <core/scoring/constraints/CoordinateConstraint.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -65,6 +70,9 @@
 //Backbone Gaussian Mover
 #include <protocols/simple_moves/BBGaussianMover.hh>
 #include <protocols/simple_moves/BBConRotMover.hh>
+
+#include <core/optimization/Minimizer.hh>
+#include <core/optimization/AtomTreeMinimizer.hh>
 
 // Utility Headers
 #include <utility/io/ozstream.hh>
@@ -129,6 +137,7 @@ OPT_1GRP_KEY(Integer, mc, output_stride)
 OPT_1GRP_KEY(Integer, mc, cluster_ndx)
 OPT_1GRP_KEY(Boolean, mc, centroid)
 OPT_1GRP_KEY(Boolean, mc, noscore)
+OPT_1GRP_KEY(Boolean, mc, xyzcst)
 
 //replica
 OPT_1GRP_KEY(Boolean, mc, replica)
@@ -155,7 +164,213 @@ OPT_1GRP_KEY(Real, mc, near_native_threshold )
 OPT_1GRP_KEY(Boolean, mc, follow_classic_naming_convention )
 OPT_1GRP_KEY(String,mc, movable_segment)
 
+using namespace core;
+
 void *my_main( void* );
+void get_resmap( pose::Pose const &pose, pose::Pose const &ref_pose, std::map< Size, Size > &resmap );
+
+///////////////////////////////////////
+// test new mover
+///////////////////////////////////////
+
+using namespace protocols::simple_moves;
+
+class BBG8T3A_Jump_Mover : public BBGaussianMover
+{
+public:
+
+public:
+	BBG8T3A_Jump_Mover():BBGaussianMover(3,8,4),
+	    dphi(utility::vector1<Real>(n_dof_angle_))
+	{
+	    protocols::moves::Mover::type("BBG8T3A_Jump_Mover");
+	    //build end atom list
+	    end_atom_list_.push_back("CA");
+	    end_atom_list_.push_back("C");
+	    end_atom_list_.push_back("O");
+
+	    //init the A/C factor
+	    factorA_ = 0.6;
+	    factorB_ = 10;
+	}
+
+	~BBG8T3A_Jump_Mover(){}
+
+	void apply(Pose &pose)
+	{
+	    //if(available_seg_list_.size()==0)setup_list(pose);
+	    //if(available_seg_list_.size()==0)return;
+
+	    //select four hinge
+	    //for lysozyme, 104-117
+	    Real rA, rB, rC, rD;
+	    if (RG.uniform()<0.5) {
+	    	Size Ns(RG.uniform()*2+1);
+		    Real randn = RG.uniform();
+		    rA = Size(randn*(15.0-3.0*Ns))+104;
+		    rB = rA+Ns;
+		    rC = rB+Ns;
+		    rD = rC+Ns;
+	    }
+	    else {
+	    	rA = 105;
+	    	rB = 106;
+	    	rC = 116;
+	    	rD = 117;
+	    }
+	    
+	    std::cout << rA << "," << rB << "," << rC << "," << rD << std::endl;
+
+	    get_VdRdPhi(pose, rA, rB, rC, rD);
+	    get_G();
+	    get_A();
+	    Real W_old = get_L_move(pose, rA, rB, rC, rD);
+
+	    get_VdRdPhi(pose, rA, rB, rC, rD);
+	    get_G();
+	    get_A();
+	    Real W_new = get_L_prime();
+
+	    last_proposal_density_ratio_ = W_new / W_old;
+	}
+
+	virtual std::string get_name() const
+	{
+		return "BBG8T3A_Jump_Mover";
+	}
+
+protected:
+	void get_VdRdPhi(Pose const &pose, Size rA, Size rB, Size rC, Size rD)
+	{
+	    conformation::Residue const & rsd4( pose.residue( rD ) );
+	    conformation::Residue const & rsd3( pose.residue( rC ) );
+	    conformation::Residue const & rsd2( pose.residue( rB ) );
+	    conformation::Residue const & rsd1( pose.residue( rA ) );
+
+	    for (Size i=1;i<=end_atom_list_.size();i++)
+	    {
+	        //for each end atom
+	        Vector end_xyz = rsd4.atom(end_atom_list_[i]).xyz();
+	        //TR << "Phi: 8" << endl;
+	        matrix_dRdPhi[i][8] = get_dRdPhi(rsd4.atom("CA").xyz(),
+	                                         rsd4.atom("C").xyz(),
+	                                         end_xyz);
+	        //TR << "Phi: 7" << endl;
+	        matrix_dRdPhi[i][7] = get_dRdPhi(rsd4.atom("N").xyz(),
+	                                         rsd4.atom("CA").xyz(),
+	                                         end_xyz);
+	        //TR << "Phi: 6" << endl;
+	        matrix_dRdPhi[i][6] = get_dRdPhi(rsd3.atom("CA").xyz(),
+	                                         rsd3.atom("C").xyz(),
+	                                         end_xyz);
+	        //TR << "Phi: 5" << endl;
+	        matrix_dRdPhi[i][5] = get_dRdPhi(rsd3.atom("N").xyz(),
+	                                         rsd3.atom("CA").xyz(),
+	                                         end_xyz);
+	        //TR << "Phi: 4" << endl;
+	        matrix_dRdPhi[i][4] = get_dRdPhi(rsd2.atom("CA").xyz(),
+	                                         rsd2.atom("C").xyz(),
+	                                         end_xyz);
+	        //TR << "Phi: 3" << endl;
+	        matrix_dRdPhi[i][3] = get_dRdPhi(rsd2.atom("N").xyz(),
+	                                         rsd2.atom("CA").xyz(),
+	                                         end_xyz);
+	        //TR << "Phi: 2" << endl;
+	        matrix_dRdPhi[i][2] = get_dRdPhi(rsd1.atom("CA").xyz(),
+	                                         rsd1.atom("C").xyz(),
+	                                         end_xyz);
+	        //TR << "Phi: 1" << endl;
+	        matrix_dRdPhi[i][1] = get_dRdPhi(rsd1.atom("N").xyz(),
+	                                         rsd1.atom("CA").xyz(),
+	                                         end_xyz);
+	    }
+	}
+
+	void get_G()
+	{
+		for (Size i=1; i<=n_dof_angle_; i++)
+	    {
+	        for (Size j=i; j<=n_dof_angle_; j++)
+	        {
+	            matrix_G[i][j] = 0.0;
+	            for (Size n=1; n<=end_atom_list_.size();n++)
+	            {
+	                matrix_G[i][j] += matrix_dRdPhi[n][i].dot(matrix_dRdPhi[n][j]);
+	            }
+	            //if (matrix_G[i][j]>-ZERO && matrix_G[i][j]<ZERO) matrix_G[i][j] = 0.0;
+	            if (i<j) matrix_G[j][i]=matrix_G[i][j];
+
+	        }
+	    }
+	}
+
+	void get_A()
+	{
+	    for (Size i=1; i<=n_dof_angle_; i++)
+	    {
+	        for (Size j=i; j<=n_dof_angle_; j++)
+	        {
+	            matrix_A[i][j] = factorB_ * matrix_G[i][j];
+	            if (i==j) matrix_A[i][j] += 1.0;
+	            matrix_A[i][j] *= factorA_ / 2.0;
+	            if (i<j) matrix_A[j][i] = matrix_A[i][j];
+	        }
+	    }
+	}
+
+	void get_VdRdPhi(Pose const &){}
+	//Real get_L_move(Pose &){}
+
+	Real get_L_move(Pose &pose, Size rA, Size rB, Size rC, Size rD)
+	{
+	    //gerate a Gaussian dx vector
+	    utility::vector1<Real> delta(n_dof_angle_);
+	    for (Size i=1; i<=n_dof_angle_; i++) delta[i]=RG.gaussian();
+	    //calculate d^2 = delta^2
+	    Real d2=0.0;
+	    for (Size i=1; i<=n_dof_angle_; i++) d2+=delta[i]*delta[i];
+	    //cholesky, get L^t, L^-1
+	    Real detL = cholesky_fw(matrix_A, n_dof_angle_, delta, dphi);
+	    
+	    //W_old *= exp(-d^2)
+	    Real W_old = detL*exp(-d2/2.0);
+	    //set the new phi,psi (above all called phi, actually 4 phi, 4 psi)
+	    pose.set_psi(rD, basic::periodic_range( pose.psi(rD)+dphi[8], 360.0 ) );
+	    pose.set_phi(rD, basic::periodic_range( pose.phi(rD)+dphi[7], 360.0 ) );
+	    pose.set_psi(rC, basic::periodic_range( pose.psi(rC)+dphi[6], 360.0 ) ) ;
+	    pose.set_phi(rC, basic::periodic_range( pose.phi(rC)+dphi[5], 360.0 ) );
+	    pose.set_psi(rB, basic::periodic_range( pose.psi(rB)+dphi[4], 360.0 ) );
+	    pose.set_phi(rB, basic::periodic_range( pose.phi(rB)+dphi[3], 360.0 ) );
+	    pose.set_psi(rA, basic::periodic_range( pose.psi(rA)+dphi[2], 360.0 ) );
+	    pose.set_phi(rA, basic::periodic_range( pose.phi(rA)+dphi[1], 360.0 ) );
+
+	    return W_old;
+	}
+
+	Real get_L_prime()
+	{
+		utility::vector1<Real> delta(n_dof_angle_);
+	    //get L
+	    Real detL = cholesky_bw(matrix_A, n_dof_angle_, dphi, delta);
+	    //delta = L^t * dphi
+	    //calculate d^2 = delta^2
+	    Real d2=0.0;
+	    for (Size i=1; i<=n_dof_angle_; i++)d2+=delta[i]*delta[i];
+	    Real W_new = detL*exp(-d2/2.0);
+	    return W_new;
+	}
+
+private:
+	utility::vector1< string > end_atom_list_;
+	utility::vector1< Real > dphi;
+	Real factorA_;
+	Real factorB_;
+	Real last_delta_square_;
+};
+
+//////////////////////////////
+//////////////////////////////
+
 
 core::Real
 periodic_range( core::Real a, core::Real x ){
@@ -249,6 +464,7 @@ int main( int argc, char * argv [] )
 	NEW_OPT(mc::cluster_ndx, "index of the center of clusters in silent file", 0);
 	NEW_OPT(mc::centroid, "using centroid mode", false);
 	NEW_OPT(mc::noscore, "in absence of score", false);
+	NEW_OPT(mc::xyzcst, "coordinate constraints", false);
 	NEW_OPT(mc::rmsd_region_start, "beginning of rmsd region", 0);
 	NEW_OPT(mc::rmsd_region_stop, "end of rmsd region", 0);
 	//bb
@@ -289,11 +505,37 @@ int main( int argc, char * argv [] )
 
 }
 
+void
+get_resmap( pose::Pose const &pose,
+				pose::Pose const &ref_pose,
+				std::map< Size, Size > &resmap 
+		)
+{
+		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+				Size ii_pdb( pose.pdb_info()->number( ii ) );
+				//pose_resmap[ii_pdb] = ii;
+
+				for ( Size jj = 1; jj <= ref_pose.total_residue(); ++jj ) {
+						Size jj_pdb( ref_pose.pdb_info()->number( jj ) );
+
+						if( ii_pdb == jj_pdb ){
+								id::AtomID id1( pose.residue(ii).atom_index( "CA" ), ii );
+								id::AtomID id2( ref_pose.residue(jj).atom_index( "CA" ), jj );
+
+								resmap[ii] = jj;
+								TR << "Map: " << ii << " " << ii_pdb << " mapped to ";
+								TR << jj << " " << jj_pdb << std::endl;
+								break;
+						}
+				}
+		}
+}
 
 void *
 my_main( void* )
 {
 	using namespace core;
+	using namespace core::id;
 	using namespace core::io::silent;
 	using namespace core::io::pdb;
 	using namespace basic::options;
@@ -338,7 +580,7 @@ my_main( void* )
 
 	//bend score(for conrot and backrub)
 	if ( !(option[mc::centroid]) && option[ mc::mm_bend_weight ]>0) {
-			score_fxn->set_weight(core::scoring::mm_bend, option[ mc::mm_bend_weight ]);
+		score_fxn->set_weight(core::scoring::mm_bend, option[ mc::mm_bend_weight ]);
 	}
 
 	core::scoring::methods::EnergyMethodOptions energymethodoptions(score_fxn->energy_method_options());
@@ -371,6 +613,7 @@ my_main( void* )
 
 	//setup the BBGMover
 	protocols::simple_moves::BBG8T3AMover bbgmover;
+	//BBG8T3A_Jump_Mover bbgmover;
 
 	//setup the ConRotMover
 	protocols::simple_moves::BBConRotMover bbcrmover;
@@ -428,7 +671,6 @@ my_main( void* )
 		core::import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
 	}
 
-
 	//setup starting pose
 	PoseOP pose = new Pose();
 	Pose &p(*pose);
@@ -447,9 +689,41 @@ my_main( void* )
 		core::import_pose::pose_from_pdb( p, *rsd_set, infn.str());
 	}
 	else {
-			std::cerr << "User did not specify the pdb file!" << std::endl;
+		std::cerr << "User did not specify the pdb file!" << std::endl;
 		exit( EXIT_FAILURE );
 	}
+
+	/////////////////////////////////
+	// setup coordinate cst
+	kinematics::MoveMap cstmm;
+	cstmm.set_bb(false);
+	cstmm.set_chi(false);
+	cstmm.set_jump(true);
+	core::optimization::AtomTreeMinimizer cstmin;
+	core::optimization::MinimizerOptions cstoptions( "lbfgs_armijo_nonmonotone", 1e-2, true, false, false );
+	cstoptions.max_iter(5);
+	if ( option[mc::xyzcst] ) {
+		// virtual atom
+		core::pose::addVirtualResAsRoot(p);
+		core::Size nmonomerres = p.total_residue()-1;
+
+		// add cst to pose
+		for ( Size i = 1; i<=nmonomerres; ++i ) {
+			if ( !p.residue(i).is_polymer() ) continue;
+				core::conformation::Residue const & nat_i_rsd( p.residue(i) );
+				
+				//add constraints on CA
+				Size CA_i = nat_i_rsd.atom_index("CA");
+				p.add_constraint( new core::scoring::constraints::CoordinateConstraint( 
+					AtomID(CA_i,i), AtomID(1, p.fold_tree().root()), nat_i_rsd.xyz( CA_i ),
+					new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) ) );
+			
+		}
+	}
+
+	//move it here, yuan
+	Pose start_pose(p); //save the starting structure so we can compare by rmsd later ek 1-21-2011
+
 	//switch to centroid
 	if ( option[ mc::centroid ] ) {
 		to_centroid.apply(p);
@@ -460,6 +734,11 @@ my_main( void* )
 		core::scoring::constraints::add_constraints_from_cmdline( p, *score_fxn);
 	}
 
+	// setup resmap for gdt
+	std::map<Size, Size> resmap;
+	if ( option[in::file::native].user() ) {
+		get_resmap(*native_pose, p, resmap);
+	}
 
 	//call score_fxn after pose loaded
 	TR << "Score After PDB Load:" << std::endl;
@@ -474,34 +753,73 @@ my_main( void* )
 		ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( "score" );
 		ss->fill_struct(p, inputfn.str()+"_"+lead_zero_string_of(0, 6));
 		ss->add_energy( "temperature", 0.0 );
+		ss->add_energy( "GDTMM", 0.0 );
+		ss->add_energy( "GDTHA", 0.0 );
 		ss->add_energy( "rmsd", 0.0 );
 		ss->add_energy( "srmsd", 0.0 );
+
 		std::string score_fn(inputfn.str() + ".out");
-		std::ofstream scoreos(score_fn.c_str());
-  	ss->print_header( scoreos );
-		//sfd.write_silent_struct(*ss, score_fn, false );
+		if (!utility::file::file_exists(score_fn)) {
+		  //new file create header
+		  std::ofstream scoreos(score_fn.c_str());
+  	  ss->print_header( scoreos );
+		}
 	}
 
-	//ss, score only silent file
+	Size i=1; //hack, for restarting a run
+	Size maxstep=0;
+	std::string maxtag;
+
+	//trajactory
 	core::io::silent::SilentStructOP trajss;
 	core::io::silent::SilentFileData trajsfd;
 	if (option[mc::trajectory_stride]>0 ) {
 		trajss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( p );
-			if (rank==0) { //only one proc do this
-				for (core::Size ndx_traj=1, num_traj=option[mc::trajectory_tlist]().size(); ndx_traj<=num_traj; ++ndx_traj) {
-					if( option[mc::follow_classic_naming_convention ]() ) {
-						trajss->fill_struct(p, inputfn.str()+"_"+lead_zero_string_of(0, 6));
-					}else {
-						trajss->fill_struct(p, get_tag( 0, option[mc::trajectory_tlist]()[ndx_traj], rank ) );
+		if (rank==0) { //only one proc do this
+			for (core::Size ndx_traj=1, num_traj=option[mc::trajectory_tlist]().size(); ndx_traj<=num_traj; ++ndx_traj) {
+				if( option[mc::follow_classic_naming_convention ]() ) {
+					trajss->fill_struct(p, inputfn.str()+"_"+lead_zero_string_of(0, 6));
+				}else {
+					trajss->fill_struct(p, get_tag( 0, option[mc::trajectory_tlist]()[ndx_traj], rank ) );
+				}
+				trajss->add_energy( "temperature", 0.0 );
+				trajss->add_energy( "GDTMM", 0.0 );
+				trajss->add_energy( "GDTHA", 0.0 );
+				trajss->add_energy( "rmsd", 0.0  );
+				trajss->add_energy( "srmsd", 0.0 );
+				std::string traj_fn = get_filename("_traj.out",option[mc::trajectory_tlist]()[ndx_traj]);
+				if (utility::file::file_exists(traj_fn)) {
+					//need to restart from a traj
+					std::cout << "Restarting ..." << std::endl;
+					SilentFileData resfd(traj_fn, false, true, option[in::file::silent_struct_type]());
+					utility::vector1< std::string > tags;
+					resfd.read_tags_fast( traj_fn, tags );
+					resfd.read_file( traj_fn );
+					//tags = resfd.tags();
+					std::cout << "number of tags read in: " << tags.size() << " " << resfd.size() << std::endl;
+					for( core::Size ii = 1; ii <= tags.size(); ii++ ) {
+							std::stringstream stepstr(tags[ii].substr(2,8));
+							Size step; stepstr >> step;
+							if (step>maxstep) {
+									maxstep = step;
+									maxtag = tags[ii];
+							}
 					}
-					trajss->add_energy( "temperature", 0.0 );
-					trajss->add_energy( "rmsd", 0.0  );
-					trajss->add_energy( "srmsd", 0.0 );
-					std::string traj_fn = get_filename("_traj.out",option[mc::trajectory_tlist]()[ndx_traj]);
+					//find last pose
+					if (maxstep>0) {
+							SilentStructOP ress = resfd[ maxtag ];	
+							ress->fill_pose(p);
+							core::pose::clearPoseExtraScores(p);
+							i = maxstep+1;
+					}
+				}
+				else {
+					//new file create init
 					std::ofstream trajos(traj_fn.c_str());
-  				trajss->print_header( trajos );
+  					trajss->print_header( trajos );
 				}
 			}
+		}
 	}
 
 	//nresidue
@@ -524,6 +842,7 @@ my_main( void* )
 	//rmsd region
 	core::Size rmsd_start=1;
 	core::Size rmsd_stop=p.n_residue();
+	if (option[mc::xyzcst]) rmsd_stop--; //skip virt
 	if (option[mc::rmsd_region_start].user()) rmsd_start=option[mc::rmsd_region_start];
 	if (option[mc::rmsd_region_stop].user()) rmsd_stop=option[mc::rmsd_region_stop];
 
@@ -732,11 +1051,11 @@ my_main( void* )
 		}
 	}
 
-	Pose start_pose(p); //save the starting structure so we can compare by rmsd later ek 1-21-2011
 	Size ntrials = option[ mc::ntrials ];
 	std::cout << "Job is working ..." << std::endl;
 	basic::prof_reset();
-	for (Size i = 1; i <= ntrials; ++i) {
+	//"i", init from 1 or traj
+	for (; i <= ntrials; ++i) {
 		//init
 		string move_type("fake");
 		Real proposal_density_ratio=1.0;
@@ -748,6 +1067,12 @@ my_main( void* )
 			bbgmover.apply(p);
 			move_type = bbgmover.type();
 			proposal_density_ratio = bbgmover.last_proposal_density_ratio();
+
+			//if xyzcst, refit
+			if (option[mc::xyzcst]) {
+				cstmin.run( p, cstmm, *score_fxn, cstoptions );
+			}
+
 			mc->boltzmann(p, move_type, proposal_density_ratio);
 		}
 		else if ( prob > backrub_prob+conrot_prob+sc_prob+ fast_sc_prob ) { //small
@@ -858,9 +1183,15 @@ my_main( void* )
 				if(option[mc::follow_classic_naming_convention]()) {
 					ss->fill_struct(p, inputfn.str()+"_"+lead_zero_string_of(ndump, 6));
 				}else{
-					ss->fill_struct(p, get_tag(i,kT,rank) );
+					ss->fill_struct(p, get_tag(i,mc->temperature(),rank) );
 				}
 				ss->add_energy( "temperature", mc->temperature() );
+				if( option[ in::file::native ].user() ) {
+				  ss->add_energy( "GDTMM", core::scoring::CA_gdtmm(*native_pose, p, resmap) );
+				  ss->add_energy( "GDTHA", core::scoring::gdtha(*native_pose, p, resmap) );
+					ss->add_energy( "rmsd", core::scoring::CA_rmsd( *native_pose, p) ); //ek add rmsd to native in silent-structure header information
+				}
+				ss->add_energy( "srmsd", core::scoring::CA_rmsd( start_pose, p ) ); //ek add rmsd to starting structure in silent-structure header information
 				sfd.write_silent_struct(*ss, get_filename(".out", mc->temperature()), true );
 			}
 		}
@@ -875,13 +1206,15 @@ my_main( void* )
 					if( option[mc::follow_classic_naming_convention]() ){
 						trajss->fill_struct(p, inputfn.str()+"_"+lead_zero_string_of(ndump, 6));
 					} else {
-						trajss->fill_struct(p, get_tag(i,kT,rank) );
+						trajss->fill_struct(p, get_tag(i,mc->temperature(),rank) );
 					}
 					trajss->add_energy( "temperature", mc->temperature() );
 					if( option[ in::file::native ].user() ) {
-						trajss->add_energy( "rms", core::scoring::CA_rmsd( *native_pose, p) ); //ek add rmsd to native in silent-structure header information
+					trajss->add_energy( "GDTMM", core::scoring::CA_gdtmm(*native_pose, p, resmap) );
+					trajss->add_energy( "GDTHA", core::scoring::gdtha(*native_pose, p, resmap) );
+						trajss->add_energy( "rmsd", core::scoring::CA_rmsd( *native_pose, p) ); //ek add rmsd to native in silent-structure header information
 					}
-					trajss->add_energy( "srms", core::scoring::CA_rmsd( start_pose, p ) ); //ek add rmsd to starting structure in silent-structure header information
+					trajss->add_energy( "srmsd", core::scoring::CA_rmsd( start_pose, p ) ); //ek add rmsd to starting structure in silent-structure header information
 					trajsfd.write_silent_struct(*trajss, get_filename("_traj.out", mc->temperature()), false );
 				}
 			}
@@ -906,14 +1239,4 @@ my_main( void* )
 
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
 

@@ -715,10 +715,10 @@ void ClassicAbinitio::set_default_scores() {
 	}
 
 	//loading the cenrot score
-	score_stage4rot_ = ScoreFunctionFactory::create_score_function( "score_cenrot" );
-	score_stage4rot_->set_weight(core::scoring::cen_rot_dun, 0.0);
-	score_stage4rot_sc_ = ScoreFunctionFactory::create_score_function( "score_cenrot" );
-	score_stage4rot_sc_->set_weight(core::scoring::cen_rot_dun, 1.0);
+	score_stage4rot_ = ScoreFunctionFactory::create_score_function( "score4_cenrot_relax" );
+	//score_stage4rot_->set_weight(core::scoring::cen_rot_dun, 0.0);
+	score_stage4rot_sc_ = ScoreFunctionFactory::create_score_function( "score4_cenrot_repack" );
+	//score_stage4rot_sc_->set_weight(core::scoring::cen_rot_dun, 1.0);
 
 	if ( option[ OptionKeys::abinitio::stage5_patch ].user() ) { //vats
 		score_stage5_  = ScoreFunctionFactory::create_score_function( "score3", option[ OptionKeys::abinitio::stage5_patch ]() );

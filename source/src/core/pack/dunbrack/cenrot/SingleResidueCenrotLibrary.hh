@@ -68,8 +68,7 @@ private:
 public:
 	CentroidRotamerSampleData(){}
 	CentroidRotamerSampleData(Real p, Real d, Real a, Real w, Real vd, Real va, Real vw)
-	:prob_(p),distance_(d),angle_(a),dihedral_(w),
-	sd_dis_(vd), sd_ang_(va), sd_dih_(vw) {
+	:prob_(p),distance_(d),angle_(a),dihedral_(w), sd_dis_(vd), sd_ang_(va), sd_dih_(vw) {
 		energy_ = -log(p);
 		norm_factor_ = 1.0; ///sqrt(2.0*3.14159265) no need
 	}
@@ -305,6 +304,12 @@ private:
 	AA aa_;
 	Size max_rot_num;
 	Real ref_energy_; //ref energy for rot, -log(1/N)
+	// ref_energy_ is too rude
+	//pointed by hahnbeom, the ref energy should be treated as bb dependent
+	//E_ref(phi, psi) = <log Pi(phi, psi))> = SUM Pi*logPi / SUM Pi
+	ObjexxFCL::FArray2D< Real > entropy_; /// E_ref is the same as shannon entropy
+
+	void setup_entropy_correction();
 };
 
 } // cenrot

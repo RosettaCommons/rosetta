@@ -18,7 +18,7 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from matplotlib import cm
 import matplotlib.pyplot as plt
 
-#load the ref center
+# load the ref center
 def load_centroid(fn, ncluster):
 	inp = open(fn,'r')
 	lines = inp.readlines()
@@ -35,6 +35,23 @@ def load_centroid(fn, ncluster):
 		centroids.append([x,y,z])
 	return vstack(centroids)
 
+def load_centroid_xyz(fn,ncluster):
+    inp = open(fn,'r')
+    lines = inp.readlines()
+    inp.close()
+    centroids = []
+    for line in lines:
+        dats = line.split()
+        x = float(dats[2])
+        y = float(dats[3])
+        z = float(dats[4])
+        centroids.append([x,y,z])
+    if len(centroids) < ncluster:
+        print "ERROR in loading init centers"
+        sys.exit()
+    return vstack(centroids)
+
+# from 0 to 35 !! (0==36)
 def pbc(bin):
 	if bin>=36:
 		bin=0
@@ -42,11 +59,17 @@ def pbc(bin):
 		bin=35
 	return int(bin)
 
+# [-180, 180) -> [0, 360) -> [0, 36)
+# i.e.
+# 0: (-185,-175)
+# ...
+# 35: (345,355)
 def get_bb_bin_index(bb):
 	bin1 = int((bb[0]+180)/10)
 	bin2 = int((bb[1]+180)/10)
 	return pbc(bin1), pbc(bin2)
 
+#for debug
 def show_bb_table(bbtable):
 	for i in xrange(36):
 		for j in xrange(36):
@@ -54,10 +77,14 @@ def show_bb_table(bbtable):
 			#print bbtable[i,j], " ",
 		print "\n",
 
+#von Mises PDF
+# dx in degree
 def ksr(dx, kappa):
 	dx = dx/180*pi
 	return np.exp(kappa*np.cos(dx))/i0(kappa)/(2*pi)
 
+#if the mean value of that angle close to the bundary
+#dat point may shift by 2*pi which may cause the average wrong
 def correct_pbc(dat):
 	#check if the mean value around -180/180
 	cosdat = np.cos(dat)
@@ -68,9 +95,10 @@ def correct_pbc(dat):
 	#dat[dat-acos(meancos)>pi] -2pi
 	#dat[dat-acos(meancos)<-pi] +2pi
 
-##############################
-# main
-##############################
+
+############################################################
+##   main
+############################################################
 if len(sys.argv) < 3:
 	print 'command line: script + AA + nrot'
 	print 'kmeans.py <AA> <Nrot>'
@@ -81,17 +109,21 @@ if len(sys.argv) < 3:
 draw=False
 #########
 
-cutoff = 1.6
+cutoff = 2.0
 restype = sys.argv[1]
 ncluster = int(sys.argv[2])
 inpfile = "./split/" + restype + ".dat"
 
 inp = open(inpfile, 'r')
 lines = inp.readlines()
+skip = int(len(lines)/10000)
 inp.close()
 
+#cart coordinates for each sample
 xyzlist = []
+#internal coordinates for each sample
 intlist = []
+#psi, phi list
 bblist = []
 
 for line in lines:
@@ -101,6 +133,7 @@ for line in lines:
 	dih = float(dats[2])
 	psi = float(dats[3])
 	phi = float(dats[4])
+	#filter valid data
 	if dis>0.1 and dis<9 and fabs(ang)<=180 and fabs(dih)<=180:
 		if fabs(psi)<=180 and fabs(phi)<=180:
 			ang = pi-ang
@@ -112,26 +145,32 @@ for line in lines:
 			intlist.append([dis, pi-ang, dih])
 			bblist.append([psi, phi])
 
-#pre data
+#prepare data (for clustering)
 data = vstack(xyzlist)
 save_data = data
 #idat = vstack(intlist)
 
 #cluster
-fn = "ref/" + restype
+#fn = "ref/" + restype
+fn = "refine/" + restype + ".xyz"
 if os.path.isfile(fn):
-	centroids = load_centroid(fn, ncluster)
+	#load reference centroid (adjusted manually)
+	#centroids = load_centroid(fn, ncluster)
+	centroids = load_centroid_xyz(fn, ncluster)
 	centroids,_ = kmeans(data, centroids)
 else:
+	#first run
 	centroids,_ = kmeans(data, ncluster)
 
+#cluster assignment and corresponding distance
 idx, dist = vq(data, centroids)
-nd = len(data)
+nd = len(data) #total data number
 savend = nd
 
 ## cluster, find the centroid
 while True: 
-	data = data[dist<cutoff]
+	#shrink data, discard outliers
+	data = data[dist<cutoff]  
 	#idat = idat[dist<cutoff]
 	centroids,_ = kmeans(data, centroids)
 	idx, dist = vq(data,centroids)
@@ -140,16 +179,60 @@ while True:
 		break
 	else:
 		nd = len(data)
-	if cutoff>0.6: cutoff=cutoff-0.2
+	if cutoff>1.0: cutoff=cutoff-0.1
 
 #assign
 idx, dist = vq(save_data, centroids)
 
 if draw:
+	colorlist = ['r', 'b', 'g', 'y', 'c', 'm', 'k', 'w', 'r']
+	marklist = ['o', '^', '+', '>', (5,2), (5,0)]
 	fig = plt.figure()
+	ax = fig.add_subplot(111, projection='3d')
+	ax.set_aspect("equal")
+	R = 2.0
+	for i in xrange(ncluster):
+	    #plot
+	    c = colorlist[i]
+	    #m = marklist[i]
+	    m = '.'
 
+	    flag = idx==i
+
+	    xs = save_data[flag, 0]
+	    ys = save_data[flag, 1]
+	    zs = save_data[flag, 2]
+	    n = len(xs)
+	    ax.scatter(xs[0:n:skip], ys[0:n:skip], zs[0:n:skip], c=c)#,marker=m
+	    ax.scatter3D(centroids[i,0],centroids[i,1],centroids[i,2], c='black', s=20, marker='s')
+
+	    #output the centroid
+	    x = centroids[i][0]
+	    y = centroids[i][1]
+	    z = centroids[i][2]
+	    r = sqrt(x*x+y*y+z*z)
+	    t = arccos(z/r)
+	    p = arctan2(y,x)
+	    print restype, i+1, float(n)/float(savend), r, 180-t*180/pi, p*180/pi, np.std(dist[idx==i])
+	    R = max(np.max(r),R)
+
+	ax.set_xlabel('X Label')
+	ax.set_ylabel('Y Label')
+	ax.set_zlabel('Z Label')
+
+	#draw sphere
+	#R = 2.0
+	u, v = np.mgrid[0:2*np.pi:20j, 0:np.pi:10j]
+	x = R*np.cos(u)*np.sin(v)
+	y = R*np.sin(u)*np.sin(v)
+	z = R*np.cos(v)
+	ax.plot_wireframe(x, y, z, color="r")
+
+	plt.show()
+
+################################################
 ## Adaptive Kernel Desity Estimate
-kappa_scale = 2.9
+kappa_scale = 50
 kappa = sqrt(savend)/kappa_scale #40~100 CYS~LEU
 # this is a very arbitrary guess, may need to be change if change dataset
 
@@ -158,6 +241,9 @@ rhos = []
 ncs = []
 phis = []
 psis = []
+
+## check: make sure the def is compatable with pbc !!!
+
 xphi = np.linspace(-180, 180, 36, endpoint=False)
 ypsi = np.linspace(-180, 180, 36, endpoint=False)
 
@@ -201,7 +287,7 @@ for i in xrange(ncluster):
 			philst[tn]=(bblist[nd][1])
 			psilst[tn]=(bblist[nd][0])
 			tn = tn+1
-	assert (tn==n), "data number of cluster doesn't match"
+	assert (tn==n), "data number of clusters don't match"
 	phis.append(philst)
 	psis.append(psilst)
 	rho = np.zeros([36,36])

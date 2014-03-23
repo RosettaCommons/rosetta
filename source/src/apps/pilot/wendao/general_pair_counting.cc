@@ -265,7 +265,7 @@ void my_main()
 	Size nbin_pair = option[pair_bin_number];
 	//Real Lbin = wbin * nbin_pair;
 	Size nbin_env = option[env_bin_number]; //max neighbour number
-	Size nrottype = option[restype_rot_dependent]?79:20; //magic number
+	Size nrottype = option[restype_rot_dependent]?86:20; //magic number
 	Size nenv_pair = get_env_bin_number(nbin_env);
 	if (option[env_dependent_pair].user()) {
 		nrottype *= nenv_pair;

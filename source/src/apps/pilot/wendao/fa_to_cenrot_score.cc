@@ -271,6 +271,8 @@ OPT_KEY(Boolean, output_cenrot_intcoord)
 OPT_KEY(Boolean, output_bestrot_err)
 OPT_KEY(Boolean, output_cenrot_pdb)
 OPT_KEY(Boolean, repack_cenrot)
+OPT_KEY(Boolean, repack_high_vdw)
+OPT_KEY(Boolean, min_after_repack)
 OPT_KEY(Boolean, relax_cenrot)
 OPT_KEY(Boolean, opt_after_relax)
 OPT_KEY(Integer, repack_buried_cutoff)
@@ -298,6 +300,8 @@ int main( int argc, char * argv [] ) {
 	NEW_OPT(output_cenrot_dir, "dir for output centroid pdbs", ".");
 	NEW_OPT(output_cenrot_prefix, "prefix for pdbs", "idealized_");
 	NEW_OPT(repack_cenrot, "repack the centroid rotamer model", false);
+	NEW_OPT(repack_high_vdw, "repack the centroid rotamer model with high vdw (4.0)", false);
+	NEW_OPT(min_after_repack, "min after relack", false);
 	NEW_OPT(repack_bfactor_cutoff, "count repack side-chain with Bfactor lower than default 100", 100.0);
 	NEW_OPT(repack_buried_cutoff, "count repack side-chain with buried cutoff", 0);
 	NEW_OPT(repack_ncycle, "how many times to repack", 1);
@@ -455,6 +459,8 @@ void * my_main( void* ) {
 			<< core::Real(sum_re)/sum_all*100
 			<< " % of " << sum_all << std::endl;
 	}
+
+	return 0;
 }
 
 void relax_cenrot_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std::string const &tag)
@@ -508,7 +514,7 @@ void relax_cenrot_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, st
 	combo2->add_mover(minmover);
 
 	//this is not real relax
-	for (Size i=1; i<=option[relax_cycle_number]; i++) {
+	for (int i=1; i<=option[relax_cycle_number]; i++) {
 		run->apply(p);
 
 		score_bb_fxn->show(TR,p);
@@ -528,7 +534,7 @@ void relax_cenrot_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, st
 			pose::Pose bestpose(mc->lowest_score_pose());
 			mc->reset(bestpose);
 			p = bestpose;
-			
+
 			moves::RepeatMover(combo2, 3).apply(bestpose);
 			(*score_bb_fxn)(bestpose);
 			score_bb_fxn->show(TR,bestpose);
@@ -545,6 +551,8 @@ void relax_cenrot_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, st
 
 //should be cenrot
 void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std::string const &tag) {
+	using namespace core::id;
+
 	core::scoring::ScoreFunctionOP score_fxn;
 	if ( option[cenrot_score].user() ) {
 		//score_fxn = core::scoring::getScoreFunction();
@@ -600,13 +608,38 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 		// C-beta atoms should not be altered during packing because branching atoms are optimized
 		// main_task_factory->push_back( new operation::PreserveCBeta );
 
+		core::scoring::ScoreFunctionOP sf_pack = score_fxn->clone();
+
+		if (option[repack_high_vdw]) {
+			sf_pack->set_weight(core::scoring::vdw, 4.0);
+		}
+
 		protocols::simple_moves::PackRotamersMover packrotamersmover;
 		packrotamersmover.task_factory(main_task_factory);
-		packrotamersmover.score_function(score_fxn);
+		packrotamersmover.score_function(sf_pack);
 
 		for (int np=0; np<option[repack_ncycle]; np++) {
 			p=ref;
 			packrotamersmover.apply(p);
+
+			if (option[min_after_repack]) {
+				core::kinematics::MoveMap mm;
+				mm.set_bb  ( false ); 
+				mm.set_chi ( false );
+
+				Size const n_res( p.n_residue() );
+				for (Size i=1; i<=n_res; i++) {
+					core::conformation::Residue const &res_i = p.residue(i);
+					mm.set( DOF_ID( AtomID( res_i.atom_index("CEN"), i ), core::id::RB1 ), true );
+				}
+
+				core::optimization::MinimizerOptions minoptions( "lbfgs_armijo_nonmonotone", 1e-2, true, false, false );
+				minoptions.max_iter( 20 );
+				core::optimization::CartesianMinimizer minimizer;
+
+				minimizer.run( p, mm, *score_fxn, minoptions );
+			}
+
 			//rescore
 			if (option[output_cenrot_score].user()) {
 				rescore_pose( score_fxn, native_pose, p, "packed_"+tag);
@@ -614,7 +647,7 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 
 			for ( core::Size i=1; i<= ref.n_residue(); ++i ) {
 				if (ref.pdb_info()->temperature(i, p.residue(i).nbr_atom()) > option[repack_bfactor_cutoff]) continue;
-				if (ref.energies().tenA_neighbor_graph().get_node(i)->num_edges() < option[repack_buried_cutoff]) continue;
+				if (ref.energies().tenA_neighbor_graph().get_node(i)->num_edges() < Size(option[repack_buried_cutoff])) continue;
 
 				Real dis= ( p.residue(i).atom("CEN").xyz()-ref.residue(i).atom("CEN").xyz()).length();
 				Real r = (ref.residue(i).atom(ref.residue(i).nbr_atom()).xyz()-ref.residue(i).atom("CEN").xyz()).length();
@@ -623,11 +656,11 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 				//save this
 				n_total[p.residue(i).aa()]++;
 
-				if (dis/r > 0.342) continue; //sin(20)
+				if (dis/r > 0.6427876) continue; //sin(20)=0.342, sin(40)=0.6427876
 				if (p.residue(i).aa()==chemical::aa_pro && (dis/r > 0.156)) continue; //for pro sin(18/2)
 				nrecovery[p.residue(i).aa()]++;
 			}
-			
+
 			// the logic here is: only if "fit" first, then cal recovery rate
 			// ** fit and repack: output recovery rate
 			// ** repack only: output err

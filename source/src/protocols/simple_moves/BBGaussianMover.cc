@@ -104,25 +104,6 @@ void BBGaussianMover::setup_list(Pose const &pose)
     using namespace basic::options;
     using namespace basic::options::OptionKeys;
 
-    /* old version, can not handle that segment shorter than n_pert
-    available_res_list_.erase(available_res_list_.begin(),available_res_list_.end());
-    Size seg_len = 0;
-    //for (Size n=n_pert_res_,end=pose.n_residue(); n<=end; n++)
-    for (Size n=1,end=pose.n_residue(); n<=end; n++)
-    {
-        conformation::Residue const & rsd( pose.residue( n ) );
-        if ( rsd.is_protein() && movemap_->get( TorsionID( n, BB, phi_torsion ) ) &&
-            movemap_->get( TorsionID( n, BB, psi_torsion ) ) )
-        {
-            seg_len++;
-            if(seg_len>=n_pert_res_)available_res_list_.push_back(n);
-        }
-        else
-        {
-            seg_len = 0;
-        }
-    }*/
-
     //!!! can not handle cutpoint
     available_seg_list_.erase(available_seg_list_.begin(),available_seg_list_.end());
     int seg_len = 0;
@@ -135,7 +116,7 @@ void BBGaussianMover::setup_list(Pose const &pose)
             && n<end
             && (!option[bbg::ignore_improper_res] || pose.residue(n).name1()!='P')  )
         {
-            //TR << "Yes: " << n << std::endl;
+            //skip Proline
             seg_len++;
         }
         else
@@ -145,19 +126,19 @@ void BBGaussianMover::setup_list(Pose const &pose)
             {
                 //put them in
                 int first(n-seg_len);
-								int last;
-								if( n==end &&
-									 pose.residue( n ).is_protein()
-									 && movemap_->get( TorsionID( n, BB, phi_torsion ) )
-									 && movemap_->get( TorsionID( n, BB, psi_torsion ) )
-									 && (!option[bbg::ignore_improper_res] || pose.residue(n).name1()!='P') )
-								{
-									last = end;
-								}
-								else
-								{
-									last = n-1;
-								}
+                int last;
+                if( n==end &&
+                	 pose.residue( n ).is_protein()
+                	 && movemap_->get( TorsionID( n, BB, phi_torsion ) )
+                	 && movemap_->get( TorsionID( n, BB, psi_torsion ) )
+                	 && (!option[bbg::ignore_improper_res] || pose.residue(n).name1()!='P') )
+                {
+                	last = end;
+                }
+                else
+                {
+                	last = n-1;
+                }
                 //TR << "first=" << first << " last=" << last << std::endl;
 
                 int r_num(first);
@@ -305,16 +286,6 @@ void BBGaussianMover::pivot_range_randomly(Pose &pose, Size i, Size to)
 ////////////////////////////////////////////
 // BBG8T3AMover
 ////////////////////////////////////////////
-/*
-void BBG8T3AMover::register_options() {
-
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-
-	OPT( bbg::factorA );
-	OPT( bbg::factorB );
-}
-*/
 
 protocols::moves::MoverOP
 BBG8T3AMover::clone() const {
@@ -419,17 +390,6 @@ void BBG8T3AMover::get_G()
 
         }
     }
-    /*
-        TR << " --Gij-- " << endl;
-        for(Size i=1; i<=n_dof_angle_; i++)
-        {
-            for(Size j=1; j<=n_dof_angle_; j++)
-        	{
-                TR<< matrix_G[i][j] << " ";
-        	}
-            TR << endl;
-        }
-        */
 }
 
 void BBG8T3AMover::get_A()
@@ -451,101 +411,16 @@ core::Real BBG8T3AMover::get_L_move(Pose &pose)
     //gerate a Gaussian dx vector
     utility::vector1<Real> delta(n_dof_angle_);
     for (Size i=1; i<=n_dof_angle_; i++) delta[i]=RG.gaussian();
-		/*
-    for (Size i=1; i<=n_dof_angle_; i+=2)
-    {
-        Real r1=sqrt(-log(RG.uniform()));
-        Real r2=RG.uniform();
-        delta[i]=r1*cos(numeric::constants::r::pi_2*r2);
-        delta[i+1]=r1*sin(numeric::constants::r::pi_2*r2);
-    }*/
+
     //calculate d^2 = delta^2
     Real d2=0.0;
     for (Size i=1; i<=n_dof_angle_; i++) d2+=delta[i]*delta[i];
 
     //cholesky, get L^t, L^-1
     Real detL = cholesky_fw(matrix_A, n_dof_angle_, delta, dphi);
-    /*
-        //dphi=L^-t * delta, L^-t = (L^-1)^t ???
-        for (Size i=1; i<=n_dof_angle_; i++)
-        {
-            dphi[i] = 0.0;
-            for (Size j=i; j<=n_dof_angle_; j++)
-            {
-                dphi[i]+=matrix_Li[j][i]*delta[j];
-            }
-        }
-
-
-        for(Size i=1; i<=n_dof_angle_; i++)TR << "dx: "<<delta[i] << endl;
-
-        //check delta
-
-        for (Size i=1; i<=n_dof_angle_; i++)
-        {
-            delta[i] = 0.0;
-            for (Size j=i; j<=n_dof_angle_; j++)
-            {
-                delta[i]+=matrix_Lt[i][j]*dphi[j];
-            }
-        }
-        for(Size i=1; i<=n_dof_angle_; i++)TR << "dx: "<<delta[i] << endl;
-
-       TR << "delta --> d^2:" <<  d2 << endl;
-    		d2 = 0.0;
-        for(Size i=1; i<=n_dof_angle_; i++)
-        {
-            for(Size j=1; j<=n_dof_angle_; j++)
-            {
-    				    d2+=dphi[j]*matrix_A[i][j]*dphi[i];
-    				}
-    		}
-        TR << "dphi --> d^2:" <<  d2 << endl;
-    */
-    //for(Size i=1; i<=n_dof_angle_; i++)TR << "dx: "<<delta[i] << endl;
-    //for(Size i=1; i<=n_dof_angle_; i++)TR << "dphi: "<<dphi[i] << endl;
 
     //W_old *= exp(-d^2)
     Real W_old = detL*exp(-d2/2.0);
-
-    /*
-        TR << " --Aij-- " << endl;
-        for(Size i=1; i<=n_dof_angle_; i++)
-        {
-            for(Size j=1; j<=n_dof_angle_; j++)
-        		{
-                TR<< matrix_A[i][j] << " ";
-        		}
-            TR << endl;
-        }
-        TR << " --matrix_Lt-- " << endl;
-        for(Size i=1; i<=n_dof_angle_; i++)
-        {
-            for(Size j=1; j<=n_dof_angle_; j++)
-        		{
-                TR<< matrix_Lt[i][j] << " ";
-        		}
-            TR << endl;
-        }
-        TR << " --matrix_Li-- " << endl;
-        for(Size i=1; i<=n_dof_angle_; i++)
-        {
-            for(Size j=1; j<=n_dof_angle_; j++)
-        		{
-                TR<< matrix_Li[i][j] << " ";
-        		}
-            TR << endl;
-        }
-        TR << " --U-- " << endl;
-        for(Size i=1; i<=n_dof_angle_; i++)
-        {
-            for(Size j=1; j<=n_dof_angle_; j++)
-        		{
-                TR<< matrix_U[i][j] << " ";
-        		}
-            TR << endl;
-        }
-    */
 
     //set the new phi,psi (above all called phi, actually 4 phi, 4 psi)
     pose.set_psi(resnum_, basic::periodic_range( pose.psi(resnum_)+dphi[8], 360.0 ) );
@@ -556,10 +431,6 @@ core::Real BBG8T3AMover::get_L_move(Pose &pose)
     pose.set_phi(resnum_-2, basic::periodic_range( pose.phi(resnum_-2)+dphi[3], 360.0 ) );
     pose.set_psi(resnum_-3, basic::periodic_range( pose.psi(resnum_-3)+dphi[2], 360.0 ) );
     pose.set_phi(resnum_-3, basic::periodic_range( pose.phi(resnum_-3)+dphi[1], 360.0 ) );
-    /*
-    TR << "detL:" <<  detL << endl;
-    TR << "d^2:" <<  d2 << endl;
-    TR << "W_old:" <<  W_old << endl;*/
 
     return W_old;
 }
@@ -569,93 +440,12 @@ core::Real BBG8T3AMover::get_L_prime()
     utility::vector1<Real> delta(n_dof_angle_);
     //get L
     Real detL = cholesky_bw(matrix_A, n_dof_angle_, dphi, delta);
-    //delta = L^t * dphi
-    /*
-    for (Size i=1; i<=n_dof_angle_; i++)
-    {
-    delta[i] = 0.0;
-    for (Size j=i; j<=n_dof_angle_; j++)
-    {
-        delta[i]+=matrix_Lt[i][j]*(-dphi[j]);
-    }
-    }
-    */
+    
     //calculate d^2 = delta^2
     Real d2=0.0;
     for (Size i=1; i<=n_dof_angle_; i++)d2+=delta[i]*delta[i];
 
-    //for(Size i=1; i<=n_dof_angle_; i++)TR << "dx: "<<delta[i] << endl;
-    //for(Size i=1; i<=n_dof_angle_; i++)TR << "dphi: "<<dphi[i] << endl;
-
-    //dphi=L^-t * delta, L^-t = (L^-1)^t
-    //for(Size i=1; i<=n_dof_angle_; i++)
-    //{
-    //	dphi[i] = 0.0;
-    //	for(Size j=i; j<=n_dof_angle_; j++)
-    //	{
-    //		dphi[i]+=matrix_Li[j][i]*delta[j];
-    //	}
-    //}
-
-    //for(Size i=1; i<=n_dof_angle_; i++)TR << "dphi: "<<dphi[i] << endl;
-
-    /*
-    	TR << " --Aij-- " << endl;
-        for(Size i=1; i<=n_dof_angle_; i++)
-        {
-            for(Size j=1; j<=n_dof_angle_; j++)
-        		{
-                TR<< matrix_A[i][j] << " ";
-        		}
-            TR << endl;
-        }
-        TR << " --matrix_Lt-- " << endl;
-        for(Size i=1; i<=n_dof_angle_; i++)
-        {
-            for(Size j=1; j<=n_dof_angle_; j++)
-        		{
-                TR<< matrix_Lt[i][j] << " ";
-        		}
-            TR << endl;
-        }
-        TR << " --matrix_Li-- " << endl;
-        for(Size i=1; i<=n_dof_angle_; i++)
-        {
-            for(Size j=1; j<=n_dof_angle_; j++)
-        		{
-                TR<< matrix_Li[i][j] << " ";
-        		}
-            TR << endl;
-        }
-        TR << " --U-- " << endl;
-        for(Size i=1; i<=n_dof_angle_; i++)
-        {
-            for(Size j=1; j<=n_dof_angle_; j++)
-        		{
-                TR<< matrix_U[i][j] << " ";
-        		}
-            TR << endl;
-        }
-
-    TR << "delta --> d^2:" <<  d2 << endl;
-    	d2 = 0.0;
-    for(Size i=1; i<=n_dof_angle_; i++)
-    {
-        for(Size j=1; j<=n_dof_angle_; j++)
-        {
-    			    d2+=dphi[j]*matrix_A[i][j]*dphi[i];
-    			}
-    	}
-    TR << "dphi --> d^2:" <<  d2 << endl;
-    */
-    //W_new *= exp(-d'^2)
-    //Real W_new = detL*exp(-d2/2.0);
     Real W_new = detL*exp(-d2/2.0);
-
-    /*
-    TR << "detL:" <<  detL << endl;
-    TR << "d^2:" <<  d2 << endl;
-    TR << "W_new:" <<  W_new << endl;*/
 
     return W_new;
 }
@@ -667,6 +457,7 @@ void BBG8T3AMover::apply(Pose &pose)
     if(available_seg_list_.size()==0)return;
     //randomly select a residue in the list
     int ndx=static_cast< int >( RG.uniform()*available_seg_list_.size()+1 );
+
     Size left = available_seg_list_[ ndx ].first;
     resnum_ = available_seg_list_[ ndx ].second;
 

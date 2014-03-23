@@ -47,6 +47,7 @@ ScoreTypes
 CenRotEnvEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( cen_rot_env );
+	sts.push_back( cen_rot_cbeta );
 	return sts;
 }
 
@@ -94,9 +95,12 @@ CenRotEnvEnergy::residue_energy(
 
 	/// accumulate total energies
 	Real env_score( 0.0 );
-	potential_.evaluate_cen_rot_env_score( pose, rsd, env_score );
+	Real cbeta6_score( 0.0 );
+	Real cbeta12_score( 0.0 );
+	potential_.evaluate_cen_rot_env_and_cbeta_score( pose, rsd, env_score, cbeta6_score, cbeta12_score );
 
 	emap[ cen_rot_env ] += env_score;
+	emap[ cen_rot_cbeta ] += cbeta6_score + cbeta12_score;
 } // residue_energy
 
 
@@ -112,24 +116,37 @@ CenRotEnvEnergy::eval_residue_derivatives(
 	if ( rsd.aa() > core::chemical::num_canonical_aas ) return;
 
 	Real weight_env = weights[ cen_rot_env ];
+	Real weight_cbeta = weights[ cen_rot_cbeta ];
 
-	numeric::xyzVector<Real> f2_cen, f2_cb;
-	potential_.evaluate_cen_rot_env_deriv( pose, rsd, f2_cen, f2_cb);
+	numeric::xyzVector<Real> f2_cen_env, f2_cen_cb6, f2_cen_cb12;
+	numeric::xyzVector<Real> f2_cb_env, f2_cb_cb6, f2_cb_cb12;
+	potential_.evaluate_cen_rot_env_and_cbeta_deriv( pose, rsd,
+		f2_cen_env, f2_cen_cb6, f2_cen_cb12,
+		f2_cb_env, f2_cb_cb6, f2_cb_cb12);
 
-	Vector const cen_x = rsd.atom( rsd.nbr_atom()+1 ).xyz();
-	Vector const cen_y = -f2_cen + cen_x;
-	Vector const f1_cen( cen_x.cross( cen_y ) );
+	//force on CEN
+	Vector const cen_x = rsd.atom("CEN").xyz();
+	Vector cen_y = -f2_cen_env + cen_x;
+	Vector const f1_cen_env( cen_x.cross( cen_y ) );
 
+	Vector const f2_cen_cbeta( f2_cen_cb6 + f2_cen_cb12 );
+	cen_y = -f2_cen_cbeta + cen_x;
+	Vector const f1_cen_cbeta( cen_x.cross( cen_y ) );
+
+	//force on CB
 	Vector const cb_x = rsd.atom( rsd.nbr_atom() ).xyz();
-	Vector const cb_y = -f2_cb + cb_x;
-	Vector const f1_cb( cb_x.cross( cb_y ) );
+	Vector cb_y = -f2_cb_env + cb_x;
+	Vector const f1_cb_env( cb_x.cross( cb_y ) );
+	
+	Vector const f2_cb_cbeta( f2_cb_cb6 + f2_cb_cb12 );
+	cb_y = -f2_cb_cbeta + cb_x;
+	Vector const f1_cb_cbeta( cb_x.cross( cb_y ) );
 
-	atom_derivs[ rsd.nbr_atom()+1 ].f1() += weight_env * f1_cen;
-	atom_derivs[ rsd.nbr_atom()+1 ].f2() += weight_env * f2_cen;
-	atom_derivs[ rsd.nbr_atom()].f1() += weight_env * f1_cb;
-	atom_derivs[ rsd.nbr_atom()].f2() += weight_env * f2_cb;
+	atom_derivs[ rsd.atom_index("CEN") ].f1() += weight_env * f1_cen_env + weight_cbeta * f1_cen_cbeta;
+	atom_derivs[ rsd.atom_index("CEN") ].f2() += weight_env * f2_cen_env + weight_cbeta * f2_cen_cbeta;
+	atom_derivs[ rsd.nbr_atom()].f1() += weight_env * f1_cb_env + weight_cbeta * f1_cb_cbeta;
+	atom_derivs[ rsd.nbr_atom()].f2() += weight_env * f2_cb_env + weight_cbeta * f2_cb_cbeta;
 }
-
 
 void
 CenRotEnvEnergy::finalize_total_energy(

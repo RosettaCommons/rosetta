@@ -317,6 +317,7 @@ enum ScoreType {
 	fa_dun_dev,
 	fa_dun_rot,
 	fa_dun_semi,
+	cen_rot_dun,
 	dna_chi,
 	p_aa_pp,
 	p_aa_pp_offset,
@@ -347,7 +348,7 @@ enum ScoreType {
 	cen_env_smooth,   //fpd smooth centroid env
 	cbeta_smooth,     //fpd smooth cbeta
 	cen_rot_env,
-	cen_rot_dun,
+	cen_rot_cbeta,
 	env,
 	cbeta,
 	DFIRE,

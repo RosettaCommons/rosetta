@@ -67,8 +67,11 @@ private:
 		chemical::AtomTypeSet const & atom_type_set
 	);
 
+	void get_atom_type_set_name( std::string ats_suff );
+
 private:
 	std::string atom_type_set_name_;
+	std::string vdw_suffix_;
 	utility::vector1< utility::vector1< Real > > atom_vdw_;
 
 	/// @brief  Approximation to per-atom radii, derived from atom_vdw_ data

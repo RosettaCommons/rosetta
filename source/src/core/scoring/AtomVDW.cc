@@ -47,9 +47,13 @@ static basic::Tracer TR("core.scoring.AtomVDW");
 
 
 /// @details ctor, reads data file. Need to configure to allow alternate tables/atom_sets
-AtomVDW::AtomVDW( std::string const & atom_type_set_name ) :
-	atom_type_set_name_( atom_type_set_name )
+AtomVDW::AtomVDW( std::string const & atom_type_set_name_with_suffix ):vdw_suffix_("NULL") //atom_type_set_name_( atom_type_set_name )
 {
+	//init atom_type_set_name_ and vdw_suffix_
+	get_atom_type_set_name(atom_type_set_name_with_suffix);
+
+	std::string atom_type_set_name = atom_type_set_name_;
+
 	// get the relevant atomset
 	chemical::AtomTypeSet const & atom_set
 		( *chemical::ChemicalManager::get_instance()->atom_type_set( atom_type_set_name ) );//chemical::CENTROID ) );
@@ -63,7 +67,13 @@ AtomVDW::AtomVDW( std::string const & atom_type_set_name ) :
 	}
 
 	utility::io::izstream stream;
-	stream.open( atom_set.directory() + "/atom_vdw.txt" );
+	if (vdw_suffix_.compare("NULL")==0) {
+		stream.open( atom_set.directory() + "/atom_vdw.txt" );
+	}
+	else {
+		stream.open( atom_set.directory() + "/" + vdw_suffix_ + ".txt" );
+		TR << "Openning alternative vdw file: " << atom_set.directory() + "/" + vdw_suffix_ + ".txt" << std::endl;
+	}
 
 	if ( !stream.good() ) {
 		stream.clear();
@@ -104,6 +114,22 @@ AtomVDW::AtomVDW( std::string const & atom_type_set_name ) :
 	}
 
 	setup_approximate_vdw_radii( atom_type_index, atom_set );
+}
+
+// tool for parseing alternative vdw parameter file
+void AtomVDW::get_atom_type_set_name( std::string ats_suff )
+{
+	std::vector<std::string> elems;
+	std::stringstream ss(ats_suff);
+	std::string item;
+	while (std::getline(ss, item, ':')) {
+		elems.push_back(item);
+	}
+	Size n = elems.size();
+	if (n==0) utility_exit_with_message( "Unable to parse the atom_type_set name" );
+	atom_type_set_name_ = elems[0];
+	if (n==2) vdw_suffix_ = elems[1];
+	if (n>2) utility_exit_with_message( "Error format of atom_type_set name" );
 }
 
 /// @details  Calculates approximation to a single per-atom radius using the pairwise data from the file
