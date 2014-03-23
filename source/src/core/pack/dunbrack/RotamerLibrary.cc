@@ -1452,8 +1452,12 @@ RotamerLibrary::random_tempname( std::string const & prefix ) const
 	// Ugly C stuff...
 #ifdef WIN32
 	char * tmpname_output = _tempnam( option[ in::path::database ](1).name().c_str(), prefix.c_str() );
+	std::string tempfilename = tmpname_output;
+	free( tmpname_output );
 #elif __CYGWIN__
 	char * tmpname_output = tempnam( option[ in::path::database ](1).name().c_str(), prefix.c_str() );
+	std::string tempfilename = tmpname_output;
+	free( tmpname_output );
 #elif USEMPI
 	// jk change this to mkstemp to prevent race condition
 	// apl -- any reason mkstemp can't become the standard?
@@ -1474,18 +1478,28 @@ RotamerLibrary::random_tempname( std::string const & prefix ) const
 	/// http://lists.virus.org/vulnwatch-0212/msg00023.html
 	/// I suppose this is a security flaw with mini... just as soon as someone figures out
 	/// how to open a stream with a file descriptor, this code should be replaced.
-#else
-	char * tmpname_output = tempnam( option[ in::path::database ](1).name().c_str(), prefix.c_str() );
-#endif
-
-	/// Copy c-style string to std::string.
 	std::string tempfilename = tmpname_output;
-
-#ifdef USEMPI
 	delete [] tmpname_output;
 #else
-	free( tmpname_output );
+	bool exists = false;
+	std::string dirname = option[ in::path::database ](1).name();
+	if(*dirname.rbegin()!='/') dirname+="/";
+	const char charset[] ="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	const platform::Size max_index = (sizeof(charset) - 1);
+	std::string str = "";
+	std::string tempfilename;
+	do {
+	    str += charset[rand() % max_index];
+	    tempfilename  = dirname + str + prefix;
+	    std::ifstream file(tempfilename.c_str());
+	    if(file) {
+	      file.close();
+	      exists = true;
+	    } else exists = false;
+//	char * tmpname_output = tempnam( option[ in::path::database ](1).name().c_str(), prefix.c_str() );
+	} while(exists);
 #endif
+	TR << "Random tempname will be: "<<tempfilename<<std::endl;
 
 	return tempfilename;
 }

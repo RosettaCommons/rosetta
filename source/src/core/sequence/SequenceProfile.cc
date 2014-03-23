@@ -137,6 +137,7 @@ void SequenceProfile::read_from_checkpoint(
 	profile( new_prof );
 }
 
+
 void SequenceProfile::read_from_file(
 	utility::file::FileName const & fn
 ) {
