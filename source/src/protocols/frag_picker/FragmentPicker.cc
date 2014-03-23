@@ -1389,6 +1389,16 @@ void FragmentPicker::parse_command_line() {
 		tr.Info << "picking fragments for query profile: "
 			<< get_query_seq_string() << std::endl;
 	}
+	//## -------- setup query profile : legacy blast's binary checkpoint file
+	if (option[in::file::binary_chk].user()) {
+		core::sequence::SequenceProfileOP q_prof(new core::sequence::SequenceProfile);
+		tr.Info << "reading a query profile from: "
+			<< option[in::file::binary_chk]() << std::endl;
+		q_prof->read_from_binary_chk(option[in::file::binary_chk]());
+		set_query_seq(q_prof);
+		tr.Info << "picking fragments for query profile: "
+			<< get_query_seq_string() << std::endl;
+	}
 	if (option[in::file::pssm].user()) {
 		core::sequence::SequenceProfileOP q_prof(new core::sequence::SequenceProfile);
 		tr.Info << "reading a query profile from: "

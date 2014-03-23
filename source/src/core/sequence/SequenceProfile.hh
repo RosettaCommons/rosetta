@@ -120,6 +120,9 @@ public:
 	/// For compatability, negative_better defaults to true. Set manually if necessary.
 	void read_from_checkpoint( FileName const & fn, bool negative_better = true );
 
+	/// @brief Read profile matrix from the given filename in the legacy BLAST binary format
+        void read_from_binary_chk(FileName const & fn);
+	
 	/// @brief Returns the 2D vector1 of Real values representing this profile.
 	utility::vector1< utility::vector1< Real > > const & profile() const;
 

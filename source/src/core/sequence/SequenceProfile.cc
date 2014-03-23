@@ -137,6 +137,75 @@ void SequenceProfile::read_from_checkpoint(
 	profile( new_prof );
 }
 
+void SequenceProfile::read_from_binary_chk(utility::file::FileName const & fn) {
+
+    double x = 0;
+    char bb4[4];
+    std::ifstream myfile (fn.name().c_str(), std::ios::in|std::ios::binary);
+    if ( !myfile ) {
+		std::string msg(
+			"ERROR: Unable to open file " +
+			static_cast< std::string > (fn) +
+			"!"
+		);
+		utility_exit_with_message( msg );
+    }
+
+	static utility::vector1< core::chemical::AA > order;
+	order.resize( 20 );
+	order[ 1] = core::chemical::aa_from_oneletter_code( 'A' );
+	order[ 2] = core::chemical::aa_from_oneletter_code( 'R' );
+	order[ 3] = core::chemical::aa_from_oneletter_code( 'N' );
+	order[ 4] = core::chemical::aa_from_oneletter_code( 'D' );
+	order[ 5] = core::chemical::aa_from_oneletter_code( 'C' );
+	order[ 6] = core::chemical::aa_from_oneletter_code( 'Q' );
+	order[ 7] = core::chemical::aa_from_oneletter_code( 'E' );
+	order[ 8] = core::chemical::aa_from_oneletter_code( 'G' );
+	order[ 9] = core::chemical::aa_from_oneletter_code( 'H' );
+	order[10] = core::chemical::aa_from_oneletter_code( 'I' );
+	order[11] = core::chemical::aa_from_oneletter_code( 'L' );
+	order[12] = core::chemical::aa_from_oneletter_code( 'K' );
+	order[13] = core::chemical::aa_from_oneletter_code( 'M' );
+	order[14] = core::chemical::aa_from_oneletter_code( 'F' );
+	order[15] = core::chemical::aa_from_oneletter_code( 'P' );
+	order[16] = core::chemical::aa_from_oneletter_code( 'S' );
+	order[17] = core::chemical::aa_from_oneletter_code( 'T' );
+	order[18] = core::chemical::aa_from_oneletter_code( 'W' );
+	order[19] = core::chemical::aa_from_oneletter_code( 'Y' );
+	order[20] = core::chemical::aa_from_oneletter_code( 'V' );
+
+
+    myfile.read(bb4,4);
+
+    int seqLength = bb4[0];
+    int b2 = ((int) bb4[1]) << 8;
+    int b3 = ((int) bb4[2]) << 16;
+    int b4 = ((int) bb4[3]) << 24;
+    seqLength = (seqLength < 0) ? 256 + seqLength + b2 + b3 + b4 : seqLength + b2 + b3 + b4;
+    std::cout << seqLength<<" "<<(int)bb4[0]<<" "<<(int)bb4[1] << "\n";
+
+    utility::vector1<char> seq;
+    for(int i=0;i<seqLength;++i) {
+      seq.push_back( myfile.get() );
+    }
+    string strSeq(seq.begin(),seq.end());
+    tr.Debug << "Read sequence " << strSeq << " from  " << fn << std::endl;
+
+    char bb8[8];
+    double row[20];
+    for(int i = 0;i < seqLength;i++) {
+      utility::vector1< Real > prof_row;
+      for(int j = 0;j < 20;j++) {
+        myfile.read(bb8,8);
+        std::copy(bb8, bb8 + sizeof(double), reinterpret_cast<char*>(&x));
+//        x = swap(x);
+        std::cout << std::fixed<<std::setw(7)<<std::setprecision(4)<<x<<" ";
+        prof_row.push_back(x);
+      }
+      profile_.push_back( prof_row );
+      std::cout<<std::endl;
+    }
+}
 
 void SequenceProfile::read_from_file(
 	utility::file::FileName const & fn
