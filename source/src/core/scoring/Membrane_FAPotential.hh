@@ -20,6 +20,10 @@
 ///	@author		Rebecca Faye Alford (rfalford12@gmail.com)
 /// @author		Patrick Barth (original)
 
+
+#ifndef INCLUDED_core_scoring_Membrane_FA_Potential_hh
+#define INCLUDED_core_scoring_Membrane_FA_Potential_hh
+
 // Unit headers
 #include <core/scoring/Membrane_FAPotential.fwd.hh>
 #include <core/scoring/MembranePotential.hh>
@@ -183,4 +187,7 @@ namespace core {
 		
 	} // scoring
 } // core
+
+#endif //INCLUDED_core_scoring_Membrane_FA_Potential_hh
+
 
