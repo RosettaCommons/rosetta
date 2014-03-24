@@ -130,22 +130,19 @@ void CoarseEtable::read_files(std::string fn_resolve,std::string fn_etable, std:
 
 			//read entry from line
 			for (int i=0;i<2;i++) {
-	l >> tag;
-	if ( l.fail() ) goto error; // EVIL
-	entry.type[i] = atom_set_->atom_type_index( tag ); //fails if type not available
-	maxType = std::max(maxType,entry.type[i]);
+				l >> tag;
+				if ( l.fail() ) utility_exit_with_message("CoarseEtable::read_file: bad line: "+  line );
+				entry.type[i] = atom_set_->atom_type_index( tag ); //fails if type not available
+				maxType = std::max(maxType,entry.type[i]);
 			};
 			l >> entry.seq_dist_;
-			if ( l.fail() ) goto error; //EVIL
+			if ( l.fail() ) utility_exit_with_message("CoarseEtable::read_file: bad line: "+  line );
 			l >> entry.ID;
-			if ( l.fail() ) goto error; //EVIL
+			if ( l.fail() ) utility_exit_with_message("CoarseEtable::read_file: bad line: "+  line );
 			entries.push_back(entry);
 			//      cerr << "entry " << entry.type[0] << ' ' << entry.type[1] << ' ' << entry.seq_dist_ << ' ' << entry.ID << endl;
 			maxID = std::max(maxID,entry.ID);
 			maxDist= std::max(maxDist,entry.seq_dist_);
-			continue;
-		error:
-			utility_exit_with_message("CoarseEtable::read_file: bad line: "+	line );
 		};
 		cerr << "creating resolve_table with " << maxType << ' ' << maxDist+1 << endl;
 		resolve_.dimension(maxType,maxType,maxDist+1);

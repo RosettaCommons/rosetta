@@ -166,11 +166,11 @@ double RandomGenerator::gaussian()
 
 	double rgaussian; // Return value
 	if ( gaussian_iset ) {
-L1:
-		v1 = 2.0f * uniform() - 1.0f;
-		v2 = 2.0f * uniform() - 1.0f;
-		rsq = ( v1 * v1 ) + ( v2 * v2 );
-		if ( rsq >= 1.0 || rsq == 0.0 ) goto L1;
+		do {
+			v1 = 2.0f * uniform() - 1.0f;
+			v2 = 2.0f * uniform() - 1.0f;
+			rsq = ( v1 * v1 ) + ( v2 * v2 );
+		} while ( rsq >= 1.0 || rsq == 0.0 );
 		fac = std::sqrt(-(2.0*std::log(rsq)/rsq));
 		gaussian_gset = v1*fac;
 		rgaussian = v2*fac;

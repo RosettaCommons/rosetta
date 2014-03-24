@@ -143,8 +143,7 @@ func_1d::dump( Real displacement ) {
 		CX = BX+GOLD*(BX-AX);
 		FC = func_eval(CX);
 
-	L1:
-		if ( FB >= FC ) {
+		while ( FB >= FC ) {
 			R = (BX-AX)*(FB-FC);
 			Q = (BX-CX)*(FB-FA);
 			U = BX-((BX-CX)*Q-(BX-AX)*R)/(2.*sign(std::max(std::abs(Q-R),TINY),Q-R));
@@ -156,11 +155,11 @@ func_1d::dump( Real displacement ) {
 					FA = FB;
 					BX = U;
 					FB = FU;
-					goto L1;
+					continue;
 				} else if ( FU > FB ) {
 					CX = U;
 					FC = FU;
-					goto L1;
+					continue;
 				}
 				U = CX+GOLD*(CX-BX);
 				FU = func_eval(U);
@@ -188,7 +187,6 @@ func_1d::dump( Real displacement ) {
 			FA = FB;
 			FB = FC;
 			FC = FU;
-			goto L1;
 		}
 	} // mnbrak
 
@@ -270,14 +268,14 @@ func_1d::dump( Real displacement ) {
 				Q = std::abs(Q);
 				ETEMP = E;
 				E = D;
-				if ( std::abs(P) >= std::abs(.5*Q*ETEMP) ||
-						 P <= Q*(A-X) || P >= Q*(B-X) ) goto L1;
-				D = P/Q;
-				U = X+D;
-				if ( U-A < TOL2 || B-U < TOL2 ) D = sign(TOL1,XM-X);
-				goto L2;
+				if ( ! ( std::abs(P) >= std::abs(.5*Q*ETEMP) ||
+						 P <= Q*(A-X) || P >= Q*(B-X) ) ) {
+					D = P/Q;
+					U = X+D;
+					if ( U-A < TOL2 || B-U < TOL2 ) D = sign(TOL1,XM-X);
+					goto L2;
+				}
 			}
-		L1:
 			if ( X >= XM ) {
 				E = A-X;
 			} else {

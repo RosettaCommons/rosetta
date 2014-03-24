@@ -864,10 +864,9 @@ SheetFilter::ingo_ident_sheets(
 			for ( int j = 1; j <= nstr; ++j ) {
 				if ( strlbl(j) > cnt ) {
 					memo = strlbl(j);
-					goto L1212;
+					break;
 				}
 			}
-L1212:
 			++cnt;
 			for ( int j = 1; j <= nstr; ++j ) {
 				if ( strlbl(j) == memo ) strlbl(j) = cnt;
@@ -1105,11 +1104,11 @@ SheetFilter::ingo_proper_sheets(
 		for ( int i = 1; i <= nsht; ++i ) {
 			int lbbl = i;
 			for ( int j = 1; j <= (nstr-1); ++j ) {
-				if ( strlbl(j) != lbbl ) goto L7777;
-				if ( stpppt(j)-strtpt(j) < 6 ) goto L7777;
+				if ( strlbl(j) != lbbl ) continue;
+				if ( stpppt(j)-strtpt(j) < 6 ) continue;
 				for ( int k = (j+1); k <= nstr; ++k ) {
-					if ( strlbl(k) != lbbl ) goto L8888;
-					if ( stpppt(k)-strtpt(k) < 6 ) goto L8888;
+					if ( strlbl(k) != lbbl ) continue;
+					if ( stpppt(k)-strtpt(k) < 6 ) continue;
 					if ( dstrmin(j,k) < ngbhct ) {
 						maxdist = std::max(dstrmin(j,k),maxdist);
 						dot_prod = 0.0;
@@ -1141,9 +1140,7 @@ SheetFilter::ingo_proper_sheets(
 //                 std::cout << SS( dot_prod ) << std::endl;
 //                 if ( dot_prod > -dotcut && dot_prod < dotcut ) rubbish = 5;
 					}
-L8888:;
 				}
-L7777:;
 			}
 		}
 
@@ -1338,7 +1335,7 @@ SheetFilter::ingo_sheet_stuff(
 			//rhiju ingo_find_ord doesn't assign strand order and directions if the sheet
 			//rhiju forms a barrel. this might be worth fixing in the future, since we'd like to check
 			//rhiju handedness of BAB's in the barrel.
-			if ( rubbish > 6 ) goto L1234;
+			if ( rubbish > 6 ) break;
 			ingo_lnl(hm,order,nloc,nnloc);
 			ingo_find_dir(j,hm,nstr,slct,order,strlbl,strdr,directions);
 			bool use_whole_helix (false);
@@ -1357,7 +1354,7 @@ SheetFilter::ingo_sheet_stuff(
 				 nstr,nres,sequence,directions,scstr,lctn,use_whole_helix,rubbish);
 			}
 		}
-L1234:;
+//L1234:;
 	}
 
 }

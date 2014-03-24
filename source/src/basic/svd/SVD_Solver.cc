@@ -691,15 +691,14 @@ SVD_Solver::svdcmp(){
 			for ( l = k; l >= 1; --l ) {
 				nm = l-1;
 				if ( (std::abs(cstyle_tmp_[l])+anorm) == anorm ) goto L2;
-				if ( (std::abs(cstyle_w_[nm])+anorm) == anorm ) goto L1;
+				if ( (std::abs(cstyle_w_[nm])+anorm) == anorm ) break;
 			}
-L1:
 			c = 0.0;
 			s = 1.0;
 			for ( i = l; i <= k; ++i ) {
 				f = s*cstyle_tmp_[i];
 				cstyle_tmp_[i] *= c;
-				if ( (std::abs(f)+anorm) == anorm ) goto L2;
+				if ( (std::abs(f)+anorm) == anorm ) break;
 				g = cstyle_w_[i];
 				h = pythag(f, g);
 				cstyle_w_[i] = h;
@@ -722,7 +721,7 @@ L2:
 						cstyle_v_[j][k] = -cstyle_v_[j][k];
 					}
 				}
-				goto L3;
+				break;
 			}
 			if ( its == 30) utility_exit_with_message("no convergence in svdcmp \n" );
 			x = cstyle_w_[l];
@@ -775,7 +774,6 @@ L2:
 			cstyle_tmp_[k] = f;
 			cstyle_w_[k] = x;
 		}
-L3:;
 	}
 }
 

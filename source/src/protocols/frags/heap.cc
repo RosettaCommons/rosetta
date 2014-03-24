@@ -304,7 +304,7 @@ heap_down(
 	while ( indx < last ) {
 		child = 2*indx+1;
 
-		if ( child > last ) goto L20; // loop escape
+		if ( child > last ) break;
 
 		cv  = heap(child);
 		cocv = coheap(child);
@@ -321,13 +321,12 @@ heap_down(
 			}
 		}
 
-		if ( coiv <= cocv ) goto L20; // loop escape
+		if ( coiv <= cocv ) break;
 		coheap(indx) = cocv;
 		heap(indx) = cv;
 		indx = child;
 	}
 
-L20:; // loop escape
 	heap(indx) = iv;
 	coheap(indx) = coiv;
 }
@@ -378,13 +377,12 @@ heap_up(
 		parent = static_cast< int >((indx-1)/2);
 		pv = heap(parent);
 		copv = coheap(parent);
-		if ( copv < covalue ) goto L20; // loop escape
+		if ( copv < covalue ) break;
 		coheap(indx) = copv;
 		heap(indx) = pv;
 		indx = parent;
 	}
 
-L20:; // loop escape
 	coheap(indx) = covalue;
 	heap(indx) = value;
 }

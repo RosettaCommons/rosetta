@@ -633,12 +633,10 @@ AntibodyModeler::all_cdr_VL_VH_fold_tree(
 			if ( ! it2->is_jump() && loop_start > edge_start
 			        && loop_stop < edge_stop ) {
 				//edge_found = true;  // set but never used ~Labonte
-				goto L100;
+				break;
 			}
 		}
 
-
-L100:
 		f.delete_unordered_edge( edge_start, edge_stop, Edge::PEPTIDE);
 		f.add_edge( loop_start-1, loop_stop+1, num_jump+1 );
 		f.add_edge( edge_start, loop_start-1, Edge::PEPTIDE );

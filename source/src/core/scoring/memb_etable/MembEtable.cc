@@ -414,58 +414,56 @@ MembEtable::make_pairenergy_table()
 
 			}
 
-			if ( !add_long_range_damping ) goto L456;
+			if ( add_long_range_damping ) {
 
-			// ctsa - remaining bins damp to 0. on a linear path
-			/*dljatr_damp = -ljatr_(normal_disbins,atype2,atype1) /
-			 long_range_damping_length;
-			dljrep_damp = -ljrep_(normal_disbins,atype2,atype1) /
-			 long_range_damping_length;*/
-			dsolv1_damp = -solv1_(normal_disbins,atype2,atype1) /
-			 long_range_damping_length;
-			dsolv2_damp = -solv2_(normal_disbins,atype2,atype1) /
-			 long_range_damping_length;
-      //pba
-      memb_dsolv1_damp = -memb_solv1_(normal_disbins,atype2,atype1) /
-       long_range_damping_length;
-      memb_dsolv2_damp = -memb_solv2_(normal_disbins,atype2,atype1) /
-       long_range_damping_length;
+				// ctsa - remaining bins damp to 0. on a linear path
+				/*dljatr_damp = -ljatr_(normal_disbins,atype2,atype1) /
+				 long_range_damping_length;
+				dljrep_damp = -ljrep_(normal_disbins,atype2,atype1) /
+				 long_range_damping_length;*/
+				dsolv1_damp = -solv1_(normal_disbins,atype2,atype1) /
+				 long_range_damping_length;
+				dsolv2_damp = -solv2_(normal_disbins,atype2,atype1) /
+				 long_range_damping_length;
+				//pba
+				memb_dsolv1_damp = -memb_solv1_(normal_disbins,atype2,atype1) /
+				 long_range_damping_length;
+				memb_dsolv2_damp = -memb_solv2_(normal_disbins,atype2,atype1) /
+				 long_range_damping_length;
 
-			/*intercept_ljatr_damp = -dljatr_damp*max_dis_;
-			intercept_ljrep_damp = -dljrep_damp*max_dis_;*/
-			intercept_solv1_damp = -dsolv1_damp*max_dis_;
-			intercept_solv2_damp = -dsolv2_damp*max_dis_;
-      //pba
-      intercept_memb_solv1_damp = -memb_dsolv1_damp*max_dis_;
-      intercept_memb_solv2_damp = -memb_dsolv2_damp*max_dis_;
+				/*intercept_ljatr_damp = -dljatr_damp*max_dis_;
+				intercept_ljrep_damp = -dljrep_damp*max_dis_;*/
+				intercept_solv1_damp = -dsolv1_damp*max_dis_;
+				intercept_solv2_damp = -dsolv2_damp*max_dis_;
+				//pba
+				intercept_memb_solv1_damp = -memb_dsolv1_damp*max_dis_;
+				intercept_memb_solv2_damp = -memb_dsolv2_damp*max_dis_;
 
-			for ( int disbin = normal_disbins+1; disbin <= etable_disbins; ++disbin ) {
-				dis2 = ( disbin - 1 ) * dis2_step;
-				dis = std::sqrt(dis2);
+				for ( int disbin = normal_disbins+1; disbin <= etable_disbins; ++disbin ) {
+					dis2 = ( disbin - 1 ) * dis2_step;
+					dis = std::sqrt(dis2);
 
-				/*ljatr_(disbin,atype2,atype1) = intercept_ljatr_damp + dis *dljatr_damp;
-				ljrep_(disbin,atype2,atype1) = intercept_ljrep_damp + dis *dljrep_damp;*/
-				solv1_(disbin,atype2,atype1) = intercept_solv1_damp + dis *dsolv1_damp;
-				solv2_(disbin,atype2,atype1) = intercept_solv2_damp + dis *dsolv2_damp;
-        //pba
-        memb_solv1_(disbin,atype2,atype1) = intercept_memb_solv1_damp + dis * memb_dsolv1_damp;
-        memb_solv2_(disbin,atype2,atype1) = intercept_memb_solv2_damp + dis * memb_dsolv2_damp;
+					/*ljatr_(disbin,atype2,atype1) = intercept_ljatr_damp + dis *dljatr_damp;
+					ljrep_(disbin,atype2,atype1) = intercept_ljrep_damp + dis *dljrep_damp;*/
+					solv1_(disbin,atype2,atype1) = intercept_solv1_damp + dis *dsolv1_damp;
+					solv2_(disbin,atype2,atype1) = intercept_solv2_damp + dis *dsolv2_damp;
+					//pba
+					memb_solv1_(disbin,atype2,atype1) = intercept_memb_solv1_damp + dis * memb_dsolv1_damp;
+					memb_solv2_(disbin,atype2,atype1) = intercept_memb_solv2_damp + dis * memb_dsolv2_damp;
 
-				/*dljatr_(disbin,atype2,atype1) = dljatr_damp;
-				dljrep_(disbin,atype2,atype1) = dljrep_damp;*/
-				dsolv1_(disbin,atype2,atype1)  = dsolv1_damp;
-				dsolv2_(disbin,atype2,atype1) = dsolv2_damp;
-        //pba
-        memb_dsolv2_(disbin,atype2,atype1) = memb_dsolv2_damp;
-        memb_dsolv1_(disbin,atype2,atype1) = memb_dsolv1_damp;
+					/*dljatr_(disbin,atype2,atype1) = dljatr_damp;
+					dljrep_(disbin,atype2,atype1) = dljrep_damp;*/
+					dsolv1_(disbin,atype2,atype1)  = dsolv1_damp;
+					dsolv2_(disbin,atype2,atype1) = dsolv2_damp;
+					//pba
+					memb_dsolv2_(disbin,atype2,atype1) = memb_dsolv2_damp;
+					memb_dsolv1_(disbin,atype2,atype1) = memb_dsolv1_damp;
 
-    //pbadebug WARNING
-    //if(atype1==18 && atype2==19)
-    //  std::cout << "bin s1 s2 " << disbin << " " << solv1_(disbin,atype2,atype1) << " " << solv2_(disbin,atype2,atype1) << std::endl;
-
+					//pbadebug WARNING
+					//if(atype1==18 && atype2==19)
+					//  std::cout << "bin s1 s2 " << disbin << " " << solv1_(disbin,atype2,atype1) << " " << solv2_(disbin,atype2,atype1) << std::endl;
+				}
 			}
-
-L456:
 
 			//  ctsa - set last bin of all values to zero
 			/*ljatr_(etable_disbins,atype2,atype1) = 0.0;

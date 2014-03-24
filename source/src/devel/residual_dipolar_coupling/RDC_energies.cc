@@ -363,15 +363,14 @@ void svdcmp(
 			for ( l = k; l >= 1; --l ) {
 				nm = l-1;
 				if ( (std::abs(rv1(l))+anorm) == anorm ) goto L2;
-				if ( (std::abs(w(nm))+anorm) == anorm ) goto L1;
+				if ( (std::abs(w(nm))+anorm) == anorm ) break;
 			}
-L1:
 			c = 0.0;
 			s = 1.0;
 			for ( i = l; i <= k; ++i ) {
 				f = s*rv1(i);
 				rv1(i) *= c;
-				if ( (std::abs(f)+anorm) == anorm ) goto L2;
+				if ( (std::abs(f)+anorm) == anorm ) break;
 				g = w(i);
 				h = pythag(f,g);
 				w(i) = h;
@@ -394,7 +393,7 @@ L2:
 						v(j,k) = -v(j,k);
 					}
 				}
-				goto L3;
+				break;
 			}
 			if ( its == 30) utility_exit_with_message("no convergence in svdcmp \n" );
 			x = w(l);
@@ -447,7 +446,6 @@ L2:
 			rv1(k) = f;
 			w(k) = x;
 		}
-L3:;
 	}
 
 
