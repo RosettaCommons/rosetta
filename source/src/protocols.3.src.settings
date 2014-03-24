@@ -555,6 +555,7 @@ sources = {
 		"PSSM2BfactorMover",
 		"RepackSidechainsMover",
 		"RepulsiveOnlyMover",
+		"ResidueTypeConstraintMover",
 		"ReturnSidechainMover",
 		"ResTypeFragmentMover",
 		"RingConformationMover",

@@ -8739,6 +8739,7 @@ SandwichFeatures::report_features(
 		resfile_stream << "USE_INPUT_SC" << endl;
 		resfile_stream << "start" << endl;
 
+		resfile_stream << "# final update: 03/22/2014" << endl;
 		resfile_stream << "# NOTAA	CFHMPWY for surface_heading residues at core strands" << endl;
 		resfile_stream << "# NOTAA	CFHMWY for surface_heading residuess at edge strands" << endl;
 
