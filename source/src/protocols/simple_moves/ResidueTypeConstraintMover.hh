@@ -42,7 +42,7 @@ public:
 
 	void constraint_file( std::string const & );
 
-	void constraint_set( ResidueTypeConstraintCOP );
+	//	void constraint_set( ResidueTypeConstraintCOP );
 	ResidueTypeConstraintOP constraint_set();
 	ResidueTypeConstraintCOP constraint_set() const;
 
