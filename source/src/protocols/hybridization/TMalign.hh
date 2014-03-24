@@ -1366,8 +1366,8 @@ public:
 			int const y_len,
 			std::vector < int > & y2x ) {
 		double GL, rmsd;
-		numeric::xyzVector <core::Real> t;
-		numeric::xyzMatrix <core::Real> u;
+		numeric::xyzVector <core::Real> t(0.0,0.0,0.0);
+		numeric::xyzMatrix <core::Real> u(0.0);
 
 		double d01=d0+1.5;
 		if(d01 < D0_MIN) d01=D0_MIN;

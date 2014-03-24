@@ -3527,7 +3527,7 @@ void ElectronDensity::updateCachedDensity( core::conformation::Residue const &rs
 	int resid = rsd.seqpos();
 
 	// constants
-	numeric::xyzVector< core::Real > cartX, fracX;
+	numeric::xyzVector< core::Real > cartX(0,0,0), fracX(0,0,0);
 	numeric::xyzVector< core::Real > atm_i, atm_j, del_ij, atm_idx_ij;
 
 	// subtract old residue's density
