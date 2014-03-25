@@ -59,7 +59,7 @@ def main(args):
 
         started = datetime.datetime.today()
         execute('\n\nExecuting %s...' % t, 'export PYTHONPATH=`pwd`:$PYTHONPATH && %s %s' % (sys.executable, t) )
-        print 'Finished {} in {}'.format(t, datetime.datetime.today() - started)
+        print '\nFinished {} in {}'.format(t, datetime.datetime.today() - started)
 
         #__import__( 'test.' + t[:-3] )
         #execute('Executing %s...' % t, 'export PYTHONPATH=`pwd`:$PYTHONPATH && python %s' % t)

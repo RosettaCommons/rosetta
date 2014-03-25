@@ -751,7 +751,7 @@ def prepareMiniLibs(mini_path, bindings_path):
     shutil.copyfile(binding_source_path+'/src/__init__.py' , bindings_path+'/__init__.py')
 
     if Options.debug:  # creating some symlinks for debug version
-        for l in 'TestBindings.py test demos'.split() + ['libboost_python.'+suffix]:
+        for l in 'TestBindings.py test demos toolbox'.split() + ['libboost_python.'+suffix]:
             if os.path.islink('./debug/'+l): os.remove('./debug/'+l)
             os.symlink('./../'+l, './debug/'+l)
 
