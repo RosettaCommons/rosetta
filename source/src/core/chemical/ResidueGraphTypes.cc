@@ -32,28 +32,37 @@
 #include <core/chemical/ResidueGraphTypes.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>
-
+#include <core/chemical/Atom.hh>
+#include <core/chemical/Bond.hh>
 // Package headers
 
 namespace core {
-    namespace chemical {
-        
-        /////////////////////////////////////////////////////////////
-        ////////// PREDICATES for FILTERED GRAPHS ///////////////////
-        ////////////////////////////////////////////////////////////
-        
+namespace chemical {
+
+				/////////////////////////////////////////////////////////////
+				////////// PREDICATES for FILTERED GRAPHS ///////////////////
+				////////////////////////////////////////////////////////////
+
+
+				bool RealFilter::operator()(VD const vd) const {
+				    return ! (*graph_)[ vd ].is_fake();
+				}
+
+				bool RealFilter::operator()(ED const ed) const {
+				    return ! (*graph_)[ ed ].is_fake();
+				}
 
 
         bool HeavyAtomFilter::operator()(VD const vd) const{
             return (*atom_types_)[ (*graph_)[vd].atom_type_index() ].is_heavyatom();
         }
-        
+
         bool AcceptorAtomFilter::operator()(VD const vd) const{
             return (*atom_types_)[ (*graph_)[vd].atom_type_index() ].is_acceptor();
         }
 
         bool HeavyAtomWithPolarHydrogensFilter::operator()(VD const vd) const{
-            
+
             for(OutEdgeIterPair ep = boost::out_edges(vd, *graph_); ep.first != ep.second; ++ep.first){
             	OutEdgeIter e_iter= ep.first;
             	ED ed = *e_iter;
@@ -66,7 +75,7 @@ namespace core {
         }
 
         bool HeavyAtomWithHydrogensFilter::operator()(VD const vd) const{
-            
+
             for(OutEdgeIterPair ep = boost::out_edges(vd, *graph_); ep.first != ep.second; ++ep.first){
             	OutEdgeIter e_iter= ep.first;
                 ED ed = *e_iter;
@@ -77,12 +86,12 @@ namespace core {
             }
             return false;
         }
-        
+
 
         bool HydrogenAtomFilter::operator()(VD const vd) const{
             return (*atom_types_)[ (*graph_)[vd].atom_type_index() ].is_hydrogen();
         }
-        
+
         bool AromaticAtomFilter::operator()(VD const vd) const{
             return (*atom_types_)[ (*graph_)[vd].atom_type_index() ].is_aromatic();
         }
@@ -94,9 +103,7 @@ namespace core {
             return  (*atom_types_)[ (*graph_)[vd].atom_type_index() ].is_hydrogen() && !(*atom_types_)[ (*graph_)[vd].atom_type_index() ].is_polar_hydrogen();
         }
 
-        
-        
-    }
+}
 }
 ///////////////////////////////////////////////////////////////
 

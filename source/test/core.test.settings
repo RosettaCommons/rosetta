@@ -26,6 +26,7 @@ sources = {
 	],
 	"chemical/gasteiger" :[
 		"GasteigerAtomTypeSet",
+		"GasteigerAtomTyper",
 	],
 	"chemical/carbohydrates" : [
 		"CarbohydrateInfo",

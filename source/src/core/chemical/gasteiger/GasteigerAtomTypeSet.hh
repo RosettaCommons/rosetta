@@ -82,6 +82,8 @@ public:
 	GasteigerAtomTypeDataCOP
 	operator[] ( Size const index ) const;
 
+	/// @brief Return the type that's assigned for fake atoms. (Virtual atoms and the like.)
+	GasteigerAtomTypeDataCOP type_for_fake_atoms() const;
 
 	/// @brief Load the AtomSet from a file
 	void

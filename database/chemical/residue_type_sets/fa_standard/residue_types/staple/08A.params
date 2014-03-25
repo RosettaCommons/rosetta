@@ -30,7 +30,7 @@ BOND   N      H
 BOND   CA     C  
 BOND   CA     CB 
 BOND   CA     C1 
-BOND   C      O  
+BOND_TYPE   C      O    2
 BOND   CB    1HB 
 BOND   CB    2HB 
 BOND   CB    3HB 

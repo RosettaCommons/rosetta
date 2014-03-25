@@ -40,7 +40,12 @@ namespace gasteiger {
 class PossibleAtomTypesForAtom; // Forward declaration
 
 void assign_gasteiger_atom_types( core::chemical::ResidueType & restype, GasteigerAtomTypeSetCOP const & gasteiger_atom_type_set, bool keep_existing);
-PossibleAtomTypesForAtom GetPossibleTypesForAtom( core::chemical::ResidueType const & restype, VD const & atomVD, GasteigerAtomTypeSetCOP const & gasteiger_atom_type_set );
+
+PossibleAtomTypesForAtom GetPossibleTypesForAtom(
+				const core::chemical::RealResidueGraph & graph,
+				RealResidueVD const & atomVD,
+				GasteigerAtomTypeSetCOP const & gasteiger_atom_type_set,
+				core::Size connections );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //!
@@ -77,7 +82,7 @@ class PossibleAtomTypesForAtom :
   //! Parameters are
   //! 1. the atom
   //! 2. the size of the smallest ring that this atom is part of
-  void ( PossibleAtomTypesForAtom::*m_FinalizeFunction)( const core::chemical::ResidueType &, const core::chemical::VD & );
+  void ( PossibleAtomTypesForAtom::*m_FinalizeFunction)( const core::chemical::RealResidueGraph &, const core::chemical::RealResidueVD & );
 
   //! @brief Create the map from atom environment string to possible atom types
   //! @param IN_AROMATIC_RING whether to only include types that could be in an aromatic ring
@@ -184,9 +189,7 @@ public:
   void SetToType( const GasteigerAtomTypeDataCOP &ATOM_TYPE);
 
   //! @brief set the final type based on the given atom and smallest ring size
-  //! @param ATOM the atom of interest
-  //! @param SMALLEST_RING_SIZE the size of the smallest ring this atom is part of
-  void Finalize( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD);
+  void Finalize( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD);
 
 /////////////////
 //// operators //
@@ -242,34 +245,22 @@ public:
   void FinalizeAromatic( const int &DESIRED_CHARGE);
 
   //! @brief choose the final atom type for Nitrogen with two single bonds
-  //! @param ATOM the atom of interest
-  //! @param SMALLEST_RING_SIZE the size of the smallest ring this atom is part of
-  void FinalizeNitrogenTwoSingle( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD );
+  void FinalizeNitrogenTwoSingle( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD );
 
   //! @brief choose the final atom type for a nitrogen with a single and a double bond
-  //! @param ATOM the atom of interest
-  //! @param SMALLEST_RING_SIZE the size of the smallest ring this atom is part of
-  void FinalizeNitrogenSingleDouble( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD );
+  void FinalizeNitrogenSingleDouble( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD );
 
   //! @brief choose the final atom type for Nitrogen with three single bonds
-  //! @param ATOM the atom of interest
-  //! @param SMALLEST_RING_SIZE the size of the smallest ring this atom is part of
-  void FinalizeNitrogenThreeSingle( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD );
+  void FinalizeNitrogenThreeSingle( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD );
 
   //! @brief choose the final atom type for Oxygen with two single bonds
-  //! @param ATOM the atom of interest
-  //! @param SMALLEST_RING_SIZE the size of the smallest ring this atom is part of
-  void FinalizeOxygenTwoSingle( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD );
+  void FinalizeOxygenTwoSingle( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD );
 
   //! @brief choose the final atom type for Oxygen with a single and a double bond
-  //! @param ATOM the atom of interest
-  //! @param SMALLEST_RING_SIZE the size of the smallest ring this atom is part of
-  void FinalizeOxygenSingleDouble( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD );
+  void FinalizeOxygenSingleDouble( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD );
 
   //! @brief choose the final atom type for Oxygen with three single bonds
-  //! @param ATOM the atom of interest
-  //! @param SMALLEST_RING_SIZE the size of the smallest ring this atom is part of
-  void FinalizeOxygenThreeSingle( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD );
+  void FinalizeOxygenThreeSingle( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD );
 
 //  //! @brief get connected element types
 //  //! @param ATOM the atom of interest
@@ -277,19 +268,17 @@ public:
 //  static storage::Set< ElementType> GetConnectedElementTypes( const AtomConformationalInterface &ATOM);
 
   //! @brief test whether a particular atom is unsaturated, without relying on atom types having already been set
-  //! @param ATOM the atom of interest
   //! @return true if atom has no A. unsaturated bonds or B. is part of an aromatic ring or C. has empty orbitals
-  bool IsUnsaturated( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD ) const;
+  bool IsUnsaturated( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD ) const;
 
   //! @brief count unsaturated neighbors
-  //! @param ATOM the atom of interest
   //! @return the number of unsaturated neighbors around ATOM
-  size_t CountUnsaturatedNeighbors( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD ) const;
+  core::Size CountUnsaturatedNeighbors( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD ) const;
 
   //! @brief test whether atom is bonded to any halogens
   //! @param ATOM the atom of interest
   //! @return true if the atom is bonded to any halogens
-  bool IsBondedToAHalogen( const core::chemical::ResidueType & restype, const core::chemical::VD & atomVD ) const;
+  bool IsBondedToAHalogen( const core::chemical::RealResidueGraph & graph, const core::chemical::RealResidueVD & atomVD ) const;
 
 }; // class PossibleAtomTypesForAtom
 

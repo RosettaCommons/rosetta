@@ -21,6 +21,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueSupport.hh>
 #include <core/chemical/Atom.hh>
+#include <core/chemical/Bond.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/MMAtomType.hh>
 
@@ -513,9 +514,8 @@ read_topology_file(
 	for (Size i=1; i<= nlines; ++i) {
 		std::string const & line( lines[i] );
 		std::istringstream l( line );
-		std::string tag,atom1,atom2,atom3,atom4, rotate, orbitals_tag, orbital;
+		std::string tag,atom1,atom2,atom3,atom4, rotate, orbitals_tag, orbital, bond_type;
 		core::Real value;
-		core::Size bond_type;
 		l >> tag;
 		if ( l.fail() ) continue;
 		if ( tag == "CONNECT" ) {
@@ -543,8 +543,7 @@ read_topology_file(
 
 		} else if ( tag == "BOND_TYPE" ) {
 			l >> atom1 >> atom2 >> bond_type;
-			// apl Note: this cast could easily fail and there's no error checking
-			rsd->add_bond(atom1, atom2, static_cast<core::chemical::BondName>(bond_type));
+			rsd->add_bond(atom1, atom2, convert_to_BondName(bond_type));
 		} else if ( tag == "CHARGE" ) {
 			l >> atom1;
 			// We should allow multiple charges on one line, but since we now just have the one, hold off.
@@ -927,7 +926,7 @@ read_topology_file(
 	}
 
     return rsd;
-    
+
 }
 
 

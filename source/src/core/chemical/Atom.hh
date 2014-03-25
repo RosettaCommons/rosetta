@@ -153,6 +153,13 @@ public:
 	void is_acceptor(bool acceptor){is_acceptor_ = acceptor;}
 	void is_virtual(bool is_virtual){is_virtual_ = is_virtual;}
 	void has_orbitals(bool orbitals){has_orbitals_ = orbitals;}
+
+	// Calculated data
+
+	/// @brief Return true if this represents a fake/mock atom.
+	/// (Real atoms have elements that exist on the periodic table.)
+	bool is_fake() const;
+
 	// data
 private:
 	std::string name_;
@@ -181,7 +188,7 @@ private:
 
 } // chemical
 } // core
-    
-    
-    
+
+
+
 #endif // INCLUDED_core_chemical_Atom_HH

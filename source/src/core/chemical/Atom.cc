@@ -46,6 +46,8 @@
 namespace core {
 namespace chemical {
 
+static basic::Tracer TR("core.chemical.Atom");
+
 Atom::Atom():
 		name_(""),
 		mm_name_(""),
@@ -132,6 +134,18 @@ Atom & Atom::operator =(Atom const & rhs){
 gasteiger::GasteigerAtomTypeDataCOP Atom::gasteiger_atom_type() const { return gasteiger_atom_type_; }
 
 void Atom::gasteiger_atom_type( core::chemical::gasteiger::GasteigerAtomTypeDataCOP gasteiger_atom_type ) { gasteiger_atom_type_ = gasteiger_atom_type; }
+
+bool
+Atom::is_fake() const {
+	if( is_virtual_ ) { return true; }
+	if( element_ ) {
+		return element_->is_fake();
+	} else {
+		TR.Warning << "Warning: Attempted to determine real/fake status of atom without an element: " << name() << std::endl;
+		return true; // Can't be real if it doesn't have an element.
+	}
+}
+
 
 void
 Atom::print(
