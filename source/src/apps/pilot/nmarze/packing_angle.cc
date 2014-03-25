@@ -47,7 +47,7 @@ public:
 	// destructor
 	virtual ~PackingAngle(){};
 
-virtual void apply( pose::Pose & pose_in )
+virtual void apply( core::pose::Pose & pose_in )
 {
 	TR << "Applying Packing Angle Calculator" << std::endl;
 
