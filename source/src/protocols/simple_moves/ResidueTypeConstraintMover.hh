@@ -31,20 +31,20 @@ namespace simple_moves {
 class ResidueTypeConstraintMover : public protocols::moves::Mover {
 
 public:
-	typedef core::scoring::constraints::ResidueTypeConstraint ResidueTypeConstraint;
-	typedef core::scoring::constraints::ResidueTypeConstraintOP ResidueTypeConstraintOP;
-	typedef core::scoring::constraints::ResidueTypeConstraintCOP ResidueTypeConstraintCOP;
+  typedef core::scoring::constraints::ResidueTypeConstraint ResidueTypeConstraint;
+	//  typedef core::scoring::constraints::ResidueTypeConstraintOP ResidueTypeConstraintOP;
+	//  typedef core::scoring::constraints::ResidueTypeConstraintCOP ResidueTypeConstraintCOP;
 
 public:
-	ResidueTypeConstraintMover();
-	virtual ~ResidueTypeConstraintMover();
-	ResidueTypeConstraintMover( std::string const & );
+  ResidueTypeConstraintMover();
+  virtual ~ResidueTypeConstraintMover();
+  ResidueTypeConstraintMover( std::string const & );
 
-	void constraint_file( std::string const & );
-
-	//	void constraint_set( ResidueTypeConstraintCOP );
-	ResidueTypeConstraintOP constraint_set();
-	ResidueTypeConstraintCOP constraint_set() const;
+	//  void constraint_file( std::string const & );
+	//
+	//  void constraint_set( ResidueTypeConstraintCOP );
+	//  ResidueTypeConstraintOP constraint_set();
+	//  ResidueTypeConstraintCOP constraint_set() const;
 
 	virtual void apply( Pose & );
 	virtual std::string get_name() const;
