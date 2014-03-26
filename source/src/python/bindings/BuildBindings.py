@@ -724,7 +724,7 @@ def prepareMiniLibs(mini_path, bindings_path):
     if Platform == 'cygwin' : suffix = 'dll'
     if Platform == 'macos' : suffix = 'dylib'
 
-    mini = mini_path + '/src/python/bindings/{}rosetta/libmini.'.format('debug/' if Options.debug else '') + suffix
+    mini = mini_path + '/src/python/bindings/{0}rosetta/libmini.'.format('debug/' if Options.debug else '') + suffix
 
     add_loption = getLinkerOptions()
 
