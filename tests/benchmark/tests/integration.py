@@ -107,9 +107,9 @@ def run_itegration_tests(mode, rosetta_dir, working_dir, platform, jobs=1, hpc_d
             #command_sh = working_dir + '/' + d + '/command.sh'
             #if os.path.isfile(command_sh): os.remove(command_sh)  # deleting non-tempalte command.sh files to avoid stroing absolute paths in database
 
-            for f in ignore_files:
-                fl = working_dir + '/' + d + '/' + f
-                if os.path.isfile(fl): ignore.append(d + '/' + f)  #os.remove(command_sh)  # deleting non-tempalte command.sh files to avoid stroing absolute paths in database
+            # for f in ignore_files:
+            #     fl = working_dir + '/' + d + '/' + f
+            #     if os.path.isfile(fl): ignore.append(d + '/' + f)  #os.remove(command_sh)  # deleting non-tempalte command.sh files to avoid stroing absolute paths in database
 
 
     results[_StateKey_]  = _S_queued_for_comparison_
@@ -135,12 +135,12 @@ def compare(test, results, files_path, previous_results, previous_files_path):
 
     results = dict(tests={}, summary=dict(total=0, failed=0, failed_tests=[]), config={})
 
-
     if previous_files_path:
         for test in os.listdir(files_path):
             if os.path.isdir(files_path + '/' + test):
-                res, brief_diff = execute('Comparing {}...'.format(test), 'diff -rq {0}/{test} {1}/{test}'.format(files_path, previous_files_path, test=test), return_='tuple')
-                res, full_diff  = execute('Comparing {}...'.format(test), 'diff -r  {0}/{test} {1}/{test}'.format(files_path, previous_files_path, test=test), return_='tuple')
+                exclude = ''.join([' --exclude="{}"'.format(f) for f in ignore_files] )
+                res, brief_diff = execute('Comparing {}...'.format(test), 'diff -rq {exclude} {0}/{test} {1}/{test}'.format(files_path, previous_files_path, test=test, exclude=exclude), return_='tuple')
+                res, full_diff  = execute('Comparing {}...'.format(test), 'diff -r  {exclude} {0}/{test} {1}/{test}'.format(files_path, previous_files_path, test=test, exclude=exclude), return_='tuple')
                 results['tests'][test] = {_StateKey_: _S_failed_ if res else _S_finished_, _LogKey_: brief_diff + '\n\n' + full_diff[:65536] if res else ''}
 
                 results['summary']['total'] += 1
