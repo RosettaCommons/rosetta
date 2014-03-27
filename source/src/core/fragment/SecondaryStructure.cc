@@ -418,9 +418,11 @@ SecondaryStructure::extend( core::Size nres ) {
 	if ( nres > total_residue_ ) {
 		loop_fraction_.dimension( nres );
 		strand_fraction_.dimension( nres );
+		confidence_.dimension( nres );
 		for ( Size pos=total_residue_+1; pos<=nres; ++pos ) {
 			loop_fraction_( pos ) = 1.0;
 			strand_fraction_( pos ) = 0.0;
+			confidence_(pos) = 0.0;
 		}
 		total_residue_=nres;
 	}
