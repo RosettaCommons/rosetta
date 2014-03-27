@@ -58,6 +58,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 #include <string>
+#include <algorithm>
 
 using basic::T;
 using basic::Error;
@@ -397,12 +398,13 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 	// we need to add a SS identifier for the ligand if there is one
 	utility::vector1<Size> ligands = protocols::flxbb::find_ligands( pose );
 	bool has_ligand = false;
+	std::replace( secstruct.begin(), secstruct.end(), ' ', 'L'); // replace all ' ' to 'L'
   TR << "secstruct is:" << secstruct << std::endl;
 	for( Size i=1; i <= ligands.size(); i++) {
-		TR << "adding an L to the secstruct string due to unknown AA" << std::endl;
-		secstruct += 'L';
 		has_ligand = true;
 	}
+	
+
 	srbl_->compute( pose, secstruct );
 
 	// make a pymol script for visualizing the layers
