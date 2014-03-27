@@ -48,3 +48,4 @@ get_commit_id.sh
 /diffs*
 /compile*
 .unit_test_results.json
+_performance_
