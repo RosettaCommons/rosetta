@@ -143,6 +143,15 @@ SSPredictionFilter::compute( core::pose::Pose const & pose ) const {
 	} else {
 		core::scoring::dssp::Dssp dssp( pose );
 		wanted_ss = dssp.get_dssp_secstruct();
+		// strip ligands from the ss string -- dssp now includes a character for ligand
+		runtime_assert( pose.total_residue() == wanted_ss.size() );
+		std::string pruned_ss( "" );
+		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
+			if ( pose.residue(i).is_protein() ) {
+				pruned_ss += wanted_ss[i-1];
+			}
+		}
+		wanted_ss = pruned_ss;
 	}
 
 	if ( use_svm_ ) {
