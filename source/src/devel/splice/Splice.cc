@@ -138,46 +138,46 @@ SpliceCreator::mover_name()
 }
 
 Splice::Splice() :
-		Mover( SpliceCreator::mover_name() ),
-		from_res_( 0 ),
-		to_res_( 0 ),
-		saved_from_res_( 0 ),
-		saved_to_res_( 0 ),
-		source_pdb_( "" ),
-		ccd_( true ),
-		scorefxn_(NULL),
-		rms_cutoff_( 999999 ),
-		res_move_( 4 ),
-		randomize_cut_( false ),
-		cut_secondarystruc_( false ),
-		task_factory_( NULL ),
-		design_task_factory_( NULL ),
-		torsion_database_fname_( "" ),
-		database_entry_( 0 ),
-		database_pdb_entry_( "" ),
-		template_file_( "" ),
-		poly_ala_( true ),
-		equal_length_( false ),
-		template_pose_( NULL ),
-		start_pose_( NULL ),
-		saved_fold_tree_( NULL ),
-		design_( false ),
-		dbase_iterate_( false ),
-		allow_all_aa_( false ),
-		allow_threading_( true ),
-		rtmin_( true ),
-		first_pass_( true ),
-		locked_res_( NULL ),
-		locked_res_id_( ' ' ),
-		checkpointing_file_ ( "" ),
-		loop_dbase_file_name_( "" ),
-		loop_pdb_source_( "" ),
-		mover_tag_( NULL ),
-		splice_filter_( NULL ),
-		Pdb4LetName_(""),
-		use_sequence_profiles_( false ),
-		segment_type_( "" )
- {
+				Mover( SpliceCreator::mover_name() ),
+				from_res_( 0 ),
+				to_res_( 0 ),
+				saved_from_res_( 0 ),
+				saved_to_res_( 0 ),
+				source_pdb_( "" ),
+				ccd_( true ),
+				scorefxn_(NULL),
+				rms_cutoff_( 999999 ),
+				res_move_( 4 ),
+				randomize_cut_( false ),
+				cut_secondarystruc_( false ),
+				task_factory_( NULL ),
+				design_task_factory_( NULL ),
+				torsion_database_fname_( "" ),
+				database_entry_( 0 ),
+				database_pdb_entry_( "" ),
+				template_file_( "" ),
+				poly_ala_( true ),
+				equal_length_( false ),
+				template_pose_( NULL ),
+				start_pose_( NULL ),
+				saved_fold_tree_( NULL ),
+				design_( false ),
+				dbase_iterate_( false ),
+				allow_all_aa_( false ),
+				allow_threading_( true ),
+				rtmin_( true ),
+				first_pass_( true ),
+				locked_res_( NULL ),
+				locked_res_id_( ' ' ),
+				checkpointing_file_ ( "" ),
+				loop_dbase_file_name_( "" ),
+				loop_pdb_source_( "" ),
+				mover_tag_( NULL ),
+				splice_filter_( NULL ),
+				Pdb4LetName_(""),
+				use_sequence_profiles_( false ),
+				segment_type_( "" )
+{
 	profile_weight_away_from_interface_ = 1.0;
 	restrict_to_repacking_chain2_ = true;
 	design_shell_ = 6.0;
@@ -635,12 +635,12 @@ Splice::apply( core::pose::Pose & pose )
 	using namespace protocols::toolbox::task_operations;
 	using namespace core::pack::task;
 	ThreadSequenceOperationOP tso = new ThreadSequenceOperation;
-    if (allow_threading()){
-        tso->target_sequence( threaded_seq );
-        tso->start_res( from_res() );
-        tso->allow_design_around( true ); // 21Sep12: from now on the design shell is determined downstream //false );
-        TR<<"Threading sequence: "<<threaded_seq<<" starting from "<<from_res()<<std::endl;
-    }
+	if (allow_threading()){
+		tso->target_sequence( threaded_seq );
+		tso->start_res( from_res() );
+		tso->allow_design_around( true ); // 21Sep12: from now on the design shell is determined downstream //false );
+		TR<<"Threading sequence: "<<threaded_seq<<" starting from "<<from_res()<<std::endl;
+	}
 	TaskFactoryOP tf;
 	if( design_task_factory()() == NULL )
 		tf = new TaskFactory;
@@ -656,11 +656,11 @@ Splice::apply( core::pose::Pose & pose )
 
 	tf->push_back( new operation::InitializeFromCommandline );
 	tf->push_back( new operation::NoRepackDisulfides );
-    if (allow_threading()) {
-        TR<<"THREADING ALLOWED"<<std::endl;
-        tf->push_back( tso );
-    }
-    else TR<<"THREADING NOT ALLOWED"<<std::endl;
+	if (allow_threading()) {
+		TR<<"THREADING ALLOWED"<<std::endl;
+		tf->push_back( tso );
+	}
+	else TR<<"THREADING NOT ALLOWED"<<std::endl;
 	DesignAroundOperationOP dao = new DesignAroundOperation;
 	dao->design_shell( (design_task_factory()() == NULL ? 0.0 : design_shell()) ); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
 	dao->repack_shell( repack_shell() );
@@ -673,10 +673,10 @@ Splice::apply( core::pose::Pose & pose )
 	for(core::Size res_num=1; res_num <= pose.total_residue(); res_num++ ){
 		if( std::find( pro_gly_res.begin(), pro_gly_res.end(), res_num ) == pro_gly_res.end() ){
 			operation::RestrictAbsentCanonicalAASOP racaas = new operation::RestrictAbsentCanonicalAAS;
-            if (allow_all_aa())
-                racaas->keep_aas( "ACDEFGHIKLMNPQRSTVWY" ); //allow all amino acids - for the humanization project - Assaf Alon
-            else
-                racaas->keep_aas( "ADEFGHIKLMNPQRSTVWY" ); /// disallow pro/gly/cys/his /// 29Mar13 now allowing all residues other than Cys. Expecting sequence profiles to take care of gly/pro/his
+			if (allow_all_aa())
+				racaas->keep_aas( "ACDEFGHIKLMNPQRSTVWY" ); //allow all amino acids - for the humanization project - Assaf Alon
+			else
+				racaas->keep_aas( "ADEFGHIKLMNPQRSTVWY" ); /// disallow pro/gly/cys/his /// 29Mar13 now allowing all residues other than Cys. Expecting sequence profiles to take care of gly/pro/his
 			racaas->include_residue( res_num );
 			tf->push_back( racaas);
 		}
@@ -788,9 +788,9 @@ Splice::apply( core::pose::Pose & pose )
 		TR<<std::endl;
 		TR<<"Weighted score function before ccd:"<<std::endl;
 		scorefxn()->show(pose);//before ccd starts make sure we have all constratins in place, gidoenla Jul13
-		
-       
-        ccd_mover.apply( pose );
+
+
+		ccd_mover.apply( pose );
 		TR<<"Weighted score function after ccd:"<<std::endl;
 		scorefxn()->show(pose);//before ccd starts make sure we have all constratins in place, gidoenla Jul13
 		//pose.dump_pdb("after_ccd.pdb");
@@ -861,21 +861,21 @@ Splice::apply( core::pose::Pose & pose )
 		}
 	}// fi ccd
 	else{ // if no ccd, still need to thread sequence
-        //If a filter (such as the bb clash dectection filter is defined) it should be tested here.
-        if( splice_filter() && !splice_filter()->apply( pose ) ){
-            //std::ostringstream convert_filter;
-            //std::string Result_filter;
-            //convert_filter << splice_filter()->score( pose );
-            //Result_filter = convert_filter.str();
-            
-            TR<<"Failing before design because filter reports failure (splice filter)!"<<std::endl;
-            //TR<<"Filter value is: "<<Result_filter<<std::endl;
-            set_last_move_status( protocols::moves::FAIL_RETRY );
-            retrieve_values();
-            return;
-        }
-        
-        //Debugging, remove after, gideonla aug13
+		//If a filter (such as the bb clash dectection filter is defined) it should be tested here.
+		if( splice_filter() && !splice_filter()->apply( pose ) ){
+			//std::ostringstream convert_filter;
+			//std::string Result_filter;
+			//convert_filter << splice_filter()->score( pose );
+			//Result_filter = convert_filter.str();
+
+			TR<<"Failing before design because filter reports failure (splice filter)!"<<std::endl;
+			//TR<<"Filter value is: "<<Result_filter<<std::endl;
+			set_last_move_status( protocols::moves::FAIL_RETRY );
+			retrieve_values();
+			return;
+		}
+
+		//Debugging, remove after, gideonla aug13
 		//TR<<"NOT DOING CCD, DOING REPACKING INSTEAD"<<std::endl;
 		PackerTaskOP ptask = tf()->create_task_and_apply_taskoperations( pose );
 		protocols::simple_moves::PackRotamersMover prm( scorefxn(), ptask );
@@ -885,14 +885,14 @@ Splice::apply( core::pose::Pose & pose )
 		prm.apply( pose );
 		//pose.dump_pdb("before_rtmin.pdb");
 		//After Re-packing we add RotamerTrialMover to resolve any left over clashes, gideonla Aug13
-        if ( rtmin()){//To prevent rtmin when not needed - Assaf Alon
-            TaskFactoryOP tf_rtmin  = new TaskFactory(*tf);//this taskfactory (tf_rttmin) is only used here. I don't want to affect other places in splice, gideonla aug13
-            tf_rtmin->push_back( new operation::RestrictToRepacking()); //W don't rtmin to do design
-            ptask = tf_rtmin()->create_task_and_apply_taskoperations( pose );
-            protocols::simple_moves::RotamerTrialsMinMover rtmin( scorefxn(), *ptask );
-            rtmin.apply(pose);
-            //pose.dump_pdb("after_rtmin.pdb");
-        }
+		if ( rtmin()){//To prevent rtmin when not needed - Assaf Alon
+			TaskFactoryOP tf_rtmin  = new TaskFactory(*tf);//this taskfactory (tf_rttmin) is only used here. I don't want to affect other places in splice, gideonla aug13
+			tf_rtmin->push_back( new operation::RestrictToRepacking()); //W don't rtmin to do design
+			ptask = tf_rtmin()->create_task_and_apply_taskoperations( pose );
+			protocols::simple_moves::RotamerTrialsMinMover rtmin( scorefxn(), *ptask );
+			rtmin.apply(pose);
+			//pose.dump_pdb("after_rtmin.pdb");
+		}
 	}
 	saved_fold_tree_ = new core::kinematics::FoldTree( pose.fold_tree() );
 	retrieve_values();
@@ -1022,7 +1022,7 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 	add_sequence_constraints_only( tag->getOption< bool >( "add_sequence_constraints_only", false ) );
 	if( add_sequence_constraints_only() ){
 		TR<<"add_sequence_constraints only set to true. Therefore not parsing any of the other Splice flags."<<std::endl;
-		
+
 		return;
 	}
 
@@ -1070,7 +1070,7 @@ Splice::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, protoco
 	repack_shell(tag->getOption< core::Real >( "repack_shell", 8.0 ) );//Added by gideonla May13,
 	rms_cutoff( tag->getOption< core::Real >( "rms_cutoff", 999999 ) );
 	runtime_assert( !(tag->hasOption( "torsion_database" ) && tag->hasOption( "rms_cutoff" )) ); // torsion database doesn't specify coordinates so no point in computing rms
-	res_move( tag->getOption< core::Size >( "res_move", 4 ) );
+	res_move( tag->getOption< core::Size >( "res_move", 1000 ) );// All resdiues in the backbone can move
 	randomize_cut( tag->getOption< bool >( "randomize_cut", false ) );
 	runtime_assert( ( tag->hasOption( "randomize_cut" ) && tag->hasOption( "source_pose" ) ) || !tag->hasOption( "source_pose" ) );
 	cut_secondarystruc( tag->getOption< bool >( "cut_secondarystruc", false ) );
@@ -1356,7 +1356,7 @@ void
 Splice::splice_filter( protocols::filters::FilterOP f ){
 	splice_filter_ = f;
 }
-    
+
 void//is anyone using this function ? gideonla. NOv13
 Splice::read_splice_segments( std::string const segment_type, std::string const segment_name, std::string const file_name ){
 	if(use_sequence_profiles_){
@@ -1568,69 +1568,40 @@ Splice::add_sequence_constraints( core::pose::Pose & pose){
 		pose.dump_pdb(out); //Testi*/
 		runtime_assert( seqprof->size()-1 == pose.conformation().chain_end( chain_num_ ) - pose.conformation().chain_begin( chain_num_ ) + 1 ); //Please note that the minus 1 after seqprof size is because seqprof size is always +1 to the actual size. Do not chnage this!!
 		cst_num = 0;
-		TR<<"Upweighting sequence constraints for residues: "<<std::endl;
-		if (pose.conformation().num_chains() == 1){//If pose has only one chain (no ligand) than all residues are weighted the same
-			for( core::Size seqpos = pose.conformation().chain_begin( 1 ); seqpos <= pose.conformation().chain_end( 1 ); ++seqpos ) {
-				//TR<<"Now adding constraint to aa: "<<seqpos<<pose.aa(seqpos)<<std::endl;
-				//TR<<"The sequence profile row for position "<<seqpos<<" is: "<<seqprof->prof_row(seqpos)<<std::endl;
-				//TR<<"The probabilty row for position "<<seqpos<<"is: "<<seqprof->probability_row(seqpos)<<std::endl;
-				SequenceProfileConstraintOP spc( new SequenceProfileConstraint( pose, seqpos, seqprof ) );
-				pose.add_constraint( spc );
-			}
-			ConstraintCOPs constraints( pose.constraint_set()->get_all_constraints() );
-			TR<<"Total number of constraints at End: "<<constraints.size()<<std::endl;
-		}
-		else{ //if pose has two chains then there is also a ligand therefore we weigh binder rediues according to distance from ligand
-			core::id::SequenceMappingOP smap = new core::id::SequenceMapping();
-			if (chain_num_>1){
-				for( core::Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
-					if (seqpos>pose.conformation().chain_end( 1 )){
-						smap->push_back( seqpos-pose.conformation().chain_end( 1 ) ); //if position is in chain 2 then it should have a seqeunce profile, the mapping should look like this: 0|0|0|1|2|3|
-																						// So the first positions ('0') do not have a seqeuence constraint
-					}
-					else{
-						smap->push_back( 0 );
-					}
-				}
-				smap->show();//uncomment to see mapping in tracer
+		TR<<"Up-weighting sequence constraints "<<std::endl;
+
+		//If pose has more than one chain the sequence profile mapping needs to be modified accordingly
+		core::id::SequenceMappingOP smap = new core::id::SequenceMapping();
+		for( core::Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
+			if ((seqpos>=pose.conformation().chain_begin( chain_num_ )) and (seqpos<=pose.conformation().chain_end( chain_num_ ))) {
+				smap->push_back( seqpos-pose.conformation().chain_begin( chain_num_ )+1 );
+				//if position is in chain >1 then it should have a sequence profile, the mapping should look like this: 0|0|0|1|2|3|																// So the first positions ('0') do not have a seqeuence constraint
 			}
 			else{
-			//	TR<<"Binder is chain 1, setting smap to null"<<std::endl;
-				smap=NULL;
+				smap->push_back( 0 );
 			}
-
-			utility::vector1< core::Size > const non_upweighted_residues( find_residues_on_chain1_inside_interface( pose ,chain_num_) );
-			for( core::Size seqpos = pose.conformation().chain_begin( chain_num_ ); seqpos <= pose.conformation().chain_end( chain_num_ ); ++seqpos ){
-				using namespace core::scoring::constraints;
-
-				SequenceProfileConstraintOP spc( new SequenceProfileConstraint( pose, seqpos, seqprof ,smap) );
-				TR<<"sepos="<<spc->seqpos()<<std::endl;
-				if( std::find( non_upweighted_residues.begin(), non_upweighted_residues.end(), seqpos ) == non_upweighted_residues.end() ){//seqpos not in interface so upweight
-					spc->weight( profile_weight_away_from_interface());
-				}
-				TR<<"Now adding constraint to aa: "<<seqpos<<pose.aa(seqpos)<<std::endl;
-				//TR<<"The sequence profile row for that residue is: "<<seqprof->prof_row(seqpos-)<<std::endl;
-				pose.add_constraint( spc );
-				cst_num++;
-				//TR<<"cst_num: "<<cst_num<<std::endl;
-				TR<<"Current constraints size: "<<pose.constraint_set()->get_all_constraints().size()<<std::endl;
-			}
-			TR<<"Added a total of "<<cst_num<<" sequence constraints."<<std::endl;
-			TR<<"Now the pose has a total of "<<pose.constraint_set()->get_all_constraints().size()<<" constraints"<<std::endl;
-
-			/*ConstraintCOPs constraints( pose.constraint_set()->get_all_constraints() );
-			for ( int i=1;i<=constraints.size();i++ ) {
-				TR<< "For Debugging, Comment out, Constrained residues are: "<<std::endl;
-				utility::vector1< core::Size > res =constraints[i]->residues();
-				for ( int j=1;j<=res.size();j++ ) {
-					TR<<res[j]<<std::endl;
-				}
-			}
-*/
-
-
 		}
+		//smap->show();//uncomment to see mapping in tracer
 
+
+		utility::vector1< core::Size > const non_upweighted_residues( find_residues_on_chain1_inside_interface( pose ,chain_num_) );
+		for( core::Size seqpos = pose.conformation().chain_begin( chain_num_ ); seqpos <= pose.conformation().chain_end( chain_num_ ); ++seqpos ){
+			using namespace core::scoring::constraints;
+
+			SequenceProfileConstraintOP spc( new SequenceProfileConstraint( pose, seqpos, seqprof ,smap) );
+			TR<<"sepos="<<spc->seqpos()<<std::endl;
+			if( std::find( non_upweighted_residues.begin(), non_upweighted_residues.end(), seqpos ) == non_upweighted_residues.end() ){//seqpos not in interface so upweight
+				spc->weight( profile_weight_away_from_interface());
+			}
+			TR<<"Now adding constraint to aa: "<<seqpos<<pose.aa(seqpos)<<std::endl;
+			//TR<<"The sequence profile row for that residue is: "<<seqprof->prof_row(seqpos-)<<std::endl;
+			pose.add_constraint( spc );
+			cst_num++;
+			//TR<<"cst_num: "<<cst_num<<std::endl;
+			TR<<"Current constraints size: "<<pose.constraint_set()->get_all_constraints().size()<<std::endl;
+		}
+		TR<<"Added a total of "<<cst_num<<" sequence constraints."<<std::endl;
+		TR<<"Now the pose has a total of "<<pose.constraint_set()->get_all_constraints().size()<<" constraints"<<std::endl;
 
 
 		/// just checking that the scorefxn has upweighted res_type_constraint
