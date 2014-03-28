@@ -1,0 +1,59 @@
+#### LayerDesign integration test ####
+#Note that this script assumes that there is only one protein chain and one ligand. If not, adjust the various jump parameters accordingly
+
+<ROSETTASCRIPTS>
+        <TASKOPERATIONS>
+                <InitializeFromCommandline name=init/>
+		<DetectProteinLigandInterface name=LigInterface cut1=6 cut2=8 cut3=10 cut4=12 design=1 /> Add resfile, if necessary
+		<DetectProteinLigandInterface name=ligpackonly cut1=0.0 cut2=0.0 cut3=10 cut4=12 repack_only=1 design=0 />
+
+	# (Note that more complicated possibilities are possible)
+                <LimitAromaChi2 name=limchi2/>
+		<SetCatalyticResPackBehavior name=fixcatres fix_catalytic_aa=1 /> Don't allow catalytic residues to mutate
+		<RestrictToRepacking name=repack_only /> Don't design when repacking.
+
+        ### layers for full design
+                <LayerDesign name=layer_ligcore layer=other make_pymol_script=1 >
+                  <DetectProteinLigandInterface name=LigIntLayer cut1=6 cut2=8 cut3=10 cut4=12 design=1 >
+                    <all copy_layer=boundary/>
+                  </DetectProteinLigandInterface>
+                  <SelectBySASA name=AllCore state=bound core=1 mode=mc>
+                    <all copy_layer=core/>
+                  </SelectBySASA>
+                </LayerDesign>
+
+        </TASKOPERATIONS>
+        <SCOREFXNS>
+	        <enzdes weights=enzdes />
+	        <softlig weights=ligand_soft_rep />
+                <talaris weights=talaris2013_cst />
+                <softall weights=soft_rep_design.wts />
+        </SCOREFXNS>
+        <FILTERS>
+                <EnzScore name=allcst score_type=cstE scorefxn=enzdes whole_pose=1 energy_cutoff=10/>
+                <ScoreType name=resid scorefxn=enzdes score_type=res_type_constraint threshold=0 confidence=0/>
+                <ScoreType name=total_score scorefxn=enzdes score_type=total_score threshold=0 confidence=0/> Also will contain res_type_constraint values
+
+        </FILTERS>
+        <MOVERS>
+	        <AddOrRemoveMatchCsts name=addcst cst_instruction=add_new />
+                <AddOrRemoveMatchCsts name=cst_readd cst_instruction="add_pregenerated"/>
+	        <AddOrRemoveMatchCsts name=cst_remove cst_instruction="remove" keep_covalent=1/>
+		<ScoreMover name=score scorefxn=enzdes verbose=0 />
+
+		<PackRotamersMover name=repackinterface task_operations=init,LigInterface,fixcatres,repack_only />
+                <PackRotamersMover name=designlayer scorefxn=talaris task_operations=init,fixcatres,layer_ligcore,repack_only />
+
+		#Sidechain and rigid body minimization only - adjust as appropriate if you want more flexibility
+                <TaskAwareMinMover name=minlig bb=0 chi=1 jump=1 scorefxn=enzdes task_operations=LigInterface/>
+                <MinMover name=minall bb=1 chi=1 jump=1 scorefxn=talaris />
+
+	</MOVERS>
+        <APPLY_TO_POSE>
+        </APPLY_TO_POSE>
+        <PROTOCOLS>
+	  <Add mover_name=addcst/>
+	  <Add mover=designlayer/>
+          <Add mover_name=score/>
+        </PROTOCOLS>
+</ROSETTASCRIPTS>

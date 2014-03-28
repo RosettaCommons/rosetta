@@ -1,0 +1,25 @@
+-parser:protocol inputs/intest1.xml
+-extra_res_fa inputs/diket.fa.params
+-enzdes:cstfile inputs/diket_lys.cst
+-s inputs/pl23_lys98_ab1_run1_116_ES__0001.pdb
+-nstruct 1
+-mute all
+-unmute protocols.flxbb.LayerDesignOperation
+##### these are general flags
+-run:preserve_header
+-score:weights enzdes
+-enzdes::minimize_ligand_torsions 5.0
+-use_input_sc
+-correct
+-corrections::score:no_his_his_pairE
+-score::hbond_params correct_params
+-lj_hbond_hdis 1.75
+-lj_hbond_OH_donor_dis 2.6
+# -dun08 false
+-use_incorrect_hbond_deriv false
+-linmem_ig 10
+-nblist_autoupdate true
+-enzdes::lig_packer_weight 1.8
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
+-docking::ligand::old_estat true
+
