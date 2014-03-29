@@ -1526,7 +1526,7 @@ public:
 			Real self_ca, self_cb;
 			get_self_interactions( r_rho_ca, r_rho_cb , self_ca, self_cb );
 
-			// FPD DEBUG!!! UNCOMMENT FOR PRODUCTION
+			// for exact debugging always run
 			if (!option[ crystdock::debug_exact ] ) {
 				if (self_ca >= maxclash) {
 					TR << "   self clashing!" << std::endl;
@@ -1605,8 +1605,14 @@ public:
 						y  += ex_collision_map(sx+1,sy+1,sz+1);
 						Ncc++;
 					}
-					Real correl = (Ncc*xy - x*y) / std::sqrt( (Ncc*x2-x*x) * (Ncc*y2-y*y) );
-					TR << "correl = " << correl << std::endl;
+					Real correl = 1, slope = 0;
+					Real sx = (Ncc*x2-x*x);
+					Real sy = (Ncc*y2-y*y);
+					if (sx*sy > 0) {
+						correl = (Ncc*xy - x*y) / std::sqrt( (sx) * (sy) );
+						slope = correl * sx/sy;
+					}
+					TR << "correl = " << correl << "   scale = " << slope << std::endl;
 
 					collision_map = ex_collision_map;
 				}
@@ -1643,37 +1649,6 @@ public:
 			base_name = out_name.base();
 			std::string outname = base_name+"_"+right_string_of( i, 8, '0' )+".pdb";
 			dump_transformed_pdb( pose, ih, urs, outname );
-
-			// debug: dump exact maps
-			if ((option[ crystdock::debug ] || option[ crystdock::debug_exact ]) && i==nhits) {
-				numeric::xyzVector<Real> xyz((Real)ih.x,(Real)ih.y,(Real)ih.z);
-				xyz = c2i_*xyz;
-				int sx = pos_mod( (int)xyz[0] ,  grid_[0] );
-				int sy = pos_mod( (int)xyz[1] ,  grid_[1] );
-				int sz = pos_mod( (int)xyz[2] ,  grid_[2] );
-
-				FArray3D<Real> shift_rho_ca, s_shift_rho_ca;
-				shift_rho_ca.dimension( grid_[0], grid_[1],grid_[2] );
-
-				TR << "dumping shift(" << sx << "," << sy << "," << sz << ")" << std::endl;
-
-				for (int z=1; z<=rho_ca.u3(); ++z)
-				for (int y=1; y<=rho_ca.u2(); ++y)
-				for (int x=1; x<=rho_ca.u1(); ++x) {
-					int cx = pos_mod( x-sx-1 , grid_[0] ) + 1;
-					int cy = pos_mod( y-sy-1 , grid_[1] ) + 1;
-					int cz = pos_mod( z-sz-1 , grid_[2] ) + 1;
-					shift_rho_ca(x,y,z) = r_rho_ca(cx,cy,cz);
-				}
-				writeMRC( shift_rho_ca, "shift_rho_ca.mrc" );
-
-				for (int s=sym_lb; s<=(int)sym_ub; ++s) {   // s==1 is always identity
-					transform_map( shift_rho_ca, rts[s].get_rotation(), rts[s].get_translation(), s_shift_rho_ca);
-					std::ostringstream oss;
-					oss << "s_shift_rho_ca_" << s << ".mrc";
-					writeMRC( s_shift_rho_ca, oss.str() );
-				}
-			}
 		}
 	}
 };
