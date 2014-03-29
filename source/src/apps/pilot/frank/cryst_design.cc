@@ -95,6 +95,7 @@ OPT_1GRP_KEY(Real, crystdock, trans_step)
 OPT_1GRP_KEY(Real, crystdock, rot_step)
 OPT_1GRP_KEY(Integer, crystdock, nmodels)
 OPT_1GRP_KEY(Integer, crystdock, rotnum)
+OPT_1GRP_KEY(Integer, crystdock, symnum)
 OPT_1GRP_KEY(Boolean, crystdock, debug)
 OPT_1GRP_KEY(Boolean, crystdock, debug_exact)
 
@@ -132,9 +133,9 @@ core::Real interp_linear(
 	numeric::xyzVector<int> srcgrid(data.u1(),data.u2(),data.u3());
 
 	// 0->1-based indexing
-	pt000[0] = (int)(floor(idxX[0]+1e-6))+1;
-	pt000[1] = (int)(floor(idxX[1]+1e-6))+1;
-	pt000[2] = (int)(floor(idxX[2]+1e-6))+1;
+	pt000[0] = (int)(std::floor(idxX[0]+1e-6))+1;
+	pt000[1] = (int)(std::floor(idxX[1]+1e-6))+1;
+	pt000[2] = (int)(std::floor(idxX[2]+1e-6))+1;
 
 	// bound check
 	if (pt000[0] < -srcgrid[0]/2+1 || pt000[0] >= srcgrid[0]/2+1) return 0.0;
@@ -145,9 +146,9 @@ core::Real interp_linear(
 	if (pt000[2] <= 0 ) pt000[2] += srcgrid[2];
 
 	// interpolation coeffs
-	fpart[0] = idxX[0]-floor(idxX[0]); neg_fpart[0] = 1-fpart[0];
-	fpart[1] = idxX[1]-floor(idxX[1]); neg_fpart[1] = 1-fpart[1];
-	fpart[2] = idxX[2]-floor(idxX[2]); neg_fpart[2] = 1-fpart[2];
+	fpart[0] = idxX[0]-std::floor(idxX[0]); neg_fpart[0] = 1-fpart[0];
+	fpart[1] = idxX[1]-std::floor(idxX[1]); neg_fpart[1] = 1-fpart[1];
+	fpart[2] = idxX[2]-std::floor(idxX[2]); neg_fpart[2] = 1-fpart[2];
 
 	S retval = (S)0.0;
 
@@ -234,6 +235,38 @@ struct Quat {
 	Quat( Real x_in,Real y_in,Real z_in,Real w_in) {
 		x_=x_in; y_=y_in; z_=z_in; w_=w_in;
 	}
+
+	// construct from a rotation matrix
+	// should be stable
+	Quat( numeric::xyzMatrix<Real> const& R) {
+		Real S;
+		if (R.xx() + R.yy() + R.zz() > 0) {
+			S = 0.5 / sqrt(R.xx() + R.yy() + R.zz());
+			w_ = 0.25 / S;
+			x_ = ( R.zy() - R.yz() ) * S;
+			y_ = ( R.xz() - R.zx() ) * S;
+			z_ = ( R.yx() - R.xy() ) * S;
+		} else if ( R.xx() > R.yy() && R.xx() > R.zz() )  {
+			S  = sqrt( 1.0 + R.xx() - R.yy() - R.zz() ) * 2;
+			x_ = 0.25 * S;
+			y_ = (R.yx() + R.xy() ) / S;
+			z_ = (R.zx() + R.xz() ) / S;
+			w_ = (R.zy() - R.yz() ) / S;
+		} else if ( R.yy() > R.zz() ) {
+			S  = sqrt( 1.0 - R.xx() + R.yy() - R.zz() ) * 2;
+			x_ = (R.yx() + R.xy() ) / S;
+			y_ = 0.25 * S;
+			z_ = (R.zy() + R.yz() ) / S;
+			w_ = (R.xz() - R.zx() ) / S;
+		} else {
+			S  = sqrt( 1.0 - R.xx() - R.yy() + R.zz() ) * 2;
+			x_ = (R.xz() + R.zx() ) / S;
+			y_ = (R.zy() + R.yz() ) / S;
+			z_ = 0.25 * S;
+			w_ = (R.yx() - R.xy() ) / S;
+		}
+	}
+
 	numeric::xyzMatrix<Real> asR() const {
 		if (1-w_*w_ < 1e-6)
 			return numeric::xyzMatrix<core::Real>::rows(1,0,0, 0,1,0, 0,0,1);
@@ -241,7 +274,7 @@ struct Quat {
 		Real xx = x_*x_, xy = x_*y_, xz = x_*z_, xw = x_*w_;
 		Real yy = y_*y_, yz = y_*z_, yw = y_*w_;
 		Real zz = z_*z_, zw = z_*w_;
-		Real ww = w_*w_;
+		//Real ww = w_*w_;
 
 		return numeric::xyzMatrix<core::Real>::rows(
 			1 - 2 * ( yy+zz ) ,     2 * ( xy-zw ) ,     2 * ( xz+yw ) ,
@@ -261,7 +294,11 @@ public:
 	nrots() const { return rotlist_.size(); }
 
 	void get(Size ii, numeric::xyzMatrix<Real> &R) const {
-		R = rotlist_[ii].asR();
+		if (ii==0) {
+			R = numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1);
+		} else {
+			R = rotlist_[ii].asR();
+		}
 	}
 
 	void
@@ -519,7 +556,8 @@ enum SpacegroupSetting {
 	ORTHORHOMBIC,
 	TETRAGONAL,
 	HEXAGONAL,  // includes trigonal
-	CUBIC
+	CUBIC,
+	UNDEFINED
 };
 
 struct CheshireCell {
@@ -540,8 +578,17 @@ private:
 	numeric::xyzMatrix<Real> f2c_, c2f_;
 	Real a_, b_, c_, alpha_, beta_, gamma_, V_;
 public:
+	Spacegroup() {
+		a_ = b_ = c_ = alpha_ = beta_ = gamma_ = V_ = 0;
+		setting_ = UNDEFINED;
+	}
+
 	Spacegroup(std::string name_in) {
-		name_ = name_in;
+		init( name_in );
+	}
+
+	void init( std::string name_in ) {
+ 		name_ = name_in;
 
 		// setting
 		if ( name_ == "P1" )
@@ -622,7 +669,7 @@ public:
 
 		// transformation matrices
 		core::Real ca = cos(DEG2RAD*alpha_), cb = cos(DEG2RAD*beta_), cg = cos(DEG2RAD*gamma_);
-		core::Real sa = sin(DEG2RAD*alpha_), sb = sin(DEG2RAD*beta_), sg = sin(DEG2RAD*gamma_);
+		core::Real sb = sin(DEG2RAD*beta_), sg = sin(DEG2RAD*gamma_);
 		core::Real f33 = (cb*cg - ca)/(sb*sg);
 		f2c_ = numeric::xyzMatrix<core::Real>::rows(
 			a_  , b_ * cg , c_ * cb,
@@ -634,6 +681,7 @@ public:
 
 		// report
 		if (a_!=a_in || b_!=b_in || c_!=c_in || alpha_!=alpha_in || beta_!=beta_in || gamma_!=gamma_in) {
+			// might want to die on this instead
 			TR << "Overriding input crystal parameters with [ "
 			          << a_ << "," << b_ << "," << c_ << " , " << alpha_ << ","  << beta_ << ","  << gamma_ << " ]" << std::endl;
 		}
@@ -647,11 +695,11 @@ public:
 
 	// TO DO get this working for all settings
 	Real get_interface_score(InterfaceInfo iinfo) {
-		/*Real r5 = */iinfo.pop().cb_overlap;
-		/*Real r4 = */iinfo.pop().cb_overlap;
+		if (iinfo.size() < 3) return 0;
+
+		iinfo.pop();
+		iinfo.pop();
 		Real r3 = iinfo.pop().cb_overlap;
-		/*Real r2 = */iinfo.pop().cb_overlap;
-		/*Real r1 = */iinfo.pop().cb_overlap;
 
 		return 2*r3;
 	}
@@ -669,6 +717,8 @@ private:
 
 	numeric::xyzMatrix<Real> i2c_, c2i_;
 
+	Spacegroup sg_;
+
 public:
 	CrystDock() {
 		// to do: make these options
@@ -684,7 +734,7 @@ public:
 
 	// write density grids in MRC --  debugging only for now
 	void
-	writeMRC(FArray3D<Real> density, Spacegroup const &sg, std::string mapfilename, bool is_oversampled=false) {
+	writeMRC(FArray3D<Real> density, std::string mapfilename, bool is_oversampled=false) {
 		const int CCP4HDSIZE = 1024;  // size of CCP4/MRC header
 		std::fstream outx( (mapfilename).c_str() , std::ios::binary | std::ios::out );
 
@@ -713,7 +763,7 @@ public:
 		outx.write(reinterpret_cast <char*>(&grid[0]), sizeof(int)*3);
 
 		// cell params
-		Real Aeff=sg.A(), Beff=sg.B(), Ceff=sg.C();
+		Real Aeff=sg_.A(), Beff=sg_.B(), Ceff=sg_.C();
 		if (is_oversampled) {
 			Aeff *= ((Real)oversamplegrid_[0]) / ((Real)grid_[0]);
 			Beff *= ((Real)oversamplegrid_[1]) / ((Real)grid_[1]);
@@ -721,7 +771,7 @@ public:
 		}
 
 		float cellDimensions[3] = {Aeff,Beff,Ceff};
-		float cellAngles[3] = {sg.alpha(),sg.beta(),sg.gamma()};
+		float cellAngles[3] = {sg_.alpha(),sg_.beta(),sg_.gamma()};
 		outx.write(reinterpret_cast <char*>(&cellDimensions), sizeof(float)*3);
 		outx.write(reinterpret_cast <char*>(&cellAngles), sizeof(float)*3);
 
@@ -775,23 +825,23 @@ public:
 
 	// build occupancy and interaction masks from pose
 	// since we will be sampling rotations from this map, we sample over a larger volume than the unit cell
-	void setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &rho_cb, Spacegroup const &sg, Real trans_step) {
+	void setup_maps( Pose & pose, FArray3D<Real> &rho_ca, FArray3D<Real> &rho_cb, Real trans_step) {
 		Real ATOM_MASK_PADDING = 2.0;
 		Real UNIT_CELL_PADDING = 4.0;  // IN GRID POINTS!
 
-		Size minmult = sg.minmult();
+		Size minmult = sg_.minmult();
 
 		// find true grid
-		grid_[0] = minmult*(Size)std::floor(sg.A()/(minmult*trans_step) + 0.5);
-		grid_[1] = minmult*(Size)std::floor(sg.B()/(minmult*trans_step) + 0.5);
-		grid_[2] = minmult*(Size)std::floor(sg.C()/(minmult*trans_step) + 0.5);
+		grid_[0] = minmult*(Size)std::floor(sg_.A()/(minmult*trans_step) + 0.5);
+		grid_[1] = minmult*(Size)std::floor(sg_.B()/(minmult*trans_step) + 0.5);
+		grid_[2] = minmult*(Size)std::floor(sg_.C()/(minmult*trans_step) + 0.5);
 
 		numeric::xyzMatrix<Real> i2f, f2i;
 		f2i = numeric::xyzMatrix<Real>::rows( (Real)grid_[0],0,0,  0,(Real)grid_[1],0,  0,0,(Real)grid_[2] );
 		i2f = numeric::xyzMatrix<Real>::rows( 1.0/((Real)grid_[0]),0,0,  0,1.0/((Real)grid_[1]),0,  0,0,1.0/((Real)grid_[2]) );
 
-		i2c_ = sg.f2c()*i2f;
-		c2i_ = f2i*sg.c2f();
+		i2c_ = sg_.f2c()*i2f;
+		c2i_ = f2i*sg_.c2f();
 
 		// find oversampled grid
 		oversamplegrid_ = numeric::xyzVector<int>(0,0,0);
@@ -895,7 +945,7 @@ public:
 	// trilinear interpolation of map subject to real-space rotation
 	void resample_maps(
 			FArray3D<Real> const &rho_ca, FArray3D<Real> const &rho_cb,
-			numeric::xyzMatrix<Real> R, Spacegroup const &/*sg*/,
+			numeric::xyzMatrix<Real> R,
 			FArray3D<Real> &r_rho_ca, FArray3D<Real> &r_rho_cb ) {
 		r_rho_ca.dimension( grid_[0], grid_[1], grid_[2] ); r_rho_ca=0;
 		r_rho_cb.dimension( grid_[0], grid_[1], grid_[2] ); r_rho_cb=0;
@@ -926,8 +976,6 @@ public:
 				r_rho_ca(x,y,z) += rho_ca_rx;
 				r_rho_cb(x,y,z) += rho_cb_rx;
 			}
-			//std::ostringstream oss; oss << "shift"<<a<<"_"<<b<<"_"<<c<<".mrc";
-			//writeMRC( r_rho_ca, sg, oss.str(), false );
 
 		}
 	}
@@ -978,11 +1026,11 @@ public:
 		}
 	}
 
-	void add_crystinfo_to_pose( Pose & pose, Spacegroup const &sg ) {
+	void add_crystinfo_to_pose( Pose & pose ) {
 		CrystInfo ci;
 
-		ci.A(sg.A()); ci.B(sg.B()); ci.C(sg.C()); ci.alpha(sg.alpha()); ci.beta(sg.beta()); ci.gamma(sg.gamma());
-		ci.spacegroup(sg.pdbname());
+		ci.A(sg_.A()); ci.B(sg_.B()); ci.C(sg_.C()); ci.alpha(sg_.alpha()); ci.beta(sg_.beta()); ci.gamma(sg_.gamma());
+		ci.spacegroup(sg_.pdbname());
 
 		pose.pdb_info()->set_crystinfo(ci);
 	}
@@ -1013,7 +1061,7 @@ public:
 		}
 	}
 
-	// same as previous function, but not transformation and applies an offset of 1 (necessary for symm xform)
+	// same as previous function, but no T and applies an offset of 1 (necessary for symm xform)
 	void transform_map_offset1(
 			FArray3D<Real> const &rho,
 			numeric::xyzMatrix<Real> S,
@@ -1027,6 +1075,44 @@ public:
 			int ry = 1 + pos_mod( (int)std::floor( (S.yx()*cx) + (S.yy()*cy) + (S.yz()*cz) ) , rho.u2());
 			int rz = 1 + pos_mod( (int)std::floor( (S.zx()*cx) + (S.zy()*cy) + (S.zz()*cz) ) , rho.u3());
 			Real rho_sx = rho(rx,ry,rz);
+			Srho(x,y,z) = rho_sx;
+		}
+	}
+
+
+	// same as previous function, applies an offset of 0
+	void transform_map_offset0(
+			FArray3D<Real> const &rho,
+			numeric::xyzMatrix<Real> S,
+			FArray3D<Real> &Srho) {
+		Srho.dimension( rho.u1(), rho.u2(), rho.u3() );
+		for (int z=1; z<=rho.u3(); ++z)
+		for (int y=1; y<=rho.u2(); ++y)
+		for (int x=1; x<=rho.u1(); ++x) {
+			int cx=x-1,cy=y-1,cz=z-1;
+			int rx = 1 + pos_mod( (int)std::floor( (S.xx()*cx) + (S.xy()*cy) + (S.xz()*cz) ) , rho.u1());
+			int ry = 1 + pos_mod( (int)std::floor( (S.yx()*cx) + (S.yy()*cy) + (S.yz()*cz) ) , rho.u2());
+			int rz = 1 + pos_mod( (int)std::floor( (S.zx()*cx) + (S.zy()*cy) + (S.zz()*cz) ) , rho.u3());
+			Real rho_sx = rho(rx,ry,rz);
+			Srho(x,y,z) = rho_sx;
+		}
+	}
+
+	// same as previous function, applies an offset of 0
+	void transform_map_offset0_subsample(
+			FArray3D<Real> const &rho,
+			numeric::xyzMatrix<Real> S,
+			FArray3D<Real> &Srho) {
+		Srho.dimension( rho.u1(), rho.u2(), rho.u3() );
+		for (int z=1; z<=rho.u3(); ++z)
+		for (int y=1; y<=rho.u2(); ++y)
+		for (int x=1; x<=rho.u1(); ++x) {
+			int cx=x-1,cy=y-1,cz=z-1;
+			numeric::xyzVector<Real> rx = S*numeric::xyzVector<Real>(cx,cy,cz);
+			rx[0] = min_mod( rx[0], (Real)grid_[0]);
+			rx[1] = min_mod( rx[1], (Real)grid_[1]);
+			rx[2] = min_mod( rx[2], (Real)grid_[2]);
+			Real rho_sx = interp_linear( rho, rx );
 			Srho(x,y,z) = rho_sx;
 		}
 	}
@@ -1085,7 +1171,7 @@ public:
 		}
 	}
 
-	// wrapper does a series of 2d iffts + SUMS IN THE THIRD DIMENSION
+	// wrapper does a series of 2d iffts
 	void
 	ifft2dslice( FArray3D< std::complex<Real> > const &Frho, FArray3D<Real> &rho, int axisSlice ) {
 		FArray2D<Real> rhoSlice;
@@ -1104,8 +1190,7 @@ public:
 				numeric::fourier::ifft2(FrhoSlice, rhoSlice);
 				for (int jj=1; jj<=yi; jj++)
 				for (int kk=1; kk<=zi; kk++) {
-					for (int xx=1; xx<=xi; xx++)  //SUM
-						rho(xx,jj,kk) += rhoSlice(jj,kk);
+					rho(ii,jj,kk) = rhoSlice(jj,kk);
 				}
 			}
 		} else if (axisSlice == 2) {
@@ -1118,12 +1203,11 @@ public:
 				numeric::fourier::ifft2(FrhoSlice, rhoSlice);
 				for (int ii=1; ii<=xi; ii++)
 				for (int kk=1; kk<=zi; kk++) {
-					for (int yy=1; yy<=yi; yy++)  //SUM
-						rho(ii,yy,kk) += rhoSlice(ii,kk);
+					rho(ii,jj,kk) = rhoSlice(ii,kk);
 				}
 			}
 		} else if (axisSlice == 3) {
-			FrhoSlice.dimension(xi,zi);
+			FrhoSlice.dimension(xi,yi);
 			for (int kk=1; kk<=zi; kk++) {
 				for (int ii=1; ii<=xi; ii++)
 				for (int jj=1; jj<=yi; jj++) {
@@ -1132,8 +1216,7 @@ public:
 				numeric::fourier::ifft2(FrhoSlice, rhoSlice);
 				for (int ii=1; ii<=xi; ii++)
 				for (int jj=1; jj<=yi; jj++) {
-					for (int zz=1; zz<=zi; zz++)  //SUM
-						rho(ii,jj,zz) += rhoSlice(ii,jj);
+					rho(ii,jj,kk) = rhoSlice(ii,jj);
 				}
 			}
 		} else {
@@ -1141,61 +1224,210 @@ public:
 		}
 	}
 
+	void
+	project_along_axis( FArray3D<Real> &rho, numeric::xyzVector<Real> axis ) {
+		FArray3D<Real> rho_input = rho;
+
+		Real scalefact = std::max(std::fabs(axis[0]), std::max(std::fabs(axis[1]),std::fabs(axis[2])));
+		axis /= scalefact;
+
+		int ngrid = (std::fabs(axis[0]>0.999))? grid_[0] : ((std::fabs(axis[1])>0.999)? grid_[1] : grid_[2]);
+
+		// for pp = 1:D-1; mfft = mfft+circshift( mfft_orig, [pp*slide(1,1),pp*sl ide(2,2),pp*slide(3,3)]);
+ 		for (int P=1; P<ngrid; ++P) {  // one less than full cycle
+ 			for (int z=1; z<=grid_[2]; ++z)
+ 			for (int y=1; y<=grid_[1]; ++y)
+ 			for (int x=1; x<=grid_[0]; ++x) {
+ 				int xt = pos_mod((int)floor( x+P*axis[0]-0.5 ), grid_[0]) + 1;
+ 				int yt = pos_mod((int)floor( y+P*axis[1]-0.5 ), grid_[1]) + 1;
+ 				int zt = pos_mod((int)floor( z+P*axis[2]-0.5 ), grid_[2]) + 1;
+ 				rho(x,y,z) += rho_input(xt,yt,zt);
+ 			}
+ 		}
+	}
+
 	// the main convolution operation used for both CA and CB maps
-	// there are actually three possible cases, depending on input transformation
-	//     a) symm axis not parallel to any xtal axis (cubic SGs): 3D FFT
-	//     b) symm axis parallel to some xtal axis: 2D FFTs of each slice, sum after convolution
-	//     c) translation only: sum (f dot g)
 	void
 	do_convolution( FArray3D<Real> const &rho, FArray3D<Real> const &Srho, numeric::xyzMatrix<Real> S, FArray3D<Real> &conv_out) {
 		FArray3D<Real> working_s, working_trans, working_strans;
 		FArray3D< std::complex<Real> > Fworking_trans, Fworking_strans;
 		Size Npoints = rho.u1()*rho.u2()*rho.u3();
 
-		// find out what case we are...
-		bool SLICE_X = (fabs(S.xx())<1e-6 && fabs(S.xy())<1e-6 && fabs(S.xz())<1e-6);
-		bool SLICE_Y = (fabs(S.yx())<1e-6 && fabs(S.yy())<1e-6 && fabs(S.yz())<1e-6);
-		bool SLICE_Z = (fabs(S.zx())<1e-6 && fabs(S.zy())<1e-6 && fabs(S.zz())<1e-6);
-		bool SLICE_ALL = (SLICE_X && SLICE_Y && SLICE_Z);
-		bool SLICE_NONE = (!SLICE_X && !SLICE_Y && !SLICE_Z);
+		// find out what plane we are slicing along
+		Quat Sinv_Q(S);
 
-		if (SLICE_NONE) {  // case A
-			if (option[ crystdock::debug ]|| option[ crystdock::debug_exact ]) TR << "SLICE_NONE!\n";
-			transform_map_offset1( rho, S, working_trans);
-			transform_map_offset1( Srho, S, working_strans);
+		// many different possibilities explain the convoluted logic below
+		//    - this may return (1,0,0), (sqrt(1/2),sqrt(1/2),0) or (1/2,1/2,1/2) for X, XY, and XYZ symm axes
+		//    - also in some spacegps( e.g. P3112[5] ) it may be (1,1/4,0) -- since it's not a rotation but a skew
+		//    - in others ( e.g. P6122[8] ) it may also be (1,1/4,0) but we need to pre-skew
+		//    - in these cases, we want to process as 'x' rotation with the skew handled in the projection
+		int slice_x = (Sinv_Q.x_>=0.5) ? 1 : ((Sinv_Q.x_<=-0.5) ? -1:0);
+		int slice_y = (Sinv_Q.y_>=0.5) ? 1 : ((Sinv_Q.y_<=-0.5) ? -1:0);
+		int slice_z = (Sinv_Q.z_>=0.5) ? 1 : ((Sinv_Q.z_<=-0.5) ? -1:0);
 
-			numeric::fourier::fft3(working_trans, Fworking_trans);
-			numeric::fourier::fft3(working_strans, Fworking_strans);
-			for (int i=0; i<(int)Npoints; ++i) Fworking_trans[i] *= std::conj(Fworking_strans[i]);
-			numeric::fourier::ifft3(Fworking_trans, conv_out);
-		} else if (SLICE_ALL) {
-			if (option[ crystdock::debug ]) TR << "SLICE_ALL!\n";
+		numeric::xyzVector<Real> rotaxis(
+			std::sqrt(std::fabs(Sinv_Q.x_)),
+			std::sqrt(std::fabs(Sinv_Q.y_)),
+			std::sqrt(std::fabs(Sinv_Q.z_)));
+		if (Sinv_Q.x_<0) rotaxis[0] *= -1;
+		if (Sinv_Q.y_<0) rotaxis[1] *= -1;
+		if (Sinv_Q.z_<0) rotaxis[2] *= -1;
+
+		// do we need to do fft convolution at all?
+		if (slice_x==0 && slice_y==0 && slice_z==0) {
+
+			// translation only, just take dot product
+			if (option[ crystdock::debug ]|| option[ crystdock::debug_exact ]) {
+				TR << "no slice"  << std::endl;
+				TR << "                : " << Sinv_Q.x_ << " " << Sinv_Q.y_ << " " << Sinv_Q.z_ << std::endl;
+			}
 			core::Real dotProd=0;
 			for (int i=0; i<(int)Npoints; ++i) dotProd += rho[i]*Srho[i];
 			conv_out.dimension( rho.u1(),rho.u2(),rho.u3() );
 			conv_out = dotProd;
 		} else {
-			if (option[ crystdock::debug ]|| option[ crystdock::debug_exact ]) TR << "SLICE_ONE! " << SLICE_X << " " << SLICE_Y << " " << SLICE_Z << "\n";
 
-			numeric::xyzMatrix<Real> Sadjusted = S;
-			if (SLICE_X) Sadjusted.xx() = 1;
-			if (SLICE_Y) Sadjusted.yy() = 1;
-			if (SLICE_Z) Sadjusted.zz() = 1;
-			transform_map_offset1( rho, Sadjusted, working_trans);
-			transform_map_offset1( Srho, Sadjusted, working_strans);
+			// do the fft convolution
 
-			Size axisSlice = SLICE_X? 1 : (SLICE_Y? 2:3);
-			fft2dslice( working_trans, Fworking_trans, axisSlice );
-			fft2dslice( working_strans, Fworking_strans, axisSlice );
+			// Rinv maps xyz->pij (our reindexed coordinates with p is perpendicular to the symmaxis)
+			// R maps pij->xyz
+			numeric::xyzMatrix<Real> Rinv;
+			int slice_axis = 0;
+			bool R_is_identity=false;
+			if (slice_x != 0) {
+				slice_axis = 1;
+				Rinv.row_x( Vector( slice_x, slice_y, slice_z ) );
+				R_is_identity = (slice_y==0 && slice_z==0);
+			} else {
+				Rinv.row_x( Vector( 1, 0, 0 ) );
+			}
+
+			if (slice_x == 0 && slice_y != 0) {
+				slice_axis = 2;
+				Rinv.row_y( Vector( slice_x, slice_y, slice_z ) );
+				R_is_identity = (slice_z==0);
+			} else {
+				Rinv.row_y( Vector( 0, 1, 0 ) );
+			}
+			if (slice_x == 0 && slice_y == 0 && slice_z != 0) {
+				slice_axis = 3;
+				Rinv.row_z( Vector( slice_x, slice_y, slice_z ) );
+				R_is_identity = true;
+			} else {
+				Rinv.row_z( Vector( 0, 0, 1 ) );
+			}
+
+			// oddball case (all rotations of it too)
+			if (S == numeric::xyzMatrix<Real>::rows(1,-1,0,   0,-1,0,   0,0,-1) ) {
+				Rinv = numeric::xyzMatrix<Real>::rows( 2,-1,0,  1,0,0,  0,0,1 );
+				R_is_identity = false;
+				rotaxis = Vector(1,0,0);
+			}
+			if (S == numeric::xyzMatrix<Real>::rows(-1,0,0, -1,1,0, 0,0,-1) ) {
+				Rinv = numeric::xyzMatrix<Real>::rows( 0,1,0, -1,2,0, 0,0,1 );
+				R_is_identity = false;
+				rotaxis = Vector(0,1,0);
+			}
+			if (S == numeric::xyzMatrix<Real>::rows(-1,0,0, 0,-1,0, 0,-1,1) ) {
+				Rinv = numeric::xyzMatrix<Real>::rows(1,0,0, 0,0,1, 0,-1,2);
+				R_is_identity = false;
+				rotaxis = Vector(0,0,1);
+			}
+			if (S == numeric::xyzMatrix<Real>::rows(1,0,-1, 0,-1,0, 0,0,-1) ) {
+				Rinv = numeric::xyzMatrix<Real>::rows( 2,0,-1, 0,1,0, 1,0,0 );
+				R_is_identity = false;
+				rotaxis = Vector(1,0,0);
+			}
+			if (S == numeric::xyzMatrix<Real>::rows(0,0,-1, -1,0,0, 0,1,-1) ) {
+				Rinv = numeric::xyzMatrix<Real>::rows( 0,1,0, 1,0,0, 0,2,-1 );
+				R_is_identity = false;
+				rotaxis = Vector(0,0,1);
+			}
+			if (S == numeric::xyzMatrix<Real>::rows(0,-1,0, -1,0,1, -1,0,0) ) {
+				Rinv = numeric::xyzMatrix<Real>::rows( 0,1,0, -1,0,2, 0,0,1 );
+				R_is_identity = false;
+				rotaxis = Vector(0,1,0);
+			}
+
+			numeric::xyzMatrix<Real> R = numeric::inverse(Rinv);
+
+			// Q is our symmetric transformation in our new coordinates
+			numeric::xyzMatrix<Real> Q = Rinv*S*R;
+
+			// Qstar is the FFT transformation
+			//   Q-I on diagonal elements not on the slice axis
+			//   partially apply the elements in the column of the slice axis (only applied to symm-sampled map)
+			//        to compensate for point group sliding as we move up the symm axis in resampled groups
+			numeric::xyzMatrix<Real> QstarF, QstarG;
+			if (slice_axis == 1) {
+				QstarF = numeric::xyzMatrix<Real>::rows( 1,0,0,   Q.yx(),Q.yy()-1,Q.yz(),   Q.zx(),Q.zy(),Q.zz()-1 );
+				QstarG = numeric::xyzMatrix<Real>::rows( 1,0,0,        0,Q.yy()-1,Q.yz(),        0,Q.zy(),Q.zz()-1 );
+			} else if (slice_axis == 2) {
+				QstarF = numeric::xyzMatrix<Real>::rows( Q.xx()-1,  Q.xy(),Q.xz(), 0,1,0, Q.zx(),  Q.zy(),Q.zz()-1 );
+				QstarG = numeric::xyzMatrix<Real>::rows( Q.xx()-1,       0,Q.xz(), 0,1,0, Q.zx(),       0,Q.zz()-1 );
+			} else if (slice_axis == 3) {
+				QstarF = numeric::xyzMatrix<Real>::rows( Q.xx()-1,Q.xy(),  Q.xz(), Q.yx(),Q.yy()-1,  Q.yz(), 0,0,1 );
+				QstarG = numeric::xyzMatrix<Real>::rows( Q.xx()-1,Q.xy(),       0, Q.yx(),Q.yy()-1,       0, 0,0,1 );
+			}
+
+			if (option[ crystdock::debug ]|| option[ crystdock::debug_exact ]) {
+				TR << "  slice on axis :    " << slice_axis << std::endl;
+				TR << "slice along axis: " << slice_x << " " << slice_y << " " << slice_z << std::endl;
+				TR << "                : " << Sinv_Q.x_ << " " << Sinv_Q.y_ << " " << Sinv_Q.z_ << std::endl;
+				TR << "                : " << rotaxis[0] << " " << rotaxis[1] << " " << rotaxis[2] << std::endl;
+				TR << "         S = [" << S.xx() << "," <<  S.xy() << "," <<  S.xz() << ";  "
+				                       << S.yx() << "," <<  S.yy() << "," <<  S.yz() << ";  "
+				                       << S.zx() << "," <<  S.zy() << "," <<  S.zz() << "]" << std::endl;
+				if (!R_is_identity) {
+					TR << "      Rinv = [" << Rinv.xx() << "," << Rinv.xy() << "," << Rinv.xz() << ";  "
+										   << Rinv.yx() << "," << Rinv.yy() << "," << Rinv.yz() << ";  "
+										   << Rinv.zx() << "," << Rinv.zy() << "," << Rinv.zz() << "]" << std::endl;
+					TR << "         R = [" << R.xx() << "," <<  R.xy() << "," <<  R.xz() << ";  "
+										   << R.yx() << "," <<  R.yy() << "," <<  R.yz() << ";  "
+										   << R.zx() << "," <<  R.zy() << "," <<  R.zz() << "]" << std::endl;
+				}
+				TR << "         Q = [" << Q.xx() << "," << Q.xy() << "," << Q.xz() << ";  "
+									   << Q.yx() << "," << Q.yy() << "," << Q.yz() << ";  "
+									   << Q.zx() << "," << Q.zy() << "," << Q.zz() << "]" << std::endl;
+				TR << "        Qf = [" << QstarF.xx() << "," <<  QstarF.xy() << "," <<  QstarF.xz() << ";  "
+									   << QstarF.yx() << "," <<  QstarF.yy() << "," <<  QstarF.yz() << ";  "
+									   << QstarF.zx() << "," <<  QstarF.zy() << "," <<  QstarF.zz() << "]" << std::endl;
+				TR << "        Qg = [" << QstarG.xx() << "," <<  QstarG.xy() << "," <<  QstarG.xz() << ";  "
+									   << QstarG.yx() << "," <<  QstarG.yy() << "," <<  QstarG.yz() << ";  "
+									   << QstarG.zx() << "," <<  QstarG.zy() << "," <<  QstarG.zz() << "]" << std::endl;
+			}
+
+			// transform
+			transform_map_offset0( rho, R, working_trans);
+			transform_map_offset0( Srho, R, working_strans);
+
+			// transform in each plane
+			// fft in each plane
+			FArray3D<Real> rworking_trans, rworking_strans;
+			transform_map_offset0( working_trans, QstarF, rworking_trans);
+			transform_map_offset0( working_strans, QstarG, rworking_strans);
+
+			fft2dslice( rworking_trans, Fworking_trans, slice_axis );
+			fft2dslice( rworking_strans, Fworking_strans, slice_axis );
 			for (int i=0; i<(int)Npoints; ++i) Fworking_trans[i] *= std::conj(Fworking_strans[i]);
-			ifft2dslice(Fworking_trans, conv_out, axisSlice);  // also sums
+
+
+			if (R_is_identity) {
+				ifft2dslice(Fworking_trans, conv_out, slice_axis);
+			} else {
+				ifft2dslice(Fworking_trans, working_trans, slice_axis);
+				transform_map_offset0( working_trans, Rinv, conv_out);
+			}
+			project_along_axis( conv_out, rotaxis );
+
+			//project_along_axis( conv_out, numeric::xyzVector<int>( slice_x, slice_y, slice_z ) );
 		}
 	}
 
 	void apply( Pose & pose) {
 		// set up crystal info
-		Spacegroup sg( option[ crystdock::spacegroup ] );
-		sg.set_parameters(
+		sg_.init( option[ crystdock::spacegroup ] );
+		sg_.set_parameters(
 			option[ crystdock::A ],option[ crystdock::B ],option[ crystdock::C ],
 			option[ crystdock::alpha ],option[ crystdock::beta ],option[ crystdock::gamma ] );
 
@@ -1204,12 +1436,13 @@ public:
 
 		// center pose at origin
 		center_pose_at_origin( pose );
-		add_crystinfo_to_pose( pose, sg );
+		add_crystinfo_to_pose( pose );
 
 		// lookup symmops
 		utility::vector1<core::kinematics::RT> rts;
 		CheshireCell cc;
-		sg.get_symmops( rts, cc );
+		sg_.get_symmops( rts, cc );
+
 		if (option[ crystdock::debug ] || option[ crystdock::debug_exact ] )
 			TR << "search [ " << cc.low[0] <<","<< cc.low[1] <<","<< cc.low[2] << " : "
 			          << cc.high[0] <<","<< cc.high[1] <<","<< cc.high[2] << "]" << std::endl;
@@ -1217,10 +1450,10 @@ public:
 		// compute rho_ca, rho_cb
 		FArray3D<Real> rho_ca, rho_cb, r_rho_ca, r_rho_cb;
 
-		setup_maps( pose, rho_ca, rho_cb, sg, option[ crystdock::trans_step ]);
+		setup_maps( pose, rho_ca, rho_cb, option[ crystdock::trans_step ]);
 
 		Size Npoints = grid_[0]*grid_[1]*grid_[2];
-		Real voxel_volume = sg.volume() / Npoints;
+		Real voxel_volume = sg_.volume() / Npoints;
 
 		numeric::xyzVector<Size> ccIndexLow(
 			(Size)std::floor(cc.low[0]*grid_[0]+1.5),
@@ -1236,8 +1469,8 @@ public:
 				ccIndexHigh[i]=ccIndexLow[i];
 
 		if (option[ crystdock::debug ]|| option[ crystdock::debug_exact ]) {
-			writeMRC( rho_ca, sg, "ca_mask.mrc", true );
-			writeMRC( rho_cb, sg, "cb_mask.mrc", true );
+			writeMRC( rho_ca, "ca_mask.mrc", true );
+			writeMRC( rho_cb, "cb_mask.mrc", true );
 		}
 
 		// space for intermediate results
@@ -1245,7 +1478,6 @@ public:
 
 		numeric::xyzMatrix<Real> identity = numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1);
 		numeric::xyzMatrix<Real> r_local;
-		Real alpha, beta, gamma;
 
 		// the collection of hits
 		InterfaceHitDatabase IDB;
@@ -1255,21 +1487,24 @@ public:
 		UniformRotationSampler urs( rotstep );
 		urs.remove_redundant( rts, i2c_, c2i_ );
 
-		Size lowerbound = 1, upperbound = urs.nrots();
+		Size rot_lb = 1, rot_ub = urs.nrots();
 		if ( option[ crystdock::rotnum ].user() ) {
-			lowerbound = upperbound = option[ crystdock::rotnum ]();
-			runtime_assert( upperbound<=urs.nrots() );
+			rot_lb = rot_ub = option[ crystdock::rotnum ]();
+		}
+		Size sym_lb = 2, sym_ub = rts.size();
+		if ( option[ crystdock::symnum ].user() ) {
+			sym_lb = sym_ub = option[ crystdock::symnum ]();
 		}
 
-		for (int ctr=(int)lowerbound; ctr<=(int)upperbound ; ++ctr) {
+		for (int ctr=(int)rot_lb; ctr<=(int)rot_ub ; ++ctr) {
 			TR << "Rotation " << ctr << " of " << urs.nrots() << std::endl;
 			urs.get(ctr, r_local);
 
-			resample_maps( rho_ca, rho_cb, r_local, sg, r_rho_ca, r_rho_cb );
+			resample_maps( rho_ca, rho_cb, r_local, r_rho_ca, r_rho_cb );
 
 			if (option[ crystdock::debug ]|| option[ crystdock::debug_exact ] ) {
 				std::ostringstream oss1; oss1 << "rot"<<ctr<<".mrc";
-				writeMRC( r_rho_ca, sg, oss1.str() );
+				writeMRC( r_rho_ca, oss1.str() );
 				std::ostringstream oss2; oss2 << "rot"<<ctr<<".pdb";
 				dump_transformed_pdb( pose, InterfaceHit( 0,0,0,0, ctr ), urs, oss2.str() );
 			}
@@ -1290,22 +1525,28 @@ public:
 			// get "P1" interactions
 			Real self_ca, self_cb;
 			get_self_interactions( r_rho_ca, r_rho_cb , self_ca, self_cb );
-			if (self_ca >= maxclash) {
-				TR << "   self clashing!" << std::endl;
-				writeMRC( r_rho_ca, sg, "clash.mrc" );
-				continue;   // no need to continue
+
+			// FPD DEBUG!!! UNCOMMENT FOR PRODUCTION
+			if (!option[ crystdock::debug_exact ] ) {
+				if (self_ca >= maxclash) {
+					TR << "   self clashing!" << std::endl;
+					writeMRC( r_rho_ca, "clash.mrc" );
+					continue;   // no need to continue
+				}
 			}
 
-			//UNCOMMENT to add self interfaces
-			//  before doing this get_interface_score needs to be smarter about what interfaces constitute a fully connected lattice
-			//	for (int i=0; i<Npoints; ++i) interface_map[i].add_interface( SingleInterface(s, conv_out[i]) );
-
 			// foreach symmop
-			for (int s=2; s<=(int)rts.size(); ++s) {   // s==1 is always identity
-				numeric::xyzMatrix<Real> resample = rts[s].get_rotation() - identity;
+			for (int s=sym_lb; s<=(int)sym_ub; ++s) {   // s==1 is always identity
+				numeric::xyzMatrix<Real> s_i = rts[s].get_rotation();
+				numeric::xyzMatrix<Real> s_inv = numeric::inverse(s_i);
+				numeric::xyzVector<Real> t_inv = s_inv*(-rts[s].get_translation());
 
-				transform_map( r_rho_ca, rts[s].get_rotation(), rts[s].get_translation(), working_s);
-				do_convolution( r_rho_ca, working_s, resample, conv_out);
+				//transform_map( r_rho_ca, rts[s].get_rotation(), rts[s].get_translation(), working_s);
+				transform_map( r_rho_ca, s_inv, t_inv, working_s);
+
+				// all the magic is in here
+				do_convolution( r_rho_ca, working_s, s_i, conv_out);
+
 				for (int z=(int)ccIndexLow[2]; z<=(int)ccIndexHigh[2]; ++z)
 				for (int y=(int)ccIndexLow[1]; y<=(int)ccIndexHigh[1]; ++y)
 				for (int x=(int)ccIndexLow[0]; x<=(int)ccIndexHigh[0]; ++x) {
@@ -1322,9 +1563,9 @@ public:
 						for (int z=1; z<=grid_[2]; ++z)
 						for (int y=1; y<=grid_[1]; ++y)
 						for (int x=1; x<=grid_[0]; ++x) {
-							int cx = pos_mod( x-sx-1 , rho_ca.u1() ) + 1;
-							int cy = pos_mod( y-sy-1 , rho_ca.u2() ) + 1;
-							int cz = pos_mod( z-sz-1 , rho_ca.u3() ) + 1;
+							int cx = pos_mod( x-sx-1 , grid_[0] ) + 1;
+							int cy = pos_mod( y-sy-1 , grid_[1] ) + 1;
+							int cz = pos_mod( z-sz-1 , grid_[2] ) + 1;
 							shift_rho_ca(x,y,z) = r_rho_ca(cx,cy,cz);
 						}
 						transform_map( shift_rho_ca, rts[s].get_rotation(), rts[s].get_translation(), s_shift_rho_ca);
@@ -1336,32 +1577,35 @@ public:
 
 
 				// do CB fft
-				transform_map( r_rho_cb, rts[s].get_rotation(), rts[s].get_translation(), working_s);
-				do_convolution( r_rho_cb, working_s, resample, conv_out);
+				transform_map( r_rho_cb, s_inv, t_inv, working_s);
+				do_convolution( r_rho_cb, working_s, s_i, conv_out);
 				for (int i=0; i<(int)Npoints; ++i) interface_map[i].add_interface( SingleInterface(s, conv_out[i]) );
 			}
 
 			if (option[ crystdock::debug ] || option[ crystdock::debug_exact ]) {
 				std::ostringstream oss; oss << "collisionmap_"<<ctr<<".mrc";
 				FArray3D<Real> collision_map_dump = collision_map;
-				for (int i=0; i<(int)Npoints; ++i) collision_map_dump[i] = maxclash-collision_map[i];
-				writeMRC( collision_map_dump, sg, oss.str() );
+				for (int i=0; i<(int)Npoints; ++i) collision_map_dump[i] = /*maxclash-*/collision_map[i];
+				writeMRC( collision_map_dump, oss.str() );
 
 				if( option[ crystdock::debug_exact ] ) {
 					std::ostringstream oss2; oss2 << "ex_collisionmap_"<<ctr<<".mrc";
-					for (int i=0; i<(int)Npoints; ++i) collision_map_dump[i] = maxclash-ex_collision_map[i];
-					writeMRC( collision_map_dump, sg, oss2.str() );
+					for (int i=0; i<(int)Npoints; ++i) collision_map_dump[i] = /*maxclash-*/ex_collision_map[i];
+					writeMRC( collision_map_dump, oss2.str() );
 
 					// get correl
-					Real x2=0,y2=0,xy=0,x=0,y=0;
-					for (int i=0; i<(int)Npoints; ++i) {
-						x2 += collision_map[i] * collision_map[i];
-						y2 += ex_collision_map[i] * ex_collision_map[i];
-						xy += collision_map[i] * ex_collision_map[i];
-						x  += collision_map[i];
-						y  += ex_collision_map[i];
+					Real x2=0,y2=0,xy=0,x=0,y=0, Ncc=0;
+					for (int sz=(int)ccIndexLow[2]-1; sz<=(int)ccIndexHigh[2]-1; ++sz)
+					for (int sy=(int)ccIndexLow[1]-1; sy<=(int)ccIndexHigh[1]-1; ++sy)
+					for (int sx=(int)ccIndexLow[0]-1; sx<=(int)ccIndexHigh[0]-1; ++sx) {
+						x2 += collision_map(sx+1,sy+1,sz+1) * collision_map(sx+1,sy+1,sz+1);
+						y2 += ex_collision_map(sx+1,sy+1,sz+1) * ex_collision_map(sx+1,sy+1,sz+1);
+						xy += collision_map(sx+1,sy+1,sz+1) * ex_collision_map(sx+1,sy+1,sz+1);
+						x  += collision_map(sx+1,sy+1,sz+1);
+						y  += ex_collision_map(sx+1,sy+1,sz+1);
+						Ncc++;
 					}
-					Real correl = (Npoints*xy - x*y) / std::sqrt( (Npoints*x2-x*x) * (Npoints*y2-y*y) );
+					Real correl = (Ncc*xy - x*y) / std::sqrt( (Ncc*x2-x*x) * (Ncc*y2-y*y) );
 					TR << "correl = " << correl << std::endl;
 
 					collision_map = ex_collision_map;
@@ -1374,7 +1618,7 @@ public:
 			for (int x=(int)ccIndexLow[0]; x<=(int)ccIndexHigh[0]; ++x) {
 				if (collision_map(x,y,z) < maxclash) {
 					nnonclashing++;
-					core::Real score_xyz = voxel_volume * sg.get_interface_score( interface_map(x,y,z) );
+					core::Real score_xyz = voxel_volume * sg_.get_interface_score( interface_map(x,y,z) );
 					numeric::xyzVector<Real> xyz((Real)x-1,(Real)y-1,(Real)z-1);
 					xyz = i2c_*xyz;
 					IDB.add_interface( InterfaceHit( score_xyz, xyz[0],xyz[1],xyz[2], ctr ) );
@@ -1401,12 +1645,12 @@ public:
 			dump_transformed_pdb( pose, ih, urs, outname );
 
 			// debug: dump exact maps
-			if (option[ crystdock::debug ] && i==nhits) {
+			if ((option[ crystdock::debug ] || option[ crystdock::debug_exact ]) && i==nhits) {
 				numeric::xyzVector<Real> xyz((Real)ih.x,(Real)ih.y,(Real)ih.z);
 				xyz = c2i_*xyz;
-				int sx = pos_mod( (int)xyz[0] , rho_ca.u1() );
-				int sy = pos_mod( (int)xyz[1] , rho_ca.u2() );
-				int sz = pos_mod( (int)xyz[2] , rho_ca.u3() );
+				int sx = pos_mod( (int)xyz[0] ,  grid_[0] );
+				int sy = pos_mod( (int)xyz[1] ,  grid_[1] );
+				int sz = pos_mod( (int)xyz[2] ,  grid_[2] );
 
 				FArray3D<Real> shift_rho_ca, s_shift_rho_ca;
 				shift_rho_ca.dimension( grid_[0], grid_[1],grid_[2] );
@@ -1416,15 +1660,19 @@ public:
 				for (int z=1; z<=rho_ca.u3(); ++z)
 				for (int y=1; y<=rho_ca.u2(); ++y)
 				for (int x=1; x<=rho_ca.u1(); ++x) {
-					int cx = pos_mod( x-sx-1 , rho_ca.u1() ) + 1;
-					int cy = pos_mod( y-sy-1 , rho_ca.u2() ) + 1;
-					int cz = pos_mod( z-sz-1 , rho_ca.u3() ) + 1;
+					int cx = pos_mod( x-sx-1 , grid_[0] ) + 1;
+					int cy = pos_mod( y-sy-1 , grid_[1] ) + 1;
+					int cz = pos_mod( z-sz-1 , grid_[2] ) + 1;
 					shift_rho_ca(x,y,z) = r_rho_ca(cx,cy,cz);
 				}
-				writeMRC( shift_rho_ca, sg, "shift_rho_ca.mrc" );
+				writeMRC( shift_rho_ca, "shift_rho_ca.mrc" );
 
-				transform_map( shift_rho_ca, rts[2].get_rotation(), rts[2].get_translation(), s_shift_rho_ca);
-				writeMRC( s_shift_rho_ca, sg, "s_shift_rho_ca.mrc" );
+				for (int s=sym_lb; s<=(int)sym_ub; ++s) {   // s==1 is always identity
+					transform_map( shift_rho_ca, rts[s].get_rotation(), rts[s].get_translation(), s_shift_rho_ca);
+					std::ostringstream oss;
+					oss << "s_shift_rho_ca_" << s << ".mrc";
+					writeMRC( s_shift_rho_ca, oss.str() );
+				}
 			}
 		}
 	}
@@ -1466,6 +1714,7 @@ try {
 	NEW_OPT(crystdock::rot_step, "rotational stepsize (degrees) ([debug] 0 searches input rotation only)", 10);
 	NEW_OPT(crystdock::nmodels, "number of models to output", 1000);
 	NEW_OPT(crystdock::rotnum, "[debug] only run a single rotation", 0);
+	NEW_OPT(crystdock::symnum, "[debug] only run a single symmop", 0);
 	NEW_OPT(crystdock::debug, "[debug] dump intermediate info", false);
 	NEW_OPT(crystdock::debug_exact, "[debug] debug mode with exact (non-FFT) calculations (slow!)", false);
 
@@ -1498,6 +1747,8 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out, Che
 		rt_out.resize(2);
 		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
 		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0.5,0) );
+		//rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0.5,0,0) );
+		//rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0.5) );
 		cc = CheshireCell( numeric::xyzVector<Real>( 0, 0, 0),numeric::xyzVector<Real>(0.5 ,0 ,0.5 ) );
 	}
 	else if ( name_ == "C121" || name_ == "C2" ) {
@@ -1565,15 +1816,15 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out, Che
  		cc = CheshireCell( numeric::xyzVector<Real>( 0, 0, 0),numeric::xyzVector<Real>(1 ,0.5 ,0 ) );
 	}
 	else if ( name_ == "P422" ) {
-		rt_out.resize(8);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
+ 		rt_out.resize(8);
+ 		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
+ 		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
+ 		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,-1,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
+ 		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   -1,0,0,   0,0,1 )  , numeric::xyzVector<Real>(0,0,0) );
+ 		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   1,0,0,   0,-1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
+ 		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,1,0,   1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
+ 		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   -1,0,0,   0,1,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
+ 		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(   0,-1,0,   -1,0,0,   0,0,-1 )  , numeric::xyzVector<Real>(0,0,0) );
 		cc = CheshireCell( numeric::xyzVector<Real>( 0, 0, 0),numeric::xyzVector<Real>(1 ,0.5 ,0.5 ) );
 	}
 	else if ( name_ == "P4212" ) {
@@ -1696,18 +1947,18 @@ void Spacegroup::get_symmops(utility::vector1<core::kinematics::RT> &rt_out, Che
 	}
 	else if ( name_ == "P23" ) {
 		rt_out.resize(12);
-		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
+  		rt_out[1] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
+  		rt_out[2] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,-1,0,   0,0,1)  , numeric::xyzVector<Real>(0,0,0) );
+  		rt_out[3] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  1,0,0,   0,-1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
+  		rt_out[4] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  -1,0,0,   0,1,0,   0,0,-1)  , numeric::xyzVector<Real>(0,0,0) );
+  		rt_out[5] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
+  		rt_out[6] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   -1,0,0,   0,1,0)  , numeric::xyzVector<Real>(0,0,0) );
+  		rt_out[7] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,1,   -1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
+  		rt_out[8] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,0,-1,   1,0,0,   0,-1,0)  , numeric::xyzVector<Real>(0,0,0) );
+  		rt_out[9] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
+  		rt_out[10] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,1,0,   0,0,-1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
 		rt_out[11] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,1,   -1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
-		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
+  		rt_out[12] = core::kinematics::RT( numeric::xyzMatrix<Real>::rows(  0,-1,0,   0,0,-1,   1,0,0)  , numeric::xyzVector<Real>(0,0,0) );
 		cc = CheshireCell( numeric::xyzVector<Real>(0,0,0),numeric::xyzVector<Real>(1,1,1) );
 	}
 	else if ( name_ == "F23" ) {
