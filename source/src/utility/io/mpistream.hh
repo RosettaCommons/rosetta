@@ -33,7 +33,7 @@ namespace mpi_stream {
 
 
 /// @brief Default gzip buffer size, change this to suite your needs
-const size_t default_buffer_size = 921600; // Was 102400; Was 4096;
+const std::size_t default_buffer_size = 921600; // Was 102400; Was 4096;
 const int MPI_STREAM_TAG = 42; //should be a unique number...
 
 /// messages to send to MpiFileBuffer
@@ -87,7 +87,7 @@ public:
   /// @note  More info on the following parameters can be found in the zlib documentation
   basic_mpi_streambuf(
 			std::string filename,
-      size_t buffer_size_,
+      std::size_t buffer_size_,
 		  int master_rank_,
 			bool append
   );
@@ -117,7 +117,7 @@ public:
 private:
 	virtual std::streamsize flush( bool final );
   bool send_to_master( char_type*, std::streamsize );
-  size_t fill_input_buffer();
+  std::size_t fill_input_buffer();
 
 	char_vector_type m_buffer;
 
@@ -246,7 +246,7 @@ public:
 				int master_rank,
 				std::stringstream& header,
 				bool append = false,
-		    size_t buffer_size_ = default_buffer_size
+		    std::size_t buffer_size_ = default_buffer_size
   ) :
     mpi_ostreambase_type(
 			 filename,

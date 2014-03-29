@@ -66,11 +66,11 @@ private: // fields
 
 public: // accessors
 
-  size_t natom() const { return atoms_.size(); }
+  std::size_t natom() const { return atoms_.size(); }
   utility::vector1<SimplePDB_Atom>       & atoms()       { return atoms_; }
   utility::vector1<SimplePDB_Atom> const & atoms() const { return atoms_; }
-  SimplePDB_Atom       & atom( size_t const i )       { return atoms_[i]; }
-  SimplePDB_Atom const & atom( size_t const i ) const { return atoms_[i]; }
+  SimplePDB_Atom       & atom( std::size_t const i )       { return atoms_[i]; }
+  SimplePDB_Atom const & atom( std::size_t const i ) const { return atoms_[i]; }
 	mutable utility::vector1<std::string> res_labels_;
 
 

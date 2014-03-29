@@ -564,7 +564,7 @@ public:
 
 	/// @brief computes a fixed-length, hash-based identifier for this FoldTree,
 	/// permitting efficient comparison between a pair of FoldTrees
-	size_t hash_value() const;
+	std::size_t hash_value() const;
 
 	/// @brief easy output of string
 	std::string to_string() const;

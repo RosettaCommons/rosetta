@@ -96,8 +96,8 @@ PSSM2BfactorMover::apply( Pose & pose )
 			TR<<"sepos="<<seqpos<<std::endl;
 			core::id::SequenceMappingCOP SM = seqprof_cst->profile_mapping();
 			core::id::SequenceMapping tempSM = *SM;
-			if (SM==NULL){
-				TR<<"asdfasd"<<std::endl;
+			if (SM==0) {
+				TR << "asdfasd" << std::endl;
 			}
 			TR<<"seqpos_mapping:"<<tempSM[seqpos]<<std::endl;
 			SequenceProfileCOP seqprof_pos( seqprof_cst->sequence_profile() );
@@ -173,4 +173,3 @@ PSSM2BfactorMover::parse_my_tag(
 }
 } // simple_moves
 } // protocols
-

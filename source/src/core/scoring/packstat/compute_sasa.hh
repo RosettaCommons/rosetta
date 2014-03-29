@@ -203,7 +203,7 @@ namespace packstat {
 	using utility::vector1;
 
 	struct SasaResult : public utility::pointer::ReferenceCount {
-		SasaResult(size_t Nprobes, size_t Nspheres);
+		SasaResult(std::size_t Nprobes, std::size_t Nspheres);
 		ObjexxFCL::FArray2D<PackstatReal> sphere_sasa;
 		CavBalls cavballs;
 		// utility::vector1<numeric::xyzVector<PackstatReal> > sasa_centers;
@@ -411,10 +411,10 @@ namespace packstat {
 		// compute sasas
 		PackstatReal total = 0.0;
 		PackstatReal fraction,total_sa,expose;
-		for( size_t is = 1; is <= Nspheres; ++is ) {
+		for( std::size_t is = 1; is <= Nspheres; ++is ) {
 			PackstatReal const irad = S[is].radius;
       int ctr = 0;
-      for ( size_t bb = 1, l = atom_sasa_masks.index(bb,is); (int)bb <= nbytes; ++bb, ++l ) {
+      for ( std::size_t bb = 1, l = atom_sasa_masks.index(bb,is); (int)bb <= nbytes; ++bb, ++l ) {
         ctr += bit_count[atom_sasa_masks[ l ]];
       }
       fraction = static_cast< PackstatReal >( ctr ) / maskbits;

@@ -27,7 +27,7 @@ namespace utility {
 class CurlGet {
  public:
   CurlGet();
-  static int writer(char *data, size_t size, size_t nmemb, std::string *buffer);
+  static int writer(char *data, std::size_t size, std::size_t nmemb, std::string *buffer);
  private:
   char *getErrorBuffer();
   std::string * getbuffer();
@@ -45,7 +45,7 @@ class CurlPost {
  public:
   CurlPost();
   // This is the writer call back function used by curl
-  static int writer(char *data, size_t size, size_t nmemb, std::string *buffer);
+  static int writer(char *data, std::size_t size, std::size_t nmemb, std::string *buffer);
  private:
   char *getErrorBuffer();
   std::string * getreadbuffer();

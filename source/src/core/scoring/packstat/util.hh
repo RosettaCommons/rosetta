@@ -28,7 +28,7 @@ namespace scoring {
 namespace packstat {
 
 // searches for sphere/ball in vector sorted by x value
-inline size_t search_x( Spheres  const & spheres, PackstatReal const x, size_t begin, size_t end ) {
+inline std::size_t search_x( Spheres  const & spheres, PackstatReal const x, std::size_t begin, std::size_t end ) {
 	if( end - begin < 2 ) return begin;
 	size_t mid = ( end - begin ) / 2 + begin;
 	if( spheres[mid].xyz.x() <= x ) {
@@ -38,13 +38,13 @@ inline size_t search_x( Spheres  const & spheres, PackstatReal const x, size_t b
 	}
 }
 
-inline size_t search_x( Spheres  const & spheres, PackstatReal const x ) {
-	return search_x( spheres, x, (size_t)1, spheres.size() );
+inline std::size_t search_x( Spheres  const & spheres, PackstatReal const x ) {
+	return search_x( spheres, x, (std::size_t)1, spheres.size() );
 }
 
-inline size_t search_x( CavBalls const & cbs    , PackstatReal const x, size_t begin, size_t end ) {
+inline std::size_t search_x( CavBalls const & cbs    , PackstatReal const x, std::size_t begin, std::size_t end ) {
 	if( end - begin < 2 ) return begin;
-	size_t mid = ( end - begin ) / 2 + begin;
+	std::size_t mid = ( end - begin ) / 2 + begin;
 	if( cbs[mid].xyz().x() <= x ) {
 		return search_x( cbs, x, mid,  end  );
 	} else {
@@ -52,7 +52,7 @@ inline size_t search_x( CavBalls const & cbs    , PackstatReal const x, size_t b
 	}
 }
 
-inline size_t search_x( CavBalls const & cbs    , PackstatReal const x ) {
+inline std::size_t search_x( CavBalls const & cbs    , PackstatReal const x ) {
 	return search_x( cbs, x, (size_t)1, cbs.size() );
 }
 

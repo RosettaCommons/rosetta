@@ -28,23 +28,23 @@ namespace protocols {
 namespace viewer {
 namespace graphics_states_param {
 	//lin backbone display state
-	const size_t Num_BBdisplayState = 3;
+	const std::size_t Num_BBdisplayState = 3;
 	enum BBdisplayState { SHOW_NOBB, SHOW_CARTOON, SHOW_BACKBONE };
 
 	//lin sidechain display state
-	const size_t Num_SCdisplayState = 3;
+	const std::size_t Num_SCdisplayState = 3;
 	enum SCdisplayState { SHOW_NOSC, SHOW_STICK, SHOW_WIREFRAME };
 
 	//lin color state
-	const size_t Num_ColorModes = 8;
+	const std::size_t Num_ColorModes = 8;
   enum ColorMode { RAINBOW_COLOR, CPK_COLOR, RESIDUE_COLOR, CHAIN_COLOR, RAINBOW_CPK_COLOR, RESIDUE_CPK_COLOR, RHIJU_COLOR };
 
 	//lin trajectory state
-	const size_t Num_TrajectoryState = 5;
+	const std::size_t Num_TrajectoryState = 5;
 	enum TrajectoryState { SHOW_LOW, SHOW_BEST, SHOW_MC_TRIALS, SHOW_ALL_TRIALS };
 
 	// H state
-	const size_t Num_ShowHState = 2;
+	const std::size_t Num_ShowHState = 2;
 	enum ShowHState { SHOW_NO_H, SHOW_H };
 
 }

@@ -142,7 +142,7 @@ private:
 				++index;
 			}
 			// determine the vertex girths; e.g. the shortest cycle containing a particular vertex
-			std::vector< size_t > shortest_cycles(graph_size_ );
+			std::vector< std::size_t > shortest_cycles(graph_size_ );
 			for(size_t vertex_number=0; vertex_number < graph_size_; ++vertex_number){
 				shortest_cycles[vertex_number] = LengthOfSmallestCycleWithVertex(graph, vertex_number);
 			}
@@ -188,7 +188,7 @@ private:
 
 	//! @brief Remove vertices, store new paths and rings
 	//! @param vertex vertex to be removed
-	void Remove( const size_t vertex){
+	void Remove( const std::size_t vertex){
 		// BCL_MessageDbg
 			//(
 			//"Now " + util::Format()( paths_.GetSize()) + " paths and " + util::Format()( rings_.GetSize()) + " rings"
@@ -227,7 +227,7 @@ private:
 					itr_paths != itr_paths_end;
 					++itr_paths)
 			{
-				const size_t path_size( itr_paths->size() - 2);
+				const std::size_t path_size( itr_paths->size() - 2);
 				SetupAdjacencyVector( vertex_is_in_path, *itr_paths);
 
 				std::list< std::vector<size_t> >::iterator itr_paths_match(itr_paths);
@@ -266,7 +266,7 @@ private:
 	//! @return combined path
 	std::vector< size_t> CombinePaths
 	(
-			const size_t COMMON_vertex,
+			const std::size_t COMMON_vertex,
 			const std::vector< size_t> &path_a,
 			const std::vector< size_t> &path_b
 	) const {
@@ -443,12 +443,12 @@ private:
 			// Stop if all vertices in the graph are in the queue or we reach the last vertex at this distance
 			for
 			(
-					const size_t last_vertex_at_distance( seen_vertices_queue.size());
+					const std::size_t last_vertex_at_distance( seen_vertices_queue.size());
 					vertex_queue_position < last_vertex_at_distance;
 					vertex_queue_position++
 			)
 			{
-				const size_t current_vertex( seen_vertices_queue[ vertex_queue_position]);
+				const std::size_t current_vertex( seen_vertices_queue[ vertex_queue_position]);
 				// target row is a reference to the edges reachable from the current vertex
 				OutEdgeIter oe_start, oe_end;
 				boost::tie(oe_start, oe_end) = boost::out_edges(index_to_vd_[vertex], graph);
@@ -459,9 +459,9 @@ private:
 					target_row.push_back(vd_to_index_[target]);
 				}
 
-				for( size_t i( 0), number_seen( target_row.size()); i < number_seen; i++)
+				for( std::size_t i( 0), number_seen( target_row.size()); i < number_seen; i++)
 				{
-					const size_t new_vertex( target_row[ i]);
+					const std::size_t new_vertex( target_row[ i]);
 					if( !can_visit_ref[ new_vertex])
 					{
 						// do nothing; can't visit the associated vertex

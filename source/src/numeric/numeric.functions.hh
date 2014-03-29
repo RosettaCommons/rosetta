@@ -16,6 +16,8 @@
 #define INCLUDED_numeric_numeric_functions_hh
 
 
+#include <numeric/types.hh>
+
 // Platform headers
 #include <platform/types.hh>
 
@@ -396,10 +398,10 @@ nearest_size( T const & x )
 /// @brief nearest_ssize( x ): Nearest ssize_t
 template< typename T >
 inline
-ssize_t
+SSize
 nearest_ssize( T const & x )
 {
-	return ssize_t( x + ( sign( x ) * T( 0.5 ) ) );
+	return SSize( x + ( sign( x ) * T( 0.5 ) ) );
 }
 
 

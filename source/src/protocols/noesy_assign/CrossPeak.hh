@@ -276,7 +276,7 @@ public:
   core::Size peak_id() const { return peak_id_; };
 
   std::string const& filename() const { return info1_->filename(); }
-  size_t exp_hash() const { return info1_->exp_hash(); }
+  std::size_t exp_hash() const { return info1_->exp_hash(); }
 
   bool same_peak( CrossPeak const & other ) const {
     return peak_id() == other.peak_id() && exp_hash() == other.exp_hash();

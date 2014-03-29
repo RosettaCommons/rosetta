@@ -63,7 +63,7 @@ public: // Types
 	typedef  B const *  const_pointer;
 	typedef  typename Bits::iterator  iterator;
 	typedef  typename Bits::const_iterator  const_iterator;
-	typedef  typename Bits::size_type  size_type;
+	typedef  typename Bits::size_type  std::size_type;
 
 	// Project style
 	typedef  B  Bit;
