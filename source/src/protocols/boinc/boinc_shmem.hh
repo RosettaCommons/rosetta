@@ -25,9 +25,9 @@
 namespace protocols {
 namespace boinc {
 
-const size_t POSE_BUFSIZE = 5000000; // size should depend on the largest pose expected to be used //1000000; //99999;
-const size_t TEXT_BUFSIZE = 255; //99999;
-const size_t WU_DESC_TEXT_BUFSIZE = 1024; //99999;
+const std::size_t POSE_BUFSIZE = 5000000; // size should depend on the largest pose expected to be used //1000000; //99999;
+const std::size_t TEXT_BUFSIZE = 255; //99999;
+const std::size_t WU_DESC_TEXT_BUFSIZE = 1024; //99999;
 
 struct BoincSharedMemory {
 	double update_time;

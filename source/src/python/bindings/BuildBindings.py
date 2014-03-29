@@ -391,9 +391,13 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
 
     while True:
         #(res, output) = commands.getstatusoutput(commandline)
+        try:
+            po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            #po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except OSError as e:
+            if Platform == 'cygwin': continue  # on Windows this sometimes fail, so we will retry...
+            else: print e;  sys.exit(1)
 
-        po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        #po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         f = po.stderr
         output = ''
         for line in f:

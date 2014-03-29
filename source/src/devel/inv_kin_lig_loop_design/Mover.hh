@@ -91,7 +91,7 @@ namespace devel {
       //     typedef map<const Kin::Dihedral*,MoverInfo::CcdTarget> m_ccd_targets_t;
       //     mutable m_ccd_targets_t mCcdTargets;
       //     mutable Tube tube_ccd;
-      //     mutable size_t num_res_ccd;
+      //     mutable std::size_t num_res_ccd;
       //     mutable Polypeptide* pp_ccd;
       //     mutable Peptide* p_ccd;
       //     mutable Peptide* q_ccd;
@@ -100,7 +100,7 @@ namespace devel {
 
       //   public:
 
-      //     void setCcdNumRes(const size_t num_res); // sets the number of residues on either side of the chainbreak to consider when performing the ccd
+      //     void setCcdNumRes(const std::size_t num_res); // sets the number of residues on either side of the chainbreak to consider when performing the ccd
 
       //     //void setCcdTargets(const Residue* from, const Residue* to, const Residue* target) const;
       //     void clearCcdTargets() const;

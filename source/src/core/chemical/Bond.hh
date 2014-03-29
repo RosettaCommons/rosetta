@@ -104,7 +104,7 @@ public:
 
 	/// @brief Reset the internal data such that it matches the appropriate value for the SDF datatype.
 	///
-	/// Substitution (taken from) for BCL's FindBondTypeFromSDFInfo( const size_t &SDF_ID)
+	/// Substitution (taken from) for BCL's FindBondTypeFromSDFInfo( const std::size_t &SDF_ID)
 	void SetSDFType( const core::Size SDF_ID);
 
 	core::Size GetNumberOfElectrons() const;

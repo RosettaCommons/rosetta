@@ -395,7 +395,7 @@ nearest_size( T const & x )
 }
 
 
-/// @brief nearest_ssize( x ): Nearest ssize_t
+/// @brief nearest_ssize( x ): Nearest SSize
 template< typename T >
 inline
 SSize
@@ -434,7 +434,7 @@ struct ModSelector
 	T
 	mod( T const & x, T const & y )
 	{
-		return ( y != T( 0 ) ? x - ( T( static_cast< ssize_t >( x / y ) ) * y ) : T( 0 ) );
+		return ( y != T( 0 ) ? x - ( T( static_cast< SSize >( x / y ) ) * y ) : T( 0 ) );
 	}
 };
 
@@ -518,8 +518,8 @@ struct RemainderSelector
 			return T( 0 );
 		} else { // Normal y != 0 case
 			T const x_over_y( x / y );
-			ssize_t n( nearest_ssize( x_over_y ) );
-			if ( mod( n, ssize_t( 2 ) ) == 1 ) { // Odd: Check for ( n - ( x / y ) ) == .5
+			SSize n( nearest_ssize( x_over_y ) );
+			if ( mod( n, SSize( 2 ) ) == 1 ) { // Odd: Check for ( n - ( x / y ) ) == .5
 				T const n_minus_x_over_y( T( n ) - x_over_y );
 				if ( n_minus_x_over_y == T( 0.5 ) ) {
 					--n;
@@ -546,8 +546,8 @@ struct RemainderSelector< T, true >
 			return T( 0 );
 		} else { // Normal y != 0 case
 			long double const x_over_y( static_cast< long double >( x ) / y );
-			ssize_t n( nearest_ssize( x_over_y ) );
-			if ( mod( n, ssize_t( 2 ) ) == 1 ) { // Odd: Check for ( n - ( x / y ) ) == .5
+			SSize n( nearest_ssize( x_over_y ) );
+			if ( mod( n, SSize( 2 ) ) == 1 ) { // Odd: Check for ( n - ( x / y ) ) == .5
 				long double const n_minus_x_over_y( static_cast< long double >( n ) - x_over_y );
 				if ( n_minus_x_over_y == 0.5l ) {
 					--n;

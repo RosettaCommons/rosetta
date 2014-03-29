@@ -45,7 +45,7 @@ handles_metric_value(
 ///
 /// double                    double <num>
 /// int                           Int <num>
-/// size_t                    size_t <num>
+/// std::size_t                    std::size_t <num>
 /// bool                          Bool <0 or 1>
 /// utility::vector1<double>  Real[ <num1> <num2> ... ]
 /// utility::vector1<int>         Int[ <num1> <num2> ... ]

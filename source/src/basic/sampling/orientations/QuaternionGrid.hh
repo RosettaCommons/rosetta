@@ -100,7 +100,7 @@ public:
 		m_v.clear();
 		m_w.clear();
 	}
-	void Print(std::ostream& s, bool euler = false, size_t prec = 6) const;
+	void Print(std::ostream& s, bool euler = false, std::size_t prec = 6) const;
 private:
 	std::vector<Quaternion> m_v;
 	std::vector<numeric::Real> m_w;

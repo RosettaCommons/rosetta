@@ -35,19 +35,19 @@ namespace serialization {
 		BUFFER(size_t size) : start_(0),end_(0),size_(size),ownbuf_(true) {
 			buf_ = new char[size_];
 		}
-		BUFFER(char * buf, size_t size) :
+		BUFFER(char * buf, std::size_t size) :
 		buf_(buf),start_(0),end_(0),size_(size),ownbuf_(false) { }
 		~BUFFER() {
 			if(ownbuf_) delete buf_;
 		}
-		int write(char * x, size_t nchar) {
+		int write(char * x, std::size_t nchar) {
 			if ( end_+nchar >= size_ ) return -1;
 			//	strncpy(buf_+end_,x,nchar);
 			memcpy(buf_+end_,x,nchar);
 			end_ += nchar;
 			return 1;
 		}
-		int read(char * out_buf, size_t nchar) {
+		int read(char * out_buf, std::size_t nchar) {
 			//if ( start_+nchar > end_ ) return -1;
 			if ( start_+nchar >= size_ ) return -2;
 			//		strncpy(out_buf,buf_+start_,nchar);

@@ -149,7 +149,7 @@ public:
 
   //! @brief return the number of types that the atom has the potential to become
   //! @return the number of types that the atom has the potential to become
-  size_t GetNumberPossibleTypes() const;
+  std::size_t GetNumberPossibleTypes() const;
 
   //! @brief return the most stable type
   //! @return the most stable type - NULL if no such type exists
@@ -174,7 +174,7 @@ public:
 //
 //  //! @brief determine the maximal # of pi-electrons in the pi-electron system
 //  //! @return the maximal # of pi-electrons in the pi-electron system
-//  size_t GetMaxElectronsParticipatingInPiSystem() const;
+//  std::size_t GetMaxElectronsParticipatingInPiSystem() const;
 //
 //////////////////
 //// operations //
@@ -210,7 +210,7 @@ public:
 //  //! @param OSTREAM outputstream to write to
 //  //! @param INDENT number of indentations
 //  //! @return outputstream which was written to
-//  std::ostream &Write( std::ostream &OSTREAM, const size_t INDENT) const;
+//  std::ostream &Write( std::ostream &OSTREAM, const std::size_t INDENT) const;
 //
 ////////////////////////
 //// helper functions //

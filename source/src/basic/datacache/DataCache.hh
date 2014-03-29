@@ -104,7 +104,7 @@ public: // constructors
 
 	/// @brief size constructor
 	/// @param[in] n_types The number of slots for this DataCache.
-	DataCache( size_t const n_slots ) :
+	DataCache( std::size_t const n_slots ) :
 		Super(),
 		data_( n_slots, 0 )
 	{}
@@ -134,7 +134,7 @@ public: // assignment
 			Super::operator =( src );
 
 			data_.resize( src.data_.size() );
-			for ( size_t i = 1; i <= src.data_.size(); ++i ) {
+			for ( std::size_t i = 1; i <= src.data_.size(); ++i ) {
 				if ( src.data_[i] ) {
 					data_[i] = src.data_[i]->clone();
 				} else {
@@ -162,7 +162,7 @@ public: // state
 	/// @param[in] n_slots The new number of slots.
 	inline
 	void
-	resize( size_t const n_slots )
+	resize( std::size_t const n_slots )
 	{
 		data_.resize( n_slots, 0 );
 	}
@@ -180,7 +180,7 @@ public: // state
 	/// @brief clear the object in a selected slot
 	inline
 	void
-	clear( size_t const slot )
+	clear( std::size_t const slot )
 	{
 		data_[ slot ] = 0;
 	}
@@ -189,7 +189,7 @@ public: // state
 	/// @brief is there an object in the slot?
 	inline
 	bool
-	has( size_t const slot ) const
+	has( std::size_t const slot ) const
 	{
 		return ( data_[ slot ] != 0 );
 	}
@@ -201,7 +201,7 @@ public: // accessors
 	/// @brief get base class reference to the object stored in the slot
 	inline
 	Data const &
-	get( size_t const slot ) const
+	get( std::size_t const slot ) const
 	{
 		assert( data_[ slot ] );
 		return *( data_[ slot ] );
@@ -213,7 +213,7 @@ public: // accessors
 	template< typename D >
 	inline
 	D const &
-	get( size_t const slot ) const
+	get( std::size_t const slot ) const
 	{
 		return static_cast< D const & >( get( slot ) );
 	}
@@ -222,7 +222,7 @@ public: // accessors
 	/// @brief get base class reference to object stored in the slot
 	inline
 	Data &
-	get( size_t const slot )
+	get( std::size_t const slot )
 	{
 		assert( data_[ slot ] );
 		return *( data_[ slot ] );
@@ -234,7 +234,7 @@ public: // accessors
 	template< typename D >
 	inline
 	D &
-	get( size_t const slot )
+	get( std::size_t const slot )
 	{
 		return static_cast< D & >( get( slot ) );
 	}
@@ -243,7 +243,7 @@ public: // accessors
 	/// @brief get base class owning ptr to object stored in the slot
 	inline
 	DataCOP
-	get_const_ptr( size_t const slot ) const
+	get_const_ptr( std::size_t const slot ) const
 	{
 		assert( data_[ slot ] );
 		return data_[ slot ];
@@ -255,7 +255,7 @@ public: // accessors
 	template< typename D >
 	inline
 	utility::pointer::owning_ptr< D const >
-	get_const_ptr( size_t const slot ) const
+	get_const_ptr( std::size_t const slot ) const
 	{
 		return utility::pointer::static_pointer_cast< D const >( get_const_ptr( slot ) );
 	}
@@ -264,7 +264,7 @@ public: // accessors
 	/// @brief get base class owning ptr to object stored in the slot
 	inline
 	DataOP
-	get_ptr( size_t const slot )
+	get_ptr( std::size_t const slot )
 	{
 		assert( data_[ slot ] );
 		return data_[ slot ];
@@ -276,7 +276,7 @@ public: // accessors
 	template< typename D >
 	inline
 	utility::pointer::owning_ptr< D >
-	get_ptr( size_t const slot )
+	get_ptr( std::size_t const slot )
 	{
 		return utility::pointer::static_pointer_cast< D >( get_ptr( slot ) );
 	}
@@ -285,7 +285,7 @@ public: // accessors
 	/// @brief get base class raw ptr to object stored in the slot
 	inline
 	Data const *
-	get_raw_const_ptr( size_t const slot ) const
+	get_raw_const_ptr( std::size_t const slot ) const
 	{
 		assert( data_[ slot ] );
 		return data_[ slot ].get();
@@ -297,7 +297,7 @@ public: // accessors
 	template< typename D >
 	inline
 	D const *
-	get_raw_const_ptr( size_t const slot ) const
+	get_raw_const_ptr( std::size_t const slot ) const
 	{
 		return static_cast< D const * >( get_raw_const_ptr( slot ) );
 	}
@@ -306,7 +306,7 @@ public: // accessors
 	/// @brief get base class raw ptr to object stored in the slot
 	inline
 	Data *
-	get_raw_ptr( size_t const slot )
+	get_raw_ptr( std::size_t const slot )
 	{
 		assert( data_[ slot ] );
 		return data_[ slot ].get();
@@ -318,7 +318,7 @@ public: // accessors
 	template< typename D >
 	inline
 	D *
-	get_raw_ptr( size_t const slot )
+	get_raw_ptr( std::size_t const slot )
 	{
 		return static_cast< D * >( get_raw_ptr( slot ) );
 	}
@@ -332,7 +332,7 @@ public: // mutators
 	/// @param[in] observer The data to store -- data is *not* cloned.
 	inline
 	void
-	set( size_t const slot, DataOP new_data )
+	set( std::size_t const slot, DataOP new_data )
 	{
 		// yab: Switching the assignment below to a clone() clearly causes
 		// breakage in the code and tests fail.  Someone needs to sit down

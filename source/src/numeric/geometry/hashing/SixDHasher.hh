@@ -53,7 +53,7 @@ struct bin_index_hasher
 	/// @brief functor used by boost (and sgi's stl) hash classes.
 	boost::uint64_t
 	operator() ( boost::uint64_t bin_index ) const {
-		boost::uint64_t const P = 999987;   // largest prime  number less than max int value coded by size_t int (32 bits)
+		boost::uint64_t const P = 999987;   // largest prime  number less than max int value coded by std::size_t int (32 bits)
 		return  bin_index % P;
 	}
 

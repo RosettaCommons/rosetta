@@ -140,7 +140,7 @@ public:
 
 	int ReadData(void *dst, cl_mem src, unsigned int size, int blocking =CL_TRUE);
 	int WriteData(cl_mem dst, void *src, unsigned int size, int blocking =CL_TRUE);
-	int setKernelArg(cl_kernel kernel, 	cl_uint i, size_t size, const void *p);
+	int setKernelArg(cl_kernel kernel, 	cl_uint i, std::size_t size, const void *p);
 
 	// Getters & setters
 	int initialized() { return initialized_; }

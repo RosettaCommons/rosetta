@@ -129,7 +129,7 @@ private:
 	// the ShortestPathInFoldTree (either because it has yet to be
 	// initialized or because the FoldTree has changed), we take note of the
 	// new FoldTree's hash value.
-	mutable size_t previous_hash_value_;
+	mutable std::size_t previous_hash_value_;
 
 	virtual
 	core::Size version() const;

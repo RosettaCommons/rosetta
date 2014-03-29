@@ -43,7 +43,7 @@ inline float const native_recip(float const x) { return 1.0f/x; }
 
 struct CL {
   int err_;                            // error code returned from api calls
-  size_t wgsize_;                       // wgsize domain size for our calculation
+  Size wgsize_;                       // wgsize domain size for our calculation
   cl_platform_id platform_;
   cl_device_id device_id_;             // compute device id
   cl_context context_;                 // compute context
@@ -92,7 +92,7 @@ struct CL {
     //err_ = clBuildProgram(program_, 0, NULL, "-Isrc/apps/pilot/will -cl-single-precision-constant -w", NULL, NULL);
     out << "build took " << time_highres()-t << endl;
     if(err_ != CL_SUCCESS) {
-      size_t len_status, len_options, len_log;
+      Size len_status, len_options, len_log;
       char buffer_options[81920];
       char buffer_log[81920];
       cout << "Error: Failed to build program executable!" << endl;
@@ -159,43 +159,43 @@ struct CL {
     if(!tmp) handle_error("Error: Failed to allocate device memory (RW)!");
     return(tmp);
   }
-  void cpu2gpu(void const * const dat, cl_mem buf, size_t size) {
+  void cpu2gpu(void const * const dat, cl_mem buf, std::size_t size) {
     err_ = clEnqueueWriteBuffer(queue_, buf, CL_TRUE, 0, size, dat, 0, NULL, NULL);
     if(err_ != CL_SUCCESS) handle_error("Error: Failed to write to source array! "+errstr(err_));
   }
-  void gpu2cpu(cl_mem buf, void* dat, size_t size) {
+  void gpu2cpu(cl_mem buf, void* dat, std::size_t size) {
     err_ = clEnqueueReadBuffer( queue_, buf, CL_TRUE, 0, size, dat, 0, NULL, NULL );
     if(err_ != CL_SUCCESS) handle_error("Error: Failed to read output array! "+errstr(err_));
   }
   bool havekernel( std::string kname ) {
     return kernels_.find(kname) != kernels_.end();
   }
-  void q1d( std::string kname, size_t gdim0, size_t ldim0 = 0 ) {
+  void q1d( std::string kname, std::size_t gdim0, std::size_t ldim0 = 0 ) {
     if(!havekernel(kname)) handle_error("no kernel "+kname);
     if(ldim0==0) ldim0 = wgsize_;
     err_ = clEnqueueNDRangeKernel(queue_, kernels_[kname], 1, NULL, &gdim0, &ldim0, 0, NULL, NULL);
     if(err_ != CL_SUCCESS) handle_error("Error: Failed to q1d kernel! ERR="+errstr(err_)+"; max_wg_size: "+str(wgsize_)+" local_dim: ("+str(ldim0)+") global_dim: ("+str(gdim0)+")");
   }
-  void q2d( std::string kname, size_t gdim0, size_t gdim1, size_t ldim0 = 0, size_t ldim1 = 1 ) {
+  void q2d( std::string kname, std::size_t gdim0, sstd::ize_t gdim1, std::size_t ldim0 = 0, std::size_t ldim1 = 1 ) {
     if(!havekernel(kname)) handle_error("no kernel "+kname);
     if(ldim0==0) {
       ldim0 = min(gdim0,wgsize_);
       ldim1 = min(gdim1,wgsize_/ldim0);
     }
-    size_t const gdim[2] = { gdim0,gdim1 };
-    size_t const ldim[2] = { ldim0,ldim1 };
+    std::size_t const gdim[2] = { gdim0,gdim1 };
+    std::size_t const ldim[2] = { ldim0,ldim1 };
     err_ = clEnqueueNDRangeKernel(queue_, kernels_[kname], 2, NULL, gdim, ldim, 0, NULL, NULL);
     if(err_ != CL_SUCCESS) handle_error("Error: Failed to q2d kernel! ERR="+errstr(err_)+"; max_wg_size: "+str(wgsize_)+" local_dim: ("+str(ldim0)+","+str(ldim1)+") global_dim: ("+str(gdim0)+","+str(gdim1)+")");
   }
-  void q3d( std::string kname, size_t gdim0, size_t gdim1, size_t gdim2, size_t ldim0 = 0, size_t ldim1 = 1, size_t ldim2 = 1 ) {
+  void q3d( std::string kname, std::size_t gdim0, std::size_t gdim1, std::size_t gdim2, std::size_t ldim0 = 0, std::size_t ldim1 = 1, std::size_t ldim2 = 1 ) {
     if(!havekernel(kname)) handle_error("no kernel "+kname);
     if(ldim0==0) {
       ldim0 = min(gdim0,wgsize_);
       ldim1 = min(gdim1,wgsize_/ldim0);
       ldim2 = min(gdim1,wgsize_/ldim0/ldim1);
     }
-    size_t gdim[3] = { gdim0,gdim1,gdim2 };
-    size_t ldim[3] = { ldim0,ldim1,ldim2 };
+    std::size_t gdim[3] = { gdim0,gdim1,gdim2 };
+    std::size_t ldim[3] = { ldim0,ldim1,ldim2 };
     err_ = clEnqueueNDRangeKernel(queue_, kernels_[kname], 3, NULL, gdim, ldim, 0, NULL, NULL);
     if(err_ != CL_SUCCESS) handle_error("Error: Failed to q3d kernel! ERR="+errstr(err_)+"; max_wg_size: "+str(wgsize_)+" local_dim: ("+str(ldim0)+","+str(ldim1)+","+str(ldim2)+") global_dim: ("+str(gdim0)+","+str(gdim1)+","+str(gdim2)+")");
   }

@@ -42,7 +42,7 @@ struct VecMaxElement : public Converter<Vec,Real> {
 	inline Real convert( Vec v ) {
 		if( v.size() == 0 ) return -1234;
 		Real m = v[0];
-		for( size_t i=0; i < v.size(); ++i )
+		for( Size i=0; i < v.size(); ++i )
 			if( v[i] > m ) m = v[i];
 		return m;
 	}
@@ -54,7 +54,7 @@ struct VecMinElement : public Converter<Vec,Real> {
 	inline Real convert( Vec v ) {
 		if( v.size() == 0 ) return -1234;
 		Real m = v[0];
-		for( size_t i=0; i < v.size(); ++i )
+		for( Size i=0; i < v.size(); ++i )
 			if( v[i] < m ) m = v[i];
 		return m;
 	}
@@ -71,7 +71,7 @@ struct VecLen : public Converter<Vec,Real> {
 struct VecMean : public Converter<Vec,Real> {
 	inline Real convert(Vec v ) {
 		float m = 0;
-		for( size_t i=0; i < v.size(); ++i )
+		for( Size i=0; i < v.size(); ++i )
 			m += v[i];
 		return m / (Real)v.size();
 	}

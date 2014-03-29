@@ -380,8 +380,8 @@ namespace packstat {
 		Size const Nspheres( S.size() );
 		ObjexxFCL::FArray2D_ubyte atom_sasa_masks( old::nbytes, Nspheres, NULL );
 
-		for( size_t i = 1; i <= Nspheres; ++i ) {
-			for( size_t j = 1; j < i; ++j ) {
+		for( std::size_t i = 1; i <= Nspheres; ++i ) {
+			for( std::size_t j = 1; j < i; ++j ) {
 				PackstatReal const dist_sq = S[i].xyz.distance_squared(S[j].xyz);
 				PackstatReal const dth = S[i].radius+S[j].radius+2*probe;
 				if ( dist_sq > dth*dth ) continue;

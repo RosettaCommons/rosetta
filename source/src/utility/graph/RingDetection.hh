@@ -304,7 +304,7 @@ private:
 	bool Overlap
 	(
 			const std::vector< bool> &vertex_is_in_path_a,
-			const std::vector< size_t > &path_b
+			const std::vector< std::size_t > &path_b
 	) const {
 		// check all internal elements in path_a for occurrence in path_b
 		for
@@ -356,7 +356,7 @@ private:
 	size_t LengthOfSmallestCycleWithVertex
 	(
 			const Graph &graph,
-			const size_t &vertex,
+			const std::size_t &vertex,
 			const std::vector< size_t> CAN_VISIT = std::vector< size_t>()
 	) {
 		size_t shortest_branch( std::numeric_limits< size_t>::max());
@@ -367,8 +367,8 @@ private:
 			return shortest_branch;
 		}
 
-		const size_t unseen_flag( std::numeric_limits< size_t>::max() );
-		const size_t size( graph_size_);
+		const std::size_t unseen_flag( std::numeric_limits< std::size_t>::max() );
+		const std::size_t size( graph_size_);
 
 		// distances will hold the distance of each vertex to the current vertex
 		std::vector< size_t> distances( size, unseen_flag);

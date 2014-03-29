@@ -81,7 +81,7 @@ public: // construct/destruct
 
 	/// @brief size constructor
 	/// @param[in] n_types The number of slots for this DataCache.
-	BasicDataCache( size_t const n_slots );
+	BasicDataCache( std::size_t const n_slots );
 
 
 	/// @brief copy constructor

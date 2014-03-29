@@ -1,5 +1,5 @@
 void test_k_square() {
-  size_t count(1024);
+  std::size_t count(1024);
   float results[count],data[count];
   for(int i = 0; i < count; i++) data[i] = rand() / (float)RAND_MAX;
 
