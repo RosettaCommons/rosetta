@@ -154,7 +154,6 @@ public:
 	build_rotamers(
 		core::pose::Pose & pose,
 		Size const rotamer_build_position,
-		bool use_forward,
 		Size const ex_,
 		bool res2 = false
 	) const;
@@ -166,7 +165,7 @@ public:
 	build_inverted_rotamers(
 		core::pose::Pose & pose,
 		Size const motif_anchor_position,
-		bool use_forward,
+		bool & use_forward,
 		Size rotamer_build_position = 0
 	) const;
 

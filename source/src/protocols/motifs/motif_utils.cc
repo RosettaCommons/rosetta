@@ -403,6 +403,42 @@ add_motif_sc_constraints(
 	return;
 }
 
+void mutate_position_vector_for_search(
+	core::pose::Pose & pose,
+	utility::vector1< core::Size > & trim_positions
+)
+{
+	// Get a score function
+	core::scoring::ScoreFunctionOP score_fxn( core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
+
+	// Set up the packer task
+	core::pack::task::PackerTaskOP alanize_task( core::pack::task::TaskFactory::create_packer_task( pose ) );
+
+	utility::vector1< bool > allow_vector( core::chemical::num_canonical_aas, false );
+	allow_vector[ core::chemical::aa_ala ] = true;
+
+	for( core::Size ires = 1, end_i = pose.total_residue() ; ires <= end_i ; ++ires ) {
+
+		if( find( trim_positions.begin(), trim_positions.end(), ires ) != trim_positions.end() ) {
+			if( pose.residue( ires ).aa() != core::chemical::aa_pro &&
+					pose.residue( ires ).aa() != core::chemical::aa_gly ) {
+				// Add it to the packer task
+				alanize_task->nonconst_residue_task( ires ).restrict_absent_canonical_aas( allow_vector );
+			} else {
+				// Let prolines and glycines stay
+				alanize_task->temporarily_set_pack_residue( ires, false );
+			}
+		} else {
+			// Leave non-loop residues alone
+			alanize_task->temporarily_set_pack_residue( ires, false );
+		}
+
+	}
+
+	// Do the actual packing
+	core::pack::pack_rotamers( pose, *score_fxn, alanize_task );
+}
+
 void mutate_loops_for_search(
 	core::pose::Pose & pose,
 	protocols::loops::Loops & flex_regions

@@ -12,6 +12,7 @@
 
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_Backrub.hh>
+#include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/motifs/IRCollection.hh>
 #include <protocols/motifs/Motif.hh>
 #include <protocols/motifs/MotifLibrary.hh>
@@ -68,7 +69,7 @@ namespace motifs {
 				// Check for applicability
 				if( !motif_itr->apply_check( pose, target_pos ) ) continue;
 
-//				irt << "Found a motif that applies!" << std::endl;
+				// irt << "Found a motif that applies!" << std::endl;
 				// Build the set of inverse rotamers - note that I don't have a great idea for which phi/psi angles to
 				// use for building.  The rotamer libraries are bb-dependent, so...
 				bool is_it_forward( false );
@@ -130,7 +131,7 @@ namespace motifs {
 		}
 	}
 
-	void IRCollection::incorporate_motifs( core::pose::Pose & pose, protocols::loops::LoopsOP const flexible_regions )
+	void IRCollection::incorporate_motifs( core::pose::Pose & pose, protocols::loops::LoopsOP const flexible_regions, utility::vector1< core::Size > & trim_positions )
 	{
 		// Set up the initial state stuff and fire off the actual
 		// recursive routine
@@ -144,8 +145,10 @@ namespace motifs {
 
 		// makes loop residues alanine, except pro and gly, which stay the same
 		mutate_loops_for_search( pose, *flexible_regions );
+		mutate_position_vector_for_search( pose, trim_positions );
 
 		// Relax away any clashes in the initial loop
+		//core::scoring::ScoreFunctionOP score_fxn( core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep_design" ) );;
 		core::scoring::ScoreFunctionOP score_fxn( core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 		core::scoring::methods::EnergyMethodOptions options( score_fxn->energy_method_options() );
 		options.exclude_DNA_DNA( false );
@@ -155,6 +158,7 @@ namespace motifs {
 		options.hbond_options( *hb_options );
 		score_fxn->set_energy_method_options( options );
 		protocols::loops::loop_mover::refine::LoopMover_Refine_Backrub pre_loop_refine( flexible_regions, score_fxn );
+		//protocols::loops::loop_mover::refine::LoopMover_Refine_KIC pre_loop_refine( flexible_regions, score_fxn );
 		pre_loop_refine.apply( pose );
 
 		pose.dump_pdb( "alanine.pdb" );
@@ -260,7 +264,7 @@ namespace motifs {
 		// Manipulate the pdb info to hide info about the motif in the pdb file
 
 		// Score and output the file
-		std::string unique_name( "test" );
+		std::string unique_name( basic::options::option[ basic::options::OptionKeys::motifs::file_prefix ] );
 
 //		std::string unique_name( make_loop_pdb_name( setpos, unique_id() ) );
 		increment_unique_id();
@@ -269,7 +273,7 @@ namespace motifs {
 		std::string filename( unique_name + "_" + motif_filename + "_" + utility::to_string( unique_id() ) + ".pdb" );
 		std::string try_filename( my_output_path + "/" + unique_name + "_" + motif_filename + "_" + utility::to_string( unique_id() ) + ".pdb" );
 
-//		core::scoring::ScoreFunctionOP score_fxn( core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep_design" ) );;
+		//core::scoring::ScoreFunctionOP score_fxn( core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep_design" ) );;
 		core::scoring::ScoreFunctionOP score_fxn( core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 		core::scoring::methods::EnergyMethodOptions options( score_fxn->energy_method_options() );
 		options.exclude_DNA_DNA( false );
@@ -305,7 +309,7 @@ namespace motifs {
 		core::Real coordinate_cst_weight( 10.0 );
 		core::Real num_inverse_rotamers( 1.0 + setpos.size() ); // not an int because I need it for math
 
-//		ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( "soft_rep_design" ) );;
+		//ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( "soft_rep_design" ) );;
 		ScoreFunctionOP score_fxn( getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 		methods::EnergyMethodOptions options( score_fxn->energy_method_options() );
 		options.exclude_DNA_DNA( false );
@@ -334,6 +338,7 @@ namespace motifs {
 
 		// Perform some kind of loop relaxation
 		protocols::loops::loop_mover::refine::LoopMover_Refine_Backrub loop_refine( flexible_regions, score_fxn );
+		//protocols::loops::loop_mover::refine::LoopMover_Refine_KIC loop_refine( flexible_regions, score_fxn );
 
 		loop_refine.apply( pose );
 
@@ -368,6 +373,7 @@ namespace motifs {
 		irt << "Before sidechain refinement constraints score is " << pose.energies().total_energies()[ coordinate_constraint ] / num_inverse_rotamers << std::endl;
 
 		protocols::loops::loop_mover::refine::LoopMover_Refine_Backrub sc_loop_refine( flexible_regions, score_fxn );
+		//protocols::loops::loop_mover::refine::LoopMover_Refine_KIC sc_loop_refine( flexible_regions, score_fxn );
 
 		sc_loop_refine.apply( pose );
 

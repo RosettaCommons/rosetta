@@ -467,7 +467,6 @@ core::pack::rotamer_set::RotamerSetOP
 Motif::build_rotamers(
 	core::pose::Pose & pose,
 	Size const rotamer_build_position,
-	bool /*use_forward*/,
 	Size const ex_,
 	bool res2
 ) const
@@ -531,7 +530,7 @@ core::pack::rotamer_set::RotamerSetOP
 Motif::build_inverted_rotamers(
 	core::pose::Pose & pose,
 	Size const motif_anchor_position,
-	bool use_forward,
+	bool & use_forward,
 	Size rotamer_build_position
 ) const
 {
@@ -541,13 +540,14 @@ Motif::build_inverted_rotamers(
 	using namespace core::pack;
 	using namespace core::pack::task;
 
+	Size extra_value( 0 );
 
 	// If no build position was passed, it will be the default value ( 0 ),
 	// and we need to find the closest bb position to the anchor residue
 	if( rotamer_build_position == Size( 0 ) ) {
 		// Find closest
 		// *********** TO DO ************
-		mt << "Using nonsense build residue in build_motif_rotamer - default argument not yet supported\n";
+		mt << "Using nonsense build residue in build_motif_rotamer - default argument not yet supported" << std::endl;
 		rotamer_build_position = 2;
 	}
 
@@ -555,11 +555,13 @@ Motif::build_inverted_rotamers(
 
 	// Check to make sure the motif applies to the anchor residue
 	if( !apply_check( pose, motif_anchor_position ) ) {
-		mt << "Bailing from build_motif_rotamer - given anchor residue not in motif\n";
+		mt << "Bailing from build_motif_rotamer - given anchor residue not in motif" << std::endl;
 		return rotset;
 	}
 
-		rotset = build_rotamers( pose, rotamer_build_position, use_forward, forward_check( pose.residue(motif_anchor_position) ), use_forward );
+	use_forward = forward_check( pose.residue( motif_anchor_position ) );
+
+	rotset = build_rotamers( pose, rotamer_build_position, extra_value, use_forward );
 
 		// Invert the rotamer library as specified by the motif
 		for( Size ir = 1 , end_ir = rotset->num_rotamers() ; ir <= end_ir ; ++ir ) {
@@ -594,10 +596,10 @@ std::string ligand_name( "LG1" );
 			utility::trimmed_compare( ligand_name , restype_name2_ ) ) {
 			return place_atoms_( fixed, mobile, true, atoms, res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in, one_three ); //This is Matt's new test for ligands
 	} else {
-		mt << "Bad Mojo a! call to Motif::place_atom() with wrong residue(s)!\n";
-		mt << "Motif wants: " << restype_name1_ << " and " << restype_name2_ << "\n";
-		mt << "arguments are: " << fixed.name3() << " and " << mobile.name3() << "\n";
-		mt << "Neither order matches!\n";
+		mt << "Bad Mojo a! call to Motif::place_atom() with wrong residue(s)!" << std::endl;
+		mt << "Motif wants: " << restype_name1_ << " and " << restype_name2_ << std::endl;
+		mt << "arguments are: " << fixed.name3() << " and " << mobile.name3() << std::endl;
+		mt << "Neither order matches!" << std::endl;;
 	}
 
 	return;
@@ -642,10 +644,10 @@ std::string ligand_name( "LG1" );
 	} else if ( utility::trimmed_compare( protocols::dna::dna_full_name3( mobile.name3() ), restype_name1_ ) ) {
 			return Motif::place_residue_( fixed, mobile, false, res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in,  one_three );
 	} else {
-		mt << "Bad Mojo b! call to Motif::place_residue() with wrong residue(s)!\n";
-		mt << "Motif wants: " << restype_name1_ << " and " << restype_name2_ << "\n";
-		mt << "arguments are: " << fixed.name3() << " and " << mobile.name3() << "\n";
-		mt << "Neither order matches!\n";
+		mt << "Bad Mojo b! call to Motif::place_residue() with wrong residue(s)!" << std::endl;
+		mt << "Motif wants: " << restype_name1_ << " and " << restype_name2_ << std::endl;
+		mt << "arguments are: " << fixed.name3() << " and " << mobile.name3() << std::endl;
+		mt << "Neither order matches!" << std::endl;
 	}
 
 	return;
@@ -751,10 +753,10 @@ Motif::place_atoms(
 			return place_atoms_( fixed, mobile, false, atoms, one_three );
 
 	} else {
-		mt << "Bad Mojo! call to Motif::place_atom() with wrong residue(s)!\n";
-		mt << "Motif wants: " << restype_name1_ << " and " << restype_name2_ << "\n";
-		mt << "arguments are: " << fixed.name3() << " and " << mobile.name3() << "\n";
-		mt << "Neither order matches!\n";
+		mt << "Bad Mojo! call to Motif::place_atom() with wrong residue(s)!" << std::endl;
+		mt << "Motif wants: " << restype_name1_ << " and " << restype_name2_ << std::endl;
+		mt << "arguments are: " << fixed.name3() << " and " << mobile.name3() << std::endl;
+		mt << "Neither order matches!" << std::endl;
 	}
 
 	return;
@@ -806,10 +808,10 @@ Motif::place_residue(
 			return place_residue_( fixed, mobile, false, one_three );
 
 	} else {
-		mt << "Bad Mojo! call to Motif::place_residue() with wrong residue(s)!\n";
-		mt << "Motif wants: " << restype_name1_ << " and " << restype_name2_ << "\n";
-		mt << "arguments are: " << fixed.name3() << " and " << mobile.name3() << "\n";
-		mt << "Neither order matches!\n";
+		mt << "Bad Mojo! call to Motif::place_residue() with wrong residue(s)!" << std::endl;
+		mt << "Motif wants: " << restype_name1_ << " and " << restype_name2_ << std::endl;
+		mt << "arguments are: " << fixed.name3() << " and " << mobile.name3() << std::endl;
+		mt << "Neither order matches!" << std::endl;
 	}
 
 	return;

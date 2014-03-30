@@ -158,6 +158,7 @@ sources = {
 	],
 	"public/motif_tools": [
 		"extract_motifs",
+		"incorporate_motifs",
 	],
 	"public/ncaa_utilities": [
 		"make_rot_lib",

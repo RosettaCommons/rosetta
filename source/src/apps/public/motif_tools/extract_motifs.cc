@@ -154,14 +154,14 @@ fetch_atom_names(
 {
 	switch( aa ) {
 	case aa_ala:
-		oa1 = "HB1";
+		oa1 = "1HB";
 		oa2 = "CB";
-		oa3 = "HB2";
+		oa3 = "2HB";
 		break;
 	case aa_cys:
-		oa1 = "HG";
-		oa2 = "SG";
-		oa3 = "CB";
+		oa1 = "SG";
+		oa2 = "CB";
+		oa3 = "CA";
 		break;
 	case aa_asp:
 		oa1 = "OD1";

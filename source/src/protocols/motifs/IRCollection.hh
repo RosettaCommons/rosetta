@@ -20,7 +20,7 @@
 #include <protocols/motifs/MotifLibrary.fwd.hh>
 #include <protocols/motifs/IRCollection.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
+#include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
@@ -42,7 +42,7 @@ public:
 	void find_closest_backbone( core::pose::Pose & pose, protocols::loops::LoopsOP const flexible_positions,
 		utility::vector1< core::Size > & closest_pos, utility::vector1< core::Real > & closest_rmsd );
 
-	void incorporate_motifs( core::pose::Pose & pose, protocols::loops::LoopsOP const flexible_positions );
+	void incorporate_motifs( core::pose::Pose & pose, protocols::loops::LoopsOP const flexible_positions, utility::vector1< core::Size > & trim_positions );
 
 	void try_for_more( core::pose::Pose & pose,
 		protocols::loops::LoopsOP const flexible_positions,

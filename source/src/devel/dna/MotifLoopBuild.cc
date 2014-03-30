@@ -255,10 +255,12 @@ MotifLoopBuild::irc_build(core::pose::Pose & pose)
     using namespace protocols::motifs;
 
     utility::vector1<core::Size> design = get_flex_region();
+		utility::vector1<core::Size> trim_residues;
+		trim_residues.clear();
     protocols::loops::LoopsOP this_loop = new protocols::loops::Loops();
     this_loop->add_loop(design[1], design[ design.size()] );
     IRCollection irc = IRCollection(pose, motif_lib, dna_design_pos_);
-    irc.incorporate_motifs(pose, this_loop);
+    irc.incorporate_motifs(pose, this_loop, trim_residues);
 
 }
 

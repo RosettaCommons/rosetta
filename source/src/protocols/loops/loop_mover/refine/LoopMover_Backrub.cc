@@ -156,12 +156,13 @@ void LoopMover_Refine_Backrub::apply(
 	}
 
 	// scorefxn
-	scoring::ScoreFunctionOP scorefxn;
-	if ( scorefxn() != 0 ) scorefxn = scorefxn()->clone();
-	else {
-		scorefxn = getScoreFunction();
+	scoring::ScoreFunctionOP score_fxn;
+	if ( scorefxn() != 0 ) {
+		score_fxn = scorefxn()->clone();
+	} else {
+		score_fxn = getScoreFunction();
 	}
-	(*scorefxn)(pose);
+	(*score_fxn)(pose);
 
 	// set up BackrubMover and read from the database
 	protocols::backrub::BackrubMover backrubmover;
@@ -189,14 +190,14 @@ void LoopMover_Refine_Backrub::apply(
 
 	// optimize branch angles and idealize side chains
 	backrubmover.optimize_branch_angles( pose );
-	(*scorefxn)(pose);
+	(*score_fxn)(pose);
 
 	// setup monte carlo
 	float const init_temp( option[ OptionKeys::loops::refine_init_temp ]() );
 	float const	final_temp( option[ OptionKeys::loops::refine_final_temp ]() );
 	float const gamma = std::pow( (final_temp/init_temp), 1.0f/(outer_cycles*inner_cycles) );
 	float temperature = init_temp;
-	protocols::moves::MonteCarlo mc( pose, *scorefxn, temperature );
+	protocols::moves::MonteCarlo mc( pose, *score_fxn, temperature );
 	mc.reset(pose);
 
 	// setup PackerTask
@@ -235,7 +236,7 @@ void LoopMover_Refine_Backrub::apply(
 	pose.update_residue_neighbors(); // to update 10A nbr graph
 	select_loop_residues( pose, *loops(), !fix_natsc, allow_repacked, 10.0 /* neighbor_cutoff */);
 	this_packer_task->restrict_to_residues( allow_repacked );
-	core::pack::pack_rotamers( pose, *scorefxn, this_packer_task );
+	core::pack::pack_rotamers( pose, *score_fxn, this_packer_task );
 	std::string move_type = "repack";
 	pose.update_residue_neighbors(); // to update 10A nbr graph
 	mc.boltzmann( pose, move_type );
@@ -243,7 +244,7 @@ void LoopMover_Refine_Backrub::apply(
 	std::string backrub_move_type = backrubmover.type();
 	for (int i=1; i<=outer_cycles; ++i) {
 		tr() << "loopmover backrub outer refinement cycle " << i << std::endl;
-		mc.score_function( *scorefxn );
+		mc.score_function( *score_fxn );
 		mc.recover_low( pose );
 
 		for ( int j=1; j<=inner_cycles; ++j ) {
@@ -263,7 +264,7 @@ void LoopMover_Refine_Backrub::apply(
 				utility::vector1<bool> allow_repacked( nres, false );
 				select_loop_residues( pose, *loops(), !fix_natsc, allow_repacked, 10.0 /* neighbor_cutoff */);
 				this_packer_task->restrict_to_residues( allow_repacked );
-				pack::pack_rotamers( pose, *scorefxn, this_packer_task );
+				pack::pack_rotamers( pose, *score_fxn, this_packer_task );
 				std::string move_type = "repack";
 				mc.boltzmann( pose, move_type );
 			}

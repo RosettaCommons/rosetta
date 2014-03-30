@@ -111,6 +111,12 @@ mutate_loops_for_search(
 	protocols::loops::Loops & flex_regions
 );
 
+void
+mutate_position_vector_for_search(
+	core::pose::Pose & pose,
+	utility::vector1< core::Size > & trim_positions
+);
+
 // Functions for sthyme loading external data and setting up DNA mutations
 MotifLibrary const
 get_MotifLibrary_user();
