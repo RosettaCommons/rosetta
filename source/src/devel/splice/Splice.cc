@@ -707,7 +707,7 @@ Splice::apply( core::pose::Pose & pose )
 
 	if( ccd() ){
 		using namespace protocols::loops;
-
+		Pdb4LetName_ = parse_pdb_code(source_pdb_);//
 		core::Size const startn(from_res());
 		core::Size const startc(from_res() + total_residue_new - 1 );
 
@@ -1400,20 +1400,9 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 
 		}
 		else {
-			Pdb4LetName_ = source_pdb_;//
+			Pdb4LetName_ = parse_pdb_code(source_pdb_);//
 		}
-		// Remove directory if present.
-		// Do this before extension removal in case directory has a period character.
-		const size_t last_slash_idx = Pdb4LetName_.find_last_of("\\/");
-		if (std::string::npos != last_slash_idx)
-		{
-			Pdb4LetName_.erase(0, last_slash_idx + 1);
-		}
-		// Remove extension if present.
-		const size_t period_idx = Pdb4LetName_.rfind('.');
-		if (std::string::npos != period_idx) {
-			Pdb4LetName_.erase(period_idx);
-		}
+
 		if (!add_sequence_constraints_only_){///If only doing sequence constraints then don't add to pose comments source name
 			TR<<"The currnet segment is: "<<segment_type_<<" and the source pdb is "<<Pdb4LetName_<<std::endl;
 			core::pose::add_comment(pose,"segment_"+segment_type_,Pdb4LetName_);//change correct association between current loop and pdb file
@@ -1421,7 +1410,6 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 
 		load_pdb_segments_from_pose_comments(pose); // get segment name and pdb accosiation from comments in pdb file
 		TR<<"There are "<<pdb_segments_.size()<<" PSSM segments"<<std::endl;
-		//TR<<"new line for debugging"<<std::endl;
 
 		runtime_assert( pdb_segments_.size() ); //This assert is in place to make sure that the pdb file has the correct comments, otherwise this function will fail
 
@@ -1444,7 +1432,7 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 		/// we are designing L1 then we would expect that segments Frm.light1 and Frm.light2 have concensus aa identities)
 
 
-		if (ccd_){//if CCD is true we're splicing out a segment, so it's important to ensure that the disulfides are in place. In rare cases where there are highly conserved cysteines in other parts of the protein this might lead to exit, but these cases are < 1/1000
+		if ((ccd_) &&(protein_family_.compare("antibodies") == 0)){//if CCD is true and we doing this on antibodies then we're splicing out a segment, so it's important to ensure that the disulfides are in place. In rare cases where there are highly conserved cysteines in other parts of the protein this might lead to exit, but these cases are < 1/1000
 			core::Size aapos=0;
 			//TR<<"TESTING PSSMs"<<std::endl;
 			for(core::Size seg=1; seg <=profile_vector.size() ; seg++ ){//go over all the PSSM sements provided by the user
@@ -1463,15 +1451,11 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 							seqpos = convert.str();
 							pose.dump_pdb("align_prob.pdb");
 							utility_exit_with_message(" PSSM and pose might be misaligned, position "+ s+seqpos+ " should be a CYS\n");
-							//utility_exit_with_message(" could not find the source pdb name:: "+ pdb_segments_[segment_type]+ ", in pdb_profile_match file."+segment_type+"\n");
 						} //fi
 					}//fi
 				}//end inner segment for
 			}//end pssm segment for
 		}
-
-
-
 
 		return concatenate_profiles( profile_vector,segment_names_ordered_ );
 	}
@@ -1513,7 +1497,6 @@ find_residues_on_chain1_inside_interface( core::pose::Pose const & pose,core::Si
 	utility::vector1< core::Size > const chain1_interface;
 	using namespace protocols::toolbox::task_operations;
 	ProteinInterfaceDesignOperationOP pido = new ProteinInterfaceDesignOperation;
-	//TR<<"test pido @line 1163 "<<pose<<pose<<"\n";
 	if (chainNum==1){
 		pido->repack_chain1( true );
 		pido->design_chain1( true );
@@ -1563,7 +1546,7 @@ Splice::add_sequence_constraints( core::pose::Pose & pose){
 		core::sequence::SequenceProfileOP seqprof( generate_sequence_profile(pose) );
 		TR<<"chain_num: "<< chain_num_<<std::endl;
 		TR<<"Chain length/seqprof size: "<<pose.conformation().chain_end( chain_num_ ) - pose.conformation().chain_begin( chain_num_ ) + 1<<", "<<seqprof->size()-1<<std::endl;
-		/*		std::string pdb_dump_fname_("after_splice.pdb");
+	/*			std::string pdb_dump_fname_("after_splice.pdb");
 		std::ofstream out( pdb_dump_fname_.c_str() );
 		pose.dump_pdb(out); //Testi*/
 		runtime_assert( seqprof->size()-1 == pose.conformation().chain_end( chain_num_ ) - pose.conformation().chain_begin( chain_num_ ) + 1 ); //Please note that the minus 1 after seqprof size is because seqprof size is always +1 to the actual size. Do not chnage this!!
@@ -1594,10 +1577,9 @@ Splice::add_sequence_constraints( core::pose::Pose & pose){
 				spc->weight( profile_weight_away_from_interface());
 			}
 			TR<<"Now adding constraint to aa: "<<seqpos<<pose.aa(seqpos)<<std::endl;
-			//TR<<"The sequence profile row for that residue is: "<<seqprof->prof_row(seqpos-)<<std::endl;
+			//TR<<"The sequence profile row for this residue is: "<<seqprof->prof_row(seqpos-)<<std::endl;
 			pose.add_constraint( spc );
 			cst_num++;
-			//TR<<"cst_num: "<<cst_num<<std::endl;
 			TR<<"Current constraints size: "<<pose.constraint_set()->get_all_constraints().size()<<std::endl;
 		}
 		TR<<"Added a total of "<<cst_num<<" sequence constraints."<<std::endl;
@@ -1716,39 +1698,21 @@ Splice::profile_weight_away_from_interface( core::Real const p ){
 	profile_weight_away_from_interface_ = p;
 }
 
-
-//This function is not called anymore, consider removing; gideonla Aug13
-bool
-Splice::check_aa(std::string curraa, utility::vector1<core::Real > profRow)
+/// @brief This is helper function that cuts out a file name, removing the extension and the path
+std::string
+Splice::parse_pdb_code(std::string pdb_file_name)
 {
-	// order of amino acids in the .pssm file
-	static std::map< std::string, core::Size > order;
-	order["A"] = 1;
-	order["C"] = 2;
-	order["D"] = 3;
-	order["E"] = 4;
-	order["F"] = 5;
-	order["G"] = 6;
-	order["H"] = 7;
-	order["I"] = 8;
-	order["K"] = 9;
-	order["L"] = 10;
-	order["M"] = 11;
-	order["N"] = 12;
-	order["P"] = 13;
-	order["Q"] = 14;
-	order["R"] = 15;
-	order["S"] = 16;
-	order["T"] = 17;
-	order["V"] = 18;
-	order["W"] = 19;
-	order["Y"] = 20;
-	if ((profRow[order[curraa]])<0){
-		return true;
+	const size_t last_slash_idx = pdb_file_name.find_last_of("\\/");
+	if (std::string::npos != last_slash_idx)
+	{
+		pdb_file_name.erase(0, last_slash_idx + 1);
 	}
-	else{
-		return false;
+	// Remove extension if present.
+	const size_t period_idx = pdb_file_name.rfind('.');
+	if (std::string::npos != period_idx) {
+		pdb_file_name.erase(period_idx);
 	}
+	return pdb_file_name;
 
 }
 void
