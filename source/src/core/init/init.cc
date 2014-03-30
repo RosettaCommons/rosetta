@@ -159,7 +159,7 @@
 #include <core/scoring/methods/WaterAdductIntraEnergyCreator.hh>
 #include <core/scoring/nv/NVscoreCreator.hh>
 #include <core/scoring/orbitals/OrbitalsScoreCreator.hh>
-#include <core/scoring/interface/DDPscoreCreator.hh>
+#include <core/scoring/interface_/DDPscoreCreator.hh>
 #include <core/scoring/packing/HolesEnergyCreator.hh>
 #include <core/scoring/packing/SurfVolEnergyCreator.hh>
 #include <core/scoring/packing/SurfEnergyCreator.hh>
@@ -363,7 +363,7 @@ static EnergyMethodRegistrator< pack::dunbrack::cenrot::CenRotDunEnergyCreator >
 #ifndef MINI_SLIM
 static EnergyMethodRegistrator< scoring::nv::NVscoreCreator > NVscoreCreator_registrator;
 static EnergyMethodRegistrator< scoring::orbitals::OrbitalsScoreCreator > OrbitalsScoreCreator_registrator;
-static EnergyMethodRegistrator< scoring::interface::DDPscoreCreator > DDPscoreCreator_registrator;
+static EnergyMethodRegistrator< scoring::interface_::DDPscoreCreator > DDPscoreCreator_registrator;
 static EnergyMethodRegistrator< scoring::carbon_hbonds::CarbonHBondEnergyCreator > CarbonHBondEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::custom_pair_distance::FullatomCustomPairDistanceEnergyCreator > FullatomCustomPairDistanceEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CustomAtomPairEnergyCreator > CustomAtomPairEnergy_registrator;

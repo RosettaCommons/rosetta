@@ -70,7 +70,7 @@
 
 #include <core/scoring/nv/NVlookup.hh>
 #include <core/scoring/orbitals/OrbitalsLookup.hh>
-#include <core/scoring/interface/DDPlookup.hh>
+#include <core/scoring/interface_/DDPlookup.hh>
 
 #include <core/scoring/types.hh>
 #include <core/scoring/ScoreType.hh>
@@ -644,14 +644,14 @@ ScoringManager::get_NVLookupTable() const
 ///////////////////////////////////////////////////////////////////////////////
 
 
-interface::DDPlookup const &
+interface_::DDPlookup const &
 ScoringManager::get_DDPLookupTable() const
 {
 	if(DDP_lookup_table_ == 0)
 	{
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
-		DDP_lookup_table_ = new interface::DDPlookup("scoring/score_functions/DDPscore/interface_ddp_score.txt");
+		DDP_lookup_table_ = new interface_::DDPlookup("scoring/score_functions/DDPscore/interface_ddp_score.txt");
 	}
 	return *DDP_lookup_table_;
 }
@@ -1291,4 +1291,3 @@ std::string const UNFOLDED_RNA( "UNFOLDED_RNA" ); // This will later get more el
 
 } // namespace core
 } // namespace scoring
-

@@ -4,7 +4,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/core/scoring/Interface/DDPscoreCreator.hh
+/// @file   src/core/scoring/Interface_/DDPscoreCreator.hh
 /// @author Hermann Zellner (hermann1.zellner@biologie.uni-regensburg.de)
 
 
@@ -21,7 +21,7 @@
 
 namespace core {
 namespace scoring {
-namespace interface {
+namespace interface_ {
 
 class DDPscoreCreator : public methods::EnergyMethodCreator
 {
@@ -41,7 +41,7 @@ public:
 
 };
 
-} // Interface
+} // Interface_
 } // scoring
 } // core
 

@@ -4,15 +4,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file core/scoring/Interface/DDPscore.cc
+///@file core/scoring/Interface_/DDPscore.cc
 ///@brief Implementation of distance dependent interface score
 ///@detailed The distance dependent score is a knowledge based potential specialized for
 /// protein interfaces. This class loads and accesses the lookup tables.
 ///@author Hermann Zellner (hermann1.zellner@biologie.uni-regensburg.de)
 
 #include <utility/vector1.hh>
-#include <core/scoring/interface/DDPscore.hh>
-#include <core/scoring/interface/DDPscoreCreator.hh>
+#include <core/scoring/interface_/DDPscore.hh>
+#include <core/scoring/interface_/DDPscoreCreator.hh>
 
 // AUTO-REMOVED #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
@@ -32,7 +32,7 @@
 
 namespace core{
 namespace scoring{
-namespace interface{
+namespace interface_{
 
 
 

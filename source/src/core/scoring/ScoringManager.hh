@@ -63,14 +63,16 @@
 // AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
 #include <core/scoring/nv/NVlookup.fwd.hh>
 #include <core/scoring/orbitals/OrbitalsLookup.fwd.hh>
-#include <core/scoring/interface/DDPlookup.fwd.hh>
+#include <core/scoring/interface_/DDPlookup.fwd.hh>
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
+
 #ifdef WIN32
 #include <core/scoring/methods/EnergyMethodCreator.hh> // WIN32 INCLUDE
 #endif
+
 
 // AUTO-REMOVED #include <core/scoring/EnergyMap.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/types.hh>
@@ -182,7 +184,7 @@ public:
 
 
 
-  interface::DDPlookup const & get_DDPLookupTable() const;
+	interface_::DDPlookup const & get_DDPLookupTable() const;
 
 	P_AA const & get_P_AA() const;
 
@@ -324,8 +326,7 @@ private:
 	mutable nv::NVlookupOP NV_lookup_table_;
 	mutable orbitals::OrbitalsLookupOP orbitals_lookup_table_;
 
-
-  mutable interface::DDPlookupOP DDP_lookup_table_;
+	mutable interface_::DDPlookupOP DDP_lookup_table_;
 	// data
 
 	// original map using string as key, let's keep it

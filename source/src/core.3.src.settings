@@ -412,7 +412,7 @@ sources = {
 		"HBCountPairFunction",
 		"HBCPData",
 	],
-	"core/scoring/interface": [
+	"core/scoring/interface_": [
 		"DDPlookup",
 		"DDPscore",
 	],

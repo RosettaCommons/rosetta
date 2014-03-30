@@ -5,7 +5,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file core/scoring/Interface/DDPscore.hh
+///@file core/scoring/Interface_/DDPscore.hh
 ///@brief Implementation of distance dependent interface score
 ///@author Hermann Zellner (hermann1.zellner@biologie.uni-regensburg.de)
 
@@ -13,8 +13,8 @@
 #define INCLUDED_core_scoring_interface_DDPscore_hh
 
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
-#include <core/scoring/interface/DDPscore.fwd.hh>
-#include <core/scoring/interface/DDPlookup.hh>
+#include <core/scoring/interface_/DDPscore.fwd.hh>
+#include <core/scoring/interface_/DDPlookup.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -24,7 +24,7 @@
 
 namespace core{
 namespace scoring{
-namespace interface{
+namespace interface_{
 
 class DDPscore : public methods::ContextDependentTwoBodyEnergy {
 
@@ -72,10 +72,9 @@ private:
 virtual
 core::Size version() const;
 }; // DDP
-} // Interface
+} // Interface_
 } // scoring
 } // core
 
 
 #endif /* INCLUDED_core_scoring_Interface_DDPscore_HH_ */
-

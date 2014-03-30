@@ -4,9 +4,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/core/scoring/Interface/DDPlookup.cc
+/// @file   src/core/scoring/Interface_/DDPlookup.cc
 /// @author Hermann Zellner (hermann1.zellner@biologie.uni-regensburg.de)
-#include <core/scoring/interface/DDPlookup.hh>
+#include <core/scoring/interface_/DDPlookup.hh>
 
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
@@ -17,9 +17,9 @@
 
 namespace core {
 namespace scoring {
-namespace interface {
+namespace interface_ {
 
-static basic::Tracer TR("core.scoring.Interface.DDPlookup");
+static basic::Tracer TR("core.scoring.Interface_.DDPlookup");
 
 DDPlookup::DDPlookup(std::string filename)
 {

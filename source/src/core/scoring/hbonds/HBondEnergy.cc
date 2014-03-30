@@ -50,7 +50,7 @@
 // AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
-//#include <core/scoring/ScoringManager.hh>
+#include <core/scoring/ScoringManager.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
@@ -366,7 +366,7 @@ HBondEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 		hbond_set->copy_bb_donor_acceptor_arrays( existing_set );
 	}
 	pose.energies().data().set( HBOND_SET, hbond_set );
-	
+
 	//utility::vector1<core::Size> temp_vec ( pose.total_residue(), 0 );
 	num_hbonds_.clear();
 }
@@ -413,7 +413,7 @@ HBondEnergy::residue_pair_energy(
 	hbonds::HBondSet const & hbond_set
 		( static_cast< hbonds::HBondSet const & >
 			( pose.energies().data().get( HBOND_SET )));
-	
+
 	// this only works because we have already called
 	// hbond_set->setup_for_residue_pair_energies( pose )
 
@@ -495,7 +495,7 @@ HBondEnergy::residue_pair_energy(
 			*options_,
 			emap, num_hbonds_, ssdep_weight_factor);
 		}
-	
+
 	//std::cout << std::endl << num_hbonds_.size() << std::endl;
 }
 
@@ -1434,13 +1434,13 @@ HBondEnergy::finalize_total_energy(
 	totals[ hbond_sc ]       = original_sc;
 	totals[ hbond_intra ]    = original_intra;
 	// end replicate
-	
+
 	// Give back a bonus to "free" residues that are involved in 1 or fewer hbonds
 	for ( boost::unordered_map < core::Size , core::Size >::const_iterator
 		 it=num_hbonds_.begin(), it_end = num_hbonds_.end(); it != it_end; ++it ) {
 		if ( it->second > 1 ) totals[ num_hbonds ]++;
 	}
-	
+
 }
 
 /* DEPRECATED
@@ -1769,4 +1769,3 @@ HBondEnergy::version() const
 } // hbonds
 } // scoring
 } // core
-

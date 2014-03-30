@@ -390,24 +390,21 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
         print command_line
 
     while True:
-        #(res, output) = commands.getstatusoutput(commandline)
-        try:
+        if Platform == 'cygwin': (res, output) = commands.getstatusoutput(command_line)
+        else:
             po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             #po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        except OSError as e:
-            if Platform == 'cygwin': continue  # on Windows this sometimes fail, so we will retry...
-            else: print e;  sys.exit(1)
 
-        f = po.stderr
-        output = ''
-        for line in f:
-            #po.poll()
-            if print_output: print line,
-            output += line
-            sys.stdout.flush()
-        f.close()
-        while po.returncode is None: po.wait()
-        res = po.returncode
+            f = po.stderr
+            output = ''
+            for line in f:
+                #po.poll()
+                if print_output: print line,
+                output += line
+                sys.stdout.flush()
+            f.close()
+            while po.returncode is None: po.wait()
+            res = po.returncode
         #print '_____________________', res
 
 
