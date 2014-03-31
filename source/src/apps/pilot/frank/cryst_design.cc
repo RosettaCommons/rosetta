@@ -10,6 +10,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/Remarks.hh>
 #include <core/pose/CrystInfo.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -18,6 +19,7 @@
 #include <core/io/pdb/pose_io.hh>
 #include <core/types.hh>
 #include <core/pack/task/ResfileReader.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -712,6 +714,7 @@ class CrystDock : public protocols::moves::Mover {
 private:
 	core::Real ca_clashdist_, cb_clashdist_, n_clashdist_, c_clashdist_, o_clashdist_;
 	core::Real interfacedist_;
+	bool ss_only_;
 
 	numeric::xyzVector<int> grid_, oversamplegrid_;
 
@@ -726,8 +729,9 @@ public:
 		ca_clashdist_ = 2.00;   // ros VDW=2.0
 		c_clashdist_  = 2.00;   // ros VDW=2.0
 		o_clashdist_  = 1.55;   // ros VDW=1.55
-		cb_clashdist_ = 2.00;   // ros VDW=2.0
-		interfacedist_ = 4.0;
+		cb_clashdist_ = 1.70;   // ros VDW=2.0    .. make this a bit smaller to encourage better packing
+		interfacedist_ = 3.0;
+		ss_only_ = true;
 	}
 
 	virtual std::string get_name() const { return "CrystDock"; }
@@ -1035,10 +1039,18 @@ public:
 		pose.pdb_info()->set_crystinfo(ci);
 	}
 
-	void dump_transformed_pdb( Pose pose, InterfaceHit ih, UniformRotationSampler const &urs, std::string outname ) {
+	void dump_transformed_pdb( Pose pose, InterfaceHit ih, UniformRotationSampler const &urs, Real score, std::string outname ) {
 		numeric::xyzMatrix<Real> R;
 		urs.get( ih.rot_index, R );
 		numeric::xyzVector<Real> T (ih.x, ih.y, ih.z);
+
+		// add score to header
+		core::pose::RemarkInfo remark;
+		std::ostringstream oss;
+		oss << "  score = " << score << std::endl;
+		remark.num = 1;	remark.value = oss.str();
+		pose.pdb_info()->remarks().push_back( remark );
+
 		pose.apply_transform_Rx_plus_v( R,T );
 		pose.dump_pdb( outname );
 	}
@@ -1438,6 +1450,10 @@ public:
 		center_pose_at_origin( pose );
 		add_crystinfo_to_pose( pose );
 
+		// get SS
+		core::scoring::dssp::Dssp dssp( pose );
+		dssp.insert_ss_into_pose( pose );
+
 		// lookup symmops
 		utility::vector1<core::kinematics::RT> rts;
 		CheshireCell cc;
@@ -1506,7 +1522,7 @@ public:
 				std::ostringstream oss1; oss1 << "rot"<<ctr<<".mrc";
 				writeMRC( r_rho_ca, oss1.str() );
 				std::ostringstream oss2; oss2 << "rot"<<ctr<<".pdb";
-				dump_transformed_pdb( pose, InterfaceHit( 0,0,0,0, ctr ), urs, oss2.str() );
+				dump_transformed_pdb( pose, InterfaceHit( 0,0,0,0, ctr ), urs, 0.0, oss2.str() );
 			}
 
 			// store info
@@ -1530,7 +1546,6 @@ public:
 			if (!option[ crystdock::debug_exact ] ) {
 				if (self_ca >= maxclash) {
 					TR << "   self clashing!" << std::endl;
-					writeMRC( r_rho_ca, "clash.mrc" );
 					continue;   // no need to continue
 				}
 			}
@@ -1647,8 +1662,8 @@ public:
 			utility::vector1< std::string > temp_out_names= utility::split( base_name );
 			utility::file::FileName out_name = utility::file::combine_names( temp_out_names );
 			base_name = out_name.base();
-			std::string outname = base_name+"_"+right_string_of( i, 8, '0' )+".pdb";
-			dump_transformed_pdb( pose, ih, urs, outname );
+			std::string outname = base_name+"_"+option[ out::suffix ]()+right_string_of( i, 8, '0' )+".pdb";
+			dump_transformed_pdb( pose, ih, urs, ih.score, outname );
 		}
 	}
 };
