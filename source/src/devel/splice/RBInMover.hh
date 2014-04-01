@@ -28,7 +28,7 @@ namespace splice {
 class RBInMover : public protocols::moves::Mover {
 public:
 	RBInMover();
-    ~RBInMover();
+  ~RBInMover();
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
@@ -60,6 +60,9 @@ public:
 		std::string checkpointing_file() const{ return checkpointing_file_; }
 
 		void set_fold_tree( core::pose::Pose & pose ) const;
+
+		void modify_foldtree( bool const m ){ modify_foldtree_ = m; }
+		bool modify_foldtree() const { return modify_foldtree_; }
 private:
 	  void init(); /// sets the entry order; if the jump_library is already populated returns without doing anything
 		bool checkpoint_recovery(); /// recover from checkpointing. If checkpointing is off, does nothing. Returns true if recovered from checkpoint
@@ -70,6 +73,7 @@ private:
 		bool randomize_; //dflt true
 	  utility::vector1< core::kinematics::Jump > jump_library_; //dflt empty;
 		std::string checkpointing_file_; //dflt "" in which case we're not checkpointing
+		bool modify_foldtree_; //dflt true; use the existing fold tree or modify it to go by the variable domain disulfides.
 };
 
 

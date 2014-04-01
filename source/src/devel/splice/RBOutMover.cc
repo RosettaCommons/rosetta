@@ -64,7 +64,8 @@ RBOutMoverCreator::mover_name()
 
 RBOutMover::RBOutMover(): moves::Mover("RBOut"),
     template_pdb_fname_(""),
-    jump_dbase_fname_("")
+    jump_dbase_fname_(""),
+		jump_from_foldtree_( false )
 {
 }
 
@@ -148,21 +149,21 @@ RBOutMover::get_disulf_jump( Pose & pose, core::pose::Pose const & template_pose
     return pose_disulf_jump;
 }
 
-/* 
+/*
 core::kinematics::Jump
 RBOutMover::get_disulf_jump( Pose & pose )
 {
     TR << "Getting disulfide jump without using template!! If using for AbDesign make sure that the domain order is light->heavy and scFv is on chain 1" << std::endl;
     utility::vector1< std::pair< core::Size, core::Size > > const disulfs_in_pose = find_disulfs_in_range( pose, 1, pose.total_residue() );
     runtime_assert( disulfs_in_pose.size() >= 2 );
-    
+
     core::kinematics::FoldTree ft;
     ft.clear();
-    
+
     /// We don't know what order the chains will come in. Is the first disulfide in the template also first on the pose? Not always the case...
     core::Size const first_disulf( std::min( disulfs_in_pose[ 1 ].second, disulfs_in_pose[ 2 ].second ));
     core::Size const second_disulf( std::max( disulfs_in_pose[ 1 ].second, disulfs_in_pose[ 2 ].second ));
-    
+
     /// Following is an ugly foldtree just used to define the jump between the 2nd and 1st disulfides in the order they're observed in template pose
     using namespace core::kinematics;
     ft.add_edge( 1, first_disulf, Edge::PEPTIDE );
@@ -176,7 +177,7 @@ RBOutMover::get_disulf_jump( Pose & pose )
     TR<<"New foldtree:" << ft <<std::endl;
     pose.fold_tree( ft );
     core::kinematics::Jump const pose_disulf_jump( pose.jump( 1 ) );
-    
+
     return pose_disulf_jump;
 }
 
@@ -187,7 +188,7 @@ RBOutMover::apply( Pose & pose )
 	core::pose::Pose template_pose;
   core::import_pose::pose_from_pdb( template_pose, template_pdb_fname() );
 
-  core::kinematics::Jump pose_disulf_jump = get_disulf_jump( pose, template_pose );
+  core::kinematics::Jump const pose_disulf_jump = ( jump_from_foldtree() ? pose.jump( 1 ) : get_disulf_jump( pose, template_pose ) );
 //write to file
 	std::ofstream data;
 	data.open( jump_dbase_fname().c_str(), std::ios::out );
@@ -224,8 +225,10 @@ RBOutMover::parse_my_tag(
 {
     template_pdb_fname( tag->getOption< std::string >( "template_fname" ) );
     jump_dbase_fname( tag->getOption< std::string >( "jump_dbase_fname" ));
-    TR<<"Template pdb fname: "<<template_pdb_fname()<<" jump_dbase_fname: "<<jump_dbase_fname()<<std::endl;
+		jump_from_foldtree( tag->getOption< bool >( "jump_from_foldtree", false ) );
+    TR<<"Template pdb fname: "<<template_pdb_fname()<<" jump_dbase_fname: "<<jump_dbase_fname()<<" jump_from_foldtree: "<<jump_from_foldtree()<<std::endl;
 }
-} // simple_moves
-} // protocols
+
+} // splice
+} // devel
 

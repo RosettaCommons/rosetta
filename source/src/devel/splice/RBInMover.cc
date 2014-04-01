@@ -65,7 +65,8 @@ RBInMover::RBInMover(): moves::Mover("RBIn"),
     to_entry_( 1 ),
     current_entry_( 1 ),
     randomize_( true ),
-		checkpointing_file_( "" )
+		checkpointing_file_( "" ),
+		modify_foldtree_( true )
 {
 	jump_library_.clear();
 }
@@ -179,7 +180,8 @@ RBInMover::set_fold_tree( Pose & pose ) const{
 void
 RBInMover::apply( Pose & pose ){
     init();
-		set_fold_tree( pose );
+		if( modify_foldtree() )
+			set_fold_tree( pose );
     TR<<"Setting jump now"<<std::endl;
     pose.set_jump( 1, jump_library_[ current_entry_ ] );
 
@@ -225,9 +227,10 @@ RBInMover::parse_my_tag(
   to_entry( tag->getOption< core::Size >( "to_entry", 1 ) );
   randomize( tag->getOption< bool >( "randomize", true  ) );
 	checkpointing_file( tag->getOption< std::string >( "checkpointing_file", "" ) );
+	modify_foldtree( tag->getOption< bool >( "modify_foldtree", true ) );
 
   runtime_assert( from_entry() <= to_entry() && from_entry() >= 1 );
-  TR<<"RB_dbase: "<<RB_dbase()<<" from_entry: "<<from_entry()<<" to_entry: "<<to_entry()<<" randomize: "<<randomize()<<" checkpointing file: "<<checkpointing_file()<<std::endl;
+  TR<<"RB_dbase: "<<RB_dbase()<<" from_entry: "<<from_entry()<<" to_entry: "<<to_entry()<<" randomize: "<<randomize()<<" checkpointing file: "<<checkpointing_file()<<" modify_foldtree: "<<modify_foldtree()<<std::endl;
 }
 } // simple_moves
 } // protocols
